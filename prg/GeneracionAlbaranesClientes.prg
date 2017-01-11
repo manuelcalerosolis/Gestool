@@ -494,9 +494,10 @@ METHOD getValidDeliveryNoteForClient( oLine )
 
    local deliveryNote   
 
-   msgalert( oLine:getHeaderClient() )
+   D():getStatusAlbaranesClientes( ::nView )
+   D():setFocusAlbaranesClientes( "cCodCli", ::nView )
 
-   if D():gotoClienteIdAlbaranesClientes( oLine:getHeaderClient(), ::nView )
+   if ( D():AlbaranesClientes( ::nView ) )->( dbseek( oLine:getHeaderClient() ) )
 
       while ( D():AlbaranesClientes( ::nView ) )->cCodCli == oLine:getHeaderClient() .and. !( D():AlbaranesClientes( ::nView ) )->( eof() )
 
@@ -510,6 +511,8 @@ METHOD getValidDeliveryNoteForClient( oLine )
       end while
 
    end if 
+
+   D():setStatusAlbaranesClientes( ::nView )
 
 Return ( deliveryNote )
 
@@ -535,7 +538,7 @@ METHOD processDeliveryNoteLines()
    ::oWaitMeter         := TWaitMeter():New( "Generando albaranes", "Espere por favor...", len( ::getDeliveryNoteLines():getLines() ) )
    ::oWaitMeter:Run()
 
-   asort( ::getDeliveryNoteLines():getLines(), , , {|x,y| x:getHeaderClient() <= y:getHeaderClient() } )
+   asort( ::getDeliveryNoteLines():getLines(), , , {|x,y| x:getHeaderClient() + x:getValueFirstProperty() + x:getValueSecondProperty() <= y:getHeaderClient() + y:getValueFirstProperty() + y:getValueSecondProperty() } )
 
    for each oLine in aLines
       if oLine:isSelectLine()

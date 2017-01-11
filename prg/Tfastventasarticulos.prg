@@ -4230,8 +4230,8 @@ METHOD FastReportPedidoCliente()
    ::oFastReport:SetWorkArea(       "Lineas pedidos de clientes", ( D():PedidosClientesLineas( ::nView ) )->( Select() ) )
    ::oFastReport:SetFieldAliases(   "Lineas pedidos de clientes", cItemsToReport( aColPedCli() ) )
 
-   ::oFastReport:SetMasterDetail(   "Informe", "Pedidos de clientes",   {|| ::idDocumento() } )
-   ::oFastReport:SetMasterDetail(   "Informe", "Lineas pedidos de clientes",                 {|| ::IdDocumentoLinea() } )
+   ::oFastReport:SetMasterDetail(   "Informe", "Pedidos de clientes",         {|| ::idDocumento() } )
+   ::oFastReport:SetMasterDetail(   "Informe", "Lineas pedidos de clientes",  {|| ::IdDocumentoLinea() } )
 
    ::oFastReport:SetResyncPair(     "Informe", "Pedidos de clientes" )
    ::oFastReport:SetResyncPair(     "Informe", "Lineas pedidos de clientes" )
