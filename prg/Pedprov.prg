@@ -238,6 +238,8 @@ static bEdtDoc          := { |aTmp, aGet, dbf, oBrw, bWhen, bValid, nMode, aTmpL
 
 static nView
 
+static Counter
+
 static oCentroCoste
 static oTipoCtrCoste
 static cTipoCtrCoste
@@ -381,6 +383,8 @@ STATIC FUNCTION OpenFiles( lExt )
       oBandera          := TBandera():New()
 
       oMailing          := TGenmailingDatabasePedidosProveedor():New( nView )
+
+      Counter           := TCounter():New( nView, "nPedPrv" )
 
       /*
       Recursos y fuente--------------------------------------------------------
@@ -901,6 +905,11 @@ FUNCTION PedPrv( oMenuItem, oWnd, cCodPrv, cCodArt )
       TOOLTIP  "I(n)forme documento" ;
       HOTKEY   "N" ;
       LEVEL    ACC_EDIT
+
+   DEFINE BTNSHELL RESOURCE "gc_document_text_pencil_" OF oWndBrw ;
+      NOBORDER ;
+      ACTION   ( Counter:OpenDialog() ) ;
+      TOOLTIP  "Establecer contadores"
 
    DEFINE BTNSHELL oScript RESOURCE "gc_folder_document_" GROUP OF oWndBrw ;
       NOBORDER ;
