@@ -494,15 +494,22 @@ METHOD getValidDeliveryNoteForClient( oLine )
 
    local deliveryNote   
 
-   if D():gotoClienteIdAlbaranesClientes( oLine:getHeaderClient(), ::nView )
-      while ( D():AlbaranesClientes( ::nView )->cCodCli == oLine:getHeaderClient() ) .and. !( D():AlbaranesClientes( ::nView )->( eof() ) )
+   msgalert( oLine:getHeaderClient() )
 
-         if ( D():AlbaranesClientes( ::nView )->lEntregado .and. ( D():AlbaranesClientes( ::nView )->lEntregado
+   if D():gotoClienteIdAlbaranesClientes( oLine:getHeaderClient(), ::nView )
+
+      while ( D():AlbaranesClientes( ::nView ) )->cCodCli == oLine:getHeaderClient() .and. !( D():AlbaranesClientes( ::nView ) )->( eof() )
+
+         if ( D():AlbaranesClientes( ::nView ) )->nFacturado <= 1 .and. ( D():AlbaranesClientes( ::nView ) )->lEntregado
             deliveryNote   := D():AlbaranesClientesId( ::nView )
             exit
          end if 
 
+<<<<<<< HEAD
          ( D():AlbaranesClientes( ::nView )->( dbskip() ) 
+=======
+         ( D():AlbaranesClientes( ::nView ) )->( dbskip() )
+>>>>>>> origin/master
 
       end while
 
