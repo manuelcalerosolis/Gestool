@@ -840,6 +840,7 @@ Function SelectAlmacen()
 
       REDEFINE BITMAP oBmp ;
          RESOURCE "gc_package_48" ;
+         TRANSPARENT ;
          ID       300;
          OF       oDlg
 

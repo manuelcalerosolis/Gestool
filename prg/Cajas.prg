@@ -171,7 +171,7 @@ FUNCTION Cajas( oMenuItem, oWnd )
          :bEditValue       := {|| ( dbfCajT )->cCodCaj == oUser():cCaja() }
          :nWidth           := 20
          :SetCheck( { "Sel16", "Nil16" } )
-         :AddResource( "cashier_Selet_16" )
+         :AddResource( "gc_cash_register_16" )
       end with
 
       with object ( oWndBrw:AddXCol() )
@@ -3271,6 +3271,7 @@ Function SelectCajas()
 
       REDEFINE BITMAP oBmp ;
          RESOURCE "gc_cash_register_48" ;
+         TRANSPARENT ;
          ID       300;
          OF       oDlg
 
