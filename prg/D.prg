@@ -134,13 +134,13 @@ CLASS D
 
       METHOD AlbaranesClientesFecha( nView )                INLINE ( ( ::Get( ::AlbaranesClientesTableName(), nView ) )->dFecAlb )
       METHOD AlbaranesClientesId( nView )                   INLINE ( ( ::Get( ::AlbaranesClientesTableName(), nView ) )->cSerAlb + str( ( ::Get( ::AlbaranesClientesTableName(), nView ) )->nNumAlb, 9 ) + ( ::Get( ::AlbaranesClientesTableName(), nView ) )->cSufAlb )
-      METHOD AlbaranesClientesIdTextShort( nView );
-                                                            INLINE ( ::Get( "AlbCliT", nView ) )->cSerAlb + "/" + Alltrim( Str( ( ::Get( "AlbCliT", nView ) )->nNumAlb ) )
+      METHOD AlbaranesClientesIdTextShort( nView )          INLINE ( ::Get( "AlbCliT", nView ) )->cSerAlb + "/" + Alltrim( Str( ( ::Get( "AlbCliT", nView ) )->nNumAlb ) )
       METHOD AlbaranesClientesIdText( nView )               INLINE ( ::AlbaranesClientesIdTextShort( nView ) + "/" + ( ::Get( "AlbCliT", nView ) )->cSufAlb ) 
       METHOD getHashAlbaranCliente( nView )                 INLINE ( ::getHashRecordById( ::AlbaranesClientesId( nView ), ::AlbaranesClientes( nView ), nView ) )
       METHOD getDefaultHashAlbaranCliente( nView )          INLINE ( ::getHashRecordDefaultValues( ::AlbaranesClientes( nView ), nView ) )
 
       METHOD gotoIdAlbaranesClientes( id, nView )           INLINE ( ::seekInOrd( ::AlbaranesClientes( nView ), id, "nNumAlb" ) ) 
+      METHOD gotoClienteIdAlbaranesClientes( id, nView )    INLINE ( ::seekInOrd( ::AlbaranesClientes( nView ), id, "cCodCli" ) ) 
       METHOD gotoPedidoIdAlbaranesClientes( id, nView )     INLINE ( ::seekInOrd( ::AlbaranesClientes( nView ), id, "cNumPed" ) ) 
 
    METHOD getStatusAlbaranesClientes( nView )               INLINE ( ::aStatus := aGetStatus( ::AlbaranesClientes( nView ) ) )

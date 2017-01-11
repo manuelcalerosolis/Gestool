@@ -55,6 +55,7 @@ CLASS TGeneracionAlbaranesClientes FROM TConversionDocumentos
    METHOD processLines()
       METHOD processLine()
          METHOD appendDeliveryNoteLines()
+         METHOD getValidDeliveryNoteForClient()
 
    METHOD processDeliveryNoteLines()
       METHOD processDeliveryNoteLine( oLine )
@@ -481,18 +482,33 @@ Return ( .t. )
 
 METHOD processLine( oLine )
 
-   msgalert( oLine:getClient() )
-   msgalert( oLine:getClient(), "oLine" )
-
-   if D():gotoPedidoIdAlbaranesClientes( oLine:getDocumentId(), ::nView )
-      ::appendDeliveryNoteLines( oLine:getClone(), D():AlbaranesClientesId( ::nView ) )
-   else 
-      ::appendDeliveryNoteLines( oLine:getClone() )
-   end if
+   ::appendDeliveryNoteLines( oLine:getClone(), ::getValidDeliveryNoteForClient( oLine ) )
 
    ::dialogDeliveryNoteLines:setBrowseLinesDocument()
 
 Return ( .t. )
+
+//---------------------------------------------------------------------------//
+
+METHOD getValidDeliveryNoteForClient( oLine )
+
+   local deliveryNote   
+
+   if D():gotoClienteIdAlbaranesClientes( oLine:getHeaderClient(), ::nView )
+      while ( D():AlbaranesClientes( ::nView )->cCodCli == oLine:getHeaderClient() ) .and. !( D():AlbaranesClientes( ::nView )->( eof() ) )
+
+         if ( D():AlbaranesClientes( ::nView )->lEntregado .and. ( D():AlbaranesClientes( ::nView )->lEntregado
+            deliveryNote   := D():AlbaranesClientesId( ::nView )
+            exit
+         end if 
+
+         ( D():AlbaranesClientes( ::nView )->( dbskip() )
+
+      end while
+
+   end if 
+
+Return ( deliveryNote )
 
 //---------------------------------------------------------------------------//
 

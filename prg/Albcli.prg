@@ -441,6 +441,8 @@ static oGrpFam
 static oFraPub
 static oPais
 
+static Counter
+
 static oDetCamposExtra
 
 static oBtnKit
@@ -1149,6 +1151,11 @@ FUNCTION AlbCli( oMenuItem, oWnd, hHash )
       HOTKEY   "N" ;
       LEVEL    ACC_EDIT
 
+   DEFINE BTNSHELL RESOURCE "gc_document_text_pencil_" OF oWndBrw ;
+      NOBORDER ;
+      ACTION   ( Counter:OpenDialog() ) ;
+      TOOLTIP  "Establecer contadores" 
+
    DEFINE BTNSHELL oScript RESOURCE "gc_folder_document_" GROUP OF oWndBrw ;
       NOBORDER ;
       ACTION   ( oScript:Expand() ) ;
@@ -1612,6 +1619,8 @@ STATIC FUNCTION OpenFiles()
       oMailing          := TGenmailingDatabaseAlbaranesClientes():New( nView )
 
       TComercio         := TComercio():New( nView, oStock )
+
+      Counter           := TCounter():New( nView, "nAlbCli" ) 
 
       /*
       Declaración de variables públicas----------------------------------------
