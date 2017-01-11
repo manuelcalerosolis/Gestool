@@ -481,6 +481,9 @@ Return ( .t. )
 
 METHOD processLine( oLine )
 
+   msgalert( oLine:getClient() )
+   msgalert( oLine:getClient(), "oLine" )
+
    if D():gotoPedidoIdAlbaranesClientes( oLine:getDocumentId(), ::nView )
       ::appendDeliveryNoteLines( oLine:getClone(), D():AlbaranesClientesId( ::nView ) )
    else 

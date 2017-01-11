@@ -1283,6 +1283,11 @@ FUNCTION FactCli( oMenuItem, oWnd, hHash )
          HOTKEY   "N" ;
          LEVEL    ACC_EDIT
 
+      DEFINE BTNSHELL RESOURCE "gc_document_text_pencil_" OF oWndBrw ;
+         NOBORDER ;
+         ACTION   ( Counter:OpenDialog() ) ;
+         TOOLTIP  "Establecer contadores" 
+
       DEFINE BTNSHELL oScript RESOURCE "gc_folder_document_" GROUP OF oWndBrw ;
          NOBORDER ;
          ACTION   ( oScript:Expand() ) ;
@@ -1366,11 +1371,6 @@ FUNCTION FactCli( oMenuItem, oWnd, hHash )
       TOOLTIP  "(S)alir" ;
       HOTKEY   "S" ;
       ALLOW EXIT ;
-
-   DEFINE BTNSHELL RESOURCE "gc_document_text_pencil_" OF oWndBrw ;
-      NOBORDER ;
-      ACTION   ( Counter:OpenDialog() ) ;
-      TOOLTIP  "Establecer contadores" 
 
    if !oUser():lFiltroVentas()
       oWndBrw:oActiveFilter:SetFields( aItmFacCli() )
