@@ -1367,7 +1367,7 @@ FUNCTION FactCli( oMenuItem, oWnd, hHash )
       HOTKEY   "S" ;
       ALLOW EXIT ;
 
-   DEFINE BTNSHELL RESOURCE "END" OF oWndBrw ;
+   DEFINE BTNSHELL RESOURCE "gc_document_text_pencil_" OF oWndBrw ;
       NOBORDER ;
       ACTION   ( Counter:OpenDialog() ) ;
       TOOLTIP  "Establecer contadores" 
