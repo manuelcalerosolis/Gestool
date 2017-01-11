@@ -502,7 +502,7 @@ METHOD getValidDeliveryNoteForClient( oLine )
             exit
          end if 
 
-         ( D():AlbaranesClientes( ::nView )->( dbskip() )
+         ( D():AlbaranesClientes( ::nView )->( dbskip() ) 
 
       end while
 
