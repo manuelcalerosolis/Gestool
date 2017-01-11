@@ -1730,7 +1730,6 @@ STATIC FUNCTION OpenFiles()
       USE ( cPatArt() + "OFERTA.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "OFERTA", @dbfOferta ) )
       SET ADSINDEX TO ( cPatArt() + "OFERTA.CDX" ) ADDITIVE
 
-
       USE ( cPatCli() + "RUTA.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "RUTA", @dbfRuta ) )
       SET ADSINDEX TO ( cPatCli() + "RUTA.CDX" ) ADDITIVE
 
