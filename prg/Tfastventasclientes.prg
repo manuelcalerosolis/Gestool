@@ -99,6 +99,9 @@ CLASS TFastVentasClientes FROM TFastReportInfGen
    METHOD setFilterAlmacenId()            INLINE ( if( ::lApplyFilters,;
                                                    ::cExpresionHeader  += ' .and. ( Field->cCodAlm >= "' + ::oGrupoAlmacen:Cargo:Desde + '" .and. Field->cCodAlm <= "' + ::oGrupoAlmacen:Cargo:Hasta + '" )', ) )
 
+   METHOD setFilterAlmacenTicketId()      INLINE ( if( ::lApplyFilters,;
+                                                   ::cExpresionHeader  += ' .and. ( Field->cAlmTik >= "' + ::oGrupoAlmacen:Cargo:Desde + '" .and. Field->cAlmTik <= "' + ::oGrupoAlmacen:Cargo:Hasta + '" )', ) )
+
    METHOD AddFieldCamposExtra()
    METHOD loadValuesExtraFields()
 
@@ -1768,15 +1771,15 @@ METHOD AddTicket() CLASS TFastVentasClientes
    
    // filtros para la cabecera------------------------------------------------
 
-      ::cExpresionHeader          := 'Field->dFecTik >= Ctod( "' + Dtoc( ::dIniInf ) + '" ) .and. Field->dFecTik <= Ctod( "' + Dtoc( ::dFinInf ) + '" )'
-      ::cExpresionHeader          += ' .and. Rtrim( cCliTik ) >= "' + Rtrim( ::oGrupoCliente:Cargo:Desde )   + '" .and. Rtrim( cCliTik ) <= "' + Rtrim( ::oGrupoCliente:Cargo:Hasta ) + '"'
-      ::cExpresionHeader          += ' .and. Field->cSerTik >= "' + Rtrim( ::oGrupoSerie:Cargo:Desde ) + '" .and. Field->cSerTik <= "'    + Rtrim( ::oGrupoSerie:Cargo:Hasta ) + '"'
+      ::cExpresionHeader          := '( Field->dFecTik >= Ctod( "' + Dtoc( ::dIniInf ) + '" ) .and. Field->dFecTik <= Ctod( "' + Dtoc( ::dFinInf ) + '" ) )'
+      ::cExpresionHeader          += ' .and. ( Rtrim( cCliTik ) >= "' + Rtrim( ::oGrupoCliente:Cargo:Desde )   + '" .and. Rtrim( cCliTik ) <= "' + Rtrim( ::oGrupoCliente:Cargo:Hasta ) + '")'
+      ::cExpresionHeader          += ' .and. ( Field->cSerTik >= "' + Rtrim( ::oGrupoSerie:Cargo:Desde ) + '" .and. Field->cSerTik <= "'    + Rtrim( ::oGrupoSerie:Cargo:Hasta ) + '" )'
      
       ::setFilterRouteId()
 
       ::setFilterAgentId()
 
-      ::setFilterAlmacenId()
+      ::setFilterAlmacenTicketId()
       
    // filtros para la cabecera------------------------------------------------
    
