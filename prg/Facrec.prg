@@ -443,6 +443,8 @@ static lExternal           := .f.
 static cFiltroUsuario      := ""
 static oMailing
 
+static Counter
+
 static oTipoCtrCoste
 static cTipoCtrCoste
 static aTipoCtrCoste       := { "Centro de coste", "Proveedor", "Agente", "Cliente" }
@@ -999,6 +1001,8 @@ STATIC FUNCTION OpenFiles( lExt )
       oMailing          := TGenmailingDatabaseFacturaRectificativaCliente():New( nView )
 
       TComercio         := TComercio():New( nView, oStock)
+     
+      Counter           := TCounter():New( nView, "nFacRec" )
 
       /*
       Declaración de variables publicas----------------------------------------
@@ -1965,12 +1969,17 @@ FUNCTION FacRec( oMenuItem, oWnd, cCodCli, cCodArt, cCodPed, aNumDoc )
          CLOSED ;
          LEVEL    ACC_EDIT
 
-   DEFINE BTNSHELL oBtnEur RESOURCE "gc_currency_euro_" OF oWndBrw ;
-      NOBORDER ;
-      ACTION   ( lEuro := !lEuro, oWndBrw:Refresh() ) ;
-      TOOLTIP  "M(o)neda";
-      HOTKEY   "O";
-      LEVEL    ACC_ZOOM
+	  DEFINE BTNSHELL oBtnEur RESOURCE "gc_currency_euro_" OF oWndBrw ;
+	     NOBORDER ;
+	     ACTION   ( lEuro := !lEuro, oWndBrw:Refresh() ) ;
+	     TOOLTIP  "M(o)neda";
+	     HOTKEY   "O";
+	     LEVEL    ACC_ZOOM
+
+   	  DEFINE BTNSHELL RESOURCE "gc_document_text_pencil_" OF oWndBrw ;
+	     NOBORDER ;
+	     ACTION   ( Counter:OpenDialog() ) ;
+	     TOOLTIP  "Establecer contadores" 
 
    if oUser():lAdministrador()
 
@@ -1981,13 +1990,13 @@ FUNCTION FacRec( oMenuItem, oWnd, cCodCli, cCodArt, cCodPed, aNumDoc )
          TOOLTIP  "Cambiar campos" ;
          LEVEL    ACC_EDIT
 
-         DEFINE BTNSHELL RESOURCE "BMPCHG" OF oWndBrw ;
-            NOBORDER ;
-	         ACTION   ( ReplaceCreator( oWndBrw, dbfFacRecL, aColFacRec() ) ) ;
-            TOOLTIP  "Lineas" ;
-            FROM     oRpl ;
-            CLOSED ;
-            LEVEL    ACC_EDIT
+     DEFINE BTNSHELL RESOURCE "BMPCHG" OF oWndBrw ;
+         NOBORDER ;
+         ACTION   ( ReplaceCreator( oWndBrw, dbfFacRecL, aColFacRec() ) ) ;
+         TOOLTIP  "Lineas" ;
+         FROM     oRpl ;
+         CLOSED ;
+         LEVEL    ACC_EDIT
 
    end if
 

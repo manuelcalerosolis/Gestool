@@ -463,6 +463,8 @@ static aTipoCtrCoste       := { "Centro de coste", "Proveedor", "Agente", "Clien
 
 static oCentroCoste
 
+static Counter
+
 //---------------------------------------------------------------------------//
 //Comenzamos la parte de código que se compila para el ejecutable normal
 //---------------------------------------------------------------------------//
@@ -937,6 +939,8 @@ STATIC FUNCTION OpenFiles( lExt )
       CodigosPostales():GetInstance():OpenFiles()
 
       oMailing          := TGenmailingDatabasePedidosClientes():New( nView )
+
+      Counter           := TCounter():New( nView, "nPedCli" )
 
       /*
       Recursos y fuente--------------------------------------------------------
@@ -1727,6 +1731,11 @@ FUNCTION PedCli( oMenuItem, oWnd, cCodCli, cCodArt, cCodPre, lPedWeb )
       TOOLTIP  "I(n)forme documento" ;
       HOTKEY   "N" ;
       LEVEL    ACC_EDIT
+
+   DEFINE BTNSHELL RESOURCE "gc_document_text_pencil_" OF oWndBrw ;
+      NOBORDER ;
+      ACTION   ( Counter:OpenDialog() ) ;
+      TOOLTIP  "Establecer contadores" 
 
    DEFINE BTNSHELL oScript RESOURCE "gc_folder_document_" GROUP OF oWndBrw ;
       NOBORDER ;

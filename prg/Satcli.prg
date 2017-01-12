@@ -399,6 +399,8 @@ static oBtnKit
 
 static oBrwProperties
 
+static Counter
+
 static oTipoCtrCoste
 static cTipoCtrCoste
 static aTipoCtrCoste       := { "Centro de coste", "Proveedor", "Agente", "Cliente" }
@@ -751,6 +753,8 @@ STATIC FUNCTION OpenFiles( lExt )
 
       oMailingOperario  := TGenmailingDatabaseSATClientes():New( nView )
       oMailingOperario:setBlockRecipients( {|| alltrim( oRetFld( ( D():SatClientes( nView ) )->cCodOpe, oOperario:oDbf, "cMeiTra" ) ) } )
+
+      Counter           := TCounter():New( nView, "nSatCli" )
 
       CodigosPostales():GetInstance():OpenFiles()
 
@@ -1668,6 +1672,11 @@ FUNCTION SatCli( oMenuItem, oWnd, cCodCli, cCodArt )
       TOOLTIP  "I(n)forme documento" ;
       HOTKEY   "N" ;
       LEVEL    ACC_EDIT
+
+   DEFINE BTNSHELL RESOURCE "gc_document_text_pencil_" OF oWndBrw ;
+      NOBORDER ;
+      ACTION   ( Counter:OpenDialog() ) ;
+      TOOLTIP  "Establecer contadores" 
 
    DEFINE BTNSHELL oScript RESOURCE "gc_folder_document_" GROUP OF oWndBrw ;
       NOBORDER ;

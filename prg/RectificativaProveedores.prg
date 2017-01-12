@@ -344,6 +344,7 @@ static bEdtInc          := { |aTmp, aGet, dbf, oBrw, bWhen, bValid, nMode, aTmpL
 static bEdtDoc          := { |aTmp, aGet, dbf, oBrw, bWhen, bValid, nMode, aTmpLin | EdtDoc( aTmp, aGet, dbf, oBrw, bWhen, bValid, nMode, aTmpLin ) }
 static bEdtPgo          := { |aTmp, aGet, dbf, oBrw, bWhen, bValid, nMode, aTmpFac | EdtPgo( aTmp, aGet, dbf, oBrw, bWhen, bValid, nMode, aTmpFac ) }
 
+static Counter
 static oTipoCtrCoste
 static cTipoCtrCoste
 static aTipoCtrCoste    := { "Centro de coste", "Proveedor", "Agente", "Cliente" }
@@ -496,6 +497,8 @@ STATIC FUNCTION OpenFiles( lExt )
       oFntTot           := TFont():New( "Arial", 8, 26, .F., .T. )// Font del total
 
       oMailing          := TGenmailingDatabaseFacturaRectificativaProveedor():New( nView )
+
+      Counter           := TCounter():New( nView, "nRctPrv" )
 
       initPublics()
 
@@ -1025,6 +1028,11 @@ FUNCTION RctPrv( oMenuItem, oWnd, cCodPrv, cCodArt, cNumFac )
       TOOLTIP  "I(n)forme documento" ;
       HOTKEY   "N" ;
       LEVEL    ACC_EDIT
+
+   DEFINE BTNSHELL RESOURCE "gc_document_text_pencil_" OF oWndBrw ;
+      NOBORDER ;
+      ACTION   ( Counter:OpenDialog() ) ;
+      TOOLTIP  "Establecer contadores" 
 
    if oUser():lAdministrador()
 

@@ -176,6 +176,8 @@ static oDetCamposExtra
 
 static oCentroCoste
 
+static Counter
+
 #ifndef __PDA__
 
 static bEdtRec          := { |aTmp, aGet, dbfAntCliT, oBrw, bWhen, bValid, nMode, cSerAnt| EdtRec( aTmp, aGet, dbfAntCliT, oBrw, bWhen, bValid, nMode, cSerAnt ) }
@@ -464,6 +466,8 @@ STATIC FUNCTION OpenFiles( lExt )
    public nTotReq       := 0
    public nTotRet       := 0
    public nTotImp       := 0
+
+   Counter           := TCounter():New( nView, "nAntCli" )
 
    /*
    Limitaciones de cajero y cajas--------------------------------------------------------
@@ -1088,6 +1092,11 @@ FUNCTION FacAntCli( oMenuItem, oWnd, cCodCli )
       TOOLTIP  "M(o)neda";
       HOTKEY   "O";
       LEVEL    ACC_ZOOM
+
+   DEFINE BTNSHELL RESOURCE "gc_document_text_pencil_" OF oWndBrw ;
+      NOBORDER ;
+      ACTION   ( Counter:OpenDialog() ) ;
+      TOOLTIP  "Establecer contadores" 
 
    if oUser():lAdministrador()
 

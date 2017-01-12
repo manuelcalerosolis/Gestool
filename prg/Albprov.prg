@@ -320,6 +320,8 @@ static oBtnNumerosSerie
 
 static lIncidencia      := .f.
 
+static Counter
+
 static oTipoCtrCoste
 static cTipoCtrCoste
 static aTipoCtrCoste   := { "Centro de coste", "Proveedor", "Agente", "Cliente" }
@@ -798,6 +800,11 @@ FUNCTION AlbPrv( oMenuItem, oWnd, cCodPrv, cCodArt, cCodPed )
       HOTKEY   "N" ;
       LEVEL    ACC_EDIT
 
+   DEFINE BTNSHELL RESOURCE "gc_document_text_pencil_" OF oWndBrw ;
+      NOBORDER ;
+      ACTION   ( Counter:OpenDialog() ) ;
+      TOOLTIP  "Establecer contadores" 
+
    DEFINE BTNSHELL oScript RESOURCE "gc_folder_document_" GROUP OF oWndBrw ;
       NOBORDER ;
       ACTION   ( oScript:Expand() ) ;
@@ -1030,6 +1037,8 @@ STATIC FUNCTION OpenFiles( lExt )
       TComercio         := TComercio():New( nView, oStock )
 
       cPicUnd           := MasUnd()                               // Picture de las unidades
+
+      Counter           := TCounter():New( nView, "nAlbPrv" )
 
       initPublics()
 

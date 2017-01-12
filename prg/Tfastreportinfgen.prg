@@ -3702,14 +3702,15 @@ METHOD CreateTreeImageList()
    ::oTreeImageList:AddMasked( TBitmap():Define( "gc_document_text_worker_16" ),       Rgb( 255, 0, 255 ) ) // 14 Produccion
    ::oTreeImageList:AddMasked( TBitmap():Define( "gc_document_text_delete2_16" ),      Rgb( 255, 0, 255 ) ) // 15 Rectifiactivas proveedores
    ::oTreeImageList:AddMasked( TBitmap():Define( "gc_package_16" ),                    Rgb( 255, 0, 255 ) ) // 16 Existencias
-   ::oTreeImageList:AddMasked( TBitmap():Define( "gc_office_building2_16" ),  Rgb( 255, 0, 255 ) ) // 17 NO USADO
-   ::oTreeImageList:AddMasked( TBitmap():Define( "gc_document_text_delete2_16" ),       Rgb( 255, 0, 255 ) ) // 18 NO USADO
+   ::oTreeImageList:AddMasked( TBitmap():Define( "gc_office_building2_16" ),           Rgb( 255, 0, 255 ) ) // 17 NO USADO
+   ::oTreeImageList:AddMasked( TBitmap():Define( "gc_document_text_delete2_16" ),      Rgb( 255, 0, 255 ) ) // 18 NO USADO
    ::oTreeImageList:AddMasked( TBitmap():Define( "gc_user_16" ),                       Rgb( 255, 0, 255 ) ) // 19 Clientes ( NO USADO )
    ::oTreeImageList:AddMasked( TBitmap():Define( "gc_power_drill_sat_user_16" ),       Rgb( 255, 0, 255 ) ) // 20 SAT
    ::oTreeImageList:AddMasked( TBitmap():Define( "gc_briefcase2_user_16" ),            Rgb( 255, 0, 255 ) ) // 21 Recibos
    ::oTreeImageList:AddMasked( TBitmap():Define( "gc_folder_document_16" ),            Rgb( 255, 0, 255 ) ) // 22 Folder
    ::oTreeImageList:AddMasked( TBitmap():Define( "gc_moneybag_16" ),                   Rgb( 255, 0, 255 ) ) // 23 Iva
    ::oTreeImageList:AddMasked( TBitmap():Define( "gc_object_cube_16"),                 Rgb( 255, 0, 255 ) ) // 24 Articulo
+   ::oTreeImageList:AddMasked( TBitmap():Define( "gc_pencil_package_16"),              Rgb( 255, 0, 255 ) ) // 25 Movimiento de almacén
 
    if !Empty( ::oTreeReporting )
       ::oTreeReporting:SetImageList( ::oTreeImageList )
