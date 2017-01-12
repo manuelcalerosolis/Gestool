@@ -1014,6 +1014,10 @@ METHOD BuildReportCorrespondences()
                                                 ::FastReportAlbaranProveedor(),;
                                                 ::FastReportFacturaProveedor(),;
                                                 ::FastReportRectificativaProveedor() } },;
+                     "Movimientosalmacen" => ;
+                        {  "Generate" =>  {||   ::AddMovimientoAlmacen() },;
+                           "Variable" =>  {||   nil },;
+                           "Data" =>      {||   nil } },;
                      "Compras y ventas" => ;           
                         {  "Generate" =>  {||   ::SetUnidadesNegativo( .t. ),;
                                                 ::AddAlbaranCliente( .t. ),;
@@ -1305,7 +1309,8 @@ METHOD BuildTree( oTree, lLoadFile ) CLASS TFastVentasArticulos
                      { "Title" => "Rectificativas de proveedores","Image" =>15, "Type" => "Rectificativas de proveedores", "Directory" => "Articulos\Compras\Rectificativas de proveedores", "File" => "Rectificativas de proveedores.fr3" },;
                      { "Title" => "Compras",                      "Image" =>12, "Type" => "Compras",                       "Directory" => "Articulos\Compras\Compras",                       "File" => "Compras.fr3" },;
                   } ;
-                  },; 
+                  },;                  
+                  { "Title" => "Movimientos almacén",             "Image" => 25, "Type" => "Movimientosalmacen",           "Directory" => "Articulos\MovimientosAlmacen",                    "File" => "Movimientos.fr3" },;
                   {  "Title" => "Compras/Ventas",                 "Image" => 12, "Subnode" =>;
                   { ;
                      { "Title" => "Compras y ventas",             "Image" => 2, "Type" => "Compras y ventas",              "Directory" => "Articulos\ComprasVentas",                         "File" => "Compras y ventas.fr3" },;
@@ -3383,6 +3388,10 @@ METHOD AddMovimientoAlmacen() CLASS TFastVentasArticulos
 
    if !::lAllArt
       ::cExpresionLine        += ' .and. ( cRefMov >= "' + ::oGrupoArticulo:Cargo:getDesde() + '" .and. cRefMov <= "' + ::oGrupoArticulo:Cargo:getHasta() + '")'
+   end if
+
+   if !::lAllAlm
+      ::cExpresionLine        += ' .and. ( cAliMov >= "' + ::oGrupoAlmacen:Cargo:getDesde() + '" .and. cAliMov <= "' + ::oGrupoAlmacen:Cargo:getHasta() + '")'
    end if
 
    ::oHisMov:AddTmpIndex( cCurUsr(), GetFileNoExt( ::oHisMov:cFile ), ::oHisMov:OrdKey(), cAllTrimer( ::cExpresionLine ), , , , , , , , .t. )
