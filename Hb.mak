@@ -29,6 +29,7 @@ PRG            		=    										\
 Factu.prg               										\
 DialogExtend.prg           									\
 C5Lib.prg               										\
+RpreviewC3.prg 												\
 ReportC3.prg            									\
 RocolumnC3.prg          									\
 Treeitem.prg            									\
@@ -596,6 +597,7 @@ Tblconv.obj                                        \
 Regalm.obj                                         \
 Rhtml.obj                                          \
 Tshell.obj                                         \
+RpreviewC3.obj 												\
 ReportC3.obj                                       \
 RocolumnC3.obj                                     \
 Rfile.obj                                          \
@@ -1178,6 +1180,7 @@ $(OBJ)\Tchgcode.obj             		+
 $(OBJ)\Tgethlp.obj              		+
 $(OBJ)\Tget.obj               		+
 $(OBJ)\Pdreport.obj             		+
+$(OBJ)\RpreviewC3.obj 					+
 $(OBJ)\ReportC3.obj             		+
 $(OBJ)\RcolumnC3.obj            		+
 $(OBJ)\Metafi32.obj             		+

@@ -251,7 +251,9 @@ METHOD buildDialogDeliveryNoteLines( oDlg )
    with object ( ::dialogDeliveryNoteLines:InsCol( 1 ) )
       :cHeader       := "Albaran"
       :Cargo         := "getAlbaranCliente"
-      :bEditValue    := {|| if( empty( ::getDeliveryNoteLine():getValue( "AlbaranCliente" ) ), "Nuevo", ::getDeliveryNoteLine():getValue( "AlbaranCliente" ) ) }
+      :bEditValue    := {||   iif(  empty( ::getDeliveryNoteLine():getValue( "AlbaranCliente" ) ),;
+                                    "Nuevo",; 
+                                    transIdDocument( ::getDeliveryNoteLine():getValue( "AlbaranCliente" ) ) ) }
       :nWidth        := 80
       :bLDClickData  := {|| ::dialogDeliveryNoteLines:toogleSelectLine() }
    end with
@@ -492,7 +494,14 @@ Return ( .t. )
 
 METHOD getValidDeliveryNoteForClient( oLine )
 
-   local deliveryNote   
+   local deliveryNote
+   
+   if D():gotoPedidoIdAlbaranesClientes( oLine:getDocumentId(), ::nView )
+      deliveryNote   := D():AlbaranesClientesId( ::nView )
+   end if 
+
+   /*
+      
 
    D():getStatusAlbaranesClientes( ::nView )
    D():setFocusAlbaranesClientes( "cCodCli", ::nView )
@@ -513,6 +522,7 @@ METHOD getValidDeliveryNoteForClient( oLine )
    end if 
 
    D():setStatusAlbaranesClientes( ::nView )
+   */
 
 Return ( deliveryNote )
 
@@ -624,6 +634,8 @@ Return ( .t. )
 //---------------------------------------------------------------------------//
 
 METHOD addLineDeliveryNoteCustomer( oLine, nLine, currentDocument )
+
+   msgalert( currentDocument, str( len( currentDocument ) ) )
 
    if ( D():gotoIdAlbaranesClientes( currentDocument, ::nView ) )
 
