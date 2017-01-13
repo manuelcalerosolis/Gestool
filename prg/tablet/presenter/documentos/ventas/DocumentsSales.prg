@@ -76,7 +76,7 @@ CLASS DocumentsSales FROM Documents
    METHOD getSufijo()                                       INLINE ( ::hGetMaster( "Sufijo" ) )
    METHOD getStore()                                        INLINE ( ::hGetMaster( "Almacen" ) )
 
-   METHOD getId()                                           INLINE ( ::getSerie() + str( ::getNumero() ) + ::getSufijo() )
+   METHOD getId()                                           INLINE ( ::getSerie() + str( ::getNumero(), 9 ) + ::getSufijo() )
 
    METHOD isPuntoVerde()                                    INLINE ( ::hGetMaster( "OperarPuntoVerde" ) )
    METHOD isRecargoEquivalencia()                           INLINE ( ::hGetMaster( "lRecargo" ) )

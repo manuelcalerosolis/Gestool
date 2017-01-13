@@ -4081,6 +4081,6 @@ Return ( nil )
 
 Function transIdDocument( id )
 
-Return ( strtran( trans( id, "@R #/#########/##" ), " ", "" ) )
+Return ( strtran( trans( id, "@R X/XXXXXXXXX/XX" ), " ", "" ) )
 
 //----------------------------------------------------------------------------//

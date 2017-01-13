@@ -72,6 +72,7 @@ CLASS DocumentBase
    METHOD getSufijo()                                          INLINE ( ::getValue( "Sufijo" ) )
    METHOD setSufijo( value )                                   INLINE ( ::setValue( "Sufijo", value ) )
 
+   METHOD getId()                                              INLINE ( ::getDocumentId() )
    METHOD getDocumentId()                                      INLINE ( ::getValue( "Serie" ) + str( ::getValue( "Numero" ) ) + ::getValue( "Sufijo" ) )
    METHOD getNumeroDocumento()                                 INLINE ( ::getValue( "Serie" ) + alltrim( str( ::getValue( "Numero" ) ) ) )
 

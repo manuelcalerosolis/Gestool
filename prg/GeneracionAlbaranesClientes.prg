@@ -495,34 +495,24 @@ Return ( .t. )
 METHOD getValidDeliveryNoteForClient( oLine )
 
    local deliveryNote
-   
-   if D():gotoPedidoIdAlbaranesClientes( oLine:getDocumentId(), ::nView )
-      deliveryNote   := D():AlbaranesClientesId( ::nView )
-   end if 
-
-   /*
-      
 
    D():getStatusAlbaranesClientes( ::nView )
-   D():setFocusAlbaranesClientes( "cCodCli", ::nView )
+   D():setFocusAlbaranesClientes( "cNumPed", ::nView )
 
-   if ( D():AlbaranesClientes( ::nView ) )->( dbseek( oLine:getHeaderClient() ) )
-
-      while ( D():AlbaranesClientes( ::nView ) )->cCodCli == oLine:getHeaderClient() .and. !( D():AlbaranesClientes( ::nView ) )->( eof() )
-
-         if ( D():AlbaranesClientes( ::nView ) )->nFacturado <= 1 .and. ( D():AlbaranesClientes( ::nView ) )->lEntregado
+   if D():gotoPedidoIdAlbaranesClientes( oLine:getDocumentId(), ::nView )
+      while ( D():AlbaranesClientes( ::nView ) )->cNumPed == oLine:getDocumentId() .and. !( D():AlbaranesClientes( ::nView ) )->( eof() )
+         
+         if ( D():AlbaranesClientes( ::nView ) )->lEntregado
             deliveryNote   := D():AlbaranesClientesId( ::nView )
             exit
          end if 
 
          ( D():AlbaranesClientes( ::nView ) )->( dbskip() )
 
-      end while
-
+      end while   
    end if 
 
    D():setStatusAlbaranesClientes( ::nView )
-   */
 
 Return ( deliveryNote )
 
@@ -595,6 +585,8 @@ METHOD appendDeliveryNoteCustomer( oLine )
 
    ::DeliveryNoteCustomer:hSetMaster( "Entregado", .t. ) 
 
+   ::DeliveryNoteCustomer:hSetMaster( "NumeroPedido", oLine:getId() )
+
    ::DeliveryNoteCustomer:setClientToDocument( oLine:getHeaderClient() )
 
    ::setCurrentClient( oLine:getHeaderClient() )
@@ -635,26 +627,21 @@ Return ( .t. )
 
 METHOD addLineDeliveryNoteCustomer( oLine, nLine, currentDocument )
 
-   msgalert( currentDocument, str( len( currentDocument ) ) )
-
-   if ( D():gotoIdAlbaranesClientes( currentDocument, ::nView ) )
-
-      ::DeliveryNoteCustomer:getEditDocumento()
-   
-      ::addDeliveryNoteCustomer( oLine, nLine )
-   
-      ::DeliveryNoteCustomer:setDatasInDictionaryMaster() 
-
-      ::DeliveryNoteCustomer:saveEditDocumento()
-
-      ::DeliveryNoteCustomer:onPreEnd()
-   
-   else 
-   
+   if !( D():gotoIdAlbaranesClientes( currentDocument, ::nView ) )
       msgStop( "Albarán de cliente " + transIdDocument( currentDocument ) + " no encontrado." )
-   
+      Return .f.
    end if 
 
+   ::DeliveryNoteCustomer:getEditDocumento()
+
+   ::addDeliveryNoteCustomer( oLine, nLine )
+
+   ::DeliveryNoteCustomer:setDatasInDictionaryMaster() 
+
+   ::DeliveryNoteCustomer:saveEditDocumento()
+
+   ::DeliveryNoteCustomer:onPreEnd()
+   
 Return ( .t. )
 
 //---------------------------------------------------------------------------//

@@ -3521,7 +3521,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, hHash, bValid, nMode )
 
       REDEFINE GET aGet[ _CNUMPED ] VAR aTmp[ _CNUMPED ] ;
          ID       150 ;
-         PICTURE  "@R #/#########/##" ;
+         PICTURE  "@R A/XXXXXXXXX/XX" ;
          VALID    ( cPedCli( aGet, aTmp, oBrwLin, oBrwPgo, nMode ), RecalculaTotal( aTmp ), SetDialog( aGet, oSayDias, oSayTxtDias ) );
          WHEN     ( nMode == APPD_MODE ) ;
          ON HELP  ( BrwPedCli( aGet[ _CNUMPED ], dbfPedCliT, dbfPedCliL, D():Get( "TIva", nView ), D():Get( "Divisas", nView ), D():Get( "FPago", nView ), aGet[ _LIVAINC ] ),;
@@ -3533,14 +3533,14 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, hHash, bValid, nMode )
          ID       151 ;
          WHEN     ( .f. ) ;
          VALID    ( cPreCli( aGet, aTmp, oBrwLin, nMode ), RecalculaTotal( aTmp ), SetDialog( aGet, oSayDias, oSayTxtDias ) ) ;
-         PICTURE  "@R #/#########/##" ;
+         PICTURE  "@R A/XXXXXXXXX/XX" ;
          OF       oFld:aDialogs[1]
 
       REDEFINE GET aGet[ _CNUMSAT ] VAR aTmp[ _CNUMSAT ] ;
          ID       153 ;
          WHEN     ( .f. ) ;
          VALID    ( cSatCli( aGet, aTmp, oBrwLin, nMode ), SetDialog( aGet, oSayDias, oSayTxtDias ), RecalculaTotal( aTmp ) ) ;
-         PICTURE  "@R #/#########/##" ;
+         PICTURE  "@R A/XXXXXXXXX/XX" ;
          OF       oFld:aDialogs[1]
 
       REDEFINE GET aGet[ _LFACTURADO ] VAR cEstAlb;
@@ -4160,6 +4160,22 @@ Static Function StartEdtRec( aTmp, aGet, oDlg, nMode, hHash, oBrwLin )
       end if 
 
    else
+
+      aGet[ _CNUMPRE ]:Hide()
+      aGet[ _CNUMPED ]:Hide()
+      aGet[ _CNUMSAT ]:Hide()
+
+      if !empty( aTmp[ _CNUMPRE ] )
+         aGet[ _CNUMPRE ]:Show()
+      end if 
+
+      if !empty( aTmp[ _CNUMPED ] )
+         aGet[ _CNUMPED ]:Show()
+      end if 
+
+      if !empty( aTmp[ _CNUMSAT ] )
+         aGet[ _CNUMSAT ]:Show()
+      end if 
 
       if !empty( aGet[ _CCENTROCOSTE ] )
          aGet[ _CCENTROCOSTE ]:lValid()
@@ -5035,7 +5051,7 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbf, oBrw, lTotLin, cCodArtEnt, nMode, aTmpA
 
       REDEFINE GET aGet[ __CNUMPED ] VAR aTmp[ __CNUMPED ] ;
          ID       380 ;
-         PICTURE  "@R A/#########/##" ;
+         PICTURE  "@R A/XXXXXXXXX/XX" ;
          WHEN     ( nMode != ZOOM_MODE ) ;
          OF       oFld:aDialogs[2]
 
@@ -6176,7 +6192,7 @@ STATIC FUNCTION GrpPed( aGet, aTmp, oBrw )
       with object ( oBrwLin:AddCol() )
          :cHeader          := "Número"
          :bEditValue       := {|| aPedidos[ oBrwLin:nArrayAt, 3 ] }
-         :cEditPicture     := "@R #/999999999/##"
+         :cEditPicture     := "@R A/XXXXXXXXX/XX"
          :nWidth           := 80
       end with
 
@@ -6319,7 +6335,7 @@ STATIC FUNCTION GrpPed( aGet, aTmp, oBrw )
             if lNumPed()
                (dbfTmpLin)->( dbAppend() )
                cDesAlb                 := Rtrim( cNumPed() )
-               cDesAlb                 += " Pedido Nº " + Alltrim( Trans( aPedidos[ nItem, 3 ], "@R #/999999999/##" ) )
+               cDesAlb                 += " Pedido Nº " + Alltrim( Trans( aPedidos[ nItem, 3 ], "@R A/XXXXXXXXX/XX" ) )
                cDesAlb                 += " - Fecha " + Dtoc( aPedidos[ nItem, 4] )
                (dbfTmpLin)->mLngDes    := cDesAlb
                (dbfTmpLin)->lControl   := .t.
