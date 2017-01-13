@@ -193,6 +193,7 @@ CLASS TTpvSalon
    METHOD CreateItemPanelCurvaArriba( nRow, nCol )                         INLINE ::CreateItemMesa( nRow, nCol, nil, itmPanelCurvaArriba, "Navigate_corner_right_top_64" )
    METHOD CreateItemPanelCurvaDerecha( nRow, nCol )                        INLINE ::CreateItemMesa( nRow, nCol, nil, itmPanelCurvaDerecha, "Navigate_corner_right_64" )
    METHOD CreateItemPanelCurvaIzquierda( nRow, nCol )                      INLINE ::CreateItemMesa( nRow, nCol, nil, itmPanelCurvaIzquierda, "Navigate_corner_right_down_64" )
+   
    METHOD CreateItemGenerico( nRow, nCol, uTooltip )                       INLINE ::CreateItemMesa( nRow, nCol, uTooltip, itmGenerico, "Shape_square_cup_160" )
    METHOD CreateItemLlevar( nRow, nCol, uTooltip )                         INLINE ::CreateItemMesa( nRow, nCol, uTooltip, itmLlevar, "Shape_square_wheel_160" )
    METHOD CreateItemEncargar( nRow, nCol, uTooltip )                       INLINE ::CreateItemMesa( nRow, nCol, uTooltip, itmEncargar, "shape_square_address_book2_160" )
