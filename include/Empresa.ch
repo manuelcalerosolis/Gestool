@@ -313,3 +313,4 @@
 #define _CCEESPTCOM 313
 #define _LOPENTIK   314 
 #define _LCONTREC   315
+#define _LSTOCKALM  316

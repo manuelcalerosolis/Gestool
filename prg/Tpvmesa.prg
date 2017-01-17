@@ -383,19 +383,19 @@ Method cBitmapMesa( nItem ) CLASS TTpvMesa
          Return( "Navigate_left_64" )
 
       case nItem == itmGenerico
-         Return( "Cashier_160" )
+         Return( "gc_cash_register_160" )
 
       case nItem == itmLlevar
-         Return( "Wheel_160" )
+         Return( "gc_motor_scooter_160" )
 
       case nItem == itmNewGenerico
-         Return( "Cashier_160" )
+         Return( "gc_cash_register_160" )
 
       case nItem == itmNewLlevar
-         Return( "Wheel_160" )
+         Return( "gc_motor_scooter_160" )
 
       case nItem == itmEncargar
-         Return( "address_book2_160" )
+         Return( "gc_notebook2_160" )
 
       case nItem == itmRecoger
          Return( "shoppingbasket_full_160" )

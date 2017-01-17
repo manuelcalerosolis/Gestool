@@ -3392,7 +3392,7 @@ Function ColorFam( oGetColor )
 
       REDEFINE BITMAP oBmpGeneral ;
         ID       500 ;
-        RESOURCE "color_wheel_48_alpha" ;
+        RESOURCE "gc_photographic_filters_48" ;
         TRANSPARENT ;
         OF       oDlg
 

@@ -8,43 +8,10 @@ LANGUAGE LANG_ENGLISH,SUBLANG_ENGLISH_US
 
 9001 RCDATA "..\\bmp\\gestool.png"
 
-BUILDING_CREDITCARDS_16 BITMAP "..\\bmp\\office-building_creditcards_16.bmp"
-
-BUILDING_CREDITCARDS_32 BITMAP "..\\bmp\\office-building_creditcards_32.bmp"
-
-BUILDING_FOLDER_RED_16 BITMAP "..\\bmp\\office-building_folder_red_16.bmp"
-
-BUILDING_FOLDER_RED_32 BITMAP "..\\bmp\\office-building_folder_red_32.bmp"
-
-OFFICE-BUILDING_ADDRESS_BOOK_32 BITMAP "..\\bmp\\office-building_address_book_32.bmp"
-
-BULLET_SQUARE_GREEN_32 BITMAP "..\\bmp\\Bullet_Square_Green_32.bmp"
-
-BULLET_SQUARE_GREEN_24 BITMAP "..\\bmp\\Bullet_Square_Green_24.bmp"
-
-MASKS2_48 BITMAP "..\\bmp\\masks2_48.bmp"
-
-PERCENT2_48 BITMAP "..\\bmp\\percent2_48.bmp"
-
-MESSAGE2_48 BITMAP "..\\bmp\\message2_48.bmp"
-
-NOVOTECNO_48 BITMAP "..\\bmp\\Novotecno_48.bmp"
-
-COLOR_WHEEL_48_ALPHA BITMAP "..\\bmp\\color_wheel_48_alpha.bmp"
-
 ALPHA BITMAP "..\\bmp\\Alpha.bmp"
-
-GEARS_RUN_16 BITMAP "..\\bmp\\gears_run_16.bmp"
-
-TEXT_CODE_COLORED_16 BITMAP "..\\bmp\\text_code_colored_16.bmp"
-
-TEXT_CODE_COLORED_32 BITMAP "..\\bmp\\text_code_colored_32.bmp"
-
-PACKAGE_NEW_PRINTER2_32 BITMAP "..\\bmp\\package_new_printer2_32.bmp"
 
 GESTOOL BITMAP "..\\bmp\\gestool.bmp"
 
-INBOX_32 BITMAP "..\\bmp\\inbox_32.bmp"
 
 SHAPE_SQUARE_SHOPPINGBASKET_FULL_160 BITMAP "..\\bmp\\shape_square_shoppingbasket_full_160.bmp"
 

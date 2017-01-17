@@ -216,13 +216,13 @@ CLASS TSalon
 
    METHOD CreateItemPanelCurvaIzquierda( nRow, nCol )                      INLINE ::CreateItemMesa( nRow, nCol, nil, 64, 64, itmPanelCurvaIzquierda, "Navigate_corner_right_down_64" )
 
-   METHOD CreateItemGenerico( nRow, nCol, uTooltip )                       INLINE ::CreateItemMesa( nRow, nCol, uTooltip, 160, 100, itmGenerico, "Cashier_160" )
+   METHOD CreateItemGenerico( nRow, nCol, uTooltip )                       INLINE ::CreateItemMesa( nRow, nCol, uTooltip, 160, 100, itmGenerico, "gc_cash_register_160" )
 
-   METHOD CreateItemLlevar( nRow, nCol, uTooltip )                         INLINE ::CreateItemMesa( nRow, nCol, uTooltip, 160, 100, itmLlevar, "Wheel_160" )
+   METHOD CreateItemLlevar( nRow, nCol, uTooltip )                         INLINE ::CreateItemMesa( nRow, nCol, uTooltip, 160, 100, itmLlevar, "gc_motor_scooter_160" )
 
-   METHOD CreateItemNewGenerico( nRow, nCol, uTooltip )                    INLINE ::CreateItemMesa( nRow, nCol, uTooltip, 160, 100, itmNewGenerico, "Cashier_160" )
+   METHOD CreateItemNewGenerico( nRow, nCol, uTooltip )                    INLINE ::CreateItemMesa( nRow, nCol, uTooltip, 160, 100, itmNewGenerico, "gc_cash_register_160" )
 
-   METHOD CreateItemNewLlevar( nRow, nCol, uTooltip )                      INLINE ::CreateItemMesa( nRow, nCol, uTooltip, 160, 100, itmNewLlevar, "Wheel_160" )
+   METHOD CreateItemNewLlevar( nRow, nCol, uTooltip )                      INLINE ::CreateItemMesa( nRow, nCol, uTooltip, 160, 100, itmNewLlevar, "gc_motor_scooter_160" )
 
    //------------------------------------------------------------------------//
 

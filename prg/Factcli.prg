@@ -4835,7 +4835,7 @@ STATIC FUNCTION EdtDet( aTmp, aGet, cFacCliL, oBrw, lTotLin, cCodArtEnt, nMode, 
          WHEN     ( nMode != ZOOM_MODE ) ;
          VALID    ( loaArt( cCodArt, aGet, aTmp, aTmpFac, oStkAct, oSayPr1, oSayPr2, oSayVp1, oSayVp2, bmpImage, nMode, .t. ) );
          BITMAP   "LUPA" ;
-         ON HELP  ( BrwArticulo( aGet[ _CREF ], aGet[ _CDETALLE ] , , , , aGet[ _CLOTE ], aTmp[ _CCODPR1 ], aTmp[ _CCODPR2 ], aGet[ _CVALPR1 ], aGet[ _CVALPR2 ], aGet[ _DFECCAD ] ) );
+         ON HELP  ( BrwArticulo( aGet[ _CREF ], aGet[ _CDETALLE ] , , , , aGet[ _CLOTE ], aTmp[ _CCODPR1 ], aTmp[ _CCODPR2 ], aGet[ _CVALPR1 ], aGet[ _CVALPR2 ], aGet[ _DFECCAD ], if( uFieldEmpresa( "lStockAlm" ), aTmp[ _CALMLIN ], nil ) ) ); 
          OF       fldGeneral
 
       REDEFINE GET aGet[ _CDETALLE ] VAR aTmp[ _CDETALLE ] ;
@@ -15237,97 +15237,6 @@ Return nil
 
 //---------------------------------------------------------------------------//
 
-Static Function FacCliExcelNovotecno()
-
-   local oDlg
-   local oBmp
-   local aFichero
-   local oBtnCancel
-   local oBrwFichero
-   local oTreeImportacion
-   local oMeterImportacion
-   local nMeterInformacion                := 0
-
-   aFichero                               := {}
-
-   DEFINE DIALOG oDlg RESOURCE "ImpNovotecno"
-
-      REDEFINE BITMAP oBmp ;
-         ID          500 ;
-         RESOURCE    "Novotecno_48" ;
-         TRANSPARENT ;
-         OF          oDlg
-
-      /*
-      Browse de ficheros a importar--------------------------------------------
-      */
-
-      oBrwFichero                         := IXBrowse():New( oDlg )
-
-      oBrwFichero:bClrSel                 := {|| { CLR_BLACK, Rgb( 229, 229, 229 ) } }
-      oBrwFichero:bClrSelFocus            := {|| { CLR_BLACK, Rgb( 167, 205, 240 ) } }
-
-      oBrwFichero:SetArray( aFichero, , , .f. )
-
-      oBrwFichero:nMarqueeStyle           := 5
-
-      oBrwFichero:lHScroll                := .f.
-
-      oBrwFichero:CreateFromResource( 220 )
-
-      oBrwFichero:bLDblClick              := {|| ShellExecute( oDlg:hWnd, "open", Rtrim( aFichero[ oBrwFichero:nArrayAt ] ) ) }
-
-      with object ( oBrwFichero:AddCol() )
-         :cHeader          := "Fichero"
-         :bEditValue       := {|| aFichero[ oBrwFichero:nArrayAt ] }
-         :nWidth           := 460
-      end with
-
-      REDEFINE BUTTON ;
-         ID       200 ;
-         OF       oDlg ;
-         ACTION   ( AddFichero( aFichero, oBrwFichero ) )
-
-      REDEFINE BUTTON ;
-         ID       210 ;
-         OF       oDlg ;
-         ACTION   ( DelFichero( aFichero, oBrwFichero ) )
-
-      /*
-      Tree de importación------------------------------------------------------
-      */
-
-      oTreeImportacion                    := TTreeView():Redefine( 300, oDlg )
-
-REDEFINE APOLOMETER oMeterImportacion ;
-         VAR      nMeterInformacion ;
-         NOPERCENTAGE ;
-         ID       310 ;
-         OF       oDlg
-
-      REDEFINE BUTTON ;
-         ID       IDOK ;
-         OF       oDlg ;
-         ACTION   ( ExecuteImportacion( aFichero, oTreeImportacion, oMeterImportacion, oBtnCancel, oDlg ) )
-
-      REDEFINE BUTTON oBtnCancel ;
-         ID       IDCANCEL ;
-         OF       oDlg ;
-         CANCEL ;
-         ACTION   ( lCancelImportacion := .t., oDlg:end() )
-
-      oDlg:AddFastKey( VK_F5, {|| ExecuteImportacion( aFichero, oTreeImportacion, oMeterImportacion, oBtnCancel, oDlg ) } )
-
-   ACTIVATE DIALOG oDlg CENTER
-
-   oTreeImportacion:Destroy()
-
-   oBmp:End()
-
-Return nil
-
-//---------------------------------------------------------------------------//
-
 static function AddFichero( aFichero, oBrwFichero )
 
    local i
@@ -19435,7 +19344,7 @@ function aColFacCli()
    aAdd( aColFacCli, { "lVolImp",   "L",   1, 0, "Aplicar volumen impuestos especiales"   , "VolumenImpuestosEspeciales",  "", "( cDbfCol )", nil } )
    aAdd( aColFacCli, { "lGasSup",   "L",   1, 0, "Linea de gastos suplidos"               , "GastosSuplidos",              "", "( cDbfCol )", nil } )
    aAdd( aColFacCli, { "cNumPed"   ,"C",  12, 0, "Número del pedido"                      , "NumeroPedido",                "", "( cDbfCol )", nil } )
-   aAdd( aColFacCli, { "dFecFac"   ,"D",   8, 0, "Fecha de factura"                       , "FechaFactura",                "", "( cDbfCol )", {|| GetSysDate() } } )
+   aAdd( aColFacCli, { "dFecFac"   ,"D",   8, 0, "Fecha de factura"                       , "FechaDocumento",              "", "( cDbfCol )", {|| GetSysDate() } } )
    aAdd( aColFacCli, { "cSuPed"    ,"C",  50, 0, "Su pedido (desde albarán)"              , "",                            "", "( cDbfCol )", nil } )
    aAdd( aColFacCli, { "cNumSat"   ,"C",  12, 0, "Número del SAT"                         , "NumeroSAT",                   "", "( cDbfCol )", nil } )
    aAdd( aColFacCli, { "dFecUltCom","D",   8, 0, "Fecha última compra"                    , "FechaUltimaVenta",            "", "( cDbfCol )", nil } ) 
@@ -19444,7 +19353,7 @@ function aColFacCli()
    aAdd( aColFacCli, { "nUniUltCom","N",  16, 6, "Unidades última compra"                 , "UnidadesUltimaVenta",         "", "( cDbfCol )", nil } ) 
    aAdd( aColFacCli, { "nBultos",   "N",  16, 6, "Numero de bultos en líneas"             , "Bultos",                      "", "( cDbfCol )", nil } )
    aAdd( aColFacCli, { "cFormato",  "C", 100, 0, "Formato de venta"                       , "Formato",                     "", "( cDbfCol )", nil } )
-   aAdd( aColFacCli, { "tFecFac",   "C",   6, 0, "Hora de la factura"                     , "HoraFactura",                 "", "( cDbfCol )", {|| GetSysTime() } } )
+   aAdd( aColFacCli, { "tFecFac",   "C",   6, 0, "Hora de la factura"                     , "HoraDocumento",               "", "( cDbfCol )", {|| GetSysTime() } } )
    aAdd( aColFacCli, { "cCtrCoste", "C",   9, 0, "Código del centro de coste"             , "",                            "", "( cDbfCol )", nil } )
    aAdd( aColFacCli, { "lLabel"   , "L",   1, 0, "Lógico para marca de etiqueta"          , "LogicoEtiqueta",              "", "( cDbfCol )", nil } )
    aAdd( aColFacCli, { "nLabel"   , "N",   6, 0, "Unidades de etiquetas a imprimir"       , "NumeroEtiqueta",              "", "( cDbfCol )", nil } )

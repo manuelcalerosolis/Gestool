@@ -131,6 +131,8 @@ CLASS TFastReportInfGen FROM TNewInfGen
    DATA  aChildDesdeGrupoCliente                   INIT {}
    DATA  aChildHastaGrupoCliente                   INIT {}
 
+   DATA lTabletVersion                           INIT .f.
+
    //------------------------------------------------------------------------//
 
    METHOD Create()
@@ -838,6 +840,8 @@ METHOD PlayTablet( uParam ) CLASS TFastReportInfGen
 
          if ::OpenTemporal()
 
+            ::lResource()
+
             ::GenReportTablet( IS_PRINTER )
 
             ::CloseTemporal()
@@ -990,7 +994,7 @@ METHOD End() CLASS TFastReportInfGen
       ::oBmpImagen:End()
    end if
 
-   if !Empty( ::oDlg )
+   if !::lTabletVersion .and. !Empty( ::oDlg )
       ::oDlg:End()
    end if
 

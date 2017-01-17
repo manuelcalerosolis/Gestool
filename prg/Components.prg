@@ -1087,13 +1087,18 @@ Return ( Self )
 
 METHOD Resource(oDlg) CLASS GetPrinter
 
-   REDEFINE GET   ::oGetControl ;
+   /*REDEFINE GET   ::oGetControl ;
       VAR         ::uGetValue ;
       ID          ::idGet ;
-      WHEN        ( .f. ) ;
-      OF          oDlg
+      OF          oDlg*/
 
-   TBtnBmp():ReDefine( ::idBtn, "gc_printer2_check_16",,,,, {|| PrinterPreferences( ::oGetControl ) }, oDlg, .f., , .f. )
+   REDEFINE COMBOBOX ::oGetControl ;
+      VAR      ::uGetValue ;
+      ID       ::idGet ;
+      ITEMS    aGetPrinters() ;
+      OF       oDlg
+
+   //TBtnBmp():ReDefine( ::idBtn, "gc_printer2_check_16",,,,, {|| PrinterPreferences( ::oGetControl ) }, oDlg, .f., , .f. )
 
 Return ( Self )
 

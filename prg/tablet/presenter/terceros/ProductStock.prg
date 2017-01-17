@@ -15,6 +15,8 @@ CLASS ProductStock FROM Editable
 
    METHOD setEnviroment( cCodArt, cCodAlm )
 
+   METHOD ClearArrayStock()
+
 ENDCLASS
 
 //---------------------------------------------------------------------------//
@@ -45,7 +47,30 @@ METHOD setEnviroment( cCodArt, cCodAlm ) CLASS ProductStock
 
    ::aStockArticulo    := ::oSender:oStock:aStockArticulo( cCodArt, cCodAlm, , .t., .f. )
 
+   if GetPvProfString( "Tablet", "OcultarStockLoteCero", ".F.", cIniAplication() ) == ".T."
+      ::ClearArrayStock()
+   end if
+
    ::setDataArray( ::aStockArticulo )
+
+Return ( self )
+
+//---------------------------------------------------------------------------//
+
+METHOD ClearArrayStock() CLASS ProductStock
+
+   local oStocks
+   local aPuente  := {}
+
+   for each oStocks in ::aStockArticulo
+
+      if Round( oStocks:nUnidades, 6 ) > 0.000000
+         aAdd( aPuente, oStocks )
+      end if
+
+   next
+
+   ::aStockArticulo  := aPuente
 
 Return ( self )
 

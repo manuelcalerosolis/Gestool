@@ -16120,7 +16120,7 @@ Return ( nAnd( nLevelUsr( "01014" ), 1 ) == 0 )
 
 //---------------------------------------------------------------------------//
 
-Function BrwArticulo( oGetCodigo, oGetNombre, lCodeBar, lAppend, oBtn, oGetLote, oGetCodPrp1, oGetCodPrp2, oGetValPrp1, oGetValPrp2, oGetFecCad )
+Function BrwArticulo( oGetCodigo, oGetNombre, lCodeBar, lAppend, oBtn, oGetLote, oGetCodPrp1, oGetCodPrp2, oGetValPrp1, oGetValPrp2, oGetFecCad, cCodAlm )
 
    if !IsPda() .and. !IsReport()
       if IsObject( oUser() ) .and. oUser():lSelectorFamilia()
@@ -16128,11 +16128,11 @@ Function BrwArticulo( oGetCodigo, oGetNombre, lCodeBar, lAppend, oBtn, oGetLote,
       end if
    end if
 
-Return ( BrwSelArticulo( oGetCodigo, oGetNombre, lCodeBar, lAppend, nil, oBtn, oGetLote, oGetCodPrp1, oGetCodPrp2, oGetValPrp1, oGetValPrp2, oGetFecCad ) )
+Return ( BrwSelArticulo( oGetCodigo, oGetNombre, lCodeBar, lAppend, nil, oBtn, oGetLote, oGetCodPrp1, oGetCodPrp2, oGetValPrp1, oGetValPrp2, oGetFecCad, cCodAlm ) )
 
 //---------------------------------------------------------------------------//
 
-Function BrwSelArticulo( oGetCodigo, oGetNombre, lCodeBar, lAppend, lEdit, oBtnSaveLine, oGetLote, oGetCodPrp1, oGetCodPrp2, oGetValPrp1, oGetValPrp2, oGetFecCad )
+Function BrwSelArticulo( oGetCodigo, oGetNombre, lCodeBar, lAppend, lEdit, oBtnSaveLine, oGetLote, oGetCodPrp1, oGetCodPrp2, oGetValPrp1, oGetValPrp2, oGetFecCad, cCodAlm )
 
    local oDlg
    local oBmp
@@ -16408,7 +16408,7 @@ Function BrwSelArticulo( oGetCodigo, oGetNombre, lCodeBar, lAppend, lEdit, oBtnS
       oBrw:CreateFromResource( 105 )
 
       if !IsReport() .and. !uFieldEmpresa( "lNStkAct" )
-         oBrw:bChange      := {|| ChangeBrwArt( oBrwStock, oBmpImage, oBrw ) }
+         oBrw:bChange      := {|| ChangeBrwArt( oBrwStock, oBmpImage, oBrw, cCodAlm ) }
       end if
 
       if !IsReport()
@@ -16586,7 +16586,7 @@ Function BrwSelArticulo( oGetCodigo, oGetNombre, lCodeBar, lAppend, lEdit, oBtnS
       oDlg:AddFastKey( VK_F6,       {|| lPropiedades   := .t., if( lPresaveBrwSelArticulo( oBrwStock, ( D():Articulos( nView ) )->lMsgVta ), oDlg:end( IDOK ), ) } )
       oDlg:AddFastKey( VK_RETURN,   {|| oDlg:end( IDOK ) } )
 
-      oDlg:bStart       := {|| StartBrwSelArticulo( oGetLote, oBrw, oBrwStock, oBtnAceptarpropiedades, oBmpImage ) }
+      oDlg:bStart       := {|| StartBrwSelArticulo( oGetLote, oBrw, oBrwStock, oBtnAceptarpropiedades, oBmpImage, cCodAlm ) }
 
    ACTIVATE DIALOG oDlg CENTER
 
@@ -16689,7 +16689,7 @@ return .t.
 
 //---------------------------------------------------------------------------//
 
-Static Function StartBrwSelArticulo( oGetLote, oBrw, oBrwStock, oBtnAceptarpropiedades, oBmpImage )
+Static Function StartBrwSelArticulo( oGetLote, oBrw, oBrwStock, oBtnAceptarpropiedades, oBmpImage, cCodAlm )
 
    if !Empty( oBrw )
       oBrw:Load()
@@ -16700,7 +16700,7 @@ Static Function StartBrwSelArticulo( oGetLote, oBrw, oBrwStock, oBtnAceptarpropi
    end if
 
    if !IsReport()
-      LoadBrwArt( oBrwStock, oBmpImage )
+      LoadBrwArt( oBrwStock, oBmpImage, cCodAlm )
    end if
 
    if !Empty( oBtnAceptarpropiedades )
@@ -16811,14 +16811,14 @@ RETURN ( cReturn )
 
 #ifndef __PDA__
 
-Static Function ChangeBrwArt( oBrwStock, oBmpImage, oBrw )
+Static Function ChangeBrwArt( oBrwStock, oBmpImage, oBrw, cCodAlm )
 
    if !Empty( oTimerBrw )
       oTimerBrw:End()
       oTimerBrw    := nil
    endif
 
-   oTimerBrw             := TTimer():New( 900, {|| LoadBrwArt( oBrwStock, oBmpImage ) }, )
+   oTimerBrw             := TTimer():New( 900, {|| LoadBrwArt( oBrwStock, oBmpImage, cCodAlm ) }, )
    oTimerBrw:hWndOwner   := oBrw:hWnd
    oTimerBrw:Activate()
 
@@ -16826,7 +16826,7 @@ Return .t.
 
 //---------------------------------------------------------------------------//
 
-Static Function LoadBrwArt( oBrwStock, oBmpImage )
+Static Function LoadBrwArt( oBrwStock, oBmpImage, cCodAlm )
 
    local oBlock
    local oError
@@ -16857,7 +16857,7 @@ Static Function LoadBrwArt( oBrwStock, oBmpImage )
       */
 
       if !uFieldEmpresa( "lNStkAct" ) .and. ( ( D():Articulos( nView ) )->nCtlStock <= 1 )
-         oStock:aStockArticulo( ( D():Articulos( nView ) )->Codigo, , oBrwStock )
+         oStock:aStockArticulo( ( D():Articulos( nView ) )->Codigo, cCodAlm, oBrwStock )
       end if
 
    RECOVER USING oError

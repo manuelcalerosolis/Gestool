@@ -4517,7 +4517,7 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbf, oBrw, lTotLin, cCodArtEnt, nMode, aTmpA
          OF       oFld:aDialogs[1]
 
       aGet[ _CREF ]:bValid       := {|| LoaArt( cCodArt, aTmp, aGet, aTmpAlb, oStkAct, oSayPr1, oSayPr2, oSayVp1, oSayVp2, bmpImage, nMode ) }
-      aGet[ _CREF ]:bHelp        := {|| brwArticulo( aGet[ _CREF ], aGet[ _CDETALLE ], .f., .t., oBtn, aGet[ _CLOTE ], aTmp[ _CCODPR1 ], aTmp[ _CCODPR2 ], aGet[ _CVALPR1 ], aGet[ _CVALPR2 ], aGet[ _DFECCAD ] ) }
+      aGet[ _CREF ]:bHelp        := {|| brwArticulo( aGet[ _CREF ], aGet[ _CDETALLE ], .f., .t., oBtn, aGet[ _CLOTE ], aTmp[ _CCODPR1 ], aTmp[ _CCODPR2 ], aGet[ _CVALPR1 ], aGet[ _CVALPR2 ], aGet[ _DFECCAD ], if( uFieldEmpresa( "lStockAlm" ), aTmp[ _CALMLIN ], nil ) ) }
       aGet[ _CREF ]:bLostFocus   := {|| lCalcDeta( aTmp, aTmpAlb, nDouDiv, oTotal, oRentLin, cCodDiv ) }
 
       REDEFINE GET aGet[ _CDETALLE ] VAR aTmp[ _CDETALLE ] ;
@@ -16791,7 +16791,7 @@ Function aColAlbCli()
    aAdd( aColAlbCli, { "lFacturado","L",  1, 0, "Lógico de facturado",                             "",                              "", "( cDbfCol )", nil } )
    aAdd( aColAlbCli, { "lLinOfe"  , "L",  1, 0, "Línea con oferta",                                "LineaOferta",                   "", "( cDbfCol )", nil } )
    aAdd( aColAlbCli, { "lVolImp",   "L",  1, 0, "Lógico aplicar volumen con impuestos especiales", "VolumenImpuestosEspeciales",    "", "( cDbfCol )", nil } )
-   aAdd( aColAlbCli, { "dFecAlb",   "D",  8, 0, "Fecha de albaran",                                "",                              "", "( cDbfCol )", {|| GetSysDate() } } )
+   aAdd( aColAlbCli, { "dFecAlb",   "D",  8, 0, "Fecha de albaran",                                "FechaDocumento",                "", "( cDbfCol )", {|| GetSysDate() } } )
    aAdd( aColAlbCli, { "cNumSat",   "C", 12, 0, "Número del SAT" ,                                 "NumeroSat",                     "", "( cDbfCol )", nil } )
    aAdd( aColAlbCli, { "lFromAtp",  "L",  1, 0, "",                                                "",                              "", "( cDbfCol )", nil } )
    aAdd( aColAlbCli, { "cCodCli",   "C", 12, 0, "Código de cliente",                               "Cliente",                       "", "( cDbfCol )", nil } )
@@ -16799,7 +16799,7 @@ Function aColAlbCli()
    aAdd( aColAlbCli, { "nUniUltCom","N", 16, 6, "Unidades última compra",                          "UnidadesUltimaCompra",          "", "( cDbfCol )", nil } )
    aAdd( aColAlbCli, { "nBultos",   "N", 16, 6, "Numero de bultos",                                "",                              "", "( cDbfCol )", nil } )
    aAdd( aColAlbCli, { "cFormato",  "C",100, 0, "Formato de venta",                                "",                              "", "( cDbfCol )", nil } )
-   aAdd( aColAlbCli, { "tFecAlb" ,  "C",  6, 0, "Hora del albarán",                                "",                              "", "( cDbfCol )", {|| GetSysTime() } } )
+   aAdd( aColAlbCli, { "tFecAlb" ,  "C",  6, 0, "Hora del albarán",                                "HoraDocumento",                 "", "( cDbfCol )", {|| GetSysTime() } } )
    aAdd( aColAlbCli, { "cCtrCoste", "C",  9, 0, "Código del centro de coste",                      "CentroCoste",                   "", "( cDbfCol )", nil } )
    aAdd( aColAlbCli, { "lLabel",    "L",  1, 0, "Lógico para marca de etiqueta",                   "",                              "", "( cDbfCol )", nil } )
    aAdd( aColAlbCli, { "nLabel",    "N",  6, 0, "Unidades de etiquetas a imprimir",                "",                              "", "( cDbfCol )", nil } )

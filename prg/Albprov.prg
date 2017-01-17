@@ -2805,7 +2805,7 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbf, oBrw, aTmpAlb, cCodArtEnt, nMode )
          WHEN     ( nMode != ZOOM_MODE ) ;
          VALID    ( loaArt( cCodArt, aGet, aTmp, aTmpAlb, oFld, oSayPr1, oSayPr2, oSayVp1, oSayVp2, oBmp, oBrwPrp, oDlg, oSayLote, oBeneficioSobre, oTotal, nMode ) );
          BITMAP   "LUPA" ;
-         ON HELP  ( BrwArticulo( aGet[ _CREF ], aGet[ _CDETALLE ], .f., .t., oBtn, aGet[ _CLOTE ], , , , , aGet[ _DFECCAD ] ) ) ;
+         ON HELP  ( BrwArticulo( aGet[ _CREF ], aGet[ _CDETALLE ], .f., .t., oBtn, aGet[ _CLOTE ], , , , , aGet[ _DFECCAD ], if( uFieldEmpresa( "lStockAlm" ), aTmp[ _CALMLIN ], nil ) ) ) ;
 			OF 		oFld:aDialogs[1]
 
       /*
@@ -11022,5 +11022,21 @@ Static Function calculateUnidadesPendientesRecepcion( oLine )
    end if
 
 Return ( oLine )
+
+//---------------------------------------------------------------------------//
+
+Function nombrePrimeraPropiedadAlbaranProveedoresLineas( view )
+
+   DEFAULT view   := nView
+
+Return ( nombrePropiedad( ( D():AlbaranesProveedoresLineas( view ) )->cCodPr1, ( D():AlbaranesProveedoresLineas( view ) )->cValPr1, view ) )
+
+//---------------------------------------------------------------------------//
+
+Function nombreSegundaPropiedadAlbaranProveedoresLineas( view )
+
+   DEFAULT view   := nView
+
+Return ( nombrePropiedad( ( D():AlbaranesProveedoresLineas( view ) )->cCodPr2, ( D():AlbaranesProveedoresLineas( view ) )->cValPr2, view ) )
 
 //---------------------------------------------------------------------------//
