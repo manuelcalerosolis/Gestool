@@ -11024,3 +11024,19 @@ Static Function calculateUnidadesPendientesRecepcion( oLine )
 Return ( oLine )
 
 //---------------------------------------------------------------------------//
+
+Function nombrePrimeraPropiedadAlbaranProveedoresLineas( view )
+
+   DEFAULT view   := nView
+
+Return ( nombrePropiedad( ( D():AlbaranesProveedoresLineas( view ) )->cCodPr1, ( D():AlbaranesProveedoresLineas( view ) )->cValPr1, view ) )
+
+//---------------------------------------------------------------------------//
+
+Function nombreSegundaPropiedadAlbaranProveedoresLineas( view )
+
+   DEFAULT view   := nView
+
+Return ( nombrePropiedad( ( D():AlbaranesProveedoresLineas( view ) )->cCodPr2, ( D():AlbaranesProveedoresLineas( view ) )->cValPr2, view ) )
+
+//---------------------------------------------------------------------------//
