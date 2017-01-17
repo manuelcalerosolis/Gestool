@@ -3830,8 +3830,6 @@ METHOD aStockArticulo( cCodArt, cCodAlm, oBrw, lLote, lNumeroSerie, dFecIni, dFe
    cCodArt              := padr( cCodArt, 18 )
    cCodAlm              := padr( cCodAlm, 16 )
 
-   Msginfo( cCodAlm )
-
    ::Reset()
 
    if empty( cCodArt )

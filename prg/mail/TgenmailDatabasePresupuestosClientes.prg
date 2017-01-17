@@ -31,7 +31,7 @@ METHOD New( nView ) CLASS TGenMailingDatabasePresupuestosClientes
 
    ::setBmpDatabase( "gc_notebook_user_48" )
 
-   ::setAsunto( "Envio de nuestro presupuesto número {Serie del pedido}/{Número del pedido}" )
+   ::setAsunto( "Envio de nuestro presupuesto número {Serie del presupuesto}/{Número del presupuesto}" )
 
    ::setBlockRecipients( {|| alltrim( retFld( ( D():PresupuestosClientes( ::nView ) )->cCodCli, D():Clientes( ::nView ), "cMeiInt" ) ) } )
 
