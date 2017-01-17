@@ -147,7 +147,7 @@ Return ( DictionaryDocumentLine():New( self, hLine ) )
 METHOD GetAppendDetail() CLASS DeliveryNoteCustomer
 
    local hLine             := D():getAlbaranClienteLineaDefaultValues( ::nView )
-   
+
    ::oDocumentLineTemporal := DictionaryDocumentLine():New( self, hLine )
 
 Return ( self )

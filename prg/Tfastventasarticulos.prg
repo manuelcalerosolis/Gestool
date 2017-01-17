@@ -211,8 +211,10 @@ METHOD lResource( cFld ) CLASS TFastVentasArticulos
 
    ::cSubTitle       := "Informe de artículos"
 
-   if !::NewResource()
-      return .f.
+   if !::lTabletVersion
+      if !::NewResource()
+         return .f.
+      end if
    end if
 
    /*

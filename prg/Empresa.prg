@@ -1646,6 +1646,10 @@ STATIC FUNCTION EditConfig( aTmp, aGet, dbfEmp, oBrw, nSelFolder, bValid, nMode 
          ID       122 ;
          OF       fldValores
 
+      REDEFINE CHECKBOX aGet[ _LSTOCKALM ] VAR aTmp[ _LSTOCKALM ] ;
+         ID       123 ;
+         OF       fldValores
+
       REDEFINE GET aGet[ _CDEFFPG ] VAR aTmp[ _CDEFFPG ] ;
          ID       130;
          PICTURE  "@!" ;
@@ -6649,6 +6653,7 @@ FUNCTION aItmEmp()
    aAdd( aDbf, {"cCeeSptCom", "C", 12, 0, "Cuenta en contaplus de impuestos devengado en compras",   "", "", "aEmp()", nil } )
    aAdd( aDbf, {"lOpenTik",   "L",  1, 0, "Lógico permitir tickets abiertos en sesiones",          "", "", "aEmp()", .t. } )
    aAdd( aDbf, {"lContRec",   "L",  1, 0, "Lógico permitir contabilizar recibos con factura sin contabilizar", "", "", "aEmp()", .f. } )
+   aAdd( aDbf, {"lStockAlm",  "L",  1, 0, "Lógico mostrar stock por almacén en ventas",            "", "", "aEmp()", .f. } )
 
 Return ( aDbf )
 

@@ -110,6 +110,9 @@ CLASS LinesDocumentsSales FROM Editable
       METHOD setDescuentoLinealAtipicaCliente()             VIRTUAL
       METHOD setDescuentoLinealOfertaArticulo()             VIRTUAL
 
+   METHOD setFilerObsoletos()
+   METHOD clearFilerObsoletos()
+
    METHOD runGridProduct()
    METHOD runGridStore()
    METHOD runGridLote()
@@ -481,6 +484,10 @@ METHOD runGridProduct() CLASS LinesDocumentsSales
       Return ( Self )
    end if
 
+   if GetPvProfString( "Tablet", "OcultarObsoletos", ".F.", cIniAplication() ) == ".T."
+      ::setFilerObsoletos()
+   end if
+
    ::oViewEditDetail:oGetArticulo:Disable()
 
    ::oSender:oProduct:oGridProduct:showView()
@@ -495,6 +502,27 @@ METHOD runGridProduct() CLASS LinesDocumentsSales
 
    ::oViewEditDetail:oGetArticulo:Enable()
    ::oViewEditDetail:oGetArticulo:setFocus()
+
+   if GetPvProfString( "Tablet", "OcultarObsoletos", ".F.", cIniAplication() ) == ".T."
+      ::clearFilerObsoletos()
+   end if
+
+Return ( self )
+
+//---------------------------------------------------------------------------//
+
+METHOD setFilerObsoletos() CLASS LinesDocumentsSales
+
+   ( D():Articulos( ::oSender:nView ) )->( dbsetfilter( {|| !Field->lObs }, "!Field->lObs" ) )
+   ( D():Articulos( ::oSender:nView ) )->( dbgotop() )
+
+Return ( self )
+
+//---------------------------------------------------------------------------//
+
+METHOD clearFilerObsoletos() CLASS LinesDocumentsSales
+
+   ( D():Articulos( ::oSender:nView ) )->( dbClearFilter() )
 
 Return ( self )
 
