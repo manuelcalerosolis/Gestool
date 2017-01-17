@@ -1377,21 +1377,25 @@ FUNCTION MkAsiento( 	Asien,;
    DEFAULT nImporteHaber   := 0
    DEFAULT nEjeCon         := 0
 
-   if IsChar( Factura ) 
-      cSerie               := SubStr( Factura, 1, 1 )
-      Factura              := SubStr( Factura, 2, 9 )
+   if ischar( Factura ) 
+      cSerie               := substr( Factura, 1, 1 )
+      if len( Factura ) <= 12
+         Factura           := substr( Factura, 2, 9 )
+      else
+         Factura           := substr( Factura, 2, 10 )
+      end if 
    end if
 
-   if IsNum( Factura )
-      Factura              := Alltrim( Str( Factura ) )
+   if isnum( Factura )
+      Factura              := alltrim( str( Factura ) )
    end if
 
    if Factura != nil
-      Factura              := Val( SubStr( Factura, -7 ) )
+      Factura              := val( substr( Factura, -7 ) )
    end if
 
    if IsChar( nEjeCon )
-      nEjeCon              := Val( nEjeCon )
+      nEjeCon              := val( nEjeCon )
    end if
 
    /*
@@ -1515,7 +1519,7 @@ Static Function MkAsientoContaplus( Asien,;
    aTemp[ ( cDiario )->( FieldPos( "IVA" ) )       ]     := If ( IVA      != NIL, IVA,        aTemp[ ( cDiario )->( FieldPos( "IVA" ) )        ] )
    aTemp[ ( cDiario )->( FieldPos( "RECEQUIV" ) )  ]     := If ( RecargoEquivalencia != NIL, RecargoEquivalencia,   aTemp[ ( cDiario )->( FieldPos( "RECEQUIV" ) )   ] )
    aTemp[ ( cDiario )->( FieldPos( "DOCUMENTO" ) ) ]     := If ( Documento!= NIL, Documento,  aTemp[ ( cDiario )->( FieldPos( "DOCUMENTO" ) )  ] )
-   aTemp[ ( cDiario )->( FieldPos( "DEPARTA" ) )   ]     := If ( Departamento  != NIL, Departamento,    aTemp[ ( cDiario )->( FieldPos( "DEPARTA" ) )    ] )
+   aTemp[ ( cDiario )->( FieldPos( "DEPARTA" ) )   ]     := If ( Departamento != NIL, Departamento,    aTemp[ ( cDiario )->( FieldPos( "DEPARTA" ) )    ] )
    aTemp[ ( cDiario )->( FieldPos( "CLAVE" ) )     ]     := If ( Clave    != NIL, Clave,      aTemp[ ( cDiario )->( FieldPos( "CLAVE" ) )      ] )
    aTemp[ ( cDiario )->( FieldPos( "NCASADO" ) )   ]     := If ( nCasado  != NIL, nCasado,    aTemp[ ( cDiario )->( FieldPos( "NCASADO" ) )    ] )
    aTemp[ ( cDiario )->( FieldPos( "TCASADO" ) )   ]     := If ( tCasado  != NIL, tCasado,    aTemp[ ( cDiario )->( FieldPos( "TCASADO" ) )    ] )

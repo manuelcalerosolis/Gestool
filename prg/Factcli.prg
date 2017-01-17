@@ -658,7 +658,8 @@ FUNCTION FactCli( oMenuItem, oWnd, hHash )
                "NFC",;
                "Pago",;
                "Envio",;
-               "Su albarán";
+               "Su albarán",;
+               "Total";
       MRU      "gc_document_text_user_16";
       BITMAP   clrTopVentas ;
       ALIAS    ( D():FacturasClientes( nView ) );
@@ -997,6 +998,8 @@ FUNCTION FactCli( oMenuItem, oWnd, hHash )
          :nWidth           := 80
          :nDataStrAlign    := 1
          :nHeadStrAlign    := 1
+         :cSortOrder       := "nTotFac"
+         :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | oWndBrw:ClickOnHeader( oCol ) }
       end with
 
       with object ( oWndBrw:AddXCol() )

@@ -1727,7 +1727,7 @@ Function CntTiket( lSimula, lCobro, lDev, lMessage, oTree, nAsiento, aSimula, db
       -------------------------------------------------------------------------
       */
 
-      for n := 1 to Len( aIvm )
+      for n := 1 to len( aIvm )
 
          aadd( aSimula, MkAsiento(  nAsiento, ;
                                     cCodDiv, ;
@@ -1768,26 +1768,26 @@ Function CntTiket( lSimula, lCobro, lDev, lMessage, oTree, nAsiento, aSimula, db
                nBaseImp := aIva[n, 3 ]
             end if
 
-            aAdd( aSimula, MkAsiento(  nAsiento, ;
-                                       cCodDiv, ;
-                                       dFecha, ;
-                                       aIva[ n, 1 ],;    // Cuenta de impuestos
-                                       cCtaCli,;         // Contrapartida
-                                       ,;                // Ptas. Debe
-                                       cConcepto,;
-                                       aIva[ n, 4 ],;    // Ptas. Haber
-                                       cNumTik,;
-                                       nBaseImp,;    // Base Imponible
-                                       aIva[ n, 2 ],;
-                                       ,;
-                                       ,;
-                                       cProyecto,;
-                                       cClave,;
-                                       ,;
-                                       ,;
-                                       ,;
-                                       lSimula,;
-                                       cTerNif,;
+            aAdd( aSimula, MkAsiento(  nAsiento, ;                 
+                                       cCodDiv, ;                 
+                                       dFecha, ;                           // Fecha                 
+                                       aIva[ n, 1 ],;                      // Cuenta de impuestos
+                                       cCtaCli,;                           // Contrapartida
+                                       ,;                                  // Ptas. Debe
+                                       cConcepto,;                         // Concepto
+                                       aIva[ n, 4 ],;                      // Ptas. Haber
+                                       cNumTik,;                           // Factura                           
+                                       nBaseImp,;                          // Base Imponible
+                                       aIva[ n, 2 ],;                      // IVA
+                                       ,;                                  // Recargo Equivalencia
+                                       ,;                                  // Documento
+                                       cProyecto,;                         // 
+                                       cClave,;                 
+                                       ,;                 
+                                       ,;                 
+                                       ,;                 
+                                       lSimula,;                 
+                                       cTerNif,;                 
                                        cTerNom ) )         
 
          end if

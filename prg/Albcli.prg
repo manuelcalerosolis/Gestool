@@ -556,7 +556,8 @@ FUNCTION AlbCli( oMenuItem, oWnd, hHash )
                "Provincia",;
                "Dirección",;
                "Agente",;
-               "Su albarán";
+               "Su albarán",;
+               "Total";
       MRU      "gc_document_empty_16";
       BITMAP   clrTopArchivos ;
       ALIAS    ( D():Get( "AlbCliT", nView ) );
@@ -16423,7 +16424,7 @@ FUNCTION rxAlbCli( cPath, cDriver )
       ( cAlbCliT )->( ordCondSet( "!Deleted() .and. !lFacturado", {|| !Deleted() .and. !Field->lFacturado }  ) )
       ( cAlbCliT )->( ordCreate( cPath + "ALBCLIT.CDX", "LCLIOBR", "CCODCLI + CCODOBR", {|| Field->CCODCLI + Field->CCODOBR } ) )
 
-      ( cAlbCliT )->( ordCondSet( "!Deleted()", {|| !Deleted() }, , , , , , , , , , , .t. ) )
+      ( cAlbCliT )->( ordCondSet( "!Deleted()", {|| !Deleted() }, , , , , , , , , .t. ) )
       ( cAlbCliT )->( ordCreate( cPath + "ALBCLIT.CDX", "nTotAlb", "nTotAlb", {|| Field->nTotAlb }, ) )
 
       ( cAlbCliT )->( ordCondSet( "!Deleted()", {|| !Deleted() }, , , , , , , , , .t.  ) )

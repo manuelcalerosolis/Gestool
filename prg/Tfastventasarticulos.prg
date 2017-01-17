@@ -148,7 +148,7 @@ CLASS TFastVentasArticulos FROM TFastReportInfGen
                                                          ::cExpresionHeader   += ' .and. ( Field->cCodCli >= "' + Rtrim( ::oGrupoCliente:Cargo:getDesde() ) + '" .and. Field->cCodCli <= "' + Rtrim( ::oGrupoCliente:Cargo:getHasta() ) + '" )', ) )
 
    METHOD setFilterProductIdLine()              INLINE ( if( ::lApplyFilters,;
-                                                         ::cExpresionLine  += ' .and. ( Field->cRef >= "' + ::oGrupoArticulo:Cargo:getDesde() + '" .and. Field->cRef <= "' + ::oGrupoArticulo:Cargo:getHasta() + '" )', ) )
+                                                         ::cExpresionLine  += ' .and. ( alltrim( Field->cRef ) >= "' + alltrim(::oGrupoArticulo:Cargo:getDesde()) + '" .and. alltrim(Field->cRef) <= "' + alltrim(::oGrupoArticulo:Cargo:getHasta()) + '" )', ) )
 
    METHOD setFilterTypeLine()                   INLINE ( if( ::lApplyFilters,;
                                                          ::cExpresionLine  += ' .and. ( Field->cCodTip >= "' + ::oGrupoTArticulo:Cargo:getDesde() + '" .and. Field->cCodTip <= "' + ::oGrupoTArticulo:Cargo:getHasta() + '" )', ) )               
@@ -161,7 +161,6 @@ CLASS TFastVentasArticulos FROM TFastReportInfGen
 
    METHOD setFilterGroupFamily()                INLINE ( if( ::lApplyFilters,;
                                                          ::cExpresionLine  += ' .and. ( Field->cGrpFam >= "' + ::oGrupoGFamilia:Cargo:getDesde() + '" .and. Field->cGrpFam <= "' + ::oGrupoGFamilia:Cargo:getHasta() + '" )', ) )               
-
 
    METHOD setFilterAgent()                      INLINE ( if( ::lApplyFilters,;
                                                          ::cExpresionHeader  += ' .and. ( Field->cCodAge >= "' + ::oGrupoAgente:Cargo:getDesde() + '" .and. Field->cCodAge <= "' + ::oGrupoAgente:Cargo:getHasta() + '" )', ) )
@@ -330,7 +329,7 @@ METHOD OpenFiles() CLASS TFastVentasArticulos
    oBlock               := ErrorBlock( {| oError | ApoloBreak( oError ) } )
    BEGIN SEQUENCE
 
-      ::lApplyFilters   := lAIS()
+      // ::lApplyFilters   := lAIS()
       ::cDriver         := cDriver()
 
       ::nView           := D():CreateView( ::cDriver )
@@ -938,34 +937,40 @@ METHOD BuildReportCorrespondences()
                      "Presupuestos de clientes" =>;   
                         {  "Generate" =>  {||   ::AddPresupuestoClientes(),;
                                                 ::processAllClients() },;
-                           "Variable" =>  {||   ::AddVariableLineasPresupuestoCliente() },;
+                           "Variable" =>  {||   ::AddVariableLineasPresupuestoCliente(),;
+                                                ::AddVariableStock() },;
                            "Data" =>      {||   ::FastReportPresupuestoCliente() } },;
                      "Pedidos de clientes" =>;
                         {  "Generate" =>  {||   ::AddPedidoClientes(),;
                                                 ::processAllClients() },;
-                           "Variable" =>  {||   ::AddVariableLineasPedidoCliente() },;
+                           "Variable" =>  {||   ::AddVariableLineasPedidoCliente(),;
+                                                ::AddVariableStock() },;
                            "Data" =>      {||   ::FastReportPedidoCliente() } },;
                      "Albaranes de clientes" =>;       
                         {  "Generate" =>  {||   ::AddAlbaranCliente(),;
                                                 ::processAllClients() },;
-                           "Variable" =>  {||   ::AddVariableLineasAlbaranCliente() },;
+                           "Variable" =>  {||   ::AddVariableLineasAlbaranCliente(),;
+                                                ::AddVariableStock() },;
                            "Data" =>      {||   ::FastReportAlbaranCliente() } },;
                      "Facturas de clientes" =>;
                         {  "Generate" =>  {||   ::AddFacturaCliente(),;
                                                 ::AddFacturaRectificativa(),;
                                                 ::processAllClients() },;
-                           "Variable" =>  {||   ::AddVariableFacturaCliente() },;
+                           "Variable" =>  {||   ::AddVariableFacturaCliente(),;
+                                                ::AddVariableStock() },;
                            "Data" =>      {||   ::FastReportFacturaCliente(),;
                                                 ::FastReportFacturaRectificativa() } },;
                      "Rectificativas de clientes" => ;
                         {  "Generate" =>  {||   ::AddFacturaRectificativa( .t. ),;
                                                 ::processAllClients() },;
-                           "Variable" =>  {||   ::AddVariableLineasRectificativaCliente() },;
+                           "Variable" =>  {||   ::AddVariableLineasRectificativaCliente(),;
+                                                ::AddVariableStock() },;
                            "Data" =>      {||   ::FastReportFacturaRectificativa() } },;
                      "Tickets de clientes" => ;
                         {  "Generate" =>  {||   ::AddTicket( .t. ),;
                                                 ::processAllClients() },;
-                           "Variable" =>  {||   ::AddVariableLineasTicketCliente() },;
+                           "Variable" =>  {||   ::AddVariableLineasTicketCliente(),;
+                                                ::AddVariableStock() },;
                            "Data" =>      {||   ::FastReportTicket( .t. ) } },;
                      "Ventas" => ;
                         {  "Generate" =>  {||   ::AddAlbaranCliente( .t. ),;
@@ -984,24 +989,29 @@ METHOD BuildReportCorrespondences()
                                                 ::FastReportTicket( .t. ) } },;
                      "Partes de producción" => ;
                         {  "Generate" =>  {||   ::AddProducido() },;
-                           "Variable" =>  {||   ::AddVariableLineasParteProduccion() },;
+                           "Variable" =>  {||   ::AddVariableLineasParteProduccion(),;
+                                                ::AddVariableStock() },;
                            "Data" =>      {||   ::FastReportParteProduccion() } },;
                      "Pedidos de proveedores" => ;
                         {  "Generate" =>  {||   ::AddPedidoProveedor() },;
-                           "Variable" =>  {||   ::AddVariableLineasPedidoProveedor() },;
+                           "Variable" =>  {||   ::AddVariableLineasPedidoProveedor(),;
+                                                ::AddVariableStock() },;
                            "Data" =>      {||   ::FastReportPedidoProveedor() } },;
                      "Albaranes de proveedores" => ;
                         {  "Generate" =>  {||   ::AddAlbaranProveedor() },;
-                           "Variable" =>  {||   ::AddVariableLineasAlbaranProveedor() },;
+                           "Variable" =>  {||   ::AddVariableLineasAlbaranProveedor(),;
+                                                ::AddVariableStock() },;
                            "Data" =>      {||   ::FastReportAlbaranProveedor() } },;
                      "Facturas de proveedores" => ;     
                         {  "Generate" =>  {||   ::AddFacturaProveedor() },;
                            "Variable" =>  {||   ::AddVariableLineasFacturaProveedor(),;
-                                                ::AddVariableLineasRectificativaProveedor() },;
+                                                ::AddVariableLineasRectificativaProveedor(),;
+                                                ::AddVariableStock() },;
                            "Data" =>      {||   ::FastReportFacturaProveedor() } },;
                      "Rectificativas de proveedores"=> ;
                         {  "Generate" =>  {||   ::AddRectificativaProveedor() },;
-                           "Variable" =>  {||   ::AddVariableLineasRectificativaProveedor() },;
+                           "Variable" =>  {||   ::AddVariableLineasRectificativaProveedor(),;
+                                                ::AddVariableStock() },;
                            "Data" =>      {||   ::FastReportRectificativaProveedor() } },;
                      "Compras" => ;                    
                         {  "Generate" =>  {||   ::AddAlbaranProveedor( .t. ),;
@@ -1009,7 +1019,8 @@ METHOD BuildReportCorrespondences()
                                                 ::AddRectificativaProveedor() },;
                            "Variable" =>  {||   ::AddVariableLineasAlbaranProveedor(),;
                                                 ::AddVariableLineasFacturaProveedor(),;
-                                                ::AddVariableLineasRectificativaProveedor() },;
+                                                ::AddVariableLineasRectificativaProveedor(),;
+                                                ::AddVariableStock() },;
                            "Data" =>      {||   ::FastReportPedidoProveedor(),;
                                                 ::FastReportAlbaranProveedor(),;
                                                 ::FastReportFacturaProveedor(),;
@@ -1097,7 +1108,8 @@ METHOD BuildReportCorrespondences()
                                                 ::AddVariableLineasAlbaranProveedor(),;
                                                 ::AddVariableLineasFacturaProveedor(),;
                                                 ::AddVariableLineasRectificativaProveedor(),;
-                                                ::AddVariableLineasParteProduccion() },;
+                                                ::AddVariableLineasParteProduccion(),;
+                                                ::AddVariableStock() },;
                            "Data" =>      {||   ::FastReportSATCliente(),;
                                                 ::FastReportPresupuestoCliente(),;
                                                 ::FastReportPedidoCliente(),;
