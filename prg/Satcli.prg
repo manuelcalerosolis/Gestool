@@ -2028,7 +2028,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, cCodCli, cCodArt, nMode )
       REDEFINE BTNBMP oBtnPrecio ;
          ID       174 ;
          OF       oFld:aDialogs[1] ;
-         RESOURCE "arrow_down_blue_16" ;
+         RESOURCE "gc_arrow_down_16" ;
          NOBORDER ;
          ACTION   ( ChangeTarifaCabecera( oGetTarifa:getTarifa(), dbfTmpLin, oBrwLin ) );
          WHEN     ( nMode != ZOOM_MODE .and. ( lUsrMaster() .or. oUser():lCambiarPrecio() ) )
@@ -3309,7 +3309,7 @@ Static Function EdtRecMenu( aTmp, oDlg )
 
             MENUITEM    "&7. Firmar documento";
                MESSAGE  "Firmar documento" ;
-               RESOURCE "Graphics-tablet_16" ;
+               RESOURCE "gc_sign_document_16" ;
                ACTION   ( if( empty( aTmp[ _MFIRMA ] ) .or.  msgNoYes( "El documento ya esta firmado, ¿Desea voler a firmarlo?" ),;
                               aTmp[ _MFIRMA ] := signatureToMemo(),;
                               ) ) 

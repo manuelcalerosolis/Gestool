@@ -2382,7 +2382,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, cCodCli, cCodArt, nMode, aNumDoc 
       REDEFINE BTNBMP oBtnPrecio ;
          ID       174 ;
          OF       oFld:aDialogs[1] ;
-         RESOURCE "arrow_down_blue_16" ;
+         RESOURCE "gc_arrow_down_16" ;
          NOBORDER ;
          ACTION   ( ChangeTarifaCabecera( oGetTarifa:getTarifa(), dbfTmpLin, oBrwLin ) );
          WHEN     ( nMode != ZOOM_MODE .and. ( lUsrMaster() .or. oUser():lCambiarPrecio() ) )

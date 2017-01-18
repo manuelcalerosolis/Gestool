@@ -18,8 +18,6 @@ SCHOOL_32 BITMAP "..\\bmp\\School_32.bmp"
 FOLDER_GEAR_32 BITMAP "..\\bmp\\Folder_Gear_32.bmp"
 FOLDER_GEAR_16 BITMAP "..\\bmp\\Folder_Gear_16.bmp"
 
-DOCUMENT_ATTACHMENT_32 BITMAP "..\\bmp\\Document_Attachment_32.bmp"
-DOCUMENT_ATTACHMENT_16 BITMAP "..\\bmp\\Document_Attachment_16.bmp"
 MDA_16 BITMAP "..\\bmp\\Mda_16.bmp"
 EMPTY_16 BITMAP "..\\bmp\\Empty_16.bmp"
 DATA_CONNECTION_16 BITMAP "..\\bmp\\data_connection_16.bmp"

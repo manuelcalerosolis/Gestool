@@ -25,6 +25,7 @@ CASHIER_160 BITMAP "..\\bmp\\Cashier_160.bmp"
 
 WHEEL_160 BITMAP "..\\bmp\\Wheel_160.bmp"
 
+
 NAVIGATE_LEFT BITMAP "..\\bmp\\navigate_left.bmp"
 
 NAVIGATE_LEFT2 BITMAP "..\\bmp\\navigate_left2.bmp"
@@ -33,41 +34,9 @@ NAVIGATE_RIGHT BITMAP "..\\bmp\\navigate_right.bmp"
 
 NAVIGATE_RIGHT2 BITMAP "..\\bmp\\navigate_right2.bmp"
 
-DOCUMENT_TEXT_PRINTER2_32 BITMAP "..\\bmp\\document_text_printer2_32.bmp"
-
-CERTIFICATE_32_ALPHA BITMAP "..\\bmp\\certificate_32_alpha.bmp"
-
-LOCK_32_ALPHA BITMAP "..\\bmp\\lock_32_alpha.bmp"
-
-PIGGY_BANK_32_ALPHA BITMAP "..\\bmp\\piggy_bank_32_alpha.bmp"
-
-POWER-DRILL_USER1_32 BITMAP "..\\bmp\\power-drill_user1_32.bmp"
 
 LOGOGESTOOL_48 BITMAP "..\\bmp\\logogestool_48.bmp"
 
-CUBE_YELLOW_CHART_32 BITMAP "..\\bmp\\cube_yellow_chart_32.bmp"
-
-USER1_CHART_32 BITMAP "..\\bmp\\user1_chart_32.bmp"
-
-BUSINESSMAN_CHART_32 BITMAP "..\\bmp\\businessman_chart_32.bmp"
-
-USER1_CHART_16 BITMAP "..\\bmp\\user1_chart_16.bmp"
-
-BUSINESSMAN_CHART_16 BITMAP "..\\bmp\\businessman_chart_16.bmp"
-
-CUBE_YELLOW_CHART_16 BITMAP "..\\bmp\\cube_yellow_chart_16.bmp"
-
-TEXT_NORMAL_16 BITMAP "..\\bmp\\text_normal_16.bmp"
-
-BRANCH_16 BITMAP "..\\bmp\\branch_16.bmp"
-
-DOOR2_OPEN_ALPHA_48 BITMAP "..\\bmp\\door2_open_alpha_48.bmp"
-
-FLOPPY_DISK_BLUE_ALPHA_48 BITMAP "..\\bmp\\floppy_disk_blue_alpha_48.bmp"
-
-DELETE2_24 BITMAP "..\\bmp\\delete2_24.bmp"
-
-PHOTO_SCENERY_16 BITMAP "..\\bmp\\photo_scenery_16.bmp"
 
 FLAT_ADD_64 BITMAP "..\\bmp\\flat_add_64.bmp"
 
@@ -99,10 +68,6 @@ FLAT_RIGHT_64 BITMAP "..\\bmp\\flat_right_64.bmp"
 
 FLAT_PRINTER_64 BITMAP "..\\bmp\\flat_printer_64.bmp"
 
-CONTROL_PANEL2_ALPHA_48 BITMAP "..\\bmp\\control_panel2_alpha_48.bmp"
-
-CONTROL_PANEL2_48 BITMAP "..\\bmp\\control_panel2_48.bmp"
-
 FLAT_CLIPBOARD_EMPTY_USER1_64 BITMAP "..\\bmp\\flat_clipboard_empty_user1_64.bmp"
 
 FLAT_ABOUT_64 BITMAP "..\\bmp\\flat_about_64.bmp"
@@ -110,21 +75,8 @@ FLAT_ABOUT_64 BITMAP "..\\bmp\\flat_about_64.bmp"
 FLAT_ATOM_64 BITMAP "..\\bmp\\flat_atom_64.bmp"
 
 
-USER1_MESSAGE_16 BITMAP "..\\bmp\\user1_message_16.bmp"
 
-USER1_MESSAGE_32 BITMAP "..\\bmp\\user1_message_32.bmp"
 
-USER_MESSAGE_48 BITMAP "..\\bmp\\user_message_48.bmp"
-
-BOOKMARKS_PREFERENCES_32 BITMAP "..\\bmp\\bookmarks_preferences_32.bmp"
-
-BOOKMARKS_PREFERENCES_16 BITMAP "..\\bmp\\bookmarks_preferences_16.bmp"
-
-CENTRO_COSTE_32 BITMAP "..\\bmp\\centro_coste_32.bmp"
-
-CENTRO_COSTE_16 BITMAP "..\\bmp\\centro_coste_16.bmp"
-
-CENTRO_COSTE_48 BITMAP "..\\bmp\\centro_coste_48.bmp"
 
 ZOOM_IN_16 BITMAP "..\\bmp\\zoom_in_16.bmp"
 
@@ -132,25 +84,9 @@ ZOOM_IN_32 BITMAP "..\\bmp\\zoom_in_32.bmp"
 
 ZOOM_IN_48 BITMAP "..\\bmp\\zoom_in_48.bmp"
 
-DOCUMENT_ATTACHMENT_16 BITMAP "..\\bmp\\document_attachment_16.bmp"
 
-DOCUMENT_ATTACHMENT_32 BITMAP "..\\bmp\\document_attachment_32.bmp"
 
 SHOPPING_BAG_48 BITMAP "..\\bmp\\shopping_bag_48.bmp"
-
-ARROW_DOWN_BLUE_16 BITMAP "..\\bmp\\arrow_down_blue_16.bmp"
-
-TABLET_16 BITMAP "..\\bmp\\graphics-tablet_16.bmp"
-
-USER1_64 BITMAP "..\\bmp\\user1_64.bmp"
-
-DOCUMENT_PLAIN_USER1_64 BITMAP "..\\bmp\\document_plain_user1_64.bmp"
-
-FIND_64 BITMAP "..\\bmp\\find_64.bmp"
-
-EDIT_56 BITMAP "..\\bmp\\edit_56.bmp"
-
-VIEW_56 BITMAP "..\\bmp\\view_56.bmp"
 
 
 COMPONENT_BLUE_16 BITMAP "..\\bmp\\component_blue_16.bmp"
