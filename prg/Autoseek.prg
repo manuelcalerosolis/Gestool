@@ -633,16 +633,16 @@ Function buildSetFilter( cExpresionFilter, cAlias, lInclude, cExpUsuario, cExpFe
 
       bExpFilter        := bCheck2Block( cExpresionFilter )
 
-      ( cAlias )->( dbsetfilter( bExpFilter, cExpresionFilter ) )
+      ( cAlias )->( adsSetAOF( cExpresionFilter ) )
       ( cAlias )->( dbgotop() )
 
    else
 
-      ( cAlias )->( dbsetfilter() )
+      ( cAlias )->( adsSetAOF() )
 
    end if
 
-   msgalert( (cAlias)->( dbInfo( DBI_DBFILTER ) ), "Filtro" )
+   msgalert( (cAlias)->( dbInfo( DBI_DBFILTER ) ), "buildSetFilter" )
 
 Return nil
 
