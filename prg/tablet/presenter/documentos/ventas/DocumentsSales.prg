@@ -767,15 +767,33 @@ Return( self )
 
 //---------------------------------------------------------------------------//
 
-METHOD saveEditDocumento() CLASS DocumentsSales            
+METHOD saveEditDocumento() CLASS DocumentsSales 
 
+   local nSeconds
+
+   nSeconds    := seconds()
+           
    ::Super:saveEditDocumento()
+
+   logwrite( str( seconds() - nSeconds ) + " : tiempo empleado en Super:saveEditDocumento()" )
+
+   nSeconds    := seconds()
 
    ::deleteLinesDocument()
 
+   logwrite( str( seconds() - nSeconds ) + " : tiempo empleado en ::deleteLinesDocument()" )
+
+   nSeconds    := seconds()
+
    ::assignLinesDocument()   
 
+   logwrite( str( seconds() - nSeconds ) + " : tiempo empleado en ::assignLinesDocument()" )
+
+   nSeconds    := seconds()
+
    ::setLinesDocument()
+
+   logwrite( str( seconds() - nSeconds ) + " : tiempo empleado en ::setLinesDocument()" )
 
 return ( .t. )
 

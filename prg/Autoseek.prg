@@ -627,28 +627,30 @@ Function buildSetFilter( cExpresionFilter, cAlias, lInclude, cExpUsuario, cExpFe
       cExpresionFilter  += if( !empty( cExpresionFilter ), " .and. ", "" ) + cFiltroFecha
    end if
 
-   msgalert( cExpresionFilter )
+   // msgalert( cExpresionFilter )
 
    if !empty( cExpresionFilter )
 
-      bExpFilter        := bCheck2Block( cExpresionFilter )
+      // bExpFilter        := bCheck2Block( cExpresionFilter )
 
       ( cAlias )->( adsSetAOF( cExpresionFilter ) )
       ( cAlias )->( dbgotop() )
 
    else
 
-      ( cAlias )->( adsSetAOF() )
+      ( cAlias )->( adsClearAOF() )
 
    end if
 
-   msgalert( (cAlias)->( dbInfo( DBI_DBFILTER ) ), "buildSetFilter" )
+   // msgalert( (cAlias)->( dbInfo( DBI_DBFILTER ) ), "buildSetFilter" )
 
 Return nil
 
 //---------------------------------------------------------------------------//
 
 Function quitSetFilter( cAlias )
+
+   // msgalert( 'quitSetFilter' )
 
    if !empty( cAlias ) .and. ( cAlias )->( used() )
       ( cAlias )->( dbClearFilter() )

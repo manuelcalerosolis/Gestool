@@ -22,6 +22,10 @@ CLASS DeliveryNoteCustomer FROM DocumentsSales
 
    METHOD printDocument()
 
+   METHOD insertLineDocument( oLine )
+   
+   METHOD getLastLineNumber( id )
+
 END CLASS
 
 //---------------------------------------------------------------------------//
@@ -177,3 +181,61 @@ METHOD printDocument() CLASS DeliveryNoteCustomer
 Return ( .t. )
 
 //---------------------------------------------------------------------------//
+
+METHOD insertLineDocument( oLine )
+
+   local lineNumber        := ::getLastLineNumber()
+
+   // obtener el numero de la ultima linea existente
+
+   msgalert( lineNumber, "lineNumber" )
+
+   // asignar el nuevo nmero de linea
+
+   oLine:setNumeroLinea( lineNumber )
+
+   oLine:setPosicionImpresion( lineNumber )
+   oDocumentLine:setSerieMaster( ::hDictionaryMaster )
+   // oDocumentLine:setNumeroMaster( ::hDictionaryMaster )
+   // oDocumentLine:setSufijoMaster( ::hDictionaryMaster )
+   // oDocumentLine:setAlmacenMaster( ::hDictionaryMaster )
+
+   // asginar a la linea el id del albaran
+
+   // pasar la linea al fichero de lineas de albaranes
+
+   msgalert( hb_valtoexp( oLine:hDictionary ) )
+
+Return ( .t. )
+
+//---------------------------------------------------------------------------//
+
+METHOD getLastLineNumber()
+
+   local id                := D():AlbaranesClientesId( ::nView )
+   local lineNumber        := 0
+
+   D():getStatusAlbaranesClientesLineas( ::nView )
+
+   ( D():AlbaranesClientesLineas( ::nView ) )->( ordSetFocus( 1 ) )
+
+   if ( D():AlbaranesClientesLineas( ::nView ) )->( dbSeek( id ) )  
+
+      while ( D():AlbaranesClientesLineasId( ::nView ) == id ) .and. !( D():AlbaranesClientesLineas( ::nView ) )->( eof() ) 
+
+         if ( D():AlbaranesClientesLineas( ::nView ) )->nNumLin > lineNumber
+            lineNumber     := ( D():AlbaranesClientesLineas( ::nView ) )->nNumLin
+         end if 
+      
+         ( D():AlbaranesClientesLineas( ::nView ) )->( dbSkip() ) 
+      
+      end while
+
+   end if 
+   
+   D():setStatusAlbaranesClientesLineas( ::nView ) 
+
+RETURN ( ++lineNumber ) 
+
+//---------------------------------------------------------------------------//
+

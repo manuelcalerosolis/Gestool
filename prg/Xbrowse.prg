@@ -12002,7 +12002,7 @@ METHOD SetOrder() CLASS TXBrwColumn
             ::oBrw:cOrders     := ' '
             ::cOrder           := If( ( ::oBrw:cAlias )->( OrdDescend() ), 'D', 'A' )
 
-            msgalert( (::oBrw:cAlias)->( dbInfo( DBI_DBFILTER ) ), "Filtro" )
+            // msgalert( (::oBrw:cAlias)->( dbInfo( DBI_DBFILTER ) ), "Filtro" )
 
          endif
 

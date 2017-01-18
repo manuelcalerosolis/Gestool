@@ -1303,9 +1303,15 @@ RETURN ( lAppend )
 
 METHOD editHashRecord( hTable, cDataTable, nView ) CLASS D
 
+   local nSeconds
+
    local lEdit       := .f.
-   local workArea    := ::Get( cDataTable, nView )   
-   local hDictionary := ::getDictionary( cDataTable, nView )
+   local workArea    
+   local hDictionary 
+
+   workArea    := ::Get( cDataTable, nView )   
+
+   hDictionary := ::getDictionary( cDataTable, nView )
 
    if empty( workArea )
       return ( lEdit )
