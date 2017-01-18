@@ -433,17 +433,20 @@ FUNCTION ControlAplicacion()
    DEFINE DIALOG oDlg RESOURCE "GETSERIALNO" TITLE "Sistema de protección"
 
    REDEFINE BITMAP oBmpPerpetua ;
-      RESOURCE    "certificate_32_alpha" ;
+      RESOURCE    "gc_certificate_32" ;
+      TRANSPARENT ;
       ID          500;
       OF          oDlg
 
    REDEFINE BITMAP oBmpSaas ;
-      RESOURCE    "piggy_bank_32_alpha" ;
+      RESOURCE    "gc_piggy_bank_32" ;
+      TRANSPARENT ;
       ID          510;
       OF          oDlg
       
    REDEFINE BITMAP oBmpDemo ;
-      RESOURCE    "lock_32_alpha" ;
+      RESOURCE    "gc_lock2_32" ;
+      TRANSPARENT ;
       ID          520;
       OF          oDlg
 
