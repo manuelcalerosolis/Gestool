@@ -491,10 +491,7 @@ RETURN Self
 
 //----------------------------------------------------------------------------//
 
-METHOD Activate(  cShow, bLClicked, bRClicked, bMoved, bResized, bPainted,;
-                  bKeyDown, bInit, bUp, bDown, bPgUp, bPgDn,;
-                  bLeft, bRight, bPgLeft, bPgRight, bValid, bDropFiles,;
-                  bLButtonUp, lCenter ) CLASS TShell
+METHOD Activate( cShow, bLClicked, bRClicked, bMoved, bResized, bPainted, bKeyDown, bInit, bUp, bDown, bPgUp, bPgDn, bLeft, bRight, bPgLeft, bPgRight, bValid, bDropFiles, bLButtonUp, lCenter ) CLASS TShell
 
    local oError
    local oBlock
@@ -512,9 +509,7 @@ METHOD Activate(  cShow, bLClicked, bRClicked, bMoved, bResized, bPainted,;
 
    ::lCenter         := lCenter
 
-   ::Super:Activate(    cShow, bLClicked, bRClicked, bMoved, bResized, bPainted,;
-                        bKeyDown, bInit, bUp, bDown, bPgUp, bPgDn, bLeft, bRight,;
-                        bPgLeft, bPgRight, bValid, bDropFiles, bLButtonUp )
+   ::Super:Activate( cShow, bLClicked, bRClicked, bMoved, bResized, bPainted, bKeyDown, bInit, bUp, bDown, bPgUp, bPgDn, bLeft, bRight, bPgLeft, bPgRight, bValid, bDropFiles, bLButtonUp )
 
    ::Maximize()
 

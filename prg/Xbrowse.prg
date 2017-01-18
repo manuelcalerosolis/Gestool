@@ -11987,6 +11987,9 @@ METHOD SetOrder() CLASS TXBrwColumn
                endif
                ::cOrder          := If( ( ::oBrw:cAlias )->( OrdDescend() ), 'D', 'A' )
             else
+
+            msgalert(::cSortOrder, "cSortOrder" )
+
                (::oBrw:cAlias)->( OrdSetFocus( ::cSortOrder, cOrdBag ) )
                ::cOrder          := 'A'
             endif
@@ -11995,9 +11998,11 @@ METHOD SetOrder() CLASS TXBrwColumn
          else
 
             (::oBrw:cAlias)->( OrdSetFocus( ::cSortOrder, cOrdBag ) )
-            lSorted   := .T.
+            lSorted            := .t.
             ::oBrw:cOrders     := ' '
             ::cOrder           := If( ( ::oBrw:cAlias )->( OrdDescend() ), 'D', 'A' )
+
+            msgalert( (::oBrw:cAlias)->( dbInfo( DBI_DBFILTER ) ), "Filtro" )
 
          endif
 

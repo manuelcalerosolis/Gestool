@@ -54,7 +54,7 @@ FUNCTION Searching( cAlias, aIndex, oBrw, cPreFij )
 	REDEFINE GET oCadena VAR xValueToSearch ;
       ID          100 ;
       PICTURE     "@!" ;
-      ON CHANGE   ( lBigSeek( nil, oCadena, cAlias ), ( if( !Empty( oBrw ), oBrw:Refresh(), ) ) );
+      ON CHANGE   ( lBigSeek( nil, oCadena, cAlias ), ( if( !empty( oBrw ), oBrw:Refresh(), ) ) );
       VALID       ( OrdClearScope( oBrw, cAlias ) );
       OF          oDlg ;
 
@@ -127,7 +127,7 @@ FUNCTION AutoSeek( nKey, nFlags, oGet, oBrw, xAlias, lUpper, cPreFij, lAllowFilt
 
    end case
 
-   if lBigSeek( cPreFij, xValueToSearch, xAlias, oBrw, lNotUser, lNotFecha, nLen ) .or. Empty( xValueToSearch )
+   if lBigSeek( cPreFij, xValueToSearch, xAlias, oBrw, lNotUser, lNotFecha, nLen ) .or. empty( xValueToSearch )
 
       oGet:SetColor( Rgb( 0, 0, 0 ), Rgb( 255, 255, 255 ) )
 
@@ -176,7 +176,7 @@ FUNCTION lBigSeek( cPreFij, xValueToSearch, xAlias, oBrw, lNotUser, lNotFecha, n
    if isChar( xValueToSearch )
 
       xValueToSearch        := StrTran( xValueToSearch, Chr( 8 ), "" )
-      if !Empty( cPreFij )
+      if !empty( cPreFij )
          xValueToSearch     := cPreFij + xValueToSearch
       end if
       xValueToSearch        := Alltrim( xValueToSearch )
@@ -411,7 +411,7 @@ Function seekDocumento( xValueToSearch, xAlias, nLen, lScope )
 
       end if
 
-      if Empty( SubStr( cPos, 2, 1 ) )
+      if empty( SubStr( cPos, 2, 1 ) )
          lRet  := .f.
          cPos  := SubStr( cPos, 2, len( cPos ) - 1 )
       else
@@ -452,20 +452,20 @@ Function CreateFastFilter( cExpresionFilter, cAlias, lInclude, oMeter, cExpUsuar
    DEFAULT lNotUser        := .t.
    DEFAULT lNotFecha       := .t.
 
-   if Empty( cAlias )
+   if empty( cAlias )
       return .f.
    end if
 
    oBlock                  := ErrorBlock( {| oError | ApoloBreak( oError ) } )
    BEGIN SEQUENCE
 
-   if !Empty( cExpUsuario )
+   if !empty( cExpUsuario )
       cFiltroUsuario       := cExpUsuario
    else
       cFiltroUsuario       := ""
    end if
 
-   if !Empty( cExpFecha )
+   if !empty( cExpFecha )
 
       if cExpFecha == "all"
          cFiltroFecha      := ""
@@ -490,7 +490,7 @@ Function CreateFastFilter( cExpresionFilter, cAlias, lInclude, oMeter, cExpUsuar
       cOrdKey              := ( cAlias )->( OrdKey() )
       bOrdKey              := c2Block( cOrdKey )
 
-      if !Empty( oMeter )
+      if !empty( oMeter )
          nEvery            := Int( ( cAlias )->( OrdKeyCount() ) / 10 )
          bEvery            := {|| oMeter:Set( ( cAlias )->( OrdKeyNo() ) ) }
       end if
@@ -499,16 +499,16 @@ Function CreateFastFilter( cExpresionFilter, cAlias, lInclude, oMeter, cExpUsuar
          cExpresionFilter  := "'" + cExpresionFilter + "' $ " + cOrdKey + ".and. " + cCondAnterior
       end if
 
-      if !lNotUser .and. Empty( cExpUsuario ) .and. !Empty( cFiltroUsuario )
-         if !Empty( cExpresionFilter )
+      if !lNotUser .and. empty( cExpUsuario ) .and. !empty( cFiltroUsuario )
+         if !empty( cExpresionFilter )
             cExpresionFilter     += " .and. " + cFiltroUsuario
          else
             cExpresionFilter     := cFiltroUsuario
          end if
       end if
 
-      if !lNotFecha .and. Empty( cExpFecha ) .and. !Empty( cFiltroFecha )
-         if !Empty( cExpresionFilter )
+      if !lNotFecha .and. empty( cExpFecha ) .and. !empty( cFiltroFecha )
+         if !empty( cExpresionFilter )
             cExpresionFilter     += " .and. " + cFiltroFecha
          else
             cExpresionFilter     := cFiltroFecha
@@ -519,7 +519,7 @@ Function CreateFastFilter( cExpresionFilter, cAlias, lInclude, oMeter, cExpUsuar
 
       bExpFilter           := bCheck2Block( cExpresionFilter )
 
-      if !Empty( bExpFilter ) .and. !Empty( cOldIndexName ) .and. !Empty( cBagAnterior )
+      if !empty( bExpFilter ) .and. !empty( cOldIndexName ) .and. !empty( cBagAnterior )
          ( cAlias )->( OrdCondSet( cExpresionFilter, bExpFilter ) )
          ( cAlias )->( OrdCreate( cBagAnterior, cNamAnterior, cOrdKey, bOrdKey ) )
          ( cAlias )->( OrdSetFocus( cNamAnterior, cBagAnterior ) )
@@ -553,15 +553,15 @@ Function DestroyFastFilter( cAlias, lUser, lFecha )
 
    if lAds() .or. lAIS()
 
-      if !Empty( cAlias ) .and. ( cAlias )->( used() )
+      if !empty( cAlias ) .and. ( cAlias )->( used() )
          ( cAlias )->( dbClearFilter() )
       end if
 
    else
 
-      if !Empty( cBagAnterior )
+      if !empty( cBagAnterior )
 
-         if !Empty( cAlias ) .and. ( cAlias )->( Used() )
+         if !empty( cAlias ) .and. ( cAlias )->( Used() )
 
             ( cAlias )->( OrdSetFocus( cOldIndexName, cBagAnterior ) )
             ( cAlias )->( OrdDestroy( cNamAnterior, cBagAnterior ) )
@@ -591,7 +591,7 @@ Return .t.
 
 Function OrdClearScope( oBrw, dbf )
 
-   if !Empty( dbf ) .and. ( dbf )->( Used() )
+   if !empty( dbf ) .and. ( dbf )->( Used() )
       ( dbf )->( OrdScope( 0, nil ) )
       ( dbf )->( OrdScope( 1, nil ) )
    end if
@@ -619,26 +619,30 @@ Function buildSetFilter( cExpresionFilter, cAlias, lInclude, cExpUsuario, cExpFe
       cExpresionFilter  := "'" + cExpresionFilter + "' $ " + cOrdKey + " .and. !Deleted()"
    end if
 
-   if Empty( cExpUsuario ) .and. !Empty( cFiltroUsuario )
-      cExpresionFilter  += if( !Empty( cExpresionFilter ), " .and. ", "" ) + cFiltroUsuario
+   if empty( cExpUsuario ) .and. !empty( cFiltroUsuario )
+      cExpresionFilter  += if( !empty( cExpresionFilter ), " .and. ", "" ) + cFiltroUsuario
    end if
 
-   if Empty( cExpFecha ) .and. !Empty( cFiltroFecha )
-      cExpresionFilter  += if( !Empty( cExpresionFilter ), " .and. ", "" ) + cFiltroFecha
+   if empty( cExpFecha ) .and. !empty( cFiltroFecha )
+      cExpresionFilter  += if( !empty( cExpresionFilter ), " .and. ", "" ) + cFiltroFecha
    end if
 
-   if !Empty( cExpresionFilter )
+   msgalert( cExpresionFilter )
+
+   if !empty( cExpresionFilter )
 
       bExpFilter        := bCheck2Block( cExpresionFilter )
 
-      ( cAlias )->( dbSetFilter( bExpFilter, cExpresionFilter ) )
-      ( cAlias )->( dbGoTop() )
+      ( cAlias )->( dbsetfilter( bExpFilter, cExpresionFilter ) )
+      ( cAlias )->( dbgotop() )
 
    else
 
-      ( cAlias )->( dbSetFilter() )
+      ( cAlias )->( dbsetfilter() )
 
    end if
+
+   msgalert( (cAlias)->( dbInfo( DBI_DBFILTER ) ), "Filtro" )
 
 Return nil
 
@@ -646,7 +650,7 @@ Return nil
 
 Function quitSetFilter( cAlias )
 
-   if !Empty( cAlias ) .and. ( cAlias )->( used() )
+   if !empty( cAlias ) .and. ( cAlias )->( used() )
       ( cAlias )->( dbClearFilter() )
    end if
 

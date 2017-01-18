@@ -11792,7 +11792,7 @@ STATIC FUNCTION EndTrans( aTmp, aGet, oBrw, oBrwInc, nMode, oDlg )
       nNumAlb              := nNewDoc( aTmp[ _CSERALB ], D():Get( "AlbCliT", nView ), "NALBCLI", , D():Get( "NCount", nView ) )
       aTmp[ _NNUMALB ]     := nNumAlb
       cSufAlb              := retSufEmp()
-      aTmp[ _CSUFALB ]     := cSerAlb
+      aTmp[ _CSUFALB ]     := cSufAlb
       nTotOld              := 0
    end if 
 
