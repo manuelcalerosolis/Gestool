@@ -13073,6 +13073,12 @@ STATIC FUNCTION SaveDeta( aTmp, aTmpFac, aGet, oBrw, oDlg, oFld, oSayPr1, oSayPr
       return .f.
    end if
 
+   /*
+   Nos aseguramos que la marca de impuestos incluidos está igual que la de la cabecera
+   */
+
+   aTmp[ _LIVALIN ]  := aTmpFac[ _LIVAINC ]
+
    if empty( aTmp[ _CALMLIN ] ) .and. !empty( aGet[ _CALMLIN ] )
       MsgStop( "Código de almacen no puede estar vacio" )
       aGet[ _CALMLIN ]:SetFocus()
