@@ -5122,6 +5122,7 @@ static function Informe3()
    local oInf
 
    oInf  := TFastVentasArticulos():New()
+   oInf:lTabletVersion                 := .t.
    oInf:cReportType                    := "Stocks"
    oInf:cReportDirectory               := cPatReporting() + "Articulos\Existencias\Stocks"
    oInf:cReportName                    := "Stocks artículos tablet"

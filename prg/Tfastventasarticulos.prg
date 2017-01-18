@@ -364,7 +364,7 @@ METHOD OpenFiles() CLASS TFastVentasArticulos
 
       DATABASE NEW ::oPreCliL PATH ( cPatEmp() ) CLASS "PreCliL"     FILE "PreCliL.Dbf" VIA ( ::cDriver ) SHARED INDEX "PreCliL.Cdx"
 
-      ::oAlbCliT := TDataCenter():oAlbCliT()
+      DATABASE NEW ::oAlbCliT PATH ( cPatEmp() ) CLASS "AlbCliT"     FILE "AlbCliT.Dbf" VIA ( ::cDriver ) SHARED INDEX "AlbCliT.Cdx"
 
       DATABASE NEW ::oAlbCliL PATH ( cPatEmp() ) CLASS "AlbCliL"     FILE "AlbCliL.Dbf" VIA ( ::cDriver ) SHARED INDEX "AlbCliL.Cdx"
 
@@ -2191,17 +2191,17 @@ METHOD AddAlbaranCliente( lFacturados ) CLASS TFastVentasArticulos
       ::cExpresionHeader   += ' .and. nFacturado < 3'
    end if
 
-   ::setFilterClientIdHeader()
+   //::setFilterClientIdHeader()
 
-   ::setFilterPaymentId()
+   //::setFilterPaymentId()
 
-   ::setFilterRouteId() 
+   //::setFilterRouteId() 
 
-   ::setFilterTransportId()
+   //::setFilterTransportId()
    
-   ::setFilterUserId()
+   //::setFilterUserId()
 
-   ::setFilterAgent()
+   //::setFilterAgent()
    
    // filtros para las líneas-------------------------------------------------
 
@@ -2211,13 +2211,13 @@ METHOD AddAlbaranCliente( lFacturados ) CLASS TFastVentasArticulos
    ::cExpresionLine        += ' .and. ( Field->nNumAlb >= Val( "' + Rtrim( ::oGrupoNumero:Cargo:getDesde() ) + '" ) .and. Field->nNumAlb <= Val( "' + Rtrim( ::oGrupoNumero:Cargo:getHasta() ) + '" ) )'
    ::cExpresionLine        += ' .and. ( Field->cSufAlb >= "' + Rtrim( ::oGrupoSufijo:Cargo:getDesde() )   + '" .and. Field->cSufAlb <= "' + Rtrim( ::oGrupoSufijo:Cargo:getHasta() ) + '" )'
    
-   ::setFilterProductIdLine()
+   //::setFilterProductIdLine()
 
-   ::setFilterStoreLine()
+   //::setFilterStoreLine()
 
-   ::setFilterFamily() 
+   //::setFilterFamily() 
 
-   ::setFilterGroupFamily()
+   //::setFilterGroupFamily()
 
    // Procesando albaranes-------------------------------------------------
 
