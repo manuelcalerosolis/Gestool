@@ -6534,10 +6534,10 @@ STATIC FUNCTION EndTrans( aTmp, aGet, nMode, oBrwLin, oBrw, oBrwInc, oDlg )
    aTmp[ _NTARIFA ]        := oGetTarifa:getTarifa()
 
    if isAppendOrDuplicateMode( nMode )
-
       nNumSat              := nNewDoc( cSerSat, D():SatClientes( nView ), "nSatCli", , D():Contadores( nView ) )
       aTmp[ _NNUMSAT ]     := nNumSat
-
+      cSufSat              := retSufEmp()
+      aTmp[ _CSUFSAT ]     := cSufSat
    end if 
 
    // Comenzamos la transaccion------------------------------------------------

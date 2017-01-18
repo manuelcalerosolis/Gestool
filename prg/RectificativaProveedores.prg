@@ -6568,14 +6568,16 @@ STATIC FUNCTION EndTrans( aTmp, aGet, oBrw, oBrwLin, nMode, nDec, oDlg, oFld )
    aTmp[ _CTIMCHG ]  := Time()
 
    do case
-   case nMode == APPD_MODE .or. nMode == DUPL_MODE
+   case isAppendOrDuplicateMode( nMode )
 
       // Nuevo numero de la factura--------------------------------------------
 
       nNumFac           := nNewDoc( cSerFac, D():FacturasRectificativasProveedores( nView ), "nRctPrv", , D():Contadores( nView ) )
       aTmp[ _NNUMFAC ]  := nNumFac
+      cSufFac           := retSufEmp()
+      aTmp[ _CSUFFAC ]  := cSufFac
 
-   case nMode == EDIT_MODE
+   case isEditMode( nMode )
 
       while ( D():FacturasRectificativasProveedoresLineas( nView ) )->( dbSeek( cSerFac + str( nNumFac ) + cSufFac ) .and. !( D():FacturasRectificativasProveedoresLineas( nView ) )->( eof() ) )
 

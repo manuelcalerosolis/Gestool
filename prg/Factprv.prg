@@ -7216,16 +7216,18 @@ STATIC FUNCTION EndTrans( aTmp, aGet, oBrw, oBrwLin, nMode, nDec, oDlg )
    */
 
    do case
-   case nMode == APPD_MODE .or. nMode == DUPL_MODE
-
+   case isAppendOrDuplicateMode( nMode )
+   
       oMsgText( "Obteniendo contadores" )
 
       nNumFac           := nNewDoc( cSerFac, D():FacturasProveedores( nView ), "NFACPRV", , D():Contadores( nView ) )
       aTmp[ _NNUMFAC ]  := nNumFac
+      cSufFac           := retSufEmp()
+      aTmp[ _CSUFFAC ]  := cSufFac
 
       aTmp[ _LIMPALB ]  := !aNumAlb:Empty() .or. !Empty( aTmp[ _CNUMALB ] )
 
-   case nMode == EDIT_MODE
+   case isEditMode( nMode )
 
       oMsgText( "Eliminando información anterior" )
 

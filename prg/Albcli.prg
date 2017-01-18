@@ -11788,9 +11788,11 @@ STATIC FUNCTION EndTrans( aTmp, aGet, oBrw, oBrwInc, nMode, oDlg )
 
    // obtenemos nuevo contador-------------------------------------------------
 
-   if nMode == APPD_MODE .or. nMode == DUPL_MODE
+   if isAppendOrDuplicateMode( nMode )
       nNumAlb              := nNewDoc( aTmp[ _CSERALB ], D():Get( "AlbCliT", nView ), "NALBCLI", , D():Get( "NCount", nView ) )
       aTmp[ _NNUMALB ]     := nNumAlb
+      cSufAlb              := retSufEmp()
+      aTmp[ _CSUFALB ]     := cSerAlb
       nTotOld              := 0
    end if 
 
@@ -11798,7 +11800,7 @@ STATIC FUNCTION EndTrans( aTmp, aGet, oBrw, oBrwInc, nMode, oDlg )
 
    BeginTransaction()
    
-   if nMode == EDIT_MODE
+   if isEditMode( nMode )
 
       while ( D():Get( "AlbCliL", nView ) )->( dbSeek( cSerAlb + str( nNumAlb ) + cSufAlb ) ) .and. !( D():Get( "AlbCliL", nView ) )->( eof() )
 
@@ -11839,7 +11841,7 @@ STATIC FUNCTION EndTrans( aTmp, aGet, oBrw, oBrwInc, nMode, oDlg )
          end if
       end while
 
-      while ( D():AlbaranesClientesSituaciones( nView ) )->( dbSeek( cSerAlb + str( nNumAlb ) + cSufAlb ) ) 
+      while ( D():AlbaranesClientesSituaciones( nView ) )->( dbSeek( cSerAlb + str( nNumAlb ) + cSufAlb ) ) .and. !( D():AlbaranesClientesSituaciones( nView ) )->( eof() )
          if dbLock( D():AlbaranesClientesSituaciones( nView ) )
             ( D():AlbaranesClientesSituaciones( nView ) )->( dbDelete() )
             ( D():AlbaranesClientesSituaciones( nView ) )->( dbUnLock() )
@@ -15167,27 +15169,6 @@ function SynAlbCli( cPath )
             end if
          end if
 
-/*
-         en el caso de TuRueda,se han rellenado los importes de la ecotasa a albaranes atiguos, que ya la tenian 
-
-         if empty( ( D():Get( "AlbCliL", nView ) )->nValImp )
-            cCodImp                    := RetFld( ( D():Get( "AlbCliL", nView ) )->CREF, D():Articulos( nView ), "cCodImp" )
-            if !empty( cCodImp )
-               if dbLock( D():Get( "AlbCliL", nView ) )
-                  ( D():Get( "AlbCliL", nView ) )->nValImp := oNewImp:nValImp( cCodImp )
-                  ( D():Get( "AlbCliL", nView ) )->( dbUnlock() )
-               end if   
-            end if
-         end if
-
-         if empty( ( D():Get( "AlbCliL", nView ) )->cCodImp )
-            if dbLock( D():Get( "AlbCliL", nView ) )
-               ( D():Get( "AlbCliL", nView ) )->nValImp := 0
-               ( D():Get( "AlbCliL", nView ) )->( dbUnlock() )
-            end if   
-         end if
-*/
-
          if empty( ( D():Get( "AlbCliL", nView ) )->nVolumen )
             if dbLock( D():Get( "AlbCliL", nView ) )
                ( D():Get( "AlbCliL", nView ) )->nVolumen   := RetFld( ( D():Get( "AlbCliL", nView ) )->CREF, D():Articulos( nView ), "nVolumen" )
@@ -15239,6 +15220,13 @@ function SynAlbCli( cPath )
             if ( D():Get( "AlbCliL", nView ) )->dFecAlb != ( D():Get( "AlbCliT", nView ) )->dFecAlb
                if dbLock( D():Get( "AlbCliL", nView ) )
                   ( D():Get( "AlbCliL", nView ) )->dFecAlb    := ( D():Get( "AlbCliT", nView ) )->dFecAlb
+                  ( D():Get( "AlbCliL", nView ) )->( dbUnlock() )
+               end if   
+            end if
+
+            if ( D():Get( "AlbCliL", nView ) )->tFecAlb != ( D():Get( "AlbCliT", nView ) )->tFecAlb
+               if dbLock( D():Get( "AlbCliL", nView ) )
+                  ( D():Get( "AlbCliL", nView ) )->tFecAlb    := ( D():Get( "AlbCliT", nView ) )->tFecAlb
                   ( D():Get( "AlbCliL", nView ) )->( dbUnlock() )
                end if   
             end if

@@ -4047,7 +4047,7 @@ Static Function NewTiket( aGet, aTmp, nMode, nSave, lBig, oBrw, oBrwDet )
 
       CursorWait()
 
-      oBlock            := ErrorBlock( {| oError | ApoloBreak( oError ) } )
+      oBlock                  := ErrorBlock( {| oError | ApoloBreak( oError ) } )
       BEGIN SEQUENCE
 
          AutoMeterDialog( oDlgTpv )

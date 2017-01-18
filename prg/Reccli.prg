@@ -265,6 +265,7 @@ FUNCTION RecCli( oMenuItem, oWnd, aNumRec )
    local nOrdAnt
    local lFound
    local oSnd
+   local oCobrado
 
    DEFAULT  oMenuItem   := _MENUITEM_
    DEFAULT  oWnd        := oWnd()
@@ -628,11 +629,22 @@ FUNCTION RecCli( oMenuItem, oWnd, aNumRec )
 
     //  lGenRecCli( oWndBrw:oBrw, oMail, IS_MAIL )
 
-   DEFINE BTNSHELL RESOURCE "gc_money2_" OF oWndBrw GROUP ;
+   DEFINE BTNSHELL oCobrado RESOURCE "gc_money2_" OF oWndBrw GROUP ;
       NOBORDER ;
       ACTION   ( lLiquida( oWndBrw:oBrw ) ) ;
       TOOLTIP  "Cobrar" ;
       LEVEL    ACC_EDIT
+
+      if oUser():lAdministrador()
+
+      DEFINE BTNSHELL RESOURCE "Del" OF oWndBrw GROUP ;
+         NOBORDER ;
+         ACTION   ( lLiquida( oWndBrw:oBrw, .f. ) ) ;
+         TOOLTIP  "Pendiente" ;
+         FROM     oCobrado ;
+         LEVEL    ACC_EDIT
+
+      end if 
 
    DEFINE BTNSHELL RESOURCE "gc_document_empty_chart_" OF oWndBrw ;
       NOBORDER ;
@@ -2953,27 +2965,32 @@ RETURN ( aDoc )
 
 //----------------------------------------------------------------------------//
 
-static function lLiquida( oBrw )
+static function lLiquida( oBrw, lCobrado )
 
    local nRec
+
+   DEFAULT lCobrado  := .t.
 
    if len( oBrw:aSelected ) > 0
 
       for each nRec in ( oBrw:aSelected )
 
-         ( D():FacturasClientesCobros( nView ) )->( dbGoTo( nRec ) )
+         ( D():FacturasClientesCobros( nView ) )->( dbgoto( nRec ) )
 
-         if !( D():FacturasClientesCobros( nView ) )->lCobrado
+         if ( ( D():FacturasClientesCobros( nView ) )->lCobrado != lCobrado )
 
-            if ( D():FacturasClientesCobros( nView ) )->( dbRLock() )
-               ( D():FacturasClientesCobros( nView ) )->lCobrado   := .t.
-               ( D():FacturasClientesCobros( nView ) )->dEntrada   := GetSysDate()
-               ( D():FacturasClientesCobros( nView ) )->cTurRec    := cCurSesion()
-               ( D():FacturasClientesCobros( nView ) )->( dbUnLock() )
-            end if
+            if ( lCobrado ) .or. ( !lCobrado .and. empty( ( D():FacturasClientesCobros( nView ) )->nNumRem ) )
+
+               if ( D():FacturasClientesCobros( nView ) )->( dbrlock() )
+                  ( D():FacturasClientesCobros( nView ) )->lCobrado   := lCobrado
+                  ( D():FacturasClientesCobros( nView ) )->dEntrada   := GetSysDate()
+                  ( D():FacturasClientesCobros( nView ) )->cTurRec    := cCurSesion()
+                  ( D():FacturasClientesCobros( nView ) )->( dbunlock() )
+               end if
+
+            end if 
 
          end if
-
 
          if ( D():FacturasClientes( nView ) )->( dbSeek( ( D():FacturasClientesCobros( nView ) )->cSerie + str( ( D():FacturasClientesCobros( nView ) )->nNumFac ) + ( D():FacturasClientesCobros( nView ) )->cSufFac ) )
 

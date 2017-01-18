@@ -4488,7 +4488,6 @@ STATIC FUNCTION EndTrans( aGet, aTmp, oBrw, nMode, oDlg )
       Return .f.
    end if
 
-
    // Estos campos no pueden estar vacios
 
    if empty( aTmp[ _CCODPRV ] )
@@ -4522,12 +4521,14 @@ STATIC FUNCTION EndTrans( aGet, aTmp, oBrw, nMode, oDlg )
    aTmp[ _CTIMCHG ]     := Time()
 
    do case
-   case nMode == APPD_MODE .or. nMode == DUPL_MODE
+   case isAppendOrDuplicateMode( nMode )
 
       nPedido           := nNewDoc( cSerie, D():PedidosProveedores( nView ), "NPEDPRV", , D():Contadores( nView ) )
       aTmp[ _NNUMPED ]  := nPedido
+      cSufPed           := retSufEmp()
+      aTmp[ _CSUFPED ]  := cSufPed
 
-   case nMode == EDIT_MODE
+   case isEditMode( nMode )
 
       if nPedido != 0
 

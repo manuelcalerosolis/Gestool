@@ -2745,9 +2745,10 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, hHash, bValid, nMode )
       impuestos Incluido-------------------------------------------------------------
       */
 
-      REDEFINE CHECKBOX aGet[ _LIVAINC ] VAR aTmp[ _LIVAINC ] ;
+      REDEFINE CHECKBOX aGet[ _LIVAINC ] ;
+         VAR      aTmp[ _LIVAINC ] ;
          ID       200 ;
-         WHEN     ( ( dbfTmpLin )->( ordKeyCount() ) == 0 ) ;
+         WHEN     ( ( dbfTmpLin )->( ordKeyCount() ) == 0 .or. getConfigEmpresa( 'PermitirCambioFacturaIVAIncluido', .f. ) ) ;
          OF       fldGeneral
 
       /*
@@ -13871,6 +13872,8 @@ STATIC FUNCTION EndTrans( aTmp, aGet, oBrw, oBrwDet, oBrwPgo, aNumAlb, nMode, oD
 
          nNumFac              := nNewDoc( cSerFac, D():FacturasClientes( nView ), "NFACCLI", , D():Contadores( nView ) )
          aTmp[ _NNUMFAC ]     := nNumFac
+         cSufFac              := retSufEmp()
+         aTmp[ _CSUFFAC ]     := cSufFac
          aTmp[ _LIMPALB ]     := !empty( aNumAlb )
 
       end if 

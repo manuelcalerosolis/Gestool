@@ -6622,12 +6622,14 @@ STATIC FUNCTION EndTrans( aTmp, aGet, nMode, oBrwLin, oBrw, oBrwInc, oDlg, lActu
    aTmp[ _LALQUILER ]      := !Empty( oTipPre ) .and. ( oTipPre:nAt == 2 )
 
    do case
-   case nMode == APPD_MODE .or. nMode == DUPL_MODE
+   case isAppendOrDuplicateMode( nMode )
 
       nNumPre              := nNewDoc( cSerPre, D():PresupuestosClientes( nView ), "nPreCli", , dbfCount )
       aTmp[ _NNUMPRE ]     := nNumPre
+      cSufPre              := retSufEmp()
+      aTmp[ _CSUFPRE ]     := cSufPre
 
-   case nMode == EDIT_MODE
+   case isEditMode( nMode )
 
       if nNumPre != 0 .AND. ( D():PresupuestosClientesLineas( nView ) )->( dbSeek( cSerPre + str( nNumPre ) + cSufPre ) )
 

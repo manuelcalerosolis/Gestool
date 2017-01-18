@@ -24,6 +24,18 @@ Return ( TConfig():getInstance():setUser( key, value ) )
 
 //---------------------------------------------------------------------------//
 
+Function getConfigEmpresa( key, default )
+
+Return ( TConfig():getInstance():getEmpresa( key, default ) )
+
+//---------------------------------------------------------------------------//
+
+Function setConfigEmpresa( key, value )
+
+Return ( TConfig():getInstance():setEmpresa( key, value ) )
+
+//---------------------------------------------------------------------------//
+
 CLASS TConfig
 
    CLASSDATA oInstance
@@ -41,10 +53,12 @@ CLASS TConfig
    METHOD get( node, key, default )
    METHOD getTraslation( key, default )      INLINE ( ::get( 'Traslations', key, default ) )
    METHOD getUser( key, default )            INLINE ( ::get( cCurUsr(), key, default ) )
+   METHOD getEmpresa( key, default )         INLINE ( ::get( 'Empresa', key, default ) )
 
    METHOD set( node, key, value )
    METHOD setTraslation( key, value )        INLINE ( ::set( 'Traslations', key, value ) )
    METHOD setUser( key, value )              INLINE ( ::set( cCurUsr(), key, value ) )
+   METHOD setEmpresa( key, default )         INLINE ( ::set( 'Empresa', key, default ) )
 
    METHOD getFullFileName()            
 

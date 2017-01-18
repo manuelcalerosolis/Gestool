@@ -5586,12 +5586,14 @@ STATIC FUNCTION EndTrans( aTmp, aGet, nDec, nRec, oBrw, nMode, oDlg )
       aTmp[ _CTIMCHG ]     := Time()
 
       do case
-      case nMode == APPD_MODE .or. nMode == DUPL_MODE
+      case isAppendOrDuplicateMode( nMode )
 
          nNumAlb           := nNewDoc( cSerAlb, D():AlbaranesProveedores( nView ), "nAlbPrv", , D():Contadores( nView ) )
          aTmp[ _NNUMALB ]  := nNumAlb
+         cSufAlb           := retSufEmp()      
+         aTmp[ _CSUFALB ]  := cSufAlb
 
-      case nMode == EDIT_MODE
+      case isEditMode( nMode )
 
          /*
          Resetea los pedidos de proveedores------------------------------------

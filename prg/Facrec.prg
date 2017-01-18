@@ -7661,7 +7661,6 @@ STATIC FUNCTION EndTrans( aTmp, aGet, oBrw, oBrwDet, oBrwPgo, aNumAlb, nMode, oD
       return .f.
    end if
 
-
    if lPasNil() .and. ( nMode == APPD_MODE .or. nMode == DUPL_MODE )
 
       ( dbfTmpLin )->( dbGoTop() )
@@ -7704,7 +7703,7 @@ STATIC FUNCTION EndTrans( aTmp, aGet, oBrw, oBrwDet, oBrwPgo, aNumAlb, nMode, oD
    */
 
    do case
-   case ( nMode == APPD_MODE .or. nMode == DUPL_MODE )
+   case isAppendOrDuplicateMode( nMode )
 
 		/*
       Obtenemos el nuevo numero de la factura----------------------------------
@@ -7712,9 +7711,11 @@ STATIC FUNCTION EndTrans( aTmp, aGet, oBrw, oBrwDet, oBrwPgo, aNumAlb, nMode, oD
 
       nNumFac           := nNewDoc( cSerFac, D():FacturasRectificativas( nView ), "nFacRec", , dbfCount )
       aTmp[ _NNUMFAC ]  := nNumFac
-      aTmp[ _LIMPALB ]  := !Empty( aNumAlb )
+      cSufFac           := retSufEmp()
+      aTmp[ _CSUFFAC ]  := cSufFac
+      aTmp[ _LIMPALB ]  := !empty( aNumAlb )
 
-   case ( nMode == EDIT_MODE )
+   case isEditMode( nMode )
 
       while ( dbfFacRecL )->( dbSeek( cSerFac + Str( nNumFac ) + cSufFac ) ) .and. !( dbfFacRecL )->( eof() )
 

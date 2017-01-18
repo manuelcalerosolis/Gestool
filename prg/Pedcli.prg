@@ -1078,7 +1078,7 @@ FUNCTION PedCli( oMenuItem, oWnd, cCodCli, cCodArt, cCodPre, lPedWeb )
 
    DEFINE SHELL oWndBrw FROM 0, 0 TO 22, 80 ;
       XBROWSE ;
-      TITLE    getConfigTraslation("Pedidos de clientes") ;
+      TITLE    "Pedidos de clientes" ;
       PROMPT   "Número",;
                "Fecha",;
                "Código",;
@@ -2030,7 +2030,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, cCodCli, cCodArt, nMode, cCodPre 
    Comienza el dialogo---------------------------------------------------------
    */
 
-   DEFINE DIALOG oDlg RESOURCE "PEDCLI" TITLE LblTitle( nMode ) + getConfigTraslation("Pedidos de clientes")
+   DEFINE DIALOG oDlg RESOURCE "PEDCLI" TITLE LblTitle( nMode ) + "Pedidos de clientes"
 
       REDEFINE FOLDER oFld;
          ID       200 ;
@@ -8942,7 +8942,7 @@ STATIC FUNCTION EndTrans( aTmp, aGet, oBrwLin, oBrwInc, nMode, oDlg, lActualizaW
 
    cSerPed              := aTmp[ _CSERPED ]
    nNumPed              := aTmp[ _NNUMPED ]
-   CSufPed              := aTmp[ _CSUFPED ]
+   cSufPed              := aTmp[ _CSUFPED ]
 
    aTmp[ _LSNDDOC ]     := .t.
 
@@ -9049,12 +9049,14 @@ STATIC FUNCTION EndTrans( aTmp, aGet, oBrwLin, oBrwInc, nMode, oDlg, lActualizaW
    aTmp[ _LALQUILER ]   := .f.
 
    do case
-   case nMode == APPD_MODE .or. nMode == DUPL_MODE
+   case isAppendOrDuplicateMode( nMode )
 
       nNumPed           := nNewDoc( cSerPed, D():PedidosClientes( nView ), "NPEDCLI", , D():Contadores( nView ) )
       aTmp[ _NNUMPED ]  := nNumPed
+      cSufPed           := retSufEmp()
+      aTmp[ _CSUFPED ]  := cSufPed
 
-   case nMode == EDIT_MODE
+   case isEditMode( nMode )
 
       if nNumPed != 0
 
@@ -12642,7 +12644,7 @@ FUNCTION BrwPedCli( oGet, cPedCliT, cPedCliL, cdbfIva, cdbfDiv, dbfFPago, oIva )
    ( cPedCliT )->( dbSetFilter( {|| Field->nEstado <= 2 }, "nEstado <= 2" ) )
    ( cPedCliT )->( dbGoTop() )
 
-   DEFINE DIALOG oDlg RESOURCE "HELPENTRY" TITLE getConfigTraslation("Pedidos de clientes")
+   DEFINE DIALOG oDlg RESOURCE "HELPENTRY" TITLE "Pedidos de clientes"
 
 		REDEFINE GET oGet1 VAR cGet1;
          ID       104 ;
