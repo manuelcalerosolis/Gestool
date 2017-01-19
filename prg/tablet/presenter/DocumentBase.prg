@@ -79,7 +79,12 @@ CLASS DocumentBase
    METHOD getDivisa()                                          INLINE ( ::getValue( "Divisa" ) ) 
 
    METHOD getStore()                                           INLINE ( ::getValue( "Almacen" ) )
-   METHOD setStore( cStore )                                   INLINE ( ::setValue( "Almacen", cStore ) )
+   METHOD setStore( value )                                    INLINE ( ::setValue( "Almacen", value ) )
+
+   METHOD getFechaDocumento()                                  INLINE ( ::getValue( "FechaDocumento" ) )
+   METHOD setFechaDocumento( value )                           INLINE ( ::setValue( "FechaDocumento", value ) )
+   METHOD getHoraDocumento()                                   INLINE ( ::getValue( "HoraDocumento" ) )
+   METHOD setHoraDocumento( value )                            INLINE ( ::setValue( "HoraDocumento", value ) )
 
 END CLASS
 
