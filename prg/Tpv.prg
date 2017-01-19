@@ -9225,7 +9225,7 @@ STATIC FUNCTION lCobro( aTmp, aGet, nSave, nMode, lGenVale, nDifVale, lBig, oDlg
          cImageTitle := "Document_plain_businessman2_48_alpha"
          cTextTitle  := "El documento actual se guardará como un albaran de cliente."
       case nSave == SAVFAC
-         cImageTitle := "gc_document_text_user2_48"
+         cImageTitle := "gc_document_text_user2_48" 
          cTextTitle  := "El documento actual se guardará como una factura de cliente."
       case nSave == SAVDEV
          cImageTitle := "Cashier_delete_48_alpha"
@@ -9264,7 +9264,7 @@ STATIC FUNCTION lCobro( aTmp, aGet, nSave, nMode, lGenVale, nDifVale, lBig, oDlg
       Banner del título-----------------------------------------------------------
       */
 
-      REDEFINE BITMAP oBmpTitulo RESOURCE ( cImageTitle )   ID 500 OF oDlg
+      REDEFINE BITMAP oBmpTitulo RESOURCE ( cImageTitle )   ID 500 TRANSPARENT OF oDlg 
 
       REDEFINE SAY oSayTitulo PROMPT ( cTextTitle )         ID 510 OF oDlg
 

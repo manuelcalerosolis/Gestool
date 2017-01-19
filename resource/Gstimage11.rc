@@ -4,21 +4,9 @@
 #include <commctrl.h>
 #include <richedit.h>
 
-Briefcase_security_agent_32 BITMAP "..\\bmp\\Briefcase_security_agent_32.bmp"
 
-Folder_into_32 BITMAP "..\\bmp\\Folder_into_32.bmp"
-Folder_out_32 BITMAP "..\\bmp\\Folder_out_32.bmp"
 
-Cabinet_Open_Alpha_48 BITMAP "..\\bmp\\cabinet_open_alpha_48.bmp"
-Cubes_Yellow_Alpha_48 BITMAP "..\\bmp\\cubes_yellow_alpha_48.bmp"
-Components_Alpha_48 BITMAP "..\\bmp\\components_alpha_48.bmp"
-Document_Text_Alpha_48 BITMAP "..\\bmp\\document_text_alpha_48.bmp"
-Bookmark_Silver_Alpha_48 BITMAP "..\\bmp\\bookmark_silver_alpha_48.bmp"
-Truck_Red_48 BITMAP "..\\bmp\\truck_red_48.bmp"
-Forklift_Alpha_48 BITMAP "..\\bmp\\Forklift_alpha_48.bmp"
-Data_Green_Alpha_48 BITMAP "..\\bmp\\Data_Green_alpha_48.bmp"
-Photo_landscape2_48 BITMAP "..\\bmp\\Photo_landscape2_48.bmp"
-Mail_earth_48_alpha BITMAP "..\\bmp\\mail_earth_48_alpha.bmp"
+
 Cashier_delete_48_alpha BITMAP "..\\bmp\\Cashier_delete_48_alpha.bmp"
 Cashier_businessman2_48_alpha BITMAP "..\\bmp\\Cashier_businessman2_48_alpha.bmp"
 Cashier_stop_48_alpha BITMAP "..\\bmp\\Cashier_stop_48_alpha.bmp"
