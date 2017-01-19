@@ -347,7 +347,7 @@ FUNCTION RecCli( oMenuItem, oWnd, aNumRec )
          :lHide            := .t.
          :AddResource( "Nil16" )
          :AddResource( "gc_folder_cubes_16" )
-         :AddResource( "Component_Blue_16" )
+         :AddResource( "Sel16" )
       end with
 
       with object ( oWndBrw:AddXCol() )
@@ -1332,7 +1332,7 @@ FUNCTION EdtCob( aTmp, aGet, cFacCliP, oBrw, lRectificativa, nSpecialMode, nMode
 
          REDEFINE BITMAP oBmpGeneral ;
             ID       500 ;
-            RESOURCE "folder_components_48" ;
+            RESOURCE "gc_folder_cubes_48" ;
             TRANSPARENT ;
             OF       oFld:aDialogs[ 5 ]
 
@@ -6023,7 +6023,7 @@ Static Function CompensarReciboCliente( oBrw )
 
    REDEFINE BITMAP oBmp ;
       ID       500 ;
-      RESOURCE "folder_components_48" ;
+      RESOURCE "gc_folder_cubes_48" ;
       TRANSPARENT ;
       OF       oDlg
 

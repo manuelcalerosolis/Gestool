@@ -75,9 +75,6 @@ FLAT_ABOUT_64 BITMAP "..\\bmp\\flat_about_64.bmp"
 FLAT_ATOM_64 BITMAP "..\\bmp\\flat_atom_64.bmp"
 
 
-
-
-
 ZOOM_IN_16 BITMAP "..\\bmp\\zoom_in_16.bmp"
 
 ZOOM_IN_32 BITMAP "..\\bmp\\zoom_in_32.bmp"
@@ -85,16 +82,4 @@ ZOOM_IN_32 BITMAP "..\\bmp\\zoom_in_32.bmp"
 ZOOM_IN_48 BITMAP "..\\bmp\\zoom_in_48.bmp"
 
 
-
 SHOPPING_BAG_48 BITMAP "..\\bmp\\shopping_bag_48.bmp"
-
-
-COMPONENT_BLUE_16 BITMAP "..\\bmp\\component_blue_16.bmp"
-
-FOLDER_COMPONENTS_48 BITMAP "..\\bmp\\folder_components_48.bmp"
-
-BOX_WHITE_48 BITMAP "..\\bmp\\box_white_48.bmp"
-
-BOX_WHITE_32 BITMAP "..\\bmp\\box_white_32.bmp"
-
-BOX_WHITE_16 BITMAP "..\\bmp\\box_white_16.bmp"
