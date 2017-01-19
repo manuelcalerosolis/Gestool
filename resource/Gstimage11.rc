@@ -7,12 +7,6 @@
 
 
 
-Cashier_delete_48_alpha BITMAP "..\\bmp\\Cashier_delete_48_alpha.bmp"
-Cashier_businessman2_48_alpha BITMAP "..\\bmp\\Cashier_businessman2_48_alpha.bmp"
-Cashier_stop_48_alpha BITMAP "..\\bmp\\Cashier_stop_48_alpha.bmp"
-Cashier_box_new_48_alpha BITMAP "..\\bmp\\Cashier_box_new_48_alpha.bmp"
-Document_plain_businessman2_48_alpha BITMAP "..\\bmp\\Document_plain_businessman2_48_alpha.bmp"
-Document_businessman2_48_alpha BITMAP "..\\bmp\\Document_businessman2_48_alpha.bmp"
 Gear_run_16 BITMAP "..\\bmp\\Gear_run_16.bmp"
 Bookkeeper_alpha_48 BITMAP "..\\bmp\\Bookkeeper_alpha_48.bmp"
 Star_Red_48 BITMAP "..\\bmp\\Star_Red_48.bmp"

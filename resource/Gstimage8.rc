@@ -93,12 +93,7 @@ arrow_down_blue BITMAP "..\\bmp\\arrow_down_blue.bmp"
 
 Money2_32_Pressed BITMAP "..\\bmp\\Money2_32_Pressed.bmp"
 
-Check2_32 BITMAP "..\\bmp\\check2.bmp"
-
 Package_New_32 BITMAP "..\\bmp\\package_new.bmp"
-
-Package_New_Disk_Green_32 BITMAP "..\\bmp\\package_new_disk_green_32.bmp"
-Printer2_Disk_Green_32 BITMAP "..\\bmp\\printer2_disk_green_32.bmp"
 
 Id_Card_32 BITMAP "..\\bmp\\id_card_32.bmp"
 Id_Card_Delete_32 BITMAP "..\\bmp\\id_card_delete_32.bmp"
