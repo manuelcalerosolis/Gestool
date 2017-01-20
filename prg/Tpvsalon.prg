@@ -850,7 +850,7 @@ METHOD LoadRecogerPendientes( lPuntosPendientes ) CLASS TTpvSalon
 
    ::nTop                     := 5
    ::nLeft                    := 1
-   ::nType                    := itmGenerico
+   ::nType                    := itmRecoger
 
    /*
    Limpio la sala para montar los puntos de venta------------------------------

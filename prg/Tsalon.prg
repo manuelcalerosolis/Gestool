@@ -378,8 +378,6 @@ Return ( Self )
 
 Method Design( oDbfSala, oDlg ) CLASS TSalon
 
-   ?"Entro a diseñar el salón"
-
    ::lDesign                  := .t.
    ::oDbfSala                 := oDbfSala
 
