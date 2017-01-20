@@ -1047,6 +1047,9 @@ METHOD SetEstadoPedCli( cNumPed ) CLASS TStock
 
    if dblock( ::cPedCliT )
       ( ::cPedCliT )->nEstado    := nEstadoPedido
+      ( ::cPedCliT )->lSndDoc  := .t.
+      ( ::cPedCliT )->dFecCre  := Date()
+      ( ::cPedCliT )->cTimCre  := Time()
       ( ::cPedCliT )->( dbUnlock() )
    end if
 

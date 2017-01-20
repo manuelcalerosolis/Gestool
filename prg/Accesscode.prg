@@ -56,7 +56,7 @@ CLASS AccessCode
    DATA  oBtnConectCancel
 
    DATA  oBmpEngine
-   DATA  cBmpEngine              INIT  "Data_Green_Alpha_48"
+   DATA  cBmpEngine              INIT  "gc_data_48"
 
    DATA  oProgress
    DATA  nProgress               INIT  0
@@ -141,7 +141,7 @@ METHOD Resource() CLASS AccessCode
    do case
       case lAds()
          ::oSayDatabase          := TSay():Redefine( 210, {|| "Database engine : Sybase Advantage Release 10.0 - SAP Company ®" }, oDlg )
-         ::cBmpEngine            := "Data_Green_Alpha_48"
+         ::cBmpEngine            := "gc_data_48"
 
       case lAIS()
          ::oSayDatabase          := TSay():Redefine( 210, {|| "Database engine : Internet Sybase Advantage Release 10.0 - SAP Company ®" }, oDlg )
@@ -149,7 +149,7 @@ METHOD Resource() CLASS AccessCode
 
       otherwise
          ::oSayDatabase          := TSay():Redefine( 210, {|| "Database engine : xHarbour Native RDD" }, oDlg )
-         ::cBmpEngine            := "Data_Green_Alpha_48"
+         ::cBmpEngine            := "gc_data_48"
 
    end case
 
@@ -395,7 +395,7 @@ METHOD TactilResource() CLASS AccessCode
       do case
       case lAds()
          ::oSayDatabase          := TWebBtn():Redefine( 210,,,,,, oDlg,,,, "Database engine : Sybase Advantage Release 10.0 - SAP Company ®", "LEFT",,,,, Rgb( 0, 0, 0 ), Rgb( 255, 255, 255 ) )
-         ::cBmpEngine            := "Data_Green_Alpha_48"
+         ::cBmpEngine            := "gc_data_48"
 
       case lAIS()
          ::oSayDatabase          := TWebBtn():Redefine( 210,,,,,, oDlg,,,, "Database engine : Internet Sybase Advantage Release 10.0 - SAP Company ®", "LEFT",,,,, Rgb( 0, 0, 0 ), Rgb( 255, 255, 255 ) )
@@ -403,7 +403,7 @@ METHOD TactilResource() CLASS AccessCode
 
       otherwise
          ::oSayDatabase          := TWebBtn():Redefine( 210,,,,,, oDlg,,,, "Database engine : xHarbour Native RDD", "LEFT",,,,, Rgb( 0, 0, 0 ), Rgb( 255, 255, 255 ) )
-         ::cBmpEngine            := "Data_Green_Alpha_48"
+         ::cBmpEngine            := "gc_data_48"
 
       end case
 
@@ -831,7 +831,7 @@ Method InitialCheck() CLASS AccessCode
                ::oMessage:SetText( "Servidor ADS conectado." )
             end if
 
-            ::oBmpEngine:Reload( "Data_Green_Alpha_48" )
+            ::oBmpEngine:Reload( "gc_data_48" )
 
          end if
 

@@ -200,14 +200,9 @@ METHOD insertLineDocument( oLine )
 
    // obtener el numero de la ultima linea existente
 
-   msgalert( lineNumber, "lineNumber" )
-
-   // asignar el nuevo nmero de linea
-
    oLine:setNumeroLinea( lineNumber )
 
    oLine:setPosicionImpresion( lineNumber )
-
    oLine:setSerie( ( D():AlbaranesClientes( ::nView ) )->cSerAlb )
    oLine:setNumero( ( D():AlbaranesClientes( ::nView ) )->nNumAlb )
    oLine:setSufijo( ( D():AlbaranesClientes( ::nView ) )->cSufAlb )
@@ -220,8 +215,6 @@ METHOD insertLineDocument( oLine )
    // asginar a la linea el id del albaran
 
    // pasar la linea al fichero de lineas de albaranes
-
-   msgalert( hb_valtoexp( oLine:hDictionary ) )
 
 Return ( .t. )
 

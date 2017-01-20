@@ -199,7 +199,7 @@ CLASS TTpvSalon
    METHOD CreateItemEncargar( nRow, nCol, uTooltip )                       INLINE ::CreateItemMesa( nRow, nCol, uTooltip, itmEncargar, "shape_square_address_book2_160" )
    METHOD CreateItemNewGenerico( nRow, nCol, uTooltip )                    INLINE ::CreateItemMesa( nRow, nCol, uTooltip, itmNewGenerico, "gc_cash_register_160" )
    METHOD CreateItemNewLlevar( nRow, nCol, uTooltip )                      INLINE ::CreateItemMesa( nRow, nCol, uTooltip, itmNewLlevar, "gc_motor_scooter_160" )
-   METHOD CreateItemRecoger( nRow, nCol, uTooltip )                        INLINE ::CreateItemMesa( nRow, nCol, uTooltip, itmRecoger, "shape_square_shoppingbasket_full_160" )
+   METHOD CreateItemRecoger( nRow, nCol, uTooltip )                        INLINE ::CreateItemMesa( nRow, nCol, uTooltip, itmRecoger, "gc_shopping_basket_160" )
 
    //------------------------------------------------------------------------//
 
@@ -850,7 +850,7 @@ METHOD LoadRecogerPendientes( lPuntosPendientes ) CLASS TTpvSalon
 
    ::nTop                     := 5
    ::nLeft                    := 1
-   ::nType                    := itmGenerico
+   ::nType                    := itmRecoger
 
    /*
    Limpio la sala para montar los puntos de venta------------------------------
