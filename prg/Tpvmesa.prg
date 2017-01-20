@@ -398,7 +398,7 @@ Method cBitmapMesa( nItem ) CLASS TTpvMesa
          Return( "gc_notebook2_160" )
 
       case nItem == itmRecoger
-         Return( "shoppingbasket_full_160" )
+         Return( "gc_shopping_basket_160" )
 
    end case
 
