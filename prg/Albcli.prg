@@ -2325,6 +2325,8 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, hHash, bValid, nMode )
             return .t.
          end if
 
+         aTmp[ _LSNDDOC   ]   := .t.
+
          lChangeRegIva( aTmp )
 
    end case
