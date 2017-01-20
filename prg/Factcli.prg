@@ -1048,6 +1048,13 @@ FUNCTION FactCli( oMenuItem, oWnd, hHash )
          :lHide            := .t.
       end with
 
+      with object ( oWndBrw:AddXCol() )
+         :cHeader          := "Creación/Modificación"
+         :bEditValue       := {|| dtoc( ( D():FacturasClientes( nView ) )->dFecCre ) + space( 1 ) + ( D():FacturasClientes( nView ) )->cTimCre }
+         :nWidth           := 120
+         :lHide            := .t.
+      end with
+
    oDetCamposExtra:addCamposExtra( oWndBrw )
 
    oWndBrw:cHtmlHelp    := "Factura a clientes"
@@ -6441,7 +6448,10 @@ Return .t.
 Static Function lChgContabilizado( lChk )
 
    if ( D():FacturasClientes( nView ) )->( dbRLock() )
-      ( D():FacturasClientes( nView ) )->lContab    := lChk
+      ( D():FacturasClientes( nView ) )->lContab  := lChk
+      ( D():FacturasClientes( nView ) )->lSndDoc  := !( D():FacturasClientes( nView ) )->lSndDoc
+      ( D():FacturasClientes( nView ) )->dFecCre  := Date()
+      ( D():FacturasClientes( nView ) )->cTimCre  := Time()
       ( D():FacturasClientes( nView ) )->( dbUnlock() )
    end if
 
@@ -7631,7 +7641,6 @@ Static Function MakSelRec( bAction, bPreAction, bPostAction, cDocIni, cDocFin, n
          oMtrInf:Set( ( D():FacturasClientes( nView ) )->( OrdKeyCount() ) )
 
       end if
-
 
       if !empty( bPostAction )
          Eval( bPostAction )

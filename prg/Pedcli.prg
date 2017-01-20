@@ -6042,6 +6042,10 @@ STATIC FUNCTION ChgSta( oBrw )
                ( D():PedidosClientes( nView ) )->nEstado := 1
             end if
 
+            ( D():PedidosClientes( nView ) )->lSndDoc  := !( D():PedidosClientes( nView ) )->lSndDoc
+            ( D():PedidosClientes( nView ) )->dFecCre  := Date()
+            ( D():PedidosClientes( nView ) )->cTimCre  := Time()
+
             ( D():PedidosClientes( nView ) )->( dbRUnlock() )
 
          end if

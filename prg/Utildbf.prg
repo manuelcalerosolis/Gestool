@@ -898,9 +898,24 @@ Function lselectAll( oBrw, dbf, cFieldName, lselect, lTop, lMeter )
    while !( dbf )->( eof() )
 
       if dbLock( dbf )
+         
          nPos           := ( dbf )->( FieldPos( cFieldName ) )
-         ( dbf )->( FieldPut( nPos, lselect ) )
+         if nPos != 0
+            ( dbf )->( FieldPut( nPos, lselect ) )
+         end if
+         
+         nPos           := ( dbf )->( FieldPos( "dFecCre" ) )
+         if nPos != 0
+            ( dbf )->( FieldPut( nPos, Date() ) )
+         end if
+         
+         nPos           := ( dbf )->( FieldPos( "cTimCre" ) )
+         if nPos != 0
+            ( dbf )->( FieldPut( nPos, Time() ) )
+         end if
+         
          dbSafeUnLock( dbf )
+
       end if
 
       ( dbf )->( dbSkip() )

@@ -18102,6 +18102,17 @@ FUNCTION SetFacturadoAlbaranCliente( lFacturado, oBrw, cAlbCliT, cAlbCliL, cAlbC
 
    ( cAlbCliT )->( dbGoTo( nRecHead ) )
 
+   /*
+   Marcamos el albarán para envio-----------------------------------------------
+   */
+
+   if dbDialogLock( cAlbCliT )
+      ( cAlbCliT )->lSndDoc  := .t.
+      ( cAlbCliT )->dFecCre  := Date()
+      ( cAlbCliT )->cTimCre  := Time()
+      ( cAlbCliT )->( dbUnlock() )
+   end if
+
    if oBrw != nil
       oBrw:Refresh()
       oBrw:SetFocus()
@@ -18110,7 +18121,6 @@ FUNCTION SetFacturadoAlbaranCliente( lFacturado, oBrw, cAlbCliT, cAlbCliL, cAlbC
 RETURN NIL
 
 //---------------------------------------------------------------------------//
-
 
 Function nTotDtoLAlbCli( dbfLin, nDec, nVdv, cPorDiv )
 

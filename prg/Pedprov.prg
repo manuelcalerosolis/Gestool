@@ -7338,6 +7338,8 @@ FUNCTION lSnd( oWndBrw, dbf )
       if dbDialogLock( dbf )
 
          ( dbf )->lSndDoc  := !( dbf )->lSndDoc
+         ( dbf )->dFecCre  := Date()
+         ( dbf )->cTimCre  := Time()
 
          ( dbf )->( dbUnlock() )
 

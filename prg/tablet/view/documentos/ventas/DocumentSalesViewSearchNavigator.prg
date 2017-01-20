@@ -22,6 +22,17 @@ METHOD setColumns() CLASS DocumentSalesViewSearchNavigator
    ::setBrowseConfigurationName( "grid_ventas" )
 
    with object ( ::addColumn() )
+      :cHeader          := "Envio"
+      :nHeadBmpNo       := 3
+      :bStrData         := {|| "" }
+      :bEditValue       := {|| ::getField( "Envio" ) }
+      :nWidth           := 33
+      :lHide            := .t.
+      :SetCheck( { "gc_mail2_24", "Nil16" } )
+      :AddResource( "gc_mail2_24" )
+   end with
+
+   with object ( ::addColumn() )
       :cHeader           := "Id"
       :bEditValue        := {|| ::getField( "Serie" ) + "/" + alltrim( str( ::getField( "Numero" ) ) ) + CRLF + dtoc( ::getField( "Fecha" ) ) }
       :nWidth            := 165
