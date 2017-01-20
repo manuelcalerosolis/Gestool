@@ -73,10 +73,11 @@ CLASS DocumentsSales FROM Documents
 
    METHOD getSerie()                                        INLINE ( ::hGetMaster( "Serie" ) )
    METHOD getNumero()                                       INLINE ( ::hGetMaster( "Numero" ) )
+   METHOD getStrNumero()                                    INLINE ( str( ::getNumero(), 9 ) )
    METHOD getSufijo()                                       INLINE ( ::hGetMaster( "Sufijo" ) )
    METHOD getStore()                                        INLINE ( ::hGetMaster( "Almacen" ) )
 
-   METHOD getId()                                           INLINE ( ::getSerie() + str( ::getNumero(), 9 ) + ::getSufijo() )
+   METHOD getId()                                           INLINE ( ::getSerie() + ::getStrNumero() + ::getSufijo() )
 
    METHOD isPuntoVerde()                                    INLINE ( ::hGetMaster( "OperarPuntoVerde" ) )
    METHOD isRecargoEquivalencia()                           INLINE ( ::hGetMaster( "lRecargo" ) )
@@ -877,11 +878,8 @@ METHOD setDatasInDictionaryMaster( NumeroDocumento ) CLASS DocumentsSales
    hSet( ::hDictionaryMaster, "HoraCreacion", time() )  
 
    hSet( ::hDictionaryMaster, "TotalDocumento", ::oTotalDocument:getTotalDocument() )
-
    hSet( ::hDictionaryMaster, "TotalImpuesto", ::oTotalDocument:getImporteIva() )
-
    hSet( ::hDictionaryMaster, "TotalRecargo", ::oTotalDocument:getImporteRecargo() )
-
    hSet( ::hDictionaryMaster, "TotalNeto", ::oTotalDocument:getBase() )
 
 Return ( .t. )

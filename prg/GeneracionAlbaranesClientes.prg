@@ -76,8 +76,6 @@ CLASS TGeneracionAlbaranesClientes FROM TConversionDocumentos
 
    METHOD addLineDeliveryNoteCustomer( oLine, currentDocument )
 
-   METHOD appendLineDeliveryNoteCustomer( oLine, nLine, currentDocument )
-
 ENDCLASS
 
 //----------------------------------------------------------------------------//
@@ -559,13 +557,13 @@ METHOD processDeliveryNoteLine( oLine, nLine )
    ::oWaitMeter:incMeter()
 
    if !( empty( oLine:getValue( "AlbaranCliente" ) ) ) 
-      ::appendLineDeliveryNoteCustomer( oLine, nLine, oLine:getValue( "AlbaranCliente" ) )
+      ::addLineDeliveryNoteCustomer( oLine, nLine, oLine:getValue( "AlbaranCliente" ) )
       ::cleanCurrents()  
       Return .t.
    end if 
 
    if empty( oLine:getValue( "AlbaranCliente" ) ) .and. ( !empty( ::currentClient ) .and. ::currentClient == oLine:getHeaderClient() )
-      ::appendLineDeliveryNoteCustomer( oLine, nLine, ::currentDocument )
+      ::addLineDeliveryNoteCustomer( oLine, nLine, ::currentDocument )
       Return .t.
    end if 
 
@@ -662,24 +660,4 @@ Return ( .t. )
 
 //---------------------------------------------------------------------------//
 
-METHOD appendLineDeliveryNoteCustomer( oLine, nLine, currentDocument )
-
-   local id 
-
-   if !( D():gotoIdAlbaranesClientes( currentDocument, ::nView ) )
-      msgStop( "Albarán de cliente " + transIdDocument( currentDocument ) + " no encontrado." )
-      Return .f.
-   end if 
-
-   // insertar una linea en el documento actual
-
-   ::DeliveryNoteCustomer:insertLineDocument( oLine )
-
-   ( D():appendHashRecord( oLine:hDictionary, ::getDataTableLine(), ::nView ) ) // recalcular totales del documento
-
-   // ::DeliveryNoteCustomer:onPreEnd()
-
-Return ( .t. )
-
-//---------------------------------------------------------------------------//
 

@@ -160,15 +160,27 @@ Return ( self )
 
 METHOD deleteLinesDocument() CLASS DeliveryNoteCustomer
 
-   D():getStatusAlbaranesClientesLineas( ::nView )
+   local statement
 
-   ( D():AlbaranesClientesLineas( ::nView ) )->( ordSetFocus( 1 ) )
+   if lAIS()
 
-   while ( D():AlbaranesClientesLineas( ::nView ) )->( dbSeek( ::getID() ) ) 
-      ::delDocumentLine()
-   end while
+      statement   := "DELETE FROM " + cPatEmp() + "AlbCliL " + ;
+                     "WHERE cSerAlb = '" + ::getSerie() + "'AND nNumAlb = " + alltrim( ::getStrNumero() ) + "AND cSufAlb = '" + ::getSufijo() + "'" 
 
-   D():setStatusAlbaranesClientesLineas( ::nView ) 
+      TDataCenter():ExecuteSqlStatement( statement )
+
+   else
+
+      D():getStatusAlbaranesClientesLineas( ::nView )
+      ( D():AlbaranesClientesLineas( ::nView ) )->( ordsetfocus( 1 ) )
+
+      while ( D():AlbaranesClientesLineas( ::nView ) )->( dbseek( ::getID() ) ) 
+         ::delDocumentLine()
+      end while
+
+      D():setStatusAlbaranesClientesLineas( ::nView ) 
+
+   end if 
 
 Return ( Self )
 
