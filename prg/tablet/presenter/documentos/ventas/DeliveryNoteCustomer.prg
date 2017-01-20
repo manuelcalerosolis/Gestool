@@ -195,7 +195,7 @@ METHOD insertLineDocument( oLine )
    oLine:setNumeroLinea( lineNumber )
 
    oLine:setPosicionImpresion( lineNumber )
-   oDocumentLine:setSerieMaster( ::hDictionaryMaster )
+   oLine:setSerieMaster( ::hDictionaryMaster )
    // oDocumentLine:setNumeroMaster( ::hDictionaryMaster )
    // oDocumentLine:setSufijoMaster( ::hDictionaryMaster )
    // oDocumentLine:setAlmacenMaster( ::hDictionaryMaster )

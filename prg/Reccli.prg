@@ -5,6 +5,7 @@
 #include "Report.ch"
 #include "FastrepH.ch"
 #include "Factu.ch" 
+#include "DbInfo.ch"
 
 #define _MENUITEM_               "01059"
 
@@ -5353,12 +5354,18 @@ function nNewReciboCliente( cNumFac, cTipRec, cFacCliP )
    local nCon
    local nRec
    local nOrd
+   local cFilter     := ""
 
    DEFAULT cTipRec   := space( 1 )
 
    nCon              := 1
    nRec              := ( cFacCliP )->( Recno() )
    nOrd              := ( cFacCliP )->( OrdSetFocus( "nNumFac" ) )
+   //cFilter           := ( cFacCliP )->( dbInfo( DBI_DBFILTER ) )
+   
+   //( cFacCliP )->( dbClearFilter() )
+
+   ( cFacCliP )->( dbGoTop() )
 
    if ( cFacCliP )->( dbSeek( cNumFac ) )
 
@@ -5376,6 +5383,13 @@ function nNewReciboCliente( cNumFac, cTipRec, cFacCliP )
 
    ( cFacCliP )->( OrdSetFocus( nOrd ) )
    ( cFacCliP )->( dbGoTo( nRec ) )
+
+   /*if !Empty( cFilter ) 
+      ( cFacCliP )->( dbSetFilter( bCheck2Block( cFilter ), cFilter ) )
+      ( cFacCliP )->( dbGoTop() )
+   end if
+
+   MsgInfo( ( cFacCliP )->( dbInfo( DBI_DBFILTER ) ) )*/
 
 return ( nCon )
 

@@ -129,7 +129,7 @@ METHOD onPreSaveEdit() CLASS ReceiptInvoiceCustomer
    local nImporteReciboNuevo  := 0
 
    /*
-   Convertimos el estado a LÃ³gico----------------------------------------------
+   Convertimos el estado a Lógico----------------------------------------------
    */
 
    hSet( ::oSender:hDictionaryMaster, "LogicoCobrado", ( ::oViewEdit:cCbxEstado == "Cobrado" ) )
@@ -176,6 +176,9 @@ METHOD onPostSaveEdit() CLASS ReceiptInvoiceCustomer
 
    ( D():FacturasClientes( ::nView ) )->( OrdSetFocus( nOrdAnt ) )
    ( D():FacturasClientes( ::nView ) )->( dbGoTo( nRec ) )
+   
+   ::oViewSearchNavigator:changeComboboxSearch()
+   ::FilterTable( ::oViewSearchNavigator:oSayFilter:cCaption )
 
 Return ( .t. )
 
@@ -230,10 +233,12 @@ METHOD addReciboDiferencia( nImporteRecibo ) CLASS ReceiptInvoiceCustomer
    cNumRec           += Str( aTabla[ ( ::getDataTable() )->( fieldpos( "nNumFac" ) ) ] )
    cNumRec           += aTabla[ ( ::getDataTable() )->( fieldpos( "cSufFac" ) ) ]
 
+   ( ::getDataTable() )->( dbClearFilter() )
+
    nCount            := nNewReciboCliente( cNumRec, aTabla[ ( ::getDataTable() )->( fieldpos( "cTipRec" ) ) ], ::getDataTable() )
 
    /*
-   AÃ±adimos el nuevo recibo-------------------------------------------------
+   Añadimos el nuevo recibo-------------------------------------------------
    */
 
    ( ::getDataTable() )->( dbAppend() )
@@ -251,7 +256,7 @@ METHOD addReciboDiferencia( nImporteRecibo ) CLASS ReceiptInvoiceCustomer
    ( ::getDataTable() )->dEntrada   := Ctod( "" )
    ( ::getDataTable() )->nImporte   := nImporteRecibo
    ( ::getDataTable() )->nImpCob    := nImporteRecibo
-   ( ::getDataTable() )->cDescrip   := "Recibo nÂº" + AllTrim( str( nCount ) ) + " de factura " + if( !empty( aTabla[ ( ::getDataTable() )->( fieldpos( "cTipRec" ) ) ] ), "rectificativa ", "" ) + aTabla[ ( ::getDataTable() )->( fieldpos( "cSerie" ) ) ] + '/' + AllTrim( str( aTabla[ ( ::getDataTable() )->( fieldpos( "nNumFac" ) ) ] ) ) + '/' + aTabla[ ( ::getDataTable() )->( fieldpos( "cSufFac" ) ) ]
+   ( ::getDataTable() )->cDescrip   := "Recibo nº" + AllTrim( str( nCount ) ) + " de factura " + if( !empty( aTabla[ ( ::getDataTable() )->( fieldpos( "cTipRec" ) ) ] ), "rectificativa ", "" ) + aTabla[ ( ::getDataTable() )->( fieldpos( "cSerie" ) ) ] + '/' + AllTrim( str( aTabla[ ( ::getDataTable() )->( fieldpos( "nNumFac" ) ) ] ) ) + '/' + aTabla[ ( ::getDataTable() )->( fieldpos( "cSufFac" ) ) ]
    ( ::getDataTable() )->dPreCob    := dFecFacCli( cNumRec, D():FacturasClientes( ::nView ) )
    ( ::getDataTable() )->cPgdoPor   := ""
    ( ::getDataTable() )->lCobrado   := .f.
