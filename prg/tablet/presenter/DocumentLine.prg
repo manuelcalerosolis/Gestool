@@ -17,10 +17,6 @@ CLASS DocumentLine FROM DocumentBase
    METHOD setClient( Client )                                  INLINE ( ::setValue( "Cliente", Client ) )
    METHOD getClient()                                          INLINE ( ::getValue( "Cliente" ) )
 
-   METHOD setSerie( Serie )                                    INLINE ( ::setValue( "Serie", Serie ) )
-   METHOD setNumero( Numero )                                  INLINE ( ::setValue( "Numero", Numero ) )
-   METHOD setSufijo( Sufijo )                                  INLINE ( ::setValue( "Sufijo", Sufijo ) )
-
    METHOD getNumeroLinea()                                     INLINE ( ::getValue( "NumeroLinea" ) )
    METHOD setNumeroLinea( NumeroLinea )                        INLINE ( ::setValue( "NumeroLinea", NumeroLinea ) )
    METHOD setPosicionImpresion( PosicionImpresion)             INLINE ( ::setValue( "PosicionImpresion", PosicionImpresion ) )

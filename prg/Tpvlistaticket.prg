@@ -1153,8 +1153,8 @@ METHOD StartVales() CLASS TpvListaTicket
 
       oCarpeta                := TCarpeta():New( ::oOfficeBar, "Vales de cliente" )
 
-      oGrupo                  := TDotNetGroup():New( oCarpeta, 186,  "Selección", .f., , "Check2_32" )
-         oBoton               := TDotNetButton():New( 60, oGrupo,    "Check2_32",               "Seleccionar",        1, {|| ::OnClickSelectVales() }, , , .f., .f., .f. )
+      oGrupo                  := TDotNetGroup():New( oCarpeta, 186,  "Selección", .f., , "gc_check_32" )
+         oBoton               := TDotNetButton():New( 60, oGrupo,    "gc_check_32",               "Seleccionar",        1, {|| ::OnClickSelectVales() }, , , .f., .f., .f. )
          oBoton               := TDotNetButton():New( 60, oGrupo,    "Checks_32",               "Todos",              2, {|| ::OnClickSelectTodosVales() }, , , .f., .f., .f. )
          oBoton               := TDotNetButton():New( 60, oGrupo,    "Del32",                   "Ninguno",            3, {|| ::OnClickSelectNingunoVales() }, , , .f., .f., .f. )
 

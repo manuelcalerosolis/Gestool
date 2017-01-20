@@ -9212,25 +9212,25 @@ STATIC FUNCTION lCobro( aTmp, aGet, nSave, nMode, lGenVale, nDifVale, lBig, oDlg
 
    do case
       case nSave == SAVTIK
-         cImageTitle := "Cashier_businessman2_48_alpha"
+         cImageTitle := "gc_cash_register_user_48"
          cTextTitle  := "El documento actual se cobrará y guardará como un ticket de cliente."
       case nSave == SAVALB
-         cImageTitle := "Document_plain_businessman2_48_alpha"
+         cImageTitle := "gc_document_empty_user_48"
          cTextTitle  := "El documento actual se guardará como un albaran de cliente."
       case nSave == SAVFAC
          cImageTitle := "gc_document_text_user2_48"
          cTextTitle  := "El documento actual se guardará como una factura de cliente."
       case nSave == SAVDEV
-         cImageTitle := "Cashier_delete_48_alpha"
+         cImageTitle := "gc_cash_register_delete_48"
          cTextTitle  := "El documento actual se guardará como una devolución a cliente."
       case nSave == SAVVAL .and. !aTmp[ _LFRETIK ]
-         cImageTitle := "Cashier_delete_48_alpha"
+         cImageTitle := "gc_cash_register_delete_48"
          cTextTitle  := "El documento actual se guardará como un vale a cliente."
       case nSave == SAVVAL .and. aTmp[ _LFRETIK ]
-         cImageTitle := "Cashier_box_new_48_alpha"
+         cImageTitle := "gc_cash_register_gift_48"
          cTextTitle  := "El documento actual se guardará como un cheque regalo."
       case nSave == SAVAPT
-         cImageTitle := "Cashier_delete_48_alpha"
+         cImageTitle := "gc_cash_register_delete_48"
          cTextTitle  := "El documento actual se guardará como un apartado."
    end case
 
@@ -9469,10 +9469,10 @@ STATIC FUNCTION lCobro( aTmp, aGet, nSave, nMode, lGenVale, nDifVale, lBig, oDlg
       Botones__________________________________________________________________
       */
 
-      oBtnInsertarCobro    := ApoloBtnBmp():Redefine( 554, "Money2_Add2_32", , , , ,            {|| lAddCobro( @aTmp, oTotDiv, oBrwPgo ) }, oDlg, , {|| lWhen }, .f., .f., "Añadir cobro combinado", , , , .t., "TOP", .t., , , .f. )
-      oBtnAceptarRegalo    := ApoloBtnBmp():Redefine( 553, "Package_New_Disk_Green_32", , , , , {|| if( lValidaCobro( aGet, @aTmp, @lGenVale, @nDifVale, nSave, oDlg ), ( lCopTik := .t., lRegalo := .t., oDlg:end( IDOK ) ), ) }, oDlg, , {|| lWhen }, .f., .f., "Aceptar y ticket regalo", , , , .t., "TOP", .t., , , .f. )
-      oBtnAceptarImprimir  := ApoloBtnBmp():Redefine( IDOK, "Printer2_Disk_Green_32", , , , ,   {|| if( lValidaCobro( aGet, @aTmp, @lGenVale, @nDifVale, nSave, oDlg ), ( lCopTik := .t., oDlg:end( IDOK ) ), ) }, oDlg, , {|| lWhen }, .f., .f., "Aceptar e imprimir [F6]", ,,, .t., "TOP", .t., , , .f. )
-      oBtnAceptar          := ApoloBtnBmp():Redefine( 552, "Check2_32", , , , ,                 {|| if( lValidaCobro( aGet, @aTmp, @lGenVale, @nDifVale, nSave, oDlg ), ( lCopTik := .f., oDlg:end( IDOK ) ), ) }, oDlg, , {|| lWhen }, .f., .f., "Aceptar sin imprimir [F5]", ,,, .t., "TOP", .t., , , .f. )
+      oBtnInsertarCobro    := ApoloBtnBmp():Redefine( 554, "gc_money2_plus_32", , , , ,            {|| lAddCobro( @aTmp, oTotDiv, oBrwPgo ) }, oDlg, , {|| lWhen }, .f., .f., "Añadir cobro combinado", , , , .t., "TOP", .t., , , .f. )
+      oBtnAceptarRegalo    := ApoloBtnBmp():Redefine( 553, "gc_gift_disk_32", , , , , {|| if( lValidaCobro( aGet, @aTmp, @lGenVale, @nDifVale, nSave, oDlg ), ( lCopTik := .t., lRegalo := .t., oDlg:end( IDOK ) ), ) }, oDlg, , {|| lWhen }, .f., .f., "Aceptar y ticket regalo", , , , .t., "TOP", .t., , , .f. )
+      oBtnAceptarImprimir  := ApoloBtnBmp():Redefine( IDOK, "gc_printer2_disk_32", , , , ,   {|| if( lValidaCobro( aGet, @aTmp, @lGenVale, @nDifVale, nSave, oDlg ), ( lCopTik := .t., oDlg:end( IDOK ) ), ) }, oDlg, , {|| lWhen }, .f., .f., "Aceptar e imprimir [F6]", ,,, .t., "TOP", .t., , , .f. )
+      oBtnAceptar          := ApoloBtnBmp():Redefine( 552, "gc_check_32", , , , ,                 {|| if( lValidaCobro( aGet, @aTmp, @lGenVale, @nDifVale, nSave, oDlg ), ( lCopTik := .f., oDlg:end( IDOK ) ), ) }, oDlg, , {|| lWhen }, .f., .f., "Aceptar sin imprimir [F5]", ,,, .t., "TOP", .t., , , .f. )
       oBtnCancelar         := ApoloBtnBmp():Redefine( IDCANCEL, "Del32", , , , ,                {|| oDlg:end() }, oDlg, , , .f., .f., "Cancelar", , , , .t., "TOP", .t., , , .f. )
 
       /*
@@ -18437,7 +18437,7 @@ Static Function AsistenteDevolucionTiket( aTmp, aGet, nMode, lDevolucion )
 
       REDEFINE BITMAP oBmp ;
          ID          500 ;
-         RESOURCE    "Cashier_delete_48_alpha" ;
+         RESOURCE    "gc_cash_register_delete_48" ;
          TRANSPARENT ;
          OF          oDlg
 
@@ -19119,7 +19119,7 @@ Static Function cInformeDevolucionTpv( dbfTmp )
 
       REDEFINE BITMAP oBmp ;
          ID          500 ;
-         RESOURCE    "Cashier_delete_48_alpha" ;
+         RESOURCE    "gc_cash_register_delete_48" ;
          TRANSPARENT ;
          OF          oDlg
 

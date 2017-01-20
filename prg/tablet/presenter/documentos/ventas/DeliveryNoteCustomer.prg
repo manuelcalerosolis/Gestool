@@ -195,10 +195,22 @@ METHOD insertLineDocument( oLine )
    oLine:setNumeroLinea( lineNumber )
 
    oLine:setPosicionImpresion( lineNumber )
+<<<<<<< HEAD
    oLine:setSerieMaster( ::hDictionaryMaster )
    // oDocumentLine:setNumeroMaster( ::hDictionaryMaster )
    // oDocumentLine:setSufijoMaster( ::hDictionaryMaster )
    // oDocumentLine:setAlmacenMaster( ::hDictionaryMaster )
+=======
+
+   oLine:setSerie( ( D():AlbaranesClientes( ::nView ) )->cSerAlb )
+   oLine:setNumero( ( D():AlbaranesClientes( ::nView ) )->nNumAlb )
+   oLine:setSufijo( ( D():AlbaranesClientes( ::nView ) )->cSufAlb )
+
+   oLine:setStore( ( D():AlbaranesClientes( ::nView ) )->cCodAlm )
+
+   oLine:setFechaDocumento( ( D():AlbaranesClientes( ::nView ) )->dFecAlb )
+   oLine:setHoraDocumento( ( D():AlbaranesClientes( ::nView ) )->tFecAlb )
+>>>>>>> origin/master
 
    // asginar a la linea el id del albaran
 

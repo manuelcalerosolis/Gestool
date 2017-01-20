@@ -675,7 +675,7 @@ METHOD appendLineDeliveryNoteCustomer( oLine, nLine, currentDocument )
 
    ::DeliveryNoteCustomer:insertLineDocument( oLine )
 
-   // recalcular totales del documento
+   ( D():appendHashRecord( oLine:hDictionary, ::getDataTableLine(), ::nView ) ) // recalcular totales del documento
 
    // ::DeliveryNoteCustomer:onPreEnd()
 
