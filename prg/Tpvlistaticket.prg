@@ -586,7 +586,7 @@ METHOD OnClickFiltro() CLASS TpvListaTicket
 
       REDEFINE BITMAP ::oBmpGeneral ;
          ID       500 ;
-         RESOURCE "funnel_48_alpha"  ;
+         RESOURCE "gc_funnel_48"  ;
          TRANSPARENT ;
          OF       ::oDlgFiltro
 
@@ -1155,7 +1155,7 @@ METHOD StartVales() CLASS TpvListaTicket
 
       oGrupo                  := TDotNetGroup():New( oCarpeta, 186,  "Selección", .f., , "gc_check_32" )
          oBoton               := TDotNetButton():New( 60, oGrupo,    "gc_check_32",               "Seleccionar",        1, {|| ::OnClickSelectVales() }, , , .f., .f., .f. )
-         oBoton               := TDotNetButton():New( 60, oGrupo,    "Checks_32",               "Todos",              2, {|| ::OnClickSelectTodosVales() }, , , .f., .f., .f. )
+         oBoton               := TDotNetButton():New( 60, oGrupo,    "gc_checks_32",               "Todos",              2, {|| ::OnClickSelectTodosVales() }, , , .f., .f., .f. )
          oBoton               := TDotNetButton():New( 60, oGrupo,    "Del32",                   "Ninguno",            3, {|| ::OnClickSelectNingunoVales() }, , , .f., .f., .f. )
 
       oGrupo                  := TDotNetGroup():New( oCarpeta, 366,  "Seleción de tickets", .f. )

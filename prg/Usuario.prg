@@ -1418,7 +1418,7 @@ Function BrwUserTactil( oGet, dbfUsr, oGet2 )
 
       REDEFINE BITMAP oBmpGeneral ;
         ID        500 ;
-        RESOURCE  "Users_48_alpha" ;
+        RESOURCE  "gc_users3_48" ;
         TRANSPARENT ;
         OF        oDlg
 

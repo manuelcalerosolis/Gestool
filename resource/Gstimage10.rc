@@ -4,9 +4,6 @@
 #include <commctrl.h>
 #include <richedit.h>
 
-WEBTOPBLACK BITMAP "..\\bmp\\MkTopBlack.bmp"
-WEBTOPBLUE BITMAP "..\\bmp\\MkTopBlue.bmp"
-WEBTOPRED BITMAP "..\\bmp\\MkTopRed.bmp"
 
 AssDocAuto BITMAP "..\\bmp\\AssDocAuto.bmp"
 AssCambioIva BITMAP "..\\bmp\\AssCambioIva.bmp"

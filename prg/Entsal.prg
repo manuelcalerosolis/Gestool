@@ -553,7 +553,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfEntT, oBrw, bWhen, bValid, nMode )
          ON HELP  ( aGet[ _CRUTDOC ]:cText( cGetFile( 'Doc ( *.* ) | ' + '*.*', 'Seleccione el nombre del fichero' ) ) ) ;
          OF       oDlg
 
-      TBtnBmp():ReDefine( 161, "gear_run_16",,,,,{|| ShellExecute( oDlg:hWnd, "open", Rtrim( aTmp[ _CRUTDOC ] ) ) }, oDlg, .f., , .f., )
+      TBtnBmp():ReDefine( 161, "gc_gearwheel_16",,,,,{|| ShellExecute( oDlg:hWnd, "open", Rtrim( aTmp[ _CRUTDOC ] ) ) }, oDlg, .f., , .f., )
 
       REDEFINE GET aGet[ _CTURENT ] VAR aTmp[ _CTURENT ];
          ID       170 ;

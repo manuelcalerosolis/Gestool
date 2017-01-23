@@ -13,19 +13,6 @@ ALPHA BITMAP "..\\bmp\\Alpha.bmp"
 GESTOOL BITMAP "..\\bmp\\gestool.bmp"
 
 
-SHAPE_SQUARE_SHOPPINGBASKET_FULL_160 BITMAP "..\\bmp\\shape_square_shoppingbasket_full_160.bmp"
-
-SHAPE_SQUARE_ADDRESS_BOOK2_160 BITMAP "..\\bmp\\shape_square_address_book2_160.bmp"
-
-SHOPPINGBASKET_FULL_160 BITMAP "..\\bmp\\shoppingbasket_full_160.bmp"
-
-ADDRESS_BOOK2_160 BITMAP "..\\bmp\\address_book2_160.bmp"
-
-CASHIER_160 BITMAP "..\\bmp\\Cashier_160.bmp"
-
-WHEEL_160 BITMAP "..\\bmp\\Wheel_160.bmp"
-
-
 NAVIGATE_LEFT BITMAP "..\\bmp\\navigate_left.bmp"
 
 NAVIGATE_LEFT2 BITMAP "..\\bmp\\navigate_left2.bmp"
@@ -80,6 +67,5 @@ ZOOM_IN_16 BITMAP "..\\bmp\\zoom_in_16.bmp"
 ZOOM_IN_32 BITMAP "..\\bmp\\zoom_in_32.bmp"
 
 ZOOM_IN_48 BITMAP "..\\bmp\\zoom_in_48.bmp"
-
 
 SHOPPING_BAG_48 BITMAP "..\\bmp\\shopping_bag_48.bmp"

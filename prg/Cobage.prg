@@ -1410,7 +1410,7 @@ METHOD AsistenteImportarFacturas() CLASS TCobAge
 
    REDEFINE BITMAP oBmp ;
       ID       500 ;
-      RESOURCE "Bookkeeper_alpha_48" ;
+      RESOURCE "gc_briefcase2_agent_48" ;
       TRANSPARENT ;
       OF       oDlg
 
