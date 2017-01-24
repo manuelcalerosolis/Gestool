@@ -7550,7 +7550,7 @@ Static Function TestConexionDatabase()
       msgStop( "Servidor : "  + TComercio:TComercioConfig:getMySqlServer()   + CRLF + ;
                "User : "      + TComercio:TComercioConfig:getMySqlUser()     + CRLF + ;
                "Database : "  + TComercio:TComercioConfig:getMySqlDatabase() + CRLF + ;
-               "Port : "      + str( TComercio:TComercioConfig:getMySqlPort() ),;
+               "Port : "      + alltrim( str( TComercio:TComercioConfig:getMySqlPort() ) ),;
                "Error al conectar con la base de datos" ) 
    end if     
 

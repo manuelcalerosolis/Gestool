@@ -430,7 +430,7 @@ FUNCTION ControlAplicacion()
    oSayAlquiler   := Array( 8 )
    cSayAlquiler   := Array( 8 )
 
-   DEFINE DIALOG oDlg RESOURCE "GETSERIALNO" TITLE "Sistema de protección"
+   DEFINE DIALOG oDlg RESOURCE "GetSerialNo" TITLE "Sistema de protección"
 
    REDEFINE BITMAP oBmpPerpetua ;
       RESOURCE    "gc_certificate_32" ;

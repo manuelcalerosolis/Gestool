@@ -134,7 +134,7 @@ METHOD Resource() CLASS AccessCode
       OF             oDlg
 
    REDEFINE BITMAP   oBmpLogo ;
-      FILE           ( FullCurDir() + "Bmp\Gestoollogo.bmp" ) ;
+      FILE           ( FullCurDir() + "Bmp\GestoolLogo.bmp" ) ;
       ID             610 ;
       OF             oDlg
 
