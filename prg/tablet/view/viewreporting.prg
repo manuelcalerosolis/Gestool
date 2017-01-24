@@ -245,7 +245,11 @@ METHOD loadHashReportCliente() CLASS ViewReporting
                         {  "cReportType" => "Facturas de clientes",;
                            "cReportDirectory" => cPatReporting() + "Clientes\Ventas\Facturas de clientes",;
                            "cReportName" => "Diario facturas tablet",;
-                           "cReportFile" => cPatReporting() + "Clientes\Ventas\Facturas de clientes\Diario facturas tablet.fr3" } }
+                           "cReportFile" => cPatReporting() + "Clientes\Ventas\Facturas de clientes\Diario facturas tablet.fr3" },;
+                        {  "cReportType" => "Ventas",;
+                           "cReportDirectory" => cPatReporting() + "Clientes\Ventas\Ventas",;
+                           "cReportName" => "Diario ventas tablet",;
+                           "cReportFile" => cPatReporting() + "Clientes\Ventas\Ventas\Diario ventas tablet.fr3" } }
 
 Return ( self ) 
 

@@ -4822,7 +4822,7 @@ Function MainTablet()
    INFORME PROVISIONAL*********************************************************
    */
 
-   TGridImage():Build(  {  "nTop"      => {|| GridRow( 12 ) },;
+   /*TGridImage():Build(  {  "nTop"      => {|| GridRow( 12 ) },;
                            "nLeft"     => {|| GridWidth( 11.5, oDlg ) - 64 },;
                            "nWidth"    => 64,;
                            "nHeight"   => 64,;
@@ -4844,13 +4844,13 @@ Function MainTablet()
                            "nHeight"   => 64,;
                            "cResName"  => "gc_package_printer_64",;
                            "bLClicked" => {|| Informe3() },;
-                           "oWnd"      => oDlg } )
+                           "oWnd"      => oDlg } )*/
 
    /*
    GALERÍA DE INFORMES*********************************************************
    */
 
-   TGridImage():Build(  {  "nTop"      => {|| GridRow( 18 ) },;
+   TGridImage():Build(  {  "nTop"      => {|| GridRow( 9 ) },;
                            "nLeft"     => {|| GridWidth( 11.5, oDlg ) - 64 },;
                            "nWidth"    => 64,;
                            "nHeight"   => 64,;
