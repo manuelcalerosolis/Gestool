@@ -1618,8 +1618,20 @@ METHOD InRange( uValue ) CLASS GetRangoSeries
       Return .f.
    end if
 
+   if !( isChar( uValue ) )
+      Return .f.
+   end if 
+
+   uValue         := upper( uValue ) 
+
    if !empty( ::hObjectSerie )
+
+      if !( hb_hhaskey( ::hObjectSerie, uValue ) )
+         Return .f.
+      end if 
+
       value       := hGet( ::hObjectSerie, uValue ):Value()
+   
    end if
 
 return ( value )
