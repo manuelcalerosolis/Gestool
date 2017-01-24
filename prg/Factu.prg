@@ -4356,12 +4356,6 @@ Function cNameVersion()
    if IsNil( cNameVersion )
 
       do case
-         /*
-         case File( FullCurDir() + "dccn" )
-
-            cNameVersion      := "Oido cocina Profesional"
-         */
-
          case File( FullCurDir() + "scmmrc" )
 
             cNameVersion      := "PrestaShop 1.6"
@@ -4388,28 +4382,24 @@ Return ( cNameVersion )
 
 Function cBmpVersion()
 
-   if IsNil( cBmpVersion )
+   if isNil( cBmpVersion )
 
       do case
-         /*case File( FullCurDir() + "dccn" )
+         case file( FullCurDir() + "scmmrc" )
 
-            cBmpVersion      := FullCurDir() + "Bmp\Oidococina.bmp"*/
+            cBmpVersion      := "gc_GestoolPrestashop"
 
-         case File( FullCurDir() + "scmmrc" )
+         case file( FullCurDir() + "prfsnl" )
 
-            cBmpVersion      := FullCurDir() + "Bmp\gc_Gestoolprestashop.bmp"
+            cBmpVersion      := "GestoolPro"
 
-         case File( FullCurDir() + "prfsnl" )
+         case file( FullCurDir() + "stndrd" )
 
-            cBmpVersion      := FullCurDir() + "Bmp\GestoolPro.bmp"
-
-         case File( FullCurDir() + "stndrd" )
-
-            cBmpVersion      := FullCurDir() + "Bmp\GestoolStandard.bmp"
+            cBmpVersion      := "GestoolStandard"
 
          otherwise
 
-            cBmpVersion      := FullCurDir() + "Bmp\GestoolLite.bmp"
+            cBmpVersion      := "GestoolLite"
 
       end case
 

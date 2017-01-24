@@ -129,8 +129,8 @@ METHOD Resource() CLASS AccessCode
    DEFINE DIALOG oDlg RESOURCE "Bienvenidos" TITLE "Bienvenidos a " + __GSTROTOR__ + Space( 1 ) + __GSTVERSION__ + " - " + __GSTFACTORY__ BRUSH ::oBrush ICON oIcoApp
 
    REDEFINE BITMAP   oBmpVersion ;
-      FILE           cBmpVersion() ;
       ID             600 ;
+      RESOURCE       cBmpVersion() ;
       OF             oDlg
 
    REDEFINE BITMAP   oBmpLogo ;

@@ -1518,15 +1518,15 @@ METHOD AddFacturaCliente( cCodigoCliente ) CLASS TFastVentasClientes
    local oError
    local oBlock
    
-   oBlock               := ErrorBlock( {| oError | ApoloBreak( oError ) } )
-   BEGIN SEQUENCE
+   //oBlock               := ErrorBlock( {| oError | ApoloBreak( oError ) } )
+   //BEGIN SEQUENCE
    
       ::InitFacturasClientes()
 
       ::oFacCliT:OrdSetFocus( "dFecFac" )
       ::oFacCliL:OrdSetFocus( "nNumFac" )
 
-   // filtros para la cabecera------------------------------------------------
+      // filtros para la cabecera----------------------------------------------
    
       ::cExpresionHeader          := 'Field->dFecFac >= Ctod( "' + Dtoc( ::dIniInf ) + '" ) .and. Field->dFecFac <= Ctod( "' + Dtoc( ::dFinInf ) + '" )'
       if !empty( ::oGrupoSerie )
@@ -1634,13 +1634,10 @@ METHOD AddFacturaCliente( cCodigoCliente ) CLASS TFastVentasClientes
 
       ::oFacCliT:IdxDelete( cCurUsr(), GetFileNoExt( ::oFacCliT:cFile ) )
    
-   RECOVER USING oError
-
-      msgStop( ErrorMessage( oError ), "Imposible añadir facturas de clientes" )
-
-   END SEQUENCE
-
-   ErrorBlock( oBlock )
+   // RECOVER USING oError
+   //    msgStop( ErrorMessage( oError ), "Imposible añadir facturas de clientes" )
+   // END SEQUENCE
+   // ErrorBlock( oBlock )
    
 RETURN ( Self )
 
@@ -2466,37 +2463,21 @@ RETURN nil
 METHOD loadValuesExtraFields() CLASS TFastVentasClientes
 
    local cField
-   local Valor
+   local uValor
 
-   if isArray( ::aExtraFields ) .and. Len( ::aExtraFields ) != 0
+   if isArray( ::aExtraFields ) .and. len( ::aExtraFields ) != 0
 
       for each cField in ::aExtraFields
 
-         Valor             := ::oCamposExtra:valueExtraField( cField[ "código" ], ::oDbf:cSerDoc + Padr( ::oDbf:cNumDoc, 9 ) + ::oDbf:cSufDoc, cField )
+         uValor             := ::oCamposExtra:valueExtraField( cField[ "código" ], ::oDbf:cSerDoc + Padr( ::oDbf:cNumDoc, 9 ) + ::oDbf:cSufDoc, cField )
 
-         do case         
-            case cField[ "tipo" ] == 2
-               Valor       := Val( Valor )
-
-            case cField[ "tipo" ] == 4
-
-               if Empty( Valor )
-                  Valor    := .f.
-               else
-                  Valor    := ( AllTrim( Valor ) == "si" )
-               end if
-
-         end case
-
-         ::oDbf:FieldPutByName(  "fld" + cField[ "código" ], Valor )
-
-         ::oDbf:fieldput( fieldpos( "fld" + cField[ "código" ] ), Valor )
+         ::oDbf:fieldPutByName( "fld" + cField[ "código" ], uValor )
 
       next
 
    end if
 
-return nil
+Return nil
 
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//

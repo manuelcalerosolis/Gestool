@@ -602,25 +602,46 @@ Return ( cPict )
 
 METHOD valueExtraField( cCampo, cClave, cField ) CLASS TDetCamposExtra
 
-   local nRec              := ::oDbf:Recno()
-   local nOrdAnt           := ::oDbf:OrdSetFocus( "cTotClave" )
-   local cClavePrincipal   := ""
-   local valueExtraField   := ""
+   local nRec                 := ::oDbf:recno()
+   local nOrdAnt              := ::oDbf:ordsetfocus( "cTotClave" )
+   local cClavePrincipal      := ""
+   local valueExtraField  
 
-   cClavePrincipal         := hGet( DOCUMENTOS_ITEMS, ::TipoDocumento ) + cCampo + Padr( cClave, 20 )
+   cClavePrincipal            := hGet( DOCUMENTOS_ITEMS, ::TipoDocumento ) + cCampo + Padr( cClave, 20 )
 
    if ::oDbf:Seek( cClavePrincipal )
+      valueExtraField         := ::oDbf:cValor
+   end if 
 
-      if cField[ "tipo" ] == 2
-         valueExtraField      := Val( ::oDbf:cValor )
-      else
-         valueExtraField      := ::oDbf:cValor
-      end if
+   do case
+      case cField[ "tipo" ] == 2
 
-   end if
+         if isnil( valueExtraField )
+            valueExtraField   := 0
+         else
+            valueExtraField   := val( valueExtraField )
+         end if 
 
-   ::oDbf:OrdSetFocus( nOrdAnt )
-   ::oDbf:GoTo( nRec )
+      case cField[ "tipo" ] == 3
+         
+         if isnil( valueExtraField )
+            valueExtraField   := ctod( "" )
+         else
+            valueExtraField   := ctod( valueExtraField )
+         end if 
+
+      case cField[ "tipo" ] == 4
+
+         if isnil( valueExtraField )
+            valueExtraField   := .f.
+         else
+            valueExtraField   := ( alltrim( valueExtraField ) == "si" )
+         end if
+
+   end case
+
+   ::oDbf:ordsetfocus( nOrdAnt )
+   ::oDbf:goto( nRec )
 
 Return ( valueExtraField )
 

@@ -4326,16 +4326,15 @@ RETURN ( Self )
 METHOD loadValuesExtraFields() CLASS TFastVentasArticulos
 
    local cField
-   local Valor
+   local uValor
 
-   if isArray( ::aExtraFields ) .and. Len( ::aExtraFields ) != 0
+   if isArray( ::aExtraFields ) .and. len( ::aExtraFields ) != 0
 
       for each cField in ::aExtraFields
 
-         ::oDbf:FieldPutByName(  "fld" + cField[ "código" ],;
-                                 ::oCamposExtra:valueExtraField( cField[ "código" ], ::oDbf:cCodArt, cField ) )
+         uValor             := ::oCamposExtra:valueExtraField( cField[ "código" ], ::oDbf:cSerDoc + Padr( ::oDbf:cNumDoc, 9 ) + ::oDbf:cSufDoc, cField )
 
-         ::oDbf:fieldput( fieldpos( "fld" + cField[ "código" ] ), ::oCamposExtra:valueExtraField( cField[ "código" ], ::oDbf:cCodArt, cField ) )
+         ::oDbf:fieldPutByName( "fld" + cField[ "código" ], uValor )
 
       next
 
