@@ -3129,8 +3129,8 @@ Function CreateAcceso( oWnd )
    oItem:cMessage       := 'Galería de informes'
    oItem:bAction        := {|| RunReportGalery() }
    oItem:cId            := "01119"
-   oItem:cBmp           := "gc_printer2_16"
-   oItem:cBmpBig        := "gc_printer2_32"
+   oItem:cBmp           := "gc_cabinet_open_16"
+   oItem:cBmpBig        := "gc_cabinet_open_32"
    oItem:lShow          := .f.
 
    oGrupo               := TGrupoAcceso()
@@ -4770,18 +4770,6 @@ Function MainTablet()
                            "cResName"  => "gc_door_open_64",;
                            "bLClicked" => {|| oDlg:End() },;
                            "oWnd"      => oDlg } )
-/*
-   TGridUrllink():Build({  "nTop"      => {|| GridRow( 3 ) },;
-                           "nLeft"     => {|| GridWidth( 10, oDlg ) },;
-                           "cURL"      => "Salir",;
-                           "oWnd"      => oDlg,;
-                           "oFont"     => oGridFont(),;
-                           "lPixel"    => .t.,;
-                           "nClrInit"  => nGridColor(),;
-                           "nClrOver"  => nGridColor(),;
-                           "nClrVisit" => nGridColor(),;
-                           "bAction"   => {|| oDlg:End() } } )
-*/
    
    //----------------Pedidos de clientes
 
@@ -4854,7 +4842,7 @@ Function MainTablet()
                            "nLeft"     => {|| GridWidth( 11.5, oDlg ) - 64 },;
                            "nWidth"    => 64,;
                            "nHeight"   => 64,;
-                           "cResName"  => "gc_printer_64",;
+                           "cResName"  => "gc_cabinet_open_64",;
                            "bLClicked" => {|| Reporting():New():Resource() },;
                            "oWnd"      => oDlg } )
 
