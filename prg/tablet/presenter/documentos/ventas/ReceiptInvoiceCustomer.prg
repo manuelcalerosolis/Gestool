@@ -133,7 +133,7 @@ METHOD onPreSaveEdit() CLASS ReceiptInvoiceCustomer
    */
 
    hSet( ::oSender:hDictionaryMaster, "LogicoCobrado", ( ::oViewEdit:cCbxEstado == "Cobrado" ) )
-   hSet( ::oSender:hDictionaryMaster, "FechaCobro", if( ::oViewEdit:cCbxEstado == "Cobrado", Date(), "" ) )
+   hSet( ::oSender:hDictionaryMaster, "FechaCobro", if( ::oViewEdit:cCbxEstado == "Cobrado", Date(), cToD( "" ) ) )
    
    hSet( ::oSender:hDictionaryMaster, "FechaCreacion", Date() )
    hSet( ::oSender:hDictionaryMaster, "HoraCreacion", Time() )
@@ -178,7 +178,10 @@ METHOD onPostSaveEdit() CLASS ReceiptInvoiceCustomer
    ( D():FacturasClientes( ::nView ) )->( dbGoTo( nRec ) )
    
    ::oViewSearchNavigator:changeComboboxSearch()
-   ::FilterTable( ::oViewSearchNavigator:oSayFilter:cCaption )
+   
+   if !Empty( ::oViewSearchNavigator:oSayFilter )
+      ::FilterTable( ::oViewSearchNavigator:oSayFilter:cCaption )
+   end if
 
 Return ( .t. )
 
@@ -253,7 +256,7 @@ METHOD addReciboDiferencia( nImporteRecibo ) CLASS ReceiptInvoiceCustomer
    ( ::getDataTable() )->cCodCli    := aTabla[ ( ::getDataTable() )->( fieldpos( "cCodCli" ) ) ]
    ( ::getDataTable() )->cNomCli    := aTabla[ ( ::getDataTable() )->( fieldpos( "cNomCli" ) ) ]
    ( ::getDataTable() )->cCodAge    := aTabla[ ( ::getDataTable() )->( fieldpos( "cCodAge" ) ) ] 
-   ( ::getDataTable() )->dEntrada   := Ctod( "" )
+   //( ::getDataTable() )->dEntrada   := Ctod( "" )
    ( ::getDataTable() )->nImporte   := nImporteRecibo
    ( ::getDataTable() )->nImpCob    := nImporteRecibo
    ( ::getDataTable() )->cDescrip   := "Recibo nº" + AllTrim( str( nCount ) ) + " de factura " + if( !empty( aTabla[ ( ::getDataTable() )->( fieldpos( "cTipRec" ) ) ] ), "rectificativa ", "" ) + aTabla[ ( ::getDataTable() )->( fieldpos( "cSerie" ) ) ] + '/' + AllTrim( str( aTabla[ ( ::getDataTable() )->( fieldpos( "nNumFac" ) ) ] ) ) + '/' + aTabla[ ( ::getDataTable() )->( fieldpos( "cSufFac" ) ) ]

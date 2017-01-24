@@ -102,7 +102,7 @@ METHOD ProcessLiquidateReceipt( nEntregado ) CLASS LiquidateReceipt
 
                if dbLock( D():FacturasClientesCobros( ::nView ) )
                   ( D():FacturasClientesCobros( ::nView ) )->lCobrado   := .t.
-                  ( D():FacturasClientesCobros( ::nView ) )->dEntrada   := GetSysDate()
+                  ( D():FacturasClientesCobros( ::nView ) )->dEntrada   := Date()
                   ( D():FacturasClientesCobros( ::nView ) )->( dbUnLock() )
                end if
                

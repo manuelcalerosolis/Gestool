@@ -7547,7 +7547,11 @@ Static Function TestConexionDatabase()
       msgInfo( "Conexión con base de datos realizada correctamente" )
       TComercio:prestashopDisConnect() 
    else
-      msgStop( "Error al conectar con la base de datos" )
+      msgStop( "Servidor : "  + TComercio:TComercioConfig:getMySqlServer()   + CRLF + ;
+               "User : "      + TComercio:TComercioConfig:getMySqlUser()     + CRLF + ;
+               "Database : "  + TComercio:TComercioConfig:getMySqlDatabase() + CRLF + ;
+               "Port : "      + str( TComercio:TComercioConfig:getMySqlPort() ),;
+               "Error al conectar con la base de datos" ) 
    end if     
 
 Return ( .t. )

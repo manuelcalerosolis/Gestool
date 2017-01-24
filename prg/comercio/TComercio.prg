@@ -2269,10 +2269,12 @@ Return ( cResult )
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 
-METHOD prestaShopConnect()
+METHOD prestaShopConnect( lAlert )
 
    local oDb
-   local lConnect     := .f.
+   local lConnect    := .f.
+
+   DEFAULT lAlert    := .f.
 
    if empty( ::TComercioConfig:getMySqlServer() )
       msgStop( "No se ha definido ningun servidor web" )

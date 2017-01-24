@@ -14,6 +14,8 @@ CLASS ReceiptDocumentSalesViewEdit FROM ViewEdit
 
    METHOD StartDialog()                  INLINE ( Self )
 
+   METHOD defineNumeroRecibo( nRow )
+
    METHOD defineFechaExpedicion( nRow )
    METHOD defineFechaVencimiento( nRow )
 
@@ -33,6 +35,8 @@ CLASS ReceiptDocumentSalesViewEdit FROM ViewEdit
 
    METHOD cTextoEstado()
 
+   METHOD defineAceptarCancelar()
+
 END CLASS
 
 //---------------------------------------------------------------------------//
@@ -46,6 +50,8 @@ Return ( self )
 //---------------------------------------------------------------------------//
 
 METHOD insertControls() CLASS ReceiptDocumentSalesViewEdit
+
+   ::defineNumeroRecibo()
 
    ::defineFechaExpedicion()
    ::defineFechaVencimiento()
@@ -70,7 +76,7 @@ Return ( self )
 
 METHOD defineCliente( nRow ) CLASS ReceiptDocumentSalesViewEdit
 
-   DEFAULT nRow         := 175
+   DEFAULT nRow         := 200
 
    TGridSay():Build(    {  "nRow"      => nRow,;
                            "nCol"      => {|| GridWidth( 0.5, ::oDlg ) },;
@@ -111,7 +117,7 @@ METHOD defineFormaPago( nRow ) CLASS ReceiptDocumentSalesViewEdit
 
    local cSayTextFPago  := retFld( hGet( ::oSender:hDictionaryMaster, "Pago" ), D():FormasPago( ::oSender:nView ) )
 
-   DEFAULT nRow         := 200
+   DEFAULT nRow         := 225
 
 
    TGridSay():Build(    {  "nRow"      => nRow,;
@@ -149,9 +155,49 @@ Return ( self )
 
 //---------------------------------------------------------------------------//
 
-METHOD defineFechaExpedicion( nRow ) CLASS ReceiptDocumentSalesViewEdit
+METHOD defineNumeroRecibo( nRow ) CLASS ReceiptDocumentSalesViewEdit
+
+   local cNumero        := ""
 
    DEFAULT nRow         := 75
+
+   cNumero              := hGet( ::oSender:hDictionaryMaster, "Serie" )
+   cNumero              += "/"
+   cNumero              += AllTrim( Str( hGet( ::oSender:hDictionaryMaster, "Numero" ) ) )
+   cNumero              += "/"
+   cNumero              += hGet( ::oSender:hDictionaryMaster, "Sufijo" )
+   cNumero              += "-"
+   cNumero              += AllTrim( Str( hGet( ::oSender:hDictionaryMaster, "NumeroRecibo" ) ) )
+
+   TGridSay():Build(    {  "nRow"      => nRow,;
+                           "nCol"      => {|| GridWidth( 0.5, ::oDlg ) },;
+                           "bText"     => {|| "Número" },;
+                           "oWnd"      => ::oDlg,;
+                           "oFont"     => oGridFont(),;
+                           "lPixels"   => .t.,;
+                           "nClrText"  => Rgb( 0, 0, 0 ),;
+                           "nClrBack"  => Rgb( 255, 255, 255 ),;
+                           "nWidth"    => {|| GridWidth( 1.5, ::oDlg ) },;
+                           "nHeight"   => 23,;
+                           "lDesign"   => .f. } )
+
+   TGridGet():Build(    {  "nRow"      => nRow,;
+                           "nCol"      => {|| GridWidth( 2.5, ::oDlg ) },;
+                           "bSetGet"   => {|u| if( PCount() == 0, cNumero, cNumero := u ) },;
+                           "oWnd"      => ::oDlg,;
+                           "nWidth"    => {|| GridWidth( 2.5, ::oDlg ) },;
+                           "nHeight"   => 23,;
+                           "lPixels"   => .t.,;
+                           "bWhen"     => {|| .f. },;
+                           "bValid"    => {|| .t. } } )
+
+Return ( self )
+
+//---------------------------------------------------------------------------//
+
+METHOD defineFechaExpedicion( nRow ) CLASS ReceiptDocumentSalesViewEdit
+
+   DEFAULT nRow         := 100
 
    TGridSay():Build(    {  "nRow"      => nRow,;
                            "nCol"      => {|| GridWidth( 0.5, ::oDlg ) },;
@@ -181,7 +227,7 @@ Return ( self )
 
 METHOD defineFechaVencimiento( nRow ) CLASS ReceiptDocumentSalesViewEdit
 
-   DEFAULT nRow         := 100
+   DEFAULT nRow         := 125
 
    TGridSay():Build(    {  "nRow"      => nRow,;
                            "nCol"      => {|| GridWidth( 0.5, ::oDlg ) },;
@@ -211,7 +257,7 @@ Return ( self )
 
 METHOD defineImporte( nRow ) CLASS ReceiptDocumentSalesViewEdit
 
-   DEFAULT nRow         := 150
+   DEFAULT nRow         := 175
 
    TGridSay():Build(    {  "nRow"      => nRow,;
                            "nCol"      => {|| GridWidth( 0.5, ::oDlg ) },;
@@ -244,7 +290,7 @@ METHOD defineAgente( nRow ) CLASS ReceiptDocumentSalesViewEdit
 
    local cSayTextAgente    := cNbrAgent( hGet( ::oSender:hDictionaryMaster, "Agente" ) )
 
-   DEFAULT nRow            := 225
+   DEFAULT nRow            := 250
 
 
    TGridSay():Build(    {  "nRow"      => nRow,;
@@ -284,7 +330,7 @@ Return ( self )
 
 METHOD defineConcepto( nRow ) CLASS ReceiptDocumentSalesViewEdit
 
-   DEFAULT nRow            := 250
+   DEFAULT nRow            := 275
 
 
    TGridSay():Build(    {  "nRow"      => nRow,;
@@ -315,7 +361,7 @@ Return ( self )
 
 METHOD definePagadoPor( nRow ) CLASS ReceiptDocumentSalesViewEdit
 
-   DEFAULT nRow            := 275
+   DEFAULT nRow            := 300
 
    TGridSay():Build(    {  "nRow"      => nRow,;
                            "nCol"      => {|| GridWidth( 0.5, ::oDlg ) },;
@@ -344,7 +390,7 @@ Return ( self )
 
 METHOD defineEstado( nRow ) CLASS ReceiptDocumentSalesViewEdit
 
-   DEFAULT nRow         := 125
+   DEFAULT nRow         := 150
 
    ::cTextoEstado()
 
@@ -381,5 +427,35 @@ METHOD cTextoEstado() CLASS ReceiptDocumentSalesViewEdit
    end if
 
 Return ( nil )
+
+//---------------------------------------------------------------------------//
+
+METHOD defineAceptarCancelar() CLASS ReceiptDocumentSalesViewEdit
+
+   TGridImage():Build(  {  "nTop"      => 5,;
+                           "nLeft"     => {|| GridWidth( 7.5, ::oDlg ) },;
+                           "nWidth"    => 64,;
+                           "nHeight"   => 64,;
+                           "cResName"  => "gc_error_64",;
+                           "bLClicked" => {|| ::oSender:onViewCancel() },;
+                           "oWnd"      => ::oDlg } )
+
+   TGridImage():Build(  {  "nTop"      => 5,;
+                           "nLeft"     => {|| GridWidth( 9.0, ::oDlg ) },;
+                           "nWidth"    => 64,;
+                           "nHeight"   => 64,;
+                           "cResName"  => "gc_printer_ok2_64",;
+                           "bLClicked" => {|| ::oSender:printReceipt(), ::oSender:onViewSave() },;
+                           "oWnd"      => ::oDlg } )
+
+   TGridImage():Build(  {  "nTop"      => 5,;
+                           "nLeft"     => {|| GridWidth( 10.5, ::oDlg ) },;
+                           "nWidth"    => 64,;
+                           "nHeight"   => 64,;
+                           "cResName"  => "gc_ok_64",;
+                           "bLClicked" => {|| ::oSender:onViewSave() },;
+                           "oWnd"      => ::oDlg } )
+
+Return ( self )
 
 //---------------------------------------------------------------------------//

@@ -191,6 +191,7 @@ CLASS TFastVentasArticulos FROM TFastReportInfGen
    METHOD getTotalUnidadesGrupoCliente( cCodGrp, cCodArt )
    METHOD getTotalCajasGrupoCliente( cCodGrp, cCodArt )
    METHOD ValidGrupoCliente( cCodGrp )
+   METHOD getUnidadesVendidas
 
    METHOD summaryReport()
    METHOD acumulaDbf( nRecnoAcumula )
@@ -2191,17 +2192,17 @@ METHOD AddAlbaranCliente( lFacturados ) CLASS TFastVentasArticulos
       ::cExpresionHeader   += ' .and. nFacturado < 3'
    end if
 
-   ::setFilterClientIdHeader()
+   //::setFilterClientIdHeader()
 
-   ::setFilterPaymentId()
+   //::setFilterPaymentId()
 
-   ::setFilterRouteId() 
+   //::setFilterRouteId() 
 
-   ::setFilterTransportId()
+   //::setFilterTransportId()
    
-   ::setFilterUserId()
+   //::setFilterUserId()
 
-   ::setFilterAgent()
+   //::setFilterAgent()
    
    // filtros para las líneas-------------------------------------------------
 
@@ -2211,13 +2212,13 @@ METHOD AddAlbaranCliente( lFacturados ) CLASS TFastVentasArticulos
    ::cExpresionLine        += ' .and. ( Field->nNumAlb >= Val( "' + Rtrim( ::oGrupoNumero:Cargo:getDesde() ) + '" ) .and. Field->nNumAlb <= Val( "' + Rtrim( ::oGrupoNumero:Cargo:getHasta() ) + '" ) )'
    ::cExpresionLine        += ' .and. ( Field->cSufAlb >= "' + Rtrim( ::oGrupoSufijo:Cargo:getDesde() )   + '" .and. Field->cSufAlb <= "' + Rtrim( ::oGrupoSufijo:Cargo:getHasta() ) + '" )'
    
-   ::setFilterProductIdLine()
+   //::setFilterProductIdLine()
 
-   ::setFilterStoreLine()
+   //::setFilterStoreLine()
 
-   ::setFilterFamily() 
+   //::setFilterFamily() 
 
-   ::setFilterGroupFamily()
+   //::setFilterGroupFamily()
 
    // Procesando albaranes-------------------------------------------------
 
@@ -4590,7 +4591,7 @@ METHOD getTotalCajasGrupoCliente( cCodGrp, cCodArt ) CLASS TFastVentasArticulos
       while ::oDbf:cCodArt == Padr( cCodArt, 18 ) .and. !::oDbf:Eof()
 
          if ::ValidGrupoCliente( cCodGrp )
-            nTotal   += ::oDbf:nCajas
+            nTotal   += ::oDbf:nCanEnt
          end if
 
          ::oDbf:Skip()
@@ -4601,6 +4602,58 @@ METHOD getTotalCajasGrupoCliente( cCodGrp, cCodArt ) CLASS TFastVentasArticulos
 
    ::oDbf:OrdSetFocus( nOrdAnt )
    ::oDbf:GoTo( nRec )
+
+Return nTotal
+
+//---------------------------------------------------------------------------//
+
+METHOD getUnidadesVendidas( cCodArt, cCodAlm ) CLASS TFastVentasArticulos
+   
+   local nRecAlb     := ::oDbf:Recno()
+   local nOrdAlb     := ::oDbf:OrdSetFocus( "cStkFast" )
+   local nRecFac     := ::oDbf:Recno()
+   local nOrdFac     := ::oDbf:OrdSetFocus( "cStkFast" )
+   local nTotal      := 0
+
+   if !Empty( ::oAlbCliL )
+
+      if ::oAlbCliL:Seek( cCodArt + cCodAlm + stod( Date() ) )
+
+         while ::oAlbCliL:cRef + ::oAlbCliL:cAlmLin + stod( ::oAlbCliL:dFecAlb ) == cCodArt + cCodAlm + stod( Date() ) .and.;
+               !::oAlbCliL:Eof()
+
+               nTotal += nTotNAlbCli( ::oAlbCliL )
+
+               ::oAlbCliL:Skip()
+
+         end while
+
+      end if
+
+   end if
+
+   if !Empty( ::oFacCliL )
+
+      if ::oFacCliL:Seek( cCodArt + cCodAlm + stod( Date() ) )
+
+         while ::oFacCliL:cRef + ::oFacCliL:cAlmLin + stod( ::oFacCliL:dFecAlb ) == cCodArt + cCodAlm + stod( Date() ) .and.;
+               !::oFacCliL:Eof()
+
+               nTotal += nTotNFacCli( ::oFacCliL )
+
+               ::oFacCliL:Skip()
+
+         end while
+
+      end if
+
+   end if
+
+   ::oDbf:GoTo( nRecAlb )
+   ::oDbf:OrdSetFocus( nOrdAlb )
+
+   ::oDbf:GoTo( nRecFac )
+   ::oDbf:OrdSetFocus( nOrdFac )
 
 Return nTotal
 
