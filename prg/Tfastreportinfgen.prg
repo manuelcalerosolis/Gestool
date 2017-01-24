@@ -842,7 +842,7 @@ METHOD PlayTablet( uParam ) CLASS TFastReportInfGen
 
             ::lResource()
 
-            ::GenReportTablet( IS_SCREEN )
+            ::GenReportTablet( IS_PRINTER )
 
             ::CloseTemporal()
 
