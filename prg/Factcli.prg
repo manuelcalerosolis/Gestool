@@ -19034,7 +19034,8 @@ FUNCTION rxFacCli( cPath, cDriver )
       ( cFacCliL )->( ordCondSet("!Deleted()", {|| !Deleted() } ) )
       ( cFacCliL )->( ordCreate( cPath + "FacCliL.Cdx", "nPosPrint", "cSerie + str( nNumFac ) + cSufFac + Str( nPosPrint )", {|| Field->cSerie + str( Field->nNumFac ) + Field->cSufFac + str( Field->nPosPrint ) } ) )
 
-
+      ( cFacCliL )->( ordCondSet( "!Deleted()", {|| !Deleted() } ) )
+      ( cFacCliL )->( ordCreate( cPath + "FacCliL.Cdx", "cVtaFast", "cRef + cAlmLin + dtos( dFecFac )", {|| Field->cRef + Field->cAlmLin + dtos( Field->dFecFac ) } ) )
 
       ( cFacCliL )->( dbCloseArea() )
 

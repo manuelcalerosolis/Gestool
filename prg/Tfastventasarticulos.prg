@@ -4608,51 +4608,43 @@ Return nTotal
 
 METHOD getUnidadesVendidas( cCodArt, cCodAlm ) CLASS TFastVentasArticulos
    
-   local nRecAlb     := ::oDbf:Recno()
-   local nOrdAlb     := ::oDbf:OrdSetFocus( "cStkFast" )
-   local nRecFac     := ::oDbf:Recno()
-   local nOrdFac     := ::oDbf:OrdSetFocus( "cStkFast" )
+   local nRecAlb     := ::oAlbCliL:Recno()
+   local nOrdAlb     := ::oAlbCliL:OrdSetFocus( "cVtaFast" )
+   local nRecFac     := ::oFacCliL:Recno()
+   local nOrdFac     := ::oFacCliL:OrdSetFocus( "cVtaFast" )
    local nTotal      := 0
 
-   if !Empty( ::oAlbCliL )
+   if ::oAlbCliL:Seek( Padr( cCodArt, 18 ) + Padr( cCodAlm, 16 ) + dtos( GetSysDate() ) )
 
-      if ::oAlbCliL:Seek( cCodArt + cCodAlm + stod( Date() ) )
+      while ::oAlbCliL:cRef + ::oAlbCliL:cAlmLin + dtos( ::oAlbCliL:dFecAlb ) == Padr( cCodArt, 18 ) + Padr( cCodAlm, 16 ) + dtos( GetSysDate() ) .and.;
+            !::oAlbCliL:Eof()
 
-         while ::oAlbCliL:cRef + ::oAlbCliL:cAlmLin + stod( ::oAlbCliL:dFecAlb ) == cCodArt + cCodAlm + stod( Date() ) .and.;
-               !::oAlbCliL:Eof()
+         nTotal += nTotNAlbCli( ::oAlbCliL )
 
-               nTotal += nTotNAlbCli( ::oAlbCliL )
+         ::oAlbCliL:Skip()
 
-               ::oAlbCliL:Skip()
-
-         end while
-
-      end if
+      end while
 
    end if
 
-   if !Empty( ::oFacCliL )
 
-      if ::oFacCliL:Seek( cCodArt + cCodAlm + stod( Date() ) )
+   if ::oFacCliL:Seek( Padr( cCodArt, 18 ) + Padr( cCodAlm, 16 ) + dtos( GetSysDate() ) )
 
-         while ::oFacCliL:cRef + ::oFacCliL:cAlmLin + stod( ::oFacCliL:dFecAlb ) == cCodArt + cCodAlm + stod( Date() ) .and.;
-               !::oFacCliL:Eof()
+      while ::oFacCliL:cRef + ::oFacCliL:cAlmLin + dtos( ::oFacCliL:dFecFac ) == Padr( cCodArt, 18 ) + Padr( cCodAlm, 16 ) + dtos( GetSysDate() ) .and.;
+            !::oFacCliL:Eof()
 
-               nTotal += nTotNFacCli( ::oFacCliL )
+         nTotal += nTotNFacCli( ::oFacCliL )
 
-               ::oFacCliL:Skip()
+         ::oFacCliL:Skip()
 
-         end while
-
-      end if
+      end while
 
    end if
 
-   ::oDbf:GoTo( nRecAlb )
-   ::oDbf:OrdSetFocus( nOrdAlb )
-
-   ::oDbf:GoTo( nRecFac )
-   ::oDbf:OrdSetFocus( nOrdFac )
+   ::oAlbCliL:GoTo( nRecAlb )
+   ::oAlbCliL:OrdSetFocus( nOrdAlb )
+   ::oFacCliL:GoTo( nRecFac )
+   ::oFacCliL:OrdSetFocus( nOrdFac )
 
 Return nTotal
 

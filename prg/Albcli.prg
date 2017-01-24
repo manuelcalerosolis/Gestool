@@ -16474,6 +16474,9 @@ FUNCTION rxAlbCli( cPath, cDriver )
       ( cAlbCliT )->( ordCondSet( "!lFacturado .and. nCtlStk < 2 .and. !Deleted()", {|| !Field->lFacturado .and. Field->nCtlStk < 2 .and. !Deleted() }, , , , , , , , , .t. ) )
       ( cAlbCliT )->( ordCreate( cPath + "AlbCliL.Cdx", "cStkFast", "cRef + cAlmLin + dtos( dFecAlb )", {|| Field->cRef + Field->cAlmLin + dtos( Field->dFecAlb ) } ) )
 
+      ( cAlbCliT )->( ordCondSet( "!lFacturado .and. !Deleted()", {|| !Field->lFacturado .and. !Deleted() } ) )
+      ( cAlbCliT )->( ordCreate( cPath + "AlbCliL.Cdx", "cVtaFast", "cRef + cAlmLin + dtos( dFecAlb )", {|| Field->cRef + Field->cAlmLin + dtos( Field->dFecAlb ) } ) )
+
       ( cAlbCliT )->( dbCloseArea() )
 
    else
