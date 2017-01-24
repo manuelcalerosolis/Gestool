@@ -145,7 +145,7 @@ Source: "c:\fw195\gestool\bmp\gestoollogo.bmp";        DestDir: "{app}\Bmp"; Fla
 Source: "c:\fw195\gestool\bmp\gestoolpro.bmp";         DestDir: "{app}\Bmp"; Flags: ignoreversion
 Source: "c:\fw195\gestool\bmp\gestoollite.bmp";        DestDir: "{app}\Bmp"; Flags: ignoreversion
 Source: "c:\fw195\gestool\bmp\gestoolstandard.bmp";    DestDir: "{app}\Bmp"; Flags: ignoreversion
-Source: "c:\fw195\gestool\bmp\gestoolprestashop.bmp";  DestDir: "{app}\Bmp"; Flags: ignoreversion
+Source: "c:\fw195\gestool\bmp\gc_gestoolprestashop.bmp";  DestDir: "{app}\Bmp"; Flags: ignoreversion
 
 Source: "c:\fw195\gestool\bmp\noimage.bmp";           DestDir: "{app}\Bmp"; Flags: ignoreversion
 Source: "c:\fw195\gestool\bmp\imgfaccli.bmp";         DestDir: "{app}\Bmp"; Flags: ignoreversion

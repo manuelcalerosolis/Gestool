@@ -4397,7 +4397,7 @@ Function cBmpVersion()
 
          case File( FullCurDir() + "scmmrc" )
 
-            cBmpVersion      := FullCurDir() + "Bmp\GestoolPrestashop.bmp"
+            cBmpVersion      := FullCurDir() + "Bmp\gc_Gestoolprestashop.bmp"
 
          case File( FullCurDir() + "prfsnl" )
 
