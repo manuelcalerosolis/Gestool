@@ -49,6 +49,7 @@ METHOD ExecuteReportingArticulo( hInforme ) CLASS Reporting
    local oInf
 
    oInf                    := TFastVentasArticulos():New()
+   oInf:lTabletVersion     := .t.
    oInf:cReportType        := hGet( hInforme, "cReportType" )
    oInf:cReportDirectory   := hGet( hInforme, "cReportDirectory" )
    oInf:cReportName        := hGet( hInforme, "cReportName" )
@@ -69,6 +70,7 @@ METHOD ExecuteReportingCliente( hInforme ) CLASS Reporting
    local oInf
 
    oInf                    := TFastVentasClientes():New()
+   oInf:lTabletVersion     := .t.
    oInf:cReportType        := hGet( hInforme, "cReportType" )
    oInf:cReportDirectory   := hGet( hInforme, "cReportDirectory" )
    oInf:cReportName        := hGet( hInforme, "cReportName" )

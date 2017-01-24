@@ -3620,7 +3620,7 @@ METHOD CargaBrowseFamilias() CLASS TpvTactil
    // Preguntamos si hay menus activos y es no es de acompañamiento---------------
 
    if ::oTpvMenu:lIsMenuActive()
-      aAdd( ::aFamilias, { "Menús", nil, {|| ::CargaMenus() }, "Clipboard_empty_48" } ) 
+      aAdd( ::aFamilias, { "Menús", nil, {|| ::CargaMenus() }, "gc_clipboard_pencil_48" } ) 
    end if 
 
    // Recorremos la tabla y rellenamos el array de familias-----------------------

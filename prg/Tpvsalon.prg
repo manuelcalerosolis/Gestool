@@ -194,9 +194,9 @@ CLASS TTpvSalon
    METHOD CreateItemPanelCurvaDerecha( nRow, nCol )                        INLINE ::CreateItemMesa( nRow, nCol, nil, itmPanelCurvaDerecha, "Navigate_corner_right_64" )
    METHOD CreateItemPanelCurvaIzquierda( nRow, nCol )                      INLINE ::CreateItemMesa( nRow, nCol, nil, itmPanelCurvaIzquierda, "Navigate_corner_right_down_64" )
    
-   METHOD CreateItemGenerico( nRow, nCol, uTooltip )                       INLINE ::CreateItemMesa( nRow, nCol, uTooltip, itmGenerico, "Shape_square_cup_160" )
-   METHOD CreateItemLlevar( nRow, nCol, uTooltip )                         INLINE ::CreateItemMesa( nRow, nCol, uTooltip, itmLlevar, "Shape_square_wheel_160" )
-   METHOD CreateItemEncargar( nRow, nCol, uTooltip )                       INLINE ::CreateItemMesa( nRow, nCol, uTooltip, itmEncargar, "shape_square_address_book2_160" )
+   METHOD CreateItemGenerico( nRow, nCol, uTooltip )                       INLINE ::CreateItemMesa( nRow, nCol, uTooltip, itmGenerico, "gc_cash_register_160" )
+   METHOD CreateItemLlevar( nRow, nCol, uTooltip )                         INLINE ::CreateItemMesa( nRow, nCol, uTooltip, itmLlevar, "gc_motor_scooter_160" )
+   METHOD CreateItemEncargar( nRow, nCol, uTooltip )                       INLINE ::CreateItemMesa( nRow, nCol, uTooltip, itmEncargar, "gc_notebook2_160" )
    METHOD CreateItemNewGenerico( nRow, nCol, uTooltip )                    INLINE ::CreateItemMesa( nRow, nCol, uTooltip, itmNewGenerico, "gc_cash_register_160" )
    METHOD CreateItemNewLlevar( nRow, nCol, uTooltip )                      INLINE ::CreateItemMesa( nRow, nCol, uTooltip, itmNewLlevar, "gc_motor_scooter_160" )
    METHOD CreateItemRecoger( nRow, nCol, uTooltip )                        INLINE ::CreateItemMesa( nRow, nCol, uTooltip, itmRecoger, "gc_shopping_basket_160" )

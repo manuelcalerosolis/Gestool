@@ -526,7 +526,7 @@ Method Dialog()
 
       REDEFINE BITMAP oBmp ;
          ID       500 ;
-         RESOURCE "Funnel_48_alpha" ;
+         RESOURCE "gc_funnel_48" ;
          TRANSPARENT ;
          OF       ::oDlg
 

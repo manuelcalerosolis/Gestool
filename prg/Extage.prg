@@ -640,7 +640,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfExtAgeT, oBrw, bWhen, bValid, nMode )
 
       REDEFINE BITMAP oBmpGeneral ;
          ID       990 ;
-         RESOURCE "estado_depositos_48_alpha" ;
+         RESOURCE "gc_package_pencil_48" ;
          TRANSPARENT ;
          OF       oDlg
 

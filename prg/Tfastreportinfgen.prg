@@ -842,7 +842,7 @@ METHOD PlayTablet( uParam ) CLASS TFastReportInfGen
 
             ::lResource()
 
-            ::GenReportTablet( IS_PRINTER )
+            ::GenReportTablet( IS_SCREEN )
 
             ::CloseTemporal()
 
@@ -1813,7 +1813,7 @@ METHOD SaveReportAs() CLASS TFastReportInfGen
 
       REDEFINE BITMAP   oBmpGeneral ;
          ID             500 ;
-         RESOURCE       "Form_Blue_Add_Alpha_48" ;
+         RESOURCE       "gc_form_plus2_48" ;
          TRANSPARENT ;
          OF             oDlg
 

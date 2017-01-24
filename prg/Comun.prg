@@ -2843,7 +2843,7 @@ Function ApoloMsgNoYes( cText, cTitle, lTactil )
       DEFINE DIALOG oDlg RESOURCE "DeleteRecno" TITLE ( cTitle )
    end if
 
-   // REDEFINE BITMAP oBmp       ID 500         OF oDlg RESOURCE "Symbol_questionmark_48_Alpha" TRANSPARENT
+   // REDEFINE BITMAP oBmp       ID 500         OF oDlg RESOURCE "gc_question_48" TRANSPARENT
 
    REDEFINE SAY PROMPT cText  ID 100         OF oDlg
 

@@ -3129,8 +3129,8 @@ Function CreateAcceso( oWnd )
    oItem:cMessage       := 'Galería de informes'
    oItem:bAction        := {|| RunReportGalery() }
    oItem:cId            := "01119"
-   oItem:cBmp           := "gc_printer2_16"
-   oItem:cBmpBig        := "gc_printer2_32"
+   oItem:cBmp           := "gc_cabinet_open_16"
+   oItem:cBmpBig        := "gc_cabinet_open_32"
    oItem:lShow          := .f.
 
    oGrupo               := TGrupoAcceso()
@@ -4397,7 +4397,7 @@ Function cBmpVersion()
 
          case File( FullCurDir() + "scmmrc" )
 
-            cBmpVersion      := FullCurDir() + "Bmp\GestoolPrestashop.bmp"
+            cBmpVersion      := FullCurDir() + "Bmp\gc_Gestoolprestashop.bmp"
 
          case File( FullCurDir() + "prfsnl" )
 
@@ -4770,18 +4770,6 @@ Function MainTablet()
                            "cResName"  => "gc_door_open_64",;
                            "bLClicked" => {|| oDlg:End() },;
                            "oWnd"      => oDlg } )
-/*
-   TGridUrllink():Build({  "nTop"      => {|| GridRow( 3 ) },;
-                           "nLeft"     => {|| GridWidth( 10, oDlg ) },;
-                           "cURL"      => "Salir",;
-                           "oWnd"      => oDlg,;
-                           "oFont"     => oGridFont(),;
-                           "lPixel"    => .t.,;
-                           "nClrInit"  => nGridColor(),;
-                           "nClrOver"  => nGridColor(),;
-                           "nClrVisit" => nGridColor(),;
-                           "bAction"   => {|| oDlg:End() } } )
-*/
    
    //----------------Pedidos de clientes
 
@@ -4822,7 +4810,7 @@ Function MainTablet()
    INFORME PROVISIONAL*********************************************************
    */
 
-   TGridImage():Build(  {  "nTop"      => {|| GridRow( 12 ) },;
+   /*TGridImage():Build(  {  "nTop"      => {|| GridRow( 12 ) },;
                            "nLeft"     => {|| GridWidth( 11.5, oDlg ) - 64 },;
                            "nWidth"    => 64,;
                            "nHeight"   => 64,;
@@ -4844,17 +4832,17 @@ Function MainTablet()
                            "nHeight"   => 64,;
                            "cResName"  => "gc_package_printer_64",;
                            "bLClicked" => {|| Informe3() },;
-                           "oWnd"      => oDlg } )
+                           "oWnd"      => oDlg } )*/
 
    /*
    GALERÍA DE INFORMES*********************************************************
    */
 
-   TGridImage():Build(  {  "nTop"      => {|| GridRow( 18 ) },;
+   TGridImage():Build(  {  "nTop"      => {|| GridRow( 9 ) },;
                            "nLeft"     => {|| GridWidth( 11.5, oDlg ) - 64 },;
                            "nWidth"    => 64,;
                            "nHeight"   => 64,;
-                           "cResName"  => "gc_printer_64",;
+                           "cResName"  => "gc_cabinet_open_64",;
                            "bLClicked" => {|| Reporting():New():Resource() },;
                            "oWnd"      => oDlg } )
 
