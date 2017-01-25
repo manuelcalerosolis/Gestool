@@ -11987,9 +11987,6 @@ METHOD SetOrder() CLASS TXBrwColumn
                endif
                ::cOrder          := If( ( ::oBrw:cAlias )->( OrdDescend() ), 'D', 'A' )
             else
-
-            msgalert(::cSortOrder, "cSortOrder" )
-
                (::oBrw:cAlias)->( OrdSetFocus( ::cSortOrder, cOrdBag ) )
                ::cOrder          := 'A'
             endif
