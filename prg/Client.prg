@@ -12305,7 +12305,9 @@ Static function getSelectedAtipica( hValue, hSelectedAtipica )
    if isValidAtipicaXY( hValue, hCurrentAtipica ) 
 
       if isBetterAtipica( hValue, hSelectedAtipica, hCurrentAtipica )
+      
          Return ( hCurrentAtipica )
+
       end if
 
    end if 
@@ -12321,14 +12323,14 @@ Static Function isValidAtipicaXY( hValue, hAtipica )
       do case
          case hhaskey( hAtipica, "nCajasGratis" ) .and. hAtipica[ "nCajasGratis" ] != 0
 
-            if hAtipica[ "nUnidadesVender" ] >= hValue[ "nCajas" ] 
-               Return ( .t. ) // nUnidadesGratis( hNewAtipica ) > nUnidadesGratis( hOldAtipica ) )
+            if hAtipica[ "nUnidadesVender" ] <= hValue[ "nCajas" ] 
+               Return ( .t. )
             end if                
 
          case hhaskey( hAtipica, "nUnidadesGratis" ) .and. hAtipica[ "nUnidadesGratis" ] != 0
 
-            if hAtipica[ "nUnidadesVender" ] >= hValue[ "nUnidades" ] 
-               Return ( .t. ) // nUnidadesGratis( hNewAtipica ) > nUnidadesGratis( hOldAtipica ) )
+            if hAtipica[ "nUnidadesVender" ] <= hValue[ "nUnidades" ] 
+               Return ( .t. )
             end if                
 
       end case
@@ -12500,12 +12502,8 @@ Function hAtipica( hValue )
 
             case hSelectedAtipica[ "nTipoXY" ] == 2     // Unidades
 
-               if mod( hValue[ "nCajas" ] * hValue[ "nUnidades" ], hSelectedAtipica[ "nUnidadesVender" ] ) == 0
-
-                  nModOferta                             := Int( Div( hValue[ "nUnidades" ], hSelectedAtipica[ "nUnidadesVender" ] ) )
-                  hSelectedAtipica[ "nUnidadesGratis" ]  := ( hSelectedAtipica[ "nUnidadesVender" ] - hSelectedAtipica[ "nUnidadesCobrar" ] ) * nModOferta
-
-               end if
+               nModOferta                             := Int( Div( hValue[ "nUnidades" ], hSelectedAtipica[ "nUnidadesVender" ] ) )
+               hSelectedAtipica[ "nUnidadesGratis" ]  := ( hSelectedAtipica[ "nUnidadesVender" ] - hSelectedAtipica[ "nUnidadesCobrar" ] ) * nModOferta
 
          end case
 

@@ -11280,6 +11280,7 @@ Static Function saveDetail( aTmp, aClo, aGet, aTmpAlb, dbfTmpLin, oBrw, nMode )
    // Atipicas ----------------------------------------------------------------
 
    hAtipica                   := hAtipica( hValue( aTmp, aTmpAlb ) )
+
    if !empty( hAtipica ) 
       if hhaskey( hAtipica, "nCajasGratis" ) .and. hget( hAtipica, "nCajasGratis" ) != 0
          nCajasGratis         := hget( hAtipica, "nCajasGratis" ) 

@@ -5071,7 +5071,7 @@ static function Informe1()
 
    oInf:end()
 
-RETURN NIL 
+RETURN NIL
 
 //---------------------------------------------------------------------------//
 
