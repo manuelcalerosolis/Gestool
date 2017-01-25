@@ -1874,8 +1874,8 @@ Function CreateAcceso( oWnd )
    oItem:cMessage       := 'Búsqueda especial'
    oItem:bAction        := {|| tSpecialSearchArticulo():New( "01127", oWnd ) }
    oItem:cId            := "01127"
-   oItem:cBmp           := "zoom_in_16"
-   oItem:cBmpBig        := "zoom_in_32"
+   oItem:cBmp           := "gc_zoom_in_16"
+   oItem:cBmpBig        := "gc_zoom_in_32"
    oItem:lShow          := .f.
    oItem:lLittle        := .f.
 
@@ -3179,7 +3179,7 @@ Function CreateAcceso( oWnd )
    oItem:cBmpBig        := "gc_worker2_print_32"
    oItem:lShow          := .f.
 
-   if lAIS()
+   /*if lAIS()
 
    oGrupo               := TGrupoAcceso()
    oGrupo:nBigItems     := 1
@@ -3197,7 +3197,7 @@ Function CreateAcceso( oWnd )
    oItem:cBmpBig        := "gc_document_empty_chart_32"
    oItem:lShow          := .f.
 
-   end if 
+   end if */
 
    // Ayudas-------------------------------------------------------------------
 
@@ -5071,7 +5071,7 @@ static function Informe1()
 
    oInf:end()
 
-RETURN NIL 
+RETURN NIL
 
 //---------------------------------------------------------------------------//
 

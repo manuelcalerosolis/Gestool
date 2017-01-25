@@ -224,10 +224,10 @@ METHOD Resource() CLASS TSPECIALSEARCHARTICULO
    DEFINE DIALOG ::oDlg RESOURCE ::cSelectResource() OF oWnd()
 
       REDEFINE BITMAP oBmp;
-         RESOURCE    "zoom_in_48" ;
+         RESOURCE    "gc_zoom_in_48" ;
          ID          500 ;
          TRANSPARENT ;
-         OF          ::oDlg 
+         OF          ::oDlg
 
       REDEFINE COMBOBOX ::oEstadoMaquina ;
          VAR         ::cEstadoMaquina ;

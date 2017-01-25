@@ -1144,8 +1144,9 @@ Method lValidRegister() CLASS TFastVentasArticulos
       Return .f.
    end if
 
-   //::DesdeHastaGrupoCliente()
-
+   if !::DesdeHastaGrupoCliente()
+      Return .f.
+   end if
 
    if !empty( ::oGrupoArticulo ) .and. !( ::oDbf:cCodArt       >= ::oGrupoArticulo:Cargo:getDesde()         .and. ::oDbf:cCodArt    <= ::oGrupoArticulo:Cargo:getHasta() )
       Return .f.
@@ -1229,13 +1230,17 @@ RETURN ( .t. )
 
 METHOD DesdeHastaGrupoCliente() CLASS TFastVentasArticulos
 
-   if !( ::oDbf:cCodGrp >= ::oGrupoGCliente:Cargo:getDesde() .or. ascan( ::aChildDesdeGrupoCliente, {|cChild| ::oDbf:cCodGrp == cChild } ) != 0 )
-      Return .f.
-   end if 
+   if !Empty( ::oGrupoGCliente )
 
-   if !( ::oDbf:cCodGrp <= ::oGrupoGCliente:Cargo:getHasta() .or. ascan( ::aChildHastaGrupoCliente, {|cChild| ::oDbf:cCodGrp == cChild } ) != 0 )
-      Return .f.
-   end if 
+      if !( ::oDbf:cCodGrp >= ::oGrupoGCliente:Cargo:getDesde() .or. ascan( ::aChildDesdeGrupoCliente, {|cChild| ::oDbf:cCodGrp == cChild } ) != 0 )
+         Return .f.
+      end if 
+
+      if !( ::oDbf:cCodGrp <= ::oGrupoGCliente:Cargo:getHasta() .or. ascan( ::aChildHastaGrupoCliente, {|cChild| ::oDbf:cCodGrp == cChild } ) != 0 )
+         Return .f.
+      end if
+    
+   end if
 
 Return ( .t. )
 
@@ -2192,17 +2197,17 @@ METHOD AddAlbaranCliente( lFacturados ) CLASS TFastVentasArticulos
       ::cExpresionHeader   += ' .and. nFacturado < 3'
    end if
 
-   //::setFilterClientIdHeader()
+   ::setFilterClientIdHeader()
 
-   //::setFilterPaymentId()
+   ::setFilterPaymentId()
 
-   //::setFilterRouteId() 
+   ::setFilterRouteId() 
 
-   //::setFilterTransportId()
+   ::setFilterTransportId()
    
-   //::setFilterUserId()
+   ::setFilterUserId()
 
-   //::setFilterAgent()
+   ::setFilterAgent()
    
    // filtros para las líneas-------------------------------------------------
 
@@ -2212,13 +2217,13 @@ METHOD AddAlbaranCliente( lFacturados ) CLASS TFastVentasArticulos
    ::cExpresionLine        += ' .and. ( Field->nNumAlb >= Val( "' + Rtrim( ::oGrupoNumero:Cargo:getDesde() ) + '" ) .and. Field->nNumAlb <= Val( "' + Rtrim( ::oGrupoNumero:Cargo:getHasta() ) + '" ) )'
    ::cExpresionLine        += ' .and. ( Field->cSufAlb >= "' + Rtrim( ::oGrupoSufijo:Cargo:getDesde() )   + '" .and. Field->cSufAlb <= "' + Rtrim( ::oGrupoSufijo:Cargo:getHasta() ) + '" )'
    
-   //::setFilterProductIdLine()
+   ::setFilterProductIdLine()
 
-   //::setFilterStoreLine()
+   ::setFilterStoreLine()
 
-   //::setFilterFamily() 
+   ::setFilterFamily() 
 
-   //::setFilterGroupFamily()
+   ::setFilterGroupFamily()
 
    // Procesando albaranes-------------------------------------------------
 
@@ -4590,7 +4595,7 @@ METHOD getTotalCajasGrupoCliente( cCodGrp, cCodArt ) CLASS TFastVentasArticulos
       while ::oDbf:cCodArt == Padr( cCodArt, 18 ) .and. !::oDbf:Eof()
 
          if ::ValidGrupoCliente( cCodGrp )
-            nTotal   += ::oDbf:nCanEnt
+            nTotal   += ::oDbf:nCajas
          end if
 
          ::oDbf:Skip()
