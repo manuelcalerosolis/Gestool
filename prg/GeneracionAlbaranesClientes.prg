@@ -579,8 +579,6 @@ Return ( .t. )
 
 METHOD appendDeliveryNoteCustomer( oLine )
 
-   local nSeconds    := seconds()
-
    ::DeliveryNoteCustomer:setAppendMode()
 
    ::DeliveryNoteCustomer:getAppendDocumento()
@@ -593,15 +591,11 @@ METHOD appendDeliveryNoteCustomer( oLine )
 
    ::setCurrentClient( oLine:getHeaderClient() )
 
-   logwrite( str( seconds() - nSeconds ) + " : tiempo empleado en appendDeliveryNoteCustomer" )
-
 Return ( .t. )
 
 //---------------------------------------------------------------------------//
 
 METHOD addDeliveryNoteCustomer( oLine, nLine )
-
-   local nSeconds    := seconds()
 
    local oDeliveryNoteLine
 
@@ -613,15 +607,11 @@ METHOD addDeliveryNoteCustomer( oLine, nLine )
 
    ::DeliveryNoteCustomer:oDocumentLines:addLines( oDeliveryNoteLine )   
 
-   logwrite( str( seconds() - nSeconds ) + " : tiempo empleado en addDeliveryNoteCustomer" )
-
 Return ( .t. )
 
 //---------------------------------------------------------------------------//
 
 METHOD saveDeliveryNoteCustomer( oLine )
-
-   local nSeconds    := seconds()
 
    ::DeliveryNoteCustomer:onPreSaveAppend()
 
@@ -631,15 +621,11 @@ METHOD saveDeliveryNoteCustomer( oLine )
 
    ::DeliveryNoteCustomer:onPreEnd()
 
-   logwrite( str( seconds() - nSeconds ) + " : tiempo empleado en saveDeliveryNoteCustomer" )
-
 Return ( .t. )
 
 //---------------------------------------------------------------------------//
 
 METHOD addLineDeliveryNoteCustomer( oLine, nLine, currentDocument )
-
-   local nSeconds    := seconds()
 
    if !( D():gotoIdAlbaranesClientes( currentDocument, ::nView ) )
       msgStop( "Albarán de cliente " + transIdDocument( currentDocument ) + " no encontrado." )

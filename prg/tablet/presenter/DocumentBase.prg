@@ -15,7 +15,7 @@ END CLASS
 CLASS repositoryDictionary FROM repositoryBase
  
    METHOD getValue( key, uDefault )                            INLINE ( hGetDefault( ::hDictionary, key, uDefault ) )
-   METHOD setValue( key, value )                               INLINE ( hSet( ::hDictionary, key, value ) )
+   METHOD setValue( key, value )                               INLINE ( hSet( ::hDictionary, key, value ), value )
 
 END CLASS
 
@@ -27,7 +27,7 @@ CLASS repositoryAlias FROM repositoryBase
    METHOD getDictionary()                                      VIRTUAL
 
    METHOD getValue( key, uDefault )                            INLINE ( D():getFieldFromAliasDictionary( key, ::getAlias(), ::getDictionary(), uDefault ) )
-   METHOD setValue( key, value )                               INLINE ( hSet( ::hDictionary, key, value ) )
+   METHOD setValue( key, value )                               INLINE ( hSet( ::hDictionary, key, value ), value )
 
 END CLASS
 
@@ -51,14 +51,10 @@ CLASS DocumentBase
    METHOD setDictionary( hDictionary )                         INLINE ( ::hDictionary := hDictionary )
 
    METHOD getValue( key, uDefault )                            INLINE ( hGetDefault( ::hDictionary, key, uDefault ) )
-   METHOD setValue( key, value )                               INLINE ( hSet( ::hDictionary, key, value ) )
+   METHOD setValue( key, value )                               INLINE ( hSet( ::hDictionary, key, value ), value )
 
-   METHOD getValueFromDictionary( hDictionary, cKey )          INLINE ( if ( hHaskey( hDictionary, cKey ),;
-                                                                           ::getValue( cKey, hGet( hDictionary, cKey ) ),;
-                                                                           ) )
-   METHOD setValueFromDictionary( hDictionary, cKey )          INLINE ( if ( hHaskey( hDictionary, cKey ),;
-                                                                           ::setValue( cKey, hGet( hDictionary, cKey ) ),;
-                                                                           ) )
+   METHOD getValueFromDictionary( hDictionary, cKey )          
+   METHOD setValueFromDictionary( hDictionary, cKey )          
 
    METHOD selectLine()                                         INLINE ( ::select := .t. )                           
    METHOD unSelectLine()                                       INLINE ( ::select := .f. )                           
@@ -81,10 +77,10 @@ CLASS DocumentBase
    METHOD getStore()                                           INLINE ( ::getValue( "Almacen" ) )
    METHOD setStore( value )                                    INLINE ( ::setValue( "Almacen", value ) )
 
-   METHOD getFechaDocumento()                                  INLINE ( ::getValue( "FechaDocumento" ) )
-   METHOD setFechaDocumento( value )                           INLINE ( ::setValue( "FechaDocumento", value ) )
-   METHOD getHoraDocumento()                                   INLINE ( ::getValue( "HoraDocumento" ) )
-   METHOD setHoraDocumento( value )                            INLINE ( ::setValue( "HoraDocumento", value ) )
+   METHOD getFecha()                                           INLINE ( ::getValue( "Fecha" ) )
+   METHOD setFecha( value )                                    INLINE ( ::setValue( "Fecha", value ) )
+   METHOD getHora()                                            INLINE ( ::getValue( "Hora" ) )
+   METHOD setHora( value )                                     INLINE ( ::setValue( "Hora", value ) )
 
 END CLASS
 
@@ -117,6 +113,25 @@ METHOD newFromDictionary( oSender, hDictionary ) CLASS DocumentBase
 Return ( Self )
 
 //---------------------------------------------------------------------------//
+
+METHOD getValueFromDictionary( hDictionary, cKey )
+
+   if !( hhaskey( hDictionary, cKey ) )
+      Return ( nil )
+   end if 
+
+Return ( ::getValue( cKey, hGet( hDictionary, cKey ) ) )
+
+//---------------------------------------------------------------------------//
+                                                  
+METHOD setValueFromDictionary( hDictionary, cKey )
+
+   if !( hhaskey( hDictionary, cKey ) )
+      Return ( nil )
+   end if 
+
+Return ( ::setValue( cKey, hGet( hDictionary, cKey ) ) )
+
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
@@ -134,7 +149,7 @@ CLASS AliasDocumentBase FROM DocumentBase
    METHOD getDictionary()                                      VIRTUAL
 
    METHOD getValue( key, uDefault )                            INLINE ( D():getFieldFromAliasDictionary( key, ::getAlias(), ::getDictionary(), uDefault ) )
-   METHOD setValue( key, value )                               INLINE ( hSet( ::hDictionary, key, value ) )
+   METHOD setValue( key, value )                               INLINE ( hSet( ::hDictionary, key, value ), value )
 
    METHOD getRecno()                                           INLINE ( ( ::getAlias() )->( recno() ) )
    METHOD eof()                                                INLINE ( ( ::getAlias() )->( eof() ) )

@@ -805,10 +805,17 @@ METHOD assignLinesDocument() CLASS DocumentsSales
 
       oDocumentLine:setNumeroLinea( nNumeroLinea )
       oDocumentLine:setPosicionImpresion( nNumeroLinea )
+      
       oDocumentLine:setSerieMaster( ::hDictionaryMaster )
       oDocumentLine:setNumeroMaster( ::hDictionaryMaster )
       oDocumentLine:setSufijoMaster( ::hDictionaryMaster )
+
       oDocumentLine:setAlmacenMaster( ::hDictionaryMaster )
+
+      oDocumentLine:setFechaMaster( ::hDictionaryMaster )
+      oDocumentLine:setHoraMaster( ::hDictionaryMaster )
+
+      logwrite( hb_valtoexp( oDocumentLine:hDictionary ) )
 
    next
 

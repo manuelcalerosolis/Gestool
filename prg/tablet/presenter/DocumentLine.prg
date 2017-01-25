@@ -14,6 +14,9 @@ CLASS DocumentLine FROM DocumentBase
    METHOD setSufijoMaster( hDictionary )                       INLINE ( ::setValueFromDictionary( hDictionary, "Sufijo" ) )
    METHOD setAlmacenMaster( hDictionary )                      
 
+   METHOD setFechaMaster( hDictionary )                        INLINE ( ::setValueFromDictionary( hDictionary, "Fecha" ) ) 
+   METHOD setHoraMaster( hDictionary )                         INLINE ( ::setValueFromDictionary( hDictionary, "Hora" ) ) 
+
    METHOD setClient( Client )                                  INLINE ( ::setValue( "Cliente", Client ) )
    METHOD getClient()                                          INLINE ( ::getValue( "Cliente" ) )
 
