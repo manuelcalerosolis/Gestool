@@ -4336,8 +4336,8 @@ METHOD loadValuesExtraFields() CLASS TFastVentasArticulos
    if isArray( ::aExtraFields ) .and. len( ::aExtraFields ) != 0
 
       for each cField in ::aExtraFields
-
-         uValor             := ::oCamposExtra:valueExtraField( cField[ "código" ], ::oDbf:cSerDoc + Padr( ::oDbf:cNumDoc, 9 ) + ::oDbf:cSufDoc, cField )
+         
+         uValor             := ::oCamposExtra:valueExtraField( cField[ "código" ], ::oDbf:cCodArt, cField )
 
          ::oDbf:fieldPutByName( "fld" + cField[ "código" ], uValor )
 
