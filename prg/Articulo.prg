@@ -12151,15 +12151,15 @@ function SynArt( cPath )
             end while
          end if
 
+         /*
+         Marca para proveedor habitual-----------------------------------------
+         */
+
          nOrdAnt        := ( dbfArtPrv )->( OrdSetFocus( "lDefPrv" ) )
 
          if !( dbfArtPrv )->( dbSeek( ( dbfArt )->Codigo ) )
 
-            /*
-            Marca para proveedor habitual
-            */
-
-            if !Empty( ( dbfArt )->cPrvHab )
+            if !empty( ( dbfArt )->cPrvHab )
 
                if !( dbfArtPrv )->( dbSeek( ( dbfArt )->Codigo + ( dbfArt )->cPrvHab ) )
 

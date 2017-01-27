@@ -3671,6 +3671,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, hHash, bValid, nMode )
       REDEFINE BTNBMP oBtnPre ;
          ID       601 ;
          OF       fldGeneral ;
+         WHEN     ( lWhen .and. ( dbfTmpLin )->( ordKeyCount() ) == 0 ) ;
          RESOURCE "gc_notebook_user_16" ;
          NOBORDER ;
          TOOLTIP  "Importar presupuesto" ;
@@ -3679,6 +3680,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, hHash, bValid, nMode )
       REDEFINE BTNBMP oBtnPed ;
          ID       602 ;
          OF       fldGeneral ;
+         WHEN     ( lWhen .and. ( dbfTmpLin )->( ordKeyCount() ) == 0 ) ;
          RESOURCE "gc_clipboard_empty_user_16" ;
          NOBORDER ;
          TOOLTIP  "Importar pedido" ;
@@ -3687,6 +3689,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, hHash, bValid, nMode )
       REDEFINE BTNBMP oBtnAlb ;
          ID       603 ;
          OF       fldGeneral ;
+         WHEN     ( lWhen .and. ( dbfTmpLin )->( ordKeyCount() ) == 0 ) ;
          RESOURCE "gc_document_empty_16" ;
          NOBORDER ;
          TOOLTIP  "Importar albaran" ;
@@ -3695,6 +3698,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, hHash, bValid, nMode )
       REDEFINE BTNBMP oBtnSat ;
          ID       604 ;
          OF       fldGeneral ;
+         WHEN     ( lWhen .and. ( dbfTmpLin )->( ordKeyCount() ) == 0 ) ;
          RESOURCE "gc_power_drill_sat_user_16" ;
          NOBORDER ;
          TOOLTIP  "Importar S.A.T." ;
@@ -3703,7 +3707,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, hHash, bValid, nMode )
       REDEFINE BUTTON oBtnGrp ;
          ID       512 ;
          OF       fldGeneral ;
-         WHEN     ( lWhen .and. empty( aTmp[ _CNUMALB ] ) ) ;
+         WHEN     ( lWhen .and. ( dbfTmpLin )->( ordKeyCount() ) == 0 ) ;
          ACTION   ( GrpAlb( aGet, aTmp, oBrwLin ) )
 
       REDEFINE GET aGet[ _CNUMALB ] VAR aTmp[ _CNUMALB ] ;

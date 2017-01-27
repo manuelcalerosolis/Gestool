@@ -2525,7 +2525,6 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, hHash, bValid, nMode )
 
       oGetTarifa  := comboTarifa():Build( { "idCombo" => 172, "uValue" => aTmp[ _NTARIFA ] } )
       oGetTarifa:Resource( oFld:aDialogs[1] )
-
   
       REDEFINE BTNBMP oBtnPrecio ;
          ID       174 ;
@@ -2534,10 +2533,6 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, hHash, bValid, nMode )
          NOBORDER ;
          ACTION   ( ChangeTarifaCabecera( oGetTarifa:getTarifa(), dbfTmpLin, oBrwLin ) );
          WHEN     ( nMode != ZOOM_MODE .and. ( lUsrMaster() .or. oUser():lCambiarPrecio() ) )
-
-         /*
-         --------------
-         */
 
       REDEFINE GET oRieCli VAR nRieCli;
          ID       173 ;
@@ -3498,6 +3493,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, hHash, bValid, nMode )
       REDEFINE BTNBMP oBtnPre ;
          ID       601 ;
          OF       oFld:aDialogs[1] ;
+         WHEN     ( lWhen .and. ( dbfTmpLin )->( ordKeyCount() ) == 0 ) ;
          RESOURCE "gc_notebook_user_16" ;
          NOBORDER ;
          TOOLTIP  "Importar presupuesto" ;
@@ -3506,6 +3502,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, hHash, bValid, nMode )
       REDEFINE BTNBMP oBtnPed ;
          ID       603 ;
          OF       oFld:aDialogs[1] ;
+         WHEN     ( lWhen .and. ( dbfTmpLin )->( ordKeyCount() ) == 0 ) ;
          RESOURCE "gc_clipboard_empty_user_16" ;
          NOBORDER ;
          TOOLTIP  "Importar pedido" ;
@@ -3514,19 +3511,20 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, hHash, bValid, nMode )
       REDEFINE BUTTON oBtnAgruparPedido;
          ID       512 ;
          OF       oFld:aDialogs[1] ;
-         WHEN     ( nMode == APPD_MODE .and. empty( aTmp[ _CNUMPED ] ) ) ;
+         WHEN     ( lWhen .and. ( dbfTmpLin )->( ordKeyCount() ) == 0 ) ;
          ACTION   ( GrpPed( aGet, aTmp, oBrwLin  ) )
 
       REDEFINE BUTTON ;
          ID       513 ;
          OF       oFld:aDialogs[1] ;
+         WHEN     ( lWhen .and. ( dbfTmpLin )->( ordKeyCount() ) == 0 ) ;
          ACTION   ( importarLineasPedidosClientes( aTmp, aGet, oBrwLin )  )
 
       REDEFINE GET aGet[ _CNUMPED ] VAR aTmp[ _CNUMPED ] ;
          ID       150 ;
          PICTURE  "@R A/XXXXXXXXX/XX" ;
          VALID    ( cPedCli( aGet, aTmp, oBrwLin, oBrwPgo, nMode ), RecalculaTotal( aTmp ), SetDialog( aGet, oSayDias, oSayTxtDias ) );
-         WHEN     ( nMode == APPD_MODE ) ;
+         WHEN     ( lWhen .and. ( dbfTmpLin )->( ordKeyCount() ) == 0 ) ;
          ON HELP  ( BrwPedCli( aGet[ _CNUMPED ], dbfPedCliT, dbfPedCliL, D():Get( "TIva", nView ), D():Get( "Divisas", nView ), D():Get( "FPago", nView ), aGet[ _LIVAINC ] ),;
                     RecalculaTotal( aTmp ) ) ;
          BITMAP   "LUPA" ;
@@ -12040,17 +12038,13 @@ RETURN .t.
 
 Static Function YearComboBoxChange()
 
-   if oWndBrw:oWndBar:lAllYearComboBox()
-      DestroyFastFilter( D():Get( "AlbCliT", nView ) )
-      CreateUserFilter( "", D():Get( "AlbCliT", nView ), .f., , , "all" )
+   if ( oWndBrw:oWndBar:cYearComboBox() != __txtAllYearsFilter__ )
+      oWndBrw:oWndBar:setYearComboBoxExpression( "Year( Field->dFecAlb ) == " + oWndBrw:oWndBar:cYearComboBox() )
    else
-      DestroyFastFilter( D():Get( "AlbCliT", nView ) )
-      CreateUserFilter( "Year( Field->dFecAlb ) == " + oWndBrw:oWndBar:cYearComboBox(), D():Get( "AlbCliT", nView ), .f., , , "Year( Field->dFecAlb ) == " + oWndBrw:oWndBar:cYearComboBox() )
-   end if
+      oWndBrw:oWndBar:setYearComboBoxExpression( "" )
+   end if 
 
-   ( D():Get( "AlbCliT", nView ) )->( dbGoTop() )
-
-   oWndBrw:Refresh()
+   oWndBrw:chgFilter()
 
 Return nil
 
@@ -18535,7 +18529,7 @@ Static Function importarLineasPedidosClientes( aTmp, aGet, oBrwLin )
       return .t.
    end if
 
-   oConversionPedidosClientes    := TConversionPedidosClientes():New()
+   oConversionPedidosClientes    := TConversionPedidosClientes():New( nView, oStock )
 
    if empty( oConversionPedidosClientes )
       Return .f.

@@ -72,8 +72,6 @@ METHOD Dialog()
 
    ACTIVATE DIALOG ::oDlg CENTER
 
-   ::CloseFiles()
-
    oBmp:End()
 
 RETURN ( ::oDlg:nResult == IDOK )

@@ -13409,7 +13409,7 @@ return ( dFecAct )
 // Devuelve el numero de unidades recibidas en albaranes a clientes
 //
 
-function nUnidadesRecibidasAlbaranesClientes( cNumPed, cCodArt, cValPr1, cValPr2, cAlbCliL )
+Function nUnidadesRecibidasAlbaranesClientes( cNumPed, cCodArt, cValPr1, cValPr2, cAlbCliL )
 
    local aStatus     
    local nUnidadades    := 0
@@ -13437,12 +13437,11 @@ function nUnidadesRecibidasAlbaranesClientes( cNumPed, cCodArt, cValPr1, cValPr2
 
    SetStatus( cAlbCliL, aStatus )
 
-return ( nUnidadades )
+Return ( nUnidadades )
 
 //---------------------------------------------------------------------------//
 
-
-function dTmpPdtRec( cRef, cValPr1, cValPr2, dbfPedCliR )
+Function dTmpPdtRec( cRef, cValPr1, cValPr2, dbfPedCliR )
 
    local nRec     
    local dFecAct        := Ctod( "" )
@@ -13468,11 +13467,11 @@ function dTmpPdtRec( cRef, cValPr1, cValPr2, dbfPedCliR )
 
    ( dbfPedCliR )->( dbgoto( nRec ) )
 
-return ( dFecAct )
+Return ( dFecAct )
 
 //-----------------------------------------------------------------------------//
 
-FUNCTION dFecPedCli( cPedCli, cPedCliT )
+Function dFecPedCli( cPedCli, cPedCliT )
 
    local dFecPed  := CtoD("")
 
@@ -13480,7 +13479,7 @@ FUNCTION dFecPedCli( cPedCli, cPedCliT )
       dFecPed  := ( cPedCliT )->dFecPed
    END IF
 
-RETURN ( dFecPed )
+Return ( dFecPed )
 
 //---------------------------------------------------------------------------//
 
