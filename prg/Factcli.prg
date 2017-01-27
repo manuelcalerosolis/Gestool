@@ -266,6 +266,7 @@ Definici-n de la base de datos de lineas de detalle
 #define _NPOSPRINT         102
 #define _CTIPCTR           103
 #define _CTERCTR           104
+#define _NNUMKIT           105
 
 memvar cDbf
 memvar cDbfCol
@@ -488,6 +489,7 @@ static oGetPes
 static oGetDif
 static cPouDiv
 static oMenu
+static oDetMenu
 static cPinDiv
 static cPorDiv
 static cPpvDiv
@@ -574,6 +576,7 @@ static oMeter
 static nMeter              := 1
 
 static oDetCamposExtra
+static oLinDetCamposExtra
 static oCentroCoste
 static aEntidades          := {}
 
@@ -1937,11 +1940,15 @@ STATIC FUNCTION OpenFiles()
       Campos extras------------------------------------------------------------------------
       */
 
-      oDetCamposExtra   := TDetCamposExtra():New()
+      oDetCamposExtra      := TDetCamposExtra():New()
       oDetCamposExtra:OpenFiles()
       oDetCamposExtra:setTipoDocumento( "Facturas a clientes" )
       oDetCamposExtra:setbId( {|| D():FacturasClientesId( nView ) } )
 
+      oLinDetCamposExtra   := TDetCamposExtra():New()
+      oLinDetCamposExtra:OpenFiles()
+      oLinDetCamposExtra:setTipoDocumento( "Lineas de facturas a clientes" )
+      oLinDetCamposExtra:setbId( {|| D():FacturasClientesLineasEscandalloId( nView ) } )
 
       lOpenFiles        := .t.
 
@@ -2378,6 +2385,12 @@ STATIC FUNCTION CloseFiles()
 
    if !empty( oDetCamposExtra )
       oDetCamposExtra:CloseFiles()
+      oDetCamposExtra:End()
+   end if
+
+   if !empty( oLinDetCamposExtra )
+      oLinDetCamposExtra:CloseFiles()
+      oLinDetCamposExtra:End()
    end if
 
    SysRefresh()
@@ -3327,6 +3340,8 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, hHash, bValid, nMode )
          :nWidth              := 250
          :lHide               := .t.
       end with
+
+      oLinDetCamposExtra:addCamposExtra( oBrwLin )
 
       if nMode != ZOOM_MODE
          oBrwLin:bLDblClick   := {|| EdtDeta( oBrwLin, bEdtDet, aTmp, .f., nMode ) }
@@ -5436,16 +5451,19 @@ STATIC FUNCTION EdtDet( aTmp, aGet, cFacCliL, oBrw, lTotLin, cCodArtEnt, nMode, 
    end if
 
    oDlg:AddFastKey( VK_F6, {|| oBtnSer:Click() } )
+   oDlg:AddFastKey( VK_F9, {|| oLinDetCamposExtra:Play( aTmp[ _CSERIE ] + str( aTmp[ _NNUMFAC ] ) + aTmp[ _CSUFFAC ] + Str( aTmp[ _NNUMLIN ] ) + Str( aTmp[ _NNUMKIT ] ) ) } )
 
    oDlg:bStart    := {||   SetDlgMode( aTmp, aGet, oFld, oSayPr1, oSayPr2, oSayVp1, oSayVp2, oStkAct, nMode, oTotalLinea, aTmpFac, oRentabilidadLinea ),;
                            loadGet( aGet[ _CTERCTR ], cTipoCtrCoste ), aGet[ _CTERCTR ]:lValid(),;
                            if( !empty( cCodArtEnt ), aGet[ _CREF ]:lValid(), ), aGet[ _CCODPRV ]:lValid(), aGet[ __CCODOBR ]:lValid() }
 
    ACTIVATE DIALOG oDlg ;
-      ON INIT     ( EdtDetMenu( aGet[ _CREF ], oDlg ) );
+      ON INIT     ( menuEdtDet( aGet[ _CREF ], oDlg, , aTmp[ _CSERIE ] + Str( aTmp[ _NNUMFAC] ) + aTmp[ _CSUFFAC ] + Str( aTmp[ _NNUMLIN] ) + Str( aTmp[ _NNUMKIT] ) ) );
       CENTER
 
-   endDetMenu()
+   if !Empty( oDetMenu )
+      oDetMenu:End()
+   end if
 
    if !empty( bmpImage )
       bmpImage:End()
@@ -13927,7 +13945,7 @@ STATIC FUNCTION EndTrans( aTmp, aGet, oBrw, oBrwDet, oBrwPgo, aNumAlb, nMode, oD
       aTmp[ _NTOTLIQ ]  := nTotCob
       aTmp[ _NTOTPDT ]  := nTotFac - nTotCob
 
-      // Grabamos el registro-----------------------------------------------------
+      // Grabamos el registro--------------------------------------------------
 
       oMsgText( "Guardamos el documento" )
       
@@ -13935,15 +13953,25 @@ STATIC FUNCTION EndTrans( aTmp, aGet, oBrw, oBrwDet, oBrwPgo, aNumAlb, nMode, oD
          oMeter:Set( 4 )
       end if   
 
+      /*
+      Guardamos los campos extra-----------------------------------------------
+      */
+
+      oDetCamposExtra:saveExtraField( aTmp[ _CSERIE ] + Str( aTmp[ _NNUMFAC ] ) + aTmp[ _CSUFFAC ] )
+
+      /*
+      Guardamos definitivamente el registro------------------------------------
+      */
+
       WinGather( aTmp, , D():FacturasClientes( nView ), , nMode )
 
-      // Actualizamos el estado de los Facturas de clientes----------------------
+      // Actualizamos el estado de los Facturas de clientes--------------------
 
       oMsgText( "Actualizamos el estado de los Facturas" )
       
       if !empty( oMeter )
          oMeter:Set( 5 )
-      end if   
+      end if
 
       if len( aNumAlb ) > 0
          for n := 1 to len( aNumAlb )
@@ -19384,6 +19412,7 @@ function aColFacCli()
    aAdd( aColFacCli, { "nPosPrint", "N",   4, 0, "Posición de impresión"                  , "PosicionImpresion",           "", "( cDbfCol )", nil } )
    aAdd( aColFacCli, { "cTipCtr",   "C",  20, 0, "Tipo tercero centro de coste"           , "",                            "", "( cDbfCol )", nil } )
    aAdd( aColFacCli, { "cTerCtr",   "C",  20, 0, "Tercero centro de coste"                , "",                            "", "( cDbfCol )", nil } )
+   aAdd( aColFacCli, { "nNumKit",   "N",   4, 0, "Número de línea de escandallo"          , "",                            "", "( cDbfCol )", nil } )
 
 return ( aColFacCli )
 
@@ -22715,6 +22744,12 @@ Static Function GuardaTemporalesFacCli( cSerFac, nNumFac, cSufFac, dFecFac, tFec
 
          TComercio:appendProductsToUpadateStocks( ( dbfTmpLin )->cRef, nView )
 
+         /*
+         Guardamos los campos extra--------------------------------------------
+         */
+
+         oLinDetCamposExtra:saveExtraField( cSerFac + Str( nNumFac ) + cSufFac + Str( ( dbfTmpLin )->nNumLin ) + Str( ( dbfTmpLin )->nNumKit ) )
+
          dbPass( dbfTmpLin, D():FacturasClientesLineas( nView ), .t., cSerFac, nNumFac, cSufFac )
 
       end if   
@@ -23004,12 +23039,6 @@ Return .t.
 
 //---------------------------------------------------------------------------//
 
-Function getExtraFieldFacturaCliente( cFieldName )
-
-Return ( getExtraField( cFieldName, oDetCamposExtra, D():FacturasClientesId( nView ) ) )
-
-//---------------------------------------------------------------------------//
-
 Static Function lChangeRegIva( aTmp )
 
    lImpuestos     := ( aTmp[ _NREGIVA ] <= 1 )
@@ -23104,5 +23133,41 @@ Static Function importarArticulosScaner()
    end if
 
 Return nil       
+
+//---------------------------------------------------------------------------//
+
+static Function menuEdtDet( oCodArt, oDlg, lOferta, nIdLin )
+
+   DEFAULT lOferta      := .f.
+
+   MENU oDetMenu
+
+      MENUITEM    "&1. Rotor  " ;
+         RESOURCE "Rotor16"
+
+         MENU
+
+            MENUITEM    "&1. Campos extra [F9]";
+               MESSAGE  "Mostramos y rellenamos los campos extra" ;
+               RESOURCE "GC_FORM_PLUS2_16" ;
+               ACTION   ( oLinDetCamposExtra:Play( nIdLin ) )
+
+            MENUITEM    "&2. Modificar artículo";
+               MESSAGE  "Modificar la ficha del artículo" ;
+               RESOURCE "gc_object_cube_16";
+               ACTION   ( EdtArticulo( oCodArt:VarGet() ) );
+
+            MENUITEM    "&3. Informe de artículo";
+               MESSAGE  "Abrir el informe del artículo" ;
+               RESOURCE "Info16";
+               ACTION   ( if( oUser():lNotCostos(), msgStop( "No tiene permiso para ver los precios de costo" ), InfArticulo( oCodArt:VarGet() ) ) );
+
+         ENDMENU
+
+   ENDMENU
+
+   oDlg:SetMenu( oDetMenu )
+
+Return ( oDetMenu )
 
 //---------------------------------------------------------------------------//

@@ -240,6 +240,7 @@ Definici¢n de la base de datos de lineas de detalle
 #define _NPOSPRINT               108
 #define _CTIPCTR                 109
 #define _CTERCTR                 110
+#define _NNUMKIT                 111
 
 /*
 Definici¢n de Array para impuestos
@@ -396,6 +397,7 @@ static dbfHisMov
 static dbfHisMovS
 static dbfEmp
 static oMenu
+static oDetMenu
 static oStock
 static TComercio
 static oTrans
@@ -444,6 +446,7 @@ static oPais
 static Counter
 
 static oDetCamposExtra
+static oLinDetCamposExtra
 
 static oBtnKit
 static oBtnAtp
@@ -1459,7 +1462,6 @@ STATIC FUNCTION OpenFiles()
       USE ( cPatArt() + "ArtCodebar.Dbf" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "CODEBAR", @dbfCodebar ) )
       SET ADSINDEX TO ( cPatArt() + "ArtCodebar.Cdx" ) ADDITIVE
 
-
       USE ( cPatArt() + "ARTKIT.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "ARTTIK", @dbfKit ) )
       SET ADSINDEX TO ( cPatArt() + "ARTKIT.CDX" ) ADDITIVE
 
@@ -1686,6 +1688,10 @@ STATIC FUNCTION OpenFiles()
       oDetCamposExtra:SetTipoDocumento( "Albaranes a clientes" )
       oDetCamposExtra:setbId( {|| D():AlbaranesClientesId( nView ) } )
 
+      oLinDetCamposExtra      := TDetCamposExtra():New()
+      oLinDetCamposExtra:OpenFiles()
+      oLinDetCamposExtra:SetTipoDocumento( "Lineas de albaranes a clientes" )
+      oLinDetCamposExtra:setbId( {|| D():AlbaranesClientesId( nView ) } )
 
    RECOVER USING oError
 
@@ -5147,6 +5153,7 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbf, oBrw, lTotLin, cCodArtEnt, nMode, aTmpA
    end if
 
    oDlg:AddFastKey( VK_F6,             {|| oBtnSer:Click() } )
+   oDlg:AddFastKey( VK_F9,             {|| oLinDetCamposExtra:Play( aTmp[ _CSERALB ] + Str( aTmp[ _NNUMALB ] ) + aTmp[ _CSUFALB ] + Str( aTmp[ _NNUMLIN ] ) + Str( aTmp[ _NNUMKIT ] ) ) } )
 
    // Start --------------------------------------------------------------------
 
@@ -5156,10 +5163,12 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbf, oBrw, lTotLin, cCodArtEnt, nMode, aTmpA
                            lCalcDeta( aTmp, aTmpAlb, nDouDiv, oTotal, oRentLin, cCodDiv ) }
 
    ACTIVATE DIALOG oDlg ;
-      ON INIT     ( EdtDetMenu( aGet[ _CREF ], oDlg ) );
+      ON INIT     ( menuEdtDet( aGet[ _CREF ], oDlg, , aTmp[ _CSERALB ] + Str( aTmp[ _NNUMALB ] ) + aTmp[ _CSUFALB ] + Str( aTmp[ _NNUMLIN ] ) + Str( aTmp[ _NNUMKIT ] ) ) );
       CENTER
 
-   EndDetMenu()
+   if !Empty( oDetMenu )
+      oDetMenu:End()
+   end if
 
 RETURN ( oDlg:nResult == IDOK )
 
@@ -16803,6 +16812,7 @@ Function aColAlbCli()
    aAdd( aColAlbCli, { "nPosPrint", "N",  4, 0, "Posición de impresión",                           "PosicionImpresion",             "", "( cDbfCol )", nil } )
    aAdd( aColAlbCli, { "cTipCtr",   "C", 20, 0, "Tipo tercero centro de coste",                    "",                              "", "( cDbfCol )", nil } )
    aAdd( aColAlbCli, { "cTerCtr",   "C", 20, 0, "Tercero centro de coste",                         "",                              "", "( cDbfCol )", nil } )
+   aAdd( aColAlbCli, { "nNumKit",   "N",  4, 0, "Número de línea de escandallo",                   "",                              "", "( cDbfCol )", nil } )
 
 Return ( aColAlbCli )
 
@@ -18593,5 +18603,41 @@ Static Function importarArticulosScaner()
    end if
 
 Return nil       
+
+//---------------------------------------------------------------------------//
+
+static Function menuEdtDet( oCodArt, oDlg, lOferta, nIdLin )
+
+   DEFAULT lOferta      := .f.
+
+   MENU oDetMenu
+
+      MENUITEM    "&1. Rotor  " ;
+         RESOURCE "Rotor16"
+
+         MENU
+
+            MENUITEM    "&1. Campos extra [F9]";
+               MESSAGE  "Mostramos y rellenamos los campos extra" ;
+               RESOURCE "GC_FORM_PLUS2_16" ;
+               ACTION   ( oLinDetCamposExtra:Play( nIdLin ) )
+
+            MENUITEM    "&2. Modificar artículo";
+               MESSAGE  "Modificar la ficha del artículo" ;
+               RESOURCE "gc_object_cube_16";
+               ACTION   ( EdtArticulo( oCodArt:VarGet() ) );
+
+            MENUITEM    "&3. Informe de artículo";
+               MESSAGE  "Abrir el informe del artículo" ;
+               RESOURCE "Info16";
+               ACTION   ( if( oUser():lNotCostos(), msgStop( "No tiene permiso para ver los precios de costo" ), InfArticulo( oCodArt:VarGet() ) ) );
+
+         ENDMENU
+
+   ENDMENU
+
+   oDlg:SetMenu( oDetMenu )
+
+Return ( oDetMenu )
 
 //---------------------------------------------------------------------------//
