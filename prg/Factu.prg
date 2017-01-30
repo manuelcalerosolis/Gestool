@@ -2112,8 +2112,8 @@ Function CreateAcceso( oWnd )
    oItem:cMessage       := "Acceso a los tipos de impresoras"
    oItem:bAction        := {|| TipoImpresoras( "01115", oWnd ) }
    oItem:cId            := "01115"
-   oItem:cBmp           := "printer_view_16"
-   oItem:cBmpBig        := "printer_view_32"
+   oItem:cBmp           := "gc_printer2_16"
+   oItem:cBmpBig        := "gc_printer2_32"
    oItem:lShow          := .f.
 
    // Compras-------------------------------------------------------------------

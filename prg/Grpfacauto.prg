@@ -606,7 +606,7 @@ METHOD RedefineBrowse( id, oDlg )
       :cHeader       := "Sel."
       :bEditValue    := {|| ::aData[ ::oBrwFacturaAutomatica:nArrayAt, 1 ] }
       :nWidth        := 25
-      :SetCheck( { "Check2_16_2", "Nil16" } )
+      :SetCheck( { "gc_check_16", "Nil16" } )
    end with
 
    with object ( ::oBrwFacturaAutomatica:AddCol() )

@@ -285,7 +285,7 @@ METHOD Resource() CLASS PedCliente2PedProveedor
          :bStrData         := {|| "" }
          :bEditValue       := {|| ( ::dbfTemporal )->lSelArt }
          :nWidth           := 20
-         :SetCheck( { "check2_16_2", "Nil16" } )
+         :SetCheck( { "gc_check_16", "Nil16" } )
       end with
 
       with object ( ::oBrw:AddCol() )

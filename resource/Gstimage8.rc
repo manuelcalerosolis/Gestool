@@ -4,7 +4,6 @@
 #include <commctrl.h>
 #include <richedit.h>
 
-WEBTOPVIOLET BITMAP "..\\bmp\\MkTopViolet.bmp"
 PRECIOSMANODEOBRA BITMAP "..\\bmp\\PreciosManodeObra.bmp"
 CONECTARMYSQL BITMAP "..\\bmp\\ConectarMySql.bmp"
 
