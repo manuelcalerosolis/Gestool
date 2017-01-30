@@ -2921,7 +2921,7 @@ Function CreateAcceso( oWnd )
    oGrupo:cLittleBitmap := "gc_notebook2_16"
    oGrupo:cBigBitmap    := "gc_notebook2_32"
 
-   oItem                := oItemHerramientas:Add()
+   oItem                := oItemHerramientas:Add()    
    oItem:oGroup         := oGrupo
    oItem:cPrompt        := 'Campos extra'
    oItem:cMessage       := 'Acceso a los campos extra'

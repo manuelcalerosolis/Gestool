@@ -185,6 +185,8 @@ Defines para ficheros INI
 #define SAT_CLI                 '32'
 #define ENV_ART                 '33' 
 #define GRP_CLI                 '34' 
+#define LIN_ALB_CLI             '35'
+#define LIN_FAC_CLI             '36'
 
 #define ACC_ACCE                1        // Acceso
 #define ACC_APPD                2        // Acceso añadir
@@ -344,7 +346,9 @@ Definici¢n de Array para impuestos---------------------------------------------
                                         "Presupuestos a clientes" => "08",;
                                         "Pedidos a clientes" => "09",;
                                         "Albaranes a clientes" => "10",;
+                                        "Lineas de albaranes a clientes" => "35",;
                                         "Facturas a clientes" => "11",;
+                                        "Lineas de facturas a clientes" => "36",;
                                         "Facturas de anticipos a clientes" => "13",;
                                         "Facturas rectificativa a clientes" => "14",;
                                         "Pedidos a proveedores" => "01",;
@@ -363,7 +367,9 @@ Definici¢n de Array para impuestos---------------------------------------------
                                         "Presupuestos a clientes" => "gc_notebook_user_16",;
                                         "Pedidos a clientes" => "gc_clipboard_empty_user_16",;
                                         "Albaranes a clientes" => "gc_document_empty_16",;
+                                        "Lineas de albaranes a clientes" => "gc_document_empty_16",;
                                         "Facturas a clientes" => "gc_document_text_user_16",;
+                                        "Lineas de facturas a clientes" => "gc_document_text_user_16",;
                                         "Facturas de anticipos a clientes" => "gc_document_text_money2_16",;
                                         "Facturas rectificativa a clientes" => "gc_document_text_delete_16",;
                                         "Pedidos a proveedores" => "gc_clipboard_empty_businessman_16",;
@@ -382,7 +388,9 @@ Definici¢n de Array para impuestos---------------------------------------------
                                         "Presupuestos a clientes"=> .F.,;
                                         "Pedidos a clientes" => .F.,;
                                         "Albaranes a clientes" => .F.,;
+                                        "Lineas de albaranes a clientes" => .F.,;
                                         "Facturas a clientes" => .F.,;
+                                        "Lineas de facturas a clientes" => .F.,;
                                         "Facturas de anticipos a clientes" => .F.,;
                                         "Facturas rectificativa a clientes" => .F.,;
                                         "Pedidos a proveedores" => .F.,;

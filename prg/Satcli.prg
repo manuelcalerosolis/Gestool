@@ -448,7 +448,11 @@ FUNCTION GenSatCli( nDevice, cCaption, cCodDoc, cPrinter, nCopies )
    Si el documento es de tipo visual-------------------------------------------
    */
 
-   PrintReportSatCli( nDevice, nCopies, cPrinter, cCodDoc )
+   if lVisualDocumento( cCodDoc, D():Documentos( nView ) )
+      PrintReportSatCli( nDevice, nCopies, cPrinter, cCodDoc )
+   else
+      msgStop( "El formato ya no es soportado" )
+   end if
 
    lChgImpDoc( D():SatClientes( nView ) )
 

@@ -150,6 +150,7 @@ CLASS D
 
    METHOD AlbaranesClientesLineasTableName()                INLINE ( "AlbCliL" )
    METHOD AlbaranesClientesLineas( nView )                  INLINE ( ::Get( ::AlbaranesClientesLineasTableName(), nView ) )
+   METHOD AlbaranesClientesLineasEscandalloId( nView )      INLINE ( ( ::Get( "AlbCliL", nView ) )->cSerAlb + str( ( ::Get( "AlbCliL", nView ) )->nNumAlb, 9 ) + ( ::Get( "AlbCliL", nView ) )->cSufAlb + Str( ( ::Get( "AlbCliL", nView ) )->nNumLin )+ Str( ( ::Get( "AlbCliL", nView ) )->nNumKit ) )
 
       METHOD getHashBlankAlbaranesClientesLineas( nView )   INLINE ( ::getHashFromBlank( ::AlbaranesClientesLineas( nView ), ::getDictionary( ::AlbaranesClientesLineasTableName(), nView ) ) )
       METHOD getHashRecordAlbaranesClientesLineas( nView )  INLINE ( ::getHashFromAlias( ::AlbaranesClientesLineas( nView ), ::getDictionary( ::AlbaranesClientesLineasTableName(), nView ) ) )
@@ -205,6 +206,7 @@ CLASS D
 
    METHOD FacturasClientesLineas( nView )                   INLINE ( ::Get( "FacCliL", nView ) )
       METHOD FacturasClientesLineasId( nView )              INLINE ( ( ::Get( "FacCliL", nView ) )->cSerie + Str( ( ::Get( "FacCliL", nView ) )->nNumFac ) +  ( ::Get( "FacCliL", nView ) )->cSufFac )
+      METHOD FacturasClientesLineasEscandalloId( nView )    INLINE ( ( ::Get( "FacCliL", nView ) )->cSerie + str( ( ::Get( "FacCliL", nView ) )->nNumFac, 9 ) + ( ::Get( "FacCliL", nView ) )->cSufFac + Str( ( ::Get( "FacCliL", nView ) )->nNumLin )+ Str( ( ::Get( "FacCliL", nView ) )->nNumKit ) )
       METHOD FacturasClientesLineasEof( nView )             INLINE ( ( ::FacturasClientesLineas( nView ) )->( eof() ) )
       METHOD FacturasClientesLineasNotEof( nView )          INLINE (!( ::FacturasClientesLineasEof( nView ) ) ) 
 

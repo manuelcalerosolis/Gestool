@@ -22,7 +22,7 @@ CLASS TCamposExtra FROM TMant
    DATA oNombre
    DATA oTipo
    DATA cTipo              INIT "Texto"
-   DATA aTipo              INIT { "Texto", "Número", "Fecha", "Si/No", "Lista" }
+   DATA aTipo              INIT { "Texto", "Número", "Fecha", "Si/No", "Lista" } 
    DATA oLongitud
    DATA oDecimales
    DATA hActions
