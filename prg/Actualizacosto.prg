@@ -110,8 +110,9 @@ METHOD Activate( oMenuItem, oWnd )
    DEFINE DIALOG oDlg RESOURCE "ACTUALIZACOSTOS" OF oWnd()
 
    REDEFINE BITMAP oBmp;
-      RESOURCE "PreciosManodeObra" ;
-      ID       800 ;
+      RESOURCE "gc_worker2_48" ;
+      ID       600  ;
+      TRANSPARENT ;
       OF       oDlg
 
    ::oDefIniInf( 100, oDlg )

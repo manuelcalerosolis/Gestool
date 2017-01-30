@@ -5,6 +5,4 @@
 #include <richedit.h>
 
 
-AssDocAuto BITMAP "..\\bmp\\AssDocAuto.bmp"
-AssCambioIva BITMAP "..\\bmp\\AssCambioIva.bmp"
 UNDORED16 BITMAP "..\\bmp\\UndoRed16.bmp"
