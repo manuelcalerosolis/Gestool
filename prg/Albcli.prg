@@ -2017,7 +2017,7 @@ STATIC FUNCTION GenAlbCli( nDevice, cCaption, cCodigoDocumento, cPrinter, nCopie
    DEFAULT cCaption           := "Imprimiendo albaranes a clientes"
    DEFAULT cCodigoDocumento   := cFormatoAlbaranesClientes()
 
-   // Existe
+   //Existe
 
    if !lExisteDocumento( cCodigoDocumento, D():Documentos( nView ) )
       return nil
@@ -2044,132 +2044,9 @@ STATIC FUNCTION GenAlbCli( nDevice, cCaption, cCodigoDocumento, cPrinter, nCopie
    // Si el documento es de tipo visual-------------------------------------------
 
    if lVisualDocumento( cCodigoDocumento, D():Documentos( nView ) )
-
       PrintReportAlbCli( nDevice, nCopies, cPrinter, cCodigoDocumento )
-
    else
-
-      // Recalculamos el albaran
-
-      nTotAlbCli( cAlbaran, D():Get( "AlbCliT", nView ), D():Get( "AlbCliL", nView ), D():Get( "TIva", nView ), D():Get( "Divisas", nView ) )
-      nPagAlbCli( cAlbaran, D():Get( "AlbCliP", nView ), D():Get( "Divisas", nView ) )
-
-      // Buscamos el primer registro
-
-      ( D():Get( "AlbCliL", nView ) )->( dbSeek( cAlbaran ) )
-      ( D():Get( "AlbCliP", nView ) )->( dbSeek( cAlbaran ) )
-
-      // Posicionamos en ficheros auxiliares
-
-      ( D():Get( "Client", nView ))->( dbSeek( ( D():Get( "AlbCliT", nView ) )->cCodCli ) )
-      ( D():Get( "FPago", nView ) )->( dbSeek( ( D():Get( "AlbCliT", nView ) )->cCodPago ) )
-      ( dbfAgent  )->( dbSeek( ( D():Get( "AlbCliT", nView ) )->cCodAge ) )
-      ( dbfObrasT )->( dbSeek( ( D():Get( "AlbCliT", nView ) )->cCodCli + ( D():Get( "AlbCliT", nView ) )->cCodObr ) )
-      ( dbfDelega )->( dbSeek( ( D():Get( "AlbCliT", nView ) )->cCodDlg ) )
-
-      oTrans:oDbf:Seek( ( D():Get( "AlbCliT", nView ) )->cCodTrn )
-
-      private oInf
-      private cDbf         := D():Get( "AlbCliT", nView )
-      private cDbfCol      := D():Get( "AlbCliL", nView )
-      private cDbfPag      := D():Get( "AlbCliP", nView )
-      private cCliente     := D():Get( "Client", nView )
-      private cDbfCli      := D():Get( "Client", nView )
-      private cDbfDiv      := D():Get( "Divisas", nView )
-      private cIva         := D():Get( "TIva", nView )
-      private cDbfIva      := D():Get( "TIva", nView )
-      private cFPago       := D():Get( "FPago", nView )
-      private cDbfPgo      := D():Get( "FPago", nView )
-      private cAgent       := dbfAgent
-      private cDbfAge      := dbfAgent
-      private cTvta        := dbfTvta
-      private cObras       := dbfObrasT
-      private cDbfObr      := dbfObrasT
-      private cTarPreL     := dbfTarPreL
-      private cTarPreS     := dbfTarPreS
-      private cDbfRut      := dbfRuta
-      private cDbfUsr      := dbfUsr
-      private cDbfAnt      := D():Get( "AntCliT", nView )
-      private cDbfDlg      := dbfDelega
-      private cDbfTrn      := oTrans:GetAlias()
-      private cDbfPro      := dbfPro
-      private cDbfTblPro   := dbfTblPro
-
-      private nTotPage     := nTotLAlbCli( D():Get( "AlbCliL", nView ) )
-      private nVdvDivAlb   := nVdvDiv
-      private cPicUndAlb   := cPicUnd
-      private cPouDivAlb   := cPouDiv
-      private cPorDivAlb   := cPorDiv
-      private cPpvDivAlb   := cPpvDiv
-      private cPouEurAlb   := cPouEur
-      private nDouDivAlb   := nDouDiv
-      private nRouDivAlb   := nRouDiv
-
-      private nTotCaj      := nNumCaj
-
-      private oStk         := oStock
-
-      /*
-      Creamos el informe con la impresora seleccionada para ese informe-----------
-      */
-
-      if !empty( cPrinter ) // .and. lPrinter
-         oDevice           := TPrinter():New( cCaption, .f., .t., cPrinter )
-         REPORT oInf CAPTION cCaption TO DEVICE oDevice
-      else
-         REPORT oInf CAPTION cCaption PREVIEW
-      end if
-
-      if !empty( oInf ) .and. oInf:lCreated
-
-         oInf:lAutoland    := .f.
-         oInf:lFinish      := .f.
-         oInf:lNoCancel    := .t.
-         oInf:bSkip        := {|| AlbCliReportSkipper( D():Get( "AlbCliL", nView ) ) }
-
-         oInf:oDevice:lPrvModal  := .t.
-
-         do case
-            case nDevice == IS_PRINTER
-
-               oInf:oDevice:SetCopies( nCopies )
-
-               oInf:bPreview  := {| oDevice | PrintPreview( oDevice ) }
-
-            case nDevice == IS_PDF
-
-               oInf:bPreview  := {| oDevice | PrintPdf( oDevice ) }
-
-         end case
-
-         SetMargin( cCodigoDocumento, oInf )
-         PrintColum( cCodigoDocumento, oInf )
-
-      else
-
-         MsgStop( "No se ha podido crear el documento " + cCodigoDocumento )
-
-      end if
-
-      END REPORT
-
-      if !empty( oInf )
-
-         private oReport   := oInf
-
-         ACTIVATE REPORT oInf ;
-            WHILE       ( ( D():Get( "AlbCliL", nView ) )->cSerAlb + Str( ( D():Get( "AlbCliL", nView ) )->nNumAlb ) + ( D():Get( "AlbCliL", nView ) )->cSufAlb == cAlbaran .and. !( D():Get( "AlbCliL", nView ) )->( Eof() ) ) ;
-            FOR         ( !( D():Get( "AlbCliL", nView ) )->lImpLin ) ;
-            ON ENDPAGE  ( ePage( oInf, cCodigoDocumento ) )
-
-            if nDevice == IS_PRINTER
-               oInf:oDevice:end()
-            end if
-
-      end if
-
-      oInf                 := nil
-
+      msgStop( "El formato ya no es soportado" )
    end if
 
    /*

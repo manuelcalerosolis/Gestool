@@ -4353,85 +4353,9 @@ STATIC FUNCTION GenAlbPrv( nDevice, cCaption, cCodDoc, cPrinter, nCopies )
    */
 
    if lVisualDocumento( cCodDoc, D():Documentos( nView ) )
-
       PrintReportAlbPrv( nDevice, nCopies, cPrinter )
-
    else
-
-      if !lExisteDocumento( cCodDoc, D():Documentos( nView ) )
-         return nil
-      end if
-
-      /*
-      Posicionamos las tablas auxiliares
-      */
-
-      ( D():AlbaranesProveedoresLineas( nView ) )->( dbSeek( nAlbaran ) )
-      ( D():Proveedores( nView ) )->( dbSeek( ( D():AlbaranesProveedores( nView ) )->cCodPrv ) )
-      ( D():Divisas( nView ) )->( dbSeek( ( D():AlbaranesProveedores( nView ) )->cDivAlb ) )
-      ( D():FormasPago( nView ) )->( dbSeek( ( D():AlbaranesProveedores( nView ) )->cCodPgo ) )
-      ( D():Almacen( nView ) )->( dbSeek( ( D():AlbaranesProveedores( nView ) )->cCodAlm ) )
-
-      private cDbf         := D():AlbaranesProveedores( nView )
-      private cDbfCol      := D():AlbaranesProveedoresLineas( nView )
-      private cDbfPrv      := D():Proveedores( nView )
-      private cDbfPgo      := D():FormasPago( nView )
-      private cDbfIva      := D():TiposIva( nView )
-      private cDbfDiv      := D():Divisas( nView )
-      private cDbfAlm      := D():Almacen( nView )
-      private cDbfArt      := D():Articulos( nView )
-      private cDbfKit      := D():Kit( nView )
-      private cDbfPro      := D():Propiedades( nView )
-      private cDbfTblPro   := D():PropiedadesLineas( nView )
-      private cPicUndAlb   := cPicUnd
-      private cPinDivAlb   := cPinDiv
-      private cPirDivAlb   := cPirDiv
-      private nDinDivAlb   := nDinDiv
-      private nDirDivAlb   := nDirDiv
-      private nVdvDivAlb   := ( D():AlbaranesProveedores( nView ) )->nVdvAlb
-
-      if !Empty( cPrinter )
-         oDevice           := TPrinter():New( cCaption, .f., .t., cPrinter )
-         REPORT oInf CAPTION cCaption TO DEVICE oDevice
-      else
-         REPORT oInf CAPTION cCaption PREVIEW
-      end if
-
-      if !Empty( oInf ) .and. oInf:lCreated
-         oInf:lAutoLand          := .f.
-         oInf:lFinish            := .f.
-         oInf:lNoCancel          := .t.
-         oInf:bSkip              := {|| ( D():AlbaranesProveedoresLineas( nView ) )->( dbSkip() ) }
-
-         oInf:oDevice:lPrvModal  := .t.
-
-         do case
-            case nDevice == IS_PRINTER
-               oInf:bPreview     := {| oDevice | PrintPreview( oDevice ) }
-
-            case nDevice == IS_PDF
-               oInf:bPreview     := {| oDevice | PrintPdf( oDevice ) }
-
-         end if
-
-         SetMargin(  cCodDoc, oInf )
-         PrintColum( cCodDoc, oInf )
-
-      end if
-
-      END REPORT
-
-      ACTIVATE REPORT      oInf ;
-         WHILE             ( ( D():AlbaranesProveedoresLineas( nView ) )->cSerAlb + Str( ( D():AlbaranesProveedoresLineas( nView ) )->nNumAlb ) + ( D():AlbaranesProveedoresLineas( nView ) )->CSUFALB == nAlbaran );
-         FOR               ( !( D():AlbaranesProveedoresLineas( nView ) )->lImpLin ) ;
-         ON ENDPAGE        EPage( oInf, cCodDoc )
-
-      if nDevice == IS_PRINTER
-         oInf:oDevice:end()
-      end if
-
-      oInf                 := nil
-
+      msgStop( "El formato ya no es soportado" )
    end if
 
    lChgImpDoc( D():AlbaranesProveedores( nView ) )
