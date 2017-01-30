@@ -4,12 +4,6 @@
 #include <commctrl.h>
 #include <richedit.h>
 
-CabeceraTickets BITMAP "..\\bmp\\CabeceraTickets.bmp"
-CabeceraAlbaranes BITMAP "..\\bmp\\CabeceraAlbaranes.bmp"
-CabeceraFacturas BITMAP "..\\bmp\\CabeceraFacturas.bmp"
-CabeceraVales BITMAP "..\\bmp\\CabeceraVales.bmp"
-CabeceraApartados BITMAP "..\\bmp\\CabeceraApartados.bmp"
-CabeceraDevoluciones BITMAP "..\\bmp\\CabeceraDevoluciones.bmp"
 FidelizacionClientes BITMAP "..\\bmp\\FidelizacionClientes.bmp"
 TpvUser BITMAP "..\\bmp\\TpvUser.bmp"
 TpvDevolucion BITMAP "..\\bmp\\TpvDevolucion.bmp"

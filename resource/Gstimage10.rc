@@ -7,18 +7,4 @@
 
 AssDocAuto BITMAP "..\\bmp\\AssDocAuto.bmp"
 AssCambioIva BITMAP "..\\bmp\\AssCambioIva.bmp"
-
-CLIPBOARD_EMPTY_EARTH_16 BITMAP "..\\bmp\\clipboard_empty_earth_16.bmp"
-CLIPBOARD_EMPTY_EARTH_32 BITMAP "..\\bmp\\clipboard_empty_earth_32.bmp"
-
-CLIPBOARD_EMPTY_16 BITMAP "..\\bmp\\clipboard_empty_16.bmp"
-CLIPBOARD_EMPTY_32 BITMAP "..\\bmp\\clipboard_empty_32.bmp"
-
 UNDORED16 BITMAP "..\\bmp\\UndoRed16.bmp"
-Add2_Alpha_48 BITMAP "..\\bmp\\Add2_Alpha_48.bmp"
-Signpost_Alpha_48 BITMAP "..\\bmp\\Signpost_Alpha_48.bmp"
-User_mobilephone_Alpha_48 BITMAP "..\\bmp\\User_mobilephone_Alpha_48.bmp"
-Message_Alpha_48 BITMAP "..\\bmp\\Message_Alpha_48.bmp"
-Information2_Alpha_48 BITMAP "..\\bmp\\Information2_Alpha_48.bmp"
-Star2_Red_Alpha_48 BITMAP "..\\bmp\\star2_red_alpha_48.bmp"
-Star_Yellow_48 BITMAP "..\\bmp\\Star_Yellow_48.bmp"

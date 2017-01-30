@@ -2916,20 +2916,10 @@ Function CreateAcceso( oWnd )
    end if
 
    oGrupo               := TGrupoAcceso()
-   oGrupo:nBigItems     := 5
+   oGrupo:nBigItems     := 4
    oGrupo:cPrompt       := 'Útiles'
    oGrupo:cLittleBitmap := "gc_notebook2_16"
    oGrupo:cBigBitmap    := "gc_notebook2_32"
-
-   oItem                := oItemHerramientas:Add()
-   oItem:oGroup         := oGrupo
-   oItem:cPrompt        := 'Cambiar códigos'
-   oItem:cMessage       := 'Cambiar códigos'
-   oItem:bAction        := {|| TChgCode():New( "01073", oWnd ):Resource() }
-   oItem:cId            := "01073"
-   oItem:cBmp           := "gc_find_replace_16"
-   oItem:cBmpBig        := "gc_find_replace_32"
-   oItem:lShow          := .f.
 
    oItem                := oItemHerramientas:Add()
    oItem:oGroup         := oGrupo

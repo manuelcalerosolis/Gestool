@@ -315,12 +315,11 @@ CLASS TShell FROM TMdiChild
    METHOD CheckExtendInfo()
    METHOD ShowExtendInfo( nRow, nCol, cToolTip )
    METHOD DestroyToolTip()
+
    METHOD asteriskFilter()
-
-   METHOD SetAutoFilter()
-
-   METHOD AplyFilter()                       
-   METHOD ChangeFilter( cFilter )            INLINE   ( msgStop( cFilter ) )
+   METHOD setAutoFilter()
+   METHOD aplyFilter()                       
+   METHOD changeFilter( cFilter )            INLINE   ( msgStop( cFilter ) )
 
    METHOD EnableComboFilter( aFilter )       INLINE   ( ::oWndBar:EnableComboFilter( aFilter ) )
    METHOD SetDefaultComboFilter( aFilter )   INLINE   ( ::oWndBar:SetDefaultComboFilter( aFilter ) )
@@ -503,8 +502,8 @@ METHOD Activate( cShow, bLClicked, bRClicked, bMoved, bResized, bPainted, bKeyDo
 
    DEFAULT lCenter   := ( ::nTop == 0 .and. ::nLeft == 0 )
 
-   oBlock            := ErrorBlock( { | oError | ApoloBreak( oError ) } )
-   BEGIN SEQUENCE
+   // oBlock            := ErrorBlock( { | oError | ApoloBreak( oError ) } )
+   // BEGIN SEQUENCE
 
    CursorWait()
 
@@ -546,15 +545,15 @@ METHOD Activate( cShow, bLClicked, bRClicked, bMoved, bResized, bPainted, bKeyDo
 
    CursorWE()
 
-   RECOVER USING oError
+   // RECOVER USING oError
 
-      msgStop( "Error al iniciar al abrir las bases de datos" + CRLF + ErrorMessage( oError ) )
+   //    msgStop( "Error al iniciar al abrir las bases de datos" + CRLF + ErrorMessage( oError ) )
 
-      ::End()
+   //    ::End()
 
-   END SEQUENCE
+   // END SEQUENCE
 
-   ErrorBlock( oBlock )
+   // ErrorBlock( oBlock )
 
    ::BarEnable()
 
@@ -1023,31 +1022,15 @@ METHOD asteriskFilter( xValueToSearch, cAlias )
 
       xValueToSearch       := substr( xValueToSearch, 2, len( xValueToSearch ) - 2 )
 
-      ::cAsteriskFilter    := '"' + xValueToSearch + '" $ ' + ( cAlias )->( ordkey() ) 
-
-      if !empty( ::getActiveExpresionFilter() )
-         ( cAlias )->( setCustomFilter( ::cAsteriskFilter + ' .and. ' + ::getActiveExpresionFilter() ) )
-      else
-         ( cAlias )->( setCustomFilter( ::cAsteriskFilter ) )
-      end if 
-
-      Return .t.
+      ::cAsteriskFilter    := '"' + xValueToSearch + '" $ ' + ( cAlias )->( ordkey() )
 
    else
 
-      if !empty( ::cAsteriskFilter )
-
-         if !empty( ::getActiveExpresionFilter() )
-            ( cAlias )->( setCustomFilter( ::getActiveExpresionFilter() ) )
-         else 
-            ( cAlias )->( quitCustomFilter() )
-         end if 
-
-         ::cAsteriskFilter := ''
-
-      end if
+      ::cAsteriskFilter    := ''
 
    end if
+
+   ::chgFilter() 
 
 Return .f.
 
@@ -1785,7 +1768,7 @@ METHOD ChgCombo( nTab ) CLASS TShell
    // Evento de cambio de indices----------------------------------------------
 
    if !empty( ::bChgIndex )
-      Eval( ::bChgIndex )
+      eval( ::bChgIndex )
    end if
 
    // Orden actual ------------------------------------------------------------
@@ -1843,14 +1826,10 @@ METHOD addSeaBar( cSearchType, nLenSearchType ) CLASS TShell
       ::oWndBar:SetComboBoxChange(     {|| ::ChgCombo() } )
       ::oWndBar:SetComboFilterChange(  {|| ::ChgFilter() } )
 
-      ::oWndBar:SetKillFilter(         {|| ::KillFilter() } )
-
       ::oWndBar:SetAddButtonFilter(    {|| ::AddFilter() } )
       ::oWndBar:SetEditButtonFilter(   {|| ::EditFilter() } )
+      ::oWndBar:SetKillFilter(         {|| ::KillFilter() } )
 
-      // ::oWndBar:SetGetLostFocus(       {|| ::killScope() } )
-      // ::oWndBar:SetGetChange(          {|| ::fastSeek( ::oWndBar:oGet, ::oWndBar:oGet:varGet() ) } )
-      // ::oWndBar:SetGetPostKey(         {| oGet, cText  | ::FastSeek( oGet, cText ) } )
       ::oWndBar:SetGetKeyUp(           {|| ::fastSeek( ::oWndBar:oGet, ::oWndBar:oGet:oGet:buffer() ) } ) 
       ::oWndBar:SetGetKeyDown(         {| nKey, nFlags | ::KeySearch( nKey ) } )
 
@@ -2572,16 +2551,19 @@ METHOD chgFilter() CLASS TShell
    local cFilterYear          := ""
    local cFilterAsterisk      := ""
 
-   msgalert( ( ::xAlias )->( adsgetaof() ), "entrada de chgFilter" )
-
    CursorWait()
 
-   cFilterCombo               := ::getComboFilter()
+   cFilterCombo               := ::getActiveExpresionFilter()
    cFilterYear                := ::getYearComboBoxExpression()
    cFilterAsterisk            := ::getAsteriskFilter()
 
    if !empty(cFilterCombo)
       cFilter                 := cFilterCombo
+      ::ShowButtonFilter()
+      ::ShowEditButtonFilter()
+   else 
+      ::HideButtonFilter()
+      ::HideEditButtonFilter()
    end if 
 
    if !empty(cFilterYear)
@@ -2600,20 +2582,10 @@ METHOD chgFilter() CLASS TShell
       end if 
    end if 
 
-   msgalert( cFilter, "chgFilter")
-
    if !empty( cFilter ) 
-
       ( ::xAlias )->( setCustomFilter( cFilter ) )
-
-      ::ShowButtonFilter()
-      ::ShowEditButtonFilter()
-
    else 
-
-      ::HideButtonFilter()
-      ::HideEditButtonFilter()
-
+      ( ::xAlias )->( quitCustomFilter() )
    end if
 
    ::Refresh() 
@@ -2621,8 +2593,6 @@ METHOD chgFilter() CLASS TShell
    CursorWE()
 
    ::SetFocus()
-
-   msgalert( ( ::xAlias )->( adsgetaof() ), "salida de chgFilter" )
 
 Return ( Self )
 
