@@ -16494,7 +16494,7 @@ Static Function pdaComentario( oFntTit, dbfTmpL, cDefCom )
          :nWidth                       := 220
       end with
 
-      TBtnBmp():ReDefine( 500, "check2_16_2",,,,,{|| EndComentario( oDlg, dbfTmpL, oGetComentario ) }, oDlg, .f., , .f., , , , , , .f.  )
+      TBtnBmp():ReDefine( 500, "gc_check_16",,,,,{|| EndComentario( oDlg, dbfTmpL, oGetComentario ) }, oDlg, .f., , .f., , , , , , .f.  )
       TBtnBmp():ReDefine( 550, "END16",,,,,{|| oDlg:End( IDCANCEL ) }, oDlg, .f., , .f., , , , , , .f.  )
 
       oDlg:bStart                      := {|| SeleccionarDefecto( cDefCom, dbfComentariosT, dbfComentariosL, oBrwComentariosL, oBrwComentariosT ) }

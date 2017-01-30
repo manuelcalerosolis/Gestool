@@ -240,6 +240,7 @@ Definici¢n de la base de datos de lineas de detalle
 #define _NPOSPRINT               108
 #define _CTIPCTR                 109
 #define _CTERCTR                 110
+#define _NNUMKIT                 111
 
 /*
 Definici¢n de Array para impuestos
@@ -396,6 +397,7 @@ static dbfHisMov
 static dbfHisMovS
 static dbfEmp
 static oMenu
+static oDetMenu
 static oStock
 static TComercio
 static oTrans
@@ -444,6 +446,7 @@ static oPais
 static Counter
 
 static oDetCamposExtra
+static oLinDetCamposExtra
 
 static oBtnKit
 static oBtnAtp
@@ -1459,7 +1462,6 @@ STATIC FUNCTION OpenFiles()
       USE ( cPatArt() + "ArtCodebar.Dbf" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "CODEBAR", @dbfCodebar ) )
       SET ADSINDEX TO ( cPatArt() + "ArtCodebar.Cdx" ) ADDITIVE
 
-
       USE ( cPatArt() + "ARTKIT.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "ARTTIK", @dbfKit ) )
       SET ADSINDEX TO ( cPatArt() + "ARTKIT.CDX" ) ADDITIVE
 
@@ -1686,6 +1688,10 @@ STATIC FUNCTION OpenFiles()
       oDetCamposExtra:SetTipoDocumento( "Albaranes a clientes" )
       oDetCamposExtra:setbId( {|| D():AlbaranesClientesId( nView ) } )
 
+      oLinDetCamposExtra      := TDetCamposExtra():New()
+      oLinDetCamposExtra:OpenFiles()
+      oLinDetCamposExtra:SetTipoDocumento( "Lineas de albaranes a clientes" )
+      oLinDetCamposExtra:setbId( {|| D():AlbaranesClientesId( nView ) } )
 
    RECOVER USING oError
 
@@ -2011,7 +2017,7 @@ STATIC FUNCTION GenAlbCli( nDevice, cCaption, cCodigoDocumento, cPrinter, nCopie
    DEFAULT cCaption           := "Imprimiendo albaranes a clientes"
    DEFAULT cCodigoDocumento   := cFormatoAlbaranesClientes()
 
-   // Existe
+   //Existe
 
    if !lExisteDocumento( cCodigoDocumento, D():Documentos( nView ) )
       return nil
@@ -2038,132 +2044,9 @@ STATIC FUNCTION GenAlbCli( nDevice, cCaption, cCodigoDocumento, cPrinter, nCopie
    // Si el documento es de tipo visual-------------------------------------------
 
    if lVisualDocumento( cCodigoDocumento, D():Documentos( nView ) )
-
       PrintReportAlbCli( nDevice, nCopies, cPrinter, cCodigoDocumento )
-
    else
-
-      // Recalculamos el albaran
-
-      nTotAlbCli( cAlbaran, D():Get( "AlbCliT", nView ), D():Get( "AlbCliL", nView ), D():Get( "TIva", nView ), D():Get( "Divisas", nView ) )
-      nPagAlbCli( cAlbaran, D():Get( "AlbCliP", nView ), D():Get( "Divisas", nView ) )
-
-      // Buscamos el primer registro
-
-      ( D():Get( "AlbCliL", nView ) )->( dbSeek( cAlbaran ) )
-      ( D():Get( "AlbCliP", nView ) )->( dbSeek( cAlbaran ) )
-
-      // Posicionamos en ficheros auxiliares
-
-      ( D():Get( "Client", nView ))->( dbSeek( ( D():Get( "AlbCliT", nView ) )->cCodCli ) )
-      ( D():Get( "FPago", nView ) )->( dbSeek( ( D():Get( "AlbCliT", nView ) )->cCodPago ) )
-      ( dbfAgent  )->( dbSeek( ( D():Get( "AlbCliT", nView ) )->cCodAge ) )
-      ( dbfObrasT )->( dbSeek( ( D():Get( "AlbCliT", nView ) )->cCodCli + ( D():Get( "AlbCliT", nView ) )->cCodObr ) )
-      ( dbfDelega )->( dbSeek( ( D():Get( "AlbCliT", nView ) )->cCodDlg ) )
-
-      oTrans:oDbf:Seek( ( D():Get( "AlbCliT", nView ) )->cCodTrn )
-
-      private oInf
-      private cDbf         := D():Get( "AlbCliT", nView )
-      private cDbfCol      := D():Get( "AlbCliL", nView )
-      private cDbfPag      := D():Get( "AlbCliP", nView )
-      private cCliente     := D():Get( "Client", nView )
-      private cDbfCli      := D():Get( "Client", nView )
-      private cDbfDiv      := D():Get( "Divisas", nView )
-      private cIva         := D():Get( "TIva", nView )
-      private cDbfIva      := D():Get( "TIva", nView )
-      private cFPago       := D():Get( "FPago", nView )
-      private cDbfPgo      := D():Get( "FPago", nView )
-      private cAgent       := dbfAgent
-      private cDbfAge      := dbfAgent
-      private cTvta        := dbfTvta
-      private cObras       := dbfObrasT
-      private cDbfObr      := dbfObrasT
-      private cTarPreL     := dbfTarPreL
-      private cTarPreS     := dbfTarPreS
-      private cDbfRut      := dbfRuta
-      private cDbfUsr      := dbfUsr
-      private cDbfAnt      := D():Get( "AntCliT", nView )
-      private cDbfDlg      := dbfDelega
-      private cDbfTrn      := oTrans:GetAlias()
-      private cDbfPro      := dbfPro
-      private cDbfTblPro   := dbfTblPro
-
-      private nTotPage     := nTotLAlbCli( D():Get( "AlbCliL", nView ) )
-      private nVdvDivAlb   := nVdvDiv
-      private cPicUndAlb   := cPicUnd
-      private cPouDivAlb   := cPouDiv
-      private cPorDivAlb   := cPorDiv
-      private cPpvDivAlb   := cPpvDiv
-      private cPouEurAlb   := cPouEur
-      private nDouDivAlb   := nDouDiv
-      private nRouDivAlb   := nRouDiv
-
-      private nTotCaj      := nNumCaj
-
-      private oStk         := oStock
-
-      /*
-      Creamos el informe con la impresora seleccionada para ese informe-----------
-      */
-
-      if !empty( cPrinter ) // .and. lPrinter
-         oDevice           := TPrinter():New( cCaption, .f., .t., cPrinter )
-         REPORT oInf CAPTION cCaption TO DEVICE oDevice
-      else
-         REPORT oInf CAPTION cCaption PREVIEW
-      end if
-
-      if !empty( oInf ) .and. oInf:lCreated
-
-         oInf:lAutoland    := .f.
-         oInf:lFinish      := .f.
-         oInf:lNoCancel    := .t.
-         oInf:bSkip        := {|| AlbCliReportSkipper( D():Get( "AlbCliL", nView ) ) }
-
-         oInf:oDevice:lPrvModal  := .t.
-
-         do case
-            case nDevice == IS_PRINTER
-
-               oInf:oDevice:SetCopies( nCopies )
-
-               oInf:bPreview  := {| oDevice | PrintPreview( oDevice ) }
-
-            case nDevice == IS_PDF
-
-               oInf:bPreview  := {| oDevice | PrintPdf( oDevice ) }
-
-         end case
-
-         SetMargin( cCodigoDocumento, oInf )
-         PrintColum( cCodigoDocumento, oInf )
-
-      else
-
-         MsgStop( "No se ha podido crear el documento " + cCodigoDocumento )
-
-      end if
-
-      END REPORT
-
-      if !empty( oInf )
-
-         private oReport   := oInf
-
-         ACTIVATE REPORT oInf ;
-            WHILE       ( ( D():Get( "AlbCliL", nView ) )->cSerAlb + Str( ( D():Get( "AlbCliL", nView ) )->nNumAlb ) + ( D():Get( "AlbCliL", nView ) )->cSufAlb == cAlbaran .and. !( D():Get( "AlbCliL", nView ) )->( Eof() ) ) ;
-            FOR         ( !( D():Get( "AlbCliL", nView ) )->lImpLin ) ;
-            ON ENDPAGE  ( ePage( oInf, cCodigoDocumento ) )
-
-            if nDevice == IS_PRINTER
-               oInf:oDevice:end()
-            end if
-
-      end if
-
-      oInf                 := nil
-
+      msgStop( "El formato ya no es soportado" )
    end if
 
    /*
@@ -5145,6 +5028,7 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbf, oBrw, lTotLin, cCodArtEnt, nMode, aTmpA
    end if
 
    oDlg:AddFastKey( VK_F6,             {|| oBtnSer:Click() } )
+   oDlg:AddFastKey( VK_F9,             {|| oLinDetCamposExtra:Play( aTmp[ _CSERALB ] + Str( aTmp[ _NNUMALB ] ) + aTmp[ _CSUFALB ] + Str( aTmp[ _NNUMLIN ] ) + Str( aTmp[ _NNUMKIT ] ) ) } )
 
    // Start --------------------------------------------------------------------
 
@@ -5154,10 +5038,12 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbf, oBrw, lTotLin, cCodArtEnt, nMode, aTmpA
                            lCalcDeta( aTmp, aTmpAlb, nDouDiv, oTotal, oRentLin, cCodDiv ) }
 
    ACTIVATE DIALOG oDlg ;
-      ON INIT     ( EdtDetMenu( aGet[ _CREF ], oDlg ) );
+      ON INIT     ( menuEdtDet( aGet[ _CREF ], oDlg, , aTmp[ _CSERALB ] + Str( aTmp[ _NNUMALB ] ) + aTmp[ _CSUFALB ] + Str( aTmp[ _NNUMLIN ] ) + Str( aTmp[ _NNUMKIT ] ) ) );
       CENTER
 
-   EndDetMenu()
+   if !Empty( oDetMenu )
+      oDetMenu:End()
+   end if
 
 RETURN ( oDlg:nResult == IDOK )
 
@@ -16797,6 +16683,7 @@ Function aColAlbCli()
    aAdd( aColAlbCli, { "nPosPrint", "N",  4, 0, "Posición de impresión",                           "PosicionImpresion",             "", "( cDbfCol )", nil } )
    aAdd( aColAlbCli, { "cTipCtr",   "C", 20, 0, "Tipo tercero centro de coste",                    "",                              "", "( cDbfCol )", nil } )
    aAdd( aColAlbCli, { "cTerCtr",   "C", 20, 0, "Tercero centro de coste",                         "",                              "", "( cDbfCol )", nil } )
+   aAdd( aColAlbCli, { "nNumKit",   "N",  4, 0, "Número de línea de escandallo",                   "",                              "", "( cDbfCol )", nil } )
 
 Return ( aColAlbCli )
 
@@ -18587,5 +18474,41 @@ Static Function importarArticulosScaner()
    end if
 
 Return nil       
+
+//---------------------------------------------------------------------------//
+
+static Function menuEdtDet( oCodArt, oDlg, lOferta, nIdLin )
+
+   DEFAULT lOferta      := .f.
+
+   MENU oDetMenu
+
+      MENUITEM    "&1. Rotor  " ;
+         RESOURCE "Rotor16"
+
+         MENU
+
+            MENUITEM    "&1. Campos extra [F9]";
+               MESSAGE  "Mostramos y rellenamos los campos extra" ;
+               RESOURCE "GC_FORM_PLUS2_16" ;
+               ACTION   ( oLinDetCamposExtra:Play( nIdLin ) )
+
+            MENUITEM    "&2. Modificar artículo";
+               MESSAGE  "Modificar la ficha del artículo" ;
+               RESOURCE "gc_object_cube_16";
+               ACTION   ( EdtArticulo( oCodArt:VarGet() ) );
+
+            MENUITEM    "&3. Informe de artículo";
+               MESSAGE  "Abrir el informe del artículo" ;
+               RESOURCE "Info16";
+               ACTION   ( if( oUser():lNotCostos(), msgStop( "No tiene permiso para ver los precios de costo" ), InfArticulo( oCodArt:VarGet() ) ) );
+
+         ENDMENU
+
+   ENDMENU
+
+   oDlg:SetMenu( oDetMenu )
+
+Return ( oDetMenu )
 
 //---------------------------------------------------------------------------//

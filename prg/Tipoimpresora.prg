@@ -118,7 +118,7 @@ FUNCTION TipoImpresoras( oMenuItem, oWnd )
          XBROWSE ;
          TITLE    "Tipos de impresoras" ;
          PROMPT   "Tipos de impresoras" ;
-         MRU      "printer_view_16";
+         MRU      "gc_printer2_16";
          BITMAP   clrTopArchivos ;
          ALIAS    ( dbfTImp ) ;
          APPEND   ( WinAppRec( oWndBrw:oBrw, bEdit, dbfTImp ) ) ;

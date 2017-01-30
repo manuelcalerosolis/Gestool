@@ -19,6 +19,8 @@ CLASS TDetCamposExtra FROM TMant
 
    DATA aCamposExtra          INIT {}
 
+   DATA aValores              INIT {}
+
    DATA lOpenFiles            INIT .f.
 
    DATA oCamposExtra  
@@ -49,7 +51,7 @@ CLASS TDetCamposExtra FROM TMant
 
    Method RollBackValores( cClave )
 
-   Method GuardaValores( cClave )
+   Method GuardaValoresInHash( cClave )
 
    Method ChangeBrowse()
 
@@ -79,6 +81,8 @@ CLASS TDetCamposExtra FROM TMant
    METHOD aExtraFields()                 INLINE ( ::oCamposExtra:aCamposExtra( ::TipoDocumento ) )
 
    METHOD valueExtraField()
+
+   METHOD saveExtraField()
 
 END CLASS
 
@@ -123,7 +127,7 @@ METHOD DefineFiles( cPath, cDriver ) CLASS TDetCamposExtra
       
       FIELD NAME "cTipDoc"       TYPE "C" LEN   2  DEC 0 COMMENT "Tipo documento"         HIDE           OF ::oDbf
       FIELD NAME "cCodTipo"      TYPE "C" LEN   3  DEC 0 COMMENT "Código"                 HIDE           OF ::oDbf
-      FIELD NAME "cClave"        TYPE "C" LEN  20  DEC 0 COMMENT "Clave principal"        HIDE           OF ::oDbf
+      FIELD NAME "cClave"        TYPE "C" LEN  30  DEC 0 COMMENT "Clave principal"        HIDE           OF ::oDbf
       FIELD NAME "cValor"        TYPE "C" LEN 250  DEC 0 COMMENT "Valor del campo"        HIDE           OF ::oDbf
 
       INDEX TO "DETCEXTRA.Cdx" TAG "cTipDoc"      ON "cTipDoc"                        COMMENT "cTipDoc"                      NODELETED OF ::oDbf
@@ -285,8 +289,7 @@ Method Play( cClave, lResource )
    if lResource
 
       if ::Resource()
-         ::RollBackValores( cClave )
-         ::GuardaValores( cClave )
+         ::GuardaValoresInHash( cClave )
       end if
 
    end if
@@ -339,7 +342,7 @@ METHOD CargaValores( cClave ) CLASS TDetCamposExtra
 
    for each hCampos in ::aCamposExtra
 
-      cClavePrincipal      := hGet( DOCUMENTOS_ITEMS, ::TipoDocumento ) + hGet( hCampos, "código" ) + Padr( cClave, 20 )
+      cClavePrincipal      := hGet( DOCUMENTOS_ITEMS, ::TipoDocumento ) + hGet( hCampos, "código" ) + Padr( cClave, 30 )
 
       if ::oDbf:Seek( cClavePrincipal )
 
@@ -462,7 +465,7 @@ METHOD RollBackValores( cClave ) CLASS TDetCamposExtra
 
    for each hCampos in ::aCamposExtra
 
-      cClavePrincipal    := hGet( DOCUMENTOS_ITEMS, ::TipoDocumento ) + hGet( hCampos, "código" ) + Padr( cClave, 20 )
+      cClavePrincipal    := hGet( DOCUMENTOS_ITEMS, ::TipoDocumento ) + hGet( hCampos, "código" ) + Padr( cClave, 30 )
 
       while ::oDbf:Seek( cClavePrincipal )
          ::oDbf:Delete()
@@ -477,24 +480,43 @@ Return ( Self )
 
 //---------------------------------------------------------------------------//
 
-METHOD GuardaValores( cClave ) CLASS TDetCamposExtra
+METHOD GuardaValoresInHash( cClave ) CLASS TDetCamposExtra
 
    local hCampos
 
    for each hCampos in ::aCamposExtra
 
-      ::oDbf:Append()
-
-      ::oDbf:cTipDoc    := hGet( DOCUMENTOS_ITEMS, ::TipoDocumento )
-      ::oDbf:cCodTipo   := hGet( hCampos, "código" )
-      ::oDbf:cClave     := padr( cClave, 20 )
-      ::oDbf:cValor     := ::cFormat2Char( hGet( hCampos, "valor" ) )
-
-      ::oDbf:Save()
+      aAdd( ::aValores, {  "cTipDoc"   => hGet( DOCUMENTOS_ITEMS, ::TipoDocumento ),;
+         "cCodTipo"  => hGet( hCampos, "código" ),;
+         "cClave"    => padr( cClave, 30 ),;
+         "cValor"    => ::cFormat2Char( hGet( hCampos, "valor" ) ) } )
 
    next
 
 Return ( self ) 
+
+//---------------------------------------------------------------------------//
+
+METHOD saveExtraField( cClave ) CLASS TDetCamposExtra
+
+   local hCampos
+
+   ::RollBackValores( cClave )
+
+   for each hCampos in ::aValores
+
+      ::oDbf:Append()
+
+      ::oDbf:cTipDoc    := hGet( hCampos, "cTipDoc" )
+      ::oDbf:cCodTipo   := hGet( hCampos, "cCodTipo" )
+      ::oDbf:cClave     := padr( cClave, 30 )
+      ::oDbf:cValor     := hGet( hCampos, "cValor" )
+
+      ::oDbf:Save()
+
+   next   
+
+return ( self )
 
 //---------------------------------------------------------------------------//
 
@@ -607,7 +629,7 @@ METHOD valueExtraField( cCampo, cClave, cField ) CLASS TDetCamposExtra
    local cClavePrincipal      := ""
    local valueExtraField  
 
-   cClavePrincipal            := hGet( DOCUMENTOS_ITEMS, ::TipoDocumento ) + cCampo + Padr( cClave, 20 )
+   cClavePrincipal            := hGet( DOCUMENTOS_ITEMS, ::TipoDocumento ) + cCampo + Padr( cClave, 30 )
 
    if ::oDbf:Seek( cClavePrincipal )
       valueExtraField         := ::oDbf:cValor

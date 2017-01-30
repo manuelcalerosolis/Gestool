@@ -4033,94 +4033,9 @@ FUNCTION GenPedPrv( nDevice, cCaption, cCodDoc, cPrinter, nCopies )
    */
 
    if lVisualDocumento( cCodDoc, D():Documentos( nView ) )
-
       PrintReportPedPrv( nDevice, nCopies, cPrinter, cCodDoc )
-
    else
-
-      /*
-      Posicionamos en las areas
-      */
-
-      ( D():PedidosProveedoresLineas( nView ))->( dbSeek( nPedido ) )
-      ( D():Proveedores( nView )    )->( dbSeek( ( D():PedidosProveedores( nView ) )->cCodPrv ) )
-      ( D():Divisas( nView )    )->( dbSeek( ( D():PedidosProveedores( nView ) )->cDivPed ) )
-      ( D():FormasPago( nView )  )->( dbSeek( ( D():PedidosProveedores( nView ) )->cCodPgo ) )
-      ( D():Almacen( nView )    )->( dbSeek( ( D():PedidosProveedores( nView ) )->cCodAlm ) )
-      ( D():Usuarios( nView )    )->( dbSeek( ( D():PedidosProveedores( nView ) )->cCodUsr ) )
-
-      private cDbf         := D():PedidosProveedores( nView )
-      private cDbfCol      := D():PedidosProveedoresLineas( nView )
-      private cDbfPrv      := D():Proveedores( nView )
-      private cDbfPgo      := D():FormasPago( nView )
-      private cDbfIva      := D():TiposIva( nView )
-      private cDbfAlm      := D():Almacen( nView )
-      private cDbfDiv      := D():Divisas( nView )
-      private cDbfArt      := D():Articulos( nView )
-      private cDbfKit      := D():Kit( nView )
-      private cDbfUsr      := D():Usuarios( nView )
-      private cDbfPro      := D():Propiedades( nView )
-      private cDbfTblPro   := D():PropiedadesLineas( nView )
-      private cPicUndPed   := cPicUnd
-      private cPinDivPed   := cPinDiv
-      private cPirDivPed   := cPirDiv
-      private nDinDivPed   := nDinDiv
-      private nDirDivPed   := nDirDiv
-      private nVdvDivPed   := ( D():PedidosProveedores( nView ) )->nVdvPed
-
-      /*
-      Creamos el informe con la impresora seleccionada para ese informe-----------
-      */
-
-      if !empty( cPrinter )
-         oDevice           := TPrinter():New( cCaption, .f., .t., cPrinter )
-         REPORT oInf CAPTION cCaption TO DEVICE oDevice
-      else
-         REPORT oInf CAPTION cCaption PREVIEW
-      end if
-
-      if !empty( oInf ) .and. oInf:lCreated
-         oInf:lAutoland    := .f.
-         oInf:lFinish      := .f.
-         oInf:lNoCancel    := .t.
-         oInf:bSkip        := {|| ( D():PedidosProveedoresLineas( nView ) )->( dbSkip() ) }
-
-         oInf:oDevice:lPrvModal  := .t.
-
-         do case
-            case nDevice == IS_PRINTER
-               oInf:bPreview  := {| oDevice | PrintPreview( oDevice ) }
-
-            case nDevice == IS_PDF
-               oInf:bPreview  := {| oDevice | PrintPdf( oDevice ) }
-
-         end case
-
-         SetMargin(  cCodDoc, oInf )
-         PrintColum( cCodDoc, oInf )
-      end if
-
-      END REPORT
-
-      if !empty( oInf )
-
-         ACTIVATE REPORT oInf ;
-            WHILE       ( ( D():PedidosProveedoresLineas( nView ) )->cSerPed + Str( ( D():PedidosProveedoresLineas( nView ) )->nNumPed ) + ( D():PedidosProveedoresLineas( nView ) )->cSufPed == nPedido .and. !( D():PedidosProveedoresLineas( nView ) )->( eof() ) );
-            FOR         ( !( D():PedidosProveedoresLineas( nView ) )->lImpLin ) ;
-            ON ENDPAGE  ePage( oInf, cCodDoc )
-
-         if nDevice == IS_PRINTER
-            oInf:oDevice:end()
-         end if
-
-      end if
-
-      oInf                 := nil
-
-      /*
-      Marca de documento impreso-----------------------------------------------
-      */
-
+      msgStop( "El formato ya no es soportado" )
    end if
 
    lChgImpDoc( D():PedidosProveedores( nView ) )

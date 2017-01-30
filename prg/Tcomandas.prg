@@ -70,7 +70,7 @@ METHOD New( cPath, oWndParent, oMenuItem )
 
    ::lCreateShell       := .f.
 
-   ::cMru               := "documents_preferences_16"
+   ::cMru               := "gc_document_text_check_16"
 
    ::cHtmlHelp          := "Tipos de comandas"
 
