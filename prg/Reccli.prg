@@ -4127,6 +4127,7 @@ Static Function VariableReport( oFr )
    oFr:AddVariable(     "Recibos", "Importe del recibo",       "CallHbFunc('nImpRecCli')" )
    oFr:AddVariable(     "Recibos", "Importe formato texto",    "CallHbFunc('cTxtRecCli')" )
    oFr:AddVariable(     "Recibos", "Total factura",            "CallHbFunc('nTotFactura')" )
+   oFr:AddVariable(     "Recibos", "Total cobros factura",     "CallHbFunc('nTotCobros')" )
    oFr:AddVariable(     "Recibos", "Total rectificativa",      "CallHbFunc('nTotRectificativa')" )
    oFr:AddVariable(     "Recibos", "Cuenta bancaria cliente",  "CallHbFunc('cCtaRecCli')" )
 
@@ -4352,7 +4353,7 @@ Return ( cFilePdf )
 
 //---------------------------------------------------------------------------//
 
-function nTotFactura( cNumRec, cFacCliT, cFacCliL, cDbfIva, cDbfDiv, cFacCliP, cAntCliT )
+Function nTotFactura( cNumRec, cFacCliT, cFacCliL, cDbfIva, cDbfDiv, cFacCliP, cAntCliT )
 
    DEFAULT cNumRec   := ( D():FacturasClientesCobros( nView ) )->cSerie + str( ( D():FacturasClientesCobros( nView ) )->nNumFac ) + ( D():FacturasClientesCobros( nView ) )->cSufFac
    DEFAULT cFacCliT  := D():FacturasClientes( nView )
@@ -4363,6 +4364,24 @@ function nTotFactura( cNumRec, cFacCliT, cFacCliL, cDbfIva, cDbfDiv, cFacCliP, c
    DEFAULT cAntCliT  := D():AnticiposClientes( nView )
 
 Return ( nTotFacCli( cNumRec, cFacCliT, cFacCliL, cDbfIva, cDbfDiv, cFacCliP, cAntCliT, , , .f. ) )
+
+//---------------------------------------------------------------------------//
+
+Function nTotCobros( cNumRec, cFacCliT, cFacCliL, cDbfIva, cDbfDiv, cFacCliP, cAntCliT )
+
+   local sTotCobros  
+
+   DEFAULT cNumRec   := ( D():FacturasClientesCobros( nView ) )->cSerie + str( ( D():FacturasClientesCobros( nView ) )->nNumFac ) + ( D():FacturasClientesCobros( nView ) )->cSufFac
+   DEFAULT cFacCliT  := D():FacturasClientes( nView )
+   DEFAULT cFacCliL  := D():FacturasClientesLineas( nView )
+   DEFAULT cDbfIva   := D():TiposIva( nView )
+   DEFAULT cDbfDiv   := D():Divisas( nView )
+   DEFAULT cFacCliP  := D():FacturasClientesCobros( nView )
+   DEFAULT cAntCliT  := D():AnticiposClientes( nView )
+
+   sTotCobros        := sTotFacCli( cNumRec, cFacCliT, cFacCliL, cDbfIva, cDbfDiv, cFacCliP, cAntCliT )
+
+Return ( sTotCobros:nTotalCobrado )
 
 //---------------------------------------------------------------------------//
 
