@@ -7584,17 +7584,13 @@ Return nil
 
 Static Function YearComboBoxChange()
 
-	 if oWndBrw:oWndBar:lAllYearComboBox()
-      DestroyFastFilter( D():FacturasRectificativasProveedores( nView ) )
-      CreateUserFilter( "", D():FacturasRectificativasProveedores( nView ), .f., , , "all" )
-	 else
-      DestroyFastFilter( D():FacturasRectificativasProveedores( nView ) )
-      CreateUserFilter( "Year( Field->dFecFac ) == " + oWndBrw:oWndBar:cYearComboBox(), D():FacturasRectificativasProveedores( nView ), .f., , , "Year( Field->dFecFac ) == " + oWndBrw:oWndBar:cYearComboBox() )
-	 end if
+   if ( oWndBrw:oWndBar:cYearComboBox() != __txtAllYearsFilter__ )
+      oWndBrw:oWndBar:setYearComboBoxExpression( "Year( Field->dFecFac ) == " + oWndBrw:oWndBar:cYearComboBox() )
+   else
+      oWndBrw:oWndBar:setYearComboBoxExpression( "" )
+   end if 
 
-    ( D():FacturasRectificativasProveedores( nView ) )->( dbGoTop() )
-
-	 oWndBrw:Refresh()
+   oWndBrw:chgFilter()
 
 Return nil
 

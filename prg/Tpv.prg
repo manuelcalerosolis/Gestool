@@ -18204,17 +18204,13 @@ return ( nil )
 
 Static Function YearComboBoxChange()
 
-    if oWndBrw:oWndBar:lAllYearComboBox()
-      DestroyFastFilter( D():tikets( nView ) )
-      CreateUserFilter( "", D():tikets( nView ), .f., , , "all" )
-	 else
-		DestroyFastFilter( D():tikets( nView ) )
-      CreateUserFilter( "Year( Field->dFecTik ) == " + oWndBrw:oWndBar:cYearComboBox(), D():tikets( nView ), .f., , , "Year( Field->dFecTik ) == " + oWndBrw:oWndBar:cYearComboBox() )
-	 end if
+   if ( oWndBrw:oWndBar:cYearComboBox() != __txtAllYearsFilter__ )
+      oWndBrw:oWndBar:setYearComboBoxExpression( "Year( Field->dFecTik ) == " + oWndBrw:oWndBar:cYearComboBox() )
+   else
+      oWndBrw:oWndBar:setYearComboBoxExpression( "" )
+   end if 
 
-	 ( D():tikets( nView ) )->( dbGoTop() )
-
-	 oWndBrw:Refresh()
+   oWndBrw:chgFilter()
 
 Return nil
 

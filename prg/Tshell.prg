@@ -263,6 +263,7 @@ CLASS TShell FROM TMdiChild
    METHOD searchSetFocus()                   INLINE ( if( !empty( ::oWndBar ), ::oWndBar:setGetFocus(), ) )
    METHOD getYearComboBoxExpression()        INLINE ( if( !empty( ::oWndBar ), ::oWndBar:getYearComboBoxExpression(), '' ) )
    METHOD setYearComboBoxChange( bBlock )    INLINE ( if( !empty( ::oWndBar ), ::oWndBar:setYearComboBoxChange( bBlock ), ) )
+   Method setYearComboBox( nYear )           INLINE ( if( !empty( ::oWndBar ), ( ::oWndBar:setYearComboBox( nYear ), ::oWndBar:oYearComboBox:change() ), ) )
 
    METHOD getAsteriskFilter()                INLINE ( ::cAsteriskFilter )
 

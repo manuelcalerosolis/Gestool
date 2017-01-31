@@ -5663,23 +5663,19 @@ return ( aIncAntCli )
 
 Static Function YearComboBoxChange()
 
-	 if oWndBrw:oWndBar:lAllYearComboBox()
-		DestroyFastFilter( dbfAntCliT )
-      CreateUserFilter( "", dbfAntCliT, .f., , , "all" )
-	 else
-		DestroyFastFilter( dbfAntCliT )
-      CreateUserFilter( "Year( Field->dFecAnt ) == " + oWndBrw:oWndBar:cYearComboBox(), dbfAntCliT, .f., , , "Year( Field->dFecAnt ) == " + oWndBrw:oWndBar:cYearComboBox() )
-	 end if
+   if ( oWndBrw:oWndBar:cYearComboBox() != __txtAllYearsFilter__ )
+      oWndBrw:oWndBar:setYearComboBoxExpression( "Year( Field->dFecAnt ) == " + oWndBrw:oWndBar:cYearComboBox() )
+   else
+      oWndBrw:oWndBar:setYearComboBoxExpression( "" )
+   end if 
 
-	 ( dbfAntCliT )->( dbGoTop() )
+   oWndBrw:chgFilter()
 
-	 oWndBrw:Refresh()
+Return nil
 
-  Return nil
+//---------------------------------------------------------------------------//
 
-  //---------------------------------------------------------------------------//
-
-  #ifndef __PDA__
+#ifndef __PDA__
 
 function SynAntCli( cPath )
 

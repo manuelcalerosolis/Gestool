@@ -1392,16 +1392,15 @@ FUNCTION FactCli( oMenuItem, oWnd, hHash )
 
    ACTIVATE WINDOW oWndBrw VALID ( CloseFiles() )
 
-   EnableAcceso()
+   enableAcceso()
+
+   if uFieldempresa( 'lFltYea' )
+      oWndBrw:setYearCombobox()
+   end if
 
    if !empty( hHash ) 
-
-      if !empty( oWndBrw )
-         oWndBrw:RecAdd()
-      end if
-
-      hHash    := nil
-
+      oWndBrw:RecAdd()
+      hHash             := nil
    end if
 
 Return .t.
@@ -10666,17 +10665,13 @@ Return ( cFilePdf )
 
 Static Function YearComboBoxChange()
 
-   if oWndBrw:oWndBar:lAllYearComboBox()
-      DestroyFastFilter( D():FacturasClientes( nView ) )
-      CreateUserFilter( "", D():FacturasClientes( nView ), .f., , , "all" )
+   if ( oWndBrw:oWndBar:cYearComboBox() != __txtAllYearsFilter__ )
+      oWndBrw:oWndBar:setYearComboBoxExpression( "Year( Field->dFecFac ) == " + oWndBrw:oWndBar:cYearComboBox() )
    else
-      DestroyFastFilter( D():FacturasClientes( nView ) )
-      CreateUserFilter( "Year( Field->dFecFac ) == " + oWndBrw:oWndBar:cYearComboBox(), D():FacturasClientes( nView ), .f., , , "Year( Field->dFecFac ) == " + oWndBrw:oWndBar:cYearComboBox() )
-   end if
+      oWndBrw:oWndBar:setYearComboBoxExpression( "" )
+   end if 
 
-   ( D():FacturasClientes( nView ) )->( dbGoTop() )
-
-   oWndBrw:Refresh()
+   oWndBrw:chgFilter()
 
 Return .t.
 

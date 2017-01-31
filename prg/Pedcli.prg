@@ -11855,21 +11855,17 @@ Return ( nil )
 
 Static Function YearComboBoxChange()
 
-	 if oWndBrw:oWndBar:lAllYearComboBox()
-		DestroyFastFilter( D():PedidosClientes( nView ) )
-      CreateUserFilter( "", D():PedidosClientes( nView ), .f., , , "all" )
-	 else
-		DestroyFastFilter( D():PedidosClientes( nView ) )
-      CreateUserFilter( "Year( Field->dFecPed ) == " + oWndBrw:oWndBar:cYearComboBox(), D():PedidosClientes( nView ), .f., , , "Year( Field->dFecPed ) == " + oWndBrw:oWndBar:cYearComboBox() )
-	 end if
+   if ( oWndBrw:oWndBar:cYearComboBox() != __txtAllYearsFilter__ )
+      oWndBrw:oWndBar:setYearComboBoxExpression( "Year( Field->dFecPed ) == " + oWndBrw:oWndBar:cYearComboBox() )
+   else
+      oWndBrw:oWndBar:setYearComboBoxExpression( "" )
+   end if 
 
-	 ( D():PedidosClientes( nView ) )->( dbGoTop() )
+   oWndBrw:chgFilter()
 
-	 oWndBrw:Refresh()
+Return nil
 
-  Return nil
-
-  //-------------------------------------------------------------------------//
+//-------------------------------------------------------------------------//
 
 Static function lChangeCancel( aGet, aTmp, dbfTmpLin )
 

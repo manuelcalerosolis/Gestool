@@ -8227,17 +8227,13 @@ Return nil
 
 Static Function YearComboBoxChange()
 
-	 if oWndBrw:oWndBar:lAllYearComboBox()
-		DestroyFastFilter( D():PresupuestosClientes( nView ) )
-      CreateUserFilter( "", D():PresupuestosClientes( nView ), .f., , , "all" )
-	 else
-		DestroyFastFilter( D():PresupuestosClientes( nView ) )
-      CreateUserFilter( "Year( Field->dFecPre ) == " + oWndBrw:oWndBar:cYearComboBox(), D():PresupuestosClientes( nView ), .f., , , "Year( Field->dFecPre ) == " + oWndBrw:oWndBar:cYearComboBox() )
-	 end if
+   if ( oWndBrw:oWndBar:cYearComboBox() != __txtAllYearsFilter__ )
+      oWndBrw:oWndBar:setYearComboBoxExpression( "Year( Field->dFecPre ) == " + oWndBrw:oWndBar:cYearComboBox() )
+   else
+      oWndBrw:oWndBar:setYearComboBoxExpression( "" )
+   end if 
 
-	 ( D():PresupuestosClientes( nView ) )->( dbGoTop() )
-
-	 oWndBrw:Refresh()
+   oWndBrw:chgFilter()
 
 Return nil
 

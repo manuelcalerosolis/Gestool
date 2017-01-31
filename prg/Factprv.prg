@@ -8467,17 +8467,13 @@ Return nil
 
 Function YearComboBoxChange()
 
-    if oWndBrw:oWndBar:lAllYearComboBox()
-      DestroyFastFilter( D():FacturasProveedores( nView ) )
-      CreateUserFilter( "", D():FacturasProveedores( nView ), .f., , , "all" )
-    else
-      DestroyFastFilter( D():FacturasProveedores( nView ) )
-      CreateUserFilter( "Year( Field->dFecFac ) == " + oWndBrw:oWndBar:cYearComboBox(), D():FacturasProveedores( nView ), .f., , , "Year( Field->dFecFac ) == " + oWndBrw:oWndBar:cYearComboBox() )
-    end if
+   if ( oWndBrw:oWndBar:cYearComboBox() != __txtAllYearsFilter__ )
+      oWndBrw:oWndBar:setYearComboBoxExpression( "Year( Field->dFecFac ) == " + oWndBrw:oWndBar:cYearComboBox() )
+   else
+      oWndBrw:oWndBar:setYearComboBoxExpression( "" )
+   end if 
 
-    ( D():FacturasProveedores( nView ) )->( dbGoTop() )
-
-    oWndBrw:Refresh()
+   oWndBrw:chgFilter()
 
 Return nil
 

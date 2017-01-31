@@ -5597,7 +5597,7 @@ FONT 8, "MS Sans Serif"
   CONTROL "Validaciones rapidas de lineas", 185, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 50, 75, 108, 10
   CONTROL "Modificar tipo de impuesto", 170, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 50, 88, 95, 10
   CONTROL "Recoger usuarios", 187, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 234, 39, 69, 10
-  CONTROL "Activar búsqueda circular", 206, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 234, 51, 93, 10
+  CONTROL "Filtrar documentos por año actual", 206, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 234, 51, 118, 10
   CONTROL "Utilizar rejillas de entrada de propiedades", 138, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 234, 63, 143, 10
   CONTROL "Cambiar precios costo automáticamente", 190, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 234, 75, 139, 10
   CONTROL "", 139, "Edit", WS_BORDER|WS_TABSTOP, 309, 87, 67, 11

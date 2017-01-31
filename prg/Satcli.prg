@@ -11982,17 +11982,13 @@ RETURN ( if( cPorDiv != nil, Trans( nCalculo, cPorDiv ), nCalculo ) )
 
 Static Function YearComboBoxChange()
 
-    if oWndBrw:oWndBar:lAllYearComboBox()
-      DestroyFastFilter( D():SatClientes( nView ) )
-      CreateUserFilter( "", D():SatClientes( nView ), .f., , , "all" )
-    else
-      DestroyFastFilter( D():SatClientes( nView ) )
-      CreateUserFilter( "Year( Field->dFecSat ) == " + oWndBrw:oWndBar:cYearComboBox(), D():SatClientes( nView ), .f., , , "Year( Field->dFecSat ) == " + oWndBrw:oWndBar:cYearComboBox() )
-    end if
+   if ( oWndBrw:oWndBar:cYearComboBox() != __txtAllYearsFilter__ )
+      oWndBrw:oWndBar:setYearComboBoxExpression( "Year( Field->dFecSat ) == " + oWndBrw:oWndBar:cYearComboBox() )
+   else
+      oWndBrw:oWndBar:setYearComboBoxExpression( "" )
+   end if 
 
-    ( D():SatClientes( nView ) )->( dbGoTop() )
-
-    oWndBrw:Refresh()
+   oWndBrw:chgFilter()
 
 Return nil
 

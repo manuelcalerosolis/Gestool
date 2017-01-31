@@ -171,12 +171,13 @@ CLASS TAcceso
    Method ShowYearComboBox()              INLINE ( if( !empty( ::oYearComboBox ), ( ::lYearComboBox := .t., ::oYearComboBox:Show(), ::oYearComboBox:Set( 1 ) ), ) )
    Method HideYearComboBox()              INLINE ( if( !empty( ::oYearComboBox ), ( ::lYearComboBox := .f., ::oYearComboBox:Hide() ), ) )
    Method lAllYearComboBox()              INLINE ( if( !empty( ::oYearComboBox ), ( ::oYearComboBox:nAt == 1 ), .f. ) )
-   Method cYearComboBox()                 INLINE ( if( !empty( ::oYearComboBox ), ( ::oYearComboBox:VarGet() ), "" ) )
-   Method nYearComboBox()                 INLINE ( if( !empty( ::oYearComboBox ), ( Val( ::oYearComboBox:VarGet() ) ), 0 ) )
+   Method cYearComboBox()                 INLINE ( if( !empty( ::oYearComboBox ), ( ::oYearComboBox:varget() ), "" ) )
+   Method setYearComboBox( nYear )        
+   Method nYearComboBox()                 INLINE ( if( !empty( ::oYearComboBox ), ( Val( ::oYearComboBox:varget() ) ), 0 ) )
    Method setYearComboBoxExpression( cExpression );
                                           INLINE ( if( !empty( ::oYearComboBox ), ::cYearComboBoxExpression := cExpression, ) )
    Method getYearComboBoxExpression()     INLINE ( if( !empty( ::oYearComboBox ), ::cYearComboBoxExpression, "" ) )
-   Method SetYearComboBoxChange( bBlock ) INLINE ( if( !empty( ::oYearComboBox ), ( ::oYearComboBox:bChange  := bBlock ), ) )
+   Method setYearComboBoxChange( bBlock ) INLINE ( if( !empty( ::oYearComboBox ), ( ::oYearComboBox:bChange  := bBlock ), ) )
 
    Method Disable()                       INLINE ( CursorWait(),  if( !empty( ::oOfficeBar ), ( ::oOfficeBar:Disable(), SysRefresh() ), ) )
    Method Enable()                        INLINE ( CursorWE(),    if( !empty( ::oOfficeBar ), ( ::oOfficeBar:Enable(), SysRefresh() ), ) )
@@ -1107,6 +1108,20 @@ Method End()
    ::oButtonFilter      := nil 
    ::oComboBox          := nil 
    ::oComboFilter       := nil
+
+Return ( Self )
+
+//---------------------------------------------------------------------------//
+
+Method setYearComboBox( nYear )
+
+   DEFAULT nYear  := year( date() )
+
+   // msgalert(nYear)
+
+   if !empty( ::oYearComboBox )
+      ::oYearComboBox:set( str( nYear ) )
+   end if 
 
 Return ( Self )
 
