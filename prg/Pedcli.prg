@@ -9112,6 +9112,8 @@ STATIC FUNCTION EndTrans( aTmp, aGet, oBrwLin, oBrwInc, nMode, oDlg, lActualizaW
    aTmp[ _NTOTREQ ]     := nTotReq
    aTmp[ _NTOTPED ]     := nTotPed
 
+   oDetCamposExtra:saveExtraField( aTmp[ _CSERPED ] + Str( aTmp[ _NNUMPED ] ) + aTmp[ _CSUFPED ] )
+
    /*
    Escritura en el fichero definitivo------------------------------------------
    */
@@ -9818,6 +9820,8 @@ STATIC FUNCTION BeginTrans( aTmp, nMode )
    end if
 
    ( dbfTmpRes )->( dbGoTop() )
+
+   oDetCamposExtra:SetTemporal( aTmp[ _CSERPED ] + Str( aTmp[ _NNUMPED ] ) + aTmp[ _CSUFPED ], nMode )
 
    RECOVER USING oError
 
@@ -11855,21 +11859,17 @@ Return ( nil )
 
 Static Function YearComboBoxChange()
 
-	 if oWndBrw:oWndBar:lAllYearComboBox()
-		DestroyFastFilter( D():PedidosClientes( nView ) )
-      CreateUserFilter( "", D():PedidosClientes( nView ), .f., , , "all" )
-	 else
-		DestroyFastFilter( D():PedidosClientes( nView ) )
-      CreateUserFilter( "Year( Field->dFecPed ) == " + oWndBrw:oWndBar:cYearComboBox(), D():PedidosClientes( nView ), .f., , , "Year( Field->dFecPed ) == " + oWndBrw:oWndBar:cYearComboBox() )
-	 end if
+   if ( oWndBrw:oWndBar:cYearComboBox() != __txtAllYearsFilter__ )
+      oWndBrw:oWndBar:setYearComboBoxExpression( "Year( Field->dFecPed ) == " + oWndBrw:oWndBar:cYearComboBox() )
+   else
+      oWndBrw:oWndBar:setYearComboBoxExpression( "" )
+   end if 
 
-	 ( D():PedidosClientes( nView ) )->( dbGoTop() )
+   oWndBrw:chgFilter()
 
-	 oWndBrw:Refresh()
+Return nil
 
-  Return nil
-
-  //-------------------------------------------------------------------------//
+//-------------------------------------------------------------------------//
 
 Static function lChangeCancel( aGet, aTmp, dbfTmpLin )
 
@@ -13308,7 +13308,7 @@ return ( dFecAct )
 // Devuelve el numero de unidades recibidas en albaranes a clientes
 //
 
-function nUnidadesRecibidasAlbaranesClientes( cNumPed, cCodArt, cValPr1, cValPr2, cAlbCliL )
+Function nUnidadesRecibidasAlbaranesClientes( cNumPed, cCodArt, cValPr1, cValPr2, cAlbCliL )
 
    local aStatus     
    local nUnidadades    := 0
@@ -13336,12 +13336,11 @@ function nUnidadesRecibidasAlbaranesClientes( cNumPed, cCodArt, cValPr1, cValPr2
 
    SetStatus( cAlbCliL, aStatus )
 
-return ( nUnidadades )
+Return ( nUnidadades )
 
 //---------------------------------------------------------------------------//
 
-
-function dTmpPdtRec( cRef, cValPr1, cValPr2, dbfPedCliR )
+Function dTmpPdtRec( cRef, cValPr1, cValPr2, dbfPedCliR )
 
    local nRec     
    local dFecAct        := Ctod( "" )
@@ -13367,11 +13366,11 @@ function dTmpPdtRec( cRef, cValPr1, cValPr2, dbfPedCliR )
 
    ( dbfPedCliR )->( dbgoto( nRec ) )
 
-return ( dFecAct )
+Return ( dFecAct )
 
 //-----------------------------------------------------------------------------//
 
-FUNCTION dFecPedCli( cPedCli, cPedCliT )
+Function dFecPedCli( cPedCli, cPedCliT )
 
    local dFecPed  := CtoD("")
 
@@ -13379,7 +13378,7 @@ FUNCTION dFecPedCli( cPedCli, cPedCliT )
       dFecPed  := ( cPedCliT )->dFecPed
    END IF
 
-RETURN ( dFecPed )
+Return ( dFecPed )
 
 //---------------------------------------------------------------------------//
 

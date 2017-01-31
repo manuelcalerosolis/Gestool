@@ -235,6 +235,8 @@ METHOD Resource( nMode )
    local oBmpGeneral
    local oBmpTarifa
 
+   ::oDetCamposExtra:SetTemporal( ::oDbf:cCodGrp, nMode )
+
    DEFINE DIALOG     oDlg ;
       RESOURCE       "GRPCLI" ;
       TITLE          LblTitle( nMode ) + "Grupos de clientes"
@@ -393,7 +395,9 @@ Method lSaveResource( nMode, oDlg )
       Return nil
    end if
 
-Return oDlg:end( IDOK )
+   ::oDetCamposExtra:saveExtraField( ::oDbf:cCodGrp )
+
+Return ( oDlg:end( IDOK ) )
 
 //---------------------------------------------------------------------------//
 

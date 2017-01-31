@@ -7381,6 +7381,8 @@ STATIC FUNCTION BeginTrans( aTmp, nMode )
 
   	end if
 
+   oDetCamposExtra:SetTemporal( aTmp[ _CSERIE ] + Str( aTmp[ _NNUMFAC ] ) + aTmp[ _CSUFFAC ], nMode )
+
    RECOVER USING oError
 
       msgStop( "Imposible crear tablas temporales." + CRLF + ErrorMessage( oError ) )
@@ -7732,6 +7734,8 @@ STATIC FUNCTION EndTrans( aTmp, aGet, oBrw, oBrwDet, oBrwPgo, aNumAlb, nMode, oD
    aTmp[ _NTOTIVA ]  := nTotIva
    aTmp[ _NTOTREQ ]  := nTotReq
    aTmp[ _NTOTFAC ]  := nTotFac
+
+   oDetCamposExtra:saveExtraField( aTmp[ _CSERIE ] + Str( aTmp[ _NNUMFAC ] ) + aTmp[ _CSUFFAC ] )
 
    /*
    Grabamos el registro--------------------------------------------------------
@@ -10243,19 +10247,15 @@ Return nil
 
 Static Function YearComboBoxChange()
 
-	 if oWndBrw:oWndBar:lAllYearComboBox()
-		DestroyFastFilter( D():FacturasRectificativas( nView ) )
-      CreateUserFilter( "", D():FacturasRectificativas( nView ), .f., , , "all" )
-	 else
-		DestroyFastFilter( D():FacturasRectificativas( nView ) )
-      CreateUserFilter( "Year( Field->dFecFac ) == " + oWndBrw:oWndBar:cYearComboBox(), D():FacturasRectificativas( nView ), .f., , , "Year( Field->dFecFac ) == " + oWndBrw:oWndBar:cYearComboBox() )
-	 end if
+   if ( oWndBrw:oWndBar:cYearComboBox() != __txtAllYearsFilter__ )
+      oWndBrw:oWndBar:setYearComboBoxExpression( "Year( Field->dFecFac ) == " + oWndBrw:oWndBar:cYearComboBox() )
+   else
+      oWndBrw:oWndBar:setYearComboBoxExpression( "" )
+   end if 
 
-	 ( D():FacturasRectificativas( nView ) )->( dbGoTop() )
+   oWndBrw:chgFilter()
 
-	 oWndBrw:Refresh()
-
-  Return nil
+Return nil
 
 //---------------------------------------------------------------------------//
 

@@ -258,14 +258,20 @@ CLASS TShell FROM TMdiChild
 
    METHOD HelpTopic()
 
-   METHOD AddGoTo( cCaption, bAction )
+   METHOD addGoTo( cCaption, bAction )
 
-   METHOD SearchSetFocus()                   INLINE ( if( !empty( ::oWndBar ), ::oWndBar:SetGetFocus(), ) )
-   METHOD SetYearComboBoxChange( bBlock )    INLINE ( if( !empty( ::oWndBar ), ::oWndBar:SetYearComboBoxChange( bBlock ), ) )
+   METHOD searchSetFocus()                   INLINE ( if( !empty( ::oWndBar ), ::oWndBar:setGetFocus(), ) )
+   METHOD getYearComboBoxExpression()        INLINE ( if( !empty( ::oWndBar ), ::oWndBar:getYearComboBoxExpression(), '' ) )
+   METHOD setYearComboBoxChange( bBlock )    INLINE ( if( !empty( ::oWndBar ), ::oWndBar:setYearComboBoxChange( bBlock ), ) )
+   Method setYearComboBox( nYear )           INLINE ( if( !empty( ::oWndBar ), ( ::oWndBar:setYearComboBox( nYear ), ::oWndBar:oYearComboBox:change() ), ) )
 
-   METHOD SetKillFilter( bBlock )            INLINE ( if( !empty( ::oWndBar ), ::oWndBar:SetKillFilter( bBlock ), ) )
+   METHOD getAsteriskFilter()                INLINE ( ::cAsteriskFilter )
 
-   METHOD AddImageList( cImage )
+   METHOD getComboFilter()                   
+
+   METHOD setKillFilter( bBlock )            INLINE ( if( !empty( ::oWndBar ), ::oWndBar:setKillFilter( bBlock ), ) )
+
+   METHOD addImageList( cImage )
 
    METHOD ClickTree()
 
@@ -310,12 +316,11 @@ CLASS TShell FROM TMdiChild
    METHOD CheckExtendInfo()
    METHOD ShowExtendInfo( nRow, nCol, cToolTip )
    METHOD DestroyToolTip()
+
    METHOD asteriskFilter()
-
-   METHOD SetAutoFilter()
-
-   METHOD AplyFilter()                       
-   METHOD ChangeFilter( cFilter )            INLINE   ( msgStop( cFilter ) )
+   METHOD setAutoFilter()
+   METHOD aplyFilter()                       
+   METHOD changeFilter( cFilter )            INLINE   ( msgStop( cFilter ) )
 
    METHOD EnableComboFilter( aFilter )       INLINE   ( ::oWndBar:EnableComboFilter( aFilter ) )
    METHOD SetDefaultComboFilter( aFilter )   INLINE   ( ::oWndBar:SetDefaultComboFilter( aFilter ) )
@@ -498,8 +503,8 @@ METHOD Activate( cShow, bLClicked, bRClicked, bMoved, bResized, bPainted, bKeyDo
 
    DEFAULT lCenter   := ( ::nTop == 0 .and. ::nLeft == 0 )
 
-   oBlock            := ErrorBlock( { | oError | ApoloBreak( oError ) } )
-   BEGIN SEQUENCE
+   // oBlock            := ErrorBlock( { | oError | ApoloBreak( oError ) } )
+   // BEGIN SEQUENCE
 
    CursorWait()
 
@@ -528,7 +533,7 @@ METHOD Activate( cShow, bLClicked, bRClicked, bMoved, bResized, bPainted, bKeyDo
    // Seleccion de oden de la columna------------------------------------------
 
    if ( ::xAlias )->( Used() ) .and. !empty( ::oBrw )
-      aEval( ::oBrw:aCols, {|oCol| if( oCol:cSortOrder == ( ::xAlias )->( OrdSetFocus() ), ( oCol:SetOrder(), oCol:Adjust() ), ) } )
+      aEval( ::oBrw:aCols, {|oCol| if( oCol:cSortOrder == ( ::xAlias )->( ordsetfocus() ), ( oCol:SetOrder(), oCol:Adjust() ), ) } )
    end if
 
    // Filtro por defecto----------------------------------------------------
@@ -541,15 +546,15 @@ METHOD Activate( cShow, bLClicked, bRClicked, bMoved, bResized, bPainted, bKeyDo
 
    CursorWE()
 
-   RECOVER USING oError
+   // RECOVER USING oError
 
-      msgStop( "Error al iniciar al abrir las bases de datos" + CRLF + ErrorMessage( oError ) )
+   //    msgStop( "Error al iniciar al abrir las bases de datos" + CRLF + ErrorMessage( oError ) )
 
-      ::End()
+   //    ::End()
 
-   END SEQUENCE
+   // END SEQUENCE
 
-   ErrorBlock( oBlock )
+   // ErrorBlock( oBlock )
 
    ::BarEnable()
 
@@ -1018,31 +1023,15 @@ METHOD asteriskFilter( xValueToSearch, cAlias )
 
       xValueToSearch       := substr( xValueToSearch, 2, len( xValueToSearch ) - 2 )
 
-      ::cAsteriskFilter    := '"' + xValueToSearch + '" $ ' + ( cAlias )->( ordkey() ) 
-
-      if !empty( ::getActiveExpresionFilter() )
-         ( cAlias )->( setCustomFilter( ::cAsteriskFilter + ' .and. ' + ::getActiveExpresionFilter() ) )
-      else
-         ( cAlias )->( setCustomFilter( ::cAsteriskFilter ) )
-      end if 
-
-      Return .t.
+      ::cAsteriskFilter    := '"' + xValueToSearch + '" $ ' + ( cAlias )->( ordkey() )
 
    else
 
-      if !empty( ::cAsteriskFilter )
-
-         if !empty( ::getActiveExpresionFilter() )
-            ( cAlias )->( setCustomFilter( ::getActiveExpresionFilter() ) )
-         else 
-            ( cAlias )->( quitCustomFilter() )
-         end if 
-
-         ::cAsteriskFilter := ''
-
-      end if
+      ::cAsteriskFilter    := ''
 
    end if
+
+   ::chgFilter() 
 
 Return .f.
 
@@ -1780,7 +1769,7 @@ METHOD ChgCombo( nTab ) CLASS TShell
    // Evento de cambio de indices----------------------------------------------
 
    if !empty( ::bChgIndex )
-      Eval( ::bChgIndex )
+      eval( ::bChgIndex )
    end if
 
    // Orden actual ------------------------------------------------------------
@@ -1838,14 +1827,10 @@ METHOD addSeaBar( cSearchType, nLenSearchType ) CLASS TShell
       ::oWndBar:SetComboBoxChange(     {|| ::ChgCombo() } )
       ::oWndBar:SetComboFilterChange(  {|| ::ChgFilter() } )
 
-      ::oWndBar:SetKillFilter(         {|| ::KillFilter() } )
-
       ::oWndBar:SetAddButtonFilter(    {|| ::AddFilter() } )
       ::oWndBar:SetEditButtonFilter(   {|| ::EditFilter() } )
+      ::oWndBar:SetKillFilter(         {|| ::KillFilter() } )
 
-      // ::oWndBar:SetGetLostFocus(       {|| ::killScope() } )
-      // ::oWndBar:SetGetChange(          {|| ::fastSeek( ::oWndBar:oGet, ::oWndBar:oGet:varGet() ) } )
-      // ::oWndBar:SetGetPostKey(         {| oGet, cText  | ::FastSeek( oGet, cText ) } )
       ::oWndBar:SetGetKeyUp(           {|| ::fastSeek( ::oWndBar:oGet, ::oWndBar:oGet:oGet:buffer() ) } ) 
       ::oWndBar:SetGetKeyDown(         {| nKey, nFlags | ::KeySearch( nKey ) } )
 
@@ -2562,44 +2547,46 @@ Return ( Self )
 METHOD chgFilter() CLASS TShell
 
    local cFilter              := ""
+   local cFilterCombo         := ""
    local cFilterExpresion     := ""
+   local cFilterYear          := ""
+   local cFilterAsterisk      := ""
 
    CursorWait()
 
-   if !empty( ::oWndBar )
-      cFilter                 := ::oWndBar:GetComboFilter()
-   end if
+   cFilterCombo               := ::getActiveExpresionFilter()
+   cFilterYear                := ::getYearComboBoxExpression()
+   cFilterAsterisk            := ::getAsteriskFilter()
 
-   if !empty( cFilter )
+   if !empty(cFilterCombo)
+      cFilter                 := cFilterCombo
+      ::ShowButtonFilter()
+      ::ShowEditButtonFilter()
+   else 
+      ::HideButtonFilter()
+      ::HideEditButtonFilter()
+   end if 
 
-      if cFilter != __txtFilters__
-         
-         cFilterExpresion     := ::oActiveFilter:getExpresionFilter( cFilter )
-
-         if !empty( cFilterExpresion )
-            if !empty( ::cAsteriskFilter )
-               ( ::xAlias )->( setCustomFilter( cFilterExpresion + ' .and. ' + ::cAsteriskFilter ) )
-            else
-               ( ::xAlias )->( setCustomFilter( cFilterExpresion ) )
-            end if 
-         endif
-
-         ::ShowButtonFilter()
-         ::ShowEditButtonFilter()
-
+   if !empty(cFilterYear)
+      if !empty( cFilter )
+         cFilter              += ' .and. ' + cFilterYear
       else 
-
-         if !empty( ::cAsteriskFilter )
-            ( ::xAlias )->( setCustomFilter( ::cAsteriskFilter ) )
-         else
-            ( ::xAlias )->( quitCustomFilter() )
-         end if 
-
-         ::HideButtonFilter()
-         ::HideEditButtonFilter()
-
+         cFilter              := cFilterYear
       end if 
+   end if 
 
+   if !empty(cFilterAsterisk)
+      if !empty( cFilter )
+         cFilter              += ' .and. ' + cFilterAsterisk
+      else 
+         cFilter              := cFilterAsterisk
+      end if 
+   end if 
+
+   if !empty( cFilter ) 
+      ( ::xAlias )->( setCustomFilter( cFilter ) )
+   else 
+      ( ::xAlias )->( quitCustomFilter() )
    end if
 
    ::Refresh() 
@@ -2718,6 +2705,22 @@ METHOD KillFilter()
    ::chgFilter()
 
 Return ( Self )
+
+//----------------------------------------------------------------------------//
+
+METHOD getComboFilter()
+
+   local cFilter  := ''
+
+   if empty( ::oWndBar )
+      Return ( cFilter )
+   end if 
+
+   if ::oWndBar:GetComboFilter() != __txtFilters__
+      cFilter     := ::oWndBar:GetComboFilter()
+   end if 
+
+Return ( cFilter )
 
 //----------------------------------------------------------------------------//
 

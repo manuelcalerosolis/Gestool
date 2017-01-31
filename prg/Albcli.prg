@@ -446,7 +446,6 @@ static oPais
 static Counter
 
 static oDetCamposExtra
-static oLinDetCamposExtra
 
 static oBtnKit
 static oBtnAtp
@@ -1688,11 +1687,6 @@ STATIC FUNCTION OpenFiles()
       oDetCamposExtra:SetTipoDocumento( "Albaranes a clientes" )
       oDetCamposExtra:setbId( {|| D():AlbaranesClientesId( nView ) } )
 
-      oLinDetCamposExtra      := TDetCamposExtra():New()
-      oLinDetCamposExtra:OpenFiles()
-      oLinDetCamposExtra:SetTipoDocumento( "Lineas de albaranes a clientes" )
-      oLinDetCamposExtra:setbId( {|| D():AlbaranesClientesId( nView ) } )
-
    RECOVER USING oError
 
       lOpenFiles        := .f.
@@ -2408,7 +2402,6 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, hHash, bValid, nMode )
 
       oGetTarifa  := comboTarifa():Build( { "idCombo" => 172, "uValue" => aTmp[ _NTARIFA ] } )
       oGetTarifa:Resource( oFld:aDialogs[1] )
-
   
       REDEFINE BTNBMP oBtnPrecio ;
          ID       174 ;
@@ -2417,10 +2410,6 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, hHash, bValid, nMode )
          NOBORDER ;
          ACTION   ( ChangeTarifaCabecera( oGetTarifa:getTarifa(), dbfTmpLin, oBrwLin ) );
          WHEN     ( nMode != ZOOM_MODE .and. ( lUsrMaster() .or. oUser():lCambiarPrecio() ) )
-
-         /*
-         --------------
-         */
 
       REDEFINE GET oRieCli VAR nRieCli;
          ID       173 ;
@@ -3381,6 +3370,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, hHash, bValid, nMode )
       REDEFINE BTNBMP oBtnPre ;
          ID       601 ;
          OF       oFld:aDialogs[1] ;
+         WHEN     ( lWhen .and. ( dbfTmpLin )->( ordKeyCount() ) == 0 ) ;
          RESOURCE "gc_notebook_user_16" ;
          NOBORDER ;
          TOOLTIP  "Importar presupuesto" ;
@@ -3389,6 +3379,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, hHash, bValid, nMode )
       REDEFINE BTNBMP oBtnPed ;
          ID       603 ;
          OF       oFld:aDialogs[1] ;
+         WHEN     ( lWhen .and. ( dbfTmpLin )->( ordKeyCount() ) == 0 ) ;
          RESOURCE "gc_clipboard_empty_user_16" ;
          NOBORDER ;
          TOOLTIP  "Importar pedido" ;
@@ -3397,19 +3388,20 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, hHash, bValid, nMode )
       REDEFINE BUTTON oBtnAgruparPedido;
          ID       512 ;
          OF       oFld:aDialogs[1] ;
-         WHEN     ( nMode == APPD_MODE .and. empty( aTmp[ _CNUMPED ] ) ) ;
+         WHEN     ( lWhen .and. ( dbfTmpLin )->( ordKeyCount() ) == 0 ) ;
          ACTION   ( GrpPed( aGet, aTmp, oBrwLin  ) )
 
       REDEFINE BUTTON ;
          ID       513 ;
          OF       oFld:aDialogs[1] ;
+         WHEN     ( lWhen ) ;
          ACTION   ( importarLineasPedidosClientes( aTmp, aGet, oBrwLin )  )
 
       REDEFINE GET aGet[ _CNUMPED ] VAR aTmp[ _CNUMPED ] ;
          ID       150 ;
          PICTURE  "@R A/XXXXXXXXX/XX" ;
          VALID    ( cPedCli( aGet, aTmp, oBrwLin, oBrwPgo, nMode ), RecalculaTotal( aTmp ), SetDialog( aGet, oSayDias, oSayTxtDias ) );
-         WHEN     ( nMode == APPD_MODE ) ;
+         WHEN     ( lWhen .and. ( dbfTmpLin )->( ordKeyCount() ) == 0 ) ;
          ON HELP  ( BrwPedCli( aGet[ _CNUMPED ], dbfPedCliT, dbfPedCliL, D():Get( "TIva", nView ), D():Get( "Divisas", nView ), D():Get( "FPago", nView ), aGet[ _LIVAINC ] ),;
                     RecalculaTotal( aTmp ) ) ;
          BITMAP   "LUPA" ;
@@ -5030,7 +5022,6 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbf, oBrw, lTotLin, cCodArtEnt, nMode, aTmpA
    end if
 
    oDlg:AddFastKey( VK_F6,             {|| oBtnSer:Click() } )
-   oDlg:AddFastKey( VK_F9,             {|| oLinDetCamposExtra:Play( aTmp[ _CSERALB ] + Str( aTmp[ _NNUMALB ] ) + aTmp[ _CSUFALB ] + Str( aTmp[ _NNUMLIN ] ) + Str( aTmp[ _NNUMKIT ] ) ) } )
 
    // Start --------------------------------------------------------------------
 
@@ -9272,6 +9263,12 @@ STATIC FUNCTION BeginTrans( aTmp, nMode )
 
       end if
 
+   /*
+   Metemos los temporales de los campos extra----------------------------------
+   */
+
+   oDetCamposExtra:SetTemporal( aTmp[ _CSERALB ] + Str( aTmp[ _NNUMALB ] ) + aTmp[ _CSUFALB ], nMode )
+
    RECOVER USING oError
 
       msgStop( ErrorMessage( oError ), "Imposible crear tablas temporales." )
@@ -11774,6 +11771,12 @@ STATIC FUNCTION EndTrans( aTmp, aGet, oBrw, oBrwInc, nMode, oDlg )
    aTmp[ _NTOTALB ]     := nTotAlb
    aTmp[ _NTOTPAG ]     := nTotPag
 
+   /*
+   Guardamos los campos extra-----------------------------------------------
+   */
+
+   oDetCamposExtra:saveExtraField( aTmp[ _CSERALB ] + Str( aTmp[ _NNUMALB ] ) + aTmp[ _CSUFALB ] )
+
    WinGather( aTmp, , D():Get( "AlbCliT", nView ), , nMode )
 
    /*
@@ -11926,17 +11929,13 @@ RETURN .t.
 
 Static Function YearComboBoxChange()
 
-   if oWndBrw:oWndBar:lAllYearComboBox()
-      DestroyFastFilter( D():Get( "AlbCliT", nView ) )
-      CreateUserFilter( "", D():Get( "AlbCliT", nView ), .f., , , "all" )
+   if ( oWndBrw:oWndBar:cYearComboBox() != __txtAllYearsFilter__ )
+      oWndBrw:oWndBar:setYearComboBoxExpression( "Year( Field->dFecAlb ) == " + oWndBrw:oWndBar:cYearComboBox() )
    else
-      DestroyFastFilter( D():Get( "AlbCliT", nView ) )
-      CreateUserFilter( "Year( Field->dFecAlb ) == " + oWndBrw:oWndBar:cYearComboBox(), D():Get( "AlbCliT", nView ), .f., , , "Year( Field->dFecAlb ) == " + oWndBrw:oWndBar:cYearComboBox() )
-   end if
+      oWndBrw:oWndBar:setYearComboBoxExpression( "" )
+   end if 
 
-   ( D():Get( "AlbCliT", nView ) )->( dbGoTop() )
-
-   oWndBrw:Refresh()
+   oWndBrw:chgFilter()
 
 Return nil
 
@@ -18422,7 +18421,7 @@ Static Function importarLineasPedidosClientes( aTmp, aGet, oBrwLin )
       return .t.
    end if
 
-   oConversionPedidosClientes    := TConversionPedidosClientes():New()
+   oConversionPedidosClientes    := TConversionPedidosClientes():New( nView, oStock )
 
    if empty( oConversionPedidosClientes )
       Return .f.
@@ -18494,17 +18493,12 @@ static Function menuEdtDet( oCodArt, oDlg, lOferta, nIdLin )
 
          MENU
 
-            MENUITEM    "&1. Campos extra [F9]";
-               MESSAGE  "Mostramos y rellenamos los campos extra" ;
-               RESOURCE "GC_FORM_PLUS2_16" ;
-               ACTION   ( oLinDetCamposExtra:Play( nIdLin ) )
-
-            MENUITEM    "&2. Modificar artículo";
+            MENUITEM    "&1. Modificar artículo";
                MESSAGE  "Modificar la ficha del artículo" ;
                RESOURCE "gc_object_cube_16";
                ACTION   ( EdtArticulo( oCodArt:VarGet() ) );
 
-            MENUITEM    "&3. Informe de artículo";
+            MENUITEM    "&2. Informe de artículo";
                MESSAGE  "Abrir el informe del artículo" ;
                RESOURCE "Info16";
                ACTION   ( if( oUser():lNotCostos(), msgStop( "No tiene permiso para ver los precios de costo" ), InfArticulo( oCodArt:VarGet() ) ) );

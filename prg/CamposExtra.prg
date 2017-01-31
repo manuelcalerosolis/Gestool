@@ -371,6 +371,9 @@ METHOD Resource( nMode ) CLASS TCamposExtra
       WHEN        ( nMode == APPD_MODE ) ;
       OF          ::oDlg
 
+   ::oCodigo:bHelp  := {|| ::oCodigo:cText( NextKey( ::oDbf:cCodigo, ::oDbf:cAlias, "0", 3 ) ) }
+   ::oCodigo:cBmp   := "BOT"
+
    REDEFINE GET ::oNombre VAR ::oDbf:cNombre ;
       ID          110 ;
       WHEN        ( nMode != ZOOM_MODE ) ;

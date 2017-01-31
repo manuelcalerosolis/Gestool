@@ -7004,6 +7004,8 @@ STATIC FUNCTION BeginTrans( aTmp, nMode )
 
       ( dbfTmpPgo )->( dbGoTop() )
 
+      oDetCamposExtra:SetTemporal( aTmp[ _CSERFAC ] + Str( aTmp[ _NNUMFAC ] ) + aTmp[ _CSUFFAC ], nMode )
+
       CursorWE()
 
    RECOVER USING oError
@@ -7312,6 +7314,12 @@ STATIC FUNCTION EndTrans( aTmp, aGet, oBrw, oBrwLin, nMode, nDec, oDlg )
    aTmp[ _NTOTIVA ]  := nTotIva
    aTmp[ _NTOTREQ ]  := nTotReq
    aTmp[ _NTOTFAC ]  := nTotFac
+
+   /*
+   Salvamos los temporales de los campos extra---------------------------------
+   */
+
+   oDetCamposExtra:saveExtraField( aTmp[ _CSERFAC ] + Str( aTmp[ _NNUMFAC ] ) + aTmp[ _CSUFFAC ] )
 
    // Grabamos las cabeceras de los albaranes----------------------------------
 
@@ -8467,17 +8475,13 @@ Return nil
 
 Function YearComboBoxChange()
 
-    if oWndBrw:oWndBar:lAllYearComboBox()
-      DestroyFastFilter( D():FacturasProveedores( nView ) )
-      CreateUserFilter( "", D():FacturasProveedores( nView ), .f., , , "all" )
-    else
-      DestroyFastFilter( D():FacturasProveedores( nView ) )
-      CreateUserFilter( "Year( Field->dFecFac ) == " + oWndBrw:oWndBar:cYearComboBox(), D():FacturasProveedores( nView ), .f., , , "Year( Field->dFecFac ) == " + oWndBrw:oWndBar:cYearComboBox() )
-    end if
+   if ( oWndBrw:oWndBar:cYearComboBox() != __txtAllYearsFilter__ )
+      oWndBrw:oWndBar:setYearComboBoxExpression( "Year( Field->dFecFac ) == " + oWndBrw:oWndBar:cYearComboBox() )
+   else
+      oWndBrw:oWndBar:setYearComboBoxExpression( "" )
+   end if 
 
-    ( D():FacturasProveedores( nView ) )->( dbGoTop() )
-
-    oWndBrw:Refresh()
+   oWndBrw:chgFilter()
 
 Return nil
 

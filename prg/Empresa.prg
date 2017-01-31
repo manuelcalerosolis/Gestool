@@ -1323,32 +1323,38 @@ STATIC FUNCTION EditConfig( aTmp, aGet, dbfEmp, oBrw, nSelFolder, bValid, nMode 
          TRANSPARENT ;
          OF       fldGeneral
 
-      REDEFINE CHECKBOX aGet[ _LCODART ] VAR aTmp[ _LCODART ] ;
+      REDEFINE CHECKBOX aGet[ _LCODART ] ;
+         VAR      aTmp[ _LCODART ] ;
          ID       140 ;
          OF       fldGeneral
 
-      REDEFINE CHECKBOX aGet[ _LENTCON ] VAR aTmp[ _LENTCON ] ;
+      REDEFINE CHECKBOX aGet[ _LENTCON ] ;
+         VAR      aTmp[ _LENTCON ] ;
          ID       150 ;
          OF       fldGeneral
 
-      REDEFINE CHECKBOX aGet[ _LMODDES ] VAR aTmp[ _LMODDES ] ;
+      REDEFINE CHECKBOX aGet[ _LMODDES ] ;
+         VAR      aTmp[ _LMODDES ] ;
          ID       160 ;
          OF       fldGeneral
 
-      REDEFINE CHECKBOX aGet[ _LMODIVA ] VAR aTmp[ _LMODIVA ] ;
+      REDEFINE CHECKBOX aGet[ _LMODIVA ] ;
+         VAR      aTmp[ _LMODIVA ] ;
          ID       170 ;
          OF       fldGeneral
 
-      REDEFINE CHECKBOX aGet[ _LBUSCIR ] ;
-         VAR      aTmp[ _LBUSCIR ] ;
+      REDEFINE CHECKBOX aGet[ _LFLTYEA ] ;
+         VAR      aTmp[ _LFLTYEA ] ;
          ID       206 ;
          OF       fldGeneral
 
-      REDEFINE CHECKBOX aGet[ _LGETUSR ] VAR aTmp[ _LGETUSR ] ;
+      REDEFINE CHECKBOX aGet[ _LGETUSR ] ;
+         VAR      aTmp[ _LGETUSR ] ;
          ID       187 ;
          OF       fldGeneral
 
-      REDEFINE CHECKBOX aGet[ _LGETLOT ] VAR aTmp[ _LGETLOT ] ;
+      REDEFINE CHECKBOX aGet[ _LGETLOT ] ;
+         VAR      aTmp[ _LGETLOT ] ;
          ID       185 ;
          OF       fldGeneral
 
@@ -1356,137 +1362,170 @@ STATIC FUNCTION EditConfig( aTmp, aGet, dbfEmp, oBrw, nSelFolder, bValid, nMode 
          ID       138;
          OF       fldGeneral
 
-      REDEFINE GET aGet[ _CNOMIMP ] VAR aTmp[ _CNOMIMP ] ;
+      REDEFINE GET aGet[ _CNOMIMP ] ;
+         VAR      aTmp[ _CNOMIMP ] ;
          ID       139 ;
          OF       fldGeneral
 
-      REDEFINE CHECKBOX aGet[ _LACTCOS ] VAR aTmp[ _LACTCOS ] ;
+      REDEFINE CHECKBOX aGet[ _LACTCOS ] ;
+         VAR      aTmp[ _LACTCOS ] ;
          ID       190 ;
          OF       fldGeneral
 
-      REDEFINE CHECKBOX aGet[ _LGETCOB ] VAR aTmp[ _LGETCOB ] ;
+      REDEFINE CHECKBOX aGet[ _LGETCOB ] ;
+         VAR      aTmp[ _LGETCOB ] ;
          ID       181 ;
          OF       fldGeneral
 
-      REDEFINE CHECKBOX aGet[ _LGETAGE ] VAR aTmp[ _LGETAGE ] ;
+      REDEFINE CHECKBOX aGet[ _LGETAGE ] ;
+         VAR      aTmp[ _LGETAGE ] ;
          ID       182 ;
          OF       fldGeneral
 
-      REDEFINE CHECKBOX aGet[ _LUSEPNT ] VAR aTmp[ _LUSEPNT ] ;
+      REDEFINE CHECKBOX aGet[ _LUSEPNT ] ;
+         VAR      aTmp[ _LUSEPNT ] ;
          ID       191 ;
          OF       fldGeneral
 
-      REDEFINE CHECKBOX aGet[ _LUSEPOR ] VAR aTmp[ _LUSEPOR ] ;
+      REDEFINE CHECKBOX aGet[ _LUSEPOR ] ;
+         VAR      aTmp[ _LUSEPOR ] ;
          ID       189 ;
          OF       fldGeneral
 
-      REDEFINE CHECKBOX aGet[ _LDTOLIN ] VAR aTmp[ _LDTOLIN ] ;
+      REDEFINE CHECKBOX aGet[ _LDTOLIN ] ;
+         VAR      aTmp[ _LDTOLIN ] ;
          ID       300 ;
          OF       fldGeneral
 
-      REDEFINE CHECKBOX aGet[ _LPRELIN ] VAR aTmp[ _LPRELIN ] ;
+      REDEFINE CHECKBOX aGet[ _LPRELIN ] ;
+         VAR      aTmp[ _LPRELIN ] ;
          ID       110 ;
          OF       fldGeneral
 
-      REDEFINE CHECKBOX aGet[ _LGRPENT ] VAR aTmp[ _LGRPENT ] ;
+      REDEFINE CHECKBOX aGet[ _LGRPENT ] ;
+         VAR      aTmp[ _LGRPENT ] ;
          ID       204 ;
          OF       fldGeneral
 
-      REDEFINE CHECKBOX aGet[ _LBUSIMP ] VAR aTmp[ _LBUSIMP ] ;
+      REDEFINE CHECKBOX aGet[ _LBUSIMP ] ;
+         VAR      aTmp[ _LBUSIMP ] ;
          ID       195 ;
          OF       fldGeneral
 
-      REDEFINE CHECKBOX aGet[ _LPREMIN ] VAR aTmp[ _LPREMIN ] ;
+      REDEFINE CHECKBOX aGet[ _LPREMIN ] ;
+         VAR      aTmp[ _LPREMIN ] ;
          ID       196 ;
          OF       fldGeneral
 
-      REDEFINE CHECKBOX aGet[ _LSTKALM ] VAR aTmp[ _LSTKALM ] ;
+      REDEFINE CHECKBOX aGet[ _LSTKALM ] ;
+         VAR      aTmp[ _LSTKALM ] ;
          ID       197 ;
          OF       fldGeneral
 
-      REDEFINE CHECKBOX aGet[ _LTIPMOV ] VAR aTmp[ _LTIPMOV ] ;
+      REDEFINE CHECKBOX aGet[ _LTIPMOV ] ;
+         VAR      aTmp[ _LTIPMOV ] ;
          ID       180 ;
          OF       fldGeneral
 
-      REDEFINE CHECKBOX aGet[ _LPASNIL ] VAR aTmp[ _LPASNIL ] ;
+      REDEFINE CHECKBOX aGet[ _LPASNIL ] ;
+         VAR      aTmp[ _LPASNIL ] ;
          ID       184 ;
          OF       fldGeneral
 
-      REDEFINE CHECKBOX aGet[ _LSALPDT ] VAR aTmp[ _LSALPDT ] ;
+      REDEFINE CHECKBOX aGet[ _LSALPDT ] ;
+         VAR      aTmp[ _LSALPDT ] ;
          ID       192 ;
          OF       fldGeneral
 
-      REDEFINE CHECKBOX aGet[ _LUSEIMP ] VAR aTmp[ _LUSEIMP ] ;
+      REDEFINE CHECKBOX aGet[ _LUSEIMP ] ;
+         VAR      aTmp[ _LUSEIMP ] ;
          ID       183 ;
          OF       fldGeneral
 
-      REDEFINE CHECKBOX aGet[ _LMODIMP ] VAR aTmp[ _LMODIMP ] ;
+      REDEFINE CHECKBOX aGet[ _LMODIMP ] ;
+         VAR      aTmp[ _LMODIMP ] ;
          ID       188 ;
          WHEN     aTmp[ _LUSEIMP ] ;
          OF       fldGeneral
 
-      REDEFINE CHECKBOX aGet[ _LIVAIMPESP ] VAR aTmp[ _LIVAIMPESP ] ;
+      REDEFINE CHECKBOX aGet[ _LIVAIMPESP ] ;
+         VAR      aTmp[ _LIVAIMPESP ] ;
          ID       153 ;
          WHEN     aTmp[ _LUSEIMP ] ;
          OF       fldGeneral
 
-      REDEFINE CHECKBOX aGet[ _LSHWCOS ] VAR aTmp[ _LSHWCOS ] ;
+      REDEFINE CHECKBOX aGet[ _LSHWCOS ] ;
+         VAR      aTmp[ _LSHWCOS ] ;
          ID       205 ;
          OF       fldGeneral
 
-      REDEFINE CHECKBOX aGet[ _LMOVCOS ] VAR aTmp[ _LMOVCOS ] ;
+      REDEFINE CHECKBOX aGet[ _LMOVCOS ] ;
+         VAR      aTmp[ _LMOVCOS ] ;
          ID       203 ;
          OF       fldGeneral
 
-      REDEFINE CHECKBOX aGet[ _LCOSACT ] VAR aTmp[ _LCOSACT ] ;
+      REDEFINE CHECKBOX aGet[ _LCOSACT ] ;
+         VAR      aTmp[ _LCOSACT ] ;
          ID       761 ;
          OF       fldGeneral
 
-      REDEFINE CHECKBOX aGet[ _LCOSPRV ] VAR aTmp[ _LCOSPRV ] ;
+      REDEFINE CHECKBOX aGet[ _LCOSPRV ] ;
+         VAR      aTmp[ _LCOSPRV ] ;
          ID       198 ;
          OF       fldGeneral
 
-      REDEFINE CHECKBOX aGet[ _LSHOWORG ] VAR aTmp[ _LSHOWORG ] ;
+      REDEFINE CHECKBOX aGet[ _LSHOWORG ] ;
+         VAR      aTmp[ _LSHOWORG ] ;
          ID       306 ;
          OF       fldGeneral         
 
-      REDEFINE CHECKBOX aGet[ _LNUMPED ] VAR aTmp[ _LNUMPED ] ;
+      REDEFINE CHECKBOX aGet[ _LNUMPED ] ;
+         VAR      aTmp[ _LNUMPED ] ;
          ID       260 ;   
          OF       fldGeneral
 
-      REDEFINE CHECKBOX aGet[ _LRECCOSTES ] VAR aTmp[ _LRECCOSTES ] ;
+      REDEFINE CHECKBOX aGet[ _LRECCOSTES ] ;
+         VAR      aTmp[ _LRECCOSTES ] ;
          ID       360 ;   
          OF       fldGeneral   
 
-      REDEFINE GET aGet[ _CNUMPED ] VAR aTmp[ _CNUMPED ] ;
+      REDEFINE GET aGet[ _CNUMPED ] ;
+         VAR      aTmp[ _CNUMPED ] ;
          ID       270 ;
          OF       fldGeneral
 
-      REDEFINE CHECKBOX aGet[ _LNUMOBR ] VAR aTmp[ _LNUMOBR ] ;
+      REDEFINE CHECKBOX aGet[ _LNUMOBR ] ;
+         VAR      aTmp[ _LNUMOBR ] ;
          ID       200 ;
          OF       fldGeneral
 
-      REDEFINE GET aGet[ _CNUMOBR ] VAR aTmp[ _CNUMOBR ] ;
+      REDEFINE GET aGet[ _CNUMOBR ] ;
+         VAR      aTmp[ _CNUMOBR ] ;
          ID       210 ;
          OF       fldGeneral
 
-      REDEFINE CHECKBOX aGet[ _LNUMALB ] VAR aTmp[ _LNUMALB ] ;
+      REDEFINE CHECKBOX aGet[ _LNUMALB ] ;
+         VAR      aTmp[ _LNUMALB ] ;
          ID       220 ;
          OF       fldGeneral
 
-      REDEFINE GET aGet[ _CNUMALB ] VAR aTmp[ _CNUMALB ] ;
+      REDEFINE GET aGet[ _CNUMALB ] ;
+         VAR      aTmp[ _CNUMALB ] ;
          ID       230 ;
          OF       fldGeneral
 
-      REDEFINE CHECKBOX aGet[ _LSUALB ] VAR aTmp[ _LSUALB ] ;
+      REDEFINE CHECKBOX aGet[ _LSUALB ] ;
+         VAR      aTmp[ _LSUALB ] ;
          ID       240 ;
          OF       fldGeneral
 
-      REDEFINE GET aGet[ _CSUALB ] VAR aTmp[ _CSUALB ] ;
+      REDEFINE GET aGet[ _CSUALB ] ;
+         VAR      aTmp[ _CSUALB ] ;
          ID       250 ;
          OF       fldGeneral
 
-      REDEFINE CHECKBOX aGet[ _LSERVICIO ] VAR aTmp[ _LSERVICIO ] ;
+      REDEFINE CHECKBOX aGet[ _LSERVICIO ] ;
+         VAR      aTmp[ _LSERVICIO ] ;
          ID       199 ;
          OF       fldGeneral
 
@@ -6609,7 +6648,7 @@ FUNCTION aItmEmp()
    aAdd( aDbf, {"cNomSerZ",   "C", 60, 0, "Nombre para la serie Z",                                "", "", "aEmp()", nil } )
    aAdd( aDbf, {"lCntNeg",    "L",  1, 0, "Contabilizar negativo",                                 "", "", "aEmp()", .f. } )
    aAdd( aDbf, {"lImgArt",    "L",  1, 0, "Lógico si un artículo lleva imagen",                    "", "", "aEmp()", nil } )
-   aAdd( aDbf, {"cCooKey",    "C",250, 0, "Valor de __COOKIE_KEY__ para prestashop",               "", "", "aEmp()", nil } )
+   aAdd( aDbf, {"lFltYea",    "L",  1, 0, "Lógico filtro de documentos por año",                   "", "", "aEmp()", nil } )
    aAdd( aDbf, {"cNomImp",    "C", 20, 0, "Nombre del impuesto",                                   "", "", "aEmp()", "IVA" } )
    aAdd( aDbf, {"lReqDec",    "L",  1, 0, "Lógico si el recargo se aplica con decimales",          "", "", "aEmp()", .f. } )
    aAdd( aDbf, {"lAptNeg",    "L",  1, 0, "Lógico de realizar apunte en contaplus en negativo",    "", "", "aEmp()", .f. } )
@@ -6622,7 +6661,6 @@ FUNCTION aItmEmp()
    aAdd( aDbf, {"lRecNumFac", "L",  1, 0, "Lógico para recuperar el número de las facturas",       "", "", "aEmp()", .t. } )
    aAdd( aDbf, {"lAlbTct",    "L",  1, 0, "Lógico para realizar albaranes desde táctil",           "", "", "aEmp()", .f. } )
    aAdd( aDbf, {"lFacTct",    "L",  1, 0, "Lógico para realizar facturas desde táctil",            "", "", "aEmp()", .f. } )
-   aAdd( aDbf, {"cPrefixTbl", "C", 10, 0, "Prefijo para tablas de prestashop",                     "", "", "aEmp()", "ps_" } )
    aAdd( aDbf, {"lMailTrno",  "L",  1, 0, "Lógico para enviar mail de cierre de turno",            "", "", "aEmp()", .f. } )
    aAdd( aDbf, {"cMailTrno",  "C",200, 0, "dirección de correo electónico para cierre de turno",   "", "", "aEmp()", "" } )
    aAdd( aDbf, {"cCtaPor",    "C", 12, 0, "Subcuenta de portes",                                   "", "", "aEmp()", nil } )

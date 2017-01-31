@@ -4952,27 +4952,45 @@ Return ( nil )
 //---------------------------------------------------------------------------//
 
 Function Test()
+/*
+   local cAlbCliT
 
+   USE ( cPatEmp() + "AlbCLIT.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "AlbCLIT", @cAlbCliT ) )
+   SET ADSINDEX TO ( cPatEmp() + "AlbCLIT.CDX" ) ADDITIVE
+
+      // sin filtros
+
+      ( cAlbCliT )->( browse() )
+
+      // con filtro
+
+      ( cAlbCliT )->( adsSetAOF( "Year( Field->dFecAlb ) == 2017" ) )
+      msgalert( ( cAlbCliT )->( adsgetaof() ) )
+      ( cAlbCliT )->( dbgotop() )
+      ( cAlbCliT )->( browse() )
+
+      // cambio el orde
+
+      ( cAlbCliT )->( ordsetfocus( "CNOMCLI" ) )
+      ( cAlbCliT )->( dbgotop() )
+      ( cAlbCliT )->( browse() )
+
+
+      // cambio el orden
+
+      ( cAlbCliT )->( ordsetfocus( "CCODCLI" ) )
+      ( cAlbCliT )->( dbgotop() )
+      ( cAlbCliT )->( browse() )
+
+      msgalert( ( cAlbCliT )->( adsgetaof() ) )
+
+   CLOSE ( cAlbCliT )
+*/
 Return ( nil )
 
 //---------------------------------------------------------------------------//
 
 Static Function testAll()
-
-   USE ( cPatCli() + "Client.Dbf" ) NEW VIA ( cDriver() ) EXCLUSIVE ALIAS ( cCheckArea( "Client", @dbfClient ) )
-   SET ADSINDEX TO ( cPatCli() + "Client.Cdx" ) ADDITIVE
-
-   USE ( cPatCli() + "Obrast.Dbf" ) NEW VIA ( cDriver() ) EXCLUSIVE ALIAS ( cCheckArea( "Obrast", @dbfObras ) )
-   SET ADSINDEX TO ( cPatCli() + "Obrast.Cdx" ) ADDITIVE
-
-   // deleteAll()
-
-   // fillAll()
-
-   seekAll()
-
-   CLOSE ( dbfClient )
-   CLOSE ( dbfObras )   
 
 RETURN NIL 
 

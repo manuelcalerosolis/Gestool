@@ -1392,16 +1392,15 @@ FUNCTION FactCli( oMenuItem, oWnd, hHash )
 
    ACTIVATE WINDOW oWndBrw VALID ( CloseFiles() )
 
-   EnableAcceso()
+   enableAcceso()
+
+   if uFieldempresa( 'lFltYea' )
+      oWndBrw:setYearCombobox()
+   end if
 
    if !empty( hHash ) 
-
-      if !empty( oWndBrw )
-         oWndBrw:RecAdd()
-      end if
-
-      hHash    := nil
-
+      oWndBrw:RecAdd()
+      hHash             := nil
    end if
 
 Return .t.
@@ -1940,23 +1939,23 @@ STATIC FUNCTION OpenFiles()
       Campos extras------------------------------------------------------------------------
       */
 
-      oDetCamposExtra      := TDetCamposExtra():New()
+      oDetCamposExtra                  := TDetCamposExtra():New()
       oDetCamposExtra:OpenFiles()
       oDetCamposExtra:setTipoDocumento( "Facturas a clientes" )
       oDetCamposExtra:setbId( {|| D():FacturasClientesId( nView ) } )
 
-      oLinDetCamposExtra   := TDetCamposExtra():New()
+      oLinDetCamposExtra               := TDetCamposExtra():New()
       oLinDetCamposExtra:OpenFiles()
       oLinDetCamposExtra:setTipoDocumento( "Lineas de facturas a clientes" )
       oLinDetCamposExtra:setbId( {|| D():FacturasClientesLineasEscandalloId( nView ) } )
 
-      lOpenFiles        := .t.
+      lOpenFiles                       := .t.
 
       EnableAcceso()
 
    RECOVER USING oError
 
-      lOpenFiles        := .f.
+      lOpenFiles                       := .f.
 
       msgStop(  ErrorMessage( oError ), "Imposible abrir todas las bases de datos facturas de clientes.", )
 
@@ -3686,6 +3685,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, hHash, bValid, nMode )
       REDEFINE BTNBMP oBtnPre ;
          ID       601 ;
          OF       fldGeneral ;
+         WHEN     ( lWhen .and. ( dbfTmpLin )->( ordKeyCount() ) == 0 ) ;
          RESOURCE "gc_notebook_user_16" ;
          NOBORDER ;
          TOOLTIP  "Importar presupuesto" ;
@@ -3694,6 +3694,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, hHash, bValid, nMode )
       REDEFINE BTNBMP oBtnPed ;
          ID       602 ;
          OF       fldGeneral ;
+         WHEN     ( lWhen .and. ( dbfTmpLin )->( ordKeyCount() ) == 0 ) ;
          RESOURCE "gc_clipboard_empty_user_16" ;
          NOBORDER ;
          TOOLTIP  "Importar pedido" ;
@@ -3702,6 +3703,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, hHash, bValid, nMode )
       REDEFINE BTNBMP oBtnAlb ;
          ID       603 ;
          OF       fldGeneral ;
+         WHEN     ( lWhen .and. ( dbfTmpLin )->( ordKeyCount() ) == 0 ) ;
          RESOURCE "gc_document_empty_16" ;
          NOBORDER ;
          TOOLTIP  "Importar albaran" ;
@@ -3710,6 +3712,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, hHash, bValid, nMode )
       REDEFINE BTNBMP oBtnSat ;
          ID       604 ;
          OF       fldGeneral ;
+         WHEN     ( lWhen .and. ( dbfTmpLin )->( ordKeyCount() ) == 0 ) ;
          RESOURCE "gc_power_drill_sat_user_16" ;
          NOBORDER ;
          TOOLTIP  "Importar S.A.T." ;
@@ -3718,7 +3721,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, hHash, bValid, nMode )
       REDEFINE BUTTON oBtnGrp ;
          ID       512 ;
          OF       fldGeneral ;
-         WHEN     ( lWhen .and. empty( aTmp[ _CNUMALB ] ) ) ;
+         WHEN     ( lWhen .and. ( dbfTmpLin )->( ordKeyCount() ) == 0 ) ;
          ACTION   ( GrpAlb( aGet, aTmp, oBrwLin ) )
 
       REDEFINE GET aGet[ _CNUMALB ] VAR aTmp[ _CNUMALB ] ;
@@ -10662,17 +10665,13 @@ Return ( cFilePdf )
 
 Static Function YearComboBoxChange()
 
-   if oWndBrw:oWndBar:lAllYearComboBox()
-      DestroyFastFilter( D():FacturasClientes( nView ) )
-      CreateUserFilter( "", D():FacturasClientes( nView ), .f., , , "all" )
+   if ( oWndBrw:oWndBar:cYearComboBox() != __txtAllYearsFilter__ )
+      oWndBrw:oWndBar:setYearComboBoxExpression( "Year( Field->dFecFac ) == " + oWndBrw:oWndBar:cYearComboBox() )
    else
-      DestroyFastFilter( D():FacturasClientes( nView ) )
-      CreateUserFilter( "Year( Field->dFecFac ) == " + oWndBrw:oWndBar:cYearComboBox(), D():FacturasClientes( nView ), .f., , , "Year( Field->dFecFac ) == " + oWndBrw:oWndBar:cYearComboBox() )
-   end if
+      oWndBrw:oWndBar:setYearComboBoxExpression( "" )
+   end if 
 
-   ( D():FacturasClientes( nView ) )->( dbGoTop() )
-
-   oWndBrw:Refresh()
+   oWndBrw:chgFilter()
 
 Return .t.
 
@@ -10976,6 +10975,12 @@ STATIC FUNCTION BeginTrans( aTmp, nMode )
       lErrors     := .t.
 
    end if   
+
+   /*
+   Cargamos los temporales de los campos extra---------------------------------
+   */
+
+   oDetCamposExtra:SetTemporal( aTmp[ _CSERIE ] + Str( aTmp[ _NNUMFAC ] ) + aTmp[ _CSUFFAC ], nMode )
 
    RECOVER USING oError
 

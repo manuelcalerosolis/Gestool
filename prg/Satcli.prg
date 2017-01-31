@@ -6418,6 +6418,8 @@ STATIC FUNCTION BeginTrans( aTmp, nMode )
       lErrors     := .t.
    end if
 
+   oDetCamposExtra:SetTemporal( aTmp[ _CSERSAT ] + Str( aTmp[ _NNUMSAT ] ) + aTmp[ _CSUFSAT ], nMode ) 
+
    RECOVER USING oError
 
       msgStop( "Imposible crear tablas temporales" + CRLF + ErrorMessage( oError ) )
@@ -6656,6 +6658,12 @@ STATIC FUNCTION EndTrans( aTmp, aGet, nMode, oBrwLin, oBrw, oBrwInc, oDlg )
    aTmp[ _NTOTIVA ]     := nTotIva
    aTmp[ _NTOTREQ ]     := nTotReq
    aTmp[ _NTOTSAT ]     := nTotSat
+
+   /*
+   Guardamos los campos extra-----------------------------------------------
+   */
+
+   oDetCamposExtra:saveExtraField( aTmp[ _CSERSAT ] + Str( aTmp[ _NNUMSAT ] ) + aTmp[ _CSUFSAT ] )
 
    WinGather( aTmp, , D():SatClientes( nView ), , nMode )
 
@@ -11982,17 +11990,13 @@ RETURN ( if( cPorDiv != nil, Trans( nCalculo, cPorDiv ), nCalculo ) )
 
 Static Function YearComboBoxChange()
 
-    if oWndBrw:oWndBar:lAllYearComboBox()
-      DestroyFastFilter( D():SatClientes( nView ) )
-      CreateUserFilter( "", D():SatClientes( nView ), .f., , , "all" )
-    else
-      DestroyFastFilter( D():SatClientes( nView ) )
-      CreateUserFilter( "Year( Field->dFecSat ) == " + oWndBrw:oWndBar:cYearComboBox(), D():SatClientes( nView ), .f., , , "Year( Field->dFecSat ) == " + oWndBrw:oWndBar:cYearComboBox() )
-    end if
+   if ( oWndBrw:oWndBar:cYearComboBox() != __txtAllYearsFilter__ )
+      oWndBrw:oWndBar:setYearComboBoxExpression( "Year( Field->dFecSat ) == " + oWndBrw:oWndBar:cYearComboBox() )
+   else
+      oWndBrw:oWndBar:setYearComboBoxExpression( "" )
+   end if 
 
-    ( D():SatClientes( nView ) )->( dbGoTop() )
-
-    oWndBrw:Refresh()
+   oWndBrw:chgFilter()
 
 Return nil
 

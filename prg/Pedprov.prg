@@ -4355,6 +4355,11 @@ STATIC FUNCTION BeginTrans( aTmp, nMode )
 
       ( dbfTmpDoc )->( dbGoTop() )
 
+      /*
+      Cargamos los temporales de los campos extra---------------------------------
+      */
+
+      oDetCamposExtra:SetTemporal( aTmp[ _CSERPED ] + Str( aTmp[ _NNUMPED ] ) + aTmp[ _CSUFPED ], nMode )
 
    RECOVER USING oError
 
@@ -4517,6 +4522,12 @@ STATIC FUNCTION EndTrans( aGet, aTmp, oBrw, nMode, oDlg )
       dbPass( dbfTmpDoc, D():PedidosProveedoresDocumentos( nView ), .t., cSerie, nPedido, cSufPed )
       ( dbfTmpDoc )->( dbSkip() )
    end while
+
+   /*
+   Cargamos los temporales de los campos extra---------------------------------
+   */
+
+   oDetCamposExtra:saveExtraField( aTmp[ _CSERPED ] + Str( aTmp[ _NNUMPED ] ) + aTmp[ _CSUFPED ], nMode )
 
    // Salvamos el registro del pedido
 
@@ -5742,17 +5753,13 @@ Return nil
 
 Static Function YearComboBoxChange()
 
-	if oWndBrw:oWndBar:lAllYearComboBox()
-            DestroyFastFilter( D():PedidosProveedores( nView ) )
-            CreateUserFilter( "", D():PedidosProveedores( nView ), .f., , , "all" )
-	else
-		DestroyFastFilter( D():PedidosProveedores( nView ) )
-            CreateUserFilter( "Year( Field->dFecPed ) == " + oWndBrw:oWndBar:cYearComboBox(), D():PedidosProveedores( nView ), .f., , , "Year( Field->dFecPed ) == " + oWndBrw:oWndBar:cYearComboBox() )
-	end if
+   if ( oWndBrw:oWndBar:cYearComboBox() != __txtAllYearsFilter__ )
+      oWndBrw:oWndBar:setYearComboBoxExpression( "Year( Field->dFecPed ) == " + oWndBrw:oWndBar:cYearComboBox() )
+   else
+      oWndBrw:oWndBar:setYearComboBoxExpression( "" )
+   end if 
 
-	( D():PedidosProveedores( nView ) )->( dbGoTop() )
-
-	oWndBrw:Refresh()
+   oWndBrw:chgFilter()
 
 Return nil
 

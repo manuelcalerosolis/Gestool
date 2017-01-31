@@ -35,9 +35,11 @@ CLASS TAcceso
    DATA  aComboFilter      INIT  {__txtFilters__}
 
    DATA  oYearComboBox
-   DATA  cYearComboBox     INIT  "[Todos]"
+   DATA  cYearComboBox     INIT  __txtAllYearsFilter__
    DATA  aYearComboBox     INIT  {}
    DATA  lYearComboBox     INIT  .t.
+
+   DATA  cYearComboBoxExpression
 
    DATA  oButtonFilter
    DATA  oButtonAddFilter
@@ -169,9 +171,13 @@ CLASS TAcceso
    Method ShowYearComboBox()              INLINE ( if( !empty( ::oYearComboBox ), ( ::lYearComboBox := .t., ::oYearComboBox:Show(), ::oYearComboBox:Set( 1 ) ), ) )
    Method HideYearComboBox()              INLINE ( if( !empty( ::oYearComboBox ), ( ::lYearComboBox := .f., ::oYearComboBox:Hide() ), ) )
    Method lAllYearComboBox()              INLINE ( if( !empty( ::oYearComboBox ), ( ::oYearComboBox:nAt == 1 ), .f. ) )
-   Method cYearComboBox()                 INLINE ( if( !empty( ::oYearComboBox ), ( ::oYearComboBox:VarGet() ), "" ) )
-   Method nYearComboBox()                 INLINE ( if( !empty( ::oYearComboBox ), ( Val( ::oYearComboBox:VarGet() ) ), 0 ) )
-   Method SetYearComboBoxChange( bBlock ) INLINE ( if( !empty( ::oYearComboBox ), ( ::oYearComboBox:bChange  := bBlock ), ) )
+   Method cYearComboBox()                 INLINE ( if( !empty( ::oYearComboBox ), ( ::oYearComboBox:varget() ), "" ) )
+   Method setYearComboBox( nYear )        
+   Method nYearComboBox()                 INLINE ( if( !empty( ::oYearComboBox ), ( Val( ::oYearComboBox:varget() ) ), 0 ) )
+   Method setYearComboBoxExpression( cExpression );
+                                          INLINE ( if( !empty( ::oYearComboBox ), ::cYearComboBoxExpression := cExpression, ) )
+   Method getYearComboBoxExpression()     INLINE ( if( !empty( ::oYearComboBox ), ::cYearComboBoxExpression, "" ) )
+   Method setYearComboBoxChange( bBlock ) INLINE ( if( !empty( ::oYearComboBox ), ( ::oYearComboBox:bChange  := bBlock ), ) )
 
    Method Disable()                       INLINE ( CursorWait(),  if( !empty( ::oOfficeBar ), ( ::oOfficeBar:Disable(), SysRefresh() ), ) )
    Method Enable()                        INLINE ( CursorWE(),    if( !empty( ::oOfficeBar ), ( ::oOfficeBar:Enable(), SysRefresh() ), ) )
@@ -189,13 +195,13 @@ METHOD New() CLASS TAcceso
 
    ::aAccesos        := {}
    ::cGet            := Space( 200 )
-   ::cYearComboBox   := "[Todos]"
+   ::cYearComboBox   := __txtAllYearsFilter__
 
    /*
    Rellenamos los años---------------------------------------------------------
    */
 
-   aAdd( ::aYearComboBox, "[Todos]" )
+   aAdd( ::aYearComboBox, __txtAllYearsFilter__ )
    for n := 2000 to Year( Date() )
       aAdd( ::aYearComboBox, Str( n, 4 ) )
    next
@@ -1102,6 +1108,20 @@ Method End()
    ::oButtonFilter      := nil 
    ::oComboBox          := nil 
    ::oComboFilter       := nil
+
+Return ( Self )
+
+//---------------------------------------------------------------------------//
+
+Method setYearComboBox( nYear )
+
+   DEFAULT nYear  := year( date() )
+
+   // msgalert(nYear)
+
+   if !empty( ::oYearComboBox )
+      ::oYearComboBox:set( str( nYear ) )
+   end if 
 
 Return ( Self )
 

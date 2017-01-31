@@ -6394,6 +6394,7 @@ STATIC FUNCTION BeginTrans( aTmp, nMode )
 
    ( dbfTmpEst )->( dbGoTop() )
 
+   oDetCamposExtra:SetTemporal( aTmp[ _CSERPRE ] + Str( aTmp[ _NNUMPRE ] ) + aTmp[ _CSUFPRE ], nMode )
 
    RECOVER USING oError
 
@@ -6626,6 +6627,12 @@ STATIC FUNCTION EndTrans( aTmp, aGet, nMode, oBrwLin, oBrw, oBrwInc, oDlg, lActu
    aTmp[ _NTOTIVA ]     := nTotIva
    aTmp[ _NTOTREQ ]     := nTotReq
    aTmp[ _NTOTPRE ]     := nTotPre
+
+   /*
+   Guardamos los campos extra-----------------------------------------------
+   */
+
+   oDetCamposExtra:saveExtraField( aTmp[ _CSERPRE ] + Str( aTmp[ _NNUMPRE ] ) + aTmp[ _CSUFPRE ] )
 
    WinGather( aTmp, , D():PresupuestosClientes( nView ), , nMode )
 
@@ -8227,17 +8234,13 @@ Return nil
 
 Static Function YearComboBoxChange()
 
-	 if oWndBrw:oWndBar:lAllYearComboBox()
-		DestroyFastFilter( D():PresupuestosClientes( nView ) )
-      CreateUserFilter( "", D():PresupuestosClientes( nView ), .f., , , "all" )
-	 else
-		DestroyFastFilter( D():PresupuestosClientes( nView ) )
-      CreateUserFilter( "Year( Field->dFecPre ) == " + oWndBrw:oWndBar:cYearComboBox(), D():PresupuestosClientes( nView ), .f., , , "Year( Field->dFecPre ) == " + oWndBrw:oWndBar:cYearComboBox() )
-	 end if
+   if ( oWndBrw:oWndBar:cYearComboBox() != __txtAllYearsFilter__ )
+      oWndBrw:oWndBar:setYearComboBoxExpression( "Year( Field->dFecPre ) == " + oWndBrw:oWndBar:cYearComboBox() )
+   else
+      oWndBrw:oWndBar:setYearComboBoxExpression( "" )
+   end if 
 
-	 ( D():PresupuestosClientes( nView ) )->( dbGoTop() )
-
-	 oWndBrw:Refresh()
+   oWndBrw:chgFilter()
 
 Return nil
 
