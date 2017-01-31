@@ -6364,6 +6364,8 @@ STATIC FUNCTION BeginTrans( aTmp, nMode )
 
       ( dbfTmpPgo )->( dbGoTop() )
 
+   oDetCamposExtra:SetTemporal( aTmp[ _CSERFAC ] + Str( aTmp[ _NNUMFAC ] ) + aTmp[ _CSUFFAC ], nMode )
+
    RECOVER USING oError
 
       msgStop( "Imposible crear tablas temporales." + CRLF + ErrorMessage( oError ) )
@@ -6623,7 +6625,9 @@ STATIC FUNCTION EndTrans( aTmp, aGet, oBrw, oBrwLin, nMode, nDec, oDlg, oFld )
       endif
 
       dbPass( dbfTmpPgo, D():FacturasProveedoresPagos( nView ), .t., cSerFac, nNumFac, cSufFac )
+      
       ( dbfTmpPgo )->( dbSkip() )
+
    end while
 
    /*
@@ -6635,6 +6639,12 @@ STATIC FUNCTION EndTrans( aTmp, aGet, oBrw, oBrwLin, nMode, nDec, oDlg, oFld )
    aTmp[ _NTOTIVA ]   := nTotIva
    aTmp[ _NTOTREQ ]   := nTotReq
    aTmp[ _NTOTFAC ]   := nTotFac
+
+   /*
+   Guardamos los campos extra-----------------------------------------------
+   */
+
+   oDetCamposExtra:saveExtraField( aTmp[ _CSERFAC ] + Str( aTmp[ _NNUMFAC ] ) + aTmp[ _CSUFFAC ] )
 
    /*
    Grabamos las cabeceras de los albaranes

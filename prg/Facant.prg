@@ -366,8 +366,8 @@ STATIC FUNCTION OpenFiles( lExt )
 
    lExternal            := lExt
 
-   /*oBlock               := ErrorBlock( {| oError | ApoloBreak( oError ) } )
-   BEGIN SEQUENCE*/
+   oBlock               := ErrorBlock( {| oError | ApoloBreak( oError ) } )
+   BEGIN SEQUENCE
 
    nView                := D():CreateView()
 
@@ -487,13 +487,13 @@ STATIC FUNCTION OpenFiles( lExt )
    oDetCamposExtra:setbId( {|| D():AnticiposClientesId( nView ) } )
 
 
-   /*RECOVER USING oError
+   RECOVER USING oError
 
       msgStop( "Imposible abrir todas las bases de datos" + CRLF + ErrorMessage( oError ) )
       CloseFiles()
 
    END SEQUENCE
-   ErrorBlock( oBlock )*/
+   ErrorBlock( oBlock )
 
 RETURN ( lOpenFiles )
 
@@ -919,8 +919,6 @@ FUNCTION FacAntCli( oMenuItem, oWnd, cCodCli )
          :nWidth           := 30
          :lHide            := .t.
       end with
-
-   oDetCamposExtra:addCamposExtra( oWndBrw )
 
    oWndBrw:cHtmlHelp    := "Factura de anticipos a clientes"
 
@@ -2608,6 +2606,12 @@ STATIC FUNCTION BeginTrans( aTmp, nMode )
 
    ( dbfTmpDoc )->( dbGoTop() )
 
+   /*
+   Cargamos los temporales de los campos extra---------------------------------
+   */
+
+   oDetCamposExtra:SetTemporal( aTmp[ _CSERANT ] + Str( aTmp[ _NNUMANT ] ) + aTmp[ _CSUFANT ], nMode )
+
 RETURN NIL
 
 //-----------------------------------------------------------------------//
@@ -2787,6 +2791,12 @@ STATIC FUNCTION EndTrans( aTmp, aGet, oBrw, nMode, nDec, nTotal, oDlg )
    aTmp[ _NTOTIVA ]  := nTotIva
    aTmp[ _NTOTREQ ]  := nTotReq
    aTmp[ _NTOTANT ]  := nTotAnt
+
+   /*
+   Guardamos los campos extra-----------------------------------------------
+   */
+
+   oDetCamposExtra:saveExtraField( aTmp[ _CSERANT ] + Str( aTmp[ _NNUMANT ] ) + aTmp[ _CSUFANT ] )
 
    /*
    Grabamos el registro--------------------------------------------------------
