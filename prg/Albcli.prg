@@ -3394,7 +3394,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, hHash, bValid, nMode )
       REDEFINE BUTTON ;
          ID       513 ;
          OF       oFld:aDialogs[1] ;
-         WHEN     ( lWhen .and. ( dbfTmpLin )->( ordKeyCount() ) == 0 ) ;
+         WHEN     ( lWhen ) ;
          ACTION   ( importarLineasPedidosClientes( aTmp, aGet, oBrwLin )  )
 
       REDEFINE GET aGet[ _CNUMPED ] VAR aTmp[ _CNUMPED ] ;
