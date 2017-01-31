@@ -2447,7 +2447,8 @@ METHOD lInvCierre()
                   " caja " + ::cCajaCurrentTurno()
 
       REDEFINE BITMAP oBmp ;
-         RESOURCE "InvertirTurno" ;
+         RESOURCE "gc_clock_refresh_48" ;
+         TRANSPARENT ;
          ID       500 ;
          OF       oDlgWat
 

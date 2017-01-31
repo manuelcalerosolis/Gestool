@@ -253,7 +253,7 @@ METHOD Resource()
 
    DEFINE DIALOG ::oDialog RESOURCE "ASS_EURO"
 
-   REDEFINE BITMAP oBmp RESOURCE "EliminarArticulos" ID 600 OF ::oDialog
+   REDEFINE BITMAP oBmp RESOURCE "gc_delete_48" ID 500 TRANSPARENT OF ::oDialog
 
    REDEFINE PAGES ::oPages ID 110 OF ::oDialog ;
       DIALOGS "ASS_EURO01", "ASS_EURO02"

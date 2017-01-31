@@ -3540,7 +3540,8 @@ FUNCTION mkPathEmp( cCodEmpNew, cNomEmpNew, cCodEmpOld, aImportacion, lDialog, l
       DEFINE DIALOG oDlgWat NAME "CreaEmp" TITLE "Creando empresa : " + cCodEmpNew + " - " + Rtrim( cNomEmpNew )
 
          REDEFINE BITMAP oBmp ;
-            RESOURCE "CrearEmpresa" ;
+            RESOURCE "gc_factory_48" ;
+            TRANSPARENT ;
             ID       500 ;
             OF       oDlgWat
 

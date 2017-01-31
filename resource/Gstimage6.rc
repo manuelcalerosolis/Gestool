@@ -5,26 +5,12 @@
 #include <richedit.h>
 
 
-NOTE_PINNED_16 BITMAP "..\\bmp\\Note_Pinned_16.bmp"
 
-CUP_16 BITMAP "..\\bmp\\Cup_16.bmp"
 CUP_48 BITMAP "..\\bmp\\Cup_48.bmp"
 
-PRINTER_48 BITMAP "..\\bmp\\Printer_48.bmp"
 DELETE2_48 BITMAP "..\\bmp\\Delete2_48.bmp"
 
-BUSCARNUMEROSERIE BITMAP "..\\bmp\\BuscarNumeroSerie.bmp"
-BUSCARNUMEROLOTE BITMAP "..\\bmp\\BuscarNumeroLote.bmp"
-GENERARPEDIDOPROVEEDOR BITMAP "..\\bmp\\PlantillaGenerarPedidosProveedor.bmp"
-INVERTIRTURNO BITMAP "..\\bmp\\InvertirTurno.bmp"
-CREAREMPRESA BITMAP "..\\bmp\\CrearEmpresa.bmp"
-ELIMINARARTICULOS BITMAP "..\\bmp\\EliminarArticulos.bmp"
-ELIMINARTARIFASCLIENTES BITMAP "..\\bmp\\EliminarTarifasClientes.bmp"
 CONVERTIRDBFTOSQL BITMAP "..\\bmp\\ConvertirDBFtoSQL.bmp"
 
-STAR_YELLOW_64 BITMAP "..\\bmp\\star_yellow_64.bmp"
 
-SELECTED_16 BITMAP "..\\bmp\\selected_16.bmp"
-UNSELECTED_16 BITMAP "..\\bmp\\unselected_16.bmp"
 
-COCKTAIL_48 BITMAP "..\\bmp\\Cocktail_48.bmp"

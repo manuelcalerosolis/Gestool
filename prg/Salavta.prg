@@ -10,7 +10,7 @@
 
 CLASS TSalaVenta FROM TMasDet
 
-   DATA  cMru     INIT "Cup_16"
+   DATA  cMru     INIT "gc_cup_16"
    DATA  cBitmap  INIT "WebTopBlack"
 
    CLASSDATA aResource  AS ARRAY          INIT  {  "GC_BEER_BOTTLE_16"     ,;

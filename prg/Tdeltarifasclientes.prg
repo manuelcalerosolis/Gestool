@@ -146,7 +146,7 @@ METHOD Resource()
 
    DEFINE DIALOG ::oDialog RESOURCE "ASS_EURO" TITLE "Eliminar tarifas de clientes"
 
-   REDEFINE BITMAP oBmp RESOURCE "EliminarTarifasClientes" ID 600 OF ::oDialog
+   REDEFINE BITMAP oBmp RESOURCE "gc_delete_48" ID 500 TRANSPARENT OF ::oDialog
 
    REDEFINE PAGES ::oPages ID 110 OF ::oDialog ;
       DIALOGS "ASS_DELTAR01", "ASS_EURO02"
