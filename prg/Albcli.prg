@@ -446,7 +446,6 @@ static oPais
 static Counter
 
 static oDetCamposExtra
-static oLinDetCamposExtra
 
 static oBtnKit
 static oBtnAtp
@@ -1687,11 +1686,6 @@ STATIC FUNCTION OpenFiles()
       oDetCamposExtra:OpenFiles()
       oDetCamposExtra:SetTipoDocumento( "Albaranes a clientes" )
       oDetCamposExtra:setbId( {|| D():AlbaranesClientesId( nView ) } )
-
-      oLinDetCamposExtra      := TDetCamposExtra():New()
-      oLinDetCamposExtra:OpenFiles()
-      oLinDetCamposExtra:SetTipoDocumento( "Lineas de albaranes a clientes" )
-      oLinDetCamposExtra:setbId( {|| D():AlbaranesClientesId( nView ) } )
 
    RECOVER USING oError
 
@@ -5028,7 +5022,6 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbf, oBrw, lTotLin, cCodArtEnt, nMode, aTmpA
    end if
 
    oDlg:AddFastKey( VK_F6,             {|| oBtnSer:Click() } )
-   oDlg:AddFastKey( VK_F9,             {|| oLinDetCamposExtra:Play( aTmp[ _CSERALB ] + Str( aTmp[ _NNUMALB ] ) + aTmp[ _CSUFALB ] + Str( aTmp[ _NNUMLIN ] ) + Str( aTmp[ _NNUMKIT ] ) ) } )
 
    // Start --------------------------------------------------------------------
 
@@ -9270,6 +9263,12 @@ STATIC FUNCTION BeginTrans( aTmp, nMode )
 
       end if
 
+   /*
+   Metemos los temporales de los campos extra----------------------------------
+   */
+
+   oDetCamposExtra:SetTemporal( aTmp[ _CSERALB ] + Str( aTmp[ _NNUMALB ] ) + aTmp[ _CSUFALB ], nMode )
+
    RECOVER USING oError
 
       msgStop( ErrorMessage( oError ), "Imposible crear tablas temporales." )
@@ -11771,6 +11770,12 @@ STATIC FUNCTION EndTrans( aTmp, aGet, oBrw, oBrwInc, nMode, oDlg )
    aTmp[ _NTOTREQ ]     := nTotReq
    aTmp[ _NTOTALB ]     := nTotAlb
    aTmp[ _NTOTPAG ]     := nTotPag
+
+   /*
+   Guardamos los campos extra-----------------------------------------------
+   */
+
+   oDetCamposExtra:saveExtraField( aTmp[ _CSERALB ] + Str( aTmp[ _NNUMALB ] ) + aTmp[ _CSUFALB ] )
 
    WinGather( aTmp, , D():Get( "AlbCliT", nView ), , nMode )
 
@@ -18488,17 +18493,12 @@ static Function menuEdtDet( oCodArt, oDlg, lOferta, nIdLin )
 
          MENU
 
-            MENUITEM    "&1. Campos extra [F9]";
-               MESSAGE  "Mostramos y rellenamos los campos extra" ;
-               RESOURCE "GC_FORM_PLUS2_16" ;
-               ACTION   ( oLinDetCamposExtra:Play( nIdLin ) )
-
-            MENUITEM    "&2. Modificar artículo";
+            MENUITEM    "&1. Modificar artículo";
                MESSAGE  "Modificar la ficha del artículo" ;
                RESOURCE "gc_object_cube_16";
                ACTION   ( EdtArticulo( oCodArt:VarGet() ) );
 
-            MENUITEM    "&3. Informe de artículo";
+            MENUITEM    "&2. Informe de artículo";
                MESSAGE  "Abrir el informe del artículo" ;
                RESOURCE "Info16";
                ACTION   ( if( oUser():lNotCostos(), msgStop( "No tiene permiso para ver los precios de costo" ), InfArticulo( oCodArt:VarGet() ) ) );

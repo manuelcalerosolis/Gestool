@@ -9112,6 +9112,8 @@ STATIC FUNCTION EndTrans( aTmp, aGet, oBrwLin, oBrwInc, nMode, oDlg, lActualizaW
    aTmp[ _NTOTREQ ]     := nTotReq
    aTmp[ _NTOTPED ]     := nTotPed
 
+   oDetCamposExtra:saveExtraField( aTmp[ _CSERPED ] + Str( aTmp[ _NNUMPED ] ) + aTmp[ _CSUFPED ] )
+
    /*
    Escritura en el fichero definitivo------------------------------------------
    */
@@ -9818,6 +9820,8 @@ STATIC FUNCTION BeginTrans( aTmp, nMode )
    end if
 
    ( dbfTmpRes )->( dbGoTop() )
+
+   oDetCamposExtra:SetTemporal( aTmp[ _CSERPED ] + Str( aTmp[ _NNUMPED ] ) + aTmp[ _CSUFPED ], nMode )
 
    RECOVER USING oError
 

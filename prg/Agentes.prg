@@ -141,8 +141,6 @@ FUNCTION Agentes( oMenuItem, oWnd )
          :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | oWndBrw:ClickOnHeader( oCol ) }
       end with
 
-      oDetCamposExtra:addCamposExtra( oWndBrw )
-
       oWndBrw:cHtmlHelp    := "Agentes"
       
       oWndBrw:CreateXFromCode()
@@ -936,6 +934,12 @@ Static Function lPreEdit( aTmp, nMode )
          end while
       end if
 
+   /*
+   Cargamos los temporales de los campos extra---------------------------------
+   */
+
+   oDetCamposExtra:SetTemporal( aTmp[ _CCODAGE ], nMode )
+
    RECOVER USING oError
 
       msgStop( "Imposible crear tablas temporales" + CRLF + ErrorMessage( oError ) )
@@ -1028,6 +1032,13 @@ STATIC FUNCTION lPreSave( aTemp, aoGet, dbfAge, oBrw, oBrwLin, nMode, oDlg )
    buildRelation( tmpAgentesComisiones, D():AgentesComisiones( nView ), { "cCodAge" => aTemp[ _CCODAGE ] } )
    buildRelation( tmpAgentesRelaciones, D():AgentesRelaciones( nView ), { "cCodAge" => aTemp[ _CCODAGE ] } )
    buildRelation( tmpAgentesTarifas, D():Atipicas( nView ), { "cCodAge" => aTemp[ _CCODAGE ] } )
+
+   /*
+   Guardamos los campos extra-----------------------------------------------
+   */
+
+   oDetCamposExtra:saveExtraField( aTemp[ _CCODAGE ] )
+
 
    // Ahora escribimos en el fichero definitivo-----------------------------------
 

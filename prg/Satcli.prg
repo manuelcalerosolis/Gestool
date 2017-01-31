@@ -6418,6 +6418,8 @@ STATIC FUNCTION BeginTrans( aTmp, nMode )
       lErrors     := .t.
    end if
 
+   oDetCamposExtra:SetTemporal( aTmp[ _CSERSAT ] + Str( aTmp[ _NNUMSAT ] ) + aTmp[ _CSUFSAT ], nMode ) 
+
    RECOVER USING oError
 
       msgStop( "Imposible crear tablas temporales" + CRLF + ErrorMessage( oError ) )
@@ -6656,6 +6658,12 @@ STATIC FUNCTION EndTrans( aTmp, aGet, nMode, oBrwLin, oBrw, oBrwInc, oDlg )
    aTmp[ _NTOTIVA ]     := nTotIva
    aTmp[ _NTOTREQ ]     := nTotReq
    aTmp[ _NTOTSAT ]     := nTotSat
+
+   /*
+   Guardamos los campos extra-----------------------------------------------
+   */
+
+   oDetCamposExtra:saveExtraField( aTmp[ _CSERSAT ] + Str( aTmp[ _NNUMSAT ] ) + aTmp[ _CSUFSAT ] )
 
    WinGather( aTmp, , D():SatClientes( nView ), , nMode )
 

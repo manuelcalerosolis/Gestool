@@ -258,7 +258,6 @@ STATIC FUNCTION OpenFiles( lExt, cPath )
       end if
 
       oDetCamposExtra:SetTipoDocumento( "Proveedores" )
-
       oDetCamposExtra:setbId( {|| D():ProveedoresId( nView ) } )
 
       CodigosPostales():GetInstance():OpenFiles()
@@ -486,8 +485,6 @@ FUNCTION Provee( oMenuItem, oWnd )
    end with
 
    oWndBrw:cHtmlHelp    := "Proveedores"
-
-   oDetCamposExtra:addCamposExtra( oWndBrw )
 
    oWndBrw:CreateXFromCode()
 
@@ -1910,6 +1907,12 @@ STATIC FUNCTION lPreSave( aTmp, aGet, dbfProvee, dbfArticulo, oBrw, nMode, oDlg 
       aTmp[ _CTIMCHG ]     := Time()
       aTmp[ _MOBSERV ]     := oRTF:SaveAsRTF()
 
+      /*
+      Guardamos los campos extra-----------------------------------------------
+      */
+
+      oDetCamposExtra:saveExtraField( aTmp[ _COD ] )
+
       WinGather( aTmp, aGet, dbfProvee, oBrw, nMode )
 
       CommitTransaction()
@@ -2071,6 +2074,12 @@ static function BeginTrans( aTmp, nMode )
    end if
 
    ( dbfTmpBnc )->( dbGoTop() )
+
+   /*
+   Cargamos los temporales de los campos extra---------------------------------
+   */
+
+   oDetCamposExtra:SetTemporal( aTmp[ _COD ], nMode )
 
    RECOVER USING oError
 
