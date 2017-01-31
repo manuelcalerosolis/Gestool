@@ -3233,7 +3233,7 @@ METHOD lArqueoTurno( lZoom, lParcial ) CLASS TTurno
          :bEditValue       := {|| ::lInCajaSelect( ::oDbfCaj:FieldGetByName( "cCodCaj" ) ) } // ::oDbfCaj:FieldGetByName( "lCajSel" ) }
          :nWidth           := 20
          :SetCheck( { "Sel16", "Nil16" } )
-         :AddResource( "Cashier_Selet_16" )
+         :AddResource( "gc_cash_register_16" )
       end with
 
       with object ( oBrwCaj:AddCol() )

@@ -351,7 +351,7 @@ FUNCTION Empresa( oMenuItem, oWnd )
          :bEditValue       := {|| ( dbfEmp )->CodEmp == cCodigoEmpresaEnUso() }
          :nWidth           := 20
          :SetCheck( { "Sel16", "Nil16" } )
-         :AddResource( "FactorySelec_16" )
+         :AddResource( "gc_factory_16" )
       end with
 
       with object ( oWndBrw:AddXCol() )

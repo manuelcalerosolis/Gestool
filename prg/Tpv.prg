@@ -15970,148 +15970,6 @@ Return nil
 
 //---------------------------------------------------------------------------//
 
-Function ComentariosTPV( aGet, aTmp, dbfTmpL, cDefCom )
-
-   local oError
-   local oBlock
-   local oGetComentario
-   local cGetComentario
-   local oCbxOrd
-   local cNumPed
-   local obrwComentarios
-   local obrwLineasComentarios
-   local oDlgComentarios
-   local dbfComentariosT
-   local dbfComentariosL
-   local oFntDlg
-
-   if ( dbfTmpL )->( ordKeyCount() ) == 0
-      MsgStop( "No puede añadir un comentario." )
-      return .f.
-   end if
-
-   oFntDlg              := TFont():New( FONT_NAME, 12, 32, .F., .T.,  )
-
-   cGetComentario       := ( dbfTmpL )->cComent
-
-   oBlock               := ErrorBlock( {| oError | ApoloBreak( oError ) } )
-   BEGIN SEQUENCE
-
-      USE ( cPatEmp() + "COMENTARIOST.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "COMENT", @dbfComentariosT ) )
-      SET ADSINDEX TO ( cPatEmp() + "COMENTARIOST.CDX" ) ADDITIVE
-      ( dbfComentariosT )->( OrdSetFocus( "cCodigo" ) )
-
-      USE ( cPatEmp() + "COMENTARIOSL.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "COMENL", @dbfComentariosL ) )
-      SET ADSINDEX TO ( cPatEmp() + "COMENTARIOSL.CDX" ) ADDITIVE
-      ( dbfComentariosL )->( OrdSetFocus( "cCodDes" ) )
-
-      DEFINE DIALOG oDlgComentarios RESOURCE "COMENTARIOS_TPV"
-
-      REDEFINE GET oGetComentario VAR cGetComentario ;
-         ID       150;
-         FONT     oFntDlg ;
-         OF       oDlgComentarios
-
-      REDEFINE BUTTONBMP ;
-         ID       160 ;
-         OF       oDlgComentarios ;
-         BITMAP   "gc_keyboard_32" ;
-         ACTION   ( VirtualKey( .f., oGetComentario ) )
-
-      REDEFINE BUTTONBMP ;
-         ID       170 ;
-         OF       oDlgComentarios ;
-         BITMAP   "Up32" ;
-         ACTION   ( obrwComentarios:Select( 0 ), oBrwComentarios:GoUp(), obrwComentarios:Select( 1 ) )
-
-      REDEFINE BUTTONBMP ;
-         ID       171 ;
-         OF       oDlgComentarios ;
-         BITMAP   "Down32" ;
-         ACTION   ( obrwComentarios:Select( 0 ), oBrwComentarios:GoDown(), obrwComentarios:Select( 1 ) )
-
-      REDEFINE BUTTONBMP ;
-         ID       180 ;
-         OF       oDlgComentarios ;
-         BITMAP   "arrow_up_blue" ;
-         ACTION   ( oBrwLineasComentarios:Select( 0 ), oBrwLineasComentarios:GoUp(), oBrwLineasComentarios:Select( 1 ) )
-
-      REDEFINE BUTTONBMP ;
-         ID       181 ;
-         OF       oDlgComentarios ;
-         BITMAP   "arrow_down_blue" ;
-         ACTION   (oBrwLineasComentarios:Select( 0 ), oBrwLineasComentarios:GoDown(), oBrwLineasComentarios:Select( 1 ) )
-
-      REDEFINE BUTTONBMP ;
-         ID       IDOK ;
-         OF       oDlgComentarios ;
-         ACTION   ( EndComentario( oDlgComentarios, dbfTmpL, oGetComentario ) )
-
-      REDEFINE BUTTONBMP ;
-         ID       IDCANCEL ;
-         OF       oDlgComentarios ;
-         ACTION   ( oDlgComentarios:End() )
-
-      oBrwComentarios                  := IXBrowse():New( oDlgComentarios )
-
-      obrwComentarios:bClrSel          := {|| { CLR_BLACK, Rgb( 229, 229, 229 ) } }
-      obrwComentarios:bClrSelFocus     := {|| { CLR_BLACK, Rgb( 167, 205, 240 ) } }
-
-      obrwComentarios:cAlias           := dbfComentariosT
-      obrwComentarios:nMarqueeStyle    := 6
-      obrwComentarios:cName            := "Comentarios de artículos"
-      obrwComentarios:nRowHeight       := 40
-      oBrwComentarios:lHeader          := .f.
-      oBrwComentarios:lHScroll         := .f.
-
-      obrwComentarios:CreateFromResource( 100 )
-
-      obrwComentarios:bChange         := {|| ChangeComentarios( dbfComentariosT, dbfComentariosL, oBrwLineasComentarios ) }
-
-      with object ( oBrwComentarios:AddCol() )
-         :cSortOrder       := "cCodigo"
-         :bEditValue       := {|| ( dbfComentariosT )->cDescri }
-      end with
-
-      oBrwLineasComentarios                  := IXBrowse():New( oDlgComentarios )
-
-      oBrwLineasComentarios:bClrSel          := {|| { CLR_BLACK, Rgb( 229, 229, 229 ) } }
-      oBrwLineasComentarios:bClrSelFocus     := {|| { CLR_BLACK, Rgb( 167, 205, 240 ) } }
-
-      oBrwLineasComentarios:cAlias           := dbfComentariosL
-      oBrwLineasComentarios:nMarqueeStyle    := 6
-      oBrwLineasComentarios:cName            := "Lineas comentarios de artículos"
-      oBrwLineasComentarios:nRowHeight       := 40
-      oBrwLineasComentarios:lHeader          := .f.
-      oBrwLineasComentarios:lHScroll         := .f.
-
-      oBrwLineasComentarios:CreateFromResource( 110 )
-
-      with object ( oBrwLineasComentarios:AddCol() )
-         :bEditValue          := {|| ( dbfComentariosL )->cDescri }
-      end with
-
-      oBrwLineasComentarios:bLClicked := {|| ChangeLineasComentarios( oGetComentario, dbfComentariosL ) }
-
-      oDlgComentarios:bStart          := {|| SeleccionarDefecto( cDefCom, dbfComentariosT, dbfComentariosL, oBrwLineasComentarios, oBrwComentarios ) }
-
-      ACTIVATE DIALOG oDlgComentarios CENTER
-
-   RECOVER USING oError
-
-      msgStop( 'Imposible abrir ficheros de comentarios de artículos' + CRLF + ErrorMessage( oError ) )
-
-   END SEQUENCE
-
-   ErrorBlock( oBlock )
-
-   CLOSE ( dbfComentariosT )
-   CLOSE ( dbfComentariosL )
-
-Return ( nil )
-
-//---------------------------------------------------------------------------//
-
 static function SeleccionarDefecto( cDefCom, dbfComentariosT, dbfComentariosL, oBrwLineasComentarios, oBrwComentarios )
 
    if !empty( cDefCom )
@@ -16184,7 +16042,7 @@ Return .t.
 
 static function lNumeroComensales( aTmp )
 
-   aTmp[ _NNUMCOM ]     := nVirtualNumKey( "Users1_32", "Número comensales" )
+   aTmp[ _NNUMCOM ]     := nVirtualNumKey( "gc_users_family_32", "Número comensales" )
 
    lRecTotal( aTmp )
 
@@ -18310,7 +18168,7 @@ Static Function lFidelity( aGet, aTmp, nMode )
 
       TBitmap():ReDefine( 700, "FidelizacionClientes", , oDlg )
 
-      ApoloBtnBmp():Redefine( 500, "Id_Card_32", , , , , {|| oDlg:end( IDOK ), if( !empty( aGet[ _CCLITIK ] ), aGet[ _CCLITIK ]:SetFocus(), ) }, oDlg, , , .f., .f., "Si. [ F5 ]", ,,, .t., "TOP", .t., , , .f., )
+      ApoloBtnBmp():Redefine( 500, "gc_id_card_32", , , , , {|| oDlg:end( IDOK ), if( !empty( aGet[ _CCLITIK ] ), aGet[ _CCLITIK ]:SetFocus(), ) }, oDlg, , , .f., .f., "Si. [ F5 ]", ,,, .t., "TOP", .t., , , .f., )
 
       ApoloBtnBmp():Redefine( 510, "Id_Card_Delete_32", , , , , {|| oDlg:end( IDOK ), appCli( .f. ) }, oDlg, , , .f., .f., "No, pero deseo tenerla. [ F6 ]", ,,, .t., "TOP", .t., , , .f., )
 

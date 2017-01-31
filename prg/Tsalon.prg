@@ -281,7 +281,7 @@ Method InitDesign() CLASS TSalon
 
    oGrupo                     := TDotNetGroup():New( oCarpeta, 66, "Selección", .f. )
 
-   oBoton                     := TDotNetButton():New( 60, oGrupo, "Stop_32",              "Quitar selección",  1, {|| ::UnSelectButtons() }, , , .f., .f., .f. )
+   oBoton                     := TDotNetButton():New( 60, oGrupo, "gc_sign_stop_32",              "Quitar selección",  1, {|| ::UnSelectButtons() }, , , .f., .f., .f. )
 
    oGrupo                     := TDotNetGroup():New( oCarpeta, 246, "Mesas", .f., , "Shape_circle_32" )
 

@@ -6,19 +6,12 @@
 
 CONECTARMYSQL BITMAP "..\\bmp\\ConectarMySql.bmp"
 
-NOTE_DELETE_32 BITMAP "..\\bmp\\Note_Delete_32.bmp"
-NOTE_PINNED_48 BITMAP "..\\bmp\\Note_Pinned_48.bmp"
-NOTE_EDIT_32 BITMAP "..\\bmp\\Note_Edit_32.bmp"
 
-SECURITY_AGENT_48 BITMAP "..\\bmp\\security_agent_48.bmp"
-MASKS_16 BITMAP "..\\bmp\\masks_16.bmp"
 
-Stop_32 BITMAP "..\\bmp\\Stop_32.bmp"
 Shape_circle_32 BITMAP "..\\bmp\\Shape_circle_32.bmp"
 Shape_ellipse_32 BITMAP "..\\bmp\\Shape_ellipse_32.bmp"
 Shape_square_32 BITMAP "..\\bmp\\Shape_square_32.bmp"
 Shape_rectangle_32 BITMAP "..\\bmp\\Shape_rectangle_32.bmp"
-
 Bar_center_32 BITMAP "..\\bmp\\Bar_center_32.bmp"
 Bar_center_64 BITMAP "..\\bmp\\Bar_center_64.bmp"
 Bar_left_32 BITMAP "..\\bmp\\Bar_left_32.bmp"
@@ -31,7 +24,6 @@ Bar_corner_top_left_32 BITMAP "..\\bmp\\Bar_corner_top_left_32.bmp"
 Bar_corner_top_left_64 BITMAP "..\\bmp\\Bar_corner_top_left_64.bmp"
 Bar_corner_top_right_32 BITMAP "..\\bmp\\Bar_corner_top_right_32.bmp"
 Bar_corner_top_right_64 BITMAP "..\\bmp\\Bar_corner_top_right_64.bmp"
-
 Flower_white_32 BITMAP "..\\bmp\\Flower_white_32.bmp"
 Flower_blue_32 BITMAP "..\\bmp\\Flower_blue_32.bmp"
 Flower_red_32 BITMAP "..\\bmp\\Flower_red_32.bmp"
@@ -61,34 +53,17 @@ Navigate_left_32 BITMAP "..\\bmp\\Navigate_left_32.bmp"
 Navigate_left_64 BITMAP "..\\bmp\\Navigate_left_64.bmp"
 Navigate_right_32 BITMAP "..\\bmp\\Navigate_right_32.bmp"
 Navigate_right_64 BITMAP "..\\bmp\\Navigate_right_64.bmp"
-
 Shape_circle_80 BITMAP "..\\bmp\\Shape_circle_80.bmp"
 Shape_ellipse_80 BITMAP "..\\bmp\\Shape_ellipse_80.bmp"
 Shape_square_80 BITMAP "..\\bmp\\Shape_square_80.bmp"
 Shape_rectangle_80 BITMAP "..\\bmp\\Shape_rectangle_80.bmp"
 
-Users1_32 BITMAP "..\\bmp\\Users1_32.bmp"
-Document_check_16 BITMAP "..\\bmp\\document_check_16.bmp"
-UsrSel BITMAP "..\\bmp\\UsrSel.bmp"
-document_time_16 BITMAP "..\\bmp\\document_time_16.bmp"
 
-Cashier_Selet_16 BITMAP "..\\bmp\\Cashier_Selet_16.bmp"
 
-hand_paper_16 BITMAP "..\\bmp\\hand_paper_16.bmp"
-factorySelec_16 BITMAP "..\\bmp\\factorySelec_16.bmp"
-Stop_16 BITMAP "..\\bmp\\Stop_16.bmp"
-reemplazar_16 BITMAP "..\\bmp\\reemplazar_16.bmp"
-folder_ok_16 BITMAP "..\\bmp\\folder_ok_16.bmp"
 
-clipboard_ok_16 BITMAP "..\\bmp\\clipboard_ok_16.bmp"
-message_16 BITMAP "..\\bmp\\message_16.bmp"
-
-arrow_up_blue BITMAP "..\\bmp\\arrow_up_blue.bmp"
-arrow_down_blue BITMAP "..\\bmp\\arrow_down_blue.bmp"
 
 Money2_32_Pressed BITMAP "..\\bmp\\Money2_32_Pressed.bmp"
 
-Package_New_32 BITMAP "..\\bmp\\package_new.bmp"
 
 Id_Card_32 BITMAP "..\\bmp\\id_card_32.bmp"
 Id_Card_Delete_32 BITMAP "..\\bmp\\id_card_delete_32.bmp"

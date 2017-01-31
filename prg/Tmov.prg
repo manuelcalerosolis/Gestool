@@ -142,7 +142,7 @@ FUNCTION TMov( oMenuItem, oWnd )
          :bEditValue       := {|| ( dbfTMov )->nTipMov <= 1 }
          :nWidth           := 20
          :SetCheck( { "Sel16", "Cnt16" } )
-         :AddResource( "reemplazar_16" )
+         :AddResource( "gc_arrow_circle2_16" )
       end with
 
       with object ( oWndBrw:AddXCol() )
@@ -645,7 +645,7 @@ FUNCTION BrwTMov( oGet, dbfTMov, oGet2 )
             :bEditValue       := {|| ( dbfTMov )->nTipMov <= 1 }
             :nWidth           := 20
             :SetCheck( { "Sel16", "Cnt16" } )
-            :AddResource( "reemplazar_16" )
+            :AddResource( "gc_arrow_circle2_16" )
          end with
 
          with object ( oBrw:AddCol() )

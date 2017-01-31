@@ -3145,7 +3145,7 @@ METHOD OnClickComensalesMenus()
 
   ::DisableDialog()
 
-  ::nComensalesMenu    := nVirtualNumKey( "Users1_32", "Número de menús", 0 )
+  ::nComensalesMenu    := nVirtualNumKey( "gc_users_family_32", "Número de menús", 0 )
 
   ::EnableDialog()
 

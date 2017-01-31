@@ -1106,7 +1106,7 @@ FUNCTION PedCli( oMenuItem, oWnd, cCodCli, cCodArt, cCodPre, lPedWeb )
          :nWidth           := 20
          :lHide            := .t.
          :SetCheck( { "Sel16", "Nil16" } )
-         :AddResource( "clipboard_ok_16" )
+         :AddResource( "gc_clipboard_checks_16" )
       end with
 
       with object ( oWndBrw:AddXCol() )

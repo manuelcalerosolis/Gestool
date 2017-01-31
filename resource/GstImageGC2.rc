@@ -238,17 +238,16 @@ GC_GIFT_DISK_32 BITMAP "..\\bmp\\gc_gift_disk_32.bmp"
 GC_PRINTER2_DISK_32 BITMAP "..\\bmp\\GC_PRINTER2_DISK_32.bmp"
 GC_QUESTION_48 BITMAP "..\\bmp\\gc_question_48.bmp"
 GC_CHECKS_32 BITMAP "..\\bmp\\gc_checks_32.bmp"
-
 GC_GESTOOLPRESTASHOP BITMAP "..\\bmp\\gc_Gestoolprestashop.bmp"
 GESTOOLPRO BITMAP "..\\bmp\\Gestoolpro.bmp"
 GESTOOLSTANDARD BITMAP "..\\bmp\\Gestoolstandard.bmp"
 GESTOOLLITE BITMAP "..\\bmp\\Gestoollite.bmp"
-
 GC_PRINTER_OK2_64 BITMAP "..\\bmp\\gc_printer_ok2_64.bmp"
 GC_CABINET_OPEN_64 BITMAP "..\\bmp\\gc_cabinet_open_64.bmp"
 GC_CABINET_OPEN_32 BITMAP "..\\bmp\\gc_cabinet_open_32.bmp"
 GC_CABINET_OPEN_16 BITMAP "..\\bmp\\gc_cabinet_open_16.bmp"
-
 GC_ZOOM_IN_16 BITMAP "..\\bmp\\gc_zoom_in_16.bmp"
 GC_ZOOM_IN_32 BITMAP "..\\bmp\\gc_zoom_in_32.bmp"
 GC_ZOOM_IN_48 BITMAP "..\\bmp\\gc_zoom_in_48.bmp"
+
+GC_SIGN_STOP_32 BITMAP "..\\bmp\\gc_sign_stop_32.bmp"
