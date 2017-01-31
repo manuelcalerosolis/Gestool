@@ -351,7 +351,7 @@ CLASS TFastReportInfGen FROM TNewInfGen
    METHOD nTotalLineaTicketsClientes()                            INLINE ( nBasLTpv( ::oTikCliL ) )
    METHOD nTotalPesoLineaTicketsClientes()                        INLINE ( 0 )
    METHOD nTotalImpuestosIncluidosLineaTicketsClientes()          INLINE ( nTotLTpv( ::oTikCliL ) )
-   METHOD nTotalIVALineaTicketsClientes()                         INLINE ( nIvaLTpv( , ::oTikCliL ) )
+   METHOD nTotalIVALineaTicketsClientes()                         INLINE ( nIvaLTpv( ::oTikCliT, ::oTikCliL ) )
 
    METHOD nTotalDescuentoPorcentualLineaTicketsClientes()         INLINE ( nDtoLTpv( ::oTikCliL:cAlias ) )
 

@@ -1017,21 +1017,19 @@ Return ( lSeek )
 
 METHOD asteriskFilter( xValueToSearch, cAlias )
 
-   local cFilterExpresion
-
    if left( xValueToSearch, 1 ) == "*" .and. right( xValueToSearch, 1 ) == "*" .and. len( rtrim( xValueToSearch ) ) > 1
 
       xValueToSearch       := substr( xValueToSearch, 2, len( xValueToSearch ) - 2 )
 
       ::cAsteriskFilter    := '"' + xValueToSearch + '" $ ' + ( cAlias )->( ordkey() )
 
-   else
+      ::chgFilter() 
 
-      ::cAsteriskFilter    := ''
+      Return .t.
 
    end if
 
-   ::chgFilter() 
+   ::cAsteriskFilter    := ''
 
 Return .f.
 

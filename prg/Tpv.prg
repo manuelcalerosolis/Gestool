@@ -4954,16 +4954,16 @@ Function nIvaLTpv( cTikT, cTikL, nDec, nRou, nVdv, nPrc )
    end case
 
    do case
-      case Valtype( cTikT ) == "C" .and. ( cTikT )->cTipTik == SAVDEV
-         nCalculo       := - nCalculo
+      case isChar( cTikT ) .and. ( cTikT )->cTipTik == SAVDEV
+         nCalculo          := - nCalculo
 
-      case Valtype( cTikT ) == "O" .and. cTikT:cTipTik == SAVDEV
-         nCalculo       := - nCalculo
+      case isObject( cTikT ) .and. cTikT:cTipTik == SAVDEV
+         nCalculo          := - nCalculo
 
    end case
 
    if nCalculo != 0 .and. nVdv != 0
-      nCalculo          := nCalculo / nVdv
+      nCalculo             := nCalculo / nVdv
    end if
 
 Return ( Round( nCalculo, nRou ) )
