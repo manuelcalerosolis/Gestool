@@ -816,9 +816,9 @@ STATIC FUNCTION EndApp()
       DEFINE DIALOG oDlg RESOURCE "EndApp" BRUSH oBrush
 
          REDEFINE BITMAP oBmpVersion ;
-            FILE     cBmpVersion() ;
-            ID       600 ;
-            OF       oDlg
+            RESOURCE     cBmpVersion() ;
+            ID          600 ;
+            OF          oDlg
 
          TWebBtn():Redefine( 100,,,,,, oDlg,,,,, "LEFT",,,,, Rgb( 0, 0, 0 ), Rgb( 255, 255, 255 ) ):SetTransparent()
          TWebBtn():Redefine( 110,,,,,, oDlg,,,,, "LEFT",,,,, Rgb( 0, 0, 0 ), Rgb( 255, 255, 255 ) ):SetTransparent()
@@ -4370,7 +4370,7 @@ Return ( cNameVersion )
 
 //---------------------------------------------------------------------------//
 
-Function cBmpVersion()
+Function cBmpVersion() 
 
    if isNil( cBmpVersion )
 
