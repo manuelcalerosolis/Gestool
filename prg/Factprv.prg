@@ -7004,6 +7004,8 @@ STATIC FUNCTION BeginTrans( aTmp, nMode )
 
       ( dbfTmpPgo )->( dbGoTop() )
 
+      oDetCamposExtra:SetTemporal( aTmp[ _CSERFAC ] + Str( aTmp[ _NNUMFAC ] ) + aTmp[ _CSUFFAC ], nMode )
+
       CursorWE()
 
    RECOVER USING oError
@@ -7312,6 +7314,12 @@ STATIC FUNCTION EndTrans( aTmp, aGet, oBrw, oBrwLin, nMode, nDec, oDlg )
    aTmp[ _NTOTIVA ]  := nTotIva
    aTmp[ _NTOTREQ ]  := nTotReq
    aTmp[ _NTOTFAC ]  := nTotFac
+
+   /*
+   Salvamos los temporales de los campos extra---------------------------------
+   */
+
+   oDetCamposExtra:saveExtraField( aTmp[ _CSERFAC ] + Str( aTmp[ _NNUMFAC ] ) + aTmp[ _CSUFFAC ] )
 
    // Grabamos las cabeceras de los albaranes----------------------------------
 

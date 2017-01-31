@@ -648,7 +648,7 @@ METHOD setTemporal( cClave, nMode ) CLASS TDetCamposExtra
    ::aCamposExtra          := {}
 
    if Empty( ::TipoDocumento )
-      MsgStop( "No existen campos extra para este tipo de documento." )
+      //MsgStop( "No existen campos extra para este tipo de documento." )
       Return .f.
    end if
 
@@ -657,7 +657,7 @@ METHOD setTemporal( cClave, nMode ) CLASS TDetCamposExtra
    end if
 
    if len( aCampos ) < 1
-      MsgStop( "No existen campos extra para este tipo de documento." )
+      //MsgStop( "No existen campos extra para este tipo de documento." )
       Return .f.
    end if   
 
