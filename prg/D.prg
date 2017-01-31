@@ -519,7 +519,7 @@ CLASS D
 
    METHOD Proveedores( nView )                                       INLINE ( ::Get( "Provee", nView ) )
       METHOD gotoProveedores( id, nView )                            INLINE ( ::SeekInOrd( ::Proveedores( nView ), id, "Cod" ) ) 
-      METHOD ProveedoresId( nView )                                  INLINE ( ( ::Proveedores( nView ) )->Cod )
+      METHOD ProveedoresId( nView )                                  INLINE ( ( ::Get( "Provee", nView ) )->Cod )
       METHOD GruposProveedores( nView )                              INLINE ( ::GetObject( "GruposProveedores", nView ) )
       METHOD BancosProveedores( nView )                              INLINE ( ::Get( "PrvBnc", nView ) )
 

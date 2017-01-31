@@ -5659,6 +5659,12 @@ Static Function BeginTrans( aTmp, nMode )
 
    aOldCodeBar    := aDbfToArr( dbfTmpCodebar, 2 )
 
+   /*
+   Cargamos los temporales de los campos extra---------------------------------
+   */
+
+   oDetCamposExtra:SetTemporal( aTmp[ ( D():Articulos( nView ) )->( fieldpos( "Codigo" ) ) ], nMode )
+
    RECOVER USING oError
 
       msgStop( "Imposible crear tablas temporales " + CRLF + ErrorMessage( oError ) )
@@ -6041,6 +6047,12 @@ Static Function EndTrans( aTmp, aGet, oSay, oDlg, aTipBar, cTipBar, nMode, oImpC
       if ( dbfTmpImg )->( Lastrec() ) == 0
          lChangeImage  := ( cImageOld == aTmp[ ( D():Articulos( nView ) )->( fieldpos( "cImagen" ) ) ] )
       end if  
+
+      /*
+      Guardamos los campos extra-----------------------------------------------
+      */
+
+      oDetCamposExtra:saveExtraField( aTmp[ ( D():Articulos( nView ) )->( fieldpos( "Codigo" ) ) ] )      
 
       /*
       Grabamos el registro a disco---------------------------------------------

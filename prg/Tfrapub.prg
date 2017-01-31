@@ -173,7 +173,6 @@ METHOD OpenFiles( lExclusive, cPath )
       end if
 
       ::oDetCamposExtra:setTipoDocumento( "Envases de artículos" )
-      ::oDetCamposExtra:setbId( {|| ::oDbf:cCodFra } )
 
       ::oDbf:Activate( .f., !( lExclusive ) )
 
@@ -234,7 +233,7 @@ METHOD Resource( nMode )
 
    local oBmpDlg
 
-   ::CargaValoresCamposExtra()
+   ::CargaValoresCamposExtra( nMode )
 
    DEFINE DIALOG ::oDlg RESOURCE "FraPub" TITLE LblTitle( nMode ) + "envase"
 
@@ -262,7 +261,7 @@ METHOD Resource( nMode )
       ::oDetCamposExtra:oBrw:bClrSel                := {|| { CLR_BLACK, Rgb( 229, 229, 229 ) } }
       ::oDetCamposExtra:oBrw:bClrSelFocus           := {|| { CLR_BLACK, Rgb( 167, 205, 240 ) } }
 
-      ::oDetCamposExtra:oBrw:SetArray( ::oDetCamposExtra:aCamposExtra, , , .f. )
+      ::oDetCamposExtra:oBrw:SetArray( ::oDetCamposExtra:aItemSelected, , , .f. )
 
       ::oDetCamposExtra:oBrw:nMarqueeStyle          := MARQSTYLE_HIGHLCELL
       ::oDetCamposExtra:oBrw:lRecordSelector        := .f.
@@ -275,14 +274,14 @@ METHOD Resource( nMode )
 
       with object ( ::oDetCamposExtra:oBrw:AddCol() )
          :cHeader          := "Campo"
-         :bStrData         := {|| AllTrim( Capitalize( hGet( ::oDetCamposExtra:aCamposExtra[ ::oDetCamposExtra:oBrw:nArrayAt ], "descripción" ) ) ) + if( hGet( ::oDetCamposExtra:aCamposExtra[ ::oDetCamposExtra:oBrw:nArrayAt ], "lrequerido" ), " *", "" ) }
+         :bStrData         := {|| AllTrim( Capitalize( hGet( ::oDetCamposExtra:aItemSelected[ ::oDetCamposExtra:oBrw:nArrayAt ], "descripción" ) ) ) + if( hGet( ::oDetCamposExtra:aItemSelected[ ::oDetCamposExtra:oBrw:nArrayAt ], "lrequerido" ), " *", "" ) }
          :nWidth           := 180
       end with
 
       with object ( ::oDetCamposExtra:oCol := ::oDetCamposExtra:oBrw:AddCol() )
          :cHeader          := "Valor"
-         :bEditValue       := {|| hGet( ::oDetCamposExtra:aCamposExtra[ ::oDetCamposExtra:oBrw:nArrayAt ], "valor" ) }
-         :bStrData         := {|| hGet( ::oDetCamposExtra:aCamposExtra[ ::oDetCamposExtra:oBrw:nArrayAt ], "valor" ) }
+         :bEditValue       := {|| hGet( ::oDetCamposExtra:aItemSelected[ ::oDetCamposExtra:oBrw:nArrayAt ], "valor" ) }
+         :bStrData         := {|| hGet( ::oDetCamposExtra:aItemSelected[ ::oDetCamposExtra:oBrw:nArrayAt ], "valor" ) }
          :nWidth           := 200
       end with
 
@@ -417,13 +416,15 @@ RETURN ( cNombre )
 
 //---------------------------------------------------------------------------//
 
-METHOD CargaValoresCamposExtra()
+METHOD CargaValoresCamposExtra( nMode )
+
+   ::oDetCamposExtra:SetTemporal( ::oDbf:cCodFra, nMode )
 
    ::oDetCamposExtra:Play( ::oDbf:cCodFra, .f. )
 
-   if len( ::oDetCamposExtra:aCamposExtra ) == 0
+   if len( ::oDetCamposExtra:aItemSelected ) == 0
 
-      aAdd( ::oDetCamposExtra:aCamposExtra,  {  "código"       => Space(1),;
+      aAdd( ::oDetCamposExtra:aItemSelected,  {  "código"       => Space(1),;
                                                 "descripción"  => Space(1),;
                                                 "tipo"         => 1,;
                                                 "longitud"     => 1,;
@@ -440,10 +441,7 @@ Return ( nil )
 
 METHOD SaveCamposExtra()
 
-   if Len( ::oDetCamposExtra:aCamposExtra ) > 1 .and. !Empty( hGet( ::oDetCamposExtra:aCamposExtra[1], "código" ) )
-      ::oDetCamposExtra:RollBackValores( ::oDbf:cCodFra )
-      ::oDetCamposExtra:GuardaValores( ::oDbf:cCodFra )
-   end if
+   ::oDetCamposExtra:saveExtraField( ::oDbf:cCodFra )
 
 Return ( nil )
 

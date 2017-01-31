@@ -9604,6 +9604,12 @@ STATIC FUNCTION BeginTrans( aTmp, nMode )
 
    end if
 
+   /*
+   Cargamos los temporales de los campos extra---------------------------------
+   */
+
+   oDetCamposExtra:SetTemporal( aTmp[ ( D():Clientes( nView ) )->( fieldpos( "Cod" ) ) ], nMode )
+
    RECOVER USING oError
 
       msgStop( "Imposible crear tablas temporales." + CRLF + ErrorMessage( oError ) )
@@ -10112,6 +10118,12 @@ STATIC FUNCTION SavClient( aTmp, aGet, oDlg, oBrw, nMode )
       end while
 
    end if
+
+   /*
+   Guardamos los campos extra-----------------------------------------------
+   */
+
+   oDetCamposExtra:saveExtraField( aTmp[ _COD ] )
 
    //-----------------------------------------------------------------------------
 

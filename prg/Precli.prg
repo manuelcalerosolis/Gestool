@@ -6394,6 +6394,7 @@ STATIC FUNCTION BeginTrans( aTmp, nMode )
 
    ( dbfTmpEst )->( dbGoTop() )
 
+   oDetCamposExtra:SetTemporal( aTmp[ _CSERPRE ] + Str( aTmp[ _NNUMPRE ] ) + aTmp[ _CSUFPRE ], nMode )
 
    RECOVER USING oError
 
@@ -6626,6 +6627,12 @@ STATIC FUNCTION EndTrans( aTmp, aGet, nMode, oBrwLin, oBrw, oBrwInc, oDlg, lActu
    aTmp[ _NTOTIVA ]     := nTotIva
    aTmp[ _NTOTREQ ]     := nTotReq
    aTmp[ _NTOTPRE ]     := nTotPre
+
+   /*
+   Guardamos los campos extra-----------------------------------------------
+   */
+
+   oDetCamposExtra:saveExtraField( aTmp[ _CSERPRE ] + Str( aTmp[ _NNUMPRE ] ) + aTmp[ _CSUFPRE ] )
 
    WinGather( aTmp, , D():PresupuestosClientes( nView ), , nMode )
 

@@ -1940,23 +1940,23 @@ STATIC FUNCTION OpenFiles()
       Campos extras------------------------------------------------------------------------
       */
 
-      oDetCamposExtra      := TDetCamposExtra():New()
+      oDetCamposExtra                  := TDetCamposExtra():New()
       oDetCamposExtra:OpenFiles()
       oDetCamposExtra:setTipoDocumento( "Facturas a clientes" )
       oDetCamposExtra:setbId( {|| D():FacturasClientesId( nView ) } )
 
-      oLinDetCamposExtra   := TDetCamposExtra():New()
+      oLinDetCamposExtra               := TDetCamposExtra():New()
       oLinDetCamposExtra:OpenFiles()
       oLinDetCamposExtra:setTipoDocumento( "Lineas de facturas a clientes" )
       oLinDetCamposExtra:setbId( {|| D():FacturasClientesLineasEscandalloId( nView ) } )
 
-      lOpenFiles        := .t.
+      lOpenFiles                       := .t.
 
       EnableAcceso()
 
    RECOVER USING oError
 
-      lOpenFiles        := .f.
+      lOpenFiles                       := .f.
 
       msgStop(  ErrorMessage( oError ), "Imposible abrir todas las bases de datos facturas de clientes.", )
 
@@ -10980,6 +10980,12 @@ STATIC FUNCTION BeginTrans( aTmp, nMode )
       lErrors     := .t.
 
    end if   
+
+   /*
+   Cargamos los temporales de los campos extra---------------------------------
+   */
+
+   oDetCamposExtra:SetTemporal( aTmp[ _CSERIE ] + Str( aTmp[ _NNUMFAC ] ) + aTmp[ _CSUFFAC ], nMode )
 
    RECOVER USING oError
 

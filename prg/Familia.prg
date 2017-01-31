@@ -587,8 +587,6 @@ FUNCTION Familia( oMenuItem, oWnd )
          :lHide            := .t.
       end with
 
-      oDetCamposExtra:addCamposExtra( oWndBrw )
-
       oWndBrw:cHtmlHelp    := "Familias"
       
       oWndBrw:CreateXFromCode()
@@ -737,7 +735,7 @@ Static Function EdtRec( aTmp, aGet, dbfFamilia, oBrw, bWhen, bValid, nMode )
    oBlock               := ErrorBlock( {| oError | ApoloBreak( oError ) } )
    BEGIN SEQUENCE
 
-      BeginTrans( aTmp )
+      BeginTrans( aTmp, nMode )
 
       if Empty( aTmp[ _NCOLBTN ] )
          aTmp[ _NCOLBTN ]  := GetSysColor( COLOR_BTNFACE )
@@ -1296,7 +1294,7 @@ Return ( aChild )
 
 //---------------------------------------------------------------------------//
 
-STATIC FUNCTION BeginTrans( aTmp )
+STATIC FUNCTION BeginTrans( aTmp, nMode )
 
    local cCodFam
 
@@ -1329,6 +1327,8 @@ STATIC FUNCTION BeginTrans( aTmp )
       ( dbfTmp )->( dbGoTop() )
 
    end if
+
+   oDetCamposExtra:SetTemporal( aTmp[ _CCODFAM ], nMode )
 
 Return Nil
 
@@ -1425,6 +1425,12 @@ STATIC FUNCTION EndTrans( aTmp, aGet, nMode, oBrw, oDlg, lActualizaWeb )
          dbPass( dbfTmp, dbfFamPrv, .t., cCodFam )
          ( dbfTmp )->( dbSkip() )
       end while
+
+      /*
+      Guardamos los campos extra-----------------------------------------------
+      */
+
+      oDetCamposExtra:saveExtraField( aTmp[ _CCODFAM ] )
 
       // Escribe los datos pendientes---------------------------------------------
 
