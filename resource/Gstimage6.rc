@@ -4,7 +4,6 @@
 #include <commctrl.h>
 #include <richedit.h>
 
-COCKTAIL_RED_32 BITMAP "..\\bmp\\Cocktail_red_32.bmp"
 
 NOTE_PINNED_16 BITMAP "..\\bmp\\Note_Pinned_16.bmp"
 

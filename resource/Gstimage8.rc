@@ -58,16 +58,4 @@ Shape_ellipse_80 BITMAP "..\\bmp\\Shape_ellipse_80.bmp"
 Shape_square_80 BITMAP "..\\bmp\\Shape_square_80.bmp"
 Shape_rectangle_80 BITMAP "..\\bmp\\Shape_rectangle_80.bmp"
 
-
-
-
-
 Money2_32_Pressed BITMAP "..\\bmp\\Money2_32_Pressed.bmp"
-
-
-Id_Card_32 BITMAP "..\\bmp\\id_card_32.bmp"
-Id_Card_Delete_32 BITMAP "..\\bmp\\id_card_delete_32.bmp"
-
-DOCUMENT_GEAR_16 BITMAP "..\\bmp\\document_gear_16.bmp"
-DOCUMENT_GEAR_32 BITMAP "..\\bmp\\document_gear_32.bmp"
-

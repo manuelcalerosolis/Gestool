@@ -18166,7 +18166,7 @@ Static Function lFidelity( aGet, aTmp, nMode )
 
       ApoloBtnBmp():Redefine( 500, "gc_id_card_32", , , , , {|| oDlg:end( IDOK ), if( !empty( aGet[ _CCLITIK ] ), aGet[ _CCLITIK ]:SetFocus(), ) }, oDlg, , , .f., .f., "Si. [ F5 ]", ,,, .t., "TOP", .t., , , .f., )
 
-      ApoloBtnBmp():Redefine( 510, "Id_Card_Delete_32", , , , , {|| oDlg:end( IDOK ), appCli( .f. ) }, oDlg, , , .f., .f., "No, pero deseo tenerla. [ F6 ]", ,,, .t., "TOP", .t., , , .f., )
+      ApoloBtnBmp():Redefine( 510, "gc_id_card_delete_32", , , , , {|| oDlg:end( IDOK ), appCli( .f. ) }, oDlg, , , .f., .f., "No, pero deseo tenerla. [ F6 ]", ,,, .t., "TOP", .t., , , .f., )
 
       ApoloBtnBmp():Redefine( IDCANCEL, "Del32", , , , , {|| oDlg:end() }, oDlg, , , .f., .f., "Gracias, en otra ocasión. [ ESC ]", ,,, .t., "TOP", .t., , , .f., )
 
