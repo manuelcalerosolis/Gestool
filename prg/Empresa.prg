@@ -351,7 +351,7 @@ FUNCTION Empresa( oMenuItem, oWnd )
          :bEditValue       := {|| ( dbfEmp )->CodEmp == cCodigoEmpresaEnUso() }
          :nWidth           := 20
          :SetCheck( { "Sel16", "Nil16" } )
-         :AddResource( "FactorySelec_16" )
+         :AddResource( "gc_factory_16" )
       end with
 
       with object ( oWndBrw:AddXCol() )
@@ -3540,7 +3540,8 @@ FUNCTION mkPathEmp( cCodEmpNew, cNomEmpNew, cCodEmpOld, aImportacion, lDialog, l
       DEFINE DIALOG oDlgWat NAME "CreaEmp" TITLE "Creando empresa : " + cCodEmpNew + " - " + Rtrim( cNomEmpNew )
 
          REDEFINE BITMAP oBmp ;
-            RESOURCE "CrearEmpresa" ;
+            RESOURCE "gc_factory_48" ;
+            TRANSPARENT ;
             ID       500 ;
             OF       oDlgWat
 

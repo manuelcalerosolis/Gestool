@@ -4,31 +4,7 @@
 #include <commctrl.h>
 #include <richedit.h>
 
-SIGUIENTEFAMILIA BITMAP "..\\bmp\\Nav_Right_Red_48.bmp"
-ANTERIORFAMILIA BITMAP "..\\bmp\\Nav_Left_Red_48.bmp"
 
-SIGUIENTEARTICULO BITMAP "..\\bmp\\Nav_Right_Blue_48.bmp"
-ANTERIORARTICULO BITMAP "..\\bmp\\Nav_Left_Blue_48.bmp"
 
-DISKDRIVE_48 BITMAP "..\\bmp\\Diskdrive_48.bmp"
-PAPELERA BITMAP "..\\bmp\\Garbage_48.bmp"
-SALIDA BITMAP "..\\bmp\\Door_48.bmp"
-COBRAR BITMAP "..\\bmp\\Money2_48.bmp"
-LOCK_48 BITMAP "..\\bmp\\Lock_48.bmp"
-STAR BITMAP "..\\bmp\\Home_48.bmp"
-UP48 BITMAP "..\\bmp\\Arrow_up_green_48.bmp"
-DOWN48 BITMAP "..\\bmp\\Arrow_down_green_48.bmp"
-NEW48 BITMAP "..\\bmp\\Add2_48.bmp"
-NOTE_ADD_32 BITMAP "..\\bmp\\Note_Add_32.bmp"
 NAVIGATE_MINUS_16 BITMAP "..\\bmp\\Navigate_Minus_16.bmp"
 NAVIGATE_PLUS_16 BITMAP "..\\bmp\\Navigate_Plus_16.bmp"
-FREE_BULLET_86 BITMAP "..\\bmp\\free_bullet_86.bmp"
-FREE_BUTTON_86 BITMAP "..\\bmp\\free_button_86.bmp"
-
-GAUGE_16 BITMAP "..\\bmp\\Gauge_16.bmp"
-
-MAGIC_16 BITMAP "..\\bmp\\Magic_Wand_16.bmp"
-MAGIC_32 BITMAP "..\\bmp\\Magic_Wand_32.bmp"
-
-ARROW_LEFT_GREEN_16 BITMAP "..\\bmp\\arrow_left_green_16.bmp"
-ARROW_RIGHT_GREEN_16 BITMAP "..\\bmp\\arrow_right_green_16.bmp"

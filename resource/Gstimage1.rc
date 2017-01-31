@@ -298,10 +298,6 @@ FACTORY_ADD2_16 BITMAP "..\\bmp\\Factory_Add2_16.bmp"
 
 NUT_AND_BOLT_32 BITMAP "..\\bmp\\Nut_and_bolt_32.bmp"
 
-COMERCIOELECTRONICO_16 BITMAP "..\\bmp\\ComercioElectronico_16.bmp"
-
-COMERCIOELECTRONICO_32 BITMAP "..\\bmp\\ComercioElectronico_32.bmp"
-
 PROCESAR32 BITMAP "..\\bmp\\gears_run.bmp"
 
 TEXT_CODE_16 BITMAP "..\\bmp\\text_code_16.bmp"

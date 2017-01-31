@@ -16,7 +16,7 @@ CLASS TInvitacion FROM TMANT
                                              "gc_ticket_blue_16"     ,;
                                              "gc_ticket_red_16"       }
 
-   CLASSDATA aBigResource  AS ARRAY INIT {   "COCKTAIL_48"           ,;
+   CLASSDATA aBigResource  AS ARRAY INIT {   "gc_cocktail_48"           ,;
                                              "gc_user2_48"           ,;
                                              "gc_security_agent_48"  ,;
                                              "gc_user_headphones_48" ,;

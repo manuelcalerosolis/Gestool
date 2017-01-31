@@ -3,31 +3,3 @@
 #include <windows.h>
 #include <commctrl.h>
 #include <richedit.h>
-
-
-PLEASEWAIT BITMAP "..\\bmp\\PleaseWait.bmp"
-SENDINTERNET BITMAP "..\\bmp\\SendInternet.bmp"
-APERTURATURNO BITMAP "..\\bmp\\AperturaTurno.bmp"
-IMPORTARFACTUCONT BITMAP "..\\bmp\\ImportarFactucont.bmp"
-ACTUALIZAREMPRESA BITMAP "..\\bmp\\ActualizarEmpresa.bmp"
-COMERCIOELECTRONICO BITMAP "..\\bmp\\ComercioElectronico.bmp"
-
-CALCULATOR_322 BITMAP "..\\bmp\\Calculator_322.bmp"
-SENDMAIL BITMAP "..\\bmp\\CorreoElectronico.bmp"
-
-TICKET_BLUE_16 BITMAP "..\\bmp\\ticket_blue_16.bmp"
-TICKET_BLUE_48 BITMAP "..\\bmp\\ticket_blue_48.bmp"
-TICKET_GREEN_16 BITMAP "..\\bmp\\ticket_green_16.bmp"
-TICKET_GREEN_48 BITMAP "..\\bmp\\ticket_green_48.bmp"
-TICKET_RED_16 BITMAP "..\\bmp\\ticket_red_16.bmp"
-TICKET_RED_48 BITMAP "..\\bmp\\ticket_red_48.bmp"
-TICKET_YELLOW_16 BITMAP "..\\bmp\\ticket_yellow_16.bmp"
-TICKET_YELLOW_48 BITMAP "..\\bmp\\ticket_yellow_48.bmp"
-USER_HEADPHONES_16 BITMAP "..\\bmp\\user_headphones_16.bmp"
-USER_HEADPHONES_48 BITMAP "..\\bmp\\user_headphones_48.bmp"
-WOMAN1_16 BITMAP "..\\bmp\\woman1_16.bmp"
-WOMAN1_48 BITMAP "..\\bmp\\woman1_48.bmp"
-WOMAN2_16 BITMAP "..\\bmp\\woman2_16.bmp"
-WOMAN2_48 BITMAP "..\\bmp\\woman2_48.bmp"
-WOMAN3_16 BITMAP "..\\bmp\\woman3_16.bmp"
-WOMAN3_48 BITMAP "..\\bmp\\woman3_48.bmp"

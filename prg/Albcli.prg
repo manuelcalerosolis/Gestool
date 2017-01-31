@@ -617,7 +617,7 @@ FUNCTION AlbCli( oMenuItem, oWnd, hHash )
          :nHeadStrAlign    := 3
          :AddResource( "Sel16" )
          :AddResource( "Nil16" )
-         :AddResource( "hand_paper_16" )
+         :AddResource( "gc_hand_paper_16" )
       end with
 
       with object ( oWndBrw:AddXCol() )
