@@ -2102,8 +2102,8 @@ Function CreateAcceso( oWnd )
    oItem:cMessage       := "Acceso a los tipos de notas"
    oItem:bAction        := {|| TipoNotas( "01097", oWnd ) }
    oItem:cId            := "01097"
-   oItem:cBmp           := "Folder2_Red_16"
-   oItem:cBmpBig        := "Folder2_Red_32"
+   oItem:cBmp           := "gc_folder2_16"
+   oItem:cBmpBig        := "gc_folder2_32"
    oItem:lShow          := .f.
 
    oItem                := oItemArchivo:Add()
@@ -3742,8 +3742,8 @@ Function TctCreateButtonBar()
 
    oItemArchivo         := oAcceso:Add()
    oItemArchivo:cPrompt := 'Archivos'
-   oItemArchivo:cBmp    := "Folder16"
-   oItemArchivo:cBmpBig := "Folder_32"
+   oItemArchivo:cBmp    := "gc_folder_open_16"
+   oItemArchivo:cBmpBig := "gc_folder_open_32"
 
    oGrupo               := TGrupoAcceso()
    oGrupo:nBigItems     := 7
@@ -4053,7 +4053,7 @@ Function TPVCreateButtonBar()
 
    oItemArchivo         := oAcceso:Add()
    oItemArchivo:cPrompt := 'Archivos'
-   oItemArchivo:cBmpBig := "Folder_32"
+   oItemArchivo:cBmpBig := "gc_folder_open_32"
 
    oGrupo               := TGrupoAcceso()
    oGrupo:nBigItems     := 6
@@ -4157,8 +4157,8 @@ Function TPVCreateButtonBar()
    oGrupo               := TGrupoAcceso()
    oGrupo:nBigItems     := 1
    oGrupo:cPrompt       := 'Salir'
-   oGrupo:cLittleBitmap := "Folder16"
-   oGrupo:cBigBitmap    := "Folder_32"
+   oGrupo:cLittleBitmap := "gc_folder_open_16"
+   oGrupo:cBigBitmap    := "gc_folder_open_32"
 
    oItem                := oItemArchivo:Add()
    oItem:oGroup         := oGrupo

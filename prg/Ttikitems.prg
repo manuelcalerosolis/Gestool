@@ -234,9 +234,9 @@ Function CfgTikItems( oMenuItem, oWnd )
       return nil
    end if
 
-   aBmp  := {  LoadBitmap( GetResources(), "Text_Bold" )       ,;
-               LoadBitmap( GetResources(), "Text_Center" )     ,;
-               LoadBitmap( GetResources(), "Text_Justified_16" ) }
+   aBmp  := {  LoadBitmap( GetResources(), "gc_text_bold_16" )       ,;
+               LoadBitmap( GetResources(), "gc_text_center_16" )     ,;
+               LoadBitmap( GetResources(), "gc_text_justified_16" ) }
 
    DEFINE SHELL oWndBrw FROM 2, 10 TO 18, 70;
       TITLE    "Formatos de tickets" ;

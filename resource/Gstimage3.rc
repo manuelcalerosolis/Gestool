@@ -4,7 +4,6 @@
 #include <commctrl.h>
 #include <richedit.h>
 
-DOCUMENT16 BITMAP "..\\bmp\\Document_plain_16.bmp"
 BAR_01 BITMAP "..\\bmp\\Bar_01.bmp"
 
 BULLET_BALL_GLASS_BLUE_16 BITMAP "..\\bmp\\Bullet_Ball_Glass_Blue_16.bmp"
@@ -19,15 +18,3 @@ BULLET_TRIANGLE_BLUE_16 BITMAP "..\\bmp\\Bullet_Triangle_Blue_16.bmp"
 BULLET_TRIANGLE_GREEN_16 BITMAP "..\\bmp\\Bullet_Triangle_Green_16.bmp"
 BULLET_TRIANGLE_RED_16 BITMAP "..\\bmp\\Bullet_Triangle_Red_16.bmp"
 BULLET_TRIANGLE_YELLOW_16 BITMAP "..\\bmp\\Bullet_Triangle_Yellow_16.bmp"
-
-
-
-REDO_16 BITMAP "..\\bmp\\Redo_16.bmp"
-UNDO1_16 BITMAP "..\\bmp\\Undo1_16.bmp"
-TEXT_UNDERLINED_16 BITMAP "..\\bmp\\text_underlined_16.bmp"
-TEXT_ITALICS_16 BITMAP "..\\bmp\\text_italics_16.bmp"
-TEXT_ALIGN_RIGHT_16 BITMAP "..\\bmp\\text_align_right_16.bmp"
-TEXT_ALIGN_LEFT_16 BITMAP "..\\bmp\\text_align_left_16.bmp"
-PIN_BLUE_16 BITMAP "..\\bmp\\pin_blue_16.bmp"
-FOLDER2_RED_16 BITMAP "..\\bmp\\Folder2_Red_16.bmp"
-FOLDER2_RED_32 BITMAP "..\\bmp\\Folder2_Red_32.bmp"

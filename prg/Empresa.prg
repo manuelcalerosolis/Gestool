@@ -2507,7 +2507,7 @@ STATIC FUNCTION EditConfig( aTmp, aGet, dbfEmp, oBrw, nSelFolder, bValid, nMode 
       REDEFINE BTNBMP ;
             ID       101 ;
             OF       fldComunicaciones ;
-            RESOURCE "Data_Connection_16" ;
+            RESOURCE "gc_data_16" ;
             NOBORDER ;
             TOOLTIP  "" ;
             ACTION   ( TestConexionDatabase() )
@@ -2515,7 +2515,7 @@ STATIC FUNCTION EditConfig( aTmp, aGet, dbfEmp, oBrw, nSelFolder, bValid, nMode 
       REDEFINE BTNBMP ;
             ID       102 ;
             OF       fldComunicaciones ;
-            RESOURCE "Data_Connection_16" ;
+            RESOURCE "gc_data_16" ;
             NOBORDER ;
             TOOLTIP  "" ;
             ACTION   ( TestConexionFTP() )

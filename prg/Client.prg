@@ -3477,7 +3477,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, nTab, bValid, nMode )
          ID       160 ;
          WHEN     ( oRTF:SendMsg( EM_CANUNDO ) != 0 ) ;
          OF       fldObservaciones ;
-         RESOURCE "Undo1_16" ;
+         RESOURCE "gc_undo_inv_16" ;
          NOBORDER ;
          TOOLTIP  "Deshacer" ;
          ACTION   ( oRTF:Undo(), oRTF:SetFocus() )
@@ -3486,7 +3486,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, nTab, bValid, nMode )
          ID       170 ;
          WHEN     ( oRTF:SendMsg( EM_CANREDO ) != 0 ) ;
          OF       fldObservaciones ;
-         RESOURCE "Redo_16" ;
+         RESOURCE "gc_undo_16" ;
          NOBORDER ;
          TOOLTIP  "Rehacer" ;
          ACTION   ( oRTF:Redo(), oRTF:SetFocus() )
@@ -3516,7 +3516,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, nTab, bValid, nMode )
          ID       210 ;
          WHEN     ( ! oRTF:lReadOnly ) ;
          OF       fldObservaciones ;
-         RESOURCE "Text_Bold" ;
+         RESOURCE "gc_text_bold_16" ;
          NOBORDER ;
          TOOLTIP  "Negrita" ;
          ACTION   ( lBold  := !lBold, oRTF:SetBold( lBold ), oRTF:SetFocus() )
@@ -3525,7 +3525,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, nTab, bValid, nMode )
          ID       220 ;
          WHEN     ( ! oRTF:lReadOnly ) ;
          OF       fldObservaciones ;
-         RESOURCE "Text_Italics_16" ;
+         RESOURCE "gc_text_italics_16" ;
          NOBORDER ;
          TOOLTIP  "Cursiva" ;
          ACTION   ( lItalic := !lItalic, oRTF:SetItalic( lItalic ), oRTF:SetFocus() )
@@ -3534,7 +3534,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, nTab, bValid, nMode )
          ID       230 ;
          WHEN     ( ! oRTF:lReadOnly ) ;
          OF       fldObservaciones ;
-         RESOURCE "Text_Underlined_16" ;
+         RESOURCE "gc_text_underline_16" ;
          NOBORDER ;
          TOOLTIP  "Subrayado" ;
          ACTION   ( lUnderline := !lUnderline, oRTF:SetUnderline( lUnderline ), oRTF:SetFocus() )
@@ -3543,7 +3543,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, nTab, bValid, nMode )
          ID       240 ;
          WHEN     ( ! oRTF:lReadOnly ) ;
          OF       fldObservaciones ;
-         RESOURCE "Text_Align_Left_16" ;
+         RESOURCE "gc_text_align_left_16" ;
          NOBORDER ;
          TOOLTIP  "Izquierda" ;
          ACTION   ( oRTF:SetAlign( PFA_LEFT ), oRTF:SetFocus() )
@@ -3552,7 +3552,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, nTab, bValid, nMode )
          ID       250 ;
          WHEN     ( ! oRTF:lReadOnly ) ;
          OF       fldObservaciones ;
-         RESOURCE "Text_Center" ;
+         RESOURCE "gc_text_center_16" ;
          NOBORDER ;
          TOOLTIP  "Centro" ;
          ACTION   ( oRTF:SetAlign( PFA_CENTER ), oRTF:SetFocus() )
@@ -3561,7 +3561,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, nTab, bValid, nMode )
          ID       260 ;
          WHEN     ( ! oRTF:lReadOnly ) ;
          OF       fldObservaciones ;
-         RESOURCE "Text_Align_Right_16" ;
+         RESOURCE "gc_text_align_right_16" ;
          NOBORDER ;
          TOOLTIP  "Derecha" ;
          ACTION   ( oRTF:SetAlign( PFA_RIGHT ), oRTF:SetFocus() )
@@ -3570,7 +3570,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, nTab, bValid, nMode )
          ID       270 ;
          WHEN     ( ! oRTF:lReadOnly ) ;
          OF       fldObservaciones ;
-         RESOURCE "Text_Justified_16" ;
+         RESOURCE "gc_text_justified_16" ;
          NOBORDER ;
          TOOLTIP  "Justificado" ;
          ACTION   ( oRTF:SetAlign( PFA_JUSTIFY ), oRTF:SetFocus() )
@@ -3579,7 +3579,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, nTab, bValid, nMode )
          ID       280 ;
          WHEN     ( ! oRTF:lReadOnly .AND. !oRTF:GetNumbering() ) ;
          OF       fldObservaciones ;
-         RESOURCE "Pin_Blue_16" ;
+         RESOURCE "gc_pin_blue_16" ;
          NOBORDER ;
          TOOLTIP  "Viñetas" ;
          ACTION   ( lBullet := !lBullet, oRTF:SetBullet( lBullet ), oRTF:SetFocus() )
@@ -4791,7 +4791,7 @@ STATIC FUNCTION EdtAtp( aTmp, aGet, dbfTmpAtp, oBrw, aTmpCli, aGetCli, nMode )
 
       REDEFINE LISTBOX oBrwRen ;
          FIELDS ;
-                  if( aRentabilidad[ oBrwRen:nAt, 5 ], LoadBitmap( GetResources(), "BALERT" ), "" ) ,;
+                  if( aRentabilidad[ oBrwRen:nAt, 5 ], LoadBitmap( GetResources(), "gc_sign_warning_16" ), "" ) ,;
                   aRentabilidad[ oBrwRen:nAt, 1 ],;
                   aRentabilidad[ oBrwRen:nAt, 2 ],;
                   if( !aRentabilidad[ oBrwRen:nAt, 4 ], Trans( aRentabilidad[ oBrwRen:nAt, 3 ], cPouDiv ), Trans( aRentabilidad[ oBrwRen:nAt, 3 ], "999.99" ) + " %" ),;
