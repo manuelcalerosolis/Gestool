@@ -1594,7 +1594,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfProvee, oBrw, bWhen, bValid, nMode )
          ID       130 ;
          WHEN     ( ! Empty( oRTF:GetSel() ) .and. ! oRTF:lReadOnly ) ;
          OF       oFld:aDialogs[ 7 ] ;
-         RESOURCE "Cut_16" ;
+         RESOURCE "gc_cut_16" ;
          NOBORDER ;
          TOOLTIP  "Cortar" ;
          ACTION   ( oRTF:Cut(), oRTF:SetFocus() )
@@ -1612,7 +1612,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfProvee, oBrw, bWhen, bValid, nMode )
          ID       150 ;
          WHEN     ( ! Empty( oClp:GetText() ) .and. ! oRTF:lReadOnly ) ;
          OF       oFld:aDialogs[ 7 ] ;
-         RESOURCE "Paste_16" ;
+         RESOURCE "gc_clipboard_paste_16" ;
          NOBORDER ;
          TOOLTIP  "Pegar" ;
          ACTION   ( oRTF:Paste(), oRTF:SetFocus() )

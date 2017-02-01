@@ -2150,7 +2150,7 @@ END CLASS
          ID       ( id + 3 ) ;
          WHEN     ( ! empty( ::oRTF:GetSel() ) .and. ! ::oRTF:lReadOnly ) ;
          OF       oDlg ;
-         RESOURCE "Cut_16" ;
+         RESOURCE "gc_cut_16" ;
          NOBORDER ;
          TOOLTIP  "Cortar" ;
 
@@ -2170,7 +2170,7 @@ END CLASS
          ID       ( id + 5 ) ;
          WHEN     ( ! empty( ::oClp:GetText() ) .and. ! ::oRTF:lReadOnly ) ;
          OF       oDlg ;
-         RESOURCE "Paste_16" ;
+         RESOURCE "gc_clipboard_paste_16" ;
          NOBORDER ;
          TOOLTIP  "Pegar" ;
 

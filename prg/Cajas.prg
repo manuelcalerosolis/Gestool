@@ -1078,7 +1078,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfCajT, oBrw, bWhen, bValid, nMode )
          WHEN     ( nMode != ZOOM_MODE ) ;
          OF       oFld:aDialogs[2]
 
-      TBtnBmp():ReDefine( 331, "Cut_16",,,,,{|| PrintEscCode( aTmp[ ( dbfCajT )->( FieldPos( "cCodCut" ) ) ], aTmp[ ( dbfCajT )->( FieldPos( "cWinTik" ) ) ] ) }, oFld:aDialogs[2], .f., , .f., "Test de código" )
+      TBtnBmp():ReDefine( 331, "gc_cut_16",,,,,{|| PrintEscCode( aTmp[ ( dbfCajT )->( FieldPos( "cCodCut" ) ) ], aTmp[ ( dbfCajT )->( FieldPos( "cWinTik" ) ) ] ) }, oFld:aDialogs[2], .f., , .f., "Test de código" )
 
       /*
       Formato para crote
@@ -1250,7 +1250,7 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbfTmpLin, oBrw, bWhen, bValid, nMode, aTmpC
          ID       130 ;
          OF       oDlg
 
-      TBtnBmp():ReDefine( 131, "Cut_16",,,,,{|| PrintEscCode( aTmp[ ( dbfTmpLin )->( FieldPos( "cCodCut" ) ) ], aTmp[ ( dbfTmpLin )->( FieldPos( "cNomPrn" ) ) ] ) }, oDlg, .f., , .f., "Test de código" )
+      TBtnBmp():ReDefine( 131, "gc_cut_16",,,,,{|| PrintEscCode( aTmp[ ( dbfTmpLin )->( FieldPos( "cCodCut" ) ) ], aTmp[ ( dbfTmpLin )->( FieldPos( "cNomPrn" ) ) ] ) }, oDlg, .f., , .f., "Test de código" )
 
       /*
       Formato para comandas
