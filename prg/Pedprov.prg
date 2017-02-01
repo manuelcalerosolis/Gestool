@@ -5406,6 +5406,7 @@ Static function nCalculaUnidades( nObjetivo )
 Return ( nUnidades )
 
 //---------------------------------------------------------------------------//
+
 /*Añade en la temporal de lineas de pedidos*/
 
 Static Function AppTemPedL( cCodAlm )
