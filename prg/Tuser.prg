@@ -618,8 +618,9 @@ Method lMasterLike()
    DEFINE DIALOG oDlg RESOURCE "TPV_USER"
 
       REDEFINE BITMAP oBmp;
-         RESOURCE "TpvUser" ;
-         ID       150 ;
+         RESOURCE "gc_security_agent_48" ;
+         TRANSPARENT ;
+         ID       500 ;
          OF       oDlg
 
       REDEFINE GET oClave VAR cClave;

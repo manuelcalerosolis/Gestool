@@ -254,4 +254,5 @@ GC_SIGN_STOP_32 BITMAP "..\\bmp\\gc_sign_stop_32.bmp"
 GC_ID_CARD_DELETE_32 BITMAP "..\\bmp\\gc_id_card_delete_32.bmp"
 GC_DELETE_48 BITMAP "..\\bmp\\gc_delete_48.bmp"
 GC_COCKTAIL_48 BITMAP "..\\bmp\\gc_cocktail_48.bmp"
+GC_ID_CARD_TRANSP_48 BITMAP "..\\bmp\\gc_id_card_transp_48.bmp"
 

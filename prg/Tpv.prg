@@ -18162,7 +18162,7 @@ Static Function lFidelity( aGet, aTmp, nMode )
 
    oDlg  := TDialog():New( , , , , , "Fidelity" )
 
-      TBitmap():ReDefine( 700, "FidelizacionClientes", , oDlg )
+      TBitmap():ReDefine( 600, "gc_id_card_transp_48", , oDlg,)
 
       ApoloBtnBmp():Redefine( 500, "gc_id_card_32", , , , , {|| oDlg:end( IDOK ), if( !empty( aGet[ _CCLITIK ] ), aGet[ _CCLITIK ]:SetFocus(), ) }, oDlg, , , .f., .f., "Si. [ F5 ]", ,,, .t., "TOP", .t., , , .f., )
 
