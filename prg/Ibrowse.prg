@@ -612,7 +612,7 @@ Method RightButtonDown( nRow, nCol, nFlags )
 
       MenuEnd()
 
-      //MenuAddItem( "Personalizar...", "Personalizar la rejilla de datos", .f., .t., {|| ::DlgColumn() }, , "Column_Preferences_16", oMenu )
+      //MenuAddItem( "Personalizar...", "Personalizar la rejilla de datos", .f., .t., {|| ::DlgColumn() }, , "gc_table_selection_column_16", oMenu )
 
       MenuAddItem( "Guardar vista actual", "Guarda la vista actual de la rejilla de datos", .f., .t., {|| ::SaveData( .t. ) }, , "gc_table_selection_column_disk_16", oMenu )
 
@@ -622,7 +622,7 @@ Method RightButtonDown( nRow, nCol, nFlags )
 
       MenuAddItem( "Exportar a E&xcel", "Exportar rejilla de datos a Excel", .f., .t., {|| ::ExportToExcel() }, , "gc_spreadsheet_sum_16", oMenu )
 
-      MenuAddItem( "Exportar a &Word", "Exportar rejilla de datos a Word", .f., .t., {|| ::ExportToWord() }, , "Text_Rich_16", oMenu )
+      MenuAddItem( "Exportar a &Word", "Exportar rejilla de datos a Word", .f., .t., {|| ::ExportToWord() }, , "gc_document_text_16", oMenu )
 
       MenuEnd()
 

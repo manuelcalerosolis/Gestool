@@ -255,4 +255,13 @@ GC_ID_CARD_DELETE_32 BITMAP "..\\bmp\\gc_id_card_delete_32.bmp"
 GC_DELETE_48 BITMAP "..\\bmp\\gc_delete_48.bmp"
 GC_COCKTAIL_48 BITMAP "..\\bmp\\gc_cocktail_48.bmp"
 GC_ID_CARD_TRANSP_48 BITMAP "..\\bmp\\gc_id_card_transp_48.bmp"
+GC_MYSQL_48 BITMAP "..\\bmp\\gc_mysql_48.bmp"
+
+flag_eu_48_alpha BITMAP "..\\bmp\\flag_eu_48_alpha.bmp"
+
+GC_STAR2_TRANSP_48 BITMAP "..\\bmp\\gc_star2_transp_48.bmp"
+GC_NAVIGATE_PLUS_16 BITMAP "..\\bmp\\gc_navigate_plus_16.bmp"
+GC_NAVIGATE_MINUS_16 BITMAP "..\\bmp\\gc_navigate_minus_16.bmp"
+GC_CUT_16 BITMAP "..\\bmp\\gc_cut_16.bmp"
+GC_CLIPBOARD_PASTE_16 BITMAP "..\\bmp\\gc_clipboard_paste_16.bmp"
 

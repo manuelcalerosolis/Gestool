@@ -1072,7 +1072,7 @@ FUNCTION PedCli( oMenuItem, oWnd, cCodCli, cCodArt, cCodPre, lPedWeb )
          :AddResource( "gc_check_12" )
          :AddResource( "gc_shape_square_12" )
          :AddResource( "gc_delete_12" )
-         :AddResource( "Worker2_16" )
+         :AddResource( "gc_worker2_16" )
       end with
 
       with object ( oWndBrw:AddXCol() )
@@ -2432,7 +2432,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, cCodCli, cCodArt, nMode, cCodPre 
          :nHeadBmpNo          := 1
          :nBtnBmp             := 1
          :nHeadBmpAlign       := 1
-         :AddResource( "Navigate_Plus_16" )
+         :AddResource( "gc_navigate_plus_16" )
          :lHide               := .t.
       end with
 
@@ -2446,7 +2446,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, cCodCli, cCodArt, nMode, cCodPre 
          :nHeadBmpNo          := 1
          :nBtnBmp             := 1
          :nHeadBmpAlign       := 1
-         :AddResource( "Navigate_Minus_16" )
+         :AddResource( "gc_navigate_minus_16" )
          :lHide               := .t.
       end with
 

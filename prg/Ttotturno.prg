@@ -773,7 +773,7 @@ Method CreateTree( cCaja, cTurno )
    local nSaldoTotal    := 0
    local nSaldoActual   := 0
 
-   oTree                := TreeBegin( "Navigate_Minus_16", "Navigate_Plus_16" )
+   oTree                := TreeBegin( "gc_navigate_minus_16", "gc_navigate_plus_16" )
 
    /*
    Contadores------------------------------------------------------------------

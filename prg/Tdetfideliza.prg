@@ -6,7 +6,7 @@
 
 CLASS TDetFideliza FROM TDet
 
-   DATA  cMru                       INIT "Robot_Money2_16"
+   DATA  cMru                       INIT "gc_industrial_robot_money_16"
    DATA  cBitmap                    INIT Rgb( 197, 227, 9 )
 
    METHOD OpenFiles( lExclusive )

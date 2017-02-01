@@ -4646,7 +4646,7 @@ METHOD lCalTurno( cTurno, cCaja )
 
          if Empty( ::oBrwTotales:oTree )
 
-            ::oBrwTotales:SetTree( ::oTreeTotales, { "Navigate_Minus_16", "Navigate_Plus_16", "Nil16" }, ,  ) 
+            ::oBrwTotales:SetTree( ::oTreeTotales, { "gc_navigate_minus_16", "gc_navigate_plus_16", "Nil16" }, ,  ) 
             
             if len( ::oBrwTotales:aCols ) > 1
                ::oBrwTotales:aCols[ 1 ]:cHeader    := ""

@@ -3,8 +3,3 @@
 #include <windows.h>
 #include <commctrl.h>
 #include <richedit.h>
-
-
-
-NAVIGATE_MINUS_16 BITMAP "..\\bmp\\Navigate_Minus_16.bmp"
-NAVIGATE_PLUS_16 BITMAP "..\\bmp\\Navigate_Plus_16.bmp"

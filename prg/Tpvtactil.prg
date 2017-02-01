@@ -3615,7 +3615,7 @@ METHOD CargaBrowseFamilias() CLASS TpvTactil
 
    // Caso especial de favoritos--------------------------------------------------
 
-   aAdd( ::aFamilias, { "Favoritos", nil, {|| ::CargaFavoritos() }, "gc_star2_48" } ) 
+   aAdd( ::aFamilias, { "Favoritos", nil, {|| ::CargaFavoritos() }, "gc_star2_transp_48" } ) 
 
    // Preguntamos si hay menus activos y es no es de acompañamiento---------------
 

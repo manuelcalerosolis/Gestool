@@ -1266,7 +1266,7 @@ Static Function LoadDatos( cCodArt, nYear, oDlg, oBrwStk, oBrwTmp, oGraph, oBrwC
    oStock:oTreeStocks( cCodArt )
 
    if empty( oBrwStk:oTree )
-      oBrwStk:SetTree( oStock:oTree, { "Navigate_Minus_16", "Navigate_Plus_16", "Nil16" } ) 
+      oBrwStk:SetTree( oStock:oTree, { "gc_navigate_minus_16", "gc_navigate_plus_16", "Nil16" } ) 
    else 
       oBrwStk:oTree     := oStock:oTree
       oBrwStk:oTreeItem := oStock:oTree:oFirst

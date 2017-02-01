@@ -1421,7 +1421,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, cCodPrv, cCodArt, nMode )
             :nHeadBmpNo          := 1
             :nBtnBmp             := 1
             :nHeadBmpAlign       := 1
-            :AddResource( "Navigate_Plus_16" )
+            :AddResource( "gc_navigate_plus_16" )
             :lHide               := .t.
          end with
    
@@ -1435,7 +1435,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, cCodPrv, cCodArt, nMode )
             :nHeadBmpNo          := 1
             :nBtnBmp             := 1
             :nHeadBmpAlign       := 1
-            :AddResource( "Navigate_Minus_16" )
+            :AddResource( "gc_navigate_minus_16" )
             :lHide               := .t.
          end with
 
