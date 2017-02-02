@@ -10666,7 +10666,7 @@ Return ( cFilePdf )
 Static Function YearComboBoxChange()
 
    if ( oWndBrw:oWndBar:cYearComboBox() != __txtAllYearsFilter__ )
-      oWndBrw:oWndBar:setYearComboBoxExpression( "Year( Field->dFecFac ) == " + oWndBrw:oWndBar:cYearComboBox() )
+      oWndBrw:oWndBar:setYearComboBoxExpression( "year( field->dFecFac ) == " + oWndBrw:oWndBar:cYearComboBox() )
    else
       oWndBrw:oWndBar:setYearComboBoxExpression( "" )
    end if 

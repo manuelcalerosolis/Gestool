@@ -1248,6 +1248,10 @@ FUNCTION AlbCli( oMenuItem, oWnd, hHash )
 
    EnableAcceso()
 
+   if uFieldempresa( 'lFltYea' )
+      oWndBrw:setYearCombobox()
+   end if
+
    if !empty( hHash ) 
 
       if !empty( oWndBrw )

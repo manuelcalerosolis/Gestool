@@ -602,15 +602,15 @@ Static Function CloseFiles()
 
    oWndBrw     := nil
 
-   if !Empty( oFntTot )
+   if !empty( oFntTot )
       oFntTot:end()
    end if
 
-   if !Empty( oDetCamposExtra )
+   if !empty( oDetCamposExtra )
       oDetCamposExtra:CloseFiles()
    end if
 
-   if !Empty( oCentroCoste )
+   if !empty( oCentroCoste )
       oCentroCoste:CloseFiles()
    end if
 
@@ -1161,7 +1161,7 @@ FUNCTION FacPrv( oMenuItem, oWnd, cCodPrv, cCodArt, cNumAlb )
          LEVEL    ACC_EDIT
 
       DEFINE BTNSHELL RESOURCE "gc_document_empty_businessman_" OF oWndBrw ;
-         ACTION   ( if( !Empty( ( D():FacturasProveedores( nView ) )->cNumAlb ), ZooAlbPrv( ( D():FacturasProveedores( nView ) )->cNumAlb ), MsgStop( "La factura no proviene de un albarán" ) ) );
+         ACTION   ( if( !empty( ( D():FacturasProveedores( nView ) )->cNumAlb ), ZooAlbPrv( ( D():FacturasProveedores( nView ) )->cNumAlb ), MsgStop( "La factura no proviene de un albarán" ) ) );
          TOOLTIP  "Visualizar albarán";
          FROM     oRotor ;
          LEVEL    ACC_EDIT
@@ -1195,13 +1195,20 @@ FUNCTION FacPrv( oMenuItem, oWnd, cCodPrv, cCodArt, cNumAlb )
 
    EnableAcceso()
 
-   if !Empty( cCodPrv ) .or. !Empty( cCodArt ) .or. !Empty( cNumAlb )
-      if !Empty( oWndBrw )
+   if uFieldempresa( 'lFltYea' )
+      oWndBrw:setYearCombobox()
+   end if
+
+   if !empty( cCodPrv ) .or. !empty( cCodArt ) .or. !empty( cNumAlb )
+
+      if !empty( oWndBrw )
          oWndBrw:RecAdd()
       end if
+
       cCodPrv  := nil
       cCodArt  := nil
       cNumAlb  := nil
+
    end if
 
    // Quitamos el sistema de script
@@ -1261,11 +1268,11 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, cCodPrv, cCodArt, nMode, cNumAlb 
       aTmp[ _DFECIMP ]     := Ctod( "" )
       aTmp[ _TFECFAC ]     := getSysTime()
 
-      if !Empty( cCodPrv )
+      if !empty( cCodPrv )
          aTmp[ _CCODPRV ]  := cCodPrv
       end if
 
-      if !Empty( cNumAlb )
+      if !empty( cNumAlb )
          aTmp[ _CNUMALB ]  := cNumAlb
       end if
 
@@ -1303,11 +1310,11 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, cCodPrv, cCodArt, nMode, cNumAlb 
 
    end case
 
-   if Empty( aTmp[ _CDTOESP ] )
+   if empty( aTmp[ _CDTOESP ] )
       aTmp[ _CDTOESP ]  := Padr( "General", 50 )
    end if
 
-   if Empty( aTmp[ _CDPP ] )
+   if empty( aTmp[ _CDPP ] )
       aTmp[ _CDPP ]     := Padr( "Pronto pago", 50 )
    end if
 
@@ -1716,7 +1723,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, cCodPrv, cCodArt, nMode, cNumAlb 
 
          with object ( oBrwLin:AddCol() )
             :cHeader          := "Descripción"
-            :bEditValue       := {|| if( Empty( ( dbfTmp )->cRef ) .and. !( dbfTmp )->lControl, ( dbfTmp )->mLngDes, ( dbfTmp )->cDetalle ) }
+            :bEditValue       := {|| if( empty( ( dbfTmp )->cRef ) .and. !( dbfTmp )->lControl, ( dbfTmp )->mLngDes, ( dbfTmp )->cDetalle ) }
             :nWidth           := 286
          end with
 
@@ -2069,7 +2076,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, cCodPrv, cCodArt, nMode, cNumAlb 
 
       with object ( oBrwIva:aCols[ 1 ] )
          :cHeader       := "Bruto"
-         :bStrData      := {|| if( !Empty( aTotIva[ oBrwIva:nArrayAt, 1 ] ), Trans( aTotIva[ oBrwIva:nArrayAt, 2 ], cPirDiv ), "" ) }
+         :bStrData      := {|| if( !empty( aTotIva[ oBrwIva:nArrayAt, 1 ] ), Trans( aTotIva[ oBrwIva:nArrayAt, 2 ], cPirDiv ), "" ) }
          :nWidth        := 82
          :nDataStrAlign := 1
          :nHeadStrAlign := 1
@@ -2078,7 +2085,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, cCodPrv, cCodArt, nMode, cNumAlb 
 
       with object ( oBrwIva:aCols[ 2 ] )
          :cHeader       := "Base"
-         :bStrData      := {|| if( !Empty( aTotIva[ oBrwIva:nArrayAt, 2 ] ), Trans( aTotIva[ oBrwIva:nArrayAt, 2 ], cPirDiv ), "" ) }
+         :bStrData      := {|| if( !empty( aTotIva[ oBrwIva:nArrayAt, 2 ] ), Trans( aTotIva[ oBrwIva:nArrayAt, 2 ], cPirDiv ), "" ) }
          :nWidth        := 82
          :cEditPicture  := cPirDiv
          :nDataStrAlign := 1
@@ -2102,7 +2109,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, cCodPrv, cCodArt, nMode, cNumAlb 
 
       with object ( oBrwIva:aCols[ 4 ] )
          :cHeader       := "%R.E."
-         :bStrData      := {|| if( !Empty( aTotIva[ oBrwIva:nArrayAt, 4 ] ) .and. aTmp[ _LRECARGO ], Trans( aTotIva[ oBrwIva:nArrayAt, 4 ], "@E 99.9" ), "" ) }
+         :bStrData      := {|| if( !empty( aTotIva[ oBrwIva:nArrayAt, 4 ] ) .and. aTmp[ _LRECARGO ], Trans( aTotIva[ oBrwIva:nArrayAt, 4 ], "@E 99.9" ), "" ) }
          :nWidth        := 50
          :nDataStrAlign := 1
          :nHeadStrAlign := 1
@@ -2111,7 +2118,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, cCodPrv, cCodArt, nMode, cNumAlb 
 
       with object ( oBrwIva:aCols[ 5 ] )
          :cHeader       := cImp()
-         :bStrData      := {|| if( !Empty( aTotIva[ oBrwIva:nArrayAt, 5 ] ), Trans( aTotIva[ oBrwIva:nArrayAt, 5 ], cPirDiv ), "" ) }
+         :bStrData      := {|| if( !empty( aTotIva[ oBrwIva:nArrayAt, 5 ] ), Trans( aTotIva[ oBrwIva:nArrayAt, 5 ], cPirDiv ), "" ) }
          :nWidth        := 75
          :nDataStrAlign := 1
          :nHeadStrAlign := 1
@@ -2120,7 +2127,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, cCodPrv, cCodArt, nMode, cNumAlb 
 
       with object ( oBrwIva:aCols[ 6 ] )
          :cHeader       := "R.E."
-         :bStrData      := {|| if( !Empty( aTotIva[ oBrwIva:nArrayAt, 6 ] ) .and. aTmp[ _LRECARGO ], Trans( aTotIva[ oBrwIva:nArrayAt, 6 ], cPirDiv ), "" ) }
+         :bStrData      := {|| if( !empty( aTotIva[ oBrwIva:nArrayAt, 6 ] ) .and. aTmp[ _LRECARGO ], Trans( aTotIva[ oBrwIva:nArrayAt, 6 ], cPirDiv ), "" ) }
          :nWidth        := 75
          :cEditPicture  := cPirDiv
          :nDataStrAlign := 1
@@ -2676,13 +2683,13 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, cCodPrv, cCodArt, nMode, cNumAlb 
    oDlg:AddFastKey ( VK_F1, {|| GoHelp() } )
 
    do case
-      case nMode == APPD_MODE .and. lRecogerUsuario() .and. Empty( cCodArt )
+      case nMode == APPD_MODE .and. lRecogerUsuario() .and. empty( cCodArt )
          oDlg:bStart := {|| if( lGetUsuario( aGet[ _CCODUSR ], D():Usuarios( nView ) ), , oDlg:end() ) }
 
-      case nMode == APPD_MODE .and. lRecogerUsuario() .and. !Empty( cCodArt )
+      case nMode == APPD_MODE .and. lRecogerUsuario() .and. !empty( cCodArt )
          oDlg:bStart := {|| if( lGetUsuario( aGet[ _CCODUSR ], D():Usuarios( nView ) ), AppDeta( oBrwLin, bEdtDet, aTmp, cCodArt ), oDlg:end() ) }
 
-      case nMode == APPD_MODE .and. !lRecogerUsuario() .and. !Empty( cCodArt )
+      case nMode == APPD_MODE .and. !lRecogerUsuario() .and. !empty( cCodArt )
          oDlg:bStart := {|| AppDeta( oBrwLin, bEdtDet, aTmp, cCodArt ) }
 
       otherwise
@@ -2772,7 +2779,7 @@ Static Function EdtRecMenu( aTmp, oDlg )
             MENUITEM    "&2. Visualizar albarán";
                MESSAGE  "Visualiza el albarán del que proviene" ;
                RESOURCE "gc_document_empty_businessman_16" ;
-               ACTION   ( if( !Empty( ( D():FacturasProveedores( nView ) )->cNumAlb ), ZooAlbPrv( ( D():FacturasProveedores( nView ) )->cNumAlb ), MsgStop( "La factura no proviene de un albarán" ) ))
+               ACTION   ( if( !empty( ( D():FacturasProveedores( nView ) )->cNumAlb ), ZooAlbPrv( ( D():FacturasProveedores( nView ) )->cNumAlb ), MsgStop( "La factura no proviene de un albarán" ) ))
 
             SEPARATOR
 
@@ -2807,7 +2814,7 @@ Return ( oMnuRec )
 
 Static Function InitDialog( cNumAlb, aGet, aTmp, oDlg, oBrwLin, cCodPrv, oBrwPgo, oBrwInc, dbfTmpInc, aControl, oSayGas, oSayLabels, oBrwIva )
 
-   if !Empty( cNumAlb )
+   if !empty( cNumAlb )
       aGet[ _CNUMALB ]:lValid()
    endif
    
@@ -3081,7 +3088,7 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbf, oBrw, aTmpFac, cCodArtEnt, nMode )
       aTmp[ _LCHGLIN  ]    := lActCos()
       aTmp[ _DFECCAD  ]    := Ctod( "" )
 
-      if !Empty( cCodArtEnt )
+      if !empty( cCodArtEnt )
          cCodArt           := cCodArtEnt
       end if
 
@@ -3090,7 +3097,7 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbf, oBrw, aTmpFac, cCodArtEnt, nMode )
 
    case nMode == EDIT_MODE
 
-      if !Empty( aTmp[ _CREF ] )
+      if !empty( aTmp[ _CREF ] )
          ( D():Articulos( nView ) )->( dbSeek( Alltrim( aTmp[ _CREF ] ) ) )
       end if
 
@@ -3156,7 +3163,7 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbf, oBrw, aTmpFac, cCodArtEnt, nMode )
 
       REDEFINE GET aGet[_CDETALLE] VAR aTmp[_CDETALLE] ;
          ID       120 ;
-         WHEN     ( ( lModDes() .or. Empty( aTmp[ _CDETALLE ] ) ) .AND. nMode != ZOOM_MODE ) ;
+         WHEN     ( ( lModDes() .or. empty( aTmp[ _CDETALLE ] ) ) .AND. nMode != ZOOM_MODE ) ;
          OF       oFld:aDialogs[1]
 
       REDEFINE GET aGet[_MLNGDES] VAR aTmp[_MLNGDES] ;
@@ -3827,7 +3834,7 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbf, oBrw, aTmpFac, cCodArtEnt, nMode )
 
    oDlg:bStart    := {|| SetDlgMode( aGet, aTmp, oFld, aTmpFac, nMode, oSayPr1, oSayPr2, oSayVp1, oSayVp2, oSayLote, oTotal, oBrwPrp ),;
                          loadGet( aGet[ _CTERCTR ], cTipoCtrCoste ), aGet[ _CTERCTR ]:lValid(),;
-                         if( !Empty( cCodArtEnt ), aGet[ _CREF ]:lValid(), ) }
+                         if( !empty( cCodArtEnt ), aGet[ _CREF ]:lValid(), ) }
 
    ACTIVATE DIALOG oDlg ;
       ON INIT     ( EdtDetMenu( aGet[ _CREF ], oDlg ) );
@@ -3845,7 +3852,7 @@ static Function cNomUbica( aTmp, aGet, cAlm )
    aTmp[_CCODUBI2]      := cGetUbica( aTmp[_CALMLIN], cAlm, 2 )
    aTmp[_CCODUBI3]      := cGetUbica( aTmp[_CALMLIN], cAlm, 3 )
 
-   if Empty( aTmp[_CCODUBI1] )
+   if empty( aTmp[_CCODUBI1] )
       aGet[_CCODUBI1]:Hide()
       aGet[_CVALUBI1]:Hide()
       aGet[_CNOMUBI1]:Hide()
@@ -3855,7 +3862,7 @@ static Function cNomUbica( aTmp, aGet, cAlm )
       aGet[_CNOMUBI1]:Show()
    end if
 
-   if Empty( aTmp[_CCODUBI2] )
+   if empty( aTmp[_CCODUBI2] )
       aGet[_CCODUBI2]:Hide()
       aGet[_CVALUBI2]:Hide()
       aGet[_CNOMUBI2]:Hide()
@@ -3865,7 +3872,7 @@ static Function cNomUbica( aTmp, aGet, cAlm )
       aGet[_CNOMUBI2]:Show()
    end if
 
-   if Empty( aTmp[_CCODUBI3] )
+   if empty( aTmp[_CCODUBI3] )
       aGet[_CCODUBI3]:Hide()
       aGet[_CVALUBI3]:Hide()
       aGet[_CNOMUBI3]:Hide()
@@ -3896,7 +3903,7 @@ STATIC FUNCTION SetDlgMode( aGet, aTmp, oFld, aTmpFac, nMode, oSayPr1, oSayPr2, 
    if !uFieldEmpresa( "lUseBultos" )
       aGet[ __NBULTOS ]:Hide()
    else
-      if !Empty( aGet[ __NBULTOS ] )
+      if !empty( aGet[ __NBULTOS ] )
          aGet[ __NBULTOS ]:SetText( uFieldempresa( "cNbrBultos" ) )
       end if 
    end if
@@ -3909,11 +3916,11 @@ STATIC FUNCTION SetDlgMode( aGet, aTmp, oFld, aTmpFac, nMode, oSayPr1, oSayPr2, 
 
    aGet[ _NUNICAJA ]:SetText( cNombreUnidades() )
 
-   if Empty( aTmp[_CALMLIN ] )
+   if empty( aTmp[_CALMLIN ] )
       aTmp[ _CALMLIN ]  := aTmpFac[ _CCODALM ]
    end if
 
-   if Empty( aTmp[ __CALMORIGEN ] )
+   if empty( aTmp[ __CALMORIGEN ] )
       aTmp[ __CALMORIGEN ]  := aTmpFac[ _CALMORIGEN ]
    end if
   
@@ -3935,7 +3942,7 @@ STATIC FUNCTION SetDlgMode( aGet, aTmp, oFld, aTmpFac, nMode, oSayPr1, oSayPr2, 
    Colocamos nuevamente los folders
    */
 
-   oFld:aEnable   := { .t., !Empty( aTmp[ _CREF ] ), .t., .t. }
+   oFld:aEnable   := { .t., !empty( aTmp[ _CREF ] ), .t., .t. }
    oFld:SetOption( 1 )
 
    do case
@@ -4010,7 +4017,7 @@ STATIC FUNCTION SetDlgMode( aGet, aTmp, oFld, aTmpFac, nMode, oSayPr1, oSayPr2, 
 
    lCalcDeta( aTmp, aTmpFac, aGet, oTotal )
 
-   if !Empty( aTmp[ _CCODPR1 ] )
+   if !empty( aTmp[ _CCODPR1 ] )
       aGet[ _CVALPR1 ]:Show()
       aGet[ _CVALPR1 ]:lValid()
       oSayPr1:Show()
@@ -4022,7 +4029,7 @@ STATIC FUNCTION SetDlgMode( aGet, aTmp, oFld, aTmpFac, nMode, oSayPr1, oSayPr2, 
       oSayVp1:Hide()
    end if
 
-   if !Empty( aTmp[ _CCODPR2 ] )
+   if !empty( aTmp[ _CCODPR2 ] )
       aGet[ _CVALPR2 ]:Show()
       aGet[ _CVALPR2 ]:lValid()
       oSayPr2:Show()
@@ -4044,17 +4051,17 @@ STATIC FUNCTION SetDlgMode( aGet, aTmp, oFld, aTmpFac, nMode, oSayPr1, oSayPr2, 
 
    if D():GetObject( "UnidadMedicion", nView ):oDbf:Seek(  aTmp[ _CUNIDAD ] )
 
-      if D():GetObject( "UnidadMedicion", nView ):oDbf:nDimension >= 1 .and. !Empty( D():GetObject( "UnidadMedicion", nView ):oDbf:cTextoDim1 )
+      if D():GetObject( "UnidadMedicion", nView ):oDbf:nDimension >= 1 .and. !empty( D():GetObject( "UnidadMedicion", nView ):oDbf:cTextoDim1 )
          aGet[ ( D():FacturasProveedoresLineas( nView ) )->( fieldpos( "nMedUno" ) ) ]:oSay:SetText( D():GetObject( "UnidadMedicion", nView ):oDbf:cTextoDim1 )
          aGet[ ( D():FacturasProveedoresLineas( nView ) )->( fieldpos( "nMedUno" ) ) ]:Show()
       end if
 
-      if D():GetObject( "UnidadMedicion", nView ):oDbf:nDimension >= 2 .and. !Empty( D():GetObject( "UnidadMedicion", nView ):oDbf:cTextoDim2 )
+      if D():GetObject( "UnidadMedicion", nView ):oDbf:nDimension >= 2 .and. !empty( D():GetObject( "UnidadMedicion", nView ):oDbf:cTextoDim2 )
          aGet[ ( D():FacturasProveedoresLineas( nView ) )->( fieldpos( "nMedDos" ) ) ]:oSay:SetText( D():GetObject( "UnidadMedicion", nView ):oDbf:cTextoDim2 )
          aGet[ ( D():FacturasProveedoresLineas( nView ) )->( fieldpos( "nMedDos" ) ) ]:Show()
       end if
 
-      if D():GetObject( "UnidadMedicion", nView ):oDbf:nDimension >= 3 .and. !Empty( D():GetObject( "UnidadMedicion", nView ):oDbf:cTextoDim3 )
+      if D():GetObject( "UnidadMedicion", nView ):oDbf:nDimension >= 3 .and. !empty( D():GetObject( "UnidadMedicion", nView ):oDbf:cTextoDim3 )
          aGet[ ( D():FacturasProveedoresLineas( nView ) )->( fieldpos( "nMedTre" ) ) ]:oSay:SetText( D():GetObject( "UnidadMedicion", nView ):oDbf:cTextoDim3 )
          aGet[ ( D():FacturasProveedoresLineas( nView ) )->( fieldpos( "nMedTre" ) ) ]:Show()
       end if
@@ -4080,7 +4087,7 @@ STATIC FUNCTION SaveDeta( aTmp, aGet, oBrw, oDlg2, nMode, oTotal, oFld, aTmpFac,
       Return nil
    end if
 
-   if Empty( aTmp[ _CREF ] ) .and. lRetCodArt()
+   if empty( aTmp[ _CREF ] ) .and. lRetCodArt()
       MsgStop( "No se pueden añadir lineas sin codificar" )
       Return .f.
    end if
@@ -4089,7 +4096,7 @@ STATIC FUNCTION SaveDeta( aTmp, aGet, oBrw, oDlg2, nMode, oTotal, oFld, aTmpFac,
       Return nil
    end if
 
-   if Empty( aTmp[ _CALMLIN ] )
+   if empty( aTmp[ _CALMLIN ] )
       MsgStop( "Código de almacen no puede estar vacio" )
       aGet[ _CALMLIN ]:SetFocus()
       Return nil
@@ -4142,7 +4149,7 @@ STATIC FUNCTION SaveDeta( aTmp, aGet, oBrw, oDlg2, nMode, oTotal, oFld, aTmpFac,
          saveLoteActual( aTmp[ _CREF ], aTmp[ _CLOTE ], nView )   
       end if
 
-      if !Empty( oBrwPrp:Cargo )
+      if !empty( oBrwPrp:Cargo )
 
          for n := 1 to len( oBrwPrp:Cargo )
 
@@ -4195,11 +4202,11 @@ STATIC FUNCTION SaveDeta( aTmp, aGet, oBrw, oDlg2, nMode, oTotal, oFld, aTmpFac,
 
    end if
 
-   if !Empty( aGet[ _CUNIDAD ] )
+   if !empty( aGet[ _CUNIDAD ] )
       aGet[ _CUNIDAD ]:lValid()
    end if
 
-   if !Empty( oBrwPrp )
+   if !empty( oBrwPrp )
       oBrwPrp:Cargo                 := nil
    end if
 
@@ -4295,7 +4302,7 @@ STATIC FUNCTION PrnSerie( oBrw )
    local dFecDesde   := CtoD( "01/01/" + Str( Year( Date() ) ) )
    local dFecHasta   := Date()
 
-   if Empty( cFmtDoc )
+   if empty( cFmtDoc )
       cFmtDoc        := cSelPrimerDoc( "FP" )
    end if
 
@@ -4720,7 +4727,7 @@ Static Function GenFacPrv( nDevice, cCaption, cCodDoc, cPrinter, nCopies )
    DEFAULT cCodDoc      := cFormatoDocumento( ( D():FacturasProveedores( nView ) )->cSerFac, "nFacPrv", D():Contadores( nView ) )
    DEFAULT nCopies      := if( nCopiasDocumento( ( D():FacturasProveedores( nView ) )->cSerFac, "nFacPrv", D():Contadores( nView ) ) == 0, Max( Retfld( ( D():FacturasProveedores( nView ) )->cCodPrv, D():Proveedores( nView ), "nCopiasF" ), 1 ), nCopiasDocumento( ( D():FacturasProveedores( nView ) )->cSerFac, "nFacPrv", D():Contadores( nView ) ) )
 
-   if Empty( cCodDoc )
+   if empty( cCodDoc )
       cCodDoc           := cFirstDoc( "FP", D():Documentos( nView ) )
    end if
 
@@ -4778,9 +4785,9 @@ STATIC FUNCTION loaPrv( aGet, aTmp, dbf, nMode, oSay, oTlfPrv )
 
    local lValid      := .f.
    local cNewCodCli  := aGet[ _CCODPRV ]:VarGet()
-   local lChgCodCli  := ( Empty( cOldCodCli ) .or. cOldCodCli != cNewCodCli )
+   local lChgCodCli  := ( empty( cOldCodCli ) .or. cOldCodCli != cNewCodCli )
 
-   if Empty( cNewCodCli )
+   if empty( cNewCodCli )
       Return .t.
    elseif At( ".", cNewCodCli ) != 0
       cNewCodCli     := PntReplace( aGet[ _CCODPRV ], "0", RetNumCodPrvEmp() )
@@ -4797,7 +4804,7 @@ STATIC FUNCTION loaPrv( aGet, aTmp, dbf, nMode, oSay, oTlfPrv )
 
       aGet[ _CCODPRV ]:cText( ( D():Proveedores( nView ) )->Cod )
 
-      if Empty( aGet[_CNOMPRV]:varGet() ) .or. lChgCodCli
+      if empty( aGet[_CNOMPRV]:varGet() ) .or. lChgCodCli
          aGet[_CNOMPRV]:cText( ( D():Proveedores( nView ) )->Titulo )
       end if
 
@@ -4805,23 +4812,23 @@ STATIC FUNCTION loaPrv( aGet, aTmp, dbf, nMode, oSay, oTlfPrv )
          oTlfPrv:SetText( ( D():Proveedores( nView ) )->Telefono )
       end if
 
-      if Empty( aGet[_CDIRPRV]:varGet() ) .or. lChgCodCli
+      if empty( aGet[_CDIRPRV]:varGet() ) .or. lChgCodCli
          aGet[_CDIRPRV]:cText( ( D():Proveedores( nView ) )->Domicilio )
       endif
 
-      if Empty( aGet[_CPOBPRV]:varGet() ) .or. lChgCodCli
+      if empty( aGet[_CPOBPRV]:varGet() ) .or. lChgCodCli
          aGet[_CPOBPRV]:cText( (D():Proveedores( nView ))->POBLACION )
       endif
 
-      if Empty( aGet[ _CPROVPROV ]:varGet() ) .or. lChgCodCli
+      if empty( aGet[ _CPROVPROV ]:varGet() ) .or. lChgCodCli
          aGet[ _CPROVPROV ]:cText( (D():Proveedores( nView ))->PROVINCIA )
       endif
 
-      if Empty( aGet[_CPOSPRV]:varGet() ) .or. lChgCodCli
+      if empty( aGet[_CPOSPRV]:varGet() ) .or. lChgCodCli
          aGet[_CPOSPRV]:cText( (D():Proveedores( nView ))->CODPOSTAL )
       endif
 
-      if Empty( aGet[_CDNIPRV]:varGet() ) .or. lChgCodCli
+      if empty( aGet[_CDNIPRV]:varGet() ) .or. lChgCodCli
          aGet[_CDNIPRV]:cText( (D():Proveedores( nView ))->NIF )
       endif
 
@@ -4832,7 +4839,7 @@ STATIC FUNCTION loaPrv( aGet, aTmp, dbf, nMode, oSay, oTlfPrv )
          aGet[ _NDPP    ]:cText( ( D():Proveedores( nView ) )->DtoPP )
       end if
 
-      if Empty( aGet[ _CCODPAGO ]:VarGet() ) .or. lChgCodCli
+      if empty( aGet[ _CCODPAGO ]:VarGet() ) .or. lChgCodCli
          aGet[ _CCODPAGO ]:cText( ( D():Proveedores( nView ) )->fPago )
          aGet[ _CCODPAGO ]:lValid()
 
@@ -4844,37 +4851,37 @@ STATIC FUNCTION loaPrv( aGet, aTmp, dbf, nMode, oSay, oTlfPrv )
 
             if dbSeekInOrd( ( D():Proveedores( nView ) )->Cod, "cCodDef", D():BancosProveedores( nView ) )
 
-               if !Empty( aGet[ _CBANCO ] )
+               if !empty( aGet[ _CBANCO ] )
                   aGet[ _CBANCO ]:cText( ( D():BancosProveedores( nView ) )->cCodBnc )
                   aGet[ _CBANCO ]:lValid()
                end if
 
-               if !Empty( aGet[ _CPAISIBAN ] )
+               if !empty( aGet[ _CPAISIBAN ] )
                   aGet[ _CPAISIBAN ]:cText( ( D():BancosProveedores( nView ) )->cPaisIBAN )
                   aGet[ _CPAISIBAN ]:lValid()
                end if
 
-               if !Empty( aGet[ _CCTRLIBAN ] )
+               if !empty( aGet[ _CCTRLIBAN ] )
                   aGet[ _CCTRLIBAN ]:cText( ( D():BancosProveedores( nView ) )->cCtrlIBAN )
                   aGet[ _CCTRLIBAN ]:lValid()
                end if
 
-               if !Empty( aGet[ _CENTBNC ] )
+               if !empty( aGet[ _CENTBNC ] )
                   aGet[ _CENTBNC ]:cText( ( D():BancosProveedores( nView ) )->cEntBnc )
                   aGet[ _CENTBNC ]:lValid()
                end if
 
-               if !Empty( aGet[ _CSUCBNC ] )
+               if !empty( aGet[ _CSUCBNC ] )
                   aGet[ _CSUCBNC ]:cText( ( D():BancosProveedores( nView ) )->cSucBnc )
                   aGet[ _CSUCBNC ]:lValid()
                end if
 
-               if !Empty( aGet[ _CDIGBNC ] )
+               if !empty( aGet[ _CDIGBNC ] )
                   aGet[ _CDIGBNC ]:cText( ( D():BancosProveedores( nView ) )->cDigBnc )
                   aGet[ _CDIGBNC ]:lValid()
                end if
 
-               if !Empty( aGet[ _CCTABNC ] )
+               if !empty( aGet[ _CCTABNC ] )
                   aGet[ _CCTABNC ]:cText( ( D():BancosProveedores( nView ) )->cCtaBnc )
                   aGet[ _CCTABNC ]:lValid()
                end if
@@ -4885,12 +4892,12 @@ STATIC FUNCTION loaPrv( aGet, aTmp, dbf, nMode, oSay, oTlfPrv )
 
       end if
 
-      if Empty( aGet[ _NTIPRET ]:VarGet() ) .or. lChgCodCli
+      if empty( aGet[ _NTIPRET ]:VarGet() ) .or. lChgCodCli
          aGet[ _NTIPRET ]:oGet:cText(  ( D():Proveedores( nView ) )->nTipRet )
          aGet[ _NTIPRET ]:Select(      ( D():Proveedores( nView ) )->nTipRet )
       end if
 
-      if Empty( aGet[ _NPCTRET ]:VarGet() ) .or. lChgCodCli
+      if empty( aGet[ _NPCTRET ]:VarGet() ) .or. lChgCodCli
          aGet[ _NPCTRET ]:cText( ( D():Proveedores( nView ) )->nPctRet )
       end if
 
@@ -4899,15 +4906,15 @@ STATIC FUNCTION loaPrv( aGet, aTmp, dbf, nMode, oSay, oTlfPrv )
          aGet[ _NREGIVA ]:nOption( Max( ( D():Proveedores( nView ) )->nRegIva, 1 ) )
          aGet[ _NREGIVA ]:Refresh()
 
-         if Empty( aTmp[ _CSERFAC ] )
+         if empty( aTmp[ _CSERFAC ] )
 
-            if !Empty( ( D():Proveedores( nView ) )->Serie )
+            if !empty( ( D():Proveedores( nView ) )->Serie )
                aGet[ _CSERFAC ]:cText( ( D():Proveedores( nView ) )->Serie )
             end if
 
          else
 
-            if !Empty( ( D():Proveedores( nView ) )->Serie ) .and. aTmp[ _CSERFAC ] != ( D():Proveedores( nView ) )->Serie .and. ApoloMsgNoYes( "La serie del proveedor seleccionado es distinta a la anterior.", "¿Desea cambiar la serie?" )
+            if !empty( ( D():Proveedores( nView ) )->Serie ) .and. aTmp[ _CSERFAC ] != ( D():Proveedores( nView ) )->Serie .and. ApoloMsgNoYes( "La serie del proveedor seleccionado es distinta a la anterior.", "¿Desea cambiar la serie?" )
                aGet[ _CSERFAC ]:cText( ( D():Proveedores( nView ) )->Serie )
             end if
 
@@ -4923,7 +4930,7 @@ STATIC FUNCTION loaPrv( aGet, aTmp, dbf, nMode, oSay, oTlfPrv )
          aGet[ _LRECC ]:Refresh()        
       end if
 
-      if ( D():Proveedores( nView ) )->lMosCom .and. !Empty( ( D():Proveedores( nView ) )->mComent ) .and. lChgCodCli
+      if ( D():Proveedores( nView ) )->lMosCom .and. !empty( ( D():Proveedores( nView ) )->mComent ) .and. lChgCodCli
          MsgStop( AllTrim( ( D():Proveedores( nView ) )->mComent ) )
       end if
 
@@ -4964,7 +4971,7 @@ STATIC FUNCTION LoaArt( cCodArt, aGet, aTmp, aTmpFac, oFld, oSayPr1, oSayPr2, oS
    cCodPrv           := aTmpFac[ _CCODPRV ]
    lChgCodArt        := ( Rtrim( cOldCodArt ) != Rtrim( cCodArt ) .or. Rtrim( cOldPrpArt ) != Rtrim( cPrpArt ) )
 
-   if Empty( cCodArt )
+   if empty( cCodArt )
 
       if lRetCodArt()
          MsgStop( "No se pueden añadir lineas sin codificar" )
@@ -4978,7 +4985,7 @@ STATIC FUNCTION LoaArt( cCodArt, aGet, aTmp, aTmpFac, oFld, oSayPr1, oSayPr2, oS
       aGet [_MLNGDES  ]:Show()
       aGet [_MLNGDES  ]:SetFocus()
 
-      if !Empty( oBrwPrp )
+      if !empty( oBrwPrp )
          oBrwPrp:Hide()
       end if
 
@@ -5001,7 +5008,7 @@ STATIC FUNCTION LoaArt( cCodArt, aGet, aTmp, aTmpFac, oFld, oSayPr1, oSayPr2, oS
       if Len( Alltrim( cCodArt ) ) > 18
 
          hHas128              := ReadCodeGS128( cCodArt )
-         if !Empty( hHas128 )
+         if !empty( hHas128 )
             cCodArt           := uGetCodigo( hHas128, "01" )
             cLote             := uGetCodigo( hHas128, "10" )
             dFechaCaducidad   := uGetCodigo( hHas128, "15" )
@@ -5041,7 +5048,7 @@ STATIC FUNCTION LoaArt( cCodArt, aGet, aTmp, aTmpFac, oFld, oSayPr1, oSayPr2, oS
 
             if ( D():Articulos( nView ) )->lLote
 
-               if Empty( cLote )
+               if empty( cLote )
                   cLote          := ( D():Articulos( nView ) )->cLote
                end if 
 
@@ -5053,13 +5060,13 @@ STATIC FUNCTION LoaArt( cCodArt, aGet, aTmp, aTmpFac, oFld, oSayPr1, oSayPr2, oS
                Fecha de caducidad----------------------------------------------
                */
 
-               if Empty( dFechaCaducidad )
+               if empty( dFechaCaducidad )
                   dFechaCaducidad   := dFechaCaducidadLote( cCodArt, aTmp[ _CVALPR1 ], aTmp[ _CVALPR2 ], aTmp[ _CLOTE ], D():AlbaranesProveedoresLineas( nView ), D():FacturasProveedoresLineas( nView ) )
                end if 
 
                aGet[ _DFECCAD ]:Show()
 
-               if Empty( aTmp[ _DFECCAD ] )
+               if empty( aTmp[ _DFECCAD ] )
                   aGet[ _DFECCAD ]:cText( dFechaCaducidad )
                end if
 
@@ -5076,7 +5083,7 @@ STATIC FUNCTION LoaArt( cCodArt, aGet, aTmp, aTmpFac, oFld, oSayPr1, oSayPr2, oS
             */
 
             cCodFam                 := ( D():Articulos( nView ) )->Familia
-            if !Empty( cCodFam )
+            if !empty( cCodFam )
                aTmp[ _CCODFAM ]     := cCodFam
                aTmp[ _CGRPFAM ]     := cGruFam( cCodFam, D():Familias( nView ) )
             end if
@@ -5121,7 +5128,7 @@ STATIC FUNCTION LoaArt( cCodArt, aGet, aTmp, aTmpFac, oFld, oSayPr1, oSayPr2, oS
             aGet[_CREF    ]:cText( ( D():Articulos( nView ) )->Codigo )
             aGet[_CDETALLE]:cText( ( D():Articulos( nView ) )->Nombre )
 
-            if ( D():Articulos( nView ) )->lMosCom .and. !Empty( ( D():Articulos( nView ) )->mComent )
+            if ( D():Articulos( nView ) )->lMosCom .and. !empty( ( D():Articulos( nView ) )->mComent )
                MsgStop( Trim( ( D():Articulos( nView ) )->mComent ) )
             end if
 
@@ -5160,13 +5167,13 @@ STATIC FUNCTION LoaArt( cCodArt, aGet, aTmp, aTmpFac, oFld, oSayPr1, oSayPr2, oS
 
             if ( D():ProveedorArticulo( nView ) )->( dbSeek( cCodPrv + cCodArt) )
 
-               if !Empty( aGet[ _CREFPRV ] )
+               if !empty( aGet[ _CREFPRV ] )
                   aGet[ _CREFPRV ]:cText( ( D():ProveedorArticulo( nView ) )->cRefPrv )
                end if
 
             else
 
-               if !Empty( aGet[ _CREFPRV ] )
+               if !empty( aGet[ _CREFPRV ] )
                   aGet[ _CREFPRV ]:cText( Space( 20 ) )
                end if
 
@@ -5197,7 +5204,7 @@ STATIC FUNCTION LoaArt( cCodArt, aGet, aTmp, aTmpFac, oFld, oSayPr1, oSayPr2, oS
 
                hidePropertiesTable( oBrwPrp )
 
-               if !Empty( aTmp[ _CCODPR1 ] )
+               if !empty( aTmp[ _CCODPR1 ] )
 
                   if aGet[ _CVALPR1 ] != nil
                      aGet[ _CVALPR1 ]:Show()
@@ -5229,7 +5236,7 @@ STATIC FUNCTION LoaArt( cCodArt, aGet, aTmp, aTmpFac, oFld, oSayPr1, oSayPr2, oS
 
                end if
 
-               if !Empty( aTmp[ _CCODPR2 ] )
+               if !empty( aTmp[ _CCODPR2 ] )
 
                   if aGet[ _CVALPR2 ] != nil
                      aGet[ _CVALPR2 ]:Show()
@@ -5266,7 +5273,7 @@ STATIC FUNCTION LoaArt( cCodArt, aGet, aTmp, aTmpFac, oFld, oSayPr1, oSayPr2, oS
             Cargamos el codigo de las unidades---------------------------------
             */
 
-            if !Empty( aGet[ _CUNIDAD ] )
+            if !empty( aGet[ _CUNIDAD ] )
                aGet[ _CUNIDAD ]:cText( ( D():Articulos( nView ) )->cUnidad )
                aGet[ _CUNIDAD ]:lValid()
             else
@@ -5285,7 +5292,7 @@ STATIC FUNCTION LoaArt( cCodArt, aGet, aTmp, aTmpFac, oFld, oSayPr1, oSayPr2, oS
             Precios de Compra-----------------------------------------------------
             */
 
-            if !Empty( aGet[ _NPRECOM ] )
+            if !empty( aGet[ _NPRECOM ] )
                aGet[ _NPRECOM ]:cText( nNetUFacPrv( aTmp, aTmpFac, nDinDiv, nRinDiv, aTmpFac[ _NVDVFAC ] ) )
             end if
 
@@ -5399,7 +5406,7 @@ STATIC FUNCTION LoadPreCosto( aGet, oGet )
 
    local xValor   := aGet[_CREF]:varGet()
 
-   IF Empty( xValor )
+   IF empty( xValor )
       RETURN .F.
    END IF
 
@@ -5422,7 +5429,7 @@ STATIC FUNCTION LoadArtPed( aGet )
    local lValid               := .f.
    local xValor               := aGet[_CREF]:varGet()
 
-   IF Empty( xValor )
+   IF empty( xValor )
 
       aGet[_NIVA]:cText( 0 )
       aGet[_NIVA]:bWhen       := {|| .t. }
@@ -5458,7 +5465,7 @@ STATIC FUNCTION GetArtPrv( cRefPrv, cCodPrv, aGet )
 
    local nOrdAnt
 
-   if Empty( cRefPrv )
+   if empty( cRefPrv )
 
       return .t.
 
@@ -5760,7 +5767,7 @@ RETURN ( aRet )
 
 Static Function StartGetSelRec( oBrw, oRad, oChk1, oChk2, oSerIni, oSerFin, oDocIni, oDocFin, oSufIni, oSufFin, lHide1, lHide2, cTitle1, cTitle2 )
 
-   if !Empty( oBrw ) .and. ( len( oBrw:oBrw:aSelected ) > 1 )
+   if !empty( oBrw ) .and. ( len( oBrw:oBrw:aSelected ) > 1 )
 
       oRad:SetOption( 1 )
 
@@ -5799,7 +5806,7 @@ Static Function TreeChanged( oTree )
 
    local oItemTree   := oTree:GetItem()
 
-   if !Empty( oItemTree ) .and. !Empty( oItemTree:bAction )
+   if !empty( oItemTree ) .and. !empty( oItemTree:bAction )
       Eval( oItemTree:bAction )
    end if
 
@@ -5839,7 +5846,7 @@ static function MakSelRec( bAction, bPreAction, bPostAction, cDocIni, cDocFin, n
    oBtnCancel:bAction   := {|| lWhile := .f. }
    oBtnCancel:Enable()
 
-   if !Empty( bPreAction )
+   if !empty( bPreAction )
       lPre              := Eval( bPreAction )
    end if
 
@@ -5900,7 +5907,7 @@ static function MakSelRec( bAction, bPreAction, bPostAction, cDocIni, cDocFin, n
 
       end if
 
-      if !Empty( bPostAction )
+      if !empty( bPostAction )
          Eval( bPostAction )
       end if
 
@@ -5987,7 +5994,7 @@ STATIC FUNCTION ContFactu( lSimula, lPago, oTree )
    cRuta             := cRutCnt()
    cCodEmp           := cCodEmpCnt( ( D():FacturasProveedores( nView ) )->cSerFac )
 
-   if Empty( cCtaPrvVta )
+   if empty( cCtaPrvVta )
       cCtaPrvVta     := cCtaPrv()
    end if
 
@@ -6051,7 +6058,7 @@ STATIC FUNCTION ContFactu( lSimula, lPago, oTree )
             if nImpDeta != 0
 
                cCtaVent    := RetCtaCom( ( D():FacturasProveedoresLineas( nView ) )->cRef, D():Articulos( nView ) )
-               if Empty( cCtaVent )
+               if empty( cCtaVent )
                   cCtaVent := cCtaPrvVta + RetGrpVta( ( D():FacturasProveedoresLineas( nView ) )->cRef, cRuta, cCodEmp, D():Articulos( nView ), ( D():FacturasProveedoresLineas( nView ) )->nIva )
                end if
 
@@ -6199,17 +6206,17 @@ STATIC FUNCTION ContFactu( lSimula, lPago, oTree )
 
    if lSimula .or. !lErrorFound
 
-      if Empty( ( D():FacturasProveedores( nView ) )->dFecEnt )
+      if empty( ( D():FacturasProveedores( nView ) )->dFecEnt )
          dFecha      := ( D():FacturasProveedores( nView ) )->dFecFac
       else
          dFecha      := ( D():FacturasProveedores( nView ) )->dFecEnt
       end if
 
       cConCompr      := "S/Fcta."
-      if !Empty( ( D():FacturasProveedores( nView ) )->cSuPed )
+      if !empty( ( D():FacturasProveedores( nView ) )->cSuPed )
          nNumFac     := Val( ( D():FacturasProveedores( nView ) )->cSuPed )
          cConCompr   += " N." + Rtrim( ( D():FacturasProveedores( nView ) )->cSuPed )
-      elseif !Empty( ( D():FacturasProveedores( nView ) )->cNumDoc )
+      elseif !empty( ( D():FacturasProveedores( nView ) )->cNumDoc )
          cConCompr   += " Doc. " + Rtrim( ( D():FacturasProveedores( nView ) )->cNumDoc )
       else
          cConCompr   += " N." + Rtrim( cFactura )
@@ -6495,7 +6502,7 @@ STATIC FUNCTION GrpAlb( oGet, aTmp, oBrw )
    local cCodPrv     := oGet:varGet()
    local nOrd        := ( D():AlbaranesProveedores( nView ) )->( ordSetFocus( "CCODPRV" ) )
 
-   if Empty( cCodPrv )
+   if empty( cCodPrv )
       MsgStop( "Es necesario codificar un proveedor" )
       ( D():AlbaranesProveedores( nView ) )->( ordSetFocus( nOrd ) )
       return .t.
@@ -6688,7 +6695,7 @@ STATIC FUNCTION GrpAlb( oGet, aTmp, oBrw )
             if ( D():AlbaranesProveedoresLineas( nView ) )->( dbSeek( aAlbaranes[ nItem, 2 ] ) )
 
                cDetalle                := "Albaran Nº" + ( D():AlbaranesProveedoresLineas( nView ) )->cSerAlb + "/" + AllTrim( Str( ( D():AlbaranesProveedoresLineas( nView ) )->nNumAlb ) ) + "/" + Rtrim( ( D():AlbaranesProveedoresLineas( nView ) )->cSufAlb )
-               if !Empty( Alltrim( aAlbaranes[ nItem, 3 ] ) )
+               if !empty( Alltrim( aAlbaranes[ nItem, 3 ] ) )
                   cDetalle             += " - " + Alltrim( aAlbaranes[ nItem, 3 ] )
                end if
                cDetalle                += " - Fecha " + Dtoc( aAlbaranes[ nItem, 4 ] )
@@ -6746,7 +6753,7 @@ STATIC FUNCTION cAlbPrv( aGet, oBrw, nMode, aTmp )
    local lValid   := .f.
    local cAlbaran := aGet[ _CNUMALB ]:varGet()
 
-   if nMode != APPD_MODE .OR. Empty( cAlbaran )
+   if nMode != APPD_MODE .OR. empty( cAlbaran )
       return .t.
    end if
 
@@ -7038,7 +7045,7 @@ STATIC FUNCTION EndTrans( aTmp, aGet, oBrw, oBrwLin, nMode, nDec, oDlg )
    local oError
    local oBlock
 
-   if Empty( aTmp[ _CSERFAC ] )
+   if empty( aTmp[ _CSERFAC ] )
       aTmp[ _CSERFAC ]  := "A"
    end if
 
@@ -7064,13 +7071,13 @@ STATIC FUNCTION EndTrans( aTmp, aGet, oBrw, oBrwLin, nMode, nDec, oDlg )
    Estos campos no pueden estar vacios
    */
 
-   if Empty( aTmp[ _CCODPRV ] )
+   if empty( aTmp[ _CCODPRV ] )
       msgStop( "Proveedor no puede estar vacío." )
       aGet[ _CCODPRV ]:SetFocus()
       return .f.
    end if
 
-   if Empty( aTmp[ _CCODALM ] )
+   if empty( aTmp[ _CCODALM ] )
       msgStop( "Almacen no puede estar vacío." )
       aGet[ _CCODALM ]:SetFocus()
       return .f.
@@ -7082,13 +7089,13 @@ STATIC FUNCTION EndTrans( aTmp, aGet, oBrw, oBrwLin, nMode, nDec, oDlg )
       return .f.
    end if
 
-   if Empty( aTmp[ _CCODCAJ ] )
+   if empty( aTmp[ _CCODCAJ ] )
       msgStop( "Caja no puede estar vacía." )
       aGet[ _CCODCAJ ]:SetFocus()
       return .f.
    end if
 
-   if Empty( aTmp[ _CCODPAGO ] )
+   if empty( aTmp[ _CCODPAGO ] )
       msgStop( "Forma de pago no puede estar vacía." )
       aGet[ _CCODPAGO ]:SetFocus()
       return .f.
@@ -7135,7 +7142,7 @@ STATIC FUNCTION EndTrans( aTmp, aGet, oBrw, oBrwLin, nMode, nDec, oDlg )
       cSufFac           := retSufEmp()
       aTmp[ _CSUFFAC ]  := cSufFac
 
-      aTmp[ _LIMPALB ]  := !aNumAlb:Empty() .or. !Empty( aTmp[ _CNUMALB ] )
+      aTmp[ _LIMPALB ]  := !aNumAlb:empty() .or. !empty( aTmp[ _CNUMALB ] )
 
    case isEditMode( nMode )
 
@@ -7199,11 +7206,11 @@ STATIC FUNCTION EndTrans( aTmp, aGet, oBrw, oBrwLin, nMode, nDec, oDlg )
       aTbl[ _LCHGLIN ]     := .f.
       aTbl[ _NPRECOM ]     := nNetUFacPrv( aTbl, aTmp, nDinDiv, nRinDiv ) //, aTmp[ _NVDVFAC ] )
       
-      if Empty( aTbl[ __DFECFAC ] )
+      if empty( aTbl[ __DFECFAC ] )
          aTbl[ __DFECFAC ] := aTmp[ _DFECFAC ]
       end if
 
-      if Empty( aTbl[ __TFECFAC ] )
+      if empty( aTbl[ __TFECFAC ] )
          aTbl[ __TFECFAC ] := aTmp[ _TFECFAC ]
       end if
 
@@ -7372,23 +7379,23 @@ STATIC FUNCTION KillTrans( oBrwLin )
    Borramos los ficheros
    */
 
-   if !Empty( dbfTmp ) .and. ( dbfTmp )->( Used() )
+   if !empty( dbfTmp ) .and. ( dbfTmp )->( Used() )
       ( dbfTmp )->( dbCloseArea() )
    end if
 
-   if !Empty( dbfTmpInc ) .and. ( dbfTmpInc )->( Used() )
+   if !empty( dbfTmpInc ) .and. ( dbfTmpInc )->( Used() )
       ( dbfTmpInc )->( dbCloseArea() )
    end if
 
-   if !Empty( dbfTmpDoc ) .and. ( dbfTmpDoc )->( Used() )
+   if !empty( dbfTmpDoc ) .and. ( dbfTmpDoc )->( Used() )
       ( dbfTmpDoc )->( dbCloseArea() )
    end if
 
-   if !Empty( dbfTmpPgo ) .and. ( dbfTmpPgo )->( Used() )
+   if !empty( dbfTmpPgo ) .and. ( dbfTmpPgo )->( Used() )
       ( dbfTmpPgo )->( dbCloseArea() )
    end if
 
-   if !Empty( dbfTmpSer ) .and. ( dbfTmpSer )->( Used() )
+   if !empty( dbfTmpSer ) .and. ( dbfTmpSer )->( Used() )
       ( dbfTmpSer )->( dbCloseArea() )
    end if
 
@@ -7406,7 +7413,7 @@ STATIC FUNCTION KillTrans( oBrwLin )
 
    aNumAlb:Init()
 
-   if !Empty( oMnuRec )
+   if !empty( oMnuRec )
       oMnuRec:End()
    end if
 
@@ -7455,7 +7462,7 @@ STATIC FUNCTION ChgContabilizado( lContabilizado, cFactura, nAsiento, oTree )
       lReturn     := .f.
    end if
 
-   if !Empty( oTree )
+   if !empty( oTree )
       oTree:Select( oTree:Add( "Factura : " + Rtrim( cFactura ) + " asiento generado num. " + Alltrim( Str( nAsiento ) ), 1 ) )
    end if
 
@@ -7474,7 +7481,7 @@ STATIC FUNCTION ImpFactura( oBrw, aGet, aTmp )
 
    local nChgDiv  := aTmp[ _NVDVFAC ]
 
-   IF Empty( aGet[ _CCODPRV ]:varGet() )
+   IF empty( aGet[ _CCODPRV ]:varGet() )
       msgStop( "Es necesario codificar un proveedor" )
       RETURN .T.
    END IF
@@ -7781,7 +7788,7 @@ static function lGenFac( oBrw, oBtn, nDevice )
 
    DEFAULT nDevice   := IS_PRINTER
 
-   if Empty( oBtn )
+   if empty( oBtn )
       return nil
    end if
 
@@ -7957,7 +7964,7 @@ STATIC FUNCTION lLiquida( oBrw, cFactura, cDivFac )
 
       while ( D():FacturasProveedoresPagos( nView ) )->cSerFac + Str( ( D():FacturasProveedoresPagos( nView ) )->nNumFac ) + ( D():FacturasProveedoresPagos( nView ) )->cSufFac == cFactura .and. !( D():FacturasProveedoresPagos( nView ) )->( eof() )
 
-         if Empty( ( D():FacturasProveedoresPagos( nView ) )->cTipRec ) .and. !( D():FacturasProveedoresPagos( nView ) )->lCobrado
+         if empty( ( D():FacturasProveedoresPagos( nView ) )->cTipRec ) .and. !( D():FacturasProveedoresPagos( nView ) )->lCobrado
 
             EdtRecPrv( ( D():FacturasProveedoresPagos( nView ) )->cSerFac + Str( ( D():FacturasProveedoresPagos( nView ) )->nNumFac ) + ( D():FacturasProveedoresPagos( nView ) )->cSufFac, .f. )
 
@@ -8039,7 +8046,7 @@ return ( lRecPgd )
 
 static function ShowKitFacPrv( dbfMaster, oBrw, cCodPrv, dbfTmpInc, aGet, aTmp, aControl, oSayGas, oSayLabels, oBrwIva )
 
-   if !Empty( aGet )
+   if !empty( aGet )
 
       if lUsrMaster() .or. oUser():lCambiarPrecio() 
          aGet[ ( dbfMaster )->( FieldPos( "lRecargo" ) ) ]:Enable()
@@ -8047,7 +8054,7 @@ static function ShowKitFacPrv( dbfMaster, oBrw, cCodPrv, dbfTmpInc, aGet, aTmp, 
          aGet[ ( dbfMaster )->( FieldPos( "lRecargo" ) ) ]:Disable()
       end if
 
-      if !Empty( cCodPrv )
+      if !empty( cCodPrv )
          aGet[ ( dbfMaster )->( FieldPos( "cCodPrv" ) ) ]:cText( cCodPrv )
          aGet[ ( dbfMaster )->( FieldPos( "cCodPrv" ) ) ]:lValid()
       end if
@@ -8056,7 +8063,7 @@ static function ShowKitFacPrv( dbfMaster, oBrw, cCodPrv, dbfTmpInc, aGet, aTmp, 
 
       aGet[ ( dbfMaster )->( FieldPos( "SubCta" ) ) ]:lValid()
 
-      if !Empty( aTmp ) .and. aTmp[ _LFACGAS ]
+      if !empty( aTmp ) .and. aTmp[ _LFACGAS ]
 
          oBrw:Hide()
          oBrwIva:Hide()
@@ -8133,7 +8140,7 @@ static function ShowKitFacPrv( dbfMaster, oBrw, cCodPrv, dbfTmpInc, aGet, aTmp, 
    Hace que salte la incidencia al entrar en el documento----------------------
    */
 
-   if !Empty( dbfTmpInc )
+   if !empty( dbfTmpInc )
 
       while !( dbfTmpInc )->( Eof() )
          if ( dbfTmpInc )->lAviso .and. !( dbfTmpInc )->lListo
@@ -8160,12 +8167,12 @@ STATIC FUNCTION ValidaMedicion( aTmp, aGet )
    Cargamos el codigo de las unidades---------------------------------
    */
 
-   if ( Empty( cOldUndMed ) .or. cOldUndMed != cNewUndMed )
+   if ( empty( cOldUndMed ) .or. cOldUndMed != cNewUndMed )
 
       if D():GetObject( "UnidadMedicion", nView ):oDbf:Seek( aTmp[ _CUNIDAD ] )
 
-         if D():GetObject( "UnidadMedicion", nView ):oDbf:nDimension >= 1 .and. !Empty( D():GetObject( "UnidadMedicion", nView ):oDbf:cTextoDim1 )
-            if !Empty( aGet[ ( D():FacturasProveedoresLineas( nView ) )->( fieldpos( "nMedUno" ) ) ] )
+         if D():GetObject( "UnidadMedicion", nView ):oDbf:nDimension >= 1 .and. !empty( D():GetObject( "UnidadMedicion", nView ):oDbf:cTextoDim1 )
+            if !empty( aGet[ ( D():FacturasProveedoresLineas( nView ) )->( fieldpos( "nMedUno" ) ) ] )
                aGet[ ( D():FacturasProveedoresLineas( nView ) )->( fieldpos( "nMedUno" ) ) ]:oSay:SetText( D():GetObject( "UnidadMedicion", nView ):oDbf:cTextoDim1 )
                aGet[ ( D():FacturasProveedoresLineas( nView ) )->( fieldpos( "nMedUno" ) ) ]:cText( ( D():Articulos( nView ) )->nLngArt )
                aGet[ ( D():FacturasProveedoresLineas( nView ) )->( fieldpos( "nMedUno" ) ) ]:Show()
@@ -8173,7 +8180,7 @@ STATIC FUNCTION ValidaMedicion( aTmp, aGet )
                aTmp[ ( D():FacturasProveedoresLineas( nView ) )->( fieldpos( "nMedUno" ) ) ]  := ( D():Articulos( nView ) )->nLngArt
             end if
          else
-            if !Empty( aGet[ ( D():FacturasProveedoresLineas( nView ) )->( fieldpos( "nMedUno" ) ) ] )
+            if !empty( aGet[ ( D():FacturasProveedoresLineas( nView ) )->( fieldpos( "nMedUno" ) ) ] )
                aGet[ ( D():FacturasProveedoresLineas( nView ) )->( fieldpos( "nMedUno" ) ) ]:cText( 0 )
                aGet[ ( D():FacturasProveedoresLineas( nView ) )->( fieldpos( "nMedUno" ) ) ]:Hide()
             else
@@ -8181,8 +8188,8 @@ STATIC FUNCTION ValidaMedicion( aTmp, aGet )
             end if
          end if
 
-         if D():GetObject( "UnidadMedicion", nView ):oDbf:nDimension >= 1 .and. !Empty( D():GetObject( "UnidadMedicion", nView ):oDbf:cTextoDim2 )
-            if !Empty( aGet[ ( D():FacturasProveedoresLineas( nView ) )->( fieldpos( "nMedDos" ) ) ] )
+         if D():GetObject( "UnidadMedicion", nView ):oDbf:nDimension >= 1 .and. !empty( D():GetObject( "UnidadMedicion", nView ):oDbf:cTextoDim2 )
+            if !empty( aGet[ ( D():FacturasProveedoresLineas( nView ) )->( fieldpos( "nMedDos" ) ) ] )
                aGet[ ( D():FacturasProveedoresLineas( nView ) )->( fieldpos( "nMedDos" ) ) ]:oSay:SetText( D():GetObject( "UnidadMedicion", nView ):oDbf:cTextoDim2 )
                aGet[ ( D():FacturasProveedoresLineas( nView ) )->( fieldpos( "nMedDos" ) ) ]:cText( ( D():Articulos( nView ) )->nAltArt )
                aGet[ ( D():FacturasProveedoresLineas( nView ) )->( fieldpos( "nMedDos" ) ) ]:Show()
@@ -8191,7 +8198,7 @@ STATIC FUNCTION ValidaMedicion( aTmp, aGet )
             end if
 
          else
-            if !Empty( aGet[ ( D():FacturasProveedoresLineas( nView ) )->( fieldpos( "nMedDos" ) ) ] )
+            if !empty( aGet[ ( D():FacturasProveedoresLineas( nView ) )->( fieldpos( "nMedDos" ) ) ] )
                aGet[ ( D():FacturasProveedoresLineas( nView ) )->( fieldpos( "nMedDos" ) ) ]:cText( 0 )
                aGet[ ( D():FacturasProveedoresLineas( nView ) )->( fieldpos( "nMedDos" ) ) ]:Hide()
             else
@@ -8199,8 +8206,8 @@ STATIC FUNCTION ValidaMedicion( aTmp, aGet )
             end if
          end if
 
-         if D():GetObject( "UnidadMedicion", nView ):oDbf:nDimension >= 1 .and. !Empty( D():GetObject( "UnidadMedicion", nView ):oDbf:cTextoDim3 )
-            if !Empty( aGet[ ( D():FacturasProveedoresLineas( nView ) )->( fieldpos( "nMedTre" ) ) ] )
+         if D():GetObject( "UnidadMedicion", nView ):oDbf:nDimension >= 1 .and. !empty( D():GetObject( "UnidadMedicion", nView ):oDbf:cTextoDim3 )
+            if !empty( aGet[ ( D():FacturasProveedoresLineas( nView ) )->( fieldpos( "nMedTre" ) ) ] )
                aGet[ ( D():FacturasProveedoresLineas( nView ) )->( fieldpos( "nMedTre" ) ) ]:oSay:SetText( D():GetObject( "UnidadMedicion", nView ):oDbf:cTextoDim3 )
                aGet[ ( D():FacturasProveedoresLineas( nView ) )->( fieldpos( "nMedTre" ) ) ]:cText( ( D():Articulos( nView ) ) ->nAncArt )
                aGet[ ( D():FacturasProveedoresLineas( nView ) )->( fieldpos( "nMedTre" ) ) ]:Show()
@@ -8208,7 +8215,7 @@ STATIC FUNCTION ValidaMedicion( aTmp, aGet )
                aTmp[ ( D():FacturasProveedoresLineas( nView ) )->( fieldpos( "nMedTre" ) ) ]  := ( D():Articulos( nView ) )->nAncArt
             end if
          else
-            if !Empty( aGet[ ( D():FacturasProveedoresLineas( nView ) )->( fieldpos( "nMedTre" ) ) ] )
+            if !empty( aGet[ ( D():FacturasProveedoresLineas( nView ) )->( fieldpos( "nMedTre" ) ) ] )
                aGet[ ( D():FacturasProveedoresLineas( nView ) )->( fieldpos( "nMedTre" ) ) ]:cText( 0 )
                aGet[ ( D():FacturasProveedoresLineas( nView ) )->( fieldpos( "nMedTre" ) ) ]:Hide()
             else
@@ -8218,17 +8225,17 @@ STATIC FUNCTION ValidaMedicion( aTmp, aGet )
 
       else
 
-         if !Empty( aGet[ ( D():FacturasProveedoresLineas( nView ) )->( fieldpos( "nMedUno" ) ) ] )
+         if !empty( aGet[ ( D():FacturasProveedoresLineas( nView ) )->( fieldpos( "nMedUno" ) ) ] )
             aGet[ ( D():FacturasProveedoresLineas( nView ) )->( fieldpos( "nMedUno" ) ) ]:Hide()
             aGet[ ( D():FacturasProveedoresLineas( nView ) )->( fieldpos( "nMedUno" ) ) ]:cText( 0 )
          end if
 
-         if !Empty( aGet[ ( D():FacturasProveedoresLineas( nView ) )->( fieldpos( "nMedDos" ) ) ] )
+         if !empty( aGet[ ( D():FacturasProveedoresLineas( nView ) )->( fieldpos( "nMedDos" ) ) ] )
             aGet[ ( D():FacturasProveedoresLineas( nView ) )->( fieldpos( "nMedDos" ) ) ]:Hide()
             aGet[ ( D():FacturasProveedoresLineas( nView ) )->( fieldpos( "nMedDos" ) ) ]:cText( 0 )
          end if
 
-         if !Empty( aGet[ ( D():FacturasProveedoresLineas( nView ) )->( fieldpos( "nMedTre" ) ) ] )
+         if !empty( aGet[ ( D():FacturasProveedoresLineas( nView ) )->( fieldpos( "nMedTre" ) ) ] )
             aGet[ ( D():FacturasProveedoresLineas( nView ) )->( fieldpos( "nMedTre" ) ) ]:Hide()
             aGet[ ( D():FacturasProveedoresLineas( nView ) )->( fieldpos( "nMedTre" ) ) ]:cText( 0 )
          end if
@@ -8752,7 +8759,7 @@ Static Function ImprimirSeriesFacturasProveedores( nDevice, lExt )
 
    D():SetStatus( "FacPrvT", nView, aStatus )
    
-   if !Empty( oWndBrw )
+   if !empty( oWndBrw )
       oWndBrw:Refresh()
    end if   
 
@@ -8789,7 +8796,7 @@ FUNCTION nPagFacPrv( cFactura, cFacPrvP, cDivRet, cDiv, lOnlyCob, aTmp )
 
    nRec                    := ( cFacPrvP )->( Recno() )
 
-   if !Empty( aTmp )
+   if !empty( aTmp )
 
       cCodDiv              := ( cFacPrvP )->cDivPgo
 
@@ -9084,7 +9091,7 @@ FUNCTION nTotFacPrv( cFactura, cFacPrvT, cFacPrvL, cIva, cDiv, cFacPrvP, aTmp, c
    local aPReGas        := { 0, 0, 0 }
    local nImpuestoEspecial
 
-   if !Empty( nView )
+   if !empty( nView )
       DEFAULT cFacPrvT  := D():FacturasProveedores( nView )
       DEFAULT cFacPrvL  := D():FacturasProveedoresLineas( nView )
       DEFAULT cIva      := D():TiposIva( nView )
@@ -10635,23 +10642,23 @@ Function SynFacPrv( cPath )
    
    while !( dbfFacPrvT )->( eof() )
 
-      if Empty( ( dbfFacPrvT )->cSufFac )
+      if empty( ( dbfFacPrvT )->cSufFac )
          ( dbfFacPrvT )->cSufFac := "00"
       end if
 
-      if !Empty( ( dbfFacPrvT )->cNumAlb ) .and. Len( AllTrim( ( dbfFacPrvT )->cNumAlb ) ) != 12
+      if !empty( ( dbfFacPrvT )->cNumAlb ) .and. Len( AllTrim( ( dbfFacPrvT )->cNumAlb ) ) != 12
          ( dbfFacPrvT )->cNumAlb := AllTrim( ( dbfFacPrvT )->cNumAlb ) + "00"
       end if
 
-      if Empty( ( dbfFacPrvT )->cCodCaj )
+      if empty( ( dbfFacPrvT )->cCodCaj )
          ( dbfFacPrvT )->cCodCaj := "000"
       end if
 
-      if Empty( ( dbfFacPrvT )->cPaisIBAN )
+      if empty( ( dbfFacPrvT )->cPaisIBAN )
          ( dbfFacPrvT )->cPaisIBAN  := "ES"
       end if 
 
-      if Empty( ( dbfFacPrvT )->cCtrlIBAN )
+      if empty( ( dbfFacPrvT )->cCtrlIBAN )
          ( dbfFacPrvT )->cCtrlIBAN  := IbanDigit( ( dbfFacPrvT )->cPaisIBAN, ( dbfFacPrvT )->cEntBnc, ( dbfFacPrvT )->cSucBnc, ( dbfFacPrvT )->cDigBnc, ( dbfFacPrvT )->cCtaBnc )
       end if 
 
@@ -10670,23 +10677,23 @@ Function SynFacPrv( cPath )
 
    while !( dbfFacPrvL )->( eof() )
 
-      if Empty( ( dbfFacPrvL )->cSufFac )
+      if empty( ( dbfFacPrvL )->cSufFac )
          ( dbfFacPrvL )->cSufFac := "00"
       end if
 
-      if Empty( ( dbfFacPrvL )->cLote ) .and. !Empty( ( dbfFacPrvL )->nLote )
+      if empty( ( dbfFacPrvL )->cLote ) .and. !empty( ( dbfFacPrvL )->nLote )
          ( dbfFacPrvL )->cLote   := AllTrim( Str( ( dbfFacPrvL )->nLote ) )
       end if
 
-      if !Empty( ( dbfFacPrvL )->cRef ) .and. Empty( ( dbfFacPrvL )->cCodFam )
+      if !empty( ( dbfFacPrvL )->cRef ) .and. empty( ( dbfFacPrvL )->cCodFam )
          ( dbfFacPrvL )->cCodFam := RetFamArt( ( dbfFacPrvL )->cRef, dbfArticulo )
       end if
 
-      if !Empty( ( dbfFacPrvL )->cRef ) .and. !Empty( ( dbfFacPrvL )->cCodFam )
+      if !empty( ( dbfFacPrvL )->cRef ) .and. !empty( ( dbfFacPrvL )->cCodFam )
          ( dbfFacPrvL )->cGrpFam := cGruFam( ( dbfFacPrvL )->cCodFam, dbfFamilia )
       end if
 
-      if Empty( ( dbfFacPrvL )->nReq )
+      if empty( ( dbfFacPrvL )->nReq )
          ( dbfFacPrvL )->nReq    := nPReq( dbfIva, ( dbfFacPrvL )->nIva )
       end if
 
@@ -10694,11 +10701,11 @@ Function SynFacPrv( cPath )
          ( dbfFacPrvL )->dFecFac := RetFld( ( dbfFacPrvL )->cSerFac + Str( ( dbfFacPrvL )->nNumFac ) + ( dbfFacPrvL )->cSufFac, dbfFacPrvT, "dFecFac" )
       end if
 
-      if Empty( ( dbfFacPrvL )->cAlmLin )
+      if empty( ( dbfFacPrvL )->cAlmLin )
          ( dbfFacPrvL )->cAlmLin    := RetFld( ( dbfFacPrvL )->cSerFac + Str( ( dbfFacPrvL )->nNumFac ) + ( dbfFacPrvL )->cSufFac, dbfFacPrvT, "cCodAlm" )
       end if
 
-      if !Empty( ( dbfFacPrvL )->mNumSer )
+      if !empty( ( dbfFacPrvL )->mNumSer )
          aNumSer                       := hb_aTokens( ( dbfFacPrvL )->mNumSer, "," )
          for each cNumSer in aNumSer
             ( dbfFacPrvS )->( dbAppend() )
@@ -10731,11 +10738,11 @@ Function SynFacPrv( cPath )
 
       // Almacen de origen en facturas
 
-      if !Empty( ( dbfFacPrvL )->iNumAlb )
+      if !empty( ( dbfFacPrvL )->iNumAlb )
          ( dbfFacPrvL )->cAlmOrigen := RetFld( ( dbfFacPrvL )->iNumAlb, dbfAlbPrvL, "cAlmOrigen", "nNumLin" )
       end if
 
-      if Empty( ( dbfFacPrvL )->nPosPrint )
+      if empty( ( dbfFacPrvL )->nPosPrint )
          ( dbfFacPrvL )->nPosPrint := ( dbfFacPrvL )->nNumLin
       end if
 
@@ -10754,7 +10761,7 @@ Function SynFacPrv( cPath )
    
    while !( dbfFacPrvI )->( eof() )
 
-      if Empty( ( dbfFacPrvI )->cSufFac )
+      if empty( ( dbfFacPrvI )->cSufFac )
          ( dbfFacPrvI )->cSufFac := "00"
       end if
 
@@ -10773,7 +10780,7 @@ Function SynFacPrv( cPath )
    
    while !( dbfFacPrvS )->( eof() )
 
-      if Empty( ( dbfFacPrvS )->cSufFac )
+      if empty( ( dbfFacPrvS )->cSufFac )
          ( dbfFacPrvS )->cSufFac := "00"
       end if
 
@@ -10866,51 +10873,51 @@ Function SynFacPrv( cPath )
    END SEQUENCE
    ErrorBlock( oBlock )
 
-   if !Empty( dbfFacPrvT ) .and. ( dbfFacPrvT )->( Used() )
+   if !empty( dbfFacPrvT ) .and. ( dbfFacPrvT )->( Used() )
       ( dbfFacPrvT )->( dbCloseArea() )
    end if
 
-   if !Empty( dbfFacPrvL ) .and. ( dbfFacPrvL )->( Used() )
+   if !empty( dbfFacPrvL ) .and. ( dbfFacPrvL )->( Used() )
       ( dbfFacPrvL )->( dbCloseArea() )
    end if
 
-   if !Empty( dbfFacPrvS ) .and. ( dbfFacPrvS )->( Used() )
+   if !empty( dbfFacPrvS ) .and. ( dbfFacPrvS )->( Used() )
       ( dbfFacPrvS )->( dbCloseArea() )
    end if
 
-   if !Empty( dbfFacPrvI ) .and. ( dbfFacPrvI )->( Used() )
+   if !empty( dbfFacPrvI ) .and. ( dbfFacPrvI )->( Used() )
       ( dbfFacPrvI )->( dbCloseArea() )
    end if
 
-   if !Empty( dbfFacPrvP ) .and. ( dbfFacPrvP )->( Used() )
+   if !empty( dbfFacPrvP ) .and. ( dbfFacPrvP )->( Used() )
       ( dbfFacPrvP )->( dbCloseArea() )
    end if
 
-   if !Empty( dbfArticulo ) .and. ( dbfArticulo )->( Used() )
+   if !empty( dbfArticulo ) .and. ( dbfArticulo )->( Used() )
       ( dbfArticulo )->( dbCloseArea() )
    end if
 
-   if !Empty( dbfFamilia ) .and. ( dbfFamilia )->( Used() )
+   if !empty( dbfFamilia ) .and. ( dbfFamilia )->( Used() )
       ( dbfFamilia )->( dbCloseArea() )
    end if
 
-   if !Empty( dbfArtPrv ) .and. ( dbfArtPrv )->( Used() )
+   if !empty( dbfArtPrv ) .and. ( dbfArtPrv )->( Used() )
       ( dbfArtPrv )->( dbCloseArea() )
    end if
 
-   if !Empty( dbfIva ) .and. ( dbfIva )->( Used() )
+   if !empty( dbfIva ) .and. ( dbfIva )->( Used() )
       ( dbfIva )->( dbCloseArea() )
    end if
 
-   if !Empty( dbfDiv ) .and. ( dbfDiv )->( Used() )
+   if !empty( dbfDiv ) .and. ( dbfDiv )->( Used() )
       ( dbfDiv )->( dbCloseArea() )
    end if
 
-   if !Empty( cArtDiv ) .and. ( cArtDiv )->( Used() )
+   if !empty( cArtDiv ) .and. ( cArtDiv )->( Used() )
       ( cArtDiv )->( dbCloseArea() )
    end if
 
-   if !Empty( dbfAlbPrvL ) .and. ( dbfAlbPrvL )->( Used() )
+   if !empty( dbfAlbPrvL ) .and. ( dbfAlbPrvL )->( Used() )
       ( dbfAlbPrvL )->( dbCloseArea() )
    end if
 
@@ -10993,7 +11000,7 @@ Method CreateData() CLASS TFacturasProveedorSenderReciver
    USE ( cPatSnd() + "FacPrvP.DBF" ) NEW VIA ( cLocalDriver() ) SHARED ALIAS ( cCheckArea( "FacPrvP", @tmpFacPrvP ) )
    SET ADSINDEX TO ( cPatSnd() + "FacPrvP.CDX" ) ADDITIVE
 
-   if !Empty( ::oSender:oMtr )
+   if !empty( ::oSender:oMtr )
       ::oSender:oMtr:nTotal := ( cFacPrvT )->( LastRec() )
    end if
 
@@ -11031,7 +11038,7 @@ Method CreateData() CLASS TFacturasProveedorSenderReciver
 
       ( cFacPrvT )->( dbSkip() )
 
-      if !Empty( ::oSender:oMtr )
+      if !empty( ::oSender:oMtr )
          ::oSender:oMtr:Set( ( cFacPrvT )->( OrdKeyNo() ) )
       end if
 
@@ -11878,16 +11885,16 @@ FUNCTION cPrpFacPrv( cFacPrvL )
 
    local cReturn     := ""
 
-   DEFAULT cFacPrvL  := if( !Empty( tmpFacPrvL ), tmpFacPrvL, D():FacturasProveedoresLineas( nView ) )
+   DEFAULT cFacPrvL  := if( !empty( tmpFacPrvL ), tmpFacPrvL, D():FacturasProveedoresLineas( nView ) )
 
    cReturn           += Alltrim( ( cFacPrvL )->cRef )
 
-   if !Empty( ( cFacPrvL )->cValPr1 )
+   if !empty( ( cFacPrvL )->cValPr1 )
       cReturn        += "."
       cReturn        += Alltrim( ( cFacPrvL )->cValPr1 )
    end if
 
-   if !Empty( ( cFacPrvL )->cValPr2 )
+   if !empty( ( cFacPrvL )->cValPr2 )
       cReturn        += "."
       cReturn        += Alltrim( ( cFacPrvL )->cValPr2 )
    end if
@@ -11947,7 +11954,7 @@ Function cCtaFacPrv( cFacPrvT, cFacPrvP, cBncPrv )
 
    cCtaFacPrv        := Rtrim( ( cFacPrvT )->cEntBnc + ( cFacPrvT )->cSucBnc + ( cFacPrvT )->cDigBnc + ( cFacPrvT )->cCtaBnc )
 
-   if Empty( cCtaFacPrv )
+   if empty( cCtaFacPrv )
       if dbSeekInOrd( ( cFacPrvT )->cSerFac + Str( ( cFacPrvT )->nNumFac ) + ( cFacPrvT )->cSufFac, "nNumFac", cFacPrvP )
          cCtaFacPrv  := cProveeCuenta( ( cFacPrvP )->cCodPrv, cBncPrv )
       end if
@@ -11986,7 +11993,7 @@ FUNCTION nTotLFacPrv( uFacPrvL, nDec, nRec, nVdv, cPirDiv )
    local nDtoLin
    local nDtoPrm
 
-   DEFAULT uFacPrvL  := if( !Empty( tmpFacPrvL ), tmpFacPrvL, D():FacturasProveedoresLineas( nView ) )
+   DEFAULT uFacPrvL  := if( !empty( tmpFacPrvL ), tmpFacPrvL, D():FacturasProveedoresLineas( nView ) )
    DEFAULT nDec      := nDinDiv()
    DEFAULT nRec      := nRinDiv()
    DEFAULT nVdv      := 1
@@ -12114,7 +12121,7 @@ FUNCTION nTotUFacPrv( uFacPrvL, nDec, nVdv, cPinDiv )
 
    local nCalculo
 
-   DEFAULT uFacPrvL     := if( !Empty( tmpFacPrvL ), tmpFacPrvL, D():FacturasProveedoresLineas( nView ) )
+   DEFAULT uFacPrvL     := if( !empty( tmpFacPrvL ), tmpFacPrvL, D():FacturasProveedoresLineas( nView ) )
    DEFAULT nDec         := nDinDiv()   // Decimales de la divisa
    DEFAULT nVdv         := 1
 
@@ -12137,7 +12144,7 @@ FUNCTION cBarPrp1FacPrv( uFacPrvL, uTblPro )
 
    local cBarPrp1    := ""
 
-   DEFAULT uFacPrvL  := if( !Empty( tmpFacPrvL ), tmpFacPrvL, D():FacturasProveedoresLineas( nView ) )
+   DEFAULT uFacPrvL  := if( !empty( tmpFacPrvL ), tmpFacPrvL, D():FacturasProveedoresLineas( nView ) )
    DEFAULT uTblPro   := D():PropiedadesLineas( nView )
 
    if dbSeekInOrd( ( uFacPrvL )->cCodPr1 + ( uFacPrvL )->cValPr1, "cCodPro", uTblPro )
@@ -12152,7 +12159,7 @@ FUNCTION cBarPrp2FacPrv( uFacPrvL, uTblPro )
 
    local cBarPrp2    := ""
 
-   DEFAULT uFacPrvL  := if( !Empty( tmpFacPrvL ), tmpFacPrvL, D():FacturasProveedoresLineas( nView ) )
+   DEFAULT uFacPrvL  := if( !empty( tmpFacPrvL ), tmpFacPrvL, D():FacturasProveedoresLineas( nView ) )
    DEFAULT uTblPro   := D():PropiedadesLineas( nView )
 
    if dbSeekInOrd( ( uFacPrvL )->cCodPr2 + ( uFacPrvL )->cValPr2, "cCodPro", uTblPro )
@@ -12167,7 +12174,7 @@ STATIC FUNCTION cNomValPrp1( uFacPrvL, uTblPro )
 
    local cBarPrp1    := ""
 
-   DEFAULT uFacPrvL  := if( !Empty( tmpFacPrvL ), tmpFacPrvL, D():FacturasProveedoresLineas( nView ) )
+   DEFAULT uFacPrvL  := if( !empty( tmpFacPrvL ), tmpFacPrvL, D():FacturasProveedoresLineas( nView ) )
    DEFAULT uTblPro   := D():PropiedadesLineas( nView )
 
    if dbSeekInOrd( ( uFacPrvL )->cCodPr1 + ( uFacPrvL )->cValPr1, "cCodPro", uTblPro )
@@ -12182,7 +12189,7 @@ STATIC FUNCTION cNomValPrp2( uFacPrvL, uTblPro )
 
    local cBarPrp2    := ""
 
-   DEFAULT uFacPrvL  := if( !Empty( tmpFacPrvL ), tmpFacPrvL, D():FacturasProveedoresLineas( nView ) )
+   DEFAULT uFacPrvL  := if( !empty( tmpFacPrvL ), tmpFacPrvL, D():FacturasProveedoresLineas( nView ) )
    DEFAULT uTblPro   := D():PropiedadesLineas( nView )
 
    if dbSeekInOrd( ( uFacPrvL )->cCodPr2 + ( uFacPrvL )->cValPr2, "cCodPro", uTblPro )
@@ -12290,7 +12297,7 @@ Function DesignReportFacPrv( oFr, cDoc )
       Paginas y bandas---------------------------------------------------------
       */
 
-      if !Empty( ( cDoc )->mReport )
+      if !empty( ( cDoc )->mReport )
 
          oFr:LoadFromBlob( ( cDoc )->( Select() ), "mReport")
 
@@ -12412,7 +12419,7 @@ Function PrintReportFacPrv( nDevice, nCopies, cPrinter, cDoc )
    Cargar el informe-----------------------------------------------------------
    */
 
-   if !Empty( ( D():Documentos( nView ) )->mReport )
+   if !empty( ( D():Documentos( nView ) )->mReport )
 
       oFr:LoadFromBlob( ( D():Documentos( nView ) )->( Select() ), "mReport" )
 
@@ -12928,7 +12935,7 @@ FUNCTION lValidInformeFacPrv( oGet, oGet2 )
    local lValid   := .f.
    local xValor   := oGet:varGet()
 
-   if Empty( xValor )
+   if empty( xValor )
       return .t.
    end if
 
@@ -12989,23 +12996,23 @@ Function lIntelliArtciculoSearch( cCodArt, cCodPrv, cArticulo, cArtPrv, cCodebar
    */
 
    do case
-      case Empty( cCodigoArticulo ) .and. Empty( cCodigoProveedor )
+      case empty( cCodigoArticulo ) .and. empty( cCodigoProveedor )
 
          Return ( .f. )
 
-      case !Empty( cCodigoArticulo ) .and. Empty( cCodigoProveedor )
+      case !empty( cCodigoArticulo ) .and. empty( cCodigoProveedor )
 
          if ( cArticulo )->( dbSeek( cCodigoArticulo ) )
             Return ( .t. )
          end if 
       
-      case Empty( cCodigoArticulo ) .and. !Empty( cCodigoProveedor )
+      case empty( cCodigoArticulo ) .and. !empty( cCodigoProveedor )
 
          if ( cArticulo )->( dbSeek( cCodigoProveedor ) )
             Return ( .t. )
          end if
 
-      case !Empty( cCodigoArticulo ) .and. !Empty( cCodigoProveedor )
+      case !empty( cCodigoArticulo ) .and. !empty( cCodigoProveedor )
          
          if uFieldEmpresa( "nCopSea") == 1
             if ( cArticulo )->( dbSeek( cCodigoArticulo ) )

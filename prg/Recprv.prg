@@ -181,7 +181,7 @@ STATIC FUNCTION CloseFiles()
 
    DestroyFastFilter( D():FacturasProveedoresPagos( nView ), .t., .t. )
 
-   if !Empty( oCentroCoste )
+   if !empty( oCentroCoste )
       oCentroCoste:CloseFiles()
    end if
 
@@ -317,7 +317,7 @@ FUNCTION RecPrv( oMenuItem, oWnd, aNumRec )
 
    with object ( oWndBrw:AddXCol() )
       :cHeader          := "Tipo"
-      :bEditValue       := {|| if( !Empty( ( D():FacturasProveedoresPagos( nView ) )->cTipRec ), "Rectificativa", "" ) }
+      :bEditValue       := {|| if( !empty( ( D():FacturasProveedoresPagos( nView ) )->cTipRec ), "Rectificativa", "" ) }
       :nWidth           := 60
    end with
 
@@ -633,7 +633,11 @@ FUNCTION RecPrv( oMenuItem, oWnd, aNumRec )
 
    EnableAcceso()
 
-   if ValType( aNumRec ) == "A" .and. !Empty( aNumRec[ 1 ] )
+   if uFieldempresa( 'lFltYea' )
+      oWndBrw:setYearCombobox()
+   end if
+
+   if isArray( aNumRec ) .and. !empty( aNumRec[ 1 ] )
       ExternalPago( aNumRec )
    end if
 
@@ -645,7 +649,7 @@ Static Function ExternalPago( aNumRec )
 
    local nOrdAnt  := ( D():FacturasProveedoresPagos( nView ) )->( OrdSetFocus( "nNumFac" ) )
 
-   if ( D():FacturasProveedoresPagos( nView ) )->( dbSeek( aNumRec[ 1 ] ) ) .and. !Empty( oWndBrw )
+   if ( D():FacturasProveedoresPagos( nView ) )->( dbSeek( aNumRec[ 1 ] ) ) .and. !empty( oWndBrw )
       oWndBrw:Refresh()
       oWndBrw:RecEdit()
    end if
@@ -688,11 +692,11 @@ Static Function EdtPag( aTmp, aGet, dbf, oBrw, lRectificativa, bValid, nMode )
    local oBmpDevolucion
    local oBmpBancos
 
-   if Empty( aTmp[ _CCODCAJ ] )
+   if empty( aTmp[ _CCODCAJ ] )
       aTmp[ _CCODCAJ ]     := oUser():cCaja()
    end if
 
-   if Empty( aTmp[ _CPAISIBAN ] )
+   if empty( aTmp[ _CPAISIBAN ] )
       aTmp[ _CPAISIBAN ]   := "ES"
    end if
 
@@ -1034,15 +1038,15 @@ Static Function EdtPag( aTmp, aGet, dbf, oBrw, lRectificativa, bValid, nMode )
 
    EndEdtRecMenu()
 
-   if !Empty( oBmpDiv )
+   if !empty( oBmpDiv )
       oBmpDiv:End()
    end if
 
-   if !Empty( oBmpGeneral )
+   if !empty( oBmpGeneral )
       oBmpGeneral:End()
    end if
 
-   if !Empty( oBmpDevolucion )
+   if !empty( oBmpDevolucion )
       oBmpDevolucion:End()
    end if
 
@@ -1437,7 +1441,7 @@ STATIC FUNCTION StartPrint( cCodDoc, nRad, dFecIni, dFecFin, cDocIni, cDocFin, c
 
    DEFAULT nCopPrn   := 1
 
-   if Empty( cCodDoc )
+   if empty( cCodDoc )
       return nil
    end if
 
@@ -1458,7 +1462,7 @@ STATIC FUNCTION StartPrint( cCodDoc, nRad, dFecIni, dFecFin, cDocIni, cDocFin, c
          if (  if( nRad == 1, ( ( D():FacturasProveedoresPagos( nView ) )->dEntrada >= dFecIni .and. ( D():FacturasProveedoresPagos( nView ) )->dEntrada <= dFecFin ), .t. )                  .and. ;
                if( nRad == 2, ( ( D():FacturasProveedoresPagos( nView ) )->cSerFac + Str( ( D():FacturasProveedoresPagos( nView ) )->nNumFac ) + ( D():FacturasProveedoresPagos( nView ) )->cSufFac + Str( ( D():FacturasProveedoresPagos( nView ) )->nNumRec ) >= cDocIni           .and. ;
                                 ( D():FacturasProveedoresPagos( nView ) )->cSerFac + Str( ( D():FacturasProveedoresPagos( nView ) )->nNumFac ) + ( D():FacturasProveedoresPagos( nView ) )->cSufFac + Str( ( D():FacturasProveedoresPagos( nView ) )->nNumRec ) <= cDocFin ), .t. )  .and. ;
-               if( !Empty( cCodPgo ), cCodPgo == cPgoFacPrv( ( D():FacturasProveedoresPagos( nView ) )->cSerFac + Str( ( D():FacturasProveedoresPagos( nView ) )->nNumFac, 9 ) + ( D():FacturasProveedoresPagos( nView ) )->cSufFac, D():FacturasProveedores( nView ) ), .t. ) .and. ;
+               if( !empty( cCodPgo ), cCodPgo == cPgoFacPrv( ( D():FacturasProveedoresPagos( nView ) )->cSerFac + Str( ( D():FacturasProveedoresPagos( nView ) )->nNumFac, 9 ) + ( D():FacturasProveedoresPagos( nView ) )->cSufFac, D():FacturasProveedores( nView ) ), .t. ) .and. ;
                if( lNotImp, !( D():FacturasProveedoresPagos( nView ) )->lRecImp, .t. )                                                                             .and. ;
                if( lNotCob, !( D():FacturasProveedoresPagos( nView ) )->lCobrado, .t. ) )
 
@@ -1491,7 +1495,7 @@ STATIC FUNCTION StartPrint( cCodDoc, nRad, dFecIni, dFecFin, cDocIni, cDocFin, c
          if (  if( nRad == 1, ( ( D():FacturasProveedoresPagos( nView ) )->dEntrada >= dFecIni .and. ( D():FacturasProveedoresPagos( nView ) )->dEntrada <= dFecFin ), .t. )                  .and. ;
                if( nRad == 2, ( ( D():FacturasProveedoresPagos( nView ) )->cSerFac + Str( ( D():FacturasProveedoresPagos( nView ) )->nNumFac ) + ( D():FacturasProveedoresPagos( nView ) )->cSufFac >= cDocIni           .and. ;
                                 ( D():FacturasProveedoresPagos( nView ) )->cSerFac + Str( ( D():FacturasProveedoresPagos( nView ) )->nNumFac ) + ( D():FacturasProveedoresPagos( nView ) )->cSufFac <= cDocFin ), .t. )  .and. ;
-               if( !Empty( cCodPgo ), cCodPgo == cPgoFacPrv( ( D():FacturasProveedoresPagos( nView ) )->cSerFac + Str( ( D():FacturasProveedoresPagos( nView ) )->nNumFac, 9 ) + ( D():FacturasProveedoresPagos( nView ) )->cSufFac, D():FacturasProveedores( nView ) ), .t. ) .and. ;
+               if( !empty( cCodPgo ), cCodPgo == cPgoFacPrv( ( D():FacturasProveedoresPagos( nView ) )->cSerFac + Str( ( D():FacturasProveedoresPagos( nView ) )->nNumFac, 9 ) + ( D():FacturasProveedoresPagos( nView ) )->cSufFac, D():FacturasProveedores( nView ) ), .t. ) .and. ;
                if( lNotImp, !( D():FacturasProveedoresPagos( nView ) )->lRecImp, .t. )                                                                             .and. ;
                if( lNotCob, !( D():FacturasProveedoresPagos( nView ) )->lCobrado, .t. ) )
 
@@ -1528,7 +1532,7 @@ FUNCTION GenRecPrv( nDevice, cCaption, cCodDoc, cPrinter, nCopies )
    DEFAULT nCopies      := 1
    DEFAULT cCodDoc      := cFormatoDocumento( ( D():FacturasProveedoresPagos( nView ) )->cSerFac, "nRecPrv", D():Contadores( nView ) )
 
-   if Empty( cCodDoc )
+   if empty( cCodDoc )
       cCodDoc           := cFirstDoc( "RP", D():Documentos( nView ) )
    end if
 
@@ -1554,14 +1558,14 @@ FUNCTION GenRecPrv( nDevice, cCaption, cCodDoc, cPrinter, nCopies )
       ( D():Proveedores( nView )    )->( dbSeek( ( D():FacturasProveedores( nView ) )->cCodPrv ) )
       ( D():FormasPago( nView )  )->( dbSeek( ( D():FacturasProveedores( nView ) )->cCodPago) )
 
-      if !Empty( cPrinter )
+      if !empty( cPrinter )
          oDevice           := TPrinter():New( cCaption, .f., .t., cPrinter )
          REPORT oInf CAPTION cCaption TO DEVICE oDevice
       else
          REPORT oInf CAPTION cCaption PREVIEW
       end if
 
-      if !Empty( oInf ) .and. oInf:lCreated
+      if !empty( oInf ) .and. oInf:lCreated
 
          oInf:lFinish            := .f.
          oInf:lNoCancel          := .t.
@@ -1585,7 +1589,7 @@ FUNCTION GenRecPrv( nDevice, cCaption, cCodDoc, cPrinter, nCopies )
 
       END REPORT
 
-      if !Empty( oInf )
+      if !empty( oInf )
 
          ACTIVATE REPORT oInf WHILE ( .f. ) ON ENDPAGE ( eItems( oInf ) )
 
@@ -1612,7 +1616,7 @@ FUNCTION GenRecPrv( nDevice, cCaption, cCodDoc, cPrinter, nCopies )
    Refrescamos la pantalla principal-------------------------------------------
    */
 
-   if !Empty( oWndBrw )
+   if !empty( oWndBrw )
       oWndBrw:Refresh()
    end if
 
@@ -1706,7 +1710,7 @@ STATIC FUNCTION PasRec( cDocIni, cDocFin, nRad, cTipo, lSimula, lChgState, oBrw,
    while ( Eval( bWhile ) )
 
       do case
-         case ( cTipo == "Facturas" .or. cTipo == "Todas" )       .and. Empty( ( D():FacturasProveedoresPagos( nView ) )->cTipRec )
+         case ( cTipo == "Facturas" .or. cTipo == "Todas" )       .and. empty( ( D():FacturasProveedoresPagos( nView ) )->cTipRec )
 
             if lChgState
                lReturn  := ChgState( lSimula )
@@ -1714,7 +1718,7 @@ STATIC FUNCTION PasRec( cDocIni, cDocFin, nRad, cTipo, lSimula, lChgState, oBrw,
                lReturn  := CntRecPrv( lSimula, oTree, nil, aSimula, .f., D():FacturasProveedores( nView ), D():FacturasProveedoresPagos( nView ), D():Proveedores( nView ), D():FormasPago( nView ), D():Divisas( nView ) )
             end if
 
-         case ( cTipo == "Rectificativas" .or. cTipo == "Todas" ) .and. !Empty( ( D():FacturasProveedoresPagos( nView ) )->cTipRec )
+         case ( cTipo == "Rectificativas" .or. cTipo == "Todas" ) .and. !empty( ( D():FacturasProveedoresPagos( nView ) )->cTipRec )
 
             if lChgState
                lReturn  := ChgState( lSimula )
@@ -1901,7 +1905,7 @@ static function PrnPrePago( dDesde, dHasta, cPrvDesde, cPrvHasta, cTitulo, cSubT
 
 	END REPORT
 
-   IF !Empty( oReport ) .and.  oReport:lCreated
+   IF !empty( oReport ) .and.  oReport:lCreated
 		oReport:Margin( 0, RPT_RIGHT, RPT_CMETERS )
       oReport:bSkip := {|| ( D():FacturasProveedoresPagos( nView ) )->( dbSkip() ) }
    END IF
@@ -1911,7 +1915,7 @@ static function PrnPrePago( dDesde, dHasta, cPrvDesde, cPrvHasta, cTitulo, cSubT
             ( D():FacturasProveedoresPagos( nView ) )->DPRECOB <= dHasta                .AND. ;
             cCodFacPrv( (D():FacturasProveedoresPagos( nView ))->cSerFac + Str( (D():FacturasProveedoresPagos( nView ))->nNumFac ) + (D():FacturasProveedoresPagos( nView ))->cSufFac, D():FacturasProveedores( nView ) ) >= cPrvDesde  .AND. ;
             cCodFacPrv( (D():FacturasProveedoresPagos( nView ))->cSerFac + Str( (D():FacturasProveedoresPagos( nView ))->nNumFac ) + (D():FacturasProveedoresPagos( nView ))->cSufFac, D():FacturasProveedores( nView ) ) <= cPrvHasta  .AND. ;
-            Empty( ( D():FacturasProveedoresPagos( nView ) )->dEntrada )                        ;
+            empty( ( D():FacturasProveedoresPagos( nView ) )->dEntrada )                        ;
       WHILE !( D():FacturasProveedoresPagos( nView ) )->( eof() )
 
 	oFont1:end()
@@ -2345,45 +2349,45 @@ Function SynRecPrv( cPatEmp )
 
    while !( dbfFacPrvP )->( eof() )
 
-      if Empty( ( dbfFacPrvP )->cSufFac )
+      if empty( ( dbfFacPrvP )->cSufFac )
          ( dbfFacPrvP )->cSufFac := "00"
       end if
 
-      if Empty( ( dbfFacPrvP )->cCodPrv )
+      if empty( ( dbfFacPrvP )->cCodPrv )
          ( dbfFacPrvP )->cCodPrv := RetFld( ( dbfFacPrvP )->cSerFac + Str( ( dbfFacPrvP )->nNumFac ) + ( dbfFacPrvP )->cSufFac, dbfFacPrvT, "cCodPrv" )
       end if
 
-      if Empty( ( dbfFacPrvP )->cNomPrv )
+      if empty( ( dbfFacPrvP )->cNomPrv )
          ( dbfFacPrvP )->cNomPrv := RetFld( ( dbfFacPrvP )->cSerFac + Str( ( dbfFacPrvP )->nNumFac ) + ( dbfFacPrvP )->cSufFac, dbfFacPrvT, "cNomPrv" )
       end if
 
-      if Empty( ( dbfFacPrvP )->cCodCaj )
+      if empty( ( dbfFacPrvP )->cCodCaj )
          ( dbfFacPrvP )->cCodCaj := RetFld( ( dbfFacPrvP )->cSerFac + Str( ( dbfFacPrvP )->nNumFac ) + ( dbfFacPrvP )->cSufFac, dbfFacPrvT, "cCodCaj" )
       end if
 
-      if Empty( ( dbfFacPrvP )->cCodUsr )
+      if empty( ( dbfFacPrvP )->cCodUsr )
          ( dbfFacPrvP )->cCodUsr := RetFld( ( dbfFacPrvP )->cSerFac + Str( ( dbfFacPrvP )->nNumFac ) + ( dbfFacPrvP )->cSufFac, dbfFacPrvT, "cCodUsr" )
       end if
 
-      if !Empty( ( dbfFacPrvP )->cCtaEmp )
+      if !empty( ( dbfFacPrvP )->cCtaEmp )
 
-         if Empty( ( dbfFacPrvP )->cEPaisIBAN )
+         if empty( ( dbfFacPrvP )->cEPaisIBAN )
             ( dbfFacPrvP )->cEPaisIBAN  := "ES"
          end if 
 
-         if Empty( ( dbfFacPrvP )->cECtrlIBAN )
+         if empty( ( dbfFacPrvP )->cECtrlIBAN )
             ( dbfFacPrvP )->cECtrlIBAN  := IbanDigit( ( dbfFacPrvP )->cEPaisIBAN, ( dbfFacPrvP )->cECtrlIBAN, ( dbfFacPrvP )->cEntEmp, ( dbfFacPrvP )->cSucEmp, ( dbfFacPrvP )->cDigEmp, ( dbfFacPrvP )->cCtaEmp )
          end if 
 
       end if 
 
-      if !Empty( ( dbfFacPrvP )->cCtaPrv )
+      if !empty( ( dbfFacPrvP )->cCtaPrv )
 
-         if Empty( ( dbfFacPrvP )->cPaisIBAN )
+         if empty( ( dbfFacPrvP )->cPaisIBAN )
             ( dbfFacPrvP )->cPaisIBAN  := "ES"
          end if 
 
-         if Empty( ( dbfFacPrvP )->cCtrlIBAN )
+         if empty( ( dbfFacPrvP )->cCtrlIBAN )
             ( dbfFacPrvP )->cCtrlIBAN  := IbanDigit( ( dbfFacPrvP )->cPaisIBAN, ( dbfFacPrvP )->cCtrlIBAN, ( dbfFacPrvP )->cEntPrv, ( dbfFacPrvP )->cSucPrv, ( dbfFacPrvP )->cDigPrv, ( dbfFacPrvP )->cCtaPrv )
          end if 
 
@@ -2419,35 +2423,35 @@ Function SynRecPrv( cPatEmp )
 
    ErrorBlock( oBlock )
 
-   if !Empty( dbfFacPrvP )
+   if !empty( dbfFacPrvP )
       ( dbfFacPrvP )->( dbCloseArea() )
    end if
    
-   if !Empty( dbfFacPrvT )
+   if !empty( dbfFacPrvT )
       ( dbfFacPrvT )->( dbCloseArea() )
    end if
    
-   if !Empty( dbfFacPrvL )
+   if !empty( dbfFacPrvL )
       ( dbfFacPrvL )->( dbCloseArea() )
    end if
 
-   if !Empty( dbfRctPrvT )
+   if !empty( dbfRctPrvT )
       ( dbfRctPrvT )->( dbCloseArea() )
    end if
 
-   if !Empty( dbfDiv )    
+   if !empty( dbfDiv )    
       ( dbfDiv )->( dbCloseArea() )
    end if
 
-   if !Empty( dbfPrv )    
+   if !empty( dbfPrv )    
       ( dbfPrv )->( dbCloseArea() )
    end if
 
-   if !Empty( dbfFPago )
+   if !empty( dbfFPago )
       ( dbfFPago )->( dbCloseArea() )
    end if
 
-   if !Empty( dbfIva ) 
+   if !empty( dbfIva ) 
       ( dbfIva )->( dbCloseArea() )
    end if
 
@@ -2609,10 +2613,10 @@ FUNCTION rxRecPrv( cPath, cDriver )
       ( dbfFacPrvP )->( ordCondSet( "!Deleted()", {|| !Deleted() } ) )
       ( dbfFacPrvP )->( ordCreate( cPath + "FacPrvP.CDX", "cTurRec", "cTurRec + cSufFac + cCodCaj", {|| Field->cTurRec + Field->cSufFac + Field->cCodCaj } ) )
 
-      ( dbfFacPrvP )->( ordCondSet( "!Deleted() .and. !Empty( Field->cTipRec )", {|| !Deleted() .and. !Empty( Field->cTipRec ) } ) )
+      ( dbfFacPrvP )->( ordCondSet( "!Deleted() .and. !empty( Field->cTipRec )", {|| !Deleted() .and. !empty( Field->cTipRec ) } ) )
       ( dbfFacPrvP )->( ordCreate( cPath + "FacPrvP.CDX", "rNumFac", "cSerFac + Str( nNumFac ) + cSufFac + Str( nNumRec )", {|| Field->cSerFac + Str( Field->nNumFac ) + Field->cSufFac + Str( Field->nNumRec ) }, ) )
 
-      ( dbfFacPrvP )->( ordCondSet( "!Deleted() .and. Empty( Field->cTipRec )", {|| !Deleted() .and. Empty( Field->cTipRec ) } ) )
+      ( dbfFacPrvP )->( ordCondSet( "!Deleted() .and. empty( Field->cTipRec )", {|| !Deleted() .and. empty( Field->cTipRec ) } ) )
       ( dbfFacPrvP )->( ordCreate( cPath + "FacPrvP.CDX", "fNumFac", "cSerFac + Str( nNumFac ) + cSufFac + Str( nNumRec )", {|| Field->cSerFac + Str( Field->nNumFac ) + Field->cSufFac + Str( Field->nNumRec ) }, ) )
 
       ( dbfFacPrvP )->( ordCondSet( "!Deleted()", {|| !Deleted() } ) )
@@ -2927,7 +2931,7 @@ Function DesignReportRecPrv( oFr, cDoc )
       Paginas y bandas---------------------------------------------------------
       */
 
-      if !Empty( ( cDoc )->mReport )
+      if !empty( ( cDoc )->mReport )
 
          oFr:LoadFromBlob( ( cDoc )->( Select() ), "mReport")
 
@@ -3028,7 +3032,7 @@ Function PrintReportRecPrv( nDevice, nCopies, cPrinter, cDoc )
    Cargar el informe-----------------------------------------------------------
    */
 
-   if !Empty( ( cDoc )->mReport )
+   if !empty( ( cDoc )->mReport )
 
       oFr:LoadFromBlob( ( cDoc )->( Select() ), "mReport")
 
@@ -3233,7 +3237,7 @@ Function startEdtPag( aGet, aTmp, lIntro )
 
    end if
 
-   if Empty( aTmp[ _CRECDEV ] )
+   if empty( aTmp[ _CRECDEV ] )
       aGet[ _CRECDEV ]:Disable()
    else
       aGet[ _CRECDEV ]:Enable()

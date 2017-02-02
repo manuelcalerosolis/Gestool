@@ -945,22 +945,15 @@ FUNCTION MkSubcuenta( oGetSubcuenta, aTemp, oGet, cRuta, cCodEmp, oGetDebe, oGet
    cRuta                := cPath( cRuta )
 
    cCodSubcuenta        := oGetSubcuenta:VarGet()
-   cCodSubcuenta        := PntReplace( oGetSubcuenta, "0", nLenSubcuenta() )
-   cCodSubcuenta        := PadR( cCodSubcuenta, nLenSubcuenta() )
-   cCodSubcuenta        := AllTrim( cCodSubcuenta )
-
-   /*
-   if len( cCodSubcuenta ) != nLenSubcuenta()
-      MsgStop( "La longitud de la subcuenta no es correcta." )
-      Return .t.
-   end if
-   */
+   cCodSubcuenta        := pntReplace( oGetSubcuenta, "0", nLenSubcuenta() )
+   cCodSubcuenta        := padr( cCodSubcuenta, nLenSubcuenta() )
+   cCodSubcuenta        := alltrim( cCodSubcuenta )
 
    if !Empty( cCodSubcuenta )
 
       for n := 1 to len( aSerie )
 
-         cCodEmp     := cCodEmpCnt( aSerie[ n ] )
+         cCodEmp        := cCodEmpCnt( aSerie[ n ] )
 
          if !Empty( cCodEmp ) .and. aScan( aEmpProced, cCodEmp ) == 0
 
@@ -1659,12 +1652,22 @@ Return ( nil )
 Devuelve la cuenta de venta de un articulo
 */
 
-FUNCTION RetCtaVta( cCodArt, dbfArticulo )
+FUNCTION retCtaVta( cCodArt, lDevolucion, dbfArticulo )
 
-   local cCtaVta  := ""
+   local cCtaVta        := ""
+
+   DEFAULT lDevolucion  := .f.
 
    if ( dbfArticulo )->( dbSeek( cCodArt ) )
-      cCtaVta     := Rtrim( ( dbfArticulo )->cCtaVta )
+
+      if lDevolucion
+         cCtaVta        := rtrim( ( dbfArticulo )->cCtaVtaDev )
+      end if 
+
+      if empty(cCtaVta)
+         cCtaVta        := rtrim( ( dbfArticulo )->cCtaVta )
+      end if 
+   
    end if
 
 RETURN ( cCtaVta )

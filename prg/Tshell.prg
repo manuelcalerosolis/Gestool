@@ -38,7 +38,7 @@ static oFontTotal
 
 #ifndef __PDA__
 
-//------------------------------------------------------------------------//
+//------------------------------------------------------------------------// 
 //Clases/métodos del programa
 //------------------------------------------------------------------------//
 
@@ -263,7 +263,7 @@ CLASS TShell FROM TMdiChild
    METHOD searchSetFocus()                   INLINE ( if( !empty( ::oWndBar ), ::oWndBar:setGetFocus(), ) )
    METHOD getYearComboBoxExpression()        INLINE ( if( !empty( ::oWndBar ), ::oWndBar:getYearComboBoxExpression(), '' ) )
    METHOD setYearComboBoxChange( bBlock )    INLINE ( if( !empty( ::oWndBar ), ::oWndBar:setYearComboBoxChange( bBlock ), ) )
-   Method setYearComboBox( nYear )           INLINE ( if( !empty( ::oWndBar ), ( ::oWndBar:setYearComboBox( nYear ), ::oWndBar:oYearComboBox:change() ), ) )
+   Method setYearComboBox( nYear )           INLINE ( if( !empty( ::oWndBar ), ::oWndBar:setYearComboBox( nYear ), ) )
 
    METHOD getAsteriskFilter()                INLINE ( ::cAsteriskFilter )
 

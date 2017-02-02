@@ -969,11 +969,11 @@ FUNCTION RctPrv( oMenuItem, oWnd, cCodPrv, cCodArt, cNumFac )
       LEVEL    ACC_IMPR
 
    DEFINE BTNSHELL RESOURCE "gc_portable_barcode_scanner_" OF oWndBrw ;
-			NOBORDER ;
-         ACTION   ( TLabelGeneratorFacturaRectificativaProveedores():New( nView ):Dialog() ) ;
-         TOOLTIP  "E(t)iquetas" ;
-         HOTKEY   "T";
-         LEVEL    ACC_IMPR
+      NOBORDER ;
+      ACTION   ( TLabelGeneratorFacturaRectificativaProveedores():New( nView ):Dialog() ) ;
+      TOOLTIP  "E(t)iquetas" ;
+      HOTKEY   "T";
+      LEVEL    ACC_IMPR
 
    DEFINE BTNSHELL oLiq RESOURCE "gc_money2_" GROUP OF oWndBrw ;
       NOBORDER ;
@@ -981,13 +981,13 @@ FUNCTION RctPrv( oMenuItem, oWnd, cCodPrv, cCodArt, cNumFac )
       TOOLTIP  "Pagar" ;
       LEVEL    ACC_EDIT
 
-      DEFINE BTNSHELL RESOURCE "gc_money2_" OF oWndBrw ;
-         NOBORDER ;
-         ACTION   ( aGetSelRec( oWndBrw, {|| lLiquida( oWndBrw:oBrw, ( D():FacturasRectificativasProveedores( nView ) )->cSerFac + Str( ( D():FacturasRectificativasProveedores( nView ) )->nNumFac ) + ( D():FacturasRectificativasProveedores( nView ) )->cSufFac ) }, "Liquidar series de facturas", .t., nil, .t., nil ) ) ;
-         TOOLTIP  "Pagar series" ;
-         FROM     oLiq ;
-         CLOSED ;
-         LEVEL    ACC_EDIT
+   DEFINE BTNSHELL RESOURCE "gc_money2_" OF oWndBrw ;
+      NOBORDER ;
+      ACTION   ( aGetSelRec( oWndBrw, {|| lLiquida( oWndBrw:oBrw, ( D():FacturasRectificativasProveedores( nView ) )->cSerFac + Str( ( D():FacturasRectificativasProveedores( nView ) )->nNumFac ) + ( D():FacturasRectificativasProveedores( nView ) )->cSufFac ) }, "Liquidar series de facturas", .t., nil, .t., nil ) ) ;
+      TOOLTIP  "Pagar series" ;
+      FROM     oLiq ;
+      CLOSED ;
+      LEVEL    ACC_EDIT
 
    DEFINE BTNSHELL RESOURCE "BmpConta" OF oWndBrw ;
       NOBORDER ;
@@ -1043,13 +1043,13 @@ FUNCTION RctPrv( oMenuItem, oWnd, cCodPrv, cCodArt, cNumFac )
          TOOLTIP  "Cambiar campos" ;
          LEVEL    ACC_EDIT
 
-         DEFINE BTNSHELL RESOURCE "BMPCHG" OF oWndBrw ;
-            NOBORDER ;
-            ACTION   ( ReplaceCreator( oWndBrw, D():FacturasRectificativasProveedoresLineas( nView ), aColRctPrv() ) ) ;      
-            TOOLTIP  "Lineas" ;
-            FROM     oRpl ;
-            CLOSED ;
-            LEVEL    ACC_EDIT
+      DEFINE BTNSHELL RESOURCE "BMPCHG" OF oWndBrw ;
+         NOBORDER ;
+         ACTION   ( ReplaceCreator( oWndBrw, D():FacturasRectificativasProveedoresLineas( nView ), aColRctPrv() ) ) ;      
+         TOOLTIP  "Lineas" ;
+         FROM     oRpl ;
+         CLOSED ;
+         LEVEL    ACC_EDIT
 
    end if
 
@@ -1096,7 +1096,11 @@ FUNCTION RctPrv( oMenuItem, oWnd, cCodPrv, cCodArt, cNumFac )
 
    ACTIVATE WINDOW oWndBrw VALID ( CloseFiles() )
 
-   EnableAcceso()
+   enableAcceso()
+
+   if uFieldempresa( 'lFltYea' )
+      oWndBrw:setYearCombobox()
+   end if
 
    if !Empty( cCodPrv ) .or. !Empty( cCodArt ) .or. !Empty( cNumFac )
       if !Empty( oWndBrw )

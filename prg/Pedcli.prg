@@ -1729,9 +1729,13 @@ FUNCTION PedCli( oMenuItem, oWnd, cCodCli, cCodArt, cCodPre, lPedWeb )
 
    EnableAcceso()
 
-   if !Empty( cCodCli ) .or. !Empty( cCodArt ) .or. !Empty( cCodPre )
+   if uFieldempresa( 'lFltYea' )
+      oWndBrw:setYearCombobox()
+   end if
 
-      if !Empty( oWndBrw )
+   if !empty( cCodCli ) .or. !empty( cCodArt ) .or. !empty( cCodPre )
+
+      if !empty( oWndBrw )
          oWndBrw:RecAdd()
       end if
 

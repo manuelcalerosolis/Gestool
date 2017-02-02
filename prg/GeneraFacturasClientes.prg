@@ -410,7 +410,7 @@ METHOD Resource() CLASS GeneraFacturasClientes
       :bEditValue                   := {|| ::GetItemCheck() }
       :nWidth                       := 20
       :bLClickHeader                := {|nMRow, nMCol, nFlags, oColumn| ::clickOnCheckHeader( oColumn ) }         
-      :SetCheck( { "gc_check_16", "nil16" } ) // ""
+      :SetCheck( { "sel16", "nil16" } ) // ""
    end with
 
    with object ( ::oBrwAlbaranes:AddCol() )

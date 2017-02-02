@@ -969,6 +969,10 @@ FUNCTION PedPrv( oMenuItem, oWnd, cCodPrv, cCodArt )
 
    EnableAcceso()
 
+   if uFieldempresa( 'lFltYea' )
+      oWndBrw:setYearCombobox()
+   end if
+
    if !empty( cCodPrv ) .or. !empty( cCodArt )
 
       if !empty( oWndBrw )

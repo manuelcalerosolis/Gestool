@@ -1269,7 +1269,7 @@ STATIC FUNCTION EdtBig( aTmp, aGet, dbfCli, oBrw, bWhen, bValid, nMode )
       REDEFINE GET aGet[ _TELEFONO ] VAR aTmp[ _TELEFONO ] ;
          ID       150 ;
          WHEN     ( nMode != ZOOM_MODE ) ;
-         VALID    ( if( nMode == APPD_MODE, lValidTlf( aGet[_TELEFONO] ), .t. ) ) ;
+         VALID    ( if( nMode == APPD_MODE, lValidTlf( aGet[ _TELEFONO ] ), .t. ) ) ;
          OF       oDlg
 
       if uFieldEmpresa( "nCifRut" ) <= 1
@@ -1643,34 +1643,29 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, nTab, bValid, nMode )
          WHEN     ( nMode != ZOOM_MODE ) ;
          OF       fldGeneral
 
-      REDEFINE GET aGet[_TELEFONO] VAR aTmp[_TELEFONO] ;
+      REDEFINE GET aGet[ _TELEFONO ] VAR aTmp[ _TELEFONO ] ;
          ID       180 ;
-         COLOR    CLR_GET ;
          WHEN     ( nMode != ZOOM_MODE ) ;
-         VALID    ( if( nMode == APPD_MODE, lValidTlf( aGet[_TELEFONO] ), .t. ) ) ;
+         VALID    ( if( nMode == APPD_MODE, lValidTlf( aGet[ _TELEFONO ] ), .t. ) ) ;
          OF       fldGeneral
 
       REDEFINE GET aGet[_TELEFONO2] VAR aTmp[_TELEFONO2] ;
          ID       185 ;
-         COLOR    CLR_GET ;
          WHEN     ( nMode != ZOOM_MODE ) ;
          OF       fldGeneral
 
       REDEFINE GET aGet[_FAX] VAR aTmp[_FAX] ;
          ID       190 ;
-         COLOR    CLR_GET ;
          WHEN     ( nMode != ZOOM_MODE ) ;
          OF       fldGeneral
 
       REDEFINE GET aGet[_MOVIL] VAR aTmp[_MOVIL] ;
          ID       195 ;
-         COLOR    CLR_GET ;
          WHEN     ( nMode != ZOOM_MODE ) ;
          OF       fldGeneral
 
       REDEFINE GET aGet[_MOVIL2] VAR aTmp[_MOVIL2] ;
          ID       196 ;
-         COLOR    CLR_GET ;
          WHEN     ( nMode != ZOOM_MODE ) ;
          OF       fldGeneral
 

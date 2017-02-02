@@ -6629,7 +6629,7 @@ METHOD ContabilizaContadores()
    local cRutCnt     := cRutCnt()
    local cCodDiv     := cDivEmp()
    local cCtaIvm     := cCtaVta() + RetGrpVta( ::oDbfDet:cCodArt, cRutCnt, ::cGetEmpresaContaplus, ::oArticulo:cAlias )
-   local cCtaVen     := RetCtaVta( ::oDbfDet:cCodArt, ::oArticulo:cAlias )
+   local cCtaVen     := RetCtaVta( ::oDbfDet:cCodArt, .f., ::oArticulo:cAlias )
    local cDesAsi     := "N/Sesión " + lTrim( ::oDbf:cNumTur ) + "/" + ::oDbf:cSufTur
    local cPgoAsi     := "C/Sesión " + lTrim( ::oDbf:cNumTur ) + "/" + ::oDbf:cSufTur
    local dFecha      := ::oDbf:dCloTur

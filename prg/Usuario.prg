@@ -858,7 +858,11 @@ static function SelMenu( oTree, oItem, aChkAcc, oChkAcc )
 
    local i
 
-   if !IsNil( oItem:Cargo )
+   if empty( oItem )
+      Return .f.
+   end if 
+
+   if !isnil( oItem:Cargo )
 
       oItem:Cargo       := 0
 
@@ -892,12 +896,14 @@ static function SelMenu( oTree, oItem, aChkAcc, oChkAcc )
    else
 
       for i := 1 to Len( oItem:aItems )
-         SelMenu( oTree, oItem:aItems[ i ], aChkAcc, oChkAcc )
+         selMenu( oTree, oItem:aItems[ i ], aChkAcc, oChkAcc )
       next
 
    end if
 
-   oTree:Refresh()
+   if !empty(oTree)
+      oTree:Refresh()
+   end if 
 
 return .t.
 

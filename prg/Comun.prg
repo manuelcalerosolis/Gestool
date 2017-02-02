@@ -3368,6 +3368,8 @@ PISCA_EXE()   // Vai Piscar o Seu EXE na Barra do Windows
 #include "hbstack.h"
 #include "urlmon.h"
 
+HB_MAXUINT hb_dateMilliSeconds( void );
+
 HB_FUNC ( SHOWTASKBAR ) //Habilita o botao INICIAR
 {
 HWND hWnd = FindWindow("Shell_TrayWnd", "");
@@ -3391,9 +3393,7 @@ FlashWindow(Handle,TRUE); // VAI PISCAR O SEU EXE NA BARRA
 Sleep(300); // TEMPO DE ESPERA
 }
 
-
 HB_FUNC ( DISABLECLOSEWINDOWS ) // DESABILITA O X da janela
-
 {
 HMENU MenuH = GetSystemMenu(GetForegroundWindow(),FALSE);
 
@@ -3409,13 +3409,17 @@ EnableMenuItem(MenuH,SC_CLOSE,MF_GRAYED);
 }
 
 HB_FUNC( DOWNLOADFILE )
-
 {
    HRESULT hr;
 
    hr = URLDownloadToFileA( NULL, hb_parc( 1 ), hb_parc( 2 ), 0, NULL );
   
    hb_retnl( hr ) ;
+}
+
+HB_FUNC( HB_MILLISECONDS )
+{
+   hb_retnl( hb_dateMilliSeconds() );
 }
 
 #pragma ENDDUMP

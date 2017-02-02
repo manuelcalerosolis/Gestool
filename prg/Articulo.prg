@@ -1661,7 +1661,6 @@ STATIC FUNCTION EdtRec( aTmp, aGet, cArticulo, oBrw, bWhen, bValid, nMode )
    local oError
    local oBrwDiv
    local oBrwLeng
-   local oBrwCtaCom
    local oBrwCodebar
    local aBtnDiv              := Array( 8 )
    local oBrwOfe
@@ -1681,7 +1680,6 @@ STATIC FUNCTION EdtRec( aTmp, aGet, cArticulo, oBrw, bWhen, bValid, nMode )
    local cGetSubCta           := ""
    local oGetSaldo
    local nGetSaldo            := 0
-   local oBrwCtaVta
    local nGetDebe             := 0
    local nGetHaber            := 0
    local oGetCtaCom
@@ -1725,15 +1723,23 @@ STATIC FUNCTION EdtRec( aTmp, aGet, cArticulo, oBrw, bWhen, bValid, nMode )
    local oBmpUbicaciones
    local oBmpImagenes
    local oBmpTactil
-   local aImpComanda          := aTiposImpresoras( dbfTImp )
+   local aImpComanda                         := aTiposImpresoras( dbfTImp )
    local oImpComanda1
    local oImpComanda2
    local cImpComanda1
    local cImpComanda2
-   local aNombreTarifas       := aNombreTarifas()
-   local cNombreTarifaWeb     := aNombreTarifas[1]
+   local aNombreTarifas                      := aNombreTarifas()
+   local cNombreTarifaWeb                    := aNombreTarifas[1]
    local oGetValNewImp
-   local nGetValNewImp        := 0
+   local nGetValNewImp                       := 0
+   local oGetSubcuentaVentaDevolucion
+   local cGetSubcuentaVentaDevolucion
+   local oGetSaldoSubcuentaVentaDevolucion
+   local nGetSaldoSubcuentaVentaDevolucion   := 0
+   local oGetSubcuentaCompraDevolucion
+   local cGetSubcuentaCompraDevolucion
+   local oGetSaldoSubcuentaCompraDevolucion
+   local nGetSaldoSubcuentaCompraDevolucion  := 0
 
    CursorWait()
 
@@ -3801,8 +3807,13 @@ STATIC FUNCTION EdtRec( aTmp, aGet, cArticulo, oBrw, bWhen, bValid, nMode )
          PICTURE  ( Replicate( "X", nLenSubcuentaContaplus() ) ) ;
          WHEN     ( nLenCuentaContaplus() != 0 .and. nMode != ZOOM_MODE ) ;
          BITMAP   "LUPA" ;
-         ON HELP  ( BrwChkSubcuenta( aGet[ ( D():Articulos( nView ) )->( fieldpos( "CCTAVTA" ) ) ], oGetSubCta ) ) ;
-         VALID    ( lValidaSubcuenta( aGet, aTmp, @nGetDebe, @nGetHaber, oGetSaldo, oGetSubCta, cSubCtaAnt, oBrwCtaVta, dbfTmpSubCta ) );
+         ON HELP  ( brwChkSubcuenta(   aGet[ ( D():Articulos( nView ) )->( fieldpos( "cCtaVta" ) ) ],;
+                                       oGetSubCta ) ) ;
+         VALID    ( lValidaSubcuenta(  aGet[ ( D():Articulos( nView ) )->( fieldpos( "cCtaVta" ) ) ],;
+                                       aTmp[ ( D():Articulos( nView ) )->( fieldpos( "cCtaVta" ) ) ],;
+                                       aGet[ ( D():Articulos( nView ) )->( fieldpos( "Nombre"  ) ) ],;
+                                       oGetSubCta,;
+                                       oGetSaldo ) );
          OF       fldContabilidad
 
    REDEFINE GET   oGetSubCta ;
@@ -3811,131 +3822,99 @@ STATIC FUNCTION EdtRec( aTmp, aGet, cArticulo, oBrw, bWhen, bValid, nMode )
          WHEN     .f. ;
          OF       fldContabilidad
 
-   REDEFINE GET oGetSaldo VAR nGetSaldo ;
+   REDEFINE GET   oGetSaldo ;
+         VAR      nGetSaldo ;
          ID       112 ;
          PICTURE  cPorDiv ;
          WHEN     .f. ;
          OF       fldContabilidad
 
-   /*
-   Subcuenta de venta----------------------------------------------------------
-   */
-
-   oBrwCtaVta                 := IXBrowse():New( fldContabilidad )
-
-   oBrwCtaVta:bClrSel         := {|| { CLR_BLACK, Rgb( 229, 229, 229 ) } }
-   oBrwCtaVta:bClrSelFocus    := {|| { CLR_BLACK, Rgb( 167, 205, 240 ) } }
-
-   oBrwCtaVta:lFooter         := .t.
-
-   oBrwCtaVta:cAlias          := dbfTmpSubCta
-
-   oBrwCtaVta:nMarqueeStyle   := 5
-   oBrwCtaVta:cName           := "Artículo.Contabilidad cuenta de ventas"
-
-   with object ( oBrwCtaVta:AddCol() )
-      :cHeader          := "Asiento"
-      :bEditValue       := {|| Trans( ( dbfTmpSubCta )->nAsiento, "9999999" ) }
-      :nWidth           := 40
-      :nDataStrAlign    := AL_RIGHT
-      :nHeadStrAlign    := AL_RIGHT
-      :nFootStrAlign    := AL_RIGHT
-   end with
-
-   with object ( oBrwCtaVta:AddCol() )
-      :cHeader          := "Fecha"
-      :bEditValue       := {|| Dtoc( ( dbfTmpSubCta )->dFecha ) }
-      :nWidth           := 80
-   end with
-
-   with object ( oBrwCtaVta:AddCol() )
-      :cHeader          := "Concepto"
-      :bEditValue       := {|| ( dbfTmpSubCta )->cConcepto }
-      :nWidth           := 180
-   end with
-
-   with object ( oBrwCtaVta:AddCol() )
-      :cHeader          := "Debe"
-      :bEditValue       := {|| ( dbfTmpSubCta )->nDebe }
-      :bFooter          := {|| nGetDebe }
-      :nWidth           := 80
-      :cEditPicture     := cPorDiv
-      :nDataStrAlign    := AL_RIGHT
-      :nHeadStrAlign    := AL_RIGHT
-      :nFootStrAlign    := AL_RIGHT
-   end with
-
-   with object ( oBrwCtaVta:AddCol() )
-      :cHeader          := "Haber"
-      :bEditValue       := {|| ( dbfTmpSubCta )->nHaber }
-      :bFooter          := {|| nGetHaber }
-      :nWidth           := 80
-      :cEditPicture     := cPorDiv
-      :nDataStrAlign    := AL_RIGHT
-      :nHeadStrAlign    := AL_RIGHT
-      :nFootStrAlign    := AL_RIGHT
-   end with
-
-   with object ( oBrwCtaVta:AddCol() )
-      :cHeader          := "Concepto"
-      :bEditValue       := {|| ( dbfTmpSubCta )->cDeparta }
-      :nWidth           := 80
-   end with
-
-   with object ( oBrwCtaVta:AddCol() )
-      :cHeader          := "Factura"
-      :bEditValue       := {|| Trans( ( dbfTmpSubCta )->nFactura, "9999999" ) }
-      :nWidth           := 80
-      :nDataStrAlign    := AL_RIGHT
-      :nHeadStrAlign    := AL_RIGHT
-      :nFootStrAlign    := AL_RIGHT
-   end with
-
-   with object ( oBrwCtaVta:AddCol() )
-      :cHeader          := "Base"
-      :bEditValue       := {|| ( dbfTmpSubCta )->nBase }
-      :nWidth           := 80
-      :cEditPicture     := cPorDiv
-      :nDataStrAlign    := AL_RIGHT
-      :nHeadStrAlign    := AL_RIGHT
-      :nFootStrAlign    := AL_RIGHT
-   end with
-
-   with object ( oBrwCtaVta:AddCol() )
-      :cHeader          := cImp()
-      :bEditValue       := {|| ( dbfTmpSubCta )->nIva }
-      :nWidth           := 80
-      :cEditPicture     := cPorDiv
-      :nDataStrAlign    := AL_RIGHT
-      :nHeadStrAlign    := AL_RIGHT
-      :nFootStrAlign    := AL_RIGHT
-   end with
-
-   oBrwCtaVta:bRClicked    := {| nRow, nCol, nFlags | oBrwCtaVta:RButtonDown( nRow, nCol, nFlags ) }
-
-   oBrwCtaVta:CreateFromResource( 120 )
-
-   REDEFINE GET   aGet[ ( D():Articulos( nView ) )->( fieldpos( "CCTACOM" ) ) ];
-         VAR      aTmp[ ( D():Articulos( nView ) )->( fieldpos( "CCTACOM" ) ) ] ;
-         ID       130 ;
-         PICTURE  ( Replicate( "X", nLenSubcuentaContaplus() ) ) ;
-         WHEN     ( nLenCuentaContaplus() != 0 .AND. nMode != ZOOM_MODE ) ;
+   REDEFINE GET   aGet[ ( D():Articulos( nView ) )->( fieldpos( "cCtaVtaDev" ) ) ] ;
+         VAR      aTmp[ ( D():Articulos( nView ) )->( fieldpos( "cCtaVtaDev" ) ) ] ;
+         ID       120 ;
+         PICTURE  ( replicate( "X", nLenSubcuentaContaplus() ) ) ;
+         WHEN     ( nLenCuentaContaplus() != 0 .and. nMode != ZOOM_MODE ) ;
+         ON HELP  ( brwChkSubcuenta(   aGet[ ( D():Articulos( nView ) )->( fieldpos( "cCtaVtaDev" ) ) ],;
+                                       oGetSubcuentaVentaDevolucion ) ) ;
+         VALID    ( lValidaSubcuenta(  aGet[ ( D():Articulos( nView ) )->( fieldpos( "cCtaVtaDev" ) ) ],;
+                                       aTmp[ ( D():Articulos( nView ) )->( fieldpos( "cCtaVtaDev" ) ) ],;
+                                       aGet[ ( D():Articulos( nView ) )->( fieldpos( "Nombre" ) )     ],;
+                                       oGetSubcuentaVentaDevolucion,;
+                                       oGetSaldoSubcuentaVentaDevolucion ) );
          BITMAP   "LUPA" ;
-         ON HELP  ( BrwChkSubcuenta( aGet[ ( D():Articulos( nView ) )->( fieldpos( "CCTACOM" ) ) ], oGetCtaCom ) ) ;
-         VALID    ( lValidaSubcuentaCompras( aGet, aTmp, @nDebCom, @nHabCom, oGetSalCom, oGetCtaCom, cSubCtaAntCom, oBrwCtaCom, dbfTmpSubCom ) );
          OF       fldContabilidad
 
-   REDEFINE GET oGetCtaCom VAR cGetCtaCom ;
+   REDEFINE GET   oGetSubcuentaVentaDevolucion ;
+         VAR      cGetSubcuentaVentaDevolucion ;
+         ID       121 ;
+         WHEN     .f. ;
+         OF       fldContabilidad
+
+   REDEFINE GET   oGetSaldoSubcuentaVentaDevolucion ; 
+         VAR      nGetSaldoSubcuentaVentaDevolucion ;
+         ID       122 ;
+         PICTURE  cPorDiv ;
+         WHEN     .f. ;
+         OF       fldContabilidad
+
+   REDEFINE GET   aGet[ ( D():Articulos( nView ) )->( fieldpos( "cCtaCom" ) ) ];
+         VAR      aTmp[ ( D():Articulos( nView ) )->( fieldpos( "cCtaCom" ) ) ] ;
+         ID       130 ;
+         PICTURE  ( replicate( "X", nLenSubcuentaContaplus() ) ) ;
+         WHEN     ( nLenCuentaContaplus() != 0 .and. nMode != ZOOM_MODE ) ;
+         BITMAP   "LUPA" ;
+         ON HELP  ( brwChkSubcuenta(   aGet[ ( D():Articulos( nView ) )->( fieldpos( "cCtaCom" ) ) ],;
+                                       oGetCtaCom ) ) ;
+         VALID    ( lValidaSubcuenta(  aGet[ ( D():Articulos( nView ) )->( fieldpos( "cCtaCom" ) ) ],;
+                                       aTmp[ ( D():Articulos( nView ) )->( fieldpos( "cCtaCom" ) ) ],;
+                                       aGet[ ( D():Articulos( nView ) )->( fieldpos( "Nombre"  ) ) ],;
+                                       oGetCtaCom,;
+                                       oGetSalCom ) );
+         OF       fldContabilidad
+
+   REDEFINE GET   oGetCtaCom ;
+         VAR      cGetCtaCom ;
          ID       131 ;
          WHEN     .f. ;
          OF       fldContabilidad
 
-   REDEFINE GET oGetSalCom VAR nGetSalCom ;
+   REDEFINE GET   oGetSalCom ;
+         VAR      nGetSalCom ;
          ID       132 ;
          PICTURE  cPorDiv ;
          WHEN     .f. ;
          OF       fldContabilidad
 
+   REDEFINE GET   aGet[ ( D():Articulos( nView ) )->( fieldpos( "cCtaComDev" ) ) ] ;
+         VAR      aTmp[ ( D():Articulos( nView ) )->( fieldpos( "cCtaComDev" ) ) ] ;
+         ID       140 ;
+         PICTURE  ( replicate( "X", nLenSubcuentaContaplus() ) ) ;
+         WHEN     ( nLenCuentaContaplus() != 0 .and. nMode != ZOOM_MODE ) ;
+         ON HELP  ( brwChkSubcuenta(   aGet[ ( D():Articulos( nView ) )->( fieldpos( "cCtaComDev" ) ) ],;
+                                       oGetSubcuentaCompraDevolucion ) ) ;
+         VALID    ( lValidaSubcuenta(  aGet[ ( D():Articulos( nView ) )->( fieldpos( "cCtaComDev" ) ) ],;
+                                       aTmp[ ( D():Articulos( nView ) )->( fieldpos( "cCtaComDev" ) ) ],;
+                                       aGet[ ( D():Articulos( nView ) )->( fieldpos( "Nombre" ) )     ],;
+                                       oGetSubcuentaCompraDevolucion,;
+                                       oGetSaldoSubcuentaCompraDevolucion ) );
+         BITMAP   "LUPA" ;
+         OF       fldContabilidad
+
+   REDEFINE GET   oGetSubcuentaCompraDevolucion ;
+         VAR      cGetSubcuentaCompraDevolucion ;
+         ID       141 ;
+         WHEN     .f. ;
+         OF       fldContabilidad
+
+   REDEFINE GET   oGetSaldoSubcuentaCompraDevolucion ; 
+         VAR      nGetSaldoSubcuentaCompraDevolucion ;
+         ID       142 ;
+         PICTURE  cPorDiv ;
+         WHEN     .f. ;
+         OF       fldContabilidad
+
+   
+   /*
    oBrwCtaCom                 := IXBrowse():New( fldContabilidad )
 
    oBrwCtaCom:bClrSel         := {|| { CLR_BLACK, Rgb( 229, 229, 229 ) } }
@@ -4023,6 +4002,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, cArticulo, oBrw, bWhen, bValid, nMode )
    oBrwCtaCom:bRClicked    := {| nRow, nCol, nFlags | oBrwCtaCom:RButtonDown( nRow, nCol, nFlags ) }
 
    oBrwCtaCom:CreateFromResource( 140 )
+   */
 
    REDEFINE GET   aGet[ ( D():Articulos( nView ) )->( fieldpos( "CCTATRN" ) ) ];
          VAR      aTmp[ ( D():Articulos( nView ) )->( fieldpos( "CCTATRN" ) ) ] ;
@@ -4710,7 +4690,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, cArticulo, oBrw, bWhen, bValid, nMode )
 
    end if
 
-   oDlg:bStart    := {|| StartDlg( aGet, aTmp, nMode, oSay, oDlg, oCosto, aBtnDiv, oFnt, oBtnMoneda, aBtn, bmpImage, oBrwPrv, oBrwDiv, oBrwStk, oBrwKit, oBrwOfe, oBrwCtaVta, oBrwCtaCom, oBrwCodeBar, oBrwImg, oBrwLeng ) }
+   oDlg:bStart    := {|| StartDlg( aGet, aTmp, nMode, oSay, oDlg, oCosto, aBtnDiv, oFnt, oBtnMoneda, aBtn, bmpImage, oBrwPrv, oBrwDiv, oBrwStk, oBrwKit, oBrwOfe, oBrwCodeBar, oBrwImg, oBrwLeng ) }
 
    ACTIVATE DIALOG oDlg ;
       CENTER ;
@@ -5152,27 +5132,16 @@ Return ( oDlg:nResult == IDOK )
 
 //--------------------------------------------------------------------------//
 
-Static function lValidaSubcuenta( aGet, aTmp, nGetDebe, nGetHaber, oGetSaldo, oGetSubCta, cSubCtaAnt, oBrwCta, dbfTmpSubCta )
+Static function lValidaSubcuenta( getCuenta, valueCuenta, nombreCuenta, getNombreCuenta, getSaldo )
 
-   if MkSubcuenta( aGet[ ( D():Articulos( nView ) )->( fieldpos( "CCTAVTA" ) ) ],;
-                { aTmp[ ( D():Articulos( nView ) )->( fieldpos( "CCTAVTA" ) ) ], aTmp[ ( D():Articulos( nView ) )->( fieldpos( "NOMBRE"  ) ) ] },;
-                oGetSubCta,;
-                nil,;
-                nil,;
-                @nGetDebe,;
-                @nGetHaber,;
-                oGetSaldo )
-
-      if aTmp[ ( D():Articulos( nView ) )->( fieldpos( "CCTAVTA" ) ) ] != cSubCtaAnt
-         LoadSubcuenta( aTmp[ ( D():Articulos( nView ) )->( fieldpos( "CCTAVTA" ) ) ], cRutCnt(), dbfTmpSubCta )
-         oBrwCta:Refresh()
-      end if
-
-      Return .t.
-
-   end if
-
-Return .f.
+Return   (  mkSubcuenta(   getCuenta,;
+                           { valueCuenta, nombreCuenta },;
+                           getNombreCuenta,;
+                           nil,;
+                           nil,;
+                           nil,;
+                           nil,;
+                           getSaldo ) )
 
 //---------------------------------------------------------------------------//
 
@@ -5188,7 +5157,7 @@ Static function lValidaSubcuentaCompras( aGet, aTmp, nGetDebe, nGetHaber, oGetSa
                 oGetSaldo )
 
       if aTmp[ ( D():Articulos( nView ) )->( fieldpos( "CCTACOM" ) ) ] != cSubCtaAntCom
-         LoadSubcuenta( aTmp[ ( D():Articulos( nView ) )->( fieldpos( "CCTACOM" ) ) ], cRutCnt(), dbfTmpSubCom )
+         // LoadSubcuenta( aTmp[ ( D():Articulos( nView ) )->( fieldpos( "CCTACOM" ) ) ], cRutCnt(), dbfTmpSubCom )
          oBrwCom:Refresh()
       end if
 
@@ -5200,7 +5169,7 @@ Return .f.
 
 //---------------------------------------------------------------------------//
 
-Static Function StartDlg( aGet, aTmp, nMode, oSay, oDlg, oCosto, aBtnDiv, oFnt, oBtnMoneda, aBtn, bmpImage, oBrwPrv, oBrwDiv, oBrwStk, oBrwKit, oBrwOfe, oBrwCtaVta, oBrwCtaCom, oBrwCodeBar, oBrwImg, oBrwLeng )
+Static Function StartDlg( aGet, aTmp, nMode, oSay, oDlg, oCosto, aBtnDiv, oFnt, oBtnMoneda, aBtn, bmpImage, oBrwPrv, oBrwDiv, oBrwStk, oBrwKit, oBrwOfe, oBrwCodeBar, oBrwImg, oBrwLeng )
 
    CursorWait()
 
@@ -5292,14 +5261,6 @@ Static Function StartDlg( aGet, aTmp, nMode, oSay, oDlg, oCosto, aBtnDiv, oFnt, 
 
    if !Empty( oBrwOfe )
       oBrwOfe:LoadData()
-   end if
-
-   if !Empty( oBrwCtaVta )
-      oBrwCtaVta:LoadData()
-   end if
-
-   if !Empty( oBrwCtaCom )
-      oBrwCtaCom:LoadData()
    end if
 
    if !Empty( oBrwImg )
@@ -5634,7 +5595,6 @@ Static Function BeginTrans( aTmp, nMode )
 
    /*
    Subcuentas------------------------------------------------------------------
-   */
 
    dbCreate( filTmpSubCta, aSqlStruct( aItmSubCta ), cLocalDriver() )
    dbUseArea( .t., cLocalDriver(), filTmpSubCta, cCheckArea( "TmpSubCta", @dbfTmpSubCta ), .f. )
@@ -5652,6 +5612,7 @@ Static Function BeginTrans( aTmp, nMode )
       LoadSubcuenta( cCodSubCta, cRutCnt(), dbfTmpSubCta )
       LoadSubcuenta( cCodSubCom, cRutCnt(), dbfTmpSubCom )
    end if
+   */
 
    /*
    Guardamos el-los códigos de barras para saber si han habido cambios---------
@@ -6138,6 +6099,7 @@ Static Function KillTrans( oMenu, oBmpCategoria, oBmpTemporada, oBmpEstado, oBmp
       ( dbfTmpCodebar )->( dbCloseArea() )
    end if
 
+   /*
    if !Empty( dbfTmpSubCta ) .and. ( dbfTmpSubCta )->( Used() )
       ( dbfTmpSubCta )->( dbCloseArea() )
    end if
@@ -6148,6 +6110,7 @@ Static Function KillTrans( oMenu, oBmpCategoria, oBmpTemporada, oBmpEstado, oBmp
 
    dbfTmpCodebar  := nil
    dbfTmpSubCta   := nil
+   */
    dbfTmpSubCom   := nil
    dbfTmpPrv      := nil
    dbfTmpVta      := nil
@@ -15341,6 +15304,8 @@ function aItmArt()
    aAdd( aBase, { "GRPVENT",   "C",  9, 0, "Código del grupo de ventas" ,             "",                   "", "( cDbfArt )", nil } )
    aAdd( aBase, { "CCTAVTA",   "C", 12, 0, "Código de la cuenta de ventas" ,          "",                   "", "( cDbfArt )", nil } )
    aAdd( aBase, { "CCTACOM",   "C", 12, 0, "Código de la cuenta de compras" ,         "",                   "", "( cDbfArt )", nil } )
+   aAdd( aBase, { "CCTAVTADEV","C", 12, 0, "Código de la cuenta de ventas en devoluciones" ,    "",         "", "( cDbfArt )", nil } )
+   aAdd( aBase, { "CCTACOMDEV","C", 12, 0, "Código de la cuenta de compras en devoluciones" ,   "",         "", "( cDbfArt )", nil } )
    aAdd( aBase, { "CCTATRN",   "C", 12, 0, "Código de la cuenta de portes" ,          "",                   "", "( cDbfArt )", nil } )
    aAdd( aBase, { "CODEBAR",   "C", 20, 0, "Código de barras" ,                       "",                   "", "( cDbfArt )", nil } )
    aAdd( aBase, { "NTIPBAR",   "N",  2, 0, "Tipo de código de barras" ,               "",                   "", "( cDbfArt )", nil } )

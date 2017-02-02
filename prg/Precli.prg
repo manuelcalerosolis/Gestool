@@ -1715,9 +1715,13 @@ FUNCTION PreCli( oMenuItem, oWnd, cCodCli, cCodArt )
 
    ACTIVATE WINDOW oWndBrw VALID ( CloseFiles() )
 
-   EnableAcceso()
+   enableAcceso()
 
-   if !Empty( cCodCli ) .or. !Empty( cCodArt )
+   if uFieldempresa( 'lFltYea' )
+      oWndBrw:setYearCombobox()
+   end if
+
+   if !empty( cCodCli ) .or. !empty( cCodArt )
       oWndBrw:RecAdd()
       cCodCli  := nil
       cCodArt  := nil

@@ -880,7 +880,11 @@ FUNCTION AlbPrv( oMenuItem, oWnd, cCodPrv, cCodArt, cCodPed )
 
    ACTIVATE WINDOW oWndBrw VALID ( CloseFiles() )
 
-   EnableAcceso()
+   enableAcceso()
+
+   if uFieldempresa( 'lFltYea' )
+      oWndBrw:setYearCombobox()
+   end if
 
    if !Empty( cCodPrv ) .or. !Empty( cCodArt ) .or. !Empty( cCodPed )
 

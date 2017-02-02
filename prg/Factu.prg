@@ -4952,6 +4952,28 @@ Return ( nil )
 //---------------------------------------------------------------------------//
 
 Function Test()
+
+   local localTime    
+
+//   hb_timeStampGetLocal( @localTime )
+//   msgalert( localTime, "localTime" )
+
+   logwrite( hb_milliSeconds() )
+   logwrite( hb_milliSeconds() )
+   logwrite( hb_milliSeconds() )
+   logwrite( hb_milliSeconds() )
+   logwrite( hb_milliSeconds() )
+   logwrite( hb_milliSeconds() )
+   logwrite( hb_milliSeconds() )
+   logwrite( hb_milliSeconds() )
+   logwrite( hb_milliSeconds() )
+   logwrite( hb_milliSeconds() )
+   logwrite( hb_milliSeconds() )
+   logwrite( hb_milliSeconds() )
+   logwrite( hb_milliSeconds() )
+   logwrite( hb_milliSeconds() )
+   logwrite( hb_milliSeconds() )
+
 /*
    local cAlbCliT
 
@@ -5126,3 +5148,5 @@ static function Informe3()
 RETURN NIL 
 
 //---------------------------------------------------------------------------//
+
+// DLL32 FUNCTION GetLocalTime(lpSystemTime AS LPSTR) AS LONG PASCAL FROM "GetLocalTime" LIB "kernel32.dll"

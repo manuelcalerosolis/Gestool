@@ -183,9 +183,13 @@ FUNCTION CntFacCli( lSimula, lPago, lExcCnt, lMessage, oTree, nAsiento, aSimula,
 
                nImpIva        := nIvaLFacCli( dbfFacCliL, nDouDiv, nRouDiv )
                nImpIvm        := nTotIFacCli( dbfFacCliL, nDouDiv, nRouDiv )
-               cCtaVent       := RetCtaVta( ( dbfFacCliL )->cRef, dbfArt )
 
-               if Empty( cCtaVent )
+               /*
+               Cuenta de venta si es una devolucion----------------------------
+               */
+
+               cCtaVent       := RetCtaVta( ( dbfFacCliL )->cRef, ( nImpDet < 0 ), dbfArt )
+               if empty( cCtaVent )
                   cCtaVent    := cCtaCliVta + RetGrpVta( ( dbfFacCliL )->cRef, cRuta, cCodEmp, dbfArt, nIva )
                end if
 
@@ -1387,11 +1391,6 @@ Function CntTiket( lSimula, lCobro, lDev, lMessage, oTree, nAsiento, aSimula, db
          Si el articulo no es un obsequio ni tiene control de almacen de tipo contadores
          */
 
-         cCtaVent    := RetCtaVta( ( dbfTikL )->cCbaTil, dbfArt )
-         if Empty( cCtaVent )
-            cCtaVent := cCtaCli() + RetGrpVta( ( dbfTikL )->cCbaTil, cRuta, cCodEmp, dbfArt, ( dbfTikL )->nIvaTil )
-         end if
-
          /*
          Importe de la linea---------------------------------------------------
          */
@@ -1448,9 +1447,22 @@ Function CntTiket( lSimula, lCobro, lDev, lMessage, oTree, nAsiento, aSimula, db
             nIvmDeta := - nIvmDeta
          end if
 
+         /*
+         cuenta de venta en funcion de si es una devolucion---------------------
+         */
+
+         cCtaVent    := RetCtaVta( ( dbfTikL )->cCbaTil, ( nImpDeta < 0 ), dbfArt )
+         if Empty( cCtaVent )
+            cCtaVent := cCtaCli() + RetGrpVta( ( dbfTikL )->cCbaTil, cRuta, cCodEmp, dbfArt, ( dbfTikL )->nIvaTil )
+         end if
+
+         /*
+         Acumula los importes--------------------------------------------------
+         */
+
          nPos        := aScan( aVentas, {|x| x[ 1 ] == cCtaVent } )
          if nPos == 0 // .and. nImpDeta != 0
-            aAdd( aVentas, { cCtaVent, ( dbfTikL )->nIvaTil, nImpDeta, nIvaDeta } )
+            aadd( aVentas, { cCtaVent, ( dbfTikL )->nIvaTil, nImpDeta, nIvaDeta } )
          else
             aVentas[ nPos, 3 ] += nImpDeta
             aVentas[ nPos, 4 ] += nIvaDeta
@@ -2115,8 +2127,11 @@ FUNCTION CntAlbCli( lSimula, lExcCnt, lMessage, oTree, nAsiento, aSimula, dbfAlb
                nImpPnt     := nPntLAlbCli( dbfAlbCliL, nDpvDiv )
                nImpIva     := nIvaLAlbCli( dbfAlbCliL, nDouDiv, nRouDiv )
 
-               cCtaVent    := RetCtaVta( ( dbfAlbCliL )->cRef, dbfArt )
+               /*
+               Cuenta de venta si estamos devolviendo----------------------------
+               */
 
+               cCtaVent    := RetCtaVta( ( dbfAlbCliL )->cRef, ( nImpDet < 0 ), dbfArt )
                if Empty( cCtaVent )
                   cCtaVent := cCtaCliVta + RetGrpVta( ( dbfAlbCliL )->cRef, cRuta, cCodEmp, dbfArt, nIva )
                end if
@@ -2805,8 +2820,7 @@ FUNCTION CntFacRec2( lSimula, lPago, lExcCnt, lMessage, oTree, nAsiento, aSimula
                nImpPnt     := nPntLFacRec( dbfFacRecL, nDpvDiv )
                nImpIva     := nIvaLFacRec( dbfFacRecL, nDouDiv, nRouDiv ) 
 
-               cCtaVent    := RetCtaVta( ( dbfFacRecL )->cRef, dbfArt )
-
+               cCtaVent    := RetCtaVta( ( dbfFacRecL )->cRef, ( nImpDet < 0 ), dbfArt )
                if Empty( cCtaVent )
                   cCtaVent := cCtaCliVta + RetGrpVta( ( dbfFacRecL )->cRef, cRuta, cCodEmp, dbfArt, nIva )
                end if
@@ -5462,8 +5476,8 @@ FUNCTION CntFacRec( lSimula, lPago, lExcCnt, lMessage, oTree, nAsiento, aSimula,
 
                nImpIva        := nIvaLFacRec( dbfFacRecL, nDouDiv, nRouDiv )
                nImpIvm        := nTotIFacRec( dbfFacRecL, nDouDiv, nRouDiv )
-               cCtaVent       := RetCtaVta( ( dbfFacRecL )->cRef, dbfArt )
 
+               cCtaVent       := RetCtaVta( ( dbfFacRecL )->cRef, ( nImpDet < 0 ), dbfArt )
                if Empty( cCtaVent )
                   cCtaVent    := cCtaCliVta + RetGrpVta( ( dbfFacRecL )->cRef, cRuta, cCodEmp, dbfArt, nIva )
                end if

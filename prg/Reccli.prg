@@ -718,7 +718,11 @@ end if
 
    ACTIVATE WINDOW oWndBrw VALID ( CloseFiles() )
 
-   if ValType( aNumRec ) == "A" .and. !empty( aNumRec[ 1 ] )
+   if uFieldempresa( 'lFltYea' )
+      oWndBrw:setYearCombobox()
+   end if
+
+   if isArray( aNumRec ) .and. !empty( aNumRec[ 1 ] )
 
       nOrdAnt  := (D():FacturasClientesCobros( nView ))->( OrdSetFocus( "nNumFac" ) )
       lFound   := ( D():FacturasClientesCobros( nView ) )->( dbSeek( aNumRec[ 1 ] ) )

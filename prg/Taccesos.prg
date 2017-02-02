@@ -1117,10 +1117,9 @@ Method setYearComboBox( nYear )
 
    DEFAULT nYear  := year( date() )
 
-   // msgalert(nYear)
-
    if !empty( ::oYearComboBox )
       ::oYearComboBox:set( str( nYear ) )
+      eval( ::oYearComboBox:bChange )
    end if 
 
 Return ( Self )
