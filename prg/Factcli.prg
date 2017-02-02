@@ -3340,7 +3340,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, hHash, bValid, nMode )
          :lHide               := .t.
       end with
 
-      oLinDetCamposExtra:addCamposExtra( oBrwLin )
+      //oLinDetCamposExtra:addCamposExtra( oBrwLin )
 
       if nMode != ZOOM_MODE
          oBrwLin:bLDblClick   := {|| EdtDeta( oBrwLin, bEdtDet, aTmp, .f., nMode ) }
@@ -10699,8 +10699,8 @@ STATIC FUNCTION BeginTrans( aTmp, nMode )
 
    CursorWait()
 
-   oBlock         := ErrorBlock( { | oError | ApoloBreak( oError ) } )
-   BEGIN SEQUENCE
+   /*oBlock         := ErrorBlock( { | oError | ApoloBreak( oError ) } )
+   BEGIN SEQUENCE*/
  
    /*
    Inicializaci-n de variables-------------------------------------------------
@@ -10755,11 +10755,20 @@ STATIC FUNCTION BeginTrans( aTmp, nMode )
       ( dbfTmpLin )->( OrdCondSet( "!Deleted()", {||!Deleted() } ) )
       ( dbfTmpLin )->( OrdCreate( cTmpLin, "nPosPrint", "Str( nPosPrint, 4 )", {|| Str( Field->nPosPrint ) } ) )
 
+      oLinDetCamposExtra:initArrayValue()
+
       if ( D():FacturasClientesLineas( nView ) )->( dbSeek( cFac ) )
+        
          while ( ( D():FacturasClientesLineas( nView ) )->cSerie + str( ( D():FacturasClientesLineas( nView ) )->nNumFac ) + ( D():FacturasClientesLineas( nView ) )->cSufFac ) == cFac .and. !( D():FacturasClientesLineas( nView ) )->( eof() )
+        
+            oLinDetCamposExtra:SetTemporalLines( ( D():FacturasClientesLineas( nView ) )->cSerie + str( ( D():FacturasClientesLineas( nView ) )->nNumFac ) + ( D():FacturasClientesLineas( nView ) )->cSufFac + str( ( D():FacturasClientesLineas( nView ) )->nNumLin ) + str( ( D():FacturasClientesLineas( nView ) )->nNumKit ), nMode )
+        
             dbPass( D():FacturasClientesLineas( nView ), dbfTmpLin, .t. )
+        
             ( D():FacturasClientesLineas( nView ) )->( dbSkip() )
+        
          end while
+      
       endif
 
       ( dbfTmpLin )->( dbGoTop() )
@@ -10982,7 +10991,7 @@ STATIC FUNCTION BeginTrans( aTmp, nMode )
 
    oDetCamposExtra:SetTemporal( aTmp[ _CSERIE ] + Str( aTmp[ _NNUMFAC ] ) + aTmp[ _CSUFFAC ], nMode )
 
-   RECOVER USING oError
+   /*RECOVER USING oError
 
       msgStop( "Imposible crear tablas temporales." + CRLF + ErrorMessage( oError ) )
 
@@ -10992,7 +11001,7 @@ STATIC FUNCTION BeginTrans( aTmp, nMode )
 
    END SEQUENCE
 
-   ErrorBlock( oBlock )
+   ErrorBlock( oBlock )*/
 
    CursorWE()
 
