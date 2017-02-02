@@ -41,7 +41,7 @@ CLASS TImpresoraTiket
    DATA  oIniApp
    DATA  cLastError
    DATA  nRetardo
-   DATA  cMru           INIT "Printer_16"
+   DATA  cMru           INIT "gc_printer2_16"
    DATA  cModel
 
    DATA  oFont

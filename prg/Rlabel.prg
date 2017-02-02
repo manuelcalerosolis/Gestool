@@ -174,7 +174,7 @@ FUNCTION RptLabel( oMenuItem, oWnd )
          HEAD     "Código",;
                   "Nombre";
          PROMPT   "Código";
-         MRU      "Edit_16";
+         MRU      "gc_document_text_pencil_16";
          BITMAP   "WebTopGreen" ;
          ALIAS    ( cDbfLblT) ;
          APPEND   ( WinAppRec( oWndBrw:oBrw, bEdit, cDbfLblT ) );

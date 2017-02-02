@@ -406,7 +406,7 @@ METHOD Activate( oMenuItem, oWnd )
                               "gc_document_empty_16",;
                               "gc_document_text_businessman_16",;
                               "gc_document_text_delete2_16",;
-                              "Package_book_red_16",;
+                              "gc_document_text_pencil_16",;
                               "gc_document_text_worker_16",;
                               "gc_cash_register_user_16" }
 

@@ -6800,7 +6800,7 @@ Static function BeginTrans( aTmp, aGet, nMode, lNewFile )
 
       if !empty( oBtnTipoVta )
          oBtnTipoVta:cPrompt           := "Ticket"
-         oBtnTipoVta:cxBmp             := "Cashier_user1_32"
+         oBtnTipoVta:cxBmp             := "gc_cash_register_user_32"
       end if
 
    case nMode == EDIT_MODE .or. nMode == ZOOM_MODE .or. nMode == DUPL_MODE
@@ -9114,13 +9114,13 @@ Static Function ClickButtonsMode( aTmp )
 
             aTmp[ _CTIPTIK ]     := SAVTIK
             oBtnTipoVta:cPrompt  := "Ticket"
-            oBtnTipoVta:cxBmp    := "Cashier_user1_32"
+            oBtnTipoVta:cxBmp    := "gc_cash_register_user_32"
 
       case aTmp[ _CTIPTIK ] == SAVALB
 
          aTmp[ _CTIPTIK ]        := SAVTIK
          oBtnTipoVta:cPrompt     := "Ticket"
-         oBtnTipoVta:cxBmp       := "Cashier_user1_32"
+         oBtnTipoVta:cxBmp       := "gc_cash_register_user_32"
 
    end case
 
@@ -18441,7 +18441,7 @@ Static Function AsistenteDevolucionTiket( aTmp, aGet, nMode, lDevolucion )
 
       else
 
-         o                    := ApoloBtnBmp():Redefine( IDOK, "Document_delete_32", , , , , {|| FinalizaDevolucionTicket( , aTmp, aGet, dbfTmp, oNumero, oBrwDev, oDlg ) }, oDlg, , , .f., .f., "Emitir vale", , , , .t., "TOP", .t., , , .f. )
+         o                    := ApoloBtnBmp():Redefine( IDOK, "gc_document_text_delete_32", , , , , {|| FinalizaDevolucionTicket( , aTmp, aGet, dbfTmp, oNumero, oBrwDev, oDlg ) }, oDlg, , , .f., .f., "Emitir vale", , , , .t., "TOP", .t., , , .f. )
 
          oDlg:bStart          := {|| o:Show() }
 

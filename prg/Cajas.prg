@@ -3213,7 +3213,7 @@ Static Function InitBrwBigCaj( oDlg, oImgCaj, oLstCaj, dbfCaj )
    ( dbfCaj )->( dbGoTop() )
    while !( dbfCaj )->( eof() )
 
-      oImgCaj:Add( TBitmap():Define( "CASHIER_48", , oDlg ) )
+      oImgCaj:Add( TBitmap():Define( "gc_cash_register_48", , oDlg ) )
 
       oLstCaj:InsertItem( ( dbfCaj )->( OrdKeyNo() ) - 1, Capitalize( ( dbfCaj )->cNomCaj ) )
 

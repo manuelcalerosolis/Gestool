@@ -246,7 +246,7 @@ Function CfgTikItems( oMenuItem, oWnd )
                "Nombre";
       PROMPT   "Código",;
                "Nombre";
-      MRU      "Document_edit_16";
+      MRU      "gc_document_text_pencil_16";
       BITMAP   "WebTopGreen" ;
 		ALIAS		( dbfDoc ) ;
       APPEND   ( WinAppRec( oWndBrw:oBrw, bEdtTikItems, dbfDoc ) );

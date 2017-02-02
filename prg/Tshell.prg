@@ -2403,7 +2403,7 @@ METHOD CreateXFromCode()
          :nHeadBmpNo          := 1
          :nBtnBmp             := 1
          :nHeadBmpAlign       := 1
-         :AddResource( "Edit_16" )
+         :AddResource( "gc_document_text_pencil_16" )
       end with
 
    end if

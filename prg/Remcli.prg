@@ -2145,7 +2145,7 @@ METHOD EdtRecMenu( oDlg )
 
             MENUITEM    "&1. Modificar cuenta";
                MESSAGE  "Modificar cuenta" ;
-               RESOURCE "Address_book2_16" ;
+               RESOURCE "gc_book_telephone_16" ;
                ACTION   ( if( !Empty( ::oDbf:cCodRem ), ::oCtaRem:Edit(), MsgStop( "Cuenta vacía" ) ) )
 
             MENUITEM    "&2. Modificar recibo";

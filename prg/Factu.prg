@@ -3788,7 +3788,7 @@ Function TctCreateButtonBar()
    oItem:cPrompt        := "Usuarios"
    oItem:cMessage       := "Acceso a los usuarios del programa"
    oItem:bAction        := {|| BrwBigUser() }
-   oItem:cBmp           := "Businessmen_16"
+   oItem:cBmp           := "gc_businessmen2_16"
    oItem:cBmpBig        := "Businessmen_32"
 
    oItem                := oItemArchivo:Add()
@@ -3908,7 +3908,7 @@ Function BuildTctMenu()
             HELPID   "01040" ;
             MESSAGE  "Base de datos de las cajas del establecimiento" ;
             ACTION   ( SelCajTactil() );
-            RESOURCE "Cashier_16" ;
+            RESOURCE "gc_cash_register_16" ;
 
          MENUITEM    "&5. Usuarios";
             MESSAGE  "Usuarios" ;
@@ -4207,7 +4207,7 @@ Function BuildTpvMenu()
             HELPID   "01040" ;
             MESSAGE  "Base de datos de las cajas del establecimiento" ;
             ACTION   ( SelCajTactil() );
-            RESOURCE "Cashier_16" ;
+            RESOURCE "gc_cash_register_16" ;
 
          MENUITEM    "&5. Usuarios";
             MESSAGE  "Usuarios" ;

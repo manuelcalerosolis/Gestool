@@ -381,7 +381,7 @@ FUNCTION HisMovAlm( oMenuItem, oWnd )
                "Origen almacén",;
                "Destino almacén" ;
       ALIAS    ( dbfHisMov ) ;
-      MRU      "Package_book_red_16" ;
+      MRU      "gc_document_text_pencil_16" ;
       BITMAP   Rgb( 128, 57, 123 ) ;
       APPEND   ( WinAppRec( oWndBrw:oBrw, bEdit, dbfHisMov ) );
 		DUPLICAT ( WinDupRec( oWndBrw:oBrw, bEdit, dbfHisMov ) );

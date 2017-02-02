@@ -6344,7 +6344,7 @@ STATIC FUNCTION EdtRotorMenu( aTmp, aGet, oDlg, oBrw, nMode )
 
             MENUITEM "&4. Añadir factura de cliente";
             MESSAGE  "Añade una factura de cliente" ;
-            RESOURCE "Document_user1_16";
+            RESOURCE "gc_document_text_user_16";
             ACTION   ( SavClient( aTmp, aGet, oDlg, oBrw, nMode ), FactCli( nil, nil, { "Cliente" => ( D():Clientes( nView ) )->Cod } ) )
 
             MENUITEM "&5. Añadir tiket de cliente";
