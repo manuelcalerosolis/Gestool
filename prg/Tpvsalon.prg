@@ -1154,7 +1154,7 @@ Method InitSelector( lPuntosPendientes, lShowLlevar, nSelectOption ) CLASS TTpvS
 
    end if
 
-   oGrupo                     := TDotNetGroup():New( oCarpeta, 66, "Acciones", .f., , "Exit_32" )
+   oGrupo                     := TDotNetGroup():New( oCarpeta, 66, "Acciones", .f., , "gc_door_open2_32" )
       oBoton                  := TDotNetButton():New( 60, oGrupo, "End32",       "Salir",          1, {|| ::oSelectedPunto := nil, ::Close( IDCANCEL ) }, , , .f., .f., .f. )
 
    oGrupo                     := TDotNetGroup():New( oCarpeta, 246, "Leyenda ubicaciones", .f., , "" )

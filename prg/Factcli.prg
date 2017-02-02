@@ -3030,7 +3030,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, hHash, bValid, nMode )
          :bEditValue          := {|| ( dbfTmpLin )->lLinOfe }
          :nWidth              := 60
          :lHide               := .t.   
-         :SetCheck( { "Star_Red_16", "Nil16" } )
+         :SetCheck( { "gc_star2_16", "Nil16" } )
       end with
 
       with object ( oBrwLin:AddCol() )

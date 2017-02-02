@@ -7679,7 +7679,7 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbfTmpL, oBrw, bWhen, cCodArt, nMode, aTik )
             case cName == "Promoción"
 
                @ 0, 0 BITMAP aGet[ _LINPROMO ] ;
-                           RESOURCE "Star_Blue_16";
+                           RESOURCE "gc_star2_blue_16";
                            NOBORDER ;
                            SIZE     16, 16 ;
                            OF       oDlgDet
@@ -7689,7 +7689,7 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbfTmpL, oBrw, bWhen, cCodArt, nMode, aTik )
             case cName == "Oferta"
 
                @ 0, 0 BITMAP aGet[ _LLINOFE ] ;
-                           RESOURCE "Star_Red_16";
+                           RESOURCE "gc_star2_16";
                            NOBORDER ;
                            SIZE     16, 16 ;
                            OF       oDlgDet

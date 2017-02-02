@@ -156,7 +156,6 @@ TdprnC3.prg             									\
 Animat.prg              									\
 Tdelobs.prg             									\
 Tdeltarifasclientes.prg 									\
-Tankes.prg              									\
 Grpcli.prg              									\
 Atipicas.prg 													\
 Grpfacauto.prg 												\
@@ -609,7 +608,6 @@ Ttikstka.obj                                       \
 TStockMinimoFamilia.obj                            \
 Xvalalmg.obj                                       \
 Printer.obj                                        \
-Tankes.obj                                         \
 Grpcli.obj                                         \
 Atipicas.obj 				                           \
 Grpfacauto.obj 			                           \
@@ -1079,7 +1077,6 @@ $(OBJ)\Tdeltarifasclientes.obj   	+
 $(OBJ)\Printer.obj               	+
 $(OBJ)\Webbar.obj                	+
 $(OBJ)\Webmap.obj                	+
-$(OBJ)\Tankes.obj                	+
 $(OBJ)\Grpcli.obj                	+
 $(OBJ)\Atipicas.obj 						+
 $(OBJ)\Grpfacauto.obj           		+

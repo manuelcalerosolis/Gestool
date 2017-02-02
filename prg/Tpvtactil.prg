@@ -2250,7 +2250,7 @@ METHOD Resource() CLASS TpvTactil
       :lHide                  := .t.
       :bEditValue             := {|| ::oTemporalLinea:lInPromo }
       :nWidth                 := ::ResizedCol( 16 )
-      :SetCheck( { "Star_Blue_16", "Nil16" } )
+      :SetCheck( { "gc_star2_blue_16", "Nil16" } )
    end with
 
    with object ( ::oBrwLineas:AddCol() )
@@ -10367,7 +10367,7 @@ METHOD CambiarUnidadesPrecio( lGetPrecio )
    end if 
 
    if ::lGetPrecio
-      ::oBtnPrecioUnidades:LoadBitmap( "Currency_euro_32" ) 
+      ::oBtnPrecioUnidades:LoadBitmap( "gc_currency_euro_32" ) 
    else
       ::oBtnPrecioUnidades:LoadBitmap( "Paginator_32" )
    end if 

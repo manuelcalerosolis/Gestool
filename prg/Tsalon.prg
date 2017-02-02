@@ -358,7 +358,7 @@ Method InitSelector( lPuntosPendientes, lLlevar, dbfTikT ) CLASS TSalon
       ::oBtnLlevar            := TDotNetButton():New( 60, oGrupo, "gc_motor_scooter_32",    "Para llevar",    len( ::oSalaVenta:aSalas ) + 2, {|| ::LoadLlevarPendientes( dbfTikT, lPuntosPendientes ) }, , , .f., .f., .f. )
    end if
 
-   oGrupo                     := TDotNetGroup():New( oCarpeta, 66, "Acciones", .f., , "Exit_32" )
+   oGrupo                     := TDotNetGroup():New( oCarpeta, 66, "Acciones", .f., , "gc_door_open2_32" )
       oBoton                  := TDotNetButton():New( 60, oGrupo, "End32", "Salir",  1, {|| ::oSelectedPunto := nil, ::Close( IDCANCEL ) }, , , .f., .f., .f. )
 
    oGrupo                     := TDotNetGroup():New( oCarpeta, 126, "Leyenda", .f., , "" )
