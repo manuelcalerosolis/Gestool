@@ -281,8 +281,6 @@ BAN_VENE BITMAP "..\\bmp\\res141.bmp"
 
 BAN_YUG BITMAP "..\\bmp\\res142.bmp"
 
-FOLDER16 BITMAP "..\\bmp\\res307.bmp"
-
 USER1_MONEY2_32 BITMAP "..\\bmp\\User1_money2_32.bmp"
 
 

@@ -139,7 +139,7 @@ function RPreview( oDevice )
           ACTION Zoom()                                ;
           TOOLTIP Strtran(TXT_ZOOM,"&","") NOBORDER
 
-     DEFINE BUTTON oTwoPages RESOURCE "Two_Pages" OF oBar  ;
+     DEFINE BUTTON oTwoPages RESOURCE "gc_copy_16" OF oBar  ;
           MESSAGE TXT_PREVIEW_ON_TWO_PAGES       ;
           ACTION TwoPages()                      ;
           TOOLTIP Strtran(TXT_TWOPAGES,"&","") NOBORDER
@@ -317,10 +317,10 @@ static function BuildMenu()
 
                MENUITEM oMenuTwoPages PROMPT TXT_TWOPAGES ACTION TwoPages(.T.) ;
                     ENABLED ;
-                    MESSAGE TXT_PREVIEW_ON_TWO_PAGES RESOURCE "Two_Pages"
+                    MESSAGE TXT_PREVIEW_ON_TWO_PAGES RESOURCE "gc_copy_16"
                MENUITEM oMenuOnePage PROMPT TXT_ONEPAGE ACTION TwoPages(.T.) ;
                     DISABLED ;
-                    MESSAGE TXT_PREVIEW_ON_ONE_PAGE RESOURCE "One_Page"
+                    MESSAGE TXT_PREVIEW_ON_ONE_PAGE RESOURCE "gc_document_white_16"
           ENDMENU
    ENDMENU
 
@@ -581,7 +581,7 @@ static function TwoPages(lMenu)
           endif
 
           oTwoPages:FreeBitmaps()
-          oTwoPages:LoadBitmaps("One_Page")
+          oTwoPages:LoadBitmaps("gc_document_white_16")
           oTwoPages:cMsg      := TXT_PREVIEW_ON_ONE_PAGE
           oTwoPages:cTooltip  := StrTran(TXT_ONEPAGE,"&","")
           oMenuTwoPages:disable()
@@ -590,7 +590,7 @@ static function TwoPages(lMenu)
      else
 
           oTwoPages:FreeBitmaps()
-          oTwoPages:LoadBitmaps("Two_Pages")
+          oTwoPages:LoadBitmaps("gc_copy_16")
           oTwoPages:cMsg     := TXT_PREVIEW_ON_TWO_PAGES
           oTwoPages:cTooltip := StrTran(TXT_TWOPAGES,"&","")
           oMenuTwoPages:enable()

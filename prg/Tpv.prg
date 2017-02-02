@@ -6800,7 +6800,7 @@ Static function BeginTrans( aTmp, aGet, nMode, lNewFile )
 
       if !empty( oBtnTipoVta )
          oBtnTipoVta:cPrompt           := "Ticket"
-         oBtnTipoVta:cxBmp             := "Cashier_user1_32"
+         oBtnTipoVta:cxBmp             := "gc_cash_register_user_32"
       end if
 
    case nMode == EDIT_MODE .or. nMode == ZOOM_MODE .or. nMode == DUPL_MODE
@@ -7679,7 +7679,7 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbfTmpL, oBrw, bWhen, cCodArt, nMode, aTik )
             case cName == "Promoción"
 
                @ 0, 0 BITMAP aGet[ _LINPROMO ] ;
-                           RESOURCE "Star_Blue_16";
+                           RESOURCE "gc_star2_blue_16";
                            NOBORDER ;
                            SIZE     16, 16 ;
                            OF       oDlgDet
@@ -7689,7 +7689,7 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbfTmpL, oBrw, bWhen, cCodArt, nMode, aTik )
             case cName == "Oferta"
 
                @ 0, 0 BITMAP aGet[ _LLINOFE ] ;
-                           RESOURCE "Star_Red_16";
+                           RESOURCE "gc_star2_16";
                            NOBORDER ;
                            SIZE     16, 16 ;
                            OF       oDlgDet
@@ -9114,13 +9114,13 @@ Static Function ClickButtonsMode( aTmp )
 
             aTmp[ _CTIPTIK ]     := SAVTIK
             oBtnTipoVta:cPrompt  := "Ticket"
-            oBtnTipoVta:cxBmp    := "Cashier_user1_32"
+            oBtnTipoVta:cxBmp    := "gc_cash_register_user_32"
 
       case aTmp[ _CTIPTIK ] == SAVALB
 
          aTmp[ _CTIPTIK ]        := SAVTIK
          oBtnTipoVta:cPrompt     := "Ticket"
-         oBtnTipoVta:cxBmp       := "Cashier_user1_32"
+         oBtnTipoVta:cxBmp       := "gc_cash_register_user_32"
 
    end case
 
@@ -18162,7 +18162,7 @@ Static Function lFidelity( aGet, aTmp, nMode )
 
    oDlg  := TDialog():New( , , , , , "Fidelity" )
 
-      TBitmap():ReDefine( 700, "FidelizacionClientes", , oDlg )
+      TBitmap():ReDefine( 600, "gc_id_card_transp_48", , oDlg,)
 
       ApoloBtnBmp():Redefine( 500, "gc_id_card_32", , , , , {|| oDlg:end( IDOK ), if( !empty( aGet[ _CCLITIK ] ), aGet[ _CCLITIK ]:SetFocus(), ) }, oDlg, , , .f., .f., "Si. [ F5 ]", ,,, .t., "TOP", .t., , , .f., )
 
@@ -18441,7 +18441,7 @@ Static Function AsistenteDevolucionTiket( aTmp, aGet, nMode, lDevolucion )
 
       else
 
-         o                    := ApoloBtnBmp():Redefine( IDOK, "Document_delete_32", , , , , {|| FinalizaDevolucionTicket( , aTmp, aGet, dbfTmp, oNumero, oBrwDev, oDlg ) }, oDlg, , , .f., .f., "Emitir vale", , , , .t., "TOP", .t., , , .f. )
+         o                    := ApoloBtnBmp():Redefine( IDOK, "gc_document_text_delete_32", , , , , {|| FinalizaDevolucionTicket( , aTmp, aGet, dbfTmp, oNumero, oBrwDev, oDlg ) }, oDlg, , , .f., .f., "Emitir vale", , , , .t., "TOP", .t., , , .f. )
 
          oDlg:bStart          := {|| o:Show() }
 

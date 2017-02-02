@@ -1946,13 +1946,13 @@ METHOD lGrupoCaja( lInitGroup, lImp ) CLASS TNewInfGen
    ::oGrupoCaja:Cargo:ValidHasta := {|oGet| if( cCajas( if( !Empty( oGet ), oGet, ::oHasta ), ::oDbfCaj:cAlias, ::oSayHasta ), ( ::ChangeValor(), .t. ), .f. ) }
    ::oGrupoCaja:Cargo:lImprimir  := lImp
 
-   ::oImageList:AddMasked( TBitmap():Define( "Cashier_16" ), Rgb( 255, 0, 255 ) )
+   ::oImageList:AddMasked( TBitmap():Define( "gc_cash_register_16" ), Rgb( 255, 0, 255 ) )
 
    if lInitGroup != nil
 
       aAdd( ::aSelectionGroup, ::oGrupoCaja )
 
-      ::oImageGroup:AddMasked( TBitmap():Define( "Cashier_16" ), Rgb( 255, 0, 255 ) )
+      ::oImageGroup:AddMasked( TBitmap():Define( "gc_cash_register_16" ), Rgb( 255, 0, 255 ) )
 
       ::oGrupoCaja:Cargo:Imagen  := len( ::oImageGroup:aBitmaps ) -1
 

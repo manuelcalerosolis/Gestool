@@ -3021,8 +3021,9 @@ Function ComprobarUser( dbfUsr )
    DEFINE DIALOG oDlg RESOURCE "TPV_USER"
 
       REDEFINE BITMAP oBmp;
-         RESOURCE "TpvUser" ;
-         ID       150 ;
+         RESOURCE "gc_security_agent_48" ;
+         TRANSPARENT ;
+         ID       500 ;
          OF       oDlg
 
       REDEFINE GET cClave;
@@ -3078,8 +3079,9 @@ Static function IniciarClave( dbfUsr, lOldPass )
    DEFINE DIALOG oDlg RESOURCE "INICIAR_CLAVE"
 
       REDEFINE BITMAP oBmp;
-         RESOURCE "IniciarClave" ;
-         ID       100 ;
+         RESOURCE "gc_security_agent_48" ;
+         TRANSPARENT ;
+         ID       500 ;
          OF       oDlg
 
       REDEFINE GET oAntClave VAR cAntClave;

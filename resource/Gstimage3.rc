@@ -4,33 +4,7 @@
 #include <commctrl.h>
 #include <richedit.h>
 
-DOCUMENT16 BITMAP "..\\bmp\\Document_plain_16.bmp"
-
-
-ANGEL24 BITMAP "..\\bmp\\Angel_24.bmp"
-SECURITY24 BITMAP "..\\bmp\\Security_Agent_24.bmp"
-USERHEADSET24 BITMAP "..\\bmp\\User_Headset_24.bmp"
-DUDE224 BITMAP "..\\bmp\\Dude2_24.bmp"
 BAR_01 BITMAP "..\\bmp\\Bar_01.bmp"
-FOLDER_INTRO16 BITMAP "..\\bmp\\folder_into.bmp"
-
-
-WORKER2_16 BITMAP "..\\bmp\\Worker2_16.bmp"
-WORKER2_32 BITMAP "..\\bmp\\Worker2_32.bmp"
-WORKER2_MONEY_16 BITMAP "..\\bmp\\Worker2_Money_16.bmp"
-WORKER2_MONEY_32 BITMAP "..\\bmp\\Worker2_Money_32.bmp"
-GROUP_WORKER2_16 BITMAP "..\\bmp\\Group_Worker2_16.bmp"
-GROUP_WORKER2_32 BITMAP "..\\bmp\\Group_Worker2_32.bmp"
-WORKER2_CLOCK_16 BITMAP "..\\bmp\\Worker2_Clock_16.bmp"
-WORKER2_CLOCK_32 BITMAP "..\\bmp\\Worker2_Clock_32.bmp"
-WORKER2_HAMMER2_16 BITMAP "..\\bmp\\Worker2_Hammer2_16.bmp"
-WORKER2_HAMMER2_32 BITMAP "..\\bmp\\Worker2_Hammer2_32.bmp"
-WORKER2_FORM_RED_32 BITMAP "..\\bmp\\Worker2_Form_Red_32.bmp"
-
-ROBOT_16 BITMAP "..\\bmp\\Robot_16.bmp"
-ROBOT_32 BITMAP "..\\bmp\\Robot_32.bmp"
-ROBOT_MONEY2_16 BITMAP "..\\bmp\\Robot_Money2_16.bmp"
-ROBOT_MONEY2_32 BITMAP "..\\bmp\\Robot_Money2_32.bmp"
 
 BULLET_BALL_GLASS_BLUE_16 BITMAP "..\\bmp\\Bullet_Ball_Glass_Blue_16.bmp"
 BULLET_BALL_GLASS_GREEN_16 BITMAP "..\\bmp\\Bullet_Ball_Glass_Green_16.bmp"
@@ -44,24 +18,3 @@ BULLET_TRIANGLE_BLUE_16 BITMAP "..\\bmp\\Bullet_Triangle_Blue_16.bmp"
 BULLET_TRIANGLE_GREEN_16 BITMAP "..\\bmp\\Bullet_Triangle_Green_16.bmp"
 BULLET_TRIANGLE_RED_16 BITMAP "..\\bmp\\Bullet_Triangle_Red_16.bmp"
 BULLET_TRIANGLE_YELLOW_16 BITMAP "..\\bmp\\Bullet_Triangle_Yellow_16.bmp"
-
-TAPE_MEASURE1_16 BITMAP "..\\bmp\\Tape_Measure1_16.bmp"
-TAPE_MEASURE1_32 BITMAP "..\\bmp\\Tape_Measure1_32.bmp"
-
-TEXT_RICH_16 BITMAP "..\\bmp\\Text_Rich_16.bmp"
-COLUMN_PREFERENCES_16 BITMAP "..\\bmp\\Column_Preferences_16.bmp"
-
-BEER_GLASS_BUTTON_16 BITMAP "..\\bmp\\Beer_Glass_Button_16.bmp"
-BEER_GLASS_BUTTON_32 BITMAP "..\\bmp\\Beer_Glass_Button_32.bmp"
-
-CUT_16 BITMAP "..\\bmp\\Cut_16.bmp"
-PASTE_16 BITMAP "..\\bmp\\Paste_16.bmp"
-REDO_16 BITMAP "..\\bmp\\Redo_16.bmp"
-UNDO1_16 BITMAP "..\\bmp\\Undo1_16.bmp"
-TEXT_UNDERLINED_16 BITMAP "..\\bmp\\text_underlined_16.bmp"
-TEXT_ITALICS_16 BITMAP "..\\bmp\\text_italics_16.bmp"
-TEXT_ALIGN_RIGHT_16 BITMAP "..\\bmp\\text_align_right_16.bmp"
-TEXT_ALIGN_LEFT_16 BITMAP "..\\bmp\\text_align_left_16.bmp"
-PIN_BLUE_16 BITMAP "..\\bmp\\pin_blue_16.bmp"
-FOLDER2_RED_16 BITMAP "..\\bmp\\Folder2_Red_16.bmp"
-FOLDER2_RED_32 BITMAP "..\\bmp\\Folder2_Red_32.bmp"

@@ -2150,7 +2150,7 @@ END CLASS
          ID       ( id + 3 ) ;
          WHEN     ( ! empty( ::oRTF:GetSel() ) .and. ! ::oRTF:lReadOnly ) ;
          OF       oDlg ;
-         RESOURCE "Cut_16" ;
+         RESOURCE "gc_cut_16" ;
          NOBORDER ;
          TOOLTIP  "Cortar" ;
 
@@ -2170,7 +2170,7 @@ END CLASS
          ID       ( id + 5 ) ;
          WHEN     ( ! empty( ::oClp:GetText() ) .and. ! ::oRTF:lReadOnly ) ;
          OF       oDlg ;
-         RESOURCE "Paste_16" ;
+         RESOURCE "gc_clipboard_paste_16" ;
          NOBORDER ;
          TOOLTIP  "Pegar" ;
 
@@ -2180,7 +2180,7 @@ END CLASS
          ID       ( id + 6 ) ;
          WHEN     ( ::oRTF:SendMsg( EM_CANUNDO ) != 0 ) ;
          OF       oDlg ;
-         RESOURCE "Undo1_16" ;
+         RESOURCE "gc_undo_inv_16" ;
          NOBORDER ;
          TOOLTIP  "Deshacer" ;
 
@@ -2190,7 +2190,7 @@ END CLASS
          ID       ( id + 7 ) ;
          WHEN     ( ::oRTF:SendMsg( EM_CANREDO ) != 0 ) ;
          OF       oDlg ;
-         RESOURCE "Redo_16" ;
+         RESOURCE "gc_undo_16" ;
          NOBORDER ;
          TOOLTIP  "Rehacer" ;
 
@@ -2224,7 +2224,7 @@ END CLASS
          ID       ( id + 11 ) ;
          WHEN     ( ! ::oRTF:lReadOnly ) ;
          OF       oDlg ;
-         RESOURCE "Text_Bold" ;
+         RESOURCE "gc_text_bold_16" ;
          NOBORDER ;
          TOOLTIP  "Negrita" ;
 
@@ -2234,7 +2234,7 @@ END CLASS
          ID       ( id + 12 ) ;
          WHEN     ( ! ::oRTF:lReadOnly ) ;
          OF       oDlg ;
-         RESOURCE "Text_Italics_16" ;
+         RESOURCE "gc_text_italics_16" ;
          NOBORDER ;
          TOOLTIP  "Cursiva" ;
          
@@ -2244,7 +2244,7 @@ END CLASS
          ID       ( id + 13 ) ;
          WHEN     ( ! ::oRTF:lReadOnly ) ;
          OF       oDlg ;
-         RESOURCE "Text_Underlined_16" ;
+         RESOURCE "gc_text_underline_16" ;
          NOBORDER ;
          TOOLTIP  "Subrayado" ;
 
@@ -2254,7 +2254,7 @@ END CLASS
          ID       ( id + 14 ) ;
          WHEN     ( ! ::oRTF:lReadOnly ) ;
          OF       oDlg ;
-         RESOURCE "Text_Align_Left_16" ;
+         RESOURCE "gc_text_align_left_16" ;
          NOBORDER ;
          TOOLTIP  "Izquierda" ;
 
@@ -2264,7 +2264,7 @@ END CLASS
          ID       ( id + 15 ) ;
          WHEN     ( ! ::oRTF:lReadOnly ) ;
          OF       oDlg ;
-         RESOURCE "Text_Center" ;
+         RESOURCE "gc_text_center_16" ;
          NOBORDER ;
          TOOLTIP  "Centro" ;
 
@@ -2274,7 +2274,7 @@ END CLASS
          ID       ( id + 16 ) ;
          WHEN     ( ! ::oRTF:lReadOnly ) ;
          OF       oDlg ;
-         RESOURCE "Text_Align_Right_16" ;
+         RESOURCE "gc_text_align_right_16" ;
          NOBORDER ;
          TOOLTIP  "Derecha" ;
 
@@ -2284,7 +2284,7 @@ END CLASS
          ID       ( id + 17 ) ;
          WHEN     ( ! ::oRTF:lReadOnly ) ;
          OF       oDlg ;
-         RESOURCE "Text_Justified_16" ;
+         RESOURCE "gc_text_justified_16" ;
          NOBORDER ;
          TOOLTIP  "Justificado" ;
 
@@ -2294,7 +2294,7 @@ END CLASS
          ID       ( id + 18 ) ;
          WHEN     ( ! ::oRTF:lReadOnly .and. ! ::oRTF:GetNumbering() ) ;
          OF       oDlg ;
-         RESOURCE "Pin_Blue_16" ;
+         RESOURCE "gc_pin_blue_16" ;
          NOBORDER ;
          TOOLTIP  "Viñetas" ;
 

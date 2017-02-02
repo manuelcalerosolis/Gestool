@@ -4,10 +4,6 @@
 #include <commctrl.h>
 #include <richedit.h>
 
-CONECTARMYSQL BITMAP "..\\bmp\\ConectarMySql.bmp"
-
-
-
 Shape_circle_32 BITMAP "..\\bmp\\Shape_circle_32.bmp"
 Shape_ellipse_32 BITMAP "..\\bmp\\Shape_ellipse_32.bmp"
 Shape_square_32 BITMAP "..\\bmp\\Shape_square_32.bmp"

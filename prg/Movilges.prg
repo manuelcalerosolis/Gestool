@@ -144,8 +144,8 @@ Method New( oMenuItem, oWnd )
    ::lExportarComentario:= .f.
    ::lExportarAtipica   := .f.
    ::oImageList         := TImageList():New()
-   ::oImageList:AddMasked( TBitmap():Define( "Folder16" ), Rgb( 255, 0, 255 ) )
-   ::oImageList:AddMasked( TBitmap():Define( "Folder16" ), Rgb( 255, 0, 255 ) )
+   ::oImageList:AddMasked( TBitmap():Define( "gc_folder_open_16" ), Rgb( 255, 0, 255 ) )
+   ::oImageList:AddMasked( TBitmap():Define( "gc_folder_open_16" ), Rgb( 255, 0, 255 ) )
    ::cCodEmp            := cCodEmp()
    ::nMedidor           := 0
 

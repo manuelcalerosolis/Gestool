@@ -4,8 +4,3 @@
 #include <commctrl.h>
 #include <richedit.h>
 
-
-
-flag_eu_48_alpha BITMAP "..\\bmp\\flag_eu_48_alpha.bmp"
-
-

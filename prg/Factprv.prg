@@ -2387,7 +2387,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, cCodPrv, cCodArt, nMode, cNumAlb 
             :nWidth           := 22
             :AddResource( "Cnt16" )
             :AddResource( "Sel16" )
-            :AddResource( "UndoRed16" )
+            :AddResource( "gc_undo_16" )
          end with
 
          with object ( oBrwPgo:AddCol() )

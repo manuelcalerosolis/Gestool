@@ -2250,7 +2250,7 @@ METHOD Resource() CLASS TpvTactil
       :lHide                  := .t.
       :bEditValue             := {|| ::oTemporalLinea:lInPromo }
       :nWidth                 := ::ResizedCol( 16 )
-      :SetCheck( { "Star_Blue_16", "Nil16" } )
+      :SetCheck( { "gc_star2_blue_16", "Nil16" } )
    end with
 
    with object ( ::oBrwLineas:AddCol() )
@@ -3615,7 +3615,7 @@ METHOD CargaBrowseFamilias() CLASS TpvTactil
 
    // Caso especial de favoritos--------------------------------------------------
 
-   aAdd( ::aFamilias, { "Favoritos", nil, {|| ::CargaFavoritos() }, "gc_star2_48" } ) 
+   aAdd( ::aFamilias, { "Favoritos", nil, {|| ::CargaFavoritos() }, "gc_star2_transp_48" } ) 
 
    // Preguntamos si hay menus activos y es no es de acompañamiento---------------
 
@@ -10367,7 +10367,7 @@ METHOD CambiarUnidadesPrecio( lGetPrecio )
    end if 
 
    if ::lGetPrecio
-      ::oBtnPrecioUnidades:LoadBitmap( "Currency_euro_32" ) 
+      ::oBtnPrecioUnidades:LoadBitmap( "gc_currency_euro_32" ) 
    else
       ::oBtnPrecioUnidades:LoadBitmap( "Paginator_32" )
    end if 

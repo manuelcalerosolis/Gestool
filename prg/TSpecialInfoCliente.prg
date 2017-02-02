@@ -63,7 +63,7 @@ METHOD Resource() CLASS TSpecialInfoCliente
       oBrwCliente:nMarqueeStyle         := 6
       oBrwCliente:cName                 := "Máquinas en informe de clientes"
 
-      oBrwCliente:setTree( TDataCenter():treeProductFromSAT(), { "Navigate_Minus_16", "Navigate_Plus_16" } )
+      oBrwCliente:setTree( TDataCenter():treeProductFromSAT(), { "gc_navigate_minus_16", "gc_navigate_plus_16" } )
 
       if len( oBrwCliente:aCols ) > 0
          oBrwCliente:aCols[ 1 ]:cHeader := ""

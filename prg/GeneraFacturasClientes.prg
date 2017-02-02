@@ -579,7 +579,7 @@ METHOD SetTreeBrowse() CLASS GeneraFacturasClientes
 
    if empty( ::oBrwAlbaranes:oTree )
 
-      ::oBrwAlbaranes:SetTree( ::oTreeTotales, { "Navigate_Minus_16", "Navigate_Plus_16", "Nil16" } ) 
+      ::oBrwAlbaranes:SetTree( ::oTreeTotales, { "gc_navigate_minus_16", "gc_navigate_plus_16", "Nil16" } ) 
 
       if len( ::oBrwAlbaranes:aCols ) > 1
          ::oBrwAlbaranes:aCols[ 1 ]:cHeader    := ""
@@ -685,7 +685,7 @@ METHOD CreateTree() CLASS GeneraFacturasClientes
 
    TreeInit()
 
-   ::oTreeTotales                := TreeBegin( "Navigate_Minus_16", "Navigate_Plus_16" )
+   ::oTreeTotales                := TreeBegin( "gc_navigate_minus_16", "gc_navigate_plus_16" )
 
    ::InitClaves()
 

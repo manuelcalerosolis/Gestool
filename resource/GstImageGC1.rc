@@ -424,15 +424,9 @@ GC_SAFE_INTO_64 BITMAP "..\\bmp\\gc_safe_into_64.bmp"
 GC_DOCUMENT_TEXT_USER_48 BITMAP "..\\bmp\\gc_document_text_user_48.bmp"
 GC_DOCUMENT_TEXT_USER_48 BITMAP "..\\bmp\\gc_document_text_user_48.bmp"
 GC_DOCUMENT_WHITE_16 BITMAP "..\\bmp\\gc_document_white_16.bmp"
-
-DOCUMENT_USER1_32 BITMAP "..\\bmp\\document_user1_32.bmp"
-MONEY2_BUSINESSMAN_32 BITMAP "..\\bmp\\Money2_businessman_32.bmp"
 GC_UNDO_16 BITMAP "..\\bmp\\gc_undo_16.bmp"
 GC_FLASH_16 BITMAP "..\\bmp\\gc_flash_16.bmp"
-
 MAIL16 BITMAP "..\\bmp\\gc_mail_earth_16.bmp"
-DOCUMENT_MONEY2_16 BITMAP "..\\bmp\\Document_money2_16.bmp"
-
 GC_NOTE_16 BITMAP "..\\bmp\\gc_note_16.bmp"
 GC_SHOPPING_CART_16 BITMAP "..\\bmp\\gc_shopping_cart_16.bmp"
 GC_DICTIONARY_16 BITMAP "..\\bmp\\gc_dictionary_16.bmp"
@@ -440,8 +434,6 @@ GC_BOOK_TELEPHONE_16 BITMAP "..\\bmp\\gc_book_telephone_16.bmp"
 GC_BOOK_TELEPHONE_32 BITMAP "..\\bmp\\gc_book_telephone_32.bmp"
 GC_TEXT_FIELD_16 BITMAP "..\\bmp\\gc_text_field_16.bmp"
 GC_BUSINESSPEOPLE_PLUS_16 BITMAP "..\\bmp\\gc_businesspeople_plus_16.bmp"
-
-PENCIL_PACKAGE_32 BITMAP "..\\bmp\\Pencil_Package_32.bmp"
 
 GC_PACKAGE_CHECK_16 BITMAP "..\\bmp\\gc_package_check_16.bmp"
 GC_PACKAGE_PLUS_16 BITMAP "..\\bmp\\gc_package_plus_16.bmp"

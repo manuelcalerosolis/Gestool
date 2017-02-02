@@ -17508,7 +17508,7 @@ Static Function dlgToolTip( cCodArt, oBrw )
       oImageListInfo                   := TImageList():New( 16, 16 )
 
       oImageListInfo:AddMasked( TBitmap():Define( "gc_object_cube_16" ),   Rgb( 255, 0, 255 ) )
-      oImageListInfo:AddMasked( TBitmap():Define( "Star_Red_16" ),      Rgb( 255, 0, 255 ) )
+      oImageListInfo:AddMasked( TBitmap():Define( "gc_star2_16" ),      Rgb( 255, 0, 255 ) )
       oImageListInfo:AddMasked( TBitmap():Define( "gc_calendar_16" ),      Rgb( 255, 0, 255 ) )
 
       /*

@@ -954,7 +954,7 @@ Static Function PagosTikets( oCodCli )
    REDEFINE BUTTONBMP ;
       ID       140 ;
       OF       oDlg ;
-      BITMAP   "EXIT_32" ;
+      BITMAP   "gc_door_open2_32" ;
       ACTION   ( oDlg:end() )
 
    ACTIVATE DIALOG oDlg CENTER

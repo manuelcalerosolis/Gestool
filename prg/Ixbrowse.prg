@@ -647,8 +647,6 @@ METHOD ArrayIncrSeek( cSeek, nGoTo ) CLASS IXBrowse
    local nAt, nBrwCol, nSortCol, nRow, uVal
    local lExact
 
-   msgAlert( cSeek, "ArrayIncrSeek")
-
    if ::lIncrFilter
       return ::ArrayIncrFilter( cSeek, @nGoTo )
    endif

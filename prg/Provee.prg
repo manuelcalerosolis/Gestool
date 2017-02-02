@@ -1594,7 +1594,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfProvee, oBrw, bWhen, bValid, nMode )
          ID       130 ;
          WHEN     ( ! Empty( oRTF:GetSel() ) .and. ! oRTF:lReadOnly ) ;
          OF       oFld:aDialogs[ 7 ] ;
-         RESOURCE "Cut_16" ;
+         RESOURCE "gc_cut_16" ;
          NOBORDER ;
          TOOLTIP  "Cortar" ;
          ACTION   ( oRTF:Cut(), oRTF:SetFocus() )
@@ -1612,7 +1612,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfProvee, oBrw, bWhen, bValid, nMode )
          ID       150 ;
          WHEN     ( ! Empty( oClp:GetText() ) .and. ! oRTF:lReadOnly ) ;
          OF       oFld:aDialogs[ 7 ] ;
-         RESOURCE "Paste_16" ;
+         RESOURCE "gc_clipboard_paste_16" ;
          NOBORDER ;
          TOOLTIP  "Pegar" ;
          ACTION   ( oRTF:Paste(), oRTF:SetFocus() )
@@ -1621,7 +1621,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfProvee, oBrw, bWhen, bValid, nMode )
          ID       160 ;
          WHEN     ( oRTF:SendMsg( EM_CANUNDO ) != 0 ) ;
          OF       oFld:aDialogs[ 7 ] ;
-         RESOURCE "Undo1_16" ;
+         RESOURCE "gc_undo_inv_16" ;
          NOBORDER ;
          TOOLTIP  "Deshacer" ;
          ACTION   ( oRTF:Undo(), oRTF:SetFocus() )
@@ -1630,7 +1630,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfProvee, oBrw, bWhen, bValid, nMode )
          ID       170 ;
          WHEN     ( oRTF:SendMsg( EM_CANREDO ) != 0 ) ;
          OF       oFld:aDialogs[ 7 ] ;
-         RESOURCE "Redo_16" ;
+         RESOURCE "gc_undo_16" ;
          NOBORDER ;
          TOOLTIP  "Rehacer" ;
          ACTION   ( oRTF:Redo(), oRTF:SetFocus() )
@@ -1660,7 +1660,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfProvee, oBrw, bWhen, bValid, nMode )
          ID       210 ;
          WHEN     ( ! oRTF:lReadOnly ) ;
          OF       oFld:aDialogs[ 7 ] ;
-         RESOURCE "Text_Bold" ;
+         RESOURCE "gc_text_bold_16" ;
          NOBORDER ;
          TOOLTIP  "Negrita" ;
          ACTION   ( lBold  := !lBold ,;
@@ -1670,7 +1670,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfProvee, oBrw, bWhen, bValid, nMode )
          ID       220 ;
          WHEN     ( ! oRTF:lReadOnly ) ;
          OF       oFld:aDialogs[ 7 ] ;
-         RESOURCE "Text_Italics_16" ;
+         RESOURCE "gc_text_italics_16" ;
          NOBORDER ;
          TOOLTIP  "Cursiva" ;
          ACTION   ( lItalic := !lItalic ,;
@@ -1680,7 +1680,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfProvee, oBrw, bWhen, bValid, nMode )
          ID       230 ;
          WHEN     ( ! oRTF:lReadOnly ) ;
          OF       oFld:aDialogs[ 7 ] ;
-         RESOURCE "Text_Underlined_16" ;
+         RESOURCE "gc_text_underline_16" ;
          NOBORDER ;
          TOOLTIP  "Subrayado" ;
          ACTION   ( lUnderline := !lUnderline ,;
@@ -1690,7 +1690,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfProvee, oBrw, bWhen, bValid, nMode )
          ID       240 ;
          WHEN     ( ! oRTF:lReadOnly ) ;
          OF       oFld:aDialogs[ 7 ] ;
-         RESOURCE "Text_Align_Left_16" ;
+         RESOURCE "gc_text_align_left_16" ;
          NOBORDER ;
          TOOLTIP  "Izquierda" ;
          ACTION   ( oRTF:SetAlign( PFA_LEFT ), oRTF:SetFocus() )
@@ -1699,7 +1699,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfProvee, oBrw, bWhen, bValid, nMode )
          ID       250 ;
          WHEN     ( ! oRTF:lReadOnly ) ;
          OF       oFld:aDialogs[ 7 ] ;
-         RESOURCE "Text_Center" ;
+         RESOURCE "gc_text_center_16" ;
          NOBORDER ;
          TOOLTIP  "Centro" ;
          ACTION   ( oRTF:SetAlign( PFA_CENTER ), oRTF:SetFocus() )
@@ -1708,7 +1708,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfProvee, oBrw, bWhen, bValid, nMode )
          ID       260 ;
          WHEN     ( ! oRTF:lReadOnly ) ;
          OF       oFld:aDialogs[ 7 ] ;
-         RESOURCE "Text_Align_Right_16" ;
+         RESOURCE "gc_text_align_right_16" ;
          NOBORDER ;
          TOOLTIP  "Derecha" ;
          ACTION   ( oRTF:SetAlign( PFA_RIGHT ), oRTF:SetFocus() )
@@ -1717,7 +1717,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfProvee, oBrw, bWhen, bValid, nMode )
          ID       270 ;
          WHEN     ( ! oRTF:lReadOnly ) ;
          OF       oFld:aDialogs[ 7 ] ;
-         RESOURCE "Text_Justified_16" ;
+         RESOURCE "gc_text_justified_16" ;
          NOBORDER ;
          TOOLTIP  "Justificado" ;
          ACTION   ( oRTF:SetAlign( PFA_JUSTIFY ), oRTF:SetFocus() )
@@ -1726,7 +1726,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfProvee, oBrw, bWhen, bValid, nMode )
          ID       280 ;
          WHEN     ( ! oRTF:lReadOnly .AND. !oRTF:GetNumbering() ) ;
          OF       oFld:aDialogs[ 7 ] ;
-         RESOURCE "Pin_Blue_16" ;
+         RESOURCE "gc_pin_blue_16" ;
          NOBORDER ;
          TOOLTIP  "Viñetas" ;
          ACTION   ( lBullet := !lBullet ,;

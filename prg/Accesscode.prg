@@ -659,8 +659,9 @@ METHOD ShowConnectDialog() CLASS AccessCode
    DEFINE DIALOG ::oDlgConnect RESOURCE "SqlConnect"
 
       REDEFINE BITMAP ;
-         RESOURCE "ConectarMySql" ;
+         RESOURCE "gc_mysql_48" ;
          ID       500 ;
+         TRANSPARENT ;
          OF       ::oDlgConnect
 
       REDEFINE GET ::oGetServer ;

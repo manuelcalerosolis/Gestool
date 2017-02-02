@@ -205,7 +205,7 @@ METHOD GenIndices( oMsg )
          ::SetText( "Generando índices : Filtros", ::aProgress[ 1 ] )            ; TFilterDatabase():Create( ::cPathDat ):Reindexa()
          ::SetText( "Generando índices : Notas", ::aProgress[ 1 ] )              ; TNotas():Create( ::cPathDat ):Reindexa()
          ::SetText( "Generando índices : Agenda", ::aProgress[ 1 ] )             ; TAgenda():Create( ::cPathDat ):Reindexa()
-         ::SetText( "Generando índices : Tanques", ::aProgress[ 1 ] )            ; TTankes():Create( ::cPathDat ):Reindexa()
+         // ::SetText( "Generando índices : Tanques", ::aProgress[ 1 ] )            ; TTankes():Create( ::cPathDat ):Reindexa()
          // ::SetText( "Generando índices : Auditoria", ::aProgress[ 1 ] )          ; TAuditor():Create( ::cPathDat ):Reindexa()
 
       end if

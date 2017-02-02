@@ -21,11 +21,9 @@ CLASS TDetCamposExtra FROM TMant
 
    DATA aItemSelected         INIT {}
 
-   DATA aValores              INIT {}
-
    DATA lOpenFiles            INIT .f.
 
-   DATA oCamposExtra  
+   DATA oCamposExtra
 
    DATA hFormatoColumnas      INIT {}
 
@@ -41,52 +39,38 @@ CLASS TDetCamposExtra FROM TMant
    Method OpenService( lExclusive )
    Method CloseService()
 
-   Method SetTipoDocumento( cValor )   INLINE ( ::TipoDocumento  := cValor )
-
    Method Reindexa( oMeter )
 
+   Method SetTipoDocumento( cValor )            INLINE ( ::TipoDocumento  := cValor )
+   Method initArrayValue()                      INLINE ( ::aCamposExtra  := {} )
+   Method setbId( bValue )                      INLINE ( ::bId := bValue )
+   Method lExisteCamposExtra()                  INLINE ( len( ::aCamposExtra ) < 1 )
+   Method aExtraFields()                        INLINE ( ::oCamposExtra:aCamposExtra( ::TipoDocumento ) )
+
    Method Play()
-
    Method Resource( nMode )
-
-   Method CargaValores( cClave )
-
-   Method RollBackValores( cClave )
-
-   Method ChangeBrowse()
-
-   Method setColType( uValue )         INLINE ( ::oCol:nEditType := uValue )
-   Method setColPicture( uValue )      INLINE ( ::oCol:cEditPicture := uValue )
-   Method setColListTxt( aValue )      INLINE ( ::oCol:aEditListTxt := aValue )
-
-   Method setbId( bValue )             INLINE ( ::bId := bValue )
-
-   Method cFormat2Char( uValor )
-   Method cChar2Format( uValor, nFormat )
-
    Method lPreSave()
 
-   METHOD lExisteCamposExtra()         INLINE ( len( ::aCamposExtra ) < 1 )
+   Method addCamposExtra( oBrw )
+   Method ChangeBrowse()
+   Method setColType( uValue )                  INLINE ( ::oCol:nEditType := uValue )
+   Method setColPicture( uValue )               INLINE ( ::oCol:cEditPicture := uValue )
+   Method setColListTxt( aValue )               INLINE ( ::oCol:aEditListTxt := aValue )
+   Method cFormat2Char( uValor )
+   Method cChar2Format( uValor, nFormat )
+   Method nAlignData( campoExtra )              INLINE ( if( campoExtra[ "tipo" ] == 2, AL_RIGHT, AL_LEFT ) )
+   Method cPictData( campoExtra )
+   Method cFormatValue( campoExtra )
+   Method editColCampoExtra( oCol, uNewValue, nKey )
 
-   METHOD addCamposExtra( oBrw )
+   Method CargaValores( cClave )
+   Method RollBackValores( cClave )
+   Method saveExtraField()
 
-   METHOD nAlignData( campoExtra )     INLINE ( if( campoExtra[ "tipo" ] == 2, AL_RIGHT, AL_LEFT ) )
-
-   METHOD cPictData( campoExtra )
-
-   METHOD cFormatValue( campoExtra )
-
-   METHOD editColCampoExtra( oCol, uNewValue, nKey )
-
-   METHOD aExtraFields()                 INLINE ( ::oCamposExtra:aCamposExtra( ::TipoDocumento ) )
-
-   METHOD valueExtraField()
-
-   METHOD saveExtraField()
-
-   METHOD setTemporal( cClave, nMode )
-
-   METHOD selectItem( cClave )
+   Method valueExtraField()
+   Method selectItem( cClave )
+   Method setTemporalLines( cClave, nMode )     INLINE ( ::SetTemporal( cClave, nMode, .f. ) )
+   Method setTemporal( cClave, nMode, lClear )
 
 END CLASS
 
@@ -275,9 +259,11 @@ Method Play( cClave, lResource ) CLASS TDetCamposExtra
    DEFAULT lResource    := .t.
 
    if ::selectItem( cClave )
+
       if lResource
          ::Resource()
       end if
+
    end if
 
 Return ( self )
@@ -443,18 +429,23 @@ Return ( Self )
 
 METHOD RollBackValores( cClave ) CLASS TDetCamposExtra
 
-   local nRec     := ::oDbf:Recno()
-   local nOrdAnt  := ::oDbf:OrdSetFocus( "cTotClave" )
+   local nRec              := ::oDbf:Recno()
+   local nOrdAnt           := ::oDbf:OrdSetFocus( "cTotClave" )
    local hCampos
    local cClavePrincipal
+   local hExtraField
 
-   for each hCampos in ::aItemSelected
+   for each hExtraField in ::aCamposExtra
 
-      cClavePrincipal    := hGet( DOCUMENTOS_ITEMS, ::TipoDocumento ) + hGet( hCampos, "código" ) + Padr( cClave, 30 )
+      for each hCampos in hExtraField
 
-      while ::oDbf:Seek( cClavePrincipal )
-         ::oDbf:Delete()
-      end while
+         cClavePrincipal    := hGet( DOCUMENTOS_ITEMS, ::TipoDocumento ) + hGet( hCampos, "código" ) + Padr( cClave, 30 )
+
+         while ::oDbf:Seek( cClavePrincipal )
+            ::oDbf:Delete()
+         end while
+
+      next
 
    next
 
@@ -468,19 +459,28 @@ Return ( Self )
 METHOD saveExtraField( cClave ) CLASS TDetCamposExtra
 
    local hCampos
+   local hExtraField
 
    ::RollBackValores( cClave )
 
-   for each hCampos in ::aItemSelected
+   for each hExtraField in ::aCamposExtra
 
-      ::oDbf:Append()
+      for each hCampos in hExtraField
 
-      ::oDbf:cTipDoc    := hGet( DOCUMENTOS_ITEMS, ::TipoDocumento )
-      ::oDbf:cCodTipo   := hGet( hCampos, "código" )
-      ::oDbf:cClave     := padr( cClave, 30 )
-      ::oDbf:cValor     := ::cFormat2Char( hGet( hCampos, "valor" ) )
+         if hGet( hCampos, "clave" ) == padr( cClave, 30 )
 
-      ::oDbf:Save()
+            ::oDbf:Append()
+
+            ::oDbf:cTipDoc    := hGet( DOCUMENTOS_ITEMS, ::TipoDocumento )
+            ::oDbf:cCodTipo   := hGet( hCampos, "código" )
+            ::oDbf:cClave     := padr( cClave, 30 )
+            ::oDbf:cValor     := ::cFormat2Char( hGet( hCampos, "valor" ) )
+
+            ::oDbf:Save()
+
+         end if
+
+      next
 
    next   
 
@@ -637,7 +637,7 @@ Return ( valueExtraField )
 
 //---------------------------------------------------------------------------//
 
-METHOD setTemporal( cClave, nMode ) CLASS TDetCamposExtra
+METHOD setTemporal( cClave, nMode, lClear ) CLASS TDetCamposExtra
 
    local nRec              := ::oDbf:Recno()
    local nOrdAnt           := ::oDbf:OrdSetFocus( "cTotClave" )
@@ -645,38 +645,35 @@ METHOD setTemporal( cClave, nMode ) CLASS TDetCamposExtra
    local cClavePrincipal
    local aCampos
 
-   ::aCamposExtra          := {}
+   DEFAULT lClear          := .t.
+
+   if lClear
+      ::aCamposExtra       := {}
+   end if
 
    if Empty( ::TipoDocumento )
-      //MsgStop( "No existen campos extra para este tipo de documento." )
       Return .f.
    end if
 
    if !Empty( ::TipoDocumento )
-      aCampos              := ::oCamposExtra:aCamposExtra( ::TipoDocumento )
+      aCampos              := ::aExtraFields()
    end if
 
    if len( aCampos ) < 1
-      //MsgStop( "No existen campos extra para este tipo de documento." )
       Return .f.
    end if   
 
-   if nMode != APPD_MODE
+   for each hCampos in aCampos
 
-      for each hCampos in aCampos
+      cClavePrincipal      := hGet( DOCUMENTOS_ITEMS, ::TipoDocumento ) + hGet( hCampos, "código" ) + Padr( cClave, 30 )
 
-         cClavePrincipal      := hGet( DOCUMENTOS_ITEMS, ::TipoDocumento ) + hGet( hCampos, "código" ) + Padr( cClave, 30 )
+      hSet( hCampos, "clave", Padr( cClave, 30 ) )
 
-         if ::oDbf:Seek( cClavePrincipal )
+      if ::oDbf:Seek( cClavePrincipal )
+         hSet( hCampos, "valor", ::cChar2Format( ::oDbf:cValor, hGet( hCampos, "tipo" ) ) )
+      end if
 
-            hSet( hCampos, "valor", ::cChar2Format( ::oDbf:cValor, hGet( hCampos, "tipo" ) ) )
-            
-
-         end if
-
-      next
-
-   end if
+   next
 
    aAdd( ::aCamposExtra, aCampos )
 
@@ -689,14 +686,18 @@ Return ( self )
 
 METHOD selectItem( cClave ) CLASS TDetCamposExtra
 
+   local nPos           := 0
+
    if len( ::aCamposExtra ) == 0
       Return .f.
    end if
 
-   if len( ::aCamposExtra ) > 1
+   nPos  :=  ascan( ::aCamposExtra, {|a| hGet( a[1], "clave" ) == Padr( cClave, 30 ) } )
 
+   if nPos != 0
+      ::aItemSelected   := ::aCamposExtra[ nPos ]
    else
-      ::aItemSelected   := ::aCamposExtra[1]
+      Return .f.
    end if
 
 Return ( .t. )

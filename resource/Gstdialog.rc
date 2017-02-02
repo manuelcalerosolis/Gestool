@@ -11616,22 +11616,23 @@ FONT 8, "MS Sans Serif"
   CONTROL "Solo pendientes de finalizar", 200, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 7, 141, 101, 12
 }
 
-INICIAR_CLAVE DIALOG DISCARDABLE 37, 69, 236, 124
+INICIAR_CLAVE DIALOG DISCARDABLE 37, 69, 278, 119
 STYLE WS_POPUP|DS_MODALFRAME|DS_3DLOOK|WS_CAPTION|WS_SYSMENU|WS_VISIBLE
 FONT 8, "MS Sans Serif"
 {
-  CONTROL "", 130, "Edit", ES_PASSWORD|WS_BORDER|WS_TABSTOP, 113, 63, 120, 12
-  CONTROL "", 110, "Edit", ES_PASSWORD|WS_BORDER|WS_TABSTOP, 113, 75, 120, 12
-  CONTROL "", 120, "Edit", ES_PASSWORD|WS_BORDER|WS_TABSTOP, 113, 87, 120, 12
-  CONTROL "&Aceptar [F5]", IDOK, "Button", BS_DEFPUSHBUTTON|WS_TABSTOP, 124, 107, 50, 14
-  CONTROL "&Cancelar", IDCANCEL, "Button", WS_TABSTOP, 183, 107, 50, 14
-  CONTROL "Nueva clave de acceso", -1, "Static", WS_GROUP, 5, 78, 81, 8
-  CONTROL "", -1, "Static", SS_ETCHEDHORZ, 0, 102, 236, 1
-  CONTROL "", 100, "Static", SS_BITMAP|SS_CENTERIMAGE|SS_REALSIZEIMAGE, 0, 0, 236, 34
-  CONTROL "Repetir clave de acceso", -1, "Static", WS_GROUP, 5, 90, 81, 8
-  CONTROL "Para cumplir la ley de protección de datos, cada usuario de la aplicación debe de tener una clave de acceso de al menos ocho caracteres.", -1, "Static", WS_GROUP, 5, 38, 228, 18
-  CONTROL "", -1, "Static", SS_ETCHEDHORZ, 0, 59, 236, 1
-  CONTROL "Clave anterior", -1, "Static", WS_GROUP, 5, 66, 46, 8
+  CONTROL "", 130, "Edit", ES_PASSWORD|WS_BORDER|WS_TABSTOP, 152, 54, 120, 12
+  CONTROL "", 110, "Edit", ES_PASSWORD|WS_BORDER|WS_TABSTOP, 152, 66, 120, 12
+  CONTROL "", 120, "Edit", ES_PASSWORD|WS_BORDER|WS_TABSTOP, 152, 78, 120, 12
+  CONTROL "&Aceptar [F5]", IDOK, "Button", BS_DEFPUSHBUTTON|WS_TABSTOP, 163, 98, 50, 14
+  CONTROL "&Cancelar", IDCANCEL, "Button", WS_TABSTOP, 222, 98, 50, 14
+  CONTROL "Nueva clave de acceso", -1, "Static", WS_GROUP, 44, 69, 81, 8
+  CONTROL "", -1, "Static", SS_ETCHEDHORZ, 39, 93, 236, 1
+  CONTROL "Repetir clave de acceso", -1, "Static", WS_GROUP, 44, 81, 81, 8
+  CONTROL "Para cumplir la ley de protección de datos, cada usuario de la aplicación debe de tener una clave de acceso de al menos ocho caracteres.", -1, "Static", WS_GROUP, 44, 29, 228, 18
+  CONTROL "", -1, "Static", SS_ETCHEDHORZ, 39, 50, 236, 1
+  CONTROL "Clave anterior", -1, "Static", WS_GROUP, 44, 57, 46, 8
+  CONTROL "", 500, "Static", SS_BITMAP|SS_CENTERIMAGE, 4, 3, 34, 30
+  CONTROL "Clave de usuario vacía o inferior a ocho caracteres.", 200, "Static", WS_GROUP, 44, 3, 200, 10
 }
 
 INITCONNECT DIALOG DISCARDABLE 130, 69, 352, 111
@@ -18394,20 +18395,20 @@ FONT 8, "MS Sans Serif"
   CONTROL "", 600, "TBitMap", 0x00800000, 0, 0, 270, 27
 }
 
-SQLCONNECT DIALOG DISCARDABLE 113, 122, 365, 160
+SQLCONNECT DIALOG DISCARDABLE 113, 122, 245, 124
 STYLE WS_POPUP|DS_MODALFRAME|DS_3DLOOK|WS_CAPTION|WS_VISIBLE
 FONT 8, "MS Sans Serif"
 {
-  CONTROL "", 210, "Edit", WS_BORDER|WS_TABSTOP, 222, 53, 129, 13
-  CONTROL "", 230, "Edit", WS_BORDER|WS_TABSTOP, 222, 75, 129, 13
-  CONTROL "", 250, "Edit", ES_PASSWORD|WS_BORDER|WS_TABSTOP, 222, 97, 129, 13
-  CONTROL "Servidor", 200, "Static", WS_GROUP, 161, 57, 48, 9, WS_EX_TRANSPARENT
-  CONTROL "Usuario", 220, "Static", WS_GROUP, 161, 79, 48, 9, WS_EX_TRANSPARENT
-  CONTROL "Contraseña", 240, "Static", WS_GROUP, 161, 101, 48, 9, WS_EX_TRANSPARENT
-  CONTROL "Conectar", 260, "Button", BS_DEFPUSHBUTTON|WS_TABSTOP, 246, 129, 50, 14
-  CONTROL "&Cancelar", 270, "Button", WS_TABSTOP, 301, 129, 50, 14
-  CONTROL "", 500, "Static", SS_BITMAP|SS_CENTERIMAGE|SS_REALSIZEIMAGE, 0, 0, 365, 34
-  CONTROL "", -1, "Static", SS_ETCHEDHORZ, 0, 32, 398, 2
+  CONTROL "", 210, "Edit", WS_BORDER|WS_TABSTOP, 105, 25, 129, 13
+  CONTROL "", 230, "Edit", WS_BORDER|WS_TABSTOP, 105, 47, 129, 13
+  CONTROL "", 250, "Edit", ES_PASSWORD|WS_BORDER|WS_TABSTOP, 105, 69, 129, 13
+  CONTROL "Servidor", 200, "Static", WS_GROUP, 44, 29, 48, 9, WS_EX_TRANSPARENT
+  CONTROL "Usuario", 220, "Static", WS_GROUP, 44, 51, 48, 9, WS_EX_TRANSPARENT
+  CONTROL "Contraseña", 240, "Static", WS_GROUP, 44, 73, 48, 9, WS_EX_TRANSPARENT
+  CONTROL "Conectar", 260, "Button", BS_DEFPUSHBUTTON|WS_TABSTOP, 129, 101, 50, 14
+  CONTROL "&Cancelar", 270, "Button", WS_TABSTOP, 184, 101, 50, 14
+  CONTROL "", 500, "Static", SS_BITMAP|SS_CENTERIMAGE, 4, 3, 34, 30
+  CONTROL "Datos necesarios para la conexión con las bases de datos.", -1, "Static", WS_GROUP, 44, 3, 201, 10
 }
 
 LANGUAGE LANG_SPANISH,SUBLANG_SPANISH_MODERN
@@ -18839,7 +18840,8 @@ FONT 8, "MS Sans Serif"
   CONTROL "&Aceptar [F5]", IDOK, "Button", BS_DEFPUSHBUTTON|WS_TABSTOP, 76, 64, 50, 14
   CONTROL "&Cancelar", IDCANCEL, "Button", WS_TABSTOP, 136, 64, 50, 14
   CONTROL "", -1, "Static", SS_ETCHEDHORZ, 0, 57, 200, 2
-  CONTROL "", 150, "Static", SS_BITMAP|SS_CENTERIMAGE|SS_REALSIZEIMAGE, 0, 0, 190, 34
+  CONTROL "", 500, "Static", SS_BITMAP|SS_CENTERIMAGE, 4, 3, 34, 30
+  CONTROL "Se necesita la contraseña del administrador para continuar con la acción seleccionada.", 200, "Static", WS_GROUP, 44, 3, 141, 26
 }
 
 TPVFRONT DIALOG DISCARDABLE -89, -75, 530, 350

@@ -582,7 +582,6 @@ FUNCTION BrwTMov( oGet, dbfTMov, oGet2 )
       DEFINE DIALOG oDlg RESOURCE "HELPENTRY_PDA"
 #endif
 
-#ifndef __PDA__
 
          REDEFINE GET oGet1 VAR cGet1;
             ID       104 ;
@@ -591,33 +590,6 @@ FUNCTION BrwTMov( oGet, dbfTMov, oGet2 )
          BITMAP   "FIND" ;
             OF       oDlg
 
-#else
-
-      DEFINE FONT oFont NAME "Verdana" SIZE 0, -14
-
-         REDEFINE SAY oSayTit ;
-            VAR      "Buscando tipo de movimiento" ;
-            ID       110 ;
-            COLOR    "N/W*" ;
-            FONT     oFont ;
-            OF       oDlg
-
-         REDEFINE BTNBMP oBtn ;
-            ID       100 ;
-            OF       oDlg ;
-            FILE     ( cPatBmp() + "Factory_16.bmp" ) ;
-            NOBORDER ;
-            ACTION      ( nil )
-
-         oBtn:SetColor( 0, nRGB( 255, 255, 255 )  )
-
-      REDEFINE GET oGet1 VAR cGet1;
-         ID       104 ;
-         ON CHANGE( AutoSeek( nKey, nFlags, Self, oBrw, dbfTMov ) );
-         BITMAP   "FIND" ;
-         OF       oDlg
-
-#endif
 
          REDEFINE COMBOBOX oCbxOrd ;
             VAR      cCbxOrd ;
