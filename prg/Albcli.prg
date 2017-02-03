@@ -2669,6 +2669,8 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, hHash, bValid, nMode )
       oBrwLin:lFooter         := .t.
       oBrwLin:lAutoSort       := .t.
 
+      oBrwLin:bExportLector   := {|| stringExport( dbfTmpLin ) }
+
       oBrwLin:CreateFromResource( 240 )
 
       with object ( oBrwLin:AddCol() )
@@ -18514,5 +18516,21 @@ static Function menuEdtDet( oCodArt, oDlg, lOferta, nIdLin )
    oDlg:SetMenu( oDetMenu )
 
 Return ( oDetMenu )
+
+//---------------------------------------------------------------------------//
+
+Static Function stringExport( dbfTmpLin )
+   
+   local stringExport
+
+   stringExport         := alltrim( ( dbfTmpLin )->cRef ) + "," 
+   stringExport         += alltrim( trans( nTotNAlbCli( dbfTmpLin ), cPicUnd ) ) + ","
+   stringExport         += alltrim( trans( nTotNAlbCli( dbfTmpLin ), cPicUnd ) ) + ","
+   stringExport         += alltrim( ( dbfTmpLin )->cCodPr1 ) + "," 
+   stringExport         += alltrim( ( dbfTmpLin )->cValPr1 ) + "," 
+   stringExport         += alltrim( ( dbfTmpLin )->cCodPr2 ) + "," 
+   stringExport         += alltrim( ( dbfTmpLin )->cValPr1 ) + CRLF
+
+Return ( stringExport )
 
 //---------------------------------------------------------------------------//
