@@ -594,13 +594,6 @@ METHOD New( cSubTitle, aFields, aIndex, oMenuItem, oWnd, cHelp, xOthers ) CLASS 
    DEFAULT oWnd      := oWnd()
    DEFAULT cHelp     := ""
 
-   nLevel            := nLevelUsr( oMenuItem )
-
-   if nAnd( nLevel, 1 ) != 0
-      msgStop( "Acceso no permitido." )
-      RETURN ( .f. )
-   end if
-
    ::cSubTitle       := cSubTitle
    ::aFields         := aFields
    ::cHelp           := cHelp
