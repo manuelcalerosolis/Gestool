@@ -1529,6 +1529,17 @@ Return nil
 
 //---------------------------------------------------------------------------//
 
+Function validRunReport( nLevel )
+
+   if nAnd( nLevelUsr( nLevel ), 1 ) != 0
+      msgStop( "Acceso no permitido." )
+      Return .f.
+   end if
+
+Return .t.
+
+//---------------------------------------------------------------------------//
+
 Function RunAsistenciaRemota()
 
    local nHnd
@@ -3133,7 +3144,7 @@ Function CreateAcceso( oWnd )
    oItem:oGroup         := oGrupo
    oItem:cPrompt        := 'Artículos'
    oItem:cMessage       := 'Informes realacionados con articulos'
-   oItem:bAction        := {|| TFastVentasArticulos():New():Play() }
+   oItem:bAction        := {|| if( validRunReport( "01118" ), TFastVentasArticulos():New():Play(), ) }
    oItem:cId            := "01118"
    oItem:cBmp           := "gc_object_cube_print_16"
    oItem:cBmpBig        := "gc_object_cube_print_32"
@@ -3143,7 +3154,7 @@ Function CreateAcceso( oWnd )
    oItem:oGroup         := oGrupo
    oItem:cPrompt        := 'Clientes'
    oItem:cMessage       := 'Informes realacionados con clientes'
-   oItem:bAction        := {|| TFastVentasClientes():New():Play() }
+   oItem:bAction        := {|| if( validRunReport( "01120" ), TFastVentasClientes():New():Play(), ) }
    oItem:cId            := "01120"
    oItem:cBmp           := "gc_user_print_16"
    oItem:cBmpBig        := "gc_user_print_32"
@@ -3153,7 +3164,7 @@ Function CreateAcceso( oWnd )
    oItem:oGroup         := oGrupo
    oItem:cPrompt        := 'Proveedores'
    oItem:cMessage       := 'Informes realacionados con proveedores'
-   oItem:bAction        := {|| TFastComprasProveedores():New():Play() }
+   oItem:bAction        := {|| if( validRunReport( "01121" ), TFastComprasProveedores():New():Play(), ) }
    oItem:cId            := "01121"
    oItem:cBmp           := "gc_businessman_print_16"
    oItem:cBmpBig        := "gc_businessman_print_32"
@@ -3163,7 +3174,7 @@ Function CreateAcceso( oWnd )
    oItem:oGroup         := oGrupo
    oItem:cPrompt        := 'Producción'
    oItem:cMessage       := 'Informes realacionados con la producción'
-   oItem:bAction        := {|| TFastProduccion():New():Play() }
+   oItem:bAction        := {|| if( validRunReport( "01123" ), TFastProduccion():New():Play(), ) }
    oItem:cId            := "01123"
    oItem:cBmp           := "gc_worker2_print_16"
    oItem:cBmpBig        := "gc_worker2_print_32"
@@ -3203,16 +3214,6 @@ Function CreateAcceso( oWnd )
    oGrupo:cPrompt       := 'Ayudas'
    oGrupo:cLittleBitmap := "gc_lifebelt_16"
    oGrupo:cBigBitmap    := "gc_lifebelt_32"
-
-   /*oItem                := oItemAyudas:Add()
-   oItem:oGroup         := oGrupo
-   oItem:cPrompt        := 'Ayuda'
-   oItem:cMessage       := 'Ayuda de la aplicación'
-   oItem:bAction        := {|| goWeb( __GSTHELP__ ) }
-   oItem:cId            := "01093"
-   oItem:cBmp           := "gc_lifebelt_16"
-   oItem:cBmpBig        := "gc_lifebelt_32"
-   oItem:lShow          := .f.*/
 
    oItem                := oItemAyudas:Add()
    oItem:oGroup         := oGrupo

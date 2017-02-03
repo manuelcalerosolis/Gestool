@@ -456,8 +456,8 @@ Function CreateFastFilter( cExpresionFilter, cAlias, lInclude, oMeter, cExpUsuar
       return .f.
    end if
 
-   oBlock                  := ErrorBlock( {| oError | ApoloBreak( oError ) } )
-   BEGIN SEQUENCE
+   /*oBlock                  := ErrorBlock( {| oError | ApoloBreak( oError ) } )
+   BEGIN SEQUENCE*/
 
    if !empty( cExpUsuario )
       cFiltroUsuario       := cExpUsuario
@@ -532,7 +532,7 @@ Function CreateFastFilter( cExpresionFilter, cAlias, lInclude, oMeter, cExpUsuar
 
    end if
 
-   RECOVER USING oError
+   /*RECOVER USING oError
 
       bExpFilter           := nil
 
@@ -540,7 +540,7 @@ Function CreateFastFilter( cExpresionFilter, cAlias, lInclude, oMeter, cExpUsuar
 
    END SEQUENCE
 
-   ErrorBlock( oBlock )
+   ErrorBlock( oBlock )*/
 
 Return ( bExpFilter != nil )
 
@@ -627,7 +627,8 @@ Function buildSetFilter( cExpresionFilter, cAlias, lInclude, cExpUsuario, cExpFe
       cExpresionFilter  += if( !empty( cExpresionFilter ), " .and. ", "" ) + cFiltroFecha
    end if
 
-   // msgalert( cExpresionFilter )
+   //msgalert( cExpresionFilter )
+   //msgInfo( cAlias, "cAlias" )
 
    if !empty( cExpresionFilter )
 
@@ -638,11 +639,11 @@ Function buildSetFilter( cExpresionFilter, cAlias, lInclude, cExpUsuario, cExpFe
 
    else
 
-      ( cAlias )->( adsClearAOF() )
+      //( cAlias )->( adsClearAOF() )
 
    end if
 
-   // msgalert( (cAlias)->( dbInfo( DBI_DBFILTER ) ), "buildSetFilter" )
+   //msgalert( (cAlias)->( dbInfo( DBI_DBFILTER ) ), "buildSetFilter" )
 
 Return nil
 

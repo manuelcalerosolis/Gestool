@@ -584,6 +584,7 @@ END CLASS
 METHOD New( cSubTitle, aFields, aIndex, oMenuItem, oWnd, cHelp, xOthers ) CLASS TInfGen
 
    local n
+   local nLevel
    local cFileObject := SubStr( StrTran( Str( Seconds() ), ".", "" ), -6 )
 
    DEFAULT cSubTitle := Padr( "Generador de informes", 50 )
