@@ -1041,7 +1041,7 @@ FUNCTION AlbCli( oMenuItem, oWnd, hHash )
 
    DEFINE BTNSHELL RESOURCE "gc_document_empty_chart_" OF oWndBrw ;
       NOBORDER ;
-      ACTION   ( TFastVentasArticulos():New():Play( ALB_CLI ) ) ;
+      ACTION   ( if( validRunReport( "01118" ), TFastVentasArticulos():New():Play( ALB_CLI ), ) ) ;
       TOOLTIP  "Rep(o)rting";
       HOTKEY   "O" ;
       LEVEL    ACC_IMPR

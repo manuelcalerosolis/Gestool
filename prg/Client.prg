@@ -11587,8 +11587,10 @@ Return ( lOferta )
 
 Static Function ReportingClient()
 
-   oReporting        := TFastVentasClientes():New()
-   oReporting:Play()
+   if validRunReport( "01120" )
+      oReporting        := TFastVentasClientes():New()
+      oReporting:Play()
+   end if
 
 Return ( oReporting )
 

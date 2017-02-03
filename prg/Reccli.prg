@@ -649,7 +649,7 @@ FUNCTION RecCli( oMenuItem, oWnd, aNumRec )
 
    DEFINE BTNSHELL RESOURCE "gc_document_empty_chart_" OF oWndBrw ;
       NOBORDER ;
-      ACTION   ( TFastVentasRecibos():New():Play() );
+      ACTION   ( if( validRunReport( "01120" ), TFastVentasRecibos():New():Play(), ) );
       TOOLTIP  "(R)eporting";
       HOTKEY   "R";
       LEVEL    ACC_IMPR
