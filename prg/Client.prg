@@ -1002,7 +1002,7 @@ FUNCTION Client( oMenuItem, oWnd, cCodCli )
          ACTION   ( BrwVtaCli( ( D():Clientes( nView ) )->Cod, ( D():Clientes( nView ) )->Titulo ) );
          TOOLTIP  "(I)nforme cliente" ;
          HOTKEY   "I" ;
-         LEVEL    ACC_ZOOM
+         LEVEL    ACC_EDIT
 
       DEFINE BTNSHELL RESOURCE "IMP" OF oWndBrw ;
          NOBORDER ;

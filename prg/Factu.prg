@@ -3215,16 +3215,6 @@ Function CreateAcceso( oWnd )
    oGrupo:cLittleBitmap := "gc_lifebelt_16"
    oGrupo:cBigBitmap    := "gc_lifebelt_32"
 
-   /*oItem                := oItemAyudas:Add()
-   oItem:oGroup         := oGrupo
-   oItem:cPrompt        := 'Ayuda'
-   oItem:cMessage       := 'Ayuda de la aplicación'
-   oItem:bAction        := {|| goWeb( __GSTHELP__ ) }
-   oItem:cId            := "01093"
-   oItem:cBmp           := "gc_lifebelt_16"
-   oItem:cBmpBig        := "gc_lifebelt_32"
-   oItem:lShow          := .f.*/
-
    oItem                := oItemAyudas:Add()
    oItem:oGroup         := oGrupo
    oItem:cPrompt        := 'Visitar web'
