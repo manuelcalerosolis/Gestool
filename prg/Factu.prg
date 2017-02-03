@@ -3133,7 +3133,7 @@ Function CreateAcceso( oWnd )
    oItem:oGroup         := oGrupo
    oItem:cPrompt        := 'Artículos'
    oItem:cMessage       := 'Informes realacionados con articulos'
-   oItem:bAction        := {|| TFastVentasArticulos():New():Play() }
+   oItem:bAction        := {|| TFastVentasArticulos():New( , , , "01118" ):Play() }
    oItem:cId            := "01118"
    oItem:cBmp           := "gc_object_cube_print_16"
    oItem:cBmpBig        := "gc_object_cube_print_32"
@@ -3143,7 +3143,7 @@ Function CreateAcceso( oWnd )
    oItem:oGroup         := oGrupo
    oItem:cPrompt        := 'Clientes'
    oItem:cMessage       := 'Informes realacionados con clientes'
-   oItem:bAction        := {|| TFastVentasClientes():New():Play() }
+   oItem:bAction        := {|| TFastVentasClientes():New( , , , "01120" ):Play() }
    oItem:cId            := "01120"
    oItem:cBmp           := "gc_user_print_16"
    oItem:cBmpBig        := "gc_user_print_32"
@@ -3153,7 +3153,7 @@ Function CreateAcceso( oWnd )
    oItem:oGroup         := oGrupo
    oItem:cPrompt        := 'Proveedores'
    oItem:cMessage       := 'Informes realacionados con proveedores'
-   oItem:bAction        := {|| TFastComprasProveedores():New():Play() }
+   oItem:bAction        := {|| TFastComprasProveedores():New( , , , "01121" ):Play() }
    oItem:cId            := "01121"
    oItem:cBmp           := "gc_businessman_print_16"
    oItem:cBmpBig        := "gc_businessman_print_32"
@@ -3163,7 +3163,7 @@ Function CreateAcceso( oWnd )
    oItem:oGroup         := oGrupo
    oItem:cPrompt        := 'Producción'
    oItem:cMessage       := 'Informes realacionados con la producción'
-   oItem:bAction        := {|| TFastProduccion():New():Play() }
+   oItem:bAction        := {|| TFastProduccion():New( , , , "01123" ):Play() }
    oItem:cId            := "01123"
    oItem:cBmp           := "gc_worker2_print_16"
    oItem:cBmpBig        := "gc_worker2_print_32"

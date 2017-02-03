@@ -584,6 +584,7 @@ END CLASS
 METHOD New( cSubTitle, aFields, aIndex, oMenuItem, oWnd, cHelp, xOthers ) CLASS TInfGen
 
    local n
+   local nLevel
    local cFileObject := SubStr( StrTran( Str( Seconds() ), ".", "" ), -6 )
 
    DEFAULT cSubTitle := Padr( "Generador de informes", 50 )
@@ -592,6 +593,13 @@ METHOD New( cSubTitle, aFields, aIndex, oMenuItem, oWnd, cHelp, xOthers ) CLASS 
    DEFAULT oMenuItem := "00000"
    DEFAULT oWnd      := oWnd()
    DEFAULT cHelp     := ""
+
+   nLevel            := nLevelUsr( oMenuItem )
+
+   if nAnd( nLevel, 1 ) != 0
+      msgStop( "Acceso no permitido." )
+      RETURN ( .f. )
+   end if
 
    ::cSubTitle       := cSubTitle
    ::aFields         := aFields
