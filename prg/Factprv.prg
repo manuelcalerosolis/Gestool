@@ -6057,7 +6057,7 @@ STATIC FUNCTION ContFactu( lSimula, lPago, oTree )
 
             if nImpDeta != 0
 
-               cCtaVent    := RetCtaCom( ( D():FacturasProveedoresLineas( nView ) )->cRef, D():Articulos( nView ) )
+               cCtaVent    := RetCtaCom( ( D():FacturasProveedoresLineas( nView ) )->cRef, ( nImpDeta < 0 ), D():Articulos( nView ) )
                if empty( cCtaVent )
                   cCtaVent := cCtaPrvVta + RetGrpVta( ( D():FacturasProveedoresLineas( nView ) )->cRef, cRuta, cCodEmp, D():Articulos( nView ), ( D():FacturasProveedoresLineas( nView ) )->nIva )
                end if

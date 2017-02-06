@@ -3045,6 +3045,16 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, hHash, bValid, nMode )
       end with
 
       with object ( oBrwLin:AddCol() )
+         :cHeader             := "Número Kit"
+         :bEditValue          := {|| ( dbfTmpLin )->nNumKit }
+         :cEditPicture        := "9999"
+         :nWidth              := 55
+         :nDataStrAlign       := 1
+         :nHeadStrAlign       := 1
+         :lHide               := .t.
+      end with
+
+      with object ( oBrwLin:AddCol() )
          :cHeader             := "Posición"
          :cSortOrder          := "nPosPrint"
          :bEditValue          := {|| ( dbfTmpLin )->nPosPrint }
@@ -10761,9 +10771,9 @@ STATIC FUNCTION BeginTrans( aTmp, nMode )
         
          while ( ( D():FacturasClientesLineas( nView ) )->cSerie + str( ( D():FacturasClientesLineas( nView ) )->nNumFac ) + ( D():FacturasClientesLineas( nView ) )->cSufFac ) == cFac .and. !( D():FacturasClientesLineas( nView ) )->( eof() )
         
-            oLinDetCamposExtra:SetTemporalLines( ( D():FacturasClientesLineas( nView ) )->cSerie + str( ( D():FacturasClientesLineas( nView ) )->nNumFac ) + ( D():FacturasClientesLineas( nView ) )->cSufFac + str( ( D():FacturasClientesLineas( nView ) )->nNumLin ) + str( ( D():FacturasClientesLineas( nView ) )->nNumKit ), nMode )
-        
             dbPass( D():FacturasClientesLineas( nView ), dbfTmpLin, .t. )
+
+            oLinDetCamposExtra:SetTemporalLines( ( dbfTmpLin )->cSerie + str( ( dbfTmpLin )->nNumFac ) + ( dbfTmpLin )->cSufFac + str( ( dbfTmpLin )->nNumLin ) + str( ( D():FacturasClientesLineas( nView ) )->nNumKit ), ( dbfTmpLin )->( OrdKeyNo() ), nMode )
         
             ( D():FacturasClientesLineas( nView ) )->( dbSkip() )
         
@@ -10989,7 +10999,7 @@ STATIC FUNCTION BeginTrans( aTmp, nMode )
    Cargamos los temporales de los campos extra---------------------------------
    */
 
-   oDetCamposExtra:SetTemporal( aTmp[ _CSERIE ] + Str( aTmp[ _NNUMFAC ] ) + aTmp[ _CSUFFAC ], nMode )
+   oDetCamposExtra:SetTemporal( aTmp[ _CSERIE ] + Str( aTmp[ _NNUMFAC ] ) + aTmp[ _CSUFFAC ], ( D():FacturasClientes( nView ) )->( OrdKeyNo() ), nMode )
 
    /*RECOVER USING oError
 
@@ -13510,6 +13520,7 @@ STATIC FUNCTION AppendKit( uTmpLin, aTmpFac )
                ( dbfTmpLin )->lKitChl     := .t.
             end if
 
+            ( dbfTmpLin )->nNumKit     := nLastNum( dbfTmpLin, "nNumKit" )
             ( dbfTmpLin )->cRef        := ( dbfKit )->cRefKit
             ( dbfTmpLin )->cDetalle    := ( D():Articulos( nView ) )->Nombre
             ( dbfTmpLin )->nPntVer     := ( D():Articulos( nView ) )->nPntVer1

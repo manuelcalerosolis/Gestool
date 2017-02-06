@@ -33,6 +33,8 @@ CLASS IXBrowse FROM TXBrowse
 
    CLASSDATA nToolTip         AS NUMERIC     INIT 900
 
+   DATA  bExportLector
+
    ACCESS BookMark            INLINE Eval( ::bBookMark )
    ASSIGN BookMark(u)         INLINE Eval( ::bBookMark, u )
 
@@ -72,6 +74,8 @@ CLASS IXBrowse FROM TXBrowse
    METHOD SetRDD( lAddColumns, lAutoOrder, aFldNames )
 
    METHOD ExportToExcel()
+
+   METHOD ExportLector()
 
    METHOD MakeTotals( aCols )
 
@@ -365,6 +369,10 @@ METHOD RButtonDown( nRow, nCol, nFlags )
 
    MenuAddItem( "Exportar a E&xcel", "Exportar rejilla de datos a Excel", .f., .t., {|| ::ExportToExcel() }, , "gc_spreadsheet_sum_16", oMenu )
 
+   if !empty( ::bExportLector )
+      MenuAddItem( "Exportar códigos y unidades", "Exportar códigos y unidades", .f., .t., {|| ::ExportLector() }, , "gc_spreadsheet_sum_16", oMenu )
+   end if
+
    MenuEnd() 
 
    oMenu:Activate( nRow, nCol, Self )
@@ -558,6 +566,54 @@ METHOD ExportToExcel()
    ErrorBlock( oBlock )
 
 Return nil
+
+//----------------------------------------------------------------------------//
+
+METHOD ExportLector()
+
+   local nRow
+   local nRows
+   local oClip
+   local cText
+   local oError
+   local oBlock
+
+   nRows             := eval( ::bKeyCount )
+   if ( nRows == 0 )
+      Return ( Self )
+   endif
+
+   //oBlock            := ErrorBlock( {| oError | ApoloBreak( oError ) } )
+   //BEGIN SEQUENCE
+
+      CursorWait()
+
+      nRow           := 1
+      cText          := ""
+
+      eval( ::bGoTop )
+      while nRow <= ( nRows + 1 )
+
+         cText       += eval( ::bExportLector )
+      
+         ::skip( 1 ); ( nRow++ )
+
+      end while
+
+      oClip          := TClipBoard():New( 1, ::oWnd )
+      if oClip:Open()
+         oClip:SetText( cText )
+      end if 
+      oClip:Close()
+
+      CursorWe()
+
+//   RECOVER USING oError
+//      msgStop( "Error exportando a excel." + CRLF + ErrorMessage( oError ) )
+//   END SEQUENCE
+//   ErrorBlock( oBlock )
+
+Return ( Self )
 
 //----------------------------------------------------------------------------//
 

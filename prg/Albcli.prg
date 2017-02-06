@@ -2669,6 +2669,8 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, hHash, bValid, nMode )
       oBrwLin:lFooter         := .t.
       oBrwLin:lAutoSort       := .t.
 
+      oBrwLin:bExportLector   := {|| stringExport( dbfTmpLin ) }
+
       oBrwLin:CreateFromResource( 240 )
 
       with object ( oBrwLin:AddCol() )
@@ -2687,6 +2689,16 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, hHash, bValid, nMode )
          :bLClickHeader       := {| nMRow, nMCol, nFlags, oCol | if( !empty( oCol ), oCol:SetOrder(), ) }
          :cEditPicture        := "9999"
          :nWidth              := 60
+         :nDataStrAlign       := 1
+         :nHeadStrAlign       := 1
+         :lHide               := .t.
+      end with
+
+      with object ( oBrwLin:AddCol() )
+         :cHeader             := "Número Kit"
+         :bEditValue          := {|| ( dbfTmpLin )->nNumKit }
+         :cEditPicture        := "9999"
+         :nWidth              := 55
          :nDataStrAlign       := 1
          :nHeadStrAlign       := 1
          :lHide               := .t.
@@ -5720,6 +5732,7 @@ STATIC FUNCTION cPedCli( aGet, aTmp, oBrwLin, oBrwPgo, nMode )
                   (dbfTmpLin)->cCtrCoste  := (dbfPedCliL)->cCtrCoste
                   (dbfTmpLin)->cTipCtr    := (dbfPedCliL)->cTipCtr
                   (dbfTmpLin)->cTerCtr    := (dbfPedCliL)->cTerCtr
+                  (dbfTmpLin)->nUndKit    := (dbfPedCliL)->nNudKit
 
                   if !( dbfPedCliL )->lKitArt
 
@@ -6310,6 +6323,7 @@ STATIC FUNCTION GrpPed( aGet, aTmp, oBrw )
                      (dbfTmpLin)->cCtrCoste  := (dbfPedCliL)->cCtrCoste
                      (dbfTmpLin)->cTipCtr    := (dbfPedCliL)->cTipCtr
                      (dbfTmpLin)->cTerCtr    := (dbfPedCliL)->cTerCtr
+                     (dbfTmpLin)->nNumKit    := (dbfPedCliL)->nNumKit
 
                      if lCalCaj()
                         if nTotRec != 0
@@ -6406,6 +6420,7 @@ STATIC FUNCTION GrpPed( aGet, aTmp, oBrw )
                   ( dbfTmpLin )->cCtrCoste   := ( dbfPedCliL )->cCtrCoste
                   ( dbfTmpLin )->cTipCtr     := ( dbfPedCliL )->cTipCtr
                   ( dbfTmpLin )->cTerCtr     := ( dbfPedCliL )->cTerCtr
+                  ( dbfTmpLin )->nNumKit     := ( dbfPedCliL )->nNumKit
 
                end if
 
@@ -11331,6 +11346,7 @@ STATIC FUNCTION AppendKit( uTmpLin, aTmpAlb )
                ( dbfTmpLin )->lKitChl     := .t.
             end if
 
+            ( dbfTmpLin )->nNumKit     := nLastNum( dbfTmpLin, "nNumKit" )
             ( dbfTmpLin )->cRef        := ( dbfKit )->cRefKit
             ( dbfTmpLin )->cDetalle    := ( D():Articulos( nView ) )->Nombre
             ( dbfTmpLin )->nPntVer     := ( D():Articulos( nView ) )->nPntVer1
@@ -18514,5 +18530,21 @@ static Function menuEdtDet( oCodArt, oDlg, lOferta, nIdLin )
    oDlg:SetMenu( oDetMenu )
 
 Return ( oDetMenu )
+
+//---------------------------------------------------------------------------//
+
+Static Function stringExport( dbfTmpLin )
+   
+   local stringExport
+
+   stringExport         := alltrim( ( dbfTmpLin )->cRef ) + "," 
+   stringExport         += alltrim( trans( nTotNAlbCli( dbfTmpLin ), cPicUnd ) ) + ","
+   stringExport         += alltrim( trans( nTotNAlbCli( dbfTmpLin ), cPicUnd ) ) + ","
+   stringExport         += alltrim( ( dbfTmpLin )->cCodPr1 ) + "," 
+   stringExport         += alltrim( ( dbfTmpLin )->cValPr1 ) + "," 
+   stringExport         += alltrim( ( dbfTmpLin )->cCodPr2 ) + "," 
+   stringExport         += alltrim( ( dbfTmpLin )->cValPr1 ) + CRLF
+
+Return ( stringExport )
 
 //---------------------------------------------------------------------------//

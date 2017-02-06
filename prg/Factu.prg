@@ -2711,18 +2711,6 @@ Function CreateAcceso( oWnd )
    oItem:cBmpBig        := "gc_earth_money_32"
    oItem:lShow          := .f.
 
-/*
-   oItem                := oItemVentas:Add()
-   oItem:oGroup         := oGrupo
-   oItem:cPrompt        := 'Pedidos electrónicos'
-   oItem:cMessage       := 'Pedidos de clientes recibidos de comercio electrónico'
-   oItem:bAction        := {|| PedCli( "01056", oWnd, , , , .t. ) }
-   oItem:cId            := "01109"
-   oItem:cBmp           := "gc_clipboard_empty_earth_16"
-   oItem:cBmpBig        := "gc_clipboard_empty_earth_32"
-   oItem:lShow          := .f.
-*/
-
    end if
 
    // TPV----------------------------------------------------------------------

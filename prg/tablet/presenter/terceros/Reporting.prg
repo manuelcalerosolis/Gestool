@@ -30,21 +30,21 @@ Return ( self )
 
 //---------------------------------------------------------------------------//
 
-METHOD ExecuteReporting( hInforme ) CLASS Reporting
+METHOD ExecuteReporting( hInforme, oDevice ) CLASS Reporting
 
    if ::cReportType == ART_TBL
-      ::ExecuteReportingArticulo( hInforme )
+      ::ExecuteReportingArticulo( hInforme, oDevice )
    end if
 
    if ::cReportType == CLI_TBL
-      ::ExecuteReportingCliente( hInforme )
+      ::ExecuteReportingCliente( hInforme, oDevice )
    end if   
 
 Return ( self )
 
 //---------------------------------------------------------------------------//
 
-METHOD ExecuteReportingArticulo( hInforme ) CLASS Reporting
+METHOD ExecuteReportingArticulo( hInforme, oDevice ) CLASS Reporting
    
    local oInf
 
@@ -57,7 +57,7 @@ METHOD ExecuteReportingArticulo( hInforme ) CLASS Reporting
    oInf:cAlmacenDefecto    := oUser():cAlmacen()
    oInf:BuildReportCorrespondences()
 
-   oInf:PlayTablet()
+   oInf:PlayTablet( , oDevice )
 
    oInf:end()
 
@@ -65,7 +65,7 @@ Return ( self )
 
 //---------------------------------------------------------------------------//
 
-METHOD ExecuteReportingCliente( hInforme ) CLASS Reporting
+METHOD ExecuteReportingCliente( hInforme, oDevice ) CLASS Reporting
 
    local oInf
 
@@ -80,7 +80,7 @@ METHOD ExecuteReportingCliente( hInforme ) CLASS Reporting
    oInf:bPreGenerate       := {|| oInf:oGrupoSufijo:Cargo:Desde       := Rtrim( oUser():cDelegacion() ),;
                                   oInf:oGrupoSufijo:Cargo:Hasta       := Rtrim( oUser():cDelegacion() ) }
 
-   oInf:PlayTablet()
+   oInf:PlayTablet( , oDevice )
 
    oInf:end()
 

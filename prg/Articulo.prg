@@ -6007,7 +6007,7 @@ Static Function EndTrans( aTmp, aGet, oSay, oDlg, aTipBar, cTipBar, nMode, oImpC
 
       if ( dbfTmpImg )->( Lastrec() ) == 0
          lChangeImage  := ( cImageOld == aTmp[ ( D():Articulos( nView ) )->( fieldpos( "cImagen" ) ) ] )
-      end if  
+      end if 
 
       /*
       Guardamos los campos extra-----------------------------------------------

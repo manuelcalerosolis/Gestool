@@ -76,11 +76,19 @@ Return ( ::oDlg:nResult == IDOK )
 METHOD defineBotonSalir() CLASS ViewReporting
 
    TGridImage():Build(  {  "nTop"      => 5,;
+                           "nLeft"     => {|| GridWidth( 7.5, ::oDlg ) },;
+                           "nWidth"    => 64,;
+                           "nHeight"   => 64,;
+                           "cResName"  => "gc_monitor_64",;
+                           "bLClicked" => {|| ::oSender:ExecuteReporting( ::hInformes[ ::oBrowse:nArrayAt ], IS_SCREEN ) },;
+                           "oWnd"      => ::oDlg } )
+
+   TGridImage():Build(  {  "nTop"      => 5,;
                            "nLeft"     => {|| GridWidth( 9, ::oDlg ) },;
                            "nWidth"    => 64,;
                            "nHeight"   => 64,;
                            "cResName"  => "gc_printer_64",;
-                           "bLClicked" => {|| ::oSender:ExecuteReporting( ::hInformes[ ::oBrowse:nArrayAt ] ) },;
+                           "bLClicked" => {|| ::oSender:ExecuteReporting( ::hInformes[ ::oBrowse:nArrayAt ], IS_PRINTER ) },;
                            "oWnd"      => ::oDlg } )
 
    TGridImage():Build(  {  "nTop"      => 5,;
@@ -101,7 +109,7 @@ METHOD defineBotonesGenerales() CLASS ViewReporting
                                                       "nLeft"     => {|| GridWidth( 0.5, ::oDlg ) },;
                                                       "nWidth"    => 64,;
                                                       "nHeight"   => 64,;
-                                                      "cResName"  => "gc_object_cube_printer_64",;
+                                                      "cResName"  => "gc_object_cube_cabinet_open_64",;
                                                       "bLClicked" => {|| ::changeTypeReporting( ART_TBL ), ::loadHashReport() },;
                                                       "oWnd"      => ::oDlg } )
 
@@ -109,7 +117,7 @@ METHOD defineBotonesGenerales() CLASS ViewReporting
                                                       "nLeft"     => {|| GridWidth( 2, ::oDlg ) },;
                                                       "nWidth"    => 64,;
                                                       "nHeight"   => 64,;
-                                                      "cResName"  => "gc_user_printer_64",;
+                                                      "cResName"  => "gc_user_cabinet_open_64",;
                                                       "bLClicked" => {|| ::changeTypeReporting( CLI_TBL ), ::loadHashReport() },;
                                                       "oWnd"      => ::oDlg } )
 
