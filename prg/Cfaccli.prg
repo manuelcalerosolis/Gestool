@@ -3569,9 +3569,6 @@ FUNCTION CntFacPrv( lSimula, lPago, lMessage, oTree, nAsiento, aSimula, dbfFacPr
 
       for n := 1 to Len( aTotIva )
 
-      
-
-
          if isIVAComunidadEconomicaEuropea( dbfFacPrvT )
             cSubCtaIva  := cCuentaCompraIVASoportadoUE()
             cSubCtaReq  := cCuentaCompraIVARepercutidoUE()
@@ -3603,7 +3600,7 @@ FUNCTION CntFacPrv( lSimula, lPago, lMessage, oTree, nAsiento, aSimula, dbfFacPr
 
             if nImpDeta != 0
 
-               cCtaVent    := RetCtaCom( ( dbfFacPrvL )->cRef, dbfArticulo )
+               cCtaVent    := RetCtaCom( ( dbfFacPrvL )->cRef, ( nImpDeta < 0 ), dbfArticulo )
                if Empty( cCtaVent )
                   cCtaVent := cCtaPrvVta + RetGrpVta( ( dbfFacPrvL )->cRef, cRuta, cCodEmp, dbfArticulo, ( dbfFacPrvL )->nIva )
                end if
@@ -4183,7 +4180,7 @@ FUNCTION CntRctPrv( lSimula, lPago, lMessage, oTree, nAsiento, aSimula, dbfRctPr
 
          if nImpDeta != 0
 
-            cCtaVent := RetCtaCom( ( dbfRctPrvL )->cRef, dbfArticulo )
+            cCtaVent := RetCtaCom( ( dbfRctPrvL )->cRef, ( nImpDeta < 0 ), dbfArticulo )
             if Empty( cCtaVent )
                cCtaVent := cCtaPrvVta + RetGrpVta( ( dbfRctPrvL )->cRef, cRuta, cCodEmp, dbfArticulo, ( dbfRctPrvL )->nIva )
             end if

@@ -3218,12 +3218,25 @@ METHOD procesarArticuloInventario( cInventario ) CLASS TRemMovAlm
 
    local cCodigo
    local nUnidades
-   local aInventario    := hb_atokens( cInventario, "," )
+   local cCodigoPrimeraPropiedad
+   local cCodigoSegundaPropiedad
+   local cValorPrimeraPropiedad
+   local cValorSegundaPropiedad
+   local aInventario             := hb_atokens( cInventario, "," )
 
-   if hb_isarray( aInventario ) .and. len( aInventario ) >= 2
+   if hb_isarray( aInventario ) 
 
-      cCodigo           := alltrim( aInventario[ 1 ] )
-      nUnidades         := val( aInventario[ 2 ] )
+      if len( aInventario ) >= 2
+         cCodigo                 := alltrim( aInventario[ 1 ] )
+         nUnidades               := val( aInventario[ 2 ] )
+      end if 
+
+      if len( aInventario ) >= 6
+         cCodigoPrimeraPropiedad := alltrim( aInventario[ 3 ] )
+         cValorPrimeraPropiedad  := alltrim( aInventario[ 4 ] )
+         cCodigoSegundaPropiedad := alltrim( aInventario[ 5 ] )
+         cValorSegundaPropiedad  := alltrim( aInventario[ 6 ] )
+      end if 
 
       if !hb_isstring( cCodigo ) 
          aadd( ::aInventarioErrors, "El código del artículo no es un valor valido." )
@@ -3235,7 +3248,7 @@ METHOD procesarArticuloInventario( cInventario ) CLASS TRemMovAlm
          Return ( Self )   
       end if 
 
-      ::insertaArticuloRemesaMovimiento( cCodigo, nUnidades )
+      ::insertaArticuloRemesaMovimiento( cCodigo, nUnidades, cCodigoPrimeraPropiedad, cValorPrimeraPropiedad, cCodigoSegundaPropiedad, cValorSegundaPropiedad )
 
    end if 
 
@@ -3248,13 +3261,29 @@ Return ( Self )
 //---------------------------------------------------------------------------//
 // Trata de insertar el articulo en la remesa de moviemitnos-------------------
 
-METHOD insertaArticuloRemesaMovimiento( cCodigo, nUnidades ) CLASS TRemMovAlm
+METHOD insertaArticuloRemesaMovimiento( cCodigo, nUnidades, cCodigoPrimeraPropiedad, cValorPrimeraPropiedad, cCodigoSegundaPropiedad, cValorSegundaPropiedad ) CLASS TRemMovAlm
 
    ::oDetMovimientos:oDbfVir:Blank()
 
-   ::oDetMovimientos:oDbfVir:cRefMov   := cCodigo
-   ::oDetMovimientos:oDbfVir:nUndMov   := nUnidades
-   ::oDetMovimientos:oDbfVir:nNumLin   := nLastNum( ::oDetMovimientos:oDbfVir:cAlias )
+   ::oDetMovimientos:oDbfVir:cRefMov      := cCodigo
+   ::oDetMovimientos:oDbfVir:nUndMov      := nUnidades
+   ::oDetMovimientos:oDbfVir:nNumLin      := nLastNum( ::oDetMovimientos:oDbfVir:cAlias )
+
+   if hb_isstring( cCodigoPrimeraPropiedad )   
+      ::oDetMovimientos:oDbfVir:cCodPr1   := cCodigoPrimeraPropiedad
+   end if 
+
+   if hb_isstring( cValorPrimeraPropiedad )   
+      ::oDetMovimientos:oDbfVir:cValPr1   := cValorPrimeraPropiedad
+   end if 
+
+   if hb_isstring( cCodigoSegundaPropiedad )   
+      ::oDetMovimientos:oDbfVir:cCodPr2   := cCodigoSegundaPropiedad
+   end if 
+
+   if hb_isstring( cValorSegundaPropiedad )   
+      ::oDetMovimientos:oDbfVir:cValPr2   := cValorSegundaPropiedad
+   end if 
 
    if !( ::oDetMovimientos:loadArticulo( APPD_MODE, .t. ) )
       aadd( ::aInventarioErrors, "El código de artículo " + cCodigo + " no es un valor valido." )

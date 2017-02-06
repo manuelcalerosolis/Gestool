@@ -5616,7 +5616,7 @@ STATIC FUNCTION ContabilizaRectificativa( lSimula, lPago, oTree )
 
          if nImpDeta != 0
 
-            cCtaVent    := RetCtaCom( ( D():FacturasRectificativasProveedoresLineas( nView ) )->cRef, D():Articulos( nView ) )
+            cCtaVent    := RetCtaCom( ( D():FacturasRectificativasProveedoresLineas( nView ) )->cRef, ( nImpDeta < 0 ), D():Articulos( nView ) )
             if Empty( cCtaVent )
                cCtaVent := cCtaPrvVta + RetGrpVta( ( D():FacturasRectificativasProveedoresLineas( nView ) )->cRef, cRuta, cCodEmp, D():Articulos( nView ), ( D():FacturasRectificativasProveedoresLineas( nView ) )->nIva )
             end if

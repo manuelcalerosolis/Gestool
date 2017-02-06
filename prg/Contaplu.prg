@@ -1678,12 +1678,22 @@ RETURN ( cCtaVta )
 Devuelve la cuenta de compra de un articulo
 */
 
-FUNCTION RetCtaCom( cCodArt, dbfArticulo )
+FUNCTION RetCtaCom( cCodArt, lDevolucion, dbfArticulo )
 
-   local cCtaCom  := ""
+   local cCtaCom        := ""
+
+   DEFAULT lDevolucion  := .f.
 
    if ( dbfArticulo )->( dbSeek( cCodArt ) )
-      cCtaCom     := Rtrim( ( dbfArticulo )->cCtaCom )
+
+      if lDevolucion
+         cCtaCom        := rtrim( ( dbfArticulo )->cCtaComDev )
+      end if 
+
+      if empty(cCtaCom)
+         cCtaCom        := rtrim( ( dbfArticulo )->cCtaCom )
+      end if 
+
    end if
 
 RETURN ( cCtaCom )
