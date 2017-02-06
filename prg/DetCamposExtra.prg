@@ -69,8 +69,8 @@ CLASS TDetCamposExtra FROM TMant
 
    Method valueExtraField()
    Method selectItem( cClave )
-   Method setTemporalLines( cClave, nMode )     INLINE ( ::SetTemporal( cClave, nMode, .f. ) )
-   Method setTemporal( cClave, nMode, lClear )
+   Method setTemporalLines( cClave, nClaveInterna, nMode )     INLINE ( ::SetTemporal( cClave, nClaveInterna, nMode, .f. ) )  
+   Method setTemporal( cClave, nClaveInterna, nMode, lClear )
 
 END CLASS
 
@@ -257,6 +257,8 @@ RETURN ( Self )
 Method Play( cClave, lResource ) CLASS TDetCamposExtra
 
    DEFAULT lResource    := .t.
+
+   MsgInfo( hb_valtoexp( ::aCamposExtra ), "aCampos" )
 
    if ::selectItem( cClave )
 
@@ -637,7 +639,7 @@ Return ( valueExtraField )
 
 //---------------------------------------------------------------------------//
 
-METHOD setTemporal( cClave, nMode, lClear ) CLASS TDetCamposExtra
+METHOD setTemporal( cClave, nClaveInterna, nMode, lClear ) CLASS TDetCamposExtra
 
    local nRec              := ::oDbf:Recno()
    local nOrdAnt           := ::oDbf:OrdSetFocus( "cTotClave" )
@@ -668,6 +670,7 @@ METHOD setTemporal( cClave, nMode, lClear ) CLASS TDetCamposExtra
       cClavePrincipal      := hGet( DOCUMENTOS_ITEMS, ::TipoDocumento ) + hGet( hCampos, "código" ) + Padr( cClave, 30 )
 
       hSet( hCampos, "clave", Padr( cClave, 30 ) )
+      hSet( hCampos, "claveinterna", Padr( nClaveInterna, 30 ) )
 
       if ::oDbf:Seek( cClavePrincipal )
          hSet( hCampos, "valor", ::cChar2Format( ::oDbf:cValor, hGet( hCampos, "tipo" ) ) )

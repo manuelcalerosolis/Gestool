@@ -6420,6 +6420,7 @@ STATIC FUNCTION GrpPed( aGet, aTmp, oBrw )
                   ( dbfTmpLin )->cCtrCoste   := ( dbfPedCliL )->cCtrCoste
                   ( dbfTmpLin )->cTipCtr     := ( dbfPedCliL )->cTipCtr
                   ( dbfTmpLin )->cTerCtr     := ( dbfPedCliL )->cTerCtr
+                  ( dbfTmpLin )->nNumKit     := ( dbfPedCliL )->nNumKit
 
                end if
 
