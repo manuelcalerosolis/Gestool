@@ -2693,6 +2693,16 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, hHash, bValid, nMode )
       end with
 
       with object ( oBrwLin:AddCol() )
+         :cHeader             := "Número Kit"
+         :bEditValue          := {|| ( dbfTmpLin )->nNumKit }
+         :cEditPicture        := "9999"
+         :nWidth              := 55
+         :nDataStrAlign       := 1
+         :nHeadStrAlign       := 1
+         :lHide               := .t.
+      end with
+
+      with object ( oBrwLin:AddCol() )
          :cHeader             := "Posición"
          :cSortOrder          := "nPosPrint"
          :bEditValue          := {|| ( dbfTmpLin )->nPosPrint }
@@ -5720,6 +5730,7 @@ STATIC FUNCTION cPedCli( aGet, aTmp, oBrwLin, oBrwPgo, nMode )
                   (dbfTmpLin)->cCtrCoste  := (dbfPedCliL)->cCtrCoste
                   (dbfTmpLin)->cTipCtr    := (dbfPedCliL)->cTipCtr
                   (dbfTmpLin)->cTerCtr    := (dbfPedCliL)->cTerCtr
+                  (dbfTmpLin)->nUndKit    := (dbfPedCliL)->nNudKit
 
                   if !( dbfPedCliL )->lKitArt
 
@@ -6310,6 +6321,7 @@ STATIC FUNCTION GrpPed( aGet, aTmp, oBrw )
                      (dbfTmpLin)->cCtrCoste  := (dbfPedCliL)->cCtrCoste
                      (dbfTmpLin)->cTipCtr    := (dbfPedCliL)->cTipCtr
                      (dbfTmpLin)->cTerCtr    := (dbfPedCliL)->cTerCtr
+                     (dbfTmpLin)->nNumKit    := (dbfPedCliL)->nNumKit
 
                      if lCalCaj()
                         if nTotRec != 0
@@ -11331,6 +11343,7 @@ STATIC FUNCTION AppendKit( uTmpLin, aTmpAlb )
                ( dbfTmpLin )->lKitChl     := .t.
             end if
 
+            ( dbfTmpLin )->nNumKit     := nLastNum( dbfTmpLin, "nNumKit" )
             ( dbfTmpLin )->cRef        := ( dbfKit )->cRefKit
             ( dbfTmpLin )->cDetalle    := ( D():Articulos( nView ) )->Nombre
             ( dbfTmpLin )->nPntVer     := ( D():Articulos( nView ) )->nPntVer1

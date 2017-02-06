@@ -221,6 +221,7 @@ Definici¢n de la base de datos de lineas de detalle
 #define __CCENTROCOSTE           102
 #define _CTIPCTR                 103
 #define _CTERCTR                 104
+#define _NNUMKIT                 105
 
 /*
 Array para impuestos
@@ -2317,6 +2318,16 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, cCodCli, cCodArt, nMode, cCodPre 
          :nDataStrAlign       := 1
          :nHeadStrAlign       := 1
          :lHide 					:= .t.
+      end with
+
+      with object ( oBrwLin:AddCol() )
+         :cHeader             := "Número Kit"
+         :bEditValue          := {|| ( dbfTmpLin )->nNumKit }
+         :cEditPicture        := "9999"
+         :nWidth              := 55
+         :nDataStrAlign       := 1
+         :nHeadStrAlign       := 1
+         :lHide               := .t.
       end with
 
       with object ( oBrwLin:AddCol() )
@@ -10700,6 +10711,7 @@ Static Function AppendKit( uTmpLin, aTmpPed )
                ( dbfTmpLin )->lKitChl  	:= .t.
             end if
 
+            ( dbfTmpLin )->nNumKit     := nLastNum( dbfTmpLin, "nNumKit" )
             ( dbfTmpLin )->cRef        := ( dbfkit      )->cRefKit
             ( dbfTmpLin )->cDetalle    := ( D():Articulos( nView ) )->Nombre
             ( dbfTmpLin )->nPntVer     := ( D():Articulos( nView ) )->nPntVer1
@@ -15800,6 +15812,7 @@ function aColPedCli()
    aAdd( aColPedCli, { "cCtrCoste", "C",    9,  0, "Código del centro de coste",                      "",                           "", "( cDbfCol )", nil } )
    aAdd( aColPedCli, { "cTipCtr",   "C",   20,  0, "Tipo tercero centro de coste",                    "",                           "", "( cDbfCol )", nil } )
    aAdd( aColPedCli, { "cTerCtr",   "C",   20,  0, "Tercero centro de coste",                         "",                           "", "( cDbfCol )", nil } )
+   aAdd( aColPedCli, { "nNumKit",   "N",    4,  0, "Número de línea de escandallo",                   "",                           "", "( cDbfCol )", nil } )
 
 return ( aColPedCli )
 

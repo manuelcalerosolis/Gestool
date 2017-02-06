@@ -461,7 +461,7 @@ METHOD saveExtraField( cClave ) CLASS TDetCamposExtra
    local hCampos
    local hExtraField
 
-   ::RollBackValores( cClave )
+   /*::RollBackValores( cClave )
 
    for each hExtraField in ::aCamposExtra
 
@@ -482,7 +482,7 @@ METHOD saveExtraField( cClave ) CLASS TDetCamposExtra
 
       next
 
-   next   
+   next   */
 
 return ( self )
 
