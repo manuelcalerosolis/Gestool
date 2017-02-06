@@ -14,32 +14,15 @@ NEXT BITMAP "..\\bmp\\Navigate_Right_16.bmp"
 BOTTOM BITMAP "..\\bmp\\Navigate_End_16.bmp"
 CLI BITMAP "..\\bmp\\gc_id_card_16.bmp"
 CLIPOT BITMAP "..\\bmp\\gc_id_card_hint_16.bmp"
-INDEX_16 BITMAP "..\\bmp\\Index_16.bmp"
 FIND BITMAP "..\\bmp\\gc_binocular2_16.bmp"
-
 PAGINATOR_32 BITMAP "..\\bmp\\Paginator_32.bmp"
 
 
-
-
-
-BUSINESSMEN_16 BITMAP "..\\bmp\\Businessmen_16.bmp"
-BUSINESSMEN_32 BITMAP "..\\bmp\\Businessmen_32.bmp"
-SHIELD_32 BITMAP "..\\bmp\\Shield_32.bmp"
-NOTE_16 BITMAP "..\\bmp\\Note_16.bmp"
-NOTE_32 BITMAP "..\\bmp\\Note_32.bmp"
 DOCTOR_16 BITMAP "..\\bmp\\Doctor_16.bmp"
 DOCTOR_32 BITMAP "..\\bmp\\Doctor_32.bmp"
-TELEPHONE_16 BITMAP "..\\bmp\\Telephone_16.bmp"
-TELEPHONE_32 BITMAP "..\\bmp\\Telephone_32.bmp"
-HARDDISK_16 BITMAP "..\\bmp\\Harddisk_16.bmp"
-HARDDISK_32 BITMAP "..\\bmp\\Harddisk_32.bmp"
-IMPORT1_16 BITMAP "..\\bmp\\Import1_16.bmp"
-IMPORT1_32 BITMAP "..\\bmp\\Import1_32.bmp"
-TABLE_REPLACE_16 BITMAP "..\\bmp\\Table_replace_16.bmp"
-TABLE_REPLACE_32 BITMAP "..\\bmp\\Table_replace_32.bmp"
 
-CALC_16 BITMAP "..\\bmp\\Calc_16.bmp"
+
+
 LIFEBELT_16 BITMAP "..\\bmp\\Lifebelt_16.bmp"
 LIFEBELT_32 BITMAP "..\\bmp\\Lifebelt_32.bmp"
 LIGHTBULB_ON_16 BITMAP "..\\bmp\\lightbulb_on_16.bmp"

@@ -3778,7 +3778,7 @@ Function TctCreateButtonBar()
    oItem:cMessage       := "Acceso a los usuarios del programa"
    oItem:bAction        := {|| BrwBigUser() }
    oItem:cBmp           := "gc_businessmen2_16"
-   oItem:cBmpBig        := "Businessmen_32"
+   oItem:cBmpBig        := "gc_businessmen2_32"
 
    oItem                := oItemArchivo:Add()
    oItem:oGroup         := oGrupo
@@ -3903,7 +3903,7 @@ Function BuildTctMenu()
             MESSAGE  "Usuarios" ;
             HELPID   "01074" ;
             ACTION   ( BrwBigUser() );
-            RESOURCE "Businessmen_16"
+            RESOURCE "gc_businessmen2_16"
 
          SEPARATOR
 
@@ -4083,7 +4083,7 @@ Function TPVCreateButtonBar()
    oItem:cPrompt        := "Usuarios"
    oItem:cMessage       := "Acceso a los usuarios del programa"
    oItem:bAction        := {|| BrwBigUser() }
-   oItem:cBmpBig        := "Businessmen_32"
+   oItem:cBmpBig        := "gc_businessmen2_32"
 
    oItem                := oItemArchivo:Add()
    oItem:oGroup         := oGrupo
@@ -4202,7 +4202,7 @@ Function BuildTpvMenu()
             MESSAGE  "Usuarios" ;
             HELPID   "01074" ;
             ACTION   ( BrwBigUser() );
-            RESOURCE "Businessmen_16"
+            RESOURCE "gc_businessmen2_16"
 
       SEPARATOR
 

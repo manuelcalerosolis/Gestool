@@ -177,7 +177,7 @@ FUNCTION TipoNotas( oMenuItem, oWnd )
       XBROWSE ;
       TITLE    "Tipos de notas" ;
       PROMPT   "Tipo";
-      MRU      "Index_16";
+      MRU      "gc_folder2_16";
       ALIAS    ( dbfTipoNotas ) ;
       BITMAP   clrTopArchivos ;
       APPEND   ( WinAppRec( oWndBrw:oBrw, bEdit, dbfTipoNotas ) ) ;

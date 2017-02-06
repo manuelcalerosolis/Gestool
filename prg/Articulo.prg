@@ -7914,7 +7914,7 @@ STATIC FUNCTION EdtCodebar( aTmp, aGet, dbfTmpCodebar, oBrw, bWhen, bValid, nMod
 
       REDEFINE GET   aGet[ ( dbfTmpCodebar )->( fieldPos( "cCodBar" ) ) ] ;
             VAR      aTmp[ ( dbfTmpCodebar )->( fieldPos( "cCodBar" ) ) ] ;
-            BITMAP   "Calc_16" ;
+            BITMAP   "gc_calculator_16" ;
             ID       100 ;
             ON HELP  ( lCalEan13( aGet[ ( dbfTmpCodebar )->( fieldPos( "cCodBar" ) ) ] ) );
             OF       oDlg
