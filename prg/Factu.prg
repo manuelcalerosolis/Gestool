@@ -3797,7 +3797,7 @@ Function TctCreateButtonBar()
    oItem:cBmpBig        := "gc_cash_register_refresh_32"
 
    // Ayudas-------------------------------------------------------------------
-
+   
    oGrupo               := TGrupoAcceso()
    oGrupo:nBigItems     := 4
    oGrupo:cPrompt       := 'Ayudas'
