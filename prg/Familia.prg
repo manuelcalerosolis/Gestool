@@ -1044,7 +1044,7 @@ Static Function EdtRec( aTmp, aGet, dbfFamilia, oBrw, bWhen, bValid, nMode )
             oDlg:AddFastKey( VK_F6, {|| EndTrans( aTmp, aGet, nMode, oBrwPrv, oDlg, .t. ) } )
          end if
 
-         oDlg:AddFastKey( VK_F9, {|| oDetCamposExtra:Play( aTmp[ _CCODFAM ] ) } )
+         oDlg:AddFastKey( VK_F9, {|| oDetCamposExtra:Play( space(1) ) } )
 
       end if
 
@@ -1088,7 +1088,7 @@ Static Function EdtRecMenu( oDlg, aTmp )
             MENUITEM "&1. Campos extra [F9]";
             MESSAGE  "Mostramos y rellenamos los campos extra para la familia" ;
             RESOURCE "gc_form_plus2_16" ;
-            ACTION   ( oDetCamposExtra:Play( aTmp[ _CCODFAM ] ) )
+            ACTION   ( oDetCamposExtra:Play( Space(1) ) )
 
          ENDMENU
 
@@ -1328,7 +1328,7 @@ STATIC FUNCTION BeginTrans( aTmp, nMode )
 
    end if
 
-   oDetCamposExtra:SetTemporal( aTmp[ _CCODFAM ], nMode )
+   oDetCamposExtra:SetTemporal( aTmp[ _CCODFAM ], "", nMode )
 
 Return Nil
 
@@ -1430,7 +1430,7 @@ STATIC FUNCTION EndTrans( aTmp, aGet, nMode, oBrw, oDlg, lActualizaWeb )
       Guardamos los campos extra-----------------------------------------------
       */
 
-      oDetCamposExtra:saveExtraField( aTmp[ _CCODFAM ] )
+      oDetCamposExtra:saveExtraField( aTmp[ _CCODFAM ], "" )
 
       // Escribe los datos pendientes---------------------------------------------
 

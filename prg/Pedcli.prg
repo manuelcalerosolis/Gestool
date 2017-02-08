@@ -3530,7 +3530,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, cCodCli, cCodArt, nMode, cCodPre 
       oDlg:AddFastKey( VK_F5, {|| EndTrans( aTmp, aGet, oBrwLin, oBrwInc, nMode, oDlg ) } )
       oDlg:AddFastKey( VK_F6, {|| if( EndTrans( aTmp, aGet, oBrwLin, oBrwInc, nMode, oDlg ), GenPedCli( IS_PRINTER ), ) } )
       oDlg:AddFastKey( VK_F7, {|| ExcelImport( aTmp, dbfTmpLin, D():Articulos( nView ), dbfArtDiv, D():Familias( nView ), D():Divisas( nView ), oBrwLin, .t. ) } )
-      oDlg:AddFastKey( VK_F9, {|| oDetCamposExtra:Play( aTmp[ _CSERPED ] + str( aTmp[ _NNUMPED ] ) + aTmp[ _CSUFPED ] ) } )
+      oDlg:AddFastKey( VK_F9, {|| oDetCamposExtra:Play( Space(1) ) } )
 
       oDlg:AddFastKey( 65,    {|| if( GetKeyState( VK_CONTROL ), CreateInfoArticulo(), ) } )
 
@@ -4104,7 +4104,7 @@ Static Function EdtRecMenu( aTmp, oDlg )
             MENUITEM    "&1. Campos extra [F9]";
                MESSAGE  "Mostramos y rellenamos los campos extra para la familia" ;
                RESOURCE "gc_form_plus2_16" ;
-               ACTION   ( oDetCamposExtra:Play( aTmp[ _CSERPED ] + Str( aTmp[ _NNUMPED ] ) + aTmp[ _CSUFPED ] ) )
+               ACTION   ( oDetCamposExtra:Play( Space(1) ) )
 
             MENUITEM    "&2. Visualizar presupuesto";
                MESSAGE  "Visualiza el presupuesto del cliente" ;
@@ -9127,7 +9127,7 @@ STATIC FUNCTION EndTrans( aTmp, aGet, oBrwLin, oBrwInc, nMode, oDlg, lActualizaW
    aTmp[ _NTOTREQ ]     := nTotReq
    aTmp[ _NTOTPED ]     := nTotPed
 
-   oDetCamposExtra:saveExtraField( aTmp[ _CSERPED ] + Str( aTmp[ _NNUMPED ] ) + aTmp[ _CSUFPED ] )
+   oDetCamposExtra:saveExtraField( aTmp[ _CSERPED ] + Str( aTmp[ _NNUMPED ] ) + aTmp[ _CSUFPED ], "" )
 
    /*
    Escritura en el fichero definitivo------------------------------------------
@@ -9836,7 +9836,7 @@ STATIC FUNCTION BeginTrans( aTmp, nMode )
 
    ( dbfTmpRes )->( dbGoTop() )
 
-   oDetCamposExtra:SetTemporal( aTmp[ _CSERPED ] + Str( aTmp[ _NNUMPED ] ) + aTmp[ _CSUFPED ], nMode )
+   oDetCamposExtra:SetTemporal( aTmp[ _CSERPED ] + Str( aTmp[ _NNUMPED ] ) + aTmp[ _CSUFPED ], "", nMode )
 
    RECOVER USING oError
 

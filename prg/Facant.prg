@@ -1863,7 +1863,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfAntCliT, oBrw, cCodCli, bValid, nMode, cS
 
       oDlg:AddFastKey( VK_F5, {|| EndTrans( aTmp, aGet, oBrw, nMode, nRouDiv, nTotAnt, oDlg ) } )
       oDlg:AddFastKey( VK_F6, {|| if( EndTrans( aTmp, aGet, oBrw, nMode, nRouDiv, nTotAnt, oDlg ), GenAntCli( IS_PRINTER ), ) } )
-      oDlg:AddFastKey( VK_F9, {|| oDetCamposExtra:Play( aTmp[ _CSERANT ] + str( aTmp[ _NNUMANT ] ) + aTmp[ _CSUFANT ] ) } )
+      oDlg:AddFastKey( VK_F9, {|| oDetCamposExtra:Play( space(1) ) } )
 
    end if
 
@@ -2610,7 +2610,7 @@ STATIC FUNCTION BeginTrans( aTmp, nMode )
    Cargamos los temporales de los campos extra---------------------------------
    */
 
-   oDetCamposExtra:SetTemporal( aTmp[ _CSERANT ] + Str( aTmp[ _NNUMANT ] ) + aTmp[ _CSUFANT ], nMode )
+   oDetCamposExtra:SetTemporal( aTmp[ _CSERANT ] + Str( aTmp[ _NNUMANT ] ) + aTmp[ _CSUFANT ], "", nMode )
 
 RETURN NIL
 
@@ -2796,7 +2796,7 @@ STATIC FUNCTION EndTrans( aTmp, aGet, oBrw, nMode, nDec, nTotal, oDlg )
    Guardamos los campos extra-----------------------------------------------
    */
 
-   oDetCamposExtra:saveExtraField( aTmp[ _CSERANT ] + Str( aTmp[ _NNUMANT ] ) + aTmp[ _CSUFANT ] )
+   oDetCamposExtra:saveExtraField( aTmp[ _CSERANT ] + Str( aTmp[ _NNUMANT ] ) + aTmp[ _CSUFANT ], "" )
 
    /*
    Grabamos el registro--------------------------------------------------------
@@ -4445,7 +4445,7 @@ Static Function EdtRecMenu( aTmp, oDlg )
             MENUITEM    "&1. Campos extra [F9]";
                MESSAGE  "Mostramos y rellenamos los campos extra para la familia" ;
                RESOURCE "gc_form_plus2_16" ;
-               ACTION   ( oDetCamposExtra:Play( aTmp[ _CSERANT ] + Str( aTmp[ _NNUMANT] ) + aTmp[ _CSUFANT ] ) )
+               ACTION   ( oDetCamposExtra:Play( space(1) ) )
 
             MENUITEM    "&2. Visualizar factura";
                MESSAGE  "Visualiza la factura que lo liquida" ;

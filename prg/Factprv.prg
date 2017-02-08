@@ -2676,7 +2676,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, cCodPrv, cCodArt, nMode, cNumAlb 
 
       oDlg:AddFastKey( VK_F5,             {|| EndTrans( aTmp, aGet, oBrw, oBrwLin, nMode, nDinDiv, oDlg ) } )
       oDlg:AddFastKey( VK_F6,             {|| if( EndTrans( aTmp, aGet, oBrw, oBrwLin, nMode, nDinDiv, oDlg ), GenFacPrv( IS_PRINTER ), ) } )
-      oDlg:AddFastKey( VK_F9,             {|| oDetCamposExtra:Play( aTmp[ _CSERFAC ] + str( aTmp[ _NNUMFAC ] ) + aTmp[ _CSUFFAC ] ) } )
+      oDlg:AddFastKey( VK_F9,             {|| oDetCamposExtra:Play( Space(1) ) } )
       oDlg:AddFastKey( 65,                {|| if( GetKeyState( VK_CONTROL ), CreateInfoArticulo(), ) } )
    end if
 
@@ -2773,7 +2773,7 @@ Static Function EdtRecMenu( aTmp, oDlg )
             MENUITEM    "&1. Campos extra [F9]";
                MESSAGE  "Mostramos y rellenamos los campos extra para la familia" ;
                RESOURCE "gc_form_plus2_16" ;
-               ACTION   ( oDetCamposExtra:Play( aTmp[ _CSERFAC ] + Str( aTmp[ _NNUMFAC] ) + aTmp[ _CSUFFAC ] ) )
+               ACTION   ( oDetCamposExtra:Play( space(1) ) )
 
 
             MENUITEM    "&2. Visualizar albarán";
@@ -7011,7 +7011,7 @@ STATIC FUNCTION BeginTrans( aTmp, nMode )
 
       ( dbfTmpPgo )->( dbGoTop() )
 
-      oDetCamposExtra:SetTemporal( aTmp[ _CSERFAC ] + Str( aTmp[ _NNUMFAC ] ) + aTmp[ _CSUFFAC ], nMode )
+      oDetCamposExtra:SetTemporal( aTmp[ _CSERFAC ] + Str( aTmp[ _NNUMFAC ] ) + aTmp[ _CSUFFAC ], "", nMode )
 
       CursorWE()
 
@@ -7326,7 +7326,7 @@ STATIC FUNCTION EndTrans( aTmp, aGet, oBrw, oBrwLin, nMode, nDec, oDlg )
    Salvamos los temporales de los campos extra---------------------------------
    */
 
-   oDetCamposExtra:saveExtraField( aTmp[ _CSERFAC ] + Str( aTmp[ _NNUMFAC ] ) + aTmp[ _CSUFFAC ] )
+   oDetCamposExtra:saveExtraField( aTmp[ _CSERFAC ] + Str( aTmp[ _NNUMFAC ] ) + aTmp[ _CSUFFAC ], "" )
 
    // Grabamos las cabeceras de los albaranes----------------------------------
 

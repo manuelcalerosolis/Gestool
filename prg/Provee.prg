@@ -625,13 +625,13 @@ FUNCTION Provee( oMenuItem, oWnd )
       TOOLTIP  "Rotor" ;
       LEVEL    ACC_EDIT
 
-      DEFINE BTNSHELL RESOURCE "gc_form_plus2_" OF oWndBrw ;
+      /*DEFINE BTNSHELL RESOURCE "gc_form_plus2_" OF oWndBrw ;
          NOBORDER ;
          ACTION   ( oDetCamposExtra:Play( ( dbfProvee )->Cod ) );
          TOOLTIP  "Campos extra" ;
          FROM     oRotor ;
          ALLOW    EXIT ;
-         LEVEL    ACC_EDIT
+         LEVEL    ACC_EDIT*/
 
       DEFINE BTNSHELL RESOURCE "gc_clipboard_empty_businessman_" OF oWndBrw ;
          ALLOW    EXIT ;
@@ -1779,7 +1779,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfProvee, oBrw, bWhen, bValid, nMode )
          oFld:aDialogs[6]:AddFastKey( VK_F3, {|| WinEdtRec( oBrwDoc, bEdtDoc, dbfTmpDoc, nil, nil, aTmp ) } )
          oFld:aDialogs[6]:AddFastKey( VK_F4, {|| DbDelRec( oBrwDoc, dbfTmpDoc, nil, nil, .t. ) } )
 
-         oDlg:AddFastKey( VK_F9, {|| oDetCamposExtra:Play( aTmp[ _COD ] ) } )
+         oDlg:AddFastKey( VK_F9, {|| oDetCamposExtra:Play( Space(1) ) } )
 
          oDlg:AddFastKey( VK_F5, {|| lPreSave( aTmp, aGet, dbfProvee, dbfArticulo, oBrw, nMode, oDlg ) } )
 
@@ -1911,7 +1911,7 @@ STATIC FUNCTION lPreSave( aTmp, aGet, dbfProvee, dbfArticulo, oBrw, nMode, oDlg 
       Guardamos los campos extra-----------------------------------------------
       */
 
-      oDetCamposExtra:saveExtraField( aTmp[ _COD ] )
+      oDetCamposExtra:saveExtraField( aTmp[ _COD ], "" )
 
       WinGather( aTmp, aGet, dbfProvee, oBrw, nMode )
 
@@ -2079,7 +2079,7 @@ static function BeginTrans( aTmp, nMode )
    Cargamos los temporales de los campos extra---------------------------------
    */
 
-   oDetCamposExtra:SetTemporal( aTmp[ _COD ], nMode )
+   oDetCamposExtra:SetTemporal( aTmp[ _COD ], "", nMode )
 
    RECOVER USING oError
 
@@ -2892,7 +2892,7 @@ Static Function EdtRecMenu( aTmp, aGet, dbfProvee, dbfArticulo, oBrw, nMode, oDl
             MENUITEM "&1. Campos extra [F9]";
                MESSAGE  "Mostramos y rellenamos los campos extra para el proveedor" ;
                RESOURCE "gc_form_plus2_16" ;
-               ACTION   ( oDetCamposExtra:Play( ( dbfProvee )->Cod ) )
+               ACTION   ( oDetCamposExtra:Play( Space(1) ) )
 
             MENUITEM    "&2. Informe del proveedor";
                MESSAGE  "Muestra el informe del artículo" ;

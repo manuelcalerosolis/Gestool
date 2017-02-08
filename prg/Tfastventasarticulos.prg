@@ -1036,11 +1036,9 @@ METHOD BuildReportCorrespondences()
                         {  "Generate" =>  {||   ::SetUnidadesNegativo( .t. ),;
                                                 ::AddAlbaranCliente( .t. ),;
                                                 ::AddFacturaCliente(),;
-                                                ::AddFacturaRectificativa(),;
                                                 ::AddTicket(),;
                                                 ::AddAlbaranProveedor( .t. ),;
                                                 ::AddFacturaProveedor(),;
-                                                ::AddRectificativaProveedor(),;
                                                 ::SetUnidadesNegativo( .f. ) },;
                            "Variable" =>  {||   ::AddVariableLineasAlbaranCliente(),;
                                                 ::AddVariableFacturaCliente(),;
@@ -3719,7 +3717,7 @@ METHOD AddAlbaranProveedor( lFacturados ) CLASS TFastVentasArticulos
       ::oDbf:cCodTerCtr := ::oAlbPrvL:cTerCtr
       ::oDbf:cNomTerCtr := NombreTerceroCentroCoste( ::oAlbPrvL:cTipCtr, ::oAlbPrvL:cTerCtr, ::nView )
 
-      if ::oAlbPrvT:Seek( ::oAlbPrvL:cSerAlb + Str( ::oAlbPrvL:nNumAlb ) + ::oAlbPrvL:cSufAlb )
+      if ::oAlbPrvT:Seek( ::oAlbPrvL:cSerAlb + Str( ::oAlbPrvL:nNumAlb, 9 ) + ::oAlbPrvL:cSufAlb )
 
          ::oDbf:cCodCli    := ::oAlbPrvT:cCodPrv
          ::oDbf:cNomCli    := ::oAlbPrvT:cNomPrv
@@ -3749,7 +3747,7 @@ METHOD AddAlbaranProveedor( lFacturados ) CLASS TFastVentasArticulos
          ::oDbf:cMinDoc    := SubStr( ::oAlbPrvT:cTimChg, 4, 2 )
 
       end if
-      
+
       ::InsertIfValid()
       ::loadValuesExtraFields()
 
@@ -3849,7 +3847,7 @@ METHOD AddFacturaProveedor( cCodigoArticulo ) CLASS TFastVentasArticulos
       ::oDbf:cCodTerCtr := ::oFacPrvL:cTerCtr
       ::oDbf:cNomTerCtr := NombreTerceroCentroCoste( ::oFacPrvL:cTipCtr, ::oFacPrvL:cTerCtr, ::nView )
 
-      if ::oFacPrvT:Seek( ::oFacPrvL:cSerFac + Str( ::oFacPrvL:nNumFac ) + ::oFacPrvL:cSufFac )
+      if ::oFacPrvT:Seek( ::oFacPrvL:cSerFac + Str( ::oFacPrvL:nNumFac, 9 ) + ::oFacPrvL:cSufFac )
 
          ::oDbf:cCodCli    := ::oFacPrvT:cCodPrv
          ::oDbf:cNomCli    := ::oFacPrvT:cNomPrv

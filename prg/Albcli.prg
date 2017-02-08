@@ -446,6 +446,7 @@ static oPais
 static Counter
 
 static oDetCamposExtra
+static oLinDetCamposExtra
 
 static oBtnKit
 static oBtnAtp
@@ -1691,6 +1692,11 @@ STATIC FUNCTION OpenFiles()
       oDetCamposExtra:SetTipoDocumento( "Albaranes a clientes" )
       oDetCamposExtra:setbId( {|| D():AlbaranesClientesId( nView ) } )
 
+      oLinDetCamposExtra               := TDetCamposExtra():New()
+      oLinDetCamposExtra:OpenFiles()
+      oLinDetCamposExtra:setTipoDocumento( "Lineas de albaranes a clientes" )
+      oLinDetCamposExtra:setbId( {|| D():AlbaranesClientesLineasEscandalloId( nView ) } )
+
    RECOVER USING oError
 
       lOpenFiles        := .f.
@@ -1930,6 +1936,11 @@ STATIC FUNCTION CloseFiles()
 
    if !empty( oDetCamposExtra )
       oDetCamposExtra:CloseFiles()
+   end if
+
+   if !empty( oLinDetCamposExtra )
+      oLinDetCamposExtra:CloseFiles()
+      oLinDetCamposExtra:End()
    end if
 
    TComercio:end()
@@ -3983,7 +3994,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, hHash, bValid, nMode )
 
       oDlg:AddFastKey( VK_F6,             {|| if( EndTrans( aTmp, aGet, oBrw, oBrwInc, nMode, oDlg ), ImprimirSeriesAlbaranes(), ) } )
       oDlg:AddFastKey( VK_F5,             {|| EndTrans( aTmp, aGet, oBrw, oBrwInc, nMode, oDlg ) } )
-      oDlg:AddFastKey( VK_F9,             {|| oDetCamposExtra:Play( aTmp[ _CSERALB ] + str( aTmp[ _NNUMALB ] ) + aTmp[ _CSUFALB ] ) } )
+      oDlg:AddFastKey( VK_F9,             {|| oDetCamposExtra:Play( space(1) ) } )
       oDlg:AddFastKey( 65,                {|| if( GetKeyState( VK_CONTROL ), CreateInfoArticulo(), ) } )
 
    end if
@@ -4197,7 +4208,7 @@ Static Function EdtRecMenu( aGet, aTmp, oBrw, oDlg )
             MENUITEM    "&1. Campos extra [F9]";
                MESSAGE  "Mostramos y rellenamos los campos extra para la familia" ;
                RESOURCE "GC_FORM_PLUS2_16" ;
-               ACTION   ( oDetCamposExtra:Play( aTmp[ _CSERALB ] + Str( aTmp[ _NNUMALB] ) + aTmp[ _CSUFALB ] ) )
+               ACTION   ( oDetCamposExtra:Play( Space(1) ) )
 
             MENUITEM    "&2. Visualizar pedido";
                MESSAGE  "Visualiza el pedido del que proviene" ;
@@ -4367,6 +4378,8 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbf, oBrw, lTotLin, cCodArtEnt, nMode, aTmpA
       end if
 
       cTipoCtrCoste           := "Centro de coste"
+
+      oLinDetCamposExtra:setTemporalAppend()
 
    case nMode == EDIT_MODE
 
@@ -4990,14 +5003,6 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbf, oBrw, lTotLin, cCodArtEnt, nMode, aTmpA
          WHEN     ( nMode != ZOOM_MODE ) ; 
          OF       oFld:aDialogs[4]
 
-
-
-
-
-
-
-
-
       REDEFINE BITMAP bmpImage ;
          ID       220 ;
          FILE     ( cFileBitmap( cPatImg(), aTmp[ _CIMAGEN ] ) );
@@ -5037,6 +5042,7 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbf, oBrw, lTotLin, cCodArtEnt, nMode, aTmpA
       oDlg:AddFastKey( VK_F5,          {|| oBtn:SetFocus(), oBtn:Click() } )
    end if
 
+   oDlg:AddFastKey( VK_F9,             {|| oLinDetCamposExtra:Play( if( nMode == APPD_MODE, "", Str( ( dbfTmpLin )->( OrdKeyNo() ) ) ) ) } )
    oDlg:AddFastKey( VK_F6,             {|| oBtnSer:Click() } )
 
    // Start --------------------------------------------------------------------
@@ -5047,7 +5053,7 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbf, oBrw, lTotLin, cCodArtEnt, nMode, aTmpA
                            lCalcDeta( aTmp, aTmpAlb, nDouDiv, oTotal, oRentLin, cCodDiv ) }
 
    ACTIVATE DIALOG oDlg ;
-      ON INIT     ( menuEdtDet( aGet[ _CREF ], oDlg, , aTmp[ _CSERALB ] + Str( aTmp[ _NNUMALB ] ) + aTmp[ _CSUFALB ] + Str( aTmp[ _NNUMLIN ] ) + Str( aTmp[ _NNUMKIT ] ) ) );
+      ON INIT     ( menuEdtDet( aGet[ _CREF ], oDlg, , if( nMode == APPD_MODE, "", Str( ( dbfTmpLin )->( OrdKeyNo() ) ) ) ) );
       CENTER
 
    if !Empty( oDetMenu )
@@ -9130,9 +9136,12 @@ STATIC FUNCTION BeginTrans( aTmp, nMode )
          ( dbfTmpLin )->( OrdCondSet( "!Deleted()", {||!Deleted() } ) )
          ( dbfTmpLin )->( OrdCreate( cTmpLin, "nPosPrint", "Str( nPosPrint, 4 )", {|| Str( Field->nPosPrint ) } ) )
 
+         oLinDetCamposExtra:initArrayValue()
+
          if ( D():Get( "AlbCliL", nView ) )->( dbSeek( cAlbaran ) )
             while ( ( D():Get( "AlbCliL", nView ) )->cSerAlb + Str( ( D():Get( "AlbCliL", nView ) )->nNumAlb ) + ( D():Get( "AlbCliL", nView ) )->cSufAlb ) == cAlbaran .and. !( D():Get( "AlbCliL", nView ) )->( eof() )
                dbPass( D():Get( "AlbCliL", nView ), dbfTmpLin, .t. )
+               oLinDetCamposExtra:SetTemporalLines( ( dbfTmpLin )->cSerAlb + str( ( dbfTmpLin )->nNumAlb ) + ( dbfTmpLin )->cSufAlb + str( ( dbfTmpLin )->nNumLin ) + str( ( dbfTmpLin )->nNumKit ), ( dbfTmpLin )->( OrdKeyNo() ), nMode )
                ( D():Get( "AlbCliL", nView ) )->( dbSkip() )
             end while
          end if
@@ -9286,7 +9295,7 @@ STATIC FUNCTION BeginTrans( aTmp, nMode )
    Metemos los temporales de los campos extra----------------------------------
    */
 
-   oDetCamposExtra:SetTemporal( aTmp[ _CSERALB ] + Str( aTmp[ _NNUMALB ] ) + aTmp[ _CSUFALB ], nMode )
+   oDetCamposExtra:SetTemporal( aTmp[ _CSERALB ] + Str( aTmp[ _NNUMALB ] ) + aTmp[ _CSUFALB ], "", nMode )
 
    RECOVER USING oError
 
@@ -11132,6 +11141,10 @@ STATIC FUNCTION SaveDeta( aTmp, aTmpAlb, oFld, aGet, oBrw, bmpImage, oDlg, nMode
 
    end if
 
+   if nMode == APPD_MODE
+      oLinDetCamposExtra:SaveTemporalAppend( ( dbfTmpLin )->( OrdKeyNo() ) )
+   end if
+
    // Liberacion del bitmap----------------------------------------------------
 
    if !empty( bmpImage )
@@ -11777,6 +11790,8 @@ STATIC FUNCTION EndTrans( aTmp, aGet, oBrw, oBrwInc, nMode, oDlg )
 
       TComercio:appendProductsToUpadateStocks( (dbfTmpLin)->cRef, nView )
 
+      oLinDetCamposExtra:saveExtraField( cSerAlb + Str( nNumAlb ) + cSufAlb + Str( ( dbfTmpLin )->nNumLin ) + Str( ( dbfTmpLin )->nNumKit ), ( dbfTmpLin )->( OrdKeyNo() ) )
+
       ( dbfTmpLin )->( dbSkip() )
 
       oMsgProgress():deltaPos(1)
@@ -11795,7 +11810,7 @@ STATIC FUNCTION EndTrans( aTmp, aGet, oBrw, oBrwInc, nMode, oDlg )
    Guardamos los campos extra-----------------------------------------------
    */
 
-   oDetCamposExtra:saveExtraField( aTmp[ _CSERALB ] + Str( aTmp[ _NNUMALB ] ) + aTmp[ _CSUFALB ] )
+   oDetCamposExtra:saveExtraField( aTmp[ _CSERALB ] + Str( aTmp[ _NNUMALB ] ) + aTmp[ _CSUFALB ], "" )
 
    WinGather( aTmp, , D():Get( "AlbCliT", nView ), , nMode )
 
@@ -18513,12 +18528,17 @@ static Function menuEdtDet( oCodArt, oDlg, lOferta, nIdLin )
 
          MENU
 
-            MENUITEM    "&1. Modificar artículo";
+            MENUITEM    "&1. Campos extra [F9]";
+               MESSAGE  "Mostramos y rellenamos los campos extra" ;
+               RESOURCE "GC_FORM_PLUS2_16" ;
+               ACTION   ( oLinDetCamposExtra:Play( nIdLin ) )
+
+            MENUITEM    "&2. Modificar artículo";
                MESSAGE  "Modificar la ficha del artículo" ;
                RESOURCE "gc_object_cube_16";
                ACTION   ( EdtArticulo( oCodArt:VarGet() ) );
 
-            MENUITEM    "&2. Informe de artículo";
+            MENUITEM    "&3. Informe de artículo";
                MESSAGE  "Abrir el informe del artículo" ;
                RESOURCE "Info16";
                ACTION   ( if( oUser():lNotCostos(), msgStop( "No tiene permiso para ver los precios de costo" ), InfArticulo( oCodArt:VarGet() ) ) );

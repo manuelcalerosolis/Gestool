@@ -162,7 +162,7 @@ METHOD importarCampos()
    end if
 
    ( D():Clientes( ::nView ) )->CodPago         := "TR"
-   ( D():Clientes( ::nView ) )->CodAlm          := "000"
+   ( D():Clientes( ::nView ) )->cCodAlm         := "000"
 
    ( D():Clientes( ::nView ) )->( dbcommit() )
 

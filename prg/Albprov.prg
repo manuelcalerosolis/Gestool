@@ -2242,7 +2242,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, cCodPrv, cCodArt, nMode, cCodPed 
       oDlg:AddFastKey( VK_F7, {|| ExcelImport( aTmp, dbfTmp, D():Articulos( nView ), D():ArticuloPrecioPropiedades( nView ), D():Familias( nView ), D():Divisas( nView ), oBrwLin, , D():Kit( nView ) ) } )
       oDlg:AddFastKey( VK_F5, {|| EndTrans( aTmp, aGet, nDinDiv, nDirDiv, oBrw, nMode, oDlg ) } )
       oDlg:AddFastKey( VK_F6, {|| if( EndTrans( aTmp, aGet, nDinDiv, nDirDiv, oBrw, nMode, oDlg ), GenAlbPrv( IS_PRINTER ), ) } )
-      oDlg:AddFastKey( VK_F9,{|| oDetCamposExtra:Play( aTmp[ _CSERALB ] + str( aTmp[ _NNUMALB ] ) + aTmp[ _CSUFALB ] ) } )
+      oDlg:AddFastKey( VK_F9,{|| oDetCamposExtra:Play( space(1) ) } )
       oDlg:AddFastKey( 65,    {|| if( GetKeyState( VK_CONTROL ), CreateInfoArticulo(), ) } )
    end if
 
@@ -2417,7 +2417,7 @@ Static Function edtRecMenu( aTmp, aGet, oBrwLin, oDlg )
             MENUITEM    "&1. Campos extra [F9]";
                MESSAGE  "Mostramos y rellenamos los campos extra para la familia" ;
                RESOURCE "GC_FORM_PLUS2_16" ;
-               ACTION   ( oDetCamposExtra:Play( aTmp[ _CSERALB ] + Str( aTmp[ _NNUMALB] ) + aTmp[ _CSUFALB ] ) )
+               ACTION   ( oDetCamposExtra:Play( space(1) ) )
 
             MENUITEM    "&2. Visualizar pedido";
                MESSAGE  "Visualiza el pedido del que proviene" ;
@@ -5412,7 +5412,7 @@ STATIC FUNCTION BeginTrans( aTmp, nMode )
       Cargamos los temporales de los campos extra---------------------------------
       */
 
-      oDetCamposExtra:SetTemporal( aTmp[ _CSERALB ] + Str( aTmp[ _NNUMALB ] ) + aTmp[ _CSUFALB ], nMode )
+      oDetCamposExtra:SetTemporal( aTmp[ _CSERALB ] + Str( aTmp[ _NNUMALB ] ) + aTmp[ _CSUFALB ], "", nMode )
 
       CursorWE()
 
@@ -5631,7 +5631,7 @@ STATIC FUNCTION EndTrans( aTmp, aGet, nDec, nRec, oBrw, nMode, oDlg )
       Guardamos los campos extra-----------------------------------------------
       */
 
-      oDetCamposExtra:saveExtraField( aTmp[ _CSERALB ] + Str( aTmp[ _NNUMALB ] ) + aTmp[ _CSUFALB ] )
+      oDetCamposExtra:saveExtraField( aTmp[ _CSERALB ] + Str( aTmp[ _NNUMALB ] ) + aTmp[ _CSUFALB ], "" )
 
       /*
       Grabamos las cabeceras de los albaranes----------------------------------

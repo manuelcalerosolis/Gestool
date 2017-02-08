@@ -72,6 +72,9 @@ CLASS TDetCamposExtra FROM TMant
    Method setTemporalLines( cClave, nClaveInterna, nMode )     INLINE ( ::SetTemporal( cClave, nClaveInterna, nMode, .f. ) )  
    Method setTemporal( cClave, nClaveInterna, nMode, lClear )
 
+   Method SaveTemporalAppend()
+   Method setTemporalAppend( cClave )
+
 END CLASS
 
 //---------------------------------------------------------------------------//
@@ -257,8 +260,6 @@ RETURN ( Self )
 Method Play( cClave, lResource ) CLASS TDetCamposExtra
 
    DEFAULT lResource    := .t.
-
-   MsgInfo( hb_valtoexp( ::aCamposExtra ), "aCampos" )
 
    if ::selectItem( cClave )
 
@@ -458,18 +459,18 @@ Return ( Self )
 
 //---------------------------------------------------------------------------//
 
-METHOD saveExtraField( cClave ) CLASS TDetCamposExtra
+METHOD saveExtraField( cClave, cClaveInterna ) CLASS TDetCamposExtra
 
    local hCampos
    local hExtraField
 
-   /*::RollBackValores( cClave )
+   ::RollBackValores( cClave )
 
    for each hExtraField in ::aCamposExtra
 
       for each hCampos in hExtraField
 
-         if hGet( hCampos, "clave" ) == padr( cClave, 30 )
+         if hGet( hCampos, "claveinterna" ) == padr( cClaveInterna, 30 )
 
             ::oDbf:Append()
 
@@ -484,7 +485,7 @@ METHOD saveExtraField( cClave ) CLASS TDetCamposExtra
 
       next
 
-   next   */
+   next
 
 return ( self )
 
@@ -691,11 +692,19 @@ METHOD selectItem( cClave ) CLASS TDetCamposExtra
 
    local nPos           := 0
 
+   if Empty( cClave )
+      cClave            := ""
+   end if
+
+   if Valtype( cClave ) != "C"
+      cClave            := Str( cClave )
+   end if
+
    if len( ::aCamposExtra ) == 0
       Return .f.
    end if
 
-   nPos  :=  ascan( ::aCamposExtra, {|a| hGet( a[1], "clave" ) == Padr( cClave, 30 ) } )
+   nPos  :=  ascan( ::aCamposExtra, {|a| AllTrim( hGet( a[1], "claveinterna" ) ) == AllTrim( cClave ) } )
 
    if nPos != 0
       ::aItemSelected   := ::aCamposExtra[ nPos ]
@@ -704,5 +713,33 @@ METHOD selectItem( cClave ) CLASS TDetCamposExtra
    end if
 
 Return ( .t. )
+
+//---------------------------------------------------------------------------//
+
+METHOD setTemporalAppend() CLASS TDetCamposExtra
+
+   local aCampos
+
+   if !Empty( ::TipoDocumento )
+      aCampos              := ::aExtraFields()
+   end if
+
+   if len( aCampos ) > 0
+      aAdd( ::aCamposExtra, aCampos )
+   end if   
+
+Return ( self )
+
+//---------------------------------------------------------------------------//
+
+METHOD SaveTemporalAppend( nClave ) CLASS TDetCamposExtra
+
+   local hCampo
+
+   for each hCampo in ::aItemSelected
+      hSet( hCampo, "claveinterna", Padr( nClave, 30 ) )
+   next
+
+Return ( self )
 
 //---------------------------------------------------------------------------//

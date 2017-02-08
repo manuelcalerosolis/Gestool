@@ -1115,13 +1115,13 @@ FUNCTION Client( oMenuItem, oWnd, cCodCli )
          TOOLTIP  "Rotor" ;
          LEVEL    ACC_EDIT
 
-         DEFINE BTNSHELL RESOURCE "GC_FORM_PLUS2_" OF oWndBrw ;
+         /*DEFINE BTNSHELL RESOURCE "GC_FORM_PLUS2_" OF oWndBrw ;
             NOBORDER ;
             ACTION   ( oDetCamposExtra:Play( ( D():Clientes( nView ) )->Cod ) );
             TOOLTIP  "Campos extra" ;
             FROM     oRotor ;
             ALLOW    EXIT ;
-            LEVEL    ACC_EDIT
+            LEVEL    ACC_EDIT*/
 
          DEFINE BTNSHELL RESOURCE "GC_NOTEBOOK_USER_" OF oWndBrw ;
             ALLOW    EXIT ;
@@ -3807,7 +3807,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, nTab, bValid, nMode )
          oDlg:AddFastKey( VK_F7, {|| if( oFld:nOption > 1, oFld:SetOption( oFld:nOption - 1 ), ) } )
          oDlg:AddFastKey( VK_F8, {|| if( oFld:nOption < Len( oFld:aDialogs ), oFld:SetOption( oFld:nOption + 1 ), ) } )
 
-         oDlg:AddFastKey( VK_F9, {|| oDetCamposExtra:Play( aTmp[ _COD ] ) } )
+         oDlg:AddFastKey( VK_F9, {|| oDetCamposExtra:Play( Space(1) ) } )
 
          oDlg:AddFastKey( VK_F5, {|| SavClient( aTmp, aGet, oDlg, oBrw, nMode ) } )
 
@@ -6308,7 +6308,7 @@ STATIC FUNCTION EdtRotorMenu( aTmp, aGet, oDlg, oBrw, nMode )
          MENUITEM "&1. Campos extra [F9]";
             MESSAGE  "Mostramos y rellenamos los campos extra para el cliente" ;
             RESOURCE "GC_FORM_PLUS2_16" ;
-            ACTION   ( oDetCamposExtra:Play( ( D():Clientes( nView ) )->Cod ) )
+            ACTION   ( oDetCamposExtra:Play( space(1) ) )
 
          MENUITEM "&2. Informe del cliente";
          MESSAGE  "Muestra el informe del Cliente" ;
@@ -9603,7 +9603,7 @@ STATIC FUNCTION BeginTrans( aTmp, nMode )
    Cargamos los temporales de los campos extra---------------------------------
    */
 
-   oDetCamposExtra:SetTemporal( aTmp[ ( D():Clientes( nView ) )->( fieldpos( "Cod" ) ) ], nMode )
+   oDetCamposExtra:SetTemporal( aTmp[ ( D():Clientes( nView ) )->( fieldpos( "Cod" ) ) ], "", nMode )
 
    RECOVER USING oError
 
@@ -10118,7 +10118,7 @@ STATIC FUNCTION SavClient( aTmp, aGet, oDlg, oBrw, nMode )
    Guardamos los campos extra-----------------------------------------------
    */
 
-   oDetCamposExtra:saveExtraField( aTmp[ _COD ] )
+   oDetCamposExtra:saveExtraField( aTmp[ _COD ], "" )
 
    //-----------------------------------------------------------------------------
 

@@ -3161,7 +3161,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, cCodCli, cCodArt, nMode )
 
       oDlg:AddFastKey( VK_F5, {|| EndTrans( aTmp, aGet, nMode, oBrwLin, oBrw, oBrwInc, oDlg ) } )
       oDlg:AddFastKey( VK_F6, {|| if( EndTrans( aTmp, aGet, nMode, oBrwLin, oBrw, oBrwInc, oDlg ), GenSatCli( IS_PRINTER ), ) } )
-      oDlg:AddFastKey( VK_F9, {|| oDetCamposExtra:Play( aTmp[ _CSERSAT ] + str( aTmp[ _NNUMSAT ] ) + aTmp[ _CSUFSAT ] ) } )
+      oDlg:AddFastKey( VK_F9, {|| oDetCamposExtra:Play( Space(1) ) } )
 
       oDlg:AddFastKey( 65,    {|| if( GetKeyState( VK_CONTROL ), CreateInfoArticulo(), ) } )
 
@@ -3284,7 +3284,7 @@ Static Function EdtRecMenu( aTmp, oDlg )
             MENUITEM    "&1. Campos extra [F9]";
                MESSAGE  "Mostramos y rellenamos los campos extra para la familia" ;
                RESOURCE "gc_form_plus2_16" ;
-               ACTION   ( oDetCamposExtra:Play( aTmp[ _CSERSAT ] + Str( aTmp[ _NNUMSAT] ) + aTmp[ _CSUFSAT ] ) )
+               ACTION   ( oDetCamposExtra:Play( Space(1) ) )
 
             MENUITEM    "&2. Modificar cliente";
                MESSAGE  "Modificar la ficha del cliente" ;
@@ -6422,7 +6422,7 @@ STATIC FUNCTION BeginTrans( aTmp, nMode )
       lErrors     := .t.
    end if
 
-   oDetCamposExtra:SetTemporal( aTmp[ _CSERSAT ] + Str( aTmp[ _NNUMSAT ] ) + aTmp[ _CSUFSAT ], nMode ) 
+   oDetCamposExtra:SetTemporal( aTmp[ _CSERSAT ] + Str( aTmp[ _NNUMSAT ] ) + aTmp[ _CSUFSAT ], "", nMode ) 
 
    RECOVER USING oError
 
@@ -6667,7 +6667,7 @@ STATIC FUNCTION EndTrans( aTmp, aGet, nMode, oBrwLin, oBrw, oBrwInc, oDlg )
    Guardamos los campos extra-----------------------------------------------
    */
 
-   oDetCamposExtra:saveExtraField( aTmp[ _CSERSAT ] + Str( aTmp[ _NNUMSAT ] ) + aTmp[ _CSUFSAT ] )
+   oDetCamposExtra:saveExtraField( aTmp[ _CSERSAT ] + Str( aTmp[ _NNUMSAT ] ) + aTmp[ _CSUFSAT ], "" )
 
    WinGather( aTmp, , D():SatClientes( nView ), , nMode )
 
