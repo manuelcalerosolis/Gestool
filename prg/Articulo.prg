@@ -1554,13 +1554,13 @@ Function Articulo( oMenuItem, oWnd, bOnInit )
       TOOLTIP  "Rotor" ;
       LEVEL    ACC_EDIT
 
-      DEFINE BTNSHELL RESOURCE "gc_form_plus2_" OF oWndBrw ;
+      /*DEFINE BTNSHELL RESOURCE "gc_form_plus2_" OF oWndBrw ;
          NOBORDER ;
          ACTION   ( oDetCamposExtra:Play( ( D():Articulos( nView ) )->Codigo ) );
          TOOLTIP  "Campos extra" ;
          FROM     oRotor ;
          ALLOW    EXIT ;
-         LEVEL    ACC_EDIT
+         LEVEL    ACC_EDIT*/
 
       DEFINE BTNSHELL RESOURCE "gc_clipboard_empty_businessman_" OF oWndBrw ;
          NOBORDER ;
@@ -4682,7 +4682,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, cArticulo, oBrw, bWhen, bValid, nMode )
       oDlg:AddFastKey( VK_F5, {|| endTrans( aTmp, aGet, oSay, oDlg, aBar, cSay[7], nMode, oImpComanda1, oImpComanda2, aImpComanda ) } )
       oDlg:AddFastKey( VK_F7, {|| if( oFld:nOption > 1, oFld:SetOption( oFld:nOption - 1 ), ) } )
       oDlg:AddFastKey( VK_F8, {|| if( oFld:nOption < Len( oFld:aDialogs ), oFld:SetOption( oFld:nOption + 1 ), ) } )
-      oDlg:AddFastKey( VK_F9, {|| oDetCamposExtra:Play( aTmp[ ( D():Articulos( nView ) )->( fieldpos( "Codigo" ) ) ] ) } )
+      oDlg:AddFastKey( VK_F9, {|| oDetCamposExtra:Play( Space(1) ) } )
 
       if ( TComercioConfig():getInstance():isRealTimeConexion() )
          oDlg:AddFastKey( VK_F6, {|| oBtnAceptarActualizarWeb:Click() } )
@@ -5624,7 +5624,7 @@ Static Function BeginTrans( aTmp, nMode )
    Cargamos los temporales de los campos extra---------------------------------
    */
 
-   oDetCamposExtra:SetTemporal( aTmp[ ( D():Articulos( nView ) )->( fieldpos( "Codigo" ) ) ], nMode )
+   oDetCamposExtra:SetTemporal( aTmp[ ( D():Articulos( nView ) )->( fieldpos( "Codigo" ) ) ], "", nMode )
 
    RECOVER USING oError
 
@@ -6007,13 +6007,13 @@ Static Function EndTrans( aTmp, aGet, oSay, oDlg, aTipBar, cTipBar, nMode, oImpC
 
       if ( dbfTmpImg )->( Lastrec() ) == 0
          lChangeImage  := ( cImageOld == aTmp[ ( D():Articulos( nView ) )->( fieldpos( "cImagen" ) ) ] )
-      end if  
+      end if 
 
       /*
       Guardamos los campos extra-----------------------------------------------
       */
 
-      oDetCamposExtra:saveExtraField( aTmp[ ( D():Articulos( nView ) )->( fieldpos( "Codigo" ) ) ] )      
+      oDetCamposExtra:saveExtraField( aTmp[ ( D():Articulos( nView ) )->( fieldpos( "Codigo" ) ) ], "" )      
 
       /*
       Grabamos el registro a disco---------------------------------------------
@@ -7913,7 +7913,7 @@ STATIC FUNCTION EdtCodebar( aTmp, aGet, dbfTmpCodebar, oBrw, bWhen, bValid, nMod
 
       REDEFINE GET   aGet[ ( dbfTmpCodebar )->( fieldPos( "cCodBar" ) ) ] ;
             VAR      aTmp[ ( dbfTmpCodebar )->( fieldPos( "cCodBar" ) ) ] ;
-            BITMAP   "Calc_16" ;
+            BITMAP   "gc_calculator_16" ;
             ID       100 ;
             ON HELP  ( lCalEan13( aGet[ ( dbfTmpCodebar )->( fieldPos( "cCodBar" ) ) ] ) );
             OF       oDlg
@@ -13366,7 +13366,7 @@ Static Function EdtRecMenu( aTmp, aGet, oSay, oDlg, oFld, aBar, cSay, nMode )
             MENUITEM "&1. Campos extra [F9]";
             MESSAGE  "Mostramos y rellenamos los campos extra para el artículo" ;
             RESOURCE "GC_FORM_PLUS2_16" ;
-            ACTION   ( oDetCamposExtra:Play( aTmp[ ( D():Articulos( nView ) )->( fieldpos( "Codigo" ) ) ] ) )
+            ACTION   ( oDetCamposExtra:Play( Space(1) ) )
 
             MENUITEM "&2. Informe de artículo en escandallo";
             MESSAGE  "Muestra el informe del artículo en escandallo" ;

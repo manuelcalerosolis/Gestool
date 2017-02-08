@@ -284,10 +284,13 @@ static oBrwIva
 static oStock
 static TComercio
 
+static oDetMenu
+
 static oNewImp
 static oFont
 static oMenu
 static oDetCamposExtra
+static oLinDetCamposExtra
 static oCentroCoste
 static nNumAlb
 static aNumAlb          := {}
@@ -1065,6 +1068,11 @@ STATIC FUNCTION OpenFiles( lExt )
       oDetCamposExtra:SetTipoDocumento( "Albaranes a proveedores" )
       oDetCamposExtra:setbId( {|| D():AlbaranesProveedoresId( nView ) } )
 
+      oLinDetCamposExtra               := TDetCamposExtra():New()
+      oLinDetCamposExtra:OpenFiles()
+      oLinDetCamposExtra:setTipoDocumento( "Lineas albaranes a proveedores" )
+      oLinDetCamposExtra:setbId( {|| D():AlbaranesProveedoresLineasNumero( nView ) } )
+
    RECOVER
 
       lOpenFiles              := .f.
@@ -1101,6 +1109,11 @@ STATIC FUNCTION CloseFiles()
 
    if !Empty( oDetCamposExtra )
       oDetCamposExtra:CloseFiles()
+   end if
+
+   if !empty( oLinDetCamposExtra )
+      oLinDetCamposExtra:CloseFiles()
+      oLinDetCamposExtra:End()
    end if
 
    if !Empty( oCentroCoste )
@@ -2242,7 +2255,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, cCodPrv, cCodArt, nMode, cCodPed 
       oDlg:AddFastKey( VK_F7, {|| ExcelImport( aTmp, dbfTmp, D():Articulos( nView ), D():ArticuloPrecioPropiedades( nView ), D():Familias( nView ), D():Divisas( nView ), oBrwLin, , D():Kit( nView ) ) } )
       oDlg:AddFastKey( VK_F5, {|| EndTrans( aTmp, aGet, nDinDiv, nDirDiv, oBrw, nMode, oDlg ) } )
       oDlg:AddFastKey( VK_F6, {|| if( EndTrans( aTmp, aGet, nDinDiv, nDirDiv, oBrw, nMode, oDlg ), GenAlbPrv( IS_PRINTER ), ) } )
-      oDlg:AddFastKey( VK_F9,{|| oDetCamposExtra:Play( aTmp[ _CSERALB ] + str( aTmp[ _NNUMALB ] ) + aTmp[ _CSUFALB ] ) } )
+      oDlg:AddFastKey( VK_F9,{|| oDetCamposExtra:Play( space(1) ) } )
       oDlg:AddFastKey( 65,    {|| if( GetKeyState( VK_CONTROL ), CreateInfoArticulo(), ) } )
    end if
 
@@ -2417,7 +2430,7 @@ Static Function edtRecMenu( aTmp, aGet, oBrwLin, oDlg )
             MENUITEM    "&1. Campos extra [F9]";
                MESSAGE  "Mostramos y rellenamos los campos extra para la familia" ;
                RESOURCE "GC_FORM_PLUS2_16" ;
-               ACTION   ( oDetCamposExtra:Play( aTmp[ _CSERALB ] + Str( aTmp[ _NNUMALB] ) + aTmp[ _CSUFALB ] ) )
+               ACTION   ( oDetCamposExtra:Play( space(1) ) )
 
             MENUITEM    "&2. Visualizar pedido";
                MESSAGE  "Visualiza el pedido del que proviene" ;
@@ -2768,6 +2781,8 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbf, oBrw, aTmpAlb, cCodArtEnt, nMode )
       end if
 
       cTipoCtrCoste        := "Centro de coste"
+
+      oLinDetCamposExtra:setTemporalAppend()
 
    case nMode == EDIT_MODE
 
@@ -3549,6 +3564,7 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbf, oBrw, aTmpAlb, cCodArtEnt, nMode )
       if nMode != ZOOM_MODE
          oDlg:AddFastKey( VK_F6, {|| oBtnNumerosSerie:Click() } )
          oDlg:AddFastKey( VK_F5, {|| oBtn:SetFocus(), oBtn:Click() } )
+         oDlg:AddFastKey( VK_F9, {|| oLinDetCamposExtra:Play( if( nMode == APPD_MODE, "", Str( ( dbfTmp )->( OrdKeyNo() ) ) ) ) } )
       end if
 
       oDlg:AddFastKey ( VK_F1, {|| GoHelp() } )
@@ -3558,10 +3574,12 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbf, oBrw, aTmpAlb, cCodArtEnt, nMode )
                          if( !Empty( cCodArtEnt ), aGet[ _CREF ]:lValid(), ) }
 
    ACTIVATE DIALOG oDlg ;
-      ON INIT     ( EdtDetMenu( aGet[ _CREF ], oDlg ) );
+      ON INIT     ( menuEdtDet( aGet[ _CREF ], oDlg, if( nMode == APPD_MODE, "", Str( ( dbfTmp )->( OrdKeyNo() ) ) ) ) );
       CENTER
 
-   EndDetMenu()
+   if !Empty( oDetMenu )
+      oDetMenu:End()
+   end if
 
 RETURN ( oDlg:nResult == IDOK )
 
@@ -3875,6 +3893,10 @@ STATIC FUNCTION SaveDeta( aTmp, aGet, oDlg, oFld, oBrw, nMode, oTotal, oGet, aTm
 
       oDlg:end( IDOK )
 
+   end if
+
+   if nMode == APPD_MODE
+      oLinDetCamposExtra:SaveTemporalAppend( ( dbfTmp )->( OrdKeyNo() ) )
    end if
 
    cOldCodArt        := ""
@@ -5324,9 +5346,12 @@ STATIC FUNCTION BeginTrans( aTmp, nMode )
       Añadimos desde el fichero de lineas
       */
 
+      oLinDetCamposExtra:initArrayValue()
+
       if ( D():AlbaranesProveedoresLineas( nView ) )->( dbSeek( nAlbaran ) )
          while ( ( D():AlbaranesProveedoresLineas( nView ) )->cSerAlb + Str( ( D():AlbaranesProveedoresLineas( nView ) )->nNumAlb ) + ( D():AlbaranesProveedoresLineas( nView ) )->cSufAlb == nAlbaran .AND. !( D():AlbaranesProveedoresLineas( nView ) )->( eof() ) )
             appendRegisterByHash( D():AlbaranesProveedoresLineas( nView ), dbfTmp, hDuplicate ) 
+            oLinDetCamposExtra:SetTemporalLines( ( dbfTmp )->cSerAlb + str( ( dbfTmp )->nNumAlb ) + ( dbfTmp )->cSufAlb + str( ( dbfTmp )->nNumLin ), ( dbfTmp )->( OrdKeyNo() ), nMode )
             ( D():AlbaranesProveedoresLineas( nView ) )->( DbSkip() )
          end while
       end if
@@ -5412,7 +5437,7 @@ STATIC FUNCTION BeginTrans( aTmp, nMode )
       Cargamos los temporales de los campos extra---------------------------------
       */
 
-      oDetCamposExtra:SetTemporal( aTmp[ _CSERALB ] + Str( aTmp[ _NNUMALB ] ) + aTmp[ _CSUFALB ], nMode )
+      oDetCamposExtra:SetTemporal( aTmp[ _CSERALB ] + Str( aTmp[ _NNUMALB ] ) + aTmp[ _CSUFALB ], "", nMode )
 
       CursorWE()
 
@@ -5610,6 +5635,8 @@ STATIC FUNCTION EndTrans( aTmp, aGet, nDec, nRec, oBrw, nMode, oDlg )
 
          dbGather( aTbl, D():AlbaranesProveedoresLineas( nView ), .t. )
 
+         oLinDetCamposExtra:saveExtraField( cSerAlb + Str( nNumAlb ) + cSufAlb + Str( ( dbfTmp )->nNumLin ), ( dbfTmp )->( OrdKeyNo() ) )
+
          TComercio:appendProductsToUpadateStocks( (dbfTmp)->cRef, nView )
 
          ( dbfTmp )->( dbSkip() )
@@ -5631,7 +5658,7 @@ STATIC FUNCTION EndTrans( aTmp, aGet, nDec, nRec, oBrw, nMode, oDlg )
       Guardamos los campos extra-----------------------------------------------
       */
 
-      oDetCamposExtra:saveExtraField( aTmp[ _CSERALB ] + Str( aTmp[ _NNUMALB ] ) + aTmp[ _CSUFALB ] )
+      oDetCamposExtra:saveExtraField( aTmp[ _CSERALB ] + Str( aTmp[ _NNUMALB ] ) + aTmp[ _CSUFALB ], "" )
 
       /*
       Grabamos las cabeceras de los albaranes----------------------------------
@@ -10976,5 +11003,39 @@ Function nombreSegundaPropiedadAlbaranProveedoresLineas( view )
    DEFAULT view   := nView
 
 Return ( nombrePropiedad( ( D():AlbaranesProveedoresLineas( view ) )->cCodPr2, ( D():AlbaranesProveedoresLineas( view ) )->cValPr2, view ) )
+
+//---------------------------------------------------------------------------//
+
+static Function menuEdtDet( oCodArt, oDlg, nIdLin )
+
+   MENU oDetMenu
+
+      MENUITEM    "&1. Rotor  " ;
+         RESOURCE "Rotor16"
+
+         MENU
+
+            MENUITEM    "&1. Campos extra [F9]";
+               MESSAGE  "Mostramos y rellenamos los campos extra" ;
+               RESOURCE "GC_FORM_PLUS2_16" ;
+               ACTION   ( oLinDetCamposExtra:Play( nIdLin ) )
+
+            MENUITEM    "&2. Modificar artículo";
+               MESSAGE  "Modificar la ficha del artículo" ;
+               RESOURCE "gc_object_cube_16";
+               ACTION   ( EdtArticulo( oCodArt:VarGet() ) );
+
+            MENUITEM    "&3. Informe de artículo";
+               MESSAGE  "Abrir el informe del artículo" ;
+               RESOURCE "Info16";
+               ACTION   ( if( oUser():lNotCostos(), msgStop( "No tiene permiso para ver los precios de costo" ), InfArticulo( oCodArt:VarGet() ) ) );
+
+         ENDMENU
+
+   ENDMENU
+
+   oDlg:SetMenu( oDetMenu )
+
+Return ( oDetMenu )
 
 //---------------------------------------------------------------------------//

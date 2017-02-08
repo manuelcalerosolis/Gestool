@@ -820,7 +820,7 @@ STATIC FUNCTION EdtRec( aTemp, aoGet, dbfAge, oBrw, bWhen, bValid, nMode )
       if nMode != ZOOM_MODE
          oDlg:AddFastKey( VK_F5, {|| lPreSave( aTemp, aoGet, dbfAge, oBrw, oBrwLin, nMode, oDlg ) } )
       
-         oDlg:AddFastKey( VK_F9, {|| oDetCamposExtra:Play( aTemp[ _CCODAGE ] ) } )
+         oDlg:AddFastKey( VK_F9, {|| oDetCamposExtra:Play( Space(1) ) } )
 
       endif
 
@@ -851,7 +851,7 @@ Static Function EdtRecMenu( oDlg, aTemp )
             MENUITEM "&1. Campos extra [F9]";
             MESSAGE  "Mostramos y rellenamos los campos extra para la familia" ;
             RESOURCE "GC_FORM_PLUS2_16" ;
-            ACTION   ( oDetCamposExtra:Play( aTemp[ _CCODAGE ] ) )
+            ACTION   ( oDetCamposExtra:Play( Space(1) ) )
 
          ENDMENU
 
@@ -938,7 +938,7 @@ Static Function lPreEdit( aTmp, nMode )
    Cargamos los temporales de los campos extra---------------------------------
    */
 
-   oDetCamposExtra:SetTemporal( aTmp[ _CCODAGE ], nMode )
+   oDetCamposExtra:SetTemporal( aTmp[ _CCODAGE ], "", nMode )
 
    RECOVER USING oError
 
@@ -1037,7 +1037,7 @@ STATIC FUNCTION lPreSave( aTemp, aoGet, dbfAge, oBrw, oBrwLin, nMode, oDlg )
    Guardamos los campos extra-----------------------------------------------
    */
 
-   oDetCamposExtra:saveExtraField( aTemp[ _CCODAGE ] )
+   oDetCamposExtra:saveExtraField( aTemp[ _CCODAGE ], "" )
 
 
    // Ahora escribimos en el fichero definitivo-----------------------------------

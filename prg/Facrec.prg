@@ -3633,7 +3633,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, cCodCli, cCodArt, nMode, aNumDoc 
       oDlg:AddFastKey( 65,                {|| if( GetKeyState( VK_CONTROL ), CreateInfoArticulo(), ) } )
       oDlg:AddFastKey( VK_F5,             {|| EndTrans( aTmp, aGet, oBrw, oBrwLin, oBrwPgo, aNumAlb, nMode, oDlg, oFld ) } )
       oDlg:AddFastKey( VK_F6,             {|| if( EndTrans( aTmp, aGet, oBrw, oBrwLin, oBrwPgo, aNumAlb, nMode, oDlg, oFld ), GenFacRec( IS_PRINTER ), ) } )
-      oDlg:AddFastKey( VK_F9,             {|| oDetCamposExtra:Play( aTmp[ _CSERIE ] + str( aTmp[ _NNUMFAC ] ) + aTmp[ _CSUFFAC ] ) } )
+      oDlg:AddFastKey( VK_F9,             {|| oDetCamposExtra:Play( space(1) ) } )
 
    end if
 
@@ -7385,7 +7385,7 @@ STATIC FUNCTION BeginTrans( aTmp, nMode )
 
   	end if
 
-   oDetCamposExtra:SetTemporal( aTmp[ _CSERIE ] + Str( aTmp[ _NNUMFAC ] ) + aTmp[ _CSUFFAC ], nMode )
+   oDetCamposExtra:SetTemporal( aTmp[ _CSERIE ] + Str( aTmp[ _NNUMFAC ] ) + aTmp[ _CSUFFAC ], "", nMode )
 
    RECOVER USING oError
 
@@ -7739,7 +7739,7 @@ STATIC FUNCTION EndTrans( aTmp, aGet, oBrw, oBrwDet, oBrwPgo, aNumAlb, nMode, oD
    aTmp[ _NTOTREQ ]  := nTotReq
    aTmp[ _NTOTFAC ]  := nTotFac
 
-   oDetCamposExtra:saveExtraField( aTmp[ _CSERIE ] + Str( aTmp[ _NNUMFAC ] ) + aTmp[ _CSUFFAC ] )
+   oDetCamposExtra:saveExtraField( aTmp[ _CSERIE ] + Str( aTmp[ _NNUMFAC ] ) + aTmp[ _CSUFFAC ], "" )
 
    /*
    Grabamos el registro--------------------------------------------------------
@@ -8830,7 +8830,7 @@ Static Function EdtRecMenu( aTmp, oDlg )
          	MENUITEM    "&1. Campos extra [F9]";
                MESSAGE  "Mostramos y rellenamos los campos extra para la familia" ;
                RESOURCE "gc_form_plus2_16" ;
-               ACTION   ( oDetCamposExtra:Play( aTmp[ _CSERIE ] + Str( aTmp[ _NNUMFAC] ) + aTmp[ _CSUFFAC ] ) )
+               ACTION   ( oDetCamposExtra:Play( space(1) ) )
 
             MENUITEM    "&2. Modificar cliente";
                MESSAGE  "Modifica la ficha del cliente" ;

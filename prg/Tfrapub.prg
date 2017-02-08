@@ -418,9 +418,9 @@ RETURN ( cNombre )
 
 METHOD CargaValoresCamposExtra( nMode )
 
-   ::oDetCamposExtra:SetTemporal( ::oDbf:cCodFra, nMode )
+   ::oDetCamposExtra:SetTemporal( ::oDbf:cCodFra, "", nMode )
 
-   ::oDetCamposExtra:Play( ::oDbf:cCodFra, .f. )
+   ::oDetCamposExtra:Play( Space(1), .f. )
 
    if len( ::oDetCamposExtra:aItemSelected ) == 0
 
@@ -441,7 +441,7 @@ Return ( nil )
 
 METHOD SaveCamposExtra()
 
-   ::oDetCamposExtra:saveExtraField( ::oDbf:cCodFra )
+   ::oDetCamposExtra:saveExtraField( ::oDbf:cCodFra, "" )
 
 Return ( nil )
 

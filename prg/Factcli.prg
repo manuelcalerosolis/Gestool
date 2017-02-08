@@ -3045,6 +3045,16 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, hHash, bValid, nMode )
       end with
 
       with object ( oBrwLin:AddCol() )
+         :cHeader             := "Número Kit"
+         :bEditValue          := {|| ( dbfTmpLin )->nNumKit }
+         :cEditPicture        := "9999"
+         :nWidth              := 55
+         :nDataStrAlign       := 1
+         :nHeadStrAlign       := 1
+         :lHide               := .t.
+      end with
+
+      with object ( oBrwLin:AddCol() )
          :cHeader             := "Posición"
          :cSortOrder          := "nPosPrint"
          :bEditValue          := {|| ( dbfTmpLin )->nPosPrint }
@@ -3339,8 +3349,6 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, hHash, bValid, nMode )
          :nWidth              := 250
          :lHide               := .t.
       end with
-
-      //oLinDetCamposExtra:addCamposExtra( oBrwLin )
 
       if nMode != ZOOM_MODE
          oBrwLin:bLDblClick   := {|| EdtDeta( oBrwLin, bEdtDet, aTmp, .f., nMode ) }
@@ -4483,7 +4491,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, hHash, bValid, nMode )
 
          oDlg:AddFastKey( VK_F6,             {|| if( EndTrans( aTmp, aGet, oBrw, oBrwLin, oBrwPgo, aNumAlb, nMode, oDlg ), GenFacCli( IS_PRINTER ), ) } )
          oDlg:AddFastKey( VK_F5,             {|| EndTrans( aTmp, aGet, oBrw, oBrwLin, oBrwPgo, aNumAlb, nMode, oDlg ) } )
-         oDlg:AddFastKey( VK_F9,             {|| oDetCamposExtra:Play( aTmp[ _CSERIE ] + str( aTmp[ _NNUMFAC ] ) + aTmp[ _CSUFFAC ] ) } )
+         oDlg:AddFastKey( VK_F9,             {|| oDetCamposExtra:Play( Space( 1 ) ) } )
          oDlg:AddFastKey( 65,                {|| if( GetKeyState( VK_CONTROL ), CreateInfoArticulo(), ) } )
    
       end if
@@ -4812,6 +4820,8 @@ STATIC FUNCTION EdtDet( aTmp, aGet, cFacCliL, oBrw, lTotLin, cCodArtEnt, nMode, 
       aTmp[ __CCODOBR ]       := aTmpFac[ _CCODOBR ]
 
       cTipoCtrCoste           := "Centro de coste"
+
+      oLinDetCamposExtra:setTemporalAppend()
 
    case nMode == EDIT_MODE
 
@@ -5454,14 +5464,14 @@ STATIC FUNCTION EdtDet( aTmp, aGet, cFacCliL, oBrw, lTotLin, cCodArtEnt, nMode, 
    end if
 
    oDlg:AddFastKey( VK_F6, {|| oBtnSer:Click() } )
-   oDlg:AddFastKey( VK_F9, {|| oLinDetCamposExtra:Play( aTmp[ _CSERIE ] + str( aTmp[ _NNUMFAC ] ) + aTmp[ _CSUFFAC ] + Str( aTmp[ _NNUMLIN ] ) + Str( aTmp[ _NNUMKIT ] ) ) } )
+   oDlg:AddFastKey( VK_F9, {|| oLinDetCamposExtra:Play( if( nMode == APPD_MODE, "", Str( ( dbfTmpLin )->( OrdKeyNo() ) ) ) ) } )
 
    oDlg:bStart    := {||   SetDlgMode( aTmp, aGet, oFld, oSayPr1, oSayPr2, oSayVp1, oSayVp2, oStkAct, nMode, oTotalLinea, aTmpFac, oRentabilidadLinea ),;
                            loadGet( aGet[ _CTERCTR ], cTipoCtrCoste ), aGet[ _CTERCTR ]:lValid(),;
                            if( !empty( cCodArtEnt ), aGet[ _CREF ]:lValid(), ), aGet[ _CCODPRV ]:lValid(), aGet[ __CCODOBR ]:lValid() }
 
    ACTIVATE DIALOG oDlg ;
-      ON INIT     ( menuEdtDet( aGet[ _CREF ], oDlg, , aTmp[ _CSERIE ] + Str( aTmp[ _NNUMFAC] ) + aTmp[ _CSUFFAC ] + Str( aTmp[ _NNUMLIN] ) + Str( aTmp[ _NNUMKIT] ) ) );
+      ON INIT     ( menuEdtDet( aGet[ _CREF ], oDlg, , if( nMode == APPD_MODE, "", Str( ( dbfTmpLin )->( OrdKeyNo() ) ) ) ) );
       CENTER
 
    if !Empty( oDetMenu )
@@ -9363,7 +9373,7 @@ Static Function EdtRecMenu( aTmp, oDlg )
             MENUITEM    "&1. Campos extra [F9]";
                MESSAGE  "Mostramos y rellenamos los campos extra para la familia" ;
                RESOURCE "form_green_add_16" ;
-               ACTION   ( oDetCamposExtra:Play( aTmp[ _CSERIE ] + Str( aTmp[ _NNUMFAC] ) + aTmp[ _CSUFFAC ] ) )
+               ACTION   ( oDetCamposExtra:Play( Space( 1 ) ) )
 
             MENUITEM    "&2. Visualizar presupuesto";
                MESSAGE  "Visualiza el presupueso del que proviene" ;
@@ -10699,8 +10709,8 @@ STATIC FUNCTION BeginTrans( aTmp, nMode )
 
    CursorWait()
 
-   /*oBlock         := ErrorBlock( { | oError | ApoloBreak( oError ) } )
-   BEGIN SEQUENCE*/
+   oBlock         := ErrorBlock( { | oError | ApoloBreak( oError ) } )
+   BEGIN SEQUENCE
  
    /*
    Inicializaci-n de variables-------------------------------------------------
@@ -10712,7 +10722,7 @@ STATIC FUNCTION BeginTrans( aTmp, nMode )
    do case
       case nMode == APPD_MODE
          nTotalOld   := 0
-
+         
       case nMode == DUPL_MODE
          nTotalOld   := 0
 
@@ -10761,15 +10771,15 @@ STATIC FUNCTION BeginTrans( aTmp, nMode )
         
          while ( ( D():FacturasClientesLineas( nView ) )->cSerie + str( ( D():FacturasClientesLineas( nView ) )->nNumFac ) + ( D():FacturasClientesLineas( nView ) )->cSufFac ) == cFac .and. !( D():FacturasClientesLineas( nView ) )->( eof() )
         
-            oLinDetCamposExtra:SetTemporalLines( ( D():FacturasClientesLineas( nView ) )->cSerie + str( ( D():FacturasClientesLineas( nView ) )->nNumFac ) + ( D():FacturasClientesLineas( nView ) )->cSufFac + str( ( D():FacturasClientesLineas( nView ) )->nNumLin ) + str( ( D():FacturasClientesLineas( nView ) )->nNumKit ), nMode )
-        
             dbPass( D():FacturasClientesLineas( nView ), dbfTmpLin, .t. )
+
+            oLinDetCamposExtra:SetTemporalLines( ( dbfTmpLin )->cSerie + str( ( dbfTmpLin )->nNumFac ) + ( dbfTmpLin )->cSufFac + str( ( dbfTmpLin )->nNumLin ) + str( ( dbfTmpLin )->nNumKit ), ( dbfTmpLin )->( OrdKeyNo() ), nMode )
         
             ( D():FacturasClientesLineas( nView ) )->( dbSkip() )
         
          end while
-      
-      endif
+
+      end if
 
       ( dbfTmpLin )->( dbGoTop() )
 
@@ -10989,9 +10999,9 @@ STATIC FUNCTION BeginTrans( aTmp, nMode )
    Cargamos los temporales de los campos extra---------------------------------
    */
 
-   oDetCamposExtra:SetTemporal( aTmp[ _CSERIE ] + Str( aTmp[ _NNUMFAC ] ) + aTmp[ _CSUFFAC ], nMode )
+   oDetCamposExtra:SetTemporal( aTmp[ _CSERIE ] + Str( aTmp[ _NNUMFAC ] ) + aTmp[ _CSUFFAC ], "", nMode )
 
-   /*RECOVER USING oError
+   RECOVER USING oError
 
       msgStop( "Imposible crear tablas temporales." + CRLF + ErrorMessage( oError ) )
 
@@ -11001,7 +11011,7 @@ STATIC FUNCTION BeginTrans( aTmp, nMode )
 
    END SEQUENCE
 
-   ErrorBlock( oBlock )*/
+   ErrorBlock( oBlock )
 
    CursorWE()
 
@@ -13304,6 +13314,14 @@ STATIC FUNCTION SaveDeta( aTmp, aTmpFac, aGet, oBrw, oDlg, oFld, oSayPr1, oSayPr
    end if
 
    /*
+   Guardamos la clave para los campos extra de las lineas----------------------
+   */
+
+   if nMode == APPD_MODE
+      oLinDetCamposExtra:SaveTemporalAppend( ( dbfTmpLin )->( OrdKeyNo() ) )
+   end if
+
+   /*
    Liberacion del bitmap-------------------------------------------------------
    */
 
@@ -13510,6 +13528,7 @@ STATIC FUNCTION AppendKit( uTmpLin, aTmpFac )
                ( dbfTmpLin )->lKitChl     := .t.
             end if
 
+            ( dbfTmpLin )->nNumKit     := nLastNum( dbfTmpLin, "nNumKit" )
             ( dbfTmpLin )->cRef        := ( dbfKit )->cRefKit
             ( dbfTmpLin )->cDetalle    := ( D():Articulos( nView ) )->Nombre
             ( dbfTmpLin )->nPntVer     := ( D():Articulos( nView ) )->nPntVer1
@@ -13971,7 +13990,7 @@ STATIC FUNCTION EndTrans( aTmp, aGet, oBrw, oBrwDet, oBrwPgo, aNumAlb, nMode, oD
       Guardamos los campos extra-----------------------------------------------
       */
 
-      oDetCamposExtra:saveExtraField( aTmp[ _CSERIE ] + Str( aTmp[ _NNUMFAC ] ) + aTmp[ _CSUFFAC ] )
+      oDetCamposExtra:saveExtraField( aTmp[ _CSERIE ] + Str( aTmp[ _NNUMFAC ] ) + aTmp[ _CSUFFAC ], "" )
 
       /*
       Guardamos definitivamente el registro------------------------------------
@@ -22762,7 +22781,7 @@ Static Function GuardaTemporalesFacCli( cSerFac, nNumFac, cSufFac, dFecFac, tFec
          Guardamos los campos extra--------------------------------------------
          */
 
-         oLinDetCamposExtra:saveExtraField( cSerFac + Str( nNumFac ) + cSufFac + Str( ( dbfTmpLin )->nNumLin ) + Str( ( dbfTmpLin )->nNumKit ) )
+         oLinDetCamposExtra:saveExtraField( cSerFac + Str( nNumFac ) + cSufFac + Str( ( dbfTmpLin )->nNumLin ) + Str( ( dbfTmpLin )->nNumKit ), ( dbfTmpLin )->( OrdKeyNo() ) )
 
          dbPass( dbfTmpLin, D():FacturasClientesLineas( nView ), .t., cSerFac, nNumFac, cSufFac )
 

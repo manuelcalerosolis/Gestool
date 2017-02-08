@@ -2475,69 +2475,6 @@ RETURN lReturn
 
 //---------------------------------------------------------------------------//
 
-function PdalSelUsuario()
-
-   local oDlg
-   local oBrw
-   local hPss        := ReadBitmap( cPatBmp() + "key1_16.bmp" )
-   local hUse        := ReadBitmap( cPatBmp() + "gc_sign_forbidden_16.bmp" )
-   local lOpen       := .t.
-   local oBlock
-   local oClave
-   local cClave      := Space( 10 )
-
-   oBlock            := ErrorBlock( {| oError | ApoloBreak( oError ) } )
-   BEGIN SEQUENCE
-
-   USE ( cPatDat() + "USERS.DBF" ) NEW VIA ( cLocalDriver() ) SHARED ALIAS ( cCheckArea( "USERS", @dbfUser ) )
-   SET ADSINDEX TO ( cPatDat() + "USERS.CDX" ) ADDITIVE
-
-   ( dbfUser )->( dbSetFilter( {|| !Field->lGrupo }, "!lGrupo" ) )
-
-   DEFINE DIALOG oDlg RESOURCE "lSelUser"
-
-      REDEFINE LISTBOX oBrw ;
-         FIELDS ;
-               if( !Empty( ( dbfUser )->cClvUse ), hPss, "" ),;
-               ( dbfUser )->cCodUse + CRLF + ( dbfUser )->cNbrUse ;
-         SIZES ;
-               20,;
-               180;
-         HEADER ;
-               "",;
-               "Código" + CRLF + "Nombre" ;
-         ALIAS ( dbfUser );
-         ID    100 ;
-         OF    oDlg
-
-      REDEFINE GET oClave VAR cClave ;
-         ID    110 ;
-         OF    oDlg
-
-   ACTIVATE DIALOG oDlg ;
-      ON INIT ( oDlg:SetMenu( BuildMenu( oDlg, dbfUser, oClave, oBrw ) ) )
-
-   RECOVER
-
-      msgStop( "Imposible abrir usuarios" )
-      lOpen             := .f.
-
-   END SEQUENCE
-
-   ErrorBlock( oBlock )
-
-
-   if dbfUser != nil
-      ( dbfUser )->( dbClearFilter() )
-      ( dbfUser )->( dbCloseArea() )
-   end if
-
-   dbfUser := nil
-
-Return ( oDlg:nResult == 1 )
-
-//---------------------------------------------------------------------------//
-
 static function BuildMenu( oDlg, dbfUser, oClave, oBrwUser )
 
    local oMenu

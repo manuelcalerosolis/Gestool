@@ -830,7 +830,9 @@ RETURN ( Self )
 
 //---------------------------------------------------------------------------//
 
-METHOD PlayTablet( uParam ) CLASS TFastReportInfGen
+METHOD PlayTablet( uParam, oDevice ) CLASS TFastReportInfGen
+
+   DEFAULT oDevice   := IS_PRINTER
 
    ::Create( uParam )
 
@@ -842,7 +844,7 @@ METHOD PlayTablet( uParam ) CLASS TFastReportInfGen
 
             ::lResource()
 
-            ::GenReportTablet( IS_PRINTER )
+            ::GenReportTablet( oDevice )
 
             ::CloseTemporal()
 

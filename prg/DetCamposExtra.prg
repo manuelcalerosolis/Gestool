@@ -69,8 +69,11 @@ CLASS TDetCamposExtra FROM TMant
 
    Method valueExtraField()
    Method selectItem( cClave )
-   Method setTemporalLines( cClave, nMode )     INLINE ( ::SetTemporal( cClave, nMode, .f. ) )
-   Method setTemporal( cClave, nMode, lClear )
+   Method setTemporalLines( cClave, nClaveInterna, nMode )     INLINE ( ::SetTemporal( cClave, nClaveInterna, nMode, .f. ) )  
+   Method setTemporal( cClave, nClaveInterna, nMode, lClear )
+
+   Method SaveTemporalAppend()
+   Method setTemporalAppend( cClave )
 
 END CLASS
 
@@ -456,7 +459,7 @@ Return ( Self )
 
 //---------------------------------------------------------------------------//
 
-METHOD saveExtraField( cClave ) CLASS TDetCamposExtra
+METHOD saveExtraField( cClave, cClaveInterna ) CLASS TDetCamposExtra
 
    local hCampos
    local hExtraField
@@ -467,7 +470,7 @@ METHOD saveExtraField( cClave ) CLASS TDetCamposExtra
 
       for each hCampos in hExtraField
 
-         if hGet( hCampos, "clave" ) == padr( cClave, 30 )
+         if hGet( hCampos, "claveinterna" ) == padr( cClaveInterna, 30 )
 
             ::oDbf:Append()
 
@@ -482,7 +485,7 @@ METHOD saveExtraField( cClave ) CLASS TDetCamposExtra
 
       next
 
-   next   
+   next
 
 return ( self )
 
@@ -637,7 +640,7 @@ Return ( valueExtraField )
 
 //---------------------------------------------------------------------------//
 
-METHOD setTemporal( cClave, nMode, lClear ) CLASS TDetCamposExtra
+METHOD setTemporal( cClave, nClaveInterna, nMode, lClear ) CLASS TDetCamposExtra
 
    local nRec              := ::oDbf:Recno()
    local nOrdAnt           := ::oDbf:OrdSetFocus( "cTotClave" )
@@ -668,6 +671,7 @@ METHOD setTemporal( cClave, nMode, lClear ) CLASS TDetCamposExtra
       cClavePrincipal      := hGet( DOCUMENTOS_ITEMS, ::TipoDocumento ) + hGet( hCampos, "código" ) + Padr( cClave, 30 )
 
       hSet( hCampos, "clave", Padr( cClave, 30 ) )
+      hSet( hCampos, "claveinterna", Padr( nClaveInterna, 30 ) )
 
       if ::oDbf:Seek( cClavePrincipal )
          hSet( hCampos, "valor", ::cChar2Format( ::oDbf:cValor, hGet( hCampos, "tipo" ) ) )
@@ -688,11 +692,19 @@ METHOD selectItem( cClave ) CLASS TDetCamposExtra
 
    local nPos           := 0
 
+   if Empty( cClave )
+      cClave            := ""
+   end if
+
+   if Valtype( cClave ) != "C"
+      cClave            := Str( cClave )
+   end if
+
    if len( ::aCamposExtra ) == 0
       Return .f.
    end if
 
-   nPos  :=  ascan( ::aCamposExtra, {|a| hGet( a[1], "clave" ) == Padr( cClave, 30 ) } )
+   nPos  :=  ascan( ::aCamposExtra, {|a| AllTrim( hGet( a[1], "claveinterna" ) ) == AllTrim( cClave ) } )
 
    if nPos != 0
       ::aItemSelected   := ::aCamposExtra[ nPos ]
@@ -701,5 +713,33 @@ METHOD selectItem( cClave ) CLASS TDetCamposExtra
    end if
 
 Return ( .t. )
+
+//---------------------------------------------------------------------------//
+
+METHOD setTemporalAppend() CLASS TDetCamposExtra
+
+   local aCampos
+
+   if !Empty( ::TipoDocumento )
+      aCampos              := ::aExtraFields()
+   end if
+
+   if len( aCampos ) > 0
+      aAdd( ::aCamposExtra, aCampos )
+   end if   
+
+Return ( self )
+
+//---------------------------------------------------------------------------//
+
+METHOD SaveTemporalAppend( nClave ) CLASS TDetCamposExtra
+
+   local hCampo
+
+   for each hCampo in ::aItemSelected
+      hSet( hCampo, "claveinterna", Padr( nClave, 30 ) )
+   next
+
+Return ( self )
 
 //---------------------------------------------------------------------------//

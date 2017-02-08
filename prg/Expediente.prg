@@ -280,7 +280,7 @@ METHOD Activate()
 
       // Imagen adicional -----------------------------------------------------
 
-      ::oWndBrw:AddImageList( "on_worker2_folder_document_16" )
+      ::oWndBrw:AddImageList( "gc_worker2_16" )
 
       // Columnas ---------------------------------------------------------------
 
@@ -1813,7 +1813,7 @@ Method PutOperarioIndex( nTypeExp, oButton )
    Vamos a poner los indices---------------------------------------------------
    */
 
-   nItemBitmap                      := aScan( ::oWndBrw:oImageList:aBitmaps, {|o| Upper( o:cResName ) == Upper( "on_worker2_folder_document_16" ) } )
+   nItemBitmap                      := aScan( ::oWndBrw:oImageList:aBitmaps, {|o| Upper( o:cResName ) == Upper( "gc_worker2_16" ) } )
    if nItemBitmap != 0
       nItemBitmap := nItemBitmap - 2
       // TvSetItemImage( ::oWndBrw:oBtnBar:hWnd, oButton:hItem, nItemBitmap )
@@ -1923,7 +1923,7 @@ Method RestoreOperarioButton()
 
       ::oWndBrw:oBtnTop:aSay[ 1, 3 ]   := "Expedientes"
 
-      nItemBitmap                      := aScan( ::oWndBrw:oImageList:aBitmaps, {|o| Upper( o:cResName ) == Upper( "worker2_folder_document_16" ) } )
+      nItemBitmap                      := aScan( ::oWndBrw:oImageList:aBitmaps, {|o| Upper( o:cResName ) == Upper( "gc_worker2_16" ) } )
       if nItemBitmap != 0
          nItemBitmap := nItemBitmap - 2
          // TvSetItemImage( ::oWndBrw:oBtnBar:hWnd, ::oButtonOld:hItem, nItemBitmap )

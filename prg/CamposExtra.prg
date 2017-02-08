@@ -584,7 +584,8 @@ Method aCamposExtra( cTipoCampo ) CLASS TCamposExtra
                                     "lrequerido"   => ::oDbf:lRequerido,;
                                     "valores"      => hb_deserialize( ::oDbf:mDefecto ),;
                                     "valor"        => cValor,;
-                                    "clave"        => space( 30 ) } )
+                                    "clave"        => space( 30 ),;
+                                    "claveinterna" => "" } )
 
          end if
 

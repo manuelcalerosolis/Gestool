@@ -797,7 +797,7 @@ FUNCTION PedPrv( oMenuItem, oWnd, cCodPrv, cCodArt )
       HOTKEY   "E";
       LEVEL    ACC_DELE
 
-   DEFINE BTNSHELL oPrv RESOURCE "IMP" GROUP OF oWndBrw ;
+   DEFINE BTNSHELL oPrv RESOURCE "GC_PRINTER2_" GROUP OF oWndBrw ;
       NOBORDER ;
       ACTION   ( GenPedPrv( IS_PRINTER ) ) ;
       MENU     This:Toggle() ;
@@ -814,7 +814,7 @@ FUNCTION PedPrv( oMenuItem, oWnd, cCodPrv, cCodArt )
       HOTKEY   "R";
       LEVEL    ACC_IMPR
 
-   DEFINE BTNSHELL oImp RESOURCE "PREV1" OF oWndBrw ;
+   DEFINE BTNSHELL oImp RESOURCE "GC_MONITOR_" OF oWndBrw ;
       NOBORDER ;
       ACTION   ( GenPedPrv( IS_SCREEN ), oWndBrw:Refresh() ) ;
       MENU     This:Toggle() ;
@@ -2166,7 +2166,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, cCodPrv, cCodArt, nMode )
 
          oDlg:AddFastKey( VK_F5, {|| EndTrans( aGet, aTmp, oBrw, nMode, oDlg ) } )
          oDlg:AddFastKey( VK_F6, {|| if( EndTrans( aGet, aTmp, oBrw, nMode, oDlg ), GenPedPrv( IS_PRINTER ), ) } )
-         oDlg:AddFastKey( VK_F9, {|| oDetCamposExtra:Play( aTmp[ _CSERPED ] + str( aTmp[ _NNUMPED ] ) + aTmp[ _CSUFPED ] ) } )
+         oDlg:AddFastKey( VK_F9, {|| oDetCamposExtra:Play( space(1) ) } )
          oDlg:AddFastKey( 65,    {|| if( GetKeyState( VK_CONTROL ), CreateInfoArticulo(), ) } )
       end if
 
@@ -2244,7 +2244,7 @@ Static Function EdtRecMenu( aGet, aTmp, oBrw, oBrwLin, nMode, oDlg )
             MENUITEM    "&1. Campos extra [F9]";
                MESSAGE  "Mostramos y rellenamos los campos extra para la familia" ;
                RESOURCE "gc_form_plus2_16" ;
-               ACTION   ( oDetCamposExtra:Play( aTmp[ _CSERPED ] + Str( aTmp[ _NNUMPED ] ) + aTmp[ _CSUFPED ] ) )
+               ACTION   ( oDetCamposExtra:Play( space(1) ) )
 
             MENUITEM    "&2. Modificar proveedor";
                MESSAGE  "Modificar la ficha del proveedor" ;
@@ -4363,7 +4363,7 @@ STATIC FUNCTION BeginTrans( aTmp, nMode )
       Cargamos los temporales de los campos extra---------------------------------
       */
 
-      oDetCamposExtra:SetTemporal( aTmp[ _CSERPED ] + Str( aTmp[ _NNUMPED ] ) + aTmp[ _CSUFPED ], nMode )
+      oDetCamposExtra:SetTemporal( aTmp[ _CSERPED ] + Str( aTmp[ _NNUMPED ] ) + aTmp[ _CSUFPED ], "", nMode )
 
    RECOVER USING oError
 
@@ -4531,7 +4531,7 @@ STATIC FUNCTION EndTrans( aGet, aTmp, oBrw, nMode, oDlg )
    Cargamos los temporales de los campos extra---------------------------------
    */
 
-   oDetCamposExtra:saveExtraField( aTmp[ _CSERPED ] + Str( aTmp[ _NNUMPED ] ) + aTmp[ _CSUFPED ], nMode )
+   oDetCamposExtra:saveExtraField( aTmp[ _CSERPED ] + Str( aTmp[ _NNUMPED ] ) + aTmp[ _CSUFPED ], "", nMode )
 
    // Salvamos el registro del pedido
 
@@ -4760,7 +4760,7 @@ static function lGenPed( oBrw, oBtn, nDevice )
 
    if !( D():Documentos( nView ) )->( dbSeek( "PP" ) )
 
-      DEFINE BTNSHELL RESOURCE "DOCUMENT" OF oWndBrw ;
+      DEFINE BTNSHELL RESOURCE "gc_document_white_" OF oWndBrw ;
          NOBORDER ;
          ACTION   ( msgStop( "No hay pedidos de proveedores predefinidos" ) );
          TOOLTIP  "No hay documentos" ;

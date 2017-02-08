@@ -235,7 +235,7 @@ METHOD Resource( nMode )
    local oBmpGeneral
    local oBmpTarifa
 
-   ::oDetCamposExtra:SetTemporal( ::oDbf:cCodGrp, nMode )
+   ::oDetCamposExtra:SetTemporal( ::oDbf:cCodGrp, "", nMode )
 
    DEFINE DIALOG     oDlg ;
       RESOURCE       "GRPCLI" ;
@@ -307,7 +307,7 @@ METHOD Resource( nMode )
 			ACTION      ( oDlg:end() )
 
    oDlg:AddFastKey( VK_F5, {|| ::lSaveResource( nMode, oDlg ) } )
-   oDlg:AddFastKey( VK_F9, {|| ::oDetCamposExtra:Play( ::oDbf:cCodGrp ) } )
+   oDlg:AddFastKey( VK_F9, {|| ::oDetCamposExtra:Play( Space(1) ) } )
 
    oDlg:bStart       := {|| ::StartResource(), ::EdtRotorMenu( oDlg ) }
 
@@ -340,7 +340,7 @@ METHOD EdtRotorMenu( oDlg )
          MENUITEM    "&1. Campos extra [F9]";
             MESSAGE  "Mostramos y rellenamos los campos extra para el grupo cliente" ;
             RESOURCE "gc_form_plus2_16" ;
-            ACTION   ( ::oDetCamposExtra:Play( ::oDbf:cCodGrp ) )
+            ACTION   ( ::oDetCamposExtra:Play( Space(1) ) )
 
       ENDMENU
 
@@ -395,7 +395,7 @@ Method lSaveResource( nMode, oDlg )
       Return nil
    end if
 
-   ::oDetCamposExtra:saveExtraField( ::oDbf:cCodGrp )
+   ::oDetCamposExtra:saveExtraField( ::oDbf:cCodGrp, "" )
 
 Return ( oDlg:end( IDOK ) )
 

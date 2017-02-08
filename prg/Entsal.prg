@@ -366,7 +366,7 @@ STATIC FUNCTION OpenFiles()
    oBandera       := TBandera():New
 
    bBmp           := LoadBitmap( GetResources(), "BmpLock" )
-   bBmpSnd        := LoadBitmap( GetResources(), "Send16" )
+   bBmpSnd        := LoadBitmap( GetResources(), "gc_satellite_dish2_16" )
 
    RECOVER
 
