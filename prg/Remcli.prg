@@ -915,7 +915,7 @@ METHOD Resource( nMode )
          :bBmpData         := {|| ::gotoRecibo(), ( if( ::oDbfDet:lCobrado, 1, 2 ) ) }
          :nWidth           := 20
          :AddResource( "bSel" )
-         :AddResource( "bCancel" )
+         :AddResource( "gc_delete_16" )
          :AddResource( "gc_money2_16" )
       end with
 

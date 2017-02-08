@@ -1724,13 +1724,13 @@ METHOD lGrupoBanco( lInitGroup, lImp ) CLASS TNewInfGen
    ::oGrupoBanco:Cargo:ValidHasta   := {|oGet| if( ::oBanco:Existe( if( !Empty( oGet ), oGet, ::oHasta ), ::oSayHasta, "cNomBnc", .t., .t., "0" ), ( ::ChangeValor(), .t. ), .f. ) }
    ::oGrupoBanco:Cargo:lImprimir    := lImp
 
-   ::oImageList:AddMasked( TBitmap():Define( "Banc_16" ), Rgb( 255, 0, 255 ) )
+   ::oImageList:AddMasked( TBitmap():Define( "gc_office_building2_16" ), Rgb( 255, 0, 255 ) )
 
    if lInitGroup != nil
 
       aAdd( ::aSelectionGroup, ::oGrupoBanco )
 
-      ::oImageGroup:AddMasked( TBitmap():Define( "Banc_16" ), Rgb( 255, 0, 255 ) )
+      ::oImageGroup:AddMasked( TBitmap():Define( "gc_office_building2_16" ), Rgb( 255, 0, 255 ) )
 
       ::oGrupoBanco:Cargo:Imagen  := len( ::oImageGroup:aBitmaps ) -1
 
