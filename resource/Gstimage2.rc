@@ -18,12 +18,6 @@ FIND BITMAP "..\\bmp\\gc_binocular2_16.bmp"
 PAGINATOR_32 BITMAP "..\\bmp\\Paginator_32.bmp"
 
 
-DOCTOR_16 BITMAP "..\\bmp\\Doctor_16.bmp"
-DOCTOR_32 BITMAP "..\\bmp\\Doctor_32.bmp"
-LIFEBELT_16 BITMAP "..\\bmp\\Lifebelt_16.bmp"
-LIFEBELT_32 BITMAP "..\\bmp\\Lifebelt_32.bmp"
-HELP_32 BITMAP "..\\bmp\\Help_32.bmp"
-
 NIL16 BITMAP "..\\bmp\\Nil_16.bmp"
 
 BADDFILTER16 BITMAP "..\\bmp\\Funnel_Add_16.bmp"

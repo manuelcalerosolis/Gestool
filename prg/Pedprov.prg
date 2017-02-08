@@ -797,7 +797,7 @@ FUNCTION PedPrv( oMenuItem, oWnd, cCodPrv, cCodArt )
       HOTKEY   "E";
       LEVEL    ACC_DELE
 
-   DEFINE BTNSHELL oPrv RESOURCE "IMP" GROUP OF oWndBrw ;
+   DEFINE BTNSHELL oPrv RESOURCE "GC_PRINTER2_" GROUP OF oWndBrw ;
       NOBORDER ;
       ACTION   ( GenPedPrv( IS_PRINTER ) ) ;
       MENU     This:Toggle() ;
@@ -814,7 +814,7 @@ FUNCTION PedPrv( oMenuItem, oWnd, cCodPrv, cCodArt )
       HOTKEY   "R";
       LEVEL    ACC_IMPR
 
-   DEFINE BTNSHELL oImp RESOURCE "PREV1" OF oWndBrw ;
+   DEFINE BTNSHELL oImp RESOURCE "GC_MONITOR_" OF oWndBrw ;
       NOBORDER ;
       ACTION   ( GenPedPrv( IS_SCREEN ), oWndBrw:Refresh() ) ;
       MENU     This:Toggle() ;
@@ -4760,7 +4760,7 @@ static function lGenPed( oBrw, oBtn, nDevice )
 
    if !( D():Documentos( nView ) )->( dbSeek( "PP" ) )
 
-      DEFINE BTNSHELL RESOURCE "DOCUMENT" OF oWndBrw ;
+      DEFINE BTNSHELL RESOURCE "gc_document_white_" OF oWndBrw ;
          NOBORDER ;
          ACTION   ( msgStop( "No hay pedidos de proveedores predefinidos" ) );
          TOOLTIP  "No hay documentos" ;

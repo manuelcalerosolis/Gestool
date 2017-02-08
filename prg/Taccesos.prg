@@ -628,7 +628,7 @@ Method CreateSearchBar( oWnd )
    ::oComboFilter:Disable()
 
    @ 125, 632 BTNBMP ::oButtonAddFilter ;
-            RESOURCE "bAddFilter16" ;
+            RESOURCE "gc_funnel_add_16" ;
             SIZE     18, 18 ;
             OF       ::oRebar ;
             NOBORDER ;
