@@ -12,8 +12,6 @@ LANGUAGE LANG_ENGLISH,SUBLANG_ENGLISH_US
 
 OFERTA BITMAP "..\\bmp\\res32.bmp"
 
-BMPOUT BITMAP "..\\bmp\\res143.bmp"
-
 COLOR_01 BITMAP "..\\bmp\\res222.bmp"
 
 COLOR_02 BITMAP "..\\bmp\\res223.bmp"
@@ -21,15 +19,6 @@ COLOR_02 BITMAP "..\\bmp\\res223.bmp"
 COLOR_03 BITMAP "..\\bmp\\res224.bmp"
 
 COLOR_00 BITMAP "..\\bmp\\res225.bmp"
-
-USR_BLOCK BITMAP "..\\bmp\\res275.bmp"
-
-USR_FREE BITMAP "..\\bmp\\res276.bmp"
-
-UP BITMAP "..\\bmp\\res303.bmp"
-
-DOWN BITMAP "..\\bmp\\res304.bmp"
-
 
 IMG500EUROS BITMAP "..\\bmp\\res249.bmp"
 
@@ -95,11 +84,8 @@ COL_14 BITMAP "..\\bmp\\res244.bmp"
 
 COL_15 BITMAP "..\\bmp\\res245.bmp"
 
-ALIGN_CENTER BITMAP "..\\bmp\\res148.bmp"
 
-ALIGN_LEFT BITMAP "..\\bmp\\res149.bmp"
 
-ALIGN_RIGHT BITMAP "..\\bmp\\res150.bmp"
 
 BAN_ALB BITMAP "..\\bmp\\res53.bmp"
 
@@ -281,12 +267,9 @@ BAN_VENE BITMAP "..\\bmp\\res141.bmp"
 
 BAN_YUG BITMAP "..\\bmp\\res142.bmp"
 
-USER1_MONEY2_32 BITMAP "..\\bmp\\User1_money2_32.bmp"
 
 
-POLICEMAN_USA_32 BITMAP "..\\bmp\\Policeman_Usa_32.bmp"
 
-POLICEMAN_USA_16 BITMAP "..\\bmp\\Policeman_Usa_16.bmp"
 
 LED_RED_16 BITMAP "..\\bmp\\Led_Red_16.bmp"
 
