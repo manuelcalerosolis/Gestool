@@ -4954,26 +4954,6 @@ Return ( nil )
 
 Function Test()
 
-   local localTime    
-
-//   hb_timeStampGetLocal( @localTime )
-//   msgalert( localTime, "localTime" )
-
-   logwrite( hb_milliSeconds() )
-   logwrite( hb_milliSeconds() )
-   logwrite( hb_milliSeconds() )
-   logwrite( hb_milliSeconds() )
-   logwrite( hb_milliSeconds() )
-   logwrite( hb_milliSeconds() )
-   logwrite( hb_milliSeconds() )
-   logwrite( hb_milliSeconds() )
-   logwrite( hb_milliSeconds() )
-   logwrite( hb_milliSeconds() )
-   logwrite( hb_milliSeconds() )
-   logwrite( hb_milliSeconds() )
-   logwrite( hb_milliSeconds() )
-   logwrite( hb_milliSeconds() )
-   logwrite( hb_milliSeconds() )
 
 /*
    local cAlbCliT

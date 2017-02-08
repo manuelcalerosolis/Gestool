@@ -795,21 +795,16 @@ METHOD End( lForceExit ) CLASS TShell
 
    // Barra de busqueda--------------------------------------------------------
 
-   if !::lBigStyle .and. !empty( ::oWndBar )
+   if !empty( ::oWndBar )
 
       ::oWndBar:DisableGet()
-
       ::oWndBar:DisableComboBox()
-
       ::oWndBar:DisableComboFilter()
+      ::oWndBar:HideYearCombobox()
 
       ::HideButtonFilter()
       ::HideAddButtonFilter()
       ::HideEditButtonFilter()
-
-      if ::lFechado
-         ::oWndBar:HideYearCombobox()
-      end if
 
    end if
 
@@ -823,7 +818,8 @@ METHOD End( lForceExit ) CLASS TShell
    ::oWndClient:ChildClose( Self )
 
    ::Super:End()
-   // ::Super:Destroy()
+   
+   sysRefresh()
 
    CursorWE()
 
@@ -2656,8 +2652,9 @@ METHOD setWindowsBar()
       
       ::enableComboFilter( ::oActiveFilter:aFiltersName )
       
-      ::SetDefaultComboFilter()
-      ::ShowAddButtonFilter()
+      ::setDefaultComboFilter()
+
+      ::showAddButtonFilter()
 
       ::setFilterByUser()
 

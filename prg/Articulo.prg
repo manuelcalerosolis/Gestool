@@ -528,7 +528,7 @@ STATIC FUNCTION CloseFiles( lDestroy )
 
    if oWndBrw != nil
 
-      if !Empty( oWndBrw:oBrw )
+      if !empty( oWndBrw:oBrw )
          oWndBrw:oBrw:End()
       end if
 
@@ -676,59 +676,59 @@ STATIC FUNCTION CloseFiles( lDestroy )
       ( dbfTImp )->( dbCloseArea() )
    end if
 
-   if !Empty( dbfDoc )
+   if !empty( dbfDoc )
       ( dbfDoc )->( dbCloseArea() )
    end if
 
-   if !Empty( oStock )
+   if !empty( oStock )
       oStock:end()
    end if
 
-   if !Empty( oGrpFam )
+   if !empty( oGrpFam )
       oGrpFam:end()
    end if
 
-   if !Empty( oTipArt )
+   if !empty( oTipArt )
       oTipArt:end()
    end if
 
-   if !Empty( oFabricante )
+   if !empty( oFabricante )
       oFabricante:end()
    end if
 
-   if !Empty( oCatalogo )
+   if !empty( oCatalogo )
       oCatalogo:end()
    end if
 
-   if !Empty( oNewImp )
+   if !empty( oNewImp )
       oNewImp:end()
    end if
 
-   if !Empty( oUndMedicion )
+   if !empty( oUndMedicion )
       oUndMedicion:end()
    end if
 
-   if !Empty( oFraPub )
+   if !empty( oFraPub )
       oFraPub:end()
    end if
 
-   if !Empty( oSeccion )
+   if !empty( oSeccion )
       oSeccion:End()
    end if
 
-   if !Empty( oOrdenComanda )
+   if !empty( oOrdenComanda )
       oOrdenComanda:End()
    end if 
 
-   if !Empty( oTpvMenu )
+   if !empty( oTpvMenu )
       oTpvMenu:CloseService()
    end if
 
-   if !Empty( oDetCamposExtra )
+   if !empty( oDetCamposExtra )
       oDetCamposExtra:CloseFiles()
    end if
 
-   if !Empty( oLenguajes )
+   if !empty( oLenguajes )
       oLenguajes:End()
    end if
 
@@ -979,7 +979,7 @@ Function Articulo( oMenuItem, oWnd, bOnInit )
    with object ( oWndBrw:AddXCol() )
       :cHeader          := "Tipo"
       :cSortOrder       := "cCodTip"
-      :bStrData         := {|| AllTrim( ( D():Articulos( nView ) )->cCodTip ) + if( !Empty( ( D():Articulos( nView ) )->cCodTip ), " - ", "" ) + oRetFld( ( D():Articulos( nView ) )->cCodTip, oTipArt:oDbf, "cNomTip" ) }
+      :bStrData         := {|| AllTrim( ( D():Articulos( nView ) )->cCodTip ) + if( !empty( ( D():Articulos( nView ) )->cCodTip ), " - ", "" ) + oRetFld( ( D():Articulos( nView ) )->cCodTip, oTipArt:oDbf, "cNomTip" ) }
       :nWidth           := 140
       :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | oWndBrw:ClickOnHeader( oCol ) }
       :lHide            := .t. 
@@ -988,7 +988,7 @@ Function Articulo( oMenuItem, oWnd, bOnInit )
    with object ( oWndBrw:AddXCol() )
       :cHeader          := getConfigTraslation( "Categoría" )
       :cSortOrder       := "cCodCate"
-      :bStrData         := {|| AllTrim( ( D():Articulos( nView ) )->cCodCate ) + if( !Empty( ( D():Articulos( nView ) )->cCodCate ), " - ", "" ) + RetFld( ( D():Articulos( nView ) )->cCodCate, dbfCategoria, "cNombre" ) }
+      :bStrData         := {|| AllTrim( ( D():Articulos( nView ) )->cCodCate ) + if( !empty( ( D():Articulos( nView ) )->cCodCate ), " - ", "" ) + RetFld( ( D():Articulos( nView ) )->cCodCate, dbfCategoria, "cNombre" ) }
       :bBmpData         := {|| nBitmapTipoCategoria( RetFld( ( D():Articulos( nView ) )->cCodCate, dbfCategoria, "cTipo" ) ) }
       :nWidth           := 140
       :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | oWndBrw:ClickOnHeader( oCol ) }
@@ -999,7 +999,7 @@ Function Articulo( oMenuItem, oWnd, bOnInit )
    with object ( oWndBrw:AddXCol() )
       :cHeader          := getConfigTraslation( "Temporada" )
       :cSortOrder       := "cCodTemp"
-      :bStrData         := {|| AllTrim( ( D():Articulos( nView ) )->cCodTemp ) + if( !Empty( ( D():Articulos( nView ) )->cCodTemp ), " - ", "" ) + RetFld( ( D():Articulos( nView ) )->cCodTemp, dbfTemporada, "cNombre" ) }
+      :bStrData         := {|| AllTrim( ( D():Articulos( nView ) )->cCodTemp ) + if( !empty( ( D():Articulos( nView ) )->cCodTemp ), " - ", "" ) + RetFld( ( D():Articulos( nView ) )->cCodTemp, dbfTemporada, "cNombre" ) }
       :bBmpData         := {|| nBitmapTipoTemporada( RetFld( ( D():Articulos( nView ) )->cCodTemp, dbfTemporada, "cTipo" ) ) }
       :nWidth           := 140
       :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | oWndBrw:ClickOnHeader( oCol ) }
@@ -1011,7 +1011,7 @@ Function Articulo( oMenuItem, oWnd, bOnInit )
    with object ( oWndBrw:AddXCol() )
       :cHeader          := "Fabricante"
       :cSortOrder       := "cCodFab"
-      :bStrData         := {|| AllTrim( ( D():Articulos( nView ) )->cCodFab ) + if( !Empty( ( D():Articulos( nView ) )->cCodFab ), " - ", "" ) + RetFld( ( D():Articulos( nView ) )->cCodFab, oFabricante:GetAlias() ) }
+      :bStrData         := {|| AllTrim( ( D():Articulos( nView ) )->cCodFab ) + if( !empty( ( D():Articulos( nView ) )->cCodFab ), " - ", "" ) + RetFld( ( D():Articulos( nView ) )->cCodFab, oFabricante:GetAlias() ) }
       :nWidth           := 140
       :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | oWndBrw:ClickOnHeader( oCol ) }
       :lHide            := .t. 
@@ -1020,7 +1020,7 @@ Function Articulo( oMenuItem, oWnd, bOnInit )
    with object ( oWndBrw:AddXCol() )
       :cHeader          := "Estado"
       :cSortOrder       := "cCodEst"
-      :bStrData         := {|| AllTrim( ( D():Articulos( nView ) )->cCodEst ) + if( !Empty( ( D():Articulos( nView ) )->cCodEst ), " - ", "" ) + RetFld( ( D():Articulos( nView ) )->cCodEst, D():EstadoArticulo( nView ), "cNombre" ) }
+      :bStrData         := {|| AllTrim( ( D():Articulos( nView ) )->cCodEst ) + if( !empty( ( D():Articulos( nView ) )->cCodEst ), " - ", "" ) + RetFld( ( D():Articulos( nView ) )->cCodEst, D():EstadoArticulo( nView ), "cNombre" ) }
       :bBmpData         := {|| nBitmapTipoEstadoSat( RetFld( ( D():Articulos( nView ) )->cCodEst, D():EstadoArticulo( nView ), "cTipo" ) ) }
       :nWidth           := 140
       :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | oWndBrw:ClickOnHeader( oCol ) }
@@ -1294,7 +1294,7 @@ Function Articulo( oMenuItem, oWnd, bOnInit )
    with object ( oWndBrw:AddXCol() )
       :cHeader          := "Proveedor"
       :cSortOrder       := "cPrvHab"
-      :bStrData         := {|| if( !Empty( ( D():Articulos( nView ) )->cPrvHab ), AllTrim( ( D():Articulos( nView ) )->cPrvHab ) + " - " + RetProvee( ( D():Articulos( nView ) )->cPrvHab, dbfProv ), "" ) }
+      :bStrData         := {|| if( !empty( ( D():Articulos( nView ) )->cPrvHab ), AllTrim( ( D():Articulos( nView ) )->cPrvHab ) + " - " + RetProvee( ( D():Articulos( nView ) )->cPrvHab, dbfProv ), "" ) }
       :nWidth           := 200
       :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | oWndBrw:ClickOnHeader( oCol ) }
       :lHide            := .t.
@@ -1348,10 +1348,10 @@ Function Articulo( oMenuItem, oWnd, bOnInit )
    oWndBrw:bToolTip     := {|| dlgTooltip( ( D():Articulos( nView ) )->Codigo, oWndBrw:oBrw ) }
 
    if uFieldEmpresa( "lShwPop" )
-      oWndBrw:oBrw:bChange    := {|| if( !Empty( oWndBrw ), oWndBrw:CheckExtendInfo(), ) }
+      oWndBrw:oBrw:bChange    := {|| if( !empty( oWndBrw ), oWndBrw:CheckExtendInfo(), ) }
    else
       oWndBrw:oBrw:bChange    := {|| oWndBrw:DestroyTooltip() }
-      aAdd( oWndBrw:aFastKey, { VK_SPACE, {|| if( !Empty( oWndBrw ), oWndBrw:ShowExtendInfo(), ) } } )
+      aAdd( oWndBrw:aFastKey, { VK_SPACE, {|| if( !empty( oWndBrw ), oWndBrw:ShowExtendInfo(), ) } } )
    end if
 
    oWndBrw:CreateXFromCode()
@@ -1641,7 +1641,7 @@ Function Articulo( oMenuItem, oWnd, bOnInit )
 
    ACTIVATE WINDOW oWndBrw VALID ( CloseFiles( .t. ) )
 
-   if !Empty( bOnInit )
+   if !empty( bOnInit )
       Eval( bOnInit )
    end if
 
@@ -1817,8 +1817,8 @@ STATIC FUNCTION EdtRec( aTmp, aGet, cArticulo, oBrw, bWhen, bValid, nMode )
       aTmp[ ( D():Articulos( nView ) )->( fieldpos( "nTipDur" ) ) ]       := 1
 
 
-      aTmp[ ( D():Articulos( nView ) )->( fieldpos( "cCodPrp1" ) ) ]      := Padr( GetPvProfString( "PROPIEDADES", "Propiedad1",       "",   cIniAplication() ), 20 )
-      aTmp[ ( D():Articulos( nView ) )->( fieldpos( "cCodPrp2" ) ) ]      := Padr( GetPvProfString( "PROPIEDADES", "Propiedad2",       "",   cIniAplication() ), 20 )
+      aTmp[ ( D():Articulos( nView ) )->( fieldpos( "cCodPrp1" ) ) ]      := Padr( GetPvProfString( "PROPIEDADES", "Propiedad1", "", cIniAplication() ), 20 )
+      aTmp[ ( D():Articulos( nView ) )->( fieldpos( "cCodPrp2" ) ) ]      := Padr( GetPvProfString( "PROPIEDADES", "Propiedad2", "", cIniAplication() ), 20 )
 
    case nMode == DUPL_MODE
 
@@ -1832,11 +1832,11 @@ STATIC FUNCTION EdtRec( aTmp, aGet, cArticulo, oBrw, bWhen, bValid, nMode )
    cImageOld                                                   := aTmp[ ( D():Articulos( nView ) )->( fieldpos( "cImagen" ) ) ]
    nGetValNewImp                                               := oNewImp:nValImp( aTmp[ ( D():Articulos( nView ) )->( fieldpos( "CCODIMP" ) ) ] )
 
-   if Empty( aTmp[ ( D():Articulos( nView ) )->( fieldpos( "nColBtn" ) ) ] )
-      aTmp[ ( D():Articulos( nView ) )->( fieldpos( "nColBtn" ) ) ]       := GetSysColor( COLOR_BTNFACE )
+   if empty( aTmp[ ( D():Articulos( nView ) )->( fieldpos( "nColBtn" ) ) ] )
+      aTmp[ ( D():Articulos( nView ) )->( fieldpos( "nColBtn" ) ) ]       := rgb( 255,255,255 )
    end if
 
-   if Empty( aTmp[ ( D():Articulos( nView ) )->( fieldpos( "nTipBar" ) ) ] )
+   if empty( aTmp[ ( D():Articulos( nView ) )->( fieldpos( "nTipBar" ) ) ] )
       aTmp[ ( D():Articulos( nView ) )->( fieldpos( "nTipBar" ) ) ]       := 1
    else
       if aTmp[ ( D():Articulos( nView ) )->( fieldpos( "nTipBar" ) ) ] > 3
@@ -1844,8 +1844,8 @@ STATIC FUNCTION EdtRec( aTmp, aGet, cArticulo, oBrw, bWhen, bValid, nMode )
       end if
    end if
 
-   cImpComanda1    := if( Empty( aTmp[ ( D():Articulos( nView ) )->( fieldpos( "cTipImp1" ) ) ] ), "No imprimir", AllTrim( aTmp[ ( D():Articulos( nView ) )->( fieldpos( "cTipImp1" ) ) ] ) )
-   cImpComanda2    := if( Empty( aTmp[ ( D():Articulos( nView ) )->( fieldpos( "cTipImp2" ) ) ] ), "No imprimir", AllTrim( aTmp[ ( D():Articulos( nView ) )->( fieldpos( "cTipImp2" ) ) ] ) )
+   cImpComanda1    := if( empty( aTmp[ ( D():Articulos( nView ) )->( fieldpos( "cTipImp1" ) ) ] ), "No imprimir", AllTrim( aTmp[ ( D():Articulos( nView ) )->( fieldpos( "cTipImp1" ) ) ] ) )
+   cImpComanda2    := if( empty( aTmp[ ( D():Articulos( nView ) )->( fieldpos( "cTipImp2" ) ) ] ), "No imprimir", AllTrim( aTmp[ ( D():Articulos( nView ) )->( fieldpos( "cTipImp2" ) ) ] ) )
 
    cSay[7]         := aBar[ aTmp[ ( D():Articulos( nView ) )->( fieldpos( "nTipBar" ) ) ] ]
    cSay[6]         := ""
@@ -3392,7 +3392,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, cArticulo, oBrw, bWhen, bValid, nMode )
    REDEFINE BUTTON aBtnDiv[ 1 ];
 		ID 		500 ;
       OF       fldPropiedades;
-      WHEN     ( !Empty( aTmp[ ( D():Articulos( nView ) )->( fieldpos( "cCodPrp1" ) ) ] ) .and. nMode != ZOOM_MODE );
+      WHEN     ( !empty( aTmp[ ( D():Articulos( nView ) )->( fieldpos( "cCodPrp1" ) ) ] ) .and. nMode != ZOOM_MODE );
       ACTION   ( WinAppRec( oBrwDiv, bEdtVta, dbfTmpVta, , , aTmp ) )
 
    REDEFINE BUTTON aBtnDiv[ 2 ];
@@ -3700,43 +3700,43 @@ STATIC FUNCTION EdtRec( aTmp, aGet, cArticulo, oBrw, bWhen, bValid, nMode )
       with object ( oBrwStk:AddCol() )
          :cHeader             := "Código"
          :nWidth              := 40
-         :bStrData            := {|| if( !Empty( oBrwStk:aArrayData ), oBrwStk:aArrayData[ oBrwStk:nArrayAt ]:cCodigoAlmacen, "" ) }
+         :bStrData            := {|| if( !empty( oBrwStk:aArrayData ), oBrwStk:aArrayData[ oBrwStk:nArrayAt ]:cCodigoAlmacen, "" ) }
       end with
 
       with object ( oBrwStk:AddCol() )
          :cHeader             := "Almacén"
          :nWidth              := 120
-         :bStrData            := {|| if( !Empty( oBrwStk:aArrayData ), RetAlmacen( oBrwStk:aArrayData[ oBrwStk:nArrayAt ]:cCodigoAlmacen, dbfAlmT ), "" ) }
+         :bStrData            := {|| if( !empty( oBrwStk:aArrayData ), RetAlmacen( oBrwStk:aArrayData[ oBrwStk:nArrayAt ]:cCodigoAlmacen, dbfAlmT ), "" ) }
       end with
 
       with object ( oBrwStk:AddCol() )
          :cHeader             := "Prop. 1"
          :nWidth              := 120
-         :bStrData            := {|| if( !Empty( oBrwStk:aArrayData ), oBrwStk:aArrayData[ oBrwStk:nArrayAt ]:cValorPropiedad1, "" ) }
+         :bStrData            := {|| if( !empty( oBrwStk:aArrayData ), oBrwStk:aArrayData[ oBrwStk:nArrayAt ]:cValorPropiedad1, "" ) }
       end with
 
       with object ( oBrwStk:AddCol() )
          :cHeader             := "Prop. 2"
          :nWidth              := 120
-         :bStrData            := {|| if( !Empty( oBrwStk:aArrayData ), oBrwStk:aArrayData[ oBrwStk:nArrayAt ]:cValorPropiedad2, "" ) }
+         :bStrData            := {|| if( !empty( oBrwStk:aArrayData ), oBrwStk:aArrayData[ oBrwStk:nArrayAt ]:cValorPropiedad2, "" ) }
       end with
 
       with object ( oBrwStk:AddCol() )
          :cHeader             := "Lote"
          :nWidth              := 60
-         :bStrData            := {|| if( !Empty( oBrwStk:aArrayData ), oBrwStk:aArrayData[ oBrwStk:nArrayAt ]:cLote, "" ) }
+         :bStrData            := {|| if( !empty( oBrwStk:aArrayData ), oBrwStk:aArrayData[ oBrwStk:nArrayAt ]:cLote, "" ) }
       end with
 
       with object ( oBrwStk:AddCol() )
          :cHeader             := "Num. serie"
          :nWidth              := 60
-         :bStrData            := {|| if( !Empty( oBrwStk:aArrayData ), oBrwStk:aArrayData[ oBrwStk:nArrayAt ]:cNumeroSerie, "" ) }
+         :bStrData            := {|| if( !empty( oBrwStk:aArrayData ), oBrwStk:aArrayData[ oBrwStk:nArrayAt ]:cNumeroSerie, "" ) }
       end with
 
       with object ( oBrwStk:AddCol() )
          :cHeader             := "Unidades"
          :nWidth              := 80
-         :bEditValue          := {|| if( !Empty( oBrwStk:aArrayData ), oBrwStk:aArrayData[ oBrwStk:nArrayAt ]:nUnidades, 0 ) }
+         :bEditValue          := {|| if( !empty( oBrwStk:aArrayData ), oBrwStk:aArrayData[ oBrwStk:nArrayAt ]:nUnidades, 0 ) }
          :bFooter             := {|| nStockUnidades( oBrwStk ) }
          :cEditPicture        := MasUnd()
          :nDataStrAlign       := AL_RIGHT
@@ -3746,7 +3746,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, cArticulo, oBrw, bWhen, bValid, nMode )
 
       with object ( oBrwStk:AddCol() )
          :cHeader             := "Pdt. recibir"
-         :bEditValue          := {|| if( !Empty( oBrwStk:aArrayData ), oBrwStk:aArrayData[ oBrwStk:nArrayAt ]:nPendientesRecibir, 0 ) }
+         :bEditValue          := {|| if( !empty( oBrwStk:aArrayData ), oBrwStk:aArrayData[ oBrwStk:nArrayAt ]:nPendientesRecibir, 0 ) }
          :bFooter             := {|| nStockPendiente( oBrwStk ) }
          :nWidth              := 70
          :cEditPicture        := cPicUnd
@@ -3758,7 +3758,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, cArticulo, oBrw, bWhen, bValid, nMode )
 
       with object ( oBrwStk:AddCol() )
          :cHeader             := "Pdt. entregar"
-         :bEditValue          := {|| if( !Empty( oBrwStk:aArrayData ), oBrwStk:aArrayData[ oBrwStk:nArrayAt ]:nPendientesEntregar, 0 ) }
+         :bEditValue          := {|| if( !empty( oBrwStk:aArrayData ), oBrwStk:aArrayData[ oBrwStk:nArrayAt ]:nPendientesEntregar, 0 ) }
          :bFooter             := {|| nStockEntregar( oBrwStk ) }
          :nWidth              := 70
          :cEditPicture        := cPicUnd
@@ -4710,7 +4710,7 @@ Return ( oDlg:nResult == IDOK )
 
 static function actualizaTarifaWeb( aGet, aTmp, nMode )
 
-   if !Empty( oGetTarWeb )
+   if !empty( oGetTarWeb )
       aTmp[ ( D():Articulos( nView ) )->( fieldpos( "nTarWeb" ) ) ]  := oGetTarWeb:getTarifa()
    endif
 
@@ -4877,7 +4877,7 @@ Static Function ActualizaCostoProveedor( aTmp, aGet, dbfTmpPrv )
 
       aTmp[ ( D():Articulos( nView ) )->( fieldpos( "pCosto"  ) ) ]   := nTotImpPrv( dbfTmpPrv, dbfDiv )
 
-      if !Empty( aGet[ ( D():Articulos( nView ) )->( fieldpos( "pCosto"  ) ) ] )
+      if !empty( aGet[ ( D():Articulos( nView ) )->( fieldpos( "pCosto"  ) ) ] )
          aGet[ ( D():Articulos( nView ) )->( fieldpos( "pCosto"  ) ) ]:Refresh()
       end if   
 
@@ -5057,7 +5057,7 @@ STATIC FUNCTION EdtRec2( aTmp, aGet, cArticulo, oBrw, bWhen, bValid, nMode )
       VAR      aTmp[ ( D():Articulos( nView ) )->( fieldpos( "CPRVHAB" ) ) ] ;
       ID       140 ;
       PICTURE  ( RetPicCodPrvEmp() ) ;
-      WHEN     ( Empty( aTmp[( D():Articulos( nView ) )->( fieldpos( "CCODCAT" ) ) ] ) );
+      WHEN     ( empty( aTmp[( D():Articulos( nView ) )->( fieldpos( "CCODCAT" ) ) ] ) );
       VALID    ( CargaProveedor( aGet[ ( D():Articulos( nView ) )->( fieldpos( "CPRVHAB" ) ) ], oSay[ 4 ], oValorPunto, dbfProv ) );
       ON HELP  ( BrwProvee( aGet[ ( D():Articulos( nView ) )->( fieldpos( "CPRVHAB" ) ) ] ) ) ;
       BITMAP   "LUPA" ;
@@ -5243,31 +5243,31 @@ Static Function StartDlg( aGet, aTmp, nMode, oSay, oDlg, oCosto, aBtnDiv, oFnt, 
 
    IXBrowse():OpenData()
 
-   if !Empty( oBrwPrv )
+   if !empty( oBrwPrv )
       oBrwPrv:LoadData()
    end if
 
-   if !Empty( oBrwDiv )
+   if !empty( oBrwDiv )
       oBrwDiv:LoadData()
    end if
 
-   if !Empty( oBrwStk )
+   if !empty( oBrwStk )
       oBrwStk:LoadData()
    end if
 
-   if !Empty( oBrwKit )
+   if !empty( oBrwKit )
       oBrwKit:LoadData()
    end if
 
-   if !Empty( oBrwOfe )
+   if !empty( oBrwOfe )
       oBrwOfe:LoadData()
    end if
 
-   if !Empty( oBrwImg )
+   if !empty( oBrwImg )
       oBrwImg:LoadData()
    end if
 
-   if !Empty( oBrwLeng )
+   if !empty( oBrwLeng )
       oBrwLeng:LoadData()
    end if
 
@@ -5937,11 +5937,11 @@ Static Function EndTrans( aTmp, aGet, oSay, oDlg, aTipBar, cTipBar, nMode, oImpC
             aTmp[ ( D():Articulos( nView ) )->( fieldpos( "CodeBar"  ) ) ]   := ( dbfTmpCodebar )->cCodBar
          end if
 
-         if !Empty( ( dbfTmpCodebar )->cValPr1 ) .and. At( Alltrim( aTmp[ ( D():Articulos( nView ) )->( FieldPos( "mValPrp1" ) ) ] ), Alltrim( ( dbfTmpCodebar )->cValPr1 ) ) == 0
+         if !empty( ( dbfTmpCodebar )->cValPr1 ) .and. At( Alltrim( aTmp[ ( D():Articulos( nView ) )->( FieldPos( "mValPrp1" ) ) ] ), Alltrim( ( dbfTmpCodebar )->cValPr1 ) ) == 0
             aTmp[ ( D():Articulos( nView ) )->( FieldPos( "mValPrp1" ) ) ]   := Alltrim( aTmp[ ( D():Articulos( nView ) )->( FieldPos( "mValPrp1" ) ) ] ) + Alltrim( ( dbfTmpCodebar )->cValPr1 ) + ","
          end if
 
-         if !Empty( ( dbfTmpCodebar )->cValPr2 ) .and. At( Alltrim( aTmp[ ( D():Articulos( nView ) )->( FieldPos( "mValPrp2" ) ) ] ), Alltrim( ( dbfTmpCodebar )->cValPr2 ) ) == 0
+         if !empty( ( dbfTmpCodebar )->cValPr2 ) .and. At( Alltrim( aTmp[ ( D():Articulos( nView ) )->( FieldPos( "mValPrp2" ) ) ] ), Alltrim( ( dbfTmpCodebar )->cValPr2 ) ) == 0
             aTmp[ ( D():Articulos( nView ) )->( FieldPos( "mValPrp2" ) ) ]   := Alltrim( aTmp[ ( D():Articulos( nView ) )->( FieldPos( "mValPrp2" ) ) ] ) + Alltrim( ( dbfTmpCodebar )->cValPr2 ) + ","
          end if
 
@@ -5969,15 +5969,15 @@ Static Function EndTrans( aTmp, aGet, oSay, oDlg, aTipBar, cTipBar, nMode, oImpC
       aTmp[ ( D():Articulos( nView ) )->( fieldpos( "nBnfSbr6") ) ]       := oSay[ 16 ]:nAt
       aTmp[ ( D():Articulos( nView ) )->( fieldpos( "nPosTpv" ) ) ]       -= 0.5
 
-      if !Empty( oImpComanda1 )
+      if !empty( oImpComanda1 )
          aTmp[ ( D():Articulos( nView ) )->( fieldpos( "cTipImp1" ) ) ]   := aImpComanda[ oImpComanda1:nAt ]
       end if
 
-      if !Empty( oImpComanda2 )
+      if !empty( oImpComanda2 )
          aTmp[ ( D():Articulos( nView ) )->( fieldpos( "cTipImp2" ) ) ]    := aImpComanda[ oImpComanda2:nAt ]
       end if
 
-      if !Empty( oActiveX )
+      if !empty( oActiveX )
          aTmp[ ( D():Articulos( nView ) )->( fieldpos( "mDesTec" ) ) ]     := oActiveX:DocumentHTML
       end if
 
@@ -6067,44 +6067,44 @@ Static Function KillTrans( oMenu, oBmpCategoria, oBmpTemporada, oBmpEstado, oBmp
    Quitamos los filtros de stock-----------------------------------------------
    */
 
-   if !Empty( dbfTmpPrv ) .and. ( dbfTmpPrv )->( Used() )
+   if !empty( dbfTmpPrv ) .and. ( dbfTmpPrv )->( Used() )
       ( dbfTmpPrv )->( dbCloseArea() )
    end if
 
-   if !Empty( dbfTmpLeng ) .and. ( dbfTmpLeng )->( Used() )
+   if !empty( dbfTmpLeng ) .and. ( dbfTmpLeng )->( Used() )
       ( dbfTmpLeng )->( dbCloseArea() )
    end if
 
-   if !Empty( dbfTmpAlm ) .and. ( dbfTmpAlm )->( Used() )
+   if !empty( dbfTmpAlm ) .and. ( dbfTmpAlm )->( Used() )
       ( dbfTmpAlm )->( dbCloseArea() )
    end if
 
-   if !Empty( dbfTmpVta ) .and. ( dbfTmpVta )->( Used() )
+   if !empty( dbfTmpVta ) .and. ( dbfTmpVta )->( Used() )
       ( dbfTmpVta )->( dbCloseArea() )
    end if
 
-   if !Empty( dbfTmpKit ) .and. ( dbfTmpKit )->( Used() )
+   if !empty( dbfTmpKit ) .and. ( dbfTmpKit )->( Used() )
       ( dbfTmpKit )->( dbCloseArea() )
    end if
 
-   if !Empty( dbfTmpOfe ) .and. ( dbfTmpOfe )->( Used() )
+   if !empty( dbfTmpOfe ) .and. ( dbfTmpOfe )->( Used() )
       ( dbfTmpOfe )->( dbCloseArea() )
    end if
 
-   if !Empty( dbfTmpImg ) .and. ( dbfTmpImg )->( Used() )
+   if !empty( dbfTmpImg ) .and. ( dbfTmpImg )->( Used() )
       ( dbfTmpImg )->( dbCloseArea() )
    end if
 
-   if !Empty( dbfTmpCodebar ) .and. ( dbfTmpCodebar )->( Used() )
+   if !empty( dbfTmpCodebar ) .and. ( dbfTmpCodebar )->( Used() )
       ( dbfTmpCodebar )->( dbCloseArea() )
    end if
 
    /*
-   if !Empty( dbfTmpSubCta ) .and. ( dbfTmpSubCta )->( Used() )
+   if !empty( dbfTmpSubCta ) .and. ( dbfTmpSubCta )->( Used() )
       ( dbfTmpSubCta )->( dbCloseArea() )
    end if
 
-   if !Empty( dbfTmpSubCom ) .and. ( dbfTmpSubCom )->( Used() )
+   if !empty( dbfTmpSubCom ) .and. ( dbfTmpSubCom )->( Used() )
       ( dbfTmpSubCom )->( dbCloseArea() )
    end if
 
@@ -6131,71 +6131,71 @@ Static Function KillTrans( oMenu, oBmpCategoria, oBmpTemporada, oBmpEstado, oBmp
    dbfErase( filTmpSubCta  )
    dbfErase( filTmpSubCom  )
 
-   if !Empty( oMenu )
+   if !empty( oMenu )
       oMenu:End()
    end if
 
-   if !Empty( oBmpCategoria )
+   if !empty( oBmpCategoria )
       oBmpCategoria:End()
    end if
 
-   if !Empty( oBmpTemporada )
+   if !empty( oBmpTemporada )
       oBmpTemporada:End()
    end if
 
-   if !Empty( oBmpEstado )
+   if !empty( oBmpEstado )
       oBmpEstado:End()
    end if
 
-   if !Empty( oBmpGeneral )
+   if !empty( oBmpGeneral )
       oBmpGeneral:End()
    end if
 
-   if !Empty( oBmpPrecios )
+   if !empty( oBmpPrecios )
       oBmpPrecios:End()
    end if
 
-   if !Empty( oBmpDescripciones )
+   if !empty( oBmpDescripciones )
       oBmpDescripciones:End()
    end if
 
-   if !Empty( oBmpPropiedades )
+   if !empty( oBmpPropiedades )
       oBmpPropiedades:End()
    end if
 
-   if !Empty( oBmpLogistica )
+   if !empty( oBmpLogistica )
       oBmpLogistica:End()
    end if
 
-   if !Empty( oBmpStocks )
+   if !empty( oBmpStocks )
       oBmpStocks:End()
    end if
 
-   if !Empty( oBmpContabilidad )
+   if !empty( oBmpContabilidad )
       oBmpContabilidad:End()
    end if
 
-   if !Empty( oBmpOfertas )
+   if !empty( oBmpOfertas )
       oBmpOfertas:End()
    end if
 
-   if !Empty( oBmpEscandallos )
+   if !empty( oBmpEscandallos )
       oBmpEscandallos:End()
    end if
 
-   if !Empty( oBmpWeb )
+   if !empty( oBmpWeb )
       oBmpWeb:End()
    end if
 
-   if !Empty( oBmpUbicaciones )
+   if !empty( oBmpUbicaciones )
       oBmpUbicaciones:End()
    end if
 
-   if !Empty( oBmpImagenes )
+   if !empty( oBmpImagenes )
       oBmpImagenes:End()
    end if
 
-   if !Empty( oBmpTactil )
+   if !empty( oBmpTactil )
       oBmpTactil:End()
    end if
 
@@ -6336,7 +6336,6 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbfArtPrv, oBrw, bWhen, bValid, nMode )
 
    REDEFINE SAY oTotal PROMPT nTmpImpPrv( aTmp, dbfTmpPrv, dbfDiv, .t. ) ;
       ID       170 ;
-      COLOR    CLR_GET ;
       OF       oDlg
 
    REDEFINE CHECKBOX aGet[ ( dbfTmpPrv )->( fieldPos( "lDefPrv" ) ) ] ;
@@ -7379,7 +7378,7 @@ STATIC FUNCTION EdtLeng( aTmp, aGet, dbfTmpLeng, oBrw, bWhen, bValid, nMode, aTm
 
    ACTIVATE DIALOG oDlg CENTER
 
-   if !Empty( oBmp )
+   if !empty( oBmp )
       oBmp:End()
    end if
 
@@ -7389,13 +7388,13 @@ RETURN ( oDlg:nResult == IDOK )
 
 static function EndEdtLeng( aGet, aTmp, aTmpArt, dbfTmpLeng, oBrw, nMode, oDlg )
 
-   if Empty( aTmp[ ( dbfTmpLeng )->( FieldPos( "cCodLen" ) ) ] )
+   if empty( aTmp[ ( dbfTmpLeng )->( FieldPos( "cCodLen" ) ) ] )
       MsgStop( "Código de lenguaje no puede estar vacío." )
       aGet[ ( dbfTmpLeng )->( FieldPos( "cCodLen" ) ) ]:SetFocus()
       Return .f.
    end if
 
-   if Empty( aTmp[ ( dbfTmpLeng )->( FieldPos( "cDesTik" ) ) ] ) .and. Empty( aTmp[ ( dbfTmpLeng )->( FieldPos( "cDesArt" ) ) ] )
+   if empty( aTmp[ ( dbfTmpLeng )->( FieldPos( "cDesTik" ) ) ] ) .and. empty( aTmp[ ( dbfTmpLeng )->( FieldPos( "cDesArt" ) ) ] )
 
       MsgStop( "Tiene que introducir al menos una descripción." )
       aGet[ ( dbfTmpLeng )->( FieldPos( "cDesTik" ) ) ]:SetFocus()
@@ -7525,7 +7524,7 @@ static function SeleccionPropiedad( aValPrp, oBrwPrp, nPos )
 
    aValPrp[ nPos ]:lSel   := !aValPrp[ nPos ]:lSel
 
-   if !Empty( oBrwPrp )
+   if !empty( oBrwPrp )
       oBrwPrp:Refresh()
    end if
 
@@ -7541,7 +7540,7 @@ static function lSelAllPrp( aValPrp, oBrwPrp, lVal )
       aValPrp[ n ]:lSel    := lVal
    next
 
-   if !Empty( oBrwPrp )
+   if !empty( oBrwPrp )
       oBrwPrp:Refresh()
    end if
 
@@ -7835,7 +7834,7 @@ Static Function EndEdtVta( aValPrp1, aValPrp2, aTmp, aGet, oSay, cSay, oBrw, oDl
 
    ( dbfTmpVta )->( OrdSetFocus( nOrdAnt ) )
 
-   if !Empty( oBrw )
+   if !empty( oBrw )
       oBrw:Refresh()
    end if
 
@@ -7858,7 +7857,7 @@ static function lLimpiarPantalla( aValPrp1, aValPrp2, aTmp, aGet, oBrwPrp1, oBrw
       aValPrp:lSel         := .f.
    next
 
-   if !Empty( oBrwPrp1 )
+   if !empty( oBrwPrp1 )
       oBrwPrp1:Refresh()
    end if
 
@@ -7866,7 +7865,7 @@ static function lLimpiarPantalla( aValPrp1, aValPrp2, aTmp, aGet, oBrwPrp1, oBrw
       aValPrp:lSel         := .f.
    next
 
-   if !Empty( oBrwPrp2 )
+   if !empty( oBrwPrp2 )
       oBrwPrp2:Refresh()
    end if
 
@@ -7887,12 +7886,12 @@ static function lLimpiarPantalla( aValPrp1, aValPrp2, aTmp, aGet, oBrwPrp1, oBrw
    cSay[5]                 := aBenefSobre[ Max( aTmp[ ( dbfTmpVta )->( fieldpos( "nBnfSbr5" ) ) ], 1 ) ]
    cSay[6]                 := aBenefSobre[ Max( aTmp[ ( dbfTmpVta )->( fieldpos( "nBnfSbr6" ) ) ], 1 ) ]
 
-   if !Empty( aGet )
-      aEval( aGet, {| o | if( !Empty( o ), o:Refresh(), ) } )
+   if !empty( aGet )
+      aEval( aGet, {| o | if( !empty( o ), o:Refresh(), ) } )
    end if
 
-   if !Empty( oSay )
-      aEval( oSay, {| o | if( !Empty( o ), o:Refresh(), ) } )
+   if !empty( oSay )
+      aEval( oSay, {| o | if( !empty( o ), o:Refresh(), ) } )
    end if
 
 return ( .t. )
@@ -8052,7 +8051,7 @@ Function dbSeekCodebar( cCodBar, dbfCodebar, cCodExc, lMessage )
    DEFAULT cCodExc         := ""
    DEFAULT lMessage        := .t.
 
-   if Empty( cCodBar )
+   if empty( cCodBar )
       if lMessage
          MsgBeepWait( "Código de barras no puede estar vacío", "Atención", 1 )
       end if
@@ -8080,15 +8079,15 @@ Static Function StartEdtVta( aTmp, aGet, nMode, oBrwPrp1, oBrwPrp2, oTodasPrp1, 
 
    if nMode == APPD_MODE
 
-      if !Empty( oBtnOk )
+      if !empty( oBtnOk )
          SetWindowText( oBtnOk:hWnd, "Añadir [F5]" )
       end if
 
-      if !Empty( oBtnCancel )
+      if !empty( oBtnCancel )
          SetWindowText( oBtnCancel:hWnd, "Salir" )
       end if
 
-      if !Empty( oBrwPrp1 )
+      if !empty( oBrwPrp1 )
          oBrwPrp1:Load()
       end if
 
@@ -8111,19 +8110,19 @@ Static Function StartEdtVta( aTmp, aGet, nMode, oBrwPrp1, oBrwPrp2, oTodasPrp1, 
 
    else
 
-      if !Empty( oBtnOk )
+      if !empty( oBtnOk )
          SetWindowText( oBtnOk:hWnd, "Aceptar [F5]" )
       end if
 
-      if !Empty( oBtnCancel )
+      if !empty( oBtnCancel )
          SetWindowText( oBtnCancel:hWnd, "Cancelar" )
       end if
 
-      if !Empty( oBrwPrp1 )
+      if !empty( oBrwPrp1 )
          oBrwPrp1:Hide()
       end if
 
-      if !Empty( oBrwPrp2 )
+      if !empty( oBrwPrp2 )
          oBrwPrp2:Hide()
       end if
 
@@ -8313,7 +8312,7 @@ RETURN ( oDlg:nResult == IDOK )
 
 Function lPreSaveKit( aGet, aTmp, dbfTmpKit, dbfArt, oBrw, nMode, oDlg, aTmpArt, nCos )
 
-   if Empty( aTmp[ ( dbfTmpKit )->( fieldpos( "cRefKit" ) ) ] )
+   if empty( aTmp[ ( dbfTmpKit )->( fieldpos( "cRefKit" ) ) ] )
       msgstop( "El código no puede estar vacío" )
       aGet[ ( dbfTmpKit )->( fieldpos( "cRefKit" ) ) ]:SetFocus()
       Return .f.
@@ -8675,7 +8674,7 @@ Function CalPre( lSobreCoste, nCosto, lBnf, nBnf, uTipIva, oGetPrePts, oGetIvaPt
       Si tiene impuesto especial añadirlo
       */
 
-      if !Empty( cCodImp ) .and. !Empty( oNewImp )
+      if !empty( cCodImp ) .and. !empty( oNewImp )
          nNewIva  += oNewImp:nValImp( cCodImp, .t., nIvaPct )
       end if
 
@@ -8713,7 +8712,7 @@ Function cImgArticulo( aTmp )
       cImagenArt  := cFirstImage( aTmp[ ( D():Articulos( nView ) )->( fieldpos( "Codigo" ) ) ], D():ArticuloImagenes( nView ) )
    end if
 
-   if Empty( GetPath( cImagenArt ) )
+   if empty( GetPath( cImagenArt ) )
       cImagenArt  := uFieldEmpresa( "cDirImg" ) + "\" + cImagenArt
    end if
 
@@ -8772,7 +8771,7 @@ Function CalBnfPts( lSobreCoste, lIvaInc, nCosto, nPrePts, oBnf, uTipIva, oGetIv
    Despues si tiene impuesto especial
    */
 
-   /*if !Empty( cCodImp ) .and. !Empty( oNewImp )
+   /*if !empty( cCodImp ) .and. !empty( oNewImp )
       nIvm        += oNewImp:nValImp( cCodImp, .t., nIvaPct )
    end if*/
 
@@ -8854,7 +8853,7 @@ Function CalBnfIva( lSobreCoste, lIvaInc, nCosto, uPrecioIva, oBnf, uTipIva, oGe
 
    // Impuesto especial
 
-   /*if !Empty( cCodImp ) .and. !Empty( oNewImp )
+   /*if !empty( cCodImp ) .and. !empty( oNewImp )
       nIvm        := oNewImp:nValImp( cCodImp, lIvaInc, nIvaPct )
    end if */
 	
@@ -9248,7 +9247,7 @@ Static Function SeekFamilia( oCbxOrd, oBrw )
    ( D():Articulos( nView ) )->( OrdScope( 0, nil ) )
    ( D():Articulos( nView ) )->( OrdScope( 1, nil ) )
 
-   if !Empty( ( D():Familias( nView ) )->cCodFam ) .and. ( D():Articulos( nView ) )->( dbSeek( ( D():Familias( nView ) )->cCodFam ) )
+   if !empty( ( D():Familias( nView ) )->cCodFam ) .and. ( D():Articulos( nView ) )->( dbSeek( ( D():Familias( nView ) )->cCodFam ) )
 
       ( D():Articulos( nView ) )->( OrdScope( 0, ( D():Familias( nView ) )->cCodFam ) )
       ( D():Articulos( nView ) )->( OrdScope( 1, ( D():Familias( nView ) )->cCodFam ) )
@@ -9277,7 +9276,7 @@ STATIC FUNCTION CheckValid( aGet, dbf, nTag, nMode )
 
    if ( nMode == APPD_MODE ) .or. ( nMode == DUPL_MODE )
 
-      if Empty( xClave )
+      if empty( xClave )
          Return .f.
       end if
 
@@ -9454,11 +9453,11 @@ FUNCTION AppendReferenciaProveedor( cRefPrv, cCodPrv, cCodArt, nDtoPrv, nDtoPrm,
       Return nil
    end if
 
-   if Empty( cCodPrv )
+   if empty( cCodPrv )
       Return nil 
    end if    
 
-   if Empty( cCodArt )
+   if empty( cCodArt )
       Return nil 
    end if    
 
@@ -9914,15 +9913,15 @@ STATIC FUNCTION mkChgPrc( cFam, cGetTip, cIva, lCosto, lTarifa1, lTarifa2, lTari
    cExpFlt        += '.and. Codigo >= "' + cArtOrg + '"'
    cExpFlt        += '.and. Codigo <= "' + cArtDes + '"'
 
-   if !Empty( cFam )
+   if !empty( cFam )
       cExpFlt     += '.and. Familia == "' + cFam + '"'
    end if
 
-   if !Empty( cGetTip )
+   if !empty( cGetTip )
       cExpFlt     += '.and. cCodTip == "' + cGetTip + '"'
    end if
 
-   if !Empty( cIva )
+   if !empty( cIva )
       cExpFlt     += '.and. TipoIva == "' + cIva + '"'
    end if
 
@@ -10089,7 +10088,7 @@ STATIC FUNCTION mkChgPrc( cFam, cGetTip, cIva, lCosto, lTarifa1, lTarifa2, lTari
                         ( D():Articulos( nView ) )->pVenta1      := Round( ( D():Articulos( nView ) )->pVenta1, nDec )
                      end if
 
-                     /*if ( D():Articulos( nView ) )->lMarAju .and. !Empty( ( D():Articulos( nView ) )->cMarAju )
+                     /*if ( D():Articulos( nView ) )->lMarAju .and. !empty( ( D():Articulos( nView ) )->cMarAju )
                         ( D():Articulos( nView ) )->pVenta1      := nAjuste( ( D():Articulos( nView ) )->pVenta1, ( D():Articulos( nView ) )->cMarAju )
                      elseif lMargenAjuste
                         ( D():Articulos( nView ) )->pVenta1      := nAjuste( ( D():Articulos( nView ) )->pVenta1, cMargenAjuste )
@@ -10111,7 +10110,7 @@ STATIC FUNCTION mkChgPrc( cFam, cGetTip, cIva, lCosto, lTarifa1, lTarifa2, lTari
                         ( D():Articulos( nView ) )->pVtaIva1     := Round( ( D():Articulos( nView ) )->pVtaIva1, nDec )
                      end if
 
-                     /*if ( D():Articulos( nView ) )->lMarAju .and. !Empty( ( D():Articulos( nView ) )->cMarAju )
+                     /*if ( D():Articulos( nView ) )->lMarAju .and. !empty( ( D():Articulos( nView ) )->cMarAju )
                         ( D():Articulos( nView ) )->pVtaIva1     := nAjuste( ( D():Articulos( nView ) )->pVtaIva1, ( D():Articulos( nView ) )->cMarAju )
                      elseif lMargenAjuste
                         ( D():Articulos( nView ) )->pVtaIva1     := nAjuste( ( D():Articulos( nView ) )->pVtaIva1, cMargenAjuste )
@@ -10215,7 +10214,7 @@ STATIC FUNCTION mkChgPrc( cFam, cGetTip, cIva, lCosto, lTarifa1, lTarifa2, lTari
                         ( D():Articulos( nView ) )->pVenta2      := Round( ( D():Articulos( nView ) )->pVenta2, nDec )
                      end if
 
-                     /*if ( D():Articulos( nView ) )->lMarAju .and. !Empty( ( D():Articulos( nView ) )->cMarAju )
+                     /*if ( D():Articulos( nView ) )->lMarAju .and. !empty( ( D():Articulos( nView ) )->cMarAju )
                         ( D():Articulos( nView ) )->pVenta2      := nAjuste( ( D():Articulos( nView ) )->pVenta2, ( D():Articulos( nView ) )->cMarAju )
                      elseif lMargenAjuste
                         ( D():Articulos( nView ) )->pVenta2      := nAjuste( ( D():Articulos( nView ) )->pVenta2, cMargenAjuste )
@@ -10237,7 +10236,7 @@ STATIC FUNCTION mkChgPrc( cFam, cGetTip, cIva, lCosto, lTarifa1, lTarifa2, lTari
                         ( D():Articulos( nView ) )->pVtaIva2     := Round( ( D():Articulos( nView ) )->pVtaIva2, nDec )
                      end if
 
-                     /*if ( D():Articulos( nView ) )->lMarAju .and. !Empty( ( D():Articulos( nView ) )->cMarAju )
+                     /*if ( D():Articulos( nView ) )->lMarAju .and. !empty( ( D():Articulos( nView ) )->cMarAju )
                         ( D():Articulos( nView ) )->pVtaIva2     := nAjuste( ( D():Articulos( nView ) )->pVtaIva2, ( D():Articulos( nView ) )->cMarAju )
                      elseif lMargenAjuste
                         ( D():Articulos( nView ) )->pVtaIva2     := nAjuste( ( D():Articulos( nView ) )->pVtaIva2, cMargenAjuste )
@@ -10341,7 +10340,7 @@ STATIC FUNCTION mkChgPrc( cFam, cGetTip, cIva, lCosto, lTarifa1, lTarifa2, lTari
                         ( D():Articulos( nView ) )->pVenta3      := Round( ( D():Articulos( nView ) )->pVenta3, nDec )
                      end if
 
-                     /*if ( D():Articulos( nView ) )->lMarAju .and. !Empty( ( D():Articulos( nView ) )->cMarAju )
+                     /*if ( D():Articulos( nView ) )->lMarAju .and. !empty( ( D():Articulos( nView ) )->cMarAju )
                         ( D():Articulos( nView ) )->pVenta3      := nAjuste( ( D():Articulos( nView ) )->pVenta3, ( D():Articulos( nView ) )->cMarAju )
                      elseif lMargenAjuste
                         ( D():Articulos( nView ) )->pVenta3      := nAjuste( ( D():Articulos( nView ) )->pVenta3, cMargenAjuste )
@@ -10363,7 +10362,7 @@ STATIC FUNCTION mkChgPrc( cFam, cGetTip, cIva, lCosto, lTarifa1, lTarifa2, lTari
                         ( D():Articulos( nView ) )->pVtaIva3     := Round( ( D():Articulos( nView ) )->pVtaIva3, nDec )
                      end if
 
-                     /*if ( D():Articulos( nView ) )->lMarAju .and. !Empty( ( D():Articulos( nView ) )->cMarAju )
+                     /*if ( D():Articulos( nView ) )->lMarAju .and. !empty( ( D():Articulos( nView ) )->cMarAju )
                         ( D():Articulos( nView ) )->pVtaIva3     := nAjuste( ( D():Articulos( nView ) )->pVtaIva3, ( D():Articulos( nView ) )->cMarAju )
                      elseif lMargenAjuste
                         ( D():Articulos( nView ) )->pVtaIva3     := nAjuste( ( D():Articulos( nView ) )->pVtaIva3, cMargenAjuste )
@@ -10463,7 +10462,7 @@ STATIC FUNCTION mkChgPrc( cFam, cGetTip, cIva, lCosto, lTarifa1, lTarifa2, lTari
                         ( D():Articulos( nView ) )->pVenta4      := Round( ( D():Articulos( nView ) )->pVenta4, nDec )
                      end if
 
-                     /*if ( D():Articulos( nView ) )->lMarAju .and. !Empty( ( D():Articulos( nView ) )->cMarAju )
+                     /*if ( D():Articulos( nView ) )->lMarAju .and. !empty( ( D():Articulos( nView ) )->cMarAju )
                         ( D():Articulos( nView ) )->pVenta4      := nAjuste( ( D():Articulos( nView ) )->pVenta4, ( D():Articulos( nView ) )->cMarAju )
                      elseif lMargenAjuste
                         ( D():Articulos( nView ) )->pVenta4      := nAjuste( ( D():Articulos( nView ) )->pVenta4, cMargenAjuste )
@@ -10485,7 +10484,7 @@ STATIC FUNCTION mkChgPrc( cFam, cGetTip, cIva, lCosto, lTarifa1, lTarifa2, lTari
                         ( D():Articulos( nView ) )->pVtaIva4     := Round( ( D():Articulos( nView ) )->pVtaIva4, nDec )
                      end if
 
-                     /*if ( D():Articulos( nView ) )->lMarAju .and. !Empty( ( D():Articulos( nView ) )->cMarAju )
+                     /*if ( D():Articulos( nView ) )->lMarAju .and. !empty( ( D():Articulos( nView ) )->cMarAju )
                         ( D():Articulos( nView ) )->pVtaIva4     := nAjuste( ( D():Articulos( nView ) )->pVtaIva4, ( D():Articulos( nView ) )->cMarAju )
                      elseif lMargenAjuste
                         ( D():Articulos( nView ) )->pVtaIva4     := nAjuste( ( D():Articulos( nView ) )->pVtaIva4, cMargenAjuste )
@@ -10589,7 +10588,7 @@ STATIC FUNCTION mkChgPrc( cFam, cGetTip, cIva, lCosto, lTarifa1, lTarifa2, lTari
                         ( D():Articulos( nView ) )->pVenta5      := Round( ( D():Articulos( nView ) )->pVenta5, nDec )
                      end if
 
-                     /*if ( D():Articulos( nView ) )->lMarAju .and. !Empty( ( D():Articulos( nView ) )->cMarAju )
+                     /*if ( D():Articulos( nView ) )->lMarAju .and. !empty( ( D():Articulos( nView ) )->cMarAju )
                         ( D():Articulos( nView ) )->pVenta5      := nAjuste( ( D():Articulos( nView ) )->pVenta5, ( D():Articulos( nView ) )->cMarAju )
                      elseif lMargenAjuste
                         ( D():Articulos( nView ) )->pVenta5      := nAjuste( ( D():Articulos( nView ) )->pVenta5, cMargenAjuste )
@@ -10611,7 +10610,7 @@ STATIC FUNCTION mkChgPrc( cFam, cGetTip, cIva, lCosto, lTarifa1, lTarifa2, lTari
                         ( D():Articulos( nView ) )->pVtaIva5     := Round( ( D():Articulos( nView ) )->pVtaIva5, nDec )
                      end if
 
-                     /*if ( D():Articulos( nView ) )->lMarAju .and. !Empty( ( D():Articulos( nView ) )->cMarAju )
+                     /*if ( D():Articulos( nView ) )->lMarAju .and. !empty( ( D():Articulos( nView ) )->cMarAju )
                         ( D():Articulos( nView ) )->pVtaIva5     := nAjuste( ( D():Articulos( nView ) )->pVtaIva5, ( D():Articulos( nView ) )->cMarAju )
                      elseif lMargenAjuste
                         ( D():Articulos( nView ) )->pVtaIva5     := nAjuste( ( D():Articulos( nView ) )->pVtaIva5, cMargenAjuste )
@@ -10715,7 +10714,7 @@ STATIC FUNCTION mkChgPrc( cFam, cGetTip, cIva, lCosto, lTarifa1, lTarifa2, lTari
                         ( D():Articulos( nView ) )->pVenta6      := Round( ( D():Articulos( nView ) )->pVenta6, nDec )
                      end if
 
-                     /*if ( D():Articulos( nView ) )->lMarAju .and. !Empty( ( D():Articulos( nView ) )->cMarAju )
+                     /*if ( D():Articulos( nView ) )->lMarAju .and. !empty( ( D():Articulos( nView ) )->cMarAju )
                         ( D():Articulos( nView ) )->pVenta6      := nAjuste( ( D():Articulos( nView ) )->pVenta6, ( D():Articulos( nView ) )->cMarAju )
                      elseif lMargenAjuste
                         ( D():Articulos( nView ) )->pVenta6      := nAjuste( ( D():Articulos( nView ) )->pVenta6, cMargenAjuste )
@@ -10737,7 +10736,7 @@ STATIC FUNCTION mkChgPrc( cFam, cGetTip, cIva, lCosto, lTarifa1, lTarifa2, lTari
                         ( D():Articulos( nView ) )->pVtaIva6     := Round( ( D():Articulos( nView ) )->pVtaIva6, nDec )
                      end if
 
-                     /*if ( D():Articulos( nView ) )->lMarAju .and. !Empty( ( D():Articulos( nView ) )->cMarAju )
+                     /*if ( D():Articulos( nView ) )->lMarAju .and. !empty( ( D():Articulos( nView ) )->cMarAju )
                         ( D():Articulos( nView ) )->pVtaIva6     := nAjuste( ( D():Articulos( nView ) )->pVtaIva6, ( D():Articulos( nView ) )->cMarAju )
                      elseif lMargenAjuste
                         ( D():Articulos( nView ) )->pVtaIva6     := nAjuste( ( D():Articulos( nView ) )->pVtaIva6, cMargenAjuste )
@@ -10811,7 +10810,7 @@ STATIC FUNCTION mkChgPrc( cFam, cGetTip, cIva, lCosto, lTarifa1, lTarifa2, lTari
 
 	( D():Articulos( nView ) )->( dbGoto( nRecAct ) )
 
-   if !Empty( oWndBrw )
+   if !empty( oWndBrw )
       oWndBrw:Refresh()
    end if
 
@@ -11163,7 +11162,7 @@ FUNCTION nPreMedCom( cCodArt, cCodAlm, dbfAlbPrvT, dbfAlbPrvL, dbfFacPrvT, dbfFa
       while ( dbfAlbPrvL )->cRef == cCodArt .and. !( dbfAlbPrvL )->( Eof() )
 
          if !lFacAlbPrv( ( dbfAlbPrvL )->cSerAlb + Str( ( dbfAlbPrvL )->nNumAlb ) + ( dbfAlbPrvL )->cSufAlb, dbfAlbPrvT ) .and. ;
-            ( dbfAlbPrvL )->cAlmLin == cCodAlm .or. Empty( cCodAlm )
+            ( dbfAlbPrvL )->cAlmLin == cCodAlm .or. empty( cCodAlm )
 
             nTotUni += nTotNAlbPrv( dbfAlbPrvL )
             nTotPre += nImpLAlbPrv( dbfAlbPrvT, dbfAlbPrvL, nDecOut, nDerOut, nDiv )
@@ -11180,7 +11179,7 @@ FUNCTION nPreMedCom( cCodArt, cCodAlm, dbfAlbPrvT, dbfAlbPrvL, dbfFacPrvT, dbfFa
 
       while ( dbfFacPrvL )->cRef == cCodArt .AND. !( dbfFacPrvL )->( Eof() )
 
-         if ( dbfFacPrvL )->cAlmLin == cCodAlm .or. Empty( cCodAlm )
+         if ( dbfFacPrvL )->cAlmLin == cCodAlm .or. empty( cCodAlm )
 
             nTotUni += nTotNFacPrv( dbfFacPrvL )
             nTotPre += nImpLFacPrv( dbfFacPrvT, dbfFacPrvL, nDecOut, nDerOut, nDiv )
@@ -11197,7 +11196,7 @@ FUNCTION nPreMedCom( cCodArt, cCodAlm, dbfAlbPrvT, dbfAlbPrvL, dbfFacPrvT, dbfFa
 
       while ( cHisMov )->cRefMov == cCodArt .AND. !( cHisMov )->( Eof() )
 
-         if ( cHisMov )->cAliMov == cCodAlm .or. Empty( cCodAlm )
+         if ( cHisMov )->cAliMov == cCodAlm .or. empty( cCodAlm )
 
             nTotUni += nTotNMovAlm( cHisMov )
             nTotPre += ( cHisMov )->nPreDiv
@@ -12173,17 +12172,17 @@ function SynArt( cPath )
          */
 
          do case
-            case Empty( ( dbfArt )->LastChg ) .and. Empty( ( dbfArt )->dFecChg )
+            case empty( ( dbfArt )->LastChg ) .and. empty( ( dbfArt )->dFecChg )
 
                ( dbfArt )->LastChg := GetSysDate()
                ( dbfArt )->dFecChg := GetSysDate()
                ( dbfArt )->( dbUnLock() )
 
-            case Empty( ( dbfArt )->LastChg )
+            case empty( ( dbfArt )->LastChg )
 
                ( dbfArt )->LastChg := ( dbfArt )->dFecChg
 
-            case Empty( ( dbfArt )->dFecChg )
+            case empty( ( dbfArt )->dFecChg )
 
                ( dbfArt )->dFecChg := ( dbfArt )->LastChg
 
@@ -12247,11 +12246,11 @@ function SynArt( cPath )
 
             if ( dbfFamilia )->( dbSeek( ( dbfArt )->Familia ) )
 
-               if Empty( ( dbfArt )->cCodPrp1 ) .and. !Empty( ( dbfFamilia )->cCodPrp1 )
+               if empty( ( dbfArt )->cCodPrp1 ) .and. !empty( ( dbfFamilia )->cCodPrp1 )
                   ( dbfArt )->cCodPrp1  := ( dbfFamilia )->cCodPrp1
                end if
 
-               if Empty( ( dbfArt )->cCodPrp2 ) .and. !Empty( ( dbfFamilia )->cCodPrp2 )
+               if empty( ( dbfArt )->cCodPrp2 ) .and. !empty( ( dbfFamilia )->cCodPrp2 )
                   ( dbfArt )->cCodPrp2  := ( dbfFamilia )->cCodPrp2
                end if
 
@@ -12265,7 +12264,7 @@ function SynArt( cPath )
          Buscamos si exite un codigo de barras por defecto---------------------
          */
 
-         if Empty( ( dbfArt )->Codebar )
+         if empty( ( dbfArt )->Codebar )
 
             nOrdAnt                     := ( dbfCodebar )->( OrdSetFocus( "cCodArt" ) )
 
@@ -12371,7 +12370,7 @@ function SynArt( cPath )
       ( dbfCodebar )->( dbGoTop() )
       while !( dbfCodebar )->( eof() )
 
-         if Empty( ( dbfCodebar )->cCodBar )
+         if empty( ( dbfCodebar )->cCodBar )
             ( dbfCodebar )->( dbDelete() )
          end if
 
@@ -12452,7 +12451,7 @@ function SynArt( cPath )
    CLOSE ( dbfFacPrvL )
    CLOSE ( dbfIva     )
 
-   if !Empty( oNewImp )
+   if !empty( oNewImp )
       oNewImp:End()
    end if
 
@@ -12468,17 +12467,17 @@ Static Function EndTrans2( aTmp, aGet, oSay, oDlg, nMode )
    Valores que tienen que estar rellenos---------------------------------------
    */
 
-   if Empty( cCod )
+   if empty( cCod )
       MsgStop( "Código no puede estar vacío" )
       return nil
    end if
 
-   if Empty( aTmp[( D():Articulos( nView ) )->( fieldpos( "Nombre" ) ) ] )
+   if empty( aTmp[( D():Articulos( nView ) )->( fieldpos( "Nombre" ) ) ] )
       MsgStop( "Descripción no puede estar vacío" )
       return nil
    end if
 
-   if Empty( oSay[3]:varGet() )
+   if empty( oSay[3]:varGet() )
       MsgStop( "Referencia artículo-proveedor no puede estar vacía" )
       return nil
    end if
@@ -12623,7 +12622,7 @@ Static Function EndTrans2( aTmp, aGet, oSay, oDlg, nMode )
                                                                      oNewImp,;
                                                                      D():TiposIva( nView ) )[2]
 
-   if !Empty( aTmp[ ( D():Articulos( nView ) )->( fieldpos( "cPrvHab" ) ) ] )
+   if !empty( aTmp[ ( D():Articulos( nView ) )->( fieldpos( "cPrvHab" ) ) ] )
 
       ( D():ProveedorArticulo( nView ) )->( dbAppend() )
       ( D():ProveedorArticulo( nView ) )->cCodArt        := cCod
@@ -12644,7 +12643,7 @@ Return ( oDlg:end( IDOK ) )
 
 Static Function EndDetalle( aTmp, aGet, dbfTmpPrv, oBrw, nMode, oDlg, lOldPrvDef, aTmpArt, lOldRefPrv )
 
-   if Empty( aTmp[ ( dbfTmpPrv )->( fieldPos( "CCODPRV" ) ) ] )
+   if empty( aTmp[ ( dbfTmpPrv )->( fieldPos( "CCODPRV" ) ) ] )
       msgStop( "El código de proveedor no puede estar vacío" )
       return nil
    end if
@@ -12770,7 +12769,7 @@ Method CreateData()
    USE ( cPatSnd() + "ArtCodebar.Dbf" ) NEW VIA ( cLocalDriver() ) SHARED ALIAS ( cCheckArea( "CODEBAR", @tmpCodebar ) )
    SET ADSINDEX TO ( cPatSnd() + "ArtCodebar.Cdx" ) ADDITIVE
 
-   if !Empty( ::oSender:oMtr )
+   if !empty( ::oSender:oMtr )
       ::oSender:oMtr:nTotal := ( D():Articulos( nView ) )->( lastrec() )
    end if
 
@@ -12855,7 +12854,7 @@ Method CreateData()
 
       ( D():Articulos( nView ) )->( dbSkip() )
 
-      if !Empty( ::oSender:oMtr )
+      if !empty( ::oSender:oMtr )
          ::oSender:oMtr:Set( ( D():Articulos( nView ) )->( OrdKeyNo() ) )
       end if
 
@@ -13060,7 +13059,7 @@ Method Process()
             ::oSender:SetText( "Ficheros de articulos descomprimimos correctamente" )
             ::oSender:SetText( "Total de registros recibidos " + alltrim( str( ( tmpArticulo )->( lastrec() ) ) ) )
 
-            if !Empty( ::oSender:oMtr )
+            if !empty( ::oSender:oMtr )
                ::oSender:oMtr:nTotal := ( tmpArticulo )->( lastrec() )
             end if
 
@@ -13085,7 +13084,7 @@ Method Process()
 
                ( tmpArticulo )->( dbSkip() )
 
-               if !Empty( ::oSender:oMtr )
+               if !empty( ::oSender:oMtr )
                   ::oSender:oMtr:Set( ( tmpArticulo )->( OrdKeyNo() ) )
                end if
 
@@ -13093,7 +13092,7 @@ Method Process()
 
             end while
 
-            if !Empty( ::oSender:oMtr )
+            if !empty( ::oSender:oMtr )
                ::oSender:oMtr:nTotal := ( tmpArtPrv )->( LastRec() )
             end if
 
@@ -13111,7 +13110,7 @@ Method Process()
 
                ( tmpArtPrv )->( dbSkip() )
 
-               if !Empty( ::oSender:oMtr )
+               if !empty( ::oSender:oMtr )
                   ::oSender:oMtr:Set( (tmpArtPrv)->( recno() ) )
                end if
 
@@ -13119,7 +13118,7 @@ Method Process()
 
             end while
 
-            if !Empty( ::oSender:oMtr )
+            if !empty( ::oSender:oMtr )
                ::oSender:oMtr:nTotal := ( tmpArtDiv )->( lastrec() )
             end if
 
@@ -13137,7 +13136,7 @@ Method Process()
 
                ( tmpArtDiv )->( dbSkip() )
 
-               if !Empty( ::oSender:oMtr )
+               if !empty( ::oSender:oMtr )
                   ::oSender:oMtr:Set( ( tmpArtDiv )->( OrdKeyNo() ) )
                end if
 
@@ -13145,7 +13144,7 @@ Method Process()
 
             end while
 
-            if !Empty( ::oSender:oMtr )
+            if !empty( ::oSender:oMtr )
                ::oSender:oMtr:Set( ( tmpArtDiv )->( lastrec() ) )
             end if
 
@@ -13153,7 +13152,7 @@ Method Process()
             Kits Asociados
             */
 
-            if !Empty( ::oSender:oMtr )
+            if !empty( ::oSender:oMtr )
                ::oSender:oMtr:nTotal := (tmpKit)->( lastrec() )
             end if
 
@@ -13171,7 +13170,7 @@ Method Process()
 
                ( tmpKit )->( dbSkip() )
 
-               if !Empty( ::oSender:oMtr )
+               if !empty( ::oSender:oMtr )
                   ::oSender:oMtr:Set( ( tmpKit )->( OrdKeyNo() ) )
                end if
 
@@ -13183,7 +13182,7 @@ Method Process()
             ofertas de articulos
             */
 
-            if !Empty( ::oSender:oMtr )
+            if !empty( ::oSender:oMtr )
                ::oSender:oMtr:nTotal := ( tmpOfe )->( lastrec() )
             end if
 
@@ -13201,7 +13200,7 @@ Method Process()
 
                ( tmpOfe )->( dbSkip() )
 
-               if !Empty( ::oSender:oMtr )
+               if !empty( ::oSender:oMtr )
                   ::oSender:oMtr:Set( ( tmpOfe )->( OrdKeyNo() ) )
                end if
 
@@ -13209,7 +13208,7 @@ Method Process()
 
             end while
 
-            if !Empty( ::oSender:oMtr )
+            if !empty( ::oSender:oMtr )
                ::oSender:oMtr:Set( ( tmpOfe )->( lastrec() ) )
             end if
 
@@ -13219,7 +13218,7 @@ Method Process()
 
             ( dbfCodebar )->( OrdSetFocus( "cArtBar" ) )
 
-            if !Empty( ::oSender:oMtr )
+            if !empty( ::oSender:oMtr )
                ::oSender:oMtr:nTotal := ( tmpCodebar )->( lastrec() )
             end if
 
@@ -13235,7 +13234,7 @@ Method Process()
 
                ( tmpCodebar )->( dbSkip() )
 
-               if !Empty( ::oSender:oMtr )
+               if !empty( ::oSender:oMtr )
                   ::oSender:oMtr:Set( ( tmpCodebar )->( OrdKeyNo() ) )
                end if
 
@@ -13245,7 +13244,7 @@ Method Process()
 
             ( dbfCodebar )->( OrdSetFocus( "cCodArt" ) )
 
-            if !Empty( ::oSender:oMtr )
+            if !empty( ::oSender:oMtr )
                ::oSender:oMtr:Set( ( tmpCodebar )->( lastrec() ) )
             end if
 
@@ -13380,7 +13379,7 @@ Static Function EdtRecMenu( aTmp, aGet, oSay, oDlg, oFld, aBar, cSay, nMode )
 
    oDlg:SetMenu( oMenu )
 
-   if !Empty( oActiveX )
+   if !empty( oActiveX )
       oActiveX:DocumentHTML      := aTmp[ ( D():Articulos( nView ) )->( fieldpos( "MDESTEC" ) ) ]
       oActivex:LocalizationFile  := FullCurDir() + "Spanish.xml"
       oActivex:BorderStyle       := 0
@@ -13470,7 +13469,7 @@ Static Function lValidUndMedicion( aTmp, aGet )
 
    //si el campo unidad de medición esta vacio oculto las tres dimensiones
 
-   if Empty( aTmp[ ( D():Articulos( nView ) )->( fieldpos( "CUNIDAD" ) ) ] )
+   if empty( aTmp[ ( D():Articulos( nView ) )->( fieldpos( "CUNIDAD" ) ) ] )
 
       aGet[ ( D():Articulos( nView ) )->( fieldpos( "NLNGART" ) ) ]:Hide()
       aGet[ ( D():Articulos( nView ) )->( fieldpos( "NALTART" ) ) ]:Hide()
@@ -13537,7 +13536,7 @@ Return ( lCarga )
 
 Static Function ExpFamilia( cCodFam, oSayFamilia, aGet )
 
-   if Empty( cCodFam )
+   if empty( cCodFam )
       Return .t.
    end if
 
@@ -13547,9 +13546,9 @@ Static Function ExpFamilia( cCodFam, oSayFamilia, aGet )
 
       if cCodFam != cCodigoFamilia
 
-         if ( !Empty( ( D():Familias( nView ) )->cCodPrp1 ) .and. aGet[ ( D():Articulos( nView ) )->( fieldpos( "cCodPrp1" ) ) ]:VarGet() != ( D():Familias( nView ) )->cCodPrp1 ) .or.;
-            ( !Empty( ( D():Familias( nView ) )->cCodPrp2 ) .and. aGet[ ( D():Articulos( nView ) )->( fieldpos( "cCodPrp2" ) ) ]:VarGet() != ( D():Familias( nView ) )->cCodPrp2 ) .or.;
-            ( !Empty( ( D():Familias( nView ) )->cCodFra  ) .and. aGet[ ( D():Articulos( nView ) )->( fieldpos( "cCodFra"  ) ) ]:VarGet() != ( D():Familias( nView ) )->cCodFra  )
+         if ( !empty( ( D():Familias( nView ) )->cCodPrp1 ) .and. aGet[ ( D():Articulos( nView ) )->( fieldpos( "cCodPrp1" ) ) ]:VarGet() != ( D():Familias( nView ) )->cCodPrp1 ) .or.;
+            ( !empty( ( D():Familias( nView ) )->cCodPrp2 ) .and. aGet[ ( D():Articulos( nView ) )->( fieldpos( "cCodPrp2" ) ) ]:VarGet() != ( D():Familias( nView ) )->cCodPrp2 ) .or.;
+            ( !empty( ( D():Familias( nView ) )->cCodFra  ) .and. aGet[ ( D():Articulos( nView ) )->( fieldpos( "cCodFra"  ) ) ]:VarGet() != ( D():Familias( nView ) )->cCodFra  )
 
             if ApoloMsgNoYes( "¿ Desea importar las propiedades y frases publicitarias de la familia ?" )
 
@@ -14008,7 +14007,7 @@ Method BotonSiguiente() CLASS TArticuloLabelGenerator
    do case
       case ::oFld:nOption == 1
 
-         if Empty( ::cFormatoLabel )
+         if empty( ::cFormatoLabel )
 
             MsgStop( "Debe cumplimentar un formato de etiquetas" )
 
@@ -14515,13 +14514,13 @@ Method lCreateTemporal() CLASS TArticuloLabelGenerator
       ( tmpArticulo )->( OrdCondSet( "!Deleted()", {|| !Deleted() } ) )
       ( tmpArticulo )->( OrdCreate( filArticulo, "Codigo", "Codigo", {|| Field->Codigo } ) )
 
-      if Empty( dbfArt )
+      if empty( dbfArt )
          USE ( cPatArt() + "ARTICULO.Dbf" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "ARTICULO", @dbfArt ) )
          SET ADSINDEX TO ( cPatArt() + "ARTICULO.CDX" ) ADDITIVE
          lCloseArticulo    := .t.
       end if
 
-      if Empty( dbfArtLbl )
+      if empty( dbfArtLbl )
          USE ( cPatArt() + "ArtLbl.Dbf" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "ArtLbl", @dbfArtLbl ) )
          SET ADSINDEX TO ( cPatArt() + "ArtLbl.Cdx" ) ADDITIVE
          lCloseLabel       := .t.
@@ -14672,7 +14671,7 @@ Method lPrintLabels() CLASS TArticuloLabelGenerator
    Cargar el informe-----------------------------------------------------------
    */
 
-   if !Empty( ( dbfDoc )->mReport )
+   if !empty( ( dbfDoc )->mReport )
 
       oFr:LoadFromBlob( ( dbfDoc )->( Select() ), "mReport")
 
@@ -14835,7 +14834,7 @@ FUNCTION mkArticulo( cPath, lAppend, cPathOld, oMeter, lMovAlm )
 	DEFAULT lMovAlm	:= .t.
    DEFAULT cPath     := cPatArt()
 
-   if !Empty( oMeter )
+   if !empty( oMeter )
 		oMeter:cText	:= "Generando Bases"
 		sysrefresh()
    end if
@@ -15772,7 +15771,7 @@ Function nRetPreArt( nTarifa, cCodDiv, lIvaInc, dbfArt, dbfDiv, dbfArtKit, dbfIv
          do case
             case nTarifa == 1
                if ( dbfArt )->lBnf1
-                  if Empty( nPrecioCosto)
+                  if empty( nPrecioCosto)
                   nPrecioCosto         := nCosto( nil, dbfArt, dbfArtKit )
                   end if
                   nPrecioBase          := ( nPrecioCosto * ( dbfArt )->Benef1 / 100 ) + nPrecioCosto
@@ -15784,7 +15783,7 @@ Function nRetPreArt( nTarifa, cCodDiv, lIvaInc, dbfArt, dbfDiv, dbfArtKit, dbfIv
 
             case nTarifa == 2
                if ( dbfArt )->lBnf2
-                  if Empty( nPrecioCosto)
+                  if empty( nPrecioCosto)
                   nPrecioCosto         := nCosto( nil, dbfArt, dbfArtKit )
                   end if
                   nPrecioBase          := ( nPrecioCosto * ( dbfArt )->Benef2 / 100 ) + nPrecioCosto
@@ -15796,7 +15795,7 @@ Function nRetPreArt( nTarifa, cCodDiv, lIvaInc, dbfArt, dbfDiv, dbfArtKit, dbfIv
 
             case nTarifa == 3
                if ( dbfArt )->lBnf3
-                  if Empty( nPrecioCosto)
+                  if empty( nPrecioCosto)
                   nPrecioCosto         := nCosto( nil, dbfArt, dbfArtKit )
                   end if
                   nPrecioBase          := ( nPrecioCosto * ( dbfArt )->Benef3 / 100 ) + nPrecioCosto
@@ -15808,7 +15807,7 @@ Function nRetPreArt( nTarifa, cCodDiv, lIvaInc, dbfArt, dbfDiv, dbfArtKit, dbfIv
 
             case nTarifa == 4
                if ( dbfArt )->lBnf4
-                  if Empty( nPrecioCosto)
+                  if empty( nPrecioCosto)
                   nPrecioCosto         := nCosto( nil, dbfArt, dbfArtKit )
                   end if
                   nPrecioBase          := ( nPrecioCosto * ( dbfArt )->Benef4 / 100 ) + nPrecioCosto
@@ -15820,7 +15819,7 @@ Function nRetPreArt( nTarifa, cCodDiv, lIvaInc, dbfArt, dbfDiv, dbfArtKit, dbfIv
 
             case nTarifa == 5
                if ( dbfArt )->lBnf5
-                  if Empty( nPrecioCosto)
+                  if empty( nPrecioCosto)
                   nPrecioCosto         := nCosto( nil, dbfArt, dbfArtKit )
                   end if
                   nPrecioBase          := ( nPrecioCosto * ( dbfArt )->Benef5 / 100 ) + nPrecioCosto
@@ -15832,7 +15831,7 @@ Function nRetPreArt( nTarifa, cCodDiv, lIvaInc, dbfArt, dbfDiv, dbfArtKit, dbfIv
 
             case nTarifa == 6
                if ( dbfArt )->lBnf6
-                  if Empty( nPrecioCosto)
+                  if empty( nPrecioCosto)
                   nPrecioCosto         := nCosto( nil, dbfArt, dbfArtKit )
                   end if
                   nPrecioBase          := ( nPrecioCosto * ( dbfArt )->Benef6 / 100 ) + nPrecioCosto
@@ -15927,7 +15926,7 @@ Function nCosto( uTmp, dbfArt, dbfArtKit, lPic, cDivRet, dbfDiv )
       case IsChar( uTmp ) .and. ( dbfArt )->( dbSeek( uTmp ) )
          cCodArt     := ( dbfArt )->Codigo
          lKitArt     := ( dbfArt )->lKitArt .and. !( dbfArt )->lKitAsc
-      case Empty( uTmp )
+      case empty( uTmp )
          cCodArt     := ( dbfArt )->Codigo
          lKitArt     := ( dbfArt )->lKitArt .and. !( dbfArt )->lKitAsc
    end case
@@ -16159,7 +16158,7 @@ Function BrwSelArticulo( oGetCodigo, oGetNombre, lCodeBar, lAppend, lEdit, oBtnS
 
    end if
 
-   if !Empty( oGetCodigo )
+   if !empty( oGetCodigo )
       cTxtOrigen        := oGetCodigo:VarGet()
    end if
 
@@ -16167,7 +16166,7 @@ Function BrwSelArticulo( oGetCodigo, oGetNombre, lCodeBar, lAppend, lEdit, oBtnS
    Origen de busqueda----------------------------------------------------------
    */
 
-   if !Empty( cTxtOrigen ) .and. !( D():Articulos( nView ) )->( dbSeek( cTxtOrigen ) )
+   if !empty( cTxtOrigen ) .and. !( D():Articulos( nView ) )->( dbSeek( cTxtOrigen ) )
       ( D():Articulos( nView ) )->( OrdSetFocus( Ordenes[ nOrd ] ) )
       ( D():Articulos( nView ) )->( dbGoTop() )
    else
@@ -16251,7 +16250,7 @@ Function BrwSelArticulo( oGetCodigo, oGetNombre, lCodeBar, lAppend, lEdit, oBtnS
 
       with object ( oBrw:AddCol() )
          :cHeader          := "Proveedor"
-         :bEditValue       := {|| if( !Empty( ( D():Articulos( nView ) )->cPrvHab ), AllTrim( ( D():Articulos( nView ) )->cPrvHab ) + " - " + RetProvee( ( D():Articulos( nView ) )->cPrvHab, dbfProv ), "" ) }
+         :bEditValue       := {|| if( !empty( ( D():Articulos( nView ) )->cPrvHab ), AllTrim( ( D():Articulos( nView ) )->cPrvHab ) + " - " + RetProvee( ( D():Articulos( nView ) )->cPrvHab, dbfProv ), "" ) }
          :nWidth           := 220
          :lHide            := .t.
          :cSortOrder       := "cPrvHab"
@@ -16424,39 +16423,39 @@ Function BrwSelArticulo( oGetCodigo, oGetNombre, lCodeBar, lAppend, lEdit, oBtnS
                :cHeader             := "Código"
                :cOrder              := "Código"
                :nWidth              := 40
-               :bStrData            := {|| if( !Empty( oBrwStock:aArrayData ), oBrwStock:aArrayData[ oBrwStock:nArrayAt ]:cCodigoAlmacen, "" ) }
+               :bStrData            := {|| if( !empty( oBrwStock:aArrayData ), oBrwStock:aArrayData[ oBrwStock:nArrayAt ]:cCodigoAlmacen, "" ) }
                :bLClickHeader       := {| nMRow, nMCol, nFlags, oCol | cOrdenColumnaBrw( oCol, oBrwStock ) }
             end with
 
             with object ( oBrwStock:AddCol() )
                :cHeader             := "Almacén"
                :nWidth              := 120
-               :bStrData            := {|| if( !Empty( oBrwStock:aArrayData ), RetAlmacen( oBrwStock:aArrayData[ oBrwStock:nArrayAt ]:cCodigoAlmacen, dbfAlmT ), "" ) }
+               :bStrData            := {|| if( !empty( oBrwStock:aArrayData ), RetAlmacen( oBrwStock:aArrayData[ oBrwStock:nArrayAt ]:cCodigoAlmacen, dbfAlmT ), "" ) }
             end with
 
             with object ( oBrwStock:AddCol() )
                :cHeader             := "Prop. 1"
                :nWidth              := 40
-               :bStrData            := {|| if( !Empty( oBrwStock:aArrayData ), oBrwStock:aArrayData[ oBrwStock:nArrayAt ]:cValorPropiedad1, "" ) }
+               :bStrData            := {|| if( !empty( oBrwStock:aArrayData ), oBrwStock:aArrayData[ oBrwStock:nArrayAt ]:cValorPropiedad1, "" ) }
             end with
 
             with object ( oBrwStock:AddCol() )
                :cHeader             := "Prop. 2"
                :nWidth              := 40
-               :bStrData            := {|| if( !Empty( oBrwStock:aArrayData ), oBrwStock:aArrayData[ oBrwStock:nArrayAt ]:cValorPropiedad2, "" ) }
+               :bStrData            := {|| if( !empty( oBrwStock:aArrayData ), oBrwStock:aArrayData[ oBrwStock:nArrayAt ]:cValorPropiedad2, "" ) }
             end with
 
             with object ( oBrwStock:AddCol() )
                :cHeader             := "Lote"
                :nWidth              := 60
-               :bStrData            := {|| if( !Empty( oBrwStock:aArrayData ), oBrwStock:aArrayData[ oBrwStock:nArrayAt ]:cLote, "" ) }
+               :bStrData            := {|| if( !empty( oBrwStock:aArrayData ), oBrwStock:aArrayData[ oBrwStock:nArrayAt ]:cLote, "" ) }
                :bLClickHeader       := {| nMRow, nMCol, nFlags, oCol | cOrdenColumnaBrw( oCol, oBrwStock ) }
             end with
 
             with object ( oBrwStock:AddCol() )
                :cHeader             := "Caducidad"
                :nWidth              := 60
-               :bStrData            := {|| if( !Empty( oBrwStock:aArrayData ), oBrwStock:aArrayData[ oBrwStock:nArrayAt ]:dFechaCaducidad, "" ) }
+               :bStrData            := {|| if( !empty( oBrwStock:aArrayData ), oBrwStock:aArrayData[ oBrwStock:nArrayAt ]:dFechaCaducidad, "" ) }
                :lHide               := .t.
                :bLClickHeader       := {| nMRow, nMCol, nFlags, oCol | cOrdenColumnaBrw( oCol, oBrwStock ) }
             end with
@@ -16464,14 +16463,14 @@ Function BrwSelArticulo( oGetCodigo, oGetNombre, lCodeBar, lAppend, lEdit, oBtnS
             /*with object ( oBrwStock:AddCol() )
                :cHeader             := "Num. serie"
                :nWidth              := 60
-               :bStrData            := {|| if( !Empty( oBrwStock:aArrayData ), oBrwStock:aArrayData[ oBrwStock:nArrayAt ]:cNumeroSerie, "" ) }
+               :bStrData            := {|| if( !empty( oBrwStock:aArrayData ), oBrwStock:aArrayData[ oBrwStock:nArrayAt ]:cNumeroSerie, "" ) }
                :bLClickHeader       := {| nMRow, nMCol, nFlags, oCol | cOrdenColumnaBrw( oCol, oBrwStock ) }
             end with*/
 
             with object ( oBrwStock:AddCol() )
                :cHeader             := "Unidades"
                :nWidth              := 80
-               :bEditValue          := {|| if( !Empty( oBrwStock:aArrayData ), oBrwStock:aArrayData[ oBrwStock:nArrayAt ]:nUnidades, 0 ) }
+               :bEditValue          := {|| if( !empty( oBrwStock:aArrayData ), oBrwStock:aArrayData[ oBrwStock:nArrayAt ]:nUnidades, 0 ) }
                :bFooter             := {|| nStockUnidades( oBrwStock ) }
                :cEditPicture        := MasUnd()
                :nDataStrAlign       := AL_RIGHT
@@ -16482,7 +16481,7 @@ Function BrwSelArticulo( oGetCodigo, oGetNombre, lCodeBar, lAppend, lEdit, oBtnS
 
             with object ( oBrwStock:AddCol() )
                :cHeader             := "Pdt. recibir"
-               :bEditValue          := {|| if( !Empty( oBrwStock:aArrayData ), oBrwStock:aArrayData[ oBrwStock:nArrayAt ]:nPendientesRecibir, 0 ) }
+               :bEditValue          := {|| if( !empty( oBrwStock:aArrayData ), oBrwStock:aArrayData[ oBrwStock:nArrayAt ]:nPendientesRecibir, 0 ) }
                :bFooter             := {|| nStockPendiente( oBrwStock ) }
                :nWidth              := 70
                :cEditPicture        := cPicUnd
@@ -16493,7 +16492,7 @@ Function BrwSelArticulo( oGetCodigo, oGetNombre, lCodeBar, lAppend, lEdit, oBtnS
 
             with object ( oBrwStock:AddCol() )
                :cHeader             := "Pdt. entregar"
-               :bEditValue          := {|| if( !Empty( oBrwStock:aArrayData ), oBrwStock:aArrayData[ oBrwStock:nArrayAt ]:nPendientesEntregar, 0 ) }
+               :bEditValue          := {|| if( !empty( oBrwStock:aArrayData ), oBrwStock:aArrayData[ oBrwStock:nArrayAt ]:nPendientesEntregar, 0 ) }
                :bFooter             := {|| nStockEntregar( oBrwStock ) }
                :nWidth              := 70
                :cEditPicture        := cPicUnd
@@ -16575,45 +16574,45 @@ Function BrwSelArticulo( oGetCodigo, oGetNombre, lCodeBar, lAppend, lEdit, oBtnS
          cReturn        := ( D():Articulos( nView ) )->Codigo
       end if
 
-      if !Empty( oGetCodigo )
+      if !empty( oGetCodigo )
          oGetCodigo:cText( Padr( cReturn, 200 ) )
       end if
 
-      if !Empty( oGetNombre )
+      if !empty( oGetNombre )
          oGetNombre:cText( ( D():Articulos( nView ) )->Nombre )
       end if
 
-      if !Empty( oBrwStock )              .and.;
+      if !empty( oBrwStock )              .and.;
          lPropiedades                     .and.;
          Len(oBrwStock:aArrayData) != 0
 
-         if !Empty( oGetLote )
+         if !empty( oGetLote )
             oGetLote:cText( oBrwStock:aArrayData[ oBrwStock:nArrayAt ]:cLote )
             oGetLote:lValid()
             oGetLote:Refresh()
          end if
 
-         if !Empty( oGetCodPrp1 )
+         if !empty( oGetCodPrp1 )
             oGetCodPrp1 := oBrwStock:aArrayData[ oBrwStock:nArrayAt ]:cCodigoPropiedad1
          end if
 
-         if !Empty( oGetCodPrp2 )
+         if !empty( oGetCodPrp2 )
             oGetCodPrp2 := oBrwStock:aArrayData[ oBrwStock:nArrayAt ]:cCodigoPropiedad2
          end if
 
-         if !Empty( oGetValPrp1 )
+         if !empty( oGetValPrp1 )
             oGetValPrp1:cText( oBrwStock:aArrayData[ oBrwStock:nArrayAt ]:cValorPropiedad1 )
             oGetValPrp1:lValid()
             oGetValPrp1:SetFocus()
          end if
 
-         if !Empty( oGetValPrp2 )
+         if !empty( oGetValPrp2 )
             oGetValPrp2:cText( oBrwStock:aArrayData[ oBrwStock:nArrayAt ]:cValorPropiedad2 )
             oGetValPrp2:lValid()
             oGetValPrp2:SetFocus()
          end if
 
-         if !Empty( oGetFecCad )
+         if !empty( oGetFecCad )
             oGetFecCad:cText( oBrwStock:aArrayData[ oBrwStock:nArrayAt ]:dFechaCaducidad )
          end if
 
@@ -16625,11 +16624,11 @@ Function BrwSelArticulo( oGetCodigo, oGetNombre, lCodeBar, lAppend, lEdit, oBtnS
 
    SetBrwOpt( "BrwArticulo", if( ( D():Articulos( nView ) )->( OrdSetFocus() ) == "CODOBS", 1, 2 ) )
 
-   if !Empty( oBrw )
+   if !empty( oBrw )
       oBrw:CloseData()
    end if
 
-   if !Empty( oBrwStock )
+   if !empty( oBrwStock )
       oBrwStock:CloseData()
    end if
 
@@ -16643,11 +16642,11 @@ Function BrwSelArticulo( oGetCodigo, oGetNombre, lCodeBar, lAppend, lEdit, oBtnS
       oBmpImage:End()
    end if
 
-   if !Empty( oGetCodigo )
+   if !empty( oGetCodigo )
       oGetCodigo:SetFocus()
    end if
 
-   if !Empty( oBmp )
+   if !empty( oBmp )
       oBmp:End()
    end if
 
@@ -16668,11 +16667,11 @@ return .t.
 
 Static Function StartBrwSelArticulo( oGetLote, oBrw, oBrwStock, oBtnAceptarpropiedades, oBmpImage, cCodAlm )
 
-   if !Empty( oBrw )
+   if !empty( oBrw )
       oBrw:Load()
    end if
 
-   if !Empty( oBrwStock )
+   if !empty( oBrwStock )
       oBrwStock:Load() 
    end if
 
@@ -16680,8 +16679,8 @@ Static Function StartBrwSelArticulo( oGetLote, oBrw, oBrwStock, oBtnAceptarpropi
       LoadBrwArt( oBrwStock, oBmpImage, cCodAlm )
    end if
 
-   if !Empty( oBtnAceptarpropiedades )
-      if Empty( oGetLote )
+   if !empty( oBtnAceptarpropiedades )
+      if empty( oGetLote )
          oBtnAceptarpropiedades:Hide()
       else
          oBtnAceptarpropiedades:Show()
@@ -16696,7 +16695,7 @@ static function cOrdenColumnaBrw( oCol, oBrwStock )
 
    local oColumn
 
-   if !Empty( oBrwStock )
+   if !empty( oBrwStock )
 
       do case
          case AllTrim( oCol:cHeader ) == "Código"
@@ -16772,12 +16771,12 @@ Static Function InsertBrwSelArticulo( oGet, lCodeBar, oBtn )
       cReturn     := ( D():Articulos( nView ) )->Codigo
    end if
 
-   if !Empty( oGet )
+   if !empty( oGet )
       oGet:cText( cReturn )
       lOk         := oGet:lOldValid()
    end if
 
-   if lOk .and. !Empty( oBtn )
+   if lOk .and. !empty( oBtn )
       oBtn:Click()
    end if
 
@@ -16790,7 +16789,7 @@ RETURN ( cReturn )
 
 Static Function ChangeBrwArt( oBrwStock, oBmpImage, oBrw, cCodAlm )
 
-   if !Empty( oTimerBrw )
+   if !empty( oTimerBrw )
       oTimerBrw:End()
       oTimerBrw    := nil
    endif
@@ -16812,7 +16811,7 @@ Static Function LoadBrwArt( oBrwStock, oBmpImage, cCodAlm )
    BEGIN SEQUENCE
 
       if !uFieldEmpresa( "lNStkAct" )
-         if !Empty( oTimerBrw )
+         if !empty( oTimerBrw )
             oTimerBrw:End()
             oTimerBrw    := nil
          endif
@@ -16901,7 +16900,7 @@ Static Function SpecialSeek( nKey, nFlags, oGet, oBrw, oCbx, dbfCodebar )
    end if
 
    if lResult
-      if !Empty( oBrw:bChange )
+      if !empty( oBrw:bChange )
          Eval( oBrw:bChange )
       end if
    end if
@@ -17104,13 +17103,13 @@ Function cSeekExternalCodebar( cCodBar, dbfCodebar, dbfArt )
 
       cCodigo              := ( dbfCodebar )->cCodArt
 
-      if Empty( cPropiedades )
+      if empty( cPropiedades )
 
-         if !Empty( ( dbfCodebar )->cValPr1 )
+         if !empty( ( dbfCodebar )->cValPr1 )
             cPropiedades   += "." + Rtrim( ( dbfCodebar )->cValPr1 )
          end if
 
-         if !Empty( ( dbfCodebar )->cValPr2 )
+         if !empty( ( dbfCodebar )->cValPr2 )
             cPropiedades   += "." + Rtrim( ( dbfCodebar )->cValPr2 )
          end if
 
@@ -17120,7 +17119,7 @@ Function cSeekExternalCodebar( cCodBar, dbfCodebar, dbfArt )
 
    ( dbfCodebar )->( OrdSetFocus( nOrdenAnterior ) )
 
-   if !Empty( cPropiedades )
+   if !empty( cPropiedades )
       cCodBar                 := Rtrim( cCodigo ) + cPropiedades
    else
       cCodBar                 := cCodigo
@@ -17333,7 +17332,7 @@ Function DesignReportArticulo( oFr, dbfDoc )
          Paginas y bandas---------------------------------------------------------
          */
 
-         if !Empty( ( dbfDoc )->mReport )
+         if !empty( ( dbfDoc )->mReport )
 
             oFr:LoadFromBlob( ( dbfDoc )->( Select() ), "mReport")
 
@@ -17422,7 +17421,7 @@ Function PrintReportArticulo( nDevice, nCopies, cPrinter, dbfDoc )
    Cargar el informe-----------------------------------------------------------
    */
 
-   if !Empty( ( dbfDoc )->mReport )
+   if !empty( ( dbfDoc )->mReport )
 
       oFr:LoadFromBlob( ( dbfDoc )->( Select() ), "mReport")
 
@@ -17531,43 +17530,43 @@ Static Function dlgToolTip( cCodArt, oBrw )
       with object ( oBrwStock:AddCol() )
          :cHeader             := "Código"
          :nWidth              := 40
-         :bStrData            := {|| if( !Empty( oBrwStock:aArrayData ), oBrwStock:aArrayData[ oBrwStock:nArrayAt ]:cCodigoAlmacen, "" ) }
+         :bStrData            := {|| if( !empty( oBrwStock:aArrayData ), oBrwStock:aArrayData[ oBrwStock:nArrayAt ]:cCodigoAlmacen, "" ) }
       end with
 
       with object ( oBrwStock:AddCol() )
          :cHeader             := "Almacén"
          :nWidth              := 120
-         :bStrData            := {|| if( !Empty( oBrwStock:aArrayData ), RetAlmacen( oBrwStock:aArrayData[ oBrwStock:nArrayAt ]:cCodigoAlmacen, dbfAlmT ), "" ) }
+         :bStrData            := {|| if( !empty( oBrwStock:aArrayData ), RetAlmacen( oBrwStock:aArrayData[ oBrwStock:nArrayAt ]:cCodigoAlmacen, dbfAlmT ), "" ) }
       end with
 
       with object ( oBrwStock:AddCol() )
          :cHeader             := "Prop. 1"
          :nWidth              := 40
-         :bStrData            := {|| if( !Empty( oBrwStock:aArrayData ), oBrwStock:aArrayData[ oBrwStock:nArrayAt ]:cValorPropiedad1, "" ) }
+         :bStrData            := {|| if( !empty( oBrwStock:aArrayData ), oBrwStock:aArrayData[ oBrwStock:nArrayAt ]:cValorPropiedad1, "" ) }
       end with
 
       with object ( oBrwStock:AddCol() )
          :cHeader             := "Prop. 2"
          :nWidth              := 40
-         :bStrData            := {|| if( !Empty( oBrwStock:aArrayData ), oBrwStock:aArrayData[ oBrwStock:nArrayAt ]:cValorPropiedad2, "" ) }
+         :bStrData            := {|| if( !empty( oBrwStock:aArrayData ), oBrwStock:aArrayData[ oBrwStock:nArrayAt ]:cValorPropiedad2, "" ) }
       end with
 
       with object ( oBrwStock:AddCol() )
          :cHeader             := "Lote"
          :nWidth              := 60
-         :bStrData            := {|| if( !Empty( oBrwStock:aArrayData ), oBrwStock:aArrayData[ oBrwStock:nArrayAt ]:cLote, "" ) }
+         :bStrData            := {|| if( !empty( oBrwStock:aArrayData ), oBrwStock:aArrayData[ oBrwStock:nArrayAt ]:cLote, "" ) }
       end with
 
       with object ( oBrwStock:AddCol() )
          :cHeader             := "Num. serie"
          :nWidth              := 60
-         :bStrData            := {|| if( !Empty( oBrwStock:aArrayData ), oBrwStock:aArrayData[ oBrwStock:nArrayAt ]:cNumeroSerie, "" ) }
+         :bStrData            := {|| if( !empty( oBrwStock:aArrayData ), oBrwStock:aArrayData[ oBrwStock:nArrayAt ]:cNumeroSerie, "" ) }
       end with
 
       with object ( oBrwStock:AddCol() )
          :cHeader             := "Unidades"
          :nWidth              := 80
-         :bEditValue          := {|| if( !Empty( oBrwStock:aArrayData ), oBrwStock:aArrayData[ oBrwStock:nArrayAt ]:nUnidades, 0 ) }
+         :bEditValue          := {|| if( !empty( oBrwStock:aArrayData ), oBrwStock:aArrayData[ oBrwStock:nArrayAt ]:nUnidades, 0 ) }
          :bFooter             := {|| nStockUnidades( oBrwStock ) }
          :cEditPicture        := MasUnd()
          :nDataStrAlign       := AL_RIGHT
@@ -17577,7 +17576,7 @@ Static Function dlgToolTip( cCodArt, oBrw )
 
       with object ( oBrwStock:AddCol() )
          :cHeader             := "Pdt. recibir"
-         :bEditValue          := {|| if( !Empty( oBrwStock:aArrayData ), oBrwStock:aArrayData[ oBrwStock:nArrayAt ]:nPendientesRecibir, 0 ) }
+         :bEditValue          := {|| if( !empty( oBrwStock:aArrayData ), oBrwStock:aArrayData[ oBrwStock:nArrayAt ]:nPendientesRecibir, 0 ) }
          :bFooter             := {|| nStockPendiente( oBrwStock ) }
          :nWidth              := 70
          :cEditPicture        := cPicUnd
@@ -17588,7 +17587,7 @@ Static Function dlgToolTip( cCodArt, oBrw )
 
       with object ( oBrwStock:AddCol() )
          :cHeader             := "Pdt. entregar"
-         :bEditValue          := {|| if( !Empty( oBrwStock:aArrayData ), oBrwStock:aArrayData[ oBrwStock:nArrayAt ]:nPendientesEntregar, 0 ) }
+         :bEditValue          := {|| if( !empty( oBrwStock:aArrayData ), oBrwStock:aArrayData[ oBrwStock:nArrayAt ]:nPendientesEntregar, 0 ) }
          :bFooter             := {|| nStockEntregar( oBrwStock ) }
          :nWidth              := 70
          :cEditPicture        := cPicUnd
@@ -17624,7 +17623,7 @@ Static Function startToolTip( cCodArt, oBrwStock, oTreeInfo, oImageListInfo )
 
    oTreeInfo:Add( "Fecha de creación " + Dtoc( ( D():Articulos( nView ) )->LastChg ), 2 )
 
-   if !Empty( ( D():Articulos( nView ) )->dFecChg )
+   if !empty( ( D():Articulos( nView ) )->dFecChg )
       oTreeInfo:Add( "Última modificación " + Dtoc( ( D():Articulos( nView ) )->dFecChg ), 2 )
    end if
 
@@ -17652,7 +17651,7 @@ Static Function startToolTip( cCodArt, oBrwStock, oTreeInfo, oImageListInfo )
 
    end if
 
-   if !Empty( oBrwStock )
+   if !empty( oBrwStock )
       oBrwStock:Load()
    end if
 
@@ -17674,8 +17673,8 @@ Static Function nTipoOferta()
          Comprobamos si esta entre las fechas----------------------------------
 			*/
 
-         if ( GetSysDate() >= ( dbfOfe )->dIniOfe .or. Empty( ( dbfOfe )->dIniOfe ) ) .and. ;
-            ( GetSysDate() <= ( dbfOfe )->dFinOfe .or. Empty( ( dbfOfe )->dFinOfe ) )
+         if ( GetSysDate() >= ( dbfOfe )->dIniOfe .or. empty( ( dbfOfe )->dIniOfe ) ) .and. ;
+            ( GetSysDate() <= ( dbfOfe )->dFinOfe .or. empty( ( dbfOfe )->dFinOfe ) )
 
             nOferta  := ( dbfOfe )->nTipOfe
 
@@ -17833,7 +17832,7 @@ static function ChangeFamiliaInt( cCodFam )
 
    local nRec
 
-   if !Empty( cCodFam )
+   if !empty( cCodFam )
 
       nRec  := ( D():Familias( nView ) )->( Recno() )
 
@@ -17846,7 +17845,7 @@ static function ChangeFamiliaInt( cCodFam )
             ( D():Familias( nView ) )->( dbUnLock() )
          end if
 
-         if !Empty( ( D():Familias( nView ) )->cCodGrp )
+         if !empty( ( D():Familias( nView ) )->cCodGrp )
             ChangeGrpFamInt( ( D():Familias( nView ) )->cCodGrp )
          end if
 
@@ -17864,7 +17863,7 @@ static function ChangePropiedadesInt( cCodPro )
 
    local nRec
 
-   if !Empty( cCodPro )
+   if !empty( cCodPro )
 
       nRec  := ( dbfPro )->( Recno() )
 
@@ -17891,7 +17890,7 @@ static function ChangeFabricantesInt( cCodFab )
 
    local nRec
 
-   if !Empty( cCodFab )
+   if !empty( cCodFab )
 
       nRec  := oFabricante:oDbf:Recno()
 
@@ -17916,7 +17915,7 @@ static function ChangeTipArtInt( cCodTip )
 
    local nRec
 
-   if !Empty( cCodTip )
+   if !empty( cCodTip )
 
       nRec  := oTipart:oDbf:Recno()
 
@@ -17941,7 +17940,7 @@ static function ChangeGrpFamInt( cCodGrp )
 
    local nRec
 
-   if !Empty( cCodGrp )
+   if !empty( cCodGrp )
 
       nRec  := oGrpFam:oDbf:Recno()
 
@@ -18016,7 +18015,7 @@ Function nStockBrowse( oBrwStock, nPos )
 
    DEFAULT nPos   := 6
 
-   if !Empty( oBrwStock ) .and. !Empty( oBrwStock:aArrayData )
+   if !empty( oBrwStock ) .and. !empty( oBrwStock:aArrayData )
       aEval( oBrwStock:aArrayData, {|a| nStock += a[ nPos ] } )
    end if
 
@@ -18028,7 +18027,7 @@ Function nStockUnidades( oBrwStock, cCodigoAlmacen )
 
    local nStock   := 0
 
-   if !Empty( oBrwStock ) .and. !Empty( oBrwStock:aArrayData )
+   if !empty( oBrwStock ) .and. !empty( oBrwStock:aArrayData )
       if empty( cCodigoAlmacen )
          aEval( oBrwStock:aArrayData, {|a| nStock += a:nUnidades } )
       else
@@ -18044,7 +18043,7 @@ Function nStockPendiente( oBrwStock )
 
    local nStock   := 0
 
-   if !Empty( oBrwStock ) .and. !Empty( oBrwStock:aArrayData )
+   if !empty( oBrwStock ) .and. !empty( oBrwStock:aArrayData )
       aEval( oBrwStock:aArrayData, {|a| nStock += a:nPendientesRecibir } )
    end if
 
@@ -18056,7 +18055,7 @@ Function nStockEntregar( oBrwStock )
 
    local nStock   := 0
 
-   if !Empty( oBrwStock ) .and. !Empty( oBrwStock:aArrayData )
+   if !empty( oBrwStock ) .and. !empty( oBrwStock:aArrayData )
       aEval( oBrwStock:aArrayData, {|a| nStock += a:nPendientesEntregar } )
    end if
 
@@ -18068,7 +18067,7 @@ FUNCTION cArtBarPrp1( uArt, uTblPro )
 
    local cBarPrp1    := ""
 
-   DEFAULT uArt      := if( !Empty( tmpArticulo ), tmpArticulo, D():Articulos( nView ) )
+   DEFAULT uArt      := if( !empty( tmpArticulo ), tmpArticulo, D():Articulos( nView ) )
    DEFAULT uTblPro   := dbfTblPro
 
    if dbSeekInOrd( ( uArt )->cCodPrp1 + ( uArt )->cValPrp1, "cCodPro", uTblPro )
@@ -18083,7 +18082,7 @@ FUNCTION cArtBarPrp2( uArt, uTblPro )
 
    local cBarPrp2    := ""
 
-   DEFAULT uArt      := if( !Empty( tmpArticulo ), tmpArticulo, D():Articulos( nView ) )
+   DEFAULT uArt      := if( !empty( tmpArticulo ), tmpArticulo, D():Articulos( nView ) )
    DEFAULT uTblPro   := dbfTblPro
 
    if dbSeekInOrd( ( uArt )->cCodPrp2 + ( uArt )->cValPrp2, "cCodPro", uTblPro )
@@ -18239,7 +18238,7 @@ static function EndEdtImg( aTmp, dbfTmpImg, oBrw, nMode, oDlg )
 
    lCargaImagenes()
 
-   if !Empty( oBrw )
+   if !empty( oBrw )
       oBrw:Refresh()
    end if
 
@@ -18267,7 +18266,7 @@ Function ChangeTarifaPrecioWeb( aGet, aTmp )
 
    if aTmp[ ( D():Articulos( nView ) )->( fieldpos( "LSBRINT" ) ) ]
 
-      if Empty( oGetTarWeb )
+      if empty( oGetTarWeb )
          Return .f.
       end if
 
@@ -18554,7 +18553,7 @@ FUNCTION cNomValPrp2Art( uArticulo, uTblPro )
 
    local cBarPrp2     := ""
 
-   DEFAULT uArticulo  := if( !Empty( tmpArticulo ), tmpArticulo, D():Articulos( nView ) )
+   DEFAULT uArticulo  := if( !empty( tmpArticulo ), tmpArticulo, D():Articulos( nView ) )
    DEFAULT uTblPro    := dbfTblPro
 
    if dbSeekInOrd( ( uArticulo )->cCodPrp2 + ( uArticulo )->cValPrp2, "cCodPro", uTblPro )
@@ -19082,7 +19081,7 @@ Function nDescuentoArticulo( cCodArt, cCodCli, nView )
    local nDescuento  := 0
    local nNumDto     := retFld( cCodCli, D():Clientes( nView ), "nDtoArt" )
 
-   if Empty( nNumDto )
+   if empty( nNumDto )
       Return 0
    end if
 
@@ -19200,7 +19199,7 @@ Return ( nombrePropiedad( ( tmpArticulo )->cCodPrp2, ( tmpArticulo )->cValPrp2, 
 
 Static Function changeImpuestoEspecial( oGetValNewImp, aTmp )
 
-   if !Empty( oGetValNewImp )
+   if !empty( oGetValNewImp )
       oGetValNewImp:cText( oNewImp:nValImp( aTmp[ ( D():Articulos( nView ) )->( fieldpos( "CCODIMP" ) ) ] ) )
       oGetValNewImp:Refresh()
    end if

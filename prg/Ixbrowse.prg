@@ -583,8 +583,8 @@ METHOD ExportLector()
       Return ( Self )
    endif
 
-   //oBlock            := ErrorBlock( {| oError | ApoloBreak( oError ) } )
-   //BEGIN SEQUENCE
+   oBlock            := ErrorBlock( {| oError | ApoloBreak( oError ) } )
+   BEGIN SEQUENCE
 
       CursorWait()
 
@@ -592,13 +592,14 @@ METHOD ExportLector()
       cText          := ""
 
       eval( ::bGoTop )
-      while nRow <= ( nRows + 1 )
+      while ( nRow <= nRows )
 
          cText       += eval( ::bExportLector )
       
          ::skip( 1 ); ( nRow++ )
 
       end while
+      eval( ::bGoTop )
 
       oClip          := TClipBoard():New( 1, ::oWnd )
       if oClip:Open()
@@ -606,12 +607,14 @@ METHOD ExportLector()
       end if 
       oClip:Close()
 
+      msgInfo( "Contenido exportado al portapapeles" )
+
       CursorWe()
 
-//   RECOVER USING oError
-//      msgStop( "Error exportando a excel." + CRLF + ErrorMessage( oError ) )
-//   END SEQUENCE
-//   ErrorBlock( oBlock )
+   RECOVER USING oError
+      msgStop( "Error exportando a excel." + CRLF + ErrorMessage( oError ) )
+   END SEQUENCE
+   ErrorBlock( oBlock )
 
 Return ( Self )
 

@@ -169,7 +169,7 @@ CLASS TAcceso
    Method SetEditButtonFilter( bAction )  INLINE ( if( !empty( ::oButtonEditFilter ), ( ::oButtonEditFilter:bAction := bAction ), ) )
 
    Method ShowYearComboBox()              INLINE ( if( !empty( ::oYearComboBox ), ( ::lYearComboBox := .t., ::oYearComboBox:Show(), ::oYearComboBox:Set( 1 ) ), ) )
-   Method HideYearComboBox()              INLINE ( if( !empty( ::oYearComboBox ), ( ::lYearComboBox := .f., ::oYearComboBox:Hide() ), ) )
+   Method HideYearComboBox()              INLINE ( if( !empty( ::oYearComboBox ), ( ::lYearComboBox := .f., ::oYearComboBox:bChange := nil, ::oYearComboBox:Hide() ), ) )
    Method lAllYearComboBox()              INLINE ( if( !empty( ::oYearComboBox ), ( ::oYearComboBox:nAt == 1 ), .f. ) )
    Method cYearComboBox()                 INLINE ( if( !empty( ::oYearComboBox ), ( ::oYearComboBox:varget() ), "" ) )
    Method setYearComboBox( nYear )        

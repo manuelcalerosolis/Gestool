@@ -1705,7 +1705,9 @@ FUNCTION PedCli( oMenuItem, oWnd, cCodCli, cCodArt, cCodPre, lPedWeb )
 
       DEFINE BTNSHELL RESOURCE "GC_CASH_REGISTER_USER_" OF oWndBrw ;
             ALLOW    EXIT ;
-            ACTION   ( if( ( D():PedidosClientes( nView ) )->nEstado <=1 .and. Empty( ( D():PedidosClientes( nView ) )->cNumTik ), FrontTpv( nil, nil, nil, nil, .f., .f., { nil, ( D():PedidosClientes( nView ) )->cSerPed + Str( ( D():PedidosClientes( nView ) )->nNumPed ) + ( D():PedidosClientes( nView ) )->cSufPed, nil } ), MsgStop( "Pedido albaranado, cancelado o convertido a ticket" ) ) );
+            ACTION   (  if (  ( D():PedidosClientes( nView ) )->nEstado <= 1 .and. empty( ( D():PedidosClientes( nView ) )->cNumTik ),;
+                              generateTicketFromDocument( { "Pedido" => D():PedidosClientesId( nView ) } ),;
+                              msgStop( "Pedido albaranado, cancelado o convertido a ticket" ) ) );
             TOOLTIP  "Convertir a ticket" ;
             FROM     oRotor ;
 

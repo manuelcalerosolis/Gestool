@@ -671,11 +671,11 @@ function oRetFld( cCod, oDbf, xFld, nOrd )
       xFld        := 2
    end if
 
-   if Empty( nOrd )
+   if empty( nOrd )
       nOrd        := 1
    end if
 
-   nRec           := oDbf:Recno()
+   nRec           := oDbf:recno()
 
    if nOrd != nil
       nAnt        := oDbf:ordsetfocus( nOrd )

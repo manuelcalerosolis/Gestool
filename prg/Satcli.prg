@@ -1690,37 +1690,49 @@ FUNCTION SatCli( oMenuItem, oWnd, cCodCli, cCodArt )
       ImportScript( oWndBrw, oScript, "SATClientes", nView )  
 
    DEFINE BTNSHELL oRotor RESOURCE "ROTOR" GROUP OF oWndBrw ;
-         NOBORDER ;
-         MENU     This:Toggle() ;
-         ACTION   ( oRotor:Expand() ) ;
-         TOOLTIP  "Rotor" ;
+      NOBORDER ;
+      MENU     This:Toggle() ;
+      ACTION   ( oRotor:Expand() ) ;
+      TOOLTIP  "Rotor" ;
 
       DEFINE BTNSHELL RESOURCE "GC_USER_" OF oWndBrw ;
-            ACTION   ( EdtCli( ( D():SatClientes( nView ) )->cCodCli ) );
-            TOOLTIP  "Modificar cliente" ;
-            FROM     oRotor ;
+         ACTION   ( EdtCli( ( D():SatClientes( nView ) )->cCodCli ) );
+         TOOLTIP  "Modificar cliente" ;
+         FROM     oRotor ;
 
       DEFINE BTNSHELL RESOURCE "INFO" OF oWndBrw ;
-            ACTION   ( InfCliente( ( D():SatClientes( nView ) )->cCodCli ) ); 
-            TOOLTIP  "Informe de cliente" ;
-            FROM     oRotor ;
+         ACTION   ( InfCliente( ( D():SatClientes( nView ) )->cCodCli ) ); 
+         TOOLTIP  "Informe de cliente" ;
+         FROM     oRotor ;
 
       DEFINE BTNSHELL RESOURCE "GC_WORKER2_" OF oWndBrw ;
-            ACTION   ( if( !Empty( ( D():SatClientes( nView ) )->cCodObr ), EdtObras( ( D():SatClientes( nView ) )->cCodCli, ( D():SatClientes( nView ) )->cCodObr, dbfObrasT ), MsgStop( "No hay obra asociada al S.A.T." ) ) );
-            TOOLTIP  "Modificar dirección" ;
-            FROM     oRotor ;
+         ACTION   ( if( !Empty( ( D():SatClientes( nView ) )->cCodObr ), EdtObras( ( D():SatClientes( nView ) )->cCodCli, ( D():SatClientes( nView ) )->cCodObr, dbfObrasT ), MsgStop( "No hay obra asociada al S.A.T." ) ) );
+         TOOLTIP  "Modificar dirección" ;
+         FROM     oRotor ;
 
       DEFINE BTNSHELL RESOURCE "GC_DOCUMENT_EMPTY_" OF oWndBrw ;
-            ALLOW    EXIT ;
-            ACTION   ( if( !( D():SatClientes( nView ) )->lEstado, AlbCli( nil, nil, { "SAT" => ( D():SatClientes( nView ) )->cSerSat + Str( ( D():SatClientes( nView ) )->nNumSat ) + ( D():SatClientes( nView ) )->cSufSat } ), MsgStop( "El S.A.T. ya ha sido aceptado" ) ) );
-            TOOLTIP  "Generar albarán" ;
-            FROM     oRotor ;
+         ALLOW    EXIT ;
+         ACTION   ( if( !( D():SatClientes( nView ) )->lEstado,;
+                        AlbCli( nil, nil, { "SAT" => D():SatClientesId( nView ) }  ),;
+                        MsgStop( "El S.A.T. ya ha sido aceptado" ) ) );
+         TOOLTIP  "Generar albarán" ;
+         FROM     oRotor ;
 
       DEFINE BTNSHELL RESOURCE "GC_DOCUMENT_TEXT_USER_" OF oWndBrw ;
-            ALLOW    EXIT ;
-            ACTION   ( if( !( D():SatClientes( nView ) )->lEstado, FactCli( nil, nil, { "SAT" => ( D():SatClientes( nView ) )->cSerSat + Str( ( D():SatClientes( nView ) )->nNumSat ) + ( D():SatClientes( nView ) )->cSufSat } ), MsgStop( "El S.A.T. ya ha sido aceptado" ) ) );
-            TOOLTIP  "Generar factura" ;
-            FROM     oRotor ;
+         ALLOW    EXIT ;
+         ACTION   ( if( !( D():SatClientes( nView ) )->lEstado,;
+                        FactCli( nil, nil, { "SAT" => D():SatClientesId( nView ) } ),;
+                        msgStop( "El S.A.T. ya ha sido aceptado" ) ) );
+         TOOLTIP  "Generar factura" ;
+         FROM     oRotor ;
+
+      DEFINE BTNSHELL RESOURCE "GC_CASH_REGISTER_USER_" OF oWndBrw ;
+         ALLOW    EXIT ;
+         ACTION   ( if( !( D():SatClientes( nView ) )->lEstado,;
+                        generateTicketFromDocument( { "SAT" => D():SatClientesId( nView ) } ),;
+                        msgStop( "El S.A.T. ya ha sido aceptado" ) ) );
+         TOOLTIP  "Convertir a ticket" ;
+         FROM     oRotor ;
 
    DEFINE BTNSHELL RESOURCE "END" GROUP OF oWndBrw ;
       NOBORDER ;

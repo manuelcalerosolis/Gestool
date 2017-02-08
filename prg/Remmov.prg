@@ -3228,7 +3228,7 @@ METHOD procesarArticuloInventario( cInventario ) CLASS TRemMovAlm
 
       if len( aInventario ) >= 2
          cCodigo                 := alltrim( aInventario[ 1 ] )
-         nUnidades               := val( aInventario[ 2 ] )
+         nUnidades               := val( strtran( aInventario[ 2 ], ".", "," ) )
       end if 
 
       if len( aInventario ) >= 6

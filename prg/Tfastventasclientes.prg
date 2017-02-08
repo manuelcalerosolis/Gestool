@@ -445,6 +445,8 @@ METHOD Create( uParam ) CLASS TFastVentasClientes
    ::AddField( "cCodObr",  "C", 10, 0, {|| "@!" }, "Código dirección"                        )
    ::AddField( "cCodAlm",  "C", 16, 0, {|| "@!" }, "Código almacén"                          )
 
+   ::AddField( "cCodTip",  "C", 12, 0, {|| "@!" }, "Código del tipo de cliente"              )
+
    ::AddField( "cTipDoc",  "C", 30, 0, {|| "" },   "Tipo de documento"                       )
 
    ::AddField( "cClsDoc",  "C",  2, 0, {|| "" },   "Clase de documento"                      )

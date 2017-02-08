@@ -1219,7 +1219,9 @@ FUNCTION AlbCli( oMenuItem, oWnd, hHash )
 
       DEFINE BTNSHELL RESOURCE "GC_CASH_REGISTER_USER_" OF oWndBrw ;
          ALLOW    EXIT ;
-         ACTION   ( if( !lFacturado( D():Get( "AlbCliT", nView ) ) .and. empty( ( D():Get( "AlbCliT", nView ) )->cNumTik ), FrontTpv( nil, nil, nil, nil, .f., .f., { nil, nil, ( D():Get( "AlbCliT", nView ) )->cSerAlb + Str( ( D():Get( "AlbCliT", nView ) )->nNumAlb ) + ( D():Get( "AlbCliT", nView ) )->cSufAlb } ), MsgStop( "Albarán facturado o convertido a ticket" ) ) );
+         ACTION   ( if( !lFacturado( D():Get( "AlbCliT", nView ) ) .and. empty( ( D():Get( "AlbCliT", nView ) )->cNumTik ),;
+                        generateTicketFromDocument( { "Albaran" => D():AlbaranesClientesId( nView ) } ),;
+                        msgStop( "Albarán facturado o convertido a ticket" ) ) );
          TOOLTIP  "Convertir a ticket" ;
          FROM     oRotor ;
 
@@ -18521,15 +18523,12 @@ Return ( oDetMenu )
 
 Static Function stringExport( dbfTmpLin )
    
-   local stringExport
-
-   stringExport         := alltrim( ( dbfTmpLin )->cRef ) + "," 
-   stringExport         += alltrim( trans( nTotNAlbCli( dbfTmpLin ), cPicUnd ) ) + ","
-   stringExport         += alltrim( trans( nTotNAlbCli( dbfTmpLin ), cPicUnd ) ) + ","
+   local stringExport   := alltrim( ( dbfTmpLin )->cRef ) + "," 
+   stringExport         += alltrim( strtran( trans( nTotNAlbCli( dbfTmpLin ), cPicUnd ), ",", "." ) ) + ","
    stringExport         += alltrim( ( dbfTmpLin )->cCodPr1 ) + "," 
    stringExport         += alltrim( ( dbfTmpLin )->cValPr1 ) + "," 
    stringExport         += alltrim( ( dbfTmpLin )->cCodPr2 ) + "," 
-   stringExport         += alltrim( ( dbfTmpLin )->cValPr1 ) + CRLF
+   stringExport         += alltrim( ( dbfTmpLin )->cValPr2 ) + CRLF
 
 Return ( stringExport )
 

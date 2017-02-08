@@ -351,9 +351,9 @@ static oBtnFac
 static oBtnApt
 static oBtnVal
 static oBtnDev
+static oBtnAssVal
+static oBtnAssDev
 static oBtnOld
-static oBtnUp
-static oBtnDown
 static oGrupoSerie
 static oBtnUpSerie
 static oBtnDownSerie
@@ -430,7 +430,7 @@ static lExternal           := .t.
 static nNumBtnFam          := NUM_BTN_FAM
 static nNumBtnArt          := NUM_BTN_ART
 static aTipDoc             := { "Tiket", "Albarán", "Factura", "Devolución", "Apartado", "Vale", "Pda", "Cheque regalo" }
-static bEditT              := { |aTmp, aGet, cTikT, oBrw, cTot, nTot, nMode, aNumDoc    | EdtRec( aTmp, aGet, cTikT, oBrw, cTot, nTot, nMode, aNumDoc ) }
+static bEditT              := { |aTmp, aGet, cTikT, oBrw, cTot, nTot, nMode, hDocument    | EdtRec( aTmp, aGet, cTikT, oBrw, cTot, nTot, nMode, hDocument ) }
 static bEditL              := { |aTmp, aGet, dbfTikL, oBrw, bWhen, bValid, nMode, cNumTik | EdtDet( aTmp, aGet, dbfTikL, oBrw, bWhen, bValid, nMode, cNumTik ) }
 static bEditP              := { |aTmp, aGet, dbfTikP, oBrw, bWhen, bValid, nMode, aTmpTik | EdtCob( aTmp, aGet, dbfTikP, oBrw, bWhen, bValid, nMode, aTmpTik ) }
 static bEditE              := { |aTmp, aGet, dbfTmpE, oBrw, bWhen, bValid, nMode, aTmpTik | EdtEnt( aTmp, aGet, dbfTmpE, oBrw, bWhen, bValid, nMode, aTmpTik ) }
@@ -1157,7 +1157,13 @@ Return .t.
 
 //----------------------------------------------------------------------------//
 
-FUNCTION FrontTpv( oMenuItem, oWnd, cCodCli, cCodArt, lEntCon, lExtTpv, aNumDoc )
+Function generateTicketFromDocument( hDocument )
+
+Return ( frontTpv( nil, nil, nil, nil, nil, nil , hDocument ) )
+
+//----------------------------------------------------------------------------//
+
+FUNCTION FrontTpv( oMenuItem, oWnd, cCodCli, cCodArt, lEntCon, lExtTpv, hDocument )
 
    local oBtnEur
    local cTitle
@@ -1176,7 +1182,6 @@ FUNCTION FrontTpv( oMenuItem, oWnd, cCodCli, cCodArt, lEntCon, lExtTpv, aNumDoc 
    DEFAULT  oWnd        := oWnd()
    DEFAULT  lEntCon     := lEntCon()
    DEFAULT  lExtTpv     := .f.
-   DEFAULT  aNumDoc     := { "", "", "" }
 
    nLevel               := nLevelUsr( oMenuItem )
    if nAnd( nLevel, 1 ) != 0
@@ -1185,7 +1190,7 @@ FUNCTION FrontTpv( oMenuItem, oWnd, cCodCli, cCodArt, lEntCon, lExtTpv, aNumDoc 
    end if
 
    /*
-   Cerramos todas las ventanas
+   Cerramos todas las ventanas------------------------------------------------
    */
 
    if oWnd != nil
@@ -1226,7 +1231,7 @@ FUNCTION FrontTpv( oMenuItem, oWnd, cCodCli, cCodArt, lEntCon, lExtTpv, aNumDoc 
       MRU      "gc_cash_register_user_16";
       BITMAP   clrTopTPV ;
       ALIAS    ( D():Tikets( nView ) );
-      APPEND   ( TpvAppRec( oWndBrw:oBrw, bEditT, D():Tikets( nView ), oWnd, cCodCli, cCodArt, aNumDoc ) );
+      APPEND   ( TpvAppRec( oWndBrw:oBrw, bEditT, D():Tikets( nView ), oWnd, cCodCli, cCodArt, hDocument ) );
       DELETE   ( WinDelRec( oWndBrw:oBrw, D():Tikets( nView ), {|| TpvDelRec() } ) );
       ZOOM     ( WinZooRec( oWndBrw:oBrw, bEditT, D():Tikets( nView ) ) );
       EDIT     ( WinEdtRec( oWndBrw:oBrw, bEditT, D():Tikets( nView ) ) );
@@ -1236,7 +1241,7 @@ FUNCTION FrontTpv( oMenuItem, oWnd, cCodCli, cCodArt, lEntCon, lExtTpv, aNumDoc 
       oWndBrw:lAutoSeek     := .f.
       oWndBrw:lFechado      := .t.
 
-	  oWndBrw:SetYearComboBoxChange( {|| YearComboBoxChange() } )
+      oWndBrw:SetYearComboBoxChange( {|| YearComboBoxChange() } )
 
       with object ( oWndBrw:AddXCol() )
          :cHeader          := "Sesión cerrada"
@@ -1703,9 +1708,9 @@ else
       TOOLTIP  "(S)alir";
       HOTKEY   "S"
 
-end if
+   end if
 
-   if !oUser():lFiltroVentas()
+   if !( oUser():lFiltroVentas() )
       oWndBrw:oActiveFilter:SetFields( aItmTik() )
       oWndBrw:oActiveFilter:SetFilterType( TIK_CLI )
    end if
@@ -1714,15 +1719,15 @@ end if
 
    EnableAcceso()
 
-   if !empty( cCodCli ) .or. !empty( cCodArt ) .or. lEntCon .or. !empty( aNumDoc )
+   if !empty( cCodCli ) .or. !empty( cCodArt ) .or. lEntCon .or. !empty( hDocument )
 
       if !empty( oWndBrw )
          oWndBrw:RecAdd()
       end if
 
-      cCodCli  := nil
-      cCodArt  := nil
-      aNumDoc  := { "", "", "" }
+      cCodCli     := nil
+      cCodArt     := nil
+      hDocument   := nil
 
    end if
 
@@ -1730,9 +1735,9 @@ Return .t.
 
 //----------------------------------------------------------------------------//
 
-Static Function TpvAppRec( oWndBrw, bEditT, cTikT, oWnd, cCodCli, cCodArt, aNumDoc )
+Static Function TpvAppRec( oWndBrw, bEditT, cTikT, oWnd, cCodCli, cCodArt, hDocument )
 
-   while ( WinAppRec( oWndBrw, bEditT, cTikT, cCodCli, cCodArt, aNumDoc ) )
+   while ( WinAppRec( oWndBrw, bEditT, cTikT, cCodCli, cCodArt, hDocument ) )
 
       if lStopEntCont
 
@@ -2154,7 +2159,7 @@ Return ( .t. )
 
 //----------------------------------------------------------------------------//
 
-STATIC FUNCTION EdtRec( aTmp, aGet, cTikT, oBrw, cCodCli, cCodArt, nMode, aNumDoc )
+STATIC FUNCTION EdtRec( aTmp, aGet, cTikT, oBrw, cCodCli, cCodArt, nMode, hDocument )
 
    local nOrd
    local oBmpDiv
@@ -2709,7 +2714,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, cTikT, oBrw, cCodCli, cCodArt, nMode, aNumDo
          WHEN     ( .f. ) ;
          OF       oDlgTpv
 
-   oDlgTpv:bStart       := {|| StartEdtRec( aTmp, aGet, nMode, oDlgTpv, oBrw, oBrwDet, aNumDoc, cCodArt ) }
+   oDlgTpv:bStart       := {|| StartEdtRec( aTmp, aGet, nMode, oDlgTpv, oBrw, oBrwDet, hDocument, cCodArt ) }
    // oDlgTpv:bGotFocus    := {|| msgAlert( "bGotFocus") }
 
    /*
@@ -2765,7 +2770,7 @@ Return ( lRecTotal( aTmp ) )
 
 //--------------------------------------------------------------------------//
 
-Static Function StartEdtRec( aTmp, aGet, nMode, oDlgTpv, oBrw, oBrwDet, aNumDoc, cCodArt )
+Static Function StartEdtRec( aTmp, aGet, nMode, oDlgTpv, oBrw, oBrwDet, hDocument, cCodArt )
 
    local oBoton
    local oGrupo
@@ -2785,116 +2790,65 @@ Static Function StartEdtRec( aTmp, aGet, nMode, oDlgTpv, oBrw, oBrwDet, aNumDoc,
       oCarpeta          := TCarpeta():New( oOfficeBar, "T.P.V." )
 
       oGrupo            := TDotNetGroup():New( oCarpeta, 186, "Lineas", .f. )
-         oBtnAdd        := TDotNetButton():New( 60, oGrupo, "New32",                    "Añadir [F2]",         1, {|| AppDetRec( oBrwDet, bEditL, aTmp, cPorDiv, cPicEur ), aGet[ _CCLITIK ]:SetFocus() }, , , .f., .f., .f. )
-         oBtnEdt        := TDotNetButton():New( 60, oGrupo, "gc_pencil__32",                   "Modificar [F3]",      2, {|| WinEdtRec( oBrwDet, bEditL, dbfTmpL, , , aTmp ), lRecTotal( aTmp ), aGet[ _CCLITIK ]:SetFocus() }, , , .f., .f., .f. )
-         oBtnDel        := TDotNetButton():New( 60, oGrupo, "Del32",                    "Eliminar [F4]",       3, {|| deleteLineTicket( aTmp, oBrwDet ) }, , {|| nMode != ZOOM_MODE }, .f., .f., .f. )
+         oBtnAdd        := TDotNetButton():New( 60, oGrupo, "New32",                      "Añadir [F2]",          1, {|| AppDetRec( oBrwDet, bEditL, aTmp, cPorDiv, cPicEur ), aGet[ _CCLITIK ]:SetFocus() }, , , .f., .f., .f. )
+         oBtnEdt        := TDotNetButton():New( 60, oGrupo, "gc_pencil__32",              "Modificar [F3]",       2, {|| WinEdtRec( oBrwDet, bEditL, dbfTmpL, , , aTmp ), lRecTotal( aTmp ), aGet[ _CCLITIK ]:SetFocus() }, , , .f., .f., .f. )
+         oBtnDel        := TDotNetButton():New( 60, oGrupo, "Del32",                      "Eliminar [F4]",        3, {|| deleteLineTicket( aTmp, oBrwDet ) }, , {|| nMode != ZOOM_MODE }, .f., .f., .f. )
 
       oGrupo            := TDotNetGroup():New( oCarpeta, 436, "Cobros", .f. )
-         oBtnTik        := TDotNetButton():New( 60, oGrupo, "gc_money2_32",             "Cobrar [F5]",         1, {|| NewTiket( aGet, aTmp, nMode, SAVTIK, .f., oBrw, oBrwDet ) }, , {|| nMode != ZOOM_MODE }, .f., .f., .f. )
-         oBtnAlb        := TDotNetButton():New( 60, oGrupo, "gc_document_empty_32",  "Albarán [F7]",        2, {|| NewTiket( aGet, aTmp, nMode, SAVALB, .f., oBrw, oBrwDet ) }, , {|| nMode != ZOOM_MODE }, .f., .f., .f. )
-         oBtnFac        := TDotNetButton():New( 70, oGrupo, "gc_document_text_user_32",        "Factura [F8]",        3, {|| NewTiket( aGet, aTmp, nMode, SAVFAC, .f., oBrw, oBrwDet ) }, , {|| nMode != ZOOM_MODE }, .f., .f., .f. )
-         oBtnApt        := TDotNetButton():New( 60, oGrupo, "gc_cash_stop_32",          "Apartar [F9]",        4, {|| GuardaApartado( aGet, aTmp, @nMode, SAVAPT, .f., oBrw, oBrwDet, oDlgTpv ) }, , {|| nMode != ZOOM_MODE }, .f., .f., .f. )
-         oBtnVal        := TDotNetButton():New( 60, oGrupo, "gc_cash_money_32",        "Cheque regalo",       5, {|| NewTiket( aGet, aTmp, nMode, SAVRGL, .f., oBrw, oBrwDet ) }, , {|| nMode != ZOOM_MODE }, .f., .f., .f. )
-         oBtnDev        := TDotNetButton():New( 60, oGrupo, "gc_cash_delete_32",        "Devolución",          6, {|| if( uFieldEmpresa( "lNumTik" ), AsistenteDevolucionTiket( aTmp, aGet, nMode, .t. ), NewTiket( aGet, aTmp, nMode, SAVDEV, .f., oBrw, oBrwDet ) ) }, , {|| nMode == APPD_MODE }, .f., .f., .f. )
-         oBtnOld        := TDotNetButton():New( 60, oGrupo, "gc_cash_scroll_32",        "Vale",                7, {|| if( uFieldEmpresa( "lNumTik" ), AsistenteDevolucionTiket( aTmp, aGet, nMode, .f. ), NewTiket( aGet, aTmp, nMode, SAVVAL, .f., oBrw, oBrwDet ) ) }, , {|| nMode != ZOOM_MODE }, .f., .f., .f. )
+         oBtnTik        := TDotNetButton():New( 60, oGrupo, "gc_money2_32",               "Cobrar [F5]",          1, {|| NewTiket( aGet, aTmp, nMode, SAVTIK, .f., oBrw, oBrwDet ) }, , {|| nMode != ZOOM_MODE }, .f., .f., .f. )
+         oBtnAlb        := TDotNetButton():New( 60, oGrupo, "gc_document_empty_32",       "Albarán [F7]",         2, {|| NewTiket( aGet, aTmp, nMode, SAVALB, .f., oBrw, oBrwDet ) }, , {|| nMode != ZOOM_MODE }, .f., .f., .f. )
+         oBtnFac        := TDotNetButton():New( 70, oGrupo, "gc_document_text_user_32",   "Factura [F8]",         3, {|| NewTiket( aGet, aTmp, nMode, SAVFAC, .f., oBrw, oBrwDet ) }, , {|| nMode != ZOOM_MODE }, .f., .f., .f. )
+         oBtnApt        := TDotNetButton():New( 60, oGrupo, "gc_cash_stop_32",            "Apartar [F9]",         4, {|| GuardaApartado( aGet, aTmp, @nMode, SAVAPT, .f., oBrw, oBrwDet, oDlgTpv ) }, , {|| nMode != ZOOM_MODE }, .f., .f., .f. )
+         oBtnVal        := TDotNetButton():New( 60, oGrupo, "gc_cash_money_32",           "Cheque regalo",        5, {|| NewTiket( aGet, aTmp, nMode, SAVRGL, .f., oBrw, oBrwDet ) }, , {|| nMode != ZOOM_MODE }, .f., .f., .f. )
+         oBtnDev        := TDotNetButton():New( 60, oGrupo, "gc_cash_delete_32",          "Devolución",           6, {|| NewTiket( aGet, aTmp, nMode, SAVDEV, .f., oBrw, oBrwDet ) }, , {|| nMode == APPD_MODE }, .f., .f., .f. )
+         oBtnOld        := TDotNetButton():New( 60, oGrupo, "gc_cash_scroll_32",          "Vale",                 7, {|| NewTiket( aGet, aTmp, nMode, SAVVAL, .f., oBrw, oBrwDet ) }, , {|| nMode != ZOOM_MODE }, .f., .f., .f. )
 
-      oGrupo            := TDotNetGroup():New( oCarpeta, 66, "Tickets", .f. )
-         oBtnUp         := TDotNetButton():New( 60, oGrupo, "gc_arrow_up_32",    "",                    1, , , {|| nMode != ZOOM_MODE }, .f., .f., .f. ) //lCambiaTicket( .t., aTmp, aGet, nMode ), if( !empty( oBrw ), ( oBrw:Select( 0 ), oBrw:Select( 1 ), oBrw:Refresh() ), )
-         oBtnDown       := TDotNetButton():New( 60, oGrupo, "gc_arrow_down_32",  "",                    1, , , {|| nMode != ZOOM_MODE }, .f., .f., .f. ) //lCambiaTicket( .f., aTmp, aGet, nMode ), if( !empty( oBrw ), ( oBrw:Select( 0 ), oBrw:Select( 1 ), oBrw:Refresh() ), )
+      oGrupo            := TDotNetGroup():New( oCarpeta, 126, "Tickets", .f. )
+         oBtnAssDev     := TDotNetButton():New( 60, oGrupo, "gc_cash_delete_32",          "Asistente devolución", 1, {|| AsistenteDevolucionTiket( aTmp, aGet, nMode, .t. ) }, , {|| nMode == APPD_MODE }, .f., .f., .f. )
+         oBtnAssVal     := TDotNetButton():New( 60, oGrupo, "gc_cash_scroll_32",          "Asistente vale",       2, {|| AsistenteDevolucionTiket( aTmp, aGet, nMode, .f. ) }, , {|| nMode != ZOOM_MODE }, .f., .f., .f. )
 
       oGrupo            := TDotNetGroup():New( oCarpeta, 66, "Salida", .f. )
-         oBoton         := TDotNetButton():New( 60, oGrupo, "End32",                    "Salida",              1, {|| oDlgTpv:End() }, , , .f., .f., .f. )
+         oBoton         := TDotNetButton():New( 60, oGrupo, "End32",                      "Salida",               1, {|| oDlgTpv:End() }, , , .f., .f., .f. )
 
       oCarpeta          := TCarpeta():New( oOfficeBar, "Rotor" )
 
       oGrupo            := TDotNetGroup():New( oCarpeta, 306, "Cobros", .f. )
-         oBoton         := TDotNetButton():New( 60, oGrupo, "gc_user_32",                 "Modificar cliente",   1, {|| if( !empty( aTmp[ _CCLITIK ] ), EdtCli( aTmp[ _CCLITIK ] ), MsgStop( "Código cliente vacío" ) ) }, , , .f., .f., .f. )
-         oBoton         := TDotNetButton():New( 60, oGrupo, "gc_speech_balloon_answer2_32",                  "Informe cliente",     2, {|| if( !empty( aTmp[ _CCLITIK ] ), InfCliente( aTmp[ _CCLITIK ] ), MsgStop( "Código cliente vacío" ) ) }, , , .f., .f., .f. )
-         oBoton         := TDotNetButton():New( 60, oGrupo, "gc_worker2_32",                "Modificar obras",     3, {|| if( !empty( aTmp[ _CCLITIK ] ), EdtObras( aTmp[ _CCLITIK ], aTmp[ _CCODOBR ], dbfObrasT ), MsgStop( "No hay obra asociada para el presupuesto" ) ) }, , , .f., .f., .f. )
-         oBoton         := TDotNetButton():New( 60, oGrupo, "gc_object_cube_32",           "Modificar artículo",  4, {|| EdtArticulo( ( dbfTmpL )->cCbaTil ) }, , , .f., .f., .f. )
-         oBoton         := TDotNetButton():New( 60, oGrupo, "gc_speech_balloon_answer2_32",                  "Informe artículo",    5, {|| InfArticulo( ( dbfTmpL )->cCbaTil ) }, , , .f., .f., .f. )
+         oBoton         := TDotNetButton():New( 60, oGrupo, "gc_user_32",                    "Modificar cliente", 1, {|| if( !empty( aTmp[ _CCLITIK ] ), EdtCli( aTmp[ _CCLITIK ] ), MsgStop( "Código cliente vacío" ) ) }, , , .f., .f., .f. )
+         oBoton         := TDotNetButton():New( 60, oGrupo, "gc_speech_balloon_answer2_32",  "Informe cliente",   2, {|| if( !empty( aTmp[ _CCLITIK ] ), InfCliente( aTmp[ _CCLITIK ] ), MsgStop( "Código cliente vacío" ) ) }, , , .f., .f., .f. )
+         oBoton         := TDotNetButton():New( 60, oGrupo, "gc_worker2_32",                 "Modificar obras",   3, {|| if( !empty( aTmp[ _CCLITIK ] ), EdtObras( aTmp[ _CCLITIK ], aTmp[ _CCODOBR ], dbfObrasT ), MsgStop( "No hay obra asociada para el presupuesto" ) ) }, , , .f., .f., .f. )
+         oBoton         := TDotNetButton():New( 60, oGrupo, "gc_object_cube_32",             "Modificar artículo",4, {|| EdtArticulo( ( dbfTmpL )->cCbaTil ) }, , , .f., .f., .f. )
+         oBoton         := TDotNetButton():New( 60, oGrupo, "gc_speech_balloon_answer2_32",  "Informe artículo",  5, {|| InfArticulo( ( dbfTmpL )->cCbaTil ) }, , , .f., .f., .f. )
 
       SetButtonEdtRec( nMode, aTmp )
 
    end if
 
    if nMode == DUPL_MODE
-
-      oBtnAdd:lEnabled  := .f.
-      oBtnEdt:lEnabled  := .f.
-      oBtnDel:lEnabled  := .f.
-
-      oBtnTik:lEnabled  := .f.
-      oBtnAlb:lEnabled  := .f.
-      oBtnFac:lEnabled  := .t.
-      oBtnApt:lEnabled  := .f.
-      oBtnVal:lEnabled  := .f.
-      oBtnDev:lEnabled  := .f.
-      oBtnOld:lEnabled  := .f.
-
-      oBtnUp:lEnabled   := .f.
-      oBtnDown:lEnabled := .f.
-
+      stateButtons( .f. )
    end if
 
-   if aNumDoc != nil
+   if isHash( hDocument )
 
       do case
-         case !empty( aNumDoc[ 1 ] )
+         case HGetKeyAt( hDocument, 1 ) == "Presupuesto"
 
-            cPreCli( aTmp, aGet, @aNumDoc[ 1 ], oBrwDet )
+            cPreCli( aTmp, aGet, HGetValueAt( hDocument, 1 ), oBrwDet )
 
-            oBtnAdd:lEnabled  := .f.
-            oBtnEdt:lEnabled  := .f.
-            oBtnDel:lEnabled  := .f.
+         case HGetKeyAt( hDocument, 1 ) == "Pedido"
 
-            oBtnAlb:lEnabled  := .f.
-            oBtnFac:lEnabled  := .f.
-            oBtnApt:lEnabled  := .f.
-            oBtnVal:lEnabled  := .f.
-            oBtnDev:lEnabled  := .f.
-            oBtnOld:lEnabled  := .f.
+            cPedCli( aTmp, aGet, HGetValueAt( hDocument, 1 ), oBrwDet )
 
-            oBtnUp:lEnabled   := .f.
-            oBtnDown:lEnabled := .f.
+         case HGetKeyAt( hDocument, 1 ) == "Albaran"
 
-         case !empty( aNumDoc[ 2 ] )
+            cAlbCli( aTmp, aGet, HGetValueAt( hDocument, 1 ), oBrwDet )
 
-            cPedCli( aTmp, aGet, @aNumDoc[ 2 ], oBrwDet )
+         case HGetKeyAt( hDocument, 1 ) == "SAT"
 
-            oBtnAdd:lEnabled  := .f.
-            oBtnEdt:lEnabled  := .f.
-            oBtnDel:lEnabled  := .f.
-
-            oBtnAlb:lEnabled  := .f.
-            oBtnFac:lEnabled  := .f.
-            oBtnApt:lEnabled  := .f.
-            oBtnVal:lEnabled  := .f.
-            oBtnDev:lEnabled  := .f.
-            oBtnOld:lEnabled  := .f.
-
-            oBtnUp:lEnabled   := .f.
-            oBtnDown:lEnabled := .f.
-
-         case !empty( aNumDoc[ 3 ] )
-
-            cAlbCli( aTmp, aGet, @aNumDoc[ 3 ], oBrwDet )
-
-            oBtnAdd:lEnabled  := .f.
-            oBtnEdt:lEnabled  := .f.
-            oBtnDel:lEnabled  := .f.
-
-            oBtnAlb:lEnabled  := .f.
-            oBtnFac:lEnabled  := .f.
-            oBtnApt:lEnabled  := .f.
-            oBtnVal:lEnabled  := .f.
-            oBtnDev:lEnabled  := .f.
-            oBtnOld:lEnabled  := .f.
-
-            oBtnUp:lEnabled   := .f.
-            oBtnDown:lEnabled := .f.
+            msgalert( HGetValueAt( hDocument, 1 ), "SAT")
 
       end case
+
+      stateButtons( .f., { oBtnTik } )
 
    end if
 
@@ -2962,21 +2916,27 @@ Return ( nil )
 
 //---------------------------------------------------------------------------//
 
-Static Function StateButtons( lState ) 
+Static Function StateButtons( lState, aExcept ) 
 
-   DEFAULT lState    := .f.
+   DEFAULT lState       := .f.
+   DEFAULT aExcept      := {}
 
-   oBtnAdd:lEnabled  := lState
-   oBtnEdt:lEnabled  := lState
-   oBtnDel:lEnabled  := lState
+   oBtnAdd:lEnabled     := lState
+   oBtnEdt:lEnabled     := lState
+   oBtnDel:lEnabled     := lState
 
-   oBtnTik:lEnabled  := lState
-   oBtnAlb:lEnabled  := lState
-   oBtnFac:lEnabled  := lState
-   oBtnApt:lEnabled  := lState
-   oBtnVal:lEnabled  := lState
-   oBtnDev:lEnabled  := lState
-   oBtnOld:lEnabled  := lState
+   oBtnTik:lEnabled     := lState
+   oBtnAlb:lEnabled     := lState
+   oBtnFac:lEnabled     := lState
+   oBtnApt:lEnabled     := lState
+   oBtnVal:lEnabled     := lState
+   oBtnDev:lEnabled     := lState
+   oBtnOld:lEnabled     := lState
+
+   oBtnAssVal:lEnabled  := lState
+   oBtnAssDev:lEnabled  := lState
+
+   aEval( aExcept, {| oBtn | oBtn:lEnabled := !lState } )
 
    oBtnAdd:Refresh()
    oBtnEdt:Refresh()
@@ -2990,23 +2950,29 @@ Static Function StateButtons( lState )
    oBtnDev:Refresh()
    oBtnOld:Refresh()
 
+   oBtnAssVal:Refresh()
+   oBtnAssDev:Refresh()
+
 return ( nil )
 
 //---------------------------------------------------------------------------//
 
 Static Function SetButtonEdtRec( nMode, aTmp )
 
-   oBtnAdd:lEnabled  := ( nMode != ZOOM_MODE )
-   oBtnEdt:lEnabled  := ( nMode != ZOOM_MODE )
-   oBtnDel:lEnabled  := ( nMode != ZOOM_MODE )
+   oBtnAdd:lEnabled     := ( nMode != ZOOM_MODE )
+   oBtnEdt:lEnabled     := ( nMode != ZOOM_MODE )
+   oBtnDel:lEnabled     := ( nMode != ZOOM_MODE )
 
-   oBtnTik:lEnabled  := ( nMode == APPD_MODE ) .or. ( ( aTmp[ _CTIPTIK ] == SAVTIK .or. aTmp[ _CTIPTIK ] == SAVAPT ) .and. ( nMode == EDIT_MODE ) )
-   oBtnAlb:lEnabled  := ( nMode == APPD_MODE ) .or. ( ( aTmp[ _CTIPTIK ] == SAVALB .or. aTmp[ _CTIPTIK ] == SAVAPT ) .and. ( nMode == EDIT_MODE ) )
-   oBtnFac:lEnabled  := ( nMode == APPD_MODE ) .or. ( ( aTmp[ _CTIPTIK ] == SAVFAC .or. aTmp[ _CTIPTIK ] == SAVAPT ) .and. ( nMode == EDIT_MODE ) )
-   oBtnApt:lEnabled  := ( nMode == APPD_MODE ) .or. ( ( aTmp[ _CTIPTIK ] == SAVVAL .or. aTmp[ _CTIPTIK ] == SAVAPT ) .and. ( nMode == EDIT_MODE ) )
-   oBtnVal:lEnabled  := ( nMode == APPD_MODE ) .or. ( ( aTmp[ _CTIPTIK ] == SAVVAL .or. aTmp[ _CTIPTIK ] == SAVAPT ) .and. ( nMode == EDIT_MODE ) )
-   oBtnDev:lEnabled  := ( nMode == APPD_MODE ) .or. ( ( aTmp[ _CTIPTIK ] == SAVVAL .or. aTmp[ _CTIPTIK ] == SAVDEV .or. aTmp[ _CTIPTIK ] == SAVAPT ) .and. ( nMode == EDIT_MODE ) )
-   oBtnOld:lEnabled  := ( nMode == APPD_MODE ) .or. ( ( aTmp[ _CTIPTIK ] == SAVVAL .or. aTmp[ _CTIPTIK ] == SAVVAL .or. aTmp[ _CTIPTIK ] == SAVVAL ) .and. ( nMode == EDIT_MODE ) )
+   oBtnTik:lEnabled     := ( nMode == APPD_MODE ) .or. ( ( aTmp[ _CTIPTIK ] == SAVTIK .or. aTmp[ _CTIPTIK ] == SAVAPT ) .and. ( nMode == EDIT_MODE ) )
+   oBtnAlb:lEnabled     := ( nMode == APPD_MODE ) .or. ( ( aTmp[ _CTIPTIK ] == SAVALB .or. aTmp[ _CTIPTIK ] == SAVAPT ) .and. ( nMode == EDIT_MODE ) )
+   oBtnFac:lEnabled     := ( nMode == APPD_MODE ) .or. ( ( aTmp[ _CTIPTIK ] == SAVFAC .or. aTmp[ _CTIPTIK ] == SAVAPT ) .and. ( nMode == EDIT_MODE ) )
+   oBtnApt:lEnabled     := ( nMode == APPD_MODE ) .or. ( ( aTmp[ _CTIPTIK ] == SAVVAL .or. aTmp[ _CTIPTIK ] == SAVAPT ) .and. ( nMode == EDIT_MODE ) )
+   oBtnVal:lEnabled     := ( nMode == APPD_MODE ) .or. ( ( aTmp[ _CTIPTIK ] == SAVVAL .or. aTmp[ _CTIPTIK ] == SAVAPT ) .and. ( nMode == EDIT_MODE ) )
+   oBtnDev:lEnabled     := ( nMode == APPD_MODE ) .or. ( ( aTmp[ _CTIPTIK ] == SAVVAL .or. aTmp[ _CTIPTIK ] == SAVDEV .or. aTmp[ _CTIPTIK ] == SAVAPT ) .and. ( nMode == EDIT_MODE ) )
+   oBtnOld:lEnabled     := ( nMode == APPD_MODE ) .or. ( ( aTmp[ _CTIPTIK ] == SAVVAL .or. aTmp[ _CTIPTIK ] == SAVVAL .or. aTmp[ _CTIPTIK ] == SAVVAL ) .and. ( nMode == EDIT_MODE ) )
+
+   oBtnAssVal:lEnabled  := ( nMode == APPD_MODE ) .or. ( ( aTmp[ _CTIPTIK ] == SAVVAL .or. aTmp[ _CTIPTIK ] == SAVAPT ) .and. ( nMode == EDIT_MODE ) )
+   oBtnAssDev:lEnabled  := ( nMode == APPD_MODE ) .or. ( ( aTmp[ _CTIPTIK ] == SAVVAL .or. aTmp[ _CTIPTIK ] == SAVDEV .or. aTmp[ _CTIPTIK ] == SAVAPT ) .and. ( nMode == EDIT_MODE ) )
 
 Return ( nil )
 
@@ -6991,15 +6957,6 @@ Static function BeginTrans( aTmp, aGet, nMode, lNewFile )
       end if
 
    end case
-
-   /*
-   Desabilitamos los botones de up y down para el caso del tactil--------------
-   */
-
-   if !empty( oBtnUp ) .and. !empty( oBtnDown )
-      oBtnUp:lEnabled   := ( nMode == EDIT_MODE .or. nMode == ZOOM_MODE )
-      oBtnDown:lEnabled := ( nMode == EDIT_MODE .or. nMode == ZOOM_MODE )
-   end if
 
    /*
    Cargamos valores en la OfficeBar para el caso del táctil--------------------

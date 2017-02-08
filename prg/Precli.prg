@@ -1698,7 +1698,9 @@ FUNCTION PreCli( oMenuItem, oWnd, cCodCli, cCodArt )
 
       DEFINE BTNSHELL RESOURCE "GC_CASH_REGISTER_USER_" OF oWndBrw ;
             ALLOW    EXIT ;
-            ACTION   ( if( !( D():PresupuestosClientes( nView ) )->lEstado .and. Empty( ( D():PresupuestosClientes( nView ) )->cNumTik ), FrontTpv( nil, nil, nil, nil, .f., .f., { ( D():PresupuestosClientes( nView ) )->cSerPre + Str( ( D():PresupuestosClientes( nView ) )->nNumPre ) + ( D():PresupuestosClientes( nView ) )->cSufPre, nil, nil } ), MsgStop( "Presupuesto aceptado o convertido a ticket" ) ) );
+            ACTION   ( if( !( D():PresupuestosClientes( nView ) )->lEstado .and. empty( ( D():PresupuestosClientes( nView ) )->cNumTik ),;
+                           generateTicketFromDocument( { "Presupuesto" => D():PresupuestosClientesId( nView ) } ),;
+                           msgStop( "Presupuesto aceptado o convertido a ticket" ) ) );
             TOOLTIP  "Convertir a ticket" ;
             FROM     oRotor ;
 

@@ -503,12 +503,12 @@ CLASS TpvTactil
          METHOD ValidarAgregarLibre( oGetDescripcion, oDlg )
          METHOD GuardarAgregarLibre()
 
-   // Agregar lote------------------------------------------------------------
+   // Agregar lote-----------------------------------------------------------//
 
    METHOD AgregarLote() 
       METHOD ValidarAgregarLote( cLote, oDlg )
 
-   // Metodos para los menus---------------------------------------------------
+   // Metodos para los menus-------------------------------------------------//
 
    METHOD CargaMenus() 
    METHOD AgregarMenu()
@@ -3772,8 +3772,6 @@ METHOD CargaArticulosOrden( cCodMnu, cCodOrd )
       if ::oArticulo:Seek( cArticulo )
 
          ::CreateItemArticulo( aItems, cCodMnu, cCodOrd )
-
-      else 
 
       end if 
 
@@ -9533,7 +9531,7 @@ METHOD CreateItemArticulo( aItems, cCodigoMenu, cCodigoOrden )
          
          else
             
-            if ::oArticulo:nColBtn == 0 
+            if ( ::oArticulo:nColBtn == 0 .or. ::oArticulo:nColBtn == rgb(255,255,255) )
                :nClrPane   := oRetFld( ::oArticulo:Familia, ::oFamilias, "nColBtn", "cCodFam" )
             else
                :nClrPane   := ::oArticulo:nColBtn
@@ -9541,7 +9539,7 @@ METHOD CreateItemArticulo( aItems, cCodigoMenu, cCodigoOrden )
                
          end if
 
-         :Add( aItems )
+         :add( aItems )
 
       end with
 
