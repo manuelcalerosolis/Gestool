@@ -188,6 +188,8 @@ Defines para ficheros INI
 #define GRP_CLI                 '34' 
 #define LIN_ALB_CLI             '35'
 #define LIN_FAC_CLI             '36'
+#define LIN_ALB_PRV             '37'
+#define LIN_FAC_PRV             '38'
 
 #define ACC_ACCE                1        // Acceso
 #define ACC_APPD                2        // Acceso añadir
@@ -354,7 +356,9 @@ Definici¢n de Array para impuestos---------------------------------------------
                                         "Facturas rectificativa a clientes" => "14",;
                                         "Pedidos a proveedores" => "01",;
                                         "Albaranes a proveedores" => "02",;
+                                        "Lineas albaranes a proveedores" => "37",;
                                         "Facturas a proveedores" => "03",;
+                                        "Lineas facturas a proveedores" => "38",;
                                         "Facturas rectificativa a proveedores" => "04",;
                                         "S.A.T" => "32",;
                                         "Envases de artículos" => "33" ,;
@@ -375,7 +379,9 @@ Definici¢n de Array para impuestos---------------------------------------------
                                         "Facturas rectificativa a clientes" => "gc_document_text_delete_16",;
                                         "Pedidos a proveedores" => "gc_clipboard_empty_businessman_16",;
                                         "Albaranes a proveedores" => "gc_document_empty_businessman_16",;
+                                        "Lineas albaranes a proveedores" => "gc_document_empty_businessman_16",;
                                         "Facturas a proveedores" => "gc_document_text_businessman_16",;
+                                        "Lineas facturas a proveedores" => "gc_document_text_businessman_16",;
                                         "Facturas rectificativa a proveedores" => "gc_document_text_delete2_16",;
                                         "S.A.T" => "gc_power_drill_sat_user_16",;
                                         "Envases de artículos" => "gc_box_closed_16",; 
@@ -396,7 +402,9 @@ Definici¢n de Array para impuestos---------------------------------------------
                                         "Facturas rectificativa a clientes" => .F.,;
                                         "Pedidos a proveedores" => .F.,;
                                         "Albaranes a proveedores" => .F.,;
+                                        "Lineas albaranes a proveedores" => .F.,;
                                         "Facturas a proveedores" => .F.,;
+                                        "Lineas facturas a proveedores" => .F.,;
                                         "Facturas rectificativa a proveedores" => .F.,;
                                         "S.A.T" => .F.,;
                                         "Envases de artículos" => .F.,;

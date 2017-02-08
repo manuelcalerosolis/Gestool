@@ -488,6 +488,7 @@ CLASS D
 
    METHOD FacturasProveedoresLineas( nView )             INLINE ( ::Get( "FacPrvL", nView ) )
       METHOD FacturasProveedoresLineasId( nView )        INLINE ( ( ::Get( "FacPrvL", nView ) )->cSerFac + str( ( ::Get( "FacPrvL", nView ) )->nNumFac, 9 ) + ( ::Get( "FacPrvL", nView ) )->cSufFac )
+      METHOD FacturasProveedoresLineasNumeroId( nView )  INLINE ( ( ::Get( "FacPrvL", nView ) )->cSerFac + str( ( ::Get( "FacPrvL", nView ) )->nNumFac, 9 ) + ( ::Get( "FacPrvL", nView ) )->cSufFac + Str( ( ::Get( "FacPrvL", nView ) )->nNumLin ) )
 
    METHOD FacturasProveedoresIncidencias( nView )        INLINE ( ::Get( "FacPrvI", nView ) )
       METHOD FacturasProveedoresIncidenciasId ( nView )  INLINE ( ( ::Get( "FacPrvI", nView ) )->cSerFac + str( ( ::Get( "FacPrvI", nView ) )->nNumFac, 9 ) + ( ::Get( "FacPrvI", nView ) )->cSufFac )

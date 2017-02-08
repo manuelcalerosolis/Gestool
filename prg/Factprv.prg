@@ -299,6 +299,8 @@ static dbfAlm
 static oStock
 static TComercio
 
+static oDetMenu
+
 static oNewImp
 static cNewFile
 static cPicEur
@@ -354,6 +356,8 @@ static oNumerosSerie
 static oBtnNumerosSerie
 
 static oDetCamposExtra
+static oLinDetCamposExtra
+
 static oCentroCoste
 
 static nView
@@ -532,6 +536,11 @@ STATIC FUNCTION OpenFiles( lExt )
       oDetCamposExtra:SetTipoDocumento( "Facturas a proveedores" )
       oDetCamposExtra:setbId( {|| D():FacturasProveedoresId( nView ) } )
 
+      oLinDetCamposExtra               := TDetCamposExtra():New()
+      oLinDetCamposExtra:OpenFiles()
+      oLinDetCamposExtra:setTipoDocumento( "Lineas facturas a proveedores" )
+      oLinDetCamposExtra:setbId( {|| D():FacturasProveedoresLineasNumeroId( nView ) } )
+
       /*
       Centro de coste-----------------------------------------------------------------------
       */
@@ -608,6 +617,11 @@ Static Function CloseFiles()
 
    if !empty( oDetCamposExtra )
       oDetCamposExtra:CloseFiles()
+   end if
+
+   if !empty( oLinDetCamposExtra )
+      oLinDetCamposExtra:CloseFiles()
+      oLinDetCamposExtra:End()
    end if
 
    if !empty( oCentroCoste )
@@ -3094,6 +3108,7 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbf, oBrw, aTmpFac, cCodArtEnt, nMode )
 
       cTipoCtrCoste        := "Centro de coste"
 
+      oLinDetCamposExtra:setTemporalAppend()
 
    case nMode == EDIT_MODE
 
@@ -3828,6 +3843,7 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbf, oBrw, aTmpFac, cCodArtEnt, nMode )
    if nMode != ZOOM_MODE
       oDlg:AddFastKey( VK_F6, {|| oBtnNumerosSerie:Click() } )
       oDlg:AddFastKey( VK_F5, {|| oBtn:SetFocus(), oBtn:Click() } )
+      oDlg:AddFastKey( VK_F9, {|| oLinDetCamposExtra:Play( if( nMode == APPD_MODE, "", Str( ( dbfTmp )->( OrdKeyNo() ) ) ) ) } )
    end if
 
    oDlg:AddFastKey ( VK_F1, {|| GoHelp() } )
@@ -3837,63 +3853,15 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbf, oBrw, aTmpFac, cCodArtEnt, nMode )
                          if( !empty( cCodArtEnt ), aGet[ _CREF ]:lValid(), ) }
 
    ACTIVATE DIALOG oDlg ;
-      ON INIT     ( EdtDetMenu( aGet[ _CREF ], oDlg ) );
+      ON INIT     ( menuEdtDet( aGet[ _CREF ], oDlg, if( nMode == APPD_MODE, "", Str( ( dbfTmp )->( OrdKeyNo() ) ) ) ) );
       CENTER
 
-   EndDetMenu()
+   if !Empty( oDetMenu )
+      oDetMenu:End()
+   end if
 
 RETURN ( oDlg:nResult == IDOK )
 
-//--------------------------------------------------------------------------//
-/*
-static Function cNomUbica( aTmp, aGet, cAlm )
-
-   aTmp[_CCODUBI1]      := cGetUbica( aTmp[_CALMLIN], cAlm, 1 )
-   aTmp[_CCODUBI2]      := cGetUbica( aTmp[_CALMLIN], cAlm, 2 )
-   aTmp[_CCODUBI3]      := cGetUbica( aTmp[_CALMLIN], cAlm, 3 )
-
-   if empty( aTmp[_CCODUBI1] )
-      aGet[_CCODUBI1]:Hide()
-      aGet[_CVALUBI1]:Hide()
-      aGet[_CNOMUBI1]:Hide()
-   else
-      aGet[_CCODUBI1]:Show()
-      aGet[_CVALUBI1]:Show()
-      aGet[_CNOMUBI1]:Show()
-   end if
-
-   if empty( aTmp[_CCODUBI2] )
-      aGet[_CCODUBI2]:Hide()
-      aGet[_CVALUBI2]:Hide()
-      aGet[_CNOMUBI2]:Hide()
-   else
-      aGet[_CCODUBI2]:Show()
-      aGet[_CVALUBI2]:Show()
-      aGet[_CNOMUBI2]:Show()
-   end if
-
-   if empty( aTmp[_CCODUBI3] )
-      aGet[_CCODUBI3]:Hide()
-      aGet[_CVALUBI3]:Hide()
-      aGet[_CNOMUBI3]:Hide()
-   else
-      aGet[_CCODUBI3]:Show()
-      aGet[_CVALUBI3]:Show()
-      aGet[_CNOMUBI3]:Show()
-   end if
-
-   aGet[_CCODUBI1]:Refresh()
-   aGet[_CVALUBI1]:Refresh()
-   aGet[_CNOMUBI1]:Refresh()
-   aGet[_CCODUBI2]:Refresh()
-   aGet[_CVALUBI2]:Refresh()
-   aGet[_CNOMUBI3]:Refresh()
-   aGet[_CCODUBI3]:Refresh()
-   aGet[_CVALUBI3]:Refresh()
-   aGet[_CNOMUBI3]:Refresh()
-
-return .t.
-*/
 //--------------------------------------------------------------------------//
 
 STATIC FUNCTION SetDlgMode( aGet, aTmp, oFld, aTmpFac, nMode, oSayPr1, oSayPr2, oSayVp1, oSayVp2, oSayLote, oTotal, oBrwPrp )
@@ -4200,6 +4168,10 @@ STATIC FUNCTION SaveDeta( aTmp, aGet, oBrw, oDlg2, nMode, oTotal, oFld, aTmpFac,
 
       oDlg2:end( IDOK )
 
+   end if
+
+   if nMode == APPD_MODE
+      oLinDetCamposExtra:SaveTemporalAppend( ( dbfTmp )->( OrdKeyNo() ) )
    end if
 
    if !empty( aGet[ _CUNIDAD ] )
@@ -6897,9 +6869,12 @@ STATIC FUNCTION BeginTrans( aTmp, nMode )
       A¤adimos desde el fichero de lineas
       */
 
+      oLinDetCamposExtra:initArrayValue()
+
       if ( D():FacturasProveedoresLineas( nView ) )->( dbSeek( nFactura ) )
          while ( ( D():FacturasProveedoresLineas( nView ) )->CSERFAC + Str( ( D():FacturasProveedoresLineas( nView ) )->NNUMFAC ) + ( D():FacturasProveedoresLineas( nView ) )->CSUFFAC == nFactura .AND. !( D():FacturasProveedoresLineas( nView ) )->( eof() ) )
             dbPass( D():FacturasProveedoresLineas( nView ), dbfTmp, .t. )
+            oLinDetCamposExtra:SetTemporalLines( ( dbfTmp )->cSerFac + str( ( dbfTmp )->nNumFac ) + ( dbfTmp )->cSufFac + str( ( dbfTmp )->nNumLin ), ( dbfTmp )->( OrdKeyNo() ), nMode )
             ( D():FacturasProveedoresLineas( nView ) )->( dbSkip() )
          end while
       end if
@@ -7231,6 +7206,8 @@ STATIC FUNCTION EndTrans( aTmp, aGet, oBrw, oBrwLin, nMode, nDec, oDlg )
       end if
 
       dbGather( aTbl, D():FacturasProveedoresLineas( nView ), .t. )
+
+      oLinDetCamposExtra:saveExtraField( cSerFac + Str( nNumFac ) + cSufFac + Str( ( dbfTmp )->nNumLin ), ( dbfTmp )->( OrdKeyNo() ) )
 
       setFacturadoAlbaranProveedorLinea( cSerFac, nNumFac, cSufFac, nView )
 
@@ -13164,5 +13141,39 @@ Function ExpAlmacenOrigen( cCodAlm, dbfTmpLin, oBrw )
    oBrw:Refresh()
 
 Return nil
+
+//---------------------------------------------------------------------------//
+
+static Function menuEdtDet( oCodArt, oDlg, nIdLin )
+
+   MENU oDetMenu
+
+      MENUITEM    "&1. Rotor  " ;
+         RESOURCE "Rotor16"
+
+         MENU
+
+            MENUITEM    "&1. Campos extra [F9]";
+               MESSAGE  "Mostramos y rellenamos los campos extra" ;
+               RESOURCE "GC_FORM_PLUS2_16" ;
+               ACTION   ( oLinDetCamposExtra:Play( nIdLin ) )
+
+            MENUITEM    "&2. Modificar artículo";
+               MESSAGE  "Modificar la ficha del artículo" ;
+               RESOURCE "gc_object_cube_16";
+               ACTION   ( EdtArticulo( oCodArt:VarGet() ) );
+
+            MENUITEM    "&3. Informe de artículo";
+               MESSAGE  "Abrir el informe del artículo" ;
+               RESOURCE "Info16";
+               ACTION   ( if( oUser():lNotCostos(), msgStop( "No tiene permiso para ver los precios de costo" ), InfArticulo( oCodArt:VarGet() ) ) );
+
+         ENDMENU
+
+   ENDMENU
+
+   oDlg:SetMenu( oDetMenu )
+
+Return ( oDetMenu )
 
 //---------------------------------------------------------------------------//
