@@ -327,7 +327,7 @@ METHOD InitDialog() CLASS TFastValoracionAlmacen
                               TDotNetButton():New( 60, oGrupo, "gc_earth_32",             "HTML",        5, {|| ::GenReport( IS_HTML ) }, , , .f., .f., .f. )
 
       oGrupo               := TDotNetGroup():New( oCarpeta, 126, "Útiles", .f. )
-                              TDotNetButton():New( 60, oGrupo, "Drawing_utensils_32",  "Diseñar",     1, {|| ::DesignReport() }, , , .f., .f., .f. )
+                              TDotNetButton():New( 60, oGrupo, "gc_set_square_pencil_32",  "Diseñar",     1, {|| ::DesignReport() }, , , .f., .f., .f. )
                               TDotNetButton():New( 60, oGrupo, "gc_funnel_32",            "Filtrar",     2, {|| ::DlgFilter() }, , , .f., .f., .f. )
 
       oGrupo               := TDotNetGroup():New( oCarpeta, 66, "Salida", .f. )

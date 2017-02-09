@@ -84,9 +84,6 @@ COL_14 BITMAP "..\\bmp\\res244.bmp"
 
 COL_15 BITMAP "..\\bmp\\res245.bmp"
 
-
-
-
 BAN_ALB BITMAP "..\\bmp\\res53.bmp"
 
 BAN_ALEM BITMAP "..\\bmp\\res54.bmp"
@@ -268,17 +265,4 @@ BAN_VENE BITMAP "..\\bmp\\res141.bmp"
 BAN_YUG BITMAP "..\\bmp\\res142.bmp"
 
 
-
 LED_RED_16 BITMAP "..\\bmp\\Led_Red_16.bmp"
-
-
-
-
-TEXT_CODE_16 BITMAP "..\\bmp\\text_code_16.bmp"
-
-gc_trafficlight_on_16 BITMAP "..\\bmp\\gc_trafficlight_on_16.bmp"
-
-DRAWING_UTENSILS_32 BITMAP "..\\bmp\\Drawing_utensils_32.bmp"
-
-DOCUMENT_OUT_16 BITMAP "..\\bmp\\Document_out_16.bmp"
-
