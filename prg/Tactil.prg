@@ -271,7 +271,7 @@ FUNCTION CuentasClientes( oWnd )
    REDEFINE BUTTONBMP oBtnPagos ;
       ID       230 ;
       OF       oDlg ;
-      BITMAP   "User1_Money2_32" ;
+      BITMAP   "gc_money2_32" ;
       ACTION   ( PagosTikets( oCodCli ) )
 
    REDEFINE GET oEntCli VAR nEntCli;

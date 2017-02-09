@@ -11862,7 +11862,7 @@ Static Function StartPedidosWeb( oDlgPedidosWeb )
 
    oGrupo                     := TDotNetGroup():New( oCarpeta, 126, "Acciones", .f. )
 
-   oBoton                     := TDotNetButton():New( 60, oGrupo, "Procesar32",        "Procesar",       1, {|| oDlgPedidosWeb:End( IDOK ) }, , , .f., .f., .f. )
+   oBoton                     := TDotNetButton():New( 60, oGrupo, "gc_gearwheel_run_32",        "Procesar",       1, {|| oDlgPedidosWeb:End( IDOK ) }, , , .f., .f., .f. )
    oBoton                     := TDotNetButton():New( 60, oGrupo, "gc_garbage_full_32",  "Eliminar",       2, {|| WinDelRec( oBrwPedidosWeb, D():PedidosClientes( nView ), {|| QuiPedCli() } ), ChangePedidosWeb() } , , , .f., .f., .f. )
 
    oGrupo                     := TDotNetGroup():New( oCarpeta, 66, "Salir", .f. )

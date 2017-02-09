@@ -6402,28 +6402,28 @@ STYLE WS_CHILD|DS_3DLOOK|WS_VISIBLE
 FONT 8, "MS Sans Serif"
 {
   CONTROL "", 110, "Edit", ES_MULTILINE|WS_BORDER|WS_TABSTOP, 93, 40, 40, 12
-  CONTROL "", 120, "Edit", ES_MULTILINE|WS_BORDER|WS_TABSTOP, 93, 52, 237, 12
+  CONTROL "", 120, "Edit", ES_MULTILINE|WS_BORDER|WS_TABSTOP, 93, 53, 237, 12
   CONTROL "", 150, "Edit", WS_BORDER|WS_TABSTOP, 253, 426, 41, 12
   CONTROL "", 151, "Edit", WS_BORDER|WS_TABSTOP, 296, 426, 167, 12
-  CONTROL "", 450, "Edit", WS_BORDER|WS_TABSTOP, 93, 64, 41, 12
-  CONTROL "", 451, "Edit", WS_BORDER|WS_TABSTOP, 136, 64, 194, 12
-  CONTROL "Generar albaranes", 420, "Button", BS_AUTORADIOBUTTON|WS_GROUP, 51, 91, 73, 10
-  CONTROL "Generar facturas", 430, "Button", BS_AUTORADIOBUTTON|WS_GROUP, 51, 103, 66, 10
-  CONTROL "", 440, "Edit", WS_VSCROLL|WS_BORDER|WS_TABSTOP, 93, 77, 29, 12
-  CONTROL "Usar descuentos y configuración del cliente", 170, "Button", BS_AUTOCHECKBOX|BS_TOP|BS_MULTILINE, 51, 115, 151, 10
+  CONTROL "", 450, "Edit", WS_BORDER|WS_TABSTOP, 93, 66, 41, 12
+  CONTROL "", 451, "Edit", WS_BORDER|WS_TABSTOP, 136, 66, 194, 12
+  CONTROL "Generar albaranes", 420, "Button", BS_AUTORADIOBUTTON|WS_GROUP, 51, 94, 73, 10
+  CONTROL "Generar facturas", 430, "Button", BS_AUTORADIOBUTTON|WS_GROUP, 51, 106, 66, 10
+  CONTROL "", 440, "Edit", WS_VSCROLL|WS_BORDER|WS_TABSTOP, 93, 79, 29, 12
+  CONTROL "Usar descuentos y configuración del cliente", 170, "Button", BS_AUTOCHECKBOX|BS_TOP|BS_MULTILINE, 52, 120, 151, 10
   CONTROL "", 130, "Edit", WS_VSCROLL|WS_BORDER|WS_TABSTOP, 422, 43, 60, 12
   CONTROL "", 140, "Edit", WS_VSCROLL|WS_BORDER|WS_TABSTOP, 422, 55, 60, 12
   CONTROL "", 160, "Edit", ES_RIGHT|WS_VSCROLL|WS_BORDER|WS_TABSTOP, 389, 68, 31, 12
   CONTROL "", 161, "ComboBox", WS_BORDER|CBS_DROPDOWN|WS_VSCROLL|WS_TABSTOP, 422, 68, 61, 40
   CONTROL "", 410, "Edit", WS_VSCROLL|WS_BORDER|WS_TABSTOP, 422, 81, 60, 12
-  CONTROL "Aña&dir [F2]", 510, "Button", WS_TABSTOP, 44, 132, 50, 14
-  CONTROL "&Modificar [F3]", 520, "Button", WS_TABSTOP, 99, 132, 50, 14
-  CONTROL "&Eliminar [F4]", 530, "Button", WS_TABSTOP, 153, 132, 50, 14
-  CONTROL "&Zoom", 540, "Button", WS_TABSTOP, 208, 132, 50, 14
-  CONTROL "S&ubir", 550, "Button", WS_TABSTOP, 263, 132, 50, 14
-  CONTROL "&Bajar", 560, "Button", WS_TABSTOP, 318, 132, 50, 14
-  CONTROL "Ocultar Esc&ll.", 570, "Button", WS_TABSTOP, 373, 132, 50, 14
-  CONTROL "", 200, "TXBrowse", WS_TABSTOP|0x00300000, 44, 148, 617, 151
+  CONTROL "Aña&dir [F2]", 510, "Button", WS_TABSTOP, 44, 136, 50, 14
+  CONTROL "&Modificar [F3]", 520, "Button", WS_TABSTOP, 99, 136, 50, 14
+  CONTROL "&Eliminar [F4]", 530, "Button", WS_TABSTOP, 153, 136, 50, 14
+  CONTROL "&Zoom", 540, "Button", WS_TABSTOP, 208, 136, 50, 14
+  CONTROL "S&ubir", 550, "Button", WS_TABSTOP, 263, 136, 50, 14
+  CONTROL "&Bajar", 560, "Button", WS_TABSTOP, 318, 136, 50, 14
+  CONTROL "Ocultar Esc&ll.", 570, "Button", WS_TABSTOP, 373, 136, 50, 14
+  CONTROL "", 200, "TXBrowse", WS_TABSTOP|0x00300000, 44, 152, 617, 143
   CONTROL "", 210, "Edit", WS_BORDER|WS_TABSTOP, 50, 313, 80, 12
   CONTROL "", 220, "Edit", ES_RIGHT|WS_VSCROLL|WS_BORDER|WS_TABSTOP, 131, 313, 55, 12
   CONTROL "", 230, "Edit", WS_BORDER|WS_TABSTOP, 50, 326, 80, 12
@@ -6442,23 +6442,23 @@ FONT 8, "MS Sans Serif"
   CONTROL "", 380, "Static", WS_GROUP, 468, 354, 34, 16
   CONTROL "0", 390, "Static", SS_RIGHT|WS_GROUP, 557, 354, 100, 16
   CONTROL "Código", -1, "Static", WS_GROUP, 51, 43, 27, 8
-  CONTROL "Descripción", -1, "Button", BS_GROUPBOX, 44, 30, 290, 99
+  CONTROL "Descripción", -1, "Button", BS_GROUPBOX, 44, 30, 290, 102
   CONTROL "Descuentos", -1, "Button", BS_GROUPBOX, 44, 301, 149, 68
   CONTROL "Neto", -1, "Static", WS_GROUP, 468, 332, 34, 8
   CONTROL "Impuestos", -1, "Static", WS_GROUP, 468, 343, 34, 8
-  CONTROL "Nombre", -1, "Static", WS_GROUP, 51, 55, 27, 8
-  CONTROL "Fechas de vigencia", -1, "Button", BS_GROUPBOX, 337, 30, 151, 100
+  CONTROL "Nombre", -1, "Static", WS_GROUP, 51, 56, 27, 8
+  CONTROL "Fechas de vigencia", -1, "Button", BS_GROUPBOX, 337, 30, 151, 102
   CONTROL "Inicio", -1, "Static", WS_GROUP, 344, 46, 22, 8
   CONTROL "Fin", -1, "Static", WS_GROUP, 344, 58, 15, 8
   CONTROL "Bruto", -1, "Static", WS_GROUP, 468, 321, 34, 8
   CONTROL "Proxima factura", -1, "Static", WS_GROUP, 345, 84, 54, 8
-  CONTROL "Serie", -1, "Static", WS_GROUP, 51, 80, 27, 8
-  CONTROL "Forma pago", -1, "Static", WS_GROUP, 51, 67, 40, 8
+  CONTROL "Serie", -1, "Static", WS_GROUP, 51, 82, 27, 8
+  CONTROL "Forma pago", -1, "Static", WS_GROUP, 51, 69, 40, 8
   CONTROL "", 990, "Static", SS_BITMAP|SS_CENTERIMAGE, 4, 3, 34, 30
   CONTROL "Plantilla venta automática", -1, "Static", WS_GROUP, 44, 3, 120, 8
   CONTROL "Grupo", -1, "Static", WS_GROUP, 211, 429, 25, 8
   CONTROL "Periodicidad", -1, "Static", WS_GROUP, 344, 71, 44, 8
-  CONTROL "Grupos", -1, "Button", BS_GROUPBOX, 491, 30, 168, 100
+  CONTROL "Grupos", -1, "Button", BS_GROUPBOX, 491, 30, 168, 102
   CONTROL "", 500, "TXBrowse", WS_GROUP|0x00200000, 498, 43, 158, 82
 }
 

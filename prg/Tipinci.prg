@@ -361,30 +361,9 @@ FUNCTION BrwIncidencia( dbfInci, oGet, oGet2 )
 
    ( dbfInci )->( dbGoTop() )
 
-#ifndef __PDA__
+
    DEFINE DIALOG oDlg RESOURCE "HELPENTRY"      TITLE "Seleccionar tipos de incidencia"
-#else
-   DEFINE DIALOG oDlg RESOURCE "HELPENTRY_PDA"  TITLE "Seleccionar tipos de incidencia"
 
-   DEFINE FONT oFont NAME "Verdana" SIZE 0, -14
-
-      REDEFINE SAY oSayTit ;
-         VAR      "Buscando tipos de incidencia" ;
-         ID       110 ;
-         COLOR    "N/W*" ;
-         FONT     oFont ;
-         OF       oDlg
-
-      REDEFINE BTNBMP oBtn ;
-         ID       100 ;
-         OF       oDlg ;
-         FILE     ( cPatBmp() + "about_16.bmp" ) ;
-         NOBORDER ;
-         ACTION      ( nil )
-
-      oBtn:SetColor( 0, nRGB( 255, 255, 255 )  )
-
-#endif
 
       REDEFINE GET oGet1 VAR cGet1;
          ID       104 ;
@@ -399,8 +378,6 @@ FUNCTION BrwIncidencia( dbfInci, oGet, oGet2 )
          ITEMS    aCbxOrd ;
          ON CHANGE( ( dbfInci )->( OrdSetFocus( oCbxOrd:nAt ) ), oBrw:refresh(), oGet1:SetFocus(), oCbxOrd:Refresh() ) ;
          OF       oDlg
-
-#ifndef __PDA__
 
       oBrw                 := IXBrowse():New( oDlg )
 
@@ -474,29 +451,6 @@ FUNCTION BrwIncidencia( dbfInci, oGet, oGet2 )
    oDlg:AddFastKey( VK_RETURN,   {|| oDlg:end( IDOK ) } )
 
    ACTIVATE DIALOG oDlg CENTER
-
-#else
-
-   REDEFINE LISTBOX oBrw ;
-      FIELDS ;
-               ( dbfInci )->cCodInci + CRLF + ( dbfInci )->cNomInci ;
-      HEAD ;
-               "Código" + CRLF + "Nombre" ;
-      FIELDSIZES ;
-               180 ;
-      ID       105 ;
-      ALIAS    ( dbfInci ) ;
-      OF       oDlg
-
-      oBrw:aJustify     := { .f., .f. }
-      oBrw:aActions     := {| nCol | lPressCol( nCol, oBrw, oCbxOrd, aCbxOrd, dbfInci ) }
-      oBrw:bLDblClick   := {|| oDlg:end( IDOK ) }
-      oBrw:bKeyDown     := {|nKey, nFalg| if( nKey == VK_RETURN, oDlg:end( IDOK ), ) }
-
-   ACTIVATE DIALOG oDlg ;
-      ON INIT ( pdaMenuEdtRec( oDlg ) )
-
-#endif
 
    if oDlg:nResult == IDOK
 

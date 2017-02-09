@@ -1252,13 +1252,13 @@ FUNCTION FactCli( oMenuItem, oWnd, hHash )
          CLOSED ;
          LEVEL    ACC_EDIT
 
-      DEFINE BTNSHELL RESOURCE "Document_plain_earth_" OF oWndBrw ;
+      DEFINE BTNSHELL RESOURCE "gc_document_text_earth_" OF oWndBrw ;
          NOBORDER ;
          ACTION   ( aGetSelRec( oWndBrw, {|lChk1, lChk2, oTree| CreateFileFacturae( oTree, lChk1, lChk2 ) }, "Exportar facturas electrónicas a Facturae v 3.2", .f., "Firmar digitalmente (necesita runtime de Java)", .t., "Enviar por correo electrónico" ) ) ;
          TOOLTIP  "Exportar a Facturae 3.2" ;
          LEVEL    ACC_EDIT
 
-      DEFINE BTNSHELL RESOURCE "Text_Code_" OF oWndBrw ;
+      DEFINE BTNSHELL RESOURCE "gc_edi_" OF oWndBrw ;
          NOBORDER ;
          ACTION   ( aGetSelRec( oWndBrw, {|lNoExportadas, lChk2, oTree| runEDIScript( lNoExportadas, oTree, nView ) }, "Exportar facturas a EDI", .f., "Solo las no exportadas", .t. ) ) ;
          TOOLTIP  "Exportar a EDI" ;

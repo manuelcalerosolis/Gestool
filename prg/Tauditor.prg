@@ -91,7 +91,7 @@ CLASS TAuditor FROM TMant
 
    DATA lOpenFiles         INIT .f.
 
-   DATA cMru               INIT "Policeman_usa_16"
+   DATA cMru               INIT "gc_security_agent_16"
    DATA aBmp               INIT {}
 
    DATA oEmpresa
