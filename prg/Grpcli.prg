@@ -684,13 +684,13 @@ RETURN ( alltrim( nombreGrupo ) )
 
 function cGruCli( cCodCli, oDbfCli )
 
-   local cCodGrC  := ""
+   local cCodGrp  := ""
 
    if oDbfCli:Seek( cCodCli )
-      cCodGrC     := oDbfCli:cCodGrp
+      cCodGrp     := oDbfCli:cCodGrp
    end if
 
-return( cCodGrC )
+return( cCodGrp )
 
 //---------------------------------------------------------------------------//
 

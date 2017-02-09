@@ -487,6 +487,8 @@ CLASS TComercio
 
    METHOD getStartId( idProduct )                     INLINE ( padr( ::getCurrentWebName(), 100 ) + ( if( !empty( idProduct ), padr( idProduct, 18 ), "" ) ) )
 
+   METHOD getErrorJson()                              INLINE ( ::TComercioConfig:getErrorJson() )
+
 END CLASS
 
 //---------------------------------------------------------------------------//

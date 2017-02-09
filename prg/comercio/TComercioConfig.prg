@@ -18,6 +18,8 @@ CLASS TComercioConfig
    DATA hCurrentWeb
 
    DATA aAviableProducts               INIT {}
+
+   DATA cErrorJson                     INIT ""
    
    METHOD New()                        CONSTRUCTOR
    METHOD getInstance()
@@ -38,6 +40,8 @@ CLASS TComercioConfig
    
    METHOD getFromCurrentWeb( key, default )
    METHOD setToCurrentWeb( key, value )
+
+   METHOD getErrorJson()               INLINE ( ::cErrorJson )
 
    METHOD isActive()                   INLINE ( ::getFromCurrentWeb( "Active", .t. ) )
    METHOD isSilenceMode()              INLINE ( ::getFromCurrentWeb( "SilenceMode", .f. ) )
@@ -143,15 +147,19 @@ METHOD LoadJSON() CLASS TComercioConfig
    local hConfig
    local cFileConfigEmpresa   := ::getFullFileName()
 
-   if file( cFileConfigEmpresa )
-      
-      cConfig                 := memoread( cFileConfigEmpresa )
-      hb_jsonDecode( cConfig, @hConfig )      
+   if !file( cFileConfigEmpresa )
+      ::cErrorJson            := "Fichero " + cFileConfigEmpresa + " no encontrado"
+      Return ( Self )
+   end if 
 
-      if !empty( hConfig )
-         ::hConfig            := hConfig
-      end if 
+   cConfig                 := memoread( cFileConfigEmpresa )
+   hb_jsonDecode( cConfig, @hConfig )      
 
+   if empty( hConfig )
+      ::cErrorJson         := "Fichero " + cFileConfigEmpresa + " formato no valido"
+   else
+      ::hConfig            := hConfig
+      ::cErrorJson         := "Fichero " + cFileConfigEmpresa + " cargado satisfactoriamente"
    end if 
 
 Return ( Self )

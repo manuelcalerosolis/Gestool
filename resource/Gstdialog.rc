@@ -5437,24 +5437,25 @@ FONT 8, "MS Sans Serif"
   CONTROL "", 100, "ComboBox", WS_BORDER|CBS_DROPDOWN|CBS_SORT|WS_VSCROLL|WS_TABSTOP, 128, 124, 206, 107
   CONTROL "", 101, "TBtnBmp", 0x00000000, 128, 138, 12, 12
   CONTROL "", 102, "TBtnBmp", 0x00000000, 128, 151, 12, 12
-  CONTROL "", 300, "Edit", ES_AUTOHSCROLL|WS_BORDER|WS_TABSTOP, 127, 182, 297, 12
-  CONTROL "", 310, "Edit", ES_AUTOHSCROLL|WS_BORDER|WS_TABSTOP, 127, 195, 96, 12
-  CONTROL "Webs disponibles para comercion electrónico", -1, "Button", BS_GROUPBOX, 44, 113, 385, 55
+  CONTROL "", 300, "Edit", ES_AUTOHSCROLL|WS_BORDER|WS_TABSTOP, 127, 195, 297, 12
+  CONTROL "", 310, "Edit", ES_AUTOHSCROLL|WS_BORDER|WS_TABSTOP, 127, 208, 96, 12
+  CONTROL "Webs disponibles para comercion electrónico", -1, "Button", BS_GROUPBOX, 44, 113, 385, 67
   CONTROL "Probar conexión BD", -1, "Static", WS_GROUP, 49, 142, 73, 8
   CONTROL "Servidor de correo electrónico", -1, "Button", BS_GROUPBOX, 44, 29, 385, 81
   CONTROL "Servidor", -1, "Static", WS_GROUP, 49, 43, 31, 8
   CONTROL "Cuenta", -1, "Static", WS_GROUP, 49, 57, 28, 8
   CONTROL "Puerto", -1, "Static", WS_GROUP, 337, 43, 26, 8
   CONTROL "Contraseña", -1, "Static", WS_GROUP, 49, 70, 41, 8
-  CONTROL "Intercambio electrónico de datos EDI", -1, "Button", BS_GROUPBOX, 45, 170, 384, 40
-  CONTROL "Directorio exportación", -1, "Static", WS_GROUP, 48, 185, 74, 8
-  CONTROL "Código EDI [EAN]", -1, "Static", WS_GROUP, 48, 198, 62, 8
+  CONTROL "Intercambio electrónico de datos EDI", -1, "Button", BS_GROUPBOX, 45, 183, 384, 40
+  CONTROL "Directorio exportación", -1, "Static", WS_GROUP, 48, 198, 74, 8
+  CONTROL "Código EDI [EAN]", -1, "Static", WS_GROUP, 48, 211, 62, 8
   CONTROL "", 500, "Static", SS_BITMAP|SS_CENTERIMAGE, 4, 3, 34, 30, WS_EX_TRANSPARENT
   CONTROL "Configuraciones para el envio de email y para el enlace de la aplicación con una página web", -1, "Static", SS_LEFTNOWORDWRAP, 44, 3, 384, 8
   CONTROL "Enviar con copia a", -1, "Static", WS_GROUP, 49, 83, 65, 8
   CONTROL "Enviar copia oculta", -1, "Static", WS_GROUP, 49, 97, 66, 8
   CONTROL "Probar conexión FTP", -1, "Static", WS_GROUP, 49, 155, 72, 8
   CONTROL "Web", -1, "Static", WS_GROUP, 49, 127, 66, 8
+  CONTROL "", 105, "Static", WS_GROUP, 49, 168, 375, 8
 }
 
 EMPRESA_1 DIALOG DISCARDABLE 31, 12, 397, 287

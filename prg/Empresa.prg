@@ -1196,6 +1196,9 @@ STATIC FUNCTION EditConfig( aTmp, aGet, dbfEmp, oBrw, nSelFolder, bValid, nMode 
    local oSerie
    local cSerie                  := "A"
 
+   local oPrestashopFile
+   local cPrestashopFile         := ""
+
    /*
    Obtenemos el nivel de acceso------------------------------------------------
    */
@@ -2519,6 +2522,11 @@ STATIC FUNCTION EditConfig( aTmp, aGet, dbfEmp, oBrw, nSelFolder, bValid, nMode 
             NOBORDER ;
             TOOLTIP  "" ;
             ACTION   ( TestConexionFTP() )
+
+      REDEFINE SAY   ;
+            PROMPT   TComercio:getErrorJson() ;
+            ID       105 ;
+            OF       fldComunicaciones ;
 
       REDEFINE GET   aGet[ _CRUTEDI ] ;
             VAR      aTmp[ _CRUTEDI ] ;

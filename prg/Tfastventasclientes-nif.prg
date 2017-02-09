@@ -3,7 +3,7 @@
 #include "Report.ch"
 #include "MesDbf.ch"
 // #include "FastRepH.ch"
- 
+
 //---------------------------------------------------------------------------//
 
 CLASS TFastVentasClientes FROM TFastReportInfGen
@@ -435,7 +435,7 @@ METHOD Create( uParam ) CLASS TFastVentasClientes
 
    ::AddField( "cCodCli",  "C", 12, 0, {|| "@!" }, "Código cliente"                          )
    ::AddField( "cNomCli",  "C",100, 0, {|| ""   }, "Nombre cliente"                          )
-   ::AddField( "cDniCli",  "C", 30, 0, {|| "@!" }, "NIF cliente"                             )
+//   ::AddField( "cNifCli",  "C", 30, 0, {|| "@!" }, "NIF cliente"                             )
 
    ::AddField( "cCodTip",  "C", 12, 0, {|| "@!" }, "Código del tipo de cliente"              )
    ::AddField( "cCodGrp",  "C", 12, 0, {|| "@!" }, "Código grupo de cliente"                 )
@@ -445,6 +445,8 @@ METHOD Create( uParam ) CLASS TFastVentasClientes
    ::AddField( "cCodUsr",  "C",  3, 0, {|| "@!" }, "Código usuario"                          )
    ::AddField( "cCodObr",  "C", 10, 0, {|| "@!" }, "Código dirección"                        )
    ::AddField( "cCodAlm",  "C", 16, 0, {|| "@!" }, "Código almacén"                          )
+
+   ::AddField( "cCodTip",  "C", 12, 0, {|| "@!" }, "Código del tipo de cliente"              )
 
    ::AddField( "cTipDoc",  "C", 30, 0, {|| "" },   "Tipo de documento"                       )
 
@@ -492,7 +494,7 @@ METHOD Create( uParam ) CLASS TFastVentasClientes
    ::AddFieldCamposExtra()
 
    ::AddTmpIndex( "cCodCli", "cCodCli" )
-   ::AddTmpIndex( "cDniCli", "cDniCli" )
+//   ::AddTmpIndex( "cNifCli", "cNifCli" )
 
 RETURN ( self )
 
@@ -571,13 +573,18 @@ RETURN ( Self )
 
 METHOD DataReport() CLASS TFastVentasClientes
 
+   msgalert( "DataReport")
    
    /*
    Zona de detalle-------------------------------------------------------------
    */
 
    ::oFastReport:SetWorkArea(       "Informe", ::oDbf:nArea )
+
+   msgalert( "cObjectsToReport( ::oDbf )" )
    ::oFastReport:SetFieldAliases(   "Informe", cObjectsToReport( ::oDbf ) )
+
+   msgalert( "Zona de datos---------------------------------------------------------------" )
 
    /*
    Zona de datos---------------------------------------------------------------
@@ -629,6 +636,8 @@ METHOD DataReport() CLASS TFastVentasClientes
    Relaciones------------------------------------------------------------------
    */
 
+   msgalert( "Relaciones------------------------------------------------------------------" )
+
    ::oFastReport:SetMasterDetail(   "Informe", "Empresa",               {|| cCodEmp() } )
    ::oFastReport:SetMasterDetail(   "Informe", "Bancos",                {|| ::oDbf:cCodCli } )
    ::oFastReport:SetMasterDetail(   "Informe", "Clientes",              {|| ::oDbf:cCodCli } )
@@ -672,6 +681,8 @@ METHOD DataReport() CLASS TFastVentasClientes
 
    ::oFastReport:SetResyncPair(     "Incidencias", "Tipos de incidencias" ) 
 
+   msgalert( ::cReportType, "DataReport case" )
+
    do case
       case ::cReportType == "SAT de clientes"
 
@@ -703,10 +714,13 @@ METHOD DataReport() CLASS TFastVentasClientes
 
       case ::cReportType == "Facturación de clientes"
 
+         msgalert( 1 )
          ::FastReportFacturaCliente()
          
+         msgalert( 2 )
          ::FastReportFacturaRectificativa()
 
+         msgalert( 3 )
          ::FastReportTicket( .t. )
 
       case ::cReportType == "Ventas"
@@ -883,11 +897,11 @@ METHOD lGenerate() CLASS TFastVentasClientes
          ::AddTicket( .t. )
 
       case ::cReportType == "Facturación de clientes"   
-
+msgalert( "::AddFacturaCliente()" )
          ::AddFacturaCliente()
-
+msgalert( "::AddFacturaRectificativa()" )
          ::AddFacturaRectificativa()
-
+msgalert( "::AddTicket()" )
          ::AddTicket()
 
       case ::cReportType == "Ventas"
@@ -1016,6 +1030,7 @@ METHOD AddSATCliente( cCodigoCliente ) CLASS TFastVentasClientes
 
             ::oDbf:cCodCli    := ::oSatCliT:cCodCli
             ::oDbf:cNomCli    := ::oSatCliT:cNomCli
+           // ::oDbf:cNifCli    := ::oSatCliT:cDniCli
             ::oDbf:cCodAge    := ::oSatCliT:cCodAge
             ::oDbf:cCodPgo    := ::oSatCliT:cCodPgo
             ::oDbf:cCodRut    := ::oSatCliT:cCodRut
@@ -1056,8 +1071,7 @@ METHOD AddSATCliente( cCodigoCliente ) CLASS TFastVentasClientes
             ::oDbf:nTotRet    := sTot:nTotalRetencion
             ::oDbf:nTotCob    := sTot:nTotalCobrado
 
-            ::oDbf:nRieCli    := oRetFld( ::oSatCliT:cCodCli, ::oDbfCli, "Riesgo", "Cod" )
-            ::oDbf:cDniCli    := oRetFld( ::oSatCliT:cCodCli, ::oDbfCli, "Nif", "Cod" )
+            ::oDbf:nRieCli    := oRetFld( ::oSatCliT:cCodCli, ::oDbfCli, "Riesgo", "COD" )
 
             if ::oSatCliT:lEstado
                ::oDbf:cEstado := "Pendiente"
@@ -1151,6 +1165,8 @@ METHOD AddPresupuestoCliente( cCodigoCliente ) CLASS TFastVentasClientes
 
             ::oDbf:cCodCli    := ::oPreCliT:cCodCli
             ::oDbf:cNomCli    := ::oPreCliT:cNomCli
+           // ::oDbf:cNifCli    := ::oPreCliT:cDniCli
+
             ::oDbf:cCodAge    := ::oPreCliT:cCodAge
             ::oDbf:cCodPgo    := ::oPreCliT:cCodPgo
             ::oDbf:cCodRut    := ::oPreCliT:cCodRut
@@ -1191,8 +1207,7 @@ METHOD AddPresupuestoCliente( cCodigoCliente ) CLASS TFastVentasClientes
             ::oDbf:nTotRet    := sTot:nTotalRetencion
             ::oDbf:nTotCob    := sTot:nTotalCobrado
 
-            ::oDbf:nRieCli    := oRetFld( ::oPreCliT:cCodCli, ::oDbfCli, "Riesgo", "Cod" )
-            ::oDbf:cDniCli    := oRetFld( ::oPreCliT:cCodCli, ::oDbfCli, "Nif", "Cod" )
+            ::oDbf:nRieCli    := oRetFld( ::oPreCliT:cCodCli, ::oDbfCli, "Riesgo", "COD" )
 
             if ::oPreCliT:lEstado
                ::oDbf:cEstado    := "Pendiente"
@@ -1286,6 +1301,8 @@ METHOD AddPedidoCliente( cCodigoCliente ) CLASS TFastVentasClientes
 
             ::oDbf:cCodCli    := ::oPedCliT:cCodCli
             ::oDbf:cNomCli    := ::oPedCliT:cNomCli
+           // ::oDbf:cNifCli    := ::oPedCliT:cDniCli
+
             ::oDbf:cCodAge    := ::oPedCliT:cCodAge
             ::oDbf:cCodPgo    := ::oPedCliT:cCodPgo
             ::oDbf:cCodRut    := ::oPedCliT:cCodRut
@@ -1324,8 +1341,7 @@ METHOD AddPedidoCliente( cCodigoCliente ) CLASS TFastVentasClientes
             ::oDbf:nTotRet    := sTot:nTotalRetencion
             ::oDbf:nTotCob    := sTot:nTotalCobrado
 
-            ::oDbf:nRieCli    := oRetFld( ::oPedCliT:cCodCli, ::oDbfCli, "Riesgo", "Cod" )
-            ::oDbf:cDniCli    := oRetFld( ::oPedCliT:cCodCli, ::oDbfCli, "Nif", "Cod" )
+            ::oDbf:nRieCli    := oRetFld( ::oPedCliT:cCodCli, ::oDbfCli, "Riesgo", "COD" )
 
             do case
                case ::oPedCliT:nEstado <= 1
@@ -1431,6 +1447,8 @@ METHOD AddAlbaranCliente( lNoFacturados ) CLASS TFastVentasClientes
 
             ::oDbf:cCodCli    := ::oAlbCliT:cCodCli
             ::oDbf:cNomCli    := ::oAlbCliT:cNomCli
+           // ::oDbf:cNifCli    := ::oAlbCliT:cDniCli
+
             ::oDbf:cCodAge    := ::oAlbCliT:cCodAge
             ::oDbf:cCodPgo    := ::oAlbCliT:cCodPago
             ::oDbf:cCodRut    := ::oAlbCliT:cCodRut
@@ -1469,8 +1487,7 @@ METHOD AddAlbaranCliente( lNoFacturados ) CLASS TFastVentasClientes
             ::oDbf:nTotRet    := sTot:nTotalRetencion
             ::oDbf:nTotCob    := sTot:nTotalCobrado
 
-            ::oDbf:nRieCli    := oRetFld( ::oAlbCliT:cCodCli, ::oDbfCli, "Riesgo", "Cod" )
-            ::oDbf:cDniCli    := oRetFld( ::oAlbCliT:cCodCli, ::oDbfCli, "Nif", "Cod" )
+            ::oDbf:nRieCli    := oRetFld( ::oAlbCliT:cCodCli, ::oDbfCli, "Riesgo", "COD" )
 
             do case
                case ::oAlbCliT:nFacturado <= 1
@@ -1524,8 +1541,8 @@ METHOD AddFacturaCliente( cCodigoCliente ) CLASS TFastVentasClientes
    local oError
    local oBlock
    
-   oBlock               := ErrorBlock( {| oError | ApoloBreak( oError ) } )
-   BEGIN SEQUENCE
+   //oBlock               := ErrorBlock( {| oError | ApoloBreak( oError ) } )
+   //BEGIN SEQUENCE
    
       ::InitFacturasClientes()
 
@@ -1573,6 +1590,8 @@ METHOD AddFacturaCliente( cCodigoCliente ) CLASS TFastVentasClientes
 
             ::oDbf:cCodCli    := ::oFacCliT:cCodCli
             ::oDbf:cNomCli    := ::oFacCliT:cNomCli
+           // ::oDbf:cNifCli    := ::oFacCliT:cDniCli
+
             ::oDbf:cCodAge    := ::oFacCliT:cCodAge
             ::oDbf:cCodPgo    := ::oFacCliT:cCodPago
             ::oDbf:cCodRut    := ::oFacCliT:cCodRut
@@ -1612,8 +1631,7 @@ METHOD AddFacturaCliente( cCodigoCliente ) CLASS TFastVentasClientes
             ::oDbf:nTotRet    := sTot:nTotalRetencion
             ::oDbf:nTotCob    := sTot:nTotalCobrado
 
-            ::oDbf:nRieCli    := oRetFld( ::oFacCliT:cCodCli, ::oDbfCli, "Riesgo", "Cod" )
-            ::oDbf:cDniCli    := oRetFld( ::oFacCliT:cCodCli, ::oDbfCli, "Nif", "Cod" )
+            ::oDbf:nRieCli    := oRetFld( ::oFacCliT:cCodCli, ::oDbfCli, "Riesgo", "COD" )
 
             ::oDbf:cEstado    := cChkPagFacCli( ::oDbf:cSerDoc + ::oDbf:cNumDoc + ::oDbf:cSufDoc, ::oFacCliT:cAlias, ::oFacCliP:cAlias )
 
@@ -1641,10 +1659,10 @@ METHOD AddFacturaCliente( cCodigoCliente ) CLASS TFastVentasClientes
 
       ::oFacCliT:IdxDelete( cCurUsr(), GetFileNoExt( ::oFacCliT:cFile ) )
    
-   RECOVER USING oError
-      msgStop( ErrorMessage( oError ), "Imposible añadir facturas de clientes" )
-   END SEQUENCE
-   ErrorBlock( oBlock )
+   // RECOVER USING oError
+   //    msgStop( ErrorMessage( oError ), "Imposible añadir facturas de clientes" )
+   // END SEQUENCE
+   // ErrorBlock( oBlock )
    
 RETURN ( Self )
 
@@ -1656,7 +1674,7 @@ METHOD AddFacturaRectificativa( cCodigoCliente ) CLASS TFastVentasClientes
    local oError
    local oBlock
    
-   oBlock                        := ErrorBlock( {| oError | ApoloBreak( oError ) } )
+   oBlock               := ErrorBlock( {| oError | ApoloBreak( oError ) } )
    BEGIN SEQUENCE
    
       ::InitFacturasRectificativasClientes()
@@ -1664,7 +1682,7 @@ METHOD AddFacturaRectificativa( cCodigoCliente ) CLASS TFastVentasClientes
       ::oFacRecT:OrdSetFocus( "dFecFac" )
       ::oFacRecL:OrdSetFocus( "nNumFac" )
 
-      // filtros para la cabecera------------------------------------------------
+   // filtros para la cabecera------------------------------------------------
    
       ::cExpresionHeader          := '( Field->dFecFac >= Ctod( "' + Dtoc( ::dIniInf ) + '" ) .and. Field->dFecFac <= Ctod( "' + Dtoc( ::dFinInf ) + '" ) )'
       ::cExpresionHeader          += ' .and. ( Field->cSerie >= "' + Rtrim( ::oGrupoSerie:Cargo:Desde ) + '" .and. Field->cSerie <= "'    + Rtrim( ::oGrupoSerie:Cargo:Hasta ) + '" )'
@@ -1682,7 +1700,7 @@ METHOD AddFacturaRectificativa( cCodigoCliente ) CLASS TFastVentasClientes
 
       ::setFilterAlmacenId()
 
-      // Procesando facturas recitificativas-------------------------------------
+   // Procesando facturas recitificativas-------------------------------------
 
       ::setMeterText( "Procesando facturas rectificativas" )
       
@@ -1700,6 +1718,8 @@ METHOD AddFacturaRectificativa( cCodigoCliente ) CLASS TFastVentasClientes
 
          ::oDbf:cCodCli    := ::oFacRecT:cCodCli            
          ::oDbf:cNomCli    := ::oFacRecT:cNomCli
+        // ::oDbf:cNifCli    := ::oFacRecT:cDniCli
+
          ::oDbf:cCodAge    := ::oFacRecT:cCodAge
          ::oDbf:cCodPgo    := ::oFacRecT:cCodPago
          ::oDbf:cCodRut    := ::oFacRecT:cCodRut
@@ -1739,10 +1759,11 @@ METHOD AddFacturaRectificativa( cCodigoCliente ) CLASS TFastVentasClientes
          ::oDbf:nTotRet    := sTot:nTotalRetencion
          ::oDbf:nTotCob    := sTot:nTotalCobrado
 
-         ::oDbf:nRieCli    := oRetFld( ::oFacRecT:cCodCli, ::oDbfCli, "Riesgo", "Cod" )
-         ::oDbf:cDniCli    := oRetFld( ::oFacRecT:cCodCli, ::oDbfCli, "Nif", "Cod" )
+         ::oDbf:nRieCli    := oRetFld( ::oFacRecT:cCodCli, ::oDbfCli, "Riesgo", "COD" )
 
-         // Añadimos un nuevo registro--------------------------------------------
+         /*
+         Añadimos un nuevo registro--------------------------------------------
+         */
 
          if ::lValidRegister()
             ::oDbf:Insert()
@@ -1818,6 +1839,8 @@ METHOD AddTicket() CLASS TFastVentasClientes
 
             ::oDbf:cCodCli    := ::oTikCliT:cCliTik
             ::oDbf:cNomCli    := ::oTikCliT:cNomTik
+           // ::oDbf:cNifCli    := ::oTikCliT:cDniCli
+
             ::oDbf:cCodAge    := ::oTikCliT:cCodAge
             ::oDbf:cCodPgo    := ::oTikCliT:cFpgTik
             ::oDbf:cCodRut    := ::oTikCliT:cCodRut
@@ -1851,8 +1874,7 @@ METHOD AddTicket() CLASS TFastVentasClientes
             ::oDbf:nTotRnt    := sTot:nTotalRentabilidad
             ::oDbf:nTotCob    := sTot:nTotalCobrado
 
-            ::oDbf:nRieCli    := oRetFld( ::oTikCliT:cCliTik, ::oDbfCli, "Riesgo", "Cod" )
-            ::oDbf:cDniCli    := oRetFld( ::oTikCliT:cCliTik, ::oDbfCli, "Nif", "Cod" )
+            ::oDbf:nRieCli    := oRetFld( ::oTikCliT:cCliTik, ::oDbfCli, "Riesgo", "COD" )
 
             /*
             Añadimos un nuevo registro--------------------------------------------
@@ -1936,6 +1958,8 @@ METHOD AddRecibosCliente( cFieldOrder ) CLASS TFastVentasClientes
 
          ::oDbf:cCodCli    := ::oFacCliP:cCodCli
          ::oDbf:cNomCli    := ::oFacCliP:cNomCli
+        // ::oDbf:cNifCli    := oRetFld( ::oFacCliP:cCodCli, ::oDbfCli, 'Nif' )
+
          ::oDbf:cCodAge    := ::oFacCliP:cCodAge
          ::oDbf:cCodPgo    := ::oFacCliP:cCodPgo
          ::oDbf:cCodUsr    := ::oFacCliP:cCodUsr
@@ -1969,8 +1993,7 @@ METHOD AddRecibosCliente( cFieldOrder ) CLASS TFastVentasClientes
 
          ::oDbf:cEstado    := cEstadoRecibo( ::oFacCliP:cAlias )
 
-         ::oDbf:nRieCli    := oRetFld( ::oFacCliP:cCodCli, ::oDbfCli, "Riesgo", "Cod" )
-         ::oDbf:cDniCli    := oRetFld( ::oFacCliP:cCodCli, ::oDbfCli, "Nif", "Cod" )
+         ::oDbf:nRieCli    := oRetFld( ::oFacCliP:cCodCli, ::oDbfCli, "Riesgo", "COD" )
 
          // Añadimos un nuevo registro--------------------------------------------
 
@@ -2058,6 +2081,8 @@ METHOD insertFacturaCliente()
 
                   ::oDbf:cCodCli    := ::oFacCliT:cCodCli
                   ::oDbf:cNomCli    := ::oFacCliT:cNomCli
+                  //// ::oDbf:cNifCli    := ::oFacCliT:cDniCli
+
                   ::oDbf:cCodAge    := ::oFacCliT:cCodAge
                   ::oDbf:cCodPgo    := ::oFacCliT:cCodPago
                   ::oDbf:cCodRut    := ::oFacCliT:cCodRut
@@ -2098,8 +2123,7 @@ METHOD insertFacturaCliente()
                   ::oDbf:nTotRet    := sTot:nTotalRetencion
                   ::oDbf:nTotCob    := sTot:nTotalCobrado
 
-                  ::oDbf:nRieCli    := oRetFld( ::oFacCliT:cCodCli, ::oDbfCli, "Riesgo", "Cod" )
-                  ::oDbf:cDniCli    := oRetFld( ::oFacCliT:cCodCli, ::oDbfCli, "Nif", "Cod" )
+                  ::oDbf:nRieCli    := oRetFld( ::oFacCliT:cCodCli, ::oDbfCli, "Riesgo", "COD" )
 
                   /*
                   Añadimos un nuevo registro--------------------------------------------
@@ -2197,6 +2221,8 @@ METHOD insertRectificativa()
 
                   ::oDbf:cCodCli    := ::oFacRecT:cCodCli            
                   ::oDbf:cNomCli    := ::oFacRecT:cNomCli
+                  //// ::oDbf:cNifCli    := ::oFacRecT:cDniCli
+
                   ::oDbf:cCodAge    := ::oFacRecT:cCodAge
                   ::oDbf:cCodPgo    := ::oFacRecT:cCodPago
                   ::oDbf:cCodRut    := ::oFacRecT:cCodRut
@@ -2236,8 +2262,7 @@ METHOD insertRectificativa()
                   ::oDbf:nTotRet    := sTot:nTotalRetencion
                   ::oDbf:nTotCob    := sTot:nTotalCobrado
 
-                  ::oDbf:nRieCli    := oRetFld( ::oFacRecT:cCodCli, ::oDbfCli, "Riesgo", "Cod" )
-                  ::oDbf:cDniCli    := oRetFld( ::oFacRecT:cCodCli, ::oDbfCli, "Nif", "Cod" )
+                  ::oDbf:nRieCli    := oRetFld( ::oFacRecT:cCodCli, ::oDbfCli, "Riesgo", "COD" )
 
                   /*
                   Añadimos un nuevo registro--------------------------------------------
@@ -2331,6 +2356,8 @@ METHOD insertTicketCliente()
 
                      ::oDbf:cCodCli    := ::oTikCliT:cCliTik
                      ::oDbf:cNomCli    := ::oTikCliT:cNomTik
+                     //// ::oDbf:cNifCli    := ::oTikCliT:cDniCli
+
                      ::oDbf:cCodAge    := ::oTikCliT:cCodAge
                      ::oDbf:cCodPgo    := ::oTikCliT:cFpgTik
                      ::oDbf:cCodRut    := ::oTikCliT:cCodRut
@@ -2366,8 +2393,7 @@ METHOD insertTicketCliente()
                      ::oDbf:nTotRnt    := sTot:nTotalRentabilidad
                      ::oDbf:nTotCob    := sTot:nTotalCobrado
 
-                     ::oDbf:nRieCli    := oRetFld( ::oTikCliT:cCliTik, ::oDbfCli, "Riesgo", "Cod" )
-                     ::oDbf:cDniCli    := oRetFld( ::oTikCliT:cCliTik, ::oDbfCli, "Nif", "Cod" )
+                     ::oDbf:nRieCli    := oRetFld( ::oTikCliT:cCliTik, ::oDbfCli, "Riesgo", "COD" )
 
                      /*
                      Añadimos un nuevo registro--------------------------------------------
@@ -2436,7 +2462,6 @@ METHOD AddClientes() CLASS TFastVentasClientes
       ::oDbf:cCodObr := ""
       ::oDbf:cCodPos := ::oDbfCli:CodPostal
       ::oDbf:nRieCli := ::oDbfCli:Riesgo
-      ::oDbf:cDniCli := ::oDbfCli:Nif
 
       if ::lValidRegister()
          ::oDbf:Insert()
