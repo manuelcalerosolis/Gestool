@@ -7431,9 +7431,7 @@ METHOD Process()
 
                      if dbLock( cAlbCliT )
 
-                        if lClient
-                           ( cAlbCliT )->lSndDoc      := .f.
-                        end if 
+                        ( cAlbCliT )->lSndDoc      := .f.
 
                         if uFieldempresa( "lRecEnt" )
                            ( cAlbCliT )->lEntregado   := .t.

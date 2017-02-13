@@ -13069,17 +13069,39 @@ Method Process()
             while !( tmpArticulo )->( eof() )
 
                if ( D():Articulos( nView ) )->( dbSeek( ( tmpArticulo )->Codigo ) )
+
                   if !::oSender:lServer
+
                      ::CleanRelation( ( tmpArticulo )->Codigo )
+
                      dbPass( tmpArticulo, D():Articulos( nView ) )
+
+                     if dbLock( D():Articulos( nView ) )
+                        ( D():Articulos( nView ) )->lSndDoc := .f.
+                        ( D():Articulos( nView ) )->( dbUnLock() )
+                     end if
+
                      ::oSender:SetText( "Reemplazado : " + AllTrim( ( D():Articulos( nView ) )->Codigo ) + "; " + AllTrim( ( D():Articulos( nView ) )->Nombre ) + "; " + AllTrim( Trans( ( D():Articulos( nView ) )->pVenta1, PicOut() ) ) + "; " + AllTrim( Trans( ( D():Articulos( nView ) )->pVtaIva1, PicOut() ) ) )
+
                   else
+
                      ::oSender:SetText( "Desestimado : " + AllTrim( ( D():Articulos( nView ) )->Codigo ) + "; " + AllTrim( ( D():Articulos( nView ) )->Nombre ) + "; " + AllTrim( Trans( ( D():Articulos( nView ) )->pVenta1, PicOut() ) ) + "; " + AllTrim( Trans( ( D():Articulos( nView ) )->pVtaIva1, PicOut() ) ) )
+
                   end if
+
                else
+
                   ::CleanRelation( ( tmpArticulo )->Codigo )
+
                   dbPass( tmpArticulo, D():Articulos( nView ), .t. )
+
+                  if dbLock( D():Articulos( nView ) )
+                     ( D():Articulos( nView ) )->lSndDoc := .f.
+                     ( D():Articulos( nView ) )->( dbUnLock() )
+                  end if
+
                   ::oSender:SetText( "Añadido : " + AllTrim( ( D():Articulos( nView ) )->Codigo ) + "; " + AllTrim( ( D():Articulos( nView ) )->Nombre ) + "; " + AllTrim( Trans( ( D():Articulos( nView ) )->pVenta1, PicOut() ) ) + "; " + AllTrim( Trans( ( D():Articulos( nView ) )->pVtaIva1, PicOut() ) ) )
+               
                end if
 
                ( tmpArticulo )->( dbSkip() )
