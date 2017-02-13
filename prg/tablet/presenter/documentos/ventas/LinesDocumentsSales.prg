@@ -343,6 +343,10 @@ Return ( self )
 
 METHOD setStockArticulo() 
  
+   /*
+   Stock por lote------------------------------------------------------------//
+   */
+
    ::oViewEditDetail:nGetStock   := ::oSender:oStock:nTotStockAct(   ::hGetDetail( "Articulo" ),;
                                                                      ::hGetDetail( "Almacen" ),;
                                                                      ::hGetDetail( "ValorPropiedad1" ),;
@@ -354,6 +358,19 @@ METHOD setStockArticulo()
 
    if !Empty( ::oViewEditDetail:oGetStock )
       ::oViewEditDetail:oGetStock:Refresh()
+   end if
+
+   ::oViewEditDetail:nGetStockAlmacen   := ::oSender:oStock:nTotStockAct(  ::hGetDetail( "Articulo" ),;
+                                                                           ::hGetDetail( "Almacen" ),;
+                                                                           Space( 20 ),;
+                                                                           Space( 20 ),;
+                                                                           Space( 14 ),;
+                                                                           .f.,;
+                                                                           nil ,;
+                                                                           ::hGetDetail( "TipoStock" ) )
+
+   if !Empty( ::oViewEditDetail:oGetStockAlmacen )
+      ::oViewEditDetail:oGetStockAlmacen:Refresh()
    end if
 
 Return ( nil )

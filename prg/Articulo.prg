@@ -4605,7 +4605,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, cArticulo, oBrw, bWhen, bValid, nMode )
       :nEditType           := TYPE_IMAGE
       :lBmpStretch         := .f.
       :lBmpTransparent     := .t.
-      :bStrImage           := {|| ( dbfTmpImg )->cImgArt }
+      :bStrImage           := {|| cFileBmpName( ( dbfTmpImg )->cImgArt ) }
       :nDataBmpAlign       := AL_CENTER
       :nWidth              := 100
    end with

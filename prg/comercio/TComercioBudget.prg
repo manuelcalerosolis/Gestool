@@ -365,7 +365,7 @@ METHOD insertStateDocumentPrestashop( oQuery ) CLASS TComercioDocument
    
    cQueryState    := "SELECT * FROM " + ::TComercio:cPrefixtable( "order_history" ) + " h " + ;
                      "INNER JOIN " + ::TComercio:cPrefixtable( "order_state_lang" ) + " s on h.id_order_state = s.id_order_state " + ;
-                     "WHERE s.id_lang = " + str( ::TComercio:nLanguage ) + " and id_order = " + alltrim( str( ::idDocumentPrestashop ) )
+                     "WHERE s.id_lang = " + ::TComercio:nLanguage + " and id_order = " + alltrim( str( ::idDocumentPrestashop ) )
    oQueryState    := TMSQuery():New( ::oConexionMySQLDatabase(), cQueryState  )
 
    if oQueryState:Open() .and. oQueryState:RecCount() > 0
