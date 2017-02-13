@@ -1361,7 +1361,8 @@ FUNCTION FacRec( oMenuItem, oWnd, cCodCli, cCodArt, cCodPed, aNumDoc )
                "Dirección",;
                "Sesión",;
                "Agente",;
-               "Pago";
+               "Pago",;
+               "Total";
       MRU      "gc_document_text_delete_16";
       BITMAP   clrTopArchivos ;
       ALIAS    ( D():FacturasRectificativas( nView ) );
@@ -1626,6 +1627,8 @@ FUNCTION FacRec( oMenuItem, oWnd, cCodCli, cCodArt, cCodPed, aNumDoc )
          :nWidth           := 80
          :nDataStrAlign    := 1
          :nHeadStrAlign    := 1
+         :cSortOrder       := "nTotFac"
+         :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | oWndBrw:ClickOnHeader( oCol ) }
       end with
 
       with object ( oWndBrw:AddXCol() )

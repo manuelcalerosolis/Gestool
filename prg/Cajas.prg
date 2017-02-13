@@ -2744,7 +2744,7 @@ Function cPrinterAlbaran( cCodCaj, dbfCajT )
 
    end if
 
-Return ( cPrn )
+Return ( alltrim( cPrn ) )
 
 //---------------------------------------------------------------------------//
 

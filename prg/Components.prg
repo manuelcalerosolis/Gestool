@@ -107,6 +107,8 @@ CLASS PrintSeries FROM ResourceBuilder
    METHOD SetCompras()
    METHOD SetVentas()
 
+   METHOD setPrinter( cPrinter )          INLINE ( if( !empty( ::oImpresora ), ::oImpresora:set( cPrinter ), ) )
+
    METHOD Resource()
       METHOD StartResource()
       METHOD ActionResource()
@@ -486,7 +488,7 @@ CLASS ComponentGet FROM Component
 
    METHOD Resource( oDlg )
 
-   METHOD cText( uGetValue )     INLINE ( if( !empty( ::oGetControl ), ::oGetControl:cText( uGetValue ), ::uGetValue := uGetValue ) )
+   METHOD cText( uGetValue )     INLINE ( if( !empty( ::oGetControl ), ::oGetControl:cText( uGetValue ), ), ::uGetValue := uGetValue )
    METHOD varGet()               INLINE ( ::oGetControl:varGet() )
    METHOD Value()                INLINE ( ::uGetValue )
 
@@ -1073,7 +1075,11 @@ CLASS GetPrinter FROM ComponentGet
 
    METHOD TypeDocumento( cType )    INLINE ( if( !empty( cType ), ::cTypeDocumento := cType, ::cTypeDocumento ) )
 
+   METHOD set( cPrinter )
+
 END CLASS 
+
+//--------------------------------------------------------------------------//
 
 METHOD New( idGet, idBtn, oContainer ) CLASS GetPrinter
 
@@ -1081,16 +1087,13 @@ METHOD New( idGet, idBtn, oContainer ) CLASS GetPrinter
 
    ::idBtn        := idBtn
 
-   ::uGetValue    := PrnGetName()
+   ::uGetValue    := prnGetName()
 
 Return ( Self )
 
-METHOD Resource(oDlg) CLASS GetPrinter
+//--------------------------------------------------------------------------//
 
-   /*REDEFINE GET   ::oGetControl ;
-      VAR         ::uGetValue ;
-      ID          ::idGet ;
-      OF          oDlg*/
+METHOD Resource(oDlg) CLASS GetPrinter
 
    REDEFINE COMBOBOX ::oGetControl ;
       VAR      ::uGetValue ;
@@ -1098,7 +1101,17 @@ METHOD Resource(oDlg) CLASS GetPrinter
       ITEMS    aGetPrinters() ;
       OF       oDlg
 
-   //TBtnBmp():ReDefine( ::idBtn, "gc_printer2_check_16",,,,, {|| PrinterPreferences( ::oGetControl ) }, oDlg, .f., , .f. )
+Return ( Self )
+
+//--------------------------------------------------------------------------//
+
+METHOD set( cPrinter ) 
+
+   if !empty( ::oGetControl )
+      ::oGetControl:set( cPrinter )
+   end if 
+
+   ::uGetValue    := cPrinter
 
 Return ( Self )
 

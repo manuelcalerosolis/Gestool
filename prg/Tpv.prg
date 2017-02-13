@@ -11810,7 +11810,7 @@ Function SavTik2Alb( aTik, aGet, nMode, nSave )
    else
 
       /*
-      Posicionamos en el albaran existente
+      Posicionamos en el albaran existente-------------------------------------
       */
 
       cSerTik                       := SubStr( aTik[ _CNUMDOC ], 1, 1 )

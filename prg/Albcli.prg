@@ -2027,8 +2027,9 @@ STATIC FUNCTION GenAlbCli( nDevice, cCaption, cCodigoDocumento, cPrinter, nCopie
    DEFAULT nDevice            := IS_PRINTER
    DEFAULT cCaption           := "Imprimiendo albaranes a clientes"
    DEFAULT cCodigoDocumento   := cFormatoAlbaranesClientes()
+   DEFAULT cPrinter           := cPrinterAlbaran( oUser():cCaja(), dbfCajT )
 
-   //Existe
+   // Existe-------------------------------------------------------------------
 
    if !lExisteDocumento( cCodigoDocumento, D():Documentos( nView ) )
       return nil
@@ -2048,11 +2049,11 @@ STATIC FUNCTION GenAlbCli( nDevice, cCaption, cCodigoDocumento, cPrinter, nCopie
       nCopies           := 1
    end if  
 
-   // Numero de albaran
+   // Numero de albaran--------------------------------------------------------
 
    cAlbaran             := D():AlbaranesClientesId( nView )
 
-   // Si el documento es de tipo visual-------------------------------------------
+   // Si el documento es de tipo visual----------------------------------------
 
    if lVisualDocumento( cCodigoDocumento, D():Documentos( nView ) )
       PrintReportAlbCli( nDevice, nCopies, cPrinter, cCodigoDocumento )
@@ -13313,15 +13314,16 @@ Return .t.
 Static Function ImprimirSeriesAlbaranes( nDevice, lExternal )
 
    local aStatus
-   local oPrinter   
    local cFormato 
+   local oPrinter  
+   local cPrinterAlbaran   := cPrinterAlbaran( oUser():cCaja(), dbfCajT )
 
-   DEFAULT nDevice   := IS_PRINTER
-   DEFAULT lExternal := .f.
+   DEFAULT nDevice         := IS_PRINTER
+   DEFAULT lExternal       := .f.
 
    // Cremaos el dialogo-------------------------------------------------------
 
-   oPrinter          := PrintSeries():New( nView )
+   oPrinter                := PrintSeries():New( nView )
 
    if empty(oPrinter)
       return .f.
@@ -13336,8 +13338,8 @@ Static Function ImprimirSeriesAlbaranes( nDevice, lExternal )
    oPrinter:Sufijo(     ( D():AlbaranesClientes( nView ) )->cSufAlb )
 
    if lExternal
-      oPrinter:oFechaInicio:cText( ( D():AlbaranesClientes( nView ) )->dFecAlb )
-      oPrinter:oFechaFin:cText( ( D():AlbaranesClientes( nView ) )->dFecAlb )
+      oPrinter:oFechaInicio:cText(  ( D():AlbaranesClientes( nView ) )->dFecAlb )
+      oPrinter:oFechaFin:cText(     ( D():AlbaranesClientes( nView ) )->dFecAlb )
    end if
 
    oPrinter:oFormatoDocumento:TypeDocumento( "AC" )   
@@ -13356,23 +13358,23 @@ Static Function ImprimirSeriesAlbaranes( nDevice, lExternal )
 
    oPrinter:bInit    := {||   ( D():AlbaranesClientes( nView ) )->( dbSeek( oPrinter:DocumentoInicio(), .t. ) ) }
 
-   oPrinter:bWhile   := {||   oPrinter:InRangeDocumento( D():AlbaranesClientesId( nView ) )                  .and. ;
+   oPrinter:bWhile   := {||   oPrinter:InRangeDocumento( D():AlbaranesClientesId( nView ) )                 .and. ;
                               ( D():AlbaranesClientes( nView ) )->( !eof() ) }
 
-   oPrinter:bFor     := {||   oPrinter:InRangeFecha( ( D():AlbaranesClientes( nView ) )->dFecAlb )           .and. ;
-                              oPrinter:InRangeCliente( ( D():AlbaranesClientes( nView ) )->cCodCli )         .and. ;
+   oPrinter:bFor     := {||   oPrinter:InRangeFecha( ( D():AlbaranesClientes( nView ) )->dFecAlb )          .and. ;
+                              oPrinter:InRangeCliente( ( D():AlbaranesClientes( nView ) )->cCodCli )        .and. ;
                               oPrinter:InRangeAgente( ( D():AlbaranesClientes( nView ) )->cCodAge )         .and. ;
                               oPrinter:InRangeGrupoCliente( retGrpCli( ( D():AlbaranesClientes( nView ) )->cCodCli, D():Clientes( nView ) ) ) }
 
    oPrinter:bSkip    := {||   ( D():AlbaranesClientes( nView ) )->( dbSkip() ) }
 
-   oPrinter:bAction  := {||   GenAlbCli(  nDevice,; 
+   oPrinter:bAction  := {||   genAlbCli(  nDevice,; 
                                           "Imprimiendo documento : " + D():AlbaranesClientesId( nView ),;
                                           oPrinter:oFormatoDocumento:uGetValue,;
                                           oPrinter:oImpresora:uGetValue,;
                                           if( !oPrinter:oCopias:lCopiasPredeterminadas, oPrinter:oCopias:uGetValue, ) ) }
 
-   oPrinter:bStart   := {||   if( lExternal, oPrinter:DisableRange(), ) }
+   oPrinter:bStart   := {||   if( lExternal, oPrinter:DisableRange(), ), if( !empty( cPrinterAlbaran ), oPrinter:setPrinter( cPrinterAlbaran ), ) }
 
    // Abrimos el dialogo-------------------------------------------------------
 
