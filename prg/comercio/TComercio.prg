@@ -946,7 +946,7 @@ METHOD insertRootCategory() CLASS TComercio
       ::writeText( "Error al insertar la categoría raiz", 3 )
    end if
 
-   cCommand       := "INSERT INTO " + ::cPrefixTable( "category_lang" ) + " ( id_category, id_lang, name, description, link_rewrite, meta_title, meta_keywords, meta_description ) VALUES ( '1', '" + str( ::nLanguage ) + "', 'Root', 'Root', 'Root', '', '', '' )"
+   cCommand       := "INSERT INTO " + ::cPrefixTable( "category_lang" ) + " ( id_category, id_lang, name, description, link_rewrite, meta_title, meta_keywords, meta_description ) VALUES ( '1', '" + ::nLanguage + "', 'Root', 'Root', 'Root', '', '', '' )"
 
    if TMSCommand():New( ::oCon ):ExecDirect( cCommand )
       ::writeText( "He insertado correctamente en la tabla categorias lenguajes la categoría raiz", 3 )
@@ -999,7 +999,7 @@ METHOD insertRootCategory() CLASS TComercio
       ::writeText( "Error al insertar la categoría inicio", 3 )
    end if
 
-   cCommand       := "INSERT INTO " + ::cPrefixTable( "category_lang" ) + " ( id_category, id_lang, name, description, link_rewrite, meta_title, meta_keywords, meta_description ) VALUES ( '2', '" + str( ::nLanguage ) + "', 'Inicio', 'Inicio', 'Inicio', '', '', '' )"
+   cCommand       := "INSERT INTO " + ::cPrefixTable( "category_lang" ) + " ( id_category, id_lang, name, description, link_rewrite, meta_title, meta_keywords, meta_description ) VALUES ( '2', '" + ::nLanguage + "', 'Inicio', 'Inicio', 'Inicio', '', '', '' )"
 
    if TMSCommand():New( ::oCon ):ExecDirect( cCommand )
       ::writeText( "He insertado correctamente en la tabla categorias lenguajes la categoría raiz", 3 )
@@ -1084,7 +1084,7 @@ METHOD InsertImageProductPrestashopLang( hProduct, hImage, idImagenPrestashop )
                   "legend ) " + ;
                "VALUES (" + ;
                   "'" + alltrim( str( idImagenPrestashop ) ) + "', " + ;
-                  "'" + alltrim( str( ::nLanguage ) ) + "', " + ;
+                  "'" + alltrim( ::nLanguage ) + "', " + ;
                   "'" + ::oCon:Escapestr( hGet( hProduct, "name" ) ) + "' )"
 
    if TMSCommand():New( ::oCon ):ExecDirect( cCommand )
@@ -1639,17 +1639,17 @@ METHOD GetLanguagePrestashop() CLASS TComercio
    local oQuery
    local cCodLanguage
 
-   oQuery               := TMSQuery():New( ::oCon, 'SELECT * FROM ' + ::cPrefixTable( "lang" ) + ' WHERE active = 1' )
+   oQuery               := TMSQuery():New( ::oCon, 'SELECT * FROM ' + ::cPrefixTable( "configuration" ) + ' WHERE name = "PS_LANG_DEFAULT"' )
 
    if oQuery:Open() .and. oQuery:RecCount() > 0
-      cCodLanguage   := oQuery:FieldGet( 1 )
+      cCodLanguage   := oQuery:FieldGetByName( 'value' )
    end if
 
    if !empty( oQuery )
       oQuery:Free()
    end if   
 
-Return if( !empty( cCodLanguage ), cCodLanguage, 1 )
+Return if( !empty( cCodLanguage ), cCodLanguage, "1" )
 
 //---------------------------------------------------------------------------//
 
@@ -2916,7 +2916,7 @@ METHOD buildInsertIvaPrestashop( hTax ) CLASS TComercio
                   "name ) " + ;
                "VALUES ( " + ;
                   "'" + str( nCodigoWeb ) + "', " + ;                         // id_tax
-                  "'" + str( ::nLanguage ) + "', " + ;                        // id_lang
+                  "'" + ::nLanguage + "', " + ;                        // id_lang
                   "'" + ::oCon:Escapestr( hGet( hTax, "name" ) ) + "' )"      // name
 
    if TMSCommand():New( ::oCon ):ExecDirect( cCommand )
@@ -3029,7 +3029,7 @@ METHOD buildInsertFabricantesPrestashop( hFabricantesData ) CLASS TComercio
                   "id_lang ) " + ;
                "VALUES ( " + ;
                   "'" + alltrim( str( nCodigoWeb ) ) + "', " + ;     //id_manufacturer
-                  "'" + str( ::nLanguage ) + "' )"                   //id_lang
+                  "'" + ::nLanguage + "' )"                   //id_lang
 
    if !TMSCommand():New( ::oCon ):ExecDirect( cCommand )
       ::writeText( "Error al insertar el fabricante " + hGet( hFabricantesData, "name" ) + " en la tabla" + ::cPreFixtable( "manufacturer_lang" ), 3 )
@@ -3108,7 +3108,7 @@ METHOD buildInsertCategoriesPrestashop( hFamiliaData ) CLASS TComercio
                   "meta_description ) " + ;
                "VALUES ( '" + ;
                   str( nCodigoWeb ) + "', '" +;
-                  str( ::nLanguage ) + "', '" + ;
+                  ::nLanguage + "', '" + ;
                   hGet( hFamiliaData, "name" ) + "', '" + ;
                   hGet( hFamiliaData, "description" ) + "', '" + ;
                   hGet( hFamiliaData, "link_rewrite" ) + "', " + ;
@@ -3399,7 +3399,7 @@ METHOD BuildInsertProductsPrestashop( hProduct ) CLASS TComercio
                      "available_later )" + ;
                   " VALUES ( " + ;
                      "'" + str( nCodigoWeb ) + "', " + ;                            // id_product
-                     "'" + str( ::nLanguage ) + "', " + ;                           // id_lang
+                     "'" + ::nLanguage + "', " + ;                           // id_lang
                      "'" + ::oCon:Escapestr( hGet( hProduct, "description" ) ) + "', " + ;        // description
                      "'" + hGet( hProduct, "description_short" ) + "', " + ;   // description_short
                      "'" + hGet( hProduct, "link_rewrite" ) + "', " + ;        // link_rewrite
@@ -3571,7 +3571,7 @@ METHOD buildInsertPropiedadesPrestashop( hPropiedadesCabData ) CLASS TComercio
                                  "public_name ) " + ;
                               "VALUES ( " + ;
                                  "'" + alltrim( str( idPrestashop ) ) + "', " + ;        //id_attribute_group
-                                 "'" + str( ::nLanguage ) + "', " + ;                  //id_lang
+                                 "'" + ::nLanguage + "', " + ;                  //id_lang
                                  "'" + hGet( hPropiedadesCabData, "name" ) + "', " + ; //name
                                  "'" + hGet( hPropiedadesCabData, "name" ) + "' )"     //public_name
 
@@ -3622,7 +3622,7 @@ METHOD buildInsertLineasPropiedadesPrestashop( hPropiedadesLinData, nPosition ) 
                         "name ) " + ;
                      "VALUES ( " + ;
                         "'" + alltrim( str( nCodigoPropiedad ) ) + "', " + ;                    //id_attribute
-                        "'" + str( ::nLanguage ) + "', " + ;                                    //id_lang
+                        "'" + ::nLanguage + "', " + ;                                    //id_lang
                         "'" + ::oCon:Escapestr( hGet( hPropiedadesLinData, "name" ) ) + "' )"   //name
 
       if !TMSCommand():New( ::oCon ):ExecDirect( cCommand )
@@ -4982,7 +4982,7 @@ Return ( .t. )
 
 METHOD downloadStateToPresupuesto( oQuery, cSerPre, nNumPre, cSufPre ) CLASS TComercio
 
-   local oQueryState          := TMSQuery():New( ::oCon, "SELECT * FROM " +::cPrefixtable( "order_state_lang" ) + " WHERE id_lang = " + str( ::nLanguage ) + " and id_order_state = " + alltrim( str( oQuery:FieldGetByName( "id_order_state" ) ) ) ) 
+   local oQueryState          := TMSQuery():New( ::oCon, "SELECT * FROM " +::cPrefixtable( "order_state_lang" ) + " WHERE id_lang = " + ::nLanguage + " and id_order_state = " + alltrim( str( oQuery:FieldGetByName( "id_order_state" ) ) ) ) 
 
    if oQueryState:Open() .and. oQueryState:RecCount() > 0
 
@@ -5086,7 +5086,7 @@ METHOD downloadState( oQuery, cSerPed, nNumPed, cSufPed ) CLASS TComercio
 
    local oQueryState
 
-   oQueryState          := TMSQuery():New( ::oCon, "SELECT * FROM " +::cPrefixtable( "order_state_lang" ) + " WHERE id_lang = " + str( ::nLanguage ) + " and id_order_state = " + alltrim( str( oQuery:FieldGetByName( "id_order_state" ) ) ) ) 
+   oQueryState          := TMSQuery():New( ::oCon, "SELECT * FROM " +::cPrefixtable( "order_state_lang" ) + " WHERE id_lang = " + ::nLanguage + " and id_order_state = " + alltrim( str( oQuery:FieldGetByName( "id_order_state" ) ) ) ) 
 
    if oQueryState:Open() .and. oQueryState:RecCount() > 0
 
@@ -5154,7 +5154,7 @@ METHOD idOrderState( cSitua ) CLASS TComercio
    local oQuery2 
    local idState  
 
-   oQuery2             := TMSQuery():New( ::oCon, "SELECT id_order_state FROM " + ::cPrefixtable( "order_state_lang" ) + " WHERE id_lang = " + str( ::nLanguage ) + " and name = '" + alltrim( cSitua ) + "'" )
+   oQuery2             := TMSQuery():New( ::oCon, "SELECT id_order_state FROM " + ::cPrefixtable( "order_state_lang" ) + " WHERE id_lang = " + ::nLanguage + " and name = '" + alltrim( cSitua ) + "'" )
 
 
    if oQuery2:Open() .and. oQuery2:RecCount() > 0

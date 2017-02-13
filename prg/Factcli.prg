@@ -22045,7 +22045,7 @@ Method Process() CLASS TFacturasClientesSenderReciver
 
                   dbPass( tmpFacCliT, dbfFacCliT, .t. )
 
-                  if lClient .and. dbLock( dbfFacCliT )
+                  if dbLock( dbfFacCliT )
                      ( dbfFacCliT )->lSndDoc := .f.
                      ( dbfFacCliT )->( dbUnLock() )
                   end if

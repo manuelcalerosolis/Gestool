@@ -14137,6 +14137,11 @@ METHOD Process() CLASS TPedidosClientesSenderReciver
 
                		dbPass( tmpPedCliT, dbfPedCliT, .t. )
 
+                     if dbLock( dbfPedCliT )
+                        ( dbfPedCliT )->lSndDoc := .f.
+                        ( dbfPedCliT )->( dbUnLock() )
+                     end if
+
                		::oSender:SetText( "Añadido : " + ( tmpPedCliT )->cSerPed + "/" + AllTrim( Str( ( tmpPedCliT )->nNumPed ) ) + "/" + AllTrim( ( tmpPedCliT )->cSufPed ) + "; " + Dtoc( ( tmpPedCliT )->dFecPed ) + "; " + AllTrim( ( tmpPedCliT )->cCodCli ) + "; " + ( tmpPedCliT )->cNomCli )
 
                		if ( tmpPedCliL )->( dbSeek( ( tmpPedCliT )->cSerPed + Str( ( tmpPedCliT )->nNumPed ) + ( tmpPedCliT )->cSufPed ) )

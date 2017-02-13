@@ -2133,18 +2133,41 @@ Method Process()
                   ::oSender:oMtr:nTotal := ( tmpFam )->( lastrec() )
                end if
 
+               ( tmpFam )->( ordsetfocus( 0 ) )
+               ( tmpFam )->( dbGoTop() )
+
                while !( tmpFam )->( eof() )
 
                   if ( dbfFam )->( dbSeek( ( tmpFam )->cCodFam ) )
+
                      if !::oSender:lServer
+                        
                         dbPass( tmpFam, dbfFam )
+                        
+                        if dbLock( dbfFam )
+                           ( dbfFam )->lSelDoc := .f.
+                           ( dbfFam )->( dbUnLock() )
+                        end if
+
                         ::oSender:SetText( "Reemplazado : " + AllTrim( ( dbfFam )->cCodFam ) + "; " + AllTrim( ( dbfFam )->cNomFam ) )
+                     
                      else
+
                         ::oSender:SetText( "Desestimado : " + AllTrim( ( dbfFam )->cCodFam ) + "; " + AllTrim( ( dbfFam )->cNomFam ) )
+
                      end if
+
                   else
+
                         dbPass( tmpFam, dbfFam, .t. )
+                        
+                        if dbLock( dbfFam )
+                           ( dbfFam )->lSelDoc := .f.
+                           ( dbfFam )->( dbUnLock() )
+                        end if
+
                         ::oSender:SetText( "Añadido     : " + AllTrim( ( dbfFam )->cCodFam ) + "; " + AllTrim( ( dbfFam )->cNomFam ) )
+
                   end if
 
                   ( tmpFam )->( dbSkip() )

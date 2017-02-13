@@ -21,6 +21,9 @@ CLASS ViewDetail FROM ViewBase
    DATA oGetStock
    DATA nGetStock
 
+   DATA oGetStockAlmacen
+   DATA nGetStockAlmacen
+
    DATA oSayGetCajas
    DATA oGetCajas
    DATA oGetUnidades
@@ -86,9 +89,10 @@ END CLASS
 
 METHOD New( oSender ) CLASS ViewDetail
 
-   ::oSender      := oSender
+   ::oSender            := oSender
 
-   ::nGetStock    := 0
+   ::nGetStock          := 0
+   ::nGetStockAlmacen   := 0
 
 Return ( self )
 
@@ -500,16 +504,27 @@ METHOD defineStock() CLASS ViewDetail
                                           "nHeight"   => 23,;
                                           "lDesign"   => .f. } )
 
-   ::oGetStock       := TGridGet():Build( {  "nRow"      => ::getRow(),;
-                                          "nCol"      => {|| GridWidth( 2.5, ::oDlg ) },;
-                                          "bSetGet"   => {|u| if( PCount() == 0, ::nGetStock, ::nGetStock := u ) },;
-                                          "oWnd"      => ::oDlg,;
-                                          "lPixels"   => .t.,;
-                                          "cPict"     => MasUnd(),;
-                                          "nWidth"    => {|| GridWidth( 3, ::oDlg ) },;
-                                          "lRight"    => .t.,;
-                                          "nHeight"   => 23,;
-                                          "bWhen"     => {|| .f. } } )
+   ::oGetStock          := TGridGet():Build( {  "nRow"      => ::getRow(),;
+                                                "nCol"      => {|| GridWidth( 2.5, ::oDlg ) },;
+                                                "bSetGet"   => {|u| if( PCount() == 0, ::nGetStock, ::nGetStock := u ) },;
+                                                "oWnd"      => ::oDlg,;
+                                                "lPixels"   => .t.,;
+                                                "cPict"     => MasUnd(),;
+                                                "nWidth"    => {|| GridWidth( 3, ::oDlg ) },;
+                                                "lRight"    => .t.,;
+                                                "nHeight"   => 23,;
+                                                "bWhen"     => {|| .f. } } )
+
+   ::oGetStockAlmacen   := TGridGet():Build( {  "nRow"     => ::getRow(),;
+                                                "nCol"      => {|| GridWidth( 5.5, ::oDlg ) },;
+                                                "bSetGet"   => {|u| if( PCount() == 0, ::nGetStockAlmacen, ::nGetStockAlmacen := u ) },;
+                                                "oWnd"      => ::oDlg,;
+                                                "lPixels"   => .t.,;
+                                                "cPict"     => MasUnd(),;
+                                                "nWidth"    => {|| GridWidth( 3, ::oDlg ) },;
+                                                "lRight"    => .t.,;
+                                                "nHeight"   => 23,;
+                                                "bWhen"     => {|| .f. } } )
 
    ::nextRow()
 

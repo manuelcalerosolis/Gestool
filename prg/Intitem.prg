@@ -450,15 +450,25 @@ Method Process() CLASS TClienteSenderReciver
                   if ( dbfClient )->( dbSeek( ( tmpCli )->Cod ) )
                      if !::oSender:lServer
                         dbPass( tmpCli, dbfClient, .f. )
+                        if dbLock( dbfClient )
+                           ( dbfClient )->lSndInt := .f.
+                           ( dbfClient )->( dbUnLock() )
+                        end if
                         ::oSender:SetText( "Reemplazado : " + alltrim( ( tmpCli )->Cod ) + "; " + ( tmpCli )->Titulo )
                         ::CleanRelation( ( tmpCli )->Cod, dbfCliAtp, dbfObrasT, dbfContactos )
                      else
                         ::oSender:SetText( "Desestimado : " + alltrim( ( tmpCli )->Cod ) + "; " + ( tmpCli )->Titulo )
                      end if
                   else
+                        
                         dbPass( tmpCli, dbfClient, .t. )
+                        if dbLock( dbfClient )
+                           ( dbfClient )->lSndInt := .f.
+                           ( dbfClient )->( dbUnLock() )
+                        end if
                         ::oSender:SetText( "Añadido : " + alltrim( ( tmpCli )->Cod ) + "; " + ( tmpCli )->Titulo )
                         //::CleanRelation( ( tmpCli )->Cod, dbfCliAtp, dbfObrasT, dbfContactos )
+
                   end if
 
                   ( tmpCli )->( dbSkip() )

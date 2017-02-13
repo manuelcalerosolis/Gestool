@@ -523,8 +523,8 @@ METHOD imagesProduct( idProduct ) CLASS TComercioProduct
 
             for each cImgToken in aImgToken
 
-               if file( cImgToken ) .and. ascan( aImages, {|a| hGet( a, "name" ) == cImgToken } ) == 0
-                  aadd( aImages, {  "name"               => cImgToken,;
+               if file( cFileBmpName( cImgToken ) ) .and. ascan( aImages, {|a| hGet( a, "name" ) == cImgToken } ) == 0
+                  aadd( aImages, {  "name"               => cFileBmpName( cImgToken ),;
                                     "idProductGestool"   => idProduct,;
                                     "id"                 => ::getIdProductImage( idProduct, cImgToken ),;
                                     "lDefault"           => ::getDefaultProductImage( idProduct, cImgToken ) } )
@@ -554,8 +554,8 @@ METHOD imagesProduct( idProduct ) CLASS TComercioProduct
 
             cImagen  := alltrim( ( D():ArticuloImagenes( ::getView() ) )->cImgArt )
 
-            if file( cImagen ) .and. ascan( aImages, {|a| hGet( a, "name" ) == cImagen } ) == 0
-               aadd( aImages, {  "name"               => cImagen,;
+            if file( cFileBmpName( cImagen ) ) .and. ascan( aImages, {|a| hGet( a, "name" ) == cImagen } ) == 0
+               aadd( aImages, {  "name"               => cFileBmpName( cImagen ),;
                                  "idProductGestool"   => idProduct,;
                                  "id"                 => ( D():ArticuloImagenes( ::getView() ) )->nId,;
                                  "lDefault"           => ( D():ArticuloImagenes( ::getView() ) )->lDefImg } )
@@ -894,7 +894,7 @@ METHOD insertProductLang( idProduct, hProduct ) CLASS TComercioProduct
                      "available_later ) " + ;
                   "VALUES ( " + ;
                      "'" + alltrim( str( idProduct ) ) + "', " + ;                                             // id_product
-                     "'" + alltrim( str( ::getLanguage() ) ) + "', " + ;                                       // id_lang
+                     "'" + ::getLanguage() + "', " + ;                                                         // id_lang
                      "'" + ::oConexionMySQLDatabase():escapeStr( hGet( hProduct, "description" ) ) + "', " + ; // description
                      "'" + hGet( hProduct, "description_short" ) + "', " + ;                                   // description_short
                      "'" + hGet( hProduct, "link_rewrite" ) + "', " + ;                                        // link_rewrite
@@ -1035,7 +1035,7 @@ METHOD insertImageLang( hProduct, hImage, idImagePrestashop )
                   "legend ) " + ;
                "VALUES (" + ;
                   "'" + alltrim( str( idImagePrestashop ) ) + "', " + ;
-                  "'" + alltrim( str( ::getLanguage() ) ) + "', " + ;
+                  "'" + ::getLanguage() + "', " + ;
                   "'" + ::oConexionMySQLDatabase():escapeStr( hGet( hProduct, "name" ) ) + "' )"
 
    if ::commandExecDirect( cCommand )
@@ -1754,7 +1754,7 @@ METHOD insertTaxPrestashop( hTax ) CLASS TComercioProduct
                   "name ) " + ;
                "VALUES ( " + ;
                   "'" + alltrim( str( idTax ) ) + "', " + ;                                  // id_tax
-                  "'" + alltrim( str( ::getLanguage() ) ) + "', " + ;                        // id_lang
+                  "'" + ::getLanguage() + "', " + ;                                          // id_lang
                   "'" + ::oConexionMySQLDatabase():Escapestr( hGet( hTax, "name" ) ) + "' )" // name
 
    if ::commandExecDirect( cCommand )
@@ -1864,7 +1864,7 @@ METHOD insertManufacturersPrestashop( hFabricantesData ) CLASS TComercioProduct
                   "id_lang ) " + ;
                "VALUES ( " + ;
                   "'" + alltrim( str( nCodigoWeb ) ) + "', " + ;     // id_manufacturer
-                  "'" + str( ::TComercio:nLanguage ) + "' )"         // id_lang
+                  "'" + ::TComercio:nLanguage + "' )"         // id_lang
 
    if !::commandExecDirect( cCommand )
       ::writeText( "Error al insertar el fabricante " + hGet( hFabricantesData, "name" ) + " en la tabla" + ::cPreFixtable( "manufacturer_lang" ), 3 )
@@ -1906,7 +1906,7 @@ METHOD insertPropertiesHeader( hPropertiesHeaderProduct ) CLASS TComercioProduct
                                  "public_name ) " + ;
                               "VALUES ( " + ;
                                  "'" + alltrim( str( idPrestashop ) ) + "', " + ;            // id_attribute_group
-                                 "'" + alltrim( str( ::getLanguage() ) ) + "', " + ;         // id_lang
+                                 "'" + ::getLanguage() + "', " + ;                           // id_lang
                                  "'" + hGet( hPropertiesHeaderProduct, "name" ) + "', " + ;  // name
                                  "'" + hGet( hPropertiesHeaderProduct, "name" ) + "' )"      // public_name
 
@@ -1953,7 +1953,7 @@ METHOD insertPropertiesLineProduct( hPropertiesLineProduct, nPosition ) CLASS TC
                         "name ) " + ;
                      "VALUES ( " + ;
                         "'" + alltrim( str( idPrestashop ) ) + "', " + ;                                             // id_attribute
-                        "'" + alltrim( str( ::getLanguage() ) ) + "', " + ;                                          // id_lang
+                        "'" + ::getLanguage() + "', " + ;                                                            // id_lang
                         "'" + ::oConexionMySQLDatabase():Escapestr( hGet( hPropertiesLineProduct, "name" ) ) + "' )" // name
 
       if !::commandExecDirect( cCommand )

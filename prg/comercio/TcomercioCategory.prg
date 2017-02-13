@@ -69,7 +69,7 @@ METHOD buildCategory( id ) CLASS TComercioCategory
                                        "name"            => categoryName,;
                                        "description"     => categoryName,;
                                        "link_rewrite"    => cLinkRewrite( categoryName ),;
-                                       "image"           => alltrim( ( D():Familias( ::getView() ) )->cImgBtn ),;
+                                       "image"           => cFileBmpName( alltrim( ( D():Familias( ::getView() ) )->cImgBtn ) ),;
                                        "cPrefijoNombre"  => "" } )
 
    end if   
@@ -157,7 +157,7 @@ METHOD insertRootCategory() CLASS TComercioCategory
                         "meta_description ) "                                    + ;
                      "VALUES ( "                                                 + ;
                         "'1', "                                                  + ;
-                        "'" + alltrim( str( ::getLanguage() ) ) + "', "          + ;
+                        "'" + ::getLanguage() + "', "                            + ;
                         "'Root',  "                                              + ;
                         "'Root',  "                                              + ;
                         "'Root',  "                                              + ;
@@ -247,7 +247,7 @@ METHOD insertRootCategory() CLASS TComercioCategory
                         "meta_description ) "                                    + ;
                      "VALUES ( "                                                 + ;
                         "'2', "                                                  + ; 
-                        "'" + alltrim( str( ::getLanguage() ) ) + "', "          + ; 
+                        "'" + ::getLanguage() + "', "                            + ; 
                         "'Inicio', "                                             + ; 
                         "'Inicio', "                                             + ; 
                         "'Inicio', "                                             + ; 
@@ -398,7 +398,7 @@ METHOD insertCategory( hCategory ) CLASS TComercioCategory
                               "meta_description ) "                                    + ;
                            "VALUES ( "                                                 + ;
                               "'" + alltrim( str( idCategory ) ) + "', "               + ;
-                              "'" + alltrim( str( ::getLanguage() ) ) + "', "          + ;
+                              "'" + ::getLanguage() + "', "                            + ;
                               "'" + hGet( hCategory, "name" ) + "', "                  + ;
                               "'" + hGet( hCategory, "description" ) + "', "           + ;
                               "'" + hGet( hCategory, "link_rewrite" ) + "', "          + ;

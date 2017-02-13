@@ -708,6 +708,10 @@ FUNCTION cFileBmpName( cFile, lEmptyImage )
 
    DEFAULT lEmptyImage  := .f.
 
+   if File( cFile )
+      RETURN ( cFile )
+   end if
+
    if At( ":", cFile ) == 0 .and. !Empty( cPatImg() )
       cFile    := Rtrim( cPatImg() ) + Rtrim( cFile )
    else

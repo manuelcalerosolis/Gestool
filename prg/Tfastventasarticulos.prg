@@ -2835,6 +2835,8 @@ METHOD AddTicket() CLASS TFastVentasArticulos
                ::oDbf:cPosCli    := ::oTikCliT:cPosCli
                ::oDbf:cCodGrp    := cGruCli( ::oTikCliT:cCliTik, ::oDbfCli )
 
+               ::oDbf:TipoIva    := cCodigoIva( ::oDbfIva:cAlias, ::oTikCliL:nIvaTil )
+
                ::oDbf:cCodFam    := ::oTikCliL:cCodFam
                ::oDbf:cGrpFam    := ::oTikCliL:cGrpFam
                ::oDbf:cCodTip    := RetFld( ::oTikCliL:cCbaTil, ::oDbfArt:cAlias, "cCodTip", "Codigo" )
@@ -2933,6 +2935,7 @@ METHOD AddTicket() CLASS TFastVentasArticulos
                ::oDbf:cPrvCli    := ::oTikCliT:cPrvCli
                ::oDbf:cPosCli    := ::oTikCliT:cPosCli
                ::oDbf:cCodGrp    := cGruCli( ::oTikCliT:cCliTik, ::oDbfCli )
+               ::oDbf:TipoIva    := cCodigoIva( ::oDbfIva:cAlias, ::oTikCliL:nIvaTil )
 
                ::oDbf:cCodFam    := ::oTikCliL:cCodFam
                ::oDbf:cGrpFam    := ::oTikCliL:cGrpFam
