@@ -2835,7 +2835,7 @@ METHOD AddTicket() CLASS TFastVentasArticulos
                ::oDbf:cPosCli    := ::oTikCliT:cPosCli
                ::oDbf:cCodGrp    := cGruCli( ::oTikCliT:cCliTik, ::oDbfCli )
 
-               ::oDbf:TipoIva    := cCodigoIva( ::oDbfIva:cAlias, ::oTikCliT:nIvaTil )
+               ::oDbf:TipoIva    := cCodigoIva( ::oDbfIva:cAlias, ::oTikCliL:nIvaTil )
 
                ::oDbf:cCodFam    := ::oTikCliL:cCodFam
                ::oDbf:cGrpFam    := ::oTikCliL:cGrpFam
@@ -2935,7 +2935,7 @@ METHOD AddTicket() CLASS TFastVentasArticulos
                ::oDbf:cPrvCli    := ::oTikCliT:cPrvCli
                ::oDbf:cPosCli    := ::oTikCliT:cPosCli
                ::oDbf:cCodGrp    := cGruCli( ::oTikCliT:cCliTik, ::oDbfCli )
-               ::oDbf:TipoIva    := cCodigoIva( ::oDbfIva:cAlias, ::oTikCliT:nIvaTil )
+               ::oDbf:TipoIva    := cCodigoIva( ::oDbfIva:cAlias, ::oTikCliL:nIvaTil )
 
                ::oDbf:cCodFam    := ::oTikCliL:cCodFam
                ::oDbf:cGrpFam    := ::oTikCliL:cGrpFam
