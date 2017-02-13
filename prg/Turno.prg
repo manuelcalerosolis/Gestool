@@ -2042,7 +2042,7 @@ METHOD DialogCreateTurno()
 
       REDEFINE BITMAP oBmp ;
         ID        600 ;
-        RESOURCE  "Clock_run_48_alpha" ;
+        RESOURCE  "gc_clock_play_48" ;
         TRANSPARENT ;
         OF        oDlg
 
