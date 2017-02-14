@@ -769,13 +769,13 @@ Method Dialog( oBtnTarifa, lPuntosLibres ) CLASS TTpvRestaurante
          ID       500 ;
          OF       oDlg ;
          ACTION   ( ::InitSala(), oDlg:end() );
-         BITMAP   "Cup_48" ;
+         BITMAP   "gc_cup_48" ;
 
       REDEFINE BUTTONBMP ;
          ID       IDCANCEL ;
          OF       oDlg ;
          ACTION   ( ::InitSala(), oDlg:end() );
-         BITMAP   "Delete2_48" ;
+         BITMAP   "gc_delete_48" ;
 
    oDlg:Activate( , , , .t., , , {|| ::InitDialog( oImgSala, oLstSala, lPuntosLibres ) } )
 
@@ -888,7 +888,7 @@ Method Tikets( oBtnTarifa, oBtnRenombrar ) CLASS TTpvRestaurante
          ID       IDCANCEL ;
          OF       oDlg ;
          ACTION   ( oDlg:end() );
-         BITMAP   "Delete2_48" ;
+         BITMAP   "gc_delete_48" ;
 
    oDlg:Activate( , , , .t., , , {|| ::InitTikets( oImgSala, oLstSala ) } )
 
@@ -917,7 +917,7 @@ Method InitTikets( oImgSala, oLstSala ) CLASS TTpvRestaurante
    do case
       case ( IsNil( ::lPuntosVenta ) )
 
-         oImgSala:AddMasked( TBitmap():Define( "Cup_48" ), Rgb( 255, 0, 255 ) )
+         oImgSala:AddMasked( TBitmap():Define( "gc_cup_48" ), Rgb( 255, 0, 255 ) )
 
          oLstSala:InsertGroup( 0, "Tickets pendientes" )
 
@@ -1030,7 +1030,7 @@ Method InitTikets( oImgSala, oLstSala ) CLASS TTpvRestaurante
          Buscamos si hay tikets pendientes en la sala generica-----------------
          */
 
-         oImgSala:AddMasked( TBitmap():Define( "Cup_48" ), Rgb( 255, 0, 255 ) )
+         oImgSala:AddMasked( TBitmap():Define( "gc_cup_48" ), Rgb( 255, 0, 255 ) )
 
          oLstSala:InsertGroup( nLastGroup, "General" )
 
@@ -1128,7 +1128,7 @@ Return ( Self )
 Method Reset( oBtnTarifa ) CLASS TTpvRestaurante
 
    if !empty( oBtnTarifa )
-      oBtnTarifa:cBmp( "Cup_48" )
+      oBtnTarifa:cBmp( "gc_cup_48" )
       oBtnTarifa:cCaption( "General" )
    end if
 

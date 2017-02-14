@@ -15519,7 +15519,7 @@ Static Function CrearInvitacion( dbfTmpL, oBrwDet )
       REDEFINE BUTTONBMP oBtnCancel ;
          ID       550 ;
          OF       oDlg ;
-         BITMAP   "Delete2_48" ;
+         BITMAP   "gc_delete_48" ;
          ACTION   ( oDlg:End() )
 
       oDlg:bStart       := {|| oBtnTodasLineas:GoDown() }
