@@ -6,6 +6,4 @@
 
 
 
-DELETE2_48 BITMAP "..\\bmp\\Delete2_48.bmp"
-
 CONVERTIRDBFTOSQL BITMAP "..\\bmp\\ConvertirDBFtoSQL.bmp"
