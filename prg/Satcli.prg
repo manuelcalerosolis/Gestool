@@ -11228,7 +11228,9 @@ Return ( Self )
 Method ReciveData() CLASS TSATClientesSenderReciver
 
    local n
-   local aExt        := aRetDlgEmp()
+   local aExt
+
+   aExt     := ::oSender:aExtensions()
 
    /*
    Recibirlo de internet
@@ -11306,6 +11308,12 @@ Method Process() CLASS TSATClientesSenderReciver
                   if ::validateRecepcion( tmpSatCliT, cSatCliT, cOperario )
 
                      dbPass( tmpSatCliT, cSatCliT, .t. )
+
+                     if dbLock( cSatCliT )
+                        ( cSatCliT )->lSndDoc := .f.
+                        ( cSatCliT )->( dbUnLock() )
+                     end if
+
                      ::oSender:SetText( "Añadido     : " + ( tmpSatCliL )->cSerSat + "/" + AllTrim( Str( ( tmpSatCliL )->nNumSat ) ) + "/" + AllTrim( ( tmpSatCliL )->cSufSat ) + "; " + Dtoc( ( tmpSatCliT )->dFecSat ) + "; " + AllTrim( ( tmpSatCliT )->cCodCli ) + "; " + ( tmpSatCliT )->cNomCli )
 
                      if ( tmpSatCliL )->( dbSeek( ( tmpSatCliT )->cSerSat + Str( ( tmpSatCliT )->nNumSat ) + ( tmpSatCliT )->cSufSat ) )

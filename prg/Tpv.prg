@@ -14152,11 +14152,7 @@ Method ReciveData() CLASS TTiketsClientesSenderReciver
    local n
    local aExt
 
-   if ::oSender:lServer
-      aExt        := aRetDlgEmp()
-   else
-      aExt        := { "All" }
-   end if
+   aExt     := ::oSender:aExtensions()
 
    /*
    Recibirlo de internet
@@ -14255,6 +14251,11 @@ Method Process() CLASS TTiketsClientesSenderReciver
                   end if 
 
                   dbPass( tmpTikT, cdbfTikT, .t. )
+
+                  if dbLock( cdbfTikT )
+                     ( cdbfTikT )->lSndDoc := .f.
+                     ( cdbfTikT )->( dbUnLock() )
+                  end if
 
                   ::oSender:SetText( "Reemplazado : " + ( cdbfTikT )->cSerTik + "/" + AllTrim( ( cdbfTikT )->cNumTik ) + "/" + AllTrim( ( cdbfTikT )->cSufTik ) + "; " + Dtoc( ( cdbfTikT )->dFecTik ) + "; " + AllTrim( ( cdbfTikT )->cCliTik ) + "; " + ( cdbfTikT )->cNomTik )
 

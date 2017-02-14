@@ -84,6 +84,8 @@ Definici¢n de la base de datos de albaranes a proveedores
 #define _NFACTURADO               62
 #define _TFECALB                  63     //   D      8     0 "",  
 #define _CCENTROCOSTE             64
+#define _DFECCRE                  65
+#define _CTIMCRE                  66 
 
 /*
 Definici¢n de la base de datos de lineas de detalle
@@ -5543,7 +5545,7 @@ STATIC FUNCTION EndTrans( aTmp, aGet, nDec, nRec, oBrw, nMode, oDlg )
 
       aTmp[ _DFECCHG ]     := GetSysDate()
       aTmp[ _CTIMCHG ]     := Time()
-
+      
       do case
       case isAppendOrDuplicateMode( nMode )
 
@@ -10764,11 +10766,7 @@ Method ReciveData() CLASS TAlbaranesProveedorSenderReciver
    local n
    local aExt
    
-   if ::oSender:lServer
-      aExt  := aRetDlgEmp()
-   else
-      aExt  := { "All" }
-   end if
+   aExt     := ::oSender:aExtensions()
 
    /*
    Recibirlo de internet
@@ -10824,7 +10822,20 @@ Method Process() CLASS TAlbaranesProveedorSenderReciver
 
             if ::validateRecepcion( tmpAlbPrvT, dbfAlbPrvT )
 
+               while ( dbfAlbPrvT )->( dbseek( ( tmpAlbPrvT )->cSerAlb + Str( ( tmpAlbPrvT )->nNumAlb ) + ( tmpAlbPrvT )->cSufAlb ) )
+                  dbLockDelete( dbfAlbPrvT )
+               end if 
+
+               while ( dbfAlbPrvL )->( dbseek( ( tmpAlbPrvT )->cSerAlb + Str( ( tmpAlbPrvT )->nNumAlb ) + ( tmpAlbPrvT )->cSufAlb ) )
+                  dbLockDelete( dbfAlbPrvL )
+               end if 
+
                dbPass( tmpAlbPrvT, dbfAlbPrvT, .t. )
+
+               if dbLock( dbfAlbPrvT )
+                  ( dbfAlbPrvT )->lSndDoc := .f.
+                  ( dbfAlbPrvT )->( dbUnLock() )
+               end if
                
                ::oSender:SetText( "Añadido : " + ( tmpAlbPrvT )->cSerAlb + "/" + AllTrim( Str( ( tmpAlbPrvT )->nNumAlb ) ) + "/" + AllTrim( ( tmpAlbPrvT )->cSufAlb ) + "; " + Dtoc( ( tmpAlbPrvT )->dFecAlb ) + "; " + AllTrim( ( dbfAlbPrvT )->cCodPrv ) + "; " + ( dbfAlbPrvT )->cNomPrv )
 
@@ -10874,19 +10885,19 @@ Return Self
 
 METHOD validateRecepcion( tmpAlbPrvT, dbfAlbPrvT ) CLASS TAlbaranesProveedorSenderReciver
 
-   ::cErrorRecepcion       := "Pocesando albaran de proveedor número " + ( dbfAlbPrvT )->cSerPed + "/" + alltrim( Str( ( dbfAlbPrvT )->nNumPed ) ) + "/" + alltrim( ( dbfAlbPrvT )->cSufPed ) + " "
+   ::cErrorRecepcion       := "Pocesando albaran de proveedor número " + ( dbfAlbPrvT )->cSerAlb + "/" + alltrim( Str( ( dbfAlbPrvT )->nNumAlb ) ) + "/" + alltrim( ( dbfAlbPrvT )->cSufAlb ) + " "
 
-   if !( lValidaOperacion( ( tmpAlbPrvT )->dFecPed, .f. ) )
-      ::cErrorRecepcion    += "la fecha " + dtoc( ( tmpAlbPrvT )->dFecPed ) + " no es valida en esta empresa"
+   if !( lValidaOperacion( ( tmpAlbPrvT )->dFecAlb, .f. ) )
+      ::cErrorRecepcion    += "la fecha " + dtoc( ( tmpAlbPrvT )->dFecAlb ) + " no es valida en esta empresa"
       Return .f. 
    end if 
 
-   if !( ( dbfAlbPrvT )->( dbSeek( ( tmpAlbPrvT )->cSerPed + Str( ( tmpAlbPrvT )->nNumPed ) + ( tmpAlbPrvT )->cSufPed ) ) )
+   if !( ( dbfAlbPrvT )->( dbSeek( ( tmpAlbPrvT )->cSerAlb + Str( ( tmpAlbPrvT )->nNumAlb ) + ( tmpAlbPrvT )->cSufAlb ) ) )
       Return .t.
    end if 
 
-   if dtos( ( dbfAlbPrvT )->dFecCre ) + ( dbfAlbPrvT )->cTimCre >= dtos( ( tmpAlbPrvT )->dFecCre ) + ( tmpAlbPrvT )->cTimCre 
-      ::cErrorRecepcion    += "la fecha en la empresa " + dtoc( ( dbfAlbPrvT )->dFecCre ) + " " + ( dbfAlbPrvT )->cTimCre + " es más reciente que la recepción " + dtoc( ( tmpAlbPrvT )->dFecCre ) + " " + ( tmpAlbPrvT )->cTimCre 
+   if dtos( ( dbfAlbPrvT )->dFecChg ) + ( dbfAlbPrvT )->cTimChg >= dtos( ( tmpAlbPrvT )->dFecChg ) + ( tmpAlbPrvT )->cTimChg 
+      ::cErrorRecepcion    += "la fecha en la empresa " + dtoc( ( dbfAlbPrvT )->dFecChg ) + " " + ( dbfAlbPrvT )->cTimChg + " es más reciente que la recepción " + dtoc( ( tmpAlbPrvT )->dFecChg ) + " " + ( tmpAlbPrvT )->cTimChg 
       Return .f.
    end if
 

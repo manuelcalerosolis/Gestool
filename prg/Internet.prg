@@ -141,6 +141,8 @@ CLASS TSndRecInf
    METHOD lLocalSendFiles( aSource, cTarget )
    METHOD lFtpSendFiles( aSource, cTarget )
 
+   METHOD aExtensions()
+
 END CLASS
 
 //----------------------------------------------------------------------------//
@@ -1740,6 +1742,21 @@ METHOD ActivateTablet() CLASS TSndRecInf
    ::lInProcess   := .f.
 
 Return ( Self )
+
+//----------------------------------------------------------------------------//
+
+METHOD aExtensions() CLASS TSndRecInf
+
+   local aExt  := {}
+
+   if ::lServer
+      aExt  := aRetDlgEmp()
+   else
+      aExt  := aRetDlgEmp()
+      aAdd( aExt, "All" )
+   end if
+
+Return ( aExt )
 
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//

@@ -7342,11 +7342,7 @@ METHOD ReciveData()
    local n
    local aExt
 
-   if ::oSender:lServer
-      aExt        := aRetDlgEmp()
-   else
-      aExt        := { "All" }
-   end if
+   aExt     := ::oSender:aExtensions()
 
    /*
    Recibirlo de internet

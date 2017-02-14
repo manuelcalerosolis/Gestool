@@ -11347,11 +11347,7 @@ Method ReciveData()
    local n
    local aExt
 
-   if ::oSender:lServer
-      aExt        := aRetDlgEmp()
-   else
-      aExt        := { "All" }
-   end if
+   aExt     := ::oSender:aExtensions()
 
    /*
    Recibirlo de internet
@@ -11431,6 +11427,11 @@ Method Process()
                      !( cPreCliT )->( dbSeek( ( tmpPreCliT )->cSerPre + Str( ( tmpPreCliT )->nNumPre ) + ( tmpPreCliT )->cSufPre ) )
 
                      dbPass( tmpPreCliT, cPreCliT, .t. )
+
+                     if dbLock( cPreCliT )
+                        ( cPreCliT )->lSndDoc := .f.
+                        ( cPreCliT )->( dbUnLock() )
+                     end if
                      
                      ::oSender:SetText( "Añadido : " + ( tmpPreCliL )->cSerPre + "/" + AllTrim( Str( ( tmpPreCliL )->nNumPre ) ) + "/" + AllTrim( ( tmpPreCliL )->cSufPre ) + "; " + Dtoc( ( tmpPreCliT )->dFecPre ) + "; " + AllTrim( ( tmpPreCliT )->cCodCli ) + "; " + ( tmpPreCliT )->cNomCli )
 

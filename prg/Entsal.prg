@@ -1373,7 +1373,7 @@ Method Process() CLASS TEntradasSalidasSenderReciver
 
                   dbPass( tmpEntSal, cDbfEntSal, .t. )
                   
-                  if lClient .and. dbLock( cDbfEntSal )
+                  if dbLock( cDbfEntSal )
                      ( cDbfEntSal )->lSndEnt := .f.
                      ( cDbfEntSal )->( dbUnLock() )
                   end if

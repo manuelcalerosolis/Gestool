@@ -5580,6 +5580,13 @@ Static Function EndTrans( aTmp, aGet, cFacCliP, oBrw, oDlg, nMode, nSpecialMode 
    end if
 
    /*
+   Ponemos la fecha y hora de creacion y modificación--------------------------
+   */
+
+   aTmp[ _DFECCRE ]    := GetSysDate()
+   aTmp[ _CHORCRE ]    := Substr( Time(), 1, 5 )
+
+   /*
    Grabamos el recibo----------------------------------------------------------
    */
 
