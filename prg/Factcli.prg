@@ -1416,6 +1416,7 @@ STATIC FUNCTION GenFacCli( nDevice, cCaption, cCodDoc, cPrinter, nCopies )
    DEFAULT nDevice      := IS_PRINTER
    DEFAULT cCaption     := "Imprimiendo facturas a clientes"
    DEFAULT cCodDoc      := cFormatoFacturasClientes()
+   DEFAULT cPrinter     := cPrinterFactura( oUser():cCaja(), dbfCajT )
 
    if empty( nCopies )
       nCopies           := retfld( ( D():FacturasClientes( nView ) )->cCodCli, D():Clientes( nView ), "CopiasF" )
@@ -16586,19 +16587,21 @@ Static Function ImprimirSeriesFacturas( nDevice, lExt )
 
    local aStatus
    local oPrinter   
+   local cPrinterFactura   := cPrinterFactura( oUser():cCaja(), dbfCajT )
 
-   DEFAULT nDevice   := IS_PRINTER
-   DEFAULT lExt      := .f.
+
+   DEFAULT nDevice         := IS_PRINTER
+   DEFAULT lExt            := .f.
 
    // Cremaos el dialogo-------------------------------------------------------
 
-   oPrinter          := PrintSeries():New( nView ):SetVentas()
+   oPrinter                := PrintSeries():New( nView ):SetVentas()
 
    // Establecemos sus valores-------------------------------------------------
 
-   oPrinter:Serie(      ( D():FacturasClientes( nView ) )->cSerie )
-   oPrinter:Documento(  ( D():FacturasClientes( nView ) )->nNumFac )
-   oPrinter:Sufijo(     ( D():FacturasClientes( nView ) )->cSufFac )
+   oPrinter:Serie(         ( D():FacturasClientes( nView ) )->cSerie )
+   oPrinter:Documento(     ( D():FacturasClientes( nView ) )->nNumFac )
+   oPrinter:Sufijo(        ( D():FacturasClientes( nView ) )->cSufFac )
 
    if lExt
 
@@ -16635,7 +16638,8 @@ Static Function ImprimirSeriesFacturas( nDevice, lExt )
                                           oPrinter:oImpresora:uGetValue,;
                                           if( !oPrinter:oCopias:lCopiasPredeterminadas, oPrinter:oCopias:uGetValue, ) ) }
 
-   oPrinter:bStart   := {||   if( lExternal, oPrinter:DisableRange(), ) }
+   oPrinter:bStart   := {||   if( lExternal, oPrinter:DisableRange(), ),;
+                              if( !empty( cPrinterFactura ), oPrinter:setPrinter( cPrinterFactura ), ) }
 
    // Abrimos el dialogo-------------------------------------------------------
 

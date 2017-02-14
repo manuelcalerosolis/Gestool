@@ -13372,7 +13372,8 @@ Static Function ImprimirSeriesAlbaranes( nDevice, lExternal )
                                           oPrinter:oImpresora:uGetValue,;
                                           if( !oPrinter:oCopias:lCopiasPredeterminadas, oPrinter:oCopias:uGetValue, ) ) }
 
-   oPrinter:bStart   := {||   if( lExternal, oPrinter:DisableRange(), ), if( !empty( cPrinterAlbaran ), oPrinter:setPrinter( cPrinterAlbaran ), ) }
+   oPrinter:bStart   := {||   if( lExternal, oPrinter:DisableRange(), ),;
+                              if( !empty( cPrinterAlbaran ), oPrinter:setPrinter( cPrinterAlbaran ), ) }
 
    // Abrimos el dialogo-------------------------------------------------------
 
