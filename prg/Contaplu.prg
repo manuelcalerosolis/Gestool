@@ -921,7 +921,7 @@ Return ( nil )
 Crea una subcuenta en contaplus
 */
 
-FUNCTION MkSubcuenta( oGetSubcuenta, aTemp, oGet, cRuta, cCodEmp, oGetDebe, oGetHaber, oGetSaldo )
+FUNCTION mkSubcuenta( oGetSubcuenta, aTemp, oGet, cRuta, cCodEmp, oGetDebe, oGetHaber, oGetSaldo )
 
    local n
    local cArea
@@ -944,103 +944,103 @@ FUNCTION MkSubcuenta( oGetSubcuenta, aTemp, oGet, cRuta, cCodEmp, oGetDebe, oGet
 
    cRuta                := cPath( cRuta )
 
-   cCodSubcuenta        := oGetSubcuenta:VarGet()
+   cCodSubcuenta        := oGetSubcuenta:varGet()
    cCodSubcuenta        := pntReplace( oGetSubcuenta, "0", nLenSubcuenta() )
    cCodSubcuenta        := padr( cCodSubcuenta, nLenSubcuenta() )
    cCodSubcuenta        := alltrim( cCodSubcuenta )
 
-   if !Empty( cCodSubcuenta )
+   if empty( cCodSubcuenta )
+      RETURN .t.
+   end if 
 
-      for n := 1 to len( aSerie )
+   for n := 1 to len( aSerie )
 
-         cCodEmp        := cCodEmpCnt( aSerie[ n ] )
+      cCodEmp           := cCodEmpCnt( aSerie[ n ] )
 
-         if !Empty( cCodEmp ) .and. aScan( aEmpProced, cCodEmp ) == 0
+      if !Empty( cCodEmp ) .and. aScan( aEmpProced, cCodEmp ) == 0
 
-            if OpenSubCuenta( cRuta, cCodEmp, @cArea )
+         if OpenSubCuenta( cRuta, cCodEmp, @cArea )
 
-               if !( cArea )->( dbSeek( cCodSubcuenta, .t. ) ) .and. !Empty( aTemp )
+            if !( cArea )->( dbSeek( cCodSubcuenta, .t. ) ) .and. !empty( aTemp )
 
-                  if ApoloMsgNoYes( "Subcuenta : " + Rtrim( cCodSubcuenta ) + " no existe en empresa : " + cCodEmp + CRLF + ;
-                                    "¿ Desea crearla ?" ,;
-                                    "Contabilidad" )
+               if ApoloMsgNoYes( "Subcuenta : " + rtrim( cCodSubcuenta ) + " no existe en empresa : " + cCodEmp + CRLF + ;
+                                 "¿ Desea crearla ?" ,;
+                                 "Contabilidad" )
 
-                     aSize( aTemp, 10 )
+                  ( cArea )->( dbappend() )
 
-                     ( cArea )->( dbAppend() )
-                     ( cArea )->Cod          := cCodSubcuenta
+                  ( cArea )->Cod          := cCodSubcuenta
 
-                     if ( cArea )->( FieldPos( "IDNIF" ) ) != 0
-                        ( cArea )->IdNif     := 1
-                     end if
-
-                     if aTemp[ 2 ] != nil
-                        ( cArea )->Titulo    := aTemp[ 2 ]
-                     end if
-
-                     if aTemp[ 3 ] != NIL
-                        ( cArea )->Nif       := aTemp[ 3 ]
-                     end if
-
-                     if aTemp[ 4 ] != NIL
-                        ( cArea )->Domicilio := aTemp[ 4 ]
-                     end if
-
-                     if aTemp[ 5 ] != NIL
-                        ( cArea )->Poblacion := aTemp[ 5 ]
-                     end if
-
-                     if aTemp[ 6 ] != NIL
-                        ( cArea )->Provincia := aTemp[ 6 ]
-                     end if
-
-                     if aTemp[ 7 ] != NIL
-                        ( cArea )->CodPostal := aTemp[ 7 ]
-                     end if
-
-                     if aTemp[ 8 ] != NIL
-                        ( cArea )->Telef01   := aTemp[ 8 ]
-                     end if
-
-                     if aTemp[ 9 ] != NIL
-                        ( cArea )->Fax01     := aTemp[ 9 ]
-                     end if
-
-                     if aTemp[ 10 ] != nil
-                        ( cArea )->eMail     := aTemp[ 10 ]
-                     end if
-
-                     ( cArea )->( DbCommit() )
-
-                     if Empty( cTitCta )
-                        cTitCta              := ( cArea )->Titulo
-                     end if
-
+                  if ( cArea )->( fieldpos( "IDNIF" ) ) != 0
+                     ( cArea )->idNif     := 1
                   end if
 
-               else
-
-                  if Empty( cTitCta )
-                     cTitCta                 := ( cArea )->Titulo
+                  if len( aTemp ) > 1
+                     ( cArea )->Titulo    := aTemp[ 2 ]
                   end if
-                  nSumaDB                    += ( cArea )->SumaDBEU
-                  nSumaHB                    += ( cArea )->SumaHBEU
+
+                  if len( aTemp ) > 2
+                     ( cArea )->Nif       := aTemp[ 3 ]
+                  end if
+
+                  if len( aTemp ) > 3
+                     ( cArea )->Domicilio := aTemp[ 4 ]
+                  end if
+
+                  if len( aTemp ) > 4
+                     ( cArea )->Poblacion := aTemp[ 5 ]
+                  end if
+
+                  if len( aTemp ) > 5
+                     ( cArea )->Provincia := aTemp[ 6 ]
+                  end if
+
+                  if len( aTemp ) > 6
+                     ( cArea )->CodPostal := aTemp[ 7 ]
+                  end if
+
+                  if len( aTemp ) > 7
+                     ( cArea )->Telef01   := aTemp[ 8 ]
+                  end if
+
+                  if len( aTemp ) > 8
+                     ( cArea )->Fax01     := aTemp[ 9 ]
+                  end if
+
+                  if len( aTemp ) > 9
+                     ( cArea )->eMail     := aTemp[ 10 ]
+                  end if
+
+                  ( cArea )->( dbcommit() )
+
+                  if empty( cTitCta )
+                     cTitCta              := ( cArea )->Titulo
+                  end if
 
                end if
 
-               CLOSE ( cArea )
+            else
 
-               aAdd( aEmpProced, cCodEmp )
+               if empty( cTitCta )
+                  cTitCta                 := ( cArea )->Titulo
+               end if
+
+               nSumaDB                    += ( cArea )->SumaDBEU
+               nSumaHB                    += ( cArea )->SumaHBEU
 
             end if
 
+            CLOSE ( cArea )
+
+            aAdd( aEmpProced, cCodEmp )
+
          end if
 
-      next
+      end if
 
-   end if
+   next
 
-   if ValType( oGet ) == "O"
+   if isObject( oGet )
       do case
          case oGet:ClassName() == "TGET" .or. oGet:ClassName() == "TGETHLP"
             oGet:cText( cTitCta )
@@ -1049,19 +1049,23 @@ FUNCTION MkSubcuenta( oGetSubcuenta, aTemp, oGet, cRuta, cCodEmp, oGetDebe, oGet
       end case
    end if
 
-   if ValType( oGetDebe ) == "O"
+   if isObject( oGetDebe )
       oGetDebe:cText( nSumaDB )
-   elseif ValType( oGetDebe ) == "N"
+   end if 
+
+   if isNum( oGetDebe )
       oGetDebe := nSumaDB
    end if
 
-   if ValType( oGetHaber ) == "O"
+   if isObject( oGetHaber )
       oGetHaber:cText( nSumaHB )
-   elseif ValType( oGetHaber ) == "N"
+   end if 
+
+   if isNum( oGetHaber )
       oGetHaber := nSumaHB
    end if
 
-   if ValType( oGetSaldo ) == "O"
+   if isObject( oGetSaldo )
       oGetSaldo:cText( nSumaDB - nSumaHB )
    end if
 

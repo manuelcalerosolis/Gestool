@@ -3801,8 +3801,8 @@ STATIC FUNCTION EdtRec( aTmp, aGet, cArticulo, oBrw, bWhen, bValid, nMode )
          ID       101 ;
          OF       fldContabilidad
 
-   REDEFINE GET   aGet[ ( D():Articulos( nView ) )->( fieldpos( "CCTAVTA" ) ) ] ;
-         VAR      aTmp[ ( D():Articulos( nView ) )->( fieldpos( "CCTAVTA" ) ) ] ;
+   REDEFINE GET   aGet[ ( D():Articulos( nView ) )->( fieldpos( "cCtaVta" ) ) ] ;
+         VAR      aTmp[ ( D():Articulos( nView ) )->( fieldpos( "cCtaVta" ) ) ] ;
          ID       110 ;
          PICTURE  ( Replicate( "X", nLenSubcuentaContaplus() ) ) ;
          WHEN     ( nLenCuentaContaplus() != 0 .and. nMode != ZOOM_MODE ) ;
@@ -3810,7 +3810,6 @@ STATIC FUNCTION EdtRec( aTmp, aGet, cArticulo, oBrw, bWhen, bValid, nMode )
          ON HELP  ( brwChkSubcuenta(   aGet[ ( D():Articulos( nView ) )->( fieldpos( "cCtaVta" ) ) ],;
                                        oGetSubCta ) ) ;
          VALID    ( lValidaSubcuenta(  aGet[ ( D():Articulos( nView ) )->( fieldpos( "cCtaVta" ) ) ],;
-                                       aTmp[ ( D():Articulos( nView ) )->( fieldpos( "cCtaVta" ) ) ],;
                                        aGet[ ( D():Articulos( nView ) )->( fieldpos( "Nombre"  ) ) ],;
                                        oGetSubCta,;
                                        oGetSaldo ) );
@@ -3837,7 +3836,6 @@ STATIC FUNCTION EdtRec( aTmp, aGet, cArticulo, oBrw, bWhen, bValid, nMode )
          ON HELP  ( brwChkSubcuenta(   aGet[ ( D():Articulos( nView ) )->( fieldpos( "cCtaVtaDev" ) ) ],;
                                        oGetSubcuentaVentaDevolucion ) ) ;
          VALID    ( lValidaSubcuenta(  aGet[ ( D():Articulos( nView ) )->( fieldpos( "cCtaVtaDev" ) ) ],;
-                                       aTmp[ ( D():Articulos( nView ) )->( fieldpos( "cCtaVtaDev" ) ) ],;
                                        aGet[ ( D():Articulos( nView ) )->( fieldpos( "Nombre" ) )     ],;
                                        oGetSubcuentaVentaDevolucion,;
                                        oGetSaldoSubcuentaVentaDevolucion ) );
@@ -3866,7 +3864,6 @@ STATIC FUNCTION EdtRec( aTmp, aGet, cArticulo, oBrw, bWhen, bValid, nMode )
          ON HELP  ( brwChkSubcuenta(   aGet[ ( D():Articulos( nView ) )->( fieldpos( "cCtaCom" ) ) ],;
                                        oGetCtaCom ) ) ;
          VALID    ( lValidaSubcuenta(  aGet[ ( D():Articulos( nView ) )->( fieldpos( "cCtaCom" ) ) ],;
-                                       aTmp[ ( D():Articulos( nView ) )->( fieldpos( "cCtaCom" ) ) ],;
                                        aGet[ ( D():Articulos( nView ) )->( fieldpos( "Nombre"  ) ) ],;
                                        oGetCtaCom,;
                                        oGetSalCom ) );
@@ -3893,7 +3890,6 @@ STATIC FUNCTION EdtRec( aTmp, aGet, cArticulo, oBrw, bWhen, bValid, nMode )
          ON HELP  ( brwChkSubcuenta(   aGet[ ( D():Articulos( nView ) )->( fieldpos( "cCtaComDev" ) ) ],;
                                        oGetSubcuentaCompraDevolucion ) ) ;
          VALID    ( lValidaSubcuenta(  aGet[ ( D():Articulos( nView ) )->( fieldpos( "cCtaComDev" ) ) ],;
-                                       aTmp[ ( D():Articulos( nView ) )->( fieldpos( "cCtaComDev" ) ) ],;
                                        aGet[ ( D():Articulos( nView ) )->( fieldpos( "Nombre" ) )     ],;
                                        oGetSubcuentaCompraDevolucion,;
                                        oGetSaldoSubcuentaCompraDevolucion ) );
@@ -4010,16 +4006,11 @@ STATIC FUNCTION EdtRec( aTmp, aGet, cArticulo, oBrw, bWhen, bValid, nMode )
          PICTURE  ( Replicate( "X", nLenSubcuentaContaplus() ) ) ;
          WHEN     ( nLenCuentaContaplus() != 0 .AND. nMode != ZOOM_MODE ) ;
          BITMAP   "LUPA" ;
-         ON HELP  ( BrwChkSubcuenta( aGet[ ( D():Articulos( nView ) )->( fieldpos( "CCTATRN" ) ) ], oGetCtaTrn ) ) ;
-         VALID    ( MkSubcuenta( aGet[ ( D():Articulos( nView ) )->( fieldpos( "CCTATRN" ) ) ],;
-                              {  aTmp[ ( D():Articulos( nView ) )->( fieldpos( "CCTATRN" ) ) ],;
-                                 aTmp[ ( D():Articulos( nView ) )->( fieldpos( "NOMBRE"  ) ) ] },;
-                              oGetCtaTrn,;
-                              nil,;
-                              nil,;
-                              nil,;
-                              nil,;
-                              oGetSalTrn ) );
+         ON HELP  ( brwChkSubcuenta(   aGet[ ( D():Articulos( nView ) )->( fieldpos( "CCTATRN" ) ) ], oGetCtaTrn ) ) ;
+         VALID    ( lValidaSubcuenta(  aGet[ ( D():Articulos( nView ) )->( fieldpos( "CCTATRN" ) ) ],;
+                                       aGet[ ( D():Articulos( nView ) )->( fieldpos( "NOMBRE"  ) ) ],;
+                                       oGetCtaTrn,;
+                                       oGetSalTrn ) );
          OF       fldContabilidad
 
    REDEFINE GET oGetCtaTrn VAR cGetCtaTrn ;
@@ -5132,22 +5123,27 @@ Return ( oDlg:nResult == IDOK )
 
 //--------------------------------------------------------------------------//
 
-Static function lValidaSubcuenta( getCuenta, valueCuenta, nombreCuenta, getNombreCuenta, getSaldo )
+Static function lValidaSubcuenta( getCuenta, getArticulo, getNombreCuenta, getSaldo )
 
-Return   (  mkSubcuenta(   getCuenta,;
-                           { valueCuenta, nombreCuenta },;
-                           getNombreCuenta,;
-                           nil,;
-                           nil,;
-                           nil,;
-                           nil,;
-                           getSaldo ) )
+   local valueCuenta    := alltrim( getCuenta:varget() )
+   local nombreArticulo := alltrim( getArticulo:varget() )
+
+   mkSubcuenta(   getCuenta,;
+                  { valueCuenta, nombreArticulo },;
+                  getNombreCuenta,;
+                  nil,;
+                  nil,;
+                  nil,;
+                  nil,;
+                  getSaldo )
+
+Return .t. 
 
 //---------------------------------------------------------------------------//
 
 Static function lValidaSubcuentaCompras( aGet, aTmp, nGetDebe, nGetHaber, oGetSaldo, oGetSubCom, cSubCtaAntCom, oBrwCom, dbfTmpSubCom )
 
-   if MkSubcuenta( aGet[ ( D():Articulos( nView ) )->( fieldpos( "CCTACOM" ) ) ],;
+   if mkSubcuenta( aGet[ ( D():Articulos( nView ) )->( fieldpos( "CCTACOM" ) ) ],;
                 { aTmp[ ( D():Articulos( nView ) )->( fieldpos( "CCTACOM" ) ) ], aTmp[ ( D():Articulos( nView ) )->( fieldpos( "NOMBRE"  ) ) ] },;
                 oGetSubCom,;
                 nil,;
