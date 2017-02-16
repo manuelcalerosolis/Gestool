@@ -20067,7 +20067,7 @@ FONT 8, "MS Sans Serif"
   CONTROL "&Zoom", 503, "Button", WS_TABSTOP, 156, 40, 50, 14
   CONTROL "&Eliminar [F4]", 502, "Button", WS_TABSTOP, 210, 40, 50, 14
   CONTROL "", 400, "TXBrowse", WS_TABSTOP|0x00300000, 48, 56, 440, 200
-  CONTROL "Organismos", -1, "Button", BS_GROUPBOX, 44, 29, 448, 232
+  CONTROL "Entidades", -1, "Button", BS_GROUPBOX, 44, 29, 448, 232
   CONTROL "", 600, "Static", SS_BITMAP|SS_CENTERIMAGE, 4, 3, 34, 30
   CONTROL "Directorio de organismos para emisión de facturas electronicas con facturae.", -1, "Static", SS_LEFTNOWORDWRAP, 44, 3, 446, 8
 }
