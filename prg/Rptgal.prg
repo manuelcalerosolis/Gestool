@@ -2527,6 +2527,9 @@ Return nil
 Function TConversionPedidosClientes()
 Return nil
 
+Function validRunReport()
+Return .t.
+
 //------------------------------------------------------------------//
 
 #pragma BEGINDUMP

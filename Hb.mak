@@ -1441,17 +1441,7 @@ $(BORLANDLIB)\psdk\shell32.lib,
 $(RESOURCE)\GstDialog.Res        +
 $(RESOURCE)\GstTactil.Res        +
 $(RESOURCE)\GstImage1.Res        +
-$(RESOURCE)\GstImage2.Res        +
-$(RESOURCE)\GstImage3.Res        +
-$(RESOURCE)\GstImage4.Res        +
-$(RESOURCE)\GstImage5.Res        +
-$(RESOURCE)\GstImage6.Res        +
-$(RESOURCE)\GstImage7.Res        +
-$(RESOURCE)\GstImage8.Res        +
-$(RESOURCE)\GstImage9.Res        +
-$(RESOURCE)\GstImage10.Res       +
-$(RESOURCE)\GstImage11.Res       +
-$(RESOURCE)\GstImage12.Res       +
+$(RESOURCE)\GstImage2.Res        + 
 $(RESOURCE)\GstImageGC1.Res      +
 $(RESOURCE)\GstImageGC2.Res      +
 |

@@ -183,7 +183,6 @@ TRnkGFRVta.prg          \
 TStkMinArt.prg          \
 TStockMinimoFamilia.prg \
 Talbtip.prg             \
-Tankes.prg              \
 Tarifa.prg              \
 Tarray.prg              \
 Tartalb.prg             \
@@ -1225,7 +1224,6 @@ TRnkGFRVta.obj          \
 TStkMinArt.obj          \
 TStockMinimoFamilia.obj \
 Talbtip.obj             \
-Tankes.obj              \
 Tarifa.obj              \
 Tarray.obj              \
 Tartalb.obj             \
@@ -2277,7 +2275,6 @@ $(OBJ)\TRnkGFRVta.obj           +
 $(OBJ)\TStkMinArt.obj           +
 $(OBJ)\TStockMinimoFamilia.obj  +
 $(OBJ)\Talbtip.obj              +
-$(OBJ)\Tankes.obj               +
 $(OBJ)\Tarifa.obj               +
 $(OBJ)\Tarray.obj               +
 $(OBJ)\Tartalb.obj              +
@@ -3205,16 +3202,6 @@ $(BORLANDLIB)\psdk\shell32.lib,
 $(RESOURCE)\RptApolo.Res         +
 $(RESOURCE)\GstImage1.Res        +
 $(RESOURCE)\GstImage2.Res        +
-$(RESOURCE)\GstImage3.Res        +
-$(RESOURCE)\GstImage4.Res        +
-$(RESOURCE)\GstImage5.Res        +
-$(RESOURCE)\GstImage6.Res        +
-$(RESOURCE)\GstImage7.Res        +
-$(RESOURCE)\GstImage8.Res        +
-$(RESOURCE)\GstImage9.Res        +
-$(RESOURCE)\GstImage10.Res       +
-$(RESOURCE)\GstImage11.Res       +
-$(RESOURCE)\GstImage12.Res       +
 $(RESOURCE)\GstImageGC1.Res      +
 $(RESOURCE)\GstImageGC2.Res      +
 |
