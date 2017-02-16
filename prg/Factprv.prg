@@ -967,7 +967,7 @@ FUNCTION FacPrv( oMenuItem, oWnd, cCodPrv, cCodArt, cNumAlb )
       
       with object ( oWndBrw:AddXCol() )
          :cHeader          := "Creación/Modificación"
-         :bEditValue       := {|| dtoc( ( D():FacturasProveedores( nView ) )->dFecCre ) + space( 1 ) + ( D():FacturasProveedores( nView ) )->cTimCre }
+         :bEditValue       := {|| dtoc( ( D():FacturasProveedores( nView ) )->dFecChg ) + space( 1 ) + ( D():FacturasProveedores( nView ) )->cTimChg }
          :nWidth           := 120
          :lHide            := .t.
       end with
@@ -9583,6 +9583,9 @@ FUNCTION rxFacPrv( cPath, cDriver )
       ( cFacPrvL )->( ordCondSet("!Deleted()", {||!Deleted()}  ) )
       ( cFacPrvL )->( ordCreate( cPath + "FacPrvL.CDX", "nPosPrint", "cSerFac + Str( nNumFac ) + cSufFac + Str( nPosPrint )", {|| Field->cSerFac + Str( Field->nNumFac ) + Field->cSufFac + str( Field->nPosPrint ) } ) )
 
+      ( cFacPrvL )->( ordCondSet("!Deleted()", {||!Deleted()}  ) )
+      ( cFacPrvL )->( ordCreate( cPath + "FacPrvL.CDX", "dFecFac", "dFecFac", {|| Field->dFecFac } ) )
+
       ( cFacPrvL )->( dbCloseArea() )
    else
       msgStop( "Imposible abrir en modo exclusivo la tabla de facturas de proveedores" )
@@ -11125,11 +11128,7 @@ Method ReciveData() CLASS TFacturasProveedorSenderReciver
    local n
    local aExt
 
-   if ::oSender:lServer
-      aExt  := aRetDlgEmp()
-   else
-      aExt  := { "All" }
-   end if
+   aExt     := ::oSender:aExtensions()
 
    /*
    Recibirlo de internet
@@ -11230,6 +11229,9 @@ Method Process() CLASS TFacturasProveedorSenderReciver
                oStock:cFacPrvT   := cFacPrvT
                oStock:cFacPrvL   := cFacPrvL
 
+               ( tmpFacPrvT )->( OrdSetFocus(0) )
+               ( tmpFacPrvT )->( dbGoTop() )
+
                while ( tmpFacPrvT )->( !eof() )
 
                   /*
@@ -11238,7 +11240,20 @@ Method Process() CLASS TFacturasProveedorSenderReciver
 
                   if ::validateRecepcion( tmpFacPrvT, cFacPrvT )
 
+                     while ( cFacPrvT )->( dbseek( ( tmpFacPrvT )->cSerFac + Str( ( tmpFacPrvT )->nNumFac ) + ( tmpFacPrvT )->cSufFac ) )
+                        dbLockDelete( cFacPrvT )
+                     end if 
+
+                     while ( cFacPrvL )->( dbseek( ( tmpFacPrvT )->cSerFac + Str( ( tmpFacPrvT )->nNumFac ) + ( tmpFacPrvT )->cSufFac ) )
+                        dbLockDelete( cFacPrvL )
+                     end if 
+
                      dbPass( tmpFacPrvT, cFacPrvT, .t. )
+
+                     if dbLock( cFacPrvT )
+                        ( cFacPrvT )->lSndDoc := .f.
+                        ( cFacPrvT )->( dbUnLock() )
+                     end if
 
                      ::oSender:SetText( "Añadido     : " + ( tmpFacPrvT )->cSerFac + "/" + AllTrim( Str( ( tmpFacPrvT )->nNumFac ) ) +"/" + AllTrim( ( tmpFacPrvT )->cSufFac ) + "; " + Dtoc( ( tmpFacPrvT )->dFecFac ) + "; " + AllTrim( ( tmpFacPrvT )->cCodPrv ) + ( tmpFacPrvT )->cNomPrv )
 
@@ -11356,7 +11371,7 @@ Method Process() CLASS TFacturasProveedorSenderReciver
                      ( cFacPrvT)->LRECARGO    := ( tmpFacPrvT )->lRecargo
                      ( cFacPrvT)->CDIVFAC     := ( tmpFacPrvT )->cDivFac
                      ( cFacPrvT)->NVDVFAC     := ( tmpFacPrvT )->nVdvFac
-                     ( cFacPrvT)->LSNDDOC     := .t.
+                     ( cFacPrvT)->LSNDDOC     := .f.
                      ( cFacPrvT)->CDTOUNO     := ( tmpFacPrvT )->cDtoUno
                      ( cFacPrvT)->NDTOUNO     := ( tmpFacPrvT )->nDtoUno
                      ( cFacPrvT)->CDTODOS     := ( tmpFacPrvT )->cDtoDos
@@ -11553,21 +11568,21 @@ Return Self
 
 //----------------------------------------------------------------------------//
 
-METHOD validateRecepcion( tmpFacPrvT, dbfFacPrvT ) CLASS TFacturasProveedorSenderReciver
+METHOD validateRecepcion( tmpFacPrvT, cFacPrvT ) CLASS TFacturasProveedorSenderReciver
 
-   ::cErrorRecepcion       := "Pocesando factura de proveedor número " + ( dbfFacPrvT )->cSerPed + "/" + alltrim( Str( ( dbfFacPrvT )->nNumPed ) ) + "/" + alltrim( ( dbfFacPrvT )->cSufPed ) + " "
+   ::cErrorRecepcion       := "Pocesando factura de proveedor número " + ( cFacPrvT )->cSerFac + "/" + alltrim( Str( ( cFacPrvT )->nNumFac ) ) + "/" + alltrim( ( cFacPrvT )->cSufFac ) + " "
 
-   if !( lValidaOperacion( ( tmpFacPrvT )->dFecPed, .f. ) )
-      ::cErrorRecepcion    += "la fecha " + dtoc( ( tmpFacPrvT )->dFecPed ) + " no es valida en esta empresa"
+   if !( lValidaOperacion( ( tmpFacPrvT )->dFecFac, .f. ) )
+      ::cErrorRecepcion    += "la fecha " + dtoc( ( tmpFacPrvT )->dFecFac ) + " no es valida en esta empresa"
       Return .f. 
    end if 
 
-   if !( ( dbfFacPrvT )->( dbSeek( ( tmpFacPrvT )->cSerPed + Str( ( tmpFacPrvT )->nNumPed ) + ( tmpFacPrvT )->cSufPed ) ) )
+   if !( ( cFacPrvT )->( dbSeek( ( tmpFacPrvT )->cSerFac + Str( ( tmpFacPrvT )->nNumFac ) + ( tmpFacPrvT )->cSufFac ) ) )
       Return .t.
    end if 
 
-   if dtos( ( dbfFacPrvT )->dFecCre ) + ( dbfFacPrvT )->cTimCre >= dtos( ( tmpFacPrvT )->dFecCre ) + ( tmpFacPrvT )->cTimCre 
-      ::cErrorRecepcion    += "la fecha en la empresa " + dtoc( ( dbfFacPrvT )->dFecCre ) + " " + ( dbfFacPrvT )->cTimCre + " es más reciente que la recepción " + dtoc( ( tmpFacPrvT )->dFecCre ) + " " + ( tmpFacPrvT )->cTimCre 
+   if dtos( ( cFacPrvT )->dFecChg ) + ( cFacPrvT )->cTimChg >= dtos( ( tmpFacPrvT )->dFecChg ) + ( tmpFacPrvT )->cTimChg 
+      ::cErrorRecepcion    += "la fecha en la empresa " + dtoc( ( cFacPrvT )->dFecChg ) + " " + ( cFacPrvT )->cTimChg + " es más reciente que la recepción " + dtoc( ( tmpFacPrvT )->dFecChg ) + " " + ( tmpFacPrvT )->cTimChg 
       Return .f.
    end if
 

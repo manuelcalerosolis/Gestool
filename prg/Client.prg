@@ -12289,7 +12289,7 @@ Return ( hAtipica['nUnidadesVender'] - hAtipica['nUnidadesCobrar'] )
 
 Static Function nImporteUnitario( hAtipica )
 
-   if empty(hAtipica)
+   if empty( hAtipica )
       Return ( 0 )
    end if 
 
@@ -12299,7 +12299,7 @@ Return ( hAtipica['nImporteUnitario'] )
 
 Static Function isBetterAtipica( hValue, hNewAtipica, hOldAtipica )
 
-   if empty(hOldAtipica)
+   if empty( hOldAtipica )
       return .t.
    end if 
 
@@ -12311,15 +12311,15 @@ Static function getSelectedAtipica( hValue, hSelectedAtipica )
 
    local hCurrentAtipica   := hValoresAtipica( hValue ) // hCurrentAtipica )
 
-   if isValidAtipicaXY( hValue, hCurrentAtipica ) 
+   if isValidAtipicaXY( hValue, hCurrentAtipica )
 
       if isBetterAtipica( hValue, hSelectedAtipica, hCurrentAtipica )
-      
+
          Return ( hCurrentAtipica )
 
       end if
 
-   end if 
+   end if
 
 Return ( hSelectedAtipica )
 
@@ -12328,7 +12328,7 @@ Return ( hSelectedAtipica )
 Static Function isValidAtipicaXY( hValue, hAtipica )
 
    if hAtipica[ "isTypeXY" ]
-      
+
       do case
          case hhaskey( hAtipica, "nCajasGratis" ) .and. hAtipica[ "nCajasGratis" ] != 0
 

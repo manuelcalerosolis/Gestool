@@ -515,7 +515,15 @@ Method CreateData()
    local lSnd           := .f.
    local oTipoArt
    local oTipoArtTmp
-   local cFileName      := "TipArt" + StrZero( ::nGetNumberToSend(), 6 ) + "." + retSufEmp()
+   local cFileName
+
+   if ::oSender:lServer
+      cFileName       := "TipArt" + StrZero( ::nGetNumberToSend(), 6 ) + ".All"
+   else
+      cFileName       := "TipArt" + StrZero( ::nGetNumberToSend(), 6 ) + "." + retSufEmp()
+   end if
+
+   MsgInfo( cFileName )
 
    oTipoArt             := TTipArt():Create( cPatEmp(), cDriver() )
    oTipoArt:OpenService()
@@ -605,7 +613,13 @@ Return ( Self )
 
 Method SendData()
 
-   local cFileName         := "TipArt" + StrZero( ::nGetNumberToSend(), 6 ) + "." + retSufEmp()
+   local cFileName
+
+   if ::oSender:lServer
+      cFileName         := "TipArt" + StrZero( ::nGetNumberToSend(), 6 ) + ".All"
+   else
+      cFileName         := "TipArt" + StrZero( ::nGetNumberToSend(), 6 ) + "." + retSufEmp()
+   end if
 
    if file( cPatOut() + cFileName )
 
@@ -685,11 +699,25 @@ Method Process()
                while !oTipArtTmp:oDbf:eof()
 
                   if oTipArt:oDbf:Seek( oTipArtTmp:oDbf:cCodTip )
+                     
                      dbPass( oTipArtTmp:oDbf:cAlias, oTipArt:oDbf:cAlias, .f. )
+                     
+                     oTipArt:oDbf:Load()
+                     oTipArt:oDbf:lSelect := .f.
+                     oTipArt:oDbf:Save()
+
                      ::oSender:SetText( "Reemplazado : " + oTipArt:oDbf:cCodTip + "; " + oTipArt:oDbf:cNomTip )
+
                   else
+
                      dbPass( oTipArtTmp:oDbf:cAlias, oTipArt:oDbf:cAlias, .t. )
+
+                     oTipArt:oDbf:Load()
+                     oTipArt:oDbf:lSelect := .f.
+                     oTipArt:oDbf:Save()
+
                      ::oSender:SetText( "Añadido : " + oTipArt:oDbf:cCodTip + "; " + oTipArt:oDbf:cNomTip )
+                     
                   end if
 
                   oTipArtTmp:oDbf:Skip()

@@ -14930,11 +14930,7 @@ Method ReciveData() CLASS TFacturasRectificativasSenderReciver
    local n
    local aExt
 
-   if ::oSender:lServer
-      aExt  := aRetDlgEmp()
-   else
-      aExt  := { "All" }
-   end if
+   aExt     := ::oSender:aExtensions()
 
    /*
    Recibirlo de internet
@@ -15020,7 +15016,7 @@ Method Process() CLASS TFacturasRectificativasSenderReciver
 
                   dbPass( tmpFacRecT, cFacRecT, .t. )
 
-                  if lClient .and. dbLock( cFacRecT )
+                  if dbLock( cFacRecT )
                      ( cFacRecT )->lSndDoc := .f.
                      ( cFacRecT )->( dbUnLock() )
                   end if

@@ -2815,15 +2815,35 @@ Method Process()
                while !( tmpPrv )->( eof() )
 
                   if ( dbfProvee )->( dbSeek( ( tmpPrv )->Cod ) )
+                     
                      if !::oSender:lServer
+                        
                         dbPass( tmpPrv, dbfProvee, .f. )
+
+                        if dbLock( dbfProvee )
+                           ( dbfProvee )->lSndInt := .f.
+                           ( dbfProvee )->( dbUnLock() )
+                        end if
+
                         ::oSender:SetText( "Reemplazado : " + AllTrim( ( dbfProvee )->Cod ) + "; " + ( dbfProvee )->Titulo )
+
                      else
+
                         ::oSender:SetText( "Desestimado : " + AllTrim( ( dbfProvee )->Cod ) + "; " + ( dbfProvee )->Titulo )
+
                      end if
+
                   else
+
                      dbPass( tmpPrv, dbfProvee, .t. )
+
+                     if dbLock( dbfProvee )
+                        ( dbfProvee )->lSndInt := .f.
+                        ( dbfProvee )->( dbUnLock() )
+                     end if
+
                      ::oSender:SetText( "Añadido : " + AllTrim( ( dbfProvee )->Cod ) + "; " + ( dbfProvee )->Titulo )
+
                   end if
 
                   ( tmpPrv )->( dbSkip() )

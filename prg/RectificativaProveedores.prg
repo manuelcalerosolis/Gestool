@@ -10953,11 +10953,7 @@ Method ReciveData() CLASS TRectificativasProveedorSenderReciver
    local n
    local aExt
 
-   if ::oSender:lServer
-      aExt  := aRetDlgEmp()
-   else
-      aExt  := { "All" }
-   end if
+   aExt     := ::oSender:aExtensions()
 
    /*
    Recibirlo de internet
@@ -11045,7 +11041,7 @@ Method Process() CLASS TRectificativasProveedorSenderReciver
 
                   dbPass( tmpRctPrvT, dbfRctPrvT, .t. )
                   
-                  if lClient .and. dbLock( dbfRctPrvT )
+                  if dbLock( dbfRctPrvT )
                      ( dbfRctPrvT )->lSndDoc := .f.
                      ( dbfRctPrvT )->( dbUnLock() )
                   end if
@@ -11131,8 +11127,8 @@ METHOD validateRecepcion( tmpRctPrvT, dbfRctPrvT ) CLASS TRectificativasProveedo
       Return .t.
    end if 
 
-   if dtos( ( dbfRctPrvT )->dFecCre ) + ( dbfRctPrvT )->cTimCre >= dtos( ( tmpRctPrvT )->dFecCre ) + ( tmpRctPrvT )->cTimCre 
-      ::cErrorRecepcion    += "la fecha en la empresa " + dtoc( ( dbfRctPrvT )->dFecCre ) + " " + ( dbfRctPrvT )->cTimCre + " es más reciente que la recepción " + dtoc( ( tmpRctPrvT )->dFecCre ) + " " + ( tmpRctPrvT )->cTimCre 
+   if dtos( ( dbfRctPrvT )->dFecChg ) + ( dbfRctPrvT )->cTimChg >= dtos( ( tmpRctPrvT )->dFecChg ) + ( tmpRctPrvT )->cTimChg 
+      ::cErrorRecepcion    += "la fecha en la empresa " + dtoc( ( dbfRctPrvT )->dFecChg ) + " " + ( dbfRctPrvT )->cTimChg + " es más reciente que la recepción " + dtoc( ( tmpRctPrvT )->dFecChg ) + " " + ( tmpRctPrvT )->cTimChg 
       Return .f.
    end if
 

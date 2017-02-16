@@ -9377,7 +9377,7 @@ Static Function EdtRecMenu( aTmp, oDlg )
 
             MENUITEM    "&1. Campos extra [F9]";
                MESSAGE  "Mostramos y rellenamos los campos extra para la familia" ;
-               RESOURCE "form_green_add_16" ;
+               RESOURCE "gc_form_plus2_16" ;
                ACTION   ( oDetCamposExtra:Play( Space( 1 ) ) )
 
             MENUITEM    "&2. Visualizar presupuesto";
@@ -12781,127 +12781,129 @@ STATIC FUNCTION LoaArt( cCodArt, aGet, aTmp, aTmpFac, oStkAct, oSayPr1, oSayPr2,
 
          end if
 
-         // Precios en tarifas-------------------------------------------------
-
-         if !empty( aTmpFac[ _CCODTAR ] ) // .and. empty( aTmp[ _NPREUNIT ] )
-
-            // Precio----------------------------------------------------------
-
-            nImpOfe  := RetPrcTar( aTmp[ _CREF ], aTmpFac[ _CCODTAR ], aTmp[ _CCODPR1 ], aTmp[ _CCODPR2 ], aTmp[ _CVALPR1 ], aTmp[ _CVALPR2 ], dbfTarPreL, aTmp[ _NTARLIN ] )
-            if nImpOfe != 0
-               if !empty( aGet[ _NPREUNIT ] )
-                  aGet[ _NPREUNIT ]:cText( nImpOfe )
-               end if
-            end if
-
-            // Descuento porcentual--------------------------------------------
-
-            nImpOfe  := RetPctTar( aTmp[ _CREF ], cCodFam, aTmpFac[ _CCODTAR ], aTmp[ _CCODPR1 ], aTmp[ _CCODPR2 ], aTmp[ _CVALPR1 ], aTmp[ _CVALPR2 ], dbfTarPreL )
-            if nImpOfe != 0
-               if !empty( aGet[_NDTO ] )
-                  aGet[_NDTO   ]:cText( nImpOfe )
-               end if   
-            end if
-
-            // Descuento lineal------------------------------------------------
-
-            nImpOfe  := RetLinTar( aTmp[ _CREF ], cCodFam, aTmpFac[_CCODTAR], aTmp[_CCODPR1], aTmp[_CCODPR2], aTmp[_CVALPR1], aTmp[_CVALPR2], dbfTarPreL )
-            if nImpOfe != 0
-               if !empty( aGet[ _NDTODIV ] )
-                  aGet[ _NDTODIV ]:cText( nImpOfe )
-               end if   
-            end if
-
-            // Comision de agente----------------------------------------------
-
-            nImpOfe  := retComTar( aTmp[ _CREF ], cCodFam, aTmpFac[ _CCODTAR ], aTmp[ _CCODPR1 ], aTmp[ _CCODPR2 ], aTmp[ _CVALPR1 ], aTmp[ _CVALPR2 ], aTmpFac[ _CCODAGE ], dbfTarPreL, dbfTarPreS )
-            if nImpOfe != 0
-               if !empty( aGet[ _NCOMAGE ] )
-                  aGet[ _NCOMAGE ]:cText( nImpOfe )
-               end if   
-            end if
-
-            // Descuento de promoci-n------------------------------------------
-
-            nImpOfe  := RetDtoPrm( aTmp[ _CREF ], cCodFam, aTmpFac[_CCODTAR], aTmp[_CCODPR1], aTmp[_CCODPR2], aTmp[_CVALPR1], aTmp[_CVALPR2], aTmpFac[_DFECFAC], dbfTarPreL )
-            if nImpOfe  != 0
-               if !empty( aGet[ _NDTOPRM ] )
-                  aGet[ _NDTOPRM ]:cText( nImpOfe )
-               end if   
-            end if
-
-            // Descuento de promoci-n para el agente---------------------------
-
-            nDtoAge  := RetDtoAge( aTmp[ _CREF ], cCodFam, aTmpFac[ _CCODTAR ], aTmp[_CCODPR1], aTmp[_CCODPR2], aTmp[_CVALPR1], aTmp[_CVALPR2], aTmpFac[_DFECFAC], aTmpFac[_CCODAGE], dbfTarPreL, dbfTarPreS )
-            if nDtoAge  != 0
-               if !empty( aGet[ _NCOMAGE] )
-                  aGet[ _NCOMAGE ]:cText( nDtoAge )
-               end if   
-            end if
-
-         end if
-
-         /*
-         Estudiamos los casos de las atipicas de clientes-----------------------
-         */
-
-         hAtipica := hAtipica( hValue( aTmp, aTmpFac ) )
-        
-         if !empty( hAtipica )
-
-            if hhaskey( hAtipica, "nImporte" ) .and. hAtipica[ "nImporte" ] != 0
-               if !empty( aGet[ _NPREUNIT ] )
-                  aGet[ _NPREUNIT ]:cText( hAtipica[ "nImporte" ] )
-               else 
-                  aTmp[ _NPREUNIT ] := hAtipica[ "nImporte" ] 
-               end if
-            end if
-
-            if hhaskey( hAtipica, "nDescuentoPorcentual" ) .and. hAtipica[ "nDescuentoPorcentual"] != 0 .and. aTmp[ _NDTO ] == 0
-               if !empty( aGet[ _NDTO ] )
-                  aGet[ _NDTO ]:cText( hAtipica[ "nDescuentoPorcentual"] )   
-               else 
-                  aTmp[ _NDTO ]  := hAtipica[ "nDescuentoPorcentual"]
-               end if   
-            end if
-
-            if hhaskey( hAtipica, "nDescuentoPromocional" ) .and. hAtipica[ "nDescuentoPromocional" ] != 0 .and. aTmp[ _NDTOPRM ] == 0
-               if !empty( aGet[ _NDTOPRM ] )
-                  aGet[ _NDTOPRM ]:cText( hAtipica[ "nDescuentoPromocional" ] )
-               else 
-                  aTmp[ _NDTOPRM ]  := hAtipica[ "nDescuentoPromocional" ] 
-               end if
-            end if
-
-            if hhaskey( hAtipica, "nComisionAgente" ) .and. hAtipica[ "nComisionAgente" ] != 0 .and. aTmp[ _NCOMAGE ] == 0
-               if !empty( aGet[ _NCOMAGE ] )
-                  aGet[ _NCOMAGE ]:cText( hAtipica[ "nComisionAgente" ] )
-               else 
-                  atmp[ _NCOMAGE ]  := hAtipica[ "nComisionAgente" ] 
-               end if   
-            end if
-
-            if hhaskey( hAtipica, "nDescuentoLineal" ) .and. hAtipica[ "nDescuentoLineal" ] != 0 .and. aTmp[ _NDTODIV ] == 0
-               if !empty( aGet[ _NDTODIV ] )
-                  aGet[ _NDTODIV ]:cText( hAtipica[ "nDescuentoLineal" ] )
-               else 
-                  aTmp[ _NDTODIV ]  := hAtipica[ "nDescuentoLineal" ]
-               end if
-            end if
-
-            if hhaskey( hAtipica, "nTarifaPrecio" ) .and. hAtipica[ "nTarifaPrecio" ] != 0 .and. aTmp[ _NDTODIV ] == 0
-               if !empty( aGet[ _NTARLIN ] )
-                  aGet[ _NTARLIN ]:cText( hAtipica[ "nTarifaPrecio" ] )
-               else 
-                  aTmp[ _NTARLIN ]  := hAtipica[ "nTarifaPrecio" ] 
-               end if 
-            end if 
-
-         end if
+         
 
          sysRefresh()
 
          ValidaMedicion( aTmp, aGet )
+
+      end if
+
+      // Precios en tarifas-------------------------------------------------
+
+      if !empty( aTmpFac[ _CCODTAR ] ) // .and. empty( aTmp[ _NPREUNIT ] )
+
+         // Precio----------------------------------------------------------
+
+         nImpOfe  := RetPrcTar( aTmp[ _CREF ], aTmpFac[ _CCODTAR ], aTmp[ _CCODPR1 ], aTmp[ _CCODPR2 ], aTmp[ _CVALPR1 ], aTmp[ _CVALPR2 ], dbfTarPreL, aTmp[ _NTARLIN ] )
+         if nImpOfe != 0
+            if !empty( aGet[ _NPREUNIT ] )
+               aGet[ _NPREUNIT ]:cText( nImpOfe )
+            end if
+         end if
+
+         // Descuento porcentual--------------------------------------------
+
+         nImpOfe  := RetPctTar( aTmp[ _CREF ], aTmp[ _CCODFAM ], aTmpFac[ _CCODTAR ], aTmp[ _CCODPR1 ], aTmp[ _CCODPR2 ], aTmp[ _CVALPR1 ], aTmp[ _CVALPR2 ], dbfTarPreL )
+         if nImpOfe != 0
+            if !empty( aGet[_NDTO ] )
+               aGet[_NDTO   ]:cText( nImpOfe )
+            end if   
+         end if
+
+         // Descuento lineal------------------------------------------------
+
+         nImpOfe  := RetLinTar( aTmp[ _CREF ], aTmp[ _CCODFAM ], aTmpFac[_CCODTAR], aTmp[_CCODPR1], aTmp[_CCODPR2], aTmp[_CVALPR1], aTmp[_CVALPR2], dbfTarPreL )
+         if nImpOfe != 0
+            if !empty( aGet[ _NDTODIV ] )
+               aGet[ _NDTODIV ]:cText( nImpOfe )
+            end if   
+         end if
+
+         // Comision de agente----------------------------------------------
+
+         nImpOfe  := retComTar( aTmp[ _CREF ], aTmp[ _CCODFAM ], aTmpFac[ _CCODTAR ], aTmp[ _CCODPR1 ], aTmp[ _CCODPR2 ], aTmp[ _CVALPR1 ], aTmp[ _CVALPR2 ], aTmpFac[ _CCODAGE ], dbfTarPreL, dbfTarPreS )
+         if nImpOfe != 0
+            if !empty( aGet[ _NCOMAGE ] )
+               aGet[ _NCOMAGE ]:cText( nImpOfe )
+            end if   
+         end if
+
+         // Descuento de promoci-n------------------------------------------
+
+         nImpOfe  := RetDtoPrm( aTmp[ _CREF ], aTmp[ _CCODFAM ], aTmpFac[_CCODTAR], aTmp[_CCODPR1], aTmp[_CCODPR2], aTmp[_CVALPR1], aTmp[_CVALPR2], aTmpFac[_DFECFAC], dbfTarPreL )
+         if nImpOfe  != 0
+            if !empty( aGet[ _NDTOPRM ] )
+               aGet[ _NDTOPRM ]:cText( nImpOfe )
+            end if   
+         end if
+
+         // Descuento de promoci-n para el agente---------------------------
+
+         nDtoAge  := RetDtoAge( aTmp[ _CREF ], aTmp[ _CCODFAM ], aTmpFac[ _CCODTAR ], aTmp[_CCODPR1], aTmp[_CCODPR2], aTmp[_CVALPR1], aTmp[_CVALPR2], aTmpFac[_DFECFAC], aTmpFac[_CCODAGE], dbfTarPreL, dbfTarPreS )
+         if nDtoAge  != 0
+            if !empty( aGet[ _NCOMAGE] )
+               aGet[ _NCOMAGE ]:cText( nDtoAge )
+            end if   
+         end if
+
+      end if
+
+      /*
+      Estudiamos los casos de las atipicas de clientes-----------------------
+      */
+
+      hAtipica := hAtipica( hValue( aTmp, aTmpFac ) )
+     
+      if !empty( hAtipica )
+
+         if hhaskey( hAtipica, "nImporte" ) .and. hAtipica[ "nImporte" ] != 0
+            if !empty( aGet[ _NPREUNIT ] )
+               aGet[ _NPREUNIT ]:cText( hAtipica[ "nImporte" ] )
+            else 
+               aTmp[ _NPREUNIT ] := hAtipica[ "nImporte" ] 
+            end if
+         end if
+
+         if hhaskey( hAtipica, "nDescuentoPorcentual" ) .and. hAtipica[ "nDescuentoPorcentual"] != 0 .and. aTmp[ _NDTO ] == 0
+            if !empty( aGet[ _NDTO ] )
+               aGet[ _NDTO ]:cText( hAtipica[ "nDescuentoPorcentual"] )   
+            else 
+               aTmp[ _NDTO ]  := hAtipica[ "nDescuentoPorcentual"]
+            end if   
+         end if
+
+         if hhaskey( hAtipica, "nDescuentoPromocional" ) .and. hAtipica[ "nDescuentoPromocional" ] != 0 .and. aTmp[ _NDTOPRM ] == 0
+            if !empty( aGet[ _NDTOPRM ] )
+               aGet[ _NDTOPRM ]:cText( hAtipica[ "nDescuentoPromocional" ] )
+            else 
+               aTmp[ _NDTOPRM ]  := hAtipica[ "nDescuentoPromocional" ] 
+            end if
+         end if
+
+         if hhaskey( hAtipica, "nComisionAgente" ) .and. hAtipica[ "nComisionAgente" ] != 0 .and. aTmp[ _NCOMAGE ] == 0
+            if !empty( aGet[ _NCOMAGE ] )
+               aGet[ _NCOMAGE ]:cText( hAtipica[ "nComisionAgente" ] )
+            else 
+               atmp[ _NCOMAGE ]  := hAtipica[ "nComisionAgente" ] 
+            end if   
+         end if
+
+         if hhaskey( hAtipica, "nDescuentoLineal" ) .and. hAtipica[ "nDescuentoLineal" ] != 0 .and. aTmp[ _NDTODIV ] == 0
+            if !empty( aGet[ _NDTODIV ] )
+               aGet[ _NDTODIV ]:cText( hAtipica[ "nDescuentoLineal" ] )
+            else 
+               aTmp[ _NDTODIV ]  := hAtipica[ "nDescuentoLineal" ]
+            end if
+         end if
+
+         if hhaskey( hAtipica, "nTarifaPrecio" ) .and. hAtipica[ "nTarifaPrecio" ] != 0 .and. aTmp[ _NDTODIV ] == 0
+            if !empty( aGet[ _NTARLIN ] )
+               aGet[ _NTARLIN ]:cText( hAtipica[ "nTarifaPrecio" ] )
+            else 
+               aTmp[ _NTARLIN ]  := hAtipica[ "nTarifaPrecio" ] 
+            end if 
+         end if 
 
       end if
 
@@ -21937,11 +21939,7 @@ Method ReciveData() CLASS TFacturasClientesSenderReciver
    local n
    local aExt
 
-   if ::oSender:lServer
-      aExt  := aRetDlgEmp()
-   else
-      aExt  := { "All" }
-   end if
+   aExt     := ::oSender:aExtensions()
 
    /*
    Recibirlo de internet-------------------------------------------------------

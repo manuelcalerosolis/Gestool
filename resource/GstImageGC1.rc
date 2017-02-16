@@ -399,9 +399,6 @@ GC_CLOUD_16 BITMAP "..\\bmp\\gc_cloud_16.bmp"
 GC_CLOUD_RAIN_16 BITMAP "..\\bmp\\GC_CLOUD_RAIN_16.bmp"
 GC_SNOWFLAKE_16 BITMAP "..\\bmp\\GC_SNOWFLAKE_16.bmp"
 
-FORM_GREEN_ADD_16 BITMAP "..\\bmp\\form_green_add_16.bmp"
-FORM_GREEN_ADD_32 BITMAP "..\\bmp\\form_green_add_32.bmp"
-
 DOCLOCK BITMAP "..\\bmp\\gc_document_pdf_16.bmp"
 DOCLOCK16 BITMAP "..\\bmp\\gc_document_pdf_16.bmp"
 

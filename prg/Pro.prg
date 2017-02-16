@@ -3138,17 +3138,39 @@ Method Process()
             while !( tmpProT )->( eof() )
 
                if ( dbfProT )->( dbSeek( ( tmpProT )->cCodTbl ) )
+
                   if !::oSender:lServer
+                     
                      ::cleanRelation( ( tmpProT )->cCodTbl )
+                     
                      dbPass( tmpProT, dbfProT )
+
+                     /*if dbLock( dbfProT )
+                        ( dbfProT )->lSndDoc := .f.
+                        ( dbfProT )->( dbUnLock() )
+                     end if*/
+
                      ::oSender:SetText( "Reemplazado : " + alltrim( ( dbfProT )->cCodPro ) + "; " + alltrim( ( dbfProT )->cDesPro ) )
+
                   else
+
                      ::oSender:SetText( "Desestimado : " + alltrim( ( dbfProT )->cCodPro ) + "; " + alltrim( ( dbfProT )->cDesPro ) )
+
                   end if
+
                else
+
                   ::CleanRelation( ( tmpProT )->cCodTbl )
+
                   dbPass( tmpProT, dbfProT, .t. )
+
+                  /*if dbLock( dbfProT )
+                     ( dbfProT )->lSndDoc := .f.
+                     ( dbfProT )->( dbUnLock() )
+                  end if*/
+
                   ::oSender:SetText( "Añadido : " + alltrim( ( dbfProT )->cCodPro ) + "; " + alltrim( ( dbfProT )->cDesPro ) )
+                  
                end if
 
                ( tmpProT )->( dbSkip() )

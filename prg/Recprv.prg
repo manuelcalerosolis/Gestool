@@ -290,7 +290,7 @@ FUNCTION RecPrv( oMenuItem, oWnd, aNumRec )
       :nWidth           := 20
       :AddResource( "Cnt16" )
       :AddResource( "Sel16" )
-      :AddResource( "Document_out_16" )
+      :AddResource( "gc_money2_16" )
       :AddResource( "gc_money2_16" )
    end with
 

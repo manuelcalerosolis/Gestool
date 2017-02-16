@@ -194,7 +194,7 @@ METHOD Resource() CLASS PedCliente2PedProveedor
    DEFINE DIALOG ::oDlg RESOURCE "PEDCLI2PEDPROV"
 
       REDEFINE BITMAP ::oBmp ;
-         RESOURCE "shopping_bag_48" ;
+         RESOURCE "gc_clipboard_empty_businessman_48" ;
          ID       600 ;
          TRANSPARENT ;
          OF       ::oDlg

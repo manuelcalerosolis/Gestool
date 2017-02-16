@@ -63,7 +63,7 @@ Definici¢n de la base de datos de pedidos a proveedores
 #define _NTOTPED                  50
 #define _CNUMALB                  51
 #define _LRECC                    52
-#define _CCENTROCOSTE             53  
+#define _CCENTROCOSTE             53 
 
 /* Definici¢n de la base de datos de lineas de detalle */
 
@@ -740,7 +740,7 @@ FUNCTION PedPrv( oMenuItem, oWnd, cCodPrv, cCodArt )
 
       with object ( oWndBrw:AddXCol() )
          :cHeader          := "Creación/Modificación"
-         :bEditValue       := {|| dtoc( ( D():PedidosProveedores( nView ) )->dFecCre ) + space( 1 ) + ( D():PedidosProveedores( nView ) )->cTimCre }
+         :bEditValue       := {|| dtoc( ( D():PedidosProveedores( nView ) )->dFecChg ) + space( 1 ) + ( D():PedidosProveedores( nView ) )->cTimChg }
          :nWidth           := 120
          :lHide            := .t.
       end with
@@ -4402,6 +4402,7 @@ STATIC FUNCTION EndTrans( aGet, aTmp, oBrw, nMode, oDlg )
    cSufPed              := aTmp[ _CSUFPED ]
    cNumPedCli           := aTmp[ _CNUMPEDCLI ]
 
+
    // Comprobamos la fecha del documento
 
    if !lValidaOperacion( aTmp[ _DFECPED ] )
@@ -7265,8 +7266,8 @@ FUNCTION lSnd( oWndBrw, dbf )
       if dbDialogLock( dbf )
 
          ( dbf )->lSndDoc  := !( dbf )->lSndDoc
-         ( dbf )->dFecCre  := Date()
-         ( dbf )->cTimCre  := Time()
+         ( dbf )->dFecChg  := Date()
+         ( dbf )->cTimChg  := Time()
 
          ( dbf )->( dbUnlock() )
 
@@ -8430,11 +8431,7 @@ Method ReciveData() CLASS TPedidosProveedorSenderReciver
    local n
    local aExt
 
-   if ::oSender:lServer
-      aExt        := aRetDlgEmp()
-   else
-      aExt        := { "All" }
-   end if
+   aExt     := ::oSender:aExtensions()
 
    // Recibirlo de internet
 
@@ -8491,7 +8488,20 @@ Method Process() CLASS TPedidosProveedorSenderReciver
 
             if ::validateRecepcion( tmpPedPrvT, dbfPedPrvT )
 
+               while ( dbfPedPrvT )->( dbseek( ( tmpPedPrvT )->cSerPed + Str( ( tmpPedPrvT )->nNumPed ) + ( tmpPedPrvT )->cSufPed ) )
+                  dbLockDelete( dbfPedPrvT )
+               end if 
+
+               while ( dbfPedPrvT )->( dbseek( ( tmpPedPrvT )->cSerPed + Str( ( tmpPedPrvT )->nNumPed ) + ( tmpPedPrvT )->cSufPed ) )
+                  dbLockDelete( dbfPedPrvT )
+               end if 
+
                dbPass( tmpPedPrvT, dbfPedPrvT, .t. )
+
+               if dbLock( dbfPedPrvT )
+                  ( dbfPedPrvT )->lSndDoc := .f.
+                  ( dbfPedPrvT )->( dbUnLock() )
+               end if
 
                ::oSender:SetText( "Añadido : " + ( tmpPedPrvT )->cSerPed + "/" + AllTrim( Str( ( tmpPedPrvT )->nNumPed ) ) + "/" + AllTrim( ( tmpPedPrvT )->cSufPed ) + "; " + Dtoc( ( tmpPedPrvT )->dFecPed ) + "; " + AllTrim( ( tmpPedPrvT )->cCodPrv ) + "; " + ( tmpPedPrvT )->cNomPrv )
 
@@ -8559,8 +8569,8 @@ METHOD validateRecepcion( tmpPedPrvT, dbfPedPrvT ) CLASS TPedidosProveedorSender
       Return .t.
    end if 
 
-   if dtos( ( dbfPedPrvT )->dFecCre ) + ( dbfPedPrvT )->cTimCre >= dtos( ( tmpPedPrvT )->dFecCre ) + ( tmpPedPrvT )->cTimCre 
-      ::cErrorRecepcion    += "la fecha en la empresa " + dtoc( ( dbfPedPrvT )->dFecCre ) + " " + ( dbfPedPrvT )->cTimCre + " es más reciente que la recepción " + dtoc( ( tmpPedPrvT )->dFecCre ) + " " + ( tmpPedPrvT )->cTimCre 
+   if dtos( ( dbfPedPrvT )->dFecChg ) + ( dbfPedPrvT )->cTimChg >= dtos( ( tmpPedPrvT )->dFecChg ) + ( tmpPedPrvT )->cTimChg 
+      ::cErrorRecepcion    += "la fecha en la empresa " + dtoc( ( dbfPedPrvT )->dFecChg ) + " " + ( dbfPedPrvT )->cTimChg + " es más reciente que la recepción " + dtoc( ( tmpPedPrvT )->dFecChg ) + " " + ( tmpPedPrvT )->cTimChg 
       Return .f.
    end if
 
