@@ -718,25 +718,11 @@ end if
 
    ACTIVATE WINDOW oWndBrw VALID ( CloseFiles() )
 
-   if uFieldempresa( 'lFltYea' )
-      oWndBrw:setYearCombobox()
-   end if
-
-   if isArray( aNumRec ) .and. !empty( aNumRec[ 1 ] )
-
-      nOrdAnt  := (D():FacturasClientesCobros( nView ))->( OrdSetFocus( "nNumFac" ) )
-      lFound   := ( D():FacturasClientesCobros( nView ) )->( dbSeek( aNumRec[ 1 ] ) )
-
-      ( D():FacturasClientesCobros( nView ) )->( OrdSetFocus( nOrdAnt ) )
-
-      if lFound
-         oWndBrw:Refresh()
-         oWndBrw:RecEdit()
+   if !empty(oWndBrw)
+      if uFieldempresa( 'lFltYea' )
+         oWndBrw:setYearCombobox()
       end if
-
-      aNumRec  := Array( 1 )
-
-   end if
+   end if 
 
 Return .t.
 

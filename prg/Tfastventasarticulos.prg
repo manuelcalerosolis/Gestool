@@ -9,8 +9,6 @@
 
 CLASS TFastVentasArticulos FROM TFastReportInfGen
 
-   DATA  nView
-
    DATA  nSec
 
    DATA  cType                            INIT "Articulos"
@@ -343,6 +341,10 @@ METHOD OpenFiles() CLASS TFastVentasArticulos
 
       D():Agentes( ::nView )
 
+      D():PresupuestosClientes( ::nView )
+
+      D():PresupuestosClientesLineas( ::nView )
+
       D():PedidosClientes( ::nView )
 
       D():PedidosClientesLineas( ::nView )
@@ -360,10 +362,6 @@ METHOD OpenFiles() CLASS TFastVentasArticulos
       ::oSatCliT  := TDataCenter():oSatCliT()
 
       DATABASE NEW ::oSatCliL PATH ( cPatEmp() ) CLASS "SatCliL"     FILE "SatCliL.Dbf" VIA ( ::cDriver ) SHARED INDEX "SatCliL.Cdx"
-
-      ::oPreCliT  := TDataCenter():oPreCliT()
-
-      DATABASE NEW ::oPreCliL PATH ( cPatEmp() ) CLASS "PreCliL"     FILE "PreCliL.Dbf" VIA ( ::cDriver ) SHARED INDEX "PreCliL.Cdx"
 
       DATABASE NEW ::oAlbCliT PATH ( cPatEmp() ) CLASS "AlbCliT"     FILE "AlbCliT.Dbf" VIA ( ::cDriver ) SHARED INDEX "AlbCliT.Cdx"
 
@@ -549,14 +547,6 @@ METHOD CloseFiles() CLASS TFastVentasArticulos
 
       if !empty( ::oSatCliL ) .and. ( ::oSatCliL:Used() )
          ::oSatCliL:end()
-      end if
-
-      if !empty( ::oPreCliL ) .and. ( ::oPreCliL:Used() )
-         ::oPreCliL:end()
-      end if
-
-      if !empty( ::oPreCliT ) .and. ( ::oPreCliT:Used() )
-         ::oPreCliT:end()
       end if
 
       if !empty( ::oAlbCliL ) .and. ( ::oAlbCliL:Used() )
@@ -1555,7 +1545,6 @@ METHOD DataReport() CLASS TFastVentasArticulos
    ::oFastReport:SetResyncPair(     "Informe", "Propiedades 1" )   
    ::oFastReport:SetResyncPair(     "Informe", "Propiedades 2" )   
 
-
    ::SetDataReport()
 
 Return ( Self )
@@ -1577,9 +1566,6 @@ Return ( Self )
 //---------------------------------------------------------------------------//
 
 METHOD AddSATClientes() CLASS TFastVentasArticulos
-
-   ::oSatCliT:OrdSetFocus( "dFecSat" )
-   ::oSatCliL:OrdSetFocus( "nNumSat" )
 
    // filtros para la cabecera------------------------------------------------
 
@@ -1621,8 +1607,11 @@ METHOD AddSATClientes() CLASS TFastVentasArticulos
 
    ::setMeterText( "Procesando SAT" )
 
-   ::oSatCliL:AddTmpIndex( cCurUsr(), GetFileNoExt( ::oSatCliL:cFile ), ::oSatCliL:OrdKey(), ( ::cExpresionLine ), , , , , , , , .t. )
-   ::oSatCliT:AddTmpIndex( cCurUsr(), GetFileNoExt( ::oSatCliT:cFile ), ::oSatCliT:OrdKey(), ( ::cExpresionHeader ), , , , , , , , .t. )
+   ::oSatCliT:OrdSetFocus( "dFecSat" )
+   ::oSatCliL:OrdSetFocus( "nNumSat" )
+
+   ( ::oSatCliT:cAlias )->( setCustomFilter( ::cExpresionHeader ) )
+   ( ::oSatCliL:cAlias )->( setCustomFilter( ::cExpresionLine ) )
    
    ::setMeterTotal( ::oSatCliT:OrdKeyCount() )
 
@@ -1783,9 +1772,6 @@ RETURN ( Self )
 
 METHOD AddPresupuestoClientes() CLASS TFastVentasArticulos
 
-   ::oPreCliT:OrdSetFocus( "dFecPre" )
-   ::oPreCliL:OrdSetFocus( "nNumPre" )
-
    // filtros para la cabecera------------------------------------------------
    
    ::cExpresionHeader          := '( Field->dFecPre >= Ctod( "' + Dtoc( ::dIniInf ) + '" ) .and. Field->dFecPre <= Ctod( "' + Dtoc( ::dFinInf ) + '" ) )'
@@ -1823,29 +1809,161 @@ METHOD AddPresupuestoClientes() CLASS TFastVentasArticulos
    // procesamos los presupuestos ---------------------------------------------
 
    ::setMeterText( "Procesando presupuestos" )
-   
-   ::oPreCliT:AddTmpIndex( cCurUsr(), GetFileNoExt( ::oPreCliT:cFile ), ::oPreCliT:OrdKey(), ( ::cExpresionHeader ), , , , , , , , .t. )
-   
-   ::oPreCliL:AddTmpIndex( cCurUsr(), GetFileNoExt( ::oPreCliL:cFile ), ::oPreCliL:OrdKey(), ( ::cExpresionLine ), , , , , , , , .t. )
-  
-   ::setMeterTotal( ::oPreCliT:OrdKeyCount() )
 
-   /*
-   Lineas de Preidos-----------------------------------------------------------
-   */
+   ( D():PresupuestosClientes( ::nView )        )->( ordsetfocus( "nNumPre" ) )
+   ( D():PresupuestosClientesLineas( ::nView )  )->( ordsetfocus( "nNumPre" ) )
+
+   ( D():PresupuestosClientes( ::nView )        )->( setCustomFilter( ::cExpresionHeader ) )
+   ( D():PresupuestosClientesLineas( ::nView )  )->( setCustomFilter( ::cExpresionLine ) )
+
+   msgalert( ( D():PresupuestosClientes( ::nView ) )->( dbcustomkeycount() ) )
+
+   ::setMeterTotal( ( D():PresupuestosClientes( ::nView ) )->( dbcustomkeycount() ) )
+
+   // Lineas de Preidos--------------------------------------------------------
+
+   ( D():PresupuestosClientesLineas( ::nView ) )->( dbgotop() )
+   while !::lBreak .and. !( D():PresupuestosClientesLineas( ::nView ) )->( eof() )
+
+      // Posicionamiento en las cabeceras--------------------------------------
+
+      if ( D():PresupuestosClientes( ::nView ) )->( dbseek( D():PresupuestosClientesLineasId( ::nView ) ) )
+
+         // Añadimos un nuevo registro--------------------------------
+
+         ::oDbf:Blank()
+
+         ::oDbf:cClsDoc    := PRE_CLI
+         ::oDbf:cTipDoc    := "Presupuesto cliente"
+         ::oDbf:cSerDoc    := ( D():PresupuestosClientesLineas( ::nView ) )->cSerPre
+         ::oDbf:cNumDoc    := str( ( D():PresupuestosClientesLineas( ::nView ) )->nNumPre )
+         ::oDbf:cSufDoc    := ( D():PresupuestosClientesLineas( ::nView ) )->cSufPre
+
+         ::oDbf:cIdeDoc    := ::idDocumento()
+
+         ::oDbf:nNumLin    := ( D():PresupuestosClientesLineas( ::nView ) )->nNumLin
+         ::oDbf:cCodArt    := ( D():PresupuestosClientesLineas( ::nView ) )->cRef
+         ::oDbf:cNomArt    := ( D():PresupuestosClientesLineas( ::nView ) )->cDetalle
+
+         ::oDbf:cCodPr1    := ( D():PresupuestosClientesLineas( ::nView ) )->cCodPr1
+         ::oDbf:cCodPr2    := ( D():PresupuestosClientesLineas( ::nView ) )->cCodPr2
+         ::oDbf:cValPr1    := ( D():PresupuestosClientesLineas( ::nView ) )->cValPr1
+         ::oDbf:cValPr2    := ( D():PresupuestosClientesLineas( ::nView ) )->cValPr2
+
+         ::oDbf:cLote      := ( D():PresupuestosClientesLineas( ::nView ) )->cLote
+         ::oDbf:dFecCad    := ( D():PresupuestosClientesLineas( ::nView ) )->dFecCad
+
+         ::oDbf:cCodPrv    := ( D():PresupuestosClientesLineas( ::nView ) )->cCodPrv
+         ::oDbf:cNomPrv    := RetFld( ( D():PresupuestosClientesLineas( ::nView ) )->cCodPrv, ::oDbfPrv:cAlias )
+
+         ::oDbf:TipoIva    := cCodigoIva( ::oDbfIva:cAlias, ( D():PresupuestosClientesLineas( ::nView ) )->nIva )
+
+         ::oDbf:cCodObr    := ( D():PresupuestosClientesLineas( ::nView ) )->cObrLin
+
+         ::oDbf:cCodFam    := ( D():PresupuestosClientesLineas( ::nView ) )->cCodFam
+         ::oDbf:cGrpFam    := ( D():PresupuestosClientesLineas( ::nView ) )->cGrpFam
+         ::oDbf:cCodAlm    := ( D():PresupuestosClientesLineas( ::nView ) )->cAlmLin
+         ::oDbf:cDesUbi    := RetFld( ( D():PresupuestosClientesLineas( ::nView ) )->cRef, ::oDbfArt:cAlias, "cDesUbi", "Codigo" )
+
+         ::oDbf:nDtoArt    := ( D():PresupuestosClientesLineas( ::nView ) )->nDto
+         ::oDbf:nLinArt    := ( D():PresupuestosClientesLineas( ::nView ) )->nDtoDiv
+         ::oDbf:nPrmArt    := ( D():PresupuestosClientesLineas( ::nView ) )->nDtoPrm
+
+         ::oDbf:cCodTip    := ( D():PresupuestosClientesLineas( ::nView ) )->cCodTip
+
+         ::oDbf:nCosArt    := nTotCPreCli( D():PresupuestosClientesLineas( ::nView ), ::nDecOut, ::nDerOut, ::nValDiv )
+         ::oDbf:nUniArt    := nTotNPreCli( D():PresupuestosClientesLineas( ::nView ) ) 
+
+         ::oDbf:cCtrCoste  := ( D():PresupuestosClientesLineas( ::nView ) )->cCtrCoste
+         ::oDbf:cTipCtr    := ( D():PresupuestosClientesLineas( ::nView ) )->cTipCtr
+         ::oDbf:cCodTerCtr := ( D():PresupuestosClientesLineas( ::nView ) )->cTerCtr
+         ::oDbf:cNomTerCtr := NombreTerceroCentroCoste( ( D():PresupuestosClientesLineas( ::nView ) )->cTipCtr, ( D():PresupuestosClientesLineas( ::nView ) )->cTerCtr, ::nView )
+
+         ::loadPropiedadesArticulos( ( D():PresupuestosClientesLineas( ::nView ) )->cRef )
+
+         ::oDbf:nAnoDoc    := Year( ( D():PresupuestosClientes( ::nView ) )->dFecPre )
+         ::oDbf:nMesDoc    := Month( ( D():PresupuestosClientes( ::nView ) )->dFecPre )
+         ::oDbf:dFecDoc    := ( D():PresupuestosClientes( ::nView ) )->dFecPre
+         ::oDbf:cHorDoc    := SubStr( ( D():PresupuestosClientes( ::nView ) )->cTimCre, 1, 2 )
+         ::oDbf:cMinDoc    := SubStr( ( D():PresupuestosClientes( ::nView ) )->cTimCre, 4, 2 )
+
+         ::oDbf:cCodGrp    := cGruCli( ( D():PresupuestosClientes( ::nView ) )->cCodCli, ::oDbfCli )
+
+         ::oDbf:cCodPago   := ( D():PresupuestosClientes( ::nView ) )->cCodPgo
+         ::oDbf:cCodRut    := ( D():PresupuestosClientes( ::nView ) )->cCodRut
+         ::oDbf:cCodAge    := ( D():PresupuestosClientes( ::nView ) )->cCodAge
+         ::oDbf:cCodTrn    := ( D():PresupuestosClientes( ::nView ) )->cCodTrn
+         ::oDbf:cCodUsr    := ( D():PresupuestosClientes( ::nView ) )->cCodUsr
+         ::oDbf:cCodCli    := ( D():PresupuestosClientes( ::nView ) )->cCodCli
+         ::oDbf:cNomCli    := ( D():PresupuestosClientes( ::nView ) )->cNomCli
+         ::oDbf:cPobCli    := ( D():PresupuestosClientes( ::nView ) )->cPobCli
+         ::oDbf:cPrvCli    := ( D():PresupuestosClientes( ::nView ) )->cPrvCli
+         ::oDbf:cPosCli    := ( D():PresupuestosClientes( ::nView ) )->cPosCli
+
+         if ::oAtipicasCliente:Seek( ( D():PresupuestosClientes( ::nView ) )->cCodCli + ( D():PresupuestosClientesLineas( ::nView ) )->cRef ) .and. !empty( ::oAtipicasCliente:cCodEnv )
+            ::oDbf:cCodEnv := ::oAtipicasCliente:cCodEnv
+         else
+            ::oDbf:cCodEnv := RetFld( ( D():PresupuestosClientesLineas( ::nView ) )->cRef, ::oDbfArt:cAlias, "cCodFra", "Codigo" )                    
+         end if
+
+         ::oDbf:nTotDto    := nDtoLPreCli( D():PresupuestosClientesLineas( ::nView ), ::nDecOut, ::nDerOut, ::nValDiv )
+         ::oDbf:nTotPrm    := nPrmLPreCli( D():PresupuestosClientesLineas( ::nView ), ::nDecOut, ::nDerOut, ::nValDiv )
+
+         ::oDbf:nPreArt    := nImpUPreCli( D():PresupuestosClientesLineas( ::nView ), ::nDecOut, ::nValDiv )
+         ::oDbf:nTrnArt    := nTrnUPreCli( D():PresupuestosClientesLineas( ::nView ), ::nDecOut, ::nValDiv )
+         ::oDbf:nPntArt    := nPntLPreCli( D():PresupuestosClientesLineas( ::nView ), ::nDecOut, ::nValDiv )
+
+         ::oDbf:nBrtArt    := nBrtLPreCli( D():PresupuestosClientesLineas( ::nView ), ::nDecOut, ::nDerOut, ::nValDiv )
+         ::oDbf:nImpArt    := nImpLPreCli( D():PresupuestosClientes( ::nView ), D():PresupuestosClientesLineas( ::nView ), ::nDecOut, ::nDerOut, ::nValDiv, , , .t., .t. )
+         ::oDbf:nIvaArt    := nIvaLPreCli( D():PresupuestosClientesLineas( ::nView ), ::nDecOut, ::nDerOut, ::nValDiv )
+         ::oDbf:nImpEsp    := nTotIPreCli( D():PresupuestosClientesLineas( ::nView ), ::nDecOut, ::nDerOut, ::nValDiv )
+
+         ::oDbf:nTotArt    := nImpLPreCli( D():PresupuestosClientes( ::nView ), D():PresupuestosClientesLineas( ::nView ), ::nDecOut, ::nDerOut, ::nValDiv, , , .t., .t.  )
+         ::oDbf:nTotArt    += nIvaLPreCli( D():PresupuestosClientesLineas( ::nView ), ::nDecOut, ::nDerOut, ::nValDiv )
+         ::oDbf:nPeso      := nPesLPreCli( D():PresupuestosClientesLineas( ::nView ) ) 
+
+         ::oDbf:nPctAge    := ( D():PresupuestosClientes( ::nView ) )->nPctComAge
+         ::oDbf:nComAge    := nComLPreCli( D():PresupuestosClientes( ::nView ), D():PresupuestosClientesLineas( ::nView ), ::nDecOut, ::nDerOut )
+
+         if empty( ::oDbf:nCosArt )
+            ::oDbf:nCosArt := ::oDbf:nUniArt * nCosto( ::oDbf:cCodArt, ::oDbfArt:cAlias, ::oArtKit:cAlias )
+         end if 
+
+         if !empty( ( D():PresupuestosClientesLineas( ::nView ) )->cCodPrv ) 
+            ::oDbf:cPrvHab := ( D():PresupuestosClientesLineas( ::nView ) )->cCodPrv
+         else
+            ::oDbf:cPrvHab := getProveedorPorDefectoArticulo( ::oDbf:cCodArt, D():ProveedorArticulo( ::nView ) )
+         end if
+
+         if ( D():PresupuestosClientes( ::nView ) )->lEstado
+            ::oDbf:cEstado := "Pendiente"
+         else
+            ::oDbf:cEstado := "Finalizado"
+         end if
+
+         ::insertIfValid()
+
+         ::loadValuesExtraFields()
+
+      end if
+
+      ( D():PresupuestosClientesLineas( ::nView ) )->( dbSkip() )
+      
+      ::setMeterAutoIncremental()
+
+   end while
+
+
+/*   
    
-   ::oPreCliT:GoTop()
-   while !::lBreak .and. !::oPreCliT:Eof()
+   ( D():PresupuestosClientes( ::nView ) )->( dbgotop() )
+   while !::lBreak .and. !( D():PresupuestosClientes( ::nView ) )->( eof() )
 
       if lChkSer( ::oPreCliT:cSerPre, ::aSer )
 
          if ::oPreCliL:Seek( ::oPreCliT:cSerPre + Str( ::oPreCliT:nNumPre ) + ::oPreCliT:cSufPre )
 
             while !::lBreak .and. ( ::oPreCliT:cSerPre + Str( ::oPreCliT:nNumPre ) + ::oPreCliT:cSufPre == ::oPreCliL:cSerPre + Str( ::oPreCliL:nNumPre ) + ::oPreCliL:cSufPre )
-
-               /*
-               AÃ±adimos un nuevo registro-----------------------------------
-               */
 
                ::oDbf:Blank()
 
@@ -1976,9 +2094,7 @@ METHOD AddPresupuestoClientes() CLASS TFastVentasArticulos
       ::setMeterAutoIncremental()
 
    end while
-
-   ::oPreCliT:IdxDelete( cCurUsr(), GetFileNoExt( ::oPreCliT:cFile ) )
-   ::oPreCliL:IdxDelete( cCurUsr(), GetFileNoExt( ::oPreCliL:cFile ) )
+*/
 
 RETURN ( Self )
 
@@ -2182,8 +2298,6 @@ METHOD AddAlbaranCliente( lFacturados ) CLASS TFastVentasArticulos
 
    DEFAULT lFacturados     := .f.
 
-   ::InitAlbaranesClientes()
-
    // filtros para la cabecera-------------------------------------------------
 
    ::cExpresionHeader      := '( Field->dFecAlb >= Ctod( "' + Dtoc( ::dIniInf ) + '" ) .and. Field->dFecAlb <= Ctod( "' + Dtoc( ::dFinInf ) + '" ) )'
@@ -2223,14 +2337,17 @@ METHOD AddAlbaranCliente( lFacturados ) CLASS TFastVentasArticulos
 
    ::setFilterGroupFamily()
 
-   // Procesando albaranes-------------------------------------------------
+   // Procesando albaranes-----------------------------------------------------
 
    ::setMeterText( "Procesando albaranes" )
 
-   ::oAlbCliT:AddTmpIndex( cCurUsr(), GetFileNoExt( ::oAlbCliT:cFile ), ::oAlbCliT:OrdKey(), ( ::cExpresionHeader ), , , , , , , , .t. )
-   ::oAlbCliL:AddTmpIndex( cCurUsr(), GetFileNoExt( ::oAlbCliL:cFile ), ::oAlbCliL:OrdKey(), cAllTrimer( ::cExpresionLine ), , , , , , , , .t. )
+   ( ::oAlbCliT:cAlias )->( ordsetfocus( "nNumAlb" ) )
+   ( ::oAlbCliL:cAlias )->( ordsetfocus( "nNumAlb" ) )
 
-   ::setMeterTotal( ::oAlbCliL:OrdKeyCount() )
+   ( ::oAlbCliT:cAlias )->( setCustomFilter( ::cExpresionHeader ) )
+   ( ::oAlbCliL:cAlias )->( setCustomFilter( ::cExpresionLine ) )
+
+   ::setMeterTotal( ( ::oAlbCliL:cAlias )->( dbCustomKeyCount() ) )
 
    // Lineas de albaranes---------------------------------------------------------
 
@@ -2280,41 +2397,41 @@ METHOD AddAlbaranCliente( lFacturados ) CLASS TFastVentasArticulos
          ::oDbf:nCosArt := ::oDbf:nUniArt * nCosto( ::oDbf:cCodArt, ::oDbfArt:cAlias, ::oArtKit:cAlias )
       end if 
 
-      ::oDbf:cCodPr1    := ::oAlbCliL:cCodPr1
-      ::oDbf:cCodPr2    := ::oAlbCliL:cCodPr2
-      ::oDbf:cValPr1    := ::oAlbCliL:cValPr1
-      ::oDbf:cValPr2    := ::oAlbCliL:cValPr2
+      ::oDbf:cCodPr1       := ::oAlbCliL:cCodPr1
+      ::oDbf:cCodPr2       := ::oAlbCliL:cCodPr2
+      ::oDbf:cValPr1       := ::oAlbCliL:cValPr1
+      ::oDbf:cValPr2       := ::oAlbCliL:cValPr2
 
-      ::oDbf:cLote      := ::oAlbCliL:cLote
-      ::oDbf:dFecCad    := ::oAlbCliL:dFecCad
+      ::oDbf:cLote         := ::oAlbCliL:cLote
+      ::oDbf:dFecCad       := ::oAlbCliL:dFecCad
 
-      ::oDbf:cClsDoc    := ALB_CLI
-      ::oDbf:cTipDoc    := "Albarán cliente"
-      ::oDbf:cSerDoc    := ::oAlbCliL:cSerAlb
-      ::oDbf:cNumDoc    := Str( ::oAlbCliL:nNumAlb )
-      ::oDbf:cSufDoc    := ::oAlbCliL:cSufAlb
+      ::oDbf:cClsDoc       := ALB_CLI
+      ::oDbf:cTipDoc       := "Albarán cliente"
+      ::oDbf:cSerDoc       := ::oAlbCliL:cSerAlb
+      ::oDbf:cNumDoc       := Str( ::oAlbCliL:nNumAlb )
+      ::oDbf:cSufDoc       := ::oAlbCliL:cSufAlb
 
-      ::oDbf:cIdeDoc    :=  ::idDocumento()
-      ::oDbf:nNumLin    :=  ::oAlbCliL:nNumLin
+      ::oDbf:cIdeDoc       :=  ::idDocumento()
+      ::oDbf:nNumLin       :=  ::oAlbCliL:nNumLin
 
-      ::oDbf:nBultos    := ::oAlbCliL:nBultos * if( ::lUnidadesNegativo, -1, 1 )
-      ::oDbf:cFormato   := ::oAlbCliL:cFormato
-      ::oDbf:nCajas     := ::oAlbCliL:nCanEnt * if( ::lUnidadesNegativo, -1, 1 )
-      ::oDbf:nPeso      := nPesLAlbCli( ::oAlbCliL:cAlias )
+      ::oDbf:nBultos       := ::oAlbCliL:nBultos * if( ::lUnidadesNegativo, -1, 1 )
+      ::oDbf:cFormato      := ::oAlbCliL:cFormato
+      ::oDbf:nCajas        := ::oAlbCliL:nCanEnt * if( ::lUnidadesNegativo, -1, 1 )
+      ::oDbf:nPeso         := nPesLAlbCli( ::oAlbCliL:cAlias )
 
-      ::oDbf:lKitArt    := ::oAlbCliL:lKitArt
-      ::oDbf:lKitChl    := ::oAlbCliL:lKitChl
+      ::oDbf:lKitArt       := ::oAlbCliL:lKitArt
+      ::oDbf:lKitChl       := ::oAlbCliL:lKitChl
 
-      ::oDbf:cCtrCoste  := ::oAlbCliL:cCtrCoste
+      ::oDbf:cCtrCoste     := ::oAlbCliL:cCtrCoste
 
-      ::oDbf:cTipCtr    := ::oAlbCliL:cTipCtr
-      ::oDbf:cCodTerCtr := ::oAlbCliL:cTerCtr
-      ::oDbf:cNomTerCtr := NombreTerceroCentroCoste( ::oAlbCliL:cTipCtr, ::oAlbCliL:cTerCtr, ::nView )
+      ::oDbf:cTipCtr       := ::oAlbCliL:cTipCtr
+      ::oDbf:cCodTerCtr    := ::oAlbCliL:cTerCtr
+      ::oDbf:cNomTerCtr    := NombreTerceroCentroCoste( ::oAlbCliL:cTipCtr, ::oAlbCliL:cTerCtr, ::nView )
 
       if !empty( ::oAlbCliL:cRef ) 
-         ::oDbf:cPrvHab := ::oAlbCliL:cRef
+         ::oDbf:cPrvHab    := ::oAlbCliL:cRef
       else
-         ::oDbf:cPrvHab := getProveedorPorDefectoArticulo( ::oDbf:cCodArt, D():ProveedorArticulo( ::nView ) )
+         ::oDbf:cPrvHab    := getProveedorPorDefectoArticulo( ::oDbf:cCodArt, D():ProveedorArticulo( ::nView ) )
       end if
 
       /*
@@ -2326,9 +2443,9 @@ METHOD AddAlbaranCliente( lFacturados ) CLASS TFastVentasArticulos
          ::oDbf:cCodGrp    := cGruCli( ::oAlbCliT:cCodCli, ::oDbfCli )
 
          if ::oAtipicasCliente:Seek( ::oAlbCliT:cCodCli + ::oAlbCliL:cRef ) .and. !empty( ::oAtipicasCliente:cCodEnv )
-            ::oDbf:cCodEnv    := ::oAtipicasCliente:cCodEnv
+            ::oDbf:cCodEnv := ::oAtipicasCliente:cCodEnv
          else
-            ::oDbf:cCodEnv    := RetFld( ::oAlbCliL:cRef, ::oDbfArt:cAlias, "cCodFra", "Codigo" )                    
+            ::oDbf:cCodEnv := RetFld( ::oAlbCliL:cRef, ::oDbfArt:cAlias, "cCodFra", "Codigo" )                    
          end if
 
          ::oDbf:cCodPago   := ::oAlbCliT:cCodPago
@@ -2352,6 +2469,8 @@ METHOD AddAlbaranCliente( lFacturados ) CLASS TFastVentasArticulos
          ::oDbf:nPctAge    := ::oAlbCliT:nPctComAge
          ::oDbf:nComAge    := nComLAlbCli( ::oAlbCliT:cAlias, ::oAlbCliL:cAlias, ::nDecOut, ::nDerOut )
 
+         logWrite( ::oAlbCliT:dFecAlb )
+
          ::oDbf:nAnoDoc    := Year( ::oAlbCliT:dFecAlb )
          ::oDbf:nMesDoc    := Month( ::oAlbCliT:dFecAlb )
          ::oDbf:dFecDoc    := ::oAlbCliT:dFecAlb
@@ -2368,6 +2487,11 @@ METHOD AddAlbaranCliente( lFacturados ) CLASS TFastVentasArticulos
             case ::oAlbCliT:nFacturado == 3
                ::oDbf:cEstado    := "Finalizado"
          end case
+
+      else 
+
+         logWrite( ::oAlbCliT:ordSetFocus() )
+         logWrite( ::oAlbCliL:cSerAlb + Str( ::oAlbCliL:nNumAlb ) + ::oAlbCliL:cSufAlb )
 
       end if
 
@@ -2429,18 +2553,19 @@ METHOD AddFacturaCliente() CLASS TFastVentasArticulos
 
    ::setFilterGroupFamily()
 
-   // Procesando facturas-------------------------------------------------
+   // Procesando facturas------------------------------------------------------
 
    ::setMeterText( "Procesando facturas" )
 
-   ::oFacCliT:AddTmpIndex( cCurUsr(), GetFileNoExt( ::oFacCliT:cFile ), ::oFacCliT:OrdKey(), ( ::cExpresionHeader ), , , , , , , , .t. )
-   ::oFacCliL:AddTmpIndex( cCurUsr(), GetFileNoExt( ::oFacCliL:cFile ), ::oFacCliL:OrdKey(), cAllTrimer( ::cExpresionLine ), , , , , , , , .t. )
+   ( ::oFacCliT:cAlias )->( ordsetfocus( "nNumFac" ) )
+   ( ::oFacCliL:cAlias )->( ordsetfocus( "nNumFac" ) )
 
-   ::setMeterTotal( ::oFacCliL:OrdKeyCount() )
+   ( ::oFacCliT:cAlias )->( setCustomFilter( ::cExpresionHeader ) )
+   ( ::oFacCliL:cAlias )->( setCustomFilter( ::cExpresionLine ) )
 
-   /*
-   Lineas de facturas----------------------------------------------------------
-   */
+   ::setMeterTotal( ( ::oFacCliL:cAlias )->( dbCustomKeyCount() ) )
+
+   // Lineas de facturas-------------------------------------------------------
 
    ::oFacCliL:GoTop()
    while !::lBreak .and. !::oFacCliL:Eof()
@@ -2622,10 +2747,13 @@ METHOD AddFacturaRectificativa() CLASS TFastVentasArticulos
 
    ::setMeterText( "Procesando facturas rectificativas" )
 
-   ::oFacRecT:AddTmpIndex( cCurUsr(), GetFileNoExt( ::oFacRecT:cFile ), ::oFacRecT:OrdKey(), ( ::cExpresionHeader ), , , , , , , , .t. )
-   ::oFacRecL:AddTmpIndex( cCurUsr(), GetFileNoExt( ::oFacRecL:cFile ), ::oFacRecL:OrdKey(), cAllTrimer( ::cExpresionLine ), , , , , , , , .t. )
+   ( ::oFacRecT:cAlias )->( ordsetfocus( "nNumFac" ) )
+   ( ::oFacRecL:cAlias )->( ordsetfocus( "nNumFac" ) )
 
-   ::setMeterTotal( ::oFacRecL:OrdKeyCount() )
+   ( ::oFacRecT:cAlias )->( setCustomFilter( ::cExpresionHeader ) )
+   ( ::oFacRecL:cAlias )->( setCustomFilter( ::cExpresionLine ) )
+
+   ::setMeterTotal( ( ::oFacRecL:cAlias )->( dbCustomKeyCount() ) )
 
    // Lineas de facturas rectificativas----------------------------------------
 
@@ -2774,9 +2902,6 @@ RETURN ( Self )
 
 METHOD AddTicket() CLASS TFastVentasArticulos
 
-   ::oTikCliT:OrdSetFocus( "dFecTik" )
-   ::oTikCliL:OrdSetFocus( "cNumTil" )
-
    // Filtros para la cabecera ------------------------------------------------
 
    ::cExpresionHeader       := '( Field->dFecTik >= Ctod( "' + Dtoc( ::dIniInf ) + '" ) .and. Field->dFecTik <= Ctod( "' + Dtoc( ::dFinInf ) + '" ) )'
@@ -2806,11 +2931,14 @@ METHOD AddTicket() CLASS TFastVentasArticulos
    // Procesando Tickets ------------------------------------------------
 
    ::setMeterText( "Procesando tikets" )
-   
-   ::oTikCliT:AddTmpIndex( cCurUsr(), GetFileNoExt( ::oTikCliT:cFile ), ::oTikCliT:OrdKey(), ( ::cExpresionHeader ), , , , , , , , .t. )
-   ::oTikCliL:AddTmpIndex( cCurUsr(), GetFileNoExt( ::oTikCliL:cFile ), ::oTikCliL:OrdKey(), ( ::cExpresionLine ), , , , , , , , .t. )
 
-   ::setMeterTotal( ::oTikCliT:OrdKeyCount() )
+   ::oTikCliT:ordsetfocus( "dFecTik" )
+   ::oTikCliL:ordsetfocus( "cNumTil" )
+
+   ( ::oTikCliT:cAlias )->( setCustomFilter( ::cExpresionHeader ) )
+   ( ::oTikCliL:cAlias )->( setCustomFilter( ::cExpresionLine ) )
+
+   ::setMeterTotal( ( ::oTikCliL:cAlias )->( dbCustomKeyCount() ) )
 
    // Lineas de tickets -------------------------------------------------------
 
@@ -3020,9 +3148,6 @@ METHOD AddTicket() CLASS TFastVentasArticulos
    end while
 
    ::setMeterTotal( ::oTikCliT:OrdKeyCount() )
-
-   ::oTikCliT:IdxDelete( cCurUsr(), GetFileNoExt( ::oTikCliT:cFile ) )
-   ::oTikCliL:IdxDelete( cCurUsr(), GetFileNoExt( ::oTikCliL:cFile ) )
 
 RETURN ( Self )
 
@@ -3498,19 +3623,12 @@ METHOD AddPedidoProveedor() CLASS TFastVentasArticulos
    local cExpHead
    local cExpLine
 
-   ::oPedPrvT:OrdSetFocus( "dFecPed" )
-   ::oPedPrvL:OrdSetFocus( "nNumPed" )
-
    cExpHead          := '( dFecPed >= Ctod( "' + Dtoc( ::dIniInf ) + '" ) .and. dFecPed <= Ctod( "' + Dtoc( ::dFinInf ) + '" ) )'
    cExpHead          += ' .and. cCodPrv >= "' + Rtrim( ::oGrupoProveedor:Cargo:getDesde() )    + '" .and. cCodPrv <= "'   + Rtrim( ::oGrupoProveedor:Cargo:getHasta() ) + '"'
    cExpHead          += ' .and. cSerPed >= "' + Rtrim( ::oGrupoSerie:Cargo:getDesde() )        + '" .and. cSerPed <= "'   + Rtrim( ::oGrupoSerie:Cargo:getHasta() ) + '"'
    cExpHead          += ' .and. nNumPed >= Val( "' + Rtrim( ::oGrupoNumero:Cargo:getDesde() )  + '" ) .and. nNumPed <= Val( "' + Rtrim( ::oGrupoNumero:Cargo:getHasta() ) + '" )'
    cExpHead          += ' .and. cSufPed >= "' + Rtrim( ::oGrupoSufijo:Cargo:getDesde() )       + '" .and. cSufPed <= "'   + Rtrim( ::oGrupoSufijo:Cargo:getHasta() ) + '"'
 
-   ::oPedPrvT:AddTmpIndex( cCurUsr(), GetFileNoExt( ::oPedPrvT:cFile ), ::oPedPrvT:OrdKey(), ( cExpHead ), , , , , , , , .t. )
-
-   ::setMeterText( "Procesando pedidos a proveedor" )
-   ::setMeterTotal( ::oPedPrvT:OrdKeyCount() )
 
    /*
    Lineas de Pedturas----------------------------------------------------------
@@ -3521,6 +3639,14 @@ METHOD AddPedidoProveedor() CLASS TFastVentasArticulos
    if !::lAllArt
       cExpLine       += ' .and. cRef >= "' + ::oGrupoArticulo:Cargo:getDesde() + '" .and. cRef <= "' + ::oGrupoArticulo:Cargo:getHasta() + '"'
    end if
+
+   ::oPedPrvT:OrdSetFocus( "dFecPed" )
+   ::oPedPrvL:OrdSetFocus( "nNumPed" )
+
+   ::oPedPrvT:AddTmpIndex( cCurUsr(), GetFileNoExt( ::oPedPrvT:cFile ), ::oPedPrvT:OrdKey(), ( cExpHead ), , , , , , , , .t. )
+
+   ::setMeterText( "Procesando pedidos a proveedor" )
+   ::setMeterTotal( ::oPedPrvT:OrdKeyCount() )
 
    ::oPedPrvL:AddTmpIndex( cCurUsr(), GetFileNoExt( ::oPedPrvL:cFile ), ::oPedPrvL:OrdKey(), cAllTrimer( cExpLine ), , , , , , , , .t. )
 
@@ -3629,9 +3755,6 @@ METHOD AddPedidoProveedor() CLASS TFastVentasArticulos
 
    end while
 
-   ::oPedPrvT:IdxDelete( cCurUsr(), GetFileNoExt( ::oPedPrvT:cFile ) )
-   ::oPedPrvL:IdxDelete( cCurUsr(), GetFileNoExt( ::oPedPrvL:cFile ) )
-
 RETURN ( Self )
 
 //---------------------------------------------------------------------------//
@@ -3663,7 +3786,6 @@ METHOD AddAlbaranProveedor( lFacturados ) CLASS TFastVentasArticulos
    ::setMeterTotal( ::oAlbPrvL:OrdKeyCount() )
 
    ::oAlbPrvL:GoTop()
-
    while !::lBreak .and. !::oAlbPrvL:Eof()
 
       ::oDbf:Blank()
@@ -3760,9 +3882,6 @@ METHOD AddAlbaranProveedor( lFacturados ) CLASS TFastVentasArticulos
 
    end while
 
-   ::oAlbPrvT:IdxDelete( cCurUsr(), GetFileNoExt( ::oAlbPrvT:cFile ) )
-   ::oAlbPrvL:IdxDelete( cCurUsr(), GetFileNoExt( ::oAlbPrvL:cFile ) )
-
 RETURN ( Self )
 
 //---------------------------------------------------------------------------//
@@ -3793,7 +3912,6 @@ METHOD AddFacturaProveedor( cCodigoArticulo ) CLASS TFastVentasArticulos
    ::oFacPrvL:AddTmpIndex( cCurUsr(), GetFileNoExt( ::oFacPrvL:cFile ), ::oFacPrvL:OrdKey(), cAllTrimer( ::cExpresionLine ), , , , , , , , .t. )
 
    ::oFacPrvL:GoTop()
-
    while !::lBreak .and. !::oFacPrvL:Eof()
 
       ::oDbf:Blank()

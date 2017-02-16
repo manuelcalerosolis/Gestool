@@ -1757,6 +1757,14 @@ METHOD BuildData()
    oDataTable:aStruct      := aItmCajaL()  
    ::AddDataTable( oDataTable )
 
+   oDataTable              := TDataTable():New( "CajasImp", cPathDatos() )
+   oDatatable:lTrigger     := ::lTriggerAuxiliares
+   oDataTable:cDataFile    := cPatDat( .t. ) + "CajasImp.Dbf"
+   oDataTable:cIndexFile   := cPatDat( .t. ) + "CajasImp.Cdx"
+   oDataTable:cDescription := "Cajas impresoras"
+   oDataTable:aStruct      := aItmCajaImpresiones()
+   ::AddDataTable( oDataTable )
+
    oDataTable              := TDataTable():New( "ImpTik", cPathDatos() )
    oDataTable:cDataFile    := cPatDat( .t. ) + "ImpTik.Dbf"
    oDataTable:cIndexFile   := cPatDat( .t. ) + "ImpTik.Cdx"

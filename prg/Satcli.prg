@@ -1749,15 +1749,19 @@ FUNCTION SatCli( oMenuItem, oWnd, cCodCli, cCodArt )
 
    EnableAcceso()
 
-   if uFieldempresa( 'lFltYea' )
-      oWndBrw:setYearCombobox()
-   end if
+   if !empty( oWndBrw )
 
-   if !empty( cCodCli ) .or. !empty( cCodArt )
-      oWndBrw:RecAdd()
-      cCodCli  := nil
-      cCodArt  := nil
-   end if
+      if uFieldempresa( 'lFltYea' )
+         oWndBrw:setYearCombobox()
+      end if
+
+      if !empty( cCodCli ) .or. !empty( cCodArt )
+         oWndBrw:RecAdd()
+         cCodCli  := nil
+         cCodArt  := nil
+      end if
+
+   end if 
 
 Return .t.
 

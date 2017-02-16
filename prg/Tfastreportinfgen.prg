@@ -11,6 +11,8 @@ CLASS TFastReportInfGen FROM TNewInfGen
 
    DATA  cDriver
 
+   DATA  nView
+
    DATA  aInitGroup
 
    DATA  oPages
@@ -270,16 +272,16 @@ CLASS TFastReportInfGen FROM TNewInfGen
    
    METHOD AddVariablePresupuestoCliente()
    METHOD AddVariableLineasPresupuestoCliente()
-   METHOD cDetallePresupuestoClientes()                           INLINE ( cDesPreCli(  ::oPreCliL:cAlias ) )
-   METHOD nTotalUnidadesPresupuestosClientes()                    INLINE ( nTotNPreCli( ::oPreCliL:cAlias ) )
-   METHOD nPrecioUnitarioPresupuestosClientes()                   INLINE ( nTotUPreCli( ::oPreCliL:cAlias ) ) 
-   METHOD nTotalLineaPresupuestosClientes()                       INLINE ( nTotLPreCli( ::oPreCliL:cAlias ) )
-   METHOD nTotalPesoLineaPresupuestosClientes()                   INLINE ( nPesLPreCli( ::oPreCliL:cAlias ) )
-   METHOD nTotalImpuestosIncluidosLineaPresupuestosClientes()     INLINE ( nTotFPreCli( ::oPreCliL:cAlias ) )
-   METHOD nTotalIVALineaPresupuestosClientes()                    INLINE ( nIvaLPreCli( ::oPreCliL:cAlias ) )
+   METHOD cDetallePresupuestoClientes()                           INLINE ( cDesPreCli(  D():PresupuestosClientesLineas( ::nView ) ) )
+   METHOD nTotalUnidadesPresupuestosClientes()                    INLINE ( nTotNPreCli( D():PresupuestosClientesLineas( ::nView ) ) )
+   METHOD nPrecioUnitarioPresupuestosClientes()                   INLINE ( nTotUPreCli( D():PresupuestosClientesLineas( ::nView ) ) ) 
+   METHOD nTotalLineaPresupuestosClientes()                       INLINE ( nTotLPreCli( D():PresupuestosClientesLineas( ::nView ) ) )
+   METHOD nTotalPesoLineaPresupuestosClientes()                   INLINE ( nPesLPreCli( D():PresupuestosClientesLineas( ::nView ) ) )
+   METHOD nTotalImpuestosIncluidosLineaPresupuestosClientes()     INLINE ( nTotFPreCli( D():PresupuestosClientesLineas( ::nView ) ) )
+   METHOD nTotalIVALineaPresupuestosClientes()                    INLINE ( nIvaLPreCli( D():PresupuestosClientesLineas( ::nView ) ) )
 
-   METHOD nTotalDescuentoPorcentualLineaPresupuestosClientes()    INLINE ( nDtoLPreCli( ::oPreCliL:cAlias ) )
-   METHOD nTotalDescuentoPromocionalLineaPresupuestosClientes()   INLINE ( nPrmLPreCli( ::oPreCliL:cAlias ) )
+   METHOD nTotalDescuentoPorcentualLineaPresupuestosClientes()    INLINE ( nDtoLPreCli( D():PresupuestosClientesLineas( ::nView ) ) )
+   METHOD nTotalDescuentoPromocionalLineaPresupuestosClientes()   INLINE ( nPrmLPreCli( D():PresupuestosClientesLineas( ::nView ) ) )
 
    METHOD AddVariablePedidoCliente()
    METHOD AddVariableLineasPedidoCliente()
@@ -430,7 +432,6 @@ CLASS TFastReportInfGen FROM TNewInfGen
    METHOD InitPedidosClientes()
    METHOD AddPedidosClientes()
 
-   METHOD InitAlbaranesClientes()
    METHOD AddAlbaranesClientes()
 
    METHOD InitFacturasClientes()
@@ -1477,7 +1478,7 @@ Method FastReport( nDevice ) CLASS TFastReportInfGen
       ::oFastReport:SetEventHandler(   "Designer", "OnSaveReport", {|lSaveAs| ::SaveReport( lSaveAs ) } )
 
       ::oFastReport:ClearDataSets()
-
+   
       ::DataReport()
 
       ::oFastReport:LoadFromString( ::cInformeFastReport )
@@ -2459,19 +2460,18 @@ Presupuestos----------------------------------------------------------------
 
 METHOD FastReportPresupuestoCliente()
       
-   ::oPreCliT:OrdSetFocus( "iNumPre" )
-      
-   ::oFastReport:SetWorkArea(       "Presupuestos de clientes", ::oPreCliT:nArea )
+   ( D():PresupuestosClientes( ::nView ) )->( ordsetfocus( "iNumPre" ) )
+
+   ::oFastReport:SetWorkArea(       "Presupuestos de clientes", ( D():PresupuestosClientes( ::nView ) )->( select() ) )
    ::oFastReport:SetFieldAliases(   "Presupuestos de clientes", cItemsToReport( aItmPreCli() ) )
-      
-   ::oPreCliL:OrdSetFocus( "iNumPre" )
-      
-   ::oFastReport:SetWorkArea(       "Lineas presupuestos de clientes", ::oPreCliL:nArea )
+
+   ( D():PresupuestosClientesLineas( ::nView ) )->( ordsetfocus( "iNumPre" ) )
+   ::oFastReport:SetWorkArea(       "Lineas presupuestos de clientes", ( D():PresupuestosClientesLineas( ::nView ) )->( select() ) )
    ::oFastReport:SetFieldAliases(   "Lineas presupuestos de clientes", cItemsToReport( aColPreCli() ) )
-   
+
    ::oFastReport:SetMasterDetail(   "Informe", "Presupuestos de clientes",          {|| ::idDocumento() } )
    ::oFastReport:SetMasterDetail(   "Informe", "Lineas presupuestos de clientes",   {|| ::IdDocumentoLinea() } )
-   
+
    ::oFastReport:SetResyncPair(     "Informe", "Presupuestos de clientes" )
    ::oFastReport:SetResyncPair(     "Informe", "Lineas presupuestos de clientes" )
 
@@ -3482,11 +3482,6 @@ RETURN ( Self )
 
 METHOD AddPresupuestosClientes()
 
-   ::nBasePresupuestosClientes      += ::oPreCliT:nTotNet
-   ::nIVAPresupuestosClientes       += ::oPreCliT:nTotIva
-   ::nRecargoPresupuestosClientes   += ::oPreCliT:nTotReq
-   ::nTotalPresupuestosClientes     += ::oPreCliT:nTotPre
-
 RETURN ( Self )
 
 //------------------------------------------------------------------------//
@@ -3508,17 +3503,6 @@ METHOD AddPedidosClientes()
    ::nIVAPedidosClientes            += ::oPedCliT:nTotIva
    ::nRecargoPedidosClientes        += ::oPedCliT:nTotReq
    ::nTotalPedidosClientes          += ::oPedCliT:nTotPed
-
-RETURN ( Self )
-
-//------------------------------------------------------------------------//
-
-METHOD InitAlbaranesClientes()
-
-   ::nBaseAlbaranesClientes         := 0
-   ::nIVAAlbaranesClientes          := 0
-   ::nRecargoAlbaranesClientes      := 0
-   ::nTotalAlbaranesClientes        := 0
 
 RETURN ( Self )
 

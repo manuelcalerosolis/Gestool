@@ -1394,14 +1394,18 @@ FUNCTION FactCli( oMenuItem, oWnd, hHash )
 
    enableAcceso()
 
-   if uFieldempresa( 'lFltYea' )
-      oWndBrw:setYearCombobox()
-   end if
+   if !empty(oWndBrw)
 
-   if !empty( hHash ) 
-      oWndBrw:RecAdd()
-      hHash             := nil
-   end if
+      if uFieldempresa( 'lFltYea' )
+         oWndBrw:setYearCombobox()
+      end if
+
+      if !empty( hHash ) 
+         oWndBrw:RecAdd()
+         hHash             := nil
+      end if
+
+   end if 
 
 Return .t.
 

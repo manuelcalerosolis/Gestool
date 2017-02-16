@@ -633,13 +633,17 @@ FUNCTION RecPrv( oMenuItem, oWnd, aNumRec )
 
    EnableAcceso()
 
-   if uFieldempresa( 'lFltYea' )
-      oWndBrw:setYearCombobox()
-   end if
+   if !empty( oWndBrw )
 
-   if isArray( aNumRec ) .and. !empty( aNumRec[ 1 ] )
-      ExternalPago( aNumRec )
-   end if
+      if uFieldempresa( 'lFltYea' )
+         oWndBrw:setYearCombobox()
+      end if
+
+      if isArray( aNumRec ) .and. !empty( aNumRec[ 1 ] )
+         externalPago( aNumRec )
+      end if
+
+   end if 
 
 Return .t.
 

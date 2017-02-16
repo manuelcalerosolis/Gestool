@@ -1251,14 +1251,14 @@ FUNCTION AlbCli( oMenuItem, oWnd, hHash )
 
    EnableAcceso()
 
-   if uFieldempresa( 'lFltYea' )
-      oWndBrw:setYearCombobox()
-   end if
+   if !empty( oWndBrw )
 
-   if !empty( hHash ) 
+      if uFieldempresa( 'lFltYea' )
+         oWndBrw:setYearCombobox()
+      end if
 
-      if !empty( oWndBrw )
-         oWndBrw:RecAdd()
+      if !empty( hHash ) 
+         oWndBrw:recAdd()
       end if
 
       hHash    := nil

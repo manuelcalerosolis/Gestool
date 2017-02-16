@@ -1888,9 +1888,9 @@ FUNCTION FacRec( oMenuItem, oWnd, cCodCli, cCodArt, cCodPed, aNumDoc )
       TOOLTIP  "(S)alir";
       HOTKEY   "S"
 
-      /*
-      Datos para el filtro-----------------------------------------------------
-      */
+   /*
+   Datos para el filtro-----------------------------------------------------
+   */
 
    if !oUser():lFiltroVentas()
       oWndBrw:oActiveFilter:SetFields( aItmFacRec() )
@@ -1899,16 +1899,20 @@ FUNCTION FacRec( oMenuItem, oWnd, cCodCli, cCodArt, cCodPed, aNumDoc )
 
    ACTIVATE WINDOW oWndBrw VALID ( CloseFiles() )
 
-   if uFieldempresa( 'lFltYea' )
-      oWndBrw:setYearCombobox()
-   end if
+   if !empty( oWndBrw )
 
-   if !empty( cCodCli ) .or. !empty( cCodArt ) .or. !empty( aNumDoc[ 1 ] ) .or. !empty( aNumDoc[ 2 ] ) .or. !empty( aNumDoc[ 3 ] )
-      oWndBrw:RecAdd()
-      cCodCli        := nil
-      cCodArt        := nil
-      aNumDoc        := Array( 3 )
-   end if
+      if uFieldempresa( 'lFltYea' )
+         oWndBrw:setYearCombobox()
+      end if
+
+      if !empty( cCodCli ) .or. !empty( cCodArt ) .or. !empty( aNumDoc[ 1 ] ) .or. !empty( aNumDoc[ 2 ] ) .or. !empty( aNumDoc[ 3 ] )
+         oWndBrw:RecAdd()
+         cCodCli        := nil
+         cCodArt        := nil
+         aNumDoc        := Array( 3 )
+      end if
+
+   end if 
 
 Return .t.
 

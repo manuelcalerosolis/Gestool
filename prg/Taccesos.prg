@@ -176,7 +176,7 @@ CLASS TAcceso
    Method nYearComboBox()                 INLINE ( if( !empty( ::oYearComboBox ), ( Val( ::oYearComboBox:varget() ) ), 0 ) )
    Method setYearComboBoxExpression( cExpression );
                                           INLINE ( if( !empty( ::oYearComboBox ), ::cYearComboBoxExpression := cExpression, ) )
-   Method getYearComboBoxExpression()     INLINE ( if( !empty( ::oYearComboBox ), ::cYearComboBoxExpression, "" ) )
+   Method getYearComboBoxExpression()     INLINE ( if( !empty( ::oYearComboBox ) .and. ::lYearComboBox, ::cYearComboBoxExpression, "" ) )
    Method setYearComboBoxChange( bBlock ) INLINE ( if( !empty( ::oYearComboBox ), ( ::oYearComboBox:bChange  := bBlock ), ) )
 
    Method Disable()                       INLINE ( CursorWait(),  if( !empty( ::oOfficeBar ), ( ::oOfficeBar:Disable(), SysRefresh() ), ) )
@@ -797,8 +797,6 @@ Method lHideCarpeta( oAcceso, cCurUsr )
 
    if ::lOpenFiles .and. dbSeekInOrd( cCurUsr + oAcceso:cPrompt, "cOpcion", ::cDbf )
       lHide          := !( ::cDbf )->lShow
-   else
-      lHide          := .f.
    end if
 
 Return ( lHide )
@@ -1117,10 +1115,17 @@ Method setYearComboBox( nYear )
 
    DEFAULT nYear  := year( date() )
 
-   if !empty( ::oYearComboBox )
-      ::oYearComboBox:set( str( nYear ) )
-      eval( ::oYearComboBox:bChange )
+   if empty( ::oYearComboBox )
+      Return ( Self )
    end if 
+
+   ::oYearComboBox:set( str( nYear ) )
+
+   if empty( ::oYearComboBox:bChange )
+      Return ( Self )
+   end if 
+
+   eval( ::oYearComboBox:bChange )
 
 Return ( Self )
 

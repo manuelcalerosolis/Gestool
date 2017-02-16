@@ -8,6 +8,7 @@ static lOpen         := .f.
 static oWndBrw
 static dbfCajT
 static dbfCajL
+static dbfCajasImp
 static dbfImpTik
 static dbfVisor
 static dbfCajPorta
@@ -36,21 +37,26 @@ STATIC FUNCTION lOpenFiles()
    oBlock               := ErrorBlock( {| oError | ApoloBreak( oError ) } )
    BEGIN SEQUENCE
 
-      IF !lExistTable( cPatDat() + "Cajas.Dbf" ) .or.;
-         !lExistTable( cPatDat() + "CajasL.Dbf" )
+      if !lExistTable( cPatDat() + "Cajas.Dbf" )      .or. ;
+         !lExistTable( cPatDat() + "CajasL.Dbf" )     .or. ;
+         !lExistTable( cPatDat() + "CajasImp.Dbf" )   
          mkCajas()
-      END IF
+      end if
 
-      IF !lExistIndex( cPatDat() + "Cajas.Cdx" ) .or.;
-         !lExistIndex( cPatDat() + "CajasL.Cdx" )
+      if !lExistIndex( cPatDat() + "Cajas.Cdx" )      .or. ;
+         !lExistIndex( cPatDat() + "CajasL.Cdx" )     .or. ;
+         !lExistTable( cPatDat() + "CajasImp.Cdx" )   
          rxCajas()
-      END IF
+      end if
 
       USE ( cPatDat() + "Cajas.Dbf" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "CAJAS", @dbfCajT ) )
       SET ADSINDEX TO ( cPatDat() + "Cajas.Cdx" ) ADDITIVE
 
       USE ( cPatDat() + "CajasL.Dbf" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "CAJASL", @dbfCajL ) )
       SET ADSINDEX TO ( cPatDat() + "CajasL.Cdx" ) ADDITIVE
+
+      USE ( cPatDat() + "CajasImp.Dbf" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "CajasImp", @dbfCajasImp ) )
+      SET ADSINDEX TO ( cPatDat() + "CajasImp.Cdx" ) ADDITIVE
 
       USE ( cPatDat() + "ImpTik.Dbf" ) NEW SHARED VIA ( cDriver() ) ALIAS ( cCheckArea( "ImpTik", @dbfImpTik ) )
       SET ADSINDEX TO ( cPatDat() + "ImpTik.Cdx" ) ADDITIVE
@@ -87,6 +93,7 @@ STATIC FUNCTION CloseFiles()
 
    CLOSE ( dbfCajT     )
    CLOSE ( dbfCajL     )
+   CLOSE ( dbfCajasImp )
    CLOSE ( dbfDoc      )
    CLOSE ( dbfImpTik   )
    CLOSE ( dbfVisor    )
@@ -94,6 +101,7 @@ STATIC FUNCTION CloseFiles()
 
    dbfCajT     := nil
    dbfCajL     := nil
+   dbfCajasImp := nil
    dbfDoc      := nil
    dbfImpTik   := nil
    dbfVisor    := nil
@@ -2029,6 +2037,10 @@ FUNCTION mkCajas( cPath, oMeter )
       dbCreate( cPath + "CajasL.Dbf", aSqlStruct( aItmCajaL() ), cDriver() )
    end if
 
+   if !lExistTable( cPath + "CajasImp.Dbf" )
+      dbCreate( cPath + "CajasImp.Dbf", aSqlStruct( aItmCajaImpresiones() ), cDriver() )
+   end if
+
    rxCajas( cPath, oMeter )
 
 RETURN .t.
@@ -2037,7 +2049,7 @@ RETURN .t.
 
 FUNCTION rxCajas( cPath, oMeter )
 
-	local dbfCajT
+	local dbfCajas
 
    DEFAULT cPath  := cPatDat()
 
@@ -2049,46 +2061,67 @@ FUNCTION rxCajas( cPath, oMeter )
       dbCreate( cPath + "CAJASL.DBF", aSqlStruct( aItmCajaL() ), cDriver() )
    end if
 
-   dbUseArea( .t., cDriver(), cPath + "CAJAS.DBF", cCheckArea( "CAJAS", @dbfCajT ), .f. )
+   if !lExistTable( cPath + "CajasImp.Dbf" )
+      dbCreate( cPath + "CajasImp.Dbf", aSqlStruct( aItmCajaImpresiones() ), cDriver() )
+   end if
 
-   if !( dbfCajT )->( neterr() )
+   dbUseArea( .t., cDriver(), cPath + "CAJAS.DBF", cCheckArea( "CAJAS", @dbfCajas ), .f. )
 
-      ( dbfCajT )->( __dbPack() )
+   if !( dbfCajas )->( neterr() )
 
-      ( dbfCajT )->( ordCondSet("!Deleted()", {||!Deleted()}  ) )
-      ( dbfCajT )->( ordCreate( cPath + "CAJAS.CDX", "cCodCaj", "Upper( cCodCaj )", {|| Upper( Field->cCodCaj ) }, ) )
+      ( dbfCajas )->( __dbPack() )
 
-      ( dbfCajT )->( ordCondSet("!Deleted()", {||!Deleted()}  ) )
-      ( dbfCajT )->( ordCreate( cPath + "CAJAS.CDX", "cNomCaj", "Upper( cNomCaj )", {|| Upper( Field->cNomCaj ) } ) )
+      ( dbfCajas )->( ordCondSet("!Deleted()", {||!Deleted()}  ) )
+      ( dbfCajas )->( ordCreate( cPath + "CAJAS.CDX", "cCodCaj", "Upper( cCodCaj )", {|| Upper( Field->cCodCaj ) }, ) )
 
-      ( dbfCajT )->( ordCondSet("!Deleted() .and. !Field->lNoArq", {|| !Deleted() .and. !Field->lNoArq }  ) )
-      ( dbfCajT )->( ordCreate( cPath + "CAJAS.CDX", "lNoArq", "Upper( cCodCaj )", {|| Upper( Field->cCodCaj ) }, ) )
+      ( dbfCajas )->( ordCondSet("!Deleted()", {||!Deleted()}  ) )
+      ( dbfCajas )->( ordCreate( cPath + "CAJAS.CDX", "cNomCaj", "Upper( cNomCaj )", {|| Upper( Field->cNomCaj ) } ) )
 
-      ( dbfCajT )->( ordCondSet("!Deleted()", {||!Deleted()}  ) )
-      ( dbfCajT )->( ordCreate( cPath + "CAJAS.CDX", "cCajPrt", "Upper( cCajPrt )", {|| Upper( Field->cCajPrt ) }, ) )
+      ( dbfCajas )->( ordCondSet("!Deleted() .and. !Field->lNoArq", {|| !Deleted() .and. !Field->lNoArq }  ) )
+      ( dbfCajas )->( ordCreate( cPath + "CAJAS.CDX", "lNoArq", "Upper( cCodCaj )", {|| Upper( Field->cCodCaj ) }, ) )
 
-      ( dbfCajT )->( dbCloseArea() )
+      ( dbfCajas )->( ordCondSet("!Deleted()", {||!Deleted()}  ) )
+      ( dbfCajas )->( ordCreate( cPath + "CAJAS.CDX", "cCajPrt", "Upper( cCajPrt )", {|| Upper( Field->cCajPrt ) }, ) )
+
+      ( dbfCajas )->( dbCloseArea() )
 
    else
 
-      msgStop( "Imposible abrir en modo exclusivo la tabla de cajas" + 1 )
+      msgStop( "Imposible abrir en modo exclusivo la tabla de cajas" )
 
    end if
 
-   dbUseArea( .t., cDriver(), cPath + "CAJASL.DBF", cCheckArea( "CAJASL", @dbfCajL ), .f. )
+   dbUseArea( .t., cDriver(), cPath + "CAJASL.DBF", cCheckArea( "CAJASL", @dbfCajas ), .f. )
 
-   if !( dbfCajL )->( neterr() )
+   if !( dbfCajas )->( neterr() )
 
-      ( dbfCajL )->( __dbPack() )
+      ( dbfCajas )->( __dbPack() )
 
-      ( dbfCajL )->( ordCondSet("!Deleted()", {||!Deleted()}  ) )
-      ( dbfCajL )->( ordCreate( cPath + "CAJASL.CDX", "CCODCAJ", "Upper( CCODCAJ ) + Upper( cTipImp )", {|| Upper( Field->CCODCAJ ) + Upper( Field->cTipImp ) }, ) )
+      ( dbfCajas )->( ordCondSet("!Deleted()", {||!Deleted()}  ) )
+      ( dbfCajas )->( ordCreate( cPath + "CAJASL.CDX", "CCODCAJ", "Upper( CCODCAJ ) + Upper( cTipImp )", {|| Upper( Field->CCODCAJ ) + Upper( Field->cTipImp ) }, ) )
 
-      ( dbfCajL )->( dbCloseArea() )
+      ( dbfCajas )->( dbCloseArea() )
 
    else
 
-      msgStop( "Imposible abrir en modo exclusivo la tabla de cajas" + 1 )
+      msgStop( "Imposible abrir en modo exclusivo la tabla de cajas" )
+
+   end if
+
+   dbUseArea( .t., cDriver(), cPath + "CajasImp.Dbf", cCheckArea( "CajasImp", @dbfCajas ), .f. )
+
+   if !( dbfCajas )->( neterr() )
+
+      ( dbfCajas )->( __dbPack() )
+
+      ( dbfCajas )->( ordCondSet("!Deleted()", {||!Deleted()}  ) )
+      ( dbfCajas )->( ordCreate( cPath + "CajasImp.Cdx", "cCodCaj", "Upper( cCodCaj ) + Upper( cTipDoc ) + cSerDoc", {|| Upper( Field->cCodCaj ) + Upper( Field->cTipDoc ) + Field->cSerDoc }, ) )
+
+      ( dbfCajas )->( dbCloseArea() )
+
+   else
+
+      msgStop( "Imposible abrir en modo exclusivo la tabla de impresiones en cajas" )
 
    end if
 
@@ -2102,13 +2135,15 @@ Function IsCaja()
    local oError
    local dbfCaja
 
-   if !lExistTable( cPatDat() + "Cajas.Dbf" ) .or.;
-      !lExistTable( cPatDat() + "CajasL.Dbf" )
+   if !lExistTable( cPatDat() + "Cajas.Dbf" )      .or. ;
+      !lExistTable( cPatDat() + "CajasL.Dbf" )     .or. ;
+      !lExistTable( cPatDat() + "CajasImp.Dbf" )   
       mkCajas()
    end if
 
-   if !lExistIndex( cPatDat() + "Cajas.Cdx" ) .or.;
-      !lExistIndex( cPatDat() + "CajasL.Cdx" )
+   if !lExistIndex( cPatDat() + "Cajas.Cdx" )      .or. ;
+      !lExistIndex( cPatDat() + "CajasL.Cdx" )     .or. ;
+      !lExistTable( cPatDat() + "CajasImp.Cdx" )   
       rxCajas()
    end if
 
@@ -2374,6 +2409,22 @@ Function aItmCajaL()
 Return ( aBase )
 
 //---------------------------------------------------------------------------//
+
+Function aItmCajaImpresiones()
+
+   local aBase := {}
+
+   aAdd( aBase, { "cCodCaj",   "C",     3,   0, "Código de la caja" } )
+   aAdd( aBase, { "cTipDoc",   "C",     2,   0, "Tipo de documento" } )
+   aAdd( aBase, { "cSerDoc",   "C",     1,   0, "Serie de documento" } )
+   aAdd( aBase, { "cImpDoc",   "C",   250,   0, "Impresora del documento" } )
+   aAdd( aBase, { "cFrmDoc",   "C",     3,   0, "Formato del ducumento" } )
+   aAdd( aBase, { "nCopDoc",   "N",     1,   0, "Copias documento" } )
+
+Return ( aBase )
+
+//---------------------------------------------------------------------------//
+
 
 Function RecursiveSeekEnCaja( cCodCaj, dbfCajT, cField, uValue )
 

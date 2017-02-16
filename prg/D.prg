@@ -593,6 +593,7 @@ CLASS D
    METHOD Divisas( nView )                                        INLINE ( ::Get( "Divisas", nView ) )
 
    METHOD Cajas( nView )                                          INLINE ( ::Get( "Cajas", nView ) )
+      METHOD CajasImpresion( nView )                              INLINE ( ::Get( "CajasImp", nView ) )
 
    METHOD Propiedades( nView )                                    INLINE ( ::Get( "Pro", nView ) )
       METHOD PropiedadesLineas( nView )                           INLINE ( ::Get( "TblPro", nView ) )

@@ -885,13 +885,13 @@ FUNCTION AlbPrv( oMenuItem, oWnd, cCodPrv, cCodArt, cCodPed )
 
    enableAcceso()
 
-   if uFieldempresa( 'lFltYea' )
-      oWndBrw:setYearCombobox()
-   end if
+   if !Empty( oWndBrw )
 
-   if !Empty( cCodPrv ) .or. !Empty( cCodArt ) .or. !Empty( cCodPed )
+      if uFieldempresa( 'lFltYea' )
+         oWndBrw:setYearCombobox()
+      end if
 
-      if !Empty( oWndBrw )
+      if !Empty( cCodPrv ) .or. !Empty( cCodArt ) .or. !Empty( cCodPed )
          oWndBrw:RecAdd()
       end if
 

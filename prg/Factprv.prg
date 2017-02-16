@@ -1209,13 +1209,13 @@ FUNCTION FacPrv( oMenuItem, oWnd, cCodPrv, cCodArt, cNumAlb )
 
    EnableAcceso()
 
-   if uFieldempresa( 'lFltYea' )
-      oWndBrw:setYearCombobox()
-   end if
+   if !empty( oWndBrw )
+   
+      if uFieldempresa( 'lFltYea' )
+         oWndBrw:setYearCombobox()
+      end if
 
-   if !empty( cCodPrv ) .or. !empty( cCodArt ) .or. !empty( cNumAlb )
-
-      if !empty( oWndBrw )
+      if !empty( cCodPrv ) .or. !empty( cCodArt ) .or. !empty( cNumAlb )
          oWndBrw:RecAdd()
       end if
 

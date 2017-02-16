@@ -258,20 +258,23 @@ CLASS TDbf
     METHOD AppendFrom( cFile, aFields, bFor, bWhile, nNet, nRec, cRest, cRdd ) INLINE ( ::nArea )->( __dbApp( cFile, aFields, bFor, bWhile, nNet, nRec, cRest, cRdd ) )
     METHOD DbEval( bBlock, bForCondition, bWhileCondition, nNextRecords, nRecord, lRest) INLINE ( ::nArea )->( DbEval( bBlock, bForCondition, bWhileCondition, nNextRecords, nRecord, lRest ) )
 
-    Method SwapUp()
-    Method SwapDown()
+    METHOD SwapUp()
+    METHOD SwapDown()
 
-    Method lRddAdsCdx()                   INLINE ( ::cRDD == "ADSCDX" )
+    METHOD lRddAdsCdx()                   INLINE ( ::cRDD == "ADSCDX" )
 
-    Method aCommentIndex()
+    METHOD aCommentIndex()
 
-    Method lExistFile( cFile )            INLINE ( ::cRDD != "DBFCDX" .or. File( cFile ) ) // 
+    METHOD lExistFile( cFile )            INLINE ( ::cRDD != "DBFCDX" .or. File( cFile ) ) // 
 
-    Method aScatter()
+    METHOD aScatter()
 
-    Method aDbfToArray()
+    METHOD aDbfToArray()
     
     METHOD CreateFromHash( hDefinition )
+
+    METHOD setCustomFilter( cExpresionFilter )
+    METHOD quitCustomFilter( cExpresionFilter )
 
 ENDCLASS
 
@@ -2018,7 +2021,7 @@ RETURN ( Self )
 
 //---------------------------------------------------------------------------//
 
-Method SwapUp() CLASS TDbf
+METHOD SwapUp() CLASS TDbf
 
    local nRecno      := ( ::nArea )->( RecNo() )
    local aNewBuffer  := {}
@@ -2042,7 +2045,7 @@ Return ( Self )
 
 //---------------------------------------------------------------------------//
 
-Method SwapDown() CLASS TDbf
+METHOD SwapDown() CLASS TDbf
 
    local nRecno      := ( ::nArea )->( RecNo() )
    local aNewBuffer  := {}
@@ -2083,7 +2086,7 @@ Return ( Self )
 Relaci�n de ordenes
 */
 
-Method aCommentIndex() CLASS TDbf
+METHOD aCommentIndex() CLASS TDbf
 
    local oIndex
    local aIndex   := {}
@@ -2119,7 +2122,7 @@ Return ( Self )
 
 //----------------------------------------------------------------------------//
 
-Method aScatter() class TDbf
+METHOD aScatter() class TDbf
 
   local i
   local aField  := {}
@@ -2133,7 +2136,7 @@ Return ( aField )
 
 //----------------------------------------------------------------------------//
 
-Method aDbfToArray() class TDbf
+METHOD aDbfToArray() class TDbf
 
   local aDbf  := {}
 
@@ -2170,6 +2173,29 @@ METHOD Say() CLASS TDbf
 Return ( say )        
 
 //----------------------------------------------------------------------------//
+
+METHOD setCustomFilter( cExpresionFilter )
+
+   if lAIS()
+      ( ::nArea )->( adsSetAOF( cExpresionFilter ) ) 
+   else 
+      ( ::nArea )->( dbSetFilter( bCheck2Block( cExpresionFilter ), cExpresionFilter ) )
+   end if 
+
+RETURN ( Self )
+
+//---------------------------------------------------------------------------//
+
+METHOD quitCustomFilter( cExpresionFilter )
+
+   if lAIS()
+      ( ::nArea )->( adsClearAOF() ) 
+   else 
+      ( ::nArea )->( dbSetFilter() )
+   end if 
+
+RETURN ( Self )
+
 //------ Funciones amigas ----------------------------------------------------//
 //----------------------------------------------------------------------------//
 // Este metodo crea la DATA de cada TField
