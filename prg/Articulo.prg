@@ -15072,7 +15072,7 @@ FUNCTION rxArticulo( cPath, cDriver )
       ( dbfArt )->( ordCondSet("!Deleted()", {|| !Deleted() } ) )
       ( dbfArt )->( ordCreate( cPath + "PROVART.CDX", "cRefArt", "cCodArt + cCodPrv + cRefPrv", {|| Field->cCodArt + Field->cCodPrv + Field->cRefPrv } ) )
 
-      ( dbfArt )->( ordCondSet("!Deleted() .and. lDefPrv", {|| !Deleted() } ) )
+      ( dbfArt )->( ordCondSet("!Deleted() .and. lDefPrv", {|| !Deleted() .and. Field->lDefPrv } ) )
       ( dbfArt )->( ordCreate( cPath + "PROVART.CDX", "lDefPrv", "cCodArt", {|| Field->cCodArt } ) )
 
       ( dbfArt )->( dbCloseArea() )
