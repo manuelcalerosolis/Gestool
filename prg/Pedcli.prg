@@ -7944,7 +7944,7 @@ STATIC FUNCTION EndTrans( aTmp, aGet, oBrwLin, oBrwInc, nMode, oDlg, lActualizaW
 
    end case
 
-   if !( "PDA" $ cParamsMain() )
+   if !( "PDA" $ appParamsMain() )
       oMsgProgress()
       oMsgProgress():SetRange( 0, ( dbfTmpLin )->( LastRec() ) )
    end if

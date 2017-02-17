@@ -4,10 +4,10 @@ taskkill /F /IM rptapolo.exe
 
 del \fw195\gestool\obj\rptgal.obj
 
-\bcc55\bin\make -S -fLx.mak -D__GST__
+\BCC582\BIN\MAKE -S -fLX.MAK -D__GST__
 
 cd \fw195\gestool\bin
 
-RptApolo.exe
+RptApolo.exe 2015 000 
 
 cd \fw195\gestool\

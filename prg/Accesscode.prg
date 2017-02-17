@@ -268,8 +268,8 @@ METHOD loadTableConfiguration() CLASS AccessCode
 
    cTag              := "Tablet"
 
-   if ( "TABLET:" $ cParamsMain() )
-      cTag           += right( cParamsMain(), 1 )
+   if ( "TABLET:" $ appParamsMain() )
+      cTag           += right( appParamsMain(), 1 )
    end if 
 
    ::cGetUser        := getPvProfString( cTag, "User",               "",      ::cIniFile )

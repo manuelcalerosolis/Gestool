@@ -701,7 +701,7 @@ Method cEmpresa( cNewVal )
 
       ::_Empresa := cNewVal
 
-      if !( "EMPRESA" $ cParamsMain() )
+      if !( "EMPRESA" $ appParamsMain() )
          cEmpUsr( cNewVal )
       end if
 

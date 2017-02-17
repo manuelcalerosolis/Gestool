@@ -4,11 +4,6 @@
 #include "Factu.ch" 
 #include "Ads.ch"
 
-#ifdef __SQLLIB__
-#include "sqlrdd.ch"        // Needed if you plan to use native connection to MySQL
-#include "mysql.ch"        // Needed if you plan to use native connection to MySQL
-#endif
-
 #ifdef __ADS__
    REQUEST ADS, DBFCDX
 
@@ -21,7 +16,6 @@
 #ifndef __ADS__
    REQUEST DBFCDX, DBFFPT
 #endif
-
 
 #define TVS_HASBUTTONS       1
 #define TVS_HASLINES         2
@@ -46,7 +40,7 @@ static oBtnCompras
 static oBtnExistencias
 static oBtnProduccion
 static oBtnFavoritos
-static oBtnAddFavorito
+static oBtnAddFavorito 
 static oBtnEditFavorito
 static oBtnDelFavorito
 static oBtnEjecutar
@@ -58,118 +52,44 @@ static aInforme         := {}
 
 //---------------------------------------------------------------------------//
 
-Function Main( cCodEmp, cCodUsr, cIp )
+Function Main( cCodEmp, cCodUsr, cInitOptions )
 
-   local dbfEmp
-   local dbfDlg
-   local dbfUsr
-   local dbfCaj
    local nError
    local cError
-   local cAdsType   
-   local cAdsIp     
-   local cAdsPort   
-   local cAdsData   
-   local nAdsServer 
-   local cAdsLocal  
-   local cAdsFile   
 
-   DEFAULT cCodEmp   := Alltrim( Str( Year( Date() ) ) )
+   DEFAULT cCodEmp   := alltrim( str( year( date() ) ) )
    DEFAULT cCodUsr   := "000"
 
-   SET DATE FORMAT   "dd/mm/yyyy"
-   SET DELETED       ON
-   SET EXCLUSIVE     OFF
-   SET EPOCH         TO 2000
-   SET _3DLOOK       ON
-   SET OPTIMIZE      ON
-   SET EXACT         ON
+   appSettings()
 
    // Modificaciones de las clases de fw---------------------------------------
 
-   DialogExtend() 
+   appDialogExtend() 
 
    // Chequeamos la existencia del fichero de configuracion--------------------
 
-   if !File( cIniAplication() ) .and. File( FullCurDir() + "Gestion.Ini" )
-      fRename( FullCurDir() + "Gestion.Ini", cIniAplication() )
-   end if
-
-   cAdsType          := GetPvProfString(  "ADS",      "Type",     "",   cIniAplication() )
-   cAdsIp            := GetPvProfString(  "ADS",      "Ip",       "",   cIniAplication() )
-   cAdsPort          := GetPvProfString(  "ADS",      "Port",     "",   cIniAplication() )
-   cAdsData          := GetPvProfString(  "ADS",      "Data",     "",   cIniAplication() )
-   nAdsServer        := GetPvProfInt(     "ADS",      "Server",   7,    cIniAplication() )
-   cAdsLocal         := GetPvProfString(  "ADS",      "Local",    "",   cIniAplication() )
-   cAdsFile          := GetPvProfString(  "ADS",      "File",     "",   cIniAplication() )
+   appLoadAds()
 
    // Motor de bases de datos--------------------------------------------------
+ 
+   if ( "ADSINTERNET" $ cAdsType() )
 
-   if ( "ADSINTERNET" $ cAdsType )
+      if !( appConnectADS() )
+         msgStop( "Imposible conectar con GstApolo ADS data dictionary" )
+         Return nil
+      end if
+      
+   else 
 
-      lAIS( .t. )
-
-      cAdsIp(     cAdsIp )
-      cAdsPort(   cAdsPort )
-      cAdsData(   cAdsData )
-      nAdsServer( nAdsServer )
-      cAdsFile(   cAdsFile )
-      cAdsLocal(  cAdsLocal )
-
-      RddRegister(   'ADS', 1 )
-      RddSetDefault( 'ADSCDX' )
-
-      adsSetServerType( nAdsServer() )    // TODOS
-      adsSetFileType( 2 )                 // ADS_CDX
-      adsRightsCheck( .f. )
-      adsSetDeleted( .t. )
-      adsCacheOpenTables( 250 )
-
-      with object ( TDataCenter() )
-
-         :ConnectDataDictionary()
-
-         if !:lAdsConnection
-
-            msgStop( "Imposible conectar con GstApolo ADS data dictionary" )
-
-            Return nil
-
-         end if
-
-      end with
-
-   else
-
-      lCdx( .t. )
-
-      RddSetDefault( 'DBFCDX' )
+      appConnectCDX()
 
    end if
 
    TDataCenter():BuildData()
 
-   // Apertura de ficheros-----------------------------------------------------
+   // Seleccionamos el usuario-------------------------------------------------
 
-   USE ( cPatDat() + "EMPRESA.DBF" )   NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "EMPRESA", @dbfEmp ) )
-   SET ADSINDEX TO ( cPatDat() + "EMPRESA.CDX" ) ADDITIVE
-
-   USE ( cPatDat() + "DELEGA.DBF" )    NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "DELEGA", @dbfDlg ) )
-   SET ADSINDEX TO ( cPatDat() + "DELEGA.CDX" ) ADDITIVE
-
-   USE ( cPatDat() + "USERS.DBF" )     NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "USERS", @dbfUsr ) )
-   SET ADSINDEX TO ( cPatDat() + "USERS.CDX" ) ADDITIVE
-
-   USE ( cPatDat() + "CAJAS.DBF" )     NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "CAJAS", @dbfCaj ) )
-   SET ADSINDEX TO ( cPatDat() + "CAJAS.CDX" ) ADDITIVE
-
-   // Codigo de usuario -------------------------------------------------------
-
-   oUser( cCodUsr, dbfUsr, dbfCaj, nil, .f. )
-
-   if Empty( cCodEmp )
-      cCodEmp        := GetCodEmp( dbfEmp )
-   end if
+   oUser( cCodUsr )
 
    // Ponemos el directorio para los ficheros----------------------------------
 
@@ -179,32 +99,36 @@ Function Main( cCodEmp, cCodUsr, cIp )
    cPatPrv( cCodEmp, nil, .t. )
    cPatAlm( cCodEmp, nil, .t. )
 
-   // Cargamos el buffer-------------------------------------------------------
+   // Seleccionamos la empresa-------------------------------------------------
 
    cCodigoEmpresaEnUso( cCodEmp )
 
-   aEmpresa( cCodEmp, dbfEmp, dbfDlg, dbfUsr, .t. )
+   aEmpresa( cCodEmp )
 
-   /*
-   Cargamos la estructura de ficheros de la empresa----------------------------
-   */
+   // Cargamos la estructura de ficheros de la empresa-------------------------
 
    TDataCenter():BuildEmpresa()
 
-   CLOSE ( dbfEmp )
-   CLOSE ( dbfDlg )
-   CLOSE ( dbfUsr )
-   CLOSE ( dbfCaj )
-
    // Apertura de ventana------------------------------------------------------
 
-   ReportBar()
+   reportBar()
 
-   // Fin de la aplicacion-----------------------------------------------------
+Return nil
 
-   SET 3DLOOK OFF
+//---------------------------------------------------------------------------//
 
-Return Nil
+Static Function controllerReportGallery( cInitOptions )
+
+   do case
+      case empty( cInitOptions )
+         reportBar()
+
+      case ( cInitOptions == "Articulos" )
+         TFastVentasArticulos():New():Play()
+
+   end case
+
+Return nil
 
 //---------------------------------------------------------------------------//
 
@@ -240,8 +164,8 @@ init procedure RddInit()
    REQUEST HB_LANG_ES         // Para establecer idioma de Mensajes, fechas, etc..
    REQUEST HB_CODEPAGE_ESWIN  // Para establecer código de página a Español (Ordenación, etc..)
 
-   HB_LangSelect("ES")        // Para mensajes, fechas, etc..
-   HB_SetCodePage("ESWIN")    // Para ordenación (arrays, cadenas, etc..) *Requiere CodePage.lib
+   hb_langselect("ES")        // Para mensajes, fechas, etc..
+   hb_setcodepage("ESWIN")    // Para ordenación (arrays, cadenas, etc..) *Requiere CodePage.lib
 
 return
 
@@ -1471,12 +1395,6 @@ Return nil
 
 //---------------------------------------------------------------------------//
 
-Function cParamsMain()
-
-Return ( "" )
-
-//---------------------------------------------------------------------------//
-
 Function IsReport()
 
 Return ( .t. )
@@ -1890,7 +1808,7 @@ Function aFolder( dbfFolder )
    */
 
    if lClose
-      ( dbfFolder )->( dbCloseArea() )
+      ( dbfFolder )->( dbCloseArea() )  
    else
       ( dbfFolder )->( dbGoto( nRec ) )
    end if
@@ -2452,9 +2370,6 @@ Return nil
 Function ACCESSCODE()
 Return nil
 
-Function TCentroCoste()
-Return nil
-
 Function TSPECIALSEARCHARTICULO
 Return nil
 
@@ -2529,6 +2444,9 @@ Return nil
 
 Function validRunReport()
 Return .t.
+
+Function tCentroCoste()
+Return nil
 
 //------------------------------------------------------------------//
 

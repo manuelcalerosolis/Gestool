@@ -3113,7 +3113,7 @@ METHOD OnClickIniciarSesion()
   ::DisableDialog()
 
   if ::oTurno:OpenFiles()
-     ::oTurno:lNowOpen( oWnd() )
+     ::oTurno:lNowOpen()
      ::oTurno:CloseFiles()
   end if
 

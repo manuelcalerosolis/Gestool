@@ -1225,7 +1225,7 @@ Static Function MakFacCli( oDbfTmp, dFecFac, lGrpCli, nGrpObr, lTotAlb, lUniPgo,
                de la ficha del cliente
                */
 
-               if ( "GARRIDO" $ cParamsMain() )
+               if ( "GARRIDO" $ appParamsMain() )
 
                   if ( dbfCliAtp )->( dbSeek( ( dbfFacCliT )->cCodCli + ( dbfAlbCliL )->cRef ) )                  .and. ;
                      ( dbfCliAtp )->lAplFac                                                                       .and. ;

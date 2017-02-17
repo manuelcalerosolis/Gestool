@@ -6,14 +6,12 @@ static cEvents             := ""
 
 //-------------------------------------------------------------//
 
-Function OpenWebBrowser( oWndMain )
+Function OpenWebBrowser()
 
    local cFile
    local oActiveX
 
-   DEFAULT oWndMain        := oWnd()
-
-   if ( "TERMINAL" $ cParamsMain() ) // .or. !IsInternet() )
+   if ( "TERMINAL" $ appParamsMain() ) // .or. !IsInternet() )
 
       cFile                := FullCurDir() + "web\index.html" 
 
@@ -27,7 +25,7 @@ Function OpenWebBrowser( oWndMain )
 
    end if
 
-   if !Empty( oWndMain ) .and. isInternet()
+   if !Empty( oWnd() ) .and. isInternet()
 
       oWndBrowser          := TWindow():New( -28, -6, GetSysMetrics( 1 ) - 208, GetSysMetrics( 0 ) + 10, "", , , , , , .f., .f., , , , , .f., .f., .f., .f., .t. )
 
@@ -38,11 +36,11 @@ Function OpenWebBrowser( oWndMain )
 
       oActiveX:Do( "Navigate", cFile )
 
-      SetParent( oWndBrowser:hWnd, oWndMain:oWndClient:hWnd )
+      SetParent( oWndBrowser:hWnd, oWnd():oWndClient:hWnd )
 
       oWndBrowser:Activate( , , , , , , , , , , , , , , , , {|| .f. } )
 
-      oWndMain:SetFocus()
+      oWnd():SetFocus()
 
    end if
 
@@ -80,7 +78,7 @@ Return ( nil )
 
 //-------------------------------------------------------------//
 
-Function CloseWebBrowser( oWnd )
+Function CloseWebBrowser()
 
    local oBlock
    local oError
@@ -88,15 +86,13 @@ Function CloseWebBrowser( oWnd )
    oBlock                  := ErrorBlock( {| oError | ApoloBreak( oError ) } )
    BEGIN SEQUENCE
 
-   DEFAULT oWnd            := oWnd()
-
-   if !Empty( oWnd ) .and. !Empty( oWndBrowser )
+   if !empty( oWnd() ) .and. !empty( oWndBrowser )
 
       oWndBrowser:bValid   := {|| .t. }
 
-      if !Empty( oWnd:oWndClient )
-         oWnd:oWndClient:End()
-         oWnd:oWndClient   := nil
+      if !empty( oWnd():oWndClient )
+         oWnd():oWndClient:End()
+         oWnd():oWndClient   := nil
       end if
 
    end if

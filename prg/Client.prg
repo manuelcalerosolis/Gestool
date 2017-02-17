@@ -9808,7 +9808,7 @@ STATIC FUNCTION SavClient( aTmp, aGet, oDlg, oBrw, nMode )
 
    // Campos necesarios para RISI----------------------------------------------
 
-   if ( "RISI" $ cParamsMain() )   
+   if ( "RISI" $ appParamsMain() )   
 
       if Empty( aTmp[ _CCODGRP ] )
          cText := Space( 6 ) + "* Código de grupo" + CRLF

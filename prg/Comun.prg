@@ -6,6 +6,16 @@
 
 #define NUMERO_TARIFAS  6
 
+static oWnd
+static oWndBar
+static oDlgProgress
+
+static oMsgUser
+static oMsgDelegacion
+static oMsgCaja
+static oMsgSesion
+static oMsgProgress
+
 static cCodigoEmpresaEnUso
 static cCodigoDelegacionEnUso
 
@@ -21,6 +31,7 @@ static aDlgEmp          := {}
 static nError           := 0
 
 static nHndCaj
+static nHndReport
 
 static aEmpresasGrupo   := {}
 
@@ -33,10 +44,13 @@ static lCdx             := .f.
 
 static cAdsIp           := ""
 static cAdsPort         := ""
-static cAdsData            := ""
+static cAdsData         := ""
 static nAdsServer       := 7
 static cAdsLocal        := ""
 static cAdsFile         := "Gestool.Add"
+static cAdsType         := ""
+
+static appParamsMain    := ""
 
 static cCodigoAgente    := ""
 
@@ -53,6 +67,16 @@ static cPatScriptEmp    := ""
 static cPatTmp          := ""
 static cPathPC          := ""
 static cNombrePc        := ""
+
+static cBmpVersion
+static cNameVersion
+static cTypeVersion     := ""
+
+static lStandard
+static lProfesional
+static lOsCommerce
+
+static oMsgAlmacen
 
 static cUsrTik
 
@@ -77,6 +101,671 @@ static hMapaAjuste      :=  { "#,#0"   => { "Round" => 1,  "Incrementa" => 0.00,
                               "100,00" => { "Round" => -3, "Incrementa" => 200.00,  "Decrementa" => 200.00, "Ceros" => .f. } }
 
 //----------------------------------------------------------------------------//
+
+Function oWnd() ; Return oWnd
+
+//---------------------------------------------------------------------------//
+
+Function oWndBar() ; Return oWndBar
+
+//---------------------------------------------------------------------------//
+
+Function CreateMainWindow( oIconApp )
+
+   // Carga o no la imagen de fondo--------------------------------------------
+
+   DEFINE WINDOW oWnd ;
+      FROM     0, 0 TO 26, 82;
+      TITLE    __GSTROTOR__ + Space( 1 ) + __GSTVERSION__; 
+      MDI ;
+      COLORS   Rgb( 0, 0, 0 ), Rgb( 231, 234, 238 ) ;
+      ICON     oIconApp ;
+      MENU     ( BuildMenu() )
+
+   oWndBar                    := CreateAcceso( oWnd )
+   oWndBar:CreateButtonBar( oWnd )
+
+   // Set the bar messages-----------------------------------------------------
+
+   oWnd:Cargo                 := appParamsMain()
+
+   oWnd:bKeyDown              := { | nKey | StdKey( nKey ) }  
+
+   // Mensajes-----------------------------------------------------------------
+
+   oWnd:oMsgBar               := TMsgBar():New( oWnd, __GSTCOPYRIGHT__ + Space(2) + cNameVersion(), .f., .f., .f., .f., Rgb( 0,0,0 ), Rgb( 255,255,255 ), , .f. )
+   oWnd:oMsgBar:setFont( oFontLittelTitle() )
+
+   oDlgProgress               := TMsgItem():New( oWnd:oMsgBar, "", 100,,,, .t. )
+
+   oWnd:oMsgBar:oDate         := TMsgItem():New( oWnd:oMsgBar, Dtoc( GetSysDate() ), oWnd:oMsgBar:GetWidth( DToC( GetSysDate() ) ) + 12,,,, .t., { || SelSysDate() } )
+   oWnd:oMsgBar:oDate:lTimer  := .t.
+   oWnd:oMsgBar:oDate:bMsg    := {|| GetSysDate() }
+   oWnd:oMsgBar:CheckTimer()
+
+   oMsgUser                   := TMsgItem():New( oWnd:oMsgBar, "Usuario : " + Rtrim( oUser():cNombre() ), 200,,,, .t. )
+
+   oMsgDelegacion             := TMsgItem():New( oWnd:oMsgBar, "Delegación : " + Rtrim( oUser():cDelegacion() ), 200,,,, .t., {|| if( oUser():lCambiarEmpresa, SelectDelegacion( oMsgDelegacion ), ) } )
+
+   oMsgCaja                   := TMsgItem():New( oWnd:oMsgBar, "Caja : "  + oUser():cCaja(), 100,,,, .t., {|| SelectCajas(), chkTurno() } )
+
+   oMsgAlmacen                := TMsgItem():New( oWnd:oMsgBar, "Almacén : " + Rtrim( oUser():cAlmacen() ), 100,,,, .t., {|| SelectAlmacen() } )
+
+   oMsgSesion                 := TMsgItem():New( oWnd:oMsgBar, "Sesión : ", 100,,,, .t., {|| dbDialog() } ) 
+
+   // Abrimos la ventana-------------------------------------------------------
+
+   ACTIVATE WINDOW oWnd ;
+      MAXIMIZED ;
+      ON PAINT    ( WndPaint( hDC, oWnd ) ); 
+      ON RESIZE   ( WndResize( oWnd ) );
+      ON INIT     ( lStartCheck() );
+      VALID       ( EndApp() ) 
+
+   SysRefresh()
+
+Return nil
+
+//-----------------------------------------------------------------------------//
+
+Function WndResize( oWnd )
+
+   local oBlock
+   local oError
+
+   oBlock         := ErrorBlock( {| oError | ApoloBreak( oError ) } )
+   BEGIN SEQUENCE
+
+   if !Empty( oWnd )
+
+      aEval( oWnd:oWndClient:aWnd, {|o| oWnd:oWndClient:ChildMaximize( o ) } )
+
+      if !Empty( oWndBar )
+         oWndBar:CreateLogo()
+      end if
+
+   end if
+
+   RECOVER
+
+   END SEQUENCE
+
+   ErrorBlock( oBlock )
+
+Return nil
+
+//-----------------------------------------------------------------------------//
+
+Function oMsgProgress()
+
+   if empty( oMsgProgress ) .and. !empty( oWnd() )
+      oMsgProgress   := TProgress():New( 3, oDlgProgress:nLeft() - 2 , oWnd():oMsgBar, 0, , , .t., .f., oDlgProgress:nWidth - 2, 16 )
+   end if
+
+Return ( oMsgProgress )
+
+//--------------------------------------------------------------------------//
+
+Function EndProgress()
+
+   oMsgProgress:End()
+
+   oMsgProgress      := nil
+
+Return ( nil )
+
+//--------------------------------------------------------------------------//
+
+Function Titulo( cTxt )
+
+Return ( if( oWnd() != nil, oWnd():cTitle( cTxt ), "" ) )
+
+//--------------------------------------------------------------------------//
+
+Function oMsgSesion() ; Return ( oMsgSesion )
+
+//--------------------------------------------------------------------------//
+
+Function oMsgText( cText )
+
+   DEFAULT cText     := __GSTCOPYRIGHT__ + Space(2) + cNameVersion()
+
+   if empty( oWnd() )
+      Return nil 
+   end if 
+
+   if _isData( oWnd(), "oMsgBar" ) .and. ( oWnd():oMsgBar != nil ) 
+      oWnd():oMsgBar:SetMsg( cText )
+   end if
+
+Return ( nil )
+
+//--------------------------------------------------------------------------//
+
+Static Function StdKey( nKey )
+
+   do case
+      case nKey == 65 .and. GetKeyState( VK_CONTROL ) // Crtl + A
+         CreateInfoArticulo()
+      case nKey == 66 .and. GetKeyState( VK_CONTROL ) // Crtl + B
+         BrwSelArticulo()
+      case nKey == 68 .and. GetKeyState( VK_CONTROL ) // Crtl + C
+         BrwClient()
+      case nKey == 38 .and. GetKeyState( VK_CONTROL ) // Ctrl + Down
+         NextEmpresa()
+      case nKey == 40 .and. GetKeyState( VK_CONTROL ) // Ctrl + Up
+         PriorEmpresa()
+      case nKey == 48 .and. GetKeyState( VK_CONTROL ) // Ctrl + 0
+         dbDialog()
+   end case
+
+Return Nil
+
+//---------------------------------------------------------------------------//
+
+STATIC FUNCTION EndApp()
+
+   local oAni
+   local oDlg
+   local oError
+   local oBlock
+   local oBrush
+   local oBtnOk
+   local oBtnZip
+   local lFinish
+   local oBtnCancel
+   local oBmpVersion
+
+   oBlock         := ErrorBlock( {| oError | ApoloBreak( oError ) } )
+   BEGIN SEQUENCE
+
+      SysRefresh()
+
+      if !empty( oWnd() )
+         oWnd():CloseAll()
+      end if
+
+      SysRefresh()
+
+      DEFINE BRUSH oBrush COLOR Rgb( 255, 255, 255 ) // FILE ( cBmpVersion() )
+
+      DEFINE DIALOG oDlg RESOURCE "EndApp" BRUSH oBrush
+
+         REDEFINE BITMAP oBmpVersion ;
+            RESOURCE     cBmpVersion() ;
+            ID          600 ;
+            OF          oDlg
+
+         TWebBtn():Redefine( 100,,,,,, oDlg,,,,, "LEFT",,,,, Rgb( 0, 0, 0 ), Rgb( 255, 255, 255 ) ):SetTransparent()
+         TWebBtn():Redefine( 110,,,,,, oDlg,,,,, "LEFT",,,,, Rgb( 0, 0, 0 ), Rgb( 255, 255, 255 ) ):SetTransparent()
+         TWebBtn():Redefine( 120,,,,,, oDlg,,,,, "LEFT",,,,, Rgb( 0, 0, 0 ), Rgb( 255, 255, 255 ) ):SetTransparent()
+
+         oAni                       := TAnimat():Redefine( oDlg, 200, { "BAR_01" }, 1 )
+
+         REDEFINE BUTTON oBtnZip    ID 3          OF oDlg ACTION ( CompressEmpresa( cCodEmp(), nil, { oBtnZip, oBtnOk, oBtnCancel }, nil, oAni, nil, oDlg ) )
+
+         REDEFINE BUTTON oBtnOk     ID IDOK       OF oDlg ACTION ( CompressEmpresa( cCodEmp(), nil, { oBtnZip, oBtnOk, oBtnCancel }, nil, oAni, nil, oDlg, .f. ) )
+
+         REDEFINE BUTTON oBtnCancel ID IDCANCEL   OF oDlg ACTION ( oDlg:end() )
+
+         oDlg:AddFastKey( VK_F5,    {|| oDlg:end( IDOK ) } )
+
+         oDlg:bStart                := {|| oAni:Hide() }
+
+      ACTIVATE DIALOG oDlg CENTER
+
+      if !Empty( oBrush )
+         oBrush:End()
+      end if
+
+      if !Empty( oBmpVersion )
+         oBmpVersion:End()
+      end if 
+
+   RECOVER
+
+   END SEQUENCE
+
+   ErrorBlock( oBlock )
+
+   lFinish     := !empty( oDlg ) .and. ( oDlg:nResult == IDOK )
+
+   if ( lFinish )
+      FinishAplication()
+   end if
+
+RETURN ( lFinish )
+
+//-----------------------------------------------------------------------------//
+
+// Remember to use 'exit' procedures to asure that resources are
+// freed on a possible application error
+
+Static Function FinishAplication() //  Static Function
+
+   CursorWait()
+
+   if !Empty( cCodEmp() )
+      WritePProString( "main", "Ultima Empresa", cCodEmp(), cIniAplication() )
+   end if 
+
+   lFreeUser()
+
+   // Cerramos las auditorias--------------------------------------------------
+
+   StopServices()
+
+   // Cerramos el Activex------------------------------------------------------
+
+   CloseWebBrowser()
+
+   // Limpiamos los recursos estaticos-----------------------------------------
+
+   TAcceso():End()
+
+   TBandera():Destroy()
+
+   freeResources()
+
+   // Cerramos el report-------------------------------------------------------
+
+   closeReportGallery()
+
+   CursorWE()
+
+   ferase( "chekres.txt" )
+
+   checkRes()
+
+   // winExec( "notepad checkres.txt" )
+
+Return nil
+
+//---------------------------------------------------------------------------//
+
+Static Function addMenu( oMenu, oTree )
+
+   local n
+   local cPrompt
+   local oItem
+
+   for n = 1 to len( oMenu:aItems )
+
+      cPrompt     := oMenu:aItems[ n ]:cPrompt
+
+      if ValType( oMenu:aItems[ n ]:bAction ) == "O"
+
+         oItem    := oTree:add( strtran( cPrompt, "&", "" ) )
+         addMenu( oMenu:aItems[ n ]:bAction, oItem )
+
+      else
+
+         if !empty( cPrompt )
+            oItem := oTree:add( strtran( cPrompt, "&", "" ) )
+         end if
+
+      endif
+
+   next
+
+return .t.
+
+//----------------------------------------------------------------------------//
+
+static function nLeft( oMsgBar )
+
+   local n
+   local nLen  := Len( oMsgBar:aItems )
+   local nPos  := oMsgBar:nRight - 3
+
+   if nLen > 0
+      for n := 1 to nLen
+         nPos -= ( oMsgBar:aItems[ n ]:nWidth + 4 )
+      next
+   end if
+
+return nPos
+
+//------------------------------------------------------------------------------------------------------------------------------
+
+STATIC PROCEDURE GoToWeb()
+
+   WinExec( "Start " + __GSTWEB__, 0 )
+
+RETURN
+
+//---------------------------------------------------------------------------//
+
+static function WndPaint( hDC, oWnd )
+
+   local oBlock
+
+   oBlock               := ErrorBlock( {| oError | ApoloBreak( oError ) } )
+   BEGIN SEQUENCE
+
+      if !Empty( oWnd ) .and. !Empty( oWnd:oWndClient )
+
+         if len( oWnd:oWndClient:aWnd ) > 0
+            aTail( oWnd:oWndClient:aWnd ):SetFocus()
+         end if
+
+      end if
+
+   RECOVER
+
+   END SEQUENCE
+
+   ErrorBlock( oBlock )
+
+return nil
+
+//---------------------------------------------------------------------------//
+
+Function cNbrUsr( cNbr )
+
+   if cNbr != nil .and. oMsgUser != nil
+      oMsgUser:SetText( "Usuario : " + RTrim( cNbr ) )
+   end if
+
+Return cNbr
+
+//---------------------------------------------------------------------------//
+
+Function cCajUsr( cCaj )
+
+   if !Empty( cCaj ) .and. oMsgCaja != nil
+      oMsgCaja:SetText( "Caja : " + RTrim( cCaj ) )
+   end if
+
+Return ( cCaj )
+
+//---------------------------------------------------------------------------//
+
+Function cDlgUsr( cDlg )
+
+   if cDlg != nil .and. oMsgDelegacion != nil
+      oMsgDelegacion:SetText( "Delegación : " + RTrim( cDlg ) )
+   end if
+
+Return ( cDlg )
+
+//---------------------------------------------------------------------------//
+
+Function EnableAcceso()
+
+Return ( nil ) // if( !Empty( oWndBar ), oWndBar:Enable(), ) )
+
+//---------------------------------------------------------------------------//
+
+Function DisableAcceso()
+
+Return ( nil ) // if( !Empty( oWndBar ), oWndBar:Disable(), ) )
+
+//---------------------------------------------------------------------------//
+
+Function IsReport()
+
+Return ( .f. )
+
+//---------------------------------------------------------------------------//
+
+Function validRunReport( nLevel )
+
+   if nAnd( nLevelUsr( nLevel ), 1 ) != 0
+      msgStop( "Acceso no permitido." )
+      Return .f.
+   end if
+
+Return .t.
+
+//---------------------------------------------------------------------------//
+
+Function cBmpVersion() 
+
+   if isNil( cBmpVersion )
+
+      do case
+         case file( FullCurDir() + "scmmrc" )
+
+            cBmpVersion      := "gc_GestoolPrestashop"
+
+         case file( FullCurDir() + "prfsnl" )
+
+            cBmpVersion      := "GestoolPro"
+
+         case file( FullCurDir() + "stndrd" )
+
+            cBmpVersion      := "GestoolStandard"
+
+         otherwise
+
+            cBmpVersion      := "GestoolLite"
+
+      end case
+
+   end if
+
+Return ( cBmpVersion ) 
+
+//---------------------------------------------------------------------------//
+
+
+/*
+Guardamos el nombre de la versión
+*/
+
+Function cNameVersion()
+
+   if IsNil( cNameVersion )
+
+      do case
+         case File( FullCurDir() + "scmmrc" )
+
+            cNameVersion      := "PrestaShop 1.6"
+
+         case File( FullCurDir() + "prfsnl" )
+
+            cNameVersion      := "Profesional"
+
+         case File( FullCurDir() + "stndrd" )
+
+            cNameVersion      := "Standard"
+
+         otherwise
+
+            cNameVersion      := "Lite"
+
+      end case
+
+   end if
+
+Return ( cNameVersion )
+
+//---------------------------------------------------------------------------//
+
+
+Function cTypeVersion( cType )
+
+   if !Empty( cType )
+      cTypeVersion   := cType
+   end if 
+
+Return ( cTypeVersion )
+
+//---------------------------------------------------------------------------//
+/*
+Damos valor a la estatica para la versión Oscommerce
+*/
+
+Function IsOsCommerce()
+
+   if IsNil( lOsCommerce )
+
+      if File( FullCurDir() + "scmmrc" )
+         lOsCommerce       := .t.
+      else
+         lOsCommerce       := .f.
+      end if
+
+   end if
+
+Return lOsCommerce
+
+//---------------------------------------------------------------------------//
+/*
+Damos valor a la estatica para la versión Profesional
+*/
+
+Function IsProfesional()
+
+   if IsNil( lProfesional )
+
+      if File( FullCurDir() + "scmmrc" ) .or.;
+         File( FullCurDir() + "prfsnl" )
+         lProfesional     := .t.
+      else
+         lProfesional      := .f.
+      end if
+
+   end if
+
+Return lProfesional
+
+//---------------------------------------------------------------------------//
+/*
+Damos valor a la estatica para la versión Standard
+*/
+
+Function IsStandard()
+
+   if IsNil( lStandard )
+
+      if File( FullCurDir() + "scmmrc" ) .or.; 
+         File( FullCurDir() + "prfsnl" ) .or.;
+         File( FullCurDir() + "stndrd" )
+
+         lStandard     := .t.
+
+      else
+         lStandard     := .f.
+      end if
+
+   end if
+
+Return lStandard
+
+//---------------------------------------------------------------------------//
+
+
+//---------------------------------------------------------------------------//
+// Comprobaciones iniciales
+
+FUNCTION lInitCheck( oMessage, oProgress )
+
+   local oError
+   local lCheck      := .t.
+
+   CursorWait()
+
+   if !Empty( oProgress )
+      oProgress:SetTotal( 6  )
+   end if
+
+   if !Empty( oMessage )
+      oMessage:SetText( 'Comprobando directorios' )
+   end if
+
+   if !Empty( oProgress )
+      oProgress:AutoInc()
+   end if
+
+   // Comprobamos que exista los directorios necesarios------------------------
+
+   CheckDirectory()
+
+   // Cargamos los datos de la empresa-----------------------------------------
+
+   if !Empty( oMessage )
+      oMessage:SetText( 'Control de tablas de empresa' )
+   end if
+
+   if !Empty( oProgress )
+      oProgress:AutoInc()
+   end if
+
+   if ( nUsrInUse() == 1 )
+      TstEmpresa()
+   end if 
+
+   // Cargamos los datos de la divisa------------------------------------------
+
+   if !Empty( oMessage )
+      oMessage:SetText( 'Control de tablas de divisas' )
+   end if
+
+   if !Empty( oProgress )
+      oProgress:AutoInc()
+   end if
+
+   if ( nUsrInUse() == 1 )
+      TstDivisas()
+   end if 
+
+   // Cargamos los datos de la cajas-------------------------------------------
+
+   if !Empty( oMessage )
+      oMessage:SetText( 'Control de tablas de cajas' )
+   end if
+
+   if !Empty( oProgress )
+      oProgress:AutoInc()
+   end if
+
+   if ( nUsrInUse() == 1 )
+      TstCajas()
+   end if 
+
+   // Inicializamos classes----------------------------------------------------
+
+   if !Empty( oMessage )
+      oMessage:SetText( 'Inicializamos las clases de la aplicación' )
+   end if
+
+   if !Empty( oProgress )
+      oProgress:AutoInc()
+   end if
+
+   InitClasses()
+
+   // Apertura de ficheros-----------------------------------------------------
+
+   if !Empty( oMessage )
+      oMessage:SetText( 'Selección de la empresa actual' ) 
+   end if
+
+   if !Empty( oProgress )
+      oProgress:AutoInc()
+   end if
+
+   setEmpresa()
+
+   // Eventos del inicio---------------------------------
+
+   runEventScript( "IniciarAplicacion" )
+
+   if !Empty( oMessage )
+      oMessage:SetText( 'Comprobaciones finalizadas' )
+   end if
+
+   if !Empty( oProgress )
+      oProgress:AutoInc()
+   end if
+
+   CursorWe()
+
+RETURN ( lCheck )
+
+//---------------------------------------------------------------------------//
 
 FUNCTION nAjuste( nNumber, cAdjust )
 
@@ -296,6 +985,16 @@ Return ( cAdsFile )
 
 //----------------------------------------------------------------------------//
 
+Function cAdsType( cType )
+
+   if ( isChar( cType ) .and. !empty( cType ) )
+      cAdsType    := cType
+   end if 
+
+Return ( cAdsType )
+
+//----------------------------------------------------------------------------//
+
 Function lCdx( lSetCdx )
 
    if IsLogic( lSetCdx )
@@ -318,7 +1017,7 @@ Return ( cCodigoAgente )
 
 Function lPda()
 
-Return ( "PDA" $ cParamsMain() )
+Return ( "PDA" $ appParamsMain() )
 
 //---------------------------------------------------------------------------//
 
@@ -415,7 +1114,7 @@ Function cFullPathEmpresa()
 
   local cCodigoEmpresa  := ""
 
-  cCodigoEmpresa        += FullCurDir()
+  cCodigoEmpresa        += fullCurDir()
   cCodigoEmpresa        += "Emp"
   cCodigoEmpresa        += aEmp()[ _CODEMP ]
   cCodigoEmpresa        += "\"
@@ -432,7 +1131,7 @@ Function cPatDat( lFull )
       Return ( if( lFull, cAdsUNC() + cPathDatos() + "\", cPathDatos() ) )
    end if
 
-Return ( FullCurDir() + cPathDatos() + "\" )
+Return ( fullCurDir() + cPathDatos() + "\" )
 
 //----------------------------------------------------------------------------//
 
@@ -444,7 +1143,7 @@ Function cPathDatosLocal( lFull )
       Return ( if( lFull, cAdsLocal() + cPathDatos() + "\", cPathDatos() + "\" ) )
    end if
 
-Return ( FullCurDir() + cPathDatos() + "\" )
+Return ( fullCurDir() + cPathDatos() + "\" )
 
 //----------------------------------------------------------------------------//
 
@@ -456,7 +1155,7 @@ Function cPatADS( lFull )
       Return ( if( lFull, cAdsUNC() + getSinglePathADS(), getSinglePathADS() ) )
    end if
 
-Return ( FullCurDir() + getSinglePathADS() )
+Return ( fullCurDir() + getSinglePathADS() )
 
 //----------------------------------------------------------------------------//
 
@@ -474,7 +1173,7 @@ Function cPatEmpTmp( lShort )
       Return ( cAdsUNC() + "EmpTmp\" )
    end if
 
-Return ( if( !lShort, FullCurDir(), "" ) + "EmpTmp\" )
+Return ( if( !lShort, fullCurDir(), "" ) + "EmpTmp\" )
 
 //----------------------------------------------------------------------------//
 
@@ -484,7 +1183,7 @@ Function cPatEmpOld( cCodEmp )
       Return ( cAdsUNC() + "Emp" + cCodEmp + "\" )
    end if
 
-Return ( FullCurDir() + "Emp" + cCodEmp + "\" )
+Return ( fullCurDir() + "Emp" + cCodEmp + "\" )
 
 //----------------------------------------------------------------------------//
 
@@ -494,7 +1193,7 @@ Function cPatGrpOld( cCodGrp )
       Return ( cAdsUNC() + "Emp" + cCodGrp + "\" )
    end if
 
-Return ( FullCurDir() + "Emp" + cCodGrp + "\" )
+Return ( fullCurDir() + "Emp" + cCodGrp + "\" )
 
 //----------------------------------------------------------------------------//
 
@@ -532,7 +1231,7 @@ Function cPatIn( lShort )
 
    DEFAULT lShort  := .f.
 
-Return ( if( !lShort, FullCurDir(), "" ) + "In\" )
+Return ( if( !lShort, fullCurDir(), "" ) + "In\" )
 
 //---------------------------------------------------------------------------//
 
@@ -540,7 +1239,7 @@ Function cPatInFrq( lShort )
 
    DEFAULT lShort  := .f.
 
-Return ( if( !lShort, FullCurDir(), "" ) + "InFrq\" )
+Return ( if( !lShort, fullCurDir(), "" ) + "InFrq\" )
 
 //---------------------------------------------------------------------------//
 
@@ -548,7 +1247,7 @@ Function cPatScript( lShort )
 
    DEFAULT lShort  := .f.
 
-Return ( if( !lShort, FullCurDir(), "" ) + "Script\" )
+Return ( if( !lShort, fullCurDir(), "" ) + "Script\" )
 
 //---------------------------------------------------------------------------//
 
@@ -561,7 +1260,7 @@ FUNCTION cPatScriptEmp( cPath, lShort )
       cPatScriptEmp := "Script" + cPath
    end if
 
-Return ( if( !lShort, FullCurDir(), "" ) + cPatScriptEmp + "\" )
+Return ( if( !lShort, fullCurDir(), "" ) + cPatScriptEmp + "\" )
 
 //---------------------------------------------------------------------------//
 
@@ -569,7 +1268,7 @@ Function cPatOut( lShort )
 
    DEFAULT lShort  := .f.
 
-Return ( if( !lShort, FullCurDir(), "" ) + "Out\" )
+Return ( if( !lShort, fullCurDir(), "" ) + "Out\" )
 
 //----------------------------------------------------------------------------//
 
@@ -577,7 +1276,7 @@ Function cPatSafe( lShort )
 
    DEFAULT lShort  := .f.
 
-Return ( if( !lShort, FullCurDir(), "" ) + "Safe\" )
+Return ( if( !lShort, fullCurDir(), "" ) + "Safe\" )
 
 //----------------------------------------------------------------------------//
 
@@ -585,7 +1284,7 @@ Function cPatBmp( lShort )
 
    DEFAULT lShort  := .f.
 
-Return ( if( !lShort, FullCurDir(), "" ) + "Bmp\" )
+Return ( if( !lShort, fullCurDir(), "" ) + "Bmp\" )
 
 //----------------------------------------------------------------------------//
 
@@ -593,7 +1292,7 @@ Function cPatPsion( lShort )
 
    DEFAULT lShort  := .f.
 
-Return ( if( !lShort, FullCurDir(), "" ) + "Psion\" )
+Return ( if( !lShort, fullCurDir(), "" ) + "Psion\" )
 
 //----------------------------------------------------------------------------//
 
@@ -601,7 +1300,7 @@ Function cPatHtml( lShort )
 
    DEFAULT lShort  := .f.
 
-Return ( if( !lShort, FullCurDir(), "" ) + "Html\" )
+Return ( if( !lShort, fullCurDir(), "" ) + "Html\" )
 
 //----------------------------------------------------------------------------//
 
@@ -609,7 +1308,7 @@ Function cPatXml( lShort )
 
    DEFAULT lShort  := .f.
 
-Return ( if( !lShort, FullCurDir(), "" ) + "Xml\" )
+Return ( if( !lShort, fullCurDir(), "" ) + "Xml\" )
 
 //----------------------------------------------------------------------------//
 
@@ -627,7 +1326,7 @@ Function cPatReport( lShort )
 
    DEFAULT lShort  := .f.
 
-Return ( if( !lShort, FullCurDir(), "" ) + "Reports\" )
+Return ( if( !lShort, fullCurDir(), "" ) + "Reports\" )
 
 //----------------------------------------------------------------------------//
 
@@ -1288,13 +1987,13 @@ Return ( aBase )
 
 Function lTactilMode()
 
-Return ( "TACTIL" $ cParamsMain() )
+Return ( "TACTIL" $ appParamsMain() )
 
 //---------------------------------------------------------------------------//
 
 Function lTpvMode()
 
-Return ( "TPV" $ cParamsMain() )
+Return ( "TPV" $ appParamsMain() )
 
 //---------------------------------------------------------------------------//
 
@@ -1445,6 +2144,47 @@ Return ( ErrorBlock( oBlock ) )
 
 //---------------------------------------------------------------------------//
 
+Function appSettings()
+
+   SET DATE             FORMAT "dd/mm/yyyy"
+   SET TIME             FORMAT TO "hh:mm:ss"
+   SET DELETED          ON
+   SET EXCLUSIVE        OFF
+   SET EPOCH TO         2000
+   SET OPTIMIZE         ON
+   SET EXACT            ON
+   SET AUTOPEN          ON
+   SET AUTORDER         TO 1
+   SET DECIMALS         TO 6
+
+   setHandleCount( 240 )
+
+   setResDebug( .t. )
+
+   fwNumFormat( 'E', .t. )
+
+Return nil 
+
+//---------------------------------------------------------------------------//
+
+Function appLoadAds()
+
+   if !file( cIniAplication() ) .and. file( fullCurDir() + "Gestion.Ini" )
+      fRename( fullCurDir() + "Gestion.Ini", cIniAplication() )
+   end if
+
+   cAdsType(   GetPvProfString(  "ADS",      "Type",     "",   cIniAplication() ) )
+   cAdsIp(     GetPvProfString(  "ADS",      "Ip",       "",   cIniAplication() ) )
+   cAdsPort(   GetPvProfString(  "ADS",      "Port",     "",   cIniAplication() ) )
+   cAdsData(   GetPvProfString(  "ADS",      "Data",     "",   cIniAplication() ) )
+   nAdsServer( GetPvProfInt(     "ADS",      "Server",   7,    cIniAplication() ) )
+   cAdsFile(   GetPvProfString(  "ADS",      "File",     "",   cIniAplication() ) )
+   cAdsLocal(  GetPvProfString(  "ADS",      "Local",    "",   cIniAplication() ) )
+
+Return nil 
+
+//---------------------------------------------------------------------------//
+
 //---------------------------------------------------------------------------//
 
 FUNCTION AppSql( cEmpDbf, cEmpSql, cFile )
@@ -1453,8 +2193,8 @@ FUNCTION AppSql( cEmpDbf, cEmpSql, cFile )
    local oError
    local dbfOld
 	local dbfTmp
-   local dbfDbf      := FullCurDir() + cEmpDbf + "\" + cFile + ".Dbf"
-   local cdxDbf      := FullCurDir() + cEmpDbf + "\" + cFile + ".Cdx"
+   local dbfDbf      := fullCurDir() + cEmpDbf + "\" + cFile + ".Dbf"
+   local cdxDbf      := fullCurDir() + cEmpDbf + "\" + cFile + ".Cdx"
    local dbfSql      := cEmpSql + "\" + cFile + ".Dbf"
    local cdxSql      := cEmpSql + "\" + cFile + ".Cdx"
 
@@ -1848,7 +2588,7 @@ FUNCTION cPatStk( cPath, lPath, lShort, lGrp )
       Return ( cAdsUNC() + if( lGrp, "Emp", "Emp" ) + cPath + if( lPath, "\", "" ) )
    end if
 
-Return ( if( !lShort, FullCurDir(), "" ) + if( lGrp, "Emp", "Emp" ) + cPath + if( lPath, "\", "" ) )
+Return ( if( !lShort, fullCurDir(), "" ) + if( lGrp, "Emp", "Emp" ) + cPath + if( lPath, "\", "" ) )
 
 //---------------------------------------------------------------------------//
 /*
@@ -2082,10 +2822,10 @@ FUNCTION cPatGrp( cPath, lFull, lEmpresa )
    end if
 
    if lCdx()
-      Return ( FullCurDir() + cPatGrp + "\" )
+      Return ( fullCurDir() + cPatGrp + "\" )
    end if
 
-Return ( if( lFull, FullCurDir(), "" ) + cPatGrp + "\" )
+Return ( if( lFull, fullCurDir(), "" ) + cPatGrp + "\" )
 
 //---------------------------------------------------------------------------//
 
@@ -2115,10 +2855,10 @@ FUNCTION cPatCli( cPath, lFull, lEmpresa )
    end if
 
    if lCdx()
-      Return ( FullCurDir() + cPatCli + "\" )
+      Return ( fullCurDir() + cPatCli + "\" )
    end if
 
-Return ( if( lFull, FullCurDir(), "" ) + cPatCli + "\" )
+Return ( if( lFull, fullCurDir(), "" ) + cPatCli + "\" )
 
 //---------------------------------------------------------------------------//
 
@@ -2150,10 +2890,10 @@ FUNCTION cPatArt( cPath, lFull, lEmpresa )
    end if
 
    if lCdx()
-      Return ( FullCurDir() + cPatArt + "\" )
+      Return ( fullCurDir() + cPatArt + "\" )
    end if
 
-Return ( if( lFull, FullCurDir(), "" ) + cPatArt + "\" )
+Return ( if( lFull, fullCurDir(), "" ) + cPatArt + "\" )
 
 //---------------------------------------------------------------------------//
 
@@ -2185,10 +2925,10 @@ FUNCTION cPatPrv( cPath, lFull, lEmpresa )
    end if
 
    if lCdx()
-      Return ( FullCurDir() + cPatPrv + "\" )
+      Return ( fullCurDir() + cPatPrv + "\" )
    end if
 
-   Return ( if( !lFull, FullCurDir(), "" ) + cPatPrv + "\" )
+   Return ( if( !lFull, fullCurDir(), "" ) + cPatPrv + "\" )
 
 //---------------------------------------------------------------------------//
 
@@ -2220,10 +2960,10 @@ FUNCTION cPatAlm( cPath, lFull, lEmpresa )
    end if
 
    if lCdx()
-      Return ( FullCurDir() + cPatAlm + "\" )
+      Return ( fullCurDir() + cPatAlm + "\" )
    end if
 
-Return ( if( lFull, FullCurDir(), "" ) + cPatAlm + "\" )
+Return ( if( lFull, fullCurDir(), "" ) + cPatAlm + "\" )
 
 //---------------------------------------------------------------------------//
 
@@ -2265,10 +3005,92 @@ FUNCTION cPatEmp( cPath, lFull )
    end if
 
    if lCdx()
-      Return ( FullCurDir() + cPatEmp + "\" )
+      Return ( fullCurDir() + cPatEmp + "\" )
    end if
 
-Return ( if( lFull, FullCurDir(), "" ) + cPatEmp + "\" )
+Return ( if( lFull, fullCurDir(), "" ) + cPatEmp + "\" )
+
+//---------------------------------------------------------------------------//
+
+Function appParamsMain( paramsMain )
+
+   if !empty( paramsMain )
+      appParamsMain   := upper( paramsMain )
+   end if 
+
+Return ( appParamsMain )
+
+//---------------------------------------------------------------------------//
+
+Function appConnectADS()
+
+    local TDataCenter     := TDataCenter()
+
+    lAIS( .t. )
+    
+    rddRegister( 'ADS', 1 )
+    rddSetDefault( 'ADSCDX' )
+
+    adsSetServerType( nAdsServer() )    // TODOS
+    adsSetFileType( 2 )                 // ADS_CDX
+    adsRightsCheck( .f. )
+    adsSetDeleted( .t. )
+    adsCacheOpenTables( 250 )
+
+    // Conexion con el motor de base de datos--------------------------------
+
+    TDataCenter:ConnectDataDictionary()
+
+Return ( TDataCenter:lAdsConnection )
+
+//---------------------------------------------------------------------------//
+
+Function appConnectCDX()
+
+    lCdx( .t. )
+    rddSetDefault( 'DBFCDX' )
+
+Return ( .t. )
+
+//---------------------------------------------------------------------------//
+
+Function runReportGalery( cFastReport )
+
+   local nLevel         := nLevelUsr( "01119" )
+
+   DEFAULT cFastReport  := ""
+
+   if nAnd( nLevel, 1 ) != 0
+      msgStop( "Acceso no permitido." )
+      Return nil
+   end if
+
+   if DirChange( fullCurDir() ) != 0
+      MsgStop( "No puedo cambiar al directorio " + fullCurDir() )
+      Return nil
+   end if
+
+   if file( fullCurDir() + "RptApolo.Exe" )
+
+      nHndReport        := winExec( fullCurDir() + "RptApolo.Exe " + cCodEmp() + " " + cCurUsr() + " " + cFastReport, 1 )
+
+      if !( nHndReport > 21 .or. nHndReport < 0 )
+         msgStop( "Error en la ejecución de la galeria de informes" )
+      end if
+
+   end if
+
+Return nil
+
+//---------------------------------------------------------------------------//
+
+Function closeReportGallery()
+
+   if !Empty( nHndReport )
+      PostMessage( nHndReport, WM_CLOSE )
+   end if
+
+Return nil
 
 //---------------------------------------------------------------------------//
 
@@ -2280,13 +3102,13 @@ Return ( cPatEmp() + "Empresa.Ini" )
 
 Function cIniAplication()
 
-Return ( FullCurDir() + "GstApolo.Ini" )
+Return ( fullCurDir() + "GstApolo.Ini" )
 
 //---------------------------------------------------------------------------//
 
 Function IsMuebles()
 
-Return ( "MUEBLES" $ cParamsMain() )
+Return ( "MUEBLES" $ appParamsMain() )
 
 //---------------------------------------------------------------------------//
 
@@ -2298,25 +3120,25 @@ RETURN WinExec( ( "HH " + cPatHelp() + "HELP.CHM::/" + AllTrim( cTema ) + ".HTM"
 
 Function cPatHelp()
 
-Return ( FullCurDir() + "Help\" )
+Return ( fullCurDir() + "Help\" )
 
 //----------------------------------------------------------------------------//
 
 Function cPatReporting()
 
-Return ( FullCurDir() + "Reporting\" )
+Return ( fullCurDir() + "Reporting\" )
 
 //----------------------------------------------------------------------------//
 
 Function cPatUserReporting()
 
-Return ( FullCurDir() + "UserReporting\" )
+Return ( fullCurDir() + "UserReporting\" )
 
 //----------------------------------------------------------------------------//
 
 Function cPatConfig()
 
-Return ( FullCurDir() + "Config\" )
+Return ( fullCurDir() + "Config\" )
 
 //----------------------------------------------------------------------------//
 
@@ -2334,7 +3156,7 @@ return ( cCurUsr() == "000" )
 
 Function IsPda()
 
-Return ( "PDA" $ cParamsMain() )
+Return ( "PDA" $ appParamsMain() )
 
 //---------------------------------------------------------------------------//
 
@@ -2342,7 +3164,7 @@ Function cPatSnd( lShort )
 
    DEFAULT lShort := .f.
 
-Return ( if( !lShort, FullCurDir(), "" ) + "Snd\" )
+Return ( if( !lShort, fullCurDir(), "" ) + "Snd\" )
 
 //----------------------------------------------------------------------------//
 
@@ -2351,13 +3173,13 @@ Function cEmpTmp( lPath, lShort )
    DEFAULT lPath  := .t.
    DEFAULT lShort := .f.
 
-Return ( if( !lShort, FullCurDir(), "" ) + "EmpTmp" + if( lPath, "\", "" ) )
+Return ( if( !lShort, fullCurDir(), "" ) + "EmpTmp" + if( lPath, "\", "" ) )
 
 //----------------------------------------------------------------------------//
 
 Function cPatUsr()
 
-Return ( FullCurDir() + "Usr\" )
+Return ( fullCurDir() + "Usr\" )
 
 //----------------------------------------------------------------------------//
 
@@ -2585,7 +3407,7 @@ Function cPatLog( lShort )
 
    DEFAULT lShort  := .f.
 
-Return ( if( !lShort, FullCurDir(), "" ) + "Log\" )
+Return ( if( !lShort, fullCurDir(), "" ) + "Log\" )
 
 //----------------------------------------------------------------------------//
 
@@ -2695,14 +3517,13 @@ endif
 
    cText          += "Terminated. Press any key to continue"
 
-
 RETURN
 
 //---------------------------------------------------------------------------//
 
 Function lBancas()
 
-Return ( "BANCAS" $ cParamsMain() )
+Return ( "BANCAS" $ appParamsMain() )
 
 //---------------------------------------------------------------------------//
 
@@ -2829,7 +3650,6 @@ Return ( Val( cResult ) )
 Function ApoloMsgNoYes( cText, cTitle, lTactil ) 
 
    local oDlg
-   local oBmp
    local oBtnOk
    local oBtnCancel
 
@@ -2843,8 +3663,6 @@ Function ApoloMsgNoYes( cText, cTitle, lTactil )
       DEFINE DIALOG oDlg RESOURCE "DeleteRecno" TITLE ( cTitle )
    end if
 
-   // REDEFINE BITMAP oBmp       ID 500         OF oDlg RESOURCE "gc_question_48" TRANSPARENT
-
    REDEFINE SAY PROMPT cText  ID 100         OF oDlg
 
    REDEFINE BUTTON oBtnOk     ID IDOK        OF oDlg ACTION ( oDlg:end( IDOK ) )
@@ -2854,10 +3672,6 @@ Function ApoloMsgNoYes( cText, cTitle, lTactil )
    oDlg:AddFastKey( VK_F5, {|| oDlg:end( IDOK ) } )
 
    ACTIVATE DIALOG oDlg CENTER
-
-   if !Empty( oBmp )
-      oBmp:End()
-   end if
 
 RETURN ( oDlg:nResult == IDOK )
 
@@ -3121,8 +3935,16 @@ function getFieldNameFromDictionary( cName, hashDictionary )
 return ( cFieldName )
 
 //---------------------------------------------------------------------------//
-  
 
+Function cAlmUsr( cAlm )
+
+   if cAlm != nil .and. oMsgAlmacen != nil
+      oMsgAlmacen:SetText( "Almacén : " + RTrim( cAlm ) )
+   end if
+
+Return ( cAlm )
+
+//---------------------------------------------------------------------------//
 
 FUNCTION HtmlConvertChars( cString, cQuote_style, aTranslations )
 

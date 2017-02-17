@@ -4709,7 +4709,7 @@ Static Function EdtInc( aTmp, aGet, dbfPreCliI, oBrw, bWhen, bValid, nMode, aTmp
       aTmp[ ( dbfTmpInc )->( FieldPos( "lAviso" ) ) ]  := .t.
    end if
 
-   if ( "PDA" $ cParamsMain() )
+   if ( "PDA" $ appParamsMain() )
    DEFINE DIALOG oDlg RESOURCE "PRECLI_INC_PDA"
    else
    DEFINE DIALOG oDlg RESOURCE "INCIDENCIA" TITLE LblTitle( nMode ) + "incidencias de presupuestos a clientes"
@@ -6570,7 +6570,7 @@ STATIC FUNCTION EndTrans( aTmp, aGet, nMode, oBrwLin, oBrw, oBrwInc, oDlg, lActu
 
    end case
 
-   if !( "PDA" $ cParamsMain() )
+   if !( "PDA" $ appParamsMain() )
       oMsgProgress()
       oMsgProgress():SetRange( 0, ( dbfTmpLin )->( LastRec() ) )
    end if
@@ -6585,7 +6585,7 @@ STATIC FUNCTION EndTrans( aTmp, aGet, nMode, oBrwLin, oBrw, oBrwInc, oDlg, lActu
       dbPass( dbfTmpLin, D():PresupuestosClientesLineas( nView ), .t., cSerPre, nNumPre, cSufPre )
       ( dbfTmpLin )->( dbSkip() )
 
-      if !( "PDA" $ cParamsMain() )
+      if !( "PDA" $ appParamsMain() )
          oMsgProgress():Deltapos(1)
       end if
 
@@ -6659,7 +6659,7 @@ STATIC FUNCTION EndTrans( aTmp, aGet, nMode, oBrwLin, oBrw, oBrwInc, oDlg, lActu
 
    dbCommitAll()
 
-   if !( "PDA" $ cParamsMain() )
+   if !( "PDA" $ appParamsMain() )
       oMsgProgress()
       oMsgText()
 

@@ -517,7 +517,7 @@ CLASS TTurno FROM TMasDet
    Method AppendInTemporal( cGrupo, cKey, cNaturaleza, nImporte )
    Method FillTemporal( cCodCaj )
 
-   Method lNowOpen( oWnd )
+   Method lNowOpen()
    Method RellenaIva()
    Method RollBack()             VIRTUAL
 
@@ -7283,7 +7283,7 @@ RETURN ( Self )
 // Comprueba si hay trunos abiertos
 //
 
-METHOD lNowOpen( oWnd )
+METHOD lNowOpen()
 
    ::GetCurrentTurno()
 
@@ -10574,7 +10574,7 @@ Method bEdtTiketCliente()
 
    local cNumeroDocumento  := by( ::oTikT:cSerTik + ::oTikT:cNumTik + ::oTikT:cSufTik )
 
-   if ( "TPV" $ cParamsMain() )
+   if ( "TPV" $ appParamsMain() )
       Return ( {|| InitTikCli( cNumeroDocumento ) } )
    end if
 
@@ -11636,15 +11636,15 @@ Return ( lCajaOpen )
 // Chequea q haya turnos abiertos
 //
 
-Function ChkTurno( oMenuItem, oWnd )
+Function chkTurno( oMenuItem )
 
-   local oTurno   := TTurno():New( cPatEmp(), cDriver(), oWnd, oMenuItem )   
+   local oTurno   := TTurno():New( cPatEmp(), cDriver(), oWnd(), oMenuItem )   
 
    if !empty( oTurno )
 
       if oTurno:OpenFiles()
 
-         oTurno:lNowOpen( oWnd )
+         oTurno:lNowOpen()
 
          oTurno:CloseFiles()
 

@@ -31,38 +31,12 @@ REQUEST AdsKeyCount
 REQUEST AdsGetRelKeyPos 
 REQUEST AdsSetRelKeyPos
 
-static oWndBar
 static oMenu
 
-static oMsgUser
-static oMsgDelegacion
-static oMsgCaja
-static oMsgAlmacen
-static oMsgSesion
-static oMsgProgress
-
-static oDlgProgress
-
-static cParamsMain
-
-static nHndReport
-
-static hDLLRich
-
-static oWnd
-static oBmp
 static lDemoMode        := .t. 
 
-static lStandard
-static lProfesional
-static lOsCommerce
 
-static cNameVersion
-static cBmpVersion
-static cTypeVersion     := ""
-
-STATIC dbfClient
-STATIC dbfObras 
+static hDLLRich
 
 //---------------------------------------------------------------------------//
 /*
@@ -71,19 +45,12 @@ STATIC dbfObras
 -------------------------------------------------------------------------------
 */
 
-function Main( ParamsMain, ParamsSecond )
+function Main( paramsMain, paramsSecond )
 
    local nError
    local cError
    local oIndex
    local oIconApp
-   local cAdsType
-   local cAdsIp
-   local cAdsPort
-   local cAdsData
-   local cAdsLocal
-   local cAdsFile
-   local nAdsServer
    
    local dbfUser
    local hAdsConnection
@@ -94,91 +61,35 @@ function Main( ParamsMain, ParamsSecond )
    local cSqlQuery
    local lSqlQuery
 
-   DEFAULT ParamsMain   := ""
+   appParamsMain( paramsMain )
 
-   cParamsMain          := Upper( ParamsMain )
-
-   SET DATE             FORMAT "dd/mm/yyyy"
-   SET TIME             FORMAT TO "hh:mm:ss"
-   SET DELETED          ON
-   SET EXCLUSIVE        OFF
-   SET EPOCH TO         2000
-   SET OPTIMIZE         ON
-   SET EXACT            ON
-   SET AUTOPEN          ON
-   SET AUTORDER         TO 1
-   SET DECIMALS         TO 6
-
-   SetHandleCount( 240 )
-   SetResDebug( .t. )
-
-   FwNumFormat( 'E', .t. )
-
-   DialogExtend() 
+   appSettings()
+   
+   appDialogExtend() 
 
    mainTest()
 
-   // Chequeamos la existencia del fichero de configuracion--------------------
-
-   if !File( cIniAplication() ) .and. File( FullCurDir() + "Gestion.Ini" )
-      fRename( FullCurDir() + "Gestion.Ini", cIniAplication() )
-   end if
-
-   cAdsType          := GetPvProfString(  "ADS",      "Type",     "",   cIniAplication() )
-   cAdsIp            := GetPvProfString(  "ADS",      "Ip",       "",   cIniAplication() )
-   cAdsPort          := GetPvProfString(  "ADS",      "Port",     "",   cIniAplication() )
-   cAdsData          := GetPvProfString(  "ADS",      "Data",     "",   cIniAplication() )
-   nAdsServer        := GetPvProfInt(     "ADS",      "Server",   7,    cIniAplication() )
-   cAdsLocal         := GetPvProfString(  "ADS",      "Local",    "",   cIniAplication() )
-   cAdsFile          := GetPvProfString(  "ADS",      "File",     "",   cIniAplication() )
-
-   cAdsIp(     cAdsIp )
-   cAdsPort(   cAdsPort )
-   cAdsData(   cAdsData )
-   nAdsServer( nAdsServer )
-   cAdsFile(   cAdsFile )
-   cAdsLocal(  cAdsLocal )
+   appLoadAds()
 
    // Motor de bases de datos--------------------------------------------------
 
-   if ( "ADMINISTRADOR" $ cParamsMain )
+   if ( "ADMINISTRADOR" $ appParamsMain() )
       TDataCenter():lAdministratorTask()
       Return nil
    end if 
 
    // Motor de bases de datos--------------------------------------------------
 
-   if ( "ADSINTERNET" $ cAdsType )
+   if ( "ADSINTERNET" $ cAdsType() )
 
-      lAIS( .t. )
-      rddRegister( 'ADS', 1 )
-      rddSetDefault( 'ADSCDX' )
-
-      adsSetServerType( nAdsServer() )    // TODOS
-      adsSetFileType( 2 )                 // ADS_CDX
-      adsRightsCheck( .f. )
-      adsSetDeleted( .t. )
-      adsCacheOpenTables( 250 )
-
-      // Conexion con el motor de base de datos--------------------------------
-
-      with object ( TDataCenter() )
-
-         //:CreateDataDictionary()
-
-         :ConnectDataDictionary()
-
-         if !:lAdsConnection
-            msgStop( "Imposible conectar con GstApolo ADS data dictionary" )
-            Return nil
-         end if
+      if !( appConnectADS() )
+         msgStop( "Imposible conectar con GstApolo ADS data dictionary" )
+         Return nil
+      end if
       
-      end with
-
    else 
 
-      lCdx( .t. )
-      rddSetDefault( 'DBFCDX' )
+      appConnectCDX()
 
    end if
 
@@ -187,10 +98,10 @@ function Main( ParamsMain, ParamsSecond )
    // Opciones especiales de arranque hace la operacion y salir-------------------
 
    do case
-      case ( "ENVIO" $ cParamsMain )
+      case ( "ENVIO" $ appParamsMain() )
 
-         if ( ":" $ cParamsMain )
-            cEmpUsr( Right( cParamsMain, 2 ) )
+         if ( ":" $ appParamsMain() )
+            cEmpUsr( Right( appParamsMain(), 2 ) )
          end if
 
          if lInitCheck()
@@ -199,10 +110,10 @@ function Main( ParamsMain, ParamsSecond )
 
          return nil
 
-      case ( "REINDEXA" $ cParamsMain )
+      case ( "REINDEXA" $ appParamsMain() )
 
-         if ( ":" $ cParamsMain )
-            cEmpUsr( Right( cParamsMain, 2 ) )
+         if ( ":" $ appParamsMain() )
+            cEmpUsr( Right( appParamsMain(), 2 ) )
          end if
 
          if lInitCheck()
@@ -213,10 +124,10 @@ function Main( ParamsMain, ParamsSecond )
 
          return nil
 
-      case ( "EMPRESA" $ cParamsMain )
+      case ( "EMPRESA" $ appParamsMain() )
 
-         if ( ":" $ cParamsMain )
-            cEmpUsr( Right( cParamsMain, 2 ) )
+         if ( ":" $ appParamsMain() )
+            cEmpUsr( Right( appParamsMain(), 2 ) )
          end if
 
    end case
@@ -248,19 +159,19 @@ function Main( ParamsMain, ParamsSecond )
    XbrNumFormat( "E", .t. )
 
    do case
-      case ( "TACTIL" $ cParamsMain )
+      case ( "TACTIL" $ appParamsMain() )
          
          if AccessCode():TactilResource()
             InitMainTactilWindow( oIconApp )
          end if
 
-      case ( "PDA" $ cParamsMain )
+      case ( "PDA" $ appParamsMain() )
          
          if AccessCode():Resource()
             CreateMainPdaWindow( oIconApp )
          end if
 
-      case ( "TABLET" $ cParamsMain )
+      case ( "TABLET" $ appParamsMain() )
          
          if AccessCode():loadTableConfiguration()
             CreateMainTabletWindow( oIconApp )
@@ -276,10 +187,6 @@ function Main( ParamsMain, ParamsSecond )
 
    dbCloseAll()
 
-   if oBmp != nil
-      oBmp:end()
-   end if
-
    if oIconApp != nil
       oIconApp:end()
    end if
@@ -287,12 +194,6 @@ function Main( ParamsMain, ParamsSecond )
 Return Nil
 
 //----------------------------------------------------------------------------//
-
-Function cParamsMain()
-
-Return ( cParamsMain )
-
-//---------------------------------------------------------------------------//
 
 Function HelpTopic()
 
@@ -310,63 +211,6 @@ Return Nil
 
 //----------------------------------------------------------------------------//
 
-Static Function CreateMainWindow( oIconApp )
-
-   // Carga o no la imagen de fondo--------------------------------------------
-
-   DEFINE WINDOW oWnd ;
-      FROM     0, 0 TO 26, 82;
-      TITLE    __GSTROTOR__ + Space( 1 ) + __GSTVERSION__; 
-      MDI ;
-      COLORS   Rgb( 0, 0, 0 ), Rgb( 231, 234, 238 ) ;
-      ICON     oIconApp ;
-      MENU     ( BuildMenu() )
-
-   oWndBar                    := CreateAcceso( oWnd )
-   oWndBar:CreateButtonBar( oWnd )
-
-   // Set the bar messages-----------------------------------------------------
-
-   oWnd:Cargo                 := cParamsMain
-   oWnd:bKeyDown              := { | nKey | StdKey( nKey ) }  
-
-   // Mensajes-----------------------------------------------------------------
-
-   oWnd:oMsgBar               := TMsgBar():New( oWnd, __GSTCOPYRIGHT__ + Space(2) + cNameVersion(), .f., .f., .f., .f., Rgb( 0,0,0 ), Rgb( 255,255,255 ), , .f. )
-   oWnd:oMsgBar:setFont( oFontLittelTitle() )
-
-   oDlgProgress               := TMsgItem():New( oWnd:oMsgBar, "", 100,,,, .t. )
-
-   oWnd:oMsgBar:oDate         := TMsgItem():New( oWnd:oMsgBar, Dtoc( GetSysDate() ), oWnd:oMsgBar:GetWidth( DToC( GetSysDate() ) ) + 12,,,, .t., { || SelSysDate() } )
-   oWnd:oMsgBar:oDate:lTimer  := .t.
-   oWnd:oMsgBar:oDate:bMsg    := {|| GetSysDate() }
-   oWnd:oMsgBar:CheckTimer()
-
-   oMsgUser                   := TMsgItem():New( oWnd:oMsgBar, "Usuario : " + Rtrim( oUser():cNombre() ), 200,,,, .t. )
-
-   oMsgDelegacion             := TMsgItem():New( oWnd:oMsgBar, "Delegación : " + Rtrim( oUser():cDelegacion() ), 200,,,, .t., {|| if( oUser():lCambiarEmpresa, SelectDelegacion( oMsgDelegacion ), ) } )
-
-   oMsgCaja                   := TMsgItem():New( oWnd:oMsgBar, "Caja : "  + oUser():cCaja(), 100,,,, .t., {|| SelectCajas(), chkTurno() } )
-
-   oMsgAlmacen                := TMsgItem():New( oWnd:oMsgBar, "Almacén : " + Rtrim( oUser():cAlmacen() ), 100,,,, .t., {|| SelectAlmacen() } )
-
-   oMsgSesion                 := TMsgItem():New( oWnd:oMsgBar, "Sesión : ", 100,,,, .t., {|| dbDialog() } ) 
-
-   // Abrimos la ventana-------------------------------------------------------
-
-   ACTIVATE WINDOW oWnd ;
-      MAXIMIZED ;
-      ON PAINT    ( WndPaint( hDC, oWnd, oBmp ) ); 
-      ON RESIZE   ( WndResize( oWnd ) );
-      ON INIT     ( lStartCheck() );
-      VALID       ( EndApp() ) 
-
-   SysRefresh()
-
-Return nil
-
-//---------------------------------------------------------------------------//
-
 Static Function CreateMainTabletWindow()
 
    lDemoMode( .f. )
@@ -379,26 +223,6 @@ Return ( .t. )
 
 //---------------------------------------------------------------------------//
 
-Static Function StdKey( nKey )
-
-   do case
-      case nKey == 65 .and. GetKeyState( VK_CONTROL ) // Crtl + A
-         CreateInfoArticulo()
-      case nKey == 66 .and. GetKeyState( VK_CONTROL ) // Crtl + B
-         BrwSelArticulo()
-      case nKey == 68 .and. GetKeyState( VK_CONTROL ) // Crtl + C
-         BrwClient()
-      case nKey == 38 .and. GetKeyState( VK_CONTROL ) // Ctrl + Down
-         NextEmpresa()
-      case nKey == 40 .and. GetKeyState( VK_CONTROL ) // Ctrl + Up
-         PriorEmpresa()
-      case nKey == 48 .and. GetKeyState( VK_CONTROL ) // Ctrl + 0
-         dbDialog()
-   end case
-
-Return Nil
-
-//---------------------------------------------------------------------------//
 //Procesos de comprobaciones iniciales y lectura de archivos .INI, cuando existan
 //
 
@@ -785,218 +609,6 @@ Function lEnviarCorreoCliente( cSay, oDlg )
 
 Return ( .t. )
 
-//---------------------------------------------------------------------------//
-
-STATIC FUNCTION EndApp()
-
-   local oAni
-   local oDlg
-   local oError
-   local oBlock
-   local oBrush
-   local oBtnOk
-   local oBtnZip
-   local lFinish
-   local oBtnCancel
-   local oBmpVersion
-
-   oBlock         := ErrorBlock( {| oError | ApoloBreak( oError ) } )
-   BEGIN SEQUENCE
-
-      SysRefresh()
-
-      if !Empty( oWnd )
-         oWnd:CloseAll()
-      end if
-
-      SysRefresh()
-
-      DEFINE BRUSH oBrush COLOR Rgb( 255, 255, 255 ) // FILE ( cBmpVersion() )
-
-      DEFINE DIALOG oDlg RESOURCE "EndApp" BRUSH oBrush
-
-         REDEFINE BITMAP oBmpVersion ;
-            RESOURCE     cBmpVersion() ;
-            ID          600 ;
-            OF          oDlg
-
-         TWebBtn():Redefine( 100,,,,,, oDlg,,,,, "LEFT",,,,, Rgb( 0, 0, 0 ), Rgb( 255, 255, 255 ) ):SetTransparent()
-         TWebBtn():Redefine( 110,,,,,, oDlg,,,,, "LEFT",,,,, Rgb( 0, 0, 0 ), Rgb( 255, 255, 255 ) ):SetTransparent()
-         TWebBtn():Redefine( 120,,,,,, oDlg,,,,, "LEFT",,,,, Rgb( 0, 0, 0 ), Rgb( 255, 255, 255 ) ):SetTransparent()
-
-         oAni                       := TAnimat():Redefine( oDlg, 200, { "BAR_01" }, 1 )
-
-         REDEFINE BUTTON oBtnZip    ID 3          OF oDlg ACTION ( CompressEmpresa( cCodEmp(), nil, { oBtnZip, oBtnOk, oBtnCancel }, nil, oAni, nil, oDlg ) )
-
-         REDEFINE BUTTON oBtnOk     ID IDOK       OF oDlg ACTION ( CompressEmpresa( cCodEmp(), nil, { oBtnZip, oBtnOk, oBtnCancel }, nil, oAni, nil, oDlg, .f. ) )
-
-         REDEFINE BUTTON oBtnCancel ID IDCANCEL   OF oDlg ACTION ( oDlg:end() )
-
-         oDlg:AddFastKey( VK_F5,    {|| oDlg:end( IDOK ) } )
-
-         oDlg:bStart                := {|| oAni:Hide() }
-
-      ACTIVATE DIALOG oDlg CENTER
-
-      if !Empty( oBrush )
-         oBrush:End()
-      end if
-
-      if !Empty( oBmpVersion )
-         oBmpVersion:End()
-      end if 
-
-   RECOVER
-
-   END SEQUENCE
-
-   ErrorBlock( oBlock )
-
-   lFinish     := !empty( oDlg ) .and. ( oDlg:nResult == IDOK )
-
-   if ( lFinish )
-      FinishAplication()
-   end if
-
-RETURN ( lFinish )
-
-//-----------------------------------------------------------------------------//
-
-Function WndResize( oWnd )
-
-   local oBlock
-   local oError
-
-   oBlock         := ErrorBlock( {| oError | ApoloBreak( oError ) } )
-   BEGIN SEQUENCE
-
-   if !Empty( oWnd )
-
-      aEval( oWnd:oWndClient:aWnd, {|o| oWnd:oWndClient:ChildMaximize( o ) } )
-
-      if !Empty( oWndBar )
-         oWndBar:CreateLogo()
-      end if
-
-   end if
-
-   RECOVER
-
-   END SEQUENCE
-
-   ErrorBlock( oBlock )
-
-Return nil
-
-//-----------------------------------------------------------------------------//
-// Comprobaciones iniciales
-
-FUNCTION lInitCheck( oMessage, oProgress )
-
-   local oError
-   local lCheck      := .t.
-
-   CursorWait()
-
-   if !Empty( oProgress )
-      oProgress:SetTotal( 6  )
-   end if
-
-   if !Empty( oMessage )
-      oMessage:SetText( 'Comprobando directorios' )
-   end if
-
-   if !Empty( oProgress )
-      oProgress:AutoInc()
-   end if
-
-   // Comprobamos que exista los directorios necesarios------------------------
-
-   CheckDirectory()
-
-   // Cargamos los datos de la empresa-----------------------------------------
-
-   if !Empty( oMessage )
-      oMessage:SetText( 'Control de tablas de empresa' )
-   end if
-
-   if !Empty( oProgress )
-      oProgress:AutoInc()
-   end if
-
-   if ( nUsrInUse() == 1 )
-      TstEmpresa()
-   end if 
-
-   // Cargamos los datos de la divisa------------------------------------------
-
-   if !Empty( oMessage )
-      oMessage:SetText( 'Control de tablas de divisas' )
-   end if
-
-   if !Empty( oProgress )
-      oProgress:AutoInc()
-   end if
-
-   if ( nUsrInUse() == 1 )
-      TstDivisas()
-   end if 
-
-   // Cargamos los datos de la cajas-------------------------------------------
-
-   if !Empty( oMessage )
-      oMessage:SetText( 'Control de tablas de cajas' )
-   end if
-
-   if !Empty( oProgress )
-      oProgress:AutoInc()
-   end if
-
-   if ( nUsrInUse() == 1 )
-      TstCajas()
-   end if 
-
-   // Inicializamos classes----------------------------------------------------
-
-   if !Empty( oMessage )
-      oMessage:SetText( 'Inicializamos las clases de la aplicación' )
-   end if
-
-   if !Empty( oProgress )
-      oProgress:AutoInc()
-   end if
-
-   InitClasses()
-
-   // Apertura de ficheros-----------------------------------------------------
-
-   if !Empty( oMessage )
-      oMessage:SetText( 'Selección de la empresa actual' ) 
-   end if
-
-   if !Empty( oProgress )
-      oProgress:AutoInc()
-   end if
-
-   setEmpresa( , , , , , oWnd )
-
-   // Eventos del inicio---------------------------------
-
-   runEventScript( "IniciarAplicacion" )
-
-   if !Empty( oMessage )
-      oMessage:SetText( 'Comprobaciones finalizadas' )
-   end if
-
-   if !Empty( oProgress )
-      oProgress:AutoInc()
-   end if
-
-   CursorWe()
-
-RETURN ( lCheck )
-
-//---------------------------------------------------------------------------//
 
 Function lStartCheck()
 
@@ -1056,7 +668,7 @@ Function lStartCheck()
 
    // Colocamos la sesion actual-----------------------------------------------
 
-   chkTurno( , oWnd )
+   chkTurno()
  
    if !empty( oMsgSesion() )
       oMsgSesion():setText( "Sesión : " + Transform( cCurSesion(), "######" ) )
@@ -1076,8 +688,8 @@ Function lStartCheck()
 
    oMsgText( 'Abriendo panel de navegación' )
 
-   if !Empty( oWnd ) .and. !( Os_IsWTSClient() )
-      OpenWebBrowser( oWnd )
+   if !empty( oWnd() ) .and. !( Os_IsWTSClient() )
+      openWebBrowser()
    end if
 
    // Texto limpio y a trabajar------------------------------------------------
@@ -1179,8 +791,8 @@ Function DirectEjecutaScript()
    Cerramos todas las ventanas antes de entrar---------------------------------
    */
 
-   if oWnd != nil
-      SysRefresh(); oWnd:CloseAll(); SysRefresh()
+   if !empty( oWnd() )
+      SysRefresh(); oWnd():CloseAll(); SysRefresh()
    end if
 
    /*
@@ -1248,295 +860,17 @@ Return .t.
 
 //--------------------------------------------------------------------------//
 
-Function Titulo( cTxt )
-
-Return ( if( oWnd != nil, oWnd:cTitle( cTxt ), "" ) )
-
-//--------------------------------------------------------------------------//
-
-Function oWndBar() ; Return oWndBar
-
-//--------------------------------------------------------------------------//
-
-Function oMsgSesion() ; Return ( oMsgSesion )
-
-//--------------------------------------------------------------------------//
-
-Function oMsgProgress()
-
-   if Empty( oMsgProgress )
-      oMsgProgress   := TProgress():New( 3, oDlgProgress:nLeft() - 2 , oWnd:oMsgBar, 0, , , .t., .f., oDlgProgress:nWidth - 2, 16 )
-   end if
-
-Return ( oMsgProgress )
-
-//--------------------------------------------------------------------------//
-
-Function EndProgress()
-
-   oMsgProgress:End()
-
-   oMsgProgress      := nil
-
-Return ( nil )
-
-//--------------------------------------------------------------------------//
-
-Function oMsgText( cText )
-
-   DEFAULT cText     := __GSTCOPYRIGHT__ + Space(2) + cNameVersion()
-
-   if !Empty( oWnd )
-      if _isData( oWnd, "oMsgBar" ) .and. ( oWnd:oMsgBar != nil ) 
-         oWnd:oMsgBar:SetMsg( cText )
-      end if
-   end if
-
-Return ( nil )
-
-//--------------------------------------------------------------------------//
-
-Static Function addMenu( oMenu, oTree )
-
-   local n
-   local cPrompt
-   local oItem
-
-   for n = 1 to len( oMenu:aItems )
-
-      cPrompt     := oMenu:aItems[ n ]:cPrompt
-
-      if ValType( oMenu:aItems[ n ]:bAction ) == "O"
-
-         oItem    := oTree:add( strtran( cPrompt, "&", "" ) )
-         addMenu( oMenu:aItems[ n ]:bAction, oItem )
-
-      else
-
-         if !empty( cPrompt )
-            oItem := oTree:add( strtran( cPrompt, "&", "" ) )
-         end if
-
-      endif
-
-   next
-
-return .t.
-
-//----------------------------------------------------------------------------//
-
-static function nLeft( oMsgBar )
-
-   local n
-   local nLen  := Len( oMsgBar:aItems )
-   local nPos  := oMsgBar:nRight - 3
-
-   if nLen > 0
-      for n := 1 to nLen
-         nPos -= ( oMsgBar:aItems[ n ]:nWidth + 4 )
-      next
-   end if
-
-return nPos
-
-//------------------------------------------------------------------------------------------------------------------------------
-
-STATIC PROCEDURE GoToWeb()
-
-   WinExec( "Start " + __GSTWEB__, 0 )
-
-RETURN
-
-//---------------------------------------------------------------------------//
-
-static function WndPaint( hDC, oWnd, oBmp )
-
-   local oBlock
-
-   oBlock               := ErrorBlock( {| oError | ApoloBreak( oError ) } )
-   BEGIN SEQUENCE
-
-      if !Empty( oWnd ) .and. !Empty( oWnd:oWndClient )
-
-         if len( oWnd:oWndClient:aWnd ) > 0
-            aTail( oWnd:oWndClient:aWnd ):SetFocus()
-         end if
-
-      end if
-
-   RECOVER
-
-   END SEQUENCE
-
-   ErrorBlock( oBlock )
-
-return nil
-
-//---------------------------------------------------------------------------//
-
-function Garri()
-
-   msginfo( UNENCRIP( "Xa^VKKQ2LPJ" ) )
-
-return nil
-
-//---------------------------------------------------------------------------//
-
-FUNCTION UNENCRIP(_Def)
-
-   local i
-   local cStr  := ""
-
-   for i := 1 to len( _Def )
-      cStr     := cStr + CHR(ASC(SUBSTR(_Def, I, 1)) - LEN(_Def) + I - 1)
-   next
-
-RETURN cStr
-
-//---------------------------------------------------------------------------//
-
 init procedure InitAplication()
 
    REQUEST HB_LANG_ES         // Para establecer idioma de Mensajes, fechas, etc..
    REQUEST HB_CODEPAGE_ESWIN  // Para establecer código de página a Español (Ordenación, etc..)
 
-   HB_LangSelect( "ES" )      // Para mensajes, fechas, etc..
-   HB_SetCodePage( "ESWIN" )  // Para ordenación (arrays, cadenas, etc..) *Requiere CodePage.lib
+   hb_langselect( "ES" )      // Para mensajes, fechas, etc..
+   hb_setcodepage( "ESWIN" )  // Para ordenación (arrays, cadenas, etc..) *Requiere CodePage.lib
 
-   hDLLRich    := LoadLibrary( "Riched20.dll" ) // Cargamos la libreria para richedit
+   loadLibrary( "Riched20.dll" ) // Cargamos la libreria para richedit
 
 return
-
-//---------------------------------------------------------------------------//
-// Remember to use 'exit' procedures to asure that resources are
-// freed on a possible application error
-
-Static Function FinishAplication() //  Static Function
-
-   CursorWait()
-
-   if !Empty( cCodEmp() )
-      WritePProString( "main", "Ultima Empresa", cCodEmp(), cIniAplication() )
-   end if 
-
-   lFreeUser()
-
-   // Cerramos las auditorias--------------------------------------------------
-
-   StopServices()
-
-   // Cerramos el Activex------------------------------------------------------
-
-   CloseWebBrowser( oWnd )
-
-   // Limpiamos los recursos estaticos-----------------------------------------
-
-   TAcceso():End()
-
-   TBandera():Destroy()
-
-   FreeResources()
-
-   // Cerramos la dll----------------------------------------------------------
-
-   if !Empty( hDLLRich )
-      FreeLibrary( hDLLRich )
-   end if 
-
-   // Cerramos el report-------------------------------------------------------
-
-   if !Empty( nHndReport )
-      PostMessage( nHndReport, WM_CLOSE )
-   end if
-
-   CursorWE()
-
-   ferase( "chekres.txt" )
-
-   checkRes()
-
-   // winExec( "notepad checkres.txt" )
-
-Return nil
-
-//---------------------------------------------------------------------------//
-
-Function cNbrUsr( cNbr )
-
-   if cNbr != nil .and. oMsgUser != nil
-      oMsgUser:SetText( "Usuario : " + RTrim( cNbr ) )
-   end if
-
-Return cNbr
-
-//---------------------------------------------------------------------------//
-
-Function cCajUsr( cCaj )
-
-   if !Empty( cCaj ) .and. oMsgCaja != nil
-      oMsgCaja:SetText( "Caja : " + RTrim( cCaj ) )
-   end if
-
-Return ( cCaj )
-
-//---------------------------------------------------------------------------//
-
-Function cAlmUsr( cAlm )
-
-   if cAlm != nil .and. oMsgAlmacen != nil
-      oMsgAlmacen:SetText( "Almacén : " + RTrim( cAlm ) )
-   end if
-
-Return ( cAlm )
-
-//---------------------------------------------------------------------------//
-
-Function cDlgUsr( cDlg )
-
-   if cDlg != nil .and. oMsgDelegacion != nil
-      oMsgDelegacion:SetText( "Delegación : " + RTrim( cDlg ) )
-   end if
-
-Return ( cDlg )
-
-//---------------------------------------------------------------------------//
-
-Function RunReportGalery()
-
-   local nLevel   := nLevelUsr( "01119" )
-
-   if nAnd( nLevel, 1 ) != 0
-      msgStop( "Acceso no permitido." )
-      Return nil
-   end if
-
-   if DirChange( FullCurDir() ) != 0
-      MsgStop( "No puedo cambiar al directorio " + FullCurDir() )
-      Return nil
-   end if
-
-   if File( FullCurDir() + "RptApolo.Exe" )
-
-      nHndReport  := WinExec( FullCurDir() + "RptApolo.Exe " + cCodEmp() + " " + cCurUsr(), 1 )
-
-      if !( nHndReport > 21 .or. nHndReport < 0 )
-         MsgStop( "Error en la ejecución de la galeria de informes" )
-      end if
-
-   end if
-
-Return nil
-
-//---------------------------------------------------------------------------//
-
-Function validRunReport( nLevel )
-
-   if nAnd( nLevelUsr( nLevel ), 1 ) != 0
-      msgStop( "Acceso no permitido." )
-      Return .f.
-   end if
-
-Return .t.
 
 //---------------------------------------------------------------------------//
 
@@ -3071,7 +2405,7 @@ Function CreateAcceso( oWnd )
    oItem:oGroup         := oGrupo
    oItem:cPrompt        := 'Configurar botones'
    oItem:cMessage       := 'Configurar barra de botones'
-   oItem:bAction        := {|| oWndBar:EditButtonBar( oWnd, "01085" ) }
+   oItem:bAction        := {|| oWndBar():EditButtonBar( oWnd, "01085" ) }
    oItem:cId            := "01085"
    oItem:cBmp           := "gc_magic_wand_16"
    oItem:cBmpBig        := "gc_magic_wand_32"
@@ -3237,18 +2571,6 @@ Return ( oAcceso )
 
 //---------------------------------------------------------------------------//
 
-Function EnableAcceso()
-
-Return ( nil ) // if( !Empty( oWndBar ), oWndBar:Enable(), ) )
-
-//---------------------------------------------------------------------------//
-
-Function DisableAcceso()
-
-Return ( nil ) // if( !Empty( oWndBar ), oWndBar:Disable(), ) )
-
-//---------------------------------------------------------------------------//
-
 Function BuildMenu()
 
    MENU oMenu
@@ -3259,26 +2581,6 @@ RETURN oMenu
 //---------------------------------------------------------------------------//
 
 Function BuildPdaMenu()
-
-   MENU oMenu
-
-      MENUITEM       "&1. Archivos"
-
-      MENU
-
-         MENUITEM    "&1. Agenda";
-            MESSAGE  "Acceso a la agenda del usuario" ;
-            HELPID   "01075" ;
-            ACTION   ( TNotas():New( cPatDat(), oWnd, oMenuItem ):Activate() );
-            RESOURCE "gc_note_16"
-
-      ENDMENU
-
-      MENUITEM    "&9. Salir";
-         MESSAGE  "Salir de la aplicación" ;
-         ACTION   ( oWnd:End() )
-
-   ENDMENU
 
 RETURN oMenu
 
@@ -3358,7 +2660,7 @@ Static Function InitMainTactilWindow()
 
    // Colocamos la sesion actual-----------------------------------------------
 
-   chkTurno( , oWnd )
+   chkTurno()
 
    TpvTactil():New():Activate( .t. )
 
@@ -3671,7 +2973,7 @@ STATIC FUNCTION lTctInitCheck( lDir, oMessage, oProgress )
 
       // Apertura de ficheros-----------------------------------------------------
 
-      SetEmpresa( , , , , , oWnd )
+      SetEmpresa()
 
       // Inicializamos classes----------------------------------------------------
 
@@ -3748,10 +3050,6 @@ Return ( nil )
 
 //---------------------------------------------------------------------------//
 
-Function oWnd() ; Return oWnd
-
-//---------------------------------------------------------------------------//
-
 Static Function lControlAcceso()
 
    if lCheckPerpetuoMode()
@@ -3781,145 +3079,6 @@ Function lDemoMode( lDemo )
    end if
 
 Return ( lDemoMode )
-
-//---------------------------------------------------------------------------//
-
-Function IsReport()
-
-Return ( .f. )
-
-//---------------------------------------------------------------------------//
-/*
-Guardamos el nombre de la versión
-*/
-
-Function cNameVersion()
-
-   if IsNil( cNameVersion )
-
-      do case
-         case File( FullCurDir() + "scmmrc" )
-
-            cNameVersion      := "PrestaShop 1.6"
-
-         case File( FullCurDir() + "prfsnl" )
-
-            cNameVersion      := "Profesional"
-
-         case File( FullCurDir() + "stndrd" )
-
-            cNameVersion      := "Standard"
-
-         otherwise
-
-            cNameVersion      := "Lite"
-
-      end case
-
-   end if
-
-Return ( cNameVersion )
-
-//---------------------------------------------------------------------------//
-
-Function cBmpVersion() 
-
-   if isNil( cBmpVersion )
-
-      do case
-         case file( FullCurDir() + "scmmrc" )
-
-            cBmpVersion      := "gc_GestoolPrestashop"
-
-         case file( FullCurDir() + "prfsnl" )
-
-            cBmpVersion      := "GestoolPro"
-
-         case file( FullCurDir() + "stndrd" )
-
-            cBmpVersion      := "GestoolStandard"
-
-         otherwise
-
-            cBmpVersion      := "GestoolLite"
-
-      end case
-
-   end if
-
-Return ( cBmpVersion ) 
-
-//---------------------------------------------------------------------------//
-
-Function cTypeVersion( cType )
-
-   if !Empty( cType )
-      cTypeVersion   := cType
-   end if 
-
-Return ( cTypeVersion )
-
-//---------------------------------------------------------------------------//
-/*
-Damos valor a la estatica para la versión Oscommerce
-*/
-
-Function IsOsCommerce()
-
-   if IsNil( lOsCommerce )
-
-      if File( FullCurDir() + "scmmrc" )
-         lOsCommerce       := .t.
-      else
-         lOsCommerce       := .f.
-      end if
-
-   end if
-
-Return lOsCommerce
-
-//---------------------------------------------------------------------------//
-/*
-Damos valor a la estatica para la versión Profesional
-*/
-
-Function IsProfesional()
-
-   if IsNil( lProfesional )
-
-      if File( FullCurDir() + "scmmrc" ) .or.;
-         File( FullCurDir() + "prfsnl" )
-         lProfesional     := .t.
-      else
-         lProfesional      := .f.
-      end if
-
-   end if
-
-Return lProfesional
-
-//---------------------------------------------------------------------------//
-/*
-Damos valor a la estatica para la versión Standard
-*/
-
-Function IsStandard()
-
-   if IsNil( lStandard )
-
-      if File( FullCurDir() + "scmmrc" ) .or.; 
-         File( FullCurDir() + "prfsnl" ) .or.;
-         File( FullCurDir() + "stndrd" )
-
-         lStandard     := .t.
-
-      else
-         lStandard     := .f.
-      end if
-
-   end if
-
-Return lStandard
 
 //---------------------------------------------------------------------------//
 
@@ -4450,70 +3609,6 @@ RETURN NIL
 
 //---------------------------------------------------------------------------//
 
-STATIC FUNCTION deleteAll()
-
-   ( dbfClient )->( __dbzap() )
-   ( dbfObras  )->( __dbzap() )
-
-RETURN NIL 
-
-//---------------------------------------------------------------------------//
-
-STATIC FUNCTION fillAll()
-
-   local n
-   local seconds := seconds()
-
-   for n := 1 to 100000
-
-      if ( n % 100 ) == 0
-         msgwait( "Recno " + str(n), , 0.0001 )
-      end if 
-
-      ( dbfClient )->( dbappend() )
-      if ( dbfClient )->( !neterr() )
-         ( dbfClient )->cod      := strzero( n, 8 )
-         ( dbfClient )->titulo   := strzero( n, 8 )
-         ( dbfClient )->( dbcommit() )
-         ( dbfClient )->( dbunlock() )
-      endif
-
-      ( dbfObras )->( dbappend() )
-      if ( dbfObras )->( !neterr() )
-         ( dbfObras )->cCodCli   := strzero( n, 8 )
-         ( dbfObras )->cCodObr   := strzero( n, 8 )
-         ( dbfObras )->cNomObr   := strzero( n, 8 )
-         ( dbfObras )->( dbcommit() )
-         ( dbfObras )->( dbunlock() )
-      endif
-
-   next
-
-   msgStop( seconds() - seconds, "fill" )
-
-RETURN NIL 
-
-//---------------------------------------------------------------------------//
-
-static Function seekAll()
-
-   local seconds := seconds()
-
-   ( dbfClient )->( dbGoTop() )
-
-   while ( dbfClient )->( !eof() ) 
-      retfld( ( dbfClient )->cod, dbfObras, "cCodCli" )
-      retfld( ( dbfClient )->cod, dbfObras, "cCodObr" )
-      retfld( ( dbfClient )->cod, dbfObras, "cNomObr" )
-      ( dbfClient )->( dbskip() )
-   end while
-
-   msgStop( seconds() - seconds, "seek" )
-
-RETURN NIL 
-
-//---------------------------------------------------------------------------//
-
 static function Informe1()
 
    local oInf
@@ -4581,4 +3676,3 @@ RETURN NIL
 
 //---------------------------------------------------------------------------//
 
-// DLL32 FUNCTION GetLocalTime(lpSystemTime AS LPSTR) AS LONG PASCAL FROM "GetLocalTime" LIB "kernel32.dll"

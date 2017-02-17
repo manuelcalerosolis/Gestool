@@ -4894,7 +4894,7 @@ FUNCTION genPgoFacCli( cNumFac, cFacCliT, cFacCliL, cFacCliP, cAntCliT, cClient,
                 ( cFacCliP )->cCtrCoste := ( cFacCliT )->cCtrCoste
             endif
 
-            if !( "TABLET" $ cParamsMain() )
+            if !( "TABLET" $ appParamsMain() )
 
                if ( cFPago )->nCobRec == 1 .and. nMode == APPD_MODE
                   ( cFacCliP )->cTurRec    := cCurSesion()
@@ -5034,7 +5034,7 @@ static function generaReciboFacturaCliente( cNumFac, nImporteRecibo, nPlazo, cFa
                 ( cFacCliP )->cCtrCoste := ( cFacCliT )->cCtrCoste
             endif
 
-            if !( "TABLET" $ cParamsMain() )
+            if !( "TABLET" $ appParamsMain() )
 
                if ( cFPago )->nCobRec == 1 .and. nMode == APPD_MODE
                   ( cFacCliP )->cTurRec    := cCurSesion()

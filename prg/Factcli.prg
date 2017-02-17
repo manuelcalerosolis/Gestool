@@ -1368,7 +1368,7 @@ FUNCTION FactCli( oMenuItem, oWnd, hHash )
          TOOLTIP  "Generar nota de agenda" ;
          FROM     oRotor ;
 
-   if ( "VI" $ cParamsMain() )
+   if ( "VI" $ appParamsMain() )
 
       DEFINE BTNSHELL RESOURCE "GC_DOCUMENT_TEXT_MONEY2_" OF oWndBrw ;
          ALLOW    EXIT ;
@@ -5509,7 +5509,7 @@ Static Function EdtInc( aTmp, aGet, dbfFacCliI, oBrw, bWhen, bValid, nMode, aTmp
       aTmp[ _CSUFFAC  ] := aTmpFac[ _CSUFFAC ]
    end if
 
-   if ( "PDA" $ cParamsMain() )
+   if ( "PDA" $ appParamsMain() )
       DEFINE DIALOG oDlg RESOURCE "FACTCLI_INC_PDA"
    else
       DEFINE DIALOG oDlg RESOURCE "INCIDENCIA" TITLE LblTitle( nMode ) + "incidencias de facturas a clientes"
@@ -11493,7 +11493,7 @@ STATIC FUNCTION AppDeta( oBrwDet, bEdtDet, aTmp, lTot, cCodArt, aNumDoc )
                 
    DEFAULT lTot   := .f.
 
-   if !( "TABLET" $ cParamsMain() )
+   if !( "TABLET" $ appParamsMain() )
 
       if lRecibosPagadosTmp( dbfTmpPgo )
          MsgStop( "No se pueden añadir registros a una factura con recibos cobrados" )
@@ -11669,7 +11669,7 @@ STATIC FUNCTION SetDlgMode( aTmp, aGet, oFld, oSayPr1, oSayPr2, oSayVp1, oSayVp2
 
    if !lUseCaj()
       
-      if !( "TABLET" $ cParamsMain() )
+      if !( "TABLET" $ appParamsMain() )
 
          if !empty( aGet[ _NCANENT ] )
             aGet[ _NCANENT ]:Hide()
@@ -11725,7 +11725,7 @@ STATIC FUNCTION SetDlgMode( aTmp, aGet, oFld, oSayPr1, oSayPr2, oSayVp1, oSayVp2
    end if
 
    if aGet[ _NDTODIV ] != nil
-      if !( "TABLET" $ cParamsMain() ) .and. !uFieldEmpresa( "lDtoLin", .f. )
+      if !( "TABLET" $ appParamsMain() ) .and. !uFieldEmpresa( "lDtoLin", .f. )
          aGet[ _NDTODIV ]:Hide()
       end if
    end if
@@ -12159,7 +12159,7 @@ STATIC FUNCTION LoaArt( cCodArt, aGet, aTmp, aTmpFac, oStkAct, oSayPr1, oSayPr2,
       aGet[ _CDETALLE ]:cText( Space( 50 ) )
       aGet[ _CDETALLE ]:bWhen   := {|| .t. }
 
-      if !( "TABLET" $ cParamsMain() )
+      if !( "TABLET" $ appParamsMain() )
          aGet[ _CDETALLE ]:Hide()
       end if
 
@@ -13253,7 +13253,7 @@ STATIC FUNCTION SaveDeta( aTmp, aTmpFac, aGet, oBrw, oDlg, oFld, oSayPr1, oSayPr
       aTmp[ _NREQ ]     := nPReq( dbfIva, aTmp[ _NIVA ] )
    end if   
    
-   if !( "TABLET" $ cParamsMain() )
+   if !( "TABLET" $ appParamsMain() )
    
       if nMode == APPD_MODE
 
@@ -22526,7 +22526,7 @@ Static Function lNombreVacio( aGet, cNomCli )
 
    if empty( cNomCli )
 
-      if ( "TABLET" $ cParamsMain() )
+      if ( "TABLET" $ appParamsMain() )
          apoloMsgStop( "Nombre de cliente no puede estar vacío.")
       else
          msgStop( "Nombre de cliente no puede estar vacío." )
@@ -22550,7 +22550,7 @@ Static Function lAlmacenVacio( aGet, cCodAlm )
 
    if empty( cCodAlm )
 
-      if ( "TABLET" $ cParamsMain() )
+      if ( "TABLET" $ appParamsMain() )
          apoloMsgStop( "Almacén no puede estar vacío.")
       else
          msgStop( "Almacén no puede estar vacío." )
@@ -22574,7 +22574,7 @@ Static Function lFormaPagoVacia( aGet, cCodPago )
 
    if empty( cCodPago )
 
-      if ( "TABLET" $ cParamsMain() )
+      if ( "TABLET" $ appParamsMain() )
          apoloMsgStop( "Forma de pago no puede estar vacía.")
       else
          msgStop( "Forma de pago no puede estar vacía." )
@@ -22598,7 +22598,7 @@ Static Function lDivisaVacia( aGet, cCodDiv )
 
    if empty( cCodDiv )
 
-      if ( "TABLET" $ cParamsMain() )
+      if ( "TABLET" $ appParamsMain() )
          apoloMsgStop( "No puede almacenar documento sin Código de divisa.")
       else
          msgStop( "No puede almacenar documento sin Código de divisa." )
@@ -22622,7 +22622,7 @@ Static Function lLineasVacias()
 
    if ( dbfTmpLin )->( eof() )
 
-      if ( "TABLET" $ cParamsMain() )
+      if ( "TABLET" $ appParamsMain() )
          apoloMsgStop( "No puede almacenar un documento sin lineas.")
       else
          msgStop( "No puede almacenar un documento sin lineas." )
@@ -22908,7 +22908,7 @@ Return .t.
 
 Static Function EscribeTemporalPagos( cSerFac, nNumFac, cSufFac,aTmp )
 
-   if !( "TABLET" $ cParamsMain() )
+   if !( "TABLET" $ appParamsMain() )
       
       ( dbfTmpPgo )->( dbGoTop() )
       while ( dbfTmpPgo )->( !eof() )

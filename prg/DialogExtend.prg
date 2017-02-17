@@ -2,7 +2,7 @@
 #include "Fivewin.ch"
 #include "Xbrowse.ch"
 
-FUNCTION DialogExtend() 
+FUNCTION appDialogExtend() 
 
 local hClass
 

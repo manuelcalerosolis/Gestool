@@ -977,7 +977,7 @@ Method CreateFavoritosOfficeBar()
    local aGrupo                  := {}
    local aColor                  := { RGB( 237, 71, 0 ), RGB( 237, 71, 0 ), , Rgb( 237, 71, 0 ), CLR_WHITE }
 
-   if ( "TCT" $ cParamsMain() ) .or. ( "TPV" $ cParamsMain() )
+   if ( "TCT" $ appParamsMain() ) .or. ( "TPV" $ appParamsMain() )
       Return ( Self )
    end if
 

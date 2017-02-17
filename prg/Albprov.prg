@@ -863,7 +863,7 @@ FUNCTION AlbPrv( oMenuItem, oWnd, cCodPrv, cCodArt, cCodPed )
          TOOLTIP  "Facturas parciales" ;
          FROM     oRotor
 
-   if ( "ICG" $ cParamsMain() )
+   if ( "ICG" $ appParamsMain() )
 
    DEFINE BTNSHELL RESOURCE "GC_DOCUMENT_EMPTY_" GROUP OF oWndBrw;
       NOBORDER ;

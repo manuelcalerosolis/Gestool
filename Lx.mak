@@ -1051,9 +1051,9 @@ CamposExtra.prg         \
 DetCamposExtra.prg      \
 TScripts.prg            \
 TGenMailDatabaseRecibosClientes.prg \
-TDetMovimientosAlmacen.prg \
-TDetSeriesMovimientos.prg \
-TTraslations.prg        \
+TDetMovimientosAlmacen.prg 			\
+TDetSeriesMovimientos.prg 				\
+TTraslations.prg        				\
 
 C               =       \
 Metafi32.c              \

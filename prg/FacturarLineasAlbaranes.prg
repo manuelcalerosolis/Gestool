@@ -165,7 +165,7 @@ METHOD FacturarLineas( nView ) CLASS TFacturarLineasAlbaranes
    ::nPorcentajeAlbaran             := 100
    ::nPorcentajeFactura             := 0
 
-   if ( "MODA" $ cParamsMain() )
+   if ( "MODA" $ appParamsMain() )
       ::nPorcentajePropuestoAlbaran := 50
       ::nPorcentajePropuestoFactura := 50
    else
@@ -407,7 +407,7 @@ METHOD Resource() CLASS TFacturarLineasAlbaranes
          :nHeadStrAlign       := 1
       end with
 
-      if ( "MODA" $ cParamsMain() )
+      if ( "MODA" $ appParamsMain() )
 
       with object ( ::oColTotalAlbaran := ::oBrwLineasAlbaran:AddCol() )
          :cHeader             := "Total"
@@ -749,7 +749,7 @@ METHOD Resource() CLASS TFacturarLineasAlbaranes
          CANCEL ;
          ACTION   ( ::oDlg:End() )
 
-      if ( "MODA" $ cParamsMain() )
+      if ( "MODA" $ appParamsMain() )
          ::oDlg:bStart  := {|| ::RecalculaPorcentajes() }
       else
          ::oDlg:bStart  := {|| ::ActualizaPantalla() }
@@ -1148,7 +1148,7 @@ METHOD EndResource( lPrint ) CLASS TFacturarLineasAlbaranes
    Guardamos el albarán--------------------------------------------------------
    */
 
-   if ( "MODA" $ cParamsMain() )
+   if ( "MODA" $ appParamsMain() )
       ::GuardaAlbaranModa()
    else
       ::GuardaAlbaran()
@@ -1386,7 +1386,7 @@ METHOD GeneraFactura() CLASS TFacturarLineasAlbaranes
    Quito el recargo del albaran en modo modas----------------------------------
    */
 
-   if ( "MODA" $ cParamsMain() )
+   if ( "MODA" $ appParamsMain() )
 
       if dbLock( D():Get( "AlbCliT", ::nView ) )
          ( D():Get( "AlbCliT", ::nView ) )->lRecargo   := .f.
@@ -1409,7 +1409,7 @@ METHOD CalculaTotales() CLASS TFacturarLineasAlbaranes
    Calculamos los totales------------------------------------------------------
    */
 
-   if ( "MODA" $ cParamsMain() )
+   if ( "MODA" $ appParamsMain() )
 
       ::nSayNeto     := ::oColTotalAlbaran:nTotal + ::oColNetoFactura:nTotal
 

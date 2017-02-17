@@ -582,7 +582,7 @@ METHOD Resource( nMode, aInit ) CLASS TNotas
 
    cGetTipoDocumento       := cTextoDocumento( ::oDbf:cTipDoc )
 
-   if ( "PDA" $ cParamsMain() )
+   if ( "PDA" $ appParamsMain() )
    DEFINE DIALOG oDlg RESOURCE "NOTAS_PDA"   TITLE LblTitle( nMode ) + "apunte de agenda"
    else
    DEFINE DIALOG oDlg RESOURCE "NOTAS"       TITLE LblTitle( nMode ) + "apunte de agenda"
@@ -703,7 +703,7 @@ METHOD Resource( nMode, aInit ) CLASS TNotas
       CANCEL ;
       ACTION   ( oDlg:end() )
 
-   if !( "PDA" $ cParamsMain() )
+   if !( "PDA" $ appParamsMain() )
    REDEFINE BUTTON ;
       ID       9 ;
       OF       oDlg ;
@@ -908,7 +908,7 @@ Method ZoomDocument()
 
    do case
       case ::oDbf:cTipDoc == PRE_CLI
-         ZooPreCli( ::oDbf:cNumDoc, .f., ( "PDA" $ cParamsMain() ) )
+         ZooPreCli( ::oDbf:cNumDoc, .f., ( "PDA" $ appParamsMain() ) )
 
       case ::oDbf:cTipDoc == PED_CLI
          ZooPedCli( ::oDbf:cNumDoc )

@@ -1331,7 +1331,7 @@ FUNCTION BrwAlmacen( oGet, oGet2, lBigStyle )
          oBrw:nLineHeight     := 36
       end if
 
-      if ( "PDA" $ cParamsMain() )
+      if ( "PDA" $ appParamsMain() )
 
          REDEFINE SAY oSayText VAR cSayText ;
             ID       100 ;
@@ -1350,7 +1350,7 @@ FUNCTION BrwAlmacen( oGet, oGet2, lBigStyle )
          CANCEL ;
          ACTION   ( oDlg:end() )
 
-      if !( "PDA" $ cParamsMain() )
+      if !( "PDA" $ appParamsMain() )
 
 		REDEFINE BUTTON ;
 			ID 		500 ;

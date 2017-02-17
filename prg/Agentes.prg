@@ -1295,7 +1295,7 @@ FUNCTION BrwAgentes( oGet, oGet2, lRelacionado, cCodigoAgente )
          CANCEL ;
          ACTION   ( oDlg:end() )
 
-   if !( "PDA" $ cParamsMain() )
+   if !( "PDA" $ appParamsMain() )
 
 		REDEFINE BUTTON ;
 			ID 		500 ;

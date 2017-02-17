@@ -410,7 +410,7 @@ FUNCTION BrwIncidencia( dbfInci, oGet, oGet2 )
 
       oBrw:CreateFromResource( 105 )
 
-   if ( "PDA" $ cParamsMain() )
+   if ( "PDA" $ appParamsMain() )
 
       REDEFINE SAY oSayText VAR cSayText ;
          ID       100 ;
@@ -418,7 +418,7 @@ FUNCTION BrwIncidencia( dbfInci, oGet, oGet2 )
 
    end if
 
-   if !( "PDA" $ cParamsMain() )
+   if !( "PDA" $ appParamsMain() )
 
    REDEFINE BUTTON ;
       ID       500 ;

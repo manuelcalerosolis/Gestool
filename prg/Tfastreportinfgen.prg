@@ -496,7 +496,7 @@ METHOD NewResource( cFldRes ) CLASS TFastReportInfGen
    
    //Caja de dialogo-------------------------------------------------------------
    
-   DEFINE DIALOG ::oDlg RESOURCE "ReportingDialog" TITLE ::cSubTitle
+   DEFINE DIALOG ::oDlg RESOURCE "REPORTINGDIALOG" TITLE ::cSubTitle
 
    ::oTreeReporting                 := TTreeView():Redefine( 100, ::oDlg ) 
    ::oTreeReporting:bChanged        := {|| ::TreeReportingChanged() }

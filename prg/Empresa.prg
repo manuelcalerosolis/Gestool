@@ -335,7 +335,7 @@ FUNCTION Empresa( oMenuItem, oWnd )
       oWndBrw:lAutoPos              := .f.
 
       if oUser():lCambiarEmpresa 
-         oWndBrw:oBrw:bLDblClick    := {||   setEmpresa( ( dbfEmp )->CodEmp, dbfEmp, dbfDlg, dbfUser, nil, oWnd ),;
+         oWndBrw:oBrw:bLDblClick    := {||   setEmpresa( ( dbfEmp )->CodEmp, dbfEmp, dbfDlg, dbfUser ),;
                                              chkTurno( , oWnd ),;
                                              if( !Empty( oWndBrw ), oWndBrw:End( .t. ), ) }
       else
@@ -516,7 +516,7 @@ Static Function initialProccesBuildEmpresa()
    Establecemos la empresa como la seleccionada-----------------------------
    */
 
-   setEmpresa( cCodigoEmpresa, , , , , oWnd(), .t. )
+   setEmpresa( cCodigoEmpresa )
 
    chkTurno( , oWnd() )
 
@@ -539,7 +539,7 @@ RETURN ( nil )
 Static Function WinEdtEmp()
 
    if WinEdtRec( oWndBrw, bEdit, dbfEmp )
-      setEmpresa( ( dbfEmp )->CodEmp, , , , , oWnd() )
+      setEmpresa( ( dbfEmp )->CodEmp )
       chkTurno( , oWnd() )
    end if
 
@@ -1233,7 +1233,9 @@ STATIC FUNCTION EditConfig( aTmp, aGet, dbfEmp, oBrw, nSelFolder, bValid, nMode 
 
    // Seleccionamos la empresa ------------------------------------------------
 
-   setEmpresa( ( dbfEmp )->CodEmp, dbfEmp, dbfDlg, dbfUser, oBrw, oWnd(), .t. )
+   setEmpresa( ( dbfEmp )->CodEmp, dbfEmp, dbfDlg, dbfUser, oBrw )
+
+   checkEmpresaTablesExistences()
 
    // Control de errores-------------------------------------------------------
 
@@ -2566,7 +2568,10 @@ STATIC FUNCTION EditConfig( aTmp, aGet, dbfEmp, oBrw, nSelFolder, bValid, nMode 
    KillTrans()
 
    if oDlg:nResult == IDOK
-      setEmpresa( ( dbfEmp )->CodEmp, dbfEmp, dbfDlg, dbfUser, oBrw, oWnd(), .t. )
+      setEmpresa( ( dbfEmp )->CodEmp, dbfEmp, dbfDlg, dbfUser, oBrw )
+      
+      checkEmpresaTablesExistences()
+
       chkTurno( , oWnd() )
    end if
 
@@ -3150,7 +3155,7 @@ RETURN ( oDlg:nResult == IDOK )
 
 //---------------------------------------------------------------------------//
 
-Function SetEmpresa( cCodEmp, dbfEmp, dbfDlg, dbfUsr, oBrw, oWnd, lSoft )
+Function SetEmpresa( cCodEmp, dbfEmp, dbfDlg, dbfUsr, oBrw )
 
    local nOrd
    local oBlock
@@ -3162,10 +3167,8 @@ Function SetEmpresa( cCodEmp, dbfEmp, dbfDlg, dbfUsr, oBrw, oWnd, lSoft )
    local lCmbEmpUsr  := oUser():lCambiarEmpresa
    local cCodEmpUsr  := oUser():_EmpresaFija
 
-   DEFAULT lSoft     := .f.
-
-   if !Empty( oWnd )
-      oWnd:Disable()
+   if !empty( oWnd() )
+      oWnd():Disable()
    end if
 
    CursorWait()
@@ -3284,8 +3287,6 @@ Function SetEmpresa( cCodEmp, dbfEmp, dbfDlg, dbfUsr, oBrw, oWnd, lSoft )
 
    if Empty( ( dbfEmp )->cCodGrp ) 
 
-      //cPatGrp( cCodEmp, nil, .t. )
-
       cPatCli( cCodEmp, nil, .t. )
 
       cPatArt( cCodEmp, nil, .t. )
@@ -3297,12 +3298,6 @@ Function SetEmpresa( cCodEmp, dbfEmp, dbfDlg, dbfUsr, oBrw, oWnd, lSoft )
       aEmpGrp( cCodEmp, dbfEmp, .t. )
 
    else
-
-   /*
-   Directorios si tiene grupo--------------------------------------------------
-   */
-
-      //cPatGrp( ( dbfEmp )->cCodGrp, nil, .f. )
 
       if RetFld( cCodEmp, dbfEmp, "lGrpCli", "CodEmp" )
          cPatCli( ( dbfEmp )->cCodGrp, nil, .f. )
@@ -3377,51 +3372,6 @@ Function SetEmpresa( cCodEmp, dbfEmp, dbfDlg, dbfUsr, oBrw, oWnd, lSoft )
    Chequeo de existencia de tablas---------------------------------------------
    */
 
-   if !lSoft // .and. !lAis()
-
-      oMsgText( 'Comprobando existencia de tablas' )
-      IsEntSal()
-
-      oMsgText( 'Comprobando almacenes' )
-      IsAlmacen()
-
-      oMsgText( 'Comprobando formas de pago' )
-      IsFPago()
-
-      oMsgText( 'Comprobando articulos' )
-      IsArticulo()
-
-      oMsgText( 'Comprobando facturas a proveedor' )
-      IsFacPrv()
-
-      oMsgText( 'Comprobando presupuestos a clientes' )
-      IsPreCli()
-
-      oMsgText( 'Comprobando pedidos a clientes' )
-      IsPedCli()
-
-      oMsgText( 'Comprobando albaranes a clientes' )
-      IsAlbCli()
-
-      oMsgText( 'Comprobando facturas a clientes' )
-      IsFacCli()
-
-      oMsgText( 'Comprobando facturas rectificativas a clientes' )
-      IsFacRec()
-      
-      oMsgText( 'Comprobando anticipos a clientes' )
-      IsAntCli()
-
-      oMsgText( 'Comprobando tickets' )
-      IsTpv()
-
-      oMsgText( 'Comprobando bancos' )
-      IsBancos()
-
-      oMsgText( 'Comprobando contadores' )
-      IsCount()
-
-   end if
 
    // Chequeo del turno--------------------------------------------------------
 
@@ -3462,13 +3412,60 @@ Function SetEmpresa( cCodEmp, dbfEmp, dbfDlg, dbfUsr, oBrw, oWnd, lSoft )
 
    CursorWE()
 
-   if !Empty( oWnd )
-      oWnd:Enable()
+   if !empty( oWnd() )
+      oWnd():Enable()
    end if
 
 Return nil
 
 //---------------------------------------------------------------------------//
+
+Function checkEmpresaTablesExistences()
+
+   oMsgText( 'Comprobando existencia de tablas' )
+   IsEntSal()
+
+   oMsgText( 'Comprobando almacenes' )
+   IsAlmacen()
+
+   oMsgText( 'Comprobando formas de pago' )
+   IsFPago()
+
+   oMsgText( 'Comprobando articulos' )
+   IsArticulo()
+
+   oMsgText( 'Comprobando facturas a proveedor' )
+   IsFacPrv()
+
+   oMsgText( 'Comprobando presupuestos a clientes' )
+   IsPreCli()
+
+   oMsgText( 'Comprobando pedidos a clientes' )
+   IsPedCli()
+
+   oMsgText( 'Comprobando albaranes a clientes' )
+   IsAlbCli()
+
+   oMsgText( 'Comprobando facturas a clientes' )
+   IsFacCli()
+
+   oMsgText( 'Comprobando facturas rectificativas a clientes' )
+   IsFacRec()
+   
+   oMsgText( 'Comprobando anticipos a clientes' )
+   IsAntCli()
+
+   oMsgText( 'Comprobando tickets' )
+   IsTpv()
+
+   oMsgText( 'Comprobando bancos' )
+   IsBancos()
+
+   oMsgText( 'Comprobando contadores' )
+   IsCount()
+
+Return nil
+
 //---------------------------------------------------------------------------//
 
 /*Funcion que borra el grupo de empresas y el directorio*/
@@ -4926,52 +4923,6 @@ return lChg
 
 //---------------------------------------------------------------------------//
 
-//--------------------------------------------------------------------------//
-/*
-function MnuEmpresa( oBtn, oWnd )
-
-   local dbfEmp
-   local oMenu
-   local bAction
-
-   DEFAULT oWnd   := oWnd()
-
-   IF oWnd:oWndClient:GetActive() != NIL
-      MsgStop( "Imposible acceder a empresas.", "Existen procesos abiertos." )
-      RETURN NIL
-   END IF
-
-   USE ( cPatDat() + "EMPRESA.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "EMPRESA", @dbfEmp ) )
-   SET ADSINDEX TO ( cPatDat() + "EMPRESA.CDX" ) ADDITIVE
-
-   oMenu := MenuBegin( .T. )
-
-   while !( dbfEmp )->( eof() )
-
-      bAction  := bSetEmpresa( ( dbfEmp )->CodEmp, dbfEmp, dbfDlg, dbfUser, oWnd  )
-      MenuAddItem( ( dbfEmp )->CodEmp + ' - ' + Rtrim( ( dbfEmp )->cNombre ),, .F.,, bAction,,,,,,, .F.,,, .F. )
-
-      ( dbfEmp )->( dbSkip() )
-
-   end while
-
-   MenuEnd()
-
-   oMenu:Activate( oBtn:nBottom - 1, 0, oBtn )
-
-   CLOSE ( dbfEmp )
-
-RETURN NIL
-
-//---------------------------------------------------------------------------//
-
-static function bSetEmpresa( cCodEmp, dbfEmp, dbfDlg, dbfUser, oWnd )
-
-return {|| SetEmpresa( cCodEmp, dbfEmp, dbfDlg, dbfUser, nil, oWnd ) }
-*/
-//---------------------------------------------------------------------------//
-//---------------------------------------------------------------------------//
-
 Static Function BeginEdtRec( aTmp )
 
    local oBlock
@@ -5509,8 +5460,13 @@ Function ChkAllEmp( lForced )
          end if
 
          for n := 1 to len( aEmp )
-            SetEmpresa( aEmp[ n, 1 ], , , , , , .t. )
+
+            setEmpresa( aEmp[ n, 1 ] )
+
+            checkEmpresaTablesExistences()
+            
             lActualiza( aEmp[ n, 1 ], oWndBrw, .t., aEmp[ n, 2 ] )
+
          next
 
          if !Empty( oWnd() )
@@ -7518,7 +7474,11 @@ function ActualizaEstructuras( dbfEmp, dbfDlg, dbfUser, oBrw, oWnd )
    cNomEmp        := ( dbfEmp )->cNombre
 
    if !( dbfEmp )->lGrupo
-      SetEmpresa( cCodEmp, dbfEmp, dbfDlg, dbfUser, , , .t. )
+      
+      setEmpresa( cCodEmp, dbfEmp, dbfDlg, dbfUser )
+
+      checkEmpresaTablesExistences()      
+      
    end if
 
    CursorWE()

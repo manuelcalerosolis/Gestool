@@ -12,7 +12,7 @@ function PasEuro( oWndBrw, oWnd )
    Seleccionamos la empresa
    */
 
-   SetEmpresa( (dbfEmp)->CodEmp, dbfEmp, dbfDlg, dbfUser, oWndBrw:oBrw, oWnd )
+   SetEmpresa( (dbfEmp)->CodEmp, dbfEmp, dbfDlg, dbfUser, oWndBrw:oBrw )
 
    if ( dbfEmp )->cDivEmp == "EUR"
       MsgStop( "Empresa ya convertida" )

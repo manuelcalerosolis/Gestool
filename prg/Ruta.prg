@@ -903,7 +903,7 @@ FUNCTION BrwRuta( oGet, dbfRuta, oGet2 )
 
       oBrw:CreateFromResource( 105 )
 
-      if ( "PDA" $ cParamsMain() )
+      if ( "PDA" $ appParamsMain() )
 
       REDEFINE SAY oSayText VAR cSayText ;
          ID       100 ;
@@ -921,7 +921,7 @@ FUNCTION BrwRuta( oGet, dbfRuta, oGet2 )
          OF       oDlg ;
          ACTION   ( oDlg:end() )
 
-      if !( "PDA" $ cParamsMain() )
+      if !( "PDA" $ appParamsMain() )
 
       REDEFINE BUTTON ;
          ID       500 ;

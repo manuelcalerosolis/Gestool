@@ -859,7 +859,7 @@ METHOD StartAdministratorTask()
             	::oMtrActualiza:Set( hb_EnumIndex() )
             end if
 
-            setEmpresa( aEmpresa[ 1 ], , , , , , .t. )
+            setEmpresa( aEmpresa[ 1 ] )
 
             lActualiza( aEmpresa[ 1 ], nil, .t., aEmpresa[ 2 ], .f. )
 
@@ -919,7 +919,9 @@ METHOD StartAdministratorTask()
             	::oMtrActualiza:set( hb_EnumIndex() )
             end if 
 
-            setEmpresa( aEmpresa[ 1 ], , , , , , .t. )
+            setEmpresa( aEmpresa[ 1 ] )
+
+            checkEmpresaTablesExistences()
 
             ::BuildEmpresa()  
                

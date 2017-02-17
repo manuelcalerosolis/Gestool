@@ -1431,7 +1431,7 @@ Function Articulo( oMenuItem, oWnd, bOnInit )
 
    DEFINE BTNSHELL RESOURCE "gc_document_empty_chart_" OF oWndBrw ;
       NOBORDER ;
-      ACTION   ( TFastVentasArticulos():New():Play() ) ;
+      ACTION   ( runReportGalery( "Articulos" ) ) ; //  TFastVentasArticulos():New():Play() ) ;
       TOOLTIP  "Rep(o)rting";
       HOTKEY   "O" ;
       LEVEL    ACC_IMPR
@@ -1531,7 +1531,7 @@ Function Articulo( oMenuItem, oWnd, bOnInit )
          FROM     oTct ;
          LEVEL    ACC_IMPR
 
-   if ( "VI" $ cParamsMain() )
+   if ( "VI" $ appParamsMain() )
 
    DEFINE BTNSHELL RESOURCE "BMPEXPTAR" OF oWndBrw ;
       NOBORDER ;
@@ -2001,7 +2001,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, cArticulo, oBrw, bWhen, bValid, nMode )
       ON HELP  ( BrwFamilia( aGet[ ( D():Articulos( nView ) )->( fieldpos( "FAMILIA" ) ) ], oSay[ 3 ] ) );
       OF       fldGeneral
 
-   if ( "RISI" $ cParamsMain() )
+   if ( "RISI" $ appParamsMain() )
       aGet[ ( D():Articulos( nView ) )->( fieldpos( "FAMILIA" ) ) ]:bWhen    := {|| nMode == APPD_MODE .or. nMode == DUPL_MODE }
    else
       aGet[ ( D():Articulos( nView ) )->( fieldpos( "FAMILIA" ) ) ]:bWhen    := {|| nMode != ZOOM_MODE }
