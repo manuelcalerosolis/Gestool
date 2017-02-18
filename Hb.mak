@@ -19,14 +19,17 @@ SOURCEPRG            = 	.\Prg;.\Prg\mail;.\Prg\comercio;.\Prg\tablet;.\Prg\table
 SOURCEC 				   =	C
 PPO 					   = 	Ppo1406
 
-EXE 					   = 	Bin\Gestool.exe
+EXE 					   = 	Bin\$(TARGET).exe
+
+TARGETPRG 				= $(TARGET).prg
+TARGETOBJ 				= $(TARGET).obj
 
 .path.prg      		=	.\$(SOURCEPRG)
 .path.c       			=	.\$(SOURCEC)
 .path.obj      		=	.\$(OBJ)
 
 PRG            		=    										\
-Factu.prg               										\
+$(TARGETPRG)             										\
 DialogExtend.prg           									\
 C5Lib.prg               										\
 RpreviewC3.prg 												\
@@ -477,7 +480,7 @@ Img2pdf.c               	            				\
 Treeview.c 					               				\
 
 OBJS            =                                  \
-Factu.obj                                          \
+$(TARGETOBJ)                                       \
 Tinitshell.obj                                     \
 WebBrow.obj                                        \
 TMySql.obj                                         \
@@ -951,7 +954,7 @@ $(EXE) : $(RESOURCE)\GstDialog.Res $(OBJS)
   	$(BORLAND)\Bin\iLink32 @&&|
   	-Gn -aa -Tpe -s -r -m -V4.0                              +
 (BORLAND)\lib\c0w32.obj                                     +
-$(OBJ)\Factu.obj                                            +
+$(OBJ)\$(TARGETOBJ)                                         +
 $(OBJ)\Tinitshell.obj                                       +
 $(OBJ)\WebBrow.obj                                          +
 $(OBJ)\TMySql.obj                                           +

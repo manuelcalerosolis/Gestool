@@ -17,11 +17,6 @@ REQUEST AdsSetRelKeyPos
 
 //---------------------------------------------------------------------------//
 
-static cNbrUsr
-static cCajUsr
-
-//---------------------------------------------------------------------------//
-
 Function Main( cCodEmp, cCodUsr, cInitOptions )
 
    local nError
@@ -98,32 +93,6 @@ Static Function controllerReportGallery( cInitOptions )
    end case
 
 Return nil
-
-//---------------------------------------------------------------------------//
-
-Function oWnd() 
-
-Return ( nil )
-
-//---------------------------------------------------------------------------//
-
-Function cNbrUsr( cNbr )
-
-   if cNbr != nil
-      cNbrUsr  := cNbr
-   end if
-
-Return cNbrUsr
-
-//---------------------------------------------------------------------------//
-
-Function cCajUsr( cCaj )
-
-   if cCaj != nil
-      cCajUsr  := cCaj
-   end if
-
-Return cCajUsr
 
 //---------------------------------------------------------------------------//
 

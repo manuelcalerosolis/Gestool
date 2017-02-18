@@ -2,7 +2,7 @@ cd \fw195\gestool\
 
 taskkill /F /IM gestool.exe
 
-\BCC582\BIN\MAKE -S -fHB.MAK -D__GST__
+\BCC582\BIN\MAKE -S -fHB.MAK -D__GST__ TARGET=gestool
 
 cd \fw195\gestool\bin\
 
