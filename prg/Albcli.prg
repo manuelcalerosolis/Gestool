@@ -5741,7 +5741,7 @@ STATIC FUNCTION cPedCli( aGet, aTmp, oBrwLin, oBrwPgo, nMode )
                   (dbfTmpLin)->cCtrCoste  := (dbfPedCliL)->cCtrCoste
                   (dbfTmpLin)->cTipCtr    := (dbfPedCliL)->cTipCtr
                   (dbfTmpLin)->cTerCtr    := (dbfPedCliL)->cTerCtr
-                  (dbfTmpLin)->nUndKit    := (dbfPedCliL)->nNudKit
+                  //(dbfTmpLin)->nUndKit    := (dbfPedCliL)->nNudKit
 
                   if !( dbfPedCliL )->lKitArt
 
@@ -6332,7 +6332,7 @@ STATIC FUNCTION GrpPed( aGet, aTmp, oBrw )
                      (dbfTmpLin)->cCtrCoste  := (dbfPedCliL)->cCtrCoste
                      (dbfTmpLin)->cTipCtr    := (dbfPedCliL)->cTipCtr
                      (dbfTmpLin)->cTerCtr    := (dbfPedCliL)->cTerCtr
-                     (dbfTmpLin)->nNumKit    := (dbfPedCliL)->nNumKit
+                     //(dbfTmpLin)->nNumKit    := (dbfPedCliL)->nNumKit
 
                      if lCalCaj()
                         if nTotRec != 0
@@ -6429,7 +6429,7 @@ STATIC FUNCTION GrpPed( aGet, aTmp, oBrw )
                   ( dbfTmpLin )->cCtrCoste   := ( dbfPedCliL )->cCtrCoste
                   ( dbfTmpLin )->cTipCtr     := ( dbfPedCliL )->cTipCtr
                   ( dbfTmpLin )->cTerCtr     := ( dbfPedCliL )->cTerCtr
-                  ( dbfTmpLin )->nNumKit     := ( dbfPedCliL )->nNumKit
+                  //( dbfTmpLin )->nNumKit     := ( dbfPedCliL )->nNumKit
 
                end if
 

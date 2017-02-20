@@ -10,6 +10,7 @@ static dbfFacPrvT
 static dbfFacPrvL
 static lOpenFiles       := .f.
 static cTextoFinal      := ""
+static cTxtFile         := "c:\ficheros\B21230560.txt"
 
 //---------------------------------------------------------------------------//
 
@@ -19,14 +20,8 @@ function InicioHRB()
    local oFtp
    local oFile
    local oScript
-   local cTxtFile       := "c:\B21230560.txt"
-   local cFileFtp       := "B21230560.txt"
-   local cHostFtp       := "80.34.189.190"
-   local cUserFtp       := "jinfante"
-   local cPasswdFtp     := "B21230560"
-   local lPassiveFtp    := .t.
 
-   msginfo( "entro en el Script" )
+   MsgWait( "Iniciamos del Proceso", "¡Atención!", 1 )
 
    CursorWait()
 
@@ -50,19 +45,29 @@ function InicioHRB()
    Creamos el fichero para enviarlo--------------------------------------------
    */
 
-   CreaFichero()
+   Generate()
 
    /*
    Mandamos el fichero por FTP-------------------------------------------------
    */
 
-   //EnvioFtp( cTxtFile )
+   EnvioFichero()
 
    /*
    Cerramos los ficheros abiertos----------------------------------------------
    */
 
    CloseFiles()
+
+   /*
+   Eliminamos el fichero antes de irnos----------------------------------------
+   */
+
+   /*if File( cTxtFile )
+      fErase( cTxtFile )
+   end if*/
+
+   MsgWait( "Fin del Proceso", "¡Atención!", 1 )  
 
    CursorWe()
 
@@ -148,16 +153,13 @@ RETURN ( .t. )
 
 //----------------------------------------------------------------------------//
 
-function CreaFichero()
+function Generate()
 
    local desdeFecha     := GetSysDate() - 15
    local hastaFecha     := GetSysDate()
    local nOrdAnt        := ( dbfFacPrvL )->( OrdSetFocus( "dFecFac" ) )
 
    cTextoFinal          := ""
-
-   MsgInfo( desdeFecha, "desdefecha" )
-   MsgInfo( hastaFecha, "hastaFecha" )
 
    while !( dbfFacPrvL )->( Eof() )
 
@@ -166,7 +168,7 @@ function CreaFichero()
 
          msgWait( Str( ( dbfFacPrvL )->nNumFac ), "Atención", 0.01 )
 
-         cTextoFinal       += dtos( ( dbfFacPrvT )->dFecFac )                                         // Fecha del documento   Ancho 10
+         cTextoFinal       += dtoc( ( dbfFacPrvT )->dFecFac )                                         // Fecha del documento   Ancho 10
          cTextoFinal       += "|"
          cTextoFinal       += AllTrim( Str( ( dbfFacPrvT )->nNumFac ) )                               // Número del documento Ancho de 10
          cTextoFinal       += "|"
@@ -174,9 +176,9 @@ function CreaFichero()
          cTextoFinal       += "|"
          cTextoFinal       += AllTrim( ( dbfFacPrvL )->cRef )                                         // Referencia de proveedor Ancho Variable
          cTextoFinal       += "|"
-         cTextoFinal       += Trans( nTotNFacPrv( dbfFacPrvL ), MasUnd() )                            // Cantidad Ancho Variable
+         cTextoFinal       += AllTrim( Trans( nTotNFacPrv( dbfFacPrvL ), MasUnd() ) )                 // Cantidad Ancho Variable
          cTextoFinal       += "|"
-         cTextoFinal       += Trans( ( dbfFacPrvL )->nPreUnit, cPorDiv() )                            // Precio Ancho Variable
+         cTextoFinal       += AllTrim( Trans( ( dbfFacPrvL )->nPreUnit, cPorDiv() ) )                 // Precio Ancho Variable
          cTextoFinal       += "|"
          cTextoFinal       += AllTrim( ( dbfFacPrvT )->cDniPrv )                                      // Cif Proveedor Ancho Variable
          cTextoFinal       += "|"
@@ -193,39 +195,35 @@ function CreaFichero()
 
    end while
 
-   MsgInfo( cTextoFinal, "cTextoFinal" )
+   /*
+   Creamos el fichero para mandarlo por Ftp------------------------------------
+   */
+
+   CreaFichero() 
+   
+Return .t.
+
+//---------------------------------------------------------------------------//
+
+function CreaFichero()
+
+   local nHand       := fCreate( cTxtFile )
+
+   fWrite( nHand, cTextoFinal )
+   fClose( nHand )
 
 Return .t.
 
 //---------------------------------------------------------------------------//
 
-function EnvioFtp( cTxtFile )
+function EnvioFichero()
 
    if File( cTxtFile )
 
-      oInt         := TInternet():New()
-      oFtp         := TFtp():New( cHostFtp, oInt, cUserFtp, cPasswdFtp, lPassiveFtp )
-
-      if Empty( oFtp ) .or. Empty( oFtp:hFtp )
-
-         MsgStop( "Imposible conectar al sitio ftp " + cHostFtp )
-
-      else
-
-         oFile                   := TFtpFile():New( cTxtFile, oFtp )
-
-         if !oFile:PutFile()
-            Msginfo( "Error copiando fichero " + cTxtFile )
-         else
-            Msginfo( "Fichero enviado correctamente" )
-         end if
-
-         oFile:End()
-
-      end if
+      WinExec( "c:\amh\uploadcompras.cmd " + cTxtFile )
 
    end if
 
 Return .t.
 
-//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
