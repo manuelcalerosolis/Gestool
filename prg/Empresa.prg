@@ -3200,7 +3200,7 @@ Function SetEmpresa( cCodEmp, dbfEmp, dbfDlg, dbfUsr, oBrw )
 
    if Empty( cCodEmp )
 
-      if ( dbfEmp )->( LastRec() ) == 0
+      if ( dbfEmp )->( lastrec() ) == 0
          AppEmpresa()
       end if
 
@@ -3279,6 +3279,7 @@ Function SetEmpresa( cCodEmp, dbfEmp, dbfDlg, dbfUsr, oBrw )
    */
 
    cPatEmp( cCodEmp )
+   
    cPatScriptEmp( cCodEmp )
 
    /*
@@ -3367,17 +3368,6 @@ Function SetEmpresa( cCodEmp, dbfEmp, dbfDlg, dbfUsr, oBrw )
          ( dbfUsr )->( dbRUnLock() )
       end if
    end if
-
-   /*
-   Chequeo de existencia de tablas---------------------------------------------
-   */
-
-
-   // Chequeo del turno--------------------------------------------------------
-
-   // oMsgText( 'Cargando configuración de prestashop' )
-
-   // TComercioConfig():New( cCodEmp ):LoadJSON():getWebs()
 
    /*
    Cerrando ficheros-----------------------------------------------------------

@@ -7,7 +7,7 @@
 
 //---------------------------------------------------------------------------//
 
-CLASS TFastVentasArticulos FROM TFastReportInfGen
+CLASS TFastVentasArticulos FROM TFastReportInfGen 
 
    DATA  nSec
 
@@ -209,10 +209,8 @@ METHOD lResource( cFld ) CLASS TFastVentasArticulos
 
    ::cSubTitle       := "Informe de artículos"
 
-   if !::lTabletVersion
-      if !::NewResource()
-         return .f.
-      end if
+   if !::lTabletVersion .and. !::NewResource()
+      return .f.
    end if
 
    /*
@@ -330,7 +328,6 @@ METHOD OpenFiles() CLASS TFastVentasArticulos
    oBlock               := ErrorBlock( {| oError | ApoloBreak( oError ) } )
    BEGIN SEQUENCE
 
-      // ::lApplyFilters   := lAIS()
       ::cDriver         := cDriver()
 
       ::nView           := D():CreateView( ::cDriver )

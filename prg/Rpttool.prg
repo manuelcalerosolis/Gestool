@@ -84,8 +84,6 @@ Return nil
 
 Static Function controllerReportGallery( cInitOptions )
 
-   return ( msgalert( cInitOptions ) )
-
    do case
       case ( cInitOptions == "Articulos" )
          TFastVentasArticulos():New():Play()

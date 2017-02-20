@@ -968,14 +968,14 @@ Return ( ::nView )
 
          else 
 
-            msgStop( "No puedo encontrar la tabla " + cDataTable )   
+            msgStop( "No puedo encontrar la tabla " + cDataTable / 2 )   
 
          end if
 
       RECOVER USING oError
          msgStop( "Imposible abrir todas la base de datos" + CRLF + ErrorMessage( oError ) )
       END SEQUENCE
-      
+
       ErrorBlock( oBlock )
 
    Return ( uHandle )

@@ -1431,7 +1431,7 @@ Function Articulo( oMenuItem, oWnd, bOnInit )
 
    DEFINE BTNSHELL RESOURCE "gc_document_empty_chart_" OF oWndBrw ;
       NOBORDER ;
-      ACTION   ( runReportGalery( "Articulos" ) ) ; //  TFastVentasArticulos():New():Play() ) ;
+      ACTION   ( runFastGalery( "Articulos" ) ) ; //  TFastVentasArticulos():New():Play() ) ;
       TOOLTIP  "Rep(o)rting";
       HOTKEY   "O" ;
       LEVEL    ACC_IMPR

@@ -241,7 +241,7 @@ Return ( Self )
 
 //--------------------------------------------------------------------------//
 
-Method Create( cCodUsr, dbfUser, dbfCajas, cOldUsr, lCreateHandle )
+Method Create( cCodUsr, lCreateHandle )
 
    local nOrd
    local oError
@@ -255,7 +255,7 @@ Method Create( cCodUsr, dbfUser, dbfCajas, cOldUsr, lCreateHandle )
    oBlock                     := ErrorBlock( {| oError | ApoloBreak( oError ) } )
    BEGIN SEQUENCE
 
-   ::OpenFiles( dbfUser, dbfCajas )
+   ::OpenFiles()
 
    ::_NotCambiarPrecioGrupo   := nil
    ::_NotRentabilidadGrupo    := nil
@@ -267,10 +267,6 @@ Method Create( cCodUsr, dbfUser, dbfCajas, cOldUsr, lCreateHandle )
    nOrd                       := ( ::oDbf )->( OrdSetFocus( "cCodUse" ) )
 
    if ( ::oDbf )->( dbSeek( cCodUsr ) )
-
-      if !Empty( cOldUsr )
-         ::lQuitUser( cOldUsr )
-      end if
 
       if !lCreateHandle .or. ::CreateHandle( cCodUsr ) != -1
 
@@ -714,21 +710,21 @@ Return ( ::_Empresa )
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 
-Function oUser( cCodUsr, dbfUser, dbfCajas, cOldUsr, lCreateHandle )
+Function oUser( cCodUsr, lCreateHandle )
 
    if oUser == nil
-      oUser := TUser():Create( cCodUsr, dbfUser, dbfCajas, cOldUsr, lCreateHandle )
+      oUser := TUser():Create( cCodUsr, lCreateHandle )
    end if
 
 Return ( oUser )
 
 //--------------------------------------------------------------------------//
 
-Function oSetUsr( cCodUsr, dbfUser, dbfCajas, cOldUsr, lCreateHandle )
+Function oSetUsr( cCodUsr, lCreateHandle )
 
    oUser := TUser()
-   oUser:OpenFiles( dbfUser, dbfCajas )
-   oUser:Create( cCodUsr, dbfUser, dbfCajas, cOldUsr, lCreateHandle )
+   oUser:OpenFiles()
+   oUser:Create( cCodUsr, lCreateHandle )
    oUser:CloseFiles()
 
 Return ( oUser )

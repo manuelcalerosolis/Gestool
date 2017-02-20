@@ -599,7 +599,7 @@ METHOD SelectTactilResource( nOpt, oDlg, oLstUsr ) CLASS AccessCode
 
          if lGetPsw( ::dbfUser, .t. )
 
-            oUser    := oSetUsr( ( ::dbfUser )->cCodUse, ::dbfUser, ::dbfCajas, nil, .t. )
+            oUser    := oSetUsr( ( ::dbfUser )->cCodUse, .t. )
             if oUser:lCreated
                oUser:Save( ::dbfUser )
             end if

@@ -40,23 +40,16 @@ static hDLLRich
 -------------------------------------------------------------------------------
 */
 
-function Main( paramsMain, paramsSecond )
+function Main( paramsMain, paramsSecond, paramsThird )
 
-   local nError
-   local cError
    local oIndex
    local oIconApp
    
-   local dbfUser
-   local hAdsConnection
-
-   local oDataUser
-   local oDataTable
-
-   local cSqlQuery
-   local lSqlQuery
-
    appParamsMain( paramsMain )
+
+   appParamsSecond( paramsSecond )
+   
+   appParamsThird( paramsThird )
 
    appSettings()
    
@@ -76,21 +69,23 @@ function Main( paramsMain, paramsSecond )
    // Motor de bases de datos--------------------------------------------------
 
    if ( "ADSINTERNET" $ cAdsType() )
-
       if !( appConnectADS() )
          msgStop( "Imposible conectar con GstApolo ADS data dictionary" )
          Return nil
       end if
-      
-   else 
 
+   else 
       appConnectCDX()
 
    end if
 
    TDataCenter():BuildData()
 
-   // Opciones especiales de arranque hace la operacion y salir-------------------
+   // Icono--------------------------------------------------------------------
+
+   DEFINE ICON oIconApp RESOURCE "Gestool"
+
+   // Opciones especiales de arranque hace la operacion y salir----------------
 
    do case
       case ( "ENVIO" $ appParamsMain() )
@@ -125,15 +120,17 @@ function Main( paramsMain, paramsSecond )
             cEmpUsr( Right( appParamsMain(), 2 ) )
          end if
 
+      case ( !empty( appParamsSecond() ) .and. !empty( appParamsThird() ) )
+
+         oUser( appParamsMain(), .f. )
+
+         setEmpresa( appParamsSecond() )
+
+         controllerReportGallery( appParamsThird() )
+
+         return nil
+
    end case
-
-   // Iconos-------------------------------------------------------------------
-
-   DEFINE ICON oIconApp RESOURCE "Gestool"
-
-   // Chequeamos el directorio de datos
-
-   if( !lIsDir( cPatDat() ),  MakeDir( cNamePath( cPatDat() ) ), )
 
    // Obtenemos la versión del programa----------------------------------------
 
@@ -148,7 +145,7 @@ function Main( paramsMain, paramsSecond )
    if !TReindex():lFreeHandle()
       msgStop( "Existen procesos exclusivos, no se puede acceder a la aplicación" + CRLF + ;
                "en estos momentos, reintentelo pasados unos segundos." )
-      return .f.
+      Return .f.
    end if
 
    XbrNumFormat( "E", .t. )
@@ -180,15 +177,26 @@ function Main( paramsMain, paramsSecond )
 
    end case
 
-   dbCloseAll()
-
-   if oIconApp != nil
+   if !empty( oIconApp )
       oIconApp:end()
    end if
 
 Return Nil
 
 //----------------------------------------------------------------------------//
+
+Static Function controllerReportGallery( cInitOptions )
+
+   do case
+      case ( cInitOptions == "ARTICULOS" )
+         msgalert(cInitOptions, "cInitOptions")
+         TFastVentasArticulos():New():Play()
+
+   end case
+
+Return nil
+
+//---------------------------------------------------------------------------//
 
 Function HelpTopic()
 
@@ -394,7 +402,7 @@ FUNCTION AccesTctCode()
       SysRefresh()
 
       if oDlg:nResult == IDOK
-         oSetUsr( ( dbfUser )->cCodUse, dbfUser, dbfCajas, nil, .t. ):Save( dbfUser, dbfCajas )
+         oSetUsr( ( dbfUser )->cCodUse, .t. ):Save( dbfUser, dbfCajas )
       end if
 
    RECOVER USING oError

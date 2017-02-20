@@ -55,6 +55,8 @@ static cAdsFile         := "Gestool.Add"
 static cAdsType         := ""
 
 static appParamsMain    := ""
+static appParamsSecond  := ""
+static appParamsThird   := ""
 
 static cCodigoAgente    := ""
 
@@ -140,9 +142,9 @@ Function CreateMainWindow( oIconApp )
    oWnd:oMsgBar               := TMsgBar():New( oWnd, __GSTCOPYRIGHT__ + Space(2) + cNameVersion(), .f., .f., .f., .f., Rgb( 0,0,0 ), Rgb( 255,255,255 ), , .f. )
    oWnd:oMsgBar:setFont( oFontLittelTitle() )
 
-   oDlgProgress               := TMsgItem():New( oWnd:oMsgBar, "", 100,,,, .t. )
+   oDlgProgress               := TMsgItem():New( oWnd:oMsgBar, "", 100, , , , .t. )
 
-   oWnd:oMsgBar:oDate         := TMsgItem():New( oWnd:oMsgBar, Dtoc( GetSysDate() ), oWnd:oMsgBar:GetWidth( DToC( GetSysDate() ) ) + 12,,,, .t., { || SelSysDate() } )
+   oWnd:oMsgBar:oDate         := TMsgItem():New( oWnd:oMsgBar, Dtoc( GetSysDate() ), oWnd:oMsgBar:GetWidth( dtoc( getsysdate() ) ) + 12,,,, .t., { || SelSysDate() } )
    oWnd:oMsgBar:oDate:lTimer  := .t.
    oWnd:oMsgBar:oDate:bMsg    := {|| GetSysDate() }
    oWnd:oMsgBar:CheckTimer()
@@ -916,15 +918,21 @@ Static Function FinishAplication() //  Static Function
       WritePProString( "main", "Ultima Empresa", cCodEmp(), cIniAplication() )
    end if 
 
+   // liberar el usuario-------------------------------------------------------
+
    lFreeUser()
+
+   // Cerramos el report-------------------------------------------------------
+
+   closeReportGallery()
 
    // Cerramos las auditorias--------------------------------------------------
 
-   StopServices()
+   stopServices()
 
    // Cerramos el Activex------------------------------------------------------
 
-   CloseWebBrowser()
+   closeWebBrowser()
 
    // Limpiamos los recursos estaticos-----------------------------------------
 
@@ -934,13 +942,7 @@ Static Function FinishAplication() //  Static Function
 
    freeResources()
 
-   // Cerramos el report-------------------------------------------------------
-
-   closeReportGallery()
-
-   CursorWE()
-
-   ferase( "chekres.txt" )
+   cursorWE()
 
    checkRes()
 
@@ -4239,6 +4241,18 @@ Return ( cCodigoDelegacionEnUso )
 
 //---------------------------------------------------------------------------//
 
+Function setPathEmpresa( cCodEmp )
+
+   cPatEmp( cCodEmp )
+   cPatCli( cCodEmp, nil, .t. )
+   cPatArt( cCodEmp, nil, .t. )
+   cPatPrv( cCodEmp, nil, .t. )
+   cPatAlm( cCodEmp, nil, .t. )
+
+Return ( nil )
+
+//---------------------------------------------------------------------------//
+
 FUNCTION GetCodEmp( dbfEmp )
 
    local oBlock
@@ -5461,6 +5475,26 @@ Return ( appParamsMain )
 
 //---------------------------------------------------------------------------//
 
+Function appParamsSecond( paramsSecond )
+
+   if !empty( paramsSecond )
+      appParamsSecond   := upper( paramsSecond )
+   end if 
+
+Return ( appParamsSecond )
+
+//---------------------------------------------------------------------------//
+
+Function appParamsThird( paramsThird )
+
+   if !empty( paramsThird )
+      appParamsThird   := upper( paramsThird )
+   end if 
+
+Return ( appParamsThird )
+
+//---------------------------------------------------------------------------//
+
 Function appConnectADS()
 
     local TDataCenter     := TDataCenter()
@@ -5513,6 +5547,7 @@ Function runReportGalery( cFastReport )
 
       nHndReport        := winExec( fullCurDir() + "RptApolo.Exe " + cCodEmp() + " " + cCurUsr() + " " + cFastReport, 1 )
 
+
       if !( nHndReport > 21 .or. nHndReport < 0 )
          msgStop( "Error en la ejecución de la galeria de informes" )
       end if
@@ -5523,10 +5558,38 @@ Return nil
 
 //---------------------------------------------------------------------------//
 
+Function runFastGalery( cFastReport )
+
+   local nLevel         := nLevelUsr( "01119" )
+
+   DEFAULT cFastReport  := ""
+
+   if nAnd( nLevel, 1 ) != 0
+      msgStop( "Acceso no permitido." )
+      Return nil
+   end if
+
+   if DirChange( fullCurDir() ) != 0
+      MsgStop( "No puedo cambiar al directorio " + fullCurDir() )
+      Return nil
+   end if
+
+   if file( fullCurDir() + "GesTool.Exe" )
+      nHndReport        := winExec( fullCurDir() + "GesTool.Exe " + cCurUsr() + " " + cCodEmp() + " " + cFastReport, 1 )
+
+      if !( nHndReport > 21 .or. nHndReport < 0 )
+         msgStop( "Error en la ejecución de la galeria de informes" )
+      end if
+   end if
+
+Return nil
+
+//---------------------------------------------------------------------------//
+
 Function closeReportGallery()
 
-   if !Empty( nHndReport )
-      PostMessage( nHndReport, WM_CLOSE )
+   if !empty( nHndReport )
+      postMessage( nHndReport, WM_CLOSE )
    end if
 
 Return nil

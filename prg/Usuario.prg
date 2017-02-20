@@ -829,7 +829,7 @@ Static Function SaveUser( aTmp, aGet, dbfUser, oTree, oBrw, oDlg, nMode, oGet )
    */
 
    if ( dbfUser )->cCodUse == cCurUsr()
-      oSetUsr( ( dbfUser )->cCodUse, dbfUser, dbfCajT, nil, .f. )
+      oSetUsr( ( dbfUser )->cCodUse, .f. )
    end if
 
 Return ( oDlg:end( IDOK ) )
@@ -1704,7 +1704,7 @@ Cambia el usuario actual por el q nos pasen
 FUNCTION lChgUser( cCodUsr, dbfUsr, oWndBrw, dbfCajT )
 
    if lGetPsw( dbfUsr )
-      oSetUsr( ( dbfUsr )->cCodUse, dbfUsr, dbfCajT, cCurUsr(), .t. ):Save( ( dbfUsr )->cCodUse, dbfUsr )
+      oSetUsr( ( dbfUsr )->cCodUse, .t. ):Save( ( dbfUsr )->cCodUse, dbfUsr )
    end if
 
    if oWndBrw != nil
@@ -2351,7 +2351,7 @@ Static Function SelBrwBigUser( nOpt, oDlg, dbfUsr, dbfCaj )
 
    end if
 
-   oSetUsr( ( dbfUsr )->cCodUse, dbfUsr, dbfCaj, cCurUsr(), .t. ):Save( ( dbfUsr )->cCodUse, dbfUsr )
+   oSetUsr( ( dbfUsr )->cCodUse, .t. ):Save( ( dbfUsr )->cCodUse, dbfUsr )
 
    oLstUsr:nOption   := 0
 
@@ -2597,7 +2597,7 @@ FUNCTION lChkUser( cGetNbr, cGetPas, oBtn )
    // Creacion del objeto usuario----------------------------------------------
 
    if !lError
-      oUser       := oSetUsr( ( dbfUser )->cCodUse, dbfUser, dbfCajas, nil, .t. )
+      oUser       := oSetUsr( ( dbfUser )->cCodUse, .t. )
       if oUser:lCreated
          oUser:Save( dbfUser )
       end if

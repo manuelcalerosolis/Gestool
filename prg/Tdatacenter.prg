@@ -1067,21 +1067,17 @@ METHOD ScanDataTable( cDataTable ) CLASS TDataCenter
    local nScan
    local cDataName
 
+   cDataName         := ::DatosName( cDataTable )
 
-   cDataName   := ::DatosName( cDataTable )
-
-   nScan       := aScan( ::aDataTables, {|o| o:getName() == cDataName } )   
+   nScan             := aScan( ::aDataTables, {|o| o:getName() == cDataName } )   
    if nScan != 0
       Return ( ::aDataTables[ nScan ] )
    end if 
 
+   cDataName         := ::EmpresaName( cDataTable )
 
-   cDataName   := ::EmpresaName( cDataTable )
-
-   nScan       := aScan( ::aEmpresaTables, {|o| o:getName() == cDataName } )   
+   nScan             := aScan( ::aEmpresaTables, {|o| o:getName() == cDataName } )   
    if nScan != 0
-   
-   
       Return ( ::aEmpresaTables[ nScan ] )
    end if 
 
@@ -1093,7 +1089,7 @@ METHOD ScanDataArea( cArea ) CLASS TDataCenter
 
    local nScan
 
-   nScan    := aScan( ::aDataTables, {|o| o:cArea == cArea } )   
+   nScan       := aScan( ::aDataTables, {|o| o:cArea == cArea } )   
    if nScan != 0
       Return ( ::aDataTables[ nScan ] )
    end if 
