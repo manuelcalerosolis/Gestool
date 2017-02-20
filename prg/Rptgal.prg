@@ -117,21 +117,6 @@ Return nil
 
 //---------------------------------------------------------------------------//
 
-Static Function controllerReportGallery( cInitOptions )
-
-   do case
-      case empty( cInitOptions )
-         reportBar()
-
-      case ( cInitOptions == "Articulos" )
-         TFastVentasArticulos():New():Play()
-
-   end case
-
-Return nil
-
-//---------------------------------------------------------------------------//
-
 Function oWnd() ; Return ( nil )
 
 //---------------------------------------------------------------------------//

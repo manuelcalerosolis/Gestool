@@ -922,10 +922,6 @@ Static Function FinishAplication() //  Static Function
 
    lFreeUser()
 
-   // Cerramos el report-------------------------------------------------------
-
-   closeReportGallery()
-
    // Cerramos las auditorias--------------------------------------------------
 
    stopServices()
@@ -2642,7 +2638,7 @@ Function CreateAcceso( oWnd )
    oItem:oGroup         := oGrupo
    oItem:cPrompt        := 'Artículos'
    oItem:cMessage       := 'Informes realacionados con articulos'
-   oItem:bAction        := {|| if( validRunReport( "01118" ), TFastVentasArticulos():New():Play(), ) }
+   oItem:bAction        := {|| runFastGallery( "Articulos" ) }
    oItem:cId            := "01118"
    oItem:cBmp           := "gc_object_cube_print_16"
    oItem:cBmpBig        := "gc_object_cube_print_32"
@@ -2652,7 +2648,7 @@ Function CreateAcceso( oWnd )
    oItem:oGroup         := oGrupo
    oItem:cPrompt        := 'Clientes'
    oItem:cMessage       := 'Informes realacionados con clientes'
-   oItem:bAction        := {|| if( validRunReport( "01120" ), TFastVentasClientes():New():Play(), ) }
+   oItem:bAction        := {|| runFastGallery( "Clientes" ) }
    oItem:cId            := "01120"
    oItem:cBmp           := "gc_user_print_16"
    oItem:cBmpBig        := "gc_user_print_32"
@@ -2662,7 +2658,7 @@ Function CreateAcceso( oWnd )
    oItem:oGroup         := oGrupo
    oItem:cPrompt        := 'Proveedores'
    oItem:cMessage       := 'Informes realacionados con proveedores'
-   oItem:bAction        := {|| if( validRunReport( "01121" ), TFastComprasProveedores():New():Play(), ) }
+   oItem:bAction        := {|| runFastGallery( "Proveedores" ) }
    oItem:cId            := "01121"
    oItem:cBmp           := "gc_businessman_print_16"
    oItem:cBmpBig        := "gc_businessman_print_32"
@@ -2672,7 +2668,7 @@ Function CreateAcceso( oWnd )
    oItem:oGroup         := oGrupo
    oItem:cPrompt        := 'Producción'
    oItem:cMessage       := 'Informes realacionados con la producción'
-   oItem:bAction        := {|| if( validRunReport( "01123" ), TFastProduccion():New():Play(), ) }
+   oItem:bAction        := {|| runFastGallery( "Produccion" ) }
    oItem:cId            := "01123"
    oItem:cBmp           := "gc_worker2_print_16"
    oItem:cBmpBig        := "gc_worker2_print_32"
@@ -5558,7 +5554,7 @@ Return nil
 
 //---------------------------------------------------------------------------//
 
-Function runFastGalery( cFastReport )
+Function runFastGallery( cFastReport )
 
    local nLevel         := nLevelUsr( "01119" )
 
@@ -5569,7 +5565,7 @@ Function runFastGalery( cFastReport )
       Return nil
    end if
 
-   if DirChange( fullCurDir() ) != 0
+   if dirchange( fullCurDir() ) != 0
       MsgStop( "No puedo cambiar al directorio " + fullCurDir() )
       Return nil
    end if
@@ -5580,16 +5576,6 @@ Function runFastGalery( cFastReport )
       if !( nHndReport > 21 .or. nHndReport < 0 )
          msgStop( "Error en la ejecución de la galeria de informes" )
       end if
-   end if
-
-Return nil
-
-//---------------------------------------------------------------------------//
-
-Function closeReportGallery()
-
-   if !empty( nHndReport )
-      postMessage( nHndReport, WM_CLOSE )
    end if
 
 Return nil

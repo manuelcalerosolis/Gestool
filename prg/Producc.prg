@@ -580,7 +580,7 @@ METHOD Activate( cDriver )
 
    DEFINE BTNSHELL RESOURCE "gc_document_empty_chart_" OF ::oWndBrw ;
       NOBORDER ;
-      ACTION   ( if( validRunReport( "01123" ), TFastProduccion():New():Play(), ) ) ;
+      ACTION   ( runFastGallery( "Produccion" ) ) ;
       TOOLTIP  "Rep(o)rting";
       HOTKEY   "O" ;
       LEVEL    ACC_IMPR

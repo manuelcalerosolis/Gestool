@@ -12,7 +12,8 @@
 #require "hbcurl"
 
 #define GR_GDIOBJECTS         0      /* Count of GDI objects */
-#define GR_USEROBJECTS        1      /* Count of USER objects */
+#define GR_USEROBJECTS        1   
+   /* Count of USER objects */
 
 #define CS_DBLCLKS            8
 
@@ -187,10 +188,32 @@ Return Nil
 
 Static Function controllerReportGallery( cInitOptions )
 
+   local hReportGallery    
+
    do case
-      case ( cInitOptions == "ARTICULOS" )
-         msgalert(cInitOptions, "cInitOptions")
-         TFastVentasArticulos():New():Play()
+      case cInitOptions == "ARTICULOS"
+
+         if validRunReport( "01118" )
+            TFastVentasArticulos():New():Play()
+         end if 
+
+      case cInitOptions == "CLIENTES"
+
+         if validRunReport( "01120" )
+            TFastVentasClientes():New():Play()
+         end if 
+
+      case cInitOptions == "PROVEEDORES"
+
+         if validRunReport( "01121" )
+            TFastComprasProveedores():New():Play()
+         end if 
+
+      case cInitOptions == "PRODUCCION"
+
+         if validRunReport( "01123" )
+            TFastProduccion():New():Play()
+         end if 
 
    end case
 
@@ -1053,70 +1076,4 @@ Return ( nil )
 
 //---------------------------------------------------------------------------//
 
-static function Informe1()
-
-   local oInf
-
-   oInf  := TFastVentasClientes():New()
-   oInf:lTabletVersion                 := .t.
-   oInf:cReportType                    := "Recibos cobro"
-   oInf:cReportDirectory               := cPatReporting() + "Clientes\Ventas\RecibosCobro"
-   oInf:cReportName                    := "Diario recibos tablet"
-   oInf:cReportFile                    := cPatReporting() + "Clientes\Ventas\RecibosCobro\Diario recibos tablet.fr3"
-   oInf:dIniInf                        := GetSysDate()
-   oInf:dFinInf                        := GetSysDate()
-   oInf:bPreGenerate                   := {|| oInf:oGrupoSufijo:Cargo:Desde       := Rtrim( oUser():cDelegacion() ),;
-                                              oInf:oGrupoSufijo:Cargo:Hasta       := Rtrim( oUser():cDelegacion() ) }
-
-   oInf:PlayTablet()
-
-   oInf:end()
-
-RETURN NIL
-
-//---------------------------------------------------------------------------//
-
-static function Informe2()
-
-   local oInf
-
-   oInf  := TFastVentasClientes():New()
-   oInf:lTabletVersion                 := .t.
-   oInf:cReportType                    := "Facturas de clientes"
-   oInf:cReportDirectory               := cPatReporting() + "Clientes\Ventas\Facturas de clientes"
-   oInf:cReportName                    := "Diario facturas tablet"
-   oInf:cReportFile                    := cPatReporting() + "Clientes\Ventas\Facturas de clientes\Diario facturas tablet.fr3"
-   oInf:dIniInf                        := GetSysDate()
-   oInf:dFinInf                        := GetSysDate()
-   oInf:bPreGenerate                   := {|| oInf:oGrupoSufijo:Cargo:Desde       := Rtrim( oUser():cDelegacion() ),;
-                                              oInf:oGrupoSufijo:Cargo:Hasta       := Rtrim( oUser():cDelegacion() ) }
-
-   oInf:PlayTablet()
-
-   oInf:end()
-
-RETURN NIL 
-
-//---------------------------------------------------------------------------//
-
-static function Informe3()
-
-   local oInf
-
-   oInf  := TFastVentasArticulos():New()
-   oInf:lTabletVersion                 := .t.
-   oInf:cReportType                    := "Stocks"
-   oInf:cReportDirectory               := cPatReporting() + "Articulos\Existencias\Stocks"
-   oInf:cReportName                    := "Stocks artículos tablet"
-   oInf:cReportFile                    := cPatReporting() + "Articulos\Existencias\Stocks\Stocks artículos tablet.fr3"
-   oInf:cAlmacenDefecto                := oUser():cAlmacen()
-   oInf:BuildReportCorrespondences()
-
-   oInf:PlayTablet()
-
-   oInf:end()
-
-RETURN NIL 
-
-//---------------------------------------------------------------------------//
 

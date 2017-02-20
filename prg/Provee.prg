@@ -556,7 +556,7 @@ FUNCTION Provee( oMenuItem, oWnd )
 
    DEFINE BTNSHELL RESOURCE "gc_document_empty_chart_" GROUP OF oWndBrw ;
 		NOBORDER ;
-      ACTION   ( ReportingClient() ) ;
+      ACTION   ( runFastGallery( "Proveedores" ) ) ;
       TOOLTIP  "Rep(o)rting";
       HOTKEY   "O" ;
       LEVEL    ACC_IMPR
@@ -5505,13 +5505,6 @@ FUNCTION cCtaBanPrv( cCodPrv, dbfBanco )
    end if
 
 Return ( cText )
-
-static Function ReportingClient()
-
-   oReporting  := TFastComprasProveedores():New()
-   oReporting:Play()
-
-Return( oReporting )
 
 //---------------------------------------------------------------------------//
 

@@ -1018,7 +1018,7 @@ FUNCTION Client( oMenuItem, oWnd, cCodCli )
 
       DEFINE BTNSHELL RESOURCE "gc_document_empty_chart_" GROUP OF oWndBrw ;
          NOBORDER ;
-         ACTION   ( ReportingClient() ) ;
+         ACTION   ( runFastGallery( "Clientes" ) ) ;
          TOOLTIP  "Rep(o)rting";
          HOTKEY   "O" ;
          LEVEL    ACC_IMPR
@@ -11582,17 +11582,6 @@ Static Function lArticuloEnOferta( cCodigoArticulo, cCodigoCliente, cCodigoGrupo
    end if
 
 Return ( lOferta )
-
-//---------------------------------------------------------------------------//
-
-Static Function ReportingClient()
-
-   if validRunReport( "01120" )
-      oReporting        := TFastVentasClientes():New()
-      oReporting:Play()
-   end if
-
-Return ( oReporting )
 
 //---------------------------------------------------------------------------//
 
