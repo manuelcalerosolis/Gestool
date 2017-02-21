@@ -4567,10 +4567,17 @@ METHOD getUnidadesVendidas( cCodArt, cCodAlm ) CLASS TFastVentasArticulos
 
    end if
 
+<<<<<<< HEAD
    if ( D():FacturasClientesLineas( ::nView ) )->( dbseek( idLine ) )
 
       while ( D():FacturasClientesLineas( ::nView ) )->cRef + ( D():FacturasClientesLineas( ::nView ) )->cAlmLin + dtos( ( D():FacturasClientesLineas( ::nView ) )->dFecFac ) == idLine .and. ;
             !( D():FacturasClientesLineas( ::nView ) )->( eof() )
+=======
+   if ::oFacCliL:Seek( Padr( cCodArt, 18 ) + Padr( cCodAlm, 16 ) + dtos( GetSysDate() ) )
+
+      while ::oFacCliL:cRef + ::oFacCliL:cAlmLin + dtos( ::oFacCliL:dFecFac ) == Padr( cCodArt, 18 ) + Padr( cCodAlm, 16 ) + dtos( GetSysDate() ) .and.;
+            !::oFacCliL:Eof()
+>>>>>>> 76ea993cd63d256cd8f9869ac184308c5352c46e
 
          nTotal      += nTotNFacCli( ( D():FacturasClientesLineas( ::nView ) ) )
 
