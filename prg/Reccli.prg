@@ -4798,7 +4798,7 @@ FUNCTION genPgoFacCli( cNumFac, cFacCliT, cFacCliL, cFacCliP, cAntCliT, cClient,
    Ya nos viene sin los anticipos
    */
 
-   if lDiferencia( nTotal, nTotCob, 0.1 )
+   if lDiferencia( nTotal, nTotCob, 0.001 )
 
       /*
       Si no hay recibos pagados eliminamos los recibos y se vuelven a generar

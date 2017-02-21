@@ -77,8 +77,11 @@ METHOD ExecuteReportingCliente( hInforme, oDevice ) CLASS Reporting
    oInf:cReportFile        := hGet( hInforme, "cReportFile" )
    oInf:dIniInf            := GetSysDate()
    oInf:dFinInf            := GetSysDate()
-   oInf:bPreGenerate       := {|| oInf:oGrupoSufijo:Cargo:Desde       := Rtrim( oUser():cDelegacion() ),;
-                                  oInf:oGrupoSufijo:Cargo:Hasta       := Rtrim( oUser():cDelegacion() ) }
+
+   if ( GetPvProfString( "Tablet", "FiltroDelecagionReporting", ".T.", cIniAplication() ) == ".T." )
+      oInf:bPreGenerate       := {|| oInf:oGrupoSufijo:Cargo:Desde       := Rtrim( oUser():cDelegacion() ),;
+                                     oInf:oGrupoSufijo:Cargo:Hasta       := Rtrim( oUser():cDelegacion() ) }
+   end if
 
    oInf:PlayTablet( , oDevice )
 
