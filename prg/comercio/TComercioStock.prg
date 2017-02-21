@@ -397,7 +397,7 @@ METHOD getCommandProductToUpdate( hProduct )
 
       idProductAttribute      := ::TPrestashopId():getValueProductAttributeCombination( hget( hProduct, "id" ) + hget( hStock, "idFirstProperty" ) + hget( hStock, "valueFirstProperty" ) + hget( hStock, "idSecondProperty" ) + hget( hStock, "valueSecondProperty" ), ::getCurrentWebName() )
 
-      if ( idProductAttribute != 0 ) .and. ( hget( hStock, "unitStock" ) > 0 )
+      if ( .t. ) // ( idProductAttribute != 0 ) .and. ( hget( hStock, "unitStock" ) > 0 )
 
          cCommand             += "INSERT INTO " + ::cPrefixTable( "stock_available" ) + " ( "                           + ;
                                     "id_product, "                                                                      + ;
@@ -420,7 +420,7 @@ METHOD getCommandProductToUpdate( hProduct )
 
       end if
 
-      cText                   := 'Actualizando stock con propiedades ' 
+      cText                   := 'Actualizando stock, propiedades ' 
       cText                   += alltrim( hget( hProduct, "id" ) )                                                      + ', ' 
       cText                   += alltrim( str( hget( hProduct, "idProductPrestashop" ) ) )                              + ', ' 
       cText                   += alltrim( hget( hStock, "valueFirstProperty"  ) )                                       + ', ' 

@@ -70,12 +70,14 @@ function Main( paramsMain, paramsSecond, paramsThird )
    // Motor de bases de datos--------------------------------------------------
 
    if ( "ADSINTERNET" $ cAdsType() )
+
       if !( appConnectADS() )
          msgStop( "Imposible conectar con GstApolo ADS data dictionary" )
          Return nil
       end if
 
    else 
+      
       appConnectCDX()
 
    end if

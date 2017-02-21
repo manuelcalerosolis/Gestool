@@ -2086,9 +2086,7 @@ METHOD insertStockProduct( hStock ) CLASS TComercioProduct
 
    ::commandExecDirect( cCommand )
 
-   if ( unitStock != 0 ) 
-
-      cCommand                   := "INSERT INTO " + ::cPrefixTable( "stock_available" ) + " ( "                        + ;
+   cCommand                      := "INSERT INTO " + ::cPrefixTable( "stock_available" ) + " ( "                        + ;
                                        "id_product, "                                                                   + ;
                                        "id_product_attribute, "                                                         + ;
                                        "id_shop, "                                                                      + ;
@@ -2105,13 +2103,11 @@ METHOD insertStockProduct( hStock ) CLASS TComercioProduct
                                        "'0', "                                                                          + ;
                                        "'2' )"
 
-      ::commandExecDirect( cCommand )
+   ::commandExecDirect( cCommand )
 
-      ::writeText(   "Actualizando stock con propiedades : " + alltrim( str( attributeFirstProperty ) ) + " , " + ;
-                     alltrim( str( attributeSecondProperty ) ) + ", " + ;
-                     "cantidad : " + alltrim( str( unitStock ) ) )
-
-   end if
+   ::writeText(   "Actualizando stock con propiedades : " + alltrim( str( attributeFirstProperty ) ) + " , " + ;
+                  alltrim( str( attributeSecondProperty ) ) + ", " + ;
+                  "cantidad : " + alltrim( str( unitStock ) ) )
 
 Return .t.   
 
