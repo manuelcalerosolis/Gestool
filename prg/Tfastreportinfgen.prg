@@ -2436,14 +2436,14 @@ SAT----------------------------------------------------------------------------
 
 METHOD FastReportSATCliente()
       
-   ::oSatCliT:OrdSetFocus( "iNumSat" )
+   ( D():SATClientes( ::nView ) )->( ordsetfocus( "iNumSat" ) )
       
-   ::oFastReport:SetWorkArea(       "SAT de clientes", ::oSatCliT:nArea )
+   ::oFastReport:SetWorkArea(       "SAT de clientes", ( D():SATClientes( ::nView ) )->( select() ) )
    ::oFastReport:SetFieldAliases(   "SAT de clientes", cItemsToReport( aItmSatCli() ) )
       
-   ::oSatCliL:OrdSetFocus( "iNumSat" )
+   ( D():SATClientesLineas( ::nView ) )->( ordsetfocus( "iNumSat" ) )
       
-   ::oFastReport:SetWorkArea(       "Lineas SAT de clientes", ::oSatCliL:nArea )
+   ::oFastReport:SetWorkArea(       "Lineas SAT de clientes", ( D():SATClientesLineas( ::nView ) )->( select() ) )
    ::oFastReport:SetFieldAliases(   "Lineas SAT de clientes", cItemsToReport( aColSatCli() ) )
    
    ::oFastReport:SetMasterDetail(   "Informe", "SAT de clientes",          {|| ::idDocumento() } )

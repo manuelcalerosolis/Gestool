@@ -20872,7 +20872,7 @@ FUNCTION ChkLqdFacCli( aTmp, cFacCliT, cFacCliL, cFacCliP, cAntCliT, dbfIva, dbf
    nPagFacCli     := abs( nTotalRecibosPagadosFacturasCliente( cFactura, cFacCliT, cFacCliP, dbfIva, dbfDiv ) )
    nPagFacCli     += abs( nTotAntFacCli( cFactura, cAntCliT, dbfIva, dbfDiv, nil, .f. ) )
 
-   lChkLqd                       := !lMayorIgual( nTotal, nPagFacCli, 0.1 )
+   lChkLqd                       := !lMayorIgual( nTotal, nPagFacCli, 0.001 )
 
    if aTmp != nil
       aTmp[ _LLIQUIDADA ]        := lChkLqd
