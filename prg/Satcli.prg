@@ -2797,7 +2797,8 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, cCodCli, cCodArt, nMode )
          WHEN     ( .F. ) ;
          OF       oFld:aDialogs[1]
 
-      REDEFINE COMBOBOX aGet[ _CSITUAC ] VAR aTmp[ _CSITUAC ] ;
+      REDEFINE COMBOBOX aGet[ _CSITUAC ] ;
+         VAR      aTmp[ _CSITUAC ] ;
          ID       218 ;
          WHEN     ( nMode != ZOOM_MODE ) ;
          ITEMS    ( TSituaciones():GetInstance():GetSituaciones() ) ;
