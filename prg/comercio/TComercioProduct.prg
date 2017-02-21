@@ -2081,8 +2081,8 @@ METHOD insertStockProduct( hStock ) CLASS TComercioProduct
    end if 
 
    cCommand                      := "DELETE FROM " + ::cPrefixTable( "stock_available" ) + " "                          + ;
-                                    "WHERE id_product = " + alltrim( str( idProductPrestashop ) ) + " "                 + ;
-                                    "AND id_product_attribute = " + alltrim( str( idProductAttribute ) )
+                                       "WHERE id_product = " + alltrim( str( idProductPrestashop ) ) + " "              + ;
+                                       "AND id_product_attribute = " + alltrim( str( idProductAttribute ) )
 
    ::commandExecDirect( cCommand )
 
