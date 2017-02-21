@@ -358,6 +358,8 @@ METHOD OpenFiles() CLASS TFastVentasArticulos
 
       D():FacturasClientesLineas( ::nView )
 
+      D():FacturasClientesCobros( ::nView )
+
       D():ProveedorArticulo( ::nView )
 
       DATABASE NEW ::oArtImg  PATH ( cPatArt() ) CLASS "ArtImg"      FILE "ArtImg.Dbf"  VIA ( ::cDriver ) SHARED INDEX "ArtImg.Cdx"
@@ -367,12 +369,6 @@ METHOD OpenFiles() CLASS TFastVentasArticulos
       DATABASE NEW ::oArtCod  PATH ( cPatArt() ) CLASS "ArtCodebar"  FILE "ArtCodebar.Dbf"  VIA ( ::cDriver ) SHARED INDEX "ArtCodebar.Cdx"
 
       DATABASE NEW ::oArtCod  PATH ( cPatArt() ) CLASS "ArtCodebar"  FILE "ArtCodebar.Dbf"  VIA ( ::cDriver ) SHARED INDEX "ArtCodebar.Cdx"
-
-      ::oFacCliT  := TDataCenter():oFacCliT()  
-
-      DATABASE NEW ::oFacCliL PATH ( cPatEmp() ) CLASS "FACCLIL"     FILE "FACCLIL.Dbf"   VIA ( ::cDriver ) SHARED INDEX "FACCLIL.Cdx"
-
-      DATABASE NEW ::oFacCliP PATH ( cPatEmp() ) CLASS "FACCLIP"     FILE "FACCLIP.Dbf"   VIA ( ::cDriver ) SHARED INDEX "FACCLIP.Cdx"
 
       DATABASE NEW ::oFacRecT PATH ( cPatEmp() ) CLASS "FACRECT"     FILE "FACRECT.Dbf"   VIA ( ::cDriver ) SHARED INDEX "FACRECT.Cdx"
 
@@ -540,18 +536,6 @@ METHOD CloseFiles() CLASS TFastVentasArticulos
 
       if !empty( ::oArtPrv ) .and. ( ::oArtPrv:Used() )
          ::oArtPrv:end()
-      end if
-
-      if !empty( ::oFacCliL ) .and. ( ::oFacCliL:Used() )
-         ::oFacCliL:end()
-      end if
-
-      if !empty( ::oFacCliT ) .and. ( ::oFacCliT:Used() )
-         ::oFacCliT:end()
-      end if
-
-      if !empty( ::oFacCliP ) .and. ( ::oFacCliP:Used() )
-         ::oFacCliP:end()
       end if
 
       if !empty( ::oFacRecL ) .and. ( ::oFacRecL:Used() )
@@ -2501,7 +2485,7 @@ METHOD AddFacturaCliente() CLASS TFastVentasArticulos
          ::oDbf:cHorDoc    := SubStr( ( D():FacturasClientes( ::nView ) )->cTimCre, 1, 2 )
          ::oDbf:cMinDoc    := SubStr( ( D():FacturasClientes( ::nView ) )->cTimCre, 4, 2 )
 
-         ::oDbf:cEstado    := cChkPagFacCli( ::oDbf:cSerDoc + ::oDbf:cNumDoc + ::oDbf:cSufDoc, ( D():FacturasClientes( ::nView ) ), ::oFacCliP:cAlias )
+         ::oDbf:cEstado    := cChkPagFacCli( ::oDbf:cSerDoc + ::oDbf:cNumDoc + ::oDbf:cSufDoc, ( D():FacturasClientes( ::nView ) ), D():FacturasClientesCobros( ::nView ) )
 
       end if
 
@@ -2695,7 +2679,7 @@ METHOD AddFacturaRectificativa() CLASS TFastVentasArticulos
          ::oDbf:cHorDoc    := SubStr( ::oFacRecT:cTimCre, 1, 2 )
          ::oDbf:cMinDoc    := SubStr( ::oFacRecT:cTimCre, 4, 2 )
 
-         ::oDbf:cEstado    := cChkPagFacRec( ::oDbf:cSerDoc + ::oDbf:cNumDoc + ::oDbf:cSufDoc, ::oFacRecT:cAlias, ::oFacCliP:cAlias )
+         ::oDbf:cEstado    := cChkPagFacRec( ::oDbf:cSerDoc + ::oDbf:cNumDoc + ::oDbf:cSufDoc, ::oFacRecT:cAlias, D():FacturasClientesCobros( ::nView ) )
 
       end if
 
@@ -4567,17 +4551,10 @@ METHOD getUnidadesVendidas( cCodArt, cCodAlm ) CLASS TFastVentasArticulos
 
    end if
 
-<<<<<<< HEAD
    if ( D():FacturasClientesLineas( ::nView ) )->( dbseek( idLine ) )
 
       while ( D():FacturasClientesLineas( ::nView ) )->cRef + ( D():FacturasClientesLineas( ::nView ) )->cAlmLin + dtos( ( D():FacturasClientesLineas( ::nView ) )->dFecFac ) == idLine .and. ;
             !( D():FacturasClientesLineas( ::nView ) )->( eof() )
-=======
-   if ::oFacCliL:Seek( Padr( cCodArt, 18 ) + Padr( cCodAlm, 16 ) + dtos( GetSysDate() ) )
-
-      while ::oFacCliL:cRef + ::oFacCliL:cAlmLin + dtos( ::oFacCliL:dFecFac ) == Padr( cCodArt, 18 ) + Padr( cCodAlm, 16 ) + dtos( GetSysDate() ) .and.;
-            !::oFacCliL:Eof()
->>>>>>> 76ea993cd63d256cd8f9869ac184308c5352c46e
 
          nTotal      += nTotNFacCli( ( D():FacturasClientesLineas( ::nView ) ) )
 

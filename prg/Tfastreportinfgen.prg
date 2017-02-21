@@ -2300,121 +2300,13 @@ RETURN ( ::nTotalRemesasAgentes )
 
 METHOD nFacturaClientes()
 
-   local cExpHead
-
-   if Empty( ::oFacCliT )
-      ::oFacCliT  := TDataCenter():oFacCliT()  
-   end if
-
-   ::nTotalFacturasClientes   := 0
-
-   with object ( ::oFacCliT )
-
-      :OrdSetFocus( "dFecFac" )
-
-      cExpHead                := 'dFecFac >= Ctod( "' + Dtoc( ::dIniInf ) + '" ) .and. dFecFac <= Ctod( "' + Dtoc( ::dFinInf ) + '" )'
-
-      :AddTmpIndex( cCurUsr(), GetFileNoExt( :cFile ), :OrdKey(), ( cExpHead ), , , , , , , , .t. )
-
-      if !Empty( ::oMtrInf )
-         ::oMtrInf:cText      := "Procesando facturas de clientes"
-         ::oMtrInf:SetTotal( :OrdKeyCount() )
-      end if
-
-      :GoTop()
-
-      while !::lBreak .and. !:Eof()
-
-         if ( :cCodPago >= ::oGrupoFpago:Cargo:Desde         .and. :cCodPago  <= ::oGrupoFpago:Cargo:Hasta )         .and.;
-            ( :cCodRut  >= ::oGrupoRuta:Cargo:Desde          .and. :cCodRut   <= ::oGrupoRuta:Cargo:Hasta )          .and.;
-            ( :cCodAge  >= ::oGrupoAgente:Cargo:Desde        .and. :cCodAge   <= ::oGrupoAgente:Cargo:Hasta )        .and.;
-            ( :cCodTrn  >= ::oGrupoTransportista:Cargo:Desde .and. :cCodTrn   <= ::oGrupoTransportista:Cargo:Hasta ) .and.;
-            ( :cCodUsr  >= ::oGrupoUsuario:Cargo:Desde       .and. :cCodUsr   <= ::oGrupoUsuario:Cargo:Hasta )
-
-            ::nTotalFacturasClientes   += :nTotFac
-
-         end if
-
-         :Skip()
-
-         if !Empty( ::oMtrInf )
-            ::oMtrInf:AutoInc()
-         end if
-
-      end while
-
-      :IdxDelete( cCurUsr(), GetFileNoExt( :cFile ) )
-
-   end with
-
-RETURN ( ::nTotalFacturasClientes )
+RETURN ( 0 )
 
 //---------------------------------------------------------------------------//
 
 METHOD nPagosClientes()
 
-   local cExpHead
-
-   if Empty( ::oFacCliP )
-      ::oFacCliP  := ::oFacCliP := TDataCenter():oFacCliP()
-   end if
-
-   if Empty( ::oFacCliT )
-      ::oFacCliT  := TDataCenter():oFacCliT()  
-   end if
-
-   ::nTotalPagosClientes      := 0
-   ::nTotalPendienteClientes  := 0
-
-   with object ( ::oFacCliP )
-
-      :OrdSetFocus( "dPreCob" )
-      ::oFacCliT:OrdSetFocus( "cNumFac" )
-
-      cExpHead                := 'dPreCob >= Ctod( "' + Dtoc( ::dIniInf ) + '" ) .and. dPreCob <= Ctod( "' + Dtoc( ::dFinInf ) + '" )'
-
-      :AddTmpIndex( cCurUsr(), GetFileNoExt( :cFile ), :OrdKey(), ( cExpHead ), , , , , , , , .t. )
-
-      if !Empty( ::oMtrInf )
-         ::oMtrInf:cText      := "Procesando pagos de clientes"
-         ::oMtrInf:SetTotal( :OrdKeyCount() )
-      end if
-
-      :GoTop()
-
-      while !::lBreak .and. !:Eof()
-
-         if ( :cCodPago >= ::oGrupoFpago:Cargo:Desde         .and. :cCodPago  <= ::oGrupoFpago:Cargo:Hasta )
-
-            if ( ::oFacCliT:Seek( ::oFacCliT:cSerie + Str( ::oFacCliT:nNumFac ) + ::oFacCliT:cSufFac ) )                                    .and.;
-               ( ::oFacCliT:cCodRut  >= ::oGrupoRuta:Cargo:Desde          .and. ::oFacCliT:cCodRut   <= ::oGrupoRuta:Cargo:Hasta )          .and.;
-               ( ::oFacCliT:cCodAge  >= ::oGrupoAgente:Cargo:Desde        .and. ::oFacCliT:cCodAge   <= ::oGrupoAgente:Cargo:Hasta )        .and.;
-               ( ::oFacCliT:cCodTrn  >= ::oGrupoTransportista:Cargo:Desde .and. ::oFacCliT:cCodTrn   <= ::oGrupoTransportista:Cargo:Hasta ) .and.;
-               ( ::oFacCliT:cCodUsr  >= ::oGrupoUsuario:Cargo:Desde       .and. ::oFacCliT:cCodUsr   <= ::oGrupoUsuario:Cargo:Hasta )
-
-               if ::oFacCliT:lCobrado
-                  ::nTotalPagosClientes      += nTotRecCli( ::oFacCliP, ::oDbfDiv )
-               else
-                  ::nTotalPendienteClientes  += nTotRecCli( ::oFacCliP, ::oDbfDiv )
-               end if
-
-            end if
-
-         end if
-
-         :Skip()
-
-         if !Empty( ::oMtrInf )
-            ::oMtrInf:AutoInc()
-         end if
-
-      end while
-
-      :IdxDelete( cCurUsr(), GetFileNoExt( :cFile ) )
-
-   end with
-
-RETURN ( ::nTotalPagosClientes )
+RETURN ( 0 )
 
 //---------------------------------------------------------------------------//
 
@@ -2484,20 +2376,20 @@ Pedidos---------------------------------------------------------------------
 
 METHOD FastReportPedidoCliente()
       
-   ::oPedCliT:OrdSetFocus( "iNumPed" )
+   ( D():PedidosClientes( ::nView ) )->( ordsetfocus( "iNumPed" ) )
       
-   ::oFastReport:SetWorkArea(       getConfigTraslation("Pedidos de clientes"), ::oPedCliT:nArea )
-   ::oFastReport:SetFieldAliases(   getConfigTraslation("Pedidos de clientes"), cItemsToReport( aItmPedCli() ) )
+   ::oFastReport:SetWorkArea(       "Pedidos de clientes", ( D():PedidosClientes( ::nView ) )->( select() ) )
+   ::oFastReport:SetFieldAliases(   "Pedidos de clientes", cItemsToReport( aItmPedCli() ) )
       
-   ::oPedCliL:OrdSetFocus( "iNumPed" )
+   ( D():PedidosClientesLineas( ::nView ) )->( ordsetfocus( "iNumPed" ) )
       
-   ::oFastReport:SetWorkArea(       "Lineas pedidos de clientes", ::oPedCliL:nArea ) 
+   ::oFastReport:SetWorkArea(       "Lineas pedidos de clientes", ( D():PedidosClientesLineas( ::nView ) )->( select() ) ) 
    ::oFastReport:SetFieldAliases(   "Lineas pedidos de clientes", cItemsToReport( aColPedCli() ) )
 
-   ::oFastReport:SetMasterDetail(   "Informe", getConfigTraslation("Pedidos de clientes"),         {|| ::idDocumento() } )
+   ::oFastReport:SetMasterDetail(   "Informe", "Pedidos de clientes",         {|| ::idDocumento() } )
    ::oFastReport:SetMasterDetail(   "Informe", "Lineas pedidos de clientes",  {|| ::IdDocumentoLinea() } )
 
-   ::oFastReport:SetResyncPair(     "Informe", getConfigTraslation("Pedidos de clientes") )
+   ::oFastReport:SetResyncPair(     "Informe", "Pedidos de clientes" )
    ::oFastReport:SetResyncPair(     "Informe", "Lineas pedidos de clientes" )
 
 RETURN ( Self )
@@ -2508,14 +2400,14 @@ Albaranes-------------------------------------------------------------------
 
 METHOD FastReportAlbaranCliente()
 
-   ::oAlbCliT:OrdSetFocus( "iNumAlb" )
+   ( D():AlbaranesClientes( ::nView ) )->( ordsetfocus( "iNumAlb" ) )
    
-   ::oFastReport:SetWorkArea(       "Albaranes de clientes", ::oAlbCliT:nArea )
+   ::oFastReport:SetWorkArea(       "Albaranes de clientes", ( D():AlbaranesClientes( ::nView ) )->( select() ) )
    ::oFastReport:SetFieldAliases(   "Albaranes de clientes", cItemsToReport( aItmAlbCli() ) )
    
-   ::oAlbCliL:OrdSetFocus( "iNumAlb" )
+   ( D():AlbaranesClientesLineas( ::nView ) )->( ordSetFocus( "iNumAlb" ) )
    
-   ::oFastReport:SetWorkArea(       "Lineas albaranes de clientes", ::oAlbCliL:nArea )
+   ::oFastReport:SetWorkArea(       "Lineas albaranes de clientes", ( D():AlbaranesClientesLineas( ::nView ) )->( select() ) )
    ::oFastReport:SetFieldAliases(   "Lineas albaranes de clientes", cItemsToReport( aColAlbCli() ) )
    
    ::oFastReport:SetMasterDetail(   "Informe", "Albaranes de clientes",          {|| ::idDocumento() } )
@@ -2532,14 +2424,14 @@ Facturas--------------------------------------------------------------------
 
 METHOD FastReportFacturaCliente()
 
-   ::oFacCliT:OrdSetFocus( "iNumFac" )
+   ( D():FacturasClientes( ::nView ) )->( ordsetfocus( "iNumFac" ) )
    
-   ::oFastReport:SetWorkArea(       "Facturas de clientes", ::oFacCliT:nArea )
+   ::oFastReport:SetWorkArea(       "Facturas de clientes", ( D():FacturasClientes( ::nView ) )->( select() ) )
    ::oFastReport:SetFieldAliases(   "Facturas de clientes", cItemsToReport( aItmFacCli() ) )
    
-   ::oFacCliL:OrdSetFocus( "iNumFac" )
+   ( D():FacturasClientesLineas( ::nView ) )->( ordsetfocus( "iNumFac" ) )
    
-   ::oFastReport:SetWorkArea(       "Lineas facturas de clientes", ::oFacCliL:nArea )
+   ::oFastReport:SetWorkArea(       "Lineas facturas de clientes", ( D():FacturasClientesLineas( ::nView ) )->( select() ) )
    ::oFastReport:SetFieldAliases(   "Lineas facturas de clientes", cItemsToReport( aColFacCli() ) )
    
    ::oFastReport:SetMasterDetail(   "Informe", "Facturas de clientes",        {|| ::idDocumento() } )
@@ -2602,9 +2494,9 @@ RETURN ( Self )
 
 METHOD FastReportRecibosCliente()
 
-   ::oFacCliP:OrdSetFocus( "iNumFac" )
+   ( D():FacturasClientesLineas( ::nView ) )->( ordsetfocus( "iNumFac" ) )
    
-   ::oFastReport:SetWorkArea(       "Recibos de clientes", ::oFacCliP:nArea )
+   ::oFastReport:SetWorkArea(       "Recibos de clientes", ( D():FacturasClientesLineas( ::nView ) )->( select() ) )
    ::oFastReport:SetFieldAliases(   "Recibos de clientes", cItemsToReport( aItmRecCli() ) )
 
    ::oFastReport:SetMasterDetail(   "Informe", "Recibos de clientes",   {|| ::idDocumento() + ::oDbf:cNumRec } )
@@ -3450,32 +3342,17 @@ RETURN ( nTotal )
 
 METHOD InitSatClientes()
 
-   ::nBaseSatClientes         := 0
-   ::nIVASatClientes          := 0
-   ::nRecargoSatClientes      := 0
-   ::nTotalSatClientes        := 0
-
 RETURN ( Self )
 
 //------------------------------------------------------------------------//
 
 METHOD AddSATClientes()
 
-   ::nBaseSATClientes         += ::oSatCliT:nTotNet
-   ::nIVASATClientes          += ::oSatCliT:nTotIva
-   ::nRecargoSATClientes      += ::oSatCliT:nTotReq
-   ::nTotalSATClientes        += ::oSatCliT:nTotSat
-
 RETURN ( Self )
 
 //------------------------------------------------------------------------//
 
 METHOD InitPresupuestosClientes()
-
-   ::nBasePresupuestosClientes      := 0
-   ::nIVAPresupuestosClientes       := 0
-   ::nRecargoPresupuestosClientes   := 0
-   ::nTotalPresupuestosClientes     := 0
 
 RETURN ( Self )
 
@@ -3489,21 +3366,11 @@ RETURN ( Self )
 
 METHOD InitPedidosClientes()
 
-   ::nBasePedidosClientes           := 0
-   ::nIVAPedidosClientes            := 0
-   ::nRecargoPedidosClientes        := 0
-   ::nTotalPedidosClientes          := 0
-
 RETURN ( Self )
 
 //------------------------------------------------------------------------//
 
 METHOD AddPedidosClientes()
-
-   ::nBasePedidosClientes           += ::oPedCliT:nTotNet
-   ::nIVAPedidosClientes            += ::oPedCliT:nTotIva
-   ::nRecargoPedidosClientes        += ::oPedCliT:nTotReq
-   ::nTotalPedidosClientes          += ::oPedCliT:nTotPed
 
 RETURN ( Self )
 
@@ -3511,21 +3378,11 @@ RETURN ( Self )
 
 METHOD AddAlbaranesClientes()
 
-   ::nBaseAlbaranesClientes         += ::oAlbCliT:nTotNet
-   ::nIVAAlbaranesClientes          += ::oAlbCliT:nTotIva
-   ::nRecargoAlbaranesClientes      += ::oAlbCliT:nTotReq
-   ::nTotalAlbaranesClientes        += ::oAlbCliT:nTotAlb
-
 RETURN ( Self )
 
 //------------------------------------------------------------------------//
 
 METHOD InitFacturasClientes()
-
-   ::nBaseFacturasClientes          := 0
-   ::nIVAFacturasClientes           := 0
-   ::nRecargoFacturasClientes       := 0
-   ::nTotalFacturasClientes         := 0
 
 RETURN ( Self )
 
@@ -3533,32 +3390,17 @@ RETURN ( Self )
 
 METHOD AddFacturasClientes()
 
-   ::nBaseFacturasClientes       += ::oFacCliT:nTotNet
-   ::nIVAFacturasClientes        += ::oFacCliT:nTotIva
-   ::nRecargoFacturasClientes    += ::oFacCliT:nTotReq
-   ::nTotalFacturasClientes      += ::oFacCliT:nTotFac
-
-   RETURN ( Self )
+RETURN ( Self )
 
 //------------------------------------------------------------------------//
 
 METHOD InitFacturasRectificativasClientes()
 
-   ::nBaseFacturasRectificativasClientes       := 0
-   ::nIVAFacturasRectificativasClientes        := 0
-   ::nRecargoFacturasRectificativasClientes    := 0
-   ::nTotalFacturasRectificativasClientes      := 0
-
-   RETURN ( Self )
+RETURN ( Self )
 
 //------------------------------------------------------------------------//
 
 METHOD AddFacturasRectificativasClientes()
-
-   ::nBaseFacturasRectificativasClientes       += ::oFacRecT:nTotNet
-   ::nIVAFacturasRectificativasClientes        += ::oFacRecT:nTotIva
-   ::nRecargoFacturasRectificativasClientes    += ::oFacRecT:nTotReq
-   ::nTotalFacturasRectificativasClientes      += ::oFacRecT:nTotFac
 
 RETURN ( Self )
 
@@ -3566,20 +3408,11 @@ RETURN ( Self )
 
 METHOD InitTicketsClientes()
 
-   ::nBaseTicketsClientes       := 0
-   ::nIVATicketsClientes        := 0
-   ::nRecargoTicketsClientes    := 0
-   ::nTotalTicketsClientes      := 0
-
 RETURN ( Self )
 
 //------------------------------------------------------------------------//
 
 METHOD AddTicketsClientes()
-
-   ::nBaseTicketsClientes       += ::oTikCliT:nTotNet
-   ::nIVATicketsClientes        += ::oTikCliT:nTotIva
-   ::nTotalTicketsClientes      += ::oTikCliT:nTotTik
 
 RETURN ( Self )
 
@@ -3587,21 +3420,11 @@ RETURN ( Self )
 
 METHOD InitPedidosProveedores()
 
-   ::nBasePedidosProveedores           := 0
-   ::nIVAPedidosProveedores            := 0
-   ::nRecargoPedidosProveedores        := 0
-   ::nTotalPedidosProveedores          := 0
-
 RETURN ( Self )
 
 //------------------------------------------------------------------------//
 
 METHOD AddPedidosProveedores()
-
-   ::nBasePedidosProveedores           += ::oPedPrvT:nTotNet
-   ::nIVAPedidosProveedores            += ::oPedPrvT:nTotIva
-   ::nRecargoPedidosProveedores        += ::oPedPrvT:nTotReq
-   ::nTotalPedidosProveedores          += ::oPedPrvT:nTotPed
 
 RETURN ( Self )
 
@@ -3609,32 +3432,17 @@ RETURN ( Self )
 
 METHOD InitAlbaranesProveedores()
 
-   ::nBaseAlbaranesProveedores           := 0
-   ::nIVAAlbaranesProveedores            := 0
-   ::nRecargoAlbaranesProveedores        := 0
-   ::nTotalAlbaranesProveedores          := 0
-
-   RETURN ( Self )
+RETURN ( Self )
 
 //------------------------------------------------------------------------//
 
 METHOD AddAlbaranesProveedores()
 
-   ::nBaseAlbaranesProveedores           += ::oAlbPrvT:nTotNet
-   ::nIVAAlbaranesProveedores            += ::oAlbPrvT:nTotIva
-   ::nRecargoAlbaranesProveedores        += ::oAlbPrvT:nTotReq
-   ::nTotalAlbaranesProveedores          += ::oAlbPrvT:nTotAlb
-
-   RETURN ( Self )
+RETURN ( Self )
 
 //------------------------------------------------------------------------//
 
 METHOD InitFacturasProveedores()
-
-   ::nBaseFacturasProveedores           := 0
-   ::nIVAFacturasProveedores            := 0
-   ::nRecargoFacturasProveedores        := 0
-   ::nTotalFacturasProveedores          := 0
 
 RETURN ( Self )
 
@@ -3642,32 +3450,17 @@ RETURN ( Self )
 
 METHOD AddFacturasProveedores()
 
-   ::nBaseFacturasProveedores           += ::oFacPrvT:nTotNet
-   ::nIVAFacturasProveedores            += ::oFacPrvT:nTotIva
-   ::nRecargoFacturasProveedores        += ::oFacPrvT:nTotReq
-   ::nTotalFacturasProveedores          += ::oFacPrvT:nTotFac
-
 RETURN ( Self )
 
 //------------------------------------------------------------------------//
 
 METHOD InitFacturasRectificativasProveedores()
 
-   ::nBaseFacturasRectificativasProveedores       := 0
-   ::nIVAFacturasRectificativasProveedores        := 0
-   ::nRecargoFacturasRectificativasProveedores    := 0
-   ::nTotalFacturasRectificativasProveedores      := 0
-
 RETURN ( Self )
 
 //------------------------------------------------------------------------//
 
 METHOD AddFacturasRectificativasProveedores()
-
-   ::nBaseFacturasRectificativasProveedores       += ::oRctPrvT:nTotNet
-   ::nIVAFacturasRectificativasProveedores        += ::oRctPrvT:nTotIva
-   ::nRecargoFacturasRectificativasProveedores    += ::oRctPrvT:nTotReq
-   ::nTotalFacturasRectificativasProveedores      += ::oRctPrvT:nTotFac
 
 RETURN ( Self )
 

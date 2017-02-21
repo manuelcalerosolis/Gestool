@@ -6745,8 +6745,8 @@ METHOD CreateTemporalFiles( cPath ) CLASS TStock
 
    DEFAULT cPath        := cPatTmp()
 
-   ::cDbfStock          := "Stock" + cCurUsr() + ".Dbf"
-   ::cCdxStock          := "Stock" + cCurUsr() + ".Cdx"
+   ::cDbfStock          := "Stock" + cCurUsr() + str( seconds() ) + ".Dbf"
+   ::cCdxStock          := "Stock" + cCurUsr() + str( seconds() ) + ".Cdx"
 
    ::DeleteTemporalFiles( cPath )
 
