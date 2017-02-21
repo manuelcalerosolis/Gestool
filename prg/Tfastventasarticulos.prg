@@ -350,6 +350,10 @@ METHOD OpenFiles() CLASS TFastVentasArticulos
 
       D():SATClientesLineas( ::nView )
 
+      D():AlbaranesClientes( ::nView )
+      
+      D():AlbaranesClientesLineas( ::nView )
+
       D():ProveedorArticulo( ::nView )
 
       DATABASE NEW ::oArtImg  PATH ( cPatArt() ) CLASS "ArtImg"      FILE "ArtImg.Dbf"  VIA ( ::cDriver ) SHARED INDEX "ArtImg.Cdx"
@@ -2172,95 +2176,95 @@ METHOD AddAlbaranCliente( lFacturados ) CLASS TFastVentasArticulos
 
    ::setMeterText( "Procesando albaranes" )
 
-   ( ::oAlbCliT:cAlias )->( ordsetfocus( "nNumAlb" ) )
-   ( ::oAlbCliL:cAlias )->( ordsetfocus( "nNumAlb" ) )
+   ( D():AlbaranesClientes( ::nView )        )->( ordsetfocus( "nNumAlb" ) )
+   ( D():AlbaranesClientesLineas( ::nView )  )->( ordsetfocus( "nNumAlb" ) )
 
-   ( ::oAlbCliT:cAlias )->( setCustomFilter( ::cExpresionHeader ) )
-   ( ::oAlbCliL:cAlias )->( setCustomFilter( ::cExpresionLine ) )
+   ( D():AlbaranesClientes( ::nView )        )->( setCustomFilter( ::cExpresionHeader ) )
+   ( D():AlbaranesClientesLineas( ::nView )  )->( setCustomFilter( ::cExpresionLine ) )
 
-   ::setMeterTotal( ( ::oAlbCliL:cAlias )->( dbCustomKeyCount() ) )
+   ::setMeterTotal( ( D():AlbaranesClientesLineas( ::nView ) )->( dbCustomKeyCount() ) )
 
    // Lineas de albaranes---------------------------------------------------------
 
-   ::oAlbCliL:GoTop()
-   while !::lBreak .and. !::oAlbCliL:Eof()
+   ( D():AlbaranesClientesLineas( ::nView ) )->( dbgotop() )
+   while !::lBreak .and. !( D():AlbaranesClientesLineas( ::nView ) )->( eof() )
 
       ::oDbf:Blank()
 
-      ::oDbf:cCodArt    := ::oAlbCliL:cRef
-      ::oDbf:cNomArt    := ::oAlbCliL:cDetalle
+      ::oDbf:cCodArt    := ( D():AlbaranesClientesLineas( ::nView )  )->cRef
+      ::oDbf:cNomArt    := ( D():AlbaranesClientesLineas( ::nView )  )->cDetalle
 
-      ::oDbf:cCodPrv    := ::oAlbCliL:cCodPrv
-      ::oDbf:cNomPrv    := RetFld( ::oAlbCliL:cCodPrv, ::oDbfPrv:cAlias )
+      ::oDbf:cCodPrv    := ( D():AlbaranesClientesLineas( ::nView )  )->cCodPrv
+      ::oDbf:cNomPrv    := RetFld( ( D():AlbaranesClientesLineas( ::nView )  )->cCodPrv, ::oDbfPrv:cAlias )
 
-      ::oDbf:TipoIva    := cCodigoIva( ::oDbfIva:cAlias, ::oAlbCliL:nIva )
-      ::oDbf:cCodTip    := RetFld( ::oAlbCliL:cRef, ::oDbfArt:cAlias, "cCodTip", "Codigo" )
-      ::oDbf:cCodCate   := RetFld( ::oAlbCliL:cRef, ::oDbfArt:cAlias, "cCodCate", "Codigo" )
-      ::oDbf:cCodEst    := RetFld( ::oAlbCliL:cRef, ::oDbfArt:cAlias, "cCodEst", "Codigo" )
-      ::oDbf:cCodTemp   := RetFld( ::oAlbCliL:cRef, ::oDbfArt:cAlias, "cCodTemp", "Codigo" )
-      ::oDbf:cCodFab    := RetFld( ::oAlbCliL:cRef, ::oDbfArt:cAlias, "cCodFab", "Codigo" )
-      ::oDbf:cDesUbi    := RetFld( ::oAlbCliL:cRef, ::oDbfArt:cAlias, "cDesUbi", "Codigo" )
+      ::oDbf:TipoIva    := cCodigoIva( ::oDbfIva:cAlias, ( D():AlbaranesClientesLineas( ::nView )  )->nIva )
+      ::oDbf:cCodTip    := RetFld( ( D():AlbaranesClientesLineas( ::nView )  )->cRef, ::oDbfArt:cAlias, "cCodTip", "Codigo" )
+      ::oDbf:cCodCate   := RetFld( ( D():AlbaranesClientesLineas( ::nView )  )->cRef, ::oDbfArt:cAlias, "cCodCate", "Codigo" )
+      ::oDbf:cCodEst    := RetFld( ( D():AlbaranesClientesLineas( ::nView )  )->cRef, ::oDbfArt:cAlias, "cCodEst", "Codigo" )
+      ::oDbf:cCodTemp   := RetFld( ( D():AlbaranesClientesLineas( ::nView )  )->cRef, ::oDbfArt:cAlias, "cCodTemp", "Codigo" )
+      ::oDbf:cCodFab    := RetFld( ( D():AlbaranesClientesLineas( ::nView )  )->cRef, ::oDbfArt:cAlias, "cCodFab", "Codigo" )
+      ::oDbf:cDesUbi    := RetFld( ( D():AlbaranesClientesLineas( ::nView )  )->cRef, ::oDbfArt:cAlias, "cDesUbi", "Codigo" )
       
-      ::oDbf:cCodFam    := ::oAlbCliL:cCodFam
-      ::oDbf:cGrpFam    := ::oAlbCliL:cGrpFam
-      ::oDbf:cCodAlm    := ::oAlbCliL:cAlmLin
+      ::oDbf:cCodFam    := ( D():AlbaranesClientesLineas( ::nView )  )->cCodFam
+      ::oDbf:cGrpFam    := ( D():AlbaranesClientesLineas( ::nView )  )->cGrpFam
+      ::oDbf:cCodAlm    := ( D():AlbaranesClientesLineas( ::nView )  )->cAlmLin
       
-      ::oDbf:cCodObr    := ::oAlbCliL:cObrLin
+      ::oDbf:cCodObr    := ( D():AlbaranesClientesLineas( ::nView )  )->cObrLin
 
-      ::oDbf:nUniArt    := nTotNAlbCli( ::oAlbCliL:cAlias ) * if( ::lUnidadesNegativo, -1, 1 )
+      ::oDbf:nUniArt    := nTotNAlbCli( ( D():AlbaranesClientesLineas( ::nView ) ) ) * if( ::lUnidadesNegativo, -1, 1 )
 
-      ::oDbf:nDtoArt    := ::oAlbcliL:nDto
-      ::oDbf:nLinArt    := ::oAlbcliL:nDtoDiv
-      ::oDbf:nPrmArt    := ::oAlbcliL:nDtoPrm
+      ::oDbf:nDtoArt    := ( D():AlbaranesClientesLineas( ::nView )  )->nDto
+      ::oDbf:nLinArt    := ( D():AlbaranesClientesLineas( ::nView )  )->nDtoDiv
+      ::oDbf:nPrmArt    := ( D():AlbaranesClientesLineas( ::nView )  )->nDtoPrm
 
-      ::oDbf:nTotDto    := nDtoLAlbCli( ::oAlbCliL:cAlias, ::nDecOut, ::nDerOut, ::nValDiv )
-      ::oDbf:nTotPrm    := nPrmLAlbCli( ::oAlbCliL:cAlias, ::nDecOut, ::nDerOut, ::nValDiv )
+      ::oDbf:nTotDto    := nDtoLAlbCli( ( D():AlbaranesClientesLineas( ::nView )  ), ::nDecOut, ::nDerOut, ::nValDiv )
+      ::oDbf:nTotPrm    := nPrmLAlbCli( ( D():AlbaranesClientesLineas( ::nView )  ), ::nDecOut, ::nDerOut, ::nValDiv )
 
-      ::oDbf:nTrnArt    := nTrnUAlbCli( ::oAlbCliL:cAlias, ::nDecOut, ::nValDiv )
-      ::oDbf:nPntArt    := nPntLAlbCli( ::oAlbCliL:cAlias, ::nDecOut, ::nValDiv )
+      ::oDbf:nTrnArt    := nTrnUAlbCli( ( D():AlbaranesClientesLineas( ::nView )  ), ::nDecOut, ::nValDiv )
+      ::oDbf:nPntArt    := nPntLAlbCli( ( D():AlbaranesClientesLineas( ::nView )  ), ::nDecOut, ::nValDiv )
       
-      ::oDbf:nIvaArt    := nIvaLAlbCli( ::oAlbCliL:cAlias, ::nDecOut, ::nDerOut, ::nValDiv )
-      ::oDbf:nImpEsp    := nTotIAlbCli( ::oAlbCliL:cAlias, ::nDecOut, ::nDerOut, ::nValDiv )
+      ::oDbf:nIvaArt    := nIvaLAlbCli( ( D():AlbaranesClientesLineas( ::nView )  ), ::nDecOut, ::nDerOut, ::nValDiv )
+      ::oDbf:nImpEsp    := nTotIAlbCli( ( D():AlbaranesClientesLineas( ::nView )  ), ::nDecOut, ::nDerOut, ::nValDiv )
       
-      ::oDbf:nCosArt    := nCosLAlbCli( ::oAlbCliL:cAlias, ::nDecOut, ::nDerOut, ::nValDiv )
+      ::oDbf:nCosArt    := nCosLAlbCli( ( D():AlbaranesClientesLineas( ::nView )  ), ::nDecOut, ::nDerOut, ::nValDiv )
 
       if empty( ::oDbf:nCosArt )
          ::oDbf:nCosArt := ::oDbf:nUniArt * nCosto( ::oDbf:cCodArt, ::oDbfArt:cAlias, ::oArtKit:cAlias )
       end if 
 
-      ::oDbf:cCodPr1       := ::oAlbCliL:cCodPr1
-      ::oDbf:cCodPr2       := ::oAlbCliL:cCodPr2
-      ::oDbf:cValPr1       := ::oAlbCliL:cValPr1
-      ::oDbf:cValPr2       := ::oAlbCliL:cValPr2
+      ::oDbf:cCodPr1       := ( D():AlbaranesClientesLineas( ::nView )  )->cCodPr1
+      ::oDbf:cCodPr2       := ( D():AlbaranesClientesLineas( ::nView )  )->cCodPr2
+      ::oDbf:cValPr1       := ( D():AlbaranesClientesLineas( ::nView )  )->cValPr1
+      ::oDbf:cValPr2       := ( D():AlbaranesClientesLineas( ::nView )  )->cValPr2
 
-      ::oDbf:cLote         := ::oAlbCliL:cLote
-      ::oDbf:dFecCad       := ::oAlbCliL:dFecCad
+      ::oDbf:cLote         := ( D():AlbaranesClientesLineas( ::nView )  )->cLote
+      ::oDbf:dFecCad       := ( D():AlbaranesClientesLineas( ::nView )  )->dFecCad
 
       ::oDbf:cClsDoc       := ALB_CLI
       ::oDbf:cTipDoc       := "Albarán cliente"
-      ::oDbf:cSerDoc       := ::oAlbCliL:cSerAlb
-      ::oDbf:cNumDoc       := Str( ::oAlbCliL:nNumAlb )
-      ::oDbf:cSufDoc       := ::oAlbCliL:cSufAlb
+      ::oDbf:cSerDoc       := ( D():AlbaranesClientesLineas( ::nView )  )->cSerAlb
+      ::oDbf:cNumDoc       := Str( ( D():AlbaranesClientesLineas( ::nView )  )->nNumAlb )
+      ::oDbf:cSufDoc       := ( D():AlbaranesClientesLineas( ::nView )  )->cSufAlb
 
       ::oDbf:cIdeDoc       :=  ::idDocumento()
-      ::oDbf:nNumLin       :=  ::oAlbCliL:nNumLin
+      ::oDbf:nNumLin       :=  ( D():AlbaranesClientesLineas( ::nView )  )->nNumLin
 
-      ::oDbf:nBultos       := ::oAlbCliL:nBultos * if( ::lUnidadesNegativo, -1, 1 )
-      ::oDbf:cFormato      := ::oAlbCliL:cFormato
-      ::oDbf:nCajas        := ::oAlbCliL:nCanEnt * if( ::lUnidadesNegativo, -1, 1 )
-      ::oDbf:nPeso         := nPesLAlbCli( ::oAlbCliL:cAlias )
+      ::oDbf:nBultos       := ( D():AlbaranesClientesLineas( ::nView )  )->nBultos * if( ::lUnidadesNegativo, -1, 1 )
+      ::oDbf:cFormato      := ( D():AlbaranesClientesLineas( ::nView )  )->cFormato
+      ::oDbf:nCajas        := ( D():AlbaranesClientesLineas( ::nView )  )->nCanEnt * if( ::lUnidadesNegativo, -1, 1 )
+      ::oDbf:nPeso         := nPesLAlbCli( ( D():AlbaranesClientesLineas( ::nView )  ) )
 
-      ::oDbf:lKitArt       := ::oAlbCliL:lKitArt
-      ::oDbf:lKitChl       := ::oAlbCliL:lKitChl
+      ::oDbf:lKitArt       := ( D():AlbaranesClientesLineas( ::nView )  )->lKitArt
+      ::oDbf:lKitChl       := ( D():AlbaranesClientesLineas( ::nView )  )->lKitChl
 
-      ::oDbf:cCtrCoste     := ::oAlbCliL:cCtrCoste
+      ::oDbf:cCtrCoste     := ( D():AlbaranesClientesLineas( ::nView )  )->cCtrCoste
 
-      ::oDbf:cTipCtr       := ::oAlbCliL:cTipCtr
-      ::oDbf:cCodTerCtr    := ::oAlbCliL:cTerCtr
-      ::oDbf:cNomTerCtr    := NombreTerceroCentroCoste( ::oAlbCliL:cTipCtr, ::oAlbCliL:cTerCtr, ::nView )
+      ::oDbf:cTipCtr       := ( D():AlbaranesClientesLineas( ::nView )  )->cTipCtr
+      ::oDbf:cCodTerCtr    := ( D():AlbaranesClientesLineas( ::nView )  )->cTerCtr
+      ::oDbf:cNomTerCtr    := NombreTerceroCentroCoste( ( D():AlbaranesClientesLineas( ::nView )  )->cTipCtr, ( D():AlbaranesClientesLineas( ::nView )  )->cTerCtr, ::nView )
 
-      if !empty( ::oAlbCliL:cRef ) 
-         ::oDbf:cPrvHab    := ::oAlbCliL:cRef
+      if !empty( ( D():AlbaranesClientesLineas( ::nView )  )->cRef ) 
+         ::oDbf:cPrvHab    := ( D():AlbaranesClientesLineas( ::nView )  )->cRef
       else
          ::oDbf:cPrvHab    := getProveedorPorDefectoArticulo( ::oDbf:cCodArt, D():ProveedorArticulo( ::nView ) )
       end if
@@ -2269,60 +2273,53 @@ METHOD AddAlbaranCliente( lFacturados ) CLASS TFastVentasArticulos
       Datos de cabecera--------------------------------------------------
       */
 
-      if ::oAlbCliT:Seek( ::oAlbCliL:cSerAlb + Str( ::oAlbCliL:nNumAlb ) + ::oAlbCliL:cSufAlb )
+      if D():gotoIdAlbaranesClientes( D():AlbaranesClientesLineasId( ::nView ), ::nView )
 
-         ::oDbf:cCodGrp    := cGruCli( ::oAlbCliT:cCodCli, ::oDbfCli )
+         ::oDbf:cCodGrp    := cGruCli( ( D():AlbaranesClientes( ::nView ) )->cCodCli, ::oDbfCli )
 
-         if ::oAtipicasCliente:Seek( ::oAlbCliT:cCodCli + ::oAlbCliL:cRef ) .and. !empty( ::oAtipicasCliente:cCodEnv )
+         if ::oAtipicasCliente:Seek( ( D():AlbaranesClientes( ::nView ) )->cCodCli + ( D():AlbaranesClientesLineas( ::nView )  )->cRef ) .and. !empty( ::oAtipicasCliente:cCodEnv )
             ::oDbf:cCodEnv := ::oAtipicasCliente:cCodEnv
          else
-            ::oDbf:cCodEnv := RetFld( ::oAlbCliL:cRef, ::oDbfArt:cAlias, "cCodFra", "Codigo" )                    
+            ::oDbf:cCodEnv := RetFld( ( D():AlbaranesClientesLineas( ::nView )  )->cRef, ::oDbfArt:cAlias, "cCodFra", "Codigo" )                    
          end if
 
-         ::oDbf:cCodPago   := ::oAlbCliT:cCodPago
-         ::oDbf:cCodRut    := ::oAlbCliT:cCodRut
-         ::oDbf:cCodAge    := ::oAlbCliT:cCodAge
-         ::oDbf:cCodTrn    := ::oAlbCliT:cCodTrn
-         ::oDbf:cCodUsr    := ::oAlbCliT:cCodUsr
+         ::oDbf:cCodPago   := ( D():AlbaranesClientes( ::nView ) )->cCodPago
+         ::oDbf:cCodRut    := ( D():AlbaranesClientes( ::nView ) )->cCodRut
+         ::oDbf:cCodAge    := ( D():AlbaranesClientes( ::nView ) )->cCodAge
+         ::oDbf:cCodTrn    := ( D():AlbaranesClientes( ::nView ) )->cCodTrn
+         ::oDbf:cCodUsr    := ( D():AlbaranesClientes( ::nView ) )->cCodUsr
 
-         ::oDbf:cCodCli    := ::oAlbCliT:cCodCli
-         ::oDbf:cNomCli    := ::oAlbCliT:cNomCli
-         ::oDbf:cPobCli    := ::oAlbCliT:cPobCli
-         ::oDbf:cPrvCli    := ::oAlbCliT:cPrvCli
-         ::oDbf:cPosCli    := ::oAlbCliT:cPosCli
+         ::oDbf:cCodCli    := ( D():AlbaranesClientes( ::nView ) )->cCodCli
+         ::oDbf:cNomCli    := ( D():AlbaranesClientes( ::nView ) )->cNomCli
+         ::oDbf:cPobCli    := ( D():AlbaranesClientes( ::nView ) )->cPobCli
+         ::oDbf:cPrvCli    := ( D():AlbaranesClientes( ::nView ) )->cPrvCli
+         ::oDbf:cPosCli    := ( D():AlbaranesClientes( ::nView ) )->cPosCli
 
-         ::oDbf:nPreArt    := nTotUAlbCli( ::oAlbCliL:cAlias, ::nDecOut, ::nValDiv )
-         ::oDbf:nBrtArt    := nBrtLAlbCli( ::oAlbCliT:cAlias, ::oAlbCliL:cAlias, ::nDecOut, ::nDerOut, ::nValDiv )
-         ::oDbf:nImpArt    := nImpLAlbCli( ::oAlbCliT:cAlias, ::oAlbCliL:cAlias, ::nDecOut, ::nDerOut, ::nValDiv, , , .t., .t. )
-         ::oDbf:nTotArt    := nImpLAlbCli( ::oAlbCliT:cAlias, ::oAlbCliL:cAlias, ::nDecOut, ::nDerOut, ::nValDiv, , , .t., .t.  )
-         ::oDbf:nTotArt    += nIvaLAlbCli( ::oAlbCliL:cAlias, ::nDecOut, ::nDerOut, ::nValDiv )
+         ::oDbf:nPreArt    := nTotUAlbCli( ( D():AlbaranesClientesLineas( ::nView ) ), ::nDecOut, ::nValDiv )
+         ::oDbf:nBrtArt    := nBrtLAlbCli( ( D():AlbaranesClientes( ::nView ) ), ( D():AlbaranesClientesLineas( ::nView ) ), ::nDecOut, ::nDerOut, ::nValDiv )
+         ::oDbf:nImpArt    := nImpLAlbCli( ( D():AlbaranesClientes( ::nView ) ), ( D():AlbaranesClientesLineas( ::nView ) ), ::nDecOut, ::nDerOut, ::nValDiv, , , .t., .t. )
+         ::oDbf:nTotArt    := nImpLAlbCli( ( D():AlbaranesClientes( ::nView ) ), ( D():AlbaranesClientesLineas( ::nView ) ), ::nDecOut, ::nDerOut, ::nValDiv, , , .t., .t.  )
+         ::oDbf:nTotArt    += nIvaLAlbCli( ( D():AlbaranesClientesLineas( ::nView ) ), ::nDecOut, ::nDerOut, ::nValDiv )
 
-         ::oDbf:nPctAge    := ::oAlbCliT:nPctComAge
-         ::oDbf:nComAge    := nComLAlbCli( ::oAlbCliT:cAlias, ::oAlbCliL:cAlias, ::nDecOut, ::nDerOut )
+         ::oDbf:nPctAge    := ( D():AlbaranesClientes( ::nView ) )->nPctComAge
+         ::oDbf:nComAge    := nComLAlbCli( ( D():AlbaranesClientes( ::nView ) ), ( D():AlbaranesClientesLineas( ::nView )  ), ::nDecOut, ::nDerOut )
 
-         logWrite( ::oAlbCliT:dFecAlb )
-
-         ::oDbf:nAnoDoc    := Year( ::oAlbCliT:dFecAlb )
-         ::oDbf:nMesDoc    := Month( ::oAlbCliT:dFecAlb )
-         ::oDbf:dFecDoc    := ::oAlbCliT:dFecAlb
-         ::oDbf:cHorDoc    := SubStr( ::oAlbCliT:cTimCre, 1, 2 )
-         ::oDbf:cMinDoc    := SubStr( ::oAlbCliT:cTimCre, 4, 2 )
+         ::oDbf:nAnoDoc    := Year( ( D():AlbaranesClientes( ::nView ) )->dFecAlb )
+         ::oDbf:nMesDoc    := Month( ( D():AlbaranesClientes( ::nView ) )->dFecAlb )
+         ::oDbf:dFecDoc    := ( D():AlbaranesClientes( ::nView ) )->dFecAlb
+         ::oDbf:cHorDoc    := SubStr( ( D():AlbaranesClientes( ::nView ) )->cTimCre, 1, 2 )
+         ::oDbf:cMinDoc    := SubStr( ( D():AlbaranesClientes( ::nView ) )->cTimCre, 4, 2 )
 
          do case
-            case ::oAlbCliT:nFacturado <= 1
+            case ( D():AlbaranesClientes( ::nView ) )->nFacturado <= 1
                ::oDbf:cEstado    := "Pendiente"
 
-            case ::oAlbCliT:nFacturado == 2
+            case ( D():AlbaranesClientes( ::nView ) )->nFacturado == 2
                ::oDbf:cEstado    := "Parcialmente"
 
-            case ::oAlbCliT:nFacturado == 3
+            case ( D():AlbaranesClientes( ::nView ) )->nFacturado == 3
                ::oDbf:cEstado    := "Finalizado"
          end case
-
-      else 
-
-         logWrite( ::oAlbCliT:ordSetFocus() )
-         logWrite( ::oAlbCliL:cSerAlb + Str( ::oAlbCliL:nNumAlb ) + ::oAlbCliL:cSufAlb )
 
       end if
 
@@ -2332,14 +2329,11 @@ METHOD AddAlbaranCliente( lFacturados ) CLASS TFastVentasArticulos
 
       ::addAlbaranesClientes()
 
-      ::oAlbCliL:Skip()
+      ( D():AlbaranesClientesLineas( ::nView ) )->( dbSkip() )
 
       ::setMeterAutoIncremental()
 
    end while
-
-   ::oAlbCliT:IdxDelete( cCurUsr(), GetFileNoExt( ::oAlbCliT:cFile ) )
-   ::oAlbCliL:IdxDelete( cCurUsr(), GetFileNoExt( ::oAlbCliL:cFile ) )
 
 RETURN ( Self )
 
