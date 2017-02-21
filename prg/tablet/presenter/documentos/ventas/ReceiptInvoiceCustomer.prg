@@ -10,6 +10,8 @@ CLASS ReceiptInvoiceCustomer FROM DocumentsSales
    DATA lShowFilterCobrado                INIT .t.
    DATA lCloseFiles                       INIT .t.
 
+   DATA lAceptarImprimir                  INIT .f.
+
    METHOD New()
 
    METHOD Play()
@@ -41,6 +43,9 @@ CLASS ReceiptInvoiceCustomer FROM DocumentsSales
    METHOD onPostSaveEdit()
 
    METHOD printReceipt()                  INLINE ( PrnRecCli( ( ::getDataTable() )->cSerie + Str( ( ::getDataTable() )->nNumFac ) + ( ::getDataTable() )->cSufFac + Str( ( ::getDataTable() )->nNumRec ) ) )
+
+   METHOD setTrueAceptarImprimir          INLINE ( ::lAceptarImprimir  := .t. )
+   METHOD setFalseAceptarImprimir         INLINE ( ::lAceptarImprimir  := .t. )
 
 END CLASS
 
@@ -160,6 +165,11 @@ METHOD onPostSaveEdit() CLASS ReceiptInvoiceCustomer
 
    local nRec     := ( D():FacturasClientes( ::nView ) )->( Recno() )
    local nOrdAnt  := ( D():FacturasClientes( ::nView ) )->( OrdSetFocus( "NNUMFAC" ) )
+
+   if ::lAceptarImprimir
+      ::printReceipt()
+      ::setFalseAceptarImprimir()
+   end if
 
    if ( D():FacturasClientes( ::nView ) )->( dbSeek( ( ::getDataTable() )->cSerie + Str( ( ::getDataTable() )->nNumFac ) + ( ::getDataTable() )->cSufFac ) )
 

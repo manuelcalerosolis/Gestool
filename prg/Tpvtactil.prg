@@ -735,6 +735,10 @@ CLASS TpvTactil
    METHOD lEditableDocumento()         INLINE ( !::oTiketCabecera:lCloTik )
    METHOD lEmptyLineas()               INLINE ( !Empty( ::oTiketCabecera:cNumTik ) .and. Empty( ::oTemporalLinea:OrdKeyCount() ) )
 
+   METHOD lValidatePreSave()
+
+   METHOD lValidTurno()
+
    METHOD GuardaCobros()               INLINE ( ::oTpvCobros:ArchivaCobros() )
 
    // Documentos---------------------------------------------------------------
@@ -2901,7 +2905,7 @@ METHOD EndResource() CLASS TpvTactil
    end if
 
    if !::lKillResource
-      if ( !::lEmptyDocumento() .or. ::lAlone )
+      if ( !::lValidatePreSave() .or. ::lAlone )
          lEnd           := ApoloMsgNoYes( "¿ Desea salir del TPV táctil ?", "Atención", .t. )
       end if
    end if
@@ -5956,7 +5960,7 @@ METHOD OnClickUsuarios() CLASS TpvTactil
    Si el documento es nuevo y no tiene lineas no lo guardo---------------------
    */
 
-   if ::lEmptyDocumento()
+   if ::lValidatePreSave()
       lGuardaDocumento     := .f.
    end if
 
@@ -6669,7 +6673,7 @@ METHOD OnClickPendientes() CLASS TpvTactil
    Si el documento es nuevo y no tiene lineas no lo guardo---------------------
    */
 
-   if ::lEmptyDocumento()
+   if ::lValidatePreSave()
       lGuardaDocumento     := .f.
    end if
 
@@ -6744,7 +6748,7 @@ METHOD OnClickLista() CLASS TpvTactil
    Si el documento es nuevo y no tiene lineas no lo guardo---------------------
    */
 
-   if ::lEmptyDocumento()
+   if ::lValidatePreSave()
       lGuardaDocumento     := .f.
    end if
 
@@ -6808,7 +6812,7 @@ METHOD OnClickEntregaNota() CLASS TpvTactil
 
    // Si el documento es nuevo y no tiene lineas no lo guardo------------------
 
-   if ::lEmptyDocumento()
+   if ::lValidatePreSave()
       Return ( .f. )
    end if
 
@@ -6871,7 +6875,7 @@ METHOD OnClickCloseTurno( lParcial ) CLASS TpvTactil
    Si el documento es nuevo y no tiene lineas no lo guardo---------------------
    */
 
-   if ::lEmptyDocumento()
+   if ::lValidatePreSave()
       lGuardaDocumento     := .f.
    end if
 
@@ -7520,8 +7524,8 @@ METHOD OnClickSalaVenta( nSelectOption ) CLASS TpvTactil
    Si el documento es nuevo y no tiene lineas no lo guardo---------------------
    */
 
-   if ::lEmptyDocumento()
-      lGuardaDocumento     := .f.
+   if !::lValidatePreSave()
+      Return ( .f. )
    end if
 
    /*
@@ -7652,7 +7656,7 @@ METHOD OnClickGeneral() CLASS TpvTactil
    Si el documento es nuevo y no tiene lineas no lo guardo---------------------
    */
 
-   if ::lEmptyDocumento()
+   if !::lValidatePreSave()
       lGuardaDocumento     := .f.
    end if
 
@@ -7748,7 +7752,7 @@ METHOD OnClickParaRecoger() CLASS TpvTactil
    Si el documento es nuevo y no tiene lineas no lo guardo---------------------
    */
 
-   if ::lEmptyDocumento()
+   if !::lValidatePreSave()
       lGuardaDocumento     := .f.
    end if
 
@@ -7840,7 +7844,7 @@ METHOD OnClickParaLlevar() CLASS TpvTactil
    Si el documento es nuevo y no tiene lineas no lo guardo---------------------
    */
 
-   if ::lEmptyDocumento()
+   if !::lValidatePreSave()
       lGuardaDocumento     := .f.
    end if
 
@@ -7938,7 +7942,7 @@ METHOD OnClickEncargar() CLASS TpvTactil
    Si el documento es nuevo y no tiene lineas no lo guardo---------------------
    */
 
-   if ::lEmptyDocumento()
+   if !::lValidatePreSave()
       lGuardaDocumento     := .f.
    end if
 
@@ -8036,7 +8040,7 @@ METHOD OnClickCambiaUbicacion() CLASS TpvTactil
    Si el documento es nuevo y no tiene lineas no lo guardo---------------------
    */
 
-   if ::lEmptyDocumento() .or. ::lEmptyLineas()
+   if !::lValidatePreSave() .or. ::lEmptyLineas()
       MsgStop( "El documento esta vacio" )
       Return ( .t. )
    end if
@@ -8309,7 +8313,7 @@ METHOD ImprimeTicket()
 
    otherwise
      
-         if ::lEmptyDocumento()
+         if !::lValidatePreSave()
             MsgStop( "El documento no contiene líneas." )
             Return ( .t. )
          end if
@@ -8331,7 +8335,7 @@ RETURN ( Self )
 
 METHOD PrevisualizaTicket()
 
-  if ::lEmptyDocumento()
+  if !::lValidatePreSave()
      MsgStop( "El documento no contiene líneas." )
      Return ( Self )
   end if
@@ -8716,7 +8720,7 @@ METHOD OnClickGuardar() CLASS TpvTactil
 
    // Si el documento es nuevo y no tiene lineas no lo guardo------------------
 
-   if ::lEmptyDocumento()
+   if !::lValidatePreSave()
       Return ( .f. )
    end if
 
@@ -10307,6 +10311,36 @@ METHOD OnClickImportesExactos()
    end if 
 
 RETURN ( Self )
+
+//--------------------------------------------------------------------------//
+
+METHOD lValidatePreSave()
+
+   if ::lEmptyDocumento()
+      Return .f.
+   end if
+
+   if !::lValidTurno()
+      Return .f.
+   end if
+
+RETURN ( .t. )
+
+//--------------------------------------------------------------------------//
+
+METHOD lValidTurno()
+
+   if !lCurSesion()
+      MsgStop( "No hay sesiones activas, imposible añadir documentos." )
+      Return .f.
+   end if
+
+   if !lCajaOpen( oUser():cCaja() )
+      msgStop( "Esta caja " + oUser():cCaja() + " esta cerrada." )
+      Return .f.
+   end if
+
+Return .t.
 
 //--------------------------------------------------------------------------//
 

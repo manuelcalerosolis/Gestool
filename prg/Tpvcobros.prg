@@ -820,12 +820,12 @@ METHOD GuardaCobros() CLASS TpvCobros
          if sCobro:lCloseCobro
             ::oSender:oTiketCobro:cTurPgo := sCobro:cSesionCobro
          else
-            ::oSender:oTiketCobro:cTurPgo := cCurSesion()
+            ::oSender:oTiketCobro:cTurPgo := ::oSender:oTiketCabecera:cTurTik //cCurSesion()
          end if
 
          ::oSender:oTiketCobro:Save()
 
-      else 
+      else
 
          msgStop( "No he podido almacenar los pagos del ticket " + ::oSender:cNumeroTicketFormato() )
          

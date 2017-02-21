@@ -445,7 +445,7 @@ METHOD defineAceptarCancelar() CLASS ReceiptDocumentSalesViewEdit
                            "nWidth"    => 64,;
                            "nHeight"   => 64,;
                            "cResName"  => "gc_printer_ok2_64",;
-                           "bLClicked" => {|| ::oSender:onViewSave(), ::oSender:printReceipt() },;
+                           "bLClicked" => {|| ::oSender:onViewSave(), ::oSender:setTrueAceptarImprimir() },;
                            "oWnd"      => ::oDlg } )
 
    TGridImage():Build(  {  "nTop"      => 5,;
