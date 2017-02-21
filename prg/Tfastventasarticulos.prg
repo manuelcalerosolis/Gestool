@@ -4576,7 +4576,6 @@ METHOD getUnidadesVendidas( cCodArt, cCodAlm ) CLASS TFastVentasArticulos
 
    end if
 
-
    if ::oFacCliL:Seek( Padr( cCodArt, 18 ) + Padr( cCodAlm, 16 ) + dtos( GetSysDate() ) )
 
       while ::oFacCliL:cRef + ::oFacCliL:cAlmLin + dtos( ::oFacCliL:dFecFac ) == Padr( cCodArt, 18 ) + Padr( cCodAlm, 16 ) + dtos( GetSysDate() ) .and.;
