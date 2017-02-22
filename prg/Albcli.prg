@@ -6695,10 +6695,10 @@ Static Function RecAlbCli( aTmpAlb, oDlg )
          Buscamos si existen descuentos en las ofertas
          */
 
-         nImpOfe     := nDtoOferta( ( dbfTmpLin )->cRef, aTmpAlb[ _CCODCLI ], aTmpAlb[ _CCODGRP ], ( dbfTmpLin )->nUniCaja, aTmpAlb[ _DFECALB ], dbfOferta, ( dbfTmpLin )->cCodPr1, ( dbfTmpLin )->cCodPr2, ( dbfTmpLin )->cValPr1, ( dbfTmpLin )->cValPr2 )
+         /*nImpOfe     := nDtoOferta( ( dbfTmpLin )->cRef, aTmpAlb[ _CCODCLI ], aTmpAlb[ _CCODGRP ], ( dbfTmpLin )->nUniCaja, aTmpAlb[ _DFECALB ], dbfOferta, ( dbfTmpLin )->cCodPr1, ( dbfTmpLin )->cCodPr2, ( dbfTmpLin )->cValPr1, ( dbfTmpLin )->cValPr2 )
          if nImpOfe  != 0
             ( dbfTmpLin )->nDtoPrm  := nImpOfe
-         end if
+         end if*/
 
       end if
 
@@ -11173,6 +11173,10 @@ STATIC FUNCTION SaveDeta( aTmp, aTmpAlb, oFld, aGet, oBrw, bmpImage, oDlg, nMode
       end if 
 
       setDlgMode( aTmp, aTmpAlb, nMode, aGet, oFld, oSayPr1, oSayPr2, oSayVp1, oSayVp2, oStkAct, oTotal )
+
+      if !Empty( aGet[ _CREF ] )
+         aGet[ _CREF ]:SetFocus()
+      end if
 
       sysRefresh()
 
