@@ -981,8 +981,6 @@ METHOD AddSATCliente( cCodigoCliente ) CLASS TFastVentasClientes
    oBlock               := ErrorBlock( {| oError | ApoloBreak( oError ) } )
    BEGIN SEQUENCE
    
-      ::InitSATClientes()
-
       ::oSatCliT:OrdSetFocus( "cCodCli" )
       ::oSatCliL:OrdSetFocus( "nNumSat" )
 
@@ -1116,8 +1114,6 @@ METHOD AddPresupuestoCliente( cCodigoCliente ) CLASS TFastVentasClientes
    oBlock               := ErrorBlock( {| oError | ApoloBreak( oError ) } )
    BEGIN SEQUENCE
    
-      ::InitPresupuestosClientes()
-
       ::oPreCliT:OrdSetFocus( "cCodCli" )
       ::oPreCliL:OrdSetFocus( "nNumPre" )
 
@@ -1251,8 +1247,6 @@ METHOD AddPedidoCliente( cCodigoCliente ) CLASS TFastVentasClientes
    oBlock               := ErrorBlock( {| oError | ApoloBreak( oError ) } )
    BEGIN SEQUENCE
    
-      ::InitPedidosClientes()
-
       ::oPedCliT:OrdSetFocus( "dFecPed" )
       ::oPedCliL:OrdSetFocus( "nNumPed" )
 
@@ -1392,8 +1386,6 @@ METHOD AddAlbaranCliente( lNoFacturados ) CLASS TFastVentasClientes
    oBlock                  := ErrorBlock( {| oError | ApoloBreak( oError ) } )
    BEGIN SEQUENCE
    
-      ::InitAlbaranesClientes()
-
       ::oAlbCliT:OrdSetFocus( "dFecAlb" )
       ::oAlbCliL:OrdSetFocus( "nNumAlb" )
 
@@ -1535,8 +1527,6 @@ METHOD AddFacturaCliente( cCodigoCliente ) CLASS TFastVentasClientes
    oBlock               := ErrorBlock( {| oError | ApoloBreak( oError ) } )
    BEGIN SEQUENCE
    
-      ::InitFacturasClientes()
-
       ::oFacCliT:OrdSetFocus( "dFecFac" )
       ::oFacCliL:OrdSetFocus( "nNumFac" )
 
@@ -1667,8 +1657,6 @@ METHOD AddFacturaRectificativa( cCodigoCliente ) CLASS TFastVentasClientes
    oBlock                        := ErrorBlock( {| oError | ApoloBreak( oError ) } )
    BEGIN SEQUENCE
    
-      ::InitFacturasRectificativasClientes()
-
       ::oFacRecT:OrdSetFocus( "dFecFac" )
       ::oFacRecL:OrdSetFocus( "nNumFac" )
 
@@ -1789,8 +1777,6 @@ METHOD AddTicket() CLASS TFastVentasClientes
    oBlock               := ErrorBlock( {| oError | ApoloBreak( oError ) } )
    BEGIN SEQUENCE
    
-      ::InitTicketsClientes()
-
       ::oTikCliT:OrdSetFocus( "dFecTik" )
       ::oTikCliL:OrdSetFocus( "cNumTik" )
    
@@ -2018,8 +2004,6 @@ METHOD insertFacturaCliente()
    oBlock               := ErrorBlock( {| oError | ApoloBreak( oError ) } )
    BEGIN SEQUENCE
    
-      ::InitFacturasClientes()
-
       ::oFacCliT:OrdSetFocus( "dFecFac" )
       ::oFacCliL:OrdSetFocus( "nNumFac" )
 
@@ -2157,8 +2141,6 @@ METHOD insertRectificativa()
    oBlock               := ErrorBlock( {| oError | ApoloBreak( oError ) } )
    BEGIN SEQUENCE
    
-      ::InitFacturasRectificativasClientes()
-
       ::oFacRecT:OrdSetFocus( "dFecFac" )
       ::oFacRecL:OrdSetFocus( "nNumFac" )
 
@@ -2295,8 +2277,6 @@ METHOD insertTicketCliente()
    oBlock               := ErrorBlock( {| oError | ApoloBreak( oError ) } )
    BEGIN SEQUENCE
    
-      ::InitTicketsClientes()
-
       ::oTikCliT:OrdSetFocus( "dFecTik" )
       ::oTikCliL:OrdSetFocus( "cNumTik" )
    
