@@ -94,14 +94,16 @@ RETURN .t.
 
 METHOD OpenFiles() CLASS TFastComprasProveedores
 
-   local lOpen    := .t.
+   local lOpen       := .t.
    local oBlock
    local oError
 
-   oBlock         := ErrorBlock( {| oError | ApoloBreak( oError ) } )
+   oBlock            := ErrorBlock( {| oError | ApoloBreak( oError ) } )
    BEGIN SEQUENCE
    
    ::lApplyFilters   := lAIS()
+
+   ::nView           := D():CreateView( ::cDriver )
    
       DATABASE NEW ::oPedPrvT PATH ( cPatEmp() ) CLASS "PEDPRVT"  FILE "PEDPROVT.DBF" VIA ( cDriver() ) SHARED INDEX "PEDPROVT.CDX"
 
@@ -180,6 +182,12 @@ METHOD CloseFiles() CLASS TFastComprasProveedores
    if !Empty( ::oCnfFlt ) .and. ( ::oCnfFlt:Used() )
       ::oCnfFlt:end()
    end if
+
+   if !Empty( ::nView )
+      D():DeleteView( ::nView )
+   end if
+
+   ::nView     := nil
 
 RETURN .t.
 

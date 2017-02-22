@@ -186,6 +186,8 @@ METHOD OpenFiles() CLASS TFastVentasClientes
    oBlock               := ErrorBlock( {| oError | ApoloBreak( oError ) } )
    BEGIN SEQUENCE
 
+      ::nView           := D():CreateView( ::cDriver )
+
       ::lApplyFilters   := lAIS()
 
       ::oSatCliT        := TDataCenter():oSatCliT()
@@ -426,6 +428,12 @@ METHOD CloseFiles() CLASS TFastVentasClientes
       ::oCamposExtra:CloseFiles()
       ::oCamposExtra:End()
    end if
+
+   if !Empty( ::nView )
+      D():DeleteView( ::nView )
+   end if
+
+   ::nView     := nil
 
 RETURN .t.
 

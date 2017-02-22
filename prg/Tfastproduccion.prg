@@ -165,6 +165,8 @@ METHOD OpenFiles() CLASS TFastProduccion
    BEGIN SEQUENCE
    
    ::lApplyFilters   := lAIS()
+
+   ::nView           := D():CreateView( ::cDriver )
    
       DATABASE NEW ::oParteProduccion     PATH ( cPatEmp() ) CLASS "PROCAB"      FILE "PROCAB.DBF"    VIA ( cDriver() ) SHARED INDEX "PROCAB.CDX"
       DATABASE NEW ::oMaterialProducido   PATH ( cPatEmp() ) CLASS "PROLIN"      FILE "PROLIN.DBF"    VIA ( cDriver() ) SHARED INDEX "PROLIN.CDX"
@@ -230,6 +232,12 @@ METHOD CloseFiles() CLASS TFastProduccion
    if !Empty( ::oTarPreL ) .and. ( ::oTarPreL:Used() )
       ::oTarPreL:end()
    end if
+
+   if !Empty( ::nView )
+      D():DeleteView( ::nView )
+   end if
+
+   ::nView     := nil
 
 RETURN .t.
 
