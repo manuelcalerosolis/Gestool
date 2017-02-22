@@ -331,16 +331,16 @@ CLASS TFastReportInfGen FROM TNewInfGen
 
    METHOD AddVariableLineasParteProduccion()                      VIRTUAL
    
-   METHOD cDetalleRectificativasClientes()                           INLINE ( cDesFacRec ( ::oFacRecL:cAlias ) )
-   METHOD nTotalUnidadesRectificativasClientes()                     INLINE ( nTotNFacRec( ::oFacRecL:cAlias ) )
-   METHOD nPrecioUnitarioRectificativasClientes()                    INLINE ( nTotUFacRec( ::oFacRecL:cAlias ) ) 
-   METHOD nTotalLineaRectificativasClientes()                        INLINE ( nTotLFacRec( ::oFacRecL:cAlias ) )
-   METHOD nTotalPesoLineaRectificativasClientes()                    INLINE ( nPesLFacRec( ::oFacRecL:cAlias ) )
-   METHOD nTotalImpuestosIncluidosLineaRectificativasClientes()      INLINE ( nTotFFacRec( ::oFacRecL:cAlias ) )
-   METHOD nTotalIVALineaRectificativasClientes()                     INLINE ( nIvaLFacRec( ::oFacRecL:cAlias ) )
+   METHOD cDetalleRectificativasClientes()                           INLINE ( cDesFacRec ( D():FacturasRectificativasLineas( ::nView ) ) )
+   METHOD nTotalUnidadesRectificativasClientes()                     INLINE ( nTotNFacRec( D():FacturasRectificativasLineas( ::nView ) ) )
+   METHOD nPrecioUnitarioRectificativasClientes()                    INLINE ( nTotUFacRec( D():FacturasRectificativasLineas( ::nView ) ) ) 
+   METHOD nTotalLineaRectificativasClientes()                        INLINE ( nTotLFacRec( D():FacturasRectificativasLineas( ::nView ) ) )
+   METHOD nTotalPesoLineaRectificativasClientes()                    INLINE ( nPesLFacRec( D():FacturasRectificativasLineas( ::nView ) ) )
+   METHOD nTotalImpuestosIncluidosLineaRectificativasClientes()      INLINE ( nTotFFacRec( D():FacturasRectificativasLineas( ::nView ) ) )
+   METHOD nTotalIVALineaRectificativasClientes()                     INLINE ( nIvaLFacRec( D():FacturasRectificativasLineas( ::nView ) ) )
 
-   METHOD nTotalDescuentoPorcentualLineaRectificativasClientes()     INLINE ( nDtoLFacRec( ::oFacRecL:cAlias ) )
-   METHOD nTotalDescuentoPromocionalLineaRectificativasClientes()    INLINE ( nPrmLFacRec( ::oFacRecL:cAlias ) )
+   METHOD nTotalDescuentoPorcentualLineaRectificativasClientes()     INLINE ( nDtoLFacRec( D():FacturasRectificativasLineas( ::nView ) ) )
+   METHOD nTotalDescuentoPromocionalLineaRectificativasClientes()    INLINE ( nPrmLFacRec( D():FacturasRectificativasLineas( ::nView ) ) )
 
    METHOD AddVariableTicketCliente()                              
    METHOD AddVariableLineasTicketCliente()
@@ -2448,14 +2448,14 @@ Rectificativas--------------------------------------------------------------
 
 METHOD FastReportFacturaRectificativa()
 
-   ::oFacRecT:OrdSetFocus( "iNumFac" )
+   ( D():FacturasRectificativas( ::nView ) )->( ordsetfocus( "iNumFac" ) )
    
-   ::oFastReport:SetWorkArea(       "Facturas rectificativas de clientes", ::oFacRecT:nArea )
+   ::oFastReport:SetWorkArea(       "Facturas rectificativas de clientes", ( D():FacturasRectificativas( ::nView ) )->( select() ) )
    ::oFastReport:SetFieldAliases(   "Facturas rectificativas de clientes", cItemsToReport( aItmFacRec() ) )
    
-   ::oFacRecL:OrdSetFocus( "iNumFac" )
+   ( D():FacturasRectificativas( ::nView ) )->( ordsetfocus( "iNumFac" ) )
    
-   ::oFastReport:SetWorkArea(       "Lineas facturas rectificativas de clientes", ::oFacRecL:nArea )
+   ::oFastReport:SetWorkArea(       "Lineas facturas rectificativas de clientes", ( D():FacturasRectificativasLineas( ::nView ) )->( select() ) )
    ::oFastReport:SetFieldAliases(   "Lineas facturas rectificativas de clientes", cItemsToReport( aColFacRec() ) )
    
    ::oFastReport:SetMasterDetail(   "Informe", "Facturas rectificativas de clientes",        {|| ::idDocumento() } )

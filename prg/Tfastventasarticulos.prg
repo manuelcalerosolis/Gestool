@@ -360,6 +360,10 @@ METHOD OpenFiles() CLASS TFastVentasArticulos
 
       D():FacturasClientesCobros( ::nView )
 
+      D():FacturasRectificativas( ::nView )
+
+      D():FacturasRectificativasLineas( ::nView )
+
       D():ProveedorArticulo( ::nView )
 
       DATABASE NEW ::oArtImg  PATH ( cPatArt() ) CLASS "ArtImg"      FILE "ArtImg.Dbf"  VIA ( ::cDriver ) SHARED INDEX "ArtImg.Cdx"
@@ -369,10 +373,6 @@ METHOD OpenFiles() CLASS TFastVentasArticulos
       DATABASE NEW ::oArtCod  PATH ( cPatArt() ) CLASS "ArtCodebar"  FILE "ArtCodebar.Dbf"  VIA ( ::cDriver ) SHARED INDEX "ArtCodebar.Cdx"
 
       DATABASE NEW ::oArtCod  PATH ( cPatArt() ) CLASS "ArtCodebar"  FILE "ArtCodebar.Dbf"  VIA ( ::cDriver ) SHARED INDEX "ArtCodebar.Cdx"
-
-      DATABASE NEW ::oFacRecT PATH ( cPatEmp() ) CLASS "FACRECT"     FILE "FACRECT.Dbf"   VIA ( ::cDriver ) SHARED INDEX "FACRECT.Cdx"
-
-      DATABASE NEW ::oFacRecL PATH ( cPatEmp() ) CLASS "FACRECL"     FILE "FACRECL.Dbf"   VIA ( ::cDriver ) SHARED INDEX "FACRECL.Cdx"
 
       DATABASE NEW ::oTikCliT PATH ( cPatEmp() ) CLASS "TIKET"       FILE "TIKET.Dbf"     VIA ( ::cDriver ) SHARED INDEX "TIKET.Cdx"
 
@@ -536,14 +536,6 @@ METHOD CloseFiles() CLASS TFastVentasArticulos
 
       if !empty( ::oArtPrv ) .and. ( ::oArtPrv:Used() )
          ::oArtPrv:end()
-      end if
-
-      if !empty( ::oFacRecL ) .and. ( ::oFacRecL:Used() )
-         ::oFacRecL:end()
-      end if
-
-      if !empty( ::oFacRecT ) .and. ( ::oFacRecT:Used() )
-         ::oFacRecT:end()
       end if
 
       if !empty( ::oTikCliT ) .and. ( ::oTikCliT:Used() )
@@ -2546,94 +2538,94 @@ METHOD AddFacturaRectificativa() CLASS TFastVentasArticulos
 
    ::setMeterText( "Procesando facturas rectificativas" )
 
-   ( ::oFacRecT:cAlias )->( ordsetfocus( "nNumFac" ) )
-   ( ::oFacRecL:cAlias )->( ordsetfocus( "nNumFac" ) )
+   ( D():FacturasRectificativas( ::nView )         )->( ordsetfocus( "nNumFac" ) )
+   ( D():FacturasRectificativasLineas( ::nView )   )->( ordsetfocus( "nNumFac" ) )
 
-   ( ::oFacRecT:cAlias )->( setCustomFilter( ::cExpresionHeader ) )
-   ( ::oFacRecL:cAlias )->( setCustomFilter( ::cExpresionLine ) )
+   ( D():FacturasRectificativas( ::nView )         )->( setCustomFilter( ::cExpresionHeader ) )
+   ( D():FacturasRectificativasLineas( ::nView )   )->( setCustomFilter( ::cExpresionLine ) )
 
-   ::setMeterTotal( ( ::oFacRecL:cAlias )->( dbCustomKeyCount() ) )
+   ::setMeterTotal( ( D():FacturasRectificativasLineas( ::nView ) )->( dbCustomKeyCount() ) )
 
    // Lineas de facturas rectificativas----------------------------------------
 
-   ::oFacRecL:GoTop()
+   ( D():FacturasRectificativasLineas( ::nView ) )->(dbgotop() )
 
-   while !::lBreak .and. !::oFacRecL:Eof()
+   while !::lBreak .and. !( D():FacturasRectificativasLineas( ::nView ) )->( eof() )
 
       ::oDbf:Blank()
 
-      ::oDbf:cCodArt    := ::oFacRecL:cRef
-      ::oDbf:cNomArt    := ::oFacRecL:cDetalle
+      ::oDbf:cCodArt    := ( D():FacturasRectificativasLineas( ::nView ) )->cRef
+      ::oDbf:cNomArt    := ( D():FacturasRectificativasLineas( ::nView ) )->cDetalle
 
-      ::oDbf:cCodPrv    := ::oFacRecL:cCodPrv
-      ::oDbf:cNomPrv    := RetFld( ::oFacRecL:cCodPrv, ::oDbfPrv:cAlias )
+      ::oDbf:cCodPrv    := ( D():FacturasRectificativasLineas( ::nView ) )->cCodPrv
+      ::oDbf:cNomPrv    := RetFld( ( D():FacturasRectificativasLineas( ::nView ) )->cCodPrv, ::oDbfPrv:cAlias )
 
-      ::oDbf:cCodFam    := ::oFacRecL:cCodFam
-      ::oDbf:cGrpFam    := ::oFacRecL:cGrpFam
-      ::oDbf:TipoIva    := cCodigoIva( ::oDbfIva:cAlias, ::oFacRecL:nIva )
-      ::oDbf:cCodTip    := RetFld( ::oFacRecL:cRef, ::oDbfArt:cAlias, "cCodTip", "Codigo" )
-      ::oDbf:cCodCate   := RetFld( ::oFacRecL:cRef, ::oDbfArt:cAlias, "cCodCate", "Codigo" )
-      ::oDbf:cCodEst    := RetFld( ::oFacRecL:cRef, ::oDbfArt:cAlias, "cCodEst", "Codigo" )
-      ::oDbf:cCodTemp   := RetFld( ::oFacRecL:cRef, ::oDbfArt:cAlias, "cCodTemp", "Codigo" )
-      ::oDbf:cCodFab    := RetFld( ::oFacRecL:cRef, ::oDbfArt:cAlias, "cCodFab", "Codigo" )
-      ::oDbf:cDesUbi    := RetFld( ::oFacRecL:cRef, ::oDbfArt:cAlias, "cDesUbi", "Codigo" )
+      ::oDbf:cCodFam    := ( D():FacturasRectificativasLineas( ::nView ) )->cCodFam
+      ::oDbf:cGrpFam    := ( D():FacturasRectificativasLineas( ::nView ) )->cGrpFam
+      ::oDbf:TipoIva    := cCodigoIva( ::oDbfIva:cAlias, ( D():FacturasRectificativasLineas( ::nView ) )->nIva )
+      ::oDbf:cCodTip    := RetFld( ( D():FacturasRectificativasLineas( ::nView ) )->cRef, ::oDbfArt:cAlias, "cCodTip", "Codigo" )
+      ::oDbf:cCodCate   := RetFld( ( D():FacturasRectificativasLineas( ::nView ) )->cRef, ::oDbfArt:cAlias, "cCodCate", "Codigo" )
+      ::oDbf:cCodEst    := RetFld( ( D():FacturasRectificativasLineas( ::nView ) )->cRef, ::oDbfArt:cAlias, "cCodEst", "Codigo" )
+      ::oDbf:cCodTemp   := RetFld( ( D():FacturasRectificativasLineas( ::nView ) )->cRef, ::oDbfArt:cAlias, "cCodTemp", "Codigo" )
+      ::oDbf:cCodFab    := RetFld( ( D():FacturasRectificativasLineas( ::nView ) )->cRef, ::oDbfArt:cAlias, "cCodFab", "Codigo" )
+      ::oDbf:cDesUbi    := RetFld( ( D():FacturasRectificativasLineas( ::nView ) )->cRef, ::oDbfArt:cAlias, "cDesUbi", "Codigo" )
 
-      ::oDbf:cCodAlm    := ::oFacRecL:cAlmLin
-      ::oDbf:cCodObr    := ::oFacRecL:cObrLin
+      ::oDbf:cCodAlm    := ( D():FacturasRectificativasLineas( ::nView ) )->cAlmLin
+      ::oDbf:cCodObr    := ( D():FacturasRectificativasLineas( ::nView ) )->cObrLin
 
-      ::oDbf:nUniArt    := nTotNFacRec( ::oFacRecL:cAlias ) * if( ::lUnidadesNegativo, -1, 1 )
+      ::oDbf:nUniArt    := nTotNFacRec( ( D():FacturasRectificativasLineas( ::nView ) ) ) * if( ::lUnidadesNegativo, -1, 1 )
 
-      ::oDbf:nDtoArt    := ::oFacRecL:nDto
-      ::oDbf:nLinArt    := ::oFacRecL:nDtoDiv
-      ::oDbf:nPrmArt    := ::oFacRecL:nDtoPrm
+      ::oDbf:nDtoArt    := ( D():FacturasRectificativasLineas( ::nView ) )->nDto
+      ::oDbf:nLinArt    := ( D():FacturasRectificativasLineas( ::nView ) )->nDtoDiv
+      ::oDbf:nPrmArt    := ( D():FacturasRectificativasLineas( ::nView ) )->nDtoPrm
 
-      ::oDbf:nTotDto    := nDtoLFacRec( ::oFacRecL:cAlias, ::nDecOut, ::nDerOut, ::nValDiv )
-      ::oDbf:nTotPrm    := nPrmLFacRec( ::oFacRecL:cAlias, ::nDecOut, ::nDerOut, ::nValDiv )
+      ::oDbf:nTotDto    := nDtoLFacRec( ( D():FacturasRectificativasLineas( ::nView ) ), ::nDecOut, ::nDerOut, ::nValDiv )
+      ::oDbf:nTotPrm    := nPrmLFacRec( ( D():FacturasRectificativasLineas( ::nView ) ), ::nDecOut, ::nDerOut, ::nValDiv )
 
-      ::oDbf:nTrnArt    := nTrnUFacRec( ::oFacRecL:cAlias, ::nDecOut, ::nValDiv )
-      ::oDbf:nPntArt    := nPntLFacRec( ::oFacRecL:cAlias, ::nDecOut, ::nValDiv )
+      ::oDbf:nTrnArt    := nTrnUFacRec( ( D():FacturasRectificativasLineas( ::nView ) ), ::nDecOut, ::nValDiv )
+      ::oDbf:nPntArt    := nPntLFacRec( ( D():FacturasRectificativasLineas( ::nView ) ), ::nDecOut, ::nValDiv )
 
-      ::oDbf:nBrtArt    := nBrtLFacRec( ::oFacRecL:cAlias, ::nDecOut, ::nDerOut, ::nValDiv )
-      ::oDbf:nIvaArt    := nIvaLFacRec( ::oFacRecL:cAlias, ::nDecOut, ::nDerOut, ::nValDiv )
-      ::oDbf:nImpEsp    := nTotIFacRec( ::oFacRecL:cAlias, ::nDecOut, ::nDerOut, ::nValDiv )
+      ::oDbf:nBrtArt    := nBrtLFacRec( ( D():FacturasRectificativasLineas( ::nView ) ), ::nDecOut, ::nDerOut, ::nValDiv )
+      ::oDbf:nIvaArt    := nIvaLFacRec( ( D():FacturasRectificativasLineas( ::nView ) ), ::nDecOut, ::nDerOut, ::nValDiv )
+      ::oDbf:nImpEsp    := nTotIFacRec( ( D():FacturasRectificativasLineas( ::nView ) ), ::nDecOut, ::nDerOut, ::nValDiv )
 
-      ::oDbf:nCosArt    := nCosLFacRec( ::oFacRecL:cAlias, ::nDecOut, ::nDerOut, ::nValDiv )
+      ::oDbf:nCosArt    := nCosLFacRec( ( D():FacturasRectificativasLineas( ::nView ) ), ::nDecOut, ::nDerOut, ::nValDiv )
       if empty( ::oDbf:nCosArt )
          ::oDbf:nCosArt := ::oDbf:nUniArt * nCosto( ::oDbf:cCodArt, ::oDbfArt:cAlias, ::oArtKit:cAlias )
       end if 
 
-      ::oDbf:cCodPr1    := ::oFacRecL:cCodPr1
-      ::oDbf:cCodPr2    := ::oFacRecL:cCodPr2
-      ::oDbf:cValPr1    := ::oFacRecL:cValPr1
-      ::oDbf:cValPr2    := ::oFacRecL:cValPr2
+      ::oDbf:cCodPr1    := ( D():FacturasRectificativasLineas( ::nView ) )->cCodPr1
+      ::oDbf:cCodPr2    := ( D():FacturasRectificativasLineas( ::nView ) )->cCodPr2
+      ::oDbf:cValPr1    := ( D():FacturasRectificativasLineas( ::nView ) )->cValPr1
+      ::oDbf:cValPr2    := ( D():FacturasRectificativasLineas( ::nView ) )->cValPr2
 
-      ::oDbf:cLote      := ::oFacRecL:cLote
-      ::oDbf:dFecCad    := ::oFacRecL:dFecCad
+      ::oDbf:cLote      := ( D():FacturasRectificativasLineas( ::nView ) )->cLote
+      ::oDbf:dFecCad    := ( D():FacturasRectificativasLineas( ::nView ) )->dFecCad
 
       ::oDbf:cClsDoc    := FAC_REC
       ::oDbf:cTipDoc    := "Rectificativa cliente"
-      ::oDbf:cSerDoc    := ::oFacRecL:cSerie
-      ::oDbf:cNumDoc    := Str( ::oFacRecL:nNumFac )
-      ::oDbf:cSufDoc    := ::oFacRecL:cSufFac
+      ::oDbf:cSerDoc    := ( D():FacturasRectificativasLineas( ::nView ) )->cSerie
+      ::oDbf:cNumDoc    := Str( ( D():FacturasRectificativasLineas( ::nView ) )->nNumFac )
+      ::oDbf:cSufDoc    := ( D():FacturasRectificativasLineas( ::nView ) )->cSufFac
 
       ::oDbf:cIdeDoc    :=  ::idDocumento()
-      ::oDbf:nNumLin    :=  ::oFacRecL:nNumLin
+      ::oDbf:nNumLin    :=  ( D():FacturasRectificativasLineas( ::nView ) )->nNumLin
 
-      ::oDbf:nBultos    := ::oFacRecL:nBultos * if( ::lUnidadesNegativo, -1, 1)
-      ::oDbf:cFormato   := ::oFacRecL:cFormato
-      ::oDbf:nCajas     := ::oFacRecL:nCanEnt * if( ::lUnidadesNegativo, -1, 1 )
-      ::oDbf:nPeso      := nPesLFacRec( ::oFacRecL:cAlias )
+      ::oDbf:nBultos    := ( D():FacturasRectificativasLineas( ::nView ) )->nBultos * if( ::lUnidadesNegativo, -1, 1)
+      ::oDbf:cFormato   := ( D():FacturasRectificativasLineas( ::nView ) )->cFormato
+      ::oDbf:nCajas     := ( D():FacturasRectificativasLineas( ::nView ) )->nCanEnt * if( ::lUnidadesNegativo, -1, 1 )
+      ::oDbf:nPeso      := nPesLFacRec( D():FacturasRectificativasLineas( ::nView ) )
 
-      ::oDbf:lKitArt    := ::oFacRecL:lKitArt
-      ::oDbf:lKitChl    := ::oFacRecL:lKitChl
+      ::oDbf:lKitArt    := ( D():FacturasRectificativasLineas( ::nView ) )->lKitArt
+      ::oDbf:lKitChl    := ( D():FacturasRectificativasLineas( ::nView ) )->lKitChl
 
-      ::oDbf:cCtrCoste  := ::oFacRecL:cCtrCoste
-      ::oDbf:cTipCtr    := ::oFacRecL:cTipCtr
-      ::oDbf:cCodTerCtr := ::oFacRecL:cTerCtr
-      ::oDbf:cNomTerCtr := NombreTerceroCentroCoste( ::oFacRecL:cTipCtr, ::oFacRecL:cTerCtr, ::nView )
+      ::oDbf:cCtrCoste  := ( D():FacturasRectificativasLineas( ::nView ) )->cCtrCoste
+      ::oDbf:cTipCtr    := ( D():FacturasRectificativasLineas( ::nView ) )->cTipCtr
+      ::oDbf:cCodTerCtr := ( D():FacturasRectificativasLineas( ::nView ) )->cTerCtr
+      ::oDbf:cNomTerCtr := NombreTerceroCentroCoste( ( D():FacturasRectificativasLineas( ::nView ) )->cTipCtr, ( D():FacturasRectificativasLineas( ::nView ) )->cTerCtr, ::nView )
 
-      if !empty( ::oFacRecL:cCodPrv ) 
-         ::oDbf:cPrvHab := ::oFacRecL:cCodPrv
+      if !empty( ( D():FacturasRectificativasLineas( ::nView ) )->cCodPrv ) 
+         ::oDbf:cPrvHab := ( D():FacturasRectificativasLineas( ::nView ) )->cCodPrv
       else
          ::oDbf:cPrvHab := getProveedorPorDefectoArticulo( ::oDbf:cCodArt, D():ProveedorArticulo( ::nView ) )
       end if
@@ -2642,58 +2634,55 @@ METHOD AddFacturaRectificativa() CLASS TFastVentasArticulos
       Tomamos los datos de cabecera--------------------------------
       */
 
-      if ::oFacRecT:Seek( ::oFacRecL:cSerie + Str( ::oFacRecL:nNumFac ) + ::oFacRecL:cSufFac )
+      if D():gotoIdFacturasRectificativas( D():FacturasRectificativasLineasId( ::nView ), ::nView )
 
-         if ::oAtipicasCliente:Seek( ::oFacRecT:cCodCli + ::oFacRecL:cRef ) .and. !empty( ::oAtipicasCliente:cCodEnv )
+         if ::oAtipicasCliente:Seek( ( D():FacturasRectificativas( ::nView ) )->cCodCli + ( D():FacturasRectificativasLineas( ::nView ) )->cRef ) .and. !empty( ::oAtipicasCliente:cCodEnv )
             ::oDbf:cCodEnv    := ::oAtipicasCliente:cCodEnv
          else
-            ::oDbf:cCodEnv    := RetFld( ::oFacRecL:cRef, ::oDbfArt:cAlias, "cCodFra", "Codigo" )                    
+            ::oDbf:cCodEnv    := RetFld( ( D():FacturasRectificativasLineas( ::nView ) )->cRef, ::oDbfArt:cAlias, "cCodFra", "Codigo" )                    
          end if
 
-         ::oDbf:cCodPago   := ::oFacRecT:cCodPago
-         ::oDbf:cCodRut    := ::oFacRecT:cCodRut
-         ::oDbf:cCodAge    := ::oFacRecT:cCodAge
-         ::oDbf:cCodTrn    := ::oFacRecT:cCodTrn
-         ::oDbf:cCodUsr    := ::oFacRecT:cCodUsr
+         ::oDbf:cCodPago   := ( D():FacturasRectificativas( ::nView ) )->cCodPago
+         ::oDbf:cCodRut    := ( D():FacturasRectificativas( ::nView ) )->cCodRut
+         ::oDbf:cCodAge    := ( D():FacturasRectificativas( ::nView ) )->cCodAge
+         ::oDbf:cCodTrn    := ( D():FacturasRectificativas( ::nView ) )->cCodTrn
+         ::oDbf:cCodUsr    := ( D():FacturasRectificativas( ::nView ) )->cCodUsr
 
-         ::oDbf:cCodCli    := ::oFacRecT:cCodCli
-         ::oDbf:cNomCli    := ::oFacRecT:cNomCli
-         ::oDbf:cPobCli    := ::oFacRecT:cPobCli
-         ::oDbf:cPrvCli    := ::oFacRecT:cPrvCli
-         ::oDbf:cPosCli    := ::oFacRecT:cPosCli
+         ::oDbf:cCodCli    := ( D():FacturasRectificativas( ::nView ) )->cCodCli
+         ::oDbf:cNomCli    := ( D():FacturasRectificativas( ::nView ) )->cNomCli
+         ::oDbf:cPobCli    := ( D():FacturasRectificativas( ::nView ) )->cPobCli
+         ::oDbf:cPrvCli    := ( D():FacturasRectificativas( ::nView ) )->cPrvCli
+         ::oDbf:cPosCli    := ( D():FacturasRectificativas( ::nView ) )->cPosCli
 
-         ::oDbf:cCodGrp    := cGruCli( ::oFacRecT:cCodCli, ::oDbfCli )
+         ::oDbf:cCodGrp    := cGruCli( ( D():FacturasRectificativas( ::nView ) )->cCodCli, ::oDbfCli )
 
-         ::oDbf:nPreArt    := nImpUFacRec( ::oFacRecT:cAlias, ::oFacRecL:cAlias, ::nDecOut, ::nValDiv )
+         ::oDbf:nPreArt    := nImpUFacRec( ( D():FacturasRectificativas( ::nView ) ), ( D():FacturasRectificativasLineas( ::nView ) ), ::nDecOut, ::nValDiv )
       
-         ::oDbf:nImpArt    := nImpLFacRec( ::oFacRecT:cAlias, ::oFacRecL:cAlias, ::nDecOut, ::nDerOut, ::nValDiv, , , .t., .t. )
-         ::oDbf:nTotArt    := nImpLFacRec( ::oFacRecT:cAlias, ::oFacRecL:cAlias, ::nDecOut, ::nDerOut, ::nValDiv, , , .t., .t.  )
-         ::oDbf:nTotArt    += nIvaLFacRec( ::oFacRecL:cAlias, ::nDecOut, ::nDerOut, ::nValDiv )
+         ::oDbf:nImpArt    := nImpLFacRec( ( D():FacturasRectificativas( ::nView ) ), ( D():FacturasRectificativasLineas( ::nView ) ), ::nDecOut, ::nDerOut, ::nValDiv, , , .t., .t. )
+         ::oDbf:nTotArt    := nImpLFacRec( ( D():FacturasRectificativas( ::nView ) ), ( D():FacturasRectificativasLineas( ::nView ) ), ::nDecOut, ::nDerOut, ::nValDiv, , , .t., .t.  )
+         ::oDbf:nTotArt    += nIvaLFacRec( ( D():FacturasRectificativasLineas( ::nView ) ), ::nDecOut, ::nDerOut, ::nValDiv )
 
-         ::oDbf:nPctAge    := ::oFacRecT:nPctComAge
-         ::oDbf:nComAge    := nComLFacRec( ::oFacRecT:cAlias, ::oFacRecL:cAlias, ::nDecOut, ::nDerOut )
+         ::oDbf:nPctAge    := ( D():FacturasRectificativas( ::nView ) )->nPctComAge
+         ::oDbf:nComAge    := nComLFacRec( ( D():FacturasRectificativas( ::nView ) ), ( D():FacturasRectificativasLineas( ::nView ) ), ::nDecOut, ::nDerOut )
 
-         ::oDbf:nAnoDoc    := Year( ::oFacRecT:dFecFac )
-         ::oDbf:nMesDoc    := Month( ::oFacRecT:dFecFac )
-         ::oDbf:dFecDoc    := ::oFacRecT:dFecFac
-         ::oDbf:cHorDoc    := SubStr( ::oFacRecT:cTimCre, 1, 2 )
-         ::oDbf:cMinDoc    := SubStr( ::oFacRecT:cTimCre, 4, 2 )
+         ::oDbf:nAnoDoc    := Year( ( D():FacturasRectificativas( ::nView ) )->dFecFac )
+         ::oDbf:nMesDoc    := Month( ( D():FacturasRectificativas( ::nView ) )->dFecFac )
+         ::oDbf:dFecDoc    := ( D():FacturasRectificativas( ::nView ) )->dFecFac
+         ::oDbf:cHorDoc    := SubStr( ( D():FacturasRectificativas( ::nView ) )->cTimCre, 1, 2 )
+         ::oDbf:cMinDoc    := SubStr( ( D():FacturasRectificativas( ::nView ) )->cTimCre, 4, 2 )
 
-         ::oDbf:cEstado    := cChkPagFacRec( ::oDbf:cSerDoc + ::oDbf:cNumDoc + ::oDbf:cSufDoc, ::oFacRecT:cAlias, D():FacturasClientesCobros( ::nView ) )
+         ::oDbf:cEstado    := cChkPagFacRec( ::oDbf:cSerDoc + ::oDbf:cNumDoc + ::oDbf:cSufDoc, ( D():FacturasRectificativas( ::nView ) ), D():FacturasClientesCobros( ::nView ) )
 
       end if
 
       ::InsertIfValid()
       ::loadValuesExtraFields()
 
-      ::oFacRecL:Skip()
+      ( D():FacturasRectificativasLineas( ::nView ) )->( dbSkip() )
 
       ::setMeterAutoIncremental()
 
    end while
-
-   ::oFacRecT:IdxDelete( cCurUsr(), GetFileNoExt( ::oFacRecT:cFile ) )
-   ::oFacRecL:IdxDelete( cCurUsr(), GetFileNoExt( ::oFacRecL:cFile ) )
 
 RETURN ( Self )
 

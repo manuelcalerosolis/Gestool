@@ -250,6 +250,7 @@ CLASS D
 
    // Facturas rectificativas--------------------------------------------------
 
+   METHOD gotoIdFacturasRectificativas( id, nView )            INLINE ( ::seekInOrd( ::FacturasRectificativas( nView ), id, "nNumFac"))                
    METHOD FacturasRectificativas( nView )                      INLINE ( ::Get( "FacRecT", nView ) )
       METHOD FacturasRectificativasId( nView )                 INLINE ( ( ::Get( "FacRecT", nView ) )->cSerie + str( ( ::Get( "FacRecT", nView ) )->nNumFac, 9 ) + ( ::Get( "FacRecT", nView ) )->cSufFac )
 
