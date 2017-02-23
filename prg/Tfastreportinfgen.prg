@@ -2494,9 +2494,9 @@ RETURN ( Self )
 
 METHOD FastReportRecibosCliente()
 
-   ( D():FacturasClientesLineas( ::nView ) )->( ordsetfocus( "iNumFac" ) )
+   ( D():FacturasClientesCobros( ::nView ) )->( ordsetfocus( "iNumFac" ) )
    
-   ::oFastReport:SetWorkArea(       "Recibos de clientes", ( D():FacturasClientesLineas( ::nView ) )->( select() ) )
+   ::oFastReport:SetWorkArea(       "Recibos de clientes", ( D():FacturasClientesCobros( ::nView ) )->( select() ) )
    ::oFastReport:SetFieldAliases(   "Recibos de clientes", cItemsToReport( aItmRecCli() ) )
 
    ::oFastReport:SetMasterDetail(   "Informe", "Recibos de clientes",   {|| ::idDocumento() + ::oDbf:cNumRec } )

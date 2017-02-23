@@ -660,8 +660,8 @@ METHOD New( cSubTitle, aFields, aIndex, oMenuItem, oWnd, cHelp, xOthers ) CLASS 
    Creamos las bases de datos temporales---------------------------------------
    */
 
-   ::cFileName    := cGetNewFileName( cPatTmp() + cCurUsr(), "Dbf", .t. )  // ::ClassName()
-   ::cFileIndx    := cGetNewFileName( cPatTmp() + cCurUsr(), "Cdx", .t. )  // ::ClassName()
+   ::cFileName             := cGetNewFileName( cPatTmp() + cCurUsr(), "Dbf", .t. )  // ::ClassName()
+   ::cFileIndx             := cGetNewFileName( cPatTmp() + cCurUsr(), "Cdx", .t. )  // ::ClassName()
 
    if file( ::cFileName )
       fErase( ::cFileName )
@@ -671,7 +671,7 @@ METHOD New( cSubTitle, aFields, aIndex, oMenuItem, oWnd, cHelp, xOthers ) CLASS 
       fErase( ::cFileIndx )
    end if
 
-   ::oDbf         := TDbf():New( ::cFileName, "InfMov", ( cLocalDriver() ), , ( cPatTmp() ) )
+   ::oDbf                  := TDbf():New( ::cFileName, "InfMov", ( cLocalDriver() ), , ( cPatTmp() ) )
 
    for n := 1 to len( aFields )
 
@@ -679,17 +679,17 @@ METHOD New( cSubTitle, aFields, aIndex, oMenuItem, oWnd, cHelp, xOthers ) CLASS 
          aSize( aFields[n], 10 )
       end if
 
-      ::oDbf:AddField(  aFields[ n, 1 ],;
-                        aFields[ n, 2 ],;
-                        aFields[ n, 3 ],;
-                        aFields[ n, 4 ],;
-                        aFields[ n, 5 ],;
-                        aFields[ n, 7 ],;
-                        nil,;
-                        nil,;
-                        aFields[ n, 6 ],;
-                        aFields[ n, 8 ],;
-                        if( aFields[ n, 9 ] == nil, aFields[ n, 3 ] + aFields[ n, 4 ], aFields[ n, 9 ] ) )
+      ::oDbf:AddField(     aFields[ n, 1 ],;
+                           aFields[ n, 2 ],;
+                           aFields[ n, 3 ],;
+                           aFields[ n, 4 ],;
+                           aFields[ n, 5 ],;
+                           aFields[ n, 7 ],;
+                           nil,;
+                           nil,;
+                           aFields[ n, 6 ],;
+                           aFields[ n, 8 ],;
+                           if( aFields[ n, 9 ] == nil, aFields[ n, 3 ] + aFields[ n, 4 ], aFields[ n, 9 ] ) )
 
    next
 
