@@ -2557,7 +2557,7 @@ Function CreateAcceso( oWnd )
    end if
 
    oGrupo               := TGrupoAcceso()
-   oGrupo:nBigItems     := 3
+   oGrupo:nBigItems     := 4
    oGrupo:nBigItems++
    oGrupo:cPrompt       := 'Extras'
    oGrupo:cLittleBitmap := "gc_magic_wand_16"
@@ -2603,6 +2603,20 @@ Function CreateAcceso( oWnd )
    oItem:cBmp           := "gc_calendar_16"
    oItem:cBmpBig        := "gc_calendar_32"
    oItem:lShow          := .f.
+
+   if GetPvProfString( "OPCIONES", "CambiarCodigos", ".F.", cIniAplication() ) == ".T."
+
+   oItem                := oItemHerramientas:Add()
+   oItem:oGroup         := oGrupo
+   oItem:cPrompt        := 'Cambiar códigos'
+   oItem:cMessage       := 'Cambia códigos'
+   oItem:bAction        := {|| TChgCode():New( "01080", oWnd ):Resource() }
+   oItem:cId            := "01080"
+   oItem:cBmp           := "gc_calendar_16"
+   oItem:cBmpBig        := "gc_calendar_32"
+   oItem:lShow          := .f.
+
+   end if
 
    // Reporting----------------------------------------------------------------
 
