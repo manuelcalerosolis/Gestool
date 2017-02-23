@@ -4564,8 +4564,6 @@ METHOD ExecuteSqlStatement( cSql, cSqlStatement, hStatement )
 
       ::CloseArea( cSqlStatement )
 
-
-   
       lOk               := ADSCreateSQLStatement( cSqlStatement, hStatement )
       if lOk
    

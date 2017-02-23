@@ -2472,14 +2472,14 @@ Tiket--------------------------------------------------------------------------
 
 METHOD FastReportTicket()
 
-   ( D():TiketsClientes( ::nView ) )->( OrdSetFocus( "iNumTik" ) )
+   ( D():Tikets( ::nView ) )->( ordsetfocus( "iNumTik" ) )
    
-   ::oFastReport:SetWorkArea(       "Tickets de clientes", ( D():TiketsClientes( ::nView ) )->( select() ) )
+   ::oFastReport:SetWorkArea(       "Tickets de clientes", ( D():Tikets( ::nView ) )->( select() ) )
    ::oFastReport:SetFieldAliases(   "Tickets de clientes", cItemsToReport( aItmTik() ) )
    
-   ( D():TiketsClientesLineas( ::nView ) )->(OrdSetFocus( "iNumTik" ) )
+   ( D():TiketsLineas( ::nView ) )->( ordsetfocus( "iNumTik" ) )
    
-   ::oFastReport:SetWorkArea(       "Lineas tickets de clientes", ( D():TiketsClientesLineas( ::nView ) )->( select() ) )
+   ::oFastReport:SetWorkArea(       "Lineas tickets de clientes", ( D():TiketsLineas( ::nView ) )->( select() ) )
    ::oFastReport:SetFieldAliases(   "Lineas tickets de clientes", cItemsToReport( aColTik() ) )
    
    ::oFastReport:SetMasterDetail(   "Informe", "Tickets de clientes",         {|| ::idDocumento() } )

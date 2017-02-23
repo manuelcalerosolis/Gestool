@@ -272,21 +272,21 @@ CLASS D
 
    // Tikets de clientes-------------------------------------------------------
 
-   METHOD Tikets( nView, cSelect )                             INLINE ( if( lAIS(), ::TiketsSQL( cSelect, nView ), ::Get( "TikeT", nView ) ) )
+   METHOD Tikets( nView, cSelect )                             INLINE ( if( lAIS() .and. !empty( cSelect ), ::TiketsSQL( cSelect, nView ), ::Get( "TikeT", nView ) ) )
       METHOD TiketsId( nView )                                 INLINE ( ( ::Tikets( nView ) )->cSerTik + ( ::Tikets( nView ) )->cNumTik + ( ::Tikets( nView ) )->cSufTik )
       METHOD gotoIdTikets( id, nView )                         INLINE ( ::seekInOrd( ::Tikets( nView ), id, "cNumTik" ) ) 
 
-   METHOD TiketsLineas( nView )                             INLINE ( ::Get( "TikeL", nView ) )
-      METHOD TiketsLineasId( nView )                        INLINE ( ( ::TiketsLineas( nView ) )->cSerTil + ( ::TiketsLineas( nView ) )->cNumTil + ( ::TiketsLineas( nView ) )->cSufTil )
-      METHOD gotoIdTiketsLineas( id, nView )                INLINE ( ::seekInOrd( ::TiketsLineas( nView ), id, "cNumTil" ) ) 
+   METHOD TiketsLineas( nView )                                INLINE ( ::Get( "TikeL", nView ) )
+      METHOD TiketsLineasId( nView )                           INLINE ( ( ::TiketsLineas( nView ) )->cSerTil + ( ::TiketsLineas( nView ) )->cNumTil + ( ::TiketsLineas( nView ) )->cSufTil )
+      METHOD gotoIdTiketsLineas( id, nView )                   INLINE ( ::seekInOrd( ::TiketsLineas( nView ), id, "cNumTil" ) ) 
 
-      METHOD setFocusTiketsLineas( cTag, nView )            INLINE ( ::cTag   := ( ::TiketsLineas( nView ) )->( ordSetFocus( cTag ) ) )
+      METHOD setFocusTiketsLineas( cTag, nView )               INLINE ( ::cTag   := ( ::TiketsLineas( nView ) )->( ordSetFocus( cTag ) ) )
 
-      METHOD TiketsLineasEof( nView )                       INLINE ( ( ::TiketsLineas( nView ) )->( eof() ) )
-      METHOD TiketsLineasNotEof( nView )                    INLINE ( ! ( ::TiketsLineasEof( nView ) ) ) 
+      METHOD TiketsLineasEof( nView )                          INLINE ( ( ::TiketsLineas( nView ) )->( eof() ) )
+      METHOD TiketsLineasNotEof( nView )                       INLINE ( ! ( ::TiketsLineasEof( nView ) ) ) 
 
-   METHOD getStatusTiketsLineas( nView )                    INLINE ( ::aStatus := aGetStatus( ::TiketsLineas( nView ) ) )
-   METHOD setStatusTiketsLineas( nView )                    INLINE ( SetStatus( ::TiketsLineas( nView ), ::aStatus ) )
+   METHOD getStatusTiketsLineas( nView )                       INLINE ( ::aStatus := aGetStatus( ::TiketsLineas( nView ) ) )
+   METHOD setStatusTiketsLineas( nView )                       INLINE ( SetStatus( ::TiketsLineas( nView ), ::aStatus ) )
 
    // Pedidos de clientes------------------------------------------------------
 

@@ -2477,6 +2477,7 @@ METHOD AddFacturaCliente() CLASS TFastVentasArticulos
       end if
 
       ::InsertIfValid()
+      
       ::loadValuesExtraFields()
 
       ::addFacturasClientes()
@@ -2723,14 +2724,14 @@ METHOD AddTicket() CLASS TFastVentasArticulos
 
    ::setMeterTotal( ( D():TiketsLineas( ::nView ) )->( dbCustomKeyCount() ) )
 
-   // Lineas de tickets -------------------------------------------------------
+   // Cabecera de tickets -------------------------------------------------------
 
-   ( D():Tikets( ::nView ) )->( dbGoTop() )
+   ( D():Tikets( ::nView ) )->( dbgotop() )
    while !::lBreak .and. !( D():Tikets( ::nView ) )->( eof() )
 
-      if D():gotoIdTiketsLineas( D():TiketsLineasId( ::nView ), ::nView ) 
+      if D():gotoIdTiketsLineas( D():TiketsId( ::nView ), ::nView ) 
 
-         while ( D():TiketsId( ::nView ) ) == ( D():TiketsLineasId( ::nView ) ) .and. !( D():TiketsLineas( ::nView ) )->( Eof() )
+         while ( D():TiketsId( ::nView ) ) == ( D():TiketsLineasId( ::nView ) ) .and. !( D():TiketsLineas( ::nView ) )->( eof() )
 
             if ( !empty( ( D():TiketsLineas( ::nView ) )->cCbaTil ) )
 
@@ -2783,7 +2784,6 @@ METHOD AddTicket() CLASS TFastVentasArticulos
 
                ::oDbf:nDtoArt    := ( D():TiketsLineas( ::nView ) )->nDtoLin
                ::oDbf:nLinArt    := ( D():TiketsLineas( ::nView ) )->nDtoDiv
-             //::oDbf:nPrmArt    := ::oTikCliL:nDtoPrm
 
                ::oDbf:nTotDto    := nDtoLTpv( ( D():TiketsLineas( ::nView ) ), ::nDecOut, ::nDerOut, ::nValDiv )
                ::oDbf:nTotPrm    := 0
@@ -2828,6 +2828,7 @@ METHOD AddTicket() CLASS TFastVentasArticulos
                // Añadimos un nuevo registro-----------------------------------
 
                ::InsertIfValid()
+
                ::loadValuesExtraFields()
 
             end if
@@ -2923,15 +2924,13 @@ METHOD AddTicket() CLASS TFastVentasArticulos
 
       end if
 
-      ( D():Tikets( ::nView ) )->( dbSkip() )
+      ( D():Tikets( ::nView ) )->( dbskip() )
 
       ::setMeterAutoIncremental()
 
    end while
 
    ::setMeterTotal( ( D():Tikets( ::nView ) )->( OrdKeyCount() ) )
-
-
 
 RETURN ( Self )
 
@@ -4175,7 +4174,6 @@ RETURN ( Self )
 METHOD sqlPedidoClientes() CLASS TFastVentasArticulos
 
    local cStm 
-
    local cArticuloDesde       := ""                // ::oGrupoArticulo:Cargo:getDesde()
    local cArticuloHasta       := "ZZZZZZZZZZZZZZ"  // ::oGrupoArticulo:Cargo:getHasta()
 
@@ -4226,6 +4224,7 @@ METHOD sqlPedidoClientes() CLASS TFastVentasArticulos
    TDataCenter():ExecuteSqlStatement( cStm, "lineasDocumento" ) 
 
    ( "lineasDocumento" )->( browse() )
+
 
 RETURN ( Self )
 
