@@ -10734,13 +10734,11 @@ STATIC FUNCTION LoaArt( cCodArt, aTmp, aGet, aTmpAlb, oStkAct, oSayPr1, oSayPr2,
 
             end if
 
-            
-
             SysRefresh()
 
             ValidaMedicion( aTmp, aGet )
 
-         end if
+         //end if
 
          // Precios por tarifas---------------------------------------------
 
@@ -10856,6 +10854,8 @@ STATIC FUNCTION LoaArt( cCodArt, aTmp, aGet, aTmpAlb, oStkAct, oSayPr1, oSayPr2,
                   end if 
                end if
             end if
+
+         end if
 
          end if
 
@@ -11012,9 +11012,9 @@ STATIC FUNCTION SaveDeta( aTmp, aTmpAlb, oFld, aGet, oBrw, bmpImage, oDlg, nMode
       oBtn:SetFocus()
    end if 
 
-   if !empty(aGet) .and. !( aGet[ _CREF ]:lValid() )
+   /*if !empty(aGet) .and. !( aGet[ _CREF ]:lValid() )
       return nil
-   end if
+   end if*/
 
    if !lMoreIva( aTmp[ _NIVA ] )
       return nil

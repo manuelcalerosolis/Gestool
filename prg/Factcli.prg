@@ -13119,11 +13119,11 @@ STATIC FUNCTION SaveDeta( aTmp, aTmpFac, aGet, oBrw, oDlg, oFld, oSayPr1, oSayPr
 
    if !empty( oBtn )
       oBtn:SetFocus()
-    end if  
+   end if  
 
-   if !aGet[ _CREF ]:lValid()
+   /*if !aGet[ _CREF ]:lValid()
       return .f.
-   end if
+   end if*/
 
    /*
    Fin de modo de edición multiple
