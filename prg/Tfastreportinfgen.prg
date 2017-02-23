@@ -345,15 +345,15 @@ CLASS TFastReportInfGen FROM TNewInfGen
    METHOD AddVariableTicketCliente()                              
    METHOD AddVariableLineasTicketCliente()
 
-   METHOD cDetalleTicketsClientes()                               INLINE ( ::oTikCliL:cNomTil )
-   METHOD nTotalUnidadesTicketsClientes()                         INLINE ( nTotNTpv( ::oTikCliL ) )
-   METHOD nPrecioUnitarioTicketsClientes()                        INLINE ( nBasUTpv( ::oTikCliL ) ) 
-   METHOD nTotalLineaTicketsClientes()                            INLINE ( nBasLTpv( ::oTikCliL ) )
+   METHOD cDetalleTicketsClientes()                               INLINE ( ( D():TiketsLineas( ::nView ) )->cNomTil )
+   METHOD nTotalUnidadesTicketsClientes()                         INLINE ( nTotNTpv( D():TiketsLineas( ::nView ) ) ) 
+   METHOD nPrecioUnitarioTicketsClientes()                        INLINE ( nBasUTpv( D():TiketsLineas( ::nView ) ) ) 
+   METHOD nTotalLineaTicketsClientes()                            INLINE ( nBasLTpv( D():TiketsLineas( ::nView ) ) )
    METHOD nTotalPesoLineaTicketsClientes()                        INLINE ( 0 )
-   METHOD nTotalImpuestosIncluidosLineaTicketsClientes()          INLINE ( nTotLTpv( ::oTikCliL ) )
-   METHOD nTotalIVALineaTicketsClientes()                         INLINE ( nIvaLTpv( ::oTikCliT, ::oTikCliL ) )
+   METHOD nTotalImpuestosIncluidosLineaTicketsClientes()          INLINE ( nTotLTpv( D():TiketsLineas( ::nView ) ) )
+   METHOD nTotalIVALineaTicketsClientes()                         INLINE ( nIvaLTpv( D():Tikets( ::nView ) ), ( D():TiketsLineas( ::nView ) ) )
 
-   METHOD nTotalDescuentoPorcentualLineaTicketsClientes()         INLINE ( nDtoLTpv( ::oTikCliL:cAlias ) )
+   METHOD nTotalDescuentoPorcentualLineaTicketsClientes()         INLINE ( nDtoLTpv( D():TiketsLineas( ::nView ) ) )
 
    METHOD AddVariableLiquidacionAgentes()
 
@@ -2453,7 +2453,7 @@ METHOD FastReportFacturaRectificativa()
    ::oFastReport:SetWorkArea(       "Facturas rectificativas de clientes", ( D():FacturasRectificativas( ::nView ) )->( select() ) )
    ::oFastReport:SetFieldAliases(   "Facturas rectificativas de clientes", cItemsToReport( aItmFacRec() ) )
    
-   ( D():FacturasRectificativas( ::nView ) )->( ordsetfocus( "iNumFac" ) )
+   ( D():FacturasRectificativasLineas( ::nView ) )->( ordsetfocus( "iNumFac" ) )
    
    ::oFastReport:SetWorkArea(       "Lineas facturas rectificativas de clientes", ( D():FacturasRectificativasLineas( ::nView ) )->( select() ) )
    ::oFastReport:SetFieldAliases(   "Lineas facturas rectificativas de clientes", cItemsToReport( aColFacRec() ) )
@@ -2472,14 +2472,14 @@ Tiket--------------------------------------------------------------------------
 
 METHOD FastReportTicket()
 
-   ::oTikCliT:OrdSetFocus( "iNumTik" )
+   ( D():TiketsClientes( ::nView ) )->( OrdSetFocus( "iNumTik" ) )
    
-   ::oFastReport:SetWorkArea(       "Tickets de clientes", ::oTikCliT:nArea )
+   ::oFastReport:SetWorkArea(       "Tickets de clientes", ( D():TiketsClientes( ::nView ) )->( select() ) )
    ::oFastReport:SetFieldAliases(   "Tickets de clientes", cItemsToReport( aItmTik() ) )
    
-   ::oTikCliL:OrdSetFocus( "iNumTik" )
+   ( D():TiketsClientesLineas( ::nView ) )->(OrdSetFocus( "iNumTik" ) )
    
-   ::oFastReport:SetWorkArea(       "Lineas tickets de clientes", ::oTikCliL:nArea )
+   ::oFastReport:SetWorkArea(       "Lineas tickets de clientes", ( D():TiketsClientesLineas( ::nView ) )->( select() ) )
    ::oFastReport:SetFieldAliases(   "Lineas tickets de clientes", cItemsToReport( aColTik() ) )
    
    ::oFastReport:SetMasterDetail(   "Informe", "Tickets de clientes",         {|| ::idDocumento() } )

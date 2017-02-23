@@ -1,3 +1,6 @@
+
+
+
 #include "FiveWin.ch"  
 #include "Factu.ch" 
 #include "Report.ch"
@@ -364,6 +367,10 @@ METHOD OpenFiles() CLASS TFastVentasArticulos
 
       D():FacturasRectificativasLineas( ::nView )
 
+      D():Tikets( ::nView )
+
+      D():TiketsLineas( ::nView )
+
       D():ProveedorArticulo( ::nView )
 
       DATABASE NEW ::oArtImg  PATH ( cPatArt() ) CLASS "ArtImg"      FILE "ArtImg.Dbf"  VIA ( ::cDriver ) SHARED INDEX "ArtImg.Cdx"
@@ -373,10 +380,6 @@ METHOD OpenFiles() CLASS TFastVentasArticulos
       DATABASE NEW ::oArtCod  PATH ( cPatArt() ) CLASS "ArtCodebar"  FILE "ArtCodebar.Dbf"  VIA ( ::cDriver ) SHARED INDEX "ArtCodebar.Cdx"
 
       DATABASE NEW ::oArtCod  PATH ( cPatArt() ) CLASS "ArtCodebar"  FILE "ArtCodebar.Dbf"  VIA ( ::cDriver ) SHARED INDEX "ArtCodebar.Cdx"
-
-      DATABASE NEW ::oTikCliT PATH ( cPatEmp() ) CLASS "TIKET"       FILE "TIKET.Dbf"     VIA ( ::cDriver ) SHARED INDEX "TIKET.Cdx"
-
-      DATABASE NEW ::oTikCliL PATH ( cPatEmp() ) CLASS "TIKEL"       FILE "TIKEL.Dbf"     VIA ( ::cDriver ) SHARED INDEX "TIKEL.Cdx"
 
       DATABASE NEW ::oPedPrvT PATH ( cPatEmp() ) CLASS "PedPrvT"     FILE "PedProvT.Dbf"  VIA ( ::cDriver ) SHARED INDEX "PedProvT.Cdx"
 
@@ -536,14 +539,6 @@ METHOD CloseFiles() CLASS TFastVentasArticulos
 
       if !empty( ::oArtPrv ) .and. ( ::oArtPrv:Used() )
          ::oArtPrv:end()
-      end if
-
-      if !empty( ::oTikCliT ) .and. ( ::oTikCliT:Used() )
-         ::oTikCliT:End()
-      end if
-
-      if !empty( ::oTikCliL ) .and. ( ::oTikCliL:Used() )
-         ::oTikCliL:End()
       end if
 
       if !empty( ::oPedPrvL ) .and. ( ::oPedPrvL:Used() )
@@ -2720,114 +2715,113 @@ METHOD AddTicket() CLASS TFastVentasArticulos
 
    ::setMeterText( "Procesando tikets" )
 
-   ::oTikCliT:ordsetfocus( "dFecTik" )
-   ::oTikCliL:ordsetfocus( "cNumTil" )
+   ( D():Tikets( ::nView )           )->( ordsetfocus( "cNumTik" ) )
+   ( D():TiketsLineas( ::nView )     )->( ordsetfocus( "cNumTil" ) )
 
-   ( ::oTikCliT:cAlias )->( setCustomFilter( ::cExpresionHeader ) )
-   ( ::oTikCliL:cAlias )->( setCustomFilter( ::cExpresionLine ) )
+   ( D():Tikets( ::nView )           )->( setCustomFilter( ::cExpresionHeader ) )
+   ( D():TiketsLineas( ::nView )     )->( setCustomFilter( ::cExpresionLine ) )
 
-   ::setMeterTotal( ( ::oTikCliL:cAlias )->( dbCustomKeyCount() ) )
+   ::setMeterTotal( ( D():TiketsLineas( ::nView ) )->( dbCustomKeyCount() ) )
 
    // Lineas de tickets -------------------------------------------------------
 
-   ::oTikCliT:GoTop()
+   ( D():Tikets( ::nView ) )->( dbGoTop() )
+   while !::lBreak .and. !( D():Tikets( ::nView ) )->( eof() )
 
-   while !::lBreak .and. !::oTikCliT:Eof()
+      if D():gotoIdTiketsLineas( D():TiketsLineasId( ::nView ), ::nView ) 
 
-      if lChkSer( ::oTikCliT:cSerTik, ::aSer ) .and. ::oTikCliL:Seek( ::oTikCliT:cSerTik + ::oTikCliT:cNumTik + ::oTikCliT:cSufTik )
+         while ( D():TiketsId( ::nView ) ) == ( D():TiketsLineasId( ::nView ) ) .and. !( D():TiketsLineas( ::nView ) )->( Eof() )
 
-         while ::oTikCliT:cSerTik + ::oTikCliT:cNumTik + ::oTikCliT:cSufTik == ::oTikCliL:cSerTil + ::oTikCliL:cNumTil + ::oTikCliL:cSufTil .and. !::oTikCliL:Eof()
-
-            if .t. // !( ::oTikCliL:lControl ) .and. !( ::oTikCliL:lDelTil )
+            if ( !empty( ( D():TiketsLineas( ::nView ) )->cCbaTil ) )
 
                ::oDbf:Blank()
                
-               ::oDbf:cCodArt    := ::oTikCliL:cCbaTil
-               ::oDbf:cNomArt    := ::oTikCliL:cNomTil
-               ::oDbf:cCodCli    := ::oTikCliT:cCliTik
-               ::oDbf:cNomCli    := ::oTikCliT:cNomTik
-               ::oDbf:cPobCli    := ::oTikCliT:cPobCli
-               ::oDbf:cPrvCli    := ::oTikCliT:cPrvCli
-               ::oDbf:cPosCli    := ::oTikCliT:cPosCli
-               ::oDbf:cCodGrp    := cGruCli( ::oTikCliT:cCliTik, ::oDbfCli )
+               ::oDbf:cCodArt    := ( D():TiketsLineas( ::nView ) )->cCbaTil
+               ::oDbf:cNomArt    := ( D():TiketsLineas( ::nView ) )->cNomTil
+               ::oDbf:cCodCli    := ( D():Tikets( ::nView ) )->cCliTik
+               ::oDbf:cNomCli    := ( D():Tikets( ::nView ) )->cNomTik
+               ::oDbf:cPobCli    := ( D():Tikets( ::nView ) )->cPobCli
+               ::oDbf:cPrvCli    := ( D():Tikets( ::nView ) )->cPrvCli
+               ::oDbf:cPosCli    := ( D():Tikets( ::nView ) )->cPosCli
+               ::oDbf:cCodGrp    := cGruCli( ( D():Tikets( ::nView ) )->cCliTik, ::oDbfCli )
 
-               ::oDbf:TipoIva    := cCodigoIva( ::oDbfIva:cAlias, ::oTikCliL:nIvaTil )
+               ::oDbf:TipoIva    := cCodigoIva( ::oDbfIva:cAlias, ( D():TiketsLineas( ::nView ) )->nIvaTil )
 
-               ::oDbf:cCodFam    := ::oTikCliL:cCodFam
-               ::oDbf:cGrpFam    := ::oTikCliL:cGrpFam
-               ::oDbf:cCodTip    := RetFld( ::oTikCliL:cCbaTil, ::oDbfArt:cAlias, "cCodTip", "Codigo" )
-               ::oDbf:cCodCate   := RetFld( ::oTikCliL:cCbaTil, ::oDbfArt:cAlias, "cCodCate", "Codigo" )
-               ::oDbf:cCodEst    := RetFld( ::oTikCliL:cCbaTil, ::oDbfArt:cAlias, "cCodEst", "Codigo" )
-               ::oDbf:cCodTemp   := RetFld( ::oTikCliL:cCbaTil, ::oDbfArt:cAlias, "cCodTemp", "Codigo" )
-               ::oDbf:cCodFab    := RetFld( ::oTikCliL:cCbaTil, ::oDbfArt:cAlias, "cCodFab", "Codigo" )
-               ::oDbf:cDesUbi    := RetFld( ::oTikCliL:cCbaTil, ::oDbfArt:cAlias, "cDesUbi", "Codigo" )
+               ::oDbf:cCodFam    := ( D():TiketsLineas( ::nView ) )->cCodFam
+               ::oDbf:cGrpFam    := ( D():TiketsLineas( ::nView ) )->cGrpFam
+               ::oDbf:cCodTip    := RetFld( ( D():TiketsLineas( ::nView ) )->cCbaTil, ::oDbfArt:cAlias, "cCodTip", "Codigo" )
+               ::oDbf:cCodCate   := RetFld( ( D():TiketsLineas( ::nView ) )->cCbaTil, ::oDbfArt:cAlias, "cCodCate", "Codigo" )
+               ::oDbf:cCodEst    := RetFld( ( D():TiketsLineas( ::nView ) )->cCbaTil, ::oDbfArt:cAlias, "cCodEst", "Codigo" )
+               ::oDbf:cCodTemp   := RetFld( ( D():TiketsLineas( ::nView ) )->cCbaTil, ::oDbfArt:cAlias, "cCodTemp", "Codigo" )
+               ::oDbf:cCodFab    := RetFld( ( D():TiketsLineas( ::nView ) )->cCbaTil, ::oDbfArt:cAlias, "cCodFab", "Codigo" )
+               ::oDbf:cDesUbi    := RetFld( ( D():TiketsLineas( ::nView ) )->cCbaTil, ::oDbfArt:cAlias, "cDesUbi", "Codigo" )
 
-               if ::oAtipicasCliente:Seek( ::oTikCliT:cCliTik + ::oTikCliL:cCbaTil ) .and. !empty( ::oAtipicasCliente:cCodEnv )
+               if ::oAtipicasCliente:Seek( ( D():Tikets( ::nView ) )->cCliTik + ( D():TiketsLineas( ::nView ) )->cCbaTil ) .and. !empty( ::oAtipicasCliente:cCodEnv )
                   ::oDbf:cCodEnv    := ::oAtipicasCliente:cCodEnv
                else
-                  ::oDbf:cCodEnv    := RetFld( ::oTikCliL:cCbaTil, ::oDbfArt:cAlias, "cCodFra", "Codigo" )                    
+                  ::oDbf:cCodEnv    := RetFld( ( D():TiketsLineas( ::nView ) )->cCbaTil, ::oDbfArt:cAlias, "cCodFra", "Codigo" )                    
                end if
 
-               ::oDbf:cCodAlm    := ::oTikCliL:cAlmLin
-               ::oDbf:cCodPago   := ::oTikCliT:cFpgTik
-               ::oDbf:cCodRut    := ::oTikCliT:cCodRut
-               ::oDbf:cCodAge    := ::oTikCliT:cCodAge
+               ::oDbf:cCodAlm    := ( D():TiketsLineas( ::nView ) )->cAlmLin
+               ::oDbf:cCodPago   := ( D():Tikets( ::nView ) )->cFpgTik
+               ::oDbf:cCodRut    := ( D():Tikets( ::nView ) )->cCodRut
+               ::oDbf:cCodAge    := ( D():Tikets( ::nView ) )->cCodAge
                ::oDbf:cCodTrn    := ""
-               ::oDbf:cCodUsr    := ::oTikCliT:cCcjTik
-               ::oDbf:cCodObr    := ::oTikCliT:cCodObr
+               ::oDbf:cCodUsr    := ( D():Tikets( ::nView ) )->cCcjTik
+               ::oDbf:cCodObr    := ( D():Tikets( ::nView ) )->cCodObr
 
-               if ::oTikCliT:cTipTik == "4"
-                  ::oDbf:nUniArt := - ::oTikCliL:nUntTil * if( ::lUnidadesNegativo, -1, 1 )
+               if ( D():Tikets( ::nView ) )->cTipTik == "4"
+                  ::oDbf:nUniArt := - ( D():TiketsLineas( ::nView ) )->nUntTil * if( ::lUnidadesNegativo, -1, 1 )
                else
-                  ::oDbf:nUniArt := ::oTikCliL:nUntTil   * if( ::lUnidadesNegativo, -1, 1 )
+                  ::oDbf:nUniArt := ( D():TiketsLineas( ::nView ) )->nUntTil   * if( ::lUnidadesNegativo, -1, 1 )
                end if
 
-               ::oDbf:nPreArt    := nImpUTpv( ::oTikCliT, ::oTikCliL, ::nDecOut, ::nValDiv, nil, 1 )
+               ::oDbf:nPreArt    := nImpUTpv( ( D():Tikets( ::nView ) ), ( D():TiketsLineas( ::nView ) ), ::nDecOut, ::nValDiv, nil, 1 )
 
-               ::oDbf:nBrtArt    := nNetLTpv( ::oTikCliL:cAlias, ::nDecOut, ::nDerOut, ::nValDiv )
-               ::oDbf:nImpArt    := nImpLTpv( ::oTikCliT, ::oTikCliL, ::nDecOut, ::nDerOut, ::nValDiv, nil, 1 )
+               ::oDbf:nBrtArt    := nNetLTpv( ( D():TiketsLineas( ::nView ) ), ::nDecOut, ::nDerOut, ::nValDiv )
+               ::oDbf:nImpArt    := nImpLTpv( ( D():Tikets( ::nView ) ), ( D():TiketsLineas( ::nView ) ), ::nDecOut, ::nDerOut, ::nValDiv, nil, 1 )
 
-               ::oDbf:nDtoArt    := ::oTikCliL:nDtoLin
-               ::oDbf:nLinArt    := ::oTikCliL:nDtoDiv
+               ::oDbf:nDtoArt    := ( D():TiketsLineas( ::nView ) )->nDtoLin
+               ::oDbf:nLinArt    := ( D():TiketsLineas( ::nView ) )->nDtoDiv
              //::oDbf:nPrmArt    := ::oTikCliL:nDtoPrm
 
-               ::oDbf:nTotDto    := nDtoLTpv( ::oTikCliL:cAlias, ::nDecOut, ::nDerOut, ::nValDiv )
+               ::oDbf:nTotDto    := nDtoLTpv( ( D():TiketsLineas( ::nView ) ), ::nDecOut, ::nDerOut, ::nValDiv )
                ::oDbf:nTotPrm    := 0
 
-               ::oDbf:nIvaArt    := nIvaLTpv( ::oTikCliT, ::oTikCliL, ::nDecOut, ::nDerOut, ::nValDiv, 1 )
-               ::oDbf:nImpEsp    := nIvmLTpv( ::oTikCliL:cAlias, ::nDecOut, ::nDerOut, ::nValDiv )
-               ::oDbf:nTotArt    := nImpLTpv( ::oTikCliT, ::oTikCliL, ::nDecOut, ::nDerOut, ::nValDiv, nil, 1 )
-               ::oDbf:nTotArt    += nIvaLTpv( ::oTikCliT, ::oTikCliL, ::nDecOut, ::nDerOut, ::nValDiv, 1 )
+               ::oDbf:nIvaArt    := nIvaLTpv( ( D():Tikets( ::nView ) ), ( D():TiketsLineas( ::nView ) ), ::nDecOut, ::nDerOut, ::nValDiv, 1 )
+               ::oDbf:nImpEsp    := nIvmLTpv( ( D():TiketsLineas( ::nView ) ), ::nDecOut, ::nDerOut, ::nValDiv )
+               ::oDbf:nTotArt    := nImpLTpv( ( D():Tikets( ::nView ) ), ( D():TiketsLineas( ::nView ) ), ::nDecOut, ::nDerOut, ::nValDiv, nil, 1 )
+               ::oDbf:nTotArt    += nIvaLTpv( ( D():Tikets( ::nView ) ), ( D():TiketsLineas( ::nView ) ), ::nDecOut, ::nDerOut, ::nValDiv, 1 )
                
-               ::oDbf:nCosArt    := nCosLTpv( ::oTikCliL, ::nDecOut, ::nDerOut, ::nValDiv, 1 )
+               ::oDbf:nCosArt    := nCosLTpv( ( D():TiketsLineas( ::nView ) ), ::nDecOut, ::nDerOut, ::nValDiv, 1 )
                if empty( ::oDbf:nCosArt )
                   ::oDbf:nCosArt := ::oDbf:nUniArt * nCosto( ::oDbf:cCodArt, ::oDbfArt:cAlias, ::oArtKit:cAlias )
                end if 
 
-               ::oDbf:cCodPr1    := ::oTikCliL:cCodPr1
-               ::oDbf:cCodPr2    := ::oTikCliL:cCodPr2
-               ::oDbf:cValPr1    := ::oTikCliL:cValPr1
-               ::oDbf:cValPr2    := ::oTikCliL:cValPr2
+               ::oDbf:cCodPr1    := ( D():TiketsLineas( ::nView ) )->cCodPr1
+               ::oDbf:cCodPr2    := ( D():TiketsLineas( ::nView ) )->cCodPr2
+               ::oDbf:cValPr1    := ( D():TiketsLineas( ::nView ) )->cValPr1
+               ::oDbf:cValPr2    := ( D():TiketsLineas( ::nView ) )->cValPr2
 
-               ::oDbf:cLote      := ::oTikCliL:cLote
+               ::oDbf:cLote      := ( D():TiketsLineas( ::nView ) )->cLote
 
                ::oDbf:cClsDoc    := TIK_CLI
                ::oDbf:cTipDoc    := "Ticket"
-               ::oDbf:cSerDoc    := ::oTikCliT:cSerTik
-               ::oDbf:cNumDoc    := ::oTikCliT:cNumTik
-               ::oDbf:cSufDoc    := ::oTikCliT:cSufTik
+               ::oDbf:cSerDoc    := ( D():Tikets( ::nView ) )->cSerTik
+               ::oDbf:cNumDoc    := ( D():Tikets( ::nView ) )->cNumTik
+               ::oDbf:cSufDoc    := ( D():Tikets( ::nView ) )->cSufTik
 
                ::oDbf:cIdeDoc    :=  ::idDocumento()
-               ::oDbf:nNumLin    :=  ::oTikCliL:nNumLin
+               ::oDbf:nNumLin    :=  ( D():TiketsLineas( ::nView ) )->nNumLin
 
-               ::oDbf:nAnoDoc    := Year( ::oTikCliT:dFecTik )
-               ::oDbf:nMesDoc    := Month( ::oTikCliT:dFecTik )
-               ::oDbf:dFecDoc    := ::oTikCliT:dFecTik
-               ::oDbf:cHorDoc    := SubStr( ::oTikCliT:cHorTik, 1, 2 )
-               ::oDbf:cMinDoc    := SubStr( ::oTikCliT:cHorTik, 4, 2 )
+               ::oDbf:nAnoDoc    := Year( ( D():Tikets( ::nView ) )->dFecTik )
+               ::oDbf:nMesDoc    := Month( ( D():Tikets( ::nView ) )->dFecTik )
+               ::oDbf:dFecDoc    := ( D():Tikets( ::nView ) )->dFecTik
+               ::oDbf:cHorDoc    := SubStr( ( D():Tikets( ::nView ) )->cHorTik, 1, 2 )
+               ::oDbf:cMinDoc    := SubStr( ( D():Tikets( ::nView ) )->cHorTik, 4, 2 )
 
-               ::oDbf:lKitArt    := ::oTikCliL:lKitArt
-               ::oDbf:lKitChl    := ::oTikCliL:lKitChl
+               ::oDbf:lKitArt    := ( D():TiketsLineas( ::nView ) )->lKitArt
+               ::oDbf:lKitChl    := ( D():TiketsLineas( ::nView ) )->lKitChl
 
                ::oDbf:cPrvHab    := getProveedorPorDefectoArticulo( ::oDbf:cCodArt, D():ProveedorArticulo( ::nView ) )
 
@@ -2838,83 +2832,83 @@ METHOD AddTicket() CLASS TFastVentasArticulos
 
             end if
 
-            if !empty( ::oTikCliL:cComTil ) // .and. !( ::oTikCliL:lControl ) .and. !( ::oTikCliL:lDelTil )
+            if !empty( ( D():TiketsLineas( ::nView ) )->cComTil ) // .and. !( ::oTikCliL:lControl ) .and. !( ::oTikCliL:lDelTil )
 
                ::oDbf:Blank()
                
-               ::oDbf:cCodArt    := ::oTikCliL:cComTil
-               ::oDbf:cNomArt    := ::oTikCliL:cNcmTil
+               ::oDbf:cCodArt    := ( D():TiketsLineas( ::nView ) )->cComTil
+               ::oDbf:cNomArt    := ( D():TiketsLineas( ::nView ) )->cNcmTil
 
-               ::oDbf:cCodCli    := ::oTikCliT:cCliTik
-               ::oDbf:cNomCli    := ::oTikCliT:cNomTik
-               ::oDbf:cPobCli    := ::oTikCliT:cPobCli
-               ::oDbf:cPrvCli    := ::oTikCliT:cPrvCli
-               ::oDbf:cPosCli    := ::oTikCliT:cPosCli
-               ::oDbf:cCodGrp    := cGruCli( ::oTikCliT:cCliTik, ::oDbfCli )
-               ::oDbf:TipoIva    := cCodigoIva( ::oDbfIva:cAlias, ::oTikCliL:nIvaTil )
+               ::oDbf:cCodCli    := ( D():Tikets( ::nView ) )->cCliTik
+               ::oDbf:cNomCli    := ( D():Tikets( ::nView ) )->cNomTik
+               ::oDbf:cPobCli    := ( D():Tikets( ::nView ) )->cPobCli
+               ::oDbf:cPrvCli    := ( D():Tikets( ::nView ) )->cPrvCli
+               ::oDbf:cPosCli    := ( D():Tikets( ::nView ) )->cPosCli
+               ::oDbf:cCodGrp    := cGruCli( ( D():Tikets( ::nView ) )->cCliTik, ::oDbfCli )
+               ::oDbf:TipoIva    := cCodigoIva( ::oDbfIva:cAlias, ( D():TiketsLineas( ::nView ) )->nIvaTil )
 
-               ::oDbf:cCodFam    := ::oTikCliL:cCodFam
-               ::oDbf:cGrpFam    := ::oTikCliL:cGrpFam
-               ::oDbf:cCodTip    := RetFld( ::oTikCliL:cCbaTil, ::oDbfArt:cAlias, "cCodTip", "Codigo" )
-               ::oDbf:cCodCate   := RetFld( ::oTikCliL:cCbaTil, ::oDbfArt:cAlias, "cCodCate", "Codigo" )
-               ::oDbf:cCodEst    := RetFld( ::oTikCliL:cCbaTil, ::oDbfArt:cAlias, "cCodEst", "Codigo" )
-               ::oDbf:cCodTemp   := RetFld( ::oTikCliL:cCbaTil, ::oDbfArt:cAlias, "cCodTemp", "Codigo" )
-               ::oDbf:cCodFab    := RetFld( ::oTikCliL:cCbaTil, ::oDbfArt:cAlias, "cCodFab", "Codigo" )
-               ::oDbf:cDesUbi    := RetFld( ::oTikCliL:cCbaTil, ::oDbfArt:cAlias, "cDesUbi", "Codigo" )
+               ::oDbf:cCodFam    := ( D():TiketsLineas( ::nView ) )->cCodFam
+               ::oDbf:cGrpFam    := ( D():TiketsLineas( ::nView ) )->cGrpFam
+               ::oDbf:cCodTip    := RetFld( ( D():TiketsLineas( ::nView ) )->cCbaTil, ::oDbfArt:cAlias, "cCodTip", "Codigo" )
+               ::oDbf:cCodCate   := RetFld( ( D():TiketsLineas( ::nView ) )->cCbaTil, ::oDbfArt:cAlias, "cCodCate", "Codigo" )
+               ::oDbf:cCodEst    := RetFld( ( D():TiketsLineas( ::nView ) )->cCbaTil, ::oDbfArt:cAlias, "cCodEst", "Codigo" )
+               ::oDbf:cCodTemp   := RetFld( ( D():TiketsLineas( ::nView ) )->cCbaTil, ::oDbfArt:cAlias, "cCodTemp", "Codigo" )
+               ::oDbf:cCodFab    := RetFld( ( D():TiketsLineas( ::nView ) )->cCbaTil, ::oDbfArt:cAlias, "cCodFab", "Codigo" )
+               ::oDbf:cDesUbi    := RetFld( ( D():TiketsLineas( ::nView ) )->cCbaTil, ::oDbfArt:cAlias, "cDesUbi", "Codigo" )
                
-               if ::oAtipicasCliente:Seek( ::oTikCliT:cCliTik + ::oTikCliL:cCbaTil ) .and. !empty( ::oAtipicasCliente:cCodEnv )
+               if ::oAtipicasCliente:Seek( ( D():Tikets( ::nView ) )->cCliTik + ( D():TiketsLineas( ::nView ) )->cCbaTil ) .and. !empty( ::oAtipicasCliente:cCodEnv )
                   ::oDbf:cCodEnv    := ::oAtipicasCliente:cCodEnv
                else
-                  ::oDbf:cCodEnv    := RetFld( ::oTikCliL:cCbaTil, ::oDbfArt:cAlias, "cCodFra", "Codigo" )                    
+                  ::oDbf:cCodEnv    := RetFld( ( D():TiketsLineas( ::nView ) )->cCbaTil, ::oDbfArt:cAlias, "cCodFra", "Codigo" )                    
                end if
 
-               ::oDbf:cCodAlm    := ::oTikCliL:cAlmLin
-               ::oDbf:cCodPago   := ::oTikCliT:cFpgTik
-               ::oDbf:cCodRut    := ::oTikCliT:cCodRut
-               ::oDbf:cCodAge    := ::oTikCliT:cCodAge
+               ::oDbf:cCodAlm    := ( D():TiketsLineas( ::nView ) )->cAlmLin
+               ::oDbf:cCodPago   := ( D():Tikets( ::nView ) )->cFpgTik
+               ::oDbf:cCodRut    := ( D():Tikets( ::nView ) )->cCodRut
+               ::oDbf:cCodAge    := ( D():Tikets( ::nView ) )->cCodAge
                ::oDbf:cCodTrn    := ""
-               ::oDbf:cCodUsr    := ::oTikCliT:cCcjTik
-               ::oDbf:cCodObr    := ::oTikCliT:cCodObr
+               ::oDbf:cCodUsr    := ( D():Tikets( ::nView ) )->cCcjTik
+               ::oDbf:cCodObr    := ( D():Tikets( ::nView ) )->cCodObr
 
-               if ::oTikCliT:cTipTik == "4"
-                  ::oDbf:nUniArt := - ::oTikCliL:nUntTil * if( ::lUnidadesNegativo, -1, 1 )
+               if ( D():Tikets( ::nView ) )->cTipTik == "4"
+                  ::oDbf:nUniArt := - ( D():TiketsLineas( ::nView ) )->nUntTil * if( ::lUnidadesNegativo, -1, 1 )
                else
-                  ::oDbf:nUniArt := ::oTikCliL:nUntTil   * if( ::lUnidadesNegativo, -1, 1 )
+                  ::oDbf:nUniArt := ( D():TiketsLineas( ::nView ) )->nUntTil   * if( ::lUnidadesNegativo, -1, 1 )
                end if
 
-               ::oDbf:nPreArt    := nImpUTpv( ::oTikCliT, ::oTikCliL, ::nDecOut, ::nValDiv, nil, 2 )
+               ::oDbf:nPreArt    := nImpUTpv( ( D():Tikets( ::nView ) ), ( D():TiketsLineas( ::nView ) ), ::nDecOut, ::nValDiv, nil, 2 )
 
-               ::oDbf:nBrtArt    := nBrtLTpv( ::oTikCliT, ::oTikCliL, ::nDecOut, ::nValDiv, nil, 2 )
-               ::oDbf:nImpArt    := nImpLTpv( ::oTikCliT, ::oTikCliL, ::nDecOut, ::nDerOut, ::nValDiv, nil, 2 )
-               ::oDbf:nIvaArt    := nIvaLTpv( ::oTikCliT, ::oTikCliL, ::nDecOut, ::nDerOut, ::nValDiv, 2 )
-               ::oDbf:nImpEsp    := nIvmLTpv( ::oTikCliL:cAlias, ::nDecOut, ::nDerOut, ::nValDiv )
-               ::oDbf:nTotArt    := nImpLTpv( ::oTikCliT, ::oTikCliL, ::nDecOut, ::nDerOut, ::nValDiv, nil, 2 )
-               ::oDbf:nTotArt    += nIvaLTpv( ::oTikCliT, ::oTikCliL, ::nDecOut, ::nDerOut, ::nValDiv, 2 )
+               ::oDbf:nBrtArt    := nBrtLTpv( ( D():Tikets( ::nView ) ), ( D():TiketsLineas( ::nView ) ), ::nDecOut, ::nValDiv, nil, 2 )
+               ::oDbf:nImpArt    := nImpLTpv( ( D():Tikets( ::nView ) ), ( D():TiketsLineas( ::nView ) ), ::nDecOut, ::nDerOut, ::nValDiv, nil, 2 )
+               ::oDbf:nIvaArt    := nIvaLTpv( ( D():Tikets( ::nView ) ), ( D():TiketsLineas( ::nView ) ), ::nDecOut, ::nDerOut, ::nValDiv, 2 )
+               ::oDbf:nImpEsp    := nIvmLTpv( ( D():TiketsLineas( ::nView ) ), ::nDecOut, ::nDerOut, ::nValDiv )
+               ::oDbf:nTotArt    := nImpLTpv( ( D():Tikets( ::nView ) ), ( D():TiketsLineas( ::nView ) ), ::nDecOut, ::nDerOut, ::nValDiv, nil, 2 )
+               ::oDbf:nTotArt    += nIvaLTpv( ( D():Tikets( ::nView ) ), ( D():TiketsLineas( ::nView ) ), ::nDecOut, ::nDerOut, ::nValDiv, 2 )
 
-               ::oDbf:nCosArt    := nCosLTpv( ::oTikCliL, ::nDecOut, ::nDerOut, ::nValDiv, 2 )
+               ::oDbf:nCosArt    := nCosLTpv( ( D():TiketsLineas( ::nView ) ), ::nDecOut, ::nDerOut, ::nValDiv, 2 )
                if empty( ::oDbf:nCosArt )
-                  ::oDbf:nCosArt := ::oDbf:nUniArt * nCosto( ::oTikCliL:cComTil, ::oDbfArt:cAlias, ::oArtKit:cAlias )
+                  ::oDbf:nCosArt := ::oDbf:nUniArt * nCosto( ( D():TiketsLineas( ::nView ) )->cComTil, ::oDbfArt:cAlias, ::oArtKit:cAlias )
                end if 
 
-               ::oDbf:cCodPr1    := ::oTikCliL:cCodPr1
-               ::oDbf:cCodPr2    := ::oTikCliL:cCodPr2
-               ::oDbf:cValPr1    := ::oTikCliL:cValPr1
-               ::oDbf:cValPr2    := ::oTikCliL:cValPr2
+               ::oDbf:cCodPr1    := ( D():TiketsLineas( ::nView ) )->cCodPr1
+               ::oDbf:cCodPr2    := ( D():TiketsLineas( ::nView ) )->cCodPr2
+               ::oDbf:cValPr1    := ( D():TiketsLineas( ::nView ) )->cValPr1
+               ::oDbf:cValPr2    := ( D():TiketsLineas( ::nView ) )->cValPr2
 
                ::oDbf:cClsDoc    := TIK_CLI
                ::oDbf:cTipDoc    := "Ticket"
-               ::oDbf:cSerDoc    := ::oTikCliT:cSerTik
-               ::oDbf:cNumDoc    := ::oTikCliT:cNumTik
-               ::oDbf:cSufDoc    := ::oTikCliT:cSufTik
+               ::oDbf:cSerDoc    := ( D():Tikets( ::nView ) )->cSerTik
+               ::oDbf:cNumDoc    := ( D():Tikets( ::nView ) )->cNumTik
+               ::oDbf:cSufDoc    := ( D():Tikets( ::nView ) )->cSufTik
 
                ::oDbf:cIdeDoc    :=  ::idDocumento()
-               ::oDbf:nNumLin    :=  ::oTikCliL:nNumLin
+               ::oDbf:nNumLin    :=  ( D():TiketsLineas( ::nView ) )->nNumLin
 
-               ::oDbf:nAnoDoc    := Year( ::oTikCliT:dFecTik )
-               ::oDbf:nMesDoc    := Month( ::oTikCliT:dFecTik )
-               ::oDbf:dFecDoc    := ::oTikCliT:dFecTik
-               ::oDbf:cHorDoc    := SubStr( ::oTikCliT:cHorTik, 1, 2 )
-               ::oDbf:cMinDoc    := SubStr( ::oTikCliT:cHorTik, 4, 2 )
+               ::oDbf:nAnoDoc    := Year( ( D():Tikets( ::nView ) )->dFecTik )
+               ::oDbf:nMesDoc    := Month( ( D():Tikets( ::nView ) )->dFecTik )
+               ::oDbf:dFecDoc    := ( D():Tikets( ::nView ) )->dFecTik
+               ::oDbf:cHorDoc    := SubStr( ( D():Tikets( ::nView ) )->cHorTik, 1, 2 )
+               ::oDbf:cMinDoc    := SubStr( ( D():Tikets( ::nView ) )->cHorTik, 4, 2 )
 
                ::oDbf:cPrvHab    := getProveedorPorDefectoArticulo( ::oDbf:cCodArt, D():ProveedorArticulo( ::nView ) )
 
@@ -2923,19 +2917,21 @@ METHOD AddTicket() CLASS TFastVentasArticulos
 
             end if
 
-            ::oTikCliL:Skip()
+            ( D():TiketsLineas( ::nView ) )->( dbSkip() )
 
          end while
 
       end if
 
-      ::oTikCliT:Skip()
+      ( D():Tikets( ::nView ) )->( dbSkip() )
 
       ::setMeterAutoIncremental()
 
    end while
 
-   ::setMeterTotal( ::oTikCliT:OrdKeyCount() )
+   ::setMeterTotal( ( D():Tikets( ::nView ) )->( OrdKeyCount() ) )
+
+
 
 RETURN ( Self )
 
