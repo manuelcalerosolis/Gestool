@@ -44,9 +44,9 @@ CLASS ReceiptInvoiceCustomer FROM DocumentsSales
 
    METHOD printReceipt()                  INLINE ( PrnRecCli( ( ::getDataTable() )->cSerie + Str( ( ::getDataTable() )->nNumFac ) + ( ::getDataTable() )->cSufFac + Str( ( ::getDataTable() )->nNumRec ) ) )
 
-   METHOD setTrueAceptarImprimir          INLINE ( ::lAceptarImprimir  := .t. )
-   METHOD setFalseAceptarImprimir         INLINE ( ::lAceptarImprimir  := .t. )
-
+   METHOD setTrueAceptarImprimir()        INLINE ( ::lAceptarImprimir  := .t. )
+   METHOD setFalseAceptarImprimir()       INLINE ( ::lAceptarImprimir  := .t. )
+   
 END CLASS
 
 //---------------------------------------------------------------------------//
@@ -63,10 +63,10 @@ METHOD New( oInvoice ) CLASS ReceiptInvoiceCustomer
 
    else
 
-      ::lCloseFiles           := .f.
-      ::nView                 := oInvoice:nView
-      ::cNumeroFactura        := oInvoice:GetId()
-      ::lShowFilterCobrado    := Empty( oInvoice:GetId() )
+      ::lCloseFiles              := .f.
+      ::nView                    := oInvoice:nView
+      ::cNumeroFactura           := oInvoice:GetId()
+      ::lShowFilterCobrado       := Empty( oInvoice:GetId() )
 
    end if
 
@@ -189,10 +189,8 @@ METHOD onPostSaveEdit() CLASS ReceiptInvoiceCustomer
    
    ::oViewSearchNavigator:changeComboboxSearch()
    
-   if !Empty( ::oViewSearchNavigator:oSayFilter )
-      ::FilterTable( ::oViewSearchNavigator:oSayFilter:cCaption )
-   end if
-
+   ::FilterTable( ::oViewSearchNavigator:cComboboxFilter )
+   
 Return ( .t. )
 
 //---------------------------------------------------------------------------//
@@ -291,6 +289,12 @@ Return ( .t. )
 METHOD FilterTable( cTextFilter ) CLASS ReceiptInvoiceCustomer
 
    do case
+      case cTextFilter == "Todos delegación"
+         ( ::getDataTable() )->( dbSetFilter( {|| Field->cSufFac == oUser():cDelegacion() }, "cSufFac=" + oUser():cDelegacion() ) )
+      case cTextFilter == "Pendientes delegación"
+         ( ::getDataTable() )->( dbSetFilter( {|| !Field->lCobrado .and. Field->cSufFac == oUser():cDelegacion() }, "!lCobrado .and. cSufFac=" + oUser():cDelegacion() ) )
+      case cTextFilter == "Cobrados delegación"
+         ( ::getDataTable() )->( dbSetFilter( {|| Field->lCobrado .and. Field->cSufFac == oUser():cDelegacion() }, "lCobrado .and. cSufFac=" + oUser():cDelegacion() ) )
       case cTextFilter == "Todos"
          ( ::getDataTable() )->( dbClearFilter() )
       case cTextFilter == "Pendientes"

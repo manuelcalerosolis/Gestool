@@ -5,7 +5,9 @@ CLASS ReceiptDocumentSalesViewSearchNavigator FROM ViewSearchNavigator
 
    DATA buttonPrint
 
-   DATA oSayFilter
+   DATA comboboxFilter
+   DATA cComboboxFilter                   INIT "Pendientes delegación"
+   DATA aComboboxFilter                   INIT { "Todos delegación", "Pendientes delegación", "Cobrados delegación", "Todos", "Pendientes", "Cobrados" }
 
    METHOD getDataTable()                  INLINE ( ::oSender:getDataTable() )
 
@@ -78,27 +80,17 @@ METHOD BotonesAcciones() CLASS ReceiptDocumentSalesViewSearchNavigator
                               "bLClicked" => {|| ::oSender:Edit() },;
                               "oWnd"      => ::oDlg } )
 
+      
       if ::oSender:lShowFilterCobrado
 
-         TGridImage():Build(  {  "nTop"      => 75,;
-                                 "nLeft"     => {|| GridWidth( 1.5, ::oDlg ) },;
-                                 "nWidth"    => 64,;
-                                 "nHeight"   => 64,;
-                                 "cResName"  => "gc_funnel_64",;
-                                 "bLClicked" => {|| ::ChangeFilter() },;
-                                 "oWnd"      => ::oDlg } )
-
-         ::oSayFilter  := TGridSay():Build(  {  "nRow"      => 75,;
-                                                "nCol"      => {|| GridWidth( 3, ::oDlg ) },;
-                                                "bText"     => {|| "" },;
-                                                "oWnd"      => ::oDlg,;
-                                                "oFont"     => oGridFont(),;
-                                                "lPixels"   => .t.,;
-                                                "nClrText"  => Rgb( 0, 0, 0 ),;
-                                                "nClrBack"  => Rgb( 255, 255, 255 ),;
-                                                "nWidth"    => {|| GridWidth( 3, ::oDlg ) },;
-                                                "nHeight"   => 23,;
-                                                "lDesign"   => .f. } )
+         ::comboboxFilter     := TGridComboBox():Build(  {  "nRow"      => 75,;
+                                                            "nCol"      => {|| GridWidth( 1.5, ::oDlg ) },;
+                                                            "bSetGet"   => {|u| if( PCount() == 0, ::cComboboxFilter, ::cComboboxFilter := u ) },;
+                                                            "oWnd"      => ::oDlg,;
+                                                            "nWidth"    => {|| GridWidth( 4.5, ::oDlg ) },;
+                                                            "nHeight"   => 25,;
+                                                            "aItems"    => ::aComboboxFilter,;
+                                                            "bChange"   => {|| ::ChangeFilter() } } )
 
       end if
 
@@ -116,25 +108,7 @@ METHOD ChangeFilter() CLASS ReceiptDocumentSalesViewSearchNavigator
 
    if ::oSender:lShowFilterCobrado
 
-      do case
-         case ::oSayFilter:cCaption == ""
-            cText    := "Pendientes"
-
-         case ::oSayFilter:cCaption == "Cobrados"
-            cText    := "Todos"
-
-         case ::oSayFilter:cCaption == "Pendientes"
-            cText    := "Cobrados"
-
-         case ::oSayFilter:cCaption == "Todos"
-            cText    := "Pendientes"
-
-      end case
-
-      ::oSayFilter:VarPut( cText )
-      ::oSayFilter:Refresh()   
-
-      ::oSender:FilterTable( ::oSayFilter:cCaption )
+      ::oSender:FilterTable( ::cComboboxFilter )
 
    end if
 
