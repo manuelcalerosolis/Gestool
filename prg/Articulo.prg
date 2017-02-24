@@ -2412,7 +2412,6 @@ STATIC FUNCTION EdtRec( aTmp, aGet, cArticulo, oBrw, bWhen, bValid, nMode )
    /*
    Tarifa1 ______________________________________________________________________________
    */
-
    
    REDEFINE CHECKBOX aTmp[ ( D():Articulos( nView ) )->( fieldpos( "LIVAINC" ) ) ] ;
       ID       821 ;
