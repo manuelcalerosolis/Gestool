@@ -637,7 +637,7 @@ CLASS TTurno FROM TMasDet
 
    Method ActualizaStockWeb()
 
-   Method SetFastReport( oFastReport ) Inline ( if( !Empty( oFastReport ), ::oFastReport := oFastReport, ) )
+   Method SetFastReport( oFastReport ) Inline ( if( !empty( oFastReport ), ::oFastReport := oFastReport, ) )
 
    Method lInCajaSelect( cCodigoCaja ) Inline ( aScan( ::aCajaSelect, cCodigoCaja ) != 0 )
    Method nInCajaSelect( cCodigoCaja ) Inline ( aScan( ::aCajaSelect, cCodigoCaja ) )
@@ -761,7 +761,7 @@ METHOD Build( cPath, cDriver, oWnd, oMenuItem )
    DEFAULT cDriver      := cDriver()
    DEFAULT oWnd         := GetWndFrame()
 
-   if !Empty( oWnd )
+   if !empty( oWnd )
       SysRefresh(); oWnd:CloseAll(); SysRefresh()
    end if
 
@@ -935,7 +935,7 @@ METHOD OpenFiles( lExclusive )
          lOpen                   := .f.
       end if
 
-      if Empty( ::oBandera )
+      if empty( ::oBandera )
          ::oBandera              := TBandera():New()
       end if 
       
@@ -1293,235 +1293,235 @@ RETURN ( oDlg:nResult == IDOK )
 
 METHOD CloseFiles()
 
-   if !Empty( ::oDbf ) .and.::oDbf:Used()
+   if !empty( ::oDbf ) .and.::oDbf:Used()
       ::oDbf:end()
    end if
 
-   if !Empty( ::oDbfCaj ) .and.::oDbfCaj:Used()
+   if !empty( ::oDbfCaj ) .and.::oDbfCaj:Used()
       ::oDbfCaj:end()
    end if
 
-   if !Empty( ::oDbfDet ) .and.::oDbfDet:Used()
+   if !empty( ::oDbfDet ) .and.::oDbfDet:Used()
       ::oDbfDet:end()
    end if
 
-   if !Empty( ::oEntSal ) .and. ::oEntSal:Used()
+   if !empty( ::oEntSal ) .and. ::oEntSal:Used()
       ::oEntSal:end()
    end if
 
-   if !Empty( ::oTikT ) .and. ::oTikT:Used()
+   if !empty( ::oTikT ) .and. ::oTikT:Used()
       ::oTikT:end()
    end if
 
-   if !Empty( ::oTikL ) .and. ::oTikL:Used()
+   if !empty( ::oTikL ) .and. ::oTikL:Used()
       ::oTikL:end()
    end if
 
-   if !Empty( ::oTikP ) .and. ::oTikP:Used()
+   if !empty( ::oTikP ) .and. ::oTikP:Used()
       ::oTikP:end()
    end if
 
-   if !Empty( ::oPreCliT ) .and. ::oPreCliT:Used()
+   if !empty( ::oPreCliT ) .and. ::oPreCliT:Used()
       ::oPreCliT:end()
    end if
 
-   if !Empty( ::oPreCliL ) .and. ::oPreCliL:Used()
+   if !empty( ::oPreCliL ) .and. ::oPreCliL:Used()
       ::oPreCliL:end()
    end if
 
-   if !Empty( ::oPedCliT ) .and. ::oPedCliT:Used()
+   if !empty( ::oPedCliT ) .and. ::oPedCliT:Used()
       ::oPedCliT:end()
    end if
 
-   if !Empty( ::oPedCliL ) .and. ::oPedCliL:Used()
+   if !empty( ::oPedCliL ) .and. ::oPedCliL:Used()
       ::oPedCliL:end()
    end if
 
-   if !Empty( ::oPedCliP ) .and. ::oPedCliP:Used()
+   if !empty( ::oPedCliP ) .and. ::oPedCliP:Used()
       ::oPedCliP:end()
    end if
 
-   if !Empty( ::oFacCliT ) .and. ::oFacCliT:Used()
+   if !empty( ::oFacCliT ) .and. ::oFacCliT:Used()
       ::oFacCliT:end()
    end if
 
-   if !Empty( ::oFacCliL ) .and. ::oFacCliL:Used()
+   if !empty( ::oFacCliL ) .and. ::oFacCliL:Used()
       ::oFacCliL:end()
    end if
 
-   if !Empty( ::oFacCliP ) .and. ::oFacCliP:Used()
+   if !empty( ::oFacCliP ) .and. ::oFacCliP:Used()
       ::oFacCliP:end()
    end if
 
-   if !Empty( ::oRctCliT ) .and. ::oRctCliT:Used()
+   if !empty( ::oRctCliT ) .and. ::oRctCliT:Used()
       ::oRctCliT:end()
    end if
 
-   if !Empty( ::oRctCliL ) .and. ::oRctCliL:Used()
+   if !empty( ::oRctCliL ) .and. ::oRctCliL:Used()
       ::oRctCliL:end()
    end if
 
-   if !Empty( ::oAlbCliT ) .and. ::oAlbCliT:Used()
+   if !empty( ::oAlbCliT ) .and. ::oAlbCliT:Used()
       ::oAlbCliT:end()
    end if
 
-   if !Empty( ::oAlbCliL ) .and. ::oAlbCliL:Used()
+   if !empty( ::oAlbCliL ) .and. ::oAlbCliL:Used()
       ::oAlbCliL:end()
    end if
 
-   if !Empty( ::oAlbCliP ) .and. ::oAlbCliP:Used()
+   if !empty( ::oAlbCliP ) .and. ::oAlbCliP:Used()
       ::oAlbCliP:end()
    end if
 
-   if !Empty( ::oArticulo ) .and. ::oArticulo:Used()
+   if !empty( ::oArticulo ) .and. ::oArticulo:Used()
       ::oArticulo:end()
    end if
 
-   if !Empty( ::oUser ) .and. ::oUser:Used()
+   if !empty( ::oUser ) .and. ::oUser:Used()
       ::oUser:end()
    end if
 
-   if !Empty( ::oContador ) .and. ::oContador:Used()
+   if !empty( ::oContador ) .and. ::oContador:Used()
       ::oContador:end()
    end if
 
-   if !Empty( ::oDbf ) .and. ::oDbf:Used()
+   if !empty( ::oDbf ) .and. ::oDbf:Used()
       ::oDbf:end()
    end if
 
-   if !Empty( ::oDbfCaj ) .and. ::oDbfCaj:Used()
+   if !empty( ::oDbfCaj ) .and. ::oDbfCaj:Used()
       ::oDbfCaj:end()
    end if
 
-   if !Empty( ::oDbfDet ) .and. ::oDbfDet:Used()
+   if !empty( ::oDbfDet ) .and. ::oDbfDet:Used()
       ::oDbfDet:end()
    end if
 
-   if !Empty( ::oDbfDiv ) .and. ::oDbfDiv:Used()
+   if !empty( ::oDbfDiv ) .and. ::oDbfDiv:Used()
       ::oDbfDiv:end()
    end if
 
-   if !Empty( ::oIvaImp ) .and. ::oIvaImp:Used()
+   if !empty( ::oIvaImp ) .and. ::oIvaImp:Used()
       ::oIvaImp:end()
    end if
 
-   if !Empty( ::oClient ) .and. ::oClient:Used()
+   if !empty( ::oClient ) .and. ::oClient:Used()
       ::oClient:end()
    end if
 
-   if !Empty( ::oProvee ) .and. ::oProvee:Used()
+   if !empty( ::oProvee ) .and. ::oProvee:Used()
       ::oProvee:end()
    end if
 
-   if !Empty( ::oFPago ) .and. ::oFPago:Used()
+   if !empty( ::oFPago ) .and. ::oFPago:Used()
       ::oFPago:end()
    end if
 
-   if !Empty( ::oFacPrvT ) .and. ::oFacPrvT:Used()
+   if !empty( ::oFacPrvT ) .and. ::oFacPrvT:Used()
       ::oFacPrvT:end()
    end if
 
-   if !Empty( ::oRctPrvT ) .and. ::oRctPrvT:Used()
+   if !empty( ::oRctPrvT ) .and. ::oRctPrvT:Used()
       ::oRctPrvT:end()
    end if
 
-   if !Empty( ::oPedPrvT ) .and. ::oPedPrvT:Used()
+   if !empty( ::oPedPrvT ) .and. ::oPedPrvT:Used()
       ::oPedPrvT:end()
    end if
 
-   if !Empty( ::oAlbPrvT ) .and. ::oAlbPrvT:Used()
+   if !empty( ::oAlbPrvT ) .and. ::oAlbPrvT:Used()
       ::oAlbPrvT:end()
    end if
 
-   if !Empty( ::oAlbPrvL ) .and. ::oAlbPrvL:Used()
+   if !empty( ::oAlbPrvL ) .and. ::oAlbPrvL:Used()
       ::oAlbPrvL:end()
    end if
 
-   if !Empty( ::oFacPrvL ) .and. ::oFacPrvL:Used()
+   if !empty( ::oFacPrvL ) .and. ::oFacPrvL:Used()
       ::oFacPrvL:end()
    end if
 
-   if !Empty( ::oRctPrvL ) .and. ::oRctPrvL:Used()
+   if !empty( ::oRctPrvL ) .and. ::oRctPrvL:Used()
       ::oRctPrvL:end()
    end if
 
-   if !Empty( ::oFacPrvP ) .and. ::oFacPrvP:Used()
+   if !empty( ::oFacPrvP ) .and. ::oFacPrvP:Used()
       ::oFacPrvP:end()
    end if
 
-   if !Empty( ::oAntCliT ) .and. ::oAntCliT:Used()
+   if !empty( ::oAntCliT ) .and. ::oAntCliT:Used()
       ::oAntCliT:end()
    end if
 
-   if !Empty( ::oCaja ) .and. ::oCaja:Used()
+   if !empty( ::oCaja ) .and. ::oCaja:Used()
       ::oCaja:end()
    end if
 
-   if !Empty( ::oImpTik ) .and. ::oImpTik:Used()
+   if !empty( ::oImpTik ) .and. ::oImpTik:Used()
       ::oImpTik:end()
    end if
 
-   if !Empty( ::oEmpBnc ) .and. ::oEmpBnc:Used()
+   if !empty( ::oEmpBnc ) .and. ::oEmpBnc:Used()
       ::oEmpBnc:end()
    end if
 
-   if !Empty( ::oFamilia ) .and. ::oFamilia:Used()
+   if !empty( ::oFamilia ) .and. ::oFamilia:Used()
       ::oFamilia:end()
    end if
 
-   if !Empty( ::oTemporada ) .and. ::oTemporada:Used()
+   if !empty( ::oTemporada ) .and. ::oTemporada:Used()
       ::oTemporada:end()
    end if
 
-   if !Empty( ::oCategoria ) .and. ::oCategoria:Used()
+   if !empty( ::oCategoria ) .and. ::oCategoria:Used()
       ::oCategoria:end()
    end if
 
-   if !Empty( ::oDbfEmp ) .and. ::oDbfEmp:Used()
+   if !empty( ::oDbfEmp ) .and. ::oDbfEmp:Used()
       ::oDbfEmp:end()
    end if
 
-   if !Empty( ::oDbfDoc ) .and. ::oDbfDoc:Used()
+   if !empty( ::oDbfDoc ) .and. ::oDbfDoc:Used()
       ::oDbfDoc:End()
    end if
 
-   if !Empty( ::oDbfUsr ) .and. ::oDbfUsr:Used()
+   if !empty( ::oDbfUsr ) .and. ::oDbfUsr:Used()
       ::oDbfUsr:End()
    end if
 
-   if !Empty( ::oLogPorta ) .and. ::oLogPorta:Used()
+   if !empty( ::oLogPorta ) .and. ::oLogPorta:Used()
       ::oLogPorta:End()
    end if
 
-   if !Empty( ::oDbfCount ) .and. ::oDbfCount:Used()
+   if !empty( ::oDbfCount ) .and. ::oDbfCount:Used()
       ::oDbfCount:End()
    end if
 
-   if !Empty( ::oDbfTemporal )
+   if !empty( ::oDbfTemporal )
       ::DestroyTemporal()
    end if
 
-   if !Empty( ::oBandera )
+   if !empty( ::oBandera )
       ::oBandera:end()
    end if
 
-   if !Empty( ::oTipArt )
+   if !empty( ::oTipArt )
       ::oTipArt:end()
    end if
 
-   if !Empty( ::oFabricante )
+   if !empty( ::oFabricante )
       ::oFabricante:end()
    end if
 
-   if !Empty( ::oCuentasBancarias )
+   if !empty( ::oCuentasBancarias )
       ::oCuentasBancarias:End()
    end if
 
-   if !Empty( ::oNewImp )
+   if !empty( ::oNewImp )
       ::oNewImp:end()
    end if
 
-   if !Empty( ::oTipInv )
+   if !empty( ::oTipInv )
       ::oTipInv:end()
    end if
 
@@ -1540,7 +1540,7 @@ METHOD lOpenTurno()
    Caso de q el fichero este vacio---------------------------------------------
    */
 
-   if Empty( ::oDbf ) 
+   if empty( ::oDbf ) 
       Return( ::OpenTurno )
    end if
 
@@ -1645,9 +1645,14 @@ Cierra el turno
 
 METHOD lCloseCajaSeleccionada()
 
+   local oError
+   local oBlock
    local cTurno
-   local cCurrentTurno  
+   local cCurrentTurno 
 
+   oBlock               := ErrorBlock( { | oError | ApoloBreak( oError ) } )
+   BEGIN SEQUENCE
+ 
    // Que nadie toque-------------------------------------------------------------
 
    CursorWait()
@@ -1663,16 +1668,16 @@ METHOD lCloseCajaSeleccionada()
 
    if !::lArqueoParcial 
 
-      if ::oDbf:Seek( cCurrentTurno )
-         ::oDbf:FieldPutByName( "mComTur", ::cComentario )
+      if ::oDbf:seekInOrd( cCurrentTurno, "cNumTur" )
+         ::oDbf:fieldPutByName( "mComTur", ::cComentario )
       end if
 
       // Cerramos las cajas una a una------------------------------------------------
 
-      if ::oDbfCaj:Seek( cCurrentTurno ) 
+      if ::oDbfCaj:seekInOrd( cCurrentTurno, "cNumTur" )
          ::lCloseCaja( .t., ::oDbfCaj:cCodCaj )
       end if
-   
+
       // Si hemos cerrado todas las cajas, cerramos el turno-------------------------
 
       ::lAllCloseTurno( cCurrentTurno )
@@ -1681,14 +1686,12 @@ METHOD lCloseCajaSeleccionada()
 
    // Envío de l mail--------------------------------------------------------------
 
-   if ::lEnviarMail .and. !Empty( ::cEnviarMail )
+   if ::lEnviarMail .and. !empty( ::cEnviarMail )
 
-      if !Empty( ::oTxt )
+      if !empty( ::oTxt )
          ::oTxt:SetText( "Enviando mail..." )
       end if
 
-      //::MailArqueo( cCurrentTurno ) 
-      
       ::MailArqueo( cTurno ) 
 
    end if 
@@ -1697,7 +1700,7 @@ METHOD lCloseCajaSeleccionada()
 
    if ::lChkActualizaStockWeb
 
-      if !Empty( ::oTxt )
+      if !empty( ::oTxt )
          ::oTxt:SetText( "Actualizando stocks en web..." )
       end if
 
@@ -1709,7 +1712,7 @@ METHOD lCloseCajaSeleccionada()
 
    if !::lNoImprimirArqueo
 
-      if !Empty( ::oTxt )
+      if !empty( ::oTxt )
          ::oTxt:SetText( "Imprimiendo..." )
       end if
 
@@ -1721,7 +1724,7 @@ METHOD lCloseCajaSeleccionada()
 
    if !::lArqueoParcial .and. ::lEnvioInformacion
 
-      if !Empty( ::oTxt )
+      if !empty( ::oTxt )
          ::oTxt:SetText( "Enviando información..." )
       end if
 
@@ -1730,6 +1733,12 @@ METHOD lCloseCajaSeleccionada()
    end if
 
    // Habilitamos el dialogo---------------------------------------------------
+
+   RECOVER USING oError
+      msgStop( "Error en el proceso de cierre." + CRLF + ErrorMessage( oError ) )
+   END SEQUENCE
+
+   ErrorBlock( oBlock )
 
    CursorWe()
 
@@ -1747,13 +1756,13 @@ METHOD lCloseCaja( lClose, cCodCaja )
    Ponemos todos los Pedidos de proveedor como cerrados
    */
 
-   if ::oMeter != nil
+   if !empty( ::oMeter )
       ::oMeter:Show()
       ::oMeter:nTotal   := 8
       ::oMeter:Refresh()
    end if
 
-   if !Empty( ::oTxt )
+   if !empty( ::oTxt )
       ::oTxt:SetText( "Cerrando pedidos de proveedor" )
    end if
 
@@ -1763,12 +1772,12 @@ METHOD lCloseCaja( lClose, cCodCaja )
    Ponemos todos loS albaranes de proveedor como cerrados
    */
 
-   if ::oMeter != nil
+   if !empty( ::oMeter )
       ::oMeter:Set( ++nProcc )
       ::oMeter:Refresh()
    end if
 
-   if !Empty( ::oTxt )
+   if !empty( ::oTxt )
       ::oTxt:SetText( "Cerrando albaranes de proveedor" )
    end if
 
@@ -1778,12 +1787,12 @@ METHOD lCloseCaja( lClose, cCodCaja )
    Ponemos todos las facturas de proveedor como cerradas
    */
 
-   if ::oMeter != nil
+   if !empty( ::oMeter )
       ::oMeter:Set( ++nProcc )
       ::oMeter:Refresh()
    end if
 
-   if !Empty( ::oTxt )
+   if !empty( ::oTxt )
       ::oTxt:SetText( "Cerrando facturas de proveedor" )
    end if
 
@@ -1793,12 +1802,12 @@ METHOD lCloseCaja( lClose, cCodCaja )
    Ponemos todos los presupuestos de clientes como cerrados
    */
 
-   if ::oMeter != nil
+   if !empty( ::oMeter )
       ::oMeter:Set( ++nProcc )
       ::oMeter:Refresh()
    end if
 
-   if !Empty( ::oTxt )
+   if !empty( ::oTxt )
       ::oTxt:SetText( "Cerrando presupuestos de proveedor" )
    end if
 
@@ -1808,12 +1817,12 @@ METHOD lCloseCaja( lClose, cCodCaja )
    Ponemos todos los presupuestos de clientes como cerrados
    */
 
-   if ::oMeter != nil
+   if !empty( ::oMeter )
       ::oMeter:Set( ++nProcc )
       ::oMeter:Refresh()
    end if
 
-   if !Empty( ::oTxt )
+   if !empty( ::oTxt )
       ::oTxt:SetText( "Cerrando pedidos de clientes" )
    end if
 
@@ -1823,12 +1832,12 @@ METHOD lCloseCaja( lClose, cCodCaja )
    Ponemos todos loS albaranes de clientes como cerrados
    */
 
-   if ::oMeter != nil
+   if !empty( ::oMeter )
       ::oMeter:Set( ++nProcc )
       ::oMeter:Refresh()
    end if
 
-   if !Empty( ::oTxt )
+   if !empty( ::oTxt )
       ::oTxt:SetText( "Cerrando albaranes de clientes" )
    end if
 
@@ -1838,12 +1847,12 @@ METHOD lCloseCaja( lClose, cCodCaja )
    Ponemos todos las facturas de proveedor como cerradas
    */
 
-   if ::oMeter != nil
+   if !empty( ::oMeter )
       ::oMeter:Set( ++nProcc )
       ::oMeter:Refresh()
    end if
 
-   if !Empty( ::oTxt )
+   if !empty( ::oTxt )
       ::oTxt:SetText( "Cerrando facturas de clientes" )
    end if
 
@@ -1853,12 +1862,12 @@ METHOD lCloseCaja( lClose, cCodCaja )
    Ponemos todos lso tikets como cerrados
    */
 
-   if ::oMeter != nil
+   if !empty( ::oMeter )
       ::oMeter:Set( ++nProcc )
       ::oMeter:Refresh()
    end if
 
-   if !Empty( ::oTxt )
+   if !empty( ::oTxt )
       ::oTxt:SetText( "Cerrando tikets" )
    end if
 
@@ -1868,12 +1877,12 @@ METHOD lCloseCaja( lClose, cCodCaja )
    Cerrar los pagos____________________________________________________________
    */
 
-   if ::oMeter != nil
+   if !empty( ::oMeter )
       ::oMeter:Set( ++nProcc )
       ::oMeter:Refresh()
    end if
 
-   if !Empty( ::oTxt )
+   if !empty( ::oTxt )
       ::oTxt:SetText( "Cerrando pagos" )
    end if
 
@@ -1883,12 +1892,12 @@ METHOD lCloseCaja( lClose, cCodCaja )
    Entradas y salidas----------------------------------------------------------
    */
 
-   if ::oMeter != nil
+   if !empty( ::oMeter )
       ::oMeter:Set( ++nProcc )
       ::oMeter:Refresh()
    end if
 
-   if !Empty( ::oTxt )
+   if !empty( ::oTxt )
       ::oTxt:SetText( "Cerrando entradas y salidas" )
    end if
 
@@ -1898,12 +1907,12 @@ METHOD lCloseCaja( lClose, cCodCaja )
    Ponemos el estado de la caja------------------------------------------------
    */
 
-   if ::oMeter != nil
+   if !empty( ::oMeter )
       ::oMeter:Set( ++nProcc )
       ::oMeter:Refresh()
    end if
 
-   if !Empty( ::oTxt )
+   if !empty( ::oTxt )
       ::oTxt:SetText( "Cerrando cajas" )
    end if
 
@@ -2166,7 +2175,7 @@ METHOD DialogCreateTurno()
 
    ACTIVATE DIALOG oDlg CENTER
 
-   if !Empty( oBmp )
+   if !empty( oBmp )
       oBmp:End()
    end if
 
@@ -2189,7 +2198,7 @@ Return ( Self )
 
 Method CreateTurno( oDlg )
 
-   if Empty( ::cCajeroTurno )
+   if empty( ::cCajeroTurno )
       MsgStop( "Debe de cumplimentar el usuario", "Imposible realizar apertura" )
       Return .f.
    end if
@@ -2236,7 +2245,7 @@ RETURN ( Self )
 
 METHOD CreateEntradaTurno()
 
-   if !Empty( ::nImporteTurno )
+   if !empty( ::nImporteTurno )
 
       ::oEntSal:Blank()
       ::oEntSal:nNumEnt := nNewDoc( , ::oEntSal:cAlias, "NENTSAL", , ::oDbfCount:cAlias )
@@ -2403,7 +2412,7 @@ METHOD End()
       ::oWndBrw  := nil
    end if
 
-   if !Empty( ::oTotales )
+   if !empty( ::oTotales )
       ::oTotales:end()
    end if
 
@@ -2431,7 +2440,7 @@ METHOD lInvCierre()
 
    ::cCurTurno    := ::GetLastClose()
 
-   if Empty( ::cCurTurno )
+   if empty( ::cCurTurno )
       MsgStop( "No hay sesiones para invertir el cierre" )
       return .f.
    end if
@@ -2471,7 +2480,7 @@ METHOD lInvCierre()
       oDlgWat:AddFastKey( VK_F5, {|| oBtn:Click() } )
       oDlgWat:AddFastKey( VK_F1, {|| ChmHelp( "Invertir_Cierre" ) } )
 
-      oDlgWat:bStart := {|| if( !Empty( ::oAni ), ::oAni:Hide(), ) }
+      oDlgWat:bStart := {|| if( !empty( ::oAni ), ::oAni:Hide(), ) }
 
    ACTIVATE DIALOG oDlgWat CENTER VALID ( lVal )
 
@@ -2496,7 +2505,7 @@ METHOD InvCierre( oDlg, oMsg )
 
    oDlg:Disable()
 
-   if !Empty( ::oAni )
+   if !empty( ::oAni )
       ::oAni:Show()
    end if
 
@@ -2569,7 +2578,7 @@ METHOD InvCierre( oDlg, oMsg )
 
    // Ponemos el cursor--------------------------------------------------------
 
-   if !Empty( ::oAni )
+   if !empty( ::oAni )
       ::oAni:Hide()
    end if
 
@@ -2963,25 +2972,25 @@ METHOD lArqueoTurno( lZoom, lParcial ) CLASS TTurno
          return .f.
       end if
 
-      if Empty( ::dFecTur )
+      if empty( ::dFecTur )
          ::dFecTur      := GetSysDate()
       end if
 
-      if Empty( ::cHorTur )
+      if empty( ::cHorTur )
          ::cHorTur      := Substr( Time(), 1, 5 )
       end if
 
-      if Empty( ::cCajTur )
+      if empty( ::cCajTur )
          ::cCajTur      := cCurUsr()
       end if
 
    end if
 
-   if Empty( ::cCurCaja ) 
+   if empty( ::cCurCaja ) 
       ::GetCurrentCaja()
    end if
 
-   if !::lZoom .and. Empty( ::cCurTurno )
+   if !::lZoom .and. empty( ::cCurTurno )
       MsgStop( "No hay sesiones para cerrar" )
       return .f.
    end if
@@ -3130,7 +3139,7 @@ METHOD lArqueoTurno( lZoom, lParcial ) CLASS TTurno
       REDEFINE GET oCajTur VAR ::cCajTur;
          ID       120 ;
          WHEN     ( !lZoom ) ;
-         VALID    ( !Empty( ::cCajTur ) .and. cUser( oCajTur, nil, oNomCaj ) ) ;
+         VALID    ( !empty( ::cCajTur ) .and. cUser( oCajTur, nil, oNomCaj ) ) ;
          BITMAP   "LUPA" ;
          ON HELP  ( BrwUser( oCajTur, nil, oNomCaj ) ) ;
          OF       ::oFldTurno:aDialogs[1]
@@ -3146,7 +3155,7 @@ METHOD lArqueoTurno( lZoom, lParcial ) CLASS TTurno
       REDEFINE GET oCajTur VAR ::cCajTur;
          ID       120 ;
          WHEN     ( !lZoom ) ;
-         VALID    ( !Empty( ::cCajTur ) .and. cUser( oCajTur, nil, oNomCaj ) ) ;
+         VALID    ( !empty( ::cCajTur ) .and. cUser( oCajTur, nil, oNomCaj ) ) ;
          BITMAP   "LUPA_24" ;
          ON HELP  ( BrwUserTactil( oCajTur, nil, oNomCaj ) ) ;
          OF       ::oFldTurno:aDialogs[1]
@@ -3766,15 +3775,15 @@ METHOD lArqueoTurno( lZoom, lParcial ) CLASS TTurno
    Repos de las bases de datos-------------------------------------------------
    */
 
-   if !Empty( ::oDbf ) .and. ::oDbf:Used()
+   if !empty( ::oDbf ) .and. ::oDbf:Used()
       ::oDbf:SetStatus()
    end if
 
-   if !Empty( ::oDbfDet ) .and. ::oDbfDet:Used()
+   if !empty( ::oDbfDet ) .and. ::oDbfDet:Used()
       ::oDbfDet:OrdClearScope()
    end if
 
-   if !Empty( ::oDbfCaj ) .and. ::oDbfCaj:Used()
+   if !empty( ::oDbfCaj ) .and. ::oDbfCaj:Used()
       ::oDbfCaj:OrdClearScope()
    end if
 
@@ -3810,7 +3819,7 @@ METHOD lArqueoTurno( lZoom, lParcial ) CLASS TTurno
 
    RECOVER USING oError
 
-      if !Empty( ::oDlgTurno )
+      if !empty( ::oDlgTurno )
          ::oDlgTurno:End()
       end if
 
@@ -3834,11 +3843,11 @@ METHOD lArqueoTurno( lZoom, lParcial ) CLASS TTurno
    Guardamos los datos del browse----------------------------------------------
    */
 
-   if !Empty( oBrwCaj )
+   if !empty( oBrwCaj )
       oBrwCaj:CloseData()
    end if
 
-   if !Empty( oBrwCnt )
+   if !empty( oBrwCnt )
       oBrwCnt:CloseData()
    end if
 
@@ -3846,23 +3855,23 @@ METHOD lArqueoTurno( lZoom, lParcial ) CLASS TTurno
    Refrescos por pantalla------------------------------------------------------
    */
 
-   if !Empty( oFnt )
+   if !empty( oFnt )
       oFnt:End()
    end if
 
-   if !Empty( oFntSay )
+   if !empty( oFntSay )
       oFntSay:End()
    end if
 
-   if !Empty( oFntBrw )
+   if !empty( oFntBrw )
       oFntBrw:End()
    end if
 
-   if !Empty( ::oWndBrw )
+   if !empty( ::oWndBrw )
       ::oWndBrw:Refresh()
    end if
 
-Return ( if( !Empty( ::oDlgTurno ), ::oDlgTurno:nResult == IDOK, .f. ) )
+Return ( if( !empty( ::oDlgTurno ), ::oDlgTurno:nResult == IDOK, .f. ) )
 
 //---------------------------------------------------------------------------//
 
@@ -3877,31 +3886,31 @@ Method InitArqueoTurno()
 
       ::oBrwTotales:Hide()
 
-      if !Empty( ::oGrpArqueo )
+      if !empty( ::oGrpArqueo )
          ::oGrpArqueo:Hide()
       end if 
       
       ::oTotalEfectivo:Hide()
 
-      if !Empty( ::oSayTotalEfectivo )
+      if !empty( ::oSayTotalEfectivo )
          ::oSayTotalEfectivo:Hide()
       end if 
 
       ::oTotalTarjeta:Hide()
 
-      if !Empty( ::oSayTotalTarjeta )
+      if !empty( ::oSayTotalTarjeta )
          ::oSayTotalTarjeta:Hide()
       end if 
 
       ::oTotalNoEfectivo:Hide()
 
-      if !Empty( ::oSayTotalNoEfectivo )
+      if !empty( ::oSayTotalNoEfectivo )
          ::oSayTotalNoEfectivo:Hide()
       end if
 
       ::oTotalCobros:Hide()
 
-      if !Empty( ::oSayTotalCobros )
+      if !empty( ::oSayTotalCobros )
          ::oSayTotalCobros:Hide()
       end if
 
@@ -3909,19 +3918,19 @@ Method InitArqueoTurno()
 
       ::oDiferenciaEfectivo:Hide()
 
-      if !Empty( ::oSayDiferenciaEfectivo )
+      if !empty( ::oSayDiferenciaEfectivo )
          ::oSayDiferenciaEfectivo:Hide()
       end if
 
       ::oDiferenciaTarjeta:Hide()
 
-      if !Empty( ::oSayDiferenciaTarjeta )
+      if !empty( ::oSayDiferenciaTarjeta )
          ::oSayDiferenciaTarjeta:Hide()
       end if
 
       ::oDiferenciaTotal:Hide()
 
-      if !Empty( ::oSayDiferenciaTotal )
+      if !empty( ::oSayDiferenciaTotal )
          ::oSayDiferenciaTotal:Hide()
       end if
 
@@ -3929,25 +3938,25 @@ Method InitArqueoTurno()
 
       ::oBtnOpcionesImpresion:Hide()
 
-      if !Empty( ::oChkEnviarMail )
+      if !empty( ::oChkEnviarMail )
          ::oChkEnviarMail:Hide()
       end if
 
-      if !Empty( ::oGetEnviarMail )
+      if !empty( ::oGetEnviarMail )
          ::oGetEnviarMail:Hide()
       end if
 
       ::oGrpNotificacion:Hide()
 
-      if !Empty( ::oEnvioInformacion )
+      if !empty( ::oEnvioInformacion )
          ::oEnvioInformacion:Hide()
       end if
 
-      if !Empty( ::oImprimirEnvio )
+      if !empty( ::oImprimirEnvio )
          ::oImprimirEnvio:Hide()
       end if
 
-      if !Empty( ::oGrpOpcionesEnvioInformacion )
+      if !empty( ::oGrpOpcionesEnvioInformacion )
          ::oGrpOpcionesEnvioInformacion:Hide()
       end if
 
@@ -4109,7 +4118,7 @@ METHOD GoNext( oCajTur, oBrwCnt )
 
          ::oBtnPrv:Show()
 
-         if !::lZoom .and. Empty( ::cCajTur )
+         if !::lZoom .and. empty( ::cCajTur )
             MsgStop( "Es necesario codificar un usuario." )
             oCajTur:SetFocus()
             return nil
@@ -4540,7 +4549,7 @@ Method lChangeCajas( oNomCaj )
    Texto para cajas vacias-----------------------------------------------------
    */
 
-   if Empty( cCodCaj )
+   if empty( cCodCaj )
 
       oNomCaj:cText( "Todas" )
 
@@ -4592,11 +4601,11 @@ METHOD lCalTurno( cTurno, cCaja )
    oBlock                        := ErrorBlock( { | oError | ApoloBreak( oError ) } )
    BEGIN SEQUENCE
 
-      if !Empty( ::oDlgTurno )
+      if !empty( ::oDlgTurno )
          ::oDlgTurno:Disable()
       end if
 
-      if !Empty( ::oMeter )
+      if !empty( ::oMeter )
          ::oMeter:Show()
       end if
 
@@ -4606,7 +4615,7 @@ METHOD lCalTurno( cTurno, cCaja )
       Iniciamos los totales-------------------------------------------------------
       */
 
-      if Empty( ::oTotales )
+      if empty( ::oTotales )
          ::oTotales              := TTotalTurno():New( Self )
       end if
       ::oTotales:Initiate()
@@ -4640,11 +4649,11 @@ METHOD lCalTurno( cTurno, cCaja )
       Rama de totales------------------------------------------------------------
       */
 
-      if !Empty( ::oBrwTotales )
+      if !empty( ::oBrwTotales )
 
          ::oTreeTotales             := ::oTotales:CreateTree( cCaja, cTurno )   
 
-         if Empty( ::oBrwTotales:oTree )
+         if empty( ::oBrwTotales:oTree )
 
             ::oBrwTotales:SetTree( ::oTreeTotales, { "gc_navigate_minus_16", "gc_navigate_plus_16", "Nil16" }, ,  ) 
             
@@ -4740,7 +4749,7 @@ METHOD lCalTurno( cTurno, cCaja )
       Calculo Monedas-------------------------------------------------------------
       */
 
-      if !Empty( cCaja )
+      if !empty( cCaja )
 
          if ::oDbfCaj:SeekInOrd( cTurno + cCaja, "cNumTur" )
 
@@ -4838,15 +4847,15 @@ METHOD lCalTurno( cTurno, cCaja )
 
    CursorWE()
 
-   if !Empty( ::oDbfCaj )
+   if !empty( ::oDbfCaj )
       ::oDbfCaj:SetRecno()
    end if
 
-   if !Empty( ::oMeter )
+   if !empty( ::oMeter )
       ::oMeter:Hide()
    end if
 
-   if !Empty( ::oTxt )
+   if !empty( ::oTxt )
       ::oTxt:SetText( '' )
    end if
 
@@ -4854,7 +4863,7 @@ METHOD lCalTurno( cTurno, cCaja )
    Habilitamos el dialogo------------------------------------------------------
    */
 
-   if !Empty( ::oDlgTurno )
+   if !empty( ::oDlgTurno )
       ::oDlgTurno:Enable()
    end if
 
@@ -4864,7 +4873,7 @@ RETURN ( .t. )
 
 Method ClickBrwTotales()
 
-   if len( ::oBrwTotales:Cargo:Cargo ) >= 3 .and. !Empty( ::oBrwTotales:Cargo:Cargo[ 3 ] )
+   if len( ::oBrwTotales:Cargo:Cargo ) >= 3 .and. !empty( ::oBrwTotales:Cargo:Cargo[ 3 ] )
       Eval( ::oBrwTotales:Cargo:Cargo[ 3 ] )
    else
       if ::oBrwTotales:Cargo:oTree != nil
@@ -4884,11 +4893,11 @@ METHOD TotContadores( cTurno )
 
    DEFAULT cTurno       := ::cCurTurno
 
-   if ::oMeter != nil
+   if !empty( ::oMeter )
       ::oMeter:Refresh()
    end if
 
-   if !Empty( ::oTxt )
+   if !empty( ::oTxt )
       ::oTxt:SetText( 'Calculando contadores' )
    end if
 
@@ -4919,11 +4928,11 @@ METHOD TotVenta( cTurno, cCaja )
    Cerrar por turnos-----------------------------------------------------------
    */
 
-   if ::oMeter != nil
+   if !empty( ::oMeter )
       ::oMeter:SetTotal( ::oTikT:LastRec() )
    end if
 
-   if !Empty( ::oTxt )
+   if !empty( ::oTxt )
       ::oTxt:SetText( 'Calculando tikets' )
    end if
 
@@ -4937,7 +4946,7 @@ METHOD TotVenta( cTurno, cCaja )
 
          if ::oTikT:cTipTik == SAVTIK .and. ( ::oTikT:lAbierto .or. !::oTikT:lPgdTik ) .and. ::oTikT:nUbiTik != ubiEncargar
             ::lTikAbiertos    := .t.
-            if !Empty( ::cTikAbiertos )
+            if !empty( ::cTikAbiertos )
                ::cTikAbiertos += ", "
             else
                ::cTikAbiertos += ::oTikT:cSerTik + "/" + Alltrim( ::oTikT:cNumTik ) + "/" + Rtrim( ::oTikT:cSufTik )
@@ -4973,7 +4982,7 @@ METHOD TotVenta( cTurno, cCaja )
 
          ::oTikT:Skip()
 
-         if ::oMeter != nil
+         if !empty( ::oMeter )
             ::oMeter:AutoInc()
          end if
 
@@ -4987,11 +4996,11 @@ METHOD TotVenta( cTurno, cCaja )
    Vales liquidados------------------------------------------------------------
    */
 
-   if ::oMeter != nil
+   if !empty( ::oMeter )
       ::oMeter:SetTotal( ::oTikT:LastRec() )
    end if
 
-   if !Empty( ::oTxt )
+   if !empty( ::oTxt )
       ::oTxt:SetText( 'Calculando vales' )
    end if
 
@@ -5006,7 +5015,7 @@ METHOD TotVenta( cTurno, cCaja )
 
          ::oTikT:Skip()
 
-         if ::oMeter != nil
+         if !empty( ::oMeter )
             ::oMeter:AutoInc()
          end if
 
@@ -5020,11 +5029,11 @@ METHOD TotVenta( cTurno, cCaja )
 
    // Ventas por albaranes no facturados------------------------------------------
 
-   if ::oMeter != nil
+   if !empty( ::oMeter )
       ::oMeter:SetTotal( ::oAlbCliT:LastRec() )
    end if
 
-   if !Empty( ::oTxt )
+   if !empty( ::oTxt )
       ::oTxt:SetText( 'Calculando albaranes' )
    end if
 
@@ -5042,7 +5051,7 @@ METHOD TotVenta( cTurno, cCaja )
 
          ::oAlbCliT:Skip()
 
-         if ::oMeter != nil
+         if !empty( ::oMeter )
             ::oMeter:AutoInc()
          end if
 
@@ -5056,11 +5065,11 @@ METHOD TotVenta( cTurno, cCaja )
    Entregas a cuenta en albaranes----------------------------------------------
    */
 
-   if ::oMeter != nil
+   if !empty( ::oMeter )
       ::oMeter:SetTotal( ::oPedCliP:LastRec() )
    end if
 
-   if !Empty( ::oTxt )
+   if !empty( ::oTxt )
       ::oTxt:SetText( 'Calculando entregas a cuenta' )
    end if
 
@@ -5074,7 +5083,7 @@ METHOD TotVenta( cTurno, cCaja )
 
          ::oPedCliP:Skip()
 
-         if ::oMeter != nil
+         if !empty( ::oMeter )
             ::oMeter:AutoInc()
          end if
 
@@ -5084,7 +5093,7 @@ METHOD TotVenta( cTurno, cCaja )
 
    end if
 
-   if ::oMeter != nil
+   if !empty( ::oMeter )
       ::oMeter:SetTotal( ::oAlbCliP:LastRec() )
    end if
 
@@ -5098,7 +5107,7 @@ METHOD TotVenta( cTurno, cCaja )
 
          ::oAlbCliP:Skip()
 
-         if ::oMeter != nil
+         if !empty( ::oMeter )
             ::oMeter:AutoInc()
          end if
 
@@ -5112,11 +5121,11 @@ METHOD TotVenta( cTurno, cCaja )
    Ventas por facturas---------------------------------------------------------
    */
 
-   if ::oMeter != nil
+   if !empty( ::oMeter )
       ::oMeter:SetTotal( ::oFacCliT:LastRec() )
    end if
 
-   if !Empty( ::oTxt )
+   if !empty( ::oTxt )
       ::oTxt:SetText( 'Calculando facturas' )
    end if
 
@@ -5130,7 +5139,7 @@ METHOD TotVenta( cTurno, cCaja )
 
          ::oFacCliT:Skip()
 
-         if ::oMeter != nil
+         if !empty( ::oMeter )
             ::oMeter:AutoInc()
          end if
 
@@ -5144,11 +5153,11 @@ METHOD TotVenta( cTurno, cCaja )
    Ventas por facturas rectificativas -----------------------------------------
    */
 
-   if ::oMeter != nil
+   if !empty( ::oMeter )
       ::oMeter:SetTotal( ::oRctCliT:LastRec() )
    end if
 
-   if !Empty( ::oTxt )
+   if !empty( ::oTxt )
       ::oTxt:SetText( 'Calculando rectificativas' )
    end if
 
@@ -5161,7 +5170,7 @@ METHOD TotVenta( cTurno, cCaja )
 
          ::oRctCliT:Skip()
 
-         if ::oMeter != nil
+         if !empty( ::oMeter )
             ::oMeter:AutoInc()
          end if
 
@@ -5175,11 +5184,11 @@ METHOD TotVenta( cTurno, cCaja )
    Ventas por anticipos--------------------------------------------------------
    */
 
-   if ::oMeter != nil
+   if !empty( ::oMeter )
       ::oMeter:SetTotal( ::oAntCliT:LastRec() )
    end if
 
-   if !Empty( ::oTxt )
+   if !empty( ::oTxt )
       ::oTxt:SetText( 'Calculando anticipos' )
    end if
 
@@ -5192,7 +5201,7 @@ METHOD TotVenta( cTurno, cCaja )
 
          ::oAntCliT:Skip()
 
-         if ::oMeter != nil
+         if !empty( ::oMeter )
             ::oMeter:AutoInc()
          end if
 
@@ -5206,11 +5215,11 @@ METHOD TotVenta( cTurno, cCaja )
    Ventas por anticipos--------------------------------------------------------
    */
 
-   if ::oMeter != nil
+   if !empty( ::oMeter )
       ::oMeter:SetTotal( ::oAntCliT:LastRec() )
    end if
 
-   if !Empty( ::oTxt )
+   if !empty( ::oTxt )
       ::oTxt:SetText( 'Calculando anticipos liquidados' )
    end if
 
@@ -5223,7 +5232,7 @@ METHOD TotVenta( cTurno, cCaja )
 
          ::oAntCliT:Skip()
 
-         if ::oMeter != nil
+         if !empty( ::oMeter )
             ::oMeter:AutoInc()
          end if
 
@@ -5244,11 +5253,11 @@ METHOD TotEntrada( cTurno, cCaja )
    DEFAULT cTurno       := ::cCurTurno
    DEFAULT cCaja        := ::cCurCaja
 
-   if ::oMeter != nil
+   if !empty( ::oMeter )
       ::oMeter:SetTotal( ::oEntSal:LastRec() )
    end if
 
-   if !Empty( ::oTxt )
+   if !empty( ::oTxt )
       ::oTxt:SetText( 'Calculando entradas' )
    end if
 
@@ -5264,7 +5273,7 @@ METHOD TotEntrada( cTurno, cCaja )
 
          ::oEntSal:Skip()
 
-         if ::oMeter != nil
+         if !empty( ::oMeter )
             ::oMeter:AutoInc()
          end if
 
@@ -5285,11 +5294,11 @@ METHOD TotCompra( cTurno, cCaja )
 
    // Albaranes de proveedores_________________________________________________
 
-   if ::oMeter != nil
+   if !empty( ::oMeter )
       ::oMeter:SetTotal( ::oAlbPrvT:LastRec() )
    end if
 
-   if !Empty( ::oTxt )
+   if !empty( ::oTxt )
       ::oTxt:SetText( 'Calculando albaran de proveedores' )
    end if
 
@@ -5303,7 +5312,7 @@ METHOD TotCompra( cTurno, cCaja )
 
          ::oAlbPrvT:Skip()
 
-         if ::oMeter != nil
+         if !empty( ::oMeter )
             ::oMeter:AutoInc()
          end if
 
@@ -5315,11 +5324,11 @@ METHOD TotCompra( cTurno, cCaja )
 
    // Facturas de proveedores__________________________________________________
 
-   if ::oMeter != nil
+   if !empty( ::oMeter )
       ::oMeter:SetTotal( ::oFacPrvT:LastRec() )
    end if
 
-   if !Empty( ::oTxt )
+   if !empty( ::oTxt )
       ::oTxt:SetText( 'Calculando facturas de proveedores' )
    end if
 
@@ -5331,7 +5340,7 @@ METHOD TotCompra( cTurno, cCaja )
 
          ::oFacPrvT:Skip()
 
-         if ::oMeter != nil
+         if !empty( ::oMeter )
             ::oMeter:AutoInc()
          end if
 
@@ -5343,11 +5352,11 @@ METHOD TotCompra( cTurno, cCaja )
 
    // Facturas rectificativa de proveedores____________________________________
 
-   if ::oMeter != nil
+   if !empty( ::oMeter )
       ::oMeter:SetTotal( ::oRctPrvT:LastRec() )
    end if
 
-   if !Empty( ::oTxt )
+   if !empty( ::oTxt )
       ::oTxt:SetText( 'Calculando facturas rectificativas de proveedores' )
    end if
 
@@ -5359,7 +5368,7 @@ METHOD TotCompra( cTurno, cCaja )
 
          ::oRctPrvT:Skip()
 
-         if ::oMeter != nil
+         if !empty( ::oMeter )
             ::oMeter:AutoInc()
          end if
 
@@ -5389,11 +5398,11 @@ METHOD TotCobro( cTurno, cCaja )
    Total cobrado __________________________________________________________________
    */
 
-   if ::oMeter != nil
+   if !empty( ::oMeter )
       ::oMeter:SetTotal( ::oTikP:LastRec() )
    end if
 
-   if !Empty( ::oTxt )
+   if !empty( ::oTxt )
       ::oTxt:SetText( 'Calculando cobros' )
    end if
 
@@ -5451,7 +5460,7 @@ METHOD TotCobro( cTurno, cCaja )
 
          ::oTikP:Skip()
 
-         if ::oMeter != nil
+         if !empty( ::oMeter )
             ::oMeter:AutoInc()
          end if
 
@@ -5467,11 +5476,11 @@ METHOD TotCobro( cTurno, cCaja )
    Total cobrado con facturas-----------------------------------------------------
    */
 
-   if ::oMeter != nil
+   if !empty( ::oMeter )
       ::oMeter:SetTotal( ::oFacCliP:LastRec() )
    end if
 
-   if !Empty( ::oTxt )
+   if !empty( ::oTxt )
       ::oTxt:SetText( 'Calculando cobros' )
    end if
 
@@ -5497,7 +5506,7 @@ METHOD TotCobro( cTurno, cCaja )
                   ::oTotales:addTotCobroTarjeta(      cCaja, ::oFacCliP:cSerie, ::nTotFacturaCobro(), ::cTxtFacturaCobro(), ::bEdtFacturaCobro(), ::oTotales:hBmpDoc[ "ReciboClientes" ] )
             end case
 
-            if !Empty( cCuentaEmpresaRecibo( ::oFacCliP ) )
+            if !empty( cCuentaEmpresaRecibo( ::oFacCliP ) )
                ::oTotales:addTotBancos( cCaja, ::cBancoCuenta( ::oFacCliP ), ::nTotFacturaCobro(), ::cTxtFacturaCobro(), ::bEdtFacturaCobro(), ::oTotales:hBmpDoc[ "ReciboClientes" ] )
             end if
 
@@ -5505,7 +5514,7 @@ METHOD TotCobro( cTurno, cCaja )
 
          ::oFacCliP:Skip()
 
-         if ::oMeter != nil
+         if !empty( ::oMeter )
             ::oMeter:AutoInc()
          end if
 
@@ -5542,7 +5551,7 @@ METHOD TotCobro( cTurno, cCaja )
 
          ::oPedCliP:Skip()
 
-         if ::oMeter != nil
+         if !empty( ::oMeter )
             ::oMeter:AutoInc()
          end if
 
@@ -5573,7 +5582,7 @@ METHOD TotCobro( cTurno, cCaja )
 
          ::oAlbCliP:Skip()
 
-         if ::oMeter != nil
+         if !empty( ::oMeter )
             ::oMeter:AutoInc()
          end if
 
@@ -5587,11 +5596,11 @@ METHOD TotCobro( cTurno, cCaja )
    Total cobrado en vales------------------------------------------------------
    */
 
-   if ::oMeter != nil
+   if !empty( ::oMeter )
       ::oMeter:SetTotal( ::oTikT:LastRec() )
    end if
 
-   if !Empty( ::oTxt )
+   if !empty( ::oTxt )
       ::oTxt:SetText( 'Calculando cobros' )
    end if
 
@@ -5608,7 +5617,7 @@ METHOD TotCobro( cTurno, cCaja )
 
          ::oTikT:Skip()
 
-         if ::oMeter != nil
+         if !empty( ::oMeter )
             ::oMeter:AutoInc()
          end if
 
@@ -5635,11 +5644,11 @@ METHOD TotPago( cTurno, cCaja )
    Total cobrado con facturas-----------------------------------------------------
    */
 
-   if ::oMeter != nil
+   if !empty( ::oMeter )
       ::oMeter:SetTotal( ::oFacPrvP:LastRec() )
    end if
 
-   if !Empty( ::oTxt )
+   if !empty( ::oTxt )
       ::oTxt:SetText( 'Calculando pagos' )
    end if
 
@@ -5665,7 +5674,7 @@ METHOD TotPago( cTurno, cCaja )
                   ::oTotales:addTotPagoTarjeta( cCaja, ::oFacPrvP:cSerFac, ::nTotFacturaPago(), ::cTxtFacturaPago() )
             end case
 
-            if !Empty( cCuentaEmpresaRecibo( ::oFacPrvP ) )
+            if !empty( cCuentaEmpresaRecibo( ::oFacPrvP ) )
                ::oTotales:addTotBancos( cCaja, ::cBancoCuenta( ::oFacPrvP ), - ::nTotFacturaPago(), ::cTxtFacturaPago(), ::bEdtFacturaPago(), ::oTotales:hBmpDoc[ "PagoProveedor" ] )
             end if
 
@@ -5673,7 +5682,7 @@ METHOD TotPago( cTurno, cCaja )
 
          ::oFacPrvP:Skip()
 
-         if ::oMeter != nil
+         if !empty( ::oMeter )
             ::oMeter:AutoInc()
          end if
 
@@ -5703,11 +5712,11 @@ METHOD TotTipoIva( cTurno, cCaja )
 
    /*
 
-   if ::oMeter != nil
+   if !empty( ::oMeter )
       ::oMeter:SetTotal( ::oAlbCliT:LastRec() )
    end if
 
-   if !Empty( ::oTxt )
+   if !empty( ::oTxt )
       ::oTxt:SetText( 'Calculando albaranes' )
    end if
 
@@ -5741,7 +5750,7 @@ METHOD TotTipoIva( cTurno, cCaja )
 
          ::oAlbCliT:Skip()
 
-         if ::oMeter != nil
+         if !empty( ::oMeter )
             ::oMeter:AutoInc()
          end if
 
@@ -5753,11 +5762,11 @@ METHOD TotTipoIva( cTurno, cCaja )
 
    */
 
-   if ::oMeter != nil
+   if !empty( ::oMeter )
       ::oMeter:SetTotal( ::oFacCliT:LastRec() )
    end if
 
-   if !Empty( ::oTxt )
+   if !empty( ::oTxt )
       ::oTxt:SetText( 'Calculando facturas' )
    end if
 
@@ -5790,7 +5799,7 @@ METHOD TotTipoIva( cTurno, cCaja )
 
          ::oFacCliT:Skip()
 
-         if ::oMeter != nil
+         if !empty( ::oMeter )
             ::oMeter:AutoInc()
          end if
 
@@ -5800,11 +5809,11 @@ METHOD TotTipoIva( cTurno, cCaja )
 
    end if
 
-   if ::oMeter != nil
+   if !empty( ::oMeter )
       ::oMeter:SetTotal( ::oRctCliT:LastRec() )
    end if
 
-   if !Empty( ::oTxt )
+   if !empty( ::oTxt )
       ::oTxt:SetText( 'Calculando rectificativas' )
    end if
 
@@ -5837,7 +5846,7 @@ METHOD TotTipoIva( cTurno, cCaja )
 
          ::oRctCliT:Skip()
 
-         if ::oMeter != nil
+         if !empty( ::oMeter )
             ::oMeter:AutoInc()
          end if
 
@@ -5847,11 +5856,11 @@ METHOD TotTipoIva( cTurno, cCaja )
 
    end if
 
-   if ::oMeter != nil
+   if !empty( ::oMeter )
       ::oMeter:SetTotal( ::oTikT:LastRec() )
    end if
 
-   if !Empty( ::oTxt )
+   if !empty( ::oTxt )
       ::oTxt:SetText( 'Calculando tickets' )
    end if
 
@@ -5892,7 +5901,7 @@ METHOD TotTipoIva( cTurno, cCaja )
 
          ::oTikT:Skip()
 
-         if ::oMeter != nil
+         if !empty( ::oMeter )
             ::oMeter:AutoInc()
          end if
 
@@ -6170,21 +6179,21 @@ METHOD Reindexa( oMeter )
 
    ::DefineFiles()
 
-   if !Empty( ::oDbf )
+   if !empty( ::oDbf )
       ::oDbf:IdxFDel()
       ::oDbf:Activate( .f., .t., .f. )
       ::oDbf:Pack()
       ::oDbf:End()
    end if
 
-   if !Empty( ::oDbfCaj )
+   if !empty( ::oDbfCaj )
       ::oDbfCaj:IdxFDel()
       ::oDbfCaj:Activate( .f., .t., .f. )
       ::oDbfCaj:Pack()
       ::oDbfCaj:End()
    end if
 
-   if !Empty( ::oDbfDet )
+   if !empty( ::oDbfDet )
       ::oDbfDet:IdxFDel()
       ::oDbfDet:Activate( .f., .t., .f. )
       ::oDbfDet:Pack()
@@ -6542,7 +6551,7 @@ METHOD Contabiliza()
 
    else
 
-      if !Empty( ::aSimula )
+      if !empty( ::aSimula )
          if OpenDiario( cRutCnt(), ::cGetEmpresaContaplus )
             msgTblCon( ::aSimula, cDivEmp(), ::oDbfDiv:cAlias )
             CloseDiario()
@@ -6729,7 +6738,7 @@ METHOD ContabilizaContadores()
    ----------------------------------------------------------------------------
    */
 
-   if Empty( cCtaVen )
+   if empty( cCtaVen )
       cCtaVen        := cCtaCli() + RetGrpVta( ::oDbfDet:cCodArt, cRutCnt, ::cGetEmpresaContaplus, ::oArticulo:cAlias )
    end if
 
@@ -7015,7 +7024,7 @@ METHOD Asiento()
    local cSubCta     := ""
    local lErrors     := .f.
 
-   if Empty( ::aSimula )
+   if empty( ::aSimula )
       Return .f.
    end if
 
@@ -7176,7 +7185,7 @@ METHOD lSelectTurno( lSel )
 
       ::MarkTurno( lSel )
 
-      if !Empty( ::oTreeSelect )
+      if !empty( ::oTreeSelect )
          ::oTreeSelect:Select( ::oTreeSelect:Add( "Sesión : " + ::oDbf:cNumTur + "/" + ::oDbf:cSufTur + " procesada.", 1 ) )
       end if
 
@@ -7190,7 +7199,7 @@ METHOD lSelectAll( lSel )
 
    CursorWait()
 
-   if !Empty( ::oWndBrw )
+   if !empty( ::oWndBrw )
       ::oWndBrw:Disable()
    end if
 
@@ -7204,7 +7213,7 @@ METHOD lSelectAll( lSel )
 
    ::oDbf:SetStatus()
 
-   if !Empty( ::oWndBrw )
+   if !empty( ::oWndBrw )
       ::oWndBrw:Enable()
       ::oWndBrw:Refresh()
    end if
@@ -7305,7 +7314,7 @@ RETURN ( Self )
 
 METHOD SyncAllDbf()
 
-   if Empty( ::oDbf ) .or. Empty( ::oDbfCaj ) .or. Empty( ::oDbfDet )
+   if empty( ::oDbf ) .or. empty( ::oDbfCaj ) .or. empty( ::oDbfDet )
       ::DefineFiles()
    end if
 
@@ -7314,11 +7323,11 @@ METHOD SyncAllDbf()
    ::oDbf:Activate( .f., .f. )
    while !::oDbf:Eof()
 
-      if Empty( ::oDbf:cSufTur )
+      if empty( ::oDbf:cSufTur )
          ::oDbf:FieldPutByName( "cSufTur", "00" )
       end if 
    
-      if Empty( ::oDbf:cCodCaj )
+      if empty( ::oDbf:cCodCaj )
          ::oDbf:FieldPutByName( "cCodCaj", "000" )
       end if 
    
@@ -7332,7 +7341,7 @@ METHOD SyncAllDbf()
    ::oDbfCaj:Activate( .f., .f. )
    while !::oDbfCaj:Eof()
 
-      if Empty( ::oDbfCaj:cSufTur )
+      if empty( ::oDbfCaj:cSufTur )
          ::oDbfCaj:FieldPutByName( "cSufTur", "00" )
       end if 
 
@@ -7345,7 +7354,7 @@ METHOD SyncAllDbf()
 
    ::oDbfDet:Activate( .f., .f. )
    while !::oDbfDet:Eof()
-      if Empty( ::oDbfDet:cSufTur )
+      if empty( ::oDbfDet:cSufTur )
          ::oDbfDet:FieldPutByName( "cSufTur", "00" )
       end if 
       ::oDbfDet:Skip()
@@ -7731,7 +7740,7 @@ METHOD PrintReport( cTurno, cCaja, nDevice, nCopies, cPrinter, dbfDoc )
    DEFAULT nCopies      := 1
    DEFAULT cPrinter     := PrnGetName()
 
-   if !Empty( ::oTxt )
+   if !empty( ::oTxt )
       ::oTxt:SetText( "Imprimiendo informe" )
    end if
 
@@ -7745,7 +7754,7 @@ METHOD PrintReport( cTurno, cCaja, nDevice, nCopies, cPrinter, dbfDoc )
    ::oDbfCaj:GetRecno()
    ::oDbfDet:GetRecno()
 
-   if !Empty( cCaja )
+   if !empty( cCaja )
       ::oDbfCaj:Seek( cCaja )
    end if 
 
@@ -7753,7 +7762,7 @@ METHOD PrintReport( cTurno, cCaja, nDevice, nCopies, cPrinter, dbfDoc )
    Creamos el documento--------------------------------------------------------
    */
 
-   if Empty( ::oFastReport )
+   if empty( ::oFastReport )
       ::oFastReport              := frReportManager():New()
       ::oFastReport:LoadLangRes( "Spanish.Xml" )
       ::lDestroyFastreport       := .t.
@@ -7779,7 +7788,7 @@ METHOD PrintReport( cTurno, cCaja, nDevice, nCopies, cPrinter, dbfDoc )
    Cargar el informe-----------------------------------------------------------
    */
 
-   if !Empty( ( dbfDoc )->mReport )
+   if !empty( ( dbfDoc )->mReport )
 
       ::oFastReport:LoadFromBlob( ( dbfDoc )->( Select() ), "mReport")
 
@@ -8029,7 +8038,7 @@ METHOD DesignReport( oFastReport, dbfDoc )
       Ficheros temporales------------------------------------------------------
       */
 
-      if Empty( ::oDbfTemporal )
+      if empty( ::oDbfTemporal )
          ::DefineTemporal()
       end if
       ::oDbfTemporal:Activate( .f., .f. )
@@ -8082,7 +8091,7 @@ METHOD DesignReport( oFastReport, dbfDoc )
       Paginas y bandas---------------------------------------------------------
       */
 
-      if !Empty( ( dbfDoc )->mReport )
+      if !empty( ( dbfDoc )->mReport )
 
          oFastReport:LoadFromBlob( ( dbfDoc )->( Select() ), "mReport")
 
@@ -8167,7 +8176,7 @@ RETURN ( ::oDbfTemporal )
 
 METHOD DestroyTemporal()
 
-   if !Empty( ::oDbfTemporal ) .and. ::oDbfTemporal:Used()
+   if !empty( ::oDbfTemporal ) .and. ::oDbfTemporal:Used()
       ::oDbfTemporal:End()
    end if
 
@@ -8244,7 +8253,7 @@ METHOD FillTemporal( cCodCaj )
    Creacion del temporal-------------------------------------------------------
    */
 
-   if Empty( ::oDbfTemporal )
+   if empty( ::oDbfTemporal )
       ::DefineTemporal()
       ::oDbfTemporal:Activate( .f., .f. )
    end if
@@ -9163,7 +9172,7 @@ METHOD FillTemporal( cCodCaj )
 
          while ::oFacCliP:cTurRec + ::oFacCliP:cSufFac + ::oFacCliP:cCodCaj == cTurnoCaja .and. !::oFacCliP:eof()
 
-            if ::oFacCliP:lCobrado .and. !::oFacCliP:lPasado .and. !::oFacCliP:lNotArqueo .and. !Empty( cCuentaEmpresaRecibo( ::oFacCliP ) )
+            if ::oFacCliP:lCobrado .and. !::oFacCliP:lPasado .and. !::oFacCliP:lNotArqueo .and. !empty( cCuentaEmpresaRecibo( ::oFacCliP ) )
 
                oDbvBancos:Append()
                oDbvBancos:cNomBnc   := oRetFld( cCuentaEmpresaRecibo( ::oFacCliP ), ::oEmpBnc, "cNomBnc", "cCtaBnc" )
@@ -9199,7 +9208,7 @@ METHOD FillTemporal( cCodCaj )
 
          while ::oFacPrvP:cTurRec + ::oFacPrvP:cSufFac + ::oFacPrvP:cCodCaj == cTurnoCaja .and. !::oFacPrvP:eof()
 
-            if ::oFacPrvP:lCobrado .and. !::oFacPrvP:lNotArqueo .and. !Empty( cCuentaEmpresaRecibo( ::oFacPrvP ) )
+            if ::oFacPrvP:lCobrado .and. !::oFacPrvP:lNotArqueo .and. !empty( cCuentaEmpresaRecibo( ::oFacPrvP ) )
 
                oDbvBancos:Append()
                oDbvBancos:cNomBnc   := oRetFld( cCuentaEmpresaRecibo( ::oFacPrvP ), ::oEmpBnc, "cNomBnc", "cCtaBnc" )
@@ -9253,7 +9262,7 @@ METHOD FillTemporal( cCodCaj )
       /*
       Resumen bancario---------------------------------------------------------
 
-      if !Empty( aBancos )
+      if !empty( aBancos )
 
          ::cGrupoEnUso     := "Saldos cuentas bancarias"
          ::nGrupoPeso++
@@ -10516,7 +10525,7 @@ METHOD FillTemporal( cCodCaj )
 
                while ::oTikL:cSerTil + ::oTikL:cNumTil + ::oTikL:cSufTil == ::oTikT:cSerTik + ::oTikT:cNumTik + ::oTikT:cSufTik .and. !::oTikL:eof()
 
-                  if !Empty( ::oTikL:cCodInv )
+                  if !empty( ::oTikL:cCodInv )
 
                      ::AppendInTemporal(  ::oTikL:cCodInv, Rtrim( ::oTikL:cCodInv ) + Space( 1 ) + AllTrim( oRetFld( ::oTikL:cCodInv, ::oTipInv:oDbf ) ), ::oTikL:nUntTil )
 
@@ -10642,7 +10651,7 @@ Method bEdtFacturaCobro()
 
    local cNumeroDocumento  := ::oFacCliP:cSerie + Str( ::oFacCliP:nNumFac ) + ::oFacCliP:cSufFac
 
-   if !Empty( ::oFacCliP:cTipRec )
+   if !empty( ::oFacCliP:cTipRec )
       Return ( {|| EdtFacRec( cNumeroDocumento ) } )
    end if
 
@@ -10678,7 +10687,7 @@ Method bEdtFacturaPago()
 
    local cNumeroDocumento  := ::oFacPrvP:cSerFac + Str( ::oFacPrvP:nNumFac ) + ::oFacPrvP:cSufFac
 
-   if !Empty( ::oFacPrvP:cTipRec )
+   if !empty( ::oFacPrvP:cTipRec )
       Return ( {|| EdtRctPrv( cNumeroDocumento ) } )
    end if
 
@@ -10947,7 +10956,7 @@ METHOD ContabilizaSesiones()
 
    ACTIVATE DIALOG ::oDlgSelect CENTER
 
-   if !Empty( oBmpContabilidad )
+   if !empty( oBmpContabilidad )
       oBmpContabilidad:End()
    end if
 
@@ -11034,7 +11043,7 @@ METHOD GetLastOpen()
 
    local cLasTur        := ""
 
-   if Empty( ::oDbf )
+   if empty( ::oDbf )
       Return ( cLasTur )
    end if
 
@@ -11081,7 +11090,7 @@ METHOD GetLastOpen()
 
          end if 
 
-         if Empty( cLasTur )
+         if empty( cLasTur )
             ::oDbf:Skip()
          else
             exit 
@@ -11313,7 +11322,7 @@ Method GetItemCheckState( cPrompt )
 
    if lState
 
-      if !Empty( ::oTxt )
+      if !empty( ::oTxt )
          ::oTxt:SetText( "Añadiendo a temporal " + Lower( cPrompt ) )
       end if
 
@@ -11328,27 +11337,27 @@ Return ( lState )
 
 Method RefreshTurno()
 
-   if !Empty( ::oTotalEfectivo )
+   if !empty( ::oTotalEfectivo )
       ::oTotalEfectivo:Refresh()
    end if
 
-   if !Empty( ::oTotalNoEfectivo )
+   if !empty( ::oTotalNoEfectivo )
       ::oTotalNoEfectivo:Refresh()
    end if
 
-   if !Empty( ::oTotalTarjeta )
+   if !empty( ::oTotalTarjeta )
       ::oTotalTarjeta:Refresh()
    end if
 
-   if !Empty( ::oTotalCobros )
+   if !empty( ::oTotalCobros )
       ::oTotalCobros:Refresh()
    end if
 
-   if !Empty( ::oTotalCaja )
+   if !empty( ::oTotalCaja )
       ::oTotalCaja:Refresh()
    end if
 
-   if !Empty( ::oDiferenciaEfectivo )
+   if !empty( ::oDiferenciaEfectivo )
 
       if Eval( ::oDiferenciaEfectivo:bSetGet ) > 0
          ::oDiferenciaEfectivo:SetColor( CLR_BLUE, GetSysColor( COLOR_BTNFACE ) )
@@ -11360,7 +11369,7 @@ Method RefreshTurno()
 
    end if
 
-   if !Empty( ::oDiferenciaTarjeta )
+   if !empty( ::oDiferenciaTarjeta )
 
       if Eval( ::oDiferenciaTarjeta:bSetGet ) > 0
          ::oDiferenciaTarjeta:SetColor( CLR_BLUE, GetSysColor( COLOR_BTNFACE ) )
@@ -11372,7 +11381,7 @@ Method RefreshTurno()
 
    end if
 
-   if !Empty( ::oDiferenciaTotal )
+   if !empty( ::oDiferenciaTotal )
 
       if Eval( ::oDiferenciaTotal:bSetGet ) > 0
          ::oDiferenciaTotal:SetColor( CLR_BLUE, GetSysColor( COLOR_BTNFACE ) )
@@ -11384,7 +11393,7 @@ Method RefreshTurno()
 
    end if
 
-   if !Empty( ::oImporteCambio )
+   if !empty( ::oImporteCambio )
       ::oImporteCambio:SetText( ::nImporteEfectivo - ::nImporteRetirado )
    end if
 
@@ -11401,9 +11410,9 @@ Method cBancoCuenta( uRctCli )
 
    cCuenta           := cCuentaEmpresaRecibo( uRctCli )
 
-   if !Empty( cCuenta )
+   if !empty( cCuenta )
       cBanco         := oRetFld( cCodEmp() + cCuenta, ::oEmpBnc, "cCodBnc", "cCtaBnc" )
-      if !Empty( cBanco )
+      if !empty( cBanco )
          cCuenta     := Rtrim( cBanco ) + Space( 1 ) + Trans( cCuenta, "@R ####-####-##-##########" )
       end if
    end if
@@ -11442,7 +11451,7 @@ METHOD GetItemTree()
 
    local cItem    := ""
 
-   if !Empty( ::oBrwTotales:oTreeItem ) 
+   if !empty( ::oBrwTotales:oTreeItem ) 
       cItem       := ::oBrwTotales:oTreeItem:Cargo[ 1 ]
    end if
 
@@ -11454,7 +11463,7 @@ METHOD GetImporteTree()
 
    local cItem    := ""
 
-   if !Empty( ::oBrwTotales:oTreeItem ) 
+   if !empty( ::oBrwTotales:oTreeItem ) 
       if ::oBrwTotales:oTreeItem:cPrompt != "Espacio"
          cItem    := Trans( ::oBrwTotales:oTreeItem:Cargo[ 2 ], ::cPorDiv )
       end if 
@@ -11468,7 +11477,7 @@ METHOD GetColorTree()
 
    local cColor   := { CLR_BLACK, CLR_WHITE }
 
-   if !Empty( ::oBrwTotales:oTreeItem ) .and. Empty( ::oBrwTotales:oTreeItem:cPrompt )
+   if !empty( ::oBrwTotales:oTreeItem ) .and. empty( ::oBrwTotales:oTreeItem:cPrompt )
       cColor      := { CLR_BLACK, CLR_BAR }
    end if 
 
@@ -11491,13 +11500,13 @@ FUNCTION Turnos( oMenuItem, oWnd )
 
    // Cerramos todas las ventanas----------------------------------------------
 
-   if !Empty( oWnd )
+   if !empty( oWnd )
       SysRefresh(); oWnd:CloseAll(); SysRefresh()
       oWnd:Disable()
    end if
 
    oTurno               := TTurno():New( cPatEmp(), cDriver(), oWnd, oMenuItem )
-   if !Empty( oTurno ) .and. oTurno:lAccess
+   if !empty( oTurno ) .and. oTurno:lAccess
       if oTurno:OpenFiles()
          oTurno:Activate()
       else
@@ -11505,7 +11514,7 @@ FUNCTION Turnos( oMenuItem, oWnd )
       end if
    end if
 
-   if !Empty( oWnd )
+   if !empty( oWnd )
       oWnd:Enable()
    end if
 
@@ -11532,7 +11541,7 @@ FUNCTION CloseTurno( oMenuItem, oWnd, lParcial )
    Cerramos todas las ventanas-------------------------------------------------
    */
 
-   if !lTactilMode() .and. !lTpvMode() .and. !Empty( oWnd )
+   if !lTactilMode() .and. !lTpvMode() .and. !empty( oWnd )
       SysRefresh(); oWnd:CloseAll(); SysRefresh()
    end if
 
@@ -11545,7 +11554,7 @@ FUNCTION CloseTurno( oMenuItem, oWnd, lParcial )
 
    oTurno               := TTurno():New( cPatEmp(), cDriver(), oWnd, oMenuItem )
 
-   if !Empty( oTurno ) .and. oTurno:lCreated
+   if !empty( oTurno ) .and. oTurno:lCreated
 
       if oTurno:OpenFiles()
 
@@ -11565,7 +11574,7 @@ FUNCTION CloseTurno( oMenuItem, oWnd, lParcial )
 
    EnableMainWnd( oWnd )
 
-   if !Empty( oTurno ) .and. oTurno:lCreated
+   if !empty( oTurno ) .and. oTurno:lCreated
       oTurno:SetFocus()
    end if
 
@@ -11584,14 +11593,14 @@ FUNCTION Arqueos( oMenuItem, oWnd )
    Cerramos todas las ventanas
    */
 
-   if !Empty( oWnd )
+   if !empty( oWnd )
       SysRefresh(); oWnd:CloseAll(); SysRefresh()
       oWnd:Disable()
    end if
 
    oTurno               := TTurno():New( cPatEmp(), cDriver(), oWnd, oMenuItem )
 
-   if !Empty( oTurno ) .and. oTurno:lCreated
+   if !empty( oTurno ) .and. oTurno:lCreated
       if oTurno:OpenFiles()
          oTurno:lArqueoTurno( .f. )
       end if
@@ -11600,7 +11609,7 @@ FUNCTION Arqueos( oMenuItem, oWnd )
 
    oWnd:Enable()
 
-   if !Empty( oTurno ) .and. oTurno:lCreated
+   if !empty( oTurno ) .and. oTurno:lCreated
       oTurno:SetFocus()
    end if
 
@@ -11613,7 +11622,7 @@ Function lCajaOpen( cCodCaj )
    local oTurno         := TTurno():New( cPatEmp() )
    local lCajaOpen      := .t.
 
-   if !Empty( oTurno )
+   if !empty( oTurno )
 
       if oTurno:OpenService()
 
@@ -11670,17 +11679,17 @@ Function lCurSesion( cDbfCaj )
    local lCurSesion  := .f.
    local lOpen       := .f.
 
-   if Empty( cDbfCaj )
+   if empty( cDbfCaj )
       USE ( cPatDat() + "Cajas.Dbf" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "CAJAS", @cDbfCaj ) )
       SET ADSINDEX TO ( cPatDat() + "Cajas.Cdx" ) ADDITIVE
       lOpen          := .t.
    end if
 
-   lCurSesion        := !Empty( TTurno():cCurTurno ) .or. RetFld( oUser():cCaja(), cDbfCaj, "lNoArq" )
+   lCurSesion        := !empty( TTurno():cCurTurno ) .or. RetFld( oUser():cCaja(), cDbfCaj, "lNoArq" )
 
    if lOpen
 
-      if !Empty( cDbfCaj )
+      if !empty( cDbfCaj )
          ( cDbfCaj )->( dbCloseArea() )
       end if
 
@@ -11771,7 +11780,7 @@ Function lExisteTurno( cNumTur, dbfTurno )
    local lExiste     := .f.
    local lOpen       := .f.
 
-   if Empty( dbfTurno )
+   if empty( dbfTurno )
       USE ( cPatEmp() + "Turno.DBF" ) NEW VIA ( cDriver() ) SHARED   ALIAS ( cCheckArea( "Turno", @dbfTurno ) )
       SET ADSINDEX TO ( cPatEmp() + "Turno.CDX" ) ADDITIVE
       lOpen          := .t.
