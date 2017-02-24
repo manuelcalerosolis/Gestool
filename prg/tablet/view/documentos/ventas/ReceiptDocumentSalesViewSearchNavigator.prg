@@ -96,10 +96,21 @@ METHOD BotonesAcciones() CLASS ReceiptDocumentSalesViewSearchNavigator
                                                 "lPixels"   => .t.,;
                                                 "nClrText"  => Rgb( 0, 0, 0 ),;
                                                 "nClrBack"  => Rgb( 255, 255, 255 ),;
-                                                "nWidth"    => {|| GridWidth( 3, ::oDlg ) },;
+                                                "nWidth"    => {|| GridWidth( 1.5, ::oDlg ) },;
                                                 "nHeight"   => 23,;
                                                 "lDesign"   => .f. } )
 
+      end if
+
+      if GetPvProfString( "Tablet", "MostrarFiltroDelegacion", ".F.", cIniAplication() ) == ".T."
+
+         TGridImage():Build(                 {  "nTop"      => 75,;
+                                                "nLeft"     => {|| GridWidth( 5, ::oDlg ) },;
+                                                "nWidth"    => 64,;
+                                                "nHeight"   => 64,;
+                                                "cResName"  => "gc_funnel_64",;
+                                                "bLClicked" => {|| ::oSender:AplicaFiltroDelegacion() },;
+                                                "oWnd"      => ::oDlg } )
       end if
 
    end if 

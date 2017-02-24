@@ -44,8 +44,10 @@ CLASS ReceiptInvoiceCustomer FROM DocumentsSales
 
    METHOD printReceipt()                  INLINE ( PrnRecCli( ( ::getDataTable() )->cSerie + Str( ( ::getDataTable() )->nNumFac ) + ( ::getDataTable() )->cSufFac + Str( ( ::getDataTable() )->nNumRec ) ) )
 
-   METHOD setTrueAceptarImprimir          INLINE ( ::lAceptarImprimir  := .t. )
-   METHOD setFalseAceptarImprimir         INLINE ( ::lAceptarImprimir  := .t. )
+   METHOD setTrueAceptarImprimir()        INLINE ( ::lAceptarImprimir  := .t. )
+   METHOD setFalseAceptarImprimir()       INLINE ( ::lAceptarImprimir  := .t. )
+   
+   METHOD AplicaFiltroDelegacion()     
 
 END CLASS
 
@@ -63,10 +65,10 @@ METHOD New( oInvoice ) CLASS ReceiptInvoiceCustomer
 
    else
 
-      ::lCloseFiles           := .f.
-      ::nView                 := oInvoice:nView
-      ::cNumeroFactura        := oInvoice:GetId()
-      ::lShowFilterCobrado    := Empty( oInvoice:GetId() )
+      ::lCloseFiles              := .f.
+      ::nView                    := oInvoice:nView
+      ::cNumeroFactura           := oInvoice:GetId()
+      ::lShowFilterCobrado       := Empty( oInvoice:GetId() )
 
    end if
 
@@ -342,6 +344,16 @@ METHOD onPreRunNavigator() CLASS ReceiptInvoiceCustomer
       end if 
 
    end if
+
+Return ( .t. )
+
+//---------------------------------------------------------------------------//
+
+METHOD AplicaFiltroDelegacion() CLASS ReceiptInvoiceCustomer
+
+
+   MsgInfo( "Aplicamos el filtro de delegación" )
+   
 
 Return ( .t. )
 
