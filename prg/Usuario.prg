@@ -2198,7 +2198,7 @@ FUNCTION BrwBigUser( dbfUsr, dbfCaj )
 
          oLstUsr           := TListView():Redefine( 100, oDlg )
          oLstUsr:nOption   := 0
-         oLstUsr:bClick    := {| nOpt | SelBrwBigUser( nOpt, oDlg, dbfUsr, dbfCaj, .t. ) }
+         oLstUsr:bClick    := {| nOpt | selectBrwBigUser( nOpt, oDlg, dbfUsr, dbfCaj, .t. ) }
 
          REDEFINE BUTTONBMP oBtn ;
             BITMAP         "Delete_32" ;
@@ -2313,7 +2313,7 @@ RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 
-Static Function SelBrwBigUser( nOpt, oDlg, dbfUsr, dbfCaj )
+Static Function selectBrwBigUser( nOpt, oDlg, dbfUsr, dbfCaj )
 
    local cCodigoUsuario
 
@@ -2351,7 +2351,7 @@ Static Function SelBrwBigUser( nOpt, oDlg, dbfUsr, dbfCaj )
 
    end if
 
-   oSetUsr( ( dbfUsr )->cCodUse, .t. ):Save( ( dbfUsr )->cCodUse, dbfUsr )
+   oSetUsr( ( dbfUsr )->cCodUse, .t. ):Save( ( dbfUsr )->cCodUse )
 
    oLstUsr:nOption   := 0
 

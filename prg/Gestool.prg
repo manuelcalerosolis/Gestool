@@ -405,7 +405,7 @@ FUNCTION AccesTctCode()
 
          oLstUsr           := TListView():Redefine( 100, oDlg )
          oLstUsr:nOption   := 0
-         oLstUsr:bClick    := {| nOpt | if( SelBrwBigUser( nOpt, oLstUsr, dbfUser ), oDlg:End( IDOK ), ) }
+         oLstUsr:bClick    := {| nOpt | if( clickAccessTctCode( nOpt, oLstUsr, dbfUser ), oDlg:End( IDOK ), ) }
 
       /*
       Botones de la caja de diálogo--------------------------------------------
@@ -527,7 +527,7 @@ RETURN ( nil )
 //---------------------------------------------------------------------------//
 //Función que chequea el usuario, la clave y nos deja pasar
 
-Static Function SelBrwBigUser( nOpt, oLstUsr, dbfUsr )
+Static Function clickAccessTctCode( nOpt, oLstUsr, dbfUsr )
 
    local oItem
 

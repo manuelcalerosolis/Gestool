@@ -2550,15 +2550,15 @@ METHOD StartResource() CLASS TpvTactil
          */
 
          ::oGrpSalones           := TDotNetGroup():New( oCarpeta, nLen, "Salones", .f., , "gc_cup_32" )
-            ::oBtnSala           := TDotNetButton():New( 60, ::oGrpSalones, "gc_cup_32",                 "Mesas",             1, {|| ::OnClickSalaVenta() }, , , .f., .f., .f. )
-            ::oBtnGeneral        := TDotNetButton():New( 60, ::oGrpSalones, "gc_cash_register_32",             "General",           2, {|| ::OnClickGeneral() }, , , .f., .f., .f. )
+            ::oBtnSala           := TDotNetButton():New( 60, ::oGrpSalones, "gc_cup_32",              "Mesas",             1, {|| ::OnClickSalaVenta() }, , , .f., .f., .f. )
+            ::oBtnGeneral        := TDotNetButton():New( 60, ::oGrpSalones, "gc_cash_register_32",    "General",           2, {|| ::OnClickGeneral() }, , , .f., .f., .f. )
 
             if uFieldEmpresa( "lRecoger" )
-               ::oBtnRecoger     := TDotNetButton():New( 60, ::oGrpSalones, "gc_shopping_basket_32", "Para recoger", nPos++, {|| ::OnClickParaRecoger() }, , , .f., .f., .f. )
+               ::oBtnRecoger     := TDotNetButton():New( 60, ::oGrpSalones, "gc_shopping_basket_32",  "Para recoger", nPos++, {|| ::OnClickParaRecoger() }, , , .f., .f., .f. )
             end if
 
             if uFieldEmpresa( "lLlevar" )
-               ::oBtnLlevar      := TDotNetButton():New( 60, ::oGrpSalones, "gc_motor_scooter_32",               "Para llevar",  nPos++, {|| ::OnClickParaLlevar() }, , , .f., .f., .f. )
+               ::oBtnLlevar      := TDotNetButton():New( 60, ::oGrpSalones, "gc_motor_scooter_32",    "Para llevar",  nPos++, {|| ::OnClickParaLlevar() }, , , .f., .f., .f. )
             end if
 
             if uFieldEmpresa( "lEncargar" )
@@ -2566,9 +2566,9 @@ METHOD StartResource() CLASS TpvTactil
             end if
 
          oGrupo                  := TDotNetGroup():New( oCarpeta, 226, "Datos de cliente", .f., , "gc_user_32" )
-            ::oBtnCliente        := TDotNetButton():New( 220, oGrupo, "gc_user_16",                     "...",               1, {|| ::SelecionaCliente() }, , , .f., .f., .f. )
-            ::oBtnDireccion      := TDotNetButton():New( 220, oGrupo, "gc_home_16",                      "...",               1, {|| ::SelecionaCliente() }, , , .f., .f., .f. )
-            ::oBtnTelefono       := TDotNetButton():New( 220, oGrupo, "gc_mobile_phone_16",              "...",               1, {|| ::SelecionaCliente() }, , , .f., .f., .f. )
+            ::oBtnCliente        := TDotNetButton():New( 220, oGrupo, "gc_user_16",                   "...",               1, {|| ::SelecionaCliente() }, , , .f., .f., .f. )
+            ::oBtnDireccion      := TDotNetButton():New( 220, oGrupo, "gc_home_16",                   "...",               1, {|| ::SelecionaCliente() }, , , .f., .f., .f. )
+            ::oBtnTelefono       := TDotNetButton():New( 220, oGrupo, "gc_mobile_phone_16",           "...",               1, {|| ::SelecionaCliente() }, , , .f., .f., .f. )
 
          oGrupo                  := TDotNetGroup():New( oCarpeta, 66, "Guardar", .f., , "gc_floppy_disk_32" )
             TDotNetButton():New( 60, oGrupo, "gc_floppy_disk_32", "Guardar y procesar", 1, {|| ::OnClickGuardar() }, , , .f., .f., .f. )
@@ -7524,8 +7524,8 @@ METHOD OnClickSalaVenta( nSelectOption ) CLASS TpvTactil
    Si el documento es nuevo y no tiene lineas no lo guardo---------------------
    */
 
-   if !::lValidatePreSave()
-      Return ( .f. )
+   if ::lEmptyDocumento()
+      lGuardaDocumento     := .f.
    end if
 
    /*

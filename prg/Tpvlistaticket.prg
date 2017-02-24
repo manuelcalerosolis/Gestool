@@ -375,8 +375,8 @@ METHOD StartResource() CLASS TpvListaTicket
       oCarpeta                := TCarpeta():New( ::oOfficeBar, "Inicio" )
 
       oGrupo        := TDotNetGroup():New( oCarpeta, nLen, "Salones", .f., , "gc_cup_32" )
-         ::oBtnLstMesas      := TDotNetButton():New( 60, oGrupo, "gc_cup_32",                 "Mesas",          1,    {|| ::OnClickMesas() }, , , .f., .f., .f. )
-         ::oBtnLstGeneral    := TDotNetButton():New( 60, oGrupo, "gc_cash_register_32",             "General",        2,    {|| ::OnClickGeneral() }, , , .f., .f., .f. )
+         ::oBtnLstMesas      := TDotNetButton():New( 60, oGrupo, "gc_cup_32",             "Mesas",          1,    {|| ::OnClickMesas() }, , , .f., .f., .f. )
+         ::oBtnLstGeneral    := TDotNetButton():New( 60, oGrupo, "gc_cash_register_32",   "General",        2,    {|| ::OnClickGeneral() }, , , .f., .f., .f. )
 
       if uFieldEmpresa( "lRecoger" )
          ::oBtnLstRecoger    := TDotNetButton():New( 60, oGrupo, "gc_shopping_basket_32", "Para recoger",   nPos, {|| ::OnClickRecoger() }, , , .f., .f., .f. )
@@ -384,7 +384,7 @@ METHOD StartResource() CLASS TpvListaTicket
       end if
 
       if uFieldEmpresa( "lLlevar" )
-         ::oBtnLstLlevar     := TDotNetButton():New( 60, oGrupo, "gc_motor_scooter_32",               "Para llevar",    nPos, {|| ::OnClickLlevar() }, , , .f., .f., .f. )
+         ::oBtnLstLlevar     := TDotNetButton():New( 60, oGrupo, "gc_motor_scooter_32",   "Para llevar",    nPos, {|| ::OnClickLlevar() }, , , .f., .f., .f. )
          nPos++
       end if
 
@@ -399,10 +399,10 @@ METHOD StartResource() CLASS TpvListaTicket
          ::oBtnFiltro         := TDotNetButton():New( 60, oGrupo,    "gc_calendar_32",             "Filtrar",            3, {|| ::OnClickFiltro() }, , , .f., .f., .f. )
 
       oGrupo                  := TDotNetGroup():New( oCarpeta, 366,  "Seleción de tickets", .f. )
-         ::oPrimeraLinea      := TDotNetButton():New( 60, oGrupo,    "gc_navigate_line_up_32",         "Primera línea",      1, {|| ::LineaPrimera() } )
-         ::oUltimaLinea       := TDotNetButton():New( 60, oGrupo,    "gc_navigate_line_down_32",         "Última línea",       2, {|| ::LineaUltima() } )
-         ::oAnteriorPagina    := TDotNetButton():New( 60, oGrupo,    "gc_navigate_up2a_32",            "Página anterior",    3, {|| ::PaginaAnterior() } )
-         ::oSiguientePagina   := TDotNetButton():New( 60, oGrupo,    "gc_navigate_down2a_32",          "Página siguiente",   4, {|| ::PaginaSiguiente() } )
+         ::oPrimeraLinea      := TDotNetButton():New( 60, oGrupo,    "gc_navigate_line_up_32",     "Primera línea",      1, {|| ::LineaPrimera() } )
+         ::oUltimaLinea       := TDotNetButton():New( 60, oGrupo,    "gc_navigate_line_down_32",   "Última línea",       2, {|| ::LineaUltima() } )
+         ::oAnteriorPagina    := TDotNetButton():New( 60, oGrupo,    "gc_navigate_up2a_32",        "Página anterior",    3, {|| ::PaginaAnterior() } )
+         ::oSiguientePagina   := TDotNetButton():New( 60, oGrupo,    "gc_navigate_down2a_32",      "Página siguiente",   4, {|| ::PaginaSiguiente() } )
          ::oAnteriorLinea     := TDotNetButton():New( 60, oGrupo,    "gc_arrow_up_32",             "Línea anterior",     5, {|| ::LineaAnterior() } )
          ::oSiguienteLinea    := TDotNetButton():New( 60, oGrupo,    "gc_arrow_down_32",           "Línea siguiente",    6, {|| ::LineaSiguiente() } )
 
