@@ -1286,10 +1286,10 @@ FUNCTION BrwUser( oGet, dbfUsr, oGet2, lBigStyle, lGroup, lGetPassword, lStatus 
       if lStatus
 
       with object ( oBrw:AddCol() )
-         :cHeader                := "Us. En uso"
-         :bStrData               := {|| "" }
-         :bEditValue             := {|| ( dbfUsr )->lUseUse }
-         :nWidth                 := 20
+         :cHeader             := "Us. En uso"
+         :bStrData            := {|| "" }
+         :bEditValue          := {|| ( dbfUsr )->lUseUse }
+         :nWidth              := 20
          :SetCheck( { "Cnt16", "Nil16" } )
       end with
 
