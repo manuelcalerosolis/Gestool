@@ -47,8 +47,6 @@ CLASS ReceiptInvoiceCustomer FROM DocumentsSales
    METHOD setTrueAceptarImprimir()        INLINE ( ::lAceptarImprimir  := .t. )
    METHOD setFalseAceptarImprimir()       INLINE ( ::lAceptarImprimir  := .t. )
    
-   METHOD AplicaFiltroDelegacion()     
-
 END CLASS
 
 //---------------------------------------------------------------------------//
@@ -191,10 +189,8 @@ METHOD onPostSaveEdit() CLASS ReceiptInvoiceCustomer
    
    ::oViewSearchNavigator:changeComboboxSearch()
    
-   if !Empty( ::oViewSearchNavigator:oSayFilter )
-      ::FilterTable( ::oViewSearchNavigator:oSayFilter:cCaption )
-   end if
-
+   ::FilterTable( ::oViewSearchNavigator:cComboboxFilter )
+   
 Return ( .t. )
 
 //---------------------------------------------------------------------------//
@@ -293,6 +289,12 @@ Return ( .t. )
 METHOD FilterTable( cTextFilter ) CLASS ReceiptInvoiceCustomer
 
    do case
+      case cTextFilter == "Todos delegación"
+         ( ::getDataTable() )->( dbSetFilter( {|| Field->cSufFac == oUser():cDelegacion() }, "cSufFac=" + oUser():cDelegacion() ) )
+      case cTextFilter == "Pendientes delegación"
+         ( ::getDataTable() )->( dbSetFilter( {|| !Field->lCobrado .and. Field->cSufFac == oUser():cDelegacion() }, "!lCobrado .and. cSufFac=" + oUser():cDelegacion() ) )
+      case cTextFilter == "Cobrados delegación"
+         ( ::getDataTable() )->( dbSetFilter( {|| Field->lCobrado .and. Field->cSufFac == oUser():cDelegacion() }, "lCobrado .and. cSufFac=" + oUser():cDelegacion() ) )
       case cTextFilter == "Todos"
          ( ::getDataTable() )->( dbClearFilter() )
       case cTextFilter == "Pendientes"
@@ -344,16 +346,6 @@ METHOD onPreRunNavigator() CLASS ReceiptInvoiceCustomer
       end if 
 
    end if
-
-Return ( .t. )
-
-//---------------------------------------------------------------------------//
-
-METHOD AplicaFiltroDelegacion() CLASS ReceiptInvoiceCustomer
-
-
-   MsgInfo( "Aplicamos el filtro de delegación" )
-   
 
 Return ( .t. )
 
