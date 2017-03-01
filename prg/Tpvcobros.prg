@@ -680,8 +680,8 @@ METHOD CreaCobro( nImporte ) CLASS TpvCobros
    local sTipoCobro
    local nCambio              := 0
 
-   if !lImporteExacto() 
-
+   if !lImporteExacto()
+   
       if empty( ::oBrwFormasPago ) .or. empty( ::oBrwFormasPago:aRow )
          msgStop( "No existen formas de pago" )
          Return .f.
