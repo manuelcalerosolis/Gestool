@@ -717,7 +717,7 @@ Return ( ::nView )
       end if
 
       if !hhaskey( ::hViews, nView )
-         msgStop( "Vista " + alltrim( str( nView ) ) + " no encontrada." )
+         msgStop( "Vista " + alltrim( str( nView ) ) + " no encontrada." / 2 )
          Return ( .f. )
       end if 
 
