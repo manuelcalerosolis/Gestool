@@ -693,8 +693,6 @@ METHOD MakeTotals( aCols ) CLASS IXBrowse
          (::cAlias)->(dbGoTo( uBm )) // ::BookMark( uBm )
       end if
 
-      // msgAlert( (::cAlias)->(Recno()), "recno despues de MakeTotals")
-
    endif
 
 return Self

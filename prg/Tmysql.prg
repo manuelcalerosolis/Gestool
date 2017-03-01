@@ -102,8 +102,6 @@ Method New( cHost, cUser, cPasswd, cDbName, nPort )
    ::cDbName         := RTrim( cDbName )
    ::nPort           := nPort
 
-   MSGaLERT( "TDolphinSrv():New( ::cHost, ::cUser, ::cPasswd, ::nPort, , ::cDbName )" )  
-
    ::oConexion       := TDolphinSrv():New( ::cHost, ::cUser, ::cPasswd, ::nPort, , ::cDbName )
 
 Return ( Self )

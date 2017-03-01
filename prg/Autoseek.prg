@@ -307,8 +307,6 @@ Function lSeekKey( xValueToSearch, xAlias, lScope )
 
       case cType == "N"
 
-         // msgAlert( xValueToSearch, "Numerico" )
-
          xValueToSearch := alltrim( xValueToSearch )
          xValueToSearch := strtran( xValueToSearch, ",", "." )
          xValueToSearch := val( xValueToSearch )
@@ -627,31 +625,16 @@ Function buildSetFilter( cExpresionFilter, cAlias, lInclude, cExpUsuario, cExpFe
       cExpresionFilter  += if( !empty( cExpresionFilter ), " .and. ", "" ) + cFiltroFecha
    end if
 
-   //msgalert( cExpresionFilter )
-   //msgInfo( cAlias, "cAlias" )
-
    if !empty( cExpresionFilter )
-
-      // bExpFilter        := bCheck2Block( cExpresionFilter )
-
       ( cAlias )->( adsSetAOF( cExpresionFilter ) )
       ( cAlias )->( dbgotop() )
-
-   else
-
-      //( cAlias )->( adsClearAOF() )
-
    end if
-
-   //msgalert( (cAlias)->( dbInfo( DBI_DBFILTER ) ), "buildSetFilter" )
 
 Return nil
 
 //---------------------------------------------------------------------------//
 
 Function quitSetFilter( cAlias )
-
-   // msgalert( 'quitSetFilter' )
 
    if !empty( cAlias ) .and. ( cAlias )->( used() )
       ( cAlias )->( dbClearFilter() )

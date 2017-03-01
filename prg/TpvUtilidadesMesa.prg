@@ -203,7 +203,6 @@ METHOD DividirMesas() CLASS TpvUtilidadesMesa
 
    ::oBrwOriginal:oDragCursor      := ::oSender:oDragCursor
    ::oBrwOriginal:bDragBegin       := { |r,c,f,o| ::addLinea( ::oOriginal(), ::oNuevo() ) }
-   // ::oBrwOriginal:bDropOver        := { |u,r,c,f| msgalert( "bDropOver" ) }
 
 	::oBrwOriginal:SetFont( ::oSender:oFntBrw )
 
@@ -284,7 +283,6 @@ METHOD DividirMesas() CLASS TpvUtilidadesMesa
 
    ::oBrwNuevoTicket:oDragCursor      := ::oSender:oDragCursor
    ::oBrwNuevoTicket:bDragBegin       := { |r,c,f,o| ::addLinea( ::oNuevo(), ::oOriginal() ) }
-   // ::oBrwNuevoTicket:bDropOver        := { |u,r,c,f| msgalert( "bDropOver nuevo" ) }
 
 	::oBrwNuevoTicket:SetFont( ::oSender:oFntBrw )
 

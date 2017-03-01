@@ -1584,12 +1584,6 @@ METHOD setArticuloTablaPropiedades( id, idCodigoPrimeraPropiedad, idCodigoSegund
    local oProperty
    local aProperty
 
-   // msgalert( idCodigoPrimeraPropiedad, "idCodigoPrimeraPropiedad" )
-   // msgalert( idCodigoSegundaPropiedad, "idCodigoSegundaPropiedad" )
-   // msgalert( idValorPrimeraPropiedad, " idValorPrimeraPropiedad" )
-   // msgalert( idValorSegundaPropiedad, " idValorSegundaPropiedad" )
-   // msgalert( nUnidades, "nUnidades" )
-
    for each aProperty in aPropertiesTable
 
       for each oProperty in aProperty

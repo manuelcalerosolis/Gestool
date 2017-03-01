@@ -2924,13 +2924,13 @@ Function cCajonEnCaja( cCodCaj, dbfCajT )
    local nRec     
    local cCaj     := "000"
 
-   nRec           := ( dbfCajT )->( Recno() )
+   nRec           := ( dbfCajT )->( recno() )
 
    if dbSeekInOrd( cCodCaj, "cCodCaj", dbfCajT )
       cCaj        := ( dbfCajT )->cCajon
    end if
 
-   ( dbfCajT )->( dbGoTo( nRec ) )
+   ( dbfCajT )->( dbgoto( nRec ) )
 
 Return ( cCaj )
 

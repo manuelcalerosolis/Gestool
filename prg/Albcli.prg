@@ -5103,7 +5103,7 @@ Static Function masiveAppendLines( aCabeceraAlbaran, oDialog )
 
       if isArray( aArticulo ) .and. len( aArticulo ) >= 2 .and. !empty( aArticulo[1] ) .and. !empty( aArticulo[2] ) 
          if !( oneAppendLine( aCabeceraAlbaran, aArticulo[1], val( aArticulo[2] ) ) )
-            msgalert("- Error al añadir el artículo " + alltrim( aArticulo[1] ) )
+            msgStop("- Error al añadir el artículo " + alltrim( aArticulo[1] ) )
             aadd( oDialog:aErrors, "- Error al añadir el artículo " + alltrim( aArticulo[1] ) )
          end if 
       end if
@@ -18521,7 +18521,7 @@ Static Function importarArticulosScaner()
    memoArticulos  := dialogArticulosScaner()
    
    if memoArticulos != nil
-      msgalert( memoArticulos, "procesar")
+      msgstop( memoArticulos, "procesar")
    end if
 
 Return nil       

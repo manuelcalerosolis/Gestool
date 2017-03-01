@@ -419,8 +419,6 @@ METHOD SetActorOther( hParent, oActor )
          
          hChild   := ItemNew( hItem, "SchmeNm" )               // Nombre del esquema 
 
-         msgalert( hChild, valtype( hChild ) )
-
          ItemNew( hChild, "Cd", 4, oActor:Cd )             // Código 
          ItemNew( hChild, "Prtry", 35, oActor:Prtry )      // Propietario
 
@@ -706,7 +704,6 @@ return( strDate )
 function sDate( d )
    local cDateFrm := Set( 4, "yyyy-mm-dd" )
    local strDate  := If( d != nil, dtoc(d), dtoc(date()) )
-   msgAlert( strDate)
    Set( 4, cDateFrm )
 return( strDate )
 

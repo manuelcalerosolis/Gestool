@@ -273,7 +273,7 @@ FUNCTION Usuarios( oMenuItem, oWnd )
 
       DEFINE BTNSHELL RESOURCE "SEL" OF oWndBrw ;
 			NOBORDER ;
-         ACTION   ( if( !( dbfUser )->lUseUse, lChgUser( ( dbfUser )->cCodUse, dbfUser, oWndBrw, dbfCajT ), MsgStop( "Usuario en uso" ) ) ) ;
+         ACTION   ( if( !( dbfUser )->lUseUse, changeUser( ( dbfUser )->cCodUse, dbfUser, dbfCajT, oWndBrw ), MsgStop( "Usuario en uso" ) ) ) ;
          TOOLTIP  "Sele(c)cionar";
          HOTKEY   "C"
 
@@ -1242,7 +1242,7 @@ FUNCTION BrwUser( oGet, dbfUsr, oGet2, lBigStyle, lGroup, lGetPassword, lStatus 
 
    aSta                 := aGetStatus( dbfUsr )
 
-   ( dbfUsr )->( OrdSetFocus( "CCODUSE" ) )
+   ( dbfUsr )->( ordsetfocus( "CCODUSE" ) )
    ( dbfUsr )->( dbGoTop() )
 
    if !lBigStyle
@@ -1263,7 +1263,7 @@ FUNCTION BrwUser( oGet, dbfUsr, oGet2, lBigStyle, lGroup, lGetPassword, lStatus 
 			VAR            cCbxOrd ;
 			ID             102 ;
          ITEMS          aCbxOrd ;
-         ON CHANGE      ( ( dbfUsr )->( OrdSetFocus( oCbxOrd:nAt ) ), oBrw:Refresh(), oGet1:SetFocus() ) ;
+         ON CHANGE      ( ( dbfUsr )->( ordsetfocus( oCbxOrd:nAt ) ), oBrw:Refresh(), oGet1:SetFocus() ) ;
 			OF             oDlg
 
       oBrw                 := IXBrowse():New( oDlg )
@@ -1405,7 +1405,7 @@ Function BrwUserTactil( oGet, dbfUsr, oGet2 )
    end if
 
    nRec                    := ( dbfUsr )->( Recno() )
-   nOrdAnt                 := ( dbfUsr )->( OrdSetFocus( "cCodUse" ) )
+   nOrdAnt                 := ( dbfUsr )->( ordsetfocus( "cCodUse" ) )
 
    ( dbfUsr )->( dbGoTop() )
 
@@ -1453,14 +1453,14 @@ Function BrwUserTactil( oGet, dbfUsr, oGet2 )
       with object ( oBrw:AddCol() )
          :cHeader          := "Código"
          :cSortOrder       := "cCodUse"
-         :bEditValue       := {|| AllTrim( ( dbfUsr )->cCodUse ) }
+         :bEditValue       := {|| alltrim( ( dbfUsr )->cCodUse ) }
          :nWidth           := 160
       end with
 
       with object ( oBrw:AddCol() )
          :cHeader          := "Nombre"
          :cSortOrder       := "cNbrUse"
-         :bEditValue       := {|| AllTrim( ( dbfUsr )->cNbrUse ) }
+         :bEditValue       := {|| alltrim( ( dbfUsr )->cNbrUse ) }
          :nWidth           := 400
       end with
 
@@ -1522,7 +1522,7 @@ Function BrwUserTactil( oGet, dbfUsr, oGet2 )
 
    else
 
-      ( dbfUsr )->( OrdSetFocus( nOrdAnt ) )
+      ( dbfUsr )->( ordsetfocus( nOrdAnt ) )
       ( dbfUsr )->( dbGoTo( nRec ) )
 
    end if
@@ -1701,10 +1701,14 @@ Return ( nBmpPal )
 Cambia el usuario actual por el q nos pasen
 */
 
-FUNCTION lChgUser( cCodUsr, dbfUsr, oWndBrw, dbfCajT )
+FUNCTION changeUser( cCodUsr, dbfUsr, dbfCajas, oWndBrw )
 
    if lGetPsw( dbfUsr )
-      oSetUsr( ( dbfUsr )->cCodUse, .t. ):Save( ( dbfUsr )->cCodUse, dbfUsr )
+      oUser():openFiles( dbfUsr, dbfCajas )
+      oUser():quitUser( cCurUsr() )
+      oUser():setUser( cCodUsr, .t. )
+      oUser():save()
+      oUser():closeFiles()
    end if
 
    if oWndBrw != nil
@@ -2208,10 +2212,7 @@ FUNCTION BrwBigUser( dbfUsr, dbfCaj )
 
          oDlg:bStart       := {|| InitBrwBigUser( oDlg, oImgUsr, dbfUsr ) }
 
-      ACTIVATE DIALOG oDlg ;
-         CENTER
-
-         // ON INIT           ( InitBrwBigUser( oDlg, oImgUsr, oLstUsr, dbfUsr ) ) ;
+      ACTIVATE DIALOG oDlg CENTER
 
       SetStatus( dbfUsr, aSta )
 
@@ -2263,41 +2264,28 @@ Function InitBrwBigUser( oDlg, oImgUsr, dbfUsr )
 
          if !( dbfUsr )->lGrupo
 
+            nGrpUse           := 0
+
             if ( dbfUsr )->nGrpUse <= 1
-               nGrpUse           := 0
-               nImgUse           := 0
+               nImgUse        := 0
             else
-               nGrpUse           := 1
-               nImgUse           := 1
+               nImgUse        := 1
             end if 
 
-            if !Empty( ( dbfUsr )->cImagen ) .and. File( Rtrim( ( dbfUsr )->cImagen ) )
+            if !empty( ( dbfUsr )->cImagen ) .and. file( rtrim( ( dbfUsr )->cImagen ) )
 
-               oImgUsr:Add( TBitmap():Define( , Rtrim( ( dbfUsr )->cImagen ), oDlg ) )
+               oImgUsr:Add( TBitmap():Define( , rtrim( ( dbfUsr )->cImagen ), oDlg ) )
 
-               nImgUse           := len( oImgUsr:aBitmaps )
+               nImgUse        := len( oImgUsr:aBitmaps )
 
             end if
 
-            // oLstUsr:InsertItemGroup( 1, Capitalize( ( dbfUsr )->cNbrUse ), nUser )
-               
-            oItem                := TListViewItem():New( oLstUsr )
-            oItem:cText          := Capitalize( ( dbfUsr )->cNbrUse )
-            oItem:nImage         := nImgUse
-            oItem:nGroup         := nGrpUse
-            oItem:Cargo          := ( dbfUsr )->cCodUse
+            oItem             := TListViewItem():New( oLstUsr )
+            oItem:cText       := Capitalize( ( dbfUsr )->cNbrUse )
+            oItem:nImage      := nImgUse
+            oItem:nGroup      := nGrpUse
+            oItem:Cargo       := ( dbfUsr )->cCodUse
             oItem:Create()
-
-/*
-            nItem                := oLstUsr:InsertItem( , ,  )               
-            oItem                := oLstUsr:GetItem( nItem )
-
-            if !empty(oItem)
-               oItem:Cargo       := 
-            end if
-*/
-
-            // oLstUsr:aAddItemGroup( 1, Capitalize( ( dbfUsr )->cNbrUse ), nUser, ( dbfUsr )->cCodUse )
 
          end if 
 
@@ -2315,6 +2303,7 @@ RETURN ( nil )
 
 Static Function selectBrwBigUser( nOpt, oDlg, dbfUsr, dbfCaj )
 
+   local oUser
    local cCodigoUsuario
 
    if ( nOpt == 0 )
@@ -2339,19 +2328,16 @@ Static Function selectBrwBigUser( nOpt, oDlg, dbfUsr, dbfCaj )
       Return nil
    end if 
 
-   if ( dbfUsr )->lUseUse
-
-      if !( ( dbfUsr )->cCodUse == cCurUsr() )
-
-         MsgStop( "Usuario en uso" )
-
-         Return nil
-
-      end if
-
+   if ( dbfUsr )->lUseUse .and. !( ( dbfUsr )->cCodUse == cCurUsr() )
+      msgStop( "Usuario en uso" )
+      Return nil
    end if
 
-   oSetUsr( ( dbfUsr )->cCodUse, .t. ):Save( ( dbfUsr )->cCodUse )
+   // set nuevo usuario--------------------------------------------------------
+
+   oUser():openFiles( dbfUsr, dbfCaj )
+   oUser():quitUser( cCurUsr() )
+   oUser():setUser( cCodigoUsuario )
 
    oLstUsr:nOption   := 0
 
@@ -2512,14 +2498,10 @@ FUNCTION lChkUser( cGetNbr, cGetPas, oBtn )
    USE ( cPatDat() + "Users.Dbf" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "USERS", @dbfUser ) )
    SET ADSINDEX TO ( cPatDat() + "USERS.CDX" ) ADDITIVE
 
-   USE ( cPatDat() + "Cajas.Dbf" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "USERS", @dbfCajas ) )
+   USE ( cPatDat() + "Cajas.Dbf" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "CAJAS", @dbfCajas ) )
    SET ADSINDEX TO ( cPatDat() + "Cajas.Cdx" ) ADDITIVE
 
-   /*
-   ( dbfUser )->( dbSetFilter( {|| !Field->lGrupo }, "!lGrupo" ) )
-   */
-
-   nOrd           := ( dbfUser )->( OrdSetFocus( "cNbrUse" ) )
+   nOrd           := ( dbfUser )->( ordsetfocus( "cNbrUse" ) )
 
    if Empty( cGetNbr )
       cGetNbr     := ( dbfUser )->cNbrUse
@@ -2549,8 +2531,8 @@ FUNCTION lChkUser( cGetNbr, cGetPas, oBtn )
 
          // Comprobamos las claves---------------------------------------------
 
-            if ( Empty( ( dbfUser )->cClvUse ) .or. Len( AllTrim( ( dbfUser )->cClvUse ) ) < 8 )
-               cGetPas  := IniciarClave( dbfUser, ( !Empty( ( dbfUser )->cClvUse ) .and. Len( AllTrim( ( dbfUser )->cClvUse ) ) < 8 ) )
+            if ( Empty( ( dbfUser )->cClvUse ) .or. Len( alltrim( ( dbfUser )->cClvUse ) ) < 8 )
+               cGetPas  := IniciarClave( dbfUser, ( !Empty( ( dbfUser )->cClvUse ) .and. Len( alltrim( ( dbfUser )->cClvUse ) ) < 8 ) )
             end if
 
          end if
@@ -2566,7 +2548,7 @@ FUNCTION lChkUser( cGetNbr, cGetPas, oBtn )
             ( dbfUser )->( dbUnLock() )
          end if
 
-         cGetNbr  := Alltrim( ( dbfUser )->cNbrUse )
+         cGetNbr  := alltrim( ( dbfUser )->cNbrUse )
 
       else
          
@@ -2592,15 +2574,18 @@ FUNCTION lChkUser( cGetNbr, cGetPas, oBtn )
 
    end if
 
-   ( dbfUser )->( OrdSetFocus( nOrd ) )
+   ( dbfUser )->( ordsetfocus( nOrd ) )
 
    // Creacion del objeto usuario----------------------------------------------
 
    if !lError
-      oUser       := oSetUsr( ( dbfUser )->cCodUse, .t. )
-      if oUser:lCreated
-         oUser:Save( dbfUser )
-      end if
+
+      oUser():openFiles( dbfUser, dbfCajas )
+      if oUser():setUser( ( dbfUser )->cCodUse, .t. )
+         oUser():save()
+      end if 
+      oUser():closeFiles()
+
    end if
 
    CLOSE ( dbfUser  )
@@ -2642,7 +2627,7 @@ FUNCTION lFreeUser( cCodUsr, lSetUsr, dbfUser, oWndBrw )
    end if
 
    nRec              := ( dbfUser )->( OrdKeyNo() )
-   nOrd              := ( dbfUser )->( OrdSetFocus( "cCodUse" ) )
+   nOrd              := ( dbfUser )->( ordsetfocus( "cCodUse" ) )
 
    if ( dbfUser )->( dbSeek( cCodUsr ) )
 
@@ -2674,7 +2659,7 @@ FUNCTION lFreeUser( cCodUsr, lSetUsr, dbfUser, oWndBrw )
 
    end if
 
-   ( dbfUser )->( OrdSetFocus( nOrd ) )
+   ( dbfUser )->( ordsetfocus( nOrd ) )
    ( dbfUser )->( OrdKeyGoTo( nRec ) )
 
    if lClo
@@ -2896,7 +2881,7 @@ function nLevelUsr( uHelpId )
          if !lAIS() 
             ( dbfMapa )->( ordListAdd( cPatDat() + "MAPAS.CDX" ) )
          else
-            ( dbfMapa )->( ordSetFocus( 1 ) )
+            ( dbfMapa )->( ordsetfocus( 1 ) )
          end if 
 
          if !Empty( cCurGrp() )
@@ -3068,19 +3053,19 @@ return ( cClave )
 
 static function lValPss( oAntClave, oClave, cClave, cRepClave, cAntClave, lOldPass, dbfUsr )
 
-   if lOldPass .and. AllTrim( cAntClave ) != AllTrim( ( dbfUsr )->cClvUse )
+   if lOldPass .and. alltrim( cAntClave ) != alltrim( ( dbfUsr )->cClvUse )
       MsgStop( "Clave anterior incorrecta." )
       oAntClave:SetFocus()
       return .f.
    end if
 
-   if ( AllTrim( cClave ) != AllTrim( cRepClave ) ) .or. ( Len( AllTrim( cClave ) ) != Len( AllTrim( cRepClave ) ) )
+   if ( alltrim( cClave ) != alltrim( cRepClave ) ) .or. ( Len( alltrim( cClave ) ) != Len( alltrim( cRepClave ) ) )
       MsgStop( "Las claves introducidas son distintas." )
       oClave:SetFocus()
       return .f.
    end if
 
-   if ( Len( AllTrim( cClave ) ) < 8 )
+   if ( Len( alltrim( cClave ) ) < 8 )
       MsgStop( "La longitud mínima para la clave es de 8 caracteres." )
       oClave:SetFocus()
       return .f.

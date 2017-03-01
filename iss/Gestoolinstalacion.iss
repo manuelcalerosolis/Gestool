@@ -155,8 +155,6 @@ Source: "c:\fw195\gestool\bmp\imgprecli.bmp";         DestDir: "{app}\Bmp"; Flag
 Source: "c:\fw195\gestool\bmp\imgfacprv.bmp";         DestDir: "{app}\Bmp"; Flags: ignoreversion
 Source: "c:\fw195\gestool\bmp\imgalbprv.bmp";         DestDir: "{app}\Bmp"; Flags: ignoreversion
 Source: "c:\fw195\gestool\bmp\imgpedprv.bmp";         DestDir: "{app}\Bmp"; Flags: ignoreversion
-Source: "c:\fw195\gestool\bmp\imgsndint.bmp";         DestDir: "{app}\Bmp"; Flags: ignoreversion
-Source: "c:\fw195\gestool\bmp\imgpleasewait.bmp";     DestDir: "{app}\Bmp"; Flags: ignoreversion
 
 Source: "c:\fw195\gestool\actualiza\chkemp.nil";      DestDir: "{app}";           Flags: ignoreversion
 Source: "c:\fw195\gestool\actualiza\reporting\*.*";   DestDir: "{app}\Reporting"; Flags: ignoreversion onlyifdoesntexist recursesubdirs createallsubdirs

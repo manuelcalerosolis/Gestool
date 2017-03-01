@@ -95,9 +95,6 @@ FUNCTION Agentes( oMenuItem, oWnd )
       return .f.
    end if
 
-   // msgAlert( nPrecioAgenteArticuloTarifa( '035', '02052644', 1, nView ), "found" )
-   // msgAlert( nPrecioAgenteArticuloTarifa( '035', '00000000', 1, nView ), "not found" )
-
    /*
    Anotamos el movimiento para el navegador
    */

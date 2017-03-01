@@ -7266,7 +7266,7 @@ METHOD ToExcel( bProgress, nGroupBy, aCols ) CLASS TXBrowse
    if ( oExcel := ExcelObj() ) == nil
       lExcelInstl := .f.
       if lCalcInstl == .f.
-         MsgAlert( FWString( "Excel not installed" ), FWString( "Alert" ) )
+         Msgstop( FWString( "Excel not installed" ), FWString( "Alert" ) )
          return Self
       else
          return ::ToCalc( bProgress, nGroupBy, , , aCols )
@@ -7559,7 +7559,7 @@ METHOD ToCalc( bProgress, nGroupBy, nPasteMode, aSaveAs, aCols ) CLASS TXBrowse
    if ( oCalc := SunCalcObj() ) == nil
       lCalcInstl  := .f.
       if lExcelInstl == .f.
-         MsgAlert( FWString( "No spreadsheet software installed" ),;
+         Msgstop( FWString( "No spreadsheet software installed" ),;
                    FWString( "Alert" ) )
          return Self
       else
@@ -11999,7 +11999,7 @@ METHOD SetOrder() CLASS TXBrwColumn
             ::oBrw:cOrders     := ' '
             ::cOrder           := If( ( ::oBrw:cAlias )->( OrdDescend() ), 'D', 'A' )
 
-            // msgalert( (::oBrw:cAlias)->( dbInfo( DBI_DBFILTER ) ), "Filtro" )
+            // msgstop( (::oBrw:cAlias)->( dbInfo( DBI_DBFILTER ) ), "Filtro" )
 
          endif
 

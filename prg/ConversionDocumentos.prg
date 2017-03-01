@@ -211,22 +211,22 @@ METHOD New( nView, oStock )
    
    ::aDocuments         := {  "Compras" =>                                                   nil,;                                    
                               space( 3 ) + "Pedido proveedores" =>                           {|| ::setDocumentPedidosProveedores() },;
-                              space( 3 ) + "Albarán proveedores" =>                          {|| msgAlert( "Albarán proveedores" ) },;
-                              space( 3 ) + "Factura proveedores" =>                          {|| msgAlert( "Factura proveedores" ) },;
-                              space( 3 ) + "Factura rectificativas proveedores" =>           {|| msgAlert( "Factura rectificativas proveedores" ) },;
-                              space( 3 ) + "Recibos de proveedores" =>                       {|| msgAlert( "Recibos de proveedores" ) },;
+                              space( 3 ) + "Albarán proveedores" =>                          {|| msgStop( "Albarán proveedores" ) },;
+                              space( 3 ) + "Factura proveedores" =>                          {|| msgStop( "Factura proveedores" ) },;
+                              space( 3 ) + "Factura rectificativas proveedores" =>           {|| msgStop( "Factura rectificativas proveedores" ) },;
+                              space( 3 ) + "Recibos de proveedores" =>                       {|| msgStop( "Recibos de proveedores" ) },;
                               "Ventas" =>                                                    nil,;                                    
                               space( 3 ) + "S.A.T. clientes" =>                              {|| ::setDocumentSATClientes() },;
-                              space( 3 ) + "Presupuesto clientes" =>                         {|| msgAlert( "" ), .t. },;
-                              space( 3 ) + "Pedido clientes" =>                              {|| msgAlert( "" ), .t. },;
-                              space( 3 ) + "Albarán clientes" =>                             {|| msgAlert( "" ), .t. },;
-                              space( 3 ) + "Factura clientes" =>                             {|| msgAlert( "" ), .t. },;
-                              space( 3 ) + "Factura de anticipos" =>                         {|| msgAlert( "" ), .t. },;
-                              space( 3 ) + "Factura rectificativa" =>                        {|| msgAlert( "" ), .t. },;
-                              space( 3 ) + "Recibos facturas clientes" =>                    {|| msgAlert( "" ), .t. },;
-                              space( 3 ) + "Tickets clientes" =>                             {|| msgAlert( "" ), .t. },;
-                              space( 3 ) + "Parte de producción" =>                          {|| msgAlert( "" ), .t. },;
-                              space( 3 ) + "Recibos de clientes" =>                          {|| msgAlert( "" ), .t. } }
+                              space( 3 ) + "Presupuesto clientes" =>                         {|| msgStop( "" ), .t. },;
+                              space( 3 ) + "Pedido clientes" =>                              {|| msgStop( "" ), .t. },;
+                              space( 3 ) + "Albarán clientes" =>                             {|| msgStop( "" ), .t. },;
+                              space( 3 ) + "Factura clientes" =>                             {|| msgStop( "" ), .t. },;
+                              space( 3 ) + "Factura de anticipos" =>                         {|| msgStop( "" ), .t. },;
+                              space( 3 ) + "Factura rectificativa" =>                        {|| msgStop( "" ), .t. },;
+                              space( 3 ) + "Recibos facturas clientes" =>                    {|| msgStop( "" ), .t. },;
+                              space( 3 ) + "Tickets clientes" =>                             {|| msgStop( "" ), .t. },;
+                              space( 3 ) + "Parte de producción" =>                          {|| msgStop( "" ), .t. },;
+                              space( 3 ) + "Recibos de clientes" =>                          {|| msgStop( "" ), .t. } }
 
    ::aTargetEmpresa     := aSerializedEmpresas()
 

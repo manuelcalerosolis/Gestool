@@ -939,7 +939,7 @@ Static Function cOpenStatement()
       cStatement        := "SELECT * FROM " + cPatEmp() + "TikeT"
    end if
 
-return cStatement
+Return cStatement
 
 //----------------------------------------------------------------------------//
 
@@ -2720,7 +2720,6 @@ STATIC FUNCTION EdtRec( aTmp, aGet, cTikT, oBrw, cCodCli, cCodArt, nMode, hDocum
          OF       oDlgTpv
 
    oDlgTpv:bStart       := {|| StartEdtRec( aTmp, aGet, nMode, oDlgTpv, oBrw, oBrwDet, hDocument, cCodArt ) }
-   // oDlgTpv:bGotFocus    := {|| msgAlert( "bGotFocus") }
 
    /*
    Apertura de la caja de dialogo
@@ -2829,7 +2828,7 @@ Static Function StartEdtRec( aTmp, aGet, nMode, oDlgTpv, oBrw, oBrwDet, hDocumen
    end if
 
    if nMode == DUPL_MODE
-      stateButtons( .f. )
+      stateButtons( .f., { oBtnFac } )
    end if
 
    if isHash( hDocument )
@@ -2849,7 +2848,7 @@ Static Function StartEdtRec( aTmp, aGet, nMode, oDlgTpv, oBrw, oBrwDet, hDocumen
 
          case HGetKeyAt( hDocument, 1 ) == "SAT"
 
-            msgalert( HGetValueAt( hDocument, 1 ), "SAT")
+            msgInfo( HGetValueAt( hDocument, 1 ), "SAT")
 
       end case
 

@@ -83,11 +83,11 @@ METHOD KeyChar( nKey, nFlags ) CLASS TAutoCombo
       if Empty( uItem )
          if nNewAt == 0
             if ::lCaseSensitive
-               nNewAt = AScan( ::aItems, { | x | msgAlert( alltrim(::cSearchKey), "cSearchKey"), msgAlert(x, "x"), alltrim(::cSearchKey) $ x } )
+               nNewAt = AScan( ::aItems, { | x | msgStop( alltrim(::cSearchKey), "cSearchKey"), msgStop(x, "x"), alltrim(::cSearchKey) $ x } )
                // nNewAt = AScan( ::aItems, { | x | SubStr( x, 1, Len( ::cSearchKey ) ) == ::cSearchKey } )
             else
                // nNewAt = AScan( ::aItems, { | x | SubStr( Upper( x ), 1, Len( ::cSearchKey ) ) == ::cSearchKey } )
-               nNewAt = AScan( ::aItems, { | x |  msgAlert( alltrim(::cSearchKey), "cSearchKey"), msgAlert(x, "x"), alltrim(::cSearchKey) $ Upper( x ) } )
+               nNewAt = AScan( ::aItems, { | x |  msgStop( alltrim(::cSearchKey), "cSearchKey"), msgStop(x, "x"), alltrim(::cSearchKey) $ Upper( x ) } )
             endif
             if Empty( ::oGet:hWnd )
                uItem = ::aItems[ If( nNewAt > 0, nNewAt, Max( ::nAT, 1 ) ) ]

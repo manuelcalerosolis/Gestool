@@ -21,11 +21,14 @@ CLASS TUser
 
    Data     cCodigoUsuario
 
+   METHOD   New()
+
    Method   Create( cCodUsr, cDbf )
    Method   Save( cCodUsr, cDbf )
 
-   Method   CreateHandle( cCodUsr )
-   Method   lQuitUser( cOldUsr )
+   Method   createHandle( cCodUsr )
+   Method   quitUser( cOldUsr )
+   Method   setUser( cCodUsr )
 
    Method   OpenFiles( cDbf )
    Method   CloseFiles()
@@ -196,11 +199,11 @@ END CLASS
 
 Method OpenFiles( dbfUser, dbfCajas )
 
-   if !Empty( ::oDbf ) .and. ( ::oDbf )->( Used() )
+   if !empty( ::oDbf ) .and. ( ::oDbf )->( Used() )
       Return ( Self )
    end if
 
-   if Empty( dbfUser )
+   if empty( dbfUser ) .and. empty( dbfCajas )
 
       dbUseArea( .t., cDriver(), ( cPatDat() + "Users.Dbf" ), ( ::oDbf := cCheckArea( "Users" ) ), .t. )
       if !lAIS() ; ( ::oDbf )->( OrdListAdd( cPatDat() + "Users.Cdx" ) ) ; else ; ordSetFocus( 1 ) ; end
@@ -227,15 +230,31 @@ Method CloseFiles()
 
    if ::lCloseFiles
 
-      if !Empty( ::oDbf )
+      if !empty( ::oDbf ) .and. ( ::oDbf )->( Used() )
          ( ::oDbf )->( dbCloseArea() )
       end if
 
-      if !Empty( ::oDbfCajas )
+      if !empty( ::oDbfCajas ) .and. ( ::oDbfCajas )->( Used() )
          ( ::oDbfCajas )->( dbCloseArea() )
       end if
 
+      ::oDbf         := nil
+      ::oDbfCajas    := nil
+
    end if
+
+Return ( Self )
+
+//--------------------------------------------------------------------------//
+
+Method New()
+
+   ::_NotCambiarPrecioGrupo   := nil
+   ::_NotRentabilidadGrupo    := nil
+   ::_NotCostosGrupo          := nil
+   ::_NotBitmapGrupo          := nil
+   ::_NotInicioGrupo          := nil
+   ::_FiltroVentas            := .f.
 
 Return ( Self )
 
@@ -369,53 +388,150 @@ Return ( Self )
 
 //--------------------------------------------------------------------------//
 
-Method Save( dbfUser, dbfCajas )
+Method setUser( cCodigoUsuario, lCreateHandle )
+
+   local nOrd              
+
+   DEFAULT lCreateHandle   := .t.
+
+   nOrd                    := ( ::oDbf )->( ordsetfocus( "cCodUse" ) )  
+
+   if ( ::oDbf )->( dbseek( cCodigoUsuario ) )
+
+      if !lCreateHandle .or. ::CreateHandle( cCodigoUsuario ) != -1
+
+         ::lEnUso(            .t. )
+         ::cCodigo(           cCodigoUsuario )
+         ::cPcName(           rtrim( netname() )  )
+         ::cNombre(           ( ::oDbf )->cNbrUse )
+         ::cImagen(           ( ::oDbf )->cImagen )
+         ::lNotCambiarPrecio( ( ::oDbf )->lChgPrc )
+         ::lSelectorFamilia(  ( ::oDbf )->lSelFam )
+         ::lNotBitmap(        ( ::oDbf )->lNotBmp )
+         ::lNotInicio(        ( ::oDbf )->lNotIni )
+         ::lNotRentabilidad(  ( ::oDbf )->lNotRnt )
+         ::lNotCostos(        ( ::oDbf )->lNotCos )
+         ::lUsrZur(           ( ::oDbf )->lUsrZur )
+         ::lArqueoCiego(      ( ::oDbf )->lArqCie )
+         ::nGrupoUsuario(     ( ::oDbf )->nGrpUse )
+         ::lMaster(           ( ::oDbf )->cCodUse == "000" )
+         ::lAdministrador(    ( ::oDbf )->cCodUse == "000" .or. ( ::oDbf )->nGrpUse == 1 )
+         ::lAlerta(           ( ::oDbf )->lAlerta )
+         ::lNotConfirmDelete( ( ::oDbf )->lNotDel )
+         ::cGrupo(            ( ::oDbf )->cCodGrp )
+         ::lFiltroVentas(     ( ::oDbf )->lFilVta )
+         ::cCaja(             ( ::oDbf )->cCajUse )
+         ::cAlmacen(          ( ::oDbf )->cAlmUse )
+         ::cOperario(         ( ::oDbf )->cCodTra )
+         ::lDocAuto(          ( ::oDbf )->lDocAut )
+         ::dUltAuto(          ( ::oDbf )->dUltAut )
+         ::cEmpresaFija(      ( ::oDbf )->cCodEmp )
+         ::lNoOpenCajon(      ( ::oDbf )->lNoOpCaj )
+         ::cTipoIncidencia(   ( ::oDbf )->cTipInci )
+         ::MixPermisosGrupo(  ( ::oDbf )->cCodGrp )
+         ::SalaVenta(         ( ::oDbf )->cCodSala )
+         ::DelegacionUsuario( ( ::oDbf )->cCodDlg )
+         ::SerieDefecto(      ( ::oDbf )->cSerDef )
+         ::lNotUnidades(      ( ::oDbf )->lNotUni )
+         ::lNotNotasTPV(      ( ::oDbf )->lNotNot )
+         ::lNotCobrarTPV(     ( ::oDbf )->lNotCob )
+         ::lNotImprimirComandas( ( ::oDbf )->lNotCom ) 
+
+         // Si el usuario tiene una empresa fija la colocamos caso contrario la ultima en usarse
+
+         if !Empty( ( ::oDbf )->cCodEmp )
+            ::cEmpresa( ( ::oDbf )->cCodEmp )
+         else
+            ::cEmpresa( ( ::oDbf )->cEmpUse )
+         end if
+
+         // Si el usuario tiene una delegacion fija la asignamos------------------
+         
+         if !Empty( ( ::oDbf )->cCodDlg ) .and. !::lMaster()
+            ::cDelegacion( ( ::oDbf )->cCodDlg )
+         end if
+
+         // Cajon portamonedas----------------------------------------------------
+
+         if empty( ::oCajon ) .and. !empty( cCajonEnCaja( ( ::oDbf )->cCajUse, ::oDbfCajas ) )
+            ::oCajon          := TCajon():Create( cCajonEnCaja( ( ::oDbf )->cCajUse, ::oDbfCajas ) )
+         end if
+
+         setKey( VK_F12, {|| ::OpenCajon() } )
+
+         ::lCreated           := .t.
+
+      else
+
+         ::lCreated           := .f.
+
+         msgStop( "No puedo crear un handle valido para el usuario " + cCodigoUsuario )
+
+      end if
+
+   else
+
+      ::lCreated              := .f.
+
+      msgStop( "Usuario " + cCodigoUsuario + " no encontrado.", "Creando usuario" )
+
+   end if
+
+   ( ::oDbf )->( OrdSetFocus( nOrd ) )
+
+Return ( ::lCreated )
+
+//--------------------------------------------------------------------------//
+
+Method Save()
 
    local oError
    local oBlock
 
-   oBlock                     := ErrorBlock( {| oError | ApoloBreak( oError ) } )
+   if empty( ::oDbf ) .or. !( ::oDbf )->( used() )
+      msgStop( "Imposible guardar las propiedades de usuarios, la base de datos no esta abierta." )
+      Return ( Self )
+   end if 
+
+   if empty( ::cCodigo() ) 
+      msgStop( "Imposible guardar las propiedades de usuarios, código de usuario esta vacio." )
+      Return ( Self )
+   end if 
+
+   oBlock                        := ErrorBlock( {| oError | ApoloBreak( oError ) } )
    BEGIN SEQUENCE
 
-      ::OpenFiles( dbfUser, dbfCajas )
+      if dbSeekInOrd( ::cCodigo(), "cCodUse", ::oDbf ) .and. ( ::oDbf )->( dbrlock() )
 
-      if ( ::oDbf )->( Used() )
+         ( ::oDbf )->lUseUse     := ::lEnUso()
+         ( ::oDbf )->cNbrUse     := ::cNombre()
+         ( ::oDbf )->cImagen     := ::cImagen()
+         ( ::oDbf )->cCajUse     := ::cCaja()
+         ( ::oDbf )->cAlmUse     := ::cAlmacen()
+         ( ::oDbf )->cEmpUse     := ::cEmpresa()
+         ( ::oDbf )->lSelFam     := ::lSelectorFamilia()
+         ( ::oDbf )->lUsrZur     := ::lUsrZur()
+         ( ::oDbf )->lArqCie     := ::lArqueoCiego()
+         ( ::oDbf )->nGrpUse     := ::nGrupoUsuario()
+         ( ::oDbf )->cPcnUse     := ::cPcName()
 
-         if dbSeekInOrd( ::cCodigoUsuario, "cCodUse", ::oDbf ) .and. ( ::oDbf )->( dbRLock() )
-
-            ( ::oDbf )->lUseUse     := ::lEnUso()
-            ( ::oDbf )->cNbrUse     := ::cNombre()
-            ( ::oDbf )->cImagen     := ::cImagen()
-            ( ::oDbf )->cCajUse     := ::cCaja()
-            ( ::oDbf )->cAlmUse     := ::cAlmacen()
-            ( ::oDbf )->cEmpUse     := ::cEmpresa()
-            ( ::oDbf )->lSelFam     := ::lSelectorFamilia()
-            ( ::oDbf )->lUsrZur     := ::lUsrZur()
-            ( ::oDbf )->lArqCie     := ::lArqueoCiego()
-            ( ::oDbf )->nGrpUse     := ::nGrupoUsuario()
-            ( ::oDbf )->cPcnUse     := ::cPcName()
-
-            if !::lMaster()
-               ::cDelegacion( ( ::oDbf )->cCodDlg )
-            end if
-
-            ( ::oDbf )->lAlerta     := ::lAlerta()
-            ( ::oDbf )->cCodGrp     := ::cGrupo()
-
-            ( ::oDbf )->lChgPrc     := ::_NotCambiarPrecio
-            ( ::oDbf )->lNotRnt     := ::_NotRentabilidad
-            ( ::oDbf )->lNotCos     := ::_NotCostos
-            ( ::oDbf )->lNotBmp     := ::_NotBitmap
-            ( ::oDbf )->lNotIni     := ::_NotInicio
-            ( ::oDbf )->cCodTra     := ::_Operario
-
-            ( ::oDbf )->( dbUnLock() )
-
+         if !::lMaster()
+            ::cDelegacion( ( ::oDbf )->cCodDlg )
          end if
 
-      end if
+         ( ::oDbf )->lAlerta     := ::lAlerta()
+         ( ::oDbf )->cCodGrp     := ::cGrupo()
 
-      ::CloseFiles()
+         ( ::oDbf )->lChgPrc     := ::_NotCambiarPrecio
+         ( ::oDbf )->lNotRnt     := ::_NotRentabilidad
+         ( ::oDbf )->lNotCos     := ::_NotCostos
+         ( ::oDbf )->lNotBmp     := ::_NotBitmap
+         ( ::oDbf )->lNotIni     := ::_NotInicio
+         ( ::oDbf )->cCodTra     := ::_Operario
+
+         ( ::oDbf )->( dbUnLock() )
+
+      end if
 
    RECOVER USING oError
 
@@ -449,27 +565,23 @@ Return ( ::nHandle() )
 
 //---------------------------------------------------------------------------//
 
-Method lQuitUser( cOldUsr )
+Method quitUser( cOldUsr )
 
    local nOldRec
 
-   if fClose( ::nHandle() )
-
-      nOldRec  := ( ::oDbf )->( Recno() )
-
-      if dbSeekInOrd( cOldUsr, "cCodUse", ::oDbf ) .and. ( ::oDbf )->( dbRLock() )
-         ( ::oDbf )->lUseUse  := .f.
-         ( ::oDbf )->( dbUnLock() )
-      end if
-
-      ( ::oDbf )->( dbGoTo( nOldRec ) )
-
-   else
-
-      MsgStop( "No puedo cerrar el usuario " + cOldUsr )
+   if !( fClose( ::nHandle() ) )
+      msgStop( "No puedo cerrar el usuario " + cOldUsr )
       Return ( .f. )
+   end if 
 
+   nOldRec        := ( ::oDbf )->( Recno() )
+
+   if dbSeekInOrd( cOldUsr, "cCodUse", ::oDbf ) .and. ( ::oDbf )->( dbRLock() )
+      ( ::oDbf )->lUseUse  := .f.
+      ( ::oDbf )->( dbUnLock() )
    end if
+
+   ( ::oDbf )->( dbGoTo( nOldRec ) )
 
 Return ( .t. )
 
@@ -713,7 +825,7 @@ Return ( ::_Empresa )
 Function oUser( cCodUsr, lCreateHandle )
 
    if oUser == nil
-      oUser := TUser():Create( cCodUsr, lCreateHandle )
+      oUser := TUser():New()
    end if
 
 Return ( oUser )
@@ -722,10 +834,9 @@ Return ( oUser )
 
 Function oSetUsr( cCodUsr, lCreateHandle )
 
-   oUser := TUser()
-   oUser:OpenFiles()
-   oUser:Create( cCodUsr, lCreateHandle )
-   oUser:CloseFiles()
+   oUser():openFiles()
+   oUser():setUser( cCodUsr, lCreateHandle )
+   oUser():closeFiles()
 
 Return ( oUser )
 
@@ -733,8 +844,9 @@ Return ( oUser )
 
 Function cCurUsr()
 
-   if oUser == nil
-      oUser := TUser():Create()
+   if empty( oUser )
+      msgStop( "Objeto de usuario no creado" )
+      Return ( "" )
    end if
 
 Return ( oUser:cCodigo() )
@@ -743,8 +855,9 @@ Return ( oUser:cCodigo() )
 
 Function cCurGrp()
 
-   if oUser == nil
-      oUser := TUser():Create()
+   if empty( oUser )
+      msgStop( "Objeto de usuario no creado" )
+      Return ( "" )
    end if
 
 Return ( oUser:cGrupo() )

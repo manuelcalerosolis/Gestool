@@ -1019,8 +1019,6 @@ METHOD asteriskFilter( xValueToSearch, cAlias )
 
       ::cAsteriskFilter    := '"' + xValueToSearch + '" $ ' + ( cAlias )->( ordkey() )
 
-      // msgalert( ::cAsteriskFilter, "cAsteriskFilter" )
-
       ::chgFilter() 
 
       Return .t.

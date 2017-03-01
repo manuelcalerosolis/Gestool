@@ -15118,7 +15118,7 @@ Static Function importarArticulosScaner()
    memoArticulos  := dialogArticulosScaner()
    
    if memoArticulos != nil
-      msgalert( memoArticulos, "procesar")
+      msgstop( memoArticulos, "procesar")
    end if
 
 Return nil       

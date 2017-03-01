@@ -12218,11 +12218,6 @@ STATIC FUNCTION LoaArt( cCodArt, aGet, aTmp, aTmpFac, oStkAct, oSayPr1, oSayPr2,
          cCodArt           := uGetCodigo( hHas128, "01" )
          cLote             := uGetCodigo( hHas128, "10" )
          dFechaCaducidad   := uGetCodigo( hHas128, "15" )    
-
-         msgalert( cCodArt           )
-         msgalert( cLote             )
-         msgalert( dFechaCaducidad   )    
-
       end if 
 
    end if
@@ -23168,7 +23163,7 @@ Static Function importarArticulosScaner()
    memoArticulos  := dialogArticulosScaner()
    
    if memoArticulos != nil
-      msgalert( memoArticulos, "procesar")
+      msgstop( memoArticulos, "procesar")
    end if
 
 Return nil       

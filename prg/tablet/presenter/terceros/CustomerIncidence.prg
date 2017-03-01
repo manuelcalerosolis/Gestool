@@ -23,7 +23,7 @@ CLASS CustomerIncidence FROM Editable
    METHOD onPostGetDocumento()
    METHOD onPreSaveAppend()   
 
-   METHOD startDialog()          INLINE ( msgAlert( ::oViewEdit:getTitleDocumento() ) )
+   METHOD startDialog()          INLINE ( msginfo( ::oViewEdit:getTitleDocumento() ) )
 
    METHOD onPreSaveEdit()        INLINE ( .t. )
    METHOD onPreEnd()             INLINE ( .t. )

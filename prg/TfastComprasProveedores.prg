@@ -441,11 +441,6 @@ METHOD AddFacturaProveedor( cCodigoProveedor ) CLASS TFastComprasProveedores
 
          sTot           := sTotFacPrv( ::oFacPrvT:cSerFac + Str( ::oFacPrvT:nNumFac ) + ::oFacPrvT:cSufFac, ::oFacPrvT:cAlias, ::oFacPrvL:cAlias, ::oDbfIva:cAlias, ::oDbfDiv:cAlias, ::oFacPrvP:cAlias )
 
-         // msgalert( sTot:nTotalNeto )
-         // msgalert( sTot:nTotalIva )
-         // msgalert( sTot:nTotalRecargoEquivalencia )
-         // msgalert( sTot:nTotalDocumento )
-        
          ::oDbf:Blank()
 
          ::oDbf:cTipDoc := "Factura proveedor"

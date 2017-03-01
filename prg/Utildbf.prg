@@ -1219,7 +1219,7 @@ FUNCTION cCheckArea( cDbfName, cAlias )
    cAlias      := cDbfName
 
 	while select( cAlias ) != 0
-      cAlias   := cDbfName + AllTrim( Str( n++ ) )
+      cAlias   := cDbfName + alltrim( str( n++ ) )
 	end
 
 RETURN cAlias

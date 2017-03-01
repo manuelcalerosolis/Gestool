@@ -636,8 +636,6 @@ rc      := {rc[1],rc[2],rc[3],rc[4]}
 ::nRows := max( int( ( rc[3] - rc[1] ) / ( ::nHItem ) ), 1 )
 ::nCols := max( int( ( rc[4] - rc[2] ) / ( ::nWItem ) ), 1 )
 
-//msgAlert( int( ( ( rc[4] - rc[2] ) - ( ::nWItem * ::nCols ) ) / ::nCols ), "me keda este espacio" )
-
 nHOffset := int( ( ( rc[3] - rc[1] ) - ( ::nHItem * ::nRows ) ) / ::nRows )
 nWOffset := int( ( ( rc[4] - rc[2] ) - ( ::nWItem * ::nCols ) ) / ::nCols )
 

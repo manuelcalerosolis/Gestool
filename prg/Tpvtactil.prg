@@ -2596,19 +2596,19 @@ METHOD StartResource() CLASS TpvTactil
             TDotNetButton():New( 60, oGrupo, "gc_cashdrawer_32",                  "Abrir cajón",       1, {|| ::OpenCajon() }, , , .f., .f., .f. )
 
          oGrupo                  := TDotNetGroup():New( oCarpeta, 186, "Mesas", .f., , "gc_users_family_32" )
-            TDotNetButton():New( 60, oGrupo, "gc_users_family_32",                     "Comensales",        1, {|| ::OnClickComensales() }, , , .f., .f., .f. )
-            TDotNetButton():New( 60, oGrupo, "gc_beer_garden_table_32",        "Cambiar ubicación", 2, {|| ::OnClickCambiaUbicacion() }, , , .f., .f., .f. )
-            TDotNetButton():New( 60, oGrupo, "gc_beer_garden_table_cut_32",                   "Dividir o unir mesa",3,{|| ::OnClickDividirMesa() }, , , .f., .f., .f. )
+            TDotNetButton():New( 60, oGrupo, "gc_users_family_32", "Comensales", 1, {|| ::OnClickComensales() }, , , .f., .f., .f. )
+            TDotNetButton():New( 60, oGrupo, "gc_beer_garden_table_32", "Cambiar ubicación", 2, {|| ::OnClickCambiaUbicacion() }, , , .f., .f., .f. )
+            TDotNetButton():New( 60, oGrupo, "gc_beer_garden_table_cut_32", "Dividir o unir mesa",3,{|| ::OnClickDividirMesa() }, , , .f., .f., .f. )
 
          oGrupo                  := TDotNetGroup():New( oCarpeta, 66, "Tickets", .f., , "gc_note_block_32" )
-            TDotNetButton():New( 60, oGrupo, "gc_note_block_32",                      "Lista",             1, {|| ::OnClickLista() }, , , .f., .f., .f. )
+            TDotNetButton():New( 60, oGrupo, "gc_note_block_32", "Lista", 1, {|| ::OnClickLista() }, , , .f., .f., .f. )
 
          oGrupo                  := TDotNetGroup():New( oCarpeta, 126, "Invitaciones", .f., , "gc_masks_32" )
             TDotNetButton():New( 60, oGrupo, "gc_symbol_percent_32",           "Descuentos",        1, {|| ::OnClickDescuento() }, , , .f., .f., .f. )
             TDotNetButton():New( 60, oGrupo, "gc_masks_32",                      "Invitaciones",      2, {|| ::OnClickInvitacion() }, , , .f., .f., .f. )
 
          oGrupo                  := TDotNetGroup():New( oCarpeta, 66, "Usuario", .f., , "gc_businessman2_32" )
-            ::oBtnUsuario        := TDotNetButton():New( 60, oGrupo, "gc_businessman2_32",             Capitalize( Rtrim( oUser():cNombre() ) ), 1, {|| ::OnClickUsuarios() }, , , .f., .f., .f. )
+            ::oBtnUsuario        := TDotNetButton():New( 60, oGrupo, "gc_businessman2_32", Capitalize( Rtrim( oUser():cNombre() ) ), 1, {|| ::OnClickUsuarios() }, , , .f., .f., .f. )
 
          oGrupo                     := TDotNetGroup():New( oCarpeta, 66, "Otros", .f., , "gc_cash_register_32" )
             ::oBtnImportesExactos   := TDotNetButton():New( 60, oGrupo, "gc_gauge_32",                   "Cobros rapidos",    1, {|| ::OnClickImportesExactos() }, , , .f., .f., .f. )
@@ -3145,15 +3145,15 @@ METHOD OnClickComensales()
 
 METHOD OnClickComensalesMenus()
 
-  ::nComensalesMenu    := 0
+   ::nComensalesMenu    := 0
 
-  ::DisableDialog()
+   ::DisableDialog()
 
-  ::nComensalesMenu    := nVirtualNumKey( "gc_users_family_32", "Número de menús", 0 )
+   ::nComensalesMenu    := nVirtualNumKey( "gc_users_family_32", "Número de menús", 0 )
 
-  ::EnableDialog()
+   ::EnableDialog()
 
-  RETURN ( ::nComensalesMenu )
+RETURN ( ::nComensalesMenu )
 
 //------------------------------------------------------------------------//
 
@@ -3163,19 +3163,19 @@ Si pulsamos sobre el boton de usuario nos crea el dialogo para cambiar de usuari
 
 METHOD ShowUsuario()
 
-  if BrwBigUser()
+   if BrwBigUser()
 
-     ::oBtnUsuario:cBmp( if( oUser():lAdministrador(), "gc_businessman2_32", "gc_user2_32" ) )
+      ::oBtnUsuario:cBmp( if( oUser():lAdministrador(), "gc_businessman2_32", "gc_user2_32" ) )
 
-     ::oBtnUsuario:cCaption( Capitalize( oUser():cNombre() ) )
+      ::oBtnUsuario:cCaption( Capitalize( oUser():cNombre() ) )
 
-  else
+   else
 
-     RETURN ( .f. )
+      RETURN ( .f. )
 
-  end if
+   end if
 
-  RETURN ( .t. )
+RETURN ( .t. )
 
 //------------------------------------------------------------------------//
 
@@ -4863,22 +4863,22 @@ METHOD lAcumulaArticulo( cCodigoMenu, cCodigoOrden ) CLASS TpvTactil
 
          // Comprobamos que el codigo y el precio sean iguales y que no sean ofertas-
 
-         // msgalert( empty( ::oTemporalLinea:cComTil )                           , "empty( ::oTemporalLinea:cComTil )                          "  )
-         // msgalert( empty( ::oTemporalLinea:cComent )                           , "empty( ::oTemporalLinea:cComent )                          "  )
-         // msgalert( rtrim( ::oTemporalLinea:cNomTil ) == ::cNombreArticulo()    , "rtrim( ::oTemporalLinea:cNomTil ) == ::cNombreArticulo()   "  )
-         // msgalert( !::oTemporalLinea:lKitChl                                   , "!::oTemporalLinea:lKitChl                                  "  )
-         // msgalert( !::oTemporalLinea:lDelTil                                   , "!::oTemporalLinea:lDelTil                                  "  )
-         // msgalert( ::oTemporalLinea:nPvpTil == nPrecioLinea                    , "::oTemporalLinea:nPvpTil == nPrecioLinea                   "  )
-         // msgalert( ::oTemporalLinea:nDtoLin == 0                               , "::oTemporalLinea:nDtoLin == 0                              "  )
-         // msgalert( ::oTemporalLinea:cOrdOrd == cCodigoOrden                    , "::oTemporalLinea:cOrdOrd == cCodigoOrden                   "  )
-         // msgalert( ::oTemporalLinea:nUntTil > 0                                , "::oTemporalLinea:nUntTil > 0                               "  )
-         // msgalert( ::oTemporalLinea:nLinMnu == ::GetLineaMenu()                , "::oTemporalLinea:nLinMnu == ::GetLineaMenu()               "  )
-         // msgalert( ::oTemporalLinea:cCodPr1 == ::GetCodigoPropiedadArticulo1() , "::oTemporalLinea:cCodPr1 == ::GetCodigoPropiedadArticulo1()"  )
-         // msgalert( ::oTemporalLinea:cValPr1 == ::GetValorPropiedadArticulo1()  , "::oTemporalLinea:cValPr1 == ::GetValorPropiedadArticulo1() "  )
-         // msgalert( ::oTemporalLinea:cCodPr2 == ::GetCodigoPropiedadArticulo2() , "::oTemporalLinea:cCodPr2 == ::GetCodigoPropiedadArticulo2()"  )
-         // msgalert( ::oTemporalLinea:cValPr2 == ::GetValorPropiedadArticulo2()  , "::oTemporalLinea:cValPr2 == ::GetValorPropiedadArticulo2() "  )
-         // msgalert( ::nUnidades > 0, "nUnidades > 0" )
-         // msgalert( !::oTemporalLinea:lSave                                     , "!::oTemporalLinea:lSave                                    "  )
+         // msgstop( empty( ::oTemporalLinea:cComTil )                           , "empty( ::oTemporalLinea:cComTil )                          "  )
+         // msgstop( empty( ::oTemporalLinea:cComent )                           , "empty( ::oTemporalLinea:cComent )                          "  )
+         // msgstop( rtrim( ::oTemporalLinea:cNomTil ) == ::cNombreArticulo()    , "rtrim( ::oTemporalLinea:cNomTil ) == ::cNombreArticulo()   "  )
+         // msgstop( !::oTemporalLinea:lKitChl                                   , "!::oTemporalLinea:lKitChl                                  "  )
+         // msgstop( !::oTemporalLinea:lDelTil                                   , "!::oTemporalLinea:lDelTil                                  "  )
+         // msgstop( ::oTemporalLinea:nPvpTil == nPrecioLinea                    , "::oTemporalLinea:nPvpTil == nPrecioLinea                   "  )
+         // msgstop( ::oTemporalLinea:nDtoLin == 0                               , "::oTemporalLinea:nDtoLin == 0                              "  )
+         // msgstop( ::oTemporalLinea:cOrdOrd == cCodigoOrden                    , "::oTemporalLinea:cOrdOrd == cCodigoOrden                   "  )
+         // msgstop( ::oTemporalLinea:nUntTil > 0                                , "::oTemporalLinea:nUntTil > 0                               "  )
+         // msgstop( ::oTemporalLinea:nLinMnu == ::GetLineaMenu()                , "::oTemporalLinea:nLinMnu == ::GetLineaMenu()               "  )
+         // msgstop( ::oTemporalLinea:cCodPr1 == ::GetCodigoPropiedadArticulo1() , "::oTemporalLinea:cCodPr1 == ::GetCodigoPropiedadArticulo1()"  )
+         // msgstop( ::oTemporalLinea:cValPr1 == ::GetValorPropiedadArticulo1()  , "::oTemporalLinea:cValPr1 == ::GetValorPropiedadArticulo1() "  )
+         // msgstop( ::oTemporalLinea:cCodPr2 == ::GetCodigoPropiedadArticulo2() , "::oTemporalLinea:cCodPr2 == ::GetCodigoPropiedadArticulo2()"  )
+         // msgstop( ::oTemporalLinea:cValPr2 == ::GetValorPropiedadArticulo2()  , "::oTemporalLinea:cValPr2 == ::GetValorPropiedadArticulo2() "  )
+         // msgstop( ::nUnidades > 0, "nUnidades > 0" )
+         // msgstop( !::oTemporalLinea:lSave                                     , "!::oTemporalLinea:lSave                                    "  )
 
          if empty( ::oTemporalLinea:cComTil )                              .and. ;
             empty( ::oTemporalLinea:cComent )                              .and. ;
@@ -5956,17 +5956,13 @@ METHOD OnClickUsuarios() CLASS TpvTactil
    local lReturn           := .t.
    local lGuardaDocumento  := .t.
 
-   /*
-   Si el documento es nuevo y no tiene lineas no lo guardo---------------------
-   */
+   // Si el documento es nuevo y no tiene lineas no lo guardo---------------------
 
    if ::lValidatePreSave()
       lGuardaDocumento     := .f.
    end if
 
-   /*
-   Vamos a detectar si estoy en un General------------------------------------
-   */
+   // Vamos a detectar si estoy en un General------------------------------------
 
    if ::lEmptyAlias()
       if ::SetAliasDocumento()
@@ -5990,21 +5986,15 @@ METHOD OnClickUsuarios() CLASS TpvTactil
    oBlock                  := ErrorBlock( {| oError | ApoloBreak( oError ) } )
    BEGIN SEQUENCE
 
-   /*
-   Guarda la venta actual------------------------------------------------------
-   */
+   // Guarda la venta actual------------------------------------------------------
 
    if ( !lGuardaDocumento .or. ::GuardaDocumentoPendiente() )
 
-      /*
-      Recoger usuario----------------------------------------------------------
-      */
+      // Recoger usuario----------------------------------------------------------
 
       if ::GetUsuario( .t. )
 
-         /*
-         Inicializa los valores para un nuevo documento General---------------
-         */
+         // Inicializa los valores para un nuevo documento General---------------
 
          ::InitDocumento( ubiGeneral )
 

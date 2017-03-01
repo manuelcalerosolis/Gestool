@@ -6827,9 +6827,6 @@ RETURN ( Self )
 
 METHOD validateDateTime( dFecMov, tTimMov ) CLASS TStock
 
-   // msgalert( dFecMov, "dFecMov" )
-   // msgalert( tTimMov, "tTimMov" )
-
    if !empty( ::dFechaInicio ) .and. dFecMov < ::dFechaInicio
       Return .f.
    end if 

@@ -573,18 +573,13 @@ RETURN ( Self )
 
 METHOD DataReport() CLASS TFastVentasClientes
 
-   msgalert( "DataReport")
-   
    /*
    Zona de detalle-------------------------------------------------------------
    */
 
    ::oFastReport:SetWorkArea(       "Informe", ::oDbf:nArea )
 
-   msgalert( "cObjectsToReport( ::oDbf )" )
    ::oFastReport:SetFieldAliases(   "Informe", cObjectsToReport( ::oDbf ) )
-
-   msgalert( "Zona de datos---------------------------------------------------------------" )
 
    /*
    Zona de datos---------------------------------------------------------------
@@ -636,8 +631,6 @@ METHOD DataReport() CLASS TFastVentasClientes
    Relaciones------------------------------------------------------------------
    */
 
-   msgalert( "Relaciones------------------------------------------------------------------" )
-
    ::oFastReport:SetMasterDetail(   "Informe", "Empresa",               {|| cCodEmp() } )
    ::oFastReport:SetMasterDetail(   "Informe", "Bancos",                {|| ::oDbf:cCodCli } )
    ::oFastReport:SetMasterDetail(   "Informe", "Clientes",              {|| ::oDbf:cCodCli } )
@@ -681,8 +674,6 @@ METHOD DataReport() CLASS TFastVentasClientes
 
    ::oFastReport:SetResyncPair(     "Incidencias", "Tipos de incidencias" ) 
 
-   msgalert( ::cReportType, "DataReport case" )
-
    do case
       case ::cReportType == "SAT de clientes"
 
@@ -714,13 +705,10 @@ METHOD DataReport() CLASS TFastVentasClientes
 
       case ::cReportType == "Facturación de clientes"
 
-         msgalert( 1 )
          ::FastReportFacturaCliente()
          
-         msgalert( 2 )
          ::FastReportFacturaRectificativa()
 
-         msgalert( 3 )
          ::FastReportTicket( .t. )
 
       case ::cReportType == "Ventas"
@@ -897,11 +885,8 @@ METHOD lGenerate() CLASS TFastVentasClientes
          ::AddTicket( .t. )
 
       case ::cReportType == "Facturación de clientes"   
-msgalert( "::AddFacturaCliente()" )
          ::AddFacturaCliente()
-msgalert( "::AddFacturaRectificativa()" )
          ::AddFacturaRectificativa()
-msgalert( "::AddTicket()" )
          ::AddTicket()
 
       case ::cReportType == "Ventas"

@@ -857,33 +857,37 @@ METHOD UseArea( lNewArea, lOpen ) CLASS TDbf
 
    local cName
 
-   DEFAULT lOpen     := .f.    // No esta abierta por defecto
-   DEFAULT lNewArea  := .t.
+   DEFAULT lOpen        := .f.    // No esta abierta por defecto
+   DEFAULT lNewArea     := .t.
 
-   cName             := Alltrim( Padl( ::cName, 10 ) )
+   cName                := alltrim( padl( ::cName, 10 ) )
 
-   if !lOpen
+   if lOpen
+      return ( lOpen )
+   end if 
 
-       if eval( ::bOnOpen, Self )
+   if !eval( ::bOnOpen, Self )
+      return ( lOpen )
+   end if 
 
-           if Select( cName ) > 0
-               DbSelectArea( 0 )
-               ::cAlias := "DBA" + PadL( AllTrim( Str( Select() ) ), 3, "0" )
-               lNewArea := .f.
-           else
-               ::cAlias := cName
-           endif
+   ::cAlias             := cCheckArea( "DBA" )
 
-           DbUseArea( lNewArea, ::cRDD, ::cFile, ::cAlias, ::lShared, ::lReadOnly )
-           if NetErr()
-               lOpen    := .f.
-           else
-               lOpen    := .t.
-           end if
-
-       endif
-
+   /*
+   if select( cName ) > 0
+       dbSelectArea( 0 )
+       ::cAlias := "DBA" + padl( alltrim( str( select() ) ), 3, "0" )
+       lNewArea := .f.
+   else
+       ::cAlias := cName
    endif
+   */
+
+   dbUseArea( lNewArea, ::cRDD, ::cFile, ::cAlias, ::lShared, ::lReadOnly )
+   if netErr()
+       lOpen    := .f.
+   else
+       lOpen    := .t.
+   end if
 
 return( lOpen )
 

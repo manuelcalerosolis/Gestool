@@ -3880,10 +3880,6 @@ METHOD ChangeRango() CLASS TNewInfGen
       ::cDesde          := ( oItemSelect:Cargo:Cargo:Desde )
       ::cHasta          := ( oItemSelect:Cargo:Cargo:Hasta )
 
-      // msgAlert( ::cDesde, "cDesde" )
-      // msgAlert( ::cHasta, "cHasta" )
-      // msgAlert( oItemSelect:Cargo:Cargo:Nombre, "Nombre" )
-
       if !Empty( oItemSelect:Cargo:Cargo:bCondition )
 
          if !Eval( oItemSelect:Cargo:Cargo:bCondition )
