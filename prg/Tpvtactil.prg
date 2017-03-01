@@ -4085,7 +4085,7 @@ METHOD CreateTemporal() CLASS TpvTactil
 
       INDEX TO       ( ::cTemporalComanda ) ;
          TAG         "TikC" ;
-         ON          field->cSerTil + field->cNumTil + field->cSufTil + field->cNomOrd + str( field->nNumLin ) ;
+         ON          field->cSerTil + field->cNumTil + field->cSufTil + field->cOrdOrd + str( field->nNumLin ) ;
          COMMENT     "Orden" ;
          NODELETED ;
          OF          ::oTemporalComanda
@@ -8743,7 +8743,7 @@ METHOD BuildReport() CLASS TpvTactil
    SysRefresh()
 
    /*
-   Zona de datos------------------------------------------------------------
+   Zona de datos---------------------------------------------------------------
    */
 
    ::BuildRelationReport()
