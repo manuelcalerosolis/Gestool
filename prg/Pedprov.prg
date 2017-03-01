@@ -7257,7 +7257,7 @@ return ( aPedPrvDoc )
 FUNCTION lSnd( oWndBrw, dbf )
 
    local nRecAct
-   local nRecOld           := ( dbf )->( Recno() )
+   local nRecOld              := ( dbf )->( Recno() )
 
    for each nRecAct in ( oWndBrw:oBrw:aSelected )
 
@@ -7265,9 +7265,14 @@ FUNCTION lSnd( oWndBrw, dbf )
 
       if dbDialogLock( dbf )
 
-         ( dbf )->lSndDoc  := !( dbf )->lSndDoc
-         ( dbf )->dFecChg  := Date()
-         ( dbf )->cTimChg  := Time()
+         ( dbf )->lSndDoc     := !( dbf )->lSndDoc
+         
+         if ( dbf )->( fieldPos( 'dFecChg' ) ) != 0
+            ( dbf )->dFecChg  := Date()
+         end if 
+         if ( dbf )->( fieldPos( 'cTimChg' ) ) != 0
+            ( dbf )->cTimChg  := Time()
+         end if 
 
          ( dbf )->( dbUnlock() )
 
