@@ -1315,6 +1315,16 @@ FUNCTION EdtCob( aTmp, aGet, cFacCliP, oBrw, lRectificativa, nSpecialMode, nMode
          WHEN     ( nMode != ZOOM_MODE ) ;
          OF       oFld:aDialogs[ 4 ]
 
+      REDEFINE GET aGet[ _DFECCRE ] VAR aTmp[ _DFECCRE ] ;
+         ID       300 ;
+         WHEN     ( .f. ) ;
+         OF       oFld:aDialogs[ 4 ]
+
+      REDEFINE GET aGet[ _CHORCRE ] VAR aTmp[ _CHORCRE ] ;
+         ID       310 ;
+         WHEN     ( .f. ) ;
+         OF       oFld:aDialogs[ 4 ]
+
       /*
       Montamos la pestaña si somos un recibo compensado
       */

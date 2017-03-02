@@ -22402,17 +22402,31 @@ METHOD validateRecepcion( tmpFacCliT, dbfFacCliT ) CLASS TFacturasClientesSender
    ::cErrorRecepcion       := "Pocesando factura de cliente número " + ( dbfFacCliT )->cSerie + "/" + alltrim( Str( ( dbfFacCliT )->nNumFac ) ) + "/" + alltrim( ( dbfFacCliT )->cSufFac ) + " "
 
    if !( lValidaOperacion( ( tmpFacCliT )->dFecFac, .f. ) )
+
       ::cErrorRecepcion    += "la fecha " + dtoc( ( tmpFacCliT )->dFecFac ) + " no es valida en esta empresa"
+
+      ::oSender:SetText( ::cErrorRecepcion )
+
       Return .f. 
+
    end if 
 
    if !( ( dbfFacCliT )->( dbSeek( ( tmpFacCliT )->cSerie + Str( ( tmpFacCliT )->nNumFac ) + ( tmpFacCliT )->cSufFac ) ) )
+
+      ::oSender:SetText( ::cErrorRecepcion )
+      
       Return .t.
+
    end if 
 
    if dtos( ( dbfFacCliT )->dFecCre ) + ( dbfFacCliT )->cTimCre >= dtos( ( tmpFacCliT )->dFecCre ) + ( tmpFacCliT )->cTimCre 
+      
       ::cErrorRecepcion    += "la fecha en la empresa " + dtoc( ( dbfFacCliT )->dFecCre ) + " " + ( dbfFacCliT )->cTimCre + " es más reciente que la recepción " + dtoc( ( tmpFacCliT )->dFecCre ) + " " + ( tmpFacCliT )->cTimCre 
+      
+      ::oSender:SetText( ::cErrorRecepcion )
+
       Return .f.
+
    end if
 
    ::oSender:SetText( ::cErrorRecepcion )
@@ -22426,17 +22440,31 @@ METHOD validateRecepcionRecibo( tmpFacCliP, dbfFacCliP ) CLASS TFacturasClientes
    ::cErrorRecepcion       := "Pocesando recibo de cliente número " + ( dbfFacCliP )->cSerie + "/" + alltrim( Str( ( dbfFacCliP )->nNumFac ) ) + "/" + alltrim( ( dbfFacCliP )->cSufFac ) + alltrim( Str( ( dbfFacCliP )->nNumRec ) ) + " "
 
    if !( lValidaOperacion( ( tmpFacCliP )->dPreCob, .f. ) )
+
       ::cErrorRecepcion    += "la fecha " + dtoc( ( tmpFacCliP )->dPreCob ) + " no es valida en esta empresa"
+
+      ::oSender:SetText( ::cErrorRecepcion )
+
       Return .f. 
+
    end if 
 
    if !( ( dbfFacCliP )->( dbSeek( ( tmpFacCliP )->cSerie + Str( ( tmpFacCliP )->nNumFac ) + ( tmpFacCliP )->cSufFac + Str( ( tmpFacCliP )->nNumRec ) ) ) )
-      Return .t.
+
+      ::oSender:SetText( ::cErrorRecepcion )
+
+      Return .t. 
+
    end if 
 
    if dtos( ( dbfFacCliP )->dFecCre ) + ( dbfFacCliP )->cHorCre >= dtos( ( tmpFacCliP )->dFecCre ) + ( tmpFacCliP )->cHorCre 
+
       ::cErrorRecepcion    += "la fecha en la empresa " + dtoc( ( dbfFacCliP )->dFecCre ) + " " + ( dbfFacCliP )->cHorCre + " es más reciente que la recepción " + dtoc( ( tmpFacCliP )->dFecCre ) + " " + ( tmpFacCliP )->cHorCre
-      Return .f.
+
+      ::oSender:SetText( ::cErrorRecepcion )
+
+      Return .f. 
+
    end if
 
    ::oSender:SetText( ::cErrorRecepcion )

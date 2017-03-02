@@ -16821,6 +16821,10 @@ FONT 8, "MS Sans Serif"
   CONTROL "", 500, "Static", SS_BITMAP|SS_CENTERIMAGE, 4, 4, 34, 30
   CONTROL "Centro de coste", -1, "Button", BS_GROUPBOX, 44, 127, 285, 25
   CONTROL "Ctr. Coste", -1, "Static", WS_GROUP, 50, 140, 43, 8
+  CONTROL "", 300, "Edit", WS_VSCROLL|WS_BORDER|WS_TABSTOP, 109, 166, 60, 12
+  CONTROL "", 310, "Edit", WS_BORDER|WS_TABSTOP, 172, 166, 40, 12
+  CONTROL "Fecha y hora de creación", -1, "Button", BS_GROUPBOX, 45, 154, 285, 31
+  CONTROL "Fecha y hora", -1, "Static", WS_GROUP, 50, 168, 47, 8
 }
 
 RECIBOS_4 DIALOG DISCARDABLE 82, 27, 333, 272
