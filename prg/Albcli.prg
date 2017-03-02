@@ -3545,6 +3545,16 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, hHash, bValid, nMode )
          WHEN     ( lWhen ) ;
          OF       oFld:aDialogs[2]
 
+      REDEFINE GET aGet[ _DFECCRE ] VAR aTmp[ _DFECCRE ] ;
+         ID       400 ;
+         WHEN     ( .f. ) ;
+         OF       oFld:aDialogs[2]
+
+      REDEFINE GET aGet[ _CTIMCRE ] VAR aTmp[ _CTIMCRE ] ;
+         ID       401 ;
+         WHEN     ( .f. ) ;
+         OF       oFld:aDialogs[2]
+
       /*
       Comentarios_____________________________________________________________
       */
@@ -7537,7 +7547,7 @@ METHOD validateRecepcion( tmpAlbCliT, dbfAlbCliT ) CLASS TAlbaranesClientesSende
       Return .t.
    end if 
 
-   if dtos( ( tmpAlbCliT )->dFecCre ) + ( tmpAlbCliT )->cTimCre >= dtos( ( dbfAlbCliT )->dFecCre ) + ( dbfAlbCliT )->cTimCre 
+   if dtos( ( dbfAlbCliT )->dFecCre ) + ( dbfAlbCliT )->cTimCre >= dtos( ( tmpAlbCliT )->dFecCre ) + ( tmpAlbCliT )->cTimCre
       ::cErrorRecepcion    += "la fecha en la empresa " + dtoc( ( dbfAlbCliT )->dFecCre ) + " " + ( dbfAlbCliT )->cTimCre + " es más reciente que la recepción " + dtoc( ( tmpAlbCliT )->dFecCre ) + " " + ( tmpAlbCliT )->cTimCre 
       Return .f.
    end if

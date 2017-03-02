@@ -3855,6 +3855,16 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, hHash, bValid, nMode )
          PICTURE  "@!" ;
          OF       fldData
 
+      REDEFINE GET aGet[ _DFECCRE ] VAR aTmp[ _DFECCRE ] ;
+         ID       400 ;
+         WHEN     ( .f. ) ;
+         OF       fldData
+
+      REDEFINE GET aGet[ _CTIMCRE ] VAR aTmp[ _CTIMCRE ] ;
+         ID       401 ;
+         WHEN     ( .f. ) ;
+         OF       fldData
+
       /*
       Retirado por________________________________________________________________
       */
