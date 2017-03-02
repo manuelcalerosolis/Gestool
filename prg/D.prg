@@ -273,6 +273,9 @@ CLASS D
    // Tikets de clientes-------------------------------------------------------
 
    METHOD Tikets( nView, cSelect )                             INLINE ( if( lAIS() .and. !empty( cSelect ), ::TiketsSQL( cSelect, nView ), ::Get( "TikeT", nView ) ) )
+
+   METHOD TiketsSQL( cSelect, nView )                          INLINE ( ::getSQL( "TikeT", cSelect, nView ) ) 
+
       METHOD TiketsId( nView )                                 INLINE ( ( ::Tikets( nView ) )->cSerTik + ( ::Tikets( nView ) )->cNumTik + ( ::Tikets( nView ) )->cSufTik )
       METHOD gotoIdTikets( id, nView )                         INLINE ( ::seekInOrd( ::Tikets( nView ), id, "cNumTik" ) ) 
 
@@ -681,8 +684,6 @@ CLASS D
    METHOD Bottom( cDatabase, nView )            INLINE ( dbLast( ::Get( cDatabase, nView ) ) )
 
    METHOD OpenObject( oDataTable )
-
-   METHOD TiketsSQL( cSelect, nView )
 
    METHOD getSQL( cDataTable, cSelect, nView )   
 
@@ -1159,12 +1160,6 @@ RETURN ( hash )
 
 //---------------------------------------------------------------------------//
 
-METHOD TiketsSQL( cSelect, nView ) CLASS D
-
-Return ( ::getSQL( "TiketSQL", cSelect, nView ) )
-
-//---------------------------------------------------------------------------//
-
 METHOD getSQL( cDataTable, cSelect, nView ) CLASS D
 
    local cHandle     := ::GetView( cDataTable, nView )
@@ -1186,9 +1181,9 @@ METHOD openSQL( cDataTable, cSelect, nView ) CLASS D
       ( cSql )->( dbgotop() )
    end if
 
-   ::addView( cDataTable, cSql, nView )  
+   ::addView( cDataTable, cSql, nView )
    
-    uHandle     := ::GetView( cDataTable, nView ) 
+   uHandle        := ::GetView( cDataTable, nView ) 
 
 Return ( uHandle )
 
