@@ -2515,14 +2515,14 @@ METHOD FastReportParteProduccion()
    ::oFastReport:SetWorkArea(       "Partes de producción", ::oProCab:nArea )
    ::oFastReport:SetFieldAliases(   "Partes de producción", cObjectsToReport( TProduccion():DefineFiles() ) )
    
-   ::oProLin:OrdSetFocus( "iNumOrd" )
+   ( D():PartesProduccionMaterial( ::nView ) )->( OrdSetFocus( "iNumOrd" ) )
    
-   ::oFastReport:SetWorkArea(       "Lineas partes de producción", ::oProLin:nArea )
+   ::oFastReport:SetWorkArea(       "Lineas partes de producción", ( D():PartesProduccionMaterial( ::nView ) )->( select() ) )
    ::oFastReport:SetFieldAliases(   "Lineas partes de producción", cObjectsToReport( TDetProduccion():DefineFiles() ) )
 
-   ::oProMat:OrdSetFocus( "iNumOrd" )
+   ( D():PartesProduccionMateriaPrima( ::nView ) )->( OrdSetFocus( "iNumOrd" ) )
    
-   ::oFastReport:SetWorkArea(       "Materia prima", ::oProLin:nArea )
+   ::oFastReport:SetWorkArea(       "Materia prima", ( D():PartesProduccionMaterial( ::nView ) )->( select() ) )
    ::oFastReport:SetFieldAliases(   "Materia prima", cObjectsToReport( TDetMaterial():DefineFiles() ) )
    
    ::oFastReport:SetMasterDetail(   "Informe", "Partes de producción",              {|| ::idDocumento() } )
