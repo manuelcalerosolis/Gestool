@@ -1,6 +1,3 @@
-
-
-
 #include "FiveWin.ch"  
 #include "Factu.ch" 
 #include "Report.ch"
