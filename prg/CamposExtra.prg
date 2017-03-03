@@ -729,4 +729,3 @@ Function getCustomExtraField( cFieldName, cDocumentType, Id )
 Return ( cExtraField )
 
 //---------------------------------------------------------------------------//
-

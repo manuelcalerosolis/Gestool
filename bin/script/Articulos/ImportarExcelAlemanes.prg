@@ -269,7 +269,6 @@ METHOD cFamilia()
    local nRec        := ( D():Familias( ::nView ) )->( Recno() )
    local nOrdAnt     := ( D():Familias( ::nView ) )->( OrdSetFocus( "cNomFam" ) )
    local cNewCodigo
-
    
    if Empty( ::getExcelString( "BB" ) ) .and. !Empty( ::getExcelString( "BA" ) )
 
