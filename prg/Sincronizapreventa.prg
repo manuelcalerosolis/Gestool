@@ -169,18 +169,6 @@ METHOD Search( oDlg )
    BEGIN SEQUENCE
 
    /*
-   Sinconizacion de tablas de clientes-----------------------------------------
-   */
-
-   // pdaClienteSenderReciver():CreateData( , ::oMessage, cPatServidor )
-
-   /*
-   Sinconizacion de tablas de familias-----------------------------------------
-   */
-
-   pdaFamiliaSenderReciver():CreateData( , ::oMessage, cPatServidor )
-
-   /*
    Sinconizacion de tablas de agentes------------------------------------------
    */
 

@@ -1,14 +1,9 @@
-#ifndef __PDA__
-   #include "FiveWin.ch"
-   #include "Font.ch"
-   #include "Report.ch"
-   #include "Image.ch"
-   #include "MesDbf.ch"
-   #include "xbrowse.ch"
-#else
-   #include "FWCE.ch"   
-   REQUEST DBFCDX
-#endif
+#include "FiveWin.ch"
+#include "Font.ch"
+#include "Report.ch"
+#include "Image.ch"
+#include "MesDbf.ch"
+#include "xbrowse.ch"
 #include "Factu.ch" 
 
 #define DT_TOP                      0x00000000
@@ -74,23 +69,27 @@ static nview
 static lOpenFiles    :=.f.
 
 static dbfPrv
-static dbfTmp
 static dbfArticulo
+
+static tmpProveedor
+static tmpLenguaje
 
 static oGrpFam
 static oFraPub
 static oComentarios
+static oLenguajes
 
 static oBtnAceptarActualizarWeb
 
 static oDetCamposExtra
 
-static cNewFil
+static cFileProveedor
+static cFileLenguaje
 
 static bEdit         := { |aTmp, aGet, dbfFam, oBrw, bWhen, bValid, nMode | EdtRec( aTmp, aGet, dbfFam, oBrw, bWhen, bValid, nMode ) }
-static bEdit2        := { |aTmp, aGet, dbfTmp, oBrw, bWhen, bValid, nMode | EdtDet( aTmp, aGet, dbfTmp, oBrw, bWhen, bValid, nMode ) }
+static bEdit2        := { |aTmp, aGet, tmpProveedor, oBrw, bWhen, bValid, nMode | EdtDet( aTmp, aGet, tmpProveedor, oBrw, bWhen, bValid, nMode ) }
+static bEditLenguaje := { |aTmp, aGet, dbf, oBrw, bWhen, bValid, nMode, aTmpArt | EditLenguaje( aTmp, aGet, dbf, oBrw, bWhen, bValid, nMode, aTmpArt ) }
 
-static dbfFamilia
 static dbfFamPrv
 
 static oTreePadre
@@ -100,8 +99,6 @@ static oTreePadre
 //----------------------------------------------------------------------------//
 
 //Comenzamos la parte de código que se compila para el ejecutable normal
-
-#ifndef __PDA__
 
 FUNCTION BrwFamilia( oGet, oGet2, lAdd )
 
@@ -123,19 +120,19 @@ FUNCTION BrwFamilia( oGet, oGet2, lAdd )
    cCbxOrd        := aCbxOrd[ nOrd ]
 
    if !OpenFiles( .t. )
-      return nil
+      RETURN nil
    end if
 
-   nOrd           := ( dbfFamilia )->( OrdSetFocus( nOrd ) )
+   nOrd           := ( D():Familias( nView ) )->( OrdSetFocus( nOrd ) )
 
-   ( dbfFamilia )->( dbGoTop() )
+   ( D():Familias( nView ) )->( dbgotop() )
 
    DEFINE DIALOG oDlg RESOURCE "HELPENTRY" TITLE "Familias de artículos"
 
 		REDEFINE GET oGet1 VAR cGet1;
          ID       104 ;
-         ON CHANGE( AutoSeek( nKey, nFlags, Self, oBrw, dbfFamilia ) ) ;
-         VALID    ( OrdClearScope( oBrw, dbfFamilia ) );
+         ON CHANGE( AutoSeek( nKey, nFlags, Self, oBrw, D():Familias( nView ) ) ) ;
+         VALID    ( OrdClearScope( oBrw, D():Familias( nView ) ) );
          BITMAP   "FIND" ;
          OF       oDlg
 
@@ -143,7 +140,7 @@ FUNCTION BrwFamilia( oGet, oGet2, lAdd )
 			VAR 		cCbxOrd ;
 			ID 		102 ;
          ITEMS    aCbxOrd ;
-			ON CHANGE( ( dbfFamilia )->( OrdSetFocus( oCbxOrd:nAt ) ), oBrw:refresh(), oGet1:SetFocus() ) ;
+			ON CHANGE( ( D():Familias( nView ) )->( OrdSetFocus( oCbxOrd:nAt ) ), oBrw:refresh(), oGet1:SetFocus() ) ;
 			OF 		oDlg
 
       oBrw                 := IXBrowse():New( oDlg )
@@ -151,14 +148,14 @@ FUNCTION BrwFamilia( oGet, oGet2, lAdd )
       oBrw:bClrSel         := {|| { CLR_BLACK, Rgb( 229, 229, 229 ) } }
       oBrw:bClrSelFocus    := {|| { CLR_BLACK, Rgb( 167, 205, 240 ) } }
 
-      oBrw:cAlias          := dbfFamilia
+      oBrw:cAlias          := D():Familias( nView )
       oBrw:nMarqueeStyle   := 5
       oBrw:cName           := "Browse.Familias"
 
       with object ( oBrw:AddCol() )
          :cHeader          := "Código"
          :cSortOrder       := "cCodFam"
-         :bEditValue       := {|| ( dbfFamilia )->cCodFam }
+         :bEditValue       := {|| ( D():Familias( nView ) )->cCodFam }
          :nWidth           := 120
          :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | oCbxOrd:Set( oCol:cHeader ) }
       end with
@@ -166,7 +163,7 @@ FUNCTION BrwFamilia( oGet, oGet2, lAdd )
       with object ( oBrw:AddCol() )
          :cHeader          := "Nombre"
          :cSortOrder       := "cNomFam"
-         :bEditValue       := {|| ( dbfFamilia )->cNomFam }
+         :bEditValue       := {|| ( D():Familias( nView ) )->cNomFam }
          :nWidth           := 260
          :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | oCbxOrd:Set( oCol:cHeader ) }
       end with
@@ -190,20 +187,20 @@ FUNCTION BrwFamilia( oGet, oGet2, lAdd )
          ID       500 ;
          OF       oDlg ;
          WHEN     ( nAnd( nLevel, ACC_APPD ) != 0 .and. !IsReport() .and. lAdd );
-         ACTION   ( WinAppRec( oBrw, bEdit, dbfFamilia ) )
+         ACTION   ( WinAppRec( oBrw, bEdit, D():Familias( nView ) ) )
 
 		REDEFINE BUTTON ;
          ID       501 ;
          OF       oDlg ;
          WHEN     ( nAnd( nLevel, ACC_EDIT ) != 0 .and. !IsReport() .and. lAdd );
-         ACTION   ( WinEdtRec( oBrw, bEdit, dbfFamilia ) )
+         ACTION   ( WinEdtRec( oBrw, bEdit, D():Familias( nView ) ) )
 
    if nAnd( nLevel, ACC_APPD ) != 0 .and. !IsReport()
-      oDlg:AddFastKey( VK_F2,    {|| WinAppRec( oBrw, bEdit, dbfFamilia ) } )
+      oDlg:AddFastKey( VK_F2,    {|| WinAppRec( oBrw, bEdit, D():Familias( nView ) ) } )
    end if
 
    if nAnd( nLevel, ACC_EDIT ) != 0 .and. !IsReport()
-      oDlg:AddFastKey( VK_F3,    {|| WinEdtRec( oBrw, bEdit, dbfFamilia ) } )
+      oDlg:AddFastKey( VK_F3,    {|| WinEdtRec( oBrw, bEdit, D():Familias( nView ) ) } )
    end if
 
    oDlg:AddFastKey( VK_F5,       {|| oDlg:end( IDOK ) } )
@@ -211,147 +208,35 @@ FUNCTION BrwFamilia( oGet, oGet2, lAdd )
 
    ACTIVATE DIALOG oDlg CENTER
 
-   DestroyFastFilter( dbfFamilia )
+   DestroyFastFilter( D():Familias( nView ) )
 
-   SetBrwOpt( "BrwFamilia", ( dbfFamilia )->( OrdNumber() ) )
+   SetBrwOpt( "BrwFamilia", ( D():Familias( nView ) )->( OrdNumber() ) )
 
    if oDlg:nResult == IDOK
 
-      cCod                 := ( dbfFamilia )->cCodFam
+      cCod                 := ( D():Familias( nView ) )->cCodFam
 
-      if !Empty( oGet )
+      if !empty( oGet )
          oGet:cText( cCod )
       end if
 
-      if !Empty( oGet2 )
-         oGet2:cText( ( dbfFamilia )->cNomFam )
+      if !empty( oGet2 )
+         oGet2:cText( ( D():Familias( nView ) )->cNomFam )
       end if
 
    end if
 
    CloseFiles()
 
-   if !Empty( oGet )
+   if !empty( oGet )
       oGet:SetFocus()
    end if
 
 RETURN ( cCod )
 
 //---------------------------------------------------------------------------//
-/*
-Browse de familias para las familias combinadas para que haga el closefiles
-*/
 
-FUNCTION BrwFamiliaCombinada( oGet, dbfFamilia, oGet2 )
-
-	local oDlg
-	local oBrw
-   local nRec
-	local oGet1
-	local cGet1
-   local nOrd     := GetBrwOpt( "BrwFamilia" )
-	local oCbxOrd
-   local aCbxOrd  := { "Código", "Nombre" }
-   local cCbxOrd
-   local nLevel   := nLevelUsr( MENUOPTION )
-   local lOpen    := .f.
-
-   nRec           := ( dbfFamilia )->( RecNo() )
-
-   nOrd           := Min( Max( nOrd, 1 ), len( aCbxOrd ) )
-   cCbxOrd        := aCbxOrd[ nOrd ]
-
-   nOrd           := ( dbfFamilia )->( OrdSetFocus( nOrd ) )
-
-   ( dbfFamilia )->( dbGoTop() )
-
-   DEFINE DIALOG oDlg RESOURCE "HELPENTRY" TITLE "Familias de artículos"
-
-		REDEFINE GET oGet1 VAR cGet1;
-         ID       104 ;
-         ON CHANGE( AutoSeek( nKey, nFlags, Self, oBrw, dbfFamilia ) ) ;
-         VALID    ( OrdClearScope( oBrw, dbfFamilia ) );
-         BITMAP   "FIND" ;
-         OF       oDlg
-
-		REDEFINE COMBOBOX oCbxOrd ;
-			VAR 		cCbxOrd ;
-			ID 		102 ;
-         ITEMS    aCbxOrd ;
-			ON CHANGE( ( dbfFamilia )->( OrdSetFocus( oCbxOrd:nAt ) ), oBrw:refresh(), oGet1:SetFocus() ) ;
-			OF 		oDlg
-
-      REDEFINE XBROWSE oBrw ;
-			FIELDS ;
-                  ( dbfFamilia )->cCodFam,;
-                  ( dbfFamilia )->cNomFam;
-			HEAD ;
-                  "Código",;
-                  "Nombre";
-         FIELDSIZES ;
-                  60 ,;
-                  200;
-         ALIAS    ( dbfFamilia );
-         ID       105 ;
-         OF       oDlg
-
-      oBrw:bClrSel         := {|| { CLR_BLACK, Rgb( 229, 229, 229 ) } }
-      oBrw:bClrSelFocus    := {|| { CLR_BLACK, Rgb( 167, 205, 240 ) } }
-
-      oBrw:bLDblClick      := {|| oDlg:end( IDOK ) }
-
-      oBrw:nMarqueeStyle   := 5
-
-		REDEFINE BUTTON ;
-         ID       IDOK ;
-         OF       oDlg ;
-         ACTION   ( oDlg:end(IDOK) )
-
-		REDEFINE BUTTON ;
-         ID       IDCANCEL ;
-         OF       oDlg ;
-         ACTION   ( oDlg:end() )
-
-		REDEFINE BUTTON ;
-         ID       500 ;
-         OF       oDlg ;
-         WHEN     ( .f. );
-         ACTION   ( nil )
-
-		REDEFINE BUTTON ;
-         ID       501 ;
-         OF       oDlg ;
-         WHEN     ( .f. );
-         ACTION   ( nil )
-
-   oDlg:AddFastKey( VK_F5,       {|| oDlg:end( IDOK ) } )
-   oDlg:AddFastKey( VK_RETURN,   {|| oDlg:end( IDOK ) } )
-
-   ACTIVATE DIALOG oDlg CENTER
-
-   DestroyFastFilter( dbfFamilia )
-
-   SetBrwOpt( "BrwFamilia", ( dbfFamilia )->( OrdNumber() ) )
-
-   if oDlg:nResult == IDOK
-
-      oGet:cText( ( dbfFamilia )->cCodFam )
-
-      if oGet2 != NIL
-         oGet2:cText( ( dbfFamilia )->cNomFam )
-      end if
-
-   end if
-
-   oGet:SetFocus()
-
-   ( dbfFamilia )->( dbGoTo( nRec ) )
-
-RETURN ( oDlg:nResult == IDOK )
-
-//---------------------------------------------------------------------------//
-
-static function OpenFiles()
+STATIC FUNCTION OpenFiles()
 
    local lOpen       := .t.
    local oError
@@ -362,14 +247,15 @@ static function OpenFiles()
 
       DisableAcceso()
 
-      nView             := D():CreateView()
+      nView          := D():CreateView()
 
-      lOpenFiles  := .t.
+      lOpenFiles     := .t.
 
       D():Familias( nView )
 
-      USE ( cPatArt() + "Familias.Dbf" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "FAMILIAS", @dbfFamilia ) )
-      SET ADSINDEX TO ( cPatArt() + "Familias.Cdx" ) ADDITIVE
+      D():FamiliasLenguajes( nView )
+
+      D():Lenguajes( nView )
 
       USE ( cPatArt() + "FamPrv.Dbf" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "FAMPRV", @dbfFamPrv ) )
       SET ADSINDEX TO ( cPatArt() + "FamPrv.Cdx" ) ADDITIVE
@@ -390,11 +276,16 @@ static function OpenFiles()
       oComentarios      := TComentarios():Create( cPatArt() )
       oComentarios:OpenFiles()
 
-      oDetCamposExtra      := TDetCamposExtra():New()
+      oDetCamposExtra   := TDetCamposExtra():New()
       if !empty( oDetCamposExtra )
          oDetCamposExtra:OpenFiles()
          oDetCamposExtra:SetTipoDocumento( "Familias" )
          oDetCamposExtra:setbId( {|| D():FamiliasId( nView ) } )
+      end if
+
+      oLenguajes           := TLenguaje():Create( cPatDat() )
+      if !oLenguajes:OpenFiles()
+         lOpenFiles        := .f.
       end if
 
    RECOVER USING oError
@@ -409,41 +300,44 @@ static function OpenFiles()
 
    ErrorBlock( oBlock )
 
-return ( lOpen )
+RETURN ( lOpen )
 
 //---------------------------------------------------------------------------//
 
-static function CloseFiles()
+STATIC FUNCTION CloseFiles()
 
-   CLOSE ( dbfFamilia   )
    CLOSE ( dbfFamPrv    )
    CLOSE ( dbfArticulo  )
    CLOSE ( dbfPrv       )
 
-   if !Empty( oGrpFam )
+   if !empty( oGrpFam )
       oGrpFam:End()
    end if
 
-   if !Empty( oFraPub )
+   if !empty( oFraPub )
       oFraPub:End()
    end if
 
-
-   if !Empty( oComentarios )
+   if !empty( oComentarios )
       oComentarios:End()
    end if
 
-   if !Empty( oDetCamposExtra )
+   if !empty( oDetCamposExtra )
       oDetCamposExtra:CloseFiles()
    end if
 
+   if !empty( oLenguajes )
+      oLenguajes:End()
+   end if
+
    oWndBrw        := nil
+
    dbfArticulo    := nil
-   dbfFamilia     := nil
    dbfPrv         := nil
    oComentarios   := nil
+   oLenguajes     := nil
 
-return .t.
+RETURN .t.
 
 //---------------------------------------------------------------------------//
 
@@ -465,7 +359,7 @@ FUNCTION Familia( oMenuItem, oWnd )
 
       if nAnd( nLevel, 1 ) != 0
          msgStop( "Acceso no permitido." )
-         return nil
+         RETURN nil
       end if
 
       /*
@@ -477,7 +371,7 @@ FUNCTION Familia( oMenuItem, oWnd )
       end if
 
       if !OpenFiles()
-         return nil
+         RETURN nil
       end if
 
       /*
@@ -494,11 +388,11 @@ FUNCTION Familia( oMenuItem, oWnd )
                "Posición" ;
       MRU      "gc_cubes_16" ;
       BITMAP   clrTopArchivos ;
-		ALIAS		( dbfFamilia ) ;
-      APPEND   ( WinAppRec( oWndBrw:oBrw, bEdit, dbfFamilia ) );
-      DUPLICAT ( WinDupRec( oWndBrw:oBrw, bEdit, dbfFamilia ) );
-      EDIT     ( WinEdtRec( oWndBrw:oBrw, bEdit, dbfFamilia ) );
-      DELETE   ( WinDelRec( oWndBrw:oBrw, dbfFamilia, {|| DeleteFamiliaProveedores() } ) );
+		ALIAS		( D():Familias( nView ) ) ;
+      APPEND   ( WinAppRec( oWndBrw:oBrw, bEdit, D():Familias( nView ) ) );
+      DUPLICAT ( WinDupRec( oWndBrw:oBrw, bEdit, D():Familias( nView ) ) );
+      EDIT     ( WinEdtRec( oWndBrw:oBrw, bEdit, D():Familias( nView ) ) );
+      DELETE   ( WinDelRec( oWndBrw:oBrw, D():Familias( nView ), {|| DeleteFamiliaProveedores() } ) );
       LEVEL    nLevel ;
 		OF 		oWnd
 
@@ -507,7 +401,7 @@ FUNCTION Familia( oMenuItem, oWnd )
       with object ( oWndBrw:AddXCol() )
          :cHeader          := "Envio"
          :bStrData         := {|| "" }
-         :bEditValue       := {|| ( dbfFamilia )->lSelDoc }
+         :bEditValue       := {|| ( D():Familias( nView ) )->lSelDoc }
          :nWidth           := 20
          :SetCheck( { "gc_mail2_12", "Nil16" } )
          :nHeadBmpNo       := 3
@@ -517,7 +411,7 @@ FUNCTION Familia( oMenuItem, oWnd )
       with object ( oWndBrw:AddXCol() )
          :cHeader          := "Publicar"
          :bStrData         := {|| "" }
-         :bEditValue       := {|| ( dbfFamilia )->lPubInt }
+         :bEditValue       := {|| ( D():Familias( nView ) )->lPubInt }
          :nWidth           := 20
          :SetCheck( { "gc_earth_12", "Nil16" } )
          :nHeadBmpNo       := 3
@@ -527,7 +421,7 @@ FUNCTION Familia( oMenuItem, oWnd )
       with object ( oWndBrw:AddXCol() )
          :cHeader          := "Táctil"
          :bStrData         := {|| "" }
-         :bEditValue       := {|| ( dbfFamilia )->lIncTpv }
+         :bEditValue       := {|| ( D():Familias( nView ) )->lIncTpv }
          :nWidth           := 20
          :SetCheck( { "Sel16", "Nil16" } )
          :nHeadBmpNo       := 3
@@ -538,7 +432,7 @@ FUNCTION Familia( oMenuItem, oWnd )
          :cHeader          := "Código"
          :nHeadBmpNo       := 1
          :cSortOrder       := "CCODFAM"
-         :bEditValue       := {|| ( dbfFamilia )->cCodFam }
+         :bEditValue       := {|| ( D():Familias( nView ) )->cCodFam }
          :nWidth           := 80
          :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | oWndBrw:ClickOnHeader( oCol ) }
          :AddResource( "Sel16" )
@@ -547,33 +441,33 @@ FUNCTION Familia( oMenuItem, oWnd )
       with object ( oWndBrw:AddXCol() )
          :cHeader          := "Nombre"
          :cSortOrder       := "CNOMFAM"
-         :bEditValue       := {|| ( dbfFamilia )->cNomFam }
+         :bEditValue       := {|| ( D():Familias( nView ) )->cNomFam }
          :nWidth           := 260
          :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | oWndBrw:ClickOnHeader( oCol ) }
       end with
 
       with object ( oWndBrw:AddXCol() )
          :cHeader          := "Grupo"
-         :bStrData         := {|| ( dbfFamilia )->cCodGrp }
+         :bStrData         := {|| ( D():Familias( nView ) )->cCodGrp }
          :nWidth           := 60
       end with
 
       with object ( oWndBrw:AddXCol() )
          :cHeader          := "Prop. 1"
-         :bStrData         := {|| ( dbfFamilia )->cCodPrp1 }
+         :bStrData         := {|| ( D():Familias( nView ) )->cCodPrp1 }
          :nWidth           := 60
       end with
 
       with object ( oWndBrw:AddXCol() )
          :cHeader          := "Prop. 2"
-         :bStrData         := {|| ( dbfFamilia )->cCodPrp2 }
+         :bStrData         := {|| ( D():Familias( nView ) )->cCodPrp2 }
          :nWidth           := 60
       end with
 
       with object ( oWndBrw:AddXCol() )
          :cHeader          := "Posición"
          :cSortOrder       := "nPosTpv"
-         :bEditValue       := {|| if( ( dbfFamilia )->lIncTpv, Trans( ( dbfFamilia )->nPosTpv, "99" ), "" ) }
+         :bEditValue       := {|| if( ( D():Familias( nView ) )->lIncTpv, Trans( ( D():Familias( nView ) )->nPosTpv, "99" ), "" ) }
          :nWidth           := 80
          :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | oWndBrw:ClickOnHeader( oCol ) }
          :nDataStrAlign    := 1
@@ -582,7 +476,7 @@ FUNCTION Familia( oMenuItem, oWnd )
 
       with object ( oWndBrw:AddXCol() )
          :cHeader          := "Familia padre"
-         :bStrData         := {|| ( dbfFamilia )->cFamCmb }
+         :bStrData         := {|| ( D():Familias( nView ) )->cFamCmb }
          :nWidth           := 60
          :lHide            := .t.
       end with
@@ -625,7 +519,7 @@ FUNCTION Familia( oMenuItem, oWnd )
 
 		DEFINE BTNSHELL RESOURCE "ZOOM" OF oWndBrw ;
 			NOBORDER ;
-			ACTION  	( WinZooRec( oWndBrw:oBrw, bEdit, dbfFamilia ) );
+			ACTION  	( WinZooRec( oWndBrw:oBrw, bEdit, D():Familias( nView ) ) );
 			TOOLTIP 	"(Z)oom";
          HOTKEY   "Z";
          LEVEL    ACC_ZOOM
@@ -655,7 +549,7 @@ FUNCTION Familia( oMenuItem, oWnd )
 
          DEFINE BTNSHELL RESOURCE "Lbl" OF oWndBrw ;
             NOBORDER ;
-            ACTION   ( lSelectAll( oWndBrw, dbfFamilia, "lSelDoc", .t., .t., .t. ) );
+            ACTION   ( lSelectAll( oWndBrw, D():Familias( nView ), "lSelDoc", .t., .t., .t. ) );
             TOOLTIP  "Todos" ;
             FROM     oSnd ;
             CLOSED ;
@@ -663,7 +557,7 @@ FUNCTION Familia( oMenuItem, oWnd )
 
          DEFINE BTNSHELL RESOURCE "Lbl" OF oWndBrw ;
             NOBORDER ;
-            ACTION   ( lSelectAll( oWndBrw, dbfFamilia, "lSelDoc", .f., .t., .t. ) );
+            ACTION   ( lSelectAll( oWndBrw, D():Familias( nView ), "lSelDoc", .f., .t., .t. ) );
             TOOLTIP  "Ninguno" ;
             FROM     oSnd ;
             CLOSED ;
@@ -715,13 +609,14 @@ RETURN NIL
 
 //----------------------------------------------------------------------------//
 
-Static Function EdtRec( aTmp, aGet, dbfFamilia, oBrw, bWhen, bValid, nMode )
+STATIC FUNCTION EdtRec( aTmp, aGet, cFamilia, oBrw, bWhen, bValid, nMode )
 
 	local oDlg
    local oFld
    local oBlock
    local oError
    local oBrwPrv
+   local oBrwLenguaje
    local oSayGrp
    local cSayGrp
    local oSayTComandas
@@ -737,12 +632,12 @@ Static Function EdtRec( aTmp, aGet, dbfFamilia, oBrw, bWhen, bValid, nMode )
 
       BeginTrans( aTmp, nMode )
 
-      if Empty( aTmp[ _NCOLBTN ] )
+      if empty( aTmp[ _NCOLBTN ] )
          aTmp[ _NCOLBTN ]  := GetSysColor( COLOR_BTNFACE )
       end if
 
       if nMode == DUPL_MODE
-         aTmp[ _CCODFAM ]  := NextKey( aTmp[ _CCODFAM ], dbfFamilia )
+         aTmp[ _CCODFAM ]  := NextKey( aTmp[ _CCODFAM ], D():Familias( nView ) )
       end if
 
       if nMode == APPD_MODE
@@ -756,10 +651,12 @@ Static Function EdtRec( aTmp, aGet, dbfFamilia, oBrw, bWhen, bValid, nMode )
          OF       oDlg ;
          PROMPT   "&General",;
                   "&Propiedades",;
-                  "&Proveedores";
+                  "&Proveedores",;
+                  "&Idiomas";
          DIALOGS  "FAMILIA_01",;
                   "FAMILIA_04",;
-                  "FAMILIA_02"
+                  "FAMILIA_02",;
+                  "FAMILIA_03"
 
          /*
          Redefinici¢n de la primera caja de Dialogo-------------------------------
@@ -768,9 +665,9 @@ Static Function EdtRec( aTmp, aGet, dbfFamilia, oBrw, bWhen, bValid, nMode )
          REDEFINE GET aGet[ _CCODFAM ] VAR aTmp[ _CCODFAM ];
             ID       100 ;
             WHEN     ( nMode == APPD_MODE .or. nMode == DUPL_MODE ) ;
-            ON HELP  ( aGet[ _CCODFAM ]:cText( NextKey( aTmp[ _CCODFAM ], dbfFamilia ) ) ) ; // dbLast( dbfFamilia, 1, nil, nil, 1 ) ) ) ) ;
+            ON HELP  ( aGet[ _CCODFAM ]:cText( NextKey( aTmp[ _CCODFAM ], D():Familias( nView ) ) ) ) ; // dbLast( D():Familias( nView ), 1, nil, nil, 1 ) ) ) ) ;
             BITMAP   "BOT" ;
-            VALID    ( notValid( aGet[ _CCODFAM ], dbfFamilia ) ) ;
+            VALID    ( notValid( aGet[ _CCODFAM ], D():Familias( nView ) ) ) ;
             PICTURE  "@!" ;
             OF       oFld:aDialogs[1]
 
@@ -973,44 +870,92 @@ Static Function EdtRec( aTmp, aGet, dbfFamilia, oBrw, bWhen, bValid, nMode )
          oBrwPrv:bClrSel         := {|| { CLR_BLACK, Rgb( 229, 229, 229 ) } }
          oBrwPrv:bClrSelFocus    := {|| { CLR_BLACK, Rgb( 167, 205, 240 ) } }
 
-         oBrwPrv:cAlias          := dbfTmp
+         oBrwPrv:cAlias          := tmpProveedor
          oBrwPrv:nMarqueeStyle   := 6
 
             with object ( oBrwPrv:AddCol() )
                :cHeader          := "Proveedor"
-               :bEditValue       := {|| Rtrim( ( dbfTmp )->cCodPrv ) + Space( 1 ) + retFld( ( dbfTmp )->cCodPrv, dbfPrv, "Titulo" ) }
+               :bEditValue       := {|| Rtrim( ( tmpProveedor )->cCodPrv ) + Space( 1 ) + retFld( ( tmpProveedor )->cCodPrv, dbfPrv, "Titulo" ) }
                :nWidth           := 220
             end with
 
             with object ( oBrwPrv:AddCol() )
                :cHeader          := "Familia"
-               :bEditValue       := {|| ( dbfTmp )->cFamPrv }
+               :bEditValue       := {|| ( tmpProveedor )->cFamPrv }
                :nWidth           := 140
             end with
 
             if nMode != ZOOM_MODE
-               oBrwPrv:bLDblClick   := {|| WinEdtRec( oBrwPrv, bEdit2, dbfTmp ) }
+               oBrwPrv:bLDblClick   := {|| WinEdtRec( oBrwPrv, bEdit2, tmpProveedor ) }
             end if
 
             oBrwPrv:CreateFromResource( 530 )
+
+         // Idiomas -----------------------------------------------------------
+
+         REDEFINE BUTTON;
+            ID       500 ;
+            OF       oFld:aDialogs[ 4 ];
+            WHEN     ( nMode != ZOOM_MODE );
+            ACTION   ( WinAppRec( oBrwLenguaje, bEditLenguaje, tmpLenguaje ) )
+
+         REDEFINE BUTTON;
+            ID       510 ;
+            OF       oFld:aDialogs[ 4 ];
+            WHEN     ( nMode != ZOOM_MODE );
+            ACTION   ( WinEdtRec( oBrwLenguaje, bEditLenguaje, tmpLenguaje ) )
+
+         REDEFINE BUTTON;
+            ID       520 ;
+            OF       oFld:aDialogs[ 4 ];
+            WHEN     ( nMode != ZOOM_MODE );
+            ACTION   ( dbDelRec( oBrwLenguaje, tmpLenguaje ) )
+
+         oBrwLenguaje                  := IXBrowse():New( oFld:aDialogs[ 4 ] )
+
+         oBrwLenguaje:bClrSel          := {|| { CLR_BLACK, Rgb( 229, 229, 229 ) } }
+         oBrwLenguaje:bClrSelFocus     := {|| { CLR_BLACK, Rgb( 167, 205, 240 ) } }
+
+         oBrwLenguaje:cAlias           := tmpLenguaje
+         oBrwLenguaje:nMarqueeStyle    := 6
+
+            with object ( oBrwLenguaje:AddCol() )
+               :cHeader                := "Idioma"
+               :bEditValue             := {|| alltrim( ( tmpLenguaje )->cCodLen ) + " - " + retFld( ( tmpLenguaje )->cCodLen, D():Lenguajes( nView ), "cNomLen" ) }
+               :nWidth                 := 220
+            end with
+
+            with object ( oBrwLenguaje:AddCol() )
+               :cHeader                := "Descripción"
+               :bEditValue             := {|| ( tmpLenguaje )->cDesFam }
+               :nWidth                 := 400
+            end with
+
+            if nMode != ZOOM_MODE
+               oBrwLenguaje:bLDblClick   := {|| WinEdtRec( oBrwLenguaje, bEditLenguaje, tmpLenguaje ) }
+            end if
+
+            oBrwLenguaje:CreateFromResource( 530 )
+
+         // Botones------------------------------------------------------------
 
          REDEFINE BUTTON ;
             ID       500 ;
             OF       oFld:aDialogs[3];
             WHEN     ( nMode != ZOOM_MODE ) ;
-            ACTION   ( WinAppRec( oBrwPrv, bEdit2, dbfTmp ) )
+            ACTION   ( WinAppRec( oBrwPrv, bEdit2, tmpProveedor ) )
 
          REDEFINE BUTTON ;
             ID       510 ;
             OF       oFld:aDialogs[3];
             WHEN     ( nMode != ZOOM_MODE ) ;
-            ACTION   ( WinEdtRec( oBrwPrv, bEdit2, dbfTmp ) )
+            ACTION   ( WinEdtRec( oBrwPrv, bEdit2, tmpProveedor ) )
 
          REDEFINE BUTTON ;
             ID       520 ;
             OF       oFld:aDialogs[3];
             WHEN     ( nMode != ZOOM_MODE ) ;
-            ACTION   ( dbDelRec( oBrwPrv, dbfTmp ) )
+            ACTION   ( dbDelRec( oBrwPrv, tmpProveedor ) )
 
          // Grabamos-----------------------------------------------------------------
 
@@ -1034,9 +979,9 @@ Static Function EdtRec( aTmp, aGet, dbfFamilia, oBrw, bWhen, bValid, nMode )
 
       if nMode != ZOOM_MODE
          
-         oFld:aDialogs[2]:AddFastKey( VK_F2, {|| WinAppRec( oBrwPrv, bEdit2, dbfTmp ) } )
-         oFld:aDialogs[2]:AddFastKey( VK_F3, {|| WinEdtRec( oBrwPrv, bEdit2, dbfTmp ) } )
-         oFld:aDialogs[2]:AddFastKey( VK_F4, {|| dbDelRec( oBrwPrv, dbfTmp ) } )
+         oFld:aDialogs[2]:AddFastKey( VK_F2, {|| WinAppRec( oBrwPrv, bEdit2, tmpProveedor ) } )
+         oFld:aDialogs[2]:AddFastKey( VK_F3, {|| WinEdtRec( oBrwPrv, bEdit2, tmpProveedor ) } )
+         oFld:aDialogs[2]:AddFastKey( VK_F4, {|| dbDelRec( oBrwPrv, tmpProveedor ) } )
 
          oDlg:AddFastKey( VK_F5, {|| EndTrans( aTmp, aGet, nMode, oBrwPrv, oDlg ) } )
 
@@ -1061,7 +1006,7 @@ Static Function EdtRec( aTmp, aGet, dbfFamilia, oBrw, bWhen, bValid, nMode )
 
    ErrorBlock( oBlock )
 
-   if !Empty( oBrwPrv )
+   if !empty( oBrwPrv )
       oBrwPrv:End()
    end if
 
@@ -1075,7 +1020,7 @@ RETURN ( oDlg:nResult == IDOK )
 
 //--------------------------------------------------------------------------//
 
-Static Function EdtRecMenu( oDlg, aTmp )
+STATIC FUNCTION EdtRecMenu( oDlg, aTmp )
 
    local oMenu
 
@@ -1096,11 +1041,11 @@ Static Function EdtRecMenu( oDlg, aTmp )
 
    oDlg:SetMenu( oMenu )
 
-Return ( oMenu )
+RETURN ( oMenu )
 
 //--------------------------------------------------------------------------//
 
-Static Function StartEdtRec( aGet, aTmp, bmpImage )
+STATIC FUNCTION StartEdtRec( aGet, aTmp, bmpImage )
 
    aGet[ _CCODGRP  ]:lValid()
    aGet[ _CCOMFAM  ]:lValid()
@@ -1121,18 +1066,18 @@ Static Function StartEdtRec( aGet, aTmp, bmpImage )
 
    ChgBmp( aGet[ _CIMGBTN ], bmpImage )
 
-Return .t.
+RETURN .t.
 
 //---------------------------------------------------------------------------//
 
-static function LoadTree( oTree, cCodFam )
+STATIC FUNCTION LoadTree( oTree, cCodFam )
 
    local nRec
    local nOrd
    local oNode
 
-   if Empty( cCodFam )
-      // return .t.
+   if empty( cCodFam )
+      // RETURN .t.
       cCodFam        := Space( 16 )
    end if
 
@@ -1140,19 +1085,19 @@ static function LoadTree( oTree, cCodFam )
 
    CursorWait()
 
-   nRec              := ( dbfFamilia )->( Recno() )
-   nOrd              := ( dbfFamilia )->( OrdSetFocus( "cFamCmb" ) )
+   nRec              := ( D():Familias( nView ) )->( Recno() )
+   nOrd              := ( D():Familias( nView ) )->( OrdSetFocus( "cFamCmb" ) )
 
-   if ( dbfFamilia )->( dbSeek( cCodFam ) )
+   if ( D():Familias( nView ) )->( dbSeek( cCodFam ) )
 
-      while ( ( dbfFamilia )->cFamCmb == cCodFam .and. !( dbfFamilia )->( eof() ) )
+      while ( ( D():Familias( nView ) )->cFamCmb == cCodFam .and. !( D():Familias( nView ) )->( eof() ) )
 
-         oNode       := oTree:Add( Alltrim( ( dbfFamilia )->cNomFam ) )
-         oNode:Cargo := ( dbfFamilia )->cCodFam
+         oNode       := oTree:Add( Alltrim( ( D():Familias( nView ) )->cNomFam ) )
+         oNode:Cargo := ( D():Familias( nView ) )->cCodFam
 
-         LoadTree( oNode, ( dbfFamilia )->cCodFam )
+         LoadTree( oNode, ( D():Familias( nView ) )->cCodFam )
 
-         ( dbfFamilia )->( dbSkip() )
+         ( D():Familias( nView ) )->( dbSkip() )
 
          SysRefresh()
 
@@ -1160,24 +1105,24 @@ static function LoadTree( oTree, cCodFam )
 
    end if
 
-   ( dbfFamilia )->( OrdSetFocus( nOrd ) )
-   ( dbfFamilia )->( dbGoTo( nRec ) )
+   ( D():Familias( nView ) )->( OrdSetFocus( nOrd ) )
+   ( D():Familias( nView ) )->( dbGoTo( nRec ) )
 
    CursorWE()
 
    oTree:Expand()
 
-Return ( .t. )
+RETURN ( .t. )
 
 //---------------------------------------------------------------------------//
 
-static function SetTreeState( oTree, aItems, cCodFam )
+STATIC FUNCTION SetTreeState( oTree, aItems, cCodFam )
 
    local oItem
 
    DEFAULT oTree  := oTreePadre
 
-   if Empty( aItems )
+   if empty( aItems )
       aItems      := oTree:aItems
    end if
 
@@ -1198,17 +1143,17 @@ static function SetTreeState( oTree, aItems, cCodFam )
 
    next
 
-Return ( .t. )
+RETURN ( .t. )
 
 //---------------------------------------------------------------------------//
 
-static function ChangeTreeState( oTree, aItems )
+STATIC FUNCTION ChangeTreeState( oTree, aItems )
 
    local oItem
 
    DEFAULT oTree  := oTreePadre
 
-   if Empty( aItems )
+   if empty( aItems )
       aItems      := oTree:aItems
    end if
 
@@ -1226,17 +1171,17 @@ static function ChangeTreeState( oTree, aItems )
 
    next
 
-Return ( .t. )
+RETURN ( .t. )
 
 //---------------------------------------------------------------------------//
 
-static function GetTreeState( aTmp, oTree, aItems )
+STATIC FUNCTION GetTreeState( aTmp, oTree, aItems )
 
    local oItem
 
    DEFAULT oTree              := oTreePadre
 
-   if Empty( aItems )
+   if empty( aItems )
       aItems                  := oTree:aItems
    end if
 
@@ -1253,65 +1198,65 @@ static function GetTreeState( aTmp, oTree, aItems )
 
    next
 
-Return ( aTmp )
+RETURN ( aTmp )
 
 //---------------------------------------------------------------------------//
 
-static function aChildTree( cCodFamilia, aChild )
+STATIC FUNCTION aChildTree( cCodFamilia, aChild )
 
    local nRec
    local nOrd
 
-   if Empty( aChild )
+   if empty( aChild )
       aChild   := {}
    end if
 
    CursorWait()
 
-   nRec        := ( dbfFamilia )->( Recno() )
-   nOrd        := ( dbfFamilia )->( OrdSetFocus( "cFamCmb" ) )
+   nRec        := ( D():Familias( nView ) )->( Recno() )
+   nOrd        := ( D():Familias( nView ) )->( OrdSetFocus( "cFamCmb" ) )
 
-   if ( dbfFamilia )->( dbSeek( cCodFamilia ) )
+   if ( D():Familias( nView ) )->( dbSeek( cCodFamilia ) )
 
-      while ( ( dbfFamilia )->cFamCmb == cCodFamilia .and. !( dbfFamilia )->( Eof() ) )
+      while ( ( D():Familias( nView ) )->cFamCmb == cCodFamilia .and. !( D():Familias( nView ) )->( Eof() ) )
 
-         aAdd( aChild, ( dbfFamilia )->cCodFam )
+         aAdd( aChild, ( D():Familias( nView ) )->cCodFam )
 
-         aChildTree( ( dbfFamilia )->cCodFam, aChild )
+         aChildTree( ( D():Familias( nView ) )->cCodFam, aChild )
 
-         ( dbfFamilia )->( dbSkip() )
+         ( D():Familias( nView ) )->( dbSkip() )
 
       end while
 
    end if
 
-   ( dbfFamilia )->( OrdSetFocus( nOrd ) )
-   ( dbfFamilia )->( dbGoTo( nRec ) )
+   ( D():Familias( nView ) )->( OrdSetFocus( nOrd ) )
+   ( D():Familias( nView ) )->( dbGoTo( nRec ) )
 
    CursorWE()
 
-Return ( aChild )
+RETURN ( aChild )
 
 //---------------------------------------------------------------------------//
 
 STATIC FUNCTION BeginTrans( aTmp, nMode )
 
-   local cCodFam
+   local cCodFam     := aTmp[ _CCODFAM ]
 
-   cCodFam           := aTmp[ _CCODFAM ]
-   cNewFil           := cGetNewFileName( cPatTmp() + "PrvL" )
+   cFileProveedor    := cGetNewFileName( cPatTmp() + "FamPrvl" )
+   cFileLenguaje     := cGetNewFileName( cPatTmp() + "FamLeng" )
 
 	/*
    Primero Crear la base de datos local----------------------------------------
 	*/
 
-   dbCreate( cNewFil, aSqlStruct( aItmFamPrv() ), cLocalDriver() )
-   dbUseArea( .t., cLocalDriver(), cNewFil, cCheckArea( "PrvL", @dbfTmp ), .f. )
+   dbCreate( cFileProveedor, aSqlStruct( aItmFamPrv() ), cLocalDriver() )
+   dbUseArea( .t., cLocalDriver(), cFileProveedor, cCheckArea( "FamPrvl", @tmpProveedor ), .f. )
 
-   if !( dbfTmp )->( neterr() )
+   if !( tmpProveedor )->( neterr() )
 
-      ( dbfTmp )->( ordCondSet( "!Deleted()", {|| !Deleted() } ) )
-      ( dbfTmp )->( OrdCreate( cNewFil, "cPrvFam", "cCodPrv + cFamPrv", {|| Field->cCodPrv + Field->cFamPrv } ) )
+      ( tmpProveedor )->( ordcondset( "!Deleted()", {|| !Deleted() } ) )
+      ( tmpProveedor )->( ordcreate( cFileProveedor, "cPrvFam", "cCodPrv + cFamPrv", {|| Field->cCodPrv + Field->cFamPrv } ) )
 
       /*
       A¤adimos desde el fichero de lineas
@@ -1319,18 +1264,41 @@ STATIC FUNCTION BeginTrans( aTmp, nMode )
 
       if ( dbfFamPrv )->( dbSeek( cCodFam ) )
          while ( ( dbfFamPrv )->cCodFam == cCodFam .and. !( dbfFamPrv )->( Eof() ) )
-            dbPass( dbfFamPrv, dbfTmp, .t. )
+            dbPass( dbfFamPrv, tmpProveedor, .t. )
             ( dbfFamPrv )->( dbSkip() )
          end while
       end if
 
-      ( dbfTmp )->( dbGoTop() )
+      ( tmpProveedor )->( dbgotop() )
+
+   end if
+
+   /*
+   Primero Crear la base de datos local----------------------------------------
+   */
+
+   dbCreate( cFileLenguaje, aSqlStruct( aItmFamiliaLenguajes() ), cLocalDriver() )
+   dbUseArea( .t., cLocalDriver(), cFileLenguaje, cCheckArea( "FamLeng", @tmpLenguaje ), .f. )
+
+   if !( tmpLenguaje )->( neterr() )
+
+      ( tmpLenguaje )->( ordcondset( "!Deleted()", {|| !Deleted() } ) )
+      ( tmpLenguaje )->( ordcreate( cFileLenguaje, "cPrvFam", "cCodFam + cCodLen", {|| Field->cCodFam + Field->cCodLen } ) )
+
+      if ( D():FamiliasLenguajes( nView ) )->( dbSeek( cCodFam ) )
+         while ( ( D():FamiliasLenguajes( nView ) )->cCodFam == cCodFam .and. !( D():FamiliasLenguajes( nView ) )->( Eof() ) )
+            dbPass( D():FamiliasLenguajes( nView ), tmpLenguaje, .t. )
+            ( D():FamiliasLenguajes( nView ) )->( dbSkip() )
+         end while
+      end if
+
+      ( tmpLenguaje )->( dbgotop() )
 
    end if
 
    oDetCamposExtra:SetTemporal( aTmp[ _CCODFAM ], "", nMode )
 
-Return Nil
+RETURN Nil
 
 //-----------------------------------------------------------------------//
 
@@ -1347,55 +1315,55 @@ STATIC FUNCTION EndTrans( aTmp, aGet, nMode, oBrw, oDlg, lActualizaWeb )
 
    if nMode == APPD_MODE .or. nMode == DUPL_MODE
 
-      if Empty( cCodFam )
+      if empty( cCodFam )
          MsgStop( "Código no puede estar vacío" )
          aGet[ _CCODFAM ]:SetFocus()
-         return nil
+         RETURN nil
       end if
 
-      if dbSeekInOrd( cCodFam, "cCodFam", dbfFamilia )
+      if dbSeekInOrd( cCodFam, "cCodFam", D():Familias( nView ) )
          MsgStop( "Código ya existe " + Rtrim( cCodFam ) )
-         return nil
+         RETURN nil
       end if
 
    end if
 
-   if Empty( aTmp[ _CNOMFAM ] )
+   if empty( aTmp[ _CNOMFAM ] )
       MsgStop( "Nombre no puede estar vacío" )
       aGet[ _CNOMFAM ]:SetFocus()
-      return nil
+      RETURN nil
    end if
 
    do case
-      case !Empty( aTmp[ _CCODPRP2 ] ) .AND. Empty( aTmp[ _CCODPRP1 ] )
+      case !empty( aTmp[ _CCODPRP2 ] ) .AND. empty( aTmp[ _CCODPRP1 ] )
          MsgStop( "Para informar la propiedad 2 no puede dejar vacía la propiedad 1." )
-         Return nil
-      case aTmp[ _CCODPRP1 ] == aTmp[ _CCODPRP2 ] .AND. !Empty( aTmp[ _CCODPRP1 ] ) .AND. !Empty( aTmp[ _CCODPRP2 ] )
+         RETURN nil
+      case aTmp[ _CCODPRP1 ] == aTmp[ _CCODPRP2 ] .AND. !empty( aTmp[ _CCODPRP1 ] ) .AND. !empty( aTmp[ _CCODPRP2 ] )
          MsgStop( "No puede repetir las propiedades." )
-         Return nil
+         RETURN nil
    end case
 
-   aTmp[ _CFAMCMB ]  := ""
+   aTmp[ _CFAMCMB ]        := ""
 
    GetTreeState( aTmp )
 
    if ( aTmp[ _CFAMCMB ] == aTmp[ _CCODFAM ] )
       MsgStop( "Familia padre no puede ser el mismo" )
       oTreePadre:SetFocus()
-      Return nil
+      RETURN nil
    end if
 
    aGrp  := aChildTree( aTmp[ _CCODFAM ] )
    if aScan( aGrp, aTmp[ _CFAMCMB ] ) != 0
       MsgStop( "Familia padre contiene referencia circular" )
       oTreePadre:SetFocus()
-      Return nil
+      RETURN nil
    end if
 
    aTmp[ _LSELDOC ]  := .t.
 
 	/*
-	Primero hacer el RollBack
+	Primero hacer el RollBack---------------------------------------------------
 	*/
 
    CursorWait()
@@ -1406,7 +1374,7 @@ STATIC FUNCTION EndTrans( aTmp, aGet, nMode, oBrw, oDlg, lActualizaWeb )
       BeginTransaction()
 
       /*
-      Roll Back
+      Roll Back----------------------------------------------------------------
       */
 
       while ( dbfFamPrv )->( dbSeek( cCodFam ) ) .and. !( dbfFamPrv )->( Eof() )
@@ -1416,29 +1384,40 @@ STATIC FUNCTION EndTrans( aTmp, aGet, nMode, oBrw, oDlg, lActualizaWeb )
          end if
       end while
 
-      /*
-      Ahora escribimos en el fichero definitivo
-      */
-
-      ( dbfTmp )->( dbGoTop() )
-      while !( dbfTmp )->( eof() )
-         dbPass( dbfTmp, dbfFamPrv, .t., cCodFam )
-         ( dbfTmp )->( dbSkip() )
+      while ( D():FamiliasLenguajes( nView ) )->( dbSeek( cCodFam ) ) .and. !( D():FamiliasLenguajes( nView ) )->( Eof() )
+         if dbLock( D():FamiliasLenguajes( nView ) )
+            ( D():FamiliasLenguajes( nView ) )->( dbDelete() )
+            ( D():FamiliasLenguajes( nView ) )->( dbUnLock() )
+         end if
       end while
 
       /*
-      Guardamos los campos extra-----------------------------------------------
+      Ahora escribimos en el fichero definitivo--------------------------------
       */
 
-      oDetCamposExtra:saveExtraField( aTmp[ _CCODFAM ], "" )
+      ( tmpProveedor )->( dbgotop() )
+      while !( tmpProveedor )->( eof() )
+         dbPass( tmpProveedor, dbfFamPrv, .t., cCodFam )
+         ( tmpProveedor )->( dbSkip() )
+      end while
 
-      // Escribe los datos pendientes---------------------------------------------
+      ( tmpLenguaje )->( dbgotop() )
+      while !( tmpLenguaje )->( eof() )
+         dbPass( tmpLenguaje, D():FamiliasLenguajes( nView ), .t., cCodFam )
+         ( tmpLenguaje )->( dbSkip() )
+      end while
 
-      WinGather( aTmp, aGet, dbfFamilia, oBrw, nMode )
+      // Guardamos los campos extra--------------------------------------------
+
+      oDetCamposExtra:saveExtraField( cCodFam, "" )
+
+      // Escribe los datos pendientes------------------------------------------
+
+      WinGather( aTmp, aGet, D():Familias( nView ), oBrw, nMode )
 
       CommitTransaction()
 
-      // Actualizamos los datos de la web para tiempo real------------------------
+      // Actualizamos los datos de la web para tiempo real---------------------
 
       if lActualizaWeb
          actualizaWeb( cCodFam )
@@ -1454,61 +1433,138 @@ STATIC FUNCTION EndTrans( aTmp, aGet, nMode, oBrw, oDlg, lActualizaWeb )
 
    ErrorBlock( oBlock )
 
-   /*
-   Reordenación de posiciones--------------------------------------------------
-
-   ChangePosition()
-   */
-
    CursorWe()
 
    oDlg:end( IDOK )
 
    // dbCommitAll()
 
-Return NIL
+RETURN NIL
 
 //---------------------------------------------------------------------------//
+/*
+Borramos los ficheros
+*/
 
 STATIC FUNCTION KillTrans()
 
-	/*
-	Borramos los ficheros
-	*/
-
-   if ( dbfTmp )->( Used() )
-      ( dbfTmp )->( dbCloseArea() )
+   if ( tmpProveedor )->( Used() )
+      ( tmpProveedor )->( dbCloseArea() )
    end if
 
-   dbfErase( cNewFil )
+   dbfErase( cFileProveedor )
+
+   if ( tmpLenguaje )->( Used() )
+      ( tmpLenguaje )->( dbCloseArea() )
+   end if
+
+   dbfErase( cFileLenguaje )
 
 RETURN .T.
 
 //------------------------------------------------------------------------//
 
-Static Function actualizaWeb( cCodFam )
+STATIC FUNCTION EditLenguaje( aTmp, aGet, tmpLenguaje, oBrwLenguaje, bWhen, bValid, nMode )
 
-   if lPubFam()
+   local oDlg
+   local oBmp
 
-      with object ( TComercio():New() )
-         :MeterTotal( getAutoMeterDialog() )
-         :TextTotal( getAutoTextDialog() )
-         :TComercioCategory:buildCategory( cCodFam )
-      end with
+   DEFINE DIALOG oDlg RESOURCE "FAMILIA_LENGUAJE" TITLE LblTitle( nMode ) + "descripciones por lenguaje"
 
-   end if   
+   REDEFINE BITMAP oBmp ;
+      ID          600 ;
+      RESOURCE    "gc_user_message_48" ; 
+      TRANSPARENT ;
+      OF          oDlg
 
-Return .t.
+   REDEFINE GET   aGet[ ( tmpLenguaje )->( fieldpos( "cCodLen" ) ) ] ;
+      VAR         aTmp[ ( tmpLenguaje )->( fieldpos( "cCodLen" ) ) ] ;
+      ID          110 ;
+      IDTEXT      111 ;
+      VALID       ( oLenguajes:Existe( aGet[ ( tmpLenguaje )->( fieldpos( "cCodLen" ) ) ], aGet[ ( tmpLenguaje )->( fieldpos( "cCodLen" ) ) ]:oHelpText, "cNomLen" ) );
+      ON HELP     ( oLenguajes:Buscar( aGet[ ( tmpLenguaje )->( fieldpos( "cCodLen" ) ) ] ) ) ;
+      BITMAP      "LUPA" ;
+      OF          oDlg
+
+   REDEFINE GET   aGet[ ( tmpLenguaje )->( fieldpos( "cDesFam" ) ) ] ; 
+      VAR         aTmp[ ( tmpLenguaje )->( fieldpos( "cDesFam" ) ) ] ;
+      ID          120 ;
+      OF          oDlg
+
+   REDEFINE BUTTON;
+      ID          IDOK ;
+      OF          oDlg ;
+      ACTION      ( endEditLenguaje( aGet, aTmp, nMode, oBrwLenguaje, oDlg ) )
+
+   REDEFINE BUTTON;
+      ID          IDCANCEL ;
+      OF          oDlg ;
+      CANCEL ;
+      ACTION      ( oDlg:end() )
+
+   if nMode != APPD_MODE
+      oDlg:AddFastKey( VK_F5, {|| endEditLenguaje( aGet, aTmp, nMode, oBrwLenguaje, oDlg ) } )
+   end if
+
+   oDlg:bStart    := {|| aGet[ ( tmpLenguaje )->( fieldpos( "cCodLen" ) ) ]:lValid() }
+
+   ACTIVATE DIALOG oDlg CENTER
+
+   if !empty( oBmp )
+      oBmp:End()
+   end if
+
+RETURN ( oDlg:nResult == IDOK )
+
+//---------------------------------------------------------------------------//
+
+static function endEditLenguaje( aGet, aTmp, nMode, oBrwLenguaje, oDlg )
+
+   if empty( aTmp[ ( tmpLenguaje )->( FieldPos( "cCodLen" ) ) ] )
+      msgStop( "Código de lenguaje no puede estar vacío." )
+      aGet[ ( tmpLenguaje )->( FieldPos( "cCodLen" ) ) ]:SetFocus()
+      Return .f.
+   end if
+
+   if empty( aTmp[ ( tmpLenguaje )->( FieldPos( "cDesFam" ) ) ] ) 
+      msgStop( "Tiene que introducir al menos una descripción." )
+      aGet[ ( tmpLenguaje )->( FieldPos( "cDesFam" ) ) ]:SetFocus()
+      Return .f.
+   end if
+
+   // Guardamos el fichero temporal--------------------------------------------
+
+   WinGather( aTmp, aGet, tmpLenguaje, oBrwLenguaje, nMode )
+
+   oDlg:End( IDOK )
+
+Return ( .t. )
+
+//---------------------------------------------------------------------------//
+
+STATIC FUNCTION actualizaWeb( cCodFam )
+
+   if !lPubFam()
+      RETURN .f.
+   end if
+
+   with object ( TComercio():New() )
+      :MeterTotal( getAutoMeterDialog() )
+      :TextTotal( getAutoTextDialog() )
+      :TComercioCategory:buildCategory( cCodFam )
+   end with
+
+RETURN .t.
 
 //----------------------------------------------------------------------------//
 
-Static Function lPubFam()
+STATIC FUNCTION lPubFam()
 
-Return ( ( dbfFamilia )->lPubInt .or. ( dbfFamilia )->cCodWeb != 0 )
+RETURN ( ( D():Familias( nView ) )->lPubInt .or. ( D():Familias( nView ) )->cCodWeb != 0 )
 
 //----------------------------------------------------------------------------//
 
-STATIC FUNCTION EdtDet( aTmp, aGet, dbfTmp, oBrw, bWhen, bValid, nMode )
+STATIC FUNCTION EdtDet( aTmp, aGet, tmpProveedor, oBrw, bWhen, bValid, nMode )
 
 	local oDlg
 	local oGet
@@ -1519,7 +1575,7 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbfTmp, oBrw, bWhen, bValid, nMode )
    DEFINE DIALOG oDlg RESOURCE "LFAMPRV" TITLE LblTitle( nMode ) + "familias de proveedores"
 
       REDEFINE GET oGet;
-         VAR      aTmp[ ( dbfTmp )->( FieldPos( "cCodPrv" ) ) ];
+         VAR      aTmp[ ( tmpProveedor )->( FieldPos( "cCodPrv" ) ) ];
 			ID 		100 ;
          PICTURE  ( RetPicCodPrvEmp() ) ;
          WHEN     ( nMode == APPD_MODE ) ;
@@ -1533,7 +1589,7 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbfTmp, oBrw, bWhen, bValid, nMode )
          WHEN     ( .f. ) ;
 			OF 		oDlg
 
-      REDEFINE GET oGet2 VAR aTmp[ ( dbfTmp )->( FieldPos( "cFamPrv" ) ) ];
+      REDEFINE GET oGet2 VAR aTmp[ ( tmpProveedor )->( FieldPos( "cFamPrv" ) ) ];
          ID       110 ;
 			WHEN 		( nMode != ZOOM_MODE ) ;
          OF       oDlg
@@ -1542,7 +1598,7 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbfTmp, oBrw, bWhen, bValid, nMode )
          ID       IDOK ;
 			OF 		oDlg ;
 			WHEN 		( 	nMode != ZOOM_MODE ) ;
-         ACTION   (  EndDetalle( aTmp, aGet, dbfTmp, oBrw, nMode, oDlg, oGet, oGet2 ) )
+         ACTION   (  EndDetalle( aTmp, aGet, tmpProveedor, oBrw, nMode, oDlg, oGet, oGet2 ) )
 
 		REDEFINE BUTTON ;
          ID       IDCANCEL ;
@@ -1550,7 +1606,7 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbfTmp, oBrw, bWhen, bValid, nMode )
 			ACTION 	( oDlg:end() )
 
    if nMode != ZOOM_MODE
-      oDlg:AddFastKey( VK_F5, {|| EndDetalle( aTmp, aGet, dbfTmp, oBrw, nMode, oDlg, oGet, oGet2 ) } )
+      oDlg:AddFastKey( VK_F5, {|| EndDetalle( aTmp, aGet, tmpProveedor, oBrw, nMode, oDlg, oGet, oGet2 ) } )
    end if
 
    ACTIVATE DIALOG oDlg ON PAINT ( oGet:lValid() ) CENTER
@@ -1559,51 +1615,51 @@ RETURN ( oDlg:nResult == IDOK )
 
 //---------------------------------------------------------------------------//
 
-Static Function EndDetalle( aTmp, aGet, dbfTmp, oBrw, nMode, oDlg, oGet, oGet2 )
+STATIC FUNCTION EndDetalle( aTmp, aGet, tmpProveedor, oBrw, nMode, oDlg, oGet, oGet2 )
 
    if nMode == APPD_MODE
 
-      if Empty( aTmp[ ( dbfTmp )->( FieldPos( "cCodPrv" ) ) ] )
+      if empty( aTmp[ ( tmpProveedor )->( FieldPos( "cCodPrv" ) ) ] )
          MsgStop( "Código no puede estar vacío" )
          oGet:SetFocus()
-         return nil
+         RETURN nil
       end if
 
    end if
 
-   if Empty( aTmp[ ( dbfTmp )->( FieldPos( "cFamPrv" ) ) ] )
+   if empty( aTmp[ ( tmpProveedor )->( FieldPos( "cFamPrv" ) ) ] )
       MsgStop( "Código de la familia no puede estar vacío" )
       oGet2:SetFocus()
-      return nil
+      RETURN nil
    end if
 
-   if dbSeekFamilia( aTmp, dbfTmp )
+   if dbSeekFamilia( aTmp, tmpProveedor )
       msgStop( "Código de familia existente" )
-      return nil
+      RETURN nil
    end if
 
-   WinGather( aTmp, aGet, dbfTmp, oBrw, nMode )
+   WinGather( aTmp, aGet, tmpProveedor, oBrw, nMode )
 
-Return ( oDlg:end() )
+RETURN ( oDlg:end() )
 
 //---------------------------------------------------------------------------//
 
-Static Function dbSeekFamilia( aTmp, dbfTmp )
+STATIC FUNCTION dbSeekFamilia( aTmp, tmpProveedor )
 
    local lSeek    := .f.
-   local nOrdAnt  := ( dbfTmp )->( OrdSetFocus( "cPrvFam" ) )
+   local nOrdAnt  := ( tmpProveedor )->( OrdSetFocus( "cPrvFam" ) )
 
-   if ( dbfTmp )->( dbSeek( aTmp[ ( dbfTmp )->( FieldPos( "cCodPrv" ) ) ] + aTmp[ ( dbfTmp )->( FieldPos( "cFamPrv" ) ) ] ) )
+   if ( tmpProveedor )->( dbSeek( aTmp[ ( tmpProveedor )->( FieldPos( "cCodPrv" ) ) ] + aTmp[ ( tmpProveedor )->( FieldPos( "cFamPrv" ) ) ] ) )
       lSeek    := .t.
    end if
 
-   ( dbfTmp )->( OrdSetFocus( nOrdAnt ) )
+   ( tmpProveedor )->( OrdSetFocus( nOrdAnt ) )
 
-Return ( lSeek )
+RETURN ( lSeek )
 
 //---------------------------------------------------------------------------//
 
-Function EdtFamilia( cCodFam, lOpenBrowse )
+FUNCTION EdtFamilia( cCodFam, lOpenBrowse )
 
    local lEdit          := .f.
    local nLevel         := nLevelUsr( MENUOPTION )
@@ -1612,13 +1668,13 @@ Function EdtFamilia( cCodFam, lOpenBrowse )
 
    if nAnd( nLevel, 1 ) != 0 .or. nAnd( nLevel, ACC_EDIT ) == 0
       msgStop( 'Acceso no permitido.' )
-      return .f.
+      RETURN .f.
    end if
 
    if lOpenBrowse
 
       if Familia()
-         if dbSeekInOrd( cCodFam, "cCodFam", dbfFamilia )
+         if dbSeekInOrd( cCodFam, "cCodFam", D():Familias( nView ) )
             lEdit       := oWndBrw:RecEdit()
          else
             MsgStop( "No se encuentra familia" )
@@ -1627,11 +1683,11 @@ Function EdtFamilia( cCodFam, lOpenBrowse )
 
    else
 
-      if !Empty( cCodFam )
+      if !empty( cCodFam )
 
          if OpenFiles( .t. )
-            if dbSeekInOrd( cCodFam, "cCodFam", dbfFamilia )
-               lEdit    := WinEdtRec( oWndBrw, bEdit, dbfFamilia )
+            if dbSeekInOrd( cCodFam, "cCodFam", D():Familias( nView ) )
+               lEdit    := WinEdtRec( oWndBrw, bEdit, D():Familias( nView ) )
             else
                MsgStop( "No se encuentra familia" )
             end if
@@ -1642,7 +1698,7 @@ Function EdtFamilia( cCodFam, lOpenBrowse )
 
    end if
 
-Return ( lEdit )
+RETURN ( lEdit )
 
 //--------------------------------------------------------------------------//
 
@@ -1650,141 +1706,141 @@ Return ( lEdit )
 // Devuelve el presupuesto de la familia
 //
 
-function nPreFamilia( cCodFam, aMes, lAno, dbfFamilia )
+FUNCTION nPreFamilia( cCodFam, aMes, lAno, cFamilia )
 
    local nPreFam  := 0
 
-   if dbSeekInOrd( cCodFam, "cCodFam", dbfFamilia )
+   if dbSeekInOrd( cCodFam, "cCodFam", cFamilia )
 
       if lAno
 
-         nPreFam  := ( dbfFamilia )->NVALANU
+         nPreFam  := ( cFamilia )->NVALANU
 
       else
 
          if aMes[ 1]
-            nPreFam  += ( dbfFamilia )->NENE
+            nPreFam  += ( cFamilia )->NENE
          end if
 
          if aMes[ 2]
-            nPreFam  += ( dbfFamilia )->NFEB
+            nPreFam  += ( cFamilia )->NFEB
          end if
 
          if aMes[ 3]
-            nPreFam  += ( dbfFamilia )->NMAR
+            nPreFam  += ( cFamilia )->NMAR
          end if
 
          if aMes[ 4]
-            nPreFam  += ( dbfFamilia )->NABR
+            nPreFam  += ( cFamilia )->NABR
          end if
 
          if aMes[ 5]
-            nPreFam  += ( dbfFamilia )->NMAY
+            nPreFam  += ( cFamilia )->NMAY
          end if
 
          if aMes[ 6]
-            nPreFam  += ( dbfFamilia )->NJUN
+            nPreFam  += ( cFamilia )->NJUN
          end if
 
          if aMes[ 7]
-            nPreFam  += ( dbfFamilia )->NJUL
+            nPreFam  += ( cFamilia )->NJUL
          end if
 
          if aMes[ 8]
-            nPreFam  += ( dbfFamilia )->NAGO
+            nPreFam  += ( cFamilia )->NAGO
          end if
 
          if aMes[ 9]
-            nPreFam  += ( dbfFamilia )->NSEP
+            nPreFam  += ( cFamilia )->NSEP
          end if
 
          if aMes[10]
-            nPreFam  += ( dbfFamilia )->NOCT
+            nPreFam  += ( cFamilia )->NOCT
          end if
 
          if aMes[11]
-            nPreFam  += ( dbfFamilia )->NNOV
+            nPreFam  += ( cFamilia )->NNOV
          end if
 
          if aMes[12]
-            nPreFam  += ( dbfFamilia )->NDIC
+            nPreFam  += ( cFamilia )->NDIC
          end if
 
       end if
 
    end if
 
-return ( nPreFam )
+RETURN ( nPreFam )
 
 //--------------------------------------------------------------------------//
 
-function lFamInTpv( dbfFamilia )
+FUNCTION lFamInTpv( cFamilia )
 
    local lFamInTpv   := .f.
 
-   ( dbfFamilia )->( dbGoTop() )
-   while !( dbfFamilia )->( eof() )
-      if ( dbfFamilia )->lIncTpv
+   ( cFamilia )->( dbgotop() )
+   while !( cFamilia )->( eof() )
+      if ( cFamilia )->lIncTpv
          lFamInTpv   := .t.
          exit
       end if
-      ( dbfFamilia )->( dbSkip() )
+      ( cFamilia )->( dbSkip() )
    end while
 
-return ( lFamInTpv )
+RETURN ( lFamInTpv )
 
 //---------------------------------------------------------------------------//
 
-Static Function IncWeb( aTmp )
+STATIC FUNCTION IncWeb( aTmp )
 
    local nRec
 
    for each nRec in ( oWndBrw:oBrw:aSelected )
 
-      ( dbfFamilia )->( dbGoTo( nRec ) )
+      ( D():Familias( nView ) )->( dbGoTo( nRec ) )
 
-      if dbLock( dbfFamilia )
-         ( dbfFamilia )->lPubInt := !( dbfFamilia )->lPubInt
-         ( dbfFamilia )->lSelDoc := ( dbfFamilia )->lPubInt
-         ( dbfFamilia )->( dbUnLock() )
+      if dbLock( D():Familias( nView ) )
+         ( D():Familias( nView ) )->lPubInt := !( D():Familias( nView ) )->lPubInt
+         ( D():Familias( nView ) )->lSelDoc := ( D():Familias( nView ) )->lPubInt
+         ( D():Familias( nView ) )->( dbUnLock() )
       end if
 
       oWndBrw:Refresh()
 
    next
 
-Return ( nil )
+RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 
-Static Function IncEnvio( aTmp )
+STATIC FUNCTION IncEnvio( aTmp )
 
    local nRec
 
    for each nRec in ( oWndBrw:oBrw:aSelected )
 
-      ( dbfFamilia )->( dbGoTo( nRec ) )
+      ( D():Familias( nView ) )->( dbGoTo( nRec ) )
 
-      if dbLock( dbfFamilia )
-         ( dbfFamilia )->lSelDoc := !( dbfFamilia )->lSelDoc
-         ( dbfFamilia )->( dbUnLock() )
+      if dbLock( D():Familias( nView ) )
+         ( D():Familias( nView ) )->lSelDoc := !( D():Familias( nView ) )->lSelDoc
+         ( D():Familias( nView ) )->( dbUnLock() )
       end if
 
    next
 
    oWndBrw:Refresh()
 
-return ( nil )
+RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 
-static function IncTactil( lIncTactil )
+STATIC FUNCTION IncTactil( lIncTactil )
 
-   DEFAULT  lIncTactil  := !( dbfFamilia )->lIncTpv
+   DEFAULT  lIncTactil  := !( D():Familias( nView ) )->lIncTpv
 
-   if dbLock( dbfFamilia )
-      ( dbfFamilia )->lIncTpv := lIncTactil
-      ( dbfFamilia )->( dbUnLock() )
+   if dbLock( D():Familias( nView ) )
+      ( D():Familias( nView ) )->lIncTpv := lIncTactil
+      ( D():Familias( nView ) )->( dbUnLock() )
       if oWndBrw != nil
          oWndBrw:Refresh()
       end if
@@ -1794,11 +1850,11 @@ static function IncTactil( lIncTactil )
                      " todos los artículos de esta familia," + CRLF +;
                      "para que sean " + if( lIncTactil, "incluidos en el", "excluidos del" ) +;
                      " TPV táctil ?",;
-                     ( dbfFamilia )->cCodFam + Space( 1 ) + ( dbfFamilia )->cNomFam )
+                     ( D():Familias( nView ) )->cCodFam + Space( 1 ) + ( D():Familias( nView ) )->cNomFam )
 
-      if ( dbfArticulo )->( dbSeek( ( dbfFamilia )->cCodFam ) )
+      if ( dbfArticulo )->( dbSeek( ( D():Familias( nView ) )->cCodFam ) )
 
-         while ( dbfArticulo )->Familia == ( dbfFamilia )->cCodFam
+         while ( dbfArticulo )->Familia == ( D():Familias( nView ) )->cCodFam
 
             if dbLock( dbfArticulo )
                ( dbfArticulo )->lIncTcl := lIncTactil
@@ -1813,7 +1869,7 @@ static function IncTactil( lIncTactil )
 
    end if
 
-return ( nil )
+RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 
@@ -1858,7 +1914,7 @@ RETURN ( cNom )
 
 //---------------------------------------------------------------------------//
 
-Function cCodFamPrv( cCodPrv, cFamPrv, dbfFamPrv )
+FUNCTION cCodFamPrv( cCodPrv, cFamPrv, dbfFamPrv )
 
    local cCodFam  := ""
    local nOrdAnt  := ( dbfFamPrv )->( OrdSetFocus( "cFamPrv" ) )
@@ -1869,13 +1925,13 @@ Function cCodFamPrv( cCodPrv, cFamPrv, dbfFamPrv )
 
    ( dbfFamPrv )->( OrdSetFocus( nOrdAnt ) )
 
-Return ( cCodFam )
+RETURN ( cCodFam )
 
 //---------------------------------------------------------------------------//
 
-Static Function DeleteFamiliaProveedores()
+STATIC FUNCTION DeleteFamiliaProveedores()
 
-   local cCodFam        := ( dbfFamilia )->cCodFam
+   local cCodFam        := ( D():Familias( nView ) )->cCodFam
 
    CursorWait()
 
@@ -1885,21 +1941,21 @@ Static Function DeleteFamiliaProveedores()
 
    CursorWE()
 
-Return ( .t. )
+RETURN ( .t. )
 
 //---------------------------------------------------------------------------//
 
-Function lPermitirVentaSinValorar( cCodArt, dbfArticulo, dbfFamilia )
+FUNCTION lPermitirVentaSinValorar( cCodArt, dbfArticulo, cFamilia )
 
    local lPermitir   := .f.
 
    if dbSeekInOrd( cCodArt, "Codigo", dbfArticulo )
-      if dbSeekInOrd( ( dbfArticulo )->Familia, "cCodFam", dbfFamilia )
-         lPermitir   := ( dbfFamilia )->lPreEsp
+      if dbSeekInOrd( ( dbfArticulo )->Familia, "cCodFam", cFamilia )
+         lPermitir   := ( cFamilia )->lPreEsp
       end if
    end if
 
-Return ( lPermitir )
+RETURN ( lPermitir )
 
 //---------------------------------------------------------------------------//
 
@@ -1947,7 +2003,7 @@ Method CreateData()
    USE ( cPatSnd() + "Familias.Dbf" ) NEW VIA ( cLocalDriver() ) SHARED ALIAS ( cCheckArea( "FAMILIAS", @tmpFam ) )
    SET ADSINDEX TO ( cPatSnd() + "Familias.Cdx" ) ADDITIVE
 
-   if !Empty( ::oSender:oMtr )
+   if !empty( ::oSender:oMtr )
       ::oSender:oMtr:nTotal := ( dbfFam )->( lastrec() )
    end if
 
@@ -1961,7 +2017,7 @@ Method CreateData()
 
       ( dbfFam )->( dbSkip() )
 
-      if !Empty( ::oSender:oMtr )
+      if !empty( ::oSender:oMtr )
          ::oSender:oMtr:Set( ( dbfFam )->( OrdKeyNo() ) )
       end if
 
@@ -1996,7 +2052,7 @@ Method CreateData()
 
    end if
 
-Return ( Self )
+RETURN ( Self )
 
 //---------------------------------------------------------------------------//
 
@@ -2004,7 +2060,7 @@ Method RestoreData()
 
    local oBlock
    local oError
-   local dbfFamilia
+   local cFamilia
 
    if ::lSuccesfullSend
 
@@ -2015,15 +2071,15 @@ Method RestoreData()
       oBlock            := ErrorBlock( {| oError | ApoloBreak( oError ) } )
       BEGIN SEQUENCE
 
-      USE ( cPatArt() + "Familias.Dbf" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "FAMILIAS", @dbfFamilia ) )
+      USE ( cPatArt() + "Familias.Dbf" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "FAMILIAS", @cFamilia ) )
       SET ADSINDEX TO ( cPatArt() + "Familias.Cdx" ) ADDITIVE
 
-      while !( dbfFamilia )->( eof() )
-         if ( dbfFamilia )->lSelDoc .and. ( dbfFamilia )->( dbRLock() )
-            ( dbfFamilia )->lSelDoc := .f.
-            ( dbfFamilia )->( dbRUnlock() )
+      while !( cFamilia )->( eof() )
+         if ( cFamilia )->lSelDoc .and. ( cFamilia )->( dbRLock() )
+            ( cFamilia )->lSelDoc := .f.
+            ( cFamilia )->( dbRUnlock() )
          end if
-         ( dbfFamilia )->( dbSkip() )
+         ( cFamilia )->( dbSkip() )
       end do
 
       RECOVER USING oError
@@ -2034,11 +2090,11 @@ Method RestoreData()
 
       ErrorBlock( oBlock )
 
-      CLOSE ( dbfFamilia  )
+      CLOSE ( cFamilia  )
 
    end if
 
-Return ( Self )
+RETURN ( Self )
 
 //---------------------------------------------------------------------------//
 
@@ -2064,7 +2120,7 @@ Method SendData()
 
    end if
 
-Return ( Self )
+RETURN ( Self )
 
 //---------------------------------------------------------------------------//
 
@@ -2089,7 +2145,7 @@ Method ReciveData()
 
    ::oSender:SetText( "Familias recibidas" )
 
-Return ( Self )
+RETURN ( Self )
 
 //---------------------------------------------------------------------------//
 
@@ -2129,12 +2185,12 @@ Method Process()
                USE ( cPatArt() + "Familias.Dbf" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "FAMILIAS", @dbfFam ) )
                SET ADSINDEX TO ( cPatArt() + "Familias.Cdx" ) ADDITIVE
 
-               if !Empty( ::oSender:oMtr )
+               if !empty( ::oSender:oMtr )
                   ::oSender:oMtr:nTotal := ( tmpFam )->( lastrec() )
                end if
 
                ( tmpFam )->( ordsetfocus( 0 ) )
-               ( tmpFam )->( dbGoTop() )
+               ( tmpFam )->( dbgotop() )
 
                while !( tmpFam )->( eof() )
 
@@ -2172,7 +2228,7 @@ Method Process()
 
                   ( tmpFam )->( dbSkip() )
 
-                  if !Empty( ::oSender:oMtr )
+                  if !empty( ::oSender:oMtr )
                      ::oSender:oMtr:Set( ( tmpFam )->( OrdKeyNo() ) )
                   end if
 
@@ -2180,7 +2236,7 @@ Method Process()
 
                end while
 
-               if !Empty( ::oSender:oMtr )
+               if !empty( ::oSender:oMtr )
                   ::oSender:oMtr:nTotal := ( tmpFam )->( LastRec() )
                end if
 
@@ -2207,7 +2263,7 @@ Method Process()
 
    next
 
-Return ( Self )
+RETURN ( Self )
 
 //---------------------------------------------------------------------------//
 
@@ -2228,9 +2284,8 @@ STATIC FUNCTION lSelFam( lSel, oBrw, dbf )
 RETURN NIL
 
 //---------------------------------------------------------------------------//
-//---------------------------------------------------------------------------//
 
-Function SetHeadDiv( lEur, oWndBrw, cChrSea )
+FUNCTION SetHeadDiv( lEur, oWndBrw, cChrSea )
 
    local n
 
@@ -2250,7 +2305,7 @@ Function SetHeadDiv( lEur, oWndBrw, cChrSea )
    oWndBrw:Refresh()
    oWndBrw:SetFocus()
 
-return nil
+RETURN nil
 
 //---------------------------------------------------------------------------//
 
@@ -2300,7 +2355,7 @@ RETURN ( Self )
 METHod lResource( cFld )
 
    if !::StdResource( "INF_FAM01" )
-      return .f.
+      RETURN .f.
    end if
 
    ::lDefFamInf( 110, 120, 130, 140, 600 )
@@ -2327,7 +2382,7 @@ METHOD lGenerate()
    ::aHeader      := {  {|| "Fecha    : " + Dtoc( Date() ) },;
                         {|| "Familias : " + if( ::lAllFam, "Todas", AllTrim( ::cFamOrg ) + " > " + AllTrim( ::cFamDes ) ) } }
 
-   if !Empty( ::oFilter:cExpresionFilter )
+   if !empty( ::oFilter:cExpresionFilter )
       cExpHead       := ::oFilter:cExpresionFilter
    else
       cExpHead       := '.t.'
@@ -2382,553 +2437,10 @@ METHOD lGenerate()
 RETURN ( ::oDbf:LastRec() > 0 )
 
 //---------------------------------------------------------------------------//
-//---------------------------------------------------------------------------//
-//---------------------------------------------------------------------------//
-//---------------------------------------------------------------------------//
-//Comenzamos la parte de código que se compila para el PDA
-
-#else
-
-FUNCTION pdaBrwFamilia( oGet, oGet2 )
-
-	local oDlg
-	local oBrw
-   local oBtn
-   local oFont
-	local oGet1
-	local cGet1
-   local nOrd     := GetBrwOpt( "pdaBrwFamilia" )
-	local oCbxOrd
-   local aCbxOrd  := { "Código", "Nombre" }
-   local cCbxOrd
-   local nLevel   := nLevelUsr( MENUOPTION )
-
-   nOrd           := Min( Max( nOrd, 1 ), len( aCbxOrd ) )
-   cCbxOrd        := aCbxOrd[ nOrd ]
-
-   pdaOpenFiles()
-
-   nOrd           := ( dbfFamilia )->( OrdSetFocus( nOrd ) )
-
-   ( dbfFamilia )->( dbGoTop() )
-
-   DEFINE FONT oFont NAME "Verdana" SIZE 0, -14
-
-   DEFINE DIALOG oDlg RESOURCE "HELPENTRY_PDA" TITLE "Familias de artículos"
-
-      REDEFINE SAY oSayTit ;
-         VAR      "Buscando familias" ;
-         ID       110 ;
-         COLOR    "N/W*" ;
-         FONT     oFont ;
-         OF       oDlg
-
-      REDEFINE BTNBMP oBtn ;
-         ID       100 ;
-         OF       oDlg ;
-         FILE     ( cPatBmp() + "gc_cubes_16.bmp" ) ;
-         NOBORDER ;
-         ACTION      ( nil )
-
-         oBtn:SetColor( 0, nRGB( 255, 255, 255 )  )
-
-		REDEFINE GET oGet1 VAR cGet1;
-         ID       104 ;
-         ON CHANGE( AutoSeek( nKey, nFlags, Self, oBrw, dbfFamilia ) ) ;
-         VALID    ( OrdClearScope( oBrw, dbfFamilia ) );
-         BITMAP   "FIND" ;
-         OF       oDlg
-
-		REDEFINE COMBOBOX oCbxOrd ;
-			VAR 		cCbxOrd ;
-			ID 		102 ;
-         ITEMS    aCbxOrd ;
-         ON CHANGE( ( dbfFamilia )->( OrdSetFocus( oCbxOrd:nAt ) ), ( dbfFamilia )->( dbGoTop() ), oBrw:refresh(), oGet1:SetFocus(), oCbxOrd:Refresh() ) ;
-			OF 		oDlg
-
-      REDEFINE LISTBOX oBrw ;
-			FIELDS ;
-                  (dbfFamilia)->cCodFam + CRLF + (dbfFamilia)->cNomFam;
-			HEAD ;
-                  "Código" + CRLF + "Nombre";
-         FIELDSIZES ;
-                  180;
-         ALIAS    ( dbfFamilia );
-         ID       105 ;
-         OF       oDlg
-
-   ACTIVATE DIALOG oDlg ;
-      ON INIT ( oDlg:SetMenu( pdaMenuBusFam( oDlg ) ) )
-
-   DestroyFastFilter( dbfFamilia )
-
-   SetBrwOpt( "BrwFamilia", ( dbfFamilia )->( OrdNumber() ) )
-
-   if oDlg:nResult == IDOK
-
-      oGet:cText( ( dbfFamilia )->cCodFam )
-
-      if oGet2 != NIL
-         oGet2:cText( ( dbfFamilia )->cNomFam )
-		END IF
-
-   end if
-
-   pdaCloseFiles()
-
-	oGet:setFocus()
-
-RETURN ( oDlg:nResult == IDOK )
-
-//---------------------------------------------------------------------------//
-
-static function pdaMenuBusFam( oDlg )
-
-   local oMenu
-
-   DEFINE MENU oMenu ;
-      RESOURCE 100 ;
-      BITMAPS  10 ; // bitmaps resoruces ID
-      IMAGES   3     // number of images in the bitmap
-
-      REDEFINE MENUITEM ID 110 OF oMenu ACTION ( oDlg:End( IDOK ) )
-
-      REDEFINE MENUITEM ID 120 OF oMenu ACTION ( oDlg:End( IDCANCEL ) )
-
-Return oMenu
-
-//---------------------------------------------------------------------------//
-
-static function pdaOpenFiles()
-
-   local lOpen       := .t.
-   local oError
-   local oBlock      := ErrorBlock( {| oError | ApoloBreak( oError ) } )
-
-   BEGIN SEQUENCE
-
-      USE ( cPatArt() + "Familias.Dbf" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "FAMILIAS", @dbfFamilia ) )
-      SET ADSINDEX TO ( cPatArt() + "Familias.Cdx" ) ADDITIVE
-
-      USE ( cPatArt() + "FamPrv.Dbf" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "FAMPRV", @dbfFamPrv ) )
-      SET ADSINDEX TO ( cPatArt() + "FamPrv.Cdx" ) ADDITIVE
-
-   RECOVER USING oError
-
-      msgStop( "Imposible abrir todas las bases de datos" + CRLF + ErrorMessage( oError ) )
-      pdaCloseFiles()
-
-      lOpen          := .f.
-
-   END SEQUENCE
-
-   ErrorBlock( oBlock )
-
-return ( lOpen )
-
-//---------------------------------------------------------------------------//
-
-static function pdaCloseFiles()
-
-   CLOSE ( dbfFamilia )
-   CLOSE ( dbfFamPrv  )
-
-   dbfFamilia  := nil
-   dbfPrv      := nil
-
-return .t.
-
-//---------------------------------------------------------------------------//
-
-FUNCTION pdaFamilia( oMenuItem )
-
-   local oSnd
-   local nLevel
-   local oBlock
-   local oDlg
-   local oBrwFamilia
-   local oGetBuscar
-   local cGetBuscar     := Space( 100 )
-   local oCbxOrden
-   local cCbxOrden      := "Código"
-   local oSayTit
-   local oFont
-   local oBtn
-
-   DEFAULT  oMenuItem   := MENUOPTION
-
-   /*
-   Obtenemos el nivel de acceso
-   */
-
-   nLevel               := nLevelUsr( oMenuItem )
-
-   if nAnd( nLevel, 1 ) != 0
-      msgStop( "Acceso no permitido." )
-      return nil
-   end if
-
-   if !pdaOpenFiles()
-      return nil
-   end if
-
-   oBlock               := ErrorBlock( {| oError | ApoloBreak( oError ) } )
-   BEGIN SEQUENCE
-
-      DEFINE FONT oFont NAME "Verdana" SIZE 0, -14
-
-      DEFINE DIALOG oDlg RESOURCE "Dlg_info"
-
-      REDEFINE SAY oSayTit ;
-         VAR      "Familias" ;
-         ID       140 ;
-         COLOR    "N/W*" ;
-         FONT     oFont ;
-         OF       oDlg
-
-      REDEFINE BTNBMP oBtn ;
-         ID       130 ;
-         OF       oDlg ;
-         FILE     ( cPatBmp() + "gc_cubes_16.bmp" ) ;
-         NOBORDER ;
-         ACTION      ( nil )
-
-      oBtn:SetColor( 0, nRGB( 255, 255, 255 )  )
-
-      REDEFINE GET oGetBuscar ;
-         VAR      cGetBuscar;
-         ID       110 ;
-         BITMAP   "FIND" ;
-         OF       oDlg
-
-      oGetBuscar:bChange   := {| nKey, nFlags | AutoSeek( nKey, nFlags, oGetBuscar, oBrwFamilia, dbfFamilia ) }
-
-      REDEFINE COMBOBOX oCbxOrden ;
-         VAR      cCbxOrden ;
-         ID       120 ;
-         ITEMS    { "Código", "Nombre" } ;
-			OF 		oDlg
-
-      oCbxOrden:bChange    := {|| ( dbfFamilia )->( OrdSetFocus( oCbxOrden:nAt ) ), ( dbfFamilia )->( dbGoTop() ), oBrwFamilia:Refresh(), oGetBuscar:SetFocus(), oCbxOrden:Refresh() }
-
-      REDEFINE LISTBOX oBrwFamilia ;
-         FIELDS ;
-               ( dbfFamilia )->cCodFam + CRLF + ( dbfFamilia )->cNomFam ;
-         SIZES ;
-               180 ;
-         HEADER ;
-               "Código" + CRLF + "Nombre" ;
-         ALIAS ( dbfFamilia );
-         ID    100 ;
-         OF    oDlg
-
-      ACTIVATE DIALOG oDlg ;
-         ON INIT ( oDlg:SetMenu( pdaBuildMenu( oDlg, oBrwFamilia ) ) )
-
-      pdaCloseFiles()
-
-   RECOVER
-
-      msgStop( "Imposible abrir familias" )
-
-   END SEQUENCE
-
-   ErrorBlock( oBlock )
-
-   oFont:End()
-
-   // Restauramos la ventana---------------------------------------------------
-
-   oWnd():Show()
-
-RETURN NIL
-
-//----------------------------------------------------------------------------//
-
-static function pdaBuildMenu( oDlg, oBrwFamilia )
-
-   local oMenu
-
-   DEFINE MENU oMenu ;
-      RESOURCE 300 ;
-      BITMAPS  40 ; // bitmaps resoruces ID
-      IMAGES   5     // number of images in the bitmap
-
-      REDEFINE MENUITEM ID 310 OF oMenu ACTION ( WinAppRec( oBrwFamilia, bEdtPda, dbfFamilia, oDlg ) )
-
-      REDEFINE MENUITEM ID 320 OF oMenu ACTION ( WinEdtRec( oBrwFamilia, bEdtPda, dbfFamilia, oDlg ) )
-
-      REDEFINE MENUITEM ID 330 OF oMenu ACTION ( DBDelRec( oBrwFamilia, dbfFamilia ) )
-
-      REDEFINE MENUITEM ID 340 OF oMenu ACTION ( WinZooRec( oBrwFamilia, bEdtPda, dbfFamilia, oDlg ) )
-
-      REDEFINE MENUITEM ID 350 OF oMenu ACTION ( oDlg:End() )
-
-Return oMenu
-
-//---------------------------------------------------------------------------//
-
-Static Function PdaEdtRec( aTmp, aGet, dbfFamilia, oBrw, oDlgAnt, bValid, nMode )
-
-	local oDlg
-   local oSayTit
-   local oFont
-   local oBtn
-   local logico   := .t.
-
-   DEFINE FONT oFont NAME "Verdana" SIZE 0, -14
-
-   DEFINE DIALOG oDlg RESOURCE "FAMILIA_PDA"  //TITLE LblTitle( nMode ) + "familias de artículos"
-
-      REDEFINE SAY oSayTit ;
-         VAR      LblTitle( nMode ) + "familias" ;
-         ID       110 ;
-         COLOR    "N/W*" ;
-         FONT     oFont ;
-         OF       oDlg
-
-      REDEFINE BTNBMP oBtn ;
-         ID       100 ;
-         OF       oDlg ;
-         FILE     ( cPatBmp() + "gc_cubes_16.bmp" ) ;
-         NOBORDER ;
-         ACTION      ( nil )
-
-      oBtn:SetColor( 0, nRGB( 255, 255, 255 )  )
-
-      REDEFINE GET aGet[ _CCODFAM ] ;
-         VAR      aTmp[ _CCODFAM ] ;
-         ID       120 ;
-         WHEN     ( nMode == APPD_MODE ) ;
-         OF       oDlg
-
-      REDEFINE GET aGet[ _CNOMFAM ] ;
-         VAR      aTmp[ _CNOMFAM ] ;
-         ID       121 ;
-         WHEN     ( nMode != ZOOM_MODE ) ;
-         OF       oDlg
-
-      REDEFINE CHECKBOX aGet[ _LMOSTRAR ] ;
-         VAR      aTmp[ _LMOSTRAR ] ;
-         ID       122 ;
-			WHEN 		( nMode != ZOOM_MODE ) ;
-         OF       oDlg
-
-   ACTIVATE DIALOG oDlg ;
-      ON INIT ( oDlg:SetMenu( pdaMenuEdtRec( aTmp, aGet, nMode, oBrw, oDlg ) ) )
-
-   oFont:End()
-
-   oDlgAnt:Show()
-
-RETURN ( oDlg:nResult == IDOK )
-
-//---------------------------------------------------------------------------//
-
-static function pdaMenuEdtRec( aTmp, aGet, nMode, oBrw, oDlg )
-
-   local oMenu
-
-   DEFINE MENU oMenu ;
-      RESOURCE 100 ;
-      BITMAPS  10 ; // bitmaps resoruces ID
-      IMAGES   3     // number of images in the bitmap
-
-      REDEFINE MENUITEM ID 110 OF oMenu ACTION ( PdaEndTrans( aTmp, aGet, nMode, oBrw, oDlg ) )
-
-      REDEFINE MENUITEM ID 120 OF oMenu ACTION ( oDlg:End( IDCANCEL ) )
-
-Return oMenu
-
-//---------------------------------------------------------------------------//
-
-STATIC FUNCTION PdaEndTrans( aTmp, aGet, nMode, oBrw, oDlg )
-
-   local aTabla
-   local cCodFam  := aTmp[ _CCODFAM ]
-
-   //Controlamos que no se cree una familia con el código o el nombre en blanco
-
-   if nMode == APPD_MODE
-
-      if Empty( cCodFam )
-         MsgStop( "Código no puede estar vacío" )
-         aGet[ _CCODFAM ]:SetFocus()
-         return nil
-      end if
-
-      if dbSeekInOrd( cCodFam, "CCODFAM", dbfFamilia )
-         MsgStop( "Código ya existe " + Rtrim( cCodFam ) )
-         aGet[ _CCODFAM ]:SetFocus()
-         return nil
-      end if
-
-   end if
-
-   if Empty( aTmp[ _CNOMFAM ] )
-      MsgStop( "Nombre no puede estar vacío" )
-      aGet[ _CNOMFAM ]:SetFocus()
-      return nil
-   end if
-
-   WinGather( aTmp, aGet, dbfFamilia, oBrw, nMode )
-
-   oDlg:end( IDOK )
-
-   dbCommitAll()
-
-Return ( nil )
-
-//------------------------------------------------------------------------//
-
-CLASS pdaPCFamSenderReciver
-
-   Method CreateData()
-
-END CLASS
-
-//---------------------------------------------------------------------------//
-
-Method CreateData( oPgrActual, oSayStatus ) CLASS pdaPCFamSenderReciver
-
-   local lExist      := .f.
-   local dbfFam
-   local pdaFam
-
-   USE ( cPatPc() + "Familias.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "Familias", @dbfFam ) )
-   SET ADSINDEX TO ( cPatPc() + "Familias.CDX" ) ADDITIVE
-   ( dbfFam )->( OrdSetFocus( "lSelDoc" ) )
-
-   /*
-   Usamos las bases de datos del PC--------------------------------------------
-   */
-
-   dbUseArea( .t., cDriver(), cPatArt() + "Familias.Dbf", cCheckArea( "Familias", @pdaFam ), .t. )
-   ( pdaFam )->( ordListAdd( cPatArt() + "Familias.Cdx" ) )
-
-   if !Empty( oPgrActual )
-      oPgrActual:SetRange( 0, ( pdaFam )->( OrdKeyCount() ) )
-   end if
-
-   ( pdaFam )->( dbGoTop() )
-
-   while !( pdaFam )->( eof() )
-
-      if ( pdaFam )->lSelDoc
-
-         if !( dbfFam )->( dbSeek( cCodFam ) )
-
-            if dbLock( pdaFam )
-               ( pdaFam )->lSelDoc  := .f.
-               ( pdaFam )->( dbUnLock() )
-            end if
-
-            dbPass( pdaFam, dbfFam, .t. )
-
-         end if
-
-      end if
-
-      ( pdaFam )->( dbSkip() )
-
-      if !Empty( oSayStatus )
-         oSayStatus:SetText( "Sincronizando Familias " + Alltrim( Str( ( pdaFam )->( OrdKeyNo() ) ) ) + " de " + Alltrim( Str( ( pdaFam )->( OrdKeyCount() ) ) ) )
-      end if
-
-      SysRefresh()
-
-      if !Empty( oPgrActual )
-         oPgrActual:SetPos( ( pdaFam )->( OrdKeyNo() ) )
-      end if
-
-      SysRefresh()
-
-   end while
-
-   CLOSE ( pdaFam )
-   CLOSE ( dbfFam )
-
-Return ( Self )
-
-//----------------------------------------------------------------------------//
-
-#endif
-
-CLASS pdaFamiliaSenderReciver
-
-   Method CreateData()
-
-END CLASS
-
-//----------------------------------------------------------------------------//
-
-Method CreateData( oPgrActual, oSayStatus, cPatPreVenta ) CLASS pdaFamiliaSenderReciver
-
-   local dbfFam
-   local tmpFam
-   local lExist      := .f.
-   local cFileName
-   local cPatPc      := if( Empty( cPatPreVenta ), cPatPc(), cPatPreVenta )
-
-   USE ( cPatArt() + "Familias.Dbf" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "FAMILIAS", @dbfFam ) )
-   SET ADSINDEX TO ( cPatArt() + "Familias.Cdx" ) ADDITIVE
-
-   dbUseArea( .t., cDriver(), cPatPc + "Familias.Dbf", cCheckArea( "Familias", @tmpFam ), .t. )
-   ( tmpFam )->( ordListAdd( cPatPc + "Familias.Cdx" ) )
-
-   if !Empty( oPgrActual )
-      oPgrActual:SetRange( 0, ( tmpFam )->( OrdKeyCount() ) )
-   end if
-
-   ( tmpFam )->( dbGoTop() )
-   while !( tmpFam )->( eof() )
-
-      if ( tmpFam )->lSelDoc
-
-         if ( dbfFam )->( dbSeek( ( tmpFam )->cCodFam ) )
-            dbPass( tmpFam, dbfFam, .f. )
-         else
-            dbPass( tmpFam, dbfFam, .t. )
-         end if
-
-         if dbLock( tmpFam )
-            ( tmpFam )->lSelDoc  := .f.
-            ( tmpFam )->( dbUnLock() )
-         end if
-
-         if dbLock( dbfFam )
-            ( dbfFam )->lSelDoc  := .f.
-            ( dbfFam )->( dbUnLock() )
-         end if
-
-      end if
-
-      ( tmpFam )->( dbSkip() )
-
-      if !Empty( oSayStatus )
-         oSayStatus:SetText( "Sincronizando familias " + Alltrim( Str( ( tmpFam )->( OrdKeyNo() ) ) ) + " de " + Alltrim( Str( ( tmpFam )->( OrdKeyCount() ) ) ) )
-      end if
-
-      SysRefresh()
-
-      if !Empty( oPgrActual )
-         oPgrActual:SetPos( ( tmpFam )->( OrdKeyNo() ) )
-      end if
-
-      SysRefresh()
-
-   end while
-
-   CLOSE ( tmpFam )
-   CLOSE ( dbfFam )
-
-Return ( Self )
-
-//---------------------------------------------------------------------------//
 
 FUNCTION mkFamilia( cPath, lAppend, cPathOld )
 
-	local dbfFamilia
+	local cFamilia
 
 	DEFAULT lAppend := .f.
    DEFAULT cPath   := cPatArt()
@@ -2941,23 +2453,37 @@ FUNCTION mkFamilia( cPath, lAppend, cPathOld )
       fEraseTable( cPath + "FamPrv.Dbf" )
    end if
 
+   if lExistTable( cPath + "FamLeng.Dbf", cLocalDriver() )
+      fEraseTable( cPath + "FamLeng.Dbf" )
+   end if
+
    dbCreate( cPath + "Familias.Dbf", aSqlStruct( aItmFam() ), cLocalDriver() )
 
    if lAppend .and. cPathOld != nil .and. lIsDir( cPathOld )
-      dbUseArea( .t., cDriver(), cPath + "Familias.Dbf", cCheckArea( "Familias", @dbfFamilia ), .f. )
-      if !( dbfFamilia )->( neterr() )
-         ( dbfFamilia )->( __dbApp( cPathOld + "Familias.Dbf" ) )
-         ( dbfFamilia )->( dbCloseArea() )
+      dbUseArea( .t., cDriver(), cPath + "Familias.Dbf", cCheckArea( "Familias", @cFamilia ), .f. )
+      if !( cFamilia )->( neterr() )
+         ( cFamilia )->( __dbApp( cPathOld + "Familias.Dbf" ) )
+         ( cFamilia )->( dbCloseArea() )
       end if
    end if
 
    dbCreate( cPath + "FamPrv.Dbf", aSqlStruct( aItmFamPrv() ), cLocalDriver() )
 
    if lAppend .and. cPathOld != nil .and. lIsDir( cPathOld )
-      dbUseArea( .t., cDriver(), cPath + "FamPrv.Dbf", cCheckArea( "FamPrv", @dbfFamilia ), .f. )
-      if !( dbfFamilia )->( neterr() )
-         ( dbfFamilia )->( __dbApp( cPathOld + "FamPrv.Dbf" ) )
-         ( dbfFamilia )->( dbCloseArea() )
+      dbUseArea( .t., cDriver(), cPath + "FamPrv.Dbf", cCheckArea( "FamPrv", @cFamilia ), .f. )
+      if !( cFamilia )->( neterr() )
+         ( cFamilia )->( __dbApp( cPathOld + "FamPrv.Dbf" ) )
+         ( cFamilia )->( dbCloseArea() )
+      end if
+   end if
+
+   dbCreate( cPath + "FamLeng.Dbf", aSqlStruct( aItmFamiliaLenguajes() ), cLocalDriver() )
+
+   if lAppend .and. cPathOld != nil .and. lIsDir( cPathOld )
+      dbUseArea( .t., cDriver(), cPath + "FamLeng.Dbf", cCheckArea( "FamLeng", @cFamilia ), .f. )
+      if !( cFamilia )->( neterr() )
+         ( cFamilia )->( __dbApp( cPathOld + "FamLeng.Dbf" ) )
+         ( cFamilia )->( dbCloseArea() )
       end if
    end if
 
@@ -2969,7 +2495,7 @@ RETURN .t.
 
 FUNCTION rxFamilia( cPath, cDriver )
 
-	local dbfFamilia
+	local cFamilia
 
    DEFAULT cPath     := cPatArt()
    DEFAULT cDriver   := cDriver()
@@ -2986,66 +2512,88 @@ FUNCTION rxFamilia( cPath, cDriver )
 
    fEraseIndex(  cPath + "FamPrv.Cdx" )
 
-   dbUseArea( .t., cDriver, cPath + "FAMILIAS.DBF", cCheckArea( "FAMILIAS", @dbfFamilia ), .f. )
-   if !( dbfFamilia )->( neterr() )
-      ( dbfFamilia )->( __dbPack() )
+   if !lExistTable( cPath + "FamLeng.Dbf", cDriver )
+      dbCreate( cPath + "FamLeng.Dbf", aSqlStruct( aItmFamiliaLenguajes() ), cDriver )
+   end if
 
-      ( dbfFamilia )->( ordCondSet( "!Deleted()", {|| !Deleted() }  ) )
-      ( dbfFamilia )->( ordCreate( cPath + "FAMILIAS.CDX", "cCodFam", "Field->cCodFam", {|| Field->cCodFam }, ) )
+   fEraseIndex(  cPath + "FamLeng.Cdx" )
 
-      ( dbfFamilia )->( ordCondSet("!Deleted()", {|| !Deleted() }  ) )
-      ( dbfFamilia )->( ordCreate( cPath + "FAMILIAS.CDX", "cNomFam", "Upper( Field->cNomFam )", {|| Upper( Field->cNomFam ) } ) )
+   dbUseArea( .t., cDriver, cPath + "Familias.Dbf", cCheckArea( "FAMILIAS", @cFamilia ), .f. )
+   if !( cFamilia )->( neterr() )
+      ( cFamilia )->( __dbPack() )
 
-      ( dbfFamilia )->( ordCondSet("!Deleted().and. lIncTpv", {|| !Deleted() .and. Field->lIncTpv }  ) )
-      ( dbfFamilia )->( ordCreate( cPath + "FAMILIAS.CDX", "nPosTpv", "Str( Field->nPosTpv )", {|| Str( Field->nPosTpv ) } ) )
+      ( cFamilia )->( ordcondset( "!Deleted()", {|| !Deleted() }  ) )
+      ( cFamilia )->( ordcreate( cPath + "Familias.Cdx", "cCodFam", "Field->cCodFam", {|| Field->cCodFam }, ) )
 
-      ( dbfFamilia )->( ordCondSet("!Deleted() .and. lIncTpv", {|| !Deleted() .and. Field->lIncTpv }  ) )
-      ( dbfFamilia )->( ordCreate( cPath + "FAMILIAS.CDX", "lIncTpv", "Upper( cNomFam )", {|| Upper( Field->cNomFam ) } ) )
+      ( cFamilia )->( ordcondset( "!Deleted()", {|| !Deleted() }  ) )
+      ( cFamilia )->( ordcreate( cPath + "Familias.Cdx", "cNomFam", "Upper( Field->cNomFam )", {|| Upper( Field->cNomFam ) } ) )
 
-      ( dbfFamilia )->( ordCondSet("!Deleted()", {|| !Deleted() }  ) )
-      ( dbfFamilia )->( ordCreate( cPath + "FAMILIAS.CDX", "lSelDoc", "lSelDoc", {|| Field->lSelDoc } ) )
+      ( cFamilia )->( ordcondset("!Deleted().and. lIncTpv", {|| !Deleted() .and. Field->lIncTpv }  ) )
+      ( cFamilia )->( ordcreate( cPath + "Familias.Cdx", "nPosTpv", "Str( Field->nPosTpv )", {|| Str( Field->nPosTpv ) } ) )
 
-      ( dbfFamilia )->( ordCondSet("!Deleted()", {|| !Deleted() }  ) )
-      ( dbfFamilia )->( ordCreate( cPath + "FAMILIAS.CDX", "cCodWeb", "Str( Field->cCodWeb, 11 )", {|| Str( Field->cCodWeb, 11 ) } ) )
+      ( cFamilia )->( ordcondset("!Deleted() .and. lIncTpv", {|| !Deleted() .and. Field->lIncTpv }  ) )
+      ( cFamilia )->( ordcreate( cPath + "Familias.Cdx", "lIncTpv", "Upper( cNomFam )", {|| Upper( Field->cNomFam ) } ) )
 
-      ( dbfFamilia )->( ordCondSet("!Deleted()", {|| !Deleted() }  ) )
-      ( dbfFamilia )->( ordCreate( cPath + "FAMILIAS.CDX", "cFamCmb", "cFamCmb", {|| Field->cFamCmb } ) )
+      ( cFamilia )->( ordcondset( "!Deleted()", {|| !Deleted() }  ) )
+      ( cFamilia )->( ordcreate( cPath + "Familias.Cdx", "lSelDoc", "lSelDoc", {|| Field->lSelDoc } ) )
 
-      ( dbfFamilia )->( dbCloseArea() )
+      ( cFamilia )->( ordcondset( "!Deleted()", {|| !Deleted() }  ) )
+      ( cFamilia )->( ordcreate( cPath + "Familias.Cdx", "cCodWeb", "Str( Field->cCodWeb, 11 )", {|| Str( Field->cCodWeb, 11 ) } ) )
+
+      ( cFamilia )->( ordcondset( "!Deleted()", {|| !Deleted() }  ) )
+      ( cFamilia )->( ordcreate( cPath + "Familias.Cdx", "cFamCmb", "cFamCmb", {|| Field->cFamCmb } ) )
+
+      ( cFamilia )->( dbCloseArea() )
    else
       msgStop( "Imposible abrir en modo exclusivo la tabla de familias" )
    end if
 
-   dbUseArea( .t., cDriver, cPath + "FamPrv.Dbf", cCheckArea( "FAMPRV", @dbfFamilia ), .f. )
-   if !( dbfFamilia )->( neterr() )
-      ( dbfFamilia )->( __dbPack() )
+   dbUseArea( .t., cDriver, cPath + "FamPrv.Dbf", cCheckArea( "FAMPRV", @cFamilia ), .f. )
+   if !( cFamilia )->( neterr() )
+      ( cFamilia )->( __dbPack() )
 
-      ( dbfFamilia )->( ordCondSet("!Deleted()", {||!Deleted()}  ) )
-      ( dbfFamilia )->( ordCreate( cPath + "FamPrv.Cdx", "cCodFam", "cCodFam", {|| Field->cCodFam }, ) )
+      ( cFamilia )->( ordcondset( "!Deleted()", {||!Deleted()}  ) )
+      ( cFamilia )->( ordcreate( cPath + "FamPrv.Cdx", "cCodFam", "cCodFam", {|| Field->cCodFam }, ) )
 
-      ( dbfFamilia )->( ordCondSet("!Deleted()", {||!Deleted()}  ) )
-      ( dbfFamilia )->( ordCreate( cPath + "FamPrv.Cdx", "cFamPrv", "cCodPrv + cFamPrv", {|| Field->cCodPrv + Field->cFamPrv } ) )
+      ( cFamilia )->( ordcondset( "!Deleted()", {||!Deleted()}  ) )
+      ( cFamilia )->( ordcreate( cPath + "FamPrv.Cdx", "cFamPrv", "cCodPrv + cFamPrv", {|| Field->cCodPrv + Field->cFamPrv } ) )
 
-      ( dbfFamilia )->( dbCloseArea() )
+      ( cFamilia )->( dbCloseArea() )
    else
       msgStop( "Imposible abrir en modo exclusivo la tabla de familias" )
+   end if
+
+   dbUseArea( .t., cDriver, cPath + "FamLeng.Dbf", cCheckArea( "FamLeng", @cFamilia ), .f. )
+   if !( cFamilia )->( neterr() )
+      ( cFamilia )->( __dbPack() )
+
+      ( cFamilia )->( ordcondset( "!Deleted()", {||!Deleted()}  ) )
+      ( cFamilia )->( ordcreate( cPath + "FamLeng.Cdx", "cCodFam", "cCodFam", {|| Field->cCodFam }, ) )
+
+      ( cFamilia )->( ordcondset( "!Deleted()", {||!Deleted()}  ) )
+      ( cFamilia )->( ordcreate( cPath + "FamLeng.Cdx", "cCodLen", "cCodFam + cCodLen", {|| Field->cCodFam + Field->cCodLen } ) )
+
+
+      ( cFamilia )->( dbCloseArea() )
+   else
+      msgStop( "Imposible abrir en modo exclusivo la tabla de lenguajes de familias" )
    end if
 
 RETURN NIL
 
 //--------------------------------------------------------------------------//
 
-Function aItmFamPrv()
+FUNCTION aItmFamPrv()
 
    local aBase := {  {"CCODFAM",    "C",    16,    0, "Código de familia" },;
                      {"CCODPRV",    "C",    12,    0, "Código de proveedor" },;
                      {"CFAMPRV",    "C",    20,    0, "Código de familia del proveedor" } }
 
-return ( aBase )
+RETURN ( aBase )
 
 //---------------------------------------------------------------------------//
 
-Function aItmFam()
+FUNCTION aItmFam()
 
    local aBase := {  {"CCODFAM",    "C",    16,    0, "Código de familia" },;
                      {"CNOMFAM",    "C",    40,    0, "Nombre de familia" },;
@@ -3088,22 +2636,36 @@ Function aItmFam()
                      {"cDesWeb",    "C",   250,    0, "Descripción para la web" },;
                      {"nDiaGrt",    "N",     6,    0, "Días de garantía" } }
 
-return ( aBase )
+RETURN ( aBase )
 
 //---------------------------------------------------------------------------//
 
-Function lPressCol( nCol, oBrw, oCmbOrd, aCbxOrd, cDbf )
+FUNCTION aItmFamiliaLenguajes()
+
+   local aBase := {}
+
+   aAdd( aBase, { "cCodFam",   "C",    16,   0, "Código de la familia" } )
+   aAdd( aBase, { "cCodLen",   "C",    4,    0, "Código del lenguaje" } )
+   aAdd( aBase, { "cDesFam",   "C",    200,  0, "Descripción familia" } )
+
+RETURN ( aBase )
+
+//---------------------------------------------------------------------------//
+
+FUNCTION lPressCol( nCol, oBrw, oCmbOrd, aCbxOrd, cDbf )
 
    local nPos
    local cHeader
 
-   if !Empty( nCol ) .and. nCol <= len( oBrw:aHeaders )
+   if !empty( nCol ) .and. nCol <= len( oBrw:aHeaders )
+
       cHeader     := oBrw:aHeaders[ nCol ]
       nPos        := aScan( aCbxOrd, cHeader )
 
       if nPos != 0
 
          oCmbOrd:Set( cHeader )
+
          ( cDbf )->( OrdSetFocus( oCmbOrd:nAt ) )
 
          oBrw:Refresh()
@@ -3112,7 +2674,7 @@ Function lPressCol( nCol, oBrw, oCmbOrd, aCbxOrd, cDbf )
 
    end if
 
-return nil
+RETURN nil
 
 //---------------------------------------------------------------------------//
 
@@ -3152,13 +2714,11 @@ RETURN ( cCodFra )
 
 //---------------------------------------------------------------------------//
 
-Static Function lValidFamiliaCombinado( aTmp )
+STATIC FUNCTION lValidFamiliaCombinado( aTmp )
 
    local lValid   := .t.
 
-   if !Empty( aTmp[ _CCODFAM ] ) .and.;
-      !Empty( aTmp[ _CFAMCMB ] ) .and.;
-      ( aTmp[ _CCODFAM ] == aTmp[ _CFAMCMB ] )
+   if !empty( aTmp[ _CCODFAM ] ) .and. !empty( aTmp[ _CFAMCMB ] ) .and. ( aTmp[ _CCODFAM ] == aTmp[ _CFAMCMB ] )
 
       lValid      := .f.
 
@@ -3166,7 +2726,7 @@ Static Function lValidFamiliaCombinado( aTmp )
 
    end if
 
-return ( lValid )
+RETURN ( lValid )
 
 //---------------------------------------------------------------------------//
 
@@ -3180,9 +2740,9 @@ FUNCTION retFamilia( cCodFam, uFamilia )
    oBlock            := ErrorBlock( {| oError | ApoloBreak( oError ) } )
    BEGIN SEQUENCE
 
-   if Empty( uFamilia )
+   if empty( uFamilia )
       USE ( cPatArt() + "FAMILIAS.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "FAMILIAS", @uFamilia ) )
-      SET ADSINDEX TO ( cPatArt() + "FAMILIAS.CDX" ) ADDITIVE
+      SET ADSINDEX TO ( cPatArt() + "Familias.Cdx" ) ADDITIVE
       lClose      := .t.
    end if
 
@@ -3217,7 +2777,7 @@ RETURN cTemp
 
 //---------------------------------------------------------------------------//
 
-FUNCTION cFamilia( oGet, dbfFamilia, oGet2, lMessage, oGetPrp1, oGetPrp2 )
+FUNCTION cFamilia( oGet, cFamilia, oGet2, lMessage, oGetPrp1, oGetPrp2 )
 
    local nRec
    local oBlock
@@ -3228,38 +2788,38 @@ FUNCTION cFamilia( oGet, dbfFamilia, oGet2, lMessage, oGetPrp1, oGetPrp2 )
 
    DEFAULT lMessage  := .t.
 
-   if Empty( xValor ) .or. ( xValor == Replicate( "Z", 16 ) )
-      return .t.
+   if empty( xValor ) .or. ( xValor == Replicate( "Z", 16 ) )
+      RETURN .t.
    end if
 
    oBlock            := ErrorBlock( {| oError | ApoloBreak( oError ) } )
    BEGIN SEQUENCE
 
-   if Empty( dbfFamilia )
-      USE ( cPatArt() + "FAMILIAS.DBF" ) NEW VIA ( cDriver() ) SHARED   ALIAS ( cCheckArea( "FAMILIAS", @dbfFamilia ) )
-      SET ADSINDEX TO ( cPatArt() + "FAMILIAS.CDX" ) ADDITIVE
+   if empty( cFamilia )
+      USE ( cPatArt() + "FAMILIAS.DBF" ) NEW VIA ( cDriver() ) SHARED   ALIAS ( cCheckArea( "FAMILIAS", @cFamilia ) )
+      SET ADSINDEX TO ( cPatArt() + "Familias.Cdx" ) ADDITIVE
       lClose         := .t.
    else
-      nRec           := ( dbfFamilia )->( Recno() )
+      nRec           := ( cFamilia )->( Recno() )
    end if
 
-   if dbSeekInOrd( xValor, "cCodFam", dbfFamilia )
+   if dbSeekInOrd( xValor, "cCodFam", cFamilia )
 
-      if !Empty( oGet )
-         oGet:cText( ( dbfFamilia )->cCodFam )
+      if !empty( oGet )
+         oGet:cText( ( cFamilia )->cCodFam )
       end if
 
-      if !Empty( oGet2 )
-         oGet2:cText( ( dbfFamilia )->cNomFam )
+      if !empty( oGet2 )
+         oGet2:cText( ( cFamilia )->cNomFam )
       end if
 
-      if !Empty( oGetPrp1 ) .and. Empty( oGetPrp1:VarGet() )
-         oGetPrp1:cText( ( dbfFamilia )->cCodPrp1 )
+      if !empty( oGetPrp1 ) .and. empty( oGetPrp1:VarGet() )
+         oGetPrp1:cText( ( cFamilia )->cCodPrp1 )
          oGetPrp1:lValid()
       end if
 
-      if !Empty( oGetPrp2 ) .and. Empty( oGetPrp2:VarGet() )
-         oGetPrp2:cText( ( dbfFamilia )->cCodPrp2 )
+      if !empty( oGetPrp2 ) .and. empty( oGetPrp2:VarGet() )
+         oGetPrp2:cText( ( cFamilia )->cCodPrp2 )
          oGetPrp2:lValid()
       end if
 
@@ -3282,9 +2842,9 @@ FUNCTION cFamilia( oGet, dbfFamilia, oGet2, lMessage, oGetPrp1, oGetPrp2 )
    ErrorBlock( oBlock )
 
    if lClose
-      CLOSE ( dbfFamilia )
+      CLOSE ( cFamilia )
    else
-      ( dbfFamilia )->( dbGoTo( nRec ) )
+      ( cFamilia )->( dbGoTo( nRec ) )
    end if
 
 RETURN lValid
@@ -3297,7 +2857,7 @@ FUNCTION getCodigoWebFamiliaPadre( oFamilia )
    local cCodigoWebFamiliaPadre  := 2
 
    if empty( cCodigoPadre )
-      Return ( 2 )      // id Prestashop inicio categories
+      RETURN ( 2 )      // id Prestashop inicio categories
    end if 
 
    oFamilia:getStatus()
@@ -3312,43 +2872,43 @@ RETURN ( cCodigoWebFamiliaPadre )
 
 //---------------------------------------------------------------------------//
 
-Static Function ChangePosition( lInc )
+STATIC FUNCTION ChangePosition( lInc )
 
    local aPos
    local nPos     := 1
    local aRec     := {}
-   local nRec     := ( dbfFamilia )->( Recno() )
-   local nOrd     := ( dbfFamilia )->( OrdSetFocus( "nPosTpv" ) )
+   local nRec     := ( D():Familias( nView ) )->( Recno() )
+   local nOrd     := ( D():Familias( nView ) )->( OrdSetFocus( "nPosTpv" ) )
 
    CursorWait()
 
    do case
       case IsTrue( lInc )
 
-         if ( dbfFamilia )->( dbRLock() )
-            ( dbfFamilia )->nPosTpv   := ( dbfFamilia )->nPosTpv + 1.5
+         if ( D():Familias( nView ) )->( dbRLock() )
+            ( D():Familias( nView ) )->nPosTpv   := ( D():Familias( nView ) )->nPosTpv + 1.5
          end if
-         ( dbfFamilia )->( dbUnLock() )
+         ( D():Familias( nView ) )->( dbUnLock() )
 
       case IsFalse( lInc )
 
-         if ( dbfFamilia )->( dbRLock() )
-            ( dbfFamilia )->nPosTpv   := ( dbfFamilia )->nPosTpv - 1.5
+         if ( D():Familias( nView ) )->( dbRLock() )
+            ( D():Familias( nView ) )->nPosTpv   := ( D():Familias( nView ) )->nPosTpv - 1.5
          end if
-         ( dbfFamilia )->( dbUnLock() )
+         ( D():Familias( nView ) )->( dbUnLock() )
 
    end case
 
    //--------------------------------------------------------------------------
 
-   ( dbfFamilia )->( dbGoTop() )
-   while !( dbfFamilia )->( eof() )
+   ( D():Familias( nView ) )->( dbgotop() )
+   while !( D():Familias( nView ) )->( eof() )
 
-      if ( dbfFamilia )->lIncTpv
-         aAdd( aRec, { ( dbfFamilia )->( Recno() ), nPos++ } )
+      if ( D():Familias( nView ) )->lIncTpv
+         aAdd( aRec, { ( D():Familias( nView ) )->( Recno() ), nPos++ } )
       end if
 
-      ( dbfFamilia )->( dbSkip() )
+      ( D():Familias( nView ) )->( dbSkip() )
 
    end while
 
@@ -3356,11 +2916,11 @@ Static Function ChangePosition( lInc )
 
    for each aPos in aRec
 
-      ( dbfFamilia )->( dbGoTo( aPos[ 1 ] ) )
+      ( D():Familias( nView ) )->( dbGoTo( aPos[ 1 ] ) )
 
-      if ( dbfFamilia )->( dbRLock() )
-         ( dbfFamilia )->nPosTpv      := aPos[ 2 ]
-         ( dbfFamilia )->( dbUnLock() )
+      if ( D():Familias( nView ) )->( dbRLock() )
+         ( D():Familias( nView ) )->nPosTpv      := aPos[ 2 ]
+         ( D():Familias( nView ) )->( dbUnLock() )
       end if
 
    next
@@ -3369,14 +2929,14 @@ Static Function ChangePosition( lInc )
 
    CursorWE()
 
-   ( dbfFamilia )->( dbGoTo( nRec ) )
-   ( dbfFamilia )->( OrdSetFocus( nOrd ) )
+   ( D():Familias( nView ) )->( dbGoTo( nRec ) )
+   ( D():Familias( nView ) )->( OrdSetFocus( nOrd ) )
 
-Return ( nil )
+RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 
-Function ColorFam( oGetColor )
+FUNCTION ColorFam( oGetColor )
 
    local oDlg
    local oBmpGeneral
@@ -3432,17 +2992,17 @@ Function ColorFam( oGetColor )
 
    ACTIVATE DIALOG oDlg CENTER
 
-Return .t.
+RETURN .t.
 
 //---------------------------------------------------------------------------//
 
-Function SeleccionaColor( oImgColores, oGetColor, oDlg )
+FUNCTION SeleccionaColor( oImgColores, oGetColor, oDlg )
 
    local nOpt  := oImgColores:nOption
 
-   if Empty( nOpt )
+   if empty( nOpt )
       MsgStop( "Seleccione un color" )
-      Return .f.
+      RETURN .f.
    end if
 
    nOpt        := Max( Min( nOpt, len( oImgColores:aItems ) ), 1 )
@@ -3454,11 +3014,11 @@ Function SeleccionaColor( oImgColores, oGetColor, oDlg )
 
    oDlg:End()
 
-Return .t.
+RETURN .t.
 
 //---------------------------------------------------------------------------//
 
-Function AppFamilia( lOpenBrowse )
+FUNCTION AppFamilia( lOpenBrowse )
 
    local oBlock
    local oError
@@ -3468,7 +3028,7 @@ Function AppFamilia( lOpenBrowse )
 
    if nAnd( nLevel, 1 ) != 0 .or. nAnd( nLevel, ACC_APPD ) == 0
       msgStop( 'Acceso no permitido.' )
-      return .t.
+      RETURN .t.
    end if
 
    oBlock               := ErrorBlock( { | oError | ApoloBreak( oError ) } )
@@ -3483,7 +3043,7 @@ Function AppFamilia( lOpenBrowse )
       else
 
          if OpenFiles( .t. )
-            WinAppRec( oWndBrw, bEdit, dbfFamilia )
+            WinAppRec( oWndBrw, bEdit, D():Familias( nView ) )
             CloseFiles()
          end if
 
@@ -3500,3 +3060,115 @@ Function AppFamilia( lOpenBrowse )
 RETURN .t.
 
 //--------------------------------------------------------------------------//
+/*
+Browse de familias para las familias combinadas para que haga el closefiles
+*/
+
+FUNCTION BrwFamiliaCombinada( oGet, cFamilia, oGet2 )
+
+   local oDlg
+   local oBrw
+   local nRec
+   local oGet1
+   local cGet1
+   local nOrd     := GetBrwOpt( "BrwFamilia" )
+   local oCbxOrd
+   local aCbxOrd  := { "Código", "Nombre" }
+   local cCbxOrd
+   local nLevel   := nLevelUsr( MENUOPTION )
+   local lOpen    := .f.
+
+   nRec           := ( cFamilia )->( RecNo() )
+
+   nOrd           := Min( Max( nOrd, 1 ), len( aCbxOrd ) )
+   cCbxOrd        := aCbxOrd[ nOrd ]
+
+   nOrd           := ( cFamilia )->( OrdSetFocus( nOrd ) )
+
+   ( cFamilia )->( dbgotop() )
+
+   DEFINE DIALOG oDlg RESOURCE "HELPENTRY" TITLE "Familias de artículos"
+
+      REDEFINE GET oGet1 VAR cGet1;
+         ID       104 ;
+         ON CHANGE( AutoSeek( nKey, nFlags, Self, oBrw, cFamilia ) ) ;
+         VALID    ( OrdClearScope( oBrw, cFamilia ) );
+         BITMAP   "FIND" ;
+         OF       oDlg
+
+      REDEFINE COMBOBOX oCbxOrd ;
+         VAR      cCbxOrd ;
+         ID       102 ;
+         ITEMS    aCbxOrd ;
+         ON CHANGE( ( cFamilia )->( OrdSetFocus( oCbxOrd:nAt ) ), oBrw:refresh(), oGet1:SetFocus() ) ;
+         OF       oDlg
+
+      REDEFINE XBROWSE oBrw ;
+         FIELDS ;
+                  ( cFamilia )->cCodFam,;
+                  ( cFamilia )->cNomFam;
+         HEAD ;
+                  "Código",;
+                  "Nombre";
+         FIELDSIZES ;
+                  60 ,;
+                  200;
+         ALIAS    ( cFamilia );
+         ID       105 ;
+         OF       oDlg
+
+      oBrw:bClrSel         := {|| { CLR_BLACK, Rgb( 229, 229, 229 ) } }
+      oBrw:bClrSelFocus    := {|| { CLR_BLACK, Rgb( 167, 205, 240 ) } }
+
+      oBrw:bLDblClick      := {|| oDlg:end( IDOK ) }
+
+      oBrw:nMarqueeStyle   := 5
+
+      REDEFINE BUTTON ;
+         ID       IDOK ;
+         OF       oDlg ;
+         ACTION   ( oDlg:end(IDOK) )
+
+      REDEFINE BUTTON ;
+         ID       IDCANCEL ;
+         OF       oDlg ;
+         ACTION   ( oDlg:end() )
+
+      REDEFINE BUTTON ;
+         ID       500 ;
+         OF       oDlg ;
+         WHEN     ( .f. );
+         ACTION   ( nil )
+
+      REDEFINE BUTTON ;
+         ID       501 ;
+         OF       oDlg ;
+         WHEN     ( .f. );
+         ACTION   ( nil )
+
+   oDlg:AddFastKey( VK_F5,       {|| oDlg:end( IDOK ) } )
+   oDlg:AddFastKey( VK_RETURN,   {|| oDlg:end( IDOK ) } )
+
+   ACTIVATE DIALOG oDlg CENTER
+
+   DestroyFastFilter( cFamilia )
+
+   SetBrwOpt( "BrwFamilia", ( cFamilia )->( OrdNumber() ) )
+
+   if oDlg:nResult == IDOK
+
+      oGet:cText( ( cFamilia )->cCodFam )
+
+      if oGet2 != NIL
+         oGet2:cText( ( cFamilia )->cNomFam )
+      end if
+
+   end if
+
+   oGet:SetFocus()
+
+   ( cFamilia )->( dbGoTo( nRec ) )
+
+RETURN ( oDlg:nResult == IDOK )
+
+//---------------------------------------------------------------------------//

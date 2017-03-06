@@ -921,8 +921,6 @@ METHOD StartAdministratorTask()
 
             setEmpresa( aEmpresa[ 1 ] )
 
-            checkEmpresaTablesExistences()
-
             ::BuildEmpresa()  
                
             ::CreateEmpresaTable()
@@ -2183,6 +2181,12 @@ METHOD BuildEmpresa()
    oDataTable:cDataFile    := cPatEmp( , .t. ) + "FamPrv.Dbf"
    oDataTable:cIndexFile   := cPatEmp( , .t. ) + "FamPrv.Cdx"
    oDataTable:cDescription := "Familias proveedor"
+   ::AddEmpresaTable( oDataTable )
+
+   oDataTable              := TDataTable():New( "FamLeng" )
+   oDataTable:cDataFile    := cPatEmp( , .t. ) + "FamLeng.Dbf"
+   oDataTable:cIndexFile   := cPatEmp( , .t. ) + "FamLeng.Cdx"
+   oDataTable:cDescription := "Familias lenguaje"
    ::AddEmpresaTable( oDataTable )
 
    oDataTable              := TDataTable():New( "Temporadas" )

@@ -543,8 +543,6 @@ CLASS D
 
    METHOD ProveedorArticulo( nView )                              INLINE ( ::Get( "ProvArt", nView ) )
 
-   METHOD ArticuloLenguaje( nView )                               INLINE ( ::Get( "ArtLeng", nView ) )
-
    METHOD Articulos( nView )                                      INLINE ( ::Get( "Articulo", nView ) )
    METHOD ArticulosId( nView )                                    INLINE ( ( ::Articulos( nView ) )->Codigo )
    METHOD ArticulosIdText( nView )                                INLINE ( alltrim( ( ::Articulos( nView ) )->Codigo ) + Space(1) + alltrim( ( ::Articulos( nView ) )->Nombre ) )
@@ -557,12 +555,14 @@ CLASS D
       METHOD setStatusArticulos( nView )                          INLINE ( SetStatus( ::Articulos( nView ), ::aStatus ) ) 
       METHOD setFocusArticulos( cTag, nView )                     INLINE ( ::cTag   := ( ::Articulos( nView )  )->( ordSetFocus( cTag ) ) )
 
+      METHOD ArticuloLenguaje( nView )                            INLINE ( ::Get( "ArtLeng", nView ) )
       METHOD ArticulosCodigosBarras( nView )                      INLINE ( ::Get( "ArtCodebar", nView ) )
       METHOD ArticuloPrecioPropiedades( nView )                   INLINE ( ::Get( "ArtDiv", nView ) )
-      METHOD ArticuloStockAlmacenes( nView )                      INLINE ( ::Get( "ArtAlm", nView ) )
-      METHOD ArticuloStockAlmacenesId( nView )                    INLINE ( ( ::Get( "ArtAlm", nView ) )->cCodArt ) 
       METHOD ArticuloTipos( nView )                               INLINE ( ::Get( "TipArt", nView ) )
       METHOD ArticuloImagenes( nView )                            INLINE ( ::Get( "ArtImg", nView ) )
+
+      METHOD ArticuloStockAlmacenes( nView )                      INLINE ( ::Get( "ArtAlm", nView ) )
+      METHOD ArticuloStockAlmacenesId( nView )                    INLINE ( ( ::Get( "ArtAlm", nView ) )->cCodArt ) 
 
    METHOD Ofertas( nView )                                        INLINE ( ::Get( "Oferta", nView ) )
       METHOD getStatusOfertas( nView )                            INLINE ( ::aStatus := aGetStatus( ::Ofertas( nView ) ) )
@@ -579,6 +579,8 @@ CLASS D
       METHOD getStatusFamilias( nView )                           INLINE ( ::aStatus := aGetStatus( ::Familias( nView ) ) )
       METHOD setStatusFamilias( nView )                           INLINE ( SetStatus( ::Familias( nView ), ::aStatus ) ) 
       METHOD gotoFamilias( id, nView )                            INLINE ( ::seekInOrd( ::Familias( nView ), id, "cCodFam" ) ) 
+
+   METHOD FamiliasLenguajes( nView )                              INLINE ( ::Get( "FamLeng", nView ) )
    
    METHOD Temporadas( nView )                                     INLINE ( ::Get( "Temporadas", nView ) )
 

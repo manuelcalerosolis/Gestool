@@ -4844,9 +4844,7 @@ METHOD lAcumulaArticulo( cCodigoMenu, cCodigoOrden ) CLASS TpvTactil
 
    aStatus              := ::oTemporalLinea:GetStatus()
 
-   /*
-   Buscamos codigos iguales----------------------------------------------------
-   */
+   // Buscamos codigos iguales--------------------------------------------------
 
    ::oTemporalLinea:OrdSetFocus( "cCbaTil" )
    if ::oTemporalLinea:Seek( ::oArticulo:Codigo )

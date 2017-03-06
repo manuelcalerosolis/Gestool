@@ -1,6 +1,3 @@
-
-
-
 #include "FiveWin.ch"  
 #include "Factu.ch" 
 #include "Report.ch"
@@ -188,6 +185,10 @@ CLASS TFastVentasArticulos FROM TFastReportInfGen
                                                          ::cExpresionHeader   += ' .and. ( Field->cCodPrv >= "' + Rtrim( ::oGrupoProveedor:Cargo:getDesde() ) + '" .and. Field->cCodPrv <= "' + Rtrim( ::oGrupoProveedor:Cargo:getHasta() ) + '" )', ) )
 
    METHOD DesdeHastaGrupoCliente()
+
+   METHOD getFilterArticulo()                   INLINE ( '( alltrim( Field->Codigo ) >= "' + alltrim(::oGrupoArticulo:Cargo:getDesde()) + '" .and. alltrim( Field->Codigo ) <= "' + alltrim( ::oGrupoArticulo:Cargo:getHasta() ) + '" )' + ;
+                                                         ' .and. ( alltrim( Field->Familia ) >= "' + alltrim( ::oGrupoFamilia:Cargo:getDesde() ) + '" .and.  alltrim( Field->Familia ) <= "' + alltrim( ::oGrupoFamilia:Cargo:getHasta() ) + '" )' + ;
+                                                         ' .and. ( alltrim( Field->cPrvHab ) >= "' + alltrim( ::oGrupoProveedor:Cargo:getDesde() ) + '" .and.  alltrim( Field->cPrvHab ) <= "' + alltrim( ::oGrupoProveedor:Cargo:getHasta() ) + '" )' )
 
    METHOD getTotalUnidadesGrupoCliente( cCodGrp, cCodArt )
    METHOD getTotalCajasGrupoCliente( cCodGrp, cCodArt )
@@ -1151,7 +1152,7 @@ Method lValidRegister() CLASS TFastVentasArticulos
       Return .f.
    end if
 
-   if !empty( ::oGrupoProveedor ) .and. !( ::oDbf:cCodCli      >= ::oGrupoProveedor:Cargo:getDesde()        .and. ::oDbf:cCodCli    <= ::oGrupoProveedor:Cargo:getHasta() )
+   if !empty( ::oGrupoProveedor ) .and. !( ::oDbf:cPrvHab      >= ::oGrupoProveedor:Cargo:getDesde()        .and. ::oDbf:cPrvHab    <= ::oGrupoProveedor:Cargo:getHasta() )
       Return .f.
    end if
 
@@ -2936,10 +2937,11 @@ METHOD listadoArticulo() CLASS TFastVentasArticulos
 
    local aStockArticulo
 
-   ( D():Articulos( ::nView ) )->( OrdClearScope() )   
+   ( D():Articulos( ::nView ) )->( ordsetfocus( "Codigo" ) )
 
-   ::setMeterTotal( ( D():Articulos( ::nView ) )->( OrdKeyCount() ) )
-   ::setMeterAutoIncremental()
+   ( D():Articulos( ::nView ) )->( setCustomFilter( ::getFilterArticulo() ) )
+
+   ::setMeterTotal( ( D():Articulos( ::nView ) )->( dbCustomKeyCount() ) )
 
    ::setMeterText( "Procesando artículos" )
 
@@ -2953,7 +2955,6 @@ METHOD listadoArticulo() CLASS TFastVentasArticulos
       ::oDbf:Blank()
 
       ::oDbf:cCodArt  := ( D():Articulos( ::nView ) )->Codigo
-      ::oDbf:cCodCli  := ( D():Articulos( ::nView ) )->cPrvHab
       ::oDbf:cPrvHab  := ( D():Articulos( ::nView ) )->cPrvHab
       ::oDbf:cNomArt  := ( D():Articulos( ::nView ) )->Nombre
       ::oDbf:cCodFam  := ( D():Articulos( ::nView ) )->Familia
@@ -2968,6 +2969,7 @@ METHOD listadoArticulo() CLASS TFastVentasArticulos
       ::oDbf:nCosArt  := nCosto( nil, ( D():Articulos( ::nView ) ), ::oArtKit:cAlias )
 
       ::InsertIfValid()
+
       ::loadValuesExtraFields()
 
       ( D():Articulos( ::nView ) )->( dbSkip() )
@@ -2988,17 +2990,15 @@ METHOD AddArticulo( lAppendBlank ) CLASS TFastVentasArticulos
 
    DEFAULT lAppendBlank    := .f.
 
-   if !Empty( ::oGrupoAlmacen )
-      if ::oGrupoAlmacen:cargo:getDesde() == ::oGrupoAlmacen:cargo:getHasta()
-         ::cAlmacenDefecto := ::oGrupoAlmacen:cargo:getDesde()
-      end if 
+   if !empty( ::oGrupoAlmacen ) .and. ( ::oGrupoAlmacen:cargo:getDesde() == ::oGrupoAlmacen:cargo:getHasta() )
+      ::cAlmacenDefecto    := ::oGrupoAlmacen:cargo:getDesde()
    end if
 
-   ::oDbf:Zap()
-   ( D():Articulos( ::nView ) )->( OrdClearScope() )   
+   ( D():Articulos( ::nView ) )->( ordsetfocus( "Codigo" ) )
 
-   ::setMeterTotal(  ( D():Articulos( ::nView ) )->( OrdKeyCount() ) )
-   ::setMeterAutoIncremental()
+   ( D():Articulos( ::nView ) )->( setCustomFilter( ::getFilterArticulo() ) )
+
+   ::setMeterTotal( ( D():Articulos( ::nView ) )->( dbCustomKeyCount() ) )
 
    ::setMeterText( "Procesando artículos" )
 
@@ -3007,32 +3007,23 @@ METHOD AddArticulo( lAppendBlank ) CLASS TFastVentasArticulos
    ( D():Articulos( ::nView ) )->( dbgoTop() ) 
    while !( D():Articulos( ::nView ) )->( eof() ) .and. !::lBreak
 
-      if ( Empty( ::oGrupoArticulo ) .or. ( ( D():Articulos( ::nView ) )->Codigo  >= ::oGrupoArticulo:Cargo:getDesde() .and. ( D():Articulos( ::nView ) )->Codigo  <= ::oGrupoArticulo:Cargo:getHasta() ) ) .and.;
-         ( Empty( ::oGrupoFamilia ) .or. ( ( D():Articulos( ::nView ) )->Familia >= ::oGrupoFamilia:Cargo:getDesde()  .and. ( D():Articulos( ::nView ) )->Familia <= ::oGrupoFamilia:Cargo:getHasta() ) )           
+      aStockArticulo    := ::oStock:aStockArticulo( ( D():Articulos( ::nView ) )->Codigo, ::cAlmacenDefecto, , , , , ::dFinInf )
 
-         aStockArticulo    := ::oStock:aStockArticulo( ( D():Articulos( ::nView ) )->Codigo, ::cAlmacenDefecto, , , , , ::dFinInf )
-
-         if !empty( aStockArticulo )
-            ::appendStockArticulo( aStockArticulo )
-         end if 
-
-         /*
-         Estaba comentado y lo he vuelto a activar para alvaro pita------------
-         */
-
-         if lAppendBlank
-            ::appendBlankAlmacenes( ( D():Articulos( ::nView ) )->Codigo )
-         end if
-
+      if !empty( aStockArticulo )
+         ::appendStockArticulo( aStockArticulo )
       end if 
+
+      if lAppendBlank
+         ::appendBlankAlmacenes( ( D():Articulos( ::nView ) )->Codigo )
+      end if
 
       ( D():Articulos( ::nView ) )->( dbSkip() )
 
       ::setMeterAutoIncremental()
 
-   end while
+  end while
 
-   ::setMeterAutoIncremental()
+  ::setMeterAutoIncremental()
 
 RETURN ( Self )
 
@@ -3072,6 +3063,7 @@ METHOD appendStockArticulo( aStockArticulo )
          ::fillFromArticulo()
 
          ::insertIfValid()
+         
          ::loadValuesExtraFields()
 
       end if 
@@ -3110,14 +3102,17 @@ RETURN ( ::oDbf:SeekInOrdBack( cCodigoArticulo + cCodigoAlmacen, "cCodAlm" ) )
 
 METHOD appendBlankArticulo( cCodigoArticulo, cCodigoAlmacen ) CLASS TFastVentasArticulos
 
+   DEFAULT cCodigoAlmacen  := ""
+
    ::oDbf:Blank()
 
-   ::oDbf:cCodArt  := cCodigoArticulo
-   ::oDbf:cCodAlm  := cCodigoAlmacen
+   ::oDbf:cCodArt          := cCodigoArticulo
+   ::oDbf:cCodAlm          := cCodigoAlmacen
 
    ::fillFromArticulo()
 
    ::insertIfValid()
+
    ::loadValuesExtraFields()
 
 RETURN ( Self )
@@ -4426,16 +4421,16 @@ METHOD processAllClients() CLASS TFastVentasArticulos
 
       if !( ::isClientInReport( ::oDbfCli:Cod ) )
       
-      ::oDbf:Blank()
-      ::oDbf:cCodCli       := ::oDbfCli:Cod
-      ::oDbf:cNomCli       := ::oDbfCli:Titulo
-      ::oDbf:cCodRut       := ::oDbfCli:cCodRut
-      ::oDbf:cCodPago      := ::oDbfCli:CodPago
-      ::oDbf:cCodAge       := ::oDbfCli:cCodAge
-      ::oDbf:cCodTrn       := ::oDbfCli:cCodTrn
-      ::oDbf:cCodUsr       := ::oDbfCli:cCodUsr
+         ::oDbf:Blank()
+         ::oDbf:cCodCli       := ::oDbfCli:Cod
+         ::oDbf:cNomCli       := ::oDbfCli:Titulo
+         ::oDbf:cCodRut       := ::oDbfCli:cCodRut
+         ::oDbf:cCodPago      := ::oDbfCli:CodPago
+         ::oDbf:cCodAge       := ::oDbfCli:cCodAge
+         ::oDbf:cCodTrn       := ::oDbfCli:cCodTrn
+         ::oDbf:cCodUsr       := ::oDbfCli:cCodUsr
 
-      ::oDbf:Insert()
+         ::oDbf:Insert()
 
       end if 
 

@@ -7325,7 +7325,7 @@ STATIC FUNCTION EdtLeng( aTmp, aGet, dbfTmpLeng, oBrw, bWhen, bValid, nMode, aTm
    local oDlg
    local oBmp
 
-   DEFINE DIALOG oDlg RESOURCE "ARTLENG" TITLE LblTitle( nMode ) + "descripciones por lenguaje"
+   DEFINE DIALOG oDlg RESOURCE "ARTICULO_LENGUAJE" TITLE LblTitle( nMode ) + "descripciones por lenguaje"
 
    REDEFINE BITMAP oBmp ;
       ID       600 ;
