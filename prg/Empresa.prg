@@ -1026,6 +1026,16 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfEmp, oBrw, bWhen, bValid, nMode )
          WHEN     ( !Empty( cOldCodigoEmpresa ) .AND. ( lAppendMode ) ) ;
          OF       oFld:aDialogs[2]
 
+      REDEFINE CHECKBOX aImportacion:lScript ;
+         ID       400 ;
+         WHEN     ( !Empty( cOldCodigoEmpresa ) .AND. ( lAppendMode ) ) ;
+         OF       oFld:aDialogs[2]
+
+      REDEFINE CHECKBOX aImportacion:lEntidades ;
+         ID       410 ;
+         WHEN     ( !Empty( cOldCodigoEmpresa ) .AND. ( lAppendMode ) ) ;
+         OF       oFld:aDialogs[2]
+
       REDEFINE GET oGetSemilla VAR nSemillaContadores ;
          ID       130 ;
          VALID    ( nSemillaContadores > 0 ) ;
@@ -3841,6 +3851,18 @@ Static Function StartPathEmp( cPath, cPathOld, cCodEmpNew, cNomEmpNew, cCodEmpOl
          TCuentasBancarias():Create( cPath ):CheckFiles()
       end if
 
+      if cPathOld != nil .and. aImportacion:lScript
+         TScripts():Create( cPath ):CheckFiles( cPathOld + "Scripts.Dbf" )
+      else
+         TScripts():Create( cPath ):CheckFiles()
+      end if
+
+      if cPathOld != nil .and. aImportacion:lEntidades
+         TEntidades():Create( cPath ):CheckFiles( cPathOld + "Entidades.Dbf" )
+      else
+         TEntidades():Create( cPath ):CheckFiles()
+      end if
+
       SysRefresh()
 
       if oMsg != nil
@@ -5791,6 +5813,8 @@ CLASS AImportacion
    DATA lExpedientes    INIT   .t.
    DATA lFidelizacion   INIT   .t.
    DATA nCosto          INIT   1
+   DATA lScript         INIT   .t.
+   DATA lEntidades      INIT   .t.
 
    Method False()
 
@@ -5825,6 +5849,8 @@ Method False() Class AImportacion
    ::lExpedientes    := .f.
    ::lFidelizacion   := .f.
    ::nCosto          := 1
+   ::lScript         := .f.
+   ::lEntidades      := .f.
 
 Return ( Self )
 

@@ -10972,6 +10972,10 @@ STATIC FUNCTION LoaArt( cCodArt, aTmp, aGet, aTmpAlb, oStkAct, oSayPr1, oSayPr2,
             aGet[ _NPREUNIT ]:Refresh()
          end if
 
+         if !Empty( aGet[ _NDTO ] )
+            aGet[ _NDTO ]:Refresh()
+         end if
+
          // Solo pueden modificar los precios los administradores--------------
 
          if !empty(aGet)
