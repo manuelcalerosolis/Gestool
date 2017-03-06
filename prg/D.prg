@@ -533,7 +533,11 @@ CLASS D
    METHOD PartesProduccion( nView )                                  INLINE ( ::Get( "ProCab", nView ) )
 
       METHOD PartesProduccionMaterialProducido( nView )              INLINE ( ::Get( "ProLin", nView ) )
+      METHOD PartesProduccionMaterial( nView )                       INLINE ( ::Get( "ProLin", nView ) )
+
       METHOD PartesProduccionMaterialProduccionSeries( nView )       INLINE ( ::Get( "ProSer", nView ) )
+      METHOD PartesProduccionMaterialSeries( nView )                 INLINE ( ::Get( "ProSer", nView ) )
+      
       METHOD PartesProduccionMateriaPrima( nView )                   INLINE ( ::Get( "ProMat", nView ) )
       METHOD PartesProduccionMaquinaria( nView )                     INLINE ( ::Get( "ProMaq", nView ) )  
       METHOD PartesProduccionOperarios( nView )                      INLINE ( ::Get( "ProPer", nView ) )

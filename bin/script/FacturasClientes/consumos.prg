@@ -328,7 +328,7 @@ static function Exportacion()
                               if !Empty( ( dbfArticulo )->cCodEdi )
                                  nImpDto  := ( dbfFacCliL )->nUniCaja * ( ( dbfFacCliL )->nPreUnit * ( dbfFacCliL )->nDto ) / 100
                               else
-                                 nImpDto  := ( dbfFacCliL )->nUniCaja * pCosto( dbfArticulo, .f., , dbfDiv ) * ( dbfFacCliL )->nDto ) / 100
+                                 nImpDto  := ( ( dbfFacCliL )->nUniCaja * pCosto( dbfArticulo, .f., , dbfDiv ) * ( dbfFacCliL )->nDto ) / 100
                               end if
 
                            end if

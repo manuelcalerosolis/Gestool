@@ -536,6 +536,13 @@ FUNCTION RecCli( oMenuItem, oWnd, aNumRec )
          :lHide            := .t.
       end with
 
+      with object ( oWndBrw:AddXCol() )
+         :cHeader          := "Cuenta"
+         :bEditValue       := {|| ( D():FacturasClientesCobros( nView ) )->cPaisIBAN + ( D():FacturasClientesCobros( nView ) )->cCtrlIBAN + ( D():FacturasClientesCobros( nView ) )->cEntCli + ( D():FacturasClientesCobros( nView ) )->cSucCli + ( D():FacturasClientesCobros( nView ) )->cDigCli + ( D():FacturasClientesCobros( nView ) )->cCtaCli }
+         :nWidth           := 200
+         :lHide            := .t.
+      end with
+
       oWndBrw:CreateXFromCode()
 
    DEFINE BTNSHELL RESOURCE "BUS" OF oWndBrw ;

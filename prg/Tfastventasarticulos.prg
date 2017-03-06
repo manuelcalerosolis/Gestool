@@ -374,6 +374,10 @@ METHOD OpenFiles() CLASS TFastVentasArticulos
 
       D():Articulos( ::nView )
 
+      D():PartesProduccionMaterial( ::nView )
+
+      D():PartesProduccionMateriaPrima( ::nView )
+
       D():ProveedorArticulo( ::nView )
 
       DATABASE NEW ::oArtImg  PATH ( cPatArt() ) CLASS "ArtImg"      FILE "ArtImg.Dbf"  VIA ( ::cDriver ) SHARED INDEX "ArtImg.Cdx"
@@ -399,10 +403,6 @@ METHOD OpenFiles() CLASS TFastVentasArticulos
       DATABASE NEW ::oRctPrvT PATH ( cPatEmp() ) CLASS "RctPrvT"     FILE "RctPrvT.Dbf"   VIA ( ::cDriver ) SHARED INDEX "RctPrvT.Cdx"
 
       DATABASE NEW ::oRctPrvL PATH ( cPatEmp() ) CLASS "RctPrvL"     FILE "RctPrvL.Dbf"   VIA ( ::cDriver ) SHARED INDEX "RctPrvL.Cdx"
-
-      DATABASE NEW ::oProLin  PATH ( cPatEmp() ) CLASS "ProLin"      FILE "ProLin.Dbf"    VIA ( ::cDriver ) SHARED INDEX "ProLin.Cdx"
-
-      DATABASE NEW ::oProMat  PATH ( cPatEmp() ) CLASS "ProMat"      FILE "ProMat.Dbf"    VIA ( ::cDriver ) SHARED INDEX "ProMat.Cdx"
 
       DATABASE NEW ::oHisMov  PATH ( cPatEmp() ) CLASS "HisMov"      FILE "HisMov.Dbf"    VIA ( ::cDriver ) SHARED INDEX "HisMov.Cdx"
 
@@ -572,14 +572,6 @@ METHOD CloseFiles() CLASS TFastVentasArticulos
 
       if !empty( ::oRctPrvT ) .and. ( ::oRctPrvT:Used() )
          ::oRctPrvT:end()
-      end if
-
-      if !empty( ::oProLin ) .and. ( ::oProLin:Used() )
-         ::oProLin:end()
-      end if
-
-      if !empty( ::oProMat ) .and. ( ::oProMat:Used() )
-         ::oProMat:end()
       end if
 
       if !empty( ::oHisMov ) .and. ( ::oHisMov:Used() )
@@ -3142,76 +3134,74 @@ METHOD AddProducido() CLASS TFastVentasArticulos
 
    ::setMeterText( "Procesando partes de producción" )
    
-   ::setMeterTotal( ::oProLin:OrdKeyCount() )
-
    ::cExpresionLine           := '( dFecOrd >= Ctod( "' + Dtoc( ::dIniInf ) + '" ) .and. dFecOrd <= Ctod( "' + Dtoc( ::dFinInf ) + '" ) )'
 
    if !::lAllArt
       ::cExpresionLine        += ' .and. ( cCodArt >= "' + ::oGrupoArticulo:Cargo:getDesde() + '" .and. cCodArt <= "' + ::oGrupoArticulo:Cargo:getHasta() + '")'
    end if
 
-   ::oProLin:AddTmpIndex( cCurUsr(), GetFileNoExt( ::oProLin:cFile ), ::oProLin:OrdKey(), cAllTrimer( ::cExpresionLine ), , , , , , , , .t. )
+   ( D():PartesProduccionMaterial( ::nView ) )->( setCustomFilter( ::cExpresionLine ) )
 
-   ::oProLin:GoTop()
+   ::setMeterTotal( ( D():PartesProduccionMaterial( ::nView ) )->( OrdKeyCount() ) ) 
 
-   while !::lBreak .and. !::oProLin:Eof()
+   ( D():PartesProduccionMaterial( ::nView ) )->( dbGoTop() )
 
-      if lChkSer( ::oProLin:cSerOrd, ::aSer )
+   while !::lBreak .and. !( D():PartesProduccionMaterial( ::nView ) )->( Eof() )
+
+      if lChkSer( ( D():PartesProduccionMaterial( ::nView ) )->cSerOrd, ::aSer )
 
          ::oDbf:Blank()
 
-         ::oDbf:cCodArt    := ::oProLin:cCodArt
-         ::oDbf:cNomArt    := ::oProLin:cNomArt
+         ::oDbf:cCodArt    := ( D():PartesProduccionMaterial( ::nView ) )->cCodArt
+         ::oDbf:cNomArt    := ( D():PartesProduccionMaterial( ::nView ) )->cNomArt
 
-         ::oDbf:cCodFam    := ::oProLin:cCodFam
-         ::oDbf:cGrpFam    := ::oProLin:cGrpFam
-         ::oDbf:cCodTip    := ::oProLin:cCodTip
-         ::oDbf:cCodCate   := ::oProLin:cCodCat
-         ::oDbf:cCodTemp   := ::oProLin:cCodTmp
-         ::oDbf:cCodFab    := ::oProLin:cCodFab
-         ::oDbf:cCodAlm    := ::oProLin:cAlmOrd
-         ::oDbf:cDesUbi    := RetFld( ::oProLin:cCodArt, ( D():Articulos( ::nView ) ), "cDesUbi", "Codigo" )
-         ::oDbf:cCodEnv    := RetFld( ::oProLin:cCodArt, ( D():Articulos( ::nView ) ), "cCodFra", "Codigo" )                    
+         ::oDbf:cCodFam    := ( D():PartesProduccionMaterial( ::nView ) )->cCodFam
+         ::oDbf:cGrpFam    := ( D():PartesProduccionMaterial( ::nView ) )->cGrpFam
+         ::oDbf:cCodTip    := ( D():PartesProduccionMaterial( ::nView ) )->cCodTip
+         ::oDbf:cCodCate   := ( D():PartesProduccionMaterial( ::nView ) )->cCodCat
+         ::oDbf:cCodTemp   := ( D():PartesProduccionMaterial( ::nView ) )->cCodTmp
+         ::oDbf:cCodFab    := ( D():PartesProduccionMaterial( ::nView ) )->cCodFab
+         ::oDbf:cCodAlm    := ( D():PartesProduccionMaterial( ::nView ) )->cAlmOrd
+         ::oDbf:cDesUbi    := RetFld( ( D():PartesProduccionMaterial( ::nView ) )->cCodArt, ( D():Articulos( ::nView ) ), "cDesUbi", "Codigo" )
+         ::oDbf:cCodEnv    := RetFld( ( D():PartesProduccionMaterial( ::nView ) )->cCodArt, ( D():Articulos( ::nView ) ), "cCodFra", "Codigo" )                    
 
-         ::oDbf:nBultos    := ::oProLin:nBultos
-         ::oDbf:nCajas     := ::oProLin:nCajOrd
-         ::oDbf:nUniArt    := ::oProLin:nUndOrd
-         ::oDbf:nPreArt    := ::oProLin:nImpOrd
+         ::oDbf:nBultos    := ( D():PartesProduccionMaterial( ::nView ) )->nBultos
+         ::oDbf:nCajas     := ( D():PartesProduccionMaterial( ::nView ) )->nCajOrd
+         ::oDbf:nUniArt    := ( D():PartesProduccionMaterial( ::nView ) )->nUndOrd
+         ::oDbf:nPreArt    := ( D():PartesProduccionMaterial( ::nView ) )->nImpOrd
 
-         ::oDbf:nBrtArt    := 0 //::oProLin:TotalImporte()
-         ::oDbf:nTotArt    := 0 //::oProLin:TotalImporte()
+         ::oDbf:nBrtArt    := 0 //( D():PartesProduccionMaterial( ::nView ) )->TotalImporte()
+         ::oDbf:nTotArt    := 0 //( D():PartesProduccionMaterial( ::nView ) )->TotalImporte()
 
-         ::oDbf:cCodPr1    := ::oProLin:cCodPr1
-         ::oDbf:cCodPr2    := ::oProLin:cCodPr2
-         ::oDbf:cValPr1    := ::oProLin:cValPr1
-         ::oDbf:cValPr2    := ::oProLin:cValPr2
+         ::oDbf:cCodPr1    := ( D():PartesProduccionMaterial( ::nView ) )->cCodPr1
+         ::oDbf:cCodPr2    := ( D():PartesProduccionMaterial( ::nView ) )->cCodPr2
+         ::oDbf:cValPr1    := ( D():PartesProduccionMaterial( ::nView ) )->cValPr1
+         ::oDbf:cValPr2    := ( D():PartesProduccionMaterial( ::nView ) )->cValPr2
 
          ::oDbf:cClsDoc    := PRO_LIN
          ::oDbf:cTipDoc    := "Producido"
 
-         ::oDbf:cSerDoc    := ::oProLin:cSerOrd
-         ::oDbf:cNumDoc    := Str( ::oProLin:nNumOrd )
-         ::oDbf:cSufDoc    := ::oProLin:cSufOrd
+         ::oDbf:cSerDoc    := ( D():PartesProduccionMaterial( ::nView ) )->cSerOrd
+         ::oDbf:cNumDoc    := Str( ( D():PartesProduccionMaterial( ::nView ) )->nNumOrd )
+         ::oDbf:cSufDoc    := ( D():PartesProduccionMaterial( ::nView ) )->cSufOrd
 
-         ::oDbf:cIdeDoc    :=  ::oProLin:cSerOrd + Str( ::oProLin:nNumOrd ) + ::oProLin:cSufOrd
-         ::oDbf:nNumLin    :=  ::oProLin:nNumLin
+         ::oDbf:cIdeDoc    := ( D():PartesProduccionMaterial( ::nView ) )->cSerOrd + Str( ( D():PartesProduccionMaterial( ::nView ) )->nNumOrd ) + ( D():PartesProduccionMaterial( ::nView ) )->cSufOrd
+         ::oDbf:nNumLin    := ( D():PartesProduccionMaterial( ::nView ) )->nNumLin
 
-         ::oDbf:nAnoDoc    := Year( ::oProLin:dFecOrd )
-         ::oDbf:nMesDoc    := Month( ::oProLin:dFecOrd )
-         ::oDbf:dFecDoc    := ::oProLin:dFecOrd
+         ::oDbf:nAnoDoc    := Year( ( D():PartesProduccionMaterial( ::nView ) )->dFecOrd )
+         ::oDbf:nMesDoc    := Month( ( D():PartesProduccionMaterial( ::nView ) )->dFecOrd )
+         ::oDbf:dFecDoc    := ( D():PartesProduccionMaterial( ::nView ) )->dFecOrd
 
          ::InsertIfValid( .t. )
          ::loadValuesExtraFields()
 
       end if
 
-      ::oProLin:Skip()
+      ( D():PartesProduccionMaterial( ::nView ) )->( dbSkip() )
 
       ::setMeterAutoIncremental()
 
    end while
-
-   ::oProLin:IdxDelete( cCurUsr(), GetFileNoExt( ::oProLin:cFile ) )
 
 RETURN ( Self )
 
@@ -3222,8 +3212,6 @@ METHOD AddConsumido() CLASS TFastVentasArticulos
    local cExpLine    := ""
 
    ::setMeterText( "Procesando partes de producción" )
-   
-   ::setMeterTotal( ::oProMat:OrdKeyCount() )
 
    cExpLine          := '( dFecOrd >= Ctod( "' + Dtoc( ::dIniInf ) + '" ) .and. dFecOrd <= Ctod( "' + Dtoc( ::dFinInf ) + '" ) )'
 
@@ -3231,68 +3219,68 @@ METHOD AddConsumido() CLASS TFastVentasArticulos
       cExpLine       += ' .and. ( cCodArt >= "' + ::oGrupoArticulo:Cargo:getDesde() + '" .and. cCodArt <= "' + ::oGrupoArticulo:Cargo:getHasta() + '")'
    end if
 
-   ::oProMat:AddTmpIndex( cCurUsr(), GetFileNoExt( ::oProMat:cFile ), ::oProMat:OrdKey(), cAllTrimer( cExpLine ), , , , , , , , .t. )
+   ( D():PartesProduccionMateriaPrima( ::nView ) )->( setCustomFilter( ::cExpLine ) )
+   
+   ::setMeterTotal( ( D():PartesProduccionMateriaPrima( ::nView ) )->( OrdKeyCount() ) )
+   
+   ( D():PartesProduccionMateriaPrima( ::nView ) )->( dbGoTop() )
 
-   ::oProMat:GoTop()
+   while !::lBreak .and. !( D():PartesProduccionMateriaPrima( ::nView ) )->( Eof() )
 
-   while !::lBreak .and. !::oProMat:Eof()
-
-      if lChkSer( ::oProMat:cSerOrd, ::aSer )
+      if lChkSer( ( D():PartesProduccionMateriaPrima( ::nView ) )->cSerOrd, ::aSer )
 
          ::oDbf:Blank()
 
-         ::oDbf:cCodArt    := ::oProMat:cCodArt
-         ::oDbf:cNomArt    := ::oProMat:cNomArt
+         ::oDbf:cCodArt    := ( D():PartesProduccionMateriaPrima( ::nView ) )->cCodArt
+         ::oDbf:cNomArt    := ( D():PartesProduccionMateriaPrima( ::nView ) )->cNomArt
 
-         ::oDbf:cCodFam    := ::oProMat:cCodFam
-         ::oDbf:cGrpFam    := ::oProMat:cGrpFam
-         ::oDbf:cCodTip    := ::oProMat:cCodTip
-         ::oDbf:cCodCate   := ::oProMat:cCodCat
-         ::oDbf:cCodTemp   := ::oProMat:cCodTmp
-         ::oDbf:cCodFab    := ::oProMat:cCodFab
-         ::oDbf:cCodAlm    := ::oProMat:cAlmOrd
-         ::oDbf:cDesUbi    := RetFld( ::oProMat:cCodArt, ( D():Articulos( ::nView ) ), "cDesUbi", "Codigo" )
-         ::oDbf:cCodEnv    := RetFld( ::oProMat:cCodArt, ( D():Articulos( ::nView ) ), "cCodFra", "Codigo" )                    
+         ::oDbf:cCodFam    := ( D():PartesProduccionMateriaPrima( ::nView ) )->cCodFam
+         ::oDbf:cGrpFam    := ( D():PartesProduccionMateriaPrima( ::nView ) )->cGrpFam
+         ::oDbf:cCodTip    := ( D():PartesProduccionMateriaPrima( ::nView ) )->cCodTip
+         ::oDbf:cCodCate   := ( D():PartesProduccionMateriaPrima( ::nView ) )->cCodCat
+         ::oDbf:cCodTemp   := ( D():PartesProduccionMateriaPrima( ::nView ) )->cCodTmp
+         ::oDbf:cCodFab    := ( D():PartesProduccionMateriaPrima( ::nView ) )->cCodFab
+         ::oDbf:cCodAlm    := ( D():PartesProduccionMateriaPrima( ::nView ) )->cAlmOrd
+         ::oDbf:cDesUbi    := RetFld( ( D():PartesProduccionMateriaPrima( ::nView ) )->cCodArt, ( D():Articulos( ::nView ) ), "cDesUbi", "Codigo" )
+         ::oDbf:cCodEnv    := RetFld( ( D():PartesProduccionMateriaPrima( ::nView ) )->cCodArt, ( D():Articulos( ::nView ) ), "cCodFra", "Codigo" )                    
 
-         ::oDbf:nBultos    := ::oProMat:nBultos
-         ::oDbf:nCajas     := ::oProMat:nCajOrd
-         ::oDbf:nUniArt    := ::oProMat:nUndOrd
-         ::oDbf:nPreArt    := ::oProMat:nImpOrd
+         ::oDbf:nBultos    := ( D():PartesProduccionMateriaPrima( ::nView ) )->nBultos
+         ::oDbf:nCajas     := ( D():PartesProduccionMateriaPrima( ::nView ) )->nCajOrd
+         ::oDbf:nUniArt    := ( D():PartesProduccionMateriaPrima( ::nView ) )->nUndOrd
+         ::oDbf:nPreArt    := ( D():PartesProduccionMateriaPrima( ::nView ) )->nImpOrd
 
-         ::oDbf:nBrtArt    := 0 //::oProMat:TotalImporte()
-         ::oDbf:nTotArt    := 0 //::oProMat:TotalImporte()
+         ::oDbf:nBrtArt    := 0 //( D():PartesProduccionMateriaPrima( ::nView ) )->TotalImporte()
+         ::oDbf:nTotArt    := 0 //( D():PartesProduccionMateriaPrima( ::nView ) )->TotalImporte()
 
-         ::oDbf:cCodPr1    := ::oProMat:cCodPr1
-         ::oDbf:cCodPr2    := ::oProMat:cCodPr2
-         ::oDbf:cValPr1    := ::oProMat:cValPr1
-         ::oDbf:cValPr2    := ::oProMat:cValPr2
+         ::oDbf:cCodPr1    := ( D():PartesProduccionMateriaPrima( ::nView ) )->cCodPr1
+         ::oDbf:cCodPr2    := ( D():PartesProduccionMateriaPrima( ::nView ) )->cCodPr2
+         ::oDbf:cValPr1    := ( D():PartesProduccionMateriaPrima( ::nView ) )->cValPr1
+         ::oDbf:cValPr2    := ( D():PartesProduccionMateriaPrima( ::nView ) )->cValPr2
 
          ::oDbf:cClsDoc    := PRO_MAT
          ::oDbf:cTipDoc    := "Consumido"
 
-         ::oDbf:cSerDoc    := ::oProMat:cSerOrd
-         ::oDbf:cNumDoc    := Str( ::oProMat:nNumOrd )
-         ::oDbf:cSufDoc    := ::oProMat:cSufOrd
+         ::oDbf:cSerDoc    := ( D():PartesProduccionMateriaPrima( ::nView ) )->cSerOrd
+         ::oDbf:cNumDoc    := Str( ( D():PartesProduccionMateriaPrima( ::nView ) )->nNumOrd )
+         ::oDbf:cSufDoc    := ( D():PartesProduccionMateriaPrima( ::nView ) )->cSufOrd
 
-         ::oDbf:cIdeDoc    :=  ::oProMat:cSerOrd + Str( ::oProMat:nNumOrd ) + ::oProMat:cSufOrd
-         ::oDbf:nNumLin    :=  ::oProMat:nNumLin
+         ::oDbf:cIdeDoc    :=  ( D():PartesProduccionMateriaPrima( ::nView ) )->cSerOrd + Str( ( D():PartesProduccionMateriaPrima( ::nView ) )->nNumOrd ) + ( D():PartesProduccionMateriaPrima( ::nView ) )->cSufOrd
+         ::oDbf:nNumLin    :=  ( D():PartesProduccionMateriaPrima( ::nView ) )->nNumLin
 
-         ::oDbf:nAnoDoc    := Year( ::oProMat:dFecOrd )
-         ::oDbf:nMesDoc    := Month( ::oProMat:dFecOrd )
-         ::oDbf:dFecDoc    := ::oProMat:dFecOrd
+         ::oDbf:nAnoDoc    := Year( ( D():PartesProduccionMateriaPrima( ::nView ) )->dFecOrd )
+         ::oDbf:nMesDoc    := Month( ( D():PartesProduccionMateriaPrima( ::nView ) )->dFecOrd )
+         ::oDbf:dFecDoc    := ( D():PartesProduccionMateriaPrima( ::nView ) )->dFecOrd
 
          ::InsertIfValid( .t. )
          ::loadValuesExtraFields()
 
       end if
 
-      ::oProMat:Skip()
+      ( D():PartesProduccionMateriaPrima( ::nView ) )->( dbSkip() )
 
       ::setMeterAutoIncremental()
 
    end while
-
-   ::oProMat:IdxDelete( cCurUsr(), GetFileNoExt( ::oProMat:cFile ) )
 
 RETURN ( Self )
 
