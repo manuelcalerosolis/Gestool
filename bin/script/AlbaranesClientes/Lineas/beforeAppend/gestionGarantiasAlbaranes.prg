@@ -9,9 +9,9 @@
 
 Function gestionGarantiasAlbaranes( aLine, aHeader, nView, dbfTmpLin )
 
-    //Return ( .t. )
+Return ( .t. )
 
-   Return ( TGestionGarantiasAlbaranes():New( aLine, aHeader, nView, dbfTmpLin ):Run() )
+   //Return ( TGestionGarantiasAlbaranes():New( aLine, aHeader, nView, dbfTmpLin ):Run() )
 
 //---------------------------------------------------------------------------//
 

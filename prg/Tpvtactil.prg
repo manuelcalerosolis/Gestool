@@ -6736,7 +6736,7 @@ METHOD OnClickLista() CLASS TpvTactil
    Si el documento es nuevo y no tiene lineas no lo guardo---------------------
    */
 
-   if ::lValidatePreSave()
+   if !::lValidatePreSave()
       lGuardaDocumento     := .f.
    end if
 
@@ -6754,12 +6754,12 @@ METHOD OnClickLista() CLASS TpvTactil
 
    /*
    Si el docmuento no es nuevo y no tiene lineas lo tengo q borrar-------------
+   */
 
-   if ::lEmptyLineas()
+   /*if ::lEmptyLineas()
       ::EliminarDocumento( ::cNumeroTicket() )
       lGuardaDocumento     := .f.
-   end if
-   */
+   end if*/
 
    ::DisableDialog()
 
