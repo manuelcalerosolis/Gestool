@@ -712,11 +712,16 @@ Return ( oUser )
 
 //--------------------------------------------------------------------------//
 
-Function oSetUsr( cCodUsr, lCreateHandle )
+Function oSetUsr( cCodUsr, lCreateHandle, lCloseFiles )
+
+   DEFAULT lCloseFiles := .t.
 
    oUser():openFiles()
    oUser():setUser( cCodUsr, lCreateHandle )
-   oUser():closeFiles()
+
+   if lCloseFiles
+      oUser():closeFiles()
+   end if
 
 Return ( oUser )
 

@@ -599,9 +599,10 @@ METHOD SelectTactilResource( nOpt, oDlg, oLstUsr ) CLASS AccessCode
 
          if lGetPsw( ::dbfUser, .t. )
 
-            oUser    := oSetUsr( ( ::dbfUser )->cCodUse, .t. )
+            oUser    := oSetUsr( ( ::dbfUser )->cCodUse, .t., .f. )
             if oUser:lCreated
-               oUser:Save( ::dbfUser )
+               oUser:Save()
+               oUser:CloseFiles()
             end if
 
             ::EndTactilResource( oDlg )

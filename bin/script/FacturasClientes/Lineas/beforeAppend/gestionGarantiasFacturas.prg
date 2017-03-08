@@ -9,9 +9,9 @@
 
 Function gestionGarantiasFacturas( aLine, aHeader, nView, dbfTmpLin )
 	
-	 // Return ( .t. )
+Return ( .t. )
 
-Return ( TGestionGarantiasFacturas():New( aLine, aHeader, nView, dbfTmpLin ):Run() )
+//Return ( TGestionGarantiasFacturas():New( aLine, aHeader, nView, dbfTmpLin ):Run() )
 
 //---------------------------------------------------------------------------//
 
