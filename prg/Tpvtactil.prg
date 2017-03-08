@@ -5956,7 +5956,7 @@ METHOD OnClickUsuarios() CLASS TpvTactil
 
    // Si el documento es nuevo y no tiene lineas no lo guardo---------------------
 
-   if ::lValidatePreSave()
+   if !::lValidatePreSave()
       lGuardaDocumento     := .f.
    end if
 
@@ -6661,7 +6661,7 @@ METHOD OnClickPendientes() CLASS TpvTactil
    Si el documento es nuevo y no tiene lineas no lo guardo---------------------
    */
 
-   if ::lValidatePreSave()
+   if !::lValidatePreSave()
       lGuardaDocumento     := .f.
    end if
 
@@ -6800,7 +6800,7 @@ METHOD OnClickEntregaNota() CLASS TpvTactil
 
    // Si el documento es nuevo y no tiene lineas no lo guardo------------------
 
-   if ::lValidatePreSave()
+   if !::lValidatePreSave()
       Return ( .f. )
    end if
 
@@ -6863,7 +6863,7 @@ METHOD OnClickCloseTurno( lParcial ) CLASS TpvTactil
    Si el documento es nuevo y no tiene lineas no lo guardo---------------------
    */
 
-   if ::lValidatePreSave()
+   if !::lValidatePreSave()
       lGuardaDocumento     := .f.
    end if
 
