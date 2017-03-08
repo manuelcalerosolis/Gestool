@@ -921,9 +921,19 @@ RETURN ( lOpenFiles )
 
 //----------------------------------------------------------------------------//
 
-Static Function cOpenStatement()
+STATIC FUNCTION cOpenStatement()
 
    local cStatement     := ""
+
+   // Script openStatement-----------------------------------------------------
+
+   cStatement           := runScript( "TPV\SQLOpen.prg" ) 
+
+   if !empty( cStatement )
+      Return ( cStatement )
+   end if 
+
+   // Script openStatement-----------------------------------------------------
 
    if lAIS() .and. !oUser():lAdministrador()
 
@@ -939,7 +949,7 @@ Static Function cOpenStatement()
       cStatement        := "SELECT * FROM " + cPatEmp() + "TikeT"
    end if
 
-Return cStatement
+RETURN  ( cStatement )
 
 //----------------------------------------------------------------------------//
 
@@ -1164,7 +1174,7 @@ Return .t.
 
 Function generateTicketFromDocument( hDocument )
 
-Return ( frontTpv( nil, nil, nil, nil, nil, nil , hDocument ) )
+Return ( frontTpv( nil, nil, nil, nil, .f., nil , hDocument ) )
 
 //----------------------------------------------------------------------------//
 
@@ -1724,7 +1734,7 @@ else
 
    EnableAcceso()
 
-   if !empty( cCodCli ) .or. !empty( cCodArt ) .or. lEntCon .or. !empty( hDocument )
+   if !empty( cCodCli ) .or. !empty( cCodArt ) .or. !empty( hDocument ) .or. lEntCon 
 
       if !empty( oWndBrw )
          oWndBrw:RecAdd()
@@ -2848,7 +2858,7 @@ Static Function StartEdtRec( aTmp, aGet, nMode, oDlgTpv, oBrw, oBrwDet, hDocumen
 
          case HGetKeyAt( hDocument, 1 ) == "SAT"
 
-            msgInfo( HGetValueAt( hDocument, 1 ), "SAT")
+            cSatCli( aTmp, aGet, HGetValueAt( hDocument, 1 ), oBrwDet )
 
       end case
 
@@ -2886,9 +2896,7 @@ Static Function StartEdtRec( aTmp, aGet, nMode, oDlgTpv, oBrw, oBrwDet, hDocumen
 
    if !empty( oDlgTpv )
 
-      // aEval( oDlgTpv:aControls, { | oCtrl | oCtrl:Disable() } )
-
-      if IsTrue( lMaximized )
+      if isTrue( lMaximized )
          oDlgTpv:Maximize()
       end if
 
@@ -2990,13 +2998,11 @@ Static Function cSatCli( aTmp, aGet, cNumSat, oBrwLin )
    local nOrdLin
 
    nRecCab           := ( D():SatClientes( nView ) )->( recno() )
-   nRecLin           := ( D():SatClientesLineas( nView ) )->( recno() )
    nOrdCab           := ( D():SatClientes( nView ) )->( ordsetfocus( "nNumSat" ) )
+   nRecLin           := ( D():SatClientesLineas( nView ) )->( recno() )
    nOrdLin           := ( D():SatClientesLineas( nView ) )->( ordsetfocus( "nNumSat" ) )
 
-   /*
-   Pasamos las cabeceras-------------------------------------------------------
-   */
+   // Pasamos las cabeceras-------------------------------------------------------
 
    if ( D():SatClientes( nView ) )->( dbSeek( cNumSat ) )
 
@@ -3014,7 +3020,7 @@ Static Function cSatCli( aTmp, aGet, cNumSat, oBrwLin )
       aGet[ _CPRVCLI ]:cText( ( D():SatClientes( nView ) )->cPrvCli )
       aGet[ _CPOSCLI ]:cText( ( D():SatClientes( nView ) )->cPosCli )
       aGet[ _CDNICLI ]:cText( ( D():SatClientes( nView ) )->cDniCli )
-      aGet[ _CFPGTIK ]:cText( ( D():SatClientes( nView ) )->cCodPago )
+      aGet[ _CFPGTIK ]:cText( ( D():SatClientes( nView ) )->cCodPgo )
       aGet[ _CDIVTIK ]:cText( ( D():SatClientes( nView ) )->cDivSat )
       aGet[ _CCODAGE ]:cText( ( D():SatClientes( nView ) )->cCodAge )
       aGet[ _NCOMAGE ]:cText( ( D():SatClientes( nView ) )->nPctComAge )
@@ -3065,7 +3071,6 @@ Static Function cSatCli( aTmp, aGet, cNumSat, oBrwLin )
             ( dbfTmpL )->cGrpFam    := ( D():SatClientesLineas( nView ) )->cGrpFam
             ( dbfTmpL )->nLote      := ( D():SatClientesLineas( nView ) )->nLote
             ( dbfTmpL )->cLote      := ( D():SatClientesLineas( nView ) )->cLote
-            ( dbfTmpL )->dFecCad    := ( D():SatClientesLineas( nView ) )->dFecCad
 
             ( dbfTmpL )->nNumLin    := nLastNum( dbfTmpL )
             ( dbfTmpL )->nPosPrint  := nLastNum( dbfTmpL, "nPosPrint" )
@@ -3073,16 +3078,16 @@ Static Function cSatCli( aTmp, aGet, cNumSat, oBrwLin )
             // Precios---------------------------------------------------------
 
             if ( D():SatClientes( nView ) )->lIvaInc
-               ( dbfTmpL )->nPvpTil       := ( D():SatClientesLineas( nView ) )->nPreUnit
+               ( dbfTmpL )->nPvpTil       := ( D():SatClientesLineas( nView ) )->nPreDiv
             else
-               if  uFieldEmpresa( "lUseImp")  //empresa ecotasa 
-                  if uFieldEmpresa( "lIvaImpEsp" )  //ecotasa con iva
-                     ( dbfTmpL )->nPvpTil := ( D():SatClientesLineas( nView ) )->nPreUnit + ( D():SatClientesLineas( nView ) )->nValImp + ( ( ( ( D():SatClientesLineas( nView ) )->nPreUnit + ( D():SatClientesLineas( nView ) )->nValImp ) * ( D():SatClientesLineas( nView ) )->nIva ) / 100 )
+               if  uFieldEmpresa( "lUseImp")          //empresa ecotasa 
+                  if uFieldEmpresa( "lIvaImpEsp" )    //ecotasa con iva
+                     ( dbfTmpL )->nPvpTil := ( D():SatClientesLineas( nView ) )->nPreDiv + ( D():SatClientesLineas( nView ) )->nValImp + ( ( ( ( D():SatClientesLineas( nView ) )->nPreDiv + ( D():SatClientesLineas( nView ) )->nValImp ) * ( D():SatClientesLineas( nView ) )->nIva ) / 100 )
                   else
-                     ( dbfTmpL )->nPvpTil := ( D():SatClientesLineas( nView ) )->nPreUnit + ( D():SatClientesLineas( nView ) )->nValImp + ( ( ( D():SatClientesLineas( nView ) )->nPreUnit * ( D():SatClientesLineas( nView ) )->nIva ) / 100 )
+                     ( dbfTmpL )->nPvpTil := ( D():SatClientesLineas( nView ) )->nPreDiv + ( D():SatClientesLineas( nView ) )->nValImp + ( ( ( D():SatClientesLineas( nView ) )->nPreDiv * ( D():SatClientesLineas( nView ) )->nIva ) / 100 )
                   end if
                else
-                  ( dbfTmpL )->nPvpTil    := ( D():SatClientesLineas( nView ) )->nPreUnit + ( ( ( D():SatClientesLineas( nView ) )->nPreUnit * ( D():SatClientesLineas( nView ) )->nIva ) / 100 )
+                  ( dbfTmpL )->nPvpTil    := ( D():SatClientesLineas( nView ) )->nPreDiv + ( ( ( D():SatClientesLineas( nView ) )->nPreDiv * ( D():SatClientesLineas( nView ) )->nIva ) / 100 )
                end if
             end if
 
@@ -3098,32 +3103,27 @@ Static Function cSatCli( aTmp, aGet, cNumSat, oBrwLin )
 
    end if
 
-   /*
-   Refrescamos el browse y los totales
-   */
+   // Refrescamos el browse y los totales--------------------------------------
 
    lRecTotal( aTmp )
 
-   ( dbfTmpL )->( dbGoTop() )
+   ( dbfTmpL )->( dbgotop() )
 
    oBrwLin:Refresh()
 
-   /*
-   Volvemos al orden y al numero de registro que teniamos----------------------
-   */
+   // Volvemos al orden y al numero de registro que teniamos-------------------
 
    ( D():SatClientes( nView ) )->( ordsetfocus( nOrdCab ) )
-   ( D():SatClientesLineas( nView ) )->( ordsetfocus( nOrdLin ) )
    ( D():SatClientes( nView ) )->( dbgoto( nRecCab ) )
+   ( D():SatClientesLineas( nView ) )->( ordsetfocus( nOrdLin ) )
    ( D():SatClientesLineas( nView ) )->( dbgoto( nRecLin ) )
 
    cNumSat            := ""
    lStopEntContLine   := .t.
 
-return .t.
+Return .t.
 
 //---------------------------------------------------------------------------//
-
 
 Static Function cAlbCli( aTmp, aGet, cNumAlb, oBrwLin )
 
@@ -3134,8 +3134,8 @@ Static Function cAlbCli( aTmp, aGet, cNumAlb, oBrwLin )
 
    nRecCab     		:= ( dbfAlbCliT )->( Recno() )
    nRecLin     		:= ( dbfAlbCliL )->( Recno() )
-   nOrdCab     		:= ( dbfAlbCliT )->( ordsetfocus( "NNUMALB" ) )
-   nOrdLin     		:= ( dbfAlbCliL )->( ordsetfocus( "NNUMALB" ) )
+   nOrdCab     		:= ( dbfAlbCliT )->( ordsetfocus( "nNumAlb" ) )
+   nOrdLin     		:= ( dbfAlbCliL )->( ordsetfocus( "nNumAlb" ) )
 
    /*
    Pasamos las cabeceras-------------------------------------------------------
@@ -3257,11 +3257,11 @@ Static Function cAlbCli( aTmp, aGet, cNumAlb, oBrwLin )
    cNumAlb            := ""
    lStopEntContLine   := .t.
 
-return .t.
+Return .t.
 
 //---------------------------------------------------------------------------//
 
-static function cPedCli( aTmp, aGet, cNumPed, oBrwLin )
+Static Function cPedCli( aTmp, aGet, cNumPed, oBrwLin )
 
    local nRecCab
    local nRecLin
@@ -4364,15 +4364,15 @@ Static Function NewTiket( aGet, aTmp, nMode, nSave, lBig, oBrw, oBrwDet )
 
          end if
 
-         /*
-         Antes de guardar, si venimos de un SAT, cambiamos el estado del SAT---
-         */
+         // Antes de guardar, si venimos de un SAT, cambiamos el estado del SAT---
 
          if !empty( aTmp[ _CSATTIK ] )
 
             setAutoTextDialog( 'Estado SAT' )
 
-            if dbSeekInOrd( aTmp[ _CSATTIK ], "nNumAlb", dbfAlbCliT )
+            nOrdAlb           := ( D():SATClientes( nView ) )->( ordsetfocus( "nNumSat" ) )
+
+            if ( D():SATClientes( nView ) )->( dbseek( aTmp[ _CSATTIK ] ) )
 
                if dbLock( D():SATClientes( nView ) )
                   ( D():SATClientes( nView ) )->lEstado       := .t.
@@ -4382,30 +4382,11 @@ Static Function NewTiket( aGet, aTmp, nMode, nSave, lBig, oBrw, oBrwDet )
 
             end if
 
-            nOrdAlb           := ( D():SATClientesLineas( nView ) )->( ordsetfocus( "nNumAlb" ) )
-
-            if ( D():SATClientesLineas( nView ) )->( dbSeek( aTmp[ _CSATTIK ] ) )
-
-               while ( D():SATClientesLineasId( nView ) == aTmp[ _CSATTIK ] ) .and. !( D():SATClientesLineas( nView ) )->( eof() )
-
-                  if dbLock( D():SATClientesLineas( nView ) )
-                     ( D():SATClientesLineas( nView ) )->lEstado := .t.
-                     ( D():SATClientesLineas( nView ) )->( dbUnLock() )
-                  end if
-
-                  ( D():SATClientesLineas( nView ) )->( dbSkip() )
-
-               end while
-
-            end if
-
-            ( D():SATClientesLineas( nView ) )->( ordsetfocus( nOrdAlb ) )
+            ( D():SATClientes( nView ) )->( ordsetfocus( nOrdAlb ) )
 
          end if
 
-         /*
-         Antes de guardar, si venimos de un pedido, cambiamos el estado al pedido
-         */
+         // Antes de guardar, si venimos de un pedido, cambiamos el estado al pedido
 
          if !empty( aTmp[ _CPEDTIK ] )
 
@@ -4423,9 +4404,7 @@ Static Function NewTiket( aGet, aTmp, nMode, nSave, lBig, oBrw, oBrwDet )
 
          end if
 
-         /*
-         Antes de guardar, si venimos de un presupuesto, cambiamos el estado al presupuesto
-         */
+         // Antes de guardar, si venimos de un presupuesto, cambiamos el estado al presupuesto
 
          if !empty( aTmp[ _CPRETIK ] )
 
@@ -4446,7 +4425,6 @@ Static Function NewTiket( aGet, aTmp, nMode, nSave, lBig, oBrw, oBrwDet )
          /*
          Guardamos el tipo como albaranes-----------------------------------------
          */
-
 
          do case
             case nMode == DUPL_MODE
@@ -4635,7 +4613,7 @@ Static Function NewTiket( aGet, aTmp, nMode, nSave, lBig, oBrw, oBrwDet )
       Preparados para un nuevo registro----------------------------------------
       */
 
-      if ( lBig ) .or. ( lEntCon() .and. ( nMode == APPD_MODE ) .and. ( empty( cAlbTik ) .and. empty( cPedTik ) .and. empty( cPreTik ) ) )
+      if ( lBig ) .or. ( lEntCon() .and. ( nMode == APPD_MODE ) .and. ( empty( cAlbTik ) .and. empty( cPedTik ) .and. empty( cPreTik ) .and. empty( cSatTik ) ) )
 
          setAutoTextDialog( 'Inicializado entorno' )
 
@@ -4710,7 +4688,7 @@ Static Function NewTiket( aGet, aTmp, nMode, nSave, lBig, oBrw, oBrwDet )
 
       end if
 
-      lStopEntCont         := !( empty( cAlbTik ) .and. empty( cPedTik ) .and. empty( cPreTik ) )
+      lStopEntCont         := !( empty( cAlbTik ) .and. empty( cPedTik ) .and. empty( cPreTik ) .and. empty( cSatTik ) )
 
    end if
 
@@ -8338,17 +8316,17 @@ STATIC FUNCTION SavLine( aTmp, aGet, dbfTmpL, oBrw, aTik, oGetTotal, lTwo, nMode
 
    end if
 
-   /*
-   Caso de q las porpiedades no existan en la ficha del articulo--------------
-   */
+   // Caso de q las porpiedades no existan en la ficha del articulo--------------
 
    if !( isPropertiesInProduct( aTmp, nMode ) )
-      return .f.
+
+      if !msgBeepYesNo( "Estas propiedades no estan definidas en la ficha del artículo", "¿Desea continuar?" )
+         return .f.
+      end if 
+
    end if
 
-   /*
-   Casos especiles para combustibles-------------------------------------------
-   */
+   // Casos especiles para combustibles-------------------------------------------
 
    lStdChange( aTmp, aGet )
 
@@ -8362,9 +8340,7 @@ STATIC FUNCTION SavLine( aTmp, aGet, dbfTmpL, oBrw, aTik, oGetTotal, lTwo, nMode
 
    end if
 
-   /*
-   Imprimo en el visor el nombre y precio del artículo-------------------------
-   */
+   // Imprimo en el visor el nombre y precio del artículo-------------------------
 
    if oVisor != nil
       oVisor:SetBufferLine( { aTmp[ _CNOMTIL ], Trans( aTmp[ _NPVPTIL ], cPouDiv ) }, 1 )
@@ -20223,10 +20199,6 @@ Function isPropertiesInProduct( aTmp, nMode )
    end if 
 
    if dbSeekInOrd( cCode + cProperties, "cValPrp", dbfArtDiv )
-      return .t.
-   end if 
-
-   if msgBeepYesNo( "Estas propiedades no estan definidas en la ficha del artículo", "¿Desea continuar?" )
       return .t.
    end if 
 

@@ -3193,6 +3193,7 @@ METHOD AddProducido() CLASS TFastVentasArticulos
          ::oDbf:dFecDoc    := ( D():PartesProduccionMaterial( ::nView ) )->dFecOrd
 
          ::InsertIfValid( .t. )
+         
          ::loadValuesExtraFields()
 
       end if

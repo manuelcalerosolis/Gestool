@@ -1714,7 +1714,7 @@ FUNCTION SatCli( oMenuItem, oWnd, cCodCli, cCodArt )
          ALLOW    EXIT ;
          ACTION   ( if( !( D():SatClientes( nView ) )->lEstado,;
                         AlbCli( nil, nil, { "SAT" => D():SatClientesId( nView ) }  ),;
-                        MsgStop( "El S.A.T. ya ha sido aceptado" ) ) );
+                        msgStop( "El S.A.T. ya ha sido convertido" ) ) );
          TOOLTIP  "Generar albarán" ;
          FROM     oRotor ;
 
@@ -1722,7 +1722,7 @@ FUNCTION SatCli( oMenuItem, oWnd, cCodCli, cCodArt )
          ALLOW    EXIT ;
          ACTION   ( if( !( D():SatClientes( nView ) )->lEstado,;
                         FactCli( nil, nil, { "SAT" => D():SatClientesId( nView ) } ),;
-                        msgStop( "El S.A.T. ya ha sido aceptado" ) ) );
+                        msgStop( "El S.A.T. ya ha sido convertido" ) ) );
          TOOLTIP  "Generar factura" ;
          FROM     oRotor ;
 
@@ -1730,7 +1730,7 @@ FUNCTION SatCli( oMenuItem, oWnd, cCodCli, cCodArt )
          ALLOW    EXIT ;
          ACTION   ( if( !( D():SatClientes( nView ) )->lEstado,;
                         generateTicketFromDocument( { "SAT" => D():SatClientesId( nView ) } ),;
-                        msgStop( "El S.A.T. ya ha sido aceptado" ) ) );
+                        msgStop( "El S.A.T. ya ha sido convertido" ) ) );
          TOOLTIP  "Convertir a ticket" ;
          FROM     oRotor ;
 

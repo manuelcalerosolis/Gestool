@@ -417,13 +417,13 @@ Return uReturn
 
 METHOD RunScript( cFichero, uParam1, uParam2, uParam3, uParam4, uParam5, uParam6, uParam7, uParam8, uParam9, uParam10 ) CLASS TScripts
 
-   local uReturn
    local pHrb
    local oError
    local oBlock
+   local uReturn
 
-   /*oBlock         := ErrorBlock( {| oError | ApoloBreak( oError ) } )
-   BEGIN SEQUENCE*/
+   oBlock         := ErrorBlock( {| oError | ApoloBreak( oError ) } )
+   BEGIN SEQUENCE
 
       if file( cFichero )
          pHrb        := hb_hrbLoad( cFichero )
@@ -431,11 +431,11 @@ METHOD RunScript( cFichero, uParam1, uParam2, uParam3, uParam4, uParam5, uParam6
          hb_hrbUnload( pHrb )   
       end if
 
-   /*RECOVER USING oError
+   RECOVER USING oError
       msgStop( "Error de ejecución script." + CRLF + ErrorMessage( oError ) )
    END SEQUENCE
 
-   ErrorBlock( oBlock )*/
+   ErrorBlock( oBlock )
 
 RETURN ( uReturn )
 
@@ -509,82 +509,6 @@ Return ( uReturn )
 
 //---------------------------------------------------------------------------//
 
-Function ImportScript( oMainWindow, oBoton, cDirectory, uParam1, uParam2, uParam3, uParam4, uParam5, uParam6, uParam7, uParam8, uParam9, uParam10 )
-
-   local aFile
-   local aDirectory  
-   
-   /*aDirectory  := Directory( cPatScript() + cDirectory + "\*.prg" )
-
-   if !Empty( aDirectory )
-
-      for each aFile in aDirectory
-         oMainWindow:NewAt( "gc_document_white_", , , {|| TScripts():CompilarEjecutarFicheroScript( cPatScript() + cDirectory + '\' + aFile[ 1 ], uParam1, uParam2, uParam3, uParam4, uParam5, uParam6, uParam7, uParam8, uParam9, uParam10 ) }, GetFileNoExt( Rtrim( aFile[ 1 ] ) ), , , , , oBoton )
-      next 
-
-   end if */
-
-   aDirectory  := aDirectoryEventScript( cDirectory )
-
-   if !Empty( aDirectory )
-
-      for each aFile in aDirectory
-
-         oMainWindow:NewAt( "gc_document_white_", , , {|| TScripts():CompilarEjecutarFicheroScript( aFile[ 1 ], uParam1, uParam2, uParam3, uParam4, uParam5, uParam6, uParam7, uParam8, uParam9, uParam10 ) }, GetFileNoExt( Rtrim( aFile[ 1 ] ) ), , , , , oBoton )
-
-      next 
-
-   end if
-
-RETURN ( nil )
-
-//---------------------------------------------------------------------------//
-
-Static Function aDirectoryEventScript( cDirectory )
-
-   local aDirectory
-
-   aDirectory     := Directory( cPatScriptEmp() + cDirectory + "\*.prg" )
-   if !empty( aDirectory )
-      aEval( aDirectory, {|a| a[1] := cPatScriptEmp() + cDirectory + "\" + a[1]} )
-      Return ( aDirectory )
-   end if 
-
-   aDirectory     := Directory( cPatScript() + cDirectory + "\*.prg" )
-   if !empty( aDirectory )
-      aEval( aDirectory, {|a| a[1] := cPatScript() + cDirectory + "\" + a[1]} )
-   end if 
-
-Return ( aDirectory )
-
-//---------------------------------------------------------------------------//
-
-Function runEventScript( cDirectory, uParam1, uParam2, uParam3, uParam4, uParam5, uParam6, uParam7, uParam8, uParam9, uParam10 )
-
-   local aFile
-   local aFiles
-   local uReturn   
-   
-   aFiles         := aDirectoryEventScript( cDirectory ) 
-
-   if !empty( aFiles )
-
-      for each aFile in aFiles
-
-         uReturn  := TScripts():CompilarEjecutarFicheroScript( aFile[ 1 ], uParam1, uParam2, uParam3, uParam4, uParam5, uParam6, uParam7, uParam8, uParam9, uParam10 )
-
-         if isfalse( uReturn )
-            exit
-         end if 
-
-      next 
-
-   end if 
-
-RETURN ( uReturn )
-
-//---------------------------------------------------------------------------//
-
 METHOD getCompileHbr( cDirectory ) CLASS TScripts
 
    local aDirectory  := {}
@@ -641,3 +565,84 @@ METHOD runArrayScripts( aScripts, uParam1 ) CLASS TScripts
 Return uReturn
 
 //---------------------------------------------------------------------------//
+
+Function ImportScript( oMainWindow, oBoton, cDirectory, uParam1, uParam2, uParam3, uParam4, uParam5, uParam6, uParam7, uParam8, uParam9, uParam10 )
+
+   local aFile
+   local aDirectory  
+   
+   aDirectory  := aDirectoryEventScript( cDirectory )
+
+   if !Empty( aDirectory )
+
+      for each aFile in aDirectory
+
+         oMainWindow:NewAt( "gc_document_white_", , , {|| TScripts():CompilarEjecutarFicheroScript( aFile[ 1 ], uParam1, uParam2, uParam3, uParam4, uParam5, uParam6, uParam7, uParam8, uParam9, uParam10 ) }, GetFileNoExt( Rtrim( aFile[ 1 ] ) ), , , , , oBoton )
+
+      next 
+
+   end if
+
+RETURN ( nil )
+
+//---------------------------------------------------------------------------//
+
+Static Function aDirectoryEventScript( cDirectory )
+
+   local aDirectory
+
+   aDirectory     := Directory( cPatScriptEmp() + cDirectory + "\*.prg" )
+   if !empty( aDirectory )
+      aEval( aDirectory, {|a| a[1] := cPatScriptEmp() + cDirectory + "\" + a[1]} )
+      Return ( aDirectory )
+   end if 
+
+   aDirectory     := Directory( cPatScript() + cDirectory + "\*.prg" )
+   if !empty( aDirectory )
+      aEval( aDirectory, {|a| a[1] := cPatScript() + cDirectory + "\" + a[1]} )
+   end if 
+
+Return ( aDirectory )
+
+//---------------------------------------------------------------------------//
+
+Function runEventScript( cDirectory, uParam1, uParam2, uParam3, uParam4, uParam5, uParam6, uParam7, uParam8, uParam9, uParam10 )
+
+   local aFile
+   local aFiles
+   local uReturn  
+   
+   aFiles         := aDirectoryEventScript( cDirectory ) 
+
+   if empty( aFiles )
+      Return ( nil )
+   end if 
+
+   for each aFile in aFiles
+
+      uReturn  := TScripts():CompilarEjecutarFicheroScript( aFile[ 1 ], uParam1, uParam2, uParam3, uParam4, uParam5, uParam6, uParam7, uParam8, uParam9, uParam10 )
+
+      if isfalse( uReturn )
+         exit
+      end if 
+
+   next 
+
+RETURN ( uReturn )
+
+//---------------------------------------------------------------------------//
+
+Function RunScript( cFichero, uParam1, uParam2, uParam3, uParam4, uParam5, uParam6, uParam7, uParam8, uParam9, uParam10 ) 
+
+   if file( cPatScriptEmp() + cFichero )
+      RETURN ( TScripts():CompilarEjecutarFicheroScript( cPatScriptEmp() + cFichero, uParam1, uParam2, uParam3, uParam4, uParam5, uParam6, uParam7, uParam8, uParam9, uParam10 ) )
+   end if 
+
+   if file( cPatScript() + cFichero )
+      RETURN ( TScripts():CompilarEjecutarFicheroScript( cPatScript() + cFichero, uParam1, uParam2, uParam3, uParam4, uParam5, uParam6, uParam7, uParam8, uParam9, uParam10 ) )
+   end if 
+
+RETURN ( nil )
+
+//---------------------------------------------------------------------------//
+

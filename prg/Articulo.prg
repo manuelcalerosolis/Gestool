@@ -7390,7 +7390,6 @@ static function EndEdtLeng( aGet, aTmp, aTmpArt, dbfTmpLeng, oBrw, nMode, oDlg )
    end if
 
    if empty( aTmp[ ( dbfTmpLeng )->( FieldPos( "cDesTik" ) ) ] ) .and. empty( aTmp[ ( dbfTmpLeng )->( FieldPos( "cDesArt" ) ) ] )
-
       MsgStop( "Tiene que introducir al menos una descripción." )
       aGet[ ( dbfTmpLeng )->( FieldPos( "cDesTik" ) ) ]:SetFocus()
       Return .f.

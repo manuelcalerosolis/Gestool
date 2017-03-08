@@ -84,15 +84,15 @@ METHOD lPreSave( oGet, oDlg, nMode )
    if nMode == APPD_MODE .or. nMode == DUPL_MODE
 
       if ::oDbf:SeekInOrd( ::oDbf:cCodLen, "cCodLen" )
-         MsgStop( "Código ya existe " + Rtrim( ::oDbf:cCodLen ) )
+         msgStop( "Código ya existe " + Rtrim( ::oDbf:cCodLen ) )
          oGet:GetFocus()
          return .f.
       end if
 
    end if
 
-   if Empty( ::oDbf:cNomLen )
-      MsgStop( "La descripción del lenguaje no puede estar vacía." )
+   if empty( ::oDbf:cNomLen )
+      msgStop( "La descripción del lenguaje no puede estar vacía." )
       Return .f.
    end if
 

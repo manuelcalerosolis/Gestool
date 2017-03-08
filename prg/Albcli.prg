@@ -12597,7 +12597,7 @@ STATIC FUNCTION cSatCli( aGet, aTmp, oBrw, nMode )
       return .t.
    end if
 
-   if dbSeekInOrd( cSatCliente, "NNUMSAT", D():SatClientes( nView ) )
+   if dbSeekInOrd( cSatCliente, "nNumSat", D():SatClientes( nView ) )
 
       if ( D():SatClientes( nView ) )->lEstado
 

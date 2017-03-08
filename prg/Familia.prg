@@ -1701,7 +1701,6 @@ FUNCTION EdtFamilia( cCodFam, lOpenBrowse )
 RETURN ( lEdit )
 
 //--------------------------------------------------------------------------//
-
 //
 // Devuelve el presupuesto de la familia
 //
