@@ -4344,12 +4344,17 @@ METHOD controllerExportPrestashop( idProduct ) Class TComercio
    if !empty( lastInsertProduct )
       restoreLastInsert       :=  msgYesNo(  "La última sincronización con la web no finalizo correctamente" + CRLF + ;
                                              "¿Desea continuar desde el último artículo insertado?" )
+   else 
+      if !msgYesNo(  "Se dispone a actualizar la web completa, el proceso puede ser prolongado" + CRLF + ;  
+                     "¿Desea continuar?" )
+         Return .f.
+      end if 
    end if  
 
    ::disableDialog()
 
-   // oBlock                     := ErrorBlock( { | oError | Break( oError ) } )
-   // BEGIN SEQUENCE
+   oBlock                     := ErrorBlock( { | oError | Break( oError ) } )
+   BEGIN SEQUENCE
 
       ::ftpConnect()
 
@@ -4369,10 +4374,10 @@ METHOD controllerExportPrestashop( idProduct ) Class TComercio
 
       ::ftpDisConnect()
 
-   // RECOVER USING oError
-   //    msgStop( ErrorMessage( oError ), "Error en modulo Prestashop." )
-   // END SEQUENCE
-   // ErrorBlock( oBlock )
+   RECOVER USING oError
+      msgStop( ErrorMessage( oError ), "Error en modulo Prestashop." )
+   END SEQUENCE
+   ErrorBlock( oBlock )
 
    ::EnableDialog()
 
@@ -5268,7 +5273,11 @@ METHOD controllerUpdateStockPrestashop() Class TComercio
 
    ::TComercioStock:createCommandProductsToUpdate()
 
+   ::saveLastInsertStock()
+
    ::writeText( 'Proceso finalizado' )
+
+   msginfo( 'Proceso finalizado' )
 
    ::enableDialog()
 

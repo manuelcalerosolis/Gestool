@@ -3185,7 +3185,7 @@ METHOD AddProducido() CLASS TFastVentasArticulos
          ::oDbf:cNumDoc    := Str( ( D():PartesProduccionMaterial( ::nView ) )->nNumOrd )
          ::oDbf:cSufDoc    := ( D():PartesProduccionMaterial( ::nView ) )->cSufOrd
 
-         ::oDbf:cIdeDoc    := ( D():PartesProduccionMaterial( ::nView ) )->cSerOrd + Str( ( D():PartesProduccionMaterial( ::nView ) )->nNumOrd ) + ( D():PartesProduccionMaterial( ::nView ) )->cSufOrd
+         ::oDbf:cIdeDoc    :=  ::idDocumento()
          ::oDbf:nNumLin    := ( D():PartesProduccionMaterial( ::nView ) )->nNumLin
 
          ::oDbf:nAnoDoc    := Year( ( D():PartesProduccionMaterial( ::nView ) )->dFecOrd )
