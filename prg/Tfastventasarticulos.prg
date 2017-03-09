@@ -3178,7 +3178,7 @@ METHOD AddProducido() CLASS TFastVentasArticulos
          ::oDbf:cValPr1    := ( D():PartesProduccionMaterial( ::nView ) )->cValPr1
          ::oDbf:cValPr2    := ( D():PartesProduccionMaterial( ::nView ) )->cValPr2
 
-         ::oDbf:cClsDoc    := PRO_LIN
+         ::oDbf:cClsDoc    := PAR_PRO
          ::oDbf:cTipDoc    := "Producido"
 
          ::oDbf:cSerDoc    := ( D():PartesProduccionMaterial( ::nView ) )->cSerOrd
