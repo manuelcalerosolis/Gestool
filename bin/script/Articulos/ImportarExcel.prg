@@ -247,13 +247,14 @@ METHOD getExcelNumeric( columna, fila )
 
    excelValue                 := ::getExcelValue( columna, fila, valorPorDefecto )
 
-   if valtype( excelValue ) != "N" 
-      excelValue              := val( excelValue )
+   if valtype( excelValue ) != "N"
+      excelValue              := strtran( excelValue, ",", "." )
+      excelValue              := val( AllTrim( excelValue ) )
    end if 
 
-   if empty( excelValue )
+   /*if empty( excelValue )
       Return ( valorPorDefecto ) 
-   end if 
+   end if */
 
 Return ( excelValue )   
 
