@@ -929,7 +929,8 @@ METHOD BuildReportCorrespondences()
                                                 ::FastReportFacturaRectificativa(),;
                                                 ::FastReportTicket( .t. ) } },;
                      "Partes de producción" => ;
-                        {  "Generate" =>  {||   ::AddProducido() },;
+                        {  "Generate" =>  {||   ::AddProducido(),;
+                                                ::AddConsumido() },;
                            "Variable" =>  {||   ::AddVariableLineasParteProduccion(),;
                                                 ::AddVariableStock() },;
                            "Data" =>      {||   ::FastReportParteProduccion() } },;
@@ -3210,17 +3211,17 @@ RETURN ( Self )
 
 METHOD AddConsumido() CLASS TFastVentasArticulos
 
-   local cExpLine    := ""
-
    ::setMeterText( "Procesando partes de producción" )
 
-   cExpLine          := '( dFecOrd >= Ctod( "' + Dtoc( ::dIniInf ) + '" ) .and. dFecOrd <= Ctod( "' + Dtoc( ::dFinInf ) + '" ) )'
+   ::cExpresionLine        := '( dFecOrd >= Ctod( "' + Dtoc( ::dIniInf ) + '" ) .and. dFecOrd <= Ctod( "' + Dtoc( ::dFinInf ) + '" ) )'
 
    if !::lAllArt
-      cExpLine       += ' .and. ( cCodArt >= "' + ::oGrupoArticulo:Cargo:getDesde() + '" .and. cCodArt <= "' + ::oGrupoArticulo:Cargo:getHasta() + '")'
+      ::cExpresionLine     += ' .and. ( cCodArt >= "' + ::oGrupoArticulo:Cargo:getDesde() + '" .and. cCodArt <= "' + ::oGrupoArticulo:Cargo:getHasta() + '")'
    end if
 
-   ( D():PartesProduccionMateriaPrima( ::nView ) )->( setCustomFilter( ::cExpLine ) )
+   msgalert( ::cExpresionLine )
+
+   ( D():PartesProduccionMateriaPrima( ::nView ) )->( setCustomFilter( ::cExpresionLine ) )
    
    ::setMeterTotal( ( D():PartesProduccionMateriaPrima( ::nView ) )->( OrdKeyCount() ) )
    
@@ -3245,9 +3246,9 @@ METHOD AddConsumido() CLASS TFastVentasArticulos
          ::oDbf:cDesUbi    := RetFld( ( D():PartesProduccionMateriaPrima( ::nView ) )->cCodArt, ( D():Articulos( ::nView ) ), "cDesUbi", "Codigo" )
          ::oDbf:cCodEnv    := RetFld( ( D():PartesProduccionMateriaPrima( ::nView ) )->cCodArt, ( D():Articulos( ::nView ) ), "cCodFra", "Codigo" )                    
 
-         ::oDbf:nBultos    := ( D():PartesProduccionMateriaPrima( ::nView ) )->nBultos
-         ::oDbf:nCajas     := ( D():PartesProduccionMateriaPrima( ::nView ) )->nCajOrd
-         ::oDbf:nUniArt    := ( D():PartesProduccionMateriaPrima( ::nView ) )->nUndOrd
+         ::oDbf:nBultos    := ( D():PartesProduccionMateriaPrima( ::nView ) )->nBultos * -1
+         ::oDbf:nCajas     := ( D():PartesProduccionMateriaPrima( ::nView ) )->nCajOrd * -1
+         ::oDbf:nUniArt    := ( D():PartesProduccionMateriaPrima( ::nView ) )->nUndOrd * -1
          ::oDbf:nPreArt    := ( D():PartesProduccionMateriaPrima( ::nView ) )->nImpOrd
 
          ::oDbf:nBrtArt    := 0 //( D():PartesProduccionMateriaPrima( ::nView ) )->TotalImporte()
@@ -3258,7 +3259,7 @@ METHOD AddConsumido() CLASS TFastVentasArticulos
          ::oDbf:cValPr1    := ( D():PartesProduccionMateriaPrima( ::nView ) )->cValPr1
          ::oDbf:cValPr2    := ( D():PartesProduccionMateriaPrima( ::nView ) )->cValPr2
 
-         ::oDbf:cClsDoc    := PRO_MAT
+         ::oDbf:cClsDoc    := PAR_PRO
          ::oDbf:cTipDoc    := "Consumido"
 
          ::oDbf:cSerDoc    := ( D():PartesProduccionMateriaPrima( ::nView ) )->cSerOrd
@@ -3273,6 +3274,7 @@ METHOD AddConsumido() CLASS TFastVentasArticulos
          ::oDbf:dFecDoc    := ( D():PartesProduccionMateriaPrima( ::nView ) )->dFecOrd
 
          ::InsertIfValid( .t. )
+
          ::loadValuesExtraFields()
 
       end if
