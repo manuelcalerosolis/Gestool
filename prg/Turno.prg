@@ -4502,6 +4502,10 @@ Method lValidCajas()
    local nUsrCaj
    local lValidCajas    := .t.
 
+   if ::lArqueoParcial
+      Return .t.
+   end if
+
    ::oDbfCaj:GetRecno()
 
    ::oDbfCaj:GoTop()
@@ -11545,7 +11549,7 @@ FUNCTION CloseTurno( oMenuItem, oWnd, lParcial )
       SysRefresh(); oWnd:CloseAll(); SysRefresh()
    end if
 
-   if nUserCaja( oUser():cCaja() ) > 1
+   if !lParcial .and. nUserCaja( oUser():cCaja() ) > 1
       msgStop( "Hay más de un usuario conectado a la caja", "Atención" )
       return .f.
    end if

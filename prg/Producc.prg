@@ -1033,12 +1033,12 @@ METHOD DefineFiles( cPath, cDriver )
       FIELD NAME "cAlmOrg" TYPE "C" LEN 16  DEC 0 COMMENT "Almacén Origen"                         OF ::oDbf
       FIELD NAME "lRecCos" TYPE "L" LEN 01  DEC 0 COMMENT "Recalcula"      HIDE                    OF ::oDbf
 
-      INDEX TO "ProCab.Cdx" TAG "cNumOrd" ON "cSerOrd + Str( nNumOrd, 9 ) + cSufOrd"         COMMENT "Número"        NODELETED OF ::oDbf
-      INDEX TO "ProCab.Cdx" TAG "dFecOrd" ON "dtos( dFecOrd ) + cHorIni"                     COMMENT "Fecha inicio"  NODELETED OF ::oDbf
-      INDEX TO "ProCab.Cdx" TAG "cCodOpe" ON "cCodOpe"                                       COMMENT "Operación"     NODELETED OF ::oDbf
-      INDEX TO "ProCab.Cdx" TAG "cCodSec" ON "cCodSec"                                       COMMENT "Sección"       NODELETED OF ::oDbf
-      INDEX TO "ProCab.Cdx" TAG "cAlmOrd" ON "cAlmOrd"                                       COMMENT "Almacén"       NODELETED OF ::oDbf
-      INDEX TO "ProCab.Cdx" TAG "iNumOrd" ON "'30' + cSerOrd + Str( nNumOrd, 9 ) + cSufOrd"  COMMENT ""              NODELETED OF ::oDbf
+      INDEX TO "ProCab.Cdx" TAG "cNumOrd" ON "cSerOrd + Str( nNumOrd, 9 ) + cSufOrd"                     COMMENT "Número"        NODELETED OF ::oDbf
+      INDEX TO "ProCab.Cdx" TAG "dFecOrd" ON "dtos( dFecOrd ) + cHorIni"                                 COMMENT "Fecha inicio"  NODELETED OF ::oDbf
+      INDEX TO "ProCab.Cdx" TAG "cCodOpe" ON "cCodOpe"                                                   COMMENT "Operación"     NODELETED OF ::oDbf
+      INDEX TO "ProCab.Cdx" TAG "cCodSec" ON "cCodSec"                                                   COMMENT "Sección"       NODELETED OF ::oDbf
+      INDEX TO "ProCab.Cdx" TAG "cAlmOrd" ON "cAlmOrd"                                                   COMMENT "Almacén"       NODELETED OF ::oDbf
+      INDEX TO "ProCab.Cdx" TAG "iNumOrd" ON "'30' + cSerOrd + Str( nNumOrd, 9 ) + space( 1 ) + cSufOrd" COMMENT ""              NODELETED OF ::oDbf
 
    END DATABASE ::oDbf
 

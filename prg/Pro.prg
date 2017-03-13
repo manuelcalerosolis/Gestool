@@ -672,6 +672,17 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbf, oBrw, aTmpPro, bValid, nMode, cCodArt )
                      aGet[ ( dbfProL )->( FieldPos( "nColor" ) ) ]:Refresh() ) ;
          OF       oDlg
 
+      REDEFINE GET aGet[ ( dbfProL )->( FieldPos( "cSerDef" ) ) ] ;
+         VAR      aTmp[ ( dbfProL )->( FieldPos( "cSerDef" ) ) ] ;
+         ID       210 ;
+         PICTURE  "@!" ;
+         SPINNER ;
+         ON UP    ( UpSerie( aGet[ ( dbfProL )->( FieldPos( "cSerDef" ) ) ] ) );
+         ON DOWN  ( DwSerie( aGet[ ( dbfProL )->( FieldPos( "cSerDef" ) ) ] ) ); 
+         WHEN     ( nMode != ZOOM_MODE );
+         VALID    ( aTmp[ ( dbfProL )->( FieldPos( "cSerDef" ) ) ] >= "A" .AND. aTmp[ ( dbfProL )->( FieldPos( "cSerDef" ) ) ] <= "Z" ) ;
+         OF       oDlg
+
       REDEFINE BUTTON;
          ID       IDOK ;
          OF       oDlg ;
@@ -2073,6 +2084,7 @@ Function aItmPro()
    aAdd( aBase, { "nBarTbl",   "C",  4, 0, "Código para codigos de barras"          } )
    aAdd( aBase, { "cCodWeb",   "N", 11, 0, "Código del producto en la web"          } )
    aAdd( aBase, { "nColor",    "N", 10, 0, "Código de color"                        } )
+   aAdd( aBase, { "cSerDef",   "C",  1, 0, "Serie por defecto"                      } )
 
 return ( aBase )
 
