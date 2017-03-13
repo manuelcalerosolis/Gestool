@@ -4557,21 +4557,22 @@ METHOD ExecuteSqlStatement( cSql, cSqlStatement, hStatement )
    local oBlock
    local cErrorAds
 
-   DEFAULT hStatement   := ADS_CDX
+   DEFAULT cSqlStatement   := "ADS" + alltrim( strtran( str( seconds() ), ".", "" ) )
+   DEFAULT hStatement      := ADS_CDX
 
    CursorWait()
 
-   oBlock               := ErrorBlock( {| oError | ApoloBreak( oError ) } )
+   oBlock                  := ErrorBlock( {| oError | ApoloBreak( oError ) } )
    BEGIN SEQUENCE
-
-      dbSelectArea( 0 )
 
       ::CloseArea( cSqlStatement )
 
-      lOk               := ADSCreateSQLStatement( cSqlStatement, hStatement )
+      dbSelectArea( 0 )
+
+      lOk                  := ADSCreateSQLStatement( cSqlStatement, hStatement )
       if lOk
    
-         lOk            := ADSExecuteSQLDirect( cSql )
+         lOk               := ADSExecuteSQLDirect( cSql )
          if !lOk
             msginfo( cSql, "cSql" )
             nError      := AdsGetLastError( @cErrorAds )
@@ -4580,14 +4581,14 @@ METHOD ExecuteSqlStatement( cSql, cSqlStatement, hStatement )
    
       else
    
-         nError         := AdsGetLastError( @cErrorAds )
+         nError            := AdsGetLastError( @cErrorAds )
          msgStop( "Error : " + Str( nError) + "[" + cErrorAds + "]", 'ERROR en ADSCreateSQLStatement' )
    
       end if
    
       if lOk 
-         AdsCacheOpenCursors( 0 )
-         AdsClrCallBack()
+         ADSCacheOpenCursors( 0 )
+         ADSClrCallBack()
       endif
 
    RECOVER USING oError

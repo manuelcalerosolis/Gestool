@@ -283,9 +283,9 @@ STATIC FUNCTION OpenFiles()
          oDetCamposExtra:setbId( {|| D():FamiliasId( nView ) } )
       end if
 
-      oLenguajes           := TLenguaje():Create( cPatDat() )
+      oLenguajes        := TLenguaje():Create( cPatDat() )
       if !oLenguajes:OpenFiles()
-         lOpenFiles        := .f.
+         lOpenFiles     := .f.
       end if
 
    RECOVER USING oError
@@ -375,7 +375,7 @@ FUNCTION Familia( oMenuItem, oWnd )
       end if
 
       /*
-      Anotamos el movimiento para el navegador
+      Anotamos el movimiento para el navegador---------------------------------
       */
 
       AddMnuNext( "Familias de artículos", ProcName() )

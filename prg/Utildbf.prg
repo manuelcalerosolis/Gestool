@@ -1972,6 +1972,21 @@ Function dbBlankRec( cAlias )
 RETURN aBlank
 
 //--------------------------------------------------------------------------//
+
+Function dbHash( cAlias )
+
+   local i
+   local hHash       := {=>}
+
+   DEFAULT cAlias    := Alias()
+
+   for i = 1 to ( cAlias )->( fCount() )
+      hSet( hHash, ( cAlias )->( fieldname(i) ), ( cAlias )->( fieldget( i ) ) )
+   next
+
+RETURN ( hHash )
+
+//--------------------------------------------------------------------------//
 /*
 Bloquea un registro
 */

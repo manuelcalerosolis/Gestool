@@ -4748,41 +4748,39 @@ FUNCTION genPgoFacCli( cNumFac, cFacCliT, cFacCliL, cFacCliP, cAntCliT, cClient,
    local cBanco
    local lAlert
 
-   DEFAULT nMode     := APPD_MODE
-   DEFAULT lMessage  := .t.
+   DEFAULT nMode        := APPD_MODE
+   DEFAULT lMessage     := .t.
 
    if !empty( nView )
-
       DEFAULT cFacCliP  := D():FacturasClientesCobros( nView )
       DEFAULT cFPago    := D():FormasPago( nView )
       DEFAULT cDiv      := D():Divisas( nView )
       DEFAULT cFacCliL  := D():FacturasClientesLineas( nView )
       DEFAULT cFacCliT  := D():FacturasClientes( nView )
       DEFAULT cAntCliT  := D():AnticiposClientes( nView )
-
    end if
 
-   lAlert            := ( nMode == APPD_MODE )
+   lAlert               := ( nMode == APPD_MODE )
 
-   cSerFac           := ( cFacCliT )->cSerie
-   nNumFac           := ( cFacCliT )->nNumFac
-   cSufFac           := ( cFacCliT )->cSufFac
-   cDivFac           := ( cFacCliT )->cDivFac
-   nVdvFac           := ( cFacCliT )->nVdvFac
-   dFecFac           := ( cFacCliT )->dFecFac
-   cCodPgo           := ( cFacCliT )->cCodPago
-   cCodCli           := ( cFacCliT )->cCodCli
-   cNomCli           := ( cFacCliT )->cNomCli
-   cCodAge           := ( cFacCliT )->cCodAge
-   cCodCaj           := ( cFacCliT )->cCodCaj
-   cCodUsr           := ( cFacCliT )->cCodUsr
-   cBanco            := ( cFacCliT )->cBanco
-   cPaisIBAN         := ( cFacCliT )->cPaisIBAN 
-   cCtrlIBAN         := ( cFacCliT )->cCtrlIBAN
-   cEntidad          := ( cFacCliT )->cEntBnc
-   cSucursal         := ( cFacCliT )->cSucBnc
-   cControl          := ( cFacCliT )->cDigBnc
-   cCuenta           := ( cFacCliT )->cCtaBnc
+   cSerFac              := ( cFacCliT )->cSerie
+   nNumFac              := ( cFacCliT )->nNumFac
+   cSufFac              := ( cFacCliT )->cSufFac
+   cDivFac              := ( cFacCliT )->cDivFac
+   nVdvFac              := ( cFacCliT )->nVdvFac
+   dFecFac              := ( cFacCliT )->dFecFac
+   cCodPgo              := ( cFacCliT )->cCodPago
+   cCodCli              := ( cFacCliT )->cCodCli
+   cNomCli              := ( cFacCliT )->cNomCli
+   cCodAge              := ( cFacCliT )->cCodAge
+   cCodCaj              := ( cFacCliT )->cCodCaj
+   cCodUsr              := ( cFacCliT )->cCodUsr
+   cBanco               := ( cFacCliT )->cBanco
+   cPaisIBAN            := ( cFacCliT )->cPaisIBAN 
+   cCtrlIBAN            := ( cFacCliT )->cCtrlIBAN
+   cEntidad             := ( cFacCliT )->cEntBnc
+   cSucursal            := ( cFacCliT )->cSucBnc
+   cControl             := ( cFacCliT )->cDigBnc
+   cCuenta              := ( cFacCliT )->cCtaBnc
 
 //   if ( nMode == APPD_MODE .and. nMode == DUPL_MODE )
 //      generaRecibosFacturasClientes( cNumFac, cFacCliT, cFacCliL, cFacCliP, cAntCliT, cClient, cFPago, cDiv, cIva, nMode, lMessage )
@@ -4935,6 +4933,10 @@ FUNCTION genPgoFacCli( cNumFac, cFacCliT, cFacCliL, cFacCliP, cAntCliT, cClient,
             lAlert                         := .f.
 
             ( cFacCliP )->( dbUnLock() )
+
+            // Insertar vencimiento en contaplus-------------------------------
+
+            insertVencimientoContaplus( dbHash( cFacCliP ) ,  )
 
          next
 
@@ -6413,6 +6415,24 @@ Function LiquidaRecibo( nImporte, dbfRecCli, cFacCliT )
       ( dbfRecCli )->( dbGoTo( nRec ) )
 
    end if
+
+Return nil
+
+//---------------------------------------------------------------------------//
+
+Function insertVencimientoContaplus( hRecibo )
+
+   // Si el recibo esta pagado nos vamos
+
+   if ( hget( hRecibo, "lCobrado" ) )
+      Return .f.
+   end if 
+
+   // Apertura de base de dtos de vencimiento en contaplis
+
+   // Añadir campos a base de datos de contaplus
+
+   // Cerrar base de datos de contaplus
 
 Return nil
 
