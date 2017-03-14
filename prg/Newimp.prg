@@ -61,8 +61,6 @@ METHOD New( cPath, oWndParent, oMenuItem )
 
    ::oDbf               := nil
 
-   ::cPouDiv            := cPouDiv( cDivEmp() )
-
    ::lAutoButtons       := .t.
    ::lCreateShell       := .f.
 
@@ -88,6 +86,8 @@ METHOD OpenFiles( lExclusive, cPath ) CLASS TNewImp
       end if
 
       ::oDbf:Activate( .f., !( lExclusive ) )
+
+      ::cPouDiv         := cPouDiv( cDivEmp() )
 
    RECOVER USING oError
 
