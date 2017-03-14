@@ -16045,7 +16045,7 @@ FONT 8, "MS Sans Serif"
   CONTROL "Documentos", -1, "Button", BS_GROUPBOX|WS_TABSTOP, 2, 1, 141, 40
 }
 
-PRODET DIALOG DISCARDABLE 30, 71, 282, 125
+PRODET DIALOG DISCARDABLE 30, 71, 282, 92
 STYLE WS_POPUP|DS_MODALFRAME|DS_3DLOOK|WS_CAPTION|WS_SYSMENU|WS_VISIBLE
 CAPTION "Tabla de propiedades"
 FONT 8, "MS Sans Serif"
@@ -16055,17 +16055,15 @@ FONT 8, "MS Sans Serif"
   CONTROL "", 120, "Edit", ES_RIGHT|WS_VSCROLL|WS_BORDER|WS_TABSTOP, 104, 29, 60, 11
   CONTROL "", 130, "Edit", ES_RIGHT|WS_BORDER|WS_TABSTOP, 104, 42, 60, 11
   CONTROL "", 200, "Edit", ES_RIGHT|WS_BORDER|WS_TABSTOP, 104, 55, 175, 11
-  CONTROL "", 210, "Edit", ES_RIGHT|WS_VSCROLL|WS_BORDER|WS_TABSTOP, 104, 67, 31, 11
-  CONTROL "&Aceptar [F5]", IDOK, "Button", BS_DEFPUSHBUTTON|WS_TABSTOP, 118, 90, 50, 14
-  CONTROL "&Cancelar", IDCANCEL, "Button", WS_TABSTOP, 173, 90, 50, 14
-  CONTROL "&Ayuda", 9, "Button", WS_TABSTOP, 228, 90, 50, 14
+  CONTROL "&Aceptar [F5]", IDOK, "Button", BS_DEFPUSHBUTTON|WS_TABSTOP, 118, 75, 50, 14
+  CONTROL "&Cancelar", IDCANCEL, "Button", WS_TABSTOP, 173, 75, 50, 14
+  CONTROL "&Ayuda", 9, "Button", WS_TABSTOP, 228, 75, 50, 14
   CONTROL "Descripción", -1, "Static", WS_GROUP, 3, 19, 45, 8
   CONTROL "Código", -1, "Static", WS_GROUP, 3, 6, 45, 8
-  CONTROL "", -1, "Static", SS_ETCHEDHORZ, 2, 84, 279, 1
+  CONTROL "", -1, "Static", SS_ETCHEDHORZ, 2, 69, 279, 1
   CONTROL "Número para código de barras", -1, "Static", WS_GROUP, 3, 45, 98, 8
   CONTROL "Número de orden", -1, "Static", WS_GROUP, 3, 32, 98, 8
   CONTROL "Color", -1, "Static", WS_GROUP, 4, 58, 98, 8
-  CONTROL "Serie por defecto", -1, "Static", WS_GROUP, 4, 70, 98, 8
 }
 
 PRODUCCION DIALOG DISCARDABLE 97, 39, 672, 416
@@ -16217,7 +16215,7 @@ FONT 8, "MS Sans Serif"
   CONTROL "Clientes y obras", -1, "Button", BS_GROUPBOX|WS_TABSTOP, 2, 205, 300, 85
 }
 
-PROP DIALOG DISCARDABLE 70, 20, 354, 300
+PROP DIALOG DISCARDABLE 70, 20, 354, 312
 STYLE WS_POPUP|DS_MODALFRAME|DS_3DLOOK|WS_CAPTION|WS_SYSMENU|WS_VISIBLE
 CAPTION "Propiedades"
 FONT 8, "Helv"
@@ -16231,8 +16229,8 @@ FONT 8, "Helv"
   CONTROL "&Modificar [F3]", 501, "Button", WS_TABSTOP, 63, 111, 50, 14
   CONTROL "&Eliminar [F4]", 502, "Button", WS_TABSTOP, 118, 111, 50, 14
   CONTROL "", 120, "TXBrowse", WS_TABSTOP|0x00300000, 8, 127, 338, 142
-  CONTROL "&Aceptar [F5]", IDOK, "Button", BS_DEFPUSHBUTTON|WS_TABSTOP, 243, 279, 50, 14
-  CONTROL "&Cancelar", IDCANCEL, "Button", WS_TABSTOP, 296, 279, 50, 14
+  CONTROL "&Aceptar [F5]", IDOK, "Button", BS_DEFPUSHBUTTON|WS_TABSTOP, 243, 280, 50, 14
+  CONTROL "&Cancelar", IDCANCEL, "Button", WS_TABSTOP, 296, 280, 50, 14
   CONTROL "Propiedad", -1, "Button", BS_GROUPBOX, 2, 3, 348, 52
   CONTROL "Tabla de propiedades", -1, "Button", BS_GROUPBOX, 2, 99, 348, 176
   CONTROL "Código", -1, "Static", WS_GROUP, 8, 17, 30, 8
@@ -16241,7 +16239,7 @@ FONT 8, "Helv"
   CONTROL "Subir", 503, "Button", WS_TABSTOP, 275, 111, 34, 14
   CONTROL "Comercio electrónico", -1, "Button", BS_GROUPBOX, 2, 57, 348, 39
   CONTROL "Descripción", -1, "Static", WS_GROUP, 8, 83, 38, 8
-  CONTROL "Aceptar y actualizar &web [F6]", 505, "Button", WS_TABSTOP, 141, 279, 98, 14
+  CONTROL "Aceptar y actualizar &web [F6]", 505, "Button", WS_TABSTOP, 141, 280, 98, 14
 }
 
 PROP_GRAPH DIALOG DISCARDABLE 6, 18, 316, 161

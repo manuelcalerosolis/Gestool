@@ -4,10 +4,14 @@
 #include "xbrowse.ch"
 
 static oWndBrw 
+static nView
+static oMenu
 static dbfProT
 static dbfProL
 static dbfTmpProL
 static cTmpProLin
+static oDetCamposExtra
+static oLinDetCamposExtra
 static oBtnAceptarActualizarWeb
 static nTipoActualizacionLineas  := EDIT_MODE
 static bEdit                     := { |aTmp, aGet, dbf, oBrw, bWhen, bValid, nMode | EdtRec( aTmp, aGet, dbf, oBrw, bWhen, bValid, nMode ) }
@@ -64,7 +68,7 @@ FUNCTION Prop( oMenuItem, oWnd )
       XBROWSE ;
       TITLE    "Propiedades de artículos" ;
       MRU      "gc_coathanger_16";
-      PROMPT   "Código",;
+      PROMPT   "Código",;    
                "Nombre" ;
       BITMAP   clrTopArchivos ;
       ALIAS    ( dbfProT ) ;
@@ -348,10 +352,12 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfProT, oWndBrw, cPrp, cKey, nMode )
          oDlg:AddFastKey( VK_F3, {|| WinEdtRec( oBrw, bEdtDet, dbfTmpProL, aTmp ) } )
          oDlg:AddFastKey( VK_F4, {|| DelDet( oBrw ) } )
          oDlg:AddFastKey( VK_F5, {|| EndTrans( aTmp, aGet, nMode, oDlg ) } )
-         
+
          if uFieldEmpresa( "lRealWeb" )
             oDlg:AddFastKey( VK_F6, {|| EndTrans( aTmp, aGet, nMode, oDlg, .t. ) } )
          end if
+
+         oDlg:AddFastKey( VK_F9, {|| oDetCamposExtra:Play( space(1) ) } )
 
       end if
 
@@ -359,10 +365,15 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfProT, oWndBrw, cPrp, cKey, nMode )
 
       oDlg:bStart := {|| StartEdtRec( aGet, cPrp, cKey ) }
 
-   ACTIVATE DIALOG oDlg CENTER
+   ACTIVATE DIALOG oDlg CENTER ;
+      ON INIT ( EdtRecMenu( oDlg ) )
+
+   if !Empty( oMenu )
+      oMenu:end()
+   end if
 
    KillTrans()
-
+    
 RETURN ( oDlg:nResult == IDOK )
 
 //---------------------------------------------------------------------------//
@@ -500,6 +511,8 @@ STATIC FUNCTION BeginTrans( aTmp, nMode, cCodPro )
       ( dbfProL )->( OrdSetFocus( nOrdAnt ) )
       ( dbfProL )->( dbGoTop() )
 
+      oDetCamposExtra:SetTemporal( cCodPro, "", nMode )
+
    end if
 
    RECOVER USING oError
@@ -579,6 +592,8 @@ STATIC FUNCTION EndTrans( aTmp, aGet, nMode, oDlg, lActualizaWeb )
          ( dbfTmpProL )->( dbSkip() )
       end while
 
+      oDetCamposExtra:saveExtraField( aTmp[ ( dbfProT )->( FieldPos( "cCodPro" ) ) ], "" )
+
       WinGather( aTmp, aGet, dbfProT, nil, nMode )
 
       /*
@@ -616,6 +631,29 @@ STATIC FUNCTION KillTrans()
    dbfErase( cTmpProLin )
 
 RETURN nil
+
+//---------------------------------------------------------------------------//
+
+Static Function EdtRecMenu( oDlg )
+
+   MENU oMenu
+
+      MENUITEM    "&1. Rotor"
+
+         MENU
+
+            MENUITEM    "&1. Campos extra [F9]";
+               MESSAGE  "Mostramos y rellenamos los campos extra para propiedades" ;
+               RESOURCE "GC_FORM_PLUS2_16" ;
+               ACTION   ( oDetCamposExtra:Play( Space(1) ) )
+
+         ENDMENU
+
+   ENDMENU
+
+   oDlg:SetMenu( oMenu )
+
+Return ( oMenu )
 
 //---------------------------------------------------------------------------//
 
@@ -664,23 +702,12 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbf, oBrw, aTmpPro, bValid, nMode, cCodArt )
       REDEFINE GET aGet[ ( dbfProL )->( FieldPos( "nColor" ) ) ];
          VAR      aTmp[ ( dbfProL )->( FieldPos( "nColor" ) ) ];
          ID       200 ;
-         COLOR    aTmp[ ( dbfProL )->( FieldPos( "nColor" ) ) ], aTmp[ ( dbfProL )->( FieldPos( "nColor" ) ) ] ;
+         COLOR    if( aTmpPro[ ( dbfProT )->( FieldPos( "lColor" ) ) ], aTmp[ ( dbfProL )->( FieldPos( "nColor" ) ) ], CLR_GET ), if( aTmpPro[ ( dbfProT )->( FieldPos( "lColor" ) ) ], aTmp[ ( dbfProL )->( FieldPos( "nColor" ) ) ], CLR_GET ) ;
          BITMAP   "LUPA" ;
          WHEN     ( nMode != ZOOM_MODE .and. aTmpPro[ ( dbfProT )->( FieldPos( "lColor" ) ) ] ) ;
          ON HELP  (  aTmp[ ( dbfProL )->( FieldPos( "nColor" ) ) ]  := ChooseColor(),;
                      aGet[ ( dbfProL )->( FieldPos( "nColor" ) ) ]:SetColor( aTmp[ ( dbfProL )->( FieldPos( "nColor" ) ) ], aTmp[ ( dbfProL )->( FieldPos( "nColor" ) ) ] ),;
                      aGet[ ( dbfProL )->( FieldPos( "nColor" ) ) ]:Refresh() ) ;
-         OF       oDlg
-
-      REDEFINE GET aGet[ ( dbfProL )->( FieldPos( "cSerDef" ) ) ] ;
-         VAR      aTmp[ ( dbfProL )->( FieldPos( "cSerDef" ) ) ] ;
-         ID       210 ;
-         PICTURE  "@!" ;
-         SPINNER ;
-         ON UP    ( UpSerie( aGet[ ( dbfProL )->( FieldPos( "cSerDef" ) ) ] ) );
-         ON DOWN  ( DwSerie( aGet[ ( dbfProL )->( FieldPos( "cSerDef" ) ) ] ) ); 
-         WHEN     ( nMode != ZOOM_MODE );
-         VALID    ( aTmp[ ( dbfProL )->( FieldPos( "cSerDef" ) ) ] >= "A" .AND. aTmp[ ( dbfProL )->( FieldPos( "cSerDef" ) ) ] <= "Z" ) ;
          OF       oDlg
 
       REDEFINE BUTTON;
@@ -1829,11 +1856,18 @@ STATIC FUNCTION OpenFiles()
 
    BEGIN SEQUENCE
 
+      nView       := D():CreateView()
+
       USE ( cPatArt() + "PRO.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "PRO", @dbfProT ) )
       SET ADSINDEX TO ( cPatArt() + "PRO.CDX" ) ADDITIVE
 
       USE ( cPatArt() + "TBLPRO.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "TBLPRO", @dbfProL ) )
       SET ADSINDEX TO ( cPatArt() + "TBLPRO.CDX" ) ADDITIVE
+
+      oDetCamposExtra      := TDetCamposExtra():New()
+      oDetCamposExtra:OpenFiles()
+      oDetCamposExtra:SetTipoDocumento( "Propiedades" )
+      oDetCamposExtra:setbId( {|| D():PropiedadesId( nView ) } )
 
    RECOVER
 
@@ -1861,9 +1895,16 @@ STATIC FUNCTION CloseFiles()
       ( dbfProL )->( dbCloseArea() )
    end if
 
-   dbfProT    := nil
-   dbfProL    := nil
-   oWndBrw    := nil
+   if !empty( oDetCamposExtra )
+      oDetCamposExtra:CloseFiles()
+   end if
+
+   D():DeleteView( nView )
+
+   dbfProT           := nil
+   dbfProL           := nil
+   oDetCamposExtra   := nil
+   oWndBrw           := nil
 
 RETURN .T.
 
@@ -2084,7 +2125,6 @@ Function aItmPro()
    aAdd( aBase, { "nBarTbl",   "C",  4, 0, "Código para codigos de barras"          } )
    aAdd( aBase, { "cCodWeb",   "N", 11, 0, "Código del producto en la web"          } )
    aAdd( aBase, { "nColor",    "N", 10, 0, "Código de color"                        } )
-   aAdd( aBase, { "cSerDef",   "C",  1, 0, "Serie por defecto"                      } )
 
 return ( aBase )
 

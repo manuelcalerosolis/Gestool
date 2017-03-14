@@ -6592,8 +6592,8 @@ Static function BeginTrans( aTmp, aGet, nMode, lNewFile )
 
    CursorWait()
 
-   /*oBlock               := ErrorBlock( {| oError | ApoloBreak( oError ) } )
-   BEGIN SEQUENCE*/
+   oBlock               := ErrorBlock( {| oError | ApoloBreak( oError ) } )
+   BEGIN SEQUENCE
 
    if empty( aTmp[ _CDIVTIK ] )
       aTmp[ _CDIVTIK ]  := cDivEmp()
@@ -7171,17 +7171,16 @@ Static function BeginTrans( aTmp, aGet, nMode, lNewFile )
       oBrwDet:Refresh()
    end if
 
-   /*RECOVER USING oError
+   RECOVER USING oError
 
       msgStop( ErrorMessage( oError ), "Imposible crear tablas temporales." )
 
       KillTrans()
-
       lErrors     := .t.
 
    END SEQUENCE
 
-   ErrorBlock( oBlock )*/
+   ErrorBlock( oBlock )
 
    CursorWE()
 

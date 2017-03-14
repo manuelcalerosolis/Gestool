@@ -606,6 +606,7 @@ CLASS D
       METHOD CajasImpresion( nView )                              INLINE ( ::Get( "CajasImp", nView ) )
 
    METHOD Propiedades( nView )                                    INLINE ( ::Get( "Pro", nView ) )
+   METHOD PropiedadesId( nView )                                  INLINE ( ( ::Get( "RctPrvT", nView ) )->cCodPro )
       METHOD PropiedadesLineas( nView )                           INLINE ( ::Get( "TblPro", nView ) )
       METHOD gotoIdPropiedadesLineas( id, nView )                 INLINE ( ::seekInOrd( ::PropiedadesLineas( nView ), id, "cCodPro" ) ) 
 
