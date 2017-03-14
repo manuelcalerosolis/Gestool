@@ -1984,16 +1984,16 @@ FUNCTION OpenVencimientos( cRuta, cCodEmp, cArea, lMessage )
    oBlock            := ErrorBlock( { | oError | ApoloBreak( oError ) } )
    BEGIN SEQUENCE
 
-      if File( cRuta + "EMP" + cCodEmp + "\SubCta.Dbf" ) .and. ;
-         File( cRuta + "EMP" + cCodEmp + "\SubCta.Cdx" ) 
+      if File( cRuta + "EMP" + cCodEmp + "\Venci.Dbf" ) .and. ;
+         File( cRuta + "EMP" + cCodEmp + "\Venci.Cdx" ) 
 
-         USE ( cRuta + "EMP" + cCodEmp + "\SubCta.Dbf" ) NEW SHARED VIA ( cLocalDriver() ) ALIAS ( cCheckArea( "CUENTA", @cArea ) )
-         SET INDEX TO ( cRuta + "EMP" + cCodEmp + "\SubCta.Cdx" ) ADDITIVE
+         USE ( cRuta + "EMP" + cCodEmp + "\Venci.Dbf" ) NEW SHARED VIA ( cLocalDriver() ) ALIAS ( cCheckArea( "Venci", @cArea ) )
+         SET INDEX TO ( cRuta + "EMP" + cCodEmp + "\Venci.Cdx" ) ADDITIVE
 
       else
 
          if lMessage
-            msgStop( "Ficheros no encontrados", "Abriendo subcuentas" )
+            msgStop( "Ficheros no encontrados", "Abriendo vencimientos" )
          end if
 
          lOpen       := .f.
@@ -2002,7 +2002,7 @@ FUNCTION OpenVencimientos( cRuta, cCodEmp, cArea, lMessage )
 
       if ( cArea )->( RddName() ) == nil .or. NetErr()
          if lMessage
-            MsgStop( "Imposible acceder a fichero Contaplus", "Abriendo subcuentas" )
+            MsgStop( "Imposible acceder a fichero Contaplus", "Abriendo vencimientos" )
          end if
          lOpen       := .f.
       end if
@@ -2010,7 +2010,7 @@ FUNCTION OpenVencimientos( cRuta, cCodEmp, cArea, lMessage )
    RECOVER
 
       if lMessage
-         MsgStop( "Imposible acceder a fichero Contaplus", "Abriendo subcuentas" )
+         MsgStop( "Imposible acceder a fichero de vencimientos Contaplus", "Abriendo vencimientos" )
       end if
       lOpen          := .f.
 
@@ -2021,7 +2021,6 @@ FUNCTION OpenVencimientos( cRuta, cCodEmp, cArea, lMessage )
 Return ( lOpen )
 
 //--------------------------------------------------------------------------//
-
 
 FUNCTION MsgTblCon( aTable, cDivisa, dbfDiv, lConAsi, cTitle, bConta )
 

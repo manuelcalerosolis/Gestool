@@ -6422,6 +6422,7 @@ Return nil
 
 Function insertVencimientoContaplus( hRecibo )
 
+   local cArea
    local cEmpresaContaplus    
 
    // Si el recibo esta pagado nos vamos--------------------------------------
@@ -6451,11 +6452,15 @@ Function insertVencimientoContaplus( hRecibo )
 
    // Apertura de base de dtos de vencimiento en contaplis
 
-   if OpenSubCuenta( cRuta, cCodEmp, @cArea, .t. )
+   if OpenVencimientos( cRutCnt(), cEmpresaContaplus, @cArea )
+      msgalert("vencimientos abiertos")
+   end if 
 
    // Añadir campos a base de datos de contaplus
 
    // Cerrar base de datos de contaplus
+
+   Close( cArea )
 
 Return nil
 
