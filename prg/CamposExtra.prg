@@ -13,7 +13,7 @@ CLASS TCamposExtra FROM TMant
 
    DATA cMru               INIT  "gc_form_plus2_16"
    DATA cBitmap            INIT  Rgb( 128, 57, 123 )
-
+    
    DATA oDlg
 
    DATA lOpenFiles         INIT .f.       

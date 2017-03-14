@@ -190,6 +190,8 @@ Defines para ficheros INI
 #define LIN_FAC_CLI             '36'
 #define LIN_ALB_PRV             '37'
 #define LIN_FAC_PRV             '38'
+#define PRO_ART                 '39'
+#define LIN_PRO_ART             '40'
 
 #define ACC_ACCE                1        // Acceso
 #define ACC_APPD                2        // Acceso añadir
@@ -362,7 +364,9 @@ Definici¢n de Array para impuestos---------------------------------------------
                                         "Facturas rectificativa a proveedores" => "04",;
                                         "S.A.T" => "32",;
                                         "Envases de artículos" => "33" ,;
-                                        "Grupos de clientes" => "34" }
+                                        "Grupos de clientes" => "34" ,;
+                                        "Propiedades" => "39" ,;
+                                        "Lineas de propiedades" => "40" }
 
 #define ICONOS_DOCUMENTOS_ITEMS {       "Artículos" => "gc_object_cube_16",;
                                         "Clientes" => "gc_user_16",;
@@ -385,7 +389,9 @@ Definici¢n de Array para impuestos---------------------------------------------
                                         "Facturas rectificativa a proveedores" => "gc_document_text_delete2_16",;
                                         "S.A.T" => "gc_power_drill_sat_user_16",;
                                         "Envases de artículos" => "gc_box_closed_16",; 
-                                        "Grupos de clientes" => "gc_users3_16" }
+                                        "Grupos de clientes" => "gc_users3_16" ,;
+                                        "Propiedades" => "gc_coathanger_16" ,;
+                                        "Lineas de propiedades" => "gc_coathanger_16" }
 
 #define DOCUMENTOS_SELECTED     {       "Artículos" => .F.,;
                                         "Clientes" => .F.,;
@@ -408,7 +414,9 @@ Definici¢n de Array para impuestos---------------------------------------------
                                         "Facturas rectificativa a proveedores" => .F.,;
                                         "S.A.T" => .F.,;
                                         "Envases de artículos" => .F.,;
-                                        "Grupos de clientes" => .F. } 
+                                        "Grupos de clientes" => .F.,;
+                                        "Propiedades" => .F.,;
+                                        "Lineas de propiedades" => .F. }
 
 #define DOCUMENT_SERIES         { "A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z" }
 
