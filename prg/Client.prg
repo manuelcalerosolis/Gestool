@@ -1448,6 +1448,10 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, nTab, bValid, nMode )
          aTmp[ _DLLACLI ]  := ctod( "" )
          aTmp[ _DALTA   ]  := getSysDate()
 
+         // Ejecutamos script del evento append--------------------------------
+
+         runEventScript( "clientes\BeforeAppend", aGet, aTmp, nView )
+
       case nMode == DUPL_MODE
 
          aTmp[ _COD     ]  := NextKey( aTmp[ _COD ], ( D():Clientes( nView ) ), "0", RetNumCodCliEmp() )
