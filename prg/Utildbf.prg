@@ -1697,11 +1697,11 @@ FUNCTION WinDupRec( oBrw, bEdit, cAlias, bWhen, bValid, xOthers )
       Return .f.
    end if
 
-   // Script antes de añadir
+   // Script antes de añadir---------------------------------------------------
 
    runScriptBeforeAppend()
 
-   // Orden principal
+   // Orden principal----------------------------------------------------------
 
    nRec           := ( cAlias )->( Recno() )
 
@@ -1709,11 +1709,11 @@ FUNCTION WinDupRec( oBrw, bEdit, cAlias, bWhen, bValid, xOthers )
       nOrd        := ( cAlias )->( OrdSetFocus( 1 ) )
    end if
 
-   if lAdsRDD()
-      ( cAlias )->( dbClearFilter() )
-   end if
+   // if lAdsRDD()
+   //    ( cAlias )->( dbClearFilter() )
+   // end if
 
-	// Bloqueamos el registro durante la edici¢n
+	// Bloqueamos el registro durante la edición--------------------------------
 
    if !( cAlias )->( eof() )
 
@@ -1737,13 +1737,13 @@ FUNCTION WinDupRec( oBrw, bEdit, cAlias, bWhen, bValid, xOthers )
       ( cAlias )->( dbGoTo( nRec ) )
    end if
 
-   // Script despues de añadir
+   // Script despues de añadir-------------------------------------------------
 
    runScriptAfterAppend()
 
    runScriptAfterEdit()
 
-   // refrescos en pantalla
+   // refrescos en pantalla----------------------------------------------------
 
    if lResult .and. !empty( oBrw ) .and. ( oBrw:lActive )
 

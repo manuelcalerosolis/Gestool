@@ -9940,7 +9940,7 @@ STATIC FUNCTION DupFactura( lActual, cFecDoc )
 
    // Recogemos el nuevo numero de factura--------------------------------------
 
-   nNewNumFac        := nNewDoc( ( D():FacturasClientes( nView ) )->cSerie, D():FacturasClientes( nView ), "nFacCli", , D():Contadores( nView ) )
+   nNewNumFac        := nNewDoc( ( D():FacturasClientes( nView ) )->cSerie, D():FacturasClientes( nView ), "nFacCli", 9, D():Contadores( nView ) )
 
    // Duplicamos las cabeceras--------------------------------------------------
 
@@ -9950,10 +9950,9 @@ STATIC FUNCTION DupFactura( lActual, cFecDoc )
 
    if ( D():FacturasClientesLineas( nView ) )->( dbSeek( ( D():FacturasClientesId( nView ) ) ) )
 
-      while ( D():FacturasClientesId( nView ) ) == D():FacturasClientesLineasId( nView ) .and. ;
-            !( D():FacturasClientesLineas( nView ) )->( Eof() )
+      while ( D():FacturasClientesId( nView ) ) == D():FacturasClientesLineasId( nView ) .and. !( D():FacturasClientesLineas( nView ) )->( eof() )
 
-            FacRecDup( D():FacturasClientesLineas( nView ), ( D():FacturasClientes( nView ) )->cSerie, nNewNumFac, ( D():FacturasClientes( nView ) )->cSufFac, .f., .f. )
+         FacRecDup( D():FacturasClientesLineas( nView ), ( D():FacturasClientes( nView ) )->cSerie, nNewNumFac, ( D():FacturasClientes( nView ) )->cSufFac, .f., .f. )
 
          ( D():FacturasClientesLineas( nView ) )->( dbSkip() )
 
@@ -9968,7 +9967,7 @@ STATIC FUNCTION DupFactura( lActual, cFecDoc )
       while ( D():FacturasClientes( nView ) )->cSerie + str( ( D():FacturasClientes( nView ) )->nNumFac ) + ( D():FacturasClientes( nView ) )->cSufFac == ( D():FacturasClientesCobros( nView ) )->cSerie + str( ( D():FacturasClientesCobros( nView ) )->nNumFac ) + ( D():FacturasClientesCobros( nView ) )->cSufFac .and. ;
             !( D():FacturasClientesCobros( nView ) )->( Eof() )
 
-            FacRecDup( D():FacturasClientesCobros( nView ), ( D():FacturasClientes( nView ) )->cSerie, nNewNumFac, ( D():FacturasClientes( nView ) )->cSufFac, .f., .t., lActual, cFecDoc )
+         FacRecDup( D():FacturasClientesCobros( nView ), ( D():FacturasClientes( nView ) )->cSerie, nNewNumFac, ( D():FacturasClientes( nView ) )->cSufFac, .f., .t., lActual, cFecDoc )
 
          ( D():FacturasClientesCobros( nView ) )->( dbSkip() )
 
@@ -9983,7 +9982,7 @@ STATIC FUNCTION DupFactura( lActual, cFecDoc )
       while ( D():FacturasClientes( nView ) )->cSerie + str( ( D():FacturasClientes( nView ) )->nNumFac ) + ( D():FacturasClientes( nView ) )->cSufFac == ( dbfFacCliD )->cSerie + str( ( dbfFacCliD )->nNumFac ) + ( dbfFacCliD )->cSufFac .and. ;
             !( dbfFacCliD )->( Eof() )
 
-            FacRecDup( dbfFacCliD, ( D():FacturasClientes( nView ) )->cSerie, nNewNumFac, ( D():FacturasClientes( nView ) )->cSufFac, .f., .t. )
+         FacRecDup( dbfFacCliD, ( D():FacturasClientes( nView ) )->cSerie, nNewNumFac, ( D():FacturasClientes( nView ) )->cSufFac, .f., .t. )
 
          ( dbfFacCliD )->( dbSkip() )
 

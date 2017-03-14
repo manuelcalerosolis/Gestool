@@ -356,14 +356,14 @@ STATIC FUNCTION OpenFiles( lExt )
 
       D():ImpuestosEspeciales( nView )
 
-      oDetCamposExtra      := TDetCamposExtra():New()
+      oDetCamposExtra   := TDetCamposExtra():New()
       oDetCamposExtra:OpenFiles()
       oDetCamposExtra:SetTipoDocumento( "Pedidos a proveedores" )
       oDetCamposExtra:setbId( {|| D():PedidosProveedoresId( nView ) } )
 
-      oCentroCoste            := TCentroCoste():Create( cPatDat() )
+      oCentroCoste      := TCentroCoste():Create( cPatDat() )
       if !oCentroCoste:OpenFiles()
-         lOpenFiles           := .f.
+         lOpenFiles     := .f.
       end if
 
       oNewImp           := TNewImp():Create( cPatEmp() )
@@ -1116,23 +1116,31 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, cCodPrv, cCodArt, nMode )
    DEFINE DIALOG oDlg RESOURCE "PEDPRV" TITLE LblTitle( nMode ) + "pedidos a proveedores"
 
 	REDEFINE FOLDER oFld ;
-         ID       400 ; 
-         OF       oDlg ;
-         PROMPT   "&Pedido",  "Da&tos",   "I&ncidencias",   "D&ocumentos" ;
-         DIALOGS  "PEDPRV_1", "PEDPRV_2", "PEDCLI_3",       "PEDCLI_4"
+         ID          400 ; 
+         OF          oDlg ;
+         PROMPT      "&Pedido",;
+                     "Da&tos",;
+                     "I&ncidencias",;
+                     "D&ocumentos" ;
+         DIALOGS     "PEDPRV_1",;
+                     "PEDPRV_2",;
+                     "PEDCLI_3",;
+                     "PEDCLI_4"
 
       // cuadro del usuario
 
-      REDEFINE GET aGet[ _CCODUSR ] VAR aTmp[ _CCODUSR ];
-         ID       215 ;
-         WHEN     ( .f. ) ;
-         VALID    ( SetUsuario( aGet[ _CCODUSR ], oUsr, nil, D():Usuarios( nView ) ) );
-         OF       oFld:aDialogs[2]
+      REDEFINE GET   aGet[ _CCODUSR ] ;
+         VAR         aTmp[ _CCODUSR ];
+         ID          215 ;
+         WHEN        ( .f. ) ;
+         VALID       ( SetUsuario( aGet[ _CCODUSR ], oUsr, nil, D():Usuarios( nView ) ) );
+         OF          oFld:aDialogs[2]
 
-      REDEFINE GET oUsr VAR cUsr ;
-         ID       216 ;
-         WHEN     ( .f. ) ; 
-         OF       oFld:aDialogs[2] 
+      REDEFINE GET   oUsr ;
+         VAR         cUsr ;
+         ID          216 ;
+         WHEN        ( .f. ) ; 
+         OF          oFld:aDialogs[2] 
 
       // Datos del proveedor_________________________________________________
 
@@ -1160,14 +1168,18 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, cCodPrv, cCodArt, nMode )
         TRANSPARENT ;
         OF       oFld:aDialogs[4]
 
-      REDEFINE GET aGet[ _CCODPRV ] VAR aTmp[ _CCODPRV ] ;
-         ID       140 ;
-         PICTURE	( RetPicCodPrvEmp() ) ;
-         WHEN 		( nMode != ZOOM_MODE ) ;
-         VALID    ( LoaPrv( aGet, aTmp, D():Proveedores( nView ), nMode, oSay[ 4 ], oTlfPrv ) ) ;
-         ON HELP  ( BrwProvee( aGet[ _CCODPRV ], oSay[ 4 ] ) ) ;
-         BITMAP   "LUPA" ;
-         OF       oFld:aDialogs[1]
+      REDEFINE GET   aGet[ _CCODPRV ] ;
+         VAR         aTmp[ _CCODPRV ] ;
+         ID          140 ;
+         PICTURE     ( RetPicCodPrvEmp() ) ;
+         WHEN 	      ( nMode != ZOOM_MODE ) ;
+         VALID       ( LoaPrv( aGet, aTmp, D():Proveedores( nView ), nMode, oSay[ 4 ], oTlfPrv ) ) ;
+         ON HELP     ( BrwProvee( aGet[ _CCODPRV ], oSay[ 4 ] ) ) ;
+         BITMAP      "LUPA" ;
+         OF          oFld:aDialogs[1]
+
+      aGet[ _CCODPRV ]:bPreValidate    := {|oSender| msgalert( oSender:ClassName() ) }
+      aGet[ _CCODPRV ]:bPostValidate   := {|oSender| msgalert( 'bPostValidate' ) }
 
       REDEFINE GET aGet[ _CNOMPRV ] VAR aTmp[ _CNOMPRV ];
          ID 		141 ;

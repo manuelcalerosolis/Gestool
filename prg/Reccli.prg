@@ -789,26 +789,26 @@ FUNCTION EdtCob( aTmp, aGet, cFacCliP, oBrw, lRectificativa, nSpecialMode, nMode
 
          if nSpecialMode == LIBRE_MODE
             
-            aTmp[ _CTIPREC ]     := "L"
-            aTmp[ _CTURREC ]     := cCurSesion( nil, .f. )
-            aTmp[ _LSNDDOC ]     := .t.
+            aTmp[ _CTIPREC ]              := "L"
+            aTmp[ _CTURREC ]              := cCurSesion( nil, .f. )
+            aTmp[ _LSNDDOC ]              := .t.
 
             if !empty( oClienteCompensar )
 
-               aTmp[ _CDESCRIP ]       := "Recibo matriz para compensar"
-               aTmp[ _CCODCLI  ]       := oClienteCompensar:VarGet()
-               aTmp[ _NIMPORTE ]       := nTotalRelacionados
+               aTmp[ _CDESCRIP ]          := "Recibo matriz para compensar"
+               aTmp[ _CCODCLI  ]          := oClienteCompensar:VarGet()
+               aTmp[ _NIMPORTE ]          := nTotalRelacionados
 
                if ( D():Clientes( nView ) )->( dbSeek( aTmp[ _CCODCLI ] ) )
 
-                  aTmp[ _CNOMCLI ]     := ( D():Clientes( nView ) )->Titulo
-                  aTmp[ _CCODPGO ]     := ( D():Clientes( nView ) )->CodPago
-                  aTmp[ _CCODAGE ]     := ( D():Clientes( nView ) )->cAgente
-                  aTmp[ _CCTAREM ]     := ( D():Clientes( nView ) )->cCodRem
+                  aTmp[ _CNOMCLI ]        := ( D():Clientes( nView ) )->Titulo
+                  aTmp[ _CCODPGO ]        := ( D():Clientes( nView ) )->CodPago
+                  aTmp[ _CCODAGE ]        := ( D():Clientes( nView ) )->cAgente
+                  aTmp[ _CCTAREM ]        := ( D():Clientes( nView ) )->cCodRem
 
                   if !empty( ( D():Clientes( nView ) )->CodPago )
-                     aTmp[ _CCTAREC ]  := RetFld( ( D():Clientes( nView ) )->CodPago, D():FormasPago( nView ), "cCtaCobro" )
-                     aTmp[ _CCTAGAS ]  := RetFld( ( D():Clientes( nView ) )->CodPago, D():FormasPago( nView ), "cCtaGas" )
+                     aTmp[ _CCTAREC ]     := RetFld( ( D():Clientes( nView ) )->CodPago, D():FormasPago( nView ), "cCtaCobro" )
+                     aTmp[ _CCTAGAS ]     := RetFld( ( D():Clientes( nView ) )->CodPago, D():FormasPago( nView ), "cCtaGas" )
                   end if
 
                   if lBancoDefecto( ( D():Clientes( nView ) )->Cod, D():ClientesBancos( nView ) )
@@ -4932,11 +4932,11 @@ FUNCTION genPgoFacCli( cNumFac, cFacCliT, cFacCliL, cFacCliP, cAntCliT, cClient,
 
             lAlert                         := .f.
 
-            ( cFacCliP )->( dbUnLock() )
+            ( cFacCliP )->( dbunlock() )
 
             // Insertar vencimiento en contaplus-------------------------------
 
-            insertVencimientoContaplus( dbHash( cFacCliP ) ,  )
+            insertVencimientoContaplus( cFacCliP )
 
          next
 
@@ -6420,16 +6420,18 @@ Return nil
 
 //---------------------------------------------------------------------------//
 
-Function insertVencimientoContaplus( hRecibo )
+Function insertVencimientoContaplus( cFacCliP )
 
    local cArea
    local cEmpresaContaplus    
 
    // Si el recibo esta pagado nos vamos--------------------------------------
 
-   if ( hget( hRecibo, "lCobrado" ) )
+   if ( ( cFacCliP )->lCobrado ) 
       Return ( .f. )
    end if 
+
+   msgalert( 'lCobrado')
 
    // si no estamos usando una version de contaplus----------------------------
 
@@ -6445,18 +6447,31 @@ Function insertVencimientoContaplus( hRecibo )
 
    // la serie del recibo tiene empresa contable asociada----------------------
 
-   cEmpresaContaplus    := cEmpCnt( hget( hRecibo, "cSerie" ) )
+   cEmpresaContaplus    := cEmpCnt( ( cFacCliP )->cSerie )
    if empty(cEmpresaContaplus)
       Return ( .f. )
    end if 
 
    // Apertura de base de dtos de vencimiento en contaplis
 
-   if OpenVencimientos( cRutCnt(), cEmpresaContaplus, @cArea )
-      msgalert("vencimientos abiertos")
+   if !( OpenVencimientos( cRutCnt(), cEmpresaContaplus, @cArea ) )
+      Return ( .f. )
    end if 
 
    // Añadir campos a base de datos de contaplus
+
+   ( cArea )->( dbappend( .t. ) )
+   ( cArea )->fecha     := ( cFacCliP )->dPreCob
+   ( cArea )->cod       := ( cFacCliP )->cCodCli
+   ( cArea )->acpa      := 'A'
+   ( cArea )->contra    := ( cFacCliP )->cCtaRec
+   ( cArea )->concepto  := 'Cobro Fra. ' + ( cFacCliP )->cSerie + '/' + alltrim( str( ( cFacCliP )->nNumFac ) )
+   ( cArea )->estado    := .t.
+   ( cArea )->documento := ( cFacCliP )->cSerie + '/' + alltrim( str( ( cFacCliP )->nNumFac ) )
+   ( cArea )->monedaUso := '2'
+   ( cArea )->fechaPag  := ( cFacCliP )->dFecVto
+   ( cArea )->euro      := ( cFacCliP )->nImporte
+   ( cArea )->( dbunlock() )
 
    // Cerrar base de datos de contaplus
 

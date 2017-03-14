@@ -193,21 +193,21 @@ CLASS TShell FROM TMdiChild
 
    METHOD fastSeek()
 
-   METHOD lCloseArea    INLINE ( .t. ) // ::oBrw:lCloseArea() )
+   METHOD lCloseArea                         INLINE ( .t. ) // ::oBrw:lCloseArea() )
 
-   METHOD Refresh()     INLINE ( if( !empty( ::oBtnMain ), ::oBtnBar:Select( ::oBtnMain ), ),;
-                                 if( !empty( ::oBrw ) .and. ( ::oBrw:lActive ), ::oBrw:Refresh(), ),;
-                                 if( !empty( ::oBtnTop ), ::oBtnTop:Refresh(), ), ::Super:Refresh() )
-   METHOD UpStable()    INLINE ( if( !empty( ::oBtnMain ), ::oBtnBar:Select( ::oBtnMain ), ),;
-                                 if( !empty( ::oBrw ) .and. ( ::oBrw:lActive ), ::oBrw:Refresh(), ) )
-   METHOD GoUp()        INLINE ( ::oBrw:GoUp() )
-   METHOD GoDown()      INLINE ( ::oBrw:GoDown() )
+   METHOD Refresh()                          INLINE ( if( !empty( ::oBtnMain ), ::oBtnBar:Select( ::oBtnMain ), ),;
+                                                if( !empty( ::oBrw ) .and. ( ::oBrw:lActive ), ::oBrw:Refresh(), ),;
+                                                if( !empty( ::oBtnTop ), ::oBtnTop:Refresh(), ), ::Super:Refresh() )
+   METHOD UpStable()                         INLINE ( if( !empty( ::oBtnMain ), ::oBtnBar:Select( ::oBtnMain ), ),;
+                                                if( !empty( ::oBrw ) .and. ( ::oBrw:lActive ), ::oBrw:Refresh(), ) )
+   METHOD GoUp()                             INLINE ( ::oBrw:GoUp() )
+   METHOD GoDown()                           INLINE ( ::oBrw:GoDown() )
 
-   METHOD Select()      INLINE ( if( !empty( ::oBrw ) .and. ( ::oBrw:lActive ), ( ::oBrw:Refresh(), ::oBrw:Select() ), ) )
-   METHOD SelectOne()   INLINE ( if( !empty( ::oBrw ) .and. ( ::oBrw:lActive ), ( ::oBrw:SelectOne() ), ) )
+   METHOD Select()                           INLINE ( if( !empty( ::oBrw ) .and. ( ::oBrw:lActive ), ( ::oBrw:Refresh(), ::oBrw:Select() ), ) )
+   METHOD SelectOne()                        INLINE ( if( !empty( ::oBrw ) .and. ( ::oBrw:lActive ), ( ::oBrw:SelectOne() ), ) )
 
    METHOD SetFocus()    
-   METHOD putFocus()    INLINE ( ::setWindowsBar(), ::SetFocus() )
+   METHOD putFocus()                         INLINE ( ::setWindowsBar(), ::SetFocus() )
 
    METHOD SetIndex( nIndex )
 
@@ -1181,15 +1181,15 @@ METHOD RecDup()
 
       ::killScope()
 
-      ::SetOnProcess()
+      ::setOnProcess()
 
-      Eval( ::bDup )
-
-      ::QuitOnProcess()
+      eval( ::bDup )
 
       ::Refresh()
 
-      ::SetFocus()
+      ::quitOnProcess()
+
+      ::setFocus()
 
    else
 

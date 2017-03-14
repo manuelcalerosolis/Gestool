@@ -873,7 +873,7 @@ FUNCTION nNewDoc( cSerie, dbf, cTipDoc, nLen, dbfCount )
    local nPos
    local nDoc        := 0
    local nRetry      := 0
-   local cOldFlt     := ( dbf )->( dbinfo( DBI_DBFILTER ) )
+   local cOldFlt     
    local nRecAnt     := ( dbf )->( recno() )
    local nOrdAnt     := ( dbf )->( ordsetfocus( 1 ) )
    local cSufEmp     := retSufEmp()
@@ -890,6 +890,8 @@ FUNCTION nNewDoc( cSerie, dbf, cTipDoc, nLen, dbfCount )
    
    oBlock            := ErrorBlock( { | oError | ApoloBreak( oError ) } )
    BEGIN SEQUENCE
+
+   cOldFlt           := ( dbf )->( dbinfo( DBI_DBFILTER ) )
    
    if !empty( cOldFlt )
       ( dbf )->( dbsetfilter() )
@@ -947,7 +949,7 @@ FUNCTION nNewDoc( cSerie, dbf, cTipDoc, nLen, dbfCount )
    ( dbf )->( ordsetfocus( nOrdAnt ) )
    ( dbf )->( dbgoto( nRecAnt ) )
    
-   if nDoc == 0
+   if ( nDoc == 0 )
       msgStop( "No puedo obtener el número de nuevo documento" )
    end if
 

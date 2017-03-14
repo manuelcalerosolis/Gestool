@@ -30,6 +30,9 @@ CLASS TGetHlp FROM TGet
    DATA  bOldValid
    DATA  bOldLostFocus
 
+   DATA  bPreValidate
+   DATA  bPostValidate
+
    DATA  nMargin                  INIT 16
 
    METHOD New()                   CONSTRUCTOR
@@ -48,13 +51,16 @@ CLASS TGetHlp FROM TGet
 
    METHOD Home()                 INLINE ( ::oGet:Home(), ::SetPos( ::oGet:Pos ) )
 
-   METHOD EvalMult()             INLINE ( if( ::bMult != nil, Eval( ::bMult, Self ), ) )
+   METHOD EvalMult()             INLINE ( if( ::bMult != nil, eval( ::bMult, Self ), ) )
 
    METHOD Hide()                 INLINE ( if( ::oSay != nil, ::oSay:Hide(), ), if( ::oHelpText != nil, ::oHelpText:Hide(), ), ::Super:Hide() )
 
    METHOD Show()                 INLINE ( if( ::oSay != nil, ::oSay:Show(), ), if( ::oHelpText != nil, ::oHelpText:Show(), ), ::Super:Show() )
 
    METHOD SetText( cText )       INLINE ( if( ::oSay != nil, ::oSay:SetText( cText ), ::cText( cText ) ) )
+
+   METHOD evalPreValidate()      INLINE ( if( ::bPreValidate != nil, eval( ::bPreValidate, Self ), ) )
+   METHOD evalPostValidate()     INLINE ( if( ::bPostValidate != nil, eval( ::bPostValidate, Self ), ) )
 
    METHOD HardEnable()
    
@@ -469,24 +475,29 @@ METHOD lValid() CLASS TGetHlp
 
    local lRet   := .t.
 
+   ::evalPreValidate()
+
    if ::oGet:BadDate
       ::oGet:KillFocus()
       ::oGet:SetFocus()
-      MsgBeep()
+      msgBeep()
       return .f.
-   else
-      ::oGet:Assign()
-      if ValType( ::bValid ) == "B"
-         lRet   := Eval( ::bValid, Self  )
-         if IsLogic( lRet )
-            if !lRet
-              ::oWnd:nLastKey = 0
-            endif
-         else
-            return .t.
-         end if 
-      endif
-   endif
+   end if  
+
+   ::oGet:Assign()
+   
+   if !( isBlock( ::bValid ) )
+      return .t.
+   end if
+
+   lRet  := eval( ::bValid, Self )
+   if isLogic( lRet )
+      if !lRet
+         ::oWnd:nLastKey  := 0
+      else
+         ::evalPostValidate()
+      end if
+   end if
 
 return lRet
 
