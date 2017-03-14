@@ -1849,8 +1849,8 @@ STATIC FUNCTION OpnCta( cRuta, cCodEmp, cArea, lMessage )
    local oBlock
    local lOpen       := .t.
 
-   DEFAULT lMessage  := .f.
    DEFAULT cRuta     := cRutCnt()
+   DEFAULT lMessage  := .f.
 
    if Empty( cRuta )
       return .f.
@@ -1862,11 +1862,11 @@ STATIC FUNCTION OpnCta( cRuta, cCodEmp, cArea, lMessage )
    oBlock            := ErrorBlock( { | oError | ApoloBreak( oError ) } )
    BEGIN SEQUENCE
 
-      if File( cRuta + "EMP" + cCodEmp + "\BALAN.DBF" )  .and.;
-         File( cRuta + "EMP" + cCodEmp + "\BALAN.CDX" )
+      if File( cRuta + "EMP" + cCodEmp + "\Balan.Dbf" )  .and.;
+         File( cRuta + "EMP" + cCodEmp + "\Balan.Cdx" )
 
-         USE ( cRuta + "EMP" + cCodEmp + "\BALAN.DBF" ) NEW SHARED VIA ( cLocalDriver() ) ALIAS ( cCheckArea( "CUENTA", @cArea ) )
-         SET INDEX TO ( cRuta + "EMP" + cCodEmp + "\BALAN.CDX" )
+         USE ( cRuta + "EMP" + cCodEmp + "\Balan.Dbf" ) NEW SHARED VIA ( cLocalDriver() ) ALIAS ( cCheckArea( "CUENTA", @cArea ) )
+         SET INDEX TO ( cRuta + "EMP" + cCodEmp + "\Balan.Cdx" )
    		SET TAG TO "CTA"
 
       else
@@ -1880,9 +1880,7 @@ STATIC FUNCTION OpnCta( cRuta, cCodEmp, cArea, lMessage )
       end if
 
       if ( cArea )->( RddName() ) == nil .or. NetErr()
-
          lOpen          := .f.
-
       end if
 
    RECOVER
@@ -1928,7 +1926,8 @@ FUNCTION OpenSubCuenta( cRuta, cCodEmp, cArea, lMessage )
    oBlock            := ErrorBlock( { | oError | ApoloBreak( oError ) } )
    BEGIN SEQUENCE
 
-      if File( cRuta + "EMP" + cCodEmp + "\SubCta.Cdx" )
+      if File( cRuta + "EMP" + cCodEmp + "\SubCta.Dbf" ) .and. ;
+         File( cRuta + "EMP" + cCodEmp + "\SubCta.Cdx" ) 
 
          USE ( cRuta + "EMP" + cCodEmp + "\SubCta.Dbf" ) NEW SHARED VIA ( cLocalDriver() ) ALIAS ( cCheckArea( "CUENTA", @cArea ) )
          SET INDEX TO ( cRuta + "EMP" + cCodEmp + "\SubCta.Cdx" ) ADDITIVE
@@ -1964,6 +1963,65 @@ FUNCTION OpenSubCuenta( cRuta, cCodEmp, cArea, lMessage )
 Return ( lOpen )
 
 //--------------------------------------------------------------------------//
+
+FUNCTION OpenVencimientos( cRuta, cCodEmp, cArea, lMessage )
+
+   local oBlock
+   local lOpen       := .t.
+
+   DEFAULT cRuta     := cRutCnt()
+   DEFAULT cCodEmp   := cEmpCnt()   
+   DEFAULT lMessage  := .f.
+
+   if Empty( cRuta )
+      msgStop( "Ruta de Contaplus esta vacia")
+      Return ( .f. )
+   end if
+
+   cRuta             := cPath( cRuta )
+   cCodEmp           := alltrim( cCodEmp )
+
+   oBlock            := ErrorBlock( { | oError | ApoloBreak( oError ) } )
+   BEGIN SEQUENCE
+
+      if File( cRuta + "EMP" + cCodEmp + "\SubCta.Dbf" ) .and. ;
+         File( cRuta + "EMP" + cCodEmp + "\SubCta.Cdx" ) 
+
+         USE ( cRuta + "EMP" + cCodEmp + "\SubCta.Dbf" ) NEW SHARED VIA ( cLocalDriver() ) ALIAS ( cCheckArea( "CUENTA", @cArea ) )
+         SET INDEX TO ( cRuta + "EMP" + cCodEmp + "\SubCta.Cdx" ) ADDITIVE
+
+      else
+
+         if lMessage
+            msgStop( "Ficheros no encontrados", "Abriendo subcuentas" )
+         end if
+
+         lOpen       := .f.
+
+      end if
+
+      if ( cArea )->( RddName() ) == nil .or. NetErr()
+         if lMessage
+            MsgStop( "Imposible acceder a fichero Contaplus", "Abriendo subcuentas" )
+         end if
+         lOpen       := .f.
+      end if
+
+   RECOVER
+
+      if lMessage
+         MsgStop( "Imposible acceder a fichero Contaplus", "Abriendo subcuentas" )
+      end if
+      lOpen          := .f.
+
+   END SEQUENCE
+
+   ErrorBlock( oBlock )
+
+Return ( lOpen )
+
+//--------------------------------------------------------------------------//
+
 
 FUNCTION MsgTblCon( aTable, cDivisa, dbfDiv, lConAsi, cTitle, bConta )
 
@@ -2521,10 +2579,11 @@ Function OpnBalance( cRuta, cCodEmp, lMessage )
    cRuta             := cPath( cRuta )
    cCodEmp           := alltrim( cCodEmp )
 
-   if File( cRuta + "EMP" + cCodEmp + "\DIARIO.CDX" )
+   if file( cRuta + "EMP" + cCodEmp + "\Balan.Dbf" ) .and. ;
+      file( cRuta + "EMP" + cCodEmp + "\Balan.Cdx" )
 
-      USE ( cRuta + "EMP" + cCodEmp + "\BALAN.DBF" ) NEW SHARED VIA ( cLocalDriver() ) ALIAS ( cCheckArea( "CUENTA", @dbfBalance ) )
-      SET INDEX TO ( cRuta + "EMP" + cCodEmp + "\BALAN.CDX" )
+      USE ( cRuta + "EMP" + cCodEmp + "\Balan.Dbf" ) NEW SHARED VIA ( cLocalDriver() ) ALIAS ( cCheckArea( "BALAN", @dbfBalance ) )
+      SET INDEX TO ( cRuta + "EMP" + cCodEmp + "\Balan.Cdx" )
 		SET TAG TO "CTA"
 
    else
@@ -2566,7 +2625,8 @@ Function OpnSubCuenta( cRuta, cCodEmp, lMessage )
    cRuta             := cPath( cRuta )
    cCodEmp           := alltrim( cCodEmp )
 
-   if File( cRuta + "EMP" + cCodEmp + "\SubCta.Cdx" )
+   if file( cRuta + "EMP" + cCodEmp + "\SubCta.Dbf" ) .and. ;
+      file( cRuta + "EMP" + cCodEmp + "\SubCta.Cdx" )
 
       USE ( cRuta + "EMP" + cCodEmp + "\SubCta.Dbf" ) NEW SHARED VIA ( cLocalDriver() ) ALIAS ( cCheckArea( "SUBCUENTA", @dbfSubcuenta ) )
       SET INDEX TO ( cRuta + "EMP" + cCodEmp + "\SubCta.Cdx" )

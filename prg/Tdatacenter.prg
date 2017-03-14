@@ -4575,7 +4575,7 @@ METHOD ExecuteSqlStatement( cSql, cSqlStatement, hStatement )
          lOk               := ADSExecuteSQLDirect( cSql )
          if !lOk
             msginfo( cSql, "cSql" )
-            nError      := AdsGetLastError( @cErrorAds )
+            nError         := AdsGetLastError( @cErrorAds )
             msgStop( "Error : " + Str( nError) + "[" + cErrorAds + "]", 'ERROR en AdsExecuteSqlDirect' )
          endif
    

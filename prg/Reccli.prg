@@ -6422,13 +6422,36 @@ Return nil
 
 Function insertVencimientoContaplus( hRecibo )
 
-   // Si el recibo esta pagado nos vamos
+   local cEmpresaContaplus    
+
+   // Si el recibo esta pagado nos vamos--------------------------------------
 
    if ( hget( hRecibo, "lCobrado" ) )
-      Return .f.
+      Return ( .f. )
+   end if 
+
+   // si no estamos usando una version de contaplus----------------------------
+
+   if lAplicacionA3()
+      Return ( .f. )
+   end if 
+
+   // si esta vacia la ruta de contaplus---------------------------------------
+
+   if empty( cRutCnt() )
+      Return ( .f. )
+   end if 
+
+   // la serie del recibo tiene empresa contable asociada----------------------
+
+   cEmpresaContaplus    := cEmpCnt( hget( hRecibo, "cSerie" ) )
+   if empty(cEmpresaContaplus)
+      Return ( .f. )
    end if 
 
    // Apertura de base de dtos de vencimiento en contaplis
+
+   if OpenSubCuenta( cRuta, cCodEmp, @cArea, .t. )
 
    // Añadir campos a base de datos de contaplus
 
