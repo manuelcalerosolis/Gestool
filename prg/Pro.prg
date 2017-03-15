@@ -6,6 +6,7 @@
 static oWndBrw 
 static nView
 static oMenu
+static oDetMenu
 static dbfProT
 static dbfProL
 static dbfTmpProL
@@ -490,12 +491,16 @@ STATIC FUNCTION BeginTrans( aTmp, nMode, cCodPro )
 
       nOrdAnt        := ( dbfProL )->( OrdSetFocus( 1 ) )
 
+      oLinDetCamposExtra:initArrayValue()
+
       if nMode != APPD_MODE .and. ( dbfProL )->( dbSeek( cCodPro ) )
 
          while ( dbfProL )->cCodPro == cCodPro .and. !( dbfProL )->( eof() )
 
             dbPass( dbfProL, dbfTmpProL, .t. )
-         
+            
+            oLinDetCamposExtra:SetTemporalLines( ( dbfTmpProL )->cCodPro + ( dbfTmpProL )->cCodTbl, ( dbfTmpProL )->( OrdKeyNo() ), nMode )
+
             if empty( ( dbfTmpProL )->nOrdTbl )
                ( dbfTmpProL )->nOrdTbl := ( dbfTmpProL )->( Recno() )
             end if
@@ -589,6 +594,7 @@ STATIC FUNCTION EndTrans( aTmp, aGet, nMode, oDlg, lActualizaWeb )
       ( dbfTmpProL )->( dbGoTop() )
       while !( dbfTmpProL )->( eof() )
          dbPass( dbfTmpProL, dbfProL, .t., aTmp[ ( dbfProT )->( FieldPos( "cCodPro" ) ) ] )
+         oLinDetCamposExtra:saveExtraField( ( dbfTmpProL )->cCodPro + ( dbfTmpProL )->cCodTbl, ( dbfTmpProL )->( OrdKeyNo() ) )
          ( dbfTmpProL )->( dbSkip() )
       end while
 
@@ -657,6 +663,30 @@ Return ( oMenu )
 
 //---------------------------------------------------------------------------//
 
+static Function menuEdtDet( oDlg, nIdLin )
+
+   MENU oDetMenu
+
+      MENUITEM    "&1. Rotor  " ;
+         RESOURCE "Rotor16"
+
+         MENU
+
+            MENUITEM    "&1. Campos extra [F9]";
+               MESSAGE  "Mostramos y rellenamos los campos extra" ;
+               RESOURCE "GC_FORM_PLUS2_16" ;
+               ACTION   ( oLinDetCamposExtra:Play( nIdLin ) )
+
+         ENDMENU
+
+   ENDMENU
+
+   oDlg:SetMenu( oDetMenu )
+
+Return ( oDetMenu )
+
+//---------------------------------------------------------------------------//
+
 STATIC FUNCTION EdtDet( aTmp, aGet, dbf, oBrw, aTmpPro, bValid, nMode, cCodArt )
 
    local oDlg
@@ -665,6 +695,7 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbf, oBrw, aTmpPro, bValid, nMode, cCodArt )
 
    if nMode == APPD_MODE
       aTmp[ ( dbfProL )->( FieldPos( "nOrdTbl" ) ) ]  := ( dbfTmpProL )->( LastRec() ) + 1
+      oLinDetCamposExtra:setTemporalAppend()
    end if
 
    DEFINE DIALOG oDlg RESOURCE "PRODET" TITLE LblTitle( nMode ) + "propiedad"
@@ -729,11 +760,15 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbf, oBrw, aTmpPro, bValid, nMode, cCodArt )
 
    if nMode != ZOOM_MODE
       oDlg:AddFastKey( VK_F5, {|| SaveEdtDet( aTmp, aGet, oBrw, oDlg, nMode, dbfTmpProL ) } )
+      oDlg:AddFastKey( VK_F9, {|| oLinDetCamposExtra:Play( if( nMode == APPD_MODE, "", Str( ( dbfTmpProL )->( OrdKeyNo() ) ) ) ) } )
    end if
 
-   oDlg:AddFastKey( VK_F1, {||  ChmHelp( "Propiedades_de_articulos" ) } )
+   ACTIVATE DIALOG oDlg CENTER ;
+      ON INIT ( menuEdtDet( oDlg, if( nMode == APPD_MODE, "", Str( ( dbfTmpProL )->( OrdKeyNo() ) ) ) ) )
 
-   ACTIVATE DIALOG oDlg CENTER
+   if !Empty( oDetMenu )
+      oDetMenu:End()
+   end if
 
 RETURN ( oDlg:nResult == IDOK )
 
@@ -772,6 +807,10 @@ Static Function SaveEdtDet( aTmp, aGet, oBrw, oDlg, nMode, dbfTmpProL )
    if !lErr
       WinGather( aTmp, aGet, dbfTmpProL, oBrw, nMode )
       oDlg:end( IDOK )
+   end if
+
+   if nMode == APPD_MODE
+      oLinDetCamposExtra:SaveTemporalAppend( ( dbfTmpProL )->( OrdKeyNo() ) )
    end if
 
 Return nil
@@ -1851,12 +1890,12 @@ RETURN ( lRet )
 
 STATIC FUNCTION OpenFiles()
 
-   local lOpen    := .t.
-   local oBlock   := ErrorBlock( {| oError | ApoloBreak( oError ) } )
+   local lOpen                         := .t.
+   local oBlock                        := ErrorBlock( {| oError | ApoloBreak( oError ) } )
 
    BEGIN SEQUENCE
 
-      nView       := D():CreateView()
+      nView                            := D():CreateView()
 
       USE ( cPatArt() + "PRO.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "PRO", @dbfProT ) )
       SET ADSINDEX TO ( cPatArt() + "PRO.CDX" ) ADDITIVE
@@ -1864,10 +1903,15 @@ STATIC FUNCTION OpenFiles()
       USE ( cPatArt() + "TBLPRO.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "TBLPRO", @dbfProL ) )
       SET ADSINDEX TO ( cPatArt() + "TBLPRO.CDX" ) ADDITIVE
 
-      oDetCamposExtra      := TDetCamposExtra():New()
+      oDetCamposExtra                  := TDetCamposExtra():New()
       oDetCamposExtra:OpenFiles()
       oDetCamposExtra:SetTipoDocumento( "Propiedades" )
       oDetCamposExtra:setbId( {|| D():PropiedadesId( nView ) } )
+
+      oLinDetCamposExtra               := TDetCamposExtra():New()
+      oLinDetCamposExtra:OpenFiles()
+      oLinDetCamposExtra:setTipoDocumento( "Lineas de propiedades" )
+      oLinDetCamposExtra:setbId( {|| D():PropiedadesLineasId( nView ) } )
 
    RECOVER
 
@@ -1899,12 +1943,18 @@ STATIC FUNCTION CloseFiles()
       oDetCamposExtra:CloseFiles()
    end if
 
+   if !Empty( oLinDetCamposExtra )
+      oLinDetCamposExtra:CloseFiles()
+      oLinDetCamposExtra:End()
+   end if
+
    D():DeleteView( nView )
 
-   dbfProT           := nil
-   dbfProL           := nil
-   oDetCamposExtra   := nil
-   oWndBrw           := nil
+   dbfProT              := nil
+   dbfProL              := nil
+   oDetCamposExtra      := nil
+   oLinDetCamposExtra   := nil
+   oWndBrw              := nil
 
 RETURN .T.
 

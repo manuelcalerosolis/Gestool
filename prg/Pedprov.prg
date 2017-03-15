@@ -224,6 +224,7 @@ static nVdvDiv          := 1
 static oFont
 static oMenu
 static oDetCamposExtra
+static oLinDetCamposExtra
 static cOldCodCli       := ""
 static cOldCodArt       := ""
 static cOldPrpArt       := ""
@@ -360,6 +361,11 @@ STATIC FUNCTION OpenFiles( lExt )
       oDetCamposExtra:OpenFiles()
       oDetCamposExtra:SetTipoDocumento( "Pedidos a proveedores" )
       oDetCamposExtra:setbId( {|| D():PedidosProveedoresId( nView ) } )
+
+      oLinDetCamposExtra               := TDetCamposExtra():New()
+      oLinDetCamposExtra:OpenFiles()
+      oLinDetCamposExtra:setTipoDocumento( "Lineas de albaranes a clientes" )
+      oLinDetCamposExtra:setbId( {|| D():AlbaranesClientesLineasEscandalloId( nView ) } )
 
       oCentroCoste      := TCentroCoste():Create( cPatDat() )
       if !oCentroCoste:OpenFiles()
@@ -3072,7 +3078,7 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbf, oBrw, aTmpPed, cCodArt, nMode )
                            oBrwAlb:GoTop(), oBrwAlb:Refresh() }
 
    ACTIVATE DIALOG oDlg ;
-         ON INIT  ( EdtDetMenu( aGet[ _CREF ], oDlg ) );
+         ON INIT  ( MenuEdtDet( aGet[ _CREF ], oDlg, , if( nMode == APPD_MODE, "", Str( ( dbfTmpLin )->( OrdKeyNo() ) ) ) ) );
          CENTER
 
    EndDetMenu()
@@ -9447,5 +9453,41 @@ Function nombreSegundaPropiedadPedidosProveedoresLineas( view )
    DEFAULT view   := nView
 
 Return ( nombrePropiedad( ( D():PedidosProveedoresLineas( view ) )->cCodPr2, ( D():PedidosProveedoresLineas( view ) )->cValPr2, view ) )
+
+//---------------------------------------------------------------------------//
+
+Function MenuEdtDet( oCodArt, oDlg, lOferta, nIdLin )
+
+   DEFAULT lOferta      := .f.
+
+   MENU oMenu
+
+      MENUITEM    "&1. Rotor  " ;
+         RESOURCE "Rotor16"
+
+         MENU
+
+            MENUITEM    "&1. Campos extra [F9]";
+               MESSAGE  "Mostramos y rellenamos los campos extra" ;
+               RESOURCE "GC_FORM_PLUS2_16" ;
+               ACTION   ( oLinDetCamposExtra:Play( nIdLin ) )
+
+            MENUITEM    "&2. Modificar artículo";
+               MESSAGE  "Modificar la ficha del artículo" ;
+               RESOURCE "gc_object_cube_16";
+               ACTION   ( EdtArticulo( oCodArt:VarGet() ) );
+
+            MENUITEM    "&3. Informe de artículo";
+               MESSAGE  "Abrir el informe del artículo" ;
+               RESOURCE "Info16";
+               ACTION   ( if( oUser():lNotCostos(), msgStop( "No tiene permiso para ver los precios de costo" ), InfArticulo( oCodArt:VarGet() ) ) );
+
+         ENDMENU
+
+   ENDMENU
+
+   oDlg:SetMenu( oMenu )
+
+Return ( oMenu )
 
 //---------------------------------------------------------------------------//
