@@ -2163,20 +2163,20 @@ Return ( cClientCuenta( ( cFacCliP )->cCodCli, cBncCli ) )
 
 function SynRecCli( cPath )
 
+   local cDiv
+   local cIva
+   local cFPago
    local oBlock
    local oError
    local nTotFac
    local nTotRec
+   local cClient
    local cFacCliT
    local cFacCliP
    local cFacCliL
    local cAntCliT
    local cFacRecT
    local cFacRecL
-   local cDiv
-   local cIva
-   local cClient
-   local cFPago
 
    DEFAULT cPath     := cPatEmp()
 
@@ -4936,7 +4936,7 @@ FUNCTION genPgoFacCli( cNumFac, cFacCliT, cFacCliL, cFacCliP, cAntCliT, cClient,
 
             // Insertar vencimiento en contaplus-------------------------------
 
-            insertVencimientoContaplus( cFacCliP )
+            insertVencimientoContaplus( cFacCliP, cClient )
 
          next
 
@@ -6420,7 +6420,7 @@ Return nil
 
 //---------------------------------------------------------------------------//
 
-Function insertVencimientoContaplus( cFacCliP )
+Function insertVencimientoContaplus( cFacCliP, cClient )
 
    local cArea
    local cEmpresaContaplus    
@@ -6430,8 +6430,6 @@ Function insertVencimientoContaplus( cFacCliP )
    if ( ( cFacCliP )->lCobrado ) 
       Return ( .f. )
    end if 
-
-   msgalert( 'lCobrado')
 
    // si no estamos usando una version de contaplus----------------------------
 
@@ -6462,7 +6460,7 @@ Function insertVencimientoContaplus( cFacCliP )
 
    ( cArea )->( dbappend( .t. ) )
    ( cArea )->fecha     := ( cFacCliP )->dPreCob
-   ( cArea )->cod       := ( cFacCliP )->cCodCli
+   ( cArea )->cod       := cCliCta( ( cFacCliP )->cCodCli, cClient )
    ( cArea )->acpa      := 'A'
    ( cArea )->contra    := ( cFacCliP )->cCtaRec
    ( cArea )->concepto  := 'Cobro Fra. ' + ( cFacCliP )->cSerie + '/' + alltrim( str( ( cFacCliP )->nNumFac ) )

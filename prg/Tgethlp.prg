@@ -497,6 +497,8 @@ METHOD lValid() CLASS TGetHlp
       else
          ::evalPostValidate()
       end if
+   else 
+      return .t.
    end if
 
 return lRet

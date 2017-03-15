@@ -3219,8 +3219,6 @@ METHOD AddConsumido() CLASS TFastVentasArticulos
       ::cExpresionLine     += ' .and. ( cCodArt >= "' + ::oGrupoArticulo:Cargo:getDesde() + '" .and. cCodArt <= "' + ::oGrupoArticulo:Cargo:getHasta() + '")'
    end if
 
-   msgalert( ::cExpresionLine )
-
    ( D():PartesProduccionMateriaPrima( ::nView ) )->( setCustomFilter( ::cExpresionLine ) )
    
    ::setMeterTotal( ( D():PartesProduccionMateriaPrima( ::nView ) )->( OrdKeyCount() ) )

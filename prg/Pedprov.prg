@@ -1178,8 +1178,8 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, cCodPrv, cCodArt, nMode )
          BITMAP      "LUPA" ;
          OF          oFld:aDialogs[1]
 
-      aGet[ _CCODPRV ]:bPreValidate    := {|oSender| msgalert( oSender:ClassName() ) }
-      aGet[ _CCODPRV ]:bPostValidate   := {|oSender| msgalert( 'bPostValidate' ) }
+      // aGet[ _CCODPRV ]:bPreValidate    := {|| msginfo( oSender:ClassName() ) }
+      // aGet[ _CCODPRV ]:bPostValidate   := {|| msginfo( 'bPostValidate' ) }
 
       REDEFINE GET aGet[ _CNOMPRV ] VAR aTmp[ _CNOMPRV ];
          ID 		141 ;
