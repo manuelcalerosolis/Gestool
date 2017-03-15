@@ -3513,7 +3513,19 @@ METHOD BuildEmpresa()
 
    ::AddEmpresaObject( TNewImp():Create() )
 
-   if !IsReport()
+   oDataTable              := TDetCamposExtra():Create()
+   oDataTable:cName        := "CamposExtraHeader"
+   ::AddEmpresaObject( oDataTable )
+
+   oDataTable              := TDetCamposExtra():Create()
+   oDataTable:cName        := "CamposExtraLine"
+   ::AddEmpresaObject( oDataTable )
+
+   ::AddEmpresaObject( TCentroCoste():Create( cPatEmp() ) )
+   ::AddEmpresaObject( TStock():Create( cPatEmp() ) )
+   ::AddEmpresaObject( TBandera():New() )
+
+   if !isReport()
       ::AddEmpresaObject( TPrestaShopId():Create() )
    end if
 

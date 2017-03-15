@@ -8,6 +8,7 @@ CLASS TCentroCoste FROM TMant
 
 	DATA lOpenFiles
    DATA cMru               INIT     "gc_folder_open_money_16"
+   DATA cName              INIT     "CentroCoste"
 
    DATA aTipo              INIT {   "Clientes", "Artículos", "Proveedores" }
    DATA cTipo              INIT     "Artículos"

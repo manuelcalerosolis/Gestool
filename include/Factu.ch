@@ -192,6 +192,7 @@ Defines para ficheros INI
 #define LIN_FAC_PRV             '38'
 #define PRO_ART                 '39'
 #define LIN_PRO_ART             '40'
+#define LIN_PED_PRV             '41'
 
 #define ACC_ACCE                1        // Acceso
 #define ACC_APPD                2        // Acceso añadir
@@ -357,6 +358,7 @@ Definici¢n de Array para impuestos---------------------------------------------
                                         "Facturas de anticipos a clientes" => "13",;
                                         "Facturas rectificativa a clientes" => "14",;
                                         "Pedidos a proveedores" => "01",;
+                                        "Lineas pedidos a proveedores" => "41",;
                                         "Albaranes a proveedores" => "02",;
                                         "Lineas albaranes a proveedores" => "37",;
                                         "Facturas a proveedores" => "03",;
@@ -382,6 +384,7 @@ Definici¢n de Array para impuestos---------------------------------------------
                                         "Facturas de anticipos a clientes" => "gc_document_text_money2_16",;
                                         "Facturas rectificativa a clientes" => "gc_document_text_delete_16",;
                                         "Pedidos a proveedores" => "gc_clipboard_empty_businessman_16",;
+                                        "Lineas pedidos a proveedores" => "gc_clipboard_empty_businessman_16",;
                                         "Albaranes a proveedores" => "gc_document_empty_businessman_16",;
                                         "Lineas albaranes a proveedores" => "gc_document_empty_businessman_16",;
                                         "Facturas a proveedores" => "gc_document_text_businessman_16",;
@@ -407,6 +410,7 @@ Definici¢n de Array para impuestos---------------------------------------------
                                         "Facturas de anticipos a clientes" => .F.,;
                                         "Facturas rectificativa a clientes" => .F.,;
                                         "Pedidos a proveedores" => .F.,;
+                                        "Lineas pedidos a proveedores" => .F.,;
                                         "Albaranes a proveedores" => .F.,;
                                         "Lineas albaranes a proveedores" => .F.,;
                                         "Facturas a proveedores" => .F.,;

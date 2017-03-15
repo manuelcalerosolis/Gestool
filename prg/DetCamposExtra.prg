@@ -11,10 +11,12 @@ CLASS TDetCamposExtra FROM TMant
          
    DATA oDbf
    DATA oDlg
+
+   DATA cName
    
    DATA oBrw
    DATA oCol
-  
+       
    DATA TipoDocumento         INIT ""
 
    DATA aCamposExtra          INIT {}
@@ -29,6 +31,7 @@ CLASS TDetCamposExtra FROM TMant
 
    DATA bId
 
+   METHOD Create( cPath, cDriver )              CONSTRUCTOR
    Method New( cPath, oWndParent, oMenuItem )   CONSTRUCTOR
 
    Method DefineFiles()
@@ -36,8 +39,8 @@ CLASS TDetCamposExtra FROM TMant
    Method OpenFiles( lExclusive )
    Method CloseFiles()
 
-   Method OpenService( lExclusive )
-   Method CloseService()
+   Method OpenService( lExclusive )             INLINE ( ::openFiles( lExclusive ) )
+   Method CloseService()                        INLINE ( ::CloseFiles() )
 
    Method Reindexa( oMeter )
 
@@ -79,17 +82,14 @@ END CLASS
 
 //---------------------------------------------------------------------------//
 
-METHOD New( cPath, cDriver, oWndParent, oMenuItem ) CLASS TDetCamposExtra
+METHOD Create( cPath, cDriver ) CLASS TDetCamposExtra
 
    DEFAULT cPath           := cPatEmp()
    DEFAULT cDriver         := cDriver()
-   DEFAULT oWndParent      := oWnd()
-   DEFAULT oMenuItem       := "01124"
-
-   ::nLevel                := nLevelUsr( oMenuItem )
 
    ::cPath                 := cPath
-   ::oWndParent            := oWndParent
+   ::cDriver               := cDriver
+
    ::oDbf                  := nil
 
    ::hFormatoColumnas      := {  "1" => {||  ::setColType( EDIT_GET ) ,;
@@ -104,6 +104,21 @@ METHOD New( cPath, cDriver, oWndParent, oMenuItem ) CLASS TDetCamposExtra
                                  "5" => {||  ::setColType( EDIT_LISTBOX ) ,;
                                              ::setColListTxt( hGet( ::aItemSelected[ ::oBrw:nArrayAt ], "valores" ) ) ,;
                                              ::setColPicture( "" ) } }
+
+RETURN ( Self )
+
+//---------------------------------------------------------------------------//
+
+
+METHOD New( cPath, cDriver, oWndParent, oMenuItem ) CLASS TDetCamposExtra
+
+   DEFAULT oWndParent      := oWnd()
+   DEFAULT oMenuItem       := "01124"
+
+   ::Create( cPath, cDriver )
+
+   ::nLevel                := nLevelUsr( oMenuItem )
+   ::oWndParent            := oWndParent
 
 RETURN ( Self )
 
@@ -190,50 +205,6 @@ METHOD CloseFiles() CLASS TDetCamposExtra
    ::oCamposExtra := nil
 
    ::lOpenFiles   := .f.
-
-RETURN ( .t. )
-
-//---------------------------------------------------------------------------//
-
-METHOD OpenService( lExclusive, cPath ) CLASS TDetCamposExtra
-
-   local lOpen          := .t.
-   local oError
-   local oBlock
-
-   DEFAULT lExclusive   := .f.
-   DEFAULT cPath        := ::cPath
-
-   oBlock               := ErrorBlock( {| oError | ApoloBreak( oError ) } )
-   BEGIN SEQUENCE
-
-      if Empty( ::oDbf )
-         ::oDbf         := ::DefineFiles( cPath )
-      end if
-
-      ::oDbf:Activate( .f., !( lExclusive ) )
-
-   RECOVER USING oError
-
-      lOpen             := .f.
-
-      msgStop( ErrorMessage( oError ), "Imposible abrir todas las bases de datos" )
-
-   END SEQUENCE
-
-   ErrorBlock( oBlock )
-
-   ::CloseService()
-
-RETURN ( lOpen )
-
-//---------------------------------------------------------------------------//
-
-METHOD CloseService() CLASS TDetCamposExtra
-
-   if !Empty( ::oDbf ) .and. ::oDbf:Used()
-      ::oDbf:End()
-   end if
 
 RETURN ( .t. )
 

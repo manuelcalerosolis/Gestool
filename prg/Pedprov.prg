@@ -184,7 +184,6 @@ static dbfPrv
 static dbfIva
 static dbfTmp
 static dbfDiv
-static oBandera
 static dbfArticulo
 static dbfTmpInc
 static dbfTmpDoc
@@ -202,8 +201,6 @@ static dbfArtPrv
 static oMailing
 
 static dbfClient
-static oStock
-static oNewImp
 static oGetNet
 static oGetIva
 static oGetIvm
@@ -223,7 +220,7 @@ static nGetReq          := 0
 static nVdvDiv          := 1
 static oFont
 static oMenu
-static oDetCamposExtra
+static oDetMenu
 static cOldCodCli       := ""
 static cOldCodArt       := ""
 static cOldPrpArt       := ""
@@ -240,7 +237,6 @@ static nView
 
 static Counter
 
-static oCentroCoste
 static oTipoCtrCoste
 static cTipoCtrCoste
 static aTipoCtrCoste   := { "Centro de coste", "Proveedor", "Agente", "Cliente" }
@@ -352,35 +348,25 @@ STATIC FUNCTION OpenFiles( lExt )
 
       D():Empresa( nView )
 
-      D():GetObject( "UnidadMedicion", nView )
+      D():UnidadMedicion( nView )
 
       D():ImpuestosEspeciales( nView )
+      
+      D():CamposExtraHeader( nView ):setTipoDocumento( "Pedidos a proveedores" )
+      D():CamposExtraHeader( nView ):setbId( {|| D():PedidosProveedoresId( nView ) } )
 
-      oDetCamposExtra   := TDetCamposExtra():New()
-      oDetCamposExtra:OpenFiles()
-      oDetCamposExtra:SetTipoDocumento( "Pedidos a proveedores" )
-      oDetCamposExtra:setbId( {|| D():PedidosProveedoresId( nView ) } )
+      D():CamposExtraLine( nView ):setTipoDocumento( "Lineas pedidos a proveedores" )
+      D():CamposExtraLine( nView ):setbId( {|| D():PedidosProveedoresLineasId( nView ) } )
 
-      oCentroCoste      := TCentroCoste():Create( cPatDat() )
-      if !oCentroCoste:OpenFiles()
-         lOpenFiles     := .f.
-      end if
-
-      oNewImp           := TNewImp():Create( cPatEmp() )
-      if !oNewImp:OpenFiles()
-         lOpenFiles     := .f.
-      end if
+      D():CentroCoste( nView )
 
       D():ArticuloLenguaje( nView )
 
-      oStock            := TStock():Create( cPatEmp() )
-      if !oStock:lOpenFiles()
-         lOpenFiles     := .f.
-      end if
+      D():Stocks( nView )
 
       CodigosPostales():GetInstance():OpenFiles()
 
-      oBandera          := TBandera():New()
+      D():Banderas( nView )
 
       oMailing          := TGenmailingDatabasePedidosProveedor():New( nView )
 
@@ -424,33 +410,13 @@ STATIC FUNCTION CloseFiles()
       oFont:end()
    end if
 
-   if !empty( oDetCamposExtra )
-      oDetCamposExtra:CloseFiles()
-   end if
-
-   if oStock != nil
-      oStock:end()
-   end if
-
-   if !Empty( oCentroCoste )
-      oCentroCoste:CloseFiles()
-   end if
-
-   if !empty( oNewImp )
-      oNewImp:end()
-   end if
-
    CodigosPostales():GetInstance():CloseFiles()
 
    D():DeleteView( nView )
 
-   oStock      := nil
-   oBandera    := nil
-   oNewImp     := nil
+   lOpenFiles           := .f.
 
-   lOpenFiles  := .f.
-
-   oWndBrw     := nil
+   oWndBrw              := nil
 
    EnableAcceso()
 
@@ -745,7 +711,7 @@ FUNCTION PedPrv( oMenuItem, oWnd, cCodPrv, cCodArt )
          :lHide            := .t.
       end with
 
-      oDetCamposExtra:addCamposExtra( oWndBrw )
+      D():CamposExtraHeader( nView ):addCamposExtra( oWndBrw )
 
       oWndBrw:cHtmlHelp    := "Pedido a proveedor"
 
@@ -1271,10 +1237,10 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, cCodPrv, cCodArt, nMode )
 
 		REDEFINE GET aGet[ _CDIVPED ] VAR aTmp[ _CDIVPED ];
          WHEN     ( nMode == APPD_MODE .AND. ( dbfTmpLin )->( LastRec() ) == 0 ) ;
-         VALID    ( cDivIn( aGet[ _CDIVPED ], oBmpDiv, aGet[ _NVDVPED ], @cPinDiv, @nDinDiv, @cPirDiv, @nDirDiv, oGetMasDiv, D():Divisas( nView ), oBandera ) );
+         VALID    ( cDivIn( aGet[ _CDIVPED ], oBmpDiv, aGet[ _NVDVPED ], @cPinDiv, @nDinDiv, @cPirDiv, @nDirDiv, oGetMasDiv, D():Divisas( nView ), D():Banderas( nView ) ) );
 			PICTURE	"@!";
 			ID 		170 ;
-         ON HELP  BrwDiv( aGet[ _CDIVPED ], oBmpDiv, aGet[ _NVDVPED ], D():Divisas( nView ), oBandera ) ;
+         ON HELP  BrwDiv( aGet[ _CDIVPED ], oBmpDiv, aGet[ _NVDVPED ], D():Divisas( nView ), D():Banderas( nView ) ) ;
          BITMAP   "LUPA" ;
          OF       oFld:aDialogs[1]
 
@@ -1900,8 +1866,8 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, cCodPrv, cCodArt, nMode )
          ID       510 ;
          IDTEXT   511 ;
          BITMAP   "LUPA" ;
-         VALID    ( oCentroCoste:Existe( aGet[ _CCENTROCOSTE ], aGet[ _CCENTROCOSTE ]:oHelpText, "cNombre" ) );
-         ON HELP  ( oCentroCoste:Buscar( aGet[ _CCENTROCOSTE ] ) ) ;
+         VALID    ( D():CentroCoste( nView ):Existe( aGet[ _CCENTROCOSTE ], aGet[ _CCENTROCOSTE ]:oHelpText, "cNombre" ) );
+         ON HELP  ( D():CentroCoste( nView ):Buscar( aGet[ _CCENTROCOSTE ] ) ) ;
          WHEN     ( nMode != ZOOM_MODE ) ;
          OF       oFld:aDialogs[2]
 
@@ -2178,7 +2144,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, cCodPrv, cCodArt, nMode )
 
          oDlg:AddFastKey( VK_F5, {|| EndTrans( aGet, aTmp, oBrw, nMode, oDlg ) } )
          oDlg:AddFastKey( VK_F6, {|| if( EndTrans( aGet, aTmp, oBrw, nMode, oDlg ), GenPedPrv( IS_PRINTER ), ) } )
-         oDlg:AddFastKey( VK_F9, {|| oDetCamposExtra:Play( space(1) ) } )
+         oDlg:AddFastKey( VK_F9, {|| D():CamposExtraHeader( nView ):Play( space(1) ) } )
          oDlg:AddFastKey( 65,    {|| if( GetKeyState( VK_CONTROL ), CreateInfoArticulo(), ) } )
       end if
 
@@ -2256,7 +2222,7 @@ Static Function EdtRecMenu( aGet, aTmp, oBrw, oBrwLin, nMode, oDlg )
             MENUITEM    "&1. Campos extra [F9]";
                MESSAGE  "Mostramos y rellenamos los campos extra para la familia" ;
                RESOURCE "gc_form_plus2_16" ;
-               ACTION   ( oDetCamposExtra:Play( space(1) ) )
+               ACTION   ( D():CamposExtraHeader( nView ):Play( space(1) ) )
 
             MENUITEM    "&2. Modificar proveedor";
                MESSAGE  "Modificar la ficha del proveedor" ;
@@ -2603,9 +2569,11 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbf, oBrw, aTmpPed, cCodArt, nMode )
 
       cTipoCtrCoste     := "Centro de coste"
 
+      D():CamposExtraLine( nView ):setTemporalAppend()
+
    else
 
-      nGetStk           := oStock:nPutStockActual( aTmp[ _CREFPRV ], aTmp[ _CALMLIN ], , , , aTmp[ _LKITART ], aTmp[ _NCTLSTK ] )
+      nGetStk           := D():Stocks( nView ):nPutStockActual( aTmp[ _CREFPRV ], aTmp[ _CALMLIN ], , , , aTmp[ _LKITART ], aTmp[ _NCTLSTK ] )
 
    end if
 
@@ -2680,7 +2648,7 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbf, oBrw, aTmpPed, cCodArt, nMode )
          ON HELP  ( brwPropiedadActual( aGet[ _CVALPR1 ], oSayVp1, aTmp[_CCODPR1 ] ) ) ;
 	      OF 		oFld:aDialogs[1]
 
-         aGet[ _CVALPR1 ]:bChange   := {|| aGet[ _CVALPR1 ]:Assign(), oStock:nPutStockActual( aTmp[ _CREF ], aTmp[ _CALMLIN ], aTmp[ _CVALPR1 ], aTmp[ _CVALPR2 ], aTmp[ _CLOTE ], aTmp[ _LKITART ], aTmp[ _NCTLSTK ], oGetStk ) }
+         aGet[ _CVALPR1 ]:bChange   := {|| aGet[ _CVALPR1 ]:Assign(), D():Stocks( nView ):nPutStockActual( aTmp[ _CREF ], aTmp[ _CALMLIN ], aTmp[ _CVALPR1 ], aTmp[ _CVALPR2 ], aTmp[ _CLOTE ], aTmp[ _LKITART ], aTmp[ _NCTLSTK ], oGetStk ) }
 
       REDEFINE SAY oSayPr1 VAR cSayPr1;
          ID       221 ;
@@ -2703,7 +2671,7 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbf, oBrw, aTmpPed, cCodArt, nMode )
          ON HELP  ( brwPropiedadActual( aGet[ _CVALPR2 ], oSayVp2, aTmp[ _CCODPR2 ] ) ) ;
 			OF 		oFld:aDialogs[1]
 
-         aGet[ _CVALPR2 ]:bChange   := {|| aGet[ _CVALPR2 ]:Assign(), oStock:nPutStockActual( aTmp[ _CREF ], aTmp[ _CALMLIN ], aTmp[ _CVALPR1 ], aTmp[ _CVALPR2 ], aTmp[ _CLOTE ], aTmp[ _LKITART ], aTmp[ _NCTLSTK ], oGetStk ) }
+         aGet[ _CVALPR2 ]:bChange   := {|| aGet[ _CVALPR2 ]:Assign(), D():Stocks( nView ):nPutStockActual( aTmp[ _CREF ], aTmp[ _CALMLIN ], aTmp[ _CVALPR1 ], aTmp[ _CVALPR2 ], aTmp[ _CLOTE ], aTmp[ _LKITART ], aTmp[ _NCTLSTK ], oGetStk ) }
 
       REDEFINE SAY oSayPr2 VAR cSayPr2;
          ID       231 ;
@@ -2718,7 +2686,7 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbf, oBrw, aTmpPed, cCodArt, nMode )
          ID       240 ;
 			WHEN 		( nMode != ZOOM_MODE ) ;
          VALID    (  cAlmacen( aGet[ _CALMLIN ], , oSay2 ),;
-                     oStock:lPutStockActual( aTmp[ _CREF ], aTmp[ _CALMLIN ], aTmp[ _CVALPR1 ], aTmp[ _CVALPR2 ], aTmp[ _CLOTE ], aTmp[ _LKITART ], aTmp[ _NCTLSTK ], oGetStk ) ) ;
+                     D():Stocks( nView ):lPutStockActual( aTmp[ _CREF ], aTmp[ _CALMLIN ], aTmp[ _CVALPR1 ], aTmp[ _CVALPR2 ], aTmp[ _CLOTE ], aTmp[ _LKITART ], aTmp[ _NCTLSTK ], oGetStk ) ) ;
          BITMAP   "LUPA" ;
          ON HELP  ( BrwAlmacen( Self, oSay2 ) ) ;
 			OF 		oFld:aDialogs[1]
@@ -2864,8 +2832,8 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbf, oBrw, aTmpPed, cCodArt, nMode )
          IDTEXT      171 ;
          BITMAP      "LUPA" ;
          WHEN        ( nMode != ZOOM_MODE ) ;
-         VALID       ( D():GetObject( "UnidadMedicion", nView ):Existe( aGet[ _CUNIDAD ], aGet[ _CUNIDAD ]:oHelpText, "cNombre" ), ValidaMedicion( aTmp, aGet) );
-         ON HELP     ( D():GetObject( "UnidadMedicion", nView ):Buscar( aGet[ _CUNIDAD ] ), ValidaMedicion( aTmp, aGet ) ) ;
+         VALID       ( D():UnidadMedicion( nView ):Existe( aGet[ _CUNIDAD ], aGet[ _CUNIDAD ]:oHelpText, "cNombre" ), ValidaMedicion( aTmp, aGet) );
+         ON HELP     ( D():UnidadMedicion( nView ):Buscar( aGet[ _CUNIDAD ] ), ValidaMedicion( aTmp, aGet ) ) ;
          OF          oFld:aDialogs[1]
 
 		REDEFINE GET   aGet[ _NDTOLIN ] ;
@@ -2994,8 +2962,8 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbf, oBrw, aTmpPed, cCodArt, nMode )
          ID       410 ;
          IDTEXT   411 ;
          BITMAP   "LUPA" ;
-         VALID    ( oCentroCoste:Existe( aGet[ __CCENTROCOSTE ], aGet[ __CCENTROCOSTE ]:oHelpText, "cNombre" ) );
-         ON HELP  ( oCentroCoste:Buscar( aGet[ __CCENTROCOSTE ] ) ) ;
+         VALID    ( D():CentroCoste( nView ):Existe( aGet[ __CCENTROCOSTE ], aGet[ __CCENTROCOSTE ]:oHelpText, "cNombre" ) );
+         ON HELP  ( D():CentroCoste( nView ):Buscar( aGet[ __CCENTROCOSTE ] ) ) ;
          WHEN     ( nMode != ZOOM_MODE ) ;
          OF       oFld:aDialogs[5]
 
@@ -3060,6 +3028,7 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbf, oBrw, aTmpPed, cCodArt, nMode )
 
    if nMode != ZOOM_MODE
       oDlg:AddFastKey(  VK_F5, {|| SaveDeta( aTmp, aGet, oBrwPrp, oFld, oDlg, oBrw, nMode, oTotal, oGet1, aTmpPed, oSayPr1, oSayPr2, oSayVp1, oSayVp2, oGetStk, oSayLote, oBtn ) } )
+      oDlg:AddFastKey( VK_F9,  {|| D():CamposExtraLine( nView ):Play( if( nMode == APPD_MODE, "", Str( ( dbfTmpLin )->( OrdKeyNo() ) ) ) ) } )
    end if 
 
    oDlg:SetControlFastKey( "PedidosProveedoresLineas", nView, aGet )
@@ -3072,10 +3041,12 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbf, oBrw, aTmpPed, cCodArt, nMode )
                            oBrwAlb:GoTop(), oBrwAlb:Refresh() }
 
    ACTIVATE DIALOG oDlg ;
-         ON INIT  ( EdtDetMenu( aGet[ _CREF ], oDlg ) );
+         ON INIT  ( MenuEdtDet( aGet[ _CREF ], oDlg, , if( nMode == APPD_MODE, "", Str( ( dbfTmpLin )->( OrdKeyNo() ) ) ) ) );
          CENTER
 
-   EndDetMenu()
+   if !Empty( oDetMenu )      
+      oDetMenu:End()
+   end if
 
    ( D():AlbaranesProveedoresLineas( nView ) )->( OrdScope( 0, nil ) )
    ( D():AlbaranesProveedoresLineas( nView ) )->( OrdScope( 1, nil ) )
@@ -3211,20 +3182,20 @@ STATIC FUNCTION SetDlgMode( aGet, aTmp, aTmpPed, nMode, oSayPr1, oSayPr2, oSayVp
    aGet[ ( D():PedidosProveedoresLineas( nView ) )->( fieldpos( "nMedDos" ) ) ]:Hide()
    aGet[ ( D():PedidosProveedoresLineas( nView ) )->( fieldpos( "nMedTre" ) ) ]:Hide()
 
-   if D():GetObject( "UnidadMedicion", nView ):oDbf:Seek(  aTmp[ _CUNIDAD ] )
+   if D():UnidadMedicion( nView ):oDbf:Seek(  aTmp[ _CUNIDAD ] )
 
-      if D():GetObject( "UnidadMedicion", nView ):oDbf:nDimension >= 1 .and. !empty( D():GetObject( "UnidadMedicion", nView ):oDbf:cTextoDim1 )
-         aGet[ ( D():PedidosProveedoresLineas( nView ) )->( fieldpos( "nMedUno" ) ) ]:oSay:SetText( D():GetObject( "UnidadMedicion", nView ):oDbf:cTextoDim1 )
+      if D():UnidadMedicion( nView ):oDbf:nDimension >= 1 .and. !empty( D():UnidadMedicion( nView ):oDbf:cTextoDim1 )
+         aGet[ ( D():PedidosProveedoresLineas( nView ) )->( fieldpos( "nMedUno" ) ) ]:oSay:SetText( D():UnidadMedicion( nView ):oDbf:cTextoDim1 )
          aGet[ ( D():PedidosProveedoresLineas( nView ) )->( fieldpos( "nMedUno" ) ) ]:Show()
       end if
 
-      if D():GetObject( "UnidadMedicion", nView ):oDbf:nDimension >= 2 .and. !empty( D():GetObject( "UnidadMedicion", nView ):oDbf:cTextoDim2 )
-         aGet[ ( D():PedidosProveedoresLineas( nView ) )->( fieldpos( "nMedDos" ) ) ]:oSay:SetText( D():GetObject( "UnidadMedicion", nView ):oDbf:cTextoDim2 )
+      if D():UnidadMedicion( nView ):oDbf:nDimension >= 2 .and. !empty( D():UnidadMedicion( nView ):oDbf:cTextoDim2 )
+         aGet[ ( D():PedidosProveedoresLineas( nView ) )->( fieldpos( "nMedDos" ) ) ]:oSay:SetText( D():UnidadMedicion( nView ):oDbf:cTextoDim2 )
          aGet[ ( D():PedidosProveedoresLineas( nView ) )->( fieldpos( "nMedDos" ) ) ]:Show()
       end if
 
-      if D():GetObject( "UnidadMedicion", nView ):oDbf:nDimension >= 3 .and. !empty( D():GetObject( "UnidadMedicion", nView ):oDbf:cTextoDim3 )
-         aGet[ ( D():PedidosProveedoresLineas( nView ) )->( fieldpos( "nMedTre" ) ) ]:oSay:SetText( D():GetObject( "UnidadMedicion", nView ):oDbf:cTextoDim3 )
+      if D():UnidadMedicion( nView ):oDbf:nDimension >= 3 .and. !empty( D():D():UnidadMedicion( nView ):oDbf:cTextoDim3 )
+         aGet[ ( D():PedidosProveedoresLineas( nView ) )->( fieldpos( "nMedTre" ) ) ]:oSay:SetText( D():UnidadMedicion( nView ):oDbf:cTextoDim3 )
          aGet[ ( D():PedidosProveedoresLineas( nView ) )->( fieldpos( "nMedTre" ) ) ]:Show()
       end if
 
@@ -3318,7 +3289,7 @@ STATIC FUNCTION LoaArt( aGet, aTmp, nMode, aTmpPed, oSayPr1, oSayPr2, oSayVp1, o
 
             aTmp[ _CCODIMP ]  := ( D():Articulos( nView ) )->cCodImp
 
-            oNewImp:setCodeAndValue( aTmp[ _CCODIMP ], aGet[ _NVALIMP ] )
+            D():ImpuestosEspeciales( nView ):setCodeAndValue( aTmp[ _CCODIMP ], aGet[ _NVALIMP ] )
 
             // Preguntamos si el regimen de " + cImp() + " es distinto de Exento
 
@@ -3529,7 +3500,7 @@ STATIC FUNCTION LoaArt( aGet, aTmp, nMode, aTmpPed, oSayPr1, oSayPr2, oSayVp1, o
             // Ponemos el stock---------------------------------------------------
 
             if oGetStk != nil .and. aTmp[ _NCTLSTK ] <= 1
-               oStock:nPutStockActual( cCodArt, aTmp[ _CALMLIN ], , , , aTmp[ _LKITART ], aTmp[ _NCTLSTK ], oGetStk )
+               D():Stocks( nView ):nPutStockActual( cCodArt, aTmp[ _CALMLIN ], , , , aTmp[ _LKITART ], aTmp[ _NCTLSTK ], oGetStk )
             end if
 
             if !empty( aGet[ _CUNIDAD ] )
@@ -3676,6 +3647,10 @@ STATIC FUNCTION SaveDeta( aTmp, aGet, oBrwPrp, oFld, oDlg, oBrw, nMode, oTotal, 
 
       oDlg:end( IDOK )
 
+   end if
+
+   if nMode == APPD_MODE
+      D():CamposExtraLine( nView ):SaveTemporalAppend( ( dbfTmpLin )->( OrdKeyNo() ) )
    end if
 
    aTmp[ _MNUMSER ]                 := ""
@@ -4329,11 +4304,15 @@ STATIC FUNCTION BeginTrans( aTmp, nMode )
       A¤adimos desde el fichero de lineas-----------------------------------------
       */
 
+      D():CamposExtraLine( nView ):initArrayValue()
+
       if ( D():PedidosProveedoresLineas( nView ) )->( dbSeek( nPedido ) )
 
          while ( ( D():PedidosProveedoresLineas( nView ) )->cSerPed + Str( ( D():PedidosProveedoresLineas( nView ) )->nNumPed ) + ( D():PedidosProveedoresLineas( nView ) )->cSufPed == nPedido .and. ( D():PedidosProveedoresLineas( nView ) )->( !eof() ) )
 
             dbPass( D():PedidosProveedoresLineas( nView ), dbfTmpLin, .t. )
+
+            D():CamposExtraLine( nView ):SetTemporalLines( ( dbfTmpLin )->cSerPed + str( ( dbfTmpLin )->nNumPed ) + ( dbfTmpLin )->cSufPed + str( ( dbfTmpLin )->nNumLin ), ( dbfTmpLin )->( OrdKeyNo() ), nMode )
 
             ( D():PedidosProveedoresLineas( nView ) )->( dbSkip() )
 
@@ -4381,7 +4360,7 @@ STATIC FUNCTION BeginTrans( aTmp, nMode )
       Cargamos los temporales de los campos extra---------------------------------
       */
 
-      oDetCamposExtra:SetTemporal( aTmp[ _CSERPED ] + Str( aTmp[ _NNUMPED ] ) + aTmp[ _CSUFPED ], "", nMode )
+      D():CamposExtraHeader( nView ):SetTemporal( aTmp[ _CSERPED ] + Str( aTmp[ _NNUMPED ] ) + aTmp[ _CSUFPED ], "", nMode )
 
    RECOVER USING oError
 
@@ -4525,7 +4504,8 @@ STATIC FUNCTION EndTrans( aGet, aTmp, oBrw, nMode, oDlg )
    while !( dbfTmpLin )->( eof() )
       if !( ( dbfTmpLin )->nUniCaja == 0 .and. ( dbfTmpLin )->lFromImp )
          dbPass( dbfTmpLin, D():PedidosProveedoresLineas( nView ), .t., cSerie, nPedido, cSufPed )
-      end if   
+      end if
+      D():CamposExtraLine( nView ):saveExtraField( ( dbfTmpLin )->cSerPed + Str( ( dbfTmpLin )->nNumPed ) + ( dbfTmpLin )->cSufPed + Str( ( dbfTmpLin )->nNumLin ), ( dbfTmpLin )->( OrdKeyNo() ) )
       ( dbfTmpLin )->( dbSkip() )
       oMsgProgress():Deltapos(1)
    end while
@@ -4550,7 +4530,7 @@ STATIC FUNCTION EndTrans( aGet, aTmp, oBrw, nMode, oDlg )
    Cargamos los temporales de los campos extra---------------------------------
    */
 
-   oDetCamposExtra:saveExtraField( aTmp[ _CSERPED ] + Str( aTmp[ _NNUMPED ] ) + aTmp[ _CSUFPED ], "", nMode )
+   D():CamposExtraHeader( nView ):saveExtraField( aTmp[ _CSERPED ] + Str( aTmp[ _NNUMPED ] ) + aTmp[ _CSUFPED ], "", nMode )
 
    // Salvamos el registro del pedido
 
@@ -4558,7 +4538,7 @@ STATIC FUNCTION EndTrans( aGet, aTmp, oBrw, nMode, oDlg )
 
    // Ponemos el pedido en su estado
 
-   oStock:SetPedPrv( cSerie + str( nPedido ) + cSufPed )
+   D():Stocks( nView ):SetPedPrv( cSerie + str( nPedido ) + cSufPed )
 
    dbCommitAll()
 
@@ -4849,7 +4829,7 @@ STATIC FUNCTION QuiPedPrv( lDetail )
    */
 
    if !empty( ( D():PedidosProveedores( nView ) )->cNumPedCli )
-      oStock:SetGeneradoPedCli( ( D():PedidosProveedores( nView ) )->cNumPedCli )
+      D():Stocks( nView ):SetGeneradoPedCli( ( D():PedidosProveedores( nView ) )->cNumPedCli )
    end if
 
    CursorWe()
@@ -5127,7 +5107,7 @@ Static Function LlenaTemporal( cProvee, cArtOrg, cArtDes, nStockDis, nStockFin, 
 
    while !( D():Articulos( nView ) )->( Eof() )
 
-      nStkFisico                    := oStock:nTotStockAct( ( D():Articulos( nView ) )->Codigo, , , , , ( D():Articulos( nView ) )->lKitArt, ( D():Articulos( nView ) )->nKitStk )
+      nStkFisico                    := D():Stocks( nView ):nTotStockAct( ( D():Articulos( nView ) )->Codigo, , , , , ( D():Articulos( nView ) )->lKitArt, ( D():Articulos( nView ) )->nKitStk )
       nStkDisponible                := nStkFisico - nReservado( ( D():Articulos( nView ) )->Codigo )
       nStkMinimo                    := nStockMinimo( ( D():Articulos( nView ) )->Codigo, cCodAlm, nView )
       nStkMaximo                    := nStockMaximo( ( D():Articulos( nView ) )->Codigo, cCodAlm, nView )
@@ -5487,11 +5467,11 @@ STATIC FUNCTION ValidaMedicion( aTmp, aGet )
 
    if ( empty( cOldUndMed ) .or. cOldUndMed != cNewUndMed )
 
-      if D():GetObject( "UnidadMedicion", nView ):oDbf:Seek( aTmp[ _CUNIDAD ] )
+      if D():UnidadMedicion( nView ):oDbf:Seek( aTmp[ _CUNIDAD ] )
 
-         if D():GetObject( "UnidadMedicion", nView ):oDbf:nDimension >= 1 .and. !empty( D():GetObject( "UnidadMedicion", nView ):oDbf:cTextoDim1 )
+         if D():UnidadMedicion( nView ):oDbf:nDimension >= 1 .and. !empty( D():UnidadMedicion( nView ):oDbf:cTextoDim1 )
             if !empty( aGet[ ( D():PedidosProveedoresLineas( nView ) )->( fieldpos( "nMedUno" ) ) ] )
-               aGet[ ( D():PedidosProveedoresLineas( nView ) )->( fieldpos( "nMedUno" ) ) ]:oSay:SetText( D():GetObject( "UnidadMedicion", nView ):oDbf:cTextoDim1 )
+               aGet[ ( D():PedidosProveedoresLineas( nView ) )->( fieldpos( "nMedUno" ) ) ]:oSay:SetText( D():UnidadMedicion( nView ):oDbf:cTextoDim1 )
                aGet[ ( D():PedidosProveedoresLineas( nView ) )->( fieldpos( "nMedUno" ) ) ]:cText( ( D():Articulos( nView ) )->nLngArt )
                aGet[ ( D():PedidosProveedoresLineas( nView ) )->( fieldpos( "nMedUno" ) ) ]:Show()
             else
@@ -5506,9 +5486,9 @@ STATIC FUNCTION ValidaMedicion( aTmp, aGet )
             end if
          end if
 
-         if D():GetObject( "UnidadMedicion", nView ):oDbf:nDimension >= 2 .and. !empty( D():GetObject( "UnidadMedicion", nView ):oDbf:cTextoDim2 )
+         if D():UnidadMedicion( nView ):oDbf:nDimension >= 2 .and. !empty( D():UnidadMedicion( nView ):oDbf:cTextoDim2 )
             if !empty( aGet[ ( D():PedidosProveedoresLineas( nView ) )->( fieldpos( "nMedDos" ) ) ] )
-               aGet[ ( D():PedidosProveedoresLineas( nView ) )->( fieldpos( "nMedDos" ) ) ]:oSay:SetText( D():GetObject( "UnidadMedicion", nView ):oDbf:cTextoDim2 )
+               aGet[ ( D():PedidosProveedoresLineas( nView ) )->( fieldpos( "nMedDos" ) ) ]:oSay:SetText( D():UnidadMedicion( nView ):oDbf:cTextoDim2 )
                aGet[ ( D():PedidosProveedoresLineas( nView ) )->( fieldpos( "nMedDos" ) ) ]:cText( ( D():Articulos( nView ) )->nAltArt )
                aGet[ ( D():PedidosProveedoresLineas( nView ) )->( fieldpos( "nMedDos" ) ) ]:Show()
             else
@@ -5524,9 +5504,9 @@ STATIC FUNCTION ValidaMedicion( aTmp, aGet )
             end if
          end if
 
-         if D():GetObject( "UnidadMedicion", nView ):oDbf:nDimension >= 3 .and. !empty( D():GetObject( "UnidadMedicion", nView ):oDbf:cTextoDim3 )
+         if D():UnidadMedicion( nView ):oDbf:nDimension >= 3 .and. !empty( D():UnidadMedicion( nView ):oDbf:cTextoDim3 )
             if !empty( aGet[ ( D():PedidosProveedoresLineas( nView ) )->( fieldpos( "nMedTre" ) ) ] )
-               aGet[ ( D():PedidosProveedoresLineas( nView ) )->( fieldpos( "nMedTre" ) ) ]:oSay:SetText( D():GetObject( "UnidadMedicion", nView ):oDbf:cTextoDim3 )
+               aGet[ ( D():PedidosProveedoresLineas( nView ) )->( fieldpos( "nMedTre" ) ) ]:oSay:SetText( D():UnidadMedicion( nView ):oDbf:cTextoDim3 )
                aGet[ ( D():PedidosProveedoresLineas( nView ) )->( fieldpos( "nMedTre" ) ) ]:cText( ( D():Articulos( nView ) ) ->nAncArt )
                aGet[ ( D():PedidosProveedoresLineas( nView ) )->( fieldpos( "nMedTre" ) ) ]:Show()
             else
@@ -5632,14 +5612,14 @@ Static Function DataReport( oFr )
    oFr:SetWorkArea(     "Código de proveedores", ( D():ProveedorArticulo( nView ) )->( Select() ) )
    oFr:SetFieldAliases( "Código de proveedores", cItemsToReport( aItmArtPrv() ) )
 
-   oFr:SetWorkArea(     "Unidades de medición",  D():GetObject( "UnidadMedicion", nView ):Select() )
-   oFr:SetFieldAliases( "Unidades de medición",  cObjectsToReport( D():GetObject( "UnidadMedicion", nView ):oDbf ) )
+   oFr:SetWorkArea(     "Unidades de medición",  D():UnidadMedicion( nView ):Select() )
+   oFr:SetFieldAliases( "Unidades de medición",  cObjectsToReport( D():UnidadMedicion( nView ):oDbf ) )
 
    oFr:SetWorkArea(     "Clientes", ( D():Clientes( nView ) )->( Select() ) )
    oFr:SetFieldAliases( "Clientes", cItemsToReport( aItmCli() ) )
 
-   oFr:SetWorkArea(     "Impuestos especiales",  oNewImp:Select() )
-   oFr:SetFieldAliases( "Impuestos especiales",  cObjectsToReport( oNewImp:oDbf ) )
+   oFr:SetWorkArea(     "Impuestos especiales",  D():ImpuestosEspeciales( nView ):Select() )
+   oFr:SetFieldAliases( "Impuestos especiales",  cObjectsToReport( D():ImpuestosEspeciales( nView ):oDbf ) )
 
    oFr:SetMasterDetail( "Pedidos", "Lineas de pedidos",        {|| ( D():PedidosProveedores( nView ) )->cSerPed + Str( ( D():PedidosProveedores( nView ) )->nNumPed ) + ( D():PedidosProveedores( nView ) )->cSufPed } )
    oFr:SetMasterDetail( "Pedidos", "Incidencias de pedidos",   {|| ( D():PedidosProveedores( nView ) )->cSerPed + Str( ( D():PedidosProveedores( nView ) )->nNumPed ) + ( D():PedidosProveedores( nView ) )->cSufPed } )
@@ -5926,14 +5906,14 @@ Static Function CargaComprasProveedor( aTmp, oImportaComprasProveedor, oDlg )
 
                   // Valores del stock-----------------------------------------
 
-                  oStock:aStockArticulo( ( dbfTmpLin )->cRef, ( dbfTmpLin )->cAlmLin )
+                  D():Stocks( nView ):aStockArticulo( ( dbfTmpLin )->cRef, ( dbfTmpLin )->cAlmLin )
 
-                  ( dbfTmpLin )->nStkAct        := oStock:nUnidadesInStock()
-                  ( dbfTmpLin )->nPdtRec        := oStock:nPendientesRecibirInStock()
+                  ( dbfTmpLin )->nStkAct        := D():Stocks( nView ):nUnidadesInStock()
+                  ( dbfTmpLin )->nPdtRec        := D():Stocks( nView ):nPendientesRecibirInStock()
 
                   // Consumo de producto entre dos fechas----------------------
 
-                  nConsumo                      := oStock:nConsumoArticulo( ( dbfTmpLin )->cRef, ( dbfTmpLin )->cAlmLin, ( dbfTmpLin )->cValPr1, ( dbfTmpLin )->cValPr2, ( dbfTmpLin )->cLote, dFecIni, dFecFin )
+                  nConsumo                      := D():Stocks( nView ):nConsumoArticulo( ( dbfTmpLin )->cRef, ( dbfTmpLin )->cAlmLin, ( dbfTmpLin )->cValPr1, ( dbfTmpLin )->cValPr2, ( dbfTmpLin )->cLote, dFecIni, dFecFin )
 
                   if !empty( nConsumo )
                         
@@ -5997,12 +5977,12 @@ Static Function CalculaComprasProveedor( aTmp, oBrwLin, oImportaComprasProveedor
 
             if ( dbfTmpLin )->( dbRLock() )
 
-                  oStock:aStockArticulo( ( dbfTmpLin )->cRef, ( dbfTmpLin )->cAlmLin )
+                  D():Stocks( nView ):aStockArticulo( ( dbfTmpLin )->cRef, ( dbfTmpLin )->cAlmLin )
 
-                  ( dbfTmpLin )->nStkAct        := oStock:nUnidadesInStock()
-                  ( dbfTmpLin )->nPdtRec        := oStock:nPendientesRecibirInStock()
+                  ( dbfTmpLin )->nStkAct        := D():Stocks( nView ):nUnidadesInStock()
+                  ( dbfTmpLin )->nPdtRec        := D():Stocks( nView ):nPendientesRecibirInStock()
 
-                  nConsumo                      := oStock:nConsumoArticulo( ( dbfTmpLin )->cRef, , ( dbfTmpLin )->cValPr1, ( dbfTmpLin )->cValPr2, ( dbfTmpLin )->cLote, dFecIni, dFecFin )
+                  nConsumo                      := D():Stocks( nView ):nConsumoArticulo( ( dbfTmpLin )->cRef, , ( dbfTmpLin )->cValPr1, ( dbfTmpLin )->cValPr2, ( dbfTmpLin )->cLote, dFecIni, dFecFin )
 
                   if !empty( nConsumo )
                         
@@ -9430,7 +9410,7 @@ Return ( nombreSegundaPropiedadPedidosProveedoresLineas( view ) )
 
 Function getExtraFieldPedidoProveedor( cFieldName )
 
-Return ( getExtraField( cFieldName, oDetCamposExtra, D():PedidosProveedoresId( nView ) ) )
+Return ( getExtraField( cFieldName, D():CamposExtraHeader( nView ), D():PedidosProveedoresId( nView ) ) )
 
 //---------------------------------------------------------------------------//   
 
@@ -9447,5 +9427,41 @@ Function nombreSegundaPropiedadPedidosProveedoresLineas( view )
    DEFAULT view   := nView
 
 Return ( nombrePropiedad( ( D():PedidosProveedoresLineas( view ) )->cCodPr2, ( D():PedidosProveedoresLineas( view ) )->cValPr2, view ) )
+
+//---------------------------------------------------------------------------//
+
+Function MenuEdtDet( oCodArt, oDlg, lOferta, nIdLin )
+
+   DEFAULT lOferta      := .f.
+
+   MENU oDetMenu
+
+      MENUITEM    "&1. Rotor  " ;
+         RESOURCE "Rotor16"
+
+         MENU
+
+            MENUITEM    "&1. Campos extra [F9]";
+               MESSAGE  "Mostramos y rellenamos los campos extra" ;
+               RESOURCE "GC_FORM_PLUS2_16" ;
+               ACTION   ( D():CamposExtraLine( nView ):Play( nIdLin ) )
+
+            MENUITEM    "&2. Modificar artículo";
+               MESSAGE  "Modificar la ficha del artículo" ;
+               RESOURCE "gc_object_cube_16";
+               ACTION   ( EdtArticulo( oCodArt:VarGet() ) );
+
+            MENUITEM    "&3. Informe de artículo";
+               MESSAGE  "Abrir el informe del artículo" ;
+               RESOURCE "Info16";
+               ACTION   ( if( oUser():lNotCostos(), msgStop( "No tiene permiso para ver los precios de costo" ), InfArticulo( oCodArt:VarGet() ) ) );
+
+         ENDMENU
+
+   ENDMENU
+
+   oDlg:SetMenu( oDetMenu )
+
+Return ( oDetMenu )
 
 //---------------------------------------------------------------------------//

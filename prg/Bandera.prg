@@ -8,6 +8,8 @@ CLASS TBandera
    CLASSDATA aNomBan       AS ARRAY    INIT {}
    CLASSDATA aBmpBan       AS ARRAY    INIT {}
 
+   DATA cName              INIT "Banderas"
+
    METHOD New()
 
    METHOD End()            VIRTUAL
@@ -17,6 +19,9 @@ CLASS TBandera
    METHOD hBandera( cRes )
 
    METHOD cBandera( cRes )
+
+   METHOD OpenService()       INLINE   ( .t. )
+   METHOD CloseService()      INLINE   ( .t. )
 
 END CLASS
 
