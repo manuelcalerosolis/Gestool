@@ -13380,14 +13380,19 @@ Static Function EdtRecMenu( aTmp, aGet, oSay, oDlg, oFld, aBar, cSay, nMode )
          MENU
 
             MENUITEM "&1. Campos extra [F9]";
-            MESSAGE  "Mostramos y rellenamos los campos extra para el artículo" ;
-            RESOURCE "GC_FORM_PLUS2_16" ;
-            ACTION   ( oDetCamposExtra:Play( Space(1) ) )
+               MESSAGE  "Mostramos y rellenamos los campos extra para el artículo" ;
+               RESOURCE "GC_FORM_PLUS2_16" ;
+               ACTION   ( oDetCamposExtra:Play( Space(1) ) )
 
             MENUITEM "&2. Informe de artículo en escandallo";
-            MESSAGE  "Muestra el informe del artículo en escandallo" ;
-            RESOURCE "info16" ;
-            ACTION   ( BrwVtaComArt( ( dbfTmpKit )->cRefKit, ( dbfTmpKit )->cDesKit, dbfDiv, D():TiposIva( nView ), dbfAlmT, D():Articulos( nView ) ) )
+               MESSAGE  "Muestra el informe del artículo en escandallo" ;
+               RESOURCE "info16" ;
+               ACTION   ( BrwVtaComArt( ( dbfTmpKit )->cRefKit, ( dbfTmpKit )->cDesKit, dbfDiv, D():TiposIva( nView ), dbfAlmT, D():Articulos( nView ) ) )
+
+            MENUITEM "&3. Ver comando";
+               MESSAGE  "Muestra el informe del artículo en escandallo" ;
+               RESOURCE "info16" ;
+               ACTION   ( debugWeb( aTmp ) )
 
          ENDMENU
 
@@ -18390,7 +18395,7 @@ Return ( .t. )
 
 //---------------------------------------------------------------------------//
 
-Static Function BuildWeb( idProduct, idShop )
+Static Function buildWeb( idProduct, idShop )
 
    local TComercio   := TComercio():New( nView, oStock )
 
@@ -18407,6 +18412,32 @@ Static Function BuildWeb( idProduct, idShop )
 Return .t.
 
 //---------------------------------------------------------------------------//
+
+Static Function debugWeb( aTmp )
+
+   local idProduct   := aTmp[ ( D():Articulos( nView ) )->( fieldpos( "Codigo" ) ) ]
+   local idShop      := aTmp[ ( D():Articulos( nView ) )->( fieldpos( "cWebShop" ) ) ]
+   local TComercio   := TComercio():New( nView, oStock )
+
+   TComercio:setDebugMode()
+   TComercio:resetMegaCommand()
+
+   if lPublishProductInPrestashop()
+      TComercio:setWebToExport( idShop ) 
+      TComercio:controllerExportOneProductToPrestashop( idProduct )
+   end if 
+
+   if lDeleteProductInPrestashop()
+      TComercio:setWebToExport( idShop ) 
+      TComercio:controllerDeleteOneProductToPrestashop( idProduct )
+   end if 
+
+   msgalert( TComercio:megaCommand, "" )
+
+Return .t.
+
+//---------------------------------------------------------------------------//
+
 
 Static Function lPublishProductInPrestashop()
 

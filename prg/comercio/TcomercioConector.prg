@@ -13,25 +13,9 @@ CLASS TComercioConector
 
    DATA        TComercio
 
-   CLASSDATA   megaCommand                                  INIT ""
-
    METHOD New( TComercio )                                  CONSTRUCTOR
 
    // facades------------------------------------------------------------------
-
-   /*
-   METHOD oProductDatabase()                                INLINE ( ::TComercio:oArt )
-   METHOD oIvaDatabase()                                    INLINE ( ::TComercio:oIva )
-   METHOD oManufacturerDatabase()                           INLINE ( ::TComercio:oFab )
-   METHOD oCustomerDatabase()                               INLINE ( ::TComercio:oCli )
-   METHOD oAddressDatabase()                                INLINE ( ::TComercio:oObras )
-   METHOD oPaymentDatabase()                                INLINE ( ::TComercio:oFPago )
-   METHOD oCategoryDatabase()                               INLINE ( ::TComercio:oFam )
-   METHOD oPropertyDatabase()                               INLINE ( ::TComercio:oPro )
-   METHOD oPropertiesLinesDatabase()                        INLINE ( ::TComercio:oTblPro )
-   METHOD oPropertyProductDatabase()                        INLINE ( ::TComercio:oArtDiv )
-   METHOD oImageProductDatabase()                           INLINE ( ::TComercio:oArtImg )
-   */
 
    METHOD getView()                                         INLINE ( ::TComercio:nView )
 
@@ -75,7 +59,7 @@ CLASS TComercioConector
    METHOD cDirectoryCategories()                            INLINE ( ::TComercio:cDirectoryCategories() )
    METHOD getRecursiveFolderPrestashop( cCarpeta )          INLINE ( ::TComercio:getRecursiveFolderPrestashop( cCarpeta ) )
 
-   METHOD commandExecDirect( cCommand )                     INLINE ( ::writeText( cCommand ), TMSCommand():New( ::oConexionMySQLDatabase() ):ExecDirect( cCommand ) )
+   METHOD commandExecDirect( cCommand )                     
    METHOD queryExecDirect( cQuery )                         INLINE ( TMSQuery():New( ::oConexionMySQLDatabase(), cQuery ) )
 
    METHOD truncateTable( cTable )   
@@ -88,9 +72,6 @@ CLASS TComercioConector
 
    METHOD saveLastInsertStock( idProduct )                  INLINE ( ::TComercio:saveLastInsertStock( idProduct ) )
    METHOD getLastInsertstock()                              INLINE ( ::TComercio:getLastInsertstock() )
-
-   METHOD resetMegaCommand()                                INLINE ( ::megaCommand := "" )
-   METHOD addMegaCommand( cCommand ) 
 
    // facades------------------------------------------------------------------
 
@@ -121,19 +102,17 @@ Return ( Self )
 
 //---------------------------------------------------------------------------//
  
-METHOD addMegaCommand( cCommand ) CLASS TComercioConector
+METHOD commandExecDirect( cCommand ) CLASS TComercioConector
 
-   if ( cCommand $ ::megaCommand )
-      Return ( Self )
+   ::writeText( cCommand )
+
+   if ::TComercio:lDebugMode
+      ::TComercio:addMegaCommand( cCommand )
+      Return .f.      
    end if 
 
-   ::megaCommand  += cCommand + ";"
-   ::megaCommand  += CRLF
-
-Return ( Self )
+Return ( TMSCommand():New( ::oConexionMySQLDatabase() ):ExecDirect( cCommand ) )
 
 //---------------------------------------------------------------------------//
-
-
 
 

@@ -110,6 +110,8 @@ CLASS TComercioProduct FROM TComercioConector
 
    METHOD getCoverValue( lValue )                              
 
+   METHOD notValidProductId( idProduct )                       INLINE ( empty( idProduct ) .and. !( ::TComercio:lDebugMode ) )
+
 END CLASS
 
 //---------------------------------------------------------------------------//
@@ -757,7 +759,7 @@ METHOD insertProduct( hProduct ) CLASS TComercioProduct
 
    idProduct            := ::insertProductPrestashopTable( hProduct, idCategory )
 
-   if empty( idProduct )
+   if ::notValidProductId( idProduct )
       Return ( Self )
    end if 
 
@@ -2046,21 +2048,29 @@ Return ( Self )
 METHOD processStockProduct( idProduct, hProduct ) CLASS TComercioProduct
 
    local hStock
+   local cCommand
+   local idProductPrestashop     
+
+   idProductPrestashop           := ::TPrestashopId():getValueProduct( hget( hProduct, "id" ), ::getCurrentWebName() )
+
+   cCommand                      := "DELETE FROM " + ::cPrefixTable( "stock_available" ) + " "                          + ;
+                                       "WHERE id_product = " + alltrim( str( idProductPrestashop ) ) 
+
+   ::commandExecDirect( cCommand )
 
    for each hStock in hGet( hProduct, "aStock" )
-      ::insertStockProduct( hStock )
+      ::insertStockProduct( idProductPrestashop, hStock )
    next
 
 Return ( Self )
 
 //---------------------------------------------------------------------------//
 
-METHOD insertStockProduct( hStock ) CLASS TComercioProduct
+METHOD insertStockProduct( idProductPrestashop, hStock ) CLASS TComercioProduct
 
    local cText
    local cCommand
    local unitStock               
-   local idProductPrestashop     
    local attributeFirstProperty  
    local attributeSecondProperty 
    local idProductAttribute      := 0
@@ -2071,7 +2081,6 @@ METHOD insertStockProduct( hStock ) CLASS TComercioProduct
                                     !empty( hget( hStock, "idSecondProperty" ) )    .or.;
                                     !empty( hget( hStock, "valueSecondProperty" ) )
 
-   idProductPrestashop           := ::TPrestashopId():getValueProduct( hget( hStock, "idProduct" ), ::getCurrentWebName() )
    attributeFirstProperty        := ::TPrestashopId():getValueAttribute( hget( hStock, "idFirstProperty" ) + hget( hStock, "valueFirstProperty" ),     ::getCurrentWebName() )
    attributeSecondProperty       := ::TPrestashopId():getValueAttribute( hget( hStock, "idSecondProperty" ) + hget( hStock, "valueSecondProperty" ),   ::getCurrentWebName() ) 
    unitStock                     := hget( hStock, "unitStock" )
@@ -2079,12 +2088,6 @@ METHOD insertStockProduct( hStock ) CLASS TComercioProduct
    if ( attributeFirstProperty != 0 ) .and. ( attributeSecondProperty != 0 )
       idProductAttribute         := ::getProductAttribute( idProductPrestashop, attributeFirstProperty, attributeSecondProperty ) 
    end if 
-
-   cCommand                      := "DELETE FROM " + ::cPrefixTable( "stock_available" ) + " "                          + ;
-                                       "WHERE id_product = " + alltrim( str( idProductPrestashop ) ) + " "              + ;
-                                       "AND id_product_attribute = " + alltrim( str( idProductAttribute ) )
-
-   ::commandExecDirect( cCommand )
 
    cCommand                      := "INSERT INTO " + ::cPrefixTable( "stock_available" ) + " ( "                        + ;
                                        "id_product, "                                                                   + ;

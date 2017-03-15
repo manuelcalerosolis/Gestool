@@ -215,7 +215,7 @@ METHOD addStockProductToUpdate( hProduct )
          ( empty( idSecondProperty )      .or. ( sStock:cCodigoPropiedad2 == idSecondProperty ) )  .and.;
          ( empty( valueSecondProperty )   .or. ( sStock:cValorPropiedad2 == valueSecondProperty ) )
 
-         if sStock:nUnidades > 0
+         // if sStock:nUnidades > 0
 
             nTotalStock          += sStock:nUnidades 
 
@@ -231,7 +231,7 @@ METHOD addStockProductToUpdate( hProduct )
 
             end if 
 
-         end if 
+         // end if 
 
       end if  
 

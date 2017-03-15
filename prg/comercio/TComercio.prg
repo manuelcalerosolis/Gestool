@@ -25,6 +25,8 @@ CLASS TComercio
    CLASSDATA oInstance
    CLASSDATA hProductsToUpdate      INIT {=>}
 
+   CLASSDATA megaCommand            INIT ""
+
    DATA  TComercioConfig  
    DATA  TPrestashopId
 
@@ -188,6 +190,8 @@ CLASS TComercio
 
    DATA oWaitMeter
 
+   DATA lDebugMode                        INIT .f.
+
    METHOD New()                           CONSTRUCTOR
    METHOD Default()
    METHOD End() 
@@ -196,6 +200,9 @@ CLASS TComercio
 
    METHOD getInstance()
    METHOD endInstance()
+
+   METHOD setDebugMode()                  INLINE ( ::lDebugMode   := .t. )
+   METHOD quitDebugMode()                 INLINE ( ::lDebugMode   := .f. )
 
    METHOD MeterTotal( oMeterTotal )       INLINE ( iif( oMeterTotal == nil, ::oMeterTotal := oMeterTotal, ::oMeterTotal ) )
    METHOD TextTotal( oTextTotal )         INLINE ( iif( oTextTotal == nil, ::oTextTotal := oTextTotal, ::oTextTotal ) )
@@ -488,6 +495,9 @@ CLASS TComercio
    METHOD getStartId( idProduct )                     INLINE ( padr( ::getCurrentWebName(), 100 ) + ( if( !empty( idProduct ), padr( idProduct, 18 ), "" ) ) )
 
    METHOD getErrorJson()                              INLINE ( ::TComercioConfig:getErrorJson() )
+
+   METHOD resetMegaCommand()                          INLINE ( ::megaCommand := "" )
+   METHOD addMegaCommand( cCommand ) 
 
 END CLASS
 
@@ -5345,6 +5355,19 @@ METHOD buildStockPrestashop( idProduct ) CLASS tComercio
 Return ( aStockProduct )
 
 //---------------------------------------------------------------------------//
+
+METHOD addMegaCommand( cCommand ) CLASS TComercio
+
+   if ( cCommand $ ::megaCommand )
+      Return ( Self )
+   end if 
+
+   ::megaCommand  += cCommand + ";"
+   ::megaCommand  += CRLF
+
+Return ( Self )
+
+//---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
@@ -5494,3 +5517,4 @@ Function KillAutoRecive()
 Return( nil )
 
 //---------------------------------------------------------------------------//
+
