@@ -1325,14 +1325,14 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, cCodPrv, cCodArt, nMode )
          end with
 
          with object ( oBrwLin:AddCol() )
-            :cHeader             := "Posición"
-            :cSortOrder          := "nPosPrint"
-            :bEditValue          := {|| ( dbfTmpLin )->nPosPrint }
-            :bLClickHeader       := {| nMRow, nMCol, nFlags, oCol | if( !empty( oCol ), oCol:SetOrder(), ) }
-            :cEditPicture        := "9999"
-            :nWidth              := 60
-            :nDataStrAlign       := 1
-            :nHeadStrAlign       := 1
+            :cHeader          := "Posición"
+            :cSortOrder       := "nPosPrint"
+            :bEditValue       := {|| ( dbfTmpLin )->nPosPrint }
+            :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | if( !empty( oCol ), oCol:SetOrder(), ) }
+            :cEditPicture     := "9999"
+            :nWidth           := 60
+            :nDataStrAlign    := 1
+            :nHeadStrAlign    := 1
          end with 
 
          with object ( oBrwLin:AddCol() )
@@ -1413,30 +1413,30 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, cCodPrv, cCodArt, nMode )
          end with
 
          with object ( oBrwLin:AddCol() )
-            :cHeader             := cNombreUnidades()
-            :cSortOrder          := "nUniCaja"
-            :bEditValue          := {|| ( dbfTmpLin )->nUniCaja }
-            :cEditPicture        := cPicUnd
-            :nWidth              := 60
-            :nDataStrAlign       := 1
-            :nHeadStrAlign       := 1
-            :lHide               := .t.
-            :nEditType           := 1
-            :nFooterType         := AGGR_SUM
-            :bOnPostEdit         := {|o,x,n| ChangeUnidades( o, x, n, aTmp ) }
-            :bLClickHeader       := {| nMRow, nMCol, nFlags, oCol | if( !empty( oCol ), oCol:SetOrder(), ) }         
+            :cHeader          := cNombreUnidades()
+            :cSortOrder       := "nUniCaja"
+            :bEditValue       := {|| ( dbfTmpLin )->nUniCaja }
+            :cEditPicture     := cPicUnd
+            :nWidth           := 60
+            :nDataStrAlign    := 1
+            :nHeadStrAlign    := 1
+            :lHide            := .t.
+            :nEditType        := 1
+            :nFooterType      := AGGR_SUM
+            :bOnPostEdit      := {|o,x,n| ChangeUnidades( o, x, n, aTmp ) }
+            :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | if( !empty( oCol ), oCol:SetOrder(), ) }         
          end with
    
          with object ( oBrwLin:AddCol() )
-            :cHeader             := "Sumar unidades"
-            :bStrData            := {|| "" }
-            :bOnPostEdit         := {|| .t. }
-            :bEditBlock          := {|| SumaUnidadLinea( aTmp ) }
-            :nEditType           := 5
-            :nWidth              := 20
-            :nHeadBmpNo          := 1
-            :nBtnBmp             := 1
-            :nHeadBmpAlign       := 1
+            :cHeader          := "Sumar unidades"
+            :bStrData         := {|| "" }
+            :bOnPostEdit      := {|| .t. }
+            :bEditBlock       := {|| SumaUnidadLinea( aTmp ) }
+            :nEditType        := 5
+            :nWidth           := 20
+            :nHeadBmpNo       := 1
+            :nBtnBmp          := 1
+            :nHeadBmpAlign    := 1
             :AddResource( "gc_navigate_plus_16" )
             :lHide               := .t.
          end with
@@ -2824,52 +2824,58 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbf, oBrw, aTmpPed, cCodArt, nMode )
 
       aGet[ ( D():PedidosProveedoresLineas( nView ) )->( fieldpos( "nMedDos" ) ) ]:oSay:SetColor( CLR_BLUE )
 
-      REDEFINE GET aGet[ ( D():PedidosProveedoresLineas( nView ) )->( fieldpos( "nMedTre" ) ) ] ;
-         VAR      aTmp[ ( D():PedidosProveedoresLineas( nView ) )->( fieldpos( "nMedTre" ) ) ] ;
-         ID       320 ;
-         IDSAY    321 ;
+      REDEFINE GET   aGet[ ( D():PedidosProveedoresLineas( nView ) )->( fieldpos( "nMedTre" ) ) ] ;
+         VAR         aTmp[ ( D():PedidosProveedoresLineas( nView ) )->( fieldpos( "nMedTre" ) ) ] ;
+         ID          320 ;
+         IDSAY       321 ;
          SPINNER ;
-         WHEN     ( nMode != ZOOM_MODE ) ;
-         ON CHANGE( lCalcDeta( aTmp, oTotal ) );
-         PICTURE  MasUnd() ;
-         OF       oFld:aDialogs[1]
+         WHEN        ( nMode != ZOOM_MODE ) ;
+         ON CHANGE   ( lCalcDeta( aTmp, oTotal ) );
+         PICTURE     MasUnd() ;
+         OF          oFld:aDialogs[1]
 
       aGet[ ( D():PedidosProveedoresLineas( nView ) )->( fieldpos( "nMedTre" ) ) ]:oSay:SetColor( CLR_BLUE )
 
-		REDEFINE GET aGet[_NUNICAJA] VAR aTmp[_NUNICAJA];
-			ID 		150 ;
-			SPINNER ;
-			WHEN 		( nMode != ZOOM_MODE ) ;
-			ON CHANGE( lCalcDeta( aTmp, oTotal ) );
-			PICTURE 	cPicUnd ;
-         OF       oFld:aDialogs[1] ;
-         IDSAY    151
+      REDEFINE GET   aGet[ _NUNICAJA ] ;
+         VAR         aTmp[ _NUNICAJA ] ;
+         ID          150 ;
+         SPINNER ;
+         WHEN        ( nMode != ZOOM_MODE ) ;
+         ON CHANGE   ( lCalcDeta( aTmp, oTotal ) ) ;
+         PICTURE 	   cPicUnd ;
+         OF          oFld:aDialogs[1] ;
+         IDSAY       151
 
-      REDEFINE GET aGet[ _NPREDIV ] VAR aTmp[ _NPREDIV ] ;
-			ID 		160 ;
-			SPINNER ;
-			PICTURE	cPinDiv ;
-			WHEN 		( nMode != ZOOM_MODE ) ;
-			ON CHANGE( lCalcDeta( aTmp, oTotal ) );
-			OF 		oFld:aDialogs[1]
+         aGet[ _NUNICAJA ]:Cargo          := "nUniCaja"
+         aGet[ _NUNICAJA ]:bPostValidate  := {| oSender | runScript( "PedidosProveedores\Lineas\validControl.prg", oSender, aGet, nView, nMode ) } 
 
-      REDEFINE GET aGet[_CUNIDAD] VAR aTmp[_CUNIDAD] ;
-         ID       170 ;
-         IDTEXT   171 ;
-         BITMAP   "LUPA" ;
-         WHEN     ( nMode != ZOOM_MODE ) ;
-         VALID    ( D():GetObject( "UnidadMedicion", nView ):Existe( aGet[ _CUNIDAD ], aGet[ _CUNIDAD ]:oHelpText, "cNombre" ), ValidaMedicion( aTmp, aGet) );
-         ON HELP  ( D():GetObject( "UnidadMedicion", nView ):Buscar( aGet[ _CUNIDAD ] ), ValidaMedicion( aTmp, aGet ) ) ;
-         OF       oFld:aDialogs[1]
-
-		REDEFINE GET aGet[_NDTOLIN] VAR aTmp[_NDTOLIN] ;
-			ID 		180 ;
-			WHEN 		( nMode != ZOOM_MODE ) ;
-			ON CHANGE( lCalcDeta( aTmp, oTotal ) );
+      REDEFINE GET   aGet[ _NPREDIV ] ;
+         VAR         aTmp[ _NPREDIV ] ;
+			ID          160 ;
 			SPINNER ;
-         PICTURE  "@E 999.99" ;
-			COLOR 	CLR_GET ;
-			OF 		oFld:aDialogs[1]
+			PICTURE     cPinDiv ;
+			WHEN        ( nMode != ZOOM_MODE ) ;
+			ON CHANGE   ( lCalcDeta( aTmp, oTotal ) );
+			OF          oFld:aDialogs[1]
+
+      REDEFINE GET   aGet[ _CUNIDAD ] ;
+         VAR         aTmp[ _CUNIDAD ] ;
+         ID          170 ;
+         IDTEXT      171 ;
+         BITMAP      "LUPA" ;
+         WHEN        ( nMode != ZOOM_MODE ) ;
+         VALID       ( D():GetObject( "UnidadMedicion", nView ):Existe( aGet[ _CUNIDAD ], aGet[ _CUNIDAD ]:oHelpText, "cNombre" ), ValidaMedicion( aTmp, aGet) );
+         ON HELP     ( D():GetObject( "UnidadMedicion", nView ):Buscar( aGet[ _CUNIDAD ] ), ValidaMedicion( aTmp, aGet ) ) ;
+         OF          oFld:aDialogs[1]
+
+		REDEFINE GET   aGet[ _NDTOLIN ] ;
+         VAR         aTmp[ _NDTOLIN ] ;
+			ID          180 ;
+			WHEN        ( nMode != ZOOM_MODE ) ;
+			ON CHANGE   ( lCalcDeta( aTmp, oTotal ) );
+			SPINNER ;
+         PICTURE     "@E 999.99" ;
+			OF          oFld:aDialogs[1]
 
       REDEFINE GET aGet[_NDTOPRM] VAR aTmp[_NDTOPRM] ;
          ID       250 ;

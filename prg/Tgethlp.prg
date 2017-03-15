@@ -486,20 +486,18 @@ METHOD lValid() CLASS TGetHlp
 
    ::oGet:Assign()
    
-   if !( isBlock( ::bValid ) )
-      return .t.
-   end if
+   if ( isBlock( ::bValid ) )
 
-   lRet  := eval( ::bValid, Self )
-   if isLogic( lRet )
-      if !lRet
-         ::oWnd:nLastKey  := 0
-      else
-         ::evalPostValidate()
+      lRet     := eval( ::bValid, Self )
+      if isLogic( lRet ) .and. !( lRet )
+         ::oWnd:nLastKey   := 0
+      else 
+         lRet  := .t.
       end if
-   else 
-      return .t.
-   end if
+
+   end if 
+
+   ::evalPostValidate()
 
 return lRet
 
