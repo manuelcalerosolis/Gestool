@@ -639,6 +639,12 @@ CLASS D
    METHOD ClientesContactos( nView )                              INLINE ( ::Get( "CliCto", nView ) )
 
    METHOD ImpuestosEspeciales( nView )                            INLINE ( ::GetObject( "ImpuestosEspeciales", nView ) )
+   METHOD CamposExtraHeader( nView )                              INLINE ( ::GetObject( "CamposExtraHeader", nView ) )
+   METHOD CamposExtraLine( nView )                                INLINE ( ::GetObject( "CamposExtraLine", nView ) )
+   METHOD UnidadMedicion( nView )                                 INLINE ( ::GetObject( "UnidadMedicion", nView ) )
+   METHOD CentroCoste( nView )                                    INLINE ( ::GetObject( "CentroCoste", nView ) )
+   METHOD Stocks( nView )                                         INLINE ( ::GetObject( "Stocks", nView ) )
+   METHOD Banderas( nView )                                       INLINE ( ::GetObject( "Banderas", nView ) )
 
    METHOD Agentes( nView )                                        INLINE ( ::Get( "Agentes", nView ) )
       METHOD AgentesId( nView )                                   INLINE ( ( ::Get( "Agentes", nView ) )->cCodAge )
@@ -784,7 +790,7 @@ Return ( ::nView )
       local cHandle  := ::GetView( cName, nView )
 
       if empty( cHandle )
-         ::OpenObject( cName, nView )
+         cHandle     := ::OpenObject( cName, nView )
       end if
 
    Return ( cHandle )
@@ -1073,23 +1079,23 @@ Return ( ::nView )
 
          msgStop( "No puedo encontrar el objeto " + cObject )   
 
-         Return ( .f. )
+         Return ( nil )
 
       end if 
 
       if ( oObject:OpenService() )
-   
+         
          ::addView( cObject, oObject, nView )
    
       else 
 
          msgStop( "No puedo abrir la base de datos del objeto " + cObject )   
 
-         Return ( .f. )
+         Return ( nil )
 
       end if 
 
-   Return ( .t. )
+   Return ( oObject )
 
 //---------------------------------------------------------------------------//
 

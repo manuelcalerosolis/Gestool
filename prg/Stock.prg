@@ -16,6 +16,8 @@ CLASS TStock
    DATA cPath
    DATA cDriver
 
+   DATA cName                       INIT "Stocks"
+
    DATA lNotPendiente               INIT .f.
 
    DATA lStockInit                  INIT .f.
@@ -140,6 +142,9 @@ CLASS TStock
 
    METHOD lOpenFiles( )
    METHOD CloseFiles()
+
+   METHOD OpenService()                      INLINE ( ::lOpenFiles() )
+   METHOD CloseService()                     INLINE ( ::CloseFiles() )
 
    METHOD CreateTemporalFiles( cPath )
    METHOD DeleteTemporalFiles( cPath )
