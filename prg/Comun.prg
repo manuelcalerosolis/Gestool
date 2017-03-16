@@ -30,6 +30,8 @@ static aMnuNext         := {}
 static aMnuPrev         := {}
 static aDlgEmp          := {}
 
+static hVariables       := {=>}
+
 static nError           := 0
 
 static lDemoMode        := .t. 
@@ -6817,4 +6819,32 @@ HB_FUNC( HB_MILLISECONDS )
 
 #pragma ENDDUMP
 
-//--------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+
+Function inicializateHashVariables()
+
+   hVariables := {=>}
+
+Return ( .t. )
+
+//---------------------------------------------------------------------------//
+
+Function setVariablesInHash( cClave, uValor )
+
+   hset( hVariables, cClave, uValor )
+
+Return ( .t. )
+
+//---------------------------------------------------------------------------//
+
+Function getVariablesToHash( cClave )
+
+   local uVariable   := ""
+
+   if hhaskey( hVariables, cClave )
+      uVariable      := hGet( hVariables, cClave )
+   end if
+
+Return ( uVariable )
+
+//---------------------------------------------------------------------------//

@@ -1730,7 +1730,7 @@ FUNCTION brwPropiedadActual( oGet, oSay, cPrp )
    local oDlg
    local oBrw
    local lRet        := .f.
-   local cKey        
+   local cKey        := ""       
    local oBlock
    local oError
    local cTitle      := ""
@@ -1761,7 +1761,10 @@ FUNCTION brwPropiedadActual( oGet, oSay, cPrp )
 
    // Titulo del dialogo-------------------------------------------------------
 
-   cKey              := oGet:varget()
+   if !Empty( oGet )
+      cKey           := oGet:varget()
+   end if
+
    cTitle            := "Seleccionar propiedad : " + retProp( cPrp, dbfProT )
 
    // Creacion de una dbf temporal---------------------------------------------
@@ -1852,13 +1855,19 @@ FUNCTION brwPropiedadActual( oGet, oSay, cPrp )
 
    if ( oDlg:nResult == IDOK )
 
-      oGet:cText( ( dbfProL )->cCodTbl )
+      if !Empty( oGet )
+         oGet:cText( ( dbfProL )->cCodTbl )
+      end if
 
       if IsObject( oSay )
          oSay:SetText( ( dbfProL )->cDesTbl )
       end if
 
-      lRet        := .t.
+      if Empty( oGet )
+         lRet        := ( dbfProL )->cCodTbl
+      else
+         lRet        := .t.
+      end if
 
    end if
 
