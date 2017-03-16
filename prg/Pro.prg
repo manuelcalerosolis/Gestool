@@ -13,7 +13,6 @@ static dbfTmpProL
 static cTmpProLin
 static oDetCamposExtra
 static oLinDetCamposExtra
-static oBtnAceptarActualizarWeb
 static nTipoActualizacionLineas  := EDIT_MODE
 static bEdit                     := { |aTmp, aGet, dbf, oBrw, bWhen, bValid, nMode | EdtRec( aTmp, aGet, dbf, oBrw, bWhen, bValid, nMode ) }
 static bEdtDet                   := { |aTmp, aGet, dbf, oBrw, bWhen, bValid, nMode, cCodArt | EdtDet( aTmp, aGet, dbf, oBrw, bWhen, bValid, nMode, cCodArt ) }
@@ -329,12 +328,6 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfProT, oWndBrw, cPrp, cKey, nMode )
          WHEN     ( nMode != ZOOM_MODE ) ;
          ACTION   ( DownDet( oBrw ) )
 
-      REDEFINE BUTTON oBtnAceptarActualizarWeb ;
-         ID       505 ;
-         OF       oDlg ;
-         WHEN     ( nMode != ZOOM_MODE ) ;
-         ACTION   ( EndTrans( aTmp, aGet, nMode, oDlg, .t. ) )
-
       REDEFINE BUTTON;
          ID       IDOK ;
          OF       oDlg ;
@@ -386,12 +379,6 @@ Static Function StartEdtRec( aGet, cPrp, cKey )
    end if
 
    aGet[ ( dbfProT )->( FieldPos( "cCodPro" ) ) ]:SetFocus() 
-
-   if uFieldEmpresa( "lRealWeb" )
-      oBtnAceptarActualizarWeb:Show()
-   else
-      oBtnAceptarActualizarWeb:Hide()
-   end if
 
 Return ( .t. )
 

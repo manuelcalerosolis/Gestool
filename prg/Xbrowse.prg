@@ -1268,25 +1268,26 @@ METHOD Refresh( lComplete )  CLASS TXBrowse
 
    local nKeyNo, nMaxRows, nBookMark, nTemp
 
-   DEFAULT lComplete := .F.
+   DEFAULT lComplete := .f.
 
    ::KeyCount()
 
    if lComplete
-      ::nRowSel  = 1
-      ::nArrayAt = Min( 1, ::nLen )
+      ::nRowSel      := 1
+      ::nArrayAt     := Min( 1, ::nLen )
    else
       ::DelRepos()  // if the row is deleted for RDD
-      nKeyNo     = ::KeyNo()
-      if nKeyNo > ::nLen         // Rare case
-         ::KeyNo  := ::nLen
-         nKeyNo  = ::nLen
+      nKeyNo         := ::KeyNo()
+      if hb_isNumeric( nKeyNo ) .and. ( nKeyNo > ::nLen )        // Rare case
+         ::KeyNo     := ::nLen
+         nKeyNo      := ::nLen
       endif
       if ::nArrayAt == 0 .and. ::nLen > 0
          // when one or more rows are added to a blank array
          ::nArrayAt  := 1
       endif
    endif
+   
    ::CalcRowSelPos()
    ::GetDisplayCols()
 
