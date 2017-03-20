@@ -112,6 +112,9 @@ CLASS TComercioProduct FROM TComercioConector
 
    METHOD notValidProductId( idProduct )                       INLINE ( empty( idProduct ) .and. !( ::TComercio:lDebugMode ) )
 
+   METHOD buildImagesManufacturers( hManufacturer )
+   METHOD uploadImagesManufacturers( hManufacturer )
+
 END CLASS
 
 //---------------------------------------------------------------------------//
@@ -241,8 +244,11 @@ METHOD buildManufacturerProduct( id ) CLASS TComercioProduct
 
    if ::TPrestashopId():getValueManufacturer( id, ::getCurrentWebName() ) == 0
       if D():gotoIdFabricantes( id, ::getView() ) .and. ( D():Fabricantes( ::getView() ) )->lPubInt
-         aadd( ::aManufacturersProduct,   {  "id"     => id,;
-                                             "name"   => rtrim( ( D():Fabricantes( ::getView() ) )->cNomFab ) } )
+         aadd( ::aManufacturersProduct,   {  "id"              => id,;
+                                             "name"            => rtrim( ( D():Fabricantes( ::getView() ) )->cNomFab ),;
+                                             "image"           => rtrim( ( D():Fabricantes( ::getView() ) )->cImgLogo ),;
+                                             "aTypeImages"     => {} ,;
+                                             "cPrefijoNombre"  => "" } )
       end if
    end if 
 
@@ -1630,6 +1636,7 @@ Return ( nil )
 
 //---------------------------------------------------------------------------//
 
+
 METHOD ftpUploadFilesProductImages( hProductImage ) CLASS TComercioProduct
 
    local cTypeImage
@@ -1690,6 +1697,9 @@ METHOD insertAditionalInformation() CLASS TComercioProduct
       for each hManufacturer in ::aManufacturersProduct
 
          ::insertManufacturersPrestashop( hManufacturer )
+
+         ::buildImagesManufacturers( hManufacturer )
+         ::uploadImagesManufacturers( hManufacturer )
 
          ::meterProcesoText( "Subiendo fabricantes " + alltrim(str(hb_enumindex())) + " de " + alltrim(str(len(::aManufacturersProduct))) )
 
@@ -1845,6 +1855,7 @@ METHOD insertManufacturersPrestashop( hFabricantesData ) CLASS TComercioProduct
 
    if ::commandExecDirect( cCommand )
       nCodigoWeb           := ::oConexionMySQLDatabase():GetInsertId()
+      hset( hFabricantesData, "cPrefijoNombre", alltrim( str( nCodigoWeb ) ) )
    else
       ::writeText( "Error al insertar el fabricante " + hGet( hFabricantesData, "name" ) + " en la tabla " + ::cPreFixtable( "manufacturer" ), 3 )
    end if
@@ -2313,3 +2324,71 @@ Return '0'
 
 //---------------------------------------------------------------------------//
 
+METHOD buildImagesManufacturers( hManufacturer )
+
+   local oTipoImage
+   local fileImage
+   local cTmpFile
+
+   fileImage   := hget( hManufacturer, "image" )
+
+   if !File( fileImage )
+      Return nil
+   end if
+
+   for each oTipoImage in ::aTypeImagesPrestashop()
+
+      if !Empty( hget( hManufacturer, "image" ) ) .and. oTipoImage:lManufactures
+
+         if File( fileImage )
+
+            cTmpFile    := cPatTmp() + hget( hManufacturer, "cPrefijoNombre" ) + "-" + oTipoImage:cNombreTipo + ".jpg"
+
+            saveImage( fileImage, cTmpFile, oTipoImage:nAnchoTipo, oTipoImage:nAltoTipo )
+
+            aadd( hget( hManufacturer, "aTypeImages" ), cTmpFile )
+
+         end if
+
+         SysRefresh()
+
+      end if 
+
+   next
+
+   cTmpFile    := cPatTmp() + hget( hManufacturer, "cPrefijoNombre" ) + ".jpg"
+
+   saveImage( fileImage, cTmpFile )
+
+   aadd( hget( hManufacturer, "aTypeImages" ), cTmpFile )
+
+Return nil
+
+//---------------------------------------------------------------------------//
+
+METHOD uploadImagesManufacturers( hManufacturer )
+
+   local cTypeImage
+   local cRemoteImage
+
+   if !hhaskey( hManufacturer, "aTypeImages")
+      Return ( nil )
+   end if 
+
+   for each cTypeImage in hget( hManufacturer, "aTypeImages" )
+
+      ::meterProcesoText( "Subiendo imagen " + cTypeImage )
+
+      ::oFtp():CreateFile( cTypeImage, ::cDirectoryManufacture() + "/" )
+
+      SysRefresh()
+
+      ferase( cTypeImage )
+
+      SysRefresh()
+
+   next
+
+Return nil
+
+//---------------------------------------------------------------------------//
