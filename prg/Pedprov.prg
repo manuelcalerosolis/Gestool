@@ -235,8 +235,6 @@ static bEdtDoc          := { |aTmp, aGet, dbf, oBrw, bWhen, bValid, nMode, aTmpL
 
 static nView
 
-static Counter
-
 static oTipoCtrCoste
 static cTipoCtrCoste
 static aTipoCtrCoste   := { "Centro de coste", "Proveedor", "Agente", "Cliente" }
@@ -321,6 +319,8 @@ STATIC FUNCTION OpenFiles( lExt )
 
       D():ArticulosCodigosBarras( nView )
 
+      D():ArticuloLenguaje( nView )
+
       D():Familias( nView )
 
       D():Almacen( nView )
@@ -360,21 +360,17 @@ STATIC FUNCTION OpenFiles( lExt )
 
       D():CentroCoste( nView )
 
-      D():ArticuloLenguaje( nView )
-
       D():Stocks( nView )
 
-      CodigosPostales():GetInstance():OpenFiles()
+      D():CodigosPostales( nView )
 
       D():Banderas( nView )
-
-      oMailing          := TGenmailingDatabasePedidosProveedor():New( nView )
-
-      Counter           := TCounter():New( nView, "nPedPrv" )
 
       /*
       Recursos y fuente--------------------------------------------------------
       */
+
+      oMailing          := TGenmailingDatabasePedidosProveedor():New( nView )
 
       oFont             := TFont():New( "Arial", 8, 26, .F., .T. )
 
@@ -409,8 +405,6 @@ STATIC FUNCTION CloseFiles()
    if !empty( oFont )
       oFont:end()
    end if
-
-   CodigosPostales():GetInstance():CloseFiles()
 
    D():DeleteView( nView )
 
@@ -874,7 +868,7 @@ FUNCTION PedPrv( oMenuItem, oWnd, cCodPrv, cCodArt )
 
    DEFINE BTNSHELL RESOURCE "gc_document_text_pencil_" OF oWndBrw ;
       NOBORDER ;
-      ACTION   ( Counter:OpenDialog() ) ;
+      ACTION   ( TCounter():New( nView, "nPedPrv" ):OpenDialog() ) ;
       TOOLTIP  "Establecer contadores"
 
    DEFINE BTNSHELL oScript RESOURCE "gc_folder_document_" GROUP OF oWndBrw ;
@@ -2748,47 +2742,54 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbf, oBrw, aTmpPed, cCodArt, nMode )
 
       // Bultos y cajas---------------------------------------------------------
       
-      REDEFINE GET aGet[ __NBULTOS ] ;
-         VAR      aTmp[ __NBULTOS ] ;
-         ID       420 ;
-         IDSAY    421 ;
+      REDEFINE GET   aGet[ __NBULTOS ] ;
+         VAR         aTmp[ __NBULTOS ] ;
+         ID          420 ;
+         IDSAY       421 ;
          SPINNER ;
-         WHEN     ( uFieldEmpresa( "lUseBultos" ) .AND. nMode != ZOOM_MODE ) ;
-         PICTURE  cPicUnd ;
-         OF       oFld:aDialogs[1]   
+         WHEN        ( uFieldEmpresa( "lUseBultos" ) .AND. nMode != ZOOM_MODE ) ;
+         PICTURE     cPicUnd ;
+         OF          oFld:aDialogs[1]   
 
-      REDEFINE GET aGet[ _NCANPED ] VAR aTmp[ _NCANPED ];
-			ID 		140 ;
-			SPINNER ;
-         WHEN     ( lUseCaj() .AND. nMode != ZOOM_MODE ) ;
-			ON CHANGE( lCalcDeta( aTmp, oTotal ) );
-			PICTURE 	cPicUnd ;
-         OF       oFld:aDialogs[1] ;
-         IDSAY    141
+      aGet[ __NBULTOS ]:Cargo          := "nBultos"
+      aGet[ __NBULTOS ]:bPostValidate  := {| oSender | runScript( "PedidosProveedores\Lineas\validControl.prg", oSender, aGet, nView, nMode ) } 
+
+      REDEFINE GET   aGet[ _NCANPED ] ;
+         VAR         aTmp[ _NCANPED ];
+			ID          140 ;
+         IDSAY       141 ;
+         SPINNER ;
+         WHEN        ( lUseCaj() .AND. nMode != ZOOM_MODE ) ;
+         ON CHANGE   ( lCalcDeta( aTmp, oTotal ) );
+         PICTURE     cPicUnd ;
+         OF          oFld:aDialogs[1] 
+
+      aGet[ _NCANPED ]:Cargo          := "nCanPed"
+      aGet[ _NCANPED ]:bPostValidate  := {| oSender | runScript( "PedidosProveedores\Lineas\validControl.prg", oSender, aGet, nView, nMode ) } 
 
       // Campos de las descripciones de la unidad de medición------------------
 
-      REDEFINE GET aGet[ ( D():PedidosProveedoresLineas( nView ) )->( fieldpos( "nMedUno" ) ) ] ;
-         VAR      aTmp[ ( D():PedidosProveedoresLineas( nView ) )->( fieldpos( "nMedUno" ) ) ] ;
-         ID       300 ;
-         IDSAY    301 ;
+      REDEFINE GET   aGet[ ( D():PedidosProveedoresLineas( nView ) )->( fieldpos( "nMedUno" ) ) ] ;
+         VAR         aTmp[ ( D():PedidosProveedoresLineas( nView ) )->( fieldpos( "nMedUno" ) ) ] ;
+         ID          300 ;
+         IDSAY       301 ;
          SPINNER ;
-         WHEN     ( nMode != ZOOM_MODE ) ;
-         ON CHANGE( lCalcDeta( aTmp, oTotal ) );
-         PICTURE  MasUnd() ;
-         OF       oFld:aDialogs[1]
+         WHEN        ( nMode != ZOOM_MODE ) ;
+         ON CHANGE   ( lCalcDeta( aTmp, oTotal ) );
+         PICTURE     MasUnd() ;
+         OF          oFld:aDialogs[1]
 
       aGet[ ( D():PedidosProveedoresLineas( nView ) )->( fieldpos( "nMedUno" ) ) ]:oSay:SetColor( CLR_BLUE )
 
-      REDEFINE GET aGet[ ( D():PedidosProveedoresLineas( nView ) )->( fieldpos( "nMedDos" ) ) ] ;
-         VAR      aTmp[ ( D():PedidosProveedoresLineas( nView ) )->( fieldpos( "nMedDos" ) ) ] ;
-         ID       310 ;
-         IDSAY    311 ;
+      REDEFINE GET   aGet[ ( D():PedidosProveedoresLineas( nView ) )->( fieldpos( "nMedDos" ) ) ] ;
+         VAR         aTmp[ ( D():PedidosProveedoresLineas( nView ) )->( fieldpos( "nMedDos" ) ) ] ;
+         ID          310 ;
+         IDSAY       311 ;
          SPINNER ;
-         WHEN     ( nMode != ZOOM_MODE ) ;
-         ON CHANGE( lCalcDeta( aTmp, oTotal ) );
-         PICTURE  MasUnd() ;
-         OF       oFld:aDialogs[1]
+         WHEN        ( nMode != ZOOM_MODE ) ;
+         ON CHANGE   ( lCalcDeta( aTmp, oTotal ) );
+         PICTURE     MasUnd() ;
+         OF          oFld:aDialogs[1]
 
       aGet[ ( D():PedidosProveedoresLineas( nView ) )->( fieldpos( "nMedDos" ) ) ]:oSay:SetColor( CLR_BLUE )
 
@@ -2826,6 +2827,9 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbf, oBrw, aTmpPed, cCodArt, nMode )
 			ON CHANGE   ( lCalcDeta( aTmp, oTotal ) );
 			OF          oFld:aDialogs[1]
 
+      aGet[ _NPREDIV ]:Cargo          := "nPreDiv"
+      aGet[ _NPREDIV ]:bPostValidate  := {| oSender | runScript( "PedidosProveedores\Lineas\validControl.prg", oSender, aGet, nView, nMode ) } 
+
       REDEFINE GET   aGet[ _CUNIDAD ] ;
          VAR         aTmp[ _CUNIDAD ] ;
          ID          170 ;
@@ -2845,20 +2849,22 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbf, oBrw, aTmpPed, cCodArt, nMode )
          PICTURE     "@E 999.99" ;
 			OF          oFld:aDialogs[1]
 
-      REDEFINE GET aGet[_NDTOPRM] VAR aTmp[_NDTOPRM] ;
-         ID       250 ;
-			WHEN 		( nMode != ZOOM_MODE ) ;
-			ON CHANGE( lCalcDeta( aTmp, oTotal ) );
+      REDEFINE GET   aGet[ _NDTOPRM ] ;
+         VAR         aTmp[ _NDTOPRM ] ;
+         ID          250 ;
+			WHEN        ( nMode != ZOOM_MODE ) ;
+			ON CHANGE   ( lCalcDeta( aTmp, oTotal ) );
 			SPINNER ;
-			PICTURE	"@E 99.99" ;
-			OF 		oFld:aDialogs[1]
+			PICTURE     "@E 99.99" ;
+			OF          oFld:aDialogs[1]
 
-      REDEFINE GET aGet[_NDTORAP] VAR aTmp[_NDTORAP] ;
-         ID       260 ;
-			WHEN 		( nMode != ZOOM_MODE ) ;
+      REDEFINE GET   aGet[ _NDTORAP ] ;
+         VAR         aTmp[ _NDTORAP ] ;
+         ID          260 ;
+			WHEN        ( nMode != ZOOM_MODE ) ;
 			SPINNER ;
-			PICTURE	"@E 99.99" ;
-			OF 		oFld:aDialogs[1]
+			PICTURE     "@E 99.99" ;
+			OF          oFld:aDialogs[1]
 
       REDEFINE GET aGet[ _CFORMATO ] VAR aTmp[ _CFORMATO ];
          ID       430;
@@ -4500,7 +4506,7 @@ STATIC FUNCTION EndTrans( aGet, aTmp, oBrw, nMode, oDlg )
 
    // Ahora escribimos en el fichero definitivo-----------------------------------
 
-   ( dbfTmpLin )->( dbGoTop() )
+   ( dbfTmpLin )->( dbgotop() )
    while !( dbfTmpLin )->( eof() )
       if !( ( dbfTmpLin )->nUniCaja == 0 .and. ( dbfTmpLin )->lFromImp )
          dbPass( dbfTmpLin, D():PedidosProveedoresLineas( nView ), .t., cSerie, nPedido, cSufPed )

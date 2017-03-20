@@ -169,6 +169,7 @@ CLASS TDataCenter
    METHOD SetAplicationID( cNombreUsuario )
 
    METHOD ExecuteSqlStatement( cSql, cSqlStatement )
+   METHOD ExecuteSqlDirect( cSql )
    
    METHOD selectSATFromClient( cCodigoCliente )
       METHOD treeProductFromSAT()
@@ -3521,8 +3522,12 @@ METHOD BuildEmpresa()
    oDataTable:cName        := "CamposExtraLine"
    ::AddEmpresaObject( oDataTable )
 
-   ::AddEmpresaObject( TCentroCoste():Create( cPatEmp() ) )
+   ::AddEmpresaObject( TCentroCoste():Create() )
+
    ::AddEmpresaObject( TStock():Create( cPatEmp() ) )
+
+   ::AddEmpresaObject( CodigosPostales():Create( cPatEmp() ) )
+
    ::AddEmpresaObject( TBandera():New() )
 
    if !isReport()
@@ -4586,7 +4591,6 @@ METHOD ExecuteSqlStatement( cSql, cSqlStatement, hStatement )
    
          lOk               := ADSExecuteSQLDirect( cSql )
          if !lOk
-            msginfo( cSql, "cSql" )
             nError         := AdsGetLastError( @cErrorAds )
             msgStop( "Error : " + Str( nError) + "[" + cErrorAds + "]", 'ERROR en AdsExecuteSqlDirect' )
          endif
@@ -4612,6 +4616,22 @@ METHOD ExecuteSqlStatement( cSql, cSqlStatement, hStatement )
    ErrorBlock( oBlock )
 
    CursorWE()
+
+RETURN ( lOk )
+
+//---------------------------------------------------------------------------//
+
+METHOD ExecuteSqlDirect( cSql )
+
+   local lOk
+   local nError
+   local cErrorAds
+
+   lOk               := ADSExecuteSQLDirect( cSql )
+   if !lOk
+      nError         := AdsGetLastError( @cErrorAds )
+      msgStop( "Error : " + Str( nError) + "[" + cErrorAds + "]", 'ERROR en AdsExecuteSqlDirect' )
+   endif
 
 RETURN ( lOk )
 

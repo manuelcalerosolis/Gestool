@@ -24,5 +24,7 @@ Function SqlOpen()
       cStatement        := "SELECT * FROM " + cPatEmp() + "TikeT"
    end if
 
+   msgalert( cStatement, "cStatement" )
+
 Return ( cStatement )
 

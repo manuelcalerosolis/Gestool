@@ -987,7 +987,7 @@ METHOD Close() CLASS TDbf
         ::nArea  := 0
         ::cAlias := ""
     else
-        Alert( "No puedo cerrar el area de trabajo: " + ::cAlias + ":" + ::ClassName() )
+        Alert( "No puedo cerrar el area de trabajo: " + ::cAlias + ":" + ::cFile() )
     endif
 
 return( lRet )
