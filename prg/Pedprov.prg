@@ -2565,6 +2565,8 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbf, oBrw, aTmpPed, cCodArt, nMode )
 
       D():CamposExtraLine( nView ):setTemporalAppend()
 
+      runScript( "PedidosProveedores\Lineas\beforeAppendLine.prg", aTmp, nView, nMode, ( ( dbfTmpLin )->( ordKeyCount() ) == 0 ) )
+
    else
 
       nGetStk           := D():Stocks( nView ):nPutStockActual( aTmp[ _CREFPRV ], aTmp[ _CALMLIN ], , , , aTmp[ _LKITART ], aTmp[ _NCTLSTK ] )
@@ -3039,11 +3041,11 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbf, oBrw, aTmpPed, cCodArt, nMode )
 
    oDlg:SetControlFastKey( "PedidosProveedoresLineas", nView, aGet )
 
-   oDlg:bStart    := {||   SetDlgMode( aGet, aTmp, aTmpPed, nMode, oSayPr1, oSayPr2, oSayVp1, oSayVp2, oSayLote, oBrwPrp, oFld, oDlg, oTotal, oGetStk ),;
-                           if( !empty( cCodArt ), aGet[ _CREF ]:lValid(), ),;
-                           lCalcDeta( aTmp, oTotal ),;
-                           aGet[ _CUNIDAD ]:lValid(),;
+   oDlg:bStart    := {||   aGet[ _CUNIDAD ]:lValid(),;
                            loadGet( aGet[ _CTERCTR ], cTipoCtrCoste ), aGet[ _CTERCTR ]:lValid(),;
+                           if( !empty( cCodArt ), aGet[ _CREF ]:lValid(), ),;
+                           SetDlgMode( aGet, aTmp, aTmpPed, nMode, oSayPr1, oSayPr2, oSayVp1, oSayVp2, oSayLote, oBrwPrp, oFld, oDlg, oTotal, oGetStk ),;
+                           lCalcDeta( aTmp, oTotal ),;
                            oBrwAlb:GoTop(), oBrwAlb:Refresh() }
 
    ACTIVATE DIALOG oDlg ;
@@ -3212,9 +3214,16 @@ STATIC FUNCTION SetDlgMode( aGet, aTmp, aTmpPed, nMode, oSayPr1, oSayPr2, oSayVp
    oFld:SetOption( 1 )
 
    aGet[ _CALMLIN ]:lValid()
-   aGet[ _CREF    ]:SetFocus()
+
+   /*if Empty( aGet[ _CREF ]:VarGet() ) .and. Empty( aGet[ _MLNGDES ]:VarGet() )
+      aGet[ _MLNGDES ]:Hide()
+      aGet[ _CDETALLE]:show()
+      aGet[ _MLNGDES ]:Refresh()
+   end if*/
 
    oTotal:cText( 0 )
+   
+   aGet[ _CREF    ]:SetFocus()
 
 RETURN .t.
 

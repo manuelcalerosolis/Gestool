@@ -57,6 +57,8 @@ CLASS TComercioConector
    METHOD oFtp()                                            INLINE ( ::TComercio:oFtp )
    METHOD cDirectoryProduct()                               INLINE ( ::TComercio:cDirectoryProduct() )
    METHOD cDirectoryCategories()                            INLINE ( ::TComercio:cDirectoryCategories() )
+   METHOD cDirectoryManufacture()                           INLINE ( ::TComercio:cDirectoryManufacture() )
+
    METHOD getRecursiveFolderPrestashop( cCarpeta )          INLINE ( ::TComercio:getRecursiveFolderPrestashop( cCarpeta ) )
 
    METHOD commandExecDirect( cCommand )                     

@@ -32,6 +32,8 @@ CLASS TComercioCategory FROM TComercioConector
       
    METHOD cleanGestoolReferences()
 
+   METHOD buildImageCategory( hCategoryProduct )
+   METHOD uploadImageCategory( hCategoryProduct )
 
 END CLASS
 
@@ -70,7 +72,8 @@ METHOD buildCategory( id ) CLASS TComercioCategory
                                        "description"     => categoryName,;
                                        "link_rewrite"    => cLinkRewrite( categoryName ),;
                                        "image"           => cFileBmpName( alltrim( ( D():Familias( ::getView() ) )->cImgBtn ) ),;
-                                       "cPrefijoNombre"  => "" } )
+                                       "cPrefijoNombre"  => "",;
+                                       "aTypeImages"     => {} } )
 
    end if   
 
@@ -307,6 +310,8 @@ METHOD insertCategories() CLASS TComercioCategory
 
    for each hCategoryProduct in ::aCategoriesProduct
       ::insertCategory( hCategoryProduct )
+      ::buildImageCategory( hCategoryProduct )
+      ::uploadImageCategory( hCategoryProduct )
    next 
 
 Return ( Self )
@@ -564,4 +569,71 @@ Return ( .t. )
 
 //---------------------------------------------------------------------------//
 
+METHOD buildImageCategory( hCategoryProduct )
 
+   local oTipoImage
+   local fileImage
+   local cTmpFile
+
+   fileImage   := hget( hCategoryProduct, "image" )
+
+   if !File( fileImage )
+      Return nil
+   end if
+   
+   cTmpFile    := cPatTmp() + hget( hCategoryProduct, "cPrefijoNombre" ) + ".jpg"
+
+   saveImage( fileImage, cTmpFile )
+
+   aadd( hget( hCategoryProduct, "aTypeImages" ), cTmpFile )
+
+   for each oTipoImage in ::aTypeImagesPrestashop()
+
+      if !Empty( hget( hCategoryProduct, "image" ) ) .and. oTipoImage:lCategories
+
+         if File( fileImage )
+
+            cTmpFile    := cPatTmp() + hget( hCategoryProduct, "cPrefijoNombre" ) + "-" + oTipoImage:cNombreTipo + ".jpg"
+
+            saveImage( fileImage, cTmpFile, oTipoImage:nAnchoTipo, oTipoImage:nAltoTipo )
+
+            aadd( hget( hCategoryProduct, "aTypeImages" ), cTmpFile )
+
+         end if
+
+         SysRefresh()
+
+      end if 
+
+   next
+
+Return ( .t. )
+
+//---------------------------------------------------------------------------//
+
+METHOD uploadImageCategory( hCategoryProduct )
+
+   local cTypeImage
+   local cRemoteImage
+
+   if !hhaskey( hCategoryProduct, "aTypeImages")
+      Return ( nil )
+   end if 
+
+   for each cTypeImage in hget( hCategoryProduct, "aTypeImages" )
+
+      ::meterProcesoText( "Subiendo imagen " + cTypeImage )
+
+      ::oFtp():CreateFile( cTypeImage, ::cDirectoryCategories() + "/" )
+
+      SysRefresh()
+
+      ferase( cTypeImage )
+
+      SysRefresh()
+
+   next
+
+Return ( .t. )
+
+//---------------------------------------------------------------------------//

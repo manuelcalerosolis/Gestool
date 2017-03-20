@@ -295,6 +295,8 @@ METHOD liqInvoice( cNumFac ) CLASS Customer
                if dbLock( D():FacturasClientesCobros( ::nView ) )
                   ( D():FacturasClientesCobros( ::nView ) )->dEntrada   := Date()
                   ( D():FacturasClientesCobros( ::nView ) )->lCobrado   := .t.
+                  ( D():FacturasClientesCobros( ::nView ) )->dFecCre    := GetSysDate()
+                  ( D():FacturasClientesCobros( ::nView ) )->cHorCre    := Time()
                   ( D():FacturasClientesCobros( ::nView ) )->( dbUnLock() )
                end if
 

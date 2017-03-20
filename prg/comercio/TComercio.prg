@@ -413,7 +413,11 @@ CLASS TComercio
    METHOD uploadImageToPrestashop()
 
    METHOD buildInsertIvaPrestashop( hTax )
+
    METHOD buildInsertFabricantesPrestashop( hFabricantesData )
+   METHOD buildImagesFabricantes( hFabricantesData )
+   METHOD upLoadImagesFabricantes( hFabricantesData )
+
    METHOD buildInsertCategoriesPrestashop( hFamiliaData )
    METHOD buildInsertProductsPrestashop( hProduct )
    METHOD buildInsertNodeCategoryProduct( idFamilia, idProduct )
@@ -470,6 +474,7 @@ CLASS TComercio
 
    METHOD cDirectoryProduct()                         INLINE ( ::TComercioConfig:getImagesDirectory() + "/p" )
    METHOD cDirectoryCategories()                      INLINE ( ::TComercioConfig:getImagesDirectory() + "/c" )
+   METHOD cDirectoryManufacture()                     INLINE ( ::TComercioConfig:getImagesDirectory() + "/m" )
    METHOD getRecursiveFolderPrestashop( cCarpeta )
 
    // stocks-------------------------------------------------------------------
@@ -2378,10 +2383,13 @@ METHOD buildFabricantePrestashop( id ) CLASS TComercio
 
    if ::lSyncAll .or. ::TPrestashopId:getValueManufacturer( id, ::getCurrentWebName() ) == 0
       if ::oFab:SeekInOrd( id, "cCodFab" ) .and. ::oFab:lPubInt
-         aAdd( ::aFabricantesData,  {  "id"     => id,;
-                                       "name"   => rtrim( ::oFab:cNomFab ) } )
+         aAdd( ::aFabricantesData,  {  "id"              => id,;
+                                       "name"            => rtrim( ::oFab:cNomFab ),;
+                                       "image"           => rtrim( ::oFab:cImgLogo ),;
+                                       "aTypeImages"     => {},;
+                                       "cPrefijoNombre"  => "" } )
       end if
-   end if 
+   end if
 
 Return ( Self )
 
@@ -3017,7 +3025,15 @@ METHOD buildInsertFabricantesPrestashop( hFabricantesData ) CLASS TComercio
                   "'1' )"                                            //active
 
    if TMSCommand():New( ::oCon ):ExecDirect( cCommand )
+      
       nCodigoWeb           := ::oCon:GetInsertId()
+      
+      //Insertamos un registro en las tablas de imágenes----------------------
+
+      if !empty( hGet( hFabricantesData, "image" ) )
+         hset( hFabricantesData, "cPrefijoNombre", alltrim( str( nCodigoWeb ) ) )
+      end if
+
    else
       ::writeText( "Error al insertar el fabricante " + hGet( hFabricantesData, "name" ) + " en la tabla " + ::cPreFixtable( "manufacturer" ), 3 )
    end if
@@ -3052,6 +3068,58 @@ METHOD buildInsertFabricantesPrestashop( hFabricantesData ) CLASS TComercio
    end if 
 
 return nCodigoWeb
+
+//---------------------------------------------------------------------------//
+
+METHOD buildImagesFabricantes( hFabricantesData )
+
+   local oTipoImage
+   local fileImage
+   local cTmpFile
+
+   MsgInfo( "buildImagesFabricantes" )
+
+   fileImage   := hget( hFabricantesData, "image" )
+
+   if !File( fileImage )
+      Return nil
+   end if
+   
+   cTmpFile    := cPatTmp() + hget( hFabricantesData, "cPrefijoNombre" ) + ".jpg"
+
+   saveImage( fileImage, cTmpFile )
+
+   aadd( hget( hFabricantesData, "aTypeImages" ), cTmpFile )
+
+   for each oTipoImage in ::aTypeImagesPrestashop()
+
+      if !Empty( hget( hFabricantesData, "image" ) ) .and. oTipoImage:lManufactures
+
+         if File( fileImage )
+
+            cTmpFile    := cPatTmp() + hget( hFabricantesData, "cPrefijoNombre" ) + "-" + oTipoImage:cNombreTipo + ".jpg"
+
+            saveImage( fileImage, cTmpFile, oTipoImage:nAnchoTipo, oTipoImage:nAltoTipo )
+
+            aadd( hget( hFabricantesData, "aTypeImages" ), cTmpFile )
+
+         end if
+
+         SysRefresh()
+
+      end if 
+
+   next
+
+Return nil
+
+//---------------------------------------------------------------------------//
+
+METHOD upLoadImagesFabricantes( hFabricantesData )
+
+   MsgInfo( "upLoadImagesFabricantes" )
+
+Return nil
 
 //---------------------------------------------------------------------------//
 

@@ -413,9 +413,11 @@ return AllTrim( if( n > 0, left( cNameFile, n - 1 ), cNameFile ) )
 
 //----------------------------------------------------------------------------//
 
-FUNCTION cNoPathInt( cFileName )
+FUNCTION cNoPathInt( cFileName, cCon )
 
-RETURN Alltrim( SubStr( cFileName, RAt( "/", cFileName ) + 1 ) )
+   DEFAULT cCon := "/"
+
+RETURN Alltrim( SubStr( cFileName, RAt( cCon, cFileName ) + 1 ) )
 
 //----------------------------------------------------------------------------//
 
