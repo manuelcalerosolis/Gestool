@@ -9139,7 +9139,6 @@ STATIC FUNCTION GrpAlb( aGet, aTmp, oBrw, nMode )
                ( dbfTmpLin )->lControl    := .t.
                ( dbfTmpLin )->nNumLin     := nOffSet
                ( dbfTmpLin )->nPosPrint   := nOffSet
-            //   ++nOffSet
 
             end if
 
