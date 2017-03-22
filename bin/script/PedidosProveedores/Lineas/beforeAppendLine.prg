@@ -9,6 +9,8 @@ Function beforeAppendLine( aTmp, nView, nMode, lInicializate )
 
    local uValor
 
+   Return .t.
+
    /*
    Iniciamos variables en el caso correcto-------------------------------------
    */

@@ -2868,31 +2868,34 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbf, oBrw, aTmpPed, cCodArt, nMode )
 			PICTURE     "@E 99.99" ;
 			OF          oFld:aDialogs[1]
 
-      REDEFINE GET aGet[ _CFORMATO ] VAR aTmp[ _CFORMATO ];
-         ID       430;
-         WHEN     ( nMode != ZOOM_MODE ) ;
-         OF       oFld:aDialogs[1]
+      REDEFINE GET   aGet[ _CFORMATO ] ;
+         VAR         aTmp[ _CFORMATO ] ;
+         ID          430 ;
+         WHEN        ( nMode != ZOOM_MODE ) ;
+         OF          oFld:aDialogs[1]
 
-      REDEFINE GET oGetStk VAR nGetStk ;
-         ID       190 ;
-         WHEN     .f. ;
-			PICTURE 	cPicUnd ;
-			OF 		oFld:aDialogs[1]
+      REDEFINE GET   oGetStk ;
+         VAR         nGetStk ;
+         ID          190 ;
+         WHEN        .f. ;
+			PICTURE 	   cPicUnd ;
+			OF          oFld:aDialogs[1]
 
-      REDEFINE GET aGet[ _CREFPRV ] VAR aTmp[ _CREFPRV ];
-         ID       400 ;
-         WHEN     ( nMode != ZOOM_MODE ) ;
-         OF       oFld:aDialogs[1]
+      REDEFINE GET   aGet[ _CREFPRV ] ;
+         VAR         aTmp[ _CREFPRV ];
+         ID          400 ;
+         WHEN        ( nMode != ZOOM_MODE ) ;
+         OF          oFld:aDialogs[1]
 
-		REDEFINE GET oTotal VAR nTotal ;
-			ID 		210 ;
-         PICTURE  cPirDiv ;
-			WHEN 		.F. ;
-			OF 		oFld:aDialogs[1]
+		REDEFINE GET    oTotal VAR nTotal ;
+			ID          210 ;
+         PICTURE     cPirDiv ;
+			WHEN        .f. ;
+			OF          oFld:aDialogs[1]
 
       REDEFINE BITMAP oBmp ;
-         ID       100 ;
-         OF       oDlg
+         ID          100 ;
+         OF          oDlg
 
       oBmp:SetColor( , GetSysColor( 15 ) )
 
@@ -2900,23 +2903,26 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbf, oBrw, aTmpPed, cCodArt, nMode )
       Segunda Caja de diálogo--------------------------------------------------
       */
 
-      REDEFINE SAY oTotUni PROMPT nTotNPedPrv( aTmp ) ;
-         ID       150 ;
-         COLOR    "B/W*" ;
-         PICTURE  cPicUnd ;
-         OF       oFld:aDialogs[2]
+      REDEFINE SAY   oTotUni ;
+         PROMPT      nTotNPedPrv( aTmp ) ;
+         ID          150 ;
+         COLOR       "B/W*" ;
+         PICTURE     cPicUnd ;
+         OF          oFld:aDialogs[2]
 
-      REDEFINE SAY oTotEnt PROMPT nTotRes ;
-         ID       160 ;
-         COLOR    "G/W*" ;
-         PICTURE  cPicUnd ;
-         OF       oFld:aDialogs[2]
+      REDEFINE SAY   oTotEnt ;
+         PROMPT      nTotRes ;
+         ID          160 ;
+         COLOR       "G/W*" ;
+         PICTURE     cPicUnd ;
+         OF          oFld:aDialogs[2]
 
-      REDEFINE SAY oTotPdt PROMPT nTotNPedPrv( aTmp ) - nTotRes ;
-         ID       170 ;
-         COLOR    "R/W*" ;
-         PICTURE  cPicUnd ;
-         OF       oFld:aDialogs[2]
+      REDEFINE SAY   oTotPdt ;
+         PROMPT      nTotNPedPrv( aTmp ) - nTotRes ;
+         ID          170 ;
+         COLOR       "R/W*" ;
+         PICTURE     cPicUnd ;
+         OF          oFld:aDialogs[2]
 
       /*
       Browse de albaranes------------------------------------------------------
@@ -3017,7 +3023,6 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbf, oBrw, aTmpPed, cCodArt, nMode )
       REDEFINE GET aGet[_DANULADO] VAR aTmp[_DANULADO] ;
          ID       410 ;
          SPINNER ;
-         COLOR    CLR_GET ;
          WHEN     ( nMode != ZOOM_MODE ) ;
          OF       oFld:aDialogs[3]
 
@@ -3551,27 +3556,19 @@ STATIC FUNCTION GetArtPrv( cRefPrv, cCodPrv, aGet )
 	local nOrdAnt
 
    if empty( cRefPrv )
-
       Return .t.
+   end if 
 
+   nOrdAnt  := ( D():ProveedorArticulo( nView ) )->( ordSetFocus( "cRefPrv" ) )
+
+   if ( D():ProveedorArticulo( nView ) )->( dbSeek( cCodPrv + cRefPrv ) )
+      aGet[ _CREF ]:cText( ( D():ProveedorArticulo( nView ) )->cCodArt )
+		aGet[ _CREF ]:lValid()
    else
-
-      nOrdAnt  := ( D():ProveedorArticulo( nView ) )->( ordSetFocus( "cRefPrv" ) )
-
-      if ( D():ProveedorArticulo( nView ) )->( dbSeek( cCodPrv + cRefPrv ) )
-
-         aGet[ _CREF ]:cText( ( D():ProveedorArticulo( nView ) )->cCodArt )
-			aGet[ _CREF ]:lValid()
-
-      else
-
-         msgStop( "Referencia de proveedor no encontrada" )
-
-      end if
-
-		( D():ProveedorArticulo( nView ) )->( ordSetFocus( nOrdAnt ) )
-
+      msgStop( "Referencia de proveedor no encontrada" )
    end if
+
+	( D():ProveedorArticulo( nView ) )->( ordSetFocus( nOrdAnt ) )
 
 Return .t.
 
@@ -4400,7 +4397,7 @@ STATIC FUNCTION EndTrans( aGet, aTmp, oBrw, nMode, oDlg )
    local aTabla
    local cSerie
    local nPedido
-   local cSufPed
+   local cSufijo
    local nNumLin
    local cNumPedCli
 
@@ -4411,11 +4408,10 @@ STATIC FUNCTION EndTrans( aGet, aTmp, oBrw, nMode, oDlg )
    nNumLin              := 1
    cSerie               := aTmp[ _CSERPED ]
    nPedido              := aTmp[ _NNUMPED ]
-   cSufPed              := aTmp[ _CSUFPED ]
+   cSufijo              := aTmp[ _CSUFPED ]
    cNumPedCli           := aTmp[ _CNUMPEDCLI ]
 
-
-   // Comprobamos la fecha del documento
+   // Comprobamos la fecha del documento---------------------------------------
 
    if !lValidaOperacion( aTmp[ _DFECPED ] )
       Return .f.
@@ -4425,7 +4421,7 @@ STATIC FUNCTION EndTrans( aGet, aTmp, oBrw, nMode, oDlg )
       Return .f.
    end if
 
-   // Estos campos no pueden estar vacios
+   // Estos campos no pueden estar vacios--------------------------------------
 
    if empty( aTmp[ _CCODPRV ] )
       msgStop( "Proveedor no puede estar vacío." )
@@ -4460,37 +4456,35 @@ STATIC FUNCTION EndTrans( aGet, aTmp, oBrw, nMode, oDlg )
    do case
    case isAppendOrDuplicateMode( nMode )
 
-      nPedido           := nNewDoc( cSerie, D():PedidosProveedores( nView ), "NPEDPRV", , D():Contadores( nView ) )
-      aTmp[ _NNUMPED ]  := nPedido
-      cSufPed           := retSufEmp()
-      aTmp[ _CSUFPED ]  := cSufPed
+      nPedido           := aTmp[ _NNUMPED ]  := nNewDoc( cSerie, D():PedidosProveedores( nView ), "nPedPrv", , D():Contadores( nView ) )
+      cSufijo           := aTmp[ _CSUFPED ]  := retSufEmp()
 
-   case isEditMode( nMode )
+   case isEditMode( nMode ) .and. ( nPedido != 0 )
 
-      if nPedido != 0
+      D():sqlDeletePedidosProveedoresLineasId( cSerie, nPedido, cSufijo )
 
-         while ( D():PedidosProveedoresLineas( nView ) )->( dbSeek( cSerie + str( nPedido ) + cSufPed ) )
-            if dbLock( D():PedidosProveedoresLineas( nView ) )
-               ( D():PedidosProveedoresLineas( nView ) )->( dbDelete() )
-               ( D():PedidosProveedoresLineas( nView ) )->( dbUnLock() )
-            end if
-         end while
+/*
+      while ( D():PedidosProveedoresLineas( nView ) )->( dbSeek( cSerie + str( nPedido ) + cSufijo ) )
+         if dbLock( D():PedidosProveedoresLineas( nView ) )
+            ( D():PedidosProveedoresLineas( nView ) )->( dbDelete() )
+            ( D():PedidosProveedoresLineas( nView ) )->( dbUnLock() )
+         end if
+      end while
+*/
 
-         while ( D():PedidosProveedoresIncidencias( nView ) )->( dbSeek( cSerie + str( nPedido ) + cSufPed ) )
-            if dbLock( D():PedidosProveedoresIncidencias( nView ) )
-               ( D():PedidosProveedoresIncidencias( nView ) )->( dbDelete() )
-               ( D():PedidosProveedoresIncidencias( nView ) )->( dbUnLock() )
-            end if
-         end while
+      while ( D():PedidosProveedoresIncidencias( nView ) )->( dbSeek( cSerie + str( nPedido ) + cSufijo ) )
+         if dbLock( D():PedidosProveedoresIncidencias( nView ) )
+            ( D():PedidosProveedoresIncidencias( nView ) )->( dbDelete() )
+            ( D():PedidosProveedoresIncidencias( nView ) )->( dbUnLock() )
+         end if
+      end while
 
-         while ( D():PedidosProveedoresDocumentos( nView ) )->( dbSeek( cSerie + str( nPedido ) + cSufPed ) )
-            if dbLock( D():PedidosProveedoresDocumentos( nView ) )
-               ( D():PedidosProveedoresDocumentos( nView ) )->( dbDelete() )
-               ( D():PedidosProveedoresDocumentos( nView ) )->( dbUnLock() )
-            end if
-         end while
-
-      end if
+      while ( D():PedidosProveedoresDocumentos( nView ) )->( dbSeek( cSerie + str( nPedido ) + cSufijo ) )
+         if dbLock( D():PedidosProveedoresDocumentos( nView ) )
+            ( D():PedidosProveedoresDocumentos( nView ) )->( dbDelete() )
+            ( D():PedidosProveedoresDocumentos( nView ) )->( dbUnLock() )
+         end if
+      end while
 
    end case
 
@@ -4518,26 +4512,26 @@ STATIC FUNCTION EndTrans( aGet, aTmp, oBrw, nMode, oDlg )
    ( dbfTmpLin )->( dbgotop() )
    while !( dbfTmpLin )->( eof() )
       if !( ( dbfTmpLin )->nUniCaja == 0 .and. ( dbfTmpLin )->lFromImp )
-         dbPass( dbfTmpLin, D():PedidosProveedoresLineas( nView ), .t., cSerie, nPedido, cSufPed )
+         dbPass( dbfTmpLin, D():PedidosProveedoresLineas( nView ), .t., cSerie, nPedido, cSufijo )
       end if
-      D():CamposExtraLine( nView ):saveExtraField( ( dbfTmpLin )->cSerPed + Str( ( dbfTmpLin )->nNumPed ) + ( dbfTmpLin )->cSufPed + Str( ( dbfTmpLin )->nNumLin ), ( dbfTmpLin )->( OrdKeyNo() ) )
+      D():CamposExtraLine( nView ):saveExtraField( ( dbfTmpLin )->cSerPed + Str( ( dbfTmpLin )->nNumPed ) + ( dbfTmpLin )->cSufPed + Str( ( dbfTmpLin )->nNumLin ), ( dbfTmpLin )->( ordkeyno() ) )
       ( dbfTmpLin )->( dbSkip() )
       oMsgProgress():Deltapos(1)
    end while
 
-   // Ahora escribimos en el fichero definitivo de incidencias
+   // Ahora escribimos en el fichero definitivo de incidencias-----------------
 
    ( dbfTmpInc )->( dbGoTop() )
    while ( dbfTmpInc )->( !eof() )
-      dbPass( dbfTmpInc, D():PedidosProveedoresIncidencias( nView ), .t., cSerie, nPedido, cSufPed )
+      dbPass( dbfTmpInc, D():PedidosProveedoresIncidencias( nView ), .t., cSerie, nPedido, cSufijo )
       ( dbfTmpInc )->( dbSkip() )
    end while
 
-   // Ahora escribimos en el fichero definitivo de documentos
+   // Ahora escribimos en el fichero definitivo de documentos------------------
 
    ( dbfTmpDoc )->( dbGoTop() )
    while ( dbfTmpDoc )->( !eof() )
-      dbPass( dbfTmpDoc, D():PedidosProveedoresDocumentos( nView ), .t., cSerie, nPedido, cSufPed )
+      dbPass( dbfTmpDoc, D():PedidosProveedoresDocumentos( nView ), .t., cSerie, nPedido, cSufijo )
       ( dbfTmpDoc )->( dbSkip() )
    end while
 
@@ -4545,7 +4539,7 @@ STATIC FUNCTION EndTrans( aGet, aTmp, oBrw, nMode, oDlg )
    Cargamos los temporales de los campos extra---------------------------------
    */
 
-   D():CamposExtraHeader( nView ):saveExtraField( aTmp[ _CSERPED ] + Str( aTmp[ _NNUMPED ] ) + aTmp[ _CSUFPED ], "", nMode )
+   D():CamposExtraHeader( nView ):saveExtraField( cSerie + str( nPedido ) + cSufijo, "", nMode )
 
    // Salvamos el registro del pedido
 
@@ -4553,17 +4547,15 @@ STATIC FUNCTION EndTrans( aGet, aTmp, oBrw, nMode, oDlg )
 
    // Ponemos el pedido en su estado
 
-   D():Stocks( nView ):SetPedPrv( cSerie + str( nPedido ) + cSufPed )
+   D():Stocks( nView ):SetPedPrv( cSerie + str( nPedido ) + cSufijo )
 
    dbCommitAll()
 
    CommitTransaction()
 
    RECOVER USING oError
-
       RollBackTransaction()
       msgStop( "Imposible almacenar pedido" + CRLF + ErrorMessage( oError ) )
-
    END SEQUENCE
    ErrorBlock( oBlock )
 
