@@ -743,6 +743,7 @@ METHOD Create( uParam ) CLASS TFastVentasArticulos
    ::AddField( "cCodUsr",     "C",  3, 0, {|| "@!" }, "Código usuario"                          )
    ::AddField( "cCodOpe",     "C",  5, 0, {|| "@!" }, "Código operario"                         )
    ::AddField( "cCodEnv",     "C",  3, 0, {|| "@!" }, "Código tipo de envase"                   )
+   ::AddField( "cCodCaj",     "C",  3, 0, {|| "@!" }, "Código caja"                             )
 
    ::AddField( "cCodCli",     "C", 12, 0, {|| "@!" }, "Código cliente/proveedor"                )
    ::AddField( "cNomCli",     "C", 80, 0, {|| "@!" }, "Nombre cliente/proveedor"                )
@@ -2712,7 +2713,7 @@ METHOD AddTicket() CLASS TFastVentasArticulos
    ( D():Tikets( ::nView )           )->( setCustomFilter( ::cExpresionHeader ) )
    ( D():TiketsLineas( ::nView )     )->( setCustomFilter( ::cExpresionLine ) )
 
-   ::setMeterTotal( ( D():TiketsLineas( ::nView ) )->( dbCustomKeyCount() ) )
+   ::setMeterTotal( ( D():Tikets( ::nView ) )->( dbCustomKeyCount() ) )
 
    // Cabecera de tickets -------------------------------------------------------
 
@@ -2729,17 +2730,20 @@ METHOD AddTicket() CLASS TFastVentasArticulos
                
                ::oDbf:cCodArt    := ( D():TiketsLineas( ::nView ) )->cCbaTil
                ::oDbf:cNomArt    := ( D():TiketsLineas( ::nView ) )->cNomTil
+
                ::oDbf:cCodCli    := ( D():Tikets( ::nView ) )->cCliTik
                ::oDbf:cNomCli    := ( D():Tikets( ::nView ) )->cNomTik
                ::oDbf:cPobCli    := ( D():Tikets( ::nView ) )->cPobCli
                ::oDbf:cPrvCli    := ( D():Tikets( ::nView ) )->cPrvCli
                ::oDbf:cPosCli    := ( D():Tikets( ::nView ) )->cPosCli
+               ::oDbf:cCodCaj    := ( D():Tikets( ::nView ) )->cNcjTik
                ::oDbf:cCodGrp    := cGruCli( ( D():Tikets( ::nView ) )->cCliTik, ::oDbfCli )
 
                ::oDbf:TipoIva    := cCodigoIva( ::oDbfIva:cAlias, ( D():TiketsLineas( ::nView ) )->nIvaTil )
 
                ::oDbf:cCodFam    := ( D():TiketsLineas( ::nView ) )->cCodFam
                ::oDbf:cGrpFam    := ( D():TiketsLineas( ::nView ) )->cGrpFam
+
                ::oDbf:cCodTip    := RetFld( ( D():TiketsLineas( ::nView ) )->cCbaTil, ( D():Articulos( ::nView ) ), "cCodTip", "Codigo" )
                ::oDbf:cCodCate   := RetFld( ( D():TiketsLineas( ::nView ) )->cCbaTil, ( D():Articulos( ::nView ) ), "cCodCate", "Codigo" )
                ::oDbf:cCodEst    := RetFld( ( D():TiketsLineas( ::nView ) )->cCbaTil, ( D():Articulos( ::nView ) ), "cCodEst", "Codigo" )
@@ -2748,9 +2752,9 @@ METHOD AddTicket() CLASS TFastVentasArticulos
                ::oDbf:cDesUbi    := RetFld( ( D():TiketsLineas( ::nView ) )->cCbaTil, ( D():Articulos( ::nView ) ), "cDesUbi", "Codigo" )
 
                if ::oAtipicasCliente:Seek( ( D():Tikets( ::nView ) )->cCliTik + ( D():TiketsLineas( ::nView ) )->cCbaTil ) .and. !empty( ::oAtipicasCliente:cCodEnv )
-                  ::oDbf:cCodEnv    := ::oAtipicasCliente:cCodEnv
+                  ::oDbf:cCodEnv := ::oAtipicasCliente:cCodEnv
                else
-                  ::oDbf:cCodEnv    := RetFld( ( D():TiketsLineas( ::nView ) )->cCbaTil, ( D():Articulos( ::nView ) ), "cCodFra", "Codigo" )                    
+                  ::oDbf:cCodEnv := RetFld( ( D():TiketsLineas( ::nView ) )->cCbaTil, ( D():Articulos( ::nView ) ), "cCodFra", "Codigo" )                    
                end if
 
                ::oDbf:cCodAlm    := ( D():TiketsLineas( ::nView ) )->cAlmLin
@@ -2904,6 +2908,7 @@ METHOD AddTicket() CLASS TFastVentasArticulos
                ::oDbf:cPrvHab    := getProveedorPorDefectoArticulo( ::oDbf:cCodArt, D():ProveedorArticulo( ::nView ) )
 
                ::InsertIfValid()
+
                ::loadValuesExtraFields()
 
             end if
@@ -2919,8 +2924,6 @@ METHOD AddTicket() CLASS TFastVentasArticulos
       ::setMeterAutoIncremental()
 
    end while
-
-   ::setMeterTotal( ( D():Tikets( ::nView ) )->( OrdKeyCount() ) )
 
 RETURN ( Self )
 

@@ -18,6 +18,8 @@ CLASS CodigosPostales FROM TMant
    
    DATA oldCodigo
 
+   DATA cName                                         INIT "CodigosPostales"
+
    CLASSDATA oProvincias
 
    METHOD New( cPath, oWndParent, oMenuItem ) CONSTRUCTOR
@@ -26,7 +28,7 @@ CLASS CodigosPostales FROM TMant
    METHOD GetInstance()                               INLINE ( if( empty( ::oInstance ), ::oInstance := ::New(), ), ::oInstance ) 
 
    METHOD OpenFiles( lExclusive, cPath )
-   METHOD OpenService( lExclusive, cPath )
+   METHOD OpenService( lExclusive, cPath )            INLINE ( ::OpenFiles( lExclusive, cPath ) )
    METHOD CloseFiles() 
    METHOD DefineFiles()
 
@@ -99,31 +101,6 @@ METHOD OpenFiles( lExclusive, cPath ) CLASS CodigosPostales
    DEFAULT lExclusive   := .f.
    DEFAULT cPath        := ::cPath
 
-   if !::OpenService()
-      RETURN ( .f. )
-   end if 
-
-   if !empty( ::oProvincias )
-      lOpen             := ::oProvincias:OpenFiles()
-   end if
-
-   if !lOpen      
-      ::CloseFiles()
-   end if 
-
-RETURN ( lOpen )
-
-//----------------------------------------------------------------------------//
-
-METHOD OpenService( lExclusive, cPath ) CLASS CodigosPostales
-
-   local lOpen          := .t.
-   local oError
-   local oBlock         
-
-   DEFAULT lExclusive   := .f.
-   DEFAULT cPath        := ::cPath
-
    oBlock               := ErrorBlock( {| oError | ApoloBreak( oError ) } )
    BEGIN SEQUENCE
 
@@ -132,6 +109,10 @@ METHOD OpenService( lExclusive, cPath ) CLASS CodigosPostales
       end if
 
       ::oDbf:Activate( .f., !( lExclusive ) )
+
+      if !empty( ::oProvincias )
+         lOpen          := ::oProvincias:OpenFiles()
+      end if
 
    RECOVER USING oError
 
@@ -148,7 +129,6 @@ METHOD OpenService( lExclusive, cPath ) CLASS CodigosPostales
 RETURN ( lOpen )
 
 //----------------------------------------------------------------------------//
-
 
 METHOD CloseFiles() CLASS CodigosPostales
 

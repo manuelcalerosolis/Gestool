@@ -416,21 +416,23 @@ CLASS D
 
    // Pedidos de proveedores---------------------------------------------------
 
-   METHOD PedidosProveedoresTableName()               INLINE ( "PedProvT" )
-   METHOD PedidosProveedores( nView )                 INLINE ( ::Get( "PedProvT", nView ) )
-      METHOD PedidosProveedoresId( nView )            INLINE ( ( ::Get( "PedProvT", nView ) )->cSerPed + str( ( ::Get( "PedProvT", nView ) )->nNumPed, 9 ) + ( ::Get( "PedProvT", nView ) )->cSufPed )
-      METHOD gotoIdPedidosProveedores( id, nView )    INLINE ( ::seekInOrd( ::PedidosProveedores( nView ), id, "nNumPed" ) ) 
+   METHOD PedidosProveedoresTableName()                        INLINE ( "PedProvT" )
+   METHOD PedidosProveedores( nView )                          INLINE ( ::Get( "PedProvT", nView ) )
+      METHOD PedidosProveedoresId( nView )                     INLINE ( ( ::Get( "PedProvT", nView ) )->cSerPed + str( ( ::Get( "PedProvT", nView ) )->nNumPed, 9 ) + ( ::Get( "PedProvT", nView ) )->cSufPed )
+      METHOD gotoIdPedidosProveedores( id, nView )             INLINE ( ::seekInOrd( ::PedidosProveedores( nView ), id, "nNumPed" ) ) 
 
-   METHOD PedidosProveedoresLineasTableName( nView )           INLINE ( "PedProvL" )
+   METHOD PedidosProveedoresLineasTableName( lADS )            INLINE ( if( isTrue( lADS ), cPatEmp() + "PedProvL", "PedProvL" ) )
    METHOD PedidosProveedoresLineas( nView )                    INLINE ( ::Get( "PedProvL", nView ) )
       METHOD PedidosProveedoresLineasId( nView )               INLINE ( ( ::Get( "PedProvL", nView ) )->cSerPed + str( ( ::Get( "PedProvL", nView ) )->nNumPed, 9 ) + ( ::Get( "PedProvL", nView ) )->cSufPed )
       METHOD getStatusPedidosProveedoresLineas( nView )        INLINE ( ::aStatus := aGetStatus( ::PedidosProveedoresLineas( nView ) ) )
       METHOD setStatusPedidosProveedoresLineas( nView )        INLINE ( SetStatus( ::PedidosProveedoresLineas( nView ), ::aStatus ) ) 
       METHOD setFocusPedidosProveedoresLineas( cTag, nView )   INLINE ( ::cTag   := ( ::PedidosProveedoresLineas( nView )  )->( ordSetFocus( cTag ) ) )
 
-   METHOD PedidosProveedoresIncidencias( nView )            INLINE ( ::Get( "PedPrvI", nView ) )
+   METHOD sqlDeletePedidosProveedoresLineasId( cSerie, nNumero, cSufijo, nView )        
 
-   METHOD PedidosProveedoresDocumentos( nView )             INLINE ( ::Get( "PedPrvD", nView ) )
+   METHOD PedidosProveedoresIncidencias( nView )               INLINE ( ::Get( "PedPrvI", nView ) )
+
+   METHOD PedidosProveedoresDocumentos( nView )                INLINE ( ::Get( "PedPrvD", nView ) )
 
    // Albaranes de proveedores-------------------------------------------------
 
@@ -703,7 +705,6 @@ CLASS D
 
    METHOD openSQL( cDataTable, cSelect, nView )
 
-
 ENDCLASS
 
 //---------------------------------------------------------------------------//
@@ -971,7 +972,7 @@ Return ( ::nView )
             if isADSDriver( cDriver )
                ordSetFocus( 1 )
             else 
-               ordListAdd( ( oDataTable:cFullCdxIndexFile ) )
+               ordListAdd( oDataTable:cFullCdxIndexFile )
             end if 
 
             if !neterr()
@@ -1614,3 +1615,19 @@ METHOD setArticuloTablaPropiedades( id, idCodigoPrimeraPropiedad, idCodigoSegund
 Return ( .t. )
 
 //---------------------------------------------------------------------------//
+
+METHOD sqlDeletePedidosProveedoresLineasId( cSerie, nNumero, cSufijo )        
+
+   local cStatement  := ""
+
+   cStatement        := "DELETE FROM " + ::PedidosProveedoresLineasTableName( .t. ) + " " + ;
+                           "WHERE " + ;
+                              "cSerPed = " + quoted( cSerie )  + " AND " + ;
+                              "nNumPed = " + quoted( nNumero ) + " AND " + ;
+                              "cSufPed = " + quoted( cSufijo )   
+
+Return ( TDataCenter():ExecuteSqlStatement( cStatement ) )
+
+//---------------------------------------------------------------------------//
+   
+

@@ -20,6 +20,7 @@ Return nil
 CLASS TImportarExcelArguelles FROM TImportarExcel
 
    DATA idArticulo
+   DATA idFamilia
 
    METHOD New()
 
@@ -39,6 +40,8 @@ CLASS TImportarExcelArguelles FROM TImportarExcel
 
    METHOD desbloqueaRegistro()   INLINE ( ( D():Articulos( ::nView ) )->( dbcommit() ),;
                                           ( D():Articulos( ::nView ) )->( dbunlock() ) )
+
+   METHOD importarFamilias()
 
    METHOD importarCampos()
 
@@ -97,6 +100,8 @@ METHOD procesaFicheroExcel()
    while ( ::filaValida() )
 
       if !::existeRegistro()
+
+         ::importarFamilias()
       
          ::importarCampos()
 
@@ -112,6 +117,29 @@ Return nil
 
 //---------------------------------------------------------------------------//
 
+METHOD importarFamilias()
+
+   ::idFamilia                                  := ::getExcelString( "H" )  
+
+   if ( D():gotoFamilias( ::idFamilia, ::nView ) )
+      Return nil      
+   end if 
+
+   ( D():Familias( ::nView ) )->( dbappend() )
+   ( D():Familias( ::nView ) )->cCodFam         := ::idFamilia
+
+   if !empty( ::getExcelString( "G" ) )      
+      ( D():Familias( ::nView ) )->cNomFam      := ::getNombre( ::getExcelString( "G" ) )
+   end if 
+
+   ( D():Familias( ::nView ) )->( dbcommit() )
+
+   ( D():Familias( ::nView ) )->( dbunlock() )
+
+Return nil
+
+//---------------------------------------------------------------------------// 
+
 METHOD importarCampos()
 
    ( D():Articulos( ::nView ) )->( dbappend() )
@@ -124,20 +152,18 @@ METHOD importarCampos()
       ( D():Articulos( ::nView ) )->Nombre      := ::getNombre( ::getExcelString( "B" ) )
    end if 
 
-   ( D():Articulos( ::nView ) )->nPesoKg     := ::getExcelNumeric( "C" )
-   ( D():Articulos( ::nView ) )->nCajEnt     := ::getExcelNumeric( "D" )
+   ( D():Articulos( ::nView ) )->nPesoKg        := ::getExcelNumeric( "C" )
+   ( D():Articulos( ::nView ) )->nCajEnt        := ::getExcelNumeric( "D" )
    
-   ( D():Articulos( ::nView ) )->NPESCAJ     := ::getExcelNumeric( "E" )
-   ( D():Articulos( ::nView ) )->NVOLCAJ     := ::getExcelNumeric( "F" )
+   ( D():Articulos( ::nView ) )->NPESCAJ        := ::getExcelNumeric( "E" )
+   ( D():Articulos( ::nView ) )->NVOLCAJ        := ::getExcelNumeric( "F" )
 
    ( D():Articulos( ::nView ) )->TipoIva        := "N"
    
    ( D():Articulos( ::nView ) )->nCtlStock      := 1
    ( D():Articulos( ::nView ) )->nLabel         := 1
 
-   /*
-   Desbloqueamos la tabla de artículos-----------------------------------------
-   */
+   ( D():Articulos( ::nView ) )->Familia        := ::idFamilia
 
    ( D():Articulos( ::nView ) )->( dbcommit() )
 

@@ -3307,9 +3307,13 @@ Return ( if( oError:GenCode == EG_ZERODIV, 0, Break( oError ) ) )
 
 //---------------------------------------------------------------------------//
 
-Function Quoted( cString )
+Function Quoted( uValue )
 
-Return ( "'" + cString + "'" )
+   if( hb_isnumeric( uValue ) )
+      Return ( alltrim( str( uValue ) ) )
+   end if 
+
+Return ( "'" + alltrim( uValue ) + "'" )
 
 //---------------------------------------------------------------------------//
 

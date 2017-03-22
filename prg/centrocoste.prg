@@ -48,6 +48,9 @@ END CLASS
 
 METHOD New( cPath, cDriver )
 
+   DEFAULT cPath        := cPatDat()
+   DEFAULT cDriver      := cDriver()
+
    ::Super:New( cPath, cDriver )
 
    ::Default()
@@ -57,6 +60,9 @@ Return ( Self )
 //---------------------------------------------------------------------------//
 
 METHOD Create( cPath, cDriver )
+
+   DEFAULT cPath        := cPatDat()
+   DEFAULT cDriver      := cDriver()
 
    ::Super:Create( cPath, cDriver )
 
@@ -68,13 +74,13 @@ Return ( Self )
 
 METHOD Default()
 
-   ::hValid             := {  "Clientes" => {|| cClient( ::oGetDocument, , ::oGetDocument:oHelpText ) } ,;
-                              "Artículos" => {|| cArticulo( ::oGetDocument, , ::oGetDocument:oHelpText ) } ,;
-                              "Proveedores" => {|| cProvee( ::oGetDocument, , ::oGetDocument:oHelpText ) } }
+   ::hValid             := {  "Clientes"     => {|| cClient( ::oGetDocument, , ::oGetDocument:oHelpText ) } ,;
+                              "Artículos"    => {|| cArticulo( ::oGetDocument, , ::oGetDocument:oHelpText ) } ,;
+                              "Proveedores"  => {|| cProvee( ::oGetDocument, , ::oGetDocument:oHelpText ) } }
 
-   ::hHelp              := {  "Clientes" => {|| BrwClient( ::oGetDocument, ::oGetDocument:oHelpText ) } ,;
-                              "Artículos" => {|| BrwArticulo( ::oGetDocument, ::oGetDocument:oHelpText ) } ,;
-                              "Proveedores" => {|| BrwProvee( ::oGetDocument, ::oGetDocument:oHelpText ) } }
+   ::hHelp              := {  "Clientes"     => {|| BrwClient( ::oGetDocument, ::oGetDocument:oHelpText ) } ,;
+                              "Artículos"    => {|| BrwArticulo( ::oGetDocument, ::oGetDocument:oHelpText ) } ,;
+                              "Proveedores"  => {|| BrwProvee( ::oGetDocument, ::oGetDocument:oHelpText ) } }
 
 Return ( Self )
 
@@ -85,7 +91,7 @@ METHOD DefineFiles( cPath, cDriver )
    	DEFAULT cPath        := ::cPath
    	DEFAULT cDriver      := cDriver()
 
-   	DEFINE DATABASE ::oDbf FILE "CCoste.DBF" CLASS "CENTROCOSTE" PATH ( cPath ) VIA ( cDriver ) COMMENT "Centro de coste"
+   	DEFINE DATABASE ::oDbf FILE "CCoste.Dbf" CLASS "CENTROCOSTE" PATH ( cPath ) VIA ( cDriver ) COMMENT "Centro de coste"
 
       	FIELD NAME "cCodigo"   TYPE "C" LEN  9  DEC 0  COMMENT "Código"  				DEFAULT Space(  9 )  					  				         COLSIZE 80  OF ::oDbf
       	FIELD NAME "cNombre"   TYPE "C" LEN 50  DEC 0  COMMENT "Nombre"  				DEFAULT Space( 50 )  					  				         COLSIZE 200 OF ::oDbf

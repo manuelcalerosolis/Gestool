@@ -4,16 +4,30 @@
 
 Function validControl( oSender, aGet, nView, nMode )
 
+   local nCajas
+   local nCajasArticulos
+   local nKilosArticulos
+
    if ( nMode != APPD_MODE )
-      return .f.
+      return .t.
    end if 
 	
-   if ( oSender:cargo == "nUniCaja" )
+   if ( oSender:cargo == "nCanPed" )
 
-      msgalert( "soy nUniCaja" )
+      nCajas            := aGet[ ( D():PedidosProveedoresLineas( nView ) )->( fieldpos( "nCanPed" ) ) ]:varget()
 
-      aGet[ ( D():PedidosProveedoresLineas( nView ) )->( fieldpos( "nPreDiv" ) ) ]:varPut( 9999 )
-      aGet[ ( D():PedidosProveedoresLineas( nView ) )->( fieldpos( "nPreDiv" ) ) ]:refresh()
+      nCajasArticulos   := ( D():Articulos( nView ) )->nCajEnt
+      nKilosArticulos   := ( D():Articulos( nView ) )->nPesoKg
+
+      if nCajasArticulos != 0
+         aGet[ ( D():PedidosProveedoresLineas( nView ) )->( fieldpos( "nBultos" ) ) ]:varPut( nCajas / nCajasArticulos )
+         aGet[ ( D():PedidosProveedoresLineas( nView ) )->( fieldpos( "nBultos" ) ) ]:refresh()
+      end if 
+
+      if nKilosArticulos != 0
+         aGet[ ( D():PedidosProveedoresLineas( nView ) )->( fieldpos( "nUniCaja" ) ) ]:varPut( nCajas * nKilosArticulos )
+         aGet[ ( D():PedidosProveedoresLineas( nView ) )->( fieldpos( "nUniCaja" ) ) ]:refresh()
+      end if 
 
    end if 
 

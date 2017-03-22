@@ -9,6 +9,7 @@ Function beforeAppendLine( aTmp, aGet, nView, nMode, lInicializate )
 
    local uValor
 
+<<<<<<< HEAD
    if ( nMode != APPD_MODE )
       return .f.
    end if
@@ -17,6 +18,9 @@ Function beforeAppendLine( aTmp, aGet, nView, nMode, lInicializate )
    msginfo( hb_valtoexp( aGet ), len( aGet ) )
 
    MsgInfo( aTmp[ ( D():PedidosProveedoresLineas( nView ) )->( fieldpos( "cRef" ) ) ] )
+=======
+   Return .t.
+>>>>>>> 9938411783a4fe1df27a98bfd3973d4474de2749
 
    /*
    Iniciamos variables en el caso correcto-------------------------------------
