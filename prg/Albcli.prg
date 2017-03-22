@@ -11182,7 +11182,7 @@ STATIC FUNCTION SaveDeta( aTmp, aTmpAlb, oFld, aGet, oBrw, bmpImage, oDlg, nMode
 
       acopy( dbBlankRec( dbfTmpLin ), aTmp )
 
-      if !empty(aGet)
+      if !empty( aGet )
          aeval( aGet, {| o, i | if( "GET" $ o:ClassName(), o:cText( aTmp[ i ] ), ) } )
       end if 
 
