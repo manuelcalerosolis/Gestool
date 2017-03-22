@@ -2565,7 +2565,7 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbf, oBrw, aTmpPed, cCodArt, nMode )
 
       D():CamposExtraLine( nView ):setTemporalAppend()
 
-      runScript( "PedidosProveedores\Lineas\beforeAppendLine.prg", aTmp, nView, nMode, ( ( dbfTmpLin )->( ordKeyCount() ) == 0 ) )
+      //runScript( "PedidosProveedores\Lineas\beforeAppendLine.prg", aTmp, aGet, nView, nMode, ( ( dbfTmpLin )->( ordKeyCount() ) == 0 ) )
 
    else
 
@@ -3101,6 +3101,8 @@ STATIC FUNCTION SetDlgMode( aGet, aTmp, aTmpPed, nMode, oSayPr1, oSayPr2, oSayVp
    oSayPr2:SetText( "" )
    oSayVp2:SetText( "" )
 
+   runScript( "PedidosProveedores\Lineas\beforeAppendLine.prg", aTmp, aGet, nView, nMode, ( ( dbfTmpLin )->( ordKeyCount() ) == 0 ) )
+
    do case
    case nMode == APPD_MODE
 
@@ -3127,7 +3129,7 @@ STATIC FUNCTION SetDlgMode( aGet, aTmp, aTmpPed, nMode, oSayPr1, oSayPr2, oSayVp
       if !empty( aGet[ __CCENTROCOSTE ] )
          aGet[ __CCENTROCOSTE ]:lValid()
       endif
-
+   
    case nMode != APPD_MODE .AND. empty( cCodArt )
 
       aGet[_CREF    ]:hide()
@@ -3219,12 +3221,6 @@ STATIC FUNCTION SetDlgMode( aGet, aTmp, aTmpPed, nMode, oSayPr1, oSayPr2, oSayVp
    oFld:SetOption( 1 )
 
    aGet[ _CALMLIN ]:lValid()
-
-   /*if Empty( aGet[ _CREF ]:VarGet() ) .and. Empty( aGet[ _MLNGDES ]:VarGet() )
-      aGet[ _MLNGDES ]:Hide()
-      aGet[ _CDETALLE]:show()
-      aGet[ _MLNGDES ]:Refresh()
-   end if*/
 
    oTotal:cText( 0 )
    
@@ -3642,6 +3638,10 @@ STATIC FUNCTION SaveDeta( aTmp, aGet, oBrwPrp, oFld, oDlg, oBrw, nMode, oTotal, 
       end if
 
       if lEntCon()
+
+         /*aCopy( dbBlankRec( dbfTmpLin ), aTmp )
+
+         aEval( aGet, {| o, i | if( "GET" $ o:ClassName(), o:cText( aTmp[ i ] ), ) } )*/
 
          SetDlgMode( aGet, aTmp, aTmpPed, nMode, oSayPr1, oSayPr2, oSayVp1, oSayVp2, oSayLote, oBrwPrp, oFld, oDlg, oTotal, oGetStk )
 
