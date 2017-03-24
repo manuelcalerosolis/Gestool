@@ -5644,6 +5644,7 @@ Static Function DataReport( oFr )
    oFr:SetWorkArea(     "Pedidos", ( D():PedidosProveedores( nView ) )->( Select() ), .f., { FR_RB_CURRENT, FR_RB_CURRENT, 0 } )
    oFr:SetFieldAliases( "Pedidos", cItemsToReport( aItmPedPrv() ) )
 
+   ( D():PedidosProveedoresLineas( nView ) )->( ordsetfocus( "cCodFam" ) )
    oFr:SetWorkArea(     "Lineas de pedidos", ( D():PedidosProveedoresLineas( nView ) )->( Select() ) )
    oFr:SetFieldAliases( "Lineas de pedidos", cItemsToReport( aColPedPrv() ) )
 
@@ -7249,6 +7250,9 @@ FUNCTION rxPedPrv( cPath, cDriver )
       ( cPedPrvT )->( ordCondSet( "!Deleted()", {||!Deleted()}  ) )
       ( cPedPrvT )->( ordCreate( cPath + "PedProvL.Cdx", "nNumPedRef", "cSerPed + Str( nNumPed ) + cSufPed + cRef", {|| Field->cSerPed + Str( Field->nNumPed ) + Field->cSufPed + Field->cRef } ) )
 
+      ( cPedPrvT )->( ordCondSet( "!Deleted()", {||!Deleted()}  ) )
+      ( cPedPrvT )->( ordCreate( cPath + "PedProvL.Cdx", "cCodFam", "cSerPed + Str( nNumPed ) + cSufPed + cCodFam", {|| Field->cSerPed + Str( Field->nNumPed ) + Field->cSufPed + Field->cCodFam } ) )
+
       ( cPedPrvT )->( dbCloseArea() )
    else
       msgStop( "Imposible abrir en modo exclusivo la tabla de pedidos de proveedores" )
@@ -7259,7 +7263,7 @@ FUNCTION rxPedPrv( cPath, cDriver )
       ( cPedPrvT )->( __dbPack() )
 
       ( cPedPrvT )->( ordCondSet("!Deleted()", {||!Deleted()}  ) )
-      ( cPedPrvT )->( ordCreate( cPath + "PedPrvI.Cdx", "NNUMPED", "CSERPED + STR( NNUMPED ) + CSUFPED", {|| Field->CSERPED + STR( Field->nNumPed ) + Field->cSufPed } ) )
+      ( cPedPrvT )->( ordCreate( cPath + "PedPrvI.Cdx", "nNumPed", "cSerPed + Str( nNumPed ) + cSufPed", {|| Field->cSerPed + Str( Field->nNumPed ) + Field->cSufPed } ) )
 
       ( cPedPrvT )->( dbCloseArea() )
    else
@@ -7271,7 +7275,7 @@ FUNCTION rxPedPrv( cPath, cDriver )
       ( cPedPrvT )->( __dbPack() )
 
       ( cPedPrvT )->( ordCondSet("!Deleted()", {||!Deleted()}  ) )
-      ( cPedPrvT )->( ordCreate( cPath + "PedPrvD.CDX", "NNUMPED", "CSERPED + STR( NNUMPED ) + CSUFPED", {|| Field->CSERPED + STR( Field->nNumPed ) + Field->cSufPed } ) )
+      ( cPedPrvT )->( ordCreate( cPath + "PedPrvD.Cdx", "nNumPed", "cSerPed + Str( nNumPed ) + cSufPed", {|| Field->cSerPed + Str( Field->nNumPed ) + Field->cSufPed } ) )
 
       ( cPedPrvT )->( dbCloseArea() )
    else
@@ -9183,7 +9187,7 @@ Function DesignReportPedPrv( oFr, cDoc )
                                                    + ;
                                                    "procedure DetalleOnMasterDetail(Sender: TfrxComponent);"   + Chr(13) + Chr(10) + ;
                                                    "begin"                                                     + Chr(13) + Chr(10) + ;
-                                                   "CallHbFunc('nTotPedPrv');"                                 + Chr(13) + Chr(10) + ;
+                                                   ";"                                                         + Chr(13) + Chr(10) + ;
                                                    "end;"                                                      + Chr(13) + Chr(10) + ;
                                                    "begin"                                                     + Chr(13) + Chr(10) + ;
                                                    "end." )
