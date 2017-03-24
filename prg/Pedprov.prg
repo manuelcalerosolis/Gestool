@@ -3167,6 +3167,9 @@ STATIC FUNCTION SetDlgMode( aGet, aTmp, aTmpPed, nMode, oSayPr1, oSayPr2, oSayVp
 
    end case
 
+   MsgInfo( aTmp[ _CVALPR1 ], "Valor 1" )
+   MsgInfo( aTmp[ _CVALPR2 ], "Valor 2" )
+
    if !empty( aTmp[ _CCODPR1 ] )
       aGet[ _CVALPR1 ]:Show()
       aGet[ _CVALPR1 ]:lValid()

@@ -32,6 +32,8 @@ Function beforeAppendLine( aTmp, aGet, nView, nMode, lInicializate )
       setVariablesInHash( "Barco", uValor )
    end if
 
+   MsgInfo( uValor, "uValor 1" )
+
    aTmp[ ( D():PedidosProveedoresLineas( nView ) )->( fieldpos( "cCodPr1" ) ) ]     := Padr( "0001", 20 )
    aTmp[ ( D():PedidosProveedoresLineas( nView ) )->( fieldpos( "cValPr1" ) ) ]     := Padr( uValor, 40 )
 
@@ -45,6 +47,8 @@ Function beforeAppendLine( aTmp, aGet, nView, nMode, lInicializate )
       uValor   := brwPropiedadActual( , , Padr( "0002", 20 ) )
       setVariablesInHash( "Marea", uValor )
    end if
+
+   MsgInfo( uValor, "uValor 2" )
 
    aTmp[ ( D():PedidosProveedoresLineas( nView ) )->( fieldpos( "cCodPr2" ) ) ]     := Padr( "0002", 20 )
    aTmp[ ( D():PedidosProveedoresLineas( nView ) )->( fieldpos( "cValPr2" ) ) ]     := Padr( uValor, 40 )
