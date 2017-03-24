@@ -168,6 +168,8 @@ CLASS TDataCenter
    METHOD EnableTriggers()
    METHOD SetAplicationID( cNombreUsuario )
 
+   METHOD SqlCreateIndex( tableName, indexName, tagName, Expression, Condition )
+
    METHOD ExecuteSqlStatement( cSql, cSqlStatement )
    METHOD ExecuteSqlDirect( cSql )
    
@@ -2932,17 +2934,17 @@ METHOD BuildEmpresa()
    Albaranes Clientes
    */
 
-   oDataTable              := TDataTable():New( "AlbCliT" )
-   oDataTable:lTrigger     := ::lTriggerAuxiliares   
-   oDataTable:cDataFile    := cPatEmp( , .t. ) + "AlbCliT.Dbf"
-   oDataTable:cIndexFile   := cPatEmp( , .t. ) + "AlbCliT.Cdx"
-   oDataTable:cDescription := "Albaranes de clientes"
-   oDataTable:bCreateFile  := {| cPath | mkAlbCli( cPath ) }
-   oDataTable:bCreateIndex := {| cPath | rxAlbCli( cPath ) }
-   oDataTable:bSyncFile    := {|| SynAlbCli( cPatEmp() ) }
-   oDatatable:aDictionary  := hashDictionary( aItmAlbCli() )
-   oDatatable:aDefaultValue:= hashDefaultValue( aItmAlbCli() )
-   oDatatable:bId          := {|| Field->cSerAlb + str( Field->nNumAlb ) + Field->cSufAlb }
+   oDataTable                 := TDataTable():New( "AlbCliT" )
+   oDataTable:lTrigger        := ::lTriggerAuxiliares   
+   oDataTable:cDataFile       := cPatEmp( , .t. ) + "AlbCliT.Dbf"
+   oDataTable:cIndexFile      := cPatEmp( , .t. ) + "AlbCliT.Cdx"
+   oDataTable:cDescription    := "Albaranes de clientes"
+   oDataTable:bCreateFile     := {|| mkAlbCli( cPatEmp() ) }
+   oDataTable:adsCreateIndex  := {|| reindexAdsAlbCli( cPatEmp() ) }
+   oDataTable:bSyncFile       := {|| synAlbCli( cPatEmp() ) }
+   oDatatable:aDictionary     := hashDictionary( aItmAlbCli() )
+   oDatatable:aDefaultValue   := hashDefaultValue( aItmAlbCli() )
+   oDatatable:bId             := {|| Field->cSerAlb + str( Field->nNumAlb ) + Field->cSufAlb }
    ::AddEmpresaTable( oDataTable )
 
    oDataTable              := TDataTable():New( "AlbCliL" )
@@ -4312,13 +4314,18 @@ METHOD ReindexTable( oTable )
 
    oBlock         := ErrorBlock( { | oError | ApoloBreak( oError ) } )
    BEGIN SEQUENCE
-
-      dbusearea( .t., ( cDriver() ), ( oTable:cName ), "Table", .f. )
-      if !neterr() .and. ( "Table" )->( used() )
-         ( "Table" )->( ordsetfocus( 1 ) )
-         ( "Table" )->( adsReindex() )
-         ( "Table" )->( dbclosearea() )
-      end if 
+/*
+      if !empty( oTable:adsCreateIndex )
+         eval( oTable:adsCreateIndex )
+      else
+*/      
+         dbusearea( .t., ( cDriver() ), ( oTable:cName ), "Table", .f. )
+         if !neterr() .and. ( "Table" )->( used() )
+            ( "Table" )->( ordsetfocus( 1 ) )
+            ( "Table" )->( adsReindex() )
+            ( "Table" )->( dbclosearea() )
+         end if 
+//    end if 
 
    RECOVER USING oError
 
@@ -4442,8 +4449,6 @@ METHOD ActualizaEmpresa( oMsg )
 
    // ::BuildEmpresa()
 
-   // Eliminando tablas del diccionario----------------------------------------
-  
    // Recargamos el diccionario de datos---------------------------------------
 
    ::ReLoadTables()
@@ -4480,7 +4485,7 @@ METHOD ActualizaEmpresa( oMsg )
 
    // Creamos las nuesvas estructuras------------------------------------------
 
-   SetIndexToADSCDX()
+   setIndexToADSCDX()
 
    ::BuildData()
 
@@ -4563,6 +4568,47 @@ METHOD SetAplicationID( cNombreUsuario )
    cStm                    := "EXECUTE PROCEDURE sp_SetApplicationID( '" + Alltrim( cNombreUsuario ) + "' ) ;"
 
 RETURN ( ::ExecuteSqlStatement( cStm, "SetAplicationID" ) )
+
+//---------------------------------------------------------------------------//
+
+METHOD SqlCreateIndex( tableName, indexName, tagName, Expression, Condition, Options, PageSize )
+
+   local cStm              
+
+   tableName            := quoted( tableName )
+
+   if empty( indexName )
+      indexName         := "N"
+   else
+      indexName         := quoted( indexName )
+   end if
+   tagName              := quoted( tagName )
+   Expression           := quoted( Expression )
+
+   if empty( Condition )
+      Condition         := "NULL"
+   else
+      Condition         := quoted( Condition )
+   end if 
+
+   if empty( Options )
+      Options           := alltrim( str( nAnd( ADS_ASCENDING, ADS_COMPOUND ) ) )
+   else
+      Options           := alltrim( str( Options ) )
+   end if 
+
+   if empty( PageSize )
+      PageSize          := alltrim( str( 1024 ) )
+   else
+      PageSize          := alltrim( str( PageSize ) )
+   end if 
+
+   cStm                 := "EXECUTE PROCEDURE sp_CreateIndex( " + tableName + ", " + indexName + ", " + tagName + ", " + Expression + ", " +  Condition + ", " + Options + ", " + PageSize + " );"
+
+   msgalert( cStm )
+   logwrite( cStm )
+
+RETURN ( ::ExecuteSqlStatement( cStm, "CreateIndex" ) )
 
 //---------------------------------------------------------------------------//
 
@@ -4789,7 +4835,8 @@ CLASS TDataTable
    DATA  hDefinition 
    DATA  bSyncFile   
    DATA  bCreateFile
-   DATA  bCreateIndex   
+   DATA  bCreateIndex
+   DATA  adsCreateIndex   
    DATA  aDictionary
    DATA  hIndex         
    DATA  aDefaultValue

@@ -196,6 +196,8 @@ METHOD CloseFiles() CLASS TDetCamposExtra
       ::oDbf:End()
    end if
 
+   ::closeDivisa()
+
    if ::oCamposExtra != nil
       ::oCamposExtra:CloseFiles()
       ::oCamposExtra:End()

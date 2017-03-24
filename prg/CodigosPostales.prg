@@ -22,7 +22,7 @@ CLASS CodigosPostales FROM TMant
 
    CLASSDATA oProvincias
 
-   METHOD New( cPath, oWndParent, oMenuItem ) CONSTRUCTOR
+   METHOD New( cPath, oWndParent, oMenuItem )         CONSTRUCTOR
    METHOD Create( cPath ) CONSTRUCTOR
 
    METHOD GetInstance()                               INLINE ( if( empty( ::oInstance ), ::oInstance := ::New(), ), ::oInstance ) 
@@ -30,6 +30,8 @@ CLASS CodigosPostales FROM TMant
    METHOD OpenFiles( lExclusive, cPath )
    METHOD OpenService( lExclusive, cPath )            INLINE ( ::OpenFiles( lExclusive, cPath ) )
    METHOD CloseFiles() 
+   METHOD CloseService()                              INLINE ( ::CloseFiles() )
+   
    METHOD DefineFiles()
 
    METHOD Resource( nMode )

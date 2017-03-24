@@ -421,18 +421,30 @@ CLASS D
       METHOD PedidosProveedoresId( nView )                     INLINE ( ( ::Get( "PedProvT", nView ) )->cSerPed + str( ( ::Get( "PedProvT", nView ) )->nNumPed, 9 ) + ( ::Get( "PedProvT", nView ) )->cSufPed )
       METHOD gotoIdPedidosProveedores( id, nView )             INLINE ( ::seekInOrd( ::PedidosProveedores( nView ), id, "nNumPed" ) ) 
 
-   METHOD PedidosProveedoresLineasTableName( lADS )            INLINE ( if( isTrue( lADS ), cPatEmp() + "PedProvL", "PedProvL" ) )
+   METHOD PedidosProveedoresLineasTableName()                  INLINE ( "PedProvL" )
+   METHOD adsPedidosProveedoresLineasTableName()               INLINE ( cPatEmp() + ::PedidosProveedoresLineasTableName() )
    METHOD PedidosProveedoresLineas( nView )                    INLINE ( ::Get( "PedProvL", nView ) )
       METHOD PedidosProveedoresLineasId( nView )               INLINE ( ( ::Get( "PedProvL", nView ) )->cSerPed + str( ( ::Get( "PedProvL", nView ) )->nNumPed, 9 ) + ( ::Get( "PedProvL", nView ) )->cSufPed )
       METHOD getStatusPedidosProveedoresLineas( nView )        INLINE ( ::aStatus := aGetStatus( ::PedidosProveedoresLineas( nView ) ) )
       METHOD setStatusPedidosProveedoresLineas( nView )        INLINE ( SetStatus( ::PedidosProveedoresLineas( nView ), ::aStatus ) ) 
       METHOD setFocusPedidosProveedoresLineas( cTag, nView )   INLINE ( ::cTag   := ( ::PedidosProveedoresLineas( nView )  )->( ordSetFocus( cTag ) ) )
 
-   METHOD sqlDeletePedidosProveedoresLineasId( cSerie, nNumero, cSufijo, nView )        
+   METHOD sqlDeletePedidosProveedoresLineasId( cSerie, nNumero, cSufijo ) ;
+                                                               INLINE ::sqlDeletePedidosProveedoresId( cSerie, nNumero, cSufijo, ::adsPedidosProveedoresLineasTableName() )        
 
-   METHOD PedidosProveedoresIncidencias( nView )               INLINE ( ::Get( "PedPrvI", nView ) )
+   METHOD PedidosProveedoresIncidenciasTableName()             INLINE ( "PedPrvI" )
+   METHOD adsPedidosProveedoresIncidenciasTableName()          INLINE ( cPatEmp() + ::PedidosProveedoresIncidenciasTableName() )
+   METHOD PedidosProveedoresIncidencias( nView )               INLINE ( ::Get( ::PedidosProveedoresIncidenciasTableName(), nView ) )
+   METHOD sqlDeletePedidosProveedoresIncidenciasId( cSerie, nNumero, cSufijo ) ;
+                                                               INLINE ::sqlDeletePedidosProveedoresId( cSerie, nNumero, cSufijo, ::adsPedidosProveedoresIncidenciasTableName() )        
 
+   METHOD PedidosProveedoresDocumentosTableName()              INLINE ( "PedPrvD" )
+   METHOD adsPedidosProveedoresDocumentosTableName()           INLINE ( cPatEmp() + ::PedidosProveedoresDocumentosTableName() )
    METHOD PedidosProveedoresDocumentos( nView )                INLINE ( ::Get( "PedPrvD", nView ) )
+   METHOD sqlDeletePedidosProveedoresDocumentosId( cSerie, nNumero, cSufijo ) ;
+                                                               INLINE ::sqlDeletePedidosProveedoresId( cSerie, nNumero, cSufijo, ::adsPedidosProveedoresDocumentosTableName() )        
+
+   METHOD sqlDeletePedidosProveedoresId( cSerie, nNumero, cSufijo, cTableName )
 
    // Albaranes de proveedores-------------------------------------------------
 
@@ -1616,11 +1628,11 @@ Return ( .t. )
 
 //---------------------------------------------------------------------------//
 
-METHOD sqlDeletePedidosProveedoresLineasId( cSerie, nNumero, cSufijo )        
+METHOD sqlDeletePedidosProveedoresId( cSerie, nNumero, cSufijo, cTableName )        
 
    local cStatement  := ""
 
-   cStatement        := "DELETE FROM " + ::PedidosProveedoresLineasTableName( .t. ) + " " + ;
+   cStatement        := "DELETE FROM " + cTableName + " " + ;
                            "WHERE " + ;
                               "cSerPed = " + quoted( cSerie )  + " AND " + ;
                               "nNumPed = " + quoted( nNumero ) + " AND " + ;
@@ -1630,4 +1642,3 @@ Return ( TDataCenter():ExecuteSqlStatement( cStatement ) )
 
 //---------------------------------------------------------------------------//
    
-

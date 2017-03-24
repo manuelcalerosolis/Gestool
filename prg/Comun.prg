@@ -281,7 +281,7 @@ Return ( .t. )
 
 Function Test()
 
-   D():sqlDeletePedidosProveedoresLineasId("A", 1, "00")
+   // reindexAdsAlbCli()
 
 Return ( nil )
 

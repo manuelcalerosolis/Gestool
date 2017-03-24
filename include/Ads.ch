@@ -275,6 +275,10 @@
 #define ADS_DD_DFV_NONE                   2
 #define ADS_DD_DFV_VALUES_STORED          3
 
+#define ADS_ASCENDING            0x00000000
+#define ADS_COMPOUND             0x00000002
+#define ADS_DESCENDING           0x00000008
+
 /* Commands */
 
 #command SET FILETYPE TO <x:NTX,CDX,ADT,VFP>                              ;

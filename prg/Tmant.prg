@@ -153,6 +153,7 @@ CLASS TMant
    METHOD GetSeconds()                    INLINE ( msgInfo( ::nSeconds - Seconds() ) )
 
    METHOD lLoadDivisa()
+   METHOD closeDivisa()
 
    METHOD SetFilter( cFilter )            INLINE ( ::oDbf:SetFilter( cFilter ) )
    METHOD KillFilter()                    INLINE ( ::oDbf:SetFilter() )
@@ -1497,7 +1498,7 @@ METHOD lLoadDivisa( cCodDiv )
 
    local lRet
 
-   DEFAULT cCodDiv:= cDivEmp()
+   DEFAULT cCodDiv   := cDivEmp()
 
    if Empty( ::oDbfDiv )
       DATABASE NEW ::oDbfDiv PATH ( cPatDat() ) FILE "DIVISAS.DBF" VIA ( cDriver() ) SHARED INDEX "DIVISAS.CDX"
@@ -1529,6 +1530,18 @@ METHOD lLoadDivisa( cCodDiv )
    ::cPicUnd      := MasUnd()
 
 return ( lRet )
+
+//----------------------------------------------------------------------------//
+
+METHOD closeDivisa( cCodDiv )
+
+   if !empty( ::oDbfDiv ) .and. ( ::oDbfDiv:used() )
+      ::oDbfDiv:end()
+   end if
+
+   ::oDbfDiv   := nil
+
+Return ( nil )
 
 //----------------------------------------------------------------------------//
 

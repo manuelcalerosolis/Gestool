@@ -1,5 +1,6 @@
 #include "FiveWin.Ch"
 #include "Factu.ch" 
+#include "Ads.ch"
 
 //--------------------------------------------------------------------------//
 
@@ -417,6 +418,24 @@ FUNCTION rxCount( cPath, oMeter )
    else
 
       msgStop( "Imposible abrir en modo exclusivo la tabla de contadores", "Reindexando contadores" )
+
+   end if
+
+Return ( nil )
+
+//---------------------------------------------------------------------------//
+
+Function toAdsCount( cPath )
+
+   local dbf
+
+   dbUseArea( .t., cDriver(), cPath + "nCount.Dbf", cCheckArea( "nCount", @dbf ), .f., .f. )
+
+   if !( dbf )->( netErr() )
+      
+      COPY TO ( "nCount.Adt" ) VIA "ADT"
+
+      ( dbf )->( dbCloseArea() )
 
    end if
 

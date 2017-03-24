@@ -193,8 +193,9 @@ static dbfTmpSer
 static cTmpArt
 static cTmpSer
 static cTmpPed
-static cTmpInc
-static cTmpDoc
+static tmpPedidosIncidencias
+static tmpPedidosLineas
+static tmpPedidosDocumentos
 static dbfFamilia
 static dbfArtPrv
 
@@ -213,7 +214,6 @@ static cPinDiv
 static cPicUnd
 static nDinDiv
 static nDirDiv
-static cNewFile
 static nGetNeto         := 0
 static nGetIva          := 0
 static nGetReq          := 0
@@ -2550,7 +2550,7 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbf, oBrw, aTmpPed, cCodArt, nMode )
 
    cOldCodArt           := aTmp[ _CREF ]
    cOldUndMed           := aTmp[ _CUNIDAD ]
-   cTipoCtrCoste        := AllTrim( aTmp[ _CTIPCTR ] )
+   cTipoCtrCoste        := alltrim( aTmp[ _CTIPCTR ] )
 
    if nMode == APPD_MODE
 
@@ -2590,8 +2590,16 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbf, oBrw, aTmpPed, cCodArt, nMode )
       TITLE       LblTitle( nMode ) + "líneas a pedidos de proveedores"
 
 	  REDEFINE FOLDER oFld ID 400 OF oDlg ;
-         PROMPT   "&General"  , "Da&tos",    "&Anular",     "&Observaciones", "&Centro coste" ;
-         DIALOGS  "LPEDPRV_1" , "LPEDPRV_2", "LFACPRV_4",   "LFACPRV_6",      "LCTRCOSTE"
+         PROMPT   "&General",;
+                  "Da&tos",;
+                  "&Anular",;
+                  "&Observaciones",;
+                  "&Centro coste" ;
+         DIALOGS  "LPEDPRV_1",;
+                  "LPEDPRV_2",;
+                  "LFACPRV_4",;
+                  "LFACPRV_6",;
+                  "LCTRCOSTE"
 
       REDEFINE GET aGet[ _CREF ] VAR aTmp[ _CREF ];
          ID       110 ;
@@ -4244,7 +4252,7 @@ RETURN .T.
 STATIC FUNCTION BeginTrans( aTmp, nMode )
 
    local lErrors     := .f.
-   local cDbf        := "PProL"
+   local cDbfLin     := "PProL"
    local cDbfInc     := "PProI"
    local cDbfDoc     := "PProD"
    local nPedido     := aTmp[ _CSERPED ] +  Str( aTmp[ _NNUMPED ] ) + aTmp[ _CSUFPED ]
@@ -4253,39 +4261,39 @@ STATIC FUNCTION BeginTrans( aTmp, nMode )
 
    BEGIN SEQUENCE
 
-      cNewFile       := cGetNewFileName( cPatTmp() + cDbf )
-      cTmpInc        := cGetNewFileName( cPatTmp() + cDbfInc )
-      cTmpDoc        := cGetNewFileName( cPatTmp() + cDbfDoc )
+      tmpPedidosLineas        := cGetNewFileName( cPatTmp() + cDbfLin )
+      tmpPedidosIncidencias   := cGetNewFileName( cPatTmp() + cDbfInc )
+      tmpPedidosDocumentos    := cGetNewFileName( cPatTmp() + cDbfDoc )
 
       /*
       Primero Crear la base de datos local----------------------------------------
       */
 
-      dbCreate( cNewFile, aSqlStruct( aColPedPrv() ), cLocalDriver() )
-      dbUseArea( .t., cLocalDriver(), cNewFile, cCheckArea( cDbf, @dbfTmpLin ), .f. )
+      dbCreate( tmpPedidosLineas, aSqlStruct( aColPedPrv() ), cLocalDriver() )
+      dbUseArea( .t., cLocalDriver(), tmpPedidosLineas, cCheckArea( cDbfLin, @dbfTmpLin ), .f. )
 
       if !( dbfTmpLin )->( neterr() )
 
          ( dbfTmpLin )->( OrdCondSet( "!Deleted()", {||!Deleted() } ) )
-         ( dbfTmpLin )->( OrdCreate( cNewFile, "nNumLin", "Str( nNumLin, 4 )", {|| Str( Field->nNumLin, 4 ) } ) )
+         ( dbfTmpLin )->( OrdCreate( tmpPedidosLineas, "nNumLin", "Str( nNumLin, 4 )", {|| Str( Field->nNumLin, 4 ) } ) )
 
          ( dbfTmpLin )->( OrdCondSet( "!Deleted()", {||!Deleted() } ) )
-         ( dbfTmpLin )->( OrdCreate( cNewFile, "cRef", "cRef", {|| Field->cRef } ) )
+         ( dbfTmpLin )->( OrdCreate( tmpPedidosLineas, "cRef", "cRef", {|| Field->cRef } ) )
 
          ( dbfTmpLin )->( OrdCondSet( "!Deleted()", {||!Deleted() } ) )
-         ( dbfTmpLin )->( OrdCreate( cNewFile, "cDetalle", "Left( cDetalle, 100 )", {|| Left( Field->cDetalle, 100 ) } ) )
+         ( dbfTmpLin )->( OrdCreate( tmpPedidosLineas, "cDetalle", "Left( cDetalle, 100 )", {|| Left( Field->cDetalle, 100 ) } ) )
 
          ( dbfTmpLin )->( OrdCondSet( "!Deleted()", {|| !Deleted() } ) )
-         ( dbfTmpLin )->( OrdCreate( cNewFile, "nUniCaja", "nUniCaja", {|| Field->nUniCaja } ) )
+         ( dbfTmpLin )->( OrdCreate( tmpPedidosLineas, "nUniCaja", "nUniCaja", {|| Field->nUniCaja } ) )
 
          ( dbfTmpLin )->( OrdCondSet( "!Deleted()", {||!Deleted() } ) )
-         ( dbfTmpLin )->( OrdCreate( cNewFile, "Recno", "Str( Recno() )", {|| Str( Recno() ) } ) )
+         ( dbfTmpLin )->( OrdCreate( tmpPedidosLineas, "Recno", "Str( Recno() )", {|| Str( Recno() ) } ) )
 
          ( dbfTmpLin )->( OrdCondSet( "!Deleted()", {||!Deleted() } ) )
-         ( dbfTmpLin )->( OrdCreate( cNewFile, "cRefPrv", "cRefPrv", {|| Field->cRefPrv } ) )
+         ( dbfTmpLin )->( OrdCreate( tmpPedidosLineas, "cRefPrv", "cRefPrv", {|| Field->cRefPrv } ) )
 
          ( dbfTmpLin )->( OrdCondSet( "!Deleted()", {||!Deleted() } ) )
-         ( dbfTmpLin )->( OrdCreate( cNewFile, "nPosPrint", "Str( nPosPrint, 4 )", {|| Str( Field->nPosPrint ) } ) )
+         ( dbfTmpLin )->( OrdCreate( tmpPedidosLineas, "nPosPrint", "Str( nPosPrint, 4 )", {|| Str( Field->nPosPrint ) } ) )
 
       end if
 
@@ -4293,23 +4301,23 @@ STATIC FUNCTION BeginTrans( aTmp, nMode )
       Creamos el fichero de incidencias-------------------------------------------
       */
 
-      dbCreate( cTmpInc, aSqlStruct( aIncPedPrv() ), cLocalDriver() )
-      dbUseArea( .t., cLocalDriver(), cTmpInc, cCheckArea( cDbfInc, @dbfTmpInc ), .f. )
+      dbCreate( tmpPedidosIncidencias, aSqlStruct( aIncPedPrv() ), cLocalDriver() )
+      dbUseArea( .t., cLocalDriver(), tmpPedidosIncidencias, cCheckArea( cDbfInc, @dbfTmpInc ), .f. )
 
       if !( dbfTmpInc )->( neterr() )
          ( dbfTmpInc )->( ordCondSet( "!Deleted()", {||!Deleted() } ) )
-         ( dbfTmpInc )->( ordCreate( cTmpInc, "Recno", "Recno()", {|| Recno() } ) )
+         ( dbfTmpInc )->( ordCreate( tmpPedidosIncidencias, "Recno", "Recno()", {|| Recno() } ) )
       end if
 
       /*
       Creamos el fichero de Documentos--------------------------------------------
       */
 
-      dbCreate( cTmpDoc, aSqlStruct( aPedPrvDoc() ), cLocalDriver() )
-      dbUseArea( .t., cLocalDriver(), cTmpDoc, cCheckArea( cDbfDoc, @dbfTmpDoc ), .f. )
+      dbCreate( tmpPedidosDocumentos, aSqlStruct( aPedPrvDoc() ), cLocalDriver() )
+      dbUseArea( .t., cLocalDriver(), tmpPedidosDocumentos, cCheckArea( cDbfDoc, @dbfTmpDoc ), .f. )
       if !( dbfTmpDoc )->( neterr() )
          ( dbfTmpDoc )->( ordCondSet( "!Deleted()", {||!Deleted() } ) )
-         ( dbfTmpDoc )->( ordCreate( cTmpDoc, "Recno", "Recno()", {|| Recno() } ) )
+         ( dbfTmpDoc )->( ordCreate( tmpPedidosDocumentos, "Recno", "Recno()", {|| Recno() } ) )
       end if
 
       /*
@@ -4332,7 +4340,7 @@ STATIC FUNCTION BeginTrans( aTmp, nMode )
 
       end if
 
-      ( dbfTmpLin )->( dbGoTop() )
+      ( dbfTmpLin )->( dbgotop() )
 
       /*
       A¤adimos desde el fichero de incidencias------------------------------------
@@ -4343,13 +4351,14 @@ STATIC FUNCTION BeginTrans( aTmp, nMode )
          while ( ( D():PedidosProveedoresIncidencias( nView ) )->cSerPed + Str( ( D():PedidosProveedoresIncidencias( nView ) )->nNumPed ) + ( D():PedidosProveedoresIncidencias( nView ) )->cSufPed == nPedido ) .AND. ( D():PedidosProveedoresIncidencias( nView ) )->( !eof() )
 
             dbPass( D():PedidosProveedoresIncidencias( nView ), dbfTmpInc, .t. )
+
             ( D():PedidosProveedoresIncidencias( nView ) )->( dbSkip() )
 
          end while
 
       end if
 
-      ( dbfTmpInc )->( dbGoTop() )
+      ( dbfTmpInc )->( dbgotop() )
 
       /*
       A¤adimos desde el fichero de Documentos-------------------------------------
@@ -4360,13 +4369,14 @@ STATIC FUNCTION BeginTrans( aTmp, nMode )
          while ( ( D():PedidosProveedoresDocumentos( nView ) )->cSerPed + Str( ( D():PedidosProveedoresDocumentos( nView ) )->nNumPed ) + ( D():PedidosProveedoresDocumentos( nView ) )->cSufPed == nPedido ) .AND. ( D():PedidosProveedoresDocumentos( nView ) )->( !eof() )
 
             dbPass( D():PedidosProveedoresDocumentos( nView ), dbfTmpDoc, .t. )
+
             ( D():PedidosProveedoresDocumentos( nView ) )->( dbSkip() )
 
          end while
 
       end if
 
-      ( dbfTmpDoc )->( dbGoTop() )
+      ( dbfTmpDoc )->( dbgotop() )
 
       /*
       Cargamos los temporales de los campos extra---------------------------------
@@ -4404,12 +4414,6 @@ STATIC FUNCTION EndTrans( aGet, aTmp, oBrw, nMode, oDlg )
    if empty( aTmp[ _CSERPED ] )
       aTmp[ _CSERPED ]  := "A"
    end if
-
-   nNumLin              := 1
-   cSerie               := aTmp[ _CSERPED ]
-   nPedido              := aTmp[ _NNUMPED ]
-   cSufijo              := aTmp[ _CSUFPED ]
-   cNumPedCli           := aTmp[ _CNUMPEDCLI ]
 
    // Comprobamos la fecha del documento---------------------------------------
 
@@ -4450,18 +4454,46 @@ STATIC FUNCTION EndTrans( aGet, aTmp, oBrw, nMode, oDlg )
 
    oMsgText( "Archivando" )
 
-   aTmp[ _DFECCHG ]     := GetSysDate()
-   aTmp[ _CTIMCHG ]     := Time()
+   // Guardamos datos -------------------------------------------------------
+
+   nNumLin              := 1
+
+   cSerie               := aTmp[ _CSERPED ]
+   nPedido              := aTmp[ _NNUMPED ]
+   cSufijo              := aTmp[ _CSUFPED ]
+   cNumPedCli           := aTmp[ _CNUMPEDCLI ]
+
+   aTmp[ _DFECCHG ]     := getSysDate()
+   aTmp[ _CTIMCHG ]     := time()
+   aTmp[ _NTOTNET ]     := nTotNet
+   aTmp[ _NTOTIVA ]     := nTotIva
+   aTmp[ _NTOTREQ ]     := nTotReq
+   aTmp[ _NTOTPED ]     := nTotPed
+
+   // control de errores-------------------------------------------------------
+
+   oBlock               := ErrorBlock( {| oError | ApoloBreak( oError ) } )
+   BEGIN SEQUENCE
+
+   beginTransaction()
 
    do case
    case isAppendOrDuplicateMode( nMode )
+
+      oMsgText( "Obteniendo nuevo número" )
 
       nPedido           := aTmp[ _NNUMPED ]  := nNewDoc( cSerie, D():PedidosProveedores( nView ), "nPedPrv", , D():Contadores( nView ) )
       cSufijo           := aTmp[ _CSUFPED ]  := retSufEmp()
 
    case isEditMode( nMode ) .and. ( nPedido != 0 )
 
+      oMsgText( "Eliminando registros anteriores" )
+
       D():sqlDeletePedidosProveedoresLineasId( cSerie, nPedido, cSufijo )
+
+      D():sqlDeletePedidosProveedoresIncidenciasId( cSerie, nPedido, cSufijo )
+
+      D():sqlDeletePedidosProveedoresDocumentosId( cSerie, nPedido, cSufijo )
 
 /*
       while ( D():PedidosProveedoresLineas( nView ) )->( dbSeek( cSerie + str( nPedido ) + cSufijo ) )
@@ -4470,7 +4502,7 @@ STATIC FUNCTION EndTrans( aGet, aTmp, oBrw, nMode, oDlg )
             ( D():PedidosProveedoresLineas( nView ) )->( dbUnLock() )
          end if
       end while
-*/
+
 
       while ( D():PedidosProveedoresIncidencias( nView ) )->( dbSeek( cSerie + str( nPedido ) + cSufijo ) )
          if dbLock( D():PedidosProveedoresIncidencias( nView ) )
@@ -4485,67 +4517,84 @@ STATIC FUNCTION EndTrans( aGet, aTmp, oBrw, nMode, oDlg )
             ( D():PedidosProveedoresDocumentos( nView ) )->( dbUnLock() )
          end if
       end while
+*/
 
    end case
-
-   // Guardamos los totales-------------------------------------------------------
-
-   aTmp[ _NTOTNET ]     := nTotNet
-   aTmp[ _NTOTIVA ]     := nTotIva
-   aTmp[ _NTOTREQ ]     := nTotReq
-   aTmp[ _NTOTPED ]     := nTotPed
-
-   oBlock               := ErrorBlock( {| oError | ApoloBreak( oError ) } )
-   BEGIN SEQUENCE
-
-   BeginTransaction()
 
    // Quitamos los filtros--------------------------------------------------------
 
    ( dbfTmpLin )->( dbClearFilter() )
 
-   oMsgProgress()
+   oMsgText( "Escribiendo lineas de pedidos" )
+
    oMsgProgress():SetRange( 0, ( dbfTmpLin )->( LastRec() ) )
 
    // Ahora escribimos en el fichero definitivo-----------------------------------
 
    ( dbfTmpLin )->( dbgotop() )
    while !( dbfTmpLin )->( eof() )
+
       if !( ( dbfTmpLin )->nUniCaja == 0 .and. ( dbfTmpLin )->lFromImp )
          dbPass( dbfTmpLin, D():PedidosProveedoresLineas( nView ), .t., cSerie, nPedido, cSufijo )
       end if
+
       D():CamposExtraLine( nView ):saveExtraField( ( dbfTmpLin )->cSerPed + Str( ( dbfTmpLin )->nNumPed ) + ( dbfTmpLin )->cSufPed + Str( ( dbfTmpLin )->nNumLin ), ( dbfTmpLin )->( ordkeyno() ) )
+
       ( dbfTmpLin )->( dbSkip() )
+
       oMsgProgress():Deltapos(1)
+
    end while
 
    // Ahora escribimos en el fichero definitivo de incidencias-----------------
 
+   oMsgText( "Escribiendo incidencias de pedidos" )
+
+   oMsgProgress():SetRange( 0, ( dbfTmpInc )->( LastRec() ) )
+
    ( dbfTmpInc )->( dbGoTop() )
    while ( dbfTmpInc )->( !eof() )
+
       dbPass( dbfTmpInc, D():PedidosProveedoresIncidencias( nView ), .t., cSerie, nPedido, cSufijo )
+
       ( dbfTmpInc )->( dbSkip() )
+
+      oMsgProgress():Deltapos(1)
+
    end while
 
    // Ahora escribimos en el fichero definitivo de documentos------------------
 
+   oMsgText( "Escribiendo documentos de pedidos" )
+
+   oMsgProgress():SetRange( 0, ( dbfTmpDoc )->( LastRec() ) )
+
    ( dbfTmpDoc )->( dbGoTop() )
    while ( dbfTmpDoc )->( !eof() )
+
       dbPass( dbfTmpDoc, D():PedidosProveedoresDocumentos( nView ), .t., cSerie, nPedido, cSufijo )
+
       ( dbfTmpDoc )->( dbSkip() )
+
+      oMsgProgress():Deltapos(1)
+
    end while
 
-   /*
-   Cargamos los temporales de los campos extra---------------------------------
-   */
+   // Cargamos los temporales de los campos extra---------------------------------
+
+   oMsgText( "Escribiendo campos extras de pedidos" )
 
    D():CamposExtraHeader( nView ):saveExtraField( cSerie + str( nPedido ) + cSufijo, "", nMode )
 
    // Salvamos el registro del pedido
 
+   oMsgText( "Escribiendo pedido" )
+
    WinGather( aTmp, , D():PedidosProveedores( nView ), oBrw, nMode )
 
    // Ponemos el pedido en su estado
+
+   oMsgText( "Actualizando estado del pedido" )
 
    D():Stocks( nView ):SetPedPrv( cSerie + str( nPedido ) + cSufijo )
 
@@ -4560,7 +4609,7 @@ STATIC FUNCTION EndTrans( aGet, aTmp, oBrw, nMode, oDlg )
    ErrorBlock( oBlock )
 
    oMsgText()
-   EndProgress()
+   endProgress()
 
    oDlg:Enable()
 
@@ -4588,9 +4637,9 @@ STATIC FUNCTION KillTrans( oBrwLin )
       ( dbfTmpDoc )->( dbCloseArea() )
    end if
 
-   dbfErase( cNewFile )
-   dbfErase( cTmpInc )
-   dbfErase( cTmpDoc )
+   dbfErase( tmpPedidosLineas )
+   dbfErase( tmpPedidosIncidencias )
+   dbfErase( tmpPedidosDocumentos )
 
    /*
    Guardamos los posibles cambios en el browse---------------------------------

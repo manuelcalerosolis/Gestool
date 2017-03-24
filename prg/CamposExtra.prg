@@ -122,11 +122,11 @@ METHOD New( cPath, oWndParent, oMenuItem ) CLASS TCamposExtra
    ::oWndParent            := oWndParent
    ::oDbf                  := nil
 
-   ::hActions              := {  "Texto" => {|| ::enableLongitud(), ::disableDefecto(), ::cTextLongitud( 1, 0 ) } ,;
+   ::hActions              := {  "Texto"  => {|| ::enableLongitud(), ::disableDefecto(), ::cTextLongitud( 1, 0 ) } ,;
                                  "Número" => {|| ::enableLongitud(), ::disableDefecto(), ::cTextLongitud( 1, 0 ) } ,;
-                                 "Fecha" => {|| ::disableLongitud(), ::cTextLongitud( 8, 0 ), ::disableDefecto() } ,;
-                                 "Si/No" => {|| ::disableLongitud(), ::cTextLongitud( 1, 0 ), ::disableDefecto() } ,;
-                                 "Lista" => {|| ::disableLongitud(), ::cTextLongitud( 10, 0 ), ::enableDefecto() } }
+                                 "Fecha"  => {|| ::disableLongitud(), ::cTextLongitud( 8, 0 ), ::disableDefecto() } ,;
+                                 "Si/No"  => {|| ::disableLongitud(), ::cTextLongitud( 1, 0 ), ::disableDefecto() } ,;
+                                 "Lista"  => {|| ::disableLongitud(), ::cTextLongitud( 10, 0 ), ::enableDefecto() } }
 
    ::aValoresDefecto       := { }
 
@@ -279,6 +279,8 @@ METHOD CloseFiles() CLASS TCamposExtra
    end if
 
    ::oDbf         := nil
+
+   ::closeDivisa()
 
    ::lOpenFiles   := .f.
 
