@@ -2387,7 +2387,7 @@ METHOD AddFacturaCliente() CLASS TFastVentasArticulos
       if empty( ::oDbf:nCosArt )
          ::oDbf:nCosArt := ::oDbf:nUniArt * nCosto( ::oDbf:cCodArt, ( D():Articulos( ::nView ) ), ::oArtKit:cAlias )
       end if 
-      
+
       ::oDbf:cCodPr1    := ( D():FacturasClientesLineas( ::nView ) )->cCodPr1
       ::oDbf:cCodPr2    := ( D():FacturasClientesLineas( ::nView ) )->cCodPr2
       ::oDbf:cValPr1    := ( D():FacturasClientesLineas( ::nView ) )->cValPr1
@@ -2417,7 +2417,7 @@ METHOD AddFacturaCliente() CLASS TFastVentasArticulos
       ::oDbf:cTipCtr    := ( D():FacturasClientesLineas( ::nView ) )->cTipCtr
       ::oDbf:cCodTerCtr := ( D():FacturasClientesLineas( ::nView ) )->cTerCtr
       ::oDbf:cNomTerCtr := NombreTerceroCentroCoste( ( D():FacturasClientesLineas( ::nView ) )->cTipCtr, ( D():FacturasClientesLineas( ::nView ) )->cTerCtr, ::nView )
-   
+
       if !empty( ( D():FacturasClientesLineas( ::nView ) )->cCodPrv ) 
          ::oDbf:cPrvHab := ( D():FacturasClientesLineas( ::nView ) )->cCodPrv
       else
@@ -2428,7 +2428,7 @@ METHOD AddFacturaCliente() CLASS TFastVentasArticulos
       Vamos a la cabecera por los datos que faltan-----------------
       */
 
-      if ( D():FacturasClientes( ::nView ) )->( dbseek( D():FacturasClientesLineasId( ::nView ) ) ) 
+      if ( D():FacturasClientes( ::nView ) )->( dbseek( ( D():FacturasClientesLineas( ::nView ) )->cSerie + Str( ( D():FacturasClientesLineas( ::nView ) )->nNumFac ) + ( D():FacturasClientesLineas( ::nView ) )->cSufFac ) ) 
 
          if ::oAtipicasCliente:Seek( ( D():FacturasClientes( ::nView ) )->cCodCli + ( D():FacturasClientesLineas( ::nView ) )->cRef ) .and. !empty( ::oAtipicasCliente:cCodEnv )
             ::oDbf:cCodEnv    := ::oAtipicasCliente:cCodEnv

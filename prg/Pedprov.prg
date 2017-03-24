@@ -3073,6 +3073,8 @@ STATIC FUNCTION SetDlgMode( aGet, aTmp, aTmpPed, nMode, oSayPr1, oSayPr2, oSayVp
 
    local cCodArt        := aGet[ _CREF ]:VarGet()
 
+   runScript( "PedidosProveedores\Lineas\beforeAppendLine.prg", aTmp, aGet, nView, nMode, ( ( dbfTmpLin )->( ordKeyCount() ) == 0 ) )
+
    if !uFieldEmpresa( "lUseBultos" )
       aGet[ __NBULTOS ]:Hide()
    else
@@ -3100,9 +3102,7 @@ STATIC FUNCTION SetDlgMode( aGet, aTmp, aTmpPed, nMode, oSayPr1, oSayPr2, oSayVp
 
    oSayPr2:SetText( "" )
    oSayVp2:SetText( "" )
-
-   runScript( "PedidosProveedores\Lineas\beforeAppendLine.prg", aTmp, aGet, nView, nMode, ( ( dbfTmpLin )->( ordKeyCount() ) == 0 ) )
-
+   
    do case
    case nMode == APPD_MODE
 
@@ -3639,9 +3639,9 @@ STATIC FUNCTION SaveDeta( aTmp, aGet, oBrwPrp, oFld, oDlg, oBrw, nMode, oTotal, 
 
       if lEntCon()
 
-         /*aCopy( dbBlankRec( dbfTmpLin ), aTmp )
+         aCopy( dbBlankRec( dbfTmpLin ), aTmp )
 
-         aEval( aGet, {| o, i | if( "GET" $ o:ClassName(), o:cText( aTmp[ i ] ), ) } )*/
+         aEval( aGet, {| o, i | if( "GET" $ o:ClassName(), o:cText( aTmp[ i ] ), ) } )
 
          SetDlgMode( aGet, aTmp, aTmpPed, nMode, oSayPr1, oSayPr2, oSayVp1, oSayVp2, oSayLote, oBrwPrp, oFld, oDlg, oTotal, oGetStk )
 
