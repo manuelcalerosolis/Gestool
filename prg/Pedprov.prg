@@ -3073,8 +3073,6 @@ STATIC FUNCTION SetDlgMode( aGet, aTmp, aTmpPed, nMode, oSayPr1, oSayPr2, oSayVp
 
    local cCodArt        := aGet[ _CREF ]:VarGet()
 
-   runScript( "PedidosProveedores\Lineas\beforeAppendLine.prg", aTmp, aGet, nView, nMode, ( ( dbfTmpLin )->( ordKeyCount() ) == 0 ) )
-
    if !uFieldEmpresa( "lUseBultos" )
       aGet[ __NBULTOS ]:Hide()
    else
@@ -3102,6 +3100,8 @@ STATIC FUNCTION SetDlgMode( aGet, aTmp, aTmpPed, nMode, oSayPr1, oSayPr2, oSayVp
 
    oSayPr2:SetText( "" )
    oSayVp2:SetText( "" )
+   
+   runScript( "PedidosProveedores\Lineas\beforeAppendLine.prg", aTmp, aGet, nView, nMode, ( ( dbfTmpLin )->( ordKeyCount() ) == 0 ) )
    
    do case
    case nMode == APPD_MODE
@@ -3167,15 +3167,15 @@ STATIC FUNCTION SetDlgMode( aGet, aTmp, aTmpPed, nMode, oSayPr1, oSayPr2, oSayVp
 
    end case
 
-   MsgInfo( aTmp[ _CVALPR1 ], "Valor 1" )
-   MsgInfo( aTmp[ _CVALPR2 ], "Valor 2" )
-
    if !empty( aTmp[ _CCODPR1 ] )
       aGet[ _CVALPR1 ]:Show()
-      aGet[ _CVALPR1 ]:lValid()
+      //aGet[ _CVALPR1 ]:lValid()
       oSayPr1:SetText( retProp( aTmp[ _CCODPR1 ], D():Propiedades( nView ) ) )
       oSayPr1:Show()
       oSayVp1:Show()
+      oSayVp1:cText( cNombrePropiedad( aTmp[ _CCODPR1 ], aTmp[ _CVALPR1 ], D():PropiedadesLineas( nView ) ) )
+      oSayVp1:Refresh()
+      aGet[ _CVALPR1 ]:Refresh()
    else
       aGet[ _CVALPR1 ]:Hide()
       oSayPr1:Hide()
@@ -3184,10 +3184,13 @@ STATIC FUNCTION SetDlgMode( aGet, aTmp, aTmpPed, nMode, oSayPr1, oSayPr2, oSayVp
 
    if !empty( aTmp[ _CCODPR2 ] )
       aGet[ _CVALPR2 ]:Show()
-      aGet[ _CVALPR2 ]:lValid()
+      //aGet[ _CVALPR2 ]:lValid()
       oSayPr2:SetText( retProp( aTmp[ _CCODPR2 ], D():Propiedades( nView ) ) )
       oSayPr2:Show()
       oSayVp2:Show()
+      oSayVp2:cText( cNombrePropiedad( aTmp[ _CCODPR2 ], aTmp[ _CVALPR2 ], D():PropiedadesLineas( nView ) ) )
+      oSayVp2:Refresh()
+      aGet[ _CVALPR2 ]:Refresh()
    else
       aGet[ _CVALPR2 ]:hide()
       oSayPr2:Hide()
@@ -3642,9 +3645,9 @@ STATIC FUNCTION SaveDeta( aTmp, aGet, oBrwPrp, oFld, oDlg, oBrw, nMode, oTotal, 
 
       if lEntCon()
 
-         aCopy( dbBlankRec( dbfTmpLin ), aTmp )
+         /*aCopy( dbBlankRec( dbfTmpLin ), aTmp )
 
-         aEval( aGet, {| o, i | if( "GET" $ o:ClassName(), o:cText( aTmp[ i ] ), ) } )
+         aEval( aGet, {| o, i | if( "GET" $ o:ClassName(), o:cText( aTmp[ i ] ), ) } )*/
 
          SetDlgMode( aGet, aTmp, aTmpPed, nMode, oSayPr1, oSayPr2, oSayVp1, oSayVp2, oSayLote, oBrwPrp, oFld, oDlg, oTotal, oGetStk )
 
