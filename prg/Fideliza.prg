@@ -722,7 +722,7 @@ METHOD LoadFabricante()
    local aFabricante := hb_ATokens( Alltrim( ::oDbf:mFabricant ) )
 
    if ::oDbfFab == nil .or. !::oDbfFab:Used()
-      DATABASE NEW ::oDbfFab PATH ( cPatArt() ) FILE "Fabricantes.Dbf" VIA ( cDriver() ) ALIAS "FABRIC" SHARED INDEX "Fabricantes.Cdx"
+      DATABASE NEW ::oDbfFab PATH ( cPatArt() ) FILE "Fabric.Dbf" VIA ( cDriver() ) ALIAS "FABRIC" SHARED INDEX "Fabric.Cdx"
    end if
 
    ::oDbfFab:GoTop()

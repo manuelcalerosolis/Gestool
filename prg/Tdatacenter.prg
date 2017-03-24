@@ -2232,11 +2232,12 @@ METHOD BuildEmpresa()
    ::AddEmpresaTable( oDataTable )
 */
 
-   oDataTable              := TDataTable():New( "Fabricantes" )
-   oDataTable:cDataFile    := cPatEmp( , .t. ) + "Fabricantes.Dbf"
-   oDataTable:cIndexFile   := cPatEmp( , .t. ) + "Fabricantes.Cdx"
+   oDataTable              := TDataTable():New( "Fabric" )
+   oDataTable:cDataFile    := cPatEmp( , .t. ) + "Fabric.Dbf"
+   oDataTable:cIndexFile   := cPatEmp( , .t. ) + "Fabric.Cdx"
    oDataTable:cDescription := "Fabricantes"
    oDataTable:bCreateFile  := {| cPath | TFabricantes():BuildFiles( cPath ) }
+   oDataTable:bSyncFile    := {|| TFabricantes():Create():Syncronize() }
    ::AddEmpresaTable( oDataTable )
 
    oDataTable              := TDataTable():New( "TarPreT" )

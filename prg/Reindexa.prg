@@ -522,6 +522,7 @@ METHOD GenIndices( oMsg )
          ::SetText( "Sincroniza líneas de ordenes de carga", ::aProgress[ 6 ]  )             ; SynOrdCar( ::cPathEmp )
          ::SetText( "Sincroniza líneas de movimientos de almacén", ::aProgress[ 6 ]  )       ; SynRemMov( ::cPathEmp )
          ::SetText( "Sincroniza unidades de medición", ::aProgress[ 6 ]  )                   ; UniMedicion():Create():Syncronize()
+         ::SetText( "Sincroniza Fabricantes", ::aProgress[ 6 ]  )                            ; TFabricantes():Create():Syncronize()
 
       end if
 
