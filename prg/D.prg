@@ -205,7 +205,7 @@ CLASS D
       METHOD unlockFacturasClientes( nView )                INLINE ( ( ::Get( "FacCliT", nView ) )->( dbUnLock() ) ) 
 
    METHOD FacturasClientesLineas( nView )                   INLINE ( ::Get( "FacCliL", nView ) )
-      METHOD FacturasClientesLineasId( nView )              INLINE ( ( ::Get( "FacCliL", nView ) )->cSerie + Str( ( ::Get( "FacCliL", nView ) )->nNumFac ) +  ( ::Get( "FacCliL", nView ) )->cSufFac )
+      METHOD FacturasClientesLineasId( nView )              INLINE ( ( ::Get( "FacCliL", nView ) )->cSerie + Str( ( ::Get( "FacCliL", nView ) )->nNumFac ) + ( ::Get( "FacCliL", nView ) )->cSufFac )
       METHOD FacturasClientesLineasEscandalloId( nView )    INLINE ( ( ::Get( "FacCliL", nView ) )->cSerie + str( ( ::Get( "FacCliL", nView ) )->nNumFac, 9 ) + ( ::Get( "FacCliL", nView ) )->cSufFac + Str( ( ::Get( "FacCliL", nView ) )->nNumLin )+ Str( ( ::Get( "FacCliL", nView ) )->nNumKit ) )
       METHOD FacturasClientesLineasEof( nView )             INLINE ( ( ::FacturasClientesLineas( nView ) )->( eof() ) )
       METHOD FacturasClientesLineasNotEof( nView )          INLINE (!( ::FacturasClientesLineasEof( nView ) ) ) 
