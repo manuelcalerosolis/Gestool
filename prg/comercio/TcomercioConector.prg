@@ -111,7 +111,7 @@ METHOD commandExecDirect( cCommand ) CLASS TComercioConector
    if ::TComercio:lDebugMode
       ::TComercio:addMegaCommand( cCommand )
       Return .f.      
-   end if 
+   end if
 
 Return ( TMSCommand():New( ::oConexionMySQLDatabase() ):ExecDirect( cCommand ) )
 

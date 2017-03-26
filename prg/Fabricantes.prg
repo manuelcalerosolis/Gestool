@@ -48,6 +48,8 @@ CLASS TFabricantes FROM TMant
    METHOD Save()
    METHOD Load()
 
+   Method Syncronize()
+
 END CLASS
 
 //----------------------------------------------------------------------------//
@@ -197,7 +199,7 @@ METHOD DefineFiles( cPath, cDriver )
    DEFAULT cPath        := ::cPath
    DEFAULT cDriver      := cDriver()
 
-   DEFINE DATABASE ::oDbf FILE "Fabricantes.Dbf" CLASS "Fabricantes" ALIAS "Fabrican" PATH ( cPath ) VIA ( cDriver ) COMMENT "Fabricantes o marcas"
+   DEFINE DATABASE ::oDbf FILE "Fabric.Dbf" CLASS "Fabric" ALIAS "Fabric" PATH ( cPath ) VIA ( cDriver ) COMMENT "Fabricantes o marcas"
 
       FIELD CALCULATE NAME "bSndDoc"            LEN  14  DEC 0 COMMENT { "Envio", "gc_mail2_16", 3 }     VAL {|| ::oDbf:lSndDoc }   BITMAPS "gc_mail2_12", "Nil16" COLSIZE 20 OF ::oDbf
       FIELD CALCULATE NAME "bPubInt"            LEN  14  DEC 0 COMMENT { "Publicar", "gc_earth_16", 3 }  VAL {|| ::oDbf:lPubInt}    BITMAPS "gc_earth_12", "Nil16" COLSIZE 20 OF ::oDbf
@@ -209,9 +211,9 @@ METHOD DefineFiles( cPath, cDriver )
       FIELD NAME "cUrlFab"             TYPE "C" LEN 250  DEC 0 COMMENT "Url"                          COLSIZE 200  OF ::oDbf
       FIELD NAME "lSndDoc"             TYPE "L" LEN   1  DEC 0 COMMENT "Envio"                        HIDE         OF ::oDbf
 
-      INDEX TO "Fabricantes.CDX"    TAG "cCodFab" ON "cCodFab"             COMMENT "Código"     NODELETED OF ::oDbf
-      INDEX TO "Fabricantes.CDX"    TAG "cNomFab" ON "cNomFab"             COMMENT "Nombre"     NODELETED OF ::oDbf
-      INDEX TO "Fabricantes.CDX"    TAG "cCodWeb" ON "Str( cCodWeb, 11 )"  COMMENT "Código web" NODELETED OF ::oDbf
+      INDEX TO "Fabric.CDX"    TAG "cCodFab" ON "cCodFab"             COMMENT "Código"     NODELETED OF ::oDbf
+      INDEX TO "Fabric.CDX"    TAG "cNomFab" ON "cNomFab"             COMMENT "Nombre"     NODELETED OF ::oDbf
+      INDEX TO "Fabric.CDX"    TAG "cCodWeb" ON "Str( cCodWeb, 11 )"  COMMENT "Código web" NODELETED OF ::oDbf
 
    END DATABASE ::oDbf
 
@@ -608,7 +610,7 @@ Method Process()
 
          ::oSender:SetText( "Procesando fichero " + cPatIn() + aFiles[ m, 1 ] )
 
-         if file( cPatSnd() + "Fabricantes.Dbf" )
+         if file( cPatSnd() + "Fabric.Dbf" )
 
             oFabricantes      := ::DefineFiles( cPatEmp() )
             oFabricantes:Activate()
@@ -665,8 +667,8 @@ Method Process()
 
             ::oSender:SetText( "Faltan ficheros" )
 
-            if !File( cPatSnd() + "Fabricantes.Dbf" )
-               ::oSender:SetText( "Falta " + cPatSnd() + "Fabricantes.Dbf" )
+            if !File( cPatSnd() + "Fabric.Dbf" )
+               ::oSender:SetText( "Falta " + cPatSnd() + "Fabric.Dbf" )
             end if
 
          end if
@@ -713,3 +715,42 @@ METHOD Load()
 RETURN ( Self )
 
 //----------------------------------------------------------------------------//
+
+Method Syncronize()
+
+   local cFabricantes
+
+   if ::OpenService( .t. )
+
+      if File( cPatEmp( , .t. ) + "Fabricantes.Dbf" )
+
+         USE ( cPatEmp( , .t. ) + "Fabricantes.Dbf" ) NEW VIA ( "DBFCDX" ) SHARED ALIAS ( cCheckArea( "Fabricantes", @cFabricantes ) )
+
+         ( cFabricantes )->( dbGoTop() )
+
+         while !( cFabricantes )->( Eof() )
+
+            if !::oDbf:SeekInOrd( ( cFabricantes )->cCodFab, "cCodFab" )
+               dbPass( cFabricantes, ::oDbf:cAlias, .t. )
+            end if
+
+            ( cFabricantes )->( dbSkip() )
+
+         end while
+
+         if cFabricantes != nil
+            ( cFabricantes )->( dbCloseArea() )
+         end if
+
+         dbfErase( cPatEmp( , .t. ) + "Fabricantes.Dbf" )
+         dbfErase( cPatEmp( , .t. ) + "Fabricantes.Cdx" )
+
+      end if
+
+      ::CloseService()
+
+   end if
+
+Return .t.
+
+//--------------------------------------------------------------------------//

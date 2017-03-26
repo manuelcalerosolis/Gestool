@@ -667,7 +667,7 @@ CLASS D
 
    METHOD Lenguajes( nView )                 INLINE ( ::Get( "Lenguaje", nView ) )
 
-   METHOD Fabricantes( nView )               INLINE ( ::Get( "Fabricantes", nView ) )
+   METHOD Fabricantes( nView )               INLINE ( ::Get( "Fabric", nView ) )
       METHOD gotoIdFabricantes( id, nView )  INLINE ( ::seekInOrd( ::Fabricantes( nView ), id, "cCodFab" ) ) 
 
    METHOD Ruta( nView )                      INLINE ( ::Get( "Ruta", nView ) )
