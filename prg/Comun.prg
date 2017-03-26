@@ -281,7 +281,7 @@ Return ( .t. )
 
 Function Test()
 
-   // reindexAdsAlbCli()
+   reindexAdsAlbCli()
 
 Return ( nil )
 

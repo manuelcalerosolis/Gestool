@@ -5,6 +5,8 @@
 #include "Xbrowse.ch"
 #include "MesDbf.ch"
 
+
+
 //---------------------------------------------------------------------------//
 
 CLASS TDataCenter
@@ -4592,21 +4594,18 @@ METHOD SqlCreateIndex( tableName, indexName, tagName, Expression, Condition, Opt
    end if 
 
    if empty( Options )
-      Options           := alltrim( str( nAnd( ADS_ASCENDING, ADS_COMPOUND ) ) )
+      Options           := alltrim( str( 2 ) )
    else
       Options           := alltrim( str( Options ) )
    end if 
 
    if empty( PageSize )
-      PageSize          := alltrim( str( 1024 ) )
+      PageSize          := alltrim( str( 2048 ) )
    else
       PageSize          := alltrim( str( PageSize ) )
    end if 
 
    cStm                 := "EXECUTE PROCEDURE sp_CreateIndex( " + tableName + ", " + indexName + ", " + tagName + ", " + Expression + ", " +  Condition + ", " + Options + ", " + PageSize + " );"
-
-   msgalert( cStm )
-   logwrite( cStm )
 
 RETURN ( ::ExecuteSqlStatement( cStm, "CreateIndex" ) )
 
@@ -5119,4 +5118,28 @@ Function ADSRunSQL( cSqlAlias, cSqlStatement, lShow )
 RETURN lGood
 
 //---------------------------------------------------------------------------//
+#pragma BEGINDUMP
+
+#include "hbvm.h"
+#include "hbapi.h"
+#include "hbapiitm.h"
+#include "hbapierr.h"
+#include "hbapilng.h"
+#include "hbstack.h"
+#include "hbdate.h"
+
+#include "rddsys.ch"
+#include "rddads.h"
+
+UNSIGNED32 ENTRYPOINT AdsReindex61( ADSHANDLE hTbl, UNSIGNED32 ulPageSize ); 
+
+HB_FUNC( ADSREINDEX61 )
+{
+   ADSAREAP pArea = hb_adsGetWorkAreaPointer();
+
+   hb_retl( AdsReindex61( pArea ? pArea->hTable : ( ADSHANDLE ) -1, hb_parnl( 1 ) ) == AE_SUCCESS );
+}
+
+#pragma ENDDUMP
+
 

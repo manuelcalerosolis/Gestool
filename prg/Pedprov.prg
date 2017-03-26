@@ -9127,6 +9127,24 @@ Return ( nil )
 
 //---------------------------------------------------------------------------//
 
+Function evalPedidosProveedor( cExpresion )
+
+   local bExpresion  := &( "{||" + cExpresion + "}" )
+
+   if hb_isblock( bExpresion )
+      eval( bExpresion )
+   end if
+
+Return ( nil )
+
+//---------------------------------------------------------------------------//
+
+Function viewPedidosProveedor()
+
+Return ( nView )
+
+//---------------------------------------------------------------------------//
+
 FUNCTION cDesPedPrv( cPedPrvL )
 
    DEFAULT cPedPrvL  := D():PedidosProveedoresLineas( nView )
