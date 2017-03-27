@@ -3063,6 +3063,8 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbf, oBrw, aTmpFac, cCodArtEnt, nMode )
    local oFld
    local oBtn
    local oTotal
+   local oSayFam
+   local cSayFam        := ""
    local cSay2
    local oSay2
    local oBmp
@@ -3255,6 +3257,23 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbf, oBrw, aTmpFac, cCodArtEnt, nMode )
          WHEN     .f. ;
          COLOR    CLR_GET ;
          OF       oFld:aDialogs[1]
+
+      // Familia del articulo--------------------------------------------------
+
+      REDEFINE GET   aGet[ _CCODFAM ] ;
+         VAR         aTmp[ _CCODFAM ] ;
+         ID          270 ;
+         WHEN        ( nMode != ZOOM_MODE ) ;
+         BITMAP      "LUPA" ;
+         VALID       ( oSayFam:cText( RetFld( aTmp[ _CCODFAM  ], D():Familias( nView ) ) ), .t. );
+         ON HELP     ( brwFamilia( aGet[ _CCODFAM ], oSayFam ) );
+         OF          oFld:aDialogs[ 1 ]
+
+      REDEFINE GET   oSayFam ;
+         VAR         cSayFam ;
+         WHEN        ( .f. ) ;
+         ID          271 ;
+         OF          oFld:aDialogs[ 1 ]
 
       // Browse de propiedades-------------------------------------------------
 
