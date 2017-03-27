@@ -380,6 +380,8 @@ METHOD OpenFiles() CLASS TFastVentasArticulos
 
       D():ProveedorArticulo( ::nView )
 
+      D():MovimientosAlmacenLineas( ::nView )
+
       DATABASE NEW ::oArtImg  PATH ( cPatArt() ) CLASS "ArtImg"      FILE "ArtImg.Dbf"  VIA ( ::cDriver ) SHARED INDEX "ArtImg.Cdx"
 
       DATABASE NEW ::oArtKit  PATH ( cPatArt() ) CLASS "ArtKit"      FILE "ArtKit.Dbf"  VIA ( ::cDriver ) SHARED INDEX "ArtKit.Cdx"
@@ -403,8 +405,6 @@ METHOD OpenFiles() CLASS TFastVentasArticulos
       DATABASE NEW ::oRctPrvT PATH ( cPatEmp() ) CLASS "RctPrvT"     FILE "RctPrvT.Dbf"   VIA ( ::cDriver ) SHARED INDEX "RctPrvT.Cdx"
 
       DATABASE NEW ::oRctPrvL PATH ( cPatEmp() ) CLASS "RctPrvL"     FILE "RctPrvL.Dbf"   VIA ( ::cDriver ) SHARED INDEX "RctPrvL.Cdx"
-
-      DATABASE NEW ::oHisMov  PATH ( cPatEmp() ) CLASS "HisMov"      FILE "HisMov.Dbf"    VIA ( ::cDriver ) SHARED INDEX "HisMov.Cdx"
 
       DATABASE NEW ::oArtPrv  PATH ( cPatEmp() ) CLASS "ArtPrv"      FILE "ProvArt.Dbf"   VIA ( ::cDriver ) SHARED INDEX "ProvArt.Cdx"
 
@@ -572,10 +572,6 @@ METHOD CloseFiles() CLASS TFastVentasArticulos
 
       if !empty( ::oRctPrvT ) .and. ( ::oRctPrvT:Used() )
          ::oRctPrvT:end()
-      end if
-
-      if !empty( ::oHisMov ) .and. ( ::oHisMov:Used() )
-         ::oHisMov:end()
       end if
 
       if !empty( ::oArtAlm ) .and. ( ::oArtAlm:Used() )
@@ -3224,7 +3220,7 @@ METHOD AddConsumido() CLASS TFastVentasArticulos
 
    ( D():PartesProduccionMateriaPrima( ::nView ) )->( setCustomFilter( ::cExpresionLine ) )
    
-   ::setMeterTotal( ( D():PartesProduccionMateriaPrima( ::nView ) )->( OrdKeyCount() ) )
+   ::setMeterTotal( ( D():PartesProduccionMateriaPrima( ::nView ) )->( dbCustomKeyCount() ) )
    
    ( D():PartesProduccionMateriaPrima( ::nView ) )->( dbGoTop() )
 
@@ -3293,9 +3289,9 @@ RETURN ( Self )
 METHOD AddMovimientoAlmacen() CLASS TFastVentasArticulos
 
    ::setMeterText( "Procesando movimientos de almacén" )
-   
-   ::setMeterTotal( ::oHisMov:OrdKeyCount() )
 
+   // creamos la expresion del filtro------------------------------------------
+   
    ::cExpresionLine           := '( dFecMov >= Ctod( "' + Dtoc( ::dIniInf ) + '" ) .and. dFecMov <= Ctod( "' + Dtoc( ::dFinInf ) + '" ) )'
 
    if !::lAllArt
@@ -3306,79 +3302,83 @@ METHOD AddMovimientoAlmacen() CLASS TFastVentasArticulos
       ::cExpresionLine        += ' .and. ( cAliMov >= "' + ::oGrupoAlmacen:Cargo:getDesde() + '" .and. cAliMov <= "' + ::oGrupoAlmacen:Cargo:getHasta() + '")'
    end if
 
-   ::oHisMov:AddTmpIndex( cCurUsr(), GetFileNoExt( ::oHisMov:cFile ), ::oHisMov:OrdKey(), cAllTrimer( ::cExpresionLine ), , , , , , , , .t. )
+   // aplicamos el filtro------------------------------------------------------
 
-   ::oHisMov:GoTop()
+   ( D():MovimientosAlmacenLineas( ::nView ) )->( setCustomFilter( ::cExpresionLine ) )
+   
+   // inicializamos el meter---------------------------------------------------
 
-   while !::lBreak .and. !::oHisMov:Eof()
+   ::setMeterTotal( ( D():MovimientosAlmacenLineas( ::nView ) )->( dbCustomKeyCount() ) )
+
+   // procesamos los movimientos de almacen------------------------------------
+   
+   ( D():MovimientosAlmacenLineas( ::nView ) )->( dbgotop() )
+
+   while !(::lBreak ) .and. !( D():MovimientosAlmacenLineas( ::nView ) )->( eof() )
 
       ::oDbf:Blank()
 
-      ::oDbf:cCodArt    := ::oHisMov:cRefMov
-      ::oDbf:cNomArt    := ::oHisMov:cNomMov
+      ::oDbf:cCodArt    := ( D():MovimientosAlmacenLineas( ::nView ) )->cRefMov
+      ::oDbf:cNomArt    := ( D():MovimientosAlmacenLineas( ::nView ) )->cNomMov
 
-      ::oDbf:cCodFam    := RetFld( ::oHisMov:cRefMov, ( D():Articulos( ::nView ) ), "Familia", "Codigo" )
-      ::oDbf:cCodTip    := RetFld( ::oHisMov:cRefMov, ( D():Articulos( ::nView ) ), "cCodTip", "Codigo" )
-      ::oDbf:cCodCate   := RetFld( ::oHisMov:cRefMov, ( D():Articulos( ::nView ) ), "cCodCate", "Codigo" )
-      ::oDbf:cCodTemp   := RetFld( ::oHisMov:cRefMov, ( D():Articulos( ::nView ) ), "cCodTemp", "Codigo" )
-      ::oDbf:cCodFab    := RetFld( ::oHisMov:cRefMov, ( D():Articulos( ::nView ) ), "cCodFab", "Codigo" )
-      ::oDbf:cCodAlm    := ::oHismov:cAliMov
-      ::oDbf:cAlmOrg    := ::oHismov:cAloMov
-      ::oDbf:cDesUbi    := RetFld( ::oHisMov:cRefMov, ( D():Articulos( ::nView ) ), "cDesUbi", "Codigo" )
-      ::oDbf:cCodEnv    := RetFld( ::oHisMov:cRefMov, ( D():Articulos( ::nView ) ), "cCodFra", "Codigo" )                    
+      ::oDbf:cCodFam    := RetFld( ( D():MovimientosAlmacenLineas( ::nView ) )->cRefMov, ( D():Articulos( ::nView ) ), "Familia", "Codigo" )
+      ::oDbf:cCodTip    := RetFld( ( D():MovimientosAlmacenLineas( ::nView ) )->cRefMov, ( D():Articulos( ::nView ) ), "cCodTip", "Codigo" )
+      ::oDbf:cCodCate   := RetFld( ( D():MovimientosAlmacenLineas( ::nView ) )->cRefMov, ( D():Articulos( ::nView ) ), "cCodCate", "Codigo" )
+      ::oDbf:cCodTemp   := RetFld( ( D():MovimientosAlmacenLineas( ::nView ) )->cRefMov, ( D():Articulos( ::nView ) ), "cCodTemp", "Codigo" )
+      ::oDbf:cCodFab    := RetFld( ( D():MovimientosAlmacenLineas( ::nView ) )->cRefMov, ( D():Articulos( ::nView ) ), "cCodFab", "Codigo" )
+      ::oDbf:cCodAlm    := ( D():MovimientosAlmacenLineas( ::nView ) )->cAliMov
+      ::oDbf:cAlmOrg    := ( D():MovimientosAlmacenLineas( ::nView ) )->cAloMov
+      ::oDbf:cDesUbi    := RetFld( ( D():MovimientosAlmacenLineas( ::nView ) )->cRefMov, ( D():Articulos( ::nView ) ), "cDesUbi", "Codigo" )
+      ::oDbf:cCodEnv    := RetFld( ( D():MovimientosAlmacenLineas( ::nView ) )->cRefMov, ( D():Articulos( ::nView ) ), "cCodFra", "Codigo" )                    
 
-      ::oDbf:nBultos    := ::oHisMov:nBultos
-      ::oDbf:nCajas     := ::oHisMov:nCajMov
-      ::oDbf:nUniArt    := ::oHisMov:nUndMov
-      ::oDbf:nPreArt    := ::oHisMov:nPreDiv
+      ::oDbf:nBultos    := ( D():MovimientosAlmacenLineas( ::nView ) )->nBultos
+      ::oDbf:nCajas     := ( D():MovimientosAlmacenLineas( ::nView ) )->nCajMov
+      ::oDbf:nUniArt    := ( D():MovimientosAlmacenLineas( ::nView ) )->nUndMov
+      ::oDbf:nPreArt    := ( D():MovimientosAlmacenLineas( ::nView ) )->nPreDiv
 
       ::oDbf:nBrtArt    := 0
       ::oDbf:nTotArt    := 0
 
-      ::oDbf:cCodPr1    := ::oHisMov:cCodPr1
-      ::oDbf:cCodPr2    := ::oHisMov:cCodPr2
-      ::oDbf:cValPr1    := ::oHisMov:cValPr1
-      ::oDbf:cValPr2    := ::oHisMov:cValPr2
+      ::oDbf:cCodPr1    := ( D():MovimientosAlmacenLineas( ::nView ) )->cCodPr1
+      ::oDbf:cCodPr2    := ( D():MovimientosAlmacenLineas( ::nView ) )->cCodPr2
+      ::oDbf:cValPr1    := ( D():MovimientosAlmacenLineas( ::nView ) )->cValPr1
+      ::oDbf:cValPr2    := ( D():MovimientosAlmacenLineas( ::nView ) )->cValPr2
 
       ::oDbf:cClsDoc    := MOV_ALM
       
       do case
-         case ::oHisMov:nTipMov <= 1
+         case ( D():MovimientosAlmacenLineas( ::nView ) )->nTipMov <= 1
             ::oDbf:cTipDoc    := "Movimiento entre almacenes"
 
-         case ::oHisMov:nTipMov == 2
+         case ( D():MovimientosAlmacenLineas( ::nView ) )->nTipMov == 2
             ::oDbf:cTipDoc    := "Movimiento regularización"
 
-         case ::oHisMov:nTipMov == 3
+         case ( D():MovimientosAlmacenLineas( ::nView ) )->nTipMov == 3
             ::oDbf:cTipDoc    := "Movimiento por objetivo"
 
-         case ::oHismov:nTipMov == 4
+         case ( D():MovimientosAlmacenLineas( ::nView ) )->nTipMov == 4
             ::oDbf:cTipDoc    := "Movimiento consolidación"
 
       end case
 
       ::oDbf:cSerDoc    := ""
-      ::oDbf:cNumDoc    := Str( ::oHisMov:nNumRem )
-      ::oDbf:cSufDoc    := ::oHisMov:cSufRem
+      ::oDbf:cNumDoc    := Str( ( D():MovimientosAlmacenLineas( ::nView ) )->nNumRem )
+      ::oDbf:cSufDoc    := ( D():MovimientosAlmacenLineas( ::nView ) )->cSufRem
 
-      ::oDbf:cIdeDoc    := Str( ::oHisMov:nNumRem ) + ::oHisMov:cSufRem
-      ::oDbf:nNumLin    := ::oHisMov:nNumLin
+      ::oDbf:cIdeDoc    := Str( ( D():MovimientosAlmacenLineas( ::nView ) )->nNumRem ) + ( D():MovimientosAlmacenLineas( ::nView ) )->cSufRem
+      ::oDbf:nNumLin    := ( D():MovimientosAlmacenLineas( ::nView ) )->nNumLin
 
-      ::oDbf:nAnoDoc    := Year( ::oHisMov:dFecMov )
-      ::oDbf:nMesDoc    := Month( ::oHisMov:dFecMov )
-      ::oDbf:dFecDoc    := ::oHisMov:dFecMov
-
-      //::InsertIfValid( .t. )
+      ::oDbf:nAnoDoc    := Year( ( D():MovimientosAlmacenLineas( ::nView ) )->dFecMov )
+      ::oDbf:nMesDoc    := Month( ( D():MovimientosAlmacenLineas( ::nView ) )->dFecMov )
+      ::oDbf:dFecDoc    := ( D():MovimientosAlmacenLineas( ::nView ) )->dFecMov
 
       ::oDbf:Insert()
 
-      ::oHisMov:Skip()
+      ( D():MovimientosAlmacenLineas( ::nView ) )->( dbskip() )
       
       ::setMeterAutoIncremental()
 
    end while
-
-   ::oHisMov:IdxDelete( cCurUsr(), GetFileNoExt( ::oHisMov:cFile ) )
 
 RETURN ( Self )
 

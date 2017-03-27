@@ -3254,6 +3254,7 @@ STATIC FUNCTION SetDlgMode( aGet, aTmp, aTmpPed, nMode, oSayPr1, oSayPr2, oSayVp
    oFld:SetOption( 1 )
 
    aGet[ _CALMLIN ]:lValid()
+   aGet[ _CCODFAM ]:lValid()
 
    oTotal:cText( 0 )
    
