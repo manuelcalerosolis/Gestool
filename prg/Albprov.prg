@@ -2741,6 +2741,8 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbf, oBrw, aTmpAlb, cCodArtEnt, nMode )
    local oBmp
    local oBtn
    local oGet1
+   local oSayFam
+   local cSayFam           := ""
    local oTotal
 	local nTotal
    local oBrwPrp
@@ -2928,6 +2930,23 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbf, oBrw, aTmpAlb, cCodArtEnt, nMode )
          ID       232 ;
          WHEN     .f. ;
          OF       oFld:aDialogs[1]
+
+      // Familia del articulo--------------------------------------------------
+
+      REDEFINE GET   aGet[ _CCODFAM ] ;
+         VAR         aTmp[ _CCODFAM ] ;
+         ID          270 ;
+         WHEN        ( nMode != ZOOM_MODE ) ;
+         BITMAP      "LUPA" ;
+         VALID       ( oSayFam:cText( RetFld( aTmp[ _CCODFAM  ], D():Familias( nView ) ) ), .t. );
+         ON HELP     ( brwFamilia( aGet[ _CCODFAM ], oSayFam ) );
+         OF          oFld:aDialogs[ 1 ]
+
+      REDEFINE GET   oSayFam ;
+         VAR         cSayFam ;
+         WHEN        ( .f. ) ;
+         ID          271 ;
+         OF          oFld:aDialogs[ 1 ]
 
       // Browse de propiedades-------------------------------------------------
 
@@ -3762,6 +3781,7 @@ Static Function SetDlgMode( aGet, aTmp, aTmpAlb, nMode, oSayPr1, oSayPr2, oSayVp
    aGet[ __CALMORIGEN  ]:lValid()
    aGet[ _CALMLIN  ]:lValid()
    aGet[ _CUNIDAD  ]:lValid()
+   aGet[ _CCODFAM  ]:lValid()
    aGet[ _CREF     ]:SetFocus()
 
    /*
