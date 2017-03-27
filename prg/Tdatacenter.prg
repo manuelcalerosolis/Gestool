@@ -5119,6 +5119,7 @@ Function ADSRunSQL( cSqlAlias, cSqlStatement, lShow )
 RETURN lGood
 
 //---------------------------------------------------------------------------//
+/*
 #pragma BEGINDUMP
 
 #include "hbvm.h"
@@ -5142,5 +5143,5 @@ HB_FUNC( ADSREINDEX61 )
 }
 
 #pragma ENDDUMP
-
+*/
 

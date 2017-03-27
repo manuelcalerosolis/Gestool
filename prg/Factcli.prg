@@ -14784,9 +14784,7 @@ Static Function CreateFileFacturae( oTree, lFirmar, lEnviar )
 
       end if
 
-      /*
-      Lineas de detalle--------------------------------------------------------
-      */
+      // Lineas de detalle-----------------------------------------------------
 
       if ( D():FacturasClientesLineas( nView ) )->( dbSeek( nNumero ) )
 
@@ -14804,7 +14802,7 @@ Static Function CreateFileFacturae( oTree, lFirmar, lEnviar )
                oItemLine:nIva                      := ( D():FacturasClientesLineas( nView ) )->nIva
                oItemLine:lIvaInc                   := ( D():FacturasClientes( nView ) )->lIvaInc
 
-               // Descuento lineal
+               // Descuento lineal---------------------------------------------
 
                if ( D():FacturasClientesLineas( nView ) )->nDtoDiv != 0               
 
