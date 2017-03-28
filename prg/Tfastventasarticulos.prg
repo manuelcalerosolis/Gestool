@@ -3387,7 +3387,7 @@ METHOD AddPedidoProveedor() CLASS TFastVentasArticulos
 
    // filtros para la linea----------------------------------------------------
 
-   ::cExpresionLine           := '!Field->lTotLin .and. !Field->lControl'
+   ::cExpresionLine           := '!Field->lControl'
    ::cExpresionLine           += ' .and. ( Field->cSerPed >= "' + Rtrim( ::oGrupoSerie:Cargo:getDesde() )   + '" .and. Field->cSerPed <= "' + Rtrim( ::oGrupoSerie:Cargo:getHasta() ) + '" )'
    ::cExpresionLine           += ' .and. ( Field->nNumPed >= Val( "' + Rtrim( ::oGrupoNumero:Cargo:getDesde() ) + '" ) .and. Field->nNumPed <= Val( "' + Rtrim( ::oGrupoNumero:Cargo:getHasta() ) + '" ) )'
    ::cExpresionLine           += ' .and. ( Field->cSufPed >= "' + Rtrim( ::oGrupoSufijo:Cargo:getDesde() ) + '" .and. Field->cSufPed <= "' + Rtrim( ::oGrupoSufijo:Cargo:getHasta() ) + '" )'
@@ -3406,9 +3406,7 @@ METHOD AddPedidoProveedor() CLASS TFastVentasArticulos
    ( D():PedidosProveedoresLineas( ::nView ) )->( ordsetfocus( "nNumPed" ) )
    ( D():PedidosProveedoresLineas( ::nView ) )->( setCustomFilter( ::cExpresionLine ) )
 
-   ::setMeterTotal( ( D():PedidosClientesLineas( ::nView ) )->( dbcustomkeycount() ) )
-
-   msgalert( ( D():PedidosClientesLineas( ::nView ) )->( dbcustomkeycount() ) )
+   ::setMeterTotal( ( D():PedidosProveedoresLineas( ::nView ) )->( dbcustomkeycount() ) )
 
    // empezamos a procesar pedidos---------------------------------------------
 
@@ -3501,8 +3499,6 @@ METHOD AddPedidoProveedor() CLASS TFastVentasArticulos
       ::setMeterAutoIncremental()
 
    end while
-
-   msgalert( ::oMtrInf:nCurrent, "current" )
 
 RETURN ( Self )
 
