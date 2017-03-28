@@ -382,6 +382,10 @@ METHOD OpenFiles() CLASS TFastVentasArticulos
 
       D():MovimientosAlmacenLineas( ::nView )
 
+      D():PedidosProveedores( ::nView )
+
+      D():PedidosProveedoresLineas()
+
       DATABASE NEW ::oArtImg  PATH ( cPatArt() ) CLASS "ArtImg"      FILE "ArtImg.Dbf"  VIA ( ::cDriver ) SHARED INDEX "ArtImg.Cdx"
 
       DATABASE NEW ::oArtKit  PATH ( cPatArt() ) CLASS "ArtKit"      FILE "ArtKit.Dbf"  VIA ( ::cDriver ) SHARED INDEX "ArtKit.Cdx"
@@ -389,10 +393,6 @@ METHOD OpenFiles() CLASS TFastVentasArticulos
       DATABASE NEW ::oArtCod  PATH ( cPatArt() ) CLASS "ArtCodebar"  FILE "ArtCodebar.Dbf"  VIA ( ::cDriver ) SHARED INDEX "ArtCodebar.Cdx"
 
       DATABASE NEW ::oArtCod  PATH ( cPatArt() ) CLASS "ArtCodebar"  FILE "ArtCodebar.Dbf"  VIA ( ::cDriver ) SHARED INDEX "ArtCodebar.Cdx"
-
-      DATABASE NEW ::oPedPrvT PATH ( cPatEmp() ) CLASS "PedPrvT"     FILE "PedProvT.Dbf"  VIA ( ::cDriver ) SHARED INDEX "PedProvT.Cdx"
-
-      DATABASE NEW ::oPedPrvL PATH ( cPatEmp() ) CLASS "PedPrvL"     FILE "PedProvL.Dbf"  VIA ( ::cDriver ) SHARED INDEX "PedProvL.Cdx"
 
       DATABASE NEW ::oAlbPrvT PATH ( cPatEmp() ) CLASS "AlbPrvT"     FILE "AlbProvT.Dbf"  VIA ( ::cDriver ) SHARED INDEX "AlbProvT.Cdx"
 
@@ -540,14 +540,6 @@ METHOD CloseFiles() CLASS TFastVentasArticulos
 
       if !empty( ::oArtPrv ) .and. ( ::oArtPrv:Used() )
          ::oArtPrv:end()
-      end if
-
-      if !empty( ::oPedPrvL ) .and. ( ::oPedPrvL:Used() )
-         ::oPedPrvL:end()
-      end if
-
-      if !empty( ::oPedPrvT ) .and. ( ::oPedPrvT:Used() )
-         ::oPedPrvT:end()
       end if
 
       if !empty( ::oAlbPrvL ) .and. ( ::oAlbPrvL:Used() )
@@ -3386,43 +3378,44 @@ RETURN ( Self )
 
 METHOD AddPedidoProveedor() CLASS TFastVentasArticulos
 
-   local cExpHead
-   local cExpLine
+   ::cExpresionHeader          := '( dFecPed >= Ctod( "' + Dtoc( ::dIniInf ) + '" ) .and. dFecPed <= Ctod( "' + Dtoc( ::dFinInf ) + '" ) )'
+   ::cExpresionHeader          += ' .and. cSerPed >= "' + Rtrim( ::oGrupoSerie:Cargo:getDesde() )        + '" .and. cSerPed <= "'   + Rtrim( ::oGrupoSerie:Cargo:getHasta() ) + '"'
+   ::cExpresionHeader          += ' .and. nNumPed >= Val( "' + Rtrim( ::oGrupoNumero:Cargo:getDesde() )  + '" ) .and. nNumPed <= Val( "' + Rtrim( ::oGrupoNumero:Cargo:getHasta() ) + '" )'
+   ::cExpresionHeader          += ' .and. cSufPed >= "' + Rtrim( ::oGrupoSufijo:Cargo:getDesde() )       + '" .and. cSufPed <= "'   + Rtrim( ::oGrupoSufijo:Cargo:getHasta() ) + '"'
 
-   cExpHead          := '( dFecPed >= Ctod( "' + Dtoc( ::dIniInf ) + '" ) .and. dFecPed <= Ctod( "' + Dtoc( ::dFinInf ) + '" ) )'
-   cExpHead          += ' .and. cCodPrv >= "' + Rtrim( ::oGrupoProveedor:Cargo:getDesde() )    + '" .and. cCodPrv <= "'   + Rtrim( ::oGrupoProveedor:Cargo:getHasta() ) + '"'
-   cExpHead          += ' .and. cSerPed >= "' + Rtrim( ::oGrupoSerie:Cargo:getDesde() )        + '" .and. cSerPed <= "'   + Rtrim( ::oGrupoSerie:Cargo:getHasta() ) + '"'
-   cExpHead          += ' .and. nNumPed >= Val( "' + Rtrim( ::oGrupoNumero:Cargo:getDesde() )  + '" ) .and. nNumPed <= Val( "' + Rtrim( ::oGrupoNumero:Cargo:getHasta() ) + '" )'
-   cExpHead          += ' .and. cSufPed >= "' + Rtrim( ::oGrupoSufijo:Cargo:getDesde() )       + '" .and. cSufPed <= "'   + Rtrim( ::oGrupoSufijo:Cargo:getHasta() ) + '"'
+   ::setFilterProveedorIdHeader()
 
+   // filtros para la linea----------------------------------------------------
 
-   /*
-   Lineas de Pedturas----------------------------------------------------------
-   */
+   ::cExpresionLine           := '!Field->lTotLin .and. !Field->lControl'
+   ::cExpresionLine           += ' .and. ( Field->cSerPed >= "' + Rtrim( ::oGrupoSerie:Cargo:getDesde() )   + '" .and. Field->cSerPed <= "' + Rtrim( ::oGrupoSerie:Cargo:getHasta() ) + '" )'
+   ::cExpresionLine           += ' .and. ( Field->nNumPed >= Val( "' + Rtrim( ::oGrupoNumero:Cargo:getDesde() ) + '" ) .and. Field->nNumPed <= Val( "' + Rtrim( ::oGrupoNumero:Cargo:getHasta() ) + '" ) )'
+   ::cExpresionLine           += ' .and. ( Field->cSufPed >= "' + Rtrim( ::oGrupoSufijo:Cargo:getDesde() ) + '" .and. Field->cSufPed <= "' + Rtrim( ::oGrupoSufijo:Cargo:getHasta() ) + '" )'
 
-   cExpLine          := '!lControl'
+   ::setFilterProductIdLine()
 
-   if !::lAllArt
-      cExpLine       += ' .and. cRef >= "' + ::oGrupoArticulo:Cargo:getDesde() + '" .and. cRef <= "' + ::oGrupoArticulo:Cargo:getHasta() + '"'
-   end if
-
-   ::oPedPrvT:OrdSetFocus( "dFecPed" )
-   ::oPedPrvL:OrdSetFocus( "nNumPed" )
-
-   ::oPedPrvT:AddTmpIndex( cCurUsr(), GetFileNoExt( ::oPedPrvT:cFile ), ::oPedPrvT:OrdKey(), ( cExpHead ), , , , , , , , .t. )
+   ::setFilterTypeLine()
 
    ::setMeterText( "Procesando pedidos a proveedor" )
-   ::setMeterTotal( ::oPedPrvT:OrdKeyCount() )
 
-   ::oPedPrvL:AddTmpIndex( cCurUsr(), GetFileNoExt( ::oPedPrvL:cFile ), ::oPedPrvL:OrdKey(), cAllTrimer( cExpLine ), , , , , , , , .t. )
+   ( D():PedidosProveedores( ::nView )       )->( OrdSetFocus( "dFecPed" ) )
 
-   ::oPedPrvT:GoTop()
+   ( D():PedidosProveedoresLineas( ::nView ) )->( OrdSetFocus( "nNumPed" ) )
 
-   while !::lBreak .and. !::oPedPrvT:Eof()
+   ( D():PedidosProveedores( ::nView )       )->( setCustomFilter( ::cExpresionHeader ) )
+
+   ( D():PedidosProveedoresLineas( ::nView ) )->( setCustomFilter( ::cExpresionLine ) )
+
+   ::setMeterTotal( ( D():PedidosClientesLineas( ::nView ) )->( dbCustomKeyCount() ) )
+
+
+   ( D():PedidosProveedoresLineas( ::nView ) )->( dbgotop() )
+
+   while !::lBreak .and. !( D():PedidosProveedoresLineas( ::nView ) )->( eof() )
 
       if lChkSer( ::oPedPrvT:cSerPed, ::aSer )
 
-         if ::oPedPrvL:Seek( ::oPedPrvT:cSerPed + Str( ::oPedPrvT:nNumPed ) + ::oPedPrvT:cSufPed )
+         if ( D():PedidosProveedores( ::nView ) )->( dbseek( D():PedidosProveedoresLineasId( ::nView ) ) )
 
             while !::lBreak .and. ( ::oPedPrvT:cSerPed + Str( ::oPedPrvT:nNumPed ) + ::oPedPrvT:cSufPed == ::oPedPrvL:cSerPed + Str( ::oPedPrvL:nNumPed ) + ::oPedPrvL:cSufPed ) .and. !::oPedPrvL:Eof()
 
@@ -3431,83 +3424,83 @@ METHOD AddPedidoProveedor() CLASS TFastVentasArticulos
 
                      ::oDbf:Blank()
 
-                     ::oDbf:cCodArt    := ::oPedPrvL:cRef
-                     ::oDbf:cNomArt    := ::oPedPrvL:cDetalle
+                     ::oDbf:cCodArt    := ( D():PedidosProveedoresLineas( ::nView ) )->cRef
+                     ::oDbf:cNomArt    := ( D():PedidosProveedoresLineas( ::nView ) )->cDetalle
 
                      ::oDbf:cCodFam    := ::oPedPrvL:cCodFam
                      ::oDbf:TipoIva    := cCodigoIva( ::oDbfIva:cAlias, ::oPedPrvL:nIva )
-                     ::oDbf:cCodTip    := RetFld( ::oPedPrvL:cRef, ( D():Articulos( ::nView ) ), "cCodTip", "Codigo" )
-                     ::oDbf:cCodCate   := RetFld( ::oPedPrvL:cRef, ( D():Articulos( ::nView ) ), "cCodCate", "Codigo" )
-                     ::oDbf:cCodEst    := RetFld( ::oPedPrvL:cRef, ( D():Articulos( ::nView ) ), "cCodEst", "Codigo" )
-                     ::oDbf:cCodTemp   := RetFld( ::oPedPrvL:cRef, ( D():Articulos( ::nView ) ), "cCodTemp", "Codigo" )
-                     ::oDbf:cCodFab    := RetFld( ::oPedPrvL:cRef, ( D():Articulos( ::nView ) ), "cCodFab", "Codigo" )
-                     ::oDbf:cCodGrp    := RetFld( ::oPedPrvL:cRef, ( D():Articulos( ::nView ) ), "GrpVent", "Codigo" )
-                     ::oDbf:cDesUbi    := RetFld( ::oPedPrvL:cRef, ( D():Articulos( ::nView ) ), "cDesUbi", "Codigo" )
-                     ::oDbf:cCodEnv    := RetFld( ::oPedPrvL:cRef, ( D():Articulos( ::nView ) ), "cCodFra", "Codigo" )
-                     ::oDbf:cCodCli    := ::oPedPrvT:cCodPrv
-                     ::oDbf:cNomCli    := ::oPedPrvT:cNomPrv
-                     ::oDbf:cPobCli    := ::oPedPrvT:cPobPrv
-                     ::oDbf:cPrvCli    := ::oPedPrvT:cProPrv
-                     ::oDbf:cPosCli    := ::oPedPrvT:cPosPrv
-                     ::oDbf:cCodAlm    := ::oPedPrvL:cAlmLin
-                     ::oDbf:cCodPago   := ::oPedPrvT:cCodPgo
+                     ::oDbf:cCodTip    := RetFld( ( D():PedidosProveedoresLineas( ::nView ) )->cRef, ( D():Articulos( ::nView ) ), "cCodTip", "Codigo" )
+                     ::oDbf:cCodCate   := RetFld( ( D():PedidosProveedoresLineas( ::nView ) )->cRef, ( D():Articulos( ::nView ) ), "cCodCate", "Codigo" )
+                     ::oDbf:cCodEst    := RetFld( ( D():PedidosProveedoresLineas( ::nView ) )->cRef, ( D():Articulos( ::nView ) ), "cCodEst", "Codigo" )
+                     ::oDbf:cCodTemp   := RetFld( ( D():PedidosProveedoresLineas( ::nView ) )->cRef, ( D():Articulos( ::nView ) ), "cCodTemp", "Codigo" )
+                     ::oDbf:cCodFab    := RetFld( ( D():PedidosProveedoresLineas( ::nView ) )->cRef, ( D():Articulos( ::nView ) ), "cCodFab", "Codigo" )
+                     ::oDbf:cCodGrp    := RetFld( ( D():PedidosProveedoresLineas( ::nView ) )->cRef, ( D():Articulos( ::nView ) ), "GrpVent", "Codigo" )
+                     ::oDbf:cDesUbi    := RetFld( ( D():PedidosProveedoresLineas( ::nView ) )->cRef, ( D():Articulos( ::nView ) ), "cDesUbi", "Codigo" )
+                     ::oDbf:cCodEnv    := RetFld( ( D():PedidosProveedoresLineas( ::nView ) )->cRef, ( D():Articulos( ::nView ) ), "cCodFra", "Codigo" )
+                     ::oDbf:cCodCli    := ( D():PedidosProveedoresLineas( ::nView ) )->cCodPrv
+                     ::oDbf:cNomCli    := ( D():PedidosProveedoresLineas( ::nView ) )->cNomPrv
+                     ::oDbf:cPobCli    := ( D():PedidosProveedoresLineas( ::nView ) )->cPobPrv
+                     ::oDbf:cPrvCli    := ( D():PedidosProveedoresLineas( ::nView ) )->cProPrv
+                     ::oDbf:cPosCli    := ( D():PedidosProveedoresLineas( ::nView ) )->cPosPrv
+                     ::oDbf:cCodAlm    := ( D():PedidosProveedoresLineas( ::nView ) )->cAlmLin
+                     ::oDbf:cCodPago   := ( D():PedidosProveedoresLineas( ::nView ) )->cCodPgo
                      ::oDbf:cCodRut    := ""
                      ::oDbf:cCodAge    := ""
                      ::oDbf:cCodTrn    := ""
-                     ::oDbf:cCodUsr    := ::oPedPrvT:cCodUsr
+                     ::oDbf:cCodUsr    := ( D():PedidosProveedoresLineas( ::nView ) )->cCodUsr
 
-                     ::oDbf:nUniArt    := nTotNPedPrv( ::oPedPrvL:cAlias )
-                     ::oDbf:nPreArt    := nImpUPedPrv( ::oPedPrvT:cAlias, ::oPedPrvL:cAlias, ::nDerOut, ::nValDiv )
+                     ::oDbf:nUniArt    := nTotNPedPrv( ( D():PedidosProveedoresLineas( ::nView ) )->cAlias )
+                     ::oDbf:nPreArt    := nImpUPedPrv( ( D():PedidosProveedoresLineas( ::nView ) )->cAlias, ( D():PedidosProveedoresLineas( ::nView ) )->cAlias, ::nDerOut, ::nValDiv )
 
-                     ::oDbf:nDtoArt    := ::oPedPrvL:nDtoLin                     
-                     ::oDbf:nPrmArt    := ::oPedPrvL:nDtoPrm
+                     ::oDbf:nDtoArt    := ( D():PedidosProveedoresLineas( ::nView ) )->nDtoLin                     
+                     ::oDbf:nPrmArt    := ( D():PedidosProveedoresLineas( ::nView ) )->nDtoPrm
 
-                     ::oDbf:nTotDto    := nDtoLPedPrv( ::oPedPrvL:cAlias, ::nDecOut, ::nDerOut, ::nValDiv )
-                     ::oDbf:nTotPrm    := nPrmLPedPrv( ::oPedPrvL:cAlias, ::nDecOut, ::nDerOut, ::nValDiv )
+                     ::oDbf:nTotDto    := nDtoLPedPrv( ( D():PedidosProveedoresLineas( ::nView ) )->cAlias, ::nDecOut, ::nDerOut, ::nValDiv )
+                     ::oDbf:nTotPrm    := nPrmLPedPrv( ( D():PedidosProveedoresLineas( ::nView ) )->cAlias, ::nDecOut, ::nDerOut, ::nValDiv )
 
-                     ::oDbf:nBrtArt    := nBrtLPedPrv( ::oPedPrvL:cAlias, ::nDecOut, ::nDerOut, ::nValDiv )
-                     ::oDbf:nImpArt    := nImpLPedPrv( ::oPedPrvT:cAlias, ::oPedPrvL:cAlias, ::nDecOut, ::nDerOut, ::nValDiv, , , .t., .t. )
-                     ::oDbf:nIvaArt    := nIvaLPedPrv(::oPedPrvL:cAlias, ::nDecOut, ::nDerOut, ::nValDiv )
+                     ::oDbf:nBrtArt    := nBrtLPedPrv( ( D():PedidosProveedoresLineas( ::nView ) )->cAlias, ::nDecOut, ::nDerOut, ::nValDiv )
+                     ::oDbf:nImpArt    := nImpLPedPrv( ( D():PedidosProveedoresLineas( ::nView ) )->cAlias, ( D():PedidosProveedoresLineas( ::nView ) )->cAlias, ::nDecOut, ::nDerOut, ::nValDiv, , , .t., .t. )
+                     ::oDbf:nIvaArt    := nIvaLPedPrv( ( D():PedidosProveedoresLineas( ::nView ) )->cAlias, ::nDecOut, ::nDerOut, ::nValDiv )
                      //::oDbf:nImpEsp    := nImpEspLPedPrv(::oPedPrvL:cAlias, ::nDecOut, ::nDerOut, ::nValDiv )
-                     ::oDbf:nTotArt    := nImpLPedPrv( ::oPedPrvT:cAlias, ::oPedPrvL:cAlias, ::nDecOut, ::nDerOut, ::nValDiv, , , .t., .t.  )
-                     ::oDbf:nTotArt    += nIvaLPedPrv(::oPedPrvL:cAlias, ::nDecOut, ::nDerOut, ::nValDiv )
-                     ::oDbf:nCosArt    := nImpLPedPrv( ::oPedPrvT:cAlias, ::oPedPrvL:cAlias, ::nDecOut, ::nDerOut, ::nValDiv, , , .t., .t.  )
+                     ::oDbf:nTotArt    := nImpLPedPrv( ( D():PedidosProveedoresLineas( ::nView ) )->cAlias, ( D():PedidosProveedoresLineas( ::nView ) )->cAlias, ::nDecOut, ::nDerOut, ::nValDiv, , , .t., .t.  )
+                     ::oDbf:nTotArt    += nIvaLPedPrv( ( D():PedidosProveedoresLineas( ::nView ) )->cAlias, ::nDecOut, ::nDerOut, ::nValDiv )
+                     ::oDbf:nCosArt    := nImpLPedPrv( ( D():PedidosProveedoresLineas( ::nView ) )->cAlias, ( D():PedidosProveedoresLineas( ::nView ) )->cAlias, ::nDecOut, ::nDerOut, ::nValDiv, , , .t., .t.  )
 
-                     ::oDbf:cCodPr1    := ::oPedPrvL:cCodPr1
-                     ::oDbf:cCodPr2    := ::oPedPrvL:cCodPr2
-                     ::oDbf:cValPr1    := ::oPedPrvL:cValPr1
-                     ::oDbf:cValPr2    := ::oPedPrvL:cValPr2
+                     ::oDbf:cCodPr1    := ( D():PedidosProveedoresLineas( ::nView ) )->cCodPr1
+                     ::oDbf:cCodPr2    := ( D():PedidosProveedoresLineas( ::nView ) )->cCodPr2
+                     ::oDbf:cValPr1    := ( D():PedidosProveedoresLineas( ::nView ) )->cValPr1
+                     ::oDbf:cValPr2    := ( D():PedidosProveedoresLineas( ::nView ) )->cValPr2
 
                      ::oDbf:cClsDoc    := PED_PRV
                      ::oDbf:cTipDoc    := "Pedido proveedor"
-                     ::oDbf:cSerDoc    := ::oPedPrvT:cSerPed
-                     ::oDbf:cNumDoc    := Str( ::oPedPrvT:nNumPed )
-                     ::oDbf:cSufDoc    := ::oPedPrvT:cSufPed
+                     ::oDbf:cSerDoc    := ( D():PedidosProveedoresLineas( ::nView ) )->cSerPed
+                     ::oDbf:cNumDoc    := Str( ( D():PedidosProveedoresLineas( ::nView ) )->:nNumPed )
+                     ::oDbf:cSufDoc    := ( D():PedidosProveedoresLineas( ::nView ) )->cSufPed
 
                      ::oDbf:cIdeDoc    :=  ::idDocumento()
-                     ::oDbf:nNumLin    :=  ::oPedPrvL:nNumLin
+                     ::oDbf:nNumLin    :=  ( D():PedidosProveedoresLineas( ::nView ) )->nNumLin
 
-                     ::oDbf:nAnoDoc    := Year( ::oPedPrvT:dFecPed )
-                     ::oDbf:nMesDoc    := Month( ::oPedPrvT:dFecPed )
-                     ::oDbf:dFecDoc    := ::oPedPrvT:dFecPed
-                     ::oDbf:cHorDoc    := SubStr( ::oPedPrvT:cTimChg, 1, 2 )
-                     ::oDbf:cMinDoc    := SubStr( ::oPedPrvT:cTimChg, 4, 2 )
+                     ::oDbf:nAnoDoc    := Year( ( D():PedidosProveedoresLineas( ::nView ) )->dFecPed )
+                     ::oDbf:nMesDoc    := Month( ( D():PedidosProveedoresLineas( ::nView ) )->dFecPed )
+                     ::oDbf:dFecDoc    := ( D():PedidosProveedoresLineas( ::nView ) )->dFecPed
+                     ::oDbf:cHorDoc    := SubStr( ( D():PedidosProveedoresLineas( ::nView ) )->cTimChg, 1, 2 )
+                     ::oDbf:cMinDoc    := SubStr( ( D():PedidosProveedoresLineas( ::nView ) )->cTimChg, 4, 2 )
 
-                     ::oDbf:nBultos    := ::oPedPrvL:nBultos   
-                     ::oDbf:cFormaTo   := ::oPedPrvL:cFormato
-                     ::oDbf:nCajas     := ::oPedPrvL:nCanPed
+                     ::oDbf:nBultos    := ( D():PedidosProveedoresLineas( ::nView ) )->nBultos   
+                     ::oDbf:cFormaTo   := ( D():PedidosProveedoresLineas( ::nView ) )->cFormato
+                     ::oDbf:nCajas     := ( D():PedidosProveedoresLineas( ::nView ) )->nCanPed
 
-                     ::oDbf:cCtrCoste  := ::oPedPrvL:cCtrCoste
-                     ::oDbf:cTipCtr    := ::oPedPrvL:cTipCtr
-                     ::oDbf:cCodTerCtr := ::oPedPrvL:cTerCtr
-                     ::oDbf:cNomTerCtr := NombreTerceroCentroCoste( ::oPedPrvL:cTipCtr, ::oPedPrvL:cTerCtr, ::nView )
+                     ::oDbf:cCtrCoste  := ( D():PedidosProveedoresLineas( ::nView ) )->cCtrCoste
+                     ::oDbf:cTipCtr    := ( D():PedidosProveedoresLineas( ::nView ) )->cTipCtr
+                     ::oDbf:cCodTerCtr := ( D():PedidosProveedoresLineas( ::nView ) )->cTerCtr
+                     ::oDbf:cNomTerCtr := NombreTerceroCentroCoste( ( D():PedidosProveedoresLineas( ::nView ) )->cTipCtr, ( D():PedidosProveedoresLineas( ::nView ) )->cTerCtr, ::nView )
 
                   ::InsertIfValid()
                   ::loadValuesExtraFields()
 
                //end if
 
-               ::oPedPrvL:Skip()
+               ( D():PedidosProveedoresLineas( ::nView ) )-> ( dbSkip() )
 
             end while
 
@@ -3515,7 +3508,7 @@ METHOD AddPedidoProveedor() CLASS TFastVentasArticulos
 
       end if
 
-      ::oPedPrvT:Skip()
+      ( D():PedidosProveedoresLineas( ::nView ) )->( dbSkip() )
 
       ::setMeterAutoIncremental()
 
