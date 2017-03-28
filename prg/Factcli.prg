@@ -15033,6 +15033,8 @@ return nil
 
 static function lValidLineForFacturae()
 
+   RETURN ( .t. )
+
 Return ( lValLine( D():FacturasClientesLineas( nView ) ) .and. !( D():FacturasClientesLineas( nView ) )->lTotLin .and. nTotNFacCli( D():FacturasClientesLineas( nView ) ) != 0 )
 
 //---------------------------------------------------------------------------//
@@ -15044,7 +15046,7 @@ Static Function loadRecCli( aTmp, oBrwPgo )
 
    DisableAcceso()
 
-   nRec           := ( dbfTmpPgo  )->( Recno() )
+   nRec           := ( dbfTmpPgo  )->( recno() )
    cFac           := aTmp[ _CSERIE ] + str( aTmp[ _NNUMFAC ] ) + aTmp[ _CSUFFAC ]
 
    ( dbfTmpPgo )->( __dbZap() )
@@ -15063,7 +15065,7 @@ Static Function loadRecCli( aTmp, oBrwPgo )
 
    end if
 
-   ( dbfTmpPgo )->( dbGoto( nRec ) )
+   ( dbfTmpPgo )->( dbgoto( nRec ) )
 
    if !empty( oBrwPgo )
       oBrwPgo:Refresh()
