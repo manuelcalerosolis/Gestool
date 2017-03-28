@@ -2537,17 +2537,16 @@ RETURN ( Self )
 
 //---------------------------------------------------------------------------//
 
-
 METHOD FastReportPedidoProveedor()
       
-   ::oPedPrvT:OrdSetFocus( "iNumPed" )
+   ( D():PedidosProveedores( ::nView ) )->( ordsetfocus( "iNumPed" ) )
       
-   ::oFastReport:SetWorkArea(       "Pedidos de proveedor", ::oPedPrvT:nArea )
+   ::oFastReport:SetWorkArea(       "Pedidos de proveedor", ( D():PedidosProveedores( ::nView ) )->( select() ) )
    ::oFastReport:SetFieldAliases(   "Pedidos de proveedor", cItemsToReport( aItmPedPrv() ) )
       
-   ::oPedPrvL:OrdSetFocus( "iNumPed" )
+   ( D():PedidosProveedoresLineas( ::nView ) )->( ordsetfocus( "iNumPed" ) )
 
-   ::oFastReport:SetWorkArea(       "Lineas pedidos de proveedor", ::oPedPrvL:nArea )
+   ::oFastReport:SetWorkArea(       "Lineas pedidos de proveedor", ( D():PedidosProveedoresLineas( ::nView ) )->( select() ) )
    ::oFastReport:SetFieldAliases(   "Lineas pedidos de proveedor", cItemsToReport( aColPedPrv() ) )
 
    ::oFastReport:SetMasterDetail(   "Informe", "Pedidos de proveedor",               {|| ::idDocumento() } )
