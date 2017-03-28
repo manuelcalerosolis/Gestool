@@ -139,7 +139,6 @@ CLASS TBackup
 
    Method GuardarPreferencias()
 
-
    METHOD SyncAllDbf()
 
 ENDCLASS
@@ -859,6 +858,91 @@ Method ZipFiles()
       hb_gcAll()
 
       aAdd( aFil, cDat )
+
+      /*
+      Ahora el directorio de SCRIPTS-------------------------------------------
+      */
+
+      cDat                 := cPatSafe() + "script"
+      if ::lDate
+         cDat              += Dtos( Date() )
+      end if
+      cDat                 += ".Zip"
+
+      if file( cDat )
+         ferase( cDat )
+      end if
+
+      ::nActualFile        := 0
+      //aDir                 := Directory( FullCurDir() + "script\*.*" )
+
+      aDir                 := DirectoryRecurse( FullCurDir() + "script\*.*", "D" )
+
+      MsgInfo( hb_valtoexp( DirectoryRecurse( FullCurDir() + "script\*.*" ), "D" ) )
+
+      MsgInfo( hb_valtoexp( aDir ), Len( aDir ) )
+
+      ::oProgreso:SetTotal( Len( aDir ) )
+      ::oProgreso:cText    := "Comprimiendo directorio scripts"
+
+      hb_SetDiskZip( {|| nil } )
+      if !empty( ::cPassword1 )
+         aEval( aDir, { | cName, nIndex | hb_ZipFile( cDat, FullCurDir() + "script\" + cName[ 1 ], 9, , , Rtrim( ::cPassword1 ) ), ::oProgreso:Set( nIndex ) } )
+      else
+         //aEval( aDir, { | cName, nIndex | hb_ZipFile( cDat, FullCurDir() + "script\" + cName[ 1 ], 9 ), ::oProgreso:Set( nIndex ) } )
+         aEval( aDir, { | cName, nIndex | msginfo( cName[ 1 ], cDat ), hb_ZipFile( cDat, cName[ 1 ], 9 ), ::oProgreso:Set( nIndex ) } )
+
+
+/*FUNCTION hb_ZipFile( ;
+      cFileName, ;
+      acFiles, ;
+      nLevel, ;
+      bUpdate, ;
+      lOverwrite, ;
+      cPassword, ;
+      lWithPath, ;
+      lWithDrive, ;
+      bProgress, ;
+      lFullPath, ;
+      acExclude )*/
+
+
+
+
+      end if 
+      hb_gcAll()
+
+      aAdd( aFil, cDat )
+
+      /*
+      Ahora el directorio de reporting-----------------------------------------
+      */
+
+      /*cDat                 := cPatSafe() + "reporting"
+      if ::lDate
+         cDat              += Dtos( Date() )
+      end if
+      cDat                 += ".Zip"
+
+      if file( cDat )
+         ferase( cDat )
+      end if
+
+      ::nActualFile        := 0
+      aDir                 := Directory( FullCurDir() + "reporting\*.*" )
+
+      ::oProgreso:SetTotal( Len( aDir ) )
+      ::oProgreso:cText    := "Comprimiendo directorio scripts"
+
+      hb_SetDiskZip( {|| nil } )
+      if !empty( ::cPassword1 )
+         aEval( aDir, { | cName, nIndex | hb_ZipFile( cDat, FullCurDir() + "reporting\" + cName[ 1 ], 9, , , Rtrim( ::cPassword1 ) ), ::oProgreso:Set( nIndex ) } )
+      else
+         aEval( aDir, { | cName, nIndex | hb_ZipFile( cDat, FullCurDir() + "reporting\" + cName[ 1 ], 9 ), ::oProgreso:Set( nIndex ) } )
+      end if 
+      hb_gcAll()
+
+      aAdd( aFil, cDat )*/
 
       /*
       Ahora pasamos los datos al dispositivo-----------------------------------
