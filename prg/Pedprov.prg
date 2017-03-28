@@ -5901,7 +5901,7 @@ Static Function CargaComprasProveedor( aTmp, oImportaComprasProveedor, oDlg )
                   end if
 
                   if ( D():Articulos( nView ) )->lLote  
-                        ( dbfTmpLin )->cLote    := ( D():Articulos( nView ) )->lLote
+                        ( dbfTmpLin )->cLote    := ( D():Articulos( nView ) )->cLote
                   end if 
 
                   /*
