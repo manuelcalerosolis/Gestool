@@ -921,7 +921,7 @@ METHOD StartAdministratorTask()
             ::oMsg:SetText( "Creando diccionario de empresa " + Rtrim( aEmpresa[ 1 ] ) + " - " + Rtrim( aEmpresa[ 2 ] ) )
 
             if !empty( ::oMtrActualiza )
-            	::oMtrActualiza:set( hb_EnumIndex() )
+            	::oMtrActualiza:set( hb_enumindex() )
             end if 
 
             setEmpresa( aEmpresa[ 1 ] )
@@ -995,17 +995,17 @@ RETURN ( Self )
 
 METHOD CreateDataDictionary()
 
-   if !file( ::getDataDictionaryFile() )
+   if file( ::getDataDictionaryFile() )
+      Return ( Self )
+   end if 
+   
+   if msgYesNo( "La base de datos " + ::getDataDictionaryFile() + " no existe, ¿desea crearla?")
 
-      if msgYesNo( "La base de datos " + ::getDataDictionaryFile() + " no existe, ¿desea crearla?")
+      AdsDDCreate( ::getDataDictionaryFile(), , ::cDataDictionaryComment )
 
-         AdsDDCreate( ::getDataDictionaryFile(), , ::cDataDictionaryComment )
+      AdsDDSetDatabaseProperty( ADS_DD_ENABLE_INTERNET, .t. )
 
-         AdsDDSetDatabaseProperty( ADS_DD_ENABLE_INTERNET, .t. )
-
-      end if 
-
-   end if
+   end if 
 
 RETURN ( Self )
 
