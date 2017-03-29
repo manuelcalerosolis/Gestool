@@ -4120,3 +4120,16 @@ Function transIdDocument( id )
 Return ( strtran( trans( id, "@R X/XXXXXXXXX/XX" ), " ", "" ) )
 
 //----------------------------------------------------------------------------//
+
+Function cNoBrackets( cFileName )
+
+   local n           := rat( "[", cFileName )
+
+   if ( n != 0 )
+      cFileName      := substr( cFileName, 1, n - 1 )
+   end if 
+
+Return ( cFileName )
+
+//----------------------------------------------------------------------------//
+

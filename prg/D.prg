@@ -627,6 +627,8 @@ CLASS D
       METHOD gotoIdPropiedadesLineas( id, nView )                 INLINE ( ::seekInOrd( ::PropiedadesLineas( nView ), id, "cCodPro" ) ) 
       METHOD PropiedadesLineasId( nView )                         INLINE ( ( ::Get( "TblPro", nView ) )->cCodPro + ( ::Get( "TblPro", nView ) )->cCodTbl )
 
+      METHOD PropiedadesLineasDos( nView )                        INLINE ( ::Get( "TblPro[]", nView ) )
+
    METHOD Almacen( nView )                                        INLINE ( ::Get( "Almacen", nView ) )
 
    METHOD Documentos( nView )                                     INLINE ( ::Get( "RDocumen", nView ) )
