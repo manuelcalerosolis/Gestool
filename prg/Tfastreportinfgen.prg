@@ -2583,14 +2583,14 @@ RETURN ( Self )
 
 METHOD FastReportFacturaProveedor()
       
-   ::oFacPrvT:OrdSetFocus( "iNumFac" )
+   ( D():FacturasProveedores( ::nView ) )->( OrdSetFocus( "iNumFac" ) )
       
-   ::oFastReport:SetWorkArea(       "Facturas de proveedor", ::oFacPrvT:nArea )
+   ::oFastReport:SetWorkArea(       "Facturas de proveedor", ( D():FacturasProveedores( ::nView ) )->( select() ) )
    ::oFastReport:SetFieldAliases(   "Facturas de proveedor", cItemsToReport( aItmFacPrv() ) )
       
-   ::oFacPrvL:OrdSetFocus( "iNumFac" )
+   ( D():FacturasProveedoresLineas( ::nView ) )->( OrdSetFocus( "iNumFac" ) )
       
-   ::oFastReport:SetWorkArea(       "Lineas facturas de proveedor", ::oFacPrvL:nArea )
+   ::oFastReport:SetWorkArea(       "Lineas facturas de proveedor", ( D():FacturasProveedoresLineas( ::nView ) )->( select() ) )
    ::oFastReport:SetFieldAliases(   "Lineas facturas de proveedor", cItemsToReport( aColFacPrv() ) )
 
    ::oFastReport:SetMasterDetail(   "Informe", "Facturas de proveedor",               {|| ::idDocumento() } )
@@ -2604,15 +2604,15 @@ RETURN ( Self )
 //---------------------------------------------------------------------------//
 
 METHOD FastReportRectificativaProveedor()
+   
+   ( D():FacturasRectificativasProveedores( ::nView ) )->( OrdSetFocus( "iNumRct" ) )
       
-   ::oRctPrvT:OrdSetFocus( "iNumRct" )
-      
-   ::oFastReport:SetWorkArea(       "Rectificativas de proveedor", ::oRctPrvT:nArea )
+   ::oFastReport:SetWorkArea(       "Rectificativas de proveedor", ( D():FacturasRectificativasProveedores( ::nView ) )->( select() ) )
    ::oFastReport:SetFieldAliases(   "Rectificativas de proveedor", cItemsToReport( aItmRctPrv() ) )
+   
+   ( D():FacturasRectificativasProveedoresLineas( ::nView ) )->( OrdSetFocus( "iNumRct" ) )
       
-   ::oRctPrvL:OrdSetFocus( "iNumRct" )
-      
-   ::oFastReport:SetWorkArea(       "Lineas rectificativas de proveedor", ::oRctPrvL:nArea )
+   ::oFastReport:SetWorkArea(       "Lineas rectificativas de proveedor", ( D():FacturasRectificativasProveedoresLineas( ::nView ) )->( select() ) )
    ::oFastReport:SetFieldAliases(   "Lineas rectificativas de proveedor", cItemsToReport( aColRctPrv() ) )
 
    ::oFastReport:SetMasterDetail(   "Informe", "Rectificativas de proveedor",               {|| ::idDocumento() } )
