@@ -3646,10 +3646,10 @@ METHOD AddFacturaProveedor( cCodigoArticulo ) CLASS TFastVentasArticulos
 
    ::setFilterProductIdLine()
 
-   ( D():FacturasProveedores( ::nView ) )->( ordsetfocus( "nNumAlb" ) )
+   ( D():FacturasProveedores( ::nView ) )->( ordsetfocus( "nNumFac" ) )
    ( D():FacturasProveedores( ::nView ) )->( setCustomFilter( ::cExpresionHeader ) )
 
-   ( D():facturasProveedoresLineas( ::nView ) )->( ordsetfocus( "nNumAlb" ) )
+   ( D():FacturasProveedoresLineas( ::nView ) )->( ordsetfocus( "nNumFac" ) )
    ( D():FacturasProveedoresLineas( ::nView ) )->( setCustomFilter( ::cExpresionLine ) )
 
    ::setMeterText( "Procesando facturas proveedor" )
