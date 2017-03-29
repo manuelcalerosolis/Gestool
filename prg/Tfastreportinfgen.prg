@@ -2583,14 +2583,14 @@ RETURN ( Self )
 
 METHOD FastReportFacturaProveedor()
       
-   ::oFacPrvT:OrdSetFocus( "iNumFac" )
+   ( D():FacturasProveedores( ::nView ) )->( OrdSetFocus( "iNumFac" ) )
       
-   ::oFastReport:SetWorkArea(       "Facturas de proveedor", ::oFacPrvT:nArea )
+   ::oFastReport:SetWorkArea(       "Facturas de proveedor", ( D():FacturasProveedores( ::nView ) )->( select() ) )
    ::oFastReport:SetFieldAliases(   "Facturas de proveedor", cItemsToReport( aItmFacPrv() ) )
       
-   ::oFacPrvL:OrdSetFocus( "iNumFac" )
+   ( D():FacturasProveedoresLineas( ::nView ) )->( OrdSetFocus( "iNumFac" ) )
       
-   ::oFastReport:SetWorkArea(       "Lineas facturas de proveedor", ::oFacPrvL:nArea )
+   ::oFastReport:SetWorkArea(       "Lineas facturas de proveedor", ( D():FacturasProveedoresLineas( ::nView ) )->( select() ) )
    ::oFastReport:SetFieldAliases(   "Lineas facturas de proveedor", cItemsToReport( aColFacPrv() ) )
 
    ::oFastReport:SetMasterDetail(   "Informe", "Facturas de proveedor",               {|| ::idDocumento() } )
