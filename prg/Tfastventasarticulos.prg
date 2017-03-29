@@ -401,7 +401,7 @@ METHOD OpenFiles() CLASS TFastVentasArticulos
 
       D():FacturasRectificativasProveedoresLineas ( ::nView )      
 
-      DATABASE NEW ::oArtImg  PATH ( cPatArt() ) CLASS "ArtImg"      FILE "ArtImg.Dbf"  VIA ( ::cDriver ) SHARED INDEX "ArtImg.Cdx"
+      D():ArticuloImagenes( ::nView )
 
       DATABASE NEW ::oArtKit  PATH ( cPatArt() ) CLASS "ArtKit"      FILE "ArtKit.Dbf"  VIA ( ::cDriver ) SHARED INDEX "ArtKit.Cdx"
 
@@ -528,10 +528,6 @@ METHOD CloseFiles() CLASS TFastVentasArticulos
 
    oBlock         := ErrorBlock( {| oError | ApoloBreak( oError ) } )
    BEGIN SEQUENCE
-
-      if !empty( ::oArtImg ) .and. ( ::oArtImg:Used() )
-         ::oArtImg:end()
-      end if
 
       if !empty( ::oArtKit ) .and. ( ::oArtKit:Used() )
          ::oArtKit:end()
@@ -1285,7 +1281,7 @@ METHOD DataReport() CLASS TFastVentasArticulos
    ::oFastReport:SetWorkArea(       "Artículos.Escandallos",      ( D():Articulos( ::nView ) )->( select() ) )
    ::oFastReport:SetFieldAliases(   "Artículos.Escandallos",      cItemsToReport( aItmArt() ) )
 
-   ::oFastReport:SetWorkArea(       "Imagenes",                   ::oArtImg:nArea )
+   ::oFastReport:SetWorkArea(       "Imagenes",                   ( D():ArticuloImagenes( ::nView ) )->( select() ) )
    ::oFastReport:SetFieldAliases(   "Imagenes",                   cItemsToReport( aItmImg() ) )
 
    ::oFastReport:SetWorkArea(       "Códigos de barras",          ::oArtCod:nArea )
@@ -3887,25 +3883,28 @@ RETURN if ( !empty( cDato ), cDato, ::GetDatoAlbaranProveedor( cCodArt, cLote, c
 
 //---------------------------------------------------------------------------//
 
-METHOD GetDatoAlbaranProveedor( cCodArt, cLote, cCampoRequerido )
+METHOD GetDatoAlbaranProveedor( idArticulo, cLote, cCampoRequerido )
 
    local Resultado
+   local nFieldPosition
 
    DEFAULT cCampoRequerido    := "dFecAlb"
 
-   ::oAlbPrvL:getStatus()
+   D():getStatusAlbaranesProveedoresLineas( ::nView )
 
-   ::oAlbPrvL:OrdSetFocus( "cRefFec" )
+   ( D():AlbaranesProveedoresLineas( ::nView ) )->( ordsetfocus( "cRefFec" ) )
 
-   if ::oAlbPrvL:Seek( Padr( cCodArt, 18 ) + Padr( cLote, 12 ) )
+   if ( D():AlbaranesProveedoresLineas( ::nView ) )->( dbseek( Padr( idArticulo, 18 ) + Padr( cLote, 12 ) ) )
 
-      if ::oAlbPrvL:fieldpos( cCampoRequerido ) != 0
-         Resultado   := ::oAlbPrvL:fieldgetbyname( cCampoRequerido )
+      nFieldPosition          := ( D():AlbaranesProveedoresLineas( ::nView ) )->( fieldpos( cCampoRequerido ) )
+
+      if ( nFieldPosition != 0 )
+         Resultado            := ( D():AlbaranesProveedoresLineas( ::nView ) )->( fieldget( nFieldPosition ) )
       end if 
                
    end if  
 
-   ::oAlbPrvL:setStatus()
+   D():setStatusAlbaranesProveedoresLineas( ::nView )
 
 RETURN ( Resultado )
 
@@ -3913,25 +3912,28 @@ RETURN ( Resultado )
 
 METHOD GetDatoMovimientosAlamcen( cCodArt, cLote, cCampoRequerido )
 
+   local nFieldPosition
    local Resultado            := ""
 
    DEFAULT cCampoRequerido    := "dFecMov"
 
-   ::oHisMov:getStatus()
+   D():getStatusMovimientosAlmacenLineas( ::nView )
 
-   ::oHisMov:OrdSetFocus( "cRefFec" )
+   ( D():getStatusMovimientosAlmacenLineas( ::nView ) )->( ordsetfocus( "cRefFec" ) )
 
-   if ::oHisMov:Seek( Padr( cCodArt, 18 ) + Padr( cLote, 12 ) )
+   if ( D():getStatusMovimientosAlmacenLineas( ::nView ) )->( dbseek( Padr( cCodArt, 18 ) + Padr( cLote, 12 ) ) )
 
-      if ::oHisMov:fieldpos( cCampoRequerido ) != 0
-         Resultado   := ::oHisMov:fieldgetbyname( cCampoRequerido )
+      nFieldPosition          := ( D():getStatusMovimientosAlmacenLineas( ::nView ) )->( fieldpos( cCampoRequerido ) )
+
+      if ( nFieldPosition != 0 )
+         Resultado            := ( D():getStatusMovimientosAlmacenLineas( ::nView ) )->( fieldget( nFieldPosition ) )
       end if
                 
    end if
 
-   ::oHisMov:setStatus()
+   D():setStatusMovimientosAlmacenLineas( ::nView )
 
-RETURN ( resultado )
+RETURN ( Resultado )
 
 //--------------------------------------------------------------------------//
 
