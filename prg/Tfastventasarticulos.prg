@@ -198,6 +198,8 @@ CLASS TFastVentasArticulos FROM TFastReportInfGen
    METHOD StockActualArticulo( cCodArt )              INLINE ( ::oStock:nStockAlmacen( Padr( cCodArt, 18 ) ) )
    METHOD StockAlmacenArticulo( cCodArt, cCodAlm )    INLINE ( ::oStock:nStockAlmacen( Padr( cCodArt, 18 ), Padr( cCodAlm, 16 ) ) )
 
+   METHOD getFieldMovimientoAlmacen( cField )
+
 END CLASS
 
 //----------------------------------------------------------------------------//
@@ -4417,6 +4419,16 @@ METHOD ValidGrupoCliente( cCodGrp ) CLASS TFastVentasArticulos
    end if
 
 Return lValid 
+
+//---------------------------------------------------------------------------//
+
+METHOD getFieldMovimientoAlmacen( cField )
+
+   local cResultField   := ""
+
+   cResultField         := RetFld( Padr( ::oDbf:cNumDoc, 9 ) + Padr( ::oDbf:cSufDoc, 2 ), D():MovimientosAlmacen( ::nView ), cField )
+
+Return cResultField
 
 //---------------------------------------------------------------------------//
 

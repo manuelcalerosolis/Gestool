@@ -998,7 +998,7 @@ METHOD CreateDataDictionary()
    if file( ::getDataDictionaryFile() )
       Return ( Self )
    end if 
-   
+
    if msgYesNo( "La base de datos " + ::getDataDictionaryFile() + " no existe, ¿desea crearla?")
 
       AdsDDCreate( ::getDataDictionaryFile(), , ::cDataDictionaryComment )
@@ -1069,6 +1069,8 @@ METHOD ScanDataTable( cDataTable ) CLASS TDataCenter
 
    local nScan
    local cDataName
+
+   cDataTable        := cNoBrackets( cDataTable )
 
    cDataName         := ::DatosName( cDataTable )
 
