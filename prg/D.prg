@@ -687,6 +687,8 @@ CLASS D
 
    METHOD Turnos( nView )                    INLINE ( ::Get( "Turno", nView ) )
 
+   METHOD TiposEnvases( nView )              INLINE ( ::Get( "FraPub", nView ) )
+
    // get objects--------------------------------------------------------------
 
    METHOD getPrestaShopId( nView )           INLINE ( ::GetObject( "PrestaShopId", nView ) )
