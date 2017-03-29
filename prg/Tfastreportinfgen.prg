@@ -2604,15 +2604,15 @@ RETURN ( Self )
 //---------------------------------------------------------------------------//
 
 METHOD FastReportRectificativaProveedor()
+   
+   ( D():FacturasRectificativasProveedores( ::nView ) )->( OrdSetFocus( "iNumRct" ) )
       
-   ::oRctPrvT:OrdSetFocus( "iNumRct" )
-      
-   ::oFastReport:SetWorkArea(       "Rectificativas de proveedor", ::oRctPrvT:nArea )
+   ::oFastReport:SetWorkArea(       "Rectificativas de proveedor", ( D():FacturasRectificativasProveedores( ::nView ) )->( select() ) )
    ::oFastReport:SetFieldAliases(   "Rectificativas de proveedor", cItemsToReport( aItmRctPrv() ) )
+   
+   ( D():FacturasRectificativasProveedoresLineas( ::nView ) )->( OrdSetFocus( "iNumRct" ) )
       
-   ::oRctPrvL:OrdSetFocus( "iNumRct" )
-      
-   ::oFastReport:SetWorkArea(       "Lineas rectificativas de proveedor", ::oRctPrvL:nArea )
+   ::oFastReport:SetWorkArea(       "Lineas rectificativas de proveedor", ( D():FacturasRectificativasProveedoresLineas( ::nView ) )->( select() ) )
    ::oFastReport:SetFieldAliases(   "Lineas rectificativas de proveedor", cItemsToReport( aColRctPrv() ) )
 
    ::oFastReport:SetMasterDetail(   "Informe", "Rectificativas de proveedor",               {|| ::idDocumento() } )
