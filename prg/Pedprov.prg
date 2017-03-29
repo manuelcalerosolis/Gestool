@@ -5692,6 +5692,9 @@ Static Function DataReport( oFr )
    oFr:SetWorkArea(     "Artículos", ( D():Articulos( nView ) )->( Select() ) )
    oFr:SetFieldAliases( "Artículos", cItemsToReport( aItmArt() ) )
 
+   oFr:SetWorkArea(     "Familias", ( D():Familias( nView ) )->( Select() ) )
+   oFr:SetFieldAliases( "Familias", cItemsToReport( aItmFam() ) )
+
    oFr:SetWorkArea(     "Código de proveedores", ( D():ProveedorArticulo( nView ) )->( Select() ) )
    oFr:SetFieldAliases( "Código de proveedores", cItemsToReport( aItmArtPrv() ) )
 
@@ -5715,6 +5718,7 @@ Static Function DataReport( oFr )
    oFr:SetMasterDetail( "Pedidos", "Clientes",                 {|| GetCodCli( ( D():PedidosProveedores( nView ) )->cNumPedCli ) } )
 
    oFr:SetMasterDetail( "Lineas de pedidos", "Artículos",               {|| ( D():PedidosProveedoresLineas( nView ) )->cRef } )
+   oFr:SetMasterDetail( "Lineas de pedidos", "Familias",                {|| ( D():PedidosProveedoresLineas( nView ) )->cCodFam } )
    oFr:SetMasterDetail( "Lineas de pedidos", "Código de proveedores",   {|| ( D():PedidosProveedores( nView ) )->cCodPrv + ( D():PedidosProveedoresLineas( nView ) )->cRef } )
    oFr:SetMasterDetail( "Lineas de pedidos", "Unidades de medición",    {|| ( D():PedidosProveedoresLineas( nView ) )->cUnidad } )
    oFr:SetMasterDetail( "Lineas de pedidos", "Impuestos especiales",    {|| ( D():PedidosProveedoresLineas( nView ) )->cCodImp } )
@@ -5730,6 +5734,7 @@ Static Function DataReport( oFr )
    oFr:SetResyncPair(   "Pedidos", "Clientes" )
 
    oFr:SetResyncPair(   "Lineas de pedidos", "Artículos" )
+   oFr:SetResyncPair(   "Lineas de pedidos", "Familias" )
    oFr:SetResyncPair(   "Lineas de pedidos", "Código de proveedores" )
    oFr:SetResyncPair(   "Lineas de pedidos", "Unidades de medición" )
    oFr:SetResyncPair(   "Lineas de pedidos", "Impuestos especiales" )

@@ -16610,8 +16610,6 @@ FUNCTION reindexAdsAlbCli( cPath )
 
    TDataCenter():SqlCreateIndex( cPath + 'AlbCliT', 'AlbCliT.Cdx', 'dDesFec', 'dFecAlb', '!Deleted()', nAnd( 2, 8 ) )
 
-Return ( nil )   
-
 /*
 
    dbUseArea( .t., cDriver, cPath + "ALBCLIL.DBF", cCheckArea( "ALBCLIL", @cAlbCliT ), .f. )
@@ -16785,7 +16783,6 @@ Return ( nil )
 RETURN NIL
 
 //---------------------------------------------------------------------------//
-
 
 function aAlbCliEst()
 

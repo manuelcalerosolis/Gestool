@@ -1669,8 +1669,6 @@ METHOD AddTable( oTable, lSilent )
 
          if !AdsDDaddTable( oTable:cName, oTable:cFullAdsDataFile, oTable:cFullAdsIndexFile )
 
-         // if !AdsDDaddTable( oTable:cName, oTable:cDataFile, oTable:cIndexFile )
-
             lAddTable   := .f.
 
             msgStop( "Descripción de error " + cValToChar( adsGetLastError( @cError ) ) + CRLF + ;
