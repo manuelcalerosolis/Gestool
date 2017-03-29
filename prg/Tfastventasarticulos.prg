@@ -24,7 +24,6 @@ CLASS TFastVentasArticulos FROM TFastReportInfGen
    DATA  oCtrCoste
    DATA  oOperario
    DATA  oFraPub
-   DATA  oPrp2
 
    DATA  oStock
 
@@ -404,7 +403,7 @@ METHOD OpenFiles() CLASS TFastVentasArticulos
 
       D():PropiedadesLineas( ::nView )
 
-      DATABASE NEW ::oPrp2    PATH ( cPatArt() ) CLASS "TblPro2"     FILE "TblPro.Dbf"    VIA ( ::cDriver ) SHARED INDEX "TblPro.Cdx"
+      D():PropiedadesLineasDos( ::nView )
 
       D():TarifaPreciosLineas( ::nView )
 
@@ -523,10 +522,6 @@ METHOD CloseFiles() CLASS TFastVentasArticulos
 
       if !empty( ::oCnfFlt ) .and. ( ::oCnfFlt:Used() )
          ::oCnfFlt:end()
-      end if
-
-      if !empty( ::oPrp2 ) .and. ( ::oPrp2:Used() )
-         ::oPrp2:end()
       end if
 
       if !empty( ::oFraPub )
@@ -1249,13 +1244,13 @@ METHOD DataReport() CLASS TFastVentasArticulos
    ::oFastReport:SetWorkArea(       "Rutas",                         ( D():Ruta( ::nView ) )->( select() ) )
    ::oFastReport:SetFieldAliases(   "Rutas",                         cItemsToReport( aItmRut() ) )
 
-   ::oFastReport:SetWorkArea(       "Propiedades 1",                 :( D():PropiedadesLineas( ::nView ) )->( select() ) ) 
+   ::oFastReport:SetWorkArea(       "Propiedades 1",                 ( D():PropiedadesLineas( ::nView ) )->( select() ) ) 
    ::oFastReport:SetFieldAliases(   "Propiedades 1",                 cItemsToReport( aItmPro() ) )
 
-   ::oFastReport:SetWorkArea(       "Propiedades 2",                 ::oPrp2:nArea ) 
+   ::oFastReport:SetWorkArea(       "Propiedades 2",                 ( D():PropiedadesLineasDos( ::nView ) )->( select() ) ) 
    ::oFastReport:SetFieldAliases(   "Propiedades 2",                 cItemsToReport( aItmPro() ) )
 
-   ::oFastReport:SetWorkArea(       "Codificación de proveedores",   ( D():ProveedorArticulo( ::nView ) )->( select( ) ) )
+   ::oFastReport:SetWorkArea(       "Codificación de proveedores",   ( D():ProveedorArticulo( ::nView ) )->( select() ) )
    ::oFastReport:SetFieldAliases(   "Codificación de proveedores",   cItemsToReport( aItmArtPrv() ) )
 
    ::oFastReport:SetWorkArea(       "Operario",                      ::oOperario:Select() )
@@ -3913,7 +3908,7 @@ METHOD getUnidadesAlbaranProveedor() CLASS TFastVentasArticulos
    cClave            += ::oDbf:cLote
 
    D():getStatusAlbaranesProveedoresLineas( ::nView )
-   ( D():AlbaranesProveedoresLineas( ::nView ) )->( OrdSetFocus( "cPedPrvRef" ) 
+   ( D():AlbaranesProveedoresLineas( ::nView ) )->( OrdSetFocus( "cPedPrvRef" ) )
 
    if ( D():AlbaranesProveedoresLineas( ::nView ) )->( dbseek( cClave ) )
       nUnidades      := nTotNAlbPrv( D():AlbaranesProveedoresLineas( ::nView ) )
@@ -3939,7 +3934,7 @@ METHOD getEstadoAlbaranProveedor() CLASS TFastVentasArticulos
    cClave         += ::oDbf:cLote
 
    D():getStatusAlbaranesProveedoresLineas( ::nView )
-   ( D():AlbaranesProveedoresLineas( ::nView ) )->( OrdSetFocus( "cPedPrvRef" ) 
+   ( D():AlbaranesProveedoresLineas( ::nView ) )->( OrdSetFocus( "cPedPrvRef" ) )
 
    if ( D():AlbaranesProveedoresLineas( ::nView ) )->( dbseek( cClave ) )
       if ( D():AlbaranesProveedoresLineas( ::nView ) )->lFacturado
@@ -4273,27 +4268,27 @@ METHOD processAllClients() CLASS TFastVentasArticulos
 
    D():getStatusClientes( ::nView )
    
-   ( D():Clientes( nView ) )->( OrdSetFocus( "Cod" ) )
+   ( D():Clientes( ::nView ) )->( OrdSetFocus( "Cod" ) )
 
-   ( D():Clientes( nView ) )->( dbgotop() )
-   while !( D():Clientes( nView ) )->( Eof() ) .and. !::lBreak
+   ( D():Clientes( ::nView ) )->( dbgotop() )
+   while !( D():Clientes( ::nView ) )->( Eof() ) .and. !::lBreak
 
-      if !( ::isClientInReport( ( D():Clientes( nView ) )->Cod ) )
+      if !( ::isClientInReport( ( D():Clientes( ::nView ) )->Cod ) )
       
          ::oDbf:Blank()
-         ::oDbf:cCodCli       := ( D():Clientes( nView ) )->Cod
-         ::oDbf:cNomCli       := ( D():Clientes( nView ) )->Titulo
-         ::oDbf:cCodRut       := ( D():Clientes( nView ) )->cCodRut
-         ::oDbf:cCodPago      := ( D():Clientes( nView ) )->CodPago
-         ::oDbf:cCodAge       := ( D():Clientes( nView ) )->cCodAge
-         ::oDbf:cCodTrn       := ( D():Clientes( nView ) )->cCodTrn
-         ::oDbf:cCodUsr       := ( D():Clientes( nView ) )->cCodUsr
+         ::oDbf:cCodCli       := ( D():Clientes( ::nView ) )->Cod
+         ::oDbf:cNomCli       := ( D():Clientes( ::nView ) )->Titulo
+         ::oDbf:cCodRut       := ( D():Clientes( ::nView ) )->cCodRut
+         ::oDbf:cCodPago      := ( D():Clientes( ::nView ) )->CodPago
+         ::oDbf:cCodAge       := ( D():Clientes( ::nView ) )->cCodAge
+         ::oDbf:cCodTrn       := ( D():Clientes( ::nView ) )->cCodTrn
+         ::oDbf:cCodUsr       := ( D():Clientes( ::nView ) )->cCodUsr
 
          ::oDbf:Insert()
 
       end if 
 
-      ( D():Clientes( nView ) )->( dbskip() )
+      ( D():Clientes( ::nView ) )->( dbskip() )
 
    end while
 
