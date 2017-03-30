@@ -474,6 +474,8 @@ ProductStock.prg                                   \
 StockViewNavigator.prg                             \
 Reporting.prg                                      \
 ViewReporting.prg                                  \
+backupPresenter.prg                                \
+backupView.prg                                     \
 
 C               =       	            				\
 Img2pdf.c               	            				\
@@ -938,6 +940,8 @@ ProductStock.obj                                   \
 StockViewNavigator.obj                             \
 Reporting.obj                                      \
 ViewReporting.obj                                  \
+backupPresenter.obj                                \
+backupView.obj                                     \
 
 .PRG.OBJ:
   	$(HB)\Bin\Harbour $? /n /p$(PPO)\$&.ppo /w /es2 /i$(FWINCLUDE) /i$(HBINCLUDE) /i$(GTINCLUDE) /o$(OBJ)\$&.c
@@ -1387,6 +1391,8 @@ $(OBJ)\Autoget.Obj                				+
 $(OBJ)\TTraslations.obj                      +
 $(OBJ)\ProductStock.obj                      +
 $(OBJ)\StockViewNavigator.obj                +
+$(OBJ)\backupPresenter.obj                   +
+$(OBJ)\backupView.obj                        +
 $(OBJ)\Reporting.obj                         +
 $(OBJ)\ViewReporting.obj
 $<,$*

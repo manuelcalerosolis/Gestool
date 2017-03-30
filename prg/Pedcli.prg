@@ -1719,7 +1719,7 @@ FUNCTION PedCli( oMenuItem, oWnd, cCodCli, cCodArt, cCodPre, lPedWeb )
       HOTKEY   "S"
 
    if !oUser():lFiltroVentas()
-      oWndBrw:oActiveFilter:SetFields( aItmPedCli() )
+      oWndBrw:oActiveFilter:SetFields( aItmPedCli() ) 
       oWndBrw:oActiveFilter:SetFilterType( PED_CLI )
    end if
 

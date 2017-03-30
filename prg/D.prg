@@ -825,6 +825,7 @@ Return ( ::nView )
       local cHandle
 
       if ::AssertView( nView )
+         
          hView          := hGet( ::hViews, nView )
          if hb_ishash( hView ) 
             if hhaskey( hView, Upper( cDatabase ) )
