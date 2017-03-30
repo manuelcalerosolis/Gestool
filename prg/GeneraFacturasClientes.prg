@@ -269,7 +269,7 @@ METHOD lOpenFiles() CLASS GeneraFacturasClientes
 
       D():ClientesBancos( ::nView )
 
-      D():GruposClientes( ::nView )
+      D():objectGruposClientes( ::nView )
 
       D():Contadores( ::nView )
 

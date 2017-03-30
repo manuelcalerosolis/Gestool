@@ -1557,7 +1557,7 @@ STATIC FUNCTION OpenFiles()
 
       D():Clientes( nView )
 
-      D():GruposClientes( nView )
+      D():objectGruposClientes( nView )
 
       D():ClientesEntidad( nView )
 

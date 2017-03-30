@@ -1016,8 +1016,8 @@ METHOD New( idGet, idSay, idText, oContainer ) CLASS GetGrupoCliente
 
    ::uGetValue    := Space( 4 )
 
-   ::bValid       := {|| D():GruposClientes( ::oContainer:nView ):Existe( ::oGetControl, ::oSayControl, "cNomGrp", .t., .t., "0" ) }
-   ::bHelp        := {|| D():GruposClientes( ::oContainer:nView ):Buscar( ::oGetControl ) }
+   ::bValid       := {|| D():objectGruposClientes( ::oContainer:nView ):Existe( ::oGetControl, ::oSayControl, "cNomGrp", .t., .t., "0" ) }
+   ::bHelp        := {|| D():objectGruposClientes( ::oContainer:nView ):Buscar( ::oGetControl ) }
 
 Return ( Self )
 

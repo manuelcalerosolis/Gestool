@@ -128,14 +128,15 @@ CLASS D
 
    METHOD AlbaranesClientesTableName()                      INLINE ( "AlbCliT" )
    METHOD AlbaranesClientes( nView )                        INLINE ( ::Get( ::AlbaranesClientesTableName(), nView ) )
+   METHOD AlbaranesClientesSQL( cSelect, nView )            INLINE ( ::getSQL( ::AlbaranesClientesTableName(), cSelect, nView ) ) 
 
    METHOD getHashBlankAlbaranesClientes( nView )            INLINE ( ::getHashFromBlank( ::AlbaranesClientes( nView ), ::getDictionary( ::AlbaranesClientesTableName(), nView ) ) )
    METHOD getHashRecordAlbaranesClientes( nView )           INLINE ( ::getHashFromAlias( ::AlbaranesClientes( nView ), ::getDictionary( ::AlbaranesClientesTableName(), nView ) ) )
 
       METHOD AlbaranesClientesFecha( nView )                INLINE ( ( ::Get( ::AlbaranesClientesTableName(), nView ) )->dFecAlb )
       METHOD AlbaranesClientesId( nView )                   INLINE ( ( ::Get( ::AlbaranesClientesTableName(), nView ) )->cSerAlb + str( ( ::Get( ::AlbaranesClientesTableName(), nView ) )->nNumAlb, 9 ) + ( ::Get( ::AlbaranesClientesTableName(), nView ) )->cSufAlb )
-      METHOD AlbaranesClientesIdTextShort( nView )          INLINE ( ::Get( "AlbCliT", nView ) )->cSerAlb + "/" + Alltrim( Str( ( ::Get( "AlbCliT", nView ) )->nNumAlb ) )
-      METHOD AlbaranesClientesIdText( nView )               INLINE ( ::AlbaranesClientesIdTextShort( nView ) + "/" + ( ::Get( "AlbCliT", nView ) )->cSufAlb ) 
+      METHOD AlbaranesClientesIdTextShort( nView )          INLINE ( ::Get( ::AlbaranesClientesTableName(), nView ) )->cSerAlb + "/" + Alltrim( Str( ( ::Get( ::AlbaranesClientesTableName(), nView ) )->nNumAlb ) )
+      METHOD AlbaranesClientesIdText( nView )               INLINE ( ::AlbaranesClientesIdTextShort( nView ) + "/" + ( ::Get( ::AlbaranesClientesTableName(), nView ) )->cSufAlb ) 
       METHOD getHashAlbaranCliente( nView )                 INLINE ( ::getHashRecordById( ::AlbaranesClientesId( nView ), ::AlbaranesClientes( nView ), nView ) )
       METHOD getDefaultHashAlbaranCliente( nView )          INLINE ( ::getHashRecordDefaultValues( ::AlbaranesClientes( nView ), nView ) )
 
@@ -542,7 +543,6 @@ CLASS D
    METHOD Proveedores( nView )                                       INLINE ( ::Get( "Provee", nView ) )
       METHOD gotoProveedores( id, nView )                            INLINE ( ::SeekInOrd( ::Proveedores( nView ), id, "Cod" ) ) 
       METHOD ProveedoresId( nView )                                  INLINE ( ( ::Get( "Provee", nView ) )->Cod )
-      METHOD GruposProveedores( nView )                              INLINE ( ::GetObject( "GruposProveedores", nView ) )
       METHOD BancosProveedores( nView )                              INLINE ( ::Get( "PrvBnc", nView ) )
 
    // Produccion---------------------------------------------------------------
@@ -657,14 +657,6 @@ CLASS D
 
    METHOD ClientesContactos( nView )                              INLINE ( ::Get( "CliCto", nView ) )
 
-   METHOD ImpuestosEspeciales( nView )                            INLINE ( ::GetObject( "ImpuestosEspeciales", nView ) )
-   METHOD CamposExtraHeader( nView )                              INLINE ( ::GetObject( "CamposExtraHeader", nView ) )
-   METHOD CamposExtraLine( nView )                                INLINE ( ::GetObject( "CamposExtraLine", nView ) )
-   METHOD UnidadMedicion( nView )                                 INLINE ( ::GetObject( "UnidadMedicion", nView ) )
-   METHOD CentroCoste( nView )                                    INLINE ( ::GetObject( "CentroCoste", nView ) )
-   METHOD Stocks( nView )                                         INLINE ( ::GetObject( "Stocks", nView ) )
-   METHOD Banderas( nView )                                       INLINE ( ::GetObject( "Banderas", nView ) )
-
    METHOD Agentes( nView )                                        INLINE ( ::Get( "Agentes", nView ) )
       METHOD AgentesId( nView )                                   INLINE ( ( ::Get( "Agentes", nView ) )->cCodAge )
       METHOD AgentesComisiones( nView )                           INLINE ( ::Get( "AgeCom", nView ) )
@@ -688,11 +680,23 @@ CLASS D
 
    METHOD Turnos( nView )                    INLINE ( ::Get( "Turno", nView ) )
 
+   METHOD TiposEnvases( nView )              INLINE ( ::Get( "FraPub", nView ) )
+
    // get objects--------------------------------------------------------------
 
-   METHOD getPrestaShopId( nView )           INLINE ( ::GetObject( "PrestaShopId", nView ) )
+   METHOD ImpuestosEspeciales( nView )                            INLINE ( ::GetObject( "ImpuestosEspeciales", nView ) )
+   METHOD CamposExtraHeader( nView )                              INLINE ( ::GetObject( "CamposExtraHeader", nView ) )
+   METHOD CamposExtraLine( nView )                                INLINE ( ::GetObject( "CamposExtraLine", nView ) )
+   METHOD UnidadMedicion( nView )                                 INLINE ( ::GetObject( "UnidadMedicion", nView ) )
+   METHOD CentroCoste( nView )                                    INLINE ( ::GetObject( "CentroCoste", nView ) )
+   METHOD Stocks( nView )                                         INLINE ( ::GetObject( "Stocks", nView ) )
+   METHOD Banderas( nView )                                       INLINE ( ::GetObject( "Banderas", nView ) )
+   METHOD getPrestaShopId( nView )                                INLINE ( ::GetObject( "PrestaShopId", nView ) )
 
-   METHOD gruposClientes( nView )            INLINE ( ::GetObject( "GruposClientes", nView ) )
+   METHOD gruposProveedores( nView )                              INLINE ( ::GetObject( "GruposProveedores", nView ) )
+
+   METHOD objectGruposClientes( nView )                           INLINE ( ::GetObject( "GruposClientes", nView ) )
+   METHOD objectCodigosPostales( nView )                          INLINE ( ::GetObject( "CodigosPostales", nView ) )
 
    // actions------------------------------------------------------------------
 
