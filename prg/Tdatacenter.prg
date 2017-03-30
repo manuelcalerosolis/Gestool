@@ -3531,7 +3531,7 @@ METHOD BuildEmpresa()
 
    ::AddEmpresaObject( TStock():Create( cPatEmp() ) )
 
-   ::AddEmpresaObject( CodigosPostales():Create( cPatEmp() ) )
+   ::AddEmpresaObject( CodigosPostales():Create( cPatDat() ) )
 
    ::AddEmpresaObject( TBandera():New() )
 

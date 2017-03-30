@@ -196,6 +196,7 @@ CLASS TTurno FROM TMasDet
    DATA  oEntSal
    DATA  oEmpBnc
    DATA  oLogPorta
+   DATA  oTpvRestaurante
 
    CLASSDATA  cCurTurno                            INIT ""
    CLASSDATA  cCurCaja                             INIT ""
@@ -959,6 +960,11 @@ METHOD OpenFiles( lExclusive )
          lOpen                   := .f.
       end if
 
+      ::oTpvRestaurante          := TTpvRestaurante():New( cPatEmp() )
+      if !::oTpvRestaurante:OpenFiles()
+         lOpen                   := .f.
+      end if
+
       ::lLoadDivisa()
 
    RECOVER USING oError
@@ -1515,6 +1521,10 @@ METHOD CloseFiles()
 
    if !empty( ::oCuentasBancarias )
       ::oCuentasBancarias:End()
+   end if
+
+   if !empty( ::oTpvRestaurante )
+      ::oTpvRestaurante:End()
    end if
 
    if !empty( ::oNewImp )
@@ -4023,6 +4033,7 @@ Method InitDlgImprimir()
    oSubTree       := ::oTreeImpresion:Add( "Estadisticas" )
                      oSubTree:Add( "Compras por artículos" )
                      oSubTree:Add( "Ventas por artículos" )
+                     oSubTree:Add( "Ventas por salas" )
                      oSubTree:Add( "Ventas por tipo de artículos" )
                      oSubTree:Add( "Ventas por familias" )
                      oSubTree:Add( "Ventas por " + getConfigTraslation( "categoría" ) )
@@ -6034,12 +6045,12 @@ METHOD DlgImprimir( nDevice, lTactil )
 
    end if
 
-      ::oTreeImpresion           := TTreeView():Redefine( 400, oDlg )
-      ::oTreeImpresion:bChanged  := {|| ::ChangedTreeImpresion() }
+   ::oTreeImpresion           := TTreeView():Redefine( 400, oDlg )
+   ::oTreeImpresion:bChanged  := {|| ::ChangedTreeImpresion() }
 
-      /*
-      Formato de arqueo--------------------------------------------------------
-      */
+   /*
+   Formato de arqueo--------------------------------------------------------
+   */
 
    if lTactil
 
@@ -9673,13 +9684,68 @@ METHOD FillTemporal( cCodCaj )
       oDbvArticulos:GoTop()
       while !oDbvArticulos:eof()
 
-         ::AppendInTemporal(  nil, Rtrim( oDbvArticulos:cCodArt ) + Space( 1 ) + Rtrim( oDbvArticulos:cNomArt ) + Space( 1 ) + "[Und.:" + Ltrim( Trans( oDbvArticulos:nUndArt, ::cPicUnd ) ) + "]", oDbvArticulos:nImpArt )
+         ::AppendInTemporal( nil, Rtrim( oDbvArticulos:cCodArt ) + Space( 1 ) + Rtrim( oDbvArticulos:cNomArt ) + Space( 1 ) + "[Und.:" + Ltrim( Trans( oDbvArticulos:nUndArt, ::cPicUnd ) ) + "]", oDbvArticulos:nImpArt )
 
          oDbvArticulos:Skip()
 
          SysRefresh()
 
       end while
+
+   end if
+
+   /*
+   Ventas por salas---------------------------------------------------------
+   */
+
+   if ::GetItemCheckState( "Ventas por salas" )
+
+      if ::oTikT:Seek( cTurnoCaja )
+
+         while ::oTikT:cTurTik + ::oTikT:cSufTik + ::oTikT:cNcjTik == cTurnoCaja .and. !::oTikT:eof()
+
+            do case
+               case ::oTikT:cTipTik == SAVTIK
+
+                  if ::oTikL:Seek( ::oTikT:cSerTik + ::oTikT:cNumTik + ::oTikT:cSufTik )
+
+                     while ::oTikL:cSerTil + ::oTikL:cNumTil + ::oTikL:cSufTil == ::oTikT:cSerTik + ::oTikT:cNumTik + ::oTikT:cSufTik .and. !::oTikL:eof()
+
+                        ::AppendInTemporal( ::oTikT:cCodSala, Rtrim( ::oTikT:cCodSala ) + Space( 1 ) + Rtrim( oRetFld( ::oTikT:cCodSala, ::oTpvRestaurante:oDbf ) ), nImpLTpv( ::oTikT:cAlias, ::oTikL:cAlias, ::nDouDiv, ::nDorDiv ) )
+
+                        ::oTikL:Skip()
+
+                        SysRefresh()
+
+                     end while
+
+                  end if
+
+               case ::oTikT:cTipTik == SAVDEV
+
+                  if ::oTikL:Seek( ::oTikT:cSerTik + ::oTikT:cNumTik + ::oTikT:cSufTik )
+
+                     while ::oTikL:cSerTil + ::oTikL:cNumTil + ::oTikL:cSufTil == ::oTikT:cSerTik + ::oTikT:cNumTik + ::oTikT:cSufTik .and. !::oTikL:eof()
+
+                        ::AppendInTemporal( ::oTikT:cCodSala, Rtrim( ::oTikT:cCodSala ) + Space( 1 ) + Rtrim( oRetFld( ::oTikT:cCodSala, ::oTpvRestaurante:oDbf ) ), - nImpLTpv( ::oTikT:cAlias, ::oTikL:cAlias, ::nDouDiv, ::nDorDiv ) )
+
+                        ::oTikL:Skip()
+
+                        SysRefresh()
+
+                     end while
+
+                  end if
+
+            end case
+
+            ::oTikT:Skip()
+
+            SysRefresh()
+
+         end while
+
+      end if
 
    end if
 

@@ -439,8 +439,7 @@ METHOD OpenFiles() CLASS TFastVentasArticulos
 
       D():TiposEnvases( ::nView )
 
-      ::oGrpCli               := TGrpCli():Create( cPatCli() )
-      ::oGrpCli:OpenService()
+      D():objectGruposClientes( ::nView )
 
       ::oGruFam               := TGrpFam():Create( cPatArt(), "GRPFAM" )
       if !::oGruFam:OpenFiles()
@@ -520,10 +519,6 @@ METHOD CloseFiles() CLASS TFastVentasArticulos
 
       if !empty( ::oCtrCoste )
          ::oCtrCoste:end()
-      end if
-
-      if !empty( ::oGrpCli )
-         ::oGrpCli:end()
       end if
 
       if !empty( ::oStock )
@@ -1242,8 +1237,8 @@ METHOD DataReport() CLASS TFastVentasArticulos
    ::oFastReport:SetWorkArea(       "Operario",                      ::oOperario:Select() )
    ::oFastReport:SetFieldAliases(   "Operario",                      cObjectsToReport( ::oOperario:oDbf ) )
 
-   ::oFastReport:SetWorkArea(       "Grupo clientes",                ::oGrpCli:Select() )
-   ::oFastReport:SetFieldAliases(   "Grupo clientes",                cObjectsToReport( ::oGrpCli:oDbf ) )
+   ::oFastReport:SetWorkArea(       "Grupo clientes",                D():objectGruposClientes( ::nView ):Select() )
+   ::oFastReport:SetFieldAliases(   "Grupo clientes",                cObjectsToReport( D():objectGruposClientes( ::nView ):oDbf ) )
 
    ::oFastReport:SetWorkArea(       "Agentes",                       ( D():Agentes( ::nView ) )->( select() ) )
    ::oFastReport:SetFieldAliases(   "Agentes",                       cItemsToReport( aItmAge() ) )
@@ -4334,7 +4329,7 @@ Return nTotal
 METHOD ValidGrupoCliente( cCodGrp ) CLASS TFastVentasArticulos
 
    local lValid   := .f.
-   local aChild   := ::oGrpCli:aChild( cCodGrp )
+   local aChild   := D():objectGruposClientes( ::nView ):aChild( cCodGrp )
 
    aAdd( aChild, cCodGrp )
 

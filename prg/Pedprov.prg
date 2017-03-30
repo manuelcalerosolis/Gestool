@@ -362,7 +362,7 @@ STATIC FUNCTION OpenFiles( lExt )
 
       D():Stocks( nView )
 
-      D():CodigosPostales( nView )
+      D():objectCodigosPostales( nView )
 
       D():Banderas( nView )
 
@@ -1166,7 +1166,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, cCodPrv, cCodArt, nMode )
       REDEFINE GET aGet[ _CPOSPRV ] VAR aTmp[ _CPOSPRV ] ;
          ID       143 ;
 			WHEN 		( nMode != ZOOM_MODE ) ;
-         VALID    ( CodigosPostales():GetInstance():validCodigoPostal() );
+         VALID    ( D():objectCodigosPostales( nView ):validCodigoPostal() );
          OF       oFld:aDialogs[1]
 
       REDEFINE GET aGet[ _CPOBPRV ] VAR aTmp[ _CPOBPRV ] ;
@@ -2121,7 +2121,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, cCodPrv, cCodArt, nMode )
          CANCEL ;
          ACTION   ( If( ExitNoSave( nMode, dbfTmpLin ), ( oDlg:end() ), ) )
 
-      CodigosPostales():GetInstance():setBinding( { "CodigoPostal" => aGet[ _CPOSPRV ], "Poblacion" => aGet[ _CPOBPRV ], "Provincia" => aGet[ _CPROPRV ] } )
+      D():objectCodigosPostales( nView ):setBinding( { "CodigoPostal" => aGet[ _CPOSPRV ], "Poblacion" => aGet[ _CPOBPRV ], "Provincia" => aGet[ _CPROPRV ] } )
 
       if nMode != ZOOM_MODE
          oFld:aDialogs[1]:AddFastKey( VK_F2, {|| AppDeta( oBrwLin, bEdtDet, aTmp ) } )

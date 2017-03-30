@@ -1058,7 +1058,7 @@ FUNCTION AlbCli( oMenuItem, oWnd, hHash )
 
       /*DEFINE BTNSHELL RESOURCE "gc_gearwheel_" GROUP OF oWndBrw ;
          NOBORDER ;
-         ACTION   ( GenFCli( oWndBrw:oBrw, D():Get( "AlbCliT", nView ), D():Get( "AlbCliL", nView ), D():Get( "AlbCliP", nView ), D():Get( "AlbCliS", nView ), D():Get( "Client", nView ), D():Atipicas( nView ), D():Get( "TIva", nView ), D():Get( "Divisas", nView ), D():Get( "FPago", nView ), dbfUsr, D():Get( "NCount", nView ), D():GruposClientes( nView ), oStock ) );
+         ACTION   ( GenFCli( oWndBrw:oBrw, D():Get( "AlbCliT", nView ), D():Get( "AlbCliL", nView ), D():Get( "AlbCliP", nView ), D():Get( "AlbCliS", nView ), D():Get( "Client", nView ), D():Atipicas( nView ), D():Get( "TIva", nView ), D():Get( "Divisas", nView ), D():Get( "FPago", nView ), dbfUsr, D():Get( "NCount", nView ), D():objectGruposClientes( nView ), oStock ) );
          TOOLTIP  "(G)enerar facturas";
          HOTKEY   "G";
          LEVEL    ACC_APPD*/
@@ -1359,7 +1359,7 @@ STATIC FUNCTION OpenFiles()
 
       // DV con objetos-------------------------------------------------
 
-      D():GruposClientes( nView )
+      D():objectGruposClientes( nView )
 
       /*
       Proveedores--------------------------------------------------------------

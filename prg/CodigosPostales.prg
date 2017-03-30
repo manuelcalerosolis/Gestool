@@ -113,7 +113,7 @@ METHOD OpenFiles( lExclusive, cPath ) CLASS CodigosPostales
       ::oDbf:Activate( .f., !( lExclusive ) )
 
       if !empty( ::oProvincias )
-         lOpen          := ::oProvincias:OpenFiles()
+         lOpen          := ::oProvincias:OpenFiles( lExclusive, cPath )
       end if
 
    RECOVER USING oError
