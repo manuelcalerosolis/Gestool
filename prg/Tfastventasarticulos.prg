@@ -16,8 +16,6 @@ CLASS TFastVentasArticulos FROM TFastReportInfGen
    DATA  aTypeDocs                        INIT { "C", "N", "D", "L", "C" }
 
    DATA  lUnidadesNegativo                INIT .f.
-
-   DATA  oProCab
    DATA  oProLin
    DATA  oProMat
    DATA  oHisMov
@@ -456,10 +454,6 @@ METHOD OpenFiles() CLASS TFastVentasArticulos
          lOpen                := .f.
       end if
 
-      ::oProCab               := TDataCenter():oProCab( cPatEmp(), ::cDriver )
-
-      ::oCnfFlt               := TDataCenter():oCnfFlt( cPatEmp(), ::cDriver )
-
       ::oStock    := TStock():Create( cPatEmp(), ::cDriver )
       if !::oStock:lOpenFiles()
          lOpen                := .f.
@@ -508,14 +502,6 @@ METHOD CloseFiles() CLASS TFastVentasArticulos
 
    oBlock         := ErrorBlock( {| oError | ApoloBreak( oError ) } )
    BEGIN SEQUENCE
-
-      if !empty( ::oProCab ) .and. ( ::oProCab:Used() )
-         ::oProCab:end()
-      end if 
-
-      if !empty( ::oCnfFlt ) .and. ( ::oCnfFlt:Used() )
-         ::oCnfFlt:end()
-      end if
 
       if !empty( ::oCtrCoste )
          ::oCtrCoste:end()

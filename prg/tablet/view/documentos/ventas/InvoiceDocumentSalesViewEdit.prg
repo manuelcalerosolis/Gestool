@@ -37,7 +37,7 @@ METHOD defineAceptarCancelar() CLASS InvoiceDocumentSalesViewEdit
                                                    "nWidth"    => 64,;
                                                    "nHeight"   => 64,;
                                                    "cResName"  => "gc_ok_64",;
-                                                   "bLClicked" => {|| ::oSender:onViewSave() },;
+                                                   "bLClicked" => {|| if( ::oSender:nMode != ZOOM_MODE, ::oSender:onViewSave(), ) },;
                                                    "oWnd"      => ::oDlg } )
 
 Return ( self )

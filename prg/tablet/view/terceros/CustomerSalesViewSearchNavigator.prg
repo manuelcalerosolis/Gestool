@@ -116,7 +116,7 @@ METHOD Resource() CLASS CustomerSalesViewSearchNavigator
 
    ::browseGeneral()
    
-   ::oBrowse:bLDblClick       := {|| nil }
+   ::oBrowse:bLDblClick       := {|| ::oSender:visualizaFactura( ::getField( "Serie" ) + str( ::getField( "Numero" ) ) + ::getField( "Sufijo" ) ) }
 
    ::oDlg:bResized            := {|| ::resizeDialog() }
 

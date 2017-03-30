@@ -273,6 +273,7 @@ CLASS D
 
    // Tikets de clientes-------------------------------------------------------
 
+   METHOD TiketsClientes( nView )                              INLINE ( ::Get( "TikeT", nView ) )
    METHOD Tikets( nView, cSelect )                             INLINE ( if( lAIS() .and. !empty( cSelect ), ::TiketsSQL( cSelect, nView ), ::Get( "TikeT", nView ) ) )
 
    METHOD TiketsSQL( cSelect, nView )                          INLINE ( ::getSQL( "TikeT", cSelect, nView ) ) 
@@ -824,6 +825,7 @@ Return ( ::nView )
       local cHandle
 
       if ::AssertView( nView )
+         
          hView          := hGet( ::hViews, nView )
          if hb_ishash( hView ) 
             if hhaskey( hView, Upper( cDatabase ) )

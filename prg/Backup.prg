@@ -782,7 +782,9 @@ Method ZipFiles()
 
    ::aMsgs              := {}
 
-   ::oDlg:Disable()
+   if !Empty( ::oDlg )
+      ::oDlg:Disable()
+   end if
 
    aEval( Directory( cPatSafe() + "*.*" ), {|aFiles| fErase( cPatSafe() + aFiles[ 1 ] ) } )
 
@@ -994,8 +996,10 @@ Method ZipFiles()
 
       msgStop( "No se selecciono ninguna empresa" )
 
-      ::oDlg:Enable()
+   end if
 
+   if !Empty( ::oDlg )
+      ::oDlg:Enable()
    end if
 
 return ( lSel )

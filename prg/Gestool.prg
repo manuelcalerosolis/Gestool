@@ -904,34 +904,6 @@ Function MainTablet()
    end if 
 
    /*
-   INFORME PROVISIONAL*********************************************************
-   */
-
-   /*TGridImage():Build(  {  "nTop"      => {|| GridRow( 12 ) },;
-                           "nLeft"     => {|| GridWidth( 11.5, oDlg ) - 64 },;
-                           "nWidth"    => 64,;
-                           "nHeight"   => 64,;
-                           "cResName"  => "gc_briefcase2_user_64",;
-                           "bLClicked" => {|| Informe1() },;
-                           "oWnd"      => oDlg } )
-
-   TGridImage():Build(  {  "nTop"      => {|| GridRow( 9 ) },;
-                           "nLeft"     => {|| GridWidth( 11.5, oDlg ) - 64 },;
-                           "nWidth"    => 64,;
-                           "nHeight"   => 64,;
-                           "cResName"  => "gc_document_text_user_64",;
-                           "bLClicked" => {|| Informe2() },;
-                           "oWnd"      => oDlg } )
-
-   TGridImage():Build(  {  "nTop"      => {|| GridRow( 15 ) },;
-                           "nLeft"     => {|| GridWidth( 11.5, oDlg ) - 64 },;
-                           "nWidth"    => 64,;
-                           "nHeight"   => 64,;
-                           "cResName"  => "gc_package_printer_64",;
-                           "bLClicked" => {|| Informe3() },;
-                           "oWnd"      => oDlg } )*/
-
-   /*
    GALERÍA DE INFORMES*********************************************************
    */
 
@@ -963,6 +935,19 @@ Function MainTablet()
                            "nClrOver"  => nGridColor(),;
                            "nClrVisit" => nGridColor(),;
                            "bAction"   => {|| DeliveryNoteCustomer():New():Play() } } )
+
+   /*
+   Copias de Seguridad*********************************************************
+   */
+
+   TGridImage():Build(  {  "nTop"      => {|| GridRow( 12 ) },;
+                           "nLeft"     => {|| GridWidth( 11.5, oDlg ) - 64 },;
+                           "nWidth"    => 64,;
+                           "nHeight"   => 64,;
+                           "cResName"  => "gc_shield_64",;
+                           "bLClicked" => {|| BackupPresenter():New():Play() },;
+                           "oWnd"      => oDlg } )
+
 
    //----------------Facturas
    

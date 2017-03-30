@@ -48,6 +48,8 @@ CLASS Customer FROM Editable
 
    METHOD liqInvoice( cNumFac )
 
+   METHOD visualizaFactura( cNumFac )
+
 ENDCLASS
 
 //---------------------------------------------------------------------------//
@@ -338,6 +340,30 @@ METHOD liqInvoice( cNumFac ) CLASS Customer
 
    ( D():FacturasClientes( ::nView ) )->( OrdSetFocus( nOrdAnt ) )
    ( D():FacturasClientes( ::nView ) )->( dbGoTo( nRec ) )
+
+Return ( .t. )
+
+//---------------------------------------------------------------------------//
+
+METHOD visualizaFactura( cNumFac ) CLASS Customer
+
+   local oInvoiceCustomer
+   local nRecAnt
+   local nOrdAnt
+
+   nRecAnt           := ( D():FacturasClientes( ::nView ) )->( Recno() )
+   nOrdAnt           := ( D():FacturasClientes( ::nView ) )->( OrdSetFocus( "nNumFac" ) )
+
+   oInvoiceCustomer  := InvoiceCustomer():Create( ::nView )
+
+   if ( D():FacturasClientes( ::nView ) )->( dbSeek( cNumFac ) )
+      oInvoiceCustomer:Zoom()
+   else
+      ApoloMsgStop( "Error al cargar la factura" )
+   end if
+   
+   ( D():FacturasClientes( ::nView ) )->( OrdSetFocus( nOrdAnt ) )
+   ( D():FacturasClientes( ::nView ) )->( dbGoTo( nRecAnt ) )
 
 Return ( .t. )
 

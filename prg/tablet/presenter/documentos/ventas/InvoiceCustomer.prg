@@ -5,6 +5,7 @@
 CLASS InvoiceCustomer FROM DocumentsSales  
   
    METHOD New()
+   METHOD Create( nView )   
 
    METHOD getAppendDocumento()
 
@@ -34,6 +35,61 @@ CLASS InvoiceCustomer FROM DocumentsSales
    METHOD ActualizaUltimoLote()
 
 END CLASS
+
+//---------------------------------------------------------------------------//
+
+METHOD Create( nView ) CLASS InvoiceCustomer
+
+   ::nView                 := nView
+
+   ::super:oSender         := self
+
+   ::oViewSearchNavigator  := DocumentSalesViewSearchNavigator():New( self )
+
+   ::oViewEdit             := InvoiceDocumentSalesViewEdit():New( self )
+
+   ::oViewEditResumen      := ViewEditResumen():New( self )
+
+   ::oCliente              := Customer():init( self )  
+
+   ::oProduct              := Product():init( self )
+
+   ::oProductStock         := ProductStock():init( self )
+
+   ::oStore                := Store():init( self )
+
+   ::oPayment              := Payment():init( self )
+
+   ::oDirections           := Directions():init( self )
+
+   ::oDocumentLines        := DocumentLines():New( self )
+
+   ::oLinesDocumentsSales  := LinesDocumentsSales():New( self )
+
+   ::oTotalDocument        := TotalDocument():New( self )
+
+   ::lAlowEdit             := accessCode():lInvoiceModify
+
+   // Vistas--------------------------------------------------------------------
+
+   ::oViewSearchNavigator:setTitleDocumento( "Facturas de clientes" )  
+
+   ::oViewEdit:setTitleDocumento( "Factura cliente" )  
+
+   ::oViewEditResumen:setTitleDocumento( "Resumen factura" )
+
+   // Tipos--------------------------------------------------------------------
+
+   ::setTypePrintDocuments( "FC" )
+
+   ::setCounterDocuments( "nFacCli" )
+
+   // Areas--------------------------------------------------------------------
+
+   ::setDataTable( "FacCliT" )
+   ::setDataTableLine( "FacCliL" )
+
+Return ( self )
 
 //---------------------------------------------------------------------------//
 
