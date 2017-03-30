@@ -2067,7 +2067,7 @@ METHOD lGrupoGrupoCliente( lInitGroup, lImp ) CLASS TNewInfGen
    oBlock               := ErrorBlock( {| oError | ApoloBreak( oError ) } )
    BEGIN SEQUENCE
 
-   if !empty(::oGrpCli)
+   if empty(::oGrpCli)
       ::oGrpCli                      := TGrpCli():Create( cPatCli() )
       ::oGrpCli:OpenService()
    end if 

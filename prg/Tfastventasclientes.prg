@@ -173,9 +173,9 @@ METHOD OpenFiles() CLASS TFastVentasClientes
    local oBlock
 
 
-   oBlock               := ErrorBlock( {| oError | ApoloBreak( oError ) } )
+  /* oBlock               := ErrorBlock( {| oError | ApoloBreak( oError ) } )
    BEGIN SEQUENCE
-
+*/
       ::cDriver         := cDriver()
 
       ::nView           := D():CreateView( ::cDriver )
@@ -185,7 +185,7 @@ METHOD OpenFiles() CLASS TFastVentasClientes
       D():SatClientes( ::nView )
       ( D():SatClientes( ::nView ) )->( OrdSetFocus( "cCodCli" ) )
 
-      D():SatClientes( ::nView )
+      D():SatClientesLineas( ::nView )
 
       D():PresupuestosClientes( ::nView )
       ( D():PresupuestosClientes( ::nView ) )->( OrdSetFocus( "cCodCli" ) )
@@ -202,8 +202,8 @@ METHOD OpenFiles() CLASS TFastVentasClientes
 
       D():AlbaranesClientesLineas( ::nView )
 
-      D():FacturasClientesFecha( ::nView ) 
-      ( D():FacturasClientesFecha( ::nView ) )->( OrdSetFocus( "cCodCli" ) )
+      D():FacturasClientes( ::nView ) 
+      ( D():FacturasClientes( ::nView ) )->( OrdSetFocus( "cCodCli" ) )
 
       D():FacturasClientesLineas( ::nView )
 
@@ -245,10 +245,7 @@ METHOD OpenFiles() CLASS TFastVentasClientes
 
       D():Divisas( ::nView )
 
-      ::oGrpCli               := TGrpCli():Create( cPatCli() )
-      ::oGrpCli:OpenService()
-
-      ::oCnfFlt               := TDataCenter():oCnfFlt()
+      D():objectGruposClientes( ::nView )
 
       ::oPais                 := TPais():Create( cPatDat() )
       if !::oPais:OpenFiles()
@@ -272,7 +269,7 @@ METHOD OpenFiles() CLASS TFastVentasClientes
          ::aExtraFields       := ::oCamposExtra:aExtraFields()
       end if
 
-   RECOVER USING oError
+  /* RECOVER USING oError
 
       msgStop( ErrorMessage( oError ), "Imposible abrir las bases de datos de clientes" )
 
@@ -282,21 +279,13 @@ METHOD OpenFiles() CLASS TFastVentasClientes
 
    END SEQUENCE
 
-   ErrorBlock( oBlock )
+   ErrorBlock( oBlock )*/
 
 RETURN ( lOpen )
 
 //---------------------------------------------------------------------------//
 
 METHOD CloseFiles() CLASS TFastVentasClientes
-
-   if !Empty( ::oCnfFlt ) .and. ( ::oCnfFlt:Used() )
-      ::oCnfFlt:end()
-   end if
-
-   if !empty( ::oGrpCli )
-      ::oGrpCli:end()
-   end if
 
    if !empty( ::oPais )
       ::oPais:end()
@@ -491,8 +480,8 @@ METHOD DataReport() CLASS TFastVentasClientes
    ::oFastReport:SetWorkArea(       "Formas de pago",                   ( D():FormasPago( ::nView ) )->( select() ) )
    ::oFastReport:SetFieldAliases(   "Formas de pago",                   cItemsToReport( aItmFPago() ) )
 
-   ::oFastReport:SetWorkArea(       "Grupos de cliente",                ::oGrpCli:Select() )
-   ::oFastReport:SetFieldAliases(   "Grupos de cliente",                cObjectsToReport( ::oGrpCli:oDbf ) )
+   ::oFastReport:SetWorkArea(       "Grupos de cliente",                D():objectGruposClientes( ::nView ):Select() )
+   ::oFastReport:SetFieldAliases(   "Grupos de cliente",                cObjectsToReport( D():objectGruposClientes( ::nView ):oDbf ) )
 
    ::oFastReport:SetWorkArea(       "Usuarios",                         ( D():Usuarios( ::nView ) )->( select() ) ) 
    ::oFastReport:SetFieldAliases(   "Usuarios",                         cItemsToReport( aItmUsuario() ) )
@@ -860,12 +849,10 @@ METHOD AddSATCliente( cCodigoCliente ) CLASS TFastVentasClientes
    local oError
    local oBlock
    
-   oBlock               := ErrorBlock( {| oError | ApoloBreak( oError ) } )
-   BEGIN SEQUENCE
+  /* oBlock               := ErrorBlock( {| oError | ApoloBreak( oError ) } )
+   BEGIN SEQUENCE*/
    
       ( D():SatClientes( ::nView ) )->( OrdSetFocus( "cCodCli" ) )
-      ( D():SatClientes( ::nView ) )->( OrdSetFocus( "nNumSat" ) )
-
       // filtros para la cabecera------------------------------------------------
 
       ::cExpresionHeader          := 'Field->dFecSat >= Ctod( "' + Dtoc( ::dIniInf ) + '" ) .and. Field->dFecSat <= Ctod( "' + Dtoc( ::dFinInf ) + '" )'
@@ -896,7 +883,7 @@ METHOD AddSATCliente( cCodigoCliente ) CLASS TFastVentasClientes
 
       while !::lBreak .and. !( D():SatClientes( ::nView ) )->( Eof() )
 
-         sTot              := sTotSatCli( ( D():SatClientes( ::nView ) )->cSerSat + Str( ( D():SatClientes( ::nView ) )->nNumSat ) + ( D():SatClientes( ::nView ) )->cSufSat, D():SatClientes( ::nView ), D():SatClientes( ::nView ), D():TiposIva( ::nView ), D():Divisas( ::nView ) )
+         sTot              := sTotSatCli( ( D():SatClientes( ::nView ) )->cSerSat + Str( ( D():SatClientes( ::nView ) )->nNumSat ) + ( D():SatClientes( ::nView ) )->cSufSat, D():SatClientes( ::nView ), D():SatClientesLineas( ::nView ), D():TiposIva( ::nView ), D():Divisas( ::nView ) )
 
          ::oDbf:Blank()
 
@@ -969,13 +956,13 @@ METHOD AddSATCliente( cCodigoCliente ) CLASS TFastVentasClientes
 
       end while
 
-   RECOVER USING oError
+   /*RECOVER USING oError
 
       msgStop( ErrorMessage( oError ), "Imposible añadir SAT de clientes" )
 
    END SEQUENCE
 
-   ErrorBlock( oBlock )
+   ErrorBlock( oBlock )*/
    
 RETURN ( Self )
 
@@ -1095,7 +1082,7 @@ METHOD AddPresupuestoCliente( cCodigoCliente ) CLASS TFastVentasClientes
 
       end while
 
-   RECOVER USING oError
+  RECOVER USING oError
 
       msgStop( ErrorMessage( oError ), "Imposible añadir presupuestos de clientes" )
 
@@ -1384,7 +1371,7 @@ METHOD AddFacturaCliente( cCodigoCliente ) CLASS TFastVentasClientes
    oBlock               := ErrorBlock( {| oError | ApoloBreak( oError ) } )
    BEGIN SEQUENCE
    
-      ( D():FacturasClientesFecha( ::nView ) )->( OrdSetFocus( "dFecFac" ) )
+      ( D():FacturasClientes( ::nView ) )->( OrdSetFocus( "dFecFac" ) )
       ( D():FacturasClientesLineas( ::nView ) )->( OrdSetFocus( "nNumFac" ) )
 
       // filtros para la cabecera----------------------------------------------
@@ -1413,44 +1400,44 @@ METHOD AddFacturaCliente( cCodigoCliente ) CLASS TFastVentasClientes
    
       ::setMeterText( "Procesando facturas" )
       
-      ( D():FacturasClientesFecha( ::nView ) )->( setCustomFilter( ::cExpresionHeader ) )
+      ( D():FacturasClientes( ::nView ) )->( setCustomFilter( ::cExpresionHeader ) )
 
-      ::setMeterTotal( ( D():FacturasClientesFecha( ::nView ) )->( dbcustomkeycount() ) )
+      ::setMeterTotal( ( D():FacturasClientes( ::nView ) )->( dbcustomkeycount() ) )
 
-      ( D():FacturasClientesFecha( ::nView ) )->( dbgotop() )
-      while !::lBreak .and. !( D():FacturasClientesFecha( ::nView ) )->( eof() )
+      ( D():FacturasClientes( ::nView ) )->( dbgotop() )
+      while !::lBreak .and. !( D():FacturasClientes( ::nView ) )->( eof() )
 
-         sTot              := sTotFacCli( ( D():FacturasClientesFecha( ::nView ) )->cSerie + Str( ( D():FacturasClientesFecha( ::nView ) )->nNumFac ) + ( D():FacturasClientesFecha( ::nView ) )->cSufFac, D():FacturasClientesFecha( ::nView ), D():FacturasClientesLineas( ::nView ), D():TiposIva( ::nView ), D():Divisas( ::nView ), D():FacturasClientesCobros( ::nView ), D():AnticiposClientes( ::nView ) )
+         sTot              := sTotFacCli( ( D():FacturasClientes( ::nView ) )->cSerie + Str( ( D():FacturasClientes( ::nView ) )->nNumFac ) + ( D():FacturasClientes( ::nView ) )->cSufFac, D():FacturasClientes( ::nView ), D():FacturasClientesLineas( ::nView ), D():TiposIva( ::nView ), D():Divisas( ::nView ), D():FacturasClientesCobros( ::nView ), D():AnticiposClientes( ::nView ) )
 
          ::oDbf:Blank()
 
-         ::oDbf:cCodCli    := ( D():FacturasClientesFecha( ::nView ) )->cCodCli
-         ::oDbf:cNomCli    := ( D():FacturasClientesFecha( ::nView ) )->cNomCli
-         ::oDbf:cCodAge    := ( D():FacturasClientesFecha( ::nView ) )->cCodAge
-         ::oDbf:cCodPgo    := ( D():FacturasClientesFecha( ::nView ) )->cCodPago
-         ::oDbf:cCodRut    := ( D():FacturasClientesFecha( ::nView ) )->cCodRut
-         ::oDbf:cCodUsr    := ( D():FacturasClientesFecha( ::nView ) )->cCodUsr
-         ::oDbf:cCodObr    := ( D():FacturasClientesFecha( ::nView ) )->cCodObr
-         ::oDbf:cCodAlm    := ( D():FacturasClientesFecha( ::nView ) )->cCodAlm
+         ::oDbf:cCodCli    := ( D():FacturasClientes( ::nView ) )->cCodCli
+         ::oDbf:cNomCli    := ( D():FacturasClientes( ::nView ) )->cNomCli
+         ::oDbf:cCodAge    := ( D():FacturasClientes( ::nView ) )->cCodAge
+         ::oDbf:cCodPgo    := ( D():FacturasClientes( ::nView ) )->cCodPago
+         ::oDbf:cCodRut    := ( D():FacturasClientes( ::nView ) )->cCodRut
+         ::oDbf:cCodUsr    := ( D():FacturasClientes( ::nView ) )->cCodUsr
+         ::oDbf:cCodObr    := ( D():FacturasClientes( ::nView ) )->cCodObr
+         ::oDbf:cCodAlm    := ( D():FacturasClientes( ::nView ) )->cCodAlm
 
-         ::oDbf:nComAge    := ( D():FacturasClientesFecha( ::nView ) )->nPctComAge
+         ::oDbf:nComAge    := ( D():FacturasClientes( ::nView ) )->nPctComAge
 
-         ::oDbf:cCodPos    := ( D():FacturasClientesFecha( ::nView ) )->cPosCli
+         ::oDbf:cCodPos    := ( D():FacturasClientes( ::nView ) )->cPosCli
 
-         ::oDbf:cCodGrp    := RetFld( ( D():FacturasClientesFecha( ::nView ) )->cCodCli, ( D():Clientes( ::nView ) ), "cCodGrp", "Cod")
+         ::oDbf:cCodGrp    := RetFld( ( D():FacturasClientes( ::nView ) )->cCodCli, ( D():Clientes( ::nView ) ), "cCodGrp", "Cod")
 
          ::oDbf:cTipDoc    := "Factura clientes"
          ::oDbf:cClsDoc    := FAC_CLI          
-         ::oDbf:cSerDoc    := ( D():FacturasClientesFecha( ::nView ) )->cSerie
-         ::oDbf:cNumDoc    := Str( ( D():FacturasClientesFecha( ::nView ) )->nNumFac )
-         ::oDbf:cSufDoc    := ( D():FacturasClientesFecha( ::nView ) )->cSufFac
+         ::oDbf:cSerDoc    := ( D():FacturasClientes( ::nView ) )->cSerie
+         ::oDbf:cNumDoc    := Str( ( D():FacturasClientes( ::nView ) )->nNumFac )
+         ::oDbf:cSufDoc    := ( D():FacturasClientes( ::nView ) )->cSufFac
          ::oDbf:cIdeDoc    := Upper( ::oDbf:cTipDoc ) + ::oDbf:cSerDoc + ::oDbf:cNumDoc + ::oDbf:cSufDoc
 
-         ::oDbf:nAnoDoc    := Year( ( D():FacturasClientesFecha( ::nView ) )->dFecFac )
-         ::oDbf:nMesDoc    := Month( ( D():FacturasClientesFecha( ::nView ) )->dFecFac )
-         ::oDbf:dFecDoc    := ( D():FacturasClientesFecha( ::nView ) )->dFecFac
-         ::oDbf:cHorDoc    := SubStr( ( D():FacturasClientesFecha( ::nView ) )->cTimCre, 1, 2 )
-         ::oDbf:cMinDoc    := SubStr( ( D():FacturasClientesFecha( ::nView ) )->cTimCre, 4, 2 )
+         ::oDbf:nAnoDoc    := Year( ( D():FacturasClientes( ::nView ) )->dFecFac )
+         ::oDbf:nMesDoc    := Month( ( D():FacturasClientes( ::nView ) )->dFecFac )
+         ::oDbf:dFecDoc    := ( D():FacturasClientes( ::nView ) )->dFecFac
+         ::oDbf:cHorDoc    := SubStr( ( D():FacturasClientes( ::nView ) )->cTimCre, 1, 2 )
+         ::oDbf:cMinDoc    := SubStr( ( D():FacturasClientes( ::nView ) )->cTimCre, 4, 2 )
 
          ::oDbf:nTotNet    := sTot:nTotalNeto
          ::oDbf:nTotIva    := sTot:nTotalIva
@@ -1465,10 +1452,10 @@ METHOD AddFacturaCliente( cCodigoCliente ) CLASS TFastVentasClientes
          ::oDbf:nTotRet    := sTot:nTotalRetencion
          ::oDbf:nTotCob    := sTot:nTotalCobrado
 
-         ::oDbf:nRieCli    := RetFld( ( D():FacturasClientesFecha( ::nView ) )->cCodCli, ( D():Clientes( ::nView ) ) , "Riesgo", "Cod" )
-         ::oDbf:cDniCli    := RetFld( ( D():FacturasClientesFecha( ::nView ) )->cCodCli, ( D():Clientes( ::nView ) ), "Nif", "Cod" )
+         ::oDbf:nRieCli    := RetFld( ( D():FacturasClientes( ::nView ) )->cCodCli, ( D():Clientes( ::nView ) ) , "Riesgo", "Cod" )
+         ::oDbf:cDniCli    := RetFld( ( D():FacturasClientes( ::nView ) )->cCodCli, ( D():Clientes( ::nView ) ), "Nif", "Cod" )
 
-         ::oDbf:cEstado    := cChkPagFacCli( ::oDbf:cSerDoc + ::oDbf:cNumDoc + ::oDbf:cSufDoc, D():FacturasClientesFecha( ::nView ), D():FacturasClientesCobros( ::nView ) )
+         ::oDbf:cEstado    := cChkPagFacCli( ::oDbf:cSerDoc + ::oDbf:cNumDoc + ::oDbf:cSufDoc, D():FacturasClientes( ::nView ), D():FacturasClientesCobros( ::nView ) )
 
          /*
          Añadimos un nuevo registro--------------------------------------------
@@ -1484,7 +1471,7 @@ METHOD AddFacturaCliente( cCodigoCliente ) CLASS TFastVentasClientes
 
          ::loadValuesExtraFields()
 
-         ( D():FacturasClientesFecha( ::nView ) )->( dbskip() )
+         ( D():FacturasClientes( ::nView ) )->( dbskip() )
 
          ::setMeterAutoIncremental()
 
