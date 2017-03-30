@@ -265,7 +265,7 @@ CLASS TStock
    METHOD SetTmpFacRecL( tmpFacRecL )        INLINE   ( ::tmpFacRecL := tmpFacRecL )
    METHOD SetTmpFacRecS( tmpFacRecS )        INLINE   ( ::tmpFacRecS := tmpFacRecS )
 
-   METHOD nRiesgo( cCodigoCliente )          INLINE   ( ::nOperacionesCliente( cCodigoCliente, .t. ) )
+   METHOD nRiesgo( cCodigoCliente )          // INLINE   ( ::nOperacionesCliente( cCodigoCliente, .t. ) )
    METHOD nFacturado( cCodigoCliente )       INLINE   ( ::nOperacionesCliente( cCodigoCliente, .f. ) )
 
    METHOD SetRiesgo( cCodigoCliente, oGetRiesgo, nRiesgoCliente )
@@ -6865,140 +6865,60 @@ METHOD getFechaHoraConsolidacion() CLASS TStock
 Return ( dtos( ( ::cHisMovT )->dFecMov ) + ( ::cHisMovT )->cTimMov )
 
 //---------------------------------------------------------------------------//
-/*
-METHOD nRiesgo( cCodigoCliente )
+
+METHOD nRiesgo( cCodigoCliente ) CLASS TStock
 
    local cStm
-   local nOrd
+   local cSql
    local oBlock
    local nRiesgo     := 0
-
-   cStm              := "SELECT * FROM " + cPatEmp() + "AlbCliT WHERE cCodCli = " + quoted( cCodigoCliente )
-
-   msglert( cStm, "cStm" )
-
-   Return nil
-
-   if empty( cCodigoCliente )
-      Return ( nRiesgo )
-   end if
 
    if alltrim( cCodigoCliente ) == alltrim( cDefCli() )
       Return ( nRiesgo )
    end if
 
-   DEFAULT lRiesgo   := .t.
+   if empty( cCodigoCliente )
+      Return ( nRiesgo )
+   end if
 
    oBlock            := ErrorBlock( {| oError | ApoloBreak( oError ) } )
    BEGIN SEQUENCE
 
+   // Albaranes ---------------------------------------------------------------
 
-   nRec              := ( ::cAlbCliT )->( Recno() )
-   nOrd              := ( ::cAlbCliT )->( ordsetfocus( "lCodCli" ) )
+   cStm              := "SELECT SUM( nTotAlb - nTotPag ) AS nRiesgo FROM " + cPatEmp() + "AlbCliT WHERE cCodCli = " + quoted( cCodigoCliente ) + " AND NOT lFacturado"
 
-   if ( ::cAlbCliT )->( dbSeek( cCodigoCliente ) )
+   TDataCenter():ExecuteSqlStatement( cStm, @cSql )
 
-      while ( alltrim( ( ::cAlbCliT )->cCodCli ) == alltrim( cCodigoCliente ) ) .and. !( ::cAlbCliT )->( Eof() )
+   if !empty(cSql)
+      nRiesgo        += ( cSql )->nRiesgo
+   end if 
 
-         if !( ::cAlbCliT )->lFacturado
+   // Pagos -------------------------------------------------------------------
 
-            nRiesgo     += ( ::cAlbCliT )->nTotAlb
-            nRiesgo     -= ( ::cAlbCliT )->nTotPag
+   cStm              := "SELECT SUM( nImporte ) AS nRiesgo FROM " + cPatEmp() + "FacCliP WHERE cCodCli = " + quoted( cCodigoCliente ) + " AND lCobrado AND NOT lPasado"
 
-         end if 
+   TDataCenter():ExecuteSqlStatement( cStm, @cSql )
 
-         ( ::cAlbCliT )->( dbSkip() )
+   if !empty(cSql)
+      nRiesgo        += ( cSql )->nRiesgo
+   end if 
 
-         SysRefresh()
+   // Anticipos ---------------------------------------------------------------
 
-      end while
+   cStm              := "SELECT SUM( nTotTik - nCobTik ) AS nRiesgo FROM " + cPatEmp() + "TikeT WHERE cCliTik = " + quoted( cCodigoCliente ) + " AND lLiqTik AND ( cTipTik = '1' OR cTipTik = '7' )"
 
-   end if
+   TDataCenter():ExecuteSqlStatement( cStm, @cSql )
 
-   ( ::cAlbCliT )->( ordsetfocus( nOrd ) )
-   ( ::cAlbCliT )->( dbGoTo( nRec ) )
-
-   // Pagos no cobrados en facturas--------------------------------------------
-
-   nRec              := ( ::cFacCliP )->( Recno() )
-   nOrd              := ( ::cFacCliP )->( ordsetfocus( "cCodCli" ) )
-
-   if ( ::cFacCliP )->( dbSeek( cCodigoCliente ) )
-
-      while ( alltrim( ( ::cFacCliP )->cCodCli ) == alltrim( cCodigoCliente ) ) .and. !( ::cFacCliP )->( Eof() )
-
-         nRiesgo     += ( ::cFacCliP )->nImporte
-
-         if lRiesgo .and. ( ::cFacCliP )->lCobrado .and. !( ::cFacCliP )->lPasado
-            nRiesgo  -= ( ::cFacCliP )->nImporte
-         end if
-
-         ( ::cFacCliP )->( dbSkip() )
-
-         SysRefresh()
-
-      end while
-
-   end if
-
-   ( ::cFacCliP )->( ordsetfocus( nOrd ) )
-   ( ::cFacCliP )->( dbGoTo( nRec ) )
-
-   // Anticipos no liquidados-------------------------------------------------
-
-   nRec              := ( ::cAntCliT )->( Recno() )
-   nOrd              := ( ::cAntCliT )->( ordsetfocus( "lCodCli" ) )
-
-   if ( ::cAntCliT )->( dbSeek( cCodigoCliente ) )
-
-      while ( alltrim( ( ::cAntCliT )->cCodCli ) == alltrim( cCodigoCliente ) ) .and. !( ::cAntCliT )->( Eof() )
-
-         if lRiesgo
-            nRiesgo  -= ( ::cAntCliT )->nTotAnt
-         end if 
-
-         ( ::cAntCliT )->( dbSkip() )
-
-         SysRefresh()
-
-      end while
-
-   end if
-
-   ( ::cAntCliT )->( ordsetfocus( nOrd ) )
-   ( ::cAntCliT )->( dbGoTo( nRec ) )
-
-   // Pagos no cobrados en facturas---------------------------------------------------
-
-   nRec              := ( ::cTikT )->( Recno() )
-   nOrd              := ( ::cTikT )->( ordsetfocus( "lCliTik" ) )
-
-   if ( ::cTikT )->( dbSeek( cCodigoCliente ) )
-
-      while ( alltrim( ( ::cTikT )->cCliTik ) == alltrim( cCodigoCliente ) ) .and. !( ::cTikT )->( Eof() )
-
-         nRiesgo     += ( ::cTikT )->nTotTik 
-
-         if lRiesgo
-            nRiesgo  -= ( ::cTikT )->nCobTik 
-         end if
-
-         ( ::cTikT )->( dbSkip() )
-
-         SysRefresh()
-
-      end while
-
-   end if
-
-   ( ::cTikT )->( ordsetfocus( nOrd ) )
-   ( ::cTikT )->( dbGoTo( nRec ) )
+   if !empty(cSql)
+      nRiesgo        += ( cSql )->nRiesgo
+   end if 
 
    END SEQUENCE
 
    ErrorBlock( oBlock )
 
 Return ( nRiesgo )
-*/
+
 
 //---------------------------------------------------------------------------//
