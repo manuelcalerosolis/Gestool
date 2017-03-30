@@ -272,6 +272,7 @@ CLASS D
 
    // Tikets de clientes-------------------------------------------------------
 
+   METHOD TiketsClientes( nView )                              INLINE ( ::Get( "TikeT", nView ) )
    METHOD Tikets( nView, cSelect )                             INLINE ( if( lAIS() .and. !empty( cSelect ), ::TiketsSQL( cSelect, nView ), ::Get( "TikeT", nView ) ) )
 
    METHOD TiketsSQL( cSelect, nView )                          INLINE ( ::getSQL( "TikeT", cSelect, nView ) ) 
