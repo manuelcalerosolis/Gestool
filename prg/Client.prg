@@ -13387,3 +13387,47 @@ static function DelDetalle( cCodigo )
 Return .t.
 
 //---------------------------------------------------------------------------//
+
+Function showClienteRiesgo( idCliente, nRiesgoCliente, getRiesgo, lAviso )
+
+   local nRiesgo  := ClientesModel():Riesgo( idCliente )
+
+   DEFAULT lAviso := uFieldEmpresa( "lSalPdt" , .f. )
+
+   if !( hb_isobject( getRiesgo ) )
+      Return ( nRiesgo )
+   end if 
+
+   getRiesgo:cText( nRiesgo )
+
+   if !( hb_isnumeric( nRiesgoCliente ) )
+      Return ( nRiesgo )
+   end if 
+
+   if ( nRiesgo > nRiesgoCliente )
+      getRiesgo:setColor( Rgb( 255, 255, 255 ), Rgb( 255, 0, 0 ) )
+   else
+      getRiesgo:setColor( Rgb( 0, 0, 0 ), Rgb( 255, 255, 255 ) )
+   end if
+
+   getRiesgo:Refresh()
+
+   if lAviso
+      msgStop( "El riesgo alacanzado es de " + alltrim( Trans( nRiesgo, cPorDiv() ) ) + "; sobre el establecido en su ficha " + alltrim( Trans( nRiesgoCliente, cPorDiv() ) ) + ".",;
+               "El riesgo del cliente supera el límite establecido" )
+   end if
+
+Return ( nRiesgo )
+
+//---------------------------------------------------------------------------//
+
+Function lClienteAlcanzadoRiesgoPermitido( lCreditoSolicitado, nRiesgoPermitido, nRiesgoAlcanzado )
+
+   if lCreditoSolicitado .and. nRiesgoAlcanzado >= nRiesgoPermitido
+      msgStop( "Este cliente supera el limite de riesgo permitido.", "Imposible archivar documento" )
+      Return .t.
+   end if 
+
+Return .f.
+
+//---------------------------------------------------------------------------//

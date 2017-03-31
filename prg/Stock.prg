@@ -248,8 +248,8 @@ CLASS TStock
    
       METHOD Integra( sStock )
 
-   METHOD nOperacionesCliente(cCodigoCliente, lRiesgo)
-   METHOD nPedidoCliente( cCodigoCliente )
+   METHOD nOperacionesCliente(idCliente, lRiesgo)
+   METHOD nPedidoCliente( idCliente )
    METHOD nConsumoArticulo( cCodArt, cCodAlm, cLote, dFecIni, dFecFin )
 
    METHOD lValidNumeroSerie( cCodArt, cCodAlm, nNumSer, lMessage )
@@ -265,10 +265,10 @@ CLASS TStock
    METHOD SetTmpFacRecL( tmpFacRecL )        INLINE   ( ::tmpFacRecL := tmpFacRecL )
    METHOD SetTmpFacRecS( tmpFacRecS )        INLINE   ( ::tmpFacRecS := tmpFacRecS )
 
-   METHOD nRiesgo( cCodigoCliente )          // INLINE   ( ::nOperacionesCliente( cCodigoCliente, .t. ) )
-   METHOD nFacturado( cCodigoCliente )       INLINE   ( ::nOperacionesCliente( cCodigoCliente, .f. ) )
+   METHOD nRiesgo( idCliente )          // INLINE   ( ::nOperacionesCliente( idCliente, .t. ) )
+   METHOD nFacturado( idCliente )       INLINE   ( ::nOperacionesCliente( idCliente, .f. ) )
 
-   METHOD SetRiesgo( cCodigoCliente, oGetRiesgo, nRiesgoCliente )
+   METHOD SetRiesgo( idCliente, oGetRiesgo, nRiesgoCliente )
 
    METHOD nCostoMedio( cCodArt, cCodAlm, cCodPr1, cCodPr2, cValPr1, cValPr2, cLote )
 
@@ -314,11 +314,11 @@ CLASS TStock
 
    METHOD validateDateTime( dFecMov, tTimMov )
 
-   METHOD nFacturacionPendiente( cCodigoCliente )
+   METHOD nFacturacionPendiente( idCliente )
 
-   METHOD nPagadoCliente( cCodigoCliente )
+   METHOD nPagadoCliente( idCliente )
 
-   METHOD nFacturacionCliente( cCodigoCliente )
+   METHOD nFacturacionCliente( idCliente )
 
 END CLASS
 
@@ -5009,18 +5009,18 @@ Return ( nTotal )
 
 //---------------------------------------------------------------------------//
 
-Method nOperacionesCliente( cCodigoCliente, lRiesgo )
+Method nOperacionesCliente( idCliente, lRiesgo )
 
    local nRec
    local nOrd
    local oBlock
    local nRiesgo     := 0
 
-   if empty( cCodigoCliente )
+   if empty( idCliente )
       Return ( nRiesgo )
    end if
 
-   if alltrim( cCodigoCliente ) == alltrim( cDefCli() )
+   if alltrim( idCliente ) == alltrim( cDefCli() )
       Return ( nRiesgo )
    end if
 
@@ -5032,9 +5032,9 @@ Method nOperacionesCliente( cCodigoCliente, lRiesgo )
    nRec              := ( ::cAlbCliT )->( Recno() )
    nOrd              := ( ::cAlbCliT )->( ordsetfocus( "lCodCli" ) )
 
-   if ( ::cAlbCliT )->( dbSeek( cCodigoCliente ) )
+   if ( ::cAlbCliT )->( dbSeek( idCliente ) )
 
-      while ( alltrim( ( ::cAlbCliT )->cCodCli ) == alltrim( cCodigoCliente ) ) .and. !( ::cAlbCliT )->( Eof() )
+      while ( alltrim( ( ::cAlbCliT )->cCodCli ) == alltrim( idCliente ) ) .and. !( ::cAlbCliT )->( Eof() )
 
          if !( ::cAlbCliT )->lFacturado
 
@@ -5062,9 +5062,9 @@ Method nOperacionesCliente( cCodigoCliente, lRiesgo )
    nRec              := ( ::cFacCliP )->( Recno() )
    nOrd              := ( ::cFacCliP )->( ordsetfocus( "cCodCli" ) )
 
-   if ( ::cFacCliP )->( dbSeek( cCodigoCliente ) )
+   if ( ::cFacCliP )->( dbSeek( idCliente ) )
 
-      while ( alltrim( ( ::cFacCliP )->cCodCli ) == alltrim( cCodigoCliente ) ) .and. !( ::cFacCliP )->( Eof() )
+      while ( alltrim( ( ::cFacCliP )->cCodCli ) == alltrim( idCliente ) ) .and. !( ::cFacCliP )->( Eof() )
 
          nRiesgo     += ( ::cFacCliP )->nImporte
 
@@ -5088,9 +5088,9 @@ Method nOperacionesCliente( cCodigoCliente, lRiesgo )
    nRec              := ( ::cAntCliT )->( Recno() )
    nOrd              := ( ::cAntCliT )->( ordsetfocus( "lCodCli" ) )
 
-   if ( ::cAntCliT )->( dbSeek( cCodigoCliente ) )
+   if ( ::cAntCliT )->( dbSeek( idCliente ) )
 
-      while ( alltrim( ( ::cAntCliT )->cCodCli ) == alltrim( cCodigoCliente ) ) .and. !( ::cAntCliT )->( Eof() )
+      while ( alltrim( ( ::cAntCliT )->cCodCli ) == alltrim( idCliente ) ) .and. !( ::cAntCliT )->( Eof() )
 
          if lRiesgo
             nRiesgo  -= ( ::cAntCliT )->nTotAnt
@@ -5112,9 +5112,9 @@ Method nOperacionesCliente( cCodigoCliente, lRiesgo )
    nRec              := ( ::cTikT )->( Recno() )
    nOrd              := ( ::cTikT )->( ordsetfocus( "lCliTik" ) )
 
-   if ( ::cTikT )->( dbSeek( cCodigoCliente ) )
+   if ( ::cTikT )->( dbSeek( idCliente ) )
 
-      while ( alltrim( ( ::cTikT )->cCliTik ) == alltrim( cCodigoCliente ) ) .and. !( ::cTikT )->( Eof() )
+      while ( alltrim( ( ::cTikT )->cCliTik ) == alltrim( idCliente ) ) .and. !( ::cTikT )->( Eof() )
 
          nRiesgo     += ( ::cTikT )->nTotTik 
 
@@ -5141,14 +5141,14 @@ Return ( nRiesgo )
 
 //---------------------------------------------------------------------------//
 
-Method nFacturacionPendiente( cCodigoCliente )
+Method nFacturacionPendiente( idCliente )
 
    local nRec
    local nOrd
    local oBlock
    local nTotal     := 0
 
-   if empty( cCodigoCliente )
+   if empty( idCliente )
       Return ( nTotal )
    end if
 
@@ -5160,9 +5160,9 @@ Method nFacturacionPendiente( cCodigoCliente )
    nRec              := ( ::cFacCliP )->( Recno() )
    nOrd              := ( ::cFacCliP )->( ordsetfocus( "cCodCli" ) )
 
-   if ( ::cFacCliP )->( dbSeek( cCodigoCliente ) )
+   if ( ::cFacCliP )->( dbSeek( idCliente ) )
 
-      while ( alltrim( ( ::cFacCliP )->cCodCli ) == alltrim( cCodigoCliente ) ) .and. !( ::cFacCliP )->( Eof() )
+      while ( alltrim( ( ::cFacCliP )->cCodCli ) == alltrim( idCliente ) ) .and. !( ::cFacCliP )->( Eof() )
 
          if !( ::cFacCliP )->lCobrado
             nTotal  += ( ::cFacCliP )->nImporte
@@ -5187,14 +5187,14 @@ Return ( nTotal )
 
 //---------------------------------------------------------------------------//
 
-METHOD nPagadoCliente( cCodigoCliente )
+METHOD nPagadoCliente( idCliente )
 
    local nRec
    local nOrd
    local oBlock
    local nTotal     := 0
 
-   if empty( cCodigoCliente )
+   if empty( idCliente )
       Return ( nTotal )
    end if
 
@@ -5206,9 +5206,9 @@ METHOD nPagadoCliente( cCodigoCliente )
    nRec              := ( ::cFacCliP )->( Recno() )
    nOrd              := ( ::cFacCliP )->( ordsetfocus( "cCodCli" ) )
 
-   if ( ::cFacCliP )->( dbSeek( cCodigoCliente ) )
+   if ( ::cFacCliP )->( dbSeek( idCliente ) )
 
-      while ( alltrim( ( ::cFacCliP )->cCodCli ) == alltrim( cCodigoCliente ) ) .and. !( ::cFacCliP )->( Eof() )
+      while ( alltrim( ( ::cFacCliP )->cCodCli ) == alltrim( idCliente ) ) .and. !( ::cFacCliP )->( Eof() )
 
          if ( ::cFacCliP )->lCobrado
 
@@ -5235,14 +5235,14 @@ Return ( nTotal )
 
 //---------------------------------------------------------------------------//
 
-METHOD nFacturacionCliente( cCodigoCliente )
+METHOD nFacturacionCliente( idCliente )
 
    local nRec
    local nOrd
    local oBlock
    local nTotal     := 0
 
-   if empty( cCodigoCliente )
+   if empty( idCliente )
       Return ( nTotal )
    end if
 
@@ -5254,9 +5254,9 @@ METHOD nFacturacionCliente( cCodigoCliente )
    nRec              := ( ::cFacCliT )->( Recno() )
    nOrd              := ( ::cFacCliT )->( ordsetfocus( "cCodCli" ) )
 
-   if ( ::cFacCliT )->( dbSeek( cCodigoCliente ) )
+   if ( ::cFacCliT )->( dbSeek( idCliente ) )
 
-      while ( alltrim( ( ::cFacCliT )->cCodCli ) == alltrim( cCodigoCliente ) ) .and. !( ::cFacCliT )->( Eof() )
+      while ( alltrim( ( ::cFacCliT )->cCodCli ) == alltrim( idCliente ) ) .and. !( ::cFacCliT )->( Eof() )
 
          nTotal  += ( ::cFacCliT )->nTotFac
 
@@ -5439,9 +5439,9 @@ RETURN ( nUnidades )
 
 //---------------------------------------------------------------------------//
 
-METHOD setRiesgo( cCodigoCliente, oGetRiesgo, nRiesgoCliente, lAviso )
+METHOD setRiesgo( idCliente, oGetRiesgo, nRiesgoCliente, lAviso )
 
-   local nRiesgo  := ::nRiesgo( cCodigoCliente )
+   local nRiesgo  := ::nRiesgo( idCliente )
 
    DEFAULT lAviso := uFieldEmpresa( "lSalPdt" , .f. )
 
@@ -6866,18 +6866,21 @@ Return ( dtos( ( ::cHisMovT )->dFecMov ) + ( ::cHisMovT )->cTimMov )
 
 //---------------------------------------------------------------------------//
 
-METHOD nRiesgo( cCodigoCliente ) CLASS TStock
+METHOD nRiesgo( idCliente ) CLASS TStock
 
+Return ( ClientesModel():Riesgo( idCliente ) )
+
+/*
    local cStm
    local cSql
    local oBlock
    local nRiesgo     := 0
 
-   if alltrim( cCodigoCliente ) == alltrim( cDefCli() )
+   if alltrim( idCliente ) == alltrim( cDefCli() )
       Return ( nRiesgo )
    end if
 
-   if empty( cCodigoCliente )
+   if empty( idCliente )
       Return ( nRiesgo )
    end if
 
@@ -6886,7 +6889,7 @@ METHOD nRiesgo( cCodigoCliente ) CLASS TStock
 
    // Albaranes ---------------------------------------------------------------
 
-   cStm              := "SELECT SUM( nTotAlb - nTotPag ) AS nRiesgo FROM " + cPatEmp() + "AlbCliT WHERE cCodCli = " + quoted( cCodigoCliente ) + " AND NOT lFacturado"
+   cStm              := "SELECT SUM( nTotAlb - nTotPag ) AS nRiesgo FROM " + cPatEmp() + "AlbCliT WHERE cCodCli = " + quoted( idCliente ) + " AND NOT lFacturado"
 
    TDataCenter():ExecuteSqlStatement( cStm, @cSql )
 
@@ -6896,7 +6899,7 @@ METHOD nRiesgo( cCodigoCliente ) CLASS TStock
 
    // Pagos -------------------------------------------------------------------
 
-   cStm              := "SELECT SUM( nImporte ) AS nRiesgo FROM " + cPatEmp() + "FacCliP WHERE cCodCli = " + quoted( cCodigoCliente ) + " AND lCobrado AND NOT lPasado"
+   cStm              := "SELECT SUM( nImporte ) AS nRiesgo FROM " + cPatEmp() + "FacCliP WHERE cCodCli = " + quoted( idCliente ) + " AND lCobrado AND NOT lPasado"
 
    TDataCenter():ExecuteSqlStatement( cStm, @cSql )
 
@@ -6904,9 +6907,9 @@ METHOD nRiesgo( cCodigoCliente ) CLASS TStock
       nRiesgo        += ( cSql )->nRiesgo
    end if 
 
-   // Anticipos ---------------------------------------------------------------
+   // Tickest ---------------------------------------------------------------
 
-   cStm              := "SELECT SUM( nTotTik - nCobTik ) AS nRiesgo FROM " + cPatEmp() + "TikeT WHERE cCliTik = " + quoted( cCodigoCliente ) + " AND lLiqTik AND ( cTipTik = '1' OR cTipTik = '7' )"
+   cStm              := "SELECT SUM( nTotTik - nCobTik ) AS nRiesgo FROM " + cPatEmp() + "TikeT WHERE cCliTik = " + quoted( idCliente ) + " AND lLiqTik AND ( cTipTik = '1' OR cTipTik = '7' )"
 
    TDataCenter():ExecuteSqlStatement( cStm, @cSql )
 
@@ -6919,6 +6922,6 @@ METHOD nRiesgo( cCodigoCliente ) CLASS TStock
    ErrorBlock( oBlock )
 
 Return ( nRiesgo )
-
+*/
 
 //---------------------------------------------------------------------------//

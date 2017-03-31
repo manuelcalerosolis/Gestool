@@ -2260,7 +2260,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, hHash, bValid, nMode )
    Mostramos datos de clientes-------------------------------------------------
    */
 
-   nRieCli                    := oStock:nRiesgo( aTmp[ _CCODCLI ] )
+   nRieCli                    := 0 // ClientesModel():Riesgo( aTmp[ _CCODCLI ] )
 
    if empty( aTmp[ _CTLFCLI ] )
       aTmp[ _CTLFCLI ]        := RetFld( aTmp[ _CCODCLI ], D():Get( "Client", nView ), "Telefono" )
@@ -9478,12 +9478,20 @@ STATIC FUNCTION LoaCli( aGet, aTmp, nMode )
       if empty( aTmp[_CCODGRP] ) .or. lChgCodCli
          aTmp[_CCODGRP]    := ( D():Get( "Client", nView ) )->cCodGrp
       end if
-     
+
+      // Calculo del reisgo del cliente-------------------------------------
+
+      showClienteRiesgo( ( D():Get( "Client", nView ) )->Cod, ( D():Get( "Client", nView ) )->Riesgo, oRieCli )
+
+      // Si ha cambiado el cliente---------------------------------------------
+
       if ( lChgCodCli )
 
-         /*
-         Cargamos la obra por defecto------------------------------------------
-         */
+         // Calculo del reisgo del cliente-------------------------------------
+
+         showClienteRiesgo( ( D():Get( "Client", nView ) )->Cod, ( D():Get( "Client", nView ) )->Riesgo, oRieCli )
+
+         // Cargamos la obra por defecto---------------------------------------
 
          if !empty( aGet[ _CCODOBR ] )
 
@@ -9500,12 +9508,6 @@ STATIC FUNCTION LoaCli( aGet, aTmp, nMode )
          aTmp[ _LMODCLI ]  := ( D():Get( "Client", nView ) )->lModDat
 
          aTmp[ _LOPERPV ]  := ( D():Get( "Client", nView ) )->lPntVer
-
-         /*
-         Calculo del reisgo del cliente-------------------------------------------
-         */
-
-         oStock:SetRiesgo( cNewCodCli, oRieCli, ( D():Get( "Client", nView ) )->Riesgo )
 
       end if
 
@@ -9603,13 +9605,13 @@ STATIC FUNCTION LoaCli( aGet, aTmp, nMode )
 
          if !empty( aGet[_CCODAGE] )
             if ( empty( aGet[_CCODAGE]:varGet() ) .or. lChgCodCli ) .and. !empty( ( D():Get( "Client", nView ) )->cAgente )
-                aGet[_CCODAGE]:cText( (D():Get( "Client", nView ))->CAGENTE )
+                aGet[_CCODAGE]:cText( (D():Get( "Client", nView ) )->CAGENTE )
                 aGet[_CCODAGE]:lValid()
             end if
          end if
 
          if ( empty( aGet[_CCODRUT]:varGet() ) .or. lChgCodCli ) .and. !empty( ( D():Get( "Client", nView ) )->cCodRut )
-            aGet[_CCODRUT]:cText( ( D():Get( "Client", nView ))->CCODRUT )
+            aGet[_CCODRUT]:cText( ( D():Get( "Client", nView ) )->CCODRUT )
             aGet[_CCODRUT]:lValid()
          end if
 
@@ -9704,15 +9706,11 @@ STATIC FUNCTION LoaCli( aGet, aTmp, nMode )
             MsgStop( Trim( ( D():Get( "Client", nView ) )->mComent ) )
          end if
 
-         ShowIncidenciaCliente( ( D():Get( "Client", nView ) )->Cod, nView )
+         showIncidenciaCliente( ( D():Get( "Client", nView ) )->Cod, nView )
 
          if !( D():Get( "Client", nView ) )->lChgPre
             msgStop( "Este cliente no tiene autorización para venta a credito", "Imposible archivar como albarán" )
          end if
-
-         if ( ( D():Get( "Client", nView ) )->lCreSol ) .and. ( nRieCli >= ( D():Get( "Client", nView ) )->Riesgo )
-            msgStop( "Este cliente supera el limite de riesgo permitido.", "Imposible archivar como albarán" )
-         end if 
 
       end if
 
@@ -11581,6 +11579,7 @@ RETURN ( .t. )
 
 STATIC FUNCTION EndTrans( aTmp, aGet, oBrw, oBrwInc, nMode, oDlg )
 
+   local cSat 
    local aTabla
    local oError
    local oBlock
@@ -11590,7 +11589,6 @@ STATIC FUNCTION EndTrans( aTmp, aGet, oBrw, oBrwInc, nMode, oDlg )
    local cNumPed
    local dFecAlb
    local cPedido
-   local cSat 
 
    if empty( aTmp[ _CSERALB ] )
       aTmp[ _CSERALB ]  := "A"
@@ -11639,8 +11637,7 @@ STATIC FUNCTION EndTrans( aTmp, aGet, oBrw, oBrwInc, nMode, oDlg )
       return .f.
    end if
 
-   if lClienteRiesgoAlcanzado( aTmp[ _CCODCLI ], oStock, D():Get( "Client", nView ), nTotAlb, nMode )
-      msgStop( "Este cliente supera el limite de riesgo permitido." )
+   if lClienteAlcanzadoRiesgoPermitido( ( D():Get( "Client", nView ) )->lCreSol, ( D():Get( "Client", nView ) )->Riesgo, nRieCli - nTotOld + nTotAlb )
       aGet[ _CCODCLI ]:SetFocus()
       return .f.
    end if

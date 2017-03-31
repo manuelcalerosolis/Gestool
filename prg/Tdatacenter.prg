@@ -5,8 +5,6 @@
 #include "Xbrowse.ch"
 #include "MesDbf.ch"
 
-
-
 //---------------------------------------------------------------------------//
 
 CLASS TDataCenter
