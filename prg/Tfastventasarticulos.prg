@@ -188,10 +188,6 @@ CLASS TFastVentasArticulos FROM TFastReportInfGen
    METHOD summaryReport()
    METHOD acumulaDbf( nRecnoAcumula )
 
-   METHOD setMeterText( cText )           INLINE ( if ( !empty( ::oMtrInf ), ::oMtrInf:cText := cText, ) )
-   METHOD setMeterTotal( nTotal )         INLINE ( if ( !empty( ::oMtrInf ), ::oMtrInf:SetTotal( nTotal ), ) )
-   METHOD setMeterAutoIncremental()       INLINE ( if ( !empty( ::oMtrInf ), ::oMtrInf:AutoInc(), ) )
-
    METHOD StockActualArticulo( cCodArt )              INLINE ( ::oStock:nStockAlmacen( Padr( cCodArt, 18 ) ) )
    METHOD StockAlmacenArticulo( cCodArt, cCodAlm )    INLINE ( ::oStock:nStockAlmacen( Padr( cCodArt, 18 ), Padr( cCodAlm, 16 ) ) )
 

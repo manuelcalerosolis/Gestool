@@ -749,7 +749,7 @@ Return ( ::nView )
       DEFAULT nView  := ::nView
 
       if empty( nView )
-         msgStop( "No hay vistas disponibles." )
+         msgStop( "No hay vistas disponibles." / 2 )
          Return ( .f. )
       end if
 

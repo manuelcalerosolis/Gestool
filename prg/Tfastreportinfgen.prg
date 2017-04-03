@@ -469,6 +469,10 @@ CLASS TFastReportInfGen FROM TNewInfGen
    METHOD lShowOptions()                                 INLINE ( if( !empty(::oBtnOptions), ::oBtnOptions:Show(), ) )
    
    METHOD selectReportTree( cReportName )
+
+   METHOD setMeterText( cText )                          INLINE ( if ( !empty( ::oMtrInf ), ::oMtrInf:cText := cText, ) )
+   METHOD setMeterTotal( nTotal )                        INLINE ( if ( !empty( ::oMtrInf ), ::oMtrInf:SetTotal( nTotal ), ) )
+   METHOD setMeterAutoIncremental()                      INLINE ( if ( !empty( ::oMtrInf ), ::oMtrInf:AutoInc(), ) )
    
 END CLASS
 
