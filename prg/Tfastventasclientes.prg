@@ -1207,6 +1207,7 @@ METHOD AddPedidoCliente( cCodigoCliente ) CLASS TFastVentasClientes
 
          ::addPedidosClientes()
 
+     
          ( D():PedidosClientes( ::nView ) )->( dbskip() )
 
          ::setMeterAutoIncremental()

@@ -16,7 +16,7 @@ CLASS PedidosProveedoresModel FROM BaseModel
    METHOD deletePedidosProveedoresIncidenciasId( cSerie, nNumero, cSufijo ) ;
                                                 INLINE ::deleteDetailsById( cSerie, nNumero, cSufijo, ::getIncidenceTableName() )
 
-   METHOD deletePedidosProveedoresDocumentosId( cSerie, nNumero, cSufijo) ;
+   METHOD deletePedidosProveedoresDocumentosId( cSerie, nNumero, cSufijo ) ;
                                                 INLINE :: deleteDetailsById( cSerie, nNumero, cSufijo, ::getDocumentsTableName() )
 
    METHOD deleteDetailsById( cSerie, nNumero, cSufijo, cTableName )

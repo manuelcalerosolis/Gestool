@@ -4517,9 +4517,9 @@ STATIC FUNCTION EndTrans( aGet, aTmp, oBrw, nMode, oDlg )
 
       PedidosProveedoresModel():deletePedidosProveedoresLineasId( cSerie, nPedido, cSufijo )
 
-      D():sqlDeletePedidosProveedoresIncidenciasId( cSerie, nPedido, cSufijo )
+      PedidosProveedoresModel():deletePedidosProveedoresIncidenciasId( cSerie, nPedido, cSufijo )
 
-      D():sqlDeletePedidosProveedoresDocumentosId( cSerie, nPedido, cSufijo )
+      PedidosProveedoresModel():deletePedidosProveedoresDocumentosId( cSerie, nNumero, cSufijo )
 
 /*
       while ( D():PedidosProveedoresLineas( nView ) )->( dbSeek( cSerie + str( nPedido ) + cSufijo ) )

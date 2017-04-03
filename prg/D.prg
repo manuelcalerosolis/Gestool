@@ -436,16 +436,12 @@ CLASS D
    METHOD PedidosProveedoresIncidenciasTableName()             INLINE ( "PedPrvI" )
    METHOD adsPedidosProveedoresIncidenciasTableName()          INLINE ( cPatEmp() + ::PedidosProveedoresIncidenciasTableName() )
    METHOD PedidosProveedoresIncidencias( nView )               INLINE ( ::Get( ::PedidosProveedoresIncidenciasTableName(), nView ) )
-   METHOD sqlDeletePedidosProveedoresIncidenciasId( cSerie, nNumero, cSufijo ) ;
-                                                               INLINE ::sqlDeletePedidosProveedoresId( cSerie, nNumero, cSufijo, ::adsPedidosProveedoresIncidenciasTableName() )        
-
+   
    METHOD PedidosProveedoresDocumentosTableName()              INLINE ( "PedPrvD" )
    METHOD adsPedidosProveedoresDocumentosTableName()           INLINE ( cPatEmp() + ::PedidosProveedoresDocumentosTableName() )
    METHOD PedidosProveedoresDocumentos( nView )                INLINE ( ::Get( "PedPrvD", nView ) )
-   METHOD sqlDeletePedidosProveedoresDocumentosId( cSerie, nNumero, cSufijo ) ;
-                                                               INLINE ::sqlDeletePedidosProveedoresId( cSerie, nNumero, cSufijo, ::adsPedidosProveedoresDocumentosTableName() )        
+   
 
-   METHOD sqlDeletePedidosProveedoresId( cSerie, nNumero, cSufijo, cTableName )
 
    // Albaranes de proveedores-------------------------------------------------
 
@@ -1632,20 +1628,6 @@ METHOD setArticuloTablaPropiedades( id, idCodigoPrimeraPropiedad, idCodigoSegund
    next 
 
 Return ( .t. )
-
-//---------------------------------------------------------------------------//
-
-METHOD sqlDeletePedidosProveedoresId( cSerie, nNumero, cSufijo, cTableName )        
-
-   local cStatement  := ""
-
-   cStatement        := "DELETE FROM " + cTableName + " " + ;
-                           "WHERE " + ;
-                              "cSerPed = " + quoted( cSerie )  + " AND " + ;
-                              "nNumPed = " + quoted( nNumero ) + " AND " + ;
-                              "cSufPed = " + quoted( cSufijo )   
-
-Return ( TDataCenter():ExecuteSqlStatement( cStatement ) )
 
 //---------------------------------------------------------------------------//
    
