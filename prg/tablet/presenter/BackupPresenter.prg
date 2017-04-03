@@ -52,18 +52,28 @@ METHOD runBackup() CLASS BackupPresenter
  
    local oClassBackup
 
-   MsgInfo( "Ejecuto la copia de seguridad" )
-
    oClassBackup            := TBackup():Create()
 
-   MsgInfo( oClassBackup )
-   MsgInfo( oClassBackup:ClassName() )
-   MsgInfo( uFieldEmpresa( "CodEmp" ) )
-
    if !Empty( oClassBackup )
-      oClassBackup:aEmp    := { { .t., uFieldEmpresa( "CodEmp" ), uFieldEmpresa( "cNombre" ) } }
-      oClassBackup:cDir    := ::oBackupView:cGetFolder
-      oClassBackup:ZipFiles()
+
+      if oClassBackup:OpenFiles()
+
+         oClassBackup:aEmp                := { { .t., uFieldEmpresa( "CodEmp" ), uFieldEmpresa( "cNombre" ) } }
+         oClassBackup:lDir                := .t.
+         oClassBackup:lInternet           := .f.
+         oClassBackup:cDir                := ::oBackupView:cGetFolder
+         oClassBackup:cFile               := "C:\InfomeCopia.Txt"
+         oClassBackup:oProgreso           := ::oBackupView:oMeter
+         oClassBackup:oProgresoTarget     := ::oBackupView:oMeterTarget
+         
+         if oClassBackup:ZipFiles()
+            ApoloMsgStop( "Proceso finalizado con éxito." ) 
+         end if
+
+      end if
+
+      oClassBackup:CloseFiles()
+
    end if
 
 Return ( self )
