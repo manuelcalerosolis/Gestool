@@ -151,8 +151,8 @@
 #define _CMOTINA                 141
 #define _DALTA                   142
 
-#define _aCCODCLI                  1      //   C     12     0
-#define _aCCODGRP                  2      //   C     12     0
+#define _aCCODCLI                  1     //   C     12     0
+#define _aCCODGRP                  2     //   C     12     0
 #define _aCCODART                  3     //   C     14     0
 #define _aCCODFAM                  4     //   C      8     0
 #define _aNTIPATP                  5     //   N      1     0

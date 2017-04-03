@@ -173,9 +173,9 @@ METHOD OpenFiles() CLASS TFastVentasClientes
    local oBlock
 
 
-  /* oBlock               := ErrorBlock( {| oError | ApoloBreak( oError ) } )
+   oBlock               := ErrorBlock( {| oError | ApoloBreak( oError ) } )
    BEGIN SEQUENCE
-*/
+
       ::cDriver         := cDriver()
 
       ::nView           := D():CreateView( ::cDriver )
@@ -269,7 +269,7 @@ METHOD OpenFiles() CLASS TFastVentasClientes
          ::aExtraFields       := ::oCamposExtra:aExtraFields()
       end if
 
-  /* RECOVER USING oError
+   RECOVER USING oError
 
       msgStop( ErrorMessage( oError ), "Imposible abrir las bases de datos de clientes" )
 
@@ -279,7 +279,7 @@ METHOD OpenFiles() CLASS TFastVentasClientes
 
    END SEQUENCE
 
-   ErrorBlock( oBlock )*/
+   ErrorBlock( oBlock )
 
 RETURN ( lOpen )
 
@@ -875,7 +875,7 @@ METHOD AddSATCliente( cCodigoCliente ) CLASS TFastVentasClientes
 
       ::setMeterText( "Procesando SAT" )
 
-      ( D():SatClientes( ::nView ) )->( setCustomFilter( ::cExpresionHeader ))
+      ( D():SatClientes( ::nView ) )->( setCustomFilter( ::cExpresionHeader ) )
 
       ::setMeterTotal( ( D():SatClientes( ::nView ) )->( dbcustomkeycount() ) )
 
