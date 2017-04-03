@@ -286,7 +286,7 @@ METHOD AddAlbaranProveedor( lFacturados ) CLASS TFastComprasProveedores
 
    local sTot
 
-   DEFAULT lFacturados  := .f.
+   DEFAULT lFacturados           := .f.
 
    ( D():AlbaranesProveedores( ::nView ) )->( OrdSetFocus( "dFecAlb" ) )
 
@@ -308,13 +308,13 @@ METHOD AddAlbaranProveedor( lFacturados ) CLASS TFastComprasProveedores
    
    ( D():AlbaranesProveedores( ::nView ) )->( setCustomFilter( ::cExpresionHeader ) )
 
-   ::setMeterTotal( ( D():AlbaranesProveedores( ::nView ) )->(dbcustomkeycount() ) )
+   ::setMeterTotal( ( D():AlbaranesProveedores( ::nView ) )->( dbcustomkeycount() ) )
 
    ( D():AlbaranesProveedores( ::nView ) )->( dbgotop() )
 
-   while !::lBreak .and. !( D():AlbaranesProveedores( ::nView ) )->( Eof() )
+   while !::lBreak .and. !( D():AlbaranesProveedores( ::nView ) )->( eof() )
 
-      sTot           := sTotAlbPrv( ( D():AlbaranesProveedores( ::nView ) )->cSerAlb + Str( ( D():AlbaranesProveedores( ::nView ) )->nNumAlb ) + ( D():AlbaranesProveedores( ::nView ) )->cSufAlb, D():AlbaranesProveedores( ::nView ), D():AlbaranesProveedoresLineas( ::nView ), D():TiposIva( ::nView ), D():Divisas( ::nView ) )
+      sTot           := sTotAlbPrv( D():AlbaranesProveedoresId( ::nView ), D():AlbaranesProveedores( ::nView ), D():AlbaranesProveedoresLineas( ::nView ), D():TiposIva( ::nView ), D():Divisas( ::nView ) )
      
       ::oDbf:Blank()
 

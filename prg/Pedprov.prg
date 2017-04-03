@@ -4515,7 +4515,7 @@ STATIC FUNCTION EndTrans( aGet, aTmp, oBrw, nMode, oDlg )
 
       oMsgText( "Eliminando registros anteriores" )
 
-      D():sqlDeletePedidosProveedoresLineasId( cSerie, nPedido, cSufijo )
+      PedidosProveedoresModel():deletePedidosProveedoresLineasId( cSerie, nPedido, cSufijo )
 
       D():sqlDeletePedidosProveedoresIncidenciasId( cSerie, nPedido, cSufijo )
 

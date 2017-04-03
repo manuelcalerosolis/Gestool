@@ -481,6 +481,7 @@ ClientesModel.prg 												\
 AlbaranesClientesModel.prg 									\
 RecibosClientesModel.prg 										\
 TicketsClientesModel.prg 										\
+PedidosProveedoresModel.prg									\
 
 C               =       	            				\
 Img2pdf.c               	            				\
@@ -952,6 +953,7 @@ ClientesModel.obj 											\
 AlbaranesClientesModel.obj 								\
 TicketsClientesModel.obj 									\
 RecibosClientesModel.obj 									\
+PedidosProveedoresModel.obj 								\
 
 .PRG.OBJ:
   	$(HB)\Bin\Harbour $? /n /p$(PPO)\$&.ppo /w /es2 /i$(FWINCLUDE) /i$(HBINCLUDE) /i$(GTINCLUDE) /o$(OBJ)\$&.c
@@ -1409,7 +1411,8 @@ $(OBJ)\BaseModel.obj 								+
 $(OBJ)\ClientesModel.obj 							+
 $(OBJ)\AlbaranesClientesModel.obj 				+
 $(OBJ)\RecibosClientesModel.obj					+
-$(OBJ)\TicketsClientesModel.obj 								
+$(OBJ)\TicketsClientesModel.obj 	 				+							
+$(OBJ)\PedidosProveedoresModel.obj 								
 $<,$*
 $(FWLIB)\FiveH.lib               +
 $(FWLIB)\FiveHC.lib              +

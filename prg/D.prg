@@ -433,9 +433,6 @@ CLASS D
       METHOD setStatusPedidosProveedoresLineas( nView )        INLINE ( SetStatus( ::PedidosProveedoresLineas( nView ), ::aStatus ) ) 
       METHOD setFocusPedidosProveedoresLineas( cTag, nView )   INLINE ( ::cTag   := ( ::PedidosProveedoresLineas( nView )  )->( ordSetFocus( cTag ) ) )
 
-   METHOD sqlDeletePedidosProveedoresLineasId( cSerie, nNumero, cSufijo ) ;
-                                                               INLINE ::sqlDeletePedidosProveedoresId( cSerie, nNumero, cSufijo, ::adsPedidosProveedoresLineasTableName() )        
-
    METHOD PedidosProveedoresIncidenciasTableName()             INLINE ( "PedPrvI" )
    METHOD adsPedidosProveedoresIncidenciasTableName()          INLINE ( cPatEmp() + ::PedidosProveedoresIncidenciasTableName() )
    METHOD PedidosProveedoresIncidencias( nView )               INLINE ( ::Get( ::PedidosProveedoresIncidenciasTableName(), nView ) )
@@ -749,12 +746,12 @@ Return ( ::nView )
       DEFAULT nView  := ::nView
 
       if empty( nView )
-         msgStop( "No hay vistas disponibles." / 2 )
+         msgStop( "No hay vistas disponibles." )
          Return ( .f. )
       end if
 
       if !hhaskey( ::hViews, nView )
-         msgStop( "Vista " + alltrim( str( nView ) ) + " no encontrada." / 2 )
+         msgStop( "Vista " + alltrim( str( nView ) ) + " no encontrada." )
          Return ( .f. )
       end if 
 

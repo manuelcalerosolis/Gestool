@@ -339,6 +339,8 @@ Static Function initPublics()
    public nTotBrt       := 0
    public nTotDto       := 0
    public nTotDPP       := 0
+   public nTotUno       := 0
+   public nTotDos       := 0
    public nTotNet       := 0
    public nTotIva       := 0
    public nTotReq       := 0
@@ -6895,7 +6897,6 @@ Static Function VariableReport( oFr )
    oFr:AddVariable(     "Albaranes",             "Total descuento",                          "GetHbVar('nTotDto')" )
    oFr:AddVariable(     "Albaranes",             "Total descuento pronto pago",              "GetHbVar('nTotDpp')" )
    oFr:AddVariable(     "Albaranes",             "Total bruto",                              "GetHbVar('nTotBrt')" )
-   oFr:AddVariable(     "Albaranes",             "Total descuento pronto pago",              "GetHbVar('nTotDpp')" )
    oFr:AddVariable(     "Albaranes",             "Total neto",                               "GetHbVar('nTotNet')" )
    oFr:AddVariable(     "Albaranes",             "Total primer descuento definible",         "GetHbVar('nTotUno')" )
    oFr:AddVariable(     "Albaranes",             "Total segundo descuento definible",        "GetHbVar('nTotDos')" )
