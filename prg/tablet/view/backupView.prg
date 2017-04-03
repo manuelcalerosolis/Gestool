@@ -7,6 +7,10 @@ CLASS backupView FROM ViewBase
    DATA oGetFolder
    DATA cGetFolder
    DATA cFileLog
+   DATA oMeter
+   DATA nMeter
+   DATA oMeterTarget
+   DATA nMeterTarget
 
    METHOD New()
 
@@ -15,6 +19,8 @@ CLASS backupView FROM ViewBase
    METHOD defineAceptarCancelar()
 
    METHOD defineFolder()
+
+   METHOD defineMeter
 
    METHOD getTitleTipoDocumento()   INLINE ( ::getTextoTipoDocumento() )
 
@@ -28,7 +34,10 @@ END CLASS
 
 METHOD New( oSender ) CLASS backupView
 
-   ::oSender      := oSender
+   ::oSender         := oSender
+
+   ::nMeter          := 0
+   ::nMeterTarget    := 0
    
    ::CargarPreferencias()
 
@@ -39,6 +48,8 @@ Return ( self )
 METHOD insertControls() CLASS backupView
 
    ::defineFolder()
+
+   ::defineMeter()
 
 Return ( Self )
 
@@ -65,6 +76,34 @@ METHOD defineFolder() CLASS backupView
                                              "nWidth"    => {|| GridWidth( 7.1, ::oDlg ) },;
                                              "nHeight"   => 23,;
                                              "lPixels"   => .t. } )
+
+Return ( Self )
+
+//---------------------------------------------------------------------------//
+
+METHOD defineMeter() CLASS backupView
+
+   ::oMeter          := TGridMeter():Build( {   "nRow"            => 65,;
+                                                "nCol"            => {|| GridWidth( 0.5, ::oDlg ) },;
+                                                "bSetGet"         => {|u| if( PCount() == 0, ::nMeter, ::nMeter := u ) },;
+                                                "oWnd"            => ::oDlg,;
+                                                "nWidth"          => {|| GridWidth( 12, ::oDlg ) },;
+                                                "nHeight"         => 23,;
+                                                "lPixels"         => .t.,;
+                                                "lNoPercentage"   => .f.,;
+                                                "nClrPane"        => Rgb( 255,255,255 ),;
+                                                "nClrBar"         => Rgb( 128,255,0 ) } )
+
+   ::oMeterTarget    := TGridMeter():Build( {   "nRow"            => 65,;
+                                                "nCol"            => {|| GridWidth( 0.5, ::oDlg ) },;
+                                                "bSetGet"         => {|u| if( PCount() == 0, ::nMeterTarget, ::nMeterTarget := u ) },;
+                                                "oWnd"            => ::oDlg,;
+                                                "nWidth"          => {|| GridWidth( 12, ::oDlg ) },;
+                                                "nHeight"         => 23,;
+                                                "lPixels"         => .t.,;
+                                                "lNoPercentage"   => .f.,;
+                                                "nClrPane"        => Rgb( 255,255,255 ),;
+                                                "nClrBar"         => Rgb( 128,255,0 ) } )
 
 Return ( Self )
 

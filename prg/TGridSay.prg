@@ -758,6 +758,81 @@ METHOD New( nRow, nCol, cCaption, bSetGet, oWnd, nWidth, nHeight,;
 Return Self
 
 //----------------------------------------------------------------------------//
+
+CLASS TGridMeter FROM TApoloMeter, TGridable
+
+   METHOD Build()
+
+   METHOD New() 
+
+   METHOD ReAdjust()
+
+END CLASS
+
+//----------------------------------------------------------------------------//
+
+METHOD Build( hBuilder ) CLASS TGridMeter
+
+   local nRow           := if( hhaskey( hBuilder, "nRow"          ), hBuilder[ "nRow"           ], nil )
+   local nCol           := if( hhaskey( hBuilder, "nCol"          ), hBuilder[ "nCol"           ], nil )
+   local bSetGet        := if( hhaskey( hBuilder, "bSetGet"       ), hBuilder[ "bSetGet"        ], nil )
+   local nTotal         := if( hhaskey( hBuilder, "nTotal"        ), hBuilder[ "nTotal"         ], 0 )
+   local oWnd           := if( hhaskey( hBuilder, "oWnd"          ), hBuilder[ "oWnd"           ], nil )
+   local nWidth         := if( hhaskey( hBuilder, "nWidth"        ), hBuilder[ "nWidth"         ], nil )
+   local nHeight        := if( hhaskey( hBuilder, "nHeight"       ), hBuilder[ "nHeight"        ], nil )
+   local lUpdate        := if( hhaskey( hBuilder, "lUpdate"       ), hBuilder[ "lUpdate"        ], nil )
+   local lPixel         := if( hhaskey( hBuilder, "lPixel"        ), hBuilder[ "lPixel"         ], nil )
+   local oFont          := if( hhaskey( hBuilder, "oFont"         ), hBuilder[ "oFont"          ], nil )
+   local cText          := if( hhaskey( hBuilder, "cText"         ), hBuilder[ "cText"          ], nil )
+   local lNoPercentage  := if( hhaskey( hBuilder, "lNoPercentage" ), hBuilder[ "lNoPercentage"  ], nil )
+   local nClrPane       := if( hhaskey( hBuilder, "nClrPane"      ), hBuilder[ "nClrPane"       ], nil )
+   local nClrText       := if( hhaskey( hBuilder, "nClrText"      ), hBuilder[ "nClrText"       ], nil )
+   local nClrBar        := if( hhaskey( hBuilder, "nClrBar"       ), hBuilder[ "nClrBar"        ], nil )
+   local nClrBText      := if( hhaskey( hBuilder, "nClrBText"     ), hBuilder[ "nClrBText"      ], nil )
+   local lDesign        := if( hhaskey( hBuilder, "lDesign"       ), hBuilder[ "lDesign"        ], nil )
+
+Return   (  ::New( nRow, nCol, bSetGet, nTotal, oWnd, nWidth, nHeight,;
+            lUpdate, lPixel, oFont, cText, lNoPercentage, nClrPane, nClrText, ;
+            nClrBar, nClrBText, lDesign ) )
+
+//----------------------------------------------------------------------------//
+
+METHOD New( nRow, nCol, bSetGet, nTotal, oWnd, nWidth, nHeight,;
+            lUpdate, lPixel, oFont, cText, lNoPercentage, nClrPane, nClrText, ;
+            nClrBar, nClrBText, lDesign ) CLASS TGridMeter
+
+   nRow     := ::EvalTop( nRow )
+   nCol     := ::EvalLeft( nCol )
+   nWidth   := ::EvalWidth( nWidth )
+   nHeight  := ::EvalHeight( nHeight )
+
+   ::Super:New( nRow, nCol, bSetGet, nTotal, oWnd, nWidth, nHeight,;
+            lUpdate, lPixel, oFont, cText, lNoPercentage, nClrPane, nClrText, ;
+            nClrBar, nClrBText, lDesign ) 
+
+return Self
+
+//----------------------------------------------------------------------------//
+
+METHOD ReAdjust() CLASS TGridMeter
+
+   local nRow     := if( !empty(::bRow), eval(::bRow), ::nTop )
+   local nCol    := if( !empty(::bCol), eval(::bCol), ::nLeft )
+   local nWidth   := if( !empty(::bWidth), eval(::bWidth), ::nWidth )
+   local nHeight  := if( !empty(::bHeight), eval(::bHeight), ::nHeight )
+
+   ::Move( nRow, nCol, nWidth, nHeight )  
+
+return Self
+
+//----------------------------------------------------------------------------//
+
+
+
+
+
+
+
 //----------------------------------------------------------------------------//
 //----------------------------------------------------------------------------//
 //----------------------------------------------------------------------------//

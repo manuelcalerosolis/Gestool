@@ -1638,7 +1638,9 @@ Method SaveToDisk( Resultado )
    ::mResultado   += CRLF
    ::mResultado   += Resultado
 
-   ::oResultado:cText( ::mResultado )
+   if !Empty( ::oResultado )
+      ::oResultado:cText( ::mResultado )
+   end if
 
    // Guardamos el informe-----------------------------------------------------
 
