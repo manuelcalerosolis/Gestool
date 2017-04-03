@@ -83,27 +83,30 @@ Return ( Self )
 
 METHOD defineMeter() CLASS backupView
 
+
    ::oMeter          := TGridMeter():Build( {   "nRow"            => 65,;
                                                 "nCol"            => {|| GridWidth( 0.5, ::oDlg ) },;
                                                 "bSetGet"         => {|u| if( PCount() == 0, ::nMeter, ::nMeter := u ) },;
                                                 "oWnd"            => ::oDlg,;
-                                                "nWidth"          => {|| GridWidth( 12, ::oDlg ) },;
+                                                "nWidth"          => {|| GridWidth( 11.5, ::oDlg ) },;
                                                 "nHeight"         => 23,;
-                                                "lPixels"         => .t.,;
-                                                "lNoPercentage"   => .f.,;
-                                                "nClrPane"        => Rgb( 255,255,255 ),;
-                                                "nClrBar"         => Rgb( 128,255,0 ) } )
+                                                "lPixel"          => .t.,;
+                                                "lUpdate"         => .t.,;
+                                                "lNoPercentage"   => .t.,;
+                                                "nClrPane"        => rgb( 255,255,255 ),;
+                                                "nClrBar"         => rgb( 128,255,0 ) } )
 
-   ::oMeterTarget    := TGridMeter():Build( {   "nRow"            => 65,;
+   ::oMeterTarget    := TGridMeter():Build( {   "nRow"            => 90,;
                                                 "nCol"            => {|| GridWidth( 0.5, ::oDlg ) },;
                                                 "bSetGet"         => {|u| if( PCount() == 0, ::nMeterTarget, ::nMeterTarget := u ) },;
                                                 "oWnd"            => ::oDlg,;
-                                                "nWidth"          => {|| GridWidth( 12, ::oDlg ) },;
+                                                "nWidth"          => {|| GridWidth( 11.5, ::oDlg ) },;
                                                 "nHeight"         => 23,;
-                                                "lPixels"         => .t.,;
-                                                "lNoPercentage"   => .f.,;
-                                                "nClrPane"        => Rgb( 255,255,255 ),;
-                                                "nClrBar"         => Rgb( 128,255,0 ) } )
+                                                "lPixel"          => .t.,;
+                                                "lUpdate"         => .t.,;
+                                                "lNoPercentage"   => .t.,;
+                                                "nClrPane"        => rgb( 255,255,255 ),;
+                                                "nClrBar"         => rgb( 128,255,0 ) } )
 
 Return ( Self )
 
