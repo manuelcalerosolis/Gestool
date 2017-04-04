@@ -29,6 +29,11 @@ METHOD ExecuteSqlStatement( cSql, cSqlStatement, hStatement )
    DEFAULT cSqlStatement   := "ADS" + trimedSeconds()
    DEFAULT hStatement      := ADS_CDX
 
+<<<<<<< HEAD
+=======
+   //msgalert( cSql, cSqlStatement )
+
+>>>>>>> 0b9303fde80e3652243c3195bc9ff22ed980985c
    oBlock                  := ErrorBlock( {| oError | ApoloBreak( oError ) } )
    BEGIN SEQUENCE
 
