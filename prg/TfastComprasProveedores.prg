@@ -35,7 +35,7 @@ CLASS TFastComprasProveedores FROM TFastReportInfGen
    METHOD AddFacturaRectificativa()
    METHOD AddProveedor()
 
-   METHOD idDocumento()                 INLINE ( ::oDbf:cClsDoc + ::oDbf:cSerDoc + ::oDbf:cNumDoc + ::oDbf:cSufDoc )
+   METHOD idDocumento()                 INLINE ( ::oDbf:cClsDoc + ::oDbf:cSerDoc + ::oDbf:cNumDoc + space(1) + ::oDbf:cSufDoc )
    METHOD idDocumentoLinea()            INLINE ( ::idDocumento() )
 
    METHOD setFilterPaymentId()          INLINE ( if( ::lApplyFilters,;

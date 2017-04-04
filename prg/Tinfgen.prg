@@ -660,8 +660,8 @@ METHOD New( cSubTitle, aFields, aIndex, oMenuItem, oWnd, cHelp, xOthers ) CLASS 
    Creamos las bases de datos temporales---------------------------------------
    */
 
-   ::cFileName             := cGetNewFileName( cPatTmp() + cCurUsr(), "Dbf", .t. )  // ::ClassName()
-   ::cFileIndx             := cGetNewFileName( cPatTmp() + cCurUsr(), "Cdx", .t. )  // ::ClassName()
+   ::cFileName             := cGetNewFileName( cPatTmp() + trimedSeconds(), "Dbf", .t. )  // ::ClassName()
+   ::cFileIndx             := cGetNewFileName( cPatTmp() + trimedSeconds(), "Cdx", .t. )  // ::ClassName()
 
    if file( ::cFileName )
       fErase( ::cFileName )

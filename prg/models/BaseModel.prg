@@ -26,10 +26,8 @@ METHOD ExecuteSqlStatement( cSql, cSqlStatement, hStatement )
    local oBlock
    local cErrorAds
 
-   DEFAULT cSqlStatement   := "ADS" + alltrim( strtran( str( seconds() ), ".", "" ) )
+   DEFAULT cSqlStatement   := "ADS" + trimedSeconds()
    DEFAULT hStatement      := ADS_CDX
-
-   msgalert( cSql, cSqlStatement )
 
    oBlock                  := ErrorBlock( {| oError | ApoloBreak( oError ) } )
    BEGIN SEQUENCE

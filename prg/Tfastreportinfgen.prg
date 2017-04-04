@@ -1322,7 +1322,7 @@ METHOD OpenData( cPath, lExclusive ) CLASS TFastReportInfGen
       */
 
       if Empty( ::oDbfInf )
-         ::oDbfInf               := ::DefineReport( cPath )
+         ::oDbfInf      := ::DefineReport( cPath )
       end if
 
       ::oDbfInf:Activate( .f., !( lExclusive ) )
@@ -1400,7 +1400,7 @@ METHOD OpenService( lExclusive, cPath ) CLASS TFastReportInfGen
       */
 
       if Empty( ::oDbfInf )
-         ::oDbfInf               := ::DefineReport( cPath )
+         ::oDbfInf      := ::DefineReport( cPath )
       end if
 
       ::oDbfInf:Activate( .f., !( lExclusive ) )

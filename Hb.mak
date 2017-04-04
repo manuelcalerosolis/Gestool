@@ -1452,7 +1452,10 @@ $(HBLIB)\hbcplr.lib            	+
 $(IMG2PDFLIB)\Image2pdf.lib      +
 $(HBLIB)\b32\rddads.lib          +
 $(HBLIB)\ace32.lib               +
-$(BORLANDLIB)\cw32.lib           + 
+$(HBLIB)\sqlite.lib          		+
+$(HBLIB)\hdo.lib               	+
+$(HBLIB)\rdlsqlite.lib 				+
+$(BORLANDLIB)\cw32mt.lib         + 
 $(BORLANDLIB)\uuid.lib           + 
 $(BORLANDLIB)\import32.lib       + 
 $(BORLANDLIB)\ws2_32.lib         + 

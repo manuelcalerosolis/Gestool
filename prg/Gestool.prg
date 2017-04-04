@@ -8,18 +8,18 @@
 #include "dbInfo.ch" 
 #include "directry.ch"
 #include "hbcurl.ch"
+#include "hdo.ch"
 
 #require "hbcurl"
 
-#define GR_GDIOBJECTS         0      /* Count of GDI objects */
+#define GR_GDIOBJECTS         0
 #define GR_USEROBJECTS        1   
-   /* Count of USER objects */
 
 #define CS_DBLCLKS            8
 
 #define HKEY_LOCAL_MACHINE    2147483650
 
-#define FONT_NAME             "Segoe UI" // "Arial" //     
+#define FONT_NAME             "Segoe UI"     
 
 ANNOUNCE RDDSYS
 
@@ -1049,8 +1049,92 @@ Return ( by( nRow ) )
 
 Function mainTest()
 
+   local i
+   local e
+   local oDb
+   local cDb
+   local oCur
+   local oStmt
+   local cTabla      := "test"
+   local cSql        := "SELECT * FROM " + cTabla + ";"
+   local cIns        := "INSERT INTO " + cTabla + ;
+                           " ( first, last, street, city, state, zip, hiredate, married, age, salary, notes ) "  + ;
+                           "VALUES ( 'Manu', 'Exposito', 'Pico de Almanzor, 35', 'Avila', 'ES', 41700, 20161231, 0, 52, 40456.89, 'Esta es una nota cualquiera' );"
+   local cCreaTabla  := "CREATE TABLE " + cTabla  + " ( " + ;
+                           "idreg INTEGER PRIMARY KEY,"    + ;
+                           "first       VARCHAR( 20 ),"     + ;
+                           "last        VARCHAR( 20 ),"     + ;
+                           "street      VARCHAR( 30 ),"     + ;
+                           "city        VARCHAR( 30 ),"     + ;
+                           "state       VARCHAR( 2 ),"      + ;
+                           "zip         VARCHAR( 20 ),"     + ;
+                           "hiredate    DATE,"             + ;
+                           "married     BOOLEAN,"          + ;
+                           "age         INTEGER,"          + ;
+                           "salary      DECIMAL( 9, 2 ),"   + ;
+                           "notes       VARCHAR( 70 ) );"
+
+   oDb   := THDO():new( "sqlite" )
+   
+   cDb   := "demo.db"
+
+   if file( cDb )
+      msgalert( "El archivo: " + cDb + " ya existe" )
+   else
+      msgalert( "El archivo: " + cDb + " no existe" )
+   endif
+
+   if oDb:connect( cDb )
+      msgalert( cDb + " abierta" )
+      try
+         oDb:exec( cCreaTabla )
+         msgalert( "La tabla " + cTabla + " se ha creado correctamente" )
+      catch
+         msgalert( "Error al crear la tabla " + cTabla )
+         msgstop( oDb:errorInfo() )
+      end
+
+      try
+         msgalert( if( oDb:inTransaction(), "Esta ", "No esta " ) + "en una trasaccion" )
+         
+         oDb:beginTransaction()
+
+            msgalert( "Ahora " + if( oDb:inTransaction(), "esta ", "no esta " ) + "en una trasaccion" )
+         
+            i := oDb:exec( cIns )
+
+         oDb:commit()
+         
+         msgalert( hb_ntos( i ) + " - " + hb_ntos( oDb:lastInsertId() ), "Columnas afectadas y lastInsertId" )
+
+      catch
+         msgalert( e:SubSystem + ";" + padl( e:SubCode, 4 ) + ";" + ;
+               e:Operation + ";" + e:Description, "Error desde Harbour" )
+         msgalert( oDb:errorInfo(), "Datos del error" )
+         oDb:rollBack()
+      end
+
+      oStmt := oDb:prepare( cSql )
+      oStmt:execute()
+         
+      oCur  := THashCursor():new( oStmt:fetchAll( FETCH_HASH ) )
+
+      oStmt:free()
+      
+      oCur:free()
+
+      msgalert( hb_valtoexp( oStmt ) )
+
+   endif
+
+   if oDb:disconnect()
+      msgalert( cDb + " cerrada" )
+   endif
+
 Return ( nil )
 
 //---------------------------------------------------------------------------//
+
+
 
 
