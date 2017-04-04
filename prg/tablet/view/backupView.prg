@@ -57,7 +57,7 @@ Return ( Self )
 
 METHOD defineFolder() CLASS backupView
 
-   TGridSay():Build(    {  "nRow"      => 40,;
+   TGridSay():Build(    {  "nRow"      => 55,;
                            "nCol"      => {|| GridWidth( 0.5, ::oDlg ) },;
                            "bText"     => {|| "Destino" },;
                            "oWnd"      => ::oDlg,;
@@ -69,7 +69,7 @@ METHOD defineFolder() CLASS backupView
                            "nHeight"   => 23,;
                            "lDesign"   => .f. } )
 
-   ::oGetFolder      := TGridGet():Build( {  "nRow"      => 40,;
+   ::oGetFolder      := TGridGet():Build( {  "nRow"      => 55,;
                                              "nCol"      => {|| GridWidth( 2.5, ::oDlg ) },;
                                              "bSetGet"   => {|u| if( PCount() == 0, ::cGetFolder, ::cGetFolder := u ) },;
                                              "oWnd"      => ::oDlg,;
@@ -84,24 +84,48 @@ Return ( Self )
 METHOD defineMeter() CLASS backupView
 
 
-   ::oMeter          := TGridMeter():Build( {   "nRow"            => 65,;
-                                                "nCol"            => {|| GridWidth( 0.5, ::oDlg ) },;
+   TGridSay():Build(    {  "nRow"      => 90,;
+                           "nCol"      => {|| GridWidth( 0.5, ::oDlg ) },;
+                           "bText"     => {|| "Proceso" },;
+                           "oWnd"      => ::oDlg,;
+                           "oFont"     => oGridFont(),;
+                           "lPixels"   => .t.,;
+                           "nClrText"  => Rgb( 0, 0, 0 ),;
+                           "nClrBack"  => Rgb( 255, 255, 255 ),;
+                           "nWidth"    => {|| GridWidth( 1.5, ::oDlg ) },;
+                           "nHeight"   => 23,;
+                           "lDesign"   => .f. } )
+
+   ::oMeter          := TGridMeter():Build( {   "nRow"            => 90,;
+                                                "nCol"            => {|| GridWidth( 3.2, ::oDlg ) },;
                                                 "bSetGet"         => {|u| if( PCount() == 0, ::nMeter, ::nMeter := u ) },;
                                                 "oWnd"            => ::oDlg,;
-                                                "nWidth"          => {|| GridWidth( 11.5, ::oDlg ) },;
-                                                "nHeight"         => 23,;
+                                                "nWidth"          => {|| GridWidth( 7.1, ::oDlg ) },;
+                                                "nHeight"         => 20,;
                                                 "lPixel"          => .t.,;
                                                 "lUpdate"         => .t.,;
                                                 "lNoPercentage"   => .t.,;
                                                 "nClrPane"        => rgb( 255,255,255 ),;
                                                 "nClrBar"         => rgb( 128,255,0 ) } )
 
-   ::oMeterTarget    := TGridMeter():Build( {   "nRow"            => 90,;
-                                                "nCol"            => {|| GridWidth( 0.5, ::oDlg ) },;
+   TGridSay():Build(    {  "nRow"      => 125,;
+                           "nCol"      => {|| GridWidth( 0.5, ::oDlg ) },;
+                           "bText"     => {|| "Guardando" },;
+                           "oWnd"      => ::oDlg,;
+                           "oFont"     => oGridFont(),;
+                           "lPixels"   => .t.,;
+                           "nClrText"  => Rgb( 0, 0, 0 ),;
+                           "nClrBack"  => Rgb( 255, 255, 255 ),;
+                           "nWidth"    => {|| GridWidth( 1.5, ::oDlg ) },;
+                           "nHeight"   => 23,;
+                           "lDesign"   => .f. } )
+
+   ::oMeterTarget    := TGridMeter():Build( {   "nRow"            => 125,;
+                                                "nCol"            => {|| GridWidth( 3.2, ::oDlg ) },;
                                                 "bSetGet"         => {|u| if( PCount() == 0, ::nMeterTarget, ::nMeterTarget := u ) },;
                                                 "oWnd"            => ::oDlg,;
-                                                "nWidth"          => {|| GridWidth( 11.5, ::oDlg ) },;
-                                                "nHeight"         => 23,;
+                                                "nWidth"          => {|| GridWidth( 7.1, ::oDlg ) },;
+                                                "nHeight"         => 20,;
                                                 "lPixel"          => .t.,;
                                                 "lUpdate"         => .t.,;
                                                 "lNoPercentage"   => .t.,;
