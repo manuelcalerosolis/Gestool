@@ -29,7 +29,7 @@ METHOD ExecuteSqlStatement( cSql, cSqlStatement, hStatement )
    DEFAULT cSqlStatement   := "ADS" + alltrim( strtran( str( seconds() ), ".", "" ) )
    DEFAULT hStatement      := ADS_CDX
 
-   msgalert( cSql, cSqlStatement )
+   //msgalert( cSql, cSqlStatement )
 
    oBlock                  := ErrorBlock( {| oError | ApoloBreak( oError ) } )
    BEGIN SEQUENCE

@@ -37,7 +37,7 @@ METHOD deleteDetailsById( cSerie, nNumero, cSufijo, cTableName )
                               "nNumPed = " + quoted( nNumero ) + " AND " + ;
                               "cSufPed = " + quoted( cSufijo )   
 
-   msgalert( cSql )                              
+   //msgalert( cSql )                              
 
 Return ( ::ExecuteSqlStatement( cSql ) )
 
