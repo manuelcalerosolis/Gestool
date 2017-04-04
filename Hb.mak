@@ -30,6 +30,7 @@ TARGETOBJ 				= $(TARGET).obj
 
 PRG            		=    										\
 $(TARGETPRG)             										\
+SQLDatabase.prg 													\
 DialogExtend.prg           									\
 C5Lib.prg               										\
 RpreviewC3.prg 													\
@@ -489,6 +490,7 @@ Treeview.c 					               				\
 
 OBJS            =                                  \
 $(TARGETOBJ)                                       \
+SQLDatabase.obj 												\
 Tinitshell.obj                                     \
 WebBrow.obj                                        \
 TMySql.obj                                         \
@@ -971,6 +973,7 @@ $(EXE) : $(RESOURCE)\GstDialog.Res $(OBJS)
   	-Gn -aa -Tpe -s -r -m -V4.0                              +
 (BORLAND)\lib\c0w32.obj                                     +
 $(OBJ)\$(TARGETOBJ)                                         +
+$(OBJ)\SQLDatabase.obj                                      +
 $(OBJ)\Tinitshell.obj                                       +
 $(OBJ)\WebBrow.obj                                          +
 $(OBJ)\TMySql.obj                                           +

@@ -1049,6 +1049,11 @@ Return ( by( nRow ) )
 
 Function mainTest()
 
+   if !( getSQLDatabase():Connect() )
+      msgalert( "Error al conectar con la base de datos SQLite" )
+   end if 
+
+/*
    local i
    local e
    local oDb
@@ -1060,17 +1065,17 @@ Function mainTest()
    local cIns        := "INSERT INTO " + cTabla + ;
                            " ( first, last, street, city, state, zip, hiredate, married, age, salary, notes ) "  + ;
                            "VALUES ( 'Manu', 'Exposito', 'Pico de Almanzor, 35', 'Avila', 'ES', 41700, 20161231, 0, 52, 40456.89, 'Esta es una nota cualquiera' );"
-   local cCreaTabla  := "CREATE TABLE " + cTabla  + " ( " + ;
-                           "idreg INTEGER PRIMARY KEY,"    + ;
+   local cCreaTabla  := "CREATE TABLE " + cTabla  + " ( "   + ;
+                           "idreg INTEGER PRIMARY KEY,"     + ;
                            "first       VARCHAR( 20 ),"     + ;
                            "last        VARCHAR( 20 ),"     + ;
                            "street      VARCHAR( 30 ),"     + ;
                            "city        VARCHAR( 30 ),"     + ;
                            "state       VARCHAR( 2 ),"      + ;
                            "zip         VARCHAR( 20 ),"     + ;
-                           "hiredate    DATE,"             + ;
-                           "married     BOOLEAN,"          + ;
-                           "age         INTEGER,"          + ;
+                           "hiredate    DATE,"              + ;
+                           "married     BOOLEAN,"           + ;
+                           "age         INTEGER,"           + ;
                            "salary      DECIMAL( 9, 2 ),"   + ;
                            "notes       VARCHAR( 70 ) );"
 
@@ -1130,6 +1135,7 @@ Function mainTest()
    if oDb:disconnect()
       msgalert( cDb + " cerrada" )
    endif
+*/
 
 Return ( nil )
 

@@ -3618,6 +3618,12 @@ Return ( "ADS\" )
 
 //----------------------------------------------------------------------------//
 
+Function cPathDatabase()
+
+Return ( fullCurDir() + "Database\" )
+
+//----------------------------------------------------------------------------//
+
 Function cPatEmpTmp( lShort )
 
    DEFAULT lShort  := .f.
