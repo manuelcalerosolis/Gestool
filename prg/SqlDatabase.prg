@@ -10,15 +10,27 @@ static oSqlDatabase
 CLASS SQLDatabase
 
     DATA oConexion
-    DATA cDatabaseSQLite        
 
-    METHOD New()                CONSTRUCTOR
-    METHOD isDatabaseSQLite()
+    DATA cDatabaseSQLite    
 
-    METHOD Conexion()           INLINE  ( ::oConexion )
+    DATA cPathDatabaseSQLite    
+
+    DATA aModels
+
+    METHOD New()                    CONSTRUCTOR
+
+    METHOD Conexion()               INLINE  ( ::oConexion )
     
-    METHOD Connect()            INLINE  ( ::oConexion:Connect( ::cDatabaseSQLite ) )
-    METHOD Exec( cSql )         INLINE  ( ::oConexion:Exec( cSql ) )
+    METHOD Connect() 
+    METHOD Disconnect()             INLINE  ( ::oConexion:disconnect() )
+           
+    METHOD Exec( cSql )             
+    METHOD Query( cSql )            INLINE ( ::oConexion:Query( cSql ) )
+    METHOD Prepare( cSql )          INLINE ( msgalert( cSql, "prepare desde dentro" ), ::oConexion:Prepare( cSql ) )
+
+    METHOD errorInfo()              INLINE ( ::oConexion:errorInfo() )
+
+    METHOD checkModelsExistence()   
 
 ENDCLASS
 
@@ -26,21 +38,54 @@ ENDCLASS
 
 METHOD New() 
 
-    ::cDatabaseSQLite   := cPathDatabase() + "Gestool.db"
+    ::aModels                   := { TiposImpresorasModel():New():getSQLCreateTable() }
 
-    ::oConexion         := THDO():new( "sqlite" )
+    ::cPathDatabaseSQLite       := fullCurDir() + "Database\" 
+
+    ::cDatabaseSQLite           := ::cPathDatabaseSQLite + "Gestool.db"
+
+    ::oConexion                 := THDO():new( "sqlite" )
 
 Return ( Self )
+
+//----------------------------------------------------------------------------//
+
+METHOD Connect()
+
+    if !lIsDir( ::cPathDatabaseSQLite )
+        makedir( ::cPathDatabaseSQLite ) 
+    end if 
+    
+Return ( ::oConexion:Connect( ::cDatabaseSQLite ) )
+
+//----------------------------------------------------------------------------//
+
+METHOD Exec( cSql )
+
+    local lExec     := .t.
+
+    try
+        ::oConexion:Exec( cSql )
+    catch
+        lExec       := .f.
+    end
+
+Return ( lExec )
+
+//----------------------------------------------------------------------------//
+
+METHOD checkModelsExistence()
+    
+Return ( aeval( ::aModels, { |cModel| ::Exec( cModel ) } ) )
 
 //----------------------------------------------------------------------------//
 
 Function getSQLDatabase()
 
     if empty( oSqlDatabase )
-        oSqlDatabase    := SQLDatabase():New()
+        oSqlDatabase            := SQLDatabase():New()
     end if
 
 Return ( oSqlDatabase )
 
 //----------------------------------------------------------------------------//
-

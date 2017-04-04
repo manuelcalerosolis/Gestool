@@ -7,7 +7,7 @@ function ImportarPedidosProveedor()
 
    msgalert( file( fullcurdir() +  "Script\PedidosProveedores\Test.dll" ), fullcurdir() +  "Script\PedidosProveedores\Test.dll" )
 
-   msgalert( SetResources( fullcurdir() +  "Script\PedidosProveedores\Test.dll" ) )
+   msgalert( SetResources( fullcurdir() + "Script\PedidosProveedores\Test.dll" ) )
 
    DEFINE DIALOG oDialog RESOURCE "GETSERIE" 
 

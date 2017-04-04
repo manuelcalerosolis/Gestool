@@ -21452,43 +21452,10 @@ Return ( nUnidades )
 
 //---------------------------------------------------------------------------//
 
-Function dUltimaVentaCliente( cCodCli, dbfAlbCliT, dbfFacCliT, dbfTikT )
+Function dUltimaVentaCliente( cCodCli )
 
-   local nRecAlbT          := ( dbfAlbCliT )->( Recno() )
-   local nRecFacT          := ( dbfFacCliT )->( Recno() )
-   local nOrdAlbT          := ( dbfAlbCliT )->( OrdSetFocus( "cCliFec" ) )
-   local nOrdFacT          := ( dbfFacCliT )->( OrdSetFocus( "cCliFec" ) )
-   local dUltimaFactura    := ctod( "" )
-   local dUltimoAlbaran    := ctod( "" )
-
-   CursorWait()
-
-   /*
-   Buscamos por los Facturas no facturados-----------------------------------
-   */
-
-   if ( dbfAlbCliT )->( dbSeek( cCodCli ) )
-      dUltimoAlbaran       := ( dbfAlbCliT )->dFecAlb 
-   end if
-
-   /*
-   Buscamos ahora por loas facturas--------------------------------------------
-   */
-
-   if ( dbfFacCliT )->( dbSeek( cCodCli ) )
-      dUltimaFactura       := ( dbfFacCliT )->dFecFac
-   end if
-
-   /*
-   Dejamos las tablas como estaban------------------------------------------
-   */
-
-   ( dbfAlbCliT )->( OrdSetFocus( nOrdAlbT ) )
-   ( dbfFacCliT )->( OrdSetFocus( nOrdFacT ) )
-   ( dbfAlbCliT )->( dbGoTo( nRecAlbT ) )
-   ( dbfFacCliT )->( dbGoTo( nRecFacT ) )
-
-   CursorWE()
+   local dUltimaFactura    := AlbaranesClientesModel():UltimoDocumento( cCodCli )
+   local dUltimoAlbaran    := FacturasClientesModel():UltimoDocumento( cCodCli )
 
 Return ( if( dUltimaFactura > dUltimoAlbaran, dUltimaFactura, dUltimoAlbaran ) )
 
