@@ -3,7 +3,6 @@
 #include "MesDbf.ch"
 
 static oWndBrw
-static oRowSet
 
 //---------------------------------------------------------------------------//
 
@@ -41,25 +40,24 @@ FUNCTION TiposImpresoras( oMenuItem, oWnd )
    disableAcceso()
 
    oTiposImpresorasModel   := TiposImpresorasModel():New()
+   oTiposImpresorasModel:getOrderRowSet()
 
-   oRowSet                 := oTiposImpresorasModel:getRowSet()
-
-   oWndBrw                 := TShellSQL():New( 2, 10, 18, 70, "Tipos de impresoras", , oWnd, , , .f., , , oRowSet, , , , , {"Tipos de impresoras"}, {|| msgalert( "edit" ) },, {|| msgalert( "delete") },, nil, nLevel, "gc_printer2_16", ( 104 + ( 0 * 256 ) + ( 63 * 65536 ) ),,, .t. )
+   oWndBrw                 := TShellSQL():New( 2, 10, 18, 70, "Tipos de impresoras", , oWnd, , , .f., , , oTiposImpresorasModel, , , , , {"Tipos de impresoras"}, {|| msgalert( "edit" ) },, {|| msgalert( "delete") },, nil, nLevel, "gc_printer2_16", ( 104 + ( 0 * 256 ) + ( 63 * 65536 ) ),,, .t. )
 
       with object ( oWndBrw:AddXCol() )
          :cHeader          := "Id"
          :cSortOrder       := "id"
-         :bEditValue       := {|| oRowSet:fieldGet( "id" ) }
+         :bEditValue       := {|| oTiposImpresorasModel:getOrderRowSet():fieldGet( "id" ) }
          :nWidth           := 40
-         :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | oWndBrw:ClickOnHeader( oCol ) }
+         :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | oWndBrw:clickOnHeader( oCol ) }
       end with
 
       with object ( oWndBrw:AddXCol() )
          :cHeader          := "Tipo de impresora"
          :cSortOrder       := "nombre"
-         :bEditValue       := {|| oRowSet:fieldGet( "nombre" ) }
+         :bEditValue       := {|| oTiposImpresorasModel:getOrderRowSet():fieldGet( "nombre" ) }
          :nWidth           := 800
-         :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | oWndBrw:ClickOnHeader( oCol ) }
+         :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | oWndBrw:clickOnHeader( oCol ) }
       end with
 
       oWndBrw:CreateXFromCode()
