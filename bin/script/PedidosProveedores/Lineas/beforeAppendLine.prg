@@ -9,8 +9,6 @@ Function beforeAppendLine( aTmp, aGet, nView, nMode, lInicializate )
 
    local uValor
 
-   Return .t.
-
    if ( nMode != APPD_MODE )
       return .f.
    end if

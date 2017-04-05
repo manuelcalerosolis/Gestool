@@ -8,7 +8,7 @@ Function validControl( oSender, aGet, nView, nMode )
    local nCajasArticulos
    local nKilosArticulos
 
-   if ( nMode != APPD_MODE .or. nMode != DUPL_MODE )
+   if ( nMode != APPD_MODE .and. nMode != DUPL_MODE )
       return .t.
    end if 
 	

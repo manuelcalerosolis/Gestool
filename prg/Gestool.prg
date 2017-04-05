@@ -1049,7 +1049,7 @@ Return ( by( nRow ) )
 
 Function mainTest()
 
-   local i
+   /*local i
    local e
    local oDb
    local cDb
@@ -1129,7 +1129,7 @@ Function mainTest()
 
    if oDb:disconnect()
       msgalert( cDb + " cerrada" )
-   endif
+   endif*/
 
 Return ( nil )
 
