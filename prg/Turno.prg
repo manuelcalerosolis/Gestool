@@ -8204,6 +8204,8 @@ RETURN ( Self )
 
 Method AppendInTemporal( cKey, cNaturaleza, nImporte )
 
+   local e
+
    logwrite( "Str( ::nGrupoPeso, 3 )" )
    logwrite( Str( ::nGrupoPeso, 3 ) )
    logwrite( "::cGrupoEnUso" )
@@ -8213,41 +8215,46 @@ Method AppendInTemporal( cKey, cNaturaleza, nImporte )
    logwrite( "str( ::nGrupoPeso, 3 ) + ::cGrupoEnUso + cKey" )
    logwrite( Str( ::nGrupoPeso, 3 ) + ::cGrupoEnUso + cKey )
 
-   if ( cKey != nil )
-      cKey                       := padr( cKey, 14, space( 1 ) )
-   end if
+   try
 
-   if ( cKey == nil )
+      if ( cKey == nil )
 
-      ::oDbfTemporal:Blank()
-      ::oDbfTemporal:cGrpTur     := ::cGrupoEnUso
-      ::oDbfTemporal:nGrpPes     := ::nGrupoPeso
-      ::oDbfTemporal:cNatTur     := cNaturaleza
-      ::oDbfTemporal:nImpTur     := nImporte
-      ::oDbfTemporal:Insert()
-
-   else
-
-
-      if ::oDbfTemporal:Seek( Str( ::nGrupoPeso, 3 ) + ::cGrupoEnUso + cKey )
-
-         ::oDbfTemporal:Load()
-         ::oDbfTemporal:nImpTur  += nImporte
-         ::oDbfTemporal:Save()
+         ::oDbfTemporal:Blank()
+         ::oDbfTemporal:cGrpTur     := ::cGrupoEnUso
+         ::oDbfTemporal:nGrpPes     := ::nGrupoPeso
+         ::oDbfTemporal:cNatTur     := cNaturaleza
+         ::oDbfTemporal:nImpTur     := nImporte
+         ::oDbfTemporal:Insert()
 
       else
 
-         ::oDbfTemporal:Blank()
-         ::oDbfTemporal:cGrpTur  := ::cGrupoEnUso
-         ::oDbfTemporal:nGrpPes  := ::nGrupoPeso
-         ::oDbfTemporal:cKeyTur  := cKey
-         ::oDbfTemporal:cNatTur  := cNaturaleza
-         ::oDbfTemporal:nImpTur  := nImporte
-         ::oDbfTemporal:Insert()
+         cKey                       := padr( cKey, 14, space( 1 ) )
+
+         if ::oDbfTemporal:Seek( Str( ::nGrupoPeso, 3 ) + ::cGrupoEnUso + cKey )
+
+            ::oDbfTemporal:Load()
+            ::oDbfTemporal:nImpTur  += nImporte
+            ::oDbfTemporal:Save()
+
+         else
+
+            ::oDbfTemporal:Blank()
+            ::oDbfTemporal:cGrpTur  := ::cGrupoEnUso
+            ::oDbfTemporal:nGrpPes  := ::nGrupoPeso
+            ::oDbfTemporal:cKeyTur  := cKey
+            ::oDbfTemporal:cNatTur  := cNaturaleza
+            ::oDbfTemporal:nImpTur  := nImporte
+            ::oDbfTemporal:Insert()
+
+         end if
 
       end if
 
-   end if
+   catch e
+
+      eval( errorblock(), e )
+
+   end 
 
 RETURN ( Self )
 
