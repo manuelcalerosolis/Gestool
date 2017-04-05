@@ -17,7 +17,7 @@ CLASS TiposImpresorasModel FROM BaseModel
    METHOD   getSQLSelect()       INLINE   ( ::cSQLSelect )
 
    METHOD   getOrderRowSet()
-   METHOD   freeRowSet()         INLINE   ( if( !empty( ::oRowSet ), ( msgalert( "antes del free" ), msgalert( "Despues del free" ), ::oRowSet:= nil, msgalert( "Despues de todo" ) ), ) )
+   METHOD   freeRowSet()         INLINE   ( if( !empty( ::oRowSet ), ( ::oRowSet:= nil ), ) )
 
    METHOD   refreshSelectOrderBy( cNomCol, cOrder ) ;
                                  INLINE   ( ::getOrderRowSet( cNomCol, cOrder, .t. ) )

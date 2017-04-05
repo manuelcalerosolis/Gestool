@@ -23,7 +23,7 @@ CLASS TShellSQL FROM TShell
 
    METHOD setFilter()               INLINE ( Self )
 
-   METHOD ChgCombo( nTab )
+   METHOD ChgCombo()
 
 ENDCLASS
 
@@ -154,10 +154,6 @@ METHOD ClickOnHeader( oCol )
 
    ::selectColumnOrder( oCol )
 
-   msgalert ( oCol:cSortOrder )
-
-   msgalert ( oCol:cOrder )
-
    ::oModel:refreshSelectOrderBy( oCol:cSortOrder, oCol:cOrder )
 
    ::oBrw:Refresh()
@@ -166,8 +162,16 @@ RETURN ( Self )
 
 //---------------------------------------------------------------------------//
 
-METHOD ChgCombo( nTab )
+METHOD ChgCombo()
 
-   msgalert( ::oWndBar:GetComboBox() )
+   local nPosition   := ascan( ::oBrw:aCols, {|o| o:cHeader == ::oWndBar:GetComboBox() } ) 
+
+   if nPosition != 0
+
+      ::selectColumnOrder( ::oBrw:aCols[ nPosition ] )
+
+      ::oModel:refreshSelectOrderBy( ::oBrw:aCols[ nPosition ]:cSortOrder, ::oBrw:aCols[ nPosition ]:cOrder )
+
+   end if
 
 RETURN ( Self )
