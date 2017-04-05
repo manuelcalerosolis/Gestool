@@ -5170,25 +5170,15 @@ FUNCTION BrwPrv( oGet, oGet2, dbfProvee )
 	local oBrw
 	local oGet1
 	local cGet1
-   local nOrd        //:= GetBrwOpt( "BrwProvee" )
+   local nOrd        := GetBrwOpt( "BrwProvee" )
 	local oCbxOrd
    local cCbxOrd
    local cTxtOrigen
-   local cReturn     //:= Space( 12 )
-   local nLevelUsr   //:= nLevelUsr( "01034" )
-   local aCbxOrd     //:= {  "Código", "Nombre", "NIF/CIF", "Población", "Teléfono", "Fax", "Domicilio", "Población", "Código postal", "Provincia", "Correo electrónico", "Contacto" }
+   local cReturn     := Space( 12 )
+   local nLevelUsr   := nLevelUsr( "01034" )
+   local aCbxOrd     := {  "Código", "Nombre", "NIF/CIF", "Población", "Teléfono", "Fax", "Domicilio", "Población", "Código postal", "Provincia", "Correo electrónico", "Contacto" }
 
-
-   MsgInfo( "1" )
-   nOrd        := GetBrwOpt( "BrwProvee" )
-   MsgInfo( "2" )
-   cReturn     := Space( 12 )
-   MsgInfo( "3" )
-   nLevelUsr   := nLevelUsr( "01034" )
-   MsgInfo( "4" )
-   aCbxOrd     := {  "Código", "Nombre", "NIF/CIF", "Población", "Teléfono", "Fax", "Domicilio", "Población", "Código postal", "Provincia", "Correo electrónico", "Contacto" }
-   MsgInfo( "5" )
-
+   MsgInfo( "Entro en el brwProvee" )
 
    nOrd              := Min( Max( nOrd, 1 ), len( aCbxOrd ) )
    cCbxOrd           := aCbxOrd[ nOrd ]

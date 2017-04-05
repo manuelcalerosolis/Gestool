@@ -54,7 +54,7 @@ STATIC FUNCTION CloseFiles()
    DisableAcceso()
 
    if dbfTImp != nil
-      ( dbfTImp ) -> ( dbCloseArea() )
+      ( dbfTImp )->( dbCloseArea() )
    end if
 
    dbfTImp  := nil
@@ -148,7 +148,7 @@ FUNCTION TipoImpresoras( oMenuItem, oWnd )
          NOBORDER ;
          ACTION   ( oWndBrw:RecAdd() );
          ON DROP  ( oWndBrw:RecDup() );
-         TOOLTIP  "(A)ñadir";
+         TOOLTIP  "(A)ï¿½adir";
          BEGIN GROUP;
          HOTKEY   "A";
          LEVEL    ACC_APPD
@@ -189,7 +189,7 @@ RETURN NIL
 
 //----------------------------------------------------------------------------//
 /*
-Monta el diálogo para añadir, editar,... registros
+Monta el dialogo para aÃ±adir, editar,... registros
 */
 
 STATIC FUNCTION EdtRec( aTmp, aGet, dbfTImp, oBrw, bWhen, bValid, nMode )
@@ -216,7 +216,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfTImp, oBrw, bWhen, bValid, nMode )
       CANCEL ;
       ACTION   ( oDlg:end() )
 
-   // Teclas rápidas-----------------------------------------------------------
+   // Teclas rï¿½pidas-----------------------------------------------------------
 
    if nMode != ZOOM_MODE
       oDlg:AddFastKey( VK_F5, {|| EndTrans( aTmp, aGet, dbfTImp, oBrw, nMode, oDlg ) } )
@@ -228,12 +228,10 @@ RETURN ( oDlg:nResult == IDOK )
 
 //----------------------------------------------------------------------------//
 /*
-Funcion que termina la edición del registro de la base de datos
+Funcion que termina la ediciÃ³n del registro de la base de datos
 */
 
 STATIC FUNCTION EndTrans( aTmp, aGet, dbfSitua, oBrw, nMode, oDlg )
-
-   //Comprobamos que el código no esté vacío y que no exista
 
    if nMode == APPD_MODE .or. nMode == DUPL_MODE
       if Existe( Upper( aTmp[ ( dbfTImp )->( FieldPos( "cTipImp" ) ) ] ), dbfTImp, "cTipImp" )
@@ -244,7 +242,7 @@ STATIC FUNCTION EndTrans( aTmp, aGet, dbfSitua, oBrw, nMode, oDlg )
    end if
 
    if Empty( aTmp[ ( dbfTImp )->( FieldPos( "cTipImp" ) ) ] )
-      MsgStop( "El tipo de impresora no puede estar vacío" )
+      MsgStop( "El tipo de impresora no puede estar vacÃ­o" )
       aGet[ ( dbfTImp )->( FieldPos( "cTipImp" ) ) ]:SetFocus()
       return nil
    end if
@@ -256,9 +254,6 @@ STATIC FUNCTION EndTrans( aTmp, aGet, dbfSitua, oBrw, nMode, oDlg )
 RETURN ( oDlg:end( IDOK ) )
 
 //---------------------------------------------------------------------------//
-/*
-Función que crea las bases de datos necesarias
-*/
 
 FUNCTION mkTipImp( cPath, lAppend, cPathOld, oMeter )
 
@@ -286,10 +281,6 @@ FUNCTION mkTipImp( cPath, lAppend, cPathOld, oMeter )
 RETURN .t.
 
 //----------------------------------------------------------------------------//
-
-/*
-Funcion que crea los índices de las bases de datos
-*/
 
 FUNCTION rxTipImp( cPath, oMeter )
 
@@ -347,7 +338,7 @@ FUNCTION IsTipImp()
 
       ( dbfTImp )->( dbCloseArea() )
 
-      msgStop( ErrorMessage( oError ), "Imposible realizar las comprobación inicial de tipos de impresoras" )
+      msgStop( ErrorMessage( oError ), "Imposible realizar las comprobaciÃ³n inicial de tipos de impresoras" )
 
    END SEQUENCE
 
@@ -365,7 +356,7 @@ FUNCTION cTipoImpresora( oGet, dbfTImp )
    local oError
    local lClose      := .f.
    local lValid      := .f.
-	local xValor 	   := oGet:varGet()
+   local xValor      := oGet:varGet()
 
    if Empty( xValor )
       return .t.
@@ -388,7 +379,7 @@ FUNCTION cTipoImpresora( oGet, dbfTImp )
 
       else
 
-         msgStop( "Código de tipo de impresora no encontrado" )
+         msgStop( "CÃ³digo de tipo de impresora no encontrado" )
 
       end if
 
@@ -400,9 +391,9 @@ FUNCTION cTipoImpresora( oGet, dbfTImp )
 
    ErrorBlock( oBlock )
 
-	IF lClose
+   IF lClose
       CLOSE( dbfTImp )
-	END IF
+   END IF
 
 RETURN lValid
 
@@ -410,12 +401,12 @@ RETURN lValid
 
 FUNCTION BrwTipoImpresora( oGet, lBigStyle )
 
-	local oDlg
-	local oGet1
-	local cGet1
-	local oBrw
+   local oDlg
+   local oGet1
+   local cGet1
+   local oBrw
    local nOrd        := GetBrwOpt( "BrwTipImpresora" )
-	local oCbxOrd
+   local oCbxOrd
    local aCbxOrd     := { "Tipo" }
    local cCbxOrd
    local nLevel      := nLevelUsr( "01115" )
@@ -456,18 +447,18 @@ FUNCTION BrwTipoImpresora( oGet, lBigStyle )
    if !lBigStyle
 
       REDEFINE GET oGet1 VAR cGet1;
-			ID 		104 ;
+         ID       104 ;
          ON CHANGE( AutoSeek( nKey, nFlags, Self, oBrw, dbfTImp ) );
          VALID    ( OrdClearScope( oBrw, dbfTImp ) );
          BITMAP   "FIND" ;
          OF       oDlg
 
-		REDEFINE COMBOBOX oCbxOrd ;
-			VAR 		cCbxOrd ;
-			ID 		102 ;
+      REDEFINE COMBOBOX oCbxOrd ;
+         VAR      cCbxOrd ;
+         ID       102 ;
          ITEMS    aCbxOrd ;
          ON CHANGE( ( dbfTImp )->( OrdSetFocus( oCbxOrd:nAt ) ), oBrw:Refresh(), oGet1:SetFocus() ) ;
-			OF 		oDlg
+         OF       oDlg
 
    end if
 
@@ -486,7 +477,7 @@ FUNCTION BrwTipoImpresora( oGet, lBigStyle )
       end if
 
       with object ( oBrw:AddCol() )
-         :cHeader          := "Código"
+         :cHeader          := "CÃ³digo"
          :cSortOrder       := "cTipImp"
          :bEditValue       := {|| ( dbfTImp )->cTipImp }
          :nWidth           := 400
@@ -533,7 +524,7 @@ FUNCTION BrwTipoImpresora( oGet, lBigStyle )
          OF       oDlg ;
          ACTION   ( oDlg:end( IDOK ) )
 
-		REDEFINE BUTTON ;
+      REDEFINE BUTTON ;
          ID       IDCANCEL ;
          OF       oDlg ;
          CANCEL ;
@@ -549,7 +540,7 @@ FUNCTION BrwTipoImpresora( oGet, lBigStyle )
          WHEN     ( nAnd( nLevel, ACC_APPD ) != 0 .and. !IsReport() ) ;
          ACTION   ( WinAppRec( oBrw, bEdit, dbfTImp ) );
 
-		REDEFINE BUTTON ;
+      REDEFINE BUTTON ;
          ID       501 ;
          OF       oDlg ;
          WHEN     ( nAnd( nLevel, ACC_EDIT ) != 0 .and. !IsReport() ) ;
@@ -573,7 +564,7 @@ FUNCTION BrwTipoImpresora( oGet, lBigStyle )
    if oDlg:nResult == IDOK
 
       oGet:cText( ( dbfTImp )->cTipImp )
-		oGet:lValid()
+      oGet:lValid()
 
    end if
 

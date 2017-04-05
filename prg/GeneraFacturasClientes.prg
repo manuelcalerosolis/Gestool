@@ -632,9 +632,9 @@ Return ( self )
 
 METHOD CreateListaAlbaranes() CLASS GeneraFacturasClientes
 
-   local nRec           := ( D():AlbaranesClientes( ::nView ) )->( Recno() )
-   local nOrdAnt        := ( D():AlbaranesClientes( ::nView ) )->( OrdSetFocus( "LCLIOBR" ) )
    local aTotAlbaran
+   local nRec           := ( D():AlbaranesClientes( ::nView ) )->( Recno() )
+   local nOrdAnt        := ( D():AlbaranesClientes( ::nView ) )->( OrdSetFocus( "cCodObr" ) )
 
    ::aListaAlbaranes    := {}
 
@@ -940,6 +940,10 @@ Return ( self )
 //---------------------------------------------------------------------------//
 
 METHOD lIsFacturable() CLASS GeneraFacturasClientes
+
+   if ( D():AlbaranesClientes( ::nView ) )->lFacturado
+      Return ( .f. )
+   end if
 
    if !::oPeriodo:InRange( ( D():AlbaranesClientes( ::nView ) )->dFecAlb )
       Return ( .f. )

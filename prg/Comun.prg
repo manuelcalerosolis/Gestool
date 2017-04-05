@@ -281,6 +281,8 @@ Return ( .t. )
 
 Function Test()
 
+   
+
 Return ( nil )
 
 //---------------------------------------------------------------------------//
@@ -2930,6 +2932,7 @@ Function appCheckDirectory()
    if( !lIsDir( cPatReporting() ),     makedir( cNamePath( cPatReporting() ) ), )
    if( !lIsDir( cPatUserReporting() ), makedir( cNamePath( cPatUserReporting() ) ), )
    if( !lIsDir( cPatConfig() ),        makedir( cNamePath( cPatConfig() ) ), )
+   if( !lIsDir( cPatDat() ),           makedir( cNamePath( cPatDat() ) ), )
 
    // Elimina los temporales de la aplicación----------------------------------
 

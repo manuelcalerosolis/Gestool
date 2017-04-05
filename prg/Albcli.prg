@@ -16276,6 +16276,9 @@ FUNCTION rxAlbCli( cPath, cDriver )
       ( cAlbCliT )->( ordCondSet( "!Deleted()", {|| !Deleted() }  ) )
       ( cAlbCliT )->( ordCreate( cPath + "ALBCLIT.CDX", "dFecAlb", "dFecAlb", {|| Field->dFecAlb } ) )
 
+      ( cAlbCliT )->( ordCondSet( "!Deleted()", {|| !Deleted() }, , , , , , , , , .t.  ) )
+      ( cAlbCliT )->( ordCreate( cPath + "ALBCLIT.CDX", "dDesFec", "dFecAlb", {|| Field->dFecAlb } ) )
+
       ( cAlbCliT )->( ordCondSet( "!Deleted()", {|| !Deleted() }  ) )
       ( cAlbCliT )->( ordCreate( cPath + "ALBCLIT.CDX", "CCODCLI", "CCODCLI", {|| Field->CCODCLI } ) )
 
@@ -16309,17 +16312,14 @@ FUNCTION rxAlbCli( cPath, cDriver )
       ( cAlbCliT )->( ordCondSet( "!Deleted()", {|| !Deleted() }  ) )
       ( cAlbCliT )->( ordCreate( cPath + "ALBCLIT.CDX", "CCODOBR", "CCODCLI + CCODOBR", {|| Field->CCODCLI + Field->CCODOBR } ) )
 
-      ( cAlbCliT )->( ordCondSet( "!Deleted()", {|| !Deleted() }  ) )
-      ( cAlbCliT )->( ordCreate( cPath + "ALBCLIT.CDX", "CNUMPED", "CNUMPED", {|| Field->CNUMPED } ) )
-
       ( cAlbCliT )->( ordCondSet( "!Deleted()", {|| !Deleted() }  ))
       ( cAlbCliT )->( ordCreate( cPath + "ALBCLIT.CDX", "lSndDoc", "lSndDoc", {|| Field->lSndDoc } ) )
 
       ( cAlbCliT )->( ordCondSet( "!Deleted()", {|| !Deleted() }  ) )
       ( cAlbCliT )->( ordCreate( cPath + "AlbCliT.Cdx", "cCodUsr", "Field->cCodUsr + Dtos( Field->dFecCre ) + Field->cTimCre", {|| Field->cCodUsr + Dtos( Field->dFecCre ) + Field->cTimCre } ) )
 
-      ( cAlbCliT )->( ordCondSet( "!Deleted()", {|| !Deleted() }  ) )
-      ( cAlbCliT )->( ordCreate( cPath + "ALBCLIT.CDX", "CNUMTIK", "CNUMTIK", {|| Field->CNUMTIK } ) )
+      ( cAlbCliT )->( ordCondSet( "!Deleted()", {|| !Deleted() } ) )
+      ( cAlbCliT )->( ordCreate( cPath + "AlbCliT.CDX", "cSuPed", "cSuPed", {|| Field->cSuPed } ) )
 
       ( cAlbCliT )->( ordCondSet( "!Deleted()", {|| !Deleted() }  ) )
       ( cAlbCliT )->( ordCreate( cPath + "ALBCLIT.CDX", "cCtrCoste", "cCtrCoste", {|| Field->cCtrCoste } ) )
@@ -16333,35 +16333,19 @@ FUNCTION rxAlbCli( cPath, cDriver )
       ( cAlbCliT )->( ordCondSet("!Deleted()", {||!Deleted()}  ) )
       ( cAlbCliT )->( ordCreate( cPath + "ALBCLIT.CDX", "CodPostal", "Field->cPosCli", {|| Field->cPosCli } ) )
 
+      ( cAlbCliT )->( ordCondSet( "!Deleted()", {|| !Deleted() }  ) )
+      ( cAlbCliT )->( ordCreate( cPath + "ALBCLIT.CDX", "CNUMPED", "CNUMPED", {|| Field->CNUMPED } ) )
+
+      ( cAlbCliT )->( ordCondSet( "!Deleted()", {|| !Deleted() }  ) )
+      ( cAlbCliT )->( ordCreate( cPath + "ALBCLIT.CDX", "CNUMTIK", "CNUMTIK", {|| Field->CNUMTIK } ) )
 
       // Albaranes no facturado------------------------------------------------
-
-      ( cAlbCliT )->( ordCondSet( "!Deleted() .and. !lFacturado", {|| !Deleted() .and. !Field->lFacturado }  ) )
-      ( cAlbCliT )->( ordCreate( cPath + "AlbCliT.Cdx", "lCodCli", "Field->cCodCli", {|| Field->cCodCli } ) )
-
-      ( cAlbCliT )->( ordCondSet( "!Deleted()", {|| !Deleted() } ) )
-      ( cAlbCliT )->( ordCreate( cPath + "AlbCliT.CDX", "cSuPed", "cSuPed", {|| Field->cSuPed } ) )
 
       ( cAlbCliT )->( ordCondSet( "!Deleted()", {|| !Deleted() } ) )
       ( cAlbCliT )->( ordCreate( cPath + "AlbCliT.Cdx", "iNumAlb", "'10' + cSerAlb + Str( nNumAlb ) + Space( 1 ) + cSufAlb", {|| '10' + Field->cSerAlb + Str( Field->nNumAlb ) + Space( 1 ) + Field->cSufAlb } ) )
 
-      ( cAlbCliT )->( ordCondSet( "!Deleted()", {|| !Deleted() }  ) )
-      ( cAlbCliT )->( ordCreate( cPath + "ALBCLIT.CDX", "CNUMCLI", "CSERALB + Str(NNUMALB) + CSUFALB + CCODCLI", {|| Field->CSERALB + Str( Field->NNUMALB ) + Field->CSUFALB + Field->CCODCLI } ) )
-
-      ( cAlbCliT )->( ordCondSet( "!Deleted()", {|| !Deleted() }, , , , , , , , , .t. ) )
-      ( cAlbCliT )->( ordCreate( cPath + "AlbCliT.Cdx", "cCliFec", "cCodCli + dtos( dFecAlb ) + tFecAlb", {|| Field->cCodCli + dtos( Field->dFecAlb ) + Field->tFecAlb } ) )
-
-      ( cAlbCliT )->( ordCondSet( "!Deleted()", {|| !Deleted() }, , , , , , , , , .t. ) )
-      ( cAlbCliT )->( ordCreate( cPath + "AlbCliT.Cdx", "dFecDes", "dtos( dFecAlb ) + tFecAlb", {|| dtos( Field->dFecAlb ) + Field->tFecAlb } ) )
-
-      ( cAlbCliT )->( ordCondSet( "!Deleted() .and. !lFacturado", {|| !Deleted() .and. !Field->lFacturado }  ) )
-      ( cAlbCliT )->( ordCreate( cPath + "ALBCLIT.CDX", "LCLIOBR", "CCODCLI + CCODOBR", {|| Field->CCODCLI + Field->CCODOBR } ) )
-
       ( cAlbCliT )->( ordCondSet( "!Deleted()", {|| !Deleted() }, , , , , , , , , .t. ) )
       ( cAlbCliT )->( ordCreate( cPath + "ALBCLIT.CDX", "nTotAlb", "nTotAlb", {|| Field->nTotAlb }, ) )
-
-      ( cAlbCliT )->( ordCondSet( "!Deleted()", {|| !Deleted() }, , , , , , , , , .t.  ) )
-      ( cAlbCliT )->( ordCreate( cPath + "ALBCLIT.CDX", "dDesFec", "dFecAlb", {|| Field->dFecAlb } ) )
 
       ( cAlbCliT )->( dbCloseArea() )
    else

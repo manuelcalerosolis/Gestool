@@ -152,17 +152,21 @@ CLASS TShell FROM TMdiChild
                aColSizes, aColSelect, aJustify, aPrompt, bAdd, bEdit, bDel, bDup,;
                nSizeBtn, nLevel, cMru, cInifile  ) CONSTRUCTOR
 
-   METHOD Create() INLINE ( Self )
+   METHOD Create()               INLINE ( Self )
 
    METHOD Activate( cShow, bLClicked, bRClicked, bMoved, bResized, bPainted,;
                     bKeyDown, bInit, bUp, bDown, bPgUp, bPgDn,;
                     bLeft, bRight, bPgLeft, bPgRight, bValid, bDropFiles,;
                     bLButtonUp )
 
+   METHOD setXAlias( xAlias )    INLINE ( if( isObject( xAlias ), ::xAlias := xAlias:cAlias, ::xAlias := xAlias ) )
+
    METHOD CreateXBrowse()
    METHOD CreateXFromCode()
-   METHOD AddXCol()  INLINE ( ::oBrw:AddCol() )
-   METHOD AddCol()   INLINE ( ::oBrw:AddCol() )
+   METHOD AddXCol()              INLINE ( ::oBrw:AddCol() )
+   METHOD AddCol()               INLINE ( ::oBrw:AddCol() )
+
+   METHOD selectColumnOrder()
 
 	METHOD GotFocus()
 
@@ -294,6 +298,8 @@ CLASS TShell FROM TMdiChild
    METHOD ShowEditButtonFilter()             INLINE ( ::oWndBar:ShowEditButtonFilter() )
    METHOD HideEditButtonFilter()             INLINE ( ::oWndBar:HideEditButtonFilter() )
 
+   METHOD setFilter( cFilter )               INLINE ( if(   !empty( cFilter ), ( ::xAlias )->( setCustomFilter( cFilter ) ), ( ::xAlias )->( quitCustomFilter() ) ) )
+
    METHOD AddFilter()                        INLINE ( if(   !empty( ::oActiveFilter ),;
                                                             ( ::oActiveFilter:AddFilter(), ::EnableComboFilter( ::oActiveFilter:FiltersName() ) ), ) )
    METHOD EditFilter()                       INLINE ( if(   !empty( ::oActiveFilter ) .and. !empty( ::oWndBar ),;
@@ -408,11 +414,7 @@ METHOD New(  nTop, nLeft, nBottom, nRight, cTitle, oMenu, oWnd, oIcon,;
    ::bDup            := bDup
    ::bZoo            := bZoo
 
-   if IsObject( xAlias )
-      ::xAlias       := xAlias:cAlias
-   else
-      ::xAlias       := xAlias
-   end if
+   ::setXAlias( xAlias )
 
    // Fuentes en funcion del estilo--------------------------------------------
 
@@ -532,9 +534,7 @@ METHOD Activate( cShow, bLClicked, bRClicked, bMoved, bResized, bPainted, bKeyDo
 
    // Seleccion de oden de la columna------------------------------------------
 
-   if ( ::xAlias )->( Used() ) .and. !empty( ::oBrw )
-      aEval( ::oBrw:aCols, {|oCol| if( oCol:cSortOrder == ( ::xAlias )->( ordsetfocus() ), ( oCol:SetOrder(), oCol:Adjust() ), ) } )
-   end if
+   ::selectColumnOrder()
 
    // Filtro por defecto----------------------------------------------------
 
@@ -557,6 +557,16 @@ METHOD Activate( cShow, bLClicked, bRClicked, bMoved, bResized, bPainted, bKeyDo
    // ErrorBlock( oBlock )
 
    ::BarEnable()
+
+RETURN NIL
+
+//----------------------------------------------------------------------------//
+
+METHOD selectColumnOrder() CLASS TShell
+
+   if ( ::xAlias )->( Used() ) .and. !empty( ::oBrw )
+      aEval( ::oBrw:aCols, {|oCol| if( oCol:cSortOrder == ( ::xAlias )->( ordsetfocus() ), ( oCol:SetOrder(), oCol:Adjust() ), ) } )
+   end if
 
 RETURN NIL
 
@@ -2577,11 +2587,7 @@ METHOD chgFilter() CLASS TShell
       end if 
    end if 
 
-   if !empty( cFilter ) 
-      ( ::xAlias )->( setCustomFilter( cFilter ) )
-   else 
-      ( ::xAlias )->( quitCustomFilter() )
-   end if
+   ::setFilter( cFilter )
 
    ::Refresh() 
 

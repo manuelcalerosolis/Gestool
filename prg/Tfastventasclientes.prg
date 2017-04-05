@@ -61,7 +61,7 @@ CLASS TFastVentasClientes FROM TFastReportInfGen
    METHOD setMeterTotal( nTotal )         INLINE ( if ( !empty( ::oMtrInf ), ::oMtrInf:SetTotal( nTotal ), ) )
    METHOD setMeterAutoIncremental()       INLINE ( if ( !empty( ::oMtrInf ), ::oMtrInf:AutoInc(), ) )
 
-   METHOD RiesgoAlcanzado()               INLINE ( ::oStock:nRiesgo( ::oDbf:cCodCli ) )
+   METHOD RiesgoAlcanzado()               INLINE ( ClientesModel():Riesgo( ::oDbf:cCodCli ) )
    METHOD TotalFacturado()                INLINE ( ::oStock:nFacturado( ::oDbf:cCodCli ) )
    METHOD nFacturacionCliente()           INLINE ( ::oStock:nFacturacionCliente( ::oDbf:cCodCli ) )
    METHOD TotalPendiente()                INLINE ( ::oStock:nFacturacionPendiente( ::oDbf:cCodCli ) )
