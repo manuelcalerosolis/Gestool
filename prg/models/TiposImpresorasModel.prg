@@ -16,11 +16,13 @@ CLASS TiposImpresorasModel FROM BaseModel
    METHOD   getSQLCreateTable()  INLINE   ( ::cSQLCreateTable )
    METHOD   getSQLSelect()       INLINE   ( ::cSQLSelect )
 
-   METHOD   getRowSet()
-   METHOD   freeRowSet()         INLINE   ( if( !empty( ::oRowSet ), ( ::oRowSet:free(), ::oRowSet := nil ), ) )
+   METHOD   getOrderRowSet()
+   METHOD   freeRowSet()         INLINE   ( if( !empty( ::oRowSet ), ( msgalert( "antes del free" ), msgalert( "Despues del free" ), ::oRowSet:= nil, msgalert( "Despues de todo" ) ), ) )
 
-   METHOD   getSelectOrderBy( order ) ;
-                                 INLINE   ( ::cSQLSelect + if( empty( order ), "", " ORDER BY " + order ) + ";" ) 
+   METHOD   refreshSelectOrderBy( cNomCol, cOrder ) ;
+                                 INLINE   ( ::getOrderRowSet( cNomCol, cOrder, .t. ) )
+
+   METHOD   getSelectOrderBy( cNomCol, cOrder ) 
 
 END CLASS
 
@@ -48,21 +50,19 @@ Return ( nil )
 
 //---------------------------------------------------------------------------//
 
-METHOD getRowSet( order )
+METHOD getOrderRowSet( cNomCol, cOrder, lRefresh )
 
    local oStmt
 
-   if !empty( ::oRowSet )
+   if hb_isnil( lRefresh ) .and. !empty( ::oRowSet )
       Return ( ::oRowSet )
    end if 
 
    try
-      oStmt          := getSQLDatabase():Query( ::getSelectOrderBy( order ) )
+      oStmt          := getSQLDatabase():Query( ::getSelectOrderBy( cNomCol, cOrder ) )
 
-      if empty( ::oRowSet )
-         ::oRowSet   := oStmt:fetchRowSet()
-         ::oRowSet:goTop()
-      end if 
+      ::oRowSet      := oStmt:fetchRowSet()
+      ::oRowSet:goTop()
 
    catch
 
@@ -73,5 +73,21 @@ METHOD getRowSet( order )
    end
 
 Return ( ::oRowSet )
+
+//---------------------------------------------------------------------------//
+
+METHOD getSelectOrderBy( cNomCol, cOrder )
+
+   local cSQLSelect  := ::cSQLSelect
+
+   if !empty( cNomCol )
+      cSQLSelect     += " ORDER BY " + cNomCol
+   end if 
+
+   if !empty( cOrder  ) .and. cOrder == "D"
+      cSQLSelect     += " DESC"
+   end if
+
+Return ( cSQLSelect )
 
 //---------------------------------------------------------------------------//

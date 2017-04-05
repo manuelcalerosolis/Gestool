@@ -10,9 +10,9 @@
 
 CLASS TShellSQL FROM TShell
 
-   DATA  oRowSet
+   DATA  oModel
 
-   METHOD setXAlias( oRowSet )      INLINE ( if( hb_isobject( oRowSet ), ::oRowSet := oRowSet, ) )
+   METHOD setXAlias( oModel )      INLINE ( if( hb_isobject( oModel ), ::oModel := oModel, ) )
 
    METHOD createXBrowse()
    METHOD createXFromCode()
@@ -56,17 +56,17 @@ METHOD CreateXBrowse()
 
       ::oBrw:lAutoSort        := .f.
       ::oBrw:nDataType        := DATATYPE_USER
-      ::oBrw:bGoTop           := {|| ::oRowSet:GoTop() }
-      ::oBrw:bGoBottom        := {|| ::oRowSet:GoBottom() }
-      ::oBrw:bBof             := {|| ::oRowSet:Bof() }
-      ::oBrw:bEof             := {|| ::oRowSet:Eof() }
-      ::oBrw:bBookMark        := {| n | iif( n == nil, ::oRowSet:RecNo(), ::oRowSet:GoTo( n ) ) }
-      ::oBrw:bSkip            := {| n | iif( n == nil, n := 1, ), ::oRowSet:Skipper( n ) }
-      ::oBrw:bKeyNo           := {| n | ::oRowSet:RecNo() }
-      ::oBrw:bKeyCount        := {|| ::oRowSet:RecCount() }
+      ::oBrw:bGoTop           := {|| ::oModel:oRowSet:GoTop() }
+      ::oBrw:bGoBottom        := {|| ::oModel:oRowSet:GoBottom() }
+      ::oBrw:bBof             := {|| ::oModel:oRowSet:Bof() }
+      ::oBrw:bEof             := {|| ::oModel:oRowSet:Eof() }
+      ::oBrw:bBookMark        := {| n | iif( n == nil, ::oModel:oRowSet:RecNo(), ::oModel:oRowSet:GoTo( n ) ) }
+      ::oBrw:bSkip            := {| n | iif( n == nil, n := 1, ), ::oModel:oRowSet:Skipper( n ) }
+      ::oBrw:bKeyNo           := {| n | ::oModel:oRowSet:RecNo() }
+      ::oBrw:bKeyCount        := {|| ::oModel:oRowSet:RecCount() }
 
       if ::oBrw:oVScroll() != nil
-         ::oBrw:oVscroll():SetRange( 1, ::oRowSet:RecCount() )
+         ::oBrw:oVscroll():SetRange( 1, ::oModel:oRowSet:RecCount() )
       endif
 
       ::oBrw:lFastEdit        := .t.
@@ -122,7 +122,19 @@ Return ( Self )
 
 //---------------------------------------------------------------------------//
 
-METHOD selectColumnOrder()
+METHOD selectColumnOrder( oCol )
+
+   if empty( oCol )
+      Return ( nil )
+   end if
+
+   aeval( ::oBrw:aCols, {|o| if( o:cSortOrder != oCol:cSortOrder, o:cOrder := "", ) } )    
+
+   if oCol:cOrder == 'D' .or. empty( oCol:cOrder )
+      oCol:cOrder    := 'A'
+   else
+      oCol:cOrder    := 'D'
+   end if 
 
 RETURN NIL
 
@@ -130,7 +142,15 @@ RETURN NIL
 
 METHOD ClickOnHeader( oCol )
 
-   msgAlert( oCol:cSortOrder )
+   ::selectColumnOrder( oCol )
+
+   msgalert ( oCol:cSortOrder )
+
+   msgalert ( oCol:cOrder )
+
+   ::oModel:refreshSelectOrderBy( oCol:cSortOrder, oCol:cOrder )
+
+   ::oBrw:Refresh()
 
 RETURN ( Self )
 
