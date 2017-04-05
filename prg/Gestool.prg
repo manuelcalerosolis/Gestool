@@ -1062,7 +1062,6 @@ Return ( by( nRow ) )
 
 Function mainTest()
 
-<<<<<<< HEAD
    /*local i
    local e
    local oDb
@@ -1390,7 +1389,7 @@ static function DelClient( oLbx )
    if oDb:disconnect()
       msgalert( cDb + " cerrada" )
    endif*/
-=======
+//=======
 return nil
 
 //----------------------------------------------------------------------------//
@@ -1413,7 +1412,7 @@ static function SeekClient( oLbx )
             MsgAlert( "I find that customer in position: " + ltrim( str( nRec ) ) )
          endif
    endif
->>>>>>> origin/master
+//>>>>>>> origin/master
 
 return nil
 
