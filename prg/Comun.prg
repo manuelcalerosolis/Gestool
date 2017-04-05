@@ -257,17 +257,17 @@ Function lStartCheck()
    
    initServices()
 
-   // Test---------------------------------------------------------------------
-
-   Test()
-
    // Navegación---------------------------------------------------------------
 
    oMsgText( 'Abriendo panel de navegación' )
 
-   if !empty( oWnd() ) .and. !( Os_IsWTSClient() )
-      openWebBrowser()
+   if !empty( oWnd() ) .and. !( os_iswtsclient() )
+      // openWebBrowser()
    end if
+
+   // Test---------------------------------------------------------------------
+
+   Test()
 
    // Texto limpio y a trabajar------------------------------------------------
 
@@ -281,7 +281,7 @@ Return ( .t. )
 
 Function Test()
 
-   
+   TiposImpresoras()
 
 Return ( nil )
 

@@ -52,16 +52,17 @@ METHOD getRowSet( order )
 
    local oStmt
 
+   if !empty( ::oRowSet )
+      Return ( ::oRowSet )
+   end if 
+
    try
       oStmt          := getSQLDatabase():Query( ::getSelectOrderBy( order ) )
 
       if empty( ::oRowSet )
          ::oRowSet   := oStmt:fetchRowSet()
-      else
-         ::oRowSet:Refresh()
+         ::oRowSet:goTop()
       end if 
-
-      ::oRowSet:goTop()
 
    catch
 

@@ -19,11 +19,6 @@ FUNCTION TiposImpresoras( oMenuItem, oWnd )
    DEFAULT  oMenuItem   := "01115"
    DEFAULT  oWnd        := oWnd()
 
-   if oWndBrw != nil
-      oWndBrw:SetFocus()
-      Return nil
-   end if
-
    /*
    Obtenemos el nivel de acceso-----------------------------------------------
    */
@@ -49,11 +44,20 @@ FUNCTION TiposImpresoras( oMenuItem, oWnd )
 
    oRowSet                 := oTiposImpresorasModel:getRowSet()
 
-   oWndBrw                 := TShellSQL():New( 2, 10, 18, 70, "Tipos de impresoras", , oWnd, , , .f., , , oRowSet, , , , , {"Tipos de impresoras"}, {|| EdtRec( oWndBrw ) },, {|| msgalert( "delete") },, nil, nLevel, "gc_printer2_16", ( 104 + ( 0 * 256 ) + ( 63 * 65536 ) ),,, .t. )
+   oWndBrw                 := TShellSQL():New( 2, 10, 18, 70, "Tipos de impresoras", , oWnd, , , .f., , , oRowSet, , , , , {"Tipos de impresoras"}, {|| msgalert( "edit" ) },, {|| msgalert( "delete") },, nil, nLevel, "gc_printer2_16", ( 104 + ( 0 * 256 ) + ( 63 * 65536 ) ),,, .t. )
+
+      with object ( oWndBrw:AddXCol() )
+         :cHeader          := "Id"
+         :cSortOrder       := "id"
+         :bEditValue       := {|| oRowSet:fieldGet( "id" ) }
+         :nWidth           := 40
+         :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | oWndBrw:ClickOnHeader( oCol ) }
+      end with
 
       with object ( oWndBrw:AddXCol() )
          :cHeader          := "Tipo de impresora"
-         :bEditValue       := {|| oTiposImpresorasModel:getRowSet():fieldGet( "nombre" ) }
+         :cSortOrder       := "nombre"
+         :bEditValue       := {|| oRowSet:fieldGet( "nombre" ) }
          :nWidth           := 800
          :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | oWndBrw:ClickOnHeader( oCol ) }
       end with
@@ -99,7 +103,7 @@ FUNCTION TiposImpresoras( oMenuItem, oWnd )
          TOOLTIP  "(S)alir" ;
          HOTKEY   "S"
 
-   ACTIVATE WINDOW oWndBrw VALID ( oTiposImpresorasModel:End(), .t. )
+   ACTIVATE WINDOW oWndBrw VALID ( oTiposImpresorasModel:End(), .f. )
 
    EnableAcceso()
 

@@ -19,6 +19,8 @@ CLASS TShellSQL FROM TShell
 
    METHOD selectColumnOrder()
 
+   METHOD clickOnHeader( oCol )
+
    METHOD setFilter()               INLINE ( Self )
 
 ENDCLASS
@@ -52,6 +54,7 @@ METHOD CreateXBrowse()
 
       ::oBrw:bRClicked        := {| nRow, nCol, nFlags | ::RButtonDown( nRow, nCol, nFlags ) }
 
+      ::oBrw:lAutoSort        := .f.
       ::oBrw:nDataType        := DATATYPE_USER
       ::oBrw:bGoTop           := {|| ::oRowSet:GoTop() }
       ::oBrw:bGoBottom        := {|| ::oRowSet:GoBottom() }
@@ -124,3 +127,12 @@ METHOD selectColumnOrder()
 RETURN NIL
 
 //----------------------------------------------------------------------------//
+
+METHOD ClickOnHeader( oCol )
+
+   msgAlert( oCol:cSortOrder )
+
+RETURN ( Self )
+
+//---------------------------------------------------------------------------//
+
