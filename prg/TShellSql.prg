@@ -23,6 +23,8 @@ CLASS TShellSQL FROM TShell
 
    METHOD setFilter()               INLINE ( Self )
 
+   METHOD ChgCombo( nTab )
+
 ENDCLASS
 
 //----------------------------------------------------------------------------//
@@ -104,12 +106,18 @@ METHOD CreateXFromCode()
 
    local oCol
 
+   ::aPrompt                  := {}
+
    // Insertamos el action por columnas----------------------------------------
 
    for each oCol in ::oBrw:aCols
+      
       if empty( oCol:bLDClickData ) .and. !( oCol:lEditable )
          oCol:bLDClickData    := {|| ::RecEdit() }
       end if 
+
+      aadd( ::aPrompt, oCol:cHeader )
+
    next
 
    // Creamos el objeto -------------------------------------------------------
@@ -136,6 +144,8 @@ METHOD selectColumnOrder( oCol )
       oCol:cOrder    := 'D'
    end if 
 
+   ::oWndBar:setComboBoxSet( oCol:cHeader )   
+
 RETURN NIL
 
 //----------------------------------------------------------------------------//
@@ -156,3 +166,8 @@ RETURN ( Self )
 
 //---------------------------------------------------------------------------//
 
+METHOD ChgCombo( nTab )
+
+   msgalert( ::oWndBar:GetComboBox() )
+
+RETURN ( Self )

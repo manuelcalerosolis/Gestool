@@ -42,7 +42,7 @@ FUNCTION TiposImpresoras( oMenuItem, oWnd )
    oTiposImpresorasModel   := TiposImpresorasModel():New()
    oTiposImpresorasModel:getOrderRowSet()
 
-   oWndBrw                 := TShellSQL():New( 2, 10, 18, 70, "Tipos de impresoras", , oWnd, , , .f., , , oTiposImpresorasModel, , , , , {"Tipos de impresoras"}, {|| msgalert( "edit" ) },, {|| msgalert( "delete") },, nil, nLevel, "gc_printer2_16", ( 104 + ( 0 * 256 ) + ( 63 * 65536 ) ),,, .t. )
+   oWndBrw                 := TShellSQL():New( 2, 10, 18, 70, "Tipos de impresoras", , oWnd, , , .f., , , oTiposImpresorasModel, , , , , {}, {|| msgalert( "edit" ) },, {|| msgalert( "delete") },, nil, nLevel, "gc_printer2_16", ( 104 + ( 0 * 256 ) + ( 63 * 65536 ) ),,, .t. )
 
       with object ( oWndBrw:AddXCol() )
          :cHeader          := "Id"
