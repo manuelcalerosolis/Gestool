@@ -23,7 +23,9 @@ CLASS TShellSQL FROM TShell
 
    METHOD setFilter()               INLINE ( Self )
 
-   METHOD ChgCombo( nTab )
+   METHOD chgCombo( nTab )
+
+   METHOD fastSeek()
 
 ENDCLASS
 
@@ -171,3 +173,46 @@ METHOD ChgCombo( nTab )
    msgalert( ::oWndBar:GetComboBox() )
 
 RETURN ( Self )
+
+//---------------------------------------------------------------------------//
+
+METHOD FastSeek()
+
+   local nRec
+   local nOrd
+   local oCol
+   local oGet
+   local lSeek
+   local xValueToSearch
+
+   if empty( ::oWndBar ) .or. empty( ::oWndBar:oGet )
+      Return .f.
+   end if
+
+   oGet              := ::oWndBar:oGet
+
+   // Estudiamos la cadena de busqueda-------------------------------------------
+
+   xValueToSearch    := oGet:oGet:Buffer()
+   xValueToSearch    := alltrim( cvaltochar( xValueToSearch ) )
+   xValueToSearch    := strtran( xValueToSearch, chr( 8 ), "" )
+
+   // Guradamos valores iniciales-------------------------------------------------
+
+   Return ( msgAlert( xValueToSearch ) )
+
+   // color para el get informar al cliente de busqueda erronea----------------
+
+   if lSeek .or. empty( xValueToSearch ) .or. ( "*" $ xValueToSearch )
+      oGet:SetColor( Rgb( 0, 0, 0 ), Rgb( 255, 255, 255 ) )
+   else
+      oGet:SetColor( Rgb( 255, 255, 255 ), Rgb( 255, 102, 102 ) )
+   end if
+
+   ::oBrw:Refresh()
+   ::oBrw:Select( 0 )
+   ::oBrw:Select( 1 )
+
+Return ( lSeek )
+
+//--------------------------------------------------------------------------//

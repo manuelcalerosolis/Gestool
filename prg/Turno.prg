@@ -8206,16 +8206,16 @@ Method AppendInTemporal( cKey, cNaturaleza, nImporte )
 
    local e
 
-   logwrite( "Str( ::nGrupoPeso, 3 )" )
-   logwrite( Str( ::nGrupoPeso, 3 ) )
-   logwrite( "::cGrupoEnUso" )
-   logwrite( ::cGrupoEnUso )
-   logwrite( "cKey" )
-   logwrite( cKey )
-   logwrite( "str( ::nGrupoPeso, 3 ) + ::cGrupoEnUso + cKey" )
-   logwrite( Str( ::nGrupoPeso, 3 ) + ::cGrupoEnUso + cKey )
-
    try
+   
+      logwrite( "Str( ::nGrupoPeso, 3 )" )
+      logwrite( Str( ::nGrupoPeso, 3 ) )
+      logwrite( "::cGrupoEnUso" )
+      logwrite( ::cGrupoEnUso )
+      logwrite( "cKey" )
+      logwrite( cKey )
+      logwrite( "str( ::nGrupoPeso, 3 ) + ::cGrupoEnUso + cKey" )
+      // logwrite( Str( ::nGrupoPeso, 3 ) + ::cGrupoEnUso + cKey )
 
       if ( cKey == nil )
 
