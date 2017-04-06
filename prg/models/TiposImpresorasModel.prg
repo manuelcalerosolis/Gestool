@@ -22,7 +22,9 @@ CLASS TiposImpresorasModel FROM BaseModel
    METHOD   refreshSelectOrderBy( cNomCol, cOrder ) ;
                                  INLINE   ( ::getOrderRowSet( cNomCol, cOrder, .t. ) )
 
-   METHOD   getSelectOrderBy( cNomCol, cOrder ) 
+   METHOD   getSelectOrderBy( cNomCol, cOrder )
+
+   METHOD   getSelectByField( cNomCol, cFind )
 
 END CLASS
 
@@ -87,6 +89,23 @@ METHOD getSelectOrderBy( cNomCol, cOrder )
    if !empty( cOrder  ) .and. cOrder == "D"
       cSQLSelect     += " DESC"
    end if
+
+Return ( cSQLSelect )
+
+//---------------------------------------------------------------------------//
+
+METHOD getSelectByField( cNomCol, cFind, cOrder )
+
+local cSQLSelect  := ::cSQLSelect
+
+if !empty( cNomCol ) .and. !empty( cFind )
+      cSQLSelect     += " WHERE upper(" + cNomCol +") like '%" + cFind + "%'" 
+
+      if !empty( cOrder )
+       cSQLSelect    += ::getSelectOrderBy( cNomCol, cOrder )
+      endif
+
+end if
 
 Return ( cSQLSelect )
 

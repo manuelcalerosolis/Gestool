@@ -23,13 +23,9 @@ CLASS TShellSQL FROM TShell
 
    METHOD setFilter()               INLINE ( Self )
 
-<<<<<<< HEAD
-   METHOD chgCombo( nTab )
-
    METHOD fastSeek()
-=======
+
    METHOD ChgCombo()
->>>>>>> 24971dd838e41cf2ec8b5c092e77bbe01939b6d0
 
 ENDCLASS
 
@@ -192,6 +188,8 @@ METHOD FastSeek()
    local oGet
    local lSeek
    local xValueToSearch
+   local nPosition   := ascan( ::oBrw:aCols, {|o| o:cHeader == ::oWndBar:GetComboBox() } ) 
+
 
    if empty( ::oWndBar ) .or. empty( ::oWndBar:oGet )
       Return .f.
@@ -202,12 +200,18 @@ METHOD FastSeek()
    // Estudiamos la cadena de busqueda-------------------------------------------
 
    xValueToSearch    := oGet:oGet:Buffer()
-   xValueToSearch    := alltrim( cvaltochar( xValueToSearch ) )
+   xValueToSearch    := alltrim( upper(cvaltochar( xValueToSearch ) ) )
    xValueToSearch    := strtran( xValueToSearch, chr( 8 ), "" )
 
    // Guradamos valores iniciales-------------------------------------------------
 
-   Return ( msgAlert( xValueToSearch ) )
+   if nPosition != 0
+
+      ::selectColumnOrder( ::oBrw:aCols[ nPosition ] )
+
+      return msgalert ( ::oModel:getSelectByField( ::oBrw:aCols[ nPosition ]:cSortOrder, xValueToSearch, ::oBrw:aCols[ nPosition ]:cOrder ) )
+
+   end if
 
    // color para el get informar al cliente de busqueda erronea----------------
 
