@@ -8204,9 +8204,11 @@ RETURN ( Self )
 
 Method AppendInTemporal( cKey, cNaturaleza, nImporte )
 
-   local e
+   local oBlock
+   local oError
 
-   try
+   oBlock               := ErrorBlock( { | oError | ApoloBreak( oError ) } )
+   BEGIN SEQUENCE
    
       logwrite( "Str( ::nGrupoPeso, 3 )" )
       logwrite( Str( ::nGrupoPeso, 3 ) )
@@ -8250,11 +8252,10 @@ Method AppendInTemporal( cKey, cNaturaleza, nImporte )
 
       end if
 
-   catch e
-
-      eval( errorblock(), e )
-
-   end 
+   RECOVER USING oError
+      msgStop( "Error en añadiendo datos temporales" + CRLF + ErrorMessage( oError ) )
+   END SEQUENCE
+   ErrorBlock( oBlock )
 
 RETURN ( Self )
 
