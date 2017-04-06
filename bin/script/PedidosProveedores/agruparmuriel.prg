@@ -61,11 +61,9 @@ CLASS TImportarPedidosProveedor
 
    METHOD AddLineasAlbaran()
 
-   METHOD CreaArrayLineas()
-
-   METHOD GuardaLineas()
-
    METHOD SetEstadoPedidos()  INLINE ( MsgInfo( "Ponemos bien el estado de los pedidos pasados" ) )
+
+   METHOD selectPedidosProveedoresPendientes( idProveedor )
 
 END CLASS
 
@@ -83,7 +81,9 @@ METHOD New( nView ) CLASS TImportarPedidosProveedor
    ::aPedidos                 := { { .t., "A99999999900", ctod( "01/01/2017" ), "Proveedor", "Nombre", 0 }, { .t., "A99999999900", ctod( "01/01/2017" ), "Proveedor", "Nombre", 100 } }
 
    ::cSelectAlias             := "pedidoProveedor"
-   PedidosProveedoresModel():selectPedidosProveedoresPendientes( Padr( ::cCodigoProveedor, 12 ), @::cSelectAlias )
+   
+
+   ::selectPedidosProveedoresPendientes( Padr( ::cCodigoProveedor, 12 ) )
 
 Return ( Self )
 
@@ -211,7 +211,7 @@ METHOD LoadBrowse() CLASS TImportarPedidosProveedor
    end if
 
    if ::cOldProvee != ::cCodigoProveedor
-      PedidosProveedoresModel():selectPedidosProveedoresPendientes( Padr( ::cCodigoProveedor, 12 ), @::cSelectAlias )
+      ::selectPedidosProveedoresPendientes( Padr( ::cCodigoProveedor, 12 ) )
    end if
 
    ::SetOldProvee()
@@ -376,37 +376,51 @@ Return ( .t. )
 
 METHOD AddLineasAlbaran() CLASS TImportarPedidosProveedor
 
+   local n              := 1
+   local cPedido
    local cSelectLineas  := "LineasAlbaran"
+   local cSql
 
-   MsgInfo( hb_Valtoexp( ::oBrowse:aSelected ) )
+   cSql        := "SELECT cRef, cAlmLin, cCodPr1, cCodPr2, cValPr1, cValPr2, sum(nUniCaja) AS nUniCaja, sum(nCanPed) AS nCanPed, sum(nBultos) AS nBultos"
+   cSql        += " FROM " + + cPatEmp() + "PedProvL WHERE "
 
-   PedidosProveedoresModel():selectPedidosProveedoresLineasToArray( ::oBrowse:aSelected, @::cSelectLineas )
+   for each cPedido in ::oBrowse:aSelected
+
+      cSql     += "( cSerPed = " + quoted( SubStr( cPedido, 1, 1 ) )
+      cSql     += " AND"
+      cSql     += " nNumPed = " + AllTrim( SubStr( cPedido, 2, 9 ) )
+      cSql     += " AND"
+      cSql     += " cSufPed = " + quoted( SubStr( cPedido, 11, 2 ) )
+      cSql     += " )"
+      
+      if n != Len( ::oBrowse:aSelected )
+         cSql  += " OR"
+      end if
+
+      n++
+
+   next
+
+   cSql     += " GROUP BY cRef, cAlmLin, cCodPr1, cCodPr2, cValPr1, cValPr2"
+
+   MsgInfo( cSql, "cSql" )
+   LogWrite( cSql )
+
+   BaseModel():ExecuteSqlStatement( cSql, cSelectLineas )
 
    ( cSelectLineas )->( Browse() )
 
-   
-
-   //::CreaArrayLineas()
-
-   //::GuardaLineas()
-
 Return ( .t. )
 
 //---------------------------------------------------------------------------//
 
-METHOD CreaArrayLineas() CLASS TImportarPedidosProveedor
+METHOD selectPedidosProveedoresPendientes( idProveedor )
 
-   MsgInfo( ::cSerieAlbaran )
-   MsgInfo( ::nNumeroAlbaran )
-   MsgInfo( ::cSufijoAlbaran )
+   local cSql  := "SELECT * FROM " + cPatEmp() + "PedProvT " + ;
+                           "WHERE " + ;
+                              "cCodPrv = " + quoted( idProveedor )  + " AND " + ;
+                              "nEstado = 1"
 
-Return ( .t. )
-
-//---------------------------------------------------------------------------//
-
-METHOD GuardaLineas() CLASS TImportarPedidosProveedor
-
-
-Return ( .t. )
+Return ( BaseModel():ExecuteSqlStatement( cSql, ::cSelectAlias ) )
 
 //---------------------------------------------------------------------------//
