@@ -12,7 +12,7 @@ CLASS TShellSQL FROM TShell
 
    DATA  oModel
 
-   METHOD setXAlias( oModel )      INLINE ( if( hb_isobject( oModel ), ::oModel := oModel, ) )
+   METHOD setXAlias( oModel )       INLINE ( if( hb_isobject( oModel ), ::oModel := oModel, ) )
 
    METHOD createXBrowse()
    METHOD createXFromCode()
@@ -23,9 +23,15 @@ CLASS TShellSQL FROM TShell
 
    METHOD setFilter()               INLINE ( Self )
 
+<<<<<<< HEAD
    METHOD fastSeek()
 
    METHOD ChgCombo()
+=======
+   METHOD chgCombo( nTab )
+
+   METHOD fastSeek()
+>>>>>>> origin/master
 
 ENDCLASS
 
