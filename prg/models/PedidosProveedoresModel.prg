@@ -25,6 +25,10 @@ CLASS PedidosProveedoresModel FROM BaseModel
 
    METHOD deleteDetailsById( cSerie, nNumero, cSufijo, cTableName )
 
+   METHOD selectPedidosProveedoresPendientes( idProveedor, cAlias )
+
+   METHOD selectPedidosProveedoresLineasToArray( aPedidos, cAlias )
+
 END CLASS
 
 //---------------------------------------------------------------------------//
@@ -53,8 +57,39 @@ METHOD deleteDetailsById( cSerie, nNumero, cSufijo, cTableName )
                               "nNumPed = " + quoted( nNumero ) + " AND " + ;
                               "cSufPed = " + quoted( cSufijo )   
 
-   //msgalert( cSql )                              
-
 Return ( ::ExecuteSqlStatement( cSql ) )
+
+//---------------------------------------------------------------------------//
+
+METHOD selectPedidosProveedoresPendientes( idProveedor, cAlias )
+
+   local cSql  := "SELECT * FROM " + ::getHeaderTableName() + " " + ;
+                           "WHERE " + ;
+                              "cCodPrv = " + quoted( idProveedor )  + " AND " + ;
+                              "nEstado = 1"
+
+Return ( ::ExecuteSqlStatement( cSql, @cAlias ) )
+
+//---------------------------------------------------------------------------//
+
+METHOD selectPedidosProveedoresLineasToArray( aPedidos, cAlias )
+
+   local cPedido
+   local cSql  := "SELECT * FROM " + ::getLineTableName() + " " + ;
+                           "WHERE " + ;
+                              "cCodPrv = " + quoted( idProveedor )  + " AND " + ;
+                              "nEstado = 1"
+
+   for each cPedido in aPedidos
+
+      msgInfo( cPedido, "cPedido" )
+
+   next
+
+   MsgInfo( cSql, "cSql" )
+
+Return .t.
+
+//Return ( ::ExecuteSqlStatement( cSql, @cAlias ) )
 
 //---------------------------------------------------------------------------//

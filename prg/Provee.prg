@@ -5178,15 +5178,12 @@ FUNCTION BrwPrv( oGet, oGet2, dbfProvee )
    local nLevelUsr   := nLevelUsr( "01034" )
    local aCbxOrd     := {  "Código", "Nombre", "NIF/CIF", "Población", "Teléfono", "Fax", "Domicilio", "Población", "Código postal", "Provincia", "Correo electrónico", "Contacto" }
 
-   MsgInfo( "Entro en el brwProvee" )
-
    nOrd              := Min( Max( nOrd, 1 ), len( aCbxOrd ) )
    cCbxOrd           := aCbxOrd[ nOrd ]
 
    nOrd              := ( dbfProvee )->( OrdSetFocus( nOrd ) )
 
    ( dbfProvee )->( dbGoTop() )
-
 
    /*
    Distintas cajas de dialogo--------------------------------------------------
