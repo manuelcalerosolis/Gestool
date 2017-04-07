@@ -3,6 +3,7 @@
 #include "MesDbf.ch"
 
 static oWndBrw
+static oTiposImpresorasModel
 
 //---------------------------------------------------------------------------//
 
@@ -13,7 +14,6 @@ Monto el Browse principal
 FUNCTION TiposImpresoras( oMenuItem, oWnd )
 
    local nLevel
-   local oTiposImpresorasModel
 
    DEFAULT  oMenuItem   := "01115"
    DEFAULT  oWnd        := oWnd()
@@ -42,7 +42,7 @@ FUNCTION TiposImpresoras( oMenuItem, oWnd )
    oTiposImpresorasModel   := TiposImpresorasModel():New()
    oTiposImpresorasModel:getOrderRowSet()
 
-   oWndBrw                 := TShellSQL():New( 2, 10, 18, 70, "Tipos de impresoras", , oWnd, , , .f., , , oTiposImpresorasModel, , , , , {}, {|| msgalert( "edit" ) },, {|| msgalert( "delete") },, nil, nLevel, "gc_printer2_16", ( 104 + ( 0 * 256 ) + ( 63 * 65536 ) ),,, .t. )
+   oWndBrw                 := TShellSQL():New( 2, 10, 18, 70, "Tipos de impresoras", , oWnd, , , .f., , , oTiposImpresorasModel, , , , , {}, {|| EditTiposImpresoras() },, {|| msgalert( "delete") },, nil, nLevel, "gc_printer2_16", ( 104 + ( 0 * 256 ) + ( 63 * 65536 ) ),,, .t. )
 
       with object ( oWndBrw:AddXCol() )
          :cHeader          := "Id"
@@ -74,7 +74,7 @@ FUNCTION TiposImpresoras( oMenuItem, oWnd )
          NOBORDER ;
          ACTION   ( oWndBrw:RecAdd() );
          ON DROP  ( oWndBrw:RecDup() );
-         TOOLTIP  "(A)�adir";
+         TOOLTIP  "(A)ñadir";
          BEGIN GROUP;
          HOTKEY   "A";
          LEVEL    ACC_APPD
@@ -108,3 +108,46 @@ FUNCTION TiposImpresoras( oMenuItem, oWnd )
 RETURN NIL
 
 //----------------------------------------------------------------------------//
+
+/*
+Monta el dialogo para añadir, editar,... registros
+*/
+
+STATIC FUNCTION EditTiposImpresoras( id )
+
+   local oDlg
+
+   oTiposImpresorasModel:loadCurrent( id )
+
+   DEFINE DIALOG oDlg RESOURCE "TIPO_IMPRESORA" TITLE LblTitle( nMode ) + "tipos de impresoras"
+
+   REDEFINE GET oGetNombre ;
+      VAR      oTiposImpresorasModel:get( "nombre" ) ;
+      ID       100 ;
+      WHEN     ( nMode != ZOOM_MODE ) ;
+      OF       oDlg
+
+   REDEFINE BUTTON ;
+      ID       IDOK ;
+      OF       oDlg ;
+      WHEN     ( nMode != ZOOM_MODE ) ;
+      ACTION   ( oTiposImpresorasModel:Save() )
+
+   REDEFINE BUTTON ;
+      ID       IDCANCEL ;
+      OF       oDlg ;
+      CANCEL ;
+      ACTION   ( oDlg:end() )
+
+   // Teclas r�pidas-----------------------------------------------------------
+
+   if nMode != ZOOM_MODE
+      oDlg:AddFastKey( VK_F5, {|| oTiposImpresorasModel:Save() } )
+   end if
+
+   ACTIVATE DIALOG oDlg CENTER
+
+RETURN ( oDlg:nResult == IDOK )
+
+//----------------------------------------------------------------------------//
+

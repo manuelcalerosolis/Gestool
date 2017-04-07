@@ -8204,21 +8204,20 @@ RETURN ( Self )
 
 Method AppendInTemporal( cKey, cNaturaleza, nImporte )
 
-   local oBlock
    local oError
+   local oBlock
+
+   if !( hb_ischar( cNaturaleza ) )
+      Return ( Self )
+   end if 
+
+   if !( hb_isnumeric( nImporte ) )
+      Return ( Self )
+   end if 
 
    oBlock               := ErrorBlock( { | oError | ApoloBreak( oError ) } )
    BEGIN SEQUENCE
    
-      logwrite( "Str( ::nGrupoPeso, 3 )" )
-      logwrite( Str( ::nGrupoPeso, 3 ) )
-      logwrite( "::cGrupoEnUso" )
-      logwrite( ::cGrupoEnUso )
-      logwrite( "cKey" )
-      logwrite( cKey )
-      logwrite( "str( ::nGrupoPeso, 3 ) + ::cGrupoEnUso + cKey" )
-      // logwrite( Str( ::nGrupoPeso, 3 ) + ::cGrupoEnUso + cKey )
-
       if ( cKey == nil )
 
          ::oDbfTemporal:Blank()
@@ -8232,7 +8231,7 @@ Method AppendInTemporal( cKey, cNaturaleza, nImporte )
 
          cKey                       := padr( cKey, 14, space( 1 ) )
 
-         if ::oDbfTemporal:Seek( Str( ::nGrupoPeso, 3 ) + ::cGrupoEnUso + cKey )
+         if ::oDbfTemporal:Seek( str( ::nGrupoPeso, 3 ) + ::cGrupoEnUso + cKey )
 
             ::oDbfTemporal:Load()
             ::oDbfTemporal:nImpTur  += nImporte
@@ -8255,6 +8254,7 @@ Method AppendInTemporal( cKey, cNaturaleza, nImporte )
    RECOVER USING oError
       msgStop( "Error en añadiendo datos temporales" + CRLF + ErrorMessage( oError ) )
    END SEQUENCE
+   
    ErrorBlock( oBlock )
 
 RETURN ( Self )
@@ -8913,8 +8913,6 @@ METHOD FillTemporal( cCodCaj )
 
    if ::GetItemCheckState( "Cobros por formas de pago" ) // ::aOpcionImp[15]
 
-      msgalert( "Cobros por formas de pago" )
-
       /*
       Tickets---------------------------------------------------------------------
       */
@@ -8929,25 +8927,16 @@ METHOD FillTemporal( cCodCaj )
             cTipTik        := oRetFld( ::oTikP:cSerTik + ::oTikP:cNumTik + ::oTikP:cSufTik, ::oTikT, "cTipTik", 1 )
 
             do case
-               case cTipTik == SAVTIK // Como devolucion
+               case cTipTik == SAVTIK  // Como ticket
                   nTotLin  := nTotLCobTik( ::oTikP, ::oDbfDiv, cDivEmp() )
 
-               case cTipTik == SAVDEV // Como devolucion
+               case cTipTik == SAVDEV  // Como devolucion
                   nTotLin  := - nTotLCobTik( ::oTikP, ::oDbfDiv, cDivEmp() )
 
-               case cTipTik == SAVVAL // Como vale
+               otherwise               // Como vale
                   nTotLin  := 0
 
             end case
-
-            logwrite("2 oFpgPgo")
-            logwrite( ::oTikP:cFpgPgo )
-            logwrite("3 oRetFld")
-            logwrite( oRetFld( ::oTikP:cFpgPgo, ::oFPago ) )
-            logwrite("4 valtype")
-            logwrite( valtype( oRetFld( ::oTikP:cFpgPgo, ::oFPago ) ) )
-            logwrite("5 suma")
-            logwrite( ::oTikP:cFpgPgo + Space( 1 ) + oRetFld( ::oTikP:cFpgPgo, ::oFPago ) )
 
             if nTotLin != 0
                ::AppendInTemporal( ::oTikP:cFpgPgo, ::oTikP:cFpgPgo + Space( 1 ) + oRetFld( ::oTikP:cFpgPgo, ::oFPago ), nTotLin )
@@ -8970,11 +8959,7 @@ METHOD FillTemporal( cCodCaj )
       ::oFacCliP:GetStatus()
       ::oFacCliP:OrdSetFocus( "cTurRec" )
 
-      msgalert( "saltamos a factura" )
-
       if ::oFacCliP:Seek( cTurnoCaja )
-
-         msgalert( ::oFacCliP:cTurRec + ::oFacCliP:cSufFac + ::oFacCliP:cCodCaj, "sima factura" )
 
          while ::oFacCliP:cTurRec + ::oFacCliP:cSufFac + ::oFacCliP:cCodCaj == cTurnoCaja .and. !::oFacCliP:eof()
 
@@ -8998,8 +8983,6 @@ METHOD FillTemporal( cCodCaj )
 
       ::oPedCliP:GetStatus()
       ::oPedCliP:OrdSetFocus( "cTurRec" )
-
-      msgalert( "saltamos al pedido" )
 
       if ::oPedCliP:Seek( cTurnoCaja )
 
@@ -9025,8 +9008,6 @@ METHOD FillTemporal( cCodCaj )
 
       ::oAlbCliP:GetStatus()
       ::oAlbCliP:OrdSetFocus( "cTurRec" )
-
-      msgalert( "saltamos al albaran" )
 
       if ::oAlbCliP:Seek( cTurnoCaja )
 

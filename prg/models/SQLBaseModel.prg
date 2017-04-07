@@ -12,7 +12,6 @@ CLASS SQLBaseModel
 	  DATA	   hColumns
   	DATA	   cColumns
 
-    DATA     cSQLCreateTable
     DATA	   cSQLInsert     
     DATA     cSQLSelect      
  
@@ -53,11 +52,9 @@ END CLASS
 
 METHOD New()
 
-   ::cSQLCreateTable     := "CREATE TABLE " + ::cTableName + " ( "
+   ::cSQLSelect          := "SELECT * FROM " + ::cTableName
 
-   ::cSQLSelect          := "SELECT " + ::cColumns + " FROM " + ::cTableName
-
-   ::cSQLInsert					 := "INSERT INTO " + ::cTableName + ::cColumns + " VALUES "
+   // ::cSQLInsert					 := "INSERT INTO " + ::cTableName + ::cColumns + " VALUES "
 
  Return ( Self )
 
@@ -73,9 +70,13 @@ Return ( nil )
 
 METHOD getSQLCreateTable()
    
-   Local cSQLCreateTable := ::cSQLCreateTable
+   Local cSQLCreateTable := "CREATE TABLE " + ::cTableName + " ( "
 
-   
+   hEval( ::hColumns, {| k, v | cSQLCreateTable += k + " " + v + ", " } )
+
+   cSQLCreateTable        := ChgAtEnd( cSQLCreateTable, ' )', 2 )
+
+   msgalert( cSQLCreateTable, cSQLCreateTable )
 
 Return ( cSQLCreateTable )
 

@@ -4515,35 +4515,11 @@ STATIC FUNCTION EndTrans( aGet, aTmp, oBrw, nMode, oDlg )
 
       oMsgText( "Eliminando registros anteriores" )
 
-      PedidosProveedoresModel():deletePedidosProveedoresLineasId( cSerie, nPedido, cSufijo )
+      PedidosProveedoresModel():deleteLineasById( cSerie, nPedido, cSufijo )
 
-      PedidosProveedoresModel():deletePedidosProveedoresIncidenciasId( cSerie, nPedido, cSufijo )
+      PedidosProveedoresModel():deleteIncidenciasById( cSerie, nPedido, cSufijo )
 
-      PedidosProveedoresModel():deletePedidosProveedoresDocumentosId( cSerie, nPedido, cSufijo )
-
-/*
-      while ( D():PedidosProveedoresLineas( nView ) )->( dbSeek( cSerie + str( nPedido ) + cSufijo ) )
-         if dbLock( D():PedidosProveedoresLineas( nView ) )
-            ( D():PedidosProveedoresLineas( nView ) )->( dbDelete() )
-            ( D():PedidosProveedoresLineas( nView ) )->( dbUnLock() )
-         end if
-      end while
-
-
-      while ( D():PedidosProveedoresIncidencias( nView ) )->( dbSeek( cSerie + str( nPedido ) + cSufijo ) )
-         if dbLock( D():PedidosProveedoresIncidencias( nView ) )
-            ( D():PedidosProveedoresIncidencias( nView ) )->( dbDelete() )
-            ( D():PedidosProveedoresIncidencias( nView ) )->( dbUnLock() )
-         end if
-      end while
-
-      while ( D():PedidosProveedoresDocumentos( nView ) )->( dbSeek( cSerie + str( nPedido ) + cSufijo ) )
-         if dbLock( D():PedidosProveedoresDocumentos( nView ) )
-            ( D():PedidosProveedoresDocumentos( nView ) )->( dbDelete() )
-            ( D():PedidosProveedoresDocumentos( nView ) )->( dbUnLock() )
-         end if
-      end while
-*/
+      PedidosProveedoresModel():deleteDocumentosById( cSerie, nPedido, cSufijo )
 
    end case
 
@@ -4572,7 +4548,7 @@ STATIC FUNCTION EndTrans( aGet, aTmp, oBrw, nMode, oDlg )
 
    end while
 
-   // Ahora escribimos en el fichero definitivo de incidencias-----------------
+   // Ahora escribimos en el fichero definitivo de incidencias--------------------
 
    oMsgText( "Escribiendo incidencias de pedidos" )
 
