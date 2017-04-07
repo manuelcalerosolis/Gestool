@@ -7,10 +7,6 @@ static oTiposImpresorasModel
 
 //---------------------------------------------------------------------------//
 
-/*
-Monto el Browse principal
-*/
-
 FUNCTION TiposImpresoras( oMenuItem, oWnd )
 
    local nLevel
@@ -72,12 +68,18 @@ FUNCTION TiposImpresoras( oMenuItem, oWnd )
 
       DEFINE BTNSHELL RESOURCE "NEW" OF oWndBrw ;
          NOBORDER ;
-         ACTION   ( oWndBrw:RecAdd() );
-         ON DROP  ( oWndBrw:RecDup() );
-         TOOLTIP  "(A)Ã±adir";
+         ACTION   ( appendTiposImpresoras() );
+         TOOLTIP  "(A)ñadir";
          BEGIN GROUP;
          HOTKEY   "A";
          LEVEL    ACC_APPD
+
+      DEFINE BTNSHELL RESOURCE "EDIT" OF oWndBrw ;
+         NOBORDER ;
+         ACTION   ( editTiposImpresoras() );
+         TOOLTIP  "(M)odificar";
+         HOTKEY   "M" ;
+         LEVEL    ACC_EDIT
 
       DEFINE BTNSHELL RESOURCE "ZOOM" OF oWndBrw ;
          NOBORDER ;
@@ -109,41 +111,56 @@ RETURN NIL
 
 //----------------------------------------------------------------------------//
 
+STATIC FUNCTION appendTiposImpresoras()
+
+   oTiposImpresorasModel:loadBlankBuffer()
+
+RETURN NIL
+
+//----------------------------------------------------------------------------//
 /*
-Monta el dialogo para aÃ±adir, editar,... registros
+Monta el dialogo para añadir, editar,... registros
 */
 
-STATIC FUNCTION EditTiposImpresoras( id )
+STATIC FUNCTION editTiposImpresoras()
+
+   oTiposImpresorasModel:loadCurrentBuffer()
+
+   if dialogTiposImpresoras()
+      msgalert( oTiposImpresorasModel:hBuffer[ "nombre" ], "tengo q modificar" )
+
+   end if 
+
+RETURN NIL
+
+//----------------------------------------------------------------------------//
+
+STATIC FUNCTION dialogTiposImpresoras()
 
    local oDlg
+   local oGetNombre
 
-   oTiposImpresorasModel:loadCurrent( id )
+   DEFINE DIALOG oDlg RESOURCE "TIPO_IMPRESORA" TITLE "Tipos de impresoras"
 
-   DEFINE DIALOG oDlg RESOURCE "TIPO_IMPRESORA" TITLE LblTitle( nMode ) + "tipos de impresoras"
-
-   REDEFINE GET oGetNombre ;
-      VAR      oTiposImpresorasModel:get( "nombre" ) ;
-      ID       100 ;
-      WHEN     ( nMode != ZOOM_MODE ) ;
-      OF       oDlg
+   REDEFINE GET   oGetNombre ;
+      VAR         oTiposImpresorasModel:hBuffer[ "nombre" ] ;
+      ID          100 ;
+      OF          oDlg
 
    REDEFINE BUTTON ;
-      ID       IDOK ;
-      OF       oDlg ;
-      WHEN     ( nMode != ZOOM_MODE ) ;
-      ACTION   ( oTiposImpresorasModel:Save() )
+      ID          IDOK ;
+      OF          oDlg ;
+      ACTION      ( oDlg:end( IDOK ) )
 
    REDEFINE BUTTON ;
-      ID       IDCANCEL ;
-      OF       oDlg ;
+      ID          IDCANCEL ;
+      OF          oDlg ;
       CANCEL ;
-      ACTION   ( oDlg:end() )
+      ACTION      ( oDlg:end() )
 
-   // Teclas rï¿½pidas-----------------------------------------------------------
+   // Teclas rpidas-----------------------------------------------------------
 
-   if nMode != ZOOM_MODE
-      oDlg:AddFastKey( VK_F5, {|| oTiposImpresorasModel:Save() } )
-   end if
+   oDlg:AddFastKey( VK_F5, {|| oDlg:end( IDOK ) } )
 
    ACTIVATE DIALOG oDlg CENTER
 

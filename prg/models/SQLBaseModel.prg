@@ -10,7 +10,7 @@ CLASS SQLBaseModel
 
 	  DATA     cTableName
 	  DATA	   hColumns
-  	DATA	   cColumns
+  	DATA	   hBuffer
 
     DATA	   cSQLInsert     
     DATA     cSQLSelect      
@@ -26,8 +26,6 @@ CLASS SQLBaseModel
     METHOD	 getInsertInto()						            INLINE	 ( ::cSQLInsert )
     METHOD   getSQLSelect()                         INLINE   ( ::cSQLSelect )
 
-    METHOD 	 getcValues
- 
     METHOD   getOrderRowSet()
     METHOD   freeRowSet()                           INLINE   ( if( !empty( ::oRowSet ), ( ::oRowSet:= nil ), ) )
 
@@ -45,6 +43,12 @@ CLASS SQLBaseModel
     METHOD   getSelectByOrder()
 
     METHOD   find( cFind )
+
+    METHOD   loadBuffer( id )
+    METHOD   loadBlankBuffer()
+    METHOD   loadCurrentBuffer()
+
+    METHOD   getBuffer( cColumn )                   INLINE   ( hget( ::hBuffer, cColumn ) )
 
 END CLASS
 
@@ -75,8 +79,6 @@ METHOD getSQLCreateTable()
    hEval( ::hColumns, {| k, v | cSQLCreateTable += k + " " + v + ", " } )
 
    cSQLCreateTable        := ChgAtEnd( cSQLCreateTable, ' )', 2 )
-
-   msgalert( cSQLCreateTable, cSQLCreateTable )
 
 Return ( cSQLCreateTable )
 
@@ -158,10 +160,40 @@ Return ( ::oRowSet:recCount() > 0 )
 
 //---------------------------------------------------------------------------//
 
-METHOD getcValues()
+METHOD loadBlankBuffer()
 
-  Local cValues
+   if empty( ::oRowSet )
+      Return ( .f. )
+   end if 
 
-Return ( cValues )
+Return ( ::loadBuffer( 0 ) )
 
 //---------------------------------------------------------------------------//
+
+METHOD loadCurrentBuffer()                
+
+   if empty( ::oRowSet )
+      Return ( .f. )
+   end if 
+
+Return ( ::loadBuffer( ::oRowSet:fieldGet( "id" ) ) )   
+
+//---------------------------------------------------------------------------//
+
+METHOD loadBuffer( id )
+
+   local n 
+
+   ::hBuffer  := {=>}
+
+   ::oRowSet:goto( id )
+
+   for n := 1 to ::oRowSet:fieldCount()
+      hset( ::hBuffer, ::oRowSet:fieldname( n ), ::oRowSet:fieldget( n ) )
+   next 
+
+Return ( .t. )
+
+//---------------------------------------------------------------------------//
+
+
