@@ -3734,7 +3734,7 @@ METHOD lArqueoTurno( lZoom, lParcial ) CLASS TTurno
 
       REDEFINE GET ::oGetEnviarMail ;
          VAR      ::cEnviarMail ;
-         WHEN     ( ::lEnviarMail .and. lUsrMaster() ) ;
+         WHEN     ( .f. ) ;
          ID       730 ;
          OF       ::oFldTurno:aDialogs[ 4 ]
 
