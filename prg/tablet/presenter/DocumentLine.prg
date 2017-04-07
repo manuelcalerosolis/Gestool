@@ -58,6 +58,8 @@ CLASS DocumentLine FROM DocumentBase
    METHOD getPrecioVenta()                                     INLINE ( round( ::getValue(  "PrecioVenta" ), nDouDiv() ) )
    METHOD getPortes()                                          INLINE ( ::getValue( "Portes", 0 ) )
    
+   METHOD getCajas()                                           INLINE ( ::getValue( "Cajas" ) )
+
    METHOD getUnidades()                                        INLINE ( ::getValue( "Unidades" ) )
    METHOD setUnidades( nUnidades )                             INLINE ( ::setValue( "Unidades", nUnidades ) )
 

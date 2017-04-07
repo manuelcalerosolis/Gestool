@@ -80,6 +80,11 @@ METHOD getSQLCreateTable()
 
    cSQLCreateTable        := ChgAtEnd( cSQLCreateTable, ' )', 2 )
 
+<<<<<<< HEAD
+=======
+   //msgalert( cSQLCreateTable, cSQLCreateTable )
+
+>>>>>>> 45ba7ea1e144b906d8c91b086416eec2b6c235f3
 Return ( cSQLCreateTable )
 
 //---------------------------------------------------------------------------//

@@ -1,6 +1,10 @@
 #include "FiveWin.Ch"
 #include "Factu.ch"
 
+/*
+Hay que crear los campos extra necesarios para este script---------------------
+*/
+
 Function ImportarPedidosProveedor( nView )                  
          
    local oImportarPedidosProveedor    := TImportarPedidosProveedor():New( nView )
@@ -16,7 +20,8 @@ CLASS TImportarPedidosProveedor
    DATA oDialog
    DATA nView
 
-   DATA cSelectAlias
+   DATA cSelectHead
+   DATA cSelectLines
 
    DATA oBrowse
 
@@ -55,15 +60,21 @@ CLASS TImportarPedidosProveedor
 
    METHOD todosRegistro()
 
-   METHOD isSeekRegistro()    INLINE ( aScan( ::oBrowse:aSelected, ( ::cSelectAlias )->cSerPed + Str( ( ::cSelectAlias )->nNumPed ) + ( ::cSelectAlias )->cSufPed ) != 0 )
+   METHOD isSeekRegistro()    INLINE ( aScan( ::oBrowse:aSelected, ( ::cSelectHead )->cSerPed + Str( ( ::cSelectHead )->nNumPed ) + ( ::cSelectHead )->cSufPed ) != 0 )
 
    METHOD AddCabeceraAlbaran()
 
    METHOD AddLineasAlbaran()
 
-   METHOD SetEstadoPedidos()  INLINE ( MsgInfo( "Ponemos bien el estado de los pedidos pasados" ) )
+   METHOD SetEstadoPedidos()
 
    METHOD selectPedidosProveedoresPendientes( idProveedor )
+
+   METHOD AddRegLine()
+
+   METHOD SetTotalesAlbaran()
+
+   METHOD AddCamposExtra()
 
 END CLASS
 
@@ -80,7 +91,8 @@ METHOD New( nView ) CLASS TImportarPedidosProveedor
 
    ::aPedidos                 := { { .t., "A99999999900", ctod( "01/01/2017" ), "Proveedor", "Nombre", 0 }, { .t., "A99999999900", ctod( "01/01/2017" ), "Proveedor", "Nombre", 100 } }
 
-   ::cSelectAlias             := "pedidoProveedor"
+   ::cSelectHead              := "pedidoProveedor"
+   ::cSelectLines             := "LineasAlbaran"
    
 
    ::selectPedidosProveedoresPendientes( Padr( ::cCodigoProveedor, 12 ) )
@@ -140,7 +152,7 @@ METHOD Resource() CLASS TImportarPedidosProveedor
       ::oBrowse:bClrSel                := {|| { CLR_BLACK, Rgb( 229, 229, 229 ) } }
       ::oBrowse:bClrSelFocus           := {|| { CLR_BLACK, Rgb( 167, 205, 240 ) } }
 
-      ::oBrowse:cAlias                 := ::cSelectAlias
+      ::oBrowse:cAlias                 := ::cSelectHead
 
       ::oBrowse:nMarqueeStyle          := 5
       ::oBrowse:lRecordSelector        := .f.
@@ -161,25 +173,25 @@ METHOD Resource() CLASS TImportarPedidosProveedor
 
       with object ( ::oBrowse:AddCol() )
          :cHeader                   := "Número"
-         :bStrData                  := {|| ( ::cSelectAlias )->cSerPed + "/" + AllTrim( Str( ( ::cSelectAlias )->nNumPed ) ) + "/" + ( ::cSelectAlias )->cSufPed }
+         :bStrData                  := {|| ( ::cSelectHead )->cSerPed + "/" + AllTrim( Str( ( ::cSelectHead )->nNumPed ) ) + "/" + ( ::cSelectHead )->cSufPed }
          :nWidth                    := 120
       end with
 
       with object ( ::oBrowse:AddCol() )
          :cHeader                   := "Fecha"
-         :bStrData                  := {|| ( ::cSelectAlias )->dFecPed }
+         :bStrData                  := {|| ( ::cSelectHead )->dFecPed }
          :nWidth                    := 80
       end with
 
       with object ( ::oBrowse:AddCol() )
          :cHeader                   := "Proveedor"
-         :bStrData                  := {|| ( ::cSelectAlias )->cCodPrv + Space(1) + ( ::cSelectAlias )->cNomPrv }
+         :bStrData                  := {|| ( ::cSelectHead )->cCodPrv + Space(1) + ( ::cSelectHead )->cNomPrv }
          :nWidth                    := 510
       end with
 
       with object ( ::oBrowse:AddCol() )
          :cHeader                   := "Total"
-         :bEditValue                := {|| ( ::cSelectAlias )->nTotPed }
+         :bEditValue                := {|| ( ::cSelectHead )->nTotPed }
          :cEditPicture              := cPinDiv()
          :nWidth                    := 110
          :nDataStrAlign             := 1
@@ -210,6 +222,8 @@ METHOD LoadBrowse() CLASS TImportarPedidosProveedor
       Return nil
    end if
 
+   ::oBrowse:aSelected     := {}
+
    if ::cOldProvee != ::cCodigoProveedor
       ::selectPedidosProveedoresPendientes( Padr( ::cCodigoProveedor, 12 ) )
    end if
@@ -228,12 +242,12 @@ METHOD seleccionaRegistro() CLASS TImportarPedidosProveedor
    
    local n
 
-   n  := aScan( ::oBrowse:aSelected, ( ::cSelectAlias )->cSerPed + Str( ( ::cSelectAlias )->nNumPed ) + ( ::cSelectAlias )->cSufPed )
+   n  := aScan( ::oBrowse:aSelected, ( ::cSelectHead )->cSerPed + Str( ( ::cSelectHead )->nNumPed ) + ( ::cSelectHead )->cSufPed )
 
    if n != 0
       aDel( ::oBrowse:aSelected, n, .t. )   
    else
-      aAdd( ::oBrowse:aSelected, ( ::cSelectAlias )->cSerPed + Str( ( ::cSelectAlias )->nNumPed ) + ( ::cSelectAlias )->cSufPed )
+      aAdd( ::oBrowse:aSelected, ( ::cSelectHead )->cSerPed + Str( ( ::cSelectHead )->nNumPed ) + ( ::cSelectHead )->cSufPed )
    end if
 
    if !Empty( ::oBrowse )
@@ -250,17 +264,17 @@ METHOD todosRegistro( lSel ) CLASS TImportarPedidosProveedor
 
    if lSel
 
-      ( ::cSelectAlias )->( dbGoTop() )
+      ( ::cSelectHead )->( dbGoTop() )
 
-      while !( ::cSelectAlias )->( Eof() )
+      while !( ::cSelectHead )->( Eof() )
 
-         aAdd( ::oBrowse:aSelected, ( ::cSelectAlias )->cSerPed + Str( ( ::cSelectAlias )->nNumPed ) + ( ::cSelectAlias )->cSufPed )
+         aAdd( ::oBrowse:aSelected, ( ::cSelectHead )->cSerPed + Str( ( ::cSelectHead )->nNumPed ) + ( ::cSelectHead )->cSufPed )
 
-         ( ::cSelectAlias )->( dbSkip() )
+         ( ::cSelectHead )->( dbSkip() )
 
       end while
 
-      ( ::cSelectAlias )->( dbGoTop() )
+      ( ::cSelectHead )->( dbGoTop() )
 
    end if
 
@@ -295,6 +309,8 @@ METHOD Process() CLASS TImportarPedidosProveedor
 
    ::AddLineasAlbaran()
 
+   ::SetTotalesAlbaran()
+
    ::SetEstadoPedidos()
 
    ::oDialog:End( IDOK )
@@ -310,15 +326,15 @@ METHOD AddCabeceraAlbaran() CLASS TImportarPedidosProveedor
    cabecera del albarán a crear
    */
 
-   ( ::cSelectAlias )->( dbGoTop() )
+   ( ::cSelectHead )->( dbGoTop() )
 
    /*
    Tomo valores para el número del albarán a crear
    */
 
-   ::cSerieAlbaran      := ( ::cSelectAlias )->cSerPed
-   ::nNumeroAlbaran     := nNewDoc( ( ::cSelectAlias )->cSerPed, D():AlbaranesProveedores( ::nView ), "nAlbPrv", , D():Contadores( ::nView ) )
-   ::cSufijoAlbaran     := ( ::cSelectAlias )->cSufPed
+   ::cSerieAlbaran      := ( ::cSelectHead )->cSerPed
+   ::nNumeroAlbaran     := nNewDoc( ( ::cSelectHead )->cSerPed, D():AlbaranesProveedores( ::nView ), "nAlbPrv", , D():Contadores( ::nView ) )
+   ::cSufijoAlbaran     := ( ::cSelectHead )->cSufPed
 
    /*
    Creo un regustro nuevo en las cabeceras de llos albaranes-------------------
@@ -329,42 +345,42 @@ METHOD AddCabeceraAlbaran() CLASS TImportarPedidosProveedor
    ( D():AlbaranesProveedores( ::nView ) )->cSerAlb        := ::cSerieAlbaran
    ( D():AlbaranesProveedores( ::nView ) )->nNumAlb        := ::nNumeroAlbaran
    ( D():AlbaranesProveedores( ::nView ) )->cSufAlb        := ::cSufijoAlbaran
-   ( D():AlbaranesProveedores( ::nView ) )->cTurAlb        := ( ::cSelectAlias )->cTurPed
+   ( D():AlbaranesProveedores( ::nView ) )->cTurAlb        := ( ::cSelectHead )->cTurPed
    ( D():AlbaranesProveedores( ::nView ) )->dFecAlb        := GetSysDate()
-   ( D():AlbaranesProveedores( ::nView ) )->cCodPrv        := ( ::cSelectAlias )->cCodPrv
-   ( D():AlbaranesProveedores( ::nView ) )->cCodAlm        := ( ::cSelectAlias )->cCodAlm
-   ( D():AlbaranesProveedores( ::nView ) )->cCodCaj        := ( ::cSelectAlias )->cCodCaj
-   ( D():AlbaranesProveedores( ::nView ) )->cNomPrv        := ( ::cSelectAlias )->cNomPrv
-   ( D():AlbaranesProveedores( ::nView ) )->cDirPrv        := ( ::cSelectAlias )->cDirPrv
-   ( D():AlbaranesProveedores( ::nView ) )->cPobPrv        := ( ::cSelectAlias )->cPobPrv
-   ( D():AlbaranesProveedores( ::nView ) )->cProPrv        := ( ::cSelectAlias )->cProPrv
-   ( D():AlbaranesProveedores( ::nView ) )->cPosPrv        := ( ::cSelectAlias )->cPosPrv
-   ( D():AlbaranesProveedores( ::nView ) )->cDniPrv        := ( ::cSelectAlias )->cDniPrv
-   ( D():AlbaranesProveedores( ::nView ) )->dFecEnt        := ( ::cSelectAlias )->dFecEnt
-   ( D():AlbaranesProveedores( ::nView ) )->cCodPgo        := ( ::cSelectAlias )->cCodPgo
-   ( D():AlbaranesProveedores( ::nView ) )->nBultos        := ( ::cSelectAlias )->nBultos
-   ( D():AlbaranesProveedores( ::nView ) )->nPortes        := ( ::cSelectAlias )->nPortes
-   ( D():AlbaranesProveedores( ::nView ) )->cDtoEsp        := ( ::cSelectAlias )->cDtoEsp
-   ( D():AlbaranesProveedores( ::nView ) )->nDtoEsp        := ( ::cSelectAlias )->nDtoEsp
-   ( D():AlbaranesProveedores( ::nView ) )->cDpp           := ( ::cSelectAlias )->cDpp
-   ( D():AlbaranesProveedores( ::nView ) )->nDpp           := ( ::cSelectAlias )->nDpp
-   ( D():AlbaranesProveedores( ::nView ) )->lRecargo       := ( ::cSelectAlias )->lRecargo
-   ( D():AlbaranesProveedores( ::nView ) )->cCondEnt       := ( ::cSelectAlias )->cCondEnt
-   ( D():AlbaranesProveedores( ::nView ) )->cExped         := ( ::cSelectAlias )->cExped
+   ( D():AlbaranesProveedores( ::nView ) )->cCodPrv        := ( ::cSelectHead )->cCodPrv
+   ( D():AlbaranesProveedores( ::nView ) )->cCodAlm        := ( ::cSelectHead )->cCodAlm
+   ( D():AlbaranesProveedores( ::nView ) )->cCodCaj        := ( ::cSelectHead )->cCodCaj
+   ( D():AlbaranesProveedores( ::nView ) )->cNomPrv        := ( ::cSelectHead )->cNomPrv
+   ( D():AlbaranesProveedores( ::nView ) )->cDirPrv        := ( ::cSelectHead )->cDirPrv
+   ( D():AlbaranesProveedores( ::nView ) )->cPobPrv        := ( ::cSelectHead )->cPobPrv
+   ( D():AlbaranesProveedores( ::nView ) )->cProPrv        := ( ::cSelectHead )->cProPrv
+   ( D():AlbaranesProveedores( ::nView ) )->cPosPrv        := ( ::cSelectHead )->cPosPrv
+   ( D():AlbaranesProveedores( ::nView ) )->cDniPrv        := ( ::cSelectHead )->cDniPrv
+   ( D():AlbaranesProveedores( ::nView ) )->dFecEnt        := ( ::cSelectHead )->dFecEnt
+   ( D():AlbaranesProveedores( ::nView ) )->cCodPgo        := ( ::cSelectHead )->cCodPgo
+   ( D():AlbaranesProveedores( ::nView ) )->nBultos        := ( ::cSelectHead )->nBultos
+   ( D():AlbaranesProveedores( ::nView ) )->nPortes        := ( ::cSelectHead )->nPortes
+   ( D():AlbaranesProveedores( ::nView ) )->cDtoEsp        := ( ::cSelectHead )->cDtoEsp
+   ( D():AlbaranesProveedores( ::nView ) )->nDtoEsp        := ( ::cSelectHead )->nDtoEsp
+   ( D():AlbaranesProveedores( ::nView ) )->cDpp           := ( ::cSelectHead )->cDpp
+   ( D():AlbaranesProveedores( ::nView ) )->nDpp           := ( ::cSelectHead )->nDpp
+   ( D():AlbaranesProveedores( ::nView ) )->lRecargo       := ( ::cSelectHead )->lRecargo
+   ( D():AlbaranesProveedores( ::nView ) )->cCondEnt       := ( ::cSelectHead )->cCondEnt
+   ( D():AlbaranesProveedores( ::nView ) )->cExped         := ( ::cSelectHead )->cExped
    ( D():AlbaranesProveedores( ::nView ) )->lFacturado     := .f.
-   ( D():AlbaranesProveedores( ::nView ) )->cDivAlb        := ( ::cSelectAlias )->cDivPed
-   ( D():AlbaranesProveedores( ::nView ) )->nVdvAlb        := ( ::cSelectAlias )->nVdvPed
+   ( D():AlbaranesProveedores( ::nView ) )->cDivAlb        := ( ::cSelectHead )->cDivPed
+   ( D():AlbaranesProveedores( ::nView ) )->nVdvAlb        := ( ::cSelectHead )->nVdvPed
    ( D():AlbaranesProveedores( ::nView ) )->lSndDoc        := .t.
-   ( D():AlbaranesProveedores( ::nView ) )->cDtoUno        := ( ::cSelectAlias )->cDtoUno
-   ( D():AlbaranesProveedores( ::nView ) )->nDtoUno        := ( ::cSelectAlias )->nDtoUno
-   ( D():AlbaranesProveedores( ::nView ) )->cDtoDos        := ( ::cSelectAlias )->cDtoDos
-   ( D():AlbaranesProveedores( ::nView ) )->nDtoDos        := ( ::cSelectAlias )->nDtoDos
+   ( D():AlbaranesProveedores( ::nView ) )->cDtoUno        := ( ::cSelectHead )->cDtoUno
+   ( D():AlbaranesProveedores( ::nView ) )->nDtoUno        := ( ::cSelectHead )->nDtoUno
+   ( D():AlbaranesProveedores( ::nView ) )->cDtoDos        := ( ::cSelectHead )->cDtoDos
+   ( D():AlbaranesProveedores( ::nView ) )->nDtoDos        := ( ::cSelectHead )->nDtoDos
    ( D():AlbaranesProveedores( ::nView ) )->lCloAlb        := .f.
-   ( D():AlbaranesProveedores( ::nView ) )->cCodUsr        := ( ::cSelectAlias )->cCodUsr
+   ( D():AlbaranesProveedores( ::nView ) )->cCodUsr        := ( ::cSelectHead )->cCodUsr
    ( D():AlbaranesProveedores( ::nView ) )->dFecChg        := GetSysDate()
    ( D():AlbaranesProveedores( ::nView ) )->cTimChg        := getSysTime()
-   ( D():AlbaranesProveedores( ::nView ) )->cCodDlg        := ( ::cSelectAlias )->cCodDlg
-   ( D():AlbaranesProveedores( ::nView ) )->nRegIva        := ( ::cSelectAlias )->nRegIva
+   ( D():AlbaranesProveedores( ::nView ) )->cCodDlg        := ( ::cSelectHead )->cCodDlg
+   ( D():AlbaranesProveedores( ::nView ) )->nRegIva        := ( ::cSelectHead )->nRegIva
    ( D():AlbaranesProveedores( ::nView ) )->nFacturado     := 1
    ( D():AlbaranesProveedores( ::nView ) )->tFecAlb        := getSysTime()
 
@@ -374,11 +390,21 @@ Return ( .t. )
 
 //---------------------------------------------------------------------------//
 
+METHOD selectPedidosProveedoresPendientes( idProveedor )
+
+   local cSql  := "SELECT * FROM " + cPatEmp() + "PedProvT " + ;
+                           "WHERE " + ;
+                              "cCodPrv = " + quoted( idProveedor )  + " AND " + ;
+                              "nEstado = 1"
+
+Return ( BaseModel():ExecuteSqlStatement( cSql, ::cSelectHead ) )
+
+//---------------------------------------------------------------------------//
+
 METHOD AddLineasAlbaran() CLASS TImportarPedidosProveedor
 
    local n              := 1
    local cPedido
-   local cSelectLineas  := "LineasAlbaran"
    local cSql
 
    cSql        := "SELECT cRef, cAlmLin, cCodPr1, cCodPr2, cValPr1, cValPr2, sum(nUniCaja) AS nUniCaja, sum(nCanPed) AS nCanPed, sum(nBultos) AS nBultos"
@@ -403,24 +429,185 @@ METHOD AddLineasAlbaran() CLASS TImportarPedidosProveedor
 
    cSql     += " GROUP BY cRef, cAlmLin, cCodPr1, cCodPr2, cValPr1, cValPr2"
 
-   MsgInfo( cSql, "cSql" )
-   LogWrite( cSql )
+   BaseModel():ExecuteSqlStatement( cSql, ::cSelectLines )
 
-   BaseModel():ExecuteSqlStatement( cSql, cSelectLineas )
-
-   ( cSelectLineas )->( Browse() )
+   ::AddRegLine()
 
 Return ( .t. )
 
 //---------------------------------------------------------------------------//
 
-METHOD selectPedidosProveedoresPendientes( idProveedor )
+METHOD AddRegLine() CLASS TImportarPedidosProveedor
 
-   local cSql  := "SELECT * FROM " + cPatEmp() + "PedProvT " + ;
-                           "WHERE " + ;
-                              "cCodPrv = " + quoted( idProveedor )  + " AND " + ;
-                              "nEstado = 1"
+   local nOrdAnt
 
-Return ( BaseModel():ExecuteSqlStatement( cSql, ::cSelectAlias ) )
+   ( ::cSelectLines )->( dbGoTop() )
+
+   while !( ::cSelectLines )->( Eof() )
+
+      ( D():AlbaranesProveedoresLineas( ::nView ) )->( dbAppend() )
+
+      ( D():AlbaranesProveedoresLineas( ::nView ) )->cSerAlb      := ::cSerieAlbaran
+      ( D():AlbaranesProveedoresLineas( ::nView ) )->nNumAlb      := ::nNumeroAlbaran
+      ( D():AlbaranesProveedoresLineas( ::nView ) )->cSufAlb      := ::cSufijoAlbaran
+      ( D():AlbaranesProveedoresLineas( ::nView ) )->cRef         := ( ::cSelectLines )->cRef
+
+      if ( D():Articulos( ::nView ) )->( dbSeek( ( ::cSelectLines )->cRef ) )
+
+         ( D():AlbaranesProveedoresLineas( ::nView ) )->cDetalle     := ( D():Articulos( ::nView ) )->Nombre
+         ( D():AlbaranesProveedoresLineas( ::nView ) )->nIva         := nIva( D():TiposIva( ::nView ), ( D():Articulos( ::nView ) )->TipoIva )
+         ( D():AlbaranesProveedoresLineas( ::nView ) )->nReq         := nReq( D():TiposIva( ::nView ), ( D():Articulos( ::nView ) )->TipoIva )
+         ( D():AlbaranesProveedoresLineas( ::nView ) )->nCtlStk      := ( D():Articulos( ::nView ) )->nCtlStock
+         ( D():AlbaranesProveedoresLineas( ::nView ) )->lLote        := ( D():Articulos( ::nView ) )->lLote
+         ( D():AlbaranesProveedoresLineas( ::nView ) )->cCodFam      := ( D():Articulos( ::nView ) )->Familia
+         ( D():AlbaranesProveedoresLineas( ::nView ) )->cGrpFam      := cGruFam( ( D():AlbaranesProveedoresLineas( ::nView ) )->cCodFam, D():Familias( ::nView ) )
+
+      end if
+
+      nOrdAnt                 := ( D():ProveedorArticulo( ::nView ) )->( OrdSetFocus( "cCodPrv" ) )
+
+      if ( D():ProveedorArticulo( ::nView ) )->( dbSeek( ::cCodigoProveedor + ( ::cSelectLines )->cRef ) )
+         ( D():AlbaranesProveedoresLineas( ::nView ) )->cRefPrv   :=  ( D():ProveedorArticulo( ::nView ) )->cRefPrv
+      end if
+
+      ( D():ProveedorArticulo( ::nView ) )->( ordSetFocus( nOrdAnt ) )
+
+      ( D():AlbaranesProveedoresLineas( ::nView ) )->nCanEnt      := ( ::cSelectLines )->nCanPed
+      ( D():AlbaranesProveedoresLineas( ::nView ) )->nUniCaja     := ( ::cSelectLines )->nUniCaja
+      ( D():AlbaranesProveedoresLineas( ::nView ) )->nPreDiv      := nCosto( nil, D():Articulos( ::nView ), D():Kit( ::nView ), .f., 1, D():Divisas( ::nView ) )
+      ( D():AlbaranesProveedoresLineas( ::nView ) )->cCodPr1      := ( ::cSelectLines )->cCodPr1
+      ( D():AlbaranesProveedoresLineas( ::nView ) )->cCodPr2      := ( ::cSelectLines )->cCodPr2
+      ( D():AlbaranesProveedoresLineas( ::nView ) )->cValPr1      := ( ::cSelectLines )->cValPr1
+      ( D():AlbaranesProveedoresLineas( ::nView ) )->cValPr2      := ( ::cSelectLines )->cValPr2
+      ( D():AlbaranesProveedoresLineas( ::nView ) )->cAlmLin      := ( ::cSelectLines )->cAlmLin
+      ( D():AlbaranesProveedoresLineas( ::nView ) )->nNumLin      := ( ::cSelectLines )->( Recno() )
+      ( D():AlbaranesProveedoresLineas( ::nView ) )->nPosPrint    := ( ::cSelectLines )->( Recno() )
+      ( D():AlbaranesProveedoresLineas( ::nView ) )->lFacturado   :=  .f.
+      ( D():AlbaranesProveedoresLineas( ::nView ) )->nBultos      := ( ::cSelectLines )->nBultos
+      ( D():AlbaranesProveedoresLineas( ::nView ) )->( dbUnlock() )
+
+      ::AddCamposExtra()
+
+      ( ::cSelectLines )->( dbSkip() )
+
+   end while
+
+Return ( .t. )
+
+//---------------------------------------------------------------------------//
+
+METHOD AddCamposExtra() CLASS TImportarPedidosProveedor
+
+   /*
+   001 - bultos original-------------------------------------------------------
+   */
+
+   ( D():DetCamposExtras( ::nView ) )->( dbAppend() )
+
+   ( D():DetCamposExtras( ::nView ) )->cTipDoc     := "37"
+   ( D():DetCamposExtras( ::nView ) )->cCodTipo    := "001"
+   ( D():DetCamposExtras( ::nView ) )->cClave      := ::cSerieAlbaran + Str( ::nNumeroAlbaran ) + ::cSufijoAlbaran + Str( ( ::cSelectLines )->( Recno() ), 4 )
+   ( D():DetCamposExtras( ::nView ) )->cValor      := Str( ( ::cSelectLines )->nBultos )
+
+   ( D():DetCamposExtras( ::nView ) )->( dbUnlock() )
+
+   /*
+   002 - cajas original--------------------------------------------------------
+   */
+
+   ( D():DetCamposExtras( ::nView ) )->( dbAppend() )
+
+   ( D():DetCamposExtras( ::nView ) )->cTipDoc     := "37"
+   ( D():DetCamposExtras( ::nView ) )->cCodTipo    := "002"
+   ( D():DetCamposExtras( ::nView ) )->cClave      := ::cSerieAlbaran + Str( ::nNumeroAlbaran ) + ::cSufijoAlbaran + Str( ( ::cSelectLines )->( Recno() ), 4 )
+   ( D():DetCamposExtras( ::nView ) )->cValor      := Str( ( ::cSelectLines )->nCanPed )
+
+   ( D():DetCamposExtras( ::nView ) )->( dbUnlock() )
+
+   /*
+   003 - unidades original-----------------------------------------------------
+   */
+
+   ( D():DetCamposExtras( ::nView ) )->( dbAppend() )
+
+   ( D():DetCamposExtras( ::nView ) )->cTipDoc     := "37"
+   ( D():DetCamposExtras( ::nView ) )->cCodTipo    := "003"
+   ( D():DetCamposExtras( ::nView ) )->cClave      := ::cSerieAlbaran + Str( ::nNumeroAlbaran ) + ::cSufijoAlbaran + Str( ( ::cSelectLines )->( Recno() ), 4 )
+   ( D():DetCamposExtras( ::nView ) )->cValor      := Str( ( ::cSelectLines )->nUniCaja )
+
+   ( D():DetCamposExtras( ::nView ) )->( dbUnlock() )
+
+Return ( .t. )
+
+//---------------------------------------------------------------------------//
+
+METHOD SetTotalesAlbaran() CLASS TImportarPedidosProveedor
+
+   local aTotalAlbaran
+
+   aTotalAlbaran     := aTotAlbPrv( ::cSerieAlbaran + Str( ::nNumeroAlbaran ) + ::cSufijoAlbaran, D():AlbaranesProveedores( ::nView ), D():AlbaranesProveedoresLineas( ::nView ), D():TiposIva( ::nView ), D():Divisas( ::nView ) )
+
+   if ( D():AlbaranesProveedores( ::nView ) )->( dbSeek( ::cSerieAlbaran + Str( ::nNumeroAlbaran ) + ::cSufijoAlbaran ) ) .and.;
+      dbLock( D():AlbaranesProveedores( ::nView ) )
+
+      ( D():AlbaranesProveedores( ::nView ) )->nTotNet     := aTotalAlbaran[1]
+      ( D():AlbaranesProveedores( ::nView ) )->nTotIva     := aTotalAlbaran[2]
+      ( D():AlbaranesProveedores( ::nView ) )->nTotReq     := aTotalAlbaran[3]
+      ( D():AlbaranesProveedores( ::nView ) )->nTotAlb     := aTotalAlbaran[4]
+
+      ( D():AlbaranesProveedores( ::nView ) )->( dbUnlock() )
+
+   end if
+
+Return ( .t. )
+
+//---------------------------------------------------------------------------//
+
+METHOD SetEstadoPedidos() CLASS TImportarPedidosProveedor
+
+   local cPedido
+   local nOrdAnt
+
+   for each cPedido in ::oBrowse:aSelected
+
+      nOrdAnt  := ( D():PedidosProveedores( ::nView ) )->( OrdSetFocus( "nNumPed" ) )
+
+      if ( D():PedidosProveedores( ::nView ) )->( dbSeek( cPedido ) )
+
+         if dbLock( D():PedidosProveedores( ::nView ) )
+
+            ( D():PedidosProveedores( ::nView ) )->nEstado    := 3
+         
+            ( D():PedidosProveedores( ::nView ) )->( dbUnlock() )
+
+         end if
+
+      end if
+
+      ( D():PedidosProveedores( ::nView ) )->( OrdSetFocus( nOrdAnt ) )
+
+      nOrdAnt  := ( D():PedidosProveedoresLineas( ::nView ) )->( OrdSetFocus( "nNumPed" ) )
+
+      if ( D():PedidosProveedoresLineas( ::nView ) )->( dbSeek( cPedido ) )
+         
+         while ( D():PedidosProveedoresLineas( ::nView ) )->cSerPed + Str( ( D():PedidosProveedoresLineas( ::nView ) )->nNumPed ) + ( D():PedidosProveedoresLineas( ::nView ) )->cSufPed == cPedido .and.;
+               !( D():PedidosProveedoresLineas( ::nView ) )->( eof() )
+
+               if dbLock( D():PedidosProveedoresLineas( ::nView ) )
+                  ( D():PedidosProveedoresLineas( ::nView ) )->nEstado    := 3
+                  ( D():PedidosProveedoresLineas( ::nView ) )->( dbUnlock() )
+               end if
+            
+            ( D():PedidosProveedoresLineas( ::nView ) )->( dbSkip() )
+
+         end while
+
+      end if      
+
+      ( D():PedidosProveedoresLineas( ::nView ) )->( OrdSetFocus( nOrdAnt ) )
+
+   next
+
+Return ( .t. )
 
 //---------------------------------------------------------------------------//
