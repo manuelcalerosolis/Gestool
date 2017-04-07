@@ -6,35 +6,38 @@
 
 CLASS SQLBaseModel
   
-    DATA     oRowSet
+   DATA     oRowSet
 
-	  DATA     cTableName
-	  DATA	   hColumns
+	DATA     cTableName
+	DATA	   hColumns
+   DATA     cColumnKey
+
   	DATA	   hBuffer
-
-    DATA	   cSQLInsert     
-    DATA     cSQLSelect      
+   DATA     idBuffer    
  
-    DATA     cFind
-    DATA     cColumnOrder
-    DATA     cColumnOrientation
+   DATA     cFind
+   DATA     cColumnOrder
+   DATA     cColumnOrientation
  
-    METHOD   New()
-    METHOD   End()
+   METHOD   New()
+   METHOD   End()
 
-    METHOD   getSQLCreateTable()
-    METHOD	 getInsertInto()						            INLINE	 ( ::cSQLInsert )
-    METHOD   getSQLSelect()                         INLINE   ( ::cSQLSelect )
+   METHOD   getSQLCreateTable()
+   METHOD	getInsertSentence()						    
+   METHOD   getUpdateSentence()
+   METHOD   getDeleteSentence()
+   
+   METHOD   getOrderRowSet()
+   METHOD   freeRowSet()                           INLINE   ( if( !empty( ::oRowSet ), ( ::oRowSet := nil ), ) )
+   METHOD   getRowSetRecno()                       INLINE   ( if( !empty( ::oRowSet ), ( ::oRowSet:recno() ) , 0 ) )
+   METHOD   setRowSetRecno( nRecno )               INLINE   ( if( !empty( ::oRowSet ), ( ::oRowSet:goto( nRecno ) ), ) )
 
-    METHOD   getOrderRowSet()
-    METHOD   freeRowSet()                           INLINE   ( if( !empty( ::oRowSet ), ( ::oRowSet:= nil ), ) )
-
-    METHOD   setFind( cFind )                       INLINE   ( ::cFind := cFind )
+    METHOD   setFind( cFind )                      INLINE   ( ::cFind := cFind )
  
-    METHOD   setColumnOrderBy( cColumn )            INLINE   ( ::cColumnOrder := cColumn )
-    METHOD   setOrderOrientation( cOrientation )    INLINE   ( ::cColumnOrientation := cOrientation )
+    METHOD   setColumnOrderBy( cColumn )           INLINE   ( ::cColumnOrder := cColumn )
+    METHOD   setOrderOrientation( cOrientation )   INLINE   ( ::cColumnOrientation := cOrientation )
 
-    METHOD   refreshSelect()                        INLINE   ( ::getOrderRowSet( .t. ) )
+    METHOD   refreshSelect()                       INLINE   ( ::getOrderRowSet( .t. ) )
 
     METHOD   getSelectSentence()
  
@@ -48,7 +51,11 @@ CLASS SQLBaseModel
     METHOD   loadBlankBuffer()
     METHOD   loadCurrentBuffer()
 
-    METHOD   getBuffer( cColumn )                   INLINE   ( hget( ::hBuffer, cColumn ) )
+    METHOD   updateCurrentBuffer()                 INLINE ( getSQLDatabase():Query( ::getUpdateSentence() ), ::refreshSelect() )
+    METHOD   insertBuffer()                        INLINE ( getSQLDatabase():Query( ::getInsertSentence() ), ::refreshSelect() )
+    METHOD   deleteSelection()                     INLINE ( getSQLDatabase():Query( ::getdeleteSentence() ), ::refreshSelect() )
+
+    METHOD   getBuffer( cColumn )                  INLINE   ( hget( ::hBuffer, cColumn ) )
 
 END CLASS
 
@@ -56,11 +63,13 @@ END CLASS
 
 METHOD New()
 
-   ::cSQLSelect          := "SELECT * FROM " + ::cTableName
+   ::cColumnKey                  := "id"
 
-   // ::cSQLInsert					 := "INSERT INTO " + ::cTableName + ::cColumns + " VALUES "
+   ::cFind                       := ""
+   ::cColumnOrder                := ""
+   ::cColumnOrientation          := ""
 
- Return ( Self )
+Return ( Self )
 
 //---------------------------------------------------------------------------//
 
@@ -80,11 +89,6 @@ METHOD getSQLCreateTable()
 
    cSQLCreateTable        := ChgAtEnd( cSQLCreateTable, ' )', 2 )
 
-<<<<<<< HEAD
-=======
-   //msgalert( cSQLCreateTable, cSQLCreateTable )
-
->>>>>>> 45ba7ea1e144b906d8c91b086416eec2b6c235f3
 Return ( cSQLCreateTable )
 
 //---------------------------------------------------------------------------//
@@ -115,9 +119,51 @@ Return ( ::oRowSet )
 
 //---------------------------------------------------------------------------//
 
+METHOD getUpdateSentence()
+
+  local cSQLUpdate  := "UPDATE " + ::cTableName + " SET "
+
+  hEval( ::hBuffer, {| k, v | if ( k != ::cColumnKey, cSQLUpdate += k + " = " + convertToSql( v ) + ", ", ) } )
+
+  cSQLUpdate        := ChgAtEnd( cSQLUpdate, '', 2 )
+
+  cSQLUpdate        += " WHERE " + ::cColumnKey + " = " + convertToSql( ::idBuffer ) 
+
+Return ( cSQLUpdate )
+
+//---------------------------------------------------------------------------//
+
+METHOD getInsertSentence()
+
+   Local cSQLInsert
+
+   cSQLInsert               := "INSERT INTO " + ::cTableName + " ( "
+
+   hEval( ::hBuffer, {| k, v | if ( k != ::cColumnKey, cSQLInsert += k + ", ", ) } )
+
+   cSQLInsert        := ChgAtEnd( cSQLInsert, ' ) VALUES ( ', 2 )
+
+   hEval( ::hBuffer, {| k, v | if ( k != ::cColumnKey, cSQLInsert += convertToSql( v ) + ", ", ) } )
+
+   cSQLInsert        := ChgAtEnd( cSQLInsert, ' )', 2 )
+
+Return ( cSQLInsert )
+
+//---------------------------------------------------------------------------//
+
+METHOD   getDeleteSentence()
+
+Local cSQLDelete
+
+cSQLDelete                := "DELETE FROM " + ::cTableName + " WHERE " + ::cColumnKey + " = " + convertToSql( ::oRowSet:fieldGet( ::cColumnKey ) )
+
+Return ( cSQLDelete )
+
+//---------------------------------------------------------------------------//
+
 METHOD getSelectSentence()
 
-   local cSQLSelect  := ::cSQLSelect
+   local cSQLSelect  := "SELECT * FROM " + ::cTableName
 
    cSQLSelect        += ::getSelectByColumn()
 
@@ -181,7 +227,7 @@ METHOD loadCurrentBuffer()
       Return ( .f. )
    end if 
 
-Return ( ::loadBuffer( ::oRowSet:fieldGet( "id" ) ) )   
+Return ( ::loadBuffer( ::oRowSet:fieldGet( ::cColumnKey ) ) )   
 
 //---------------------------------------------------------------------------//
 
@@ -190,6 +236,7 @@ METHOD loadBuffer( id )
    local n 
 
    ::hBuffer  := {=>}
+   ::idBuffer := id
 
    ::oRowSet:goto( id )
 
@@ -200,5 +247,38 @@ METHOD loadBuffer( id )
 Return ( .t. )
 
 //---------------------------------------------------------------------------//
+
+Function convertToSql( value )
+
+   if hb_isnumeric( value )
+      Return ( alltrim(str( value ) ) )
+   end if
+
+   if hb_ischar( value )
+      Return ( quoted( alltrim( value ) ) )
+   end if
+
+Return ( value )
+       
+//---------------------------------------------------------------------------//
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
