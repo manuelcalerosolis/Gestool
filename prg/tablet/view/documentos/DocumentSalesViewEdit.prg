@@ -51,6 +51,8 @@ Return ( self )
 
 METHOD columnsBrowseLineas() CLASS DocumentSalesViewEdit
 
+   ::setBrowseConfigurationName( "grid_browselineas" )
+
    with object ( ::oBrowse:AddCol() )
       :cHeader                := "Código"
       :bEditValue             := {|| ::getDocumentLines():getProductId() }
@@ -65,21 +67,10 @@ METHOD columnsBrowseLineas() CLASS DocumentSalesViewEdit
    end with
 
    with object ( ::oBrowse:AddCol() )
-      :cHeader                := cNombreCajas()
+      :cHeader                := "Caj"
       :bEditValue             := {|| ::getDocumentLines():getCajas() }
       :cEditPicture           := MasUnd()
-      :nWidth                 := 75
-      :nDataStrAlign          := 1
-      :nHeadStrAlign          := 1
-      :lHide                  := .t.
-      :nFooterType            := AGGR_SUM
-   end with
-
-   with object ( ::oBrowse:AddCol() )
-      :cHeader                := cNombreUnidades()
-      :bEditValue             := {|| ::getDocumentLines():getUnidades() }
-      :cEditPicture           := MasUnd()
-      :nWidth                 := 130
+      :nWidth                 := 60
       :nDataStrAlign          := 1
       :nHeadStrAlign          := 1
       :lHide                  := .t.
@@ -88,6 +79,17 @@ METHOD columnsBrowseLineas() CLASS DocumentSalesViewEdit
 
    with object ( ::oBrowse:AddCol() )
       :cHeader                := "Und"
+      :bEditValue             := {|| ::getDocumentLines():getUnidades() }
+      :cEditPicture           := MasUnd()
+      :nWidth                 := 60
+      :nDataStrAlign          := 1
+      :nHeadStrAlign          := 1
+      :lHide                  := .t.
+      :nFooterType            := AGGR_SUM
+   end with
+
+   with object ( ::oBrowse:AddCol() )
+      :cHeader                := "T.Und"
       :bEditValue             := {|| ::getDocumentLines():getTotalUnits() }
       :cEditPicture           := MasUnd()
       :nWidth                 := 90
