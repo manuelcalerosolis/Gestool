@@ -115,7 +115,7 @@ Monta el dialogo para añadir, editar,... registros
 
 STATIC FUNCTION EditTiposImpresoras( id )
 
-   local oDlg
+   /*local oDlg
 
    oTiposImpresorasModel:loadCurrent( id )
 
@@ -147,7 +147,9 @@ STATIC FUNCTION EditTiposImpresoras( id )
 
    ACTIVATE DIALOG oDlg CENTER
 
-RETURN ( oDlg:nResult == IDOK )
+RETURN ( oDlg:nResult == IDOK )*/
+
+Return .t.
 
 //----------------------------------------------------------------------------//
 

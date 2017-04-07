@@ -76,7 +76,7 @@ METHOD getSQLCreateTable()
 
    cSQLCreateTable        := ChgAtEnd( cSQLCreateTable, ' )', 2 )
 
-   msgalert( cSQLCreateTable, cSQLCreateTable )
+   //msgalert( cSQLCreateTable, cSQLCreateTable )
 
 Return ( cSQLCreateTable )
 

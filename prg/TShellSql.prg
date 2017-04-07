@@ -23,16 +23,9 @@ CLASS TShellSQL FROM TShell
 
    METHOD setFilter()               INLINE ( Self )
 
-<<<<<<< HEAD
    METHOD chgCombo( nTab )
 
    METHOD fastSeek()
-=======
-   METHOD fastSeek()
-
-   METHOD ChgCombo()
-
->>>>>>> origin/master
 
 ENDCLASS
 
