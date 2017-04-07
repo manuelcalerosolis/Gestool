@@ -12,7 +12,7 @@ CLASS TShellSQL FROM TShell
 
    DATA  oModel
 
-   METHOD setXAlias( oModel )      INLINE ( if( hb_isobject( oModel ), ::oModel := oModel, ) )
+   METHOD setXAlias( oModel )       INLINE ( if( hb_isobject( oModel ), ::oModel := oModel, ) )
 
    METHOD createXBrowse()
    METHOD createXFromCode()
@@ -23,9 +23,16 @@ CLASS TShellSQL FROM TShell
 
    METHOD setFilter()               INLINE ( Self )
 
+<<<<<<< HEAD
    METHOD chgCombo( nTab )
 
    METHOD fastSeek()
+=======
+   METHOD fastSeek()
+
+   METHOD ChgCombo()
+
+>>>>>>> origin/master
 
 ENDCLASS
 
@@ -156,7 +163,11 @@ METHOD ClickOnHeader( oCol )
 
    ::selectColumnOrder( oCol )
 
-   ::oModel:refreshSelectOrderBy( oCol:cSortOrder, oCol:cOrder )
+   ::oModel:setColumnOrderBy( oCol:cSortOrder )
+
+   ::oModel:setOrderOrientation( oCol:cOrder )
+
+   ::oModel:refreshSelect()
 
    ::oBrw:Refresh()
 
@@ -172,7 +183,13 @@ METHOD ChgCombo()
 
       ::selectColumnOrder( ::oBrw:aCols[ nPosition ] )
 
-      ::oModel:refreshSelectOrderBy( ::oBrw:aCols[ nPosition ]:cSortOrder, ::oBrw:aCols[ nPosition ]:cOrder )
+      ::oModel:setColumnOrderBy( ::oBrw:aCols[ nPosition ]:cSortOrder )
+
+      ::oModel:setOrderOrientation( ::oBrw:aCols[ nPosition ]:cOrder )
+
+      ::oModel:refreshSelect()
+
+      ::oBrw:Refresh()
 
    end if
 
@@ -186,8 +203,9 @@ METHOD FastSeek()
    local nOrd
    local oCol
    local oGet
-   local lSeek
+   local lFind
    local xValueToSearch
+
 
    if empty( ::oWndBar ) .or. empty( ::oWndBar:oGet )
       Return .f.
@@ -198,16 +216,16 @@ METHOD FastSeek()
    // Estudiamos la cadena de busqueda-------------------------------------------
 
    xValueToSearch    := oGet:oGet:Buffer()
-   xValueToSearch    := alltrim( cvaltochar( xValueToSearch ) )
+   xValueToSearch    := alltrim( upper(cvaltochar( xValueToSearch ) ) )
    xValueToSearch    := strtran( xValueToSearch, chr( 8 ), "" )
 
    // Guradamos valores iniciales-------------------------------------------------
 
-   Return ( msgAlert( xValueToSearch ) )
+   lFind             := ::oModel:find( xValueToSearch )
 
    // color para el get informar al cliente de busqueda erronea----------------
 
-   if lSeek .or. empty( xValueToSearch ) .or. ( "*" $ xValueToSearch )
+   if lFind .or. empty( xValueToSearch ) 
       oGet:SetColor( Rgb( 0, 0, 0 ), Rgb( 255, 255, 255 ) )
    else
       oGet:SetColor( Rgb( 255, 255, 255 ), Rgb( 255, 102, 102 ) )
@@ -217,6 +235,6 @@ METHOD FastSeek()
    ::oBrw:Select( 0 )
    ::oBrw:Select( 1 )
 
-Return ( lSeek )
+Return ( lFind )
 
 //--------------------------------------------------------------------------//

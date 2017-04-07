@@ -1416,6 +1416,13 @@ FUNCTION PedCli( oMenuItem, oWnd, cCodCli, cCodArt, cCodPre, lPedWeb )
          :lHide            := .t.
       end with
 
+      with object ( oWndBrw:AddXCol() )
+         :cHeader          := "Nombre establecimiento"
+         :bEditValue       := {|| retfld( ( D():PedidosClientes( nView ) )->cCodCli, D():Clientes( nView ), "NbrEst" ) }
+         :nWidth           := 120
+         :lHide            := .t.
+      end with
+
       oDetCamposExtra:addCamposExtra( oWndBrw )
 
    	oWndBrw:cHtmlHelp    := "Pedidos a clientes"
