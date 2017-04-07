@@ -124,18 +124,13 @@ Monta el dialogo para añadir, editar,... registros
 
 STATIC FUNCTION editTiposImpresoras()
 
-<<<<<<< HEAD
    oTiposImpresorasModel:loadCurrentBuffer()
 
    if dialogTiposImpresoras()
       msgalert( oTiposImpresorasModel:hBuffer[ "nombre" ], "tengo q modificar" )
-
    end if 
 
 RETURN NIL
-=======
-   /*local oDlg
->>>>>>> 45ba7ea1e144b906d8c91b086416eec2b6c235f3
 
 //----------------------------------------------------------------------------//
 
