@@ -38,7 +38,8 @@ ENDCLASS
 
 METHOD New() 
 
-    ::aModels                   := { TiposImpresorasModel():New():getSQLCreateTable() }
+    ::aModels                   := { TiposImpresorasModel():New():getSQLCreateTable(),  ;
+                                      }
 
     ::cPathDatabaseSQLite       := fullCurDir() + "Database\" 
 

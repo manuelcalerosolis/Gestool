@@ -6,8 +6,6 @@
 
 CLASS BaseModel
 
-   DATA oRowSet
-
    METHOD getEmpresaTableName( cTableName )     INLINE ( cPatEmp() + cTableName )
 
    METHOD getDatosTableName( cTableName )       INLINE ( cPatDat() + cTableName )

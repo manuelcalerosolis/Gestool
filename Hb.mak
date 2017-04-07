@@ -480,6 +480,7 @@ ViewReporting.prg                                  	\
 backupPresenter.prg                                	\
 backupView.prg                                     	\
 BaseModel.prg 														\
+SQLBaseModel.prg 														\
 ClientesModel.prg 												\
 AlbaranesClientesModel.prg 									\
 FacturasClientesModel.prg 										\
@@ -957,6 +958,7 @@ ViewReporting.obj                                  \
 backupPresenter.obj                                \
 backupView.obj                                     \
 BaseModel.obj 													\
+SQLBaseModel.Obj 												\
 ClientesModel.obj 											\
 AlbaranesClientesModel.obj 								\
 FacturasClientesModel.obj 										\
@@ -1421,6 +1423,7 @@ $(OBJ)\backupView.obj                        +
 $(OBJ)\Reporting.obj                         +
 $(OBJ)\ViewReporting.obj 							+
 $(OBJ)\BaseModel.obj 								+
+$(OBJ)\SQLBaseModel.obj 							+
 $(OBJ)\ClientesModel.obj 							+
 $(OBJ)\AlbaranesClientesModel.obj 				+
 $(OBJ)\FacturasClientesModel.obj 				+
