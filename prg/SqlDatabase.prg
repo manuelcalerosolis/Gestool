@@ -9,28 +9,28 @@ static oSqlDatabase
 
 CLASS SQLDatabase
 
-    DATA oConexion
+   DATA oConexion
 
-    DATA cDatabaseSQLite    
+   DATA cDatabaseSQLite    
 
-    DATA cPathDatabaseSQLite    
+   DATA cPathDatabaseSQLite    
 
-    DATA aModels
+   DATA aModels
 
-    METHOD New()                    CONSTRUCTOR
+   METHOD New()                    CONSTRUCTOR
 
-    METHOD Conexion()               INLINE  ( ::oConexion )
-    
-    METHOD Connect() 
-    METHOD Disconnect()             INLINE  ( ::oConexion:disconnect() )
-           
-    METHOD Exec( cSql )             
-    METHOD Query( cSql )            INLINE ( ::oConexion:Query( cSql ) )
-    METHOD Prepare( cSql )          INLINE ( msgalert( cSql, "prepare desde dentro" ), ::oConexion:Prepare( cSql ) )
+   METHOD Conexion()               INLINE  ( ::oConexion )
 
-    METHOD errorInfo()              INLINE ( ::oConexion:errorInfo() )
+   METHOD Connect() 
+   METHOD Disconnect()             INLINE  ( ::oConexion:disconnect() )
+        
+   METHOD Exec( cSql )             
+   METHOD Query( cSql )            INLINE ( ::oConexion:Query( cSql ) )
+   METHOD Prepare( cSql )          INLINE ( msgalert( cSql, "prepare desde dentro" ), ::oConexion:Prepare( cSql ) )
 
-    METHOD checkModelsExistence()   
+   METHOD errorInfo()              INLINE ( ::oConexion:errorInfo() )
+
+   METHOD checkModelsExistence()   
 
 ENDCLASS
 
@@ -38,14 +38,14 @@ ENDCLASS
 
 METHOD New() 
 
-    ::aModels                   := { TiposImpresorasModel():New():getSQLCreateTable(),  ;
-                                      }
+   ::aModels                  := { TiposImpresorasModel():New():getSQLCreateTable(),  ;
+                                   }
 
-    ::cPathDatabaseSQLite       := fullCurDir() + "Database\" 
+   ::cPathDatabaseSQLite      := fullCurDir() + "Database\" 
 
-    ::cDatabaseSQLite           := ::cPathDatabaseSQLite + "Gestool.db"
+   ::cDatabaseSQLite          := ::cPathDatabaseSQLite + "Gestool.db"
 
-    ::oConexion                 := THDO():new( "sqlite" )
+   ::oConexion                := THDO():new( "sqlite" )
 
 Return ( Self )
 
@@ -53,9 +53,9 @@ Return ( Self )
 
 METHOD Connect()
 
-    if !lIsDir( ::cPathDatabaseSQLite )
-        makedir( ::cPathDatabaseSQLite ) 
-    end if 
+   if !lIsDir( ::cPathDatabaseSQLite )
+      makedir( ::cPathDatabaseSQLite ) 
+   end if 
     
 Return ( ::oConexion:Connect( ::cDatabaseSQLite ) )
 
@@ -63,13 +63,13 @@ Return ( ::oConexion:Connect( ::cDatabaseSQLite ) )
 
 METHOD Exec( cSql )
 
-    local lExec     := .t.
+   local lExec    := .t.
 
-    try
-        ::oConexion:Exec( cSql )
-    catch
-        lExec       := .f.
-    end
+   try
+      ::oConexion:Exec( cSql )
+   catch
+      lExec       := .f.
+   end
 
 Return ( lExec )
 
@@ -83,9 +83,9 @@ Return ( aeval( ::aModels, { |cModel| ::Exec( cModel ) } ) )
 
 Function getSQLDatabase()
 
-    if empty( oSqlDatabase )
-        oSqlDatabase            := SQLDatabase():New()
-    end if
+   if empty( oSqlDatabase )
+      oSqlDatabase            := SQLDatabase():New()
+   end if
 
 Return ( oSqlDatabase )
 

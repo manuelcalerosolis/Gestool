@@ -6,49 +6,49 @@
 
 CLASS SQLBaseModel
   
-    DATA     oRowSet
+   DATA     oRowSet
 
-	  DATA     cTableName
-	  DATA	   hColumns
+   DATA     cTableName
+	DATA	   hColumns
   	DATA	   hBuffer
 
-    DATA	   cSQLInsert     
-    DATA     cSQLSelect      
+   DATA	   cSQLInsert     
+   DATA     cSQLSelect      
  
-    DATA     cFind
-    DATA     cColumnOrder
-    DATA     cColumnOrientation
+   DATA     cFind
+   DATA     cColumnOrder
+   DATA     cColumnOrientation
  
-    METHOD   New()
-    METHOD   End()
+   METHOD   New()
+   METHOD   End()
 
-    METHOD   getSQLCreateTable()
-    METHOD	 getInsertInto()						            INLINE	 ( ::cSQLInsert )
-    METHOD   getSQLSelect()                         INLINE   ( ::cSQLSelect )
+   METHOD   getSQLCreateTable()
+   METHOD	getInsertInto()                       INLINE	  ( ::cSQLInsert )
+   METHOD   getSQLSelect()                        INLINE   ( ::cSQLSelect )
 
-    METHOD   getOrderRowSet()
-    METHOD   freeRowSet()                           INLINE   ( if( !empty( ::oRowSet ), ( ::oRowSet:= nil ), ) )
+   METHOD   getOrderRowSet()
+   METHOD   freeRowSet()                          INLINE   ( if( !empty( ::oRowSet ), ( ::oRowSet:= nil ), ) )
 
-    METHOD   setFind( cFind )                       INLINE   ( ::cFind := cFind )
+   METHOD   setFind( cFind )                      INLINE   ( ::cFind := cFind )
  
-    METHOD   setColumnOrderBy( cColumn )            INLINE   ( ::cColumnOrder := cColumn )
-    METHOD   setOrderOrientation( cOrientation )    INLINE   ( ::cColumnOrientation := cOrientation )
+   METHOD   setColumnOrderBy( cColumn )           INLINE   ( ::cColumnOrder := cColumn )
+   METHOD   setOrderOrientation( cOrientation )   INLINE   ( ::cColumnOrientation := cOrientation )
 
-    METHOD   refreshSelect()                        INLINE   ( ::getOrderRowSet( .t. ) )
+   METHOD   refreshSelect()                       INLINE   ( ::getOrderRowSet( .t. ) )
 
-    METHOD   getSelectSentence()
+   METHOD   getSelectSentence()
  
-    METHOD   getSelectByColumn()
+   METHOD   getSelectByColumn()
  
-    METHOD   getSelectByOrder()
+   METHOD   getSelectByOrder()
 
-    METHOD   find( cFind )
+   METHOD   find( cFind )
 
-    METHOD   loadBuffer( id )
-    METHOD   loadBlankBuffer()
-    METHOD   loadCurrentBuffer()
+   METHOD   loadBuffer( id )
+   METHOD   loadBlankBuffer()
+   METHOD   loadCurrentBuffer()
 
-    METHOD   getBuffer( cColumn )                   INLINE   ( hget( ::hBuffer, cColumn ) )
+   METHOD   getBuffer( cColumn )                  INLINE   ( hget( ::hBuffer, cColumn ) )
 
 END CLASS
 
@@ -80,11 +80,6 @@ METHOD getSQLCreateTable()
 
    cSQLCreateTable        := ChgAtEnd( cSQLCreateTable, ' )', 2 )
 
-<<<<<<< HEAD
-=======
-   //msgalert( cSQLCreateTable, cSQLCreateTable )
-
->>>>>>> 45ba7ea1e144b906d8c91b086416eec2b6c235f3
 Return ( cSQLCreateTable )
 
 //---------------------------------------------------------------------------//
@@ -107,7 +102,9 @@ METHOD getOrderRowSet( lRefresh )
 
       msgstop( hb_valtoexp( getSQLDatabase():errorInfo() ) )
 
-      oStmt:free()
+      if !empty( oStmt )
+         oStmt:free()
+      end if    
    
    end
 
