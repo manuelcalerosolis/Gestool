@@ -14,16 +14,10 @@ END CLASS
 
 METHOD New()
 
-   ::cFind                       := ""
-
-   ::cColumnOrder                := ""
-   ::cColumnOrientation          := ""
+   ::cTableName                  := "tipos_impresoras"
 
    ::hColumns                    := {  "id"     => "INTEGER PRIMARY KEY AUTOINCREMENT",;
                                        "nombre" => "VARCHAR( 50 ) NOT NULL" }
-
-   ::cTableName                  := "tipos_impresoras"
-
 
    ::Super:New()
 

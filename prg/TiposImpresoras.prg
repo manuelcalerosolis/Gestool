@@ -91,7 +91,7 @@ FUNCTION TiposImpresoras( oMenuItem, oWnd )
 
       DEFINE BTNSHELL RESOURCE "DEL" OF oWndBrw ;
          NOBORDER ;
-         ACTION   ( oWndBrw:RecDel() );
+         ACTION   oTiposImpresorasModel:deleteSelection();
          TOOLTIP  "(E)liminar";
          MRU ;
          HOTKEY   "E";
@@ -113,7 +113,17 @@ RETURN NIL
 
 STATIC FUNCTION appendTiposImpresoras()
 
+   local nRecno 
+
+   nRecno   := oTiposImpresorasModel:getRowSetRecno()
+
    oTiposImpresorasModel:loadBlankBuffer()
+
+   if dialogTiposImpresoras()
+      oTiposImpresorasModel:insertBuffer()
+   else 
+      oTiposImpresorasModel:setRowSetRecno( nRecno ) 
+   end if
 
 RETURN NIL
 
@@ -124,10 +134,15 @@ Monta el dialogo para añadir, editar,... registros
 
 STATIC FUNCTION editTiposImpresoras()
 
+   local nRecno 
+
+   nRecno   := oTiposImpresorasModel:getRowSetRecno()
+
    oTiposImpresorasModel:loadCurrentBuffer()
 
    if dialogTiposImpresoras()
-      msgalert( oTiposImpresorasModel:hBuffer[ "nombre" ], "tengo q modificar" )
+      oTiposImpresorasModel:updateCurrentBuffer()
+      oTiposImpresorasModel:setRowSetRecno( nRecno )
    end if 
 
 RETURN NIL
@@ -168,4 +183,3 @@ RETURN ( oDlg:nResult == IDOK )
 Return .t.
 
 //----------------------------------------------------------------------------//
-
