@@ -36,14 +36,14 @@ FUNCTION TiposImpresoras( oMenuItem, oWnd )
    disableAcceso()
 
    oTiposImpresorasModel   := TiposImpresorasModel():New()
-   oTiposImpresorasModel:getOrderRowSet()
+   oTiposImpresorasModel:buildRowSet()
 
    oWndBrw                 := TShellSQL():New( 2, 10, 18, 70, "Tipos de impresoras", , oWnd, , , .f., , , oTiposImpresorasModel, , , , , {}, {|| EditTiposImpresoras() },, {|| msgalert( "delete") },, nil, nLevel, "gc_printer2_16", ( 104 + ( 0 * 256 ) + ( 63 * 65536 ) ),,, .t. )
 
       with object ( oWndBrw:AddXCol() )
          :cHeader          := "Id"
          :cSortOrder       := "id"
-         :bEditValue       := {|| oTiposImpresorasModel:getOrderRowSet():fieldGet( "id" ) }
+         :bEditValue       := {|| oTiposImpresorasModel:getRowSet():fieldGet( "id" ) }
          :nWidth           := 40
          :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | oWndBrw:clickOnHeader( oCol ) }
       end with
@@ -51,7 +51,7 @@ FUNCTION TiposImpresoras( oMenuItem, oWnd )
       with object ( oWndBrw:AddXCol() )
          :cHeader          := "Tipo de impresora"
          :cSortOrder       := "nombre"
-         :bEditValue       := {|| oTiposImpresorasModel:getOrderRowSet():fieldGet( "nombre" ) }
+         :bEditValue       := {|| oTiposImpresorasModel:getRowSet():fieldGet( "nombre" ) }
          :nWidth           := 800
          :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | oWndBrw:clickOnHeader( oCol ) }
       end with
