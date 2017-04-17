@@ -26,7 +26,7 @@ CLASS SQLDatabase
         
    METHOD Exec( cSql )             
    METHOD Query( cSql )            INLINE ( ::oConexion:Query( cSql ) )
-   METHOD Prepare( cSql )          INLINE ( msgalert( cSql, "prepare desde dentro" ), ::oConexion:Prepare( cSql ) )
+   METHOD Prepare( cSql )          INLINE ( ::oConexion:Prepare( cSql ) )
 
    METHOD errorInfo()              INLINE ( ::oConexion:errorInfo() )
 
@@ -39,7 +39,7 @@ ENDCLASS
 METHOD New() 
 
    ::aModels                  := { TiposImpresorasModel():New():getSQLCreateTable(),  ;
-                                   }
+                                   HistoricosUsuariosModel():New():getSQLCreateTable() }
 
    ::cPathDatabaseSQLite      := fullCurDir() + "Database\" 
 
