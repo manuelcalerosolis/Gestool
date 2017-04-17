@@ -5546,358 +5546,351 @@ STATIC FUNCTION cPedCli( aGet, aTmp, oBrwLin, oBrwPgo, nMode )
       Return .t.
    end if
 
-   if dbSeekInOrd( cPedido, "nNumPed", dbfPedCliT )
+   if !( dbSeekInOrd( cPedido, "nNumPed", dbfPedCliT ) )
+      msgStop( "Pedido " + cPedido + " no existe" )
+      Return .t.
+   end if
 
-      CursorWait()
+   if ( dbfPedCliT )->nEstado == 3
+      msgStop( "Pedido " + cPedido + " ya fue recibido" )
+      Return .t.
+   end if
 
-      if ( dbfPedCliT )->nEstado == 3
+   CursorWait()
 
-         MsgStop( "Pedido recibido" )
-         lValid   := .f.
+   aGet[ _CSERALB ]:cText( (dbfPedCliT)->cSerPed )
+   aGet[ _CNUMPED ]:bWhen := {|| .f. }
 
+   aGet[ _CCODCLI ]:cText( (dbfPedCliT)->CCODCLI )
+   aGet[ _CCODCLI ]:lValid()
+   aGet[ _CCODCLI ]:Disable()
+
+   aGet[ _CNOMCLI ]:cText( (dbfPedCliT)->CNOMCLI )
+   aGet[ _CDIRCLI ]:cText( (dbfPedCliT)->CDIRCLI )
+   aGet[ _CPOBCLI ]:cText( (dbfPedCliT)->CPOBCLI )
+   aGet[ _CPRVCLI ]:cText( (dbfPedCliT)->CPRVCLI )
+   aGet[ _CPOSCLI ]:cText( (dbfPedCliT)->CPOSCLI )
+   aGet[ _CDNICLI ]:cText( (dbfPedCliT)->CDNICLI )
+   aGet[ _CCODALM ]:cText( (dbfPedCliT)->CCODALM )
+   aGet[ _CTLFCLI ]:cText( (dbfPedCliT)->CTLFCLI )
+   aGet[ _CCODALM ]:lValid()
+
+   aGet[ _CCODCAJ ]:cText( (dbfPedCliT)->cCodCaj )
+   aGet[ _CCODCAJ ]:lValid()
+
+   aGet[ _CCODPAGO]:cText( (dbfPedCliT)->CCODPGO )
+   aGet[ _CCODPAGO]:lValid()
+
+   aGet[ _CCODAGE ]:cText( (dbfPedCliT)->CCODAGE )
+   aGet[ _CCODAGE ]:lValid()
+
+   aGet[ _NPCTCOMAGE ]:cText( ( dbfPedCliT )->nPctComAge )
+
+   aGet[ _CCODTAR ]:cText( (dbfPedCliT)->CCODTAR )
+   aGet[ _CCODTAR ]:lValid()
+
+   aGet[ _CCODOBR ]:cText( (dbfPedCliT)->CCODOBR )
+   aGet[ _CCODOBR ]:lValid()
+
+   oGetTarifa:setTarifa( ( dbfPedCliT )->nTarifa )
+
+   aGet[ _CCODTRN ]:cText( ( dbfPedCliT )->cCodTrn )
+   aGet[ _CCODTRN ]:lValid()
+
+   aGet[ _LIVAINC ]:Click( ( dbfPedCliT )->lIvaInc )
+   aGet[ _LRECARGO]:Click( ( dbfPedCliT )->lRecargo )
+   aGet[ _LOPERPV ]:Click( ( dbfPedCliT )->lOperPv )
+
+   /*
+   Pasamos los comentarios-----------------------------------------------
+   */
+
+   aGet[ _CCONDENT ]:cText( ( dbfPedCliT )->cCondEnt )
+   aGet[ _MCOMENT  ]:cText( ( dbfPedCliT )->mComent )
+   aGet[ _MOBSERV  ]:cText( ( dbfPedCliT )->mObserv )
+
+   /*
+   Pasamos todos los Descuentos------------------------------------------
+   */
+
+   aGet[ _CDTOESP ]:cText( ( dbfPedCliT )->cDtoEsp )
+   aGet[ _NDTOESP ]:cText( ( dbfPedCliT )->nDtoEsp )
+   aGet[ _CDPP    ]:cText( ( dbfPedCliT )->cDpp    )
+   aGet[ _NDPP    ]:cText( ( dbfPedCliT )->nDpp    )
+   aGet[ _CDTOUNO ]:cText( ( dbfPedCLiT )->cDtoUno )
+   aGet[ _NDTOUNO ]:cText( ( dbfPedCLiT )->nDtoUno )
+   aGet[ _CDTODOS ]:cText( ( dbfPedCLiT )->cDtoDos )
+   aGet[ _NDTODOS ]:cText( ( dbfPedCLiT )->nDtoDos )
+   aGet[ _CMANOBR ]:cText( ( dbfPedCliT )->cManObr )
+   aGet[ _NIVAMAN ]:cText( ( dbfPedCliT )->nIvaMan )
+   aGet[ _NMANOBR ]:cText( ( dbfPedCliT )->nManObr )
+   aGet[ _NBULTOS ]:cText( ( dbfPedCliT )->nBultos )
+
+   aTmp[ _CSUPED ]                := ( dbfPedCliT )->cSuPed
+
+   /*
+   Código de grupo-----------------------------------------------------
+   */
+
+   aTmp[ _CCODGRP ]               := ( dbfPedCliT )->cCodGrp
+   aTmp[ _LMODCLI ]               := ( dbfPedCliT )->lModCli
+   aTmp[ _LOPERPV ]               := ( dbfPedCliT )->lOperPv
+
+   /*
+   Datos de alquileres---------------------------------------------------
+   */
+
+   aTmp[ _LALQUILER ]            := ( dbfPedCliT )->lAlquiler
+   aTmp[ _DFECENTR  ]            := ( dbfPedCliT )->dFecEntr
+   aTmp[ _DFECSAL   ]            := ( dbfPedCliT )->dFecSal
+
+   if !empty( oTipAlb )
+      if ( dbfPedCliT )->lAlquiler
+         oTipAlb:Select( 2 )
       else
+         oTipAlb:Select( 1 )
+      end if
+   end if
 
-         aGet[ _CSERALB ]:cText( (dbfPedCliT)->cSerPed )
-         aGet[ _CNUMPED ]:bWhen := {|| .f. }
+   /*
+   Si encuentra las lineas-----------------------------------------------
+   */
 
-         aGet[ _CCODCLI ]:cText( (dbfPedCliT)->CCODCLI )
-         aGet[ _CCODCLI ]:lValid()
-         aGet[ _CCODCLI ]:Disable()
+   if ( dbfPedCliL )->( dbSeek( cPedido ) )
 
-         aGet[ _CNOMCLI ]:cText( (dbfPedCliT)->CNOMCLI )
-         aGet[ _CDIRCLI ]:cText( (dbfPedCliT)->CDIRCLI )
-         aGet[ _CPOBCLI ]:cText( (dbfPedCliT)->CPOBCLI )
-         aGet[ _CPRVCLI ]:cText( (dbfPedCliT)->CPRVCLI )
-         aGet[ _CPOSCLI ]:cText( (dbfPedCliT)->CPOSCLI )
-         aGet[ _CDNICLI ]:cText( (dbfPedCliT)->CDNICLI )
-         aGet[ _CCODALM ]:cText( (dbfPedCliT)->CCODALM )
-         aGet[ _CTLFCLI ]:cText( (dbfPedCliT)->CTLFCLI )
-         aGet[ _CCODALM ]:lValid()
+      if lNumPed()
+         ( dbfTmpLin )->( dbAppend() )
+         cDesAlb                 := Rtrim( cNumPed() ) + Space( 1 ) + ( dbfPedCliT )->cSerPed + "/" + AllTrim( Str( ( dbfPedCliT )->nNumPed ) ) + "/" + ( dbfPedCliT )->cSufPed
+         cDesAlb                 += " - Fecha " + Dtoc( ( dbfPedCliT )->dFecPed )
+         (dbfTmpLin)->cDetalle   := cDesAlb  
+         (dbfTmpLin)->lControl   := .t.
+      end if
 
-         aGet[ _CCODCAJ ]:cText( (dbfPedCliT)->cCodCaj )
-         aGet[ _CCODCAJ ]:lValid()
+      while ( ( dbfPedCliL )->cSerPed + Str( ( dbfPedCliL )->nNumPed ) + ( dbfPedCliL )->cSufPed == cPedido )
 
-         aGet[ _CCODPAGO]:cText( (dbfPedCliT)->CCODPGO )
-         aGet[ _CCODPAGO]:lValid()
+         nTotRet                 := ( dbfPedCliL )->nUniCaja
+         nTotRet                 -= nUnidadesRecibidasAlbaranesClientes( cPedido, ( dbfPedCliL )->cRef, ( dbfPedCliL )->cValPr1, ( dbfPedCliL )->cValPr2, D():Get( "AlbCliL", nView ) )
+         nTotRet                 -= nUnidadesRecibidasFacturasClientes( cPedido, ( dbfPedCliL )->cRef, ( dbfPedCliL )->cValPr1, ( dbfPedCliL )->cValPr2, D():Get( "FacCliL", nView ) )
 
-         aGet[ _CCODAGE ]:cText( (dbfPedCliT)->CCODAGE )
-         aGet[ _CCODAGE ]:lValid()
+         //if ( nTotNPedCli( dbfPedCliL ) == 0 .or. nTotRet > 0 ) para meter lineas en negativo
 
-         aGet[ _NPCTCOMAGE ]:cText( ( dbfPedCliT )->nPctComAge )
+            (dbfTmpLin)->( dbAppend() )
 
-         aGet[ _CCODTAR ]:cText( (dbfPedCliT)->CCODTAR )
-         aGet[ _CCODTAR ]:lValid()
+            (dbfTmpLin)->nNumAlb    := 0
+            (dbfTmpLin)->nNumLin    := (dbfPedCliL)->nNumLin
+            (dbfTmpLin)->nPosPrint  := (dbfPedCliL)->nPosPrint
+            (dbfTmpLin)->cRef       := (dbfPedCliL)->cRef
+            (dbfTmpLin)->cDetalle   := (dbfPedCliL)->cDetalle
+            (dbfTmpLin)->mLngDes    := (dbfPedCliL)->mLngDes
+            (dbfTmpLin)->mNumSer    := (dbfPedCliL)->mNumSer
+            (dbfTmpLin)->nPreUnit   := (dbfPedCliL)->nPreDiv
+            (dbfTmpLin)->nPntVer    := (dbfPedCliL)->nPntVer
+            (dbfTmpLin)->nImpTrn    := (dbfPedCliL)->nImpTrn
+            (dbfTmpLin)->nUndKit    := (dbfPedCliL)->nUndKit
+            (dbfTmpLin)->nPesoKg    := (dbfPedCliL)->nPesoKg
+            (dbfTmpLin)->cPesoKg    := (dbfPedCliL)->cPesoKg
+            (dbfTmpLin)->cUnidad    := (dbfPedCliL)->cUnidad
+            (dbfTmpLin)->nVolumen   := (dbfPedCliL)->nVolumen
+            (dbfTmpLin)->cVolumen   := (dbfPedCliL)->cVolumen
+            (dbfTmpLin)->nIva       := (dbfPedCliL)->nIva
+            (dbfTmpLin)->nReq       := (dbfPedCliL)->nReq
+            (dbfTmpLin)->cUnidad    := (dbfPedCliL)->cUnidad
+            (dbfTmpLin)->nDto       := (dbfPedCliL)->nDto
+            (dbfTmpLin)->nDtoPrm    := (dbfPedCliL)->nDtoPrm
+            (dbfTmpLin)->nComAge    := (dbfPedCliL)->nComAge
+            (dbfTmpLin)->lTotLin    := (dbfPedCliL)->lTotLin
+            (dbfTmpLin)->nDtoDiv    := (dbfPedCliL)->nDtoDiv
+            (dbfTmpLin)->nCtlStk    := (dbfPedCliL)->nCtlStk
+            (dbfTmpLin)->nCosDiv    := (dbfPedCliL)->nCosDiv
+            (dbfTmpLin)->nPvpRec    := (dbfPedCliL)->nPvpRec
+            (dbfTmpLin)->cTipMov    := (dbfPedCliL)->cTipMov
+            (dbfTmpLin)->cAlmLin    := (dbfPedCliL)->cAlmLin
+            (dbfTmpLin)->lIvaLin    := (dbfPedCliL)->lIvaLin
+            (dbfTmpLin)->cCodImp    := (dbfPedCLiL)->cCodImp
+            (dbfTmpLin)->nValImp    := (dbfPedCliL)->nValImp
+            (dbfTmpLin)->lLote      := (dbfPedCliL)->lLote
+            (dbfTmpLin)->nLote      := (dbfPedCliL)->nLote
+            (dbfTmpLin)->cLote      := (dbfPedCliL)->cLote
+            (dbfTmpLin)->lKitArt    := (dbfPedCliL)->lKitArt
+            (dbfTmpLin)->lKitChl    := (dbfPedCliL)->lKitChl
+            (dbfTmpLin)->lKitPrc    := (dbfPedCliL)->lKitPrc
+            (dbfTmpLin)->lMsgVta    := (dbfPedCliL)->lMsgVta
+            (dbfTmpLin)->lNotVta    := (dbfPedCliL)->lNotVta
+            (dbfTmpLin)->cCodPr1    := (dbfPedCliL)->cCodPr1
+            (dbfTmpLin)->cCodPr2    := (dbfPedCliL)->cCodPr2
+            (dbfTmpLin)->cValPr1    := (dbfPedCliL)->cValPr1
+            (dbfTmpLin)->cValPr2    := (dbfPedCliL)->cValPr2
+            (dbfTmpLin)->lImpLin    := (dbfPedCliL)->lImpLin
+            (dbfTmpLin)->cCodTip    := (dbfPedCliL)->cCodTip
+            (dbfTmpLin)->mObsLin    := (dbfPedCliL)->mObsLin
+            (dbfTmpLin)->Descrip    := (dbfPedCliL)->Descrip
+            (dbfTmpLin)->cCodPrv    := (dbfPedCliL)->cCodPrv
+            (dbfTmpLin)->cImagen    := (dbfPedCliL)->cImagen
+            (dbfTmpLin)->cCodFam    := (dbfPedCliL)->cCodFam
+            (dbfTmpLin)->cGrpFam    := (dbfPedCliL)->cGrpFam
+            (dbfTmpLin)->cRefPrv    := (dbfPedCliL)->cRefPrv
+            (dbfTmpLin)->dFecEnt    := (dbfPedCliL)->dFecEnt
+            (dbfTmpLin)->dFecSal    := (dbfPedCliL)->dFecSal
+            (dbfTmpLin)->nPreAlq    := (dbfPedCliL)->nPreAlq
+            (dbfTmpLin)->lAlquiler  := (dbfPedCliL)->lAlquiler
+            (dbfTmpLin)->nNumMed    := (dbfPedCliL)->nNumMed
+            (dbfTmpLin)->nMedUno    := (dbfPedCliL)->nMedUno
+            (dbfTmpLin)->nMedDos    := (dbfPedCliL)->nMedDos
+            (dbfTmpLin)->nMedTre    := (dbfPedCliL)->nMedTre
+            (dbfTmpLin)->nPuntos    := (dbfPedCliL)->nPuntos
+            (dbfTmpLin)->nValPnt    := (dbfPedCliL)->nValPnt
+            (dbfTmpLin)->nDtoPnt    := (dbfPedCliL)->nDtoPnt
+            (dbfTmpLin)->nIncPnt    := (dbfPedCliL)->nIncPnt
+            (dbfTmpLin)->cNumPed    := cPedido
+            (dbfTmpLin)->lControl   := (dbfPedCliL)->lControl
+            (dbfTmpLin)->lLinOfe    := (dbfPedCliL)->lLinOfe
+            (dbfTmpLin)->nBultos    := (dbfPedCliL)->nBultos
+            (dbfTmpLin)->cFormato   := (dbfPedCliL)->cFormato
+            (dbfTmpLin)->cObrLin    := (dbfPedCliL)->cObrLin
+            (dbfTmpLin)->cRefAux    := (dbfPedCliL)->cRefAux
+            (dbfTmpLin)->cRefAux2   := (dbfPedCliL)->cRefAux2
+            (dbfTmpLin)->cCtrCoste  := (dbfPedCliL)->cCtrCoste
+            (dbfTmpLin)->cTipCtr    := (dbfPedCliL)->cTipCtr
+            (dbfTmpLin)->cTerCtr    := (dbfPedCliL)->cTerCtr
+            //(dbfTmpLin)->nUndKit    := (dbfPedCliL)->nNudKit
 
-         aGet[ _CCODOBR ]:cText( (dbfPedCliT)->CCODOBR )
-         aGet[ _CCODOBR ]:lValid()
+            if !( dbfPedCliL )->lKitArt
 
-         oGetTarifa:setTarifa( ( dbfPedCliT )->nTarifa )
+               /*
+               Comprobamos si hay calculos por cajas
+               */
 
-         aGet[ _CCODTRN ]:cText( ( dbfPedCliT )->cCodTrn )
-         aGet[ _CCODTRN ]:lValid()
+               if lCalCaj()
 
-         aGet[ _LIVAINC ]:Click( ( dbfPedCliT )->lIvaInc )
-         aGet[ _LRECARGO]:Click( ( dbfPedCliT )->lRecargo )
-         aGet[ _LOPERPV ]:Click( ( dbfPedCliT )->lOperPv )
-
-         /*
-         Pasamos los comentarios-----------------------------------------------
-         */
-
-         aGet[ _CCONDENT ]:cText( ( dbfPedCliT )->cCondEnt )
-         aGet[ _MCOMENT  ]:cText( ( dbfPedCliT )->mComent )
-         aGet[ _MOBSERV  ]:cText( ( dbfPedCliT )->mObserv )
-
-         /*
-         Pasamos todos los Descuentos------------------------------------------
-         */
-
-         aGet[ _CDTOESP ]:cText( ( dbfPedCliT )->cDtoEsp )
-         aGet[ _NDTOESP ]:cText( ( dbfPedCliT )->nDtoEsp )
-         aGet[ _CDPP    ]:cText( ( dbfPedCliT )->cDpp    )
-         aGet[ _NDPP    ]:cText( ( dbfPedCliT )->nDpp    )
-         aGet[ _CDTOUNO ]:cText( ( dbfPedCLiT )->cDtoUno )
-         aGet[ _NDTOUNO ]:cText( ( dbfPedCLiT )->nDtoUno )
-         aGet[ _CDTODOS ]:cText( ( dbfPedCLiT )->cDtoDos )
-         aGet[ _NDTODOS ]:cText( ( dbfPedCLiT )->nDtoDos )
-         aGet[ _CMANOBR ]:cText( ( dbfPedCliT )->cManObr )
-         aGet[ _NIVAMAN ]:cText( ( dbfPedCliT )->nIvaMan )
-         aGet[ _NMANOBR ]:cText( ( dbfPedCliT )->nManObr )
-         aGet[ _NBULTOS ]:cText( ( dbfPedCliT )->nBultos )
-
-         aTmp[ _CSUPED ]                := ( dbfPedCliT )->cSuPed
-
-         /*
-         Código de grupo-----------------------------------------------------
-         */
-
-         aTmp[ _CCODGRP ]               := ( dbfPedCliT )->cCodGrp
-         aTmp[ _LMODCLI ]               := ( dbfPedCliT )->lModCli
-         aTmp[ _LOPERPV ]               := ( dbfPedCliT )->lOperPv
-
-         /*
-         Datos de alquileres---------------------------------------------------
-         */
-
-         aTmp[ _LALQUILER ]            := ( dbfPedCliT )->lAlquiler
-         aTmp[ _DFECENTR  ]            := ( dbfPedCliT )->dFecEntr
-         aTmp[ _DFECSAL   ]            := ( dbfPedCliT )->dFecSal
-
-         if !empty( oTipAlb )
-            if ( dbfPedCliT )->lAlquiler
-               oTipAlb:Select( 2 )
-            else
-               oTipAlb:Select( 1 )
-            end if
-         end if
-
-         /*
-         Si encuentra las lineas-----------------------------------------------
-         */
-
-         if ( dbfPedCliL )->( dbSeek( cPedido ) )
-
-            if lNumPed()
-               ( dbfTmpLin )->( dbAppend() )
-               cDesAlb                 := Rtrim( cNumPed() ) + Space( 1 ) + ( dbfPedCliT )->cSerPed + "/" + AllTrim( Str( ( dbfPedCliT )->nNumPed ) ) + "/" + ( dbfPedCliT )->cSufPed
-               cDesAlb                 += " - Fecha " + Dtoc( ( dbfPedCliT )->dFecPed )
-               (dbfTmpLin)->cDetalle   := cDesAlb  
-               (dbfTmpLin)->lControl   := .t.
-            end if
-
-            while ( ( dbfPedCliL )->cSerPed + Str( ( dbfPedCliL )->nNumPed ) + ( dbfPedCliL )->cSufPed == cPedido )
-
-               nTotRet                 := ( dbfPedCliL )->nUniCaja
-               nTotRet                 -= nUnidadesRecibidasAlbaranesClientes( cPedido, ( dbfPedCliL )->cRef, ( dbfPedCliL )->cValPr1, ( dbfPedCliL )->cValPr2, D():Get( "AlbCliL", nView ) )
-               nTotRet                 -= nUnidadesRecibidasFacturasClientes( cPedido, ( dbfPedCliL )->cRef, ( dbfPedCliL )->cValPr1, ( dbfPedCliL )->cValPr2, D():Get( "FacCliL", nView ) )
-
-               //if ( nTotNPedCli( dbfPedCliL ) == 0 .or. nTotRet > 0 ) para meter lineas en negativo
-
-                  (dbfTmpLin)->( dbAppend() )
-
-                  (dbfTmpLin)->nNumAlb    := 0
-                  (dbfTmpLin)->nNumLin    := (dbfPedCliL)->nNumLin
-                  (dbfTmpLin)->nPosPrint  := (dbfPedCliL)->nPosPrint
-                  (dbfTmpLin)->cRef       := (dbfPedCliL)->cRef
-                  (dbfTmpLin)->cDetalle   := (dbfPedCliL)->cDetalle
-                  (dbfTmpLin)->mLngDes    := (dbfPedCliL)->mLngDes
-                  (dbfTmpLin)->mNumSer    := (dbfPedCliL)->mNumSer
-                  (dbfTmpLin)->nPreUnit   := (dbfPedCliL)->nPreDiv
-                  (dbfTmpLin)->nPntVer    := (dbfPedCliL)->nPntVer
-                  (dbfTmpLin)->nImpTrn    := (dbfPedCliL)->nImpTrn
-                  (dbfTmpLin)->nUndKit    := (dbfPedCliL)->nUndKit
-                  (dbfTmpLin)->nPesoKg    := (dbfPedCliL)->nPesoKg
-                  (dbfTmpLin)->cPesoKg    := (dbfPedCliL)->cPesoKg
-                  (dbfTmpLin)->cUnidad    := (dbfPedCliL)->cUnidad
-                  (dbfTmpLin)->nVolumen   := (dbfPedCliL)->nVolumen
-                  (dbfTmpLin)->cVolumen   := (dbfPedCliL)->cVolumen
-                  (dbfTmpLin)->nIva       := (dbfPedCliL)->nIva
-                  (dbfTmpLin)->nReq       := (dbfPedCliL)->nReq
-                  (dbfTmpLin)->cUnidad    := (dbfPedCliL)->cUnidad
-                  (dbfTmpLin)->nDto       := (dbfPedCliL)->nDto
-                  (dbfTmpLin)->nDtoPrm    := (dbfPedCliL)->nDtoPrm
-                  (dbfTmpLin)->nComAge    := (dbfPedCliL)->nComAge
-                  (dbfTmpLin)->lTotLin    := (dbfPedCliL)->lTotLin
-                  (dbfTmpLin)->nDtoDiv    := (dbfPedCliL)->nDtoDiv
-                  (dbfTmpLin)->nCtlStk    := (dbfPedCliL)->nCtlStk
-                  (dbfTmpLin)->nCosDiv    := (dbfPedCliL)->nCosDiv
-                  (dbfTmpLin)->nPvpRec    := (dbfPedCliL)->nPvpRec
-                  (dbfTmpLin)->cTipMov    := (dbfPedCliL)->cTipMov
-                  (dbfTmpLin)->cAlmLin    := (dbfPedCliL)->cAlmLin
-                  (dbfTmpLin)->lIvaLin    := (dbfPedCliL)->lIvaLin
-                  (dbfTmpLin)->cCodImp    := (dbfPedCLiL)->cCodImp
-                  (dbfTmpLin)->nValImp    := (dbfPedCliL)->nValImp
-                  (dbfTmpLin)->lLote      := (dbfPedCliL)->lLote
-                  (dbfTmpLin)->nLote      := (dbfPedCliL)->nLote
-                  (dbfTmpLin)->cLote      := (dbfPedCliL)->cLote
-                  (dbfTmpLin)->lKitArt    := (dbfPedCliL)->lKitArt
-                  (dbfTmpLin)->lKitChl    := (dbfPedCliL)->lKitChl
-                  (dbfTmpLin)->lKitPrc    := (dbfPedCliL)->lKitPrc
-                  (dbfTmpLin)->lMsgVta    := (dbfPedCliL)->lMsgVta
-                  (dbfTmpLin)->lNotVta    := (dbfPedCliL)->lNotVta
-                  (dbfTmpLin)->cCodPr1    := (dbfPedCliL)->cCodPr1
-                  (dbfTmpLin)->cCodPr2    := (dbfPedCliL)->cCodPr2
-                  (dbfTmpLin)->cValPr1    := (dbfPedCliL)->cValPr1
-                  (dbfTmpLin)->cValPr2    := (dbfPedCliL)->cValPr2
-                  (dbfTmpLin)->lImpLin    := (dbfPedCliL)->lImpLin
-                  (dbfTmpLin)->cCodTip    := (dbfPedCliL)->cCodTip
-                  (dbfTmpLin)->mObsLin    := (dbfPedCliL)->mObsLin
-                  (dbfTmpLin)->Descrip    := (dbfPedCliL)->Descrip
-                  (dbfTmpLin)->cCodPrv    := (dbfPedCliL)->cCodPrv
-                  (dbfTmpLin)->cImagen    := (dbfPedCliL)->cImagen
-                  (dbfTmpLin)->cCodFam    := (dbfPedCliL)->cCodFam
-                  (dbfTmpLin)->cGrpFam    := (dbfPedCliL)->cGrpFam
-                  (dbfTmpLin)->cRefPrv    := (dbfPedCliL)->cRefPrv
-                  (dbfTmpLin)->dFecEnt    := (dbfPedCliL)->dFecEnt
-                  (dbfTmpLin)->dFecSal    := (dbfPedCliL)->dFecSal
-                  (dbfTmpLin)->nPreAlq    := (dbfPedCliL)->nPreAlq
-                  (dbfTmpLin)->lAlquiler  := (dbfPedCliL)->lAlquiler
-                  (dbfTmpLin)->nNumMed    := (dbfPedCliL)->nNumMed
-                  (dbfTmpLin)->nMedUno    := (dbfPedCliL)->nMedUno
-                  (dbfTmpLin)->nMedDos    := (dbfPedCliL)->nMedDos
-                  (dbfTmpLin)->nMedTre    := (dbfPedCliL)->nMedTre
-                  (dbfTmpLin)->nPuntos    := (dbfPedCliL)->nPuntos
-                  (dbfTmpLin)->nValPnt    := (dbfPedCliL)->nValPnt
-                  (dbfTmpLin)->nDtoPnt    := (dbfPedCliL)->nDtoPnt
-                  (dbfTmpLin)->nIncPnt    := (dbfPedCliL)->nIncPnt
-                  (dbfTmpLin)->cNumPed    := cPedido
-                  (dbfTmpLin)->lControl   := (dbfPedCliL)->lControl
-                  (dbfTmpLin)->lLinOfe    := (dbfPedCliL)->lLinOfe
-                  (dbfTmpLin)->nBultos    := (dbfPedCliL)->nBultos
-                  (dbfTmpLin)->cFormato   := (dbfPedCliL)->cFormato
-                  (dbfTmpLin)->cObrLin    := (dbfPedCliL)->cObrLin
-                  (dbfTmpLin)->cRefAux    := (dbfPedCliL)->cRefAux
-                  (dbfTmpLin)->cRefAux2   := (dbfPedCliL)->cRefAux2
-                  (dbfTmpLin)->cCtrCoste  := (dbfPedCliL)->cCtrCoste
-                  (dbfTmpLin)->cTipCtr    := (dbfPedCliL)->cTipCtr
-                  (dbfTmpLin)->cTerCtr    := (dbfPedCliL)->cTerCtr
-                  //(dbfTmpLin)->nUndKit    := (dbfPedCliL)->nNudKit
-
-                  if !( dbfPedCliL )->lKitArt
-
-                     /*
-                     Comprobamos si hay calculos por cajas
-                     */
-
-                     if lCalCaj()
-
-                        nDiv                       := DecimalMod( nTotRet, ( dbfPedCliL )->nCanPed )
-                        if nDiv == 0 .and. ( dbfPedCliL )->nCanPed != 0
-                           ( dbfTmpLin )->nCanEnt  := ( dbfPedCliL )->nCanPed
-                           ( dbfTmpLin )->nUniCaja := nTotRet // / ( dbfPedCliL )->nCanPed
-                        else
-                           ( dbfTmpLin )->nCanEnt  := ( dbfPedCliL )->nCanPed
-                           ( dbfTmpLin )->nUniCaja := nTotRet
-                        end if
-
-                     else
-
-                        ( dbfTmpLin )->nCanEnt     := ( dbfPedCliL )->nCanPed
-                        ( dbfTmpLin )->nUniCaja    := nTotRet
-
-                     end if
-
-                  else
-
+                  nDiv                       := DecimalMod( nTotRet, ( dbfPedCliL )->nCanPed )
+                  if nDiv == 0 .and. ( dbfPedCliL )->nCanPed != 0
                      ( dbfTmpLin )->nCanEnt  := ( dbfPedCliL )->nCanPed
-                     ( dbfTmpLin )->nUniCaja := ( dbfPedCliL )->nUniCaja
-
+                     ( dbfTmpLin )->nUniCaja := nTotRet // / ( dbfPedCliL )->nCanPed
+                  else
+                     ( dbfTmpLin )->nCanEnt  := ( dbfPedCliL )->nCanPed
+                     ( dbfTmpLin )->nUniCaja := nTotRet
                   end if
 
-               //end if
+               else
 
-               ( dbfPedCliL )->( dbSkip( 1 ) )
+                  ( dbfTmpLin )->nCanEnt     := ( dbfPedCliL )->nCanPed
+                  ( dbfTmpLin )->nUniCaja    := nTotRet
 
-            end while
+               end if
 
-            ( dbfTmpLin )->( dbGoTop() )
+            else
 
-            /*
-            Pasamos los pagos a cuenta-----------------------------------------
-            */
-
-            if ( dbfPedCliP )->( dbSeek( cPedido ) )
-
-               while ( dbfPedCliP )->cSerPed + Str( ( dbfPedCliP )->nNumPed ) + ( dbfPedCliP )->cSufPed == cPedido .and. !( dbfPedCliP )->( Eof() )
-
-                  if !( dbfPedCliP )->lPasado
-
-                     ( dbfTmpPgo )->( dbAppend() )
-
-                     ( dbfTmpPgo )->nNumRec     := ( dbfTmpPgo )->( Recno() )
-                     ( dbfTmpPgo )->cCodCaj     := ( dbfPedCliP )->cCodCaj
-                     ( dbfTmpPgo )->cTurRec     := ( dbfPedCliP )->cTurRec
-                     ( dbfTmpPgo )->cCodCli     := ( dbfPedCliP )->cCodCli
-                     ( dbfTmpPgo )->dEntrega    := ( dbfPedCliP )->dEntrega
-                     ( dbfTmpPgo )->nImporte    := ( dbfPedCliP )->nImporte
-                     ( dbfTmpPgo )->cDescrip    := ( dbfPedCliP )->cDesCrip
-                     ( dbfTmpPgo )->cPgdoPor    := ( dbfPedCliP )->cPgdoPor
-                     ( dbfTmpPgo )->cDocPgo     := ( dbfPedCliP )->cDocPgo
-                     ( dbfTmpPgo )->cDivPgo     := ( dbfPedCliP )->cDivPgo
-                     ( dbfTmpPgo )->nVdvPgo     := ( dbfPedCliP )->nVdvPgo
-                     ( dbfTmpPgo )->cCodAge     := ( dbfPedCliP )->cCodAge
-                     ( dbfTmpPgo )->cCodPgo     := ( dbfPedCliP )->cCodPgo
-                     ( dbfTmpPgo )->cBncEmp     := ( dbfPedCliP )->cBncEmp
-                     ( dbfTmpPgo )->cBncCli     := ( dbfPedCliP )->cBncCli
-                     ( dbfTmpPgo )->cEPaisIBAN  := ( dbfPedCliP )->cEPaisIBAN
-                     ( dbfTmpPgo )->cECtrlIBAN  := ( dbfPedCliP )->cECtrlIBAN
-                     ( dbfTmpPgo )->cEntEmp     := ( dbfPedCliP )->cEntEmp
-                     ( dbfTmpPgo )->cSucEmp     := ( dbfPedCliP )->cSucEmp
-                     ( dbfTmpPgo )->cDigEmp     := ( dbfPedCliP )->cDigEmp
-                     ( dbfTmpPgo )->cCtaEmp     := ( dbfPedCliP )->cCtaEmp
-                     ( dbfTmpPgo )->cPaisIBAN   := ( dbfPedCliP )->cPaisIBAN
-                     ( dbfTmpPgo )->cCtrlIBAN   := ( dbfPedCliP )->cCtrlIBAN
-                     ( dbfTmpPgo )->cEntCli     := ( dbfPedCliP )->cEntCli
-                     ( dbfTmpPgo )->cSucCli     := ( dbfPedCliP )->cSucCli
-                     ( dbfTmpPgo )->cDigCli     := ( dbfPedCliP )->cDigCli
-                     ( dbfTmpPgo )->cCtaCli     := ( dbfPedCliP )->cCtaCli
-                     ( dbfTmpPgo )->lCloPgo     := .f.
-                     ( dbfTmpPgo )->cNumRec     := ( dbfPedCliP )->cSerPed + Str( ( dbfPedCliP )->nNumPed ) + ( dbfPedCliP )->cSufPed + Str( ( dbfPedCliP )->nNumRec )
-
-                  end if
-
-                  ( dbfPedCliP )->( dbSkip() )
-
-               end while
+               ( dbfTmpLin )->nCanEnt  := ( dbfPedCliL )->nCanPed
+               ( dbfTmpLin )->nUniCaja := ( dbfPedCliL )->nUniCaja
 
             end if
 
-            ( dbfPedCliP )->( dbGoTop() )
+         //end if
 
-            /*
-            Pasamos las incidencias de los pedidos-----------------------------
-            */
+         ( dbfPedCliL )->( dbSkip( 1 ) )
 
-            if ( dbfPedCliI )->( dbSeek( cPedido ) )
+      end while
 
-               while ( dbfPedCliI )->cSerPed + Str( ( dbfPedCliI )->nNumPed ) + ( dbfPedCliI )->cSufPed == cPedido .and. !( dbfPedCliI )->( Eof() )
-                  dbPass( dbfPedCliI, dbfTmpInc, .t. )
-                  ( dbfPedCliI )->( dbSkip() )
-               end while
+      ( dbfTmpLin )->( dbGoTop() )
+
+      /*
+      Pasamos los pagos a cuenta-----------------------------------------
+      */
+
+      if ( dbfPedCliP )->( dbSeek( cPedido ) )
+
+         while ( dbfPedCliP )->cSerPed + Str( ( dbfPedCliP )->nNumPed ) + ( dbfPedCliP )->cSufPed == cPedido .and. !( dbfPedCliP )->( Eof() )
+
+            if !( dbfPedCliP )->lPasado
+
+               ( dbfTmpPgo )->( dbAppend() )
+
+               ( dbfTmpPgo )->nNumRec     := ( dbfTmpPgo )->( Recno() )
+               ( dbfTmpPgo )->cCodCaj     := ( dbfPedCliP )->cCodCaj
+               ( dbfTmpPgo )->cTurRec     := ( dbfPedCliP )->cTurRec
+               ( dbfTmpPgo )->cCodCli     := ( dbfPedCliP )->cCodCli
+               ( dbfTmpPgo )->dEntrega    := ( dbfPedCliP )->dEntrega
+               ( dbfTmpPgo )->nImporte    := ( dbfPedCliP )->nImporte
+               ( dbfTmpPgo )->cDescrip    := ( dbfPedCliP )->cDesCrip
+               ( dbfTmpPgo )->cPgdoPor    := ( dbfPedCliP )->cPgdoPor
+               ( dbfTmpPgo )->cDocPgo     := ( dbfPedCliP )->cDocPgo
+               ( dbfTmpPgo )->cDivPgo     := ( dbfPedCliP )->cDivPgo
+               ( dbfTmpPgo )->nVdvPgo     := ( dbfPedCliP )->nVdvPgo
+               ( dbfTmpPgo )->cCodAge     := ( dbfPedCliP )->cCodAge
+               ( dbfTmpPgo )->cCodPgo     := ( dbfPedCliP )->cCodPgo
+               ( dbfTmpPgo )->cBncEmp     := ( dbfPedCliP )->cBncEmp
+               ( dbfTmpPgo )->cBncCli     := ( dbfPedCliP )->cBncCli
+               ( dbfTmpPgo )->cEPaisIBAN  := ( dbfPedCliP )->cEPaisIBAN
+               ( dbfTmpPgo )->cECtrlIBAN  := ( dbfPedCliP )->cECtrlIBAN
+               ( dbfTmpPgo )->cEntEmp     := ( dbfPedCliP )->cEntEmp
+               ( dbfTmpPgo )->cSucEmp     := ( dbfPedCliP )->cSucEmp
+               ( dbfTmpPgo )->cDigEmp     := ( dbfPedCliP )->cDigEmp
+               ( dbfTmpPgo )->cCtaEmp     := ( dbfPedCliP )->cCtaEmp
+               ( dbfTmpPgo )->cPaisIBAN   := ( dbfPedCliP )->cPaisIBAN
+               ( dbfTmpPgo )->cCtrlIBAN   := ( dbfPedCliP )->cCtrlIBAN
+               ( dbfTmpPgo )->cEntCli     := ( dbfPedCliP )->cEntCli
+               ( dbfTmpPgo )->cSucCli     := ( dbfPedCliP )->cSucCli
+               ( dbfTmpPgo )->cDigCli     := ( dbfPedCliP )->cDigCli
+               ( dbfTmpPgo )->cCtaCli     := ( dbfPedCliP )->cCtaCli
+               ( dbfTmpPgo )->lCloPgo     := .f.
+               ( dbfTmpPgo )->cNumRec     := ( dbfPedCliP )->cSerPed + Str( ( dbfPedCliP )->nNumPed ) + ( dbfPedCliP )->cSufPed + Str( ( dbfPedCliP )->nNumRec )
 
             end if
 
-            ( dbfPedCliI )->( dbGoTop() )
+            ( dbfPedCliP )->( dbSkip() )
 
-            /*
-            Pasamos los documentos de los pedidos------------------------------
-            */
-
-            if ( dbfPedCliD )->( dbSeek( cPedido ) )
-
-               while ( dbfPedCliD )->cSerPed + Str( ( dbfPedCliD )->nNumPed ) + ( dbfPedCliD )->cSufPed == cPedido .and. !( dbfPedCliD )->( Eof() )
-                  dbPass( dbfPedCliD, dbfTmpDoc, .t. )
-                  ( dbfPedCliD )->( dbSkip() )
-               end while
-
-            end if
-
-            ( dbfPedCliD )->( dbGoTop() )
-
-            /*
-            Refresh------------------------------------------------------------
-            */
-
-            oBrwLin:Refresh()
-            oBrwPgo:Refresh()
-
-            oBrwLin:SetFocus()
-
-         end if
-
-         lValid   := .t.
+         end while
 
       end if
 
-      aGet[ _CNUMPED ]:Disable()
+      ( dbfPedCliP )->( dbGoTop() )
 
-      CursorWE()
+      /*
+      Pasamos las incidencias de los pedidos-----------------------------
+      */
 
-   else
+      if ( dbfPedCliI )->( dbSeek( cPedido ) )
 
-      MsgStop( "Pedido no existe" )
+         while ( dbfPedCliI )->cSerPed + Str( ( dbfPedCliI )->nNumPed ) + ( dbfPedCliI )->cSufPed == cPedido .and. !( dbfPedCliI )->( Eof() )
+            dbPass( dbfPedCliI, dbfTmpInc, .t. )
+            ( dbfPedCliI )->( dbSkip() )
+         end while
+
+      end if
+
+      ( dbfPedCliI )->( dbGoTop() )
+
+      /*
+      Pasamos los documentos de los pedidos------------------------------
+      */
+
+      if ( dbfPedCliD )->( dbSeek( cPedido ) )
+
+         while ( dbfPedCliD )->cSerPed + Str( ( dbfPedCliD )->nNumPed ) + ( dbfPedCliD )->cSufPed == cPedido .and. !( dbfPedCliD )->( Eof() )
+            dbPass( dbfPedCliD, dbfTmpDoc, .t. )
+            ( dbfPedCliD )->( dbSkip() )
+         end while
+
+      end if
+
+      ( dbfPedCliD )->( dbGoTop() )
+
+      /*
+      Refresh------------------------------------------------------------
+      */
+
+      oBrwLin:Refresh()
+      oBrwPgo:Refresh()
+
+      oBrwLin:SetFocus()
 
    end if
+
+   lValid   := .t.
+
+   aGet[ _CNUMPED ]:Disable()
+
+   CursorWE()
 
 RETURN lValid
 

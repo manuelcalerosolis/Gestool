@@ -8,21 +8,19 @@ CLASS SQLBaseModel
   
    DATA     oRowSet
 
-<<<<<<< HEAD
    DATA     cTableName
 	DATA	   hColumns
   	DATA	   hBuffer
 
    DATA	   cSQLInsert     
    DATA     cSQLSelect      
-=======
+
 	DATA     cTableName
 	DATA	   hColumns
    DATA     cColumnKey
 
   	DATA	   hBuffer
    DATA     idBuffer    
->>>>>>> 6daaa5b72914870dc388bd3b468ce4c8bd74ce88
  
    DATA     cFind
    DATA     cColumnOrder
@@ -32,7 +30,7 @@ CLASS SQLBaseModel
    METHOD   End()
 
    METHOD   getSQLCreateTable()
-<<<<<<< HEAD
+
    METHOD	getInsertInto()                       INLINE	  ( ::cSQLInsert )
    METHOD   getSQLSelect()                        INLINE   ( ::cSQLSelect )
 
@@ -45,7 +43,7 @@ CLASS SQLBaseModel
    METHOD   setOrderOrientation( cOrientation )   INLINE   ( ::cColumnOrientation := cOrientation )
 
    METHOD   refreshSelect()                       INLINE   ( ::getOrderRowSet( .t. ) )
-=======
+
    METHOD	getInsertSentence()						    
    METHOD   getUpdateSentence()
    METHOD   getDeleteSentence()
@@ -55,13 +53,12 @@ CLASS SQLBaseModel
    METHOD   getRowSetRecno()                       INLINE   ( if( !empty( ::oRowSet ), ( ::oRowSet:recno() ) , 0 ) )
    METHOD   setRowSetRecno( nRecno )               INLINE   ( if( !empty( ::oRowSet ), ( ::oRowSet:goto( nRecno ) ), ) )
 
-    METHOD   setFind( cFind )                      INLINE   ( ::cFind := cFind )
+   METHOD   setFind( cFind )                       INLINE   ( ::cFind := cFind )
  
-    METHOD   setColumnOrderBy( cColumn )           INLINE   ( ::cColumnOrder := cColumn )
-    METHOD   setOrderOrientation( cOrientation )   INLINE   ( ::cColumnOrientation := cOrientation )
+   METHOD   setColumnOrderBy( cColumn )            INLINE   ( ::cColumnOrder := cColumn )
+   METHOD   setOrderOrientation( cOrientation )    INLINE   ( ::cColumnOrientation := cOrientation )
 
     METHOD   refreshSelect()                       INLINE   ( ::getOrderRowSet( .t. ) )
->>>>>>> 6daaa5b72914870dc388bd3b468ce4c8bd74ce88
 
    METHOD   getSelectSentence()
  
@@ -75,15 +72,12 @@ CLASS SQLBaseModel
    METHOD   loadBlankBuffer()
    METHOD   loadCurrentBuffer()
 
-<<<<<<< HEAD
-   METHOD   getBuffer( cColumn )                  INLINE   ( hget( ::hBuffer, cColumn ) )
-=======
-    METHOD   updateCurrentBuffer()                 INLINE ( getSQLDatabase():Query( ::getUpdateSentence() ), ::refreshSelect() )
-    METHOD   insertBuffer()                        INLINE ( getSQLDatabase():Query( ::getInsertSentence() ), ::refreshSelect() )
-    METHOD   deleteSelection()                     INLINE ( getSQLDatabase():Query( ::getdeleteSentence() ), ::refreshSelect() )
+   METHOD   getBuffer( cColumn )                   INLINE   ( hget( ::hBuffer, cColumn ) )
+   METHOD   updateCurrentBuffer()                  INLINE   ( getSQLDatabase():Query( ::getUpdateSentence() ), ::refreshSelect() )
+   METHOD   insertBuffer()                         INLINE   ( getSQLDatabase():Query( ::getInsertSentence() ), ::refreshSelect() )
+   METHOD   deleteSelection()                      INLINE   ( getSQLDatabase():Query( ::getdeleteSentence() ), ::refreshSelect() )
 
-    METHOD   getBuffer( cColumn )                  INLINE   ( hget( ::hBuffer, cColumn ) )
->>>>>>> 6daaa5b72914870dc388bd3b468ce4c8bd74ce88
+   METHOD   getBuffer( cColumn )                   INLINE   ( hget( ::hBuffer, cColumn ) )
 
 END CLASS
 
@@ -183,9 +177,7 @@ Return ( cSQLInsert )
 
 METHOD   getDeleteSentence()
 
-Local cSQLDelete
-
-cSQLDelete                := "DELETE FROM " + ::cTableName + " WHERE " + ::cColumnKey + " = " + convertToSql( ::oRowSet:fieldGet( ::cColumnKey ) )
+   local cSQLDelete  := "DELETE FROM " + ::cTableName + " WHERE " + ::cColumnKey + " = " + convertToSql( ::oRowSet:fieldGet( ::cColumnKey ) )
 
 Return ( cSQLDelete )
 

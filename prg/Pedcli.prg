@@ -13670,16 +13670,14 @@ function nEstadoRecPedCli( cPedPrvL, dbfAlbPrvL, dbfTmpLin )
    local nEstado     := 1
    local nTotRec     := 0
 
-   nOrdAnt           := ( cPedPrvL )->( OrdSetFocus( "cPedCliRef" ) )
-
+   nOrdAnt           := ( cPedPrvL )->( ordsetfocus( "cPedCliRef" ) )
    if ( cPedPrvL )->( dbSeek( ( dbfTmpLin )->cSerPed + Str( ( dbfTmpLin )->nNumPed ) + ( dbfTmpLin )->cSufPed + ( dbfTmpLin )->cRef + ( dbfTmpLin )->cValPr1 + ( dbfTmpLin )->cValPr2 ) )
 
       nTotUni        := nTotNPedCli( dbfTmpLin )
       nTotRec        := nUnidadesRecibidasPedPrv( ( cPedPrvL )->cSerPed + Str( ( cPedPrvL )->nNumPed ) + ( cPedPrvL )->cSufPed, ( dbfTmpLin)->cRef, ( dbfTmpLin )->cValPr1, ( dbfTmpLin )->cValPr2, ( dbfTmpLin )->cRefPrv, dbfAlbPrvL )
 
    end if
-
-   ( cPedPrvL )->( OrdSetFocus( nOrdAnt ) )
+   ( cPedPrvL )->( ordsetfocus( nOrdAnt ) )
 
    do case
       case nTotRec == 0

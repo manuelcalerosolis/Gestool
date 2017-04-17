@@ -3133,17 +3133,23 @@ STATIC FUNCTION EdtRec( aTmp, aGet, cArticulo, oBrw, bWhen, bValid, nMode )
       Fechas-------------------------------------------------------------------
       */
 
-      REDEFINE GET aGet[ ( D():Articulos( nView ) )->( fieldpos( "LastChg" ) ) ] ;
-         VAR      aTmp[ ( D():Articulos( nView ) )->( fieldpos( "LastChg" ) ) ] ;
-         ID       195 ;
-         WHEN     ( .f. ) ;
-         OF       fldLogistica
+      REDEFINE GET   aGet[ ( D():Articulos( nView ) )->( fieldpos( "LastChg" ) ) ] ;
+         VAR         aTmp[ ( D():Articulos( nView ) )->( fieldpos( "LastChg" ) ) ] ;
+         ID          195 ;
+         WHEN        ( .f. ) ;
+         OF          fldLogistica
 
       REDEFINE GET   aGet[ ( D():Articulos( nView ) )->( fieldpos( "dFecChg" ) ) ] ;
-         VAR      aTmp[ ( D():Articulos( nView ) )->( fieldpos( "dFecChg" ) ) ] ;
-         ID       196 ;
-         WHEN     ( .f. ) ;
-         OF       fldLogistica
+         VAR         aTmp[ ( D():Articulos( nView ) )->( fieldpos( "dFecChg" ) ) ] ;
+         ID          196 ;
+         WHEN        ( .f. ) ;
+         OF          fldLogistica
+
+      REDEFINE GET   aGet[ ( D():Articulos( nView ) )->( fieldpos( "dFecLgt" ) ) ] ;
+         VAR         aTmp[ ( D():Articulos( nView ) )->( fieldpos( "dFecLgt" ) ) ] ;
+         ID          197 ;
+         WHEN        ( nMode != ZOOM_MODE ) ;
+         OF          fldLogistica
 
       /*
       Precios por propiedades--------------------------------------------------
@@ -3468,13 +3474,13 @@ STATIC FUNCTION EdtRec( aTmp, aGet, cArticulo, oBrw, bWhen, bValid, nMode )
       OF       fldLogistica
 
    REDEFINE GET   aGet[ ( D():Articulos( nView ) )->( fieldpos( "NLNGART" ) ) ] ;
-      VAR      aTmp[ ( D():Articulos( nView ) )->( fieldpos( "NLNGART" ) ) ] ;
-      ID       140 ;
-      IDSAY    141 ;
+      VAR         aTmp[ ( D():Articulos( nView ) )->( fieldpos( "NLNGART" ) ) ] ;
+      ID          140 ;
+      IDSAY       141 ;
       SPINNER ;
-      WHEN     ( nMode != ZOOM_MODE ) ;
-      PICTURE  MasUnd() ;
-      OF       fldLogistica
+      WHEN        ( nMode != ZOOM_MODE ) ;
+      PICTURE     MasUnd() ;
+      OF          fldLogistica
 
    REDEFINE GET   aGet[( D():Articulos( nView ) )->( fieldpos( "NALTART" ) ) ] ;
       VAR      aTmp[( D():Articulos( nView ) )->( fieldpos( "NALTART" ) ) ] ;
@@ -13488,25 +13494,9 @@ Return ( .f. )
 
 Static Function lValidUndMedicion( aTmp, aGet )
 
-   //si el campo unidad de medición esta vacio oculto las tres dimensiones
-
-   if empty( aTmp[ ( D():Articulos( nView ) )->( fieldpos( "CUNIDAD" ) ) ] )
-
-      aGet[ ( D():Articulos( nView ) )->( fieldpos( "NLNGART" ) ) ]:Hide()
-      aGet[ ( D():Articulos( nView ) )->( fieldpos( "NALTART" ) ) ]:Hide()
-      aGet[ ( D():Articulos( nView ) )->( fieldpos( "NANCART" ) ) ]:Hide()
-
-   end if
-
    if oUndMedicion:oDbf:SeekInOrd( aTmp[ ( D():Articulos( nView ) )->( fieldpos( "CUNIDAD" ) ) ], "CCODMED" )
 
       aGet[ ( D():Articulos( nView ) )->( fieldpos( "CUNIDAD" ) ) ]:oHelpText:cText( oUndMedicion:oDbf:cNombre )
-
-      //por defecto ocultamos las tres descripciones
-
-      aGet[ ( D():Articulos( nView ) )->( fieldpos( "NLNGART" ) ) ]:Hide()
-      aGet[ ( D():Articulos( nView ) )->( fieldpos( "NALTART" ) ) ]:Hide()
-      aGet[ ( D():Articulos( nView ) )->( fieldpos( "NANCART" ) ) ]:Hide()
 
       //si nDimension es igual a 1 muestra la primera descrpción
 
@@ -15350,6 +15340,7 @@ function aItmArt()
    aAdd( aBase, { "cCodUsr",   "C",  3, 0, "Código de usuario que realiza el cambio" ,"",                   "", "( cDbfArt )", nil } )
    aAdd( aBase, { "dFecChg",   "D",  8, 0, "Fecha de cambio" ,                        "",                   "", "( cDbfArt )", nil } )
    aAdd( aBase, { "cTimChg",   "C",  5, 0, "Hora de cambio" ,                         "",                   "", "( cDbfArt )", nil } )
+   aAdd( aBase, { "dFecLgt",   "D",  8, 0, "Fecha de logística" ,                     "",                   "", "( cDbfArt )", nil } )
    aAdd( aBase, { "lKitArt",   "L",  1, 0, "Lógico de escandallos" ,                  "",                   "", "( cDbfArt )", nil } )
    aAdd( aBase, { "lKitAsc",   "L",  1, 0, "Lógico de asociado" ,                     "",                   "", "( cDbfArt )", nil } )
    aAdd( aBase, { "nKitImp",   "N",  1, 0, "" ,                                       "",                   "", "( cDbfArt )", nil } )

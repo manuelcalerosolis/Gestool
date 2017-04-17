@@ -27,6 +27,9 @@ CLASS TShellSQL FROM TShell
 
    METHOD fastSeek()
 
+   METHOD loadData()
+   METHOD saveData()
+
 ENDCLASS
 
 //----------------------------------------------------------------------------//
@@ -127,6 +130,10 @@ METHOD CreateXFromCode()
    ::oBrw:CreateFromCode()
 
    ::oBrw:SetFocus()
+
+   // Cargamos las posiciones de usuarios--------------------------------------
+
+   ::LoadData()
 
 Return ( Self )
 
@@ -229,5 +236,21 @@ METHOD FastSeek()
    ::oBrw:Select( 1 )
 
 Return ( lFind )
+
+//--------------------------------------------------------------------------//
+
+METHOD loadData()
+
+   msgalert( "carga inicial de orden y la fila")
+
+Return ( nil )
+
+//--------------------------------------------------------------------------//
+
+METHOD saveData()
+
+   msgalert( "guarda el orden y la fila")
+
+Return ( nil )
 
 //--------------------------------------------------------------------------//
