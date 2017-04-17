@@ -27,7 +27,6 @@ CLASS TShellSQL FROM TShell
 
    METHOD fastSeek()
 
-   METHOD loadData()
    METHOD saveData()
 
 ENDCLASS
@@ -131,10 +130,6 @@ METHOD CreateXFromCode()
 
    ::oBrw:SetFocus()
 
-   // Cargamos las posiciones de usuarios--------------------------------------
-
-   ::LoadData()
-
 Return ( Self )
 
 //---------------------------------------------------------------------------//
@@ -167,7 +162,7 @@ METHOD ClickOnHeader( oCol )
 
    ::oModel:setOrderOrientation( oCol:cOrder )
 
-   ::oModel:refreshSelect()
+   ::oModel:buildRowSet()
 
    ::oBrw:Refresh()
 
@@ -187,7 +182,7 @@ METHOD ChgCombo()
 
       ::oModel:setOrderOrientation( ::oBrw:aCols[ nPosition ]:cOrder )
 
-      ::oModel:refreshSelect()
+      ::oModel:buildRowSet()
 
       ::oBrw:Refresh()
 
@@ -236,14 +231,6 @@ METHOD FastSeek()
    ::oBrw:Select( 1 )
 
 Return ( lFind )
-
-//--------------------------------------------------------------------------//
-
-METHOD loadData()
-
-   msgalert( "carga inicial de orden y la fila")
-
-Return ( nil )
 
 //--------------------------------------------------------------------------//
 

@@ -10,52 +10,46 @@ CLASS SQLBaseModel
 
    DATA     cTableName
 	DATA	   hColumns
-  	DATA	   hBuffer
 
    DATA	   cSQLInsert     
    DATA     cSQLSelect      
-
-  DATA     oRowSet     
-
-	DATA     cTableName
-	DATA	   hColumns
-  DATA     cColumnKey
+   
+   DATA     cColumnKey
 
   	DATA	   hBuffer
-   DATA     idBuffer    
- 	DATA	   hBuffer
-  DATA     idBuffer    
-  DATA     cFind
-  DATA     cColumnOrder
-  DATA     cColumnOrientation
+   DATA     idBuffer     
+   DATA     cFind
+   DATA     cColumnOrder
+   DATA     cColumnOrientation
  
-  METHOD   New()
-  METHOD   End()
+   METHOD   New()
+   METHOD   End()
 
  
    METHOD   getSQLCreateTable()
-   METHOD   refreshSelect()                       INLINE   ( ::getOrderRowSet( .t. ) )
+
    METHOD   getSelectSentence()
    METHOD   getInsertSentence()                     
    METHOD   getUpdateSentence()
    METHOD   getDeleteSentence()
-  METHOD   setColumnOrderBy( cColumn )           INLINE   ( ::cColumnOrder := cColumn )
-  METHOD   setOrderOrientation( cOrientation )   INLINE   ( ::cColumnOrientation := cOrientation )
+   METHOD   setColumnOrderBy( cColumn )           INLINE   ( ::cColumnOrder := cColumn )
+   METHOD   setOrderOrientation( cOrientation )   INLINE   ( ::cColumnOrientation := cOrientation )
 
-  METHOD   setFind( cFind )                      INLINE   ( ::cFind := cFind )
-  METHOD   getOrderRowSet()
-  METHOD   freeRowSet()                           INLINE   ( if( !empty( ::oRowSet ), ( ::oRowSet := nil ), ) )
-  METHOD   getRowSetRecno()                       INLINE   ( if( !empty( ::oRowSet ), ( ::oRowSet:recno() ) , 0 ) )
-  METHOD   setRowSetRecno( nRecno )               INLINE   ( if( !empty( ::oRowSet ), ( ::oRowSet:goto( nRecno ) ), ) )
+   METHOD   setFind( cFind )                      INLINE   ( ::cFind := cFind )
+   METHOD   getRowSet()
+   METHOD   buildRowSet()
+   METHOD   freeRowSet()                           INLINE   ( if( !empty( ::oRowSet ), ( ::oRowSet := nil ), ) )
+   METHOD   getRowSetRecno()                       INLINE   ( if( !empty( ::oRowSet ), ( ::oRowSet:recno() ) , 0 ) )
+   METHOD   setRowSetRecno( nRecno )               INLINE   ( if( !empty( ::oRowSet ), ( ::oRowSet:goto( nRecno ) ), ) )
  
-  METHOD   getSelectByColumn()
-  METHOD   getSelectByOrder()
+   METHOD   getSelectByColumn()
+   METHOD   getSelectByOrder()
 
-  METHOD   find( cFind )
+   METHOD   find( cFind )
 
-  METHOD   loadBuffer( id )
-  METHOD   loadBlankBuffer()
-  METHOD   loadCurrentBuffer()
+   METHOD   loadBuffer( id )
+   METHOD   loadBlankBuffer()
+   METHOD   loadCurrentBuffer()
 
    METHOD   getBuffer( cColumn )                   INLINE   ( hget( ::hBuffer, cColumn ) )
    METHOD   updateCurrentBuffer()                  INLINE   ( getSQLDatabase():Query( ::getUpdateSentence() ), ::refreshSelect() )
@@ -98,13 +92,19 @@ Return ( cSQLCreateTable )
 
 //---------------------------------------------------------------------------//
 
-METHOD getOrderRowSet( lRefresh )
+METHOD getRowSet()
+
+   if empty( ::oRowSet )
+      ::buildRowSet()
+   end if
+
+Return ( ::oRowSet )
+
+//---------------------------------------------------------------------------//
+
+METHOD buildRowSet()
 
    local oStmt
-
-   if hb_isnil( lRefresh ) .and. !empty( ::oRowSet )
-      Return ( ::oRowSet )
-   end if 
 
    try 
       oStmt          := getSQLDatabase():Query( ::getSelectSentence() )
@@ -122,7 +122,7 @@ METHOD getOrderRowSet( lRefresh )
    
    end
 
-Return ( ::oRowSet )
+Return ( self )
 
 //---------------------------------------------------------------------------//
 
@@ -210,7 +210,7 @@ METHOD find( cFind )
 
    ::setFind( cFind )
 
-   ::refreshSelect()
+   ::buildRowSet()
 
 Return ( ::oRowSet:recCount() > 0 )
 
@@ -266,6 +266,8 @@ Function convertToSql( value )
 Return ( value )
        
 //---------------------------------------------------------------------------//
+
+
 
 
 
