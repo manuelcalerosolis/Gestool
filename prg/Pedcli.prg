@@ -13663,7 +13663,7 @@ return ( nTotal )
 // NOTA: Esta funcion se utiliza para el estado de recibido de pedidos de clientes
 //
 
-function nEstadoRecPedCli( cPedPrvL, dbfAlbPrvL, dbfTmpLin )
+function nEstadoRecPedCli( cPedPrvL, cAlbPrvL, cTmpLin )
 
    local nTotUni
    local nOrdAnt
@@ -13671,10 +13671,10 @@ function nEstadoRecPedCli( cPedPrvL, dbfAlbPrvL, dbfTmpLin )
    local nTotRec     := 0
 
    nOrdAnt           := ( cPedPrvL )->( ordsetfocus( "cPedCliRef" ) )
-   if ( cPedPrvL )->( dbSeek( ( dbfTmpLin )->cSerPed + Str( ( dbfTmpLin )->nNumPed ) + ( dbfTmpLin )->cSufPed + ( dbfTmpLin )->cRef + ( dbfTmpLin )->cValPr1 + ( dbfTmpLin )->cValPr2 ) )
+   if ( cPedPrvL )->( dbSeek( ( cTmpLin )->cSerPed + Str( ( cTmpLin )->nNumPed ) + ( cTmpLin )->cSufPed + ( cTmpLin )->cRef + ( cTmpLin )->cValPr1 + ( cTmpLin )->cValPr2 ) )
 
-      nTotUni        := nTotNPedCli( dbfTmpLin )
-      nTotRec        := nUnidadesRecibidasPedPrv( ( cPedPrvL )->cSerPed + Str( ( cPedPrvL )->nNumPed ) + ( cPedPrvL )->cSufPed, ( dbfTmpLin)->cRef, ( dbfTmpLin )->cValPr1, ( dbfTmpLin )->cValPr2, ( dbfTmpLin )->cRefPrv, dbfAlbPrvL )
+      nTotUni        := nTotNPedCli( cTmpLin )
+      nTotRec        := nUnidadesRecibidasPedPrv( ( cPedPrvL )->cSerPed + Str( ( cPedPrvL )->nNumPed ) + ( cPedPrvL )->cSufPed, ( cTmpLin)->cRef, ( cTmpLin )->cValPr1, ( cTmpLin )->cValPr2, ( cTmpLin )->cRefPrv, cAlbPrvL )
 
    end if
    ( cPedPrvL )->( ordsetfocus( nOrdAnt ) )
