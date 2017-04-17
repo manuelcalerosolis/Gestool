@@ -4363,10 +4363,8 @@ METHOD getSerialiceValoresPropiedades( cCodigoPropiedad ) CLASS TFastVentasArtic
 
    ArticulosModel():getValoresPropiedades( cCodigoPropiedad, @cSql )
 
-   MsgInfo( cSql )
-
    while !( cSql )->( Eof() )
-      aAdd( aResult, AllTrim( ( cSql )->cDesTbl ) )
+      aAdd( aResult, AllTrim( ( cSql )->cCodTbl ) + " - " + AllTrim( ( cSql )->cDesTbl ) )
       ( cSql )->( dbSkip() )
    end while
 
@@ -4376,22 +4374,11 @@ Return ( aResult )
 
 METHOD getPrimerValorPropiedad( cCodigoPropiedad ) CLASS TFastVentasArticulos
 
-   local nRec        := ( D():PropiedadesLineas( ::nView ) )->( Recno() )
-   local nOrdAnt     := ( D():PropiedadesLineas( ::nView ) )->( OrdSetFocus( "CPRO" ) )
-   local cValue      := ''
+   local cSql        := "PrimeraPropiedades"
 
-   ( D():PropiedadesLineas( ::nView ) )->( dbGoTop() ) 
+   ArticulosModel():getPrimerValorPropiedad( cCodigoPropiedad, @cSql )
 
-   if ( D():PropiedadesLineas( ::nView ) )->( dbSeek( Padr( cCodigoPropiedad, 20 ) ) )
-      
-      cValue  += AllTrim( ( D():PropiedadesLineas( ::nView ) )->cDesTbl )
-      
-   end if
-
-   ( D():PropiedadesLineas( ::nView ) )->( OrdSetFocus( nOrdAnt ) )
-   ( D():PropiedadesLineas( ::nView ) )->( dbGoTo( nRec ) ) 
-
-Return cValue
+Return ( AllTrim( ( cSql )->cCodTbl ) + " - " + AllTrim( ( cSql )->cDesTbl ) )
 
 //---------------------------------------------------------------------------//
 

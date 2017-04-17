@@ -6,9 +6,10 @@
 CLASS ArticulosModel FROM BaseModel
 
    METHOD getHeaderTableName()                  INLINE ::getEmpresaTableName( "Articulo" )
-   METHOD getPropiedadesLineasName()            INLINE ::getEmpresaTableName( "TblPro" )
 
    METHOD getValoresPropiedades( cCodPro )
+
+   METHOD getPrimerValorPropiedad( cCodPro, cArea )
 
 END CLASS
 
@@ -16,9 +17,15 @@ END CLASS
 
 METHOD getValoresPropiedades( cCodPro, cArea ) CLASS ArticulosModel
 
-   local cSql  := "SELECT cDesTbl FROM " + ::getPropiedadesLineasName() + " WHERE cCodPro = " + quoted( cCodPro )
+   local cSql  := "SELECT * FROM " + ::getEmpresaTableName( "TblPro" ) + " WHERE cCodPro = " + quoted( cCodPro )
 
-   MsgInfo( cSql )
+Return ( ::ExecuteSqlStatement( cSql, @cArea ) )
+
+//---------------------------------------------------------------------------//
+
+METHOD getPrimerValorPropiedad( cCodPro, cArea ) CLASS ArticulosModel
+
+   local cSql  := "SELECT TOP 1 * FROM " + ::getEmpresaTableName( "TblPro" ) + " WHERE cCodPro = " + quoted( cCodPro ) + ""
 
 Return ( ::ExecuteSqlStatement( cSql, @cArea ) )
 
