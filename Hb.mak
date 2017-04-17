@@ -396,6 +396,7 @@ SincronizaPreventa.prg  										\
 MsTable.prg             										\
 MsError.prg 														\
 TipoImpresora.prg       										\
+SQLBaseView.prg 													\
 TiposImpresoras.prg       										\
 PageIni.prg             										\
 TpvTactil.prg           										\
@@ -874,6 +875,7 @@ SincronizaPreventa.obj  									\
 MsTable.obj             									\
 MsError.obj 													\
 TipoImpresora.obj       									\
+SQLBaseView.obj 												\
 TiposImpresoras.obj       									\
 PageIni.obj             									\
 TpvTactil.obj           									\
@@ -1341,6 +1343,7 @@ $(OBJ)\SincronizaPreventa.obj   					+
 $(OBJ)\MsTable.obj   								+ 
 $(OBJ)\MsError.obj   								+ 
 $(OBJ)\TipoImpresora.obj        					+
+$(OBJ)\SQLBaseView.obj 								+
 $(OBJ)\TiposImpresoras.obj      					+
 $(OBJ)\PageIni.obj              					+
 $(OBJ)\TpvTactil.obj            					+

@@ -281,7 +281,7 @@ Return ( .t. )
 
 Function Test()
 
-   // TiposImpresoras()
+   TiposImpresoras():New():Activate()
 
 Return ( nil )
 

@@ -2,86 +2,110 @@
 #include "Factu.ch" 
 #include "MesDbf.ch"
 
-static oWndBrw
-static oTiposImpresorasModel
+//---------------------------------------------------------------------------//
+
+CLASS TiposImpresoras FROM SQLBaseView
+
+   METHOD   New()
+
+   METHOD   Activate()
+
+   METHOD   buildSQLModel()
+
+   METHOD   buildSQLShell()
+
+   METHOD   Append()
+   METHOD   Edit()
+   METHOD   Dialog()
+
+END CLASS
 
 //---------------------------------------------------------------------------//
 
-FUNCTION TiposImpresoras( oMenuItem, oWnd )
+METHOD New()
 
-   local nLevel
+   ::keyUserMap         := "01115"
 
-   DEFAULT  oMenuItem   := "01115"
-   DEFAULT  oWnd        := oWnd()
+Return ( Self )
 
-   /*
-   Obtenemos el nivel de acceso-----------------------------------------------
-   */
+//---------------------------------------------------------------------------//
 
-   nLevel               := nLevelUsr( oMenuItem )
+METHOD Activate()
 
-   if nAnd( nLevel, 1 ) != 0
+   if ::notUserAccess()
       msgStop( "Acceso no permitido." )
-      return nil
-   end if
+      Return ( Self )
+   end if 
 
-   /*
-   Cerramos todas las ventanas-------------------------------------------------
-   */
-
-   if oWnd != nil
-      SysRefresh(); oWnd:CloseAll(); SysRefresh()
+   if oWnd() != nil
+      SysRefresh(); oWnd():CloseAll(); SysRefresh()
    end if
+   
+   ::buildSQLModel()
+
+   ::buildSQLShell()
+
+Return ( Self )
+
+//---------------------------------------------------------------------------//
+
+METHOD buildSQLModel()
+
+   ::oModel    := TiposImpresorasModel():New()
+   ::oModel:buildRowSet()
+
+Return ( Self )
+
+//---------------------------------------------------------------------------//
+
+METHOD buildSQLShell()
 
    disableAcceso()
 
-   oTiposImpresorasModel   := TiposImpresorasModel():New()
-   oTiposImpresorasModel:buildRowSet()
+   ::oShell                := TShellSQL():New( 2, 10, 18, 70, "Tipos de impresoras", , oWnd(), , , .f., , , ::oModel, , , , , {}, {|| ::Edit() },, {|| ::oModel:deleteSelection() },, nil, ::nLevel, "gc_printer2_16", ( 104 + ( 0 * 256 ) + ( 63 * 65536 ) ),,, .t. )
 
-   oWndBrw                 := TShellSQL():New( 2, 10, 18, 70, "Tipos de impresoras", , oWnd, , , .f., , , oTiposImpresorasModel, , , , , {}, {|| EditTiposImpresoras() },, {|| msgalert( "delete") },, nil, nLevel, "gc_printer2_16", ( 104 + ( 0 * 256 ) + ( 63 * 65536 ) ),,, .t. )
-
-      with object ( oWndBrw:AddXCol() )
+      with object ( ::oShell:AddXCol() )
          :cHeader          := "Id"
          :cSortOrder       := "id"
-         :bEditValue       := {|| oTiposImpresorasModel:getRowSet():fieldGet( "id" ) }
+         :bEditValue       := {|| ::oModel:getRowSet():fieldGet( "id" ) }
          :nWidth           := 40
-         :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | oWndBrw:clickOnHeader( oCol ) }
+         :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | ::oShell:clickOnHeader( oCol ) }
       end with
 
-      with object ( oWndBrw:AddXCol() )
+      with object ( ::oShell:AddXCol() )
          :cHeader          := "Tipo de impresora"
          :cSortOrder       := "nombre"
-         :bEditValue       := {|| oTiposImpresorasModel:getRowSet():fieldGet( "nombre" ) }
+         :bEditValue       := {|| ::oModel:getRowSet():fieldGet( "nombre" ) }
          :nWidth           := 800
-         :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | oWndBrw:clickOnHeader( oCol ) }
+         :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | ::oShell:clickOnHeader( oCol ) }
       end with
 
-      oWndBrw:CreateXFromCode()
+      ::oShell:CreateXFromCode()
 
-      DEFINE BTNSHELL RESOURCE "BUS" OF oWndBrw ;
+      DEFINE BTNSHELL RESOURCE "BUS" OF ::oShell ;
          NOBORDER ;
-         ACTION   ( oWndBrw:SearchSetFocus() ) ;
+         ACTION   ( ::oShell:SearchSetFocus() ) ;
          TOOLTIP  "(B)uscar" ;
          HOTKEY   "B"
 
-      oWndBrw:AddSeaBar()
+      ::oShell:AddSeaBar()
 
-      DEFINE BTNSHELL RESOURCE "NEW" OF oWndBrw ;
+      DEFINE BTNSHELL RESOURCE "NEW" OF ::oShell ;
          NOBORDER ;
-         ACTION   ( appendTiposImpresoras() );
+         ACTION   ( ::Append() );
          TOOLTIP  "(A)ñadir";
          BEGIN GROUP;
          HOTKEY   "A";
          LEVEL    ACC_APPD
 
-      DEFINE BTNSHELL RESOURCE "EDIT" OF oWndBrw ;
+      DEFINE BTNSHELL RESOURCE "EDIT" OF ::oShell ;
          NOBORDER ;
-         ACTION   ( editTiposImpresoras() );
+         ACTION   ( ::Edit() );
          TOOLTIP  "(M)odificar";
          HOTKEY   "M" ;
          LEVEL    ACC_EDIT
 
-      DEFINE BTNSHELL RESOURCE "ZOOM" OF oWndBrw ;
+      DEFINE BTNSHELL RESOURCE "ZOOM" OF ::oShell ;
          NOBORDER ;
          ACTION   ( msgalert( "zoom" ) );
          TOOLTIP  "(Z)oom";
@@ -89,40 +113,39 @@ FUNCTION TiposImpresoras( oMenuItem, oWnd )
          HOTKEY   "Z";
          LEVEL    ACC_ZOOM
 
-      DEFINE BTNSHELL RESOURCE "DEL" OF oWndBrw ;
+      DEFINE BTNSHELL RESOURCE "DEL" OF ::oShell ;
          NOBORDER ;
-         ACTION   oTiposImpresorasModel:deleteSelection();
+         ACTION   ::oModel:deleteSelection();
          TOOLTIP  "(E)liminar";
          MRU ;
          HOTKEY   "E";
          LEVEL    ACC_DELE
 
-      DEFINE BTNSHELL RESOURCE "END" GROUP OF oWndBrw ;
+      DEFINE BTNSHELL RESOURCE "END" GROUP OF ::oShell ;
          NOBORDER ;
-         ACTION   ( oWndBrw:end() ) ;
+         ACTION   ( ::oShell:end() ) ;
          TOOLTIP  "(S)alir" ;
          HOTKEY   "S"
 
-   ACTIVATE WINDOW oWndBrw VALID ( oTiposImpresorasModel:End(), .f. )
+   ACTIVATE WINDOW ::oShell ;
+      VALID ( ::oModel:End(), .f. )
 
-   EnableAcceso()
+   enableAcceso()
 
 RETURN NIL
 
 //----------------------------------------------------------------------------//
 
-STATIC FUNCTION appendTiposImpresoras()
+METHOD Append()
 
-   local nRecno 
+   local nRecno   := ::oModel:getRowSetRecno()
 
-   nRecno   := oTiposImpresorasModel:getRowSetRecno()
+   ::oModel:loadBlankBuffer()
 
-   oTiposImpresorasModel:loadBlankBuffer()
-
-   if dialogTiposImpresoras()
-      oTiposImpresorasModel:insertBuffer()
+   if ::Dialog()
+      ::oModel:insertBuffer()
    else 
-      oTiposImpresorasModel:setRowSetRecno( nRecno ) 
+      ::oModel:setRowSetRecno( nRecno ) 
    end if
 
 RETURN NIL
@@ -132,24 +155,22 @@ RETURN NIL
 Monta el dialogo para añadir, editar,... registros
 */
 
-STATIC FUNCTION editTiposImpresoras()
+METHOD Edit()
 
-   local nRecno 
+   local nRecno   := ::oModel:getRowSetRecno()
 
-   nRecno   := oTiposImpresorasModel:getRowSetRecno()
+   ::oModel:loadCurrentBuffer()
 
-   oTiposImpresorasModel:loadCurrentBuffer()
-
-   if dialogTiposImpresoras()
-      oTiposImpresorasModel:updateCurrentBuffer()
-      oTiposImpresorasModel:setRowSetRecno( nRecno )
+   if ::Dialog()
+      ::oModel:updateCurrentBuffer()
+      ::oModel:setRowSetRecno( nRecno )
    end if 
 
 RETURN NIL
 
 //----------------------------------------------------------------------------//
 
-STATIC FUNCTION dialogTiposImpresoras()
+METHOD Dialog()
 
    local oDlg
    local oGetNombre
@@ -157,7 +178,7 @@ STATIC FUNCTION dialogTiposImpresoras()
    DEFINE DIALOG oDlg RESOURCE "TIPO_IMPRESORA" TITLE "Tipos de impresoras"
 
    REDEFINE GET   oGetNombre ;
-      VAR         oTiposImpresorasModel:hBuffer[ "nombre" ] ;
+      VAR         ::oModel:hBuffer[ "nombre" ] ;
       ID          100 ;
       OF          oDlg
 
@@ -179,7 +200,5 @@ STATIC FUNCTION dialogTiposImpresoras()
    ACTIVATE DIALOG oDlg CENTER
 
 RETURN ( oDlg:nResult == IDOK )
-
-Return .t.
 
 //----------------------------------------------------------------------------//

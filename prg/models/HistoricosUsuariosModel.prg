@@ -6,9 +6,11 @@
 
 CLASS HistoricosUsuariosModel FROM SQLBaseModel
 
+   DATA     cTableName           INIT "historicos_usuarios"
+
    METHOD   New()
 
-   //METHOD   getHistory()
+   METHOD   getHistory()
 
 END CLASS
 
@@ -16,14 +18,12 @@ END CLASS
 
 METHOD New()
 
-   ::cTableName                  := "historicos_usuarios"
-
-   ::hColumns                    := {  "id"         	=>   "INTEGER PRIMARY KEY AUTOINCREMENT"   , ;
-                                       "usuario_id"	    =>   "CHARACTER ( 3 ) NOT NULL"		  	   , ;
-                                       "tabla"    		=>   "VARCHAR( 30 ) NOT NULL"		       , ;
-                                       "orden"    		=>   "VARCHAR( 30 ) NOT NULL" 		       , ;
-                                       "orientacion"	=>   "CHARACTER ( 1 ) NOT NULL"			   , ;
-                                       "recno"    		=>   "INT NOT NULL"						   }
+   ::hColumns                    := {  "id"         	=>   "INTEGER PRIMARY KEY AUTOINCREMENT" , ;
+                                       "usuario_id"	=>   "CHARACTER ( 3 ) NOT NULL"          , ;
+                                       "tabla"    		=>   "VARCHAR( 30 ) NOT NULL"            , ;
+                                       "orden"    		=>   "VARCHAR( 30 ) NOT NULL" 		     , ;
+                                       "orientacion"	=>   "CHARACTER ( 1 ) NOT NULL"			  , ;
+                                       "recno"    		=>   "INT NOT NULL" }
 
    ::Super:New()
 
@@ -31,17 +31,21 @@ Return ( Self )
 
 //---------------------------------------------------------------------------//
 
-/*Function getHistory( cTableName )
-
-   Local sentencia  := "SELECT orden, orientacion, recno from historicos_usuarios WHERE tabla =" + cTableName + " and usuario_id = " + oUser():cCodigo()
+METHOD getHistory( cTable )
 
    local oStmt
+   local aFetch
+   local cSentence   := "SELECT orden, orientacion, recno "    + ;
+                           "FROM " + ::cTableName + " "        + ;
+                           "WHERE tabla = " + quoted( cTable ) + " AND usuario_id = " + quoted( oUser():cCodigo() )
+
+   msgalert( cSentence, "cSentence" )
 
    try 
-      oStmt          := getSQLDatabase():Query( ::getSelectSentence() )
+      oStmt          := getSQLDatabase():Query( cSentence )
 
-      ::oRowSet      := oStmt:fetchAll()
-      ::oRowSet:goTop()
+      aFetch         := oStmt:fetchAll( FETCH_HASH )
+      msgalert( hb_valtoexp( aFetch ), "array()" )
 
    catch
 
@@ -53,10 +57,12 @@ Return ( Self )
    
    end
 
-   ::cColumnOrder                := 
-   ::cColumnOrientation          :=
-   ::setRowSetRecno( nRecno )
+   if !empty( aFetch ) .and. hb_isarray( aFetch )
+      msgalert( hb_valtoexp( atail( aFetch ) ), "hHash" )
 
-Return ( nil )*/
+      Return ( atail( aFetch ) )
+   end if 
+
+Return ( nil )
        
 //---------------------------------------------------------------------------//

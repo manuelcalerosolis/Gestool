@@ -24,7 +24,6 @@ CLASS SQLBaseModel
  
    METHOD   New()
    METHOD   End()
-
  
    METHOD   getSQLCreateTable()
 
@@ -55,6 +54,8 @@ CLASS SQLBaseModel
    METHOD   updateCurrentBuffer()                  INLINE   ( getSQLDatabase():Query( ::getUpdateSentence() ), ::refreshSelect() )
    METHOD   insertBuffer()                         INLINE   ( getSQLDatabase():Query( ::getInsertSentence() ), ::refreshSelect() )
    METHOD   deleteSelection()                      INLINE   ( getSQLDatabase():Query( ::getdeleteSentence() ), ::refreshSelect() )
+
+   METHOD   getHistory()                           INLINE   ( HistoricosUsuariosModel():getHistory( ::cTableName ) )
 
 END CLASS
 
