@@ -5,45 +5,29 @@
 //---------------------------------------------------------------------------//
 
 CLASS SQLBaseModel
-<<<<<<< HEAD
   
    DATA     oRowSet
-<<<<<<< HEAD
 
-=======
->>>>>>> 1c2b54d10eb1748101cee5c2c1a759baee531d62
    DATA     cTableName
 	DATA	   hColumns
   	DATA	   hBuffer
 
    DATA	   cSQLInsert     
    DATA     cSQLSelect      
-<<<<<<< HEAD
 
-=======
-=======
- 
   DATA     oRowSet
 
   DATA	   cSQLInsert     
   DATA     cSQLSelect      
->>>>>>> origin/master
->>>>>>> 1c2b54d10eb1748101cee5c2c1a759baee531d62
+
 	DATA     cTableName
 	DATA	   hColumns
   DATA     cColumnKey
 
-<<<<<<< HEAD
   	DATA	   hBuffer
    DATA     idBuffer    
-<<<<<<< HEAD
-=======
-=======
  	DATA	   hBuffer
   DATA     idBuffer    
->>>>>>> origin/master
->>>>>>> 1c2b54d10eb1748101cee5c2c1a759baee531d62
- 
   DATA     cFind
   DATA     cColumnOrder
   DATA     cColumnOrientation
@@ -51,18 +35,12 @@ CLASS SQLBaseModel
   METHOD   New()
   METHOD   End()
 
-<<<<<<< HEAD
    METHOD   getSQLCreateTable()
 
-=======
-<<<<<<< HEAD
    METHOD   getSQLCreateTable()
->>>>>>> 1c2b54d10eb1748101cee5c2c1a759baee531d62
    METHOD	getInsertInto()                       INLINE	  ( ::cSQLInsert )
    METHOD   getSQLSelect()                        INLINE   ( ::cSQLSelect )
-=======
   METHOD   getSQLCreateTable()
->>>>>>> origin/master
 
   METHOD	 getInsertInto()                       INLINE	 ( ::cSQLInsert )
   METHOD   getSQLSelect()                        INLINE   ( ::cSQLSelect )
@@ -72,19 +50,13 @@ CLASS SQLBaseModel
 
   METHOD   setFind( cFind )                      INLINE   ( ::cFind := cFind )
  
-<<<<<<< HEAD
    METHOD   setColumnOrderBy( cColumn )           INLINE   ( ::cColumnOrder := cColumn )
    METHOD   setOrderOrientation( cOrientation )   INLINE   ( ::cColumnOrientation := cOrientation )
 
    METHOD   refreshSelect()                       INLINE   ( ::getOrderRowSet( .t. ) )
-<<<<<<< HEAD
-
-=======
->>>>>>> 1c2b54d10eb1748101cee5c2c1a759baee531d62
    METHOD	getInsertSentence()						    
    METHOD   getUpdateSentence()
    METHOD   getDeleteSentence()
-=======
   METHOD   setColumnOrderBy( cColumn )           INLINE   ( ::cColumnOrder := cColumn )
   METHOD   setOrderOrientation( cOrientation )   INLINE   ( ::cColumnOrientation := cOrientation )
 
@@ -93,33 +65,23 @@ CLASS SQLBaseModel
   METHOD 	getInsertSentence()						    
   METHOD   getUpdateSentence()
   METHOD   getDeleteSentence()
->>>>>>> origin/master
    
   METHOD   getOrderRowSet()
   METHOD   freeRowSet()                           INLINE   ( if( !empty( ::oRowSet ), ( ::oRowSet := nil ), ) )
   METHOD   getRowSetRecno()                       INLINE   ( if( !empty( ::oRowSet ), ( ::oRowSet:recno() ) , 0 ) )
   METHOD   setRowSetRecno( nRecno )               INLINE   ( if( !empty( ::oRowSet ), ( ::oRowSet:goto( nRecno ) ), ) )
 
-<<<<<<< HEAD
    METHOD   setFind( cFind )                       INLINE   ( ::cFind := cFind )
  
    METHOD   setColumnOrderBy( cColumn )            INLINE   ( ::cColumnOrder := cColumn )
    METHOD   setOrderOrientation( cOrientation )    INLINE   ( ::cColumnOrientation := cOrientation )
-=======
   METHOD   setFind( cFind )                      INLINE   ( ::cFind := cFind )
  
   METHOD   setColumnOrderBy( cColumn )           INLINE   ( ::cColumnOrder := cColumn )
   METHOD   setOrderOrientation( cOrientation )   INLINE   ( ::cColumnOrientation := cOrientation )
->>>>>>> 1c2b54d10eb1748101cee5c2c1a759baee531d62
 
-<<<<<<< HEAD
-    METHOD   refreshSelect()                       INLINE   ( ::getOrderRowSet( .t. ) )
-<<<<<<< HEAD
-=======
-=======
   METHOD   refreshSelect()                       INLINE   ( ::getOrderRowSet( .t. ) )
->>>>>>> origin/master
->>>>>>> 1c2b54d10eb1748101cee5c2c1a759baee531d62
+  METHOD   refreshSelect()                       INLINE   ( ::getOrderRowSet( .t. ) )
 
   METHOD   getSelectSentence()
  
@@ -133,29 +95,23 @@ CLASS SQLBaseModel
   METHOD   loadBlankBuffer()
   METHOD   loadCurrentBuffer()
 
-<<<<<<< HEAD
    METHOD   getBuffer( cColumn )                   INLINE   ( hget( ::hBuffer, cColumn ) )
    METHOD   updateCurrentBuffer()                  INLINE   ( getSQLDatabase():Query( ::getUpdateSentence() ), ::refreshSelect() )
    METHOD   insertBuffer()                         INLINE   ( getSQLDatabase():Query( ::getInsertSentence() ), ::refreshSelect() )
    METHOD   deleteSelection()                      INLINE   ( getSQLDatabase():Query( ::getdeleteSentence() ), ::refreshSelect() )
 
    METHOD   getBuffer( cColumn )                   INLINE   ( hget( ::hBuffer, cColumn ) )
-=======
-<<<<<<< HEAD
    METHOD   getBuffer( cColumn )                  INLINE   ( hget( ::hBuffer, cColumn ) )
    METHOD   updateCurrentBuffer()                 INLINE   ( getSQLDatabase():Query( ::getUpdateSentence() ), ::refreshSelect() )
    METHOD   insertBuffer()                        INLINE   ( getSQLDatabase():Query( ::getInsertSentence() ), ::refreshSelect() )
    METHOD   deleteSelection()                     INLINE   ( getSQLDatabase():Query( ::getdeleteSentence() ), ::refreshSelect() )
    
    METHOD   getBuffer( cColumn )                  INLINE   ( hget( ::hBuffer, cColumn ) )
-=======
   METHOD   updateCurrentBuffer()                 INLINE ( getSQLDatabase():Query( ::getUpdateSentence() ), ::refreshSelect() )
   METHOD   insertBuffer()                        INLINE ( getSQLDatabase():Query( ::getInsertSentence() ), ::refreshSelect() )
   METHOD   deleteSelection()                     INLINE ( getSQLDatabase():Query( ::getdeleteSentence() ), ::refreshSelect() )
 
   METHOD   getBuffer( cColumn )                  INLINE   ( hget( ::hBuffer, cColumn ) )
->>>>>>> origin/master
->>>>>>> 1c2b54d10eb1748101cee5c2c1a759baee531d62
 
 END CLASS
 
