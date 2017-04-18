@@ -2296,14 +2296,16 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, cCodCli, cCodArt, nMode, cCodPre 
          :bStrData            := {|| "" }
          :bEditValue          := {|| ( dbfTmpLin )->lLinOfe }
          :nWidth              := 50
-         :SetCheck( { "gc_star2_16", "Nil16" } )
+         :lHide               := .t.
+         :SetCheck( { "gc_check_12", "nil16" } )
       end with
 
       with object ( oBrwLin:AddCol() )
          :cHeader             := "Re. Recibido"
          :bStrData            := {|| "" }
-         :bBmpData            := {|| if( nTotNPedCli( dbfTmpLin ) == 0, 3, nEstadoRecPedCli( D():PedidosProveedoresLineas( nView ), dbfAlbPrvL, dbfTmpLin ) ) }
+         :bBmpData            := {|| nEstadoUnidadesRecibidasPedidosClientes( D():PedidosProveedoresLineas( nView ), dbfAlbPrvL, dbfTmpLin ) }
          :nWidth              := 20
+         :lHide               := .t.
          :AddResource( "gc_delete_12" )
          :AddResource( "gc_shape_square_12" )
          :AddResource( "gc_check_12" )
@@ -2314,9 +2316,21 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, cCodCli, cCodArt, nMode, cCodPre 
          :bStrData            := {|| "" }
          :bBmpData            := {|| Min( Max( ( dbfTmpLin )->nProduc + 1, 1 ), 3 ) }
          :nWidth              := 20
+         :lHide               := .t.
          :AddResource( "gc_check_12" )
          :AddResource( "gc_shape_square_12" )
          :AddResource( "gc_delete_12" )
+      end with
+
+      with object ( oBrwLin:AddCol() )
+         :cHeader             := "En. Entregado"
+         :bStrData            := {|| "" }
+         :bBmpData            := {|| nEstadoUnidadesEntregadasPedidosClientes( dbfTmpLin, dbfAlbCliL ) }
+         :nWidth              := 20
+         :lHide               := .t.
+         :AddResource( "gc_delete_12" )
+         :AddResource( "gc_shape_square_12" )
+         :AddResource( "gc_check_12" )
       end with
 
       with object ( oBrwLin:AddCol() )
@@ -2485,6 +2499,16 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, cCodCli, cCodArt, nMode, cCodPre 
       end with
 
       with object ( oBrwLin:AddCol() )
+         :cHeader             := "Total entregadas"
+         :bEditValue          := {|| nUnidadesRecibidasAlbaranesClientes( ( dbfTmpLin )->cSerPed + Str( ( dbfTmpLin )->nNumPed ) + ( dbfTmpLin )->cSufPed, ( dbfTmpLin )->cRef, ( dbfTmpLin )->cValPr1, ( dbfTmpLin )->cValPr2, dbfAlbCliL ) }
+         :cEditPicture        := cPicUnd
+         :nWidth              := 60
+         :nDataStrAlign       := 1
+         :nHeadStrAlign       := 1
+         :lHide               := .t.
+      end with
+
+      with object ( oBrwLin:AddCol() )
          :cHeader             := "Unidad de medición"
          :bEditValue          := {|| ( dbfTmpLin )->cUnidad }
          :nWidth              := 24
@@ -2494,16 +2518,6 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, cCodCli, cCodArt, nMode, cCodPre 
          :cHeader             := "Alm."
          :bEditValue          := {|| ( dbfTmpLin )->cAlmLin }
          :nWidth              := 30
-      end with
-
-      with object ( oBrwLin:AddCol() )
-         :cHeader             := "Entregado"
-         :bEditValue          := {|| nUnidadesRecibidasAlbaranesClientes( ( dbfTmpLin )->cSerPed + Str( ( dbfTmpLin )->nNumPed ) + ( dbfTmpLin )->cSufPed, ( dbfTmpLin )->cRef, ( dbfTmpLin )->cValPr1, ( dbfTmpLin )->cValPr2, dbfAlbCliL ) }
-         :cEditPicture        := cPicUnd
-         :nWidth              := 60
-         :nDataStrAlign       := 1
-         :nHeadStrAlign       := 1
-         :lHide               := .t.
       end with
 
       with object ( oBrwLin:AddCol() )
@@ -13658,26 +13672,23 @@ function nTotReserva( cCodArt )
 return ( nTotal )
 
 //---------------------------------------------------------------------------//
-
 //
 // NOTA: Esta funcion se utiliza para el estado de recibido de pedidos de clientes
 //
 
-function nEstadoRecPedCli( cPedPrvL, cAlbPrvL, cTmpLin )
+function nEstadoUnidadesRecibidasPedidosClientes( cPedPrvL, cAlbPrvL, cTmpLin )
 
    local nTotUni
-   local nOrdAnt
-   local nEstado     := 1
+   local nEstado     := 3
    local nTotRec     := 0
 
-   nOrdAnt           := ( cPedPrvL )->( ordsetfocus( "cPedCliRef" ) )
-   if ( cPedPrvL )->( dbSeek( ( cTmpLin )->cSerPed + Str( ( cTmpLin )->nNumPed ) + ( cTmpLin )->cSufPed + ( cTmpLin )->cRef + ( cTmpLin )->cValPr1 + ( cTmpLin )->cValPr2 ) )
+   nTotUni           := nTotNPedCli( cTmpLin )
 
-      nTotUni        := nTotNPedCli( cTmpLin )
-      nTotRec        := nUnidadesRecibidasPedPrv( ( cPedPrvL )->cSerPed + Str( ( cPedPrvL )->nNumPed ) + ( cPedPrvL )->cSufPed, ( cTmpLin)->cRef, ( cTmpLin )->cValPr1, ( cTmpLin )->cValPr2, ( cTmpLin )->cRefPrv, cAlbPrvL )
+   if nTotUni == 0
+      Return ( nEstado )
+   end if 
 
-   end if
-   ( cPedPrvL )->( ordsetfocus( nOrdAnt ) )
+   nTotRec           := nTotalUnidadesRecibidasPedidosProveedor( cPedPrvL, cAlbPrvL, cTmpLin )
 
    do case
       case nTotRec == 0
@@ -13688,7 +13699,45 @@ function nEstadoRecPedCli( cPedPrvL, cAlbPrvL, cTmpLin )
          nEstado     := 3
    end case
 
-Return nEstado
+Return ( nEstado )
+
+//---------------------------------------------------------------------------//
+
+Static Function nTotalUnidadesRecibidasPedidosProveedor( cPedPrvL, cAlbPrvL, cTmpLin )
+
+   local nOrden
+   local nUnidadesRecibidas   := 0
+
+   nOrden                     := ( cPedPrvL )->( ordsetfocus( "cPedCliRef" ) )
+   if ( cPedPrvL )->( dbseek( ( cTmpLin )->cSerPed + Str( ( cTmpLin )->nNumPed ) + ( cTmpLin )->cSufPed + ( cTmpLin )->cRef + ( cTmpLin )->cValPr1 + ( cTmpLin )->cValPr2 ) )
+      nUnidadesRecibidas      := nUnidadesRecibidasPedPrv( ( cPedPrvL )->cSerPed + Str( ( cPedPrvL )->nNumPed ) + ( cPedPrvL )->cSufPed, ( cTmpLin)->cRef, ( cTmpLin )->cValPr1, ( cTmpLin )->cValPr2, ( cTmpLin )->cRefPrv, cAlbPrvL )
+   end if
+   ( cPedPrvL )->( ordsetfocus( nOrden ) )
+
+Return ( nUnidadesRecibidas )
+
+//---------------------------------------------------------------------------//
+
+//
+// NOTA: Esta funcion se utiliza para el estado de recibido de pedidos de clientes
+//
+
+function nEstadoUnidadesEntregadasPedidosClientes( cTmpLin, cAlbCliL )
+
+   local nEstado              := 1
+   local nUnidadesPedidas     := nTotNPedCli( cTmpLin )
+   local nUnidadesRecibidas   := nUnidadesRecibidasAlbaranesClientes( ( dbfTmpLin )->cSerPed + Str( ( dbfTmpLin )->nNumPed ) + ( dbfTmpLin )->cSufPed, ( dbfTmpLin )->cRef, ( dbfTmpLin )->cValPr1, ( dbfTmpLin )->cValPr2, cAlbCliL )
+
+   do case
+      case nUnidadesRecibidas == 0
+         nEstado              := 1
+      case nUnidadesRecibidas < nUnidadesPedidas
+         nEstado              := 2
+      case nUnidadesRecibidas >= nUnidadesPedidas
+         nEstado              := 3
+   end case
+
+Return ( nEstado )
 
 //---------------------------------------------------------------------------//
 
@@ -14551,7 +14600,7 @@ function aItmPedCli()
    aAdd( aItmPedCli, { "cCodPgo", "C",    2,  0, "Código de pago",                                          "Pago",                    "", "( cDbf )", {|| cDefFpg() } } )
    aAdd( aItmPedCli, { "cCodRut", "C",    4,  0, "Código de la ruta",                                       "Ruta",                    "", "( cDbf )", nil } )
    aAdd( aItmPedCli, { "dFecEnt", "D",    8,  0, "Fecha de salida",                                         "FechaSalida",             "", "( cDbf )", nil } )
-   aAdd( aItmPedCli, { "nEstAdo", "N",    1,  0, "Estado del pedido",                                       "Estado",                  "", "( cDbf )", {|| 1 } } )
+   aAdd( aItmPedCli, { "nEstado", "N",    1,  0, "Estado del pedido",                                       "Estado",                  "", "( cDbf )", {|| 1 } } )
    aAdd( aItmPedCli, { "cSuPed",  "C",   35,  0, "Su pedido",                                               "DocumentoOrigen",         "", "( cDbf )", nil } )
    aAdd( aItmPedCli, { "cCondent","C",  100,  0, "Condiciones del pedido",                                  "Condiciones",             "", "( cDbf )", nil } )
    aAdd( aItmPedCli, { "mComent", "M",   10,  0, "Comentarios",                                             "Comentarios",             "", "( cDbf )", nil } )

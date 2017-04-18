@@ -5668,15 +5668,16 @@ STATIC FUNCTION cPedCli( aGet, aTmp, oBrwLin, oBrwPgo, nMode )
 
       while ( ( dbfPedCliL )->cSerPed + Str( ( dbfPedCliL )->nNumPed ) + ( dbfPedCliL )->cSufPed == cPedido )
 
-         nTotRet                 := ( dbfPedCliL )->nUniCaja
+         nTotRet                 := nTotNPedCli( dbfPedCliL )     // -> nUniCaja
          nTotRet                 -= nUnidadesRecibidasAlbaranesClientes( cPedido, ( dbfPedCliL )->cRef, ( dbfPedCliL )->cValPr1, ( dbfPedCliL )->cValPr2, D():Get( "AlbCliL", nView ) )
          nTotRet                 -= nUnidadesRecibidasFacturasClientes( cPedido, ( dbfPedCliL )->cRef, ( dbfPedCliL )->cValPr1, ( dbfPedCliL )->cValPr2, D():Get( "FacCliL", nView ) )
 
-         //if ( nTotNPedCli( dbfPedCliL ) == 0 .or. nTotRet > 0 ) para meter lineas en negativo
+         if ( nTotRet > 0 )                                       // ->  nTotNPedCli( dbfPedCliL ) == 0 .or. para meter lineas en negativo
 
             (dbfTmpLin)->( dbAppend() )
 
             (dbfTmpLin)->nNumAlb    := 0
+            (dbfTmpLin)->cNumPed    := cPedido
             (dbfTmpLin)->nNumLin    := (dbfPedCliL)->nNumLin
             (dbfTmpLin)->nPosPrint  := (dbfPedCliL)->nPosPrint
             (dbfTmpLin)->cRef       := (dbfPedCliL)->cRef
@@ -5741,7 +5742,6 @@ STATIC FUNCTION cPedCli( aGet, aTmp, oBrwLin, oBrwPgo, nMode )
             (dbfTmpLin)->nValPnt    := (dbfPedCliL)->nValPnt
             (dbfTmpLin)->nDtoPnt    := (dbfPedCliL)->nDtoPnt
             (dbfTmpLin)->nIncPnt    := (dbfPedCliL)->nIncPnt
-            (dbfTmpLin)->cNumPed    := cPedido
             (dbfTmpLin)->lControl   := (dbfPedCliL)->lControl
             (dbfTmpLin)->lLinOfe    := (dbfPedCliL)->lLinOfe
             (dbfTmpLin)->nBultos    := (dbfPedCliL)->nBultos
@@ -5780,12 +5780,12 @@ STATIC FUNCTION cPedCli( aGet, aTmp, oBrwLin, oBrwPgo, nMode )
 
             else
 
-               ( dbfTmpLin )->nCanEnt  := ( dbfPedCliL )->nCanPed
-               ( dbfTmpLin )->nUniCaja := ( dbfPedCliL )->nUniCaja
+               ( dbfTmpLin )->nCanEnt        := ( dbfPedCliL )->nCanPed
+               ( dbfTmpLin )->nUniCaja       := ( dbfPedCliL )->nUniCaja
 
             end if
 
-         //end if
+         end if
 
          ( dbfPedCliL )->( dbSkip( 1 ) )
 
@@ -13523,7 +13523,7 @@ NOTA: Esta funcion se utiliza para el estado de generado de pedidos de clientes
 function nEstadoGenerado( cNumPed, cPedCliL, cPedPrvL )
 
    local nEstado     := 0
-   local nOrdAnt     := ( cPedPrvL )->( OrdSetFocus( "CPEDCLIREF" ) )
+   local nOrdAnt     := ( cPedPrvL )->( OrdSetFocus( "cPedCliRef" ) )
 
    ( cPedCliL )->( dbSeek( cNumPed ) )
 
