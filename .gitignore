@@ -48,6 +48,7 @@
 *.dmp
 *.ppo
 *.csv
+*.db
 
 ############
 ## Windows
