@@ -133,7 +133,7 @@ CLASS TFastVentasArticulos FROM TFastReportInfGen
    METHOD loadValuesExtraFields()
 
    METHOD setFilterClientIdHeader()             INLINE ( if( ::lApplyFilters,;
-                                                         ::cExpresionHeader   += ' .and. ( Field->cCodCli >= "' + Rtrim( ::oGrupoCliente:Cargo:getDesde() ) + '" .and. Field->cCodCli <= "' + Rtrim( ::oGrupoCliente:Cargo:getHasta() ) + '" )', ) )
+                                                         ::cExpresionLine   += ' .and. ( Field->cCodCli >= "' + ::oGrupoCliente:Cargo:getDesde() + '" .and. Field->cCodCli <= "' + ::oGrupoCliente:Cargo:getHasta() + '" )', ) )
 
    METHOD setFilterProductIdLine()              INLINE ( if( ::lApplyFilters,;
                                                          ::cExpresionLine  += ' .and. ( alltrim( Field->cRef ) >= "' + alltrim(::oGrupoArticulo:Cargo:getDesde()) + '" .and. alltrim(Field->cRef) <= "' + alltrim(::oGrupoArticulo:Cargo:getHasta()) + '" )', ) )
@@ -956,7 +956,7 @@ Method lValidRegister() CLASS TFastVentasArticulos
       Return .f.
    end if
 
-   if !empty( ::oGrupoCliente ) .and. !( ::oDbf:cCodCli        >= ::oGrupoCliente:Cargo:getDesde()          .and. ::oDbf:cCodCli    <= ::oGrupoCliente:Cargo:getHasta() )
+   if !empty( ::oGrupoCliente ) .and. !( ::oDbf:cCodCli        >= rTrim( ::oGrupoCliente:Cargo:getDesde() ) .and. ::oDbf:cCodCli    <= rTrim( ::oGrupoCliente:Cargo:getHasta() ) )
       Return .f.
    end if
 
@@ -2139,8 +2139,6 @@ METHOD AddFacturaCliente() CLASS TFastVentasArticulos
    ::cExpresionHeader      += ' .and. ( Field->nNumFac >= Val( "' + Rtrim( ::oGrupoNumero:Cargo:getDesde() )    + '" ) .and. Field->nNumFac <= Val( "'    + Rtrim( ::oGrupoNumero:Cargo:getHasta() ) + '" ) )'
    ::cExpresionHeader      += ' .and. ( Field->cSufFac >= "' + Rtrim( ::oGrupoSufijo:Cargo:getDesde() )    + '" .and. Field->cSufFac <= "'    + Rtrim( ::oGrupoSufijo:Cargo:getHasta() ) + '" )'
    
-   ::setFilterClientIdHeader()
-
    ::setFilterPaymentId()
 
    ::setFilterRouteId() 
@@ -2167,6 +2165,8 @@ METHOD AddFacturaCliente() CLASS TFastVentasArticulos
 
    ::setFilterGroupFamily()
 
+   ::setFilterClientIdHeader()
+
    // Procesando facturas------------------------------------------------------
 
    ::setMeterText( "Procesando facturas" )
@@ -2182,6 +2182,7 @@ METHOD AddFacturaCliente() CLASS TFastVentasArticulos
    // Lineas de facturas-------------------------------------------------------
 
    ( D():FacturasClientesLineas( ::nView ) )->( dbgotop() )
+
    while !::lBreak .and. !( D():FacturasClientesLineas( ::nView ) )->( eof() )
 
       if ( D():FacturasClientes( ::nView ) )->( dbseek( ( D():FacturasClientesLineas( ::nView ) )->cSerie + Str( ( D():FacturasClientesLineas( ::nView ) )->nNumFac ) + ( D():FacturasClientesLineas( ::nView ) )->cSufFac ) ) 

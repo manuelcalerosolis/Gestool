@@ -858,9 +858,17 @@ FUNCTION Client( oMenuItem, oWnd, cCodCli )
       end with
 
       with object ( oWndBrw:AddXCol() )
-         :cHeader          := "Observaciones"
+         :cHeader          := "Comentarios"
          :bEditValue       := {|| ( D():Clientes( nView ) )->mComent }
          :nWidth           := 200
+         :lHide            := .t.
+      end with
+
+      with object ( oWndBrw:AddXCol() )
+         :cHeader          := "Observaciones"
+         :bEditValue       := {|| ( D():Clientes( nView ) )->mObserv }
+         :nWidth           := 200
+         :lHide            := .t.
       end with
 
       with object ( oWndBrw:AddXCol() )
@@ -883,9 +891,15 @@ FUNCTION Client( oMenuItem, oWnd, cCodCli )
 
       with object ( oWndBrw:AddXCol() )
          :cHeader          := "Pago"
-         :bEditValue       := {|| ( D():Clientes( nView ) )->CodPago + if( !Empty( ( D():Clientes( nView ) )->CodPago ), " - " , "" ) + RetFld( ( D():Clientes( nView ) )->CodPago, dbfFPago, "" ) }
+         :bEditValue       := {|| ( D():Clientes( nView ) )->CodPago + if( !Empty( ( D():Clientes( nView ) )->CodPago ), " - " , "" ) + RetFld( ( D():Clientes( nView ) )->CodPago, dbfFPago ) }
          :nWidth           := 200
          :lHide            := .t.
+      end with
+
+      with object ( oWndBrw:AddXCol() )
+         :cHeader          := "Transportista"
+         :bEditValue       := {|| AllTrim( ( D():Clientes( nView ) )->cCodTrn ) + if( !Empty( ( D():Clientes( nView ) )->cCodTrn ), " - " , "" ) + oTrans:cNombre( ( D():Clientes( nView ) )->cCodTrn ) }
+         :nWidth           := 200
       end with
 
       with object ( oWndBrw:AddXCol() )

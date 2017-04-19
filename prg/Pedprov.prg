@@ -4615,6 +4615,8 @@ STATIC FUNCTION EndTrans( aGet, aTmp, oBrw, nMode, oDlg )
 
    oDlg:Enable()
 
+   runEventScript( "PedidosProveedores\AfterSave", cSerie, nPedido, cSufijo, nMode )
+
    oDlg:End( IDOK )
 
 Return .t.
