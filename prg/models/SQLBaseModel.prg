@@ -11,35 +11,43 @@ CLASS SQLBaseModel
    DATA     cTableName
 	DATA	   hColumns
 
+   DATA     cColumnOrder
+   DATA     cOrientation
+   DATA     nIdForRecno
+
    DATA	   cSQLInsert     
    DATA     cSQLSelect      
    
    DATA     cColumnKey
 
-  	DATA	   hBuffer
-   DATA     idBuffer     
+  	DATA	   hBuffer   
    DATA     cFind
-   DATA     cColumnOrder
-   DATA     cColumnOrientation
- 
+
    METHOD   New()
    METHOD   End()
  
    METHOD   getSQLCreateTable()
 
+   METHOD   getTableName                           INLINE ( ::cTableName )
+
+   METHOD   setColumnOrder( cColumnOrder )         INLINE ( ::cColumnOrder := cColumnOrder )
+   METHOD   setOrientation( cOrientation )         INLINE ( ::cOrientation := cOrientation )
+   METHOD   setIdForRecno( nIdForRecno )           INLINE ( ::nIdForRecno := nIdForRecno )
+
    METHOD   getSelectSentence()
    METHOD   getInsertSentence()                     
    METHOD   getUpdateSentence()
    METHOD   getDeleteSentence()
-   METHOD   setColumnOrderBy( cColumn )           INLINE   ( ::cColumnOrder := cColumn )
-   METHOD   setOrderOrientation( cOrientation )   INLINE   ( ::cColumnOrientation := cOrientation )
 
    METHOD   setFind( cFind )                      INLINE   ( ::cFind := cFind )
    METHOD   getRowSet()
    METHOD   buildRowSet()
+   METHOD   buildRowSetWithRecno()                 INLINE   ( ::buildRowSet( .t. ) )
    METHOD   freeRowSet()                           INLINE   ( if( !empty( ::oRowSet ), ( ::oRowSet := nil ), ) )
    METHOD   getRowSetRecno()                       INLINE   ( if( !empty( ::oRowSet ), ( ::oRowSet:recno() ) , 0 ) )
    METHOD   setRowSetRecno( nRecno )               INLINE   ( if( !empty( ::oRowSet ), ( ::oRowSet:goto( nRecno ) ), ) )
+   METHOD   setIdForRecno( nIdForRecno )           INLINE   ( ::nIdForRecno := nIdForRecno )
+   METHOD   getKeyFieldOfRecno()                   INLINE   ( if( !empty( ::oRowSet ), ( ::oRowSet:fieldGet( ::cColumnKey ) ), ) )
  
    METHOD   getSelectByColumn()
    METHOD   getSelectByOrder()
@@ -51,11 +59,9 @@ CLASS SQLBaseModel
    METHOD   loadCurrentBuffer()
 
    METHOD   getBuffer( cColumn )                   INLINE   ( hget( ::hBuffer, cColumn ) )
-   METHOD   updateCurrentBuffer()                  INLINE   ( getSQLDatabase():Query( ::getUpdateSentence() ), ::refreshSelect() )
-   METHOD   insertBuffer()                         INLINE   ( getSQLDatabase():Query( ::getInsertSentence() ), ::refreshSelect() )
-   METHOD   deleteSelection()                      INLINE   ( getSQLDatabase():Query( ::getdeleteSentence() ), ::refreshSelect() )
-
-   METHOD   getHistory()                           INLINE   ( HistoricosUsuariosModel():getHistory( ::cTableName ) )
+   METHOD   updateCurrentBuffer()                  INLINE   ( getSQLDatabase():Query( ::getUpdateSentence() ), ::buildRowSet() )
+   METHOD   insertBuffer()                         INLINE   ( getSQLDatabase():Query( ::getInsertSentence() ), ::buildRowSet() )
+   METHOD   deleteSelection()                      INLINE   ( getSQLDatabase():Query( ::getdeleteSentence() ), ::buildRowSet() )
 
 END CLASS
 
@@ -66,8 +72,10 @@ METHOD New()
    ::cColumnKey                  := "id"
 
    ::cFind                       := ""
+
    ::cColumnOrder                := ""
-   ::cColumnOrientation          := ""
+   ::cOrientation                := ""
+   ::nIdForRecno                      := 1
 
 Return ( Self )
 
@@ -103,20 +111,24 @@ Return ( ::oRowSet )
 
 //---------------------------------------------------------------------------//
 
-METHOD buildRowSet()
+METHOD buildRowSet( lWithRecno )
 
    local oStmt
 
-   try 
-      oStmt          := getSQLDatabase():Query( ::getSelectSentence() )
+   default  lWithRecno  := .f.
 
-      ::oRowSet      := oStmt:fetchRowSet()
-      ::oRowSet:goTop()
+   try
+      oStmt             := getSQLDatabase():Query( ::getSelectSentence() ) 
+      ::oRowSet         := oStmt:fetchRowSet()
+
+      if lWithRecno .and. !empty( ::nIdForRecno )
+         ::oRowSet:find( ::nIdForRecno , ::cColumnKey, .t. )
+      else
+         ::oRowSet:goTop()
+      end if
 
    catch
-
       msgstop( hb_valtoexp( getSQLDatabase():errorInfo() ) )
-
       if !empty( oStmt )
          oStmt:free()
       end if    
@@ -135,7 +147,7 @@ METHOD getUpdateSentence()
 
   cSQLUpdate        := ChgAtEnd( cSQLUpdate, '', 2 )
 
-  cSQLUpdate        += " WHERE " + ::cColumnKey + " = " + convertToSql( ::idBuffer ) 
+  cSQLUpdate        += " WHERE " + ::cColumnKey + " = " + convertToSql( ::oRowSet:fieldget( ::cColumnKey ) ) 
 
 Return ( cSQLUpdate )
 
@@ -179,7 +191,7 @@ Return ( cSQLSelect )
 
 //---------------------------------------------------------------------------//
 
-METHOD getSelectByColumn()
+METHOD getSelectByColumn( cColumnOrder )
 
    local cSQLSelect     := ""
 
@@ -191,7 +203,7 @@ Return ( cSQLSelect )
 
 //---------------------------------------------------------------------------//
 
-METHOD getSelectByOrder()
+METHOD getSelectByOrder( cColumnOrder, cOrientation )
 
    local cSQLSelect  := ""
 
@@ -199,7 +211,7 @@ METHOD getSelectByOrder()
       cSQLSelect     += " ORDER BY " + ::cColumnOrder
    end if 
 
-   if !empty( ::cColumnOrientation ) .and. ::cColumnOrientation == "D"
+   if !empty( ::cOrientation ) .and. ::cOrientation == "D"
       cSQLSelect     += " DESC"
    end if
 
@@ -229,11 +241,19 @@ Return ( ::loadBuffer( 0 ) )
 
 METHOD loadCurrentBuffer()                
 
+   local n
+
    if empty( ::oRowSet )
       Return ( .f. )
    end if 
 
-Return ( ::loadBuffer( ::oRowSet:fieldGet( ::cColumnKey ) ) )   
+   ::hBuffer  := {=>}
+
+   for n := 1 to ::oRowSet:fieldCount()
+      hset( ::hBuffer, ::oRowSet:fieldname( n ), ::oRowSet:fieldget( n ) )
+   next 
+
+Return ( ::hBuffer )   
 
 //---------------------------------------------------------------------------//
 
@@ -242,7 +262,6 @@ METHOD loadBuffer( id )
    local n 
 
    ::hBuffer  := {=>}
-   ::idBuffer := id
 
    ::oRowSet:goto( id )
 
@@ -267,26 +286,3 @@ Function convertToSql( value )
 Return ( value )
        
 //---------------------------------------------------------------------------//
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

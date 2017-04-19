@@ -13,18 +13,11 @@ CLASS SQLBaseView
    DATA     keyUserMap
 
    DATA     oModel
-
-   DATA     cFind
-
-   DATA     cColumnOrder
-   DATA     cColumnOrientation
  
    METHOD   New()
    
    METHOD   isUserAccess()
    METHOD   notUserAccess()                        INLINE   ( !::isUserAccess() )
-
-   METHOD   getHistory()                           INLINE   ( HistoricosUsuariosModel():getHistory( ::cTableName ) )
 
 END CLASS
 
