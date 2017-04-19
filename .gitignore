@@ -7,11 +7,11 @@
 [Pp]po/
 [Pp]po1406/
 [Dd]atos/
-[Dd]atabase/
 [Ff]ont/
 [Cc]lient/
 [Ii]ss/[Ee]xe/
 [Bb]in/[Ii]magen/
+[Bb]in/[Dd]atabase/
 
 *.tmp
 *.bak
