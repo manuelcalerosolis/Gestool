@@ -4615,7 +4615,7 @@ STATIC FUNCTION EndTrans( aGet, aTmp, oBrw, nMode, oDlg )
 
    oDlg:Enable()
 
-   runEventScript( "PedidosProveedores\AfterSave", cSerie, nPedido, cSufijo, nMode )
+   runEventScript( "PedidosProveedores\AfterSave", nView, cSerie, nPedido, cSufijo, nMode )
 
    oDlg:End( IDOK )
 
@@ -6251,6 +6251,7 @@ Calcula el Total del pedido
 FUNCTION nTotPedPrv( cPedido, cPedPrvT, cPedPrvL, cIva, cDiv, aTmp, cDivRet, lPic )
 
    local nRec
+   local nOrdAnt
    local nTotArt
    local nImpuestoEspecial
    local dFecFac
@@ -6279,9 +6280,9 @@ FUNCTION nTotPedPrv( cPedido, cPedPrvT, cPedPrvL, cIva, cDiv, aTmp, cDivRet, lPi
 
    initPublics()
 
-
    nRec              := ( cPedPrvL )->( Recno() )
-
+   nOrdAnt           := ( cPedPrvL )->( OrdSetFocus( "nNumPed" ) )
+   
    if aTmp != nil
       dFecFac        := aTmp[ _DFECPED ]
       lRecargo       := aTmp[ _LRECARGO]
@@ -6360,6 +6361,10 @@ FUNCTION nTotPedPrv( cPedido, cPedPrvT, cPedPrvL, cIva, cDiv, aTmp, cDivRet, lPi
       ( cPedPrvL )->( dbSkip() )
 
    end while
+
+   if !Empty( nOrdAnt )
+      ( cPedPrvL )->( OrdSetFocus( nOrdAnt ) )
+   end if
 
    ( cPedPrvL )->( dbGoTo( nRec ) )
 
@@ -6470,6 +6475,7 @@ FUNCTION nTotPedPrv( cPedido, cPedPrvT, cPedPrvL, cIva, cDiv, aTmp, cDivRet, lPi
    // Total de R.E.
 
    nTotReq           := Round( _NIMPREQ1 + _NIMPREQ2 + _NIMPREQ3, nDirDiv )
+
 
    // Total impuesto
 
