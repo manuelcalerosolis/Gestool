@@ -1005,8 +1005,7 @@ METHOD SetEstadoPedCli( cNumPed ) CLASS TStock
       return .f.
    end if
    
-   while ( ::cPedCliL )->cSerPed + Str( ( ::cPedCliL )->nNumPed ) + ( ::cPedCliL )->cSufPed == cNumPed .and.;
-         !( ::cPedCliL )->( eof() )
+   while ( ::cPedCliL )->cSerPed + Str( ( ::cPedCliL )->nNumPed ) + ( ::cPedCliL )->cSufPed == cNumPed .and. !( ::cPedCliL )->( eof() )
 
       if !( ::cPedCliL )->lAnulado
 
@@ -1030,7 +1029,7 @@ METHOD SetEstadoPedCli( cNumPed ) CLASS TStock
    end do
 
    /*
-   En funcion de lo recibido colocamos los pedidos
+   En funcion de lo recibido colocamos los pedidos-----------------------------
    */
 
    do case
@@ -1052,9 +1051,9 @@ METHOD SetEstadoPedCli( cNumPed ) CLASS TStock
 
    if dblock( ::cPedCliT )
       ( ::cPedCliT )->nEstado    := nEstadoPedido
-      ( ::cPedCliT )->lSndDoc  := .t.
-      ( ::cPedCliT )->dFecCre  := Date()
-      ( ::cPedCliT )->cTimCre  := Time()
+      ( ::cPedCliT )->lSndDoc    := .t.
+      ( ::cPedCliT )->dFecCre    := Date()
+      ( ::cPedCliT )->cTimCre    := Time()
       ( ::cPedCliT )->( dbUnlock() )
    end if
 
@@ -1106,11 +1105,9 @@ METHOD SetRecibidoPedCli( cNumPed ) CLASS TStock
       return self
    end if
 
-   if ( ::cPedCliT )->( dbSeek( cNumPed ) )  .and.;
-      ( ::cPedCliL )->( dbSeek( cNumPed ) )
+   if ( ::cPedCliT )->( dbSeek( cNumPed ) ) .and. ( ::cPedCliL )->( dbSeek( cNumPed ) )
 
-      while ( ::cPedCliL )->cSerPed + Str( ( ::cPedCliL )->nNumPed ) + ( ::cPedCliL )->cSufPed == cNumPed .and. ;
-            !( ::cPedCliL )->( eof() )
+      while ( ::cPedCliL )->cSerPed + Str( ( ::cPedCliL )->nNumPed ) + ( ::cPedCliL )->cSufPed == cNumPed .and. !( ::cPedCliL )->( eof() )
 
          if !empty( ( ::cPedCliL )->cRef )
 
