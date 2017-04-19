@@ -432,9 +432,6 @@ CLASS TFastReportInfGen FROM TNewInfGen
 
    METHOD AddAlbaranesClientes()
 
-   METHOD InitFacturasClientes()
-   METHOD AddFacturasClientes()
-
    METHOD InitFacturasRectificativasClientes()
    METHOD AddFacturasRectificativasClientes()
 
@@ -3380,18 +3377,6 @@ RETURN ( Self )
 //------------------------------------------------------------------------//
 
 METHOD AddAlbaranesClientes()
-
-RETURN ( Self )
-
-//------------------------------------------------------------------------//
-
-METHOD InitFacturasClientes()
-
-RETURN ( Self )
-
-//------------------------------------------------------------------------//
-
-METHOD AddFacturasClientes()
 
 RETURN ( Self )
 

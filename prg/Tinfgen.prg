@@ -585,7 +585,7 @@ METHOD New( cSubTitle, aFields, aIndex, oMenuItem, oWnd, cHelp, xOthers ) CLASS 
 
    local n
    local nLevel
-   local cFileObject := SubStr( StrTran( Str( Seconds() ), ".", "" ), -6 )
+   local cFileObject := substr( strtran( alltrim( str( seconds() ) ), ".", "" ), -6 )
 
    DEFAULT cSubTitle := Padr( "Generador de informes", 50 )
    DEFAULT aFields   := {}

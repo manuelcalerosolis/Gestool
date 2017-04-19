@@ -133,7 +133,7 @@ CLASS TFastVentasArticulos FROM TFastReportInfGen
    METHOD loadValuesExtraFields()
 
    METHOD setFilterClientIdHeader()             INLINE ( if( ::lApplyFilters,;
-                                                         ::cExpresionLine   += ' .and. ( Field->cCodCli >= "' + ::oGrupoCliente:Cargo:getDesde() + '" .and. Field->cCodCli <= "' + ::oGrupoCliente:Cargo:getHasta() + '" )', ) )
+                                                         ::cExpresionHeader   += ' .and. ( Field->cCodCli >= "' + ::oGrupoCliente:Cargo:getDesde() + '" .and. Field->cCodCli <= "' + ::oGrupoCliente:Cargo:getHasta() + '" )', ) )
 
    METHOD setFilterProductIdLine()              INLINE ( if( ::lApplyFilters,;
                                                          ::cExpresionLine  += ' .and. ( alltrim( Field->cRef ) >= "' + alltrim(::oGrupoArticulo:Cargo:getDesde()) + '" .and. alltrim(Field->cRef) <= "' + alltrim(::oGrupoArticulo:Cargo:getHasta()) + '" )', ) )
@@ -1260,7 +1260,7 @@ METHOD DataReport() CLASS TFastVentasArticulos
    ::oFastReport:SetMasterDetail(   "Informe", "Grupo clientes",                    {|| ::oDbf:cCodGrp } )
    ::oFastReport:SetMasterDetail(   "Informe", "Formas de pago",                    {|| ::oDbf:cCodPago } )
    
-   ::oFastReport:SetMasterDetail(   "Informe", "Proveedores",                       {|| ::oDbf:cCodCli } )
+   ::oFastReport:SetMasterDetail(   "Informe", "Proveedores",                       {|| ::oDbf:cPrvHab } )
    ::oFastReport:SetMasterDetail(   "Informe", "Usuarios",                          {|| ::oDbf:cCodUsr } )
    ::oFastReport:SetMasterDetail(   "Informe", "Almacenes",                         {|| ::oDbf:cCodAlm } )
    ::oFastReport:SetMasterDetail(   "Informe", "Direcciones",                       {|| ::oDbf:cCodCli + ::oDbf:cCodObr } )
@@ -1404,11 +1404,7 @@ METHOD AddSATClientes() CLASS TFastVentasArticulos
    ( D():SATClientesLineas( ::nView ) )->( dbgotop() )
    while !::lBreak .and. !( D():SATClientesLineas( ::nView ) )->( eof() )
 
-      // Posicionamiento en las cabeceras--------------------------------------
-
       if ( D():SATClientes( ::nView ) )->( dbseek( D():SATClientesLineasId( ::nView ) ) )
-
-         // Añadimos un nuevo registro--------------------------------
 
          ::oDbf:Blank()
 
@@ -2110,13 +2106,11 @@ METHOD AddAlbaranCliente( lFacturados ) CLASS TFastVentasArticulos
                ::oDbf:cEstado    := "Finalizado"
          end case
 
+         ::insertIfValid()
+
+         ::loadValuesExtraFields()
+
       end if
-
-      ::InsertIfValid()
-
-      ::loadValuesExtraFields()
-
-      ::addAlbaranesClientes()
 
       ( D():AlbaranesClientesLineas( ::nView ) )->( dbSkip() )
 
@@ -2129,8 +2123,6 @@ RETURN ( Self )
 //---------------------------------------------------------------------------//
 
 METHOD AddFacturaCliente() CLASS TFastVentasArticulos
-
-   ::InitFacturasClientes()
 
    // filtros para la cabecera-------------------------------------------------
    
@@ -2185,7 +2177,7 @@ METHOD AddFacturaCliente() CLASS TFastVentasArticulos
 
    while !::lBreak .and. !( D():FacturasClientesLineas( ::nView ) )->( eof() )
 
-      if ( D():FacturasClientes( ::nView ) )->( dbseek( ( D():FacturasClientesLineas( ::nView ) )->cSerie + Str( ( D():FacturasClientesLineas( ::nView ) )->nNumFac ) + ( D():FacturasClientesLineas( ::nView ) )->cSufFac ) ) 
+      if D():gotoIdFacturasClientes( D():FacturasClientesLineasId( ::nView ), ::nView ) 
 
          ::oDbf:Blank()
          ::oDbf:cCodArt    :=( D():FacturasClientesLineas( ::nView ) )->cRef
@@ -2298,15 +2290,13 @@ METHOD AddFacturaCliente() CLASS TFastVentasArticulos
 
          ::oDbf:cEstado    := cChkPagFacCli( ::oDbf:cSerDoc + ::oDbf:cNumDoc + ::oDbf:cSufDoc, ( D():FacturasClientes( ::nView ) ), D():FacturasClientesCobros( ::nView ) )
 
+         ::loadValuesExtraFields()
+
+         ::InsertIfValid()
+
       end if
 
-      ::InsertIfValid()
-      
-      ::loadValuesExtraFields()
-
-      ::addFacturasClientes()
-
-      ( D():FacturasClientesLineas( ::nView ) )-> ( dbSkip() )
+      ( D():FacturasClientesLineas( ::nView ) )->( dbskip() )
 
       ::setMeterAutoIncremental()
 
@@ -2490,10 +2480,11 @@ METHOD AddFacturaRectificativa() CLASS TFastVentasArticulos
 
          ::oDbf:cEstado    := cChkPagFacRec( ::oDbf:cSerDoc + ::oDbf:cNumDoc + ::oDbf:cSufDoc, ( D():FacturasRectificativas( ::nView ) ), D():FacturasClientesCobros( ::nView ) )
 
-      end if
+         ::InsertIfValid()
 
-      ::InsertIfValid()
-      ::loadValuesExtraFields()
+         ::loadValuesExtraFields()
+
+      end if
 
       ( D():FacturasRectificativasLineas( ::nView ) )->( dbSkip() )
 

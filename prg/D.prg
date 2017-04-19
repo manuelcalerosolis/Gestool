@@ -196,6 +196,7 @@ CLASS D
       METHOD FacturasClientesIdText( nView )                INLINE ( ::FacturasClientesIdTextShort( nView ) + "/" + ( ::Get( "FacCliT", nView ) )->cSufFac )
       METHOD getFacturaCliente( nView )                     INLINE ( ::getHashRecordById( ::FacturasClientesId( nView ), ::FacturasClientes( nView ), nView ) )
       METHOD getDefaultHashFacturaCliente( nView )          INLINE ( ::getHashRecordDefaultValues( ::FacturasClientes( nView ), nView ) )
+      METHOD gotoIdFacturasClientes( id, nView )            INLINE ( ::seekInOrd( ::FacturasClientes( nView ), id, "nNumFac" ) ) 
 
       METHOD getStatusFacturasClientes( nView )             INLINE ( ::aStatus := aGetStatus( ::FacturasClientes( nView ) ) )
       METHOD setStatusFacturasClientes( nView )             INLINE ( SetStatus( ::FacturasClientes( nView ), ::aStatus ) ) 
