@@ -9,7 +9,10 @@ CLASS SQLBaseModel
    DATA     oRowSet
 
    DATA     cTableName
+   DATA     cDbfTableName
 	DATA	   hColumns
+
+   DATA     aDbfFields
 
    DATA     cColumnOrder
    DATA     cOrientation
@@ -27,6 +30,13 @@ CLASS SQLBaseModel
    METHOD   End()
  
    METHOD   getSQLCreateTable()
+   METHOD   getSQLDropTable()
+   METHOD   getImportSentence( cPath )
+   METHOD   makeImportDbfSQL( cPath )
+   METHOD   getSelectSentence()
+   METHOD   getInsertSentence()                     
+   METHOD   getUpdateSentence()
+   METHOD   getDeleteSentence()
 
    METHOD   getTableName                           INLINE ( ::cTableName )
 
@@ -34,10 +44,6 @@ CLASS SQLBaseModel
    METHOD   setOrientation( cOrientation )         INLINE ( ::cOrientation := cOrientation )
    METHOD   setIdForRecno( nIdForRecno )           INLINE ( ::nIdForRecno := nIdForRecno )
 
-   METHOD   getSelectSentence()
-   METHOD   getInsertSentence()                     
-   METHOD   getUpdateSentence()
-   METHOD   getDeleteSentence()
 
    METHOD   setFind( cFind )                      INLINE   ( ::cFind := cFind )
    METHOD   getRowSet()
@@ -75,7 +81,7 @@ METHOD New()
 
    ::cColumnOrder                := ""
    ::cOrientation                := ""
-   ::nIdForRecno                      := 1
+   ::nIdForRecno                 := 1
 
 Return ( Self )
 
@@ -98,6 +104,79 @@ METHOD getSQLCreateTable()
    cSQLCreateTable        := ChgAtEnd( cSQLCreateTable, ' )', 2 )
 
 Return ( cSQLCreateTable )
+
+//---------------------------------------------------------------------------//
+
+METHOD getSQLDropTable()
+   
+   Local cSQLDropTable := "DROP TABLE " + ::cTableName
+
+Return ( cSQLDropTable )
+
+//---------------------------------------------------------------------------//
+
+METHOD getImportSentence( cPath )
+   
+   local dbf
+   local cValues     := ""
+   local cInsert     := ""
+
+   default cPath     := cPatDat()
+
+   dbUseArea( .t., cLocalDriver(), cPath + "\" + ::cDbfTableName + ".dbf", cCheckArea( "dbf", @dbf ), .f. )
+   if ( dbf )->( neterr() )
+      Return ( cInsert )
+   end if 
+
+   cInsert              := "INSERT INTO " + ::cTableName + " ( "
+   hEval( ::hColumns, {| k, v | if ( k != ::cColumnKey, cInsert += k + ", ", ) } )
+   cInsert           := ChgAtEnd( cInsert, ' ) VALUES ', 2 )
+
+   ( dbf )->( dbgotop() )
+   while ( dbf )->( !eof() )
+
+      cValues           += "( "
+      aeval( ::aDbfFields, {|cField| cValues += convertToSql( ( dbf )->( fieldget( fieldpos( cField ) ) ) ) + ", " } )
+      cValues           := chgAtEnd( cValues, ' ), ', 2 )
+
+      ( dbf )->( dbskip() )
+   end while
+
+   cValues              := chgAtEnd( cValues, '', 2 )
+
+   cInsert              += cValues
+
+   ( dbf )->( dbclosearea() )
+
+Return ( cInsert )
+
+//---------------------------------------------------------------------------//
+
+METHOD makeImportDbfSQL( cPath )
+
+   local cImportSentence
+
+   default cPath     := cPatDat()
+
+   if !( file( cPath + "\" + ::cDbfTableName + ".dbf" ) )
+      msgStop( "El fichero " + cPath + "\" + ::cDbfTableName + ".dbf" + " no se ha localizado", "Atención" )  
+      Return ( self )
+   end if 
+
+   cImportSentence   := ::getImportSentence( cPath )
+   if empty( cImportSentence )
+      Return ( self )
+   end if 
+
+   getSQLDatabase():Exec( ::getSQLDropTable() )
+
+   getSQLDatabase():Exec( ::getSQLCreateTable() )
+
+   getSQLDatabase():Exec( cImportSentence )
+
+   frename( cPath + "\" + ::cDbfTableName + ".dbf", cPath + "\" + "old-" + ::cDbfTableName + ".dbf" )
+
+Return ( self )
 
 //---------------------------------------------------------------------------//
 

@@ -16,7 +16,11 @@ METHOD New()
 
    ::cTableName                  := "tipos_impresoras"
 
-   ::hColumns                    := {  "id"     => "INTEGER PRIMARY KEY AUTOINCREMENT",;
+   ::cDbfTableName				 	:= "TipImp"
+
+   ::aDbfFields			 			:=	{  "cTipImp" }
+
+   ::hColumns                   	:= {  "id"     => "INTEGER PRIMARY KEY AUTOINCREMENT",;
                                        "nombre" => "VARCHAR( 50 ) NOT NULL" }
 
    ::Super:New()

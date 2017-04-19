@@ -26,6 +26,7 @@ CLASS TiposImpresoras FROM SQLBaseView
    METHOD   Append()
    METHOD   Edit()
    METHOD   Dialog()
+   METHOD   browse( oGet )
 
    METHOD   getHistory()
    METHOD   saveHistory()
@@ -80,7 +81,6 @@ METHOD buildSQLShell()
    disableAcceso()
 
    ::oShell                := TShellSQL():New( 2, 10, 18, 70, "Tipos de impresoras", , oWnd(), , , .f., , , ::oModel, , , , , {}, {|| ::Edit() },, {|| ::oModel:deleteSelection() },, nil, ::nLevel, "gc_printer2_16", ( 104 + ( 0 * 256 ) + ( 63 * 65536 ) ),,, .t. )
-
 
       with object ( ::oShell:AddXCol() )
          :cHeader          := "Id"
@@ -299,4 +299,116 @@ METHOD SetCombo()
 RETURN ( Self )
 
 //---------------------------------------------------------------------------//
+
+//---------------------------------------------------------------------------//
+
+METHOD browse( oGet )
+
+   local oDlg
+   local oGet1
+   local cGet1
+   local oCbxOrd
+   local aCbxOrd     := { "Tipo" }
+   local cCbxOrd
+   local cFind
+   local cOrder
+   local oBrw
+   local dbfTImp
+   local nLevel
+   local bEdit
+   local oFind
+   local oOrder
+
+
+   DEFINE DIALOG oDlg RESOURCE "HELPENTRY" TITLE "Seleccionar tipo de impresora"
+
+   REDEFINE GET   oFind ; 
+      VAR         cFind ;
+      ID          104 ;
+      ON CHANGE   ( msgalert( cFind ) );
+      BITMAP      "FIND" ;
+      OF          oDlg
+
+   REDEFINE COMBOBOX oOrder ;
+      VAR         cOrder ;
+      ID          102 ;
+      ITEMS       aCbxOrd ;
+      OF          oDlg
+
+   oBrw                    := IXBrowse():New( oDlg )
+
+      oBrw:bClrSel         := {|| { CLR_BLACK, Rgb( 229, 229, 229 ) } }
+      oBrw:bClrSelFocus    := {|| { CLR_BLACK, Rgb( 167, 205, 240 ) } }
+
+      oBrw:cAlias          := dbfTImp
+      oBrw:lHScroll        := .f.
+      oBrw:nMarqueeStyle   := 5
+      oBrw:cName           := "Browse.TipoImpresora"
+
+      with object ( oBrw:AddCol() )
+         :cHeader          := "Id"
+         :cSortOrder       := "id"
+         :bEditValue       := {|| ::oModel:getRowSet():fieldGet( "id" ) }
+         :nWidth           := 40
+         :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | ::clickOnHeader( oCol ) }
+      end with
+
+      with object ( oBrw:AddCol() )
+         :cHeader          := "Tipo de impresora"
+         :cSortOrder       := "nombre"
+         :bEditValue       := {|| ::oModel:getRowSet():fieldGet( "nombre" ) }
+         :nWidth           := 800
+         :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | ::clickOnHeader( oCol ) }
+      end with
+
+      oBrw:bLDblClick      := {|| oDlg:end( IDOK ) }
+      oBrw:bRClicked       := {| nRow, nCol, nFlags | oBrw:RButtonDown( nRow, nCol, nFlags ) }
+
+      oBrw:CreateFromResource( 105 )
+
+      REDEFINE BUTTON ;
+         ID       IDOK ;
+         OF       oDlg ;
+         ACTION   ( oDlg:end( IDOK ) )
+
+      REDEFINE BUTTON ;
+         ID       IDCANCEL ;
+         OF       oDlg ;
+         CANCEL ;
+         ACTION   ( oDlg:end() )
+
+      REDEFINE BUTTON ;
+         ID       500 ;
+         OF       oDlg ;
+         WHEN     ( nAnd( nLevel, ACC_APPD ) != 0 .and. !IsReport() ) ;
+         ACTION   ( WinAppRec( oBrw, bEdit, dbfTImp ) );
+
+      REDEFINE BUTTON ;
+         ID       501 ;
+         OF       oDlg ;
+         WHEN     ( nAnd( nLevel, ACC_EDIT ) != 0 .and. !IsReport() ) ;
+         ACTION   ( WinEdtRec( oBrw, bEdit, dbfTImp ) )
+
+      if nAnd( nLevel, ACC_APPD ) != 0 .and. !IsReport()
+         oDlg:AddFastKey( VK_F2,    {|| WinAppRec( oBrw, bEdit, dbfTImp ) } )
+      end if
+
+      if nAnd( nLevel, ACC_EDIT ) != 0 .and. !IsReport()
+         oDlg:AddFastKey( VK_F3,    {|| WinEdtRec( oBrw, bEdit, dbfTImp ) } )
+      end if
+
+      oDlg:AddFastKey( VK_RETURN,   {|| oDlg:end( IDOK ) } )
+      oDlg:AddFastKey( VK_F5,       {|| oDlg:end( IDOK ) } )
+
+   ACTIVATE DIALOG oDlg CENTER
+
+   if oDlg:nResult == IDOK
+      oGet:cText( ( dbfTImp )->cTipImp )
+      oGet:lValid()
+   end if
+
+RETURN ( oDlg:nResult == IDOK )
+
+//---------------------------------------------------------------------------//
+
 
