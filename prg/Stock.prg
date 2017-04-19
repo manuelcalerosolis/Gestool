@@ -6497,12 +6497,15 @@ Return ( nil )
 
 METHOD CreateTemporalFiles( cPath ) CLASS TStock
 
+   local cFile 
    local aStock
 
    DEFAULT cPath        := cPatTmp()
 
-   ::cDbfStock          := "Stock" + cCurUsr() + str( seconds() ) + ".Dbf"
-   ::cCdxStock          := "Stock" + cCurUsr() + str( seconds() ) + ".Cdx"
+   cFile                := "Stock" + strtran( alltrim( str( seconds() ) ), ".", "" )
+
+   ::cDbfStock          := cFile + ".dbf"
+   ::cCdxStock          := cFile + ".cdx"
 
    ::DeleteTemporalFiles( cPath )
 
