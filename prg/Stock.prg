@@ -1005,8 +1005,7 @@ METHOD SetEstadoPedCli( cNumPed ) CLASS TStock
       return .f.
    end if
    
-   while ( ::cPedCliL )->cSerPed + Str( ( ::cPedCliL )->nNumPed ) + ( ::cPedCliL )->cSufPed == cNumPed .and.;
-         !( ::cPedCliL )->( eof() )
+   while ( ::cPedCliL )->cSerPed + Str( ( ::cPedCliL )->nNumPed ) + ( ::cPedCliL )->cSufPed == cNumPed .and. !( ::cPedCliL )->( eof() )
 
       if !( ::cPedCliL )->lAnulado
 
@@ -1030,11 +1029,8 @@ METHOD SetEstadoPedCli( cNumPed ) CLASS TStock
    end do
 
    /*
-   En funcion de lo recibido colocamos los pedidos
+   En funcion de lo recibido colocamos los pedidos-----------------------------
    */
-
-   msgalert( nTotalUnidadesPedidas,     'nTotalUnidadesPedidas')
-   msgalert( nTotalUnidadesRecibidas,   'nTotalUnidadesRecibidas')
 
    do case
       case nTotalUnidadesRecibidas == 0
