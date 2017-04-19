@@ -12,22 +12,20 @@ CLASS TShellSQL FROM TShell
 
    DATA  oModel
 
-   METHOD setXAlias( oModel )       INLINE ( if( hb_isobject( oModel ), ::oModel := oModel, ) )
+   METHOD setXAlias( oModel )             INLINE ( if( hb_isobject( oModel ), ::oModel := oModel, ) )
 
    METHOD createXBrowse()
    METHOD createXFromCode()
 
    METHOD selectColumnOrder()
 
-   METHOD clickOnHeader( oCol )
+   METHOD setFilter()                     INLINE ( Self )
 
-   METHOD setFilter()               INLINE ( Self )
-
-   METHOD chgCombo( nTab )
+   METHOD setComboBoxChange( bChange )    INLINE ( ::oWndBar:SetComboBoxChange( bChange ) )
 
    METHOD fastSeek()
 
-   METHOD saveData()
+   METHOD getColumnBrowse( cHeader )
 
 ENDCLASS
 
@@ -152,44 +150,6 @@ METHOD selectColumnOrder( oCol )
 
 RETURN NIL
 
-//----------------------------------------------------------------------------//
-
-METHOD ClickOnHeader( oCol )
-
-   ::selectColumnOrder( oCol )
-
-   ::oModel:setColumnOrderBy( oCol:cSortOrder )
-
-   ::oModel:setOrderOrientation( oCol:cOrder )
-
-   ::oModel:buildRowSet()
-
-   ::oBrw:Refresh()
-
-RETURN ( Self )
-
-//---------------------------------------------------------------------------//
-
-METHOD ChgCombo()
-
-   local nPosition   := ascan( ::oBrw:aCols, {|o| o:cHeader == ::oWndBar:GetComboBox() } ) 
-
-   if nPosition != 0
-
-      ::selectColumnOrder( ::oBrw:aCols[ nPosition ] )
-
-      ::oModel:setColumnOrderBy( ::oBrw:aCols[ nPosition ]:cSortOrder )
-
-      ::oModel:setOrderOrientation( ::oBrw:aCols[ nPosition ]:cOrder )
-
-      ::oModel:buildRowSet()
-
-      ::oBrw:Refresh()
-
-   end if
-
-RETURN ( Self )
-
 //---------------------------------------------------------------------------//
 
 METHOD FastSeek()
@@ -234,9 +194,13 @@ Return ( lFind )
 
 //--------------------------------------------------------------------------//
 
-METHOD saveData()
+METHOD getColumnBrowse( cHeader )
 
-   msgalert( "guarda el orden y la fila")
+   local nPosition   := ascan( ::oBrw:aCols, {|o| o:cHeader == cHeader } )
+
+   if nPosition != 0
+      Return ( ::oBrw:aCols[ nPosition ] )
+   end if 
 
 Return ( nil )
 
