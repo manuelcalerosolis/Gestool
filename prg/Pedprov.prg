@@ -3067,8 +3067,8 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbf, oBrw, aTmpPed, cCodArt, nMode )
          OF       oFld:aDialogs[4]
 
    if nMode != ZOOM_MODE
-      oDlg:AddFastKey(  VK_F5, {|| SaveDeta( aTmp, aGet, oBrwPrp, oFld, oDlg, oBrw, nMode, oTotal, oGet1, aTmpPed, oSayPr1, oSayPr2, oSayVp1, oSayVp2, oGetStk, oSayLote, oBtn ) } )
-      oDlg:AddFastKey( VK_F9,  {|| D():CamposExtraLine( nView ):Play( if( nMode == APPD_MODE, "", Str( ( dbfTmpLin )->( OrdKeyNo() ) ) ) ) } )
+      oDlg:AddFastKey( VK_F5, {|| SaveDeta( aTmp, aGet, oBrwPrp, oFld, oDlg, oBrw, nMode, oTotal, oGet1, aTmpPed, oSayPr1, oSayPr2, oSayVp1, oSayVp2, oGetStk, oSayLote, oBtn ) } )
+      oDlg:AddFastKey( VK_F9, {|| D():CamposExtraLine( nView ):Play( if( nMode == APPD_MODE, "", Str( ( dbfTmpLin )->( OrdKeyNo() ) ) ) ) } )
    end if 
 
    oDlg:SetControlFastKey( "PedidosProveedoresLineas", nView, aGet )
