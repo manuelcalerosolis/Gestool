@@ -358,6 +358,8 @@ METHOD Browse( oGet )
 
       oBrw:CreateFromResource( 105 )
 
+      oOrder:SetItems( oBrw:getColHeaders() )
+
       REDEFINE BUTTON ;
          ID          IDOK ;
          OF          oDlg ;

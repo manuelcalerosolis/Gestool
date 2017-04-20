@@ -20,6 +20,8 @@ CLASS SQLXBrowse FROM TXBrowse
    DATA  cOriginal            AS CHARACTER   INIT ""
    DATA  cName                AS CHARACTER   INIT ""
 
+   DATA  aHeaders             AS ARRAY       INIT {}
+
    DATA  lOnProcess           AS LOGIC       INIT .f.
 
    DATA  nVScrollPos
@@ -35,6 +37,8 @@ CLASS SQLXBrowse FROM TXBrowse
    METHOD getOriginal()       INLINE ( ::cOriginal := ::SaveState() )
 
    METHOD selectCurrent()     INLINE ( ::Select( 0 ), ::Select( 1 ) )
+
+   METHOD getColHeaders()
 
    METHOD RButtonDown( nRow, nCol, nFlags )
 
@@ -243,3 +247,12 @@ return Self
 
 //----------------------------------------------------------------------------//
 
+METHOD getColHeaders()
+
+   ::aHeaders := {}
+
+   aeval( ::aCols, { |o| if( !empty( o:cHeader ), aadd( ::aHeaders, o:cHeader ), ) } )
+
+Return ( ::aHeaders )
+
+//----------------------------------------------------------------------------//
