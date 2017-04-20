@@ -316,7 +316,6 @@ METHOD Browse( oGet )
       REDEFINE GET   oFind ; 
          VAR         cFind ;
          ID          104 ;
-         ON CHANGE   ( msgalert( cFind ) );
          BITMAP      "FIND" ;
          OF          oDlg
 

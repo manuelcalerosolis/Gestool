@@ -155,7 +155,7 @@ Tblconv.prg             										\
 Regalm.prg              										\
 Rhtml.prg               										\
 Tshell.prg              										\
-TshellSql.prg 														\
+SQLTshell.prg 														\
 Rfile.prg               										\
 TdprnC3.prg             										\
 Animat.prg              										\
@@ -618,7 +618,7 @@ Tblconv.obj                                        \
 Regalm.obj                                         \
 Rhtml.obj                                          \
 Tshell.obj                                         \
-TshellSql.obj 													\
+SQLTshell.obj 													\
 RpreviewC3.obj 												\
 ReportC3.obj                                       \
 RocolumnC3.obj                                     \
@@ -1108,7 +1108,7 @@ $(OBJ)\Tblconv.obj               									+
 $(OBJ)\Regalm.obj                									+
 $(OBJ)\Rhtml.obj                 									+
 $(OBJ)\Tshell.obj                									+
-$(OBJ)\TshellSql.obj              									+
+$(OBJ)\SQLTshell.obj              									+
 $(OBJ)\RocolumnC3.obj            									+
 $(OBJ)\Rfile.obj                 									+
 $(OBJ)\Tdprnc3.obj               									+
