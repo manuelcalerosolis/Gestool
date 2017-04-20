@@ -20,8 +20,8 @@ CLASS TiposImpresoras FROM SQLBaseView
 
    METHOD   clickOnHeader( oCol )
 
-   METHOD   setCombo()
-   METHOD   chgCombo()                   
+   METHOD   setCombo( oBrowse, oCombo )
+   METHOD   chgCombo( oColumn, oBrowse )                   
 
    METHOD   Append()
    METHOD   Edit()
@@ -80,7 +80,7 @@ METHOD buildSQLShell()
 
    disableAcceso()
 
-   ::oShell                := TShellSQL():New( 2, 10, 18, 70, "Tipos de impresoras", , oWnd(), , , .f., , , ::oModel, , , , , {}, {|| ::Edit() },, {|| ::oModel:deleteSelection() },, nil, ::nLevel, "gc_printer2_16", ( 104 + ( 0 * 256 ) + ( 63 * 65536 ) ),,, .t. )
+   ::oShell                := SQLTShell():New( 2, 10, 18, 70, "Tipos de impresoras", , oWnd(), , , .f., , , ::oModel, , , , , {}, {|| ::Edit() },, {|| ::oModel:deleteSelection() },, nil, ::nLevel, "gc_printer2_16", ( 104 + ( 0 * 256 ) + ( 63 * 65536 ) ),,, .t. )
 
       with object ( ::oShell:AddXCol() )
          :cHeader          := "Id"
@@ -257,9 +257,13 @@ Return ( self )
 
 //----------------------------------------------------------------------------//
 
-METHOD clickOnHeader( oColumn )
+METHOD clickOnHeader( oColumn, oBrowse, oCombo )
 
-   ::oShell:selectColumnOrder( oColumn )
+   oBrowse:selectColumnOrder( oColumn )
+
+   if !empty( oCombo )
+      oCombo:set( oColumn:cHeader )
+   end if 
 
    ::oModel:setIdForRecno( ::oModel:getKeyFieldOfRecno() )
 
@@ -269,30 +273,30 @@ METHOD clickOnHeader( oColumn )
 
    ::oModel:buildRowSetWithRecno()
 
-   ::oShell:Refresh()
+   oBrowse:Refresh()
 
 Return ( self )
 
 //----------------------------------------------------------------------------//
 
-METHOD ChgCombo()
+METHOD ChgCombo( oCombo, oBrowse )
 
-   local oColumn  := ::oShell:getColumnBrowse( ::oShell:oWndBar:GetComboBox() )
+   local oColumn  := oBrowse:getColumnBrowse( oCombo:VarGet() )
 
    if !empty( oColumn )
-      ::clickOnHeader( oColumn )
+      ::clickOnHeader( oColumn, oBrowse )
    end if
 
 RETURN ( Self )
 
 //---------------------------------------------------------------------------//
 
-METHOD SetCombo()
+METHOD SetCombo( oBrowse, oCombo )
 
    local oColumn  := ::oShell:getColumnBrowse( ::oModel:cColumnOrder )
 
    if !empty( oColumn )
-      ::clickOnHeader( oColumn )
+      ::clickOnHeader( oColumn, oBrowse, oCombo )
    end if
 
 RETURN ( Self )
@@ -326,6 +330,8 @@ METHOD Browse( oGet )
          ITEMS       aOrden ;
          OF          oDlg
 
+      oOrder:bChange       := {|| ::ChgCombo( oOrder, oBrw ) }
+
       oBrw                 := SQLXBrowse():New( oDlg )
 
       oBrw:bClrSel         := {|| { CLR_BLACK, Rgb( 229, 229, 229 ) } }
@@ -342,7 +348,7 @@ METHOD Browse( oGet )
          :cSortOrder       := "id"
          :bEditValue       := {|| ::oModel:getRowSet():fieldGet( "id" ) }
          :nWidth           := 40
-         :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | ::clickOnHeader( oCol ) }
+         :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | ::clickOnHeader( oCol, oBrw, oOrder ) }
       end with
 
       with object ( oBrw:AddCol() )
@@ -350,7 +356,7 @@ METHOD Browse( oGet )
          :cSortOrder       := "nombre"
          :bEditValue       := {|| ::oModel:getRowSet():fieldGet( "nombre" ) }
          :nWidth           := 800
-         :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | ::clickOnHeader( oCol ) }
+         :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | ::clickOnHeader( oCol, oBrw, oOrder ) }
       end with
 
       oBrw:bLDblClick      := {|| oDlg:end( IDOK ) }
@@ -358,7 +364,7 @@ METHOD Browse( oGet )
 
       oBrw:CreateFromResource( 105 )
 
-      oOrder:SetItems( oBrw:getColHeaders() )
+      oOrder:SetItems( oBrw:getColumnHeaders() )
 
       REDEFINE BUTTON ;
          ID          IDOK ;

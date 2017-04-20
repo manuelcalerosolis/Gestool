@@ -201,8 +201,10 @@ METHOD buildRowSet( lWithRecno )
       ::oRowSet         := oStmt:fetchRowSet()
 
       if lWithRecno .and. !empty( ::nIdForRecno )
-         ::oRowSet:find( ::nIdForRecno , ::cColumnKey, .t. )
-      else
+         if ::oRowSet:find( ::nIdForRecno , ::cColumnKey, .t. ) == 0
+            ::oRowSet:goTop()
+         end if
+      else 
          ::oRowSet:goTop()
       end if
 

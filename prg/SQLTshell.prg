@@ -8,7 +8,7 @@
 // Clases/métodos del programa
 //------------------------------------------------------------------------//
 
-CLASS TShellSQL FROM TShell
+CLASS SQLTShell FROM TShell
 
    DATA  oModel
 
@@ -24,9 +24,6 @@ CLASS TShellSQL FROM TShell
    METHOD setComboBoxChange( bChange )    INLINE ( ::oWndBar:SetComboBoxChange( bChange ) )
 
    METHOD fastSeek()
-
-   METHOD getColumnBrowse( cHeader )
-
 ENDCLASS
 
 //----------------------------------------------------------------------------//
@@ -40,7 +37,7 @@ METHOD CreateXBrowse()
    oBlock                     := ErrorBlock( { | oError | ApoloBreak( oError ) } )
    BEGIN SEQUENCE
 
-      ::oBrw                  := TXBrowse():New( Self )
+      ::oBrw                  := SQLXBrowse():New( Self )
       ::oBrw:nStyle           := nOr( WS_CHILD, WS_VISIBLE, WS_TABSTOP )
       ::oBrw:l2007            := .f.
 
@@ -58,24 +55,7 @@ METHOD CreateXBrowse()
 
       ::oBrw:bRClicked        := {| nRow, nCol, nFlags | ::RButtonDown( nRow, nCol, nFlags ) }
 
-      ::oBrw:lAutoSort        := .f.
-      ::oBrw:nDataType        := DATATYPE_USER
-      ::oBrw:bGoTop           := {|| ::oModel:oRowSet:GoTop() }
-      ::oBrw:bGoBottom        := {|| ::oModel:oRowSet:GoBottom() }
-      ::oBrw:bBof             := {|| ::oModel:oRowSet:Bof() }
-      ::oBrw:bEof             := {|| ::oModel:oRowSet:Eof() }
-      ::oBrw:bBookMark        := {| n | iif( n == nil, ::oModel:oRowSet:RecNo(), ::oModel:oRowSet:GoTo( n ) ) }
-      ::oBrw:bSkip            := {| n | iif( n == nil, n := 1, ), ::oModel:oRowSet:Skipper( n ) }
-      ::oBrw:bKeyNo           := {| n | ::oModel:oRowSet:RecNo() }
-      ::oBrw:bKeyCount        := {|| ::oModel:oRowSet:RecCount() }
-
-      if ::oBrw:oVScroll() != nil
-         ::oBrw:oVscroll():SetRange( 1, ::oModel:oRowSet:RecCount() )
-      endif
-
-      ::oBrw:lFastEdit        := .t.
-      
-      ::oBrw:bKeyChar         := {|nKey| ::CtrlKey( nKey ) }
+      ::oBrw:setModel( ::oModel )
 
       // Dimensiones del control -------------------------------------------------
 
@@ -134,17 +114,7 @@ Return ( Self )
 
 METHOD selectColumnOrder( oCol )
 
-   if empty( oCol )
-      Return ( nil )
-   end if
-
-   aeval( ::oBrw:aCols, {|o| if( o:cSortOrder != oCol:cSortOrder, o:cOrder := "", ) } )    
-
-   if oCol:cOrder == 'D' .or. empty( oCol:cOrder )
-      oCol:cOrder    := 'A'
-   else
-      oCol:cOrder    := 'D'
-   end if 
+   ::oBrw:selectColumnOrder( oCol )
 
    ::oWndBar:setComboBoxSet( oCol:cHeader )   
 
@@ -190,17 +160,5 @@ METHOD FastSeek()
    ::oBrw:Select( 1 )
 
 Return ( lFind )
-
-//--------------------------------------------------------------------------//
-
-METHOD getColumnBrowse( cHeader )
-
-   local nPosition   := ascan( ::oBrw:aCols, {|o| o:cHeader == cHeader } )
-
-   if nPosition != 0
-      Return ( ::oBrw:aCols[ nPosition ] )
-   end if 
-
-Return ( nil )
 
 //--------------------------------------------------------------------------//

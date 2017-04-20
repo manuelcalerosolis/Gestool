@@ -38,7 +38,9 @@ CLASS SQLXBrowse FROM TXBrowse
 
    METHOD selectCurrent()     INLINE ( ::Select( 0 ), ::Select( 1 ) )
 
-   METHOD getColHeaders()
+   METHOD getColumnHeaders()
+   METHOD selectColumnOrder( oCol )
+   METHOD getColumnBrowse( cHeader )
 
    METHOD RButtonDown( nRow, nCol, nFlags )
 
@@ -117,7 +119,7 @@ return {|| iif( oCol:lHide, oCol:Show(), oCol:Hide() ) }
 
 //----------------------------------------------------------------------------//
 
-METHOD setModel( oModel ) 
+METHOD setModel( oModel )
 
    ::lAutoSort        := .f.
    ::nDataType        := DATATYPE_USER
@@ -243,16 +245,46 @@ METHOD MakeTotals( aCols )
 
    endif
 
-return Self
+Return ( Self )
 
 //----------------------------------------------------------------------------//
 
-METHOD getColHeaders()
+METHOD getColumnHeaders()
 
    ::aHeaders := {}
 
    aeval( ::aCols, { |o| if( !empty( o:cHeader ), aadd( ::aHeaders, o:cHeader ), ) } )
 
 Return ( ::aHeaders )
+
+//----------------------------------------------------------------------------//
+
+METHOD selectColumnOrder( oCol )
+
+   if empty( oCol )
+      Return ( nil )
+   end if
+
+   aeval( ::aCols, {|o| if( o:cSortOrder != oCol:cSortOrder, o:cOrder := "", ) } )    
+
+   if oCol:cOrder == 'D' .or. empty( oCol:cOrder )
+      oCol:cOrder    := 'A'
+   else
+      oCol:cOrder    := 'D'
+   end if 
+
+Return ( Self )
+
+//----------------------------------------------------------------------------//
+
+METHOD getColumnBrowse( cHeader )
+
+   local nPosition   := ascan( ::aCols, {|o| o:cHeader == cHeader } )
+
+   if nPosition != 0
+      Return ( ::aCols[ nPosition ] )
+   end if 
+
+Return ( nil )
 
 //----------------------------------------------------------------------------//
