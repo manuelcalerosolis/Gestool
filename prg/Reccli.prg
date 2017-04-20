@@ -1609,6 +1609,8 @@ Static Function dlgContabilizaReciboCliente( oBrw, cTitle, cOption, lChgState )
    local nRad        := 1
    local oSimula
    local lSimula     := .t.
+   local dDesde      := CtoD( "01/01/" + str( Year( Date() ) ) )
+   local dHasta      := Date()
    local nRecFac     := ( D():FacturasClientes( nView ) )->( Recno() )
    local nOrdFac     := ( D():FacturasClientes( nView ) )->( OrdSetFocus( 1 ) )
    local nRecRec     := ( D():FacturasClientesCobros( nView ) )->( Recno() )
@@ -1650,7 +1652,7 @@ Static Function dlgContabilizaReciboCliente( oBrw, cTitle, cOption, lChgState )
       OF       oDlg
 
    REDEFINE RADIO nRad ;
-      ID       90, 91, 92 ;
+      ID       90, 91, 92, 93 ;
       OF       oDlg
 
    REDEFINE GET oSerIni VAR cSerIni ;
@@ -1667,7 +1669,7 @@ Static Function dlgContabilizaReciboCliente( oBrw, cTitle, cOption, lChgState )
    REDEFINE GET oSerFin VAR cSerFin ;
       ID       110 ;
       PICTURE  "@!" ;
-      WHEN     ( nRad == 2 );
+      WHEN     ( nRad == 3 );
       SPINNER ;
       ON UP    ( UpSerie( oSerFin ) );
       ON DOWN  ( DwSerie( oSerFin ) );
@@ -1677,41 +1679,53 @@ Static Function dlgContabilizaReciboCliente( oBrw, cTitle, cOption, lChgState )
 
    REDEFINE GET oDocIni VAR nDocIni;
       ID       120 ;
-      WHEN     ( nRad == 2 ) ;
+      WHEN     ( nRad == 3 ) ;
       PICTURE  "999999999" ;
       SPINNER ;
 		OF 		oDlg
 
    REDEFINE GET oDocFin VAR nDocFin;
       ID       130 ;
-      WHEN     ( nRad == 2 ) ;
+      WHEN     ( nRad == 3 ) ;
       PICTURE  "999999999" ;
       SPINNER ;
 		OF 		oDlg
 
    REDEFINE GET cSufIni ;
       ID       140 ;
-      WHEN     ( nRad == 2 ) ;
+      WHEN     ( nRad == 3 ) ;
       PICTURE  "##" ;
 		OF 		oDlg
 
    REDEFINE GET cSufFin ;
       ID       150 ;
-      WHEN     ( nRad == 2 ) ;
+      WHEN     ( nRad == 3 ) ;
       PICTURE  "##" ;
 		OF 		oDlg
 
    REDEFINE GET nNumIni ;
       ID       160 ;
-      WHEN     ( nRad == 2 ) ;
+      WHEN     ( nRad == 3 ) ;
       PICTURE  "99" ;
 		OF 		oDlg
 
    REDEFINE GET nNumFin ;
       ID       170 ;
-      WHEN     ( nRad == 2 ) ;
+      WHEN     ( nRad == 3 ) ;
       PICTURE  "99" ;
 		OF 		oDlg
+
+   REDEFINE GET dDesde ;
+      ID       310 ;
+      WHEN     ( nRad == 4 ) ;
+      SPINNER ;
+      OF       oDlg
+
+   REDEFINE GET dHasta ;
+      ID       320 ;
+      WHEN     ( nRad == 4 ) ;
+      SPINNER ;
+      OF       oDlg
 
    REDEFINE CHECKBOX oSimula VAR lSimula;
       ID       190 ;
@@ -1731,7 +1745,7 @@ Static Function dlgContabilizaReciboCliente( oBrw, cTitle, cOption, lChgState )
    REDEFINE BUTTON ;
       ID       IDOK ;
 		OF 		oDlg ;
-      ACTION   ( initContabilizaReciboCliente( cSerIni + str( nDocIni, 9 ) + cSufIni + str( nNumIni ), cSerFin + str( nDocFin, 9 ) + cSufFin + str( nNumFin ), nRad, cTipo, lSimula, lChgState, oBrw, oBtnCancel, oDlg, oTree, oMtrInf ) )
+      ACTION   ( initContabilizaReciboCliente( cSerIni + str( nDocIni, 9 ) + cSufIni + str( nNumIni ), cSerFin + str( nDocFin, 9 ) + cSufFin + str( nNumFin ), dDesde, dHasta, nRad, cTipo, lSimula, lChgState, oBrw, oBtnCancel, oDlg, oTree, oMtrInf ) )
 
    REDEFINE BUTTON oBtnCancel ;
       ID       IDCANCEL ;
@@ -1739,7 +1753,7 @@ Static Function dlgContabilizaReciboCliente( oBrw, cTitle, cOption, lChgState )
       CANCEL ;
       ACTION   ( oDlg:end() )
 
-   oDlg:AddFastKey( VK_F5, {|| initContabilizaReciboCliente( cSerIni + str( nDocIni, 9 ) + cSufIni + str( nNumIni ), cSerFin + str( nDocFin, 9 ) + cSufFin + str( nNumFin ), nRad, cTipo, lSimula, lChgState, oBrw, oBtnCancel, oDlg, oTree, oMtrInf ) } )
+   oDlg:AddFastKey( VK_F5, {|| initContabilizaReciboCliente( cSerIni + str( nDocIni, 9 ) + cSufIni + str( nNumIni ), cSerFin + str( nDocFin, 9 ) + cSufFin + str( nNumFin ), dDesde, dHasta, nRad, cTipo, lSimula, lChgState, oBrw, oBtnCancel, oDlg, oTree, oMtrInf ) } )
 
    oDlg:bStart := {|| startContabilizaReciboCliente( oSerIni, oSimula, cOption ) }
 
@@ -1788,7 +1802,7 @@ RETURN NIL
 
 //------------------------------------------------------------------------//
 
-STATIC FUNCTION initContabilizaReciboCliente( cDocIni, cDocFin, nRad, cTipo, lSimula, lChgState, oBrw, oBtnCancel, oDlg, oTree, oMtrInf )
+STATIC FUNCTION initContabilizaReciboCliente( cDocIni, cDocFin, dDesde, dHasta, nRad, cTipo, lSimula, lChgState, oBrw, oBtnCancel, oDlg, oTree, oMtrInf )
 
    local aPos
    local bWhile
@@ -1863,6 +1877,24 @@ STATIC FUNCTION initContabilizaReciboCliente( cDocIni, cDocFin, nRad, cTipo, lSi
             oMtrInf:Set( ( D():FacturasClientesCobros( nView ) )->( OrdKeyNo() ) )
 
          end do
+
+      case ( nRad == 4 )
+
+         ( D():FacturasClientesCobros( nView ) )->( dbGoTop() )
+         while ( lWhile .and. !( D():FacturasClientesCobros( nView ) )->( eof() ) )
+
+            if ( D():FacturasClientesCobros( nView ) )->lCobrado .and. ( D():FacturasClientesCobros( nView ) )->dEntrada >= dDesde .and. ( D():FacturasClientesCobros( nView ) )->dEntrada <= dHasta
+
+               makeContabilizaReciboCliente( cTipo, oTree, lSimula, lChgState, aSimula )
+
+            end if 
+
+            ( D():FacturasClientesCobros( nView ) )->( dbSkip() )
+
+            oMtrInf:Set( ( D():FacturasClientesCobros( nView ) )->( OrdKeyNo() ) )
+
+         end do
+
 
    end if
 
