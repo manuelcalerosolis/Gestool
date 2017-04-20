@@ -8,27 +8,30 @@ CLASS TiposImpresoras FROM SQLBaseView
 
    METHOD   New()
 
-   METHOD   Activate()
+   METHOD   ActivateShell()
+      METHOD   buildSQLShell()
 
    METHOD   buildSQLModel()
-
-   METHOD   buildSQLShell()
-
    METHOD   destroySQLModel()                         INLINE   ( if( !empty(::oModel), ::oModel:end(), ) )
 
    METHOD   Destroy()                                 INLINE   ( ::saveHistory(), ::destroySQLModel(), .t. )
+  
+   METHOD   Dialog()
 
-   METHOD   clickOnHeader( oCol )
-
-   METHOD   setCombo( oBrowse, oCombo )
-   METHOD   chgCombo( oColumn, oBrowse )                   
+   METHOD   ActivateBrowse()
+      METHOD   buildBrowse( oGet )
+      METHOD   startBrowse( oFind, oOrder, oBrowse )
 
    METHOD   Append()
    METHOD   Edit()
-   
-   METHOD   Dialog()
 
-   METHOD   Browse( oGet )
+   // Evnts------------------------------------------------------------------
+
+   METHOD   clickOnHeader( oCol )
+   METHOD   changeFind( oFind, oBrowse )
+   METHOD   setCombo( oBrowse, oOrder )
+   METHOD   changeCombo( oColumn, oBrowse )                   
+
 
    METHOD   getHistory()
    METHOD   saveHistory()
@@ -45,7 +48,7 @@ Return ( Self )
 
 //---------------------------------------------------------------------------//
 
-METHOD Activate()
+METHOD ActivateShell()
 
    if ::notUserAccess()
       msgStop( "Acceso no permitido." )
@@ -147,7 +150,7 @@ METHOD buildSQLShell()
 
    ACTIVATE WINDOW ::oShell VALID ( ::Destroy() )
 
-   ::oShell:setComboBoxChange( {|| ::ChgCombo() } )
+   ::oShell:setComboBoxChange( {|| ::changeCombo() } )
 
    ::setCombo()
 
@@ -257,12 +260,12 @@ Return ( self )
 
 //----------------------------------------------------------------------------//
 
-METHOD clickOnHeader( oColumn, oBrowse, oCombo )
+METHOD clickOnHeader( oColumn, oBrowse, oOrder )
 
    oBrowse:selectColumnOrder( oColumn )
 
-   if !empty( oCombo )
-      oCombo:set( oColumn:cHeader )
+   if !empty( oOrder )
+      oOrder:set( oColumn:cHeader )
    end if 
 
    ::oModel:setIdForRecno( ::oModel:getKeyFieldOfRecno() )
@@ -279,9 +282,9 @@ Return ( self )
 
 //----------------------------------------------------------------------------//
 
-METHOD ChgCombo( oCombo, oBrowse )
+METHOD changeCombo( oOrder, oBrowse )
 
-   local oColumn  := oBrowse:getColumnBrowse( oCombo:VarGet() )
+   local oColumn  := oBrowse:getColumnHeader( oOrder:VarGet() )
 
    if !empty( oColumn )
       ::clickOnHeader( oColumn, oBrowse )
@@ -291,29 +294,42 @@ RETURN ( Self )
 
 //---------------------------------------------------------------------------//
 
-METHOD SetCombo( oBrowse, oCombo )
+METHOD SetCombo( oBrowse, oOrder )
 
-   local oColumn  := ::oShell:getColumnBrowse( ::oModel:cColumnOrder )
+   local oColumn  := ::oShell:getColumnHeader( ::oModel:cColumnOrder )
 
    if !empty( oColumn )
-      ::clickOnHeader( oColumn, oBrowse, oCombo )
+      ::clickOnHeader( oColumn, oBrowse, oOrder )
    end if
 
 RETURN ( Self )
 
 //---------------------------------------------------------------------------//
 
-METHOD Browse( oGet )
+METHOD ActivateBrowse( oGet )
+
+   ::buildSQLModel()
+
+   if ::buildBrowse() .and. !empty( oGet )
+      oGet:cText( ::oModel:getRowSet():fieldGet( "nombre" ) )
+      oGet:lValid()
+   end if
+
+   ::destroySQLModel()
+
+RETURN ( Self )
+
+//---------------------------------------------------------------------------//
+
+METHOD buildBrowse()
 
    local oDlg
-   local oBrw
+   local oBrowse
    local oFind
    local cFind       := space( 200 )
    local oOrder
    local cOrder
    local aOrden      := { "Tipo" }
-
-   ::buildSQLModel()
 
    DEFINE DIALOG oDlg RESOURCE "HELP_BROWSE_SQL" TITLE "Seleccionar tipo de impresora"
 
@@ -323,47 +339,47 @@ METHOD Browse( oGet )
          BITMAP      "FIND" ;
          OF          oDlg
 
+      oFind:bChange       := {|| ::changeFind( oFind, oBrowse ) }
+
       REDEFINE COMBOBOX oOrder ;
          VAR         cOrder ;
          ID          102 ;
          ITEMS       aOrden ;
          OF          oDlg
 
-      oOrder:bChange       := {|| ::ChgCombo( oOrder, oBrw ) }
+      oOrder:bChange       := {|| ::changeCombo( oOrder, oBrowse ) }
 
-      oBrw                 := SQLXBrowse():New( oDlg )
+      oBrowse                 := SQLXBrowse():New( oDlg )
 
-      oBrw:bClrSel         := {|| { CLR_BLACK, Rgb( 229, 229, 229 ) } }
-      oBrw:bClrSelFocus    := {|| { CLR_BLACK, Rgb( 167, 205, 240 ) } }
+      oBrowse:bClrSel         := {|| { CLR_BLACK, Rgb( 229, 229, 229 ) } }
+      oBrowse:bClrSelFocus    := {|| { CLR_BLACK, Rgb( 167, 205, 240 ) } }
 
-      oBrw:lHScroll        := .f.
-      oBrw:nMarqueeStyle   := 5
-      oBrw:cName           := "Browse.TipoImpresora"
+      oBrowse:lHScroll        := .f.
+      oBrowse:nMarqueeStyle   := 5
+      oBrowse:cName           := "Browse.TipoImpresora"
 
-      oBrw:setModel( ::oModel )
+      oBrowse:setModel( ::oModel )
 
-      with object ( oBrw:AddCol() )
-         :cHeader          := "Id"
-         :cSortOrder       := "id"
-         :bEditValue       := {|| ::oModel:getRowSet():fieldGet( "id" ) }
-         :nWidth           := 40
-         :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | ::clickOnHeader( oCol, oBrw, oOrder ) }
+      with object ( oBrowse:AddCol() )
+         :cHeader             := "Id"
+         :cSortOrder          := "id"
+         :bEditValue          := {|| ::oModel:getRowSet():fieldGet( "id" ) }
+         :nWidth              := 40
+         :bLClickHeader       := {| nMRow, nMCol, nFlags, oCol | ::clickOnHeader( oCol, oBrowse, oOrder ) }
       end with
 
-      with object ( oBrw:AddCol() )
-         :cHeader          := "Tipo de impresora"
-         :cSortOrder       := "nombre"
-         :bEditValue       := {|| ::oModel:getRowSet():fieldGet( "nombre" ) }
-         :nWidth           := 800
-         :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | ::clickOnHeader( oCol, oBrw, oOrder ) }
+      with object ( oBrowse:AddCol() )
+         :cHeader             := "Tipo de impresora"
+         :cSortOrder          := "nombre"
+         :bEditValue          := {|| ::oModel:getRowSet():fieldGet( "nombre" ) }
+         :nWidth              := 300
+         :bLClickHeader       := {| nMRow, nMCol, nFlags, oCol | ::clickOnHeader( oCol, oBrowse, oOrder ) }
       end with
 
-      oBrw:bLDblClick      := {|| oDlg:end( IDOK ) }
-      oBrw:bRClicked       := {| nRow, nCol, nFlags | oBrw:RButtonDown( nRow, nCol, nFlags ) }
+      oBrowse:bLDblClick      := {|| oDlg:end( IDOK ) }
+      oBrowse:bRClicked       := {| nRow, nCol, nFlags | oBrowse:RButtonDown( nRow, nCol, nFlags ) }
 
-      oBrw:CreateFromResource( 105 )
-
-      oOrder:SetItems( oBrw:getColumnHeaders() )
+      oBrowse:CreateFromResource( 105 )
 
       REDEFINE BUTTON ;
          ID          IDOK ;
@@ -389,17 +405,60 @@ METHOD Browse( oGet )
       oDlg:AddFastKey( VK_RETURN,   {|| oDlg:end( IDOK ) } )
       oDlg:AddFastKey( VK_F5,       {|| oDlg:end( IDOK ) } )
 
+      oDlg:bStart    := {|| ::startBrowse( oFind, oOrder, oBrowse ) }
+
    ACTIVATE DIALOG oDlg CENTER
-
-   if oDlg:nResult == IDOK
-      oGet:cText( ::oModel:getRowSet():fieldGet( "nombre" ) )
-      oGet:lValid()
-   end if
-
-   ::destroySQLModel()
 
 RETURN ( oDlg:nResult == IDOK )
 
 //---------------------------------------------------------------------------//
+
+METHOD startBrowse( oFind, oOrder, oBrowse )
+
+   local oColumn
+
+   oOrder:SetItems( oBrowse:getColumnHeaders() )
+
+   oColumn     := oBrowse:getColumnOrder( ::oModel:cColumnOrder )
+   if empty( oColumn )
+      Return ( Self )
+   end if 
+   
+   oOrder:set( oColumn:cHeader )
+
+   oBrowse:selectColumnOrder( oColumn, ::oModel:cOrientation )
+
+Return ( Self )
+
+//---------------------------------------------------------------------------//
+
+METHOD changeFind( oFind, oBrowse )
+
+   local lFind
+   local xValueToSearch
+
+   // Estudiamos la cadena de busqueda-------------------------------------------
+
+   xValueToSearch    := oFind:oGet:Buffer()
+   xValueToSearch    := alltrim( upper( cvaltochar( xValueToSearch ) ) )
+   xValueToSearch    := strtran( xValueToSearch, chr( 8 ), "" )
+
+   // Guradamos valores iniciales-------------------------------------------------
+
+   lFind             := ::oModel:find( xValueToSearch )
+
+   // color para el get informar al cliente de busqueda erronea----------------
+
+   if lFind .or. empty( xValueToSearch ) 
+      oFind:SetColor( Rgb( 0, 0, 0 ), Rgb( 255, 255, 255 ) )
+   else
+      oFind:SetColor( Rgb( 255, 255, 255 ), Rgb( 255, 102, 102 ) )
+   end if
+
+   oBrowse:refreshCurrent()
+
+Return ( lFind )
+
+//--------------------------------------------------------------------------//
 
 
