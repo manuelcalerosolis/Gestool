@@ -25,8 +25,10 @@ CLASS TiposImpresoras FROM SQLBaseView
 
    METHOD   Append()
    METHOD   Edit()
+   
    METHOD   Dialog()
-   METHOD   browse( oGet )
+
+   METHOD   Browse( oGet )
 
    METHOD   getHistory()
    METHOD   saveHistory()
@@ -57,8 +59,6 @@ METHOD Activate()
    ::buildSQLModel()
 
    ::buildSQLShell()
-
-   // ::destroySQLModel()
 
 Return ( Self )
 
@@ -149,7 +149,7 @@ METHOD buildSQLShell()
 
    ::oShell:setComboBoxChange( {|| ::ChgCombo() } )
 
-   ::SetCombo()
+   ::setCombo()
 
    enableAcceso()
 
@@ -295,55 +295,47 @@ METHOD SetCombo()
       ::clickOnHeader( oColumn )
    end if
 
-
 RETURN ( Self )
 
 //---------------------------------------------------------------------------//
 
-//---------------------------------------------------------------------------//
-
-METHOD browse( oGet )
+METHOD Browse( oGet )
 
    local oDlg
-   local oGet1
-   local cGet1
-   local oCbxOrd
-   local aCbxOrd     := { "Tipo" }
-   local cCbxOrd
-   local cFind
-   local cOrder
    local oBrw
-   local dbfTImp
-   local nLevel
-   local bEdit
    local oFind
+   local cFind       := space( 200 )
    local oOrder
+   local cOrder
+   local aOrden      := { "Tipo" }
 
+   ::buildSQLModel()
 
-   DEFINE DIALOG oDlg RESOURCE "HELPENTRY" TITLE "Seleccionar tipo de impresora"
+   DEFINE DIALOG oDlg RESOURCE "HELP_BROWSE_SQL" TITLE "Seleccionar tipo de impresora"
 
-   REDEFINE GET   oFind ; 
-      VAR         cFind ;
-      ID          104 ;
-      ON CHANGE   ( msgalert( cFind ) );
-      BITMAP      "FIND" ;
-      OF          oDlg
+      REDEFINE GET   oFind ; 
+         VAR         cFind ;
+         ID          104 ;
+         ON CHANGE   ( msgalert( cFind ) );
+         BITMAP      "FIND" ;
+         OF          oDlg
 
-   REDEFINE COMBOBOX oOrder ;
-      VAR         cOrder ;
-      ID          102 ;
-      ITEMS       aCbxOrd ;
-      OF          oDlg
+      REDEFINE COMBOBOX oOrder ;
+         VAR         cOrder ;
+         ID          102 ;
+         ITEMS       aOrden ;
+         OF          oDlg
 
-   oBrw                    := IXBrowse():New( oDlg )
+      oBrw                 := SQLXBrowse():New( oDlg )
 
       oBrw:bClrSel         := {|| { CLR_BLACK, Rgb( 229, 229, 229 ) } }
       oBrw:bClrSelFocus    := {|| { CLR_BLACK, Rgb( 167, 205, 240 ) } }
 
-      oBrw:cAlias          := dbfTImp
       oBrw:lHScroll        := .f.
       oBrw:nMarqueeStyle   := 5
       oBrw:cName           := "Browse.TipoImpresora"
+
+      oBrw:setModel( ::oModel )
 
       with object ( oBrw:AddCol() )
          :cHeader          := "Id"
@@ -367,35 +359,25 @@ METHOD browse( oGet )
       oBrw:CreateFromResource( 105 )
 
       REDEFINE BUTTON ;
-         ID       IDOK ;
-         OF       oDlg ;
-         ACTION   ( oDlg:end( IDOK ) )
+         ID          IDOK ;
+         OF          oDlg ;
+         ACTION      ( oDlg:end( IDOK ) )
 
       REDEFINE BUTTON ;
-         ID       IDCANCEL ;
-         OF       oDlg ;
+         ID          IDCANCEL ;
+         OF          oDlg ;
          CANCEL ;
-         ACTION   ( oDlg:end() )
+         ACTION      ( oDlg:end() )
 
       REDEFINE BUTTON ;
-         ID       500 ;
-         OF       oDlg ;
-         WHEN     ( nAnd( nLevel, ACC_APPD ) != 0 .and. !IsReport() ) ;
-         ACTION   ( WinAppRec( oBrw, bEdit, dbfTImp ) );
+         ID          500 ;
+         OF          oDlg ;
+         ACTION      ( msgalert( "Append") )
 
       REDEFINE BUTTON ;
-         ID       501 ;
-         OF       oDlg ;
-         WHEN     ( nAnd( nLevel, ACC_EDIT ) != 0 .and. !IsReport() ) ;
-         ACTION   ( WinEdtRec( oBrw, bEdit, dbfTImp ) )
-
-      if nAnd( nLevel, ACC_APPD ) != 0 .and. !IsReport()
-         oDlg:AddFastKey( VK_F2,    {|| WinAppRec( oBrw, bEdit, dbfTImp ) } )
-      end if
-
-      if nAnd( nLevel, ACC_EDIT ) != 0 .and. !IsReport()
-         oDlg:AddFastKey( VK_F3,    {|| WinEdtRec( oBrw, bEdit, dbfTImp ) } )
-      end if
+         ID          501 ;
+         OF          oDlg ;
+         ACTION      ( msgalert( "Edit") )
 
       oDlg:AddFastKey( VK_RETURN,   {|| oDlg:end( IDOK ) } )
       oDlg:AddFastKey( VK_F5,       {|| oDlg:end( IDOK ) } )
@@ -403,9 +385,11 @@ METHOD browse( oGet )
    ACTIVATE DIALOG oDlg CENTER
 
    if oDlg:nResult == IDOK
-      oGet:cText( ( dbfTImp )->cTipImp )
+      oGet:cText( ::oModel:getRowSet():fieldGet( "nombre" ) )
       oGet:lValid()
    end if
+
+   ::destroySQLModel()
 
 RETURN ( oDlg:nResult == IDOK )
 

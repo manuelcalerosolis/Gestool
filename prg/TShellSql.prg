@@ -161,7 +161,6 @@ METHOD FastSeek()
    local lFind
    local xValueToSearch
 
-
    if empty( ::oWndBar ) .or. empty( ::oWndBar:oGet )
       Return .f.
    end if
