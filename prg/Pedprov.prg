@@ -2781,7 +2781,7 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbf, oBrw, aTmpPed, cCodArt, nMode )
          OF          oFld:aDialogs[1]   
 
       aGet[ __NBULTOS ]:Cargo          := "nBultos"
-      aGet[ __NBULTOS ]:bPostValidate  := {| oSender | runScript( "PedidosProveedores\Lineas\validControl.prg", oSender, aGet, nView, nMode ) } 
+      aGet[ __NBULTOS ]:bPostValidate  := {| oSender | runScript( "PedidosProveedores\Lineas\validControl.prg", oSender, aGet, nView, nMode, aTmpPed ) } 
 
       REDEFINE GET   aGet[ _NCANPED ] ;
          VAR         aTmp[ _NCANPED ];
@@ -2794,7 +2794,7 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbf, oBrw, aTmpPed, cCodArt, nMode )
          OF          oFld:aDialogs[1] 
 
       aGet[ _NCANPED ]:Cargo          := "nCanPed"
-      aGet[ _NCANPED ]:bPostValidate  := {| oSender | runScript( "PedidosProveedores\Lineas\validControl.prg", oSender, aGet, nView, nMode ) } 
+      aGet[ _NCANPED ]:bPostValidate  := {| oSender | runScript( "PedidosProveedores\Lineas\validControl.prg", oSender, aGet, nView, nMode, aTmpPed ) } 
 
       // Campos de las descripciones de la unidad de medición------------------
 
@@ -2845,7 +2845,7 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbf, oBrw, aTmpPed, cCodArt, nMode )
          IDSAY       151
 
          aGet[ _NUNICAJA ]:Cargo          := "nUniCaja"
-         aGet[ _NUNICAJA ]:bPostValidate  := {| oSender | runScript( "PedidosProveedores\Lineas\validControl.prg", oSender, aGet, nView, nMode ) } 
+         aGet[ _NUNICAJA ]:bPostValidate  := {| oSender | runScript( "PedidosProveedores\Lineas\validControl.prg", oSender, aGet, nView, nMode, aTmpPed ) } 
 
       REDEFINE GET   aGet[ _NPREDIV ] ;
          VAR         aTmp[ _NPREDIV ] ;
@@ -2856,8 +2856,8 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbf, oBrw, aTmpPed, cCodArt, nMode )
 			ON CHANGE   ( lCalcDeta( aTmp, oTotal ) );
 			OF          oFld:aDialogs[1]
 
-      aGet[ _NPREDIV ]:Cargo          := "nPreDiv"
-      aGet[ _NPREDIV ]:bPostValidate  := {| oSender | runScript( "PedidosProveedores\Lineas\validControl.prg", oSender, aGet, nView, nMode ) } 
+      /*aGet[ _NPREDIV ]:Cargo          := "nPreDiv"
+      aGet[ _NPREDIV ]:bPostValidate  := {| oSender | runScript( "PedidosProveedores\Lineas\validControl.prg", oSender, aGet, nView, nMode, aTmpPed ) } */
 
       REDEFINE GET   aGet[ _CUNIDAD ] ;
          VAR         aTmp[ _CUNIDAD ] ;
@@ -3620,6 +3620,8 @@ STATIC FUNCTION SaveDeta( aTmp, aGet, oBrwPrp, oFld, oDlg, oBrw, nMode, oTotal, 
    if !cAlmacen( aGet[ _CALMLIN ] )
       Return nil
    end if
+
+   runScript( "PedidosProveedores\Lineas\beforeSaveLine.prg", aTmp, aGet, nView, nMode, aTmpPed )
 
    /*
    Escribir en fichero definitivo----------------------------------------------
