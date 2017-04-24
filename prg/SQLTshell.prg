@@ -24,6 +24,9 @@ CLASS SQLTShell FROM TShell
    METHOD setComboBoxChange( bChange )    INLINE ( ::oWndBar:SetComboBoxChange( bChange ) )
 
    METHOD fastSeek()
+
+   METHOD setDClickData( bAction )       
+
 ENDCLASS
 
 //----------------------------------------------------------------------------//
@@ -57,6 +60,8 @@ METHOD CreateXBrowse()
 
       ::oBrw:setModel( ::oModel )
 
+      ::oBrw:bKeyChar         := {|nKey| ::CtrlKey( nKey ) }
+
       // Dimensiones del control -------------------------------------------------
 
       if !::lBigStyle
@@ -86,24 +91,6 @@ Return ( lCreateXBrowse )
 
 METHOD CreateXFromCode()
 
-   local oCol
-
-   ::aPrompt                  := {}
-
-   // Insertamos el action por columnas----------------------------------------
-
-   for each oCol in ::oBrw:aCols
-      
-      if empty( oCol:bLDClickData ) .and. !( oCol:lEditable )
-         oCol:bLDClickData    := {|| ::RecEdit() }
-      end if 
-
-      aadd( ::aPrompt, oCol:cHeader )
-
-   next
-
-   // Creamos el objeto -------------------------------------------------------
-
    ::oBrw:CreateFromCode()
 
    ::oBrw:SetFocus()
@@ -119,8 +106,6 @@ METHOD selectColumnOrder( oCol )
    end if 
 
    ::oBrw:selectColumnOrder( oCol )
-
-   msgalert( hb_valtoexp( oCol ) )
 
    ::oWndBar:setComboBoxSet( oCol:cHeader )   
 
@@ -164,5 +149,13 @@ METHOD FastSeek()
    ::oBrw:refreshCurrent()
 
 Return ( lFind )
+
+//--------------------------------------------------------------------------//
+
+METHOD setDClickData( bAction )
+
+   aeval( ::oBrw:aCols, {|oCol| if( empty( oCol:bLDClickData ) .and. !( oCol:lEditable ), oCol:bLDClickData := bAction, ) } )
+
+Return ( Self )      
 
 //--------------------------------------------------------------------------//

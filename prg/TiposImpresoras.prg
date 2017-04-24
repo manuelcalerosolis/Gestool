@@ -29,6 +29,8 @@ CLASS TiposImpresoras FROM SQLBaseView
 
    METHOD   Append()
    METHOD   Edit()
+   METHOD   Zoom()
+   METHOD   Delete( oBrowse )       
 
    // Events-------------------------------------------------------------------
 
@@ -50,6 +52,8 @@ END CLASS
 METHOD New()
 
    ::keyUserMap         := "01115"
+
+   ::Super:New()
 
 Return ( Self )
 
@@ -90,9 +94,9 @@ METHOD buildSQLShell()
 
    disableAcceso()
 
-   ::oShell                := SQLTShell():New( 2, 10, 18, 70, "Tipos de impresoras", , oWnd(), , , .f., , , ::oModel, , , , , {}, {|| ::Edit() },, {|| ::oModel:deleteSelection() },, nil, ::nLevel, "gc_printer2_16", ( 104 + ( 0 * 256 ) + ( 63 * 65536 ) ),,, .t. )
+   ::oShell                := SQLTShell():New( 2, 10, 18, 70, "Tipos de impresoras", , oWnd(), , , .f., , , ::oModel, , , , , {}, {|| ::Edit() },, {|| ::Delete() },, nil, ::nLevel, "gc_printer2_16", ( 104 + ( 0 * 256 ) + ( 63 * 65536 ) ),,, .t. )
 
-      with object ( ::oShell:AddXCol() )
+      with object ( ::oShell:AddCol() )
          :cHeader          := "Id"
          :cSortOrder       := "id"
          :bEditValue       := {|| ::oModel:getRowSet():fieldGet( "id" ) }
@@ -100,7 +104,7 @@ METHOD buildSQLShell()
          :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | ::clickOnHeader( oCol, ::oShell:getBrowse(), ::oShell:getCombobox() ) }
       end with
 
-      with object ( ::oShell:AddXCol() )
+      with object ( ::oShell:AddCol() )
          :cHeader          := "Tipo de impresora"
          :cSortOrder       := "nombre"
          :bEditValue       := {|| ::oModel:getRowSet():fieldGet( "nombre" ) }
@@ -108,7 +112,9 @@ METHOD buildSQLShell()
          :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | ::clickOnHeader( oCol, ::oShell:getBrowse(), ::oShell:getCombobox() ) }
       end with
 
-      ::oShell:CreateXFromCode()
+      ::oShell:createXFromCode()
+
+      ::oShell:setDClickData( {|| ::Edit( ::oShell:getBrowse() ) } )
 
       DEFINE BTNSHELL RESOURCE "BUS" OF ::oShell ;
          NOBORDER ;
@@ -120,7 +126,7 @@ METHOD buildSQLShell()
 
       DEFINE BTNSHELL RESOURCE "NEW" OF ::oShell ;
          NOBORDER ;
-         ACTION   ( ::Append() );
+         ACTION   ( ::Append( ::oShell:getBrowse() ) );
          TOOLTIP  "(A)ñadir";
          BEGIN GROUP;
          HOTKEY   "A";
@@ -128,14 +134,14 @@ METHOD buildSQLShell()
 
       DEFINE BTNSHELL RESOURCE "EDIT" OF ::oShell ;
          NOBORDER ;
-         ACTION   ( ::Edit() );
+         ACTION   ( ::Edit( ::oShell:getBrowse() ) );
          TOOLTIP  "(M)odificar";
          HOTKEY   "M" ;
          LEVEL    ACC_EDIT
 
       DEFINE BTNSHELL RESOURCE "ZOOM" OF ::oShell ;
          NOBORDER ;
-         ACTION   ( msgalert( "zoom" ) );
+         ACTION   ( ::Zoom( ::oShell:getBrowse() ) );
          TOOLTIP  "(Z)oom";
          MRU ;
          HOTKEY   "Z";
@@ -143,7 +149,7 @@ METHOD buildSQLShell()
 
       DEFINE BTNSHELL RESOURCE "DEL" OF ::oShell ;
          NOBORDER ;
-         ACTION   ::oModel:deleteSelection();
+         ACTION   ( ::Delete( ::oShell:getBrowse() ) );
          TOOLTIP  "(E)liminar";
          MRU ;
          HOTKEY   "E";
@@ -163,13 +169,22 @@ METHOD buildSQLShell()
 
    enableAcceso()
 
-RETURN NIL
+Return ( Self )
 
 //----------------------------------------------------------------------------//
 
-METHOD Append()
+METHOD Append( oBrowse )
 
-   local nRecno   := ::oModel:getRowSetRecno()
+   local nRecno   
+
+   if ::notUserAppend()
+      msgStop( "Acceso no permitido." )
+      Return ( Self )
+   end if 
+
+   ::setAppendMode()
+
+   nRecno         := ::oModel:getRowSetRecno()
 
    ::oModel:loadBlankBuffer()
 
@@ -179,44 +194,95 @@ METHOD Append()
       ::oModel:setRowSetRecno( nRecno ) 
    end if
 
-RETURN NIL
+   if !empty( oBrowse )
+      oBrowse:refreshCurrent()
+      oBrowse:setFocus()
+   end if 
+
+Return ( Self )
 
 //----------------------------------------------------------------------------//
 /*
 Monta el dialogo para añadir, editar,... registros
 */
 
-METHOD Edit()
+METHOD Edit( oBrowse )
 
-   local nRecno   := ::oModel:getRowSetRecno()
+   local nRecno   
+
+   if ::notUserEdit()
+      msgStop( "Acceso no permitido." )
+      Return ( Self )
+   end if 
+
+   ::setEditMode()
+
+   nRecno         := ::oModel:getRowSetRecno()
 
    ::oModel:loadCurrentBuffer()
 
    if ::Dialog()
+      
       ::oModel:updateCurrentBuffer()
       ::oModel:setRowSetRecno( nRecno )
+
+      if !empty( oBrowse )
+         oBrowse:refreshCurrent()
+         oBrowse:setFocus()
+      end if 
+
    end if 
 
 RETURN NIL
 
 //----------------------------------------------------------------------------//
 
-METHOD Dialog()
+METHOD Zoom( oBrowse )
+
+   ::setZoomMode()
+
+   ::oModel:loadCurrentBuffer()
+
+   ::Dialog()
+
+   if !empty( oBrowse )
+      oBrowse:setFocus()
+   end if 
+
+RETURN NIL
+
+//----------------------------------------------------------------------------//
+
+METHOD Delete( oBrowse )
+
+   ::oModel:deleteSelection()
+
+   if !empty( oBrowse )
+      oBrowse:refreshCurrent()
+   end if 
+
+RETURN NIL
+
+//----------------------------------------------------------------------------//
+
+METHOD Dialog( lZoom )
 
    local oDlg
    local oGetNombre
 
-   DEFINE DIALOG oDlg RESOURCE "TIPO_IMPRESORA" TITLE "Tipos de impresoras"
+   DEFINE DIALOG oDlg RESOURCE "TIPO_IMPRESORA" TITLE lblTitle( ::getMode() ) + "tipos de impresoras"
 
    REDEFINE GET   oGetNombre ;
       VAR         ::oModel:hBuffer[ "nombre" ] ;
       MEMO ;
       ID          100 ;
+      WHEN        ( ! ::isZoomMode() ) ;
       OF          oDlg
 
    REDEFINE BUTTON ;
       ID          IDOK ;
       OF          oDlg ;
+      WHEN        ( ! ::isZoomMode() ) ;
       ACTION      ( oDlg:end( IDOK ) )
 
    REDEFINE BUTTON ;
@@ -403,12 +469,12 @@ METHOD buildBrowse()
       REDEFINE BUTTON ;
          ID          500 ;
          OF          oDlg ;
-         ACTION      ( ::Append() )
+         ACTION      ( ::Append( oBrowse ) )
 
       REDEFINE BUTTON ;
          ID          501 ;
          OF          oDlg ;
-         ACTION      ( ::Edit() )
+         ACTION      ( ::Edit( oBrowse ) )
 
       oDlg:AddFastKey( VK_RETURN,   {|| oDlg:end( IDOK ) } )
       oDlg:AddFastKey( VK_F5,       {|| oDlg:end( IDOK ) } )

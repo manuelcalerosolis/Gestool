@@ -1,6 +1,7 @@
 #include "FiveWin.Ch"
 #include "Factu.ch" 
 #include "Ads.ch"
+#include "Hdo.ch"
 
 //---------------------------------------------------------------------------//
 
@@ -69,6 +70,8 @@ CLASS SQLBaseModel
    METHOD   insertBuffer()                         INLINE   ( getSQLDatabase():Query( ::getInsertSentence() ), ::buildRowSet() )
    METHOD   deleteSelection()                      INLINE   ( getSQLDatabase():Query( ::getdeleteSentence() ), ::buildRowSet() )
 
+   METHOD   selectFetchArray( cSentence )
+
 END CLASS
 
 //---------------------------------------------------------------------------//
@@ -79,8 +82,8 @@ METHOD New()
 
    ::cFind                       := ""
 
-   ::cColumnOrder                := ""
-   ::cOrientation                := ""
+   ::cColumnOrder                := "id"
+   ::cOrientation                := "A"
    ::nIdForRecno                 := 1
 
 Return ( Self )
@@ -103,7 +106,7 @@ METHOD getSQLCreateTable()
 
    cSQLCreateTable        := ChgAtEnd( cSQLCreateTable, ' )', 2 )
 
-Return ( self )
+Return ( cSQLCreateTable )
 
 //---------------------------------------------------------------------------//
 
@@ -369,3 +372,30 @@ Function convertToSql( value )
 Return ( value )
        
 //---------------------------------------------------------------------------//
+
+METHOD selectFetchArray( cSentence )
+
+   local oStmt
+   local aFetch
+
+   try 
+      oStmt          := getSQLDatabase():Query( cSentence )
+      aFetch         := oStmt:fetchAll( FETCH_ARRAY )
+   catch
+
+      msgstop( hb_valtoexp( getSQLDatabase():errorInfo() ) )
+
+      if !empty( oStmt )
+        oStmt:free()
+      end if    
+   
+   end
+
+   if !empty( aFetch ) .and. hb_isarray( aFetch )
+      Return ( aFetch )
+   end if 
+
+Return ( nil )
+
+//---------------------------------------------------------------------------//
+

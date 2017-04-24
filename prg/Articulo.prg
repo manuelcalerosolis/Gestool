@@ -166,7 +166,7 @@ static dbfUbicaL
 
 static oSeccion
 
-static dbfTImp
+static aTiposImpresoras
 
 static cPouDiv
 static cPorDiv
@@ -401,9 +401,6 @@ STATIC FUNCTION OpenFiles( lExt, cPath )
       USE ( cPatAlm() + "UBICAL.Dbf" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "UBICAL", @dbfUbicaL ) )
       SET ADSINDEX TO ( cPatAlm() + "UBICAL.CDX" ) ADDITIVE
 
-      USE ( cPatDat() + "TIPIMP.Dbf" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "TIPIMP", @dbfTImp ) )
-      SET ADSINDEX TO ( cPatDat() + "TIPIMP.CDX" ) ADDITIVE
-
       D():ArticuloStockAlmacenes( nView )
 
       oBandera             := TBandera():New()
@@ -481,6 +478,8 @@ STATIC FUNCTION OpenFiles( lExt, cPath )
       if !IsReport()
          TComercioConfig():getInstance():loadJSON()
       end if
+
+      aTiposImpresoras     := TiposImpresorasModel():New():arrayTiposImpresoras()
 
       /*
       Cargamos el valor del Euro y de la Peseta-----------------------------------
@@ -672,10 +671,6 @@ STATIC FUNCTION CloseFiles( lDestroy )
       ( dbfUbicaL )->( dbCloseArea() )
    end if
 
-   if dbfTImp != nil
-      ( dbfTImp )->( dbCloseArea() )
-   end if
-
    if !empty( dbfDoc )
       ( dbfDoc )->( dbCloseArea() )
    end if
@@ -776,7 +771,6 @@ STATIC FUNCTION CloseFiles( lDestroy )
    dbfPedCliL        := nil
    dbfUbicaT         := nil
    dbfUbicaL         := nil
-   dbfTImp           := nil
    oTpvMenu          := nil
    oDetCamposExtra   := nil
    oLenguajes        := nil
@@ -1723,7 +1717,6 @@ STATIC FUNCTION EdtRec( aTmp, aGet, cArticulo, oBrw, bWhen, bValid, nMode )
    local oBmpUbicaciones
    local oBmpImagenes
    local oBmpTactil
-   local aImpComanda                         := aTiposImpresoras( dbfTImp )
    local oImpComanda1
    local oImpComanda2
    local cImpComanda1
@@ -2268,13 +2261,13 @@ STATIC FUNCTION EdtRec( aTmp, aGet, cArticulo, oBrw, bWhen, bValid, nMode )
          OF       fldTactil
 
    REDEFINE COMBOBOX oImpComanda1 VAR cImpComanda1 ;
-      ITEMS       aImpComanda ;
+      ITEMS       aTiposImpresoras ;
       ID          450 ;
       WHEN        ( nMode != ZOOM_MODE ) ;
       OF          fldTactil
 
    REDEFINE COMBOBOX oImpComanda2 VAR cImpComanda2 ;
-      ITEMS       aImpComanda ;
+      ITEMS       aTiposImpresoras ;
       ID          460 ;
       WHEN        ( nMode != ZOOM_MODE ) ;
       OF          fldTactil
@@ -4639,13 +4632,13 @@ STATIC FUNCTION EdtRec( aTmp, aGet, cArticulo, oBrw, bWhen, bValid, nMode )
    REDEFINE BUTTON oBtnAceptarActualizarWeb;
          ID       5 ;
          OF       oDlg ;
-         ACTION   ( EndTrans( aTmp, aGet, oSay, oDlg, aBar, cSay[7], nMode, oImpComanda1, oImpComanda2, aImpComanda, .t. ) )
+         ACTION   ( EndTrans( aTmp, aGet, oSay, oDlg, aBar, cSay[7], nMode, oImpComanda1, oImpComanda2, .t. ) )
 
    REDEFINE BUTTON aBtn[ 1 ] ;
          ID       IDOK ;
 			OF 		oDlg ;
          WHEN     ( nMode != ZOOM_MODE ) ;
-         ACTION   ( EndTrans( aTmp, aGet, oSay, oDlg, aBar, cSay[7], nMode, oImpComanda1, oImpComanda2, aImpComanda ) )
+         ACTION   ( EndTrans( aTmp, aGet, oSay, oDlg, aBar, cSay[7], nMode, oImpComanda1, oImpComanda2 ) )
 
 	REDEFINE BUTTON ;
          ID       IDCANCEL ;
@@ -4675,7 +4668,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, cArticulo, oBrw, bWhen, bValid, nMode )
       fldPropiedades:AddFastKey( VK_F3, {|| WinEdtRec( oBrwDiv, bEdtVta, dbfTmpVta, , , aTmp ) } )
       fldPropiedades:AddFastKey( VK_F4, {|| WinDelRec( oBrwDiv, dbfTmpVta ) } )
 
-      oDlg:AddFastKey( VK_F5, {|| endTrans( aTmp, aGet, oSay, oDlg, aBar, cSay[7], nMode, oImpComanda1, oImpComanda2, aImpComanda ) } )
+      oDlg:AddFastKey( VK_F5, {|| endTrans( aTmp, aGet, oSay, oDlg, aBar, cSay[7], nMode, oImpComanda1, oImpComanda2 ) } )
       oDlg:AddFastKey( VK_F7, {|| if( oFld:nOption > 1, oFld:SetOption( oFld:nOption - 1 ), ) } )
       oDlg:AddFastKey( VK_F8, {|| if( oFld:nOption < Len( oFld:aDialogs ), oFld:SetOption( oFld:nOption + 1 ), ) } )
       oDlg:AddFastKey( VK_F9, {|| oDetCamposExtra:Play( Space(1) ) } )
@@ -5643,7 +5636,7 @@ Return ( lErrors )
 
 //--------------------------------------------------------------------------//
 
-Static Function EndTrans( aTmp, aGet, oSay, oDlg, aTipBar, cTipBar, nMode, oImpComanda1, oImpComanda2, aImpComanda, lActualizaWeb )
+Static Function EndTrans( aTmp, aGet, oSay, oDlg, aTipBar, cTipBar, nMode, oImpComanda1, oImpComanda2, lActualizaWeb )
 
    local i
    local cImage
@@ -5971,11 +5964,11 @@ Static Function EndTrans( aTmp, aGet, oSay, oDlg, aTipBar, cTipBar, nMode, oImpC
       aTmp[ ( D():Articulos( nView ) )->( fieldpos( "nPosTpv" ) ) ]       -= 0.5
 
       if !empty( oImpComanda1 )
-         aTmp[ ( D():Articulos( nView ) )->( fieldpos( "cTipImp1" ) ) ]   := aImpComanda[ oImpComanda1:nAt ]
+         aTmp[ ( D():Articulos( nView ) )->( fieldpos( "cTipImp1" ) ) ]    := aTiposImpresoras[ MinMax( oImpComanda1:nAt, 1, len( aTiposImpresoras ) ) ]
       end if
 
       if !empty( oImpComanda2 )
-         aTmp[ ( D():Articulos( nView ) )->( fieldpos( "cTipImp2" ) ) ]    := aImpComanda[ oImpComanda2:nAt ]
+         aTmp[ ( D():Articulos( nView ) )->( fieldpos( "cTipImp2" ) ) ]    := aTiposImpresoras[ MinMax( oImpComanda2:nAt, 1, len( aTiposImpresoras ) ) ]
       end if
 
       if !empty( oActiveX )

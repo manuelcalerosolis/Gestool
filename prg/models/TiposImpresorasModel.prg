@@ -8,6 +8,8 @@ CLASS TiposImpresorasModel FROM SQLBaseModel
 
    METHOD   New()
 
+   METHOD   arrayTiposImpresoras()
+
 END CLASS
 
 //---------------------------------------------------------------------------//
@@ -32,3 +34,16 @@ METHOD New()
 Return ( Self )
 
 //---------------------------------------------------------------------------//
+
+METHOD arrayTiposImpresoras()
+
+   local aResult                 := {}
+   local arrayTiposImpresoras    := ::selectFetchArray( "SELECT nombre FROM " + ::cTableName ) 
+
+   aeval( arrayTiposImpresoras, {|a| aadd( aResult, a[ 1 ] ) } )
+
+Return ( aResult )
+
+//---------------------------------------------------------------------------//
+
+

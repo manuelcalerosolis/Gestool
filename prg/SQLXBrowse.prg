@@ -139,8 +139,7 @@ METHOD setModel( oModel )
    endif
 
    ::lFastEdit        := .t.
-   
-   ::bKeyChar         := {|nKey| ::CtrlKey( nKey ) }
+
 
 Return nil
 

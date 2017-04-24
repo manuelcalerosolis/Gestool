@@ -152,6 +152,10 @@ Defines para ficheros INI
 #define ESPE_MODE               6
 #define DELE_MODE               7
 
+#define __append_mode__         1
+#define __edit_mode__           2
+#define __zoom_mode__           3
+
 #define PED_PRV                 '01'
 #define ALB_PRV                 '02'
 #define FAC_PRV                 '03'
