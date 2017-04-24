@@ -199,6 +199,8 @@ CLASS TFastVentasArticulos FROM TFastReportInfGen
 
    METHOD getPrimerValorPropiedad( cCodigoPropiedad )
 
+   METHOD getTotalUnidadesVendidas( cCodArt )
+
 END CLASS
 
 //----------------------------------------------------------------------------//
@@ -4318,6 +4320,86 @@ METHOD getUnidadesVendidas( cCodArt, cCodAlm ) CLASS TFastVentasArticulos
    ( D():AlbaranesClientesLineas( ::nView ) )->( dbgoto( nRecAlb ) )
    ( D():FacturasClientesLineas( ::nView ) )->( ordsetfocus( nOrdFac ) )
    ( D():FacturasClientesLineas( ::nView ) )->( dbgoto( nRecFac ) )
+
+Return nTotal
+
+//---------------------------------------------------------------------------//
+
+METHOD getTotalUnidadesVendidas( cCodArt ) CLASS TFastVentasArticulos
+   
+   local nTotal      := 0
+   local idLine      := Padr( cCodArt, 18 )
+   local nRecAlb     := ( D():AlbaranesClientesLineas( ::nView ) )->( Recno() )
+   local nOrdAlb     := ( D():AlbaranesClientesLineas( ::nView ) )->( OrdSetFocus( "cRef" ) )
+   local nRecFac     := ( D():FacturasClientesLineas( ::nView ) )->( Recno() )
+   local nOrdFac     := ( D():FacturasClientesLineas( ::nView ) )->( OrdSetFocus( "cRef" ) )
+   local nRecFacRec  := ( D():FacturasRectificativasLineas( ::nView ) )->( Recno() )
+   local nOrdFacRec  := ( D():FacturasRectificativasLineas( ::nView ) )->( OrdSetFocus( "cRef" ) )
+   local nRecTik     := ( D():TiketsLineas( ::nView ) )->( Recno() )
+   local nOrdTik     := ( D():TiketsLineas( ::nView ) )->( OrdSetFocus( "cCbaTil" ) )
+
+   if ( D():AlbaranesClientesLineas( ::nView ) )->( dbseek( idLine ) )
+
+      while ( D():AlbaranesClientesLineas( ::nView ) )->cRef == idLine .and. ;
+            !( D():AlbaranesClientesLineas( ::nView ) )->( eof() )
+
+         if !( D():AlbaranesClientesLineas( ::nView ) )->lFacturado
+            nTotal   += nTotNAlbCli( D():AlbaranesClientesLineas( ::nView ) ) 
+         end if
+
+         ( D():AlbaranesClientesLineas( ::nView ) )->( dbSkip() )
+
+      end while
+
+   end if
+
+   if ( D():FacturasClientesLineas( ::nView ) )->( dbseek( idLine ) )
+
+      while ( D():FacturasClientesLineas( ::nView ) )->cRef == idLine .and. ;
+            !( D():FacturasClientesLineas( ::nView ) )->( eof() )
+
+         nTotal      += nTotNFacCli( ( D():FacturasClientesLineas( ::nView ) ) )
+
+         ( D():FacturasClientesLineas( ::nView ) )->( dbskip() )
+
+      end while
+
+   end if
+
+   if ( D():FacturasRectificativasLineas( ::nView ) )->( dbseek( idLine ) )
+
+      while ( D():FacturasRectificativasLineas( ::nView ) )->cRef == idLine .and. ;
+            !( D():FacturasRectificativasLineas( ::nView ) )->( eof() )
+
+         nTotal      += nTotNFacRec( ( D():FacturasRectificativasLineas( ::nView ) ) )
+
+         ( D():FacturasRectificativasLineas( ::nView ) )->( dbskip() )
+
+      end while
+
+   end if
+
+   if ( D():TiketsLineas( ::nView ) )->( dbseek( idLine ) )
+
+      while ( D():TiketsLineas( ::nView ) )->cCbaTil == idLine .and. ;
+            !( D():TiketsLineas( ::nView ) )->( eof() )
+
+         nTotal      += nTotNTpv( ( D():TiketsLineas( ::nView ) ) )
+
+         ( D():TiketsLineas( ::nView ) )->( dbskip() )
+
+      end while
+
+   end if
+
+   ( D():AlbaranesClientesLineas( ::nView ) )->( ordsetfocus( nOrdAlb ) )
+   ( D():AlbaranesClientesLineas( ::nView ) )->( dbgoto( nRecAlb ) )
+   ( D():FacturasClientesLineas( ::nView ) )->( ordsetfocus( nOrdFac ) )
+   ( D():FacturasClientesLineas( ::nView ) )->( dbgoto( nRecFac ) )
+   ( D():FacturasRectificativasLineas( ::nView ) )->( ordsetfocus( nOrdFacRec ) )
+   ( D():FacturasRectificativasLineas( ::nView ) )->( dbgoto( nRecFacRec ) )
+   ( D():TiketsLineas( ::nView ) )->( ordsetfocus( nOrdTik ) )
+   ( D():TiketsLineas( ::nView ) )->( dbgoto( nRecTik ) )
 
 Return nTotal
 

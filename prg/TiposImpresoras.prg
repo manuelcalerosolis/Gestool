@@ -90,7 +90,7 @@ METHOD buildSQLShell()
          :cSortOrder       := "id"
          :bEditValue       := {|| ::oModel:getRowSet():fieldGet( "id" ) }
          :nWidth           := 40
-         :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | ::clickOnHeader( oCol ) }
+         :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | ::clickOnHeader( oCol, ::oShell:oBrw ) }
       end with
 
       with object ( ::oShell:AddXCol() )
@@ -98,7 +98,7 @@ METHOD buildSQLShell()
          :cSortOrder       := "nombre"
          :bEditValue       := {|| ::oModel:getRowSet():fieldGet( "nombre" ) }
          :nWidth           := 800
-         :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | ::clickOnHeader( oCol ) }
+         :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | ::clickOnHeader( oCol, ::oShell:oBrw ) }
       end with
 
       ::oShell:CreateXFromCode()
@@ -395,12 +395,12 @@ METHOD buildBrowse()
       REDEFINE BUTTON ;
          ID          500 ;
          OF          oDlg ;
-         ACTION      ( msgalert( "Append") )
+         ACTION      ( ::append() )
 
       REDEFINE BUTTON ;
          ID          501 ;
          OF          oDlg ;
-         ACTION      ( msgalert( "Edit") )
+         ACTION      ( ::edit() )
 
       oDlg:AddFastKey( VK_RETURN,   {|| oDlg:end( IDOK ) } )
       oDlg:AddFastKey( VK_F5,       {|| oDlg:end( IDOK ) } )

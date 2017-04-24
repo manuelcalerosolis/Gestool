@@ -116,6 +116,8 @@ METHOD selectColumnOrder( oCol )
 
    ::oBrw:selectColumnOrder( oCol )
 
+   msgalert( hb_valtoexp( oCol ) )
+
    ::oWndBar:setComboBoxSet( oCol:cHeader )   
 
 RETURN NIL
