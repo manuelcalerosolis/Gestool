@@ -163,6 +163,9 @@ CLASS TShell FROM TMdiChild
 
    METHOD CreateXBrowse()
    METHOD CreateXFromCode()
+
+   METHOD getBrowse()            INLINE ( ::oBrw )
+
    METHOD AddXCol()              INLINE ( ::oBrw:AddCol() )
    METHOD AddCol()               INLINE ( ::oBrw:AddCol() )
 
@@ -297,6 +300,8 @@ CLASS TShell FROM TMdiChild
 
    METHOD ShowEditButtonFilter()             INLINE ( ::oWndBar:ShowEditButtonFilter() )
    METHOD HideEditButtonFilter()             INLINE ( ::oWndBar:HideEditButtonFilter() )
+
+   METHOD getComboBox()                      INLINE ( ::oWndBar:oCombobox )
 
    METHOD setFilter( cFilter )               INLINE ( if(   !empty( cFilter ), ( ::xAlias )->( setCustomFilter( cFilter ) ), ( ::xAlias )->( quitCustomFilter() ) ) )
 

@@ -4,37 +4,44 @@
 
 //---------------------------------------------------------------------------//
 
+#define __history_shell__     'tipos_impresoras_shell'
+#define __history_browse__    'tipos_impresoras_browse'
+
+//---------------------------------------------------------------------------//
+
 CLASS TiposImpresoras FROM SQLBaseView
 
    METHOD   New()
 
-   METHOD   ActivateShell()
+   METHOD   activateShell()
       METHOD   buildSQLShell()
 
    METHOD   buildSQLModel()
    METHOD   destroySQLModel()                         INLINE   ( if( !empty(::oModel), ::oModel:end(), ) )
-
-   METHOD   Destroy()                                 INLINE   ( ::saveHistory(), ::destroySQLModel(), .t. )
   
    METHOD   Dialog()
 
    METHOD   ActivateBrowse()
       METHOD   buildBrowse( oGet )
-      METHOD   startBrowse( oFind, oOrder, oBrowse )
+      METHOD   startBrowse( oFind, oCombobox, oBrowse )
+
+   METHOD   destroy( cHistory )                       INLINE   ( ::saveHistory( cHistory ), ::destroySQLModel(), .t. )
 
    METHOD   Append()
    METHOD   Edit()
 
-   // Evnts------------------------------------------------------------------
+   // Events-------------------------------------------------------------------
 
    METHOD   clickOnHeader( oCol )
    METHOD   changeFind( oFind, oBrowse )
-   METHOD   setCombo( oBrowse, oOrder )
-   METHOD   changeCombo( oColumn, oBrowse )                   
 
+   METHOD   setCombo( oBrowse, oCombobox )
+   METHOD   changeCombo( oBrowse, oCombobox )                   
 
-   METHOD   getHistory()
-   METHOD   saveHistory()
+   // Histroy------------------------------------------------------------------
+
+   METHOD   getHistory( cHistory )
+   METHOD   saveHistory( cHistory )
 
 END CLASS
 
@@ -59,7 +66,7 @@ METHOD ActivateShell()
       SysRefresh(); oWnd():CloseAll(); SysRefresh()
    end if
 
-   ::buildSQLModel()
+   ::buildSQLModel( __history_shell__ )
 
    ::buildSQLShell()
 
@@ -67,11 +74,11 @@ Return ( Self )
 
 //---------------------------------------------------------------------------//
 
-METHOD buildSQLModel()
+METHOD buildSQLModel( cHistory )
 
    ::oModel    := TiposImpresorasModel():New()
 
-   ::getHistory()
+   ::getHistory( cHistory )
 
    ::oModel:buildRowSetWithRecno()
 
@@ -90,7 +97,7 @@ METHOD buildSQLShell()
          :cSortOrder       := "id"
          :bEditValue       := {|| ::oModel:getRowSet():fieldGet( "id" ) }
          :nWidth           := 40
-         :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | ::clickOnHeader( oCol, ::oShell:oBrw ) }
+         :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | ::clickOnHeader( oCol, ::oShell:getBrowse(), ::oShell:getCombobox() ) }
       end with
 
       with object ( ::oShell:AddXCol() )
@@ -98,7 +105,7 @@ METHOD buildSQLShell()
          :cSortOrder       := "nombre"
          :bEditValue       := {|| ::oModel:getRowSet():fieldGet( "nombre" ) }
          :nWidth           := 800
-         :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | ::clickOnHeader( oCol, ::oShell:oBrw ) }
+         :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | ::clickOnHeader( oCol, ::oShell:getBrowse(), ::oShell:getCombobox() ) }
       end with
 
       ::oShell:CreateXFromCode()
@@ -148,11 +155,11 @@ METHOD buildSQLShell()
          TOOLTIP  "(S)alir" ;
          HOTKEY   "S"
 
-   ACTIVATE WINDOW ::oShell VALID ( ::Destroy() )
+   ACTIVATE WINDOW ::oShell VALID ( ::destroy( __history_shell__ ) )
 
-   ::oShell:setComboBoxChange( {|| ::changeCombo() } )
+   ::oShell:setComboBoxChange( {|| ::changeCombo( ::oShell:getBrowse(), ::oShell:getCombobox() ) } )
 
-   ::setCombo()
+   ::setCombo( ::oShell:getBrowse(), ::oShell:getCombobox() )
 
    enableAcceso()
 
@@ -228,9 +235,9 @@ RETURN ( oDlg:nResult == IDOK )
 
 //----------------------------------------------------------------------------//
 
-METHOD getHistory()
+METHOD getHistory( cHistory )
 
-   local hFetch            := HistoricosUsuariosModel():getHistory( ::oModel:getTableName() )
+   local hFetch            := HistoricosUsuariosModel():getHistory( cHistory )
 
    if empty( hFetch )
       Return ( Self )
@@ -252,20 +259,20 @@ Return ( self )
 
 //----------------------------------------------------------------------------//
 
-METHOD saveHistory()
+METHOD saveHistory( cHistory )
 
-   HistoricosUsuariosModel():saveHistory( ::oModel:cColumnOrder, ::oModel:cOrientation, ::oModel:getKeyFieldOfRecno(), ::oModel:getTableName() ) 
+   HistoricosUsuariosModel():saveHistory( ::oModel:cColumnOrder, ::oModel:cOrientation, ::oModel:getKeyFieldOfRecno(), cHistory ) 
 
 Return ( self )
 
 //----------------------------------------------------------------------------//
 
-METHOD clickOnHeader( oColumn, oBrowse, oOrder )
+METHOD clickOnHeader( oColumn, oBrowse, oCombobox )
 
    oBrowse:selectColumnOrder( oColumn )
 
-   if !empty( oOrder )
-      oOrder:set( oColumn:cHeader )
+   if !empty( oCombobox )
+      oCombobox:set( oColumn:cHeader )
    end if 
 
    ::oModel:setIdForRecno( ::oModel:getKeyFieldOfRecno() )
@@ -282,9 +289,9 @@ Return ( self )
 
 //----------------------------------------------------------------------------//
 
-METHOD changeCombo( oOrder, oBrowse )
+METHOD changeCombo( oBrowse, oCombobox )
 
-   local oColumn  := oBrowse:getColumnHeader( oOrder:VarGet() )
+   local oColumn  := oBrowse:getColumnHeader( oCombobox:VarGet() )
 
    if !empty( oColumn )
       ::clickOnHeader( oColumn, oBrowse )
@@ -294,12 +301,12 @@ RETURN ( Self )
 
 //---------------------------------------------------------------------------//
 
-METHOD SetCombo( oBrowse, oOrder )
+METHOD SetCombo( oBrowse, oCombobox )
 
-   local oColumn  := ::oShell:getColumnHeader( ::oModel:cColumnOrder )
+   local oColumn  := oBrowse:getColumnHeader( ::oModel:cColumnOrder )
 
    if !empty( oColumn )
-      ::clickOnHeader( oColumn, oBrowse, oOrder )
+      ::clickOnHeader( oColumn, oBrowse, oCombobox )
    end if
 
 RETURN ( Self )
@@ -308,14 +315,13 @@ RETURN ( Self )
 
 METHOD ActivateBrowse( oGet )
 
-   ::buildSQLModel()
+   ::buildSQLModel( __history_browse__ )
 
    if ::buildBrowse() .and. !empty( oGet )
       oGet:cText( ::oModel:getRowSet():fieldGet( "nombre" ) )
-      oGet:lValid()
    end if
 
-   ::destroySQLModel()
+   ::destroy( __history_browse__ )
 
 RETURN ( Self )
 
@@ -327,7 +333,7 @@ METHOD buildBrowse()
    local oBrowse
    local oFind
    local cFind       := space( 200 )
-   local oOrder
+   local oCombobox
    local cOrder
    local aOrden      := { "Tipo" }
 
@@ -341,13 +347,13 @@ METHOD buildBrowse()
 
       oFind:bChange       := {|| ::changeFind( oFind, oBrowse ) }
 
-      REDEFINE COMBOBOX oOrder ;
+      REDEFINE COMBOBOX oCombobox ;
          VAR         cOrder ;
          ID          102 ;
          ITEMS       aOrden ;
          OF          oDlg
 
-      oOrder:bChange       := {|| ::changeCombo( oOrder, oBrowse ) }
+      oCombobox:bChange       := {|| ::changeCombo( oBrowse, oCombobox ) }
 
       oBrowse                 := SQLXBrowse():New( oDlg )
 
@@ -365,7 +371,7 @@ METHOD buildBrowse()
          :cSortOrder          := "id"
          :bEditValue          := {|| ::oModel:getRowSet():fieldGet( "id" ) }
          :nWidth              := 40
-         :bLClickHeader       := {| nMRow, nMCol, nFlags, oCol | ::clickOnHeader( oCol, oBrowse, oOrder ) }
+         :bLClickHeader       := {| nMRow, nMCol, nFlags, oCol | ::clickOnHeader( oCol, oBrowse, oCombobox ) }
       end with
 
       with object ( oBrowse:AddCol() )
@@ -373,7 +379,7 @@ METHOD buildBrowse()
          :cSortOrder          := "nombre"
          :bEditValue          := {|| ::oModel:getRowSet():fieldGet( "nombre" ) }
          :nWidth              := 300
-         :bLClickHeader       := {| nMRow, nMCol, nFlags, oCol | ::clickOnHeader( oCol, oBrowse, oOrder ) }
+         :bLClickHeader       := {| nMRow, nMCol, nFlags, oCol | ::clickOnHeader( oCol, oBrowse, oCombobox ) }
       end with
 
       oBrowse:bLDblClick      := {|| oDlg:end( IDOK ) }
@@ -405,7 +411,7 @@ METHOD buildBrowse()
       oDlg:AddFastKey( VK_RETURN,   {|| oDlg:end( IDOK ) } )
       oDlg:AddFastKey( VK_F5,       {|| oDlg:end( IDOK ) } )
 
-      oDlg:bStart    := {|| ::startBrowse( oFind, oOrder, oBrowse ) }
+      oDlg:bStart    := {|| ::startBrowse( oFind, oCombobox, oBrowse ) }
 
    ACTIVATE DIALOG oDlg CENTER
 
@@ -413,18 +419,18 @@ RETURN ( oDlg:nResult == IDOK )
 
 //---------------------------------------------------------------------------//
 
-METHOD startBrowse( oFind, oOrder, oBrowse )
+METHOD startBrowse( oFind, oCombobox, oBrowse )
 
    local oColumn
 
-   oOrder:SetItems( oBrowse:getColumnHeaders() )
+   oCombobox:SetItems( oBrowse:getColumnHeaders() )
 
    oColumn     := oBrowse:getColumnOrder( ::oModel:cColumnOrder )
    if empty( oColumn )
       Return ( Self )
    end if 
    
-   oOrder:set( oColumn:cHeader )
+   oCombobox:set( oColumn:cHeader )
 
    oBrowse:selectColumnOrder( oColumn, ::oModel:cOrientation )
 

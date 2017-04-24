@@ -114,13 +114,17 @@ Return ( Self )
 
 METHOD selectColumnOrder( oCol )
 
+   if empty(oCol)
+      Return ( Self )
+   end if 
+
    ::oBrw:selectColumnOrder( oCol )
 
    msgalert( hb_valtoexp( oCol ) )
 
    ::oWndBar:setComboBoxSet( oCol:cHeader )   
 
-RETURN NIL
+Return ( Self )
 
 //---------------------------------------------------------------------------//
 
@@ -157,9 +161,7 @@ METHOD FastSeek()
       oGet:SetColor( Rgb( 255, 255, 255 ), Rgb( 255, 102, 102 ) )
    end if
 
-   ::oBrw:Refresh()
-   ::oBrw:Select( 0 )
-   ::oBrw:Select( 1 )
+   ::oBrw:refreshCurrent()
 
 Return ( lFind )
 

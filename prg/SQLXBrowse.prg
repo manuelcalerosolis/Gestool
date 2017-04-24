@@ -264,7 +264,7 @@ Return ( ::aHeaders )
 METHOD selectColumnOrder( oCol, cOrder )
 
    if empty( oCol )
-      Return ( nil )
+      Return ( Self )
    end if
 
    aeval( ::aCols, {|o| if( o:cSortOrder != oCol:cSortOrder, o:cOrder := "", ) } )    
