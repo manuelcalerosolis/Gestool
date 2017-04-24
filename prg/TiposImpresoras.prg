@@ -283,7 +283,7 @@ METHOD clickOnHeader( oColumn, oBrowse, oCombobox )
 
    ::oModel:buildRowSetWithRecno()
 
-   oBrowse:Refresh()
+   oBrowse:refreshCurrent()
 
 Return ( self )
 
@@ -303,7 +303,9 @@ RETURN ( Self )
 
 METHOD SetCombo( oBrowse, oCombobox )
 
-   local oColumn  := oBrowse:getColumnHeader( ::oModel:cColumnOrder )
+   local oColumn 
+
+   oColumn  := oBrowse:getColumnOrder( ::oModel:cColumnOrder )
 
    if !empty( oColumn )
       ::clickOnHeader( oColumn, oBrowse, oCombobox )
@@ -401,12 +403,12 @@ METHOD buildBrowse()
       REDEFINE BUTTON ;
          ID          500 ;
          OF          oDlg ;
-         ACTION      ( ::append() )
+         ACTION      ( ::Append() )
 
       REDEFINE BUTTON ;
          ID          501 ;
          OF          oDlg ;
-         ACTION      ( ::edit() )
+         ACTION      ( ::Edit() )
 
       oDlg:AddFastKey( VK_RETURN,   {|| oDlg:end( IDOK ) } )
       oDlg:AddFastKey( VK_F5,       {|| oDlg:end( IDOK ) } )

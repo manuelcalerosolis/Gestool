@@ -20,8 +20,12 @@ METHOD New()
 
    ::aDbfFields			 			:=	{  "cTipImp" }
 
-   ::hColumns                   	:= {  "id"     => "INTEGER PRIMARY KEY AUTOINCREMENT",;
-                                       "nombre" => "VARCHAR( 50 ) NOT NULL" }
+   ::hColumns                   	:= {  "id"     => {  "create"    => "INTEGER PRIMARY KEY AUTOINCREMENT",;
+                                                      "text"		=> "Identificador" ,;
+   															      "dbfField" 	=> "" },;
+                                       "nombre" => {  "create"    => "VARCHAR( 50 ) NOT NULL",;
+   															      "text"		=> "Nombre de impresora",;
+   															      "dbfField" 	=> "cTipImp" } }
 
    ::Super:New()
 

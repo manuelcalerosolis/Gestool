@@ -20,12 +20,12 @@ END CLASS
 
 METHOD New()
 
-   ::hColumns                    := {  "id"         	=>   "INTEGER PRIMARY KEY AUTOINCREMENT" , ;
-                                       "usuario_id"	  =>   "CHARACTER ( 3 ) NOT NULL"          , ;
-                                       "cTableName"   =>   "VARCHAR( 30 ) NOT NULL"            , ;
-                                       "cColumnOrder" =>   "VARCHAR( 30 ) NOT NULL" 		       , ;
-                                       "cOrientation"	=>   "CHARACTER ( 1 ) NOT NULL"			     , ;
-                                       "nIdForRecno"  =>   "INT NOT NULL" }
+   ::hColumns                    := {  "id"         	=>  { "create" => "INTEGER PRIMARY KEY AUTOINCREMENT"  }, ;
+                                       "usuario_id"	  =>  { "create" => "CHARACTER ( 3 ) NOT NULL"           }, ;
+                                       "cTableName"   =>  { "create" => "VARCHAR( 30 ) NOT NULL"             }, ;
+                                       "cColumnOrder" =>  { "create" => "VARCHAR( 30 ) NOT NULL" 		         }, ;
+                                       "cOrientation"	=>  { "create" => "CHARACTER ( 1 ) NOT NULL"			     }, ;
+                                       "nIdForRecno"  =>  { "create" => "INT NOT NULL" } }
 
    ::Super:New()
 

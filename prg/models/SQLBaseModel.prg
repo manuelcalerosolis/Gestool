@@ -99,11 +99,11 @@ METHOD getSQLCreateTable()
    
    Local cSQLCreateTable := "CREATE TABLE " + ::cTableName + " ( "
 
-   hEval( ::hColumns, {| k, v | cSQLCreateTable += k + " " + v + ", " } )
+   hEval( ::hColumns, {| k, hash | cSQLCreateTable += k + " " + hget( hash, "create" ) + ", " } )
 
    cSQLCreateTable        := ChgAtEnd( cSQLCreateTable, ' )', 2 )
 
-Return ( cSQLCreateTable )
+Return ( self )
 
 //---------------------------------------------------------------------------//
 
@@ -129,14 +129,16 @@ METHOD getImportSentence( cPath )
    end if 
 
    cInsert              := "INSERT INTO " + ::cTableName + " ( "
-   hEval( ::hColumns, {| k, v | if ( k != ::cColumnKey, cInsert += k + ", ", ) } )
+   hEval( ::hColumns, {| k | if ( k != ::cColumnKey, cInsert += k + ", ", ) } )
    cInsert           := ChgAtEnd( cInsert, ' ) VALUES ', 2 )
 
    ( dbf )->( dbgotop() )
    while ( dbf )->( !eof() )
 
       cValues           += "( "
-      aeval( ::aDbfFields, {|cField| cValues += convertToSql( ( dbf )->( fieldget( fieldpos( cField ) ) ) ) + ", " } )
+      hEval( ::hColumns, {| k, hash | if ( k != ::cColumnKey,;
+                                             cValues += convertToSql( ( dbf )->( fieldget( fieldpos( hget( hash, "dbfField" ) ) ) ) ) + ", " , )  } )
+      // aeval( ::aDbfFields, {|cField| cValues += convertToSql( ( dbf )->( fieldget( fieldpos( cField ) ) ) ) + ", " } )
       cValues           := chgAtEnd( cValues, ' ), ', 2 )
 
       ( dbf )->( dbskip() )
