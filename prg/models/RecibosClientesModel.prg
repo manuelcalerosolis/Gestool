@@ -21,7 +21,7 @@ METHOD Riesgo( idCliente )
 
    cSql           := "SELECT SUM( nImporte ) AS nRiesgo " + ;
                         "FROM " + ::getTableName() + " " + ;
-                        "WHERE cCodCli = " + quoted( idCliente ) + " AND lCobrado AND NOT lPasado"
+                        "WHERE cCodCli = " + quoted( idCliente ) + " AND NOT lCobrado AND NOT lPasado"
 
    if ::ExecuteSqlStatement( cSql, @cStm )
       nRiesgo     += ( cStm )->nRiesgo

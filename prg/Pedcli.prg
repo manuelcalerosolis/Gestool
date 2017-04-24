@@ -1677,25 +1677,25 @@ FUNCTION PedCli( oMenuItem, oWnd, cCodCli, cCodArt, cCodPre, lPedWeb )
 
       DEFINE BTNSHELL RESOURCE "GC_DOCUMENT_EMPTY_" OF oWndBrw ;
             ALLOW    EXIT ;
-            ACTION   ( if( ( D():PedidosClientes( nView ) )->nEstado != 3, AlbCli( nil, nil, { "Pedido" => ( D():PedidosClientes( nView ) )->cSerPed + Str( ( D():PedidosClientes( nView ) )->nNumPed ) + ( D():PedidosClientes( nView ) )->cSufPed } ), MsgInfo( "Pedido entregado o cancelado" ) ) );
+            ACTION   ( if( ( D():PedidosClientes( nView ) )->nEstado != 3, AlbCli( nil, nil, { "Pedido" => ( D():PedidosClientes( nView ) )->cSerPed + Str( ( D():PedidosClientes( nView ) )->nNumPed, 9 ) + ( D():PedidosClientes( nView ) )->cSufPed } ), MsgInfo( "Pedido entregado o cancelado" ) ) );
             TOOLTIP  "Generar albarán" ;
             FROM     oRotor ;
 
       DEFINE BTNSHELL RESOURCE "GC_DOCUMENT_EMPTY_" OF oWndBrw ;
             NOBORDER ;
-            ACTION   ( Ped2AlbCli( ( D():PedidosClientes( nView ) )->cSerPed + Str( ( D():PedidosClientes( nView ) )->nNumPed ) + ( D():PedidosClientes( nView ) )->cSufPed, dbfAlbCliT ) );
+            ACTION   ( Ped2AlbCli( ( D():PedidosClientes( nView ) )->cSerPed + Str( ( D():PedidosClientes( nView ) )->nNumPed, 9 ) + ( D():PedidosClientes( nView ) )->cSufPed, dbfAlbCliT ) );
             TOOLTIP  "Modificar albarán" ;
             FROM     oRotor ;
             CLOSED ;
 
       DEFINE BTNSHELL RESOURCE "GC_DOCUMENT_TEXT_USER_" OF oWndBrw ;
             ALLOW    EXIT ;
-            ACTION   ( if( ( D():PedidosClientes( nView ) )->nEstado <= 2, FactCli( nil, nil, { "Pedido" => ( D():PedidosClientes( nView ) )->cSerPed + Str( ( D():PedidosClientes( nView ) )->nNumPed ) + ( D():PedidosClientes( nView ) )->cSufPed } ), MsgInfo( "Pedido entregado o cancelado" ) ) );
+            ACTION   ( if( ( D():PedidosClientes( nView ) )->nEstado <= 2, FactCli( nil, nil, { "Pedido" => ( D():PedidosClientes( nView ) )->cSerPed + Str( ( D():PedidosClientes( nView ) )->nNumPed, 9 ) + ( D():PedidosClientes( nView ) )->cSufPed } ), MsgInfo( "Pedido entregado o cancelado" ) ) );
             TOOLTIP  "Generar factura" ;
             FROM     oRotor ;
 
       DEFINE BTNSHELL RESOURCE "GC_DOCUMENT_TEXT_USER_" OF oWndBrw ;
-            ACTION   ( Ped2FacCli( ( D():PedidosClientes( nView ) )->cSerPed + Str( ( D():PedidosClientes( nView ) )->nNumPed ) + ( D():PedidosClientes( nView ) )->cSufPed, dbfFacCliT ) );
+            ACTION   ( Ped2FacCli( ( D():PedidosClientes( nView ) )->cSerPed + Str( ( D():PedidosClientes( nView ) )->nNumPed, 9 ) + ( D():PedidosClientes( nView ) )->cSufPed, dbfFacCliT ) );
             TOOLTIP  "Modificar factura" ;
             FROM     oRotor ;
 
