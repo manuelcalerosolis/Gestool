@@ -80,11 +80,7 @@ Return ( Self )
 
 METHOD buildSQLModel( cHistory )
 
-   msgalert( "entramos en le build del modelo" )
-
    ::oModel    := TiposImpresorasModel():New()
-
-   msgalert( "Hemos construir")
 
    ::getHistory( cHistory )
 
@@ -325,9 +321,8 @@ METHOD getHistory( cHistory )
       ::oModel:setIdForRecno( hFetch[ "nIdForRecno" ] )
    end if
 
-   if hhaskey ( hFetch, "aHeadersBrw" )
-         msgalert( hFetch[ "aHeadersBrw" ] )
-         msgalert( hb_valtoexp( hFetch[ "aHeadersBrw" ]))
+   if hhaskey( hFetch, "cBrowseState" )
+      ::setBrowseState( hFetch[ "cBrowseState" ] )
    endif
    
 Return ( self )
@@ -336,17 +331,20 @@ Return ( self )
 
 METHOD saveHistory( cHistory, oBrowse )
 
-   local aHeaders
+   local cBrowseState
 
-   if !empty( oBrowse ) .and. !empty ( oBrowse:aHeaders )
-      aHeaders := quoted ( oBrowse:aHeaders )
-   else
-      aHeaders := "null"
+   msgalert( "saveHistory")
+
+   if !empty( oBrowse ) 
+      cBrowseState      := quoted( oBrowse:saveState() )
+
+      msgalert( cBrowseState) 
+
    end if
 
-   HistoricosUsuariosModel():saveHistory( cHistory, aHeaders, ::oModel:cColumnOrder, ::oModel:cOrientation, ::oModel:getKeyFieldOfRecno() ) 
+   HistoricosUsuariosModel():saveHistory( cHistory, cBrowseState, ::oModel:cColumnOrder, ::oModel:cOrientation, ::oModel:getKeyFieldOfRecno() ) 
 
-Return ( self )
+Return ( .t. )
 
 //----------------------------------------------------------------------------//
 
@@ -400,17 +398,17 @@ RETURN ( Self )
 
 METHOD ActivateBrowse( oGet )
 
-   msgalert( "He conseguido leer el primer mensaje" ) 
+   ::oModel    := TiposImpresorasModel():New()
 
-   ::buildSQLModel( __history_browse__ )
+   ::getHistory( __history_browse__ )
 
-   msgalert( "Tambien logre construir el modelo ")
+   ::oModel:buildRowSetWithRecno()
 
    if ::buildBrowse() .and. !empty( oGet )
       oGet:cText( ::oModel:getRowSet():fieldGet( "nombre" ) )
    end if
 
-   ::destroy( __history_browse__ )
+   ::destroySQLModel()
 
 RETURN ( Self )
 
@@ -502,7 +500,7 @@ METHOD buildBrowse()
 
       oDlg:bStart    := {|| ::startBrowse( oFind, oCombobox, oBrowse ) }
 
-   ACTIVATE DIALOG oDlg CENTER
+   oDlg:Activate( , , , .t., {|| ::saveHistory( __history_browse__, oBrowse ) } )
 
 RETURN ( oDlg:nResult == IDOK )
 
@@ -513,6 +511,10 @@ METHOD startBrowse( oFind, oCombobox, oBrowse )
    local oColumn
 
    oCombobox:SetItems( oBrowse:getColumnHeaders() )
+
+   if !empty( ::getBrowseState() )
+      oBrowse:restoreState( ::getBrowseState() )
+   end if 
 
    oColumn     := oBrowse:getColumnOrder( ::oModel:cColumnOrder )
    if empty( oColumn )

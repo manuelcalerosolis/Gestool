@@ -15,6 +15,8 @@ CLASS SQLBaseView
    DATA     oModel
 
    DATA     nMode                                  AS NUMERIC
+
+   DATA     cBrowseState   
  
    METHOD   New()
    
@@ -33,6 +35,9 @@ CLASS SQLBaseView
 
    METHOD setMode( nMode )                         INLINE ( ::nMode := nMode )
    METHOD getMode()                                INLINE ( ::nMode )
+
+   METHOD setBrowseState( cBrowseState )           INLINE ( ::cBrowseState := cBrowseState )
+   METHOD getBrowseState()                         INLINE ( ::cBrowseState )
 
 END CLASS
 
