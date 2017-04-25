@@ -10,6 +10,8 @@
 
 CLASS SQLTShell FROM TShell
 
+   DATA  bEnd
+
    DATA  oModel
 
    METHOD setXAlias( oModel )             INLINE ( if( hb_isobject( oModel ), ::oModel := oModel, ) )
@@ -26,6 +28,8 @@ CLASS SQLTShell FROM TShell
    METHOD fastSeek()
 
    METHOD setDClickData( bAction )       
+
+   METHOD end()
 
 ENDCLASS
 
@@ -159,3 +163,52 @@ METHOD setDClickData( bAction )
 Return ( Self )      
 
 //--------------------------------------------------------------------------//
+
+METHOD End( lForceExit )
+
+   DEFAULT lForceExit         := .f.
+
+   if ::lOnProcess .and. !lForceExit
+      Return ( .f. )
+   end if
+
+   if !empty( ::bValid ) .and. !( eval( ::bValid ) )
+      Return ( .f. )
+   end if 
+
+   ::oWndClient:ChildClose( Self )
+
+   CursorWait()
+
+   // Barra de busqueda--------------------------------------------------------
+
+   if !empty( ::oWndBar )
+      ::oWndBar:DisableGet()
+      ::oWndBar:DisableComboBox()
+      ::oWndBar:DisableComboFilter()
+      ::oWndBar:HideYearCombobox()
+
+      ::HideButtonFilter()
+      ::HideAddButtonFilter()
+      ::HideEditButtonFilter()
+   end if
+
+   // Cerramos el browse ------------------------------------------------------
+
+   if !empty( ::oBrw )
+      ::oBrw:End()
+      ::oBrw   := nil
+   end if
+
+   if !empty( ::bEnd )
+      eval( ::bEnd )
+   end if 
+
+   sysRefresh()
+
+   CursorWE()
+
+Return ( .t. )
+
+//----------------------------------------------------------------------------//
+
