@@ -12,7 +12,7 @@ CLASS HistoricosUsuariosModel FROM SQLBaseModel
 
    METHOD   getHistory( cTable )
 
-   METHOD   saveHistory( cColumnOrder, cOrientation, nIdForRecno, cTable )
+   METHOD   saveHistory( cTable, aHeadersBrw, cColumnOrder, cOrientation, nIdForRecno )
 
 END CLASS
 
@@ -23,6 +23,7 @@ METHOD New()
    ::hColumns                    := {  "id"         	=>  { "create" => "INTEGER PRIMARY KEY AUTOINCREMENT"  }, ;
                                        "usuario_id"	  =>  { "create" => "CHARACTER ( 3 ) NOT NULL"           }, ;
                                        "cTableName"   =>  { "create" => "VARCHAR( 30 ) NOT NULL"             }, ;
+                                       "aHeadersBrw"  =>  { "create" => "VARCHAR(250)"                       }, ;
                                        "cColumnOrder" =>  { "create" => "VARCHAR( 30 ) NOT NULL" 		         }, ;
                                        "cOrientation"	=>  { "create" => "CHARACTER ( 1 ) NOT NULL"			     }, ;
                                        "nIdForRecno"  =>  { "create" => "INT NOT NULL" } }
@@ -37,8 +38,8 @@ METHOD getHistory( cTable )
 
    local oStmt
    local aFetch
-   local cSentence   := "SELECT cColumnOrder, cOrientation, nIdForRecno "    + ;
-                           "FROM " + ::cTableName + " "                 + ;
+   local cSentence   := "SELECT aHeadersBrw, cColumnOrder, cOrientation, nIdForRecno "                               + ;
+                           "FROM " + ::cTableName + " "                                                              + ;
                            "WHERE cTableName = " + quoted( cTable ) + " AND usuario_id = " + quoted( oUser():cCodigo() )
 
    try 
@@ -62,14 +63,14 @@ Return ( nil )
        
 //---------------------------------------------------------------------------//
 
-METHOD   saveHistory( cColumnOrder, cOrientation, nIdForRecno, cTable )
+METHOD   saveHistory( cTable, aHeadersBrw, cColumnOrder, cOrientation, nIdForRecno )
 
-  local cInternalSelect :=  "( SELECT id FROM " + ::cTableName + " WHERE cTableName = " + quoted( cTable ) + " AND "           + ;
+  local cInternalSelect :=  "( SELECT id FROM " + ::cTableName + " WHERE cTableName = " + quoted( cTable ) + " AND "                                + ;
                             " usuario_id = " + quoted( oUser():cCodigo() )
 
-  local cUpdateHistory := "REPLACE INTO " + ::cTableName + " ( id, usuario_id, cTableName, cColumnOrder, cOrientation, nIdForRecno ) " + ;
-                          " VALUES ( " + cInternalSelect +  " ), " + quoted( oUser():cCodigo() ) + ", " + quoted( cTable )             + ;
-                          ", " + quoted( cColumnOrder ) + ", " + quoted ( cOrientation ) + ", " + alltrim( str( nIdForRecno ) ) + ")"
+  local cUpdateHistory := "REPLACE INTO " + ::cTableName + " ( id, usuario_id, cTableName, aHeadersBrw, cColumnOrder, cOrientation, nIdForRecno ) " + ;
+                          " VALUES ( " + cInternalSelect +  " ), " + quoted( oUser():cCodigo() ) + ", " + quoted( cTable )+ ","                     + ;
+                          aHeadersBrw + ", " + quoted( cColumnOrder ) + ", " + quoted ( cOrientation ) + ", " + alltrim( str( nIdForRecno ) ) + ")"
 
   getSQLDatabase():Query( cUpdateHistory )
 

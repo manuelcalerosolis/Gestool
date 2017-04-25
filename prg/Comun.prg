@@ -281,7 +281,11 @@ Return ( .t. )
 
 Function Test()
 
+<<<<<<< HEAD
    // msgalert( hb_valtoexp( TiposImpresorasModel():New():arrayTiposImpresoras() ) )
+=======
+   TiposImpresoras():New():activateBrowse()
+>>>>>>> 7f647c6c89017c6d24b704c1054f3f65bf9f9f28
 
 Return ( nil )
 

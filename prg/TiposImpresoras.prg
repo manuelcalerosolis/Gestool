@@ -16,7 +16,7 @@ CLASS TiposImpresoras FROM SQLBaseView
    METHOD   activateShell()
       METHOD   buildSQLShell()
 
-   METHOD   buildSQLModel()
+   METHOD   buildSQLModel( cHistory )
    METHOD   destroySQLModel()                         INLINE   ( if( !empty(::oModel), ::oModel:end(), ) )
   
    METHOD   Dialog()
@@ -42,8 +42,8 @@ CLASS TiposImpresoras FROM SQLBaseView
 
    // Histroy------------------------------------------------------------------
 
-   METHOD   getHistory( cHistory )
-   METHOD   saveHistory( cHistory )
+   METHOD   getHistory( cHistory, oBrowse )
+   METHOD   saveHistory( cHistory, oBrowse )
 
 END CLASS
 
@@ -80,7 +80,11 @@ Return ( Self )
 
 METHOD buildSQLModel( cHistory )
 
+   msgalert( "entramos en le build del modelo" )
+
    ::oModel    := TiposImpresorasModel():New()
+
+   msgalert( "Hemos construir")
 
    ::getHistory( cHistory )
 
@@ -320,14 +324,27 @@ METHOD getHistory( cHistory )
    if hhaskey( hFetch, "nIdForRecno" ) 
       ::oModel:setIdForRecno( hFetch[ "nIdForRecno" ] )
    end if
+
+   if hhaskey ( hFetch, "aHeadersBrw" )
+         msgalert( hFetch[ "aHeadersBrw" ] )
+         msgalert( hb_valtoexp( hFetch[ "aHeadersBrw" ]))
+   endif
    
 Return ( self )
 
 //----------------------------------------------------------------------------//
 
-METHOD saveHistory( cHistory )
+METHOD saveHistory( cHistory, oBrowse )
 
-   HistoricosUsuariosModel():saveHistory( ::oModel:cColumnOrder, ::oModel:cOrientation, ::oModel:getKeyFieldOfRecno(), cHistory ) 
+   local aHeaders
+
+   if !empty( oBrowse ) .and. !empty ( oBrowse:aHeaders )
+      aHeaders := quoted ( oBrowse:aHeaders )
+   else
+      aHeaders := "null"
+   end if
+
+   HistoricosUsuariosModel():saveHistory( cHistory, aHeaders, ::oModel:cColumnOrder, ::oModel:cOrientation, ::oModel:getKeyFieldOfRecno() ) 
 
 Return ( self )
 
@@ -383,7 +400,11 @@ RETURN ( Self )
 
 METHOD ActivateBrowse( oGet )
 
+   msgalert( "He conseguido leer el primer mensaje" ) 
+
    ::buildSQLModel( __history_browse__ )
+
+   msgalert( "Tambien logre construir el modelo ")
 
    if ::buildBrowse() .and. !empty( oGet )
       oGet:cText( ::oModel:getRowSet():fieldGet( "nombre" ) )
