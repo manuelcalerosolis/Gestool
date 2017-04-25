@@ -1883,7 +1883,9 @@ STATIC FUNCTION initContabilizaReciboCliente( cDocIni, cDocFin, dDesde, dHasta, 
          ( D():FacturasClientesCobros( nView ) )->( dbGoTop() )
          while ( lWhile .and. !( D():FacturasClientesCobros( nView ) )->( eof() ) )
 
-            if ( D():FacturasClientesCobros( nView ) )->lCobrado .and. ( D():FacturasClientesCobros( nView ) )->dEntrada >= dDesde .and. ( D():FacturasClientesCobros( nView ) )->dEntrada <= dHasta
+            if ( D():FacturasClientesCobros( nView ) )->lCobrado           .and. ;
+               ( D():FacturasClientesCobros( nView ) )->dEntrada >= dDesde .and. ;
+               ( D():FacturasClientesCobros( nView ) )->dEntrada <= dHasta
 
                makeContabilizaReciboCliente( cTipo, oTree, lSimula, lChgState, aSimula )
 
