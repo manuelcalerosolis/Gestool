@@ -57,6 +57,9 @@ CLASS TRemesas FROM TMasDet
    DATA oNotImportSinCuenta
    DATA lNotImportSinCuenta
 
+   DATA oNotImportarEsperaDocumentacion
+   DATA lNotImportarEsperaDocumentacion
+
    DATA oClienteIni
    DATA oClienteFin
    DATA cClienteIni
@@ -723,8 +726,9 @@ METHOD inicializaData()
    ::cSufijoInicio         := Space( 2 )
    ::cSufijoFin            := "ZZ"
 
-   ::lNotImportCeros       := .t.
-   ::lNotImportSinCuenta   := .t.
+   ::lNotImportCeros                   := .t.
+   ::lNotImportSinCuenta               := .t.
+   ::lNotImportarEsperaDocumentacion   := .t.
 
    ::cClienteIni           := dbFirst( ::oClientes, 1 )
    ::cClienteFin           := dbLast ( ::oClientes, 1 )
@@ -1190,12 +1194,19 @@ METHOD ImportResource( nMode )
          ::oFormaPagoFin:bValid    := {|| cFpago( ::oFormaPagoFin, ::oFormaPago:cAlias, ::oFormaPagoFin:oHelpText ) }
          ::oFormaPagoFin:bHelp     := {|| BrwFPago( ::oFormaPagoFin, ::oFormaPagoFin:oHelpText ) }
 
-      REDEFINE CHECKBOX ::oNotImportCeros VAR ::lNotImportCeros ;
+      REDEFINE CHECKBOX ::oNotImportCeros ;
+         VAR      ::lNotImportCeros ;
          ID       250 ;
          OF       oDlg
 
-      REDEFINE CHECKBOX ::oNotImportSinCuenta VAR ::lNotImportSinCuenta ;
+      REDEFINE CHECKBOX ::oNotImportSinCuenta ;
+         VAR      ::lNotImportSinCuenta ;
          ID       260 ;
+         OF       oDlg
+
+      REDEFINE CHECKBOX ::oNotImportarEsperaDocumentacion ;
+         VAR      ::lNotImportarEsperaDocumentacion ;
+         ID       270 ;
          OF       oDlg
 
       /*
@@ -1473,71 +1484,75 @@ METHOD GetRecCli( oDlg, nMode )
    local cCodRem     := ::oDbf:cCodRem
 
    if Empty( cCodRem )
+      msgStop( "Debe introducir un codigo de remesa" )
+      return .t.
+   end if
+
+   if ( nMode != APPD_MODE )
+      msgStop( "Solo se puede importar recibos añadiendo" )
       return .t.
    end if
 
    oDlg:Disable()
 
+   msgalert( ::oDbfDet:OrdKeyCount(), "OrdKeyCount" )
+
    ::oMeter:nTotal   := ::oDbfDet:OrdKeyCount()
 
-   if nMode == APPD_MODE
+   ::oDbfDet:GoTop()
+   while !::oDbfDet:Eof()
+      
+      if ::oDbfDet:cSerie >= ::cSerieInicio .and. ::oDbfDet:cSerie <= ::cSerieFin                                    .and.;
+         ::oDbfDet:nNumFac >= ::nNumeroInicio .and. ::oDbfDet:nNumFac <= ::nNumeroFin                                .and.;
+         ::oDbfDet:cSufFac >= ::cSufijoInicio .and. ::oDbfDet:cSufFac <= ::cSufijoFin                                .and.;
+         lChkSer( ::oDbfDet:cSerie, ::aSer )                                                                         .and.;
+         !::lNowExist( ::oDbfDet:cSerie + Str( ::oDbfDet:nNumFac ) + ::oDbfDet:cSufFac + Str( ::oDbfDet:nNumRec ) )  .and.;
+         !::oDbfDet:lCobrado                                                                                         .and.;
+         !Empty( ::oDbfDet:dPreCob )                                                                                 .and.;
+         Empty( ::oDbfDet:nNumRem )                                                                                  .and.;
+         ::oDbfDet:dPreCob >= ::dExpedicionIni                                                                       .and.;
+         ::oDbfDet:dPreCob <= ::dExpedicionFin                                                                       .and.;
+         ::oDbfDet:dFecVto >= ::dVencimientoIni                                                                      .and.;
+         ::oDbfDet:dFecVto <= ::dVencimeintoFin                                                                      .and.;
+         ::oDbfDet:cCodCli >= ::cClienteIni                                                                          .and.;
+         ::oDbfDet:cCodCli <= ::cClienteFin                                                                          .and.;
+         ::oDbfDet:cCodPgo >= ::cFormaPagoIni                                                                        .and.;
+         ::oDbfDet:cCodPgo <= ::cFormaPagoFin                                                                        .and.;
+         ( !::lNotImportCeros .or. ::oDbfDet:nImporte > 0 )                                                          .and.;
+         ( !::lNotImportSinCuenta .or. !Empty( ::oDbfDet:cCtaCli ) )                                                 .and.;
+         ( !::lNotImportarEsperaDocumentacion .or. !::oDbfDet:lEsperaDoc )
 
-      ::oDbfDet:GoTop()
+         if ::oDbfVir:Append()
+            aEval( ::oDbfVir:aTField, {| oFld, n | ::oDbfVir:FldPut( n, ::oDbfDet:FieldGet( n ) ) } )
 
-      while !::oDbfDet:Eof()
-         
-         if ::oDbfDet:cSerie >= ::cSerieInicio .and. ::oDbfDet:cSerie <= ::cSerieFin                                    .and.;
-            ::oDbfDet:nNumFac >= ::nNumeroInicio .and. ::oDbfDet:nNumFac <= ::nNumeroFin                                .and.;
-            ::oDbfDet:cSufFac >= ::cSufijoInicio .and. ::oDbfDet:cSufFac <= ::cSufijoFin                                .and.;
-            lChkSer( ::oDbfDet:cSerie, ::aSer )                                                                         .and.;
-            !::lNowExist( ::oDbfDet:cSerie + Str( ::oDbfDet:nNumFac ) + ::oDbfDet:cSufFac + Str( ::oDbfDet:nNumRec ) )  .and.;
-            !::oDbfDet:lCobrado                                                                                         .and.;
-            !Empty( ::oDbfDet:dPreCob )                                                                                 .and.;
-            Empty( ::oDbfDet:nNumRem )                                                                                  .and.;
-            ::oDbfDet:dPreCob >= ::dExpedicionIni                                                                       .and.;
-            ::oDbfDet:dPreCob <= ::dExpedicionFin                                                                       .and.;
-            ::oDbfDet:dFecVto >= ::dVencimientoIni                                                                      .and.;
-            ::oDbfDet:dFecVto <= ::dVencimeintoFin                                                                      .and.;
-            ::oDbfDet:cCodCli >= ::cClienteIni                                                                          .and.;
-            ::oDbfDet:cCodCli <= ::cClienteFin                                                                          .and.;
-            ::oDbfDet:cCodPgo >= ::cFormaPagoIni                                                                        .and.;
-            ::oDbfDet:cCodPgo <= ::cFormaPagoFin                                                                        .and.;
-            ( !::lNotImportCeros .or. ::oDbfDet:nImporte > 0 )                                                          .and.;
-            ( !::lNotImportSinCuenta .or. !Empty( ::oDbfDet:cCtaCli ) )
-
-            if ::oDbfVir:Append()
-               aEval( ::oDbfVir:aTField, {| oFld, n | ::oDbfVir:FldPut( n, ::oDbfDet:FieldGet( n ) ) } )
-
-               if ::gotoRecibo()
-                  ::setEstadoRecibo( ::lDefCobrado, .f. )
-               end if
-
-               ::oDbfVir:Save()
+            if ::gotoRecibo()
+               ::setEstadoRecibo( ::lDefCobrado, .f. )
             end if
 
-            n++
-
+            ::oDbfVir:Save()
          end if
 
-         ::oDbfDet:Skip()
+         n++
 
-         ::oMeter:Set( ::oDbfDet:OrdKeyNo() )
+      end if
 
-      end while
+      ::oDbfDet:Skip()
 
-      ::oMeter:Set( 0 )
-      ::oMeter:Refresh()
+      ::oMeter:Set( ::oDbfDet:OrdKeyNo() )
 
-      ::oDbfVir:GoTop()
+   end while
 
-      ::oBrwDet:Refresh()
+   ::oMeter:Set( 0 )
+   ::oMeter:Refresh()
 
-   end if
+   ::oDbfVir:GoTop()
+
+   ::oBrwDet:Refresh()
 
    oDlg:Enable()
    oDlg:End()
 
-   MsgInfo( Ltrim( Trans( n, "999999999" ) ) + " recibos importados, en la cuenta " + cCodRem )
+   msgInfo( Ltrim( Trans( n, "999999999" ) ) + " recibos importados, en la cuenta " + cCodRem )
 
 RETURN ( .t. )
 
