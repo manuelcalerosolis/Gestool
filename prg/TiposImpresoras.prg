@@ -4,46 +4,19 @@
 
 //---------------------------------------------------------------------------//
 
-#define __history_shell__     'tipos_impresoras_shell'
-#define __history_browse__    'tipos_impresoras_browse'
-
-//---------------------------------------------------------------------------//
-
 CLASS TiposImpresoras FROM SQLBaseView
 
    METHOD   New()
 
-   METHOD   activateShell()
-      METHOD   buildSQLShell()
-
-   METHOD   buildSQLModel( cHistory )
-   METHOD   destroySQLModel()                         INLINE   ( if( !empty(::oModel), ::oModel:end(), ) )
+   METHOD   buildSQLShell()
   
+   METHOD   buildSQLBrowse( oGet )
+
+   METHOD   buildSQLModel()               INLINE ( TiposImpresorasModel():New() )
+
+   METHOD   getFieldFromBrowse()          INLINE ( ::oModel:getRowSet():fieldGet( "nombre" ) )
+ 
    METHOD   Dialog()
-
-   METHOD   ActivateBrowse()
-      METHOD   buildBrowse( oGet )
-      METHOD   startBrowse( oFind, oCombobox, oBrowse )
-
-   METHOD   destroy( cHistory )                       INLINE   ( ::saveHistory( cHistory ), ::destroySQLModel(), .t. )
-
-   METHOD   Append()
-   METHOD   Edit()
-   METHOD   Zoom()
-   METHOD   Delete( oBrowse )       
-
-   // Events-------------------------------------------------------------------
-
-   METHOD   clickOnHeader( oCol )
-   METHOD   changeFind( oFind, oBrowse )
-
-   METHOD   setCombo( oBrowse, oCombobox )
-   METHOD   changeCombo( oBrowse, oCombobox )                   
-
-   // Histroy------------------------------------------------------------------
-
-   METHOD   getHistory( cHistory, oBrowse )
-   METHOD   saveHistory( cHistory, oBrowse )
 
 END CLASS
 
@@ -51,40 +24,11 @@ END CLASS
 
 METHOD New()
 
-   ::keyUserMap         := "01115"
+   ::keyUserMap            := "01115"
+   
+   ::cHistoryName          := "tipos_impresoras"
 
    ::Super:New()
-
-Return ( Self )
-
-//---------------------------------------------------------------------------//
-
-METHOD ActivateShell()
-
-   if ::notUserAccess()
-      msgStop( "Acceso no permitido." )
-      Return ( Self )
-   end if 
-
-   if oWnd() != nil
-      SysRefresh(); oWnd():CloseAll(); SysRefresh()
-   end if
-
-   ::buildSQLModel( __history_shell__ )
-
-   ::buildSQLShell()
-
-Return ( Self )
-
-//---------------------------------------------------------------------------//
-
-METHOD buildSQLModel( cHistory )
-
-   ::oModel    := TiposImpresorasModel():New()
-
-   ::getHistory( cHistory )
-
-   ::oModel:buildRowSetWithRecno()
 
 Return ( Self )
 
@@ -116,52 +60,12 @@ METHOD buildSQLShell()
 
       ::oShell:setDClickData( {|| ::Edit( ::oShell:getBrowse() ) } )
 
-      DEFINE BTNSHELL RESOURCE "BUS" OF ::oShell ;
-         NOBORDER ;
-         ACTION   ( ::oShell:SearchSetFocus() ) ;
-         TOOLTIP  "(B)uscar" ;
-         HOTKEY   "B"
+      ::AutoButtons()
 
-      ::oShell:AddSeaBar()
+   ACTIVATE WINDOW ::oShell
 
-      DEFINE BTNSHELL RESOURCE "NEW" OF ::oShell ;
-         NOBORDER ;
-         ACTION   ( ::Append( ::oShell:getBrowse() ) );
-         TOOLTIP  "(A)ñadir";
-         BEGIN GROUP;
-         HOTKEY   "A";
-         LEVEL    ACC_APPD
-
-      DEFINE BTNSHELL RESOURCE "EDIT" OF ::oShell ;
-         NOBORDER ;
-         ACTION   ( ::Edit( ::oShell:getBrowse() ) );
-         TOOLTIP  "(M)odificar";
-         HOTKEY   "M" ;
-         LEVEL    ACC_EDIT
-
-      DEFINE BTNSHELL RESOURCE "ZOOM" OF ::oShell ;
-         NOBORDER ;
-         ACTION   ( ::Zoom( ::oShell:getBrowse() ) );
-         TOOLTIP  "(Z)oom";
-         MRU ;
-         HOTKEY   "Z";
-         LEVEL    ACC_ZOOM
-
-      DEFINE BTNSHELL RESOURCE "DEL" OF ::oShell ;
-         NOBORDER ;
-         ACTION   ( ::Delete( ::oShell:getBrowse() ) );
-         TOOLTIP  "(E)liminar";
-         MRU ;
-         HOTKEY   "E";
-         LEVEL    ACC_DELE
-
-      DEFINE BTNSHELL RESOURCE "END" GROUP OF ::oShell ;
-         NOBORDER ;
-         ACTION   ( ::oShell:end() ) ;
-         TOOLTIP  "(S)alir" ;
-         HOTKEY   "S"
-
-   ACTIVATE WINDOW ::oShell VALID ( ::destroy( __history_shell__ ) )
+   ::oShell:bValid   := {|| ::saveHistory( ::getHistoryNameShell() , ::oShell:getBrowse() ), .t. }
+   ::oShell:bEnd     := {|| ::destroySQLModel() }
 
    ::oShell:setComboBoxChange( {|| ::changeCombo( ::oShell:getBrowse(), ::oShell:getCombobox() ) } )
 
@@ -170,98 +74,6 @@ METHOD buildSQLShell()
    enableAcceso()
 
 Return ( Self )
-
-//----------------------------------------------------------------------------//
-
-METHOD Append( oBrowse )
-
-   local nRecno   
-
-   if ::notUserAppend()
-      msgStop( "Acceso no permitido." )
-      Return ( Self )
-   end if 
-
-   ::setAppendMode()
-
-   nRecno         := ::oModel:getRowSetRecno()
-
-   ::oModel:loadBlankBuffer()
-
-   if ::Dialog()
-      ::oModel:insertBuffer()
-   else 
-      ::oModel:setRowSetRecno( nRecno ) 
-   end if
-
-   if !empty( oBrowse )
-      oBrowse:refreshCurrent()
-      oBrowse:setFocus()
-   end if 
-
-Return ( Self )
-
-//----------------------------------------------------------------------------//
-/*
-Monta el dialogo para añadir, editar,... registros
-*/
-
-METHOD Edit( oBrowse )
-
-   local nRecno   
-
-   if ::notUserEdit()
-      msgStop( "Acceso no permitido." )
-      Return ( Self )
-   end if 
-
-   ::setEditMode()
-
-   nRecno         := ::oModel:getRowSetRecno()
-
-   ::oModel:loadCurrentBuffer()
-
-   if ::Dialog()
-      
-      ::oModel:updateCurrentBuffer()
-      ::oModel:setRowSetRecno( nRecno )
-
-      if !empty( oBrowse )
-         oBrowse:refreshCurrent()
-         oBrowse:setFocus()
-      end if 
-
-   end if 
-
-RETURN NIL
-
-//----------------------------------------------------------------------------//
-
-METHOD Zoom( oBrowse )
-
-   ::setZoomMode()
-
-   ::oModel:loadCurrentBuffer()
-
-   ::Dialog()
-
-   if !empty( oBrowse )
-      oBrowse:setFocus()
-   end if 
-
-RETURN NIL
-
-//----------------------------------------------------------------------------//
-
-METHOD Delete( oBrowse )
-
-   ::oModel:deleteSelection()
-
-   if !empty( oBrowse )
-      oBrowse:refreshCurrent()
-   end if 
-
-RETURN NIL
 
 //----------------------------------------------------------------------------//
 
@@ -299,122 +111,9 @@ METHOD Dialog( lZoom )
 
 RETURN ( oDlg:nResult == IDOK )
 
-//----------------------------------------------------------------------------//
-
-METHOD getHistory( cHistory )
-
-   local hFetch            := HistoricosUsuariosModel():getHistory( cHistory )
-
-   if empty( hFetch )
-      Return ( Self )
-   end if
-
-   if hhaskey( hFetch, "cColumnOrder" )
-      ::oModel:setColumnOrder( hFetch[ "cColumnOrder" ] )
-   end if 
-
-   if hhaskey( hFetch, "cOrientation" )
-      ::oModel:setOrientation( hFetch[ "cOrientation" ] )
-   end if 
-
-   if hhaskey( hFetch, "nIdForRecno" ) 
-      ::oModel:setIdForRecno( hFetch[ "nIdForRecno" ] )
-   end if
-
-   if hhaskey( hFetch, "cBrowseState" )
-      ::setBrowseState( hFetch[ "cBrowseState" ] )
-   endif
-   
-Return ( self )
-
-//----------------------------------------------------------------------------//
-
-METHOD saveHistory( cHistory, oBrowse )
-
-   local cBrowseState
-
-   msgalert( "saveHistory")
-
-   if !empty( oBrowse ) 
-      cBrowseState      := quoted( oBrowse:saveState() )
-
-      msgalert( cBrowseState) 
-
-   end if
-
-   HistoricosUsuariosModel():saveHistory( cHistory, cBrowseState, ::oModel:cColumnOrder, ::oModel:cOrientation, ::oModel:getKeyFieldOfRecno() ) 
-
-Return ( .t. )
-
-//----------------------------------------------------------------------------//
-
-METHOD clickOnHeader( oColumn, oBrowse, oCombobox )
-
-   oBrowse:selectColumnOrder( oColumn )
-
-   if !empty( oCombobox )
-      oCombobox:set( oColumn:cHeader )
-   end if 
-
-   ::oModel:setIdForRecno( ::oModel:getKeyFieldOfRecno() )
-
-   ::oModel:setColumnOrder( oColumn:cSortOrder )
-
-   ::oModel:setOrientation( oColumn:cOrder )
-
-   ::oModel:buildRowSetWithRecno()
-
-   oBrowse:refreshCurrent()
-
-Return ( self )
-
-//----------------------------------------------------------------------------//
-
-METHOD changeCombo( oBrowse, oCombobox )
-
-   local oColumn  := oBrowse:getColumnHeader( oCombobox:VarGet() )
-
-   if !empty( oColumn )
-      ::clickOnHeader( oColumn, oBrowse )
-   end if
-
-RETURN ( Self )
-
 //---------------------------------------------------------------------------//
 
-METHOD SetCombo( oBrowse, oCombobox )
-
-   local oColumn 
-
-   oColumn  := oBrowse:getColumnOrder( ::oModel:cColumnOrder )
-
-   if !empty( oColumn )
-      ::clickOnHeader( oColumn, oBrowse, oCombobox )
-   end if
-
-RETURN ( Self )
-
-//---------------------------------------------------------------------------//
-
-METHOD ActivateBrowse( oGet )
-
-   ::oModel    := TiposImpresorasModel():New()
-
-   ::getHistory( __history_browse__ )
-
-   ::oModel:buildRowSetWithRecno()
-
-   if ::buildBrowse() .and. !empty( oGet )
-      oGet:cText( ::oModel:getRowSet():fieldGet( "nombre" ) )
-   end if
-
-   ::destroySQLModel()
-
-RETURN ( Self )
-
-//---------------------------------------------------------------------------//
-
-METHOD buildBrowse()
+METHOD buildSQLBrowse()
 
    local oDlg
    local oBrowse
@@ -500,62 +199,6 @@ METHOD buildBrowse()
 
       oDlg:bStart    := {|| ::startBrowse( oFind, oCombobox, oBrowse ) }
 
-   oDlg:Activate( , , , .t., {|| ::saveHistory( __history_browse__, oBrowse ) } )
+   oDlg:Activate( , , , .t., {|| ::saveHistory( ::getHistoryNameBrowse(), oBrowse ) } )
 
 RETURN ( oDlg:nResult == IDOK )
-
-//---------------------------------------------------------------------------//
-
-METHOD startBrowse( oFind, oCombobox, oBrowse )
-
-   local oColumn
-
-   oCombobox:SetItems( oBrowse:getColumnHeaders() )
-
-   if !empty( ::getBrowseState() )
-      oBrowse:restoreState( ::getBrowseState() )
-   end if 
-
-   oColumn     := oBrowse:getColumnOrder( ::oModel:cColumnOrder )
-   if empty( oColumn )
-      Return ( Self )
-   end if 
-   
-   oCombobox:set( oColumn:cHeader )
-
-   oBrowse:selectColumnOrder( oColumn, ::oModel:cOrientation )
-
-Return ( Self )
-
-//---------------------------------------------------------------------------//
-
-METHOD changeFind( oFind, oBrowse )
-
-   local lFind
-   local xValueToSearch
-
-   // Estudiamos la cadena de busqueda-------------------------------------------
-
-   xValueToSearch    := oFind:oGet:Buffer()
-   xValueToSearch    := alltrim( upper( cvaltochar( xValueToSearch ) ) )
-   xValueToSearch    := strtran( xValueToSearch, chr( 8 ), "" )
-
-   // Guradamos valores iniciales-------------------------------------------------
-
-   lFind             := ::oModel:find( xValueToSearch )
-
-   // color para el get informar al cliente de busqueda erronea----------------
-
-   if lFind .or. empty( xValueToSearch ) 
-      oFind:SetColor( Rgb( 0, 0, 0 ), Rgb( 255, 255, 255 ) )
-   else
-      oFind:SetColor( Rgb( 255, 255, 255 ), Rgb( 255, 102, 102 ) )
-   end if
-
-   oBrowse:refreshCurrent()
-
-Return ( lFind )
-
-//--------------------------------------------------------------------------//
-
-

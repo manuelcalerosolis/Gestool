@@ -281,7 +281,7 @@ Return ( .t. )
 
 Function Test()
 
-   TiposImpresoras():New():activateBrowse()
+   TiposImpresoras():New():activateShell()
 
 Return ( nil )
 
