@@ -53,7 +53,9 @@ METHOD arrayTiposImpresoras()
    local aResult                 := {}
    local arrayTiposImpresoras    := ::selectFetchArray( "SELECT nombre FROM " + ::cTableName ) 
 
-   aeval( arrayTiposImpresoras, {|a| aadd( aResult, a[ 1 ] ) } )
+   if !empty( arrayTiposImpresoras )
+      aeval( arrayTiposImpresoras, {|a| aadd( aResult, a[ 1 ] ) } )
+   end if 
 
 Return ( aResult )
 
