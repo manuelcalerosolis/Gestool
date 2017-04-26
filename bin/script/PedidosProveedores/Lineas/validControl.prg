@@ -8,9 +8,9 @@ Function validControl( oSender, aGet, nView, nMode, aTmpPed )
    local nCajasArticulos
    local nKilosArticulos
 
-   if ( nMode != APPD_MODE .and. nMode != DUPL_MODE )
+   /*if ( nMode != APPD_MODE .and. nMode != DUPL_MODE )
       return .t.
-   end if 
+   end if */
 
    if aTmpPed[ ( D():PedidosProveedores( nView ) )->( fieldpos( "cSerPed" ) ) ] != "A"
       return .t.
