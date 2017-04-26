@@ -281,7 +281,11 @@ Return ( .t. )
 
 Function Test()
 
+<<<<<<< HEAD
    TiposImpresoras():New():activateBrowse()
+=======
+   // TiposImpresorasModel():makeImportDbfSQL()
+>>>>>>> 41f2b38d091320e097f25bc2424c9a26d25f8568
 
 Return ( nil )
 

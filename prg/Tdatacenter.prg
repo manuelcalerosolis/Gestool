@@ -236,6 +236,8 @@ CLASS TDataCenter
 
    	METHOD oCliBnc()
 
+   METHOD ConvertToSQLite()
+
 END CLASS
 
 //---------------------------------------------------------------------------//
@@ -845,6 +847,10 @@ METHOD StartAdministratorTask()
    if !empty( ::oMtrDiccionario )
 	   ::oMtrDiccionario:SetTotal( 5 )
 	end if 
+
+   // Conversion de tablas a SQLite-------------------------------------------
+
+   ::ConvertToSQLite()
    
    // Recorremos el array de las empresas par actualizarlas--------------------
 
@@ -1788,6 +1794,7 @@ METHOD BuildData()
    oDataTable:bCreateIndex := {| cPath | rxCajPorta( cPath ) }
    ::AddDataTable( oDataTable )
 
+/*
    oDataTable              := TDataTable():New( "TipImp", cPathDatos() )
    oDataTable:cDataFile    := cPatDat( .t. ) + "TipImp.Dbf"
    oDataTable:cIndexFile   := cPatDat( .t. ) + "TipImp.Cdx"
@@ -1795,6 +1802,7 @@ METHOD BuildData()
    oDataTable:bCreateFile  := {| cPath | mkTipImp( cPath ) }
    oDataTable:bCreateIndex := {| cPath | rxTipImp( cPath ) }
    ::AddDataTable( oDataTable )
+*/
 
    oDataTable              := TDataTable():New( "Agenda", cPathDatos() )
    oDataTable:cDataFile    := cPatDat( .t. ) + "Agenda.Dbf"
@@ -4815,6 +4823,13 @@ METHOD selectSATFromArticulo( cCodigoArticulo )
 RETURN ( ::ExecuteSqlStatement( cStm, "SatCliArticulos" ) )
 
 //---------------------------------------------------------------------------//
+
+METHOD ConvertToSQLite()
+
+   TiposImpresorasModel():makeImportDbfSQL()
+
+RETURN ( Self )
+
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
