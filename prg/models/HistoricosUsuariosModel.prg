@@ -30,7 +30,7 @@ METHOD New()
 
    ::Super:New()
 
-Return ( Self )
+RETURN ( Self )
 
 //---------------------------------------------------------------------------//
 
@@ -65,29 +65,36 @@ Return ( nil )
 
 METHOD saveHistory( cTable, cBrowseState, cColumnOrder, cOrientation, nIdForRecno )
 
-  local cInternalSelect :=  "( SELECT id FROM " + ::cTableName                + ;
-                              " WHERE cTableName = " + quoted( cTable )       + ;
-                                 " AND "                                      + ;
-                                 " usuario_id = " + quoted( oUser():cCodigo() )
+   local cUpdateHistory 
+   local cInternalSelect
 
-  local cUpdateHistory := "REPLACE INTO " + ::cTableName                      + ;
-                            " (           id, "                               + ;
-                                          "usuario_id, "                      + ;
-                                          "cTableName, "                      + ;
-                                          "cBrowseState, "                    + ;
-                                          "cColumnOrder, "                    + ;
-                                          "cOrientation, "                    + ;
-                                          "nIdForRecno ) "                    + ;
-                            " VALUES (" + cInternalSelect +  " ), "           + ;
-                                          quoted( oUser():cCodigo() ) + ", "  + ;
-                                          quoted( cTable ) + ","              + ;
-                                          cBrowseState + ", "                 + ;
-                                          quoted( cColumnOrder ) + ", "       + ;
-                                          quoted ( cOrientation ) + ", "      + ;
-                                          alltrim( str( nIdForRecno ) ) + ")"
+   if empty( nIdForRecno )
+      RETURN ( Self )
+   end if 
+
+   cInternalSelect   := "( SELECT id FROM " + ::cTableName                 + ;
+                           " WHERE cTableName = " + quoted( cTable )       + ;
+                           " AND "                                         + ;
+                           " usuario_id = " + quoted( oUser():cCodigo() )
+
+   cUpdateHistory    := "REPLACE INTO " + ::cTableName                     + ;
+                        "  (  id, "                                        + ;
+                              "usuario_id, "                               + ;
+                              "cTableName, "                               + ;
+                              "cBrowseState, "                             + ;
+                              "cColumnOrder, "                             + ;
+                              "cOrientation, "                             + ;
+                              "nIdForRecno ) "                             + ;
+                        "  VALUES (" + cInternalSelect +  " ), "           + ;
+                              quoted( oUser():cCodigo() ) + ", "           + ;
+                              quoted( cTable ) + ","                       + ;
+                              cBrowseState + ", "                          + ;
+                              quoted( cColumnOrder ) + ", "                + ;
+                              quoted ( cOrientation ) + ", "               + ;
+                              alltrim( cvaltostr( nIdForRecno ) )          + ")"
 
   getSQLDatabase():Query( cUpdateHistory )
 
-Return ( Self )
+RETURN ( Self )
 
 //---------------------------------------------------------------------------//

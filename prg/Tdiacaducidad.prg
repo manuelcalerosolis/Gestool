@@ -244,7 +244,6 @@ METHOD lGenerate() CLASS TDiaCaducidad
    ::AddAlbaranesproveedor()
    ::AddFacturasproveedor()
    ::AddAlbaranesClientes()
-   ::AddFacturasClientes()
    ::AddTicketsClientes()
    ::AddFacturasRectificativas()
 
