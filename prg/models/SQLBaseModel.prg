@@ -15,17 +15,17 @@ CLASS SQLBaseModel
 
    DATA     aDbfFields
 
-   DATA     cColumnOrder
-   DATA     cOrientation
-   DATA     nIdForRecno
+   DATA     cColumnOrder         INIT "id"
+   DATA     cOrientation         INIT "A"
+   DATA     nIdForRecno          INIT 1
 
    DATA	   cSQLInsert     
    DATA     cSQLSelect      
    
-   DATA     cColumnKey
+   DATA     cColumnKey           INIT "id"
 
   	DATA	   hBuffer   
-   DATA     cFind
+   DATA     cFind                INIT ""
 
    METHOD   New()
    METHOD   End()
@@ -71,6 +71,9 @@ CLASS SQLBaseModel
    METHOD   deleteSelection()                      INLINE   ( getSQLDatabase():Query( ::getdeleteSentence() ), ::buildRowSet() )
 
    METHOD   selectFetchArray( cSentence )
+
+   METHOD   getDbfTableName()                      INLINE   ( ::cDbfTableName + ".dbf" )
+   METHOD   getOldTableName()                      INLINE   ( ::cDbfTableName + ".old" )
 
 END CLASS
 
@@ -126,32 +129,39 @@ METHOD getImportSentence( cPath )
 
    default cPath     := cPatDat()
 
-   dbUseArea( .t., cLocalDriver(), cPath + "\" + ::cDbfTableName + ".dbf", cCheckArea( "dbf", @dbf ), .f. )
+   dbUseArea( .t., cLocalDriver(), cPath + "\" + ::getDbfTableName(), cCheckArea( "dbf", @dbf ), .f. )
    if ( dbf )->( neterr() )
       Return ( cInsert )
    end if 
+
 
    cInsert              := "INSERT INTO " + ::cTableName + " ( "
    hEval( ::hColumns, {| k | if ( k != ::cColumnKey, cInsert += k + ", ", ) } )
    cInsert           := ChgAtEnd( cInsert, ' ) VALUES ', 2 )
 
+
    ( dbf )->( dbgotop() )
    while ( dbf )->( !eof() )
 
       cValues           += "( "
+
       hEval( ::hColumns, {| k, hash | if ( k != ::cColumnKey,;
                                              cValues += convertToSql( ( dbf )->( fieldget( fieldpos( hget( hash, "dbfField" ) ) ) ) ) + ", " , )  } )
-      // aeval( ::aDbfFields, {|cField| cValues += convertToSql( ( dbf )->( fieldget( fieldpos( cField ) ) ) ) + ", " } )
+      
       cValues           := chgAtEnd( cValues, ' ), ', 2 )
 
       ( dbf )->( dbskip() )
    end while
 
+   ( dbf )->( dbclosearea() )
+
+   if empty( cValues )
+      Return ( nil )
+   end if 
+
    cValues              := chgAtEnd( cValues, '', 2 )
 
    cInsert              += cValues
-
-   ( dbf )->( dbclosearea() )
 
 Return ( cInsert )
 
@@ -163,24 +173,27 @@ METHOD makeImportDbfSQL( cPath )
 
    default cPath     := cPatDat()
 
-   if !( file( cPath + "\" + ::cDbfTableName + ".dbf" ) )
-      msgStop( "El fichero " + cPath + "\" + ::cDbfTableName + ".dbf" + " no se ha localizado", "Atención" )  
+   if ( file( cPath + "\" + ::getOldTableName() ) )
+      Return ( self )
+   end if 
+
+   if !( file( cPath + "\" + ::getDbfTableName() ) )
+      msgStop( "El fichero " + cPath + "\" + ::getDbfTableName() + " no se ha localizado", "Atención" )  
       Return ( self )
    end if 
 
    cImportSentence   := ::getImportSentence( cPath )
-   if empty( cImportSentence )
-      Return ( self )
+   if !empty( cImportSentence )
+
+      getSQLDatabase():Exec( ::getSQLDropTable() )
+
+      getSQLDatabase():Exec( ::getSQLCreateTable() )
+
+      getSQLDatabase():Exec( cImportSentence )
+      
    end if 
 
-   getSQLDatabase():Exec( ::getSQLDropTable() )
-
-   getSQLDatabase():Exec( ::getSQLCreateTable() )
-
-   getSQLDatabase():Exec( cImportSentence )
-
-   frename( cPath + "\" + ::cDbfTableName + ".dbf", cPath + "\" + "old-" + ::cDbfTableName + ".dbf" )
-
+   frename( cPath + "\" + ::getDbfTableName(), cPath + "\" + ::getOldTableName() )
 Return ( self )
 
 //---------------------------------------------------------------------------//

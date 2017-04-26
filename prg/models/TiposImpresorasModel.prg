@@ -6,6 +6,19 @@
 
 CLASS TiposImpresorasModel FROM SQLBaseModel
 
+   DATA cTableName               INIT "tipos_impresoras"
+
+   DATA cDbfTableName            INIT "TipImp"
+
+   DATA aDbfFields               INIT {  "cTipImp" }
+
+   DATA hColumns                 INIT {  "id"     =>  {  "create"    => "INTEGER PRIMARY KEY AUTOINCREMENT",;
+                                                         "text"      => "Identificador" ,;
+                                                         "dbfField"  => "" },;
+                                          "nombre" => {  "create"    => "VARCHAR( 50 ) NOT NULL",;
+                                                         "text"      => "Nombre de impresora",;
+                                                         "dbfField"  => "cTipImp" } }
+
    METHOD   New()
 
    METHOD   arrayTiposImpresoras()

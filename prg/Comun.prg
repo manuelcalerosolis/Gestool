@@ -281,7 +281,7 @@ Return ( .t. )
 
 Function Test()
 
-   TiposImpresoras():New():activateShell()
+   // TiposImpresorasModel():makeImportDbfSQL()
 
 Return ( nil )
 

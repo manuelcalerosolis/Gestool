@@ -64,6 +64,12 @@ function Main( paramsMain, paramsSecond, paramsThird )
 
    appLoadAds()
 
+   // Conexión con SQLite------------------------------------------------------
+
+   if ( getSQLDatabase():Connect() )
+      getSQLDatabase():checkModelsExistence()
+   end if 
+
    // Motor de bases de datos--------------------------------------------------
 
    if ( "ADMINISTRADOR" $ appParamsMain() )
@@ -87,12 +93,6 @@ function Main( paramsMain, paramsSecond, paramsThird )
    end if
 
    TDataCenter():BuildData()
-
-   // Conexión con SQLite------------------------------------------------------
-
-   if ( getSQLDatabase():Connect() )
-      getSQLDatabase():checkModelsExistence()
-   end if 
 
    // Icono--------------------------------------------------------------------
 
