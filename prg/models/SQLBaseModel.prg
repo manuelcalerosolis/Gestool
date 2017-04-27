@@ -373,20 +373,6 @@ Return ( .t. )
 
 //---------------------------------------------------------------------------//
 
-Function convertToSql( value )
-
-   if hb_isnumeric( value )
-      Return ( alltrim(str( value ) ) )
-   end if
-
-   if hb_ischar( value )
-      Return ( quoted( alltrim( value ) ) )
-   end if
-
-Return ( value )
-       
-//---------------------------------------------------------------------------//
-
 METHOD selectFetchArray( cSentence )
 
    local oStmt
