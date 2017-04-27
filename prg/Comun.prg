@@ -261,13 +261,13 @@ Function lStartCheck()
 
    oMsgText( 'Abriendo panel de navegación' )
 
-   if !empty( oWnd() ) .and. !( os_iswtsclient() )
+   // if !empty( oWnd() ) .and. !( os_iswtsclient() )
       // openWebBrowser()
-   end if
+   // end if
 
    // Test---------------------------------------------------------------------
 
-   Test()
+   // Test()
 
    // Texto limpio y a trabajar------------------------------------------------
 
@@ -281,8 +281,11 @@ Return ( .t. )
 
 Function Test()
 
+<<<<<<< HEAD
    TiposNotas():New():activateShell()
 
+=======
+>>>>>>> origin/master
 Return ( nil )
 
 //---------------------------------------------------------------------------//

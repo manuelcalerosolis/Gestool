@@ -1373,6 +1373,28 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, cCodPrv, cCodArt, nMode )
          end with
 
          with object ( oBrwLin:AddCol() )
+            :cHeader          := "Bultos"
+            :bEditValue       := {|| ( dbfTmpLin )->nBultos }
+            :cEditPicture     := MasUnd()
+            :nWidth           := 60
+            :nDataStrAlign    := 1
+            :nHeadStrAlign    := 1
+            :lHide            := .t.
+            :nFooterType      := AGGR_SUM
+         end with
+
+         with object ( oBrwLin:AddCol() )
+            :cHeader          := cNombreCajas()
+            :bEditValue       := {|| ( dbfTmpLin )->nCanPed }
+            :cEditPicture     := MasUnd()
+            :nWidth           := 60
+            :nDataStrAlign    := 1
+            :nHeadStrAlign    := 1
+            :lHide            := .t.
+            :nFooterType      := AGGR_SUM
+         end with
+
+         with object ( oBrwLin:AddCol() )
             :cHeader          := cNombreUnidades()
             :cSortOrder       := "nUniCaja"
             :bEditValue       := {|| ( dbfTmpLin )->nUniCaja }
@@ -3621,8 +3643,6 @@ STATIC FUNCTION SaveDeta( aTmp, aGet, oBrwPrp, oFld, oDlg, oBrw, nMode, oTotal, 
       Return nil
    end if
 
-   runScript( "PedidosProveedores\Lineas\beforeSaveLine.prg", aTmp, aGet, nView, nMode, aTmpPed )
-
    /*
    Escribir en fichero definitivo----------------------------------------------
    */
@@ -3696,6 +3716,8 @@ STATIC FUNCTION SaveDeta( aTmp, aGet, oBrwPrp, oFld, oDlg, oBrw, nMode, oTotal, 
       oDlg:end( IDOK )
 
    end if
+
+   runScript( "PedidosProveedores\Lineas\afterSaveLine.prg", nView, nMode, aTmpPed, dbfTmpLin )
 
    if nMode == APPD_MODE
       D():CamposExtraLine( nView ):SaveTemporalAppend( ( dbfTmpLin )->( OrdKeyNo() ) )
@@ -4542,7 +4564,7 @@ STATIC FUNCTION EndTrans( aGet, aTmp, oBrw, nMode, oDlg )
          dbPass( dbfTmpLin, D():PedidosProveedoresLineas( nView ), .t., cSerie, nPedido, cSufijo )
       end if
 
-      D():CamposExtraLine( nView ):saveExtraField( ( dbfTmpLin )->cSerPed + Str( ( dbfTmpLin )->nNumPed ) + ( dbfTmpLin )->cSufPed + Str( ( dbfTmpLin )->nNumLin ), ( dbfTmpLin )->( ordkeyno() ) )
+      D():CamposExtraLine( nView ):saveExtraField( cSerie + Str( nPedido ) + cSufijo + Str( ( dbfTmpLin )->nNumLin ), ( dbfTmpLin )->( ordkeyno() ) )
 
       ( dbfTmpLin )->( dbSkip() )
 

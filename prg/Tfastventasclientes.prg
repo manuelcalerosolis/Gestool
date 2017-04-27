@@ -1468,8 +1468,6 @@ METHOD AddFacturaCliente( cCodigoCliente ) CLASS TFastVentasClientes
             ::oDbf:Cancel()
          end if
 
-         //::addFacturasClientes()
-
          ::loadValuesExtraFields()
 
          ( D():FacturasClientes( ::nView ) )->( dbskip() )
@@ -1931,8 +1929,6 @@ METHOD insertFacturaCliente()
                else
                   ::oDbf:Cancel()
                end if
-
-               //::addFacturasClientes()
 
             end if
 
