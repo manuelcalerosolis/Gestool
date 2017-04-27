@@ -399,6 +399,7 @@ MsError.prg 														\
 TipoImpresora.prg       										\
 SQLBaseView.prg 													\
 TiposImpresoras.prg       										\
+TiposNotas.prg       										\
 PageIni.prg             										\
 TpvTactil.prg           										\
 TpvUtilidadesMesa.prg 											\
@@ -490,6 +491,7 @@ RecibosClientesModel.prg 										\
 TicketsClientesModel.prg 										\
 PedidosProveedoresModel.prg									\
 TiposImpresorasModel.prg 										\
+TiposNotasModel.prg 										\
 ArticulosModel.prg                                    \
 HistoricosUsuariosModel.prg                                    \
 
@@ -879,6 +881,7 @@ MsError.obj 													\
 TipoImpresora.obj       									\
 SQLBaseView.obj 												\
 TiposImpresoras.obj       									\
+TiposNotas.obj       									\
 PageIni.obj             									\
 TpvTactil.obj           									\
 TpvUtilidadesMesa.obj 										\
@@ -971,7 +974,7 @@ FacturasClientesModel.obj 										\
 TicketsClientesModel.obj 										\
 RecibosClientesModel.obj 										\
 PedidosProveedoresModel.obj 									\
-TiposImpresorasModel.obj 										\
+TiposNotasModel.obj 										\
 ArticulosModel.obj                                    \
 HistoricosUsuariosModel.obj                                    \
 
@@ -1348,6 +1351,7 @@ $(OBJ)\MsError.obj   								+
 $(OBJ)\TipoImpresora.obj        					+
 $(OBJ)\SQLBaseView.obj 								+
 $(OBJ)\TiposImpresoras.obj      					+
+$(OBJ)\TiposNotas.obj      							+
 $(OBJ)\PageIni.obj              					+
 $(OBJ)\TpvTactil.obj            					+
 $(OBJ)\TpvUtilidadesMesa.obj 						+
@@ -1442,6 +1446,7 @@ $(OBJ)\RecibosClientesModel.obj					+
 $(OBJ)\TicketsClientesModel.obj 	 				+							
 $(OBJ)\PedidosProveedoresModel.obj 				+
 $(OBJ)\TiposImpresorasModel.obj                 +
+$(OBJ)\TiposNotasModel.obj                 +
 $(OBJ)\HistoricosUsuariosModel.obj
 $<,$*
 $(FWLIB)\FiveH.lib               				+

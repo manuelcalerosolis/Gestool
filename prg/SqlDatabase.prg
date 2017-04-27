@@ -38,8 +38,9 @@ ENDCLASS
 
 METHOD New() 
 
-   ::aModels                  := { TiposImpresorasModel():New():getSQLCreateTable(),  ;
-                                   HistoricosUsuariosModel():New():getSQLCreateTable() }
+   ::aModels                  := {  TiposImpresorasModel():New():getSQLCreateTable(),     ;
+                                    TiposNotasModel():New():getSQLCreateTable(),          ;
+                                    HistoricosUsuariosModel():New():getSQLCreateTable()   }
 
    ::cPathDatabaseSQLite      := fullCurDir() + "Database\" 
 

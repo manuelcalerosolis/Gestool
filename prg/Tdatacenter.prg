@@ -270,7 +270,7 @@ METHOD oFacCliP() CLASS TDataCenter
 
       DATABASE NEW oFacCliP PATH ( cPatEmp() ) FILE "FacCliP.Dbf" VIA ( cDriver() ) SHARED INDEX "FacCliP.Cdx"
 
-         if lAIS() .and. !oUser():lAdministrador()
+         /*if lAIS() .and. !oUser():lAdministrador()
       
             cFilter     := "Field->cSufFac == '" + oUser():cDelegacion() + "' .and. Field->cCodCaj == '" + oUser():cCaja() + "'"
             if oUser():lFiltroVentas()         
@@ -279,7 +279,7 @@ METHOD oFacCliP() CLASS TDataCenter
 
             ( oFacCliP:cAlias )->( AdsSetAOF( cFilter ) )
 
-         end if
+         end if*/
 
       Return ( oFacCliP )   
 
@@ -300,7 +300,7 @@ METHOD OpenFacCliP( dbf ) CLASS TDataCenter
       Limitaciones de cajero y cajas----------------------------------------
       */
 
-      if lAIS() .and. !oUser():lAdministrador()
+      /*if lAIS() .and. !oUser():lAdministrador()
    
          cFilter     := "Field->cSufFac == '" + oUser():cDelegacion() + "' .and. Field->cCodCaj == '" + oUser():cCaja() + "'"
          if oUser():lFiltroVentas()         
@@ -309,7 +309,7 @@ METHOD OpenFacCliP( dbf ) CLASS TDataCenter
 
          ( dbf )->( AdsSetAOF( cFilter ) )
 
-      end if
+      end if*/
 
    end if 
 
@@ -324,7 +324,7 @@ METHOD oAlbCliT() CLASS TDataCenter
 
    DATABASE NEW oAlbCliT PATH ( cPatEmp() ) FILE "AlbCliT.Dbf" VIA ( cDriver() ) SHARED INDEX "AlbCliT.Cdx"
 
-      if lAIS() .and. !oUser():lAdministrador()
+      /*if lAIS() .and. !oUser():lAdministrador()
    
          cFilter     := "Field->cSufAlb == '" + oUser():cDelegacion() + "' .and. Field->cCodCaj == '" + oUser():cCaja() + "'"
          if oUser():lFiltroVentas()         
@@ -333,7 +333,7 @@ METHOD oAlbCliT() CLASS TDataCenter
 
          ( oAlbCliT:cAlias )->( AdsSetAOF( cFilter ) )
 
-      end if
+      end if*/
 
 Return ( oAlbCliT )   
 
@@ -354,7 +354,7 @@ METHOD OpenAlbCliT( dbf ) CLASS TDataCenter
          Limitaciones de cajero y cajas----------------------------------------
          */
 
-         if lAIS() .and. !oUser():lAdministrador()
+         /*if lAIS() .and. !oUser():lAdministrador()
       
             cFilter     := "Field->cSufAlb == '" + oUser():cDelegacion() + "' .and. Field->cCodCaj == '" + oUser():cCaja() + "'"
             if oUser():lFiltroVentas()         
@@ -363,7 +363,7 @@ METHOD OpenAlbCliT( dbf ) CLASS TDataCenter
 
             ( dbf )->( AdsSetAOF( cFilter ) )
 
-         end if
+         end if*/
 
       end if 
 
@@ -378,7 +378,7 @@ METHOD oPedCliT() CLASS TDataCenter
 
    DATABASE NEW oPedCliT PATH ( cPatEmp() ) FILE "PedCliT.Dbf" VIA ( cDriver() ) SHARED INDEX "PedCliT.Cdx"
 
-   if lAIS() .and. !oUser():lAdministrador()
+   /*if lAIS() .and. !oUser():lAdministrador()
 
       cFilter     := "Field->cSufPed == '" + oUser():cDelegacion() + "' .and. Field->cCodCaj == '" + oUser():cCaja() + "'"
       if oUser():lFiltroVentas()         
@@ -387,7 +387,7 @@ METHOD oPedCliT() CLASS TDataCenter
 
       ( oPedCliT:cAlias )->( AdsSetAOF( cFilter ) )
 
-   end if
+   end if*/
 
 Return ( oPedCliT )   
 
@@ -408,7 +408,7 @@ METHOD OpenPedCliT( dbf ) CLASS TDataCenter
 		Limitaciones de cajero y cajas----------------------------------------
 		*/
 
-		if lAIS() .and. !oUser():lAdministrador()
+		/*if lAIS() .and. !oUser():lAdministrador()
 
 			cFilter   	:= "Field->cSufPed == '" + oUser():cDelegacion() + "' .and. Field->cCodCaj == '" + oUser():cCaja() + "'"
 			if oUser():lFiltroVentas()         
@@ -417,7 +417,7 @@ METHOD OpenPedCliT( dbf ) CLASS TDataCenter
 
 			( dbf )->( AdsSetAOF( cFilter ) )
 
-		end if
+		end if*/
 
 	end if 
 
@@ -432,7 +432,7 @@ METHOD oSatCliT() CLASS TDataCenter
 
 	DATABASE NEW oSatCliT PATH ( cPatEmp() ) FILE "SatCliT.Dbf" VIA ( cDriver() ) SHARED INDEX "SatCliT.Cdx"
 
-	if lAIS() .and. !oUser():lAdministrador()
+	/*if lAIS() .and. !oUser():lAdministrador()
 
 		cFilter     := "Field->cSufSat == '" + oUser():cDelegacion() + "' .and. Field->cCodCaj == '" + oUser():cCaja() + "'"
 		if oUser():lFiltroVentas()         
@@ -441,7 +441,7 @@ METHOD oSatCliT() CLASS TDataCenter
 
 		( oSatCliT:cAlias )->( AdsSetAOF( cFilter ) )
 
-	end if
+	end if*/
 
 Return ( oSatCliT )   
 
@@ -462,7 +462,7 @@ METHOD OpenSatCliT( dbf ) CLASS TDataCenter
          Limitaciones de cajero y cajas----------------------------------------
          */
 
-         if lAIS() .and. !oUser():lAdministrador()
+         /*if lAIS() .and. !oUser():lAdministrador()
       
             cFilter     := "Field->cSufSat == '" + oUser():cDelegacion() + "' .and. Field->cCodCaj == '" + oUser():cCaja() + "'"
             if oUser():lFiltroVentas()         
@@ -471,7 +471,7 @@ METHOD OpenSatCliT( dbf ) CLASS TDataCenter
 
             ( dbf )->( AdsSetAOF( cFilter ) )
 
-         end if
+         end if*/
 
       end if 
 
@@ -486,7 +486,7 @@ METHOD oPreCliT() CLASS TDataCenter
 
 	DATABASE NEW oPreCliT PATH ( cPatEmp() ) FILE "PreCliT.Dbf" VIA ( cDriver() ) SHARED INDEX "PreCliT.Cdx"
 
-	if lAIS() .and. !oUser():lAdministrador()
+	/*if lAIS() .and. !oUser():lAdministrador()
 
 		cFilter     := "Field->cSufPre == '" + oUser():cDelegacion() + "' .and. Field->cCodCaj == '" + oUser():cCaja() + "'"
 		if oUser():lFiltroVentas()         
@@ -495,7 +495,7 @@ METHOD oPreCliT() CLASS TDataCenter
 
 		( oPreCliT:cAlias )->( AdsSetAOF( cFilter ) )
 
-	end if
+	end if*/
 
 Return ( oPreCliT )   
 
@@ -516,7 +516,7 @@ METHOD OpenPreCliT( dbf ) CLASS TDataCenter
 		Limitaciones de cajero y cajas----------------------------------------
 		*/
 
-		if lAIS() .and. !oUser():lAdministrador()
+		/*if lAIS() .and. !oUser():lAdministrador()
 
 		cFilter     := "Field->cSufPre == '" + oUser():cDelegacion() + "' .and. Field->cCodCaj == '" + oUser():cCaja() + "'"
 		if oUser():lFiltroVentas()         
@@ -525,7 +525,7 @@ METHOD OpenPreCliT( dbf ) CLASS TDataCenter
 
 		( dbf )->( AdsSetAOF( cFilter ) )
 
-		end if
+		end if*/
 
 	end if 
 

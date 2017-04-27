@@ -281,6 +281,11 @@ Return ( .t. )
 
 Function Test()
 
+<<<<<<< HEAD
+   TiposNotas():New():activateShell()
+
+=======
+>>>>>>> origin/master
 Return ( nil )
 
 //---------------------------------------------------------------------------//

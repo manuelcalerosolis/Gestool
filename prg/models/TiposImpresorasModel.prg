@@ -10,8 +10,6 @@ CLASS TiposImpresorasModel FROM SQLBaseModel
 
    DATA cDbfTableName            INIT "TipImp"
 
-   DATA aDbfFields               INIT {  "cTipImp" }
-
    DATA hColumns                 INIT {  "id"     =>  {  "create"    => "INTEGER PRIMARY KEY AUTOINCREMENT",;
                                                          "text"      => "Identificador" ,;
                                                          "dbfField"  => "" },;
@@ -34,8 +32,6 @@ METHOD New()
    ::cTableName                  := "tipos_impresoras"
 
    ::cDbfTableName				 	:= "TipImp"
-
-   ::aDbfFields			 			:=	{  "cTipImp" }
 
    ::hColumns                   	:= {  "id"     => {  "create"    => "INTEGER PRIMARY KEY AUTOINCREMENT",;
                                                       "text"		=> "Identificador" ,;

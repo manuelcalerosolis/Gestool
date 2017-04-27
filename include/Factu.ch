@@ -155,6 +155,7 @@ Defines para ficheros INI
 #define __append_mode__         1
 #define __edit_mode__           2
 #define __zoom_mode__           3
+#define __duplicate_mode__      4
 
 #define PED_PRV                 '01'
 #define ALB_PRV                 '02'
