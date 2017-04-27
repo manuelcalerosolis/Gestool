@@ -31,7 +31,7 @@ METHOD New()
 
    ::cDbfTableName            	:= "TipoNotas"
 
-   ::hColumns                 	:= { 	"id"     => {  "create"    => "INTEGER PRIMARY KEY AUTOINCREMENT",;
+   ::hColumns                 	:= { 	"id"  => {  "create"    => "INTEGER PRIMARY KEY AUTOINCREMENT",;
                                                    "text"      => "Identificador" ,;
                                                    "dbfField"  => "" },;
                                     "tipo" 	=> {  "create"    => "VARCHAR( 30 ) NOT NULL",;
