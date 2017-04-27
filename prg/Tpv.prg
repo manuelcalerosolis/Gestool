@@ -15135,7 +15135,7 @@ Static Function AddFreeProduct()
          ID       170 ;
          OF       oDlg ;
          BITMAP   "Lupa_32" ;
-         ACTION   ( BrwTipoImpresora( oGetImpresora, .t. ) )
+         ACTION   ( browseTipoImpresora( oGetImpresora ) )
 
       REDEFINE BUTTON ;
          ID       IDOK ;
@@ -15170,6 +15170,18 @@ Static Function AddFreeProduct()
    oFnt:End()
 
 Return ( oDlg:nResult == IDOK )
+
+//---------------------------------------------------------------------------//
+
+STATIC FUNCTION browseTipoImpresora( oGet )
+
+   local cTipoImpresora    := TiposImpresoras():New():activateBrowse() 
+
+   if !empty( cTipoImpresora )
+      oGet:cText( padr( cTipoImpresora, 50 ) )
+   end if 
+
+RETURN ( .t. )
 
 //---------------------------------------------------------------------------//
 

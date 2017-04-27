@@ -438,8 +438,6 @@ METHOD GenIndices( oMsg )
          ::SetText( "Generando índices : Cajón Portamonedas", ::aProgress[ 4 ] );         rxCajPorta( ::cPathDat )
          ::SetText( "Generando índices : Log cajón Portamonedas", ::aProgress[ 4 ] );     rxLogPorta( ::cPathEmp )
          ::SetText( "Generando índices : Situaciones", ::aProgress[ 4 ] );                TSituaciones():GetInstance():Reindexa()
-         ::SetText( "Generando índices : Tipos de notas", ::aProgress[ 4 ] );             rxTipoNotas( ::cPathDat )
-         ::SetText( "Generando índices : Tipos de impresoras", ::aProgress[ 4 ] );        rxTipImp( ::cPathDat )
 
          ::SetText( "Generando índices : Capturas", ::aProgress[ 4 ] );                   TCaptura():Create( ::cPathDat ):Reindexa()
          ::SetText( "Generando índices : Detalle de capturas", ::aProgress[ 4 ] );        TDetCaptura():New( ::cPathDat ):Reindexa()

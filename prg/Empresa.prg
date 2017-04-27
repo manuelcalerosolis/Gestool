@@ -4422,10 +4422,6 @@ Static Function ActDbfEmp( cCodEmp, aMsg, oAni, oDlg, oMsg, oMet, lActEmp, lSinc
             ActDbf( cEmpOld, cEmpTmp, "LogPorta", "log cajón portamonedas", oMet, oMsg, aMsg )
          end if
 
-         if mkTipImp( cEmpTmp )
-            ActDbf( cEmpDat, cEmpTmp, "TipImp", "Tipos de impresoras", oMet, oMsg, aMsg )
-         end if
-
          if mkReport( cEmpTmp, .f. )
             ActDbf( cEmpOld, cEmpTmp, "CfgCar", "Añadiendo datos de documentos", oMet, oMsg, aMsg )
          end if
