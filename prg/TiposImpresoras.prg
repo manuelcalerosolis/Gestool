@@ -24,7 +24,7 @@ END CLASS
 
 METHOD New()
 
-   ::keyUserMap            := "01115"
+   ::idUserMap            := "01115"
    
    ::cHistoryName          := "tipos_impresoras"
 
@@ -147,8 +147,7 @@ METHOD buildSQLBrowse()
       oBrowse:bClrSelFocus    := {|| { CLR_BLACK, Rgb( 167, 205, 240 ) } }
 
       oBrowse:lHScroll        := .f.
-      oBrowse:nMarqueeStyle   := 5
-      oBrowse:cName           := "Browse.TipoImpresora"
+      oBrowse:nMarqueeStyle   := 6
 
       oBrowse:setModel( ::oModel )
 
