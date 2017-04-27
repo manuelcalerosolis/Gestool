@@ -1495,8 +1495,6 @@ METHOD GetRecCli( oDlg, nMode )
 
    oDlg:Disable()
 
-   msgalert( ::oDbfDet:OrdKeyCount(), "OrdKeyCount" )
-
    ::oMeter:nTotal   := ::oDbfDet:OrdKeyCount()
 
    ::oDbfDet:GoTop()

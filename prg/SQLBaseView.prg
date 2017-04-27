@@ -16,7 +16,7 @@ CLASS SQLBaseView
 
    DATA     oModel
 
-   DATA     nMode                                  AS NUMERIC
+   DATA     nMode                                     AS NUMERIC
 
    DATA     cBrowseState   
  
@@ -75,14 +75,13 @@ CLASS SQLBaseView
    METHOD   getHistoryNameShell()                     INLINE ( ::cHistoryName + "_shell" )
    METHOD   getHistoryNameBrowse()                    INLINE ( ::cHistoryName + "_browse" )
 
-
 END CLASS
 
 //---------------------------------------------------------------------------//
 
 METHOD New()
 
-   ::nLevel                                        := nLevelUsr( ::keyUserMap )
+   ::nLevel                                           := nLevelUsr( ::keyUserMap )
 
 RETURN ( Self )
 
@@ -113,21 +112,23 @@ RETURN ( Self )
 
 //---------------------------------------------------------------------------//
 
-METHOD ActivateBrowse( oGet )
+METHOD ActivateBrowse()
 
-   ::oModel    := ::buildSQLModel()
+   local uReturn
+
+   ::oModel       := ::buildSQLModel()
 
    ::getHistory( ::getHistoryNameBrowse() )
 
    ::oModel:buildRowSetWithRecno()
 
-   if ::buildSQLBrowse() .and. !empty( oGet )
-      oGet:cText( ::getFieldFromBrowse() )
+   if ::buildSQLBrowse()
+      uReturn     := ::getFieldFromBrowse() 
    end if
 
    ::destroySQLModel()
 
-RETURN ( Self )
+RETURN ( uReturn )
 
 //---------------------------------------------------------------------------//
 

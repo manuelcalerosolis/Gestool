@@ -153,7 +153,6 @@ CLASS TpvTactil
    DATA oCategorias
    DATA oComentariosCabecera
    DATA oComentariosLinea
-   DATA oTipoImpresoraComandas
    DATA oTemporadas
    DATA oParteProducionLinea
    DATA oMaterialesProducion
@@ -1389,8 +1388,6 @@ METHOD OpenFiles() CLASS TpvTactil
 
    DATABASE NEW ::oComentariosLinea                         PATH ( cPatArt() )   FILE "COMENTARIOSL.DBF"    VIA ( cDriver() ) SHARED INDEX "COMENTARIOSL.CDX"
 
-   DATABASE NEW ::oTipoImpresoraComandas                    PATH ( cPatDat() )   FILE "TIPIMP.DBF"          VIA ( cDriver() ) SHARED INDEX "TIPIMP.CDX"
-
    DATABASE NEW ::oTemporadas                               PATH ( cPatArt() )   FILE "Temporadas.DBF"      VIA ( cDriver() ) SHARED INDEX "Temporadas.CDX"
 
    DATABASE NEW ::oParteProducionLinea                      PATH ( cPatEmp() )   FILE "PROLIN.DBF"          VIA ( cDriver() ) SHARED INDEX "PROLIN.CDX"
@@ -1813,10 +1810,6 @@ METHOD CloseFiles() CLASS TpvTactil
       ::oComentariosLinea:End()
    end if
 
-   if ::oTipoImpresoraComandas != nil .and. ::oTipoImpresoraComandas:Used()
-      ::oTipoImpresoraComandas:End()
-   end if
-
    if ::oTemporadas != nil .and. ::oTemporadas:Used()
       ::oTemporadas:End()
    end if
@@ -1976,7 +1969,6 @@ METHOD CloseFiles() CLASS TpvTactil
    ::oCategorias                             := nil
    ::oComentariosCabecera                    := nil
    ::oComentariosLinea                       := nil
-   ::oTipoImpresoraComandas                  := nil
    ::oTemporadas                             := nil
    ::oParteProducionLinea                    := nil
    ::oMaterialesProducion                    := nil

@@ -1629,7 +1629,7 @@ Function CreateAcceso( oWnd )
    oItem:oGroup         := oGrupo
    oItem:cPrompt        := "Tipos de impresoras"
    oItem:cMessage       := "Acceso a los tipos de impresoras"
-   oItem:bAction        := {|| TipoImpresoras( "01115", oWnd ) }
+   oItem:bAction        := {|| TiposImpresoras():New():activateShell() }
    oItem:cId            := "01115"
    oItem:cBmp           := "gc_printer2_16"
    oItem:cBmpBig        := "gc_printer2_32"

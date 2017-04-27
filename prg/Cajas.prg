@@ -1231,32 +1231,31 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbfTmpLin, oBrw, bWhen, bValid, nMode, aTmpC
 
    DEFINE DIALOG oDlg RESOURCE "lCajas" TITLE LblTitle( nMode ) + "impresoras de comandas"
 
-      REDEFINE GET aGet[ ( dbfTmpLin )->( FieldPos( "cTipImp" ) ) ] ;
-         VAR      aTmp[ ( dbfTmpLin )->( FieldPos( "cTipImp" ) ) ] ;
-         ID       100 ;
-         VALID    ( cTipoImpresora( aGet[ ( dbfTmpLin )->( FieldPos( "cTipImp" ) ) ] ) );
-         BITMAP   "LUPA" ;
-         ON HELP  ( BrwTipoImpresora( aGet[ ( dbfTmpLin )->( FieldPos( "cTipImp" ) ) ] ) ) ;
-         OF       oDlg
+      REDEFINE GET   aGet[ ( dbfTmpLin )->( FieldPos( "cTipImp" ) ) ] ;
+         VAR         aTmp[ ( dbfTmpLin )->( FieldPos( "cTipImp" ) ) ] ;
+         ID          100 ;
+         BITMAP      "LUPA" ;
+         ON HELP     ( browseTipoImpresora( aGet[ ( dbfTmpLin )->( FieldPos( "cTipImp" ) ) ] ) );
+         OF          oDlg
 
-      REDEFINE GET aGet[ ( dbfTmpLin )->( FieldPos( "cNomPrn" ) ) ] ;
-         VAR      aTmp[ ( dbfTmpLin )->( FieldPos( "cNomPrn" ) ) ] ;
-         ID       110 ;
-         OF       oDlg
+      REDEFINE GET   aGet[ ( dbfTmpLin )->( FieldPos( "cNomPrn" ) ) ] ;
+         VAR         aTmp[ ( dbfTmpLin )->( FieldPos( "cNomPrn" ) ) ] ;
+         ID          110 ;
+         OF          oDlg
 
       TBtnBmp():ReDefine( 111, "gc_printer2_check_16",,,,,{|| PrinterPreferences( aGet[ ( dbfTmpLin )->( FieldPos( "cNomPrn" ) ) ] ) }, oDlg, .f., , .f.,  )
 
-      REDEFINE GET aGet[ ( dbfTmpLin )->( FieldPos( "cWavFil" ) ) ] ;
-         VAR      aTmp[ ( dbfTmpLin )->( FieldPos( "cWavFil" ) ) ] ;
-         ID       120 ;
-         BITMAP   "FOLDER" ;
-         ON HELP  ( aGet[ ( dbfTmpLin )->( FieldPos( "cWavFil" ) ) ]:cText( cGetFile( 'Doc ( *.* ) | *.*', 'Seleccione el nombre del fichero' ) ) ) ;
-         OF       oDlg
+      REDEFINE GET   aGet[ ( dbfTmpLin )->( FieldPos( "cWavFil" ) ) ] ;
+         VAR         aTmp[ ( dbfTmpLin )->( FieldPos( "cWavFil" ) ) ] ;
+         ID          120 ;
+         BITMAP      "FOLDER" ;
+         ON HELP     ( aGet[ ( dbfTmpLin )->( FieldPos( "cWavFil" ) ) ]:cText( cGetFile( 'Doc ( *.* ) | *.*', 'Seleccione el nombre del fichero' ) ) ) ;
+         OF          oDlg
 
-      REDEFINE GET aGet[ ( dbfTmpLin )->( FieldPos( "cCodCut" ) ) ];
-         VAR      aTmp[ ( dbfTmpLin )->( FieldPos( "cCodCut" ) ) ];
-         ID       130 ;
-         OF       oDlg
+      REDEFINE GET   aGet[ ( dbfTmpLin )->( FieldPos( "cCodCut" ) ) ];
+         VAR         aTmp[ ( dbfTmpLin )->( FieldPos( "cCodCut" ) ) ];
+         ID          130 ;
+         OF          oDlg
 
       TBtnBmp():ReDefine( 131, "gc_cut_16",,,,,{|| PrintEscCode( aTmp[ ( dbfTmpLin )->( FieldPos( "cCodCut" ) ) ], aTmp[ ( dbfTmpLin )->( FieldPos( "cNomPrn" ) ) ] ) }, oDlg, .f., , .f., "Test de código" )
 
@@ -1314,34 +1313,47 @@ RETURN ( oDlg:nResult == IDOK )
 
 //---------------------------------------------------------------------------//
 
+STATIC FUNCTION browseTipoImpresora( oGet )
+
+   local cTipoImpresora    := TiposImpresoras():New():activateBrowse() 
+
+   if !empty( cTipoImpresora )
+      oGet:cText( padr( cTipoImpresora, 50 ) )
+   end if 
+
+RETURN ( .t. )
+
+//---------------------------------------------------------------------------//
+
 STATIC FUNCTION EndDetalle( aTmp, aGet, dbfTmpLin, oBrw, oDlg, nMode, aTmpCaj )
+
+   local cErrors  := ""
 
    //Comprobaciones antes de guardar-------------------------------------------
 
    if empty( aTmp[ ( dbfTmpLin )->( FieldPos( "cTipImp" ) ) ] )
-      msginfo( "El tipo de impresora no puede estar vacío" )
-      aGet[ ( dbfTmpLin )->( FieldPos( "cTipImp" ) ) ]:SetFocus()
-      return .f.
+      cErrors     += "* El tipo de impresora no puede estar vacío" + CRLF
    end if
 
    if empty( aTmp[ ( dbfTmpLin )->( FieldPos( "cNomPrn" ) ) ] )
-      msginfo( "El nombre de la impresora no puede estar vacío" )
-      aGet[ ( dbfTmpLin )->( FieldPos( "cNomPrn" ) ) ]:SetFocus()
-      return .f.
+      cErrors     += "* El nombre de impresora no puede estar vacío" + CRLF
    end if
 
-   if nMode == APPD_MODE
-
-      if dbSeekInOrd( Upper( Padr( aTmp[ ( dbfTmpLin )->( FieldPos( "cTipImp" ) ) ], 50 ) ), "cTipImp", dbfTmpLin )
-         msginfo( "El tipo de impresora ya ha sido introducido" )
-         aGet[ ( dbfTmpLin )->( FieldPos( "cTipImp" ) ) ]:SetFocus()
-         return .f.
-      end if
-
+   if nMode == APPD_MODE .and. dbSeekInOrd( Upper( Padr( aTmp[ ( dbfTmpLin )->( FieldPos( "cTipImp" ) ) ], 50 ) ), "cTipImp", dbfTmpLin )
+      cErrors     += "* El tipo de impresora ya ha sido introducido" + CRLF
    end if
+
+   if !( TiposImpresorasModel():existTiposImpresoras( aTmp[ ( dbfTmpLin )->( FieldPos( "cTipImp" ) ) ] ) )
+      cErrors     += "* El tipo de impresora no existe"
+   end if 
+
+   if !empty( cErrors )
+      msgStop( cErrors, "El formulario contiene errores" )
+      return ( .f. )
+   end if 
 
    /*
-   Rellenamos el campo con el código de la caja
+   Rellenamos el campo con el código de la caja-------------------------------
    */
 
    aTmp[ ( dbfTmpLin )->( FieldPos( "cCodCaj" ) ) ]   := aTmpCaj[ ( dbfCajT )->( FieldPos( "cCodCaj" ) ) ]
@@ -1358,7 +1370,7 @@ STATIC FUNCTION EndDetalle( aTmp, aGet, dbfTmpLin, oBrw, oDlg, nMode, aTmpCaj )
 
    oDlg:end( IDOK )
 
-return( .t. )
+return ( .t. )
 
 //---------------------------------------------------------------------------//
 

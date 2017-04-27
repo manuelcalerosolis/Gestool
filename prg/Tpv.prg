@@ -782,9 +782,6 @@ STATIC FUNCTION OpenFiles( cPatEmp, lExt, lTactil )
       SET ADSINDEX TO ( cPatArt() + "COMENTARIOSL.CDX" ) ADDITIVE
       SET TAG TO "CCODDES"
 
-      USE ( cPatDat() + "TIPIMP.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "TIPIMP", @dbfTImp ) )
-      SET ADSINDEX TO ( cPatDat() + "TIPIMP.CDX" ) ADDITIVE
-
       USE ( cPatArt() + "Temporadas.Dbf" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "Temporada", @dbfTemporada ) )
       SET ADSINDEX TO ( cPatArt() + "Temporadas.Cdx" ) ADDITIVE
 
@@ -1030,8 +1027,6 @@ STATIC FUNCTION CloseFiles()
    CLOSE ( dbfComentariosT )
    CLOSE ( dbfComentariosL )
 
-   CLOSE ( dbfTImp     )
-
    if !empty( oCaptura )
       oCaptura:End()
    end if
@@ -1120,7 +1115,6 @@ STATIC FUNCTION CloseFiles()
    dbfEmp            := nil
    dbfAlbCliP        := nil
    dbfTblCnv         := nil
-   dbfTImp           := nil
 
    dbfPreCliT        := nil
    dbfPreCliL        := nil
