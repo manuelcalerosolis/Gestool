@@ -3317,6 +3317,24 @@ Return ( "'" + alltrim( uValue ) + "'" )
 
 //---------------------------------------------------------------------------//
 
+Function toSQLString( value )
+
+   if hb_isnil( value )
+      Return ( 'null' )
+   end if
+
+   if hb_isnumeric( value )
+      Return ( alltrim(str( value ) ) )
+   end if
+
+   if hb_ischar( value )
+      Return ( quoted( alltrim( value ) ) )
+   end if
+
+Return ( value )
+       
+//---------------------------------------------------------------------------//
+
 Function Chiled( cString )
 
 Return ( Space( 3 ) + "<" + Alltrim( cString ) + ">" )

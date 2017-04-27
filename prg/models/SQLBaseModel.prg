@@ -146,7 +146,7 @@ METHOD getImportSentence( cPath )
       cValues           += "( "
 
       hEval( ::hColumns, {| k, hash | if ( k != ::cColumnKey,;
-                                             cValues += convertToSql( ( dbf )->( fieldget( fieldpos( hget( hash, "dbfField" ) ) ) ) ) + ", " , )  } )
+                                             cValues += toSQLString( ( dbf )->( fieldget( fieldpos( hget( hash, "dbfField" ) ) ) ) ) + ", " , )  } )
       
       cValues           := chgAtEnd( cValues, ' ), ', 2 )
 
@@ -242,11 +242,11 @@ METHOD getUpdateSentence()
 
   local cSQLUpdate  := "UPDATE " + ::cTableName + " SET "
 
-  hEval( ::hBuffer, {| k, v | if ( k != ::cColumnKey, cSQLUpdate += k + " = " + convertToSql( v ) + ", ", ) } )
+  hEval( ::hBuffer, {| k, v | if ( k != ::cColumnKey, cSQLUpdate += k + " = " + toSQLString( v ) + ", ", ) } )
 
   cSQLUpdate        := ChgAtEnd( cSQLUpdate, '', 2 )
 
-  cSQLUpdate        += " WHERE " + ::cColumnKey + " = " + convertToSql( ::oRowSet:fieldget( ::cColumnKey ) ) 
+  cSQLUpdate        += " WHERE " + ::cColumnKey + " = " + toSQLString( ::oRowSet:fieldget( ::cColumnKey ) ) 
 
 Return ( cSQLUpdate )
 
@@ -262,7 +262,7 @@ METHOD getInsertSentence()
 
    cSQLInsert        := ChgAtEnd( cSQLInsert, ' ) VALUES ( ', 2 )
 
-   hEval( ::hBuffer, {| k, v | if ( k != ::cColumnKey, cSQLInsert += convertToSql( v ) + ", ", ) } )
+   hEval( ::hBuffer, {| k, v | if ( k != ::cColumnKey, cSQLInsert += toSQLString( v ) + ", ", ) } )
 
    cSQLInsert        := ChgAtEnd( cSQLInsert, ' )', 2 )
 
@@ -270,9 +270,9 @@ Return ( cSQLInsert )
 
 //---------------------------------------------------------------------------//
 
-METHOD   getDeleteSentence()
+METHOD getDeleteSentence()
 
-   local cSQLDelete  := "DELETE FROM " + ::cTableName + " WHERE " + ::cColumnKey + " = " + convertToSql( ::oRowSet:fieldGet( ::cColumnKey ) )
+   local cSQLDelete  := "DELETE FROM " + ::cTableName + " WHERE " + ::cColumnKey + " = " + toSQLString( ::oRowSet:fieldGet( ::cColumnKey ) )
 
 Return ( cSQLDelete )
 
@@ -370,20 +370,6 @@ METHOD loadBuffer( id )
 
 Return ( .t. )
 
-//---------------------------------------------------------------------------//
-
-Function convertToSql( value )
-
-   if hb_isnumeric( value )
-      Return ( alltrim(str( value ) ) )
-   end if
-
-   if hb_ischar( value )
-      Return ( quoted( alltrim( value ) ) )
-   end if
-
-Return ( value )
-       
 //---------------------------------------------------------------------------//
 
 METHOD selectFetchArray( cSentence )

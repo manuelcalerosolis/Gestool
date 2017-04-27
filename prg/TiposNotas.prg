@@ -22,7 +22,7 @@ END CLASS
 
 METHOD New()
 
-   ::keyUserMap            := "01097"
+   ::idUserMap            := "01097"
    
    ::cHistoryName          := "tipos_notas"
 

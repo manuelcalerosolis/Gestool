@@ -10,7 +10,7 @@ CLASS SQLBaseView
 
    DATA     nLevel
 
-   DATA     keyUserMap
+   DATA     idUserMap
 
    DATA     cHistoryName      
 
@@ -30,6 +30,10 @@ CLASS SQLBaseView
    METHOD   notUserDuplicate()                        INLINE ( !::isUserDuplicate() )
    METHOD   isUserEdit()                              INLINE ( nAnd( ::nLevel, ACC_EDIT ) != 0 )
    METHOD   notUserEdit()                             INLINE ( !::isUserEdit() )
+   METHOD   isUserDelete()                            INLINE ( nAnd( ::nLevel, ACC_DELE ) != 0 )
+   METHOD   notUserDelete()                           INLINE ( !::isUserDelete() )
+   METHOD   isUserZoom()                              INLINE ( nAnd( ::nLevel, ACC_ZOOM ) != 0 )
+   METHOD   notUserZoom()                             INLINE ( !::isUserZoom() )
 
    METHOD   setMode( nMode )                          INLINE ( ::nMode := nMode )
    METHOD   getMode()                                 INLINE ( ::nMode )
@@ -86,7 +90,7 @@ END CLASS
 
 METHOD New()
 
-   ::nLevel                                           := nLevelUsr( ::keyUserMap )
+   ::nLevel                                           := nLevelUsr( ::idUserMap )
 
 RETURN ( Self )
 
@@ -137,7 +141,7 @@ RETURN ( uReturn )
 
 //---------------------------------------------------------------------------//
 
-METHOD   GeneralButtons()
+METHOD GeneralButtons()
 
    DEFINE BTNSHELL RESOURCE "BUS" OF ::oShell ;
       NOBORDER ;
@@ -156,12 +160,12 @@ METHOD   GeneralButtons()
       LEVEL    ACC_APPD
 
    DEFINE BTNSHELL RESOURCE "DUP" OF ::oShell ;
-         NOBORDER ;
-         ACTION   ( ::Duplicate( ::oShell:getBrowse() ) );
-         TOOLTIP  "(D)uplicar";
-         MRU ;
-         HOTKEY   "D";
-         LEVEL    ACC_APPD
+      NOBORDER ;
+      ACTION   ( ::Duplicate( ::oShell:getBrowse() ) );
+      TOOLTIP  "(D)uplicar";
+      MRU ;
+      HOTKEY   "D";
+      LEVEL    ACC_APPD
 
    DEFINE BTNSHELL RESOURCE "EDIT" OF ::oShell ;
       NOBORDER ;
@@ -190,13 +194,13 @@ rETURN ( Self )
 
 //---------------------------------------------------------------------------//
 
-METHOD   EndButton()
+METHOD EndButton()
 
    DEFINE BTNSHELL RESOURCE "END" GROUP OF ::oShell ;
-         NOBORDER ;
-         ACTION   ( ::oShell:end() ) ;
-         TOOLTIP  "(S)alir" ;
-         HOTKEY   "S"
+      NOBORDER ;
+      ACTION   ( ::oShell:end() ) ;
+      TOOLTIP  "(S)alir" ;
+      HOTKEY   "S"
 
 RETURN ( Self )
 
@@ -323,11 +327,11 @@ METHOD Edit( oBrowse )
       ::oModel:updateCurrentBuffer()
       ::oModel:setRowSetRecno( nRecno )
 
-      if !empty( oBrowse )
-         oBrowse:refreshCurrent()
-         oBrowse:setFocus()
-      end if 
+   end if 
 
+   if !empty( oBrowse )
+      oBrowse:refreshCurrent()
+      oBrowse:setFocus()
    end if 
 
 RETURN ( Self )
@@ -335,6 +339,11 @@ RETURN ( Self )
 //----------------------------------------------------------------------------//
 
 METHOD Zoom( oBrowse )
+
+   if ::notUserZoom()
+      msgStop( "Acceso no permitido." )
+      RETURN ( Self )
+   end if 
 
    ::setZoomMode()
 
@@ -352,10 +361,18 @@ RETURN ( Self )
 
 METHOD Delete( oBrowse )
 
-   ::oModel:deleteSelection()
+   if ::notUserDelete()
+      msgStop( "Acceso no permitido." )
+      RETURN ( Self )
+   end if 
+
+   if oUser():lNotConfirmDelete() .or. msgNoYes( "¿ Desea eliminar el registro en curso ?", "Confirme eliminación" )
+      ::oModel:deleteSelection()
+   end if 
 
    if !empty( oBrowse )
       oBrowse:refreshCurrent()
+      oBrowse:setFocus()
    end if 
 
 RETURN ( Self )
