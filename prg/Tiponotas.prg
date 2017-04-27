@@ -178,8 +178,8 @@ FUNCTION TipoNotas( oMenuItem, oWnd )
       TITLE    "Tipos de notas" ;
       PROMPT   "Tipo";
       MRU      "gc_folder2_16";
-      ALIAS    ( dbfTipoNotas ) ;
       BITMAP   clrTopArchivos ;
+      ALIAS    ( dbfTipoNotas ) ;
       APPEND   ( WinAppRec( oWndBrw:oBrw, bEdit, dbfTipoNotas ) ) ;
       EDIT     ( WinEdtRec( oWndBrw:oBrw, bEdit, dbfTipoNotas ) ) ;
       DELETE   ( WinDelRec( oWndBrw:oBrw, dbfTipoNotas ) );
@@ -298,17 +298,11 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfTipoNotas, oBrw, bWhen, bValid, nMode )
       CANCEL ;
       ACTION   ( oDlg:end() )
 
-   REDEFINE BUTTON ;
-      ID       9 ;
-      OF       oDlg ;
-      ACTION   ( GoHelp() )
-
    //Teclas rápidas
 
    if nMode != ZOOM_MODE
    oDlg:AddFastKey( VK_F5, {|| EndTrans( aTmp, aGet, dbfTipoNotas, oBrw, nMode, oDlg ) } )
    end if
-   oDlg:AddFastKey( VK_F1, {|| GoHelp() } )
 
    oDlg:bStart          := {|| aGet[ ( dbfTipoNotas )->( FieldPos( "cTipo" ) ) ]:SetFocus() }
 

@@ -216,7 +216,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfTImp, oBrw, bWhen, bValid, nMode )
       CANCEL ;
       ACTION   ( oDlg:end() )
 
-   // Teclas r�pidas-----------------------------------------------------------
+   // Teclas rpidas-----------------------------------------------------------
 
    if nMode != ZOOM_MODE
       oDlg:AddFastKey( VK_F5, {|| EndTrans( aTmp, aGet, dbfTImp, oBrw, nMode, oDlg ) } )
