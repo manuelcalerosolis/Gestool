@@ -175,7 +175,7 @@ METHOD makeImportDbfSQL( cPath )
 
    if ( file( cPath + "\" + ::getOldTableName() ) )
       Return ( self )
-   end if 
+   end if
 
    if !( file( cPath + "\" + ::getDbfTableName() ) )
       msgStop( "El fichero " + cPath + "\" + ::getDbfTableName() + " no se ha localizado", "Atención" )  
@@ -183,6 +183,7 @@ METHOD makeImportDbfSQL( cPath )
    end if 
 
    cImportSentence   := ::getImportSentence( cPath )
+
    if !empty( cImportSentence )
 
       getSQLDatabase():Exec( ::getSQLDropTable() )

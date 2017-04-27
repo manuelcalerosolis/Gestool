@@ -1621,7 +1621,7 @@ Function CreateAcceso( oWnd )
    oItem:oGroup         := oGrupo
    oItem:cPrompt        := "Tipos de notas"
    oItem:cMessage       := "Acceso a los tipos de notas"
-   oItem:bAction        := {|| TipoNotas( "01097", oWnd ) }
+   oItem:bAction        := {|| TiposNotas():New():activateShell() }
    oItem:cId            := "01097"
    oItem:cBmp           := "gc_folder2_16"
    oItem:cBmpBig        := "gc_folder2_32"

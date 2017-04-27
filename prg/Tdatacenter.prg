@@ -1794,16 +1794,6 @@ METHOD BuildData()
    oDataTable:bCreateIndex := {| cPath | rxCajPorta( cPath ) }
    ::AddDataTable( oDataTable )
 
-/*
-   oDataTable              := TDataTable():New( "TipImp", cPathDatos() )
-   oDataTable:cDataFile    := cPatDat( .t. ) + "TipImp.Dbf"
-   oDataTable:cIndexFile   := cPatDat( .t. ) + "TipImp.Cdx"
-   oDataTable:cDescription := "Tipos de impresoras"
-   oDataTable:bCreateFile  := {| cPath | mkTipImp( cPath ) }
-   oDataTable:bCreateIndex := {| cPath | rxTipImp( cPath ) }
-   ::AddDataTable( oDataTable )
-*/
-
    oDataTable              := TDataTable():New( "Agenda", cPathDatos() )
    oDataTable:cDataFile    := cPatDat( .t. ) + "Agenda.Dbf"
    oDataTable:cIndexFile   := cPatDat( .t. ) + "Agenda.Cdx"
@@ -1818,14 +1808,14 @@ METHOD BuildData()
    oDataTable:bCreateFile  := {| cPath | TNotas():BuildFiles( cPath ) }
    ::AddDataTable( oDataTable )
 
-   oDataTable              := TDataTable():New( "TipoNotas", cPathDatos() )
+ /*  oDataTable              := TDataTable():New( "TipoNotas", cPathDatos() )
    oDataTable:cDataFile    := cPatDat( .t. ) + "TipoNotas.Dbf"
    oDataTable:cIndexFile   := cPatDat( .t. ) + "TipoNotas.Cdx"
    oDataTable:cDescription := "Tipos de notas"
    oDataTable:bCreateFile  := {| cPath | mkTipoNotas( cPath ) }
    oDataTable:bCreateIndex := {| cPath | rxTipoNotas( cPath ) }
    ::AddDataTable( oDataTable )
-
+*/
    oDataTable              := TDataTable():New( "TVta", cPathDatos() )
    oDataTable:cDataFile    := cPatDat( .t. ) + "TVta.Dbf"
    oDataTable:cIndexFile   := cPatDat( .t. ) + "TVta.Cdx"
@@ -4827,6 +4817,7 @@ RETURN ( ::ExecuteSqlStatement( cStm, "SatCliArticulos" ) )
 METHOD ConvertToSQLite()
 
    TiposImpresorasModel():makeImportDbfSQL()
+   TiposNotasModel():makeImportDbfSQL()
 
 RETURN ( Self )
 

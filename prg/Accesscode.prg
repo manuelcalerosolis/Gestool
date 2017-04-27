@@ -777,20 +777,6 @@ Method InitialCheck() CLASS AccessCode
          ::oMessage:SetText( "Comprobando tipos de impresoras..." )
       end if
  
-      while !IsTipImp()
-         rxTipImp( cPatDat() )
-      end while
-
-      // Tipos de notas por defecto-----------------------------------------------
-
-      if !Empty( ::oMessage )
-         ::oMessage:SetText( "Comprobando tipos de notas..." )
-      end if
-
-      while !IsTipoNotas()
-         rxTipoNotas( cPatDat() )
-      end while
-
       // Comprobamos q exista al menos un tipo de ventas--------------------------
 
       if !Empty( ::oMessage )

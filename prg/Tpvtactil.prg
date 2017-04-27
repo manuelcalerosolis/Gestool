@@ -3471,7 +3471,7 @@ METHOD AgregarLibre() CLASS TpvTactil
          ID       170 ;
          OF       oDlg ;
          BITMAP   "Lupa_32" ;
-         ACTION   ( BrwTipoImpresora( oImpresoraLibre, .t. ) )
+         ACTION   ( browseTipoImpresora( oImpresoraLibre ) )
 
       REDEFINE BUTTONBMP ;
          BITMAP   "gc_check_32" ;
@@ -3490,6 +3490,18 @@ METHOD AgregarLibre() CLASS TpvTactil
    ::oGetUnidades:SetFocus()
 
 Return ( oDlg:nResult == IDOK )
+
+//---------------------------------------------------------------------------//
+
+STATIC FUNCTION browseTipoImpresora( oGet )
+
+   local cTipoImpresora    := TiposImpresoras():New():activateBrowse() 
+
+   if !empty( cTipoImpresora )
+      oGet:cText( padr( cTipoImpresora, 50 ) )
+   end if 
+
+RETURN ( .t. )
 
 //---------------------------------------------------------------------------//
 

@@ -36,7 +36,7 @@ METHOD buildSQLShell()
 
    disableAcceso()
 
-   ::oShell                := SQLTShell():New( 2, 10, 18, 70, "Situación", , oWnd(), , , .f., , , ::oModel, , , , , {}, {|| ::Edit() },, {|| ::Delete() },, nil, ::nLevel, "gc_printer2_16", ( 104 + ( 0 * 256 ) + ( 63 * 65536 ) ),,, .t. )
+   ::oShell                := SQLTShell():New( 2, 10, 18, 70, "Tipos de notas", , oWnd(), , , .f., , , ::oModel, , , , , {}, {|| ::Edit() },, {|| ::Delete() },, nil, ::nLevel, "gc_folder2_16", ( 104 + ( 0 * 256 ) + ( 63 * 65536 ) ),,, .t. )
 
    	with object ( ::oShell:AddCol() )
         :cHeader          := "Id"
@@ -80,7 +80,7 @@ METHOD Dialog( lZoom )
    local oDlg
    local oGetNombre
 
-   DEFINE DIALOG oDlg RESOURCE "Situacion" TITLE lblTitle( ::getMode() ) + "situaciones"
+   DEFINE DIALOG oDlg RESOURCE "TiposNotas" TITLE lblTitle( ::getMode() ) + "tipos de notas"
 
    REDEFINE GET   oGetNombre ;
       VAR         ::oModel:hBuffer[ "tipo" ] ;
