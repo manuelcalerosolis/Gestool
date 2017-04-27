@@ -281,7 +281,7 @@ Return ( .t. )
 
 Function Test()
 
-   TiposNotas():New():activateShell()
+   //EstadosSat():New():activateShell()
 
 Return ( nil )
 

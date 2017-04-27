@@ -55,12 +55,15 @@ CLASS SQLBaseView
  
    METHOD   Append( oBrowse )
       METHOD setAppendMode()                          INLINE ( ::nMode := __append_mode__ )
+      METHOD isAppendMode()                           INLINE ( ::nMode == __append_mode__ )
 
    METHOD Duplicate( oBrowse )
       METHOD setDuplicateMode()                       INLINE ( ::nMode := __duplicate_mode__ )
+      METHOD isDuplicateMode()                             INLINE ( ::nMode == __duplicate_mode__ )
 
    METHOD   Edit( oBrowse )
      METHOD setEditMode()                             INLINE ( ::nMode := __edit_mode__ )
+      METHOD isEditMode()                             INLINE ( ::nMode == __edit_mode__ )
 
    METHOD   Zoom( oBrowse )
       METHOD setZoomMode()                            INLINE ( ::nMode := __zoom_mode__ )

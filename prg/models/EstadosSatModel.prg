@@ -30,7 +30,7 @@ CLASS EstadosSatModel FROM SQLBaseModel
 
    METHOD arrayEstadosSAT()
 
-   METHOD existTiposImpresoras( cValue )
+   //METHOD existTiposImpresoras( cValue )
 
 END CLASS
 
@@ -67,7 +67,7 @@ RETURN ( Self )
 METHOD arrayEstadosSAT()
 
 	local aResult                 := {}
-   local cSentence               := "SELECT nombre FROM " + ::cTableName
+   local cSentence               := "SELECT cod_estado, nombre, tipo, disponible FROM " + ::cTableName
    local aSelect                 := ::selectFetchArray( cSentence ) 
 
    if !empty( aSelect )
@@ -75,14 +75,5 @@ METHOD arrayEstadosSAT()
    end if 
 
 RETURN ( aResult )
-
-//---------------------------------------------------------------------------//
-
-METHOD existTiposImpresoras( cValue )
-
-   local cSentence               := "SELECT cod_estado, nombre, tipo, disponible FROM " + ::cTableName + " WHERE nombre = " + quoted( cValue )
-   local aSelect                 := ::selectFetchArray( cSentence )
-
-RETURN ( !empty( aSelect ) )
 
 //---------------------------------------------------------------------------//

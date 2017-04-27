@@ -215,6 +215,10 @@ METHOD buildRowSet( lWithRecno )
 
    default  lWithRecno  := .f.
 
+   msgalert ( ::cTableName )
+
+   msgalert( ::getSelectSentence )
+
    try
       oStmt             := getSQLDatabase():Query( ::getSelectSentence() ) 
       ::oRowSet         := oStmt:fetchRowSet()

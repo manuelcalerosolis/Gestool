@@ -24,7 +24,7 @@ METHOD New()
 
    ::idUserMap            := "01097"
    
-   ::cHistoryName          := "tipos_notas"
+   ::cHistoryName         := "tipos_notas"
 
    ::Super:New()
 
