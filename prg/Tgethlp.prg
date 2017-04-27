@@ -19,7 +19,7 @@ CLASS TGetHlp FROM TGet
    DATA  oBmp
    DATA  oSay
    DATA  oHelpText
-   DATA  cHelpText               INIT  Space( 50 )
+   DATA  cHelpText                  INIT  Space( 50 )
 
    DATA  bKeyUp
 
@@ -33,10 +33,12 @@ CLASS TGetHlp FROM TGet
    DATA  bPreValidate
    DATA  bPostValidate
 
-   DATA  nMargin                  INIT 16
+   DATA  nMargin                    INIT 16
 
-   METHOD New()                   CONSTRUCTOR
-   METHOD ReDefine()              CONSTRUCTOR
+   DATA  cError                     INIT ""
+
+   METHOD New()                     CONSTRUCTOR
+   METHOD ReDefine()                CONSTRUCTOR
 
    METHOD Display()
 
@@ -45,22 +47,22 @@ CLASS TGetHlp FROM TGet
    METHOD EvalHelp()
 
    METHOD KeyChar( nKey, nFlags )
-   METHOD KeyUp( nKey, nFlags )  INLINE ( if( !empty( ::bKeyUp ), eval( ::bKeyUp ), ), ::Super:KeyUp( nKey, nFlags ) )
+   METHOD KeyUp( nKey, nFlags )     INLINE ( if( !empty( ::bKeyUp ), eval( ::bKeyUp ), ), ::Super:KeyUp( nKey, nFlags ) )
 
-   METHOD SetPicture( cPicture ) INLINE ( ::cPicture  := cPicture, ::oGet:Picture := cPicture, ::Refresh()  )   // MCS
+   METHOD SetPicture( cPicture )    INLINE ( ::cPicture  := cPicture, ::oGet:Picture := cPicture, ::Refresh()  )   // MCS
 
-   METHOD Home()                 INLINE ( ::oGet:Home(), ::SetPos( ::oGet:Pos ) )
+   METHOD Home()                    INLINE ( ::oGet:Home(), ::SetPos( ::oGet:Pos ) )
 
-   METHOD EvalMult()             INLINE ( if( ::bMult != nil, eval( ::bMult, Self ), ) )
+   METHOD EvalMult()                INLINE ( if( ::bMult != nil, eval( ::bMult, Self ), ) )
 
-   METHOD Hide()                 INLINE ( if( ::oSay != nil, ::oSay:Hide(), ), if( ::oHelpText != nil, ::oHelpText:Hide(), ), ::Super:Hide() )
+   METHOD Hide()                    INLINE ( if( ::oSay != nil, ::oSay:Hide(), ), if( ::oHelpText != nil, ::oHelpText:Hide(), ), ::Super:Hide() )
 
-   METHOD Show()                 INLINE ( if( ::oSay != nil, ::oSay:Show(), ), if( ::oHelpText != nil, ::oHelpText:Show(), ), ::Super:Show() )
+   METHOD Show()                    INLINE ( if( ::oSay != nil, ::oSay:Show(), ), if( ::oHelpText != nil, ::oHelpText:Show(), ), ::Super:Show() )
 
-   METHOD SetText( cText )       INLINE ( if( ::oSay != nil, ::oSay:SetText( cText ), ::cText( cText ) ) )
+   METHOD SetText( cText )          INLINE ( if( ::oSay != nil, ::oSay:SetText( cText ), ::cText( cText ) ) )
 
-   METHOD evalPreValidate()      INLINE ( if( ::bPreValidate != nil, eval( ::bPreValidate, Self ), ) )
-   METHOD evalPostValidate()     INLINE ( if( ::bPostValidate != nil, eval( ::bPostValidate, Self ), ) )
+   METHOD evalPreValidate()         INLINE ( if( ::bPreValidate != nil, eval( ::bPreValidate, Self ), ) )
+   METHOD evalPostValidate()        INLINE ( if( ::bPostValidate != nil, eval( ::bPostValidate, Self ), ) )
 
    METHOD HardEnable()
    
@@ -73,6 +75,8 @@ CLASS TGetHlp FROM TGet
    METHOD LostFocus( hCtlFocus )
 
    METHOD lValid()
+
+   METHOD setError( cError )
 
 ENDCLASS
 
@@ -500,5 +504,19 @@ METHOD lValid() CLASS TGetHlp
    ::evalPostValidate()
 
 return lRet
+
+//---------------------------------------------------------------------------//
+
+METHOD setError( cError )
+
+   ::cError    := cError
+   
+   if !empty( ::cError )
+      ::setColor( Rgb( 255, 255, 255 ), Rgb( 255, 102, 102 ) )
+   else 
+      ::setColor( Rgb( 0, 0, 0 ), Rgb( 255, 255, 255 ) )
+   end if 
+
+Return ( Self )
 
 //---------------------------------------------------------------------------//

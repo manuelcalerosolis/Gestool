@@ -202,3 +202,5 @@ METHOD buildSQLBrowse()
    oDlg:Activate( , , , .t., {|| ::saveHistory( ::getHistoryNameBrowse(), oBrowse ) } )
 
 RETURN ( oDlg:nResult == IDOK )
+
+//---------------------------------------------------------------------------//

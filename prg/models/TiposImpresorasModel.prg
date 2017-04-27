@@ -17,9 +17,11 @@ CLASS TiposImpresorasModel FROM SQLBaseModel
                                                          "text"      => "Nombre de impresora",;
                                                          "dbfField"  => "cTipImp" } }
 
-   METHOD   New()
+   METHOD New()
 
-   METHOD   arrayTiposImpresoras()
+   METHOD arrayTiposImpresoras()
+
+   METHOD existTiposImpresoras( cValue )
 
 END CLASS
 
@@ -40,21 +42,30 @@ METHOD New()
 
    ::Super:New()
 
-Return ( Self )
+RETURN ( Self )
 
 //---------------------------------------------------------------------------//
 
 METHOD arrayTiposImpresoras()
 
    local aResult                 := {}
-   local arrayTiposImpresoras    := ::selectFetchArray( "SELECT nombre FROM " + ::cTableName ) 
+   local cSentence               := "SELECT nombre FROM " + ::cTableName
+   local aSelect                 := ::selectFetchArray( cSentence ) 
 
-   if !empty( arrayTiposImpresoras )
-      aeval( arrayTiposImpresoras, {|a| aadd( aResult, a[ 1 ] ) } )
+   if !empty( aSelect )
+      aeval( aSelect, {|a| aadd( aResult, a[ 1 ] ) } )
    end if 
 
-Return ( aResult )
+RETURN ( aResult )
 
 //---------------------------------------------------------------------------//
 
+METHOD existTiposImpresoras( cValue )
+
+   local cSentence               := "SELECT nombre FROM " + ::cTableName + " WHERE nombre = " + quoted( cValue )
+   local aSelect                 := ::selectFetchArray( cSentence )
+
+RETURN ( !empty( aSelect ) )
+
+//---------------------------------------------------------------------------//
 

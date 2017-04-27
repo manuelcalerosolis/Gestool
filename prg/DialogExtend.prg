@@ -4,27 +4,31 @@
 
 FUNCTION appDialogExtend() 
 
-local hClass
+   local hClass
 
-  hClass        := TDialog():ClassH
+   hClass        := TDialog():ClassH
 
-  __clsAddMsg( hClass, "aFastKeys", __cls_IncData( hClass ), 9, {}, 1, .f., .f. )
+   __clsAddMsg( hClass, "aErrors", __cls_IncData( hClass ), 9, {}, 1, .f., .f. )
 
-  __clsAddMsg( hClass, "aControlKeys", __cls_IncData( hClass ), 9, {}, 1, .f., .f. )
+   __clsAddMsg( hClass, "aFastKeys", __cls_IncData( hClass ), 9, {}, 1, .f., .f. )
 
-  __clsAddMsg( hClass, "AddFastKey", {|Self, nKey, bAction| Self, aAdd( ::aFastKeys, { nKey, bAction } ) }, 3, nil, 1, .f., .f. )
+   __clsAddMsg( hClass, "aControlKeys", __cls_IncData( hClass ), 9, {}, 1, .f., .f. )
 
-  __clsAddMsg( hClass, "AddControlKeys", {|Self, nKey, bAction| Self, aAdd( ::aControlKeys, { nKey, bAction } ) }, 3, nil, 1, .f., .f. )
+   __clsAddMsg( hClass, "AddFastKey", {|Self, nKey, bAction| Self, aAdd( ::aFastKeys, { nKey, bAction } ) }, 3, nil, 1, .f., .f. )
 
-  __clsAddMsg( hClass, "Enable", @DialogEnable(), 0, nil, 1, .f., .f. )
+   __clsAddMsg( hClass, "AddControlKeys", {|Self, nKey, bAction| Self, aAdd( ::aControlKeys, { nKey, bAction } ) }, 3, nil, 1, .f., .f. )
 
-  __clsAddMsg( hClass, "Disable", @DialogDisable(), 0, nil, 1, .f., .f. )
+   __clsAddMsg( hClass, "Enable", @DialogEnable(), 0, nil, 1, .f., .f. )
 
-  __clsAddMsg( hClass, "setControlFastKey", @setControlFastKey(), 0, nil, 1, .f., .f. )
+   __clsAddMsg( hClass, "Disable", @DialogDisable(), 0, nil, 1, .f., .f. )
 
-  __clsAddMsg( hClass, "aEvalValid", @DialogEvalValid(), 0, nil, 1, .f., .f. )
+   __clsAddMsg( hClass, "hasErrors", @DialogHasError(), 0, nil, 1, .f., .f. )
 
-  __clsModMsg( hClass, "KeyDown", @DialogKeyDown(), 1 )
+   __clsAddMsg( hClass, "setControlFastKey", @setControlFastKey(), 0, nil, 1, .f., .f. )
+
+   __clsAddMsg( hClass, "aEvalValid", @DialogEvalValid(), 0, nil, 1, .f., .f. )
+
+   __clsModMsg( hClass, "KeyDown", @DialogKeyDown(), 1 )
 
   //----------------------------------------------------------------------------//
 
@@ -62,19 +66,43 @@ local hClass
 
   __clsAddMsg( hClass, "setText", {|Self, cCaption| Self, ::cCaption := cCaption, SetWindowText( ::hWnd, cCaption ) }, 3, nil, 1, .f., .f. )
 
-Return nil
+RETURN nil
+
+//----------------------------------------------------------------------------//
+
+STATIC FUNCTION DialogHasError() 
+
+   local Self        
+   local oControl
+
+   msgalert( "DialogError" )
+
+   Self              := HB_QSelf()
+   Self:Cargo        := {}
+
+   msgalert( "After init DialogError" )
+
+   for each oControl in Self:aControls
+      if ( oControl:ClassName() == "TGETHLP" ) .and. !empty( oControl:cError )
+         aadd( Self:Cargo, oControl:cError )
+      end if 
+   next
+
+RETURN ( !empty( Self:Cargo ) )
 
 //----------------------------------------------------------------------------//
 
 STATIC FUNCTION DialogDisable() 
 
+   local Self         
    local oControl
-   local Self         := HB_QSelf()
+
+   Self              := HB_QSelf()
 
    CursorWait()
 
-   Self:Cargo         := Self:bValid
-   Self:bValid        := {|| .f. }
+   Self:Cargo        := Self:bValid
+   Self:bValid       := {|| .f. }
 
    for each oControl in Self:aControls
       if oControl:ClassName() <> "TSAY" .AND. oControl:ClassName() <> "TBITMAP"
@@ -82,7 +110,7 @@ STATIC FUNCTION DialogDisable()
       end if 
    next
 
-Return ( .t. )
+RETURN ( .t. )
 
 //----------------------------------------------------------------------------//
 
@@ -101,28 +129,28 @@ STATIC FUNCTION DialogEnable()
 
    CursorArrow()
 
-Return ( .t. )
+RETURN ( .t. )
 
 //----------------------------------------------------------------------------//
 
-STATIC Function setControlFastKey( cDirectory, uParam1, uParam2, uParam3, uParam4, uParam5, uParam6, uParam7, uParam8, uParam9, uParam10 )
+STATIC FUNCTION setControlFastKey( cDirectory, uParam1, uParam2, uParam3, uParam4, uParam5, uParam6, uParam7, uParam8, uParam9, uParam10 )
 
    local Self        := HB_QSelf()
 
-  if Empty( cDirectory ) 
-    Return ( nil )
-  end if
+   if Empty( cDirectory ) 
+      RETURN ( nil )
+   end if
   
-  Self:AddControlKeys(  VK_F2,    {|| runEventScript( cDirectory + "\F2", uParam1, uParam2, uParam3, uParam4, uParam5, uParam6, uParam7, uParam8, uParam9, uParam10 ) } )
-  Self:AddControlKeys(  VK_F3,    {|| runEventScript( cDirectory + "\F3", uParam1, uParam2, uParam3, uParam4, uParam5, uParam6, uParam7, uParam8, uParam9, uParam10 ) } )
-  Self:AddControlKeys(  VK_F4,    {|| runEventScript( cDirectory + "\F4", uParam1, uParam2, uParam3, uParam4, uParam5, uParam6, uParam7, uParam8, uParam9, uParam10 ) } )
-  Self:AddControlKeys(  VK_F5,    {|| runEventScript( cDirectory + "\F5", uParam1, uParam2, uParam3, uParam4, uParam5, uParam6, uParam7, uParam8, uParam9, uParam10 ) } )
-  Self:AddControlKeys(  VK_F6,    {|| runEventScript( cDirectory + "\F6", uParam1, uParam2, uParam3, uParam4, uParam5, uParam6, uParam7, uParam8, uParam9, uParam10 ) } )
-  Self:AddControlKeys(  VK_F7,    {|| runEventScript( cDirectory + "\F7", uParam1, uParam2, uParam3, uParam4, uParam5, uParam6, uParam7, uParam8, uParam9, uParam10 ) } )
-  Self:AddControlKeys(  VK_F8,    {|| runEventScript( cDirectory + "\F8", uParam1, uParam2, uParam3, uParam4, uParam5, uParam6, uParam7, uParam8, uParam9, uParam10 ) } )
-  Self:AddControlKeys(  VK_F9,    {|| runEventScript( cDirectory + "\F9", uParam1, uParam2, uParam3, uParam4, uParam5, uParam6, uParam7, uParam8, uParam9, uParam10 ) } )
+   Self:AddControlKeys(  VK_F2,    {|| runEventScript( cDirectory + "\F2", uParam1, uParam2, uParam3, uParam4, uParam5, uParam6, uParam7, uParam8, uParam9, uParam10 ) } )
+   Self:AddControlKeys(  VK_F3,    {|| runEventScript( cDirectory + "\F3", uParam1, uParam2, uParam3, uParam4, uParam5, uParam6, uParam7, uParam8, uParam9, uParam10 ) } )
+   Self:AddControlKeys(  VK_F4,    {|| runEventScript( cDirectory + "\F4", uParam1, uParam2, uParam3, uParam4, uParam5, uParam6, uParam7, uParam8, uParam9, uParam10 ) } )
+   Self:AddControlKeys(  VK_F5,    {|| runEventScript( cDirectory + "\F5", uParam1, uParam2, uParam3, uParam4, uParam5, uParam6, uParam7, uParam8, uParam9, uParam10 ) } )
+   Self:AddControlKeys(  VK_F6,    {|| runEventScript( cDirectory + "\F6", uParam1, uParam2, uParam3, uParam4, uParam5, uParam6, uParam7, uParam8, uParam9, uParam10 ) } )
+   Self:AddControlKeys(  VK_F7,    {|| runEventScript( cDirectory + "\F7", uParam1, uParam2, uParam3, uParam4, uParam5, uParam6, uParam7, uParam8, uParam9, uParam10 ) } )
+   Self:AddControlKeys(  VK_F8,    {|| runEventScript( cDirectory + "\F8", uParam1, uParam2, uParam3, uParam4, uParam5, uParam6, uParam7, uParam8, uParam9, uParam10 ) } )
+   Self:AddControlKeys(  VK_F9,    {|| runEventScript( cDirectory + "\F9", uParam1, uParam2, uParam3, uParam4, uParam5, uParam6, uParam7, uParam8, uParam9, uParam10 ) } )
   
-return ( nil )
+RETURN ( nil )
 
 //----------------------------------------------------------------------------//
 
@@ -134,7 +162,7 @@ STATIC FUNCTION DialogEvalValid()
    local aControls   := Self:aControls
 
    if empty( aControls )
-      Return ( lValid )
+      RETURN ( lValid )
    end if 
 
    for each oControl in aControls
@@ -146,7 +174,7 @@ STATIC FUNCTION DialogEvalValid()
       end if 
    next
 
-return ( lValid )
+RETURN ( lValid )
 
 //----------------------------------------------------------------------------//
 
@@ -175,7 +203,7 @@ STATIC FUNCTION DialogKeyDown( nKey, nFlags )
                   ::End()
                endif
             else
-               return ::Super:KeyDown( nKey, nFlags )
+               RETURN ::Super:KeyDown( nKey, nFlags )
             endif
          endif
       endif
@@ -196,15 +224,15 @@ STATIC FUNCTION DialogKeyDown( nKey, nFlags )
 
         end if
 
-      return ::Super:KeyDown( nKey, nFlags )
+      RETURN ::Super:KeyDown( nKey, nFlags )
 
    endif
 
-Return ( nil )
+RETURN ( nil )
 
 //----------------------------------------------------------------------------//
 
-Static Function BtnBmpReAdjust() 
+STATIC FUNCTION BtnBmpReAdjust() 
 
    local Self     := HB_QSelf()
    local nRow     := if( !empty( Self:bRow ),     eval( Self:bRow ),    Self:nTop   )
@@ -214,11 +242,11 @@ Static Function BtnBmpReAdjust()
 
    Self:Move( nRow, nLeft, nWidth, nHeight )  
 
-Return ( Self )
+RETURN ( Self )
 
 //----------------------------------------------------------------------------//
 
-Static Function CheckBoxClick( lValue )
+STATIC FUNCTION CheckBoxClick( lValue )
 
    local Self       := HB_QSelf()
 
@@ -235,11 +263,11 @@ Static Function CheckBoxClick( lValue )
 
    ::Super:Click()           // keep it here, the latest !!!
 
-Return ( Self )
+RETURN ( Self )
 
 //----------------------------------------------------------------------------//
 
-Static Function TXBrowseToExcel( bProgress, nGroupBy, aCols )
+STATIC FUNCTION TXBrowseToExcel( bProgress, nGroupBy, aCols )
 
    local oExcel, oBook, oSheet, oWin
    local nCol, nXCol, oCol, cType, uValue, nAt, cxlAggr
@@ -257,18 +285,18 @@ Static Function TXBrowseToExcel( bProgress, nGroupBy, aCols )
 
    nDataRows   := EVAL( ::bKeyCount )
    if nDataRows == 0
-      return Self
+      RETURN Self
    endif
 
    DEFAULT aCols         := ::GetVisibleCols()
 
    if Empty( aCols )
-      return Self
+      RETURN Self
    endif
 
    if ( oExcel := ExcelObj() ) == nil
       msgStop( "Excel not installed" )
-      return Self
+      RETURN Self
    endif
 
    oBlock         := ErrorBlock( {| oError | ApoloBreak( oError ) } )
@@ -441,7 +469,7 @@ Static Function TXBrowseToExcel( bProgress, nGroupBy, aCols )
 
    ErrorBlock( oBlock )
 
-return oSheet
+RETURN oSheet
 
 //----------------------------------------------------------------------------//
 
