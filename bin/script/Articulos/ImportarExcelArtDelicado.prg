@@ -18,8 +18,10 @@ Return nil
 //---------------------------------------------------------------------------//  
 
 CLASS TImportarExcelArguelles FROM TImportarExcel
-
+   
    DATA idArticulo
+   DATA aImagenes
+   DATA cDirDescarga
 
    METHOD New()
 
@@ -49,6 +51,10 @@ CLASS TImportarExcelArguelles FROM TImportarExcel
 
    METHOD cFamilia()
 
+   METHOD addImages()
+
+   METHOD descargaImagenes()
+
 END CLASS
 
 //----------------------------------------------------------------------------//
@@ -57,11 +63,14 @@ METHOD New( nView )
 
    ::nView                    := nView
 
+   ::aImagenes                := {}
+
    /*
    Cambiar el nombre del fichero-----------------------------------------------
    */
 
    ::cFicheroExcel            := "C:\ficheros\articulos.xls"
+   ::cDirDescarga             := "C:\ficheros\fotos\"
 
    /*
    Cambiar la fila de cominezo de la importacion-------------------------------
@@ -73,7 +82,7 @@ METHOD New( nView )
    Columna de campo clave------------------------------------------------------
    */
 
-   ::cColumnaCampoClave       := 'A'
+   ::cColumnaCampoClave       := 'AF'
 
 Return ( Self )
 
@@ -110,6 +119,10 @@ METHOD procesaFicheroExcel()
 
    end if
 
+   if Len( ::aImagenes ) != 0
+      ::descargaImagenes()
+   end if
+
    ::closeExcel()
 
 Return nil
@@ -118,26 +131,28 @@ Return nil
 
 METHOD importarCampos()
 
+   local aNameImagen                            := {}
+
    ( D():Articulos( ::nView ) )->( dbappend() )
 
    ::idArticulo                                 := ::getCampoClave()
 
    ( D():Articulos( ::nView ) )->Codigo         := ::idArticulo
 
-   if !empty( ::getExcelString( "K" ) )
-      ( D():Articulos( ::nView ) )->Nombre      := ::getNombre( ::getExcelString( "K" ) )
-      ( D():Articulos( ::nView ) )->Descrip     := ::getDescripcionlarga( ::getExcelString( "L" ) )
+   if !empty( ::getExcelString( "F" ) )
+      ( D():Articulos( ::nView ) )->Nombre      := ::getNombre( ::getExcelString( "F" ) )
+      ( D():Articulos( ::nView ) )->Descrip     := ::getDescripcionlarga( ::getExcelString( "G" ) )
    end if 
 
    if !empty( ::getExcelNumeric( "U" ) )
-      ( D():Articulos( ::nView ) )->pVenta1     := ::getExcelNumeric( "U" )
-      ( D():Articulos( ::nView ) )->pVtaIva1    := ::getExcelNumeric( "U" ) * ( 1 + ::getExcelNumeric( "Z" ) )
-      ( D():Articulos( ::nView ) )->pVtaWeb     := ::getExcelNumeric( "U" )
-      ( D():Articulos( ::nView ) )->nImpInt1    := ::getExcelNumeric( "U" )
+      ( D():Articulos( ::nView ) )->pVenta1     := ( ::getExcelNumeric( "U" ) / ( 1 + ::getExcelNumeric( "Z" ) ) )
+      ( D():Articulos( ::nView ) )->pVtaIva1    := ::getExcelNumeric( "U" )
+      ( D():Articulos( ::nView ) )->pVtaWeb     := ( ::getExcelNumeric( "U" ) / ( 1 + ::getExcelNumeric( "Z" ) ) )
+      ( D():Articulos( ::nView ) )->nImpInt1    := ( ::getExcelNumeric( "U" ) / ( 1 + ::getExcelNumeric( "Z" ) ) )
    end if
 
-   if !empty( ::getExcelString( "N" ) )
-      ( D():Articulos( ::nView ) )->mDesTec     := ::getExcelString( "N" )
+   if !empty( ::getExcelString( "I" ) )
+      ( D():Articulos( ::nView ) )->mDesTec     := ::getExcelString( "I" )
    end if 
 
    ( D():Articulos( ::nView ) )->TipoIva        := cCodigoIva( D():TiposIva( ::nView ), ( ::getExcelNumeric( "Z" ) * 100 ) )
@@ -147,6 +162,10 @@ METHOD importarCampos()
    ( D():Articulos( ::nView ) )->nTarWeb        := 1
    ( D():Articulos( ::nView ) )->lPubInt        := .t.
    ( D():Articulos( ::nView ) )->lSbrInt        := .t.
+   ( D():Articulos( ::nView ) )->cWebShop       := "Delicado"
+
+   ( D():Articulos( ::nView ) )->cRefAux        := ::getExcelString( "A" )
+
 
    ::cProveedor( ::getExcelString( "E" ) )
 
@@ -156,14 +175,14 @@ METHOD importarCampos()
    Descripción alemán----------------------------------------------------------
    */
 
-   if !Empty( ::getExcelString( "H" ) )
+   if !Empty( ::getExcelString( "M" ) )
 
       ( D():ArticuloLenguaje( ::nView ) )->( dbAppend() )
 
       ( D():ArticuloLenguaje( ::nView ) )->cCodArt    := ::idArticulo
-      ( D():ArticuloLenguaje( ::nView ) )->cCodLen    := "DEU "
-      ( D():ArticuloLenguaje( ::nView ) )->cDesTik    := ::getExcelString( "H" )
-      ( D():ArticuloLenguaje( ::nView ) )->cDesArt    := ::getExcelString( "I" )
+      ( D():ArticuloLenguaje( ::nView ) )->cCodLen    := "ENG "
+      ( D():ArticuloLenguaje( ::nView ) )->cDesTik    := ::getExcelString( "M" )
+      ( D():ArticuloLenguaje( ::nView ) )->cDesArt    := ::getExcelString( "N" )
 
       ( D():ArticuloLenguaje( ::nView ) )->( dbcommit() )
 
@@ -175,7 +194,7 @@ METHOD importarCampos()
    Descripción español---------------------------------------------------------
    */
 
-   if !Empty( ::getExcelString( "R" ) )
+   /*if !Empty( ::getExcelString( "R" ) )
 
       ( D():ArticuloLenguaje( ::nView ) )->( dbAppend() )
 
@@ -188,7 +207,15 @@ METHOD importarCampos()
 
       ( D():ArticuloLenguaje( ::nView ) )->( dbunlock() )
 
-   end if
+   end if*/
+
+   /*
+   Introducimos las imágenes---------------------------------------------------
+   */
+
+   aNameImagen       := hb_aTokens( StrTran( ::getExcelString( "BM" ), "!ID:", "" ), "," )
+
+   aEval( aNameImagen, { |c| ::addImages( c ) } )
 
    /*
    Desbloqueamos la tabla de artículos-----------------------------------------
@@ -201,6 +228,21 @@ METHOD importarCampos()
 Return nil
 
 //---------------------------------------------------------------------------// 
+
+METHOD addImages( cImagen )
+
+   ( D():ArticuloImagenes( ::nView ) )->( dbAppend() )
+
+   ( D():ArticuloImagenes( ::nView ) )->cCodArt    := ::idArticulo
+   ( D():ArticuloImagenes( ::nView ) )->cImgArt    := AllTrim( cImagen ) + ".jpg"
+
+   ( D():ArticuloImagenes( ::nView ) )->( dbUnlock() )
+
+   aAdd( ::aImagenes, AllTrim( cImagen ) )
+
+Return .t.
+
+//---------------------------------------------------------------------------//
 
 METHOD filaValida()
 
@@ -272,7 +314,30 @@ METHOD cFamilia()
    
    if Empty( ::getExcelString( "BB" ) ) .and. !Empty( ::getExcelString( "BA" ) )
 
-      ( D():Articulos( ::nView ) )->Familia        := ::getExcelString( "BA" )
+      /*
+      Creamos el proveedor si no existe-------------------------------------------
+      */
+
+      if !( D():Familias( ::nView ) )->( dbSeek( AllTrim( upper( ::getExcelString( "BA" ) ) ) ) )
+
+         cNewCodigo     := NextKey( dbLast(  D():Familias( ::nView ), 1 ), D():Familias( ::nView ) )
+
+         ( D():Familias( ::nView ) )->( dbAppend() )
+
+         ( D():Familias( ::nView ) )->cCodFam      := cNewCodigo
+         ( D():Familias( ::nView ) )->cNomFam      := AllTrim( upper( ::getExcelString( "BA" ) ) )
+         ( D():Familias( ::nView ) )->lPubInt      := .t.
+
+         ( D():Familias( ::nView ) )->( dbcommit() )
+         ( D():Familias( ::nView ) )->( dbunlock() )
+
+      else
+
+         cNewCodigo     := ( D():Familias( ::nView ) )->cCodFam
+
+      end if
+
+      ( D():Articulos( ::nView ) )->Familia        := cNewCodigo
 
    else
 
@@ -288,7 +353,8 @@ METHOD cFamilia()
 
          ( D():Familias( ::nView ) )->cCodFam      := cNewCodigo
          ( D():Familias( ::nView ) )->cNomFam      := AllTrim( upper( ::getExcelString( "BB" ) ) )
-         ( D():Familias( ::nView ) )->cFamCmb      := ::getExcelString( "BA" )
+         ( D():Familias( ::nView ) )->cFamCmb      := RetFld( AllTrim( upper( ::getExcelString( "BA" ) ) ), D():Familias( ::nView ), "cCodFam", "cNomFam" )
+         ( D():Familias( ::nView ) )->lPubInt      := .t.
 
          ( D():Familias( ::nView ) )->( dbcommit() )
          ( D():Familias( ::nView ) )->( dbunlock() )
@@ -299,9 +365,6 @@ METHOD cFamilia()
 
       end if
 
-      ( D():Familias( ::nView ) )->( OrdSetFocus( nOrdAnt ) )
-      ( D():Familias( ::nView ) )->( dbgoto( nRec ) )
-
       /*
       Lo metemos en la tabla de artículos-----------------------------------------
       */
@@ -309,6 +372,9 @@ METHOD cFamilia()
       ( D():Articulos( ::nView ) )->Familia        := cNewCodigo
 
    end if
+
+   ( D():Familias( ::nView ) )->( OrdSetFocus( nOrdAnt ) )
+   ( D():Familias( ::nView ) )->( dbgoto( nRec ) )
 
 Return ( nil )
 
@@ -339,6 +405,23 @@ METHOD getDescripcionlarga( cGet )
    end if
 
 Return ( cDescripcion )
+
+//---------------------------------------------------------------------------//
+
+METHOD descargaImagenes()
+
+   local cImagen
+
+   if !MsgYesNo( "Desea descargar las imágenes" )
+      Return .t.
+   end if
+
+   for each cImagen in ::aImagenes
+      MsgWait( "http://static.webshopapp.com/shops/111832/files/" + cImagen + "/image.jpg", "Descargando", 0.01 )
+      DownLoadFileToUrl( "http://static.webshopapp.com/shops/111832/files/" + cImagen + "/image.jpg", ::cDirDescarga + cImagen + ".jpg" )
+   next
+
+Return .t.
 
 //---------------------------------------------------------------------------//
 
