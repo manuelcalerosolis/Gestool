@@ -267,14 +267,14 @@ METHOD selectColumnOrder( oCol, cOrder )
 
    aeval( ::aCols, {|o| if( o:cSortOrder != oCol:cSortOrder, o:cOrder := "", ) } )    
 
-   if !empty( cOrder )
-      oCol:cOrder       := cOrder
-   else
+   if empty( cOrder )
       if oCol:cOrder == 'D' .or. empty( oCol:cOrder )
          oCol:cOrder    := 'A'
       else
          oCol:cOrder    := 'D'
       end if 
+   else
+      oCol:cOrder       := cOrder
    end if
 
 Return ( Self )

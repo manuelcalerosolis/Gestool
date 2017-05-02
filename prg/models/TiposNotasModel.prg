@@ -6,16 +6,11 @@
 
 CLASS TiposNotasModel FROM SQLBaseModel
 
-	DATA cTableName               INIT 	"tipos_notas"
+	DATA cTableName
 
-   DATA cDbfTableName            INIT 	"TipoNotas"
+   DATA cDbfTableName
 
-   DATA hColumns                 INIT 	{ 	"id"     => {  "create"    => "INTEGER PRIMARY KEY AUTOINCREMENT",;
-                                                         "text"      => "Identificador" ,;
-                                                         "dbfField"  => "" },;
-                                          "tipo" 	=> {  "create"    => "VARCHAR( 30 ) NOT NULL",;
-                                                         "text"      => "Tipo de la nota",;
-                                                         "dbfField"  => "cTipo" } }
+   DATA hColumns
 
    METHOD   New()
 

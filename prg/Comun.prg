@@ -281,7 +281,7 @@ Return ( .t. )
 
 Function Test()
 
-   TiposNotas():New():activateShell()
+   Situaciones():New():ActivateShell()
 
 Return ( nil )
 

@@ -6,7 +6,7 @@
 
 CLASS HistoricosUsuariosModel FROM SQLBaseModel
 
-   DATA     cTableName           INIT "historicos_usuarios"
+   DATA     cTableName
 
    METHOD   New()
 
@@ -19,6 +19,8 @@ END CLASS
 //---------------------------------------------------------------------------//
 
 METHOD New()
+
+   ::cTableName                  := "historicos_usuarios"
 
    ::hColumns                    := {  "id"         	=>  { "create" => "INTEGER PRIMARY KEY AUTOINCREMENT"  }, ;
                                        "usuario_id"   =>  { "create" => "CHARACTER ( 3 ) NOT NULL"           }, ;
@@ -40,7 +42,7 @@ METHOD getHistory( cTable )
    local aFetch
    local cSentence   := "SELECT cBrowseState, cColumnOrder, cOrientation, nIdForRecno "                                 + ;
                            "FROM " + ::cTableName + " "                                                                 + ;
-                           "WHERE cTableName = " + quoted( cTable ) + " AND usuario_id = " + quoted( oUser():cCodigo() )
+                           "WHERE cTableName = " + toSQLString( cTable ) + " AND usuario_id = " + toSQLString( oUser():cCodigo() )
 
    try 
     	oStmt          := getSQLDatabase():Query( cSentence )
@@ -73,9 +75,9 @@ METHOD saveHistory( cTable, cBrowseState, cColumnOrder, cOrientation, nIdForRecn
    end if 
 
    cInternalSelect   := "( SELECT id FROM " + ::cTableName                 + ;
-                           " WHERE cTableName = " + quoted( cTable )       + ;
+                           " WHERE cTableName = " + toSQLString( cTable )  + ;
                            " AND "                                         + ;
-                           " usuario_id = " + quoted( oUser():cCodigo() )
+                           " usuario_id = " + toSQLString( oUser():cCodigo() )
 
    cUpdateHistory    := "REPLACE INTO " + ::cTableName                     + ;
                         "  (  id, "                                        + ;
@@ -86,11 +88,11 @@ METHOD saveHistory( cTable, cBrowseState, cColumnOrder, cOrientation, nIdForRecn
                               "cOrientation, "                             + ;
                               "nIdForRecno ) "                             + ;
                         "  VALUES (" + cInternalSelect +  " ), "           + ;
-                              quoted( oUser():cCodigo() ) + ", "           + ;
-                              quoted( cTable ) + ","                       + ;
+                              toSQLString( oUser():cCodigo() ) + ", "      + ;
+                              toSQLString( cTable ) + ","                  + ;
                               cBrowseState + ", "                          + ;
-                              quoted( cColumnOrder ) + ", "                + ;
-                              quoted ( cOrientation ) + ", "               + ;
+                              toSQLString( cColumnOrder ) + ", "           + ;
+                              toSQLString( cOrientation ) + ", "           + ;
                               alltrim( cvaltostr( nIdForRecno ) )          + ")"
 
   getSQLDatabase():Query( cUpdateHistory )

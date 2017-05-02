@@ -1,4 +1,4 @@
- #include "FiveWin.Ch"
+#include "FiveWin.Ch"
 
 #include "Hbxml.ch"
 #include "Hbclass.ch"
@@ -163,6 +163,7 @@ METHOD importarCampos()
 
    ( D():Clientes( ::nView ) )->CodPago         := "TR"
    ( D():Clientes( ::nView ) )->cCodAlm         := "000"
+   ( D():Clientes( ::nView ) )->lChgPre         := .t.
 
    ( D():Clientes( ::nView ) )->( dbcommit() )
 

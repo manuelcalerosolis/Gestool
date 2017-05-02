@@ -10,15 +10,13 @@ CLASS SQLBaseView
 
    DATA     nLevel
 
-   DATA     idUserMap
-
-   DATA     cHistoryName      
+   DATA     idUserMap      
 
    DATA     oModel
 
    DATA     nMode                                     AS NUMERIC
 
-   DATA     cBrowseState   
+   DATA     cBrowseState 
  
    METHOD   New()
    
@@ -40,10 +38,10 @@ CLASS SQLBaseView
 
    METHOD   destroySQLModel()                         INLINE   ( if( !empty(::oModel), ::oModel:end(), ) )
 
-   METHOD   activateShell()
+   METHOD   ActivateShell()
   
    METHOD   ActivateBrowse()
-      METHOD   startBrowse( oFind, oCombobox, oBrowse )
+      METHOD   startBrowse( oCombobox, oBrowse )
 
    METHOD   AutoButtons()                             INLINE ( ::GeneralButtons(), ::EndButton() )
       METHOD   GeneralButtons()
@@ -55,12 +53,15 @@ CLASS SQLBaseView
  
    METHOD   Append( oBrowse )
       METHOD setAppendMode()                          INLINE ( ::nMode := __append_mode__ )
+      METHOD isAppendMode()                           INLINE ( ::nMode == __append_mode__ )
 
    METHOD Duplicate( oBrowse )
       METHOD setDuplicateMode()                       INLINE ( ::nMode := __duplicate_mode__ )
+      METHOD isDuplicateMode()                             INLINE ( ::nMode == __duplicate_mode__ )
 
    METHOD   Edit( oBrowse )
      METHOD setEditMode()                             INLINE ( ::nMode := __edit_mode__ )
+      METHOD isEditMode()                             INLINE ( ::nMode == __edit_mode__ )
 
    METHOD   Zoom( oBrowse )
       METHOD setZoomMode()                            INLINE ( ::nMode := __zoom_mode__ )
@@ -81,8 +82,8 @@ CLASS SQLBaseView
    METHOD   getHistory( cHistory )
    METHOD   saveHistory( cHistory, oBrowse )
 
-   METHOD   getHistoryNameShell()                     INLINE ( ::cHistoryName + "_shell" )
-   METHOD   getHistoryNameBrowse()                    INLINE ( ::cHistoryName + "_browse" )
+   METHOD   getHistoryNameShell()                     INLINE ( ::oModel:cTableName + "_shell" )
+   METHOD   getHistoryNameBrowse()                    INLINE ( ::oModel:cTableName + "_browse" )
 
 END CLASS
 
@@ -101,7 +102,7 @@ METHOD ActivateShell()
    if ::notUserAccess()
       msgStop( "Acceso no permitido." )
       RETURN ( Self )
-   end if 
+   end if
 
    if oWnd() != nil
       SysRefresh(); oWnd():CloseAll(); SysRefresh()
@@ -115,7 +116,7 @@ METHOD ActivateShell()
 
    ::buildSQLShell()
 
-   ::restoreBrowseState( ::oShell:getBrowse() )
+   ::startBrowse( ::oShell:getCombobox(), ::oShell:getBrowse() )
 
 RETURN ( Self )
 
@@ -206,7 +207,7 @@ RETURN ( Self )
 
 //---------------------------------------------------------------------------//
 
-METHOD startBrowse( oFind, oCombobox, oBrowse )
+METHOD startBrowse( oCombobox, oBrowse )
 
    local oColumn
 
@@ -318,14 +319,13 @@ METHOD Edit( oBrowse )
 
    ::setEditMode()
 
-   nRecno         := ::oModel:getRowSetRecno()
+   ::oModel:setIdForRecno( ::oModel:getKeyFieldOfRecno() )
 
    ::oModel:loadCurrentBuffer()
 
    if ::Dialog()
       
       ::oModel:updateCurrentBuffer()
-      ::oModel:setRowSetRecno( nRecno )
 
    end if 
 
@@ -366,7 +366,7 @@ METHOD Delete( oBrowse )
       RETURN ( Self )
    end if 
 
-   if oUser():lNotConfirmDelete() .or. msgNoYes( "¿ Desea eliminar el registro en curso ?", "Confirme eliminación" )
+   if oUser():lNotConfirmDelete() .or. msgNoYes( "¿Desea eliminar el registro en curso?", "Confirme eliminación" )
       ::oModel:deleteSelection()
    end if 
 
@@ -432,7 +432,7 @@ Return ( lFind )
 
 METHOD SetCombo( oBrowse, oCombobox )
 
-   local oColumn 
+   local oColumn
 
    oColumn  := oBrowse:getColumnOrder( ::oModel:cColumnOrder )
 
@@ -468,7 +468,7 @@ RETURN ( Self )
 
 METHOD getHistory( cHistory )
 
-   local hFetch            := HistoricosUsuariosModel():getHistory( cHistory )
+   local hFetch            := HistoricosUsuariosModel():New():getHistory( cHistory )
 
    if empty( hFetch )
       RETURN ( Self )
@@ -502,7 +502,7 @@ METHOD saveHistory( cHistory, oBrowse )
       cBrowseState      := quoted( oBrowse:saveState() )
    end if
 
-   HistoricosUsuariosModel():saveHistory( cHistory, cBrowseState, ::oModel:cColumnOrder, ::oModel:cOrientation, ::oModel:getKeyFieldOfRecno() ) 
+   HistoricosUsuariosModel():New():saveHistory( cHistory, cBrowseState, ::oModel:cColumnOrder, ::oModel:cOrientation, ::oModel:getKeyFieldOfRecno() ) 
 
 Return ( .t. )
 

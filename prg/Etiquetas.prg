@@ -4,13 +4,15 @@
 
 //---------------------------------------------------------------------------//
 
-CLASS TiposNotas FROM SQLBaseView
+CLASS Etiquetas FROM SQLBaseView
 
    METHOD   New()
 
    METHOD   buildSQLShell()
+  
+   //METHOD   buildSQLBrowse( oGet )
 
-   METHOD   buildSQLModel()               INLINE ( TiposNotasModel():New() )
+   METHOD   buildSQLModel()               INLINE ( EtiquetasModel():New() )
 
    METHOD   getFieldFromBrowse()          INLINE ( ::oModel:getRowSet():fieldGet( "nombre" ) )
  
@@ -22,7 +24,7 @@ END CLASS
 
 METHOD New()
 
-   ::idUserMap            := "01097"
+   ::idUserMap            	:= "01101"	
 
    ::Super:New()
 
@@ -34,25 +36,25 @@ METHOD buildSQLShell()
 
    disableAcceso()
 
-   ::oShell                := SQLTShell():New( 2, 10, 18, 70, "Tipos de notas", , oWnd(), , , .f., , , ::oModel, , , , , {}, {|| ::Edit() },, {|| ::Delete() },, nil, ::nLevel, "gc_folder2_16", ( 104 + ( 0 * 256 ) + ( 63 * 65536 ) ),,, .t. )
+   ::oShell                := SQLTShell():New( 2, 10, 18, 70, "Etiquetas", , oWnd(), , , .f., , , ::oModel, , , , , {}, {|| ::Edit() },, {|| ::Delete() },, nil, ::nLevel, "gc_printer2_16", ( 104 + ( 0 * 256 ) + ( 63 * 65536 ) ),,, .t. )
 
-   	with object ( ::oShell:AddCol() )
-        :cHeader          := "Id"
-        :cSortOrder       := "id"
-        :bEditValue       := {|| ::oModel:getRowSet():fieldGet( "id" ) }
-        :nWidth           := 40
-        :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | ::clickOnHeader( oCol, ::oShell:getBrowse(), ::oShell:getCombobox() ) }
-    	end with
+      with object ( ::oShell:AddCol() )
+         :cHeader          := "ID de etiqueta"
+         :cSortOrder       := "id"
+         :bEditValue       := {|| ::oModel:getRowSet():fieldGet( "id" ) }
+         :nWidth           := 100
+         :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | ::clickOnHeader( oCol, ::oShell:getBrowse(), ::oShell:getCombobox() ) }
+      end with
 
-   	with object ( ::oShell:AddCol() )
-        :cHeader          := "Tipo"
-        :cSortOrder       := "tipo"
-        :bEditValue       := {|| ::oModel:getRowSet():fieldGet( "tipo" ) }
-        :nWidth           := 800
-        :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | ::clickOnHeader( oCol, ::oShell:getBrowse(), ::oShell:getCombobox() ) }
-    	end with
+      with object ( ::oShell:AddCol() )
+         :cHeader          := "Nombre de la etiqueta"
+         :cSortOrder       := "nombre"
+         :bEditValue       := {|| ::oModel:getRowSet():fieldGet( "nombre" ) }
+         :nWidth           := 500
+         :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | ::clickOnHeader( oCol, ::oShell:getBrowse(), ::oShell:getCombobox() ) }
+      end with
 
-		::oShell:createXFromCode()
+      ::oShell:createXFromCode()
 
       ::oShell:setDClickData( {|| ::Edit( ::oShell:getBrowse() ) } )
 
@@ -76,10 +78,10 @@ METHOD Dialog( lZoom )
    local oDlg
    local oGetNombre
 
-   DEFINE DIALOG oDlg RESOURCE "TiposNotas" TITLE lblTitle( ::getMode() ) + "tipos de notas"
+   DEFINE DIALOG oDlg RESOURCE "ETIQUETA" TITLE lblTitle( ::getMode() ) + "etiquetas"
 
    REDEFINE GET   oGetNombre ;
-      VAR         ::oModel:hBuffer[ "tipo" ] ;
+      VAR         ::oModel:hBuffer[ "nombre" ] ;
       MEMO ;
       ID          100 ;
       WHEN        ( ! ::isZoomMode() ) ;
@@ -104,3 +106,5 @@ METHOD Dialog( lZoom )
    ACTIVATE DIALOG oDlg CENTER
 
 RETURN ( oDlg:nResult == IDOK )
+
+//---------------------------------------------------------------------------//
