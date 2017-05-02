@@ -117,30 +117,6 @@ Return nil
 
 //---------------------------------------------------------------------------//
 
-Function oWnd() ; Return ( nil )
-
-//---------------------------------------------------------------------------//
-
-Function cNbrUsr( cNbr )
-
-   if cNbr != nil
-      cNbrUsr  := cNbr
-   end if
-
-Return cNbrUsr
-
-//---------------------------------------------------------------------------//
-
-Function cCajUsr( cCaj )
-
-   if cCaj != nil
-      cCajUsr  := cCaj
-   end if
-
-Return cCajUsr
-
-//---------------------------------------------------------------------------//
-
 init procedure RddInit()
 
    REQUEST DBFCDX
@@ -1334,35 +1310,8 @@ Function oWndBar() ; Return oWndBar
 
 //---------------------------------------------------------------------------//
 
-Function oMsgSesion() ; Return nil
-
-//---------------------------------------------------------------------------//
-
-Function lDemoMode( lDemo )
-
-Return ( .f. )
-
-//---------------------------------------------------------------------------//
 
 Function lHideBmp()
-
-Return nil
-
-//---------------------------------------------------------------------------//
-
-Function Titulo()
-
-Return nil
-
-//---------------------------------------------------------------------------//
-
-Function oMsgProgress()
-
-Return nil
-
-//---------------------------------------------------------------------------//
-
-Function EndProgress()
 
 Return nil
 
@@ -2431,6 +2380,78 @@ Function validRunReport()
 Return .t.
 
 Function tCentroCoste()
+Return nil
+
+Function ClientesModel()
+Return nil
+
+Function TSituaciones()
+Return nil
+
+Function TiposImpresoras()
+Return nil
+
+Function TiposImpresorasModel()
+Return nil
+
+Function TiposNotasModel()
+Return nil
+
+Function ArticulosModel()
+Return nil
+
+Function AlbaranesClientesModel()
+Return nil
+
+Function FacturasClientesModel()
+Return nil
+
+Function PedidosProveedoresModel()
+Return nil
+
+Function lFacturasAutomaticas()
+Return nil
+
+Function Etiquetas()
+Return nil
+
+Function CloseWebBrowser()
+Return nil
+
+Function TGrupoAcceso()
+Return nil
+
+Function PageIni()
+Return nil
+
+Function TiposNotas()
+Return nil
+
+Function ActualizaCosto()
+Return nil
+
+Function StartFacturaAutomatica()
+Return nil
+
+Function StartTCobAge()
+Return nil
+
+Function TpvTactil()
+Return nil
+
+Function ImpFacCom()
+Return nil
+
+Function TImpEstudio()
+Return nil
+
+Function SQLBaseView()
+Return nil
+
+Function SituacionesModel()
+Return nil
+
+Function SQLTShell()
 Return nil
 
 //------------------------------------------------------------------//

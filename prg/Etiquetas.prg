@@ -6,17 +6,24 @@
 
 CLASS Etiquetas FROM SQLBaseView
 
+   DATA     oTree
+
    METHOD   New()
 
    METHOD   buildSQLShell()
   
-   //METHOD   buildSQLBrowse( oGet )
-
    METHOD   buildSQLModel()               INLINE ( EtiquetasModel():New() )
 
    METHOD   getFieldFromBrowse()          INLINE ( ::oModel:getRowSet():fieldGet( "nombre" ) )
  
    METHOD   Dialog()
+   METHOD      startDialog()
+   METHOD      validDialog()
+
+   METHOD   loadTree( oTree, id )
+   METHOD      setTree()
+   METHOD      getTree()
+   METHOD      changeTree()
 
 END CLASS
 
@@ -50,7 +57,15 @@ METHOD buildSQLShell()
          :cHeader          := "Nombre de la etiqueta"
          :cSortOrder       := "nombre"
          :bEditValue       := {|| ::oModel:getRowSet():fieldGet( "nombre" ) }
-         :nWidth           := 500
+         :nWidth           := 400
+         :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | ::clickOnHeader( oCol, ::oShell:getBrowse(), ::oShell:getCombobox() ) }
+      end with
+
+      with object ( ::oShell:AddCol() )
+         :cHeader          := "Padre"
+         :cSortOrder       := "id_padre"
+         :bEditValue       := {|| ::oModel:getRowSet():fieldGet( "id_padre" ) }
+         :nWidth           := 100
          :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | ::clickOnHeader( oCol, ::oShell:getBrowse(), ::oShell:getCombobox() ) }
       end with
 
@@ -87,11 +102,14 @@ METHOD Dialog( lZoom )
       WHEN        ( ! ::isZoomMode() ) ;
       OF          oDlg
 
+   ::oTree                     := TTreeView():Redefine( 110, oDlg )
+   ::oTree:bItemSelectChanged  := {|| ::changeTree() }
+
    REDEFINE BUTTON ;
       ID          IDOK ;
       OF          oDlg ;
       WHEN        ( ! ::isZoomMode() ) ;
-      ACTION      ( oDlg:end( IDOK ) )
+      ACTION      ( ::validDialog( oDlg ) )
 
    REDEFINE BUTTON ;
       ID          IDCANCEL ;
@@ -101,10 +119,158 @@ METHOD Dialog( lZoom )
 
    // Teclas rpidas-----------------------------------------------------------
 
-   oDlg:AddFastKey( VK_F5, {|| oDlg:end( IDOK ) } )
+   oDlg:AddFastKey( VK_F5, {|| ::validDialog( oDlg ) } )
+
+   // evento bstart-----------------------------------------------------------
+
+   oDlg:bStart    := {|| ::startDialog() }
 
    ACTIVATE DIALOG oDlg CENTER
 
 RETURN ( oDlg:nResult == IDOK )
 
 //---------------------------------------------------------------------------//
+
+METHOD startDialog()
+
+   ::loadTree()
+
+RETURN ( Self )
+
+//---------------------------------------------------------------------------//  
+
+METHOD validDialog( oDlg )
+
+   local idPadre                       := ::getTree() 
+
+   if !empty( idPadre )
+      ::oModel:hBuffer[ "id_padre" ]   := idPadre
+   end if 
+
+RETURN ( oDlg:end( IDOK ) )
+
+//---------------------------------------------------------------------------//
+
+METHOD loadTree( oTree, id )
+
+   local oNode
+   local nRecno
+   local nPosition
+
+   default oTree  := ::oTree
+   default id     := ""
+
+   id             := cValToStr( id )
+
+   nRecno         := ::oModel:getRowSet():Recno()
+
+   nPosition      := ::oModel:getRowSet():find( id, "id_padre" )
+
+   while ( nPosition != 0 )
+
+      oNode       := oTree:add( ::oModel:getRowSet():fieldGet( "nombre" ) )
+      oNode:Cargo := ::oModel:getRowSet():fieldGet( "id" )
+
+      ::loadTree( oNode, oNode:Cargo )
+
+      ::oModel:getRowSet():goto( nPosition )
+
+      nPosition   := ::oModel:getRowSet():findNext( id, "id_padre" )
+
+   end while
+
+   ::oModel:getRowSet():goTo( nRecno )
+
+   oTree:Expand()
+
+RETURN ( Self )
+
+//---------------------------------------------------------------------------//
+
+METHOD setTree( oTree, aItems, id )
+
+   local oItem
+
+   default oTree  := ::oTree
+
+   if empty( aItems )
+      aItems      := oTree:aItems
+   end if
+
+   for each oItem in aItems
+
+      if ( id == oItem:Cargo )
+
+         oTree:Select( oItem )
+         oTree:SetCheck( oItem, .t. )
+
+         sysRefresh()
+
+      end if
+
+      if len( oItem:aItems ) > 0
+         ::setTreeState( oTree, oItem:aItems, id )
+      end if
+
+   next
+
+RETURN ( .t. )
+
+//---------------------------------------------------------------------------//
+
+METHOD getTree( oTree, aItems )
+
+   local oItem
+
+   default oTree  := ::oTree
+
+   if empty( aItems )
+      aItems      := oTree:aItems
+   end if
+
+   for each oItem in aItems
+
+      if oTree:GetCheck( oItem )
+         RETURN ( oItem:Cargo )
+      end if
+
+      if len( oItem:aItems ) > 0
+         ::getTree( oTree, oItem:aItems )
+      end if
+
+   next
+
+RETURN ( nil )
+
+//---------------------------------------------------------------------------//
+
+METHOD changeTree( oTree, aItems )
+
+   local oItem
+
+   default oTree  := ::oTree
+
+   if empty( aItems )
+      aItems      := oTree:aItems
+   end if
+
+   for each oItem in aItems
+
+      SysRefresh()
+
+      oTree:SetCheck( oItem, .f. )
+
+      if len( oItem:aItems ) > 0
+         ::changeTree( oTree, oItem:aItems )
+      end if
+
+   next
+
+RETURN ( .t. )
+
+//---------------------------------------------------------------------------//
+
+   
+
+
+
