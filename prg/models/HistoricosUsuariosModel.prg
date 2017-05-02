@@ -6,7 +6,7 @@
 
 CLASS HistoricosUsuariosModel FROM SQLBaseModel
 
-   DATA     cTableName           INIT "historicos_usuarios"
+   DATA     cTableName
 
    METHOD   New()
 
@@ -19,6 +19,8 @@ END CLASS
 //---------------------------------------------------------------------------//
 
 METHOD New()
+
+   ::cTableName                  := "historicos_usuarios"
 
    ::hColumns                    := {  "id"         	=>  { "create" => "INTEGER PRIMARY KEY AUTOINCREMENT"  }, ;
                                        "usuario_id"   =>  { "create" => "CHARACTER ( 3 ) NOT NULL"           }, ;

@@ -326,7 +326,9 @@ ConfVisor.prg           										\
 ConfCajPorta.prg        										\
 ConfImpTiket.prg        										\
 TipoNotas.prg           										\
+Situacion.prg 		       										\
 Situaciones.prg         										\
+SituacionesModel.prg       										\
 GrpPrv.prg              										\
 Categoria.prg           										\
 InfCategoria.prg        										\
@@ -400,7 +402,7 @@ TipoImpresora.prg       										\
 SQLBaseView.prg 													\
 TiposImpresoras.prg       										\
 TiposNotas.prg       										\
-EstadosSat.prg       										\
+Etiquetas.prg       										\
 PageIni.prg             										\
 TpvTactil.prg           										\
 TpvUtilidadesMesa.prg 											\
@@ -493,7 +495,7 @@ TicketsClientesModel.prg 										\
 PedidosProveedoresModel.prg									\
 TiposImpresorasModel.prg 										\
 TiposNotasModel.prg 										\
-EstadosSatModel.prg 										\
+EtiquetasModel.prg 										\
 ArticulosModel.prg                                    \
 HistoricosUsuariosModel.prg                                    \
 
@@ -810,7 +812,9 @@ ConfImpTiket.obj        									\
 ConfVisor.obj           									\
 ConfCajPorta.obj        									\
 TipoNotas.obj           									\
+Situacion.Obj 	         									\
 Situaciones.obj         									\
+SituacionesModel.obj       									\
 GrpPrv.obj              									\
 Categoria.obj           									\
 InfCategoria.obj        									\
@@ -884,7 +888,7 @@ TipoImpresora.obj       									\
 SQLBaseView.obj 												\
 TiposImpresoras.obj       									\
 TiposNotas.obj       									\
-EstadosSat.obj       									\
+Etiquetas.obj       									\
 PageIni.obj             									\
 TpvTactil.obj           									\
 TpvUtilidadesMesa.obj 										\
@@ -979,7 +983,7 @@ RecibosClientesModel.obj 										\
 PedidosProveedoresModel.obj 									\
 TiposImpresorasModel.obj 										\
 TiposNotasModel.obj 										\
-EstadosSatModel.obj 										\
+EtiquetasModel.obj 										\
 ArticulosModel.obj                                    \
 HistoricosUsuariosModel.obj                                    \
 
@@ -1281,7 +1285,9 @@ $(OBJ)\ConfImpTiket.obj         		+
 $(OBJ)\ConfVisor.obj            		+
 $(OBJ)\ConfCajPorta.obj         		+
 $(OBJ)\TipoNotas.obj            		+
+$(OBJ)\Situacion.Obj 	          		+
 $(OBJ)\Situaciones.obj          		+
+$(OBJ)\SituacionesModel.obj          	+
 $(OBJ)\GrpPrv.obj               		+
 $(OBJ)\Categoria.obj            		+
 $(OBJ)\InfCategoria.obj         		+
@@ -1357,7 +1363,7 @@ $(OBJ)\TipoImpresora.obj        					+
 $(OBJ)\SQLBaseView.obj 								+
 $(OBJ)\TiposImpresoras.obj      					+
 $(OBJ)\TiposNotas.obj      							+
-$(OBJ)\EstadosSat.obj      							+
+$(OBJ)\Etiquetas.obj      							+
 $(OBJ)\PageIni.obj              					+
 $(OBJ)\TpvTactil.obj            					+
 $(OBJ)\TpvUtilidadesMesa.obj 						+
@@ -1453,7 +1459,7 @@ $(OBJ)\TicketsClientesModel.obj 	 				+
 $(OBJ)\PedidosProveedoresModel.obj 				+
 $(OBJ)\TiposImpresorasModel.obj                 +
 $(OBJ)\TiposNotasModel.obj                 +
-$(OBJ)\EstadosSatModel.obj                 +
+$(OBJ)\EtiquetasModel.obj                 +
 $(OBJ)\HistoricosUsuariosModel.obj
 $<,$*
 $(FWLIB)\FiveH.lib               				+

@@ -281,7 +281,7 @@ Return ( .t. )
 
 Function Test()
 
-   //EstadosSat():New():activateShell()
+   Situaciones():New():ActivateShell()
 
 Return ( nil )
 

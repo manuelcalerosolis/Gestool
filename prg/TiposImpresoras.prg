@@ -25,8 +25,6 @@ END CLASS
 METHOD New()
 
    ::idUserMap            := "01115"
-   
-   ::cHistoryName          := "tipos_impresoras"
 
    ::Super:New()
 
@@ -68,8 +66,6 @@ METHOD buildSQLShell()
    ::oShell:bEnd     := {|| ::destroySQLModel() }
 
    ::oShell:setComboBoxChange( {|| ::changeCombo( ::oShell:getBrowse(), ::oShell:getCombobox() ) } )
-
-   ::setCombo( ::oShell:getBrowse(), ::oShell:getCombobox() )
 
    enableAcceso()
 
@@ -196,7 +192,7 @@ METHOD buildSQLBrowse()
       oDlg:AddFastKey( VK_RETURN,   {|| oDlg:end( IDOK ) } )
       oDlg:AddFastKey( VK_F5,       {|| oDlg:end( IDOK ) } )
 
-      oDlg:bStart    := {|| ::startBrowse( oFind, oCombobox, oBrowse ) }
+      oDlg:bStart    := {|| ::startBrowse( oCombobox, oBrowse ) }
 
    oDlg:Activate( , , , .t., {|| ::saveHistory( ::getHistoryNameBrowse(), oBrowse ) } )
 

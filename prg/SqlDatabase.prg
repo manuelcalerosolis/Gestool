@@ -40,6 +40,8 @@ METHOD New()
 
    ::aModels                  := {  TiposImpresorasModel():New():getSQLCreateTable(),     ;
                                     TiposNotasModel():New():getSQLCreateTable(),          ;
+                                    EtiquetasModel():New():getSQLCreateTable(),           ;
+                                    SituacionesModel():New():getSQLCreateTable(),         ;
                                     HistoricosUsuariosModel():New():getSQLCreateTable()   }
 
    ::cPathDatabaseSQLite      := fullCurDir() + "Database\" 
@@ -55,7 +57,7 @@ Return ( Self )
 METHOD Connect()
 
    if !lIsDir( ::cPathDatabaseSQLite )
-      makedir( ::cPathDatabaseSQLite ) 
+      makedir( ::cPathDatabaseSQLite )
    end if 
     
 Return ( ::oConexion:Connect( ::cDatabaseSQLite ) )

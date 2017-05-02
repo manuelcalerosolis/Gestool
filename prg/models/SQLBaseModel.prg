@@ -15,17 +15,19 @@ CLASS SQLBaseModel
 
    DATA     aDbfFields
 
-   DATA     cColumnOrder         INIT "id"
-   DATA     cOrientation         INIT "A"
-   DATA     nIdForRecno          INIT 1
+   DATA     cGeneralSelect
+
+   DATA     cColumnOrder
+   DATA     cOrientation
+   DATA     nIdForRecno
 
    DATA	   cSQLInsert     
    DATA     cSQLSelect      
    
-   DATA     cColumnKey           INIT "id"
+   DATA     cColumnKey
 
   	DATA	   hBuffer   
-   DATA     cFind                INIT ""
+   DATA     cFind
 
    METHOD   New()
    METHOD   End()
@@ -66,7 +68,7 @@ CLASS SQLBaseModel
    METHOD   loadCurrentBuffer()
 
    METHOD   getBuffer( cColumn )                   INLINE   ( hget( ::hBuffer, cColumn ) )
-   METHOD   updateCurrentBuffer()                  INLINE   ( getSQLDatabase():Query( ::getUpdateSentence() ), ::buildRowSet() )
+   METHOD   updateCurrentBuffer()                  INLINE   ( getSQLDatabase():Query( ::getUpdateSentence() ), ::buildRowSetWithRecno() )
    METHOD   insertBuffer()                         INLINE   ( getSQLDatabase():Query( ::getInsertSentence() ), ::buildRowSet() )
    METHOD   deleteSelection()                      INLINE   ( getSQLDatabase():Query( ::getdeleteSentence() ), ::buildRowSet() )
 
@@ -84,6 +86,8 @@ METHOD New()
    ::cColumnKey                  := "id"
 
    ::cFind                       := ""
+
+   ::cGeneralSelect              := "SELECT * FROM " + ::cTableName
 
    ::cColumnOrder                := "id"
    ::cOrientation                := "A"
@@ -215,10 +219,6 @@ METHOD buildRowSet( lWithRecno )
 
    default  lWithRecno  := .f.
 
-   msgalert ( ::cTableName )
-
-   msgalert( ::getSelectSentence )
-
    try
       oStmt             := getSQLDatabase():Query( ::getSelectSentence() ) 
       ::oRowSet         := oStmt:fetchRowSet()
@@ -247,7 +247,7 @@ METHOD getUpdateSentence()
 
   local cSQLUpdate  := "UPDATE " + ::cTableName + " SET "
 
-  hEval( ::hBuffer, {| k, v | if ( k != ::cColumnKey, cSQLUpdate += k + " = " + toSQLString( v ) + ", ", ) } )
+  hEval( ::hBuffer, {| k, v | if ( k != ::cColumnKey, if ( empty( v ), cSQLUpdate += k + " = null, ", cSQLUpdate += k + " = " + toSQLString( v ) + ", "), ) } )
 
   cSQLUpdate        := ChgAtEnd( cSQLUpdate, '', 2 )
 
@@ -267,7 +267,7 @@ METHOD getInsertSentence()
 
    cSQLInsert        := ChgAtEnd( cSQLInsert, ' ) VALUES ( ', 2 )
 
-   hEval( ::hBuffer, {| k, v | if ( k != ::cColumnKey, cSQLInsert += toSQLString( v ) + ", ", ) } )
+   hEval( ::hBuffer, {| k, v | if ( k != ::cColumnKey, if ( empty( v ), cSQLInsert += "null, ", cSQLInsert += toSQLString( v ) + ", "), ) } )
 
    cSQLInsert        := ChgAtEnd( cSQLInsert, ' )', 2 )
 
@@ -285,7 +285,7 @@ Return ( cSQLDelete )
 
 METHOD getSelectSentence()
 
-   local cSQLSelect  := "SELECT * FROM " + ::cTableName
+   local cSQLSelect  := ::cGeneralSelect
 
    cSQLSelect        += ::getSelectByColumn()
 
@@ -312,7 +312,7 @@ METHOD getSelectByOrder( cColumnOrder, cOrientation )
    local cSQLSelect  := ""
 
    if !empty( ::cColumnOrder )
-      cSQLSelect     += " ORDER BY " + ::cColumnOrder
+      cSQLSelect     += " ORDER BY UPPER( " + ::cColumnOrder + " )"
    end if 
 
    if !empty( ::cOrientation ) .and. ::cOrientation == "D"
