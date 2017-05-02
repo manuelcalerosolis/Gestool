@@ -1132,12 +1132,12 @@ FUNCTION FactCli( oMenuItem, oWnd, hHash )
       DEFINE BTNSHELL oImp RESOURCE "IMP" GROUP OF oWndBrw ;
          NOBORDER ;
          MENU     This:Toggle() ;
-         ACTION   ( GenFacCli( IS_PRINTER ), oWndBrw:Refresh() ) ;
+         ACTION   ( selectedGenFacCli( IS_PRINTER ), oWndBrw:Refresh() ) ;
          TOOLTIP  "(I)mprimir";
          HOTKEY   "I";
          LEVEL    ACC_IMPR
 
-         lGenFacCli( oWndBrw:oBrw, oImp, IS_PRINTER ) ;
+         lGenFacCli( oWndBrw:oBrw, oImp, IS_PRINTER ) 
 
       DEFINE BTNSHELL RESOURCE "GC_PRINTER2_" OF oWndBrw ;
          NOBORDER ;
@@ -1149,7 +1149,7 @@ FUNCTION FactCli( oMenuItem, oWnd, hHash )
       DEFINE BTNSHELL oPrv RESOURCE "PREV1" OF oWndBrw ;
          NOBORDER ;
          MENU     This:Toggle() ;
-         ACTION   ( GenFacCli( IS_SCREEN ), oWndBrw:Refresh() ) ;
+         ACTION   ( selectedGenFacCli( IS_SCREEN ), oWndBrw:Refresh() ) ;
          TOOLTIP  "(P)revisualizar";
          HOTKEY   "P";
          LEVEL    ACC_IMPR
@@ -1159,7 +1159,7 @@ FUNCTION FactCli( oMenuItem, oWnd, hHash )
       DEFINE BTNSHELL oPdf RESOURCE "DOCLOCK" OF oWndBrw ;
          NOBORDER ;
          MENU     This:Toggle() ;
-         ACTION   ( GenFacCli( IS_PDF ) ) ;
+         ACTION   ( selectedGenFacCli( IS_PDF ) ) ;
          TOOLTIP  "Pd(f)";
          HOTKEY   "F";
          LEVEL    ACC_IMPR
@@ -7020,6 +7020,24 @@ RETURN .T.
 
 //---------------------------------------------------------------------------//
 
+STATIC FUNCTION selectedGenFacCli( nDevice )
+
+   local nPos
+
+   for each nPos in ( oWndBrw:oBrw:aSelected )
+
+      ( D():FacturasClientes( nView ) )->( dbgoto( nPos ) )
+
+      genFacCli( nDevice )
+
+      SysRefresh()
+
+   next
+
+RETURN NIL
+
+//---------------------------------------------------------------------------//
+
 static function lGenFacCli( oBrw, oBtn, nDevice )
 
    local bAction
@@ -7066,7 +7084,7 @@ static function bGenFacCli( nDevice, cTitle, cCodDoc )
    local nDev  := by( nDevice )
    local cTit  := by( cTitle  )
    local cCod  := by( cCodDoc )
-   local bGen  := {|| GenFacCli( nDevice, cTit, cCod ) }
+   local bGen  := {|| selectedGenFacCli( nDevice, cTit, cCod ) }
 
 return ( bGen )
 

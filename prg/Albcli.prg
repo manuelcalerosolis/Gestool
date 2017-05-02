@@ -992,7 +992,7 @@ FUNCTION AlbCli( oMenuItem, oWnd, hHash )
    DEFINE BTNSHELL oImp RESOURCE "IMP" GROUP OF oWndBrw ;
       NOBORDER ;
       MENU     This:Toggle() ;
-      ACTION   ( GenAlbCli( IS_PRINTER ), oWndBrw:Refresh() ) ;
+      ACTION   ( selectedGenAlbCli( IS_PRINTER ), oWndBrw:Refresh() ) ;
       TOOLTIP  "(I)mprimir";
       HOTKEY   "I";
       LEVEL    ACC_IMPR
@@ -1009,7 +1009,7 @@ FUNCTION AlbCli( oMenuItem, oWnd, hHash )
    DEFINE BTNSHELL oPrv RESOURCE "Prev1" OF oWndBrw ;
       NOBORDER ;
       MENU     This:Toggle() ;
-      ACTION   ( GenAlbCli( IS_SCREEN ), oWndBrw:Refresh() ) ;
+      ACTION   ( selectedGenAlbCli( IS_SCREEN ), oWndBrw:Refresh() ) ;
       TOOLTIP  "(P)revisualizar";
       HOTKEY   "P";
       LEVEL    ACC_IMPR
@@ -1019,7 +1019,7 @@ FUNCTION AlbCli( oMenuItem, oWnd, hHash )
    DEFINE BTNSHELL oPdf RESOURCE "DOCLOCK" OF oWndBrw ;
       NOBORDER ;
       MENU     This:Toggle() ;
-      ACTION   ( GenAlbCli( IS_PDF ) ) ;
+      ACTION   ( selectedGenAlbCli( IS_PDF ) ) ;
       TOOLTIP  "Pd(f)";
       HOTKEY   "F";
       LEVEL    ACC_IMPR
@@ -2013,14 +2013,49 @@ STATIC FUNCTION CloseFiles()
 
 Return .t.
 
+//---------------------------------------------------------------------------//
+
+STATIC FUNCTION selectedGenAlbCli( nDevice )
+
+   local nPos
+
+   for each nPos in ( oWndBrw:oBrw:aSelected )
+
+      ( D():AlbaranesClientes( nView ) )->( dbgoto( nPos ) )
+
+      genAlbCli( nDevice )
+
+      SysRefresh()
+
+   next
+
+RETURN NIL
+
 //--------------------------------------------------------------------------//
+
+STATIC FUNCTION bGenAlbCli( nDevice, cTitle, cCodDoc )
+
+   local bGen
+   local nDev  := by( nDevice )
+   local cTit  := by( cTitle  )
+   local cCod  := by( cCodDoc )
+
+   if nDev == IS_PRINTER
+      bGen     := {|| selectedGenAlbCli( nDev, cTit, cCod ) }
+   else
+      bGen     := {|| selectedGenAlbCli( nDev, cTit, cCod ) }
+   end if
+
+RETURN ( bGen )
+
+//---------------------------------------------------------------------------//
 
 STATIC FUNCTION GenAlbCli( nDevice, cCaption, cCodigoDocumento, cPrinter, nCopies )
 
    local oDevice
    local cAlbaran
 
-   if ( D():AlbaranesClientes( nView ) )->( Lastrec() ) == 0
+   if ( D():AlbaranesClientes( nView ) )->( lastrec() ) == 0
       return nil
    end if
 
@@ -6508,23 +6543,6 @@ STATIC FUNCTION GrpPed( aGet, aTmp, oBrw )
    end if
 
 return .t.
-
-//---------------------------------------------------------------------------//
-
-static function bGenAlbCli( nDevice, cTitle, cCodDoc )
-
-   local bGen
-   local nDev  := by( nDevice )
-   local cTit  := by( cTitle  )
-   local cCod  := by( cCodDoc )
-
-   if nDev == IS_PRINTER
-      bGen     := {|| GenAlbCli( nDev, cTit, cCod ) }
-   else
-      bGen     := {|| GenAlbCli( nDev, cTit, cCod ) }
-   end if
-
-return ( bGen )
 
 //---------------------------------------------------------------------------//
 
