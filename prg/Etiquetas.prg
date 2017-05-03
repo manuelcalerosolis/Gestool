@@ -135,6 +135,8 @@ METHOD startDialog()
 
    ::loadTree()
 
+   ::setTree( ::oModel:hBuffer[ "id_padre" ] )
+
 RETURN ( Self )
 
 //---------------------------------------------------------------------------//  
@@ -151,14 +153,14 @@ RETURN ( oDlg:end( IDOK ) )
 
 //---------------------------------------------------------------------------//
 
-METHOD loadTree( oTree, id )
+METHOD loadTree( id, oTree )
 
    local oNode
    local nRecno
    local nPosition
 
+   default id     := "0"
    default oTree  := ::oTree
-   default id     := ""
 
    id             := cValToStr( id )
 
@@ -171,7 +173,7 @@ METHOD loadTree( oTree, id )
       oNode       := oTree:add( ::oModel:getRowSet():fieldGet( "nombre" ) )
       oNode:Cargo := ::oModel:getRowSet():fieldGet( "id" )
 
-      ::loadTree( oNode, oNode:Cargo )
+      ::loadTree( oNode:Cargo, oNode )
 
       ::oModel:getRowSet():goto( nPosition )
 
@@ -187,7 +189,7 @@ RETURN ( Self )
 
 //---------------------------------------------------------------------------//
 
-METHOD setTree( oTree, aItems, id )
+METHOD setTree( id, oTree, aItems )
 
    local oItem
 
@@ -199,7 +201,7 @@ METHOD setTree( oTree, aItems, id )
 
    for each oItem in aItems
 
-      if ( id == oItem:Cargo )
+      if ( alltrim( cValToStr( id ) ) == alltrim( cValToStr( oItem:Cargo ) ) )
 
          oTree:Select( oItem )
          oTree:SetCheck( oItem, .t. )
@@ -209,7 +211,7 @@ METHOD setTree( oTree, aItems, id )
       end if
 
       if len( oItem:aItems ) > 0
-         ::setTreeState( oTree, oItem:aItems, id )
+         ::setTree( id, oTree, oItem:aItems )
       end if
 
    next
