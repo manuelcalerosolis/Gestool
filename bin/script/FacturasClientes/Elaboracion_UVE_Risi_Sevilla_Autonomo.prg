@@ -167,7 +167,7 @@ ENDCLASS
 
       ::CloseFiles()
 
-      msgInfo( "Porceso finalizado : " + ::oUve:cFile )
+      msgInfo( "Proceso finalizado : " + if( !empty(::oUve), ::oUve:cFile, "no se generaron ficheros" ) )
 
    Return ( Self )
 

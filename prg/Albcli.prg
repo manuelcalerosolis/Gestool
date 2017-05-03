@@ -1034,11 +1034,11 @@ FUNCTION AlbCli( oMenuItem, oWnd, hHash )
       LEVEL    ACC_IMPR
 
    DEFINE BTNSHELL RESOURCE "gc_portable_barcode_scanner_" OF oWndBrw ;
-         NOBORDER ;
-         ACTION   ( TLabelGeneratorAlbaranClientes():New( nView ):Dialog() ) ;
-         TOOLTIP  "Eti(q)uetas" ;
-         HOTKEY   "Q";
-         LEVEL    ACC_IMPR
+      NOBORDER ;
+      ACTION   ( TLabelGeneratorAlbaranClientes():New( nView ):Dialog() ) ;
+      TOOLTIP  "Eti(q)uetas" ;
+      HOTKEY   "Q";
+      LEVEL    ACC_IMPR
 
    DEFINE BTNSHELL RESOURCE "gc_document_empty_chart_" OF oWndBrw ;
       NOBORDER ;
