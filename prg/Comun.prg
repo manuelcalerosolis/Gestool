@@ -281,7 +281,7 @@ Return ( .t. )
 
 Function Test()
 
-   Etiquetas():New():ActivateShell()
+   Situaciones():New():ActivateShell()
 
 Return ( nil )
 
