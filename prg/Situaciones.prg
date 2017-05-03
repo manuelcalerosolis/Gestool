@@ -16,7 +16,7 @@ CLASS Situaciones FROM SQLBaseView
 
    METHOD   getFieldFromBrowse()          INLINE ( ::oModel:getRowSet():fieldGet( "nombre" ) )
  
-  // METHOD   Dialog()
+   METHOD   Dialog()
 
 END CLASS
 
@@ -72,3 +72,39 @@ METHOD buildSQLShell()
 Return ( Self )
 
 //----------------------------------------------------------------------------//
+
+METHOD Dialog( lZoom )
+
+   local oDlg
+   local oGetNombre
+
+   DEFINE DIALOG oDlg RESOURCE "SITUACION" TITLE LblTitle( ::getMode() ) + "situación"
+
+   REDEFINE GET   oGetNombre ;
+      VAR         ::oModel:hBuffer[ "situacion" ] ;
+      MEMO ;
+      ID          100 ;
+      WHEN        ( ! ::isZoomMode() ) ; 
+      OF          oDlg
+
+   REDEFINE BUTTON ;
+      ID          IDOK ;
+      OF          oDlg ;
+      WHEN        ( ! ::isZoomMode() ) ;
+      ACTION      ( oDlg:end( IDOK ) )
+
+   REDEFINE BUTTON ;
+      ID          IDCANCEL ;
+      OF          oDlg ;
+      CANCEL ;
+      ACTION      ( oDlg:end() )
+
+   // Teclas rpidas-----------------------------------------------------------
+
+   oDlg:AddFastKey( VK_F5, {|| oDlg:end( IDOK ) } )
+
+   ACTIVATE DIALOG oDlg CENTER
+
+RETURN ( oDlg:nResult == IDOK )
+
+//--------------------------------------------------------------------------//

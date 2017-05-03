@@ -5800,7 +5800,7 @@ STATIC FUNCTION cPedCli( aGet, aTmp, oBrwLin, oBrwPgo, nMode )
                   nDiv                       := DecimalMod( nTotRet, ( dbfPedCliL )->nCanPed )
                   if nDiv == 0 .and. ( dbfPedCliL )->nCanPed != 0
                      ( dbfTmpLin )->nCanEnt  := ( dbfPedCliL )->nCanPed
-                     ( dbfTmpLin )->nUniCaja := nTotRet // / ( dbfPedCliL )->nCanPed
+                     ( dbfTmpLin )->nUniCaja := nTotRet / ( dbfPedCliL )->nCanPed
                   else
                      ( dbfTmpLin )->nCanEnt  := ( dbfPedCliL )->nCanPed
                      ( dbfTmpLin )->nUniCaja := nTotRet

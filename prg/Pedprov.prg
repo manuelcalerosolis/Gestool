@@ -9547,6 +9547,21 @@ Return ( nombrePropiedad( ( D():PedidosProveedoresLineas( view ) )->cCodPr2, ( D
 
 //---------------------------------------------------------------------------//
 
+Function valorCampoExtra( cField, view )
+
+   local id
+
+   DEFAULT view   := nView
+
+   id       := ( D():PedidosProveedoresLineas( view ) )->cSerPed
+   id       += Str( ( D():PedidosProveedoresLineas( view ) )->nNumPed )
+   id       += ( D():PedidosProveedoresLineas( view ) )->cSufPed
+   id       += Str( ( D():PedidosProveedoresLineas( view ) )->nNumLin )
+
+Return ( getCustomExtraField( cField, "Lineas pedidos a proveedores", id ) )
+
+//---------------------------------------------------------------------------//
+
 Function MenuEdtDet( oCodArt, oDlg, lOferta, nIdLin )
 
    DEFAULT lOferta      := .f.

@@ -4816,8 +4816,9 @@ RETURN ( ::ExecuteSqlStatement( cStm, "SatCliArticulos" ) )
 
 METHOD ConvertToSQLite()
 
-   TiposImpresorasModel():makeImportDbfSQL()
-   TiposNotasModel():makeImportDbfSQL()
+   TiposImpresorasModel():New():makeImportDbfSQL()
+   TiposNotasModel():New():makeImportDbfSQL()
+   //Situaciones():New():makeImportDbfSQL()
 
 RETURN ( Self )
 
