@@ -251,7 +251,7 @@ METHOD getUpdateSentence()
 
   cSQLUpdate        := ChgAtEnd( cSQLUpdate, '', 2 )
 
-  cSQLUpdate        += " WHERE " + ::cColumnKey + " = " + toSQLString( ::oRowSet:fieldget( ::cColumnKey ) ) 
+  cSQLUpdate        += " WHERE " + ::cColumnKey + " = " + toSQLString( ::hBuffer[ ::cColumnKey ] )
 
 Return ( cSQLUpdate )
 

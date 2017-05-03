@@ -16,6 +16,8 @@ CLASS EtiquetasModel FROM SQLBaseModel
 
    METHOD   buildRowSetWithRecno()                 INLINE   ( ::buildRowSet( .t. ) )
 
+   METHOD   deleteSelection()
+
 END CLASS
 
 //---------------------------------------------------------------------------//
@@ -44,3 +46,15 @@ METHOD New()
 RETURN ( Self )
 
 //---------------------------------------------------------------------------//
+
+METHOD   deleteSelection()
+
+   local cUpdateOnDelete
+
+   cUpdateOnDelete := "UPDATE etiquetas SET id_padre = null WHERE id_padre = " + toSQLString( ::oRowSet:fieldGet( ::cColumnKey ) )
+
+   getSQLDatabase():Query( ::getdeleteSentence() )
+   getSQLDatabase():Query( cUpdateOnDelete )
+   ::buildRowSet()
+
+RETURN ( self )
