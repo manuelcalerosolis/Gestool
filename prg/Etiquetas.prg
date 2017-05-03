@@ -8,6 +8,8 @@ CLASS Etiquetas FROM SQLBaseView
 
    DATA     oTree
 
+   DATA     nSelectedNode
+
    METHOD   New()
 
    METHOD   buildSQLShell()
@@ -22,8 +24,13 @@ CLASS Etiquetas FROM SQLBaseView
 
    METHOD   loadTree( oTree, id )
    METHOD      setTree()
-   METHOD      getTree()
    METHOD      changeTree()
+
+   METHOD   checkSelectedNode()
+   METHOD      getSelectedNode()             INLINE ( ::nSelectedNode )
+   METHOD      setSelectedNode( nNode )      INLINE ( ::nSelectedNode := nNode )
+
+   METHOD   checkValidParent()
 
 END CLASS
 
@@ -31,7 +38,9 @@ END CLASS
 
 METHOD New()
 
-   ::idUserMap            	:= "01101"	
+   ::idUserMap            	:= "01101"
+
+   ::nSelectedNode         := nil
 
    ::Super:New()
 
@@ -123,7 +132,7 @@ METHOD Dialog( lZoom )
 
    // evento bstart-----------------------------------------------------------
 
-   oDlg:bStart    := {|| ::startDialog() }
+   oDlg:bStart    := {|| ::startDialog(), oGetNombre:setFocus() }
 
    ACTIVATE DIALOG oDlg CENTER
 
@@ -143,11 +152,38 @@ RETURN ( Self )
 
 METHOD validDialog( oDlg )
 
-   local idPadre                       := ::getTree() 
+   ::setSelectedNode( nil )
 
-   if !empty( idPadre )
-      ::oModel:hBuffer[ "id_padre" ]   := idPadre
+   if empty( ::oModel:hBuffer[ "nombre" ] )
+      msgStop( "Nombre de la etiqueta no puede estar vacío." )
+      RETURN ( .f. )
    end if 
+
+   ::checkSelectedNode()
+
+   if empty( ::getSelectedNode() )
+      RETURN ( oDlg:end( IDOK ) )
+   end if
+   
+   if ( ::isEditMode() )
+
+      if ::oModel:hBuffer[ "id" ] == ::getSelectedNode()
+               
+         msgStop( "Referencia a si mismo. Una etiqueta no puede ser padre de si misma.")
+         RETURN ( .f. )
+
+      end if
+
+      if !::checkValidParent()
+
+         msgStop( "Referencia cíclica. Una etiqueta hijo no puede ser padre de su padre")
+         RETURN ( .f. )
+         
+      endif
+
+   end if 
+
+   ::oModel:hBuffer[ "id_padre" ] := ::getSelectedNode()
 
 RETURN ( oDlg:end( IDOK ) )
 
@@ -159,7 +195,7 @@ METHOD loadTree( id, oTree )
    local nRecno
    local nPosition
 
-   default id     := "0"
+   default id     := ""
    default oTree  := ::oTree
 
    id             := cValToStr( id )
@@ -220,7 +256,7 @@ RETURN ( .t. )
 
 //---------------------------------------------------------------------------//
 
-METHOD getTree( oTree, aItems )
+METHOD checkSelectedNode( oTree, aItems )
 
    local oItem
 
@@ -233,16 +269,40 @@ METHOD getTree( oTree, aItems )
    for each oItem in aItems
 
       if oTree:GetCheck( oItem )
-         RETURN ( oItem:Cargo )
+         ::setSelectedNode( oItem:Cargo )
       end if
 
       if len( oItem:aItems ) > 0
-         ::getTree( oTree, oItem:aItems )
+         ::checkSelectedNode( oTree, oItem:aItems )
       end if
 
    next
 
 RETURN ( nil )
+
+//---------------------------------------------------------------------------//
+
+METHOD checkValidParent( oTree, nCargo )
+
+   local idTarget    := ::getSelectedNode()
+
+   while idTarget != 0
+
+      if ::oModel:getRowSet():find( idTarget, "id" ) != 0
+
+         idTarget := val( ::oModel:getRowSet():fieldget( "id_padre" ) )
+
+      end if
+
+      if alltrim( cValtoStr( idTarget ) ) == alltrim( cValtoStr( ::oModel:hBuffer[ "id" ] ) )
+
+         RETURN ( .f. )
+          
+      endif
+
+   end while
+
+RETURN ( .t. )
 
 //---------------------------------------------------------------------------//
 
