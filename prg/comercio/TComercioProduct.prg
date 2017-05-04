@@ -45,6 +45,7 @@ CLASS TComercioProduct FROM TComercioConector
                                                                            alltrim( ( D():Articulos( ::getView() ) )->Nombre ) ) )
 
       METHOD imagesProduct( id )
+      METHOD langsProduct( id )
       METHOD stockProduct( id )
 
    METHOD insertNodeProductCategory()
@@ -356,6 +357,7 @@ METHOD buildProduct( idProduct, lCleanProducts ) CLASS TComercioProduct
 
    local aStockArticulo       := {}
    local aImagesArticulos     := {}
+   local aLangsArticulos      := {}
 
    DEFAULT lCleanProducts     := .f.
 
@@ -392,9 +394,13 @@ METHOD buildProduct( idProduct, lCleanProducts ) CLASS TComercioProduct
       Return ( .f. )
    end if 
 
+   // Recopilar idiomas de los productos--------------------------------------
+
+   aLangsArticulos            := ::langsProduct( idProduct )
+
    // Contruimos el hash con toda la informacion del producto------------------
 
-   ::buildHashProduct( idProduct, aImagesArticulos, aStockArticulo )
+   ::buildHashProduct( idProduct, aImagesArticulos, aStockArticulo, aLangsArticulos )
 
 Return ( .t. )
 
@@ -426,10 +432,11 @@ Return ( .t. )
 
 //---------------------------------------------------------------------------//
 
-METHOD buildHashProduct( idProduct, aImagesArticulos, aStockArticulo ) CLASS TComercioProduct
+METHOD buildHashProduct( idProduct, aImagesArticulos, aStockArticulo, aLangsArticulos ) CLASS TComercioProduct
 
    DEFAULT aImagesArticulos   := {}
    DEFAULT aStockArticulo     := {}
+   DEFAULT aLangsArticulos    := {}
    
    // Rellenamos el Hash-------------------------------------------------
 
@@ -453,7 +460,8 @@ METHOD buildHashProduct( idProduct, aImagesArticulos, aStockArticulo ) CLASS TCo
                            "reduction_tax"         => ::getPriceReductionTax(),;
                            "description"           => ::getDescription(),; 
                            "aImages"               => aImagesArticulos,;
-                           "aStock"                => aStockArticulo } )
+                           "aStock"                => aStockArticulo,;
+                           "aLangs"                => aLangsArticulos } )
 
 Return ( ::aProducts )
 
@@ -588,6 +596,41 @@ METHOD imagesProduct( idProduct ) CLASS TComercioProduct
 Return ( aImages )
 
 //---------------------------------------------------------------------------//
+
+METHOD langsProduct( idProduct ) CLASS TComercioProduct
+
+   local idLang
+   local aLangs         := {}
+   local nOrdenAnterior        
+
+   // Pasamos las imígenes de los artículos por propiedades-----------------------" )
+
+   nOrdenAnterior       := ( D():ArticuloLenguaje( ::getView() ) )->( ordsetfocus( "cCodigo" ) )
+
+   if ( D():ArticuloLenguaje( ::getView() ) )->( dbseek( idProduct ) )
+
+      while ( D():ArticuloLenguaje( ::getView() ) )->cCodArt == idProduct .and. !( D():ArticuloLenguaje( ::getView() ) )->( eof() )
+
+         idLang         := ::TComercioConfig():getLang( ( D():ArticuloLenguaje( ::getView() ) )->cCodLen )
+
+         if !empty( idLang )
+            aadd( aLangs,  {  "idLang"             => idLang,;
+                              "shortDescription"   => ( D():ArticuloLenguaje( ::getView() ) )->cDesTik,;
+                              "longDescription"    => ( D():ArticuloLenguaje( ::getView() ) )->cDesArt } )
+         end if 
+
+         ( D():ArticuloLenguaje( ::getView() ) )->( dbskip() )
+
+      end while
+
+   end if
+
+   ( D():ArticuloLenguaje( ::getView() ) )->( ordsetfocus( nOrdenAnterior ) )
+
+Return ( aLangs )
+
+//---------------------------------------------------------------------------//
+
 
 METHOD stockProduct( id ) CLASS TComercioProduct
    
@@ -886,6 +929,7 @@ Return ( self )
 
 METHOD insertProductLang( idProduct, hProduct ) CLASS TComercioProduct
 
+   local hLang
    local cCommand
 
    cCommand    := "INSERT INTO " + ::cPrefixTable( "product_lang" ) + " ( " +;
@@ -912,6 +956,35 @@ METHOD insertProductLang( idProduct, hProduct ) CLASS TComercioProduct
                      "'" + hGet( hProduct, "name" ) + "', " + ;                                                // name
                      "'En stock', " + ;                                                                        // avatible_now
                      "'' )"
+
+   for each hLang in hGet( hProduct, "aLangs" )
+
+      cCommand := "INSERT INTO " + ::cPrefixTable( "product_lang" ) + " ( " +;
+                     "id_product, " + ;
+                     "id_lang, " + ;
+                     "description, " + ;
+                     "description_short, " + ;
+                     "link_rewrite, " + ;
+                     "meta_title, " + ;
+                     "meta_description, " + ;
+                     "meta_keywords, " + ;
+                     "name, " + ;
+                     "available_now, " + ;
+                     "available_later ) " + ;
+                  "VALUES ( " + ;
+                     "'" + alltrim( str( idProduct ) ) + "', " + ;                                                // id_product
+                     "'" + hget( hLang, "idLang") + "', " + ;                                                     // id_lang
+                     "'" + ::oConexionMySQLDatabase():escapeStr( hGet( hLang, "longDescription" ) ) + "', " + ;   // description
+                     "'" + hGet( hLang, "shortDescription" ) + "', " + ;                                          // description_short
+                     "'" + hGet( hProduct, "link_rewrite" ) + "', " + ;                                           // link_rewrite
+                     "'" + hGet( hProduct, "meta_title" ) + "', " + ;                                             // Meta_título
+                     "'" + hGet( hProduct, "meta_description" ) + "', " + ;                                       // Meta_description
+                     "'" + hGet( hProduct, "meta_keywords" ) + "', " + ;                                          // Meta_keywords
+                     "'" + hGet( hProduct, "name" ) + "', " + ;                                                   // name
+                     "'En stock', " + ;                                                                           // avatible_now
+                     "'' )"
+
+   next 
 
    if !::commandExecDirect( cCommand )
       ::writeText( "Error al insertar el artículo " + hGet( hProduct, "name" ) + " en la tabla " + ::cPrefixTable( "product_lang" ), 3 )
