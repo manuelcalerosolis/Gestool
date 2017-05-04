@@ -281,11 +281,15 @@ Return ( .t. )
 
 Function Test()
 
-<<<<<<< HEAD
-   //   Situaciones():New():ActivateShell()
-=======
-   etiquetas():New():ActivateShell()
->>>>>>> 2ea6a715fbbff930c8cce704f9387c1e0f6e8f53
+   TComercioConfig():getInstance():LoadJSON()
+
+   TComercioConfig():getInstance():setCurrentWebName("Temporada")
+
+   msgalert( hb_valtoexp( TComercioConfig():getInstance():getLangs() ) )
+
+   msgalert( valtype( TComercioConfig():getInstance():getLangs() ) )
+
+   msgalert( TComercioConfig():getInstance():getLang("ES") )
 
 Return ( nil )
 

@@ -80,6 +80,9 @@ CLASS TComercioConfig
 
    METHOD getDateStart()               INLINE ( ::getFromCurrentWeb( "DateStart" ) )
 
+   METHOD getLangs()                   INLINE ( ::getFromCurrentWeb( "Langs" ) )
+   METHOD getLang( idLang )            
+
    METHOD getImagesDirectory()         INLINE ( ::getValidDirectoryFtp( ::getFromCurrentWeb( "ImagesDirectory") ) )
    METHOD getValidDirectoryFtp( cDirectory )
 
@@ -99,7 +102,7 @@ METHOD New( idEmpresa ) CLASS TComercioConfig
 
    ::idEmpresa          := idEmpresa
 
-Return ( Self )
+RETURN ( Self )
 
 //----------------------------------------------------------------//
 
@@ -118,26 +121,26 @@ METHOD getFromCurrentWeb( key, default ) CLASS TComercioConfig
    local value    := default
 
    if empty( ::getCurrentWeb() )
-      Return ( value )
+      RETURN ( value )
    end if 
 
    if hhaskey( ::getCurrentWeb(), key )
       value       := hget( ::getCurrentWeb(), key )
    end if 
 
-Return ( value )
+RETURN ( value )
 
 //---------------------------------------------------------------------------//
 
 METHOD setToCurrentWeb( key, value ) CLASS TComercioConfig
    
    if empty( ::getCurrentWeb() )
-      Return ( .f. )
+      RETURN ( .f. )
    end if 
 
    hset( ::getCurrentWeb(), key, value )
 
-Return ( .t. )
+RETURN ( .t. )
 
 //---------------------------------------------------------------------------//
 
@@ -149,20 +152,21 @@ METHOD LoadJSON() CLASS TComercioConfig
 
    if !file( cFileConfigEmpresa )
       ::cErrorJson            := "Fichero " + cFileConfigEmpresa + " no encontrado"
-      Return ( Self )
+      RETURN ( Self )
    end if 
 
-   cConfig                 := memoread( cFileConfigEmpresa )
+   cConfig                    := memoread( cFileConfigEmpresa )
+
    hb_jsonDecode( cConfig, @hConfig )      
 
    if empty( hConfig )
-      ::cErrorJson         := "Fichero " + cFileConfigEmpresa + " formato no valido"
+      ::cErrorJson            := "Fichero " + cFileConfigEmpresa + " formato no valido"
    else
-      ::hConfig            := hConfig
-      ::cErrorJson         := "Fichero " + cFileConfigEmpresa + " cargado satisfactoriamente"
+      ::hConfig               := hConfig
+      ::cErrorJson            := "Fichero " + cFileConfigEmpresa + " cargado satisfactoriamente"
    end if 
 
-Return ( Self )
+RETURN ( Self )
 
 //----------------------------------------------------------------//
 
@@ -176,7 +180,7 @@ METHOD SaveJSON() CLASS TComercioConfig
       memowrit( cFileConfigEmpresa, hb_jsonencode( ::hConfig, .t. ) )
    end if 
 
-Return ( Self )
+RETURN ( Self )
 
 //----------------------------------------------------------------//
 
@@ -188,7 +192,7 @@ METHOD getWebs() CLASS TComercioConfig
       hWebs       := hget( ::hConfig, "Webs" )
    end if 
 
-Return ( hWebs )
+RETURN ( hWebs )
 
 //----------------------------------------------------------------//
 
@@ -196,7 +200,7 @@ METHOD getWebsNames() CLASS TComercioConfig
 
    local aWebsNames  := hgetkeys( ::getWebs() )
 
-Return ( aWebsNames )
+RETURN ( aWebsNames )
 
 //----------------------------------------------------------------//
 
@@ -207,18 +211,18 @@ METHOD setCurrentWebName( cCurrentWeb ) CLASS TComercioConfig
    cCurrentWeb          := alltrim( cCurrentWeb )
 
    if !hhaskey( ::getWebs(), cCurrentWeb )
-      Return ( .f. )
+      RETURN ( .f. )
    endif
 
    hCurrentWeb          := hget( ::getWebs(), cCurrentWeb )
 
    if empty( hCurrentWeb )
-      Return ( .f. )
+      RETURN ( .f. )
    endif
    
    ::setCurrentWeb( hCurrentWeb, cCurrentWeb )
 
-Return ( .t. )
+RETURN ( .t. )
 
 //----------------------------------------------------------------//
 
@@ -248,9 +252,27 @@ METHOD getValidDirectoryFtp( cDirectory ) CLASS TComercioConfig
       cResult  := Substr( cResult, 1, Len( cResult ) - 1 )
    end if
 
-Return ( cResult )
+RETURN ( cResult )
 
 //---------------------------------------------------------------------------//
+
+METHOD getLang( idLang )  
+
+   local hLang    := ::getLangs()
+
+   if empty( hLang )
+      RETURN ( "" )
+   end if 
+
+   if !hhaskey( hLang, idLang )
+      RETURN ( "" )
+   end if 
+
+RETURN ( hget( hLang, idLang ) )
+
+//---------------------------------------------------------------------------//
+
+
 
 
 
