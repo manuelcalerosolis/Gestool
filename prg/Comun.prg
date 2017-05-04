@@ -280,7 +280,7 @@ Return ( .t. )
 //---------------------------------------------------------------------------//
 
 Function Test()
-
+/*
    TComercioConfig():getInstance():LoadJSON()
 
    TComercioConfig():getInstance():setCurrentWebName("Temporada")
@@ -290,7 +290,7 @@ Function Test()
    msgalert( valtype( TComercioConfig():getInstance():getLangs() ) )
 
    msgalert( TComercioConfig():getInstance():getLang("ES") )
-
+*/
 Return ( nil )
 
 //---------------------------------------------------------------------------//
