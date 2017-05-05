@@ -605,7 +605,7 @@ METHOD langsProduct( idProduct ) CLASS TComercioProduct
    local aLangs         := {}
    local nOrdenAnterior        
 
-   // Pasamos las imígenes de los artículos por propiedades-----------------------" )
+   // Pasamos las imígenes de los artículos por propiedades-----------------------
 
    nOrdenAnterior       := ( D():ArticuloLenguaje( ::getView() ) )->( ordsetfocus( "cCodArt" ) )
 
