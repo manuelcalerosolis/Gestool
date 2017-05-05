@@ -2,6 +2,8 @@
 #include "Factu.ch" 
 #include "MesDbf.ch"
 
+#define  __special_mode__              "9"
+
 //---------------------------------------------------------------------------//
 
 CLASS Etiquetas FROM SQLBaseView
@@ -22,9 +24,13 @@ CLASS Etiquetas FROM SQLBaseView
    METHOD      startDialog()
    METHOD      validDialog()
 
+   METHOD   insertAfterAppendButton()
+
    METHOD   loadTree( oTree, id )
    METHOD      setTree()
    METHOD      changeTree()
+
+   METHOD   AppendChild( oBrowse )
 
    METHOD   checkSelectedNode()
    METHOD      getSelectedNode()             INLINE ( ::nSelectedNode )
@@ -43,6 +49,20 @@ METHOD New()
    ::nSelectedNode         := nil
 
    ::Super:New()
+
+Return ( Self )
+
+//---------------------------------------------------------------------------//
+
+METHOD insertAfterAppendButton()
+
+   DEFINE BTNSHELL RESOURCE "NEW" OF ::oShell ;
+      NOBORDER ;
+      ACTION   ( ::AppendChild( ::oShell:getBrowse() ) );
+      TOOLTIP  "(A)ñadir Hijos";
+      BEGIN GROUP;
+      HOTKEY   "H";
+      LEVEL    ACC_APPD
 
 Return ( Self )
 
@@ -71,9 +91,17 @@ METHOD buildSQLShell()
       end with
 
       with object ( ::oShell:AddCol() )
-         :cHeader          := "Padre"
+         :cHeader          := "Id del Padre"
          :cSortOrder       := "id_padre"
          :bEditValue       := {|| ::oModel:getRowSet():fieldGet( "id_padre" ) }
+         :nWidth           := 100
+         :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | ::clickOnHeader( oCol, ::oShell:getBrowse(), ::oShell:getCombobox() ) }
+      end with
+
+      with object ( ::oShell:AddCol() )
+         :cHeader          := "Nombre del Padre"
+         :cSortOrder       := "nombre_padre"
+         :bEditValue       := {|| ::oModel:getRowSet():fieldGet( "nombre_padre" ) }
          :nWidth           := 100
          :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | ::clickOnHeader( oCol, ::oShell:getBrowse(), ::oShell:getCombobox() ) }
       end with
@@ -111,11 +139,18 @@ METHOD Dialog( lZoom )
       WHEN        ( ! ::isZoomMode() ) ;
       OF          oDlg
 
-   ::oTree                     := TTreeView():Redefine( 110, oDlg )
-   ::oTree:bItemSelectChanged  := {|| ::changeTree() }
+   ::oTree                       := TTreeView():Redefine( 110, oDlg )
+   ::oTree:bItemSelectChanged    := {|| ::changeTree() }
+   ::oTree:bWhen                 := {|| ::getMode() != __special_mode__ .or. !::isZoomMode() }
 
    REDEFINE BUTTON ;
       ID          IDOK ;
+      OF          oDlg ;
+      WHEN        ( ! ::isZoomMode() ) ;
+      ACTION      ( ::validDialog( oDlg ) )
+
+   REDEFINE BUTTON ;
+      ID          3 ;
       OF          oDlg ;
       WHEN        ( ! ::isZoomMode() ) ;
       ACTION      ( ::validDialog( oDlg ) )
@@ -155,7 +190,7 @@ METHOD validDialog( oDlg )
    ::setSelectedNode( nil )
 
    if empty( ::oModel:hBuffer[ "nombre" ] )
-      msgStop( "Nombre de la etiqueta no puede estar vacÃ­o." )
+      msgStop( "Nombre de la etiqueta no puede estar vacío." )
       RETURN ( .f. )
    end if 
 
@@ -176,7 +211,7 @@ METHOD validDialog( oDlg )
 
       if !::checkValidParent()
 
-         msgStop( "Referencia cÃ­clica. Una etiqueta hijo no puede ser padre de su padre")
+         msgStop( "Referencia cíclica. Una etiqueta hijo no puede ser padre de su padre")
          RETURN ( .f. )
          
       endif
@@ -186,6 +221,32 @@ METHOD validDialog( oDlg )
    ::oModel:hBuffer[ "id_padre" ] := ::getSelectedNode()
 
 RETURN ( oDlg:end( IDOK ) )
+
+//----------------------------------------------------------------------------//
+
+METHOD AppendChild( oBrowse )
+
+   if ::notUserAppend()
+      msgStop( "Acceso no permitido." )
+      RETURN ( Self )
+   end if 
+
+   ::setMode( __special_mode__ )
+
+   ::oModel:setIdForRecno( ::oModel:getKeyFieldOfRecno() )
+
+   ::oModel:loadChildBuffer()
+
+   if ::Dialog()
+      ::oModel:insertChildBuffer()
+   end if
+
+   if !empty( oBrowse )
+      oBrowse:refreshCurrent()
+      oBrowse:setFocus()
+   end if 
+
+RETURN ( Self )
 
 //---------------------------------------------------------------------------//
 

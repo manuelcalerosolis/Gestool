@@ -18,6 +18,8 @@ CLASS Situaciones FROM SQLBaseView
  
    METHOD   Dialog()
 
+   METHOD   validDialog( oDlg )
+
 END CLASS
 
 //---------------------------------------------------------------------------//
@@ -91,7 +93,7 @@ METHOD Dialog( lZoom )
       ID          IDOK ;
       OF          oDlg ;
       WHEN        ( ! ::isZoomMode() ) ;
-      ACTION      ( oDlg:end( IDOK ) )
+      ACTION      ( ::validDialog( oDlg ) )
 
    REDEFINE BUTTON ;
       ID          IDCANCEL ;
@@ -103,8 +105,21 @@ METHOD Dialog( lZoom )
 
    oDlg:AddFastKey( VK_F5, {|| oDlg:end( IDOK ) } )
 
+   // evento bstart-----------------------------------------------------------
+
+   oDlg:bStart    := {|| oGetNombre:setFocus() }
+
    ACTIVATE DIALOG oDlg CENTER
 
 RETURN ( oDlg:nResult == IDOK )
 
 //--------------------------------------------------------------------------//
+
+METHOD validDialog( oDlg )
+
+   if empty( ::oModel:hBuffer[ "situacion" ] )
+      MsgStop( "El nombre de la situación no puede estar vacío" )
+      Return ( .f. )
+   end if
+
+RETURN ( oDlg:end( IDOK ) )

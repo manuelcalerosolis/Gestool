@@ -271,6 +271,8 @@ METHOD getInsertSentence()
 
    cSQLInsert        := ChgAtEnd( cSQLInsert, ' )', 2 )
 
+   msgalert( cSQLInsert )
+
 Return ( cSQLInsert )
 
 //---------------------------------------------------------------------------//
@@ -345,7 +347,7 @@ Return ( ::loadBuffer( 0 ) )
 
 METHOD loadCurrentBuffer()                
 
-   local n
+   local aColumnNames := hb_hkeys( ::hColumns )
 
    if empty( ::oRowSet )
       Return ( .f. )
@@ -353,9 +355,7 @@ METHOD loadCurrentBuffer()
 
    ::hBuffer  := {=>}
 
-   for n := 1 to ::oRowSet:fieldCount()
-      hset( ::hBuffer, ::oRowSet:fieldname( n ), ::oRowSet:fieldget( n ) )
-   next 
+   aeval( aColumnNames, {| k | hset( ::hBuffer, k, ::oRowSet:fieldget( k ) ) } )
 
 Return ( ::hBuffer )   
 
@@ -363,15 +363,13 @@ Return ( ::hBuffer )
 
 METHOD loadBuffer( id )
 
-   local n 
+   local aColumnNames := hb_hkeys( ::hColumns )
 
    ::hBuffer  := {=>}
 
    ::oRowSet:goto( id )
 
-   for n := 1 to ::oRowSet:fieldCount()
-      hset( ::hBuffer, ::oRowSet:fieldname( n ), ::oRowSet:fieldget( n ) )
-   next 
+   aeval( aColumnNames, {| k | hset( ::hBuffer, k, ::oRowSet:fieldget( k ) ) } )
 
 Return ( .t. )
 

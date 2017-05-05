@@ -45,6 +45,7 @@ CLASS SQLBaseView
 
    METHOD   AutoButtons()                             INLINE ( ::GeneralButtons(), ::EndButton() )
       METHOD   GeneralButtons()
+      METHOD   insertAfterAppendButton()              VIRTUAL
       METHOD   EndButton()
 
    METHOD   setBrowseState( cBrowseState )            INLINE ( ::cBrowseState := cBrowseState )
@@ -52,12 +53,12 @@ CLASS SQLBaseView
    METHOD   restoreBrowseState( oBrowse )
  
    METHOD   Append( oBrowse )
-      METHOD setAppendMode()                          INLINE ( ::nMode := __append_mode__ )
+      METHOD setAppendMode()                          INLINE ( ::setMode( __append_mode__ ) )
       METHOD isAppendMode()                           INLINE ( ::nMode == __append_mode__ )
 
    METHOD Duplicate( oBrowse )
       METHOD setDuplicateMode()                       INLINE ( ::nMode := __duplicate_mode__ )
-      METHOD isDuplicateMode()                             INLINE ( ::nMode == __duplicate_mode__ )
+      METHOD isDuplicateMode()                        INLINE ( ::nMode == __duplicate_mode__ )
 
    METHOD   Edit( oBrowse )
      METHOD setEditMode()                             INLINE ( ::nMode := __edit_mode__ )
@@ -159,6 +160,8 @@ METHOD GeneralButtons()
       BEGIN GROUP;
       HOTKEY   "A";
       LEVEL    ACC_APPD
+
+   ::insertAfterAppendButton()
 
    DEFINE BTNSHELL RESOURCE "DUP" OF ::oShell ;
       NOBORDER ;
@@ -308,9 +311,7 @@ RETURN ( Self )
 
 //----------------------------------------------------------------------------//
 
-METHOD Edit( oBrowse )
-
-   local nRecno   
+METHOD Edit( oBrowse )  
 
    if ::notUserEdit()
       msgStop( "Acceso no permitido." )

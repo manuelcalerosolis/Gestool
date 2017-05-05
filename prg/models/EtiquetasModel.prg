@@ -17,7 +17,11 @@ CLASS EtiquetasModel FROM SQLBaseModel
 
    METHOD   buildRowSetWithRecno()                 INLINE   ( ::buildRowSet( .t. ) )
 
+   METHOD   loadChildBuffer()
+
    METHOD   deleteSelection()
+
+   METHOD   insertChildBuffer()                    INLINE   ( msgalert( ::getInsertSentence ) ) //( getSQLDatabase():Query( ::getUpdateSentence() ), ::buildRowSetWithRecno() )
 
 END CLASS
 
@@ -44,6 +48,11 @@ METHOD New()
 
    ::Super:New()
 
+   ::cGeneralSelect              := "select id, nombre, imagen, id_padre, nombre_padre"   +;
+                                    " from etiquetas left join"                           +;
+                                    " (select id as id_del_padre, nombre as nombre_padre from etiquetas)"+;
+                                    " on id_padre = id_del_padre"
+
 RETURN ( Self )
 
 //---------------------------------------------------------------------------//
@@ -52,10 +61,27 @@ METHOD   deleteSelection()
 
    local cUpdateOnDelete
 
-   cUpdateOnDelete := "UPDATE etiquetas SET id_padre = null WHERE id_padre = " + toSQLString( ::oRowSet:fieldGet( ::cColumnKey ) )
+   cUpdateOnDelete := "UPDATE " + ::cTableName +  " SET id_padre = null WHERE id_padre = " + toSQLString( ::oRowSet:fieldGet( ::cColumnKey ) )
 
    getSQLDatabase():Query( ::getdeleteSentence() )
    getSQLDatabase():Query( cUpdateOnDelete )
    ::buildRowSet()
 
 RETURN ( self )
+
+
+//---------------------------------------------------------------------------//
+
+METHOD   loadChildBuffer()
+
+   local aColumnNames := hb_hkeys( ::hColumns )
+
+   if empty( ::oRowSet )
+      Return ( .f. )
+   end if
+
+   ::hBuffer  := {=>}
+
+   aeval( aColumnNames, {| k | hset( ::hBuffer, k , if ( k == "id_padre", ::oRowSet:fieldget( "id" ), "" ) ) } )
+
+Return ( .t. )
