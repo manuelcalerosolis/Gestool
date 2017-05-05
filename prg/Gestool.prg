@@ -49,7 +49,7 @@ function Main( paramsMain, paramsSecond, paramsThird )
 
    local oIndex
    local oIconApp
-   
+
    appParamsMain( paramsMain )
 
    appParamsSecond( paramsSecond )
@@ -75,7 +75,7 @@ function Main( paramsMain, paramsSecond, paramsThird )
    if ( "ADMINISTRADOR" $ appParamsMain() )
       TDataCenter():lAdministratorTask()
       Return nil
-   end if 
+   end if
 
    // Motor de bases de datos--------------------------------------------------
 

@@ -2335,7 +2335,9 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, cCodCli, cCodArt, nMode, cCodPre 
 
       with object ( oBrwLin:AddCol() )
          :cHeader             := "Número"
+         :cSortOrder          := "nNumLin"
          :bEditValue          := {|| ( dbfTmpLin )->nNumLin }
+         :bLClickHeader       := {| nMRow, nMCol, nFlags, oCol | if( !empty( oCol ), oCol:SetOrder(), ) }
          :cEditPicture        := "9999"
          :nWidth              := 54
          :nDataStrAlign       := 1
@@ -2366,7 +2368,9 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, cCodCli, cCodArt, nMode, cCodPre 
      
       with object ( oBrwLin:AddCol() )
          :cHeader             := "Código"
+         :cSortOrder          := "cRef"
          :bEditValue          := {|| ( dbfTmpLin )->cRef }
+         :bLClickHeader       := {| nMRow, nMCol, nFlags, oCol | if( !empty( oCol ), oCol:SetOrder(), ) }
          :nWidth              := 60
       end with
 
@@ -2379,19 +2383,24 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, cCodCli, cCodArt, nMode, cCodPre 
 
       with object ( oBrwLin:AddCol() )
          :cHeader             := "Descripción"
+         :cSortOrder          := "cDetalle"
          :bEditValue          := {|| if( Empty( ( dbfTmpLin )->cRef ), ( dbfTmpLin )->mLngDes, ( dbfTmpLin )->cDetalle ) }
+         :bLClickHeader       := {| nMRow, nMCol, nFlags, oCol | if( !empty( oCol ), oCol:SetOrder(), ) }         
          :nWidth              := 250
       end with
 
       with object ( oBrwLin:AddCol() )
          :cHeader             := "Última venta"
+         :cSortOrder          := "dFecUltCom"
          :bEditValue          := {|| Dtoc( ( dbfTmpLin )->dFecUltCom ) }
          :nWidth              := 80
          :lHide               := .t.
+         :bLClickHeader       := {| nMRow, nMCol, nFlags, oCol | if( !empty( oCol ), oCol:SetOrder(), ) }         
       end with
 
       with object ( oBrwLin:AddCol() )
          :cHeader             := "Última unidades"
+         :cSortOrder          := "nUniUltCom"
          :bEditValue          := {|| ( dbfTmpLin )->nUniUltCom }
          :cEditPicture        := MasUnd()
          :nWidth              := 60
@@ -2399,6 +2408,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, cCodCli, cCodArt, nMode, cCodPre 
          :nHeadStrAlign       := 1
          :lHide               := .t.
          :nFooterType         := AGGR_SUM
+         :bLClickHeader       := {| nMRow, nMCol, nFlags, oCol | if( !empty( oCol ), oCol:SetOrder(), ) }         
       end with
 
       with object ( oBrwLin:AddCol() )
@@ -2449,6 +2459,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, cCodCli, cCodArt, nMode, cCodPre 
 
       with object ( oBrwLin:AddCol() )
          :cHeader             := cNombreUnidades()
+         :cSortOrder          := "nUniCaja"
          :bEditValue          := {|| ( dbfTmpLin )->nUniCaja }
          :cEditPicture        := cPicUnd
          :nWidth              := 60
@@ -2458,6 +2469,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, cCodCli, cCodArt, nMode, cCodPre 
          :nEditType           := 1
          :bOnPostEdit         := {|o,x,n| ChangeUnidades( o, x, n, aTmp, dbfTmpLin ) }
          :nFooterType         := AGGR_SUM
+         :bLClickHeader       := {| nMRow, nMCol, nFlags, oCol | if( !empty( oCol ), oCol:SetOrder(), ) }         
       end with
 
       with object ( oBrwLin:AddCol() )
@@ -8577,16 +8589,25 @@ STATIC FUNCTION BeginTrans( aTmp, nMode )
    if !NetErr()
 
       ( dbfTmpLin )->( OrdCondSet( "!Deleted()", {||!Deleted() } ) )
-      ( dbfTmpLin )->( OrdCreate( cTmpLin, "Recno", "Str( Recno() )", {|| Str( Recno() ) } ) )
+      ( dbfTmpLin )->( OrdCreate( cTmpLin, "nNumLin", "Str( nNumLin, 4 )", {|| Str( Field->nNumLin ) } ) )
 
       ( dbfTmpLin )->( OrdCondSet( "!Deleted()", {||!Deleted() } ) )
       ( dbfTmpLin )->( OrdCreate( cTmpLin, "cRef", "cRef", {|| Field->cRef } ) )
 
       ( dbfTmpLin )->( OrdCondSet( "!Deleted()", {||!Deleted() } ) )
-      ( dbfTmpLin )->( OrdCreate( cTmpLin, "nNumLin", "Str( nNumLin, 4 )", {|| Str( Field->nNumLin ) } ) )
+      ( dbfTmpLin )->( OrdCreate( cTmpLin, "cDetalle", "Left( cDetalle, 100 )", {|| Left( Field->cDetalle, 100 ) } ) )
+
+      ( dbfTmpLin )->( OrdCondSet( "!Deleted()", {|| !Deleted() } ) )
+      ( dbfTmpLin )->( OrdCreate( cTmpLin, "nUniCaja", "nUniCaja", {|| Field->nUniCaja } ) )
 
       ( dbfTmpLin )->( OrdCondSet( "!Deleted()", {||!Deleted() } ) )
       ( dbfTmpLin )->( OrdCreate( cTmpLin, "nPosPrint", "Str( nPosPrint, 4 )", {|| Str( Field->nPosPrint ) } ) )
+
+      ( dbfTmpLin )->( OrdCondSet( "!Deleted()", {|| !Deleted() } ) )
+      ( dbfTmpLin )->( OrdCreate( cTmpLin, "dFecUltCom", "dFecUltCom", {|| Field->dFecUltCom } ) )
+
+      ( dbfTmpLin )->( OrdCondSet( "!Deleted()", {|| !Deleted() } ) )
+      ( dbfTmpLin )->( OrdCreate( cTmpLin, "nUniUltCom", "nUniUltCom", {|| Field->nUniUltCom } ) )
 
    else
 

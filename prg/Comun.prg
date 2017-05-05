@@ -249,7 +249,7 @@ Function lStartCheck()
  
    if !empty( oMsgSesion() )
       oMsgSesion():setText( "Sesión : " + Transform( cCurSesion(), "######" ) )
-   end if 
+   end if
 
    // Colocamos los avisos pa las notas----------------------------------------
 
@@ -281,7 +281,19 @@ Return ( .t. )
 
 Function Test()
 
+<<<<<<< HEAD
    EtiquetasModel():New():getImportSentence()
+=======
+<<<<<<< HEAD
+   //Situaciones():New():ActivateShell()
+=======
+<<<<<<< HEAD
+   //Etiquetas():New():ActivateShell()
+=======
+   msgalert( hb_valtoexp( TComercioConfig():getInstance():getLangs() ) )
+>>>>>>> 0f734ba3783c09158fd3c4e9a7f76bf451f7fa33
+>>>>>>> origin/master
+>>>>>>> origin/master
 
 Return ( nil )
 
