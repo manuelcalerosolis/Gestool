@@ -280,9 +280,25 @@ Return ( .t. )
 //---------------------------------------------------------------------------//
 
 Function Test()
+/*
+   TComercioConfig():getInstance():LoadJSON()
 
+   TComercioConfig():getInstance():setCurrentWebName("Temporada")
+
+<<<<<<< HEAD
    //Situaciones():New():ActivateShell()
+=======
+<<<<<<< HEAD
+   //Etiquetas():New():ActivateShell()
+=======
+   msgalert( hb_valtoexp( TComercioConfig():getInstance():getLangs() ) )
+>>>>>>> 0f734ba3783c09158fd3c4e9a7f76bf451f7fa33
+>>>>>>> origin/master
 
+   msgalert( valtype( TComercioConfig():getInstance():getLangs() ) )
+
+   msgalert( TComercioConfig():getInstance():getLang("ES") )
+*/
 Return ( nil )
 
 //---------------------------------------------------------------------------//

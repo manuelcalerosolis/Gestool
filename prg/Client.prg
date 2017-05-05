@@ -4159,7 +4159,7 @@ Static function validEdtFacturae( aTmp, nMode )
    if nMode == APPD_MODE .and. ;
       dbSeekInOrd( aTmp[ ( dbfTmpFacturae )->( FieldPos( "cDesFac" ) ) ], "cDesFac", D():ClientesEntidad( nView ) )
 
-      msgStop( "Descripciï¿½n ya existe." )
+      msgStop( "Descripción ya existe." )
       return .f.
       
    endif
@@ -13178,25 +13178,25 @@ Return ( .t. )
 
 function aplicaEntidadCliente( cCodCli, nView, dbfTmpEntidades )
 
-   local aEntidades     := {}
    local hEntidad
+   local aEntidades     := {}
   
    if Empty( ( D():ClientesEntidad( nView ) )->mMemo )
       Return ( .t. )
    end if
 
-   aEntidades           := hb_deserialize( ( D():ClientesEntidad( nView ) )->mMemo )
+   aEntidades                             := hb_deserialize( ( D():ClientesEntidad( nView ) )->mMemo )
 
    for each hEntidad in aEntidades
 
       if !dbSeekInOrd( ( padr( hget( hEntidad, "CodigoEntidad"), 60 ) + padr( hget( hEntidad, "RolEntidad"), 60 ) ), "cRolEnt", dbfTmpEntidades )
 
-         ( dbfTmpEntidades )->( dbAppend() )
+         ( dbfTmpEntidades )->( dbappend() )
 
          ( dbfTmpEntidades )->cCodEnt     := hget( hEntidad, "CodigoEntidad")
          ( dbfTmpEntidades )->cRol        := hget( hEntidad, "RolEntidad")
 
-         ( dbfTmpEntidades )->( dbUnlock() )
+         ( dbfTmpEntidades )->( dbunlock() )
 
       endif 
 

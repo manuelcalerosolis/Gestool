@@ -8,11 +8,14 @@ CLASS TLenguaje FROM TMant
 
    DATA cMru                  INIT "gc_user_message_16"
 
+   DATA oBrwDialog
+
+   DATA aLenguajesPrestashop  INIT {}
+
    METHOD DefineFiles()
 
    METHOD Resource( nMode )
-
-   METHOD lPreSave()
+      METHOD lValidResource()
 
 END CLASS
 
@@ -44,7 +47,8 @@ METHOD Resource( nMode )
 
    DEFINE DIALOG oDlg RESOURCE "Lenguajes" TITLE LblTitle( nMode ) + "lenguajes"
 
-      REDEFINE GET oGet VAR ::oDbf:cCodLen UPDATE;
+      REDEFINE GET oGet ;
+         VAR      ::oDbf:cCodLen UPDATE;
 			ID 		100 ;
          WHEN     ( nMode == APPD_MODE ) ;
 			PICTURE 	"@!" ;
@@ -58,8 +62,8 @@ METHOD Resource( nMode )
       REDEFINE BUTTON ;
          ID       IDOK ;
 			OF 		oDlg ;
-         WHEN     (  nMode != ZOOM_MODE ) ;
-         ACTION   (  ::lPreSave( oGet, oDlg, nMode ) )
+         WHEN     ( nMode != ZOOM_MODE ) ;
+         ACTION   ( ::lValidResource( oGet, oDlg, nMode ) )
 
       REDEFINE BUTTON ;
          ID       IDCANCEL ;
@@ -68,7 +72,7 @@ METHOD Resource( nMode )
 			ACTION 	( oDlg:end() )
 
    if nMode != ZOOM_MODE
-      oDlg:AddFastKey( VK_F5, {|| ::lPreSave( oGet, oDlg, nMode ) } )
+      oDlg:AddFastKey( VK_F5, {|| ::lValidResource( oGet, oDlg, nMode ) } )
    end if
 
    oDlg:bStart    := {|| oGet:SetFocus() }
@@ -79,7 +83,7 @@ RETURN ( oDlg:nResult == IDOK )
 
 //---------------------------------------------------------------------------//
 
-METHOD lPreSave( oGet, oDlg, nMode )
+METHOD lValidResource( oGet, oDlg, nMode )
 
    if nMode == APPD_MODE .or. nMode == DUPL_MODE
 
@@ -96,6 +100,7 @@ METHOD lPreSave( oGet, oDlg, nMode )
       Return .f.
    end if
 
-Return ( oDlg:end( IDOK ) )
+RETURN ( oDlg:end( IDOK ) )
 
 //---------------------------------------------------------------------------//
+

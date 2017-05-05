@@ -2,11 +2,15 @@
 #include "Factu.ch" 
 #include "MesDbf.ch"
 
+#define  __special_mode__              "9"
+
 //---------------------------------------------------------------------------//
 
 CLASS Etiquetas FROM SQLBaseView
 
    DATA     oTree
+
+   DATA     nSelectedNode
 
    METHOD   New()
 
@@ -20,10 +24,19 @@ CLASS Etiquetas FROM SQLBaseView
    METHOD      startDialog()
    METHOD      validDialog()
 
+   METHOD   insertAfterAppendButton()
+
    METHOD   loadTree( oTree, id )
    METHOD      setTree()
-   METHOD      getTree()
    METHOD      changeTree()
+
+   METHOD   AppendChild( oBrowse )
+
+   METHOD   checkSelectedNode()
+   METHOD      getSelectedNode()             INLINE ( ::nSelectedNode )
+   METHOD      setSelectedNode( nNode )      INLINE ( ::nSelectedNode := nNode )
+
+   METHOD   checkValidParent()
 
 END CLASS
 
@@ -31,9 +44,25 @@ END CLASS
 
 METHOD New()
 
-   ::idUserMap            	:= "01101"	
+   ::idUserMap            	:= "01101"
+
+   ::nSelectedNode         := nil
 
    ::Super:New()
+
+Return ( Self )
+
+//---------------------------------------------------------------------------//
+
+METHOD insertAfterAppendButton()
+
+   DEFINE BTNSHELL RESOURCE "NEW" OF ::oShell ;
+      NOBORDER ;
+      ACTION   ( ::AppendChild( ::oShell:getBrowse() ) );
+      TOOLTIP  "(A)ñadir Hijos";
+      BEGIN GROUP;
+      HOTKEY   "H";
+      LEVEL    ACC_APPD
 
 Return ( Self )
 
@@ -62,9 +91,17 @@ METHOD buildSQLShell()
       end with
 
       with object ( ::oShell:AddCol() )
-         :cHeader          := "Padre"
+         :cHeader          := "Id del Padre"
          :cSortOrder       := "id_padre"
          :bEditValue       := {|| ::oModel:getRowSet():fieldGet( "id_padre" ) }
+         :nWidth           := 100
+         :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | ::clickOnHeader( oCol, ::oShell:getBrowse(), ::oShell:getCombobox() ) }
+      end with
+
+      with object ( ::oShell:AddCol() )
+         :cHeader          := "Nombre del Padre"
+         :cSortOrder       := "nombre_padre"
+         :bEditValue       := {|| ::oModel:getRowSet():fieldGet( "nombre_padre" ) }
          :nWidth           := 100
          :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | ::clickOnHeader( oCol, ::oShell:getBrowse(), ::oShell:getCombobox() ) }
       end with
@@ -102,11 +139,18 @@ METHOD Dialog( lZoom )
       WHEN        ( ! ::isZoomMode() ) ;
       OF          oDlg
 
-   ::oTree                     := TTreeView():Redefine( 110, oDlg )
-   ::oTree:bItemSelectChanged  := {|| ::changeTree() }
+   ::oTree                       := TTreeView():Redefine( 110, oDlg )
+   ::oTree:bItemSelectChanged    := {|| ::changeTree() }
+   ::oTree:bWhen                 := {|| ::getMode() != __special_mode__ .or. !::isZoomMode() }
 
    REDEFINE BUTTON ;
       ID          IDOK ;
+      OF          oDlg ;
+      WHEN        ( ! ::isZoomMode() ) ;
+      ACTION      ( ::validDialog( oDlg ) )
+
+   REDEFINE BUTTON ;
+      ID          3 ;
       OF          oDlg ;
       WHEN        ( ! ::isZoomMode() ) ;
       ACTION      ( ::validDialog( oDlg ) )
@@ -123,7 +167,7 @@ METHOD Dialog( lZoom )
 
    // evento bstart-----------------------------------------------------------
 
-   oDlg:bStart    := {|| ::startDialog() }
+   oDlg:bStart    := {|| ::startDialog(), oGetNombre:setFocus() }
 
    ACTIVATE DIALOG oDlg CENTER
 
@@ -135,30 +179,85 @@ METHOD startDialog()
 
    ::loadTree()
 
+   ::setTree( ::oModel:hBuffer[ "id_padre" ] )
+
 RETURN ( Self )
 
 //---------------------------------------------------------------------------//  
 
 METHOD validDialog( oDlg )
 
-   local idPadre                       := ::getTree() 
+   ::setSelectedNode( nil )
 
-   if !empty( idPadre )
-      ::oModel:hBuffer[ "id_padre" ]   := idPadre
+   if empty( ::oModel:hBuffer[ "nombre" ] )
+      msgStop( "Nombre de la etiqueta no puede estar vacío." )
+      RETURN ( .f. )
    end if 
+
+   ::checkSelectedNode()
+
+   if empty( ::getSelectedNode() )
+      RETURN ( oDlg:end( IDOK ) )
+   end if
+   
+   if ( ::isEditMode() )
+
+      if ::oModel:hBuffer[ "id" ] == ::getSelectedNode()
+               
+         msgStop( "Referencia a si mismo. Una etiqueta no puede ser padre de si misma.")
+         RETURN ( .f. )
+
+      end if
+
+      if !::checkValidParent()
+
+         msgStop( "Referencia cíclica. Una etiqueta hijo no puede ser padre de su padre")
+         RETURN ( .f. )
+         
+      endif
+
+   end if 
+
+   ::oModel:hBuffer[ "id_padre" ] := ::getSelectedNode()
 
 RETURN ( oDlg:end( IDOK ) )
 
+//----------------------------------------------------------------------------//
+
+METHOD AppendChild( oBrowse )
+
+   if ::notUserAppend()
+      msgStop( "Acceso no permitido." )
+      RETURN ( Self )
+   end if 
+
+   ::setMode( __special_mode__ )
+
+   ::oModel:setIdForRecno( ::oModel:getKeyFieldOfRecno() )
+
+   ::oModel:loadChildBuffer()
+
+   if ::Dialog()
+      ::oModel:insertChildBuffer()
+   end if
+
+   if !empty( oBrowse )
+      oBrowse:refreshCurrent()
+      oBrowse:setFocus()
+   end if 
+
+RETURN ( Self )
+
 //---------------------------------------------------------------------------//
 
-METHOD loadTree( oTree, id )
+METHOD loadTree( id, oTree )
 
    local oNode
    local nRecno
    local nPosition
 
-   default oTree  := ::oTree
    default id     := ""
+   default oTree  := ::oTree
 
    id             := cValToStr( id )
 
@@ -171,7 +270,7 @@ METHOD loadTree( oTree, id )
       oNode       := oTree:add( ::oModel:getRowSet():fieldGet( "nombre" ) )
       oNode:Cargo := ::oModel:getRowSet():fieldGet( "id" )
 
-      ::loadTree( oNode, oNode:Cargo )
+      ::loadTree( oNode:Cargo, oNode )
 
       ::oModel:getRowSet():goto( nPosition )
 
@@ -187,7 +286,7 @@ RETURN ( Self )
 
 //---------------------------------------------------------------------------//
 
-METHOD setTree( oTree, aItems, id )
+METHOD setTree( id, oTree, aItems )
 
    local oItem
 
@@ -199,7 +298,7 @@ METHOD setTree( oTree, aItems, id )
 
    for each oItem in aItems
 
-      if ( id == oItem:Cargo )
+      if ( alltrim( cValToStr( id ) ) == alltrim( cValToStr( oItem:Cargo ) ) )
 
          oTree:Select( oItem )
          oTree:SetCheck( oItem, .t. )
@@ -209,7 +308,7 @@ METHOD setTree( oTree, aItems, id )
       end if
 
       if len( oItem:aItems ) > 0
-         ::setTreeState( oTree, oItem:aItems, id )
+         ::setTree( id, oTree, oItem:aItems )
       end if
 
    next
@@ -218,7 +317,7 @@ RETURN ( .t. )
 
 //---------------------------------------------------------------------------//
 
-METHOD getTree( oTree, aItems )
+METHOD checkSelectedNode( oTree, aItems )
 
    local oItem
 
@@ -231,16 +330,40 @@ METHOD getTree( oTree, aItems )
    for each oItem in aItems
 
       if oTree:GetCheck( oItem )
-         RETURN ( oItem:Cargo )
+         ::setSelectedNode( oItem:Cargo )
       end if
 
       if len( oItem:aItems ) > 0
-         ::getTree( oTree, oItem:aItems )
+         ::checkSelectedNode( oTree, oItem:aItems )
       end if
 
    next
 
 RETURN ( nil )
+
+//---------------------------------------------------------------------------//
+
+METHOD checkValidParent( oTree, nCargo )
+
+   local idTarget    := ::getSelectedNode()
+
+   while idTarget != 0
+
+      if ::oModel:getRowSet():find( idTarget, "id" ) != 0
+
+         idTarget := val( ::oModel:getRowSet():fieldget( "id_padre" ) )
+
+      end if
+
+      if alltrim( cValtoStr( idTarget ) ) == alltrim( cValtoStr( ::oModel:hBuffer[ "id" ] ) )
+
+         RETURN ( .f. )
+          
+      endif
+
+   end while
+
+RETURN ( .t. )
 
 //---------------------------------------------------------------------------//
 

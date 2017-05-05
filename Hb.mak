@@ -403,6 +403,7 @@ SQLBaseView.prg 													\
 TiposImpresoras.prg       										\
 TiposNotas.prg       										\
 Etiquetas.prg       										\
+TiposIncidencias.prg       										\
 PageIni.prg             										\
 TpvTactil.prg           										\
 TpvUtilidadesMesa.prg 											\
@@ -496,6 +497,7 @@ PedidosProveedoresModel.prg									\
 TiposImpresorasModel.prg 										\
 TiposNotasModel.prg 										\
 EtiquetasModel.prg 										\
+TiposIncidenciasModel.prg 										\
 ArticulosModel.prg                                    \
 HistoricosUsuariosModel.prg                                    \
 
@@ -889,6 +891,7 @@ SQLBaseView.obj 												\
 TiposImpresoras.obj       									\
 TiposNotas.obj       									\
 Etiquetas.obj       									\
+TiposIncidencias.obj       									\
 PageIni.obj             									\
 TpvTactil.obj           									\
 TpvUtilidadesMesa.obj 										\
@@ -984,6 +987,7 @@ PedidosProveedoresModel.obj 									\
 TiposImpresorasModel.obj 										\
 TiposNotasModel.obj 										\
 EtiquetasModel.obj 										\
+TiposIncidenciasModel.obj 										\
 ArticulosModel.obj                                    \
 HistoricosUsuariosModel.obj                                    \
 
@@ -1364,6 +1368,7 @@ $(OBJ)\SQLBaseView.obj 								+
 $(OBJ)\TiposImpresoras.obj      					+
 $(OBJ)\TiposNotas.obj      							+
 $(OBJ)\Etiquetas.obj      							+
+$(OBJ)\TiposIncidencias.obj      					+
 $(OBJ)\PageIni.obj              					+
 $(OBJ)\TpvTactil.obj            					+
 $(OBJ)\TpvUtilidadesMesa.obj 						+
@@ -1460,6 +1465,7 @@ $(OBJ)\PedidosProveedoresModel.obj 				+
 $(OBJ)\TiposImpresorasModel.obj                 +
 $(OBJ)\TiposNotasModel.obj                 +
 $(OBJ)\EtiquetasModel.obj                 +
+$(OBJ)\TiposIncidenciasModel.obj                 +
 $(OBJ)\HistoricosUsuariosModel.obj
 $<,$*
 $(FWLIB)\FiveH.lib               				+

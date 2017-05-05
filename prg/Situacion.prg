@@ -260,13 +260,13 @@ METHOD importStatePrestashop( oQuery )
 
    if ::findState( oQuery:FieldGetByName( "name" ) )
 
-            if empty( ::oDbf:idPs )
-               ::assignIdPrestashop( oQuery:FieldGetByName( "id_order_state" ) )
-            end if 
+      if empty( ::oDbf:idPs )
+         ::assignIdPrestashop( oQuery:FieldGetByName( "id_order_state" ) )
+      end if 
 
-         else
-            ::importState( oQuery )
-         endif
+   else
+      ::importState( oQuery )
+   endif
 
 Return( .t. ) 
 

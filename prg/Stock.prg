@@ -3879,7 +3879,6 @@ METHOD aStockArticulo( cCodArt, cCodAlm, oBrw, lLote, lNumeroSerie, dFecIni, dFe
       // Colocamos el codigo de almacen-----------------------------------------" )
 
       ::SetCodigoAlmacen( cCodAlm )
-      
       SysRefresh()
 
       // Movimientos de almacén------------------------------------------------" )
