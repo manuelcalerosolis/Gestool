@@ -595,10 +595,16 @@ METHOD stockProduct( id ) CLASS TComercioProduct
    local nStock            := 0
    local aStockProduct     := {}
    local aStockArticulo    := ::oStock():aStockArticulo( id, ::TComercioConfig():getStore() )
+   local lApunteResumen    := .t.
 
    for each sStock in aStockArticulo
 
       if sStock:nUnidades > 0
+
+         lApunteResumen    := (  AllTrim( sStock:cCodigoPropiedad1 ) != "" .or.;
+                                 AllTrim( sStock:cCodigoPropiedad2 ) != "" .or.;
+                                 AllTrim( sStock:cValorPropiedad1 ) != "" .or.;
+                                 AllTrim( sStock:cValorPropiedad2 ) != "" )
 
          aAdd( aStockProduct, {  "idProduct"             => id ,;
                                  "idFirstProperty"       => sStock:cCodigoPropiedad1 ,;
@@ -615,12 +621,16 @@ METHOD stockProduct( id ) CLASS TComercioProduct
 
    // apunte resumen ---------------------------------------------------------
 
-   aAdd( aStockProduct, {  "idProduct"             => id ,;
-                           "idFirstProperty"       => space( 20 ) ,;
-                           "idSecondProperty"      => space( 20 ) ,;
-                           "valueFirstProperty"    => space( 20 ) ,;
-                           "valueSecondProperty"   => space( 20 ) ,;
-                           "unitStock"             => nStock } )
+   if lApunteResumen
+
+      aAdd( aStockProduct, {  "idProduct"             => id ,;
+                              "idFirstProperty"       => space( 20 ) ,;
+                              "idSecondProperty"      => space( 20 ) ,;
+                              "valueFirstProperty"    => space( 20 ) ,;
+                              "valueSecondProperty"   => space( 20 ) ,;
+                              "unitStock"             => nStock } )
+
+   end if
 
 Return ( aStockProduct )
 
@@ -1943,6 +1953,10 @@ METHOD insertPropertiesLineProduct( hPropertiesLineProduct, nPosition ) CLASS TC
    local cCommand          := ""
    local nCodigoGrupo      := ::TPrestashopId():getValueAttributeGroup( hGet( hPropertiesLineProduct, "idparent" ), ::getCurrentWebName() )
 
+   if Empty( hGet( hPropertiesLineProduct, "idparent" ) ) .and. Empty( hGet( hPropertiesLineProduct, "id" ) )
+      Return ( self )
+   end if
+
    cCommand                := "INSERT INTO " + ::cPrefixTable( "attribute" ) + " ( " + ; 
                                  "id_attribute_group, " + ;
                                  "color, " + ;
@@ -2070,7 +2084,9 @@ METHOD processStockProduct( idProduct, hProduct ) CLASS TComercioProduct
    ::commandExecDirect( cCommand )
 
    for each hStock in hGet( hProduct, "aStock" )
+
       ::insertStockProduct( idProductPrestashop, hStock )
+
    next
 
 Return ( Self )
@@ -2094,30 +2110,60 @@ METHOD insertStockProduct( idProductPrestashop, hStock ) CLASS TComercioProduct
 
    attributeFirstProperty        := ::TPrestashopId():getValueAttribute( hget( hStock, "idFirstProperty" ) + hget( hStock, "valueFirstProperty" ),     ::getCurrentWebName() )
    attributeSecondProperty       := ::TPrestashopId():getValueAttribute( hget( hStock, "idSecondProperty" ) + hget( hStock, "valueSecondProperty" ),   ::getCurrentWebName() ) 
+
    unitStock                     := hget( hStock, "unitStock" )
 
-   if ( attributeFirstProperty != 0 ) .and. ( attributeSecondProperty != 0 )
-      idProductAttribute         := ::getProductAttribute( idProductPrestashop, attributeFirstProperty, attributeSecondProperty ) 
-   end if 
+   if ( attributeFirstProperty != 0 ) .or. ( attributeSecondProperty != 0 )
 
-   cCommand                      := "INSERT INTO " + ::cPrefixTable( "stock_available" ) + " ( "                        + ;
-                                       "id_product, "                                                                   + ;
-                                       "id_product_attribute, "                                                         + ;
-                                       "id_shop, "                                                                      + ;
-                                       "id_shop_group, "                                                                + ;
-                                       "quantity, "                                                                     + ;
-                                       "depends_on_stock, "                                                             + ;
-                                       "out_of_stock ) "                                                                + ;
-                                    "VALUES ( "                                                                         + ;
-                                       "'" + alltrim( str( idProductPrestashop ) ) + "', "                              + ;
-                                       "'" + alltrim( str( idProductAttribute ) ) + "', "                               + ;   
-                                       "'1', "                                                                          + ;
-                                       "'0', "                                                                          + ;
-                                       "'" + alltrim( str( unitStock ) ) + "', "                                        + ;
-                                       "'0', "                                                                          + ;
-                                       "'2' )"
+      idProductAttribute         := ::getProductAttribute( idProductPrestashop, attributeFirstProperty, attributeSecondProperty )
 
-   ::commandExecDirect( cCommand )
+   end if   
+
+      //if idProductAttribute != 0
+
+         cCommand                      := "INSERT INTO " + ::cPrefixTable( "stock_available" ) + " ( "                        + ;
+                                             "id_product, "                                                                   + ;
+                                             "id_product_attribute, "                                                         + ;
+                                             "id_shop, "                                                                      + ;
+                                             "id_shop_group, "                                                                + ;
+                                             "quantity, "                                                                     + ;
+                                             "depends_on_stock, "                                                             + ;
+                                             "out_of_stock ) "                                                                + ;
+                                          "VALUES ( "                                                                         + ;
+                                             "'" + alltrim( str( idProductPrestashop ) ) + "', "                              + ;
+                                             "'" + alltrim( str( idProductAttribute ) ) + "', "                               + ;   
+                                             "'1', "                                                                          + ;
+                                             "'0', "                                                                          + ;
+                                             "'" + alltrim( str( unitStock ) ) + "', "                                        + ;
+                                             "'0', "                                                                          + ;
+                                             "'2' )"
+
+         ::commandExecDirect( cCommand )
+
+      /*end if
+
+   else
+
+         cCommand                      := "INSERT INTO " + ::cPrefixTable( "stock_available" ) + " ( "                        + ;
+                                             "id_product, "                                                                   + ;
+                                             "id_product_attribute, "                                                         + ;
+                                             "id_shop, "                                                                      + ;
+                                             "id_shop_group, "                                                                + ;
+                                             "quantity, "                                                                     + ;
+                                             "depends_on_stock, "                                                             + ;
+                                             "out_of_stock ) "                                                                + ;
+                                          "VALUES ( "                                                                         + ;
+                                             "'" + alltrim( str( idProductPrestashop ) ) + "', "                              + ;
+                                             "'0', "                                                                          + ;   
+                                             "'1', "                                                                          + ;
+                                             "'0', "                                                                          + ;
+                                             "'" + alltrim( str( unitStock ) ) + "', "                                        + ;
+                                             "'0', "                                                                          + ;
+                                             "'2' )"
+
+         ::commandExecDirect( cCommand )
+   
+   end if*/
 
    ::writeText(   "Actualizando stock con propiedades : " + alltrim( str( attributeFirstProperty ) ) + " , " + ;
                   alltrim( str( attributeSecondProperty ) ) + ", " + ;
@@ -2269,9 +2315,17 @@ METHOD putFileRootProductImage( hProductImage ) CLASS TComercioProduct
    local aRemoteImages     
    local idProductGestool  
 
-   cNameImage              := hget( hProductImage, "name" )
-   aRemoteImages           := hget( hProductImage, "aRemoteImages" )
-   idProductGestool        := hget( hProductImage, "idProductGestool" )
+   if hhaskey( hProductImage, "name" )
+      cNameImage        := hget( hProductImage, "name" )
+   end if
+
+   if hhaskey( hProductImage, "aRemoteImages" )
+      aRemoteImages     := hget( hProductImage, "aRemoteImages" )
+   end if
+
+   if hhaskey( hProductImage, "idProductGestool" )
+      idProductGestool  := hget( hProductImage, "idProductGestool" )
+   end if
 
    if empty( cNameImage )
       Return .f.

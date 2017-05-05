@@ -249,7 +249,7 @@ Function lStartCheck()
  
    if !empty( oMsgSesion() )
       oMsgSesion():setText( "Sesión : " + Transform( cCurSesion(), "######" ) )
-   end if 
+   end if
 
    // Colocamos los avisos pa las notas----------------------------------------
 
@@ -281,7 +281,7 @@ Return ( .t. )
 
 Function Test()
 
-   Situaciones():New():ActivateShell()
+   //Situaciones():New():ActivateShell()
 
 Return ( nil )
 
