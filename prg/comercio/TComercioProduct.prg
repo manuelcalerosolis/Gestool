@@ -398,8 +398,6 @@ METHOD buildProduct( idProduct, lCleanProducts ) CLASS TComercioProduct
 
    aLangsArticulos            := ::langsProduct( idProduct )
 
-   MsgInfo( hb_valtoexp( aLangsArticulos ), "aLangsArticulos 401" )
-
    // Contruimos el hash con toda la informacion del producto------------------
 
    ::buildHashProduct( idProduct, aImagesArticulos, aStockArticulo, aLangsArticulos )
