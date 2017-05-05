@@ -260,6 +260,8 @@ METHOD getLang( idLang )
 
    local hLang    := ::getLangs()
 
+   idLang         := alltrim( idLang )
+
    if empty( hLang )
       RETURN ( "" )
    end if 

@@ -398,6 +398,8 @@ METHOD buildProduct( idProduct, lCleanProducts ) CLASS TComercioProduct
 
    aLangsArticulos            := ::langsProduct( idProduct )
 
+   MsgInfo( hb_valtoexp( aLangsArticulos ), "aLangsArticulos 401" )
+
    // Contruimos el hash con toda la informacion del producto------------------
 
    ::buildHashProduct( idProduct, aImagesArticulos, aStockArticulo, aLangsArticulos )
@@ -605,7 +607,7 @@ METHOD langsProduct( idProduct ) CLASS TComercioProduct
 
    // Pasamos las imígenes de los artículos por propiedades-----------------------" )
 
-   nOrdenAnterior       := ( D():ArticuloLenguaje( ::getView() ) )->( ordsetfocus( "cCodigo" ) )
+   nOrdenAnterior       := ( D():ArticuloLenguaje( ::getView() ) )->( ordsetfocus( "cCodArt" ) )
 
    if ( D():ArticuloLenguaje( ::getView() ) )->( dbseek( idProduct ) )
 
@@ -967,6 +969,10 @@ METHOD insertProductLang( idProduct, hProduct ) CLASS TComercioProduct
                      "'En stock', " + ;                                                                        // avatible_now
                      "'' )"
 
+   if !::commandExecDirect( cCommand )
+      ::writeText( "Error al insertar el artículo " + hGet( hProduct, "name" ) + " en la tabla " + ::cPrefixTable( "product_lang" ), 3 )
+   end if
+
    for each hLang in hGet( hProduct, "aLangs" )
 
       cCommand := "INSERT INTO " + ::cPrefixTable( "product_lang" ) + " ( " +;
@@ -983,7 +989,7 @@ METHOD insertProductLang( idProduct, hProduct ) CLASS TComercioProduct
                      "available_later ) " + ;
                   "VALUES ( " + ;
                      "'" + alltrim( str( idProduct ) ) + "', " + ;                                                // id_product
-                     "'" + hget( hLang, "idLang") + "', " + ;                                                     // id_lang
+                     "'" + AllTrim( Str( hget( hLang, "idLang" ) ) ) + "', " + ;                                                     // id_lang
                      "'" + ::oConexionMySQLDatabase():escapeStr( hGet( hLang, "longDescription" ) ) + "', " + ;   // description
                      "'" + hGet( hLang, "shortDescription" ) + "', " + ;                                          // description_short
                      "'" + hGet( hProduct, "link_rewrite" ) + "', " + ;                                           // link_rewrite
@@ -994,11 +1000,11 @@ METHOD insertProductLang( idProduct, hProduct ) CLASS TComercioProduct
                      "'En stock', " + ;                                                                           // avatible_now
                      "'' )"
 
-   next 
+      if !::commandExecDirect( cCommand )
+         ::writeText( "Error al insertar el artículo " + hGet( hProduct, "name" ) + " en la tabla " + ::cPrefixTable( "product_lang" ), 3 )
+      end if
 
-   if !::commandExecDirect( cCommand )
-      ::writeText( "Error al insertar el artículo " + hGet( hProduct, "name" ) + " en la tabla " + ::cPrefixTable( "product_lang" ), 3 )
-   end if
+   next 
 
    SysRefresh()
 
