@@ -21202,8 +21202,7 @@ FONT 8, "MS Sans Serif"
   CONTROL "Identificación", -1, "Button", BS_GROUPBOX, 44, 29, 279, 27
   CONTROL "Relaciones", -1, "Button", BS_GROUPBOX, 44, 58, 279, 225
   CONTROL "", 500, "TBitmap", 0x0000020e, 4, 4, 34, 30, 0x00000020
-  CONTROL "Datos generales del artículo", -1, "Static", SS_LEFTNOWORDWRAP, 44, 4, 94, 8
-  CONTROL "Aceptar y permanecer [F6]", 3, "Button", WS_TABSTOP, 117, 289, 96, 14
+  CONTROL "Datos generales de la etiqueta", -1, "Static", SS_LEFTNOWORDWRAP, 44, 4, 113, 8
 }
 
 SITUACION DIALOG DISCARDABLE 77, 58, 281, 43

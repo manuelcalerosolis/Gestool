@@ -2,7 +2,7 @@
 #include "Factu.ch" 
 #include "MesDbf.ch"
 
-#define  __special_mode__              "9"
+#define  __special_mode__              9
 
 //---------------------------------------------------------------------------//
 
@@ -38,6 +38,8 @@ CLASS Etiquetas FROM SQLBaseView
 
    METHOD   checkValidParent()
 
+   METHOD   LblTitle()
+
 END CLASS
 
 //---------------------------------------------------------------------------//
@@ -72,7 +74,7 @@ METHOD buildSQLShell()
 
    disableAcceso()
 
-   ::oShell                := SQLTShell():New( 2, 10, 18, 70, "Etiquetas", , oWnd(), , , .f., , , ::oModel, , , , , {}, {|| ::Edit() },, {|| ::Delete() },, nil, ::nLevel, "gc_printer2_16", ( 104 + ( 0 * 256 ) + ( 63 * 65536 ) ),,, .t. )
+   ::oShell                := SQLTShell():New( 2, 10, 18, 70, "Etiquetas", , oWnd(), , , .f., , , ::oModel, , , , , {}, {|| ::Edit() },, {|| ::Delete() },, nil, ::nLevel, "gc_bookmarks_16", ( 104 + ( 0 * 256 ) + ( 63 * 65536 ) ),,, .t. )
 
       with object ( ::oShell:AddCol() )
          :cHeader          := "ID de etiqueta"
@@ -87,14 +89,6 @@ METHOD buildSQLShell()
          :cSortOrder       := "nombre"
          :bEditValue       := {|| ::oModel:getRowSet():fieldGet( "nombre" ) }
          :nWidth           := 400
-         :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | ::clickOnHeader( oCol, ::oShell:getBrowse(), ::oShell:getCombobox() ) }
-      end with
-
-      with object ( ::oShell:AddCol() )
-         :cHeader          := "Id del Padre"
-         :cSortOrder       := "id_padre"
-         :bEditValue       := {|| ::oModel:getRowSet():fieldGet( "id_padre" ) }
-         :nWidth           := 100
          :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | ::clickOnHeader( oCol, ::oShell:getBrowse(), ::oShell:getCombobox() ) }
       end with
 
@@ -129,8 +123,15 @@ METHOD Dialog( lZoom )
 
    local oDlg
    local oGetNombre
+   local oBmpEtiquetas
 
-   DEFINE DIALOG oDlg RESOURCE "ETIQUETA" TITLE lblTitle( ::getMode() ) + "etiquetas"
+   DEFINE DIALOG oDlg RESOURCE "ETIQUETA" TITLE ::lblTitle() + "etiqueta"
+
+   REDEFINE BITMAP oBmpEtiquetas ;
+         ID       500 ;
+         RESOURCE "gc_bookmarks_48" ;
+         TRANSPARENT ;
+         OF       oDlg
 
    REDEFINE GET   oGetNombre ;
       VAR         ::oModel:hBuffer[ "nombre" ] ;
@@ -141,16 +142,10 @@ METHOD Dialog( lZoom )
 
    ::oTree                       := TTreeView():Redefine( 110, oDlg )
    ::oTree:bItemSelectChanged    := {|| ::changeTree() }
-   ::oTree:bWhen                 := {|| ::getMode() != __special_mode__ .or. !::isZoomMode() }
+   ::oTree:bWhen                 := {|| ::getMode() != __special_mode__ .and. !::isZoomMode() }
 
    REDEFINE BUTTON ;
       ID          IDOK ;
-      OF          oDlg ;
-      WHEN        ( ! ::isZoomMode() ) ;
-      ACTION      ( ::validDialog( oDlg ) )
-
-   REDEFINE BUTTON ;
-      ID          3 ;
       OF          oDlg ;
       WHEN        ( ! ::isZoomMode() ) ;
       ACTION      ( ::validDialog( oDlg ) )
@@ -196,24 +191,16 @@ METHOD validDialog( oDlg )
 
    ::checkSelectedNode()
 
-   if empty( ::getSelectedNode() )
-      RETURN ( oDlg:end( IDOK ) )
-   end if
-   
    if ( ::isEditMode() )
 
       if ::oModel:hBuffer[ "id" ] == ::getSelectedNode()
-               
          msgStop( "Referencia a si mismo. Una etiqueta no puede ser padre de si misma.")
          RETURN ( .f. )
-
       end if
 
       if !::checkValidParent()
-
          msgStop( "Referencia cíclica. Una etiqueta hijo no puede ser padre de su padre")
          RETURN ( .f. )
-         
       endif
 
    end if 
@@ -347,6 +334,10 @@ METHOD checkValidParent( oTree, nCargo )
 
    local idTarget    := ::getSelectedNode()
 
+   if empty(idTarget)
+      RETURN ( .t. )
+   end if 
+
    while idTarget != 0
 
       if ::oModel:getRowSet():find( idTarget, "id" ) != 0
@@ -393,7 +384,12 @@ RETURN ( .t. )
 
 //---------------------------------------------------------------------------//
 
-   
+METHOD LblTitle()
 
+   if ::getMode() == __special_mode__
+      RETURN ( "Añadiendo hijo a " )
+   end if 
 
+RETURN( ::Super:lblTitle() )
 
+//---------------------------------------------------------------------------//

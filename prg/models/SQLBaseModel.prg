@@ -13,8 +13,6 @@ CLASS SQLBaseModel
    DATA     cDbfTableName
 	DATA	   hColumns
 
-   DATA     aDbfFields
-
    DATA     cGeneralSelect
 
    DATA     cColumnOrder
@@ -40,6 +38,8 @@ CLASS SQLBaseModel
    METHOD   getInsertSentence()                     
    METHOD   getUpdateSentence()
    METHOD   getDeleteSentence()
+
+   METHOD   convertRecnoToId( aRecno )
 
    METHOD   getTableName                           INLINE ( ::cTableName )
 
@@ -70,7 +70,7 @@ CLASS SQLBaseModel
    METHOD   getBuffer( cColumn )                   INLINE   ( hget( ::hBuffer, cColumn ) )
    METHOD   updateCurrentBuffer()                  INLINE   ( getSQLDatabase():Query( ::getUpdateSentence() ), ::buildRowSetWithRecno() )
    METHOD   insertBuffer()                         INLINE   ( getSQLDatabase():Query( ::getInsertSentence() ), ::buildRowSet() )
-   METHOD   deleteSelection()                      INLINE   ( getSQLDatabase():Query( ::getdeleteSentence() ), ::buildRowSet() )
+   METHOD   deleteSelection( aRecno )              INLINE   ( getSQLDatabase():Query( ::getdeleteSentence( aRecno ) ), ::buildRowSet() )
 
    METHOD   selectFetchArray( cSentence )
 
@@ -271,15 +271,33 @@ METHOD getInsertSentence()
 
    cSQLInsert        := ChgAtEnd( cSQLInsert, ' )', 2 )
 
-   msgalert( cSQLInsert )
-
 Return ( cSQLInsert )
 
 //---------------------------------------------------------------------------//
 
-METHOD getDeleteSentence()
+METHOD convertRecnoToId( aRecno )
 
-   local cSQLDelete  := "DELETE FROM " + ::cTableName + " WHERE " + ::cColumnKey + " = " + toSQLString( ::oRowSet:fieldGet( ::cColumnKey ) )
+   local nRecno
+   local aId   := {}
+
+   for each nRecno in ( aRecno )
+      ::oRowset:goto( nRecno )
+      aadd( aId, ::oRowset:fieldget( "id" ) )
+   next
+
+Return ( aId )
+
+//---------------------------------------------------------------------------//
+
+METHOD getDeleteSentence( aRecno )
+
+   local aId            := ::convertRecnoToId( aRecno )
+
+   local cSQLDelete     := "DELETE FROM " + ::cTableName + " WHERE " 
+
+   aeval( aId, {| v | cSQLDelete += ::cColumnKey + " = " + toSQLString( v ) + " or " } )
+
+   cSQLDelete        := ChgAtEnd( cSQLDelete, '', 4 )
 
 Return ( cSQLDelete )
 

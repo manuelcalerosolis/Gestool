@@ -40,6 +40,7 @@ METHOD New()
 
    ::aModels                  := {  TiposImpresorasModel():New():getSQLCreateTable(),     ;
                                     TiposNotasModel():New():getSQLCreateTable(),          ;
+                                    TiposIncidenciasModel():New():getSQLCreateTable(),    ;
                                     EtiquetasModel():New():getSQLCreateTable(),           ;
                                     SituacionesModel():New():getSQLCreateTable(),         ;
                                     HistoricosUsuariosModel():New():getSQLCreateTable()   }

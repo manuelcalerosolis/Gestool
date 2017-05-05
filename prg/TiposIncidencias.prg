@@ -78,7 +78,7 @@ METHOD Dialog( lZoom )
    local oDlg
    local oGetNombre
 
-   DEFINE DIALOG oDlg RESOURCE "TipArt" TITLE lblTitle( ::getMode() ) + "tipos de incidencias"
+   DEFINE DIALOG oDlg RESOURCE "TipArt" TITLE ::lblTitle() + "tipo de incidencia"
 
    REDEFINE GET   oGetNombre ;
       VAR         ::oModel:hBuffer[ "nombre_incidencia" ] ;
@@ -121,9 +121,9 @@ METHOD buildSQLBrowse()
    local cFind       := space( 200 )
    local oCombobox
    local cOrder
-   local aOrden      := { "Tipo" }
+   local aOrden      := { "Nombre" }
 
-   DEFINE DIALOG oDlg RESOURCE "HELP_BROWSE_SQL" TITLE "Seleccionar tipo de impresora"
+   DEFINE DIALOG oDlg RESOURCE "HELP_BROWSE_SQL" TITLE "Seleccionar tipo de incidencia"
 
       REDEFINE GET   oFind ; 
          VAR         cFind ;
@@ -160,9 +160,9 @@ METHOD buildSQLBrowse()
       end with
 
       with object ( oBrowse:AddCol() )
-         :cHeader             := "Tipo de impresora"
-         :cSortOrder          := "nombre"
-         :bEditValue          := {|| ::oModel:getRowSet():fieldGet( "nombre" ) }
+         :cHeader             := "Nombre"
+         :cSortOrder          := "nombre_incidencia"
+         :bEditValue          := {|| ::oModel:getRowSet():fieldGet( "nombre_incidencia" ) }
          :nWidth              := 300
          :bLClickHeader       := {| nMRow, nMCol, nFlags, oCol | ::clickOnHeader( oCol, oBrowse, oCombobox ) }
       end with

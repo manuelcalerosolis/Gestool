@@ -76,7 +76,7 @@ METHOD Dialog( lZoom )
    local oDlg
    local oGetNombre
 
-   DEFINE DIALOG oDlg RESOURCE "TiposNotas" TITLE lblTitle( ::getMode() ) + "tipos de notas"
+   DEFINE DIALOG oDlg RESOURCE "TiposNotas" TITLE ::lblTitle() + "tipo de nota"
 
    REDEFINE GET   oGetNombre ;
       VAR         ::oModel:hBuffer[ "tipo" ] ;

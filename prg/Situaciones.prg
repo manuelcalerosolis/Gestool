@@ -80,7 +80,7 @@ METHOD Dialog( lZoom )
    local oDlg
    local oGetNombre
 
-   DEFINE DIALOG oDlg RESOURCE "SITUACION" TITLE LblTitle( ::getMode() ) + "situación"
+   DEFINE DIALOG oDlg RESOURCE "SITUACION" TITLE ::LblTitle() + "situación"
 
    REDEFINE GET   oGetNombre ;
       VAR         ::oModel:hBuffer[ "situacion" ] ;
