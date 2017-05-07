@@ -280,6 +280,15 @@ Return ( .t. )
 //---------------------------------------------------------------------------//
 
 Function Test()
+
+   with object TComercio():New()
+
+      :setDebugMode()
+      :setWebToExport( "Localhost" ) 
+      :dialogActivate()
+
+   end with 
+
 /*
    TComercioConfig():getInstance():LoadJSON()
 

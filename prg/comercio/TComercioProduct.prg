@@ -631,7 +631,6 @@ Return ( aLangs )
 
 //---------------------------------------------------------------------------//
 
-
 METHOD stockProduct( id ) CLASS TComercioProduct
    
    local sStock

@@ -236,7 +236,8 @@ CLASS TDataCenter
 
    	METHOD oCliBnc()
 
-   METHOD ConvertToSQLite()
+   METHOD ConvertDatosToSQLite()
+   METHOD ConvertEmpresaToSQLite()
 
 END CLASS
 
@@ -850,7 +851,7 @@ METHOD StartAdministratorTask()
 
    // Conversion de tablas a SQLite-------------------------------------------
 
-   ::ConvertToSQLite()
+   ::ConvertDatosToSQLite()
    
    // Recorremos el array de las empresas par actualizarlas--------------------
 
@@ -873,6 +874,8 @@ METHOD StartAdministratorTask()
             lActualiza( aEmpresa[ 1 ], nil, .t., aEmpresa[ 2 ], .f. )
 
             aEmpresa[ 4 ]      := .t.
+
+            ::ConvertEmpresaToSQLite()
 
          end if 
 
@@ -4814,14 +4817,24 @@ RETURN ( ::ExecuteSqlStatement( cStm, "SatCliArticulos" ) )
 
 //---------------------------------------------------------------------------//
 
-METHOD ConvertToSQLite()
+METHOD ConvertDatosToSQLite()
 
    TiposImpresorasModel():New():makeImportDbfSQL()
+
    TiposNotasModel():New():makeImportDbfSQL()
    //Situaciones():New():makeImportDbfSQL()
 
 RETURN ( Self )
 
+//---------------------------------------------------------------------------//
+
+METHOD ConvertEmpresaToSQLite()
+
+RETURN ( Self )
+
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//

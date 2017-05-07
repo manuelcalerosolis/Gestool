@@ -615,7 +615,7 @@ METHOD buildInitData() CLASS TComercio
    ::aPropiedadesCabeceraData    := {}
    ::aPropiedadesLineasData      := {}
 
-Return ( Self )
+RETURN ( Self )
 
 //---------------------------------------------------------------------------//
 
@@ -625,17 +625,17 @@ METHOD dialogActivate() CLASS TComercio
 
    if nAnd( ::nLevel, 1 ) != 0
       msgStop( "Acceso no permitido." )
-      return ( Self )
+      RETURN ( Self )
    end if
 
    if empty(::nView)
       msgStop( "Imposible acceder a las vistas" )
-      Return ( self )
+      RETURN ( self )
    end if
 
    if empty(::oStock)
       msgStop( "Imposible abrir los stocks" )
-      Return ( self )
+      RETURN ( self )
    end if
 
    SysRefresh()
@@ -681,7 +681,7 @@ METHOD dialogActivate() CLASS TComercio
 
    ::oBmp:End()
 
-Return ( self )
+RETURN ( self )
 
 //------------------------------------------------------------------------//
 
@@ -693,7 +693,7 @@ METHOD dialogCreateWebCombobox( id, oDlg ) CLASS TComercio
       ID          id ;
       OF          oDlg
 
-Return ( self )
+RETURN ( self )
 
 //------------------------------------------------------------------------//
 
@@ -724,7 +724,7 @@ METHOD dialogStart() CLASS TComercio
 
    end if
 
-Return nil
+RETURN nil
 
 //---------------------------------------------------------------------------//
 
@@ -802,7 +802,7 @@ METHOD controllerOrderPrestashop() CLASS TComercio
    local oError
 
    if !( ::isAviableWebToExport() )
-      Return .f.
+      RETURN .f.
    end if 
 
    ::disableDialog()
@@ -833,7 +833,7 @@ METHOD controllerOrderPrestashop() CLASS TComercio
 
    ::EnableDialog()
 
-Return .t.
+RETURN .t.
 
 //---------------------------------------------------------------------------//
 
@@ -870,18 +870,18 @@ METHOD loadOrders() CLASS TComercio
 
    oQuery:Free()
 
-Return ( .t. )
+RETURN ( .t. )
 
 //---------------------------------------------------------------------------//
 
 METHOD processOrder( oQuery ) CLASS TComercio
 
    if empty( oQuery )
-      return .f.
+      RETURN .f.
    end if 
 
    if !::checkDate( oQuery:FieldGetByName( "date_add" ) )
-      return .f.
+      RETURN .f.
    end if 
 
    if ::isRecivedDocumentAsBudget( oQuery:FieldGetByName( "module" ) )
@@ -898,25 +898,25 @@ METHOD processOrder( oQuery ) CLASS TComercio
 
    endif
 
-Return ( .t. )
+RETURN ( .t. )
 
 //---------------------------------------------------------------------------//
 
 METHOD AppendIvaPrestashop() Class TComercio
 
-Return ( Self )
+RETURN ( Self )
 
 //---------------------------------------------------------------------------//
 
 METHOD InsertIvaPrestashop() CLASS TComercio
 
-Return ( .t. )
+RETURN ( .t. )
 
 //---------------------------------------------------------------------------//
 
 METHOD lUpdateIvaPrestashop( nId ) CLASS TComercio
 
-Return ( .t. )
+RETURN ( .t. )
 
 //---------------------------------------------------------------------------//
 
@@ -1056,7 +1056,7 @@ METHOD insertRootCategory() CLASS TComercio
 
    SysRefresh()
 
-Return ( Self )
+RETURN ( Self )
 
 //---------------------------------------------------------------------------//
 
@@ -1085,7 +1085,7 @@ METHOD InsertImageProductPrestashop( hProduct, hImage, idProductPrestashop, nIma
       ::TPrestashopId:setValueImage( hGet( hProduct, "id" ) + str( hGet( hImage, "id" ), 10 ), ::getCurrentWebName(), nIdImagePrestashop )
    end if
 
-Return ( nIdImagePrestashop )
+RETURN ( nIdImagePrestashop )
 
 //---------------------------------------------------------------------------//
 
@@ -1108,7 +1108,7 @@ METHOD InsertImageProductPrestashopLang( hProduct, hImage, idImagenPrestashop )
       ::writeText( "Error al insertar la imagen " + hGet( hProduct, "name" ) + " en la tabla " + ::cPrefixTable( "image_lang" ), 3 )
    end if
 
-Return .t.
+RETURN .t.
 
 //---------------------------------------------------------------------------//
 
@@ -1138,7 +1138,7 @@ METHOD InsertImageProductPrestashopShop( hProduct, hImage, idProductPrestashop, 
       ::writeText( "Error al insertar la imagen " + hGet( hProduct, "name" ) + " en la tabla " + ::cPrefixTable( "image_shop" ), 3 )
    end if
 
-Return .t.
+RETURN .t.
 
 //---------------------------------------------------------------------------//
 
@@ -1160,7 +1160,7 @@ METHOD nIvaProduct( cCodArt ) Class TComercio
       nIva           := oQuery:FieldGetByName( "rate" )
    end if
 
-Return ( nIva )
+RETURN ( nIva )
 
 //---------------------------------------------------------------------------//
 
@@ -1285,7 +1285,7 @@ METHOD buildImagenes() CLASS TComercio
 
    next
 
-Return( nil )
+RETURN( nil )
 
 //---------------------------------------------------------------------------//
 
@@ -1298,7 +1298,7 @@ METHOD buildSubirImagenes() CLASS TComercio
    if len( ::aImagesArticulos ) > 0 .or. len( ::aImagesCategories ) > 0
       if !( ::oFtp:CreateConexion() )
          msgStop( "Imposible conectar al sitio ftp " + ::oFtp:cServer )
-         Return ( nil )
+         RETURN ( nil )
       end if 
    end if 
 
@@ -1362,7 +1362,7 @@ METHOD buildSubirImagenes() CLASS TComercio
 
    CursorWe()
 
-Return( nil )
+RETURN( nil )
 
 //---------------------------------------------------------------------------//
 
@@ -1372,7 +1372,7 @@ METHOD uploadProductImages( aProductImages ) CLASS TComercio
    local hProductImage
 
    if empty( aProductImages )
-      Return ( nil )
+      RETURN ( nil )
    end if 
 
    CursorWait()
@@ -1403,7 +1403,7 @@ METHOD uploadProductImages( aProductImages ) CLASS TComercio
 
    CursorWe()
 
-Return ( nil )
+RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 
@@ -1445,7 +1445,7 @@ METHOD buildFilesProductImages( hProductImage ) CLASS TComercio
 
    CursorWe()
 
-Return( nil )
+RETURN( nil )
 
 //---------------------------------------------------------------------------//
 
@@ -1457,7 +1457,7 @@ METHOD getTypeImagePrestashop() CLASS TComercio
    local aTypeImagesPrestashop   := {}
 
    if !empty( ::aTypeImagesPrestashop )
-      Return ( ::aTypeImagesPrestashop )
+      RETURN ( ::aTypeImagesPrestashop )
    end if 
 
    cQuery                        := 'SELECT * FROM ' + ::cPrefixTable( "image_type" )
@@ -1501,7 +1501,7 @@ METHOD getTypeImagePrestashop() CLASS TComercio
 
    oQuery            := nil
 
-Return ( aTypeImagesPrestashop )
+RETURN ( aTypeImagesPrestashop )
 
 //---------------------------------------------------------------------------//
 
@@ -1529,7 +1529,7 @@ METHOD nDefImagen( cCodArt, cImagen ) CLASS TComercio
 
    end if
 
-Return nDef
+RETURN nDef
 
 //---------------------------------------------------------------------------//
 
@@ -1553,7 +1553,7 @@ METHOD lLimpiaRefImgWeb() CLASS TComercio
    ::oArtDiv:OrdSetFocus( nOrdAnt )
    ::oArtDiv:GoTo( nRec )
 
-return .t.
+RETURN .t.
 
 //-----------------------------------------------------------------------------
 
@@ -1584,13 +1584,13 @@ METHOD nCodigoWebImagen( cCodArt, cImagen ) CLASS TComercio
    ::oArtDiv:OrdSetFocus( nOrdAnt )
    ::oArtDiv:GoTo( nRec )
 
-return nCodigo
+RETURN nCodigo
 
 //---------------------------------------------------------------------------//
 
 METHOD ConectBBDD() Class TComercio
 
-Return ( .f. )
+RETURN ( .f. )
 
 //---------------------------------------------------------------------------//
 
@@ -1600,7 +1600,7 @@ METHOD DisconectBBDD() Class TComercio
       ::oCon:Destroy()
    end if
 
-Return .t.  
+RETURN .t.  
 
 //---------------------------------------------------------------------------//
 
@@ -1625,7 +1625,7 @@ METHOD isProductIdColumn( cTable, cColumn )
       oQuery:Free()
    end if   
 
-Return ( isProduct )
+RETURN ( isProduct )
 
 //---------------------------------------------------------------------------//
 
@@ -1633,19 +1633,19 @@ METHOD AvisoSincronizaciontotal() CLASS TComercio
 
    msginfo( "Faltan Avisar de que necesita una sincronización total" )
 
-Return .t.
+RETURN .t.
 
 //---------------------------------------------------------------------------//
 
 METHOD cPreFixtable( cName ) Class TComercio
 
-Return ( ::TComercioConfig:getPrefixDatabase() + alltrim( cName ) )
+RETURN ( ::TComercioConfig:getPrefixDatabase() + alltrim( cName ) )
 
 //---------------------------------------------------------------------------//
 
 METHOD AutoRecive( oWnd ) CLASS TComercio
 
-Return Nil
+RETURN Nil
 
 //---------------------------------------------------------------------------//
 
@@ -1664,7 +1664,7 @@ METHOD GetLanguagePrestashop() CLASS TComercio
       oQuery:Free()
    end if   
 
-Return if( !empty( cCodLanguage ), cCodLanguage, "1" )
+RETURN if( !empty( cCodLanguage ), cCodLanguage, "1" )
 
 //---------------------------------------------------------------------------//
 
@@ -1724,7 +1724,7 @@ METHOD GetValPrp( nIdPrp, nProductAttibuteId ) CLASS TComercio
 
    oQuery1:Free()
 
-return cValPrp
+RETURN cValPrp
 
 //---------------------------------------------------------------------------//
 //
@@ -1914,7 +1914,7 @@ METHOD AppendClientesToPrestashop() CLASS TComercio
 
    end while
 
-Return ( self )
+RETURN ( self )
 
 //---------------------------------------------------------------------------//
 
@@ -2091,7 +2091,7 @@ METHOD AppendClientPrestashop() CLASS TComercio
 
    oQuery                                        := nil
 
-Return ( self )
+RETURN ( self )
 
 //---------------------------------------------------------------------------//
 
@@ -2148,7 +2148,7 @@ METHOD AppendMessagePedido( dFecha ) Class TComercio
 
    end if
 
-Return ( self )
+RETURN ( self )
 
 //---------------------------------------------------------------------------//
 
@@ -2223,7 +2223,7 @@ METHOD EstadoPedidosPrestashop() Class TComercio
 
    end while
 
-Return ( self )
+RETURN ( self )
 
 //---------------------------------------------------------------------------//
 
@@ -2253,7 +2253,7 @@ METHOD cValidDirectoryFtp( cDirectory ) CLASS TComercio
       cResult  := Substr( cResult, 1, Len( cResult ) - 1 )
    end if
 
-Return ( cResult )
+RETURN ( cResult )
 
 //---------------------------------------------------------------------------//
 
@@ -2276,7 +2276,7 @@ METHOD CreateDirectoryImagesLocal( cCarpeta ) CLASS TComercio
 
    next
 
-Return ( cResult )
+RETURN ( cResult )
 
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
@@ -2295,7 +2295,7 @@ METHOD prestaShopConnect( lAlert )
 
    if empty( ::TComercioConfig:getMySqlServer() )
       msgStop( "No se ha definido ningun servidor web" )
-      Return ( lConnect )
+      RETURN ( lConnect )
    end if 
 
    ::writeText( 'Intentando conectar con el servidor ' + '"' + ::TComercioConfig:getMySqlServer() + '"' + ', el usuario ' + '"' + ::TComercioConfig:getMySqlUser()  + '"' + ' y la base de datos ' + '"' + ::TComercioConfig:getMySqlDatabase() + '".' , 3 )
@@ -2341,7 +2341,7 @@ METHOD prestaShopConnect( lAlert )
 
    end if   
 
-Return ( lConnect )
+RETURN ( lConnect )
 
 //---------------------------------------------------------------------------//
 
@@ -2353,14 +2353,14 @@ METHOD prestashopDisConnect()
 
    ::writeText( 'Base de datos desconectada.', 1 )
 
-return .t.   
+RETURN .t.   
 
 //---------------------------------------------------------------------------//
 
 METHOD buildIvaPrestashop( id ) CLASS TComercio
 
    if aScan( ::aIvaData, {|h| hGet( h, "id" ) == id } ) != 0
-      Return .f. 
+      RETURN .f. 
    end if 
 
    if ::lSyncAll .or. ::TPrestashopId:getValueTax( id, ::getCurrentWebName() ) == 0
@@ -2371,14 +2371,14 @@ METHOD buildIvaPrestashop( id ) CLASS TComercio
       end if 
    end if 
 
-Return ( .t. )
+RETURN ( .t. )
 
 //---------------------------------------------------------------------------//
 
 METHOD buildFabricantePrestashop( id ) CLASS TComercio
 
    if aScan( ::aFabricantesData, {|h| hGet( h, "id" ) == id } ) != 0
-      Return .f.
+      RETURN .f.
    end if 
 
    if ::lSyncAll .or. ::TPrestashopId:getValueManufacturer( id, ::getCurrentWebName() ) == 0
@@ -2391,14 +2391,14 @@ METHOD buildFabricantePrestashop( id ) CLASS TComercio
       end if
    end if
 
-Return ( Self )
+RETURN ( Self )
 
 //---------------------------------------------------------------------------//
 
 METHOD buildFamiliaPrestashop( id ) CLASS TComercio
 
    if ascan( ::aFamiliaData, {|h| hGet( h, "id" ) == id } ) != 0
-      Return .f.
+      RETURN .f.
    end if
 
    if ::lSyncAll .or. ::TPrestashopId:getValueCategory( id, ::getCurrentWebName() ) == 0
@@ -2420,7 +2420,7 @@ METHOD buildFamiliaPrestashop( id ) CLASS TComercio
 
    end if 
 
-Return ( Self )
+RETURN ( Self )
 
 //---------------------------------------------------------------------------//
 
@@ -2430,7 +2430,7 @@ METHOD buildProductPrestashop( id ) CLASS TComercio
    local aImagesArticulos     := {}
 
    if aScan( ::aProductData, {|h| hGet( h, "id" ) == id } ) != 0
-      Return ( self )
+      RETURN ( self )
    end if 
 
    // Recopilar info de imagenes-----------------------------------------
@@ -2463,7 +2463,7 @@ METHOD buildProductPrestashop( id ) CLASS TComercio
                               "aImages"               => aImagesArticulos,;
                               "aStock"                => aStockArticulo } )
 
-Return ( Self )
+RETURN ( Self )
 
 //---------------------------------------------------------------------------//
 
@@ -2546,7 +2546,7 @@ METHOD buildImagesArticuloPrestashop( id ) CLASS TComercio
       end if   
    end if   
 
-Return ( aImages )
+RETURN ( aImages )
 
 //---------------------------------------------------------------------------//
 
@@ -2570,7 +2570,7 @@ METHOD buildPriceProduct() CLASS TComercio
 
    end if 
 
-Return ( priceProduct )
+RETURN ( priceProduct )
 
 //---------------------------------------------------------------------------//
 //
@@ -2594,7 +2594,7 @@ METHOD buildPriceReduction() CLASS TComercio
 
    end if 
 
-Return ( priceReduction )
+RETURN ( priceReduction )
 
 //---------------------------------------------------------------------------//
 
@@ -2689,7 +2689,7 @@ METHOD buildPropiedadesPrestashop( id ) CLASS TComercio
 
    end if
 
-Return ( Self )
+RETURN ( Self )
 
 //---------------------------------------------------------------------------//
 
@@ -2703,7 +2703,7 @@ METHOD buildGlobalProductInformation() CLASS TComercio
    ::buildPropiedadesPrestashop(    ::oArt:Codigo )
    ::buildProductPrestashop(        ::oArt:Codigo )
 
-Return ( Self )
+RETURN ( Self )
 
 //---------------------------------------------------------------------------//
 
@@ -2793,7 +2793,7 @@ METHOD uploadAditionalInformationToPrestashop() CLASS TComercio
 
    next
  
-Return ( Self )
+RETURN ( Self )
 
 //---------------------------------------------------------------------------//
 
@@ -2819,7 +2819,7 @@ METHOD uploadProductToPrestashop()
    
    next
 
-Return ( Self )
+RETURN ( Self )
 
 //---------------------------------------------------------------------------//
 
@@ -2839,7 +2839,7 @@ METHOD uploadImageToPrestashop()
    
    next
 
-Return ( Self )
+RETURN ( Self )
 
 //---------------------------------------------------------------------------//
 
@@ -2870,7 +2870,7 @@ METHOD buildProductInformation( idProduct ) CLASS TComercio
 
    end if   
 
-Return ( Self )
+RETURN ( Self )
 
 //---------------------------------------------------------------------------//
 
@@ -2894,13 +2894,13 @@ METHOD uploadInformationToPrestashop( idProduct )
 
    ::uploadAditionalInformationToPrestashop()
 
-Return ( Self )
+RETURN ( Self )
 
 //---------------------------------------------------------------------------//
 
 METHOD updateInformationToPrestashop( idProduct )
 
-Return ( Self )
+RETURN ( Self )
 
 //---------------------------------------------------------------------------//
 
@@ -2998,7 +2998,7 @@ METHOD buildInsertIvaPrestashop( hTax ) CLASS TComercio
    ::TPrestashopId:setValueTax(           hGet( hTax, "id" ), ::getCurrentWebName(), nCodigoWeb )
    ::TPrestashopId:setValueTaxRuleGroup(  hGet( hTax, "id" ), ::getCurrentWebName(), nCodigoWeb )
 
-Return ( nCodigoweb )
+RETURN ( nCodigoweb )
 
 //---------------------------------------------------------------------------//
 
@@ -3067,7 +3067,7 @@ METHOD buildInsertFabricantesPrestashop( hFabricantesData ) CLASS TComercio
       ::TPrestashopId:setValueManufacturer( hget( hFabricantesData, "id" ), ::getCurrentWebName(), nCodigoWeb )
    end if 
 
-return nCodigoWeb
+RETURN nCodigoWeb
 
 //---------------------------------------------------------------------------//
 
@@ -3082,7 +3082,7 @@ METHOD buildImagesFabricantes( hFabricantesData )
    fileImage   := hget( hFabricantesData, "image" )
 
    if !File( fileImage )
-      Return nil
+      RETURN nil
    end if
    
    cTmpFile    := cPatTmp() + hget( hFabricantesData, "cPrefijoNombre" ) + ".jpg"
@@ -3111,7 +3111,7 @@ METHOD buildImagesFabricantes( hFabricantesData )
 
    next
 
-Return nil
+RETURN nil
 
 //---------------------------------------------------------------------------//
 
@@ -3119,7 +3119,7 @@ METHOD upLoadImagesFabricantes( hFabricantesData )
 
    MsgInfo( "upLoadImagesFabricantes" )
 
-Return nil
+RETURN nil
 
 //---------------------------------------------------------------------------//
 
@@ -3245,13 +3245,13 @@ METHOD buildInsertCategoriesPrestashop( hFamiliaData ) CLASS TComercio
       ::TPrestashopId:setValueCategory( hget( hFamiliaData, "id" ), ::getCurrentWebName(), nCodigoWeb )
    end if 
 
-return nCodigoWeb
+RETURN nCodigoWeb
 
 //---------------------------------------------------------------------------//
 
 METHOD buildActualizaCatergoriaPadrePrestashop( hFamiliaData ) CLASS TComercio
 
-   local lReturn     := .f.
+   local lRETURN     := .f.
    local cCommand    := ""
    local nParent     := 2
 
@@ -3269,13 +3269,13 @@ METHOD buildActualizaCatergoriaPadrePrestashop( hFamiliaData ) CLASS TComercio
 
       ::writeText( cCommand )
 
-      lReturn        := TMSCommand():New( ::oCon ):ExecDirect( cCommand )
+      lRETURN        := TMSCommand():New( ::oCon ):ExecDirect( cCommand )
 
    end if
 
    SysRefresh()
 
-Return lReturn
+RETURN lRETURN
 
 //---------------------------------------------------------------------------//
 
@@ -3346,7 +3346,7 @@ METHOD buildRecalculaPosicionesCategoriasPrestashop() CLASS TComercio
 
    end if
 
-return ( .t. )
+RETURN ( .t. )
 
 //---------------------------------------------------------------------------//
 
@@ -3418,7 +3418,7 @@ METHOD BuildInsertProductsPrestashop( hProduct ) CLASS TComercio
       
       ::writeText( "Error al insertar el artículo " + hGet( hProduct, "name" ) + " en la tabla " + ::cPrefixTable( "product" ), 3 )
 
-      Return ( .f. )
+      RETURN ( .f. )
 
    end if
 
@@ -3514,13 +3514,13 @@ METHOD BuildInsertProductsPrestashop( hProduct ) CLASS TComercio
 
    ::uploadStockToPrestashop( hGet( hProduct, "aStock") )
 
-Return ( .t. )
+RETURN ( .t. )
 
 //---------------------------------------------------------------------------//
 
 METHOD buildInsertNodeCategoryProduct( idFamilia, idProduct ) CLASS TComercio
 
-Return ( nil )
+RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 /*
@@ -3529,7 +3529,7 @@ Insertamos un artículo nuevo en la tabla category_product----------------
 
 METHOD buildInsertCategoryProduct( idCategory, idProduct ) CLASS TComercio
 
-Return ( .t. )
+RETURN ( .t. )
 
 //---------------------------------------------------------------------------//
 /*
@@ -3566,7 +3566,7 @@ METHOD buildInsertImageProductsPrestashop( hProduct, idProductPrestashop ) CLASS
 
    next
 
-Return .t.
+RETURN .t.
 
 //---------------------------------------------------------------------------//
 
@@ -3615,7 +3615,7 @@ METHOD buildInsertOfertasPrestashop( hProduct, nCodigoWeb ) CLASS TComercio
 
    end if
 
-return nil
+RETURN nil
 
 //---------------------------------------------------------------------------//
 
@@ -3663,7 +3663,7 @@ METHOD buildInsertPropiedadesPrestashop( hPropiedadesCabData ) CLASS TComercio
 
    end if 
 
-Return self
+RETURN self
 
 //---------------------------------------------------------------------------//
 
@@ -3723,7 +3723,7 @@ METHOD buildInsertLineasPropiedadesPrestashop( hPropiedadesLinData, nPosition ) 
       ::TPrestashopId:setValueAttribute( hGet( hPropiedadesLinData, "idparent" ) + hGet( hPropiedadesLinData, "id" ), ::getCurrentWebName(), nCodigoPropiedad )
    end if 
 
-Return ( self )
+RETURN ( self )
 
 //---------------------------------------------------------------------------//
 
@@ -3737,7 +3737,7 @@ METHOD buildInsertImageProductsByProperties( hProduct, idProductAttribute )
    aImages                 := hget( hProduct, "aImages")
    
    if empty( aImages )
-      Return ( self )
+      RETURN ( self )
    end if 
 
    for each cImage in aImages
@@ -3771,7 +3771,7 @@ METHOD buildInsertImageProductsByProperties( hProduct, idProductAttribute )
 
    next   
 
-Return ( self )
+RETURN ( self )
 
 //---------------------------------------------------------------------------//
 
@@ -3858,7 +3858,7 @@ METHOD buildInsertPropiedadesProductPrestashop( hProduct, nCodigoWeb ) CLASS TCo
 
    ::oArtDiv:OrdSetFocus( nOrdArtDiv )
 
-Return ( self )
+RETURN ( self )
 
 //---------------------------------------------------------------------------//
 
@@ -3888,7 +3888,7 @@ METHOD insertProductAttributePrestashop( hProduct, nCodigoWeb, nPrecio ) CLASS T
       ::writeText( "Error al insertar la propiedad " + alltrim( ::oArtDiv:cValPr1 ) + " - " + alltrim( ::oArtDiv:cValPr2 ) + " en la tabla " + ::cPrefixTable( "product_attribute" ), 3 )
    end if
 
-Return ( idProductAttribute )
+RETURN ( idProductAttribute )
 
 //---------------------------------------------------------------------------//
 
@@ -3898,7 +3898,7 @@ METHOD insertProductAttributeCombinationPrestashop( idFirstProperty, valueFirstP
 
    if !( ::oTblPro:seekInOrd( upper( idFirstProperty ) + upper( valueFirstProperty ), "cCodPro" ) )
       ::writeText( "Error al buscar en tabla de propiedades " + alltrim( idFirstProperty ) + " : " + alltrim( valueFirstProperty ), 3 )
-      Return .f.
+      RETURN .f.
    end if 
 
    cCommand := "INSERT INTO " +  ::cPrefixtable( "product_attribute_combination" ) + "( " + ;
@@ -3912,7 +3912,7 @@ METHOD insertProductAttributeCombinationPrestashop( idFirstProperty, valueFirstP
       ::writeText( "Error al insertar la propiedad " + alltrim( ::oTblPro:cDesTbl ) + " en la tabla " + ::PrefixTable( "product_attribute_combination" ), 3 )
    end if
 
-Return ( .t. )
+RETURN ( .t. )
 
 //---------------------------------------------------------------------------//
 
@@ -3945,7 +3945,7 @@ METHOD insertProductAttributeShopPrestashop( lDefault, nCodigoWeb, nCodigoPropie
       ::writeText( "Error al insertar la propiedad " + alltrim( ::oTblPro:cDesTbl ) + " en la tabla " + ::cPrefixTable( "product_attribute_shop" ), 3 )
    end if
 
-Return ( .t. )
+RETURN ( .t. )
 
 //---------------------------------------------------------------------------//
 
@@ -4337,7 +4337,7 @@ METHOD buildEliminaTablas() CLASS TComercio
 
    ::buildCleanPrestashop()
 
-Return ( self )
+RETURN ( self )
 
 //---------------------------------------------------------------------------//
 
@@ -4390,20 +4390,20 @@ RETURN ( .t. )
 METHOD isAviableWebToExport() Class TComercio
 
    if !( ::isValidNameWebToExport() )
-      Return .f.
+      RETURN .f.
    end if 
 
    if !( ::TComercioConfig:setCurrentWebName( ::getWebToExport() ) )
       msgStop( "No se puede poner en uso la web " + ::getWebToExport() )
-      Return .f.
+      RETURN .f.
    end if 
 
    if !( ::TComercioConfig:isActive() )
       msgStop( "Web " + ::getWebToExport() + " esta actualmente desactivada" )
-      Return .f.
+      RETURN .f.
    end if 
 
-Return .t.
+RETURN .t.
 
 //---------------------------------------------------------------------------//
 
@@ -4415,7 +4415,7 @@ METHOD controllerExportPrestashop( idProduct ) Class TComercio
    local restoreLastInsert    := .f.    
 
    if !( ::isAviableWebToExport() )
-      Return .f.
+      RETURN .f.
    end if 
 
    lastInsertProduct          := ::getLastInsertProduct()
@@ -4425,7 +4425,7 @@ METHOD controllerExportPrestashop( idProduct ) Class TComercio
    else 
       if !msgYesNo(  "Se dispone a actualizar la web completa, el proceso puede ser prolongado" + CRLF + ;  
                      "¿Desea continuar?" )
-         Return .f.
+         RETURN .f.
       end if 
    end if  
 
@@ -4459,7 +4459,7 @@ METHOD controllerExportPrestashop( idProduct ) Class TComercio
 
    ::EnableDialog()
 
-Return .t.
+RETURN .t.
 
 //---------------------------------------------------------------------------//
 //
@@ -4498,14 +4498,14 @@ METHOD insertStructureInformation() CLASS TComercio
 
    end if 
 
-Return .t.
+RETURN .t.
 
 //---------------------------------------------------------------------------//
 
 METHOD controllerExportOneProductToPrestashop( idProduct ) Class TComercio
 
    if !( ::isAviableWebToExport() )
-      Return .f.
+      RETURN .f.
    end if 
 
    ::oWaitMeter         := TWaitMeter():New( "Actualizando articulos", "Espere por favor..." )
@@ -4519,14 +4519,14 @@ METHOD controllerExportOneProductToPrestashop( idProduct ) Class TComercio
 
    ::oWaitMeter:End()
 
-Return .t.
+RETURN .t.
 
 //---------------------------------------------------------------------------//
 
 METHOD insertOneProductToPrestashop( idProduct ) Class TComercio
 
    if !( ::TComercioProduct:buildProduct( idProduct, .t. ) )
-      Return .f.
+      RETURN .f.
    end if 
 
    if ::prestaShopConnect()
@@ -4545,7 +4545,7 @@ METHOD insertOneProductToPrestashop( idProduct ) Class TComercio
 
    end if 
 
-Return .t.
+RETURN .t.
 
 //---------------------------------------------------------------------------//
 
@@ -4571,14 +4571,14 @@ METHOD insertAllProducts( idProduct ) CLASS TComercio //*//
 
    ( D():Articulos( ::getView() ) )->( ordsetfocus( ordenAnterior ) )
 
-Return ( self )
+RETURN ( self )
 
 //---------------------------------------------------------------------------//
 
 METHOD controllerDeleteOneProductToPrestashop( idProduct ) Class TComercio
 
    if !( ::isAviableWebToExport() )
-      Return .f.
+      RETURN .f.
    end if 
 
    ::oWaitMeter         := TWaitMeter():New( "Actualizando articulos", "Espere por favor..." )
@@ -4588,14 +4588,14 @@ METHOD controllerDeleteOneProductToPrestashop( idProduct ) Class TComercio
          
    ::oWaitMeter:End()
 
-Return .t.
+RETURN .t.
 
 //---------------------------------------------------------------------------//
 
 METHOD deleteOneProductToPrestashop( idProduct ) Class TComercio
 
    if !( ::TComercioProduct:buildDeleteProduct( idProduct, .t. ) )
-      Return .f.
+      RETURN .f.
    end if 
 
    if ::prestaShopConnect()
@@ -4606,7 +4606,7 @@ METHOD deleteOneProductToPrestashop( idProduct ) Class TComercio
 
    end if 
 
-Return .t.
+RETURN .t.
 
 //---------------------------------------------------------------------------//
 
@@ -4618,7 +4618,7 @@ METHOD saveLastInsertProduct( idProduct ) CLASS TComercio
 
    ::TComercioConfig():saveJSON()
    
-Return ( self )
+RETURN ( self )
 
 //---------------------------------------------------------------------------//
 
@@ -4630,7 +4630,7 @@ METHOD saveLastInsertStock( idProduct ) CLASS TComercio
 
    ::TComercioConfig():saveJSON()
    
-Return ( self )
+RETURN ( self )
 
 //---------------------------------------------------------------------------//
 
@@ -4656,7 +4656,7 @@ METHOD buildCleanPrestashop() CLASS TComercio
    ::writeText( "Limpiamos las referencias de las imagenes" )
    ::TPrestashopId:deleteDocumentValuesImage( ::getCurrentWebName() )
 
-Return ( Self )
+RETURN ( Self )
 
 //---------------------------------------------------------------------------//
 
@@ -4668,7 +4668,7 @@ METHOD buildGetParentCategories( cCodFam ) CLASS TComercio
       idCategories         := ::TPrestashopId:getValueCategory( cCodFam, ::getCurrentWebName() )  
    end if
 
-Return ( idCategories )
+RETURN ( idCategories )
 
 //---------------------------------------------------------------------------//
 
@@ -4680,7 +4680,7 @@ METHOD buildGetNodeParentCategories( cCodFam ) CLASS TComercio
       idNode               := ::oFam:cFamCmb
    end if   
 
-Return ( idNode )
+RETURN ( idNode )
 
 //---------------------------------------------------------------------------//
 
@@ -4694,13 +4694,13 @@ METHOD BuildDeleteProductPrestashop( idProduct ) CLASS TComercio
    local cCommand                      := ""
 
    if empty( ::TPrestashopId:getValueProduct( idProduct, ::getCurrentWebName() ) ) 
-      Return ( Self )
+      RETURN ( Self )
    end if 
 
    alltrimIdProductPrestashop            := alltrim( str( ::TPrestashopId:getValueProduct( idProduct, ::getCurrentWebName() ) ) )
 
    if empty(alltrimIdProductPrestashop)
-      return self
+      RETURN self
    end if
 
    ::writeText( "Eliminando artículo de Prestashop" )
@@ -4887,7 +4887,7 @@ METHOD BuildDeleteProductPrestashop( idProduct ) CLASS TComercio
 
    ::TPrestashopId:deleteDocumentValuesProduct( idProduct, ::getCurrentWebName() )
 
-Return ( Self )
+RETURN ( Self )
 
 //---------------------------------------------------------------------------//
 
@@ -4946,7 +4946,7 @@ METHOD buildDeleteImagesProducts( cCodWeb ) CLASS TComercio
 
    endif
 
-Return nil
+RETURN nil
 
 //---------------------------------------------------------------------------//
 
@@ -4960,7 +4960,7 @@ METHOD buildDeleteImagesFiles() CLASS TComercio
 
    next
 
-Return nil
+RETURN nil
 
 //---------------------------------------------------------------------------//
 
@@ -4973,7 +4973,7 @@ METHOD uploadStockToPrestashop( aStockProductData )
       ::buildInsertStockPrestashop( hStockProductData )
    next
 
-Return .t.
+RETURN .t.
 
 //---------------------------------------------------------------------------//
 
@@ -4983,7 +4983,7 @@ METHOD BuildAddArticuloActualizar( cCodArt ) CLASS tComercio
       aadd( ::aArticulosActualizar, cCodArt )
    end if
 
-Return .t.   
+RETURN .t.   
 
 //---------------------------------------------------------------------------//
 
@@ -4999,7 +4999,7 @@ METHOD getDate( uDatePrestashop ) CLASS TComercio
       dFecha            := ctod( left( uDatePrestashop, 10 ) )
    SET DATE FORMAT "dd/mm/yyyy"
 
-Return ( dFecha )
+RETURN ( dFecha )
 
 //---------------------------------------------------------------------------//
 
@@ -5011,7 +5011,7 @@ METHOD getDatePrestashop( dFecha, tHora ) CLASS TComercio
    cFechaPrestashop   := alltrim( dtoc( dFecha ) ) + " " + alltrim( trans( tHora, "@R ##:##:##" ) ) + ".0000000"
    SET DATE FORMAT "dd/mm/yyyy"
 
-Return ( cFechaPrestashop )
+RETURN ( cFechaPrestashop )
 
 //---------------------------------------------------------------------------//
 
@@ -5019,7 +5019,7 @@ METHOD getTime( ctimePrestashop ) CLASS TComercio
 
    local dHora    := strtran( Substr( cTimePrestashop, 12, 8 ), ":", "" )
 
-Return ( dHora )
+RETURN ( dHora )
 
 //---------------------------------------------------------------------------//
 
@@ -5027,7 +5027,7 @@ METHOD checkDate( cDatePrestashop ) CLASS TComercio
 
    local dFecha   := ::getDate( cDatePrestashop )
 
-Return ( dFecha >= uFieldEmpresa( "dIniOpe" ) .or. empty( uFieldEmpresa( "dIniOpe" ) ) ) .and. ( dFecha <= uFieldEmpresa( "dFinOpe" ) .or. empty( uFieldEmpresa( "dFinOpe" ) ) )
+RETURN ( dFecha >= uFieldEmpresa( "dIniOpe" ) .or. empty( uFieldEmpresa( "dIniOpe" ) ) ) .and. ( dFecha <= uFieldEmpresa( "dFinOpe" ) .or. empty( uFieldEmpresa( "dFinOpe" ) ) )
 
 //---------------------------------------------------------------------------//
 
@@ -5039,17 +5039,17 @@ METHOD isRecivedDocumentAsBudget( cPrestashopModule ) CLASS TComercio
       lAsBudget      := .t.
    endif
 
-return ( lAsBudget )
+RETURN ( lAsBudget )
 
 //---------------------------------------------------------------------------//
 
 METHOD syncSituacionesPresupuestoPrestashop( cCodWeb, cSerPre, nNumPre, cSufPre ) CLASS TComercio
-Return ( .t. )
+RETURN ( .t. )
 
 //---------------------------------------------------------------------------//
 
 METHOD syncronizeStatesPresupuestoGestool( cCodWeb, cSerPre, nNumPre, cSufPre ) CLASS TComercio
-Return ( .t. )
+RETURN ( .t. )
 
 //---------------------------------------------------------------------------//
 
@@ -5059,7 +5059,7 @@ METHOD presupuestoCheckExistStateUp( oQuery, cCodWeb, cSerPre, nNumPre, cSufPre 
       ::downloadStateToPresupuesto( oQuery, cSerPre, nNumPre, cSufPre )
    endif
 
-Return ( .t. )
+RETURN ( .t. )
 
 //---------------------------------------------------------------------------//
 
@@ -5084,7 +5084,7 @@ METHOD downloadStateToPresupuesto( oQuery, cSerPre, nNumPre, cSufPre ) CLASS TCo
 
    end if
 
-Return( .t. )
+RETURN( .t. )
 
 //---------------------------------------------------------------------------//
 
@@ -5124,7 +5124,7 @@ METHOD syncronizeStatesPresupuestoPrestashop ( cSerPre, nNumPre, cSufPre, cCodWe
    ::oPreCliE:OrdSetFocus( nOrdAnt )
    ::oPreCliE:GoTo( nRec )
 
-Return ( .t. )
+RETURN ( .t. )
 
 //---------------------------------------------------------------------------//
 
@@ -5139,19 +5139,19 @@ METHOD UploadStatePrestashop( id_order_state, dFecSit, tFecSit, cCodWeb ) CLASS 
       id             := ::oCon:GetInsertId()   
    end if 
 
-Return ( id  )
+RETURN ( id  )
 
 //---------------------------------------------------------------------------//
 
 METHOD syncSituacionesPedidoPrestashop( cCodWeb, cSerPed, nNumPed, cSufPed ) CLASS TComercio
 
-Return ( .t. )
+RETURN ( .t. )
 
 //---------------------------------------------------------------------------//
 
 METHOD syncronizeStatesGestool( cCodWeb, cSerPed, nNumPed, cSufPed ) CLASS TComercio
 
-Return ( .t. )
+RETURN ( .t. )
 
 //---------------------------------------------------------------------------//
 
@@ -5161,7 +5161,7 @@ METHOD checkExistStateUp( oQuery, cCodWeb, cSerPed, nNumPed, cSufPed ) CLASS TCo
       ::downloadState( oQuery, cSerPed, nNumPed, cSufPed)
    endif
 
-Return ( .t. )
+RETURN ( .t. )
 
 //---------------------------------------------------------------------------//
 
@@ -5188,7 +5188,7 @@ METHOD downloadState( oQuery, cSerPed, nNumPed, cSufPed ) CLASS TComercio
 
    end if
 
-Return( .t. )
+RETURN( .t. )
 
 //---------------------------------------------------------------------------//
 
@@ -5228,25 +5228,22 @@ METHOD syncronizeStatesPrestashop ( cSerPed, nNumPed, cSufPed, cCodWeb ) CLASS T
    ::oPedCliE:OrdSetFocus( nOrdAnt )
    ::oPedCliE:GoTo( nRec )
 
-Return ( .t. )
+RETURN ( .t. )
 
 //---------------------------------------------------------------------------//
 
 METHOD idOrderState( cSitua ) CLASS TComercio
 
-   local oQuery2 
+   local oQuery 
    local idState  
 
-   oQuery2             := TMSQuery():New( ::oCon, "SELECT id_order_state FROM " + ::cPrefixtable( "order_state_lang" ) + " WHERE id_lang = " + ::nLanguage + " and name = '" + alltrim( cSitua ) + "'" )
+   oQuery         := TMSQuery():New( ::oCon, "SELECT id_order_state FROM " + ::cPrefixtable( "order_state_lang" ) + " WHERE id_lang = " + ::nLanguage + " and name = '" + alltrim( cSitua ) + "'" )
 
-
-   if oQuery2:Open() .and. oQuery2:RecCount() > 0
-
-      idState := oQuery2:FieldGetByName( "id_order_state" )
-
+   if oQuery:Open() .and. oQuery:RecCount() > 0
+      idState     := oQuery:FieldGetByName( "id_order_state" )
    endif
 
-Return ( idState )
+RETURN ( idState )
 
 //---------------------------------------------------------------------------//
 
@@ -5261,7 +5258,7 @@ METHOD UploadState( id_order_state, dFecSit, tFecSit, cCodWeb ) CLASS TComercio
       id         := ::oCon:GetInsertId()   
    end if 
 
-Return ( id  )
+RETURN ( id  )
 
 //---------------------------------------------------------------------------//
 
@@ -5276,7 +5273,7 @@ METHOD buildFTP() CLASS TComercio
          ::oFtp      := TFtpCurl():NewPrestashopConfig( ::TComercioConfig )
    end case 
 
-Return ( self )
+RETURN ( self )
 
 //---------------------------------------------------------------------------//
 
@@ -5296,7 +5293,7 @@ METHOD writeText( cText ) CLASS TComercio
    
    logWrite( cText, cPatLog() + "prestashop.log" ) 
 
-Return ( nil )   
+RETURN ( nil )   
 
 //---------------------------------------------------------------------------//
 
@@ -5309,11 +5306,9 @@ METHOD getRecursiveFolderPrestashop( cCarpeta ) CLASS TComercio
       cFolder     += ( substr( cCarpeta, n, 1 ) + "/" )
    next 
 
-Return ( cFolder )
+RETURN ( cFolder )
 
 //---------------------------------------------------------------------------//
-
-
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
@@ -5327,7 +5322,7 @@ METHOD controllerUpdateStockPrestashop() Class TComercio
    local restoreLastInsert
 
    if !( ::isAviableWebToExport() )
-      Return .f.
+      RETURN .f.
    end if 
 
    ::disableDialog()
@@ -5359,7 +5354,7 @@ METHOD controllerUpdateStockPrestashop() Class TComercio
 
    ::enableDialog()
 
-Return ( Self )
+RETURN ( Self )
 
 //---------------------------------------------------------------------------//
 
@@ -5387,7 +5382,7 @@ METHOD buildInformationStockProductDatabase() CLASS TComercio
 
    end while
 
-return .t.
+RETURN .t.
 
 //---------------------------------------------------------------------------//
 
@@ -5420,20 +5415,20 @@ METHOD buildStockPrestashop( idProduct ) CLASS tComercio
                            "valueSecondProperty"   => space( 20 ) ,;
                            "unitStock"             => nStock } )
 
-Return ( aStockProduct )
+RETURN ( aStockProduct )
 
 //---------------------------------------------------------------------------//
 
 METHOD addMegaCommand( cCommand ) CLASS TComercio
 
    if ( cCommand $ ::megaCommand )
-      Return ( Self )
+      RETURN ( Self )
    end if 
 
    ::megaCommand  += cCommand + ";"
    ::megaCommand  += CRLF
 
-Return ( Self )
+RETURN ( Self )
 
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
@@ -5530,7 +5525,7 @@ function cLinkRewrite( cLink )
       cResult           := lower( cResult )
    end if  
 
-Return( cResult )
+RETURN( cResult )
 
 //---------------------------------------------------------------------------//
 
@@ -5547,7 +5542,7 @@ Function reemplazaAcento( cCaracter )
       cResultado     := Substr( cReemplazo, nPos, 1 )
    end if
 
-return ( cResultado )
+RETURN ( cResultado )
 
 //---------------------------------------------------------------------------//
 
@@ -5569,7 +5564,7 @@ Function SetAutoRecive()
 
    end if
 
-Return( nil )
+RETURN( nil )
 
 //---------------------------------------------------------------------------//
 
@@ -5582,7 +5577,7 @@ Function KillAutoRecive()
    oTimer         := nil
    oComercio      := nil
 
-Return( nil )
+RETURN( nil )
 
 //---------------------------------------------------------------------------//
 
