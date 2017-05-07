@@ -29,7 +29,7 @@ METHOD New()
    ::hColumns                    := {  "id"              => {  "create"    => "INTEGER PRIMARY KEY AUTOINCREMENT"    ,;
                                                                "text"		=> "Identificador"                        ,;
    															               "dbfField" 	=> "" }                                   ,;
-                                       "situacion"       => {  "create"    => "VARCHAR( 50 ) NOT NULL"               ,;
+                                       "situacion"       => {  "create"    => "VARCHAR( 140 ) NOT NULL"              ,;
    															               "text"		=> "Tipo de situacion"                    ,;
    															               "dbfField" 	=> "cSitua" } }
 

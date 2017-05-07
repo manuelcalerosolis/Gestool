@@ -13,8 +13,6 @@ CLASS SQLBaseModel
    DATA     cDbfTableName
 	DATA	   hColumns
 
-   DATA     aDbfFields
-
    DATA     cGeneralSelect
 
    DATA     cColumnOrder
@@ -40,6 +38,8 @@ CLASS SQLBaseModel
    METHOD   getInsertSentence()                     
    METHOD   getUpdateSentence()
    METHOD   getDeleteSentence()
+
+   METHOD   convertRecnoToId( aRecno )
 
    METHOD   getTableName                           INLINE ( ::cTableName )
 
@@ -70,7 +70,7 @@ CLASS SQLBaseModel
    METHOD   getBuffer( cColumn )                   INLINE   ( hget( ::hBuffer, cColumn ) )
    METHOD   updateCurrentBuffer()                  INLINE   ( getSQLDatabase():Query( ::getUpdateSentence() ), ::buildRowSetWithRecno() )
    METHOD   insertBuffer()                         INLINE   ( getSQLDatabase():Query( ::getInsertSentence() ), ::buildRowSet() )
-   METHOD   deleteSelection()                      INLINE   ( getSQLDatabase():Query( ::getdeleteSentence() ), ::buildRowSet() )
+   METHOD   deleteSelection( aRecno )              INLINE   ( getSQLDatabase():Query( ::getdeleteSentence( aRecno ) ), ::buildRowSet() )
 
    METHOD   selectFetchArray( cSentence )
 
@@ -275,9 +275,29 @@ Return ( cSQLInsert )
 
 //---------------------------------------------------------------------------//
 
-METHOD getDeleteSentence()
+METHOD convertRecnoToId( aRecno )
 
-   local cSQLDelete  := "DELETE FROM " + ::cTableName + " WHERE " + ::cColumnKey + " = " + toSQLString( ::oRowSet:fieldGet( ::cColumnKey ) )
+   local nRecno
+   local aId   := {}
+
+   for each nRecno in ( aRecno )
+      ::oRowset:goto( nRecno )
+      aadd( aId, ::oRowset:fieldget( "id" ) )
+   next
+
+Return ( aId )
+
+//---------------------------------------------------------------------------//
+
+METHOD getDeleteSentence( aRecno )
+
+   local aId            := ::convertRecnoToId( aRecno )
+
+   local cSQLDelete     := "DELETE FROM " + ::cTableName + " WHERE " 
+
+   aeval( aId, {| v | cSQLDelete += ::cColumnKey + " = " + toSQLString( v ) + " or " } )
+
+   cSQLDelete        := ChgAtEnd( cSQLDelete, '', 4 )
 
 Return ( cSQLDelete )
 
@@ -345,7 +365,7 @@ Return ( ::loadBuffer( 0 ) )
 
 METHOD loadCurrentBuffer()                
 
-   local n
+   local aColumnNames := hb_hkeys( ::hColumns )
 
    if empty( ::oRowSet )
       Return ( .f. )
@@ -353,9 +373,7 @@ METHOD loadCurrentBuffer()
 
    ::hBuffer  := {=>}
 
-   for n := 1 to ::oRowSet:fieldCount()
-      hset( ::hBuffer, ::oRowSet:fieldname( n ), ::oRowSet:fieldget( n ) )
-   next 
+   aeval( aColumnNames, {| k | hset( ::hBuffer, k, ::oRowSet:fieldget( k ) ) } )
 
 Return ( ::hBuffer )   
 
@@ -363,15 +381,13 @@ Return ( ::hBuffer )
 
 METHOD loadBuffer( id )
 
-   local n 
+   local aColumnNames := hb_hkeys( ::hColumns )
 
    ::hBuffer  := {=>}
 
    ::oRowSet:goto( id )
 
-   for n := 1 to ::oRowSet:fieldCount()
-      hset( ::hBuffer, ::oRowSet:fieldname( n ), ::oRowSet:fieldget( n ) )
-   next 
+   aeval( aColumnNames, {| k | hset( ::hBuffer, k, ::oRowSet:fieldget( k ) ) } )
 
 Return ( .t. )
 

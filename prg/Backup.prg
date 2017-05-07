@@ -863,6 +863,36 @@ Method ZipFiles()
       aAdd( aFil, cDat )
 
       /*
+      Ahora el directorio de database---------------------------------------------
+      */
+
+      cDat                 := cPatSafe() + "Database"
+      if ::lDate
+         cDat              += Dtos( Date() )
+      end if
+      cDat                 += ".Zip"
+
+      if file( cDat )
+         ferase( cDat )
+      end if
+
+      ::nActualFile        := 0
+      aDir                 := Directory( FullCurDir() + "Database\*.*" )
+
+      ::oProgreso:SetTotal( Len( aDir ) )
+      ::oProgreso:cText    := "Comprimiendo directorio de bases de datos"
+
+      hb_SetDiskZip( {|| nil } )
+      if !empty( ::cPassword1 )
+         aEval( aDir, { | cName, nIndex | hb_ZipFile( cDat, FullCurDir() + "Database\" + cName[ 1 ], 9, , , Rtrim( ::cPassword1 ) ), ::oProgreso:Set( nIndex ) } )
+      else
+         aEval( aDir, { | cName, nIndex | hb_ZipFile( cDat, FullCurDir() + "Database\" + cName[ 1 ], 9 ), ::oProgreso:Set( nIndex ) } )
+      end if 
+      hb_gcAll()
+
+      aAdd( aFil, cDat ) 
+
+      /*
       Ahora el directorio de SCRIPTS-------------------------------------------
       */
 

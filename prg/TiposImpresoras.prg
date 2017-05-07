@@ -78,7 +78,7 @@ METHOD Dialog( lZoom )
    local oDlg
    local oGetNombre
 
-   DEFINE DIALOG oDlg RESOURCE "TIPO_IMPRESORA" TITLE lblTitle( ::getMode() ) + "tipos de impresoras"
+   DEFINE DIALOG oDlg RESOURCE "TIPO_IMPRESORA" TITLE ::lblTitle() + "tipo de impresora"
 
    REDEFINE GET   oGetNombre ;
       VAR         ::oModel:hBuffer[ "nombre" ] ;

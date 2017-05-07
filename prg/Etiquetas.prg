@@ -2,6 +2,8 @@
 #include "Factu.ch" 
 #include "MesDbf.ch"
 
+#define  __special_mode__              9
+
 //---------------------------------------------------------------------------//
 
 CLASS Etiquetas FROM SQLBaseView
@@ -22,15 +24,21 @@ CLASS Etiquetas FROM SQLBaseView
    METHOD      startDialog()
    METHOD      validDialog()
 
+   METHOD   insertAfterAppendButton()
+
    METHOD   loadTree( oTree, id )
    METHOD      setTree()
    METHOD      changeTree()
+
+   METHOD   AppendChild( oBrowse )
 
    METHOD   checkSelectedNode()
    METHOD      getSelectedNode()             INLINE ( ::nSelectedNode )
    METHOD      setSelectedNode( nNode )      INLINE ( ::nSelectedNode := nNode )
 
    METHOD   checkValidParent()
+
+   METHOD   LblTitle()
 
 END CLASS
 
@@ -48,11 +56,25 @@ Return ( Self )
 
 //---------------------------------------------------------------------------//
 
+METHOD insertAfterAppendButton()
+
+   DEFINE BTNSHELL RESOURCE "NEW" OF ::oShell ;
+      NOBORDER ;
+      ACTION   ( ::AppendChild( ::oShell:getBrowse() ) );
+      TOOLTIP  "(A)ñadir Hijos";
+      BEGIN GROUP;
+      HOTKEY   "H";
+      LEVEL    ACC_APPD
+
+Return ( Self )
+
+//---------------------------------------------------------------------------//
+
 METHOD buildSQLShell()
 
    disableAcceso()
 
-   ::oShell                := SQLTShell():New( 2, 10, 18, 70, "Etiquetas", , oWnd(), , , .f., , , ::oModel, , , , , {}, {|| ::Edit() },, {|| ::Delete() },, nil, ::nLevel, "gc_printer2_16", ( 104 + ( 0 * 256 ) + ( 63 * 65536 ) ),,, .t. )
+   ::oShell                := SQLTShell():New( 2, 10, 18, 70, "Etiquetas", , oWnd(), , , .f., , , ::oModel, , , , , {}, {|| ::Edit() },, {|| ::Delete() },, nil, ::nLevel, "gc_bookmarks_16", ( 104 + ( 0 * 256 ) + ( 63 * 65536 ) ),,, .t. )
 
       with object ( ::oShell:AddCol() )
          :cHeader          := "ID de etiqueta"
@@ -71,9 +93,9 @@ METHOD buildSQLShell()
       end with
 
       with object ( ::oShell:AddCol() )
-         :cHeader          := "Padre"
-         :cSortOrder       := "id_padre"
-         :bEditValue       := {|| ::oModel:getRowSet():fieldGet( "id_padre" ) }
+         :cHeader          := "Nombre del Padre"
+         :cSortOrder       := "nombre_padre"
+         :bEditValue       := {|| ::oModel:getRowSet():fieldGet( "nombre_padre" ) }
          :nWidth           := 100
          :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | ::clickOnHeader( oCol, ::oShell:getBrowse(), ::oShell:getCombobox() ) }
       end with
@@ -101,8 +123,15 @@ METHOD Dialog( lZoom )
 
    local oDlg
    local oGetNombre
+   local oBmpEtiquetas
 
-   DEFINE DIALOG oDlg RESOURCE "ETIQUETA" TITLE lblTitle( ::getMode() ) + "etiquetas"
+   DEFINE DIALOG oDlg RESOURCE "ETIQUETA" TITLE ::lblTitle() + "etiqueta"
+
+   REDEFINE BITMAP oBmpEtiquetas ;
+         ID       500 ;
+         RESOURCE "gc_bookmarks_48" ;
+         TRANSPARENT ;
+         OF       oDlg
 
    REDEFINE GET   oGetNombre ;
       VAR         ::oModel:hBuffer[ "nombre" ] ;
@@ -111,8 +140,9 @@ METHOD Dialog( lZoom )
       WHEN        ( ! ::isZoomMode() ) ;
       OF          oDlg
 
-   ::oTree                     := TTreeView():Redefine( 110, oDlg )
-   ::oTree:bItemSelectChanged  := {|| ::changeTree() }
+   ::oTree                       := TTreeView():Redefine( 110, oDlg )
+   ::oTree:bItemSelectChanged    := {|| ::changeTree() }
+   ::oTree:bWhen                 := {|| ::getMode() != __special_mode__ .and. !::isZoomMode() }
 
    REDEFINE BUTTON ;
       ID          IDOK ;
@@ -155,30 +185,22 @@ METHOD validDialog( oDlg )
    ::setSelectedNode( nil )
 
    if empty( ::oModel:hBuffer[ "nombre" ] )
-      msgStop( "Nombre de la etiqueta no puede estar vacÃ­o." )
+      msgStop( "Nombre de la etiqueta no puede estar vacío." )
       RETURN ( .f. )
    end if 
 
    ::checkSelectedNode()
 
-   if empty( ::getSelectedNode() )
-      RETURN ( oDlg:end( IDOK ) )
-   end if
-   
    if ( ::isEditMode() )
 
       if ::oModel:hBuffer[ "id" ] == ::getSelectedNode()
-               
          msgStop( "Referencia a si mismo. Una etiqueta no puede ser padre de si misma.")
          RETURN ( .f. )
-
       end if
 
       if !::checkValidParent()
-
-         msgStop( "Referencia cÃ­clica. Una etiqueta hijo no puede ser padre de su padre")
+         msgStop( "Referencia cíclica. Una etiqueta hijo no puede ser padre de su padre")
          RETURN ( .f. )
-         
       endif
 
    end if 
@@ -186,6 +208,32 @@ METHOD validDialog( oDlg )
    ::oModel:hBuffer[ "id_padre" ] := ::getSelectedNode()
 
 RETURN ( oDlg:end( IDOK ) )
+
+//----------------------------------------------------------------------------//
+
+METHOD AppendChild( oBrowse )
+
+   if ::notUserAppend()
+      msgStop( "Acceso no permitido." )
+      RETURN ( Self )
+   end if 
+
+   ::setMode( __special_mode__ )
+
+   ::oModel:setIdForRecno( ::oModel:getKeyFieldOfRecno() )
+
+   ::oModel:loadChildBuffer()
+
+   if ::Dialog()
+      ::oModel:insertChildBuffer()
+   end if
+
+   if !empty( oBrowse )
+      oBrowse:refreshCurrent()
+      oBrowse:setFocus()
+   end if 
+
+RETURN ( Self )
 
 //---------------------------------------------------------------------------//
 
@@ -286,6 +334,10 @@ METHOD checkValidParent( oTree, nCargo )
 
    local idTarget    := ::getSelectedNode()
 
+   if empty(idTarget)
+      RETURN ( .t. )
+   end if 
+
    while idTarget != 0
 
       if ::oModel:getRowSet():find( idTarget, "id" ) != 0
@@ -332,7 +384,12 @@ RETURN ( .t. )
 
 //---------------------------------------------------------------------------//
 
-   
+METHOD LblTitle()
 
+   if ::getMode() == __special_mode__
+      RETURN ( "Añadiendo hijo a " )
+   end if 
 
+RETURN( ::Super:lblTitle() )
 
+//---------------------------------------------------------------------------//

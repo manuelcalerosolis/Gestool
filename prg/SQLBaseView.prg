@@ -17,6 +17,11 @@ CLASS SQLBaseView
    DATA     nMode                                     AS NUMERIC
 
    DATA     cBrowseState 
+
+   DATA     hTextMode                                 INIT {   __append_mode__      => "Añadiendo ",;
+                                                               __edit_mode__        => "Modificando ",;
+                                                               __zoom_mode__        => "Visualizando ",;
+                                                               __duplicate_mode__   => "Duplicando " }
  
    METHOD   New()
    
@@ -36,15 +41,18 @@ CLASS SQLBaseView
    METHOD   setMode( nMode )                          INLINE ( ::nMode := nMode )
    METHOD   getMode()                                 INLINE ( ::nMode )
 
-   METHOD   destroySQLModel()                         INLINE   ( if( !empty(::oModel), ::oModel:end(), ) )
+   METHOD   destroySQLModel()                         INLINE ( if( !empty(::oModel), ::oModel:end(), ) )
 
    METHOD   ActivateShell()
   
    METHOD   ActivateBrowse()
       METHOD   startBrowse( oCombobox, oBrowse )
 
+   METHOD   LblTitle()                                INLINE ( if( hhaskey( ::hTextMode, ::getMode() ), hget( ::hTextMode, ::getMode() ), "" ) )
+
    METHOD   AutoButtons()                             INLINE ( ::GeneralButtons(), ::EndButton() )
       METHOD   GeneralButtons()
+      METHOD   insertAfterAppendButton()              VIRTUAL
       METHOD   EndButton()
 
    METHOD   setBrowseState( cBrowseState )            INLINE ( ::cBrowseState := cBrowseState )
@@ -52,12 +60,12 @@ CLASS SQLBaseView
    METHOD   restoreBrowseState( oBrowse )
  
    METHOD   Append( oBrowse )
-      METHOD setAppendMode()                          INLINE ( ::nMode := __append_mode__ )
+      METHOD setAppendMode()                          INLINE ( ::setMode( __append_mode__ ) )
       METHOD isAppendMode()                           INLINE ( ::nMode == __append_mode__ )
 
    METHOD Duplicate( oBrowse )
       METHOD setDuplicateMode()                       INLINE ( ::nMode := __duplicate_mode__ )
-      METHOD isDuplicateMode()                             INLINE ( ::nMode == __duplicate_mode__ )
+      METHOD isDuplicateMode()                        INLINE ( ::nMode == __duplicate_mode__ )
 
    METHOD   Edit( oBrowse )
      METHOD setEditMode()                             INLINE ( ::nMode := __edit_mode__ )
@@ -159,6 +167,8 @@ METHOD GeneralButtons()
       BEGIN GROUP;
       HOTKEY   "A";
       LEVEL    ACC_APPD
+
+   ::insertAfterAppendButton()
 
    DEFINE BTNSHELL RESOURCE "DUP" OF ::oShell ;
       NOBORDER ;
@@ -308,9 +318,7 @@ RETURN ( Self )
 
 //----------------------------------------------------------------------------//
 
-METHOD Edit( oBrowse )
-
-   local nRecno   
+METHOD Edit( oBrowse )  
 
    if ::notUserEdit()
       msgStop( "Acceso no permitido." )
@@ -361,14 +369,25 @@ RETURN ( Self )
 
 METHOD Delete( oBrowse )
 
+   local nSelected
+   local cNumbersOfDeletes
+
    if ::notUserDelete()
       msgStop( "Acceso no permitido." )
       RETURN ( Self )
    end if 
 
-   if oUser():lNotConfirmDelete() .or. msgNoYes( "¿Desea eliminar el registro en curso?", "Confirme eliminación" )
-      ::oModel:deleteSelection()
-   end if 
+   nSelected            := len( oBrowse:aSelected )
+
+   if nSelected > 1
+      cNumbersOfDeletes := alltrim( str( nSelected, 3 ) ) + " registros?"
+   else
+      cNumbersOfDeletes := "el registro en curso?"
+   end if
+
+      if oUser():lNotConfirmDelete() .or. msgNoYes( "¿Desea eliminar " + cNumbersOfDeletes, "Confirme eliminación" )
+         ::oModel:deleteSelection( oBrowse:aSelected )
+      end if 
 
    if !empty( oBrowse )
       oBrowse:refreshCurrent()
@@ -507,3 +526,4 @@ METHOD saveHistory( cHistory, oBrowse )
 Return ( .t. )
 
 //----------------------------------------------------------------------------//
+

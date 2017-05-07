@@ -9427,7 +9427,7 @@ Return ( substr( ( D():FacturasProveedoresLineas( nView ) )->iNumAlb, 1, 12 ) )
 */
 
 FUNCTION nTotNDocumento( uDbf )
-
+ 
    local nTotUnd
 
    do case

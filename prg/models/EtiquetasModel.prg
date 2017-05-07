@@ -13,11 +13,21 @@ CLASS EtiquetasModel FROM SQLBaseModel
 
    DATA     hColumns
 
+   DATA     hDbfToCategory
+
    METHOD   New()
 
    METHOD   buildRowSetWithRecno()                 INLINE   ( ::buildRowSet( .t. ) )
 
-   METHOD   deleteSelection()
+   METHOD   loadChildBuffer()
+
+   METHOD   updateAfterDelete()
+
+   METHOD   deleteSelection( aRecno )              INLINE   ( getSQLDatabase():Query( ::getdeleteSentence( aRecno ) ), ::updateAfterDelete( aRecno ), ::buildRowSet() )
+
+   METHOD   insertChildBuffer()                    INLINE   ( getSQLDatabase():Query( ::getInsertSentence() ), ::buildRowSetWithRecno() )
+
+   METHOD   getImportSentence( cPath )
 
 END CLASS
 
@@ -30,32 +40,116 @@ METHOD New()
    ::cDbfTableName               := ""
 
    ::hColumns                    := {  "id"        => {  "create"    => "INTEGER PRIMARY KEY AUTOINCREMENT"  ,;
-                                                         "text"		=> "Identificador"                      ,;
-   															         "dbfField" 	=> "" }                                 ,;
+                                                         "text"		=> "Identificador"}                     ,;
                                        "nombre"    => {  "create"    => "VARCHAR( 50 ) NOT NULL"             ,;
-   															         "text"		=> "Nombre de la etiqueta"              ,;
-   															         "dbfField" 	=> "" }                                 ,;
+   															         "text"		=> "Nombre de la etiqueta"}             ,;
                                        "imagen"    => {  "create"    => "VARCHAR ( 50 )"                     ,;
-                                                         "text"      => "Imagen que acompaña la etiqueta"    ,;
-                                                         "dbfField"  => "" }                                 ,;
+                                                         "text"      => "Imagen que acompaña la etiqueta"}   ,;
                                        "id_padre"  => {  "create"    => "INTEGER"                            ,;
-                                                         "text"      => "Identificador de la etiqueta padre" ,;
-                                                         "dbfField"  => "" }                                 }
+                                                         "text"      => "Identificador de la etiqueta padre"}}
 
    ::Super:New()
+
+   ::cGeneralSelect              := "select id, nombre, imagen, id_padre, nombre_padre"   +;
+                                    " from etiquetas left join"                           +;
+                                    " (select id as id_del_padre, nombre as nombre_padre from etiquetas)"+;
+                                    " on id_padre = id_del_padre"
+
+   ::hDbfToCategory              := {  "Categorias" => { "padre" =>  "Categorias"   ,;
+                                                         "hijos" =>  "cNombre"   }}
+
+
 
 RETURN ( Self )
 
 //---------------------------------------------------------------------------//
 
-METHOD   deleteSelection()
+METHOD   updateAfterDelete( aRecno )
 
-   local cUpdateOnDelete
+   local aId               := ::convertRecnoToId( aRecno )
 
-   cUpdateOnDelete := "UPDATE etiquetas SET id_padre = null WHERE id_padre = " + toSQLString( ::oRowSet:fieldGet( ::cColumnKey ) )
+   local cUpdateOnDelete   := "UPDATE " + ::cTableName +  " SET id_padre = null WHERE "
 
-   getSQLDatabase():Query( ::getdeleteSentence() )
+   aeval( aId, {| v | cUpdateOnDelete += "id_padre = " + toSQLString( v ) + " or " } )
+
+   cUpdateOnDelete        := ChgAtEnd( cUpdateOnDelete, '', 4 )
+
    getSQLDatabase():Query( cUpdateOnDelete )
-   ::buildRowSet()
 
 RETURN ( self )
+
+
+//---------------------------------------------------------------------------//
+
+METHOD   loadChildBuffer()
+
+   local aColumnNames := hb_hkeys( ::hColumns )
+
+   if empty( ::oRowSet )
+      Return ( .f. )
+   end if
+
+   ::hBuffer  := {=>}
+
+   aeval( aColumnNames, {| k | hset( ::hBuffer, k , if ( k == "id_padre", ::oRowSet:fieldget( "id" ), "" ) ) } )
+
+Return ( .t. )
+
+//---------------------------------------------------------------------------//
+
+METHOD   getImportSentence( cPath )
+
+   local hConstructor := hb_hkeys( ::hDbfToCategory )
+   local cDbfTable
+   local hContentDbfTable
+   local cFatherInsert
+   local cFindIdOfFathers
+   local nIdOfFathers
+   local cChildrenInsert
+   local cChildrenValues
+   local dbf
+
+   default cPath     := cPatDat()
+
+   for each cDbfTable in ( hConstructor )
+
+      hContentDbfTable  := ::hDbfToCategory [ cDbfTable ]
+
+      cFatherInsert     := "INSERT INTO " + ::cTableName + " (nombre, imagen, id_padre) VALUES  ( " + toSQLString( hContentDbfTable[ "padre" ] ) + ", null, null )"
+
+      //getSQLDatabase():Query( cFatherInsert )
+
+      cFindIdOfFathers := "SELECT id FROM " + ::cTableName + " WHERE nombre = " + toSQLString( hContentDbfTable[ "padre" ] )
+
+      nIdOfFathers := ::selectFetchArray( cFindIdOfFathers )[1][1]
+
+      dbUseArea( .t., cLocalDriver(), cPath + "\" + cDbfTable, cCheckArea( "dbf", @dbf ), .f. )
+
+      if ( dbf )->( neterr() )
+      Return ( cInsert )
+      end if 
+
+      cChildrenInsert := "INSERT INTO " + ::cTableName +  " ( nombre, imagen, id_padre) VALUES "
+
+      ( dbf )->( dbgotop() )
+
+      while ( dbf )->( !eof() )
+
+         cChildrenValues           += "( " + toSQLString( ( dbf )->( fieldget( fieldpos( hget( hContentDbfTable, "hijos" ) ) ) ) ) + ", null, " + toSQLString( nIdOfFathers ) + "), "
+
+         ( dbf )->( dbskip() )
+
+      end while
+
+         cChildrenValues           := chgAtEnd( cChildrenValues, ' )', 2 )
+
+      ( dbf )->( dbclosearea() )
+
+      cChildrenInsert += cChildrenValues
+
+      msgalert( cChildrenInsert )
+
+   next
+
+RETURN ( self )
+   
