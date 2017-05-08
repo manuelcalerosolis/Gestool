@@ -123,10 +123,12 @@ METHOD   getImportSentence( cPath )
 
       nIdOfFathers := ::selectFetchArray( cFindIdOfFathers )[1][1]
 
-      dbUseArea( .t., cLocalDriver(), cPath + "\" + cDbfTable, cCheckArea( "dbf", @dbf ), .f. )
+
+
+      /*dbUseArea( .t., cLocalDriver(), cPath + "\" + cDbfTable, cCheckArea( "dbf", @dbf ), .f. )
 
       if ( dbf )->( neterr() )
-      Return ( cInsert )
+      Return ( cChildrenInsert )
       end if 
 
       cChildrenInsert := "INSERT INTO " + ::cTableName +  " ( nombre, imagen, id_padre) VALUES "
@@ -148,8 +150,7 @@ METHOD   getImportSentence( cPath )
       cChildrenInsert += cChildrenValues
 
       msgalert( cChildrenInsert )
-
+*/
    next
 
 RETURN ( self )
-   

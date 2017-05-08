@@ -148,7 +148,7 @@ METHOD Dialog( lZoom )
       ID          IDOK ;
       OF          oDlg ;
       WHEN        ( ! ::isZoomMode() ) ;
-      ACTION      ( ::validDialog( oDlg ) )
+      ACTION      ( ::validDialog( oDlg, oGetNombre ) )
 
    REDEFINE BUTTON ;
       ID          IDCANCEL ;
@@ -180,12 +180,13 @@ RETURN ( Self )
 
 //---------------------------------------------------------------------------//  
 
-METHOD validDialog( oDlg )
+METHOD validDialog( oDlg, oGetNombre )
 
    ::setSelectedNode( nil )
 
    if empty( ::oModel:hBuffer[ "nombre" ] )
       msgStop( "Nombre de la etiqueta no puede estar vacío." )
+      oGetNombre:setFocus()
       RETURN ( .f. )
    end if 
 

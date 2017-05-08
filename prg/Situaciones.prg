@@ -93,7 +93,7 @@ METHOD Dialog( lZoom )
       ID          IDOK ;
       OF          oDlg ;
       WHEN        ( ! ::isZoomMode() ) ;
-      ACTION      ( ::validDialog( oDlg ) )
+      ACTION      ( ::validDialog( oDlg, oGetNombre ) )
 
    REDEFINE BUTTON ;
       ID          IDCANCEL ;
@@ -115,10 +115,11 @@ RETURN ( oDlg:nResult == IDOK )
 
 //--------------------------------------------------------------------------//
 
-METHOD validDialog( oDlg )
+METHOD validDialog( oDlg, oGetNombre )
 
    if empty( ::oModel:hBuffer[ "situacion" ] )
       MsgStop( "El nombre de la situación no puede estar vacío" )
+      oGetNombre:setFocus()
       Return ( .f. )
    end if
 

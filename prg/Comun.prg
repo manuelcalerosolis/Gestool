@@ -280,36 +280,8 @@ Return ( .t. )
 //---------------------------------------------------------------------------//
 
 Function Test()
-<<<<<<< HEAD
 
-   with object TComercio():New()
-
-      :setDebugMode()
-      :setWebToExport( "Localhost" ) 
-      :dialogActivate()
-
-   end with 
-
-/*
-   TComercioConfig():getInstance():LoadJSON()
-
-   TComercioConfig():getInstance():setCurrentWebName("Temporada")
-=======
->>>>>>> b68ade15e240b6cb4a7ce7cdcf587b9f01c22ca9
-
-<<<<<<< HEAD
-   EtiquetasModel():New():getImportSentence()
-=======
-<<<<<<< HEAD
-   //Situaciones():New():ActivateShell()
-=======
-<<<<<<< HEAD
-   //Etiquetas():New():ActivateShell()
-=======
-   msgalert( hb_valtoexp( TComercioConfig():getInstance():getLangs() ) )
->>>>>>> 0f734ba3783c09158fd3c4e9a7f76bf451f7fa33
->>>>>>> origin/master
->>>>>>> origin/master
+   //TiposIncidencias():New():ActivateBrowse()
 
 Return ( nil )
 

@@ -103,6 +103,10 @@ METHOD Dialog( lZoom )
 
    oDlg:AddFastKey( VK_F5, {|| oDlg:end( IDOK ) } )
 
+   // evento bstart-----------------------------------------------------------
+
+   oDlg:bStart    := {|| oGetNombre:setFocus() }
+
    ACTIVATE DIALOG oDlg CENTER
 
 RETURN ( oDlg:nResult == IDOK )
@@ -191,6 +195,8 @@ METHOD buildSQLBrowse()
 
       oDlg:AddFastKey( VK_RETURN,   {|| oDlg:end( IDOK ) } )
       oDlg:AddFastKey( VK_F5,       {|| oDlg:end( IDOK ) } )
+      oDlg:AddFastKey( VK_F2,       {|| ::Append( oBrowse ) } )
+      oDlg:AddFastKey( VK_F3,       {|| ::Edit( oBrowse ) } )
 
       oDlg:bStart    := {|| ::startBrowse( oCombobox, oBrowse ) }
 
