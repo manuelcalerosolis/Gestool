@@ -27,7 +27,13 @@ CLASS EtiquetasModel FROM SQLBaseEmpresasModel
 
    METHOD   insertChildBuffer()                    INLINE   ( getSQLDatabase():Query( ::getInsertSentence() ), ::buildRowSetWithRecno() )
 
-   METHOD   getImportSentence( cPath )
+   METHOD   makeParent()
+
+   METHOD   makeImportCategorias()
+
+   METHOD   makeImportDbfSQL()
+
+   METHOD   getSentenceFromOldCategories( idParent )
 
 END CLASS
 
@@ -97,70 +103,114 @@ Return ( .t. )
 
 //---------------------------------------------------------------------------//
 
-METHOD   getImportSentence( cPath )
+METHOD makeParent( cName )
 
-   local aConstructor := hb_hkeys( ::hDbfToCategory )
-   local cDbfTable
-   local hContentDbfTable
-   local cFatherInsert
-   local cFindIdOfFathers
-   local nIdOfFathers
-   local cChildrenInsert
-   local cChildrenValues
+   local cParentInsert
+
+   msgalert( "estoy a punto de hacer el padre")
+
+   cParentInsert        := "INSERT INTO " + ::cTableName + " ( "     + ;
+                              "nombre, empresa, id_padre ) "         + ;
+                           "VALUES  ( "                              + ;
+                              toSQLString( cName ) + ", " + toSQLString( cCodEmp() ) + ", null )"
+
+                              msgalert( cParentInsert , "esta es la sentencia sql")
+
+   getSQLDatabase():Query( cParentInsert )
+
+RETURN ( getSQLDatabase():LastInsertId() )
+
+//---------------------------------------------------------------------------//
+
+METHOD getSentenceFromOldCategories( idParent )
+
    local dbf
+   local cSentence   := "INSERT INTO " + ::cTableName +  " ( nombre, empresa, id_padre) VALUES "
+   local cValues     := ""
 
-   default cPath     := "EMP" + cCodEmp()
+   msgalert("voy a abrir la base de datos")
 
-   for each cDbfTable in ( aConstructor )
+   dbUseArea( .t., cDriver(), cFullPathEmpresa() + "Categorias.Dbf", cCheckArea( "Categorias", @dbf ) )
 
-      hContentDbfTable  := ::hDbfToCategory [ cDbfTable ]
-
-      cFatherInsert     := "INSERT INTO " + ::cTableName + " (nombre, empresa, id_padre) VALUES  ( " +;
-                            toSQLString( hContentDbfTable[ "padre" ] ) + ", " + toSQLString( cCodEmp() ) + ", null )"
-
-      //getSQLDatabase():Query( cFatherInsert )
-
-      msgalert( cFatherInsert )
-
-      cFindIdOfFathers := "SELECT id FROM " + ::cTableName + " WHERE nombre = " + toSQLString( hContentDbfTable[ "padre" ] )
-
-      nIdOfFathers := ::selectFetchArray( cFindIdOfFathers )[1][1]
-
-      msgalert( nIdOfFathers )
-
-      dbUseArea( .t., cLocalDriver(), cPath + "\" + cDbfTable + ".dbf", cCheckArea( "dbf", @dbf ), .f. )
-
-      if ( dbf )->( neterr() )
-      msgalert( "aqui hay un problema")
-      Return ( cChildrenInsert )
-      end if 
-
-      cChildrenInsert := "INSERT INTO " + ::cTableName +  " ( nombre, empresa, id_padre) VALUES "
-
-      msgalert( cChildrenInsert, "hemos pasado de la apertura del dbf")
-
-      ( dbf )->( dbgotop() )
+   ( dbf )->( dbgotop() )
 
       while ( dbf )->( !eof() )
 
-         cChildrenValues           += "( " + toSQLString( ( dbf )->( fieldget( fieldpos( hget( hContentDbfTable, "hijos" ) ) ) ) ) + ", " + toSQLString( cCodEmp() ) + ", " + toSQLString( nIdOfFathers ) + "), "
+         cValues     += "( " + toSQLString( ( dbf )->cNombre ) + ", " + toSQLString( cCodEmp() ) + ", " + toSQLString( idParent ) + "), "
 
          ( dbf )->( dbskip() )
 
+         msgalert( "hola")
+
       end while
 
-      msgalert( "hemos pasado el bucle while")
+      cValues        := chgAtEnd( cValues, "", 2 )
 
-         cChildrenValues           := chgAtEnd( cChildrenValues, ' )', 2 )
+   ( dbf )->( dbclosearea() )
 
-      ( dbf )->( dbclosearea() )
+   msgalert("acabo de salir del while")
 
-      cChildrenInsert += cChildrenValues
+   msgalert(cvalues, "la sentencia es esta" )
 
-      msgalert( cChildrenInsert , "Asi queda la sentencia para los hijos")
+   if empty(cValues)
+      RETURN ( nil )
+   end if 
 
-      msgalert( cChildrenInsert )
+RETURN ( cSentence + cValues )
 
-   next
+//---------------------------------------------------------------------------//
 
-RETURN ( self )
+METHOD makeImportCategorias()
+
+   local cImportSentence
+   local nIdOfCategoria
+   local cPath := cPatEmp()
+
+   msgalert( "primeros pasos")
+
+   if ( file( cFullPathEmpresa() + "Categorias.old" ) )
+      Return ( self )
+   end if
+
+   if !( file( cFullPathEmpresa() + "Categorias.Dbf" ) )
+      msgStop( "El fichero " + cPath + "\Categorias.Dbf no se ha localizado", "Atención" )  
+      Return ( self )
+   end if 
+
+   msgalert("pasamos del if")
+
+   nIdOfCategoria   := ::makeParent( "Categorias" )
+
+   msgalert( nIdOfCategoria )
+
+   cImportSentence   := ::getSentenceFromOldCategories( nIdOfCategoria )
+
+   msgalert("tenemos las sentencias SQL")
+
+   if !empty( cImportSentence )
+
+      getSQLDatabase():Exec( cImportSentence )
+      
+   end if 
+
+   msgalert("ya las hemos ejecutado")
+
+   frename( cFullPathEmpresa() + "Categorias.dbf", cFullPathEmpresa() + "Categorias.old" )
+
+   msgalert("ya le hemos cambiado el nombre al archivo")
+   
+Return ( self )
+
+//---------------------------------------------------------------------------//
+
+METHOD makeImportDbfSQL()
+
+   ::makeImportCategorias()
+   
+Return ( self )
+
+//---------------------------------------------------------------------------//
+
+
+
+//temporada

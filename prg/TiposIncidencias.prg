@@ -14,7 +14,7 @@ CLASS TiposIncidencias FROM SQLBaseView
 
    METHOD   buildSQLModel()               INLINE ( TiposIncidenciasModel():New() )
 
-   METHOD   getFieldFromBrowse()          INLINE ( ::oModel:getRowSet():fieldGet( "nombre" ) )
+   METHOD   getFieldFromBrowse()          INLINE ( ::oModel:getRowSet():fieldGet( "nombre_incidencia" ) )
  
    METHOD   Dialog()
 

@@ -875,7 +875,7 @@ METHOD StartAdministratorTask()
 
             aEmpresa[ 4 ]      := .t.
 
-            ::ConvertEmpresaToSQLite()
+            ::ConvertEmpresaToSQLite( aEmpresa )
 
          end if 
 
@@ -4819,7 +4819,9 @@ RETURN ( Self )
 
 //---------------------------------------------------------------------------//
 
-METHOD ConvertEmpresaToSQLite()
+METHOD ConvertEmpresaToSQLite( aEmpresa )
+
+  // EtiquetasModel():New():makeImportDbfSQL()
 
 RETURN ( Self )
 

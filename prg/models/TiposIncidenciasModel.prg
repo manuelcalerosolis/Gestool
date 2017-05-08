@@ -14,7 +14,7 @@ CLASS TiposIncidenciasModel FROM SQLBaseModel
 
    METHOD New()
 
-   METHOD existTiposImpresoras( cValue )
+   METHOD existTiposIncidencias( cValue )
 
 END CLASS
 
@@ -39,9 +39,9 @@ RETURN ( Self )
 
 //---------------------------------------------------------------------------//
 
-METHOD existTiposImpresoras( cValue )
+METHOD existTiposIncidencias( cValue )
 
-   local cSentence               := "SELECT nombre FROM " + ::cTableName + " WHERE nombre = " + quoted( cValue )
+   local cSentence               := "SELECT nombre_incidencia FROM " + ::cTableName + " WHERE nombre_incidencia = " + quoted( cValue )
    local aSelect                 := ::selectFetchArray( cSentence )
 
 RETURN ( !empty( aSelect ) )

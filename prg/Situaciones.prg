@@ -14,7 +14,7 @@ CLASS Situaciones FROM SQLBaseView
 
    METHOD   buildSQLModel()               INLINE ( SituacionesModel():New() )
 
-   METHOD   getFieldFromBrowse()          INLINE ( ::oModel:getRowSet():fieldGet( "nombre" ) )
+   METHOD   getFieldFromBrowse()          INLINE ( ::oModel:getRowSet():fieldGet( "situacion" ) )
  
    METHOD   Dialog()
 

@@ -12,7 +12,7 @@ CLASS TiposNotas FROM SQLBaseView
 
    METHOD   buildSQLModel()               INLINE ( TiposNotasModel():New() )
 
-   METHOD   getFieldFromBrowse()          INLINE ( ::oModel:getRowSet():fieldGet( "nombre" ) )
+   METHOD   getFieldFromBrowse()          INLINE ( ::oModel:getRowSet():fieldGet( "tipo" ) )
  
    METHOD   Dialog()
 

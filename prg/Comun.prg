@@ -281,15 +281,7 @@ Return ( .t. )
 
 Function Test()
 
-   EtiquetasModel():New():GetImportSentence()
-
-   /*msgalert( hb_valtoexp( SituacionesModel():New():arraySituaciones() ) )
-
-   msgalert( hb_valtoexp( TSituaciones():New():getsituaciones() ) )
-
-   msgalert( hb_valtoexp( TiposImpresorasModel():New():existTiposImpresoras( "tita" ) ), "existe la impresora tita?" )
-
-   msgalert( hb_valtoexp( TiposImpresorasModel():New():existTiposImpresoras( "abuela" ) ), "existe la impresora abuela?" )*/
+   EtiquetasModel():New():makeImportDbfSQL()
 
 Return ( nil )
 
@@ -3579,8 +3571,7 @@ Function cFullPathEmpresa()
   local cCodigoEmpresa  := ""
 
   cCodigoEmpresa        += fullCurDir()
-  cCodigoEmpresa        += "Emp"
-  cCodigoEmpresa        += aEmp()[ _CODEMP ]
+  cCodigoEmpresa        += cPatEmp
   cCodigoEmpresa        += "\"
   
 Return ( cCodigoEmpresa )
