@@ -53,7 +53,13 @@ CLASS PedCliente2PedProveedor
    DATA oItemGroupFabricante
    DATA oItemGroupTipoArticulo
 
-   Method New( nView )   CONSTRUCTOR
+   DATA lOnlyOrder
+
+   DATA cSerieOrder
+   DATA nNumeroOrder
+   DATA cSufijoOrder
+
+   Method New( nView, lOnlyOrder )   CONSTRUCTOR
 
    Method Resource()
       Method Prev()
@@ -68,6 +74,8 @@ CLASS PedCliente2PedProveedor
    Method StartDialog()
 
    Method LoadLineasPedidos()
+
+   Method LoadLinesaOnlyOrder()
 
    Method AddLineasPedidos( nStock, nReserva )
 
@@ -87,11 +95,15 @@ CLASS PedCliente2PedProveedor
 
    METHOD Calculaunidades( nCantidad, nStockDis, nStockMinMax )
 
+   METHOD lEstadoGenerado()
+
 END CLASS
 
 //---------------------------------------------------------------------------//
 
-METHOD New( nView, oTipoArticulo, oFabricante, oStock ) CLASS PedCliente2PedProveedor
+METHOD New( nView, oTipoArticulo, oFabricante, oStock, lOnlyOrder ) CLASS PedCliente2PedProveedor
+
+   DEFAULT lOnlyOrder   := .f.
 
    if !lAIS()
       MsgStop( "Opción disponible sólo para versión ADS." )
@@ -108,6 +120,17 @@ METHOD New( nView, oTipoArticulo, oFabricante, oStock ) CLASS PedCliente2PedProv
    ::nStockFin          := 3
 
    ::aPedidos           := {}
+
+   ::lOnlyOrder         := lOnlyOrder
+
+   ::cSerieOrder        := ( D():PedidosClientes( ::nView ) )->cSerPed
+   ::nNumeroOrder       := ( D():PedidosClientes( ::nView ) )->nNumPed
+   ::cSufijoOrder       := ( D():PedidosClientes( ::nView ) )->cSufPed
+
+   if ::lOnlyOrder .and. ( D():PedidosClientes( ::nView ) )->nGenerado > 1
+      MsgStop( "El pedido ya ha sido pasado a proveedor." )
+      Return ( self )
+   end if
 
    if ::CreateLines()
       ::Resource()
@@ -214,6 +237,7 @@ METHOD Resource() CLASS PedCliente2PedProveedor
          VAR         ::cPeriodo ;
          ID          100 ;
          ITEMS       ::aCreaArrayPeriodos() ;
+         WHEN        !::lOnlyOrder ;
          OF          ::oPag:aDialogs[1]
 
          ::oPeriodo:bCHange   := {|| ::lRecargaFecha() }
@@ -221,11 +245,13 @@ METHOD Resource() CLASS PedCliente2PedProveedor
       REDEFINE GET ::oFecIni VAR ::dFecIni;
          ID          110 ;
          SPINNER ;
+         WHEN        !::lOnlyOrder ;
          OF          ::oPag:aDialogs[1]
 
       REDEFINE GET ::oFecFin VAR ::dFecFin;
          ID          120 ;
          SPINNER ;
+         WHEN        !::lOnlyOrder ;
          OF          ::oPag:aDialogs[1]
 
       ::oBrwRangos               := BrowseRangos():New( 130, ::oPag:aDialogs[1] )
@@ -514,7 +540,11 @@ Method Next() CLASS PedCliente2PedProveedor
    do case
       case ::oPag:nOption == 1
 
-         ::LoadLineasPedidos()
+         if !::lOnlyOrder
+            ::LoadLineasPedidos()
+         else
+            ::LoadLinesaOnlyOrder()
+         end if
 
          ::oPag:GoNext()
 
@@ -529,6 +559,8 @@ Method Next() CLASS PedCliente2PedProveedor
          ::GeneraPedidoProveedor()
 
          ::TotalPedidoProveedor()
+
+         ::lEstadoGenerado()
 
          ::oPag:GoNext()
 
@@ -824,6 +856,120 @@ Return .t.
 
 //---------------------------------------------------------------------------//
 
+METHOD LoadLinesaOnlyOrder CLASS PedCliente2PedProveedor
+
+   local cSentencia  := ""
+   local cBusqueda   := ""
+   local nStock      := 0
+   local nReserva    := 0
+
+   ( ::dbfTemporal )->( __dbZap() )
+
+   cSentencia        := "SELECT lineaspedidos.cSerPed, "
+   cSentencia        +=        "lineaspedidos.nNumPed, "
+   cSentencia        +=        "lineaspedidos.cSufPed, "
+   cSentencia        +=        "lineaspedidos.cRef, "
+   cSentencia        +=        "lineaspedidos.cDetalle, "
+   cSentencia        +=        "lineaspedidos.cCodPr1, "
+   cSentencia        +=        "lineaspedidos.cCodPr2, "
+   cSentencia        +=        "lineaspedidos.cValPr1, "
+   cSentencia        +=        "lineaspedidos.cValPr2, "
+   cSentencia        +=        "lineaspedidos.cLote, "
+   cSentencia        +=        "lineaspedidos.nIva, "
+   cSentencia        +=        "lineaspedidos.nCanPed, "
+   cSentencia        +=        "lineaspedidos.nUniCaja, "
+   cSentencia        +=        "lineaspedidos.nCosDiv, "
+   cSentencia        +=        "lineaspedidos.cAlmLin, "
+   cSentencia        +=        "lineaspedidos.cCodPrv, "
+   cSentencia        +=        "lineaspedidos.nIva, "
+   cSentencia        +=        "lineaspedidos.nReq, "
+   cSentencia        +=        "lineaspedidos.cRefPrv, "
+   cSentencia        +=        "lineaspedidos.lControl, "
+   cSentencia        +=        "cabecerapedidos.cCodCli, "
+   cSentencia        +=        "cabecerapedidos.cNomCli, "
+   cSentencia        +=        "cabecerapedidos.dFecPed, "
+   cSentencia        +=        "articulos.Familia, "
+   cSentencia        +=        "articulos.cCodTip, "
+   cSentencia        +=        "articulos.cCodCate, "
+   cSentencia        +=        "articulos.cCodTemp, "
+   cSentencia        +=        "articulos.cCodFab "
+   cSentencia        += "FROM " + cPatEmp() + "PedCliL lineaspedidos "
+   cSentencia        += "LEFT JOIN " + cPatEmp() + "PedCliT cabecerapedidos on lineaspedidos.cSerPed = cabecerapedidos.cSerPed AND lineaspedidos.nNumPed = cabecerapedidos.nNumPed AND lineaspedidos.cSufped = cabecerapedidos.cSufped "
+   cSentencia        += "LEFT JOIN " + cPatEmp() + "Articulo articulos on lineaspedidos.cRef = articulos.codigo "
+   cSentencia        += "WHERE lineaspedidos.cSerPed='" + ::cSerieOrder + "' AND "
+   cSentencia        +=       "lineaspedidos.nNumPed=" + AllTrim( Str( ::nNumeroOrder ) ) + " AND "
+   cSentencia        +=       "lineaspedidos.cSufPed='" + ::cSufijoOrder + "' AND "
+   cSentencia        +=       "lineaspedidos.cRef>='" + Padr( ::oItemGroupArticulo:GetDesde(), 18 ) + "' AND "
+   cSentencia        +=       "lineaspedidos.cRef<='" + Padr( ::oItemGroupArticulo:GetHasta(), 18 ) + "' AND "
+   cSentencia        +=       "lineaspedidos.cRef<>'' AND "
+   cSentencia        +=       "lineaspedidos.nUniCaja<>0 AND "
+   cSentencia        +=       "NOT( lineaspedidos.lControl ) AND "
+   cSentencia        +=       "cabecerapedidos.dFecPed >='" + dToc( ::dFecIni ) + "' AND "
+   cSentencia        +=       "cabecerapedidos.dFecPed <='" + dToc( ::dFecFin ) + "' AND "   
+   cSentencia        +=       "NOT(cabecerapedidos.lCancel) AND "   
+   cSentencia        +=       "articulos.Familia >='" + Padr( ::oItemGroupFamilia:GetDesde(), 16 ) + "' AND "
+   cSentencia        +=       "articulos.Familia <='" + Padr( ::oItemGroupFamilia:GetHasta(), 16 ) + "' AND "
+   cSentencia        +=       "articulos.cCodTip >='" + ::oItemGroupTipoArticulo:GetDesde() + "' AND "
+   cSentencia        +=       "articulos.cCodTip <='" + ::oItemGroupTipoArticulo:GetHasta() + "' AND "
+   cSentencia        +=       "articulos.cCodCate >='" + Padr( ::oItemGroupCategoria:GetDesde(), 3 ) + "' AND "
+   cSentencia        +=       "articulos.cCodCate <='" + Padr( ::oItemGroupCategoria:GetHasta(), 3 ) + "' AND "
+   cSentencia        +=       "articulos.cCodTemp >='" + Padr( ::oItemGroupTemporada:GetDesde(), 5 ) + "' AND "
+   cSentencia        +=       "articulos.cCodTemp <='" + Padr( ::oItemGroupTemporada:GetHasta(), 5 ) + "' AND "
+   cSentencia        +=       "articulos.cCodFab >='" + Padr( ::oItemGroupFabricante:GetDesde(), 3 ) + "' AND "
+   cSentencia        +=       "articulos.cCodFab <='" + Padr( ::oItemGroupFabricante:GetHasta(), 3 ) + "' "
+   cSentencia        += "ORDER BY lineaspedidos.cRef"
+
+   if TDataCenter():ExecuteSqlStatement( cSentencia, "SelectLineasPedidos" )
+      
+      ::oMtr:SetTotal( ( "SelectLineasPedidos" )->( OrdKeyCount() ) )
+
+      ( "SelectLineasPedidos" )->( dbGoTop() )
+      while !( "SelectLineasPedidos" )->( Eof() )
+
+         nStock                        := ::oStock:nTotStockAct( ( "SelectLineasPedidos" )->cRef )
+         nReserva                      := nTotReserva( ( "SelectLineasPedidos" )->cRef )
+
+         if dbAppe( ::dbfTemporal )
+            ( ::dbfTemporal )->cRef       := ( "SelectLineasPedidos" )->cRef
+            ( ::dbfTemporal )->cDetalle   := ( "SelectLineasPedidos" )->cDetalle
+            ( ::dbfTemporal )->lSelArt    := .t.
+            ( ::dbfTemporal )->cCodPrv    := ::getCodigoProveerdor( ) 
+            ( ::dbfTemporal )->cCodPr1    := ( "SelectLineasPedidos" )->cCodPr1
+            ( ::dbfTemporal )->cCodPr2    := ( "SelectLineasPedidos" )->cCodPr2
+            ( ::dbfTemporal )->cValPr1    := ( "SelectLineasPedidos" )->cValPr1
+            ( ::dbfTemporal )->cValPr2    := ( "SelectLineasPedidos" )->cValPr2
+            ( ::dbfTemporal )->nNumUni    := ( "SelectLineasPedidos" )->nUniCaja
+            ( ::dbfTemporal )->nNumCaj    := ( "SelectLineasPedidos" )->nCanPed
+            ( ::dbfTemporal )->nStkFis    := nStock
+            ( ::dbfTemporal )->nStkDis    := nStock - nReserva
+            ( ::dbfTemporal )->nIva       := ( "SelectLineasPedidos" )->nIva
+            ( ::dbfTemporal )->nReq       := ( "SelectLineasPedidos" )->nReq
+            ( ::dbfTemporal )->nPreDiv    := ( "SelectLineasPedidos" )->nCosDiv
+            ( ::dbfTemporal )->cLote      := ( "SelectLineasPedidos" )->cLote
+            ( ::dbfTemporal )->cRefPrv    := ( "SelectLineasPedidos" )->cRefPrv
+            ( ::dbfTemporal )->( dbUnlock() )
+         end if
+
+         ( "SelectLineasPedidos" )->( dbSkip() )
+
+          ::oMtr:AutoInc()
+
+      end while
+
+      ::oMtr:AutoInc( ( "SelectLineasPedidos" )->( LastRec() ) )
+
+   end if
+
+   ( ::dbfTemporal )->( dbGoTop() )
+
+   if !Empty( ::oBrw )
+      ::oBrw:Refresh()
+   end if
+
+Return .t.
+
+//---------------------------------------------------------------------------//
+
 METHOD SelectArticulo() CLASS PedCliente2PedProveedor
 
    if dbDialogLock( ::dbfTemporal )
@@ -944,6 +1090,7 @@ METHOD GeneraPedidoProveedor() CLASS PedCliente2PedProveedor
             ( D():PedidosProveedores( ::nView ) )->cDivPed    := cDivEmp()
             ( D():PedidosProveedores( ::nView ) )->lSndDoc    := .t.
             ( D():PedidosProveedores( ::nView ) )->cCodUsr    := cCurUsr()
+            ( D():PedidosProveedores( ::nView ) )->cNumPedCli := ::cSerieOrder + Str( ::nNumeroOrder ) + ::cSufijoOrder
             
             if ( D():Proveedores( ::nView ) )->( dbSeek( ( ::dbfTemporal )->cCodPrv ) )
                ( D():PedidosProveedores( ::nView ) )->cNomPrv    := ( D():Proveedores( ::nView ) )->Titulo
@@ -1001,6 +1148,10 @@ METHOD GeneraPedidoProveedor() CLASS PedCliente2PedProveedor
          ( D():PedidosProveedoresLineas( ::nView ) )->nMedDos          := ( ::dbfTemporal )->nMedDos
          ( D():PedidosProveedoresLineas( ::nView ) )->nMedTre          := ( ::dbfTemporal )->nMedTre
          ( D():PedidosProveedoresLineas( ::nView ) )->cUnidad          := ( ::dbfTemporal )->cUnidad
+
+         if ::lOnlyOrder
+            ( D():PedidosProveedoresLineas( ::nView ) )->cPedCli       := ::cSerieOrder + Str( ::nNumeroOrder ) + ::cSufijoOrder
+         end if
 
          do case
             case ::nStockFin == 1
@@ -1086,5 +1237,19 @@ METHOD getCodigoProveerdor()
    end if 
 
 Return ( cCodigoProveedor )   
+
+//---------------------------------------------------------------------------//
+
+METHOD lEstadoGenerado()
+
+   local hPedido
+
+   if !::lOnlyOrder
+      Return .f.
+   end if
+
+   ::oStock:SetGeneradoPedCli( ::cSerieOrder + Str( ::nNumeroOrder ) + ::cSufijoOrder )
+
+Return ( .t. )
 
 //---------------------------------------------------------------------------//
