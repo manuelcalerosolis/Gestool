@@ -124,6 +124,12 @@ METHOD validDialog( oDlg, oGetNombre )
       Return ( .f. )
    end if
 
+   if ::oModel:getRowSet():find( ::oModel:hBuffer[ "nombre_incidencia" ], "nombre_incidencia" ) != 0
+      msgStop( "El nombre de la incidencia ya existe" )
+      oGetNombre:setFocus()
+      RETURN ( .f. )
+   end if
+
 RETURN ( oDlg:end( IDOK ) )
 
 //---------------------------------------------------------------------------//

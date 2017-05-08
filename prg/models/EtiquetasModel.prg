@@ -5,7 +5,7 @@
 
 //---------------------------------------------------------------------------//
 
-CLASS EtiquetasModel FROM SQLBaseModel
+CLASS EtiquetasModel FROM SQLBaseEmpresasModel
 
    DATA     cTableName
 
@@ -39,18 +39,18 @@ METHOD New()
 
    ::cDbfTableName               := ""
 
-   ::hColumns                    := {  "id"        => {  "create"    => "INTEGER PRIMARY KEY AUTOINCREMENT"  ,;
-                                                         "text"		=> "Identificador"}                     ,;
-                                       "nombre"    => {  "create"    => "VARCHAR( 50 ) NOT NULL"             ,;
-   															         "text"		=> "Nombre de la etiqueta"}             ,;
-                                       "imagen"    => {  "create"    => "VARCHAR ( 50 )"                     ,;
-                                                         "text"      => "Imagen que acompaña la etiqueta"}   ,;
-                                       "id_padre"  => {  "create"    => "INTEGER"                            ,;
-                                                         "text"      => "Identificador de la etiqueta padre"}}
+   ::hColumns                    := {  "id"        => {  "create"    => "INTEGER PRIMARY KEY AUTOINCREMENT"          ,;
+                                                         "text"		=> "Identificador"}                             ,;
+                                       "nombre"    => {  "create"    => "VARCHAR( 50 ) NOT NULL"                     ,;
+   															         "text"		=> "Nombre de la etiqueta"}                     ,;
+                                       "empresa"   => {  "create"    => "CHAR ( 4 )"                                 ,;
+                                                         "text"      => "Empresa a la que pertenece la etiqueta"}    ,;
+                                       "id_padre"  => {  "create"    => "INTEGER"                                    ,;
+                                                         "text"      => "Identificador de la etiqueta padre"}        }
 
    ::Super:New()
 
-   ::cGeneralSelect              := "select id, nombre, imagen, id_padre, nombre_padre"   +;
+   ::cGeneralSelect              := "select id, nombre, empresa, id_padre, nombre_padre"   +;
                                     " from etiquetas left join"                           +;
                                     " (select id as id_del_padre, nombre as nombre_padre from etiquetas)"+;
                                     " on id_padre = id_del_padre"
@@ -99,7 +99,7 @@ Return ( .t. )
 
 METHOD   getImportSentence( cPath )
 
-   local hConstructor := hb_hkeys( ::hDbfToCategory )
+   local aConstructor := hb_hkeys( ::hDbfToCategory )
    local cDbfTable
    local hContentDbfTable
    local cFatherInsert
@@ -109,39 +109,47 @@ METHOD   getImportSentence( cPath )
    local cChildrenValues
    local dbf
 
-   default cPath     := cPatDat()
+   default cPath     := "EMP" + cCodEmp()
 
-   for each cDbfTable in ( hConstructor )
+   for each cDbfTable in ( aConstructor )
 
       hContentDbfTable  := ::hDbfToCategory [ cDbfTable ]
 
-      cFatherInsert     := "INSERT INTO " + ::cTableName + " (nombre, imagen, id_padre) VALUES  ( " + toSQLString( hContentDbfTable[ "padre" ] ) + ", null, null )"
+      cFatherInsert     := "INSERT INTO " + ::cTableName + " (nombre, empresa, id_padre) VALUES  ( " +;
+                            toSQLString( hContentDbfTable[ "padre" ] ) + ", " + toSQLString( cCodEmp() ) + ", null )"
 
       //getSQLDatabase():Query( cFatherInsert )
+
+      msgalert( cFatherInsert )
 
       cFindIdOfFathers := "SELECT id FROM " + ::cTableName + " WHERE nombre = " + toSQLString( hContentDbfTable[ "padre" ] )
 
       nIdOfFathers := ::selectFetchArray( cFindIdOfFathers )[1][1]
 
+      msgalert( nIdOfFathers )
 
-
-      /*dbUseArea( .t., cLocalDriver(), cPath + "\" + cDbfTable, cCheckArea( "dbf", @dbf ), .f. )
+      dbUseArea( .t., cLocalDriver(), cPath + "\" + cDbfTable + ".dbf", cCheckArea( "dbf", @dbf ), .f. )
 
       if ( dbf )->( neterr() )
+      msgalert( "aqui hay un problema")
       Return ( cChildrenInsert )
       end if 
 
-      cChildrenInsert := "INSERT INTO " + ::cTableName +  " ( nombre, imagen, id_padre) VALUES "
+      cChildrenInsert := "INSERT INTO " + ::cTableName +  " ( nombre, empresa, id_padre) VALUES "
+
+      msgalert( cChildrenInsert, "hemos pasado de la apertura del dbf")
 
       ( dbf )->( dbgotop() )
 
       while ( dbf )->( !eof() )
 
-         cChildrenValues           += "( " + toSQLString( ( dbf )->( fieldget( fieldpos( hget( hContentDbfTable, "hijos" ) ) ) ) ) + ", null, " + toSQLString( nIdOfFathers ) + "), "
+         cChildrenValues           += "( " + toSQLString( ( dbf )->( fieldget( fieldpos( hget( hContentDbfTable, "hijos" ) ) ) ) ) + ", " + toSQLString( cCodEmp() ) + ", " + toSQLString( nIdOfFathers ) + "), "
 
          ( dbf )->( dbskip() )
 
       end while
+
+      msgalert( "hemos pasado el bucle while")
 
          cChildrenValues           := chgAtEnd( cChildrenValues, ' )', 2 )
 
@@ -149,8 +157,10 @@ METHOD   getImportSentence( cPath )
 
       cChildrenInsert += cChildrenValues
 
+      msgalert( cChildrenInsert , "Asi queda la sentencia para los hijos")
+
       msgalert( cChildrenInsert )
-*/
+
    next
 
 RETURN ( self )

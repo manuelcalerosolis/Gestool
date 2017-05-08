@@ -18,6 +18,8 @@ CLASS TiposImpresoras FROM SQLBaseView
  
    METHOD   Dialog()
 
+   METHOD   validDialog( oDlg, oGetNombre )
+
 END CLASS
 
 //---------------------------------------------------------------------------//
@@ -91,7 +93,7 @@ METHOD Dialog( lZoom )
       ID          IDOK ;
       OF          oDlg ;
       WHEN        ( ! ::isZoomMode() ) ;
-      ACTION      ( oDlg:end( IDOK ) )
+      ACTION      ( ::validDialog( oDlg, oGetNombre ) )
 
    REDEFINE BUTTON ;
       ID          IDCANCEL ;
@@ -205,3 +207,19 @@ METHOD buildSQLBrowse()
 RETURN ( oDlg:nResult == IDOK )
 
 //---------------------------------------------------------------------------//
+
+METHOD validDialog( oDlg, oGetNombre )
+
+   if empty( ::oModel:hBuffer[ "nombre" ] )
+      msgStop( "El nombre de la impresora no puede estar vacío." )
+      oGetNombre:setFocus()
+      RETURN ( .f. )
+   end if
+
+   if ::oModel:getRowSet():find( ::oModel:hBuffer[ "nombre" ], "nombre" ) != 0
+      msgStop( "El nombre de la impresora ya existe" )
+      oGetNombre:setFocus()
+      RETURN ( .f. )
+   end if
+
+RETURN ( oDlg:end( IDOK ) )

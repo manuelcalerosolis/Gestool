@@ -126,6 +126,8 @@ METHOD ActivateShell()
 
    ::startBrowse( ::oShell:getCombobox(), ::oShell:getBrowse() )
 
+
+
 RETURN ( Self )
 
 //---------------------------------------------------------------------------//

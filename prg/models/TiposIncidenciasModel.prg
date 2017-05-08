@@ -14,6 +14,8 @@ CLASS TiposIncidenciasModel FROM SQLBaseModel
 
    METHOD New()
 
+   METHOD existTiposImpresoras( cValue )
+
 END CLASS
 
 //---------------------------------------------------------------------------//
@@ -34,5 +36,14 @@ METHOD New()
    ::Super:New()
 
 RETURN ( Self )
+
+//---------------------------------------------------------------------------//
+
+METHOD existTiposImpresoras( cValue )
+
+   local cSentence               := "SELECT nombre FROM " + ::cTableName + " WHERE nombre = " + quoted( cValue )
+   local aSelect                 := ::selectFetchArray( cSentence )
+
+RETURN ( !empty( aSelect ) )
 
 //---------------------------------------------------------------------------//
