@@ -281,7 +281,8 @@ RETURN ( .t. )
 
 FUNCTION Test()
 
-   Etiquetas():New():ActivateBrowse()
+
+   Etiquetas():New():activateShell()
 
 Return ( nil )
 

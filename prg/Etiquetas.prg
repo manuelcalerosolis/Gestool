@@ -404,6 +404,8 @@ METHOD buildSQLBrowse()
    local oFind
    local cFind       := space( 200 )
 
+   msgalert("buildSQLBrowse")
+
    DEFINE DIALOG oDlg RESOURCE "HELP_ETIQUETAS" TITLE "Seleccionar etiquetas"
 
       REDEFINE GET   oFind ; 
@@ -415,7 +417,7 @@ METHOD buildSQLBrowse()
       oFind:bChange                 := {|| ::changeFindTree( oFind ) }
 
       ::oTree                       := TTreeView():Redefine( 110, oDlg )
-      //::oTree:bItemSelectChanged    := {|| ::changeTree() }
+      // ::oTree:bChanged              := {|| ::changeTree() }
 
       REDEFINE BUTTON ;
          ID          IDOK ;
@@ -441,13 +443,17 @@ RETURN ( oDlg:nResult == IDOK )
 
 METHOD changeFindTree( oFind )
 
-   //msgalert( oFind:cText, "cText" )
+   local oItem
+   local cFind    := alltrim( oFind:cText )
 
-   ::oModel:find( oFind:cText )
+   if !empty(cFind)
+      oItem       := ::oTree:Scan( { | o | cFind $ o:cPrompt } )
+   end if 
 
-   //msgalert( ::oModel:cFind, "el fin del model" )
-
-   ::loadTree()
+   if !empty(oItem)
+      ::oTree:Select( oItem )
+      ::oTree:setFocus()
+   end if 
 
 RETURN ( Self )
 
