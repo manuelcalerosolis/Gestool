@@ -188,7 +188,6 @@ CLASS TTurno FROM TMasDet
    DATA  oFPago
    DATA  oFamilia
    DATA  oTemporada
-   DATA  oCategoria
    DATA  oFabricante
    DATA  oCuentasBancarias
    DATA  oTipArt
@@ -918,8 +917,6 @@ METHOD OpenFiles( lExclusive )
 
       DATABASE NEW ::oTemporada  PATH ( cPatArt() ) FILE "Temporadas.Dbf"  VIA ( cDriver() ) SHARED INDEX "Temporadas.Cdx"
 
-      DATABASE NEW ::oCategoria  PATH ( cPatArt() ) FILE "Categorias.DBF"  VIA ( cDriver() ) SHARED INDEX "Categorias.CDX"
-
       DATABASE NEW ::oContador   PATH ( cPatEmp() ) FILE "nCount.Dbf"      VIA ( cDriver() ) SHARED INDEX "nCount.Cdx"
 
       DATABASE NEW ::oDbfEmp     PATH ( cPatDat() ) FILE "Empresa.Dbf"     VIA ( cDriver() ) SHARED INDEX "Empresa.Cdx"
@@ -1477,10 +1474,6 @@ METHOD CloseFiles()
 
    if !empty( ::oTemporada ) .and. ::oTemporada:Used()
       ::oTemporada:end()
-   end if
-
-   if !empty( ::oCategoria ) .and. ::oCategoria:Used()
-      ::oCategoria:end()
    end if
 
    if !empty( ::oDbfEmp ) .and. ::oDbfEmp:Used()
@@ -9893,151 +9886,6 @@ METHOD FillTemporal( cCodCaj )
                while ::oRctCliL:cSerie + Str( ::oRctCliL:nNumFac ) + ::oRctCliL:cSufFac == ::oRctCliT:cSerie + Str( ::oRctCliT:nNumFac ) + ::oRctCliT:cSufFac .and. !::oRctCliL:eof()
 
                   ::AppendInTemporal( ::oRctCliL:cCodFam, Rtrim( ::oRctCliL:cCodFam ) + Space( 1 ) + Rtrim( oRetFld( ::oRctCliL:cCodFam, ::oFamilia ) ), nImpLFacRec( ::oRctCliT:cAlias, ::oRctCliL:cAlias, ::nDouDiv, ::nDorDiv ) )
-
-                  ::oRctCliL:Skip()
-
-                  SysRefresh()
-
-               end while
-
-            end if
-
-            ::oRctCliT:Skip()
-
-            SysRefresh()
-
-         end while
-
-      end if
-
-   end if
-
-   /*
-   Ventas por categorias---------------------------------------------------------
-   */
-
-   if ::GetItemCheckState( "Ventas por " + getConfigTraslation( "categoría" ) )
-
-      if ::oTikT:Seek( cTurnoCaja )
-
-         while ::oTikT:cTurTik + ::oTikT:cSufTik + ::oTikT:cNcjTik == cTurnoCaja .and. !::oTikT:eof()
-
-            do case
-               case ::oTikT:cTipTik == SAVTIK
-
-                  if ::oTikL:Seek( ::oTikT:cSerTik + ::oTikT:cNumTik + ::oTikT:cSufTik )
-
-                     while ::oTikL:cSerTil + ::oTikL:cNumTil + ::oTikL:cSufTil == ::oTikT:cSerTik + ::oTikT:cNumTik + ::oTikT:cSufTik .and. !::oTikL:eof()
-
-                        ::AppendInTemporal( oRetFld( ::oTikL:cCbaTil, ::oArticulo, "cCodCate" ), Rtrim( oRetFld( ::oTikL:cCbaTil, ::oArticulo, "cCodCate" ) ) + Space( 1 ) + Rtrim( oRetFld( oRetFld( ::oTikL:cCbaTil, ::oArticulo, "cCodCate" ), ::oCategoria ) ), nImpLTpv( ::oTikT:cAlias, ::oTikL:cAlias, ::nDouDiv, ::nDorDiv ) )
-
-                        ::oTikL:Skip()
-
-                        SysRefresh()
-
-                     end while
-
-                  end if
-
-               case ::oTikT:cTipTik == SAVDEV
-
-                  if ::oTikL:Seek( ::oTikT:cSerTik + ::oTikT:cNumTik + ::oTikT:cSufTik )
-
-                     while ::oTikL:cSerTil + ::oTikL:cNumTil + ::oTikL:cSufTil == ::oTikT:cSerTik + ::oTikT:cNumTik + ::oTikT:cSufTik .and. !::oTikL:eof()
-
-                        ::AppendInTemporal( oRetFld( ::oTikL:cCbaTil, ::oArticulo, "cCodCate" ), Rtrim( oRetFld( ::oTikL:cCbaTil, ::oArticulo, "cCodCate" ) ) + Space( 1 ) + Rtrim( oRetFld( oRetFld( ::oTikL:cCbaTil, ::oArticulo, "cCodCate" ), ::oCategoria ) ), - nImpLTpv( ::oTikT:cAlias, ::oTikL:cAlias, ::nDouDiv, ::nDorDiv ) )
-
-                        ::oTikL:Skip()
-
-                        SysRefresh()
-
-                     end while
-
-                  end if
-
-            end case
-
-            ::oTikT:Skip()
-
-            SysRefresh()
-
-         end while
-
-      end if
-
-      /*
-      Albaranes ------------------------------------------------------------------
-      */
-
-      if ::oAlbCliT:Seek( cTurnoCaja )
-
-         while ::oAlbCliT:cTurAlb + ::oAlbCliT:cSufAlb + ::oAlbCliT:cCodCaj == cTurnoCaja .and. !::oAlbCliT:eof()
-
-            if !lFacturado( ::oAlbCliT ) .and. ::oAlbCliL:Seek( ::oAlbCliT:cSerAlb + Str( ::oAlbCliT:nNumAlb ) + ::oAlbCliT:cSufAlb )
-
-               while ::oAlbCliL:cSerAlb + Str( ::oAlbCliL:nNumAlb ) + ::oAlbCliL:cSufAlb == ::oAlbCliT:cSerAlb + Str( ::oAlbCliT:nNumAlb ) + ::oAlbCliT:cSufAlb .and. !::oAlbCliL:eof()
-
-                  ::AppendInTemporal( oRetFld( ::oAlbCliL:cRef, ::oArticulo, "cCodCate" ), Rtrim( oRetFld( ::oAlbCliL:cRef, ::oArticulo, "cCodCate" ) ) + Space( 1 ) + Rtrim( oRetFld( oRetFld( ::oAlbCliL:cRef, ::oArticulo, "cCodCate" ), ::oCategoria ) ), nImpLAlbCli( ::oAlbCliT:cAlias, ::oAlbCliL:cAlias, ::nDouDiv, ::nDorDiv ) )
-
-                  ::oAlbCliL:Skip()
-
-                  SysRefresh()
-
-               end while
-
-            end if
-
-            ::oAlbCliT:Skip()
-
-            SysRefresh()
-
-         end while
-
-      end if
-
-      /*
-      Facturas--------------------------------------------------------------------
-      */
-
-      if ::oFacCliT:Seek( cTurnoCaja )
-
-         while ::oFacCliT:cTurFac + ::oFacCliT:cSufFac + ::oFacCliT:cCodCaj == cTurnoCaja .and. !::oFacCliT:eof()
-
-            if ::oFacCliL:Seek( ::oFacCliT:cSerie + Str( ::oFacCliT:nNumFac ) + ::oFacCliT:cSufFac )
-
-               while ::oFacCliL:cSerie + Str( ::oFacCliL:nNumFac ) + ::oFacCliL:cSufFac == ::oFacCliT:cSerie + Str( ::oFacCliT:nNumFac ) + ::oFacCliT:cSufFac .and. !::oFacCliL:eof()
-
-                  ::AppendInTemporal( oRetFld( ::oFacCliL:cRef, ::oArticulo, "cCodCate" ), Rtrim( oRetFld( ::oFacCliL:cRef, ::oArticulo, "cCodCate" ) ) + Space( 1 ) + Rtrim( oRetFld( oRetFld( ::oFacCliL:cRef, ::oArticulo, "cCodCate" ), ::oCategoria ) ), nImpLFacCli( ::oFacCliT:cAlias, ::oFacCliL:cAlias, ::nDouDiv, ::nDorDiv ) )
-
-                  ::oFacCliL:Skip()
-
-                  SysRefresh()
-
-               end while
-
-            end if
-
-            ::oFacCliT:Skip()
-
-            SysRefresh()
-
-         end while
-
-      end if
-
-      /*
-      Facturas rectificativas--------------------------------------------------
-      */
-
-      if ::oRctCliT:Seek( cTurnoCaja )
-
-         while ::oRctCliT:cTurFac + ::oRctCliT:cSufFac + ::oRctCliT:cCodCaj == cTurnoCaja .and. !::oRctCliT:eof()
-
-            if ::oRctCliL:Seek( ::oRctCliT:cSerie + Str( ::oRctCliT:nNumFac ) + ::oRctCliT:cSufFac )
-
-               while ::oRctCliL:cSerie + Str( ::oRctCliL:nNumFac ) + ::oRctCliL:cSufFac == ::oRctCliT:cSerie + Str( ::oRctCliT:nNumFac ) + ::oRctCliT:cSufFac .and. !::oRctCliL:eof()
-
-                  ::AppendInTemporal( oRetFld( ::oRctCliL:cRef, ::oArticulo, "cCodCate" ), Rtrim( oRetFld( ::oRctCliL:cRef, ::oArticulo, "cCodCate" ) ) + Space( 1 ) + Rtrim( oRetFld( oRetFld( ::oRctCliL:cRef, ::oArticulo, "cCodCate" ), ::oCategoria ) ), nImpLFacRec( ::oRctCliT:cAlias, ::oRctCliL:cAlias, ::nDouDiv, ::nDorDiv ) )
 
                   ::oRctCliL:Skip()
 

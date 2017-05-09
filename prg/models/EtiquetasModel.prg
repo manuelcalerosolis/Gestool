@@ -128,35 +128,27 @@ METHOD getSentenceFromOldCategories( idParent )
    local cSentence   := "INSERT INTO " + ::cTableName +  " ( nombre, empresa, id_padre) VALUES "
    local cValues     := ""
 
-   msgalert("voy a abrir la base de datos")
-
-   dbUseArea( .t., cDriver(), cFullPathEmpresa() + "Categorias.Dbf", cCheckArea( "Categorias", @dbf ) )
+   dbUseArea( .t., cDriver(), cPatEmp() + "Categorias.Dbf", cCheckArea( "Categorias", @dbf ) )
 
    ( dbf )->( dbgotop() )
 
-      while ( dbf )->( !eof() )
+   while ( dbf )->( !eof() )
 
-         cValues     += "( " + toSQLString( ( dbf )->cNombre ) + ", " + toSQLString( cCodEmp() ) + ", " + toSQLString( idParent ) + "), "
+      cValues     += "( " + toSQLString( ( dbf )->cNombre ) + ", " + toSQLString( cCodEmp() ) + ", " + toSQLString( idParent ) + "), "
 
-         ( dbf )->( dbskip() )
+      ( dbf )->( dbskip() )
 
-         msgalert( "hola")
-
-      end while
-
-      cValues        := chgAtEnd( cValues, "", 2 )
-
+   end while
+   
    ( dbf )->( dbclosearea() )
-
-   msgalert("acabo de salir del while")
-
-   msgalert(cvalues, "la sentencia es esta" )
 
    if empty(cValues)
       RETURN ( nil )
    end if 
+      
+   cSentence      += chgAtEnd( cValues, "", 2 )
 
-RETURN ( cSentence + cValues )
+RETURN ( cSentence )
 
 //---------------------------------------------------------------------------//
 

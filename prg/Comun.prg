@@ -281,7 +281,7 @@ Return ( .t. )
 
 Function Test()
 
-   EtiquetasModel():New():makeImportDbfSQL()
+   Etiquetas():New():ActivateBrowse()
 
 Return ( nil )
 

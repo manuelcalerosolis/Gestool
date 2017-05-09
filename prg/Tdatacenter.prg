@@ -875,9 +875,9 @@ METHOD StartAdministratorTask()
 
             aEmpresa[ 4 ]      := .t.
 
-            ::ConvertEmpresaToSQLite( aEmpresa )
+            ::ConvertEmpresaToSQLite()
 
-         end if 
+         end if
 
          ::oBrwEmpresas:GoDown()
          ::oBrwEmpresas:Refresh()
@@ -1894,12 +1894,12 @@ METHOD BuildData()
    oDataTable:bCreateFile  := {| cPath | TFilterDatabase():BuildFiles( cPath ) }
    ::AddDataTable( oDataTable )
 
-/*   oDataTable              := TDataTable():New( "Situa", cPathDatos() )
+   oDataTable              := TDataTable():New( "Situa", cPathDatos() )
    oDataTable:cDataFile    := cPatDat( .t. ) + "Situa.Dbf"
    oDataTable:cIndexFile   := cPatDat( .t. ) + "Situa.Cdx"
    oDataTable:cDescription := "Situaciones"
    oDataTable:bCreateFile  := {| cPath | TSituaciones():BuildFiles( cPath ) }
-   ::AddDataTable( oDataTable )*/
+   ::AddDataTable( oDataTable )
 
    oDataTable              := TDataTable():New( "CodPostal", cPathDatos() )
    oDataTable:cDataFile    := cPatDat( .t. ) + "CodPostal.Dbf"
@@ -4819,9 +4819,9 @@ RETURN ( Self )
 
 //---------------------------------------------------------------------------//
 
-METHOD ConvertEmpresaToSQLite( aEmpresa )
+METHOD ConvertEmpresaToSQLite()
 
-  // EtiquetasModel():New():makeImportDbfSQL()
+  //EtiquetasModel():New():makeImportDbfSQL()
 
 RETURN ( Self )
 

@@ -48,7 +48,6 @@ CLASS SQLBaseModel
    METHOD   setIdForRecno( nIdForRecno )           INLINE ( ::nIdForRecno := nIdForRecno )
 
 
-   METHOD   setFind( cFind )                      INLINE   ( ::cFind := cFind )
    METHOD   getRowSet()
    METHOD   buildRowSet()
    METHOD   buildRowSetWithRecno()                 INLINE   ( ::buildRowSet( .t. ) )
@@ -61,6 +60,7 @@ CLASS SQLBaseModel
    METHOD   getSelectByColumn()
    METHOD   getSelectByOrder()
 
+   METHOD   setFind( cFind )                      INLINE   ( ::cFind := cFind )
    METHOD   find( cFind )
 
    METHOD   loadBuffer( id )
