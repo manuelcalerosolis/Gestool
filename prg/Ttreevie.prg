@@ -140,6 +140,8 @@ CLASS TTreeView FROM TControl
    METHOD SetItemHeight( nHeight )  INLINE ;  
       ( TvSetItemHeight( ::hWnd, nHeight ) )
 
+   METHOD Scan( bAction )           INLINE ( ScanItemsBlock( ::aItems, bAction ) )
+
 ENDCLASS
 
 //----------------------------------------------------------------------------//
@@ -434,5 +436,25 @@ static function SearchItem( aItems, hItem )
    next 
 
 return nil
+
+//----------------------------------------------------------------------------//
+
+static function ScanItemsBlock( aItems, bAction )
+
+   local oItem, n := 1, oItemFound
+
+   while n <= Len( aItems ) .and. oItemFound == nil
+      oItem = aItems[ n ]
+      if Eval( bAction, oItem, n )
+         return oItem
+      else
+         if Len( oItem:aItems ) > 0
+            oItemFound = ScanItemsBlock( oItem:aItems, bAction )
+         endif
+      endif
+      n++
+   end
+
+return oItemFound
 
 //----------------------------------------------------------------------------//

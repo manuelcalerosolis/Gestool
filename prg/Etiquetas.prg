@@ -12,6 +12,8 @@ CLASS Etiquetas FROM SQLBaseView
 
    DATA     nSelectedNode
 
+   DATA     allSelectedNode
+
    METHOD   New()
 
    METHOD   buildSQLShell()
@@ -35,11 +37,15 @@ CLASS Etiquetas FROM SQLBaseView
 
    METHOD   AppendChild( oBrowse )
 
+   METHOD   getAllSelectedNode( oTree, aItems )
+
    METHOD   checkSelectedNode()
    METHOD      getSelectedNode()             INLINE ( ::nSelectedNode )
    METHOD      setSelectedNode( nNode )      INLINE ( ::nSelectedNode := nNode )
 
    METHOD   checkValidParent()
+
+   METHOD   validBrowse()
 
    METHOD   LblTitle()
 
@@ -414,15 +420,14 @@ METHOD buildSQLBrowse()
          BITMAP      "FIND" ;
          OF          oDlg
 
-      oFind:bChange                 := {|| ::changeFindTree( oFind ) }
+      oFind:bChange  := {|| ::changeFindTree( oFind ) }
 
-      ::oTree                       := TTreeView():Redefine( 110, oDlg )
-      // ::oTree:bChanged              := {|| ::changeTree() }
+      ::oTree        := TTreeView():Redefine( 110, oDlg )
 
       REDEFINE BUTTON ;
          ID          IDOK ;
          OF          oDlg ;
-         ACTION      ( oDlg:end( IDOK ) )
+         ACTION      ( ::validBrowse( oDlg ) )
 
       REDEFINE BUTTON ;
          ID          IDCANCEL ;
@@ -430,8 +435,8 @@ METHOD buildSQLBrowse()
          CANCEL ;
          ACTION      ( oDlg:end() )
 
-      oDlg:AddFastKey( VK_RETURN,   {|| oDlg:end( IDOK ) } )
-      oDlg:AddFastKey( VK_F5,       {|| oDlg:end( IDOK ) } )
+      oDlg:AddFastKey( VK_RETURN,   {|| ::validBrowse( oDlg ) } )
+      oDlg:AddFastKey( VK_F5,       {|| ::validBrowse( oDlg ) } )
 
       oDlg:bStart    := {|| ::loadTree() }
 
@@ -452,9 +457,45 @@ METHOD changeFindTree( oFind )
 
    if !empty(oItem)
       ::oTree:Select( oItem )
-      ::oTree:setFocus()
    end if 
 
 RETURN ( Self )
 
 //---------------------------------------------------------------------------//
+
+METHOD validBrowse( oDlg )
+
+   ::allSelectedNode    := {}
+
+   ::getAllSelectedNode()
+   
+RETURN ( oDlg:end( IDOK ) )
+
+//---------------------------------------------------------------------------//
+
+METHOD getAllSelectedNode( oTree, aItems )
+
+   local oItem
+
+   default oTree  := ::oTree
+
+   if empty( aItems )
+      aItems      := oTree:aItems
+   end if
+
+   for each oItem in aItems
+
+      if oTree:GetCheck( oItem )
+         aadd( ::allSelectedNode, ( oItem:Cargo ) )  
+      end if
+
+      if len( oItem:aItems ) > 0
+         ::checkSelectedNode( oTree, oItem:aItems )
+      end if
+
+   next
+
+RETURN ( nil )
+
+//---------------------------------------------------------------------------//
+

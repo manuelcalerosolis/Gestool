@@ -281,9 +281,6 @@ RETURN ( .t. )
 
 FUNCTION Test()
 
-
-   Etiquetas():New():activateShell()
-
 Return ( nil )
 
 //---------------------------------------------------------------------------//
