@@ -151,22 +151,15 @@ RETURN aSelectedItems
     METHOD SetItems( aItems ) CLASS TTagEver
 ***************************************************************************************************************
 
-    local n
-    local nLen
+   ::aItems := {}
 
-    if empty(aItems)
+   if empty( aItems )
       RETURN nil
-    end if
+   end if
 
-	  if len(aItems) != 0
-
-	    ::aItems := {}
-
-	    for n := 1 to len(aItems)
-	        aadd(::aItems, {aItems[n], .f.,{0,0,0,0}} )
-	    next
-
-	 endif
+   if len(aItems) != 0
+      aeval( aItems, {|aItem| aadd( ::aItems, { aItem, .f., {0,0,0,0} } ) } ) 
+   endif
 
 RETURN nil
 

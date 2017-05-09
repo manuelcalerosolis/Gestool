@@ -1607,9 +1607,9 @@ FUNCTION CreateAcceso( oWnd )
 
    oItem                := oItemArchivo:Add()
    oItem:oGroup         := oGrupo
-   oItem:cPrompt        := 'Estados artículos'
-   oItem:cMessage       := 'Acceso al fichero de ' + getConfigTraslation( 'categorías' )
-   oItem:bAction        := {|| EstadoSat( "01126", oWnd() ) }
+   oItem:cPrompt        := 'Etiquetas'
+   oItem:cMessage       := 'Etiquetas'
+   oItem:bAction        := {|| Etiquetas():New():activateShell() }
    oItem:cId            := "01126"
    oItem:cBmp           := "gc_bookmarks_16"
    oItem:cBmpBig        := "gc_bookmarks_32"
@@ -1620,7 +1620,7 @@ FUNCTION CreateAcceso( oWnd )
    oItem:cPrompt        := "Tipos de notas"
    oItem:cMessage       := "Acceso a los tipos de notas"
    oItem:bAction        := {|| TiposNotas():New():activateShell() }
-   oItem:cId            := "01097"
+   oItem:cId            := "01101"
    oItem:cBmp           := "gc_folder2_16"
    oItem:cBmpBig        := "gc_folder2_32"
    oItem:lShow          := .f.
