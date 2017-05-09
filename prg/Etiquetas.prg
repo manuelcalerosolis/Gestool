@@ -22,7 +22,7 @@ CLASS Etiquetas FROM SQLBaseView
   
    METHOD   buildSQLModel()               INLINE ( EtiquetasModel():New() )
 
-   METHOD   getFieldFromBrowse()          INLINE ( ::oModel:getRowSet():fieldGet( "nombre" ) )
+   METHOD   getFieldFromBrowse()          INLINE ( ::allSelectedNode )
  
    METHOD   Dialog()
    METHOD      startDialog()
@@ -410,7 +410,7 @@ METHOD buildSQLBrowse()
    local oFind
    local cFind       := space( 200 )
 
-   msgalert("buildSQLBrowse")
+   ::allSelectedNode := {}
 
    DEFINE DIALOG oDlg RESOURCE "HELP_ETIQUETAS" TITLE "Seleccionar etiquetas"
 
@@ -465,8 +465,6 @@ RETURN ( Self )
 
 METHOD validBrowse( oDlg )
 
-   ::allSelectedNode    := {}
-
    ::getAllSelectedNode()
    
 RETURN ( oDlg:end( IDOK ) )
@@ -486,7 +484,7 @@ METHOD getAllSelectedNode( oTree, aItems )
    for each oItem in aItems
 
       if oTree:GetCheck( oItem )
-         aadd( ::allSelectedNode, ( oItem:Cargo ) )  
+         aadd( ::allSelectedNode, ( oItem:cPrompt ) )  
       end if
 
       if len( oItem:aItems ) > 0

@@ -280,3 +280,5 @@ GC_GEARWHEEL_RUN_32 BITMAP "..\\bmp\\gc_gearwheel_run_32.bmp"
 GC_DOCUMENT_TEXT_EARTH_16 BITMAP "..\\bmp\\gc_document_text_earth_16.bmp"
 GC_CUP_48 BITMAP "..\\bmp\\gc_cup_48.bmp"
 GC_SHIELD_64 BITMAP "..\\bmp\\gc_shield_64.bmp"
+
+16_TAGEVER BITMAP "..\\bmp\\16_tagever.bmp"

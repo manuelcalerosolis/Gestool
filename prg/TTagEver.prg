@@ -94,12 +94,12 @@ return Self
   METHOD Redefine( nId, oWnd, oFont, aItems, nClrBorder, nClrBackTag, nClrPane, nClrPaneOver ) CLASS TTagEver
 ************************************************************************************************************************************
 
-   local nClrText       := rgb(  0,102,227)
-   local nClrTextOver   := 0 //rgb(255,102,  0)
+   local nClrText       := 0 // rgb(  0,102,227)
+   local nClrTextOver   := 0 // rgb(255,102,  0)
    DEFAULT nClrPane     := CLR_WHITE
    DEFAULT nClrPaneOver := rgb(221,221,221)
    DEFAULT nClrBorder   := rgb(204,214,197)
-   DEFAULT nClrBackTag  := rgb(235,245,226)
+   DEFAULT nClrBackTag  := CLR_WHITE //rgb(235,245,226)
 
    ::SetItems( aItems )
 
@@ -214,7 +214,7 @@ local lFirst := .t.
 
 //local nBkColor := SetBkColor(::hDC, CLR_GREEN )
 
-hBmp := ReadBitmap( 0, "16_TAGEVER.BMP") //LoadBitmap(GetResources(), "16_TAGEVER")
+hBmp := LoadBitmap(GetResources(), "GC_DELETE_12" )
 
 if hBmp != 0
    nWBmp := nBmpWidth( hBmp )
