@@ -659,12 +659,17 @@ METHOD stockProduct( id ) CLASS TComercioProduct
                                  AllTrim( sStock:cValorPropiedad1 ) != "" .or.;
                                  AllTrim( sStock:cValorPropiedad2 ) != "" )
 
-         aAdd( aStockProduct, {  "idProduct"             => id ,;
-                                 "idFirstProperty"       => sStock:cCodigoPropiedad1 ,;
-                                 "idSecondProperty"      => sStock:cCodigoPropiedad2 ,;
-                                 "valueFirstProperty"    => sStock:cValorPropiedad1 ,;
-                                 "valueSecondProperty"   => sStock:cValorPropiedad2 ,;
-                                 "unitStock"             => sStock:nUnidades } )
+         if dbSeekInOrd( id + sStock:cCodigoPropiedad1 + sStock:cCodigoPropiedad2 + sStock:cValorPropiedad1 + sStock:cValorPropiedad2, "cCodArt", D():ArticuloPrecioPropiedades( ::getView() ) ) .or.;
+            ( AllTrim( sStock:cCodigoPropiedad1 ) == "" .and. AllTrim( sStock:cCodigoPropiedad2 ) == "" .and. AllTrim( sStock:cValorPropiedad1 ) == "" .and. AllTrim( sStock:cValorPropiedad2 ) == "" )
+
+            aAdd( aStockProduct, {  "idProduct"             => id ,;
+                                    "idFirstProperty"       => sStock:cCodigoPropiedad1 ,;
+                                    "idSecondProperty"      => sStock:cCodigoPropiedad2 ,;
+                                    "valueFirstProperty"    => sStock:cValorPropiedad1 ,;
+                                    "valueSecondProperty"   => sStock:cValorPropiedad2 ,;
+                                    "unitStock"             => sStock:nUnidades } )
+
+         end if
 
          nStock            += sStock:nUnidades
 
