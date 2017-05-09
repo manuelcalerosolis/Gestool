@@ -281,11 +281,6 @@ RETURN ( .t. )
 
 FUNCTION Test()
 
-<<<<<<< HEAD
-   //TiposImpresoras():New():ActivateBrowse()
-
-=======
->>>>>>> origin/master
 Return ( nil )
 
 //---------------------------------------------------------------------------//

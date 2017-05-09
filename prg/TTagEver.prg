@@ -87,8 +87,7 @@ ENDCLASS
    ::Register( nOR( CS_VREDRAW, CS_HREDRAW ) )
    ::Create()
 
-
-return Self
+RETURN Self
 
 ************************************************************************************************************************************
   METHOD Redefine( nId, oWnd, oFont, aItems, nClrBorder, nClrBackTag, nClrPane, nClrPaneOver ) CLASS TTagEver
@@ -133,22 +132,19 @@ return Self
    oWnd:DefControl( Self )
 
 
-return Self
+RETURN Self
 
 ***************************************************************************************************************
     METHOD GetItems() CLASS TTagEver
 ***************************************************************************************************************
-local n
-local nLen := len(::aItems)
-local aItems := {}
 
-for n := 1 to nLen
-    if !::aItems[n,2]
-       aadd(aItems, ::aItems[n,1] )
-    endif
-next
+   local aSelectedItems := {}
 
-return aItems
+   if !empty( ::aItems )
+      aeval( ::aItems, {|aItem| if( !aItem[ 2 ], aadd( aSelectedItems, aItem[ 1 ] ), ) } )
+   end if 
+
+RETURN aSelectedItems
 
 
 ***************************************************************************************************************
@@ -159,7 +155,7 @@ return aItems
     local nLen
 
     if empty(aItems)
-      return nil
+      RETURN nil
     end if
 
 	  if len(aItems) != 0
@@ -172,7 +168,7 @@ return aItems
 
 	 endif
 
-return nil
+RETURN nil
 
 ***************************************************************************************************************
    METHOD AddItem( cText ) CLASS TTagEver
@@ -187,7 +183,7 @@ return nil
 
    AAdd( ::aItems, {cText,.f.,{0,0,0,0}} )
 
-return nil //oItem
+RETURN nil //oItem
 
 ***************************************************************************************************************
     METHOD Paint() CLASS TTagEver
@@ -225,93 +221,97 @@ if hBmp != 0
    nHBmp := nBmpHeight( hBmp )
 endif
 
-hPen      := CreatePen( PS_SOLID, 1, ::nClrBorder )
-hOldPen   := SelectObject(::hDC, hPen )
+hPen        := CreatePen( PS_SOLID, 1, ::nClrBorder )
+hOldPen     := SelectObject(::hDC, hPen )
+   
+hBrush      := CreateSolidBrush( ::nClrBackTag )
 
-hBrush    := CreateSolidBrush( ::nClrBackTag )
-
-hBrush1    := CreateSolidBrush( ::nClrPaneOver )
-
-nLen := len( ::aItems )
-
-::aCoors := array(nLen)
-for n := 1 to nLen
-    ::aCoors[n] :={0,0,0,0}
-next
+hBrush1     := CreateSolidBrush( ::nClrPaneOver )
 
 FillSolidRect(::hDC, GetClientRect(::hWnd), ::nClrPane )
 
-sysrefresh()
+if !empty(::aItems)
 
-nL := nLeft
+   nLen := len( ::aItems )
 
-for n := 1 to nLen
+   ::aCoors := array(nLen)
+   for n := 1 to nLen
+       ::aCoors[n] :={0,0,0,0}
+   next
 
-    if ::aItems[n,2] // oculto
-       loop
-    endif
+   sysrefresh()
 
-    //if n == ::nOver
-    SetTextColor(::hDC, nColor )
-    nColor := SetTextColor(::hDC, if( n == ::nOver .or. n == ::nOption, ::nClrTextOver, ::nClrText) )
-    //endif
+   nL := nLeft
 
-    if !lFirst
-       nL := nL + nW + 8
-    endif
+   for n := 1 to nLen
 
-    lFirst := .f.
+       if ::aItems[n,2] // oculto
+          loop
+       endif
 
-    nW := 5 + GetTextWidth(::hDC, ::aItems[n,1], ::oFont:hFont ) //+ if( nWBmp != 0 .and. ( n == ::nOver .or. n == ::nOption), 5 + nWBmp + 5, 0)
-
-    if nL + nW + 5 + nWBmp + 5 > ::nWidth
-       nTop += ( ::nHLine  ) +2
-       nL := nLeft
-    endif
-
-    nW := 5 + GetTextWidth(::hDC, ::aItems[n,1], ::oFont:hFont ) + if( nWBmp != 0 .and. ( n == ::nOver .or. n == ::nOption), 5 + nWBmp + 5, 0)
-
-    nT := nTop
-
-    rc := { nT, nL, nT + nH, nL + nW }
-
-    ::aCoors[n,1] := rc[1]
-    ::aCoors[n,2] := rc[2]
-    ::aCoors[n,3] := rc[3]
-    ::aCoors[n,4] := rc[4]
-    //FillSolidRect(::hDC, {nTop+::nHLine-::nMaxDescend,0,nTop+::nHLine-::nMaxDescend+1,::nWidth}, CLR_HBLUE )
-    //wqout( rc )
-
-    hOldBrush := SelectObject( ::hDC, if( n == ::nOver .or. n == ::nOption, hBrush1, hBrush ) )
-
-    RoundRect( ::hDC, rc[2]-4, rc[1], rc[4], rc[3]-1, 6, 6 )
-
-    hOldFont := SelectObject( ::hDC, ::oFont:hFont )
-
-    DrawText(::hDC, ::aItems[n,1], {rc[1],rc[2],rc[3]-2,rc[4]}, 32+4 )
-
-    SelectObject( ::hDC, hOldFont )
-
-    if hBmp != 0 .and. ( n == ::nOver .or. n == ::nOption)
-
-       nT0 := rc[1]+((rc[3]-rc[1])/2)-nHBmp/2
-       nL0 := rc[4]-5-nWBmp
-       nB0 := nT0 + nHBmp
-       nR0 := nL0 + nWBmp
-       DrawMasked( ::hDC, hBmp, nT0, nL0 )
-       ::aItems[n,3] := {nT0,nL0,nB0,nR0}
-    else
-       ::aItems[n,3] := {0,0,0,0}
-    endif
-
-    if n == ::nOver
+       //if n == ::nOver
        SetTextColor(::hDC, nColor )
-       nColor := SetTextColor(::hDC, ::nClrText )
-    endif
+       nColor := SetTextColor(::hDC, if( n == ::nOver .or. n == ::nOption, ::nClrTextOver, ::nClrText) )
+       //endif
 
-    sysrefresh()
+       if !lFirst
+          nL := nL + nW + 8
+       endif
 
-next n
+       lFirst := .f.
+
+       nW := 5 + GetTextWidth(::hDC, ::aItems[n,1], ::oFont:hFont ) //+ if( nWBmp != 0 .and. ( n == ::nOver .or. n == ::nOption), 5 + nWBmp + 5, 0)
+
+       if nL + nW + 5 + nWBmp + 5 > ::nWidth
+          nTop += ( ::nHLine  ) +2
+          nL := nLeft
+       endif
+
+       nW := 5 + GetTextWidth(::hDC, ::aItems[n,1], ::oFont:hFont ) + if( nWBmp != 0 .and. ( n == ::nOver .or. n == ::nOption), 5 + nWBmp + 5, 0)
+
+       nT := nTop
+
+       rc := { nT, nL, nT + nH, nL + nW }
+
+       ::aCoors[n,1] := rc[1]
+       ::aCoors[n,2] := rc[2]
+       ::aCoors[n,3] := rc[3]
+       ::aCoors[n,4] := rc[4]
+       //FillSolidRect(::hDC, {nTop+::nHLine-::nMaxDescend,0,nTop+::nHLine-::nMaxDescend+1,::nWidth}, CLR_HBLUE )
+       //wqout( rc )
+
+       hOldBrush := SelectObject( ::hDC, if( n == ::nOver .or. n == ::nOption, hBrush1, hBrush ) )
+
+       RoundRect( ::hDC, rc[2]-4, rc[1], rc[4], rc[3]-1, 6, 6 )
+
+       hOldFont := SelectObject( ::hDC, ::oFont:hFont )
+
+       DrawText(::hDC, ::aItems[n,1], {rc[1],rc[2],rc[3]-2,rc[4]}, 32+4 )
+
+       SelectObject( ::hDC, hOldFont )
+
+       if hBmp != 0 .and. ( n == ::nOver .or. n == ::nOption)
+
+          nT0 := rc[1]+((rc[3]-rc[1])/2)-nHBmp/2
+          nL0 := rc[4]-5-nWBmp
+          nB0 := nT0 + nHBmp
+          nR0 := nL0 + nWBmp
+          DrawMasked( ::hDC, hBmp, nT0, nL0 )
+          ::aItems[n,3] := {nT0,nL0,nB0,nR0}
+       else
+          ::aItems[n,3] := {0,0,0,0}
+       endif
+
+       if n == ::nOver
+          SetTextColor(::hDC, nColor )
+          nColor := SetTextColor(::hDC, ::nClrText )
+       endif
+
+       sysrefresh()
+
+   next n
+
+end if 
 
 SetBkMode( ::hDC, nMode )
 SetTextColor(::hDC, nColor )
@@ -329,13 +329,13 @@ DeleteObject( hBrush1 )
 
 ::DispEnd( aInfo )
 
-return 0
+RETURN 0
 
 ***************************************************************************************************************
     METHOD LButtonDown( nRow, nCol, nFlags ) CLASS TTagEver
 ***************************************************************************************************************
 
-return 0
+RETURN 0
 
 ***************************************************************************************************************
     METHOD MouseMove  ( nRow, nCol, nFlags ) CLASS TTagEver
@@ -383,7 +383,7 @@ if nOver != ::nOver
 endif
 
 
-return 0
+RETURN 0
 
 ***************************************************************************************************************
     METHOD LButtonUp  ( nRow, nCol, nFlags ) CLASS TTagEver
@@ -401,6 +401,6 @@ if ::nOver > 0
    ::Refresh()
 endif
 
-return 0
+RETURN 0
 
 ***************************************************************************************************************

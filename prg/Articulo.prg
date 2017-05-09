@@ -1744,10 +1744,10 @@ STATIC FUNCTION EdtRec( aTmp, aGet, cArticulo, oBrw, bWhen, bValid, nMode )
    if BeginTrans( aTmp, nMode )
       Return .f.
    end if
-
+/*
    oBlock                     := ErrorBlock( { | oError | ApoloBreak( oError ) } )
    BEGIN SEQUENCE
-
+*/
    do case
    case nMode == APPD_MODE
 
@@ -1855,13 +1855,13 @@ STATIC FUNCTION EdtRec( aTmp, aGet, cArticulo, oBrw, bWhen, bValid, nMode )
    cSay[15]        := aBnfSobre[ Max( aTmp[ ( D():Articulos( nView ) )->( fieldpos( "nBnfSbr5" ) ) ], 1 ) ]
    cSay[16]        := aBnfSobre[ Max( aTmp[ ( D():Articulos( nView ) )->( fieldpos( "nBnfSbr6" ) ) ], 1 ) ]
 
-   cSubCtaAnt      := aTmp[ ( D():Articulos( nView ) )->( fieldpos( "cCtaVta" ) ) ]
-   cSubCtaAntCom   := aTmp[ ( D():Articulos( nView ) )->( fieldpos( "cCtaCom" ) ) ]
-   cCodigoFamilia  := aTmp[ ( D():Articulos( nView ) )->( fieldpos( "Familia" ) ) ]
+   cSubCtaAnt        := aTmp[ ( D():Articulos( nView ) )->( fieldpos( "cCtaVta" ) ) ]
+   cSubCtaAntCom     := aTmp[ ( D():Articulos( nView ) )->( fieldpos( "cCtaCom" ) ) ]
+   cCodigoFamilia    := aTmp[ ( D():Articulos( nView ) )->( fieldpos( "Familia" ) ) ]
 
-   aIdEtiquetas   := hb_deserialize( aTmp[ ( D():Articulos( nView ) )->( fieldpos( "cEtiqueta" ) ) ] )
+   aIdEtiquetas      := hb_deserialize( aTmp[ ( D():Articulos( nView ) )->( fieldpos( "cEtiqueta" ) ) ] )
 
-   aNombreEtiquetas     := EtiquetasModel():translateIdsToNames( aIdEtiquetas )
+   aNombreEtiquetas  := EtiquetasModel():translateIdsToNames( aIdEtiquetas )
 
    /*
    Filtros para los stocks-----------------------------------------------------
@@ -2030,14 +2030,9 @@ STATIC FUNCTION EdtRec( aTmp, aGet, cArticulo, oBrw, bWhen, bValid, nMode )
       OF       fldGeneral
 
    oTagsEver            := TTagEver():Redefine( 100, fldGeneral, nil, aNombreEtiquetas ) 
-
    oTagsEver:lOverClose := .t.
 
-<<<<<<< HEAD
-   TBtnBmp():ReDefine( 101, "gc_recycle_16",,,,,{|| getEtiquetasBrowse( oTagsEver:getItems() ) }, fldGeneral, .f., , .f.,  )
-=======
-   TBtnBmp():ReDefine( 101, "Lupa",,,,,{|| getEtiquetasBrowse() }, fldGeneral, .f., , .f.,  )               
->>>>>>> origin/master
+   TBtnBmp():ReDefine( 101, "Lupa",,,,,{|| getEtiquetasBrowse( oTagsEver:getItems() ) }, fldGeneral, .f., , .f.,  )
 
    REDEFINE GET oSay[9] VAR cSay[9] ;
       ID       271 ;
@@ -4705,14 +4700,14 @@ STATIC FUNCTION EdtRec( aTmp, aGet, cArticulo, oBrw, bWhen, bValid, nMode )
       CENTER ;
       ON INIT     (  EdtRecMenu( aTmp, aGet, oSay, oDlg, oFld, aBar, cSay, nMode ) ) ;
       VALID       (  KillTrans( oMenu, oBmpCategoria, oBmpTemporada, oBmpEstado, oBmpGeneral, oBmpPrecios, oBmpDescripciones, oBmpPropiedades, oBmpLogistica, oBmpStocks, oBmpContabilidad, oBmpOfertas, oBmpEscandallos, oBmpWeb, oBmpUbicaciones, oBmpImagenes, oBmpTactil ) )
-
+/*
    RECOVER USING oError
 
       msgStop( ErrorMessage( oError ), "Imposible abrir el dialogo de artículos" )
 
    END SEQUENCE
    ErrorBlock( oBlock )
-
+*/
 Return ( oDlg:nResult == IDOK )
 
 //--------------------------------------------------------------------------//
@@ -19313,20 +19308,12 @@ Static Function getEtiquetasBrowse( aSelectedItems )
 
    local aSelected
 
-<<<<<<< HEAD
-   oEtiquetas        := Etiquetas():New()
-
-   aSelected         := oEtiquetas:activateBrowse( aSelectedItems )
-
-   oTagsEver:SetItems( aSelected )
-=======
-   aSelected         := Etiquetas():New():activateBrowse()
+   aSelected         := Etiquetas():New():activateBrowse( aSelectedItems )
 
    if !empty( aSelected )
       oTagsEver:setItems( aSelected )
       oTagsEver:Refresh()
    end if 
->>>>>>> origin/master
 
 Return ( nil )
 

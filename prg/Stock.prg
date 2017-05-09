@@ -3871,8 +3871,8 @@ METHOD aStockArticulo( cCodArt, cCodAlm, oBrw, lLote, lNumeroSerie, dFecIni, dFe
 
    // Proceso------------------------------------------------------------------
 
-   oBlock               := ErrorBlock( {| oError | ApoloBreak( oError ) } )
-   BEGIN SEQUENCE
+   // oBlock               := ErrorBlock( {| oError | ApoloBreak( oError ) } )
+   // BEGIN SEQUENCE
 
    for each cCodAlm in aAlmacenes
 
@@ -3988,10 +3988,10 @@ METHOD aStockArticulo( cCodArt, cCodAlm, oBrw, lLote, lNumeroSerie, dFecIni, dFe
 
    // Control de erroress-------------------------------------------------------
 
-   RECOVER USING oError
-      msgStop( ErrorMessage( oError ), "Calculo de stock" )
-   END SEQUENCE
-   ErrorBlock( oBlock )
+//   RECOVER USING oError
+//      msgStop( ErrorMessage( oError ), "Calculo de stock" )
+//   END SEQUENCE
+//   ErrorBlock( oBlock )
 
 Return ( ::aStocks )
 
