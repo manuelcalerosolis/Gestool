@@ -1,10 +1,16 @@
 // Win32 TreeView support
 
-#include "FiveWin.ch"
+#include "FiveWin.ch" 
 #include "Constant.ch"
 
 #define TVN_FIRST                -400
 #define TVN_ITEMEXPANDED        (TVN_FIRST-6)
+
+#define TVN_SELCHANGINGA        (TVN_FIRST-1)
+#define TVN_SELCHANGINGW        (TVN_FIRST-50)
+
+#define TVN_SELCHANGEDA         (TVN_FIRST-2)
+#define TVN_SELCHANGEDW         (TVN_FIRST-51)
 
 #define COLOR_WINDOW            5
 #define COLOR_WINDOWTEXT        8
@@ -39,6 +45,10 @@ CLASS TTreeView FROM TControl
    DATA   bChanged
    DATA   bExpanded
 
+   DATA   bItemChanged
+   DATA   bItemSelectChanged
+   DATA   bAction
+
    CLASSDATA aProperties ;
       INIT { "aItems", "cTitle", "cVarName", "l3D", "nClrText",;
              "nClrPane", "nAlign", "nTop", "nLeft",;
@@ -56,27 +66,24 @@ CLASS TTreeView FROM TControl
 
    METHOD HScroll( nWParam, nLParam ) VIRTUAL
 
-   METHOD CollapseAll( oItem ) INLINE ScanItems( ::aItems, .f. ),;
+   METHOD CollapseAll( oItem ) INLINE ScanItems( ::aItems, .f. ),; 
       oItem := ::GetSelected(), if( oItem <> nil, oItem:MakeVisible(), nil )
 
-   METHOD CollapseBranch( oItem ) INLINE ;
-      If( oItem == nil, oItem := ::GetSelected(),), ;
+   METHOD CollapseBranch( oItem ) INLINE ; 
+      If( oItem == nil, oItem := ::GetSelected(),), ; 
       If( oItem != nil, ( oItem:Collapse(), ScanItems( oItem:aItems, .f. ), oItem:MakeVisible() ),)
 
    METHOD Expand() INLINE AEval( ::aItems, { | oItem | oItem:Expand() } )
 
-   METHOD ExpandAll( oItem ) INLINE ScanItems( ::aItems, .t. ),;
+   METHOD ExpandAll( oItem ) INLINE ScanItems( ::aItems, .t. ),; 
       oItem := ::GetSelected(), if( oItem <> nil, oItem:MakeVisible(), nil )
 
-   METHOD ExpandBranch( oItem ) INLINE ;
-      If( oItem == nil, oItem := ::GetSelected(), nil ), ;
-      If( oItem != nil, ( oItem:Expand(), ScanItems( oItem:aItems, .t. ), oItem:MakeVisible() ), nil )
-
+   METHOD ExpandBranch( oItem ) INLINE ; 
+      If( oItem == nil, oItem := ::GetSelected(), nil ), ; 
+      If( oItem != nil, ( oItem:Expand(), ScanItems( oItem:aItems, .t. ), oItem:MakeVisible() ), nil ) 
+      
    METHOD GetSelected()
-
    METHOD GetItem( hItem )
-
-   METHOD GetItemPos( oItem )
 
    METHOD Select( oItem ) INLINE TVSelect( ::hWnd, oItem:hItem )
 
@@ -91,50 +98,49 @@ CLASS TTreeView FROM TControl
    METHOD DeleteAll() INLINE ( TVDelAllItems( ::hWnd ), ::aItems := {} )
 
    METHOD HitTest( nRow, nCol )
-
+   
    METHOD HandleEvent( nMsg, nWParam, nLParam )
 
    METHOD Initiate( hDlg ) INLINE ::Super:Initiate( hDlg ), ::SetColor( ::nClrText, ::nClrPane )
-
+   
    METHOD cToChar() INLINE ::Super:cToChar( CTRL_NAME )
-
+   
    METHOD SetColor( nClrText, nClrPane ) INLINE ;
       ::Super:SetColor( nClrText, nClrPane ), TVSetColor( ::hWnd, nClrText, nClrPane )
 
-   METHOD Toggle() INLINE AEval( ::aItems, { | oItem | oItem:Toggle() } )
+   METHOD Toggle() INLINE AEval( ::aItems, { | oItem | oItem:Toggle() } ) 
 
-   METHOD ToggleAll( oItem ) INLINE ScanItems( ::aItems, , .t. ), ;
-      oItem := ::GetSelected(), If( oItem <> nil, oItem:MakeVisible(), nil )
+   METHOD ToggleAll( oItem ) INLINE ScanItems( ::aItems, , .t. ), ; 
+      oItem := ::GetSelected(), If( oItem <> nil, oItem:MakeVisible(), nil ) 
 
-   METHOD ToggleBranch( oItem ) INLINE ;
-      If( oItem == nil, oItem := ::GetSelected(), nil ), ;
+   METHOD ToggleBranch( oItem ) INLINE ; 
+      If( oItem == nil, oItem := ::GetSelected(), nil ), ; 
       If( oItem != nil, ( oItem:Toggle(), ScanItems( oItem:aItems, , .t. ), oItem:MakeVisible() ), nil )
 
-   METHOD GetCheck( oItem ) INLINE ;
-      If( oItem == nil, oItem := ::GetSelected(), nil ), ;
-      TVGetCheck( ::hWnd, oItem:hItem )
+   METHOD GetCheck( oItem ) INLINE ; 
+      If( oItem == nil, oItem := ::GetSelected(), nil ), ; 
+      TVGetCheck( ::hWnd, oItem:hItem ) 
 
-   METHOD SetCheck( oItem, lOnOff ) INLINE ;
-      If( oItem == nil, oItem := ::GetSelected(), nil ), ;
-      TVSetCheck( ::hWnd, oItem:hItem, lOnOff )
+   METHOD SetCheck( oItem, lOnOff ) INLINE ; 
+      If( oItem == nil, oItem := ::GetSelected(), nil ), ; 
+      TVSetCheck( ::hWnd, oItem:hItem, lOnOff ) 
 
    METHOD SetItems( aItems )
-
+   
    METHOD GenMenu( lPopup )
-
+   
    METHOD LoadFromMenu( oMenu )
-
+   
    METHOD Notify( nIdCtrl, nPtrNMHDR )
 
-   METHOD Scan( bAction )
-
    METHOD SetItemImage( oItem, nImage ) INLINE ;
-      If( oItem == nil, oItem := ::GetSelected(), nil ), ;
-      TVSetItemImage( ::hWnd, oItem:hItem, nImage )
+      If( oItem == nil, oItem := ::GetSelected(), nil ), ; 
+      TVSetItemImage( ::hWnd, oItem:hItem, nImage ) 
 
-   METHOD SetItemHeight( nHeight ) INLINE TvSetItemHeight( ::hWnd, nHeight )
+   METHOD SetItemHeight( nHeight )  INLINE ;  
+      ( TvSetItemHeight( ::hWnd, nHeight ) )
 
-   METHOD SetSelText( cText ) INLINE ::GetSelected():SetText( cText )
+   METHOD Scan( bAction )           INLINE ( ScanItemsBlock( ::aItems, bAction ) )
 
 ENDCLASS
 
@@ -143,32 +149,32 @@ ENDCLASS
 METHOD LoadFromMenu( oMenu ) CLASS TTreeView
 
    local n
-
+   
    ::DeleteAll()
-
+   
    for n = 1 to Len( oMenu:aItems )
       ::Add( oMenu:aItems[ n ]:cPrompt )
       if ValType( oMenu:aItems[ n ]:bAction ) == "O"
          AddSubItems( ATail( ::aItems ), oMenu:aItems[ n ]:bAction )
-      endif
+      endif      
    next
-
-return nil
+   
+return nil      
 
 //----------------------------------------------------------------------------//
 
 static function AddSubItems( oItem, oSubMenu )
 
-   local n
-
+   local n 
+   
    for n = 1 to Len( oSubMenu:aItems )
       oItem:Add( oSubMenu:aItems[ n ]:cPrompt )
       if ValType( oSubMenu:aItems[ n ]:bAction ) == "O"
          AddSubItems( ATail( oItem:aItems ), oSubMenu:aItems[ n ]:bAction )
-      endif
+      endif      
    next
-
-return nil
+   
+return nil      
 
 //----------------------------------------------------------------------------//
 
@@ -222,19 +228,18 @@ return Self
 
 //----------------------------------------------------------------------------//
 
-METHOD ReDefine( nId, oWnd, nClrFore, nClrBack, lDesign, cMsg, bChange ) CLASS TTreeView
+METHOD ReDefine( nId, oWnd, nClrFore, nClrBack, lDesign, cMsg ) CLASS TTreeView
 
    DEFAULT oWnd     := GetWndDefault(),;
            nClrFore := oWnd:nClrText,;
            nClrBack := oWnd:nClrPane,; // GetSysColor( COLOR_WINDOW ),;
            lDesign  := .f.
 
-   ::nId      = nId
-   ::oWnd     = oWnd
-   ::aItems   = {}
-   ::nClrText = nClrFore
-   ::nClrPane = nClrBack
-   ::bChanged = bChange
+   ::nId     = nId
+   ::oWnd    = oWnd
+   ::aItems  = {}
+   ::nClrText = nClrFore 
+   ::nClrPane = nClrBack 
 
    ::Register( nOR( CS_VREDRAW, CS_HREDRAW, TVS_HASBUTTONS, TVS_HASLINES, TVS_LINESATROOT ) )
 
@@ -259,86 +264,66 @@ return oItem
 
 //----------------------------------------------------------------------------//
 
-static function ScanItems( aItems, lExpand, lToggle )
+static function ScanItems( aItems, lExpand, lToggle ) 
 
-   local oItem, i
+   local oItem, i 
 
-   DEFAULT lExpand := .t., lToggle := .f.
+   DEFAULT lExpand := .t., lToggle := .f. 
 
-   for i := 1 to Len( aItems )
-       oItem = aItems[ i ]
+   for i := 1 to Len( aItems ) 
+       oItem = aItems[ i ] 
 
-       if lToggle
-          oItem:Toggle()
-       elseif lExpand
-          oItem:Expand()
-       else
-          oItem:Collapse()
-       endif
+       if lToggle 
+          oItem:Toggle() 
+       elseif lExpand 
+          oItem:Expand() 
+       else 
+          oItem:Collapse() 
+       endif 
 
-       if Len( oItem:aItems ) != 0
-          ScanItems( oItem:aItems, lExpand, lToggle )
-       endif
-   next
+       if Len( oItem:aItems ) != 0 
+          ScanItems( oItem:aItems, lExpand, lToggle ) 
+       endif 
+   next 
 
-return nil
-
-//----------------------------------------------------------------------------//
-
-static function ScanItemsBlock( aItems, bAction )
-
-   local oItem, n := 1, oItemFound
-
-   while n <= Len( aItems ) .and. oItemFound == nil
-      oItem = aItems[ n ]
-      if Eval( bAction, oItem, n )
-         return oItem
-      else
-         if Len( oItem:aItems ) > 0
-            oItemFound = ScanItemsBlock( oItem:aItems, bAction )
-         endif
-      endif
-      n++
-   end
-
-return oItemFound
+return nil 
 
 //----------------------------------------------------------------------------//
 
 METHOD GenMenu( lPopup ) CLASS TTreeView
 
-   local oMenu
-
+   local oMenu 
+   
    DEFAULT lPopup := .T.
-
+   
    if Len( ::aItems ) > 0
       if lPopup
          MENU oMenu POPUP
-      else
+      else   
          MENU oMenu
-      endif
-      GenMenuItems( ::aItems )
+      endif   
+      GenMenuItems( ::aItems )   
       ENDMENU
    endif
-
-return oMenu
+   
+return oMenu         
 
 //----------------------------------------------------------------------------//
 
 static function GenMenuItems( aItems )
 
    local n
-
+   
    for n = 1 to Len( aItems )
       MENUITEM aItems[ n ]:GetText()
       if Len( aItems[ n ]:aItems ) > 0
          MENU
             GenMenuItems( aItems[ n ]:aItems )
          ENDMENU
-      endif
+      endif   
    next
-
-return nil
+   
+return nil         
 
 //----------------------------------------------------------------------------//
 
@@ -351,12 +336,6 @@ return SearchItem( ::aItems, TVGetSelected( ::hWnd ) )
 METHOD GetItem( hItem ) CLASS TTreeView
 
 return SearchItem( ::aItems, hItem )
-
-//----------------------------------------------------------------------------//
-
-METHOD GetItemPos( oItem ) CLASS TTreeView
-
-return AScan( ::aItems, { | o | o == oItem } )
 
 //----------------------------------------------------------------------------//
 
@@ -386,18 +365,24 @@ METHOD Notify( nIdCtrl, nPtrNMHDR ) CLASS TTreeView
               endif
            endif
 
+      case nCode == -24 //-419 // -401 // -530 //TVN_SELCHANGEDWTVN_SELCHANGINGA .or. nCode == TVN_SELCHANGINGW //
+
+         if !Empty( ::bItemSelectChanged )
+            Eval( ::bItemSelectChanged, Self )
+         end if
+
+      case nCode == -401 //-419 // -401 // -530 //TVN_SELCHANGEDW
+
+         if !Empty( ::bItemChanged )
+            Eval( ::bItemChanged, Self )
+         end if
+      
    endcase
-
-return nil
-
-//----------------------------------------------------------------------------//
-
-METHOD Scan( bAction ) CLASS TTreeView
-
-return ScanItemsBlock( ::aItems, bAction )
+   
+return nil      
 
 //----------------------------------------------------------------------------//
-
+   
 METHOD SetImageList( oImageList ) CLASS TTreeView
 
    ::oImageList = oImageList
@@ -418,38 +403,58 @@ METHOD HandleEvent( nMsg, nWParam, nLParam ) CLASS TTreeView
               return 1
            endif
    endcase
-
-return ::Super:HandleEvent( nMsg, nWParam, nLParam )
+   
+return ::Super:HandleEvent( nMsg, nWParam, nLParam )              
 
 //----------------------------------------------------------------------------//
 
 METHOD SetItems( aItems ) CLASS TTreeView
 
    local n
-
+   
    for n = 1 to Len( aItems )
       ::Add( aItems[ n ] )
    next
+   
+return nil      
+
+//----------------------------------------------------------------------------//
+
+static function SearchItem( aItems, hItem ) 
+
+   local n, oItem 
+   
+   for n = 1 to Len( aItems ) 
+      if Len( aItems[ n ]:aItems ) > 0 
+         if ( oItem := SearchItem( aItems[ n ]:aItems, hItem ) ) != nil 
+            return oItem 
+         endif 
+      endif 
+      if aItems[ n ]:hItem == hItem 
+         return aItems[ n ] 
+      endif 
+   next 
 
 return nil
 
 //----------------------------------------------------------------------------//
 
-static function SearchItem( aItems, hItem )
+static function ScanItemsBlock( aItems, bAction )
 
-   local n, oItem
+   local oItem, n := 1, oItemFound
 
-   for n = 1 to Len( aItems )
-      if Len( aItems[ n ]:aItems ) > 0
-         if ( oItem := SearchItem( aItems[ n ]:aItems, hItem ) ) != nil
-            return oItem
+   while n <= Len( aItems ) .and. oItemFound == nil
+      oItem = aItems[ n ]
+      if Eval( bAction, oItem, n )
+         return oItem
+      else
+         if Len( oItem:aItems ) > 0
+            oItemFound = ScanItemsBlock( oItem:aItems, bAction )
          endif
       endif
-      if aItems[ n ]:hItem == hItem
-         return aItems[ n ]
-      endif
-   next
+      n++
+   end
 
-return nil
+return oItemFound
 
 //----------------------------------------------------------------------------//

@@ -12,6 +12,8 @@ CLASS Etiquetas FROM SQLBaseView
 
    DATA     nSelectedNode
 
+   DATA     allSelectedNode
+
    METHOD   New()
 
    METHOD   buildSQLShell()
@@ -20,7 +22,7 @@ CLASS Etiquetas FROM SQLBaseView
   
    METHOD   buildSQLModel()               INLINE ( EtiquetasModel():New() )
 
-   METHOD   getFieldFromBrowse()          INLINE ( ::oModel:getRowSet():fieldGet( "nombre" ) )
+   METHOD   getFieldFromBrowse()          INLINE ( ::allSelectedNode )
  
    METHOD   Dialog()
    METHOD      startDialog()
@@ -35,11 +37,15 @@ CLASS Etiquetas FROM SQLBaseView
 
    METHOD   AppendChild( oBrowse )
 
+   METHOD   getAllSelectedNode( oTree, aItems )
+
    METHOD   checkSelectedNode()
    METHOD      getSelectedNode()             INLINE ( ::nSelectedNode )
    METHOD      setSelectedNode( nNode )      INLINE ( ::nSelectedNode := nNode )
 
    METHOD   checkValidParent()
+
+   METHOD   validBrowse()
 
    METHOD   LblTitle()
 
@@ -404,6 +410,8 @@ METHOD buildSQLBrowse()
    local oFind
    local cFind       := space( 200 )
 
+   ::allSelectedNode := {}
+
    DEFINE DIALOG oDlg RESOURCE "HELP_ETIQUETAS" TITLE "Seleccionar etiquetas"
 
       REDEFINE GET   oFind ; 
@@ -412,15 +420,14 @@ METHOD buildSQLBrowse()
          BITMAP      "FIND" ;
          OF          oDlg
 
-      oFind:bChange                 := {|| ::changeFindTree( oFind ) }
+      oFind:bChange  := {|| ::changeFindTree( oFind ) }
 
-      ::oTree                       := TTreeView():Redefine( 110, oDlg )
-      //::oTree:bItemSelectChanged    := {|| ::changeTree() }
+      ::oTree        := TTreeView():Redefine( 110, oDlg )
 
       REDEFINE BUTTON ;
          ID          IDOK ;
          OF          oDlg ;
-         ACTION      ( oDlg:end( IDOK ) )
+         ACTION      ( ::validBrowse( oDlg ) )
 
       REDEFINE BUTTON ;
          ID          IDCANCEL ;
@@ -428,8 +435,8 @@ METHOD buildSQLBrowse()
          CANCEL ;
          ACTION      ( oDlg:end() )
 
-      oDlg:AddFastKey( VK_RETURN,   {|| oDlg:end( IDOK ) } )
-      oDlg:AddFastKey( VK_F5,       {|| oDlg:end( IDOK ) } )
+      oDlg:AddFastKey( VK_RETURN,   {|| ::validBrowse( oDlg ) } )
+      oDlg:AddFastKey( VK_F5,       {|| ::validBrowse( oDlg ) } )
 
       oDlg:bStart    := {|| ::loadTree() }
 
@@ -441,14 +448,52 @@ RETURN ( oDlg:nResult == IDOK )
 
 METHOD changeFindTree( oFind )
 
-   //msgalert( oFind:cText, "cText" )
+   local oItem
+   local cFind    := alltrim( oFind:cText )
 
-   ::oModel:find( oFind:cText )
+   if !empty(cFind)
+      oItem       := ::oTree:Scan( { | o | cFind $ o:cPrompt } )
+   end if 
 
-   //msgalert( ::oModel:cFind, "el fin del model" )
-
-   ::loadTree()
+   if !empty(oItem)
+      ::oTree:Select( oItem )
+   end if 
 
 RETURN ( Self )
 
 //---------------------------------------------------------------------------//
+
+METHOD validBrowse( oDlg )
+
+   ::getAllSelectedNode()
+   
+RETURN ( oDlg:end( IDOK ) )
+
+//---------------------------------------------------------------------------//
+
+METHOD getAllSelectedNode( oTree, aItems )
+
+   local oItem
+
+   default oTree  := ::oTree
+
+   if empty( aItems )
+      aItems      := oTree:aItems
+   end if
+
+   for each oItem in aItems
+
+      if oTree:GetCheck( oItem )
+         aadd( ::allSelectedNode, ( oItem:cPrompt ) )  
+      end if
+
+      if len( oItem:aItems ) > 0
+         ::checkSelectedNode( oTree, oItem:aItems )
+      end if
+
+   next
+
+RETURN ( nil )
+
+//---------------------------------------------------------------------------//
+

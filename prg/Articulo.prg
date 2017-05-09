@@ -50,6 +50,8 @@ static pThread
 
 static oWndBrw
 
+static oTagsEver
+
 static dbfProv
 static dbfCatalogo
 static dbfCategoria
@@ -2018,6 +2020,11 @@ STATIC FUNCTION EdtRec( aTmp, aGet, cArticulo, oBrw, bWhen, bValid, nMode )
       ON HELP  ( oTipArt:Buscar( aGet[ ( D():Articulos( nView ) )->( fieldpos( "CCODTIP" ) ) ] ) ) ;
       BITMAP   "LUPA" ;
       OF       fldGeneral
+
+   oTagsEver            := TTagEver():Redefine( 100, fldGeneral, nil, { "esto", "es", "una", "prueba" } ) 
+   oTagsEver:lOverClose := .t.
+
+   TBtnBmp():ReDefine( 101, "gc_recycle_16",,,,,{|| getEtiquetasBrowse() }, fldGeneral, .f., , .f.,  )               
 
    REDEFINE GET oSay[9] VAR cSay[9] ;
       ID       271 ;
@@ -5687,6 +5694,8 @@ Static Function EndTrans( aTmp, aGet, oSay, oDlg, aTipBar, cTipBar, nMode, oImpC
    cWebShop                := aTmp[ ( D():Articulos( nView ) )->( fieldpos( "cWebShop" ) ) ]
 
    // Notificaciones en pantalla-----------------------------------------------
+
+   msgalert( hb_valtoexp( oTagsEver:getItems() ) )
 
    oBlock                  := ErrorBlock( { | oError | ApoloBreak( oError ) } )
    BEGIN SEQUENCE
@@ -15466,6 +15475,7 @@ function aItmArt()
    aAdd( aBase, { "lIvaPver",  "L",  1, 0, "Iva incluido para el punto verde" ,        "",                  "", "( cDbfArt )", nil } )
    aAdd( aBase, { "cWebShop",  "C",100, 0, "Tienda web donde se publica el producto",  "",                  "", "( cDbfArt )", nil } )
    aAdd( aBase, { "lIvaWeb",   "L",  1, 0, "Iva incluido para precio web" ,            "",                  "", "( cDbfArt )", nil } )
+   aAdd( aBase, { "cEtiqueta", "M", 10, 0, "Relación de etiquetas" ,                   "",                  "", "( cDbfArt )", nil } )
 
 return ( aBase )
 
@@ -19286,4 +19296,19 @@ Function getProveedorPorDefectoArticulo( cCodigoArticulo, dbfProveedorArticulo )
 Return ( proveedorPorDefectoArticulo )
 
 //--------------------------------------------------------------------------//
+
+Static Function getEtiquetasBrowse()
+
+   local aSelected
+   local oEtiquetas
+
+   oEtiquetas        := Etiquetas():New()
+
+   aSelected         := oEtiquetas:activateBrowse()
+
+   if !empty( aSelected )
+      aeval( aSelected, {|elem| oTagsEver:addItem( elem ) } )
+   end if 
+
+Return ( nil )
 
