@@ -108,7 +108,7 @@ METHOD commandExecDirect( cCommand ) CLASS TComercioConector
 
    ::writeText( cCommand )
 
-   if ::TComercio:lDebugMode
+   if ::TComercio:isDebugMode()
       ::TComercio:addMegaCommand( cCommand )
       Return .t.      
    end if

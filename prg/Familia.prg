@@ -49,7 +49,7 @@
 #define _LSELDOC                 25
 #define _LPREESP                 26
 #define _CCODFRA                 27
-#define _LINFSTK                 28
+#define _CTYPE                   28
 #define _CFAMCMB                 29      //   C       8    0
 #define _NPOSTPV                 30      //
 #define _CCODWEB                 31      //   N      11    0
@@ -858,12 +858,14 @@ STATIC FUNCTION EdtRec( aTmp, aGet, cFamilia, oBrw, bWhen, bValid, nMode )
             WHEN     ( nMode != ZOOM_MODE ) ;
             OF       oFld:aDialogs[2]
 
-         // Segunda caja de dialogo--------------------------------------------------
-
-         REDEFINE CHECKBOX aTmp[ _LINFSTK ] ;
-            ID       540 ;
+         REDEFINE COMBOBOX aGet[ _CTYPE ];
+            VAR      aTmp[ _CTYPE ];
+            ITEMS    { "", "Root", "Start" };
+            ID       370 ;
             WHEN     ( nMode != ZOOM_MODE ) ;
-            OF       oFld:aDialogs[ 3 ]
+            OF       oFld:aDialogs[2]
+
+         // Segunda caja de dialogo--------------------------------------------------
 
          oBrwPrv                 := IXBrowse():New( oFld:aDialogs[ 3 ] )
 
@@ -2521,25 +2523,25 @@ FUNCTION rxFamilia( cPath, cDriver )
    if !( cFamilia )->( neterr() )
       ( cFamilia )->( __dbPack() )
 
-      ( cFamilia )->( ordcondset( "!Deleted()", {|| !Deleted() }  ) )
+      ( cFamilia )->( ordcondset( "!Deleted()", {|| !Deleted() } ) )
       ( cFamilia )->( ordcreate( cPath + "Familias.Cdx", "cCodFam", "Field->cCodFam", {|| Field->cCodFam }, ) )
 
-      ( cFamilia )->( ordcondset( "!Deleted()", {|| !Deleted() }  ) )
+      ( cFamilia )->( ordcondset( "!Deleted()", {|| !Deleted() } ) )
       ( cFamilia )->( ordcreate( cPath + "Familias.Cdx", "cNomFam", "Upper( Field->cNomFam )", {|| Upper( Field->cNomFam ) } ) )
 
-      ( cFamilia )->( ordcondset("!Deleted().and. lIncTpv", {|| !Deleted() .and. Field->lIncTpv }  ) )
+      ( cFamilia )->( ordcondset("!Deleted().and. lIncTpv", {|| !Deleted() .and. Field->lIncTpv } ) )
       ( cFamilia )->( ordcreate( cPath + "Familias.Cdx", "nPosTpv", "Str( Field->nPosTpv )", {|| Str( Field->nPosTpv ) } ) )
 
       ( cFamilia )->( ordcondset("!Deleted() .and. lIncTpv", {|| !Deleted() .and. Field->lIncTpv }  ) )
       ( cFamilia )->( ordcreate( cPath + "Familias.Cdx", "lIncTpv", "Upper( cNomFam )", {|| Upper( Field->cNomFam ) } ) )
 
-      ( cFamilia )->( ordcondset( "!Deleted()", {|| !Deleted() }  ) )
+      ( cFamilia )->( ordcondset( "!Deleted()", {|| !Deleted() } ) )
       ( cFamilia )->( ordcreate( cPath + "Familias.Cdx", "lSelDoc", "lSelDoc", {|| Field->lSelDoc } ) )
 
-      ( cFamilia )->( ordcondset( "!Deleted()", {|| !Deleted() }  ) )
-      ( cFamilia )->( ordcreate( cPath + "Familias.Cdx", "cCodWeb", "Str( Field->cCodWeb, 11 )", {|| Str( Field->cCodWeb, 11 ) } ) )
+      ( cFamilia )->( ordcondset( "!Deleted()", {|| !Deleted() } ) )
+      ( cFamilia )->( ordcreate( cPath + "Familias.Cdx", "cType", "cType", {|| Field->cType } ) )
 
-      ( cFamilia )->( ordcondset( "!Deleted()", {|| !Deleted() }  ) )
+      ( cFamilia )->( ordcondset( "!Deleted()", {|| !Deleted() } ) )
       ( cFamilia )->( ordcreate( cPath + "Familias.Cdx", "cFamCmb", "cFamCmb", {|| Field->cFamCmb } ) )
 
       ( cFamilia )->( dbCloseArea() )
@@ -2594,34 +2596,34 @@ RETURN ( aBase )
 
 FUNCTION aItmFam()
 
-   local aBase := {  {"CCODFAM",    "C",    16,    0, "Código de familia" },;
-                     {"CNOMFAM",    "C",    40,    0, "Nombre de familia" },;
-                     {"CCODPRP1",   "C",    10,    0, "Primera propiedad de la familia" },;
-                     {"CCODPRP2",   "C",    10,    0, "Segunda propiedad de la familia" },;
-                     {"CCODGRP",    "C",     3,    0, "Código de grupo" },;
-                     {"LINCTPV",    "L",     1,    0, "Incluir en TPV táctil" },;
-                     {"NVALANU",    "N",    16,    6, "Previsiones anual" },;
-                     {"NENE",       "N",    16,    6, "Previsiones Enero" },;
-                     {"NFEB",       "N",    16,    6, "Previsiones Febrero" },;
-                     {"NMAR",       "N",    16,    6, "Previsiones Marzo" },;
-                     {"NABR",       "N",    16,    6, "Previsiones Abril" },;
-                     {"NMAY",       "N",    16,    6, "Previsiones Mayo" },;
-                     {"NJUN",       "N",    16,    6, "Previsiones Junio" },;
-                     {"NJUL",       "N",    16,    6, "Previsiones Julio" },;
-                     {"NAGO",       "N",    16,    6, "Previsiones Agosto" },;
-                     {"NSEP",       "N",    16,    6, "Previsiones Septiembre" },;
-                     {"NOCT",       "N",    16,    6, "Previsiones Octubre" },;
-                     {"NNOV",       "N",    16,    6, "Previsiones Noviembre" },;
-                     {"NDIC",       "N",    16,    6, "Previsiones Diciembre" },;
+   local aBase := {  {"cCodFam",    "C",    16,    0, "Código de familia" },;
+                     {"cNomFam",    "C",    40,    0, "Nombre de familia" },;
+                     {"cCodPrp1",   "C",    10,    0, "Primera propiedad de la familia" },;
+                     {"cCodPrp2",   "C",    10,    0, "Segunda propiedad de la familia" },;
+                     {"cCodGrp",    "C",     3,    0, "Código de grupo" },;
+                     {"lIncTpv",    "L",     1,    0, "Incluir en TPV táctil" },;
+                     {"nValAnu",    "N",    16,    6, "Previsiones anual" },;
+                     {"nEne",       "N",    16,    6, "Previsiones Enero" },;
+                     {"nFeb",       "N",    16,    6, "Previsiones Febrero" },;
+                     {"nMar",       "N",    16,    6, "Previsiones Marzo" },;
+                     {"nAbr",       "N",    16,    6, "Previsiones Abril" },;
+                     {"nMay",       "N",    16,    6, "Previsiones Mayo" },;
+                     {"nJun",       "N",    16,    6, "Previsiones Junio" },;
+                     {"nJul",       "N",    16,    6, "Previsiones Julio" },;
+                     {"nAgo",       "N",    16,    6, "Previsiones Agosto" },;
+                     {"nSep",       "N",    16,    6, "Previsiones Septiembre" },;
+                     {"nOct",       "N",    16,    6, "Previsiones Octubre" },;
+                     {"nNov",       "N",    16,    6, "Previsiones Noviembre" },;
+                     {"nDic",       "N",    16,    6, "Previsiones Diciembre" },;
                      {"nDtoLin",    "N",     6,    2, "Porcentaje de descuento por familia" },;
-                     {"NPCTRPL",    "N",     6,    2, "Porcentaje de rapels" },;
-                     {"LPUBINT",    "L",     1,    0, "Publicar esta familia en internet" },;
-                     {"NCOLBTN",    "N",    10,    0, "Color del botón" },;
-                     {"CIMGBTN",    "C",   250,    0, "Imagen del botón" },;
+                     {"nPctRpl",    "N",     6,    2, "Porcentaje de rapels" },;
+                     {"lPubInt",    "L",     1,    0, "Publicar esta familia en internet" },;
+                     {"nColBtn",    "N",    10,    0, "Color del botón" },;
+                     {"cImgBtn",    "C",   250,    0, "Imagen del botón" },;
                      {"lSelDoc",    "L",     1,    0, "Lógico para seleccionado" },;
                      {"lPreEsp",    "L",     1,    0, "Lógico para permitir precios especiales" },;
                      {"cCodFra",    "C",     3,    0, "Código de frases publiciarias" },;
-                     {"lInfStk",    "L",     1,    0, "Incluir en informe de stocks bajo minimos" },;
+                     {"cType",      "C",     6,    0, "Tipo especial de familia" },;
                      {"cFamCmb",    "C",    16,    0, "Familia para combinar" },;
                      {"nPosTpv",    "N",     4,    1, "Posición para mostrar en TPV" },;
                      {"cCodWeb",    "N",    11,    0, "Código para la web" },;
@@ -2629,7 +2631,7 @@ FUNCTION aItmFam()
                      {"lMostrar",   "L",     1,    0, "Lógico para mostrar ventana de comentarios" },;
                      {"cCodImp",    "C",     3,    0, "Codigo del orden de impresion comanda" },;
                      {"cNomImp",    "C",    50,    0, "Nombre del orden de impresion comanda" },;
-                     {"nPosInt",    "N",     3,    0, "Pocisión para mostrar en internet" },;
+                     {"nPosInt",    "N",     3,    0, "Posición para mostrar en internet" },;
                      {"lFamInt",    "L",     1,    0, "Añade la familia junto con la descripción en internet" },;
                      {"cComFam",    "C",     3,    0, "Comentario por defecto para la familia" },;
                      {"cDesWeb",    "C",   250,    0, "Descripción para la web" },;

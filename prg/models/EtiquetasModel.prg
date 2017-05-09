@@ -97,7 +97,7 @@ Return ( .t. )
 
 //---------------------------------------------------------------------------//
 
-METHOD   getImportSentence( cPath )
+METHOD getImportSentence( cPath )
 
    local hConstructor := hb_hkeys( ::hDbfToCategory )
    local cDbfTable
@@ -126,7 +126,7 @@ METHOD   getImportSentence( cPath )
       dbUseArea( .t., cLocalDriver(), cPath + "\" + cDbfTable, cCheckArea( "dbf", @dbf ), .f. )
 
       if ( dbf )->( neterr() )
-      Return ( cInsert )
+         Return ( Self )
       end if 
 
       cChildrenInsert := "INSERT INTO " + ::cTableName +  " ( nombre, imagen, id_padre) VALUES "

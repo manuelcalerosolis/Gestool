@@ -124,9 +124,9 @@ METHOD buildAllProductInformation() CLASS TComercioProduct
 
    ::writeText( "Procesando articulos ... " )
 
-   ( D():Articulos( ::getView() ) )->(ordsetfocus( "lWebShop" ))
+   ( D():Articulos( ::getView() ) )->( ordsetfocus( "lWebShop" ) )
 
-   if ( D():Articulos( ::getView() ) )->(dbseek( ::getCurrentWebName() ) )
+   if ( D():Articulos( ::getView() ) )->( dbseek( ::getCurrentWebName() ) )
 
       while ( alltrim( ( D():Articulos( ::getView() ) )->cWebShop ) == ::getCurrentWebName() ) .and. !( ( D():Articulos( ::getView() ) )->( eof() ) )
 
@@ -518,6 +518,7 @@ Return ( priceReduction )
 
 METHOD imagesProduct( idProduct ) CLASS TComercioProduct
 
+   local nDefault       := 0
    local cImagen
    local aImages        := {}
    local cImgToken      := ""
@@ -540,10 +541,15 @@ METHOD imagesProduct( idProduct ) CLASS TComercioProduct
             for each cImgToken in aImgToken
 
                if file( cFileBmpName( cImgToken ) ) .and. ascan( aImages, {|a| hGet( a, "name" ) == cImgToken } ) == 0
+
+                  if ::getDefaultProductImage( idProduct, cImgToken )
+                     nDefault++
+                  end if
+
                   aadd( aImages, {  "name"               => cFileBmpName( cImgToken ),;
                                     "idProductGestool"   => idProduct,;
                                     "id"                 => ::getIdProductImage( idProduct, cImgToken ),;
-                                    "lDefault"           => ::getDefaultProductImage( idProduct, cImgToken ) } )
+                                    "lDefault"           => if( nDefault > 0, .f., ::getDefaultProductImage( idProduct, cImgToken ) ) } )
                end if 
 
             next
@@ -571,10 +577,15 @@ METHOD imagesProduct( idProduct ) CLASS TComercioProduct
             cImagen  := alltrim( ( D():ArticuloImagenes( ::getView() ) )->cImgArt )
 
             if file( cFileBmpName( cImagen ) ) .and. ascan( aImages, {|a| hGet( a, "name" ) == cImagen } ) == 0
+
+               if ( D():ArticuloImagenes( ::getView() ) )->lDefImg
+                  nDefault++
+               end if
+
                aadd( aImages, {  "name"               => cFileBmpName( cImagen ),;
                                  "idProductGestool"   => idProduct,;
                                  "id"                 => ( D():ArticuloImagenes( ::getView() ) )->nId,;
-                                 "lDefault"           => ( D():ArticuloImagenes( ::getView() ) )->lDefImg } )
+                                 "lDefault"           => if( nDefault > 0, .f., ( D():ArticuloImagenes( ::getView() ) )->lDefImg ) } )
             end if 
 
             ( D():ArticuloImagenes( ::getView() ) )->( dbskip() ) 
@@ -850,7 +861,7 @@ METHOD insertProductPrestashopTable( hProduct, idCategory ) CLASS TComercioProdu
    local cCommand
    local idProduct
 
-   ::writeText( "Aíadiendo artículo: " + hGet( hProduct, "description" ) )
+   ::writeText( "Añadiendo artículo: " + hGet( hProduct, "description" ) )
 
    idProduct         := 0
 
@@ -955,7 +966,7 @@ METHOD insertProductLang( idProduct, hProduct ) CLASS TComercioProduct
                      "available_later ) " + ;
                   "VALUES ( " + ;
                      "'" + alltrim( str( idProduct ) ) + "', " + ;                                             // id_product
-                     "'" + ::getLanguage() + "', " + ;                                                         // id_lang
+                     ::getLanguage() + ", " + ;                                                                // id_lang
                      "'" + ::oConexionMySQLDatabase():escapeStr( hGet( hProduct, "description" ) ) + "', " + ; // description
                      "'" + hGet( hProduct, "description_short" ) + "', " + ;                                   // description_short
                      "'" + hGet( hProduct, "link_rewrite" ) + "', " + ;                                        // link_rewrite
@@ -986,7 +997,7 @@ METHOD insertProductLang( idProduct, hProduct ) CLASS TComercioProduct
                      "available_later ) " + ;
                   "VALUES ( " + ;
                      "'" + alltrim( str( idProduct ) ) + "', " + ;                                                // id_product
-                     "'" + AllTrim( Str( hget( hLang, "idLang" ) ) ) + "', " + ;                                                     // id_lang
+                     hget( hLang, "idLang" ) + ", " + ;                                                           // id_lang
                      "'" + ::oConexionMySQLDatabase():escapeStr( hGet( hLang, "longDescription" ) ) + "', " + ;   // description
                      "'" + hGet( hLang, "shortDescription" ) + "', " + ;                                          // description_short
                      "'" + hGet( hProduct, "link_rewrite" ) + "', " + ;                                           // link_rewrite
@@ -1123,13 +1134,13 @@ METHOD insertImageLang( hProduct, hImage, idImagePrestashop )
 
    local cCommand
 
-   cCommand := "INSERT INTO " + ::cPrefixTable( "image_lang" ) + " ( " +;
-                  "id_image, " + ;
-                  "id_lang, " + ;
-                  "legend ) " + ;
-               "VALUES (" + ;
-                  "'" + alltrim( str( idImagePrestashop ) ) + "', " + ;
-                  "'" + ::getLanguage() + "', " + ;
+   cCommand := "INSERT INTO " + ::cPrefixTable( "image_lang" ) + " ( "                             + ;
+                  "id_image, "                                                                     + ;
+                  "id_lang, "                                                                      + ;
+                  "legend ) "                                                                      + ;
+               "VALUES ("                                                                          + ;
+                  "'" + alltrim( str( idImagePrestashop ) ) + "', "                                + ;
+                  ::getLanguage() + ", "                                                           + ;
                   "'" + ::oConexionMySQLDatabase():escapeStr( hGet( hProduct, "name" ) ) + "' )"
 
    if ::commandExecDirect( cCommand )
@@ -1852,7 +1863,7 @@ METHOD insertTaxPrestashop( hTax ) CLASS TComercioProduct
                   "name ) " + ;
                "VALUES ( " + ;
                   "'" + alltrim( str( idTax ) ) + "', " + ;                                  // id_tax
-                  "'" + ::getLanguage() + "', " + ;                                          // id_lang
+                  ::getLanguage() + ", " + ;                                                 // id_lang
                   "'" + ::oConexionMySQLDatabase():Escapestr( hGet( hTax, "name" ) ) + "' )" // name
 
    if ::commandExecDirect( cCommand )
@@ -2005,7 +2016,7 @@ METHOD insertPropertiesHeader( hPropertiesHeaderProduct ) CLASS TComercioProduct
                                  "public_name ) " + ;
                               "VALUES ( " + ;
                                  "'" + alltrim( str( idPrestashop ) ) + "', " + ;            // id_attribute_group
-                                 "'" + ::getLanguage() + "', " + ;                           // id_lang
+                                 ::getLanguage() + ", " + ;                                  // id_lang
                                  "'" + hGet( hPropertiesHeaderProduct, "name" ) + "', " + ;  // name
                                  "'" + hGet( hPropertiesHeaderProduct, "name" ) + "' )"      // public_name
 
@@ -2056,7 +2067,7 @@ METHOD insertPropertiesLineProduct( hPropertiesLineProduct, nPosition ) CLASS TC
                         "name ) " + ;
                      "VALUES ( " + ;
                         "'" + alltrim( str( idPrestashop ) ) + "', " + ;                                             // id_attribute
-                        "'" + ::getLanguage() + "', " + ;                                                            // id_lang
+                        ::getLanguage() + ", " + ;                                                                   // id_lang
                         "'" + ::oConexionMySQLDatabase():Escapestr( hGet( hPropertiesLineProduct, "name" ) ) + "' )" // name
 
       if !::commandExecDirect( cCommand )

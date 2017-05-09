@@ -19,13 +19,13 @@ CLASS TComercioCategory FROM TComercioConector
 
    METHOD insertCategories( hCategory )
       METHOD insertCategory()
-      METHOD insertCategoriesLang()
+      METHOD getCategoryLangs()
          METHOD insertCategoryLang()
       METHOD insertCategoryShop()
       METHOD insertCategoryGroup( hCategory, idCategory )
 
-   METHOD insertRootCategory() 
-      METHOD insertRootCategoryLangs()
+   METHOD buildRootCategoryInformation() 
+      METHOD buildRootCategoryLangs()
 
    METHOD getParentCategory( idCategory ) 
    METHOD getNodeParentCategory( idCategory )
@@ -54,11 +54,11 @@ METHOD buildCategory( id ) CLASS TComercioCategory
    local statusFamilias
 
    if !( ::isSyncronizeAll() )
-      Return .f. 
+      RETURN .f. 
    end if 
 
    if ascan( ::aCategoriesProduct, {|h| hGet( h, "id" ) == id } ) != 0
-      Return .f.
+      RETURN .f.
    end if
 
    statusFamilias       := aGetStatus( D():Familias( ::getView() ) ) 
@@ -69,11 +69,13 @@ METHOD buildCategory( id ) CLASS TComercioCategory
          ::buildCategory( ( D():Familias( ::getView() ) )->cFamCmb )
       end if
 
-      if empty( (D():Familias( ::getView() ) )->cDesWeb )
-         categoryName   := alltrim( ( D():Familias( ::getView() ) )->cNomFam )
-      else
+      categoryName      := alltrim( ( D():Familias( ::getView() ) )->cNomFam )
+
+      if !empty( ( D():Familias( ::getView() ) )->cDesWeb )
          categoryName   := alltrim( ( D():Familias( ::getView() ) )->cDesWeb )
       end if  
+
+      aLangs            := ::getCategoryLangs( id, categoryName )
 
       aAdd( ::aCategoriesProduct,   {  "id"              => id,;
                                        "id_parent"       => alltrim( ( D():Familias( ::getView() ) )->cFamCmb ),;
@@ -82,13 +84,14 @@ METHOD buildCategory( id ) CLASS TComercioCategory
                                        "link_rewrite"    => cLinkRewrite( categoryName ),;
                                        "image"           => cFileBmpName( alltrim( ( D():Familias( ::getView() ) )->cImgBtn ) ),;
                                        "cPrefijoNombre"  => "",;
-                                       "aTypeImages"     => {} } )
+                                       "aTypeImages"     => {},;
+                                       "langs"           => aLangs } )
 
    end if   
 
    setStatus( D():Familias( ::getView() ), statusFamilias ) 
 
-Return ( Self )
+RETURN ( Self )
 
 //---------------------------------------------------------------------------//
 
@@ -105,7 +108,7 @@ METHOD truncateAllTables() CLASS TComercioCategory
       ::truncateTable( tableToDelete )
    next 
 
-Return ( self )
+RETURN ( self )
 
 //---------------------------------------------------------------------------//
 // Insertamos el root en la tabla de categorias------------------------------
@@ -116,17 +119,28 @@ METHOD cleanGestoolReferences() CLASS TComercioCategory
 
    ::TPrestashopId():deleteDocumentValuesCategory( ::getCurrentWebName() )
 
-Return ( Self )
+RETURN ( Self )
 
 //---------------------------------------------------------------------------//
 
-METHOD insertRootCategory() CLASS TComercioCategory
+METHOD buildRootCategoryInformation() CLASS TComercioCategory
 
-   local cCommand := ""
+   local statusFamilias
+
+   if ( D():Familias( ::getView() ) )->( dbseekinord( "Root", "cType" ) )  
+      ::buildCategory( ( D():Familias( ::getView() ) )->cCodFam )
+   else 
+      RETURN ( .f. )
+   end if 
+
+   if ( D():Familias( ::getView() ) )->( dbseekinord( "Start", "cType" ) )  
+      ::buildCategory( ( D():Familias( ::getView() ) )->cCodFam )
+   else 
+      RETURN ( .f. )
+   end if 
 
    /*
    Insertamos el root en la tabla de categorias------------------------------
-   */
 
    ::writeText( "Añadiendo categoría raiz" )
 
@@ -185,83 +199,11 @@ METHOD insertRootCategory() CLASS TComercioCategory
    else
       ::writeText( "Error al insertar la categoría inicio", 3 )
    end if
+   */
 
    SysRefresh()
 
-Return ( Self )
-
-//---------------------------------------------------------------------------//
-
-METHOD insertRootCategoryLangs()
-
-   ::insertCategoryLang( ::getLanguage() )
-
-   if !empty( ::TComercioConfig():getLangs() )
-      heval( ::TComercioConfig():getLangs(), {|k,v| ::insertCategoryLang( v ) } )
-   end if 
-
-RETURN ( Self )
-
-//---------------------------------------------------------------------------//
-
-METHOD insertCategoriesLang( hCategory )
-
-   local hLang
-
-   ::insertCategoryLang( ::getLanguage(), hGet( hCategory, "name" ), hGet( hCategory, "description" ), hGet( hCategory, "link_rewrite" ) )
-
-   if empty( ::TComercioConfig():getLangs() )
-      RETURN ( Self )
-   end if 
-
-   for each hLang in ( ::TComercioConfig():getLangs() )
-
-      if ( D():FamiliasLenguaje() )->( dbseekinord( hget( hCategory, "id" ) + hLang:__enumKey, "cCodLen" ) )
-         ::insertCategoryLang( hLang:__enumValue, ( D():FamiliasLenguaje() )->cDesFam, hGet( hCategory, "description" ), hGet( hCategory, "link_rewrite" ) )
-      else 
-         ::insertCategoryLang( hLang:__enumValue, hGet( hCategory, "name" ), hGet( hCategory, "description" ), hGet( hCategory, "link_rewrite" ) )
-      end if 
-
-   next 
-
-RETURN ( Self )
-
-//---------------------------------------------------------------------------//
-
-METHOD insertCategoryLang( idLang, cName, cDescription, cLinkRewrite  )
-
-   local cCommand
-
-   default cName        := 'Root'
-   default cDescription := 'Root'
-   default cLinkRewrite := 'Root'
-
-   cCommand             := "INSERT INTO " + ::cPrefixTable( "category_lang" ) + " ( "  + ;
-                              "id_category, "                                          + ;
-                              "id_lang, "                                              + ;
-                              "name, "                                                 + ;
-                              "description, "                                          + ;
-                              "link_rewrite, "                                         + ;
-                              "meta_title, "                                           + ;
-                              "meta_keywords, "                                        + ;
-                              "meta_description ) "                                    + ;
-                           "VALUES ( "                                                 + ;
-                              "'1', "                                                  + ;
-                              quoted( idLang ) + ", "                                  + ;
-                              "'Root',  "                                              + ;
-                              "'Root',  "                                              + ;
-                              "'Root',  "                                              + ;
-                              "'',  "                                                  + ;
-                              "'',  "                                                  + ;
-                              "'' )" 
-
-   if ::commandExecDirect( cCommand )
-      ::writeText( "He insertado correctamente en la tabla categorias lenguajes la categoría raiz", 3 )
-   else
-      ::writeText( "Error al insertar la categoría raiz", 3 )
-   end if
-
-RETURN ( Self )
+RETURN ( .t. )
 
 //---------------------------------------------------------------------------//
 
@@ -270,16 +212,13 @@ METHOD insertCategories() CLASS TComercioCategory
    local idCategory
    local hCategoryProduct
 
-   ::insertRootCategory()
-   ::insertRootCategoryLangs()
-
    for each hCategoryProduct in ::aCategoriesProduct
 
       idCategory  := ::insertCategory( hCategoryProduct )
    
       if !empty( idCategory )
 
-         ::insertCategoriesLang( hCategoryProduct, idCategory )
+         ::insertCategoryLang( hCategoryProduct, idCategory )
          ::insertCategoryShop( hCategoryProduct, idCategory )
          ::insertCategoryGroup( hCategoryProduct, idCategory )
 
@@ -290,7 +229,7 @@ METHOD insertCategories() CLASS TComercioCategory
 
    next 
 
-Return ( Self )
+RETURN ( Self )
 
 //---------------------------------------------------------------------------//
 
@@ -302,7 +241,7 @@ METHOD updateCategoriesParent() CLASS TComercioCategory
       ::updateCategoryParent( hCategoryProduct )
    next 
 
-Return ( Self )
+RETURN ( Self )
 
 //---------------------------------------------------------------------------//
 
@@ -312,38 +251,40 @@ METHOD updateCategoryParent( hCategoryProduct ) CLASS TComercioCategory
    local cCommand    
    local nCategory   
 
-   nParent           := ::TPrestashopId():getValueCategory( hGet( hCategoryProduct, "id_parent" ), ::getCurrentWebName(), 2 )
+   nParent           := ::TPrestashopId():getValueCategory( hGet( hCategoryProduct, "id_parent" ), ::getCurrentWebName(), 0 )
    nCategory         := ::TPrestashopId():getValueCategory( hGet( hCategoryProduct, "id" ), ::getCurrentWebName() )
 
-   cCommand          := "UPDATE " + ::cPrefixTable( "category" )              + " " + ;
+   if !empty( nParent ) .and. !empty( nCategory )
+
+      cCommand       := "UPDATE " + ::cPrefixTable( "category" )              + " " + ;
                            "SET id_parent = '" + alltrim( str( nParent ) )    + "' " + ;
                         "WHERE id_category = " + alltrim( str( nCategory ) )
 
-   if ::commandExecDirect( cCommand )
-      ::writeText( "He relacionado la familia " + hGet( hCategoryProduct, "name" ) + " correctamente en la tabla " + ::cPrefixTable( "category" ) )
-   else
-      ::writeText( "Error al relacionar la familia " + hGet( hCategoryProduct, "name" ) + " en la tabla " + ::cPrefixTable( "category" ) )
-   end if
+      if ::commandExecDirect( cCommand )
+         ::writeText( "He relacionado la familia " + hGet( hCategoryProduct, "name" ) + " correctamente en la tabla " + ::cPrefixTable( "category" ) )
+      else
+         ::writeText( "Error al relacionar la familia " + hGet( hCategoryProduct, "name" ) + " en la tabla " + ::cPrefixTable( "category" ) )
+      end if
+
+   end if 
 
    SysRefresh()
 
-Return ( Self )
+RETURN ( Self )
 
 //---------------------------------------------------------------------------//
 
 METHOD insertCategory( hCategory ) CLASS TComercioCategory
 
    local oImagen
-   local nParent        := 2
    local cCommand       := ""
    local idCategory     := 0
 
-   ::writeText( "Añadiendo categoría: " + hGet( hCategory, "name" ) )
+   ::writeText( "Añadiendo categoría : " + hGet( hCategory, "name" ) )
 
-   //Insertamos una familia nueva en las tablas de prestashop-----------------
+   // Insertamos una familia nueva en las tablas de prestashop-----------------
 
    cCommand             := "INSERT INTO " + ::cPrefixTable( "category" ) + "( "  + ;
-                              "id_parent, "                                      + ;
                               "level_depth, "                                    + ;
                               "nleft, "                                          + ;
                               "nright, "                                         + ;
@@ -352,17 +293,16 @@ METHOD insertCategory( hCategory ) CLASS TComercioCategory
                               "date_upd, "                                       + ;
                               "position ) "                                      + ;
                            "VALUES ( "                                           + ;
-                              "'" + alltrim( str( nParent ) ) + "', "            + ;
-                              "'2', "                                            + ;
-                              "'0', "                                            + ;
-                              "'0', "                                            + ;
-                              "'1', "                                            + ;
+                              "2, "                                              + ;
+                              "0, "                                              + ;
+                              "0, "                                              + ;
+                              "1, "                                              + ;
                               "'" + dtos( GetSysDate() ) + "', "                 + ;
                               "'" + dtos( GetSysDate() ) + "', "                 + ;
-                              "'0' ) "
+                              "0 ) "
 
    if ::commandExecDirect( cCommand )
-      idCategory  := ::oConexionMySQLDatabase():GetInsertId()
+      idCategory        := ::oConexionMySQLDatabase():GetInsertId()
       ::writeText( "He insertado la familia " + hGet( hCategory, "name" ) + " correctamente en la tabla " + ::cPrefixTable( "category" ), 3 )
    else
       ::writeText( "Error al insertar la familia " + hGet( hCategory, "name" ) + " en la tabla " + ::cPrefixTable( "category" ), 3 )
@@ -382,7 +322,107 @@ METHOD insertCategory( hCategory ) CLASS TComercioCategory
       ::TPrestashopId:setValueCategory( hget( hCategory, "id" ), ::getCurrentWebName(), idCategory )
    end if 
 
-Return ( idCategory )
+RETURN ( idCategory )
+
+//---------------------------------------------------------------------------//
+
+METHOD buildRootCategoryLangs()
+
+   ::insertCategoryLang( ::getLanguage() )
+
+   if !empty( ::TComercioConfig():getLangs() )
+      heval( ::TComercioConfig():getLangs(), {|k,v| ::insertCategoryLang( v ) } )
+   end if 
+
+RETURN ( Self )
+
+//---------------------------------------------------------------------------//
+
+METHOD getCategoryLangs( id, categoryName )
+
+   local cName
+   local hLang
+   local aLangs         := {}
+
+   aadd( aLangs,        {  'lang'         => {|| ::getLanguage() },; 
+                           'name'         => categoryName,; 
+                           'description'  => categoryName,; 
+                           'link_rewrite' => cLinkRewrite( categoryName ) } )
+
+   for each hLang in ( ::TComercioConfig():getLangs() )
+      
+      if ( D():FamiliasLenguajes( ::getView() ) )->( dbseekinord( id + hLang:__enumKey, "cCodLen" ) )
+         cName          := alltrim( ( D():FamiliasLenguajes( ::getView() ) )->cDesFam )
+      else 
+         cName          := categoryName
+      end if 
+
+      aadd( aLangs,     {  'lang'         => hLang:__enumValue,; 
+                           'name'         => cName,; 
+                           'description'  => cName,; 
+                           'link_rewrite' => cLinkRewrite( cName ) } )
+
+   next 
+
+   /*
+   ::insertCategoryLang( idCategory, ::getLanguage(), hGet( hCategory, "name" ), hGet( hCategory, "description" ), hGet( hCategory, "link_rewrite" ) )
+
+   if empty( ::TComercioConfig():getLangs() )
+      RETURN ( Self )
+   end if 
+
+   for each hLang in ( ::TComercioConfig():getLangs() )
+
+      if ( D():FamiliasLenguajes( ::getView() ) )->( dbseekinord( hget( hCategory, "id" ) + hLang:__enumKey, "cCodLen" ) )
+         ::insertCategoryLang( idCategory, hLang:__enumValue, ( D():FamiliasLenguajes( ::getView() ) )->cDesFam, hGet( hCategory, "description" ), hGet( hCategory, "link_rewrite" ) )
+      else 
+         ::insertCategoryLang( idCategory, hLang:__enumValue, hGet( hCategory, "name" ), hGet( hCategory, "description" ), hGet( hCategory, "link_rewrite" ) )
+      end if 
+
+   next 
+   */
+
+RETURN ( aLangs )
+
+//---------------------------------------------------------------------------//
+
+METHOD insertCategoryLang( hCategoryProduct, idCategory )
+
+   local hLang
+   local idLang
+   local cCommand
+
+   for each hLang in ( hget( hCategoryProduct, "langs" ) )
+
+      if hb_isblock( hget( hLang, "lang") )
+         idLang         := eval( hget( hLang, "lang") )
+      else 
+         idLang         := hget( hLang, "lang")
+      end if 
+
+      cCommand          := "INSERT INTO " + ::cPrefixTable( "category_lang" ) + " ( "  + ;
+                              "id_category, "                                          + ;
+                              "id_lang, "                                              + ;
+                              "name, "                                                 + ;
+                              "description, "                                          + ;
+                              "link_rewrite ) "                                        + ;
+                           "VALUES ( "                                                 + ;
+                              alltrim( str( idCategory ) ) + ", "                      + ;
+                              alltrim( idLang ) + ", "                                 + ;
+                              quoted( hget( hLang, 'name' ) ) + ", "                   + ;
+                              quoted( hget( hLang, 'description' ) ) + ", "            + ;
+                              quoted( hget( hLang, 'link_rewrite' ) ) + " ) "
+
+
+      if ::commandExecDirect( cCommand )
+         ::writeText( "He insertado correctamente en la tabla categorias lenguajes la categoría raiz", 3 )
+      else
+         ::writeText( "Error al insertar la categoría raiz", 3 )
+      end if
+
+   next 
+
+RETURN ( Self )
 
 //---------------------------------------------------------------------------//
 
@@ -403,7 +443,7 @@ METHOD insertCategoryShop( hCategory, idCategory ) CLASS TComercioCategory
       ::writeText( "Error al insertar la categoría inicio en " + ::cPrefixTable( "category_shop" ), 3 )
    end if
 
-Return ( Self )
+RETURN ( Self )
 
 //---------------------------------------------------------------------------//
 
@@ -422,7 +462,7 @@ METHOD insertCategoryGroup( hCategory, idCategory ) CLASS TComercioCategory
       ::writeText( "Error al insertar la familia " + hGet( hCategory, "name" ) + " en la tabla " + ::cPrefixTable( "category_group" ), 3 )
    end if
 
-Return ( Self )
+RETURN ( Self )
 
 //---------------------------------------------------------------------------//
 
@@ -434,7 +474,7 @@ METHOD getParentCategory( idCategory ) CLASS TComercioCategory
       idParentCategory       := ::TPrestashopId():getValueCategory( idCategory, ::getCurrentWebName() )  
    end if
 
-Return ( idParentCategory )
+RETURN ( idParentCategory )
 
 //---------------------------------------------------------------------------//
 
@@ -446,7 +486,7 @@ METHOD getNodeParentCategory( idCategory ) CLASS TComercioCategory
       idNode               := ( D():Familias( ::getView() ) )->cFamCmb
    end if   
 
-Return ( idNode )
+RETURN ( idNode )
 
 //---------------------------------------------------------------------------//
 
@@ -469,14 +509,14 @@ METHOD recalculatePositionsCategory() CLASS TComercioCategory
    oQuery                  := ::queryExecDirect( cQuery )
    if !( oQuery:Open() )
       ::meterProcesoText( "Error al ejecutar " + "SELECT * FROM " + ::cPrefixTable( "category" ) )
-      Return ( .f. )
+      RETURN ( .f. )
    end if
 
    nTotalCategory          := oQuery:RecCount()
 
    if nTotalCategory == 0
       ::writeText( "No hay elementos en la categoría" )
-      Return ( .f. )
+      RETURN ( .f. )
    end if
 
    oQuery:GoTop()
@@ -513,7 +553,7 @@ METHOD recalculatePositionsCategory() CLASS TComercioCategory
 
    end while
 
-Return ( .t. )
+RETURN ( .t. )
 
 //---------------------------------------------------------------------------//
 
@@ -526,7 +566,7 @@ METHOD buildImageCategory( hCategoryProduct )
    fileImage   := hget( hCategoryProduct, "image" )
 
    if !File( fileImage )
-      Return nil
+      RETURN nil
    end if
    
    cTmpFile    := cPatTmp() + hget( hCategoryProduct, "cPrefijoNombre" ) + ".jpg"
@@ -555,7 +595,7 @@ METHOD buildImageCategory( hCategoryProduct )
 
    next
 
-Return ( .t. )
+RETURN ( .t. )
 
 //---------------------------------------------------------------------------//
 
@@ -565,7 +605,7 @@ METHOD uploadImageCategory( hCategoryProduct )
    local cRemoteImage
 
    if !hhaskey( hCategoryProduct, "aTypeImages")
-      Return ( nil )
+      RETURN ( nil )
    end if 
 
    for each cTypeImage in hget( hCategoryProduct, "aTypeImages" )
@@ -582,6 +622,6 @@ METHOD uploadImageCategory( hCategoryProduct )
 
    next
 
-Return ( .t. )
+RETURN ( .t. )
 
 //---------------------------------------------------------------------------//

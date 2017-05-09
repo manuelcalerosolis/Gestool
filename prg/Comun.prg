@@ -110,15 +110,15 @@ static hMapaAjuste      :=  { "#,#0"   => { "Round" => 1,  "Incrementa" => 0.00,
 
 //----------------------------------------------------------------------------//
 
-Function oWnd() ; Return oWnd
+FUNCTION oWnd() ; RETURN oWnd
 
 //---------------------------------------------------------------------------//
 
-Function oWndBar() ; Return oWndBar
+FUNCTION oWndBar() ; RETURN oWndBar
 
 //---------------------------------------------------------------------------//
 
-Function CreateMainWindow( oIconApp )
+FUNCTION CreateMainWindow( oIconApp )
 
    // Carga o no la imagen de fondo--------------------------------------------
 
@@ -172,11 +172,11 @@ Function CreateMainWindow( oIconApp )
 
    SysRefresh()
 
-Return nil
+RETURN nil
 
 //-----------------------------------------------------------------------------//
 
-Function BuildMenu()
+FUNCTION BuildMenu()
 
    local oMenu
 
@@ -187,7 +187,7 @@ RETURN oMenu
 
 //---------------------------------------------------------------------------//
 
-Function lStartCheck()
+FUNCTION lStartCheck()
 
    CursorWait()
 
@@ -275,47 +275,17 @@ Function lStartCheck()
 
    CursorWe()
 
-Return ( .t. )
+RETURN ( .t. )
 
 //---------------------------------------------------------------------------//
 
-Function Test()
-<<<<<<< HEAD
+FUNCTION Test()
 
-   with object TComercio():New()
-
-      :setDebugMode()
-      :setWebToExport( "Localhost" ) 
-      :dialogActivate()
-
-   end with 
-
-/*
-   TComercioConfig():getInstance():LoadJSON()
-
-   TComercioConfig():getInstance():setCurrentWebName("Temporada")
-=======
->>>>>>> b68ade15e240b6cb4a7ce7cdcf587b9f01c22ca9
-
-<<<<<<< HEAD
-   EtiquetasModel():New():getImportSentence()
-=======
-<<<<<<< HEAD
-   //Situaciones():New():ActivateShell()
-=======
-<<<<<<< HEAD
-   //Etiquetas():New():ActivateShell()
-=======
-   msgalert( hb_valtoexp( TComercioConfig():getInstance():getLangs() ) )
->>>>>>> 0f734ba3783c09158fd3c4e9a7f76bf451f7fa33
->>>>>>> origin/master
->>>>>>> origin/master
-
-Return ( nil )
+RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 
-Function WndResize( oWnd )
+FUNCTION WndResize( oWnd )
 
    local oBlock
    local oError
@@ -339,57 +309,57 @@ Function WndResize( oWnd )
 
    ErrorBlock( oBlock )
 
-Return nil
+RETURN nil
 
 //-----------------------------------------------------------------------------//
 
-Function oMsgProgress()
+FUNCTION oMsgProgress()
 
    if empty( oMsgProgress ) .and. !empty( oWnd() )
       oMsgProgress   := TProgress():New( 3, oDlgProgress:nLeft() - 2 , oWnd():oMsgBar, 0, , , .t., .f., oDlgProgress:nWidth - 2, 16 )
    end if
 
-Return ( oMsgProgress )
+RETURN ( oMsgProgress )
 
 //--------------------------------------------------------------------------//
 
-Function EndProgress()
+FUNCTION EndProgress()
 
    oMsgProgress:End()
 
    oMsgProgress      := nil
 
-Return ( nil )
+RETURN ( nil )
 
 //--------------------------------------------------------------------------//
 
-Function Titulo( cTxt )
+FUNCTION Titulo( cTxt )
 
-Return ( if( oWnd() != nil, oWnd():cTitle( cTxt ), "" ) )
-
-//--------------------------------------------------------------------------//
-
-Function oMsgSesion() ; Return ( oMsgSesion )
+RETURN ( if( oWnd() != nil, oWnd():cTitle( cTxt ), "" ) )
 
 //--------------------------------------------------------------------------//
 
-Function oMsgText( cText )
+FUNCTION oMsgSesion() ; RETURN ( oMsgSesion )
+
+//--------------------------------------------------------------------------//
+
+FUNCTION oMsgText( cText )
 
    DEFAULT cText     := __GSTCOPYRIGHT__ + Space(2) + cNameVersion()
 
    if empty( oWnd() )
-      Return nil 
+      RETURN nil 
    end if 
 
    if _isData( oWnd(), "oMsgBar" ) .and. ( oWnd():oMsgBar != nil ) 
       oWnd():oMsgBar:SetMsg( cText )
    end if
 
-Return ( nil )
+RETURN ( nil )
 
 //--------------------------------------------------------------------------//
 
-Static Function StdKey( nKey )
+Static FUNCTION StdKey( nKey )
 
    do case
       case nKey == 65 .and. GetKeyState( VK_CONTROL ) // Crtl + A
@@ -406,7 +376,7 @@ Static Function StdKey( nKey )
          dbDialog()
    end case
 
-Return Nil
+RETURN Nil
 
 //---------------------------------------------------------------------------//
 
@@ -506,7 +476,7 @@ FUNCTION ControlAplicacion()
    local cSayAlquiler   
 
    if lControlAcceso() 
-      Return .t.
+      RETURN .t.
    end if 
 
    nSerialHD      := Abs( nSerialHD() )
@@ -641,7 +611,7 @@ RETURN .t.
 
 //---------------------------------------------------------------------------//
 
-Function ExitDialog( oDlg, nLicencia, nSerialHD, nSerialUSR, oSerialUsr, oSayAlquiler, cSayAlquiler )
+FUNCTION ExitDialog( oDlg, nLicencia, nSerialHD, nSerialUSR, oSerialUsr, oSayAlquiler, cSayAlquiler )
 
    local n 
    local nSerialCRC
@@ -670,55 +640,55 @@ Function ExitDialog( oDlg, nLicencia, nSerialHD, nSerialUSR, oSerialUsr, oSayAlq
          if Empty( cSayAlquiler[1] )
             MsgStop( "El campo N.I.F./ C.I.F. no puede estar vacío" )
             oSayAlquiler[1]:SetFocus()
-            Return .f.
+            RETURN .f.
          end if
 
          if Empty( cSayAlquiler[2] )
             MsgStop( "El campo nombre no puede estar vacío" )
             oSayAlquiler[2]:SetFocus()
-            Return .f.
+            RETURN .f.
          end if
 
          if Empty( cSayAlquiler[3] )
             MsgStop( "El campo domicilio no puede estar vacío" )
             oSayAlquiler[3]:SetFocus()
-            Return .f.
+            RETURN .f.
          end if
 
          if Empty( cSayAlquiler[4] )
             MsgStop( "El campo población no puede estar vacío" )
             oSayAlquiler[4]:SetFocus()
-            Return .f.
+            RETURN .f.
          end if
 
          if Empty( cSayAlquiler[5] )
             MsgStop( "El campo código postal no puede estar vacío" )
             oSayAlquiler[5]:SetFocus()
-            Return .f.
+            RETURN .f.
          end if
 
          if Empty( cSayAlquiler[6] )
             MsgStop( "El campo email no puede estar vacío" )
             oSayAlquiler[6]:SetFocus()
-            Return .f.
+            RETURN .f.
          end if
 
          if !lValidMail( cSayAlquiler[6] )
             MsgStop( "El campo email no es valido" )
             oSayAlquiler[6]:SetFocus()
-            Return .f.
+            RETURN .f.
          end if
 
          if Empty( cSayAlquiler[7] )
             MsgStop( "El campo teléfono no puede estar vacío" )
             oSayAlquiler[7]:SetFocus()
-            Return .f.
+            RETURN .f.
          end if
 
          if Empty( cSayAlquiler[8] )
             MsgStop( "El campo provincia no puede estar vacío" )
             oSayAlquiler[8]:SetFocus()
-            Return .f.
+            RETURN .f.
          end if
 
          CursorWait()
@@ -739,7 +709,7 @@ Function ExitDialog( oDlg, nLicencia, nSerialHD, nSerialUSR, oSerialUsr, oSayAlq
 
    end case      
 
-Return ( .t. )
+RETURN ( .t. )
 
 //---------------------------------------------------------------------------//
 
@@ -772,11 +742,11 @@ FUNCTION ChangeLicenciaMode( nLicencia, oSerialHd, oSerialUsr, oSayPerpetua, oSa
 
    end case
 
-Return .t.
+RETURN .t.
 
 //---------------------------------------------------------------------------//
 
-Function About()
+FUNCTION About()
 
    local oDlg
    local oTree
@@ -817,11 +787,11 @@ Function About()
 
    oBrush:End()
 
-Return nil
+RETURN nil
 
 //---------------------------------------------------------------------------//
 
-Function RunAsistenciaRemota()
+FUNCTION RunAsistenciaRemota()
 
    local nHnd
 
@@ -839,11 +809,11 @@ Function RunAsistenciaRemota()
 
    end if
 
-Return nil
+RETURN nil
 
 //---------------------------------------------------------------------------//
 
-Function lEnviarCorreoWatchdog( cSay, oDlg )
+FUNCTION lEnviarCorreoWatchdog( cSay, oDlg )
 
    oDlg:Disable()
 
@@ -891,11 +861,11 @@ Function lEnviarCorreoWatchdog( cSay, oDlg )
 
    oDlg:Enable()
 
-Return ( .t. )
+RETURN ( .t. )
 
 //---------------------------------------------------------------------------//
          
-Function lEnviarCorreoCliente( cSay, oDlg )
+FUNCTION lEnviarCorreoCliente( cSay, oDlg )
 
    oDlg:Disable()
 
@@ -936,13 +906,13 @@ Function lEnviarCorreoCliente( cSay, oDlg )
 
    oDlg:Enable()
 
-Return ( .t. )
+RETURN ( .t. )
 
 //---------------------------------------------------------------------------//
 // Remember to use 'exit' procedures to asure that resources are
 // freed on a possible application error
 
-Static Function FinishAplication() //  Static Function
+Static FUNCTION FinishAplication() //  Static FUNCTION
 
    CursorWait()
 
@@ -976,11 +946,11 @@ Static Function FinishAplication() //  Static Function
 
    // winExec( "notepad checkres.txt" )
 
-Return nil
+RETURN nil
 
 //---------------------------------------------------------------------------//
 
-Static Function addMenu( oMenu, oTree )
+Static FUNCTION addMenu( oMenu, oTree )
 
    local n
    local cPrompt
@@ -1005,11 +975,11 @@ Static Function addMenu( oMenu, oTree )
 
    next
 
-return .t.
+RETURN .t.
 
 //----------------------------------------------------------------------------//
 
-static function nLeft( oMsgBar )
+static FUNCTION nLeft( oMsgBar )
 
    local n
    local nLen  := Len( oMsgBar:aItems )
@@ -1021,7 +991,7 @@ static function nLeft( oMsgBar )
       next
    end if
 
-return nPos
+RETURN nPos
 
 //------------------------------------------------------------------------------------------------------------------------------
 
@@ -1033,7 +1003,7 @@ RETURN
 
 //---------------------------------------------------------------------------//
 
-static function WndPaint( hDC, oWnd )
+static FUNCTION WndPaint( hDC, oWnd )
 
    local oBlock
 
@@ -1054,53 +1024,53 @@ static function WndPaint( hDC, oWnd )
 
    ErrorBlock( oBlock )
 
-return nil
+RETURN nil
 
 //---------------------------------------------------------------------------//
 
-Function cNbrUsr( cNbr )
+FUNCTION cNbrUsr( cNbr )
 
    if cNbr != nil .and. oMsgUser != nil
       oMsgUser:SetText( "Usuario : " + RTrim( cNbr ) )
    end if
 
-Return cNbr
+RETURN cNbr
 
 //---------------------------------------------------------------------------//
 
-Function cCajUsr( cCaj )
+FUNCTION cCajUsr( cCaj )
 
    if !Empty( cCaj ) .and. oMsgCaja != nil
       oMsgCaja:SetText( "Caja : " + RTrim( cCaj ) )
    end if
 
-Return ( cCaj )
+RETURN ( cCaj )
 
 //---------------------------------------------------------------------------//
 
-Function cDlgUsr( cDlg )
+FUNCTION cDlgUsr( cDlg )
 
    if cDlg != nil .and. oMsgDelegacion != nil
       oMsgDelegacion:SetText( "Delegación : " + RTrim( cDlg ) )
    end if
 
-Return ( cDlg )
+RETURN ( cDlg )
 
 //---------------------------------------------------------------------------//
 
-Function EnableAcceso()
+FUNCTION EnableAcceso()
 
-Return ( nil ) // if( !Empty( oWndBar ), oWndBar:Enable(), ) )
-
-//---------------------------------------------------------------------------//
-
-Function DisableAcceso()
-
-Return ( nil ) // if( !Empty( oWndBar ), oWndBar:Disable(), ) )
+RETURN ( nil ) // if( !Empty( oWndBar ), oWndBar:Enable(), ) )
 
 //---------------------------------------------------------------------------//
 
-Function CreateAcceso( oWnd )
+FUNCTION DisableAcceso()
+
+RETURN ( nil ) // if( !Empty( oWndBar ), oWndBar:Disable(), ) )
+
+//---------------------------------------------------------------------------//
+
+FUNCTION CreateAcceso( oWnd )
 
    local oAcceso
    local oGrupo
@@ -2785,29 +2755,29 @@ Function CreateAcceso( oWnd )
    oItem:cBmpBig        := "gc_user_headset_32"
    oItem:lShow          := .f.
 
-Return ( oAcceso )
+RETURN ( oAcceso )
 
 //---------------------------------------------------------------------------//
 
 
-Function IsReport()
+FUNCTION IsReport()
 
-Return ( .f. )
+RETURN ( .f. )
 
 //---------------------------------------------------------------------------//
 
-Function validRunReport( nLevel )
+FUNCTION validRunReport( nLevel )
 
    if nAnd( nLevelUsr( nLevel ), 1 ) != 0
       msgStop( "Acceso no permitido." )
-      Return .f.
+      RETURN .f.
    end if
 
-Return .t.
+RETURN .t.
 
 //---------------------------------------------------------------------------//
 
-Function cBmpVersion() 
+FUNCTION cBmpVersion() 
 
    if isNil( cBmpVersion )
 
@@ -2832,14 +2802,14 @@ Function cBmpVersion()
 
    end if
 
-Return ( cBmpVersion ) 
+RETURN ( cBmpVersion ) 
 
 //---------------------------------------------------------------------------//
 /*
 Guardamos el nombre de la versión
 */
 
-Function cNameVersion()
+FUNCTION cNameVersion()
 
    if IsNil( cNameVersion )
 
@@ -2864,24 +2834,24 @@ Function cNameVersion()
 
    end if
 
-Return ( cNameVersion )
+RETURN ( cNameVersion )
 
 //---------------------------------------------------------------------------//
 
-Function cTypeVersion( cType )
+FUNCTION cTypeVersion( cType )
 
    if !Empty( cType )
       cTypeVersion   := cType
    end if 
 
-Return ( cTypeVersion )
+RETURN ( cTypeVersion )
 
 //---------------------------------------------------------------------------//
 /*
 Damos valor a la estatica para la versión Oscommerce
 */
 
-Function IsOsCommerce()
+FUNCTION IsOsCommerce()
 
    if IsNil( lOsCommerce )
 
@@ -2893,14 +2863,14 @@ Function IsOsCommerce()
 
    end if
 
-Return lOsCommerce
+RETURN lOsCommerce
 
 //---------------------------------------------------------------------------//
 /*
 Damos valor a la estatica para la versión Profesional
 */
 
-Function IsProfesional()
+FUNCTION IsProfesional()
 
    if IsNil( lProfesional )
 
@@ -2913,14 +2883,14 @@ Function IsProfesional()
 
    end if
 
-Return lProfesional
+RETURN lProfesional
 
 //---------------------------------------------------------------------------//
 /*
 Damos valor a la estatica para la versión Standard
 */
 
-Function IsStandard()
+FUNCTION IsStandard()
 
    if IsNil( lStandard )
 
@@ -2936,11 +2906,11 @@ Function IsStandard()
 
    end if
 
-Return lStandard
+RETURN lStandard
 
 //---------------------------------------------------------------------------//
 
-Function appCheckDirectory()
+FUNCTION appCheckDirectory()
 
    if( !lIsDir( cPatDat() ),           makedir( cNamePath( cPatDat() ) ), )
    if( !lIsDir( cPatADS() ),           makedir( cNamePath( cPatADS() ) ), )
@@ -2967,7 +2937,7 @@ Function appCheckDirectory()
    eraseFilesInDirectory( cPatTmp(), "*.*" )
    eraseFilesInDirectory( cPatLog(), "*.*" )
 
-Return ( nil )
+RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 
@@ -2976,7 +2946,7 @@ Ejecuta un fichero .hrb creado a partir de un .prg
 c:\xharbour\bin>harbour c:\test.prg /gh /n
 */
 
-Function Ejecutascript()
+FUNCTION Ejecutascript()
 
    local aScripts
    local cScript  := ""
@@ -3011,7 +2981,7 @@ Function Ejecutascript()
 
    WritePProString( "SCRIPT", "Fecha", Dtoc( GetSysDate() ), cIniAplication() )
 
-Return u
+RETURN u
 
 //---------------------------------------------------------------------------//
 /*
@@ -3019,7 +2989,7 @@ Ejecuta un fichero .hrb creado a partir de un .prg directamente
 c:\xharbour\bin>harbour c:\test.prg /gh /n
 */
 
-Function DirectEjecutaScript()
+FUNCTION DirectEjecutaScript()
 
    Local u
    Local pHrb
@@ -3050,11 +3020,11 @@ Function DirectEjecutaScript()
 
    end if
 
-Return u
+RETURN u
 
 //---------------------------------------------------------------------------//
 
-Function InitClasses()
+FUNCTION InitClasses()
 
    TShell()
    TAgenda()
@@ -3095,7 +3065,7 @@ Function InitClasses()
    TBandera():New()
    TCentroCoste()
 
-Return .t.
+RETURN .t.
 
 //--------------------------------------------------------------------------//
 
@@ -3209,7 +3179,7 @@ RETURN ( lCheck )
 
 //---------------------------------------------------------------------------//
 
-Function InitServices()
+FUNCTION InitServices()
 
    // Colocamos los avisos pa las notas----------------------------------------
 
@@ -3219,11 +3189,11 @@ Function InitServices()
 
    TScripts():New( cPatEmp() ):StartTimer()
    
-Return ( nil )
+RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 
-Function StopServices()
+FUNCTION StopServices()
  
    // Informe rapido de articulos----------------------------------------------
 
@@ -3237,17 +3207,17 @@ Function StopServices()
 
    TScripts():EndTimer()
 
-Return ( nil )
+RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 
-Function lDemoMode( lDemo )
+FUNCTION lDemoMode( lDemo )
 
    if lDemo != nil
       lDemoMode   := lDemo
    end if
 
-Return ( lDemoMode )
+RETURN ( lDemoMode )
 
 //---------------------------------------------------------------------------//
 
@@ -3264,7 +3234,7 @@ FUNCTION nAjuste( nNumber, cAdjust )
    local aNumber        := {}
 
    if Empty( nNumber )
-      Return ( 0 )
+      RETURN ( 0 )
    end if 
 
    /*
@@ -3307,7 +3277,7 @@ RETURN ( nResult )
 
 //---------------------------------------------------------------------------//
 
-Static Function nAjusteDecimales( cAjuste )
+Static FUNCTION nAjusteDecimales( cAjuste )
 
   local hAjuste
   local nAjusteDecimales
@@ -3319,11 +3289,11 @@ Static Function nAjusteDecimales( cAjuste )
     end if
   end if
 
-Return ( nAjusteDecimales )
+RETURN ( nAjusteDecimales )
 
 //---------------------------------------------------------------------------//
 
-Static Function nAjusteIncrementa( cAjuste )
+Static FUNCTION nAjusteIncrementa( cAjuste )
 
   local hAjuste
   local nAjusteIncrementa
@@ -3335,11 +3305,11 @@ Static Function nAjusteIncrementa( cAjuste )
     end if
   end if
 
-Return ( nAjusteIncrementa )
+RETURN ( nAjusteIncrementa )
 
 //---------------------------------------------------------------------------//
 
-Static Function nAjusteDecrementa( cAjuste )
+Static FUNCTION nAjusteDecrementa( cAjuste )
 
   local hAjuste
   local nAjusteDecrementa
@@ -3351,11 +3321,11 @@ Static Function nAjusteDecrementa( cAjuste )
     end if
   end if
 
-Return ( nAjusteDecrementa )
+RETURN ( nAjusteDecrementa )
 
 //---------------------------------------------------------------------------//
 
-Static Function nAjusteCeros( cAjuste )
+Static FUNCTION nAjusteCeros( cAjuste )
 
   local hAjuste
   local nAjusteCeros
@@ -3367,234 +3337,234 @@ Static Function nAjusteCeros( cAjuste )
     end if
   end if
 
-Return ( nAjusteCeros )
+RETURN ( nAjusteCeros )
 
 //---------------------------------------------------------------------------//
 
-Function lAds( lSetAds )
+FUNCTION lAds( lSetAds )
 
    if IsLogic( lSetAds )
       lAds     := lSetAds
    end if
 
-Return ( lAds )
+RETURN ( lAds )
 
 //----------------------------------------------------------------------------//
 
-Function lAIS( lSetAIS )
+FUNCTION lAIS( lSetAIS )
 
    if IsLogic( lSetAIS )
       lAIS     := lSetAIS
    end if
 
-Return ( lAIS )
+RETURN ( lAIS )
 
 //----------------------------------------------------------------------------//
 
-Function lAdsRdd()
+FUNCTION lAdsRdd()
 
-Return ( lAds() .or. lAIS() )
-
-//----------------------------------------------------------------------------//
-
-Function cFieldTimeStamp()
-
-Return ( if( lAdsRdd(), "Timestamp", "T" ) )
+RETURN ( lAds() .or. lAIS() )
 
 //----------------------------------------------------------------------------//
 
-Function cAdsIp( cSetIp )
+FUNCTION cFieldTimeStamp()
+
+RETURN ( if( lAdsRdd(), "Timestamp", "T" ) )
+
+//----------------------------------------------------------------------------//
+
+FUNCTION cAdsIp( cSetIp )
 
    if IsChar( cSetIp )
       cAdsIp      := cSetIp
    end if
 
-Return ( cAdsIp )
+RETURN ( cAdsIp )
 
 //----------------------------------------------------------------------------//
 
-Function cAdsPort( cPort )
+FUNCTION cAdsPort( cPort )
 
    if isChar( cPort )
       cAdsPort  := cPort
    end if 
 
-Return ( cAdsPort )
+RETURN ( cAdsPort )
 
 //----------------------------------------------------------------------------//
 
-Function cAdsData( cSetData )
+FUNCTION cAdsData( cSetData )
 
    if IsChar( cSetData )
       cAdsData  := cSetData
    end if
 
-Return ( if( !Empty( cAdsData ), cPath( cAdsData ), "" ) )
+RETURN ( if( !Empty( cAdsData ), cPath( cAdsData ), "" ) )
 
 //----------------------------------------------------------------------------//
 
-Function nAdsServer( nServer )
+FUNCTION nAdsServer( nServer )
 
    if IsNum( nServer )
       nAdsServer  := nServer
    end if
 
-Return ( nAdsServer )
+RETURN ( nAdsServer )
 
 //----------------------------------------------------------------------------//
 
-Function cAdsLocal( cLocal )
+FUNCTION cAdsLocal( cLocal )
 
    if IsChar( cLocal )
       cAdsLocal    := cLocal
    end if
 
-Return ( cAdsLocal )
+RETURN ( cAdsLocal )
 
 //----------------------------------------------------------------------------//
 
-Function cAdsUNC()
+FUNCTION cAdsUNC()
 
-Return ( cAdsIp() + cPath( cAdsData() ) )
+RETURN ( cAdsIp() + cPath( cAdsData() ) )
 
 //----------------------------------------------------------------------------//
 
-Function cAdsFile( cFile )
+FUNCTION cAdsFile( cFile )
 
    if ( isChar( cFile ) .and. !empty( cFile ) )
       cAdsFile    := cFile
    end if 
 
-Return ( cAdsFile )
+RETURN ( cAdsFile )
 
 //----------------------------------------------------------------------------//
 
-Function cAdsType( cType )
+FUNCTION cAdsType( cType )
 
    if ( isChar( cType ) .and. !empty( cType ) )
       cAdsType    := cType
    end if 
 
-Return ( cAdsType )
+RETURN ( cAdsType )
 
 //----------------------------------------------------------------------------//
 
-Function lCdx( lSetCdx )
+FUNCTION lCdx( lSetCdx )
 
    if IsLogic( lSetCdx )
       lCdx     := lSetCdx
    end if
 
-Return ( lCdx )
+RETURN ( lCdx )
 
 //---------------------------------------------------------------------------//
 
-Function cCodigoAgente( cAgente )
+FUNCTION cCodigoAgente( cAgente )
 
    if IsChar( cAgente )
       cCodigoAgente    := cAgente
    end if
 
-Return ( cCodigoAgente )
+RETURN ( cCodigoAgente )
 
 //----------------------------------------------------------------------------//
 
-Function lPda()
+FUNCTION lPda()
 
-Return ( "PDA" $ appParamsMain() )
+RETURN ( "PDA" $ appParamsMain() )
 
 //---------------------------------------------------------------------------//
 
-Function SetIndexToADSCDX()
+FUNCTION SetIndexToADSCDX()
 
    lCdx( .f. )
    lAIS( .t. )
 
    RddSetDefault( "ADSCDX" )
 
-Return nil 
+RETURN nil 
 
 //---------------------------------------------------------------------------//
 
-Function SetIndexToCDX()
+FUNCTION SetIndexToCDX()
 
    lCdx( .t. )
    lAIS( .f. )
    
    RddSetDefault( "DBFCDX" )
 
-Return nil 
+RETURN nil 
 
 //---------------------------------------------------------------------------//
 
-Function SetIndexToADS()
+FUNCTION SetIndexToADS()
 
    lCdx( .f. )
    lAIS( .t. )
 
    RddSetDefault( "ADS" )
 
-Return nil 
+RETURN nil 
 
 //---------------------------------------------------------------------------//
 
-Function cDriver()
+FUNCTION cDriver()
 
    if lAIS() .or. lAds()
-      Return ( 'ADS' )
+      RETURN ( 'ADS' )
    end if
 
-Return ( 'DBFCDX' )
+RETURN ( 'DBFCDX' )
 
 //---------------------------------------------------------------------------//
 
-Function cADSDriver()
+FUNCTION cADSDriver()
 
-Return ( 'ADS' )
+RETURN ( 'ADS' )
 
 //---------------------------------------------------------------------------//
 
-Function isADSDriver( cDriver )
+FUNCTION isADSDriver( cDriver )
 
   DEFAULT cDriver   := cDriver()
 
-Return ( cDriver == 'ADS' )
+RETURN ( cDriver == 'ADS' )
 
 //---------------------------------------------------------------------------//
 
-Function cLocalDriver()
+FUNCTION cLocalDriver()
 
-Return ( 'DBFCDX' )
+RETURN ( 'DBFCDX' )
 
 //---------------------------------------------------------------------------//
 
-Function cNombrePc( xValue )
+FUNCTION cNombrePc( xValue )
 
    if !Empty( xValue )
       cNombrePc   := xValue
    end if
 
-Return ( cNombrePc )
+RETURN ( cNombrePc )
 
 //--------------------------------------------------------------------------//
 
-Function CacheRecords( cAlias )
+FUNCTION CacheRecords( cAlias )
 
    if lAdsRdd()
       ( cAlias )->( AdsCacheRecords( 50 ) )
    end if
 
-Return nil
+RETURN nil
 
 //---------------------------------------------------------------------------//
 
-Function cPathDatos()
+FUNCTION cPathDatos()
 
-Return ( "Datos" )
+RETURN ( "Datos" )
 
 //---------------------------------------------------------------------------//
 
-Function cFullPathEmpresa()
+FUNCTION cFullPathEmpresa()
 
   local cCodigoEmpresa  := ""
 
@@ -3603,85 +3573,85 @@ Function cFullPathEmpresa()
   cCodigoEmpresa        += aEmp()[ _CODEMP ]
   cCodigoEmpresa        += "\"
   
-Return ( cCodigoEmpresa )
+RETURN ( cCodigoEmpresa )
 
 //---------------------------------------------------------------------------//
 
-Function cPatDat( lFull )
+FUNCTION cPatDat( lFull )
 
    DEFAULT lFull  := .f.
 
    if lAIS() 
-      Return ( if( lFull, cAdsUNC() + cPathDatos() + "\", cPathDatos() ) )
+      RETURN ( if( lFull, cAdsUNC() + cPathDatos() + "\", cPathDatos() ) )
    end if
 
-Return ( fullCurDir() + cPathDatos() + "\" )
+RETURN ( fullCurDir() + cPathDatos() + "\" )
 
 //----------------------------------------------------------------------------//
 
-Function cPathDatosLocal( lFull )
+FUNCTION cPathDatosLocal( lFull )
 
    DEFAULT lFull  := .f.
 
    if lAIS()
-      Return ( if( lFull, cAdsLocal() + cPathDatos() + "\", cPathDatos() + "\" ) )
+      RETURN ( if( lFull, cAdsLocal() + cPathDatos() + "\", cPathDatos() + "\" ) )
    end if
 
-Return ( fullCurDir() + cPathDatos() + "\" )
+RETURN ( fullCurDir() + cPathDatos() + "\" )
 
 //----------------------------------------------------------------------------//
 
-Function cPatADS( lFull )
+FUNCTION cPatADS( lFull )
 
    DEFAULT lFull  := .f.
 
    if lAIS()
-      Return ( if( lFull, cAdsUNC() + getSinglePathADS(), getSinglePathADS() ) )
+      RETURN ( if( lFull, cAdsUNC() + getSinglePathADS(), getSinglePathADS() ) )
    end if
 
-Return ( fullCurDir() + getSinglePathADS() )
+RETURN ( fullCurDir() + getSinglePathADS() )
 
 //----------------------------------------------------------------------------//
 
-Function getSinglePathADS()
+FUNCTION getSinglePathADS()
 
-Return ( "ADS\" )
+RETURN ( "ADS\" )
 
 //----------------------------------------------------------------------------//
 
-Function cPatEmpTmp( lShort )
+FUNCTION cPatEmpTmp( lShort )
 
    DEFAULT lShort  := .f.
 
    if lAds()
-      Return ( cAdsUNC() + "EmpTmp\" )
+      RETURN ( cAdsUNC() + "EmpTmp\" )
    end if
 
-Return ( if( !lShort, fullCurDir(), "" ) + "EmpTmp\" )
+RETURN ( if( !lShort, fullCurDir(), "" ) + "EmpTmp\" )
 
 //----------------------------------------------------------------------------//
 
-Function cPatEmpOld( cCodEmp )
+FUNCTION cPatEmpOld( cCodEmp )
 
    if lAds()
-      Return ( cAdsUNC() + "Emp" + cCodEmp + "\" )
+      RETURN ( cAdsUNC() + "Emp" + cCodEmp + "\" )
    end if
 
-Return ( fullCurDir() + "Emp" + cCodEmp + "\" )
+RETURN ( fullCurDir() + "Emp" + cCodEmp + "\" )
 
 //----------------------------------------------------------------------------//
 
-Function cPatGrpOld( cCodGrp )
+FUNCTION cPatGrpOld( cCodGrp )
 
    if lAds()
-      Return ( cAdsUNC() + "Emp" + cCodGrp + "\" )
+      RETURN ( cAdsUNC() + "Emp" + cCodGrp + "\" )
    end if
 
-Return ( fullCurDir() + "Emp" + cCodGrp + "\" )
+RETURN ( fullCurDir() + "Emp" + cCodGrp + "\" )
 
 //----------------------------------------------------------------------------//
 
-Function cPatTmp()
+FUNCTION cPatTmp()
 
    if Empty( cPatTmp )
 
@@ -3707,31 +3677,31 @@ Function cPatTmp()
 
    end if
 
-Return ( cPatTmp )
+RETURN ( cPatTmp )
 
 //----------------------------------------------------------------------------//
 
-Function cPatIn( lShort )
+FUNCTION cPatIn( lShort )
 
    DEFAULT lShort  := .f.
 
-Return ( if( !lShort, fullCurDir(), "" ) + "In\" )
+RETURN ( if( !lShort, fullCurDir(), "" ) + "In\" )
 
 //---------------------------------------------------------------------------//
 
-Function cPatInFrq( lShort )
+FUNCTION cPatInFrq( lShort )
 
    DEFAULT lShort  := .f.
 
-Return ( if( !lShort, fullCurDir(), "" ) + "InFrq\" )
+RETURN ( if( !lShort, fullCurDir(), "" ) + "InFrq\" )
 
 //---------------------------------------------------------------------------//
 
-Function cPatScript( lShort )
+FUNCTION cPatScript( lShort )
 
    DEFAULT lShort  := .f.
 
-Return ( if( !lShort, fullCurDir(), "" ) + "Script\" )
+RETURN ( if( !lShort, fullCurDir(), "" ) + "Script\" )
 
 //---------------------------------------------------------------------------//
 
@@ -3744,55 +3714,55 @@ FUNCTION cPatScriptEmp( cPath, lShort )
       cPatScriptEmp := "Script" + cPath
    end if
 
-Return ( if( !lShort, fullCurDir(), "" ) + cPatScriptEmp + "\" )
+RETURN ( if( !lShort, fullCurDir(), "" ) + cPatScriptEmp + "\" )
 
 //---------------------------------------------------------------------------//
 
-Function cPatOut( lShort )
+FUNCTION cPatOut( lShort )
 
    DEFAULT lShort  := .f.
 
-Return ( if( !lShort, fullCurDir(), "" ) + "Out\" )
+RETURN ( if( !lShort, fullCurDir(), "" ) + "Out\" )
 
 //----------------------------------------------------------------------------//
 
-Function cPatSafe( lShort )
+FUNCTION cPatSafe( lShort )
 
    DEFAULT lShort  := .f.
 
-Return ( if( !lShort, fullCurDir(), "" ) + "Safe\" )
+RETURN ( if( !lShort, fullCurDir(), "" ) + "Safe\" )
 
 //----------------------------------------------------------------------------//
 
-Function cPatBmp( lShort )
+FUNCTION cPatBmp( lShort )
 
    DEFAULT lShort  := .f.
 
-Return ( if( !lShort, fullCurDir(), "" ) + "Bmp\" )
+RETURN ( if( !lShort, fullCurDir(), "" ) + "Bmp\" )
 
 //----------------------------------------------------------------------------//
 
-Function cPatPsion( lShort )
+FUNCTION cPatPsion( lShort )
 
    DEFAULT lShort  := .f.
 
-Return ( if( !lShort, fullCurDir(), "" ) + "Psion\" )
+RETURN ( if( !lShort, fullCurDir(), "" ) + "Psion\" )
 
 //----------------------------------------------------------------------------//
 
-Function cPatHtml( lShort )
+FUNCTION cPatHtml( lShort )
 
    DEFAULT lShort  := .f.
 
-Return ( if( !lShort, fullCurDir(), "" ) + "Html\" )
+RETURN ( if( !lShort, fullCurDir(), "" ) + "Html\" )
 
 //----------------------------------------------------------------------------//
 
-Function cPatXml( lShort )
+FUNCTION cPatXml( lShort )
 
    DEFAULT lShort  := .f.
 
-Return ( if( !lShort, fullCurDir(), "" ) + "Xml\" )
+RETURN ( if( !lShort, fullCurDir(), "" ) + "Xml\" )
 
 //----------------------------------------------------------------------------//
 
@@ -3806,33 +3776,33 @@ RETURN ( cDefPicIn )
 
 //---------------------------------------------------------------------------//
 
-Function cPatReport( lShort )
+FUNCTION cPatReport( lShort )
 
    DEFAULT lShort  := .f.
 
-Return ( if( !lShort, fullCurDir(), "" ) + "Reports\" )
+RETURN ( if( !lShort, fullCurDir(), "" ) + "Reports\" )
 
 //----------------------------------------------------------------------------//
 
-function by( uVal )
+FUNCTION by( uVal )
 
    local uRet     := uVal
 
-return ( uRet )
+RETURN ( uRet )
 
 //---------------------------------------------------------------------------//
 
-Function nHndCaj( nHnd )
+FUNCTION nHndCaj( nHnd )
 
    if nHnd != nil
       nHndCaj  := nHnd
    end if
 
-Return nHndCaj
+RETURN nHndCaj
 
 //---------------------------------------------------------------------------//
 
-Function SelSysDate( oMenuItem )
+FUNCTION SelSysDate( oMenuItem )
 
    DEFAULT oMenuItem := "01084"
 
@@ -3850,11 +3820,11 @@ Function SelSysDate( oMenuItem )
       dSysDate       := Calendario( dSysDate, "Fecha de trabajo" )
    end if
 
-Return ( dSysDate )
+RETURN ( dSysDate )
 
 //----------------------------------------------------------------------------//
 
-function ExcMnuNext( cName )
+FUNCTION ExcMnuNext( cName )
 
    local nPos
 
@@ -3879,11 +3849,11 @@ function ExcMnuNext( cName )
 
    end if
 
-return .t.
+RETURN .t.
 
 //---------------------------------------------------------------------------//
 
-function MnuNext( oBtn, oWnd )
+FUNCTION MnuNext( oBtn, oWnd )
 
    local n
    local cText
@@ -3911,7 +3881,7 @@ RETURN NIL
 
 //---------------------------------------------------------------------------//
 
-function addMnuPrev( cName, uAction )
+FUNCTION addMnuPrev( cName, uAction )
 
    if aScan( aMnuPrev, {|c| c[1] == cName } ) == 0
       if valtype( uAction ) == "C"
@@ -3921,11 +3891,11 @@ function addMnuPrev( cName, uAction )
       end if
    end if
 
-return nil
+RETURN nil
 
 //---------------------------------------------------------------------------//
 
-function ExcMnuPrev( cName )
+FUNCTION ExcMnuPrev( cName )
 
    local nPos
 
@@ -3950,11 +3920,11 @@ function ExcMnuPrev( cName )
 
    end if
 
-return .t.
+RETURN .t.
 
 //---------------------------------------------------------------------------//
 
-Function MnuPrev( oBtn, oWnd )
+FUNCTION MnuPrev( oBtn, oWnd )
 
    local n
    local cText
@@ -3978,28 +3948,28 @@ Function MnuPrev( oBtn, oWnd )
 
    oMenu:Activate( oBtn:nBottom - 1, 0, oBtn )
 
-Return nil
+RETURN nil
 
 //---------------------------------------------------------------------------//
 
-static function bMnuPrev( uValue )
-return {|| ExcMnuPrev( uValue ) }
+static FUNCTION bMnuPrev( uValue )
+RETURN {|| ExcMnuPrev( uValue ) }
 
 //---------------------------------------------------------------------------//
 
-static function bMnuNext( uValue )
-return {|| ExcMnuNext( uValue ) }
+static FUNCTION bMnuNext( uValue )
+RETURN {|| ExcMnuNext( uValue ) }
 
 //---------------------------------------------------------------------------//
 
-function Visor( aMsg )
+FUNCTION Visor( aMsg )
 
    local oDlg
    local oBrwCon
    //local hBmp     := LoadBitmap( GetResources(), "BSTOP" )
 
    if len( aMsg ) == 0
-      return .f.
+      RETURN .f.
    end if
 
 
@@ -4139,7 +4109,7 @@ RETURN ( aItmCom )
 
 //----------------------------------------------------------------------------//
 
-Function aEmpresa( cEmp, dbfEmp, dbfDlg, dbfUser, lRptGal )
+FUNCTION aEmpresa( cEmp, dbfEmp, dbfDlg, dbfUser, lRptGal )
 
    local cDlg
    local oBlock
@@ -4250,41 +4220,41 @@ RETURN ( lEmpFnd )
 
 //---------------------------------------------------------------------------//
 
-Function SetEmp( uVal, nPos )
+FUNCTION SetEmp( uVal, nPos )
 
    if nPos >= 0 .and. nPos <= len( aEmpresa )
       aEmpresa[ nPos ]  := uVal
    end if
 
- Return ( aEmpresa )
+ RETURN ( aEmpresa )
 
 //---------------------------------------------------------------------------//
 
-Function aRetDlgEmp() ; Return ( aDlgEmp )
+FUNCTION aRetDlgEmp() ; RETURN ( aDlgEmp )
 
 //---------------------------------------------------------------------------//
 
-Function cCodigoEmpresaEnUso( cCodEmp )
+FUNCTION cCodigoEmpresaEnUso( cCodEmp )
 
    if cCodEmp != nil
       cCodigoEmpresaEnUso     := cCodEmp
    end if
 
-Return ( cCodigoEmpresaEnUso )
+RETURN ( cCodigoEmpresaEnUso )
 
 //---------------------------------------------------------------------------//
 
-Function cCodigoDelegacionEnUso( cCodDlg )
+FUNCTION cCodigoDelegacionEnUso( cCodDlg )
 
    if cCodDlg != nil
       cCodigoDelegacionEnUso  := cCodDlg
    end if
 
-Return ( cCodigoDelegacionEnUso )
+RETURN ( cCodigoDelegacionEnUso )
 
 //---------------------------------------------------------------------------//
 
-Function setPathEmpresa( cCodEmp )
+FUNCTION setPathEmpresa( cCodEmp )
 
    cPatEmp( cCodEmp )
    cPatCli( cCodEmp, nil, .t. )
@@ -4292,7 +4262,7 @@ Function setPathEmpresa( cCodEmp )
    cPatPrv( cCodEmp, nil, .t. )
    cPatAlm( cCodEmp, nil, .t. )
 
-Return ( nil )
+RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 
@@ -4347,7 +4317,7 @@ FUNCTION GetCodEmp( dbfEmp )
       CLOSE ( dbfEmp )
    end if
 
-Return ( cCodEmp )
+RETURN ( cCodEmp )
 
 //---------------------------------------------------------------------------//
 /*
@@ -4355,7 +4325,7 @@ Funciones para crear las bases de datos de los favoritos de la galeria de
 informenes; lo metemos aqui para que pueda actualizar ficheros
 */
 
-Function mkReport( cPath, lAppend, cPathOld, oMeter )
+FUNCTION mkReport( cPath, lAppend, cPathOld, oMeter )
 
    DEFAULT lAppend      := .f.
 
@@ -4376,11 +4346,11 @@ Function mkReport( cPath, lAppend, cPathOld, oMeter )
       AppDbf( cPathOld, cPath, "CfgFav" )
    end if
 
-Return .t.
+RETURN .t.
 
 //---------------------------------------------------------------------------//
 
-Function rxReport( cPath, oMeter )
+FUNCTION rxReport( cPath, oMeter )
 
    local dbfFolder
    local dbfFavorito
@@ -4437,11 +4407,11 @@ Function rxReport( cPath, oMeter )
 
    end if
 
-Return nil
+RETURN nil
 
 //---------------------------------------------------------------------------//
 
-Function CreateDbfReport( cPath )
+FUNCTION CreateDbfReport( cPath )
 
    DEFAULT cPath  := cPatEmp()
 
@@ -4453,22 +4423,22 @@ Function CreateDbfReport( cPath )
       dbCreate( cPath + "CFGFAV.DBF", aSqlStruct( aItmDbfFavoritos() ), cDriver() )
    end if
 
-Return nil
+RETURN nil
 
 //---------------------------------------------------------------------------//
 
-Function aItmDbfReport()
+FUNCTION aItmDbfReport()
 
    local aBase := {}
 
    aAdd( aBase, { "cCodUsr",  "C",   3, 0, "Código de usuario" } )
    aAdd( aBase, { "cNombre",  "C", 100, 0, "Nombre de la carpeta" } )
 
-Return ( aBase )
+RETURN ( aBase )
 
 //---------------------------------------------------------------------------//
 
-Function aItmDbfFavoritos()
+FUNCTION aItmDbfFavoritos()
 
    local aBase := {}
 
@@ -4477,23 +4447,23 @@ Function aItmDbfFavoritos()
    aAdd( aBase, { "cNomFav",  "C", 100, 0, "Descripción para favoritos" } )
    aAdd( aBase, { "cNomRpt",  "C", 100, 0, "Descripción original" } )
 
-Return ( aBase )
+RETURN ( aBase )
 
 //---------------------------------------------------------------------------//
 
-Function lTactilMode()
+FUNCTION lTactilMode()
 
-Return ( "TACTIL" $ appParamsMain() )
-
-//---------------------------------------------------------------------------//
-
-Function lTpvMode()
-
-Return ( "TPV" $ appParamsMain() )
+RETURN ( "TACTIL" $ appParamsMain() )
 
 //---------------------------------------------------------------------------//
 
-Function GoogleMaps( cStreetTo, cCityTo, cCountryTo )
+FUNCTION lTpvMode()
+
+RETURN ( "TPV" $ appParamsMain() )
+
+//---------------------------------------------------------------------------//
+
+FUNCTION GoogleMaps( cStreetTo, cCityTo, cCountryTo )
 
    local oDlg
    local oWebMap
@@ -4541,21 +4511,21 @@ Function GoogleMaps( cStreetTo, cCityTo, cCountryTo )
 
    ACTIVATE DIALOG oDlg CENTERED       ON INIT  ShowInWin( cStreetFrom, cCityFrom, cCountryFrom, cStreetTo, cCityTo, cCountryTo, oWebMap, oActiveX )
 
-return nil
+RETURN nil
 
 //---------------------------------------------------------------------------//
 
-static function Load( oStreetFrom, oCityFrom, oCountryFrom )
+static FUNCTION Load( oStreetFrom, oCityFrom, oCountryFrom )
 
    oStreetFrom:cText(   Padr( cDomEmp(), 200 ) )
    oCityFrom:cText(     Padr( Rtrim( cPobEmp() ) + Space( 1 ) + Rtrim( cPrvEmp() ), 200 ) )
    oCountryFrom:cText(  Padr( "Spain", 100 ) )
 
-return nil
+RETURN nil
 
 //---------------------------------------------------------------------------//
 
-static function ShowInWin( cStreetFrom, cCityFrom, cCountryFrom, cStreetTo, cCityTo, cCountryTo, oWebMap, oActiveX )
+static FUNCTION ShowInWin( cStreetFrom, cCityFrom, cCountryFrom, cStreetTo, cCityTo, cCountryTo, oWebMap, oActiveX )
 
    oWebMap:aAddress  := {}
 
@@ -4572,11 +4542,11 @@ static function ShowInWin( cStreetFrom, cCityFrom, cCountryFrom, cStreetTo, cCit
       sysrefresh()
    end if
 
-return nil
+RETURN nil
 
 //---------------------------------------------------------------------------//
 
-static function ShowInExplorer( cStreetFrom, cCityFrom, cCountryFrom, cStreetTo, cCityTo, cCountryTo, oWebMap, oActiveX )
+static FUNCTION ShowInExplorer( cStreetFrom, cCityFrom, cCountryFrom, cStreetTo, cCityTo, cCountryTo, oWebMap, oActiveX )
 
    oWebMap:aAddress  := {}
 
@@ -4588,11 +4558,11 @@ static function ShowInExplorer( cStreetFrom, cCityFrom, cCountryFrom, cStreetTo,
 
    oWebMap:ShowMap()
 
-return nil
+RETURN nil
 
 //---------------------------------------------------------------------------//
 
-Function cUnidadMedicion( cDbf, lParentesis )
+FUNCTION cUnidadMedicion( cDbf, lParentesis )
 
    local cUnidad        := ""
 
@@ -4616,31 +4586,31 @@ Function cUnidadMedicion( cDbf, lParentesis )
       cUnidad           := "(" + cUnidad + ")"
    end if
 
-Return ( cUnidad )
+RETURN ( cUnidad )
 
 //---------------------------------------------------------------------------//
 
-Function sErrorBlock( bBlock )
+FUNCTION sErrorBlock( bBlock )
 
    nError++
 
    titulo( str( nError ) )
    logwrite( "suma control del errores 1:" + procname(1) + "2:" + procname(2) + str( nError ) )
 
-Return ( ErrorBlock( {| oError | ApoloBreak( oError ) } ) )
+RETURN ( ErrorBlock( {| oError | ApoloBreak( oError ) } ) )
 
-Function rErrorBlock( oBlock )
+FUNCTION rErrorBlock( oBlock )
 
    nError--
 
    titulo( str( nError ) )
    logwrite( "resta control del errores 1:" + procname(1) + "2:" + procname(2) + str( nError ) )
 
-Return ( ErrorBlock( oBlock ) )
+RETURN ( ErrorBlock( oBlock ) )
 
 //---------------------------------------------------------------------------//
 
-Function appSettings()
+FUNCTION appSettings()
 
    SET DATE             FORMAT "dd/mm/yyyy"
    SET TIME             FORMAT TO "hh:mm:ss"
@@ -4659,11 +4629,11 @@ Function appSettings()
 
    fwNumFormat( 'E', .t. )
 
-Return nil 
+RETURN nil 
 
 //---------------------------------------------------------------------------//
 
-Function appLoadAds()
+FUNCTION appLoadAds()
 
    if !file( cIniAplication() ) .and. file( fullCurDir() + "Gestion.Ini" )
       fRename( fullCurDir() + "Gestion.Ini", cIniAplication() )
@@ -4677,7 +4647,7 @@ Function appLoadAds()
    cAdsFile(   GetPvProfString(  "ADS",      "File",     "",   cIniAplication() ) )
    cAdsLocal(  GetPvProfString(  "ADS",      "Local",    "",   cIniAplication() ) )
 
-Return nil 
+RETURN nil 
 
 //---------------------------------------------------------------------------//
 
@@ -4695,11 +4665,11 @@ FUNCTION AppSql( cEmpDbf, cEmpSql, cFile )
    local cdxSql      := cEmpSql + "\" + cFile + ".Cdx"
 
    if !File( dbfDbf )
-      Return nil
+      RETURN nil
    end if
 
    if !lExistTable( dbfSql )
-      Return nil
+      RETURN nil
    end if
 
    oBlock            := ErrorBlock( {| oError | ApoloBreak( oError ) } )
@@ -4745,7 +4715,7 @@ RETURN NIL
 //--------------------------------------------------------------------------//
 //--------------------------------------------------------------------------//
 
-Function cSqlTableName( cTableName )
+FUNCTION cSqlTableName( cTableName )
 
    if cTableName[2] == ":"
       cTableName  := SubStr( cTableName, 3 )
@@ -4768,11 +4738,11 @@ Function cSqlTableName( cTableName )
       cTableName  := SubStr( cTableName, len( cTableName ) - 30 + 1 )
    endif
 
-Return ( cTableName )
+RETURN ( cTableName )
 
 //--------------------------------------------------------------------------//
 
-Function PrinterPreferences( oGet )
+FUNCTION PrinterPreferences( oGet )
 
    // MsgInfo( hb_valtoexp( aGetPrinters() ) )
 
@@ -4782,11 +4752,11 @@ Function PrinterPreferences( oGet )
       oGet:cText( PrnGetName() )
    end if
 
-Return ( Nil )
+RETURN ( Nil )
 
 //---------------------------------------------------------------------------//
 
-function DateTimeRich( oRTF )
+FUNCTION DateTimeRich( oRTF )
 
    local aLbx := REGetDateTime()
    local nLbx := 1
@@ -4808,11 +4778,11 @@ function DateTimeRich( oRTF )
       oRTF:InsertRTF( aLbx[ nLbx ] )
    endif
 
-return nil
+RETURN nil
 
 //---------------------------------------------------------------------------//
 
-function FindRich( oRTF )
+FUNCTION FindRich( oRTF )
 
    local oDlg
    local oFind
@@ -4839,11 +4809,11 @@ function FindRich( oRTF )
 
    ACTIVATE DIALOG oDlg CENTER NOWAIT
 
-return nil
+RETURN nil
 
 //---------------------------------------------------------------------------//
 
-Function ReportBackLine( oInf, nLines )
+FUNCTION ReportBackLine( oInf, nLines )
 
    DEFAULT nLines := 1
 
@@ -4851,55 +4821,55 @@ Function ReportBackLine( oInf, nLines )
       oInf:BackLine( nLines )
    end if
 
-Return ( "" )
+RETURN ( "" )
 
 //---------------------------------------------------------------------------//
 
-Function SetBrwOpt( cName, cOption )
+FUNCTION SetBrwOpt( cName, cOption )
 
-Return ( writePProString( "browse", cName, cValToChar( cOption ), cPatEmp() + "Empresa.Ini" ) )
-
-//---------------------------------------------------------------------------//
-
-Function GetBrwOpt( cName )
-
-Return ( GetPvProfInt( "browse", cName, 2, cPatEmp() + "Empresa.Ini" ) )
+RETURN ( writePProString( "browse", cName, cValToChar( cOption ), cPatEmp() + "Empresa.Ini" ) )
 
 //---------------------------------------------------------------------------//
 
-Function setGridOrder( cName, cOption )
+FUNCTION GetBrwOpt( cName )
 
-Return ( writePProString( "grid", cName, cValToChar( cOption ), cPatEmp() + "Empresa.Ini" ) )
-
-//---------------------------------------------------------------------------//
-
-Function getGridOrder( cName )
-
-Return ( getPvProfString( "grid", cName, "", cPatEmp() + "Empresa.Ini" ) )
+RETURN ( GetPvProfInt( "browse", cName, 2, cPatEmp() + "Empresa.Ini" ) )
 
 //---------------------------------------------------------------------------//
 
-Function cPatPc( cPath )
+FUNCTION setGridOrder( cName, cOption )
+
+RETURN ( writePProString( "grid", cName, cValToChar( cOption ), cPatEmp() + "Empresa.Ini" ) )
+
+//---------------------------------------------------------------------------//
+
+FUNCTION getGridOrder( cName )
+
+RETURN ( getPvProfString( "grid", cName, "", cPatEmp() + "Empresa.Ini" ) )
+
+//---------------------------------------------------------------------------//
+
+FUNCTION cPatPc( cPath )
 
    if !Empty( cPath )
       cPathPC     := cPath
    end if
 
-Return ( cPathPc )
+RETURN ( cPathPc )
 
 //---------------------------------------------------------------------------//
 
-Function cEmpUsr( cEmp )
+FUNCTION cEmpUsr( cEmp )
 
    if cEmp != nil
       cEmpUsr  := cEmp
    end if
 
-Return cEmpUsr
+RETURN cEmpUsr
 
 //---------------------------------------------------------------------------//
 
-function lGrupoEmpresa( cCodEmp, dbfEmpresa )
+FUNCTION lGrupoEmpresa( cCodEmp, dbfEmpresa )
 
    local oBlock
    local oError
@@ -4931,11 +4901,11 @@ function lGrupoEmpresa( cCodEmp, dbfEmpresa )
       CLOSE ( dbfEmpresa )
    end if
 
-return ( lGrupo )
+RETURN ( lGrupo )
 
 //---------------------------------------------------------------------------//
 
-function cCodigoGrupo( cCodEmp, dbfEmpresa )
+FUNCTION cCodigoGrupo( cCodEmp, dbfEmpresa )
 
    local nRec
    local oBlock
@@ -4973,11 +4943,11 @@ function cCodigoGrupo( cCodEmp, dbfEmpresa )
       ( dbfEmpresa )->( dbGoTo( nRec ) )
    end if
 
-return ( cGrupo )
+RETURN ( cGrupo )
 
 //---------------------------------------------------------------------------//
 
-Function cItemsToReport( aItems )
+FUNCTION cItemsToReport( aItems )
 
    local aItem
    local cString  := ""
@@ -4988,7 +4958,7 @@ Function cItemsToReport( aItems )
       end if
    next
 
-Return ( cString )
+RETURN ( cString )
 
 //---------------------------------------------------------------------------//
 
@@ -5005,7 +4975,7 @@ FUNCTION cObjectsToReport( oDbf )
 
    next
 
-Return ( cString )
+RETURN ( cString )
 
 //---------------------------------------------------------------------------//
 
@@ -5070,7 +5040,7 @@ FUNCTION aEmpGrp( cCodGrp, dbfEmp, lEmpresa )
 
    end if
 
-Return ( aEmpresasGrupo )
+RETURN ( aEmpresasGrupo )
 
 //----------------------------------------------------------------------------//
 
@@ -5081,10 +5051,10 @@ FUNCTION cPatStk( cPath, lPath, lShort, lGrp )
    DEFAULT lGrp   := .f.
 
    if lAds()
-      Return ( cAdsUNC() + if( lGrp, "Emp", "Emp" ) + cPath + if( lPath, "\", "" ) )
+      RETURN ( cAdsUNC() + if( lGrp, "Emp", "Emp" ) + cPath + if( lPath, "\", "" ) )
    end if
 
-Return ( if( !lShort, fullCurDir(), "" ) + if( lGrp, "Emp", "Emp" ) + cPath + if( lPath, "\", "" ) )
+RETURN ( if( !lShort, fullCurDir(), "" ) + if( lGrp, "Emp", "Emp" ) + cPath + if( lPath, "\", "" ) )
 
 //---------------------------------------------------------------------------//
 /*
@@ -5094,23 +5064,23 @@ Devuelve la descripción de una line de factura
 FUNCTION Descrip( cFacCliL, cFacCliS )
 
    local cKey
-   local cReturn     := ""
+   local cRETURN     := ""
 
    if !Empty( ( cFacCliL )->cDetalle )
-      cReturn        := Rtrim( ( cFacCliL )->cDetalle )
+      cRETURN        := Rtrim( ( cFacCliL )->cDetalle )
    else
-      cReturn        := Rtrim( ( cFacCliL )->mLngDes )
+      cRETURN        := Rtrim( ( cFacCliL )->mLngDes )
    end if
 
    if !Empty( cFacCliS )
 
       ckey           := ( cFacCliL )->( fieldget( 1 ) ) + Str( ( cFacCliL )->( fieldget( 2 ) ) ) + ( cFacCliL )->( fieldget( 3 ) ) + Str( ( cFacCliL )->nNumLin, 4 ) 
 
-      cReturn        += SerialDescrip( cKey, cFacCliS )
+      cRETURN        += SerialDescrip( cKey, cFacCliS )
 
    end if
 
-RETURN ( cReturn )
+RETURN ( cRETURN )
 
 //---------------------------------------------------------------------------//
 
@@ -5118,23 +5088,23 @@ FUNCTION DescripLeng( cFacCliL, cFacCliS, cArtLeng )
 
     local nOrd
     local cKey
-    local cReturn     := ""
+    local cRETURN     := ""
     local nOrdAnt     := ( cArtLeng )->( OrdSetFocus( "CARTLEN" ) )
 
     if !( cArtLeng )->( dbSeek( ( cFacCliL )->cRef + getLenguajeSegundario() ) )
 
       if !Empty( ( cFacCliL )->cDetalle )
-        cReturn       := Rtrim( ( cFacCliL )->cDetalle ) 
+        cRETURN       := Rtrim( ( cFacCliL )->cDetalle ) 
       else
-        cReturn       := Rtrim( ( cFacCliL )->mLngDes )
+        cRETURN       := Rtrim( ( cFacCliL )->mLngDes )
       end if
 
     else
 
       if !Empty( ( cArtLeng )->cDesArt ) 
-        cReturn       := AllTrim( ( cArtLeng )->cDesArt )
+        cRETURN       := AllTrim( ( cArtLeng )->cDesArt )
       else
-        cReturn       := AllTrim( ( cArtLeng )->cDesTik )
+        cRETURN       := AllTrim( ( cArtLeng )->cDesTik )
       end if
 
     end if
@@ -5144,7 +5114,7 @@ FUNCTION DescripLeng( cFacCliL, cFacCliS, cArtLeng )
         nOrd           := ( cFacCliL )->( OrdSetFocus( 1 ) )
         cKey           := ( cFacCliL )->( OrdKeyVal() ) + Str( ( cFacCliL )->nNumLin, 4 )
 
-        cReturn        += SerialDescrip( cKey, cFacCliS )
+        cRETURN        += SerialDescrip( cKey, cFacCliS )
 
         ( cFacCliL )->( OrdSetFocus( nOrd ) )
 
@@ -5152,11 +5122,11 @@ FUNCTION DescripLeng( cFacCliL, cFacCliS, cArtLeng )
 
   ( cArtLeng )->( OrdSetFocus( "nOrdAnt" ) )   
 
-RETURN ( cReturn )
+RETURN ( cRETURN )
 
 //---------------------------------------------------------------------------//
 
-Function SerialDescrip( cKey, cFacCliS )
+FUNCTION SerialDescrip( cKey, cFacCliS )
 
    local nOrd
    local nInc
@@ -5164,7 +5134,7 @@ Function SerialDescrip( cKey, cFacCliS )
    local cLast
    local nPrior
    local cPrior
-   local cReturn           := ""
+   local cRETURN           := ""
 
    nInc                    := 0
    nOrd                    := ( cFacCliS )->( OrdSetFocus( 1 ) )
@@ -5190,14 +5160,14 @@ Function SerialDescrip( cKey, cFacCliS )
 
             else
 
-               cReturn     += Alltrim( cPrior )    // cReturn     += Alltrim( Str( nPrior ) )
+               cRETURN     += Alltrim( cPrior )    // cRETURN     += Alltrim( Str( nPrior ) )
 
                if !Empty( nLast )
-                  cReturn  += "-"
-                  cReturn  += Alltrim( cLast )     // Alltrim( Str( nLast ) )
+                  cRETURN  += "-"
+                  cRETURN  += Alltrim( cLast )     // Alltrim( Str( nLast ) )
                end if
 
-               cReturn     += ","
+               cRETURN     += ","
 
                nInc        := 0
                nLast       := nil
@@ -5213,21 +5183,21 @@ Function SerialDescrip( cKey, cFacCliS )
       end while
 
       if !Empty( nPrior )
-         cReturn           += Alltrim( cPrior )    // Alltrim( Str( nPrior ) )
+         cRETURN           += Alltrim( cPrior )    // Alltrim( Str( nPrior ) )
       end if
 
       if !Empty( nLast )
-         cReturn           += "-"
-         cReturn           += Alltrim( cLast )     // Alltrim( Str( nLast ) )
+         cRETURN           += "-"
+         cRETURN           += Alltrim( cLast )     // Alltrim( Str( nLast ) )
       end if
 
-      cReturn              := Space( 1 ) + "[" + cReturn + "]"
+      cRETURN              := Space( 1 ) + "[" + cRETURN + "]"
 
    end if
 
    ( cFacCliS )->( OrdSetFocus( nOrd ) )
 
-Return ( cReturn )
+RETURN ( cRETURN )
 
 //---------------------------------------------------------------------------//
 
@@ -5306,22 +5276,22 @@ FUNCTION cPatGrp( cPath, lFull, lEmpresa )
    end if
 
    if lAds()
-      Return ( cAdsUNC() + cPatGrp + "\" )
+      RETURN ( cAdsUNC() + cPatGrp + "\" )
    end if
 
    if lAIS() .and. lFull
-      Return ( cAdsUNC() + cPatGrp + "\" )
+      RETURN ( cAdsUNC() + cPatGrp + "\" )
    end if
 
    if lAIS() .and. !lFull
-      Return ( cPatGrp )
+      RETURN ( cPatGrp )
    end if
 
    if lCdx()
-      Return ( fullCurDir() + cPatGrp + "\" )
+      RETURN ( fullCurDir() + cPatGrp + "\" )
    end if
 
-Return ( if( lFull, fullCurDir(), "" ) + cPatGrp + "\" )
+RETURN ( if( lFull, fullCurDir(), "" ) + cPatGrp + "\" )
 
 //---------------------------------------------------------------------------//
 
@@ -5339,22 +5309,22 @@ FUNCTION cPatCli( cPath, lFull, lEmpresa )
    end if
 
    if lAds()
-      Return ( cAdsUNC() + cPatCli + "\" )
+      RETURN ( cAdsUNC() + cPatCli + "\" )
    end if
 
    if lAIS() .and. lFull
-      Return ( cAdsUNC() + cPatCli + "\" )
+      RETURN ( cAdsUNC() + cPatCli + "\" )
    end if
 
    if lAIS() .and. !lFull
-      Return ( cPatCli )
+      RETURN ( cPatCli )
    end if
 
    if lCdx()
-      Return ( fullCurDir() + cPatCli + "\" )
+      RETURN ( fullCurDir() + cPatCli + "\" )
    end if
 
-Return ( if( lFull, fullCurDir(), "" ) + cPatCli + "\" )
+RETURN ( if( lFull, fullCurDir(), "" ) + cPatCli + "\" )
 
 //---------------------------------------------------------------------------//
 
@@ -5374,22 +5344,22 @@ FUNCTION cPatArt( cPath, lFull, lEmpresa )
    end if
 
    if lAds()
-      Return ( cAdsUNC() + cPatArt + "\" )
+      RETURN ( cAdsUNC() + cPatArt + "\" )
    end if
 
    if lAIS() .and. lFull
-      Return ( cAdsUNC() + cPatArt + "\" )
+      RETURN ( cAdsUNC() + cPatArt + "\" )
    end if
 
    if lAIS() .and. !lFull
-      Return ( cPatArt )
+      RETURN ( cPatArt )
    end if
 
    if lCdx()
-      Return ( fullCurDir() + cPatArt + "\" )
+      RETURN ( fullCurDir() + cPatArt + "\" )
    end if
 
-Return ( if( lFull, fullCurDir(), "" ) + cPatArt + "\" )
+RETURN ( if( lFull, fullCurDir(), "" ) + cPatArt + "\" )
 
 //---------------------------------------------------------------------------//
 
@@ -5409,22 +5379,22 @@ FUNCTION cPatPrv( cPath, lFull, lEmpresa )
    end if
 
    if lAds()
-      Return ( cAdsUNC() + cPatPrv + "\" )
+      RETURN ( cAdsUNC() + cPatPrv + "\" )
    end if
 
    if lAIS() .and. lFull
-      Return ( cAdsUNC() + cPatPrv + "\" )
+      RETURN ( cAdsUNC() + cPatPrv + "\" )
    end if
 
    if lAIS() .and. !lFull
-      Return ( cPatPrv )
+      RETURN ( cPatPrv )
    end if
 
    if lCdx()
-      Return ( fullCurDir() + cPatPrv + "\" )
+      RETURN ( fullCurDir() + cPatPrv + "\" )
    end if
 
-   Return ( if( !lFull, fullCurDir(), "" ) + cPatPrv + "\" )
+   RETURN ( if( !lFull, fullCurDir(), "" ) + cPatPrv + "\" )
 
 //---------------------------------------------------------------------------//
 
@@ -5444,38 +5414,38 @@ FUNCTION cPatAlm( cPath, lFull, lEmpresa )
    end if
 
    if lAds()
-      Return ( cAdsUNC() + cPatAlm + "\" )
+      RETURN ( cAdsUNC() + cPatAlm + "\" )
    end if
 
    if lAIS() .and. lFull
-      Return ( cAdsUNC() + cPatAlm + "\" )
+      RETURN ( cAdsUNC() + cPatAlm + "\" )
    end if
 
    if lAIS() .and. !lFull
-      Return ( cPatAlm )
+      RETURN ( cPatAlm )
    end if
 
    if lCdx()
-      Return ( fullCurDir() + cPatAlm + "\" )
+      RETURN ( fullCurDir() + cPatAlm + "\" )
    end if
 
-Return ( if( lFull, fullCurDir(), "" ) + cPatAlm + "\" )
+RETURN ( if( lFull, fullCurDir(), "" ) + cPatAlm + "\" )
 
 //---------------------------------------------------------------------------//
 
-Function GetSysDate()
+FUNCTION GetSysDate()
 
-Return ( if( dSysDate != nil, dSysDate, Date() ) )
+RETURN ( if( dSysDate != nil, dSysDate, Date() ) )
 
 //---------------------------------------------------------------------------//
 
-Function aEmp() ; Return ( aEmpresa )
+FUNCTION aEmp() ; RETURN ( aEmpresa )
 
 //---------------------------------------------------------------------------//
 
 FUNCTION cPathEmpresa()
 
-Return ( cPatEmp )
+RETURN ( cPatEmp )
 
 //---------------------------------------------------------------------------//
 
@@ -5489,56 +5459,56 @@ FUNCTION cPatEmp( cPath, lFull )
    end if
 
    if lAds()
-      Return ( cAdsUNC() + cPatEmp + "\" )
+      RETURN ( cAdsUNC() + cPatEmp + "\" )
    end if
 
    if lAIS() .and. lFull
-      Return ( cAdsUNC() + cPatEmp + "\" )
+      RETURN ( cAdsUNC() + cPatEmp + "\" )
    end if
 
    if lAIS() .and. !lFull
-      Return ( cPatEmp )
+      RETURN ( cPatEmp )
    end if
 
    if lCdx()
-      Return ( fullCurDir() + cPatEmp + "\" )
+      RETURN ( fullCurDir() + cPatEmp + "\" )
    end if
 
-Return ( if( lFull, fullCurDir(), "" ) + cPatEmp + "\" )
+RETURN ( if( lFull, fullCurDir(), "" ) + cPatEmp + "\" )
 
 //---------------------------------------------------------------------------//
 
-Function appParamsMain( paramsMain )
+FUNCTION appParamsMain( paramsMain )
 
    if !empty( paramsMain )
       appParamsMain   := upper( paramsMain )
    end if 
 
-Return ( appParamsMain )
+RETURN ( appParamsMain )
 
 //---------------------------------------------------------------------------//
 
-Function appParamsSecond( paramsSecond )
+FUNCTION appParamsSecond( paramsSecond )
 
    if !empty( paramsSecond )
       appParamsSecond   := upper( paramsSecond )
    end if 
 
-Return ( appParamsSecond )
+RETURN ( appParamsSecond )
 
 //---------------------------------------------------------------------------//
 
-Function appParamsThird( paramsThird )
+FUNCTION appParamsThird( paramsThird )
 
    if !empty( paramsThird )
       appParamsThird   := upper( paramsThird )
    end if 
 
-Return ( appParamsThird )
+RETURN ( appParamsThird )
 
 //---------------------------------------------------------------------------//
 
-Function appConnectADS()
+FUNCTION appConnectADS()
 
     local TDataCenter     := TDataCenter()
 
@@ -5557,20 +5527,20 @@ Function appConnectADS()
 
     TDataCenter:ConnectDataDictionary()
 
-Return ( TDataCenter:lAdsConnection )
+RETURN ( TDataCenter:lAdsConnection )
 
 //---------------------------------------------------------------------------//
 
-Function appConnectCDX()
+FUNCTION appConnectCDX()
 
     lCdx( .t. )
     rddSetDefault( 'DBFCDX' )
 
-Return ( .t. )
+RETURN ( .t. )
 
 //---------------------------------------------------------------------------//
 
-Function runReportGalery( cFastReport )
+FUNCTION runReportGalery( cFastReport )
 
    local nLevel         := nLevelUsr( "01119" )
 
@@ -5578,12 +5548,12 @@ Function runReportGalery( cFastReport )
 
    if nAnd( nLevel, 1 ) != 0
       msgStop( "Acceso no permitido." )
-      Return nil
+      RETURN nil
    end if
 
    if DirChange( fullCurDir() ) != 0
       MsgStop( "No puedo cambiar al directorio " + fullCurDir() )
-      Return nil
+      RETURN nil
    end if
 
    if file( fullCurDir() + "RptApolo.Exe" )
@@ -5597,11 +5567,11 @@ Function runReportGalery( cFastReport )
 
    end if
 
-Return nil
+RETURN nil
 
 //---------------------------------------------------------------------------//
 
-Function runFastGallery( cFastReport )
+FUNCTION runFastGallery( cFastReport )
 
    local nLevel         := nLevelUsr( "01119" )
 
@@ -5609,12 +5579,12 @@ Function runFastGallery( cFastReport )
 
    if nAnd( nLevel, 1 ) != 0
       msgStop( "Acceso no permitido." )
-      Return nil
+      RETURN nil
    end if
 
    if dirchange( fullCurDir() ) != 0
       MsgStop( "No puedo cambiar al directorio " + fullCurDir() )
-      Return nil
+      RETURN nil
    end if
 
    if file( fullCurDir() + "GesTool.Exe" )
@@ -5625,25 +5595,25 @@ Function runFastGallery( cFastReport )
       end if
    end if
 
-Return nil
+RETURN nil
 
 //---------------------------------------------------------------------------//
 
-Function cIniEmpresa()
+FUNCTION cIniEmpresa()
 
-Return ( cPatEmp() + "Empresa.Ini" )
-
-//---------------------------------------------------------------------------//
-
-Function cIniAplication()
-
-Return ( fullCurDir() + "GstApolo.Ini" )
+RETURN ( cPatEmp() + "Empresa.Ini" )
 
 //---------------------------------------------------------------------------//
 
-Function IsMuebles()
+FUNCTION cIniAplication()
 
-Return ( "MUEBLES" $ appParamsMain() )
+RETURN ( fullCurDir() + "GstApolo.Ini" )
+
+//---------------------------------------------------------------------------//
+
+FUNCTION IsMuebles()
+
+RETURN ( "MUEBLES" $ appParamsMain() )
 
 //---------------------------------------------------------------------------//
 
@@ -5653,72 +5623,72 @@ RETURN WinExec( ( "HH " + cPatHelp() + "HELP.CHM::/" + AllTrim( cTema ) + ".HTM"
 
 //----------------------------------------------------------------------------//
 
-Function cPatHelp()
+FUNCTION cPatHelp()
 
-Return ( fullCurDir() + "Help\" )
-
-//----------------------------------------------------------------------------//
-
-Function cPatReporting()
-
-Return ( fullCurDir() + "Reporting\" )
+RETURN ( fullCurDir() + "Help\" )
 
 //----------------------------------------------------------------------------//
 
-Function cPatUserReporting()
+FUNCTION cPatReporting()
 
-Return ( fullCurDir() + "UserReporting\" )
-
-//----------------------------------------------------------------------------//
-
-Function cPatConfig()
-
-Return ( fullCurDir() + "Config\" )
+RETURN ( fullCurDir() + "Reporting\" )
 
 //----------------------------------------------------------------------------//
 
-Function HtmlHelp()
+FUNCTION cPatUserReporting()
 
-Return ( "" )
+RETURN ( fullCurDir() + "UserReporting\" )
+
+//----------------------------------------------------------------------------//
+
+FUNCTION cPatConfig()
+
+RETURN ( fullCurDir() + "Config\" )
+
+//----------------------------------------------------------------------------//
+
+FUNCTION HtmlHelp()
+
+RETURN ( "" )
 
 //---------------------------------------------------------------------------//
 
-function lUsrMaster()
+FUNCTION lUsrMaster()
 
-return ( cCurUsr() == "000" )
-
-//---------------------------------------------------------------------------//
-
-Function IsPda()
-
-Return ( "PDA" $ appParamsMain() )
+RETURN ( cCurUsr() == "000" )
 
 //---------------------------------------------------------------------------//
 
-Function cPatSnd( lShort )
+FUNCTION IsPda()
+
+RETURN ( "PDA" $ appParamsMain() )
+
+//---------------------------------------------------------------------------//
+
+FUNCTION cPatSnd( lShort )
 
    DEFAULT lShort := .f.
 
-Return ( if( !lShort, fullCurDir(), "" ) + "Snd\" )
+RETURN ( if( !lShort, fullCurDir(), "" ) + "Snd\" )
 
 //----------------------------------------------------------------------------//
 
-Function cEmpTmp( lPath, lShort )
+FUNCTION cEmpTmp( lPath, lShort )
 
    DEFAULT lPath  := .t.
    DEFAULT lShort := .f.
 
-Return ( if( !lShort, fullCurDir(), "" ) + "EmpTmp" + if( lPath, "\", "" ) )
+RETURN ( if( !lShort, fullCurDir(), "" ) + "EmpTmp" + if( lPath, "\", "" ) )
 
 //----------------------------------------------------------------------------//
 
-Function cPatUsr()
+FUNCTION cPatUsr()
 
-Return ( fullCurDir() + "Usr\" )
+RETURN ( fullCurDir() + "Usr\" )
 
 //----------------------------------------------------------------------------//
 
-Function cImp()
+FUNCTION cImp()
 
    local cImp  := uFieldEmpresa( "cNomImp" )
 
@@ -5726,11 +5696,11 @@ Function cImp()
       cImp     := ""
    end if
 
-Return ( cImp )
+RETURN ( cImp )
 
 //----------------------------------------------------------------------------//
 
-Function addMnuNext( cName, uAction )
+FUNCTION addMnuNext( cName, uAction )
 
    if aScan( aMnuNext, {|c| c[1] == cName } ) == 0
       if valtype( uAction ) == "C"
@@ -5740,41 +5710,41 @@ Function addMnuNext( cName, uAction )
       end if
    end if
 
-Return .t.
+RETURN .t.
 
 //---------------------------------------------------------------------------//
 
-function cValToChar( uVal )
+FUNCTION cValToChar( uVal )
 
    local cType := ValType( uVal )
 
    do case
       case cType == "C" .or. cType == "M"
-           return uVal
+           RETURN uVal
 
       case cType == "D"
-           return DToC( uVal )
+           RETURN DToC( uVal )
 
       case cType == "L"
-           return If( uVal, ".T.", ".F." )
+           RETURN If( uVal, ".T.", ".F." )
 
       case cType == "N"
-           return AllTrim( Str( uVal ) )
+           RETURN AllTrim( Str( uVal ) )
 
       case cType == "B"
-           return "{|| ... }"
+           RETURN "{|| ... }"
 
       case cType == "A"
-           return "{ ... }"
+           RETURN "{ ... }"
 
       case cType == "O"
-           return "Object"
+           RETURN "Object"
 
       otherwise
-           return ""
+           RETURN ""
    endcase
 
-return nil
+RETURN nil
 
 //---------------------------------------------------------------------------//
 
@@ -5819,7 +5789,7 @@ RETURN ( cTemp )
 
 //---------------------------------------------------------------------------//
 
-Function cValToText( uVal, lBarraFecha )
+FUNCTION cValToText( uVal, lBarraFecha )
 
    local cType             := ValType( uVal )
 
@@ -5827,39 +5797,39 @@ Function cValToText( uVal, lBarraFecha )
 
    do case
       case cType == "C" .or. cType == "M"
-           return uVal
+           RETURN uVal
 
       case cType == "D"
            if lBarraFecha
-               return DToC( uVal )
+               RETURN DToC( uVal )
            else
-               return StrTran( DToC( uVal ), "/", "" )
+               RETURN StrTran( DToC( uVal ), "/", "" )
            end if
 
       case cType == "L"
-           return If( uVal, "S", "N" )
+           RETURN If( uVal, "S", "N" )
 
       case cType == "N"
-           return AllTrim( Str( uVal ) )
+           RETURN AllTrim( Str( uVal ) )
 
       case cType == "B"
-           return "{|| ... }"
+           RETURN "{|| ... }"
 
       case cType == "A"
-           return "{ ... }"
+           RETURN "{ ... }"
 
       case cType == "O"
-           return "Object"
+           RETURN "Object"
 
       otherwise
-           return ""
+           RETURN ""
    endcase
 
-return nil
+RETURN nil
 
 //---------------------------------------------------------------------------//
 
-function dToIso( dDate )
+FUNCTION dToIso( dDate )
 
    local cDate := ""
 
@@ -5869,11 +5839,11 @@ function dToIso( dDate )
 
    cDate       := Alltrim( Str( Year( dDate ) ) + "-" + StrZero( Month( dDate ), 2 ) + "-" + StrZero( Day( dDate ), 2 ) )
 
-return ( cDate )
+RETURN ( cDate )
 
 //---------------------------------------------------------------------------//
 
-Function LogWrite( cText, cFileName )
+FUNCTION LogWrite( cText, cFileName )
 
    local nHand
 
@@ -5926,7 +5896,7 @@ FUNCTION cUsrTik( cCodUsr )
       cUsrTik     := cCodUsr
    end if
 
-Return cUsrTik
+RETURN cUsrTik
 
 //---------------------------------------------------------------------------//
 
@@ -5934,42 +5904,42 @@ FUNCTION cDelUsrTik( cCodUsr )
 
    cUsrTik     := Space(3)
 
-Return .t.
+RETURN .t.
 
 //---------------------------------------------------------------------------//
 
-Function cPatLog( lShort )
+FUNCTION cPatLog( lShort )
 
    DEFAULT lShort  := .f.
 
-Return ( if( !lShort, fullCurDir(), "" ) + "Log\" )
+RETURN ( if( !lShort, fullCurDir(), "" ) + "Log\" )
 
 //----------------------------------------------------------------------------//
 
-Function cCodigoEmpresa( xValue )
+FUNCTION cCodigoEmpresa( xValue )
 
    if !Empty( xValue )
       cCodEmp     := xValue
    end if
 
-Return ( cCodEmp )
+RETURN ( cCodEmp )
 
 //--------------------------------------------------------------------------//
-Static Function lControlAcceso()
+Static FUNCTION lControlAcceso()
 
    if lCheckPerpetuoMode()
 
       lDemoMode( .f. )
 
-      return .t.
+      RETURN .t.
 
    end if 
 
-Return .f.
+RETURN .f.
 
 //---------------------------------------------------------------------------//
 
-Function lCheckPerpetuoMode( nSerialUSR )
+FUNCTION lCheckPerpetuoMode( nSerialUSR )
 
    local n 
    local cFileIni       
@@ -5979,7 +5949,7 @@ Function lCheckPerpetuoMode( nSerialUSR )
    local nSerialCRC     := 0
 
    if Empty( nSerialHD )
-      Return .f.
+      RETURN .f.
    end if
 
    cFileIni             := FullCurDir() + "2Ktorce.Num"  
@@ -5996,7 +5966,7 @@ Function lCheckPerpetuoMode( nSerialUSR )
             
          if nSerialCRC == nXor( nSerialHD, SERIALNUMBER )
                
-            Return .t.
+            RETURN .t.
    
          end if
    
@@ -6016,13 +5986,13 @@ Function lCheckPerpetuoMode( nSerialUSR )
             WritePProString( "Main", "Access code " + Str( n, 2 ), cValToChar( aSerialCRC[ n ] ), cFileIni )
          next
 
-         return .t.
+         RETURN .t.
 
       end if
 
    end if
 
-Return .f.
+RETURN .f.
 
 //---------------------------------------------------------------------------//
 
@@ -6125,13 +6095,13 @@ RETURN
 
 //---------------------------------------------------------------------------//
 
-Function lBancas()
+FUNCTION lBancas()
 
-Return ( "BANCAS" $ appParamsMain() )
+RETURN ( "BANCAS" $ appParamsMain() )
 
 //---------------------------------------------------------------------------//
 
-function GetOleObject( cApp )
+FUNCTION GetOleObject( cApp )
 
    local oObj
 
@@ -6144,11 +6114,11 @@ function GetOleObject( cApp )
       END
    END
 
-return oObj
+RETURN oObj
 
 //----------------------------------------------------------------------------//
 
-function WinWordObj()
+FUNCTION WinWordObj()
 
    local lInstalled
    local oWord
@@ -6157,11 +6127,11 @@ function WinWordObj()
       lInstalled  := ( ( oWord := GetOleObject( "Word.Application" ) ) != nil )
    endif
 
-return oWord
+RETURN oWord
 
 //----------------------------------------------------------------------------//
 
-function ExcelObj()
+FUNCTION ExcelObj()
 
    local lInstalled
    local oExcel
@@ -6170,11 +6140,11 @@ function ExcelObj()
       lInstalled  := ( ( oExcel := GetOleObject( "Excel.Application" ) ) != nil )
    endif
 
-return oExcel
+RETURN oExcel
 
 //----------------------------------------------------------------------------//
 
-function SunCalcObj()
+FUNCTION SunCalcObj()
 
    local lInstalled
    local oCalc
@@ -6183,11 +6153,11 @@ function SunCalcObj()
       lInstalled  := ( ( oCalc := GetOleObject( "com.sun.star.ServiceManager" ) ) != nil )
    endif
 
-return oCalc
+RETURN oCalc
 
 //----------------------------------------------------------------------------//
 
-function GetExcelRange( cBook, cSheet, acRange )
+FUNCTION GetExcelRange( cBook, cSheet, acRange )
 
    local oExcel, oBook, oSheet, oRange
 
@@ -6206,11 +6176,11 @@ function GetExcelRange( cBook, cSheet, acRange )
       endif
    endif
 
-return oRange
+RETURN oRange
 
 //----------------------------------------------------------------------------//
 
-function GetExcelBook( cBook )
+FUNCTION GetExcelBook( cBook )
 
    local oExcel, oBook
    local c, n, nBooks
@@ -6221,7 +6191,7 @@ function GetExcelBook( cBook )
       for n := 1 to nBooks
          c  := oExcel:WorkBooks( n ):FullName
          if cBook == Upper( cFilePath( c ) + cFileNoExt( c ) )
-            return oExcel:WorkBooks( n )
+            RETURN oExcel:WorkBooks( n )
          endif
       next n
       TRY
@@ -6230,11 +6200,11 @@ function GetExcelBook( cBook )
       END
    endif
 
-return oBook
+RETURN oBook
 
 //----------------------------------------------------------------------------//
 
-Function SpecialVal( cNumber )
+FUNCTION SpecialVal( cNumber )
 
    local cChar
    local cResult  := ""
@@ -6247,11 +6217,11 @@ Function SpecialVal( cNumber )
       end if
    next
 
-Return ( Val( cResult ) )
+RETURN ( Val( cResult ) )
 
 //----------------------------------------------------------------------------//
 
-Function ApoloMsgNoYes( cText, cTitle, lTactil ) 
+FUNCTION ApoloMsgNoYes( cText, cTitle, lTactil ) 
 
    local oDlg
    local oBtnOk
@@ -6281,7 +6251,7 @@ RETURN ( oDlg:nResult == IDOK )
 
 //----------------------------------------------------------------------------//
 
-Function ApoloMsgStop( cText, cTitle ) 
+FUNCTION ApoloMsgStop( cText, cTitle ) 
 
    local oDlg
    local oBtnOk
@@ -6301,7 +6271,7 @@ RETURN ( oDlg:nResult == IDOK )
 
 //----------------------------------------------------------------------------//
 
-Function ApoloWaitSeconds( nSecs )
+FUNCTION ApoloWaitSeconds( nSecs )
 
    local n
 
@@ -6310,17 +6280,17 @@ Function ApoloWaitSeconds( nSecs )
       SysRefresh()
    next
 
-return nil
+RETURN nil
 
 //----------------------------------------------------------------------------//
 
-Function ApoloDescend( uParam )
+FUNCTION ApoloDescend( uParam )
 
-Return ( Descend( uParam ) )
+RETURN ( Descend( uParam ) )
 
 //----------------------------------------------------------------------------//
 
-Function CreateFastReport()
+FUNCTION CreateFastReport()
 
    if Empty( oFastReport )
 
@@ -6331,21 +6301,21 @@ Function CreateFastReport()
 
    end if
 
-Return ( oFastReport )
+RETURN ( oFastReport )
 
 //----------------------------------------------------------------------------//
 
-Function DestroyFastReport()
+FUNCTION DestroyFastReport()
 
    if Empty( oFastReport )
       oFastReport:DestroyFR()
    end if
 
-Return ( nil )
+RETURN ( nil )
 
 //----------------------------------------------------------------------------//
 
-function cDirectorioImagenes()
+FUNCTION cDirectorioImagenes()
 
   local cDirectorio := AllTrim( uFieldEmpresa( "CDIRIMG" ) )
 
@@ -6353,14 +6323,14 @@ function cDirectorioImagenes()
     cDirectorio     := cDirectorio + "\"
   end if
 
-Return ( cDirectorio )
+RETURN ( cDirectorio )
 
 //----------------------------------------------------------------------------//
 /*
 Pasa del formato RGB al format RGB Hexadecimal  #000000-------------------------
 */
 
-function RgbToRgbHex( nColorRgb )
+FUNCTION RgbToRgbHex( nColorRgb )
 
    local cRgbHex  := ""
 
@@ -6369,11 +6339,11 @@ function RgbToRgbHex( nColorRgb )
    cRgbHex        += NumToHex( nRgbGreen( nColorRgb ), 2 )
    cRgbHex        += NumToHex( nRgbBlue( nColorRgb ), 2 )
 
-return cRgbHex
+RETURN cRgbHex
 
 //----------------------------------------------------------------------------//
 
-function InfoStack()
+FUNCTION InfoStack()
 
    local i
    local cStack
@@ -6388,17 +6358,17 @@ function InfoStack()
 
    MsgInfo( cStack )
 
-return nil
+RETURN nil
 
 //----------------------------------------------------------------------------//
 
-Function lValidMail( cMail )
+FUNCTION lValidMail( cMail )
 
-Return ( HB_RegExMatch( "[A-Z0-9._%-]+@[A-Z0-9.-]+\.[A-Z]{2,4}", cMail, .f. ) )
+RETURN ( HB_RegExMatch( "[A-Z0-9._%-]+@[A-Z0-9.-]+\.[A-Z]{2,4}", cMail, .f. ) )
 
 //----------------------------------------------------------------------------//
 
-Function hashRecord( dbf )
+FUNCTION hashRecord( dbf )
 
   local n
   local hHash   := {=>}
@@ -6407,22 +6377,22 @@ Function hashRecord( dbf )
     hSet( hHash, ( dbf )->( fieldname( n ) ), ( dbf )->( fieldget( n ) ) )
   next 
 
-Return ( hHash )
+RETURN ( hHash )
 
 //----------------------------------------------------------------------------//
 
-Function appendHashRecord( hHash, dbf, aExclude )
+FUNCTION appendHashRecord( hHash, dbf, aExclude )
 
   ( dbf )->( dbappend() )
   if !( dbf )->( neterr() )  
     writeHashRecord( hHash, dbf, aExclude )
   end if
 
-Return ( hHash )
+RETURN ( hHash )
 
 //----------------------------------------------------------------------------//
 
-Function writeHashRecord( hHash, dbf, aExclude )
+FUNCTION writeHashRecord( hHash, dbf, aExclude )
 
   local n
 
@@ -6434,21 +6404,21 @@ Function writeHashRecord( hHash, dbf, aExclude )
     end if
   next 
 
-Return ( hHash )
+RETURN ( hHash )
 
 //----------------------------------------------------------------------------//
 
-Function readHashDictionary( hashTable, dbf )
+FUNCTION readHashDictionary( hashTable, dbf )
 
   local hash      := {=>}
 
   hEval( hashTable, {|key,value| hSet( hash, key, ( dbf )->( fieldget( ( dbf )->( fieldPos( value ) ) ) ) ) } )
 
-Return ( hash )
+RETURN ( hash )
 
 //----------------------------------------------------------------------------//
 
-Function writeHashDictionary( hashValue, hashTable, dbf )
+FUNCTION writeHashDictionary( hashValue, hashTable, dbf )
 
    local h
    local value
@@ -6460,11 +6430,11 @@ Function writeHashDictionary( hashValue, hashTable, dbf )
       end if
    next
 
-Return ( nil )
+RETURN ( nil )
 
 //----------------------------------------------------------------------------//
 
-Function getValueHashDictionary( key, hashTable )
+FUNCTION getValueHashDictionary( key, hashTable )
 
    local n
    local value
@@ -6474,11 +6444,11 @@ Function getValueHashDictionary( key, hashTable )
       value   := haaGetValueAt( hashTable, n )
    end if 
 
-Return ( value )
+RETURN ( value )
 
 //----------------------------------------------------------------------------//
 
-function hashDictionary( aItems )
+FUNCTION hashDictionary( aItems )
 
    local aItem
    local hash        := {=>}
@@ -6489,11 +6459,11 @@ function hashDictionary( aItems )
       end if
    next
 
-return ( hash )
+RETURN ( hash )
 
 //---------------------------------------------------------------------------//
 
-function hashDefaultValue( aItems )
+FUNCTION hashDefaultValue( aItems )
 
   local aItem
   local hash        := {=>}
@@ -6504,11 +6474,11 @@ function hashDefaultValue( aItems )
     end if
   next
 
-return ( hash )
+RETURN ( hash )
 
 //---------------------------------------------------------------------------//
 
-function hashIndex( aItems )
+FUNCTION hashIndex( aItems )
 
    local aItem
    local hash        := {=>}
@@ -6519,34 +6489,34 @@ function hashIndex( aItems )
       end if
    next
 
-return ( hash )
+RETURN ( hash )
 
 //---------------------------------------------------------------------------//
 
 
-function getFieldNameFromDictionary( cName, hashDictionary )
+FUNCTION getFieldNameFromDictionary( cName, hashDictionary )
 
   local cFieldName  := ""
 
   if empty( hashDictionary )
-    return ( cFieldName )
+    RETURN ( cFieldName )
   end if 
 
   if hhaskey( hashDictionary, cName )
     cFieldName      := hGet( hashDictionary, cName )
   end if 
 
-return ( cFieldName )
+RETURN ( cFieldName )
 
 //---------------------------------------------------------------------------//
 
-Function cAlmUsr( cAlm )
+FUNCTION cAlmUsr( cAlm )
 
    if cAlm != nil .and. oMsgAlmacen != nil
       oMsgAlmacen:SetText( "Almacén : " + RTrim( cAlm ) )
    end if
 
-Return ( cAlm )
+RETURN ( cAlm )
 
 //---------------------------------------------------------------------------//
 
@@ -6590,13 +6560,13 @@ RETURN HtmlConvertChars( cString, cQuote_style, aTranslations )
 
 //---------------------------------------------------------------------------//
 
-Function dateTimeToString( dDate, cTime )
+FUNCTION dateTimeToString( dDate, cTime )
 
-Return ( dtoc( dDate ) + space( 1 ) + trans( cTime, "@R 99:99:99" ) )
+RETURN ( dtoc( dDate ) + space( 1 ) + trans( cTime, "@R 99:99:99" ) )
 
 //---------------------------------------------------------------------------//
 
-Function validTime( uTime )
+FUNCTION validTime( uTime )
 
    local cTime
    local nHour    
@@ -6614,30 +6584,30 @@ Function validTime( uTime )
    nSeconds       := val( substr( cTime, 5, 2 ) )
 
    if !validHour( nHour )
-      Return .f.
+      RETURN .f.
    end if 
 
    if !validMinutesSeconds( nMinutes )
-      Return .f.
+      RETURN .f.
    end if 
 
    if !validMinutesSeconds( nSeconds )
-      Return .f.
+      RETURN .f.
    end if 
 
-Return ( .t. )
+RETURN ( .t. )
 
-Function validHour( nHour )
+FUNCTION validHour( nHour )
 
-Return ( nHour >= 0 .and. nHour <= 23 )
+RETURN ( nHour >= 0 .and. nHour <= 23 )
 
-Function validMinutesSeconds( nMinutes )
+FUNCTION validMinutesSeconds( nMinutes )
 
-Return ( nMinutes >= 0 .and. nMinutes <= 59 )
+RETURN ( nMinutes >= 0 .and. nMinutes <= 59 )
 
 //---------------------------------------------------------------------------//
 
-Function validHourMinutes( uTime )
+FUNCTION validHourMinutes( uTime )
 
    local cTime
    local nHour
@@ -6653,47 +6623,47 @@ Function validHourMinutes( uTime )
    nMinutes       := val( substr( cTime, 3, 2 ) )
 
    if !validHour( nHour )
-      Return .f.
+      RETURN .f.
    end if 
 
    if !validMinutesSeconds( nMinutes )
-      Return .f.
+      RETURN .f.
    end if 
 
-Return ( .t. )
+RETURN ( .t. )
 
 //--------------------------------------------------------------------------//
 
-Function getSysTime()
+FUNCTION getSysTime()
 
-Return ( strtran( time(), ":", "" ) )
-
-//--------------------------------------------------------------------------//
-
-Function getHoraInicioEmpresa()
-
-Return ( uFieldEmpresa( "cIniJor" ) + "00")
+RETURN ( strtran( time(), ":", "" ) )
 
 //--------------------------------------------------------------------------//
 
-Function DownLoadFileToUrl( cUrl, cName )
+FUNCTION getHoraInicioEmpresa()
 
-Return DOWNLOADFILE( cUrl, cName )
+RETURN ( uFieldEmpresa( "cIniJor" ) + "00")
+
+//--------------------------------------------------------------------------//
+
+FUNCTION DownLoadFileToUrl( cUrl, cName )
+
+RETURN DOWNLOADFILE( cUrl, cName )
 
 //---------------------------------------------------------------------------//
 
-Function trimNif( cNif )
+FUNCTION trimNif( cNif )
 
    cNif   := strtran( cNif, " ", "" )
    cNif   := strtran( cNif, ".", "" )
    cNif   := strtran( cNif, "-", "" )
    cNif   := strtran( cNif, "_", "" )
 
-return( cNif )
+RETURN( cNif )
 
 //--------------------------------------------------------------------------//
 /*
-Function ADSRunSQL( cAlias, cSql, aParameters, hConnection, lShow )
+FUNCTION ADSRunSQL( cAlias, cSql, aParameters, hConnection, lShow )
 
    LOCAL cOldAlias  := Alias()
    LOCAL lCreate    := FALSE
@@ -6740,7 +6710,7 @@ RETURN lCreate
 
 //---------------------------------------------------------------------------//
 
-function aNombreTarifas() 
+FUNCTION aNombreTarifas() 
 
    local n                
    local aNombreTarifas   := {}
@@ -6753,11 +6723,11 @@ function aNombreTarifas()
 
    next
 
-return ( aNombreTarifas )
+RETURN ( aNombreTarifas )
 
 //---------------------------------------------------------------------------//
 
-function nNumeroTarifa( cNombreTarifa ) 
+FUNCTION nNumeroTarifa( cNombreTarifa ) 
 
    local n
    
@@ -6765,12 +6735,12 @@ function nNumeroTarifa( cNombreTarifa )
 
       if ( uFieldEmpresa( "lShwTar" + alltrim( str( n ) ) ) .or. ( n == 1 ) ) .and. ;
          alltrim( uFieldEmpresa( "cTxtTar" + alltrim( str( n ) ) ) ) == cNombreTarifa
-         Return ( n )
+         RETURN ( n )
       endif
 
    next
 
-return ( 1 )
+RETURN ( 1 )
 
 //---------------------------------------------------------------------------//
 
@@ -6852,23 +6822,23 @@ HB_FUNC( HB_MILLISECONDS )
 
 //---------------------------------------------------------------------------//
 
-Function inicializateHashVariables()
+FUNCTION inicializateHashVariables()
 
    hVariables := {=>}
 
-Return ( .t. )
+RETURN ( .t. )
 
 //---------------------------------------------------------------------------//
 
-Function setVariablesInHash( cClave, uValor )
+FUNCTION setVariablesInHash( cClave, uValor )
 
    hset( hVariables, cClave, uValor )
 
-Return ( .t. )
+RETURN ( .t. )
 
 //---------------------------------------------------------------------------//
 
-Function getVariablesToHash( cClave )
+FUNCTION getVariablesToHash( cClave )
 
    local uVariable   := ""
 
@@ -6876,6 +6846,6 @@ Function getVariablesToHash( cClave )
       uVariable      := hGet( hVariables, cClave )
    end if
 
-Return ( uVariable )
+RETURN ( uVariable )
 
 //---------------------------------------------------------------------------//

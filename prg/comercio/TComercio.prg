@@ -158,7 +158,7 @@ CLASS TComercio
    DATA  aImagesCategories
    DATA  aTypeImagesPrestashop
 
-   DATA  nLanguage
+   DATA  nLanguage                        INIT 0
 
    DATA  nPrecioMinimo                    INIT 0
 
@@ -203,6 +203,7 @@ CLASS TComercio
 
    METHOD setDebugMode()                  INLINE ( ::lDebugMode   := .t. )
    METHOD quitDebugMode()                 INLINE ( ::lDebugMode   := .f. )
+   METHOD isDebugMode()                   INLINE ( ::lDebugMode )
 
    METHOD MeterTotal( oMeterTotal )       INLINE ( iif( oMeterTotal == nil, ::oMeterTotal := oMeterTotal, ::oMeterTotal ) )
    METHOD TextTotal( oTextTotal )         INLINE ( iif( oTextTotal == nil, ::oTextTotal := oTextTotal, ::oTextTotal ) )
@@ -1652,19 +1653,19 @@ RETURN Nil
 METHOD GetLanguagePrestashop() CLASS TComercio
 
    local oQuery
-   local cCodLanguage
+   local nLanguage      := "1"
 
    oQuery               := TMSQuery():New( ::oCon, 'SELECT * FROM ' + ::cPrefixTable( "configuration" ) + ' WHERE name = "PS_LANG_DEFAULT"' )
 
    if oQuery:Open() .and. oQuery:RecCount() > 0
-      cCodLanguage   := oQuery:FieldGetByName( 'value' )
+      nLanguage         := oQuery:FieldGetByName( 'value' )
    end if
 
    if !empty( oQuery )
       oQuery:Free()
    end if   
 
-RETURN if( !empty( cCodLanguage ), cCodLanguage, "1" )
+RETURN ( nLanguage )
 
 //---------------------------------------------------------------------------//
 
@@ -4442,11 +4443,11 @@ METHOD controllerExportPrestashop( idProduct ) Class TComercio
 
       else 
 
-         ::insertStructureInformation()
+         if ::insertStructureInformation()
 
-         waitSeconds( 1 )
-
-         ::insertAllProducts()
+            ::insertAllProducts()
+            
+         end if 
 
       end if 
 
@@ -4470,29 +4471,40 @@ METHOD insertStructureInformation() CLASS TComercio
 
    ::MeterTotalText( "Eliminando referencias en gestool." )
 
+   if !( ::TComercioCategory:buildRootCategoryInformation() )
+      msgStop( "Error al crear las categorias raices" )
+      RETURN .f.
+   end if 
+
+   ::TComercioProduct:buildAllProductInformation()
+
    ::TComercioProduct:cleanGestoolReferences()
 
    ::TComercioCategory:cleanGestoolReferences()
 
-   ::TComercioProduct:buildAllProductInformation()
-
    if ::prestaShopConnect()
+
+      ::MeterTotalText( "Eliminando las tablas anteriores." )
 
       ::TComercioProduct:truncateAllTables()
 
       ::TComercioCategory:truncateAllTables()
 
-      ::MeterTotalText( "Subiendo la información adicional a los productos." )
-
-      ::TComercioProduct:insertAditionalInformation()
-
       ::MeterTotalText( "Subiendo la información de las categorias." )
 
       ::TComercioCategory:insertCategories()   
 
+      ::MeterTotalText( "Relacionando categorias." )
+
       ::TComercioCategory:updateCategoriesParent()
 
+      ::MeterTotalText( "Recalculando posiciones de categorias." )
+
       ::TComercioCategory:recalculatePositionsCategory()
+
+      ::MeterTotalText( "Subiendo la información adicional a los productos." )
+
+      ::TComercioProduct:insertAditionalInformation()
 
       ::prestaShopDisConnect()
 

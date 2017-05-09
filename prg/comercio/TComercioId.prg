@@ -257,6 +257,10 @@ RETURN ( .t. )
 
 METHOD isValidParameters( cTipoDocumento, cClave, cWeb, idWeb )
 
+   if ::TComercio:isDebugMode()
+      RETURN ( .t. )
+   end if 
+
    if empty( cTipoDocumento )
       msgStop( "El tipo de documento " + cTipoDocumento + " no existe", "Sistema de identificadores de Prestashop" )
       RETURN ( .f. )
@@ -268,7 +272,7 @@ METHOD isValidParameters( cTipoDocumento, cClave, cWeb, idWeb )
    end if 
 
    if empty( cWeb )
-      msgStop( "El nombre de la tienda en prestashop no puede estar vacio", "Sistema de identificadores de Prestashop" / 2 )
+      msgStop( "El nombre de la tienda en prestashop no puede estar vacio", "Sistema de identificadores de Prestashop" )
       RETURN ( .f. )
    end if 
 
