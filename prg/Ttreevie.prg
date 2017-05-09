@@ -184,7 +184,7 @@ METHOD New( nTop, nLeft, oWnd, nClrFore,;
            nWidth      := 150, nHeight := 150,;
            lCheckBoxes := .F.
 
-  ::lUnicode  = FW_SetUnicode()
+   ::lUnicode  = .f.
    ::nStyle    = nOR( WS_CHILD, WS_VISIBLE, CS_VREDRAW, CS_HREDRAW,;
                       If( lDesign, WS_CLIPSIBLINGS, 0 ), WS_TABSTOP,;
                       TVS_HASBUTTONS, TVS_HASLINES, TVS_LINESATROOT, TVS_SHOWSELALWAYS, TVS_DISABLEDRAGDROP,;
@@ -230,7 +230,7 @@ METHOD ReDefine( nId, oWnd, nClrFore, nClrBack, lDesign, cMsg, bChange ) CLASS T
            nClrBack := oWnd:nClrPane,; // GetSysColor( COLOR_WINDOW ),;
            lDesign  := .f.
 
-  ::lUnicode  = FW_SetUnicode()
+   ::lUnicode = .f.
    ::nId      = nId
    ::oWnd     = oWnd
    ::aItems   = {}
