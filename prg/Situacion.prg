@@ -45,6 +45,7 @@ END CLASS
 
 METHOD New( cPath, oWndParent, oMenuItem )
 
+   DEFAULT cPath        := cPatDat()
    DEFAULT oWndParent   := GetWndFrame()
    DEFAULT oMenuItem    := "01096"
 
@@ -270,7 +271,7 @@ METHOD importStatePrestashop( oQuery )
 
 Return( .t. ) 
 
-//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//ç
 
 METHOD importState( oQuery )
    

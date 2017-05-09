@@ -279,9 +279,17 @@ RETURN ( .t. )
 
 //---------------------------------------------------------------------------//
 
+<<<<<<< HEAD
 FUNCTION Test()
 
 RETURN ( nil )
+=======
+Function Test()
+
+   Etiquetas():New():ActivateBrowse()
+
+Return ( nil )
+>>>>>>> dee95e552b3a344e93713a3807f10131c6eb0472
 
 //---------------------------------------------------------------------------//
 
@@ -3569,8 +3577,7 @@ FUNCTION cFullPathEmpresa()
   local cCodigoEmpresa  := ""
 
   cCodigoEmpresa        += fullCurDir()
-  cCodigoEmpresa        += "Emp"
-  cCodigoEmpresa        += aEmp()[ _CODEMP ]
+  cCodigoEmpresa        += cPatEmp
   cCodigoEmpresa        += "\"
   
 RETURN ( cCodigoEmpresa )

@@ -14,9 +14,12 @@ CLASS TiposIncidencias FROM SQLBaseView
 
    METHOD   buildSQLModel()               INLINE ( TiposIncidenciasModel():New() )
 
-   METHOD   getFieldFromBrowse()          INLINE ( ::oModel:getRowSet():fieldGet( "nombre" ) )
+   METHOD   getFieldFromBrowse()          INLINE ( ::oModel:getRowSet():fieldGet( "nombre_incidencia" ) )
  
    METHOD   Dialog()
+
+   METHOD   validDialog( oDlg, oGetNombre )
+
 
 END CLASS
 
@@ -78,11 +81,12 @@ METHOD Dialog( lZoom )
    local oDlg
    local oGetNombre
 
-   DEFINE DIALOG oDlg RESOURCE "TipArt" TITLE ::lblTitle() + "tipo de incidencia"
+   DEFINE DIALOG oDlg RESOURCE "TIPO_INCIDENCIA" TITLE ::lblTitle() + "tipo de incidencia"
 
    REDEFINE GET   oGetNombre ;
       VAR         ::oModel:hBuffer[ "nombre_incidencia" ] ;
-      ID          110 ;
+      MEMO ;
+      ID          100 ;
       WHEN        ( ! ::isZoomMode() ) ;
       OF          oDlg
 
@@ -90,7 +94,7 @@ METHOD Dialog( lZoom )
       ID          IDOK ;
       OF          oDlg ;
       WHEN        ( ! ::isZoomMode() ) ;
-      //ACTION   ( lPreSave( aTmp, aGet, dbfInci, nMode, oDlg ) )
+      ACTION      ( ::validDialog( oDlg, oGetNombre ) )
 
    REDEFINE BUTTON ;
       ID          IDCANCEL ;
@@ -98,18 +102,35 @@ METHOD Dialog( lZoom )
       CANCEL ;
       ACTION      ( oDlg:end() )
 
-   REDEFINE BUTTON ;
-      ID       9 ;
-      OF       oDlg ;
-      ACTION   ( ChmHelp( "TipoIncidencia" ) )
-
    // Teclas rpidas-----------------------------------------------------------
 
    oDlg:AddFastKey( VK_F5, {|| oDlg:end( IDOK ) } )
 
+   // evento bstart-----------------------------------------------------------
+
+   oDlg:bStart    := {|| oGetNombre:setFocus() }
+
    ACTIVATE DIALOG oDlg CENTER
 
 RETURN ( oDlg:nResult == IDOK )
+
+//---------------------------------------------------------------------------//
+
+METHOD validDialog( oDlg, oGetNombre )
+
+   if empty( ::oModel:hBuffer[ "nombre_incidencia" ] )
+      MsgStop( "El nombre del tipo de incidencia no puede estar vacío." )
+      oGetNombre:setFocus()
+      Return ( .f. )
+   end if
+
+   if ::oModel:getRowSet():find( ::oModel:hBuffer[ "nombre_incidencia" ], "nombre_incidencia" ) != 0
+      msgStop( "El nombre de la incidencia ya existe" )
+      oGetNombre:setFocus()
+      RETURN ( .f. )
+   end if
+
+RETURN ( oDlg:end( IDOK ) )
 
 //---------------------------------------------------------------------------//
 
@@ -195,6 +216,8 @@ METHOD buildSQLBrowse()
 
       oDlg:AddFastKey( VK_RETURN,   {|| oDlg:end( IDOK ) } )
       oDlg:AddFastKey( VK_F5,       {|| oDlg:end( IDOK ) } )
+      oDlg:AddFastKey( VK_F2,       {|| ::Append( oBrowse ) } )
+      oDlg:AddFastKey( VK_F3,       {|| ::Edit( oBrowse ) } )
 
       oDlg:bStart    := {|| ::startBrowse( oCombobox, oBrowse ) }
 

@@ -48,7 +48,6 @@ CLASS SQLBaseModel
    METHOD   setIdForRecno( nIdForRecno )           INLINE ( ::nIdForRecno := nIdForRecno )
 
 
-   METHOD   setFind( cFind )                      INLINE   ( ::cFind := cFind )
    METHOD   getRowSet()
    METHOD   buildRowSet()
    METHOD   buildRowSetWithRecno()                 INLINE   ( ::buildRowSet( .t. ) )
@@ -61,6 +60,7 @@ CLASS SQLBaseModel
    METHOD   getSelectByColumn()
    METHOD   getSelectByOrder()
 
+   METHOD   setFind( cFind )                      INLINE   ( ::cFind := cFind )
    METHOD   find( cFind )
 
    METHOD   loadBuffer( id )
@@ -136,8 +136,7 @@ METHOD getImportSentence( cPath )
    dbUseArea( .t., cLocalDriver(), cPath + "\" + ::getDbfTableName(), cCheckArea( "dbf", @dbf ), .f. )
    if ( dbf )->( neterr() )
       Return ( cInsert )
-   end if 
-
+   end if
 
    cInsert              := "INSERT INTO " + ::cTableName + " ( "
    hEval( ::hColumns, {| k | if ( k != ::cColumnKey, cInsert += k + ", ", ) } )
@@ -182,7 +181,7 @@ METHOD makeImportDbfSQL( cPath )
    end if
 
    if !( file( cPath + "\" + ::getDbfTableName() ) )
-      msgStop( "El fichero " + cPath + "\" + ::getDbfTableName() + " no se ha localizado", "AtenciÃ³n" )  
+      msgStop( "El fichero " + cPath + "\" + ::getDbfTableName() + " no se ha localizado", "Atención" )  
       Return ( self )
    end if 
 
@@ -199,6 +198,7 @@ METHOD makeImportDbfSQL( cPath )
    end if 
 
    frename( cPath + "\" + ::getDbfTableName(), cPath + "\" + ::getOldTableName() )
+   
 Return ( self )
 
 //---------------------------------------------------------------------------//

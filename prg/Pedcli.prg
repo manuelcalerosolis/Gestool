@@ -1629,7 +1629,7 @@ FUNCTION PedCli( oMenuItem, oWnd, cCodCli, cCodArt, cCodPre, lPedWeb )
    DEFINE BTNSHELL RESOURCE "GC_SHOPPING_CART_" OF oWndBrw ;
       NOBORDER ;
       ACTION   ( PedCliente2PedProveedor():New( nView, oTipArt, oFabricante, oStock ) ) ;
-      TOOLTIP  "(G)enerar pedido a proveedores" ;
+      TOOLTIP  "(G)enerar pedidos a proveedores" ;
       HOTKEY   "G";   
 
    DEFINE BTNSHELL RESOURCE "INFO" GROUP OF oWndBrw ;
@@ -1718,6 +1718,12 @@ FUNCTION PedCli( oMenuItem, oWnd, cCodCli, cCodArt, cCodPre, lPedWeb )
                               msgStop( "Pedido albaranado, cancelado o convertido a ticket" ) ) );
             TOOLTIP  "Convertir a ticket" ;
             FROM     oRotor ;
+
+      DEFINE BTNSHELL RESOURCE "GC_SHOPPING_CART_" OF oWndBrw ;
+            ALLOW    EXIT ;
+            ACTION   ( PedCliente2PedProveedor():New( nView, oTipArt, oFabricante, oStock, .t. ) ) ;
+            TOOLTIP  "Generar pedido a proveedor" ;
+            FROM     oRotor ;   
 
    DEFINE BTNSHELL RESOURCE "END" GROUP OF oWndBrw ;
       ALLOW    EXIT ;

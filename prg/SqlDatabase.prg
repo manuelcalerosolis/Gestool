@@ -28,6 +28,8 @@ CLASS SQLDatabase
    METHOD Query( cSql )            INLINE ( ::oConexion:Query( cSql ) )
    METHOD Prepare( cSql )          INLINE ( ::oConexion:Prepare( cSql ) )
 
+   METHOD LastInsertId()           INLINE ( ::oConexion:LASTINSERTID() )
+
    METHOD errorInfo()              INLINE ( ::oConexion:errorInfo() )
 
    METHOD checkModelsExistence()   

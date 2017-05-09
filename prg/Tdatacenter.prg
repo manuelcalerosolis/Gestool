@@ -877,7 +877,7 @@ METHOD StartAdministratorTask()
 
             ::ConvertEmpresaToSQLite()
 
-         end if 
+         end if
 
          ::oBrwEmpresas:GoDown()
          ::oBrwEmpresas:Refresh()
@@ -1811,14 +1811,6 @@ METHOD BuildData()
    oDataTable:bCreateFile  := {| cPath | TNotas():BuildFiles( cPath ) }
    ::AddDataTable( oDataTable )
 
- /*  oDataTable              := TDataTable():New( "TipoNotas", cPathDatos() )
-   oDataTable:cDataFile    := cPatDat( .t. ) + "TipoNotas.Dbf"
-   oDataTable:cIndexFile   := cPatDat( .t. ) + "TipoNotas.Cdx"
-   oDataTable:cDescription := "Tipos de notas"
-   oDataTable:bCreateFile  := {| cPath | mkTipoNotas( cPath ) }
-   oDataTable:bCreateIndex := {| cPath | rxTipoNotas( cPath ) }
-   ::AddDataTable( oDataTable )
-*/
    oDataTable              := TDataTable():New( "TVta", cPathDatos() )
    oDataTable:cDataFile    := cPatDat( .t. ) + "TVta.Dbf"
    oDataTable:cIndexFile   := cPatDat( .t. ) + "TVta.Cdx"
@@ -4820,15 +4812,16 @@ RETURN ( ::ExecuteSqlStatement( cStm, "SatCliArticulos" ) )
 METHOD ConvertDatosToSQLite()
 
    TiposImpresorasModel():New():makeImportDbfSQL()
-
    TiposNotasModel():New():makeImportDbfSQL()
-   //Situaciones():New():makeImportDbfSQL()
+   SituacionesModel():New():makeImportDbfSQL()
 
 RETURN ( Self )
 
 //---------------------------------------------------------------------------//
 
 METHOD ConvertEmpresaToSQLite()
+
+  //EtiquetasModel():New():makeImportDbfSQL()
 
 RETURN ( Self )
 

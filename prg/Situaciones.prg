@@ -14,7 +14,7 @@ CLASS Situaciones FROM SQLBaseView
 
    METHOD   buildSQLModel()               INLINE ( SituacionesModel():New() )
 
-   METHOD   getFieldFromBrowse()          INLINE ( ::oModel:getRowSet():fieldGet( "nombre" ) )
+   METHOD   getFieldFromBrowse()          INLINE ( ::oModel:getRowSet():fieldGet( "situacion" ) )
  
    METHOD   Dialog()
 
@@ -93,7 +93,7 @@ METHOD Dialog( lZoom )
       ID          IDOK ;
       OF          oDlg ;
       WHEN        ( ! ::isZoomMode() ) ;
-      ACTION      ( ::validDialog( oDlg ) )
+      ACTION      ( ::validDialog( oDlg, oGetNombre ) )
 
    REDEFINE BUTTON ;
       ID          IDCANCEL ;
@@ -115,11 +115,21 @@ RETURN ( oDlg:nResult == IDOK )
 
 //--------------------------------------------------------------------------//
 
-METHOD validDialog( oDlg )
+METHOD validDialog( oDlg, oGetNombre )
 
    if empty( ::oModel:hBuffer[ "situacion" ] )
       MsgStop( "El nombre de la situación no puede estar vacío" )
+      oGetNombre:setFocus()
       Return ( .f. )
    end if
 
+   if ::oModel:getRowSet():find( ::oModel:hBuffer[ "situacion" ], "situacion" ) != 0
+      msgStop( "Esta situación ya existe" )
+      oGetNombre:setFocus()
+      RETURN ( .f. )
+   end if
+
 RETURN ( oDlg:end( IDOK ) )
+
+//--------------------------------------------------------------------------//
+

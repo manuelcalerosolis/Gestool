@@ -15,6 +15,8 @@ CLASS Etiquetas FROM SQLBaseView
    METHOD   New()
 
    METHOD   buildSQLShell()
+
+   METHOD   buildSQLBrowse()
   
    METHOD   buildSQLModel()               INLINE ( EtiquetasModel():New() )
 
@@ -29,6 +31,7 @@ CLASS Etiquetas FROM SQLBaseView
    METHOD   loadTree( oTree, id )
    METHOD      setTree()
    METHOD      changeTree()
+   METHOD      changeFindTree( oFind )
 
    METHOD   AppendChild( oBrowse )
 
@@ -148,7 +151,7 @@ METHOD Dialog( lZoom )
       ID          IDOK ;
       OF          oDlg ;
       WHEN        ( ! ::isZoomMode() ) ;
-      ACTION      ( ::validDialog( oDlg ) )
+      ACTION      ( ::validDialog( oDlg, oGetNombre ) )
 
    REDEFINE BUTTON ;
       ID          IDCANCEL ;
@@ -180,12 +183,13 @@ RETURN ( Self )
 
 //---------------------------------------------------------------------------//  
 
-METHOD validDialog( oDlg )
+METHOD validDialog( oDlg, oGetNombre )
 
    ::setSelectedNode( nil )
 
    if empty( ::oModel:hBuffer[ "nombre" ] )
       msgStop( "Nombre de la etiqueta no puede estar vacío." )
+      oGetNombre:setFocus()
       RETURN ( .f. )
    end if 
 
@@ -391,5 +395,60 @@ METHOD LblTitle()
    end if 
 
 RETURN( ::Super:lblTitle() )
+
+//---------------------------------------------------------------------------//
+
+METHOD buildSQLBrowse()
+
+   local oDlg
+   local oFind
+   local cFind       := space( 200 )
+
+   DEFINE DIALOG oDlg RESOURCE "HELP_ETIQUETAS" TITLE "Seleccionar etiquetas"
+
+      REDEFINE GET   oFind ; 
+         VAR         cFind ;
+         ID          104 ;
+         BITMAP      "FIND" ;
+         OF          oDlg
+
+      oFind:bChange                 := {|| ::changeFindTree( oFind ) }
+
+      ::oTree                       := TTreeView():Redefine( 110, oDlg )
+      ::oTree:bItemSelectChanged    := {|| ::changeTree() }
+
+      REDEFINE BUTTON ;
+         ID          IDOK ;
+         OF          oDlg ;
+         ACTION      ( oDlg:end( IDOK ) )
+
+      REDEFINE BUTTON ;
+         ID          IDCANCEL ;
+         OF          oDlg ;
+         CANCEL ;
+         ACTION      ( oDlg:end() )
+
+      oDlg:AddFastKey( VK_RETURN,   {|| oDlg:end( IDOK ) } )
+      oDlg:AddFastKey( VK_F5,       {|| oDlg:end( IDOK ) } )
+
+      oDlg:bStart    := {|| ::loadTree() }
+
+   oDlg:Activate( , , , .t., )
+
+RETURN ( oDlg:nResult == IDOK )
+
+//---------------------------------------------------------------------------//
+
+METHOD changeFindTree( oFind )
+
+   //msgalert( oFind:cText, "cText" )
+
+   ::oModel:find( oFind:cText )
+
+   //msgalert( ::oModel:cFind, "el fin del model" )
+
+   ::loadTree()
+
+RETURN ( Self )
 
 //---------------------------------------------------------------------------//

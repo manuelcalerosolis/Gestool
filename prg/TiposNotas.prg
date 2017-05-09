@@ -12,9 +12,11 @@ CLASS TiposNotas FROM SQLBaseView
 
    METHOD   buildSQLModel()               INLINE ( TiposNotasModel():New() )
 
-   METHOD   getFieldFromBrowse()          INLINE ( ::oModel:getRowSet():fieldGet( "nombre" ) )
+   METHOD   getFieldFromBrowse()          INLINE ( ::oModel:getRowSet():fieldGet( "tipo" ) )
  
    METHOD   Dialog()
+
+   METHOD   validDialog( oDlg, oGetNombre )
 
 END CLASS
 
@@ -89,7 +91,7 @@ METHOD Dialog( lZoom )
       ID          IDOK ;
       OF          oDlg ;
       WHEN        ( ! ::isZoomMode() ) ;
-      ACTION      ( oDlg:end( IDOK ) )
+      ACTION      ( ::validDialog( oDlg, oGetNombre ) )
 
    REDEFINE BUTTON ;
       ID          IDCANCEL ;
@@ -104,3 +106,23 @@ METHOD Dialog( lZoom )
    ACTIVATE DIALOG oDlg CENTER
 
 RETURN ( oDlg:nResult == IDOK )
+
+//----------------------------------------------------------------------------//
+
+METHOD validDialog( oDlg, oGetNombre )
+
+   if empty( ::oModel:hBuffer[ "tipo" ] )
+      msgStop( "El nombre de la nota no puede estar vacío." )
+      oGetNombre:setFocus()
+      RETURN ( .f. )
+   end if
+
+   if ::oModel:getRowSet():find( ::oModel:hBuffer[ "tipo" ], "tipo" ) != 0
+      msgStop( "Esta nota ya existe" )
+      oGetNombre:setFocus()
+      RETURN ( .f. )
+   end if
+
+RETURN ( oDlg:end( IDOK ) )
+
+//----------------------------------------------------------------------------//
