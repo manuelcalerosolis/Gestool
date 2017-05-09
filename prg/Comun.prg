@@ -281,6 +281,11 @@ RETURN ( .t. )
 
 FUNCTION Test()
 
+<<<<<<< HEAD
+   Etiquetas():New():ActivateShell()
+
+=======
+>>>>>>> bacb163255065b037f19b62ea3898bae2edce3ad
 Return ( nil )
 
 //---------------------------------------------------------------------------//
