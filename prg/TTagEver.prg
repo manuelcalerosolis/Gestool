@@ -239,8 +239,9 @@ for n := 1 to nLen
     ::aCoors[n] :={0,0,0,0}
 next
 
-
 FillSolidRect(::hDC, GetClientRect(::hWnd), ::nClrPane )
+
+sysrefresh()
 
 nL := nLeft
 
@@ -308,6 +309,8 @@ for n := 1 to nLen
        nColor := SetTextColor(::hDC, ::nClrText )
     endif
 
+    sysrefresh()
+
 next n
 
 SetBkMode( ::hDC, nMode )
@@ -323,7 +326,6 @@ SelectObject( ::hDC, hOldBrush )
 DeleteObject( hPen )
 DeleteObject( hBrush )
 DeleteObject( hBrush1 )
-
 
 ::DispEnd( aInfo )
 

@@ -30,16 +30,17 @@
 
 #define fldGeneral                  oFld:aDialogs[1]
 #define fldPrecios                  oFld:aDialogs[2]
-#define fldTactil                   oFld:aDialogs[3] 
-#define fldDescripciones            oFld:aDialogs[4]
-#define fldImagenes                 oFld:aDialogs[5]
-#define fldPropiedades              oFld:aDialogs[6]
-#define fldLogistica                oFld:aDialogs[7]
-#define fldStocks                   oFld:aDialogs[8] 
-#define fldContabilidad             oFld:aDialogs[9]
-#define fldOfertas                  oFld:aDialogs[10]
-#define fldEscandallos              oFld:aDialogs[11]
-#define fldWeb                      oFld:aDialogs[12]
+#define fldAdicionales              oFld:aDialogs[3] 
+#define fldTactil                   oFld:aDialogs[4] 
+#define fldDescripciones            oFld:aDialogs[5]
+#define fldImagenes                 oFld:aDialogs[6]
+#define fldPropiedades              oFld:aDialogs[7]
+#define fldLogistica                oFld:aDialogs[8]
+#define fldStocks                   oFld:aDialogs[9] 
+#define fldContabilidad             oFld:aDialogs[10]
+#define fldOfertas                  oFld:aDialogs[11]
+#define fldEscandallos              oFld:aDialogs[12]
+#define fldWeb                      oFld:aDialogs[13]
 
 memvar cDbfArt
 memvar cDbfDiv
@@ -1881,6 +1882,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, cArticulo, oBrw, bWhen, bValid, nMode )
          OF       oDlg ;
          PROMPT   "&General",;
                   "&Precios",;
+                  "&Adicionales",;
                   "&Táctil",;
                   "&Idiomas",;
                   "Imagenes",;
@@ -1893,6 +1895,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, cArticulo, oBrw, bWhen, bValid, nMode )
                   "&Web";
          DIALOGS  "ART_1",;
                   "ART_5",;
+                  "ART_Adicional",;
                   "ART_Tactil",;
                   "ART_2",;
                   "ART_12",;
@@ -1932,7 +1935,6 @@ STATIC FUNCTION EdtRec( aTmp, aGet, cArticulo, oBrw, bWhen, bValid, nMode )
          ON CHANGE( ActTitle( nKey, nFlags, Self, nMode, oDlg ) );
          WHEN     ( nMode != ZOOM_MODE ) ;
          OF       fldGeneral
-
 
    /*
    Codigos de barras___________________________________________________________
@@ -2031,7 +2033,11 @@ STATIC FUNCTION EdtRec( aTmp, aGet, cArticulo, oBrw, bWhen, bValid, nMode )
 
    oTagsEver:lOverClose := .t.
 
+<<<<<<< HEAD
    TBtnBmp():ReDefine( 101, "gc_recycle_16",,,,,{|| getEtiquetasBrowse( oTagsEver:getItems() ) }, fldGeneral, .f., , .f.,  )
+=======
+   TBtnBmp():ReDefine( 101, "Lupa",,,,,{|| getEtiquetasBrowse() }, fldGeneral, .f., , .f.,  )               
+>>>>>>> origin/master
 
    REDEFINE GET oSay[9] VAR cSay[9] ;
       ID       271 ;
@@ -2119,41 +2125,6 @@ STATIC FUNCTION EdtRec( aTmp, aGet, cArticulo, oBrw, bWhen, bValid, nMode )
          TRANSPARENT ;
          OF       oFld:aDialogs[1]
 
-   /*
-   Lote------------------------------------------------------------------------
-   */
-
-   REDEFINE CHECKBOX aTmp[ ( D():Articulos( nView ) )->( fieldpos( "lLote" ) ) ] ;
-         ID       600 ;
-         WHEN     ( nMode != ZOOM_MODE ) ;
-         OF       fldGeneral
-
-   REDEFINE GET aTmp[ ( D():Articulos( nView ) )->( fieldpos( "cLote" ) ) ] ;
-         ID       610 ;
-         WHEN     ( nMode != ZOOM_MODE .AND. aTmp[ ( D():Articulos( nView ) )->( fieldpos( "lLote" ) ) ] );
-         OF       fldGeneral
-
-   REDEFINE CHECKBOX aTmp[ ( D():Articulos( nView ) )->( fieldpos( "lTipAcc" ) ) ] ;
-         ID       280 ;
-         WHEN     ( nMode != ZOOM_MODE ) ;
-         OF       fldGeneral
-
-   REDEFINE CHECKBOX aTmp[ ( D():Articulos( nView ) )->( fieldpos( "lAutSer" ) ) ];
-         ID       138 ;
-         WHEN     ( nMode != ZOOM_MODE ) ;
-         OF       fldGeneral
-
-   REDEFINE CHECKBOX aGet[ ( D():Articulos( nView ) )->( fieldpos( "lObs" ) )] ;
-         VAR      aTmp[ ( D():Articulos( nView ) )->( fieldpos( "lObs" ) )];
-         ID       139 ;
-         OF       fldGeneral
-
-   REDEFINE CHECKBOX aGet[ ( D():Articulos( nView ) )->( fieldpos( "lNumSer" ) ) ];
-         VAR      aTmp[ ( D():Articulos( nView ) )->( fieldpos( "lNumSer" ) ) ];
-         ID       136 ;
-         WHEN     ( nMode != ZOOM_MODE ) ;
-         OF       fldGeneral
-
    REDEFINE SAY ;
          PROMPT   getConfigTraslation( "Ubicación" );
          ID       221 ;
@@ -2170,35 +2141,6 @@ STATIC FUNCTION EdtRec( aTmp, aGet, cArticulo, oBrw, bWhen, bValid, nMode )
    bmpImage:bLClicked   := {|| ShowImage( bmpImage ) }
    bmpImage:bRClicked   := {|| ShowImage( bmpImage ) }
 
-   REDEFINE CHECKBOX aTmp[ ( D():Articulos( nView ) )->( fieldpos( "lFacCnv" ) ) ] ;
-      ID       200 ;
-      WHEN     ( nMode != ZOOM_MODE ) ;
-      ON CHANGE( ChangeFactorConversion( aTmp, aGet ) ) ;
-      OF       fldGeneral
-
-   REDEFINE GET aGet[ ( D():Articulos( nView ) )->( fieldpos( "nFacCnv" ) ) ] ;
-      VAR      aTmp[ ( D():Articulos( nView ) )->( fieldpos( "nFacCnv" ) ) ] ;
-      ID       210 ;
-      WHEN     ( nMode != ZOOM_MODE .and. aTmp[ ( D():Articulos( nView ) )->( fieldpos( "lFacCnv" ) ) ] );
-      PICTURE  "@E 999,999.999999" ;
-      OF       fldGeneral
-
-   REDEFINE GET aGet[ ( D():Articulos( nView ) )->( fieldpos( "nDuracion" ) ) ] ;
-      VAR      aTmp[ ( D():Articulos( nView ) )->( fieldpos( "nDuracion" ) ) ] ;
-      ID       250 ;
-      SPINNER ;
-      MIN      0 ;
-      MAX      100 ;
-      WHEN     ( nMode != ZOOM_MODE );
-      OF       fldGeneral
-
-   REDEFINE COMBOBOX aGet[ ( D():Articulos( nView ) )->( fieldpos( "nTipDur" ) ) ];
-      VAR      aTmp[ ( D():Articulos( nView ) )->( fieldpos( "nTipDur" ) ) ];
-      ITEMS    { "Dia (s)", "Mes (es)", "Año (s)" };
-      ID       251 ;
-      WHEN     ( nMode != ZOOM_MODE ) ;
-      OF       fldGeneral
-
    /*
    REDEFINE CHECKBOX aGet[ ( D():Articulos( nView ) )->( fieldpos( "lTerminado" ) ) ];
          VAR      aTmp[ ( D():Articulos( nView ) )->( fieldpos( "lTerminado" ) ) ];
@@ -2207,23 +2149,87 @@ STATIC FUNCTION EdtRec( aTmp, aGet, cArticulo, oBrw, bWhen, bValid, nMode )
          OF       fldGeneral
    */
 
+   /*
+   Adicional------------------------------------------------------------------------
+   */
+
+   REDEFINE CHECKBOX aTmp[ ( D():Articulos( nView ) )->( fieldpos( "lLote" ) ) ] ;
+         ID       600 ;
+         WHEN     ( nMode != ZOOM_MODE ) ;
+         OF       fldAdicionales
+
+   REDEFINE GET   aTmp[ ( D():Articulos( nView ) )->( fieldpos( "cLote" ) ) ] ;
+         ID       610 ;
+         WHEN     ( nMode != ZOOM_MODE .AND. aTmp[ ( D():Articulos( nView ) )->( fieldpos( "lLote" ) ) ] );
+         OF       fldAdicionales
+
+   REDEFINE CHECKBOX aGet[ ( D():Articulos( nView ) )->( fieldpos( "lObs" ) ) ] ;
+         VAR      aTmp[ ( D():Articulos( nView ) )->( fieldpos( "lObs" ) ) ];
+         ID       139 ;
+         OF       fldAdicionales
+
+   REDEFINE CHECKBOX aGet[ ( D():Articulos( nView ) )->( fieldpos( "lNumSer" ) ) ];
+         VAR      aTmp[ ( D():Articulos( nView ) )->( fieldpos( "lNumSer" ) ) ];
+         ID       136 ;
+         WHEN     ( nMode != ZOOM_MODE ) ;
+         OF       fldAdicionales
+
+   REDEFINE CHECKBOX aTmp[ ( D():Articulos( nView ) )->( fieldpos( "lAutSer" ) ) ];
+         ID       138 ;
+         WHEN     ( nMode != ZOOM_MODE ) ;
+         OF       fldAdicionales
+
+   REDEFINE GET   aGet[ ( D():Articulos( nView ) )->( fieldpos( "nDuracion" ) ) ] ;
+         VAR      aTmp[ ( D():Articulos( nView ) )->( fieldpos( "nDuracion" ) ) ] ;
+         ID       250 ;
+         SPINNER ;
+         MIN      0 ;
+         MAX      100 ;
+         WHEN     ( nMode != ZOOM_MODE );
+         OF       fldAdicionales
+
+   REDEFINE COMBOBOX aGet[ ( D():Articulos( nView ) )->( fieldpos( "nTipDur" ) ) ];
+         VAR      aTmp[ ( D():Articulos( nView ) )->( fieldpos( "nTipDur" ) ) ];
+         ITEMS    { "Dia (s)", "Mes (es)", "Año (s)" };
+         ID       251 ;
+         WHEN     ( nMode != ZOOM_MODE ) ;
+         OF       fldAdicionales
+
+   REDEFINE CHECKBOX aTmp[ ( D():Articulos( nView ) )->( fieldpos( "lTipAcc" ) ) ] ;
+         ID       280 ;
+         WHEN     ( nMode != ZOOM_MODE ) ;
+         OF       fldAdicionales
+
+   REDEFINE CHECKBOX aTmp[ ( D():Articulos( nView ) )->( fieldpos( "lFacCnv" ) ) ] ;
+         ID       200 ;
+         WHEN     ( nMode != ZOOM_MODE ) ;
+         ON CHANGE( ChangeFactorConversion( aTmp, aGet ) ) ;
+         OF       fldAdicionales
+
+   REDEFINE GET aGet[ ( D():Articulos( nView ) )->( fieldpos( "nFacCnv" ) ) ] ;
+      VAR      aTmp[ ( D():Articulos( nView ) )->( fieldpos( "nFacCnv" ) ) ] ;
+         ID       210 ;
+         WHEN     ( nMode != ZOOM_MODE .and. aTmp[ ( D():Articulos( nView ) )->( fieldpos( "lFacCnv" ) ) ] );
+         PICTURE  "@E 999,999.999999" ;
+         OF       fldAdicionales
+
    REDEFINE GET   aGet[ ( D():Articulos( nView ) )->( fieldpos( "cCodEdi" ) ) ] ;
          VAR      aTmp[ ( D():Articulos( nView ) )->( fieldpos( "cCodEdi" ) ) ] ;
          ID       260 ;
          WHEN     ( nMode != ZOOM_MODE );
-         OF       fldGeneral
+         OF       fldAdicionales
 
    REDEFINE GET   aGet[ ( D():Articulos( nView ) )->( fieldpos( "cRefAux" ) ) ] ;
          VAR      aTmp[ ( D():Articulos( nView ) )->( fieldpos( "cRefAux" ) ) ] ;
          ID       290 ;
          WHEN     ( nMode != ZOOM_MODE );
-         OF       fldGeneral
+         OF       fldAdicionales
 
    REDEFINE GET   aGet[ ( D():Articulos( nView ) )->( fieldpos( "cRefAux2" ) ) ] ;
          VAR      aTmp[ ( D():Articulos( nView ) )->( fieldpos( "cRefAux2" ) ) ] ;
          ID       291 ;
          WHEN     ( nMode != ZOOM_MODE );
-         OF       fldGeneral
+         OF       fldAdicionales
 
    /*
    Tactil----------------------------------------------------------------------
@@ -19306,13 +19312,21 @@ Return ( proveedorPorDefectoArticulo )
 Static Function getEtiquetasBrowse( aSelectedItems )
 
    local aSelected
-   local oEtiquetas
 
+<<<<<<< HEAD
    oEtiquetas        := Etiquetas():New()
 
    aSelected         := oEtiquetas:activateBrowse( aSelectedItems )
 
    oTagsEver:SetItems( aSelected )
+=======
+   aSelected         := Etiquetas():New():activateBrowse()
+
+   if !empty( aSelected )
+      oTagsEver:setItems( aSelected )
+      oTagsEver:Refresh()
+   end if 
+>>>>>>> origin/master
 
 Return ( nil )
 
