@@ -80,7 +80,7 @@ CLASS TComercioConfig
 
    METHOD getDateStart()               INLINE ( ::getFromCurrentWeb( "DateStart" ) )
 
-   METHOD getLangs()                   INLINE ( ::getFromCurrentWeb( "Langs" ) )
+   METHOD getLangs()                   INLINE ( ::getFromCurrentWeb( "Langs", {} ) )
    METHOD getLang( idLang )            
 
    METHOD getImagesDirectory()         INLINE ( ::getValidDirectoryFtp( ::getFromCurrentWeb( "ImagesDirectory") ) )
