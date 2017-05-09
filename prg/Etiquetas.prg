@@ -415,7 +415,7 @@ METHOD buildSQLBrowse()
       oFind:bChange                 := {|| ::changeFindTree( oFind ) }
 
       ::oTree                       := TTreeView():Redefine( 110, oDlg )
-      ::oTree:bItemSelectChanged    := {|| ::changeTree() }
+      //::oTree:bItemSelectChanged    := {|| ::changeTree() }
 
       REDEFINE BUTTON ;
          ID          IDOK ;
