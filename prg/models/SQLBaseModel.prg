@@ -397,6 +397,7 @@ METHOD selectFetchArray( cSentence )
 
    local oStmt
    local aFetch
+   local aResult := {}
 
    try 
       oStmt          := getSQLDatabase():Query( cSentence )
@@ -412,8 +413,9 @@ METHOD selectFetchArray( cSentence )
    end
 
    if !empty( aFetch ) .and. hb_isarray( aFetch )
-      Return ( aFetch )
-   end if 
+      aeval( aFetch, {|a| aadd( aResult, a[ 1 ] ) } )
+      RETURN ( aResult )
+   end if
 
 Return ( nil )
 

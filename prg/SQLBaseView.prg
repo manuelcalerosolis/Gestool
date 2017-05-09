@@ -132,7 +132,7 @@ RETURN ( Self )
 
 //---------------------------------------------------------------------------//
 
-METHOD ActivateBrowse()
+METHOD ActivateBrowse( aSelectedItems )
 
    local uReturn
 
@@ -142,7 +142,7 @@ METHOD ActivateBrowse()
 
    ::oModel:buildRowSetWithRecno()
 
-   if ::buildSQLBrowse()
+   if ::buildSQLBrowse( aSelectedItems )
       uReturn     := ::getFieldFromBrowse() 
    end if
 

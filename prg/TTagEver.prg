@@ -143,7 +143,7 @@ local nLen := len(::aItems)
 local aItems := {}
 
 for n := 1 to nLen
-    if ::aItems[n,2]
+    if !::aItems[n,2]
        aadd(aItems, ::aItems[n,1] )
     endif
 next
@@ -158,7 +158,11 @@ return aItems
     local n
     local nLen
 
-	 if len(aItems) != 0
+    if empty(aItems)
+      return nil
+    end if
+
+	  if len(aItems) != 0
 
 	    ::aItems := {}
 
@@ -168,7 +172,7 @@ return aItems
 
 	 endif
 
-return 0
+return nil
 
 ***************************************************************************************************************
    METHOD AddItem( cText ) CLASS TTagEver

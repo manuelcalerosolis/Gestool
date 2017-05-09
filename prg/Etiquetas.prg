@@ -49,6 +49,9 @@ CLASS Etiquetas FROM SQLBaseView
 
    METHOD   LblTitle()
 
+   METHOD   setSelectedItems( aNames, oTree, aItems )
+   METHOD      setSelectedItem()
+
 END CLASS
 
 //---------------------------------------------------------------------------//
@@ -283,7 +286,7 @@ RETURN ( Self )
 
 //---------------------------------------------------------------------------//
 
-METHOD setTree( id, oTree, aItems )
+METHOD setTree( Id, oTree, aItems )
 
    local oItem
 
@@ -305,7 +308,7 @@ METHOD setTree( id, oTree, aItems )
       end if
 
       if len( oItem:aItems ) > 0
-         ::setTree( id, oTree, oItem:aItems )
+         ::setTree( Id, oTree, oItem:aItems )
       end if
 
    next
@@ -404,7 +407,7 @@ RETURN( ::Super:lblTitle() )
 
 //---------------------------------------------------------------------------//
 
-METHOD buildSQLBrowse()
+METHOD buildSQLBrowse( aSelectedItems )
 
    local oDlg
    local oFind
@@ -438,7 +441,7 @@ METHOD buildSQLBrowse()
       oDlg:AddFastKey( VK_RETURN,   {|| ::validBrowse( oDlg ) } )
       oDlg:AddFastKey( VK_F5,       {|| ::validBrowse( oDlg ) } )
 
-      oDlg:bStart    := {|| ::loadTree() }
+      oDlg:bStart    := {|| ::loadTree(), ::setSelectedItems( aSelectedItems ) }
 
    oDlg:Activate( , , , .t., )
 
@@ -488,7 +491,7 @@ METHOD getAllSelectedNode( oTree, aItems )
       end if
 
       if len( oItem:aItems ) > 0
-         ::checkSelectedNode( oTree, oItem:aItems )
+         ::getAllSelectedNode( oTree, oItem:aItems )
       end if
 
    next
@@ -497,3 +500,39 @@ RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 
+METHOD setSelectedItems( aNames )
+
+RETURN ( aeval( aNames, {|cName| ::setSelectedItem( cName ) } ) )
+
+//---------------------------------------------------------------------------//
+
+METHOD setSelectedItem( cName, oTree, aItems )
+
+   local oItem
+
+   default oTree  := ::oTree
+
+   if empty( aItems )
+      aItems      := oTree:aItems
+   end if
+
+   for each oItem in aItems
+
+      if ( alltrim( cValToStr( cName ) ) == alltrim( cValToStr( oItem:cPrompt ) ) )
+
+         oTree:Select( oItem )
+         oTree:SetCheck( oItem, .t. )
+
+         sysRefresh()
+
+      end if
+
+      if len( oItem:aItems ) > 0
+         ::setSelectedItem( cName, oTree, oItem:aItems )
+      end if
+
+   next
+
+RETURN ( Self )
+
+//---------------------------------------------------------------------------//

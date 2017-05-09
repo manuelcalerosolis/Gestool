@@ -7,7 +7,7 @@
 
 CLASS EtiquetasModel FROM SQLBaseEmpresasModel
 
-   DATA     cTableName
+   DATA     cTableName                             INIT "etiquetas"
 
    DATA     cDbfTableName
 
@@ -34,6 +34,11 @@ CLASS EtiquetasModel FROM SQLBaseEmpresasModel
    METHOD   makeImportDbfSQL()
 
    METHOD   getSentenceFromOldCategories( idParent )
+
+   METHOD   translateIdsToNames( aIds )
+
+   METHOD   translateNamesToIds( aNames )
+
 
 END CLASS
 
@@ -207,6 +212,34 @@ Return ( self )
 
 //---------------------------------------------------------------------------//
 
+METHOD translateIdsToNames( aIds )
 
+   local cTranslate := "SELECT nombre FROM " + ::cTableName + " WHERE empresa = " + toSQLString( cCodEmp() ) + " AND ( "
+
+   if empty( aIds )
+      RETURN ( nil )
+   end if
+
+   aeval( aIds, { | nID | cTranslate += " id = " + toSQLString ( nID ) + " OR" } )
+
+   cTranslate := chgAtEnd( cTranslate, " )", 3 )
+
+RETURN ( ::selectFetchArray( cTranslate ) )
+
+//---------------------------------------------------------------------------//
+
+METHOD translateNamesToIds( aNames )
+
+   local cTranslate := "SELECT id FROM " + ::cTableName + " WHERE empresa = " + toSQLString( cCodEmp() ) + " AND ( "
+
+   if empty( aNames )
+      RETURN ( nil )
+   end if
+
+   aeval( aNames, { | cName | cTranslate += " nombre = " + toSQLString ( cName ) + " OR" } )
+
+   cTranslate := chgAtEnd( cTranslate, " )", 3 )
+
+RETURN ( ::selectFetchArray( cTranslate ) )
 
 //temporada

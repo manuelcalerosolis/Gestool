@@ -1719,6 +1719,8 @@ STATIC FUNCTION EdtRec( aTmp, aGet, cArticulo, oBrw, bWhen, bValid, nMode )
    local oBmpUbicaciones
    local oBmpImagenes
    local oBmpTactil
+   local aIdEtiquetas
+   local aNombreEtiquetas
    local oImpComanda1
    local oImpComanda2
    local cImpComanda1
@@ -1855,6 +1857,10 @@ STATIC FUNCTION EdtRec( aTmp, aGet, cArticulo, oBrw, bWhen, bValid, nMode )
    cSubCtaAnt      := aTmp[ ( D():Articulos( nView ) )->( fieldpos( "cCtaVta" ) ) ]
    cSubCtaAntCom   := aTmp[ ( D():Articulos( nView ) )->( fieldpos( "cCtaCom" ) ) ]
    cCodigoFamilia  := aTmp[ ( D():Articulos( nView ) )->( fieldpos( "Familia" ) ) ]
+
+   aIdEtiquetas   := hb_deserialize( aTmp[ ( D():Articulos( nView ) )->( fieldpos( "cEtiqueta" ) ) ] )
+
+   aNombreEtiquetas     := EtiquetasModel():translateIdsToNames( aIdEtiquetas )
 
    /*
    Filtros para los stocks-----------------------------------------------------
@@ -2021,10 +2027,11 @@ STATIC FUNCTION EdtRec( aTmp, aGet, cArticulo, oBrw, bWhen, bValid, nMode )
       BITMAP   "LUPA" ;
       OF       fldGeneral
 
-   oTagsEver            := TTagEver():Redefine( 100, fldGeneral, nil, { "esto", "es", "una", "prueba" } ) 
+   oTagsEver            := TTagEver():Redefine( 100, fldGeneral, nil, aNombreEtiquetas ) 
+
    oTagsEver:lOverClose := .t.
 
-   TBtnBmp():ReDefine( 101, "gc_recycle_16",,,,,{|| getEtiquetasBrowse() }, fldGeneral, .f., , .f.,  )               
+   TBtnBmp():ReDefine( 101, "gc_recycle_16",,,,,{|| getEtiquetasBrowse( oTagsEver:getItems() ) }, fldGeneral, .f., , .f.,  )
 
    REDEFINE GET oSay[9] VAR cSay[9] ;
       ID       271 ;
@@ -5695,14 +5702,13 @@ Static Function EndTrans( aTmp, aGet, oSay, oDlg, aTipBar, cTipBar, nMode, oImpC
 
    // Notificaciones en pantalla-----------------------------------------------
 
-   msgalert( hb_valtoexp( oTagsEver:getItems() ) )
-
    oBlock                  := ErrorBlock( { | oError | ApoloBreak( oError ) } )
    BEGIN SEQUENCE
    
       beginTransaction()
 
-      aTmp[ ( D():Articulos( nView ) )->( fieldpos( "LastChg" ) ) ] := GetSysDate()
+      aTmp[ ( D():Articulos( nView ) )->( fieldpos( "LastChg" ) ) ]     := GetSysDate()
+      aTmp[ ( D():Articulos( nView ) )->( fieldpos( "cEtiqueta" ) ) ]   := hb_serialize( EtiquetasModel():translateNamesToIds( oTagsEver:getItems() ) )
 
       /*
       Añadimos la imágen del táctil a la tabla de imágenes---------------------
@@ -19297,18 +19303,17 @@ Return ( proveedorPorDefectoArticulo )
 
 //--------------------------------------------------------------------------//
 
-Static Function getEtiquetasBrowse()
+Static Function getEtiquetasBrowse( aSelectedItems )
 
    local aSelected
    local oEtiquetas
 
    oEtiquetas        := Etiquetas():New()
 
-   aSelected         := oEtiquetas:activateBrowse()
+   aSelected         := oEtiquetas:activateBrowse( aSelectedItems )
 
-   if !empty( aSelected )
-      aeval( aSelected, {|elem| oTagsEver:addItem( elem ) } )
-   end if 
+   oTagsEver:SetItems( aSelected )
 
 Return ( nil )
 
+//--------------------------------------------------------------------------//
