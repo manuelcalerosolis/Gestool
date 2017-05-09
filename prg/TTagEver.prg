@@ -143,7 +143,7 @@ local nLen := len(::aItems)
 local aItems := {}
 
 for n := 1 to nLen
-    if ::aItems[n,2]
+    if !::aItems[n,2]
        aadd(aItems, ::aItems[n,1] )
     endif
 next
@@ -235,13 +235,14 @@ for n := 1 to nLen
     ::aCoors[n] :={0,0,0,0}
 next
 
+logwrite("aCors")
 
 FillSolidRect(::hDC, GetClientRect(::hWnd), ::nClrPane )
-
+logwrite("FillSolidRect")
 nL := nLeft
 
 for n := 1 to nLen
-
+logwrite(n)
     if ::aItems[n,2] // oculto
        loop
     endif
@@ -303,7 +304,7 @@ for n := 1 to nLen
        SetTextColor(::hDC, nColor )
        nColor := SetTextColor(::hDC, ::nClrText )
     endif
-
+logwrite("next")
 next n
 
 SetBkMode( ::hDC, nMode )

@@ -2024,7 +2024,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, cArticulo, oBrw, bWhen, bValid, nMode )
    oTagsEver            := TTagEver():Redefine( 100, fldGeneral, nil, { "esto", "es", "una", "prueba" } ) 
    oTagsEver:lOverClose := .t.
 
-   TBtnBmp():ReDefine( 101, "gc_recycle_16",,,,,{|| getEtiquetasBrowse() }, fldGeneral, .f., , .f.,  )               
+   TBtnBmp():ReDefine( 101, "Lupa",,,,,{|| getEtiquetasBrowse() }, fldGeneral, .f., , .f.,  )               
 
    REDEFINE GET oSay[9] VAR cSay[9] ;
       ID       271 ;
@@ -19300,15 +19300,14 @@ Return ( proveedorPorDefectoArticulo )
 Static Function getEtiquetasBrowse()
 
    local aSelected
-   local oEtiquetas
 
-   oEtiquetas        := Etiquetas():New()
-
-   aSelected         := oEtiquetas:activateBrowse()
+   aSelected         := Etiquetas():New():activateBrowse()
 
    if !empty( aSelected )
-      aeval( aSelected, {|elem| oTagsEver:addItem( elem ) } )
+      oTagsEver:setItems( aSelected )
+      oTagsEver:Refresh()
    end if 
 
 Return ( nil )
 
+//--------------------------------------------------------------------------//
