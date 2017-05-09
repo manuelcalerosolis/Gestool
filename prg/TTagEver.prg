@@ -235,14 +235,14 @@ for n := 1 to nLen
     ::aCoors[n] :={0,0,0,0}
 next
 
-logwrite("aCors")
-
 FillSolidRect(::hDC, GetClientRect(::hWnd), ::nClrPane )
-logwrite("FillSolidRect")
+
+sysrefresh()
+
 nL := nLeft
 
 for n := 1 to nLen
-logwrite(n)
+
     if ::aItems[n,2] // oculto
        loop
     endif
@@ -304,7 +304,9 @@ logwrite(n)
        SetTextColor(::hDC, nColor )
        nColor := SetTextColor(::hDC, ::nClrText )
     endif
-logwrite("next")
+
+    sysrefresh()
+
 next n
 
 SetBkMode( ::hDC, nMode )
@@ -320,7 +322,6 @@ SelectObject( ::hDC, hOldBrush )
 DeleteObject( hPen )
 DeleteObject( hBrush )
 DeleteObject( hBrush1 )
-
 
 ::DispEnd( aInfo )
 
