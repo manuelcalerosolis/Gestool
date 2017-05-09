@@ -103,9 +103,6 @@ Return ( .t. )
 
 //---------------------------------------------------------------------------//
 
-<<<<<<< HEAD
-METHOD getImportSentence( cPath )
-=======
 METHOD makeParent( cName )
 
    local cParentInsert
@@ -126,13 +123,16 @@ RETURN ( getSQLDatabase():LastInsertId() )
 //---------------------------------------------------------------------------//
 
 METHOD getSentenceFromOldCategories( idParent )
->>>>>>> dee95e552b3a344e93713a3807f10131c6eb0472
 
    local dbf
    local cSentence   := "INSERT INTO " + ::cTableName +  " ( nombre, empresa, id_padre) VALUES "
    local cValues     := ""
 
    dbUseArea( .t., cDriver(), cPatEmp() + "Categorias.Dbf", cCheckArea( "Categorias", @dbf ) )
+
+   if ( dbf )->( neterr() )
+      RETURN ( nil )
+   end if 
 
    ( dbf )->( dbgotop() )
 
@@ -154,13 +154,7 @@ METHOD getSentenceFromOldCategories( idParent )
 
 RETURN ( cSentence )
 
-<<<<<<< HEAD
-      if ( dbf )->( neterr() )
-         Return ( Self )
-      end if 
-=======
 //---------------------------------------------------------------------------//
->>>>>>> dee95e552b3a344e93713a3807f10131c6eb0472
 
 METHOD makeImportCategorias()
 

@@ -488,12 +488,8 @@ ViewReporting.prg                                  	\
 backupPresenter.prg                                	\
 backupView.prg                                     	\
 BaseModel.prg 														\
-<<<<<<< HEAD
-SQLBaseModel.prg 													\
-=======
 SQLBaseModel.prg 														\
 SQLBaseEmpresasModel.prg 														\
->>>>>>> dee95e552b3a344e93713a3807f10131c6eb0472
 ClientesModel.prg 												\
 AlbaranesClientesModel.prg 									\
 FacturasClientesModel.prg 										\
