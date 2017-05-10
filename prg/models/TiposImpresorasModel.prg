@@ -6,7 +6,7 @@
 
 CLASS TiposImpresorasModel FROM SQLBaseModel
 
-   DATA cTableName
+   DATA cTableName                           INIT "tipos_impresoras"
 
    DATA cDbfTableName
 
@@ -52,7 +52,7 @@ RETURN ( aResult )
 
 METHOD existTiposImpresoras( cValue )
 
-   local cSentence               := "SELECT nombre FROM " + ::cTableName + " WHERE nombre = " + quoted( cValue )
+   local cSentence               := "SELECT nombre FROM " + ::cTableName + " WHERE nombre = " + toSQLString( cValue )
    local aSelect                 := ::selectFetchArray( cSentence )
 
 RETURN ( !empty( aSelect ) )

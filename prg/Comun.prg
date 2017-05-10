@@ -281,6 +281,9 @@ RETURN ( .t. )
 
 FUNCTION Test()
 
+
+   //msgalert(  hb_valtoexp( TiposImpresorasModel():existTiposImpresoras( "tita" ) ) )
+
 Return ( nil )
 
 //---------------------------------------------------------------------------//

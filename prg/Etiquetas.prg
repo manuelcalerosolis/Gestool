@@ -52,6 +52,9 @@ CLASS Etiquetas FROM SQLBaseView
    METHOD   setSelectedItems( aNames, oTree, aItems )
    METHOD      setSelectedItem()
 
+   METHOD   postAppend()                     INLINE ( ::loadTree() )
+   METHOD   postEdit()                       INLINE ( ::loadTree() )
+
 END CLASS
 
 //---------------------------------------------------------------------------//
@@ -438,14 +441,29 @@ METHOD buildSQLBrowse( aSelectedItems )
          CANCEL ;
          ACTION      ( oDlg:end() )
 
+      REDEFINE BUTTON ;
+         ID          500 ;
+         OF          oDlg ;
+         ACTION      ( ::Append() )
+
+      REDEFINE BUTTON ;
+         ID          501 ;
+         OF          oDlg ;
+         ACTION      ( ::Edit() )
+
       oDlg:AddFastKey( VK_RETURN,   {|| ::validBrowse( oDlg ) } )
       oDlg:AddFastKey( VK_F5,       {|| ::validBrowse( oDlg ) } )
+      oDlg:AddFastKey( VK_F2,       {|| ::Append() } )
+      oDlg:AddFastKey( VK_F3,       {|| ::Edit() } )
 
       oDlg:bStart    := {|| ::loadTree(), ::setSelectedItems( aSelectedItems ) }
 
    oDlg:Activate( , , , .t., )
 
 RETURN ( oDlg:nResult == IDOK )
+
+//---------------------------------------------------------------------------//
+
 
 //---------------------------------------------------------------------------//
 
@@ -501,6 +519,10 @@ RETURN ( nil )
 //---------------------------------------------------------------------------//
 
 METHOD setSelectedItems( aNames )
+
+   if empty( aNames )
+      RETURN nil
+   end if
 
 RETURN ( aeval( aNames, {|cName| ::setSelectedItem( cName ) } ) )
 

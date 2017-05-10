@@ -77,6 +77,10 @@ CLASS SQLBaseModel
    METHOD   getDbfTableName()                      INLINE   ( ::cDbfTableName + ".dbf" )
    METHOD   getOldTableName()                      INLINE   ( ::cDbfTableName + ".old" )
 
+   METHOD   getColumnsOfCurrentTable()
+   METHOD   compareCurrentAndActualColumns()
+   METHOD   updateTableColumns()
+
 END CLASS
 
 //---------------------------------------------------------------------------//
@@ -420,4 +424,70 @@ METHOD selectFetchArray( cSentence )
 Return ( nil )
 
 //---------------------------------------------------------------------------//
+
+METHOD getColumnsOfCurrentTable()
+
+   local oStmt
+   local cSentence
+   local aTableInfo
+   local hFetch
+   local aCurrentColumns := {}
+
+   cSentence               := "PRAGMA table_info(" + ::cTableName + ")"
+
+   try 
+      oStmt                := getSQLDatabase():Query( cSentence )
+      aTableInfo           := oStmt:fetchAll( FETCH_HASH )
+   catch
+
+      msgstop( hb_valtoexp( getSQLDatabase():errorInfo() ) )
+
+      if !empty( oStmt )
+        oStmt:free()
+      end if    
+   
+   end
+
+   if empty( aTableInfo ) .or. !hb_isarray( aTableInfo )
+      Return ( nil )
+   end if
+
+Return ( aTableInfo )
+
+//---------------------------------------------------------------------------//
+
+METHOD compareCurrentAndActualColumns()
+
+   local nPosColumn
+   local hCurrentColumn
+   local aCurrentColumns   := ::getColumnsOfCurrentTable()
+
+   for each hCurrentColumn in aCurrentColumns
+
+      nPosColumn           := ascan( hb_hkeys( ::hColumns ), hget( hCurrentColumn, "name" ) )
+      
+      if nPosColumn != 0
+
+         hb_HDelAt( ::hColumns, nPosColumn )
+
+      end if
+
+   next
+
+Return ( self )
+
+//---------------------------------------------------------------------------//
+
+METHOD updateTableColumns()
+
+   local cAlterTables := ""
+
+   ::compareCurrentAndActualColumns()
+
+   hEval( ::hColumns, {| k, hash | getSQLDatabase():Query( "ALTER TABLE " + ::cTableName + " ADD COLUMN " + k + " " + hget( hash, "create" ) ) } )
+
+Return ( self )
+
+
+
 
