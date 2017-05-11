@@ -409,7 +409,6 @@ STATIC FUNCTION OpenFiles( lExt, cPath )
       oBandera             := TBandera():New()
 
       oStock               := TStock():Create( cPatEmp() )
-
       if !oStock:lOpenFiles()
          lOpenFiles        := .f.
       end if
@@ -849,8 +848,8 @@ Function Articulo( oMenuItem, oWnd, bOnInit )
                "No obsoletos + Código",;
                "No obsoletos + Nombre",;
                "Tipo" ,;
-               getConfigTraslation( "Categoría" ) ,;
-               getConfigTraslation( "Temporada" ) ,;
+               "Categoría" ,;
+               "Temporada" ,;
                "Fabricante" ,;
                "Estado" ,;
                "Posición táctil" ,;
@@ -13409,6 +13408,11 @@ Static Function EdtRecMenu( aTmp, aGet, oSay, oDlg, oFld, aBar, cSay, nMode )
                RESOURCE "info16" ;
                ACTION   ( debugWeb( aTmp ) )
 
+            MENUITEM "&4. Información enlace web";
+               MESSAGE  "Muestra el informe del artículo en la web" ;
+               RESOURCE "info16" ;
+               ACTION   ( infoWeb( aTmp ) )
+
          ENDMENU
 
    ENDMENU
@@ -18439,7 +18443,6 @@ Return .t.
 
 //---------------------------------------------------------------------------//
 
-
 Static Function lPublishProductInPrestashop()
 
 Return ( ( D():Articulos( nView ) )->lPubInt .and. !empty( ( D():Articulos( nView ) )->cWebShop ) )
@@ -18451,7 +18454,6 @@ Static Function lDeleteProductInPrestashop()
 Return ( !( D():Articulos( nView ) )->lPubInt .and. !empty( ( D():Articulos( nView ) )->cWebShop ) ) 
 
 //---------------------------------------------------------------------------//
-
 
 Static Function lValidImporteBase( oGet, uValue, nKey, hFields )
 
@@ -19313,6 +19315,55 @@ Static Function getEtiquetasBrowse( aSelectedItems )
    if !empty( aSelected )
       oTagsEver:setItems( aSelected )
       oTagsEver:Refresh()
+   end if 
+
+Return ( nil )
+
+//--------------------------------------------------------------------------//
+
+Static Function infoWeb( aTmp )
+
+   local aInfo
+   local webShop
+   local idArticulo
+   local oComercioId
+
+   if !( aTmp[ ( D():Articulos( nView ) )->( fieldPos( "lPubInt" ) ) ] )
+      msgStop( "Este artículo no esta seleccionado para web" )
+      Return nil
+   end if 
+
+   if empty( aTmp[ ( D():Articulos( nView ) )->( fieldPos( "cWebShop" ) ) ] )
+      msgStop( "Este artículo no tiene seleccionada web" )
+      Return nil
+   end if 
+
+   aInfo          := {}
+
+   idArticulo     := aTmp[ ( D():Articulos( nView ) )->( fieldPos( "Codigo" ) ) ]
+   webShop        := aTmp[ ( D():Articulos( nView ) )->( fieldPos( "cWebShop" ) ) ]
+
+   oComercioId    := TPrestashopId():New()
+   if oComercioId:OpenService()
+
+      aadd( aInfo, { "Identificador" => oComercioId:getValueProduct( idArticulo, webShop ) } )
+
+      if oComercioId:getValueImage( idArticulo, webShop )
+         while oComercioId:oDbf:cDocumento == "10" .and. left( oComercioId:oDbf:cClave, 18 ) == idArticulo
+
+            aadd( aInfo, { "Imagen" => oComercioId:oDbf:idWeb } )
+
+            oComercioId:oDbf:Skip()
+
+         end while 
+      end if 
+
+      oComercioId:CloseFiles()
+
+   end if 
+
+   if !empty( aInfo )
+      msgalert( hb_valtoexp( aInfo ), "aInfo" )
    end if 
 
 Return ( nil )

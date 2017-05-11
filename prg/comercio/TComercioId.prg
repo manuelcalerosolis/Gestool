@@ -5,7 +5,6 @@
 #include "Factu.ch" 
 #include "FastRepH.ch"
 
-
 //---------------------------------------------------------------------------//
     
 CLASS TPrestaShopId FROM TMant
@@ -257,7 +256,7 @@ RETURN ( .t. )
 
 METHOD isValidParameters( cTipoDocumento, cClave, cWeb, idWeb )
 
-   if ::TComercio:isDebugMode()
+   if !empty( ::TComercio ) .and. ( ::TComercio:isDebugMode() )
       RETURN ( .t. )
    end if 
 
