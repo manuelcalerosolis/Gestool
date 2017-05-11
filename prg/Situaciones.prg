@@ -9,8 +9,6 @@ CLASS Situaciones FROM SQLBaseView
    METHOD   New()
 
    METHOD   buildSQLShell()
-  
-  // METHOD   buildSQLBrowse( oGet )
 
    METHOD   buildSQLModel()               INLINE ( SituacionesModel():New() )
 

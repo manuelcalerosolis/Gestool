@@ -120,7 +120,7 @@ METHOD Resource( nMode )
       REDEFINE COMBOBOX ::oDbf:cSitPry ;
          ID       130 ;
          WHEN     ( nMode != ZOOM_MODE ) ;
-         ITEMS    ( TSituaciones():GetInstance():GetSituaciones() ) ;
+         ITEMS    ( SituacionesModel():arraySituaciones() ) ;
          OF       oDlg
 
       REDEFINE GET ::oDbf:dFecPry ;

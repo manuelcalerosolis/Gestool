@@ -51,9 +51,9 @@ METHOD getImportSentence( cPath )
    local cValues     := ""
    local cInsert     := ""
 
-   default cPath     := cPatDat()
+   default cPath     := cPatEmp()
 
-   dbUseArea( .t., cLocalDriver(), cPath + "\" + ::getDbfTableName(), cCheckArea( "dbf", @dbf ), .f. )
+   dbUseArea( .t., cDriver(), cPatEmp() + ::getDbfTableName(), cCheckArea( "dbf", @dbf ) )
    if ( dbf )->( neterr() )
       Return ( cInsert )
    end if
@@ -68,8 +68,7 @@ METHOD getImportSentence( cPath )
 
       cValues           += "( "
 
-      hEval( ::hColumns, {| k, hash | if ( k != ::cColumnKey,;
-                                             cValues += toSQLString( ( dbf )->( fieldget( fieldpos( hget( hash, "dbfField" ) ) ) ) ) + ", " , )  } )
+      hEval( ::hColumns, {| k, hash | if ( k != ::cColumnKey, if ( k == "empresa", cValues += + toSQLString( cCodEmp() ) + ", ", cValues += toSQLString( ( dbf )->( fieldget( fieldpos( hget( hash, "dbfField" ) ) ) ) ) + ", "), ) } )
       
       cValues           := chgAtEnd( cValues, ' ), ', 2 )
 

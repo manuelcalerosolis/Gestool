@@ -4,9 +4,9 @@
 
 //---------------------------------------------------------------------------//
 
-CLASS TiposIncidenciasModel FROM SQLBaseModel
+CLASS TiposIncidenciasModel FROM SQLBaseEmpresasModel
 
-   DATA cTableName
+   DATA cTableName                        INIT "tipos_incidencias"
 
    DATA cDbfTableName
 
@@ -14,7 +14,10 @@ CLASS TiposIncidenciasModel FROM SQLBaseModel
 
    METHOD New()
 
+   METHOD arrayTiposIncidencias()
+
    METHOD existTiposIncidencias( cValue )
+
 
 END CLASS
 
@@ -26,16 +29,28 @@ METHOD New()
 
    ::cDbfTableName				 	:= "TIPINCI"
 
-   ::hColumns                   	:= {  "id"                 => {  "create"    => "INTEGER PRIMARY KEY AUTOINCREMENT"  ,;
-                                                                  "text"		=> "Identificador"                      ,;
-   															                  "dbfField" 	=> "" }                                 ,;
-                                       "nombre_incidencia"  => {  "create"    => "VARCHAR (50) NOT NULL"              ,;
-                                                                  "text"      => "Nombre de la incidencia"            ,;
-                                                                  "dbfField"  => "CNOMINCI"}                          }
+   ::hColumns                   	:= {  "id"                 => {  "create"    => "INTEGER PRIMARY KEY AUTOINCREMENT"          ,;
+                                                                  "text"		=> "Identificador"                              ,;
+   															                  "dbfField" 	=> "" }                                         ,;
+                                       "nombre_incidencia"  => {  "create"    => "VARCHAR (50) NOT NULL"                      ,;
+                                                                  "text"      => "Nombre de la incidencia"                    ,;
+                                                                  "dbfField"  => "CNOMINCI"}                                  ,;
+                                       "empresa"            => {  "create"    => "CHAR ( 4 )"                                 ,;
+                                                                  "text"      => "Empresa a la que pertenece la etiqueta"     ,;
+                                                                  "dbfField"  => "" }                                         }
 
    ::Super:New()
 
 RETURN ( Self )
+
+//---------------------------------------------------------------------------//
+
+METHOD arrayTiposIncidencias()
+
+   local cSentence               := "SELECT nombre_incidencia FROM " + ::cTableName
+   local aSelect                 := ::selectFetchArray( cSentence ) 
+
+RETURN ( aSelect )
 
 //---------------------------------------------------------------------------//
 

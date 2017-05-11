@@ -4569,9 +4569,6 @@ Static Function ActDbfEmp( cCodEmp, aMsg, oAni, oDlg, oMsg, oMet, lActEmp, lSinc
          ActDbf( cEmpOld, cEmpTmp, "AntCliI",   "anticipos de clientes", oMet, oMsg, aMsg )
          ActDbf( cEmpOld, cEmpTmp, "AntCliD",   "documentos de anticipos de clientes", oMet, oMsg, aMsg )
 
-         oMsg:SetText( "Situaciones" )
-         TSituaciones():GetInstance():SyncAllDbf()
-
          /*
          if mkSitua( cEmpTmp )
             ActDbf( cEmpDat, cEmpTmp, "Situa", "situaciones", oMet, oMsg, aMsg )

@@ -2801,7 +2801,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, cCodCli, cCodArt, nMode )
          VAR      aTmp[ _CSITUAC ] ;
          ID       218 ;
          WHEN     ( nMode != ZOOM_MODE ) ;
-         ITEMS    ( TSituaciones():GetInstance():GetSituaciones() ) ;
+         ITEMS    ( SituacionesModel():arraySituaciones() ) ;
          OF       oFld:aDialogs[1]
 
       REDEFINE GET aGet[ _CSUSAT ] VAR aTmp[ _CSUSAT ] ;

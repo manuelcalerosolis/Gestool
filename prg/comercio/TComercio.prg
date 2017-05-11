@@ -178,8 +178,6 @@ CLASS TComercio
 
    DATA  cPrefijoBaseDatos
 
-   DATA TSituaciones
-
    DATA idOrderPrestashop
    DATA cSeriePedido
    DATA cSeriePresupuesto

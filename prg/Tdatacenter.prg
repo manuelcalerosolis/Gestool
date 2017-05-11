@@ -1898,14 +1898,7 @@ METHOD BuildData()
    oDataTable:cDescription := "Configuración filtros"
    oDataTable:bCreateFile  := {| cPath | TFilterDatabase():BuildFiles( cPath ) }
    ::AddDataTable( oDataTable )
-
-   oDataTable              := TDataTable():New( "Situa", cPathDatos() )
-   oDataTable:cDataFile    := cPatDat( .t. ) + "Situa.Dbf"
-   oDataTable:cIndexFile   := cPatDat( .t. ) + "Situa.Cdx"
-   oDataTable:cDescription := "Situaciones"
-   oDataTable:bCreateFile  := {| cPath | TSituaciones():BuildFiles( cPath ) }
-   ::AddDataTable( oDataTable )
-
+   
    oDataTable              := TDataTable():New( "CodPostal", cPathDatos() )
    oDataTable:cDataFile    := cPatDat( .t. ) + "CodPostal.Dbf"
    oDataTable:cIndexFile   := cPatDat( .t. ) + "CodPostal.Cdx"
@@ -4850,7 +4843,7 @@ RETURN ( Self )
 
 METHOD ConvertEmpresaToSQLite()
 
-  //EtiquetasModel():New():makeImportDbfSQL()
+  EtiquetasModel():New():makeImportDbfSQL()
 
 RETURN ( Self )
 

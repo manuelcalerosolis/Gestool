@@ -281,8 +281,7 @@ RETURN ( .t. )
 
 FUNCTION Test()
 
-
-   //msgalert(  hb_valtoexp( TiposImpresorasModel():existTiposImpresoras( "tita" ) ) )
+msgalert( hb_valtoexp( tiposincidenciasModel():arrayTiposIncidencias() ) )
 
 Return ( nil )
 
@@ -1602,7 +1601,7 @@ FUNCTION CreateAcceso( oWnd )
    oItem:oGroup         := oGrupo
    oItem:cPrompt        := "Situaciones"
    oItem:cMessage       := "Acceso a los tipos de situaciones"
-   oItem:bAction        := {|| TSituaciones():New( cPatDat(), oWnd ):Play() }
+   oItem:bAction        := {|| Situaciones():New():activateShell() }
    oItem:cId            := "01096"
    oItem:cBmp           := "gc_document_attachment_16"
    oItem:cBmpBig        := "gc_document_attachment_32"

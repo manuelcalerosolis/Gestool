@@ -6,7 +6,7 @@
 
 CLASS SituacionesModel FROM SQLBaseModel
 
-   DATA     cTableName                             INIT "sitacionessitaciones"
+   DATA     cTableName                             INIT "situaciones"
 
    DATA     cDbfTableName
 
@@ -18,15 +18,13 @@ CLASS SituacionesModel FROM SQLBaseModel
 
    METHOD   arraySituaciones()
 
-   METHOD   existSituaciones()
-
 END CLASS
 
 //---------------------------------------------------------------------------//
 
 METHOD New()
 
-   ::cTableName                  := "sitaciones"
+   ::cTableName                  := "situaciones"
 
    ::cDbfTableName               := "Situa"
 
@@ -49,14 +47,5 @@ METHOD arraySituaciones()
    local aSelect                 := ::selectFetchArray( cSentence ) 
 
 RETURN ( aSelect )
-
-//---------------------------------------------------------------------------//
-
-METHOD existSituaciones( cValue )
-
-   local cSentence               := "SELECT situacion FROM " + ::cTableName + " WHERE situacion = " + toSQLString( cValue )
-   local aSelect                 := ::selectFetchArray( cSentence )
-
-RETURN ( !empty( aSelect ) )
 
 //---------------------------------------------------------------------------//

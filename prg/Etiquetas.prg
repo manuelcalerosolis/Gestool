@@ -11,6 +11,11 @@ CLASS Etiquetas FROM SQLBaseView
    DATA     nSelectedNode
 
    DATA     allSelectedNode
+      METHOD   fillAllSelectedNode( oTree, aItems )
+      METHOD   setAllSelectedNode( aSelectedItmes )         INLINE ( iif(  hb_isarray( aSelectedItmes ),;
+                                                                           ::allSelectedNode := aSelectedItmes,;
+                                                                           ::allSelectedNode := {} ) )
+      METHOD   getAllSelectedNode()                         INLINE ( ::allSelectedNode )
 
    METHOD   New()
 
@@ -18,9 +23,7 @@ CLASS Etiquetas FROM SQLBaseView
 
    METHOD   buildSQLBrowse()
   
-   METHOD   buildSQLModel()               INLINE ( EtiquetasModel():New() )
-
-   METHOD   getFieldFromBrowse()          INLINE ( ::allSelectedNode )
+   METHOD   buildSQLModel()                                 INLINE ( EtiquetasModel():New() )
  
    METHOD   Dialog()
    METHOD      startDialog()
@@ -35,11 +38,11 @@ CLASS Etiquetas FROM SQLBaseView
 
    METHOD   AppendChild( oBrowse )
 
-   METHOD   getAllSelectedNode( oTree, aItems )
+   METHOD   getFieldFromBrowse()                            INLINE ( ::getAllSelectedNode() )
 
    METHOD   checkSelectedNode()
-   METHOD      getSelectedNode()             INLINE ( ::nSelectedNode )
-   METHOD      setSelectedNode( nNode )      INLINE ( ::nSelectedNode := nNode )
+   METHOD      getSelectedNode()                            INLINE ( ::nSelectedNode )
+   METHOD      setSelectedNode( nNode )                     INLINE ( ::nSelectedNode := nNode )
 
    METHOD   checkValidParent()
 
@@ -47,13 +50,13 @@ CLASS Etiquetas FROM SQLBaseView
 
    METHOD   LblTitle()
 
-   METHOD   setSelectedItems( aNames, oTree, aItems )
-   METHOD   setSelectedItem()
+   METHOD   initTree( oTree )                               INLINE ( oTree:deleteAll(), oTree:Refresh() )
 
-   METHOD   appendOnBrowse( oTree )          INLINE   (  iif( ::Append(),;
-                                                         ( oTree:deleteAll(), oTree:Refresh(), ::loadTree( oTree ) ), ) )
+   METHOD   setTreeSelectedItems( oTree )
+      METHOD   setTreeSelectedItem()
 
-   METHOD   editOnBrowse( oTree )            
+   METHOD   appendOnBrowse( oTree )                         
+   METHOD   editOnBrowse( oTree )
 
 END CLASS
 
@@ -205,6 +208,12 @@ METHOD validDialog( oDlg, oTree, oGetNombre )
       oGetNombre:setFocus()
       RETURN ( .f. )
    end if 
+
+   if ::oModel:getRowSet():find( ::oModel:hBuffer[ "nombre" ], "nombre" ) != 0
+      msgStop( "El nombre de la etiqueta ya existe" )
+      oGetNombre:setFocus()
+      RETURN ( .f. )
+   end if
 
    ::checkSelectedNode( oTree )
 
@@ -411,7 +420,7 @@ METHOD buildSQLBrowse( aSelectedItems )
    local oFind
    local cFind       := space( 200 )
 
-   ::allSelectedNode := {}
+   ::setAllSelectedNode( aSelectedItems )   
 
    DEFINE DIALOG oDlg RESOURCE "HELP_ETIQUETAS" TITLE "Seleccionar etiquetas"
 
@@ -439,19 +448,19 @@ METHOD buildSQLBrowse( aSelectedItems )
       REDEFINE BUTTON ;
          ID          500 ;
          OF          oDlg ;
-         ACTION      (  ::appendOnBrowse( oTree ) )
+         ACTION      (  ::appendOnBrowse( oTree, aSelectedItems ) )
 
       REDEFINE BUTTON ;
          ID          501 ;
          OF          oDlg ;
-         ACTION      (  ::editOnBrowse( oTree ) )
+         ACTION      (  ::editOnBrowse( oTree, aSelectedItems ) )
 
       oDlg:AddFastKey( VK_RETURN,   {|| ::validBrowse( oDlg, oTree ) } )
       oDlg:AddFastKey( VK_F5,       {|| ::validBrowse( oDlg, oTree ) } )
-      oDlg:AddFastKey( VK_F2,       {|| ::appendOnBrowse( oTree ) } )
-      oDlg:AddFastKey( VK_F3,       {|| ::editOnBrowse( oTree ) } )
+      oDlg:AddFastKey( VK_F2,       {|| ::appendOnBrowse( oTree, aSelectedItems ) } )
+      oDlg:AddFastKey( VK_F3,       {|| ::editOnBrowse( oTree, aSelectedItems ) } )
 
-      oDlg:bStart    := {|| ::loadTree( oTree ), ::setSelectedItems( aSelectedItems ) }
+      oDlg:bStart    := {|| ::loadTree( oTree ), ::setTreeSelectedItems( oTree ) }
 
    oDlg:Activate( , , , .t., )
 
@@ -478,13 +487,15 @@ RETURN ( Self )
 
 METHOD validBrowse( oDlg, oTree )
 
-   ::getAllSelectedNode( oTree )
+   ::setAllSelectedNode()
+
+   ::fillAllSelectedNode( oTree )
    
 RETURN ( oDlg:end( IDOK ) )
 
 //---------------------------------------------------------------------------//
 
-METHOD getAllSelectedNode( oTree, aItems )
+METHOD fillAllSelectedNode( oTree, aItems )
 
    local oItem
 
@@ -499,7 +510,7 @@ METHOD getAllSelectedNode( oTree, aItems )
       end if
 
       if len( oItem:aItems ) > 0
-         ::getAllSelectedNode( oTree, oItem:aItems )
+         ::fillAllSelectedNode( oTree, oItem:aItems )
       end if
 
    next
@@ -508,17 +519,13 @@ RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 
-METHOD setSelectedItems( aNames )
+METHOD setTreeSelectedItems( oTree )
 
-   if empty( aNames )
-      RETURN nil
-   end if
-
-RETURN ( aeval( aNames, {|cName| ::setSelectedItem( cName ) } ) )
+RETURN ( aeval( ::allSelectedNode, {|cName| ::setTreeSelectedItem( cName, oTree ) } ) )
 
 //---------------------------------------------------------------------------//
 
-METHOD setSelectedItem( cName, oTree, aItems )
+METHOD setTreeSelectedItem( cName, oTree, aItems )
 
    local oItem
 
@@ -538,7 +545,7 @@ METHOD setSelectedItem( cName, oTree, aItems )
       end if
 
       if len( oItem:aItems ) > 0
-         ::setSelectedItem( cName, oTree, oItem:aItems )
+         ::setTreeSelectedItem( cName, oTree, oItem:aItems )
       end if
 
    next
@@ -547,9 +554,31 @@ RETURN ( Self )
 
 //---------------------------------------------------------------------------//
 
-METHOD editOnBrowse( oTree )
+METHOD appendOnBrowse( oTree )
 
-   msgalert( oTree:GetSelected():Cargo, "select( [cAlias] )" )
+   ::fillAllSelectedNode( oTree )
+
+   if ( ::append() )
+      ::initTree( oTree )
+      ::loadTree( oTree )
+      ::setTreeSelectedItems( oTree )
+   endif
+
+RETURN ( Self )
+
+//---------------------------------------------------------------------------//
+
+METHOD editOnBrowse( oTree, aSelectedItems )
+
+   ::oModel:getrowset():find( oTree:GetSelected():Cargo, "id" )
+
+   ::fillAllSelectedNode( oTree )
+
+   if ( ::edit() )
+      ::initTree( oTree )
+      ::loadTree( oTree )
+      ::setTreeSelectedItems( oTree )
+   endif
 
 RETURN ( Self )
 

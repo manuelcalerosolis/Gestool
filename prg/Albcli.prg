@@ -5284,7 +5284,7 @@ Static Function EdtEst( aTmp, aGet, dbf, oBrw, bWhen, bValid, nMode, aTmpAlb )
             VAR    aTmp[ (D():AlbaranesClientesSituaciones( nView ))->(fieldpos("cSitua")) ] ;
             ID       200 ;
             WHEN     ( nMode != ZOOM_MODE );
-            ITEMS    ( TSituaciones():GetInstance():GetSituaciones() ) ;
+            ITEMS    ( SituacionesModel():arraySituaciones() ) ;
             OF       oDlg
 
          REDEFINE GET aGet[ (D():AlbaranesClientesSituaciones( nView ))->(fieldpos("dFecSit")) ] ;

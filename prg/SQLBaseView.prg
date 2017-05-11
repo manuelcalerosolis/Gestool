@@ -66,7 +66,7 @@ CLASS SQLBaseView
       METHOD setAppendMode()                          INLINE ( ::setMode( __append_mode__ ) )
       METHOD isAppendMode()                           INLINE ( ::nMode == __append_mode__ )
 
-   METHOD Duplicate( oBrowse )
+   METHOD   Duplicate( oBrowse )
       METHOD setDuplicateMode()                       INLINE ( ::nMode := __duplicate_mode__ )
       METHOD isDuplicateMode()                        INLINE ( ::nMode == __duplicate_mode__ )
 
@@ -374,7 +374,7 @@ METHOD Edit( oBrowse )
       oBrowse:setFocus()
    end if 
 
-RETURN ( Self )
+RETURN ( .t. )
 
 //----------------------------------------------------------------------------//
 
