@@ -8,7 +8,7 @@
 #include "Report.ch"
 #include "Print.ch"
 
-#define __localDirectory            "C:\eDiversa\Rec\Planos\"
+#define __localDirectory            "C:\ficheros\"
 #define __localDirectoryPorcessed   "c:\Bestseller\Processed\"
 #define __timeWait                  1
 

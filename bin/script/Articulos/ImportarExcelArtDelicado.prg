@@ -149,6 +149,7 @@ METHOD importarCampos()
       ( D():Articulos( ::nView ) )->pVtaIva1    := ::getExcelNumeric( "U" )
       ( D():Articulos( ::nView ) )->pVtaWeb     := ( ::getExcelNumeric( "U" ) / ( 1 + ::getExcelNumeric( "Z" ) ) )
       ( D():Articulos( ::nView ) )->nImpInt1    := ( ::getExcelNumeric( "U" ) / ( 1 + ::getExcelNumeric( "Z" ) ) )
+      ( D():Articulos( ::nView ) )->nImpIva1    := ::getExcelNumeric( "U" )
    end if
 
    if !empty( ::getExcelString( "I" ) )
@@ -163,6 +164,7 @@ METHOD importarCampos()
    ( D():Articulos( ::nView ) )->lPubInt        := .t.
    ( D():Articulos( ::nView ) )->lSbrInt        := .t.
    ( D():Articulos( ::nView ) )->cWebShop       := "Delicado"
+   ( D():Articulos( ::nView ) )->lIvaWeb        := .t.
 
    ( D():Articulos( ::nView ) )->cRefAux        := ::getExcelString( "A" )
 

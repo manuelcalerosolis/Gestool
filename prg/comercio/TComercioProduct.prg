@@ -1844,6 +1844,7 @@ METHOD insertTaxPrestashop( hTax ) CLASS TComercioProduct
    local cCommand          := ""  
    local idTax             := 0
    local idGroupWeb        := 0
+   local oQuery
 
    cCommand := "INSERT INTO " + ::cPreFixtable( "tax" ) + " ( " + ;
                   "rate, " + ;
@@ -1895,14 +1896,32 @@ METHOD insertTaxPrestashop( hTax ) CLASS TComercioProduct
 
    // Insertamos un tipo de IVA nuevo en la tabla tax_rule------------------------
 
-   cCommand := "INSERT INTO " + ::cPrefixTable( "tax_rule" ) + "( " +;
+   cCommand          := 'SELECT id_country FROM ' + ::cPrefixTable( "country" )
+   oQuery            := ::queryExecDirect( cCommand )
+
+   if oQuery:Open() .and. oQuery:RecCount() > 0
+
+      oQuery:GoTop()
+
+      cCommand := "INSERT INTO " + ::cPrefixTable( "tax_rule" ) + "( " +;
                   "id_tax_rules_group, " + ;
                   "id_country, " + ;
-                  "id_tax ) " + ;
-               "VALUES ( " + ;
-                  "'" + alltrim( str( idGroupWeb ) ) + "', " + ;        // id_tax_rules_group
-                  "'6', " + ;                                           // id_country - 6 es el valor de Espaía
-                  "'" + alltrim( str( idTax ) ) + "' )"                 // id_tax
+                  "id_tax ) VALUES "
+
+      while !oQuery:Eof()
+
+         cCommand    += "( " + ;
+                        "'" + alltrim( str( idGroupWeb ) ) + "', " + ;
+                        "'" + AllTrim( str( oQuery:FieldGetByName( "id_country" ) ) ) + "', " + ;
+                        "'" + alltrim( str( idTax ) ) + "' ), "
+
+         oQuery:Skip()
+
+      end while
+
+   end if
+   
+   cCommand          := Substr( cCommand, 1, len( cCommand ) - 2 )
 
    if !::commandExecDirect( cCommand )
       ::writeTextError( hGet( hTax, "name" ), ::cPrefixTable( "tax_rule" ) )
