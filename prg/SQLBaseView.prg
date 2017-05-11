@@ -22,6 +22,9 @@ CLASS SQLBaseView
                                                                __edit_mode__        => "Modificando ",;
                                                                __zoom_mode__        => "Visualizando ",;
                                                                __duplicate_mode__   => "Duplicando " }
+
+   DATA     bOnPreAppend
+   DATA     bOnPostAppend
  
    METHOD   New()
    
@@ -60,8 +63,6 @@ CLASS SQLBaseView
    METHOD   restoreBrowseState( oBrowse )
  
    METHOD   Append( oBrowse )
-      METHOD preAppend()                              VIRTUAL
-      METHOD postAppend()                             VIRTUAL
       METHOD setAppendMode()                          INLINE ( ::setMode( __append_mode__ ) )
       METHOD isAppendMode()                           INLINE ( ::nMode == __append_mode__ )
 
@@ -267,15 +268,21 @@ RETURN ( Self )
 METHOD Append( oBrowse )
 
    local nRecno   
+   local lTrigger
 
    if ::notUserAppend()
       msgStop( "Acceso no permitido." )
-      RETURN ( Self )
+      RETURN ( .f. )
    end if 
 
    ::setAppendMode()
 
-   ::preAppend()
+   if ::bOnPreAppend != nil
+      lTrigger    := eval( ::bOnPreAppend )
+      if Valtype( lTrigger ) == "L" .and. !lTrigger
+         RETURN ( .f. )
+      end if
+   end if
 
    nRecno         := ::oModel:getRowSetRecno()
 
@@ -285,11 +292,18 @@ METHOD Append( oBrowse )
 
       ::oModel:insertBuffer()
 
-      ::postAppend()
+      if ::bOnPostAppend != nil
+         lTrigger    := eval( ::bOnPostAppend,  )
+         if Valtype( lTrigger ) == "L" .and. !lTrigger
+            RETURN ( .f. )
+         end if
+      end if
 
    else 
       
       ::oModel:setRowSetRecno( nRecno ) 
+
+      RETURN ( .f. )
 
    end if
 
@@ -298,7 +312,7 @@ METHOD Append( oBrowse )
       oBrowse:setFocus()
    end if 
 
-RETURN ( Self )
+RETURN ( .t. )
 
 //----------------------------------------------------------------------------//
 

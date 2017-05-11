@@ -8,8 +8,6 @@
 
 CLASS Etiquetas FROM SQLBaseView
 
-   DATA     oTree
-
    DATA     nSelectedNode
 
    DATA     allSelectedNode
@@ -33,7 +31,7 @@ CLASS Etiquetas FROM SQLBaseView
    METHOD   loadTree( oTree, id )
    METHOD      setTree()
    METHOD      changeTree()
-   METHOD      changeFindTree( oFind )
+   METHOD      changeFindTree( oFind, oTree )
 
    METHOD   AppendChild( oBrowse )
 
@@ -52,8 +50,10 @@ CLASS Etiquetas FROM SQLBaseView
    METHOD   setSelectedItems( aNames, oTree, aItems )
    METHOD   setSelectedItem()
 
-   METHOD   postAppend()                     INLINE ( ::loadTree() )
-   METHOD   postEdit()                       INLINE ( ::loadTree() )
+   METHOD   appendOnBrowse( oTree )          INLINE   (  iif( ::Append(),;
+                                                         ( oTree:deleteAll(), oTree:Refresh(), ::loadTree( oTree ) ), ) )
+
+   METHOD   editOnBrowse( oTree )            
 
 END CLASS
 
@@ -137,6 +137,7 @@ Return ( Self )
 METHOD Dialog( lZoom )
 
    local oDlg
+   local oTree
    local oGetNombre
    local oBmpEtiquetas
 
@@ -155,15 +156,15 @@ METHOD Dialog( lZoom )
       WHEN        ( ! ::isZoomMode() ) ;
       OF          oDlg
 
-   ::oTree                       := TTreeView():Redefine( 110, oDlg )
-   ::oTree:bItemSelectChanged    := {|| ::changeTree() }
-   ::oTree:bWhen                 := {|| ::getMode() != __special_mode__ .and. !::isZoomMode() }
+   oTree                      := TTreeView():Redefine( 110, oDlg )
+   oTree:bItemSelectChanged   := {|| ::changeTree( oTree ) }
+   oTree:bWhen                := {|| ::getMode() != __special_mode__ .and. !::isZoomMode() }
 
    REDEFINE BUTTON ;
       ID          IDOK ;
       OF          oDlg ;
       WHEN        ( ! ::isZoomMode() ) ;
-      ACTION      ( ::validDialog( oDlg, oGetNombre ) )
+      ACTION      ( ::validDialog( oDlg, oTree, oGetNombre ) )
 
    REDEFINE BUTTON ;
       ID          IDCANCEL ;
@@ -173,11 +174,11 @@ METHOD Dialog( lZoom )
 
    // Teclas rpidas-----------------------------------------------------------
 
-   oDlg:AddFastKey( VK_F5, {|| ::validDialog( oDlg ) } )
+   oDlg:AddFastKey( VK_F5, {|| ::validDialog( oDlg, oTree, oGetNombre ) } )
 
    // evento bstart-----------------------------------------------------------
 
-   oDlg:bStart    := {|| ::startDialog(), oGetNombre:setFocus() }
+   oDlg:bStart       := {|| ::startDialog( oTree ), oGetNombre:setFocus() }
 
    ACTIVATE DIALOG oDlg CENTER
 
@@ -185,17 +186,17 @@ RETURN ( oDlg:nResult == IDOK )
 
 //---------------------------------------------------------------------------//
 
-METHOD startDialog()
+METHOD startDialog( oTree )
 
-   ::loadTree()
+   ::loadTree( oTree )
 
-   ::setTree( ::oModel:hBuffer[ "id_padre" ] )
+   ::setTree( ::oModel:hBuffer[ "id_padre" ], oTree )
 
 RETURN ( Self )
 
 //---------------------------------------------------------------------------//  
 
-METHOD validDialog( oDlg, oGetNombre )
+METHOD validDialog( oDlg, oTree, oGetNombre )
 
    ::setSelectedNode( nil )
 
@@ -205,7 +206,7 @@ METHOD validDialog( oDlg, oGetNombre )
       RETURN ( .f. )
    end if 
 
-   ::checkSelectedNode()
+   ::checkSelectedNode( oTree )
 
    if ( ::isEditMode() )
 
@@ -221,7 +222,7 @@ METHOD validDialog( oDlg, oGetNombre )
 
    end if 
 
-   ::oModel:hBuffer[ "id_padre" ] := ::getSelectedNode()
+   ::oModel:hBuffer[ "id_padre" ] := ::getSelectedNode( oTree )
 
 RETURN ( oDlg:end( IDOK ) )
 
@@ -253,14 +254,13 @@ RETURN ( Self )
 
 //---------------------------------------------------------------------------//
 
-METHOD loadTree( id, oTree )
+METHOD loadTree( oTree, id )
 
    local oNode
    local nRecno
    local nPosition
 
    default id     := ""
-   default oTree  := ::oTree
 
    id             := cValToStr( id )
 
@@ -273,12 +273,12 @@ METHOD loadTree( id, oTree )
       oNode       := oTree:add( ::oModel:getRowSet():fieldGet( "nombre" ) )
       oNode:Cargo := ::oModel:getRowSet():fieldGet( "id" )
 
-      ::loadTree( oNode:Cargo, oNode )
+      ::loadTree( oNode, oNode:Cargo )
 
       ::oModel:getRowSet():goto( nPosition )
 
       nPosition   := ::oModel:getRowSet():findNext( id, "id_padre" )
-
+   
    end while
 
    ::oModel:getRowSet():goTo( nRecno )
@@ -292,8 +292,6 @@ RETURN ( Self )
 METHOD setTree( Id, oTree, aItems )
 
    local oItem
-
-   default oTree  := ::oTree
 
    if empty( aItems )
       aItems      := oTree:aItems
@@ -323,8 +321,6 @@ RETURN ( .t. )
 METHOD checkSelectedNode( oTree, aItems )
 
    local oItem
-
-   default oTree  := ::oTree
 
    if empty( aItems )
       aItems      := oTree:aItems
@@ -378,8 +374,6 @@ METHOD changeTree( oTree, aItems )
 
    local oItem
 
-   default oTree  := ::oTree
-
    if empty( aItems )
       aItems      := oTree:aItems
    end if
@@ -413,6 +407,7 @@ RETURN( ::Super:lblTitle() )
 METHOD buildSQLBrowse( aSelectedItems )
 
    local oDlg
+   local oTree
    local oFind
    local cFind       := space( 200 )
 
@@ -426,14 +421,14 @@ METHOD buildSQLBrowse( aSelectedItems )
          BITMAP      "FIND" ;
          OF          oDlg
 
-      oFind:bChange  := {|| ::changeFindTree( oFind ) }
+      oFind:bChange  := {|| ::changeFindTree( oFind, oTree ) }
 
-      ::oTree        := TTreeView():Redefine( 110, oDlg )
+      oTree          := TTreeView():Redefine( 110, oDlg )
 
       REDEFINE BUTTON ;
          ID          IDOK ;
          OF          oDlg ;
-         ACTION      ( ::validBrowse( oDlg ) )
+         ACTION      ( ::validBrowse( oDlg, oTree ) )
 
       REDEFINE BUTTON ;
          ID          IDCANCEL ;
@@ -444,19 +439,19 @@ METHOD buildSQLBrowse( aSelectedItems )
       REDEFINE BUTTON ;
          ID          500 ;
          OF          oDlg ;
-         ACTION      ( ::Append() )
+         ACTION      (  ::appendOnBrowse( oTree ) )
 
       REDEFINE BUTTON ;
          ID          501 ;
          OF          oDlg ;
-         ACTION      ( ::Edit() )
+         ACTION      (  ::editOnBrowse( oTree ) )
 
-      oDlg:AddFastKey( VK_RETURN,   {|| ::validBrowse( oDlg ) } )
-      oDlg:AddFastKey( VK_F5,       {|| ::validBrowse( oDlg ) } )
-      oDlg:AddFastKey( VK_F2,       {|| ::Append() } )
-      oDlg:AddFastKey( VK_F3,       {|| ::Edit() } )
+      oDlg:AddFastKey( VK_RETURN,   {|| ::validBrowse( oDlg, oTree ) } )
+      oDlg:AddFastKey( VK_F5,       {|| ::validBrowse( oDlg, oTree ) } )
+      oDlg:AddFastKey( VK_F2,       {|| ::appendOnBrowse( oTree ) } )
+      oDlg:AddFastKey( VK_F3,       {|| ::editOnBrowse( oTree ) } )
 
-      oDlg:bStart    := {|| ::loadTree(), ::setSelectedItems( aSelectedItems ) }
+      oDlg:bStart    := {|| ::loadTree( oTree ), ::setSelectedItems( aSelectedItems ) }
 
    oDlg:Activate( , , , .t., )
 
@@ -464,29 +459,26 @@ RETURN ( oDlg:nResult == IDOK )
 
 //---------------------------------------------------------------------------//
 
-
-//---------------------------------------------------------------------------//
-
-METHOD changeFindTree( oFind )
+METHOD changeFindTree( oFind, oTree )
 
    local oItem
    local cFind    := alltrim( oFind:cText )
 
    if !empty(cFind)
-      oItem       := ::oTree:Scan( { | o | cFind $ o:cPrompt } )
+      oItem       := oTree:Scan( { | o | cFind $ o:cPrompt } )
    end if 
 
    if !empty(oItem)
-      ::oTree:Select( oItem )
+      oTree:Select( oItem )
    end if 
 
 RETURN ( Self )
 
 //---------------------------------------------------------------------------//
 
-METHOD validBrowse( oDlg )
+METHOD validBrowse( oDlg, oTree )
 
-   ::getAllSelectedNode()
+   ::getAllSelectedNode( oTree )
    
 RETURN ( oDlg:end( IDOK ) )
 
@@ -495,8 +487,6 @@ RETURN ( oDlg:end( IDOK ) )
 METHOD getAllSelectedNode( oTree, aItems )
 
    local oItem
-
-   default oTree  := ::oTree
 
    if empty( aItems )
       aItems      := oTree:aItems
@@ -532,8 +522,6 @@ METHOD setSelectedItem( cName, oTree, aItems )
 
    local oItem
 
-   default oTree  := ::oTree
-
    if empty( aItems )
       aItems      := oTree:aItems
    end if
@@ -554,6 +542,14 @@ METHOD setSelectedItem( cName, oTree, aItems )
       end if
 
    next
+
+RETURN ( Self )
+
+//---------------------------------------------------------------------------//
+
+METHOD editOnBrowse( oTree )
+
+   msgalert( oTree:GetSelected():Cargo, "select( [cAlias] )" )
 
 RETURN ( Self )
 
