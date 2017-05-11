@@ -19324,9 +19324,6 @@ Return ( nil )
 Static Function infoWeb( aTmp )
 
    local aInfo
-   local webShop
-   local idArticulo
-   local oComercioId
 
    if !( aTmp[ ( D():Articulos( nView ) )->( fieldPos( "lPubInt" ) ) ] )
       msgStop( "Este artículo no esta seleccionado para web" )
@@ -19338,34 +19335,42 @@ Static Function infoWeb( aTmp )
       Return nil
    end if 
 
-   aInfo          := {}
+   aInfo          := TPrestashopId():getProductInformation( aTmp[ ( D():Articulos( nView ) )->( fieldPos( "Codigo" ) ) ], aTmp[ ( D():Articulos( nView ) )->( fieldPos( "cWebShop" ) ) ] )
 
-   idArticulo     := aTmp[ ( D():Articulos( nView ) )->( fieldPos( "Codigo" ) ) ]
-   webShop        := aTmp[ ( D():Articulos( nView ) )->( fieldPos( "cWebShop" ) ) ]
-
-   oComercioId    := TPrestashopId():New()
-   if oComercioId:OpenService()
-
-      aadd( aInfo, { "Identificador" => oComercioId:getValueProduct( idArticulo, webShop ) } )
-
-      if oComercioId:getValueImage( idArticulo, webShop )
-         while oComercioId:oDbf:cDocumento == "10" .and. left( oComercioId:oDbf:cClave, 18 ) == idArticulo
-
-            aadd( aInfo, { "Imagen" => oComercioId:oDbf:idWeb } )
-
-            oComercioId:oDbf:Skip()
-
-         end while 
-      end if 
-
-      oComercioId:CloseFiles()
-
-   end if 
-
-   if !empty( aInfo )
-      msgalert( hb_valtoexp( aInfo ), "aInfo" )
+   if empty( aInfo )
+      msgStop( "No hay información de prestashop en este artículo.")
+   else
+      dialogInfoWeb( aInfo )
    end if 
 
 Return ( nil )
 
 //--------------------------------------------------------------------------//
+
+Static Function dialogInfoWeb( aInfo )
+
+   local oDlg
+   local oTree
+
+   DEFINE DIALOG oDlg RESOURCE "ARTICULO_PRESTASHOP_ID"
+
+   oTree          := TTreeView():Redefine( 100, oDlg )
+
+   REDEFINE BUTTON ;
+      ID          IDCANCEL ;
+      OF          oDlg ;
+      CANCEL ;
+      ACTION      ( oDlg:end() )
+
+   // evento bstart-----------------------------------------------------------
+
+   oDlg:bStart    := {|| aeval( aInfo, {|hash| oTree:add(   "[" + alltrim( hget( hash, "Web" ) ) + "] : "                  +;
+                                                            if( hget( hash, "Documento" ) == "01", "Artículo", "Imagen" )  +;
+                                                            " > " + alltrim( str( hget( hash, "Id" ) ) ) ) } ) }
+
+   ACTIVATE DIALOG oDlg CENTER
+
+RETURN ( oDlg:nResult == IDOK )
+
+//---------------------------------------------------------------------------//
+

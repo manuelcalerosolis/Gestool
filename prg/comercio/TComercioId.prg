@@ -93,6 +93,8 @@ CLASS TPrestaShopId FROM TMant
    METHOD deleteValueProductAttributeCombination( cClave, cWeb )              INLINE ::deleteValue( "16", cClave, cWeb )
    METHOD deleteDocumentValuesProductAttributeCombination( cWeb )             INLINE ::deleteDocumentValues( "16", cWeb )
 
+   METHOD getProductInformation( idArticulo, cWeb )
+
    METHOD writeText( cText )                                                  INLINE ( ::TComercio:writeText( cText ) )
 
 END CLASS
@@ -299,5 +301,30 @@ METHOD isSeekGestool( cTipoDocumento, idWeb, cWeb )
    cWeb           := upper( padr( cWeb, 30 ) )
 
 RETURN ( ::oDbf:seekInOrd( cTipoDocumento + idWeb + cWeb, "cId" ) )
+
+//---------------------------------------------------------------------------//
+
+METHOD getProductInformation( idArticulo, cWeb )
+
+   local cStm
+   local cSql  
+   local aInfo := {}
+
+   cSql        := "SELECT cWeb, cDocumento, idWeb "                                 + ;
+                     "FROM " + cPatEmp() + "PrestaId" + " "                   + ;
+                     "WHERE ( cDocumento = '01' OR cDocumento = '10' ) "      + ;
+                        "AND LEFT( cClave, 18 ) = '" + ( idArticulo ) + "' "  + ;
+                        "AND cWeb = '" + upper( cWeb ) + "'"
+
+   if BaseModel():ExecuteSqlStatement( cSql, @cStm )
+      while ( !( cStm )->( eof() ) )
+         aadd( aInfo, { "Web"       => ( cStm )->cWeb,;
+                        "Documento" => ( cStm )->cDocumento,;
+                        "Id"        => ( cStm )->idWeb } )
+         ( cStm )->( dbskip() ) 
+      end while
+   end if 
+
+RETURN ( aInfo )
 
 //---------------------------------------------------------------------------//
