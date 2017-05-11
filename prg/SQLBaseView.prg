@@ -505,7 +505,9 @@ RETURN ( Self )
 
 METHOD getHistory( cHistory )
 
-   local hFetch            := HistoricosUsuariosModel():New():getHistory( cHistory )
+   local hFetch
+
+   hFetch            := HistoricosUsuariosModel():New():getHistory( cHistory )
 
    if empty( hFetch )
       RETURN ( Self )

@@ -50,7 +50,7 @@ CLASS Etiquetas FROM SQLBaseView
    METHOD   LblTitle()
 
    METHOD   setSelectedItems( aNames, oTree, aItems )
-   METHOD      setSelectedItem()
+   METHOD   setSelectedItem()
 
    METHOD   postAppend()                     INLINE ( ::loadTree() )
    METHOD   postEdit()                       INLINE ( ::loadTree() )
