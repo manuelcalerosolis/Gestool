@@ -236,6 +236,7 @@ CLASS TDataCenter
 
    	METHOD oCliBnc()
 
+   METHOD AlterTableSQLite()      
    METHOD ConvertDatosToSQLite()
    METHOD ConvertEmpresaToSQLite()
 
@@ -848,6 +849,10 @@ METHOD StartAdministratorTask()
    if !empty( ::oMtrDiccionario )
 	   ::oMtrDiccionario:SetTotal( 5 )
 	end if 
+
+   // Alteracion de tablas de SQLite------------------------------------------
+
+   ::AlterTableSQLite()
 
    // Conversion de tablas a SQLite-------------------------------------------
 
@@ -4809,10 +4814,34 @@ RETURN ( ::ExecuteSqlStatement( cStm, "SatCliArticulos" ) )
 
 //---------------------------------------------------------------------------//
 
+METHOD AlterTableSQLite()
+
+   TiposImpresorasModel();
+      :New();
+      :updateTableColumns()
+
+   TiposNotasModel();
+      :New();
+      :updateTableColumns()
+
+   SituacionesModel();
+      :New();
+      :updateTableColumns()
+
+   HistoricosUsuariosModel();
+      :New();
+      :updateTableColumns()
+
+RETURN ( Self )
+
+//---------------------------------------------------------------------------//
+
 METHOD ConvertDatosToSQLite()
 
    TiposImpresorasModel():New():makeImportDbfSQL()
+
    TiposNotasModel():New():makeImportDbfSQL()
+
    SituacionesModel():New():makeImportDbfSQL()
 
 RETURN ( Self )

@@ -45,6 +45,10 @@ CLASS TImportarExcelArguelles FROM TImportarExcel
 
    METHOD getNombre()
 
+   METHOD addLineStock()
+
+   METHOD addHeadStock()
+
 END CLASS
 
 //----------------------------------------------------------------------------//
@@ -114,6 +118,8 @@ METHOD procesaFicheroExcel()
 
    ::closeExcel()
 
+   ::addHeadStock()
+
 Return nil
 
 //---------------------------------------------------------------------------//
@@ -132,20 +138,24 @@ METHOD importarCampos()
       ( D():Articulos( ::nView ) )->Nombre      := ::getNombre( ::getExcelString( "D" ) )
    end if 
 
-   if !empty( ::getExcelNumeric( "E" ) )
-      ( D():Articulos( ::nView ) )->pCosto      := ::getExcelNumeric( "E" )
+   if !empty( ::getExcelNumeric( "BA" ) )
+      ( D():Articulos( ::nView ) )->pCosto      := ::getExcelNumeric( "BA" )
    end if
 
-   if !empty( ::getExcelNumeric( "G" ) )
-      ( D():Articulos( ::nView ) )->pVenta1     := ::getExcelNumeric( "G" )
-      ( D():Articulos( ::nView ) )->pVtaIva1    := ( ::getExcelNumeric( "G" ) * 1.21 )
+   if !empty( ::getExcelNumeric( "BB" ) )
+      ( D():Articulos( ::nView ) )->pVenta1     := ::getExcelNumeric( "BB" )
+      ( D():Articulos( ::nView ) )->pVtaIva1    := ( ::getExcelNumeric( "BB" ) * 1.21 )
    end if
 
    ( D():Articulos( ::nView ) )->Familia        := ::getExcelString( "C" )
 
+   ( D():Articulos( ::nView ) )->nStkCal        := ::getExcelNumeric( "L" )
+
    ( D():Articulos( ::nView ) )->TipoIva        := "G"
    ( D():Articulos( ::nView ) )->nCtlStock      := 1
    ( D():Articulos( ::nView ) )->nLabel         := 1
+
+   ::addLineStock()
 
    /*
    Desbloqueamos la tabla de artículos-----------------------------------------
@@ -176,6 +186,54 @@ METHOD getNombre( cGet )
    end if
 
 Return ( cNombre )
+
+//---------------------------------------------------------------------------//
+
+METHOD addLineStock()
+
+   ( D():MovimientosAlmacenLineas( ::nView ) )->( dbAppend() )
+
+   ( D():MovimientosAlmacenLineas( ::nView ) )->dFecMov   := GetSysDate()
+   ( D():MovimientosAlmacenLineas( ::nView ) )->cTimMov   := GetSysTime()
+   ( D():MovimientosAlmacenLineas( ::nView ) )->nTipMov   := 4
+   ( D():MovimientosAlmacenLineas( ::nView ) )->cAliMov   := "000"
+   ( D():MovimientosAlmacenLineas( ::nView ) )->cRefMov   := ::idArticulo
+   ( D():MovimientosAlmacenLineas( ::nView ) )->cNomMov   := ::getNombre( ::getExcelString( "D" ) )
+   ( D():MovimientosAlmacenLineas( ::nView ) )->cCodUsr   := "000"
+   ( D():MovimientosAlmacenLineas( ::nView ) )->cCodDlg   := "00"
+   ( D():MovimientosAlmacenLineas( ::nView ) )->nCajMov   := 1
+   ( D():MovimientosAlmacenLineas( ::nView ) )->nUndMov   := ::getExcelNumeric( "L" )
+   ( D():MovimientosAlmacenLineas( ::nView ) )->nPreDiv   := ::getExcelNumeric( "BA" )
+   ( D():MovimientosAlmacenLineas( ::nView ) )->lSndDoc   := .t.
+   ( D():MovimientosAlmacenLineas( ::nView ) )->nNumRem   := 1
+   ( D():MovimientosAlmacenLineas( ::nView ) )->cSufRem   := "00"
+   ( D():MovimientosAlmacenLineas( ::nView ) )->lSelDoc   := .t.
+ 
+   ( D():MovimientosAlmacenLineas( ::nView ) )->( dbUnlock() )   
+
+Return ( .t. )
+
+//---------------------------------------------------------------------------//
+
+METHOD addHeadStock()
+
+   ( D():MovimientosAlmacen( ::nView ) )->( dbAppend() )
+
+   ( D():MovimientosAlmacen( ::nView ) )->nNumRem     := 1
+   ( D():MovimientosAlmacen( ::nView ) )->cSufRem     := "00"
+   ( D():MovimientosAlmacen( ::nView ) )->nTipMov     := 4
+   ( D():MovimientosAlmacen( ::nView ) )->cCodUsr     := "000"
+   ( D():MovimientosAlmacen( ::nView ) )->cCodDlg     := "00"
+   ( D():MovimientosAlmacen( ::nView ) )->dFecRem     := GetSysDate()
+   ( D():MovimientosAlmacen( ::nView ) )->cTimRem     := GetSysTime()
+   ( D():MovimientosAlmacen( ::nView ) )->cAlmOrg     := "000"
+   ( D():MovimientosAlmacen( ::nView ) )->cCodDiv     := "EUR"
+   ( D():MovimientosAlmacen( ::nView ) )->nVdvDiv     := 1
+
+   ( D():MovimientosAlmacen( ::nView ) )->( dbUnlock() )
+
+
+Return ( .t. )
 
 //---------------------------------------------------------------------------//
 

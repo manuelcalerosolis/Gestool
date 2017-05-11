@@ -6,7 +6,7 @@
 
 CLASS TiposNotasModel FROM SQLBaseModel
 
-	DATA cTableName
+	DATA cTableName              INIT "tipos_notas"
 
    DATA cDbfTableName
 
@@ -26,12 +26,12 @@ METHOD New()
 
    ::cDbfTableName            	:= "TipoNotas"
 
-   ::hColumns                 	:= { 	"id"  => {  "create"    => "INTEGER PRIMARY KEY AUTOINCREMENT",;
-                                                   "text"      => "Identificador" ,;
-                                                   "dbfField"  => "" },;
-                                    "tipo" 	=> {  "create"    => "VARCHAR( 30 ) NOT NULL",;
-                                                   "text"      => "Tipo de la nota",;
-                                                   "dbfField"  => "cTipo" } }
+   ::hColumns                 	:= { 	"id"     => {  "create"    => "INTEGER PRIMARY KEY AUTOINCREMENT",;
+                                                      "text"      => "Identificador" ,;
+                                                      "dbfField"  => "" },;
+                                       "tipo"   => {  "create"    => "VARCHAR( 30 ) NOT NULL",;
+                                                      "text"      => "Tipo de la nota",;
+                                                      "dbfField"  => "cTipo" } }
 
 ::Super:New()
 
@@ -41,11 +41,9 @@ Return ( Self )
 
 METHOD arrayTiposNotas()
 
-   local aResult                 := {}
-   local arrayTiposNotas    := ::selectFetchArray( "SELECT tipo FROM " + ::cTableName ) 
+   local cSentence         := "SELECT tipo FROM " + ::cTableName
+   local aSelect           := ::selectFetchArray( cSentence )
 
-   aeval( arrayTiposNotas, {|a| aadd( aResult, a[ 1 ] ) } )
-
-Return ( aResult )
+Return ( aSelect )
 
 //---------------------------------------------------------------------------//

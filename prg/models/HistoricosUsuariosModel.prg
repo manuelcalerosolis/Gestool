@@ -22,13 +22,14 @@ METHOD New()
 
    ::cTableName                  := "historicos_usuarios"
 
-   ::hColumns                    := {  "id"         	=>  { "create" => "INTEGER PRIMARY KEY AUTOINCREMENT"  }, ;
-                                       "usuario_id"   =>  { "create" => "CHARACTER ( 3 ) NOT NULL"           }, ;
-                                       "cTableName"   =>  { "create" => "VARCHAR( 30 ) NOT NULL"             }, ;
-                                       "cBrowseState" =>  { "create" => "VARCHAR(250)"                       }, ;
-                                       "cColumnOrder" =>  { "create" => "VARCHAR( 30 ) NOT NULL" 		       }, ;
-                                       "cOrientation"	=>  { "create" => "CHARACTER ( 1 ) NOT NULL"			    }, ;
-                                       "nIdForRecno"  =>  { "create" => "INT NOT NULL" } }
+   ::hColumns                    := {  "id"         	=>  { "create" => "INTEGER PRIMARY KEY AUTOINCREMENT"  },;
+                                       "usuario_id"   =>  { "create" => "CHARACTER ( 3 ) NOT NULL"           },;
+                                       "cTableName"   =>  { "create" => "VARCHAR( 30 ) NOT NULL"             },;
+                                       "cBrowseState" =>  { "create" => "VARCHAR(250)"                       },;
+                                       "cColumnOrder" =>  { "create" => "VARCHAR( 30 ) NOT NULL" 		       },;
+                                       "cOrientation"	=>  { "create" => "CHARACTER ( 1 ) NOT NULL"			    },;
+                                       "nIdForRecno"  =>  { "create" => "INT NOT NULL"                       } }
+
 
    ::Super:New()
 

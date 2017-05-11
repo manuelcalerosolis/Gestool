@@ -6,7 +6,7 @@
 
 CLASS SituacionesModel FROM SQLBaseModel
 
-   DATA     cTableName
+   DATA     cTableName                             INIT "sitacionessitaciones"
 
    DATA     cDbfTableName
 
@@ -45,21 +45,16 @@ RETURN ( Self )
 
 METHOD arraySituaciones()
 
-   local aResult                 := {}
    local cSentence               := "SELECT situacion FROM " + ::cTableName
    local aSelect                 := ::selectFetchArray( cSentence ) 
 
-   if !empty( aSelect )
-      aeval( aSelect, {|a| aadd( aResult, a[ 1 ] ) } )
-   end if 
-
-RETURN ( aResult )
+RETURN ( aSelect )
 
 //---------------------------------------------------------------------------//
 
 METHOD existSituaciones( cValue )
 
-   local cSentence               := "SELECT situacion FROM " + ::cTableName + " WHERE situacion = " + quoted( cValue )
+   local cSentence               := "SELECT situacion FROM " + ::cTableName + " WHERE situacion = " + toSQLString( cValue )
    local aSelect                 := ::selectFetchArray( cSentence )
 
 RETURN ( !empty( aSelect ) )

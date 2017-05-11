@@ -60,6 +60,8 @@ CLASS SQLBaseView
    METHOD   restoreBrowseState( oBrowse )
  
    METHOD   Append( oBrowse )
+      METHOD preAppend()                              VIRTUAL
+      METHOD postAppend()                             VIRTUAL
       METHOD setAppendMode()                          INLINE ( ::setMode( __append_mode__ ) )
       METHOD isAppendMode()                           INLINE ( ::nMode == __append_mode__ )
 
@@ -68,7 +70,9 @@ CLASS SQLBaseView
       METHOD isDuplicateMode()                        INLINE ( ::nMode == __duplicate_mode__ )
 
    METHOD   Edit( oBrowse )
-     METHOD setEditMode()                             INLINE ( ::nMode := __edit_mode__ )
+      METHOD preEdit()                                VIRTUAL
+      METHOD postEdit()                               VIRTUAL
+      METHOD setEditMode()                            INLINE ( ::nMode := __edit_mode__ )
       METHOD isEditMode()                             INLINE ( ::nMode == __edit_mode__ )
 
    METHOD   Zoom( oBrowse )
@@ -271,14 +275,22 @@ METHOD Append( oBrowse )
 
    ::setAppendMode()
 
+   ::preAppend()
+
    nRecno         := ::oModel:getRowSetRecno()
 
    ::oModel:loadBlankBuffer()
 
    if ::Dialog()
+
       ::oModel:insertBuffer()
+
+      ::postAppend()
+
    else 
+      
       ::oModel:setRowSetRecno( nRecno ) 
+
    end if
 
    if !empty( oBrowse )
@@ -329,6 +341,8 @@ METHOD Edit( oBrowse )
 
    ::setEditMode()
 
+   ::preEdit()
+
    ::oModel:setIdForRecno( ::oModel:getKeyFieldOfRecno() )
 
    ::oModel:loadCurrentBuffer()
@@ -336,6 +350,8 @@ METHOD Edit( oBrowse )
    if ::Dialog()
       
       ::oModel:updateCurrentBuffer()
+
+      ::postEdit()
 
    end if 
 
@@ -489,7 +505,9 @@ RETURN ( Self )
 
 METHOD getHistory( cHistory )
 
-   local hFetch            := HistoricosUsuariosModel():New():getHistory( cHistory )
+   local hFetch
+
+   hFetch            := HistoricosUsuariosModel():New():getHistory( cHistory )
 
    if empty( hFetch )
       RETURN ( Self )
