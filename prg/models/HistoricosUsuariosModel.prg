@@ -6,7 +6,7 @@
 
 CLASS HistoricosUsuariosModel FROM SQLBaseModel
 
-   DATA     cTableName
+   DATA     cTableName           INIT "historicos_usuarios"
 
    METHOD   New()
 
@@ -19,8 +19,6 @@ END CLASS
 //---------------------------------------------------------------------------//
 
 METHOD New()
-
-   ::cTableName                  := "historicos_usuarios"
 
    ::hColumns                    := {  "id"         	=>  { "create" => "INTEGER PRIMARY KEY AUTOINCREMENT"  },;
                                        "usuario_id"   =>  { "create" => "CHARACTER ( 3 ) NOT NULL"           },;
@@ -61,6 +59,8 @@ METHOD getHistory( cTable )
    if !empty( aFetch ) .and. hb_isarray( aFetch )
     	Return ( atail( aFetch ) )
    end if 
+
+   
 
 Return ( nil )
        

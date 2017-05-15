@@ -150,7 +150,7 @@ METHOD ActivateBrowse( aSelectedItems )
    if ::buildSQLBrowse( aSelectedItems )
       uReturn     := ::getFieldFromBrowse() 
    end if
-
+   msgalert( uReturn, "uretrun")
    ::destroySQLModel()
 
 RETURN ( uReturn )

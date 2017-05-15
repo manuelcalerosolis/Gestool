@@ -46,7 +46,7 @@ END CLASS
 
 METHOD New()
 
-   ::cTableName                  := "etiquetas"
+   ::Super:New()
 
    ::cDbfTableName               := ""
 
@@ -112,14 +112,10 @@ METHOD makeParent( cName )
 
    local cParentInsert
 
-   msgalert( "estoy a punto de hacer el padre")
-
    cParentInsert        := "INSERT INTO " + ::cTableName + " ( "     + ;
                               "nombre, empresa, id_padre ) "         + ;
                            "VALUES  ( "                              + ;
                               toSQLString( cName ) + ", " + toSQLString( cCodEmp() ) + ", null )"
-
-                              msgalert( cParentInsert , "esta es la sentencia sql")
 
    getSQLDatabase():Query( cParentInsert )
 
@@ -167,8 +163,6 @@ METHOD makeImportCategorias()
    local nIdOfCategoria
    local cPath := cPatEmp()
 
-   msgalert( "primeros pasos")
-
    if ( file( cFullPathEmpresa() + "Categorias.old" ) )
       Return ( self )
    end if
@@ -178,15 +172,9 @@ METHOD makeImportCategorias()
       Return ( self )
    end if 
 
-   msgalert("pasamos del if")
-
    nIdOfCategoria   := ::makeParent( "Categorias" )
 
-   msgalert( nIdOfCategoria )
-
    cImportSentence   := ::getSentenceFromOldCategories( nIdOfCategoria )
-
-   msgalert("tenemos las sentencias SQL")
 
    if !empty( cImportSentence )
 
@@ -194,11 +182,7 @@ METHOD makeImportCategorias()
       
    end if 
 
-   msgalert("ya las hemos ejecutado")
-
    frename( cFullPathEmpresa() + "Categorias.dbf", cFullPathEmpresa() + "Categorias.old" )
-
-   msgalert("ya le hemos cambiado el nombre al archivo")
    
 Return ( self )
 

@@ -24,8 +24,6 @@ END CLASS
 
 METHOD New()
 
-   ::cTableName                  := "situaciones"
-
    ::cDbfTableName               := "Situa"
 
    ::hColumns                    := {  "id"              => {  "create"    => "INTEGER PRIMARY KEY AUTOINCREMENT"    ,;
