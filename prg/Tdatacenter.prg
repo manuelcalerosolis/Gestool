@@ -4858,9 +4858,9 @@ RETURN ( Self )
 
 METHOD MigrateEmpresaToSQLite()
 
-   TDetProduccion() ;
-      :New() ;
-      :migrateToEtiquetas()
+   EtiquetasModel();
+      :New();
+      :TrasnlateCodigoToId()
 
 RETURN ( Self )
 

@@ -39,9 +39,9 @@ CLASS EtiquetasModel FROM SQLBaseEmpresasModel
 
    METHOD   translateNamesToIds( aNames )
 
-   METHOD   getDBFAndSQLCod()
+   METHOD   arrayCodigoAndId()
 
-   METHOD   CodDBFtoEtiquetas()
+   METHOD   TrasnlateCodigoToId()
 
 END CLASS
 
@@ -235,15 +235,15 @@ RETURN ( ::selectFetchArray( cTranslate ) )
 
 //---------------------------------------------------------------------------//
 
-METHOD getDBFAndSQLCod()
+METHOD arrayCodigoAndId()
 
    local oStmt
-   local cSentence               := "SELECT id, codigo FROM " + ::cTableName + " WHERE empresa = " + toSQLString( cCodEmp() ) + " AND codigo IS NOT NULL"
+   local cSentence         := "SELECT id, codigo FROM " + ::cTableName + " WHERE empresa = " + toSQLString( cCodEmp() ) + " AND codigo IS NOT NULL"
    local aSelect           
 
    try 
       oStmt                := getSQLDatabase():Query( cSentence )
-      aSelect           := oStmt:fetchAll( FETCH_HASH )
+      aSelect              := oStmt:fetchAll( FETCH_HASH )
    catch
 
       msgstop( hb_valtoexp( getSQLDatabase():errorInfo() ) )
@@ -259,11 +259,17 @@ RETURN ( aSelect )
 //---------------------------------------------------------------------------//
 
 
-METHOD CodDBFtoEtiquetas()
+METHOD TrasnlateCodigoToId()
 
-   local cSentence              
-   local aSelect     := ::getDBFAndSQLCod()
+   local aSelect     
    local hSelect
+   local cSentence              
+
+   aSelect           := ::arrayCodigoAndId()
+
+   if empty( aSelect )
+      RETURN ( Self )
+   end if 
 
    for each hSelect in aSelect
 
