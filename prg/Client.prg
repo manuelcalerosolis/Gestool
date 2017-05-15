@@ -376,8 +376,6 @@ STATIC FUNCTION OpenFiles( lExt )
       D():FacturasClientesCobros( nView )
       ( D():FacturasClientesCobros( nView ) )->( OrdSetFocus( "cCodCli" ) )
 
-      D():TiposIncidencias( nView )
-
       D():ClientesEntidad( nView )
 
       D():Empresa( nView )
@@ -3374,12 +3372,6 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, nTab, bValid, nMode )
          :nWidth           := 40
       end with
 
-      with object ( oBrwInc:AddCol() )
-         :cHeader          := "Tipo incidencia"
-         :bEditValue       := {|| cNomInci( ( dbfTmpInc )->cCodTip, D():TiposIncidencias( nView ) ) }
-         :nWidth           := 180
-      end with
-
       if nMode != ZOOM_MODE
          oBrwInc:bLDblClick   := {|| WinEdtRec( oBrwInc, bEdtInc, dbfTmpInc, nil, nil, aTmp ) }
       end if
@@ -3409,16 +3401,6 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, nTab, bValid, nMode )
          ID       503 ;
          OF       fldIncidencias ;
          ACTION   ( WinZooRec( oBrwInc, bEdtInc, dbfTmpInc ) )
-
-      REDEFINE GET aGet[ _CTIPINCI ] VAR aTmp[ _CTIPINCI ];
-         ID       450 ;
-         IDTEXT   451 ;
-         WHEN     ( nMode != ZOOM_MODE ) ;
-         VALID    ( cTipInci( aGet[ _CTIPINCI ], D():TiposIncidencias( nView ), aGet[ _CTIPINCI ]:oHelpText ), FiltraIncidencias( aTmp, oBrwInc ) ) ;
-         BITMAP   "LUPA" ;
-         ON CHANGE( FiltraIncidencias( aTmp, oBrwInc ) );
-         ON HELP  ( BrwIncidencia( D():TiposIncidencias( nView ), aGet[ _CTIPINCI ], aGet[ _CTIPINCI ]:oHelpText ) ) ;
-         OF       fldIncidencias   
 
       /*
       Observaciones de clientes------------------------------------------------
@@ -7046,24 +7028,10 @@ Static Function EdtInc( aTmp, aGet, dbfFacCliI, oBrw, cCodCli, bValid, nMode )
    end if
 
    if !Empty( aTmp[ ( dbfFacCliI )->( FieldPos( "cCodTip" ) ) ] )
-      cNomInci    := cNomInci( aTmp[ ( dbfFacCliI )->( FieldPos( "cCodTip" ) ) ], D():TiposIncidencias( nView ) )
+      cNomInci    := ""
    end if
 
    DEFINE DIALOG oDlg RESOURCE "Incidencia" TITLE LblTitle( nMode ) + "incidencias de clientes"
-
-      REDEFINE GET aGet[ ( dbfFacCliI )->( FieldPos( "cCodTip" ) ) ];
-         VAR      aTmp[ ( dbfFacCliI )->( FieldPos( "cCodTip" ) ) ];
-         ID       120 ;
-         WHEN     ( nMode != ZOOM_MODE ) ;
-         VALID    ( cTipInci( aGet[ ( dbfFacCliI )->( FieldPos( "cCodTip" ) ) ], D():TiposIncidencias( nView ), oNomInci ) ) ;
-         BITMAP   "LUPA" ;
-         ON HELP  ( BrwIncidencia( D():TiposIncidencias( nView ), aGet[ ( dbfFacCliI )->( FieldPos( "cCodTip" ) ) ], oNomInci ) ) ;
-         OF       oDlg
-
-      REDEFINE GET oNomInci VAR cNomInci;
-         WHEN     .f. ; 
-         ID       130 ;
-         OF       oDlg
 
       REDEFINE GET aTmp[ ( dbfFacCliI )->( FieldPos( "dFecInc" ) ) ] ;
          ID       100 ;
