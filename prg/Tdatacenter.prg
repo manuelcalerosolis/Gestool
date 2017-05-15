@@ -2191,14 +2191,6 @@ METHOD BuildEmpresa()
    oDataTable:bCreateIndex := {| cPath | rxTemporada( cPath ) }
    ::AddEmpresaTable( oDataTable )
 
-   oDataTable              := TDataTable():New( "Categorias" )
-   oDataTable:cDataFile    := cPatEmp( , .t. ) + "Categorias.Dbf"
-   oDataTable:cIndexFile   := cPatEmp( , .t. ) + "Categorias.Cdx"
-   oDataTable:cDescription := "Categorías"
-   oDataTable:bCreateFile  := {| cPath | mkCategoria( cPath ) }
-   oDataTable:bCreateIndex := {| cPath | rxCategoria( cPath ) }
-   ::AddEmpresaTable( oDataTable )
-
    oDataTable              := TDataTable():New( "EstadoSat" )
    oDataTable:cDataFile    := cPatEmp( , .t. ) + "EstadoSat.Dbf"
    oDataTable:cIndexFile   := cPatEmp( , .t. ) + "EstadoSat.Cdx"

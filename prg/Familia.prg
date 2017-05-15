@@ -61,7 +61,8 @@
 #define _LFAMINT                 37      //   L       1    0
 #define _CCOMFAM                 38      //   C       3    0
 #define _CDESWEB                 39      //   C       3    0
-#define _NDIAGRT                 40      //   N       3    0
+#define _NDIAGRT                 40      //   N       6    0
+#define _MLNGDES                 41      //   M      10    0
 
 static oWndBrw
 
@@ -2635,7 +2636,8 @@ FUNCTION aItmFam()
                      {"lFamInt",    "L",     1,    0, "Añade la familia junto con la descripción en internet" },;
                      {"cComFam",    "C",     3,    0, "Comentario por defecto para la familia" },;
                      {"cDesWeb",    "C",   250,    0, "Descripción para la web" },;
-                     {"nDiaGrt",    "N",     6,    0, "Días de garantía" } }
+                     {"nDiaGrt",    "N",     6,    0, "Días de garantía" },;
+                     {"mLngDes",    "M",    10,    0, "Descripción extendida" } }
 
 RETURN ( aBase )
 
@@ -2645,9 +2647,10 @@ FUNCTION aItmFamiliaLenguajes()
 
    local aBase := {}
 
-   aAdd( aBase, { "cCodFam",   "C",    16,   0, "Código de la familia" } )
-   aAdd( aBase, { "cCodLen",   "C",    4,    0, "Código del lenguaje" } )
-   aAdd( aBase, { "cDesFam",   "C",    200,  0, "Descripción familia" } )
+   aAdd( aBase, { "cCodFam",   "C",    16,  0, "Código de la familia" } )
+   aAdd( aBase, { "cCodLen",   "C",     4,  0, "Código del lenguaje" } )
+   aAdd( aBase, { "cDesFam",   "C",   200,  0, "Descripción familia" } )
+   aAdd( aBase, { "mLngDes",   "M",    10,  0, "Descripción extendida" } )
 
 RETURN ( aBase )
 

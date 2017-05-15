@@ -620,10 +620,6 @@ STATIC FUNCTION OpenFiles( lExt )
 
       D():TiposIva( nView )
 
-      D():Categorias( nView )
-
-      D():Temporadas( nView )
-
       D():PropiedadesLineas( nView )
 
       D():Proveedores( nView )

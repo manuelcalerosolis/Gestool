@@ -183,7 +183,11 @@ METHOD makeImportCategorias()
    end if 
 
    frename( cFullPathEmpresa() + "Categorias.dbf", cFullPathEmpresa() + "Categorias.old" )
+<<<<<<< HEAD
    
+=======
+
+>>>>>>> origin/master
 Return ( self )
 
 //---------------------------------------------------------------------------//

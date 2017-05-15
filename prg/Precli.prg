@@ -11893,7 +11893,7 @@ Return nil
 
 //---------------------------------------------------------------------------//
 
-Function changeAgentPercentageInAllLines(nComAge, dbfTmpLin, oBrw )
+Function changeAgentPercentageInAllLines( nComAge, dbfTmpLin, oBrw )
 
    local nRec  := ( dbfTmpLin )->( Recno() )
 
