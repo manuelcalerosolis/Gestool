@@ -39,6 +39,9 @@ CLASS EtiquetasModel FROM SQLBaseEmpresasModel
 
    METHOD   translateNamesToIds( aNames )
 
+   METHOD   getDBFAndSQLCod()
+
+   METHOD   CodDBFtoEtiquetas()
 
 END CLASS
 
@@ -59,8 +62,7 @@ METHOD New()
                                        "id_padre"  => {  "create"    => "INTEGER"                                    ,;
                                                          "text"      => "Identificador de la etiqueta padre" }       ,;
                                        "codigo"    => {  "create"    => "CHAR ( 10 )"                                ,;
-                                                         "text"      => "Identificador de la etiqueta padre"         ,;
-                                                         "dbfField"  => "cCodigo" } }
+                                                         "text"      => "Identificador de la etiqueta padre"         }}
 
    ::Super:New()
 
@@ -129,7 +131,7 @@ RETURN ( getSQLDatabase():LastInsertId() )
 METHOD getSentenceFromOldCategories( idParent )
 
    local dbf
-   local cSentence   := "INSERT INTO " + ::cTableName +  " ( nombre, empresa, id_padre) VALUES "
+   local cSentence   := "INSERT INTO " + ::cTableName +  " ( nombre, empresa, id_padre, codigo) VALUES "
    local cValues     := ""
 
    dbUseArea( .t., cDriver(), cPatEmp() + "Categorias.Dbf", cCheckArea( "Categorias", @dbf ) )
@@ -142,7 +144,7 @@ METHOD getSentenceFromOldCategories( idParent )
 
    while ( dbf )->( !eof() )
 
-      cValues     += "( " + toSQLString( ( dbf )->cNombre ) + ", " + toSQLString( cCodEmp() ) + ", " + toSQLString( idParent ) + "), "
+      cValues     += "( " + toSQLString( ( dbf )->cNombre ) + ", " + toSQLString( cCodEmp() ) + ", " + toSQLString( idParent ) + ", " + toSQLString( ( dbf )->cCodigo ) + "), "
 
       ( dbf )->( dbskip() )
 
@@ -155,6 +157,8 @@ METHOD getSentenceFromOldCategories( idParent )
    end if 
       
    cSentence      += chgAtEnd( cValues, "", 2 )
+
+   msgalert( cSentence )
 
 RETURN ( cSentence )
 
@@ -228,5 +232,49 @@ METHOD translateNamesToIds( aNames )
    cTranslate := chgAtEnd( cTranslate, " )", 3 )
 
 RETURN ( ::selectFetchArray( cTranslate ) )
+
+//---------------------------------------------------------------------------//
+
+METHOD getDBFAndSQLCod()
+
+   local oStmt
+   local cSentence               := "SELECT id, codigo FROM " + ::cTableName + " WHERE empresa = " + toSQLString( cCodEmp() ) + " AND codigo IS NOT NULL"
+   local aSelect           
+
+   try 
+      oStmt                := getSQLDatabase():Query( cSentence )
+      aSelect           := oStmt:fetchAll( FETCH_HASH )
+   catch
+
+      msgstop( hb_valtoexp( getSQLDatabase():errorInfo() ) )
+
+      if !empty( oStmt )
+        oStmt:free()
+      end if    
+   
+   end
+
+RETURN ( aSelect )
+
+//---------------------------------------------------------------------------//
+
+
+METHOD CodDBFtoEtiquetas()
+
+   local cSentence              
+   local aSelect     := ::getDBFAndSQLCod()
+   local hSelect
+
+   for each hSelect in aSelect
+
+      cSentence      := "UPDATE EMP" + ( cCodEmp() + "ProLin" ) + " SET cEtiqueta = '" + toSQLString( hSelect["id"] ) + "' WHERE ccodcat = " + toSQLString( hSelect["codigo"] )
+
+      BaseModel():ExecuteSqlStatement( cSentence )
+
+   next
+
+RETURN ( Self )
+
+//---------------------------------------------------------------------------//
 
 //temporada
