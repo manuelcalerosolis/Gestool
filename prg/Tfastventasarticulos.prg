@@ -415,8 +415,6 @@ METHOD OpenFiles() CLASS TFastVentasArticulos
 
       D():Familias( ::nView )
 
-      D():Categorias( ::nView )
-
       D():Temporadas( ::nView )
 
       D():EstadoArticulo( ::nView )
@@ -1171,9 +1169,6 @@ METHOD DataReport() CLASS TFastVentasArticulos
 
    ::oFastReport:SetWorkArea(       "Grupos familias",               ::oGruFam:Select() )
    ::oFastReport:SetFieldAliases(   "Grupos familias",               cObjectsToReport( ::oGruFam:oDbf ) )
-
-   ::oFastReport:SetWorkArea(       "Categorias",                    ( D():Categorias( ::nView ) )->( select() ) )
-   ::oFastReport:SetFieldAliases(   "Categorias",                    cItemsToReport( aItmCategoria() ) )
 
    ::oFastReport:SetWorkArea(       "Temporadas",                    ( D():Temporadas( ::nView ) )->( select() ) )
    ::oFastReport:SetFieldAliases(   "Temporadas",                    cItemsToReport( aItmTemporada() ) )

@@ -2267,7 +2267,7 @@ function SynRecCli( cPath )
       end if
 
       if empty( ( cFacCliP )->cNomCli )
-         ( cFacCliP )->cNomCli := retClient( ( cFacCliP )->cCodCli, cClient )
+         ( cFacCliP )->cNomCli   := retClient( ( cFacCliP )->cCodCli, cClient )
       end if
 
       if empty( ( cFacCliP )->cCodCaj )
@@ -2300,6 +2300,10 @@ function SynRecCli( cPath )
 
       if empty( ( cFacCliP )->cCtaGas )
          ( cFacCliP )->cCtaGas    := RetFld( ( cFacCliP )->cCodPgo, cFPago, "cCtaGas" )
+      end if
+
+      if empty( ( cFacCliP )->cCtaCli )
+         ( cFacCliP )->cCtaCli    := RetFld( ( cFacCliP )->cCodCli, cClient, "SubCta" )
       end if
 
       /*

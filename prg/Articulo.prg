@@ -55,7 +55,6 @@ static oTagsEver
 
 static dbfProv
 static dbfCatalogo
-static dbfCategoria
 static dbfTemporada
 static dbfFamPrv
 static dbfTMov
@@ -296,9 +295,6 @@ STATIC FUNCTION OpenFiles( lExt, cPath )
 
       USE ( cPatEmp() + "CATALOGO.Dbf" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "CATALOGO", @dbfCatalogo ) )
       SET ADSINDEX TO ( cPatEmp() + "CATALOGO.CDX" ) ADDITIVE
-
-      USE ( cPatArt() + "CATEGORIAS.Dbf" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "CATEGORIA", @dbfCategoria ) )
-      SET ADSINDEX TO ( cPatArt() + "CATEGORIAS.CDX" ) ADDITIVE
 
       USE ( cPatArt() + "Temporadas.Dbf" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "TEMPORADA", @dbfTemporada ) )
       SET ADSINDEX TO ( cPatArt() + "Temporadas.Cdx" ) ADDITIVE
@@ -549,10 +545,6 @@ STATIC FUNCTION CloseFiles( lDestroy )
       ( dbfCatalogo )->( dbCloseArea() )
    end if
 
-   if dbfCategoria != nil
-      ( dbfCategoria )->( dbCloseArea() )
-   end if
-
    if dbfTemporada != nil
       ( dbfTemporada )->( dbCloseArea() )
    end if
@@ -757,7 +749,6 @@ STATIC FUNCTION CloseFiles( lDestroy )
    oNewImp           := nil
    oFraPub           := nil
    dbfDoc            := nil
-   dbfCategoria      := nil
    dbfTemporada      := nil
    dbfAlbPrvL        := nil
    dbfFacPrvL        := nil
@@ -979,17 +970,6 @@ Function Articulo( oMenuItem, oWnd, bOnInit )
       :nWidth           := 140
       :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | oWndBrw:ClickOnHeader( oCol ) }
       :lHide            := .t. 
-   end with
-
-   with object ( oWndBrw:AddXCol() )
-      :cHeader          := getConfigTraslation( "Categoría" )
-      :cSortOrder       := "cCodCate"
-      :bStrData         := {|| AllTrim( ( D():Articulos( nView ) )->cCodCate ) + if( !empty( ( D():Articulos( nView ) )->cCodCate ), " - ", "" ) + RetFld( ( D():Articulos( nView ) )->cCodCate, dbfCategoria, "cNombre" ) }
-      :bBmpData         := {|| nBitmapTipoCategoria( RetFld( ( D():Articulos( nView ) )->cCodCate, dbfCategoria, "cTipo" ) ) }
-      :nWidth           := 140
-      :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | oWndBrw:ClickOnHeader( oCol ) }
-      :lHide            := .t. 
-      AddResourceTipoCategoria( hb_QWith() )
    end with
 
    with object ( oWndBrw:AddXCol() )
@@ -2049,40 +2029,10 @@ STATIC FUNCTION EdtRec( aTmp, aGet, cArticulo, oBrw, bWhen, bValid, nMode )
 
    aGet[ ( D():Articulos( nView ) )->( fieldpos( "cCodFab" ) ) ]:bValid := {|| ( aGet[ ( D():Articulos( nView ) )->( fieldpos( "cCodFab" ) ) ]:oHelpText:cText( RetFld( aTmp[ ( D():Articulos( nView ) )->( fieldpos( "cCodFab" ) ) ], oFabricante:GetAlias() ) ), .t. ) }
    aGet[ ( D():Articulos( nView ) )->( fieldpos( "cCodFab" ) ) ]:bHelp  := {|| oFabricante:Buscar( aGet[ ( D():Articulos( nView ) )->( fieldpos( "cCodFab" ) ) ] ) }
-
-   /*
-   Categoría de artículo-------------------------------------------------------
-   */
-
-   REDEFINE GET   aGet[ ( D():Articulos( nView ) )->( fieldpos( "CCODCATE" ) ) ] ;
-         VAR      aTmp[ ( D():Articulos( nView ) )->( fieldpos( "CCODCATE" ) ) ] ;
-         ID       350 ;
-         WHEN     ( nMode != ZOOM_MODE ) ;
-         VALID    ( cCategoria( aGet[ ( D():Articulos( nView ) )->( fieldpos( "CCODCATE" ) ) ], dbfCategoria, oSay[ 17 ], oBmpCategoria ) ) ;
-         ON HELP  ( BrwCategoria( aGet[ ( D():Articulos( nView ) )->( fieldpos( "CCODCATE" ) ) ], oSay[ 17 ], oBmpCategoria ) ) ;
-         BITMAP   "LUPA" ;
-         OF       fldGeneral
-
-   REDEFINE GET   oSay[ 17 ] ;
-         VAR      cSay[ 17 ] ;
-         ID       351 ;
-         SPINNER ;
-         WHEN     ( .f. ) ;
-         OF       fldGeneral
-
-   REDEFINE BITMAP oBmpCategoria ;
-         ID       352 ;
-         TRANSPARENT ;
-         OF       fldGeneral
-   
+  
    REDEFINE SAY ;
          PROMPT   getConfigTraslation( "Familia" );
          ID       900 ;
-         OF       fldGeneral
-
-   REDEFINE SAY ;
-         PROMPT   getConfigTraslation( "Categoría" );
-         ID       700 ;
          OF       fldGeneral
 
    REDEFINE SAY ;
@@ -11630,27 +11580,6 @@ Return aCodigos
 
 //---------------------------------------------------------------------------//
 
-Static Function aNombresCategoria()
-
-   local nRec        := ( dbfCategoria )->( Recno() )
-   local aCodigos    := {}
-
-   ( dbfCategoria )->( dbGoTop() )
-
-   while !( dbfCategoria )->( Eof() )
-
-      aAdd( aCodigos, { ( dbfCategoria )->cNombre, ( dbfCategoria )->cCodigo } )
-
-      ( dbfCategoria )->( dbSkip() )
-
-   end while
-
-   ( dbfCategoria )->( dbGoTo( nRec ) )
-
-Return aCodigos
-
-//---------------------------------------------------------------------------//
-
 Static Function aNombresTemporada()
 
    local nRec        := ( dbfTemporada )->( Recno() )
@@ -17234,8 +17163,10 @@ Static Function DataReport( oFr, lTemporal )
    oFr:SetWorkArea(     "Familias", ( D():Familias( nView ) )->( Select() ) )
    oFr:SetFieldAliases( "Familias", cItemsToReport( aItmFam() ) )
 
+/*
    oFr:SetWorkArea(     "Categoria", ( dbfCategoria )->( Select() ) )
    oFr:SetFieldAliases( "Categoria", cItemsToReport( aItmCategoria() ) )
+*/
 
    oFr:SetWorkArea(     "Ofertas", ( dbfOfe )->( Select() ) )
    oFr:SetFieldAliases( "Ofertas", cItemsToReport( aItmOfe() ) )

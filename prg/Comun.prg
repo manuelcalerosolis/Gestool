@@ -281,9 +281,12 @@ RETURN ( .t. )
 
 FUNCTION Test()
 
+<<<<<<< HEAD
 //msgalert( hb_valtoexp( tiposincidenciasModel():arrayTiposIncidencias() ) )
    //msgalert(  hb_valtoexp( TiposImpresorasModel():existTiposImpresoras( "tita" ) ) )
 
+=======
+>>>>>>> origin/master
 Return ( nil )
 
 //---------------------------------------------------------------------------//
