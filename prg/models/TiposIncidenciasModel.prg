@@ -72,6 +72,4 @@ METHOD translateNameFromId( nId )
 
    msgalert( hb_valtoexp( aNombre ), "se llama asi" )
 
-   //getSQLDatabase():Query( )
-
 RETURN ( self )
