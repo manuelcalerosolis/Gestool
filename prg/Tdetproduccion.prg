@@ -86,6 +86,8 @@ CLASS TDetProduccion FROM TDetalleArticulos
 
    METHOD Del( oBrw1, oBrw2 )
 
+   METHOD getEtiquetasBrowse( oTagsEver, aSelectedItems )
+
 END CLASS
 
 //--------------------------------------------------------------------------//
@@ -236,6 +238,9 @@ METHOD Resource( nMode ) CLASS TDetProduccion
    local oBtnSer
    local oBtnAdelante
    local oBtnAtras
+   local oTagsEver
+   local aIdEtiquetas
+   local aNombreEtiquetas
 
    ::cOldCodArt         := ::oDbfVir:cCodArt
 
@@ -265,6 +270,10 @@ METHOD Resource( nMode ) CLASS TDetProduccion
    ::nGetTotVol         := ::nTotVolumen( ::oDbfVir )
 
    cSayAlm              := RetAlmacen( ::oDbfVir:cAlmOrd, ::oParent:oAlm )
+
+   aIdEtiquetas      := hb_deserialize( ::oDbfVir:cEtiqueta )
+
+   aNombreEtiquetas  := EtiquetasModel():translateIdsToNames( aIdEtiquetas )
 
    DEFINE DIALOG  ::oDlg ;
       RESOURCE    "LProducido" ;
@@ -514,7 +523,7 @@ METHOD Resource( nMode ) CLASS TDetProduccion
       oTagsEver            := TTagEver():Redefine( 100, ::oFld:aDialogs[3], nil, aNombreEtiquetas ) 
       oTagsEver:lOverClose := .t.
 
-      TBtnBmp():ReDefine( 101, "Lupa",,,,,{|| getEtiquetasBrowse( oTagsEver:getItems() ) }, ::oFld:aDialogs[3], .f., , .f.,  )
+      TBtnBmp():ReDefine( 101, "Lupa",,,,,{|| ::getEtiquetasBrowse( oTagsEver, oTagsEver:getItems() ) }, ::oFld:aDialogs[3], .f., , .f.,  )
 
       /*
       Botones------------------------------------------------------------------
@@ -1107,6 +1116,21 @@ METHOD Del( oBrw1, oBrw2 ) CLASS TDetProduccion
 
 RETURN .t.
 
+//--------------------------------------------------------------------------//
+
+METHOD getEtiquetasBrowse( oTagsEver, aSelectedItems )
+
+   local aSelected
+
+   aSelected         := Etiquetas():New():activateBrowse( aSelectedItems )
+
+   if !empty( aSelected )
+      oTagsEver:setItems( aSelected )
+      oTagsEver:Refresh()
+   end if 
+
+Return ( nil )
+
 //---------------------------------------------------------------------------//
 
 Function nTotNProduccion( uDbf )
@@ -1288,4 +1312,3 @@ METHOD Resource( nMode ) CLASS TDetSeriesProduccion
 RETURN ( Self )
 
 //--------------------------------------------------------------------------//
-

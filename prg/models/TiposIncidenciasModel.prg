@@ -58,8 +58,6 @@ METHOD exist( cValue )
    local cSentence               := "SELECT id FROM " + ::cTableName + " WHERE id = " + toSQLString( cValue )
    local aSelect                 := ::selectFetchArray( cSentence )
 
-   msgalert( hb_valtoexp( aSelect ), "existe?" )
-
 RETURN ( !empty( aSelect ) )
 
 //---------------------------------------------------------------------------//
@@ -69,7 +67,5 @@ METHOD translateNameFromId( nId )
    local cSentence   := "SELECT nombre_incidencia from " + ::cTableName + " WHERE empresa = " + toSQLString( cCodEmp() ) + " AND id = " + toSQLString( nID )
 
    local aNombre     := ::selectFetchArray( cSentence )
-
-   msgalert( hb_valtoexp( aNombre ), "se llama asi" )
 
 RETURN ( self )
