@@ -2404,17 +2404,17 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, cCodCli, cCodArt, nMode, aNumDoc 
       Formas de pago_____________________________________________________________________
 		*/
 
-      	REDEFINE GET aGet[ _CCODPAGO ] VAR aTmp[ _CCODPAGO ];
-         	ID       240 ;
+   	REDEFINE GET aGet[ _CCODPAGO ] VAR aTmp[ _CCODPAGO ];
+      	ID       240 ;
 			PICTURE 	"@!" ;
-         	WHEN     ( nMode != ZOOM_MODE );
-         	VALID    ( cFPago( aGet[ _CCODPAGO ], dbfFPago, oSay[ 4 ] ) ) ;
-         	BITMAP   "LUPA" ;
-         	ON HELP  ( BrwFPago( aGet[ _CCODPAGO ], oSay[ 4 ] ) );
+      	WHEN     ( nMode != ZOOM_MODE );
+      	VALID    ( cFPago( aGet[ _CCODPAGO ], dbfFPago, oSay[ 4 ] ) ) ;
+      	BITMAP   "LUPA" ;
+      	ON HELP  ( BrwFPago( aGet[ _CCODPAGO ], oSay[ 4 ] ) );
 			OF 		oFld:aDialogs[1]
 
-      	REDEFINE GET oSay[ 4 ] VAR cSay[ 4 ];
-         	ID       241 ;
+   	REDEFINE GET oSay[ 4 ] VAR cSay[ 4 ];
+      	ID       241 ;
 			WHEN 		.F. ;
 			COLOR 	CLR_GET ;
 			OF 		oFld:aDialogs[1]
@@ -2423,52 +2423,51 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, cCodCli, cCodArt, nMode, aNumDoc 
       Codigo de Agente___________________________________________________________________
 		*/
 
-      	REDEFINE GET aGet[ _CCODAGE ] VAR aTmp[ _CCODAGE ] ;
-         	ID       250 ;
-			WHEN 		( nMode != ZOOM_MODE ) ;
-         	VALID    ( LoadAgente( aGet[ _CCODAGE], dbfAgent, oSay[ 3 ], aGet[ _NPCTCOMAGE], dbfAgeCom, dbfTmpLin, oBrwLin ), RecalculaTotal( aTmp ) );
-         	BITMAP   "LUPA" ;
-         	ON HELP  ( BrwAgentes( aGet[ _CCODAGE], oSay[ 3 ] ) );
-			OF 		oFld:aDialogs[1]
+   	REDEFINE GET aGet[ _CCODAGE ] VAR aTmp[ _CCODAGE ] ;
+         ID       250 ;
+         WHEN 		( nMode != ZOOM_MODE ) ;
+         VALID    ( LoadAgente( aGet[ _CCODAGE], dbfAgent, oSay[ 3 ], aGet[ _NPCTCOMAGE], dbfAgeCom, dbfTmpLin, oBrwLin ), RecalculaTotal( aTmp ) );
+         BITMAP   "LUPA" ;
+         ON HELP  ( BrwAgentes( aGet[ _CCODAGE], oSay[ 3 ] ) );
+         OF 		oFld:aDialogs[1]
 
-      	REDEFINE GET oSay[ 3 ] VAR cSay[ 3 ] ;
-         	ID       251 ;
-         	WHEN     ( !empty( aTmp[ _CCODAGE ] ) .and. nMode != ZOOM_MODE ) ;
-         	BITMAP   "Bot" ;
-         	ON HELP  ( changeAgentPercentageInAllLines( aTmp[ _NPCTCOMAGE ], dbfTmpLin, oBrwLin ), RecalculaTotal( aTmp ) ) ;
-         	OF       oFld:aDialogs[1]
+      REDEFINE GET oSay[ 3 ] VAR cSay[ 3 ] ;
+      	ID       251 ;
+      	WHEN     ( !empty( aTmp[ _CCODAGE ] ) .and. nMode != ZOOM_MODE ) ;
+      	BITMAP   "Bot" ;
+      	ON HELP  ( changeAgentPercentageInAllLines( aTmp[ _NPCTCOMAGE ], dbfTmpLin, oBrwLin ), RecalculaTotal( aTmp ) ) ;
+      	OF       oFld:aDialogs[1]
 
-      	REDEFINE GET aGet[ _NPCTCOMAGE ] VAR aTmp[ _NPCTCOMAGE ] ;
-         	ID       252 ;
-         	WHEN     ( !empty( aTmp[ _CCODAGE ] ) .and. nMode != ZOOM_MODE ) ;
-         	VALID    ( validateAgentPercentage( aGet[ _NPCTCOMAGE ], dbfTmpLin, oBrwLin ), RecalculaTotal( aTmp ) ) ;
-         	PICTURE  "@E 99.99" ;
-        	SPINNER ;
-         	OF       oFld:aDialogs[1]
+      REDEFINE GET aGet[ _NPCTCOMAGE ] VAR aTmp[ _NPCTCOMAGE ] ;
+      	ID       252 ;
+      	WHEN     ( !empty( aTmp[ _CCODAGE ] ) .and. nMode != ZOOM_MODE ) ;
+      	VALID    ( validateAgentPercentage( aGet[ _NPCTCOMAGE ], dbfTmpLin, oBrwLin ), RecalculaTotal( aTmp ) ) ;
+      	PICTURE  "@E 99.99" ;
+      	SPINNER ;
+      	OF       oFld:aDialogs[1]
 
-      	REDEFINE GET oGetAge VAR nTotAge ;
-         	ID       253 ;
-         	WHEN     ( .f. );
-         	OF       oFld:aDialogs[1]
+      REDEFINE GET oGetAge VAR nTotAge ;
+      	ID       253 ;
+      	WHEN     ( .f. );
+      	OF       oFld:aDialogs[1]
 
       /*
 		Ruta____________________________________________________________________
 		*/
 
 		REDEFINE GET aGet[ _CCODRUT] VAR aTmp[_CCODRUT] ;
-         	ID       260 ;
+        	ID       260 ;
 			COLOR 	CLR_GET ;
 			WHEN 		( nMode != ZOOM_MODE ) ;
-         	VALID    ( cRuta( aGet[ _CCODRUT], dbfRuta, oSay[ 8 ] ) );
-         	BITMAP   "LUPA" ;
-         	ON HELP  ( BrwRuta( aGet[ _CCODRUT ], dbfRuta, oSay[ 8 ] ) );
-         	OF       oFld:aDialogs[1]
+         VALID    ( cRuta( aGet[ _CCODRUT], dbfRuta, oSay[ 8 ] ) );
+         BITMAP   "LUPA" ;
+         ON HELP  ( BrwRuta( aGet[ _CCODRUT ], dbfRuta, oSay[ 8 ] ) );
+         OF       oFld:aDialogs[1]
 
-      	REDEFINE GET oSay[ 8 ] VAR cSay[ 8 ] ;
-         	ID       261 ;
-			WHEN 		.F. ;
-			COLOR 	CLR_GET ;
-         	OF       oFld:aDialogs[1]
+   	REDEFINE GET oSay[ 8 ] VAR cSay[ 8 ] ;
+         ID       261 ;
+         WHEN 		.F. ;
+         OF       oFld:aDialogs[1]
 
       /*
        Botones de acceso________________________________________________________________
@@ -2477,20 +2476,20 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, cCodCli, cCodArt, nMode, aNumDoc 
 		REDEFINE BUTTON ;
 			ID 		500 ;
 			OF 		oFld:aDialogs[1] ;
-         	WHEN     ( nMode != ZOOM_MODE ) ;
-         	ACTION   ( AppDeta( oBrwLin, bEdtDet, aTmp, .f. ) )
+      	WHEN     ( nMode != ZOOM_MODE ) ;
+      	ACTION   ( AppDeta( oBrwLin, bEdtDet, aTmp, .f. ) )
 
 		REDEFINE BUTTON ;
 			ID 		501 ;
 			OF 		oFld:aDialogs[1] ;
-         	WHEN     ( nMode != ZOOM_MODE ) ;
-         	ACTION   ( EdtDeta( oBrwLin, bEdtDet, aTmp, .f., nMode ) )
+      	WHEN     ( nMode != ZOOM_MODE ) ;
+      	ACTION   ( EdtDeta( oBrwLin, bEdtDet, aTmp, .f., nMode ) )
 
 		REDEFINE BUTTON ;
 			ID 		502 ;
 			OF 		oFld:aDialogs[1] ;
-         	WHEN     ( nMode != ZOOM_MODE ) ;
-         	ACTION   ( WinDelRec( oBrwLin, dbfTmpLin, {|| DelDeta() }, {|| RecalculaTotal( aTmp ) } ) );
+      	WHEN     ( nMode != ZOOM_MODE ) ;
+      	ACTION   ( WinDelRec( oBrwLin, dbfTmpLin, {|| DelDeta() }, {|| RecalculaTotal( aTmp ) } ) );
 
 		REDEFINE BUTTON ;
 			ID 		503 ;
@@ -2500,30 +2499,30 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, cCodCli, cCodArt, nMode, aNumDoc 
       	REDEFINE BUTTON ;
 			ID 		515 ;
 			OF 		oFld:aDialogs[1] ;
-         	WHEN     ( nMode != ZOOM_MODE ) ;
-         	ACTION   ( AppDeta( oBrwLin, bEdtDet, aTmp, .t. ) )
+      	WHEN     ( nMode != ZOOM_MODE ) ;
+      	ACTION   ( AppDeta( oBrwLin, bEdtDet, aTmp, .t. ) )
 
       	REDEFINE BUTTON ;
 			ID 		524 ;
 			OF 		oFld:aDialogs[1] ;
 			WHEN 		( nMode != ZOOM_MODE ) ;
-         	ACTION   ( LineUp( dbfTmpLin, oBrwLin ), RecalculaTotal( aTmp ) )
+      	ACTION   ( LineUp( dbfTmpLin, oBrwLin ), RecalculaTotal( aTmp ) )
 
 		REDEFINE BUTTON ;
 			ID 		525 ;
 			OF 		oFld:aDialogs[1] ;
 			WHEN 		( nMode != ZOOM_MODE ) ;
-         	ACTION   ( LineDown( dbfTmpLin, oBrwLin ), RecalculaTotal( aTmp ) )
+      	ACTION   ( LineDown( dbfTmpLin, oBrwLin ), RecalculaTotal( aTmp ) )
 
-      	REDEFINE BUTTON oBtnKit;
-         	ID       526 ;
+      REDEFINE BUTTON oBtnKit;
+      	ID       526 ;
 			OF 		oFld:aDialogs[1] ;
-         	ACTION   ( ShowKit( D():FacturasRectificativas( nView ), dbfTmpLin, oBrwLin, .t. ) )
+      	ACTION   ( ShowKit( D():FacturasRectificativas( nView ), dbfTmpLin, oBrwLin, .t. ) )
 
 		REDEFINE BUTTON ;
-            ID       527 ;
-            OF       oFld:aDialogs[1] ;
-            ACTION   ( importarArticulosScaner() )
+         ID       527 ;
+         OF       oFld:aDialogs[1] ;
+         ACTION   ( importarArticulosScaner() )
 
       /*
       Detalle___________________________________________________________________________

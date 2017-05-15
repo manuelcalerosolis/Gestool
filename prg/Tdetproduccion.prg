@@ -147,7 +147,8 @@ METHOD DefineFiles( cPath, cVia, lUniqueName, cFileName ) CLASS TDetProduccion
       FIELD NAME "dFecCad"    TYPE "D" LEN  8  DEC 0 COMMENT "Fecha de caducidad"            COLSIZE  80 OF oDbf
       FIELD NAME "cHorIni"    TYPE "C" LEN  6  DEC 0 COMMENT "Hora"                          HIDE        OF oDbf           
       FIELD NAME "nBultos"    TYPE "N" LEN 16  DEC 6 COMMENT "Numero de bultos en líneas"    HIDE        OF oDbf           
-      FIELD NAME "cFormato"   TYPE "C" LEN 100 DEC 0 COMMENT "Formato"                       HIDE        OF oDbf           
+      FIELD NAME "cFormato"   TYPE "C" LEN 100 DEC 0 COMMENT "Formato"                       HIDE        OF oDbf  
+      FIELD NAME "cEtiqueta"  TYPE "M" LEN  10 DEC 0 COMMENT "Etiquetas"                     HIDE        OF oDbf  
 
       ::CommunFields( oDbf )
 
@@ -273,9 +274,11 @@ METHOD Resource( nMode ) CLASS TDetProduccion
          ID       400 ;
          OF       ::oDlg ;
          PROMPT   "&Artículo",;
-                  "Da&tos" ;
+                  "Da&tos" ,;
+                  "&Etiquetas";
          DIALOGS  "LProducido_1",;
-                  "LProducido_2"
+                  "LProducido_2",;
+                  "Etiqueta_Linea"
 
       /*
       Codigo de articulo-------------------------------------------------------
@@ -503,6 +506,15 @@ METHOD Resource( nMode ) CLASS TDetProduccion
       */
 
       ::LoadPropiedadesArticulos( ::oFld:aDialogs[ 2 ], nMode )
+
+      /*
+      Etiquetas----------------------------------------------------------------
+      */
+
+      oTagsEver            := TTagEver():Redefine( 100, ::oFld:aDialogs[3], nil, aNombreEtiquetas ) 
+      oTagsEver:lOverClose := .t.
+
+      TBtnBmp():ReDefine( 101, "Lupa",,,,,{|| getEtiquetasBrowse( oTagsEver:getItems() ) }, ::oFld:aDialogs[3], .f., , .f.,  )
 
       /*
       Botones------------------------------------------------------------------
