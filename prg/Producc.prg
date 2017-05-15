@@ -5231,9 +5231,6 @@ METHOD LoadCommunFields() CLASS TDetalleArticulos
    ::oGetTipo:cText( ::oParent:oArt:cCodTip )
    ::oGetTipo:lValid()
 
-   ::oGetCatalogo:cText( ::oParent:oArt:cCodCate )
-   ::oGetCatalogo:lValid()
-
    ::oGetTemporada:cText( ::oParent:oArt:cCodTemp )
    ::oGetTemporada:lValid()
 
