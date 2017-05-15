@@ -273,7 +273,10 @@ METHOD TrasnlateCodigoToId()
 
    for each hSelect in aSelect
 
-      cSentence      := "UPDATE EMP" + ( cCodEmp() + "ProLin" ) + " SET cEtiqueta = '" + toSQLString( hSelect["id"] ) + "' WHERE ccodcat = " + toSQLString( hSelect["codigo"] )
+      cSentence      := "UPDATE EMP" + ( cCodEmp() + "ProLin" )                     + ;
+                              " SET cEtiqueta = '" + toSQLString( hSelect["id"] )   + ;
+                              "', ccodcat = null "                                  + ;
+                           "WHERE ccodcat = " + toSQLString( hSelect["codigo"] )
 
       BaseModel():ExecuteSqlStatement( cSentence )
 
