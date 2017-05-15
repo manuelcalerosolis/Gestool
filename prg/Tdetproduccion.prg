@@ -90,6 +90,8 @@ CLASS TDetProduccion FROM TDetalleArticulos
 
    METHOD getEtiquetasBrowse()
 
+   // METHOD migrateToEtiquetas()
+
 END CLASS
 
 //--------------------------------------------------------------------------//
@@ -272,9 +274,9 @@ METHOD Resource( nMode ) CLASS TDetProduccion
 
    cSayAlm              := RetAlmacen( ::oDbfVir:cAlmOrd, ::oParent:oAlm )
 
-   aIdEtiquetas      := hb_deserialize( ::oDbfVir:cEtiqueta )
+   aIdEtiquetas         := hb_deserialize( ::oDbfVir:cEtiqueta )
 
-   aNombreEtiquetas  := EtiquetasModel():translateIdsToNames( aIdEtiquetas )
+   aNombreEtiquetas     := EtiquetasModel():translateIdsToNames( aIdEtiquetas )
 
    DEFINE DIALOG  ::oDlg ;
       RESOURCE    "LProducido" ;
@@ -1119,7 +1121,7 @@ RETURN .t.
 
 //--------------------------------------------------------------------------//
 
-METHOD getEtiquetasBrowse()
+METHOD getEtiquetasBrowse() CLASS TDetProduccion
 
    local aSelected
 
@@ -1131,6 +1133,39 @@ METHOD getEtiquetasBrowse()
    end if 
 
 Return ( nil )
+
+//---------------------------------------------------------------------------//
+
+/*
+METHOD migrateToEtiquetas() CLASS TDetProduccion
+
+   local idCategory
+
+   if !::OpenFiles()
+      RETURN ( nil )
+   end if 
+
+   ::oDbf:GoTop()
+   while !::oDbf:Eof()
+
+      if !empty(::oDbf:cCodCat)
+         
+         idCategory  := EtiquetasModel():getEtiquetaId( ::oDbf:cCodCat )
+
+         if !empty(idCategory)
+            ::oDbf:fieldPutByName( "cEtiqueta", idCategory )
+         end if 
+
+      end if 
+
+      ::oDbf:Skip()
+
+   end while
+
+   ::CloseFiles()
+
+Return ( nil )
+*/
 
 //---------------------------------------------------------------------------//
 

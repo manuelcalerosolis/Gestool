@@ -239,6 +239,7 @@ CLASS TDataCenter
    METHOD AlterTableSQLite()      
    METHOD ConvertDatosToSQLite()
    METHOD ConvertEmpresaToSQLite()
+   METHOD MigrateEmpresaToSQLite()
 
 END CLASS
 
@@ -944,6 +945,8 @@ METHOD StartAdministratorTask()
 
             ::Reindex()
 
+            ::MigrateEmpresaToSQLite()
+
             aEmpresa[ 5 ]   := .t.
 
          end if
@@ -965,7 +968,7 @@ METHOD StartAdministratorTask()
 
       ::CreateColumnLogTable()
 
-      // ::CreateAllLocksTablesUsers() da error
+      // ::CreateAllLocksTablesUsers() da error--------------------------------
 
       if !empty(::oMtrDiccionario)
 	      ::oMtrDiccionario:Set( 3 )
@@ -4848,6 +4851,16 @@ METHOD ConvertEmpresaToSQLite()
    TiposIncidenciasModel();
       :New();
       :makeImportDbfSQL()
+
+RETURN ( Self )
+
+//---------------------------------------------------------------------------//
+
+METHOD MigrateEmpresaToSQLite()
+
+   TDetProduccion() ;
+      :New() ;
+      :migrateToEtiquetas()
 
 RETURN ( Self )
 

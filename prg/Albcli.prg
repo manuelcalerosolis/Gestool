@@ -5186,7 +5186,7 @@ Static Function EdtInc( aTmp, aGet, dbf, oBrw, bWhen, bValid, nMode, aTmpAlb )
 
    local oDlg
    local oNomInci
-   local cNomInci       := TiposIncidenciasModel():translateNameFromId( aTmp[ ( dbfTmpInc )->( FieldPos( "cCodTip" ) ) ] )     //:= RetFld( aTmp[ ( dbfTmpInc )->( FieldPos( "cCodTip" ) ) ], dbfInci )
+   local cNomInci       := TiposIncidenciasModel():translateNameFromId( aTmp[ ( dbfTmpInc )->( FieldPos( "id_tip_inc" ) ) ] )     //:= RetFld( aTmp[ ( dbfTmpInc )->( FieldPos( "cCodTip" ) ) ], dbfInci )
    local oTitulo
    local cTitulo        := LblTitle( nMode ) + " incidencia"
 
@@ -5203,13 +5203,13 @@ Static Function EdtInc( aTmp, aGet, dbf, oBrw, bWhen, bValid, nMode, aTmpAlb )
 
    DEFINE DIALOG oDlg RESOURCE "INCIDENCIA" TITLE LblTitle( nMode ) + "incidencias de albaranes a clientes"
 
-      REDEFINE GET aGet[ ( dbfTmpInc )->( FieldPos( "cCodTip" ) ) ];
-         VAR      aTmp[ ( dbfTmpInc )->( FieldPos( "cCodTip" ) ) ];
+      REDEFINE GET aGet[ ( dbfTmpInc )->( FieldPos( "id_tip_inc" ) ) ];
+         VAR      aTmp[ ( dbfTmpInc )->( FieldPos( "id_tip_inc" ) ) ];
          ID       120 ;
          WHEN     ( nMode != ZOOM_MODE );
-         VALID    ( TiposIncidenciasModel():exist( aTmp[ ( dbfTmpInc )->( FieldPos( "cCodTip" ) ) ] ) ) ;
+         VALID    ( TiposIncidenciasModel():exist( aTmp[ ( dbfTmpInc )->( FieldPos( "id_tip_inc" ) ) ] ) ) ;
          BITMAP   "LUPA" ;
-         ON HELP  ( browseTipoIncidencia( aGet[ ( dbfTmpInc )->( FieldPos( "cCodTip" ) ) ] ) ) ; 
+         ON HELP  ( TiposIncidencias():New():AssignBrowse( aGet[ ( dbfTmpInc )->( FieldPos( "id_tip_inc" ) ) ] ) ) ; 
          OF       oDlg
 
       REDEFINE GET oNomInci VAR cNomInci;
@@ -16818,14 +16818,15 @@ function aIncAlbCli()
 
    local aIncAlbCli  := {}
 
-   aAdd( aIncAlbCli, { "cSerAlb", "C",    1,  0, "Serie de albarán" ,                "",                   "", "( cDbfCol )" } )
-   aAdd( aIncAlbCli, { "nNumAlb", "N",    9,  0, "Número de albarán" ,               "'999999999'",        "", "( cDbfCol )" } )
-   aAdd( aIncAlbCli, { "cSufAlb", "C",    2,  0, "Sufijo de albarán" ,               "",                   "", "( cDbfCol )" } )
-   aAdd( aIncAlbCli, { "cCodTip", "C",    3,  0, "Tipo de incidencia" ,              "",                   "", "( cDbfCol )" } )
-   aAdd( aIncAlbCli, { "dFecInc", "D",    8,  0, "Fecha de la incidencia" ,          "",                   "", "( cDbfCol )" } )
-   aAdd( aIncAlbCli, { "mDesInc", "M",   10,  0, "Descripción de la incidencia" ,    "",                   "", "( cDbfCol )" } )
-   aAdd( aIncAlbCli, { "lListo",  "L",    1,  0, "Lógico de listo" ,                 "",                   "", "( cDbfCol )" } )
-   aAdd( aIncAlbCli, { "lAviso",  "L",    1,  0, "Lógico de aviso" ,                 "",                   "", "( cDbfCol )" } )
+   aAdd( aIncAlbCli, { "cSerAlb",      "C",    1,  0, "Serie de albarán" ,                "",                   "", "( cDbfCol )" } )
+   aAdd( aIncAlbCli, { "nNumAlb",      "N",    9,  0, "Número de albarán" ,               "'999999999'",        "", "( cDbfCol )" } )
+   aAdd( aIncAlbCli, { "cSufAlb",      "C",    2,  0, "Sufijo de albarán" ,               "",                   "", "( cDbfCol )" } )
+   aAdd( aIncAlbCli, { "cCodTip",      "C",    3,  0, "Tipo de incidencia" ,              "",                   "", "( cDbfCol )" } )
+   aAdd( aIncAlbCli, { "dFecInc",      "D",    8,  0, "Fecha de la incidencia" ,          "",                   "", "( cDbfCol )" } )
+   aAdd( aIncAlbCli, { "mDesInc",      "M",   10,  0, "Descripción de la incidencia" ,    "",                   "", "( cDbfCol )" } )
+   aAdd( aIncAlbCli, { "lListo",       "L",    1,  0, "Lógico de listo" ,                 "",                   "", "( cDbfCol )" } )
+   aAdd( aIncAlbCli, { "lAviso",       "L",    1,  0, "Lógico de aviso" ,                 "",                   "", "( cDbfCol )" } )
+   aAdd( aIncAlbCli, { "id_tip_inc",   "N",   16,  0, "Id tipo incidencia" ,              "",                   "", "( cDbfCol )" } )
 
 return ( aIncAlbCli )
 

@@ -50,6 +50,7 @@ CLASS SQLBaseView
   
    METHOD   ActivateBrowse()
       METHOD   startBrowse( oCombobox, oBrowse )
+   METHOD   AssignBrowse()
 
    METHOD   LblTitle()                                INLINE ( if( hhaskey( ::hTextMode, ::getMode() ), hget( ::hTextMode, ::getMode() ), "" ) )
 
@@ -150,6 +151,24 @@ METHOD ActivateBrowse( aSelectedItems )
    end if
 
    ::destroySQLModel()
+
+RETURN ( uReturn )
+
+//---------------------------------------------------------------------------//
+
+METHOD AssignBrowse( oGet, aSelectedItems )
+
+   local uReturn
+
+   if empty(oGet)
+      RETURN ( uReturn )
+   end if 
+
+   uReturn           := ::ActivateBrowse( aSelectedItems )   
+
+   if !empty(uReturn)
+      oGet:cText( uReturn )
+   end if 
 
 RETURN ( uReturn )
 

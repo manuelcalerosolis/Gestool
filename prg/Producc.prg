@@ -90,7 +90,6 @@ CLASS TProduccion FROM TMasDet
    DATA oDbfEmp
    DATA oTemporada 
    DATA oFabricante
-   DATA oCategoria
 
    DATA oDetProduccion
    DATA oDetSeriesProduccion
@@ -692,8 +691,6 @@ METHOD OpenFiles( lExclusive )
 
    DATABASE NEW ::oTemporada  PATH ( cPatEmp() )   FILE "Temporadas.Dbf" VIA ( cDriver() ) SHARED INDEX "Temporadas.Cdx"
 
-   DATABASE NEW ::oCategoria  PATH ( cPatEmp() )   FILE "Categorias.Dbf" VIA ( cDriver() ) SHARED INDEX "Categorias.Cdx"
-
    if !::oGrupoFamilia:OpenFiles()
       lOpen          := .f.
    end if
@@ -930,10 +927,6 @@ METHOD CloseFiles()
    if ::oTemporada != nil .and. ::oTemporada:Used()
       ::oTemporada:End()
    end if
-
-   if ::oCategoria != nil .and. ::oCategoria:Used()
-      ::oCategoria:End()
-   end if 
 
    if ::oDetHoras != nil
       ::oDetHoras:End()
@@ -1478,14 +1471,14 @@ METHOD Resource( nMode, aDatosAnterior )
          :nWidth           := 55
          :lHide            := .t.
       end with
-
+/*
       with object ( ::oBrwMaterialProducido:AddCol() )
          :cHeader          := getConfigTraslation( "Categoría" )
          :bStrData         := {|| AllTrim( ::oDetProduccion:oDbfVir:FieldGetByName( "cCodCat" ) ) + Space( 1 ) + oRetFld( ::oDetProduccion:oDbfVir:FieldGetByName( "cCodCat" ), ::oCategoria ) }
          :nWidth           := 55
          :lHide            := .t.
       end with
-
+*/
       with object ( ::oBrwMaterialProducido:AddCol() )
          :cHeader          := getConfigTraslation( "Temporada" )
          :bStrData         := {|| AllTrim( ::oDetProduccion:oDbfVir:FieldGetByName( "cCodTmp" ) ) + Space( 1 ) + oRetFld( ::oDetProduccion:oDbfVir:FieldGetByName( "cCodTmp" ), ::oTemporada ) }
@@ -1632,14 +1625,14 @@ METHOD Resource( nMode, aDatosAnterior )
          :nWidth           := 55
          :lHide            := .t.
       end with
-
+/*
       with object ( ::oBrwMateriaPrima:AddCol() )
          :cHeader          := getConfigTraslation( "Categoría" )
          :bStrData         := {|| AllTrim( ::oDetMaterial:oDbfVir:FieldGetByName( "cCodCat" ) ) + Space( 1 ) + oRetFld( ::oDetMaterial:oDbfVir:FieldGetByName( "cCodCat" ), ::oCategoria ) }
          :nWidth           := 55
          :lHide            := .t.
       end with
-
+*/
       with object ( ::oBrwMateriaPrima:AddCol() )
          :cHeader          := getConfigTraslation( "Temporada" )
          :bStrData         := {|| AllTrim( ::oDetMaterial:oDbfVir:FieldGetByName( "cCodTmp" ) ) + Space( 1 ) + oRetFld( ::oDetMaterial:oDbfVir:FieldGetByName( "cCodTmp" ), ::oTemporada ) }
@@ -5161,7 +5154,7 @@ METHOD LoadPropiedadesArticulos( oDlg, nMode ) CLASS TDetalleArticulos
       ::oGetTipo:bValid := {|| ::oParent:oTipoArticulo:Existe( ::oGetTipo, ::oGetTipo:oHelpText ) }
       ::oGetTipo:bHelp  := {|| ::oParent:oTipoArticulo:Buscar( ::oGetTipo ) }
       ::oGetTipo:lValid()
-
+/*
       REDEFINE SAY ;
          PROMPT   getConfigTraslation( "Categoría" );
          ID       504 ;
@@ -5177,7 +5170,7 @@ METHOD LoadPropiedadesArticulos( oDlg, nMode ) CLASS TDetalleArticulos
       ::oGetCatalogo:bValid := {|| ::oGetCatalogo:oHelpText:cText( oRetFld( ::oDbfVir:cCodCat, ::oParent:oCategoria ) ) }
       ::oGetCatalogo:bHelp  := {|| BrwCategoria( ::oGetCatalogo, ::oGetCatalogo:oHelpText ) }
       ::oGetCatalogo:lValid()
-
+*/
       REDEFINE SAY ;
          PROMPT   getConfigTraslation( "Temporada" );
          ID       505 ;
