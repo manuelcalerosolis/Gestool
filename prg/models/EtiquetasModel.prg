@@ -59,8 +59,7 @@ METHOD New()
                                        "id_padre"  => {  "create"    => "INTEGER"                                    ,;
                                                          "text"      => "Identificador de la etiqueta padre" }       ,;
                                        "codigo"    => {  "create"    => "CHAR ( 10 )"                                ,;
-                                                         "text"      => "Identificador de la etiqueta padre"         ,;
-                                                         "dbfField"  => "cCodigo" } }
+                                                         "text"      => "Identificador de la etiqueta padre"         }}
 
    ::Super:New()
 
@@ -129,7 +128,7 @@ RETURN ( getSQLDatabase():LastInsertId() )
 METHOD getSentenceFromOldCategories( idParent )
 
    local dbf
-   local cSentence   := "INSERT INTO " + ::cTableName +  " ( nombre, empresa, id_padre) VALUES "
+   local cSentence   := "INSERT INTO " + ::cTableName +  " ( nombre, empresa, id_padre, codigo) VALUES "
    local cValues     := ""
 
    dbUseArea( .t., cDriver(), cPatEmp() + "Categorias.Dbf", cCheckArea( "Categorias", @dbf ) )
@@ -142,7 +141,7 @@ METHOD getSentenceFromOldCategories( idParent )
 
    while ( dbf )->( !eof() )
 
-      cValues     += "( " + toSQLString( ( dbf )->cNombre ) + ", " + toSQLString( cCodEmp() ) + ", " + toSQLString( idParent ) + "), "
+      cValues     += "( " + toSQLString( ( dbf )->cNombre ) + ", " + toSQLString( cCodEmp() ) + ", " + toSQLString( idParent ) + ", " + toSQLString( ( dbf )->cCodigo ) + "), "
 
       ( dbf )->( dbskip() )
 
@@ -155,6 +154,8 @@ METHOD getSentenceFromOldCategories( idParent )
    end if 
       
    cSentence      += chgAtEnd( cValues, "", 2 )
+
+   msgalert( cSentence )
 
 RETURN ( cSentence )
 
