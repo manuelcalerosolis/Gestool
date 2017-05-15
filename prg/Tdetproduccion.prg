@@ -509,12 +509,12 @@ METHOD Resource( nMode ) CLASS TDetProduccion
 
       /*
       Etiquetas----------------------------------------------------------------
-      */
 
       oTagsEver            := TTagEver():Redefine( 100, ::oFld:aDialogs[3], nil, aNombreEtiquetas ) 
       oTagsEver:lOverClose := .t.
 
       TBtnBmp():ReDefine( 101, "Lupa",,,,,{|| getEtiquetasBrowse( oTagsEver:getItems() ) }, ::oFld:aDialogs[3], .f., , .f.,  )
+      */
 
       /*
       Botones------------------------------------------------------------------
