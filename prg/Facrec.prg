@@ -2435,7 +2435,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, cCodCli, cCodArt, nMode, aNumDoc 
          	ID       251 ;
          	WHEN     ( !empty( aTmp[ _CCODAGE ] ) .and. nMode != ZOOM_MODE ) ;
          	BITMAP   "Bot" ;
-         	ON HELP  ( changeAgentPercentageInAllLines(aTmp[ _CCODAGE ], aTmp[ _NPCTCOMAGE ], dbfTmpLin, oBrwLin ), RecalculaTotal( aTmp ) ) ;
+         	ON HELP  ( changeAgentPercentageInAllLines( aTmp[ _NPCTCOMAGE ], dbfTmpLin, oBrwLin ), RecalculaTotal( aTmp ) ) ;
          	OF       oFld:aDialogs[1]
 
       	REDEFINE GET aGet[ _NPCTCOMAGE ] VAR aTmp[ _NPCTCOMAGE ] ;

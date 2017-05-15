@@ -2918,7 +2918,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, hHash, bValid, nMode )
          ID       251 ;
          WHEN     ( !empty( aTmp[ _CCODAGE ] ) .AND. lWhen ) ;
          BITMAP   "Bot" ;
-         ON HELP  ( changeAgentPercentageInAllLines(aTmp[ _NPCTCOMAGE ], dbfTmpLin, oBrwLin ), RecalculaTotal( aTmp ) ) ;
+         ON HELP  ( changeAgentPercentageInAllLines( aTmp[ _NPCTCOMAGE ], dbfTmpLin, oBrwLin ), RecalculaTotal( aTmp ) ) ;
          OF       fldGeneral
 
       REDEFINE GET aGet[ _NPCTCOMAGE ] VAR aTmp[ _NPCTCOMAGE ] ;
