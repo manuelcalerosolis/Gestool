@@ -123,7 +123,7 @@ Return ( cSQLCreateTable )
 
 METHOD getSQLDropTable()
    
-   Local cSQLDropTable := "DROP TABLE " + ::cTableName
+   local cSQLDropTable := "DROP TABLE " + ::cTableName
 
 Return ( cSQLDropTable )
 

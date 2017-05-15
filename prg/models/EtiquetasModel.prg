@@ -46,7 +46,7 @@ END CLASS
 
 METHOD New()
 
-   ::cTableName                  := "etiquetas"
+   ::Super:New()
 
    ::cDbfTableName               := ""
 
@@ -183,7 +183,7 @@ METHOD makeImportCategorias()
    end if 
 
    frename( cFullPathEmpresa() + "Categorias.dbf", cFullPathEmpresa() + "Categorias.old" )
-
+   
 Return ( self )
 
 //---------------------------------------------------------------------------//

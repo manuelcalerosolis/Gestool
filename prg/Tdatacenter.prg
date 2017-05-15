@@ -2521,14 +2521,6 @@ METHOD BuildEmpresa()
    oDataTable:bCreateFile  := {| cPath | TCobAge():BuildFiles( cPath ) }
    ::AddEmpresaTable( oDataTable )
 
-   oDataTable              := TDataTable():New( "TipInci" )
-   oDataTable:cDataFile    := cPatEmp( , .t. ) + "TipInci.Dbf"
-   oDataTable:cIndexFile   := cPatEmp( , .t. ) + "TipInci.Cdx"
-   oDataTable:cDescription := "Tipos de incidencias"
-   oDataTable:bCreateFile  := {| cPath | mkInci( cPath ) }
-   oDataTable:bCreateIndex := {| cPath | rxInci( cPath ) }
-   ::AddEmpresaTable( oDataTable )
-
    oDataTable              := TDataTable():New( "CfgCol" )
    oDataTable:cDataFile    := cPatEmp( , .t. ) + "CfgCol.Dbf"
    oDataTable:cIndexFile   := cPatEmp( , .t. ) + "CfgCol.Cdx"
@@ -4813,6 +4805,10 @@ METHOD AlterTableSQLite()
       :New();
       :updateTableColumns()
 
+   TiposIncidenciasModel();
+      :New();
+      :updateTableColumns()
+
    HistoricosUsuariosModel();
       :New();
       :updateTableColumns()
@@ -4836,6 +4832,7 @@ RETURN ( Self )
 METHOD ConvertEmpresaToSQLite()
 
   EtiquetasModel():New():makeImportDbfSQL()
+  TiposIncidenciasModel():New():makeImportDbfSQL()
 
 RETURN ( Self )
 

@@ -25,13 +25,7 @@ END CLASS
 
 METHOD New()
 
-   ::cColumnKey                  := "id"
-
-   ::cFind                       := ""
-
-   ::cColumnOrder                := "id"
-   ::cOrientation                := "A"
-   ::nIdForRecno                 := 1
+   ::Super:New()
 
 Return ( Self )
 
@@ -93,13 +87,13 @@ METHOD makeImportDbfSQL( cPath )
 
    local cImportSentence
 
-   default cPath     := cPatDat()
+   default cPath     := cPatEmp()
 
-   if ( file( cPath + "\" + ::getOldTableName() ) )
+   if ( file( cPath + ::getOldTableName() ) )
       Return ( self )
    end if
 
-   if !( file( cPath + "\" + ::getDbfTableName() ) )
+   if !( file( cPath + ::getDbfTableName() ) )
       msgStop( "El fichero " + cPath + "\" + ::getDbfTableName() + " no se ha localizado", "Atención" )  
       Return ( self )
    end if 
@@ -123,7 +117,9 @@ Return ( self )
 
 METHOD getSelectSentence()
 
-   local cSQLSelect  := ::cGeneralSelect + " WHERE empresa = " + toSQLString( cCodEmp() )
+   local cSQLSelect
+   
+   cSQLSelect  := ::cGeneralSelect + " WHERE empresa = " + toSQLString( cCodEmp() )
 
    cSQLSelect        += ::getSelectByColumn()
 

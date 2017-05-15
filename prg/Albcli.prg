@@ -349,7 +349,6 @@ static cTmpDoc
 static cTmpPgo
 static cTmpEst
 static cTmpSer
-static dbfInci
 static dbfRuta
 static dbfCliBnc
 static dbfArtPrv
@@ -1504,9 +1503,6 @@ STATIC FUNCTION OpenFiles()
       USE ( cPatDat() + "USERS.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "USERS", @dbfUsr ) )
       SET ADSINDEX TO ( cPatDat() + "USERS.CDX" ) ADDITIVE
 
-      USE ( cPatEmp() + "TIPINCI.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "TIPINCI", @dbfInci ) )
-      SET ADSINDEX TO ( cPatEmp() + "TIPINCI.CDX" ) ADDITIVE
-
       USE ( cPatDat() + "DELEGA.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "DELEGA", @dbfDelega ) )
       SET ADSINDEX TO ( cPatDat() + "DELEGA.CDX" ) ADDITIVE
       
@@ -1831,9 +1827,7 @@ STATIC FUNCTION CloseFiles()
    if !empty( dbfUsr )
       ( dbfUsr )->( dbCloseArea() )
    end if
-   if dbfInci != nil
-      ( dbfInci )->( dbCloseArea() )
-   end if
+
    if dbfArtPrv != nil
       ( dbfArtPrv )->( dbCloseArea() )
    end if
@@ -1976,7 +1970,6 @@ STATIC FUNCTION CloseFiles()
    dbfArtDiv      := nil
    dbfCajT        := nil
    dbfUsr         := nil
-   dbfInci        := nil
    dbfArtPrv      := nil
    dbfDelega      := nil
    dbfAgeCom      := nil
@@ -3815,11 +3808,11 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, hHash, bValid, nMode )
             :nWidth           := 80
          end with
 
-         with object ( oBrwInc:AddCol() )
+         /*with object ( oBrwInc:AddCol() )
             :cHeader          := "Incidencia"
             :bEditValue       := {|| cNomInci( ( dbfTmpInc )->cCodTip, dbfInci ) }
             :nWidth           := 230
-         end with
+         end with*/
 
          with object ( oBrwInc:AddCol() )
             :cHeader          := "Fecha"
@@ -5193,7 +5186,7 @@ Static Function EdtInc( aTmp, aGet, dbf, oBrw, bWhen, bValid, nMode, aTmpAlb )
 
    local oDlg
    local oNomInci
-   local cNomInci       := RetFld( aTmp[ ( dbfTmpInc )->( FieldPos( "cCodTip" ) ) ], dbfInci )
+   local cNomInci       := TiposIncidenciasModel():translateNameFromId( aTmp[ ( dbfTmpInc )->( FieldPos( "cCodTip" ) ) ] )     //:= RetFld( aTmp[ ( dbfTmpInc )->( FieldPos( "cCodTip" ) ) ], dbfInci )
    local oTitulo
    local cTitulo        := LblTitle( nMode ) + " incidencia"
 
@@ -5214,9 +5207,9 @@ Static Function EdtInc( aTmp, aGet, dbf, oBrw, bWhen, bValid, nMode, aTmpAlb )
          VAR      aTmp[ ( dbfTmpInc )->( FieldPos( "cCodTip" ) ) ];
          ID       120 ;
          WHEN     ( nMode != ZOOM_MODE );
-         VALID    ( cTipInci( aGet[ ( dbfTmpInc )->( FieldPos( "cCodTip" ) ) ], dbfInci, oNomInci ) ) ;
+         VALID    ( TiposIncidenciasModel():exist( aTmp[ ( dbfTmpInc )->( FieldPos( "cCodTip" ) ) ] ) ) ;
          BITMAP   "LUPA" ;
-         ON HELP  ( BrwIncidencia( dbfInci, aGet[ ( dbfTmpInc )->( FieldPos( "cCodTip" ) ) ], oNomInci ) ) ;
+         ON HELP  ( browseTipoIncidencia( aGet[ ( dbfTmpInc )->( FieldPos( "cCodTip" ) ) ] ) ) ; 
          OF       oDlg
 
       REDEFINE GET oNomInci VAR cNomInci;
@@ -5265,6 +5258,20 @@ Static Function EdtInc( aTmp, aGet, dbf, oBrw, bWhen, bValid, nMode, aTmpAlb )
    ACTIVATE DIALOG oDlg CENTER
 
 Return ( oDlg:nResult == IDOK )
+
+//---------------------------------------------------------------------------//
+
+Static Function browseTipoIncidencia( oGet )
+
+   local idIncidencia
+
+   idIncidencia   := TiposIncidencias():New():ActivateBrowse()
+
+   if !empty( idIncidencia )
+      oGet:cText( alltrim(str( idIncidencia ) ) )
+   end if 
+
+Return ( nil )
 
 //---------------------------------------------------------------------------//
 
