@@ -148,7 +148,6 @@ METHOD New( nView ) CLASS TItemGroupCategoria
 Return ( Self )
 
 //---------------------------------------------------------------------------//
-//---------------------------------------------------------------------------//
 
 CLASS TItemGroupTemporada FROM TItemGroup
 
