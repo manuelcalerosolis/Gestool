@@ -281,6 +281,8 @@ RETURN ( .t. )
 
 FUNCTION Test()
 
+msgalert( hb_valtoexp( EtiquetasModel():New():CodDBFtoEtiquetas() ) )
+
 Return ( nil )
 
 //---------------------------------------------------------------------------//

@@ -39,6 +39,9 @@ CLASS EtiquetasModel FROM SQLBaseEmpresasModel
 
    METHOD   translateNamesToIds( aNames )
 
+   METHOD   getDBFAndSQLCod()
+
+   METHOD   CodDBFtoEtiquetas()
 
 END CLASS
 
@@ -229,5 +232,49 @@ METHOD translateNamesToIds( aNames )
    cTranslate := chgAtEnd( cTranslate, " )", 3 )
 
 RETURN ( ::selectFetchArray( cTranslate ) )
+
+//---------------------------------------------------------------------------//
+
+METHOD getDBFAndSQLCod()
+
+   local oStmt
+   local cSentence               := "SELECT id, codigo FROM " + ::cTableName + " WHERE empresa = " + toSQLString( cCodEmp() ) + " AND codigo IS NOT NULL"
+   local aSelect           
+
+   try 
+      oStmt                := getSQLDatabase():Query( cSentence )
+      aSelect           := oStmt:fetchAll( FETCH_HASH )
+   catch
+
+      msgstop( hb_valtoexp( getSQLDatabase():errorInfo() ) )
+
+      if !empty( oStmt )
+        oStmt:free()
+      end if    
+   
+   end
+
+RETURN ( aSelect )
+
+//---------------------------------------------------------------------------//
+
+
+METHOD CodDBFtoEtiquetas()
+
+   local cSentence              
+   local aSelect     := ::getDBFAndSQLCod()
+   local hSelect
+
+   for each hSelect in aSelect
+
+      cSentence      := "UPDATE EMP" + ( cCodEmp() + "ProLin" ) + " SET cEtiqueta = '" + toSQLString( hSelect["id"] ) + "' WHERE ccodcat = " + toSQLString( hSelect["codigo"] )
+
+      BaseModel():ExecuteSqlStatement( cSentence )
+
+   next
+
+RETURN ( Self )
+
+//---------------------------------------------------------------------------//
 
 //temporada
