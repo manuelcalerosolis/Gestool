@@ -46,6 +46,8 @@ CLASS TDetProduccion FROM TDetalleArticulos
 
    DATA  oDbfSeries
 
+   DATA  oTagsEver
+
    METHOD New( cPath, oParent )
 
    METHOD DefineFiles()
@@ -86,7 +88,7 @@ CLASS TDetProduccion FROM TDetalleArticulos
 
    METHOD Del( oBrw1, oBrw2 )
 
-   METHOD getEtiquetasBrowse( oTagsEver, aSelectedItems )
+   METHOD getEtiquetasBrowse()
 
 END CLASS
 
@@ -238,7 +240,6 @@ METHOD Resource( nMode ) CLASS TDetProduccion
    local oBtnSer
    local oBtnAdelante
    local oBtnAtras
-   local oTagsEver
    local aIdEtiquetas
    local aNombreEtiquetas
 
@@ -518,16 +519,12 @@ METHOD Resource( nMode ) CLASS TDetProduccion
 
       /*
       Etiquetas----------------------------------------------------------------
-
-      oTagsEver            := TTagEver():Redefine( 100, ::oFld:aDialogs[3], nil, aNombreEtiquetas ) 
-      oTagsEver:lOverClose := .t.
-
-<<<<<<< HEAD
-      TBtnBmp():ReDefine( 101, "Lupa",,,,,{|| getEtiquetasBrowse( oTagsEver:getItems() ) }, ::oFld:aDialogs[3], .f., , .f.,  )
       */
-=======
-      TBtnBmp():ReDefine( 101, "Lupa",,,,,{|| ::getEtiquetasBrowse( oTagsEver, oTagsEver:getItems() ) }, ::oFld:aDialogs[3], .f., , .f.,  )
->>>>>>> fa06bcdcb558dcbaf5a07f92dc46cba527870c18
+      
+      ::oTagsEver            := TTagEver():Redefine( 100, ::oFld:aDialogs[3], nil, aNombreEtiquetas ) 
+      ::oTagsEver:lOverClose := .t.
+
+      TBtnBmp():ReDefine( 101, "Lupa",,,,,{|| ::getEtiquetasBrowse() }, ::oFld:aDialogs[3], .f., , .f.,  )
 
       /*
       Botones------------------------------------------------------------------
@@ -1122,15 +1119,15 @@ RETURN .t.
 
 //--------------------------------------------------------------------------//
 
-METHOD getEtiquetasBrowse( oTagsEver, aSelectedItems )
+METHOD getEtiquetasBrowse()
 
    local aSelected
 
-   aSelected         := Etiquetas():New():activateBrowse( aSelectedItems )
+   aSelected         := Etiquetas():New():activateBrowse( ::oTagsEver:getItems() )
 
    if !empty( aSelected )
-      oTagsEver:setItems( aSelected )
-      oTagsEver:Refresh()
+      ::oTagsEver:setItems( aSelected )
+      ::oTagsEver:Refresh()
    end if 
 
 Return ( nil )

@@ -4813,17 +4813,27 @@ METHOD AlterTableSQLite()
       :New();
       :updateTableColumns()
 
+   EtiquetasModel();
+      :New();
+      :updateTableColumns()
+
 RETURN ( Self )
 
 //---------------------------------------------------------------------------//
 
 METHOD ConvertDatosToSQLite()
 
-   TiposImpresorasModel():New():makeImportDbfSQL()
+   TiposImpresorasModel();
+      :New();
+      :makeImportDbfSQL()
 
-   TiposNotasModel():New():makeImportDbfSQL()
+   TiposNotasModel();
+      :New();
+      :makeImportDbfSQL()
 
-   SituacionesModel():New():makeImportDbfSQL()
+   SituacionesModel();
+      :New();
+      :makeImportDbfSQL()
 
 RETURN ( Self )
 
@@ -4831,8 +4841,13 @@ RETURN ( Self )
 
 METHOD ConvertEmpresaToSQLite()
 
-  EtiquetasModel():New():makeImportDbfSQL()
-  TiposIncidenciasModel():New():makeImportDbfSQL()
+   EtiquetasModel();
+      :New();
+      :makeImportDbfSQL()
+      
+   TiposIncidenciasModel();
+      :New();
+      :makeImportDbfSQL()
 
 RETURN ( Self )
 

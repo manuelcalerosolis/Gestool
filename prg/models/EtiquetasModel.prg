@@ -57,14 +57,17 @@ METHOD New()
                                        "empresa"   => {  "create"    => "CHAR ( 4 )"                                 ,;
                                                          "text"      => "Empresa a la que pertenece la etiqueta"}    ,;
                                        "id_padre"  => {  "create"    => "INTEGER"                                    ,;
-                                                         "text"      => "Identificador de la etiqueta padre"}        }
+                                                         "text"      => "Identificador de la etiqueta padre" }       ,;
+                                       "codigo"    => {  "create"    => "CHAR ( 10 )"                                ,;
+                                                         "text"      => "Identificador de la etiqueta padre"         ,;
+                                                         "dbfField"  => "cCodigo" } }
 
    ::Super:New()
 
-   ::cGeneralSelect              := "select id, nombre, empresa, id_padre, nombre_padre"   +;
-                                    " from etiquetas left join"                           +;
-                                    " (select id as id_del_padre, nombre as nombre_padre from etiquetas)"+;
-                                    " on id_padre = id_del_padre"
+   ::cGeneralSelect              := "SELECT id, nombre, empresa, id_padre, nombre_padre"                                +;
+                                    " FROM " + ::cTableName + " LEFT JOIN "                                             +;
+                                    " ( SELECT id AS id_del_padre, nombre AS nombre_padre FROM " + ::cTableName + " )"  +;
+                                    " ON id_padre = id_del_padre"
 
    ::hDbfToCategory              := {  "Categorias" => { "padre" =>  "Categorias"   ,;
                                                          "hijos" =>  "cNombre"   }}
