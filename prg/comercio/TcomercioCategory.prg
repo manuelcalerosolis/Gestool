@@ -50,7 +50,8 @@ METHOD buildCategory( id, rootCategory ) CLASS TComercioCategory
 
    local idLang
    local aLangs         := {}
-   local categoryName 
+   local categoryName
+   local categoryLongName
    local statusFamilias
 
    if !( ::isSyncronizeAll() )
@@ -77,8 +78,15 @@ METHOD buildCategory( id, rootCategory ) CLASS TComercioCategory
          categoryName   := alltrim( ( D():Familias( ::getView() ) )->cDesWeb )
       end if  
 
-      aLangs            := ::getCategoryLangs( id, categoryName )
+      if !empty( ( D():Familias( ::getView() ) )->mLngDes )
+         categoryLongName  := alltrim( ( D():Familias( ::getView() ) )->mLngDes )
+      else
+         categoryLongName  := categoryName
+      end if  
 
+      aLangs            := ::getCategoryLangs( id, categoryName, categoryLongName )
+
+<<<<<<< HEAD
       aAdd( ::aCategoriesProduct,   {  "id"                 => id,;
                                        "id_parent"          => alltrim( ( D():Familias( ::getView() ) )->cFamCmb ),;
                                        "name"               => categoryName,;
@@ -89,6 +97,17 @@ METHOD buildCategory( id, rootCategory ) CLASS TComercioCategory
                                        "cPrefijoNombre"     => "",;
                                        "aTypeImages"        => {},;
                                        "langs"              => aLangs } )
+=======
+      aAdd( ::aCategoriesProduct,   {  "id"              => id,;
+                                       "id_parent"       => alltrim( ( D():Familias( ::getView() ) )->cFamCmb ),;
+                                       "name"            => categoryName,;
+                                       "description"     => categoryLongName,;
+                                       "link_rewrite"    => cLinkRewrite( categoryName ),;
+                                       "image"           => cFileBmpName( alltrim( ( D():Familias( ::getView() ) )->cImgBtn ) ),;
+                                       "cPrefijoNombre"  => "",;
+                                       "aTypeImages"     => {},;
+                                       "langs"           => aLangs } )
+>>>>>>> e44b23f27ed346c7631376ff01392a8b9776f592
 
    end if   
 
@@ -343,15 +362,16 @@ RETURN ( Self )
 
 //---------------------------------------------------------------------------//
 
-METHOD getCategoryLangs( id, categoryName )
+METHOD getCategoryLangs( id, categoryName, categoryLongName )
 
    local cName
    local hLang
    local aLangs         := {}
+   local cLongName
 
    aadd( aLangs,        {  'lang'         => {|| ::getLanguage() },; 
                            'name'         => categoryName,; 
-                           'description'  => categoryName,; 
+                           'description'  => categoryLongName,; 
                            'link_rewrite' => cLinkRewrite( categoryName ) } )
 
    for each hLang in ( ::TComercioConfig():getLangs() )
@@ -362,9 +382,15 @@ METHOD getCategoryLangs( id, categoryName )
          cName          := categoryName
       end if 
 
+      if ( D():FamiliasLenguajes( ::getView() ) )->( dbseekinord( id + hLang:__enumKey, "cCodLen" ) )
+         cLongName      := alltrim( ( D():FamiliasLenguajes( ::getView() ) )->nLngDes )
+      else 
+         cLongName      := categoryLongName
+      end if 
+
       aadd( aLangs,     {  'lang'         => hLang:__enumValue,; 
                            'name'         => cName,; 
-                           'description'  => cName,; 
+                           'description'  => cLongName,; 
                            'link_rewrite' => cLinkRewrite( cName ) } )
 
    next 

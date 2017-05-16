@@ -80,8 +80,6 @@ static oFraPub
 static oComentarios
 static oLenguajes
 
-static oBtnAceptarActualizarWeb
-
 static oDetCamposExtra
 
 static cFileProveedor
@@ -410,16 +408,6 @@ FUNCTION Familia( oMenuItem, oWnd )
       end with
 
       with object ( oWndBrw:AddXCol() )
-         :cHeader          := "Publicar"
-         :bStrData         := {|| "" }
-         :bEditValue       := {|| ( D():Familias( nView ) )->lPubInt }
-         :nWidth           := 20
-         :SetCheck( { "gc_earth_12", "Nil16" } )
-         :nHeadBmpNo       := 3
-         :AddResource( "gc_earth_16" )
-      end with
-
-      with object ( oWndBrw:AddXCol() )
          :cHeader          := "Táctil"
          :bStrData         := {|| "" }
          :bEditValue       := {|| ( D():Familias( nView ) )->lIncTpv }
@@ -564,13 +552,6 @@ FUNCTION Familia( oMenuItem, oWnd )
             CLOSED ;
             LEVEL    ACC_EDIT
 
-      DEFINE BTNSHELL RESOURCE "SNDINT" OF oWndBrw ;
-         NOBORDER ;
-         ACTION   ( IncWeb() ) ;
-         TOOLTIP  "(P)ublicar" ;
-         HOTKEY   "P";
-         LEVEL    ACC_EDIT
-
       DEFINE BTNSHELL RESOURCE "TACTIL" OF oWndBrw ;
          NOBORDER ;
          ACTION   ( IncTactil() ) ;
@@ -627,6 +608,10 @@ STATIC FUNCTION EdtRec( aTmp, aGet, cFamilia, oBrw, bWhen, bValid, nMode )
    local oSayPrpDos
    local cSayPrpDos     := ""
    local bmpImage
+   local oBmpGeneral
+   local oBmpPropiedades
+   local oBmpProveedores
+   local oBmpIdiomas
 
    oBlock               := ErrorBlock( {| oError | ApoloBreak( oError ) } )
    BEGIN SEQUENCE
@@ -658,6 +643,31 @@ STATIC FUNCTION EdtRec( aTmp, aGet, cFamilia, oBrw, bWhen, bValid, nMode )
                   "FAMILIA_04",;
                   "FAMILIA_02",;
                   "FAMILIA_03"
+
+         REDEFINE BITMAP oBmpGeneral ;   
+            ID       900 ;
+            RESOURCE "gc_cubes_48" ;
+            TRANSPARENT ;
+            OF       oFld:aDialogs[1]
+
+         REDEFINE BITMAP oBmpPropiedades ;
+            ID       900 ;
+            RESOURCE "gc_bookmarks_48" ;
+            TRANSPARENT ;
+            OF       oFld:aDialogs[2]
+
+         REDEFINE BITMAP oBmpProveedores ;
+            ID       900 ;
+            RESOURCE "gc_businessman_48" ;
+            TRANSPARENT ;
+            OF       oFld:aDialogs[3]
+
+         REDEFINE BITMAP oBmpIdiomas ;
+            ID       900 ;
+            RESOURCE "gc_user_message_48" ;
+            TRANSPARENT ;
+            OF       oFld:aDialogs[4]
+
 
          /*
          Redefinici¢n de la primera caja de Dialogo-------------------------------
@@ -738,11 +748,6 @@ STATIC FUNCTION EdtRec( aTmp, aGet, cFamilia, oBrw, bWhen, bValid, nMode )
          /*
          Segunda Caja de diálogo-----------------------------------------------
          */
-
-         REDEFINE CHECKBOX aTmp[ _LPUBINT ] ;
-            ID       115 ;
-            WHEN     ( nMode != ZOOM_MODE ) ;
-            OF       oFld:aDialogs[2]
 
          REDEFINE CHECKBOX aTmp[ _LFAMINT ];
             ID       116 ;
@@ -839,13 +844,10 @@ STATIC FUNCTION EdtRec( aTmp, aGet, cFamilia, oBrw, bWhen, bValid, nMode )
             PICTURE  "@!" ;
             OF       oFld:aDialogs[2]
 
-         REDEFINE GET aGet[ _CCODWEB ] ;
-            VAR      aTmp[ _CCODWEB ] ;
-            ID       350 ;
-            PICTURE  "9999999";
-            SPINNER ;
-            MIN      ( 1 ) ;
-            MAX      ( 9999999 ) ;
+         REDEFINE GET aGet[ _MLNGDES ] ;
+            VAR      aTmp[ _MLNGDES ];
+            ID       130 ;
+            MEMO ;
             WHEN     ( nMode != ZOOM_MODE ) ;
             OF       oFld:aDialogs[2]
 
@@ -962,12 +964,6 @@ STATIC FUNCTION EdtRec( aTmp, aGet, cFamilia, oBrw, bWhen, bValid, nMode )
 
          // Grabamos-----------------------------------------------------------------
 
-         REDEFINE BUTTON oBtnAceptarActualizarWeb;
-            ID       500 ;
-            OF       oDlg ;
-            WHEN     ( nMode != ZOOM_MODE ) ;
-            ACTION   ( EndTrans( aTmp, aGet, nMode, oBrwPrv, oDlg, .t. ) )
-
          REDEFINE BUTTON ;
             ID       IDOK ;
             OF       oDlg ;
@@ -1013,6 +1009,22 @@ STATIC FUNCTION EdtRec( aTmp, aGet, cFamilia, oBrw, bWhen, bValid, nMode )
       oBrwPrv:End()
    end if
 
+   if !empty( oBmpGeneral )
+      oBmpGeneral:End()
+   end if
+
+   if !empty( oBmpPropiedades )
+      oBmpPropiedades:End()
+   end if
+
+   if !empty( oBmpProveedores )
+      oBmpProveedores:End()
+   end if
+
+   if !empty( oBmpIdiomas )
+      oBmpIdiomas:End()
+   end if
+
    /*
    Borramos los ficheros-------------------------------------------------------
 	*/
@@ -1056,12 +1068,6 @@ STATIC FUNCTION StartEdtRec( aGet, aTmp, bmpImage )
    aGet[ _CCODPRP2 ]:lValid()
 
    aGet[ _CCODFAM ]:SetFocus()
-
-   if uFieldEmpresa( "lRealWeb" )
-      oBtnAceptarActualizarWeb:Show()
-   else
-      oBtnAceptarActualizarWeb:Hide()
-   end if 
 
    LoadTree()  
 
@@ -1494,6 +1500,13 @@ STATIC FUNCTION EditLenguaje( aTmp, aGet, tmpLenguaje, oBrwLenguaje, bWhen, bVal
       ID          120 ;
       OF          oDlg
 
+   REDEFINE GET aGet[ ( tmpLenguaje )->( fieldpos( "mLngDes" ) ) ] ;
+      VAR         aTmp[ ( tmpLenguaje )->( fieldpos( "mLngDes" ) ) ];
+      ID          130 ;
+      MEMO ;
+      WHEN        ( nMode != ZOOM_MODE ) ;
+      OF          oDlg
+
    REDEFINE BUTTON;
       ID          IDOK ;
       OF          oDlg ;
@@ -1547,10 +1560,6 @@ Return ( .t. )
 
 STATIC FUNCTION actualizaWeb( cCodFam )
 
-   if !lPubFam()
-      RETURN .f.
-   end if
-
    with object ( TComercio():New() )
       :MeterTotal( getAutoMeterDialog() )
       :TextTotal( getAutoTextDialog() )
@@ -1558,12 +1567,6 @@ STATIC FUNCTION actualizaWeb( cCodFam )
    end with
 
 RETURN .t.
-
-//----------------------------------------------------------------------------//
-
-STATIC FUNCTION lPubFam()
-
-RETURN ( ( D():Familias( nView ) )->lPubInt .or. ( D():Familias( nView ) )->cCodWeb != 0 )
 
 //----------------------------------------------------------------------------//
 
@@ -1790,28 +1793,6 @@ FUNCTION lFamInTpv( cFamilia )
    end while
 
 RETURN ( lFamInTpv )
-
-//---------------------------------------------------------------------------//
-
-STATIC FUNCTION IncWeb( aTmp )
-
-   local nRec
-
-   for each nRec in ( oWndBrw:oBrw:aSelected )
-
-      ( D():Familias( nView ) )->( dbGoTo( nRec ) )
-
-      if dbLock( D():Familias( nView ) )
-         ( D():Familias( nView ) )->lPubInt := !( D():Familias( nView ) )->lPubInt
-         ( D():Familias( nView ) )->lSelDoc := ( D():Familias( nView ) )->lPubInt
-         ( D():Familias( nView ) )->( dbUnLock() )
-      end if
-
-      oWndBrw:Refresh()
-
-   next
-
-RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 
@@ -2344,7 +2325,6 @@ METHOD Create()
    ::AddField( "NNOV",       "N",  16, 6, {|| "" },    "Noviembre",              .f., "Previsiones Noviembre",               20, .f. )
    ::AddField( "NDIC",       "N",  16, 6, {|| "" },    "Diciembre",              .f., "Previsiones Diciembre",               20, .f. )
    ::AddField( "NPCTRPL",    "N",   6, 2, {|| "" },    "Rapels",                 .f., "Porcentaje de rapels",                10, .f. )
-   ::AddField( "LPUBINT",    "L",   1, 0, {|| "" },    "Internet",               .f., "Publicar esta familia en internet",   10, .f. )
 
    ::lDefFecInf   := .f.
    ::lDefSerInf   := .f.
@@ -2420,7 +2400,6 @@ METHOD lGenerate()
          ::oDbf:nNov        := ::oDbfFam:nNov
          ::oDbf:nDic        := ::oDbfFam:nDic
          ::oDbf:nPctRpl     := ::oDbfFam:nPctRpl
-         ::oDbf:lPubInt     := ::oDbfFam:lPubInt
 
          ::oDbf:Save()
 
@@ -2852,27 +2831,6 @@ FUNCTION cFamilia( oGet, cFamilia, oGet2, lMessage, oGetPrp1, oGetPrp2 )
    end if
 
 RETURN lValid
-
-//---------------------------------------------------------------------------//
-
-FUNCTION getCodigoWebFamiliaPadre( oFamilia )
-
-   local cCodigoPadre            := oFamilia:cFamCmb
-   local cCodigoWebFamiliaPadre  := 2
-
-   if empty( cCodigoPadre )
-      RETURN ( 2 )      // id Prestashop inicio categories
-   end if 
-
-   oFamilia:getStatus()
-   if oFamilia:seekInOrd( cCodigoPadre, "cCodFam" )
-      if oFamilia:lPubInt .and. oFamilia:cCodWeb != 0
-         cCodigoWebFamiliaPadre  := oFamilia:cCodWeb
-      end if 
-   end if
-   oFamilia:setStatus()
-
-RETURN ( cCodigoWebFamiliaPadre )
 
 //---------------------------------------------------------------------------//
 
