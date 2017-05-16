@@ -41,8 +41,6 @@ CLASS EtiquetasModel FROM SQLBaseEmpresasModel
 
    METHOD   arrayCodigoAndId()
 
-   METHOD   TrasnlateCodigoToId()
-
 END CLASS
 
 //---------------------------------------------------------------------------//
@@ -238,8 +236,8 @@ RETURN ( ::selectFetchArray( cTranslate ) )
 METHOD arrayCodigoAndId()
 
    local oStmt
-   local cSentence         := "SELECT id, codigo FROM " + ::cTableName + " WHERE empresa = " + toSQLString( cCodEmp() ) + " AND codigo IS NOT NULL"
    local aSelect           
+   local cSentence         := "SELECT id, codigo FROM " + ::cTableName + " WHERE empresa = " + toSQLString( cCodEmp() ) + " AND codigo IS NOT NULL"
 
    try 
       oStmt                := getSQLDatabase():Query( cSentence )
@@ -258,34 +256,3 @@ RETURN ( aSelect )
 
 //---------------------------------------------------------------------------//
 
-
-METHOD TrasnlateCodigoToId()
-
-   local aSelect     
-   local hSelect
-   local cSentence              
-
-   aSelect           := ::arrayCodigoAndId()
-
-   if empty( aSelect )
-      RETURN ( Self )
-   end if 
-
-   for each hSelect in aSelect
-
-      cSentence      := "UPDATE EMP" + ( cCodEmp() + "ProLin" )                     + ;
-                              " SET cEtiqueta = '" + toSQLString( hSelect["id"] )   + ;
-                              "', ccodcat = null "                                  + ;
-                           "WHERE ccodcat = " + toSQLString( hSelect["codigo"] )
-
-      BaseModel():ExecuteSqlStatement( cSentence )
-
-   next
-
-RETURN ( Self )
-
-//---------------------------------------------------------------------------//
-
-//temporada
-
-//select concat(cserord, nNumOrd, cSufOrd, nNumLin) as id_documento, cCodCat as etiquetas from emp0005Prolin where ccodcat is not null;

@@ -281,6 +281,8 @@ RETURN ( .t. )
 
 FUNCTION Test()
 
+msgalert( RelacionesEtiquetasModel():New():getIdEtiquetaFromCategoria( "123", EtiquetasModel():arrayCodigoAndId() ) )
+
 Return ( nil )
 
 //---------------------------------------------------------------------------//
