@@ -62,7 +62,6 @@ static dbfUser
 static dbfMapa
 static dbfCajT
 static dbfDelega
-static dbfTipInci
 static dbfSalaVta
 
 static oOperario
@@ -70,7 +69,6 @@ static oClaveRepetida
 static cClaveRepetida
 
 static oLstUsr
-
 
 static bEdit            := { |aTmp, aGet, dbfUser, oBrw, bWhen, bValid, nMode | EdtRec( aTmp, aGet, dbfUser, oBrw, bWhen, bValid, nMode ) }
 
@@ -109,9 +107,6 @@ Function OpenFiles()
 
    USE ( cPatDat() + "DELEGA.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "DELEGA", @dbfDelega ) )
    SET ADSINDEX TO ( cPatDat() + "DELEGA.CDX" ) ADDITIVE
-
-   USE ( cPatEmp() + "TIPINCI.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "TIPINCI", @dbfTipInci ) )
-   SET ADSINDEX TO ( cPatEmp() + "TIPINCI.CDX" ) ADDITIVE
 
    USE ( cPatEmp() + "SALAVTA.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "SALAVTA", @dbfSalaVta ) )
    SET ADSINDEX TO ( cPatEmp() + "SALAVTA.CDX" ) ADDITIVE
@@ -156,10 +151,6 @@ Static Function CloseFiles()
       ( dbfDelega )->( dbCloseArea() )
    end if
 
-   if !Empty( dbfTipInci )
-      ( dbfTipInci )->( dbCloseArea() )
-   end if
-
    if !Empty( dbfSalaVta )
       ( dbfSalaVta )->( dbCloseArea() )
    end if
@@ -169,7 +160,6 @@ Static Function CloseFiles()
    dbfCajT        := nil
    dbfEmp         := nil 
    dbfDelega      := nil
-   dbfTipInci     := nil
    dbfSalaVta     := nil
 
    if oWndBrw != nil
@@ -549,15 +539,6 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfUser, oBrw, lGrupo, bValid, nMode )
          BITMAP   "LUPA" ;
          VALID    ( oOperario:Existe( aGet[ _CCODTRA ], aGet[ _CCODTRA ]:oHelpText, "cNomTra", .t., .t., "0" ) ) ;
          ON HELP  ( oOperario:Buscar( aGet[ _CCODTRA ] ) ) ;
-         OF       oDlg
-
-      REDEFINE GET aGet[ _CTIPINCI ] VAR aTmp[ _CTIPINCI ];
-         ID       450 ;
-         IDTEXT   451 ;
-         WHEN     ( nMode != ZOOM_MODE ) ;
-         VALID    ( cTipInci( aGet[ _CTIPINCI ], dbfTipInci, aGet[ _CTIPINCI ]:oHelpText ) ) ;
-         BITMAP   "LUPA" ;
-         ON HELP  ( BrwIncidencia( dbfTipInci, aGet[ _CTIPINCI ], aGet[ _CTIPINCI ]:oHelpText ) ) ;
          OF       oDlg
 
       REDEFINE GET aGet[ _CCODSALA ] VAR aTmp[ _CCODSALA ];

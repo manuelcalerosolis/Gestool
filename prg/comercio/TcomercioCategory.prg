@@ -46,7 +46,7 @@ END CLASS
 
 //---------------------------------------------------------------------------//
 
-METHOD buildCategory( id ) CLASS TComercioCategory
+METHOD buildCategory( id, rootCategory ) CLASS TComercioCategory
 
    local idLang
    local aLangs         := {}
@@ -60,6 +60,8 @@ METHOD buildCategory( id ) CLASS TComercioCategory
    if ascan( ::aCategoriesProduct, {|h| hGet( h, "id" ) == id } ) != 0
       RETURN .f.
    end if
+
+   DEFAULT rootCategory := 0
 
    statusFamilias       := aGetStatus( D():Familias( ::getView() ) ) 
 
@@ -77,15 +79,16 @@ METHOD buildCategory( id ) CLASS TComercioCategory
 
       aLangs            := ::getCategoryLangs( id, categoryName )
 
-      aAdd( ::aCategoriesProduct,   {  "id"              => id,;
-                                       "id_parent"       => alltrim( ( D():Familias( ::getView() ) )->cFamCmb ),;
-                                       "name"            => categoryName,;
-                                       "description"     => categoryName,;
-                                       "link_rewrite"    => cLinkRewrite( categoryName ),;
-                                       "image"           => cFileBmpName( alltrim( ( D():Familias( ::getView() ) )->cImgBtn ) ),;
-                                       "cPrefijoNombre"  => "",;
-                                       "aTypeImages"     => {},;
-                                       "langs"           => aLangs } )
+      aAdd( ::aCategoriesProduct,   {  "id"                 => id,;
+                                       "id_parent"          => alltrim( ( D():Familias( ::getView() ) )->cFamCmb ),;
+                                       "name"               => categoryName,;
+                                       "description"        => categoryName,;
+                                       "link_rewrite"       => cLinkRewrite( categoryName ),;
+                                       "is_root_category"   => rootCategory,;
+                                       "image"              => cFileBmpName( alltrim( ( D():Familias( ::getView() ) )->cImgBtn ) ),;
+                                       "cPrefijoNombre"     => "",;
+                                       "aTypeImages"        => {},;
+                                       "langs"              => aLangs } )
 
    end if   
 
@@ -128,13 +131,13 @@ METHOD buildRootCategoryInformation() CLASS TComercioCategory
    local statusFamilias
 
    if ( D():Familias( ::getView() ) )->( dbseekinord( "Root", "cType" ) )  
-      ::buildCategory( ( D():Familias( ::getView() ) )->cCodFam )
+      ::buildCategory( ( D():Familias( ::getView() ) )->cCodFam, 1 )
    else 
       RETURN ( .f. )
    end if 
 
    if ( D():Familias( ::getView() ) )->( dbseekinord( "Start", "cType" ) )  
-      ::buildCategory( ( D():Familias( ::getView() ) )->cCodFam )
+      ::buildCategory( ( D():Familias( ::getView() ) )->cCodFam, 1 )
    else 
       RETURN ( .f. )
    end if 
@@ -291,7 +294,8 @@ METHOD insertCategory( hCategory ) CLASS TComercioCategory
                               "active, "                                         + ;
                               "date_add,  "                                      + ;
                               "date_upd, "                                       + ;
-                              "position ) "                                      + ;
+                              "position, "                                       + ;
+                              "is_root_category ) "                              + ;
                            "VALUES ( "                                           + ;
                               "2, "                                              + ;
                               "0, "                                              + ;
@@ -299,7 +303,8 @@ METHOD insertCategory( hCategory ) CLASS TComercioCategory
                               "1, "                                              + ;
                               "'" + dtos( GetSysDate() ) + "', "                 + ;
                               "'" + dtos( GetSysDate() ) + "', "                 + ;
-                              "0 ) "
+                              "0, "                                              + ;
+                              quoted( hget( hCategory, "is_root_category" ) )    + " ) "
 
    if ::commandExecDirect( cCommand )
       idCategory        := ::oConexionMySQLDatabase():GetInsertId()

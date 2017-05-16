@@ -284,7 +284,6 @@ static dbfClient
 static dbfArtPrv
 static dbfDiv
 static dbfCajT
-static dbfInci
 static oBandera
 static oNewImp
 static dbfCodebar
@@ -618,9 +617,6 @@ STATIC FUNCTION OpenFiles( lExt )
 
       USE ( cPatDat() + "USERS.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "USERS", @dbfUsr ) )
       SET ADSINDEX TO ( cPatDat() + "USERS.CDX" ) ADDITIVE
-
-      USE ( cPatEmp() + "TIPINCI.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "TIPINCI", @dbfInci ) )
-      SET ADSINDEX TO ( cPatEmp() + "TIPINCI.CDX" ) ADDITIVE
 
       USE ( cPatDat() + "DELEGA.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "DELEGA", @dbfDelega ) )
       SET ADSINDEX TO ( cPatDat() + "DELEGA.CDX" ) ADDITIVE
@@ -963,10 +959,6 @@ STATIC FUNCTION CloseFiles()
       ( dbfUsr )->( dbCloseArea() )
    end if
 
-   if dbfInci != nil
-      ( dbfInci )->( dbCloseArea() )
-   end if
-
    if dbfArtPrv != nil
       ( dbfArtPrv )->( dbCloseArea() )
    end if
@@ -1123,7 +1115,6 @@ STATIC FUNCTION CloseFiles()
    oStock         := nil
    oTipArt        := nil
    oGrpFam        := nil
-   dbfInci        := nil
    dbfAgeCom      := nil
    dbfEmp         := nil
    dbfEstado      := nil
@@ -3019,18 +3010,6 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, cCodCli, cCodArt, nMode )
          end with
 
          with object ( oBrwInc:AddCol() )
-            :cHeader          := "Código"
-            :bEditValue       := {|| ( dbfTmpInc )->cCodTip }
-            :nWidth           := 80
-         end with
-
-         with object ( oBrwInc:AddCol() )
-            :cHeader          := "Incidencia"
-            :bEditValue       := {|| cNomInci( ( dbfTmpInc )->cCodTip, dbfInci ) }
-            :nWidth           := 250
-         end with
-
-         with object ( oBrwInc:AddCol() )
             :cHeader          := "Fecha"
             :bEditValue       := {|| Dtoc( ( dbfTmpInc )->dFecInc ) }
             :nWidth           := 90
@@ -4844,28 +4823,12 @@ Return ( nil )
 Static Function EdtInc( aTmp, aGet, dbfSatCliI, oBrw, bWhen, bValid, nMode, aTmpSat )
 
    local oDlg
-   local oNomInci
-   local cNomInci          := RetFld( aTmp[ ( dbfTmpInc )->( FieldPos( "cCodTip" ) ) ], dbfInci )
 
    if nMode == APPD_MODE
       aTmp[ ( dbfTmpInc )->( FieldPos( "lAviso" ) ) ]  := .t.
    end if
 
    DEFINE DIALOG oDlg RESOURCE "INCIDENCIA" TITLE LblTitle( nMode ) + "incidencias de S.A.T. a clientes"
-
-      REDEFINE GET aGet[ ( dbfTmpInc )->( FieldPos( "cCodTip" ) ) ];
-         VAR      aTmp[ ( dbfTmpInc )->( FieldPos( "cCodTip" ) ) ];
-         ID       120 ;
-         WHEN     ( nMode != ZOOM_MODE );
-         VALID    ( cTipInci( aGet[ ( dbfTmpInc )->( FieldPos( "cCodTip" ) ) ], dbfInci, oNomInci ) ) ;
-         BITMAP   "LUPA" ;
-         ON HELP  ( BrwIncidencia( dbfInci, aGet[ ( dbfTmpInc )->( FieldPos( "cCodTip" ) ) ], oNomInci ) ) ;
-         OF       oDlg
-
-      REDEFINE GET oNomInci VAR cNomInci;
-         ID       130 ;
-         WHEN     .f. ;
-         OF       oDlg
 
       REDEFINE GET aTmp[ ( dbfTmpInc )->( FieldPos( "dFecInc" ) ) ] ;
          ID       100 ;

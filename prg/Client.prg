@@ -1498,8 +1498,6 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, nTab, bValid, nMode )
       aTmp[ _CDTOATP ]     := Padr( "Atipico", 50 )
    end if
 
-   aTmp[ _CTIPINCI ]       := oUser():cTipoIncidencia()
-
    // Colocamos los filtros----------------------------------------------------
 
    ( D():FacturasClientesCobros( nView ) )->( OrdScope( 0, aTmp[ _COD ] ) )
@@ -3824,7 +3822,6 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, nTab, bValid, nMode )
                            oBrwAtp:Load(),;
                            oBrwCon:Load(),;
                            oBrwRecCli:Load(),;
-                           aGet[ _CTIPINCI ]:lValid(),;
                            if( !empty( nTab ), oFld:setOption( nTab ), ),;
                            lRecargaFecha( oFecIniCli, oFecFinCli, cPeriodoCli ),;
                            LoadPageClient( aTmp[ _COD ] ) }
@@ -3858,28 +3855,6 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, nTab, bValid, nMode )
 
 
 RETURN ( oDlg:nResult == IDOK )
-
-//---------------------------------------------------------------------------//
-
-Static Function FiltraIncidencias( aTmp, oBrwInc )
-
-   if Empty( aTmp[ _CTIPINCI ] )
-      ( dbfTmpInc )->( OrdScope( 0, nil ) )
-      ( dbfTmpInc )->( OrdScope( 1, nil ) )
-   else
-      ( dbfTmpInc )->( OrdScope( 0, nil ) )
-      ( dbfTmpInc )->( OrdScope( 1, nil ) )
-      ( dbfTmpInc )->( OrdScope( 0, aTmp[ _CTIPINCI ] ) )
-      ( dbfTmpInc )->( OrdScope( 1, aTmp[ _CTIPINCI ] ) )
-   end if
-
-   ( dbfTmpInc )->( dbGoTop() )
-
-   if !Empty( oBrwInc )
-      oBrwInc:Refresh()
-   end if
-
-Return ( .t. )
 
 //---------------------------------------------------------------------------//
 

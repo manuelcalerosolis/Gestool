@@ -357,7 +357,6 @@ static dbfUsr
 static dbfObrasT
 static oBrwIva
 static dbfArtPrv
-static dbfInci
 static dbfDelega
 static dbfEmp
 static dbfFacPrvL
@@ -718,9 +717,6 @@ STATIC FUNCTION OpenFiles( lExt )
 
       USE ( cPatDat() + "USERS.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "USERS", @dbfUsr ) )
       SET ADSINDEX TO ( cPatDat() + "USERS.CDX" ) ADDITIVE
-
-      USE ( cPatEmp() + "TIPINCI.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "TIPINCI", @dbfInci ) )
-      SET ADSINDEX TO ( cPatEmp() + "TIPINCI.CDX" ) ADDITIVE
 
       USE ( cPatDat() + "DELEGA.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "DELEGA", @dbfDelega ) )
       SET ADSINDEX TO ( cPatDat() + "DELEGA.CDX" ) ADDITIVE
@@ -3328,18 +3324,6 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, cCodCli, cCodArt, nMode, cCodPre 
             :bEditValue       := {|| ( dbfTmpInc )->lListo }
             :nWidth           := 70
             :SetCheck( { "Sel16", "Cnt16" } )
-         end with
-
-         with object ( oBrwInc:AddCol() )
-            :cHeader          := "Código"
-            :bEditValue       := {|| ( dbfTmpInc )->cCodTip }
-            :nWidth           := 80
-         end with
-
-         with object ( oBrwInc:AddCol() )
-            :cHeader          := "Incidencia"
-            :bEditValue       := {|| cNomInci( ( dbfTmpInc )->cCodTip, dbfInci ) }
-            :nWidth           := 200
          end with
 
          with object ( oBrwInc:AddCol() )
@@ -7656,7 +7640,6 @@ STATIC FUNCTION CloseFiles()
    if( !Empty( dbfTblCnv  ), ( dbfTblCnv  )->( dbCloseArea() ), )
    if( !Empty( dbfCajT    ), ( dbfCajT    )->( dbCloseArea() ), )
    if( !Empty( dbfUsr     ), ( dbfUsr     )->( dbCloseArea() ), )
-   if( !Empty( dbfInci    ), ( dbfInci    )->( dbCloseArea() ), )
    if( !Empty( dbfArtPrv  ), ( dbfArtPrv  )->( dbCloseArea() ), )
    if( !Empty( dbfDelega  ), ( dbfDelega  )->( dbCloseArea() ), )
    if( !Empty( dbfAgeCom  ), ( dbfAgeCom  )->( dbCloseArea() ), )
@@ -7727,7 +7710,6 @@ STATIC FUNCTION CloseFiles()
    dbfTblCnv      := nil
    dbfCajT        := nil
    dbfUsr         := nil
-   dbfInci        := nil
    dbfAgeCom      := nil
    dbfEmp         := nil
    dbfFacPrvL     := nil
@@ -8829,44 +8811,25 @@ Static Function EdtInc( aTmp, aGet, dbfPedCliI, oBrw, bWhen, bValid, nMode, aTmp
 
    	local oDlg
    	local oNomInci
-   	local cNomInci         	:= RetFld( aTmp[ ( dbfTmpInc )->( FieldPos( "cCodTip" ) ) ], dbfInci )
 
    	if nMode == APPD_MODE
       	aTmp[ _CSERPED  ]    := aTmpPed[ _CSERPED ]
       	aTmp[ _NNUMPED  ]    := aTmpPed[ _NNUMPED ]
       	aTmp[ _CSUFPED  ]    := aTmpPed[ _CSUFPED ]
-
-      	if IsMuebles()
-         	aTmp[ ( dbfTmpInc )->( FieldPos( "lAviso" ) ) ]  := .t.
-      	end if
    	end if
 
    	DEFINE DIALOG oDlg RESOURCE "INCIDENCIA" TITLE LblTitle( nMode ) + "incidencias de presupuestos a clientes"
-
-      	REDEFINE GET aGet[ ( dbfTmpInc )->( FieldPos( "cCodTip" ) ) ];
-         	VAR      aTmp[ ( dbfTmpInc )->( FieldPos( "cCodTip" ) ) ];
-         	ID       120 ;
-         	WHEN     ( nMode != ZOOM_MODE ) ;
-         	VALID    ( cTipInci( aGet[ ( dbfTmpInc )->( FieldPos( "cCodTip" ) ) ], dbfInci, oNomInci ) ) ;
-         	BITMAP   "LUPA" ;
-         	ON HELP  ( BrwIncidencia( dbfInci, aGet[ ( dbfTmpInc )->( FieldPos( "cCodTip" ) ) ], oNomInci ) ) ;
-         	OF       oDlg
-
-      	REDEFINE GET oNomInci VAR cNomInci;
-      	   WHEN     .f. ;
-      	   ID       130 ;
-      	   OF       oDlg
 
 	      REDEFINE GET aTmp[ ( dbfTmpInc )->( FieldPos( "dFecInc" ) ) ] ;
 	         ID       100 ;
 	         SPINNER ;
 	         WHEN     ( nMode != ZOOM_MODE ) ;
-         OF       oDlg
+            OF       oDlg
 
-      REDEFINE CHECKBOX aTmp[ ( dbfTmpInc )->( FieldPos( "lAviso" ) ) ] ;
-         ID       150 ;
-		WHEN 		( nMode != ZOOM_MODE ) ;
-      	   OF       oDlg
+         REDEFINE CHECKBOX aTmp[ ( dbfTmpInc )->( FieldPos( "lAviso" ) ) ] ;
+            ID       150 ;
+            WHEN 		( nMode != ZOOM_MODE ) ;
+            OF       oDlg
 
       REDEFINE GET aTmp[ ( dbfTmpInc )->( FieldPos( "mDesInc" ) ) ] ;
          MEMO ;

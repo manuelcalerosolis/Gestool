@@ -334,8 +334,6 @@ STATIC FUNCTION OpenFiles( lExt )
 
       D():Usuarios( nView )
 
-      D():TiposIncidencias( nView )
-
       D():PedidosClientesReservas( nView )
 
       D():Propiedades( nView )
@@ -1978,18 +1976,6 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, cCodPrv, cCodArt, nMode )
          end with
 
          with object ( oBrwInc:AddCol() )
-            :cHeader          := "Código"
-            :bEditValue       := {|| ( dbfTmpInc )->cCodTip }
-            :nWidth           := 80
-         end with
-
-         with object ( oBrwInc:AddCol() )
-            :cHeader          := "Incidencia"
-            :bEditValue       := {|| cNomInci( ( dbfTmpInc )->cCodTip, D():TiposIncidencias( nView ) ) }
-            :nWidth           := 250
-         end with
-
-         with object ( oBrwInc:AddCol() )
             :cHeader          := "Fecha"
             :bEditValue       := {|| Dtoc( ( dbfTmpInc )->dFecInc ) }
             :nWidth           := 90
@@ -2006,40 +1992,6 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, cCodPrv, cCodArt, nMode )
          end if
 
          oBrwInc:CreateFromResource( 210 )
-
-      /*
-      REDEFINE IBROWSE oBrwInc ;
-			FIELDS ;
-                  If( !(dbfTmpInc)->lListo, aDbfBmp[ 7 ], aDbfBmp[ 6 ] ),;
-                  ( dbfTmpInc )->cCodTip ,;
-                  cNomInci( ( dbfTmpInc )->cCodTip, D():TiposIncidencias( nView ) ) ,;
-                  Dtoc( ( dbfTmpInc )->dFecInc ),;
-                  ( dbfTmpInc )->mDesInc ;
-			FIELDSIZES ;
-                  20,;
-                  55,;
-                  100,;
-                  80,;
-                  400;
-         HEAD ;
-                  "R",;
-                  "Cod. tipo" ,;
-                  "Tipo de incidencia" ,;
-                  "Fecha" ,;
-                  "Incidencia";
-         JUSTIFY  .t., .t., .t., .t., .t. ;
-         ALIAS    ( dbfTmpInc );
-			ID 		210 ;
-         OF       oFld:aDialogs[ 3 ]
-
-        if nMode != ZOOM_MODE
-            oBrwInc:bDel         := {|| DelDeta( oBrwInc, aTmp ) }
-         end if
-
-         oBrwInc:cWndName        := "Pedido a proveedor.Incidencia"
-
-         oBrwInc:LoadData()
-      */
 
       REDEFINE BUTTON ;
          ID       500 ;
@@ -2410,37 +2362,14 @@ Return ( oDlg:nResult == IDOK )
 Static Function EdtInc( aTmp, aGet, dbf, oBrw, bWhen, bValid, nMode, aTmpLin )
 
    local oDlg
-   local oNomInci
-   local cNomInci
-
-   if !empty( aTmp[ ( dbfTmpInc )->( FieldPos( "cCodTip" ) ) ] )
-      cNomInci          := cNomInci( aTmp[ ( dbfTmpInc )->( FieldPos( "cCodTip" ) ) ], D():TiposIncidencias( nView ) )
-   end if
 
    if nMode == APPD_MODE
       aTmp[ _CSERPED  ] := aTmpLin[ _CSERPED ]
       aTmp[ _NNUMPED  ] := aTmpLin[ _NNUMPED ]
       aTmp[ _CSUFPED  ] := aTmpLin[ _CSUFPED ]
-      if IsMuebles()
-         aTmp[ ( dbfTmpInc )->( FieldPos( "lAviso" ) ) ]  := .t.
-      end if
    end if
 
    DEFINE DIALOG oDlg RESOURCE "INCIDENCIA" TITLE LblTitle( nMode ) + "incidencias de pedido a proveedor"
-
-      REDEFINE GET aGet[ ( dbfTmpInc )->( FieldPos( "cCodTip" ) ) ];
-         VAR      aTmp[ ( dbfTmpInc )->( FieldPos( "cCodTip" ) ) ];
-         ID       120 ;
-         WHEN     ( nMode != ZOOM_MODE );
-         VALID    ( cTipInci( aGet[ ( dbfTmpInc )->( FieldPos( "cCodTip" ) ) ], D():TiposIncidencias( nView ), oNomInci ) ) ;
-         BITMAP   "LUPA" ;
-         ON HELP  ( BrwIncidencia( D():TiposIncidencias( nView ), aGet[ ( dbfTmpInc )->( FieldPos( "cCodTip" ) ) ], oNomInci ) ) ;
-         OF       oDlg
-
-      REDEFINE GET oNomInci VAR cNomInci;
-         WHEN     .f. ;
-         ID       130 ;
-         OF       oDlg
 
       REDEFINE GET aTmp[ ( dbfTmpInc )->( FieldPos( "dFecInc" ) ) ] ;
          ID       100 ;

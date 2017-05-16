@@ -468,8 +468,6 @@ STATIC FUNCTION OpenFiles( lExt )
 
       D():PedidosProveedores( nView )
 
-      D():TiposIncidencias( nView )
-
       D():Propiedades( nView )
 
       D():PropiedadesLineas( nView )
@@ -2539,18 +2537,6 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, cCodPrv, cCodArt, nMode, cNumAlb 
          end with
 
          with object ( oBrwInc:AddCol() )
-            :cHeader          := "Código"
-            :bEditValue       := {|| ( dbfTmpInc )->cCodTip }
-            :nWidth           := 80
-         end with
-
-         with object ( oBrwInc:AddCol() )
-            :cHeader          := "Incidencia"
-            :bEditValue       := {|| cNomInci( ( dbfTmpInc )->cCodTip, D():TiposIncidencias( nView ) ) }
-            :nWidth           := 240
-         end with
-
-         with object ( oBrwInc:AddCol() )
             :cHeader          := "Fecha"
             :bEditValue       := {|| Dtoc( ( dbfTmpInc )->dFecInc ) }
             :nWidth           := 90
@@ -2930,8 +2916,6 @@ return nil
 Static Function EdtInc( aTmp, aGet, cFacPrvI, oBrw, bWhen, bValid, nMode, aTmpFac )
 
    local oDlg
-   local oNomInci
-   local cNomInci       := RetFld( aTmp[ ( dbfTmpInc )->( FieldPos( "cCodTip" ) ) ], D():TiposIncidencias( nView ) )
 
    if nMode == APPD_MODE
 
@@ -2946,20 +2930,6 @@ Static Function EdtInc( aTmp, aGet, cFacPrvI, oBrw, bWhen, bValid, nMode, aTmpFa
    end if
 
    DEFINE DIALOG oDlg RESOURCE "INCIDENCIA" TITLE LblTitle( nMode ) + "incidencias de facturas a proveedores"
-
-      REDEFINE GET aGet[ ( dbfTmpInc )->( FieldPos( "cCodTip" ) ) ];
-         VAR      aTmp[ ( dbfTmpInc )->( FieldPos( "cCodTip" ) ) ];
-         ID       120 ;
-         WHEN     ( nMode != ZOOM_MODE );
-         VALID    ( cTipInci( aGet[ ( dbfTmpInc )->( FieldPos( "cCodTip" ) ) ], D():TiposIncidencias( nView ), oNomInci ) ) ;
-         BITMAP   "LUPA" ;
-         ON HELP  ( BrwIncidencia( D():TiposIncidencias( nView ), aGet[ ( dbfTmpInc )->( FieldPos( "cCodTip" ) ) ], oNomInci ) ) ;
-         OF       oDlg
-
-      REDEFINE GET oNomInci VAR cNomInci;
-         WHEN     .f. ;
-         ID       130 ;
-         OF       oDlg
 
       REDEFINE GET aTmp[ ( dbfTmpInc )->( FieldPos( "dFecInc" ) ) ] ;
          ID       100 ;

@@ -986,8 +986,6 @@ STATIC FUNCTION OpenFiles( lExt )
 
       D():Cajas( nView )
 
-      D():TiposIncidencias( nView )
-
       D():FormasPago( nView )
 
       D():TiposIva( nView )
@@ -2103,18 +2101,6 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, cCodPrv, cCodArt, nMode, cCodPed 
             :bEditValue       := {|| ( dbfTmpInc )->lListo }
             :nWidth           := 65
             :SetCheck( { "Sel16", "Cnt16" } )
-         end with
-
-         with object ( oBrwInc:AddCol() )
-            :cHeader          := "Código"
-            :bEditValue       := {|| ( dbfTmpInc )->cCodTip }
-            :nWidth           := 80
-         end with
-
-         with object ( oBrwInc:AddCol() )
-            :cHeader          := "Incidencia"
-            :bEditValue       := {|| cNomInci( ( dbfTmpInc )->cCodTip, D():TiposIncidencias( nView ) ) }
-            :nWidth           := 220
          end with
 
          with object ( oBrwInc:AddCol() )
@@ -3947,12 +3933,6 @@ RETURN NIL
 Static Function EdtInc( aTmp, aGet, dbf, oBrw, bWhen, bValid, nMode, aTmpAlb )
 
    local oDlg
-   local oNomInci
-   local cNomInci
-
-   if !Empty( aTmp[ ( dbfTmpInc )->( FieldPos( "cCodTip" ) ) ] )
-      cNomInci          := cNomInci( aTmp[ ( dbfTmpInc )->( FieldPos( "cCodTip" ) ) ], D():TiposIncidencias( nView ) )
-   end if
 
    if nMode == APPD_MODE
       aTmp[ _CSERALB  ] := aTmpAlb[ _CSERALB ]
@@ -3964,20 +3944,6 @@ Static Function EdtInc( aTmp, aGet, dbf, oBrw, bWhen, bValid, nMode, aTmpAlb )
    end if
 
    DEFINE DIALOG oDlg RESOURCE "INCIDENCIA" TITLE LblTitle( nMode ) + "incidencias de albaranes a proveedores"
-
-      REDEFINE GET aGet[ ( dbfTmpInc )->( FieldPos( "cCodTip" ) ) ];
-         VAR      aTmp[ ( dbfTmpInc )->( FieldPos( "cCodTip" ) ) ];
-         ID       120 ;
-         WHEN     ( nMode != ZOOM_MODE );
-         VALID    ( cTipInci( aGet[ ( dbfTmpInc )->( FieldPos( "cCodTip" ) ) ], D():TiposIncidencias( nView ), oNomInci ) ) ;
-         BITMAP   "LUPA" ;
-         ON HELP  ( BrwIncidencia( D():TiposIncidencias( nView ), aGet[ ( dbfTmpInc )->( FieldPos( "cCodTip" ) ) ], oNomInci ) ) ;
-         OF       oDlg
-
-      REDEFINE GET oNomInci VAR cNomInci;
-         WHEN     .f. ;
-         ID       130 ;
-         OF       oDlg
 
       REDEFINE GET aTmp[ ( dbfTmpInc )->( FieldPos( "dFecInc" ) ) ] ;
          ID       100 ;
