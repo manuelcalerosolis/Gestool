@@ -806,8 +806,8 @@ METHOD controllerOrderPrestashop() CLASS TComercio
 
    ::disableDialog()
 
-   // oBlock            := ErrorBlock( { | oError | Break( oError ) } )
-   // BEGIN SEQUENCE
+   oBlock            := ErrorBlock( { | oError | Break( oError ) } )
+   BEGIN SEQUENCE
 
    ::MeterTotalText( "Conectando con la base de datos" )
 
@@ -825,10 +825,10 @@ METHOD controllerOrderPrestashop() CLASS TComercio
    
    end if  
 
-   // RECOVER USING oError
-   //    msgStop( ErrorMessage( oError ), "Error en modulo Prestashop." )
-   // END SEQUENCE
-   // ErrorBlock( oBlock )
+   RECOVER USING oError
+      msgStop( ErrorMessage( oError ), "Error en modulo Prestashop." )
+   END SEQUENCE
+   ErrorBlock( oBlock )
 
    ::EnableDialog()
 

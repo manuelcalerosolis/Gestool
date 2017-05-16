@@ -182,6 +182,8 @@ METHOD insertLinesDocumentGestool( oQuery ) CLASS TComercioDocument
          
          ::setGestoolSpecificLineDocument()
          
+         //MsgInfo( oQueryLine:FieldGetByName( "product_name" ), "Artículo" )
+
          ( ::oDocumentLineDatabase() )->dFecha        := ::getDate( oQuery:FieldGetByName( "date_add" ) )
          ( ::oDocumentLineDatabase() )->cDetalle      := oQueryLine:FieldGetByName( "product_name" )
          ( ::oDocumentLineDatabase() )->mLngDes       := oQueryLine:FieldGetByName( "product_name" )
@@ -230,6 +232,8 @@ METHOD setProductInDocumentLine( oQueryLine )
    end if 
 
    if ( D():gotoArticulos( idProductGestool, ::getView() ) )
+
+      //MsgInfo( ( D():Articulos( ::getView() ) )->lKitArt )
 
       ( ::oDocumentLineDatabase() )->cRef        := ( D():Articulos( ::getView() ) )->Codigo
       ( ::oDocumentLineDatabase() )->cUnidad     := ( D():Articulos( ::getView() ) )->cUnidad
