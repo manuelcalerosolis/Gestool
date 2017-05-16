@@ -86,7 +86,6 @@ METHOD buildCategory( id, rootCategory ) CLASS TComercioCategory
 
       aLangs            := ::getCategoryLangs( id, categoryName, categoryLongName )
 
-<<<<<<< HEAD
       aAdd( ::aCategoriesProduct,   {  "id"                 => id,;
                                        "id_parent"          => alltrim( ( D():Familias( ::getView() ) )->cFamCmb ),;
                                        "name"               => categoryName,;
@@ -97,17 +96,6 @@ METHOD buildCategory( id, rootCategory ) CLASS TComercioCategory
                                        "cPrefijoNombre"     => "",;
                                        "aTypeImages"        => {},;
                                        "langs"              => aLangs } )
-=======
-      aAdd( ::aCategoriesProduct,   {  "id"              => id,;
-                                       "id_parent"       => alltrim( ( D():Familias( ::getView() ) )->cFamCmb ),;
-                                       "name"            => categoryName,;
-                                       "description"     => categoryLongName,;
-                                       "link_rewrite"    => cLinkRewrite( categoryName ),;
-                                       "image"           => cFileBmpName( alltrim( ( D():Familias( ::getView() ) )->cImgBtn ) ),;
-                                       "cPrefijoNombre"  => "",;
-                                       "aTypeImages"     => {},;
-                                       "langs"           => aLangs } )
->>>>>>> e44b23f27ed346c7631376ff01392a8b9776f592
 
    end if   
 
