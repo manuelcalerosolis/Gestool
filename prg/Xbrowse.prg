@@ -532,10 +532,7 @@ CLASS TXBrowse FROM TControl
    METHOD VUpdatePos() INLINE ::VSetPos( ::KeyNo() )
    METHOD VUpdateAll() INLINE ::KeyCount()
 
-   METHOD VSetPos( nPos ) INLINE ::nVScrollPos := nPos,;
-                                 ::oVScroll:SetPos( iif( ::nLen <= VSCROLL_MAXVALUE,;
-                                                         nPos,;
-                                                         Int( nPos * VSCROLL_MAXVALUE / ::nLen ) ) )
+   METHOD VSetPos( nPos ) 
 
    METHOD VThumbPos( nPos ) INLINE ::nVScrollPos := ::VGetThumbPos( nPos ),;
                                    ::oVScroll:SetPos( nPos )
@@ -8481,6 +8478,20 @@ return lFound
 METHOD SetChecks( aBmp, lEdit, aPrompt ) CLASS TXBrowse
 
    AEval( ::aCols, { |o| If( o:cDataType == 'L', o:SetCheck( aBmp, lEdit, aPrompt ), nil ) } )
+
+return nil
+
+//----------------------------------------------------------------------------//
+
+METHOD VSetPos( nPos ) 
+
+   if !hb_isNumeric( nPos )
+      return nil 
+   end if 
+
+   ::nVScrollPos  := nPos
+
+   ::oVScroll:SetPos( iif( ::nLen <= VSCROLL_MAXVALUE, nPos, int( nPos * VSCROLL_MAXVALUE / ::nLen ) ) )
 
 return nil
 
