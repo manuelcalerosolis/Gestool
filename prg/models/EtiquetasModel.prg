@@ -287,3 +287,5 @@ RETURN ( Self )
 //---------------------------------------------------------------------------//
 
 //temporada
+
+//select concat(cserord, nNumOrd, cSufOrd, nNumLin) as id_documento, cCodCat as etiquetas from emp0005Prolin where ccodcat is not null;

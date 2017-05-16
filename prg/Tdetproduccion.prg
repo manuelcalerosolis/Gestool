@@ -547,7 +547,7 @@ METHOD Resource( nMode ) CLASS TDetProduccion
       REDEFINE BUTTON oBtnAdelante ;
          ID       5 ;
          OF       ::oDlg ;
-         ACTION   ( if( ::oFld:nOption < Len( ::oFld:aDialogs ), ::oFld:SetOption( ::oFld:nOption + 1 ), ) )
+         ACTION   ( if( ::oFld:nOption < Len( ::oFld:aDialogs ), ::oFld:SetOption( ::oFld:nOption + 1 ), ) ) ;
 
 
       REDEFINE BUTTON ;

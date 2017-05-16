@@ -500,6 +500,7 @@ TiposImpresorasModel.prg 										\
 TiposNotasModel.prg 												\
 EtiquetasModel.prg 												\
 TiposIncidenciasModel.prg 										\
+RelacionesEtiquetasModel.prg 										\
 ArticulosModel.prg                                    \
 HistoricosUsuariosModel.prg                           \
 
@@ -992,6 +993,7 @@ TiposImpresorasModel.obj 										\
 TiposNotasModel.obj 										\
 EtiquetasModel.obj 										\
 TiposIncidenciasModel.obj 										\
+RelacionesEtiquetasModel.obj 										\
 ArticulosModel.obj                                    \
 HistoricosUsuariosModel.obj                                    \
 
@@ -1472,6 +1474,7 @@ $(OBJ)\TiposImpresorasModel.obj                 +
 $(OBJ)\TiposNotasModel.obj                 +
 $(OBJ)\EtiquetasModel.obj                 +
 $(OBJ)\TiposIncidenciasModel.obj                 +
+$(OBJ)\RelacionesEtiquetasModel.obj                 +
 $(OBJ)\HistoricosUsuariosModel.obj
 $<,$*
 $(FWLIB)\FiveH.lib               				+
