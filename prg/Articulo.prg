@@ -1838,7 +1838,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, cArticulo, oBrw, bWhen, bValid, nMode )
    cSubCtaAntCom     := aTmp[ ( D():Articulos( nView ) )->( fieldpos( "cCtaCom" ) ) ]
    cCodigoFamilia    := aTmp[ ( D():Articulos( nView ) )->( fieldpos( "Familia" ) ) ]
 
-   aIdEtiquetas      := hb_deserialize( aTmp[ ( D():Articulos( nView ) )->( fieldpos( "cEtiqueta" ) ) ] )
+   aIdEtiquetas      := RelacionesEtiquetasModel():getRelationsOfEtiquetas( "EMP" + cCodEmp() + "Articulo", aTmp[ ( D():Articulos( nView ) )->( fieldpos( "Codigo" ) ) ] )
 
    aNombreEtiquetas  := EtiquetasModel():translateIdsToNames( aIdEtiquetas )
 
@@ -5658,7 +5658,7 @@ Static Function EndTrans( aTmp, aGet, oSay, oDlg, aTipBar, cTipBar, nMode, oImpC
       beginTransaction()
 
       aTmp[ ( D():Articulos( nView ) )->( fieldpos( "LastChg" ) ) ]     := GetSysDate()
-      aTmp[ ( D():Articulos( nView ) )->( fieldpos( "cEtiqueta" ) ) ]   := hb_serialize( EtiquetasModel():translateNamesToIds( oTagsEver:getItems() ) )
+      RelacionesEtiquetasModel():setRelationsOfEtiquetas( "EMP" + cCodEmp() + "Articulo" , aTmp[ ( D():Articulos( nView ) )->( fieldpos( "Codigo" ) ) ] , EtiquetasModel():translateNamesToIds( oTagsEver:getItems() ) )
 
       /*
       Añadimos la imágen del táctil a la tabla de imágenes---------------------
