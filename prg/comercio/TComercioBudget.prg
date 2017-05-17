@@ -287,18 +287,6 @@ METHOD insertLinesKitsGestool( nNumLin, cCodArt, oQuery ) CLASS TComercioDocumen
    ( D():Kit( ::getView() ) )->( OrdSetFocus( nOrdAnt ) )
    ( D():Kit( ::getView() ) )->( dbGoTo( nRec ) )
 
-
-   /*aAdd( aBase, { "cCodKit",   "C", 18, 0, "Código del contenedor"               , "",                  "", "( cDbfArt )", nil } )
-   aAdd( aBase, { "cRefKit",   "C", 18, 0, "Código de artículo escandallo"       , "",                  "", "( cDbfArt )", nil } )
-   aAdd( aBase, { "nUndKit",   "N", 16, 6, "Unidades de escandallo"              , "",                  "", "( cDbfArt )", nil } )
-   aAdd( aBase, { "nPreKit",   "N", 16, 6, "Precio de escandallo"                , "",                  "", "( cDbfArt )", nil } )
-   aAdd( aBase, { "cDesKit",   "C", 50, 0, "Descripción del escandallo"          , "",                  "", "( cDbfArt )", nil } )
-   aAdd( aBase, { "cUnidad",   "C",  2, 0, "Unidad de medición"                  , "",                  "", "( cDbfArt )", nil } )
-   aAdd( aBase, { "nValPnt",   "N", 16, 6, ""                                    , "",                  "", "( cDbfArt )", nil } )
-   aAdd( aBase, { "nDtoPnt",   "N",  6, 2, "Descuento del punto"                 , "",                  "", "( cDbfArt )", nil } )
-   aAdd( aBase, { "lAplDto",   "L",  1, 0, "Lógico aplicar descuentos"           , "",                  "", "( cDbfArt )", nil } )
-   aAdd( aBase, { "lExcPro",   "L",  1, 0, "Lógico para excluir de producción"   , "",                  "", "( cDbfArt )", nil } )*/
-
 Return ( .t. )
 
 //---------------------------------------------------------------------------//
