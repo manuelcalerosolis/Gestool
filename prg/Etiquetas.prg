@@ -93,12 +93,12 @@ METHOD buildSQLShell()
 
    disableAcceso()
 
-   ::oShell                := SQLTShell():New( 2, 10, 18, 70, "Etiquetas", , oWnd(), , , .f., , , ::oModel, , , , , {}, {|| ::Edit() },, {|| ::Delete( ::oShell ) },, nil, ::nLevel, "gc_bookmarks_16", ( 104 + ( 0 * 256 ) + ( 63 * 65536 ) ),,, .t. )
+   ::oShell                := SQLTShell():New( 2, 10, 18, 70, "Etiquetas", , oWnd(), , , .f., , , ::oModel, , , , , {}, {|| ::Edit( ::oShell:getBrowse() ) },, {|| ::Delete( ::oShell:getBrowse() ) },, nil, ::nLevel, "gc_bookmarks_16", ( 104 + ( 0 * 256 ) + ( 63 * 65536 ) ),,, .t. )
 
       with object ( ::oShell:AddCol() )
          :cHeader          := "ID de etiqueta"
          :cSortOrder       := "id"
-         :bEditValue       := {|| ::oModel:getRowSet():fieldGet( "id" ) }
+         :bStrData         := {|| ::oModel:getRowSet():fieldGet( "id" ) }
          :nWidth           := 100
          :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | ::clickOnHeader( oCol, ::oShell:getBrowse(), ::oShell:getCombobox() ) }
       end with
@@ -106,7 +106,7 @@ METHOD buildSQLShell()
       with object ( ::oShell:AddCol() )
          :cHeader          := "Nombre de la etiqueta"
          :cSortOrder       := "nombre"
-         :bEditValue       := {|| ::oModel:getRowSet():fieldGet( "nombre" ) }
+         :bStrData         := {|| ::oModel:getRowSet():fieldGet( "nombre" ) }
          :nWidth           := 400
          :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | ::clickOnHeader( oCol, ::oShell:getBrowse(), ::oShell:getCombobox() ) }
       end with
@@ -114,7 +114,7 @@ METHOD buildSQLShell()
       with object ( ::oShell:AddCol() )
          :cHeader          := "Nombre del Padre"
          :cSortOrder       := "nombre_padre"
-         :bEditValue       := {|| ::oModel:getRowSet():fieldGet( "nombre_padre" ) }
+         :bStrData         := {|| ::oModel:getRowSet():fieldGet( "nombre_padre" ) }
          :nWidth           := 100
          :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | ::clickOnHeader( oCol, ::oShell:getBrowse(), ::oShell:getCombobox() ) }
       end with

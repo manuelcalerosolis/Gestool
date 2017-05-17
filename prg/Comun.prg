@@ -281,11 +281,9 @@ RETURN ( .t. )
 
 FUNCTION Test()
 
-<<<<<<< HEAD
-Return ( nil )
-=======
+orderTest()
+
 RETURN ( nil )
->>>>>>> origin/master
 
 //---------------------------------------------------------------------------//
 

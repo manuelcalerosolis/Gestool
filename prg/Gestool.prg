@@ -1062,18 +1062,16 @@ Return ( by( nRow ) )
 //---------------------------------------------------------------------------//
 
 Function mainTest()
-/*
+
+   
+Return ( nil )
+
+Function orderTest()
+
     local oWnd, oBrw, oCol
     local oDb, oStmt, oRS // Objetos de HDO
 
-    oDb := THDO():new( "sqlite" )
-   
-    if !oDb:connect( "Database\GesTool.db" )
-        oDb:disconnect()
-      return nil 
-    endif
-   
-    oStmt := oDb:prepare( "SELECT * FROM etiquetas ORDER BY id" )
+    oStmt := getSQLDatabase():query( "SELECT * FROM etiquetas ORDER BY id" )
    
     oRS := oStmt:fetchRowSet()
 
@@ -1108,12 +1106,11 @@ Function mainTest()
 
       oBrw:CreateFromCode()
    
-    ACTIVATE WINDOW oWnd
+    ACTIVATE WINDOW oWnd ON INIT ( oBrw:Refresh() )
 
     oRS:free()
     oStmt:free()
-    oDb:disconnect()
-
+    
 return nil
 
 //---------------------------------------------------------------------------//
@@ -1137,7 +1134,7 @@ static function MySetBrowse( oBrw, oRS )
    endif
 
    oBrw:lFastEdit := .t.
-*/
+
 Return ( nil )
 
 //---------------------------------------------------------------------------//

@@ -315,6 +315,8 @@ METHOD getSelectSentence()
 
    cSQLSelect        += ::getSelectByOrder()
 
+   msgalert( cSQLSelect, "getSelectSentence" )
+
 Return ( cSQLSelect )
 
 //---------------------------------------------------------------------------//
@@ -324,7 +326,7 @@ METHOD getSelectByColumn( cColumnOrder )
    local cSQLSelect     := ""
 
    if !empty( ::cColumnOrder ) .and. !empty( ::cFind )
-      cSQLSelect        += " WHERE upper(" + ::cColumnOrder +") LIKE '%" + ::cFind + "%'" 
+      cSQLSelect        += " WHERE UPPER(" + ::cColumnOrder +") LIKE '%" + ::cFind + "%'" 
    end if
 
 Return ( cSQLSelect )
@@ -336,12 +338,14 @@ METHOD getSelectByOrder( cColumnOrder, cOrientation )
    local cSQLSelect  := ""
 
    if !empty( ::cColumnOrder )
-      cSQLSelect     += " ORDER BY UPPER( " + ::cColumnOrder + " )"
+      cSQLSelect     += " ORDER BY " + ::cColumnOrder 
    end if 
 
    if !empty( ::cOrientation ) .and. ::cOrientation == "D"
       cSQLSelect     += " DESC"
    end if
+
+   msgalert( cSQLSelect, "getSelectByOrder" )
 
 Return ( cSQLSelect )
 

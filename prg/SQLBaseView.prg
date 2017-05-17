@@ -418,11 +418,16 @@ RETURN ( Self )
 
 METHOD Delete( oBrowse )
 
-   local nSelected
+   local nSelected      
    local cNumbersOfDeletes
 
    if ::notUserDelete()
       msgStop( "Acceso no permitido." )
+      RETURN ( Self )
+   end if 
+
+   if empty( oBrowse )
+      msgStop( "Faltan parametros." )
       RETURN ( Self )
    end if 
 
@@ -434,14 +439,12 @@ METHOD Delete( oBrowse )
       cNumbersOfDeletes := "el registro en curso?"
    end if
 
-      if oUser():lNotConfirmDelete() .or. msgNoYes( "¿Desea eliminar " + cNumbersOfDeletes, "Confirme eliminación" )
-         ::oModel:deleteSelection( oBrowse:aSelected )
-      end if 
-
-   if !empty( oBrowse )
-      oBrowse:refreshCurrent()
-      oBrowse:setFocus()
+   if oUser():lNotConfirmDelete() .or. msgNoYes( "¿Desea eliminar " + cNumbersOfDeletes, "Confirme eliminación" )
+      ::oModel:deleteSelection( oBrowse:aSelected )
    end if 
+
+   oBrowse:refreshCurrent()
+   oBrowse:setFocus()
 
 RETURN ( Self )
 
