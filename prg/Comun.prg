@@ -281,7 +281,7 @@ RETURN ( .t. )
 
 FUNCTION Test()
 
-   tiposventas():New():ActivateShell()
+   tiposventas():New():ActivateBrowse()
 
 Return ( nil )
 

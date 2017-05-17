@@ -123,7 +123,7 @@ METHOD buildSQLBrowse()
    local cFind       := space( 200 )
    local oCombobox
    local cOrder
-   local aOrden      := { "Tipo" }
+   local aOrden      := { "nombre" }
 
    DEFINE DIALOG oDlg RESOURCE "HELP_BROWSE_SQL" TITLE "Seleccionar tipo de impresora"
 

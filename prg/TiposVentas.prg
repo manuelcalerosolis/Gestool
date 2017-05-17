@@ -90,7 +90,7 @@ METHOD Dialog( lZoom )
       ID          120 ;
       WHEN        ( ! ::isZoomMode() ) ;
       OF          oDlg
-      
+
    REDEFINE BUTTON ;
       ID          IDOK ;
       OF          oDlg ;
@@ -125,7 +125,7 @@ METHOD buildSQLBrowse()
    local cFind       := space( 200 )
    local oCombobox
    local cOrder
-   local aOrden      := { "Tipo" }
+   local aOrden      := { "nombre" }
 
    DEFINE DIALOG oDlg RESOURCE "HELPENTRY" TITLE "Seleccionar tipo de venta"
 
@@ -202,9 +202,15 @@ METHOD buildSQLBrowse()
       oDlg:AddFastKey( VK_F2,       {|| ::Append( oBrowse ) } )
       oDlg:AddFastKey( VK_F3,       {|| ::Edit( oBrowse ) } )
 
+      msgalert("ojala estos carteles te ayuden de algo")
+
       oDlg:bStart    := {|| ::startBrowse( oCombobox, oBrowse ) }
 
+      msgalert(" esta por aqui cerca")
+
    oDlg:Activate( , , , .t., {|| ::saveHistory( ::getHistoryNameBrowse(), oBrowse ) } )
+
+   msgalert( "y si no pues GG ")
 
 RETURN ( oDlg:nResult == IDOK )
 
