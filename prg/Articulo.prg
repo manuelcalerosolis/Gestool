@@ -19245,8 +19245,11 @@ Static Function getEtiquetasBrowse( aSelectedItems )
 
    if !empty( aSelected )
       oTagsEver:setItems( aSelected )
-      oTagsEver:Refresh()
+   else 
+      oTagsEver:hideItems()
    end if 
+
+   oTagsEver:Refresh()
 
 Return ( nil )
 

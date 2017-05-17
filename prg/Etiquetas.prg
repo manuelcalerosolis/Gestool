@@ -11,11 +11,6 @@ CLASS Etiquetas FROM SQLBaseView
    DATA     nSelectedNode
 
    DATA     allSelectedNode
-      METHOD   fillAllSelectedNode( oTree, aItems )
-      METHOD   setAllSelectedNode( aSelectedItmes )         INLINE ( iif(  hb_isarray( aSelectedItmes ),;
-                                                                           ::allSelectedNode := aSelectedItmes,;
-                                                                           ::allSelectedNode := {} ) )
-      METHOD   getAllSelectedNode()                         INLINE ( ::allSelectedNode )
 
    METHOD   New()
 
@@ -58,6 +53,12 @@ CLASS Etiquetas FROM SQLBaseView
    METHOD   appendOnBrowse( oTree )                         
    METHOD   editOnBrowse( oTree )
 
+   METHOD   fillAllSelectedNode( oTree, aItems )
+   METHOD   setAllSelectedNode( aSelectedItmes )            INLINE ( iif(  hb_isarray( aSelectedItmes ),;
+                                                                           ::allSelectedNode := aSelectedItmes,;
+                                                                           ::allSelectedNode := {} ) )
+   METHOD   getAllSelectedNode()                            INLINE ( ::allSelectedNode )
+
 END CLASS
 
 //---------------------------------------------------------------------------//
@@ -92,7 +93,7 @@ METHOD buildSQLShell()
 
    disableAcceso()
 
-   ::oShell                := SQLTShell():New( 2, 10, 18, 70, "Etiquetas", , oWnd(), , , .f., , , ::oModel, , , , , {}, {|| ::Edit() },, {|| ::Delete() },, nil, ::nLevel, "gc_bookmarks_16", ( 104 + ( 0 * 256 ) + ( 63 * 65536 ) ),,, .t. )
+   ::oShell                := SQLTShell():New( 2, 10, 18, 70, "Etiquetas", , oWnd(), , , .f., , , ::oModel, , , , , {}, {|| ::Edit() },, {|| ::Delete( ::oShell ) },, nil, ::nLevel, "gc_bookmarks_16", ( 104 + ( 0 * 256 ) + ( 63 * 65536 ) ),,, .t. )
 
       with object ( ::oShell:AddCol() )
          :cHeader          := "ID de etiqueta"
@@ -126,8 +127,8 @@ METHOD buildSQLShell()
 
    ACTIVATE WINDOW ::oShell
 
-   ::oShell:bValid   := {|| ::saveHistory( ::getHistoryNameShell() , ::oShell:getBrowse() ), .t. }
-   ::oShell:bEnd     := {|| ::destroySQLModel() }
+   ::oShell:bValid         := {|| ::saveHistory( ::getHistoryNameShell() , ::oShell:getBrowse() ), .t. }
+   ::oShell:bEnd           := {|| ::destroySQLModel() }
 
    ::oShell:setComboBoxChange( {|| ::changeCombo( ::oShell:getBrowse(), ::oShell:getCombobox() ) } )
 

@@ -28,15 +28,16 @@ CLASS TTagEver FROM TControl
     METHOD AddItem( cText, nPeso )
 
     METHOD Paint()
-    METHOD Display() INLINE ::BeginPaint(),::Paint(),::EndPaint(), 0
+    METHOD Display()                        INLINE ::BeginPaint(),::Paint(),::EndPaint(), 0
     METHOD GetItems()
 
     METHOD LButtonDown( nRow, nCol, nFlags )
     METHOD MouseMove  ( nRow, nCol, nFlags )
     METHOD LButtonUp  ( nRow, nCol, nFlags )
 
-    METHOD EraseBkGnd( hDC ) INLINE 1
+    METHOD EraseBkGnd( hDC )                INLINE 1
 
+    METHOD HideItems()                      INLINE ( aeval(::aItems, {|aItem| aItem[2]  := .t. } ), ::Refresh() )
 
 ENDCLASS
 
@@ -79,7 +80,6 @@ ENDCLASS
    ::lOverClose   := .f.
    ::nOption      := 1
 
-
    ::SetColor( nClrText, nClrPane )
 
    ::lVisible    := .t.
@@ -121,7 +121,6 @@ RETURN Self
    ::nClrBackTag  := nClrBackTag
    ::lOverClose   := .f.
    ::nOption      := 1
-
 
    ::SetColor( nClrText, nClrPane )
 

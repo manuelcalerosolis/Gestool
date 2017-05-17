@@ -611,8 +611,6 @@ STATIC FUNCTION OpenFiles( lExt )
       D():Documentos( nView )
       ( D():Documentos( nView ) )->( OrdSetFocus( "cTipo" ) )
 
-      D():Situaciones( nView )
-
       D():PedidosProveedores( nView )
 
       D():PedidosProveedoresLineas( nView )
