@@ -43,6 +43,8 @@ CLASS TComercioDocument FROM TComercioConector
 
    METHOD idDocumentGestool()                               INLINE ( ::cSerieDocument + str( ::nNumeroDocument ) + ::cSufijoDocument ) 
 
+   METHOD insertLinesKitsGestool()
+
 END CLASS
 
 //---------------------------------------------------------------------------//
@@ -165,7 +167,9 @@ METHOD insertLinesDocumentGestool( oQuery ) CLASS TComercioDocument
 
    local nNumLin           := 1
    local cQueryLine        
-   local oQueryLine           
+   local oQueryLine  
+   local lKitArt           := .f.
+   local cCodArt           := ""         
 
    cQueryLine              := "SELECT * FROM " + ::TComercio:cPrefixtable( "order_detail" ) + " " + ;
                               "WHERE id_order = " + alltrim( str( ::idDocumentPrestashop ) )
@@ -181,8 +185,6 @@ METHOD insertLinesDocumentGestool( oQuery ) CLASS TComercioDocument
          ::setGestoolIdDocument( ::oDocumentLineDatabase() )
          
          ::setGestoolSpecificLineDocument()
-         
-         //MsgInfo( oQueryLine:FieldGetByName( "product_name" ), "Artículo" )
 
          ( ::oDocumentLineDatabase() )->dFecha        := ::getDate( oQuery:FieldGetByName( "date_add" ) )
          ( ::oDocumentLineDatabase() )->cDetalle      := oQueryLine:FieldGetByName( "product_name" )
@@ -197,13 +199,19 @@ METHOD insertLinesDocumentGestool( oQuery ) CLASS TComercioDocument
          ( ::oDocumentLineDatabase() )->nDtoDiv       := oQueryLine:FieldGetByName( "reduction_amount_tax_excl" )
          ( ::oDocumentLineDatabase() )->nIva          := ::TComercio:nIvaProduct( oQueryLine:FieldGetByName( "product_id" ) )
 
-         ::setProductInDocumentLine( oQueryLine )
+         ::setProductInDocumentLine( oQueryLine, @lKitArt, @cCodArt )
 
          if ( ::oDocumentLineDatabase() )->( neterr() )
             ::writeText( "Error al guardar las lineas del documento " + ::idDocumentGestool() )
          else 
             ( ::oDocumentLineDatabase() )->( dbunlock() )
          end if
+
+         if lKitArt
+            ::insertLinesKitsGestool( nNumLin, cCodArt, oQuery )
+         end if
+
+         lKitArt     := .f.
 
          oQueryLine:Skip()
 
@@ -218,8 +226,84 @@ METHOD insertLinesDocumentGestool( oQuery ) CLASS TComercioDocument
 Return ( .t. )
  
 //---------------------------------------------------------------------------//
+
+METHOD insertLinesKitsGestool( nNumLin, cCodArt, oQuery ) CLASS TComercioDocument
+
+   local nRec     := ( D():Kit( ::getView() ) )->( Recno() )
+   local nOrdAnt  := ( D():Kit( ::getView() ) )->( OrdSetFocus( "CCODKIT" ) )
+   local nNumKit  := 1
+
+   if ( D():Kit( ::getView() ) )->( dbSeek( cCodArt ) )
+
+      while ( D():Kit( ::getView() ) )->cCodKit == cCodArt .and. !( D():Kit( ::getView() ) )->( Eof() )
+
+         ( ::oDocumentLineDatabase() )->( dbappend() )
+
+         ::setGestoolIdDocument( ::oDocumentLineDatabase() )
          
-METHOD setProductInDocumentLine( oQueryLine )
+         ::setGestoolSpecificLineDocument()
+
+         ( ::oDocumentLineDatabase() )->cRef          := ( D():Kit( ::getView() ) )->cRefKit
+         ( ::oDocumentLineDatabase() )->cAlmLin       := cDefAlm()
+         ( ::oDocumentLineDatabase() )->nPosPrint     := nNumLin
+         ( ::oDocumentLineDatabase() )->nNumLin       := nNumLin
+         ( ::oDocumentLineDatabase() )->nNumKit       := nNumKit
+         ( ::oDocumentLineDatabase() )->nUniCaja      := ( D():Kit( ::getView() ) )->nUndKit
+         ( ::oDocumentLineDatabase() )->lKitChl       := .t.
+         ( ::oDocumentLineDatabase() )->nTarLin       := 1
+         ( ::oDocumentLineDatabase() )->dFecha        := ::getDate( oQuery:FieldGetByName( "date_add" ) )
+         
+         if ( D():gotoArticulos( ( D():Kit( ::getView() ) )->cRefKit, ::getView() ) )
+
+            ( ::oDocumentLineDatabase() )->cDetalle    := ( D():Articulos( ::getView() ) )->Nombre
+            ( ::oDocumentLineDatabase() )->mLngDes     := ( D():Articulos( ::getView() ) )->Descrip
+            ( ::oDocumentLineDatabase() )->cUnidad     := ( D():Articulos( ::getView() ) )->cUnidad
+            ( ::oDocumentLineDatabase() )->nPesoKg     := ( D():Articulos( ::getView() ) )->nPesoKg
+            ( ::oDocumentLineDatabase() )->cPesoKg     := ( D():Articulos( ::getView() ) )->cUnidad
+            ( ::oDocumentLineDatabase() )->nVolumen    := ( D():Articulos( ::getView() ) )->nVolumen
+            ( ::oDocumentLineDatabase() )->cVolumen    := ( D():Articulos( ::getView() ) )->cVolumen
+            ( ::oDocumentLineDatabase() )->nCtlStk     := ( D():Articulos( ::getView() ) )->nCtlStock
+            ( ::oDocumentLineDatabase() )->cCodTip     := ( D():Articulos( ::getView() ) )->cCodTip
+            ( ::oDocumentLineDatabase() )->cCodFam     := ( D():Articulos( ::getView() ) )->Familia
+            ( ::oDocumentLineDatabase() )->cGrpFam     := retfld( ( D():Articulos( ::getView() ) )->Familia, D():Familias( ::getView() ), "cCodGrp" )
+            
+            ( ::oDocumentLineDatabase() )->lLote       := ( D():Articulos( ::getView() ) )->lLote 
+            ( ::oDocumentLineDatabase() )->cLote       := ( D():Articulos( ::getView() ) )->cLote 
+
+            ( ::oDocumentLineDatabase() )->nIva        := nIva( D():TiposIva( ::getView() ), ( D():Articulos( ::getView() ) )->TipoIva )
+
+         end if
+
+         ( ::oDocumentLineDatabase() )->( dbunlock() )
+            
+         nNumKit++
+
+         ( D():Kit( ::getView() ) )->( dbSkip() )
+
+      end while
+
+   end if
+
+   ( D():Kit( ::getView() ) )->( OrdSetFocus( nOrdAnt ) )
+   ( D():Kit( ::getView() ) )->( dbGoTo( nRec ) )
+
+
+   /*aAdd( aBase, { "cCodKit",   "C", 18, 0, "Código del contenedor"               , "",                  "", "( cDbfArt )", nil } )
+   aAdd( aBase, { "cRefKit",   "C", 18, 0, "Código de artículo escandallo"       , "",                  "", "( cDbfArt )", nil } )
+   aAdd( aBase, { "nUndKit",   "N", 16, 6, "Unidades de escandallo"              , "",                  "", "( cDbfArt )", nil } )
+   aAdd( aBase, { "nPreKit",   "N", 16, 6, "Precio de escandallo"                , "",                  "", "( cDbfArt )", nil } )
+   aAdd( aBase, { "cDesKit",   "C", 50, 0, "Descripción del escandallo"          , "",                  "", "( cDbfArt )", nil } )
+   aAdd( aBase, { "cUnidad",   "C",  2, 0, "Unidad de medición"                  , "",                  "", "( cDbfArt )", nil } )
+   aAdd( aBase, { "nValPnt",   "N", 16, 6, ""                                    , "",                  "", "( cDbfArt )", nil } )
+   aAdd( aBase, { "nDtoPnt",   "N",  6, 2, "Descuento del punto"                 , "",                  "", "( cDbfArt )", nil } )
+   aAdd( aBase, { "lAplDto",   "L",  1, 0, "Lógico aplicar descuentos"           , "",                  "", "( cDbfArt )", nil } )
+   aAdd( aBase, { "lExcPro",   "L",  1, 0, "Lógico para excluir de producción"   , "",                  "", "( cDbfArt )", nil } )*/
+
+Return ( .t. )
+
+//---------------------------------------------------------------------------//
+         
+METHOD setProductInDocumentLine( oQueryLine, lKitArt, cCodArt )
 
    local idProductGestool                 := oQueryLine:FieldGetByName( "product_reference" )
 
@@ -233,9 +317,8 @@ METHOD setProductInDocumentLine( oQueryLine )
 
    if ( D():gotoArticulos( idProductGestool, ::getView() ) )
 
-      //MsgInfo( ( D():Articulos( ::getView() ) )->lKitArt )
-
       ( ::oDocumentLineDatabase() )->cRef        := ( D():Articulos( ::getView() ) )->Codigo
+      cCodArt                                    := ( D():Articulos( ::getView() ) )->Codigo
       ( ::oDocumentLineDatabase() )->cUnidad     := ( D():Articulos( ::getView() ) )->cUnidad
       ( ::oDocumentLineDatabase() )->nPesoKg     := ( D():Articulos( ::getView() ) )->nPesoKg
       ( ::oDocumentLineDatabase() )->cPesoKg     := ( D():Articulos( ::getView() ) )->cUnidad
@@ -254,6 +337,10 @@ METHOD setProductInDocumentLine( oQueryLine )
       ( ::oDocumentLineDatabase() )->cCodPr2     := ( D():Articulos( ::getView() ) )->cCodPrp2
       ( ::oDocumentLineDatabase() )->cValPr1     := ::getProductProperty( ( D():Articulos( ::getView() ) )->cCodPrp1, oQueryLine:FieldGetByName( "product_name" ) )
       ( ::oDocumentLineDatabase() )->cValPr2     := ::getProductProperty( ( D():Articulos( ::getView() ) )->cCodPrp2, oQueryLine:FieldGetByName( "product_name" ) )
+
+      ( ::oDocumentLineDatabase() )->lKitArt     := ( D():Articulos( ::getView() ) )->lKitArt
+
+      lKitArt                                    := ( D():Articulos( ::getView() ) )->lKitArt
 
       Return ( .t. )
 

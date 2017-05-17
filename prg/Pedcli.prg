@@ -1022,7 +1022,7 @@ FUNCTION PedCli( oMenuItem, oWnd, cCodCli, cCodArt, cCodPre, lPedWeb )
          :cHeader          := "Estado"
          :nHeadBmpNo       := 4
          :bStrData         := {|| cEstadoPedido( ( D():PedidosClientes( nView ) )->nEstado ) }
-         :bBmpData         := {|| ( D():PedidosClientes( nView ) )->nEstado }
+         :bBmpData         := {|| Max( ( D():PedidosClientes( nView ) )->nEstado, 1 ) }
          :nWidth           := 20
          :AddResource( "gc_delete_12" )
          :AddResource( "gc_shape_square_12" )
@@ -1030,7 +1030,7 @@ FUNCTION PedCli( oMenuItem, oWnd, cCodCli, cCodArt, cCodPre, lPedWeb )
          :AddResource( "gc_trafficlight_on_16" )
       end with
 
-     with object ( oWndBrw:AddXCol() )
+      with object ( oWndBrw:AddXCol() )
          :cHeader          := "Envio"
          :nHeadBmpNo       := 3
          :bStrData         := {|| "" }

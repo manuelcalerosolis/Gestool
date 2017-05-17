@@ -62,8 +62,6 @@ METHOD buildCategory( id, rootCategory ) CLASS TComercioCategory
       RETURN .f.
    end if
 
-   DEFAULT rootCategory := 0
-
    statusFamilias       := aGetStatus( D():Familias( ::getView() ) ) 
 
    if ( D():Familias( ::getView() ) )->( dbseekinord( id, "cCodFam" ) )  
@@ -91,7 +89,7 @@ METHOD buildCategory( id, rootCategory ) CLASS TComercioCategory
                                        "name"               => categoryName,;
                                        "description"        => categoryName,;
                                        "link_rewrite"       => cLinkRewrite( categoryName ),;
-                                       "is_root_category"   => rootCategory,;
+                                       "root_category"      => rootCategory,;
                                        "image"              => cFileBmpName( alltrim( ( D():Familias( ::getView() ) )->cImgBtn ) ),;
                                        "cPrefijoNombre"     => "",;
                                        "aTypeImages"        => {},;
@@ -138,7 +136,7 @@ METHOD buildRootCategoryInformation() CLASS TComercioCategory
    local statusFamilias
 
    if ( D():Familias( ::getView() ) )->( dbseekinord( "Root", "cType" ) )  
-      ::buildCategory( ( D():Familias( ::getView() ) )->cCodFam, 1 )
+      ::buildCategory( ( D():Familias( ::getView() ) )->cCodFam, 0 )
    else 
       RETURN ( .f. )
    end if 
@@ -289,6 +287,11 @@ METHOD insertCategory( hCategory ) CLASS TComercioCategory
    local oImagen
    local cCommand       := ""
    local idCategory     := 0
+   local nLevelDepth
+   local isRootCategory
+
+   nLevelDepth    := if( hget( hCategory, "root_category" ) != nil, hget( hCategory, "root_category" ), 2 )
+   isRootCategory := if( hget( hCategory, "root_category" ) != nil, 1, 0 )
 
    ::writeText( "Añadiendo categoría : " + hGet( hCategory, "name" ) )
 
@@ -304,14 +307,14 @@ METHOD insertCategory( hCategory ) CLASS TComercioCategory
                               "position, "                                       + ;
                               "is_root_category ) "                              + ;
                            "VALUES ( "                                           + ;
-                              "2, "                                              + ;
+                              str( nLevelDepth ) + ", "                          + ;
                               "0, "                                              + ;
                               "0, "                                              + ;
                               "1, "                                              + ;
                               "'" + dtos( GetSysDate() ) + "', "                 + ;
                               "'" + dtos( GetSysDate() ) + "', "                 + ;
                               "0, "                                              + ;
-                              quoted( hget( hCategory, "is_root_category" ) )    + " ) "
+                              quoted( isRootCategory )                           + " ) "
 
    if ::commandExecDirect( cCommand )
       idCategory        := ::oConexionMySQLDatabase():GetInsertId()
