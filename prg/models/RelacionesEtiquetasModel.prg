@@ -18,6 +18,12 @@ CLASS RelacionesEtiquetasModel FROM SQLBaseEmpresasModel
 
    METHOD getIdEtiquetaFromCategoria( cCodigoCategoria, aSelect )
 
+   METHOD getRelationsOfEtiquetas( cTableName, nCodLine )
+
+   METHOD setRelationsOfEtiquetas( cTableName, nCodLine, etiquetas )       INLINE ( getSQLDatabase():Query( ::sentenceForInsertLine( cTableName, nCodLine, etiquetas ) ) )
+
+   METHOD sentenceForInsertLine( cTableName, nCodLine, etiquetas )
+
 END CLASS
 
 //---------------------------------------------------------------------------//
@@ -28,7 +34,7 @@ METHOD New()
                                                                   "text"		=> "Identificador"}                           						,;                        					
                                        "id_padre"           => {  "create"    => "INTEGER"                                                   ,;
                                                                   "text"      => "Identificador padre"}                                      ,;                                     
-                                       "tabla_padre"        => {  "create"    => "VARCHAR (50) NOT NULL"                                     ,;
+                                       "tabla_padre"        => {  "create"    => "VARCHAR (50)"                                              ,;
                                                                   "text"      => "Nombre de la tabla padre"}                                 ,;
                                        "id_empresa"         => {  "create"    => "CHAR ( 4 )"                                 					,;
                                                                   "text"      => "Empresa a la que pertenece el documento y etiquetas"}     	,;
@@ -45,34 +51,20 @@ RETURN ( Self )
 
 //---------------------------------------------------------------------------//
 
-METHOD TrasnlateCodigoToId()
+METHOD getIdEtiquetaFromCategoria( cCodigoCategoria, aSelect )
 
-   local aSelect     
-   local hSelect
-   local cSentence              
+   local nPosition
 
-   aSelect           := EtiquetasModel():arrayCodigoAndId()
-
-   if empty( aSelect )
-      RETURN ( Self )
+   nPosition   := ascan( aSelect, {|h| hget( h, "codigo" ) == alltrim( cCodigoCategoria ) } )
+   if nPosition != 0
+      RETURN( hget( aSelect[nPosition], "id" ) )
    end if 
 
-   for each hSelect in aSelect
-
-      cSentence      := "UPDATE EMP" + ( cCodEmp() + "ProLin" )                     + ;
-                              " SET cEtiqueta = '" + toSQLString( hSelect["id"] )   + ;
-                              "', ccodcat = null "                                  + ;
-                           "WHERE ccodcat = " + toSQLString( hSelect["codigo"] )
-
-      BaseModel():ExecuteSqlStatement( cSentence )
-
-   next
-
-RETURN ( Self )
+RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 
-METHOD getLineasProducccion()
+METHOD getLineasProducccion( cCodigoCategoria )
 
    local cSentence
    local cInsertSentence
@@ -96,30 +88,96 @@ METHOD getLineasProducccion()
 
          cValueSentence += "( " + toSQLString( cCodEmp() )                                                                             + ", "  
          cValueSentence += toSQLString( dbfTableName )                                                                                 + ", "
+<<<<<<< HEAD
+         cValueSentence += "'" + (dbfAlias)->cSerOrd + str( (dbfAlias)->nNumOrd, 9 ) + (dbfAlias)->cSufOrd + str( (dbfAlias)->nNumLin, 4 )   + "', "
+         cValueSentence += toSQLString( ::getIdEtiquetaFromCategoria( (dbfAlias)->cCodCat, aSelect ) )                                 + " ), "
+=======
          cValueSentence += (dbfAlias)->cSerOrd + str( (dbfAlias)->nNumOrd, 9 ) + (dbfAlias)->cSufOrd + str( (dbfAlias)->nNumLin, 4 )   + ", "
          // cValueSentence += ::getIdEtiquetaFromCategoria( cCodigoCategoria, aSelect )
+>>>>>>> origin/master
 
          ( dbfAlias )->( dbskip() )
       end while
 
-
    end if 
 
-RETURN ( Self )
+   if empty( cValueSentence )
+      RETURN ( nil )
+   end if
+   
+   cInsertSentence += chgAtEnd( cValueSentence, " )", 4 )
+
+RETURN ( cInsertSentence )
 
 //---------------------------------------------------------------------------//
 
-METHOD getIdEtiquetaFromCategoria( cCodigoCategoria, aSelect )
+METHOD TrasnlateCodigoToId()
 
-   local nPosition
+   local cSentenceSQLite := ::getLineasProducccion()
 
-   nPosition   := ascan( aSelect, {|h| hget( h, "codigo" ) == cCodigoCategoria } )
-   if nPosition != 0
-      RETURN( hget( aSelect[nPosition], "id" ) )
-   end if 
+   local cSentenceDBF := "update EMP" + cCodEmp() + "PROLIN set ccodcat = null"
 
-RETURN ( nil )
+   getSQLDatabase():Query( cSentenceSQLite )
+
+   BaseModel():ExecuteSqlStatement( cSentenceDBF )
+
+RETURN ( self )
 
 //---------------------------------------------------------------------------//
 
+METHOD sentenceForInsertLine( cTableName, nCodLine, etiquetas )
 
+   local cInsertSentence
+
+   local cInternalSelect   := "( SELECT id FROM " + ::cTableName                       + ;
+                              " WHERE id_empresa = " + toSQLString( cCodEmp() )        + ;
+                              " AND tabla_documento = " + toSQLString( cTableName )    + ;
+                              " AND id_documento = " + toSQLString( nCodLine ) + " ) "
+
+   local cDeleteLine       := "DELETE FROM " + ::cTableName                            + ;
+                              " WHERE id_empresa = " + toSQLString( cCodEmp() )        + ;
+                              " AND tabla_documento = " + toSQLString( cTableName )    + ;
+                              " AND id_documento = " + toSQLString( nCodLine )
+
+   if empty( etiquetas )
+       RETURN ( cDeleteLine )
+   endif
+
+   cInsertSentence         := "REPLACE INTO " + ::cTableName                           + ;
+                                 " ( id, "                                             + ;
+                                 "id_empresa, "                                        + ;
+                                 "tabla_documento, "                                   + ;
+                                 "id_documento, "                                      + ;
+                                 "etiquetas ) "                                        + ;
+                              "VALUES ( "                                              + ;
+                                 cInternalSelect + ", "                                + ;
+                                 toSQLString( cCodEmp() ) + ", "                       + ;
+                                 toSQLString( cTableName ) + ", "                      + ;
+                                 toSQLString( nCodLine ) + ", "                        + ;
+                                 toSQLString( hb_serialize( etiquetas ) ) + " ) "
+
+RETURN ( cInsertSentence )
+
+//---------------------------------------------------------------------------//
+
+METHOD getRelationsOfEtiquetas( cTableName, nCodLine )
+
+   local cSentence := "SELECT etiquetas FROM " + ::cTableName                       + ;
+                           " WHERE id_empresa = " + toSQLString( cCodEmp() )        + ;
+                           " AND tabla_documento = " + toSQLString( cTableName )    + ;
+                           " AND id_documento = " + toSQLString( nCodLine )
+
+
+   local aResult := ::selectFetchArray( cSentence )
+
+   local aEtiquetas
+
+   if empty( aResult )
+       RETURN ( nil )
+   endif
+
+   aEtiquetas := hb_deserialize( aResult[1] ) 
+
+   RETURN ( aEtiquetas )
+
+//---------------------------------------------------------------------------//

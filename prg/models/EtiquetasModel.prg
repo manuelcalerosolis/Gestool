@@ -15,6 +15,8 @@ CLASS EtiquetasModel FROM SQLBaseEmpresasModel
 
    DATA     hDbfToCategory
 
+   DATA     cVirtualTableName
+
    METHOD   New()
 
    METHOD   buildRowSetWithRecno()                 INLINE   ( ::buildRowSet( .t. ) )
@@ -40,6 +42,8 @@ CLASS EtiquetasModel FROM SQLBaseEmpresasModel
    METHOD   translateNamesToIds( aNames )
 
    METHOD   arrayCodigoAndId()
+
+   METHOD   setcVirtualTableName( cRaiz )          INLINE ( ::cVirtualTableName := cRaiz )
 
 END CLASS
 
@@ -255,4 +259,3 @@ METHOD arrayCodigoAndId()
 RETURN ( aSelect )
 
 //---------------------------------------------------------------------------//
-

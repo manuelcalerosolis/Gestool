@@ -1037,6 +1037,8 @@ METHOD SaveResource( oGetArt, nMode ) CLASS TDetProduccion
                         ::oParent:oDetMaterial:oDbfVir:lLote      := oRetFld( ::oParent:oKitArt:cRefKit, ::oParent:oArt, "lLote" )
                         ::oParent:oDetMaterial:oDbfVir:cLote      := oRetFld( ::oParent:oKitArt:cRefKit, ::oParent:oArt, "cLote" )
                         ::oParent:oDetMaterial:oDbfVir:cCodPro    := ::oDbfVir:cCodArt
+                        ::oParent:oDetMaterial:oDbfVir:cEtiqueta  := ::oDbfVir:Etiqueta
+
 
                         ::oParent:oDetMaterial:oDbfVir:Save()
 
