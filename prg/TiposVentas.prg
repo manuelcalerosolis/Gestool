@@ -38,7 +38,7 @@ METHOD buildSQLShell()
 
    disableAcceso()
 
-   ::oShell                := SQLTShell():New( 2, 10, 18, 70, "Tipos de ventas", , oWnd(), , , .f., , , ::oModel, , , , , {}, {|| ::Edit() },, {|| ::Delete() },, nil, ::nLevel, "gc_wallet_16", ( 104 + ( 0 * 256 ) + ( 63 * 65536 ) ),,, .t. )
+   ::oShell                := SQLTShell():New( 2, 10, 18, 70, "Tipos de ventas", , oWnd(), , , .f., , , ::oModel, , , , , {}, {|| ::Edit( ::oShell:getBrowse() ) },, {|| ::Delete( ::oShell:getBrowse() ) },, nil, ::nLevel, "gc_wallet_16", ( 104 + ( 0 * 256 ) + ( 63 * 65536 ) ),,, .t. )
 
       with object ( ::oShell:AddCol() )
          :cHeader          := "Código"
@@ -88,13 +88,13 @@ METHOD Dialog( lZoom )
       VAR         ::oModel:hBuffer[ "nombre" ] ;
       MEMO ;
       ID          120 ;
-      WHEN        ( ! ::isZoomMode() ) ;
+      WHEN        ( !::isZoomMode() ) ;
       OF          oDlg
 
    REDEFINE BUTTON ;
       ID          IDOK ;
       OF          oDlg ;
-      WHEN        ( ! ::isZoomMode() ) ;
+      WHEN        ( !::isZoomMode() ) ;
       ACTION      ( ::validDialog( oDlg, oGetNombre ) )
 
    REDEFINE BUTTON ;
@@ -127,7 +127,7 @@ METHOD buildSQLBrowse()
    local cOrder
    local aOrden      := { "nombre" }
 
-   DEFINE DIALOG oDlg RESOURCE "HELPENTRY" TITLE "Seleccionar tipo de venta"
+   DEFINE DIALOG oDlg RESOURCE "HELP_BROWSE_SQL" TITLE "Seleccionar tipo de venta"
 
       REDEFINE GET   oFind ; 
          VAR         cFind ;
@@ -135,7 +135,7 @@ METHOD buildSQLBrowse()
          BITMAP      "FIND" ;
          OF          oDlg
 
-      oFind:bChange       := {|| ::changeFind( oFind, oBrowse ) }
+      oFind:bChange  := {|| ::changeFind( oFind, oBrowse ) }
 
       REDEFINE COMBOBOX oCombobox ;
          VAR         cOrder ;
@@ -202,15 +202,9 @@ METHOD buildSQLBrowse()
       oDlg:AddFastKey( VK_F2,       {|| ::Append( oBrowse ) } )
       oDlg:AddFastKey( VK_F3,       {|| ::Edit( oBrowse ) } )
 
-      msgalert("ojala estos carteles te ayuden de algo")
-
       oDlg:bStart    := {|| ::startBrowse( oCombobox, oBrowse ) }
 
-      msgalert(" esta por aqui cerca")
-
    oDlg:Activate( , , , .t., {|| ::saveHistory( ::getHistoryNameBrowse(), oBrowse ) } )
-
-   msgalert( "y si no pues GG ")
 
 RETURN ( oDlg:nResult == IDOK )
 
