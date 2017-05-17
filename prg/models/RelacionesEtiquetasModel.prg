@@ -64,13 +64,13 @@ RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 
-METHOD getLineasProducccion()
+METHOD getLineasProducccion( cCodigoCategoria )
 
    local cSentence
    local cInsertSentence
    local cValueSentence := ""
    local dbfAlias       := "PROLIN"
-   local dbfTableName   := "EMP" + cCodEmp() + "PROLIN" 
+   local dbfTableName   := "EMP" + cCodEmp() + "PROLIN"
    local aSelect        := EtiquetasModel():arrayCodigoAndId()
 
    cSentence            := "SELECT cSerOrd, nNumOrd, cSufOrd, nNumLin, cCodCat "       + ;
@@ -88,8 +88,13 @@ METHOD getLineasProducccion()
 
          cValueSentence += "( " + toSQLString( cCodEmp() )                                                                             + ", "  
          cValueSentence += toSQLString( dbfTableName )                                                                                 + ", "
+<<<<<<< HEAD
          cValueSentence += "'" + (dbfAlias)->cSerOrd + str( (dbfAlias)->nNumOrd, 9 ) + (dbfAlias)->cSufOrd + str( (dbfAlias)->nNumLin, 4 )   + "', "
          cValueSentence += toSQLString( ::getIdEtiquetaFromCategoria( (dbfAlias)->cCodCat, aSelect ) )                                 + " ), "
+=======
+         cValueSentence += (dbfAlias)->cSerOrd + str( (dbfAlias)->nNumOrd, 9 ) + (dbfAlias)->cSufOrd + str( (dbfAlias)->nNumLin, 4 )   + ", "
+         // cValueSentence += ::getIdEtiquetaFromCategoria( cCodigoCategoria, aSelect )
+>>>>>>> origin/master
 
          ( dbfAlias )->( dbskip() )
       end while

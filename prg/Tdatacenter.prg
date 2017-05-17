@@ -945,7 +945,7 @@ METHOD StartAdministratorTask()
 
             ::Reindex()
 
-            ::MigrateEmpresaToSQLite()
+            //::MigrateEmpresaToSQLite()
 
             aEmpresa[ 5 ]   := .t.
 
@@ -4858,10 +4858,13 @@ RETURN ( Self )
 
 METHOD MigrateEmpresaToSQLite()
 
+<<<<<<< HEAD
    /*EtiquetasModel();
       :New();
       :TrasnlateCodigoToId()*/
 
+=======
+>>>>>>> origin/master
 RETURN ( Self )
 
 //---------------------------------------------------------------------------//

@@ -27,7 +27,7 @@ CLASS TImportarExcelArguelles FROM TImportarExcel
 
    METHOD Run()
 
-   METHOD getCampoClave()        INLINE ( alltrim( ::getExcelString( ::cColumnaCampoClave ) ) )
+   METHOD getCampoClave()
 
    METHOD procesaFicheroExcel()
 
@@ -54,6 +54,8 @@ CLASS TImportarExcelArguelles FROM TImportarExcel
    METHOD addImages()
 
    METHOD descargaImagenes()
+
+   METHOD descargaESP()
 
 END CLASS
 
@@ -125,6 +127,8 @@ METHOD procesaFicheroExcel()
 
    ::closeExcel()
 
+   ::descargaESP()
+
 Return nil
 
 //---------------------------------------------------------------------------//
@@ -191,25 +195,6 @@ METHOD importarCampos()
       ( D():ArticuloLenguaje( ::nView ) )->( dbunlock() )   
 
    end if
-
-   /*
-   Descripción español---------------------------------------------------------
-   */
-
-   /*if !Empty( ::getExcelString( "R" ) )
-
-      ( D():ArticuloLenguaje( ::nView ) )->( dbAppend() )
-
-      ( D():ArticuloLenguaje( ::nView ) )->cCodArt    := ::idArticulo
-      ( D():ArticuloLenguaje( ::nView ) )->cCodLen    := "ESP "
-      ( D():ArticuloLenguaje( ::nView ) )->cDesTik    := ::getExcelString( "R" )
-      ( D():ArticuloLenguaje( ::nView ) )->cDesArt    := ::getExcelString( "S" )
-
-      ( D():ArticuloLenguaje( ::nView ) )->( dbcommit() )
-
-      ( D():ArticuloLenguaje( ::nView ) )->( dbunlock() )
-
-   end if*/
 
    /*
    Introducimos las imágenes---------------------------------------------------
@@ -314,20 +299,20 @@ METHOD cFamilia()
    local nOrdAnt     := ( D():Familias( ::nView ) )->( OrdSetFocus( "cNomFam" ) )
    local cNewCodigo
    
-   if Empty( ::getExcelString( "BB" ) ) .and. !Empty( ::getExcelString( "BA" ) )
+   if Empty( ::getExcelString( "AV" ) ) .and. !Empty( ::getExcelString( "AU" ) )
 
       /*
       Creamos el proveedor si no existe-------------------------------------------
       */
 
-      if !( D():Familias( ::nView ) )->( dbSeek( AllTrim( upper( ::getExcelString( "BA" ) ) ) ) )
+      if !( D():Familias( ::nView ) )->( dbSeek( AllTrim( upper( ::getExcelString( "AU" ) ) ) ) )
 
          cNewCodigo     := NextKey( dbLast(  D():Familias( ::nView ), 1 ), D():Familias( ::nView ) )
 
          ( D():Familias( ::nView ) )->( dbAppend() )
 
          ( D():Familias( ::nView ) )->cCodFam      := cNewCodigo
-         ( D():Familias( ::nView ) )->cNomFam      := AllTrim( upper( ::getExcelString( "BA" ) ) )
+         ( D():Familias( ::nView ) )->cNomFam      := AllTrim( upper( ::getExcelString( "AU" ) ) )
          ( D():Familias( ::nView ) )->lPubInt      := .t.
 
          ( D():Familias( ::nView ) )->( dbcommit() )
@@ -347,15 +332,15 @@ METHOD cFamilia()
       Creamos el proveedor si no existe-------------------------------------------
       */
 
-      if !( D():Familias( ::nView ) )->( dbSeek( AllTrim( upper( ::getExcelString( "BB" ) ) ) ) )
+      if !( D():Familias( ::nView ) )->( dbSeek( AllTrim( upper( ::getExcelString( "AV" ) ) ) ) )
 
          cNewCodigo     := NextKey( dbLast(  D():Familias( ::nView ), 1 ), D():Familias( ::nView ) )
 
          ( D():Familias( ::nView ) )->( dbAppend() )
 
          ( D():Familias( ::nView ) )->cCodFam      := cNewCodigo
-         ( D():Familias( ::nView ) )->cNomFam      := AllTrim( upper( ::getExcelString( "BB" ) ) )
-         ( D():Familias( ::nView ) )->cFamCmb      := RetFld( AllTrim( upper( ::getExcelString( "BA" ) ) ), D():Familias( ::nView ), "cCodFam", "cNomFam" )
+         ( D():Familias( ::nView ) )->cNomFam      := AllTrim( upper( ::getExcelString( "AV" ) ) )
+         ( D():Familias( ::nView ) )->cFamCmb      := RetFld( AllTrim( upper( ::getExcelString( "AU" ) ) ), D():Familias( ::nView ), "cCodFam", "cNomFam" )
          ( D():Familias( ::nView ) )->lPubInt      := .t.
 
          ( D():Familias( ::nView ) )->( dbcommit() )
@@ -424,6 +409,59 @@ METHOD descargaImagenes()
    next
 
 Return .t.
+
+//---------------------------------------------------------------------------//
+
+METHOD getCampoClave()
+
+   local cCampoClave    := alltrim( ::getExcelString( ::cColumnaCampoClave ) )
+
+   if Val( cCampoClave ) < 100
+      cCampoClave       := Rjust( cCampoClave, "0", 3 )
+   end if
+
+Return cCampoClave
+
+//---------------------------------------------------------------------------//
+
+METHOD descargaESP()
+
+   MsgWait( "Pasamos a descargar las descripciones en español", "", 0.1 )
+
+   ::cFicheroExcel            := "C:\ficheros\articulosesp.xls"
+   ::nFilaInicioImportacion   := 2
+   ::cColumnaCampoClave       := 'B'   
+
+   ::openExcel()
+
+   while ( ::filaValida() )
+
+      if ::existeRegistro()
+         
+         if !Empty( ::getExcelString( "C" ) )
+
+            ( D():ArticuloLenguaje( ::nView ) )->( dbAppend() )
+
+            ( D():ArticuloLenguaje( ::nView ) )->cCodArt    := ::getExcelString( "B" )
+            ( D():ArticuloLenguaje( ::nView ) )->cCodLen    := "ESP "
+            ( D():ArticuloLenguaje( ::nView ) )->cDesTik    := ::getExcelString( "C" )
+            ( D():ArticuloLenguaje( ::nView ) )->cDesArt    := ::getExcelString( "C" )
+
+            ( D():ArticuloLenguaje( ::nView ) )->( dbcommit() )
+
+            ( D():ArticuloLenguaje( ::nView ) )->( dbunlock() )   
+
+         end if
+
+      end if 
+
+      ::siguienteLinea()
+
+   end if
+
+   ::closeExcel()
+
+Return ( .t. )
 
 //---------------------------------------------------------------------------//
 
