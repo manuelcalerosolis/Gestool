@@ -9,6 +9,8 @@ CLASS SQLBaseModel
   
    DATA     oRowSet
 
+   DATA     cTitle                        INIT "TitleModel"
+
    DATA     cTableName
    DATA     cDbfTableName
 	DATA	   hColumns
@@ -22,7 +24,7 @@ CLASS SQLBaseModel
    DATA	   cSQLInsert     
    DATA     cSQLSelect      
    
-   DATA     cColumnKey
+   DATA     cColumnKey                     INIT "id"
 
   	DATA	   hBuffer   
    DATA     cFind
@@ -80,6 +82,9 @@ CLASS SQLBaseModel
    METHOD   getColumnsOfCurrentTable()
    METHOD   compareCurrentAndActualColumns()
    METHOD   updateTableColumns()
+
+   METHOD   setFastReportRecorset( oFastReport, cSentence, cColumns )
+   METHOD      serializeColumns()
 
 END CLASS
 
@@ -265,7 +270,7 @@ METHOD getInsertSentence()
 
    Local cSQLInsert
 
-   cSQLInsert               := "INSERT INTO " + ::cTableName + " ( "
+   cSQLInsert        := "INSERT INTO " + ::cTableName + " ( "
 
    hEval( ::hBuffer, {| k, v | if ( k != ::cColumnKey, cSQLInsert += k + ", ", ) } )
 
@@ -275,8 +280,6 @@ METHOD getInsertSentence()
 
    cSQLInsert        := ChgAtEnd( cSQLInsert, ' )', 2 )
 
-   msgalert( cSQLInsert )
-
 Return ( cSQLInsert )
 
 //---------------------------------------------------------------------------//
@@ -284,7 +287,7 @@ Return ( cSQLInsert )
 METHOD convertRecnoToId( aRecno )
 
    local nRecno
-   local aId   := {}
+   local aId         := {}
 
    for each nRecno in ( aRecno )
       ::oRowset:goto( nRecno )
@@ -303,7 +306,7 @@ METHOD getDeleteSentence( aRecno )
 
    aeval( aId, {| v | cSQLDelete += ::cColumnKey + " = " + toSQLString( v ) + " or " } )
 
-   cSQLDelete        := ChgAtEnd( cSQLDelete, '', 4 )
+   cSQLDelete           := ChgAtEnd( cSQLDelete, '', 4 )
 
 Return ( cSQLDelete )
 
@@ -490,6 +493,52 @@ METHOD updateTableColumns()
 
 Return ( self )
 
+//---------------------------------------------------------------------------//
 
+METHOD serializeColumns()
 
+   local cColumns       := ""
 
+   heval( ::hColumns, {|k| cColumns += k + ";" } )
+
+Return ( cColumns )
+
+//---------------------------------------------------------------------------//
+
+METHOD setFastReportRecorset( oFastReport, cSentence, cColumns )
+
+   local oStmt
+   local oRowSet
+
+   default cSentence := ::getSelectSentence()
+   default cColumns  := ::serializeColumns() // heval( ::hColumns, {|k| QOut( k, v , i ) } )
+
+      msgalert( cColumns )
+
+   if empty( oFastReport )
+      RETURN ( Self )
+   end if
+
+   try 
+      oStmt          := getSQLDatabase():Query( cSentence )
+      oRowSet        := oStmt:fetchRowSet()
+
+   catch
+      msgstop( hb_valtoexp( getSQLDatabase():errorInfo() ) )
+
+      if !empty( oStmt )
+        oStmt:free()
+      end if    
+   
+   end
+
+   oFastReport:SetUserDataSet( ::cTitle, cColumns,;
+                     {|| oRowSet:gotop()  },;
+                     {|| oRowSet:skip(1)  },;
+                     {|| oRowSet:skip(-1) },;
+                     {|| oRowSet:eof()    },;
+                     {|nField| oRowSet:fieldGet( nField ) } )
+
+Return ( self )
+
+//---------------------------------------------------------------------------//

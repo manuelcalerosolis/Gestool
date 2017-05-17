@@ -281,7 +281,7 @@ RETURN ( .t. )
 
 FUNCTION Test()
 
-   // tiposventas():New():ActivateBrowse()
+   // tiposventasModel():New():setFastReportRecorset()
 
 Return ( nil )
 
