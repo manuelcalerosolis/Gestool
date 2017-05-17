@@ -72,7 +72,7 @@ RETURN ( Self )
 
 //---------------------------------------------------------------------------//
 
-METHOD getLineasProducccion()
+METHOD getLineasProducccion( cCodigoCategoria )
 
    local cSentence
    local cInsertSentence

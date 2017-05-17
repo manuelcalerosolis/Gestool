@@ -945,7 +945,7 @@ METHOD StartAdministratorTask()
 
             ::Reindex()
 
-            ::MigrateEmpresaToSQLite()
+            //::MigrateEmpresaToSQLite()
 
             aEmpresa[ 5 ]   := .t.
 
