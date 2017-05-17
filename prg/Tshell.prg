@@ -348,6 +348,8 @@ CLASS TShell FROM TMdiChild
    METHOD setWindowsBar()
 
    METHOD aSelected()                        INLINE ( ::oBrw:aSelected )
+   
+   METHOD RefreshCurrent()                   INLINE ( ::oBrw:RefreshCurrent() )
 
    METHOD getActiveExpresionFilter()         
 

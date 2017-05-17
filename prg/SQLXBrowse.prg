@@ -129,9 +129,10 @@ METHOD setModel( oModel )
    ::bGoBottom        := {|| oModel:oRowSet:GoBottom() }
    ::bBof             := {|| oModel:oRowSet:Bof() }
    ::bEof             := {|| oModel:oRowSet:Eof() }
-   ::bBookMark        := {| n | iif( n == nil, oModel:oRowSet:RecNo(), oModel:oRowSet:GoTo( n ) ) }
    ::bSkip            := {| n | iif( n == nil, n := 1, ), oModel:oRowSet:Skipper( n ) }
    ::bKeyNo           := {| n | oModel:oRowSet:RecNo() }
+   ::bBookMark        := {| n | iif( n == nil, oModel:oRowSet:RecNo(), oModel:oRowSet:GoTo( n ) ) }
+   ::bKeyNo           := {| n | iif( n == nil, oModel:oRowSet:RecNo(), oModel:oRowSet:GoTo( n ) ) }
    ::bKeyCount        := {|| oModel:oRowSet:RecCount() }
 
    if ::oVScroll() != nil

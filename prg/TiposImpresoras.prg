@@ -38,7 +38,7 @@ METHOD buildSQLShell()
 
    disableAcceso()
 
-   ::oShell                := SQLTShell():New( 2, 10, 18, 70, "Tipos de impresoras", , oWnd(), , , .f., , , ::oModel, , , , , {}, {|| ::Edit() },, {|| ::Delete() },, nil, ::nLevel, "gc_printer2_16", ( 104 + ( 0 * 256 ) + ( 63 * 65536 ) ),,, .t. )
+   ::oShell                := SQLTShell():New( 2, 10, 18, 70, "Tipos de impresoras", , oWnd(), , , .f., , , ::oModel, , , , , {}, {|| ::Edit( ::oShell:getBrowse() ) },, {|| ::Delete( ::oShell:getBrowse() ) },, nil, ::nLevel, "gc_printer2_16", ( 104 + ( 0 * 256 ) + ( 63 * 65536 ) ),,, .t. )
 
       with object ( ::oShell:AddCol() )
          :cHeader          := "Id"

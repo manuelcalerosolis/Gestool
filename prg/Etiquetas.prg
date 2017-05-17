@@ -11,11 +11,6 @@ CLASS Etiquetas FROM SQLBaseView
    DATA     nSelectedNode
 
    DATA     allSelectedNode
-      METHOD   fillAllSelectedNode( oTree, aItems )
-      METHOD   setAllSelectedNode( aSelectedItmes )         INLINE ( iif(  hb_isarray( aSelectedItmes ),;
-                                                                           ::allSelectedNode := aSelectedItmes,;
-                                                                           ::allSelectedNode := {} ) )
-      METHOD   getAllSelectedNode()                         INLINE ( ::allSelectedNode )
 
    METHOD   New()
 
@@ -58,6 +53,12 @@ CLASS Etiquetas FROM SQLBaseView
    METHOD   appendOnBrowse( oTree )                         
    METHOD   editOnBrowse( oTree )
 
+   METHOD   fillAllSelectedNode( oTree, aItems )
+   METHOD   setAllSelectedNode( aSelectedItmes )            INLINE ( iif(  hb_isarray( aSelectedItmes ),;
+                                                                           ::allSelectedNode := aSelectedItmes,;
+                                                                           ::allSelectedNode := {} ) )
+   METHOD   getAllSelectedNode()                            INLINE ( ::allSelectedNode )
+
 END CLASS
 
 //---------------------------------------------------------------------------//
@@ -92,12 +93,12 @@ METHOD buildSQLShell()
 
    disableAcceso()
 
-   ::oShell                := SQLTShell():New( 2, 10, 18, 70, "Etiquetas", , oWnd(), , , .f., , , ::oModel, , , , , {}, {|| ::Edit() },, {|| ::Delete() },, nil, ::nLevel, "gc_bookmarks_16", ( 104 + ( 0 * 256 ) + ( 63 * 65536 ) ),,, .t. )
+   ::oShell                := SQLTShell():New( 2, 10, 18, 70, "Etiquetas", , oWnd(), , , .f., , , ::oModel, , , , , {}, {|| ::Edit( ::oShell:getBrowse() ) },, {|| ::Delete( ::oShell:getBrowse() ) },, nil, ::nLevel, "gc_bookmarks_16", ( 104 + ( 0 * 256 ) + ( 63 * 65536 ) ),,, .t. )
 
       with object ( ::oShell:AddCol() )
          :cHeader          := "ID de etiqueta"
          :cSortOrder       := "id"
-         :bEditValue       := {|| ::oModel:getRowSet():fieldGet( "id" ) }
+         :bStrData         := {|| ::oModel:getRowSet():fieldGet( "id" ) }
          :nWidth           := 100
          :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | ::clickOnHeader( oCol, ::oShell:getBrowse(), ::oShell:getCombobox() ) }
       end with
@@ -105,7 +106,7 @@ METHOD buildSQLShell()
       with object ( ::oShell:AddCol() )
          :cHeader          := "Nombre de la etiqueta"
          :cSortOrder       := "nombre"
-         :bEditValue       := {|| ::oModel:getRowSet():fieldGet( "nombre" ) }
+         :bStrData         := {|| ::oModel:getRowSet():fieldGet( "nombre" ) }
          :nWidth           := 400
          :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | ::clickOnHeader( oCol, ::oShell:getBrowse(), ::oShell:getCombobox() ) }
       end with
@@ -113,7 +114,7 @@ METHOD buildSQLShell()
       with object ( ::oShell:AddCol() )
          :cHeader          := "Nombre del Padre"
          :cSortOrder       := "nombre_padre"
-         :bEditValue       := {|| ::oModel:getRowSet():fieldGet( "nombre_padre" ) }
+         :bStrData         := {|| ::oModel:getRowSet():fieldGet( "nombre_padre" ) }
          :nWidth           := 100
          :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | ::clickOnHeader( oCol, ::oShell:getBrowse(), ::oShell:getCombobox() ) }
       end with
@@ -126,8 +127,8 @@ METHOD buildSQLShell()
 
    ACTIVATE WINDOW ::oShell
 
-   ::oShell:bValid   := {|| ::saveHistory( ::getHistoryNameShell() , ::oShell:getBrowse() ), .t. }
-   ::oShell:bEnd     := {|| ::destroySQLModel() }
+   ::oShell:bValid         := {|| ::saveHistory( ::getHistoryNameShell() , ::oShell:getBrowse() ), .t. }
+   ::oShell:bEnd           := {|| ::destroySQLModel() }
 
    ::oShell:setComboBoxChange( {|| ::changeCombo( ::oShell:getBrowse(), ::oShell:getCombobox() ) } )
 
