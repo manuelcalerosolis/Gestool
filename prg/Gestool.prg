@@ -1062,7 +1062,82 @@ Return ( by( nRow ) )
 //---------------------------------------------------------------------------//
 
 Function mainTest()
+/*
+    local oWnd, oBrw, oCol
+    local oDb, oStmt, oRS // Objetos de HDO
+
+    oDb := THDO():new( "sqlite" )
    
-Return nil
+    if !oDb:connect( "Database\GesTool.db" )
+        oDb:disconnect()
+      return nil 
+    endif
+   
+    oStmt := oDb:prepare( "SELECT * FROM etiquetas ORDER BY id" )
+   
+    oRS := oStmt:fetchRowSet()
+
+    DEFINE WINDOW oWnd TITLE "Testing HDO - Fivewin"
+
+      oBrw := TXBrowse():New()
+      
+         oCol := oBrw:AddCol()
+         oCol:nWidth   := 50
+         oCol:bStrData := { || oRS:FieldGet( 1 ) }
+         oCol:cHeader  := oRS:FieldName( 1 )
+
+         oCol := oBrw:AddCol()
+         oCol:nWidth   := 250
+         oCol:bStrData := { || oRS:FieldGet( 2 ) }
+         oCol:cHeader  := oRS:FieldName( 2 )
+
+         oCol := oBrw:AddCol()
+         oCol:nWidth   := 50
+         oCol:bStrData := { || oRS:FieldGet( 3 ) }
+         oCol:cHeader  := oRS:FieldName( 3 )
+
+         oCol := oBrw:AddCol()
+         oCol:nWidth   := 50
+         oCol:bStrData := { || oRS:FieldGet( 4 ) }
+         oCol:cHeader  := oRS:FieldName( 4 )
+
+      // Asignamos los codeblock de movimiento
+      MySetBrowse( oBrw, oRS )
+
+      oWnd:oClient  := oBrw
+
+      oBrw:CreateFromCode()
+   
+    ACTIVATE WINDOW oWnd
+
+    oRS:free()
+    oStmt:free()
+    oDb:disconnect()
+
+return nil
+
+//---------------------------------------------------------------------------//
+// Asigna los codeblock de movimiento a un Browse
+
+static function MySetBrowse( oBrw, oRS )
+
+   oBrw:lAutoSort := .f.
+    oBrw:nDataType := DATATYPE_USER
+    oBrw:bGoTop := {|| oRS:GoTop() }
+    oBrw:bGoBottom := {|| oRS:GoBottom() }
+    oBrw:bSkip := {| n | oRS:Skipper( n ) }
+    oBrw:bBof := {|| oRS:Bof() }
+    oBrw:bEof := {|| oRS:Eof() }
+    oBrw:bKeyCount := {|| oRS:RecCount() }
+    oBrw:bKeyNo := {| n | if( n == nil, oRS:RecNo(), oRS:GoTo( n ) ) }
+    oBrw:bBookMark := oBrw:bKeyNo
+
+   if oBrw:oVScroll() != nil
+      oBrw:oVscroll():SetRange( 1, oRS:RecCount() )
+   endif
+
+   oBrw:lFastEdit := .t.
+*/
+Return ( nil )
 
 //---------------------------------------------------------------------------//

@@ -78,7 +78,7 @@ METHOD getLineasProducccion()
    local cInsertSentence
    local cValueSentence := ""
    local dbfAlias       := "PROLIN"
-   local dbfTableName   := "EMP" + cCodEmp() + "PROLIN" 
+   local dbfTableName   := "EMP" + cCodEmp() + "PROLIN"
    local aSelect        := EtiquetasModel():arrayCodigoAndId()
 
    cSentence            := "SELECT cSerOrd, nNumOrd, cSufOrd, nNumLin, cCodCat "       + ;
@@ -97,7 +97,7 @@ METHOD getLineasProducccion()
          cValueSentence += "( " + toSQLString( cCodEmp() )                                                                             + ", "  
          cValueSentence += toSQLString( dbfTableName )                                                                                 + ", "
          cValueSentence += (dbfAlias)->cSerOrd + str( (dbfAlias)->nNumOrd, 9 ) + (dbfAlias)->cSufOrd + str( (dbfAlias)->nNumLin, 4 )   + ", "
-         cValueSentence += ::getIdEtiquetaFromCategoria( cCodigoCategoria, aSelect )
+         // cValueSentence += ::getIdEtiquetaFromCategoria( cCodigoCategoria, aSelect )
 
          ( dbfAlias )->( dbskip() )
       end while
