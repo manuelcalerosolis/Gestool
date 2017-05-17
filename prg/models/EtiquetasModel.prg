@@ -62,7 +62,7 @@ METHOD New()
                                        "empresa"   => {  "create"    => "CHAR ( 4 )"                                 ,;
                                                          "text"      => "Empresa a la que pertenece la etiqueta"}    ,;
                                        "id_padre"  => {  "create"    => "INTEGER"                                    ,;
-                                                         "text"      => "Identificador de la etiqueta padre" }       ,;
+                                                         "text"      => "Identificador de la etiqueta padre"}        ,;
                                        "codigo"    => {  "create"    => "CHAR ( 10 )"                                ,;
                                                          "text"      => "Identificador de la etiqueta padre"         }}
 
@@ -74,7 +74,7 @@ METHOD New()
                                     " ON id_padre = id_del_padre"
 
    ::hDbfToCategory              := {  "Categorias" => { "padre" =>  "Categorias"   ,;
-                                                         "hijos" =>  "cNombre"   }}
+                                                         "hijos" =>  "cNombre"   }  }
 
 
 

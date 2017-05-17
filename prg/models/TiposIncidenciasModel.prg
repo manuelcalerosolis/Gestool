@@ -31,6 +31,9 @@ METHOD New()
    ::hColumns                   	:= {  "id"                 => {  "create"    => "INTEGER PRIMARY KEY AUTOINCREMENT"          ,;
                                                                   "text"		=> "Identificador"                              ,;
    															                  "dbfField" 	=> "" }                                         ,;
+                                       "codigo"             => {  "create"    => "VARCHAR( 3 )"                               ,;
+                                                                  "text"      => "Código de identificación en DBF"            ,; 
+                                                                  "dbfField"  => "CCODINCI"}                                  ,;  
                                        "nombre_incidencia"  => {  "create"    => "VARCHAR (50) NOT NULL"                      ,;
                                                                   "text"      => "Nombre de la incidencia"                    ,;
                                                                   "dbfField"  => "CNOMINCI"}                                  ,;
@@ -55,7 +58,7 @@ RETURN ( aSelect )
 
 METHOD exist( cValue )
 
-   local cSentence               := "SELECT id FROM " + ::cTableName + " WHERE id = " + toSQLString( cValue )
+   local cSentence               := "SELECT id FROM " + ::cTableName + " WHERE codigo = " + toSQLString( cValue )
    local aSelect                 := ::selectFetchArray( cSentence )
 
 RETURN ( !empty( aSelect ) )
@@ -64,7 +67,7 @@ RETURN ( !empty( aSelect ) )
 
 METHOD translateNameFromId( nId )
 
-   local cSentence   := "SELECT nombre_incidencia from " + ::cTableName + " WHERE empresa = " + toSQLString( cCodEmp() ) + " AND id = " + toSQLString( nID )
+   local cSentence   := "SELECT nombre_incidencia from " + ::cTableName + " WHERE empresa = " + toSQLString( cCodEmp() ) + " AND codigo = " + toSQLString( nID )
 
    local aNombre     := ::selectFetchArray( cSentence )
 

@@ -90,19 +90,7 @@ METHOD Dialog( lZoom )
       ID          120 ;
       WHEN        ( ! ::isZoomMode() ) ;
       OF          oDlg
-
-   REDEFINE RADIO oGetUnidad ;
-      VAR      ::oModel:hBuffer[ "unidades" ] ;
-      ID       130, 131, 132 ;
-      WHEN     ( ! ::isZoomMode() ) ;
-      OF       oDlg
-
-   REDEFINE RADIO oGetImporte ;
-      VAR      ::oModel:hBuffer[ "importes" ] ;
-      ID       140, 141, 142 ;
-      WHEN     ( ! ::isZoomMode() ) ;
-      OF       oDlg
-
+      
    REDEFINE BUTTON ;
       ID          IDOK ;
       OF          oDlg ;

@@ -36,13 +36,7 @@ METHOD New()
                                                          "dbfField"  => "CCODMOV"}                             ,;
                                        "nombre"    => {  "create"    => "VARCHAR( 20 ) NOT NULL"               ,;
    															         "text"		=> "Descripción del movimiento"           ,;
-   															         "dbfField" 	=> "CDESMOV"}                             ,;
-                                       "unidades"  => {  "create"    => "INTEGER"                              ,;   
-                                                         "text"      => "Comportamiento en unidades"           ,;
-                                                         "dbfField"  => "NUNDMOV"}                             ,;
-                                       "importes"  => {  "create"    => "INTEGER"                              ,;
-                                                         "text"      => "Comportamiento del precio"            ,;   
-                                                         "dbfField"  => "NIMPMOV"}                             }
+   															         "dbfField" 	=> "CDESMOV"}                             }
 
    ::Super:New()
 

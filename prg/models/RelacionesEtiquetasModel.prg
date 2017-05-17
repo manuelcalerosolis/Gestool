@@ -12,7 +12,7 @@ CLASS RelacionesEtiquetasModel FROM SQLBaseEmpresasModel
 
    METHOD New()
 
-   METHOD TrasnlateCodigoToId()
+   METHOD TranslateCodigoToId()
 
    METHOD getLineasProducccion()
 
@@ -106,7 +106,7 @@ RETURN ( cInsertSentence )
 
 //---------------------------------------------------------------------------//
 
-METHOD TrasnlateCodigoToId()
+METHOD TranslateCodigoToId()
 
    local cSentenceSQLite := ::getLineasProducccion()
 
