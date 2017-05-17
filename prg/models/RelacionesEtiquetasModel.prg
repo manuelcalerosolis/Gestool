@@ -88,13 +88,8 @@ METHOD getLineasProducccion( cCodigoCategoria )
 
          cValueSentence += "( " + toSQLString( cCodEmp() )                                                                             + ", "  
          cValueSentence += toSQLString( dbfTableName )                                                                                 + ", "
-<<<<<<< HEAD
          cValueSentence += "'" + (dbfAlias)->cSerOrd + str( (dbfAlias)->nNumOrd, 9 ) + (dbfAlias)->cSufOrd + str( (dbfAlias)->nNumLin, 4 )   + "', "
          cValueSentence += toSQLString( ::getIdEtiquetaFromCategoria( (dbfAlias)->cCodCat, aSelect ) )                                 + " ), "
-=======
-         cValueSentence += (dbfAlias)->cSerOrd + str( (dbfAlias)->nNumOrd, 9 ) + (dbfAlias)->cSufOrd + str( (dbfAlias)->nNumLin, 4 )   + ", "
-         // cValueSentence += ::getIdEtiquetaFromCategoria( cCodigoCategoria, aSelect )
->>>>>>> origin/master
 
          ( dbfAlias )->( dbskip() )
       end while

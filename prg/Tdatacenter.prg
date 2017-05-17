@@ -4858,13 +4858,8 @@ RETURN ( Self )
 
 METHOD MigrateEmpresaToSQLite()
 
-<<<<<<< HEAD
-   /*EtiquetasModel();
-      :New();
-      :TrasnlateCodigoToId()*/
 
-=======
->>>>>>> origin/master
+
 RETURN ( Self )
 
 //---------------------------------------------------------------------------//

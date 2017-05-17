@@ -46,7 +46,8 @@ METHOD New()
                                     EtiquetasModel():New():getSQLCreateTable(),           ;
                                     SituacionesModel():New():getSQLCreateTable(),         ;
                                     HistoricosUsuariosModel():New():getSQLCreateTable(),  ;
-                                    RelacionesEtiquetasModel():New():getSQLCreateTable()  }
+                                    RelacionesEtiquetasModel():New():getSQLCreateTable(), ;
+                                    TiposVentasModel():New():getSQLCreateTable()          }
 
    ::cPathDatabaseSQLite      := fullCurDir() + "Database\" 
 

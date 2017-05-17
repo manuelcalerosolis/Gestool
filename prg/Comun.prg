@@ -281,11 +281,9 @@ RETURN ( .t. )
 
 FUNCTION Test()
 
-<<<<<<< HEAD
+TiposVentas():New():ActivateShell()
+
 Return ( nil )
-=======
-RETURN ( nil )
->>>>>>> origin/master
 
 //---------------------------------------------------------------------------//
 

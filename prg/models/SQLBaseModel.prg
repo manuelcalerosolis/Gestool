@@ -275,6 +275,8 @@ METHOD getInsertSentence()
 
    cSQLInsert        := ChgAtEnd( cSQLInsert, ' )', 2 )
 
+   msgalert( cSQLInsert )
+
 Return ( cSQLInsert )
 
 //---------------------------------------------------------------------------//

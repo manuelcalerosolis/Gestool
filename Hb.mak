@@ -297,7 +297,6 @@ TInfLPrv.prg            										\
 Tinfofr.prg             										\
 Catalogo.prg            										\
 Ubicacion.prg           										\
-TipIncidencias.prg      										\
 TipInci.prg             										\
 TInfListInci.prg        										\
 TTarCli.prg             										\
@@ -405,6 +404,7 @@ TiposImpresoras.prg       										\
 TiposNotas.prg       										\
 Etiquetas.prg       										\
 TiposIncidencias.prg       										\
+TiposVentas.prg       										\
 PageIni.prg             										\
 TpvTactil.prg           										\
 TpvUtilidadesMesa.prg 											\
@@ -500,6 +500,7 @@ TiposImpresorasModel.prg 										\
 TiposNotasModel.prg 												\
 EtiquetasModel.prg 												\
 TiposIncidenciasModel.prg 										\
+TiposVentasModel.prg 										\
 RelacionesEtiquetasModel.prg 										\
 ArticulosModel.prg                                    \
 HistoricosUsuariosModel.prg                           \
@@ -788,7 +789,6 @@ Movilges.obj            										\
 Tinfofr.obj             										\
 Catalogo.obj            										\
 Ubicacion.obj           										\
-TipIncidencias.obj      										\
 TipInci.obj             										\
 TInfListInci.obj        										\
 TTarCli.obj             										\
@@ -896,6 +896,7 @@ TiposImpresoras.obj       									\
 TiposNotas.obj       										\
 Etiquetas.obj       											\
 TiposIncidencias.obj       								\
+TiposVentas.obj       								\
 PageIni.obj             									\
 TpvTactil.obj           									\
 TpvUtilidadesMesa.obj 										\
@@ -993,6 +994,7 @@ TiposImpresorasModel.obj 										\
 TiposNotasModel.obj 										\
 EtiquetasModel.obj 										\
 TiposIncidenciasModel.obj 										\
+TiposVentasModel.obj 										\
 RelacionesEtiquetasModel.obj 										\
 ArticulosModel.obj                                    \
 HistoricosUsuariosModel.obj                                    \
@@ -1266,7 +1268,6 @@ $(OBJ)\Movilges.obj             		+
 $(OBJ)\Tinfofr.obj              		+
 $(OBJ)\Catalogo.obj             		+
 $(OBJ)\Ubicacion.obj            		+
-$(OBJ)\TipIncidencias.obj       		+
 $(OBJ)\TipInci.obj              		+
 $(OBJ)\TInfListInci.obj         		+
 $(OBJ)\TTarCli.obj              		+
@@ -1376,6 +1377,7 @@ $(OBJ)\TiposImpresoras.obj      					+
 $(OBJ)\TiposNotas.obj      							+
 $(OBJ)\Etiquetas.obj      							+
 $(OBJ)\TiposIncidencias.obj      					+
+$(OBJ)\TiposVentas.obj      					+
 $(OBJ)\PageIni.obj              					+
 $(OBJ)\TpvTactil.obj            					+
 $(OBJ)\TpvUtilidadesMesa.obj 						+
@@ -1474,6 +1476,7 @@ $(OBJ)\TiposImpresorasModel.obj                 +
 $(OBJ)\TiposNotasModel.obj                 +
 $(OBJ)\EtiquetasModel.obj                 +
 $(OBJ)\TiposIncidenciasModel.obj                 +
+$(OBJ)\TiposVentasModel.obj                 +
 $(OBJ)\RelacionesEtiquetasModel.obj                 +
 $(OBJ)\HistoricosUsuariosModel.obj
 $<,$*
