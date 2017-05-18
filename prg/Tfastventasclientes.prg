@@ -229,7 +229,7 @@ METHOD OpenFiles() CLASS TFastVentasClientes
 
       D():ClientesIncidencias( ::nView )
 
-      D():TiposIncidencias( ::nView )
+      //D():TiposIncidencias( ::nView )
 
       D():Clientes( ::nView )
 

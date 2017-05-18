@@ -125,10 +125,6 @@ METHOD lResource( cFld ) CLASS TFastProduccion
       return .f.
    end if
 
-   if !::lGrupoCategoria( .t. )
-      return .f.
-   end if
-
    if !::lGrupoTemporada( .t. )
       return .f.
    end if
@@ -354,9 +350,7 @@ METHOD lValidMaterialProducido()
             (  ( ::oGrupoGFamilia:Cargo:Desde == Space( __LENGRUPOSFAMILIAS__ ) .and. ::oGrupoGFamilia:Cargo:Hasta == Replicate( "Z", __LENGRUPOSFAMILIAS__ ) ) .or.;
                ( ::oMaterialProducido:cGrpFam >= ::oGrupoGFamilia:Cargo:Desde .and. ::oMaterialProducido:cGrpFam <= ::oGrupoGFamilia:Cargo:Hasta ) ) .and.;
             (  ( ::oGrupoTArticulo:Cargo:Desde == Space( __LENTIPOSARTICULOS__ ) .and. ::oGrupoTArticulo:Cargo:Hasta == Replicate( "Z", __LENTIPOSARTICULOS__ ) ) .or.;
-               ( ::oMaterialProducido:cCodTip >= ::oGrupoTArticulo:Cargo:Desde .and. ::oMaterialProducido:cCodTip <= ::oGrupoTArticulo:Cargo:Hasta ) ) .and.;
-            (  ( ::oGrupoCategoria:Cargo:Desde == Space( __LENCATEGORIAS__ ) .and. ::oGrupoCategoria:Cargo:Hasta == Replicate( "Z", __LENCATEGORIAS__ ) ) .or.;
-               ( ::oMaterialProducido:cCodCat >= ::oGrupoCategoria:Cargo:Desde .and. ::oMaterialProducido:cCodCat <= ::oGrupoCategoria:Cargo:Hasta ) )
+               ( ::oMaterialProducido:cCodTip >= ::oGrupoTArticulo:Cargo:Desde .and. ::oMaterialProducido:cCodTip <= ::oGrupoTArticulo:Cargo:Hasta ) )
 
             lValid := .t.
 
@@ -390,9 +384,7 @@ METHOD lValidMateriaPrima()
             (  ( ::oGrupoGFamilia:Cargo:Desde == Space( __LENGRUPOSFAMILIAS__ ) .and. ::oGrupoGFamilia:Cargo:Hasta == Replicate( "Z", __LENGRUPOSFAMILIAS__ ) ) .or.;
                ( ::oMateriasPrimas:cGrpFam >= ::oGrupoGFamilia:Cargo:Desde .and. ::oMateriasPrimas:cGrpFam <= ::oGrupoGFamilia:Cargo:Hasta ) ) .and.;
             (  ( ::oGrupoTArticulo:Cargo:Desde == Space( __LENTIPOSARTICULOS__ ) .and. ::oGrupoTArticulo:Cargo:Hasta == Replicate( "Z", __LENTIPOSARTICULOS__ ) ) .or.;
-               ( ::oMateriasPrimas:cCodTip >= ::oGrupoTArticulo:Cargo:Desde .and. ::oMateriasPrimas:cCodTip <= ::oGrupoTArticulo:Cargo:Hasta ) ) .and.;
-            (  ( ::oGrupoCategoria:Cargo:Desde == Space( __LENCATEGORIAS__ ) .and. ::oGrupoCategoria:Cargo:Hasta == Replicate( "Z", __LENCATEGORIAS__ ) ) .or.;
-               ( ::oMateriasPrimas:cCodCat >= ::oGrupoCategoria:Cargo:Desde .and. ::oMateriasPrimas:cCodCat <= ::oGrupoCategoria:Cargo:Hasta ) )
+               ( ::oMateriasPrimas:cCodTip >= ::oGrupoTArticulo:Cargo:Desde .and. ::oMateriasPrimas:cCodTip <= ::oGrupoTArticulo:Cargo:Hasta ) )
 
             lValid := .t.
 
@@ -754,16 +746,6 @@ METHOD getFilterMaterialProducido() CLASS TFastProduccion
 
    end if
 
-   if ::oGrupoCategoria:Cargo:Desde != Space( __LENCATEGORIAS__ ) .or. ::oGrupoCategoria:Cargo:Hasta != Replicate( "Z", __LENCATEGORIAS__ )
-      
-      if !Empty( cExpresionFilter )
-         cExpresionFilter  += " .and. "
-      end if
-
-      cExpresionFilter     += "Field->cCodCat >= '" + AllTrim( ::oGrupoCategoria:Cargo:Desde ) + "' .and. Field->cCodCat <= '" + AllTrim( ::oGrupoCategoria:Cargo:Hasta ) + "'"
-
-   end if
-
 Return ( cExpresionFilter )
 
 //---------------------------------------------------------------------------//
@@ -813,16 +795,6 @@ METHOD getFilterMateriaPrima() CLASS TFastProduccion
       end if
 
       cExpresionFilter     += "Field->cCodTip >= '" + AllTrim( ::oGrupoTArticulo:Cargo:Desde ) + "' .and. Field->cCodTip <= '" + AllTrim( ::oGrupoTArticulo:Cargo:Hasta ) + "'"
-
-   end if
-
-   if ::oGrupoCategoria:Cargo:Desde != Space( __LENCATEGORIAS__ ) .or. ::oGrupoCategoria:Cargo:Hasta != Replicate( "Z", __LENCATEGORIAS__ )
-      
-      if !Empty( cExpresionFilter )
-         cExpresionFilter  += " .and. "
-      end if
-
-      cExpresionFilter     += "Field->cCodCat >= '" + AllTrim( ::oGrupoCategoria:Cargo:Desde ) + "' .and. Field->cCodCat <= '" + AllTrim( ::oGrupoCategoria:Cargo:Hasta ) + "'"
 
    end if
 
