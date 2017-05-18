@@ -6974,7 +6974,7 @@ RETURN .T.
 
 //---------------------------------------------------------------------------//
 
-STATIC FUNCTION selectedGenFacCli( nDevice )
+STATIC FUNCTION selectedGenFacCli( nDevice, cTitle, cCodigoDocumento )
 
    local nPos
 
@@ -6982,7 +6982,7 @@ STATIC FUNCTION selectedGenFacCli( nDevice )
 
       ( D():FacturasClientes( nView ) )->( dbgoto( nPos ) )
 
-      genFacCli( nDevice )
+      genFacCli( nDevice, cTitle, cCodigoDocumento )
 
       SysRefresh()
 
@@ -7019,7 +7019,7 @@ static function lGenFacCli( oBrw, oBtn, nDevice )
 
          bAction  := bGenFacCli( nDevice, "Imprimiendo facturas de clientes", ( D():Documentos( nView ) )->Codigo )
 
-         oWndBrw:NewAt( "gc_document_white_", , , bAction, Rtrim( ( D():Documentos( nView ) )->cDescrip ) , , , , , oBtn )
+         oWndBrw:NewAt( "gc_document_white_", , , bAction, rtrim( ( D():Documentos( nView ) )->cDescrip ) , , , , , oBtn )
 
          ( D():Documentos( nView ) )->( dbSkip() )
 
