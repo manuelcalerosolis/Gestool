@@ -258,7 +258,7 @@ METHOD insertLinesKitsGestool( nNumLin, cCodArt, oQuery ) CLASS TComercioDocumen
             ( ::oDocumentLineDatabase() )->cDetalle    := ( D():Articulos( ::getView() ) )->Nombre
             ( ::oDocumentLineDatabase() )->mLngDes     := ( D():Articulos( ::getView() ) )->Descrip
             ( ::oDocumentLineDatabase() )->cUnidad     := ( D():Articulos( ::getView() ) )->cUnidad
-            ( ::oDocumentLineDatabase() )->nPesoKg     := ( D():Articulos( ::getView() ) )->nPesoKg
+            ( ::oDocumentLineDatabase() )->nPesoKg     := ( D():Articulos( ::getView() ) )->nPesoKg 
             ( ::oDocumentLineDatabase() )->cPesoKg     := ( D():Articulos( ::getView() ) )->cUnidad
             ( ::oDocumentLineDatabase() )->nVolumen    := ( D():Articulos( ::getView() ) )->nVolumen
             ( ::oDocumentLineDatabase() )->cVolumen    := ( D():Articulos( ::getView() ) )->cVolumen
