@@ -4502,6 +4502,9 @@ METHOD insertStructureInformation() CLASS TComercio
 
       ::MeterTotalText( "Subiendo la información adicional a los productos." )
 
+      ::TComercioCategory:insertTopMenuPs()
+      ::MeterTotalText( "Recalculando Top Menu." )
+
       ::TComercioProduct:insertAditionalInformation()
 
       ::prestaShopDisConnect()

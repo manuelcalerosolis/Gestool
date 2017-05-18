@@ -1802,6 +1802,9 @@ METHOD AddPedidoClientes() CLASS TFastVentasArticulos
 
          ::oDbf:cCodObr    := ( D():PedidosClientesLineas( ::nView ) )->cObrLin
 
+         ::oDbf:lKitArt    := ( D():PedidosClientesLineas( ::nView )  )->lKitArt
+         ::oDbf:lKitChl    := ( D():PedidosClientesLineas( ::nView )  )->lKitChl
+
          ::oDbf:cCodFam    := ( D():PedidosClientesLineas( ::nView ) )->cCodFam
          ::oDbf:cNomFam    := RetFld( ::oDbf:cCodFam, D():Familias( ::nView ) )
          ::oDbf:cGrpFam    := ( D():PedidosClientesLineas( ::nView ) )->cGrpFam

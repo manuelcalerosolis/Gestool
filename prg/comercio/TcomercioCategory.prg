@@ -42,6 +42,8 @@ CLASS TComercioCategory FROM TComercioConector
    METHOD buildImageCategory( hCategoryProduct )
    METHOD uploadImageCategory( hCategoryProduct )
 
+   METHOD insertTopMenuPs()
+
 END CLASS
 
 //---------------------------------------------------------------------------//
@@ -643,6 +645,82 @@ METHOD uploadImageCategory( hCategoryProduct )
       SysRefresh()
 
    next
+
+RETURN ( .t. )
+
+//---------------------------------------------------------------------------//
+
+METHOD insertTopMenuPs() CLASS TComercioCategory
+
+   local cQuery
+   local oQuery
+   local aConfig
+   local cConfig           := ""
+   local cResult           := ""
+   local aCategories       := {}
+   local cCategory         := ""
+
+   /*
+   obtenemos los valores de configuración que hay actualmente------------------
+   */
+
+   cQuery                  := "SELECT * FROM " + ::cPrefixTable( "configuration" ) + " WHERE name = 'MOD_BLOCKTOPMENU_ITEMS'"
+   oQuery                  := ::queryExecDirect( cQuery )
+
+   if !( oQuery:Open() )
+      ::meterProcesoText( "Error al ejecutar " + "SELECT * FROM " + ::cPrefixTable( "configuration" ) + " WHERE name = 'MOD_BLOCKTOPMENU_ITEMS'" )
+      RETURN ( .f. )
+   end if
+
+   aConfig              := hb_atokens( oQuery:FieldGetByName( "value" ), "," )
+
+   /*
+   obtenemos los valores de las categorias que queremos meter------------------
+   */
+   
+   cQuery                  := "SELECT * FROM " + ::cPrefixTable( "category" ) + " WHERE id_parent=2"
+   oQuery                  := ::queryExecDirect( cQuery )
+
+   if !( oQuery:Open() )
+      ::meterProcesoText( "Error al ejecutar " + "SELECT * FROM " + ::cPrefixTable( "category" ) )
+   end if
+   
+   if oQuery:RecCount() > 0
+
+      oQuery:GoTop()
+         
+      while !oQuery:Eof()
+
+         aAdd( aCategories, "CAT" + AllTrim( Str( oQuery:FieldGet( 1 ) ) ) )
+
+         oQuery:Skip()
+
+      end while
+
+   end if
+
+   /*
+   Fusionamos los dos arrays y creamos la cadena que vamos a guardar-----------
+   */
+
+   for each cCategory in aCategories
+      cResult  += cCategory + ","
+   next
+
+   for each cConfig in aConfig
+      if substr( cConfig, 1, 3 ) != "CAT"
+         cResult  += cConfig + ","
+      end if
+   next
+
+   /*
+   Actualizamos la tabla de confugiración--------------------------------------
+   */
+
+   cQuery    := "UPDATE " + ::cPrefixTable( "configuration" ) + " SET value = '" + cResult + "' WHERE name = 'MOD_BLOCKTOPMENU_ITEMS'"
+   if !::commandExecDirect( cQuery )
+      ::meterProcesoText( "Error al actualizar top menu" )
+   end if
 
 RETURN ( .t. )
 
