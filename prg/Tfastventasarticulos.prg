@@ -429,7 +429,7 @@ METHOD OpenFiles() CLASS TFastVentasArticulos
 
       D():FormasPago( ::nView )
 
-      D(): Clientes( ::nView )
+      D():Clientes( ::nView )
 
       D():TiposEnvases( ::nView )
 
