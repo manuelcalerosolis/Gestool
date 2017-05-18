@@ -34,3 +34,5 @@ ZOOM_IN_48 BITMAP "..\\bmp\\zoom_in_48.bmp"
 SHOPPING_BAG_48 BITMAP "..\\bmp\\shopping_bag_48.bmp"
 
 GC_CUBES_48 BITMAP "..\\bmp\\gc_cubes_48.bmp"
+
+GC_RECYCLE_64 BITMAP "..\\bmp\\gc_recycle_64.bmp"

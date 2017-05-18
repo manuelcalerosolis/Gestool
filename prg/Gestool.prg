@@ -1005,6 +1005,16 @@ Function MainTablet()
                            "nClrVisit" => nGridColor(),;
                            "bAction"   => {|| ReceiptInvoiceCustomer():New():play() } } )
 
+   //Reindexa------------------------------------------------------------------
+
+   TGridImage():Build(  {  "nTop"      => {|| GridRow( 15 ) },;
+                           "nLeft"     => {|| GridWidth( 11.5, oDlg ) - 64 },;
+                           "nWidth"    => 64,;
+                           "nHeight"   => 64,;
+                           "cResName"  => "GC_RECYCLE_64",;
+                           "bLClicked" => {|| Reindexa() },;
+                           "oWnd"      => oDlg } )
+
    //----------------Envio y recepcion
 
    TGridImage():Build(  {  "nTop"      => {|| GridRow( 18 ) },;
