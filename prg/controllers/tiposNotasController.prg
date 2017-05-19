@@ -12,7 +12,7 @@ CLASS TiposNotasController FROM SQLBaseController
    
    METHOD   buildSQLView( this )			INLINE ( TiposNotas():New( this ) )
   
-   METHOD   buildSQLBrowse( oGet )			INLINE ( TiposNotas():New():buildSQLBrowse( oGet ) )
+   METHOD   buildSQLBrowse()			INLINE ( TiposNotas():New():buildSQLBrowse() )
 
    METHOD   getFieldFromBrowse()          	INLINE ( ::getRowSet():fieldGet( "tipo" ) )
  
@@ -40,7 +40,7 @@ METHOD validDialog( oDlg, oGetNombre )
       RETURN ( .f. )
    end if
 
-   if ::getRowSet():find( ::oModel:hBuffer[ "tipo" ], "tipo" ) != 0 .and. ( ::getRowSet():find( ::oModel:hBuffer[ "id" ], "id" ) == 0 .or. ::isDuplicateMode() )
+   if ::getRowSet():find( ::oModel:hBuffer[ "tipo" ], "tipo" ) != 0 .and. ( ::getRowSet():fieldget( "id" ) != ::oModel:hBuffer[ "id" ] .or. ::isDuplicateMode() )
       msgStop( "Esta nota ya existe" )
       oGetNombre:setFocus()
       RETURN ( .f. )

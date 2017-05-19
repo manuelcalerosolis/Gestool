@@ -10,9 +10,7 @@ CLASS TiposIncidencias FROM SQLBaseView
 
    METHOD   buildSQLShell()
   
-   METHOD   buildSQLBrowse( oGet )
-
-   METHOD   getFieldFromBrowse()          INLINE ( ::oController:getRowSet():fieldGet( "codigo" ) )
+   METHOD   buildSQLBrowse()
  
    METHOD   Dialog()
 

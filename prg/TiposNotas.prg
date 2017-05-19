@@ -9,8 +9,6 @@ CLASS TiposNotas FROM SQLBaseView
    METHOD   New()
 
    METHOD   buildSQLShell()
-
-   METHOD   getFieldFromBrowse()          INLINE ( ::oController:getRowSet():fieldGet( "tipo" ) )
  
    METHOD   Dialog()
 

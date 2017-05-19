@@ -329,6 +329,7 @@ TipoNotas.prg           										\
 Situacion.prg 		       										\
 Situaciones.prg         										\
 SituacionesModel.prg       										\
+SituacionesController.prg       										\
 GrpPrv.prg              										\
 Categoria.prg           										\
 InfCategoria.prg        										\
@@ -505,6 +506,7 @@ EtiquetasModel.prg 												\
 TiposIncidenciasModel.prg 										\
 TiposIncidenciasController.prg 										\
 TiposVentasModel.prg 										\
+TiposVentasController.prg 										\
 RelacionesEtiquetasModel.prg 										\
 ArticulosModel.prg                                    \
 HistoricosUsuariosModel.prg                           \
@@ -825,6 +827,7 @@ TipoNotas.obj           										\
 Situacion.Obj 	         										\
 Situaciones.obj         										\
 SituacionesModel.obj       									\
+SituacionesController.obj       									\
 GrpPrv.obj              									\
 Categoria.obj           									\
 InfCategoria.obj        									\
@@ -1003,6 +1006,7 @@ EtiquetasModel.obj 										\
 TiposIncidenciasModel.obj 										\
 TiposIncidenciasController.obj 										\
 TiposVentasModel.obj 										\
+TiposVentasController.obj 										\
 RelacionesEtiquetasModel.obj 										\
 ArticulosModel.obj                                    \
 HistoricosUsuariosModel.obj                                    \
@@ -1308,6 +1312,7 @@ $(OBJ)\TipoNotas.obj            		+
 $(OBJ)\Situacion.Obj 	          		+
 $(OBJ)\Situaciones.obj          		+
 $(OBJ)\SituacionesModel.obj          	+
+$(OBJ)\SituacionesController.obj          	+
 $(OBJ)\GrpPrv.obj               		+
 $(OBJ)\Categoria.obj            		+
 $(OBJ)\InfCategoria.obj         		+
@@ -1489,6 +1494,7 @@ $(OBJ)\EtiquetasModel.obj                 +
 $(OBJ)\TiposIncidenciasModel.obj                 +
 $(OBJ)\TiposIncidenciasController.obj                 +
 $(OBJ)\TiposVentasModel.obj                 +
+$(OBJ)\TiposVentasController.obj                 +
 $(OBJ)\RelacionesEtiquetasModel.obj                 +
 $(OBJ)\HistoricosUsuariosModel.obj
 $<,$*

@@ -4,19 +4,19 @@
 
 //---------------------------------------------------------------------------//
 
-CLASS TiposIncidenciasController FROM SQLBaseController
+CLASS TiposVentasController FROM SQLBaseController
 
    METHOD   New()
 
-   METHOD   buildSQLModel( this )               INLINE ( TiposIncidenciasModel():New( this ) )
+   METHOD   buildSQLModel( this )               INLINE ( TiposVentasModel():New( this ) )
    
-   METHOD   buildSQLView( this )			INLINE ( TiposIncidencias():New( this ) )
+   METHOD   buildSQLView( this )				INLINE ( TiposVentas():New( this ) )
   
-   METHOD   buildSQLBrowse()        INLINE ( TiposIncidencias():New():buildSQLBrowse() )        
+   METHOD   buildSQLBrowse()					INLINE ( TiposVentas():New():buildSQLBrowse() )
 
    METHOD   getFieldFromBrowse()          INLINE ( ::getRowSet():fieldGet( "codigo" ) )
-
-   METHOD   validDialog( oDlg, oGetNombre )
+ 
+   METHOD   validDialog( oDlg, oGetNombre, oGetCodigo )
 
 END CLASS
 
@@ -24,7 +24,7 @@ END CLASS
 
 METHOD New()
 
-   ::idUserMap            := "01089"
+   ::idUserMap            := "01043"
 
    ::Super:New()
 
@@ -34,26 +34,26 @@ Return ( Self )
 
 METHOD validDialog( oDlg, oGetNombre, oGetCodigo )
 
-   if empty( ::oModel:hBuffer[ "nombre_incidencia" ] )
-      MsgStop( "El nombre del tipo de incidencia no puede estar vac?." )
+   if empty( ::oModel:hBuffer[ "nombre" ] )
+      msgStop( "El nombre de la venta no puede estar vacío." )
       oGetNombre:setFocus()
-      Return ( .f. )
+      RETURN ( .f. )
    end if
 
-   if ::getRowSet():find( ::oModel:hBuffer[ "nombre_incidencia" ], "nombre_incidencia" ) != 0 .and. ( ::getRowSet():fieldget( "id" ) != ::oModel:hBuffer[ "id" ] .or. ::isDuplicateMode() )
-      msgStop( "El nombre de la incidencia ya existe" )
+   if ::getRowSet():find( ::oModel:hBuffer[ "nombre" ], "nombre" ) != 0 .and. ( ::getRowSet():fieldget( "id" ) != ::oModel:hBuffer[ "id" ] .or. ::isDuplicateMode() )
+      msgStop( "El nombre de la venta ya existe" )
       oGetNombre:setFocus()
       RETURN ( .f. )
    end if
 
    if empty( ::oModel:hBuffer[ "codigo" ] )
-      MsgStop( "El codigo del tipo de incidencia no puede estar vac?." )
+      MsgStop( "El codigo del tipo de venta no puede estar vacío." )
       oGetCodigo:setFocus()
       Return ( .f. )
    end if
 
    if ::getRowSet():find( ::oModel:hBuffer[ "codigo" ], "codigo" ) != 0 .and. ( ::getRowSet():fieldget( "id" ) != ::oModel:hBuffer[ "id" ] .or. ::isDuplicateMode() )
-      msgStop( "El codigo de la incidencia ya existe" )
+      msgStop( "El codigo de la venta ya existe" )
       oGetCodigo:setFocus()
       RETURN ( .f. )
    end if

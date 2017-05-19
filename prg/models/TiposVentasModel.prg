@@ -26,8 +26,6 @@ METHOD New()
 
    ::cTitle                      := "Tipos ventas"
 
-   ::cTableName                  := "tipos_ventas"
-
    ::cDbfTableName				 	:= "TVTA"
 
    ::hColumns                   	:= {  "id"        => {  "create"    => "INTEGER PRIMARY KEY AUTOINCREMENT"    ,;

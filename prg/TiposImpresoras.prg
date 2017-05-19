@@ -10,9 +10,7 @@ CLASS TiposImpresoras FROM SQLBaseView
 
    METHOD   buildSQLShell()
   
-   METHOD   buildSQLBrowse( oGet )
-
-   METHOD   getFieldFromBrowse()             INLINE ( ::oController:getRowSet():fieldGet( "nombre" ) )
+   METHOD   buildSQLBrowse()
  
    METHOD   Dialog()
 

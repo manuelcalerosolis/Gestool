@@ -281,7 +281,7 @@ RETURN ( .t. )
 
 FUNCTION Test()
 
-
+msgalert( TiposVentasController():New():activateBrowse() ) 
 
 Return ( nil )
 
@@ -1571,7 +1571,7 @@ FUNCTION CreateAcceso( oWnd )
    oItem:oGroup         := oGrupo
    oItem:cPrompt        := "Tipos de ventas"
    oItem:cMessage       := "Acceso a los tipos de ventas"
-   oItem:bAction        := {|| TVta( "01043", oWnd ) }
+   oItem:bAction        := {|| TiposVentasController():New():activateShell() }
    oItem:cId            := "01043"
    oItem:cBmp           := "gc_wallet_16"
    oItem:cBmpBig        := "gc_wallet_32"
@@ -1601,7 +1601,7 @@ FUNCTION CreateAcceso( oWnd )
    oItem:oGroup         := oGrupo
    oItem:cPrompt        := "Situaciones"
    oItem:cMessage       := "Acceso a los tipos de situaciones"
-   oItem:bAction        := {|| Situaciones():New():activateShell() }
+   oItem:bAction        := {|| SituacionesController():New():activateShell() }
    oItem:cId            := "01096"
    oItem:cBmp           := "gc_document_attachment_16"
    oItem:cBmpBig        := "gc_document_attachment_32"
