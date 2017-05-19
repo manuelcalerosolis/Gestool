@@ -15,7 +15,7 @@ BORLANDLIB           = 	\Bcc582\lib
 IMG2PDFLIB           = 	\Img2Pdf
 
 OBJ                  = 	Obj1406
-SOURCEPRG            = 	.\Prg;.\Prg\mail;.\Prg\Comercio;.\Prg\Models;.\Prg\Tablet;.\Prg\tablet\view;.\Prg\tablet\view\documentos;.\Prg\tablet\view\terceros;.\Prg\tablet\view\documentos\ventas;.\Prg\tablet\view\documentos\terceros;.\Prg\tablet\utils;.\Prg\tablet\presenter;.\Prg\tablet\presenter\terceros;.\Prg\tablet\presenter\documentos;.\Prg\tablet\presenter\documentos\ventas;
+SOURCEPRG            = 	.\Prg;.\Prg\mail;.\Prg\Comercio;.\Prg\Models;.\Prg\Controllers;.\Prg\Tablet;.\Prg\tablet\view;.\Prg\tablet\view\documentos;.\Prg\tablet\view\terceros;.\Prg\tablet\view\documentos\ventas;.\Prg\tablet\view\documentos\terceros;.\Prg\tablet\utils;.\Prg\tablet\presenter;.\Prg\tablet\presenter\terceros;.\Prg\tablet\presenter\documentos;.\Prg\tablet\presenter\documentos\ventas;
 SOURCEC 				   =	C
 PPO 					   = 	Ppo1406
 
@@ -489,6 +489,7 @@ backupPresenter.prg                                	\
 backupView.prg                                     	\
 BaseModel.prg 														\
 SQLBaseModel.prg 														\
+SQLBaseController.prg 														\
 SQLBaseEmpresasModel.prg 														\
 ClientesModel.prg 												\
 AlbaranesClientesModel.prg 									\
@@ -497,9 +498,12 @@ RecibosClientesModel.prg 										\
 TicketsClientesModel.prg 										\
 PedidosProveedoresModel.prg									\
 TiposImpresorasModel.prg 										\
+TiposImpresorasController.prg 										\
 TiposNotasModel.prg 												\
+TiposNotasController.prg 												\
 EtiquetasModel.prg 												\
 TiposIncidenciasModel.prg 										\
+TiposIncidenciasController.prg 										\
 TiposVentasModel.prg 										\
 RelacionesEtiquetasModel.prg 										\
 ArticulosModel.prg                                    \
@@ -983,6 +987,7 @@ backupPresenter.obj                                \
 backupView.obj                                     \
 BaseModel.obj 													\
 SQLBaseModel.Obj 												\
+SQLBaseController.Obj 												\
 SQLBaseEmpresasModel.Obj 												\
 ClientesModel.obj 											\
 AlbaranesClientesModel.obj 								\
@@ -991,9 +996,12 @@ TicketsClientesModel.obj 										\
 RecibosClientesModel.obj 										\
 PedidosProveedoresModel.obj 									\
 TiposImpresorasModel.obj 										\
+TiposImpresorasController.obj 										\
 TiposNotasModel.obj 										\
+TiposNotasController.obj 										\
 EtiquetasModel.obj 										\
 TiposIncidenciasModel.obj 										\
+TiposIncidenciasController.obj 										\
 TiposVentasModel.obj 										\
 RelacionesEtiquetasModel.obj 										\
 ArticulosModel.obj                                    \
@@ -1464,6 +1472,7 @@ $(OBJ)\Reporting.obj                         +
 $(OBJ)\ViewReporting.obj 							+
 $(OBJ)\BaseModel.obj 								+
 $(OBJ)\SQLBaseModel.obj 							+
+$(OBJ)\SQLBaseController.obj 							+
 $(OBJ)\SQLBaseEmpresasModel.obj 							+
 $(OBJ)\ClientesModel.obj 							+
 $(OBJ)\AlbaranesClientesModel.obj 				+
@@ -1473,9 +1482,12 @@ $(OBJ)\RecibosClientesModel.obj					+
 $(OBJ)\TicketsClientesModel.obj 	 				+							
 $(OBJ)\PedidosProveedoresModel.obj 				+
 $(OBJ)\TiposImpresorasModel.obj                 +
+$(OBJ)\TiposImpresorasController.obj                 +
 $(OBJ)\TiposNotasModel.obj                 +
+$(OBJ)\TiposNotasController.obj                 +
 $(OBJ)\EtiquetasModel.obj                 +
 $(OBJ)\TiposIncidenciasModel.obj                 +
+$(OBJ)\TiposIncidenciasController.obj                 +
 $(OBJ)\TiposVentasModel.obj                 +
 $(OBJ)\RelacionesEtiquetasModel.obj                 +
 $(OBJ)\HistoricosUsuariosModel.obj

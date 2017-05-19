@@ -296,7 +296,6 @@ static dbfEmp
 static dbfArtDiv
 static dbfHisMov
 static dbfHisMovS
-static dbfCategoria
 static dbfTemporada
 static oRestaurante
 
@@ -772,9 +771,6 @@ STATIC FUNCTION OpenFiles( cPatEmp, lExt, lTactil )
       USE ( cPatEmp() + "MOVSER.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "MOVSER", @dbfHisMovS ) )
       SET ADSINDEX TO ( cPatEmp() + "MOVSER.CDX" ) ADDITIVE
 
-      USE ( cPatArt() + "CATEGORIAS.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "CATEGORIA", @dbfCategoria ) )
-      SET ADSINDEX TO ( cPatArt() + "CATEGORIAS.CDX" ) ADDITIVE
-
       USE ( cPatArt() + "COMENTARIOST.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "COMENTT", @dbfComentariosT ) )
       SET ADSINDEX TO ( cPatArt() + "COMENTARIOST.CDX" ) ADDITIVE
 
@@ -972,7 +968,6 @@ STATIC FUNCTION CloseFiles()
    CLOSE ( dbfDiv      )
    CLOSE ( dbfTblPro   )
    CLOSE ( dbfFamilia  )
-   CLOSE ( dbfCategoria)
    CLOSE ( dbfTemporada)
 
    CLOSE ( dbfObrasT   )
@@ -8413,20 +8408,6 @@ STATIC FUNCTION SavLine( aTmp, aGet, dbfTmpL, oBrw, aTik, oGetTotal, lTwo, nMode
          end if
 
          /*
-         Chequeamos las ofertas por categoria X  *  Y--------------------------
-         */
-
-         if !aTmp[ _LLINOFE ]
-
-            aXbyStr              := nXbYOferta( RetFld( aTmp[ _CCBATIL ], dbfArticulo, "CCODCATE", "CODIGO" ), aTik[ _CCLITIK ], aTik[ _CCODGRP ], 1, aTmp[ _NUNTTIL ], aTik[ _DFECTIK ], dbfOferta, 4 )
-
-            if aXbYStr[ 1 ] != 0
-               aTmp[ _LLINOFE ]  := .t.
-            end if
-
-         end if
-
-         /*
          Chequeamos las ofertas por temporada X  *  Y--------------------------
          */
 
@@ -14495,9 +14476,6 @@ Static Function DataReport( oFr )
    oFr:SetWorkArea(     "Unidades de medición",  oUndMedicion:Select() )
    oFr:SetFieldAliases( "Unidades de medición",  cObjectsToReport( oUndMedicion:oDbf ) )
 
-   oFr:SetWorkArea(     "Categorías", ( dbfCategoria )->( Select() ) )
-   oFr:SetFieldAliases( "Categorías", cItemsToReport( aItmCategoria() ) )
-
    oFr:SetWorkArea(     "Tipos de artículos",  oTipArt:Select() )
    oFr:SetFieldAliases( "Tipos de artículos",  cObjectsToReport( oTipArt:oDbf ) )
 
@@ -14543,7 +14521,6 @@ Static Function BuildRelationReport( oFr )
    oFr:SetMasterDetail( "Lineas de tickets", "Familia",              {|| ( dbfTikL )->cFamTil } )
    oFr:SetMasterDetail( "Lineas de tickets", "Orden comanda",        {|| ( dbfTikL )->cCodTImp } )
    oFr:SetMasterDetail( "Lineas de tickets", "Unidades de medición", {|| ( dbfTikL )->cUnidad } )
-   oFr:SetMasterDetail( "Lineas de tickets", "Categorías",           {|| RetFld( ( dbfTikL )->cCbaTil, dbfArticulo, "cCodCate" ) } )
    oFr:SetMasterDetail( "Lineas de tickets", "Tipos de artículos",   {|| RetFld( ( dbfTikL )->cCbaTil, dbfArticulo, "cCodTip" ) } )
    oFr:SetMasterDetail( "Lineas de tickets", "Fabricantes",          {|| RetFld( ( dbfTikL )->cCbaTil, dbfArticulo, "cCodFab" ) } )
    oFr:SetMasterDetail( "Lineas de tickets", "Temporadas",           {|| RetFld( ( dbfTikL )->cCbaTil, dbfArticulo, "cCodTemp" ) } )
@@ -14573,7 +14550,6 @@ Static Function BuildRelationReport( oFr )
    oFr:SetResyncPair(   "Lineas de tickets", "Familias" )
    oFr:SetResyncPair(   "Lineas de tickets", "Orden comanda" )
    oFr:SetResyncPair(   "Lineas de tickets", "Unidades de medición" )
-   oFr:SetResyncPair(   "Lineas de tickets", "Categorías" )
    oFr:SetResyncPair(   "Lineas de tickets", "Tipos de artículos" )
    oFr:SetResyncPair(   "Lineas de tickets", "Fabricantes" )
    oFr:SetResyncPair(   "Lineas de tickets", "Temporadas" )
@@ -14607,7 +14583,6 @@ Static Function ClearRelationReport( oFr )
    oFr:ClearMasterDetail( "Familia" )
    oFr:ClearMasterDetail( "Orden comanda" )
    oFr:ClearMasterDetail( "Unidades de medición" )
-   oFr:ClearMasterDetail( "Categorías" )
    oFr:ClearMasterDetail( "Tipos de artículos" )
    oFr:ClearMasterDetail( "Fabricantes" )
    oFr:ClearMasterDetail( "Temporadas" )
@@ -14637,7 +14612,6 @@ Static Function ClearRelationReport( oFr )
    oFr:ClearResyncPair(   "Lineas de tickets", "Familias" )
    oFr:ClearResyncPair(   "Lineas de tickets", "Orden comanda" )
    oFr:ClearResyncPair(   "Lineas de tickets", "Unidades de medición" )
-   oFr:ClearResyncPair(   "Lineas de tickets", "Categorías" )
    oFr:ClearResyncPair(   "Lineas de tickets", "Tipos de artículos" )
    oFr:ClearResyncPair(   "Lineas de tickets", "Fabricantes" )
    oFr:ClearResyncPair(   "Lineas de tickets", "Temporadas" )
@@ -19782,34 +19756,6 @@ static function lBuscaOferta( cCodArt, aGet, aTmp, aTmpTik, dbfOferta, dbfArticu
          */
 
          sOfeArt     := sOfertaTipoArticulo( ( dbfArticulo )->cCodTip, aTmpTik[ _CCLITIK ], aTmpTik[ _CCODGRP ], aTmpTik[ _DFECTIK ], dbfOferta, aTmpTik[ _NTARIFA ], dbfArticulo, aTmp[ _NUNTTIL ], 1, nTotalLinea )
-
-         if !empty( sOfeArt ) 
-            
-            if ( sOfeArt:nDtoPorcentual != 0 )
-               aGet[ _NDTOLIN ]:cText( sOfeArt:nDtoPorcentual )
-            end if 
-            
-            if ( sOfeArt:nDtoLineal != 0 )
-               aGet[ _NDTODIV ]:cText( sOfeArt:nDtoLineal )
-            end if 
-            
-            aTmp[ _LLINOFE ]  := .t.
-            
-            if !empty( aGet[ _LLINOFE ] )
-               aGet[ _LLINOFE ]:Show()
-            end if     
-
-         end if
-
-      end if
-
-      if !aTmp[ _LLINOFE ]
-
-         /*
-         Buscamos si existen ofertas por tipos de articulos--------------
-         */
-
-         sOfeArt     := sOfertaCategoria( ( dbfArticulo )->cCodCate, aTmpTik[ _CCLITIK ], aTmpTik[ _CCODGRP ], aTmpTik[ _DFECTIK ], dbfOferta, aTmpTik[ _NTARIFA ], dbfArticulo, aTmp[ _NUNTTIL ], 1, nTotalLinea )
 
          if !empty( sOfeArt ) 
             

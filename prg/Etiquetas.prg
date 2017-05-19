@@ -208,9 +208,9 @@ METHOD validDialog( oDlg, oTree, oGetNombre )
       msgStop( "Nombre de la etiqueta no puede estar vacío." )
       oGetNombre:setFocus()
       RETURN ( .f. )
-   end if 
+   end if
 
-   if ::oModel:getRowSet():find( ::oModel:hBuffer[ "nombre" ], "nombre" ) != 0
+   if ::oModel:getRowSet():find( ::oModel:hBuffer[ "nombre" ], "nombre" ) != 0 .and. ( ::oModel:getRowSet():find( ::oModel:hBuffer[ "id" ], "id" ) == 0 .or. ::isDuplicateMode() )
       msgStop( "El nombre de la etiqueta ya existe" )
       oGetNombre:setFocus()
       RETURN ( .f. )

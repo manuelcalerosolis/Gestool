@@ -10,23 +10,17 @@ CLASS TiposNotas FROM SQLBaseView
 
    METHOD   buildSQLShell()
 
-   METHOD   buildSQLModel()               INLINE ( TiposNotasModel():New() )
-
-   METHOD   getFieldFromBrowse()          INLINE ( ::oModel:getRowSet():fieldGet( "tipo" ) )
+   METHOD   getFieldFromBrowse()          INLINE ( ::oController:getRowSet():fieldGet( "tipo" ) )
  
    METHOD   Dialog()
-
-   METHOD   validDialog( oDlg, oGetNombre )
 
 END CLASS
 
 //---------------------------------------------------------------------------//
 
-METHOD New()
+METHOD New( oController )
 
-   ::idUserMap            := "01097"
-
-   ::Super:New()
+   ::oController      := oController
 
 Return ( Self )
 
@@ -36,34 +30,34 @@ METHOD buildSQLShell()
 
    disableAcceso()
 
-   ::oShell                := SQLTShell():New( 2, 10, 18, 70, "Tipos de notas", , oWnd(), , , .f., , , ::oModel, , , , , {}, {|| ::Edit( ::oShell:getBrowse() ) },, {|| ::Delete( ::oShell:getBrowse() ) },, nil, ::nLevel, "gc_folder2_16", ( 104 + ( 0 * 256 ) + ( 63 * 65536 ) ),,, .t. )
+   ::oShell                := SQLTShell():New( 2, 10, 18, 70, "Tipos de notas", , oWnd(), , , .f., , , ::oController:oModel, , , , , {}, {|| ::oController:Edit( ::oShell:getBrowse() ) },, {|| ::oController:Delete( ::oShell:getBrowse() ) },, nil, ::oController:nLevel, "gc_folder2_16", ( 104 + ( 0 * 256 ) + ( 63 * 65536 ) ),,, .t. )
 
    	with object ( ::oShell:AddCol() )
         :cHeader          := "Id"
         :cSortOrder       := "id"
-        :bEditValue       := {|| ::oModel:getRowSet():fieldGet( "id" ) }
+        :bEditValue       := {|| ::oController:getRowSet():fieldGet( "id" ) }
         :nWidth           := 40
-        :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | ::clickOnHeader( oCol, ::oShell:getBrowse(), ::oShell:getCombobox() ) }
+        :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | ::oController:clickOnHeader( oCol, ::oShell:getBrowse(), ::oShell:getCombobox() ) }
     	end with
 
    	with object ( ::oShell:AddCol() )
         :cHeader          := "Tipo"
         :cSortOrder       := "tipo"
-        :bEditValue       := {|| ::oModel:getRowSet():fieldGet( "tipo" ) }
+        :bEditValue       := {|| ::oController:getRowSet():fieldGet( "tipo" ) }
         :nWidth           := 800
-        :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | ::clickOnHeader( oCol, ::oShell:getBrowse(), ::oShell:getCombobox() ) }
+        :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | ::oController:clickOnHeader( oCol, ::oShell:getBrowse(), ::oShell:getCombobox() ) }
     	end with
 
 		::oShell:createXFromCode()
 
-      ::oShell:setDClickData( {|| ::Edit( ::oShell:getBrowse() ) } )
+      ::oShell:setDClickData( {|| ::oController:Edit( ::oShell:getBrowse() ) } )
 
       ::AutoButtons()
 
    ACTIVATE WINDOW ::oShell
 
-   ::oShell:bValid   := {|| ::saveHistory( ::getHistoryNameShell() , ::oShell:getBrowse() ), .t. }
-   ::oShell:bEnd     := {|| ::destroySQLModel() }
+   ::oShell:bValid   := {|| ::saveHistoryOfShell( ::oShell:getBrowse() ), .t. }
+   ::oShell:bEnd     := {|| ::oController:destroySQLModel() }
 
    ::oShell:setComboBoxChange( {|| ::changeCombo( ::oShell:getBrowse(), ::oShell:getCombobox() ) } )
 
@@ -81,17 +75,17 @@ METHOD Dialog( lZoom )
    DEFINE DIALOG oDlg RESOURCE "TiposNotas" TITLE ::lblTitle() + "tipo de nota"
 
    REDEFINE GET   oGetNombre ;
-      VAR         ::oModel:hBuffer[ "tipo" ] ;
+      VAR         ::oController:oModel:hBuffer[ "tipo" ] ;
       MEMO ;
       ID          100 ;
-      WHEN        ( ! ::isZoomMode() ) ;
+      WHEN        ( !::oController:isZoomMode() ) ;
       OF          oDlg
 
    REDEFINE BUTTON ;
       ID          IDOK ;
       OF          oDlg ;
-      WHEN        ( ! ::isZoomMode() ) ;
-      ACTION      ( ::validDialog( oDlg, oGetNombre ) )
+      WHEN        ( !::oController:isZoomMode() ) ;
+      ACTION      ( ::oController:validDialog( oDlg, oGetNombre ) )
 
    REDEFINE BUTTON ;
       ID          IDCANCEL ;
@@ -109,20 +103,3 @@ RETURN ( oDlg:nResult == IDOK )
 
 //----------------------------------------------------------------------------//
 
-METHOD validDialog( oDlg, oGetNombre )
-
-   if empty( ::oModel:hBuffer[ "tipo" ] )
-      msgStop( "El nombre de la nota no puede estar vacío." )
-      oGetNombre:setFocus()
-      RETURN ( .f. )
-   end if
-
-   if ::oModel:getRowSet():find( ::oModel:hBuffer[ "tipo" ], "tipo" ) != 0
-      msgStop( "Esta nota ya existe" )
-      oGetNombre:setFocus()
-      RETURN ( .f. )
-   end if
-
-RETURN ( oDlg:end( IDOK ) )
-
-//----------------------------------------------------------------------------//

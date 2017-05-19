@@ -24,6 +24,8 @@ END CLASS
 
 METHOD New()
 
+   ::cTitle                      := "Tipos ventas"
+
    ::cTableName                  := "tipos_ventas"
 
    ::cDbfTableName				 	:= "TVTA"
@@ -55,7 +57,7 @@ RETURN ( aResult )
 
 METHOD existTiposVentas( cValue )
 
-   local cSentence               := "SELECT nombre FROM " + ::cTableName + " WHERE nombre = " + toSQLString( cValue )
+   local cSentence               := "SELECT codigo FROM " + ::cTableName + " WHERE codigo = " + toSQLString( cValue )
    local aSelect                 := ::selectFetchArray( cSentence )
 
 RETURN ( !empty( aSelect ) )

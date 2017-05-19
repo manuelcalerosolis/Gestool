@@ -481,6 +481,10 @@ METHOD StartResourceDetail() CLASS LinesDocumentsSales
 
    ::recalcularTotal()
 
+   ::oViewEditDetail:oGetArticulo:SetFocus()
+   ::oViewEditDetail:oGetUnidades:SetFocus()
+   ::oViewEditDetail:oGetArticulo:SetFocus()
+
 Return ( self )
 
 //---------------------------------------------------------------------------//

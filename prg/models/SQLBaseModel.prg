@@ -49,8 +49,6 @@ CLASS SQLBaseModel
    METHOD   setOrientation( cOrientation )         INLINE ( ::cOrientation := cOrientation )
    METHOD   setIdForRecno( nIdForRecno )           INLINE ( ::nIdForRecno := nIdForRecno )
 
-
-   METHOD   getRowSet()
    METHOD   buildRowSet()
    METHOD   buildRowSetWithRecno()                 INLINE   ( ::buildRowSet( .t. ) )
    METHOD   freeRowSet()                           INLINE   ( if( !empty( ::oRowSet ), ( ::oRowSet := nil ), ) )
@@ -64,10 +62,6 @@ CLASS SQLBaseModel
 
    METHOD   setFind( cFind )                      INLINE   ( ::cFind := cFind )
    METHOD   find( cFind )
-
-   METHOD   loadBuffer( id )
-   METHOD   loadBlankBuffer()
-   METHOD   loadCurrentBuffer()
 
    METHOD   getBuffer( cColumn )                   INLINE   ( hget( ::hBuffer, cColumn ) )
    METHOD   updateCurrentBuffer()                  INLINE   ( getSQLDatabase():Query( ::getUpdateSentence() ), ::buildRowSetWithRecno() )
@@ -83,7 +77,7 @@ CLASS SQLBaseModel
    METHOD   compareCurrentAndActualColumns()
    METHOD   updateTableColumns()
 
-   METHOD   setFastReportRecorset( oFastReport, cSentence, cColumns )
+   METHOD   setFastReportRecordset( oFastReport, cSentence, cColumns )
    METHOD      serializeColumns()
 
 END CLASS
@@ -209,16 +203,6 @@ METHOD makeImportDbfSQL( cPath )
    frename( cPath + "\" + ::getDbfTableName(), cPath + "\" + ::getOldTableName() )
    
 Return ( self )
-
-//---------------------------------------------------------------------------//
-
-METHOD getRowSet()
-
-   if empty( ::oRowSet )
-      ::buildRowSet()
-   end if
-
-Return ( ::oRowSet )
 
 //---------------------------------------------------------------------------//
 
@@ -362,46 +346,6 @@ Return ( ::oRowSet:recCount() > 0 )
 
 //---------------------------------------------------------------------------//
 
-METHOD loadBlankBuffer()
-
-   if empty( ::oRowSet )
-      Return ( .f. )
-   end if 
-
-Return ( ::loadBuffer( 0 ) )
-
-//---------------------------------------------------------------------------//
-
-METHOD loadCurrentBuffer()                
-
-   local aColumnNames := hb_hkeys( ::hColumns )
-
-   if empty( ::oRowSet )
-      Return ( .f. )
-   end if 
-
-   ::hBuffer  := {=>}
-
-   aeval( aColumnNames, {| k | hset( ::hBuffer, k, ::oRowSet:fieldget( k ) ) } )
-
-Return ( ::hBuffer )   
-
-//---------------------------------------------------------------------------//
-
-METHOD loadBuffer( id )
-
-   local aColumnNames := hb_hkeys( ::hColumns )
-
-   ::hBuffer  := {=>}
-
-   ::oRowSet:goto( id )
-
-   aeval( aColumnNames, {| k | hset( ::hBuffer, k, ::oRowSet:fieldget( k ) ) } )
-
-Return ( .t. )
-
-//---------------------------------------------------------------------------//
-
 METHOD selectFetchArray( cSentence )
 
    local oStmt
@@ -505,7 +449,7 @@ Return ( cColumns )
 
 //---------------------------------------------------------------------------//
 
-METHOD setFastReportRecorset( oFastReport, cSentence, cColumns )
+METHOD setFastReportRecordset( oFastReport, cSentence, cColumns )
 
    local oStmt
    local oRowSet

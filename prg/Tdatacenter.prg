@@ -1819,14 +1819,6 @@ METHOD BuildData()
    oDataTable:bCreateFile  := {| cPath | TNotas():BuildFiles( cPath ) }
    ::AddDataTable( oDataTable )
 
-   oDataTable              := TDataTable():New( "TVta", cPathDatos() )
-   oDataTable:cDataFile    := cPatDat( .t. ) + "TVta.Dbf"
-   oDataTable:cIndexFile   := cPatDat( .t. ) + "TVta.Cdx"
-   oDataTable:cDescription := "Tipos de ventas"
-   oDataTable:bCreateFile  := {| cPath | mkTVta( cPath ) }
-   oDataTable:bCreateIndex := {| cPath | rxTVta( cPath ) }
-   ::AddDataTable( oDataTable )
-
    oDataTable              := TDataTable():New( "Divisas", cPathDatos() )
    oDataTable:cDataFile    := cPatDat( .t. ) + "Divisas.Dbf"
    oDataTable:cIndexFile   := cPatDat( .t. ) + "Divisas.Cdx"
@@ -4835,6 +4827,10 @@ METHOD ConvertDatosToSQLite()
       :makeImportDbfSQL()
 
    SituacionesModel();
+      :New();
+      :makeImportDbfSQL()
+
+   TiposVentasModel();
       :New();
       :makeImportDbfSQL()
 

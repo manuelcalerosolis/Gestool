@@ -24,8 +24,6 @@ END CLASS
 
 METHOD New()
 
-   ::cTableName                  := "tipos_impresoras"
-
    ::cDbfTableName				 	:= "TipImp"
 
    ::hColumns                   	:= {  "id"     => {  "create"    => "INTEGER PRIMARY KEY AUTOINCREMENT",;
