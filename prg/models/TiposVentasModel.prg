@@ -6,7 +6,7 @@
 
 CLASS TiposVentasModel FROM SQLBaseModel
 
-   DATA cTableName                           INIT "tipos_ventas"
+   DATA cTableName               INIT "tipos_ventas"
 
    DATA cDbfTableName
 
@@ -16,7 +16,9 @@ CLASS TiposVentasModel FROM SQLBaseModel
 
    METHOD arrayTiposVentas()
 
-   METHOD existTiposVentas( cValue )
+   METHOD exist( cValue )
+
+   METHOD getName( uValue )
 
 END CLASS
 
@@ -53,12 +55,26 @@ RETURN ( aResult )
 
 //---------------------------------------------------------------------------//
 
-METHOD existTiposVentas( cValue )
+METHOD exist( cValue )
 
    local cSentence               := "SELECT codigo FROM " + ::cTableName + " WHERE codigo = " + toSQLString( cValue )
    local aSelect                 := ::selectFetchArray( cSentence )
 
 RETURN ( !empty( aSelect ) )
+
+//---------------------------------------------------------------------------//
+
+METHOD getName( uValue )
+
+   local cName                   := ""
+   local cSentence               := "SELECT nombre FROM " + ::cTableName + " WHERE codigo = " + toSQLString( cValue )
+   local aSelect                 := ::selectFetchArray( cSentence )
+
+   if !empty( aSelect )
+      cName                      := hget( atail( aSelect ), "nombre" )
+   end if 
+
+RETURN ( cName )
 
 //---------------------------------------------------------------------------//
 

@@ -18,6 +18,8 @@ CLASS TiposVentasController FROM SQLBaseController
  
    METHOD   validDialog( oDlg, oGetNombre, oGetCodigo )
 
+   METHOD   isValidateGet( oGet )
+
 END CLASS
 
 //---------------------------------------------------------------------------//
@@ -61,3 +63,26 @@ METHOD validDialog( oDlg, oGetNombre, oGetCodigo )
 RETURN ( oDlg:end( IDOK ) )
 
 //---------------------------------------------------------------------------//
+
+METHOD isValidateGet( oGet )
+
+   local uValue
+   local uReturn
+
+   if empty( oGet )
+      RETURN ( uReturn )
+   end if 
+
+   uValue            := oGet:varGet()
+
+   if !( ::oModel:exist( uValue ) )
+      RETURN .f.
+   end if 
+
+   if !empty( oGet:oHelpText )
+      oGet:oHelpText:cText( ::oModel:getName( uValue ) )
+   end if 
+
+RETURN ( uReturn )
+
+//--------------------------------------------------------------------------//

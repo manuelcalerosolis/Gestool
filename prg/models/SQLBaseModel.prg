@@ -60,8 +60,11 @@ CLASS SQLBaseModel
    METHOD   getSelectByColumn()
    METHOD   getSelectByOrder()
 
-   METHOD   setFind( cFind )                      INLINE   ( ::cFind := cFind )
+   METHOD   setFind( cFind )                       INLINE   ( ::cFind := cFind )
    METHOD   find( cFind )
+
+   METHOD   exist( uValue )                        INLINE   ( .t. )
+   METHOD   getName()                              INLINE   ( "" )
 
    METHOD   getBuffer( cColumn )                   INLINE   ( hget( ::hBuffer, cColumn ) )
    METHOD   updateCurrentBuffer()                  INLINE   ( getSQLDatabase():Query( ::getUpdateSentence() ), ::buildRowSetWithRecno() )

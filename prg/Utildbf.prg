@@ -98,7 +98,7 @@ FUNCTION dbSwapDown( cAlias, oBrw )
       oBrw:SetFocus()
    end if
 
-Return nil
+RETURN nil
 
 //--------------------------------------------------------------------------//
 
@@ -131,13 +131,13 @@ Bloquea un fichero
 FUNCTION DBFLock( cAlias )
 
 	if DBLock( cAlias, MODE_FILE )
-      return .T.
+      RETURN .T.
    endif
 
    while ApoloMsgNoYes( "Fichero Bloquedo," + CRLF + "¿ Reintentar ?" )
 
 		if DBLock( cAlias, MODE_FILE )
-         return .T.
+         RETURN .T.
 		else
 			loop
 		endif
@@ -148,7 +148,7 @@ RETURN .F.
 
 //--------------------------------------------------------------------------//
 
-Function aBlankArray( aBlank, cAlias )
+FUNCTION aBlankArray( aBlank, cAlias )
 
    local i
    local aStruct  := ( cAlias )->( dbStruct() )
@@ -239,10 +239,10 @@ FUNCTION dbFirst( cAlias, nField, oGet, xDesde, nOrd )
 
    if !empty( oGet )
 		oGet:cText( xValRet )
-      Return .t.
+      RETURN .t.
    end if
 
-Return ( xValRet )
+RETURN ( xValRet )
 
 //--------------------------------------------------------------------------//
 
@@ -404,12 +404,12 @@ RETURN ( !Existe( oClave:varGet(), cAlias ) )
 
 //---------------------------------------------------------------------------//
 
-function cNoExt( cFullFile )
+FUNCTION cNoExt( cFullFile )
 
    local cNameFile := AllTrim( cFullFile )
    local n         := AT( ".", cNameFile )
 
-return AllTrim( if( n > 0, left( cNameFile, n - 1 ), cNameFile ) )
+RETURN AllTrim( if( n > 0, left( cNameFile, n - 1 ), cNameFile ) )
 
 //----------------------------------------------------------------------------//
 
@@ -445,16 +445,16 @@ RETURN SubStr( cPath, 1, nAt - 1 )
 
 //----------------------------------------------------------------------------//
 
-Function cLastPath( cFileName )
+FUNCTION cLastPath( cFileName )
 
    local cLastPath   := cOnlyPath( cFileName )
    local n           := Rat( "\", SubStr( cLastPath, 1, Len( cLastPath ) - 1 ) ) + 1
 
-Return ( SubStr( cLastPath, n ) )
+RETURN ( SubStr( cLastPath, n ) )
 
 //----------------------------------------------------------------------------//
 
-Function cPath( cPath )
+FUNCTION cPath( cPath )
 
    cPath             := Rtrim( cPath )
 
@@ -462,11 +462,11 @@ Function cPath( cPath )
       cPath          += "\"
    end if
 
-Return ( cPath )
+RETURN ( cPath )
 
 //----------------------------------------------------------------------------//
 
-Function cLeftPath( cPath )
+FUNCTION cLeftPath( cPath )
 
    cPath             := Rtrim( cPath )
 
@@ -474,11 +474,11 @@ Function cLeftPath( cPath )
       cPath          += "/"
    end if
 
-Return ( cPath )
+RETURN ( cPath )
 
 //----------------------------------------------------------------------------//
 
-Function RecursiveMakeDir( cPath )
+FUNCTION RecursiveMakeDir( cPath )
 
    local cRute       := ""
    local aPath       := hb_atokens( cPath, "\" )
@@ -490,7 +490,7 @@ Function RecursiveMakeDir( cPath )
       end if 
    next
 
-Return ( cPath )
+RETURN ( cPath )
 
 //----------------------------------------------------------------------------//
 
@@ -509,7 +509,7 @@ FUNCTION EvalGet( aGet, nMode )
 
    next
 
-Return nil
+RETURN nil
 
 //-------------------------------------------------------------------------//
 
@@ -532,7 +532,7 @@ FUNCTION bChar2Block( cChar, lLogic, lMessage, lHard )
          bBlock      := {|| "" }
       end if
 
-      return ( bBlock )
+      RETURN ( bBlock )
 
    end if
 
@@ -591,7 +591,7 @@ RETURN ( bBlock )
 // Marca registro a bajo nivel en el espacio de la marca del deleted
 // si lo consigue devuelve .t.
 
-function SetMarkRec( cMark, nRec  )
+FUNCTION SetMarkRec( cMark, nRec  )
 
    local nRecNo   := RecNo()
    local nHdl     := DbfHdl()
@@ -607,12 +607,12 @@ function SetMarkRec( cMark, nRec  )
 
    DbGoTo( nRecNo )
 
-return( FError() == 0 )
+RETURN( FError() == 0 )
 
 //---------------------------------------------------------------------------//
 // Invierte la marca del registro
 
-function ChgMarked( cMark, nRec )
+FUNCTION ChgMarked( cMark, nRec )
 
    if lMarked( cMark, nRec )
       SetMarkRec( Space( 1 ), nRec )
@@ -620,13 +620,13 @@ function ChgMarked( cMark, nRec )
       SetMarkRec( cMark, nRec )
    end if
 
-return ( nil )
+RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 // Marca registro a bajo nivel en el espacio de la marca del deleted
 // si lo consigue devuelve .t.
 
-function SetAllMark( cMark, cAlias )
+FUNCTION SetAllMark( cMark, cAlias )
 
    local nRecNo   := ( cAlias )->( RecNo() )
 
@@ -642,11 +642,11 @@ function SetAllMark( cMark, cAlias )
 
    ( cAlias )->( DbGoTo( nRecNo ) )
 
-return ( nil )
+RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 
-function SkipFor( nWantMoved, cAlias, bFor )
+FUNCTION SkipFor( nWantMoved, cAlias, bFor )
 
    local nMoved   := 0
 
@@ -671,46 +671,46 @@ function SkipFor( nWantMoved, cAlias, bFor )
 
    end if
 
-return ( nMoved )
+RETURN ( nMoved )
 
 //---------------------------------------------------------------------------//
 
-function NotMinus( nUnits )
+FUNCTION NotMinus( nUnits )
 
-return ( if( nUnits < 0, 0, nUnits ) )
+RETURN ( if( nUnits < 0, 0, nUnits ) )
 
 //--------------------------------------------------------------------------//
 
-Function cDateTime()
+FUNCTION cDateTime()
 
-Return ( Dtos( Date() ) + Left( StrTran( Time(), ":","" ), 4 ) )
+RETURN ( Dtos( Date() ) + Left( StrTran( Time(), ":","" ), 4 ) )
 
 //----------------------------------------------------------------------------//
 
-Function lNegativo( nNum )
+FUNCTION lNegativo( nNum )
 
-Return ( -0.1 > nNum )
-
-//---------------------------------------------------------------------------//
-
-Function IsArray( u )
-
-Return ( Valtype( u ) == "A" )
+RETURN ( -0.1 > nNum )
 
 //---------------------------------------------------------------------------//
 
-Function IsHash( u )
+FUNCTION IsArray( u )
 
-Return ( HB_isHash( u ) )
+RETURN ( Valtype( u ) == "A" )
 
 //---------------------------------------------------------------------------//
 
-Function retChr( cCadena )
+FUNCTION IsHash( u )
+
+RETURN ( HB_isHash( u ) )
+
+//---------------------------------------------------------------------------//
+
+FUNCTION retChr( cCadena )
 
    local cChr     := ""
 
    if Valtype( cCadena ) != "C"
-      Return ( cChr )
+      RETURN ( cChr )
    end if
 
    cCadena        := AllTrim( cCadena )
@@ -724,11 +724,11 @@ Function retChr( cCadena )
       cCadena     := SubStr( cCadena, At( " ", cCadena ) + 1 )
    end while
 
-Return ( cChr )
+RETURN ( cChr )
 
 //---------------------------------------------------------------------------//
 
-Function DateToJuliano( dFecha )
+FUNCTION DateToJuliano( dFecha )
 
    local dInicial
 
@@ -736,11 +736,11 @@ Function DateToJuliano( dFecha )
 
    dInicial       := Ctod( "01/01/" + AllTrim( Str( Year( dFecha ) ) ) )
 
-Return ( dFecha - dInicial + 1 )
+RETURN ( dFecha - dInicial + 1 )
 
 //---------------------------------------------------------------------------//
 
-Function JulianoToDate( nYear, nJuliana )
+FUNCTION JulianoToDate( nYear, nJuliana )
 
    local dFecIni
 
@@ -749,7 +749,7 @@ Function JulianoToDate( nYear, nJuliana )
 
    dFecIni           := Ctod( "01/01/" + Str( nYear, 4, 0 ) )
 
-Return ( dFecIni + nJuliana - 1 )
+RETURN ( dFecIni + nJuliana - 1 )
 
 //---------------------------------------------------------------------------//
 
@@ -785,7 +785,7 @@ FUNCTION addMonth( ddate, nMth )
      nDay   := nLDOM
    endif
 
-return ( Ctod( StrZero( nDay, 2 ) + "/" + StrZero( nMonth, 2 ) + "/" + StrZero( nYear, 4 ) ) )
+RETURN ( Ctod( StrZero( nDay, 2 ) + "/" + StrZero( nMonth, 2 ) + "/" + StrZero( nYear, 4 ) ) )
 
 //---------------------------------------------------------------------------//
 
@@ -815,7 +815,7 @@ FUNCTION LastDayoM( xDate )
       ndays       := daysInmonth( nMonth, lleap )
    endif
 
-return ndays
+RETURN ndays
 
 //---------------------------------------------------------------------------//
 
@@ -850,7 +850,7 @@ FUNCTION isLeap ( ddate )
          lRetVal := .F.
    endcase
 
-return lRetVal
+RETURN lRetVal
 
 //---------------------------------------------------------------------------//
 
@@ -869,7 +869,7 @@ FUNCTION daysInmonth ( nMonth, lLeap )
       nday  := 31
    endcase
 
-return nday
+RETURN nday
 
 //---------------------------------------------------------------------------//
 
@@ -877,7 +877,7 @@ return nday
 Selecciona todos los registros
 */
 
-Function lselectAll( oBrw, dbf, cFieldName, lselect, lTop, lMeter )
+FUNCTION lselectAll( oBrw, dbf, cFieldName, lselect, lTop, lMeter )
 
    local nPos
    local nRecAct        := ( dbf )->( Recno() )
@@ -943,11 +943,11 @@ Function lselectAll( oBrw, dbf, cFieldName, lselect, lTop, lMeter )
       oBrw:SetFocus()
    end if
 
-Return nil
+RETURN nil
 
 //---------------------------------------------------------------------------//
 
-Function ChangeField( dbfAlias, xField, xValue, oBrowse )
+FUNCTION ChangeField( dbfAlias, xField, xValue, oBrowse )
 
    if ( dbfAlias )->( dbRLock() )
       ( dbfAlias )->( FieldPut( ( dbfAlias )->( FieldPos( xField ) ), xValue ) )
@@ -959,13 +959,13 @@ Function ChangeField( dbfAlias, xField, xValue, oBrowse )
       oBrowse:Refresh()
    end if
 
-Return nil
+RETURN nil
 
 //---------------------------------------------------------------------------//
 
-Function Capitalize( cChar )
+FUNCTION Capitalize( cChar )
 
-Return ( Upper( Left( cChar, 1 ) ) + Rtrim( Lower( SubStr( cChar, 2 ) ) ) )
+RETURN ( Upper( Left( cChar, 1 ) ) + Rtrim( Lower( SubStr( cChar, 2 ) ) ) )
 
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
@@ -1007,29 +1007,29 @@ Method Init( cSerie, nNumero, cSufijo, dFecha )
    ::dFechaInicio       := dFecha
    ::dFechaFin          := dFecha
 
-Return ( Self )
+RETURN ( Self )
 
 //---------------------------------------------------------------------------//
 
-Function DecimalMod( nDividend, nDivisor )
+FUNCTION DecimalMod( nDividend, nDivisor )
 
    local nMod  := Int( nDividend / nDivisor )
    nMod        := nDividend - ( nMod * nDivisor )
 
-Return ( nMod )
+RETURN ( nMod )
 
 //----------------------------------------------------------------------------//
 
-Function LTrans( Exp, cSayPicture )
+FUNCTION LTrans( Exp, cSayPicture )
 
-Return ( Ltrim( Trans( Exp, cSayPicture ) ) )
+RETURN ( Ltrim( Trans( Exp, cSayPicture ) ) )
 
 //----------------------------------------------------------------------------//
 /*
 No borrar esta version es para el Garrido
 */
 
-Function cNumTiket( cCodAlb, dbfAlbCliT )
+FUNCTION cNumTiket( cCodAlb, dbfAlbCliT )
 
    local oBlock
    local oError
@@ -1073,17 +1073,17 @@ Function cNumTiket( cCodAlb, dbfAlbCliT )
 
    CLOSE ( dbfTiket )
 
-return ( cNumDoc )
+RETURN ( cNumDoc )
 
 //----------------------------------------------------------------------------//
 
-Function msgDbfInfo( dbfAlias, cTitle )
+FUNCTION msgDbfInfo( dbfAlias, cTitle )
 
    local oDlg
    local oTreeInfo
 
    if empty( dbfAlias )
-      Return ( nil )      
+      RETURN ( nil )      
    end if
 
    DEFINE DIALOG oDlg RESOURCE "dbInfo" TITLE ( cTitle )
@@ -1096,11 +1096,11 @@ Function msgDbfInfo( dbfAlias, cTitle )
 
    ACTIVATE DIALOG oDlg CENTER
 
-Return ( nil )
+RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 
-Static Function StartDbfInfo( dbfAlias, oTreeInfo )
+Static FUNCTION StartDbfInfo( dbfAlias, oTreeInfo )
 
    local n := 0
 
@@ -1184,7 +1184,7 @@ Static Function StartDbfInfo( dbfAlias, oTreeInfo )
    oTreeInfo:Add( "DBOI_KEYNORAW     : "  + cValToChar( dbOrderInfo( DBOI_KEYNORAW        ) ) )
    oTreeInfo:Add( "DBOI_KEYCOUNTRAW  : "  + cValToChar( dbOrderInfo( DBOI_KEYCOUNTRAW     ) ) )
 
-Return ( nil )
+RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 
@@ -1228,38 +1228,38 @@ RETURN cAlias
 
 //---------------------------------------------------------------------------//
 
-Function dbSeekArticuloUpperLower( uVal, nView )
+FUNCTION dbSeekArticuloUpperLower( uVal, nView )
 
    if dbSeekInOrd( uVal, "Codigo", D():Articulos( nView ) )
-      return .t.
+      RETURN .t.
    end if 
 
    if dbSeekInOrd( upper( uVal ), "Codigo", D():Articulos( nView ) )
-      return .t.
+      RETURN .t.
    end if 
 
    if dbSeekInOrd( lower( uVal ), "Codigo", D():Articulos( nView ) )
-      return .t.
+      RETURN .t.
    end if 
 
-Return ( .f. )
+RETURN ( .f. )
 
 //---------------------------------------------------------------------------//
 
 
-Function dbSeekUpperLower( uVal, nView )
+FUNCTION dbSeekUpperLower( uVal, nView )
 
-   local lReturn
+   local lRETURN
 
-   lReturn     := ( ( D():Articulos( nView ) )->( dbSeek( uVal ) ) )           .or.;
+   lRETURN     := ( ( D():Articulos( nView ) )->( dbSeek( uVal ) ) )           .or.;
                   ( ( D():Articulos( nView ) )->( dbSeek( Lower( uVal ) ) ) )  .or.;
                   ( ( D():Articulos( nView ) )->( dbSeek( Upper( uVal ) ) ) )
 
-Return ( lReturn )
+RETURN ( lRETURN )
 
 //---------------------------------------------------------------------------//
 
-Function dbSeekInOrd( uVal, cOrd, cAlias, lSoft, lLast )
+FUNCTION dbSeekInOrd( uVal, cOrd, cAlias, lSoft, lLast )
 
    local nOrd
    local lRet        := .f.
@@ -1272,11 +1272,11 @@ Function dbSeekInOrd( uVal, cOrd, cAlias, lSoft, lLast )
       ( cAlias )->( ordsetfocus( nOrd ) )
    end if
 
-Return ( lRet )
+RETURN ( lRet )
 
 //---------------------------------------------------------------------------//
 
-Function hSeekInOrd( hHash )
+FUNCTION hSeekInOrd( hHash )
 
    local h
    local nOrd
@@ -1323,11 +1323,11 @@ Function hSeekInOrd( hHash )
 
    end if 
 
-Return ( lRet )
+RETURN ( lRet )
 
 //---------------------------------------------------------------------------//
 
-Function aSqlStruct( aStruct )
+FUNCTION aSqlStruct( aStruct )
 
    local a
    local aSqlStruct  := {}
@@ -1336,40 +1336,40 @@ Function aSqlStruct( aStruct )
       aAdd( aSqlStruct, { a[1], a[2], a[3], a[4] } )
    next
 
-Return ( aSqlStruct )
+RETURN ( aSqlStruct )
 
 //----------------------------------------------------------------------------//
 
-Function lExistTable( cTable, cVia )
+FUNCTION lExistTable( cTable, cVia )
    
    DEFAULT cVia   := cDriver()
    
    if cVia == "ADS"
-      return .t.
+      RETURN .t.
    end if
 
-Return ( file( cTable ) ) // dbExists( cTable ) )
+RETURN ( file( cTable ) ) // dbExists( cTable ) )
 
 //----------------------------------------------------------------------------//
 
-Function lExistIndex( cIndex, cVia )
+FUNCTION lExistIndex( cIndex, cVia )
 
    DEFAULT cVia   := cDriver()
 
    if cVia == "ADS"
-      return .t.
+      RETURN .t.
    end if
 
-Return ( file( cIndex ) )
+RETURN ( file( cIndex ) )
 
 //----------------------------------------------------------------------------//
 
-Function fEraseTable( cTable, cVia )
+FUNCTION fEraseTable( cTable, cVia )
 
    local lErase   := .t.
 
    if !lExistTable( cTable )
-      Return ( lErase )
+      RETURN ( lErase )
    end if 
 
    lErase         := ( fErase( cTable ) == 0 )
@@ -1377,37 +1377,37 @@ Function fEraseTable( cTable, cVia )
       MsgStop( "Imposible eliminar el fichero " + cTable + ". Código de error " + Str( fError() ) )
    end if
 
-Return ( lErase )
+RETURN ( lErase )
 
 //----------------------------------------------------------------------------//
 
-Function fRenameTable( cTableOld, cTableNew )
+FUNCTION fRenameTable( cTableOld, cTableNew )
 
-Return ( fRename( cTableOld, cTableNew ) )
+RETURN ( fRename( cTableOld, cTableNew ) )
 
 //----------------------------------------------------------------------------//
 
-Function dbSafeUnlock( cAlias )
+FUNCTION dbSafeUnlock( cAlias )
 
    if ( cAlias )->( Used() )
       ( cAlias )->( dbUnLock() )
    end if
 
-Return nil
+RETURN nil
 
 //---------------------------------------------------------------------------//
 
-function dbSafeLock( cAlias )
+FUNCTION dbSafeLock( cAlias )
 
    if !( cAlias )->( Used() )
-      return .f.
+      RETURN .f.
    end if
       
    if dbLock( cAlias )
-      Return .t.
+      RETURN .t.
    end if
 
-return .f.
+RETURN .f.
 
 //----------------------------------------------------------------------------//
 
@@ -1450,23 +1450,23 @@ FUNCTION dbAppendDefault( cAliOrigen, cAliDestino, aStruct )
 
    end if
 
-Return ( lPass )
+RETURN ( lPass )
 
 //----------------------------------------------------------------------------//
 
-Function fEraseIndex( cTable, cVia )
+FUNCTION fEraseIndex( cTable, cVia )
 
    DEFAULT cVia   := cDriver()
 
    if cVia == "ADS"
-      return .t.
+      RETURN .t.
    end if
 
-Return ( fErase( cTable ) )
+RETURN ( fErase( cTable ) )
 
 //----------------------------------------------------------------------------//
 
-Function buildIndex( cDataBase, cDriver, aIndex )
+FUNCTION buildIndex( cDataBase, cDriver, aIndex )
 
    local cAlias
    local aCurrent
@@ -1486,7 +1486,7 @@ Function buildIndex( cDataBase, cDriver, aIndex )
       msgStop( "Imposible abrir en modo exclusivo la tabla : " + cDataBase )
    end if
 
-Return ( nil )
+RETURN ( nil )
 
 //----------------------------------------------------------------------------//
    
@@ -1501,7 +1501,7 @@ FUNCTION bCheck2Block( cChar, lMessage )
    DEFAULT lMessage  := .t.
 
    if empty( cChar )
-      return ( bBlock )
+      RETURN ( bBlock )
    end if
 
    oBlock            := ErrorBlock( {| oError | ApoloBreak( oError ) } )
@@ -1542,51 +1542,51 @@ RETURN ( bBlock )
 
 //---------------------------------------------------------------------------//
 
-Function setScriptSystem( cScriptSystem )
+FUNCTION setScriptSystem( cScriptSystem )
 
    scriptSystem   := cScriptSystem
 
-Return ( nil )   
+RETURN ( nil )   
 
 //---------------------------------------------------------------------------//
 
-Function runScriptBeforeAppend()
+FUNCTION runScriptBeforeAppend()
 
    if !empty(scriptSystem)
       runEventScript( scriptSystem + "\beforeAppend" )
    end if 
 
-Return ( nil )
+RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 
-Function runScriptAfterAppend()
+FUNCTION runScriptAfterAppend()
 
    if !empty(scriptSystem)
       runEventScript( scriptSystem + "\afterAppend" )
    end if 
 
-Return ( nil )
+RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 
-Function runScriptBeforeEdit()
+FUNCTION runScriptBeforeEdit()
 
    if !empty(scriptSystem)
       runEventScript( scriptSystem + "\beforeEdit" )
    end if 
 
-Return ( nil )
+RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 
-Function runScriptAfterEdit()
+FUNCTION runScriptAfterEdit()
 
    if !empty(scriptSystem)
       runEventScript( scriptSystem + "\afterEdit" )
    end if 
 
-Return ( nil )
+RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 
@@ -1605,7 +1605,7 @@ FUNCTION WinAppRec( oBrw, bEdit, cAlias, bWhen, bValid, xOthers )
 
    local aTmp
    local aGet
-   local lReturn     := .f.
+   local lRETURN     := .f.
    local nOrd        := 0
 
    DEFAULT cAlias    := Alias()
@@ -1613,12 +1613,12 @@ FUNCTION WinAppRec( oBrw, bEdit, cAlias, bWhen, bValid, xOthers )
    DEFAULT bValid    := "" //{ || .t. }
 
    if select( cAlias ) == 0
-      return .f.
+      RETURN .f.
    end if
 
    if lDemoMode() .and. ( cAlias )->( lastRec() ) >= 50
       msgStop( "Esta usted utilizando una versión demo.", "El programa se abortará" )
-      return .f.
+      RETURN .f.
    end if
 
    // Script antes de añadir---------------------------------------------------
@@ -1637,9 +1637,9 @@ FUNCTION WinAppRec( oBrw, bEdit, cAlias, bWhen, bValid, xOthers )
 
 	// Bloqueamos el registro durante la edición-----------------------------------
 
-   lReturn        := Eval( bEdit, aTmp, aGet, cAlias, oBrw, bWhen, bValid, APPD_MODE, xOthers )
+   lRETURN        := Eval( bEdit, aTmp, aGet, cAlias, oBrw, bWhen, bValid, APPD_MODE, xOthers )
 
-   if lReturn
+   if lRETURN
       dbSafeUnLock( cAlias )
    end if
 
@@ -1667,7 +1667,7 @@ FUNCTION WinAppRec( oBrw, bEdit, cAlias, bWhen, bValid, xOthers )
 
    end if
 
-RETURN lReturn
+RETURN lRETURN
 
 //-------------------------------------------------------------------------//
 
@@ -1691,12 +1691,12 @@ FUNCTION WinDupRec( oBrw, bEdit, cAlias, bWhen, bValid, xOthers )
    local nOrd     := 0
 
    if select( cAlias ) == 0
-      Return .f.
+      RETURN .f.
    end if
 
    if lDemoMode() .and. ( cAlias )->( lastRec() ) >= 50
       msgStop( "Esta usted utilizando una versión demo.", "El programa se abortará" )
-      Return .f.
+      RETURN .f.
    end if
 
    // Script antes de añadir---------------------------------------------------
@@ -1788,7 +1788,7 @@ FUNCTION WinEdtRec( oBrw, bEdit, cAlias, bWhen, bValid, xOthers )
    DEFAULT bValid    := "" //{ || .t. }
 
    if select( cAlias ) == 0 .OR. ( ( cAlias )->( LastRec() ) == 0 )
-      return .f.
+      RETURN .f.
    end if
 
    // Script antes de añadir
@@ -1926,27 +1926,27 @@ FUNCTION dbDialogLock( cAlias, lAppend )
    DEFAULT lAppend   := .f.
 
    if DBLock( cAlias, if( lAppend, MODE_APPEND, MODE_RECORD ) )
-      return .t.
+      RETURN .t.
 	endif
 
    while ApoloMsgNoYes( "Registro bloqueado," + CRLF + "¿ Reintentar ?" )
 
 		if DBLock( cAlias, if( lAppend, MODE_APPEND, MODE_RECORD ) )
-         return .t.
+         RETURN .t.
 		else
 			loop
 		endif
 
    enddo
 
-Return .f.
+RETURN .f.
 
 //--------------------------------------------------------------------------//
 /*
 Devuelve un array con un registro en blanco, del alias pasado como argumento
 */
 
-Function dbBlankRec( cAlias )
+FUNCTION dbBlankRec( cAlias )
 
    local i
    local aBlank   := {}
@@ -1975,7 +1975,7 @@ RETURN aBlank
 
 //--------------------------------------------------------------------------//
 
-Function dbHash( cAlias )
+FUNCTION dbHash( cAlias )
 
    local i
    local hHash       := {=>}
@@ -1993,7 +1993,7 @@ RETURN ( hHash )
 Bloquea un registro
 */
 
-Function dbLock( cAlias, nMode )
+FUNCTION dbLock( cAlias, nMode )
 
    local i
 
@@ -2005,20 +2005,20 @@ Function dbLock( cAlias, nMode )
 
          ( cAlias )->( dbAppend() )
          if !NetErr()
-            return .t.
+            RETURN .t.
 			endif
 
 		else
 
          if ( cAlias )->( dbRLock() )
-				return .t.
+				RETURN .t.
 			end if
 
 		endif
 
 	next
 
-Return .f.
+RETURN .f.
 
 //--------------------------------------------------------------------------//
 /*
@@ -2031,7 +2031,7 @@ FUNCTION WinDelRec( oBrw, cAlias, bPreBlock, bPostBlock, lMaster, lTactil )
    local nRec        := 0
    local cTxt        := "¿Desea eliminar el registro en curso?"
    local nMarked     := 0
-   local lReturn     := .f.
+   local lRETURN     := .f.
    local lTrigger    := .t.
    local oWaitMeter
 
@@ -2040,7 +2040,7 @@ FUNCTION WinDelRec( oBrw, cAlias, bPreBlock, bPostBlock, lMaster, lTactil )
    DEFAULT lTactil   := .f.
 
    if select( cAlias ) == 0 .or. ( cAlias )->( LastRec() ) == 0
-      return ( .f. )
+      RETURN ( .f. )
    end if
 
    // Cuantos registros marcados tenemos---------------------------------------
@@ -2100,7 +2100,7 @@ FUNCTION WinDelRec( oBrw, cAlias, bPreBlock, bPostBlock, lMaster, lTactil )
                lTrigger := CheckEval( bPostBlock )
             end if
 
-            lReturn     := .t.
+            lRETURN     := .t.
 
          end if
 
@@ -2115,7 +2115,7 @@ FUNCTION WinDelRec( oBrw, cAlias, bPreBlock, bPostBlock, lMaster, lTactil )
       oBrw:SetFocus() // .t. )
    end if
 
-RETURN ( lReturn )
+RETURN ( lRETURN )
 
 //--------------------------------------------------------------------------//
 
@@ -2128,14 +2128,14 @@ FUNCTION dbDelRec( oBrw, cAlias, bPreBlock, bPostBlock, lDelMarked, lBig )
    local nRec           := 0
    local cTxt           := "¿Desea eliminar el registro en curso?"
    local nMarked        := 0
-   local lReturn        := .f.
+   local lRETURN        := .f.
 
    DEFAULT cAlias       := Alias()
    DEFAULT lDelMarked   := .f.
    DEFAULT lBig         := .f.
 
    if select( cAlias ) == 0 .or. ( cAlias )->( LastRec() ) == 0
-      return ( .f. )
+      RETURN ( .f. )
    end if
 
    /*
@@ -2178,13 +2178,13 @@ FUNCTION dbDelRec( oBrw, cAlias, bPreBlock, bPostBlock, lDelMarked, lBig )
             oBrw:Refresh()
          end if
 
-         lReturn        := .t.
+         lRETURN        := .t.
 
       end if
 
    end if
 
-RETURN ( lReturn )
+RETURN ( lRETURN )
 
 //--------------------------------------------------------------------------//
 
@@ -2217,11 +2217,11 @@ FUNCTION DelRecno( cAlias, oBrw, lDelMarked )
       oBrw:SetFocus()
    end if
 
-Return nil
+RETURN nil
 
 //------------------------------------------------------------------------//
 
-Function CheckEval( bCodeBlock )
+FUNCTION CheckEval( bCodeBlock )
 
    local oBlock
    local oError
@@ -2242,11 +2242,11 @@ Function CheckEval( bCodeBlock )
 
    ErrorBlock( oBlock )
 
-Return ( lCheckEval )
+RETURN ( lCheckEval )
 
 //--------------------------------------------------------------------------//
 
-function nGetAllMark( cMark, cAlias )
+FUNCTION nGetAllMark( cMark, cAlias )
 
    local nNum     := 0
    local nRecNo   := ( cAlias )->( RecNo() )
@@ -2265,11 +2265,11 @@ function nGetAllMark( cMark, cAlias )
 
    ( cAlias )->( dbGoTo( nRecNo ) )
 
-return ( nNum )
+RETURN ( nNum )
 
 //---------------------------------------------------------------------------//
 
-Function dbDel( cAlias )
+FUNCTION dbDel( cAlias )
 
    if ( cAlias )->( dbRLock() ) //dbLock( cAlias )
       ( cAlias )->( dbDelete() )
@@ -2280,35 +2280,35 @@ Function dbDel( cAlias )
 
    ( cAlias )->( dbSkip( 0 ) )
 
-Return nil
+RETURN nil
 
 //---------------------------------------------------------------------------//
 
-Function dbLockDelete( cAlias )
+FUNCTION dbLockDelete( cAlias )
 
    if dbLock( cAlias )
       ( cAlias )->( dbDelete() )
       ( cAlias )->( dbUnLock() )
    else 
-      Return .f.
+      RETURN .f.
    end if
 
-Return .t.
+RETURN .t.
 
 //---------------------------------------------------------------------------//
 
 // Esta marcado el registro?
 
-function lMarked( cMark, nRec )
+FUNCTION lMarked( cMark, nRec )
 
     cMark := if( ValType( cMark ) == "C", cMark, "#" )
 
-return( GetMarkRec( cMark, nRec ) == cMark )
+RETURN( GetMarkRec( cMark, nRec ) == cMark )
 
 //---------------------------------------------------------------------------//
 // Extrae la marca del registro a bajo nivel del espacio de la marca de deleted
 
-function GetMarkRec( nRec )
+FUNCTION GetMarkRec( nRec )
 
    local nRecNo   := RecNo()
    local nHdl     := DbfHdl()
@@ -2323,7 +2323,7 @@ function GetMarkRec( nRec )
 
    DbGoTo( nRecNo )
 
-return( cMark )
+RETURN( cMark )
 
 //---------------------------------------------------------------------------//
 
@@ -2359,7 +2359,7 @@ FUNCTION WinGather( aTmp, aGet, cAlias, oBrw, nMode, bPostAction, lempty )
 
    CursorWe()
 
-Return ( nil )
+RETURN ( nil )
 
 //--------------------------------------------------------------------------//
 
@@ -2388,32 +2388,32 @@ RETURN NIL
 
 //---------------------------------------------------------------------------//
 
-function NotCero( nUnits )
+FUNCTION NotCero( nUnits )
 
-return ( if( nUnits != 0, nUnits, 1 ) )
+RETURN ( if( nUnits != 0, nUnits, 1 ) )
 
 //--------------------------------------------------------------------------//
 
-function NotCaja( nUnits )
+FUNCTION NotCaja( nUnits )
 
    if !lCalCaj()
       nUnits   := 1
    end if
 
-return ( if( nUnits == 0, 1, nUnits ) )
+RETURN ( if( nUnits == 0, 1, nUnits ) )
 
 //--------------------------------------------------------------------------//
 
-function SetStatus( cAlias, aStatus )
+FUNCTION SetStatus( cAlias, aStatus )
 
    ( cAlias )->( OrdSetFocus( aStatus[ 2 ] ) )
    ( cAlias )->( dbGoTo( aStatus[ 1 ] ) )
 
-return nil
+RETURN nil
 
 //--------------------------------------------------------------------------//
 
-function aGetStatus( cAlias, lInit )
+FUNCTION aGetStatus( cAlias, lInit )
 
    local aStatus  := { ( cAlias )->( Recno() ), ( cAlias )->( ordsetfocus() ) }
 
@@ -2424,11 +2424,11 @@ function aGetStatus( cAlias, lInit )
       ( cAlias )->( dbGoTop() )
    end if
 
-return ( aStatus )
+RETURN ( aStatus )
 
 //--------------------------------------------------------------------------//
 
-Function hGetStatus( cAlias, uOrder )
+FUNCTION hGetStatus( cAlias, uOrder )
 
    local hStatus  := { "Alias" => cAlias, "Recno" => ( cAlias )->( Recno() ), "Order" => ( cAlias )->( OrdSetFocus() ) }
 
@@ -2437,16 +2437,16 @@ Function hGetStatus( cAlias, uOrder )
       ( cAlias )->( dbGoTop() )
    end if
 
-Return ( hStatus )
+RETURN ( hStatus )
 
 //--------------------------------------------------------------------------//
 
-Function hSetStatus( hStatus )
+FUNCTION hSetStatus( hStatus )
 
    ( HGet( hStatus, "Alias" ) )->( ordsetfocus( HGet( hStatus, "Order" ) ) )
    ( HGet( hStatus, "Alias" ) )->( dbgoto(      HGet( hStatus, "Recno" ) ) )
 
-Return nil
+RETURN nil
 
 //--------------------------------------------------------------------------//
 /*
@@ -2455,14 +2455,14 @@ Comprueba si existe una clave
 
 FUNCTION notValid( oGet, uAlias, lRjust, cChar, nTag, nLen )
 
-   local lReturn  := .t.
+   local lRETURN  := .t.
 
    if !validKey( oGet, uAlias, lRjust, cChar, nTag, nLen )
       msgStop( "Clave existente", "Aviso del sistema" )
-      lReturn     := .f.
+      lRETURN     := .f.
    end if
 
-RETURN lReturn
+RETURN lRETURN
 
 //-------------------------------------------------------------------------//
 
@@ -2471,7 +2471,7 @@ FUNCTION validKey( oGet, uAlias, lRjust, cChar, nTag, nLen )
    local nOldTag
    local cAlias
    local cFilter
-   local lReturn  := .t.
+   local lRETURN  := .t.
    local xClave   := oGet:VarGet()
 
    DEFAULT uAlias := Alias()
@@ -2496,7 +2496,7 @@ FUNCTION validKey( oGet, uAlias, lRjust, cChar, nTag, nLen )
 
    if empty( ( cAlias )->( OrdSetFocus() ) )
       MsgInfo( "Indice no disponible, comprobación imposible" )
-      return .t.
+      RETURN .t.
    end if
 
    if lRjust
@@ -2510,7 +2510,7 @@ FUNCTION validKey( oGet, uAlias, lRjust, cChar, nTag, nLen )
    xClave         := oGet:VarGet()
 
    if Existe( xClave, cAlias )
-      lReturn     := .f.
+      lRETURN     := .f.
    end if
 
 	( cAlias )->( OrdSetFocus( nOldTag ) )
@@ -2520,7 +2520,7 @@ FUNCTION validKey( oGet, uAlias, lRjust, cChar, nTag, nLen )
    end if
 
 
-RETURN lReturn
+RETURN lRETURN
 
 //-------------------------------------------------------------------------//
 
@@ -2567,39 +2567,39 @@ RETURN ( cTitle )
 
 //----------------------------------------------------------------------------//
 
-Function dbAppe( cAlias )
+FUNCTION dbAppe( cAlias )
 
    ( cAlias )->( dbAppend() )
    if !( cAlias )->( NetErr() )
-      return .t.
+      RETURN .t.
    endif
 
-Return .f.
+RETURN .f.
 
 //--------------------------------------------------------------------------//
 
-Function databaseFileName( cFile )
+FUNCTION databaseFileName( cFile )
 
-Return ( cFile + ".Dbf" )
-
-//--------------------------------------------------------------------------//
-
-Function databaseFileIndex( cFile )
-
-Return ( cFile + ".Cdx" )
+RETURN ( cFile + ".Dbf" )
 
 //--------------------------------------------------------------------------//
 
-Function databaseFileMemo( cFile )
+FUNCTION databaseFileIndex( cFile )
 
-Return ( cFile + ".Fpt" )
+RETURN ( cFile + ".Cdx" )
 
 //--------------------------------------------------------------------------//
 
-Function dbfErase( cFileName )
+FUNCTION databaseFileMemo( cFile )
+
+RETURN ( cFile + ".Fpt" )
+
+//--------------------------------------------------------------------------//
+
+FUNCTION dbfErase( cFileName )
 
    if empty( cFileName )
-      return .t.
+      RETURN .t.
    end if
 
    if dbExists( cFileName )
@@ -2608,54 +2608,54 @@ Function dbfErase( cFileName )
 
    if file( databaseFileName( cFileName ) )
       if ferase( databaseFileName( cFileName ) ) == -1
-         Return .f.
+         RETURN .f.
       end if
    end if
 
    if file( databaseFileIndex( cFileName ) )
       if fErase( databaseFileIndex( cFileName ) ) == -1
-         Return .f.
+         RETURN .f.
       end if
    end if
 
    if file( databaseFileMemo( cFileName ) )
       if fErase( databaseFileMemo( cFileName ) ) == -1
-         Return .f.
+         RETURN .f.
       end if
    end if
 
-Return .t.
+RETURN .t.
 
 //---------------------------------------------------------------------------//
 
-Function dbfRename( cFileNameOld, cFileNameNew )
+FUNCTION dbfRename( cFileNameOld, cFileNameNew )
 
    if file( cFileNameOld + ".Dbf" )
       if fRename( cFileNameOld + ".Dbf", cFileNameNew + ".Dbf" ) == -1
          //MsgStop( "No se pudo renombrar el fichero " + cFileNameOld + ".Dbf" )
-         Return .f.
+         RETURN .f.
       end if
    end if
 
    if file( cFileNameOld + ".Cdx" )
       if fRename( cFileNameOld + ".Cdx", cFileNameNew + ".Cdx" ) == -1
          //MsgStop( "No se pudo renombrar el fichero " + cFileNameOld + ".Cdx" )
-         Return .f.
+         RETURN .f.
       end if
    end if
 
    if file( cFileNameOld + ".Fpt" )
       if fRename( cFileNameOld + ".Fpt", cFileNameNew + ".Fpt" ) == -1
          MsgStop( "No se pudo renombrar el fichero " + cFileNameOld + ".Fpt" )
-         Return .f.
+         RETURN .f.
       end if
    end if
 
-Return .t.
+RETURN .t.
 
 //---------------------------------------------------------------------------//
 
-Function dbDelKit( oBrw, dbfTmp, nNumLin )
+FUNCTION dbDelKit( oBrw, dbfTmp, nNumLin )
 
    local nRec  := ( dbfTmp )->( Recno() )
    local nOrd  := ( dbfTmp )->( OrdSetFocus( "nNumLin" ) )
@@ -2687,7 +2687,7 @@ Function dbDelKit( oBrw, dbfTmp, nNumLin )
       oBrw:Refresh()
    end if
 
-Return nil
+RETURN nil
 
 //---------------------------------------------------------------------------- //
 
@@ -2724,41 +2724,41 @@ RETURN cTemp
 
 //----------------------------------------------------------------------------//
 
-Function CommitTransaction()
+FUNCTION CommitTransaction()
 
    if lAds() .or. lAIS()
-      Return ( AdsCommitTransaction() )
+      RETURN ( AdsCommitTransaction() )
    end if
 
    dbCommitAll()
 
-Return ( .t. )
+RETURN ( .t. )
 
 //----------------------------------------------------------------------------//
 
-Function BeginTransaction()
+FUNCTION BeginTransaction()
 
    if lAds() .or. lAIS()
-      Return ( AdsBeginTransaction() )
+      RETURN ( AdsBeginTransaction() )
    end if
 
-Return ( .t. )
+RETURN ( .t. )
 
 //----------------------------------------------------------------------------//
 
-Function RollBackTransaction()
+FUNCTION RollBackTransaction()
 
    if lAds() .or. lAIS()
-      Return ( AdsRollback() )
+      RETURN ( AdsRollback() )
    end if
 
-Return ( .t. )
+RETURN ( .t. )
 
 //----------------------------------------------------------------------------//
 
-Function Div( nDividend, nDivisor )
+FUNCTION Div( nDividend, nDivisor )
 
-Return( if( nDivisor != 0, ( nDividend / nDivisor ), 0 ) )
+RETURN( if( nDivisor != 0, ( nDividend / nDivisor ), 0 ) )
 
 //----------------------------------------------------------------------------//
 
@@ -2833,16 +2833,16 @@ FUNCTION dbLast( cAlias, nField, oGet, xHasta, nOrd )
 
    if !empty( oGet )
 		oGet:cText( xValRet )
-      return .t.
+      RETURN .t.
    end if
 
-Return ( xValRet )
+RETURN ( xValRet )
 
 //--------------------------------------------------------------------------//
 
-Function IsNil( u )
+FUNCTION IsNil( u )
 
-Return ( u == nil )
+RETURN ( u == nil )
 
 //---------------------------------------------------------------------------//
 
@@ -2850,7 +2850,7 @@ FUNCTION WinMulRec( oBrw, bEdit, cAlias, bWhen, bValid, xOthers )
 
    local aTmp
    local aGet
-   local lReturn     := .f.
+   local lRETURN     := .f.
    local nOrd        := 0
 
    DEFAULT cAlias    := Alias()
@@ -2872,8 +2872,8 @@ FUNCTION WinMulRec( oBrw, bEdit, cAlias, bWhen, bValid, xOthers )
 	Bloqueamos el registro durante la edici¢n
 	*/
 
-   lReturn        := Eval( bEdit, aTmp, aGet, cAlias, oBrw, bWhen, bValid, MULT_MODE, xOthers )
-   if lReturn
+   lRETURN        := Eval( bEdit, aTmp, aGet, cAlias, oBrw, bWhen, bValid, MULT_MODE, xOthers )
+   if lRETURN
       dbSafeUnLock( cAlias )
    end if
 
@@ -2881,26 +2881,26 @@ FUNCTION WinMulRec( oBrw, bEdit, cAlias, bWhen, bValid, xOthers )
       ( cAlias )->( OrdSetFocus( nOrd ) )
    end if
 
-RETURN ( lReturn )
+RETURN ( lRETURN )
 
 //-------------------------------------------------------------------------//
 
-Function lMayorIgual( nTotal, nCobrado, nDiferencia )
+FUNCTION lMayorIgual( nTotal, nCobrado, nDiferencia )
 
    DEFAULT nDiferencia  := 0
 
    nTotal               := Abs( nTotal )
    nCobrado             := Abs( nCobrado )
 
-Return ( ( nTotal >= nCobrado ) .and. ( ( nTotal - nCobrado ) >= nDiferencia ) )
+RETURN ( ( nTotal >= nCobrado ) .and. ( ( nTotal - nCobrado ) >= nDiferencia ) )
 
 //---------------------------------------------------------------------------//
 
-Function lDiferencia( nTotal, nCobrado, nDiferencia )
+FUNCTION lDiferencia( nTotal, nCobrado, nDiferencia )
 
    DEFAULT nDiferencia  := 0
 
-Return ( abs( nTotal - nCobrado ) >= nDiferencia )
+RETURN ( abs( nTotal - nCobrado ) >= nDiferencia )
 
 //---------------------------------------------------------------------------//
 
@@ -3003,7 +3003,7 @@ FUNCTION dbPass( cAliOrigen, cAliDestino, lApp, xField1, xField2, xField3, xFiel
 
    end if
 
-Return ( lPass )
+RETURN ( lPass )
 
 //----------------------------------------------------------------------------//
 
@@ -3025,7 +3025,7 @@ FUNCTION appendRegisterByHash( cAliOrigen, cAliDestino, hHash )
 
    end if
 
-Return ( lPass )
+RETURN ( lPass )
 
 //----------------------------------------------------------------------------//
 
@@ -3041,7 +3041,7 @@ FUNCTION EditPass( cAliOrigen, cAliDestino, hHash )
 
    end if
 
-Return ( .t. )
+RETURN ( .t. )
 
 //----------------------------------------------------------------------------//
 
@@ -3065,7 +3065,7 @@ FUNCTION PassField( cAliOrigen, cAliDestino )
 
    next
 
-Return ( .t. )
+RETURN ( .t. )
 
 //----------------------------------------------------------------------------//
 
@@ -3075,7 +3075,7 @@ FUNCTION PassHash( cAliDestino, hHash )
    local nPos
 
    if empty(hHash)
-      Return ( .t. )
+      RETURN ( .t. )
    end if 
 
    for each h in hHash
@@ -3085,23 +3085,23 @@ FUNCTION PassHash( cAliDestino, hHash )
       end if
    next
 
-Return ( .t. )
+RETURN ( .t. )
 
 //----------------------------------------------------------------------------//
 
-Function IsTrue( u )
+FUNCTION IsTrue( u )
 
-Return ( Valtype( u ) == "L" .and. u )
-
-//---------------------------------------------------------------------------//
-
-Function IsFalse( u )
-
-Return ( Valtype( u ) == "L" .and. !u )
+RETURN ( Valtype( u ) == "L" .and. u )
 
 //---------------------------------------------------------------------------//
 
-Function ValidEmailAddress( cMail, lMessage )
+FUNCTION IsFalse( u )
+
+RETURN ( Valtype( u ) == "L" .and. !u )
+
+//---------------------------------------------------------------------------//
+
+FUNCTION ValidEmailAddress( cMail, lMessage )
 
    local lValid      := .t.
 
@@ -3113,56 +3113,56 @@ Function ValidEmailAddress( cMail, lMessage )
       MsgStop( "La dirección de mail introducida no es correcta" )
    end if
 
-Return ( lValid )
+RETURN ( lValid )
 
 //---------------------------------------------------------------------------//
 
-Function IsChar( u )
+FUNCTION IsChar( u )
 
-Return ( Valtype( u ) == "C" )
-
-//---------------------------------------------------------------------------//
-
-Function IsNum( u )
-
-Return ( Valtype( u ) == "N" )
+RETURN ( Valtype( u ) == "C" )
 
 //---------------------------------------------------------------------------//
 
-Function IsLogic( u )
+FUNCTION IsNum( u )
 
-Return ( Valtype( u ) == "L" )
+RETURN ( Valtype( u ) == "N" )
+
+//---------------------------------------------------------------------------//
+
+FUNCTION IsLogic( u )
+
+RETURN ( Valtype( u ) == "L" )
 
 //----------------------------------------------------------------------------//
 
-Function IsObject( u )
+FUNCTION IsObject( u )
 
-Return ( Valtype( u ) == "O" )
+RETURN ( Valtype( u ) == "O" )
 
 //----------------------------------------------------------------------------//
 
-Function IsDate( u )
+FUNCTION IsDate( u )
 
-Return ( Valtype( u ) == "D" )
-
-//---------------------------------------------------------------------------//
-
-Function IsBlock( u )
-
-Return ( Valtype( u ) == "B" )
+RETURN ( Valtype( u ) == "D" )
 
 //---------------------------------------------------------------------------//
 
-Function IsInteger( u )
+FUNCTION IsBlock( u )
 
-Return ( u - int( u ) == 0 )
+RETURN ( Valtype( u ) == "B" )
+
+//---------------------------------------------------------------------------//
+
+FUNCTION IsInteger( u )
+
+RETURN ( u - int( u ) == 0 )
 
 //---------------------------------------------------------------------------//
 /*
 Escribe un registro de disco
 */
 
-Function dbGather( aField, cAlias, lAppend )
+FUNCTION dbGather( aField, cAlias, lAppend )
 
    local i
 
@@ -3177,11 +3177,11 @@ Function dbGather( aField, cAlias, lAppend )
 
    //( cAlias )->( dbCommit() )
 
-Return Nil
+RETURN Nil
 
 //----------------------------------------------------------------------------//
 
-Function DisableMainWnd( oWnd )
+FUNCTION DisableMainWnd( oWnd )
 
    local oBlock
 
@@ -3202,11 +3202,11 @@ Function DisableMainWnd( oWnd )
 
    ErrorBlock( oBlock )
 
-Return ( nil )
+RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 
-Function EnableMainWnd( oWnd )
+FUNCTION EnableMainWnd( oWnd )
 
    local oBlock
 
@@ -3227,11 +3227,11 @@ Function EnableMainWnd( oWnd )
 
    ErrorBlock( oBlock )
 
-Return ( nil )
+RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 
-Function IsLock( cAlias )
+FUNCTION IsLock( cAlias )
 
    local n
    local a  := ( cAlias )->( dbRLockList() )
@@ -3239,15 +3239,15 @@ Function IsLock( cAlias )
    for each n in a
 
       if ( n == ( cAlias )->( Recno() ) )
-         Return .t.
+         RETURN .t.
       end if
    end if
 
-Return .f.
+RETURN .f.
 
 //--------------------------------------------------------------------------//
 
-Function pdaLockSemaphore( cAlias )
+FUNCTION pdaLockSemaphore( cAlias )
 
    local h
    local cFile := cPatLog() + Alltrim( Str( ( cAlias )->( Recno() ) ) ) + ".txt"
@@ -3259,11 +3259,11 @@ Function pdaLockSemaphore( cAlias )
       end if
    end if
 
-Return .t.
+RETURN .t.
 
 //--------------------------------------------------------------------------//
 
-Function pdaUnLockSemaphore( cAlias )
+FUNCTION pdaUnLockSemaphore( cAlias )
 
    local cFile := cPatLog() + Alltrim( Str( ( cAlias )->( Recno() ) ) ) + ".txt"
 
@@ -3271,17 +3271,17 @@ Function pdaUnLockSemaphore( cAlias )
       fErase( cFile )
    end if
 
-Return .t.
+RETURN .t.
 
 //--------------------------------------------------------------------------//
 
-Function pdaIsLockSemaphore( cAlias )
+FUNCTION pdaIsLockSemaphore( cAlias )
 
-Return ( file( cPatLog() + Alltrim( Str( ( cAlias )->( Recno() ) ) ) + ".txt" ) )
+RETURN ( file( cPatLog() + Alltrim( Str( ( cAlias )->( Recno() ) ) ) + ".txt" ) )
 
 //--------------------------------------------------------------------------//
 
-Function AdsFile( cFile )
+FUNCTION AdsFile( cFile )
 
    local cAdsFile
 
@@ -3292,62 +3292,62 @@ Function AdsFile( cFile )
    for each cAdsFile in aAdsDirectory
 
       if ( cAdsFile == cFile )
-         return .t.
+         RETURN .t.
       end if
 
    next
 
-Return .f.
+RETURN .f.
 
 //--------------------------------------------------------------------------//
 
-Function ApoloBreak( oError )
+FUNCTION ApoloBreak( oError )
 
-Return ( if( oError:GenCode == EG_ZERODIV, 0, Break( oError ) ) )
+RETURN ( if( oError:GenCode == EG_ZERODIV, 0, Break( oError ) ) )
 
 //---------------------------------------------------------------------------//
 
-Function Quoted( uValue )
+FUNCTION Quoted( uValue )
 
    if( hb_isnumeric( uValue ) )
-      Return ( alltrim( str( uValue ) ) )
+      RETURN ( alltrim( str( uValue ) ) )
    end if 
 
-Return ( "'" + alltrim( uValue ) + "'" )
+RETURN ( "'" + alltrim( uValue ) + "'" )
 
 //---------------------------------------------------------------------------//
 
-Function toSQLString( value )
+FUNCTION toSQLString( value )
 
    if hb_isnil( value )
-      Return ( 'null' )
+      RETURN ( 'null' )
    end if
 
    if hb_isnumeric( value )
-      Return ( alltrim(str( value ) ) )
+      RETURN ( alltrim(str( value ) ) )
    end if
 
    if hb_ischar( value )
-      Return ( quoted( alltrim( value ) ) )
+      RETURN ( quoted( alltrim( value ) ) )
    end if
 
-Return ( value )
+RETURN ( value )
        
 //---------------------------------------------------------------------------//
 
-Function Chiled( cString )
+FUNCTION Chiled( cString )
 
-Return ( Space( 3 ) + "<" + Alltrim( cString ) + ">" )
+RETURN ( Space( 3 ) + "<" + Alltrim( cString ) + ">" )
 
 //---------------------------------------------------------------------------//
 
-Function lChangeStruct( cAlias, aStruct )
+FUNCTION lChangeStruct( cAlias, aStruct )
 
    local i
    local aAliasStruct   
 
    if ( cAlias )->( fCount() ) != len( aStruct )
-      Return .t.
+      RETURN .t.
    end if 
 
    aAliasStruct         := ( cAlias )->( dbStruct() ) 
@@ -3359,17 +3359,17 @@ Function lChangeStruct( cAlias, aStruct )
          aAliasStruct[ i, DBS_LEN  ] != aStruct[ i, DBS_LEN  ] .or. ;
          aAliasStruct[ i, DBS_DEC  ] != aStruct[ i, DBS_DEC  ]
 
-         Return .t.
+         RETURN .t.
 
       end if
 
    next
 
-Return .f.
+RETURN .f.
 
 //----------------------------------------------------------------------------//
 
-function DbDialog( cTitle )
+FUNCTION DbDialog( cTitle )
 
    local j
    local n
@@ -3486,7 +3486,7 @@ RETURN NIL
 
 //---------------------------------------------------------------------------//
 /*
-Function getConfigTraslation( cText )
+FUNCTION getConfigTraslation( cText )
 
    local cTraslation    := ""
 
@@ -3503,41 +3503,41 @@ Function getConfigTraslation( cText )
       end if
    end if 
 
-return ( if( !empty( cTraslation ), cTraslation, cText ) )   
+RETURN ( if( !empty( cTraslation ), cTraslation, cText ) )   
 */
 //---------------------------------------------------------------------------//
 
-Function ValToMoney( cMoney )
+FUNCTION ValToMoney( cMoney )
 
-Return ( Val( StrTran( cMoney, ",", "." ) ) )
-
-//--------------------------------------------------------------------------//
-
-Function LineDown( cAlias, oBrw )
-
-Return ( lineReposition( cAlias, oBrw, .f. ) )
+RETURN ( Val( StrTran( cMoney, ",", "." ) ) )
 
 //--------------------------------------------------------------------------//
 
-Function LineDownOld( cAlias, oBrw )
+FUNCTION LineDown( cAlias, oBrw )
 
-Return ( lineRepositionOld( cAlias, oBrw, .f. ) )
-
-//--------------------------------------------------------------------------//
-
-Function LineUp( cAlias, oBrw )
-
-Return ( lineReposition( cAlias, oBrw, .t. ) )
+RETURN ( lineReposition( cAlias, oBrw, .f. ) )
 
 //--------------------------------------------------------------------------//
 
-Function LineUpOld( cAlias, oBrw )
+FUNCTION LineDownOld( cAlias, oBrw )
 
-Return ( lineRepositionOld( cAlias, oBrw, .t. ) )
+RETURN ( lineRepositionOld( cAlias, oBrw, .f. ) )
 
 //--------------------------------------------------------------------------//
 
-Function lineReposition( cAlias, oBrw, lUp )
+FUNCTION LineUp( cAlias, oBrw )
+
+RETURN ( lineReposition( cAlias, oBrw, .t. ) )
+
+//--------------------------------------------------------------------------//
+
+FUNCTION LineUpOld( cAlias, oBrw )
+
+RETURN ( lineRepositionOld( cAlias, oBrw, .t. ) )
+
+//--------------------------------------------------------------------------//
+
+FUNCTION lineReposition( cAlias, oBrw, lUp )
 
    local nOrdNum  
    local nRecNum  
@@ -3548,19 +3548,19 @@ Function lineReposition( cAlias, oBrw, lUp )
    DEFAULT lUp    := .t.
 
    if ( cAlias )->( fieldpos( "nPosPrint" ) ) == 0
-      Return .f.
+      RETURN .f.
    end if
 
    nOrdNum        := ( cAlias )->( OrdSetFocus( "nPosPrint" ) )
 
    if ( lUp .and. ( cAlias )->( OrdKeyNo() ) == 1 )
       ( cAlias )->( OrdSetFocus( nOrdNum ) )   
-      Return .f.
+      RETURN .f.
    end if 
 
    if ( !lUp .and. ( cAlias )->( OrdKeyNo() ) == ( cAlias )->( OrdKeyCount() ) )
       ( cAlias )->( OrdSetFocus( nOrdNum ) )   
-      Return .f.
+      RETURN .f.
    end if
 
    CursorWait()
@@ -3594,11 +3594,11 @@ Function lineReposition( cAlias, oBrw, lUp )
       oBrw:SetFocus()
    end if
 
-Return ( nil )
+RETURN ( nil )
 
 //--------------------------------------------------------------------------//
 
-Function lineRepositionOld( cAlias, oBrw, lUp )
+FUNCTION lineRepositionOld( cAlias, oBrw, lUp )
 
    local nOrdNum  
    local nRecNum  
@@ -3609,19 +3609,19 @@ Function lineRepositionOld( cAlias, oBrw, lUp )
    DEFAULT lUp    := .t.
 
    if ( cAlias )->( fieldpos( "nNumLin" ) ) == 0
-      Return .f.
+      RETURN .f.
    end if
 
    nOrdNum        := ( cAlias )->( OrdSetFocus( "nNumLin" ) )
 
    if ( lUp .and. ( cAlias )->( OrdKeyNo() ) == 1 )
       ( cAlias )->( OrdSetFocus( nOrdNum ) )   
-      Return .f.
+      RETURN .f.
    end if 
 
    if ( !lUp .and. ( cAlias )->( OrdKeyNo() ) == ( cAlias )->( OrdKeyCount() ) )
       ( cAlias )->( OrdSetFocus( nOrdNum ) )   
-      Return .f.
+      RETURN .f.
    end if
 
    CursorWait()
@@ -3655,31 +3655,31 @@ Function lineRepositionOld( cAlias, oBrw, lUp )
       oBrw:SetFocus()
    end if
 
-Return ( nil )
+RETURN ( nil )
 
 //--------------------------------------------------------------------------//
 
-Static Function swapLines( nOldNum, nNewNum, cAlias ) 
+Static FUNCTION swapLines( nOldNum, nNewNum, cAlias ) 
 
    lineMove( nOldNum, -1, cAlias )
    lineMove( nNewNum, nOldNum, cAlias )
    lineMove( -1, nNewNum, cAlias )
 
-Return ( nil )
+RETURN ( nil )
 
 //--------------------------------------------------------------------------//
 
-Static Function swapLinesOld( nOldNum, nNewNum, cAlias ) 
+Static FUNCTION swapLinesOld( nOldNum, nNewNum, cAlias ) 
 
    lineMoveOld( nOldNum, -1, cAlias )
    lineMoveOld( nNewNum, nOldNum, cAlias )
    lineMoveOld( -1, nNewNum, cAlias )
 
-Return ( nil )
+RETURN ( nil )
 
 //--------------------------------------------------------------------------//
 
-Static Function LineMove( nOldNum, nNewNum, cAlias )
+Static FUNCTION LineMove( nOldNum, nNewNum, cAlias )
 
    local ordenAnterior  := ( cAlias )->( ordsetfocus( 0 ) )
 
@@ -3696,11 +3696,11 @@ Static Function LineMove( nOldNum, nNewNum, cAlias )
 
    ( cAlias )->( ordsetfocus( ordenAnterior ) )
 
-Return nil
+RETURN nil
 
 //--------------------------------------------------------------------------//
 
-Static Function LineMoveOld( nOldNum, nNewNum, cAlias )
+Static FUNCTION LineMoveOld( nOldNum, nNewNum, cAlias )
 
    local ordenAnterior  := ( cAlias )->( ordsetfocus( 0 ) )
 
@@ -3717,11 +3717,11 @@ Static Function LineMoveOld( nOldNum, nNewNum, cAlias )
 
    ( cAlias )->( ordsetfocus( ordenAnterior ) )
 
-Return nil
+RETURN nil
 
 //--------------------------------------------------------------------------//
 
-Function DeleteFilesToDirectory( cPath )
+FUNCTION DeleteFilesToDirectory( cPath )
 
    local cDirectory
    local aDirectory     := Directory( cPath + "/*.*" )
@@ -3730,36 +3730,36 @@ Function DeleteFilesToDirectory( cPath )
       ERASE ( cPath + "/" + cDirectory[ 1 ] )
    next
 
-Return .t.   
+RETURN .t.   
 
 //--------------------------------------------------------------------------//
 
-Function PutBrackets( cText )
+FUNCTION PutBrackets( cText )
 
-Return ( "[" + QuitBrackets( cText ) + "]" )   
+RETURN ( "[" + QuitBrackets( cText ) + "]" )   
 
 //--------------------------------------------------------------------------//
 
-Function QuitBrackets( cText )
+FUNCTION QuitBrackets( cText )
 
    cText    := strtran( cText, "[", "" )
    cText    := strtran( cText, "]", "" )
 
-Return ( alltrim( cText ) )
+RETURN ( alltrim( cText ) )
 
 //--------------------------------------------------------------------------//
 
-Function DateToString( dDate )
+FUNCTION DateToString( dDate )
       
    local cDateFrm := Set( 4, "yyyy/mm/dd" )
    local strDate  := if( dDate != NIL, dtos( dDate ), dtos( date() ) )
    Set( 4, cDateFrm )
 
-Return( strDate )
+RETURN( strDate )
 
 //---------------------------------------------------------------------------//
 
-Function DlgWait( nRetardo )
+FUNCTION DlgWait( nRetardo )
 
    local nSeconds
 
@@ -3774,13 +3774,13 @@ RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 
-Function nRedondeaVenta( nValor )
+FUNCTION nRedondeaVenta( nValor )
 
-Return ( Round( nValor, nRouDiv() ) )
+RETURN ( Round( nValor, nRouDiv() ) )
 
 //---------------------------------------------------------------------------//
 
-Function nCalculaDescuentoVenta( nValor, nDescuento )
+FUNCTION nCalculaDescuentoVenta( nValor, nDescuento )
 
    local nTotalDescuento   := 0
 
@@ -3790,51 +3790,51 @@ Function nCalculaDescuentoVenta( nValor, nDescuento )
       nTotalDescuento      := nRedondeaVenta( nTotalDescuento )
    end if 
 
-Return ( nTotalDescuento )
+RETURN ( nTotalDescuento )
 
 //---------------------------------------------------------------------------//
 
-Function nRestaDescuentoVenta( nValor, nDescuento )
+FUNCTION nRestaDescuentoVenta( nValor, nDescuento )
 
    nValor -= nCalculaDescuentoVenta( nValor, nDescuento )
 
-Return ( nValor )
+RETURN ( nValor )
 
 //---------------------------------------------------------------------------//
 
-Function setLenguajeSegundario( cLenguaje )
+FUNCTION setLenguajeSegundario( cLenguaje )
 
    if !empty( cLenguaje )
       cLenguajeSegundario  := cLenguaje
    end if
 
-Return( .t. )
+RETURN( .t. )
 
 //---------------------------------------------------------------------------//
 
-Function getLenguajeSegundario()
+FUNCTION getLenguajeSegundario()
 
-return cLenguajeSegundario
+RETURN cLenguajeSegundario
 
 //---------------------------------------------------------------------------//
 
-Function fieldGetByName( cFieldName )
+FUNCTION fieldGetByName( cFieldName )
 
    if empty( alias() )
-      Return ""
+      RETURN ""
    end if 
 
-Return ( ( alias() )->( fieldget( fieldpos( cFieldName ) ) ) )
+RETURN ( ( alias() )->( fieldget( fieldpos( cFieldName ) ) ) )
 
 //---------------------------------------------------------------------------//
 
-Function hGetDefault( hash, key, default )
+FUNCTION hGetDefault( hash, key, default )
 
    if hhaskey( hash, key )
-      Return ( hGet( hash, key ) )
+      RETURN ( hGet( hash, key ) )
    end if 
 
-Return ( default )
+RETURN ( default )
 
 //---------------------------------------------------------------------------//
    
@@ -3851,7 +3851,7 @@ END CLASS
 
 //---------------------------------------------------------------------------//
 
-Function CaptureSignature( cFile )
+FUNCTION CaptureSignature( cFile )
 
    local oDlg
    local lSig        := .f.
@@ -3945,9 +3945,9 @@ Function CaptureSignature( cFile )
 
    RELEASE PEN oPenSig
 
-Return ( oDlg:nResult == IDOK )
+RETURN ( oDlg:nResult == IDOK )
 
-Static Function DoDraw( hDc, x, y, lPaint, lReset, oPen )
+Static FUNCTION DoDraw( hDc, x, y, lPaint, lReset, oPen )
    
    if ! lPaint .or. ( lReset != nil .and. lReset )
       MoveTo( hDC, x, y )
@@ -3957,9 +3957,9 @@ Static Function DoDraw( hDc, x, y, lPaint, lReset, oPen )
 
    sysRefresh()
 
-Return nil
+RETURN nil
 
-Function signatureToMemo()
+FUNCTION signatureToMemo()
 
    local hBmp
    local cMemo
@@ -3976,11 +3976,11 @@ Function signatureToMemo()
    
    end if 
 
-Return ( cMemo )
+RETURN ( cMemo )
 
 //----------------------------------------------------------------------------//
 
-function MsgCombo( cTitle, cText, aItems, uVar, cBmpFile, cResName )
+FUNCTION MsgCombo( cTitle, cText, aItems, uVar, cBmpFile, cResName )
 
    local oDlg, oBmp, oCbx
    local lOk      := .f.
@@ -4032,17 +4032,17 @@ function MsgCombo( cTitle, cText, aItems, uVar, cBmpFile, cResName )
       uVar := cItem
    endif
 
-Return lOk
+RETURN lOk
 
 //----------------------------------------------------------------------------//
 
-Function debug( uValue, cTitle )
+FUNCTION debug( uValue, cTitle )
 
-Return ( msgAlert( hb_valtoexp( uValue ), cTitle ) )
+RETURN ( msgAlert( hb_valtoexp( uValue ), cTitle ) )
 
 //----------------------------------------------------------------------------//
 
-Function setCustomFilter( cExpresionFilter )
+FUNCTION setCustomFilter( cExpresionFilter )
 
    if lAIS()
       ( select() )->( adsSetAOF( cExpresionFilter ) ) 
@@ -4050,11 +4050,11 @@ Function setCustomFilter( cExpresionFilter )
       ( select() )->( dbSetFilter( bCheck2Block( cExpresionFilter ), cExpresionFilter ) )
    end if 
 
-Return ( nil )
+RETURN ( nil )
 
 //----------------------------------------------------------------------------//
 
-Function quitCustomFilter()
+FUNCTION quitCustomFilter()
 
    if lAIS()
       ( select() )->( adsClearAOF() ) 
@@ -4062,43 +4062,43 @@ Function quitCustomFilter()
       ( select() )->( dbSetFilter() )
    end if 
 
-Return ( nil )
+RETURN ( nil )
 
 //----------------------------------------------------------------------------//
 
-Function dbCustomKeyCount()
+FUNCTION dbCustomKeyCount()
 
    if lAIS()
-      Return ( ( select() )->( adsKeyCount( , , ADS_RESPECTFILTERS ) ) )
+      RETURN ( ( select() )->( adsKeyCount( , , ADS_RESPECTFILTERS ) ) )
    end if 
 
-Return ( ( select() )->( ordkeycount() ) )
+RETURN ( ( select() )->( ordkeycount() ) )
 
 //----------------------------------------------------------------------------//
 
-Function isAppendOrDuplicateMode( nMode )
+FUNCTION isAppendOrDuplicateMode( nMode )
  
-Return ( nMode == APPD_MODE .or. nMode == DUPL_MODE )
+RETURN ( nMode == APPD_MODE .or. nMode == DUPL_MODE )
 
 //----------------------------------------------------------------------------//
 
-Function isEditMode( nMode )
+FUNCTION isEditMode( nMode )
  
-Return ( nMode == EDIT_MODE )
+RETURN ( nMode == EDIT_MODE )
 
 //----------------------------------------------------------------------------//
 
-Function priorSecond( time )
+FUNCTION priorSecond( time )
 
    time  := ( substr( time, 1, 2 ) + ":" + substr( time, 3, 2 ) + ":" + substr( time, 5, 2 ) )
    time  := secToTime( timeToSec( time ) - 1 )  
    time  := strtran( time, ":", "" )
 
-Return ( time )
+RETURN ( time )
 
 //----------------------------------------------------------------------------//
 
-Function dialogArticulosScaner() 
+FUNCTION dialogArticulosScaner() 
 
    local oDlg
    local memoArticulos
@@ -4126,20 +4126,20 @@ Function dialogArticulosScaner()
    ACTIVATE DIALOG oDlg CENTER
 
    if oDlg:nResult == IDOK
-      Return ( alltrim( memoArticulos ) )
+      RETURN ( alltrim( memoArticulos ) )
    end if 
 
-Return ( nil )
+RETURN ( nil )
 
 //----------------------------------------------------------------------------//
 
-Function transIdDocument( id )
+FUNCTION transIdDocument( id )
 
-Return ( strtran( trans( id, "@R X/XXXXXXXXX/XX" ), " ", "" ) )
+RETURN ( strtran( trans( id, "@R X/XXXXXXXXX/XX" ), " ", "" ) )
 
 //----------------------------------------------------------------------------//
 
-Function cNoBrackets( cFileName )
+FUNCTION cNoBrackets( cFileName )
 
    local n           := rat( "[", cFileName )
 
@@ -4147,12 +4147,28 @@ Function cNoBrackets( cFileName )
       cFileName      := substr( cFileName, 1, n - 1 )
    end if 
 
-Return ( cFileName )
+RETURN ( cFileName )
 
 //----------------------------------------------------------------------------//
 
-Function trimedSeconds()
+FUNCTION trimedSeconds()
 
-Return ( alltrim( strtran( str( seconds() ), ".", "" ) ) )
+RETURN ( alltrim( strtran( str( seconds() ), ".", "" ) ) )
+
+//----------------------------------------------------------------------------//
+
+FUNCTION serializeArray( aArray )
+
+   local cSerialized    := ""
+
+   if empty( aArray )
+      RETURN ( cSerialized )
+   end if 
+
+   aeval( aArray, {|elem| cSerialized   += alltrim( elem ) + "," } )
+
+   cSerialized          := left( cSerialized, len( cSerialized ) - 1 )
+
+RETURN ( cSerialized )
 
 //----------------------------------------------------------------------------//

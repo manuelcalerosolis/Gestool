@@ -4804,9 +4804,9 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbf, oBrw, lTotLin, cCodArtEnt, nMode, aTmpA
          IDTEXT   291 ;
          IDSAY    292 ;
          WHEN     ( !aTmp[ _LCONTROL ] .and. nMode != ZOOM_MODE .and. !lTotLin ) ;
-         VALID    ( TiposVentasModel():New():existTiposVentas( aTmp[ _CTIPMOV ] ) ) ;
+         VALID    ( TiposVentasController():New():isValidGet( aGet[ _CTIPMOV ] ) ) ;
          BITMAP   "LUPA" ;
-         ON HELP  ( TiposVentas():New():AssignBrowse( aGet[ _CTIPMOV ] ) ) ;
+         ON HELP  ( TiposVentasController():New():AssignBrowse( aGet[ _CTIPMOV ] ) ) ;
          OF       oFld:aDialogs[1] ;
 
       /*
