@@ -2008,7 +2008,7 @@ Return .t.
 
 //---------------------------------------------------------------------------//
 
-STATIC FUNCTION selectedGenAlbCli( nDevice )
+STATIC FUNCTION selectedGenAlbCli( nDevice, cTitle, cCodigoDocumento )
 
    local nPos
 
@@ -2016,7 +2016,7 @@ STATIC FUNCTION selectedGenAlbCli( nDevice )
 
       ( D():AlbaranesClientes( nView ) )->( dbgoto( nPos ) )
 
-      genAlbCli( nDevice )
+      genAlbCli( nDevice, cTitle, cCodigoDocumento )
 
       SysRefresh()
 
@@ -8908,9 +8908,9 @@ Static Function DataReportEntAlbCli( oFr, cAlbCliP, lTicket )
 
    if lTicket
       if !empty( cAlbCliP )
-         oFr:SetMasterDetail( "Entrega", "Albarán de cliente",       {|| ( cAlbCliP )->cSerAlb + Str( ( cAlbCliP )->nNumAlb ) + ( cAlbCliP )->cSufAlb } )
+         oFr:SetMasterDetail( "Entrega", "Albarán de cliente", {|| ( cAlbCliP )->cSerAlb + Str( ( cAlbCliP )->nNumAlb ) + ( cAlbCliP )->cSufAlb } )
       else
-         oFr:SetMasterDetail( "Entrega", "Albarán de cliente",       {|| ( D():Get( "AlbCliP", nView ) )->cSerAlb + Str( ( D():Get( "AlbCliP", nView ) )->nNumAlb ) + ( D():Get( "AlbCliP", nView ) )->cSufAlb } )
+         oFr:SetMasterDetail( "Entrega", "Albarán de cliente", {|| ( D():Get( "AlbCliP", nView ) )->cSerAlb + Str( ( D():Get( "AlbCliP", nView ) )->nNumAlb ) + ( D():Get( "AlbCliP", nView ) )->cSufAlb } )
       end if
    end if
 
