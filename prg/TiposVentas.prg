@@ -14,7 +14,7 @@ CLASS TiposVentas FROM SQLBaseView
 
    METHOD   buildSQLModel()               INLINE ( TiposVentasModel():New() )
 
-   METHOD   getFieldFromBrowse()          INLINE ( ::oModel:getRowSet():fieldGet( "nombre" ) )
+   METHOD   getFieldFromBrowse()          INLINE ( ::oModel:getRowSet():fieldGet( "codigo" ) )
  
    METHOD   Dialog()
 
@@ -41,7 +41,7 @@ METHOD buildSQLShell()
    ::oShell                := SQLTShell():New( 2, 10, 18, 70, "Tipos de ventas", , oWnd(), , , .f., , , ::oModel, , , , , {}, {|| ::Edit( ::oShell:getBrowse() ) },, {|| ::Delete( ::oShell:getBrowse() ) },, nil, ::nLevel, "gc_wallet_16", ( 104 + ( 0 * 256 ) + ( 63 * 65536 ) ),,, .t. )
 
       with object ( ::oShell:AddCol() )
-         :cHeader          := "Código"
+         :cHeader          := "Id"
          :cSortOrder       := "id"
          :bEditValue       := {|| ::oModel:getRowSet():fieldGet( "id" ) }
          :nWidth           := 80
@@ -79,15 +79,21 @@ METHOD Dialog( lZoom )
 
    local oDlg
    local oGetNombre
-   local oGetUnidad
-   local oGetImporte
+   local oGetCodigo
 
    DEFINE DIALOG oDlg RESOURCE "TIPO_VENTA" TITLE ::lblTitle() + "tipo de venta"
+
+   REDEFINE GET   oGetCodigo ;
+      VAR         ::oModel:hBuffer[ "codigo" ] ;
+      MEMO ;
+      ID          100 ;
+      WHEN        ( ! ::isZoomMode() ) ;
+      OF          oDlg
 
    REDEFINE GET   oGetNombre ;
       VAR         ::oModel:hBuffer[ "nombre" ] ;
       MEMO ;
-      ID          120 ;
+      ID          110 ;
       WHEN        ( !::isZoomMode() ) ;
       OF          oDlg
 
@@ -95,7 +101,7 @@ METHOD Dialog( lZoom )
       ID          IDOK ;
       OF          oDlg ;
       WHEN        ( !::isZoomMode() ) ;
-      ACTION      ( ::validDialog( oDlg, oGetNombre ) )
+      ACTION      ( ::validDialog( oDlg, oGetNombre, oGetCodigo ) )
 
    REDEFINE BUTTON ;
       ID          IDCANCEL ;
@@ -156,7 +162,7 @@ METHOD buildSQLBrowse()
       oBrowse:setModel( ::oModel )
 
       with object ( oBrowse:AddCol() )
-         :cHeader             := "Código"
+         :cHeader             := "Id"
          :cSortOrder          := "id"
          :bEditValue          := {|| ::oModel:getRowSet():fieldGet( "id" ) }
          :nWidth              := 80
@@ -210,7 +216,7 @@ RETURN ( oDlg:nResult == IDOK )
 
 //---------------------------------------------------------------------------//
 
-METHOD validDialog( oDlg, oGetNombre )
+METHOD validDialog( oDlg, oGetNombre, oGetCodigo )
 
    if empty( ::oModel:hBuffer[ "nombre" ] )
       msgStop( "El nombre de la venta no puede estar vacío." )
@@ -218,9 +224,21 @@ METHOD validDialog( oDlg, oGetNombre )
       RETURN ( .f. )
    end if
 
-   if ::oModel:getRowSet():find( ::oModel:hBuffer[ "nombre" ], "nombre" ) != 0
+   if ::oModel:getRowSet():find( ::oModel:hBuffer[ "nombre" ], "nombre" ) != 0 .and. ( ::oModel:getRowSet():find( ::oModel:hBuffer[ "id" ], "id" ) == 0 .or. ::isDuplicateMode() )
       msgStop( "El nombre de la venta ya existe" )
       oGetNombre:setFocus()
+      RETURN ( .f. )
+   end if
+
+   if empty( ::oModel:hBuffer[ "codigo" ] )
+      MsgStop( "El codigo del tipo de venta no puede estar vacío." )
+      oGetCodigo:setFocus()
+      Return ( .f. )
+   end if
+
+   if ::oModel:getRowSet():find( ::oModel:hBuffer[ "codigo" ], "codigo" ) != 0 .and. ( ::oModel:getRowSet():find( ::oModel:hBuffer[ "id" ], "id" ) == 0 .or. ::isDuplicateMode() )
+      msgStop( "El codigo de la venta ya existe" )
+      oGetCodigo:setFocus()
       RETURN ( .f. )
    end if
 

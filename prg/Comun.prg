@@ -281,7 +281,7 @@ RETURN ( .t. )
 
 FUNCTION Test()
 
-   // tiposventasModel():New():setFastReportRecorset()
+TiposNotasController():New():ActivateShell()
 
 Return ( nil )
 
@@ -1591,7 +1591,7 @@ FUNCTION CreateAcceso( oWnd )
    oItem:oGroup         := oGrupo
    oItem:cPrompt        := "Tipos de incidencias"
    oItem:cMessage       := "Acceso a los tipos de incidencias"
-   oItem:bAction        := {|| TipInci( "01089", oWnd ) }
+   oItem:bAction        := {|| TiposIncidencias():New():activateShell() }
    oItem:cId            := "01089"
    oItem:cBmp           := "gc_camera_16"
    oItem:cBmpBig        := "gc_camera_32"

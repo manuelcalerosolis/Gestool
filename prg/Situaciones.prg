@@ -47,7 +47,7 @@ METHOD buildSQLShell()
       end with
 
       with object ( ::oShell:AddCol() )
-         :cHeader          := "situacion"
+         :cHeader          := "Situación"
          :cSortOrder       := "situacion"
          :bEditValue       := {|| ::oModel:getRowSet():fieldGet( "situacion" ) }
          :nWidth           := 800
@@ -78,7 +78,7 @@ METHOD Dialog( lZoom )
    local oDlg
    local oGetNombre
 
-   DEFINE DIALOG oDlg RESOURCE "SITUACION" TITLE ::LblTitle() + "situaciÃ³n"
+   DEFINE DIALOG oDlg RESOURCE "SITUACION" TITLE ::LblTitle() + "situación"
 
    REDEFINE GET   oGetNombre ;
       VAR         ::oModel:hBuffer[ "situacion" ] ;
@@ -116,13 +116,13 @@ RETURN ( oDlg:nResult == IDOK )
 METHOD validDialog( oDlg, oGetNombre )
 
    if empty( ::oModel:hBuffer[ "situacion" ] )
-      MsgStop( "El nombre de la situaciÃ³n no puede estar vacÃ­o" )
+      MsgStop( "El nombre de la situación no puede estar vacío" )
       oGetNombre:setFocus()
       Return ( .f. )
    end if
 
    if ::oModel:getRowSet():find( ::oModel:hBuffer[ "situacion" ], "situacion" ) != 0
-      msgStop( "Esta situaciÃ³n ya existe" )
+      msgStop( "Esta situación ya existe" )
       oGetNombre:setFocus()
       RETURN ( .f. )
    end if

@@ -382,7 +382,6 @@ static dbfCodebar
 static dbfPromoT
 static dbfPromoL
 static dbfPromoC
-static dbfTVta
 static dbfTblPro
 static dbfPro
 static dbfCajT
@@ -1470,9 +1469,6 @@ STATIC FUNCTION OpenFiles()
       USE ( cPatArt() + "ARTKIT.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "ARTTIK", @dbfKit ) )
       SET ADSINDEX TO ( cPatArt() + "ARTKIT.CDX" ) ADDITIVE
 
-      USE ( cPatDat() + "TVTA.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "TVTA", @dbfTVta ) )
-      SET ADSINDEX TO ( cPatDat() + "TVTA.CDX" ) ADDITIVE
-
       USE ( cPatDat() + "TBLCNV.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "TBLCNV", @dbfTblCnv ) )
       SET ADSINDEX TO ( cPatDat() + "TBLCNV.CDX" ) ADDITIVE
 
@@ -1797,9 +1793,6 @@ STATIC FUNCTION CloseFiles()
    if !empty( dbfAlm )
       ( dbfAlm       )->( dbCloseArea() )
    end if
-   if !empty( dbfTVta )
-      ( dbfTVta      )->( dbCloseArea() )
-   end if
    if !empty( dbfTblCnv )
       ( dbfTblCnv    )->( dbCloseArea() )
    end if
@@ -1959,7 +1952,6 @@ STATIC FUNCTION CloseFiles()
    dbfPromoC      := nil
    dbfCodebar     := nil
    dbfKit         := nil
-   dbfTVta        := nil
    oBandera       := nil
    dbfTblCnv      := nil
    dbfOferta      := nil
@@ -4812,9 +4804,9 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbf, oBrw, lTotLin, cCodArtEnt, nMode, aTmpA
          IDTEXT   291 ;
          IDSAY    292 ;
          WHEN     ( !aTmp[ _LCONTROL ] .and. nMode != ZOOM_MODE .and. !lTotLin ) ;
-         VALID    ( cTVta( aGet[ _CTIPMOV ], dbfTVta, aGet[ _CTIPMOV ]:oHelpText ) ) ;
+         VALID    ( TiposVentasModel():New():existTiposVentas( aTmp[ _CTIPMOV ] ) ) ;
          BITMAP   "LUPA" ;
-         ON HELP  ( BrwTVta( aGet[ _CTIPMOV ], dbfTVta, aGet[ _CTIPMOV ]:oHelpText ) ) ;
+         ON HELP  ( TiposVentas():New():AssignBrowse( aGet[ _CTIPMOV ] ) ) ;
          OF       oFld:aDialogs[1] ;
 
       /*
@@ -8708,8 +8700,10 @@ Static Function DataReport( oFr )
    oFr:SetWorkArea(     "Tipo artículo",  oTipArt:Select() )
    oFr:SetFieldAliases( "Tipo artículo",  cObjectsToReport( oTipArt:oDbf ) )
 
-   oFr:SetWorkArea(     "Tipo de venta", ( dbfTVta )->( Select() ) )
-   oFr:SetFieldAliases( "Tipo de venta", cItemsToReport( aItmTVta() ) )
+   TiposVentasModel():New():setFastReportRecordset( oFr )
+
+   // oFr:SetWorkArea(     "Tipo de venta", ( dbfTVta )->( Select() ) )
+   // oFr:SetFieldAliases( "Tipo de venta", cItemsToReport( aItmTVta() ) )
 
    oFr:SetWorkArea(     "Usuarios", ( dbfUsr )->( Select() ) )
    oFr:SetFieldAliases( "Usuarios", cItemsToReport( aItmUsuario() ) )
@@ -9784,12 +9778,6 @@ STATIC FUNCTION SetDlgMode( aTmp, aTmpAlb, nMode, aGet, oFld, oSayPr1, oSayPr2, 
          end if
       end if
 
-      if !lTipMov()
-         if !empty( aGet[ _CTIPMOV ] )
-            aGet[ _CTIPMOV ]:hide()
-         end if
-      end if
-
       if aGet[ _NIMPTRN ] != nil
          if !uFieldEmpresa( "lUsePor", .f. )
             aGet[ _NIMPTRN ]:Hide()
@@ -9845,10 +9833,7 @@ STATIC FUNCTION SetDlgMode( aTmp, aTmpAlb, nMode, aGet, oFld, oSayPr1, oSayPr2, 
          aGet[ _NPOSPRINT]:cText( aTmp[ _NPOSPRINT ] )
          aGet[ _CALMLIN  ]:cText( aTmp[ _CALMLIN  ] )
          aGet[ _NIVA     ]:cText( aTmp[ _NIVA] )
-
-         if lTipMov() 
-            aGet[ _CTIPMOV ]:cText( aTmp[ _CTIPMOV ] )
-         end if
+         aGet[ _CTIPMOV  ]:cText( aTmp[ _CTIPMOV ] )
 
          aGet[ _LCONTROL ]:Click( .f. )
          aGet[ _CDETALLE ]:Show()
