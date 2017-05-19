@@ -281,7 +281,7 @@ RETURN ( .t. )
 
 FUNCTION Test()
 
-TiposNotasController():New():ActivateShell()
+
 
 Return ( nil )
 
@@ -1591,7 +1591,7 @@ FUNCTION CreateAcceso( oWnd )
    oItem:oGroup         := oGrupo
    oItem:cPrompt        := "Tipos de incidencias"
    oItem:cMessage       := "Acceso a los tipos de incidencias"
-   oItem:bAction        := {|| TiposIncidencias():New():activateShell() }
+   oItem:bAction        := {|| TiposIncidenciasController():New():activateShell() }
    oItem:cId            := "01089"
    oItem:cBmp           := "gc_camera_16"
    oItem:cBmpBig        := "gc_camera_32"
@@ -1621,7 +1621,7 @@ FUNCTION CreateAcceso( oWnd )
    oItem:oGroup         := oGrupo
    oItem:cPrompt        := "Tipos de notas"
    oItem:cMessage       := "Acceso a los tipos de notas"
-   oItem:bAction        := {|| TiposNotas():New():activateShell() }
+   oItem:bAction        := {|| TiposNotasController():New():activateShell() }
    oItem:cId            := "01101"
    oItem:cBmp           := "gc_folder2_16"
    oItem:cBmpBig        := "gc_folder2_32"
@@ -1631,7 +1631,7 @@ FUNCTION CreateAcceso( oWnd )
    oItem:oGroup         := oGrupo
    oItem:cPrompt        := "Tipos de impresoras"
    oItem:cMessage       := "Acceso a los tipos de impresoras"
-   oItem:bAction        := {|| TiposImpresoras():New():activateShell() }
+   oItem:bAction        := {|| TiposImpresorasController():New():activateShell() }
    oItem:cId            := "01115"
    oItem:cBmp           := "gc_printer2_16"
    oItem:cBmpBig        := "gc_printer2_32"
