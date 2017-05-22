@@ -1743,7 +1743,7 @@ STATIC FUNCTION EditConfig( aTmp, aGet, dbfEmp, oBrw, nSelFolder, bValid, nMode 
          PICTURE  "@!" ;
          VALID    ( TiposVentasModel():New():existTiposVentas( aTmp[ _CDEDVTA ] ) ) ;
          BITMAP   "LUPA" ;
-         ON HELP  ( TiposVentas():New():AssignBrowse( aGet[ _CDEDVTA ] ) ) ;
+         ON HELP  ( TiposVentasController():New():AssignBrowse( aGet[ _CDEDVTA ] ) ) ;
          OF       fldValores
 
       REDEFINE GET oSay[43] VAR cSay[43] ;

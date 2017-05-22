@@ -12,8 +12,6 @@ CLASS TiposImpresorasController FROM SQLBaseController
    
    METHOD   buildSQLView( this )				INLINE ( TiposImpresoras():New( this ) )
   
-   METHOD   buildSQLBrowse()					INLINE ( TiposImpresoras():New():buildSQLBrowse() )
-
    METHOD   getFieldFromBrowse()          INLINE ( ::getRowSet():fieldGet( "nombre" ) )
  
    METHOD   validDialog( oDlg, oGetNombre )
@@ -34,13 +32,19 @@ Return ( Self )
 
 METHOD validDialog( oDlg, oGetNombre )
 
+	local idForNombre
+
    if empty( ::oModel:hBuffer[ "nombre" ] )
-      msgStop( "El nombre de la impresora no puede estar vac?." )
+      msgStop( "El nombre de la impresora no puede estar vacío." )
       oGetNombre:setFocus()
       RETURN ( .f. )
    end if
 
-   if ::getRowSet():find( ::oModel:hBuffer[ "nombre" ], "nombre" ) != 0 .and. ( ::getRowSet():fieldget( "id" ) != ::oModel:hBuffer[ "id" ] .or. ::isDuplicateMode() )
+   idForNombre := ::oModel:ChecksForValid( "nombre" )
+   
+   if ( !empty( idForNombre ) .and. ;
+      ( ( idForNombre != ::oModel:hBuffer[ "id" ] .and. !::isDuplicateMode() ) .or. ;
+      ( idForNombre == ::oModel:hBuffer[ "id" ] .and. ::isDuplicateMode() ) ) )
       msgStop( "El nombre de la impresora ya existe" )
       oGetNombre:setFocus()
       RETURN ( .f. )

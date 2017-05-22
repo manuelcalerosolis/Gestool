@@ -15,13 +15,9 @@ CLASS EtiquetasModel FROM SQLBaseEmpresasModel
 
    DATA     hDbfToCategory
 
-   DATA     cVirtualTableName
-
    METHOD   New()
 
    METHOD   buildRowSetWithRecno()                 INLINE   ( ::buildRowSet( .t. ) )
-
-   METHOD   loadChildBuffer()
 
    METHOD   updateAfterDelete()
 
@@ -42,8 +38,6 @@ CLASS EtiquetasModel FROM SQLBaseEmpresasModel
    METHOD   translateNamesToIds( aNames )
 
    METHOD   arrayCodigoAndId()
-
-   METHOD   setcVirtualTableName( cRaiz )          INLINE ( ::cVirtualTableName := cRaiz )
 
 END CLASS
 
@@ -96,23 +90,6 @@ METHOD   updateAfterDelete( aRecno )
 
 RETURN ( self )
 
-
-//---------------------------------------------------------------------------//
-
-METHOD   loadChildBuffer()
-
-   local aColumnNames := hb_hkeys( ::hColumns )
-
-   if empty( ::oRowSet )
-      Return ( .f. )
-   end if
-
-   ::hBuffer  := {=>}
-
-   aeval( aColumnNames, {| k | hset( ::hBuffer, k , if ( k == "id_padre", ::oRowSet:fieldget( "id" ), "" ) ) } )
-
-Return ( .t. )
-
 //---------------------------------------------------------------------------//
 
 METHOD makeParent( cName )
@@ -159,8 +136,6 @@ METHOD getSentenceFromOldCategories( idParent )
    end if 
       
    cSentence      += chgAtEnd( cValues, "", 2 )
-
-   msgalert( cSentence )
 
 RETURN ( cSentence )
 

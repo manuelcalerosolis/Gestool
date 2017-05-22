@@ -12,8 +12,6 @@ CLASS TiposIncidenciasController FROM SQLBaseController
    
    METHOD   buildSQLView( this )			INLINE ( TiposIncidencias():New( this ) )
   
-   METHOD   buildSQLBrowse()        INLINE ( TiposIncidencias():New():buildSQLBrowse() )        
-
    METHOD   getFieldFromBrowse()          INLINE ( ::getRowSet():fieldGet( "codigo" ) )
 
    METHOD   validDialog( oDlg, oGetNombre )
@@ -34,26 +32,37 @@ Return ( Self )
 
 METHOD validDialog( oDlg, oGetNombre, oGetCodigo )
 
+   local idForNombre
+   local idForCodigo
+
    if empty( ::oModel:hBuffer[ "nombre_incidencia" ] )
-      MsgStop( "El nombre del tipo de incidencia no puede estar vac?." )
+      MsgStop( "El nombre del tipo de incidencia no puede estar vacío." )
       oGetNombre:setFocus()
       Return ( .f. )
-   end if
+   end if    
 
-   if ::getRowSet():find( ::oModel:hBuffer[ "nombre_incidencia" ], "nombre_incidencia" ) != 0 .and. ( ::getRowSet():fieldget( "id" ) != ::oModel:hBuffer[ "id" ] .or. ::isDuplicateMode() )
+   idForNombre := ::oModel:ChecksForValid( "nombre_incidencia" )
+
+   if ( !empty( idForNombre ) .and. ;
+      ( ( idForNombre != ::oModel:hBuffer[ "id" ] .and. !::isDuplicateMode() ) .or. ;
+      ( idForNombre == ::oModel:hBuffer[ "id" ] .and. ::isDuplicateMode() ) ) )
       msgStop( "El nombre de la incidencia ya existe" )
       oGetNombre:setFocus()
       RETURN ( .f. )
    end if
 
    if empty( ::oModel:hBuffer[ "codigo" ] )
-      MsgStop( "El codigo del tipo de incidencia no puede estar vac?." )
+      MsgStop( "El codigo del tipo de incidencia no puede estar vacío." )
       oGetCodigo:setFocus()
       Return ( .f. )
    end if
 
-   if ::getRowSet():find( ::oModel:hBuffer[ "codigo" ], "codigo" ) != 0 .and. ( ::getRowSet():fieldget( "id" ) != ::oModel:hBuffer[ "id" ] .or. ::isDuplicateMode() )
-      msgStop( "El codigo de la incidencia ya existe" )
+   idForCodigo := ::oModel:ChecksForValid( "codigo" )
+
+   if ( !empty( idForCodigo ) .and. ;
+      ( ( idForCodigo != ::oModel:hBuffer[ "id" ] .and. !::isDuplicateMode() ) .or. ;
+      ( idForCodigo == ::oModel:hBuffer[ "id" ] .and. ::isDuplicateMode() ) ) )
+      msgStop( "El código de la incidencia ya existe" )
       oGetCodigo:setFocus()
       RETURN ( .f. )
    end if

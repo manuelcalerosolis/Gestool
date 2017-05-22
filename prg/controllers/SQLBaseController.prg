@@ -132,7 +132,7 @@ METHOD ActivateBrowse( aSelectedItems )
 
    ::oModel:buildRowSetWithRecno()
 
-   if ::oView:buildSQLBrowse( ::oModel, aSelectedItems )
+   if ::oView:buildSQLBrowse( aSelectedItems )
       uReturn     := ::getFieldFromBrowse() 
    end if
 
@@ -424,7 +424,7 @@ METHOD Delete( oBrowse )
       cNumbersOfDeletes := "el registro en curso?"
    end if
 
-   if oUser():lNotConfirmDelete() .or. msgNoYes( "¿Desea eliminar " + cNumbersOfDeletes, "Confirme eliminación" )
+   if oUser():lNotConfirmDelete() .or. msgNoYes( "?Desea eliminar " + cNumbersOfDeletes, "Confirme eliminaci?" )
       ::oModel:deleteSelection( oBrowse:aSelected )
    end if 
 

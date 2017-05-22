@@ -12,8 +12,6 @@ CLASS TiposVentasController FROM SQLBaseController
    
    METHOD   buildSQLView( this )				INLINE ( TiposVentas():New( this ) )
   
-   METHOD   buildSQLBrowse()					INLINE ( TiposVentas():New():buildSQLBrowse() )
-
    METHOD   getFieldFromBrowse()          INLINE ( ::getRowSet():fieldGet( "codigo" ) )
  
    METHOD   validDialog( oDlg, oGetNombre, oGetCodigo )
@@ -36,13 +34,20 @@ Return ( Self )
 
 METHOD validDialog( oDlg, oGetNombre, oGetCodigo )
 
+   local idForNombre
+   local idForCodigo
+
    if empty( ::oModel:hBuffer[ "nombre" ] )
       msgStop( "El nombre de la venta no puede estar vacío." )
       oGetNombre:setFocus()
       RETURN ( .f. )
    end if
 
-   if ::getRowSet():find( ::oModel:hBuffer[ "nombre" ], "nombre" ) != 0 .and. ( ::getRowSet():fieldget( "id" ) != ::oModel:hBuffer[ "id" ] .or. ::isDuplicateMode() )
+   idForNombre := ::oModel:ChecksForValid( "nombre" )
+
+   if ( !empty( idForNombre ) .and. ;
+      ( ( idForNombre != ::oModel:hBuffer[ "id" ] .and. !::isDuplicateMode() ) .or. ;
+      ( idForNombre == ::oModel:hBuffer[ "id" ] .and. ::isDuplicateMode() ) ) )
       msgStop( "El nombre de la venta ya existe" )
       oGetNombre:setFocus()
       RETURN ( .f. )
@@ -54,7 +59,11 @@ METHOD validDialog( oDlg, oGetNombre, oGetCodigo )
       Return ( .f. )
    end if
 
-   if ::getRowSet():find( ::oModel:hBuffer[ "codigo" ], "codigo" ) != 0 .and. ( ::getRowSet():fieldget( "id" ) != ::oModel:hBuffer[ "id" ] .or. ::isDuplicateMode() )
+   idForNombre := ::oModel:ChecksForValid( "codigo" )
+
+   if ( !empty( idForNombre ) .and. ;
+      ( ( idForNombre != ::oModel:hBuffer[ "id" ] .and. !::isDuplicateMode() ) .or. ;
+      ( idForNombre == ::oModel:hBuffer[ "id" ] .and. ::isDuplicateMode() ) ) )
       msgStop( "El codigo de la venta ya existe" )
       oGetCodigo:setFocus()
       RETURN ( .f. )

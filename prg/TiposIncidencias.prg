@@ -33,9 +33,9 @@ METHOD buildSQLShell()
    ::oShell                := SQLTShell():New( 2, 10, 18, 70, "Tipos de incidencias", , oWnd(), , , .f., , , ::oController:oModel, , , , , {}, {|| ::oController:Edit( ::oShell:getBrowse() ) },, {|| ::Delete( ::oShell:getBrowse() ) },, nil, ::oController:nLevel, "gc_camera_16", ( 104 + ( 0 * 256 ) + ( 63 * 65536 ) ),,, .t. )
 
       with object ( ::oShell:AddCol() )
-         :cHeader          := "Id"
-         :cSortOrder       := "id"
-         :bEditValue       := {|| ::oController:getRowSet():fieldGet( "id" ) }
+         :cHeader          := "Código"
+         :cSortOrder       := "codigo"
+         :bEditValue       := {|| ::oController:getRowSet():fieldGet( "codigo" ) }
          :nWidth           := 40
          :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | ::oController:clickOnHeader( oCol, ::oShell:getBrowse(), ::oShell:getCombobox() ) }
       end with
@@ -77,7 +77,6 @@ METHOD Dialog()
 
     REDEFINE GET   oGetCodigo ;
       VAR         ::oController:oModel:hBuffer[ "codigo" ] ;
-      MEMO ;
       ID          100 ;
       WHEN        ( !::oController:isZoomMode() ) ;
       OF          oDlg
@@ -155,9 +154,9 @@ METHOD buildSQLBrowse()
       oBrowse:setModel( ::oController:oModel )
 
       with object ( oBrowse:AddCol() )
-         :cHeader             := "Id"
-         :cSortOrder          := "id"
-         :bEditValue          := {|| ::oController:getRowSet():fieldGet( "id" ) }
+         :cHeader             := "Código"
+         :cSortOrder          := "codigo"
+         :bEditValue          := {|| ::oController:getRowSet():fieldGet( "codigo" ) }
          :nWidth              := 40
          :bLClickHeader       := {| nMRow, nMCol, nFlags, oCol | ::oController:clickOnHeader( oCol, oBrowse, oCombobox ) }
       end with

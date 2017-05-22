@@ -1315,7 +1315,7 @@ RETURN ( oDlg:nResult == IDOK )
 
 STATIC FUNCTION browseTipoImpresora( oGet )
 
-   local cTipoImpresora    := TiposImpresoras():New():activateBrowse() 
+   local cTipoImpresora    := TiposImpresorasController():New():activateBrowse() 
 
    if !empty( cTipoImpresora )
       oGet:cText( padr( cTipoImpresora, 50 ) )

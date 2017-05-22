@@ -1127,7 +1127,7 @@ METHOD getEtiquetasBrowse() CLASS TDetProduccion
 
    local aSelected
 
-   aSelected         := Etiquetas():New():activateBrowse( ::oTagsEver:getItems() )
+   aSelected         := EtiquetasController():New():activateBrowse( ::oTagsEver:getItems() )
 
    if !empty( aSelected )
       ::oTagsEver:setItems( aSelected )
