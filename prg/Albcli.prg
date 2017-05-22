@@ -4806,7 +4806,7 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbf, oBrw, lTotLin, cCodArtEnt, nMode, aTmpA
          WHEN     ( !aTmp[ _LCONTROL ] .and. nMode != ZOOM_MODE .and. !lTotLin ) ;
          VALID    ( TiposVentasController():New():isValidGet( aGet[ _CTIPMOV ] ) ) ;
          BITMAP   "LUPA" ;
-         ON HELP  ( TiposVentasController():New():AssignBrowse( aGet[ _CTIPMOV ] ) ) ;
+         ON HELP  ( TiposVentasController():New():assignBrowse( aGet[ _CTIPMOV ] ) ) ;
          OF       oFld:aDialogs[1] ;
 
       /*
@@ -5194,7 +5194,7 @@ Static Function EdtInc( aTmp, aGet, dbf, oBrw, bWhen, bValid, nMode, aTmpAlb )
    end if
 
    DEFINE DIALOG oDlg RESOURCE "INCIDENCIA" TITLE LblTitle( nMode ) + "incidencias de albaranes a clientes"
-
+/*
       REDEFINE GET aGet[ ( dbfTmpInc )->( FieldPos( "id_tip_inc" ) ) ];
          VAR      aTmp[ ( dbfTmpInc )->( FieldPos( "id_tip_inc" ) ) ];
          ID       120 ;
@@ -5208,7 +5208,7 @@ Static Function EdtInc( aTmp, aGet, dbf, oBrw, bWhen, bValid, nMode, aTmpAlb )
          ID       130 ;
          WHEN     .f. ;
          OF       oDlg
-
+*/
       REDEFINE GET aTmp[ ( dbfTmpInc )->( FieldPos( "dFecInc" ) ) ] ;
          ID       100 ;
          SPINNER ;

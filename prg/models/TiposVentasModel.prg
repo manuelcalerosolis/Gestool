@@ -67,7 +67,7 @@ RETURN ( !empty( aSelect ) )
 METHOD getName( uValue )
 
    local cName                   := ""
-   local cSentence               := "SELECT nombre FROM " + ::cTableName + " WHERE codigo = " + toSQLString( cValue )
+   local cSentence               := "SELECT nombre FROM " + ::cTableName + " WHERE codigo = " + toSQLString( uValue )
    local aSelect                 := ::selectFetchArray( cSentence )
 
    if !empty( aSelect )

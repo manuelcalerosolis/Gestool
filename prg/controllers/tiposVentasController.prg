@@ -18,7 +18,7 @@ CLASS TiposVentasController FROM SQLBaseController
  
    METHOD   validDialog( oDlg, oGetNombre, oGetCodigo )
 
-   METHOD   isValidateGet( oGet )
+   METHOD   isValidGet( oGet )
 
 END CLASS
 
@@ -64,7 +64,7 @@ RETURN ( oDlg:end( IDOK ) )
 
 //---------------------------------------------------------------------------//
 
-METHOD isValidateGet( oGet )
+METHOD isValidGet( oGet )
 
    local uValue
    local uReturn

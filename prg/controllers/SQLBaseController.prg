@@ -92,6 +92,10 @@ METHOD New()
 
 	::nLevel                                           := nLevelUsr( ::idUserMap )
 
+   ::oModel                                           := ::buildSQLModel( self )
+
+   ::oView                                            := ::buildSQLView( self )
+
 RETURN ( self )
 
 //---------------------------------------------------------------------------//
@@ -108,10 +112,6 @@ METHOD ActivateShell()
       SysRefresh(); oWnd():CloseAll(); SysRefresh()
    end if
 
-   ::oModel															:= ::buildSQLModel( self )
-
-	::oView															:= ::buildSQLView( self )
-
    ::getHistoryOfShell()
 
    ::oModel:buildRowSetWithRecno()
@@ -127,10 +127,6 @@ RETURN ( Self )
 METHOD ActivateBrowse( aSelectedItems )
 
    local uReturn
-
-  	::oModel															:= ::buildSQLModel( self )
-
-	::oView															:= ::buildSQLView( self )
 
    ::getHistoryOfBrowse()
 
