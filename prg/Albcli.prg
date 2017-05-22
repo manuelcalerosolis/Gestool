@@ -5201,7 +5201,7 @@ Static Function EdtInc( aTmp, aGet, dbf, oBrw, bWhen, bValid, nMode, aTmpAlb )
          WHEN     ( nMode != ZOOM_MODE );
          VALID    ( TiposIncidenciasModel():exist( aTmp[ ( dbfTmpInc )->( FieldPos( "id_tip_inc" ) ) ] ) ) ;
          BITMAP   "LUPA" ;
-         ON HELP  ( TiposIncidencias():New():AssignBrowse( aGet[ ( dbfTmpInc )->( FieldPos( "id_tip_inc" ) ) ] ) ) ; 
+         ON HELP  ( TiposIncidenciasController():New():AssignBrowse( aGet[ ( dbfTmpInc )->( FieldPos( "id_tip_inc" ) ) ] ) ) ; 
          OF       oDlg
 
       REDEFINE GET oNomInci VAR cNomInci;
@@ -5257,7 +5257,7 @@ Static Function browseTipoIncidencia( oGet )
 
    local idIncidencia
 
-   idIncidencia   := TiposIncidencias():New():ActivateBrowse()
+   idIncidencia   := TiposIncidenciasController():New():ActivateBrowse()
 
    if !empty( idIncidencia )
       oGet:cText( alltrim(str( idIncidencia ) ) )

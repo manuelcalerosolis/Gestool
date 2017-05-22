@@ -19241,7 +19241,7 @@ Static Function getEtiquetasBrowse( aSelectedItems )
 
    local aSelected
 
-   aSelected         := Etiquetas():New():activateBrowse( aSelectedItems )
+   aSelected         := EtiquetasController():New():activateBrowse( aSelectedItems )
 
    if !empty( aSelected )
       oTagsEver:setItems( aSelected )

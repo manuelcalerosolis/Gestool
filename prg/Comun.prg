@@ -281,8 +281,6 @@ RETURN ( .t. )
 
 FUNCTION Test()
 
-msgalert( TiposVentasController():New():activateBrowse() ) 
-
 Return ( nil )
 
 //---------------------------------------------------------------------------//
@@ -1611,7 +1609,7 @@ FUNCTION CreateAcceso( oWnd )
    oItem:oGroup         := oGrupo
    oItem:cPrompt        := 'Etiquetas'
    oItem:cMessage       := 'Etiquetas'
-   oItem:bAction        := {|| Etiquetas():New():activateShell() }
+   oItem:bAction        := {|| EtiquetasController():New():activateShell() }
    oItem:cId            := "01126"
    oItem:cBmp           := "gc_bookmarks_16"
    oItem:cBmpBig        := "gc_bookmarks_32"

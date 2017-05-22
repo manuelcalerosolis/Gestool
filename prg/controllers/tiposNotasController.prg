@@ -8,14 +8,10 @@ CLASS TiposNotasController FROM SQLBaseController
 
    METHOD   New()
 
-   METHOD   buildSQLModel( this )         	INLINE ( TiposNotasModel():New( this ) )
+   METHOD   buildSQLModel( this )         	 INLINE ( TiposNotasModel():New( this ) )
    
-   METHOD   buildSQLView( this )			INLINE ( TiposNotas():New( this ) )
-  
-   METHOD   buildSQLBrowse()			INLINE ( TiposNotas():New():buildSQLBrowse() )
-
-   METHOD   getFieldFromBrowse()          	INLINE ( ::getRowSet():fieldGet( "tipo" ) )
- 
+   METHOD   buildSQLView( this )			       INLINE ( TiposNotas():New( this ) )
+   
    METHOD   validDialog( oDlg, oGetNombre )
 
 END CLASS
@@ -34,13 +30,19 @@ Return ( Self )
 
 METHOD validDialog( oDlg, oGetNombre )
 
+   local idForNombre
+
    if empty( ::oModel:hBuffer[ "tipo" ] )
       msgStop( "El nombre de la nota no puede estar vacío." )
       oGetNombre:setFocus()
       RETURN ( .f. )
    end if
 
-   if ::getRowSet():find( ::oModel:hBuffer[ "tipo" ], "tipo" ) != 0 .and. ( ::getRowSet():fieldget( "id" ) != ::oModel:hBuffer[ "id" ] .or. ::isDuplicateMode() )
+   idForNombre := ::oModel:ChecksForValid( "tipo" )
+
+   if ( !empty( idForNombre ) .and. ;
+      ( ( idForNombre != ::oModel:hBuffer[ "id" ] .and. !::isDuplicateMode() ) .or. ;
+      ( idForNombre == ::oModel:hBuffer[ "id" ] .and. ::isDuplicateMode() ) ) )
       msgStop( "Esta nota ya existe" )
       oGetNombre:setFocus()
       RETURN ( .f. )

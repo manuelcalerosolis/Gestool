@@ -503,6 +503,7 @@ TiposImpresorasController.prg 										\
 TiposNotasModel.prg 												\
 TiposNotasController.prg 												\
 EtiquetasModel.prg 												\
+EtiquetasController.prg 												\
 TiposIncidenciasModel.prg 										\
 TiposIncidenciasController.prg 										\
 TiposVentasModel.prg 										\
@@ -1003,6 +1004,7 @@ TiposImpresorasController.obj 										\
 TiposNotasModel.obj 										\
 TiposNotasController.obj 										\
 EtiquetasModel.obj 										\
+EtiquetasController.obj 										\
 TiposIncidenciasModel.obj 										\
 TiposIncidenciasController.obj 										\
 TiposVentasModel.obj 										\
@@ -1491,6 +1493,7 @@ $(OBJ)\TiposImpresorasController.obj                 +
 $(OBJ)\TiposNotasModel.obj                 +
 $(OBJ)\TiposNotasController.obj                 +
 $(OBJ)\EtiquetasModel.obj                 +
+$(OBJ)\EtiquetasController.obj                 +
 $(OBJ)\TiposIncidenciasModel.obj                 +
 $(OBJ)\TiposIncidenciasController.obj                 +
 $(OBJ)\TiposVentasModel.obj                 +

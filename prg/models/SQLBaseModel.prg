@@ -83,6 +83,8 @@ CLASS SQLBaseModel
    METHOD   setFastReportRecordset( oFastReport, cSentence, cColumns )
    METHOD      serializeColumns()
 
+   METHOD   ChecksForValid()
+
 END CLASS
 
 //---------------------------------------------------------------------------//
@@ -460,8 +462,6 @@ METHOD setFastReportRecordset( oFastReport, cSentence, cColumns )
    default cSentence := ::getSelectSentence()
    default cColumns  := ::serializeColumns() // heval( ::hColumns, {|k| QOut( k, v , i ) } )
 
-      msgalert( cColumns )
-
    if empty( oFastReport )
       RETURN ( Self )
    end if
@@ -487,5 +487,23 @@ METHOD setFastReportRecordset( oFastReport, cSentence, cColumns )
                      {|nField| oRowSet:fieldGet( nField ) } )
 
 Return ( self )
+
+//---------------------------------------------------------------------------//
+
+METHOD ChecksForValid( cColumnToValid )
+
+   local cSentence := "SELECT id FROM " + ::cTableName + " WHERE " + cColumnToValid + " = " + toSQLString( ::hBuffer[ cColumnToValid ] )
+   local aIDsToValid
+   local nIDToValid
+
+   aIDsToValid    := ::selectFetchArray( cSentence )
+
+   if empty( aIDsToValid )
+       RETURN ( nil )
+   endif
+   
+   nIDToValid     := aIDsToValid[1]
+
+RETURN ( nIDToValid )
 
 //---------------------------------------------------------------------------//
