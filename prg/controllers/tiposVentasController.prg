@@ -16,8 +16,6 @@ CLASS TiposVentasController FROM SQLBaseController
  
    METHOD   validDialog( oDlg, oGetNombre, oGetCodigo )
 
-   METHOD   isValidGet( oGet )
-
 END CLASS
 
 //---------------------------------------------------------------------------//
@@ -45,13 +43,21 @@ METHOD validDialog( oDlg, oGetNombre, oGetCodigo )
 
    idForNombre := ::oModel:ChecksForValid( "nombre" )
 
-   if ( !empty( idForNombre ) .and. ;
-      ( ( idForNombre != ::oModel:hBuffer[ "id" ] .and. !::isDuplicateMode() ) .or. ;
-      ( idForNombre == ::oModel:hBuffer[ "id" ] .and. ::isDuplicateMode() ) ) )
-      msgStop( "El nombre de la venta ya existe" )
-      oGetNombre:setFocus()
-      RETURN ( .f. )
-   end if
+   if ( !empty( idForNombre ) 
+
+      if ( idForNombre != ::oModel:hBuffer[ "id" ] .and. !::isDuplicateMode() )
+         msgStop( "El nombre de la venta ya existe" )
+         oGetNombre:setFocus()
+         RETURN ( .f. )
+      end if
+
+      if ( idForNombre == ::oModel:hBuffer[ "id" ] .and. ::isDuplicateMode() ) ) )
+         msgStop( "El nombre de la venta ya existe" )
+         oGetNombre:setFocus()
+         RETURN ( .f. )
+      end if
+
+   end if 
 
    if empty( ::oModel:hBuffer[ "codigo" ] )
       MsgStop( "El codigo del tipo de venta no puede estar vacío." )
@@ -59,39 +65,25 @@ METHOD validDialog( oDlg, oGetNombre, oGetCodigo )
       Return ( .f. )
    end if
 
-   idForNombre := ::oModel:ChecksForValid( "codigo" )
+   idForCodigo    := ::oModel:ChecksForValid( "codigo" )
 
-   if ( !empty( idForNombre ) .and. ;
-      ( ( idForNombre != ::oModel:hBuffer[ "id" ] .and. !::isDuplicateMode() ) .or. ;
-      ( idForNombre == ::oModel:hBuffer[ "id" ] .and. ::isDuplicateMode() ) ) )
-      msgStop( "El codigo de la venta ya existe" )
-      oGetCodigo:setFocus()
-      RETURN ( .f. )
+   if ( !empty( idForCodigo )
+
+      if ( idForCodigo != ::oModel:hBuffer[ "id" ] .and. !::isDuplicateMode() )
+         msgStop( "El código de la venta ya existe" )
+         oGetCodigo:setFocus()
+         RETURN ( .f. )
+      end if
+
+      if ( idForCodigo == ::oModel:hBuffer[ "id" ] .and. ::isDuplicateMode() ) ) )
+         msgStop( "El código de la venta ya existe" )
+         oGetCodigo:setFocus()
+         RETURN ( .f. )
+      end if
+
    end if
 
 RETURN ( oDlg:end( IDOK ) )
 
 //---------------------------------------------------------------------------//
 
-METHOD isValidGet( oGet )
-
-   local uValue
-   local uReturn
-
-   if empty( oGet )
-      RETURN ( uReturn )
-   end if 
-
-   uValue            := oGet:varGet()
-
-   if !( ::oModel:exist( uValue ) )
-      RETURN .f.
-   end if 
-
-   if !empty( oGet:oHelpText )
-      oGet:oHelpText:cText( ::oModel:getName( uValue ) )
-   end if 
-
-RETURN ( uReturn )
-
-//--------------------------------------------------------------------------//

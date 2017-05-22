@@ -18,8 +18,6 @@ CLASS TiposVentasModel FROM SQLBaseModel
 
    METHOD exist( cValue )
 
-   METHOD getName( uValue )
-
 END CLASS
 
 //---------------------------------------------------------------------------//
@@ -64,17 +62,4 @@ RETURN ( !empty( aSelect ) )
 
 //---------------------------------------------------------------------------//
 
-METHOD getName( uValue )
-
-   local cName                   := ""
-   local cSentence               := "SELECT nombre FROM " + ::cTableName + " WHERE codigo = " + toSQLString( uValue )
-   local aSelect                 := ::selectFetchArray( cSentence )
-
-   if !empty( aSelect )
-      cName                      := hget( atail( aSelect ), "nombre" )
-   end if 
-
-RETURN ( cName )
-
-//---------------------------------------------------------------------------//
 

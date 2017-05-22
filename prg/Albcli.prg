@@ -5194,12 +5194,12 @@ Static Function EdtInc( aTmp, aGet, dbf, oBrw, bWhen, bValid, nMode, aTmpAlb )
    end if
 
    DEFINE DIALOG oDlg RESOURCE "INCIDENCIA" TITLE LblTitle( nMode ) + "incidencias de albaranes a clientes"
-/*
+
       REDEFINE GET aGet[ ( dbfTmpInc )->( FieldPos( "id_tip_inc" ) ) ];
          VAR      aTmp[ ( dbfTmpInc )->( FieldPos( "id_tip_inc" ) ) ];
          ID       120 ;
          WHEN     ( nMode != ZOOM_MODE );
-         VALID    ( TiposIncidenciasModel():exist( aTmp[ ( dbfTmpInc )->( FieldPos( "id_tip_inc" ) ) ] ) ) ;
+         VALID    ( TiposIncidenciasController():New():isValidGet( aGet[ ( dbfTmpInc )->( FieldPos( "id_tip_inc" ) ) ] ) ) ;
          BITMAP   "LUPA" ;
          ON HELP  ( TiposIncidenciasController():New():AssignBrowse( aGet[ ( dbfTmpInc )->( FieldPos( "id_tip_inc" ) ) ] ) ) ; 
          OF       oDlg
@@ -5208,7 +5208,7 @@ Static Function EdtInc( aTmp, aGet, dbf, oBrw, bWhen, bValid, nMode, aTmpAlb )
          ID       130 ;
          WHEN     .f. ;
          OF       oDlg
-*/
+
       REDEFINE GET aTmp[ ( dbfTmpInc )->( FieldPos( "dFecInc" ) ) ] ;
          ID       100 ;
          SPINNER ;

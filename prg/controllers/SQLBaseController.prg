@@ -69,10 +69,11 @@ CLASS SQLBaseController
 
    METHOD   find( oFind )
 
-   METHOD 	AssignBrowse( oGet, aSelectedItems )
+   METHOD   isValidGet( oGet )
+   METHOD 	assignBrowse( oGet, aSelectedItems )
+
 	METHOD 	startBrowse( oCombobox, oBrowse )
 	METHOD 	restoreBrowseState( oBrowse )
-
 
    METHOD   loadBuffer( id )
    METHOD   loadBlankBuffer()
@@ -82,7 +83,6 @@ CLASS SQLBaseController
 
    METHOD 	getHistoryOfShell()								INLINE ( ::getHistory( "_shell" ) )
 	METHOD 	getHistoryOfBrowse()								INLINE ( ::getHistory( "_browse" ) )
-
 
 END CLASS
 
@@ -154,7 +154,7 @@ METHOD startBrowse( oCombobox, oBrowse )
 
    ::restoreBrowseState( oBrowse )
 
-   oColumn     := oBrowse:getColumnOrder( ::oModel:cColumnOrder )
+   oColumn        := oBrowse:getColumnOrder( ::oModel:cColumnOrder )
    if empty( oColumn )
       RETURN ( Self )
    end if 
@@ -498,3 +498,26 @@ METHOD getRowSet()
 Return ( ::oModel:oRowSet )
 
 //---------------------------------------------------------------------------//
+
+METHOD isValidGet( oGet )
+
+   local uValue
+   local uReturn
+
+   if empty( oGet )
+      RETURN ( uReturn )
+   end if 
+
+   uValue            := oGet:varGet()
+
+   if !( ::oModel:exist( uValue ) )
+      RETURN .f.
+   end if 
+
+   if !empty( oGet:oHelpText )
+      oGet:oHelpText:cText( ::oModel:getName( uValue ) )
+   end if 
+
+RETURN ( uReturn )
+
+//--------------------------------------------------------------------------//

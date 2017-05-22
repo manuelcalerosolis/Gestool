@@ -20,6 +20,8 @@ CLASS TiposIncidenciasModel FROM SQLBaseEmpresasModel
 
    METHOD translateNameFromId( nId )
 
+   METHOD getName( uValue )
+
 END CLASS
 
 //---------------------------------------------------------------------------//

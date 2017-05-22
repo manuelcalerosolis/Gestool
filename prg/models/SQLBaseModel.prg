@@ -71,7 +71,9 @@ CLASS SQLBaseModel
    METHOD   insertBuffer()                         INLINE   ( getSQLDatabase():Query( ::getInsertSentence() ), ::buildRowSet() )
    METHOD   deleteSelection( aRecno )              INLINE   ( getSQLDatabase():Query( ::getdeleteSentence( aRecno ) ), ::buildRowSet() )
 
-   METHOD   selectFetchArray( cSentence )
+   METHOD   selectFetch( cSentence )
+   METHOD   selectFetchArray( cSentence )          
+   METHOD   selectFetchHash( cSentence )           INLINE   ( ::selectFetch( cSentence, FETCH_HASH ) )
 
    METHOD   getDbfTableName()                      INLINE   ( ::cDbfTableName + ".dbf" )
    METHOD   getOldTableName()                      INLINE   ( ::cDbfTableName + ".old" )
@@ -84,6 +86,8 @@ CLASS SQLBaseModel
    METHOD      serializeColumns()
 
    METHOD   ChecksForValid()
+
+   METHOD getName( uValue )
 
 END CLASS
 
@@ -351,15 +355,17 @@ Return ( ::oRowSet:recCount() > 0 )
 
 //---------------------------------------------------------------------------//
 
-METHOD selectFetchArray( cSentence )
+METHOD selectFetch( cSentence, fetchType )
 
    local oStmt
    local aFetch
-   local aResult := {}
+
+   default fetchType := FETCH_ARRAY
 
    try 
       oStmt          := getSQLDatabase():Query( cSentence )
-      aFetch         := oStmt:fetchAll( FETCH_ARRAY )
+      aFetch         := oStmt:fetchAll( fetchType )
+
    catch
 
       msgstop( hb_valtoexp( getSQLDatabase():errorInfo() ) )
@@ -371,11 +377,24 @@ METHOD selectFetchArray( cSentence )
    end
 
    if !empty( aFetch ) .and. hb_isarray( aFetch )
+      RETURN ( aFetch )
+   end if
+
+RETURN ( nil )
+
+//---------------------------------------------------------------------------//
+
+METHOD selectFetchArray( cSentence )
+
+   local aResult  := {}
+   local aFetch   := ::selectFetch( cSentence, FETCH_ARRAY )
+
+   if !empty( aFetch ) .and. hb_isarray( aFetch )
       aeval( aFetch, {|a| aadd( aResult, a[ 1 ] ) } )
       RETURN ( aResult )
    end if
 
-Return ( nil )
+RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 
@@ -505,5 +524,21 @@ METHOD ChecksForValid( cColumnToValid )
    nIDToValid     := aIDsToValid[1]
 
 RETURN ( nIDToValid )
+
+//---------------------------------------------------------------------------//
+
+METHOD getName( uValue )
+
+   local cName                   := ""
+   local cSentence               := "SELECT nombre FROM " + ::cTableName + " WHERE codigo = " + toSQLString( uValue )
+   local aSelect                 := ::selectFetchHash( cSentence )
+
+   msgalert( cSentence, "cSentence" )
+
+   if !empty( aSelect )
+      cName                      := hget( atail( aSelect ), "nombre" )
+   end if 
+
+RETURN ( cName )
 
 //---------------------------------------------------------------------------//
