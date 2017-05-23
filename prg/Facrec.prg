@@ -4172,7 +4172,7 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbfFacRecL, oBrw, lTotLin, cCodArtEnt, nMode
          ID          290 ;
          IDSAY       292 ;
          IDTEXT      291 ;
-         OF          fldGeneral
+         OF          oFld:aDialogs[1]
 
       REDEFINE GET aGet[ _CALMLIN ] VAR aTmp[ _CALMLIN ] ;
          ID       300 ;
@@ -4180,7 +4180,6 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbfFacRecL, oBrw, lTotLin, cCodArtEnt, nMode
          VALID    ( cAlmacen( aGet[ _CALMLIN ], , oSayAlm ), if( !uFieldEmpresa( "lNStkAct" ), oStock:lPutStockActual( aTmp[ _CREF ], aTmp[ _CALMLIN ], aTmp[ _CVALPR1 ], aTmp[ _CVALPR2 ], aTmp[ _CLOTE ], aTmp[ _LKITART ], aTmp[ _NCTLSTK ], oStkAct ), .t. ) ) ;
          BITMAP   "LUPA" ;
          ON HELP  ( BrwAlmacen( aGet[ _CALMLIN], oSayAlm ) ) ;
-			COLOR 	CLR_GET ;
          OF       oFld:aDialogs[1]
 
       REDEFINE GET oSayAlm VAR cSayAlm ;
@@ -4478,7 +4477,7 @@ STATIC FUNCTION SetDlgMode( aTmp, aGet, oFld, oSayPr1, oSayPr2, oSayVp1, oSayVp2
       end if
    end if
 
-   aGet[ ( D():FacturasRectificativasClientesL( nView ) )->( fieldpos( "id_tipo_v" ) ) ]:lValid()
+   aGet[ ( D():FacturasRectificativasLineas( nView ) )->( fieldpos( "id_tipo_v" ) ) ]:lValid()
 
    do case
    case nMode == APPD_MODE

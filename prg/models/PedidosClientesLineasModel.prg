@@ -8,13 +8,17 @@ CLASS PedidosClientesLineasModel FROM SQLBaseEmpresasModel
 
    METHOD TranslateCodigoTiposVentaToId( cTable )
 
-   METHOD TranslateSATClientesLineasCodigoTiposVentaToId()           INLINE ( ::TranslateCodigoTiposVentaToId( "SatCliL" ) )
+   METHOD TranslateSATClientesLineasCodigoTiposVentaToId()              INLINE ( ::TranslateCodigoTiposVentaToId( "SatCliL" ) )
 
-   METHOD TranslatePresupuestoClientesLineasCodigoTiposVentaToId()   INLINE ( ::TranslateCodigoTiposVentaToId( "PreCliL" ) )
+   METHOD TranslatePresupuestoClientesLineasCodigoTiposVentaToId()      INLINE ( ::TranslateCodigoTiposVentaToId( "PreCliL" ) )
 
-   METHOD TranslatePedidosClientesLineasCodigoTiposVentaToId()       INLINE ( ::TranslateCodigoTiposVentaToId( "PedCliL" ) )
+   METHOD TranslatePedidosClientesLineasCodigoTiposVentaToId()          INLINE ( ::TranslateCodigoTiposVentaToId( "PedCliL" ) )
 
-   METHOD TranslateAlbaranesClientesLineasCodigoTiposVentaToId()     INLINE ( ::TranslateCodigoTiposVentaToId( "AlbCliL" ) )
+   METHOD TranslateAlbaranesClientesLineasCodigoTiposVentaToId()        INLINE ( ::TranslateCodigoTiposVentaToId( "AlbCliL" ) )
+
+   METHOD TranslateFacturasClientesLineasCodigoTiposVentaToId()         INLINE ( ::TranslateCodigoTiposVentaToId( "FacCliL" ) )
+
+   METHOD TranslateFacturasRectificativasLineasCodigoTiposVentaToId()   INLINE ( ::TranslateCodigoTiposVentaToId( "FacRecL" ) )
 
 END CLASS
 
