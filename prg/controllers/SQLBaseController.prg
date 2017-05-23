@@ -193,9 +193,11 @@ METHOD AssignBrowse( oGet, aSelectedItems )
 
    if empty( oGet )
       RETURN ( uReturn )
-   end if 
+   end if
 
-   uReturn           := ::ActivateBrowse( ::oModel, aSelectedItems )   
+   ::oModel:setIdForRecno( oGet:varGet() )
+
+   uReturn           := ::ActivateBrowse( aSelectedItems )   
 
    if !empty(uReturn)
       oGet:cText( uReturn )
@@ -208,8 +210,6 @@ RETURN ( uReturn )
 METHOD getHistory( cWnd )
 
    local hFetch      := HistoricosUsuariosModel():New():getHistory( ::oModel:cTableName + cWnd )
-
-msgalert( hb_valtoexp( hFetch ) )
 
    if empty(hFetch)
    	 RETURN ( nil )
@@ -440,7 +440,7 @@ METHOD Delete( oBrowse )
       cNumbersOfDeletes := "el registro en curso?"
    end if
 
-   if oUser():lNotConfirmDelete() .or. msgNoYes( "?Desea eliminar " + cNumbersOfDeletes, "Confirme eliminaci?" )
+   if oUser():lNotConfirmDelete() .or. msgNoYes( "¿Desea eliminar " + cNumbersOfDeletes, "Confirme eliminación" )
       ::oModel:deleteSelection( oBrowse:aSelected )
    end if 
 
@@ -520,6 +520,8 @@ METHOD isValidGet( oGet )
    local uValue
    local uReturn     := .t.
 
+   msgalert( "estoy en el valid del get" )
+
    if empty( oGet )
       RETURN ( uReturn )
    end if 
@@ -527,6 +529,8 @@ METHOD isValidGet( oGet )
    uValue            := oGet:varGet()
 
    msgalert( uValue, "uValue" )
+
+   msgalert( hb_valtoexp( ::oModel ), "este es el modelo" )
 
    if !( ::oModel:exist( uValue ) )
       RETURN .f.

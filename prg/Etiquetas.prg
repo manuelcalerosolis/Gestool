@@ -164,8 +164,6 @@ METHOD buildSQLBrowse( aSelectedItems )
    local oFind
    local cFind       := space( 200 )
 
-   msgalert( hb_valtoexp( aSelectedItems ) )
-
    DEFINE DIALOG oDlg RESOURCE "HELP_ETIQUETAS" TITLE "Seleccionar etiquetas"
 
       REDEFINE GET   oFind ; 

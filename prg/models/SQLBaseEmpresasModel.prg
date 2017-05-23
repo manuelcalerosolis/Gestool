@@ -21,6 +21,10 @@ CLASS SQLBaseEmpresasModel From SQLBaseModel
 
    METHOD   getNameFromId( uValue )
 
+   METHOD   checksForValid( cColumnToValid )
+
+   METHOD exist( cValue )
+
 END CLASS
 
 //---------------------------------------------------------------------------//
@@ -186,5 +190,31 @@ METHOD getNameFromId( uValue )
    end if 
 
 RETURN ( cName )
+
+//---------------------------------------------------------------------------//
+
+METHOD checksForValid( cColumnToValid )
+
+   local cSentence := "SELECT id FROM " + ::cTableName + " WHERE empresa = " + toSQLString( cCodEmp() ) + " AND " + cColumnToValid + " = " + toSQLString( ::hBuffer[ cColumnToValid ] )
+   local aIDsToValid
+   local nIDToValid
+
+   aIDsToValid    := ::selectFetchArray( cSentence )
+
+   if empty( aIDsToValid )
+       RETURN ( nil )
+   endif
+   
+   nIDToValid     := aIDsToValid[1]
+
+RETURN ( nIDToValid )
+
+//---------------------------------------------------------------------------//
+
+METHOD exist( cValue )
+
+   local cSentence               := "SELECT " + ::cColumnKey + " FROM " + ::cTableName + " WHERE empresa = " + toSQLString( cCodEmp() ) + " AND id = " + toSQLString( cValue )
+
+RETURN ( !empty( ::selectFetchArray( cSentence ) ) )
 
 //---------------------------------------------------------------------------//
