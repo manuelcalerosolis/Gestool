@@ -20,7 +20,7 @@ CLASS TiposIncidenciasModel FROM SQLBaseEmpresasModel
 
    METHOD translateNameFromId( nId )
 
-   METHOD getName( uValue )
+   METHOD getNameFromCodigo( uValue )
 
 END CLASS
 
@@ -30,17 +30,17 @@ METHOD New()
 
    ::cTitle                      := "Tipos incidencias"
 
-   ::cDbfTableName				 	:= "TIPINCI"
+   ::cDbfTableName				 	:= "TipInci"
 
    ::hColumns                   	:= {  "id"                 => {  "create"    => "INTEGER PRIMARY KEY AUTOINCREMENT"          ,;
                                                                   "text"		=> "Identificador"                              ,;
    															                  "dbfField" 	=> "" }                                         ,;
                                        "codigo"             => {  "create"    => "VARCHAR( 3 )"                               ,;
                                                                   "text"      => "Código de identificación en DBF"            ,; 
-                                                                  "dbfField"  => "CCODINCI"}                                  ,;  
+                                                                  "dbfField"  => "cCodInci"}                                  ,;  
                                        "nombre_incidencia"  => {  "create"    => "VARCHAR (50) NOT NULL"                      ,;
                                                                   "text"      => "Nombre de la incidencia"                    ,;
-                                                                  "dbfField"  => "CNOMINCI"}                                  ,;
+                                                                  "dbfField"  => "cNomInci"}                                  ,;
                                        "empresa"            => {  "create"    => "CHAR ( 4 )"                                 ,;
                                                                   "text"      => "Empresa a la que pertenece la etiqueta"     ,;
                                                                   "dbfField"  => "" }                                         }
@@ -53,8 +53,8 @@ RETURN ( Self )
 
 METHOD arrayTiposIncidencias()
 
-   local cSentence               := "SELECT nombre_incidencia FROM " + ::cTableName
-   local aSelect                 := ::selectFetchArray( cSentence ) 
+   local cSentence   := "SELECT nombre_incidencia FROM " + ::cTableName
+   local aSelect     := ::selectFetchArray( cSentence ) 
 
 RETURN ( aSelect )
 
@@ -62,8 +62,8 @@ RETURN ( aSelect )
 
 METHOD exist( cValue )
 
-   local cSentence               := "SELECT id FROM " + ::cTableName + " WHERE codigo = " + toSQLString( cValue )
-   local aSelect                 := ::selectFetchArray( cSentence )
+   local cSentence   := "SELECT id FROM " + ::cTableName + " WHERE codigo = " + toSQLString( cValue )
+   local aSelect     := ::selectFetchArray( cSentence )
 
 RETURN ( !empty( aSelect ) )
 
@@ -72,7 +72,23 @@ RETURN ( !empty( aSelect ) )
 METHOD translateNameFromId( nId )
 
    local cSentence   := "SELECT nombre_incidencia from " + ::cTableName + " WHERE empresa = " + toSQLString( cCodEmp() ) + " AND codigo = " + toSQLString( nID )
-
    local aNombre     := ::selectFetchArray( cSentence )
 
 RETURN ( self )
+
+//---------------------------------------------------------------------------//
+
+METHOD getNameFromCodigo( uValue )
+
+   local cName       := ""
+   local cSentence   := "SELECT nombre_incidencia FROM " + ::cTableName + " WHERE empresa = " + toSQLString( cCodEmp() ) + " AND codigo = " + toSQLString( uValue )
+   local aSelect     := ::selectFetchHash( cSentence )
+
+   if !empty( aSelect )
+      cName          := hget( atail( aSelect ), "nombre_incidencia" )
+   end if 
+
+RETURN ( cName )
+
+//---------------------------------------------------------------------------//
+

@@ -8,9 +8,9 @@ CLASS TiposIncidenciasController FROM SQLBaseController
 
    METHOD   New()
 
-   METHOD   buildSQLModel( this )               INLINE ( TiposIncidenciasModel():New( this ) )
+   METHOD   buildSQLModel( this )         INLINE ( TiposIncidenciasModel():New( this ) )
    
-   METHOD   buildSQLView( this )			INLINE ( TiposIncidencias():New( this ) )
+   METHOD   buildSQLView( this )          INLINE ( TiposIncidencias():New( this ) )
   
    METHOD   getFieldFromBrowse()          INLINE ( ::getRowSet():fieldGet( "codigo" ) )
 

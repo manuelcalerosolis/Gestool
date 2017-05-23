@@ -8,7 +8,7 @@ CLASS TiposVentasController FROM SQLBaseController
 
    METHOD   New()
 
-   METHOD   buildSQLModel( this )               INLINE ( TiposVentasModel():New( this ) )
+   METHOD   buildSQLModel( this )         INLINE ( TiposVentasModel():New( this ) )
    
    METHOD   buildSQLView( this )				INLINE ( TiposVentas():New( this ) )
   
@@ -43,7 +43,7 @@ METHOD validDialog( oDlg, oGetNombre, oGetCodigo )
 
    idForNombre := ::oModel:ChecksForValid( "nombre" )
 
-   if ( !empty( idForNombre ) 
+   if ( !empty( idForNombre ) )
 
       if ( idForNombre != ::oModel:hBuffer[ "id" ] .and. !::isDuplicateMode() )
          msgStop( "El nombre de la venta ya existe" )
@@ -51,7 +51,7 @@ METHOD validDialog( oDlg, oGetNombre, oGetCodigo )
          RETURN ( .f. )
       end if
 
-      if ( idForNombre == ::oModel:hBuffer[ "id" ] .and. ::isDuplicateMode() ) ) )
+      if ( idForNombre == ::oModel:hBuffer[ "id" ] .and. ::isDuplicateMode() )  
          msgStop( "El nombre de la venta ya existe" )
          oGetNombre:setFocus()
          RETURN ( .f. )
@@ -67,7 +67,7 @@ METHOD validDialog( oDlg, oGetNombre, oGetCodigo )
 
    idForCodigo    := ::oModel:ChecksForValid( "codigo" )
 
-   if ( !empty( idForCodigo )
+   if ( !empty( idForCodigo ) )
 
       if ( idForCodigo != ::oModel:hBuffer[ "id" ] .and. !::isDuplicateMode() )
          msgStop( "El código de la venta ya existe" )
@@ -75,7 +75,7 @@ METHOD validDialog( oDlg, oGetNombre, oGetCodigo )
          RETURN ( .f. )
       end if
 
-      if ( idForCodigo == ::oModel:hBuffer[ "id" ] .and. ::isDuplicateMode() ) ) )
+      if ( idForCodigo == ::oModel:hBuffer[ "id" ] .and. ::isDuplicateMode() )
          msgStop( "El código de la venta ya existe" )
          oGetCodigo:setFocus()
          RETURN ( .f. )

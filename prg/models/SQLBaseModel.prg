@@ -87,7 +87,7 @@ CLASS SQLBaseModel
 
    METHOD   ChecksForValid()
 
-   METHOD getName( uValue )
+   METHOD   getNameFromCodigo( uValue )
 
 END CLASS
 
@@ -527,13 +527,17 @@ RETURN ( nIDToValid )
 
 //---------------------------------------------------------------------------//
 
-METHOD getName( uValue )
+METHOD getNameFromCodigo( uValue )
 
    local cName                   := ""
    local cSentence               := "SELECT nombre FROM " + ::cTableName + " WHERE codigo = " + toSQLString( uValue )
-   local aSelect                 := ::selectFetchHash( cSentence )
+   local aSelect                 
 
    msgalert( cSentence, "cSentence" )
+
+   aSelect                       := ::selectFetchHash( cSentence )
+
+   msgalert( hb_valtoexp( aSelect ), "aSelect" )
 
    if !empty( aSelect )
       cName                      := hget( atail( aSelect ), "nombre" )

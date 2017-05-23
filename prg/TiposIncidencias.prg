@@ -73,10 +73,13 @@ METHOD Dialog()
    local oGetNombre
    local oGetCodigo
 
+   msgalert( ::oController:isZoomMode(), "isZoomMode" )
+
    DEFINE DIALOG oDlg RESOURCE "TIPO_INCIDENCIA" TITLE ::lblTitle() + "tipo de incidencia"
 
     REDEFINE GET   oGetCodigo ;
       VAR         ::oController:oModel:hBuffer[ "codigo" ] ;
+      MEMO ;
       ID          100 ;
       WHEN        ( !::oController:isZoomMode() ) ;
       OF          oDlg
@@ -104,10 +107,6 @@ METHOD Dialog()
 
    oDlg:AddFastKey( VK_F5, {|| oDlg:end( IDOK ) } )
 
-   // evento bstart-----------------------------------------------------------
-
-   oDlg:bStart    := {|| oGetNombre:setFocus() }
-
    ACTIVATE DIALOG oDlg CENTER
 
 RETURN ( oDlg:nResult == IDOK )
@@ -133,7 +132,7 @@ METHOD buildSQLBrowse()
          BITMAP      "FIND" ;
          OF          oDlg
 
-      oFind:bChange       := {|| ::changeFind( oFind, oBrowse ) }
+      oFind:bChange  := {|| ::changeFind( oFind, oBrowse ) }
 
       REDEFINE COMBOBOX oCombobox ;
          VAR         cOrder ;

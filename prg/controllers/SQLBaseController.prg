@@ -502,7 +502,7 @@ Return ( ::oModel:oRowSet )
 METHOD isValidGet( oGet )
 
    local uValue
-   local uReturn
+   local uReturn     := .t.
 
    if empty( oGet )
       RETURN ( uReturn )
@@ -510,12 +510,16 @@ METHOD isValidGet( oGet )
 
    uValue            := oGet:varGet()
 
+   msgalert( uValue, "uValue" )
+
    if !( ::oModel:exist( uValue ) )
       RETURN .f.
    end if 
 
+   msgalert( !empty( oGet:oHelpText ), "oHelpText")
+
    if !empty( oGet:oHelpText )
-      oGet:oHelpText:cText( ::oModel:getName( uValue ) )
+      oGet:oHelpText:cText( ::oModel:getNameFromCodigo( uValue ) )
    end if 
 
 RETURN ( uReturn )

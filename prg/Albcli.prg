@@ -5177,71 +5177,58 @@ RETURN ( .f. )
 Static Function EdtInc( aTmp, aGet, dbf, oBrw, bWhen, bValid, nMode, aTmpAlb )
 
    local oDlg
-   local oNomInci
-   local cNomInci       := TiposIncidenciasModel():translateNameFromId( aTmp[ ( dbfTmpInc )->( FieldPos( "id_tip_inc" ) ) ] )     //:= RetFld( aTmp[ ( dbfTmpInc )->( FieldPos( "cCodTip" ) ) ], dbfInci )
-   local oTitulo
-   local cTitulo        := LblTitle( nMode ) + " incidencia"
-
 
    if nMode == APPD_MODE
       aTmp[ _CSERALB  ] := aTmpAlb[ _CSERALB ]
       aTmp[ _NNUMALB  ] := aTmpAlb[ _NNUMALB ]
       aTmp[ _CSUFALB  ] := aTmpAlb[ _CSUFALB ]
-
-      if IsMuebles()
-         aTmp[ ( dbfTmpInc )->( FieldPos( "lAviso" ) ) ]  := .t.
-      end if
    end if
 
    DEFINE DIALOG oDlg RESOURCE "INCIDENCIA" TITLE LblTitle( nMode ) + "incidencias de albaranes a clientes"
 
-      REDEFINE GET aGet[ ( dbfTmpInc )->( FieldPos( "id_tip_inc" ) ) ];
-         VAR      aTmp[ ( dbfTmpInc )->( FieldPos( "id_tip_inc" ) ) ];
-         ID       120 ;
-         WHEN     ( nMode != ZOOM_MODE );
-         VALID    ( TiposIncidenciasController():New():isValidGet( aGet[ ( dbfTmpInc )->( FieldPos( "id_tip_inc" ) ) ] ) ) ;
-         BITMAP   "LUPA" ;
-         ON HELP  ( TiposIncidenciasController():New():AssignBrowse( aGet[ ( dbfTmpInc )->( FieldPos( "id_tip_inc" ) ) ] ) ) ; 
-         OF       oDlg
+      REDEFINE GET   aGet[ ( dbfTmpInc )->( FieldPos( "id_tip_inc" ) ) ];
+         VAR         aTmp[ ( dbfTmpInc )->( FieldPos( "id_tip_inc" ) ) ];
+         ID          120 ;
+         IDTEXT      130 ;
+         WHEN        ( nMode != ZOOM_MODE );
+         VALID       ( TiposIncidenciasController():New():isValidGet( aGet[ ( dbfTmpInc )->( FieldPos( "id_tip_inc" ) ) ] ) ) ;
+         BITMAP      "LUPA" ;
+         ON HELP     ( TiposIncidenciasController():New():AssignBrowse( aGet[ ( dbfTmpInc )->( FieldPos( "id_tip_inc" ) ) ] ) ) ; 
+         OF          oDlg
 
-      REDEFINE GET oNomInci VAR cNomInci;
-         ID       130 ;
-         WHEN     .f. ;
-         OF       oDlg
-
-      REDEFINE GET aTmp[ ( dbfTmpInc )->( FieldPos( "dFecInc" ) ) ] ;
-         ID       100 ;
+      REDEFINE GET   aTmp[ ( dbfTmpInc )->( FieldPos( "dFecInc" ) ) ] ;
+         ID          100 ;
          SPINNER ;
-         WHEN     ( nMode != ZOOM_MODE ) ;
-         OF       oDlg
+         WHEN        ( nMode != ZOOM_MODE ) ;
+         OF          oDlg
 
       REDEFINE CHECKBOX aTmp[ ( dbfTmpInc )->( FieldPos( "lAviso" ) ) ] ;
-         ID       150 ;
-         WHEN     ( nMode != ZOOM_MODE ) ;
-         OF       oDlg
+         ID          150 ;
+         WHEN        ( nMode != ZOOM_MODE ) ;
+         OF          oDlg
 
       REDEFINE GET aTmp[ ( dbfTmpInc )->( FieldPos( "mDesInc" ) ) ] ;
          MEMO ;
-         ID       110 ;
-         WHEN     ( nMode != ZOOM_MODE ) ;
-         OF       oDlg
+         ID          110 ;
+         WHEN        ( nMode != ZOOM_MODE ) ;
+         OF          oDlg
 
       REDEFINE CHECKBOX aTmp[ ( dbfTmpInc )->( FieldPos( "lListo" ) ) ] ;
-         ID       140 ;
-         WHEN     ( nMode != ZOOM_MODE ) ;
-         OF       oDlg
+         ID          140 ;
+         WHEN        ( nMode != ZOOM_MODE ) ;
+         OF          oDlg
 
       REDEFINE BUTTON ;
-         ID       IDOK ;
-         OF       oDlg ;
-         WHEN     ( nMode != ZOOM_MODE ) ;
-         ACTION   ( WinGather( aTmp, nil, dbfTmpInc, oBrw, nMode ), oDlg:end( IDOK ) )
+         ID          IDOK ;
+         OF          oDlg ;
+         WHEN        ( nMode != ZOOM_MODE ) ;
+         ACTION      ( WinGather( aTmp, nil, dbfTmpInc, oBrw, nMode ), oDlg:end( IDOK ) )
 
       REDEFINE BUTTON ;
-         ID       IDCANCEL ;
-         OF       oDlg ;
+         ID          IDCANCEL ;
+         OF          oDlg ;
          CANCEL ;
-         ACTION   ( oDlg:end() )
+         ACTION      ( oDlg:end() )
 
    if nMode != ZOOM_MODE
       oDlg:AddFastKey( VK_F5, {|| WinGather( aTmp, nil, dbfTmpInc, oBrw, nMode ), oDlg:end( IDOK ) } )
