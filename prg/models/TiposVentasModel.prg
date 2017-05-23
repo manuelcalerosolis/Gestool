@@ -6,17 +6,17 @@
 
 CLASS TiposVentasModel FROM SQLBaseModel
 
-   DATA cTableName               INIT "tipos_ventas"
+   DATA     cTableName               INIT "tipos_ventas"
 
-   DATA cDbfTableName
+   DATA     cDbfTableName
 
-   DATA hColumns
+   DATA     hColumns
 
-   METHOD New()
+   METHOD   New()
 
-   METHOD arrayTiposVentas()
+   METHOD   arrayTiposVentas()
 
-   METHOD exist( cValue )
+   METHOD   exist( cValue )
 
 END CLASS
 
