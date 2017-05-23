@@ -5235,6 +5235,8 @@ Static Function EdtInc( aTmp, aGet, dbf, oBrw, bWhen, bValid, nMode, aTmpAlb )
       oDlg:AddFastKey( VK_F5, {|| WinGather( aTmp, nil, dbfTmpInc, oBrw, nMode ), oDlg:end( IDOK ) } )
    end if
 
+   oDlg:bStart       := {|| aGet[ ( dbfTmpInc )->( FieldPos( "cCodTip" ) ) ]:lValid() }
+
    ACTIVATE DIALOG oDlg CENTER
 
 Return ( oDlg:nResult == IDOK )
