@@ -10,25 +10,18 @@ CLASS TiposVentas FROM SQLBaseView
 
    METHOD   buildSQLShell()
   
-   METHOD   buildSQLBrowse( oGet )
-
-   METHOD   buildSQLModel()               INLINE ( TiposVentasModel():New() )
-
-   METHOD   getFieldFromBrowse()          INLINE ( ::oModel:getRowSet():fieldGet( "nombre" ) )
+   METHOD   buildSQLBrowse()
  
    METHOD   Dialog()
 
-   METHOD   validDialog( oDlg, oGetNombre )
 
 END CLASS
 
 //---------------------------------------------------------------------------//
 
-METHOD New()
+METHOD New( oController )
 
-   ::idUserMap            := "01043"
-
-   ::Super:New()
+   ::oController              := oController
 
 Return ( Self )
 
@@ -38,34 +31,34 @@ METHOD buildSQLShell()
 
    disableAcceso()
 
-   ::oShell                := SQLTShell():New( 2, 10, 18, 70, "Tipos de ventas", , oWnd(), , , .f., , , ::oModel, , , , , {}, {|| ::Edit( ::oShell:getBrowse() ) },, {|| ::Delete( ::oShell:getBrowse() ) },, nil, ::nLevel, "gc_wallet_16", ( 104 + ( 0 * 256 ) + ( 63 * 65536 ) ),,, .t. )
+   ::oShell                := SQLTShell():New( 2, 10, 18, 70, "Tipos de ventas", , oWnd(), , , .f., , , ::oController:oModel, , , , , {}, {|| ::oController:Edit( ::oShell:getBrowse() ) },, {|| ::oController:Delete( ::oShell:getBrowse() ) },, nil, ::oController:nLevel, "gc_wallet_16", ( 104 + ( 0 * 256 ) + ( 63 * 65536 ) ),,, .t. )
 
       with object ( ::oShell:AddCol() )
          :cHeader          := "Código"
-         :cSortOrder       := "id"
-         :bEditValue       := {|| ::oModel:getRowSet():fieldGet( "id" ) }
+         :cSortOrder       := "codigo"
+         :bEditValue       := {|| ::oController:getRowSet():fieldGet( "codigo" ) }
          :nWidth           := 80
-         :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | ::clickOnHeader( oCol, ::oShell:getBrowse(), ::oShell:getCombobox() ) }
+         :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | ::oController:clickOnHeader( oCol, ::oShell:getBrowse(), ::oShell:getCombobox() ) }
       end with
 
       with object ( ::oShell:AddCol() )
          :cHeader          := "Nombre"
          :cSortOrder       := "nombre"
-         :bEditValue       := {|| ::oModel:getRowSet():fieldGet( "nombre" ) }
+         :bEditValue       := {|| ::oController:getRowSet():fieldGet( "nombre" ) }
          :nWidth           := 200
-         :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | ::clickOnHeader( oCol, ::oShell:getBrowse(), ::oShell:getCombobox() ) }
+         :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | ::oController:clickOnHeader( oCol, ::oShell:getBrowse(), ::oShell:getCombobox() ) }
       end with
 
       ::oShell:createXFromCode()
 
-      ::oShell:setDClickData( {|| ::Edit( ::oShell:getBrowse() ) } )
+      ::oShell:setDClickData( {|| ::oController:Edit( ::oShell:getBrowse() ) } )
 
       ::AutoButtons()
 
    ACTIVATE WINDOW ::oShell
 
-   ::oShell:bValid   := {|| ::saveHistory( ::getHistoryNameShell() , ::oShell:getBrowse() ), .t. }
-   ::oShell:bEnd     := {|| ::destroySQLModel() }
+   ::oShell:bValid   := {|| ::saveHistoryOfShell( ::oShell:getBrowse() ), .t. }
+   ::oShell:bEnd     := {|| ::oController:destroySQLModel() }
 
    ::oShell:setComboBoxChange( {|| ::changeCombo( ::oShell:getBrowse(), ::oShell:getCombobox() ) } )
 
@@ -79,23 +72,28 @@ METHOD Dialog( lZoom )
 
    local oDlg
    local oGetNombre
-   local oGetUnidad
-   local oGetImporte
+   local oGetCodigo
 
    DEFINE DIALOG oDlg RESOURCE "TIPO_VENTA" TITLE ::lblTitle() + "tipo de venta"
 
+   REDEFINE GET   oGetCodigo ;
+      VAR         ::oController:oModel:hBuffer[ "codigo" ] ;
+      ID          100 ;
+      WHEN        ( !::oController:isZoomMode() ) ;
+      OF          oDlg
+
    REDEFINE GET   oGetNombre ;
-      VAR         ::oModel:hBuffer[ "nombre" ] ;
+      VAR         ::oController:oModel:hBuffer[ "nombre" ] ;
       MEMO ;
-      ID          120 ;
-      WHEN        ( !::isZoomMode() ) ;
+      ID          110 ;
+      WHEN        ( !::oController:isZoomMode() ) ;
       OF          oDlg
 
    REDEFINE BUTTON ;
       ID          IDOK ;
       OF          oDlg ;
-      WHEN        ( !::isZoomMode() ) ;
-      ACTION      ( ::validDialog( oDlg, oGetNombre ) )
+      WHEN        ( !::oController:isZoomMode() ) ;
+      ACTION      ( ::oController:validDialog( oDlg, oGetNombre, oGetCodigo ) )
 
    REDEFINE BUTTON ;
       ID          IDCANCEL ;
@@ -109,7 +107,7 @@ METHOD Dialog( lZoom )
 
    // evento bstart-----------------------------------------------------------
 
-   oDlg:bStart    := {|| oGetNombre:setFocus() }
+   oDlg:bStart    := {|| oGetCodigo:setFocus() }
 
    ACTIVATE DIALOG oDlg CENTER
 
@@ -125,7 +123,7 @@ METHOD buildSQLBrowse()
    local cFind       := space( 200 )
    local oCombobox
    local cOrder
-   local aOrden      := { "nombre" }
+   local aOrden      := { "Nombre" }
 
    DEFINE DIALOG oDlg RESOURCE "HELP_BROWSE_SQL" TITLE "Seleccionar tipo de venta"
 
@@ -153,22 +151,22 @@ METHOD buildSQLBrowse()
       oBrowse:lHScroll        := .f.
       oBrowse:nMarqueeStyle   := 6
 
-      oBrowse:setModel( ::oModel )
+      oBrowse:setModel( ::oController:oModel )
 
       with object ( oBrowse:AddCol() )
          :cHeader             := "Código"
-         :cSortOrder          := "id"
-         :bEditValue          := {|| ::oModel:getRowSet():fieldGet( "id" ) }
+         :cSortOrder          := "codigo"
+         :bEditValue          := {|| ::oController:getRowSet():fieldGet( "codigo" ) }
          :nWidth              := 80
-         :bLClickHeader       := {| nMRow, nMCol, nFlags, oCol | ::clickOnHeader( oCol, oBrowse, oCombobox ) }
+         :bLClickHeader       := {| nMRow, nMCol, nFlags, oCol | ::oController:clickOnHeader( oCol, oBrowse, oCombobox ) }
       end with
 
       with object ( oBrowse:AddCol() )
          :cHeader             := "Nombre"
          :cSortOrder          := "nombre"
-         :bEditValue          := {|| ::oModel:getRowSet():fieldGet( "nombre" ) }
+         :bEditValue          := {|| ::oController:getRowSet():fieldGet( "nombre" ) }
          :nWidth              := 200
-         :bLClickHeader       := {| nMRow, nMCol, nFlags, oCol | ::clickOnHeader( oCol, oBrowse, oCombobox ) }
+         :bLClickHeader       := {| nMRow, nMCol, nFlags, oCol | ::oController:clickOnHeader( oCol, oBrowse, oCombobox ) }
       end with
 
       oBrowse:bLDblClick      := {|| oDlg:end( IDOK ) }
@@ -190,38 +188,22 @@ METHOD buildSQLBrowse()
       REDEFINE BUTTON ;
          ID          500 ;
          OF          oDlg ;
-         ACTION      ( ::Append( oBrowse ) )
+         ACTION      ( ::oController:Append( oBrowse ) )
 
       REDEFINE BUTTON ;
          ID          501 ;
          OF          oDlg ;
-         ACTION      ( ::Edit( oBrowse ) )
+         ACTION      ( ::oController:Edit( oBrowse ) )
 
       oDlg:AddFastKey( VK_RETURN,   {|| oDlg:end( IDOK ) } )
       oDlg:AddFastKey( VK_F5,       {|| oDlg:end( IDOK ) } )
-      oDlg:AddFastKey( VK_F2,       {|| ::Append( oBrowse ) } )
-      oDlg:AddFastKey( VK_F3,       {|| ::Edit( oBrowse ) } )
+      oDlg:AddFastKey( VK_F2,       {|| ::oController:Append( oBrowse ) } )
+      oDlg:AddFastKey( VK_F3,       {|| ::oController:Edit( oBrowse ) } )
 
-      oDlg:bStart    := {|| ::startBrowse( oCombobox, oBrowse ) }
+      oDlg:bStart    := {|| ::oController:startBrowse( oCombobox, oBrowse ) }
 
-   oDlg:Activate( , , , .t., {|| ::saveHistory( ::getHistoryNameBrowse(), oBrowse ) } )
+   oDlg:Activate( , , , .t., {|| ::saveHistoryOfBrowse( oBrowse ) } )
 
 RETURN ( oDlg:nResult == IDOK )
 
 //---------------------------------------------------------------------------//
-
-METHOD validDialog( oDlg, oGetNombre )
-
-   if empty( ::oModel:hBuffer[ "nombre" ] )
-      msgStop( "El nombre de la venta no puede estar vacío." )
-      oGetNombre:setFocus()
-      RETURN ( .f. )
-   end if
-
-   if ::oModel:getRowSet():find( ::oModel:hBuffer[ "nombre" ], "nombre" ) != 0
-      msgStop( "El nombre de la venta ya existe" )
-      oGetNombre:setFocus()
-      RETURN ( .f. )
-   end if
-
-RETURN ( oDlg:end( IDOK ) )

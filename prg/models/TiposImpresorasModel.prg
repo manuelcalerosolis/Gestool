@@ -24,7 +24,7 @@ END CLASS
 
 METHOD New()
 
-   ::cTableName                  := "tipos_impresoras"
+   ::cTitle                      := "Tipos impresoras"
 
    ::cDbfTableName				 	:= "TipImp"
 

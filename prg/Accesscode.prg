@@ -783,10 +783,6 @@ Method InitialCheck() CLASS AccessCode
          ::oMessage:SetText( "Comprobando tipos de ventas..." )
       end if
 
-      while !IsTipoVentas()
-         rxTVta( cPatDat() )
-      end while
-
       // Comprobamos q exista al menos una caja-----------------------------------
 
       if !Empty( ::oMessage )

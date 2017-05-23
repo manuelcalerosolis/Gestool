@@ -9,24 +9,16 @@ CLASS Situaciones FROM SQLBaseView
    METHOD   New()
 
    METHOD   buildSQLShell()
-
-   METHOD   buildSQLModel()               INLINE ( SituacionesModel():New() )
-
-   METHOD   getFieldFromBrowse()          INLINE ( ::oModel:getRowSet():fieldGet( "situacion" ) )
  
    METHOD   Dialog()
-
-   METHOD   validDialog( oDlg )
 
 END CLASS
 
 //---------------------------------------------------------------------------//
 
-METHOD New()
+METHOD New( oController )
 
-   ::idUserMap            := "01096"
-
-   ::Super:New()
+   ::oController        := oController
 
 Return ( Self )
 
@@ -36,34 +28,34 @@ METHOD buildSQLShell()
 
    disableAcceso()
 
-   ::oShell                := SQLTShell():New( 2, 10, 18, 70, "Situaciones", , oWnd(), , , .f., , , ::oModel, , , , , {}, {|| ::Edit( ::oShell:getBrowse() ) },, {|| ::Delete( ::oShell:getBrowse() ) },, nil, ::nLevel, "gc_document_attachment_16", ( 104 + ( 0 * 256 ) + ( 63 * 65536 ) ),,, .t. )
+   ::oShell                := SQLTShell():New( 2, 10, 18, 70, "Situaciones", , oWnd(), , , .f., , , ::oController:oModel, , , , , {}, {|| ::oController:Edit( ::oShell:getBrowse() ) },, {|| ::oController:Delete( ::oShell:getBrowse() ) },, nil, ::oController:nLevel, "gc_document_attachment_16", ( 104 + ( 0 * 256 ) + ( 63 * 65536 ) ),,, .t. )
 
       with object ( ::oShell:AddCol() )
          :cHeader          := "Id"
          :cSortOrder       := "id"
-         :bEditValue       := {|| ::oModel:getRowSet():fieldGet( "id" ) }
+         :bEditValue       := {|| ::oController:getRowSet():fieldGet( "id" ) }
          :nWidth           := 40
-         :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | ::clickOnHeader( oCol, ::oShell:getBrowse(), ::oShell:getCombobox() ) }
+         :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | ::oController:clickOnHeader( oCol, ::oShell:getBrowse(), ::oShell:getCombobox() ) }
       end with
 
       with object ( ::oShell:AddCol() )
-         :cHeader          := "situacion"
+         :cHeader          := "Situaci�n"
          :cSortOrder       := "situacion"
-         :bEditValue       := {|| ::oModel:getRowSet():fieldGet( "situacion" ) }
+         :bEditValue       := {|| ::oController:getRowSet():fieldGet( "situacion" ) }
          :nWidth           := 800
-         :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | ::clickOnHeader( oCol, ::oShell:getBrowse(), ::oShell:getCombobox() ) }
+         :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | ::oController:clickOnHeader( oCol, ::oShell:getBrowse(), ::oShell:getCombobox() ) }
       end with
 
       ::oShell:createXFromCode()
 
-      ::oShell:setDClickData( {|| ::Edit( ::oShell:getBrowse() ) } )
+      ::oShell:setDClickData( {|| ::oController:Edit( ::oShell:getBrowse() ) } )
 
       ::AutoButtons()
 
    ACTIVATE WINDOW ::oShell
 
-   ::oShell:bValid   := {|| ::saveHistory( ::getHistoryNameShell() , ::oShell:getBrowse() ), .t. }
-   ::oShell:bEnd     := {|| ::destroySQLModel() }
+   ::oShell:bValid   := {|| ::saveHistoryOfShell( ::oShell:getBrowse() ), .t. }
+   ::oShell:bEnd     := {|| ::oController:destroySQLModel() }
 
    ::oShell:setComboBoxChange( {|| ::changeCombo( ::oShell:getBrowse(), ::oShell:getCombobox() ) } )
 
@@ -78,20 +70,20 @@ METHOD Dialog( lZoom )
    local oDlg
    local oGetNombre
 
-   DEFINE DIALOG oDlg RESOURCE "SITUACION" TITLE ::LblTitle() + "situación"
+   DEFINE DIALOG oDlg RESOURCE "SITUACION" TITLE ::LblTitle() + "situaci�n"
 
    REDEFINE GET   oGetNombre ;
-      VAR         ::oModel:hBuffer[ "situacion" ] ;
+      VAR         ::oController:oModel:hBuffer[ "situacion" ] ;
       MEMO ;
       ID          100 ;
-      WHEN        ( ! ::isZoomMode() ) ; 
+      WHEN        ( !::oController:isZoomMode() ) ; 
       OF          oDlg
 
    REDEFINE BUTTON ;
       ID          IDOK ;
       OF          oDlg ;
-      WHEN        ( ! ::isZoomMode() ) ;
-      ACTION      ( ::validDialog( oDlg, oGetNombre ) )
+      WHEN        ( !::oController:isZoomMode() ) ;
+      ACTION      ( ::oController:validDialog( oDlg, oGetNombre ) )
 
    REDEFINE BUTTON ;
       ID          IDCANCEL ;
@@ -112,22 +104,3 @@ METHOD Dialog( lZoom )
 RETURN ( oDlg:nResult == IDOK )
 
 //--------------------------------------------------------------------------//
-
-METHOD validDialog( oDlg, oGetNombre )
-
-   if empty( ::oModel:hBuffer[ "situacion" ] )
-      MsgStop( "El nombre de la situación no puede estar vacío" )
-      oGetNombre:setFocus()
-      Return ( .f. )
-   end if
-
-   if ::oModel:getRowSet():find( ::oModel:hBuffer[ "situacion" ], "situacion" ) != 0
-      msgStop( "Esta situación ya existe" )
-      oGetNombre:setFocus()
-      RETURN ( .f. )
-   end if
-
-RETURN ( oDlg:end( IDOK ) )
-
-//--------------------------------------------------------------------------//
-

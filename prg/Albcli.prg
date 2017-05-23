@@ -382,7 +382,6 @@ static dbfCodebar
 static dbfPromoT
 static dbfPromoL
 static dbfPromoC
-static dbfTVta
 static dbfTblPro
 static dbfPro
 static dbfCajT
@@ -1470,9 +1469,6 @@ STATIC FUNCTION OpenFiles()
       USE ( cPatArt() + "ARTKIT.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "ARTTIK", @dbfKit ) )
       SET ADSINDEX TO ( cPatArt() + "ARTKIT.CDX" ) ADDITIVE
 
-      USE ( cPatDat() + "TVTA.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "TVTA", @dbfTVta ) )
-      SET ADSINDEX TO ( cPatDat() + "TVTA.CDX" ) ADDITIVE
-
       USE ( cPatDat() + "TBLCNV.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "TBLCNV", @dbfTblCnv ) )
       SET ADSINDEX TO ( cPatDat() + "TBLCNV.CDX" ) ADDITIVE
 
@@ -1797,9 +1793,6 @@ STATIC FUNCTION CloseFiles()
    if !empty( dbfAlm )
       ( dbfAlm       )->( dbCloseArea() )
    end if
-   if !empty( dbfTVta )
-      ( dbfTVta      )->( dbCloseArea() )
-   end if
    if !empty( dbfTblCnv )
       ( dbfTblCnv    )->( dbCloseArea() )
    end if
@@ -1959,7 +1952,6 @@ STATIC FUNCTION CloseFiles()
    dbfPromoC      := nil
    dbfCodebar     := nil
    dbfKit         := nil
-   dbfTVta        := nil
    oBandera       := nil
    dbfTblCnv      := nil
    dbfOferta      := nil
@@ -2008,7 +2000,7 @@ Return .t.
 
 //---------------------------------------------------------------------------//
 
-STATIC FUNCTION selectedGenAlbCli( nDevice )
+STATIC FUNCTION selectedGenAlbCli( nDevice, cTitle, cCodigoDocumento )
 
    local nPos
 
@@ -2016,7 +2008,7 @@ STATIC FUNCTION selectedGenAlbCli( nDevice )
 
       ( D():AlbaranesClientes( nView ) )->( dbgoto( nPos ) )
 
-      genAlbCli( nDevice )
+      genAlbCli( nDevice, cTitle, cCodigoDocumento )
 
       SysRefresh()
 
@@ -4812,9 +4804,9 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbf, oBrw, lTotLin, cCodArtEnt, nMode, aTmpA
          IDTEXT   291 ;
          IDSAY    292 ;
          WHEN     ( !aTmp[ _LCONTROL ] .and. nMode != ZOOM_MODE .and. !lTotLin ) ;
-         VALID    ( cTVta( aGet[ _CTIPMOV ], dbfTVta, aGet[ _CTIPMOV ]:oHelpText ) ) ;
+         VALID    ( TiposVentasController():New():isValidGet( aGet[ _CTIPMOV ] ) ) ;
          BITMAP   "LUPA" ;
-         ON HELP  ( BrwTVta( aGet[ _CTIPMOV ], dbfTVta, aGet[ _CTIPMOV ]:oHelpText ) ) ;
+         ON HELP  ( TiposVentasController():New():assignBrowse( aGet[ _CTIPMOV ] ) ) ;
          OF       oFld:aDialogs[1] ;
 
       /*
@@ -5185,71 +5177,58 @@ RETURN ( .f. )
 Static Function EdtInc( aTmp, aGet, dbf, oBrw, bWhen, bValid, nMode, aTmpAlb )
 
    local oDlg
-   local oNomInci
-   local cNomInci       := TiposIncidenciasModel():translateNameFromId( aTmp[ ( dbfTmpInc )->( FieldPos( "id_tip_inc" ) ) ] )     //:= RetFld( aTmp[ ( dbfTmpInc )->( FieldPos( "cCodTip" ) ) ], dbfInci )
-   local oTitulo
-   local cTitulo        := LblTitle( nMode ) + " incidencia"
-
 
    if nMode == APPD_MODE
       aTmp[ _CSERALB  ] := aTmpAlb[ _CSERALB ]
       aTmp[ _NNUMALB  ] := aTmpAlb[ _NNUMALB ]
       aTmp[ _CSUFALB  ] := aTmpAlb[ _CSUFALB ]
-
-      if IsMuebles()
-         aTmp[ ( dbfTmpInc )->( FieldPos( "lAviso" ) ) ]  := .t.
-      end if
    end if
 
    DEFINE DIALOG oDlg RESOURCE "INCIDENCIA" TITLE LblTitle( nMode ) + "incidencias de albaranes a clientes"
 
-      REDEFINE GET aGet[ ( dbfTmpInc )->( FieldPos( "id_tip_inc" ) ) ];
-         VAR      aTmp[ ( dbfTmpInc )->( FieldPos( "id_tip_inc" ) ) ];
-         ID       120 ;
-         WHEN     ( nMode != ZOOM_MODE );
-         VALID    ( TiposIncidenciasModel():exist( aTmp[ ( dbfTmpInc )->( FieldPos( "id_tip_inc" ) ) ] ) ) ;
-         BITMAP   "LUPA" ;
-         ON HELP  ( TiposIncidencias():New():AssignBrowse( aGet[ ( dbfTmpInc )->( FieldPos( "id_tip_inc" ) ) ] ) ) ; 
-         OF       oDlg
+      REDEFINE GET   aGet[ ( dbfTmpInc )->( FieldPos( "id_tip_inc" ) ) ];
+         VAR         aTmp[ ( dbfTmpInc )->( FieldPos( "id_tip_inc" ) ) ];
+         ID          120 ;
+         IDTEXT      130 ;
+         WHEN        ( nMode != ZOOM_MODE );
+         VALID       ( TiposIncidenciasController():New():isValidGet( aGet[ ( dbfTmpInc )->( FieldPos( "id_tip_inc" ) ) ] ) ) ;
+         BITMAP      "LUPA" ;
+         ON HELP     ( TiposIncidenciasController():New():AssignBrowse( aGet[ ( dbfTmpInc )->( FieldPos( "id_tip_inc" ) ) ] ) ) ; 
+         OF          oDlg
 
-      REDEFINE GET oNomInci VAR cNomInci;
-         ID       130 ;
-         WHEN     .f. ;
-         OF       oDlg
-
-      REDEFINE GET aTmp[ ( dbfTmpInc )->( FieldPos( "dFecInc" ) ) ] ;
-         ID       100 ;
+      REDEFINE GET   aTmp[ ( dbfTmpInc )->( FieldPos( "dFecInc" ) ) ] ;
+         ID          100 ;
          SPINNER ;
-         WHEN     ( nMode != ZOOM_MODE ) ;
-         OF       oDlg
+         WHEN        ( nMode != ZOOM_MODE ) ;
+         OF          oDlg
 
       REDEFINE CHECKBOX aTmp[ ( dbfTmpInc )->( FieldPos( "lAviso" ) ) ] ;
-         ID       150 ;
-         WHEN     ( nMode != ZOOM_MODE ) ;
-         OF       oDlg
+         ID          150 ;
+         WHEN        ( nMode != ZOOM_MODE ) ;
+         OF          oDlg
 
       REDEFINE GET aTmp[ ( dbfTmpInc )->( FieldPos( "mDesInc" ) ) ] ;
          MEMO ;
-         ID       110 ;
-         WHEN     ( nMode != ZOOM_MODE ) ;
-         OF       oDlg
+         ID          110 ;
+         WHEN        ( nMode != ZOOM_MODE ) ;
+         OF          oDlg
 
       REDEFINE CHECKBOX aTmp[ ( dbfTmpInc )->( FieldPos( "lListo" ) ) ] ;
-         ID       140 ;
-         WHEN     ( nMode != ZOOM_MODE ) ;
-         OF       oDlg
+         ID          140 ;
+         WHEN        ( nMode != ZOOM_MODE ) ;
+         OF          oDlg
 
       REDEFINE BUTTON ;
-         ID       IDOK ;
-         OF       oDlg ;
-         WHEN     ( nMode != ZOOM_MODE ) ;
-         ACTION   ( WinGather( aTmp, nil, dbfTmpInc, oBrw, nMode ), oDlg:end( IDOK ) )
+         ID          IDOK ;
+         OF          oDlg ;
+         WHEN        ( nMode != ZOOM_MODE ) ;
+         ACTION      ( WinGather( aTmp, nil, dbfTmpInc, oBrw, nMode ), oDlg:end( IDOK ) )
 
       REDEFINE BUTTON ;
-         ID       IDCANCEL ;
-         OF       oDlg ;
+         ID          IDCANCEL ;
+         OF          oDlg ;
          CANCEL ;
-         ACTION   ( oDlg:end() )
+         ACTION      ( oDlg:end() )
 
    if nMode != ZOOM_MODE
       oDlg:AddFastKey( VK_F5, {|| WinGather( aTmp, nil, dbfTmpInc, oBrw, nMode ), oDlg:end( IDOK ) } )
@@ -5265,7 +5244,7 @@ Static Function browseTipoIncidencia( oGet )
 
    local idIncidencia
 
-   idIncidencia   := TiposIncidencias():New():ActivateBrowse()
+   idIncidencia   := TiposIncidenciasController():New():ActivateBrowse()
 
    if !empty( idIncidencia )
       oGet:cText( alltrim(str( idIncidencia ) ) )
@@ -8708,8 +8687,10 @@ Static Function DataReport( oFr )
    oFr:SetWorkArea(     "Tipo artículo",  oTipArt:Select() )
    oFr:SetFieldAliases( "Tipo artículo",  cObjectsToReport( oTipArt:oDbf ) )
 
-   oFr:SetWorkArea(     "Tipo de venta", ( dbfTVta )->( Select() ) )
-   oFr:SetFieldAliases( "Tipo de venta", cItemsToReport( aItmTVta() ) )
+   TiposVentasModel():New():setFastReportRecordset( oFr )
+
+   // oFr:SetWorkArea(     "Tipo de venta", ( dbfTVta )->( Select() ) )
+   // oFr:SetFieldAliases( "Tipo de venta", cItemsToReport( aItmTVta() ) )
 
    oFr:SetWorkArea(     "Usuarios", ( dbfUsr )->( Select() ) )
    oFr:SetFieldAliases( "Usuarios", cItemsToReport( aItmUsuario() ) )
@@ -8908,9 +8889,9 @@ Static Function DataReportEntAlbCli( oFr, cAlbCliP, lTicket )
 
    if lTicket
       if !empty( cAlbCliP )
-         oFr:SetMasterDetail( "Entrega", "Albarán de cliente",       {|| ( cAlbCliP )->cSerAlb + Str( ( cAlbCliP )->nNumAlb ) + ( cAlbCliP )->cSufAlb } )
+         oFr:SetMasterDetail( "Entrega", "Albarán de cliente", {|| ( cAlbCliP )->cSerAlb + Str( ( cAlbCliP )->nNumAlb ) + ( cAlbCliP )->cSufAlb } )
       else
-         oFr:SetMasterDetail( "Entrega", "Albarán de cliente",       {|| ( D():Get( "AlbCliP", nView ) )->cSerAlb + Str( ( D():Get( "AlbCliP", nView ) )->nNumAlb ) + ( D():Get( "AlbCliP", nView ) )->cSufAlb } )
+         oFr:SetMasterDetail( "Entrega", "Albarán de cliente", {|| ( D():Get( "AlbCliP", nView ) )->cSerAlb + Str( ( D():Get( "AlbCliP", nView ) )->nNumAlb ) + ( D():Get( "AlbCliP", nView ) )->cSufAlb } )
       end if
    end if
 
@@ -9784,12 +9765,6 @@ STATIC FUNCTION SetDlgMode( aTmp, aTmpAlb, nMode, aGet, oFld, oSayPr1, oSayPr2, 
          end if
       end if
 
-      if !lTipMov()
-         if !empty( aGet[ _CTIPMOV ] )
-            aGet[ _CTIPMOV ]:hide()
-         end if
-      end if
-
       if aGet[ _NIMPTRN ] != nil
          if !uFieldEmpresa( "lUsePor", .f. )
             aGet[ _NIMPTRN ]:Hide()
@@ -9845,10 +9820,7 @@ STATIC FUNCTION SetDlgMode( aTmp, aTmpAlb, nMode, aGet, oFld, oSayPr1, oSayPr2, 
          aGet[ _NPOSPRINT]:cText( aTmp[ _NPOSPRINT ] )
          aGet[ _CALMLIN  ]:cText( aTmp[ _CALMLIN  ] )
          aGet[ _NIVA     ]:cText( aTmp[ _NIVA] )
-
-         if lTipMov() 
-            aGet[ _CTIPMOV ]:cText( aTmp[ _CTIPMOV ] )
-         end if
+         aGet[ _CTIPMOV  ]:cText( aTmp[ _CTIPMOV ] )
 
          aGet[ _LCONTROL ]:Click( .f. )
          aGet[ _CDETALLE ]:Show()

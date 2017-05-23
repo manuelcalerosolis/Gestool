@@ -6,17 +6,17 @@
 
 CLASS TiposVentasModel FROM SQLBaseModel
 
-   DATA cTableName                           INIT "tipos_ventas"
+   DATA     cTableName               INIT "tipos_ventas"
 
-   DATA cDbfTableName
+   DATA     cDbfTableName
 
-   DATA hColumns
+   DATA     hColumns
 
-   METHOD New()
+   METHOD   New()
 
-   METHOD arrayTiposVentas()
+   METHOD   arrayTiposVentas()
 
-   METHOD existTiposVentas( cValue )
+   METHOD   exist( cValue )
 
 END CLASS
 
@@ -24,7 +24,7 @@ END CLASS
 
 METHOD New()
 
-   ::cTableName                  := "tipos_ventas"
+   ::cTitle                      := "Tipos ventas"
 
    ::cDbfTableName				 	:= "TVTA"
 
@@ -53,12 +53,13 @@ RETURN ( aResult )
 
 //---------------------------------------------------------------------------//
 
-METHOD existTiposVentas( cValue )
+METHOD exist( cValue )
 
-   local cSentence               := "SELECT nombre FROM " + ::cTableName + " WHERE nombre = " + toSQLString( cValue )
+   local cSentence               := "SELECT codigo FROM " + ::cTableName + " WHERE codigo = " + toSQLString( cValue )
    local aSelect                 := ::selectFetchArray( cSentence )
 
 RETURN ( !empty( aSelect ) )
 
 //---------------------------------------------------------------------------//
+
 

@@ -195,7 +195,6 @@ METHOD GenIndices( oMsg )
             ::SetText( "Generando índices : Usuarios", ::aProgress[ 1 ] )        ; rxUsuario(  ::cPathDat )
             ::SetText( "Generando índices : Divisas", ::aProgress[ 1 ]  )        ; rxDiv(      ::cPathDat )
             ::SetText( "Generando índices : Configuración", ::aProgress[ 1 ] )   ; TShell():ReindexData()
-            ::SetText( "Generando índices : Tipos de venta", ::aProgress[ 1 ] )  ; rxTVta(     ::cPathDat )
 
          end if
 

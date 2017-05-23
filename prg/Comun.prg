@@ -281,8 +281,6 @@ RETURN ( .t. )
 
 FUNCTION Test()
 
-   // tiposventasModel():New():setFastReportRecorset()
-
 Return ( nil )
 
 //---------------------------------------------------------------------------//
@@ -1571,7 +1569,7 @@ FUNCTION CreateAcceso( oWnd )
    oItem:oGroup         := oGrupo
    oItem:cPrompt        := "Tipos de ventas"
    oItem:cMessage       := "Acceso a los tipos de ventas"
-   oItem:bAction        := {|| TVta( "01043", oWnd ) }
+   oItem:bAction        := {|| TiposVentasController():New():activateShell() }
    oItem:cId            := "01043"
    oItem:cBmp           := "gc_wallet_16"
    oItem:cBmpBig        := "gc_wallet_32"
@@ -1591,7 +1589,7 @@ FUNCTION CreateAcceso( oWnd )
    oItem:oGroup         := oGrupo
    oItem:cPrompt        := "Tipos de incidencias"
    oItem:cMessage       := "Acceso a los tipos de incidencias"
-   oItem:bAction        := {|| TipInci( "01089", oWnd ) }
+   oItem:bAction        := {|| TiposIncidenciasController():New():activateShell() }
    oItem:cId            := "01089"
    oItem:cBmp           := "gc_camera_16"
    oItem:cBmpBig        := "gc_camera_32"
@@ -1601,7 +1599,7 @@ FUNCTION CreateAcceso( oWnd )
    oItem:oGroup         := oGrupo
    oItem:cPrompt        := "Situaciones"
    oItem:cMessage       := "Acceso a los tipos de situaciones"
-   oItem:bAction        := {|| Situaciones():New():activateShell() }
+   oItem:bAction        := {|| SituacionesController():New():activateShell() }
    oItem:cId            := "01096"
    oItem:cBmp           := "gc_document_attachment_16"
    oItem:cBmpBig        := "gc_document_attachment_32"
@@ -1611,7 +1609,7 @@ FUNCTION CreateAcceso( oWnd )
    oItem:oGroup         := oGrupo
    oItem:cPrompt        := 'Etiquetas'
    oItem:cMessage       := 'Etiquetas'
-   oItem:bAction        := {|| Etiquetas():New():activateShell() }
+   oItem:bAction        := {|| EtiquetasController():New():activateShell() }
    oItem:cId            := "01126"
    oItem:cBmp           := "gc_bookmarks_16"
    oItem:cBmpBig        := "gc_bookmarks_32"
@@ -1621,7 +1619,7 @@ FUNCTION CreateAcceso( oWnd )
    oItem:oGroup         := oGrupo
    oItem:cPrompt        := "Tipos de notas"
    oItem:cMessage       := "Acceso a los tipos de notas"
-   oItem:bAction        := {|| TiposNotas():New():activateShell() }
+   oItem:bAction        := {|| TiposNotasController():New():activateShell() }
    oItem:cId            := "01101"
    oItem:cBmp           := "gc_folder2_16"
    oItem:cBmpBig        := "gc_folder2_32"
@@ -1631,7 +1629,7 @@ FUNCTION CreateAcceso( oWnd )
    oItem:oGroup         := oGrupo
    oItem:cPrompt        := "Tipos de impresoras"
    oItem:cMessage       := "Acceso a los tipos de impresoras"
-   oItem:bAction        := {|| TiposImpresoras():New():activateShell() }
+   oItem:bAction        := {|| TiposImpresorasController():New():activateShell() }
    oItem:cId            := "01115"
    oItem:cBmp           := "gc_printer2_16"
    oItem:cBmpBig        := "gc_printer2_32"

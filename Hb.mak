@@ -15,7 +15,7 @@ BORLANDLIB           = 	\Bcc582\lib
 IMG2PDFLIB           = 	\Img2Pdf
 
 OBJ                  = 	Obj1406
-SOURCEPRG            = 	.\Prg;.\Prg\mail;.\Prg\Comercio;.\Prg\Models;.\Prg\Tablet;.\Prg\tablet\view;.\Prg\tablet\view\documentos;.\Prg\tablet\view\terceros;.\Prg\tablet\view\documentos\ventas;.\Prg\tablet\view\documentos\terceros;.\Prg\tablet\utils;.\Prg\tablet\presenter;.\Prg\tablet\presenter\terceros;.\Prg\tablet\presenter\documentos;.\Prg\tablet\presenter\documentos\ventas;
+SOURCEPRG            = 	.\Prg;.\Prg\mail;.\Prg\Comercio;.\Prg\Models;.\Prg\Controllers;.\Prg\Tablet;.\Prg\tablet\view;.\Prg\tablet\view\documentos;.\Prg\tablet\view\terceros;.\Prg\tablet\view\documentos\ventas;.\Prg\tablet\view\documentos\terceros;.\Prg\tablet\utils;.\Prg\tablet\presenter;.\Prg\tablet\presenter\terceros;.\Prg\tablet\presenter\documentos;.\Prg\tablet\presenter\documentos\ventas;
 SOURCEC 				   =	C
 PPO 					   = 	Ppo1406
 
@@ -329,6 +329,7 @@ TipoNotas.prg           										\
 Situacion.prg 		       										\
 Situaciones.prg         										\
 SituacionesModel.prg       										\
+SituacionesController.prg       										\
 GrpPrv.prg              										\
 Categoria.prg           										\
 InfCategoria.prg        										\
@@ -491,6 +492,7 @@ ReindexaPresenter.prg                                 \
 ReindexaView.prg                                      \
 BaseModel.prg 														\
 SQLBaseModel.prg 														\
+SQLBaseController.prg 														\
 SQLBaseEmpresasModel.prg 														\
 ClientesModel.prg 												\
 AlbaranesClientesModel.prg 									\
@@ -499,10 +501,15 @@ RecibosClientesModel.prg 										\
 TicketsClientesModel.prg 										\
 PedidosProveedoresModel.prg									\
 TiposImpresorasModel.prg 										\
+TiposImpresorasController.prg 										\
 TiposNotasModel.prg 												\
+TiposNotasController.prg 												\
 EtiquetasModel.prg 												\
+EtiquetasController.prg 												\
 TiposIncidenciasModel.prg 										\
+TiposIncidenciasController.prg 										\
 TiposVentasModel.prg 										\
+TiposVentasController.prg 										\
 RelacionesEtiquetasModel.prg 										\
 ArticulosModel.prg                                    \
 HistoricosUsuariosModel.prg                           \
@@ -823,6 +830,7 @@ TipoNotas.obj           										\
 Situacion.Obj 	         										\
 Situaciones.obj         										\
 SituacionesModel.obj       									\
+SituacionesController.obj       									\
 GrpPrv.obj              									\
 Categoria.obj           									\
 InfCategoria.obj        									\
@@ -987,6 +995,7 @@ ReindexaPresenter.obj                              \
 ReindexaView.obj                                   \
 BaseModel.obj 													\
 SQLBaseModel.Obj 												\
+SQLBaseController.Obj 												\
 SQLBaseEmpresasModel.Obj 												\
 ClientesModel.obj 											\
 AlbaranesClientesModel.obj 								\
@@ -995,10 +1004,15 @@ TicketsClientesModel.obj 										\
 RecibosClientesModel.obj 										\
 PedidosProveedoresModel.obj 									\
 TiposImpresorasModel.obj 										\
+TiposImpresorasController.obj 										\
 TiposNotasModel.obj 										\
+TiposNotasController.obj 										\
 EtiquetasModel.obj 										\
+EtiquetasController.obj 										\
 TiposIncidenciasModel.obj 										\
+TiposIncidenciasController.obj 										\
 TiposVentasModel.obj 										\
+TiposVentasController.obj 										\
 RelacionesEtiquetasModel.obj 										\
 ArticulosModel.obj                                    \
 HistoricosUsuariosModel.obj                                    \
@@ -1304,6 +1318,7 @@ $(OBJ)\TipoNotas.obj            		+
 $(OBJ)\Situacion.Obj 	          		+
 $(OBJ)\Situaciones.obj          		+
 $(OBJ)\SituacionesModel.obj          	+
+$(OBJ)\SituacionesController.obj          	+
 $(OBJ)\GrpPrv.obj               		+
 $(OBJ)\Categoria.obj            		+
 $(OBJ)\InfCategoria.obj         		+
@@ -1470,6 +1485,7 @@ $(OBJ)\Reporting.obj                         +
 $(OBJ)\ViewReporting.obj 							+
 $(OBJ)\BaseModel.obj 								+
 $(OBJ)\SQLBaseModel.obj 							+
+$(OBJ)\SQLBaseController.obj 							+
 $(OBJ)\SQLBaseEmpresasModel.obj 							+
 $(OBJ)\ClientesModel.obj 							+
 $(OBJ)\AlbaranesClientesModel.obj 				+
@@ -1479,10 +1495,15 @@ $(OBJ)\RecibosClientesModel.obj					+
 $(OBJ)\TicketsClientesModel.obj 	 				+							
 $(OBJ)\PedidosProveedoresModel.obj 				+
 $(OBJ)\TiposImpresorasModel.obj                 +
+$(OBJ)\TiposImpresorasController.obj                 +
 $(OBJ)\TiposNotasModel.obj                 +
+$(OBJ)\TiposNotasController.obj                 +
 $(OBJ)\EtiquetasModel.obj                 +
+$(OBJ)\EtiquetasController.obj                 +
 $(OBJ)\TiposIncidenciasModel.obj                 +
+$(OBJ)\TiposIncidenciasController.obj                 +
 $(OBJ)\TiposVentasModel.obj                 +
+$(OBJ)\TiposVentasController.obj                 +
 $(OBJ)\RelacionesEtiquetasModel.obj                 +
 $(OBJ)\HistoricosUsuariosModel.obj
 $<,$*

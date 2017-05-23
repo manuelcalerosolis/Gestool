@@ -24,7 +24,6 @@ static tmpDlg
 static dbfBnc
 static dbfCount
 static dbfUser
-static dbfTVta
 static oBandera
 
 static cNewDlg
@@ -139,9 +138,6 @@ STATIC FUNCTION OpenFiles( lCount )
       USE ( cPatDat() + "USERS.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "USERS", @dbfUser ) )
       SET ADSINDEX TO ( cPatDat() + "USERS.CDX" ) ADDITIVE
 
-      USE ( cPatDat() + "TVTA.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "TVTA", @dbfTVta ) )
-      SET ADSINDEX TO ( cPatDat() + "TVTA.CDX" ) ADDITIVE
-
       if lCount
          USE ( cPatEmp() + "NCOUNT.DBF" ) NEW SHARED VIA ( cDriver() ) ALIAS ( cCheckArea( "NCOUNT", @dbfCount ) )
          SET ADSINDEX TO ( cPatEmp() + "NCOUNT.CDX" ) ADDITIVE
@@ -246,10 +242,6 @@ Static Function CloseFiles()
       ( dbfUser )->( dbCloseArea() )
    end if
 
-   if !Empty( dbfTVta )
-      ( dbfTVta )->( dbCloseArea() )
-   end if
-
    if !Empty( dbfCount )
       ( dbfCount )->( dbCloseArea() )
    end if
@@ -268,7 +260,6 @@ Static Function CloseFiles()
    dbfDiv      := nil
    dbfDlg      := nil
    dbfUser     := nil
-   dbfTVta     := nil
    dbfCount    := nil
    oBanco      := nil
    oPais       := nil
@@ -1750,9 +1741,9 @@ STATIC FUNCTION EditConfig( aTmp, aGet, dbfEmp, oBrw, nSelFolder, bValid, nMode 
       REDEFINE GET aGet[ _CDEDVTA ] VAR aTmp[ _CDEDVTA ] ;
          ID       400;
          PICTURE  "@!" ;
-         VALID    ( cTVta( aGet[ _CDEDVTA ], dbfTVta, oSay[43] ) ) ;
+         VALID    ( TiposVentasModel():New():existTiposVentas( aTmp[ _CDEDVTA ] ) ) ;
          BITMAP   "LUPA" ;
-         ON HELP  ( BrwTVta( aGet[ _CDEDVTA ], dbfTVta, oSay[43] ) ) ;
+         ON HELP  ( TiposVentasController():New():AssignBrowse( aGet[ _CDEDVTA ] ) ) ;
          OF       fldValores
 
       REDEFINE GET oSay[43] VAR cSay[43] ;

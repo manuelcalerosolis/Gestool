@@ -10,26 +10,17 @@ CLASS TiposIncidencias FROM SQLBaseView
 
    METHOD   buildSQLShell()
   
-   METHOD   buildSQLBrowse( oGet )
-
-   METHOD   buildSQLModel()               INLINE ( TiposIncidenciasModel():New() )
-
-   METHOD   getFieldFromBrowse()          INLINE ( ::oModel:getRowSet():fieldGet( "id" ) )
+   METHOD   buildSQLBrowse()
  
    METHOD   Dialog()
-
-   METHOD   validDialog( oDlg, oGetNombre )
-
 
 END CLASS
 
 //---------------------------------------------------------------------------//
 
-METHOD New()
+METHOD New( oController )
 
-   ::idUserMap            := "01089"
-
-   ::Super:New()
+   ::oController        := oController
 
 Return ( Self )
 
@@ -39,34 +30,34 @@ METHOD buildSQLShell()
 
    disableAcceso()
 
-   ::oShell                := SQLTShell():New( 2, 10, 18, 70, "Tipos de incidencias", , oWnd(), , , .f., , , ::oModel, , , , , {}, {|| ::Edit( ::oShell:getBrowse() ) },, {|| ::Delete( ::oShell:getBrowse() ) },, nil, ::nLevel, "gc_camera_16", ( 104 + ( 0 * 256 ) + ( 63 * 65536 ) ),,, .t. )
+   ::oShell                := SQLTShell():New( 2, 10, 18, 70, "Tipos de incidencias", , oWnd(), , , .f., , , ::oController:oModel, , , , , {}, {|| ::oController:Edit( ::oShell:getBrowse() ) },, {|| ::Delete( ::oShell:getBrowse() ) },, nil, ::oController:nLevel, "gc_camera_16", ( 104 + ( 0 * 256 ) + ( 63 * 65536 ) ),,, .t. )
 
       with object ( ::oShell:AddCol() )
-         :cHeader          := "Id"
-         :cSortOrder       := "id"
-         :bEditValue       := {|| ::oModel:getRowSet():fieldGet( "id" ) }
+         :cHeader          := "Código"
+         :cSortOrder       := "codigo"
+         :bEditValue       := {|| ::oController:getRowSet():fieldGet( "codigo" ) }
          :nWidth           := 40
-         :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | ::clickOnHeader( oCol, ::oShell:getBrowse(), ::oShell:getCombobox() ) }
+         :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | ::oController:clickOnHeader( oCol, ::oShell:getBrowse(), ::oShell:getCombobox() ) }
       end with
 
       with object ( ::oShell:AddCol() )
          :cHeader          := "Nombre"
          :cSortOrder       := "nombre_incidencia"
-         :bEditValue       := {|| ::oModel:getRowSet():fieldGet( "nombre_incidencia" ) }
+         :bEditValue       := {|| ::oController:getRowSet():fieldGet( "nombre_incidencia" ) }
          :nWidth           := 300
-         :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | ::clickOnHeader( oCol, ::oShell:getBrowse(), ::oShell:getCombobox() ) }
+         :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | ::oController:clickOnHeader( oCol, ::oShell:getBrowse(), ::oShell:getCombobox() ) }
       end with
 
       ::oShell:createXFromCode()
 
-      ::oShell:setDClickData( {|| ::Edit( ::oShell:getBrowse() ) } )
+      ::oShell:setDClickData( {|| ::oController:Edit( ::oShell:getBrowse() ) } )
 
       ::AutoButtons()
 
    ACTIVATE WINDOW ::oShell
 
-   ::oShell:bValid   := {|| ::saveHistory( ::getHistoryNameShell() , ::oShell:getBrowse() ), .t. }
-   ::oShell:bEnd     := {|| ::destroySQLModel() }
+   ::oShell:bValid   := {|| ::saveHistoryOfShell( ::oShell:getBrowse() ), .t. }
+   ::oShell:bEnd     := {|| ::oController:destroySQLModel() }
 
    ::oShell:setComboBoxChange( {|| ::changeCombo( ::oShell:getBrowse(), ::oShell:getCombobox() ) } )
 
@@ -76,25 +67,35 @@ Return ( Self )
 
 //----------------------------------------------------------------------------//
 
-METHOD Dialog( lZoom )
+METHOD Dialog()
 
    local oDlg
    local oGetNombre
+   local oGetCodigo
+
+   msgalert( ::oController:isZoomMode(), "isZoomMode" )
 
    DEFINE DIALOG oDlg RESOURCE "TIPO_INCIDENCIA" TITLE ::lblTitle() + "tipo de incidencia"
 
-   REDEFINE GET   oGetNombre ;
-      VAR         ::oModel:hBuffer[ "nombre_incidencia" ] ;
+    REDEFINE GET   oGetCodigo ;
+      VAR         ::oController:oModel:hBuffer[ "codigo" ] ;
       MEMO ;
       ID          100 ;
-      WHEN        ( ! ::isZoomMode() ) ;
+      WHEN        ( !::oController:isZoomMode() ) ;
+      OF          oDlg
+
+   REDEFINE GET   oGetNombre ;
+      VAR         ::oController:oModel:hBuffer[ "nombre_incidencia" ] ;
+      MEMO ;
+      ID          110 ;
+      WHEN        ( !::oController:isZoomMode() ) ;
       OF          oDlg
 
    REDEFINE BUTTON ;
       ID          IDOK ;
       OF          oDlg ;
-      WHEN        ( ! ::isZoomMode() ) ;
-      ACTION      ( ::validDialog( oDlg, oGetNombre ) )
+      WHEN        ( !::oController:isZoomMode() ) ;
+      ACTION      ( ::oController:validDialog( oDlg, oGetNombre, oGetCodigo ) )
 
    REDEFINE BUTTON ;
       ID          IDCANCEL ;
@@ -106,33 +107,12 @@ METHOD Dialog( lZoom )
 
    oDlg:AddFastKey( VK_F5, {|| oDlg:end( IDOK ) } )
 
-   // evento bstart-----------------------------------------------------------
-
-   oDlg:bStart    := {|| oGetNombre:setFocus() }
-
    ACTIVATE DIALOG oDlg CENTER
 
 RETURN ( oDlg:nResult == IDOK )
 
 //---------------------------------------------------------------------------//
 
-METHOD validDialog( oDlg, oGetNombre )
-
-   if empty( ::oModel:hBuffer[ "nombre_incidencia" ] )
-      MsgStop( "El nombre del tipo de incidencia no puede estar vacío." )
-      oGetNombre:setFocus()
-      Return ( .f. )
-   end if
-
-   if ::oModel:getRowSet():find( ::oModel:hBuffer[ "nombre_incidencia" ], "nombre_incidencia" ) != 0
-      msgStop( "El nombre de la incidencia ya existe" )
-      oGetNombre:setFocus()
-      RETURN ( .f. )
-   end if
-
-RETURN ( oDlg:end( IDOK ) )
-
-//---------------------------------------------------------------------------//
 
 METHOD buildSQLBrowse()
 
@@ -152,7 +132,7 @@ METHOD buildSQLBrowse()
          BITMAP      "FIND" ;
          OF          oDlg
 
-      oFind:bChange       := {|| ::changeFind( oFind, oBrowse ) }
+      oFind:bChange  := {|| ::changeFind( oFind, oBrowse ) }
 
       REDEFINE COMBOBOX oCombobox ;
          VAR         cOrder ;
@@ -170,22 +150,22 @@ METHOD buildSQLBrowse()
       oBrowse:lHScroll        := .f.
       oBrowse:nMarqueeStyle   := 6
 
-      oBrowse:setModel( ::oModel )
+      oBrowse:setModel( ::oController:oModel )
 
       with object ( oBrowse:AddCol() )
-         :cHeader             := "Id"
-         :cSortOrder          := "id"
-         :bEditValue          := {|| ::oModel:getRowSet():fieldGet( "id" ) }
+         :cHeader             := "Código"
+         :cSortOrder          := "codigo"
+         :bEditValue          := {|| ::oController:getRowSet():fieldGet( "codigo" ) }
          :nWidth              := 40
-         :bLClickHeader       := {| nMRow, nMCol, nFlags, oCol | ::clickOnHeader( oCol, oBrowse, oCombobox ) }
+         :bLClickHeader       := {| nMRow, nMCol, nFlags, oCol | ::oController:clickOnHeader( oCol, oBrowse, oCombobox ) }
       end with
 
       with object ( oBrowse:AddCol() )
          :cHeader             := "Nombre"
          :cSortOrder          := "nombre_incidencia"
-         :bEditValue          := {|| ::oModel:getRowSet():fieldGet( "nombre_incidencia" ) }
+         :bEditValue          := {|| ::oController:getRowSet():fieldGet( "nombre_incidencia" ) }
          :nWidth              := 300
-         :bLClickHeader       := {| nMRow, nMCol, nFlags, oCol | ::clickOnHeader( oCol, oBrowse, oCombobox ) }
+         :bLClickHeader       := {| nMRow, nMCol, nFlags, oCol | ::oController:clickOnHeader( oCol, oBrowse, oCombobox ) }
       end with
 
       oBrowse:bLDblClick      := {|| oDlg:end( IDOK ) }
@@ -207,21 +187,21 @@ METHOD buildSQLBrowse()
       REDEFINE BUTTON ;
          ID          500 ;
          OF          oDlg ;
-         ACTION      ( ::Append( oBrowse ) )
+         ACTION      ( ::oController:Append( oBrowse ) )
 
       REDEFINE BUTTON ;
          ID          501 ;
          OF          oDlg ;
-         ACTION      ( ::Edit( oBrowse ) )
+         ACTION      ( ::oController:Edit( oBrowse ) )
 
       oDlg:AddFastKey( VK_RETURN,   {|| oDlg:end( IDOK ) } )
       oDlg:AddFastKey( VK_F5,       {|| oDlg:end( IDOK ) } )
-      oDlg:AddFastKey( VK_F2,       {|| ::Append( oBrowse ) } )
-      oDlg:AddFastKey( VK_F3,       {|| ::Edit( oBrowse ) } )
+      oDlg:AddFastKey( VK_F2,       {|| ::oController:Append( oBrowse ) } )
+      oDlg:AddFastKey( VK_F3,       {|| ::oController:Edit( oBrowse ) } )
 
-      oDlg:bStart    := {|| ::startBrowse( oCombobox, oBrowse ) }
+      oDlg:bStart    := {|| ::oController:startBrowse( oCombobox, oBrowse ) }
 
-   oDlg:Activate( , , , .t., {|| ::saveHistory( ::getHistoryNameBrowse(), oBrowse ) } )
+   oDlg:Activate( , , , .t., {|| ::saveHistoryOfBrowse( oBrowse ) } )
 
 RETURN ( oDlg:nResult == IDOK )
 
