@@ -18,8 +18,12 @@ CLASS SQLBaseController
 
    DATA     bOnPreAppend
    DATA     bOnPostAppend
+
+   CLASSDATA   oInstance 
  
    METHOD   New()
+
+   METHOD   Instance()                                INLINE ( if( empty( ::oInstance ), ::oInstance := ::New(), ), ::oInstance ) 
 
    METHOD   destroySQLModel()                         INLINE ( if( !empty(::oModel), ::oModel:end(), ) )
 
@@ -64,7 +68,10 @@ CLASS SQLBaseController
 
    METHOD   clickOnHeader( oColumn, oBrowse, oCombobox )
 
-	METHOD   getHistory( cHistory )
+	METHOD   getHistory( cWnd )
+   METHOD      getHistoryShell()                      
+   METHOD      getHistoryBrowse()                     INLINE ( ::getHistory( "_browse" ) )
+              
    METHOD   saveHistory( cHistory, oBrowse )
 
    METHOD   find( oFind )
@@ -80,9 +87,6 @@ CLASS SQLBaseController
    METHOD   loadCurrentBuffer()
 
    METHOD 	getRowSet()
-
-   METHOD 	getHistoryOfShell()								INLINE ( ::getHistory( "_shell" ) )
-	METHOD 	getHistoryOfBrowse()								INLINE ( ::getHistory( "_browse" ) )
 
 END CLASS
 
@@ -112,7 +116,7 @@ METHOD ActivateShell()
       SysRefresh(); oWnd():CloseAll(); SysRefresh()
    end if
 
-   ::getHistoryOfShell()
+   ::getHistoryShell()
 
    ::oModel:buildRowSetWithRecno()
 
@@ -128,7 +132,7 @@ METHOD ActivateBrowse( aSelectedItems )
 
    local uReturn
 
-   ::getHistoryOfBrowse()
+   ::getHistoryBrowse()
 
    ::oModel:buildRowSetWithRecno()
 
@@ -187,7 +191,7 @@ METHOD AssignBrowse( oGet, aSelectedItems )
 
    local uReturn
 
-   if empty(oGet)
+   if empty( oGet )
       RETURN ( uReturn )
    end if 
 
@@ -203,13 +207,19 @@ RETURN ( uReturn )
 
 METHOD getHistory( cWnd )
 
-   local hFetch
+   local hFetch      := HistoricosUsuariosModel():New():getHistory( ::oModel:cTableName + cWnd )
 
-   hFetch            := HistoricosUsuariosModel():New():getHistory( ::oModel:cTableName + cWnd )
+   if hhaskey( hFetch, "cBrowseState" )
+      ::oView:setBrowseState( hFetch[ "cBrowseState" ] )
+   endif
+   
+RETURN ( hFetch )
 
-   if empty( hFetch )
-      RETURN ( Self )
-   end if
+//----------------------------------------------------------------------------//
+
+METHOD getHistoryShell()
+
+   local hFetch   := ::getHistory( "_shell" )
 
    if hhaskey( hFetch, "cColumnOrder" )
       ::oModel:setColumnOrder( hFetch[ "cColumnOrder" ] )
@@ -222,10 +232,6 @@ METHOD getHistory( cWnd )
    if hhaskey( hFetch, "nIdForRecno" ) 
       ::oModel:setIdForRecno( hFetch[ "nIdForRecno" ] )
    end if
-
-   if hhaskey( hFetch, "cBrowseState" )
-      ::oView:setBrowseState( hFetch[ "cBrowseState" ] )
-   endif
    
 RETURN ( self )
 

@@ -4799,14 +4799,15 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbf, oBrw, lTotLin, cCodArtEnt, nMode, aTmpA
       -------------------------------------------------------------------------
       */
 
-      REDEFINE GET aGet[ _CTIPMOV ] VAR aTmp[ _CTIPMOV ] ;
+      REDEFINE GET aGet[ _CTIPMOV ] ;
+         VAR      aTmp[ _CTIPMOV ] ;
          ID       290 ;
          IDTEXT   291 ;
          IDSAY    292 ;
          WHEN     ( !aTmp[ _LCONTROL ] .and. nMode != ZOOM_MODE .and. !lTotLin ) ;
-         VALID    ( TiposVentasController():New():isValidGet( aGet[ _CTIPMOV ] ) ) ;
+         VALID    ( TiposVentasController():Instance():isValidGet( aGet[ _CTIPMOV ] ) ) ;
          BITMAP   "LUPA" ;
-         ON HELP  ( TiposVentasController():New():assignBrowse( aGet[ _CTIPMOV ] ) ) ;
+         ON HELP  ( TiposVentasController():Instance():assignBrowse( aGet[ _CTIPMOV ] ) ) ;
          OF       oFld:aDialogs[1] ;
 
       /*
@@ -5186,14 +5187,14 @@ Static Function EdtInc( aTmp, aGet, dbf, oBrw, bWhen, bValid, nMode, aTmpAlb )
 
    DEFINE DIALOG oDlg RESOURCE "INCIDENCIA" TITLE LblTitle( nMode ) + "incidencias de albaranes a clientes"
 
-      REDEFINE GET   aGet[ ( dbfTmpInc )->( FieldPos( "id_tip_inc" ) ) ];
-         VAR         aTmp[ ( dbfTmpInc )->( FieldPos( "id_tip_inc" ) ) ];
+      REDEFINE GET   aGet[ ( dbfTmpInc )->( FieldPos( "cCodTip" ) ) ];
+         VAR         aTmp[ ( dbfTmpInc )->( FieldPos( "cCodTip" ) ) ];
          ID          120 ;
          IDTEXT      130 ;
          WHEN        ( nMode != ZOOM_MODE );
-         VALID       ( TiposIncidenciasController():New():isValidGet( aGet[ ( dbfTmpInc )->( FieldPos( "id_tip_inc" ) ) ] ) ) ;
+         VALID       ( TiposIncidenciasController():Instance():isValidGet( aGet[ ( dbfTmpInc )->( FieldPos( "cCodTip" ) ) ] ) ) ;
          BITMAP      "LUPA" ;
-         ON HELP     ( TiposIncidenciasController():New():AssignBrowse( aGet[ ( dbfTmpInc )->( FieldPos( "id_tip_inc" ) ) ] ) ) ; 
+         ON HELP     ( TiposIncidenciasController():Instance():AssignBrowse( aGet[ ( dbfTmpInc )->( FieldPos( "cCodTip" ) ) ] ) ) ; 
          OF          oDlg
 
       REDEFINE GET   aTmp[ ( dbfTmpInc )->( FieldPos( "dFecInc" ) ) ] ;
@@ -16798,7 +16799,6 @@ function aIncAlbCli()
    aAdd( aIncAlbCli, { "mDesInc",      "M",   10,  0, "Descripción de la incidencia" ,    "",                   "", "( cDbfCol )" } )
    aAdd( aIncAlbCli, { "lListo",       "L",    1,  0, "Lógico de listo" ,                 "",                   "", "( cDbfCol )" } )
    aAdd( aIncAlbCli, { "lAviso",       "L",    1,  0, "Lógico de aviso" ,                 "",                   "", "( cDbfCol )" } )
-   aAdd( aIncAlbCli, { "id_tip_inc",   "N",   16,  0, "Id tipo incidencia" ,              "",                   "", "( cDbfCol )" } )
 
 return ( aIncAlbCli )
 
