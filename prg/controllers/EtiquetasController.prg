@@ -88,12 +88,17 @@ METHOD validDialog( oDlg, oTree, oGetNombre )
 
    idForNombre := ::oModel:ChecksForValid( "nombre" )
 
-   if ( !empty( idForNombre ) .and. ;
-      ( ( idForNombre != ::oModel:hBuffer[ "id" ] .and. !::isDuplicateMode() ) .or. ;
-      ( idForNombre == ::oModel:hBuffer[ "id" ] .and. ::isDuplicateMode() ) ) )
-      msgStop( "El nombre de la etiqueta ya existe" )
-      oGetNombre:setFocus()
-      RETURN ( .f. )
+   if ( !empty( idForNombre ) )
+      if ( idForNombre != ::oModel:hBuffer[ "id" ] .and. !::isDuplicateMode() )
+         msgStop( "El nombre de la etiqueta ya existe" )
+         oGetNombre:setFocus()
+         RETURN ( .f. )
+      end if
+      if ( idForNombre == ::oModel:hBuffer[ "id" ] .and. ::isDuplicateMode() )
+         msgStop( "El nombre de la etiqueta ya existe" )
+         oGetNombre:setFocus()
+         RETURN ( .f. )
+      end if
    end if
 
    ::checkSelectedNode( oTree )

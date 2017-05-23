@@ -40,12 +40,18 @@ METHOD validDialog( oDlg, oGetNombre )
 
    idForNombre := ::oModel:ChecksForValid( "tipo" )
 
-   if ( !empty( idForNombre ) .and. ;
-      ( ( idForNombre != ::oModel:hBuffer[ "id" ] .and. !::isDuplicateMode() ) .or. ;
-      ( idForNombre == ::oModel:hBuffer[ "id" ] .and. ::isDuplicateMode() ) ) )
-      msgStop( "Esta nota ya existe" )
-      oGetNombre:setFocus()
-      RETURN ( .f. )
+   if ( !empty( idForNombre ) )
+      if ( idForNombre != ::oModel:hBuffer[ "id" ] .and. !::isDuplicateMode() )
+         msgStop( "Esta nota ya existe" )
+         oGetNombre:setFocus()
+         RETURN ( .f. )
+      end if
+
+      if ( idForNombre == ::oModel:hBuffer[ "id" ] .and. ::isDuplicateMode() )
+         msgStop( "Esta nota ya existe" )
+         oGetNombre:setFocus()
+         RETURN ( .f. )      
+      end if
    end if
 
 RETURN ( oDlg:end( IDOK ) )

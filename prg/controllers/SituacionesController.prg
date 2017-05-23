@@ -42,12 +42,17 @@ METHOD validDialog( oDlg, oGetNombre )
 
    idForNombre := ::oModel:ChecksForValid( "situacion" )
 
-   if ( !empty( idForNombre ) .and. ;
-      ( ( idForNombre != ::oModel:hBuffer[ "id" ] .and. !::isDuplicateMode() ) .or. ;
-      ( idForNombre == ::oModel:hBuffer[ "id" ] .and. ::isDuplicateMode() ) ) )
-      msgStop( "Esta situación ya existe" )
-      oGetNombre:setFocus()
-      RETURN ( .f. )
+   if ( !empty( idForNombre ) )
+      if ( idForNombre != ::oModel:hBuffer[ "id" ] .and. !::isDuplicateMode() )
+         msgStop( "Esta situación ya existe" )
+         oGetNombre:setFocus()
+         RETURN ( .f. )
+      endif
+      if ( idForNombre == ::oModel:hBuffer[ "id" ] .and. ::isDuplicateMode() )
+         msgStop( "Esta situación ya existe" )
+         oGetNombre:setFocus()
+         RETURN ( .f. )
+      endif
    end if
 
 RETURN ( oDlg:end( IDOK ) )

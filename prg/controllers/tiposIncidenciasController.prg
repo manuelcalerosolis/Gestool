@@ -35,20 +35,26 @@ METHOD validDialog( oDlg, oGetNombre, oGetCodigo )
    local idForNombre
    local idForCodigo
 
-   if empty( ::oModel:hBuffer[ "nombre_incidencia" ] )
+   if empty( ::oModel:hBuffer[ "nombre" ] )
       MsgStop( "El nombre del tipo de incidencia no puede estar vacío." )
       oGetNombre:setFocus()
       Return ( .f. )
    end if    
 
-   idForNombre := ::oModel:ChecksForValid( "nombre_incidencia" )
+   idForNombre := ::oModel:ChecksForValid( "nombre" )
 
-   if ( !empty( idForNombre ) .and. ;
-      ( ( idForNombre != ::oModel:hBuffer[ "id" ] .and. !::isDuplicateMode() ) .or. ;
-      ( idForNombre == ::oModel:hBuffer[ "id" ] .and. ::isDuplicateMode() ) ) )
-      msgStop( "El nombre de la incidencia ya existe" )
-      oGetNombre:setFocus()
-      RETURN ( .f. )
+   if ( !empty( idForNombre ) )
+      if ( idForNombre != ::oModel:hBuffer[ "id" ] .and. !::isDuplicateMode() )
+         msgStop( "El nombre de la incidencia ya existe" )
+         oGetNombre:setFocus()
+         RETURN ( .f. )
+      end if
+
+      if ( idForNombre == ::oModel:hBuffer[ "id" ] .and. ::isDuplicateMode() )
+         msgStop( "El nombre de la incidencia ya existe" )
+         oGetNombre:setFocus()
+         RETURN ( .f. )
+      end if 
    end if
 
    if empty( ::oModel:hBuffer[ "codigo" ] )
@@ -59,13 +65,19 @@ METHOD validDialog( oDlg, oGetNombre, oGetCodigo )
 
    idForCodigo := ::oModel:ChecksForValid( "codigo" )
 
-   if ( !empty( idForCodigo ) .and. ;
-      ( ( idForCodigo != ::oModel:hBuffer[ "id" ] .and. !::isDuplicateMode() ) .or. ;
-      ( idForCodigo == ::oModel:hBuffer[ "id" ] .and. ::isDuplicateMode() ) ) )
-      msgStop( "El código de la incidencia ya existe" )
-      oGetCodigo:setFocus()
-      RETURN ( .f. )
+   if ( !empty( idForCodigo ) )
+      if ( idForCodigo != ::oModel:hBuffer[ "id" ] .and. !::isDuplicateMode() )
+         msgStop( "El código de la incidencia ya existe" )
+         oGetCodigo:setFocus()
+         RETURN ( .f. )
+      end if
+      if ( idForCodigo == ::oModel:hBuffer[ "id" ] .and. ::isDuplicateMode() )
+         msgStop( "El código de la incidencia ya existe" )
+         oGetCodigo:setFocus()
+         RETURN ( .f. )
+      end if
    end if
+   
 
 RETURN ( oDlg:end( IDOK ) )
 
