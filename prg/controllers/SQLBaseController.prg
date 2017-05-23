@@ -132,6 +132,7 @@ METHOD ActivateBrowse( aSelectedItems )
 
    local uReturn
 
+
    ::getHistoryBrowse()
 
    ::oModel:buildRowSetWithRecno()

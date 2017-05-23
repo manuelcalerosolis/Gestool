@@ -2519,12 +2519,7 @@ FUNCTION validKey( oGet, uAlias, lRjust, cChar, nTag, nLen )
       ( cAlias )->( dbSetFilter( {|| &cFilter }, cFilter ) )
    end if
 
-<<<<<<< HEAD
 RETURN lReturn
-=======
-
-RETURN lRETURN
->>>>>>> origin/master
 
 //-------------------------------------------------------------------------//
 

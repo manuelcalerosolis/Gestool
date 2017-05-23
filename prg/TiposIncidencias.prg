@@ -42,8 +42,8 @@ METHOD buildSQLShell()
 
       with object ( ::oShell:AddCol() )
          :cHeader          := "Nombre"
-         :cSortOrder       := "nombre_incidencia"
-         :bEditValue       := {|| ::oController:getRowSet():fieldGet( "nombre_incidencia" ) }
+         :cSortOrder       := "nombre"
+         :bEditValue       := {|| ::oController:getRowSet():fieldGet( "nombre" ) }
          :nWidth           := 300
          :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | ::oController:clickOnHeader( oCol, ::oShell:getBrowse(), ::oShell:getCombobox() ) }
       end with
@@ -85,7 +85,7 @@ METHOD Dialog()
       OF          oDlg
 
    REDEFINE GET   oGetNombre ;
-      VAR         ::oController:oModel:hBuffer[ "nombre_incidencia" ] ;
+      VAR         ::oController:oModel:hBuffer[ "nombre" ] ;
       MEMO ;
       ID          110 ;
       WHEN        ( !::oController:isZoomMode() ) ;
@@ -162,8 +162,8 @@ METHOD buildSQLBrowse()
 
       with object ( oBrowse:AddCol() )
          :cHeader             := "Nombre"
-         :cSortOrder          := "nombre_incidencia"
-         :bEditValue          := {|| ::oController:getRowSet():fieldGet( "nombre_incidencia" ) }
+         :cSortOrder          := "nombre"
+         :bEditValue          := {|| ::oController:getRowSet():fieldGet( "nombre" ) }
          :nWidth              := 300
          :bLClickHeader       := {| nMRow, nMCol, nFlags, oCol | ::oController:clickOnHeader( oCol, oBrowse, oCombobox ) }
       end with
