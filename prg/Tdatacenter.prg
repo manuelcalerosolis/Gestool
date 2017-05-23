@@ -4864,7 +4864,7 @@ METHOD MigrateEmpresaToSQLite()
       :TranslatePedidosClientesLineasCodigoTiposVentaToId() ;
       :TranslateAlbaranesClientesLineasCodigoTiposVentaToId() ;
       :TranslateFacturasClientesLineasCodigoTiposVentaToId() ;
-      :TranslateFacturasRectificativasLineasCodigoTiposVentaToId
+      :TranslateFacturasRectificativasLineasCodigoTiposVentaToId()
 
 RETURN ( Self )
 
