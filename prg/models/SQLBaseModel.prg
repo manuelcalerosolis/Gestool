@@ -460,8 +460,6 @@ METHOD updateTableColumns()
 
    ::compareCurrentAndActualColumns()
 
-   hEval( ::hColumns, {| k, hash | msgalert( "ALTER TABLE " + ::cTableName + " ADD COLUMN " + k + " " + hget( hash, "create" ) ) } )
-
    hEval( ::hColumns, {| k, hash | getSQLDatabase():Query( "ALTER TABLE " + ::cTableName + " ADD COLUMN " + k + " " + hget( hash, "create" ) ) } )
 
 Return ( self )
@@ -514,7 +512,7 @@ Return ( self )
 
 //---------------------------------------------------------------------------//
 
-METHOD ChecksForValid( cColumnToValid )
+METHOD checksForValid( cColumnToValid )
 
    local cSentence := "SELECT id FROM " + ::cTableName + " WHERE " + cColumnToValid + " = " + toSQLString( ::hBuffer[ cColumnToValid ] )
    local aIDsToValid
@@ -555,6 +553,8 @@ RETURN ( cName )
 METHOD exist( cValue )
 
    local cSentence               := "SELECT " + ::cColumnKey + " FROM " + ::cTableName + " WHERE id = " + toSQLString( cValue )
+
+   msgalert( csentence, "existe?" )
 
 RETURN ( !empty( ::selectFetchArray( cSentence ) ) )
 

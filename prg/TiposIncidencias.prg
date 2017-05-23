@@ -72,8 +72,6 @@ METHOD Dialog()
    local oDlg
    local oGetNombre
 
-   msgalert( ::oController:isZoomMode(), "isZoomMode" )
-
    DEFINE DIALOG oDlg RESOURCE "TIPO_INCIDENCIA" TITLE ::lblTitle() + "tipo de incidencia"
 
    REDEFINE GET   oGetNombre ;

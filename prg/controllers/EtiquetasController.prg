@@ -189,6 +189,10 @@ METHOD loadTree( oTree, id )
 
    nPosition      := ::getRowSet():find( id, "id_padre" )
 
+   if nPosition == 0
+      nPosition      := ::getRowSet():find( 0, "id_padre" )      
+   end if
+       
    while ( nPosition != 0 )
 
       oNode       := oTree:add( ::getRowSet():fieldGet( "nombre" ) )
