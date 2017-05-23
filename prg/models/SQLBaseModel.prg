@@ -534,11 +534,7 @@ METHOD getNameFromId( uValue )
    local cSentence               := "SELECT nombre FROM " + ::cTableName + " WHERE id = " + toSQLString( uValue )
    local aSelect                 
 
-   msgalert( cSentence, "cSentence" )
-
    aSelect                       := ::selectFetchHash( cSentence )
-
-   msgalert( hb_valtoexp( aSelect ), "aSelect" )
 
    if !empty( aSelect )
       cName                      := hget( atail( aSelect ), "nombre" )
@@ -551,9 +547,6 @@ RETURN ( cName )
 METHOD exist( cValue )
 
    local cSentence               := "SELECT " + ::cColumnKey + " FROM " + ::cTableName + " WHERE id = " + toSQLString( cValue )
-
-   msgStop( cSentence, "existe?" )
-   msgStop( !empty( ::selectFetchArray( cSentence ) ), "selectFetchArray" )
 
 RETURN ( !empty( ::selectFetchArray( cSentence ) ) )
 

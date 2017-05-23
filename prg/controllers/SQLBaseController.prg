@@ -520,27 +520,21 @@ METHOD isValidGet( oGet )
    local uValue
    local uReturn     := .t.
 
-   msgalert( "estoy en el valid del get" )
-
    if empty( oGet )
       RETURN ( uReturn )
    end if 
 
    uValue            := oGet:varGet()
 
-   msgalert( uValue, "uValue" )
-
-   msgalert( hb_valtoexp( ::oModel ), "este es el modelo" )
-
    if !::oModel:exist( uValue )
+   	msgStop( "El tipo de movimiento introducido no existe")
+   	oGet:setFocus()
       RETURN .f.
    end if 
 
-   msgalert( !empty( oGet:oHelpText ), "oHelpText")
-
    if !empty( oGet:oHelpText )
       oGet:oHelpText:cText( ::oModel:getNameFromId( uValue ) )
-   end if 
+   end if
 
 RETURN ( uReturn )
 
