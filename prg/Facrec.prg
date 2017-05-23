@@ -12996,6 +12996,7 @@ function aColFacRec()
    aAdd( aColFacRec, { "nPosPrint"   ,"N",  4, 0, "Posición de impresión"                 , "PosicionImpresion",           "", "( cDbfCol )", nil } )
    aAdd( aColFacRec, { "cTipCtr"     ,"C", 20, 0, "Tipo tercero centro de coste"          , "",                            "", "( cDbfCol )", nil } )
    aAdd( aColFacRec, { "cTerCtr"     ,"C", 20, 0, "Tercero centro de coste"               , "",                            "", "( cDbfCol )", nil } )
+   aAdd( aColFacRec, { "id_tipo_v"   ,"N", 16, 0, "Identificador tipo de venta"           , "IdentificadorTipoVenta",      "", "( cDbfCol )", nil } )
 
 return ( aColFacRec )
 
