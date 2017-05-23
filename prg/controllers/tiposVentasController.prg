@@ -12,7 +12,7 @@ CLASS TiposVentasController FROM SQLBaseController
    
    METHOD   buildSQLView( this )				INLINE ( TiposVentas():New( this ) )
   
-   METHOD   getFieldFromBrowse()          INLINE ( ::getRowSet():fieldGet( "codigo" ) )
+   METHOD   getFieldFromBrowse()          INLINE ( ::getRowSet():fieldGet( "id" ) )
  
    METHOD   validDialog( oDlg, oGetNombre, oGetCodigo )
 
@@ -41,7 +41,7 @@ METHOD validDialog( oDlg, oGetNombre, oGetCodigo )
       RETURN ( .f. )
    end if
 
-   idForNombre := ::oModel:ChecksForValid( "nombre" )
+   idForNombre    := ::oModel:ChecksForValid( "nombre" )
 
    if ( !empty( idForNombre ) )
 

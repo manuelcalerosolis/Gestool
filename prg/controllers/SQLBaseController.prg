@@ -132,7 +132,6 @@ METHOD ActivateBrowse( aSelectedItems )
 
    local uReturn
 
-
    ::getHistoryBrowse()
 
    ::oModel:buildRowSetWithRecno()
@@ -526,7 +525,7 @@ METHOD isValidGet( oGet )
    msgalert( !empty( oGet:oHelpText ), "oHelpText")
 
    if !empty( oGet:oHelpText )
-      oGet:oHelpText:cText( ::oModel:getNameFromCodigo( uValue ) )
+      oGet:oHelpText:cText( ::oModel:getNameFromId( uValue ) )
    end if 
 
 RETURN ( uReturn )

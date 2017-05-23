@@ -16,10 +16,6 @@ CLASS TiposIncidenciasModel FROM SQLBaseEmpresasModel
 
    METHOD arrayTiposIncidencias()
 
-   METHOD exist( cValue )
-
-   METHOD getNameFromCodigo( uValue )
-
 END CLASS
 
 //---------------------------------------------------------------------------//
@@ -34,7 +30,7 @@ METHOD New()
                                                                   "text"		=> "Identificador"                              ,;
    															                  "dbfField" 	=> "" }                                         ,;
                                        "codigo"             => {  "create"    => "VARCHAR( 3 )"                               ,;
-                                                                  "text"      => "CÃ³digo de identificaciÃ³n en DBF"            ,; 
+                                                                  "text"      => "Código de identificación en DBF"            ,; 
                                                                   "dbfField"  => "cCodInci"}                                  ,;  
                                        "nombre"             => {  "create"    => "VARCHAR (50) NOT NULL"                      ,;
                                                                   "text"      => "Nombre de la incidencia"                    ,;
@@ -52,32 +48,9 @@ RETURN ( Self )
 METHOD arrayTiposIncidencias()
 
    local cSentence   := "SELECT nombre FROM " + ::cTableName
-   local aSelect     := ::selectFetchArray( cSentence ) 
 
-RETURN ( aSelect )
-
-//---------------------------------------------------------------------------//
-
-METHOD exist( cValue )
-
-   local cSentence   := "SELECT id FROM " + ::cTableName + " WHERE codigo = " + toSQLString( cValue )
-   local aSelect     := ::selectFetchArray( cSentence )
-
-RETURN ( !empty( aSelect ) )
+RETURN ( ::selectFetchArray( cSentence ) )
 
 //---------------------------------------------------------------------------//
 
-METHOD getNameFromCodigo( uValue )
-
-   local cName       := ""
-   local cSentence   := "SELECT nombre FROM " + ::cTableName + " WHERE empresa = " + toSQLString( cCodEmp() ) + " AND codigo = " + toSQLString( uValue )
-   local aSelect     := ::selectFetchHash( cSentence )
-
-   if !empty( aSelect )
-      cName          := hget( atail( aSelect ), "nombre" )
-   end if 
-
-RETURN ( cName )
-
-//---------------------------------------------------------------------------//
 

@@ -19,6 +19,8 @@ CLASS SQLBaseEmpresasModel From SQLBaseModel
 
    METHOD   getSelectByColumn()
 
+   METHOD   getNameFromId( uValue )
+
 END CLASS
 
 //---------------------------------------------------------------------------//
@@ -45,7 +47,7 @@ METHOD getImportSentence( cPath )
    local cValues     := ""
    local cInsert     := ""
 
-   default cPath     := cPatEmp()
+   default cPath        := cPatEmp()
 
    dbUseArea( .t., cDriver(), cPatEmp() + ::getDbfTableName(), cCheckArea( "dbf", @dbf ) )
    if ( dbf )->( neterr() )
@@ -54,7 +56,7 @@ METHOD getImportSentence( cPath )
 
    cInsert              := "INSERT INTO " + ::cTableName + " ( "
    hEval( ::hColumns, {| k | if ( k != ::cColumnKey, cInsert += k + ", ", ) } )
-   cInsert           := ChgAtEnd( cInsert, ' ) VALUES ', 2 )
+   cInsert              := ChgAtEnd( cInsert, ' ) VALUES ', 2 )
 
 
    ( dbf )->( dbgotop() )
@@ -170,5 +172,19 @@ METHOD getSelectByColumn()
    end if
 
 Return ( cSQLSelect )
+
+//---------------------------------------------------------------------------//
+
+METHOD getNameFromId( uValue )
+
+   local cName       := ""
+   local cSentence   := "SELECT nombre FROM " + ::cTableName + " WHERE empresa = " + toSQLString( cCodEmp() ) + " AND id = " + toSQLString( uValue )
+   local aSelect     := ::selectFetchHash( cSentence )
+
+   if !empty( aSelect )
+      cName          := hget( atail( aSelect ), "nombre" )
+   end if 
+
+RETURN ( cName )
 
 //---------------------------------------------------------------------------//

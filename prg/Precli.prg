@@ -302,7 +302,6 @@ static dbfAgent
 static dbfFamilia
 static dbfProvee
 static dbfOferta
-static dbfTVta
 static dbfTblPro
 static dbfPro
 
@@ -572,9 +571,6 @@ STATIC FUNCTION OpenFiles( lExt )
 
       USE ( cPatArt() + "ARTKIT.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "ARTTIK", @dbfKit ) )
       SET ADSINDEX TO ( cPatArt() + "ARTKIT.CDX" ) ADDITIVE
-
-      USE ( cPatDat() + "TVTA.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "TVTA", @dbfTVta ) )
-      SET ADSINDEX TO ( cPatDat() + "TVTA.CDX" ) ADDITIVE
 
       USE ( cPatArt() + "PRO.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "PRO", @dbfPro ) )
       SET ADSINDEX TO ( cPatArt() + "PRO.CDX" ) ADDITIVE
@@ -892,10 +888,6 @@ STATIC FUNCTION CloseFiles()
       ( dbfKit       )->( dbCloseArea() )
    end if
 
-   if !Empty( dbfTVta )
-      ( dbfTVta      )->( dbCloseArea() )
-   end if
-
    if !Empty( dbfPro )
       ( dbfPro       )->( dbCloseArea() )
    end if
@@ -1080,7 +1072,6 @@ STATIC FUNCTION CloseFiles()
    dbfFamilia     := nil
    dbfOferta      := nil
    dbfKit         := nil
-   dbfTVta        := nil
    dbfPro         := nil
    dbfTblPro      := nil
    dbfObrasT      := nil
@@ -3779,25 +3770,20 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbf, oBrw, lTotLin, cCodArtEnt, nMode, aTmpP
 
       REDEFINE GET oTotal VAR nTotPre ;
          ID       220 ;
-         COLOR    CLR_GET ;
          WHEN     .F. ;
          PICTURE  cPorDiv ;
          OF       oFld:aDialogs[1]
 
-      REDEFINE GET aGet[_CTIPMOV] VAR aTmp[ _CTIPMOV ] ;
-         WHEN     ( nMode != ZOOM_MODE .AND. !lTotLin ) ;
-			VALID		( cTVta( aGet[_CTIPMOV], dbfTVta, oGet2 ) ) ;
-         BITMAP   "LUPA" ;
-         ON HELP  ( BrwTVta( aGet[_CTIPMOV], dbfTVta, oGet2 ) ) ;
-         ID       290 ;
-         OF       oFld:aDialogs[1];
-         IDSAY    292
-
-		REDEFINE GET oGet2 VAR cGet2 ;
-         ID       291 ;
-			WHEN 		( .F. ) ;
-			COLOR 	CLR_GET ;
-         OF       oFld:aDialogs[1]
+      REDEFINE GET   aGet[ ( D():PresupuestosClientesLineas( nView ) )->( fieldpos( "id_tipo_v" ) ) ] ;
+         VAR         aTmp[ ( D():PresupuestosClientesLineas( nView ) )->( fieldpos( "id_tipo_v" ) ) ] ;
+         WHEN        ( nMode != ZOOM_MODE .AND. !lTotLin ) ;
+         VALID       ( TiposVentasController():Instance():isValidGet( aGet[ ( D():PresupuestosClientesLineas( nView ) )->( fieldpos( "id_tipo_v" ) ) ] ) ) ;
+         BITMAP      "LUPA" ;
+         ON HELP     ( TiposVentasController():Instance():assignBrowse( aGet[ ( D():PresupuestosClientesLineas( nView ) )->( fieldpos( "id_tipo_v" ) ) ] ) ) ;
+         ID          290 ;
+         IDSAY       292 ;
+         IDTEXT      291 ;
+         OF          oFld:aDialogs[1]
 
       /*
       Tipo de articulo---------------------------------------------------------
@@ -4229,18 +4215,6 @@ STATIC FUNCTION SetDlgMode( aTmp, aGet, nMode, oStkAct, oSayPr1, oSayPr2, oSayVp
 
    end if
 
-   if !lTipMov()
-
-      if aGet[ _CTIPMOV ] != nil
-         aGet[ _CTIPMOV ]:hide()
-      end if
-
-      if oGet2 != nil
-         oGet2:hide()
-      end if
-
-   end if
-
    if !aTmp[ __LALQUILER ]
 
       if !Empty( aTmp[ _CCODPR1 ] )
@@ -4328,10 +4302,6 @@ STATIC FUNCTION SetDlgMode( aTmp, aGet, nMode, oStkAct, oSayPr1, oSayPr2, oSayVp
    /*
    Focus y validación----------------------------------------------------------
    */
-
-   if aGet[ _CTIPMOV ] != nil
-      aGet[ _CTIPMOV ]:lValid()
-   end if
 
    if aGet[ _CALMLIN ] != nil
       aGet[ _CALMLIN ]:lValid()
@@ -10608,6 +10578,7 @@ function aColPreCli()
    aAdd( aColPreCli, { "cCtrCoste","C",   9,  0, "Código del centro de coste",               "",                              "", "( cDbfCol )", nil } )
    aAdd( aColPreCli, { "cTipCtr",  "C",  20,  0, "Tipo tercero centro de coste",             "",                              "", "( cDbfCol )", nil } )
    aAdd( aColPreCli, { "cTerCtr",  "C",  20,  0, "Tercero centro de coste",                  "",                              "", "( cDbfCol )", nil } )
+   aAdd( aColPreCli, { "id_tipo_v","N",  16,  0, "Identificador tipo de venta",              "IdentificadorTipoVenta",        "", "( cDbfCol )", nil } )
 
 return ( aColPreCli )
 

@@ -306,7 +306,6 @@ static dbfAgent
 static dbfFamilia
 static dbfProvee
 static dbfDoc
-static dbfTVta
 static dbfTblPro
 static dbfPro
 static dbfEstado
@@ -587,9 +586,6 @@ STATIC FUNCTION OpenFiles( lExt )
 
       USE ( cPatArt() + "ARTKIT.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "ARTTIK", @dbfKit ) )
       SET ADSINDEX TO ( cPatArt() + "ARTKIT.CDX" ) ADDITIVE
-
-      USE ( cPatDat() + "TVTA.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "TVTA", @dbfTVta ) )
-      SET ADSINDEX TO ( cPatDat() + "TVTA.CDX" ) ADDITIVE
 
       USE ( cPatArt() + "PRO.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "PRO", @dbfPro ) )
       SET ADSINDEX TO ( cPatArt() + "PRO.CDX" ) ADDITIVE
@@ -919,10 +915,6 @@ STATIC FUNCTION CloseFiles()
       ( dbfKit       )->( dbCloseArea() )
    end if
 
-   if !Empty( dbfTVta )
-      ( dbfTVta      )->( dbCloseArea() )
-   end if
-
    if !Empty( dbfPro )
       ( dbfPro       )->( dbCloseArea() )
    end if
@@ -1099,7 +1091,6 @@ STATIC FUNCTION CloseFiles()
    dbfDoc         := nil
    dbfFamilia     := nil
    dbfKit         := nil
-   dbfTVta        := nil
    dbfPro         := nil
    dbfTblPro      := nil
    dbfObrasT      := nil
@@ -3406,8 +3397,6 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbfSatCliL, oBrw, lTotLin, cCodArtEnt, nMode
    local oBtn
    local oTotal
    local nTotSatCli
-   local cGet2
-   local oGet2
    local cGet3
    local oGet3
    local oBtnSer
@@ -3866,25 +3855,20 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbfSatCliL, oBrw, lTotLin, cCodArtEnt, nMode
 
       REDEFINE GET oTotal VAR nTotSat ;
          ID       220 ;
-         COLOR    CLR_GET ;
          WHEN     .F. ;
          PICTURE  cPorDiv ;
          OF       oFld:aDialogs[1]
 
-      REDEFINE GET aGet[_CTIPMOV] VAR aTmp[ _CTIPMOV ] ;
-         WHEN     ( nMode != ZOOM_MODE .AND. !lTotLin ) ;
-         VALID    ( cTVta( aGet[_CTIPMOV], dbfTVta, oGet2 ) ) ;
-         BITMAP   "LUPA" ;
-         ON HELP  ( BrwTVta( aGet[_CTIPMOV], dbfTVta, oGet2 ) ) ;
-         ID       290 ;
-         OF       oFld:aDialogs[1];
-         IDSAY    292
-
-      REDEFINE GET oGet2 VAR cGet2 ;
-         ID       291 ;
-         WHEN     ( .F. ) ;
-         COLOR    CLR_GET ;
-         OF       oFld:aDialogs[1]
+      REDEFINE GET   aGet[ ( D():SatClientesLineas( nView ) )->( fieldpos( "id_tipo_v" ) ) ] ;
+         VAR         aTmp[ ( D():SatClientesLineas( nView ) )->( fieldpos( "id_tipo_v" ) ) ] ;
+         WHEN        ( nMode != ZOOM_MODE .AND. !lTotLin ) ;
+         VALID       ( TiposVentasController():Instance():isValidGet( aGet[ ( D():SatClientesLineas( nView ) )->( fieldpos( "id_tipo_v" ) ) ] ) ) ;
+         BITMAP      "LUPA" ;
+         ON HELP     ( TiposVentasController():Instance():assignBrowse( aGet[ ( D():SatClientesLineas( nView ) )->( fieldpos( "id_tipo_v" ) ) ] ) ) ;
+         ID          290 ;
+         IDSAY       292 ;
+         IDTEXT      291 ;
+         OF          oFld:aDialogs[1]
 
       /*
       Tipo de articulo---------------------------------------------------------
@@ -4112,7 +4096,7 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbfSatCliL, oBrw, lTotLin, cCodArtEnt, nMode
          ID       IDOK ;
          OF       oDlg ;
          WHEN     ( nMode != ZOOM_MODE ) ;
-         ACTION   ( SaveDeta( aTmp, aTmpSat, aGet, oDlg, oBrw, bmpImage, nMode, oStkAct, oSayPr1, oSayPr2, oSayVp1, oSayVp2, oGet2, oTotal, oSayLote, cCodArt, oBtn, oBtnSer, oFld ) )
+         ACTION   ( SaveDeta( aTmp, aTmpSat, aGet, oDlg, oBrw, bmpImage, nMode, oStkAct, oSayPr1, oSayPr2, oSayVp1, oSayVp2, oTotal, oSayLote, cCodArt, oBtn, oBtnSer, oFld ) )
 
       REDEFINE BUTTON ;
          ID       IDCANCEL ;
@@ -4139,7 +4123,7 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbfSatCliL, oBrw, lTotLin, cCodArtEnt, nMode
 
       oDlg:AddFastKey( VK_F6, {|| oBtnSer:Click() } )
 
-      oDlg:bStart := {||   SetDlgMode( aTmp, aGet, nMode, oStkAct, oSayPr1, oSayPr2, oSayVp1, oSayVp2, oGet2, oTotal, aTmpSat, oSayLote, oRentLin, oFld ),;
+      oDlg:bStart := {||   SetDlgMode( aTmp, aGet, nMode, oStkAct, oSayPr1, oSayPr2, oSayVp1, oSayVp2, oTotal, aTmpSat, oSayLote, oRentLin, oFld ),;
                            if( !Empty( oGetCaducidad ), oGetCaducidad:Hide(), ),;
                            if( !Empty( cCodArtEnt ), aGet[ _CREF ]:lValid(), ),;
                            loadGet( aGet[ _CTERCTR ], cTipoCtrCoste ), aGet[ _CTERCTR ]:lValid(),;
@@ -4159,7 +4143,7 @@ RETURN ( oDlg:nResult == IDOK )
 Estudiamos la posiblidades que se pueden dar en una linea de detalle
 */
 
-STATIC FUNCTION SetDlgMode( aTmp, aGet, nMode, oStkAct, oSayPr1, oSayPr2, oSayVp1, oSayVp2, oGet2, oTotal, aTmpSat, oSayLote, oRentLin, oFld )
+STATIC FUNCTION SetDlgMode( aTmp, aGet, nMode, oStkAct, oSayPr1, oSayPr2, oSayVp1, oSayVp2, oTotal, aTmpSat, oSayLote, oRentLin, oFld )
 
    local cCodArt  := aGet[ _CREF ]:varGet()
 
@@ -4330,18 +4314,6 @@ STATIC FUNCTION SetDlgMode( aTmp, aGet, nMode, oStkAct, oSayPr1, oSayPr2, oSayVp
          oStkAct:Show()
       else
          oStkAct:Hide()
-      end if
-
-   end if
-
-   if !lTipMov()
-
-      if aGet[ _CTIPMOV ] != nil
-         aGet[ _CTIPMOV ]:hide()
-      end if
-
-      if oGet2 != nil
-         oGet2:hide()
       end if
 
    end if
@@ -4542,7 +4514,7 @@ Return nil
 
 //--------------------------------------------------------------------------//
 
-STATIC FUNCTION SaveDeta( aTmp, aTmpSat, aGet, oDlg2, oBrw, bmpImage, nMode, oStkAct, oSayPr1, oSayPr2, oSayVp1, oSayVp2, oGet2, oTotal, oSayLote, cCodArt, oBtn, oBtnSer, oFld )
+STATIC FUNCTION SaveDeta( aTmp, aTmpSat, aGet, oDlg2, oBrw, bmpImage, nMode, oStkAct, oSayPr1, oSayPr2, oSayVp1, oSayVp2, oTotal, oSayLote, cCodArt, oBtn, oBtnSer, oFld )
 
    local n
    local i
@@ -4700,7 +4672,7 @@ STATIC FUNCTION SaveDeta( aTmp, aTmpSat, aGet, oDlg2, oBrw, bmpImage, nMode, oSt
       aCopy( dbBlankRec( dbfTmpLin ), aTmp )
       aEval( aGet, {| o, i | if( "GET" $ o:ClassName(), o:cText( aTmp[ i ] ), ) } )
 
-      setDlgMode( aTmp, aGet, nMode, oStkAct, oSayPr1, oSayPr2, oSayVp1, oSayVp2, oGet2, oTotal, aTmpSat, oSayLote, , oFld )
+      setDlgMode( aTmp, aGet, nMode, oStkAct, oSayPr1, oSayPr2, oSayVp1, oSayVp2, oTotal, aTmpSat, oSayLote, , oFld )
 
       SysRefresh()
 
@@ -10695,6 +10667,7 @@ function aColSatCli()
    aAdd( aColSatCli, { "cCtrCoste","C",   9,  0, "Código del centro de coste",                        "",                        "", "( cDbfCol )", nil } )
    aAdd( aColSatCli, { "cTipCtr",  "C",  20,  0, "Tipo tercero centro de coste",                      "",                        "", "( cDbfCol )", nil } )
    aAdd( aColSatCli, { "cTerCtr",  "C",  20,  0, "Tercero centro de coste",                           "",                        "", "( cDbfCol )", nil } )
+   aAdd( aColSatCli, { "id_tipo_v","N",  16,  0, "Identificador tipo de venta",                       "IdentificadorTipoVenta",  "", "( cDbfCol )", nil } )
   
 return ( aColSatCli )
 

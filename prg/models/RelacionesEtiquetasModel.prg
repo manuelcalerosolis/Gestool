@@ -110,7 +110,7 @@ METHOD TranslateCodigoToId()
 
    local cSentenceSQLite := ::getLineasProducccion()
 
-   local cSentenceDBF := "update EMP" + cCodEmp() + "PROLIN set ccodcat = null"
+   local cSentenceDBF := "UPDATE EMP" + cCodEmp() + "PROLIN set cCodCat = null"
 
    getSQLDatabase():Query( cSentenceSQLite )
 

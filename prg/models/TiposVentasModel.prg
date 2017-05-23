@@ -16,7 +16,7 @@ CLASS TiposVentasModel FROM SQLBaseModel
 
    METHOD   arrayTiposVentas()
 
-   METHOD   exist( cValue )
+   METHOD   arrayNombres()
 
 END CLASS
 
@@ -44,7 +44,7 @@ RETURN ( Self )
 
 //---------------------------------------------------------------------------//
 
-METHOD arrayTiposVentas()
+METHOD arrayNombres()
 
    local cSentence               := "SELECT nombre FROM " + ::cTableName
    local aResult                 := ::selectFetchArray( cSentence ) 
@@ -53,13 +53,12 @@ RETURN ( aResult )
 
 //---------------------------------------------------------------------------//
 
-METHOD exist( cValue )
+METHOD arrayTiposVentas()
 
-   local cSentence               := "SELECT codigo FROM " + ::cTableName + " WHERE codigo = " + toSQLString( cValue )
-   local aSelect                 := ::selectFetchArray( cSentence )
+   local cSentence               := "SELECT id, codigo FROM " + ::cTableName
+   local aResult                 := ::selectFetchHash( cSentence ) 
 
-RETURN ( !empty( aSelect ) )
+RETURN ( aResult )
 
 //---------------------------------------------------------------------------//
-
 

@@ -328,7 +328,7 @@ ConfImpTiket.prg        										\
 TipoNotas.prg           										\
 Situacion.prg 		       										\
 Situaciones.prg         										\
-SituacionesModel.prg       										\
+SituacionesModel.prg       											\
 SituacionesController.prg       										\
 GrpPrv.prg              										\
 Categoria.prg           										\
@@ -508,11 +508,12 @@ EtiquetasModel.prg 												\
 EtiquetasController.prg 												\
 TiposIncidenciasModel.prg 										\
 TiposIncidenciasController.prg 										\
-TiposVentasModel.prg 										\
+TiposVentasModel.prg 											\
 TiposVentasController.prg 										\
-RelacionesEtiquetasModel.prg 										\
+RelacionesEtiquetasModel.prg 									\
 ArticulosModel.prg                                    \
 HistoricosUsuariosModel.prg                           \
+PedidosClientesLineasModel.prg 								\
 
 C               =       	            					\
 Img2pdf.c               	            					\
@@ -1005,17 +1006,18 @@ RecibosClientesModel.obj 										\
 PedidosProveedoresModel.obj 									\
 TiposImpresorasModel.obj 										\
 TiposImpresorasController.obj 										\
-TiposNotasModel.obj 										\
-TiposNotasController.obj 										\
-EtiquetasModel.obj 										\
-EtiquetasController.obj 										\
-TiposIncidenciasModel.obj 										\
+TiposNotasModel.obj 														\
+TiposNotasController.obj 												\
+EtiquetasModel.obj 														\
+EtiquetasController.obj 												\
+TiposIncidenciasModel.obj 												\
 TiposIncidenciasController.obj 										\
-TiposVentasModel.obj 										\
-TiposVentasController.obj 										\
-RelacionesEtiquetasModel.obj 										\
-ArticulosModel.obj                                    \
-HistoricosUsuariosModel.obj                                    \
+TiposVentasModel.obj 													\
+TiposVentasController.obj 												\
+RelacionesEtiquetasModel.obj 											\
+ArticulosModel.obj                                    		\
+HistoricosUsuariosModel.obj                                 \
+PedidosClientesLineasModel.obj 										\
 
 .PRG.OBJ:
   	$(HB)\Bin\Harbour $? /n /p$(PPO)\$&.ppo /w /es2 /i$(FWINCLUDE) /i$(HBINCLUDE) /i$(GTINCLUDE) /o$(OBJ)\$&.c
@@ -1494,18 +1496,19 @@ $(OBJ)\ArticulosModel.obj                    +
 $(OBJ)\RecibosClientesModel.obj					+
 $(OBJ)\TicketsClientesModel.obj 	 				+							
 $(OBJ)\PedidosProveedoresModel.obj 				+
-$(OBJ)\TiposImpresorasModel.obj                 +
-$(OBJ)\TiposImpresorasController.obj                 +
-$(OBJ)\TiposNotasModel.obj                 +
-$(OBJ)\TiposNotasController.obj                 +
-$(OBJ)\EtiquetasModel.obj                 +
-$(OBJ)\EtiquetasController.obj                 +
-$(OBJ)\TiposIncidenciasModel.obj                 +
-$(OBJ)\TiposIncidenciasController.obj                 +
-$(OBJ)\TiposVentasModel.obj                 +
-$(OBJ)\TiposVentasController.obj                 +
-$(OBJ)\RelacionesEtiquetasModel.obj                 +
-$(OBJ)\HistoricosUsuariosModel.obj
+$(OBJ)\TiposImpresorasModel.obj                 	+
+$(OBJ)\TiposImpresorasController.obj               +
+$(OBJ)\TiposNotasModel.obj                 			+
+$(OBJ)\TiposNotasController.obj                 	+
+$(OBJ)\EtiquetasModel.obj                 			+
+$(OBJ)\EtiquetasController.obj                 		+
+$(OBJ)\TiposIncidenciasModel.obj                 	+
+$(OBJ)\TiposIncidenciasController.obj              +
+$(OBJ)\TiposVentasModel.obj                 			+
+$(OBJ)\TiposVentasController.obj                 	+
+$(OBJ)\RelacionesEtiquetasModel.obj                +
+$(OBJ)\HistoricosUsuariosModel.obj 						+
+$(OBJ)\PedidosClientesLineasModel.obj
 $<,$*
 $(FWLIB)\FiveH.lib               				+
 $(FWLIB)\FiveHC.lib              				+

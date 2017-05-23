@@ -85,9 +85,11 @@ CLASS SQLBaseModel
    METHOD   setFastReportRecordset( oFastReport, cSentence, cColumns )
    METHOD      serializeColumns()
 
-   METHOD   ChecksForValid()
+   METHOD   exist( cValue )
 
-   METHOD   getNameFromCodigo( uValue )
+   METHOD   checksForValid()
+
+   METHOD   getNameFromId( uValue )
 
 END CLASS
 
@@ -527,10 +529,10 @@ RETURN ( nIDToValid )
 
 //---------------------------------------------------------------------------//
 
-METHOD getNameFromCodigo( uValue )
+METHOD getNameFromId( uValue )
 
    local cName                   := ""
-   local cSentence               := "SELECT nombre FROM " + ::cTableName + " WHERE codigo = " + toSQLString( uValue )
+   local cSentence               := "SELECT nombre FROM " + ::cTableName + " WHERE id = " + toSQLString( uValue )
    local aSelect                 
 
    msgalert( cSentence, "cSentence" )
@@ -544,5 +546,13 @@ METHOD getNameFromCodigo( uValue )
    end if 
 
 RETURN ( cName )
+
+//---------------------------------------------------------------------------//
+
+METHOD exist( cValue )
+
+   local cSentence               := "SELECT " + ::cColumnKey + " FROM " + ::cTableName + " WHERE id = " + toSQLString( cValue )
+
+RETURN ( !empty( ::selectFetchArray( cSentence ) ) )
 
 //---------------------------------------------------------------------------//
