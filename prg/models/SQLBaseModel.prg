@@ -63,7 +63,7 @@ CLASS SQLBaseModel
    METHOD   setFind( cFind )                       INLINE   ( ::cFind := cFind )
    METHOD   find( cFind )
 
-   METHOD   exist( uValue )                        INLINE   ( .t. )
+   METHOD   exist( cValue )
    METHOD   getName()                              INLINE   ( "" )
 
    METHOD   getBuffer( cColumn )                   INLINE   ( hget( ::hBuffer, cColumn ) )
@@ -84,8 +84,6 @@ CLASS SQLBaseModel
 
    METHOD   setFastReportRecordset( oFastReport, cSentence, cColumns )
    METHOD      serializeColumns()
-
-   METHOD   exist( cValue )
 
    METHOD   checksForValid()
 
@@ -554,7 +552,8 @@ METHOD exist( cValue )
 
    local cSentence               := "SELECT " + ::cColumnKey + " FROM " + ::cTableName + " WHERE id = " + toSQLString( cValue )
 
-   msgalert( csentence, "existe?" )
+   msgStop( cSentence, "existe?" )
+   msgStop( !empty( ::selectFetchArray( cSentence ) ), "selectFetchArray" )
 
 RETURN ( !empty( ::selectFetchArray( cSentence ) ) )
 
