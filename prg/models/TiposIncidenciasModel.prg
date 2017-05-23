@@ -30,9 +30,9 @@ METHOD New()
                                                                   "text"		=> "Identificador"                              ,;
    															                  "dbfField" 	=> "" }                                         ,;
                                        "codigo"             => {  "create"    => "VARCHAR( 3 )"                               ,;
-                                                                  "text"      => "Código de identificación en DBF"            ,; 
+                                                                  "text"      => "C?igo de identificaci? en DBF"            ,; 
                                                                   "dbfField"  => "cCodInci"}                                  ,;  
-                                       "nombre"             => {  "create"    => "VARCHAR (50) NOT NULL"                      ,;
+                                       "nombre"             => {  "create"    => "VARCHAR (50)"                      ,;
                                                                   "text"      => "Nombre de la incidencia"                    ,;
                                                                   "dbfField"  => "cNomInci"}                                  ,;
                                        "empresa"            => {  "create"    => "CHAR ( 4 )"                                 ,;

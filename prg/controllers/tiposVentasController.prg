@@ -33,7 +33,6 @@ Return ( Self )
 METHOD validDialog( oDlg, oGetNombre, oGetCodigo )
 
    local idForNombre
-   local idForCodigo
 
    if empty( ::oModel:hBuffer[ "nombre" ] )
       msgStop( "El nombre de la venta no puede estar vacío." )
@@ -54,30 +53,6 @@ METHOD validDialog( oDlg, oGetNombre, oGetCodigo )
       if ( idForNombre == ::oModel:hBuffer[ "id" ] .and. ::isDuplicateMode() )  
          msgStop( "El nombre de la venta ya existe" )
          oGetNombre:setFocus()
-         RETURN ( .f. )
-      end if
-
-   end if 
-
-   if empty( ::oModel:hBuffer[ "codigo" ] )
-      MsgStop( "El codigo del tipo de venta no puede estar vacío." )
-      oGetCodigo:setFocus()
-      Return ( .f. )
-   end if
-
-   idForCodigo    := ::oModel:ChecksForValid( "codigo" )
-
-   if ( !empty( idForCodigo ) )
-
-      if ( idForCodigo != ::oModel:hBuffer[ "id" ] .and. !::isDuplicateMode() )
-         msgStop( "El código de la venta ya existe" )
-         oGetCodigo:setFocus()
-         RETURN ( .f. )
-      end if
-
-      if ( idForCodigo == ::oModel:hBuffer[ "id" ] .and. ::isDuplicateMode() )
-         msgStop( "El código de la venta ya existe" )
-         oGetCodigo:setFocus()
          RETURN ( .f. )
       end if
 

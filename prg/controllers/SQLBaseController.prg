@@ -209,6 +209,12 @@ METHOD getHistory( cWnd )
 
    local hFetch      := HistoricosUsuariosModel():New():getHistory( ::oModel:cTableName + cWnd )
 
+msgalert( hb_valtoexp( hFetch ) )
+
+   if empty(hFetch)
+   	 RETURN ( nil )
+   endif
+
    if hhaskey( hFetch, "cBrowseState" )
       ::oView:setBrowseState( hFetch[ "cBrowseState" ] )
    endif
@@ -220,6 +226,10 @@ RETURN ( hFetch )
 METHOD getHistoryShell()
 
    local hFetch   := ::getHistory( "_shell" )
+
+   if empty(hFetch)
+   	 RETURN ( nil )
+   endif
 
    if hhaskey( hFetch, "cColumnOrder" )
       ::oModel:setColumnOrder( hFetch[ "cColumnOrder" ] )
