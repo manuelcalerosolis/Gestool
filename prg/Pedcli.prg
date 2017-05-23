@@ -4198,8 +4198,6 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbf, oBrw, lTotLin, cCodArtEnt, nMode, aTmpP
    local oBrwAlbCli
    local oBrwFacCli
    local oBrwAlbPrv
-   local oGet2
-   local cGet2
    local oGet3
    local cGet3
    local oTot           	:= Array( 6 )
@@ -4765,20 +4763,16 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbf, oBrw, lTotLin, cCodArtEnt, nMode, aTmpP
       -------------------------------------------------------------------------
       */
 
-		REDEFINE GET aGet[_CTIPMOV] VAR aTmp[ _CTIPMOV ] ;
-         WHEN     ( nMode != ZOOM_MODE .AND. !lTotLin ) ;
-			VALID		( cTVta( aGet[_CTIPMOV], dbfTVta, oGet2 ) ) ;
-         BITMAP   "LUPA" ;
-         ON HELP  ( BrwTVta( aGet[_CTIPMOV], dbfTVta, oGet2 ) ) ;
-         ID       290 ;
-         OF       oFld:aDialogs[1] ;
-         IDSAY    292 ;
-
-		REDEFINE GET oGet2 VAR cGet2 ;
-         ID       291 ;
-			WHEN 		( .F. ) ;
-			COLOR 	CLR_GET ;
-         OF       oFld:aDialogs[1]
+      REDEFINE GET   aGet[ ( D():PedidosClientesLineas( nView ) )->( fieldpos( "id_tipo_v" ) ) ] ;
+         VAR         aTmp[ ( D():PedidosClientesLineas( nView ) )->( fieldpos( "id_tipo_v" ) ) ] ;
+         WHEN        ( nMode != ZOOM_MODE .AND. !lTotLin ) ;
+         VALID       ( TiposVentasController():Instance():isValidGet( aGet[ ( D():PedidosClientesLineas( nView ) )->( fieldpos( "id_tipo_v" ) ) ] ) ) ;
+         BITMAP      "LUPA" ;
+         ON HELP     ( TiposVentasController():Instance():assignBrowse( aGet[ ( D():PedidosClientesLineas( nView ) )->( fieldpos( "id_tipo_v" ) ) ] ) ) ;
+         ID          290 ;
+         IDSAY       292 ;
+         IDTEXT      291 ;
+         OF          oFld:aDialogs[1]
 
       /*
       Codigo de almacen--------------------------------------------------------
@@ -5402,7 +5396,7 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbf, oBrw, lTotLin, cCodArtEnt, nMode, aTmpP
          ID       IDOK ;
          OF       oDlg ;
 			WHEN 		( nMode != ZOOM_MODE ) ;
-         ACTION   ( SaveDeta( aTmp, aTmpPed, aGet, oFld, oDlg, oBrw, bmpImage, nMode, oStkAct, oSayPr1, oSayPr2, oSayVp1, oSayVp2, oGet2, oTotal, oEstadoProduccion, oBtn ) )
+         ACTION   ( SaveDeta( aTmp, aTmpPed, aGet, oFld, oDlg, oBrw, bmpImage, nMode, oStkAct, oSayPr1, oSayPr2, oSayVp1, oSayVp2, oTotal, oEstadoProduccion, oBtn ) )
 
 		REDEFINE BUTTON ;
          ID       IDCANCEL ;
@@ -5431,7 +5425,7 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbf, oBrw, lTotLin, cCodArtEnt, nMode, aTmpP
 
       oDlg:AddFastKey( VK_F1, {|| ChmHelp( "Añadir_v" ) } )
 
-      oDlg:bStart := {||   SetDlgMode( aTmp, aGet, nMode, oStkAct, oSayPr1, oSayPr2, oSayVp1, oSayVp2, oGet2, oTotal, aTmpPed, oFld, oRentLin, oBrwAlbCli, oBrwAlbPrv, oBrwFacCli ),;
+      oDlg:bStart := {||   SetDlgMode( aTmp, aGet, nMode, oStkAct, oSayPr1, oSayPr2, oSayVp1, oSayVp2, oTotal, aTmpPed, oFld, oRentLin, oBrwAlbCli, oBrwAlbPrv, oBrwFacCli ),;
                            if( !Empty( oBtnSer ), oBtnSer:Hide(), ),;
                            if( !Empty( cCodArtEnt ), aGet[ _CREF ]:lValid(), ),;
                            loadGet( aGet[ _CTERCTR ], cTipoCtrCoste ), aGet[ _CTERCTR ]:lValid(),;
@@ -8925,7 +8919,7 @@ Return ( .t. )
 Estudiamos la posiblidades que se pueden dar en una linea de detalle
 */
 
-STATIC FUNCTION SetDlgMode( aTmp, aGet, nMode, oStkAct, oSayPr1, oSayPr2, oSayVp1, oSayVp2, oGet2, oTotal, aTmpPed, oFld, oRentLin, oBrwAlbCli, oBrwAlbPrv, oBrwFacCli )
+STATIC FUNCTION SetDlgMode( aTmp, aGet, nMode, oStkAct, oSayPr1, oSayPr2, oSayVp1, oSayVp2, oTotal, aTmpPed, oFld, oRentLin, oBrwAlbCli, oBrwAlbPrv, oBrwFacCli )
 
    local cCodArt        := Left( aGet[ _CREF ]:VarGet(), 18 )
    
@@ -8961,13 +8955,6 @@ STATIC FUNCTION SetDlgMode( aTmp, aGet, nMode, oStkAct, oSayPr1, oSayPr2, oSayVp
    end if
 
    aGet[ _NUNICAJA ]:SetText( cNombreUnidades() )
-
-   if !lTipMov()
-      if !Empty( aGet[ _CTIPMOV ] ) .and. !Empty( oGet2 )
-         aGet[ _CTIPMOV ]:hide()
-         oGet2:hide()
-      end if
-   end if
 
    if aGet[ _NVALIMP ] != nil
       if !uFieldEmpresa( "lUseImp", .f. )
@@ -9005,6 +8992,8 @@ STATIC FUNCTION SetDlgMode( aTmp, aGet, nMode, oStkAct, oSayPr1, oSayPr2, oSayVp
       aGet[ _NPREDIV ]:Hide()
       aGet[ _NPREALQ ]:Show()
    end if
+
+   aGet[ ( D():PedidosClientesLineas( nView ) )->( fieldpos( "id_tipo_v" ) ) ]:lValid()
 
    do case
    case nMode == APPD_MODE
@@ -9332,7 +9321,7 @@ Return nil
 
 //--------------------------------------------------------------------------//
 
-STATIC FUNCTION SaveDeta( aTmp, aTmpPed, aGet, oFld, oDlg2, oBrw, bmpImage, nMode, oStkAct, oSayPr1, oSayPr2, oSayVp1, oSayVp2, oGet2, oTotal, oEstadoProduccion, oBtn )
+STATIC FUNCTION SaveDeta( aTmp, aTmpPed, aGet, oFld, oDlg2, oBrw, bmpImage, nMode, oStkAct, oSayPr1, oSayPr2, oSayVp1, oSayVp2, oTotal, oEstadoProduccion, oBtn )
 
    local n
    local i 
@@ -9461,7 +9450,7 @@ STATIC FUNCTION SaveDeta( aTmp, aTmpPed, aGet, oFld, oDlg2, oBrw, bmpImage, nMod
       aCopy( dbBlankRec( dbfTmpLin ), aTmp )
       aEval( aGet, {| o, i | if( "GET" $ o:ClassName(), o:cText( aTmp[ i ] ), ) } )
 
-      setDlgMode( aTmp, aGet, nMode, oStkAct, oSayPr1, oSayPr2, oSayVp1, oSayVp2, oGet2, oTotal, aTmpPed, oFld )
+      setDlgMode( aTmp, aGet, nMode, oStkAct, oSayPr1, oSayPr2, oSayVp1, oSayVp2, oTotal, aTmpPed, oFld )
 
       sysRefresh()
 
@@ -14779,6 +14768,7 @@ function aColPedCli()
    aAdd( aColPedCli, { "cTipCtr",   "C",   20,  0, "Tipo tercero centro de coste",                    "",                           "", "( cDbfCol )", nil } )
    aAdd( aColPedCli, { "cTerCtr",   "C",   20,  0, "Tercero centro de coste",                         "",                           "", "( cDbfCol )", nil } )
    aAdd( aColPedCli, { "nNumKit",   "N",    4,  0, "Número de línea de escandallo",                   "",                           "", "( cDbfCol )", nil } )
+   aAdd( aColPedCli, { "id_tipo_v", "N",   16,  0, "Identificador tipo de venta",                     "IdentificadorTipoVenta",     "", "( cDbfCol )", nil } )
 
 return ( aColPedCli )
 

@@ -425,7 +425,6 @@ static dbfIva
 static dbfClient
 static dbfCliBnc
 static dbfArtPrv
-static dbfTVta
 static dbfPromoT
 static dbfPromoL
 static dbfPromoC
@@ -1734,9 +1733,6 @@ STATIC FUNCTION OpenFiles()
       USE ( cPatDat() + "TIVA.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "TIVA", @dbfIva ) )
       SET ADSINDEX TO ( cPatDat() + "TIVA.CDX" ) ADDITIVE
 
-      USE ( cPatDat() + "TVTA.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "TVTA", @dbfTVta ) )
-      SET ADSINDEX TO ( cPatDat() + "TVTA.CDX" ) ADDITIVE
-
       USE ( cPatDat() + "DIVISAS.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "DIVISAS", @dbfDiv ) )
       SET ADSINDEX TO ( cPatDat() + "DIVISAS.CDX" ) ADDITIVE
 
@@ -2122,10 +2118,6 @@ STATIC FUNCTION CloseFiles()
       ( dbfPromoC  )->( dbCloseArea() )
    end if
 
-   if !empty( dbfTVta )
-      ( dbfTVta    )->( dbCloseArea() )
-   end if
-
    if !empty( dbfAlm )
       ( dbfAlm    )->( dbCloseArea() )
    end if
@@ -2334,7 +2326,6 @@ STATIC FUNCTION CloseFiles()
    dbfPromoL   := nil
    dbfPromoC   := nil
    dbfAlm      := nil
-   dbfTVta     := nil
    dbfDiv      := nil
    oBandera    := nil
    dbfObrasT   := nil
@@ -5197,15 +5188,21 @@ STATIC FUNCTION EdtDet( aTmp, aGet, cFacCliL, oBrw, lTotLin, cCodArtEnt, nMode, 
          WHEN     ( .F. ) ;
          OF       fldGeneral
 
-      REDEFINE GET aGet[ _CTIPMOV ] VAR aTmp[ _CTIPMOV ] ;
-         WHEN     ( nMode != ZOOM_MODE .AND. !lTotLin ) ;
-         VALID    ( cTVta( aGet[_CTIPMOV], dbfTVta, aGet[ _CTIPMOV ]:oHelpText ) ) ;
-         BITMAP   "LUPA" ;
-         ON HELP  ( BrwTVta( aGet[_CTIPMOV], dbfTVta, aGet[ _CTIPMOV ]:oHelpText ) ) ;
-         ID       290 ;
-         IDTEXT   291 ;
-         OF       fldGeneral ;
-         IDSAY    292 ;
+      /*
+      Tipo de moviminto
+      -------------------------------------------------------------------------
+      */
+
+      REDEFINE GET   aGet[ ( D():FacturasClientesLineas( nView ) )->( fieldpos( "id_tipo_v" ) ) ] ;
+         VAR         aTmp[ ( D():FacturasClientesLineas( nView ) )->( fieldpos( "id_tipo_v" ) ) ] ;
+         WHEN        ( nMode != ZOOM_MODE .and. nMode != MULT_MODE .and. !lTotLin ) ;
+         VALID       ( TiposVentasController():Instance():isValidGet( aGet[ ( D():FacturasClientesLineas( nView ) )->( fieldpos( "id_tipo_v" ) ) ] ) ) ;
+         BITMAP      "LUPA" ;
+         ON HELP     ( TiposVentasController():Instance():assignBrowse( aGet[ ( D():FacturasClientesLineas( nView ) )->( fieldpos( "id_tipo_v" ) ) ] ) ) ;
+         ID          290 ;
+         IDSAY       292 ;
+         IDTEXT      291 ;
+         OF          fldGeneral
 
       REDEFINE GET aGet[ _CALMLIN ] VAR aTmp[ _CALMLIN ] ;
          ID       300 ;
@@ -10220,9 +10217,6 @@ Static Function DataReport( oFr )
    oFr:SetWorkArea(     "Tipo artículo",  oTipArt:Select() )
    oFr:SetFieldAliases( "Tipo artículo",  cObjectsToReport( oTipArt:oDbf ) )
 
-   oFr:SetWorkArea(     "Tipo de venta", ( dbfTVta )->( Select() ) )
-   oFr:SetFieldAliases( "Tipo de venta", cItemsToReport( aItmTVta() ) )
-
    oFr:SetWorkArea(     "Recibos", ( D():FacturasClientesCobros( nView ) )->( Select() ) )
    oFr:SetFieldAliases( "Recibos", cItemsToReport( aItmRecCli() ) )
 
@@ -11686,12 +11680,6 @@ STATIC FUNCTION SetDlgMode( aTmp, aGet, oFld, oSayPr1, oSayPr2, oSayVp1, oSayVp2
 
    end if
 
-   if !lTipMov()
-      if !empty( aGet[ _CTIPMOV ] ) 
-         aGet[ _CTIPMOV ]:hide()
-      end if
-   end if
-
    if aGet[ _NIMPTRN ] != nil
       if !uFieldEmpresa( "lUsePor", .f. )
          aGet[ _NIMPTRN ]:Hide()
@@ -11744,6 +11732,8 @@ STATIC FUNCTION SetDlgMode( aTmp, aGet, oFld, oSayPr1, oSayPr2, oSayVp1, oSayVp2
 
    end if
 
+   aGet[ ( D():FacturasClientesLineas( nView ) )->( fieldpos( "id_tipo_v" ) ) ]:lValid()
+
    do case
    case nMode == APPD_MODE
 
@@ -11770,10 +11760,6 @@ STATIC FUNCTION SetDlgMode( aTmp, aGet, oFld, oSayPr1, oSayPr2, oSayVp1, oSayVp2
       else
          aTmp[ _CALMLIN ]  := aTmpFac[ _CCODALM ]
       end if   
-
-      if lTipMov() .and. aGet[ _CTIPMOV ] != nil
-         aGet[ _CTIPMOV  ]:cText( cDefVta() )
-      end if
 
       if !empty( aGet[ _CDETALLE] )
          aGet[ _CDETALLE]:Show()
@@ -19422,6 +19408,7 @@ function aColFacCli()
    aAdd( aColFacCli, { "cTipCtr",   "C",  20, 0, "Tipo tercero centro de coste"           , "",                            "", "( cDbfCol )", nil } )
    aAdd( aColFacCli, { "cTerCtr",   "C",  20, 0, "Tercero centro de coste"                , "",                            "", "( cDbfCol )", nil } )
    aAdd( aColFacCli, { "nNumKit",   "N",   4, 0, "Número de línea de escandallo"          , "",                            "", "( cDbfCol )", nil } )
+   aAdd( aColFacCli, { "id_tipo_v", "N",  16, 0, "Identificador tipo de venta"            , "IdentificadorTipoVenta",      "", "( cDbfCol )", nil } )
 
 return ( aColFacCli )
 

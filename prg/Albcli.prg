@@ -4799,16 +4799,16 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbf, oBrw, lTotLin, cCodArtEnt, nMode, aTmpA
       -------------------------------------------------------------------------
       */
 
-      REDEFINE GET aGet[ _CTIPMOV ] ;
-         VAR      aTmp[ _CTIPMOV ] ;
-         ID       290 ;
-         IDTEXT   291 ;
-         IDSAY    292 ;
-         WHEN     ( !aTmp[ _LCONTROL ] .and. nMode != ZOOM_MODE .and. !lTotLin ) ;
-         VALID    ( TiposVentasController():Instance():isValidGet( aGet[ _CTIPMOV ] ) ) ;
-         BITMAP   "LUPA" ;
-         ON HELP  ( TiposVentasController():Instance():assignBrowse( aGet[ _CTIPMOV ] ) ) ;
-         OF       oFld:aDialogs[1] ;
+      REDEFINE GET   aGet[ ( D():AlbaranesClientesLineas( nView ) )->( fieldpos( "id_tipo_v" ) ) ] ;
+         VAR         aTmp[ ( D():AlbaranesClientesLineas( nView ) )->( fieldpos( "id_tipo_v" ) ) ] ;
+         WHEN        ( nMode != ZOOM_MODE .AND. !lTotLin ) ;
+         VALID       ( TiposVentasController():Instance():isValidGet( aGet[ ( D():AlbaranesClientesLineas( nView ) )->( fieldpos( "id_tipo_v" ) ) ] ) ) ;
+         BITMAP      "LUPA" ;
+         ON HELP     ( TiposVentasController():Instance():assignBrowse( aGet[ ( D():AlbaranesClientesLineas( nView ) )->( fieldpos( "id_tipo_v" ) ) ] ) ) ;
+         ID          290 ;
+         IDSAY       292 ;
+         IDTEXT      291 ;
+         OF          oFld:aDialogs[1]
 
       /*
       Tipo de articulo---------------------------------------------------------
@@ -5007,9 +5007,6 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbf, oBrw, lTotLin, cCodArtEnt, nMode, aTmpA
          ID       110 ;
          WHEN     ( nMode != ZOOM_MODE ) ;
          OF       oFld:aDialogs[ 3 ]
-
-      
-
 
       REDEFINE GET aGet[ __CCENTROCOSTE ] VAR aTmp[ __CCENTROCOSTE ] ;
          ID       410 ;
@@ -5728,7 +5725,7 @@ STATIC FUNCTION cPedCli( aGet, aTmp, oBrwLin, oBrwPgo, nMode )
             (dbfTmpLin)->nCtlStk    := (dbfPedCliL)->nCtlStk
             (dbfTmpLin)->nCosDiv    := (dbfPedCliL)->nCosDiv
             (dbfTmpLin)->nPvpRec    := (dbfPedCliL)->nPvpRec
-            (dbfTmpLin)->cTipMov    := (dbfPedCliL)->cTipMov
+            (dbfTmpLin)->id_tipo_v  := (dbfPedCliL)->id_tipo_v
             (dbfTmpLin)->cAlmLin    := (dbfPedCliL)->cAlmLin
             (dbfTmpLin)->lIvaLin    := (dbfPedCliL)->lIvaLin
             (dbfTmpLin)->cCodImp    := (dbfPedCLiL)->cCodImp
@@ -6320,7 +6317,7 @@ STATIC FUNCTION GrpPed( aGet, aTmp, oBrw )
                      (dbfTmpLin)->nDtoPrm    := (dbfPedCliL)->nDtoPrm
                      (dbfTmpLin)->nComAge    := (dbfPedCliL)->nComAge
                      (dbfTmpLin)->dFecHa     := (dbfPedCliL)->dFecha
-                     (dbfTmpLin)->cTipMov    := (dbfPedCliL)->cTipMov
+                     (dbfTmpLin)->id_tipo_v  := (dbfPedCliL)->id_tipo_v
                      (dbfTmpLin)->nDtoDiv    := (dbfPedCliL)->nDtoDiv
                      (dbfTmpLin)->nUndKit    := (dbfPedCliL)->nUndKit
                      (dbfTmpLin)->lKitArt    := (dbfPedCliL)->lKitArt
@@ -6411,7 +6408,7 @@ STATIC FUNCTION GrpPed( aGet, aTmp, oBrw )
                   ( dbfTmpLin )->nDtoPrm     := ( dbfPedCliL )->nDtoPrm
                   ( dbfTmpLin )->nComAge     := ( dbfPedCliL )->nComAge
                   ( dbfTmpLin )->dFecHa      := ( dbfPedCliL )->dFecha
-                  ( dbfTmpLin )->cTipMov     := ( dbfPedCliL )->cTipMov
+                  ( dbfTmpLin )->id_tipo_v   := ( dbfPedCliL )->id_tipo_v
                   ( dbfTmpLin )->nDtoDiv     := ( dbfPedCliL )->nDtoDiv
                   ( dbfTmpLin )->nUniCaja    := ( dbfPedCliL )->nUniCaja - ( dbfPedCliL )->nUniEnt
                   ( dbfTmpLin )->nCanEnt     := ( dbfPedCliL )->nCanPed  - ( dbfPedCliL )->nCanEnt
@@ -9797,6 +9794,8 @@ STATIC FUNCTION SetDlgMode( aTmp, aTmpAlb, nMode, aGet, oFld, oSayPr1, oSayPr2, 
       oRentLin:Hide()
    end if
 
+   aGet[ ( D():AlbaranesClientesLineas( nView ) )->( fieldpos( "id_tipo_v" ) ) ]:lValid()
+
    do case
    case nMode == APPD_MODE
 
@@ -9823,7 +9822,6 @@ STATIC FUNCTION SetDlgMode( aTmp, aTmpAlb, nMode, aGet, oFld, oSayPr1, oSayPr2, 
          aGet[ _NPOSPRINT]:cText( aTmp[ _NPOSPRINT ] )
          aGet[ _CALMLIN  ]:cText( aTmp[ _CALMLIN  ] )
          aGet[ _NIVA     ]:cText( aTmp[ _NIVA] )
-         aGet[ _CTIPMOV  ]:cText( aTmp[ _CTIPMOV ] )
 
          aGet[ _LCONTROL ]:Click( .f. )
          aGet[ _CDETALLE ]:Show()
@@ -10028,7 +10026,6 @@ STATIC FUNCTION SetDlgMode( aTmp, aTmpAlb, nMode, aGet, oFld, oSayPr1, oSayPr2, 
    // Focus al codigo-------------------------------------------------------------
 
    if !empty( aGet )
-      aGet[ _CTIPMOV ]:lValid()
       aGet[ _CALMLIN ]:lValid()
       aGet[ _CCODPRV ]:lValid()
       aGet[ _COBRLIN ]:lValid()      
@@ -12448,7 +12445,7 @@ STATIC FUNCTION cPreCli( aGet, aTmp, oBrw, nMode )
                (dbfTmpLin)->nCtlStk    := (dbfPreCliL)->nCtlStk
                (dbfTmpLin)->nCosDiv    := (dbfPreCliL)->nCosDiv
                (dbfTmpLin)->nPvpRec    := (dbfPreCliL)->nPvpRec
-               (dbfTmpLin)->cTipMov    := (dbfPreCliL)->cTipMov
+               (dbfTmpLin)->id_tipo_v  := (dbfPreCliL)->id_tipo_v
                (dbfTmpLin)->cAlmLin    := (dbfPreCliL)->cAlmLin
                (dbfTmpLin)->cCodImp    := (dbfPedCLiL)->cCodImp
                (dbfTmpLin)->nValImp    := (dbfPreCliL)->nValImp
@@ -12702,7 +12699,7 @@ STATIC FUNCTION cSatCli( aGet, aTmp, oBrw, nMode )
                ( dbfTmpLin )->nDtoDiv    := ( D():SatClientesLineas( nView ) )->nDtoDiv
                ( dbfTmpLin )->nCtlStk    := ( D():SatClientesLineas( nView ) )->nCtlStk
                ( dbfTmpLin )->nCosDiv    := ( D():SatClientesLineas( nView ) )->nCosDiv
-               ( dbfTmpLin )->cTipMov    := ( D():SatClientesLineas( nView ) )->cTipMov
+               ( dbfTmpLin )->id_tipo_v  := ( D():SatClientesLineas( nView ) )->id_tipo_v
                ( dbfTmpLin )->cAlmLin    := ( D():SatClientesLineas( nView ) )->cAlmLin
                ( dbfTmpLin )->cCodImp    := ( D():SatClientesLineas( nView ) )->cCodImp
                ( dbfTmpLin )->nValImp    := ( D():SatClientesLineas( nView ) )->nValImp
@@ -16965,6 +16962,7 @@ Function aColAlbCli()
    aAdd( aColAlbCli, { "cTipCtr",   "C", 20, 0, "Tipo tercero centro de coste",                    "",                              "", "( cDbfCol )", nil } )
    aAdd( aColAlbCli, { "cTerCtr",   "C", 20, 0, "Tercero centro de coste",                         "",                              "", "( cDbfCol )", nil } )
    aAdd( aColAlbCli, { "nNumKit",   "N",  4, 0, "Número de línea de escandallo",                   "",                              "", "( cDbfCol )", nil } )
+   aAdd( aColAlbCli, { "id_tipo_v", "N", 16, 0, "Identificador tipo de venta",                     "IdentificadorTipoVenta",        "", "( cDbfCol )", nil } )
 
 Return ( aColAlbCli )
 

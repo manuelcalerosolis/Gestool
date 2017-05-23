@@ -300,7 +300,6 @@ static oBrwIva
 static dbfRuta
 static dbfTikCliT
 static dbfFacRecT
-static dbfFacRecL
 static dbfFacRecI
 static dbfFacRecD
 static dbfFacRecS
@@ -332,7 +331,6 @@ static dbfClient
 static dbfArtPrv
 static dbfFPago
 static dbfAgent
-static dbfTVta
 static dbfPromoT
 static dbfPromoL
 static dbfPromoC
@@ -594,8 +592,7 @@ STATIC FUNCTION OpenFiles( lExt )
 
       D():PropiedadesLineas( nView )
 
-      USE ( cPatEmp() + "FacRecL.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "FacRecL", @dbfFacRecL ) )
-      SET ADSINDEX TO ( cPatEmp() + "FacRecL.CDX" ) ADDITIVE
+      D():FacturasRectificativasLineas( nView ) 
 
       USE ( cPatEmp() + "FacRecI.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "FacRecI", @dbfFacRecI ) )
       SET ADSINDEX TO ( cPatEmp() + "FacRecI.CDX" ) ADDITIVE
@@ -665,9 +662,6 @@ STATIC FUNCTION OpenFiles( lExt )
 
       USE ( cPatEmp() + "FPAGO.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "FPAGO", @dbfFPago ) )
       SET ADSINDEX TO ( cPatEmp() + "FPAGO.CDX" ) ADDITIVE
-
-      USE ( cPatDat() + "TVTA.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "TVTA", @dbfTVta ) )
-      SET ADSINDEX TO ( cPatDat() + "TVTA.CDX" ) ADDITIVE
 
       USE ( cPatDat() + "DIVISAS.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "DIVISAS", @dbfDiv ) )
       SET ADSINDEX TO ( cPatDat() + "DIVISAS.CDX" ) ADDITIVE
@@ -949,10 +943,6 @@ STATIC FUNCTION CloseFiles()
       ( dbfAgent   )->( dbCloseArea() )
    end if
 
-   if !empty( dbfFacRecL )
-      ( dbfFacRecL )->( dbCloseArea() )
-   end if
-
    if !empty( dbfFacRecS )
       ( dbfFacRecS )->( dbCloseArea() )
    end if
@@ -1047,10 +1037,6 @@ STATIC FUNCTION CloseFiles()
 
    if !empty( dbfPromoC )
       ( dbfPromoC  )->( dbCloseArea() )
-   end if
-
-   if !empty( dbfTVta )
-   ( dbfTVta    )->( dbCloseArea() )
    end if
 
    if !empty( dbfAlm )
@@ -1228,7 +1214,6 @@ STATIC FUNCTION CloseFiles()
    dbfIva      := nil
    dbfFPago    := nil
    dbfAgent    := nil
-   dbfFacRecL  := nil
    dbfFacRecD  := nil
    dbfFacRecS  := nil
    dbfFacCliT  := nil
@@ -1251,7 +1236,6 @@ STATIC FUNCTION CloseFiles()
    dbfPromoL   := nil
    dbfPromoC   := nil
    dbfAlm      := nil
-   dbfTVta     := nil
    dbfDiv      := nil
    oBandera    := nil
    dbfObrasT   := nil
@@ -1759,7 +1743,7 @@ FUNCTION FacRec( oMenuItem, oWnd, cCodCli, cCodArt, cCodPed, aNumDoc )
 
    DEFINE BTNSHELL RESOURCE "BMPCONTA" OF oWndBrw ;
       NOBORDER ;
-      ACTION   ( aGetSelRec( oWndBrw, {|lChk1, lChk2, oTree| CntFacRec( lChk1, lChk2, nil, .t., oTree, nil, nil, D():FacturasRectificativas( nView ), dbfFacRecL, dbfFacCliP, D():Clientes( nView ), dbfDiv, D():Articulos( nView ), dbfFPago, dbfIva, oNewImp ) }, "Contabilizar facturas rectificativas", .f., "Simular resultados", .f., "Contabilizar recibos", {|| oDiario() }, {|| cDiario() } ) ) ;
+      ACTION   ( aGetSelRec( oWndBrw, {|lChk1, lChk2, oTree| CntFacRec( lChk1, lChk2, nil, .t., oTree, nil, nil, D():FacturasRectificativas( nView ), D():FacturasRectificativasLineas( nView ), dbfFacCliP, D():Clientes( nView ), dbfDiv, D():Articulos( nView ), dbfFPago, dbfIva, oNewImp ) }, "Contabilizar facturas rectificativas", .f., "Simular resultados", .f., "Contabilizar recibos", {|| oDiario() }, {|| cDiario() } ) ) ;
       TOOLTIP  "(C)ontabilizar" ;
       HOTKEY   "C";
       LEVEL    ACC_EDIT
@@ -1831,7 +1815,7 @@ FUNCTION FacRec( oMenuItem, oWnd, cCodCli, cCodArt, cCodPed, aNumDoc )
 
    DEFINE BTNSHELL RESOURCE "BMPCHG" OF oWndBrw ;
       NOBORDER ;
-      ACTION   ( ReplaceCreator( oWndBrw, dbfFacRecL, aColFacRec() ) ) ;
+      ACTION   ( ReplaceCreator( oWndBrw, D():FacturasRectificativasLineas( nView ), aColFacRec() ) ) ;
       TOOLTIP  "Lineas" ;
       FROM     oRpl ;
       CLOSED ;
@@ -4001,8 +3985,8 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbfFacRecL, oBrw, lTotLin, cCodArtEnt, nMode
 
       // Campos de las descripciones de la unidad de medición
 
-      REDEFINE GET aGet[ ( dbfFacRecL )->( fieldpos( "nMedUno" ) ) ] ;
-         VAR      aTmp[ ( dbfFacRecL )->( fieldpos( "nMedUno" ) ) ] ;
+      REDEFINE GET aGet[ ( D():FacturasRectificativasLineas( nView ) )->( fieldpos( "nMedUno" ) ) ] ;
+         VAR      aTmp[ ( D():FacturasRectificativasLineas( nView ) )->( fieldpos( "nMedUno" ) ) ] ;
          ID       520 ;
          IDSAY    521 ;
          SPINNER ;
@@ -4011,10 +3995,10 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbfFacRecL, oBrw, lTotLin, cCodArtEnt, nMode
          PICTURE  MasUnd() ;
          OF       oFld:aDialogs[1]
 
-         aGet[ ( dbfFacRecL )->( fieldpos( "nMedUno" ) ) ]:oSay:SetColor( CLR_BLUE )
+         aGet[ ( D():FacturasRectificativasLineas( nView ) )->( fieldpos( "nMedUno" ) ) ]:oSay:SetColor( CLR_BLUE )
 
-      REDEFINE GET aGet[ ( dbfFacRecL )->( fieldpos( "nMedDos" ) ) ] ;
-         VAR      aTmp[ ( dbfFacRecL )->( fieldpos( "nMedDos" ) ) ] ;
+      REDEFINE GET aGet[ ( D():FacturasRectificativasLineas( nView ) )->( fieldpos( "nMedDos" ) ) ] ;
+         VAR      aTmp[ ( D():FacturasRectificativasLineas( nView ) )->( fieldpos( "nMedDos" ) ) ] ;
          ID       530 ;
          IDSAY    531 ;
          SPINNER ;
@@ -4174,15 +4158,21 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbfFacRecL, oBrw, lTotLin, cCodArtEnt, nMode
          IDTEXT   206 ;
          OF       oFld:aDialogs[1]
 
-      REDEFINE GET aGet[ _CTIPMOV ] VAR aTmp[ _CTIPMOV ] ;
-         WHEN     ( nMode != ZOOM_MODE .AND. !lTotLin ) ;
-         VALID    ( cTVta( aGet[ _CTIPMOV ], dbfTVta, aGet[ _CTIPMOV ]:oHelpText ) ) ;
-         BITMAP   "LUPA" ;
-         ON HELP  ( BrwTVta( aGet[ _CTIPMOV ], dbfTVta, aGet[ _CTIPMOV ]:oHelpText ) ) ;
-         ID       290 ;
-         IDTEXT   291 ;
-         OF       oFld:aDialogs[1] ;
-         IDSAY    292 ;
+      /*
+      Tipo de moviminto
+      -------------------------------------------------------------------------
+      */
+
+      REDEFINE GET   aGet[ ( D():FacturasRectificativasLineas( nView ) )->( fieldpos( "id_tipo_v" ) ) ] ;
+         VAR         aTmp[ ( D():FacturasRectificativasLineas( nView ) )->( fieldpos( "id_tipo_v" ) ) ] ;
+         WHEN        ( nMode != ZOOM_MODE .and. nMode != MULT_MODE .and. !lTotLin ) ;
+         VALID       ( TiposVentasController():Instance():isValidGet( aGet[ ( D():FacturasRectificativasLineas( nView ) )->( fieldpos( "id_tipo_v" ) ) ] ) ) ;
+         BITMAP      "LUPA" ;
+         ON HELP     ( TiposVentasController():Instance():assignBrowse( aGet[ ( D():FacturasRectificativasLineas( nView ) )->( fieldpos( "id_tipo_v" ) ) ] ) ) ;
+         ID          290 ;
+         IDSAY       292 ;
+         IDTEXT      291 ;
+         OF          fldGeneral
 
       REDEFINE GET aGet[ _CALMLIN ] VAR aTmp[ _CALMLIN ] ;
          ID       300 ;
@@ -4474,10 +4464,6 @@ STATIC FUNCTION SetDlgMode( aTmp, aGet, oFld, oSayPr1, oSayPr2, oSayVp1, oSayVp2
       end if
    end if
 
-   if !lTipMov()
-      aGet[ _CTIPMOV ]:hide()
-   end if
-
    if !uFieldEmpresa( "lUsePor" )
       aGet[ _NIMPTRN ]:Hide()
    end if
@@ -4491,6 +4477,8 @@ STATIC FUNCTION SetDlgMode( aTmp, aGet, oFld, oSayPr1, oSayPr2, oSayVp1, oSayVp2
          aGet[ _NDTODIV ]:Hide()
       end if
    end if
+
+   aGet[ ( D():FacturasRectificativasClientesL( nView ) )->( fieldpos( "id_tipo_v" ) ) ]:lValid()
 
    do case
    case nMode == APPD_MODE
@@ -4609,66 +4597,66 @@ STATIC FUNCTION SetDlgMode( aTmp, aGet, oFld, oSayPr1, oSayPr2, oSayVp1, oSayVp2
    Ocultamos las tres unidades de medicion-------------------------------------
    */
 
-   if !empty( aGet[ ( dbfFacRecL )->( fieldpos( "nMedUno" ) ) ] )
-      aGet[ ( dbfFacRecL )->( fieldpos( "nMedUno" ) ) ]:Hide()
+   if !empty( aGet[ ( D():FacturasRectificativasLineas( nView ) )->( fieldpos( "nMedUno" ) ) ] )
+      aGet[ ( D():FacturasRectificativasLineas( nView ) )->( fieldpos( "nMedUno" ) ) ]:Hide()
    end if
 
-   if !empty( aGet[ ( dbfFacRecL )->( fieldpos( "nMedDos" ) ) ] )
-      aGet[ ( dbfFacRecL )->( fieldpos( "nMedDos" ) ) ]:Hide()
+   if !empty( aGet[ ( D():FacturasRectificativasLineas( nView ) )->( fieldpos( "nMedDos" ) ) ] )
+      aGet[ ( D():FacturasRectificativasLineas( nView ) )->( fieldpos( "nMedDos" ) ) ]:Hide()
    end if
 
-   if !empty( aGet[ ( dbfFacRecL )->( fieldpos( "nMedTre" ) ) ] )
-      aGet[ ( dbfFacRecL )->( fieldpos( "nMedTre" ) ) ]:Hide()
+   if !empty( aGet[ ( D():FacturasRectificativasLineas( nView ) )->( fieldpos( "nMedTre" ) ) ] )
+      aGet[ ( D():FacturasRectificativasLineas( nView ) )->( fieldpos( "nMedTre" ) ) ]:Hide()
    end if
 
    if oUndMedicion:oDbf:Seek( aTmp[ _CUNIDAD ] )
 
-      if !empty( aGet[ ( dbfFacRecL )->( fieldpos( "nMedUno" ) ) ] ) .and. oUndMedicion:oDbf:nDimension >= 1 .and. !empty( oUndMedicion:oDbf:cTextoDim1 )
-         aGet[ ( dbfFacRecL )->( fieldpos( "nMedUno" ) ) ]:oSay:SetText( oUndMedicion:oDbf:cTextoDim1 )
-         aGet[ ( dbfFacRecL )->( fieldpos( "nMedUno" ) ) ]:Show()
+      if !empty( aGet[ ( D():FacturasRectificativasLineas( nView ) )->( fieldpos( "nMedUno" ) ) ] ) .and. oUndMedicion:oDbf:nDimension >= 1 .and. !empty( oUndMedicion:oDbf:cTextoDim1 )
+         aGet[ ( D():FacturasRectificativasLineas( nView ) )->( fieldpos( "nMedUno" ) ) ]:oSay:SetText( oUndMedicion:oDbf:cTextoDim1 )
+         aGet[ ( D():FacturasRectificativasLineas( nView ) )->( fieldpos( "nMedUno" ) ) ]:Show()
       end if
 
-      if !empty( aGet[ ( dbfFacRecL )->( fieldpos( "nMedDos" ) ) ] ) .and. oUndMedicion:oDbf:nDimension >= 2 .and. !empty( oUndMedicion:oDbf:cTextoDim2 )
-         aGet[ ( dbfFacRecL )->( fieldpos( "nMedDos" ) ) ]:oSay:SetText( oUndMedicion:oDbf:cTextoDim2 )
-         aGet[ ( dbfFacRecL )->( fieldpos( "nMedDos" ) ) ]:Show()
+      if !empty( aGet[ ( D():FacturasRectificativasLineas( nView ) )->( fieldpos( "nMedDos" ) ) ] ) .and. oUndMedicion:oDbf:nDimension >= 2 .and. !empty( oUndMedicion:oDbf:cTextoDim2 )
+         aGet[ ( D():FacturasRectificativasLineas( nView ) )->( fieldpos( "nMedDos" ) ) ]:oSay:SetText( oUndMedicion:oDbf:cTextoDim2 )
+         aGet[ ( D():FacturasRectificativasLineas( nView ) )->( fieldpos( "nMedDos" ) ) ]:Show()
       end if
 
-      if !empty( aGet[ ( dbfFacRecL )->( fieldpos( "nMedTre" ) ) ] ) .and. oUndMedicion:oDbf:nDimension >= 3 .and. !empty( oUndMedicion:oDbf:cTextoDim3 )
-         aGet[ ( dbfFacRecL )->( fieldpos( "nMedTre" ) ) ]:oSay:SetText( oUndMedicion:oDbf:cTextoDim3 )
-         aGet[ ( dbfFacRecL )->( fieldpos( "nMedTre" ) ) ]:Show()
+      if !empty( aGet[ ( D():FacturasRectificativasLineas( nView ) )->( fieldpos( "nMedTre" ) ) ] ) .and. oUndMedicion:oDbf:nDimension >= 3 .and. !empty( oUndMedicion:oDbf:cTextoDim3 )
+         aGet[ ( D():FacturasRectificativasLineas( nView ) )->( fieldpos( "nMedTre" ) ) ]:oSay:SetText( oUndMedicion:oDbf:cTextoDim3 )
+         aGet[ ( D():FacturasRectificativasLineas( nView ) )->( fieldpos( "nMedTre" ) ) ]:Show()
       end if
 
    end if
 
    //Ocultamos las tres unidades de medicion
 
-   if !empty( aGet[ ( dbfFacRecL )->( fieldpos( "nMedUno" ) ) ] )
-      aGet[ ( dbfFacRecL )->( fieldpos( "nMedUno" ) ) ]:Hide()
+   if !empty( aGet[ ( D():FacturasRectificativasLineas( nView ) )->( fieldpos( "nMedUno" ) ) ] )
+      aGet[ ( D():FacturasRectificativasLineas( nView ) )->( fieldpos( "nMedUno" ) ) ]:Hide()
    end if
 
-   if !empty( aGet[ ( dbfFacRecL )->( fieldpos( "nMedDos" ) ) ] )
-      aGet[ ( dbfFacRecL )->( fieldpos( "nMedDos" ) ) ]:Hide()
+   if !empty( aGet[ ( D():FacturasRectificativasLineas( nView ) )->( fieldpos( "nMedDos" ) ) ] )
+      aGet[ ( D():FacturasRectificativasLineas( nView ) )->( fieldpos( "nMedDos" ) ) ]:Hide()
    end if
 
-   if !empty( aGet[ ( dbfFacRecL )->( fieldpos( "nMedTre" ) ) ] )
-      aGet[ ( dbfFacRecL )->( fieldpos( "nMedTre" ) ) ]:Hide()
+   if !empty( aGet[ ( D():FacturasRectificativasLineas( nView ) )->( fieldpos( "nMedTre" ) ) ] )
+      aGet[ ( D():FacturasRectificativasLineas( nView ) )->( fieldpos( "nMedTre" ) ) ]:Hide()
    end if
 
    if oUndMedicion:oDbf:Seek(  aTmp[ _CUNIDAD ] )
 
-      if !empty( aGet[ ( dbfFacRecL )->( fieldpos( "nMedUno" ) ) ] ) .and. oUndMedicion:oDbf:nDimension >= 1 .and. !empty( oUndMedicion:oDbf:cTextoDim1 )
-         aGet[ ( dbfFacRecL )->( fieldpos( "nMedUno" ) ) ]:oSay:SetText( oUndMedicion:oDbf:cTextoDim1 )
-         aGet[ ( dbfFacRecL )->( fieldpos( "nMedUno" ) ) ]:Show()
+      if !empty( aGet[ ( D():FacturasRectificativasLineas( nView ) )->( fieldpos( "nMedUno" ) ) ] ) .and. oUndMedicion:oDbf:nDimension >= 1 .and. !empty( oUndMedicion:oDbf:cTextoDim1 )
+         aGet[ ( D():FacturasRectificativasLineas( nView ) )->( fieldpos( "nMedUno" ) ) ]:oSay:SetText( oUndMedicion:oDbf:cTextoDim1 )
+         aGet[ ( D():FacturasRectificativasLineas( nView ) )->( fieldpos( "nMedUno" ) ) ]:Show()
       end if
 
-      if !empty( aGet[ ( dbfFacRecL )->( fieldpos( "nMedDos" ) ) ] ) .and. oUndMedicion:oDbf:nDimension >= 2 .and. !empty( oUndMedicion:oDbf:cTextoDim2 )
-         aGet[ ( dbfFacRecL )->( fieldpos( "nMedDos" ) ) ]:oSay:SetText( oUndMedicion:oDbf:cTextoDim2 )
-         aGet[ ( dbfFacRecL )->( fieldpos( "nMedDos" ) ) ]:Show()
+      if !empty( aGet[ ( D():FacturasRectificativasLineas( nView ) )->( fieldpos( "nMedDos" ) ) ] ) .and. oUndMedicion:oDbf:nDimension >= 2 .and. !empty( oUndMedicion:oDbf:cTextoDim2 )
+         aGet[ ( D():FacturasRectificativasLineas( nView ) )->( fieldpos( "nMedDos" ) ) ]:oSay:SetText( oUndMedicion:oDbf:cTextoDim2 )
+         aGet[ ( D():FacturasRectificativasLineas( nView ) )->( fieldpos( "nMedDos" ) ) ]:Show()
       end if
 
-      if !empty( aGet[ ( dbfFacRecL )->( fieldpos( "nMedTre" ) ) ] ) .and. oUndMedicion:oDbf:nDimension >= 3 .and. !empty( oUndMedicion:oDbf:cTextoDim3 )
-         aGet[ ( dbfFacRecL )->( fieldpos( "nMedTre" ) ) ]:oSay:SetText( oUndMedicion:oDbf:cTextoDim3 )
-         aGet[ ( dbfFacRecL )->( fieldpos( "nMedTre" ) ) ]:Show()
+      if !empty( aGet[ ( D():FacturasRectificativasLineas( nView ) )->( fieldpos( "nMedTre" ) ) ] ) .and. oUndMedicion:oDbf:nDimension >= 3 .and. !empty( oUndMedicion:oDbf:cTextoDim3 )
+         aGet[ ( D():FacturasRectificativasLineas( nView ) )->( fieldpos( "nMedTre" ) ) ]:oSay:SetText( oUndMedicion:oDbf:cTextoDim3 )
+         aGet[ ( D():FacturasRectificativasLineas( nView ) )->( fieldpos( "nMedTre" ) ) ]:Show()
       end if
 
    end if
@@ -4712,33 +4700,33 @@ STATIC FUNCTION SetDlgMode( aTmp, aGet, oFld, oSayPr1, oSayPr2, oSayVp1, oSayVp2
   Ocultamos las tres unidades de medicion--------------------------------------
   */
 
-   if !empty( aGet[ ( dbfFacRecL )->( fieldpos( "nMedUno" ) ) ] )
-      aGet[ ( dbfFacRecL )->( fieldpos( "nMedUno" ) ) ]:Hide()
+   if !empty( aGet[ ( D():FacturasRectificativasLineas( nView ) )->( fieldpos( "nMedUno" ) ) ] )
+      aGet[ ( D():FacturasRectificativasLineas( nView ) )->( fieldpos( "nMedUno" ) ) ]:Hide()
    end if
 
-   if !empty( aGet[ ( dbfFacRecL )->( fieldpos( "nMedDos" ) ) ] )
-      aGet[ ( dbfFacRecL )->( fieldpos( "nMedDos" ) ) ]:Hide()
+   if !empty( aGet[ ( D():FacturasRectificativasLineas( nView ) )->( fieldpos( "nMedDos" ) ) ] )
+      aGet[ ( D():FacturasRectificativasLineas( nView ) )->( fieldpos( "nMedDos" ) ) ]:Hide()
    end if
 
-   if !empty( aGet[ ( dbfFacRecL )->( fieldpos( "nMedTre" ) ) ] )
-      aGet[ ( dbfFacRecL )->( fieldpos( "nMedTre" ) ) ]:Hide()
+   if !empty( aGet[ ( D():FacturasRectificativasLineas( nView ) )->( fieldpos( "nMedTre" ) ) ] )
+      aGet[ ( D():FacturasRectificativasLineas( nView ) )->( fieldpos( "nMedTre" ) ) ]:Hide()
    end if
 
    if oUndMedicion:oDbf:Seek(  aTmp[ _CUNIDAD ] )
 
-      if !empty( aGet[ ( dbfFacRecL )->( fieldpos( "nMedUno" ) ) ] ) .and. oUndMedicion:oDbf:nDimension >= 1 .and. !empty( oUndMedicion:oDbf:cTextoDim1 )
-         aGet[ ( dbfFacRecL )->( fieldpos( "nMedUno" ) ) ]:oSay:SetText( oUndMedicion:oDbf:cTextoDim1 )
-         aGet[ ( dbfFacRecL )->( fieldpos( "nMedUno" ) ) ]:Show()
+      if !empty( aGet[ ( D():FacturasRectificativasLineas( nView ) )->( fieldpos( "nMedUno" ) ) ] ) .and. oUndMedicion:oDbf:nDimension >= 1 .and. !empty( oUndMedicion:oDbf:cTextoDim1 )
+         aGet[ ( D():FacturasRectificativasLineas( nView ) )->( fieldpos( "nMedUno" ) ) ]:oSay:SetText( oUndMedicion:oDbf:cTextoDim1 )
+         aGet[ ( D():FacturasRectificativasLineas( nView ) )->( fieldpos( "nMedUno" ) ) ]:Show()
       end if
 
-      if !empty( aGet[ ( dbfFacRecL )->( fieldpos( "nMedDos" ) ) ] ) .and. oUndMedicion:oDbf:nDimension >= 2 .and. !empty( oUndMedicion:oDbf:cTextoDim2 )
-         aGet[ ( dbfFacRecL )->( fieldpos( "nMedDos" ) ) ]:oSay:SetText( oUndMedicion:oDbf:cTextoDim2 )
-         aGet[ ( dbfFacRecL )->( fieldpos( "nMedDos" ) ) ]:Show()
+      if !empty( aGet[ ( D():FacturasRectificativasLineas( nView ) )->( fieldpos( "nMedDos" ) ) ] ) .and. oUndMedicion:oDbf:nDimension >= 2 .and. !empty( oUndMedicion:oDbf:cTextoDim2 )
+         aGet[ ( D():FacturasRectificativasLineas( nView ) )->( fieldpos( "nMedDos" ) ) ]:oSay:SetText( oUndMedicion:oDbf:cTextoDim2 )
+         aGet[ ( D():FacturasRectificativasLineas( nView ) )->( fieldpos( "nMedDos" ) ) ]:Show()
       end if
 
-      if !empty( aGet[ ( dbfFacRecL )->( fieldpos( "nMedTre" ) ) ] ) .and. oUndMedicion:oDbf:nDimension >= 3 .and. !empty( oUndMedicion:oDbf:cTextoDim3 )
-         aGet[ ( dbfFacRecL )->( fieldpos( "nMedTre" ) ) ]:oSay:SetText( oUndMedicion:oDbf:cTextoDim3 )
-         aGet[ ( dbfFacRecL )->( fieldpos( "nMedTre" ) ) ]:Show()
+      if !empty( aGet[ ( D():FacturasRectificativasLineas( nView ) )->( fieldpos( "nMedTre" ) ) ] ) .and. oUndMedicion:oDbf:nDimension >= 3 .and. !empty( oUndMedicion:oDbf:cTextoDim3 )
+         aGet[ ( D():FacturasRectificativasLineas( nView ) )->( fieldpos( "nMedTre" ) ) ]:oSay:SetText( oUndMedicion:oDbf:cTextoDim3 )
+         aGet[ ( D():FacturasRectificativasLineas( nView ) )->( fieldpos( "nMedTre" ) ) ]:Show()
       end if
 
    end if
@@ -7188,10 +7176,10 @@ STATIC FUNCTION BeginTrans( aTmp, nMode )
       ( dbfTmpLin )->( OrdCondSet( "!Deleted()", {||!Deleted() } ) )
       ( dbfTmpLin )->( OrdCreate( cTmpLin, "nPosPrint", "Str( nPosPrint, 4 )", {|| Str( Field->nPosPrint ) } ) )
 
-      if ( dbfFacRecL )->( dbSeek( cFac ) )
-         while ( ( dbfFacRecL )->CSERIE + Str( ( dbfFacRecL )->NNUMFAC ) + ( dbfFacRecL )->CSUFFAC ) == cFac .AND. !( dbfFacRecL )->( eof() )
-            dbPass( dbfFacRecL, dbfTmpLin, .t. )
-            ( dbfFacRecL )->( DbSkip() )
+      if ( D():FacturasRectificativasLineas( nView ) )->( dbSeek( cFac ) )
+         while ( ( D():FacturasRectificativasLineas( nView ) )->CSERIE + Str( ( D():FacturasRectificativasLineas( nView ) )->NNUMFAC ) + ( D():FacturasRectificativasLineas( nView ) )->CSUFFAC ) == cFac .AND. !( D():FacturasRectificativasLineas( nView ) )->( eof() )
+            dbPass( D():FacturasRectificativasLineas( nView ), dbfTmpLin, .t. )
+            ( D():FacturasRectificativasLineas( nView ) )->( DbSkip() )
          end while
       endif
 
@@ -7533,13 +7521,13 @@ STATIC FUNCTION EndTrans( aTmp, aGet, oBrw, oBrwDet, oBrwPgo, aNumAlb, nMode, oD
 
    case isEditMode( nMode )
 
-      while ( dbfFacRecL )->( dbSeek( cSerFac + Str( nNumFac ) + cSufFac ) ) .and. !( dbfFacRecL )->( eof() )
+      while ( D():FacturasRectificativasLineas( nView ) )->( dbSeek( cSerFac + Str( nNumFac ) + cSufFac ) ) .and. !( D():FacturasRectificativasLineas( nView ) )->( eof() )
 
-         TComercio:appendProductsToUpadateStocks( ( dbfFacRecL )->cRef, nView )
+         TComercio:appendProductsToUpadateStocks( ( D():FacturasRectificativasLineas( nView ) )->cRef, nView )
 
-         if dbLock( dbfFacRecL )
-            ( dbfFacRecL )->( dbDelete() )
-            ( dbfFacRecL )->( dbUnLock() )
+         if dbLock( D():FacturasRectificativasLineas( nView ) )
+            ( D():FacturasRectificativasLineas( nView ) )->( dbDelete() )
+            ( D():FacturasRectificativasLineas( nView ) )->( dbUnLock() )
          end if
 
       end while
@@ -7621,7 +7609,7 @@ STATIC FUNCTION EndTrans( aTmp, aGet, oBrw, oBrwDet, oBrwPgo, aNumAlb, nMode, oD
 
       TComercio:appendProductsToUpadateStocks( ( dbfTmpLin )->cRef, nView )
 
-      dbPass( dbfTmpLin, dbfFacRecL, .t., cSerFac, nNumFac, cSufFac )
+      dbPass( dbfTmpLin, D():FacturasRectificativasLineas( nView ), .t., cSerFac, nNumFac, cSufFac )
 
       ( dbfTmpLin )->( dbSkip() )
 
@@ -7735,13 +7723,13 @@ STATIC FUNCTION EndTrans( aTmp, aGet, oBrw, oBrwDet, oBrwPgo, aNumAlb, nMode, oD
    Generar los pagos de las facturas-------------------------------------------
    */
 
-   GenPgoFacRec( cSerFac + Str( nNumFac ) + cSufFac, D():FacturasRectificativas( nView ), dbfFacRecL, dbfFacCliP, D():Clientes( nView ), dbfFPago, dbfDiv, dbfIva, nMode )
+   GenPgoFacRec( cSerFac + Str( nNumFac ) + cSufFac, D():FacturasRectificativas( nView ), D():FacturasRectificativasLineas( nView ), dbfFacCliP, D():Clientes( nView ), dbfFPago, dbfDiv, dbfIva, nMode )
 
    /*
    Comprobamos el estado de la factura-----------------------------------------
    */
 
-   ChkLqdFacRec( nil, D():FacturasRectificativas( nView ), dbfFacRecL, dbfFacCliP, dbfIva, dbfDiv )
+   ChkLqdFacRec( nil, D():FacturasRectificativas( nView ), D():FacturasRectificativasLineas( nView ), dbfFacCliP, dbfIva, dbfDiv )
 
    /*
    Cerramos el dialogo---------------------------------------------------------
@@ -7929,22 +7917,22 @@ static function QuiFacRec()
 
    TComercio:resetProductsToUpdateStocks()
 
-   nOrdAnt     := ( dbfFacRecL )->( ordsetfocus( "nNumFac" ) )
-   while ( dbfFacRecL )->( dbseek( cSerDoc + Str( nNumDoc ) + cSufDoc ) ) .and. !( dbfFacRecL )->( eof() )
+   nOrdAnt     := ( D():FacturasRectificativasLineas( nView ) )->( ordsetfocus( "nNumFac" ) )
+   while ( D():FacturasRectificativasLineas( nView ) )->( dbseek( cSerDoc + Str( nNumDoc ) + cSufDoc ) ) .and. !( D():FacturasRectificativasLineas( nView ) )->( eof() )
 
-      TComercio:appendProductsToUpadateStocks( ( dbfFacRecL )->cRef, nView )
+      TComercio:appendProductsToUpadateStocks( ( D():FacturasRectificativasLineas( nView ) )->cRef, nView )
 
-      if dbDialogLock( dbfFacRecL )
-         ( dbfFacRecL )->( dbdelete() )
-         ( dbfFacRecL )->( dbunlock() )
+      if dbDialogLock( D():FacturasRectificativasLineas( nView ) )
+         ( D():FacturasRectificativasLineas( nView ) )->( dbdelete() )
+         ( D():FacturasRectificativasLineas( nView ) )->( dbunlock() )
       end if
 
       sysrefresh()
 
-      ( dbfFacRecL )->( dbskip() )
+      ( D():FacturasRectificativasLineas( nView ) )->( dbskip() )
 
    end do
-   ( dbfFacRecL )->( ordsetfocus( nOrdAnt ) )
+   ( D():FacturasRectificativasLineas( nView ) )->( ordsetfocus( nOrdAnt ) )
 
    TComercio:updateWebProductStocks()
 
@@ -8328,7 +8316,7 @@ Static Function MakSelRec( bAction, bPreAction, bPostAction, cDocIni, cDocFin, n
 
             if lFechas .or.( ( D():FacturasRectificativas( nView ) )->dFecFac >= dDesde .and. ( D():FacturasRectificativas( nView ) )->dFecFac <= dHasta )
 
-               lRet  := Eval( bAction, lChk1, lChk2, oTree, D():FacturasRectificativas( nView ), dbfFacRecL )
+               lRet  := Eval( bAction, lChk1, lChk2, oTree, D():FacturasRectificativas( nView ), D():FacturasRectificativasLineas( nView ) )
 
                if IsFalse( lRet )
                   exit
@@ -8357,7 +8345,7 @@ Static Function MakSelRec( bAction, bPreAction, bPostAction, cDocIni, cDocFin, n
 
             if lFechas .or.( ( D():FacturasRectificativas( nView ) )->dFecFac >= dDesde .and. ( D():FacturasRectificativas( nView ) )->dFecFac <= dHasta )
 
-               lRet  := Eval( bAction, lChk1, lChk2, oTree, D():FacturasRectificativas( nView ), dbfFacRecL )
+               lRet  := Eval( bAction, lChk1, lChk2, oTree, D():FacturasRectificativas( nView ), D():FacturasRectificativasLineas( nView ) )
 
                if IsFalse( lRet )
                   exit
@@ -9793,14 +9781,14 @@ STATIC FUNCTION DupFactura( cFecDoc )
 
    //Duplicamos las lineas del documento---------------------------------------
 
-   if ( dbfFacRecL )->( dbSeek( ( D():FacturasRectificativas( nView ) )->cSerie + Str( ( D():FacturasRectificativas( nView ) )->nNumFac ) + ( D():FacturasRectificativas( nView ) )->cSufFac ) )
+   if ( D():FacturasRectificativasLineas( nView ) )->( dbSeek( ( D():FacturasRectificativas( nView ) )->cSerie + Str( ( D():FacturasRectificativas( nView ) )->nNumFac ) + ( D():FacturasRectificativas( nView ) )->cSufFac ) )
 
-      while ( D():FacturasRectificativas( nView ) )->cSerie + Str( ( D():FacturasRectificativas( nView ) )->nNumFac ) + ( D():FacturasRectificativas( nView ) )->cSufFac == ( dbfFacRecL )->cSerie + Str( ( dbfFacRecL )->nNumFac ) + ( dbfFacRecL )->cSufFac .and. ;
-            !( dbfFacRecL )->( Eof() )
+      while ( D():FacturasRectificativas( nView ) )->cSerie + Str( ( D():FacturasRectificativas( nView ) )->nNumFac ) + ( D():FacturasRectificativas( nView ) )->cSufFac == ( D():FacturasRectificativasLineas( nView ) )->cSerie + Str( ( D():FacturasRectificativasLineas( nView ) )->nNumFac ) + ( D():FacturasRectificativasLineas( nView ) )->cSufFac .and. ;
+            !( D():FacturasRectificativasLineas( nView ) )->( Eof() )
 
-            FacRecDup( dbfFacRecL, ( D():FacturasRectificativas( nView ) )->cSerie, nNewNumFac, ( D():FacturasRectificativas( nView ) )->cSufFac, .f. )
+            FacRecDup( D():FacturasRectificativasLineas( nView ), ( D():FacturasRectificativas( nView ) )->cSerie, nNewNumFac, ( D():FacturasRectificativas( nView ) )->cSufFac, .f. )
 
-         ( dbfFacRecL )->( dbSkip() )
+         ( D():FacturasRectificativasLineas( nView ) )->( dbSkip() )
 
       end while
 
@@ -9854,76 +9842,76 @@ STATIC FUNCTION ValidaMedicion( aTmp, aGet )
       if oUndMedicion:oDbf:Seek( aTmp[ _CUNIDAD ] )
 
          if oUndMedicion:oDbf:nDimension >= 1 .and. !empty( oUndMedicion:oDbf:cTextoDim1 )
-            if !empty( aGet[ ( dbfFacRecL )->( fieldpos( "nMedUno" ) ) ] )
-               aGet[ ( dbfFacRecL )->( fieldpos( "nMedUno" ) ) ]:oSay:SetText( oUndMedicion:oDbf:cTextoDim1 )
-               aGet[ ( dbfFacRecL )->( fieldpos( "nMedUno" ) ) ]:cText( ( D():Articulos( nView ) )->nLngArt )
-               aGet[ ( dbfFacRecL )->( fieldpos( "nMedUno" ) ) ]:Show()
+            if !empty( aGet[ ( D():FacturasRectificativasLineas( nView ) )->( fieldpos( "nMedUno" ) ) ] )
+               aGet[ ( D():FacturasRectificativasLineas( nView ) )->( fieldpos( "nMedUno" ) ) ]:oSay:SetText( oUndMedicion:oDbf:cTextoDim1 )
+               aGet[ ( D():FacturasRectificativasLineas( nView ) )->( fieldpos( "nMedUno" ) ) ]:cText( ( D():Articulos( nView ) )->nLngArt )
+               aGet[ ( D():FacturasRectificativasLineas( nView ) )->( fieldpos( "nMedUno" ) ) ]:Show()
             else
-               aTmp[ ( dbfFacRecL )->( fieldpos( "nMedUno" ) ) ]  := ( D():Articulos( nView ) )->nLngArt
+               aTmp[ ( D():FacturasRectificativasLineas( nView ) )->( fieldpos( "nMedUno" ) ) ]  := ( D():Articulos( nView ) )->nLngArt
             end if
          else
-            if !empty( aGet[ ( dbfFacRecL )->( fieldpos( "nMedUno" ) ) ] )
-               aGet[ ( dbfFacRecL )->( fieldpos( "nMedUno" ) ) ]:cText( 0 )
-               aGet[ ( dbfFacRecL )->( fieldpos( "nMedUno" ) ) ]:Hide()
+            if !empty( aGet[ ( D():FacturasRectificativasLineas( nView ) )->( fieldpos( "nMedUno" ) ) ] )
+               aGet[ ( D():FacturasRectificativasLineas( nView ) )->( fieldpos( "nMedUno" ) ) ]:cText( 0 )
+               aGet[ ( D():FacturasRectificativasLineas( nView ) )->( fieldpos( "nMedUno" ) ) ]:Hide()
             else
-               aTmp[ ( dbfFacRecL )->( fieldpos( "nMedUno" ) ) ]  := 0
+               aTmp[ ( D():FacturasRectificativasLineas( nView ) )->( fieldpos( "nMedUno" ) ) ]  := 0
             end if
          end if
 
          if oUndMedicion:oDbf:nDimension >= 2 .and.!empty( oUndMedicion:oDbf:cTextoDim2 )
-            if !empty( aGet[ ( dbfFacRecL )->( fieldpos( "nMedDos" ) ) ] )
-               aGet[ ( dbfFacRecL )->( fieldpos( "nMedDos" ) ) ]:oSay:SetText( oUndMedicion:oDbf:cTextoDim2 )
-               aGet[ ( dbfFacRecL )->( fieldpos( "nMedDos" ) ) ]:cText( ( D():Articulos( nView ) )->nAltArt )
-               aGet[ ( dbfFacRecL )->( fieldpos( "nMedDos" ) ) ]:Show()
+            if !empty( aGet[ ( D():FacturasRectificativasLineas( nView ) )->( fieldpos( "nMedDos" ) ) ] )
+               aGet[ ( D():FacturasRectificativasLineas( nView ) )->( fieldpos( "nMedDos" ) ) ]:oSay:SetText( oUndMedicion:oDbf:cTextoDim2 )
+               aGet[ ( D():FacturasRectificativasLineas( nView ) )->( fieldpos( "nMedDos" ) ) ]:cText( ( D():Articulos( nView ) )->nAltArt )
+               aGet[ ( D():FacturasRectificativasLineas( nView ) )->( fieldpos( "nMedDos" ) ) ]:Show()
             else
-               aTmp[ ( dbfFacRecL )->( fieldpos( "nMedDos" ) ) ]  := ( D():Articulos( nView ) )->nAltArt
+               aTmp[ ( D():FacturasRectificativasLineas( nView ) )->( fieldpos( "nMedDos" ) ) ]  := ( D():Articulos( nView ) )->nAltArt
             end if
 
          else
-            if !empty( aGet[ ( dbfFacRecL )->( fieldpos( "nMedDos" ) ) ] )
-               aGet[ ( dbfFacRecL )->( fieldpos( "nMedDos" ) ) ]:cText( 0 )
-               aGet[ ( dbfFacRecL )->( fieldpos( "nMedDos" ) ) ]:Hide()
+            if !empty( aGet[ ( D():FacturasRectificativasLineas( nView ) )->( fieldpos( "nMedDos" ) ) ] )
+               aGet[ ( D():FacturasRectificativasLineas( nView ) )->( fieldpos( "nMedDos" ) ) ]:cText( 0 )
+               aGet[ ( D():FacturasRectificativasLineas( nView ) )->( fieldpos( "nMedDos" ) ) ]:Hide()
             else
-                 aTmp[ ( dbfFacRecL )->( fieldpos( "nMedDos" ) ) ]  := 0
+                 aTmp[ ( D():FacturasRectificativasLineas( nView ) )->( fieldpos( "nMedDos" ) ) ]  := 0
             end if
          end if
 
          if oUndMedicion:oDbf:nDimension >= 3 .and. !empty( oUndMedicion:oDbf:cTextoDim3 )
 
-            if !empty( aGet[ ( dbfFacRecL )->( fieldpos( "nMedTre" ) ) ] )
-               aGet[ ( dbfFacRecL )->( fieldpos( "nMedTre" ) ) ]:oSay:SetText( oUndMedicion:oDbf:cTextoDim3 )
-               aGet[ ( dbfFacRecL )->( fieldpos( "nMedTre" ) ) ]:cText( ( D():Articulos( nView ) ) ->nAncArt )
-               aGet[ ( dbfFacRecL )->( fieldpos( "nMedTre" ) ) ]:Show()
+            if !empty( aGet[ ( D():FacturasRectificativasLineas( nView ) )->( fieldpos( "nMedTre" ) ) ] )
+               aGet[ ( D():FacturasRectificativasLineas( nView ) )->( fieldpos( "nMedTre" ) ) ]:oSay:SetText( oUndMedicion:oDbf:cTextoDim3 )
+               aGet[ ( D():FacturasRectificativasLineas( nView ) )->( fieldpos( "nMedTre" ) ) ]:cText( ( D():Articulos( nView ) ) ->nAncArt )
+               aGet[ ( D():FacturasRectificativasLineas( nView ) )->( fieldpos( "nMedTre" ) ) ]:Show()
             else
-               aTmp[ ( dbfFacRecL )->( fieldpos( "nMedTre" ) ) ]  := ( D():Articulos( nView ) )->nAncArt
+               aTmp[ ( D():FacturasRectificativasLineas( nView ) )->( fieldpos( "nMedTre" ) ) ]  := ( D():Articulos( nView ) )->nAncArt
             end if
 
          else
 
-            if !empty( aGet[ ( dbfFacRecL )->( fieldpos( "nMedTre" ) ) ] )
-               aGet[ ( dbfFacRecL )->( fieldpos( "nMedTre" ) ) ]:cText( 0 )
-               aGet[ ( dbfFacRecL )->( fieldpos( "nMedTre" ) ) ]:Hide()
+            if !empty( aGet[ ( D():FacturasRectificativasLineas( nView ) )->( fieldpos( "nMedTre" ) ) ] )
+               aGet[ ( D():FacturasRectificativasLineas( nView ) )->( fieldpos( "nMedTre" ) ) ]:cText( 0 )
+               aGet[ ( D():FacturasRectificativasLineas( nView ) )->( fieldpos( "nMedTre" ) ) ]:Hide()
             else
-               aTmp[ ( dbfFacRecL )->( fieldpos( "nMedTre" ) ) ]  := 0
+               aTmp[ ( D():FacturasRectificativasLineas( nView ) )->( fieldpos( "nMedTre" ) ) ]  := 0
             end if
 
          end if
 
       else
 
-         if !empty( aGet[ ( dbfFacRecL )->( fieldpos( "nMedUno" ) ) ] )
-            aGet[ ( dbfFacRecL )->( fieldpos( "nMedUno" ) ) ]:Hide()
-            aGet[ ( dbfFacRecL )->( fieldpos( "nMedUno" ) ) ]:cText( 0 )
+         if !empty( aGet[ ( D():FacturasRectificativasLineas( nView ) )->( fieldpos( "nMedUno" ) ) ] )
+            aGet[ ( D():FacturasRectificativasLineas( nView ) )->( fieldpos( "nMedUno" ) ) ]:Hide()
+            aGet[ ( D():FacturasRectificativasLineas( nView ) )->( fieldpos( "nMedUno" ) ) ]:cText( 0 )
          end if
 
-         if !empty( aGet[ ( dbfFacRecL )->( fieldpos( "nMedDos" ) ) ] )
-            aGet[ ( dbfFacRecL )->( fieldpos( "nMedDos" ) ) ]:Hide()
-            aGet[ ( dbfFacRecL )->( fieldpos( "nMedDos" ) ) ]:cText( 0 )
+         if !empty( aGet[ ( D():FacturasRectificativasLineas( nView ) )->( fieldpos( "nMedDos" ) ) ] )
+            aGet[ ( D():FacturasRectificativasLineas( nView ) )->( fieldpos( "nMedDos" ) ) ]:Hide()
+            aGet[ ( D():FacturasRectificativasLineas( nView ) )->( fieldpos( "nMedDos" ) ) ]:cText( 0 )
          end if
 
-         if !empty( aGet[ ( dbfFacRecL )->( fieldpos( "nMedTre" ) ) ] )
-            aGet[ ( dbfFacRecL )->( fieldpos( "nMedTre" ) ) ]:Hide()
-            aGet[ ( dbfFacRecL )->( fieldpos( "nMedTre" ) ) ]:cText( 0 )
+         if !empty( aGet[ ( D():FacturasRectificativasLineas( nView ) )->( fieldpos( "nMedTre" ) ) ] )
+            aGet[ ( D():FacturasRectificativasLineas( nView ) )->( fieldpos( "nMedTre" ) ) ]:Hide()
+            aGet[ ( D():FacturasRectificativasLineas( nView ) )->( fieldpos( "nMedTre" ) ) ]:cText( 0 )
          end if
 
       end if
@@ -10014,7 +10002,7 @@ Static Function DataReport( oFr )
    oFr:SetWorkArea(     "Facturas rectificativas", ( D():FacturasRectificativas( nView ) )->( Select() ), .f., { FR_RB_CURRENT, FR_RB_CURRENT, 0 } )
    oFr:SetFieldAliases( "Facturas rectificativas", cItemsToReport( aItmFacRec() ) )
 
-   oFr:SetWorkArea(     "Lineas de facturas rectificativas", ( dbfFacRecL )->( Select() ) )
+   oFr:SetWorkArea(     "Lineas de facturas rectificativas", ( D():FacturasRectificativasLineas( nView ) )->( Select() ) )
    oFr:SetFieldAliases( "Lineas de facturas rectificativas", cItemsToReport( aColFacRec() ) )
 
    oFr:SetWorkArea(     "Series de lineas de facturas rectificativas", ( dbfFacRecS )->( Select() ) )
@@ -10081,12 +10069,12 @@ Static Function DataReport( oFr )
    oFr:SetMasterDetail( "Facturas rectificativas", "Transportistas",                               {|| ( D():FacturasRectificativas( nView ) )->cCodTrn } )
    oFr:SetMasterDetail( "Facturas rectificativas", "Bancos",                                       {|| ( D():FacturasRectificativas( nView ) )->cCodCli } )
 
-   oFr:SetMasterDetail( "Lineas de facturas rectificativas", "Artículos",                          				{|| ( dbfFacRecL )->cRef } )
-   oFr:SetMasterDetail( "Lineas de facturas rectificativas", "Tipo de artículo",                   				{|| ( dbfFacRecL )->cCodTip } )
-   oFr:SetMasterDetail( "Lineas de facturas rectificativas", "Ofertas",                            				{|| ( dbfFacRecL )->cRef } )
-   oFr:SetMasterDetail( "Lineas de facturas rectificativas", "Unidades de medición",               				{|| ( dbfFacRecL )->cUnidad } )
-   oFr:SetMasterDetail( "Lineas de facturas rectificativas", "Impuestos especiales",               				{|| ( dbfFacRecL )->cCodImp } )
-   oFr:SetMasterDetail( "Lineas de facturas rectificativas", "Series de lineas de facturas rectificativas",  	{|| ( dbfFacRecL )->cSerie + Str( ( dbfFacRecL )->nNumFac ) + ( dbfFacRecL )->cSufFac + Str( ( dbfFacRecL )->nNumLin ) } )
+   oFr:SetMasterDetail( "Lineas de facturas rectificativas", "Artículos",                          				{|| ( D():FacturasRectificativasLineas( nView ) )->cRef } )
+   oFr:SetMasterDetail( "Lineas de facturas rectificativas", "Tipo de artículo",                   				{|| ( D():FacturasRectificativasLineas( nView ) )->cCodTip } )
+   oFr:SetMasterDetail( "Lineas de facturas rectificativas", "Ofertas",                            				{|| ( D():FacturasRectificativasLineas( nView ) )->cRef } )
+   oFr:SetMasterDetail( "Lineas de facturas rectificativas", "Unidades de medición",               				{|| ( D():FacturasRectificativasLineas( nView ) )->cUnidad } )
+   oFr:SetMasterDetail( "Lineas de facturas rectificativas", "Impuestos especiales",               				{|| ( D():FacturasRectificativasLineas( nView ) )->cCodImp } )
+   oFr:SetMasterDetail( "Lineas de facturas rectificativas", "Series de lineas de facturas rectificativas",  	{|| ( D():FacturasRectificativasLineas( nView ) )->cSerie + Str( ( D():FacturasRectificativasLineas( nView ) )->nNumFac ) + ( D():FacturasRectificativasLineas( nView ) )->cSufFac + Str( ( D():FacturasRectificativasLineas( nView ) )->nNumLin ) } )
 																																																
    oFr:SetResyncPair(   "Facturas rectificativas", "Lineas de facturas rectificativas" )
    oFr:SetResyncPair(   "Facturas rectificativas", "Incidencias de facturas rectificativas" )
@@ -10265,7 +10253,7 @@ STATIC FUNCTION lLiquida( oBrw, cFactura )
    Chekea el estado de la factura---------------------------------------------
    */
 
-   ChkLqdFacRec( nil, D():FacturasRectificativas( nView ), dbfFacRecL, dbfFacCliP, dbfIva, dbfDiv )
+   ChkLqdFacRec( nil, D():FacturasRectificativas( nView ), D():FacturasRectificativasLineas( nView ), dbfFacCliP, dbfIva, dbfDiv )
 
    oBrw:Refresh()
    oBrw:SetFocus()
@@ -10991,7 +10979,7 @@ FUNCTION nIvaLFacRec( cFacRecL, nDec, nRou, nVdv, lDto, lPntVer, lImpTrn, cPouDi
 
    local nCalculo    := 0
 
-   DEFAULT cFacRecL  := dbfFacRecL
+   DEFAULT cFacRecL  := D():FacturasRectificativasLineas( nView )
    DEFAULT nDec      := nDouDiv()
    DEFAULT nRou      := nRouDiv()
    DEFAULT nVdv      := 1
@@ -11036,7 +11024,7 @@ FUNCTION nPntUFacRec( cFacRecL, nDec, nVdv )
 
    local nCalculo
 
-   DEFAULT cFacRecL  := dbfFacRecL
+   DEFAULT cFacRecL  := D():FacturasRectificativasLineas( nView )
    DEFAULT nDec      := nDouDiv()
    DEFAULT nVdv      := 1
 
@@ -11057,7 +11045,7 @@ FUNCTION nPntLFacRec( cFacRecL, nDec, nVdv )
 
    local nPntVer
 
-   DEFAULT cFacRecL  := dbfFacRecL
+   DEFAULT cFacRecL  := D():FacturasRectificativasLineas( nView )
    DEFAULT nDec      := nDouDiv()
    DEFAULT nVdv      := 1
 
@@ -11092,7 +11080,7 @@ FUNCTION nTrnLFacRec( dbfLin, nDec, nRou, nVdv )
 
    local nImpTrn
 
-   DEFAULT dbfLin    := dbfFacRecL
+   DEFAULT dbfLin    := D():FacturasRectificativasLineas( nView )
    DEFAULT nDec      := 2
    DEFAULT nRou      := 2
    DEFAULT nVdv      := 1
@@ -11197,9 +11185,9 @@ FUNCTION nTotFacRec( cFactura, cFacRecT, cFacRecL, cIva, cDiv, aTmp, cDivRet, lP
    
    if !empty( nView )
       DEFAULT cFacRecT     := D():FacturasRectificativas( nView )
+      DEFAULT cFacRecL     := D():FacturasRectificativasLineas( nView )
    end if
 
-   DEFAULT cFacRecL        := dbfFacRecL
    DEFAULT cIva            := cIva
    DEFAULT cDiv            := cDiv
    DEFAULT cFactura        := ( cFacRecT )->cSerie + Str( ( cFacRecT )->nNumFac ) + ( cFacRecT )->cSufFac
@@ -12296,7 +12284,7 @@ FUNCTION nTotPFacRec( cFacRecL, nDec, nVdv, cPorDiv )
 
    local nCalculo
 
-   DEFAULT cFacRecL  := dbfFacRecL
+   DEFAULT cFacRecL  := D():FacturasRectificativasLineas( nView )
    DEFAULT nDec      := nDouDiv()
    DEFAULT nVdv      := 1
 
@@ -12337,7 +12325,7 @@ FUNCTION nDtoLFacRec( cFacRecL, nDec, nRou, nVdv )
 
    local nCalculo       := 0
 
-   DEFAULT cFacRecL     := dbfFacRecL
+   DEFAULT cFacRecL     := D():FacturasRectificativasLineas( nView )
    DEFAULT nDec         := nDouDiv()
    DEFAULT nRou         := nRouDiv()
    DEFAULT nVdv         := 1
@@ -12376,7 +12364,7 @@ FUNCTION nPrmLFacRec( cFacRecL, nDec, nRou, nVdv )
 
    local nCalculo       := 0
 
-   DEFAULT cFacRecL     := dbfFacRecL
+   DEFAULT cFacRecL     := D():FacturasRectificativasLineas( nView )
    DEFAULT nDec         := nDouDiv()
    DEFAULT nRou         := nRouDiv()
    DEFAULT nVdv         := 1
@@ -12416,7 +12404,7 @@ Function nTotDtoLFacRec( cFacRecL, nDec, nVdv, cPorDiv )
 
    local nCalculo
 
-   DEFAULT cFacRecL  := dbfFacRecL
+   DEFAULT cFacRecL  := D():FacturasRectificativasLineas( nView )
    DEFAULT nDec      := nDouDiv()
    DEFAULT nVdv      := 1
 
@@ -12451,7 +12439,7 @@ FUNCTION nTotIFacRec( dbfLin, nDec, nRouDec, nVdv, cPorDiv )
 
    local nCalculo    := 0
 
-   DEFAULT dbfLin    := dbfFacRecL
+   DEFAULT dbfLin    := D():FacturasRectificativasLineas( nView )
    DEFAULT nDec      := 0
    DEFAULT nRouDec   := 0
    DEFAULT nVdv      := 1
@@ -12659,7 +12647,7 @@ FUNCTION nTotNFacRec( uDbf )
 
    local nTotUnd
 
-   DEFAULT uDbf   := dbfFacRecL
+   DEFAULT uDbf   := D():FacturasRectificativasLineas( nView )
 
    do case
    case ValType( uDbf ) == "C"
@@ -12696,7 +12684,7 @@ Function nTotVFacRec( uDbf )
 
    local nTotUnd
 
-   DEFAULT uDbf   := dbfFacRecL
+   DEFAULT uDbf   := D():FacturasRectificativasLineas( nView )
 
    do case
       case ValType( uDbf ) == "A"
@@ -13363,6 +13351,7 @@ function SynFacRec( cPath )
    local cCodImp
    local cNumSer
    local aNumSer
+   local dbfFacRecL
    local dbfArticulo
 
    DEFAULT cPath     := cPatEmp()
@@ -13453,15 +13442,6 @@ function SynFacRec( cPath )
 	      if empty( ( dbfFacRecL )->cLote ) .and. !empty( ( dbfFacRecL )->nLote )
 	         ( dbfFacRecL )->cLote      := AllTrim( Str( ( dbfFacRecL )->nLote ) )
 	      end if
-
-/*	      
-	      if empty( ( dbfFacRecL )->nValImp )
-	         cCodImp                    := RetFld( ( dbfFacRecL )->cRef, dbfArticulo, "cCodImp" )
-	        	if !empty( cCodImp )
-	            ( dbfFacRecL )->nValImp := oNewImp:nValImp( cCodImp )
-	         end if
-	      end if
-*/	  			
 
 	      if empty( ( dbfFacRecL )->nVolumen )
 	         ( dbfFacRecL )->nVolumen   :=  RetFld( ( dbfFacRecL )->cRef, dbfArticulo, "nVolumen" )
@@ -13758,7 +13738,7 @@ FUNCTION nPesLFacRec( cFacRecL )
 
    local nCalculo    := 0
 
-   DEFAULT cFacRecL  := dbfFacRecL
+   DEFAULT cFacRecL  := D():FacturasRectificativasLineas( nView )
 
    if !( cFacRecL )->lTotLin
       nCalculo       := Abs( nTotNFacRec( cFacRecL ) ) * ( cFacRecL )->nPesoKg
@@ -14048,7 +14028,7 @@ Function PrintReportFacRec( nDevice, nCopies, cPrinter )
 
    SysRefresh()
 
-   nOrd 						:= ( dbfFacRecL )->( ordSetFocus( "nPosPrint" ) )
+   nOrd 						:= ( D():FacturasRectificativasLineas( nView) )->( ordSetFocus( "nPosPrint" ) )
 
    oFr                  := frReportManager():New()
 
@@ -14138,7 +14118,7 @@ Function PrintReportFacRec( nDevice, nCopies, cPrinter )
 
    oFr:DestroyFr()
 
-   ( dbfFacRecL )->( ordSetFocus( nOrd ) )
+   ( D():FacturasRectificativasLineas( nView) )->( ordSetFocus( nOrd ) )
 
 Return cFilePdf
 
@@ -14150,7 +14130,7 @@ Devuelve la descripción de una line de factura
 
 FUNCTION cDesFacRec( cFacRecL, cFacRecS )
 
-   DEFAULT cFacRecL  := dbfFacRecL
+   DEFAULT cFacRecL  := D():FacturasRectificativasLineas( nView)
    DEFAULT cFacRecS  := dbfFacRecS
 
 RETURN ( Descrip( cFacRecL, cFacRecS ) )
@@ -14159,7 +14139,7 @@ RETURN ( Descrip( cFacRecL, cFacRecS ) )
 
 FUNCTION cDesFacRecLeng( cFacRecL, cFacRecS, cArtLeng )
 
-   DEFAULT cFacRecL  := dbfFacRecL
+   DEFAULT cFacRecL  := D():FacturasRectificativasLineas( nView)
    DEFAULT cFacRecS  := dbfFacRecS
    DEFAULT cArtLeng  := D():ArticuloLenguaje( nView )
 
@@ -14274,7 +14254,7 @@ FUNCTION nTotLFacRec( uFacRecL, nDec, nRou, nVdv, lDto, lPntVer, lImpTrn, cPouDi
    local nCalculo
    local nUnidades
 
-   DEFAULT uFacRecL     := dbfFacRecL
+   DEFAULT uFacRecL     := D():FacturasRectificativasLineas( nView )
    DEFAULT nDec         := nDouDiv()
    DEFAULT nRou         := nRouDiv()
    DEFAULT nVdv         := 1
@@ -14343,7 +14323,7 @@ FUNCTION nTotUFacRec( uTmpLin, nDec, nVdv )
 
    local nCalculo    := 0
 
-   DEFAULT uTmpLin   := dbfFacRecL
+   DEFAULT uTmpLin   := D():FacturasRectificativasLineas( nView )
    DEFAULT nDec      := nDouDiv()
    DEFAULT nVdv      := 1
 
@@ -14644,13 +14624,13 @@ Return ( getExtraField( cFieldName, oDetCamposExtra, D():FacturasRectificativasI
 
 Function nombrePrimeraPropiedadFacturasRectificativasLineas()
 
-Return ( nombrePropiedad( ( dbfFacRecL )->cCodPr1, ( dbfFacRecL )->cValPr1, nView ) )
+Return ( nombrePropiedad( ( D():FacturasRectificativasLineas( nView ) )->cCodPr1, ( D():FacturasRectificativasLineas( nView ) )->cValPr1, nView ) )
 
 //---------------------------------------------------------------------------//
 
 Function nombreSegundaPropiedadFacturasRectificativasLineas()
 
-Return ( nombrePropiedad( ( dbfFacRecL )->cCodPr2, ( dbfFacRecL )->cValPr2, nView ) )
+Return ( nombrePropiedad( ( D():FacturasRectificativasLineas( nView ) )->cCodPr2, ( D():FacturasRectificativasLineas( nView ) )->cValPr2, nView ) )
 
 //---------------------------------------------------------------------------//
 

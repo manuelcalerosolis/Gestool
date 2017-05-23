@@ -8,9 +8,13 @@ CLASS PedidosClientesLineasModel FROM SQLBaseEmpresasModel
 
    METHOD TranslateCodigoTiposVentaToId( cTable )
 
+   METHOD TranslateSATClientesLineasCodigoTiposVentaToId()           INLINE ( ::TranslateCodigoTiposVentaToId( "SatCliL" ) )
+
    METHOD TranslatePresupuestoClientesLineasCodigoTiposVentaToId()   INLINE ( ::TranslateCodigoTiposVentaToId( "PreCliL" ) )
 
-   METHOD TranslateSATClientesLineasCodigoTiposVentaToId()           INLINE ( ::TranslateCodigoTiposVentaToId( "SatCliL" ) )
+   METHOD TranslatePedidosClientesLineasCodigoTiposVentaToId()       INLINE ( ::TranslateCodigoTiposVentaToId( "PedCliL" ) )
+
+   METHOD TranslateAlbaranesClientesLineasCodigoTiposVentaToId()     INLINE ( ::TranslateCodigoTiposVentaToId( "AlbCliL" ) )
 
 END CLASS
 

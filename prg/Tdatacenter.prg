@@ -4859,8 +4859,10 @@ METHOD MigrateEmpresaToSQLite()
       :TranslateCodigoToId()
 */
    PedidosClientesLineasModel() ;
+      :TranslateSATClientesLineasCodigoTiposVentaToId() ;
       :TranslatePresupuestoClientesLineasCodigoTiposVentaToId() ;
-      :TranslateSATClientesLineasCodigoTiposVentaToId()
+      :TranslatePedidosClientesLineasCodigoTiposVentaToId() ;
+      :TranslateAlbaranesClientesLineasCodigoTiposVentaToId()
 
 RETURN ( Self )
 

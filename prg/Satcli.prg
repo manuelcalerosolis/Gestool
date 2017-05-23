@@ -4218,6 +4218,8 @@ STATIC FUNCTION SetDlgMode( aTmp, aGet, nMode, oStkAct, oSayPr1, oSayPr2, oSayVp
 
    end if
 
+   aGet[ ( D():SatClientesLineas( nView ) )->( fieldpos( "id_tipo_v" ) ) ]:lValid()
+
    do case
    case nMode == APPD_MODE
 
