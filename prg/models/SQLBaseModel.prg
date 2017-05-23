@@ -445,6 +445,7 @@ METHOD compareCurrentAndActualColumns()
 
          hb_HDelAt( ::hColumns, nPosColumn )
 
+
       end if
 
    next
@@ -458,6 +459,8 @@ METHOD updateTableColumns()
    local cAlterTables := ""
 
    ::compareCurrentAndActualColumns()
+
+   hEval( ::hColumns, {| k, hash | msgalert( "ALTER TABLE " + ::cTableName + " ADD COLUMN " + k + " " + hget( hash, "create" ) ) } )
 
    hEval( ::hColumns, {| k, hash | getSQLDatabase():Query( "ALTER TABLE " + ::cTableName + " ADD COLUMN " + k + " " + hget( hash, "create" ) ) } )
 

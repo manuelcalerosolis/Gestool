@@ -33,9 +33,9 @@ METHOD buildSQLShell()
    ::oShell                := SQLTShell():New( 2, 10, 18, 70, "Tipos de incidencias", , oWnd(), , , .f., , , ::oController:oModel, , , , , {}, {|| ::oController:Edit( ::oShell:getBrowse() ) },, {|| ::Delete( ::oShell:getBrowse() ) },, nil, ::oController:nLevel, "gc_camera_16", ( 104 + ( 0 * 256 ) + ( 63 * 65536 ) ),,, .t. )
 
       with object ( ::oShell:AddCol() )
-         :cHeader          := "Código"
-         :cSortOrder       := "codigo"
-         :bEditValue       := {|| ::oController:getRowSet():fieldGet( "codigo" ) }
+         :cHeader          := "Id"
+         :cSortOrder       := "id"
+         :bEditValue       := {|| ::oController:getRowSet():fieldGet( "id" ) }
          :nWidth           := 40
          :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | ::oController:clickOnHeader( oCol, ::oShell:getBrowse(), ::oShell:getCombobox() ) }
       end with
@@ -71,18 +71,10 @@ METHOD Dialog()
 
    local oDlg
    local oGetNombre
-   local oGetCodigo
 
    msgalert( ::oController:isZoomMode(), "isZoomMode" )
 
    DEFINE DIALOG oDlg RESOURCE "TIPO_INCIDENCIA" TITLE ::lblTitle() + "tipo de incidencia"
-
-    REDEFINE GET   oGetCodigo ;
-      VAR         ::oController:oModel:hBuffer[ "codigo" ] ;
-      MEMO ;
-      ID          100 ;
-      WHEN        ( !::oController:isZoomMode() ) ;
-      OF          oDlg
 
    REDEFINE GET   oGetNombre ;
       VAR         ::oController:oModel:hBuffer[ "nombre" ] ;
@@ -95,7 +87,7 @@ METHOD Dialog()
       ID          IDOK ;
       OF          oDlg ;
       WHEN        ( !::oController:isZoomMode() ) ;
-      ACTION      ( ::oController:validDialog( oDlg, oGetNombre, oGetCodigo ) )
+      ACTION      ( ::oController:validDialog( oDlg, oGetNombre ) )
 
    REDEFINE BUTTON ;
       ID          IDCANCEL ;
@@ -106,6 +98,8 @@ METHOD Dialog()
    // Teclas rpidas-----------------------------------------------------------
 
    oDlg:AddFastKey( VK_F5, {|| oDlg:end( IDOK ) } )
+
+   oDlg:bStart    := {|| oGetNombre:setFocus() }
 
    ACTIVATE DIALOG oDlg CENTER
 
@@ -153,9 +147,9 @@ METHOD buildSQLBrowse()
       oBrowse:setModel( ::oController:oModel )
 
       with object ( oBrowse:AddCol() )
-         :cHeader             := "Código"
-         :cSortOrder          := "codigo"
-         :bEditValue          := {|| ::oController:getRowSet():fieldGet( "codigo" ) }
+         :cHeader             := "Id"
+         :cSortOrder          := "id"
+         :bEditValue          := {|| ::oController:getRowSet():fieldGet( "id" ) }
          :nWidth              := 40
          :bLClickHeader       := {| nMRow, nMCol, nFlags, oCol | ::oController:clickOnHeader( oCol, oBrowse, oCombobox ) }
       end with
