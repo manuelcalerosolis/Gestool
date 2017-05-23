@@ -70,6 +70,7 @@ CLASS ViewBase
                                                                         hSet( ::oSender:hDictionaryMaster, cName, uValue ) ) )
 
    METHOD getValue( cName )                              INLINE ( hGet( ::oSender:hDictionaryMaster, cName ) )
+   METHOD setValue( uValue, cFieldName )                 INLINE ( hSet( ::oSender:hDictionaryMaster, cFieldName, uValue ) ) 
 
    METHOD setErrorValidator( cErrorText )
 

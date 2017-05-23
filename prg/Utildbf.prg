@@ -2515,10 +2515,9 @@ FUNCTION validKey( oGet, uAlias, lRjust, cChar, nTag, nLen )
 
 	( cAlias )->( OrdSetFocus( nOldTag ) )
 
-   if !empty(cFilter)
+   if !empty( cFilter )
       ( cAlias )->( dbSetFilter( {|| &cFilter }, cFilter ) )
    end if
-
 
 RETURN lReturn
 

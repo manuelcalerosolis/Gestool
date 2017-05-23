@@ -1012,7 +1012,7 @@ Function MainTablet()
                            "nWidth"    => 64,;
                            "nHeight"   => 64,;
                            "cResName"  => "GC_RECYCLE_64",;
-                           "bLClicked" => {|| Reindexa() },;
+                           "bLClicked" => {|| ReindexaPresenter():New():Play() },;
                            "oWnd"      => oDlg } )
 
    //----------------Envio y recepcion

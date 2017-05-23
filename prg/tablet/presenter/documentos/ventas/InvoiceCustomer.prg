@@ -33,6 +33,7 @@ CLASS InvoiceCustomer FROM DocumentsSales
    METHOD editButtonMode()                INLINE ( ::appendButtonMode() )
    METHOD deleteButtonMode()              INLINE ( ::appendButtonMode() )
    METHOD ActualizaUltimoLote()
+   METHOD onPreEditDocumento()
 
 END CLASS
 
@@ -271,5 +272,13 @@ METHOD ActualizaUltimoLote() CLASS InvoiceCustomer
    ( D():FacturasClientesLineas( ::nView ) )->( dbGoTo( nRec ) )
 
 Return ( self )
+
+//---------------------------------------------------------------------------//
+
+METHOD onPreEditDocumento() CLASS InvoiceCustomer
+
+   ::nOrdenAnterior     := ( ::getDataTable() )->( OrdSetFocus() )
+
+Return ( .t. )
 
 //---------------------------------------------------------------------------//

@@ -487,6 +487,8 @@ Reporting.prg                                      	\
 ViewReporting.prg                                  	\
 backupPresenter.prg                                	\
 backupView.prg                                     	\
+ReindexaPresenter.prg                                 \
+ReindexaView.prg                                      \
 BaseModel.prg 														\
 SQLBaseModel.prg 														\
 SQLBaseEmpresasModel.prg 														\
@@ -981,6 +983,8 @@ Reporting.obj                                      \
 ViewReporting.obj                                  \
 backupPresenter.obj                                \
 backupView.obj                                     \
+ReindexaPresenter.obj                              \
+ReindexaView.obj                                   \
 BaseModel.obj 													\
 SQLBaseModel.Obj 												\
 SQLBaseEmpresasModel.Obj 												\
@@ -1460,6 +1464,8 @@ $(OBJ)\ProductStock.obj                      +
 $(OBJ)\StockViewNavigator.obj                +
 $(OBJ)\backupPresenter.obj                   +
 $(OBJ)\backupView.obj                        +
+$(OBJ)\ReindexaPresenter.obj                 +
+$(OBJ)\ReindexaView.obj                      +
 $(OBJ)\Reporting.obj                         +
 $(OBJ)\ViewReporting.obj 							+
 $(OBJ)\BaseModel.obj 								+
