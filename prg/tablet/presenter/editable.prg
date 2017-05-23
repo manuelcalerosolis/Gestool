@@ -37,6 +37,8 @@ CLASS Editable
  
    DATA cFormatToPrint
 
+   DATA nOrdenAnterior
+
    METHOD setView( nView )                      INLINE ( ::nView := nView )
 
    METHOD Append()
@@ -79,10 +81,10 @@ CLASS Editable
    METHOD onPreEnd()                            VIRTUAL
 
    METHOD getAppendDocumento()                  INLINE ( ::hDictionaryMaster := D():getHashRecordDefaultValues( ::getDataTable(), ::nView ) )
-      METHOD onPreAppendDocumento()             INLINE ( .t. )
+      METHOD onPreAppendDocumento()             INLINE ( ::nOrdenAnterior     := ( ::getDataTable() )->( OrdSetFocus() ), .t. )
 
    METHOD getEditDocumento()
-      METHOD onPreEditDocumento()               INLINE ( .t. )
+      METHOD onPreEditDocumento()               INLINE ( ::nOrdenAnterior     := ( ::getDataTable() )->( OrdSetFocus() ), .t. )
 
    METHOD deleteDocumento()                     INLINE ( D():deleteRecord( ::getDataTable(), ::nView ) )
    

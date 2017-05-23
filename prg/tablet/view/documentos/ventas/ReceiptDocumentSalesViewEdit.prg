@@ -8,6 +8,8 @@ CLASS ReceiptDocumentSalesViewEdit FROM ViewEdit
    DATA aCbxEstado      INIT { "Cobrado", "Pendiente" }
    DATA cCbxEstado
 
+   DATA oImporteGastos
+
    METHOD New()
 
    METHOD insertControls()
@@ -20,6 +22,9 @@ CLASS ReceiptDocumentSalesViewEdit FROM ViewEdit
    METHOD defineFechaVencimiento( nRow )
 
    METHOD defineImporte( nRow )   
+
+   METHOD defineImporteCobro( nRow )   
+   METHOD defineImporteGastos( nRow )   
 
    METHOD defineCliente( nRow )
 
@@ -36,6 +41,8 @@ CLASS ReceiptDocumentSalesViewEdit FROM ViewEdit
    METHOD cTextoEstado()
 
    METHOD defineAceptarCancelar()
+
+   METHOD validImporteCobro()
 
 END CLASS
 
@@ -60,6 +67,10 @@ METHOD insertControls() CLASS ReceiptDocumentSalesViewEdit
 
    ::defineImporte()
 
+   ::defineImporteCobro()
+
+   ::defineImporteGastos()
+
    ::defineCliente()
 
    ::defineFormaPago()
@@ -76,7 +87,7 @@ Return ( self )
 
 METHOD defineCliente( nRow ) CLASS ReceiptDocumentSalesViewEdit
 
-   DEFAULT nRow         := 200
+   DEFAULT nRow         := 250
 
    TGridSay():Build(    {  "nRow"      => nRow,;
                            "nCol"      => {|| GridWidth( 0.5, ::oDlg ) },;
@@ -117,7 +128,7 @@ METHOD defineFormaPago( nRow ) CLASS ReceiptDocumentSalesViewEdit
 
    local cSayTextFPago  := retFld( hGet( ::oSender:hDictionaryMaster, "Pago" ), D():FormasPago( ::oSender:nView ) )
 
-   DEFAULT nRow         := 225
+   DEFAULT nRow         := 275
 
 
    TGridSay():Build(    {  "nRow"      => nRow,;
@@ -286,11 +297,73 @@ Return ( self )
 
 //---------------------------------------------------------------------------//
 
+METHOD defineImporteCobro( nRow ) CLASS ReceiptDocumentSalesViewEdit
+
+   DEFAULT nRow         := 200
+
+   TGridSay():Build(    {  "nRow"      => nRow,;
+                           "nCol"      => {|| GridWidth( 0.5, ::oDlg ) },;
+                           "bText"     => {|| "Cobros" },;
+                           "oWnd"      => ::oDlg,;
+                           "oFont"     => oGridFont(),;
+                           "lPixels"   => .t.,;
+                           "nClrText"  => Rgb( 0, 0, 0 ),;
+                           "nClrBack"  => Rgb( 255, 255, 255 ),;
+                           "nWidth"    => {|| GridWidth( 1.5, ::oDlg ) },;
+                           "nHeight"   => 23,;
+                           "lDesign"   => .f. } )
+
+   TGridGet():Build(    {  "nRow"      => nRow,;
+                           "nCol"      => {|| GridWidth( 2.5, ::oDlg ) },;
+                           "bSetGet"   => {|u| ::SetGetValue( u, "ImporteCobro" ) },;
+                           "oWnd"      => ::oDlg,;
+                           "cPict"     => cPorDiv(),;
+                           "nWidth"    => {|| GridWidth( 2.5, ::oDlg ) },;
+                           "nHeight"   => 23,;
+                           "lPixels"   => .t.,;
+                           "lRight"    => .t.,;
+                           "bValid"    => {|| ::validImporteCobro() } } )
+
+Return ( self )
+
+//---------------------------------------------------------------------------//
+
+METHOD defineImporteGastos( nRow ) CLASS ReceiptDocumentSalesViewEdit
+
+   DEFAULT nRow         := 225
+
+   TGridSay():Build(    {  "nRow"      => nRow,;
+                           "nCol"      => {|| GridWidth( 0.5, ::oDlg ) },;
+                           "bText"     => {|| "Gastos" },;
+                           "oWnd"      => ::oDlg,;
+                           "oFont"     => oGridFont(),;
+                           "lPixels"   => .t.,;
+                           "nClrText"  => Rgb( 0, 0, 0 ),;
+                           "nClrBack"  => Rgb( 255, 255, 255 ),;
+                           "nWidth"    => {|| GridWidth( 1.5, ::oDlg ) },;
+                           "nHeight"   => 23,;
+                           "lDesign"   => .f. } )
+
+   ::oImporteGastos  := TGridGet():Build(    {  "nRow"      => nRow,;
+                                                "nCol"      => {|| GridWidth( 2.5, ::oDlg ) },;
+                                                "bSetGet"   => {|u| ::SetGetValue( u, "ImporteGastos" ) },;
+                                                "oWnd"      => ::oDlg,;
+                                                "cPict"     => cPorDiv(),;
+                                                "nWidth"    => {|| GridWidth( 2.5, ::oDlg ) },;
+                                                "nHeight"   => 23,;
+                                                "lPixels"   => .t.,;
+                                                "lRight"    => .t.,;
+                                                "bValid"    => {|| .t. } } )
+
+Return ( self )
+
+//---------------------------------------------------------------------------//
+
 METHOD defineAgente( nRow ) CLASS ReceiptDocumentSalesViewEdit
 
    local cSayTextAgente    := cNbrAgent( hGet( ::oSender:hDictionaryMaster, "Agente" ) )
 
-   DEFAULT nRow            := 250
+   DEFAULT nRow            := 300
 
 
    TGridSay():Build(    {  "nRow"      => nRow,;
@@ -330,7 +403,7 @@ Return ( self )
 
 METHOD defineConcepto( nRow ) CLASS ReceiptDocumentSalesViewEdit
 
-   DEFAULT nRow            := 275
+   DEFAULT nRow            := 325
 
 
    TGridSay():Build(    {  "nRow"      => nRow,;
@@ -361,7 +434,7 @@ Return ( self )
 
 METHOD definePagadoPor( nRow ) CLASS ReceiptDocumentSalesViewEdit
 
-   DEFAULT nRow            := 300
+   DEFAULT nRow            := 350
 
    TGridSay():Build(    {  "nRow"      => nRow,;
                            "nCol"      => {|| GridWidth( 0.5, ::oDlg ) },;
@@ -457,5 +530,26 @@ METHOD defineAceptarCancelar() CLASS ReceiptDocumentSalesViewEdit
                            "oWnd"      => ::oDlg } )
 
 Return ( self )
+
+//---------------------------------------------------------------------------//
+
+METHOD validImporteCobro() CLASS ReceiptDocumentSalesViewEdit
+
+   if ::getValue( "ImporteCobro" ) <= ::getValue( "TotalDocumento" )
+
+      if ( ::getValue( "ImporteCobro" ) != 0 ) .and. ( ::getValue( "TotalDocumento" ) != ::getValue( "ImporteCobro" ) )
+         ::setValue( ( ::getValue( "TotalDocumento" ) - ::getValue( "ImporteCobro" ) ), "ImporteGastos" )
+         ::oImporteGastos:Refresh()
+      end if
+
+      Return .t.
+
+   else
+
+      apoloMsgStop( "El importe del cobro excede al importe del recibo" )
+
+   end if
+
+Return ( .f. )
 
 //---------------------------------------------------------------------------//

@@ -841,6 +841,8 @@ METHOD onPreEnd() CLASS DocumentsSales
 
    ::isPrintDocument()
 
+   ( ::getDataTable() )->( OrdSetFocus( ::nOrdenAnterior ) )
+
 Return ( .t. )
 
 //---------------------------------------------------------------------------//

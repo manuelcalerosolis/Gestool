@@ -42,7 +42,9 @@ CLASS CustomerView FROM ViewBase
 
    METHOD defineRuta()
 
-   METHOD whenControl()                INLINE ( ::getMode() == EDIT_MODE .and. oUser():lAdministrador() )
+   METHOD whenControl()                INLINE ( ::getMode() != ZOOM_MODE )
+
+   //METHOD whenControl()                INLINE ( ::getMode() == EDIT_MODE .and. oUser():lAdministrador() )
 
 END CLASS
 

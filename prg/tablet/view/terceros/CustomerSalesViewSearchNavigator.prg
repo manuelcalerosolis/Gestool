@@ -130,7 +130,7 @@ Return ( self )
 
 METHOD setColumns() CLASS CustomerSalesViewSearchNavigator
 
-   ::setBrowseConfigurationName( "grid_ventas" )
+   ::setBrowseConfigurationName( "grid_ventasclientes" )
 
    with object ( ::addColumn() )
       :cHeader           := "Id"

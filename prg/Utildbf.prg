@@ -2515,12 +2515,16 @@ FUNCTION validKey( oGet, uAlias, lRjust, cChar, nTag, nLen )
 
 	( cAlias )->( OrdSetFocus( nOldTag ) )
 
-   if !empty(cFilter)
+   if !empty( cFilter )
       ( cAlias )->( dbSetFilter( {|| &cFilter }, cFilter ) )
    end if
 
+<<<<<<< HEAD
+RETURN lReturn
+=======
 
 RETURN lRETURN
+>>>>>>> origin/master
 
 //-------------------------------------------------------------------------//
 

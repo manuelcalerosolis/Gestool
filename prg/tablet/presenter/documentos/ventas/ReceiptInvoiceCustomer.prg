@@ -6,7 +6,6 @@ CLASS ReceiptInvoiceCustomer FROM DocumentsSales
   
    DATA cNumeroFactura                    INIT ""
    DATA nImporteAnterior                  INIT 0
-   DATA nOrdenAnterior
    DATA lShowFilterCobrado                INIT .t.
    DATA lCloseFiles                       INIT .t.
 
@@ -46,7 +45,7 @@ CLASS ReceiptInvoiceCustomer FROM DocumentsSales
 
    METHOD setTrueAceptarImprimir()        INLINE ( ::lAceptarImprimir  := .t. )
    METHOD setFalseAceptarImprimir()       INLINE ( ::lAceptarImprimir  := .t. )
-   
+
 END CLASS
 
 //---------------------------------------------------------------------------//
@@ -264,7 +263,6 @@ METHOD addReciboDiferencia( nImporteRecibo ) CLASS ReceiptInvoiceCustomer
    ( ::getDataTable() )->cCodCli    := aTabla[ ( ::getDataTable() )->( fieldpos( "cCodCli" ) ) ]
    ( ::getDataTable() )->cNomCli    := aTabla[ ( ::getDataTable() )->( fieldpos( "cNomCli" ) ) ]
    ( ::getDataTable() )->cCodAge    := aTabla[ ( ::getDataTable() )->( fieldpos( "cCodAge" ) ) ] 
-   //( ::getDataTable() )->dEntrada   := Ctod( "" )
    ( ::getDataTable() )->nImporte   := nImporteRecibo
    ( ::getDataTable() )->nImpCob    := nImporteRecibo
    ( ::getDataTable() )->cDescrip   := "Recibo nº" + AllTrim( str( nCount ) ) + " de factura " + if( !empty( aTabla[ ( ::getDataTable() )->( fieldpos( "cTipRec" ) ) ] ), "rectificativa ", "" ) + aTabla[ ( ::getDataTable() )->( fieldpos( "cSerie" ) ) ] + '/' + AllTrim( str( aTabla[ ( ::getDataTable() )->( fieldpos( "nNumFac" ) ) ] ) ) + '/' + aTabla[ ( ::getDataTable() )->( fieldpos( "cSufFac" ) ) ]
