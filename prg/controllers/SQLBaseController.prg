@@ -532,7 +532,7 @@ METHOD isValidGet( oGet )
 
    msgalert( hb_valtoexp( ::oModel ), "este es el modelo" )
 
-   if !( ::oModel:exist( uValue ) )
+   if !::oModel:exist( uValue )
       RETURN .f.
    end if 
 
