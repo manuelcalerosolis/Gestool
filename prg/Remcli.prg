@@ -206,8 +206,8 @@ CLASS TRemesas FROM TMasDet
 
    METHOD GetBICClient()            INLINE ( GetBIC( ::GetValidEntidadCliente() ) )
 
-   METHOD TextoDocumento()          INLINE ( ::oDbfDet:cSerie + "/" + AllTrim( Str( ::oDbfDet:nNumFac ) ) + "/" +  ::oDbfDet:cSufFac )
-   METHOD IdDocumento()             INLINE ( ::oDbfDet:cSerie + AllTrim( Str( ::oDbfDet:nNumFac ) ) +  ::oDbfDet:cSufFac )
+   METHOD TextoDocumento()          INLINE ( ::oDbfDet:cSerie + AllTrim( Str( ::oDbfDet:nNumFac ) ) + ::oDbfDet:cSufFac )
+   METHOD IdDocumento()             INLINE ( ::oDbfDet:cSerie + AllTrim( Str( ::oDbfDet:nNumFac ) ) + ::oDbfDet:cSufFac )
    METHOD ImporteDocumento()        INLINE ( ::oDbfDet:nImporte )
 
    METHOD bancoRemesa()             INLINE ( ::oCtaRem:oDbf:cPaisIBAN + ::oCtaRem:oDbf:cCtrlIBAN + ::oCtaRem:oDbf:cEntBan + ::oCtaRem:oDbf:cAgcBan + ::oCtaRem:oDbf:cDgcBan + ::oCtaRem:oDbf:cCtaBan )
