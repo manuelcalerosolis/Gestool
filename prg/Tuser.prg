@@ -114,9 +114,6 @@ CLASS TUser
    Data     _EnUso                     INIT     .f.
    Method   lEnUso( lNewVal )          INLINE   ( if( isLogic( lNewVal ), ::_EnUso := lNewVal, ::_EnUso ) )
 
-   Data     _TipoIncidencia            INIT ""
-   Method   cTipoIncidencia( cNewVal ) INLINE if( cNewVal != nil, ::_TipoIncidencia := cNewVal, ::_TipoIncidencia )
-
    Data     _CodigoSala                INIT ""
    Method   SalaVenta( cNewVal )       INLINE if( cNewVal != nil, ::_CodigoSala := cNewVal, ::_CodigoSala )
 
@@ -307,7 +304,6 @@ Method setUser( cCodigoUsuario, lCreateHandle )
          ::dUltAuto(          ( ::oDbf )->dUltAut )
          ::cEmpresaFija(      ( ::oDbf )->cCodEmp )
          ::lNoOpenCajon(      ( ::oDbf )->lNoOpCaj )
-         ::cTipoIncidencia(   ( ::oDbf )->cTipInci )
          ::MixPermisosGrupo(  ( ::oDbf )->cCodGrp )
          ::SalaVenta(         ( ::oDbf )->cCodSala )
          ::DelegacionUsuario( ( ::oDbf )->cCodDlg )

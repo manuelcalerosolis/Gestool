@@ -24,8 +24,6 @@ END CLASS
 
 METHOD New()
 
-   ::cTitle                      := "Tipos ventas"
-
    ::cDbfTableName				 	:= "TVTA"
 
    ::hColumns                   	:= {  "id"        => {  "create"    => "INTEGER PRIMARY KEY AUTOINCREMENT"    ,;

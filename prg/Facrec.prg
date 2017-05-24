@@ -4488,7 +4488,6 @@ STATIC FUNCTION SetDlgMode( aTmp, aGet, oFld, oSayPr1, oSayPr2, oSayVp1, oSayVp2
 
       aGet[ _NCANENT ]:cText( 1 )
       aGet[ _NUNICAJA]:cText( 1 )
-      aGet[ _CTIPMOV ]:cText( cDefVta() )
       aTmp[ _NNUMLIN ]  := nLastNum( dbfTmpLin )
       aGet[ _NPOSPRINT]:cText( nLastNum( dbfTmpLin, "nPosPrint" ) )
       aGet[ _CALMLIN ]:cText( aTmpFac[ _CCODALM ])
@@ -4682,7 +4681,6 @@ STATIC FUNCTION SetDlgMode( aTmp, aGet, oFld, oSayPr1, oSayPr2, oSayVp1, oSayVp2
    Focus y validaci¢n----------------------------------------------------------
    */
 
-   aGet[ _CTIPMOV ]:lValid()
    aGet[ _CCODTIP ]:lValid()
    aGet[ _CALMLIN ]:lValid()
    aGet[ _CREF    ]:SetFocus()
@@ -5019,7 +5017,7 @@ STATIC FUNCTION AppendKit( uTmpLin, aTmpAlb )
       cSufAlb                          := ( uTmpLin )->cSufFac
       nCanEnt                          := ( uTmpLin )->nCanEnt
       dFecAlb                          := ( uTmpLin )->dFecha
-      cTipMov                          := ( uTmpLin )->cTipMov      
+      cTipMov                          := ( uTmpLin )->id_tipo_v      
       cAlmLin                          := ( uTmpLin )->cAlmLin
       nIvaLin                          := ( uTmpLin )->nIva
       lIvaLin                          := ( uTmpLin )->lIvaLin
@@ -5092,7 +5090,7 @@ STATIC FUNCTION AppendKit( uTmpLin, aTmpAlb )
             ( dbfTmpLin )->cSufFac     := cSufAlb
             ( dbfTmpLin )->nCanEnt     := nCanEnt
             ( dbfTmpLin )->dFecha      := dFecAlb
-            ( dbfTmpLin )->cTipMov     := cTipMov
+            ( dbfTmpLin )->id_tipo_v   := cTipMov
             ( dbfTmpLin )->cAlmLin     := cAlmLin
             ( dbfTmpLin )->lIvaLin     := lIvaLin
 
@@ -5501,7 +5499,7 @@ STATIC FUNCTION AppKit( aClo, aTmpFac, dbfTmpLin, dbfKit )
             ( dbfTmpLin )->cSufFac     := aClo[ _CSUFFAC ]
             ( dbfTmpLin )->nCanEnt     := aClo[ _NCANENT ]
             ( dbfTmpLin )->dFecha      := aClo[ _DFECHA  ]
-            ( dbfTmpLin )->cTipMov     := aClo[ _CTIPMOV ]
+            ( dbfTmpLin )->id_tipo_v   := aClo[ _CTIPMOV ]
             ( dbfTmpLin )->nNumLin     := aClo[ _NNUMLIN ]
             ( dbfTmpLin )->cAlmLin     := aClo[ _CALMLIN ]
             ( dbfTmpLin )->lIvaLin     := aClo[ _LIVALIN ]
@@ -9009,13 +9007,12 @@ STATIC FUNCTION cFacCli( aGet, aTmp, oBrw, oBrwiva, nMode )
                   ( dbfTmpLin )->cPesoKg    := ( dbfFacCliL )->cPesoKg
                   ( dbfTmpLin )->nComAge    := ( dbfFacCliL )->nComAge
                   ( dbfTmpLin )->dFecha     := ( dbfFacCliL )->dFecha
-                  ( dbfTmpLin )->cTipMov    := ( dbfFacCliL )->cTipMov
+                  ( dbfTmpLin )->id_tipo_v    := ( dbfFacCliL )->id_tipo_v
                   ( dbfTmpLin )->cCodAlb    := ( dbfFacCliL )->cSerie + Str( ( dbfFacCliL )->nNumFac ) + ( dbfFacCliL )->cSufFac
                   ( dbfTmpLin )->lTotLin    := ( dbfFacCliL )->lTotLin
                   ( dbfTmpLin )->nDtoDiv    := ( dbfFacCliL )->nDtoDiv
                   ( dbfTmpLin )->nCtlStk    := ( dbfFacCliL )->nCtlStk
                   ( dbfTmpLin )->cAlmLin    := ( dbfFacCliL )->cAlmLin
-                  ( dbfTmpLin )->cTipMov    := ( dbfFacCliL )->cTipMov
                   ( dbfTmpLin )->lIvaLin    := ( dbfFacCliL )->lIvaLin
                   ( dbfTmpLin )->lImpLin    := ( dbfFacCliL )->lImpLin
                   ( dbfTmpLin )->nValImp    := ( dbfFacCliL )->nValImp

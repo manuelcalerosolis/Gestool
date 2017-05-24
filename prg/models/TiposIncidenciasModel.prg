@@ -22,8 +22,6 @@ END CLASS
 
 METHOD New()
 
-   ::cTitle                      := "Tipos incidencias"
-
    ::cDbfTableName				 	:= "TipInci"
 
    ::hColumns                   	:= {  "id"                 => {  "create"    => "INTEGER PRIMARY KEY AUTOINCREMENT"          ,;

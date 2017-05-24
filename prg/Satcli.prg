@@ -3439,7 +3439,6 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbfSatCliL, oBrw, lTotLin, cCodArtEnt, nMode
       aTmp[ _NNUMSAT  ]    := aTmpSat[ _NNUMSAT ]
       aTmp[ _CSUFSAT  ]    := aTmpSat[ _CSUFSAT ]
       aTmp[ _NUNICAJA ]    := 1
-      aTmp[ _CTIPMOV  ]    := cDefVta()
       aTmp[ _LTOTLIN  ]    := lTotLin
       aTmp[ _NCANSAT  ]    := 1
       aTmp[ _LIVALIN  ]    := aTmpSat[ _LIVAINC ]
@@ -4401,10 +4400,6 @@ STATIC FUNCTION SetDlgMode( aTmp, aGet, nMode, oStkAct, oSayPr1, oSayPr2, oSayVp
    /*
    Focus y validación----------------------------------------------------------
    */
-
-   if aGet[ _CTIPMOV ] != nil
-      aGet[ _CTIPMOV ]:lValid()
-   end if
 
    if aGet[ _CALMLIN ] != nil
       aGet[ _CALMLIN ]:lValid()
@@ -7413,7 +7408,6 @@ Static Function AppendKit( uTmpLin, aTmpSat )
    local cSufSat
    local nCanSat
    local dFecSat
-   local cTipMov
    local cAlmLin
    local nIvaLin
    local lIvaLin
@@ -7437,7 +7431,6 @@ Static Function AppendKit( uTmpLin, aTmpSat )
       cSufSat                          := uTmpLin[ _CSUFSAT ]
       nCanSat                          := uTmpLin[ _NCANSAT ]
       dFecSat                          := uTmpLin[ _DFECHA  ]
-      cTipMov                          := uTmpLin[ _CTIPMOV ]
       cAlmLin                          := uTmpLin[ _CALMLIN ]
       nIvaLin                          := uTmpLin[ _NIVA    ]
       lIvaLin                          := uTmpLin[ _LIVALIN ]
@@ -7456,7 +7449,6 @@ Static Function AppendKit( uTmpLin, aTmpSat )
       cSufSat                          := ( uTmpLin )->cSufSat
       nCanSat                          := ( uTmpLin )->nCanSat
       dFecSat                          := ( uTmpLin )->dFecha
-      cTipMov                          := ( uTmpLin )->cTipMov
       cAlmLin                          := ( uTmpLin )->cAlmLin
       nIvaLin                          := ( uTmpLin )->nIva
       lIvaLin                          := ( uTmpLin )->lIvaLin
@@ -7514,7 +7506,6 @@ Static Function AppendKit( uTmpLin, aTmpSat )
             ( dbfTmpLin )->cSufSat     := cSufSat
             ( dbfTmpLin )->nCanSat     := nCanSat
             ( dbfTmpLin )->dFecha      := dFecSat
-            ( dbfTmpLin )->cTipMov     := cTipMov
             ( dbfTmpLin )->cAlmLin     := cAlmLin
             ( dbfTmpLin )->lIvaLin     := lIvaLin
             ( dbfTmpLin )->nComAge     := nComAge

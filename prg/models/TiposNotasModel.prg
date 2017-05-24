@@ -22,8 +22,6 @@ END CLASS
 
 METHOD New()
 
-   ::cTitle                      := "Tipos notas"
-
    ::cDbfTableName            	:= "TipoNotas"
 
    ::hColumns                 	:= { 	"id"     => {  "create"    => "INTEGER PRIMARY KEY AUTOINCREMENT",;

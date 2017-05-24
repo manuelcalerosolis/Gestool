@@ -24,6 +24,8 @@ METHOD New()
 
    ::idUserMap            := "01089"
 
+   ::setTitle( "Tipos incidencias" )
+
    ::Super:New()
 
 Return ( Self )

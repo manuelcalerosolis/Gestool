@@ -116,7 +116,7 @@ RETURN ( Self )
 
 METHOD changeFind( oFind, oBrowse )
 
-   local lFind := ::oController:find( oFind )
+   local lFind := ::oController:findGet( oFind )
 
    if lFind 
       oFind:SetColor( Rgb( 0, 0, 0 ), Rgb( 255, 255, 255 ) )
@@ -150,4 +150,4 @@ METHOD changeCombo( oBrowse, oCombobox )
 
 RETURN ( Self )
 
-
+//----------------------------------------------------------------------------//
