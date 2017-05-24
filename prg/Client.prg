@@ -131,7 +131,6 @@
 #define _NTARCMB                 121      //   N      1     0
 #define _DLLACLI                 122
 #define _CTIMCLI                 123
-#define _CTIPINCI                124
 #define _TELEFONO2               125
 #define _MOVIL2                  126
 #define _CAGENTE2                127      //   C      3     0
@@ -6992,10 +6991,6 @@ Static Function EdtInc( aTmp, aGet, dbfFacCliI, oBrw, cCodCli, bValid, nMode )
       if !empty( cCodCli )
          aTmp[ ( dbfFacCliI )->( FieldPos( "cCodCli" ) ) ]  := cCodCli
       end if
-      
-      if !Empty( oUser():cTipoIncidencia() )
-         aTmp[ ( dbfFacCliI )->( FieldPos( "cCodTip" ) ) ]  := oUser():cTipoIncidencia()
-      end if
 
       aTmp[ ( dbfFacCliI )->( FieldPos( "dFecInc" ) ) ]     := getSysDate()
       aTmp[ ( dbfFacCliI )->( FieldPos( "tTimInc" ) ) ]     := getSysTime()
@@ -9037,7 +9032,6 @@ FUNCTION aItmCli()
    aAdd( aBase, { "nTarCmb",   "N",  1, 0, "Tarifa a aplicar para combinar en táctil" ,     "",                      "", "( cDbfCli )", nil } )
    aAdd( aBase, { "dLlaCli",   "D",  8, 0, "Última llamada del cliente" ,                   "",                      "", "( cDbfCli )", nil } )
    aAdd( aBase, { "cTimCli",   "C",  5, 0, "Hora última llamada del cliente" ,              "",                      "", "( cDbfCli )", nil } )
-   aAdd( aBase, { "cTipInci",  "C",  5, 0, "Tipo de incidencia" ,                           "",                      "", "( cDbfCli )", nil } )
    aAdd( aBase, { "Telefono2", "C", 50, 0, "Segundo teléfono",                              "Telefono2",             "", "( cDbfCli )", nil } )
    aAdd( aBase, { "Movil2",    "C", 50, 0, "Segundo móvil",                                 "Movil2",                "", "( cDbfCli )", nil } )
    aAdd( aBase, { "cAgente2",  "C",  3, 0, "Código de segundo agente comercial ",           "CodigoAgente2",         "", "( cDbfCli )", {|| accessCode():cAgente } } )

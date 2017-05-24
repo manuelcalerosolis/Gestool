@@ -3620,11 +3620,6 @@ Static Function StartPathEmp( cPath, cPathOld, cCodEmpNew, cNomEmpNew, cCodEmpOl
       mkFamilia( cPath, aImportacion:lArticulos, cPathGrp ) ; rxFamilia( cPath ) ; sysRefresh()
 
       if oMsg != nil
-         oMsg:SetText( "Creando categorias" )
-      end if
-      mkCategoria( cPath, aImportacion:lArticulos, cPathGrp ); rxCategoria( cPath )   ; SysRefresh()
-
-      if oMsg != nil
          oMsg:SetText( "Creando Estados de los SAT" )
       end if
       mkEstadoSat( cPath, aImportacion:lSatCli, cPathGrp ); rxEstadoSat( cPath )   ; SysRefresh()
@@ -3791,11 +3786,6 @@ Static Function StartPathEmp( cPath, cPathOld, cCodEmpNew, cNomEmpNew, cCodEmpOl
          oMsg:SetText( "Creando forma de pago" )
       end if
       mkFPago( cPath, aImportacion:lFPago, cPathGrp )                ; sysrefresh()
-
-      if oMsg != nil
-         oMsg:SetText( "Creando incidencias" )
-      end if
-      mkInci( cPath, .t., cPathOld )                                ; sysrefresh()
 
       if oMsg != nil
          oMsg:SetText( "Creando entrada y salidas" )

@@ -229,8 +229,6 @@ METHOD OpenFiles() CLASS TFastVentasClientes
 
       D():ClientesIncidencias( ::nView )
 
-      //D():TiposIncidencias( ::nView )
-
       D():Clientes( ::nView )
 
       D():Agentes( ::nView )
@@ -500,9 +498,6 @@ METHOD DataReport() CLASS TFastVentasClientes
 
    ::oFastReport:SetWorkArea(       "Incidencias",                      ( D():ClientesIncidencias( ::nView ) )->( select() ) )
    ::oFastReport:SetFieldAliases(   "Incidencias",                      cItemsToReport( aCliInc() ) )
-
-   ::oFastReport:SetWorkArea(       "Tipos de incidencias",             ( D():TiposIncidencias( ::nView ) )->( select() ) )
-   ::oFastReport:SetFieldAliases(   "Tipos de incidencias",             cItemsToReport( aItmInci() ) )
 
    /*
    Relaciones------------------------------------------------------------------

@@ -43,7 +43,6 @@ REQUEST DBFCDX
 #define _DULTAUT                 32      //   D      8      0     Último documento aautomático
 #define _LNOOPCAJ                33      //   L      1      0 
 #define _LARQCIE                 34      //   L      1      0
-#define _CTIPINCI                35      //   C      3      0 
 #define _CCODSALA                36      
 #define _CSERDEF                 37      //   C      1      0
 #define _LNOTUNI                 38      //   L      1      0
@@ -742,10 +741,6 @@ Return ( oDlg:nResult == IDOK )
 Static Function StartEdtRec( oGet, aGet, nMode )
 
    EvalGet( aGet, nMode )
-
-   if !Empty( aGet[ _CTIPINCI ] )
-      aGet[ _CTIPINCI ]:lValid()
-   end if 
 
    oGet:SetFocus()
 
@@ -2779,7 +2774,6 @@ Function aItmUsuario()
                      { "dUltAut",   "D",  8,  0, "Fecha último documento automático" },;
                      { "lNoOpCaj",  "L",  1,  0, "Lógico abrir cajón portamonedas" },;
                      { "lArqCie",   "L",  1,  0, "Lógico arqueo ciego para este usuario" },;
-                     { "cTipInci",  "C",  3,  0, "Tipo de incidencia por defecto" },;
                      { "cCodSala",  "C",  3,  0, "Código de sala por defecto para este usuario" },;
                      { "cSerDef",   "C",  1,  0, "Serie de facturación por defecto" },;
                      { "lNotUni",   "L",  1,  0, "Lógico para no modificar las unidades" },;

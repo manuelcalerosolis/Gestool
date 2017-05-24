@@ -235,8 +235,6 @@ METHOD OpenFiles() CLASS TFastVentasClientes
 
       DATABASE NEW ::oCliInc  PATH ( cPatCli() ) CLASS "CliInc"   FILE "CliInc.Dbf" VIA ( cDriver() ) SHARED INDEX "CliInc.Cdx"
 
-      DATABASE NEW ::oTipInc  PATH ( cPatEmp() ) CLASS "TipInc"   FILE "TipInci.Dbf" VIA ( cDriver() ) SHARED INDEX "TipInci.Cdx"
-
       DATABASE NEW ::oDbfCli PATH ( cPatCli() ) FILE "CLIENT.DBF" VIA ( cDriver() ) SHARED INDEX "CLIENT.CDX"
 
       DATABASE NEW ::oDbfAge PATH ( cPatCli() ) FILE "AGENTES.DBF" VIA ( cDriver() ) SHARED INDEX "AGENTES.CDX"

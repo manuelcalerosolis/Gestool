@@ -14,11 +14,9 @@ CLASS TImpEstudio
    DATA oDbfIva
    DATA oDbfFam
    DATA oGrpFam
-   DATA oDbfCate
    DATA oDlg
    DATA oFld
    DATA cDirOrigen
-   DATA cCategoria
    DATA oTree
    DATA oTreeFile
    DATA oMtrProceso
@@ -105,8 +103,6 @@ METHOD lOpenFiles()
 
    DATABASE NEW ::oGrpFam     FILE "GRPFAM.DBF"       PATH ( cPatArt() )    VIA ( cDriver() ) SHARED INDEX  "GRPFAM.CDX"
 
-   DATABASE NEW ::oDbfCate    FILE "CATEGORIAS.DBF"   PATH ( cPatArt() )    VIA ( cDriver() ) SHARED INDEX  "CATEGORIAS.CDX"
-
    RECOVER
 
       msgStop( "Imposible abrir todas las bases de datos" )
@@ -148,16 +144,12 @@ METHOD CloseFiles()
       ::oGrpFam:End()
    end if
 
-   if !Empty ( ::oDbfCate )
-      ::oDbfCate:End()
-   end if
 
    ::oDbfArt     := nil
    ::oDbfCodeBar := nil
    ::oDbfIva     := nil
    ::oDbfFam     := nil
    ::oGrpFam     := nil
-   ::oDbfCate    := nil
 
 RETURN ( Self )
 
@@ -169,13 +161,7 @@ Método que monta el diálogo y con el que ya pasamos a la acción
 METHOD Activate( oWnd )
 
    local oBmp
-   local aStrTipCat
-   local aBmpTipCat
    local oDirOrigen
-   local oCategoria
-   local oSayCategoria
-   local cSayCategoria
-   local oBmpCategoria
 
    if nAnd( ::nLevel, 1 ) != 0
       msgStop( "Acceso no permitido." )
@@ -186,8 +172,6 @@ METHOD Activate( oWnd )
       Return( Self )
    end if
 
-   aStrTipCat     := aStrTipoCategoria()
-   aBmpTipCat     := aBmpTipoCategoria()
 
    ::CargarValoresIni()
 
@@ -205,23 +189,6 @@ METHOD Activate( oWnd )
          BITMAP   "Folder" ;
          ON HELP ( oDirOrigen:cText( cGetFile( "*.xls", "Selección de fichero" ) ) ) ;
          OF       ::oFld:aDialogs[ 1 ]
-
-      REDEFINE GET oCategoria  VAR ::cCategoria ;
-         ID       120 ;
-         VALID    ( cCategoria( oCategoria, ::oDbfCate:cAlias, oSayCategoria, oBmpCategoria, aBmpTipCat, aStrTipCat ) ) ;
-         ON HELP  ( BrwCategoria( oCategoria, oSayCategoria, oBmpCategoria, aBmpTipCat, aStrTipCat ) ) ;
-         BITMAP   "Lupa" ;
-         OF       ::oFld:aDialogs[1]
-
-      REDEFINE GET oSayCategoria VAR cSayCategoria ;
-         ID       121 ;
-         WHEN     ( .f. ) ;
-         OF       ::oFld:aDialogs[1]
-
-      REDEFINE BITMAP oBmpCategoria ;
-         ID       122 ;
-         TRANSPARENT ;
-         OF       ::oFld:aDialogs[1]
 
       REDEFINE COMBOBOX ::oCmbTar VAR ::cCmbTar ;
          ITEMS    ::aCmbTar ;
@@ -330,7 +297,7 @@ REDEFINE APOLOMETER ::oMtrProceso ;
          OF       ::oDlg ;
          ACTION   ( WinExec( "notepad.exe " + AllTrim( ::cFilTxt ) ) )
 
-   ::oDlg:bStart  := {|| ::oBtnImprimir:Hide(), oCategoria:lValid() }
+   ::oDlg:bStart  := {|| ::oBtnImprimir:Hide() }
 
    ACTIVATE DIALOG ::oDlg CENTER
 
@@ -339,7 +306,6 @@ REDEFINE APOLOMETER ::oMtrProceso ;
    ::CloseFiles()
 
    oBmp:End()
-   oBmpCategoria:End()
 
 RETURN ( Self )
 
@@ -668,7 +634,6 @@ METHOD ImportaHoja()
                   end if
 
                   ::oDbfArt:Familia    := cNewFam
-                  ::oDbfArt:cCodCate   := ::cCategoria
 
                   if !Empty( cCodBar )
 
@@ -793,7 +758,6 @@ METHOD ImportaHoja()
                      ::oDbfArt:nUniCaja   := nUniCaja
                   end if
                   ::oDbfArt:Familia       := cNewFam
-                  ::oDbfArt:cCodCate      := ::cCategoria
 
                   /*
                   Códigos de barras--------------------------------------------
@@ -986,7 +950,6 @@ METHOD GuardarValoresIni()
 
    INI oIniApp FILE cIniApp
 
-      SET SECTION  "Importacion" ENTRY "Categoria"   TO ::cCategoria    OF oIniApp
       SET SECTION  "Importacion" ENTRY "Tarifa"      TO ::cCmbTar       OF oIniApp
       SET SECTION  "Importacion" ENTRY "CodArt"      TO ::cColCodArt    OF oIniApp
       SET SECTION  "Importacion" ENTRY "NomArt"      TO ::cColNomArt    OF oIniApp
@@ -1013,7 +976,6 @@ METHOD CargarValoresIni()
 
    INI oIniApp FILE cIniApp
 
-      GET ::cCategoria     SECTION  "Importacion" ENTRY "Categoria"  OF oIniApp DEFAULT Padr( "", 3 )
       GET ::cCmbTar        SECTION  "Importacion" ENTRY "Tarifa"     OF oIniApp DEFAULT "Tarifa 1"
       GET ::cColCodArt     SECTION  "Importacion" ENTRY "CodArt"     OF oIniApp DEFAULT "A"
       GET ::cColNomArt     SECTION  "Importacion" ENTRY "NomArt"     OF oIniApp DEFAULT "B"

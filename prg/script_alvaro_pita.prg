@@ -33,7 +33,6 @@ static oNewImp
 static oFraPub        
 static dbfDoc         
 static dbfFlt         
-static dbfCategoria   
 static dbfTemporada   
 static dbfAlbPrvL     
 static dbfFacPrvL     
@@ -50,9 +49,7 @@ static dbfPedPrvL
 static dbfPedCliL     
 static dbfUbicaT      
 static dbfUbicaL      
-static dbfRctPrvL   
-static dbfTImp     
-
+static dbfRctPrvL     
 static hFile
 static cFile      
 
@@ -198,9 +195,6 @@ STATIC FUNCTION lOpenFiles( lExt, cPath )
       dbUseArea( .T., ( cDriver() ), ( cPatPrv() + "PROVEE.DBF" ), ( cCheckArea( "PROVEE", @dbfProv ) ), if(.T. .OR. .F., !.F., NIL), .F.,, )
       if !lAIS() ; ordListAdd( ( cPatPrv() + "PROVEE.CDX" ) ) ; else ; ordSetFocus( 1 ) ; end
 
-      dbUseArea( .T., ( cDriver() ), ( cPatArt() + "CATEGORIAS.DBF" ), ( cCheckArea( "CATEGORIA", @dbfCategoria ) ), if(.T. .OR. .F., !.F., NIL), .F.,, )
-      if !lAIS() ; ordListAdd( ( cPatArt() + "CATEGORIAS.CDX" ) ) ; else ; ordSetFocus( 1 ) ; end
-
       dbUseArea( .T., ( cDriver() ), ( cPatArt() + "Temporadas.Dbf" ), ( cCheckArea( "TEMPORADA", @dbfTemporada ) ), if(.T. .OR. .F., !.F., NIL), .F.,, )
       if !lAIS() ; ordListAdd( ( cPatArt() + "Temporadas.Cdx" ) ) ; else ; ordSetFocus( 1 ) ; end
 
@@ -320,9 +314,6 @@ STATIC FUNCTION lOpenFiles( lExt, cPath )
       dbUseArea( .T., ( cDriver() ), ( cPatAlm() + "UBICAL.DBF" ), ( cCheckArea( "UBICAL", @dbfUbicaL ) ), if(.T. .OR. .F., !.F., NIL), .F.,, )
       if !lAIS() ; ordListAdd( ( cPatAlm() + "UBICAL.CDX" ) ) ; else ; ordSetFocus( 1 ) ; end
 
-      dbUseArea( .T., ( cDriver() ), ( cPatDat() + "TIPIMP.DBF" ), ( cCheckArea( "TIPIMP", @dbfTImp ) ), if(.T. .OR. .F., !.F., NIL), .F.,, )
-      if !lAIS() ; ordListAdd( ( cPatDat() + "TIPIMP.CDX" ) ) ; else ; ordSetFocus( 1 ) ; end
-
       oStock               := TStock():Create( cPatGrp() )
 
       if !oStock:lOpenFiles()
@@ -357,10 +348,6 @@ STATIC FUNCTION CloseFiles( )
 
    if dbfProv <> nil
       ( dbfProv )->( dbCloseArea() )
-   end
-
-   if dbfCategoria <> nil
-      ( dbfCategoria )->( dbCloseArea() )
    end
 
    if dbfTemporada <> nil
@@ -503,10 +490,6 @@ STATIC FUNCTION CloseFiles( )
       ( dbfUbicaL )->( dbCloseArea() )
    end
 
-   if dbfTImp <> nil
-      ( dbfTImp )->( dbCloseArea() )
-   end
-
    if !Empty( oStock )
       oStock:end()
    end
@@ -541,7 +524,6 @@ STATIC FUNCTION CloseFiles( )
    oFraPub        := nil
    dbfDoc         := nil
    dbfFlt         := nil
-   dbfCategoria   := nil
    dbfTemporada   := nil
    dbfAlbPrvL     := nil
    dbfFacPrvL     := nil
@@ -558,7 +540,6 @@ STATIC FUNCTION CloseFiles( )
    dbfPedCliL     := nil
    dbfUbicaT      := nil
    dbfUbicaL      := nil
-   dbfTImp        := nil
 
    lOpenFiles     := .F.
 

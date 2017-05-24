@@ -122,33 +122,6 @@ Return ( Self )
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 
-CLASS TItemGroupCategoria FROM TItemGroup
-
-   METHOD New( nView )
-
-END CLASS
-
-//---------------------------------------------------------------------------//
-
-METHOD New( nView ) CLASS TItemGroupCategoria
-
-   ::Nombre       := "Categoría"
-   ::Desde        := Space( 3 )
-   ::Hasta        := Replicate( "Z", 3 )
-   ::cPicDesde    := "@!"
-   ::cPicHasta    := "@!"
-   ::TextDesde    := {|| RetFld( ::Desde, D():Categorias( nView ), "cNombre", "Codigo" ) }
-   ::TextHasta    := {|| RetFld( ::Hasta, D():Categorias( nView ), "cNombre", "Codigo" ) }
-   ::HelpDesde    := {|oGet| BrwCategoria( oGet ) }
-   ::HelpHasta    := {|oGet| BrwCategoria( oGet ) }
-   ::ValidDesde   := {|oGet| cCategoria( oGet, D():Categorias( nView ) ) }
-   ::ValidHasta   := {|oGet| cCategoria( oGet, D():Categorias( nView ) ) }
-   ::cBitmap      := "gc_photographic_filters_16"
-
-Return ( Self )
-
-//---------------------------------------------------------------------------//
-
 CLASS TItemGroupTemporada FROM TItemGroup
 
    METHOD New( nView )

@@ -22,10 +22,6 @@ memvar cGrupoProveedorDesde
 memvar cGrupoProveedorHasta
 memvar cGrupoTemporadaDesde
 memvar cGrupoTemporadaHasta
-memvar cGrupoCategoriaDesde
-memvar cGrupoCategoriaHasta
-memvar cGrupoCategoriaNombreDesde
-memvar cGrupoCategoriaNombreHasta
 memvar cGrupoEstadoArticuloDesde
 memvar cGrupoEstadoArticuloHasta
 memvar cGrupoFamiliaDesde
@@ -116,7 +112,6 @@ CLASS TNewInfGen FROM TInfGen
    DATA oGrupoTArticulo
    DATA oGrupoFabricante
    DATA oGrupoTOperacion
-   DATA oGrupoCategoria
    DATA oGrupoEstadoArticulo
    DATA oGrupoRuta
    DATA oGrupoFacturas
@@ -218,8 +213,6 @@ CLASS TNewInfGen FROM TInfGen
 
    METHOD lGrupoColaborador( lInitGroup, lImp )
 
-   METHOD lGrupoCategoria( lInitGroup, lImp )
-
    METHOD lGrupoEstadoArticulo( lInitGroup, lImp )
 
    METHOD lGrupoRuta( lInitGroup, lImp )
@@ -300,9 +293,6 @@ CLASS TNewInfGen FROM TInfGen
 
    METHOD SetNombreDesdeArticulo()
    METHOD SetNombreHastaArticulo()
-
-   METHOD SetNombreDesdeCategoria()
-   METHOD SetNombreHastaCategoria()
 
    METHOD SetNombreDesdeTransportista()
    METHOD SetNombreHastaTransportista()
@@ -2856,86 +2846,6 @@ RETURN ( lOpen )
 
 //---------------------------------------------------------------------------//
 
-METHOD lGrupoCategoria( lInitGroup, lImp ) CLASS TNewInfGen
-
-   local lOpen          := .t.
-   local oError
-   local oBlock
-
-   DEFAULT lImp         := .t.
-
-   oBlock               := ErrorBlock( {| oError | ApoloBreak( oError ) } )
-   BEGIN SEQUENCE
-
-   if ::oDbfCat == nil .or. !::oDbfCat:Used()
-      DATABASE NEW ::oDbfCat PATH ( cPatArt() ) FILE "CATEGORIAS.DBF" VIA ( cDriver() ) SHARED INDEX "CATEGORIAS.CDX"
-   end if
-
-   ::oGrupoCategoria                   := TRGroup():New( {|| ::oDbf:cCodCat }, {|| getConfigTraslation( "Categoría" ) + " : " + AllTrim( ::oDbf:cCodCat ) + " - " + AllTRim( ::oDbf:cNomCat ) }, {|| "Total" + getConfigTraslation( "categoria") + " : " + ::oDbf:cCodCat }, {|| 3 }, ::lSalto )
-
-   ::oGrupoCategoria:Cargo             := TItemGroup()
-   ::oGrupoCategoria:Cargo:Nombre      := getConfigTraslation( "Categorías" )
-   ::oGrupoCategoria:Cargo:Expresion   := "cCodCat"
-   ::oGrupoCategoria:Cargo:Todos       := .t.
-   ::oGrupoCategoria:Cargo:Desde       := Space( 10 )            // dbFirst( ::oDbfCat, 1 )
-   ::oGrupoCategoria:Cargo:Hasta       := Replicate( "Z", 10 )   // dbLast( ::oDbfCat, 1 )
-   ::oGrupoCategoria:Cargo:cPicDesde   := "@!"
-   ::oGrupoCategoria:Cargo:cPicHasta   := "@!"
-   ::oGrupoCategoria:Cargo:HelpDesde   := {|| BrwCategoria( ::oDesde, ::oSayDesde ) }
-   ::oGrupoCategoria:Cargo:HelpHasta   := {|| BrwCategoria( ::oHasta, ::oSayHasta ) }
-   ::oGrupoCategoria:Cargo:TextDesde   := {|| ::SetNombreDesdeCategoria() }
-   ::oGrupoCategoria:Cargo:TextHasta   := {|| ::SetNombreHastaCategoria() }
-   ::oGrupoCategoria:Cargo:ValidDesde  := {|oGet| if( cCategoria( if( !Empty( oGet ), oGet, ::oDesde ), ::oDbfCat:cAlias, ::oSayDesde ), ( ::ChangeValor(), .t. ), .f. ) }
-   ::oGrupoCategoria:Cargo:ValidHasta  := {|oGet| if( cCategoria( if( !Empty( oGet ), oGet, ::oHasta ), ::oDbfCat:cAlias, ::oSayHasta ), ( ::ChangeValor(), .t. ), .f. ) }
-   ::oGrupoCategoria:Cargo:lImprimir   := lImp
-   ::oGrupoCategoria:Cargo:cBitmap     := "gc_photographic_filters_16"
-   /*
-   ::oGrupoCategoria:Cargo:nArea       := ::oDbfCat:nArea
-   ::oGrupoCategoria:Cargo:aItems      := cItemsToReport( aItmCat() )
-   */
-
-   if !Empty( ::oImageList )
-      ::oImageList:AddMasked( TBitmap():Define( "gc_photographic_filters_16" ), Rgb( 255, 0, 255 ) )
-   end if
-
-   if lInitGroup != nil
-
-      aAdd( ::aSelectionGroup, ::oGrupoCategoria )
-
-      if !Empty( ::oImageGroup )
-         ::oImageGroup:AddMasked( TBitmap():Define( "gc_photographic_filters_16" ), Rgb( 255, 0, 255 ) )
-         ::oGrupoCategoria:Cargo:Imagen   := len( ::oImageGroup:aBitmaps ) - 1
-      end if
-
-      if lInitGroup
-         if !Empty( ::oColNombre )
-            ::oColNombre:AddResource( ::oGrupoCategoria:Cargo:cBitmap )
-         end if
-         aAdd( ::aInitGroup, ::oGrupoCategoria )
-      end if
-
-   end if
-
-   aAdd( ::aSelectionRango, ::oGrupoCategoria )
-
-   RECOVER USING oError
-
-      msgStop( ErrorMessage( oError ), 'Imposible abrir todas las bases de datos' )
-
-      if !Empty( ::oDbfCat )
-         ::oDbfCat:End()
-      end if
-
-      lOpen          := .f.
-
-   END SEQUENCE
-
-   ErrorBlock( oBlock )
-
-RETURN ( lOpen )
-
-//---------------------------------------------------------------------------//
-
 METHOD lGrupoEstadoArticulo( lInitGroup, lImp ) CLASS TNewInfGen
 
    local lOpen          := .t.
@@ -4432,19 +4342,6 @@ Method AddVariable() CLASS TNewInfGen
    if !Empty( ::oGrupoTOperacion )
    end if
 
-   if !Empty( ::oGrupoCategoria )
-
-      public cGrupoCategoriaDesde           := ::oGrupoCategoria:Cargo:Desde
-      public cGrupoCategoriaHasta           := ::oGrupoCategoria:Cargo:Hasta
-
-      ::oFastReport:AddVariable(       "Informe", "Desde código de categoria",  "GetHbVar('cGrupoCategoriaDesde')" )
-      ::oFastReport:AddVariable(       "Informe", "Hasta código de categoria",  "GetHbVar('cGrupoCategoriaHasta')" )
-
-      ::oFastReport:AddVariable(       "Informe", "Desde nombre de categoria",  "GetHbVar('cGrupoCategoriaNombreDesde')" )
-      ::oFastReport:AddVariable(       "Informe", "Hasta nombre de categoria",  "GetHbVar('cGrupoCategoriaNombreHasta')" )
-
-   end if
-
    if !Empty( ::oGrupoEstadoArticulo )
 
       public cGrupoEstadoArticuloDesde           := ::oGrupoEstadoArticulo:Cargo:Desde
@@ -4647,30 +4544,6 @@ METHOD SetNombreHastaArticulo() CLASS TNewInfGen
    end if
 
 Return ( cGrupoArticuloNombreHasta )
-
-//---------------------------------------------------------------------------//
-
-METHOD SetNombreDesdeCategoria() CLASS TNewInfGen
-   
-   if !Empty( ::oGrupoCategoria:Cargo:Desde )
-      public cGrupoCategoriaNombreDesde  := oRetFld( ::oGrupoCategoria:Cargo:Desde, ::oDbfCat, "cNombre", "Codigo" )
-   else
-      public cGrupoCategoriaNombreDesde  := ""
-   end if
-
-Return ( cGrupoCategoriaNombreDesde )
-
-//---------------------------------------------------------------------------//
-
-METHOD SetNombreHastaCategoria() CLASS TNewInfGen
-
-   if !Empty( ::oGrupoCategoria:Cargo:Hasta )
-      public cGrupoCategoriaNombreHasta  := oRetFld( ::oGrupoCategoria:Cargo:Hasta, ::oDbfCat, "cNombre", "Codigo" )
-   else
-      public cGrupoCategoriaNombreHasta  := ""
-   end if
-
-Return ( cGrupoCategoriaNombreHasta )
 
 //---------------------------------------------------------------------------//
 

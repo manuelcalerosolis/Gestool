@@ -5184,16 +5184,6 @@ Static Function EdtInc( aTmp, aGet, dbf, oBrw, bWhen, bValid, nMode, aTmpAlb )
 
    DEFINE DIALOG oDlg RESOURCE "INCIDENCIA" TITLE LblTitle( nMode ) + "incidencias de albaranes a clientes"
 
-      REDEFINE GET   aGet[ ( dbfTmpInc )->( FieldPos( "cCodTip" ) ) ];
-         VAR         aTmp[ ( dbfTmpInc )->( FieldPos( "cCodTip" ) ) ];
-         ID          120 ;
-         IDTEXT      130 ;
-         WHEN        ( nMode != ZOOM_MODE );
-         VALID       ( TiposIncidenciasController():Instance():isValidGet( aGet[ ( dbfTmpInc )->( FieldPos( "cCodTip" ) ) ] ) ) ;
-         BITMAP      "LUPA" ;
-         ON HELP     ( TiposIncidenciasController():Instance():AssignBrowse( aGet[ ( dbfTmpInc )->( FieldPos( "cCodTip" ) ) ] ) ) ; 
-         OF          oDlg
-
       REDEFINE GET   aTmp[ ( dbfTmpInc )->( FieldPos( "dFecInc" ) ) ] ;
          ID          100 ;
          SPINNER ;
@@ -5232,25 +5222,9 @@ Static Function EdtInc( aTmp, aGet, dbf, oBrw, bWhen, bValid, nMode, aTmpAlb )
       oDlg:AddFastKey( VK_F5, {|| WinGather( aTmp, nil, dbfTmpInc, oBrw, nMode ), oDlg:end( IDOK ) } )
    end if
 
-   oDlg:bStart       := {|| aGet[ ( dbfTmpInc )->( FieldPos( "cCodTip" ) ) ]:lValid() }
-
    ACTIVATE DIALOG oDlg CENTER
 
 Return ( oDlg:nResult == IDOK )
-
-//---------------------------------------------------------------------------//
-
-Static Function browseTipoIncidencia( oGet )
-
-   local idIncidencia
-
-   idIncidencia   := TiposIncidenciasController():New():ActivateBrowse()
-
-   if !empty( idIncidencia )
-      oGet:cText( alltrim(str( idIncidencia ) ) )
-   end if 
-
-Return ( nil )
 
 //---------------------------------------------------------------------------//
 

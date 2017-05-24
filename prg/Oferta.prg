@@ -50,7 +50,6 @@ static oWndBrw
 static dbfOferta
 static dbfArticulo
 static dbfFamilia
-static dbfCategoria
 static dbfTemporada
 static dbfPro
 static dbfTblPro
@@ -75,7 +74,7 @@ static dbfProLin
 static dbfProMat
 static dbfHisMov
 
-static aTipoOferta   := { "Artículos", "Familias", "Tipo de artículo", "Categorias", "Temporadas", "Fabricantes" }
+static aTipoOferta   := { "Artículos", "Familias", "Tipo de artículo", "Temporadas", "Fabricantes" }
 static aBmpOferta    := { "gc_object_cube_16", "gc_cubes_16", "gc_objects_16", "gc_photographic_filters_16", "gc_cloud_sun_16", "gc_bolt_16" }
 
 static oBandera
@@ -163,9 +162,6 @@ STATIC FUNCTION OpenFiles()
 
    USE ( cPatArt() + "ARTDIV.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "ARTDIV", @dbfArtVta ) )
    SET ADSINDEX TO ( cPatArt() + "ARTDIV.CDX" ) ADDITIVE
-
-   USE ( cPatArt() + "CATEGORIAS.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "CATEGORIA", @dbfCategoria ) )
-   SET ADSINDEX TO ( cPatArt() + "CATEGORIAS.CDX" ) ADDITIVE
 
    USE ( cPatArt() + "Temporadas.Dbf" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "TEMPORADA", @dbfTemporada ) )
    SET ADSINDEX TO ( cPatArt() + "Temporadas.Cdx" ) ADDITIVE
@@ -323,10 +319,6 @@ Static Function CloseFiles()
       ( dbfHisMov )->( dbCloseArea() )
    end if
 
-   if !Empty( dbfCategoria ) .and. ( dbfCategoria )->( Used() )
-      ( dbfCategoria )->( dbCloseArea() )
-   end if
-
    if !Empty( dbfTemporada ) .and. ( dbfTemporada )->( Used() )
       ( dbfTemporada )->( dbCloseArea() )
    end if
@@ -385,7 +377,6 @@ Static Function CloseFiles()
    dbfClient      := nil
    dbfIva         := nil
    dbfFamilia     := nil
-   dbfCategoria   := nil
    dbfTemporada   := nil
    dbfPro         := nil
    dbfTblPro      := nil
@@ -2724,10 +2715,6 @@ function ChangeComboTipo( aoGet, aBlank, nValDiv, nMode, oSayPr1, oSayPr2, oSayV
          case oCombo:nAt == 3
             aoGet[ _CARTOFE ]:bHelp  := {|| oTipArt:Buscar( aoGet[ _CARTOFE ] ) }
             aoGet[ _CARTOFE ]:bValid := {|| oTipArt:Existe( aoGet[ _CARTOFE ], aoGet[ _CDESOFE ] ) }
-
-         case oCombo:nAt == 4
-            aoGet[ _CARTOFE ]:bHelp  := {|| BrwCategoria( aoGet[ _CARTOFE ], aoGet[ _CDESOFE ] ) }
-            aoGet[ _CARTOFE ]:bValid := {|| cCategoria( aoGet[ _CARTOFE ], dbfCategoria, aoGet[ _CDESOFE ] ) }
 
          case oCombo:nAt == 5
             aoGet[ _CARTOFE ]:bHelp  := {|| BrwTemporada( aoGet[ _CARTOFE ], aoGet[ _CDESOFE ] ) }

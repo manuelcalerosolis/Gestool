@@ -17,8 +17,6 @@ CLASS D
 
    CLASSDATA   cTag
 
-   CLASSDATA   hashTiposIncidencias                         INIT {=>}
-
    METHOD CreateView()                       
    METHOD DeleteView( nView )
 
@@ -376,14 +374,6 @@ CLASS D
       METHOD setFocusClientesDirecciones( cTag, nView )  INLINE ( ::cTag   := ( ::ClientesDirecciones( nView )  )->( ordSetFocus( cTag ) ) )
       METHOD gotoIdClientesDirecciones( id, nView )      INLINE ( ::seek( ::ClientesDirecciones( nView ), id ) ) 
 
-   METHOD TiposIncidencias( nView )                      INLINE ( ::Get( "TipInci", nView ) )
-      METHOD TiposIncidenciasId( nView )                 INLINE ( ( ::Get( "TipInci", nView ) )->cCodInci )
-      METHOD TiposIncidenciasNombre( nView )             INLINE ( ( ::Get( "TipInci", nView ) )->cNomInci )
-      METHOD getHashTiposIncidencias( nView )
-      METHOD getTiposIncicencias( nView )      
-      METHOD getCodigoTipoIncicencias( cNombreIncidencia, nView )
-      METHOD getNombreTipoIncicencias( cCodigoIncidencia, nView )
-
    METHOD ClientesIncidencias( nView )                   INLINE ( ::Get( "CliInc", nView ) )
       METHOD ClientesIncidenciasId( nView )              INLINE ( ( ::Get( "CliInc", nView ) )->cCodCli )
       METHOD ClientesIncidenciasNombre( nView )          INLINE ( ( ::Get( "CliInc", nView ) )->mDesInc )
@@ -598,8 +588,6 @@ CLASS D
    METHOD FamiliasLenguajes( nView )                              INLINE ( ::Get( "FamLeng", nView ) )
    
    METHOD Temporadas( nView )                                     INLINE ( ::Get( "Temporadas", nView ) )
-
-   METHOD Categorias( nView )                                     INLINE ( ::Get( "Categorias", nView ) )
 
    METHOD Kit( nView )                                            INLINE ( ::Get( "ArtKit", nView ) )
       METHOD getStatusKit( nView )                                INLINE ( aGetStatus( ::Kit( nView ) ) )
@@ -1414,56 +1402,6 @@ METHOD setDefaultValue( hash, cDataTable, nView ) CLASS D
    hEval( aDefaultValue, {|key, value, nView| hSet( hash, key, Eval( Value, nView ) ) } )
 
 RETURN ( hash )
-
-//---------------------------------------------------------------------------//
-
-METHOD getHashTiposIncidencias( nView ) CLASS D
-
-   if !empty( ::hashTiposIncidencias )
-      Return ( ::hashTiposIncidencias )
-   end if 
-
-   ( ::TiposIncidencias( nView ) )->( dbgotop() )
-   while !( ::TiposIncidencias( nView ) )->( eof() )
-      hSet( ::hashTiposIncidencias, ::TiposIncidenciasNombre( nView ), ::TiposIncidenciasId( nView ) )
-      ( ::TiposIncidencias( nView ) )->( dbskip() )
-   end while
-
-RETURN ( ::hashTiposIncidencias )
-
-//---------------------------------------------------------------------------//
-
-METHOD getTiposIncicencias( nView ) CLASS D
-
-RETURN ( hGetKeys( ::getHashTiposIncidencias( nView ) ) )
-
-//---------------------------------------------------------------------------//
-
-METHOD getCodigoTipoIncicencias( cNombreIncidencia, nView ) CLASS D
-
-   local cCodigo              := ""
-   local hashTiposIncidencias := ::getHashTiposIncidencias( nView )
-
-   if hHasKey( hashTiposIncidencias, cNombreIncidencia )
-      cCodigo                 := hGet( hashTiposIncidencias, cNombreIncidencia )   
-   end if 
-
-RETURN ( cCodigo )
-
-//---------------------------------------------------------------------------//
-
-METHOD getNombreTipoIncicencias( cCodigoIncidencia, nView ) CLASS D
-
-   local nScan
-   local cNombreIncidencia    := ""
-   local hashTiposIncidencias := ::getHashTiposIncidencias( nView )
-
-   nScan                      := hScan( hashTiposIncidencias, {|k,v,i| v == cCodigoIncidencia } )   
-   if nScan != 0 
-      cNombreIncidencia       := hGetKeyAt( hashTiposIncidencias, nScan )
-   end if 
-
-RETURN ( cNombreIncidencia )
 
 //---------------------------------------------------------------------------//
 

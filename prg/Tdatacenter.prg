@@ -4800,10 +4800,6 @@ METHOD AlterTableSQLite()
       :New();
       :updateTableColumns()
 
-   TiposIncidenciasModel();
-      :New();
-      :updateTableColumns()
-
    HistoricosUsuariosModel();
       :New();
       :updateTableColumns()
@@ -4841,10 +4837,6 @@ RETURN ( Self )
 METHOD ConvertEmpresaToSQLite()
 
    EtiquetasModel();
-      :New();
-      :makeImportDbfSQL()
-      
-   TiposIncidenciasModel();
       :New();
       :makeImportDbfSQL()
 

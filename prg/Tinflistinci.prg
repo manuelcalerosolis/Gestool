@@ -17,8 +17,6 @@ CLASS TInfListInci FROM TInfGen
 
    METHOD CloseFiles()
 
-   METHOD lResource( cFld )
-
    METHOD lGenerate()
 
 END CLASS
@@ -47,8 +45,6 @@ METHOD OpenFiles()
 
    BEGIN SEQUENCE
 
-      DATABASE NEW ::oDbfInci PATH ( cPatEmp() ) FILE "TIPINCI.DBF" VIA ( cDriver() ) SHARED INDEX "TIPINCI.CDX"
-
    RECOVER
 
       msgStop( "Imposible abrir todas las bases de datos" )
@@ -72,56 +68,6 @@ METHOD CloseFiles()
    ::oDbfInci := nil
 
 RETURN ( Self )
-
-//---------------------------------------------------------------------------//
-
-METHOD lResource ( cFld )
-
-   local cSayInciOrg
-   local cSayInciDes
-   local oSayInciOrg
-   local oSayInciDes
-   local oInciOrg
-   local oInciDes
-
-   if !::StdResource( "INF_INCI" )
-      return .f.
-   end if
-
-   ::cInciOrg   := dbFirst( ::oDbfInci, 1 )
-   ::cInciDes   := dbLast(  ::oDbfInci, 1 )
-   cSayInciOrg  := dbFirst( ::oDbfInci, 2 )
-   cSayInciDes  := dbLast(  ::oDbfInci, 2 )
-
-   REDEFINE GET oInciOrg VAR ::cInciOrg;
-      ID       ( 1110 ) ;
-      BITMAP   "LUPA" ;
-      OF       ::oFld:aDialogs[1]
-
-      oInciOrg:bHELP := {|| BrwIncidencia( ::oDbfInci:cAlias, oInciOrg, oSayInciOrg ) }
-
-   REDEFINE GET oSayInciOrg VAR cSayInciOrg ;
-      WHEN     .f.;
-      ID       ( 1111 ) ;
-      OF       ::oFld:aDialogs[1]
-
-   REDEFINE GET oInciDes VAR ::cInciDes;
-      ID       ( 1120 ) ;
-      BITMAP   "LUPA" ;
-      OF       ::oFld:aDialogs[1]
-
-      oInciDes:bHELP := {|| BrwIncidencia( ::oDbfInci:cAlias, oInciDes, oSayInciDes ) }
-
-   REDEFINE GET oSayInciDes VAR cSayInciDes ;
-      WHEN     .f.;
-      ID       ( 1121 ) ;
-      OF       ::oFld:aDialogs[1]
-
-   ::oMtrInf:SetTotal( ::oDbfInci:Lastrec() )
-
-   ::CreateFilter( aItmInci(), ::oDbfInci:cAlias )
-
-RETURN .t.
 
 //---------------------------------------------------------------------------//
 /*

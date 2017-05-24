@@ -71,9 +71,7 @@ STATIC FUNCTION OpenFiles()
    
       D():Get( "Client", nView )
       D():Get( "CliInc", nView )
-   
-      D():Get( "TipInci", nView )
-   
+      
       D():Get( "FacPrvT", nView )
       D():Get( "FacPrvL", nView )
       D():Get( "FacPrvP", nView )
@@ -696,12 +694,6 @@ Static Function PageIniIncidecias()
          :cSortOrder          := "cCodTip"
          :bEditValue          := {|| ( D():Get( "CliInc", nView ) )->cCodTip }
          :nWidth              := 40
-      end with
-
-      with object ( oBrwInc:AddCol() )
-         :cHeader             := "Tipo incidencia"
-         :bEditValue          := {|| cNomInci( ( D():Get( "CliInc", nView ) )->cCodTip, D():Get( "TipInci", nView ) ) }
-         :nWidth              := 180
       end with
 
 

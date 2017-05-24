@@ -262,9 +262,6 @@ METHOD Resource() CLASS PedCliente2PedProveedor
       ::oItemGroupFamilia        := TItemGroupFamilia():New( ::nView )
       ::oBrwRangos:AddGroup( ::oItemGroupFamilia )
 
-      ::oItemGroupCategoria      := TItemGroupCategoria():New( ::nView )
-      ::oBrwRangos:AddGroup( ::oItemGroupCategoria )
-
       ::oItemGroupTemporada      := TItemGroupTemporada():New( ::nView )
       ::oBrwRangos:AddGroup( ::oItemGroupTemporada )
 

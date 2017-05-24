@@ -150,7 +150,6 @@ CLASS TpvTactil
    DATA oRectificativaProveedorNumeroSerie
    DATA oMovimientosAlmacen
    DATA oMovimientosAlmacenNumeroSerie
-   DATA oCategorias
    DATA oComentariosCabecera
    DATA oComentariosLinea
    DATA oTemporadas
@@ -1382,8 +1381,6 @@ METHOD OpenFiles() CLASS TpvTactil
 
    DATABASE NEW ::oMovimientosAlmacenNumeroSerie            PATH ( cPatEmp() )   FILE "MOVSER.DBF"          VIA ( cDriver() ) SHARED INDEX "MOVSER.CDX"
 
-   DATABASE NEW ::oCategorias                               PATH ( cPatArt() )   FILE "CATEGORIAS.DBF"      VIA ( cDriver() ) SHARED INDEX "CATEGORIAS.CDX"
-
    DATABASE NEW ::oComentariosCabecera                      PATH ( cPatArt() )   FILE "COMENTARIOST.DBF"    VIA ( cDriver() ) SHARED INDEX "COMENTARIOST.CDX"
 
    DATABASE NEW ::oComentariosLinea                         PATH ( cPatArt() )   FILE "COMENTARIOSL.DBF"    VIA ( cDriver() ) SHARED INDEX "COMENTARIOSL.CDX"
@@ -1798,10 +1795,6 @@ METHOD CloseFiles() CLASS TpvTactil
       ::oMovimientosAlmacenNumeroSerie:End()
    end if
 
-   if ::oCategorias != nil .and. ::oCategorias:Used()
-      ::oCategorias:End()
-   end if
-
    if ::oComentariosCabecera != nil .and. ::oComentariosCabecera:Used()
       ::oComentariosCabecera:End()
    end if
@@ -1966,7 +1959,6 @@ METHOD CloseFiles() CLASS TpvTactil
    ::oRectificativaProveedorNumeroSerie      := nil
    ::oMovimientosAlmacen                     := nil
    ::oMovimientosAlmacenNumeroSerie          := nil
-   ::oCategorias                             := nil
    ::oComentariosCabecera                    := nil
    ::oComentariosLinea                       := nil
    ::oTemporadas                             := nil
@@ -8875,9 +8867,6 @@ METHOD DataReport() CLASS TpvTactil
 
    ::oFastReport:SetWorkArea(       "Unidades de medición",  ::oUndMedicion:oDbf:nArea )
    ::oFastReport:SetFieldAliases(   "Unidades de medición",  cObjectsToReport( ::oUndMedicion:oDbf ) )
-
-   ::oFastReport:SetWorkArea(       "Categorías", ::oCategorias:nArea )
-   ::oFastReport:SetFieldAliases(   "Categorías", cItemsToReport( aItmCategoria() ) )
 
    ::oFastReport:SetWorkArea(       "Tipos de artículos",  ::oTipArt:oDbf:nArea )
    ::oFastReport:SetFieldAliases(   "Tipos de artículos",  cObjectsToReport( ::oTipArt:oDbf ) )
