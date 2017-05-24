@@ -324,7 +324,6 @@ TInfAtp.prg             										\
 ConfVisor.prg           										\
 ConfCajPorta.prg        										\
 ConfImpTiket.prg        										\
-Situacion.prg 		       										\
 Situaciones.prg         										\
 SituacionesModel.prg       											\
 SituacionesController.prg       										\
@@ -819,7 +818,6 @@ TInfAtp.obj             										\
 ConfImpTiket.obj        										\
 ConfVisor.obj           										\
 ConfCajPorta.obj        										\
-Situacion.Obj 	         										\
 Situaciones.obj         										\
 SituacionesModel.obj       									\
 SituacionesController.obj       									\
@@ -1301,7 +1299,6 @@ $(OBJ)\TInfAtp.obj              		+
 $(OBJ)\ConfImpTiket.obj         		+
 $(OBJ)\ConfVisor.obj            		+
 $(OBJ)\ConfCajPorta.obj         		+
-$(OBJ)\Situacion.Obj 	          		+
 $(OBJ)\Situaciones.obj          		+
 $(OBJ)\SituacionesModel.obj          	+
 $(OBJ)\SituacionesController.obj          	+

@@ -48,6 +48,8 @@ METHOD New()
                                     RelacionesEtiquetasModel():New():getSQLCreateTable(), ;
                                     TiposVentasModel():New():getSQLCreateTable()          }
 
+                                    
+
    ::cPathDatabaseSQLite      := fullCurDir() + "Database\" 
 
    ::cDatabaseSQLite          := ::cPathDatabaseSQLite + "Gestool.db"
