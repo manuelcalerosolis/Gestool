@@ -72,8 +72,6 @@ CLASS TFideliza FROM TMasDet
 
    METHOD LoadTipo()
 
-   METHOD LoadCategoria()
-
    METHOD LoadFabricante()
 
    METHOD LoadTemporada()
@@ -262,12 +260,10 @@ METHOD DefineFiles( cPath, cDriver )
       FIELD NAME "dFin"       TYPE "D" LEN 08  DEC 0 COMMENT "Fin"         COLSIZE 80     OF ::oDbf
       FIELD NAME "mFamilia"   TYPE "M" LEN 10  DEC 0 COMMENT "Familia"     HIDE           OF ::oDbf
       FIELD NAME "mTipo"      TYPE "M" LEN 10  DEC 0 COMMENT "Tipo"        HIDE           OF ::oDbf
-      FIELD NAME "mCategoria" TYPE "M" LEN 10  DEC 0 COMMENT "Categoria"   HIDE           OF ::oDbf
       FIELD NAME "mFabricant" TYPE "M" LEN 10  DEC 0 COMMENT "Fabricante"  HIDE           OF ::oDbf
       FIELD NAME "mTemporada" TYPE "M" LEN 10  DEC 0 COMMENT "Temporada"   HIDE           OF ::oDbf
       FIELD NAME "lFamilia"   TYPE "L" LEN 01  DEC 0 COMMENT ""            HIDE           OF ::oDbf
       FIELD NAME "lTipo"      TYPE "L" LEN 01  DEC 0 COMMENT ""            HIDE           OF ::oDbf
-      FIELD NAME "lCategoria" TYPE "L" LEN 01  DEC 0 COMMENT ""            HIDE           OF ::oDbf
       FIELD NAME "lFabricant" TYPE "L" LEN 01  DEC 0 COMMENT ""            HIDE           OF ::oDbf
       FIELD NAME "lTemporada" TYPE "L" LEN 01  DEC 0 COMMENT ""            HIDE           OF ::oDbf
 
@@ -509,8 +505,7 @@ METHOD InitResource()
 
    ::oTreeRango:Add( "Familias",    0 )
    ::oTreeRango:Add( "Tipos",       1 )
-   ::oTreeRango:Add( "Categorias",  2 )
-   ::oTreeRango:Add( "Fabricantes", 3 )
+   ::oTreeRango:Add( "Fabricantes", 2 )
    ::oTreeRango:Add( getConfigTraslation( "Temporadas" ),  4 )
 
    ::oImageList:AddMasked( TBitmap():Define( "gc_cubes_16" ), Rgb( 255, 0, 255 ) )
@@ -542,8 +537,6 @@ METHOD TreeChanged()
             ::LoadFamilia()
          case oItemSelect:cPrompt == "Tipos"
             ::LoadTipo()
-         case oItemSelect:cPrompt == "Categorias"
-            ::LoadCategoria()
          case oItemSelect:cPrompt == "Fabricantes"
             ::LoadFabricante()
          case oItemSelect:cPrompt == getConfigTraslation( "Temporadas" )
@@ -595,8 +588,6 @@ METHOD BrowseDblClick( lAllSelected )
             ::oDbf:mFamilia      := ::SelectedToMemo()
          case cItemSelect == "Tipos"
             ::oDbf:mTipo         := ::SelectedToMemo()
-         case cItemSelect == "Categorias"
-            ::oDbf:mCategoria    := ::SelectedToMemo()
          case cItemSelect == "Fabricantes"
             ::oDbf:mFabricant    := ::SelectedToMemo()
          case cItemSelect == getConfigTraslation( "Temporadas" )
@@ -631,8 +622,6 @@ METHOD ChkChanged()
             ::oDbf:lFamilia      := ::lAll
          case cItemSelect == "Tipos"
             ::oDbf:lTipo         := ::lAll
-         case cItemSelect == "Categorias"
-            ::oDbf:lCategoria    := ::lAll
          case cItemSelect == "Fabricantes"
             ::oDbf:lFabricant    := ::lAll
          case cItemSelect == getConfigTraslation( "Temporadas" )
@@ -692,26 +681,6 @@ METHOD LoadTipo()
    end while
 
    ::oChk:Click( ::oDbf:lTipo )
-
-Return ( Self )
-
-//---------------------------------------------------------------------------//
-
-METHOD LoadCategoria()
-
-   local aCategoria  := hb_ATokens( Alltrim( ::oDbf:mCategoria ) )
-
-   if ::oDbfCat == nil .or. !::oDbfCat:Used()
-      DATABASE NEW ::oDbfCat PATH ( cPatArt() ) FILE "CATEGORIAS.DBF" VIA ( cDriver() ) SHARED INDEX "CATEGORIAS.CDX"
-   end if
-
-   ::oDbfCat:GoTop()
-   do while ! ::oDbfCat:Eof()
-      aAdd( ::aData, { aScan( aCategoria, Alltrim( ::oDbfCat:cCodigo ) ) != 0, ::oDbfCat:cCodigo, ::oDbfCat:cNombre } )
-      ::oDbfCat:Skip()
-   end while
-
-   ::oChk:Click( ::oDbf:lCategoria )
 
 Return ( Self )
 
@@ -795,7 +764,6 @@ METHOD InPrograma( cCodigoArticulo, dFechaVenta, dbfArticulo )
 
             if ( Empty( ( dbfArticulo )->Familia ) .or. ::oDbf:lFamilia    .or. lScanInMemo( ( dbfArticulo )->Familia, ::oDbf:mFamilia   ) ) .and.;
                ( Empty( ( dbfArticulo )->cCodTip ) .or. ::oDbf:lTipo       .or. lScanInMemo( ( dbfArticulo )->cCodTip, ::oDbf:mTipo      ) ) .and.;
-               ( Empty( ( dbfArticulo )->cCodCat ) .or. ::oDbf:lCategoria  .or. lScanInMemo( ( dbfArticulo )->cCodCat, ::oDbf:mCategoria ) ) .and.;
                ( Empty( ( dbfArticulo )->cCodFab ) .or. ::oDbf:lFabricant  .or. lScanInMemo( ( dbfArticulo )->cCodFab, ::oDbf:mFabricant ) ) .and.;
                ( Empty( ( dbfArticulo )->cCodTemp) .or. ::oDbf:lTemporada  .or. lScanInMemo( ( dbfArticulo )->cCodTemp,::oDbf:mTemporada ) )
 

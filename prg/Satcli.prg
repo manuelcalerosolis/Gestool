@@ -1382,11 +1382,9 @@ FUNCTION SatCli( oMenuItem, oWnd, cCodCli, cCodArt )
          :cHeader          := "Estado artículo"
          :cSortOrder       := "cCodEst"
          :bStrData         := {|| AllTrim( ( D():SatClientes( nView ) )->cCodEst ) + if( !Empty( ( D():SatClientes( nView ) )->cCodEst ), " - ", "" ) + RetFld( ( D():SatClientes( nView ) )->cCodEst, dbfEstado, "cNombre" ) }
-         :bBmpData         := {|| nBitmapTipoEstadoSat( RetFld( ( D():SatClientes( nView ) )->cCodEst, dbfEstado, "cTipo" ) ) }
          :nWidth           := 140
          :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | oWndBrw:ClickOnHeader( oCol ) }
          :lHide            := .t. 
-         AddResourceTipoCategoria( hb_QWith() )
       end with
 
       with object ( oWndBrw:AddXCol() )

@@ -396,9 +396,6 @@ METHOD Import( oDlg )
          ::oMsgWait:SetText( "Convirtiendo grupos de ventas" )
          ::AppSql( "EMP" + aEmpresa:cCodigo, "EMP" + aEmpresa:cCodigo, "GrpVent" )
 
-         ::oMsgWait:SetText( "Convirtiendo tipos de incidencias" )
-         ::AppSql( "EMP" + aEmpresa:cCodigo, "EMP" + aEmpresa:cCodigo, "TipInci" )
-
          ::oMsgWait:SetText( "Convirtiendo pedidos a proveedor" )
          ::AppSql( "EMP" + aEmpresa:cCodigo, "EMP" + aEmpresa:cCodigo, "PedProvT" )
          ::AppSql( "EMP" + aEmpresa:cCodigo, "EMP" + aEmpresa:cCodigo, "PedProvL" )

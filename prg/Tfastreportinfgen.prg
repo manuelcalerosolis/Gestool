@@ -1269,9 +1269,6 @@ METHOD DataReport( oFr ) CLASS TFastReportInfGen
    ::oFastReport:SetWorkArea(       "Tipo artículos", ::oTipArt:Select() )
    ::oFastReport:SetFieldAliases(   "Tipo artículos", cObjectsToReport( ::oTipArt:oDbf ) )
 
-   ::oFastReport:SetWorkArea(       "Categorias", ::oDbfCat:nArea )
-   ::oFastReport:SetFieldAliases(   "Categorias", cItemsToReport( aItmCategoria() ) )
-
    ::oFastReport:SetWorkArea(       "Temporadas", ::oDbfTmp:nArea )
    ::oFastReport:SetFieldAliases(   "Temporadas", cItemsToReport( aItmTemporada() ) )
 

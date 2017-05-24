@@ -160,8 +160,6 @@ CLASS TInfGen
    DATA oDbfEmp
    DATA cFamOrg
    DATA cFamDes
-   DATA cCatOrg
-   DATA cCatDes
    DATA cTipOrg
    DATA cTipDes
    DATA cTipActOrg
@@ -402,8 +400,6 @@ CLASS TInfGen
    METHOD oDefPrvInf( nIdOrg, nIdSayOrg, nIdDes, nIdSayDes, nIdAllPrv )
 
    METHOD lDefFamInf( nIdOrg, nIdSayOrg, nIdDes, nIdSayDes, nIdAllFam )
-
-   METHOD lIntCatInf( nIdOrg, nIdSayOrg, nIdDes, nIdSayDes, nIdAllCat )
 
    METHOD oDefTipInf( nIdOrg, nIdSayOrg, nIdDes, nIdSayDes, nIdAllTip )
 
@@ -2926,76 +2922,6 @@ METHOD lDefFamInf( nIdOrg, nIdSayOrg, nIdDes, nIdSayDes, nIdAllFam ) CLASS TInfG
    ErrorBlock( oBlock )
 
 RETURN ( lOpen )
-
-//---------------------------------------------------------------------------//
-
-METHOD lIntCatInf( nIdOrg, nIdSayOrg, nIdDes, nIdSayDes, nIdAllCat, dbfCategoria ) CLASS TInfGen
-
-   local oCatDes
-   local oCatHas
-   local oSayCatDes
-   local cSayCatDes
-   local oSayCatHas
-   local cSayCatHas
-
-   /*
-   Si nos pasan la BD montamos los valores
-   */
-
-   ::cCatOrg         := dbFirst( dbfCategoria, 1 )
-   ::cCatDes         := dbLast ( dbfCategoria, 1 )
-   cSayCatDes        := dbFirst( dbfCategoria, 2 )
-   cSayCatHas        := dbLast ( dbfCategoria, 2 )
-
-   DEFAULT nIdOrg    := 70
-   DEFAULT nIdSayOrg := 71
-   DEFAULT nIdDes    := 80
-   DEFAULT nIdSayDes := 81
-
-   if !Empty( nIdAllCat )
-
-      ::lAllCat      := .t.
-
-      REDEFINE CHECKBOX ::lAllCat ;
-         ID       ( nIdAllCat ) ;
-         OF       ::oFld:aDialogs[1]
-
-   else
-
-      ::lAllCat      := .f.
-
-   end if
-
-   REDEFINE GET oCatDes VAR ::cCatOrg;
-      ID       ( nIdOrg );
-      WHEN     ( !::lAllCat );
-      VALID    cCategoria( oCatDes, dbfCategoria, oSayCatDes ) ;
-      BITMAP   "LUPA" ;
-      ON HELP  BrwInternalCategoria( oCatDes, dbfCategoria, oSayCatDes ) ;
-		COLOR 	CLR_GET ;
-      OF       ::oFld:aDialogs[1]
-
-   REDEFINE GET oSayCatDes VAR cSayCatDes ;
-      ID       ( nIdSayOrg );
-      WHEN     .f.;
-      COLOR    CLR_GET ;
-      OF       ::oFld:aDialogs[1]
-
-   REDEFINE GET oCatHas VAR ::cCatDes;
-      ID       ( nIdDes );
-      WHEN     ( !::lAllCat );
-      VALID    cCategoria( oCatHas, dbfCategoria, oSayCatHas ) ;
-      BITMAP   "LUPA" ;
-      ON HELP  BrwInternalCategoria( oCatHas, dbfCategoria, oSayCatHas ) ;
-		COLOR 	CLR_GET ;
-      OF       ::oFld:aDialogs[1]
-
-   REDEFINE GET oSayCatHas VAR cSayCatHas ;
-      WHEN     .f.;
-      ID       ( nIdSayDes );
-      OF       ::oFld:aDialogs[1]
-
-RETURN ( Self )
 
 //----------------------------------------------------------------------------//
 

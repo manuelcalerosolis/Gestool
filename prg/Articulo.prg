@@ -110,7 +110,6 @@ static oActiveX
 static cCatOld
 static cPrvOld
 static oMenu
-static aBmpTipCat
 
 static aBenefSobre         := { "Costo", "Venta" }
 static aImgsArticulo       := {}
@@ -839,7 +838,6 @@ Function Articulo( oMenuItem, oWnd, bOnInit )
                "No obsoletos + Código",;
                "No obsoletos + Nombre",;
                "Tipo" ,;
-               "Categoría" ,;
                "Temporada" ,;
                "Fabricante" ,;
                "Estado" ,;
@@ -997,11 +995,9 @@ Function Articulo( oMenuItem, oWnd, bOnInit )
       :cHeader          := "Estado"
       :cSortOrder       := "cCodEst"
       :bStrData         := {|| AllTrim( ( D():Articulos( nView ) )->cCodEst ) + if( !empty( ( D():Articulos( nView ) )->cCodEst ), " - ", "" ) + RetFld( ( D():Articulos( nView ) )->cCodEst, D():EstadoArticulo( nView ), "cNombre" ) }
-      :bBmpData         := {|| nBitmapTipoEstadoSat( RetFld( ( D():Articulos( nView ) )->cCodEst, D():EstadoArticulo( nView ), "cTipo" ) ) }
       :nWidth           := 140
       :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | oWndBrw:ClickOnHeader( oCol ) }
       :lHide            := .t. 
-      AddResourceTipoCategoria( hb_QWith() )
    end with
 
    with object ( oWndBrw:AddXCol() )
@@ -1679,7 +1675,6 @@ STATIC FUNCTION EdtRec( aTmp, aGet, cArticulo, oBrw, bWhen, bValid, nMode )
    local oNom2
    local oNom3
    local aBtn                 := Array( 14 )
-   local oBmpCategoria
    local oBmpTemporada
    local oBmpEstado
    local cCbxPrecio           := "Ventas"
@@ -4648,7 +4643,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, cArticulo, oBrw, bWhen, bValid, nMode )
    ACTIVATE DIALOG oDlg ;
       CENTER ;
       ON INIT     (  EdtRecMenu( aTmp, aGet, oSay, oDlg, oFld, aBar, cSay, nMode ) ) ;
-      VALID       (  KillTrans( oMenu, oBmpCategoria, oBmpTemporada, oBmpEstado, oBmpGeneral, oBmpPrecios, oBmpDescripciones, oBmpPropiedades, oBmpLogistica, oBmpStocks, oBmpContabilidad, oBmpOfertas, oBmpEscandallos, oBmpWeb, oBmpUbicaciones, oBmpImagenes, oBmpTactil ) )
+      VALID       (  KillTrans( oMenu, oBmpTemporada, oBmpEstado, oBmpGeneral, oBmpPrecios, oBmpDescripciones, oBmpPropiedades, oBmpLogistica, oBmpStocks, oBmpContabilidad, oBmpOfertas, oBmpEscandallos, oBmpWeb, oBmpUbicaciones, oBmpImagenes, oBmpTactil ) )
 /*
    RECOVER USING oError
 
@@ -6092,10 +6087,6 @@ Static Function KillTrans( oMenu, oBmpCategoria, oBmpTemporada, oBmpEstado, oBmp
 
    if !empty( oMenu )
       oMenu:End()
-   end if
-
-   if !empty( oBmpCategoria )
-      oBmpCategoria:End()
    end if
 
    if !empty( oBmpTemporada )
@@ -11446,7 +11437,6 @@ Function buscarTipologias()
    local oBmp
    local oGetFamilia
    local oGetTipo
-   local oGetCategoria
    local oGetTemporada
    local oGetFabricante
    local oGetEstado
@@ -11456,7 +11446,6 @@ Function buscarTipologias()
    local cGetNombre := space( 200 )
    local cGetFamilia := space( 200 )
    local cGetTipo := space( 200 )
-   local cGetCategoria := space( 200 )
    local cGetTemporada := space( 200 )
    local cGetFabricante := space( 200 )
    local cGetEstado := space( 200 )
@@ -17162,11 +17151,6 @@ Static Function DataReport( oFr, lTemporal )
 
    oFr:SetWorkArea(     "Familias", ( D():Familias( nView ) )->( Select() ) )
    oFr:SetFieldAliases( "Familias", cItemsToReport( aItmFam() ) )
-
-/*
-   oFr:SetWorkArea(     "Categoria", ( dbfCategoria )->( Select() ) )
-   oFr:SetFieldAliases( "Categoria", cItemsToReport( aItmCategoria() ) )
-*/
 
    oFr:SetWorkArea(     "Ofertas", ( dbfOfe )->( Select() ) )
    oFr:SetFieldAliases( "Ofertas", cItemsToReport( aItmOfe() ) )

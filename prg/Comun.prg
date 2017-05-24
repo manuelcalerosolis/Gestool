@@ -1283,17 +1283,6 @@ FUNCTION CreateAcceso( oWnd )
 
    oItem                := oItemArchivo:Add()
    oItem:oGroup         := oGrupo
-   oItem:cPrompt        := getConfigTraslation( 'Categorías' )
-   oItem:cMessage       := 'Acceso al fichero de ' + getConfigTraslation( 'categorías' )
-   oItem:bAction        := {|| Categoria( "01101", oWnd() ) }
-   oItem:cId            := "01101"
-   oItem:cBmp           := "gc_photographic_filters_16"
-   oItem:cBmpBig        := "gc_photographic_filters_32"
-   oItem:lShow          := .f.
-   oItem:lLittle        := .t.
-
-   oItem                := oItemArchivo:Add()
-   oItem:oGroup         := oGrupo
    oItem:cPrompt        := getConfigTraslation( 'Temporadas' )
    oItem:cMessage       := 'Acceso al fichero de ' + getConfigTraslation( 'temporadas' )
    oItem:bAction        := {|| Temporada( "01114", oWnd() ) }
@@ -1583,16 +1572,6 @@ FUNCTION CreateAcceso( oWnd )
    oItem:cId            := "01045"
    oItem:cBmp           := "gc_small_truck_16"
    oItem:cBmpBig        := "gc_small_truck_32"
-   oItem:lShow          := .f.
-
-   oItem                := oItemArchivo:Add()
-   oItem:oGroup         := oGrupo
-   oItem:cPrompt        := "Tipos de incidencias"
-   oItem:cMessage       := "Acceso a los tipos de incidencias"
-   oItem:bAction        := {|| TiposIncidenciasController():New():activateShell() }
-   oItem:cId            := "01089"
-   oItem:cBmp           := "gc_camera_16"
-   oItem:cBmpBig        := "gc_camera_32"
    oItem:lShow          := .f.
 
    oItem                := oItemArchivo:Add()

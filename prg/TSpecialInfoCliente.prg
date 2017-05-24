@@ -115,9 +115,7 @@ METHOD Resource() CLASS TSpecialInfoCliente
          :cHeader          := "Estado"
          :bEditValue       := {|| alltrim( oBrwCliente:oTreeItem:Cargo[ "cCodEst" ] ) }
          :bStrData         := {|| alltrim( oBrwCliente:oTreeItem:Cargo[ "cCodEst" ] ) + " - " + oBrwCliente:oTreeItem:Cargo[ "cNombre" ] }
-         :bBmpData         := {|| nBitmapTipoEstadoSat( oBrwCliente:oTreeItem:Cargo[ "cTipo" ] ) }
          :nWidth           := 170
-         AddResourceTipoCategoria( hb_QWith() )
       end with
 
       with object ( oBrwCliente:addCol() )
