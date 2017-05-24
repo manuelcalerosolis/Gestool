@@ -962,8 +962,8 @@ Return ( ::nView )
       local uHandle        := .f.
       local oDataTable
 
-      oBlock               := ErrorBlock( { | oError | ApoloBreak( oError ) } )
-      BEGIN SEQUENCE
+      /*oBlock               := ErrorBlock( { | oError | ApoloBreak( oError ) } )
+      BEGIN SEQUENCE*/
 
          cDriver           := ::GetDriver( nView )
 
@@ -993,11 +993,11 @@ Return ( ::nView )
 
          end if
 
-      RECOVER USING oError
+      /*RECOVER USING oError
          msgStop( "Imposible abrir todas la base de datos" + CRLF + ErrorMessage( oError ) )
       END SEQUENCE
 
-      ErrorBlock( oBlock )
+      ErrorBlock( oBlock )*/
 
    Return ( uHandle )
 
@@ -1569,4 +1569,3 @@ METHOD setArticuloTablaPropiedades( id, idCodigoPrimeraPropiedad, idCodigoSegund
 Return ( .t. )
 
 //---------------------------------------------------------------------------//
-   

@@ -517,8 +517,6 @@ METHOD DataReport() CLASS TFastVentasClientes
    ::oFastReport:SetMasterDetail(   "Clientes", "Grupos de cliente",    {|| ( D():Clientes( ::nView ) )->cCodGrp } )
    ::oFastReport:SetMasterDetail(   "Clientes", "País",                 {|| ( D():Clientes( ::nView ) )->cCodPai } )
 
-   ::oFastReport:SetMasterDetail(   "Incidencias", "Tipos de incidencias", {|| ( D():ClientesIncidencias( ::nView ) )->cCodTip } )
-
    /*
    Relación con la tabla de direcciones en funcion del tipo de informe
    */
@@ -543,8 +541,6 @@ METHOD DataReport() CLASS TFastVentasClientes
 
    ::oFastReport:SetResyncPair(     "Clientes", "Grupos de cliente" )
    ::oFastReport:SetResyncPair(     "Clientes", "País" )
-
-   ::oFastReport:SetResyncPair(     "Incidencias", "Tipos de incidencias" ) 
 
    do case
       case ::cReportType == "SAT de clientes"

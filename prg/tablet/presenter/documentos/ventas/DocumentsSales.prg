@@ -272,7 +272,7 @@ METHOD OpenFiles() CLASS DocumentsSales
 
       D():AlbaranesClientesLineas( ::nView )
 
-      D():FacturasClientes( ::nView )
+      //D():FacturasClientes( ::nView )
 
       D():FacturasClientesLineas( ::nView )
 
