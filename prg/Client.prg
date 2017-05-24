@@ -6991,11 +6991,7 @@ Static Function EdtInc( aTmp, aGet, dbfFacCliI, oBrw, cCodCli, bValid, nMode )
       if !empty( cCodCli )
          aTmp[ ( dbfFacCliI )->( FieldPos( "cCodCli" ) ) ]  := cCodCli
       end if
-<<<<<<< HEAD
-      
-=======
 
->>>>>>> 9f1c4543cb8d54e875c071659cbb7cf3c9046696
       aTmp[ ( dbfFacCliI )->( FieldPos( "dFecInc" ) ) ]     := getSysDate()
       aTmp[ ( dbfFacCliI )->( FieldPos( "tTimInc" ) ) ]     := getSysTime()
 

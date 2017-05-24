@@ -502,13 +502,7 @@ METHOD getNameFromId( uValue )
 
    local cName                   := ""
    local cSentence               := "SELECT nombre FROM " + ::cTableName + " WHERE id = " + toSQLString( uValue )
-<<<<<<< HEAD
    local aSelect                 := ::selectFetchHash( cSentence )
-=======
-   local aSelect                 
-
-   aSelect                       := ::selectFetchHash( cSentence )
->>>>>>> 9f1c4543cb8d54e875c071659cbb7cf3c9046696
 
    if !empty( aSelect )
       cName                      := hget( atail( aSelect ), "nombre" )

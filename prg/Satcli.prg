@@ -8164,6 +8164,8 @@ Static Function DataReport( oFr )
    oFr:SetWorkArea(     "Impuestos especiales",  oNewImp:Select() )
    oFr:SetFieldAliases( "Impuestos especiales",  cObjectsToReport( oNewImp:oDbf ) )
 
+   TiposVentasController():Instance():setFastReport( oFr )
+
    oFr:SetMasterDetail( "SAT", "Lineas de SAT",                   {|| ( D():SatClientes( nView ) )->cSerSat + Str( ( D():SatClientes( nView ) )->nNumSat ) + ( D():SatClientes( nView ) )->cSufSat } )
    oFr:SetMasterDetail( "SAT", "Series de lineas de SAT",         {|| ( D():SatClientes( nView ) )->cSerSat + Str( ( D():SatClientes( nView ) )->nNumSat ) + ( D():SatClientes( nView ) )->cSufSat } )
    oFr:SetMasterDetail( "SAT", "Incidencias de SAT",              {|| ( D():SatClientes( nView ) )->cSerSat + Str( ( D():SatClientes( nView ) )->nNumSat ) + ( D():SatClientes( nView ) )->cSufSat } )
@@ -8178,7 +8180,8 @@ Static Function DataReport( oFr )
    oFr:SetMasterDetail( "SAT", "Transportistas",                  {|| ( D():SatClientes( nView ) )->cCodTrn } )
    oFr:SetMasterDetail( "SAT", "Usuarios",                        {|| ( D():SatClientes( nView ) )->cCodUsr } )
 
-   oFr:SetMasterDetail( "Lineas de SAT", "Artículos",             {|| ( D():SatClientesLineas( nView ) )->cRef } )
+   oFr:SetMasterDetail( "Lineas de SAT", "Artículos",             {||   ( D():SatClientesLineas( nView ) )->cRef,;
+                                                                        TiposVentasController():Instance():findByIdInRowSet( ( D():SatClientesLineas( nView ) )->id_tipo_v ) } )
    oFr:SetMasterDetail( "Lineas de SAT", "Ofertas",               {|| ( D():SatClientesLineas( nView ) )->cRef } )
    oFr:SetMasterDetail( "Lineas de SAT", "Unidades de medición",  {|| ( D():SatClientesLineas( nView ) )->cUnidad } )
    oFr:SetMasterDetail( "Lineas de SAT", "Impuestos especiales",  {|| ( D():SatClientesLineas( nView ) )->cCodImp } )

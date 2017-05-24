@@ -530,10 +530,7 @@ Return ( ::oModel:oRowSet )
 METHOD isValidGet( oGet )
 
    local uValue
-<<<<<<< HEAD
-=======
    local uReturn     := .t.
->>>>>>> 9f1c4543cb8d54e875c071659cbb7cf3c9046696
 
    if empty( oGet )
       RETURN ( .t. )
@@ -541,15 +538,10 @@ METHOD isValidGet( oGet )
 
    uValue            := oGet:varGet()
 
-<<<<<<< HEAD
-   if !( ::oModel:exist( uValue ) )
-      RETURN ( .f. )
-=======
    if !::oModel:exist( uValue )
-   	msgStop( "El tipo de movimiento introducido no existe")
+   	msgStop( "El valor introducido no existe", ::getTitle() )
    	oGet:setFocus()
       RETURN .f.
->>>>>>> 9f1c4543cb8d54e875c071659cbb7cf3c9046696
    end if 
 
    if !empty( oGet:oHelpText )
