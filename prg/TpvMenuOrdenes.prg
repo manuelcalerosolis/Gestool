@@ -448,13 +448,17 @@ Return ( clogico )
 
 //---------------------------------------------------------------------------//
 
-METHOD lDegustacion( cCodOrd )
+METHOD lDegustacion( cCodigoMenu, cCodigoOrden )
 
    local lDegustacion   := .f.
 
-   if ::oDbf:SeekInOrd( cCodOrd, "cCodOrd" ) 
-      lDegustacion   := ::oDbf:lDgstcn 
+   ::oDbf:GetStatus()
+
+   if ::oDbf:SeekInOrd( cCodigoMenu + cCodigoOrden, "cMnuOrd" )
+      lDegustacion      := ::oDbf:lDgstcn 
    end if
+
+   ::oDbf:SetStatus()
 
 Return ( lDegustacion )
 
@@ -467,9 +471,7 @@ METHOD nUnidadesOrdenAcompannamiento( cCodigoMenu, cCodigoOrden )
    ::oDbf:GetStatus()
 
    if ::oDbf:SeekInOrd( cCodigoMenu + cCodigoOrden, "cMnuOrd" )
-
-      nUnidades      := ::oDbf:nUndAcomp
-
+      nUnidades         := ::oDbf:nUndAcomp
    end if
 
    ::oDbf:SetStatus()

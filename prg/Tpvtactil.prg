@@ -4290,7 +4290,7 @@ Return ( .t. )
 
 METHOD AgregarArticuloMenu( cCodigoArticulo, cCodigoMenu, cCodigoOrden )
    
-   local lDegustacion   := ::oTpvMenuOrdenes:lDegustacion( cCodigoOrden )
+   local lDegustacion   := ::oTpvMenuOrdenes:lDegustacion( cCodigoMenu, cCodigoOrden )
 
    ::SetLineaMenu( ::nLineaMenuActivo() )
 
