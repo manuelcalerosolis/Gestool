@@ -9,8 +9,6 @@ CLASS SQLBaseModel
   
    DATA     oRowSet
 
-   DATA     cTitle                        INIT "TitleModel"
-
    DATA     cTableName
    DATA     cDbfTableName
 	DATA	   hColumns
@@ -50,7 +48,7 @@ CLASS SQLBaseModel
    METHOD   setIdForRecno( nIdForRecno )           INLINE ( ::nIdForRecno := nIdForRecno )
 
    METHOD   buildRowSet()
-   METHOD   buildRowSetWithRecno()                 INLINE   ( ::buildRowSet( .t. ) )
+   METHOD   buildRowSetWithRecno()                 // INLINE   ( ::buildRowSet( .t. ) )
    METHOD   freeRowSet()                           INLINE   ( if( !empty( ::oRowSet ), ( ::oRowSet := nil ), ) )
    METHOD   getRowSetRecno()                       INLINE   ( if( !empty( ::oRowSet ), ( ::oRowSet:recno() ) , 0 ) )
    METHOD   setRowSetRecno( nRecno )               INLINE   ( if( !empty( ::oRowSet ), ( ::oRowSet:goto( nRecno ) ), ) )
@@ -82,8 +80,7 @@ CLASS SQLBaseModel
    METHOD   compareCurrentAndActualColumns()
    METHOD   updateTableColumns()
 
-   METHOD   setFastReportRecordset( oFastReport, cSentence, cColumns )
-   METHOD      serializeColumns()
+   METHOD   serializeColumns()
 
    METHOD   checksForValid()
 
@@ -215,31 +212,40 @@ Return ( self )
 
 //---------------------------------------------------------------------------//
 
-METHOD buildRowSet( lWithRecno )
+METHOD buildRowSetWithRecno()
+
+   ::buildRowSet()
+
+   if ::oRowSet:find( ::nIdForRecno, ::cColumnKey, .t. ) == 0
+      ::oRowSet:goTop()
+   end if
+
+Return ( self )
+
+//---------------------------------------------------------------------------//
+
+METHOD buildRowSet( cSentence )
 
    local oStmt
 
-   default  lWithRecno  := .f.
+   default cSentence    := ::getSelectSentence()
 
    try
-      oStmt             := getSQLDatabase():Query( ::getSelectSentence() ) 
+
+      oStmt             := getSQLDatabase():Query( cSentence ) 
       ::oRowSet         := oStmt:fetchRowSet()
 
-      if lWithRecno .and. !empty( ::nIdForRecno )
-         if ::oRowSet:find( ::nIdForRecno , ::cColumnKey, .t. ) == 0
-            ::oRowSet:goTop()
-         end if
-      else 
-         ::oRowSet:goTop()
-      end if
-
    catch
+      
       msgstop( hb_valtoexp( getSQLDatabase():errorInfo() ) )
+      
       if !empty( oStmt )
          oStmt:free()
       end if    
    
    end
+
+   ::oRowSet:goTop()
 
 Return ( self )
 
@@ -474,42 +480,6 @@ Return ( cColumns )
 
 //---------------------------------------------------------------------------//
 
-METHOD setFastReportRecordset( oFastReport, cSentence, cColumns )
-
-   local oStmt
-   local oRowSet
-
-   default cSentence := ::getSelectSentence()
-   default cColumns  := ::serializeColumns() // heval( ::hColumns, {|k| QOut( k, v , i ) } )
-
-   if empty( oFastReport )
-      RETURN ( Self )
-   end if
-
-   try 
-      oStmt          := getSQLDatabase():Query( cSentence )
-      oRowSet        := oStmt:fetchRowSet()
-
-   catch
-      msgstop( hb_valtoexp( getSQLDatabase():errorInfo() ) )
-
-      if !empty( oStmt )
-        oStmt:free()
-      end if    
-   
-   end
-
-   oFastReport:SetUserDataSet( ::cTitle, cColumns,;
-                     {|| oRowSet:gotop()  },;
-                     {|| oRowSet:skip(1)  },;
-                     {|| oRowSet:skip(-1) },;
-                     {|| oRowSet:eof()    },;
-                     {|nField| oRowSet:fieldGet( nField ) } )
-
-Return ( self )
-
-//---------------------------------------------------------------------------//
-
 METHOD checksForValid( cColumnToValid )
 
    local cSentence := "SELECT id FROM " + ::cTableName + " WHERE " + cColumnToValid + " = " + toSQLString( ::hBuffer[ cColumnToValid ] )
@@ -532,9 +502,13 @@ METHOD getNameFromId( uValue )
 
    local cName                   := ""
    local cSentence               := "SELECT nombre FROM " + ::cTableName + " WHERE id = " + toSQLString( uValue )
+<<<<<<< HEAD
+   local aSelect                 := ::selectFetchHash( cSentence )
+=======
    local aSelect                 
 
    aSelect                       := ::selectFetchHash( cSentence )
+>>>>>>> 9f1c4543cb8d54e875c071659cbb7cf3c9046696
 
    if !empty( aSelect )
       cName                      := hget( atail( aSelect ), "nombre" )

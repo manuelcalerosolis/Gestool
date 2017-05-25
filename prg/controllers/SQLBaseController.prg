@@ -19,6 +19,8 @@ CLASS SQLBaseController
    DATA     bOnPreAppend
    DATA     bOnPostAppend
 
+   DATA     cTitle                                    INIT ""
+
    CLASSDATA   oInstance 
  
    METHOD   New()
@@ -45,6 +47,9 @@ CLASS SQLBaseController
 
    METHOD   setMode( nMode )                          INLINE ( ::nMode := nMode )
    METHOD   getMode()                                 INLINE ( ::nMode )
+
+   METHOD   setTitle( cTitle )                        INLINE ( ::cTitle := cTitle )
+   METHOD   getTitle()                                INLINE ( ::cTitle )
 
 	METHOD   Append( oBrowse )
       METHOD setAppendMode()                          INLINE ( ::setMode( __append_mode__ ) )
@@ -74,7 +79,10 @@ CLASS SQLBaseController
               
    METHOD   saveHistory( cHistory, oBrowse )
 
-   METHOD   find( oFind )
+   METHOD   findGet( oFind )
+   METHOD   find( uValue )                            INLINE ( msgalert( uValue, "find" ), ::oModel:find( uValue ) )
+
+   METHOD   findByIdInRowSet( uValue )                INLINE ( if( !empty( ::getRowSet() ), ::getRowset():find( uValue, "id", .t. ), ) )
 
    METHOD   isValidGet( oGet )
    METHOD 	assignBrowse( oGet, aSelectedItems )
@@ -87,6 +95,8 @@ CLASS SQLBaseController
    METHOD   loadCurrentBuffer()
 
    METHOD 	getRowSet()
+
+   METHOD   setFastReport( oFastReport, cSentence, cColumns )
 
 END CLASS
 
@@ -451,17 +461,19 @@ RETURN ( Self )
 
 //----------------------------------------------------------------------------//
 
-METHOD find( oFind )
+METHOD findGet( oFind )
 
-	local lFind
-	local xValueToSearch
+	local uValue
 
-	xValueToSearch    := oFind:oGet:Buffer()
-	xValueToSearch    := alltrim( upper( cvaltochar( xValueToSearch ) ) )
-	xValueToSearch    := strtran( xValueToSearch, chr( 8 ), "" )
-	lFind             := ::oModel:find( xValueToSearch )
+   if empty( oFind )
+      RETURN ( .f. )
+   end if 
 
-RETURN ( lFind )
+	uValue        := oFind:oGet:Buffer()
+	uValue        := alltrim( upper( cvaltochar( uValue ) ) )
+	uValue        := strtran( uValue, chr( 8 ), "" )
+
+RETURN ( ::find( uValue ) )
 
 //----------------------------------------------------------------------------//
 
@@ -518,24 +530,59 @@ Return ( ::oModel:oRowSet )
 METHOD isValidGet( oGet )
 
    local uValue
+<<<<<<< HEAD
+=======
    local uReturn     := .t.
+>>>>>>> 9f1c4543cb8d54e875c071659cbb7cf3c9046696
 
    if empty( oGet )
-      RETURN ( uReturn )
+      RETURN ( .t. )
    end if 
 
    uValue            := oGet:varGet()
 
+<<<<<<< HEAD
+   if !( ::oModel:exist( uValue ) )
+      RETURN ( .f. )
+=======
    if !::oModel:exist( uValue )
    	msgStop( "El tipo de movimiento introducido no existe")
    	oGet:setFocus()
       RETURN .f.
+>>>>>>> 9f1c4543cb8d54e875c071659cbb7cf3c9046696
    end if 
 
    if !empty( oGet:oHelpText )
       oGet:oHelpText:cText( ::oModel:getNameFromId( uValue ) )
    end if
 
-RETURN ( uReturn )
+RETURN ( .t. )
 
 //--------------------------------------------------------------------------//
+
+METHOD setFastReport( oFastReport, cSentence, cColumns )
+
+   default cColumns  := ::oModel:serializeColumns() 
+
+   if empty( oFastReport )
+      RETURN ( Self )
+   end if
+
+   ::oModel:buildRowSet( cSentence )
+
+   if empty( ::oModel:oRowSet )
+      RETURN ( Self )
+   end if 
+
+   oFastReport:SetUserDataSet(   ::getTitle(),;
+                                 cColumns,;
+                                 {|| ::oModel:oRowSet:gotop()  },;
+                                 {|| ::oModel:oRowSet:skip(1)  },;
+                                 {|| ::oModel:oRowSet:skip(-1) },;
+                                 {|| ::oModel:oRowSet:eof()    },;
+                                 {|nField| ::oModel:oRowSet:fieldGet( nField ) } )
+
+RETURN ( self )
+
+//---------------------------------------------------------------------------//
+

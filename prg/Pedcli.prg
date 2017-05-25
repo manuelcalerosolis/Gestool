@@ -4256,7 +4256,6 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbf, oBrw, lTotLin, cCodArtEnt, nMode, aTmpP
       aTmp[ _NPRODUC    ]  := 0
       aTmp[ _DFECHA     ]  := ctod( "" )
       aTmp[ _DFECCAD    ]  := Ctod( "" )
-      aTmp[ _CTIPMOV    ]  := cDefVta()
       aTmp[ _LTOTLIN    ]  := lTotLin
       aTmp[ _NNUMPED    ]  := aTmpPed[ _NNUMPED ]
       aTmp[ _CALMLIN    ]  := aTmpPed[ _CCODALM ]
@@ -9194,9 +9193,6 @@ STATIC FUNCTION SetDlgMode( aTmp, aGet, nMode, oStkAct, oSayPr1, oSayPr2, oSayVp
    /*
    Focus y validación----------------------------------------------------------
    */
-   if !Empty( aGet[ _CTIPMOV ] )
-      aGet[ _CTIPMOV ]:lValid()
-   end if
 
    aGet[ _CALMLIN ]:lValid()
 
@@ -9556,7 +9552,6 @@ Static Function AppendKit( uTmpLin, aTmpPed )
    local cSufPed
    local nCanPed
    local dFecPed
-   local cTipMov
    local cAlmLin
    local nIvaLin
    local lIvaLin
@@ -9581,7 +9576,6 @@ Static Function AppendKit( uTmpLin, aTmpPed )
       cSufPed                          := uTmpLin[ _CSUFPED ]
       nCanPed                          := uTmpLin[ _NCANPED ]
       dFecPed                          := uTmpLin[ _DFECHA  ]
-      cTipMov                          := uTmpLin[ _CTIPMOV ]
       cAlmLin                          := uTmpLin[ _CALMLIN ]
       nIvaLin                          := uTmpLin[ _NIVA    ]
       lIvaLin                          := uTmpLin[ _LIVALIN ]
@@ -9600,7 +9594,6 @@ Static Function AppendKit( uTmpLin, aTmpPed )
       cSufPed                          := ( uTmpLin )->cSufPed
       nCanPed                          := ( uTmpLin )->nCanPed
       dFecPed                          := ( uTmpLin )->dFecha
-      cTipMov                          := ( uTmpLin )->cTipMov
       cAlmLin                          := ( uTmpLin )->cAlmLin
       nIvaLin                          := ( uTmpLin )->nIva
       lIvaLin                          := ( uTmpLin )->lIvaLin
@@ -9671,7 +9664,6 @@ Static Function AppendKit( uTmpLin, aTmpPed )
             ( dbfTmpLin )->cSufPed     := cSufPed
             ( dbfTmpLin )->nCanPed     := nCanPed
             ( dbfTmpLin )->dFecha      := dFecPed
-            ( dbfTmpLin )->cTipMov     := cTipMov
             ( dbfTmpLin )->cAlmLin     := cAlmLin
             ( dbfTmpLin )->lIvaLin     := lIvaLin
             ( dbfTmpLin )->nComAge     := nComAge

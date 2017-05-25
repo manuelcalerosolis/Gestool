@@ -18352,8 +18352,6 @@ Static Function debugWeb( aTmp )
       TComercio:controllerDeleteOneProductToPrestashop( idProduct )
    end if 
 
-   msgalert( TComercio:megaCommand, "" )
-
 Return .t.
 
 //---------------------------------------------------------------------------//

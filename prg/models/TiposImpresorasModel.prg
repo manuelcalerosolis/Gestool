@@ -6,7 +6,7 @@
 
 CLASS TiposImpresorasModel FROM SQLBaseModel
 
-   DATA cTableName                           INIT "tipos_impresoras"
+   DATA cTableName               INIT "tipos_impresoras"
 
    DATA cDbfTableName
 
@@ -23,8 +23,6 @@ END CLASS
 //---------------------------------------------------------------------------//
 
 METHOD New()
-
-   ::cTitle                      := "Tipos impresoras"
 
    ::cDbfTableName				 	:= "TipImp"
 

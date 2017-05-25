@@ -3324,7 +3324,6 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbf, oBrw, lTotLin, cCodArtEnt, nMode, aTmpP
       aTmp[ _NNUMPRE  ]    := aTmpPre[ _NNUMPRE ]
       aTmp[ _CSUFPRE  ]    := aTmpPre[ _CSUFPRE ]
       aTmp[ _NUNICAJA ]    := 1
-      aTmp[ _CTIPMOV  ]    := cDefVta()
       aTmp[ _LTOTLIN  ]    := lTotLin
       aTmp[ _NCANPRE  ]    := 1
       aTmp[ _LIVALIN  ]    := aTmpPre[ _LIVAINC ]
@@ -7228,7 +7227,6 @@ Static Function AppendKit( uTmpLin, aTmpPre )
    local cSufPre
    local nCanPre
    local dFecPre
-   local cTipMov
    local cAlmLin
    local nIvaLin
    local lIvaLin
@@ -7252,7 +7250,6 @@ Static Function AppendKit( uTmpLin, aTmpPre )
       cSufPre                          := uTmpLin[ _CSUFPRE ]
       nCanPre                          := uTmpLin[ _NCANPRE ]
       dFecPre                          := uTmpLin[ _DFECHA  ]
-      cTipMov                          := uTmpLin[ _CTIPMOV ]
       cAlmLin                          := uTmpLin[ _CALMLIN ]
       nIvaLin                          := uTmpLin[ _NIVA    ]
       lIvaLin                          := uTmpLin[ _LIVALIN ]
@@ -7271,7 +7268,6 @@ Static Function AppendKit( uTmpLin, aTmpPre )
       cSufPre                          := ( uTmpLin )->cSufPre
       nCanPre                          := ( uTmpLin )->nCanPre
       dFecPre                          := ( uTmpLin )->dFecha
-      cTipMov                          := ( uTmpLin )->cTipMov
       cAlmLin                          := ( uTmpLin )->cAlmLin
       nIvaLin                          := ( uTmpLin )->nIva
       lIvaLin                          := ( uTmpLin )->lIvaLin
@@ -7341,7 +7337,6 @@ Static Function AppendKit( uTmpLin, aTmpPre )
             ( dbfTmpLin )->cSufPre     := cSufPre
             ( dbfTmpLin )->nCanPre     := nCanPre
             ( dbfTmpLin )->dFecha      := dFecPre
-            ( dbfTmpLin )->cTipMov     := cTipMov
             ( dbfTmpLin )->cAlmLin     := cAlmLin
             ( dbfTmpLin )->lIvaLin     := lIvaLin
             ( dbfTmpLin )->nComAge     := nComAge

@@ -24,6 +24,8 @@ METHOD New()
 
    ::idUserMap            := "01043"
 
+   ::setTitle( "Tipos de ventas" )
+
    ::Super:New()
 
 Return ( Self )
