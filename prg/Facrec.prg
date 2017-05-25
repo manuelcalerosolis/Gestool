@@ -10052,6 +10052,8 @@ Static Function DataReport( oFr )
    oFr:SetWorkArea(     "Impuestos especiales",  oNewImp:Select() )
    oFr:SetFieldAliases( "Impuestos especiales",  cObjectsToReport( oNewImp:oDbf ) )
 
+   TiposVentasController():Instance():setFastReport( oFr )
+
    oFr:SetMasterDetail( "Facturas rectificativas", "Lineas de facturas rectificativas",            {|| ( D():FacturasRectificativas( nView ) )->cSerie + Str( ( D():FacturasRectificativas( nView ) )->nNumFac ) + ( D():FacturasRectificativas( nView ) )->cSufFac } )
    oFr:SetMasterDetail( "Facturas rectificativas", "Incidencias de facturas rectificativas",       {|| ( D():FacturasRectificativas( nView ) )->cSerie + Str( ( D():FacturasRectificativas( nView ) )->nNumFac ) + ( D():FacturasRectificativas( nView ) )->cSufFac } )
    oFr:SetMasterDetail( "Facturas rectificativas", "Documentos de facturas rectificativas",        {|| ( D():FacturasRectificativas( nView ) )->cSerie + Str( ( D():FacturasRectificativas( nView ) )->nNumFac ) + ( D():FacturasRectificativas( nView ) )->cSufFac } )
@@ -10065,11 +10067,12 @@ Static Function DataReport( oFr )
    oFr:SetMasterDetail( "Facturas rectificativas", "Transportistas",                               {|| ( D():FacturasRectificativas( nView ) )->cCodTrn } )
    oFr:SetMasterDetail( "Facturas rectificativas", "Bancos",                                       {|| ( D():FacturasRectificativas( nView ) )->cCodCli } )
 
-   oFr:SetMasterDetail( "Lineas de facturas rectificativas", "Artículos",                          				{|| ( D():FacturasRectificativasLineas( nView ) )->cRef } )
-   oFr:SetMasterDetail( "Lineas de facturas rectificativas", "Tipo de artículo",                   				{|| ( D():FacturasRectificativasLineas( nView ) )->cCodTip } )
-   oFr:SetMasterDetail( "Lineas de facturas rectificativas", "Ofertas",                            				{|| ( D():FacturasRectificativasLineas( nView ) )->cRef } )
-   oFr:SetMasterDetail( "Lineas de facturas rectificativas", "Unidades de medición",               				{|| ( D():FacturasRectificativasLineas( nView ) )->cUnidad } )
-   oFr:SetMasterDetail( "Lineas de facturas rectificativas", "Impuestos especiales",               				{|| ( D():FacturasRectificativasLineas( nView ) )->cCodImp } )
+   oFr:SetMasterDetail( "Lineas de facturas rectificativas", "Artículos",                          {||  ( D():FacturasRectificativasLineas( nView ) )->cRef,;
+                                                                                                        TiposVentasController():Instance():findByIdInRowSet( ( D():FacturasRectificativasLineas( nView ) )->id_tipo_v ) } )
+   oFr:SetMasterDetail( "Lineas de facturas rectificativas", "Tipo de artículo",                   {|| ( D():FacturasRectificativasLineas( nView ) )->cCodTip } )
+   oFr:SetMasterDetail( "Lineas de facturas rectificativas", "Ofertas",                            {|| ( D():FacturasRectificativasLineas( nView ) )->cRef } )
+   oFr:SetMasterDetail( "Lineas de facturas rectificativas", "Unidades de medición",               {|| ( D():FacturasRectificativasLineas( nView ) )->cUnidad } )
+   oFr:SetMasterDetail( "Lineas de facturas rectificativas", "Impuestos especiales",               {|| ( D():FacturasRectificativasLineas( nView ) )->cCodImp } )
    oFr:SetMasterDetail( "Lineas de facturas rectificativas", "Series de lineas de facturas rectificativas",  	{|| ( D():FacturasRectificativasLineas( nView ) )->cSerie + Str( ( D():FacturasRectificativasLineas( nView ) )->nNumFac ) + ( D():FacturasRectificativasLineas( nView ) )->cSufFac + Str( ( D():FacturasRectificativasLineas( nView ) )->nNumLin ) } )
 																																																
    oFr:SetResyncPair(   "Facturas rectificativas", "Lineas de facturas rectificativas" )
