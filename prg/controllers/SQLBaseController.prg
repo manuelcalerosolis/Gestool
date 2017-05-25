@@ -530,6 +530,10 @@ Return ( ::oModel:oRowSet )
 METHOD isValidGet( oGet )
 
    local uValue
+<<<<<<< HEAD
+=======
+
+>>>>>>> origin/master
 
    if empty( oGet )
       RETURN ( .t. )
