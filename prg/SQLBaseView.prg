@@ -17,7 +17,6 @@ CLASS SQLBaseView
 
    DATA     cBrowseState
 
-
    METHOD   New()
    
    METHOD   lblTitle()                                INLINE ( if( hhaskey( ::hTextMode, ::oController:getMode() ), hget( ::hTextMode, ::oController:getMode() ), "" ) )
@@ -98,7 +97,7 @@ METHOD GeneralButtons()
       HOTKEY   "E";
       LEVEL    ACC_DELE
 
-rETURN ( Self )
+RETURN ( Self )
 
 //---------------------------------------------------------------------------//
 
@@ -126,7 +125,7 @@ METHOD changeFind( oFind, oBrowse )
 
    oBrowse:refreshCurrent()
 
-Return ( lFind )
+RETURN ( lFind )
 
 //----------------------------------------------------------------------------//
 

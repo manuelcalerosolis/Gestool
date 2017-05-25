@@ -5,12 +5,6 @@
 #include "Report.ch"
 #include "Factu.ch" 
 
-#ifdef __HARBOUR__
-   #ifndef __XHARBOUR__
-      #xtranslate DbSkipper => __DbSkipper
-   #endif
-#endif
-
 //----------------------------------------------------------------------------//
 
 CLASS SQLXBrowse FROM TXBrowse
@@ -64,7 +58,7 @@ METHOD New( oWnd )
    ::bClrSelFocus    := {|| { CLR_BLACK, Rgb( 167, 205, 240 ) } }
    ::lSortDescend    := .f. 
 
-Return ( Self )
+RETURN ( Self )
 
 //------------------------------------------------------------------------//
 
@@ -111,13 +105,13 @@ METHOD RButtonDown( nRow, nCol, nFlags )
 
    ::SetFocus()
 
-Return ( Self )
+RETURN ( Self )
 
 //----------------------------------------------------------------------------//
 
 static function GenMenuBlock( oCol )
 
-return {|| iif( oCol:lHide, oCol:Show(), oCol:Hide() ) }
+RETURN {|| iif( oCol:lHide, oCol:Show(), oCol:Hide() ) }
 
 //----------------------------------------------------------------------------//
 
@@ -141,7 +135,7 @@ METHOD setModel( oModel )
 
    ::lFastEdit        := .t.
 
-Return nil
+RETURN nil
 
 //----------------------------------------------------------------------------//
 
@@ -167,7 +161,7 @@ METHOD ExportToExcel()
 
    ErrorBlock( oBlock )
 
-Return nil
+RETURN nil
 
 //----------------------------------------------------------------------------//
 
@@ -246,7 +240,7 @@ METHOD MakeTotals( aCols )
 
    endif
 
-Return ( Self )
+RETURN ( Self )
 
 //----------------------------------------------------------------------------//
 
@@ -256,14 +250,14 @@ METHOD getColumnHeaders()
 
    aeval( ::aCols, { |o| if( !empty( o:cHeader ), aadd( ::aHeaders, o:cHeader ), ) } )
 
-Return ( ::aHeaders )
+RETURN ( ::aHeaders )
 
 //----------------------------------------------------------------------------//
 
 METHOD selectColumnOrder( oCol, cOrder )
 
    if empty( oCol )
-      Return ( Self )
+      RETURN ( Self )
    end if
 
    aeval( ::aCols, {|o| if( o:cSortOrder != oCol:cSortOrder, o:cOrder := "", ) } )    
@@ -278,7 +272,7 @@ METHOD selectColumnOrder( oCol, cOrder )
       oCol:cOrder       := cOrder
    end if
 
-Return ( Self )
+RETURN ( Self )
 
 //----------------------------------------------------------------------------//
 
@@ -287,10 +281,10 @@ METHOD getColumnHeader( cHeader )
    local nPosition   := ascan( ::aCols, {|o| o:cHeader == cHeader } )
 
    if nPosition != 0
-      Return ( ::aCols[ nPosition ] )
+      RETURN ( ::aCols[ nPosition ] )
    end if 
 
-Return ( nil )
+RETURN ( nil )
 
 //----------------------------------------------------------------------------//
 
@@ -299,9 +293,9 @@ METHOD getColumnOrder( cSortOrder )
    local nPosition   := ascan( ::aCols, {|o| o:cSortOrder == cSortOrder } )
 
    if nPosition != 0
-      Return ( ::aCols[ nPosition ] )
+      RETURN ( ::aCols[ nPosition ] )
    end if 
 
-Return ( nil )
+RETURN ( nil )
 
 //----------------------------------------------------------------------------//

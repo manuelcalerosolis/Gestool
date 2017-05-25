@@ -1395,8 +1395,6 @@ METHOD OpenFiles() CLASS TpvTactil
 
    DATABASE NEW ::oMaterialesNumeroSeries                   PATH ( cPatEmp() )   FILE "MatSer.DBF"          VIA ( cDriver() ) SHARED INDEX "MatSer.CDX"
 
-   DATABASE NEW ::oTipoVenta                                PATH ( cPatDat() )   FILE "TVTA.DBF"            VIA ( cDriver() ) SHARED INDEX "TVTA.CDX"
-
    if uFieldEmpresa( "lOrdNomTpv" )
 
       ::oComentariosCabecera:OrdSetFocus( "cDescri" )
@@ -1823,10 +1821,6 @@ METHOD CloseFiles() CLASS TpvTactil
       ::oMaterialesNumeroSeries:End()
    end if
 
-   if ::oTipoVenta != nil .and. ::oTipoVenta:Used()
-      ::oTipoVenta:End()
-   end if
-
    if !Empty( ::oCaptura )
       ::oCaptura:End()
    end if
@@ -1977,7 +1971,6 @@ METHOD CloseFiles() CLASS TpvTactil
    ::oFideliza                               := nil
    ::oTipArt                                 := nil
    ::oFabricante                             := nil
-   ::oTipoVenta                              := nil
    ::oTransportista                          := nil
    ::oOrdenComanda                           := nil 
    ::oOfficeBar                              := nil
@@ -3346,8 +3339,6 @@ METHOD AgregarLineaMenu( cCodigoMenu )
 
    ::oTemporalLinea:Save()
 
-   // refrescos de pantalla-------------------------------------------------
-
    ::oBrwLineas:Refresh()
 
    ::SetTotal()
@@ -4299,15 +4290,17 @@ Return ( .t. )
 
 METHOD AgregarArticuloMenu( cCodigoArticulo, cCodigoMenu, cCodigoOrden )
    
+   local lDegustacion   := ::oTpvMenuOrdenes:lDegustacion( cCodigoOrden )
+
    ::SetLineaMenu( ::nLineaMenuActivo() )
 
    if !::oTpvMenuOrdenes:lIntercambiable( cCodigoOrden )
 
-      if ::nNumeroArticulosOrden( cCodigoOrden ) < ::nNumeroUnidadesMenu()
+      if ( lDegustacion .or. ::nNumeroArticulosOrden( cCodigoOrden ) < ::nNumeroUnidadesMenu() )
          
          ::AgregarLineas( cCodigoArticulo, cCodigoMenu, cCodigoOrden )
          
-         if ::nNumeroArticulosOrden( cCodigoOrden ) ==  ::nNumeroUnidadesMenu()
+         if ( ::nNumeroArticulosOrden( cCodigoOrden ) == ::nNumeroUnidadesMenu() .and. !lDegustacion )
             ::oBrwFamilias:GoDown()
          end if
 
@@ -4321,11 +4314,11 @@ METHOD AgregarArticuloMenu( cCodigoArticulo, cCodigoMenu, cCodigoOrden )
 
    else
 
-      if ::nArticulosOrdenesIntercambiables() < ( ::oTpvMenuOrdenes:nIntercambiables( cCodigoMenu, ::oTpvMenuOrdenes:oDbf ) * ::nNumeroUnidadesMenu() )
+      if ( lDegustacion .or. ::nArticulosOrdenesIntercambiables() < ( ::oTpvMenuOrdenes:nIntercambiables( cCodigoMenu, ::oTpvMenuOrdenes:oDbf ) * ::nNumeroUnidadesMenu() ) )
 
          ::AgregarLineas( cCodigoArticulo, cCodigoMenu, cCodigoOrden )
          
-         if ::nNumeroArticulosOrden( cCodigoOrden ) >= ::nNumeroUnidadesMenu()
+         if ( ::nNumeroArticulosOrden( cCodigoOrden ) == ::nNumeroUnidadesMenu() .and. !lDegustacion )
             ::oBrwFamilias:GoDown()
          end if
 
@@ -8888,9 +8881,6 @@ METHOD DataReport() CLASS TpvTactil
 
    ::oFastReport:SetWorkArea(       "Transportistas", ::oTransportista:Select() )
    ::oFastReport:SetFieldAliases(   "Transportistas", cObjectsToReport( ::oTransportista:oDbf ) )
-
-   ::oFastReport:SetWorkArea(       "Tipo de venta", ::oTipoVenta:nArea )
-   ::oFastReport:SetFieldAliases(   "Tipo de venta", cItemsToReport( aItmTVta() ) )
 
    ::oFastReport:SetWorkArea(       "Ofertas", ::oArticulosOfertas:nArea )
    ::oFastReport:SetFieldAliases(   "Ofertas", cItemsToReport( aItmOfe() ) )

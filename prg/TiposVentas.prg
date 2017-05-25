@@ -14,14 +14,13 @@ CLASS TiposVentas FROM SQLBaseView
  
    METHOD   Dialog()
 
-
 END CLASS
 
 //---------------------------------------------------------------------------//
 
 METHOD New( oController )
 
-   ::oController              := oController
+   ::oController           := oController
 
 Return ( Self )
 
@@ -71,9 +70,17 @@ Return ( Self )
 METHOD Dialog( lZoom )
 
    local oDlg
+   local oGetCodigo
    local oGetNombre
 
    DEFINE DIALOG oDlg RESOURCE "TIPO_VENTA" TITLE ::lblTitle() + "tipo de venta"
+
+   REDEFINE GET   oGetCodigo ;
+      VAR         ::oController:oModel:hBuffer[ "codigo" ] ;
+      MEMO ;
+      ID          100 ;
+      WHEN        ( !::oController:isZoomMode() ) ;
+      OF          oDlg
 
    REDEFINE GET   oGetNombre ;
       VAR         ::oController:oModel:hBuffer[ "nombre" ] ;
@@ -85,8 +92,8 @@ METHOD Dialog( lZoom )
    REDEFINE BUTTON ;
       ID          IDOK ;
       OF          oDlg ;
-      WHEN        ( !::oController:isZoomMode() ) ;
-      ACTION      ( ::oController:validDialog( oDlg, oGetNombre ) )
+      WHEN        ( !::oController:isZoomMode() ) ;   
+      ACTION      ( ::oController:validDialog( oDlg, oGetCodigo, oGetNombre ) )
 
    REDEFINE BUTTON ;
       ID          IDCANCEL ;
@@ -100,7 +107,7 @@ METHOD Dialog( lZoom )
 
    // evento bstart-----------------------------------------------------------
 
-   oDlg:bStart    := {|| oGetNombre:setFocus() }
+   oDlg:bStart    := {|| oGetCodigo:setFocus() }
 
    ACTIVATE DIALOG oDlg CENTER
 
@@ -126,7 +133,7 @@ METHOD buildSQLBrowse()
          BITMAP      "FIND" ;
          OF          oDlg
 
-      oFind:bChange  := {|| ::changeFind( oFind, oBrowse ) }
+      oFind:bChange           := {|| ::changeFind( oFind, oBrowse ) }
 
       REDEFINE COMBOBOX oCombobox ;
          VAR         cOrder ;
@@ -150,6 +157,14 @@ METHOD buildSQLBrowse()
          :cHeader             := "Id"
          :cSortOrder          := "id"
          :bEditValue          := {|| ::oController:getRowSet():fieldGet( "id" ) }
+         :nWidth              := 80
+         :bLClickHeader       := {| nMRow, nMCol, nFlags, oCol | ::oController:clickOnHeader( oCol, oBrowse, oCombobox ) }
+      end with
+
+      with object ( oBrowse:AddCol() )
+         :cHeader             := "Código"
+         :cSortOrder          := "codigo"
+         :bEditValue          := {|| ::oController:getRowSet():fieldGet( "codigo" ) }
          :nWidth              := 80
          :bLClickHeader       := {| nMRow, nMCol, nFlags, oCol | ::oController:clickOnHeader( oCol, oBrowse, oCombobox ) }
       end with
