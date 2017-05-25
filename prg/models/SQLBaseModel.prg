@@ -13,6 +13,8 @@ CLASS SQLBaseModel
    DATA     cDbfTableName
 	DATA	   hColumns
 
+   DATA     cWndTitle
+
    DATA     cGeneralSelect
 
    DATA     cColumnOrder
@@ -68,6 +70,10 @@ CLASS SQLBaseModel
    METHOD   updateCurrentBuffer()                  INLINE   ( getSQLDatabase():Query( ::getUpdateSentence() ), ::buildRowSetWithRecno() )
    METHOD   insertBuffer()                         INLINE   ( getSQLDatabase():Query( ::getInsertSentence() ), ::buildRowSet() )
    METHOD   deleteSelection( aRecno )              INLINE   ( getSQLDatabase():Query( ::getdeleteSentence( aRecno ) ), ::buildRowSet() )
+
+   METHOD   loadBuffer( id )
+   METHOD   loadBlankBuffer()
+   METHOD   loadCurrentBuffer()
 
    METHOD   selectFetch( cSentence )
    METHOD   selectFetchArray( cSentence )          
@@ -358,6 +364,46 @@ METHOD find( cFind )
    ::buildRowSet()
 
 Return ( ::oRowSet:recCount() > 0 )
+
+//----------------------------------------------------------------------------//
+
+METHOD loadBlankBuffer()
+
+   if empty( ::oRowSet )
+      Return ( .f. )
+   end if 
+
+Return ( ::loadBuffer( 0 ) )
+
+//---------------------------------------------------------------------------//
+
+METHOD loadCurrentBuffer()                
+
+   local aColumnNames := hb_hkeys( ::hColumns )
+
+   if empty( ::oRowSet )
+      Return ( .f. )
+   end if 
+
+   ::hBuffer  := {=>}
+
+   aeval( aColumnNames, {| k | hset( ::hBuffer, k, ::oRowSet:fieldget( k ) ) } )
+
+Return ( ::hBuffer )   
+
+//---------------------------------------------------------------------------//
+
+METHOD loadBuffer( id )
+
+   local aColumnNames := hb_hkeys( ::hColumns )
+
+   ::hBuffer  := {=>}
+
+   ::oRowSet:goto( id )
+
+   aeval( aColumnNames, {| k | hset( ::hBuffer, k, ::oRowSet:fieldget( k ) ) } )
+
+Return ( .t. )
 
 //---------------------------------------------------------------------------//
 

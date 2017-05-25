@@ -157,14 +157,14 @@ RETURN( ::Super:lblTitle() )
 
 //---------------------------------------------------------------------------//
 
-METHOD buildSQLBrowse( aSelectedItems )
+METHOD buildSQLBrowse( title, aSelectedItems )
 
    local oDlg
    local oTree
    local oFind
    local cFind       := space( 200 )
 
-   DEFINE DIALOG oDlg RESOURCE "HELP_ETIQUETAS" TITLE "Seleccionar etiquetas"
+   DEFINE DIALOG oDlg RESOURCE "HELP_ETIQUETAS" TITLE "Seleccionar " + lower( title )
 
       REDEFINE GET   oFind ; 
          VAR         cFind ;

@@ -26,12 +26,20 @@ METHOD New()
 
    ::cDbfTableName				 	:= "TipImp"
 
-   ::hColumns                   	:= {  "id"     => {  "create"    => "INTEGER PRIMARY KEY AUTOINCREMENT",;
-                                                      "text"		=> "Identificador" ,;
-   															      "dbfField" 	=> "" },;
-                                       "nombre" => {  "create"    => "VARCHAR( 50 ) NOT NULL",;
-   															      "text"		=> "Nombre de impresora",;
-   															      "dbfField" 	=> "cTipImp" } }
+   ::cWndTitle                   := "Tipos de impresoras"
+
+   ::hColumns                   	:= {  "id"     => {  "create"    => "INTEGER PRIMARY KEY AUTOINCREMENT" ,;
+                                                      "text"		=> "Identificador"                     ,;
+   															      "dbfField" 	=> ""                                  ,;
+                                                      "cHeader"   => "Id"                                ,;
+                                                      "visible"   => .f.                                 ,;
+                                                      "nWidth"    => 40}                                 ,;
+                                       "nombre" => {  "create"    => "VARCHAR( 50 ) NOT NULL"            ,;
+   															      "text"		=> "Nombre de impresora"               ,;
+   															      "dbfField" 	=> "cTipImp"                           ,;
+                                                      "cHeader"   => "Nombre"                            ,;
+                                                      "visible"   => .t.                                 ,;
+                                                      "nWidth"    => 200}                                }
 
    ::Super:New()
 

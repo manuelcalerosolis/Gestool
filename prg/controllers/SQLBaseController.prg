@@ -86,17 +86,16 @@ CLASS SQLBaseController
 
    METHOD   isValidGet( oGet )
    METHOD 	assignBrowse( oGet, aSelectedItems )
+   METHOD   showBrowseInDialog( id )
 
 	METHOD 	startBrowse( oCombobox, oBrowse )
 	METHOD 	restoreBrowseState( oBrowse )
 
-   METHOD   loadBuffer( id )
-   METHOD   loadBlankBuffer()
-   METHOD   loadCurrentBuffer()
-
    METHOD 	getRowSet()
 
    METHOD   setFastReport( oFastReport, cSentence, cColumns )
+
+   METHOD   createColumnsForBrowse( oBrowse, oCombobox )
 
 END CLASS
 
@@ -146,8 +145,8 @@ METHOD ActivateBrowse( aSelectedItems )
 
    ::oModel:buildRowSetWithRecno()
 
-   if ::oView:buildSQLBrowse( aSelectedItems )
-      uReturn     := ::getFieldFromBrowse() 
+   if ::oView:buildSQLBrowse( ::oModel:cWndTitle, aSelectedItems )
+      uReturn     := ::getFieldFromBrowse()
    end if
 
    ::destroySQLModel()
@@ -207,13 +206,25 @@ METHOD AssignBrowse( oGet, aSelectedItems )
 
    ::oModel:setIdForRecno( oGet:varGet() )
 
-   uReturn           := ::ActivateBrowse( aSelectedItems )   
+   uReturn           := ::ActivateBrowse( ::oModel:cWndTitle, aSelectedItems )   
 
    if !empty(uReturn)
       oGet:cText( uReturn )
    end if 
 
 RETURN ( uReturn )
+
+//--------------------------------------------------------------------------//
+
+METHOD showBrowseInDialog( idResource, idOfHeader )
+
+   local oBrowse
+
+   ::oModel:find( idOfHeader )
+
+   oBrowse           := ::oView:buildSQLNuclearBrowse( idResource )  
+
+RETURN ( oBrowse )
 
 //--------------------------------------------------------------------------//
 
@@ -314,31 +325,25 @@ METHOD Append( oBrowse )
 
    nRecno         := ::oModel:getRowSetRecno()
 
-   ::loadBlankBuffer()
+   ::oModel:loadBlankBuffer()
 
    if ::oView:Dialog()
-
       ::oModel:insertBuffer()
-
       if ::bOnPostAppend != nil
-         lTrigger    := eval( ::bOnPostAppend,  )
+         lTrigger    := eval( ::bOnPostAppend  )
          if Valtype( lTrigger ) == "L" .and. !lTrigger
             RETURN ( .f. )
          end if
       end if
-
    else 
-      
       ::oModel:setRowSetRecno( nRecno ) 
-
       RETURN ( .f. )
-
    end if
 
    if !empty( oBrowse )
       oBrowse:refreshCurrent()
       oBrowse:setFocus()
-   end if 
+   end if
 
 RETURN ( .t. )
 
@@ -357,7 +362,7 @@ METHOD Duplicate( oBrowse )
 
    nRecno         := ::oModel:getRowSetRecno()
 
-   ::loadCurrentBuffer()
+   ::oModel:loadCurrentBuffer()
 
    if ::oView:Dialog( ::oModel )
       ::oModel:insertBuffer()
@@ -387,7 +392,7 @@ METHOD Edit( oBrowse )
 
    ::oModel:setIdForRecno( ::oModel:getKeyFieldOfRecno() )
 
-   ::loadCurrentBuffer()
+   ::oModel:loadCurrentBuffer()
 
    if ::oView:Dialog( ::oModel )
       
@@ -415,7 +420,7 @@ METHOD Zoom( oBrowse )
 
    ::setZoomMode()
 
-   ::loadCurrentBuffer()
+   ::oModel:loadCurrentBuffer()
 
    ::oView:Dialog( ::oModel )
 
@@ -474,46 +479,6 @@ METHOD findGet( oFind )
 	uValue        := strtran( uValue, chr( 8 ), "" )
 
 RETURN ( ::find( uValue ) )
-
-//----------------------------------------------------------------------------//
-
-METHOD loadBlankBuffer()
-
-   if empty( ::oModel:oRowSet )
-      Return ( .f. )
-   end if 
-
-Return ( ::loadBuffer( 0 ) )
-
-//---------------------------------------------------------------------------//
-
-METHOD loadCurrentBuffer()                
-
-   local aColumnNames := hb_hkeys( ::oModel:hColumns )
-
-   if empty( ::oModel:oRowSet )
-      Return ( .f. )
-   end if 
-
-   ::oModel:hBuffer  := {=>}
-
-   aeval( aColumnNames, {| k | hset( ::oModel:hBuffer, k, ::oModel:oRowSet:fieldget( k ) ) } )
-
-Return ( ::oModel:hBuffer )   
-
-//---------------------------------------------------------------------------//
-
-METHOD loadBuffer( id )
-
-   local aColumnNames := hb_hkeys( ::oModel:hColumns )
-
-   ::oModel:hBuffer  := {=>}
-
-   ::oModel:oRowSet:goto( id )
-
-   aeval( aColumnNames, {| k | hset( ::oModel:hBuffer, k, ::oModel:oRowSet:fieldget( k ) ) } )
-
-Return ( .t. )
 
 //---------------------------------------------------------------------------//
 
@@ -577,3 +542,29 @@ RETURN ( self )
 
 //---------------------------------------------------------------------------//
 
+METHOD createColumnsForBrowse( oBrowse, oCombobox )
+
+   local hValues
+   local cKey
+
+   for each hValues in ::oModel:hColumns
+
+      cKey := hValues:__enumkey()
+
+      if ( hValues["visible"] )
+
+         with object ( oBrowse:AddCol() )
+            :cHeader             := hValues[ "cHeader" ]
+            :cSortOrder          := cKey
+            :bEditValue          := {|| ::oController:getRowSet():fieldGet( cKey ) }
+            :nWidth              := hValues[ "nWidth" ]
+            :bLClickHeader       := {| nMRow, nMCol, nFlags, oCol | ::oController:clickOnHeader( oCol, oBrowse, oCombobox ) }
+         end with
+          
+      endif
+
+   next
+
+RETURN ( self )
+
+//---------------------------------------------------------------------------//

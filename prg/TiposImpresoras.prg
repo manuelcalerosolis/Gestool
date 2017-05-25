@@ -9,8 +9,6 @@ CLASS TiposImpresoras FROM SQLBaseView
    METHOD   New()
 
    METHOD   buildSQLShell()
-  
-   METHOD   buildSQLBrowse()
  
    METHOD   Dialog()
 
@@ -106,7 +104,7 @@ METHOD Dialog()
 RETURN ( oDlg:nResult == IDOK )
 
 //---------------------------------------------------------------------------//
-
+/*
 METHOD buildSQLBrowse()
 
    local oDlg
@@ -198,3 +196,4 @@ METHOD buildSQLBrowse()
 
 RETURN ( oDlg:nResult == IDOK )
 
+*/

@@ -400,6 +400,7 @@ TiposImpresoras.prg       										\
 TiposNotas.prg       										\
 Etiquetas.prg       										\
 TiposVentas.prg       										\
+Propiedades.prg       								\
 PageIni.prg             										\
 TpvTactil.prg           										\
 TpvUtilidadesMesa.prg 											\
@@ -502,6 +503,8 @@ EtiquetasModel.prg 												\
 EtiquetasController.prg 												\
 TiposVentasModel.prg 											\
 TiposVentasController.prg 										\
+PropiedadesModel.obj       								\
+PropiedadesController.obj       								\
 RelacionesEtiquetasModel.prg 									\
 ArticulosModel.prg                                    \
 HistoricosUsuariosModel.prg                           \
@@ -894,6 +897,7 @@ TiposImpresoras.obj       									\
 TiposNotas.obj       										\
 Etiquetas.obj       											\
 TiposVentas.obj       								\
+Propiedades.obj       								\
 PageIni.obj             									\
 TpvTactil.obj           									\
 TpvUtilidadesMesa.obj 										\
@@ -998,6 +1002,8 @@ EtiquetasModel.obj 														\
 EtiquetasController.obj 												\
 TiposVentasModel.obj 													\
 TiposVentasController.obj 												\
+PropiedadesModel.obj       								\
+PropiedadesController.obj       								\
 RelacionesEtiquetasModel.obj 											\
 ArticulosModel.obj                                    		\
 HistoricosUsuariosModel.obj                                 \
@@ -1377,6 +1383,7 @@ $(OBJ)\TiposImpresoras.obj      					+
 $(OBJ)\TiposNotas.obj      							+
 $(OBJ)\Etiquetas.obj      							+
 $(OBJ)\TiposVentas.obj      					+
+$(OBJ)\Propiedades.obj      					+
 $(OBJ)\PageIni.obj              					+
 $(OBJ)\TpvTactil.obj            					+
 $(OBJ)\TpvUtilidadesMesa.obj 						+
@@ -1482,6 +1489,8 @@ $(OBJ)\EtiquetasModel.obj                 			+
 $(OBJ)\EtiquetasController.obj                 		+
 $(OBJ)\TiposVentasModel.obj                 			+
 $(OBJ)\TiposVentasController.obj                 	+
+$(OBJ)\PropiedadesModel.obj      					+
+$(OBJ)\PropiedadesController.obj      					+
 $(OBJ)\RelacionesEtiquetasModel.obj                +
 $(OBJ)\HistoricosUsuariosModel.obj 						+
 $(OBJ)\PedidosClientesLineasModel.obj

@@ -19,6 +19,10 @@ CLASS SQLBaseView
 
 
    METHOD   New()
+
+   METHOD   buildSQLBrowse()
+
+   METHOD   buildSQLNuclearBrowse()
    
    METHOD   lblTitle()                                INLINE ( if( hhaskey( ::hTextMode, ::oController:getMode() ), hget( ::hTextMode, ::oController:getMode() ), "" ) )
 
@@ -26,6 +30,7 @@ CLASS SQLBaseView
       METHOD   GeneralButtons()
       METHOD   insertAfterAppendButton()              VIRTUAL
       METHOD   EndButton()
+
 
    METHOD   setBrowseState( cBrowseState )            INLINE ( ::cBrowseState := cBrowseState )
    METHOD   getBrowseState()                          INLINE ( ::cBrowseState )
@@ -151,3 +156,92 @@ METHOD changeCombo( oBrowse, oCombobox )
 RETURN ( Self )
 
 //----------------------------------------------------------------------------//
+
+METHOD buildSQLBrowse( title )
+
+   local oDlg
+   local oBrowse
+   local oFind
+   local cFind       := space( 200 )
+   local oCombobox
+   local cOrder
+   local aOrden      := { title }
+
+   DEFINE DIALOG oDlg RESOURCE "HELP_BROWSE_SQL" TITLE "Seleccionar " + lower( title )
+
+      REDEFINE GET   oFind ; 
+         VAR         cFind ;
+         ID          104 ;
+         BITMAP      "FIND" ;
+         OF          oDlg
+
+      oFind:bChange       := {|| ::changeFind( oFind, oBrowse ) }
+
+      REDEFINE COMBOBOX oCombobox ;
+         VAR         cOrder ;
+         ID          102 ;
+         ITEMS       aOrden ;
+         OF          oDlg
+
+      oCombobox:bChange       := {|| ::changeCombo( oBrowse, oCombobox ) }
+
+      ::buildSQLNuclearBrowse( 105 )
+
+      REDEFINE BUTTON ;
+         ID          IDOK ;
+         OF          oDlg ;
+         ACTION      ( oDlg:end( IDOK ) )
+
+      REDEFINE BUTTON ;
+         ID          IDCANCEL ;
+         OF          oDlg ;
+         CANCEL ;
+         ACTION      ( oDlg:end() )
+
+      REDEFINE BUTTON ;
+         ID          500 ;
+         OF          oDlg ;
+         ACTION      ( ::oController:Append( oBrowse ) )
+
+      REDEFINE BUTTON ;
+         ID          501 ;
+         OF          oDlg ;
+         ACTION      ( ::oController:Edit( oBrowse ) )
+
+      oDlg:AddFastKey( VK_RETURN,   {|| oDlg:end( IDOK ) } )
+      oDlg:AddFastKey( VK_F5,       {|| oDlg:end( IDOK ) } )
+      oDlg:AddFastKey( VK_F2,       {|| ::oController:Append( oBrowse ) } )
+      oDlg:AddFastKey( VK_F3,       {|| ::oController:Edit( oBrowse ) } )
+
+      oDlg:bStart    := {|| ::oController:startBrowse( oCombobox, oBrowse ) }
+
+   oDlg:Activate( , , , .t., {|| ::saveHistoryOfBrowse( oBrowse ) } )
+
+RETURN ( oDlg:nResult == IDOK )
+
+//---------------------------------------------------------------------------//
+
+METHOD buildSQLNuclearBrowse( idResource, oDlg )
+
+   local oBrowse
+
+   oBrowse                 := SQLXBrowse():New( oDlg )
+
+   oBrowse:bClrSel         := {|| { CLR_BLACK, Rgb( 229, 229, 229 ) } }
+   oBrowse:bClrSelFocus    := {|| { CLR_BLACK, Rgb( 167, 205, 240 ) } }
+
+   oBrowse:lHScroll        := .f.
+   oBrowse:nMarqueeStyle   := 6
+
+   oBrowse:setModel( ::oController:oModel )
+
+   ::oController:createColumnsForBrowse( oBrowse )
+
+   oBrowse:bLDblClick      := {|| oDlg:end( IDOK ) }
+   oBrowse:bRClicked       := {| nRow, nCol, nFlags | oBrowse:RButtonDown( nRow, nCol, nFlags ) }
+
+   oBrowse:CreateFromResource( idResource )
+
+RETURN ( oBrowse )
+
+   //---------------------------------------------------------------------------//

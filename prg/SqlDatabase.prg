@@ -40,13 +40,14 @@ ENDCLASS
 
 METHOD New() 
 
-   ::aModels                  := {  TiposImpresorasModel():New():getSQLCreateTable(),     ;
-                                    TiposNotasModel():New():getSQLCreateTable(),          ;
-                                    EtiquetasModel():New():getSQLCreateTable(),           ;
-                                    SituacionesModel():New():getSQLCreateTable(),         ;
-                                    HistoricosUsuariosModel():New():getSQLCreateTable(),  ;
-                                    RelacionesEtiquetasModel():New():getSQLCreateTable(), ;
-                                    TiposVentasModel():New():getSQLCreateTable()          }
+   ::aModels                  := {  TiposImpresorasModel():New():getSQLCreateTable()      ,;
+                                    TiposNotasModel():New():getSQLCreateTable()           ,;
+                                    EtiquetasModel():New():getSQLCreateTable()            ,;
+                                    SituacionesModel():New():getSQLCreateTable()          ,;
+                                    HistoricosUsuariosModel():New():getSQLCreateTable()   ,;
+                                    RelacionesEtiquetasModel():New():getSQLCreateTable()  ,;
+                                    TiposVentasModel():New():getSQLCreateTable()          ,;
+                                    PropiedadesModel():New():getSQLCreateTable()          }
 
                                     
 
