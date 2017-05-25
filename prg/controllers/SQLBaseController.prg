@@ -530,7 +530,11 @@ Return ( ::oModel:oRowSet )
 METHOD isValidGet( oGet )
 
    local uValue
+<<<<<<< HEAD
    local uReturn     := .t.
+=======
+
+>>>>>>> refs/remotes/origin/master
 
    if empty( oGet )
       RETURN ( .t. )
@@ -539,10 +543,14 @@ METHOD isValidGet( oGet )
    uValue            := oGet:varGet()
 
    if !::oModel:exist( uValue )
-   	msgStop( "El tipo de movimiento introducido no existe")
+   	msgStop( "El valor introducido no existe", ::getTitle() )
    	oGet:setFocus()
       RETURN .f.
+<<<<<<< HEAD
    end if
+=======
+   end if 
+>>>>>>> refs/remotes/origin/master
 
    if !empty( oGet:oHelpText )
       oGet:oHelpText:cText( ::oModel:getNameFromId( uValue ) )

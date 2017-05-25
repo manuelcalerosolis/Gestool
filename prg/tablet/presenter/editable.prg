@@ -19,6 +19,8 @@ CLASS Editable
    DATA cDataTable
    DATA cDataTableLine
 
+   DATA cSentenceTable
+
    DATA cDataArray
 
    DATA oViewNavigator
@@ -70,6 +72,9 @@ CLASS Editable
    METHOD setDataTable( cDataTable )            INLINE ( ::cDataTable := cDataTable )
    METHOD getDataTable()                        INLINE ( ::cDataTable )
 
+   METHOD setSentenceTable( cSentenceTable )    INLINE ( ::cSentenceTable := cSentenceTable )
+   METHOD getSentenceTable()                    INLINE ( if( !Empty( ::cSentenceTable ), ::cSentenceTable, "SELECT * FROM " + cPatEmp() + ::getDataTable() ) )
+
    METHOD setDataArray( cDataArray )            INLINE ( ::cDataArray := cDataArray )
    METHOD getDataArray()                        INLINE ( ::cDataArray )
 
@@ -95,7 +100,8 @@ CLASS Editable
    METHOD saveEditDocumento()                   INLINE ( D():editHashRecord( ::hDictionaryMaster, ::getDataTable(), ::nView ) )
       METHOD saveDocumento()        
 
-   METHOD getWorkArea()                         INLINE ( D():Get( ::cDataTable, ::nView ) )
+   //METHOD getWorkArea()                         INLINE ( D():Get( ::cDataTable, ::nView ) )
+   METHOD getWorkArea()                         INLINE ( D():getSQL( ::cDataTable, ::getSentenceTable(), ::nView ) )
 
    METHOD addDetail( oDetail )                  INLINE ( aAdd( ::aDetails, oDetail ) )
 

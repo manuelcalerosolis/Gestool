@@ -1242,7 +1242,7 @@ STATIC FUNCTION EditConfig( aTmp, aGet, dbfEmp, oBrw, nSelFolder, bValid, nMode 
 
    oBlock                  := ErrorBlock( {| oError | ApoloBreak( oError ) } )
    BEGIN SEQUENCE
-   
+
    if Empty( aTmp[ _CDEFSER ] )
       aTmp[ _CDEFSER ]     := Space( 1 )
    end if
@@ -1736,19 +1736,6 @@ STATIC FUNCTION EditConfig( aTmp, aGet, dbfEmp, oBrw, nSelFolder, bValid, nMode 
       REDEFINE GET oSay[34] VAR cSay[34] ;
          WHEN     .f. ;
          ID       151 ;
-         OF       fldValores
-
-      REDEFINE GET aGet[ _CDEDVTA ] VAR aTmp[ _CDEDVTA ] ;
-         ID       400;
-         PICTURE  "@!" ;
-         VALID    ( TiposVentasModel():New():existTiposVentas( aTmp[ _CDEDVTA ] ) ) ;
-         BITMAP   "LUPA" ;
-         ON HELP  ( TiposVentasController():New():AssignBrowse( aGet[ _CDEDVTA ] ) ) ;
-         OF       fldValores
-
-      REDEFINE GET oSay[43] VAR cSay[43] ;
-         WHEN     .f. ;
-         ID       401 ;
          OF       fldValores
 
       REDEFINE GET aGet[ _CDEFTEM ] VAR aTmp[ _CDEFTEM ] ;
@@ -2346,7 +2333,7 @@ STATIC FUNCTION EditConfig( aTmp, aGet, dbfEmp, oBrw, nSelFolder, bValid, nMode 
          VALID    ( MkSubcuenta( aGet[ _CCTACEERPT ], nil, aGet[ _CCTACEERPT ]:oSay, AllTrim( aTmp[ _CRUTCNT ] ), aItmEmp[ 1, 2 ] ) );
          OF       fldContabilidad
 
-//IVA COMPRAS------------------------------------------------------------------
+      // IVA COMPRAS------------------------------------------------------------------
 
       REDEFINE GET aGet[ _CCEESPTCOM ] VAR aTmp[ _CCEESPTCOM ] ;
          ID       550 ;
@@ -2368,7 +2355,7 @@ STATIC FUNCTION EditConfig( aTmp, aGet, dbfEmp, oBrw, nSelFolder, bValid, nMode 
          VALID    ( MkSubcuenta( aGet[ _CCEERPTCOM ], nil, aGet[ _CCEERPTCOM ]:oSay, AllTrim( aTmp[ _CRUTCNT ] ), aItmEmp[ 1, 2 ] ) );
          OF       fldContabilidad
 
-//-----------------------------------------------------------------------------         
+      //-----------------------------------------------------------------------------         
 
       REDEFINE RADIO nIvaReq ;
          ID       420, 421 ;
@@ -2506,7 +2493,7 @@ STATIC FUNCTION EditConfig( aTmp, aGet, dbfEmp, oBrw, nSelFolder, bValid, nMode 
             ID       185;
             OF       fldComunicaciones
 
-      // Web---------------------------------------------------------------------- 
+      // Web----------------------------------------------------------------------
 
       TComercio:dialogCreateWebCombobox( 100, fldComunicaciones )
 

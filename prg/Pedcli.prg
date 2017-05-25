@@ -7293,6 +7293,8 @@ Static Function DataReport( oFr )
       oFr:SetFieldAliases( "Impuestos especiales",  cObjectsToReport( oNewImp:oDbf ) )
    end if 
 
+   TiposVentasController():Instance():setFastReport( oFr )
+
    oFr:SetMasterDetail( "Pedidos", "Lineas de pedidos",                 {|| ( D():PedidosClientes( nView ) )->cSerPed + Str( ( D():PedidosClientes( nView ) )->nNumPed ) + ( D():PedidosClientes( nView ) )->cSufPed } )
    oFr:SetMasterDetail( "Pedidos", "Incidencias de pedidos",            {|| ( D():PedidosClientes( nView ) )->cSerPed + Str( ( D():PedidosClientes( nView ) )->nNumPed ) + ( D():PedidosClientes( nView ) )->cSufPed } )
    oFr:SetMasterDetail( "Pedidos", "Documentos de pedidos",             {|| ( D():PedidosClientes( nView ) )->cSerPed + Str( ( D():PedidosClientes( nView ) )->nNumPed ) + ( D():PedidosClientes( nView ) )->cSufPed } )
@@ -7306,7 +7308,8 @@ Static Function DataReport( oFr )
    oFr:SetMasterDetail( "Pedidos", "Transportistas",                    {|| ( D():PedidosClientes( nView ) )->cCodTrn } )
    oFr:SetMasterDetail( "Pedidos", "Usuarios",                        	{|| ( D():PedidosClientes( nView ) )->cCodUsr } )
 
-   oFr:SetMasterDetail( "Lineas de pedidos", "Artículos",               {|| ( D():PedidosClientesLineas( nView ) )->cRef } )
+   oFr:SetMasterDetail( "Lineas de pedidos", "Artículos",               {||   ( D():PedidosClientesLineas( nView ) )->cRef,;
+                                                                              TiposVentasController():Instance():findByIdInRowSet( ( D():PedidosClientesLineas( nView ) )->id_tipo_v ) } )
    oFr:SetMasterDetail( "Lineas de pedidos", "Ofertas",                 {|| ( D():PedidosClientesLineas( nView ) )->cRef } )
    oFr:SetMasterDetail( "Lineas de pedidos", "Unidades de medición",    {|| ( D():PedidosClientesLineas( nView ) )->cUnidad } )
    oFr:SetMasterDetail( "Lineas de pedidos", "Impuestos especiales",    {|| ( D():PedidosClientesLineas( nView ) )->cCodImp } )

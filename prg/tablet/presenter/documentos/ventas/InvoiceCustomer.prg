@@ -87,6 +87,7 @@ METHOD Create( nView ) CLASS InvoiceCustomer
 
    // Areas--------------------------------------------------------------------
 
+   ::setSentenceTable( runScript( "FacturasClientes\SQLOpen.prg" )  )
    ::setDataTable( "FacCliT" )
    ::setDataTableLine( "FacCliL" )
 
@@ -144,6 +145,7 @@ METHOD New() CLASS InvoiceCustomer
 
    // Areas--------------------------------------------------------------------
 
+   ::setSentenceTable( runScript( "FacturasClientes\SQLOpen.prg" )  )
    ::setDataTable( "FacCliT" )
    ::setDataTableLine( "FacCliL" )
 
@@ -163,11 +165,20 @@ METHOD getEditDocumento() CLASS InvoiceCustomer
 
    local id                := D():FacturasClientesId( ::nView )
 
+   MsgInfo( id, "id" )
+
    if Empty( id )
       Return .f.
    end if
 
-   ::hDictionaryMaster     := D():getFacturaCliente( ::nView )
+   MsgInfo( "antes" )
+   MsgInfo( ::getWorkArea() )
+
+   ::hDictionaryMaster     := D():getHashRecordById( id, ::getWorkArea(), ::nView )
+   //D():getFacturaCliente( ::nView )
+
+   MsgInfo( hb_valtoexp( ::hDictionaryMaster ) )
+
 
    if empty( ::hDictionaryMaster )
       Return .f.
