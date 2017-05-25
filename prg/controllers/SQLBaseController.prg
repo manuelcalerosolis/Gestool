@@ -530,7 +530,6 @@ Return ( ::oModel:oRowSet )
 METHOD isValidGet( oGet )
 
    local uValue
-   local uReturn     := .t.
 
 
    if empty( oGet )
