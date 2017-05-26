@@ -6,7 +6,7 @@
 
 CLASS TiposVentasModel FROM SQLBaseModel
 
-   DATA     cTableName               INIT "tipos_ventas"
+   DATA     cTableName           INIT "tipos_ventas"
 
    DATA     cDbfTableName
 
@@ -24,17 +24,17 @@ END CLASS
 
 METHOD New()
 
-   ::cDbfTableName				 	:= "TVTA"
+   ::cDbfTableName				 	:= "TVta"
 
-   ::hColumns                   	:= {  "id"        => {  "create"    => "INTEGER PRIMARY KEY AUTOINCREMENT"    ,;
-                                                         "text"		=> "Identificador"                        ,;
-   															         "dbfField" 	=> ""}                                    ,;
-                                       "codigo"    => {  "create"    => "VARCHAR( 2 )"                         ,;
-                                                         "text"      => "Código de identificación en DBF"      ,; 
-                                                         "dbfField"  => "CCODMOV"}                             ,;
-                                       "nombre"    => {  "create"    => "VARCHAR( 20 ) NOT NULL"               ,;
-   															         "text"		=> "Descripción del movimiento"           ,;
-   															         "dbfField" 	=> "CDESMOV"}                             }
+   ::hColumns                   	:= {  "id"     => {  "create"    => "INTEGER PRIMARY KEY AUTOINCREMENT"    ,;
+                                                      "text"		=> "Identificador"                        ,;
+   															      "dbfField" 	=> ""}                                    ,;
+                                       "codigo" => {  "create"    => "VARCHAR( 2 )"                         ,;
+                                                      "text"      => "Código"                               ,; 
+                                                      "dbfField"  => "cCodMov"}                             ,;
+                                       "nombre" => {  "create"    => "VARCHAR( 20 ) NOT NULL"               ,;
+   															      "text"		=> "Nombre"                               ,;
+   															      "dbfField" 	=> "cDesMov"}                             }
 
    ::Super:New()
 

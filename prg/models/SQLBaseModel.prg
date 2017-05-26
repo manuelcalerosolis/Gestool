@@ -239,6 +239,8 @@ METHOD buildRowSet( cSentence )
       
       msgstop( hb_valtoexp( getSQLDatabase():errorInfo() ) )
       
+   finally
+
       if !empty( oStmt )
          oStmt:free()
       end if    
@@ -376,6 +378,8 @@ METHOD selectFetch( cSentence, fetchType )
 
       msgstop( hb_valtoexp( getSQLDatabase():errorInfo() ) )
 
+   finally
+
       if !empty( oStmt )
         oStmt:free()
       end if    
@@ -410,16 +414,20 @@ METHOD getColumnsOfCurrentTable()
    local cSentence
    local aTableInfo
    local hFetch
-   local aCurrentColumns := {}
+   local aCurrentColumns   := {}
 
    cSentence               := "PRAGMA table_info(" + ::cTableName + ")"
 
-   try 
+   try
+
       oStmt                := getSQLDatabase():Query( cSentence )
       aTableInfo           := oStmt:fetchAll( FETCH_HASH )
+
    catch
 
       msgstop( hb_valtoexp( getSQLDatabase():errorInfo() ) )
+
+   finally
 
       if !empty( oStmt )
         oStmt:free()

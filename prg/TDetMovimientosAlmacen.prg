@@ -49,6 +49,7 @@ CLASS TDetMovimientos FROM TDet
    DATA  oGetLote
    DATA  oGetDetalle
    DATA  cGetDetalle       INIT  ""
+   DATA  oFechaCaducidad
 
    DATA  cRefMov
    DATA  cNomMov
@@ -176,6 +177,7 @@ METHOD DefineFiles( cPath, cDriver, lUniqueName, cFileName ) CLASS TDetMovimient
       FIELD NAME "cCodPr2"    TYPE "C" LEN  20 DEC 0 COMMENT "Código propiedad 2"                  OF oDbf
       FIELD NAME "cValPr1"    TYPE "C" LEN  20 DEC 0 COMMENT "Valor propiedad 1"                   OF oDbf
       FIELD NAME "cValPr2"    TYPE "C" LEN  20 DEC 0 COMMENT "Valor propiedad 2"                   OF oDbf
+      FIELD NAME "dFecCad"    TYPE "D" LEN   8 DEC 0 COMMENT "Fecha caducidad"                     OF oDbf
       FIELD NAME "cCodUsr"    TYPE "C" LEN   3 DEC 0 COMMENT "Código usuario"                      OF oDbf
       FIELD NAME "cCodDlg"    TYPE "C" LEN   2 DEC 0 COMMENT "Código delegación"                   OF oDbf
       FIELD NAME "lLote"      TYPE "L" LEN   1 DEC 0 COMMENT "Lógico lote"                         OF oDbf
@@ -474,6 +476,13 @@ METHOD Resource( nMode ) CLASS TDetMovimientos
 
       REDEFINE SAY ::oSayPr2 PROMPT "Propiedad 2";
          ID       132 ;
+         OF       oDlg
+
+      REDEFINE GET ::oFechaCaducidad VAR ::oDbfVir:dFecCad ;
+         ID       340 ;
+         IDSAY    341 ;
+         SPINNER ;
+         WHEN     ( nMode != ZOOM_MODE ) ;
          OF       oDlg
 
       REDEFINE GET ::oGetBultos VAR ::oDbfVir:nBultos;
@@ -874,12 +883,18 @@ METHOD loadArticulo( nMode, lSilenceMode ) CLASS TDetMovimientos
             if !empty(::oGetLote)
                ::oGetLote:Show()
             end if 
+            if !empty(::oFechaCaducidad)
+               ::oFechaCaducidad:Show()
+            end if 
          else
             if !empty(::oSayLote)
                ::oSayLote:Hide()
             end if 
             if !empty(::oGetLote)
                ::oGetLote:Hide()
+            end if 
+            if !empty(::oFechaCaducidad)
+               ::oFechaCaducidad:Hide()
             end if 
          end if
 
@@ -902,6 +917,7 @@ METHOD loadArticulo( nMode, lSilenceMode ) CLASS TDetMovimientos
             if( !empty(::oSayVp2),  ::oSayVp2:Hide(),    )
             if( !empty(::oSayLote), ::oSayLote:Hide(),   )
             if( !empty(::oGetLote), ::oGetLote:Hide(),   )
+            if( !empty(::oFechaCaducidad), ::oFechaCaducidad:Hide(), )
 
             setPropertiesTable( ::oParent:oArt:Codigo, ::oDbfVir:cCodPr1, ::oDbfVir:cCodPr2, 0, ::oUndMov, ::oBrwPrp, ::oParent:nView )
 
@@ -1054,6 +1070,8 @@ METHOD SetDlgMode( nMode, oSayTotal, oSayPre ) CLASS TDetMovimientos
       ::oSayLote:Hide()
       ::oGetLote:Hide()
 
+      ::oFechaCaducidad:Hide()
+
       ::oValPr1:Hide()
       ::oSayPr1:Hide()
       ::oSayVp1:Hide()
@@ -1077,9 +1095,11 @@ METHOD SetDlgMode( nMode, oSayTotal, oSayPre ) CLASS TDetMovimientos
       if ::oDbfVir:lLote
          ::oGetLote:Show()
          ::oSayLote:Show()
+         ::oFechaCaducidad:Show()
       else
          ::oGetLote:Hide()
          ::oSayLote:Hide()
+         ::oFechaCaducidad:Hide()
       end if
 
       if !empty( ::oDbfVir:cValPr1 )

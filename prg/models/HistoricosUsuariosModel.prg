@@ -50,6 +50,8 @@ METHOD getHistory( cTable )
 
       msgstop( hb_valtoexp( getSQLDatabase():errorInfo() ) )
 
+   finally
+
       if !empty( oStmt )
         oStmt:free()
       end if    
@@ -59,8 +61,6 @@ METHOD getHistory( cTable )
    if !empty( aFetch ) .and. hb_isarray( aFetch )
     	Return ( atail( aFetch ) )
    end if 
-
-   
 
 Return ( nil )
        

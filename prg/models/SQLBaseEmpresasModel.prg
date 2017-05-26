@@ -23,7 +23,7 @@ CLASS SQLBaseEmpresasModel From SQLBaseModel
 
    METHOD   checksForValid( cColumnToValid )
 
-   METHOD exist( cValue )
+   METHOD   exist( cValue )
 
 END CLASS
 
@@ -48,8 +48,8 @@ Return ( nil )
 METHOD getImportSentence( cPath )
    
    local dbf
-   local cValues     := ""
-   local cInsert     := ""
+   local cValues        := ""
+   local cInsert        := ""
 
    default cPath        := cPatEmp()
 
@@ -182,7 +182,8 @@ Return ( cSQLSelect )
 METHOD getNameFromId( uValue )
 
    local cName       := ""
-   local cSentence   := "SELECT nombre FROM " + ::cTableName + " WHERE empresa = " + toSQLString( cCodEmp() ) + " AND id = " + toSQLString( uValue )
+   local cSentence   := "SELECT nombre FROM " + ::cTableName + ;
+                           " WHERE empresa = " + toSQLString( cCodEmp() ) + " AND id = " + toSQLString( uValue )
    local aSelect     := ::selectFetchHash( cSentence )
 
    if !empty( aSelect )
@@ -195,25 +196,23 @@ RETURN ( cName )
 
 METHOD checksForValid( cColumnToValid )
 
-   local cSentence := "SELECT id FROM " + ::cTableName + " WHERE empresa = " + toSQLString( cCodEmp() ) + " AND " + cColumnToValid + " = " + toSQLString( ::hBuffer[ cColumnToValid ] )
-   local aIDsToValid
-   local nIDToValid
+   local id
+   local cSentence   := "SELECT id FROM " + ::cTableName + ;
+                           " WHERE empresa = " + toSQLString( cCodEmp() ) + " AND " + cColumnToValid + " = " + toSQLString( hget( ::hBuffer, cColumnToValid ) )
+   local aSelect     := ::selectFetchHash( cSentence )
 
-   aIDsToValid    := ::selectFetchArray( cSentence )
-
-   if empty( aIDsToValid )
-       RETURN ( nil )
-   endif
+   if !empty( aSelect )
+      id             := hget( atail( aSelect ), "id" )
+   end if 
    
-   nIDToValid     := aIDsToValid[1]
-
-RETURN ( nIDToValid )
+RETURN ( id )
 
 //---------------------------------------------------------------------------//
 
 METHOD exist( cValue )
 
-   local cSentence               := "SELECT " + ::cColumnKey + " FROM " + ::cTableName + " WHERE empresa = " + toSQLString( cCodEmp() ) + " AND id = " + toSQLString( cValue )
+   local cSentence   := "SELECT " + ::cColumnKey + " FROM " + ::cTableName + ;
+                           " WHERE empresa = " + toSQLString( cCodEmp() ) + " AND id = " + toSQLString( cValue )
 
 RETURN ( !empty( ::selectFetchArray( cSentence ) ) )
 

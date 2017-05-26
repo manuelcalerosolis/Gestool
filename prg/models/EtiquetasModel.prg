@@ -225,6 +225,8 @@ METHOD arrayCodigoAndId()
 
       msgstop( hb_valtoexp( getSQLDatabase():errorInfo() ) )
 
+   finally
+
       if !empty( oStmt )
         oStmt:free()
       end if    

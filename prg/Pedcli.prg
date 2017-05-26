@@ -384,7 +384,6 @@ static dbfTmpRes
 static dbfTmpInc
 static dbfTmpDoc
 static dbfTmpPgo
-static dbfTVta
 static dbfPro
 static dbfPedCliE
 static dbfTmpEst
@@ -682,9 +681,6 @@ STATIC FUNCTION OpenFiles( lExt )
 
       USE ( cPatCli() + "ObrasT.Dbf" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "OBRAST", @dbfObrasT ) )
       SET ADSINDEX TO ( cPatCli() + "ObrasT.Cdx" ) ADDITIVE
-
-      USE ( cPatDat() + "TVTA.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "TVTA", @dbfTVta ) )
-      SET ADSINDEX TO ( cPatDat() + "TVTA.CDX" ) ADDITIVE
 
       USE ( cPatArt() + "OFERTA.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "OFERTA", @dbfOferta ) )
       SET ADSINDEX TO ( cPatArt() + "OFERTA.CDX" ) ADDITIVE
@@ -7624,7 +7620,6 @@ STATIC FUNCTION CloseFiles()
    if( !Empty( dbfAgent   ), ( dbfAgent   )->( dbCloseArea() ), )
    if( !Empty( dbfCodebar ), ( dbfCodebar )->( dbCloseArea() ), )
    if( !Empty( dbfObrasT  ), ( dbfObrasT  )->( dbCloseArea() ), )
-   if( !Empty( dbfTVta    ), ( dbfTVta    )->( dbCloseArea() ), )
    if( !Empty( dbfOferta  ), ( dbfOferta  )->( dbCloseArea() ), )
    if( !Empty( dbfPro     ), ( dbfPro     )->( dbCloseArea() ), )
    if( !Empty( dbfKit     ), ( dbfKit     )->( dbCloseArea() ), )
@@ -7694,7 +7689,6 @@ STATIC FUNCTION CloseFiles()
    dbfArtPrv      := nil
    dbfCodebar     := nil
    dbfObrasT      := nil
-   dbfTVta        := nil
    dbfOferta      := nil
    dbfPro         := nil
    dbfKit         := nil

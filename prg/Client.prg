@@ -8,147 +8,147 @@
 #include "Factu.ch" 
 #include "Ini.ch"
 
-#define _COD                       1      //   C      7     0
-#define _TITULO                    2      //   C     50     0
-#define _NIF                       3      //   C     15     0
-#define _DOMICILIO                 4      //   C     35     0
-#define _POBLACION                 5      //   C     25     0
-#define _PROVINCIA                 6      //   C     20     0
-#define _CODPOSTAL                 7      //   C     15     0
-#define _TELEFONO                  8      //   C     12     0
-#define _FAX                       9      //   C     12     0
-#define _MOVIL                    10      //   C     12     0
-#define _NBREST                   11      //   C     35     0
-#define _DIREST                   12      //   C     35     0
-#define _DIAPAGO                  13      //   N      2     0
-#define _DIAPAGO2                 14      //   N      2     0
-#define _BANCO                    15      //   C     35     0
-#define _DIRBANCO                 16      //   C     35     0
-#define _POBBANCO                 17      //   C     25     0
-#define _CPROBANCO                18      //   C     20     0
-#define _CUENTA                   19      //   C     20     0
-#define _NTIPCLI                  20
-#define _CODPAGO                  21      //   C      2     0
-#define _CDTOESP                  22      //   C     50     2
-#define _NDTOESP                  23      //   N      5     2
-#define _CDPP                     24      //   C     50     2
-#define _NDPP                     25      //   N      5     2
-#define _NDTOCNT                  26      //   N      5     2
-#define _NDTORAP                  27      //   N      5     2
-#define _CDTOUNO                  28      //   C     50     2
-#define _CDTODOS                  29      //   C     50     2
-#define _NDTOPTF                  30      //   N      5     2
-#define _RIESGO                   31      //   N     10     0
-#define _COPIASF                  32      //   N      1     0
-#define _SERIE                    33      //   C      1     0
-#define _NREGIVA                  34      //   L      1     0
-#define _LREQ                     35      //   L      1     0
-#define _SUBCTA                   36      //   C     12     0
-#define _CTAVENTA                 37      //   C      3     0
-#define _CAGENTE                  38      //   C      3     0
-#define _LMAYORISTA               39      //   L      1     0
-#define _NTARIFA                  40      //   N      1     0
-#define _LLABEL                   41      //   L      1     0
-#define _NLABEL                   42      //   N      5     0
-#define _CCODTAR                  43      //   C      4     0
-#define _MCOMENT                  44      //   M     10     0
-#define _CCODRUT                  45      //   C      4     0
-#define _CCODRUT2                 46      //   C      4     0
-#define _CCODPAI                  47      //   C      4     0
-#define _CCODGRP                  48      //   C      4     0
-#define _CCODREM                  49      //   C      4     0
-#define _CMEIINT                  50      //   C     65     0
-#define _CWEBINT                  51      //   C     65     0
-#define _LCHGPRE                  52      //   L      1     0
-#define _LCRESOL                  53      //   L      1     0
-#define _LPNTVER                  54      //   L      1     0
-#define _CUSRDEF01                55      //   C     100    0
-#define _CUSRDEF02                56      //   C     100    0
-#define _CUSRDEF03                57      //   C     100    0
-#define _CUSRDEF04                58      //   C     100    0
-#define _CUSRDEF05                59      //   C     100    0
-#define _CUSRDEF06                60      //   C     100    0
-#define _CUSRDEF07                61      //   C     100    0
-#define _CUSRDEF08                62      //   C     100    0
-#define _CUSRDEF09                63      //   C     100    0
-#define _CUSRDEF10                64      //   C     100    0
-#define _LVISLUN                  65      //   L      1     0
-#define _LVISMAR                  66      //   L      1     0
-#define _LVISMIE                  67      //   L      1     0
-#define _LVISJUE                  68      //   L      1     0
-#define _LVISVIE                  69      //   L      1     0
-#define _LVISSAB                  70      //   L      1     0
-#define _LVISDOM                  71      //   L      1     0
-#define _NVISLUN                  72      //   N      3     0
-#define _NVISMAR                  73      //   N      3     0
-#define _NVISMIE                  74      //   N      3     0
-#define _NVISJUE                  75      //   N      3     0
-#define _NVISVIE                  76      //   N      3     0
-#define _NVISSAB                  77      //   N      3     0
-#define _NVISDOM                  78      //   N      3     0
-#define _CAGELUN                  79      //   N      3     0
-#define _CAGEMAR                  80      //   N      3     0
-#define _CAGEMIE                  81      //   N      3     0
-#define _CAGEJUE                  82      //   N      3     0
-#define _CAGEVIE                  83      //   N      3     0
-#define _CAGESAB                  84      //   N      3     0
-#define _CAGEDOM                  85      //   N      3     0
-#define _LSNDINT                  86      //   L      1     0
-#define _CPERCTO                  87      //   L      1     0
-#define _CCODALM                  88      //   C      3     0
-#define _NMESVAC                  89      //   N      2     0
-#define _NIMPRIE                  90      //   N     16     6
-#define _NCOLOR                   91      //   N     16     6
-#define _SUBCTADTO                92      //   C     12     0
-#define _LBLQCLI                  93      //   L      1     0
-#define _LMOSCOM                  94      //   L      1     0
-#define _LTOTALB                  95      //   L      1     0
-#define _CDTOATP                  96      //   C     50     0
-#define _NDTOATP                  97      //   N      6     2
-#define _NSBRATP                  98      //   N      1     0
-#define _CCODUSR                  99      //
-#define _DFECCHG                 100      //
-#define _CTIMCHG                 101      //
-#define _NTIPRET                 102      //
-#define _NPCTRET                 103      //
-#define _DFECBLQ                 104      //   D      8     0
-#define _CMOTBLQ                 105      //   C     50     0
-#define _LMODDAT                 106      //   l      1     0
-#define _LMAIL                   107      //   L      1     0
-#define _CCODTRN                 108      //   L      1     0
-#define _MOBSERV                 109      //   M     10     0
-#define _LPUBINT                 110      //   L     1      0
-#define _CCLAVE                  111      //   C     40     0
-#define _CCODWEB                 112      //   N     11     0
-#define _CCODEDI                 113      //   N     11     0
-#define _CFACAUT                 114      //   C      3     0
-#define _LWEB                    115      //   L      1     0
-#define _NDTOART                 116      //   N      1     0
-#define _LEXCFID                 117      //   L      1     0
-#define _MFACAUT                 118      //   M     10     0
-#define _DFECNACI                119      //   D      8     0
-#define _NSEXO                   120      //   N      7     0 
-#define _NTARCMB                 121      //   N      1     0
-#define _DLLACLI                 122
-#define _CTIMCLI                 123
-#define _TELEFONO2               125
-#define _MOVIL2                  126
-#define _CAGENTE2                127      //   C      3     0
-#define _CDEPARTA                128
-#define _CDOMENT                 129
-#define _CPOBENT                 130
-#define _CCPENT                  131
-#define _CPRVENT                 132
-#define _CPROVEE                 133
-#define _CCODBIC                 134
-#define _CHORARIO                135
-#define _CENTIDAD                136
-#define _DPETRIE                 137
-#define _DCONRIE                 138
-#define _LINACLI                 139
-#define _DFECINA                 140
-#define _CMOTINA                 141
-#define _DALTA                   142
+#define _COD                       1  
+#define _TITULO                    2  
+#define _NIF                       3  
+#define _DOMICILIO                 4  
+#define _POBLACION                 5  
+#define _PROVINCIA                 6  
+#define _CODPOSTAL                 7  
+#define _TELEFONO                  8  
+#define _FAX                       9  
+#define _MOVIL                    10  
+#define _NBREST                   11  
+#define _DIREST                   12  
+#define _DIAPAGO                  13  
+#define _DIAPAGO2                 14  
+#define _BANCO                    15  
+#define _DIRBANCO                 16  
+#define _POBBANCO                 17  
+#define _CPROBANCO                18  
+#define _CUENTA                   19  
+#define _NTIPCLI                  20  
+#define _CODPAGO                  21  
+#define _CDTOESP                  22  
+#define _NDTOESP                  23  
+#define _CDPP                     24  
+#define _NDPP                     25  
+#define _NDTOCNT                  26  
+#define _NDTORAP                  27  
+#define _CDTOUNO                  28  
+#define _CDTODOS                  29  
+#define _NDTOPTF                  30  
+#define _RIESGO                   31  
+#define _COPIASF                  32  
+#define _SERIE                    33  
+#define _NREGIVA                  34  
+#define _LREQ                     35  
+#define _SUBCTA                   36  
+#define _CTAVENTA                 37      
+#define _CAGENTE                  38      
+#define _LMAYORISTA               39      
+#define _NTARIFA                  40      
+#define _LLABEL                   41      
+#define _NLABEL                   42      
+#define _CCODTAR                  43      
+#define _MCOMENT                  44      
+#define _CCODRUT                  45      
+#define _CCODRUT2                 46      
+#define _CCODPAI                  47      
+#define _CCODGRP                  48      
+#define _CCODREM                  49      
+#define _CMEIINT                  50      
+#define _CWEBINT                  51      
+#define _LCHGPRE                  52      
+#define _LCRESOL                  53      
+#define _LPNTVER                  54      
+#define _CUSRDEF01                55      
+#define _CUSRDEF02                56      
+#define _CUSRDEF03                57      
+#define _CUSRDEF04                58      
+#define _CUSRDEF05                59      
+#define _CUSRDEF06                60      
+#define _CUSRDEF07                61      
+#define _CUSRDEF08                62      
+#define _CUSRDEF09                63      
+#define _CUSRDEF10                64      
+#define _LVISLUN                  65      
+#define _LVISMAR                  66      
+#define _LVISMIE                  67      
+#define _LVISJUE                  68      
+#define _LVISVIE                  69      
+#define _LVISSAB                  70      
+#define _LVISDOM                  71      
+#define _NVISLUN                  72      
+#define _NVISMAR                  73
+#define _NVISMIE                  74
+#define _NVISJUE                  75
+#define _NVISVIE                  76
+#define _NVISSAB                  77
+#define _NVISDOM                  78
+#define _CAGELUN                  79
+#define _CAGEMAR                  80
+#define _CAGEMIE                  81
+#define _CAGEJUE                  82
+#define _CAGEVIE                  83
+#define _CAGESAB                  84
+#define _CAGEDOM                  85
+#define _LSNDINT                  86
+#define _CPERCTO                  87
+#define _CCODALM                  88
+#define _NMESVAC                  89
+#define _NIMPRIE                  90
+#define _NCOLOR                   91
+#define _SUBCTADTO                92
+#define _LBLQCLI                  93
+#define _LMOSCOM                  94
+#define _LTOTALB                  95
+#define _CDTOATP                  96
+#define _NDTOATP                  97
+#define _NSBRATP                  98
+#define _CCODUSR                  99
+#define _DFECCHG                 100
+#define _CTIMCHG                 101
+#define _NTIPRET                 102
+#define _NPCTRET                 103
+#define _DFECBLQ                 104
+#define _CMOTBLQ                 105
+#define _LMODDAT                 106
+#define _LMAIL                   107
+#define _CCODTRN                 108
+#define _MOBSERV                 109   
+#define _LPUBINT                 110   
+#define _CCLAVE                  111   
+#define _CCODWEB                 112   
+#define _CCODEDI                 113   
+#define _CFACAUT                 114   
+#define _LWEB                    115   
+#define _NDTOART                 116   
+#define _LEXCFID                 117   
+#define _MFACAUT                 118   
+#define _DFECNACI                119   
+#define _NSEXO                   120   
+#define _NTARCMB                 121   
+#define _DLLACLI                 122  
+#define _CTIMCLI                 123  
+#define _TELEFONO2               124  
+#define _MOVIL2                  125  
+#define _CAGENTE2                126   
+#define _CDEPARTA                127  
+#define _CDOMENT                 128  
+#define _CPOBENT                 129  
+#define _CCPENT                  130  
+#define _CPRVENT                 131  
+#define _CPROVEE                 132  
+#define _CCODBIC                 133  
+#define _CHORARIO                134  
+#define _CENTIDAD                135  
+#define _DPETRIE                 136  
+#define _DCONRIE                 137  
+#define _LINACLI                 138  
+#define _DFECINA                 139  
+#define _CMOTINA                 140  
+#define _DALTA                   141  
 
 #define _aCCODCLI                  1     //   C     12     0
 #define _aCCODGRP                  2     //   C     12     0
@@ -6991,7 +6991,10 @@ Static Function EdtInc( aTmp, aGet, dbfFacCliI, oBrw, cCodCli, bValid, nMode )
       if !empty( cCodCli )
          aTmp[ ( dbfFacCliI )->( FieldPos( "cCodCli" ) ) ]  := cCodCli
       end if
+<<<<<<< HEAD
 
+=======
+>>>>>>> origin/master
       aTmp[ ( dbfFacCliI )->( FieldPos( "dFecInc" ) ) ]     := getSysDate()
       aTmp[ ( dbfFacCliI )->( FieldPos( "tTimInc" ) ) ]     := getSysTime()
 

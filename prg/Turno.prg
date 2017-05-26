@@ -2946,7 +2946,6 @@ METHOD lArqueoTurno( lZoom, lParcial ) CLASS TTurno
    local oBtnRetirado
    local oBtnCalculadora
    local oBtnEfectivo
-   local oEstadoSesion
    local nOrdAnt
 
    DEFAULT lZoom        := .f.
@@ -3444,12 +3443,7 @@ METHOD lArqueoTurno( lZoom, lParcial ) CLASS TTurno
          ID       141 ;
          WHEN     .f. ;
          OF       ::oFldTurno:aDialogs[ 3 ]
-/*
-      REDEFINE SAY oEstadoSesion ;
-         PROMPT   ::cEstadoSesion() ;
-         ID       142 ;
-         OF       ::oFldTurno:aDialogs[ 3 ]
-*/
+
       end if
 
       // Formas de pago-----------------------------------------------------------

@@ -41,6 +41,8 @@ CLASS TpvMenuOrdenes FROM TDet
 
    METHOD Intercambiable()
 
+   METHOD lDegustacion()
+
    // Menu acompañamiento------------------------------------------------------
 
    METHOD nUnidadesOrdenAcompannamiento()
@@ -64,10 +66,11 @@ METHOD DefineFiles( cPath, cVia, lUniqueName, cFileName )
 
    DEFINE TABLE oDbf FILE ( cFileName ) CLASS ( cFileName ) ALIAS ( cFileName ) PATH ( cPath ) VIA ( cVia ) COMMENT "Ordenes menú"
 
-      FIELD NAME "cCodMnu"          TYPE "C" LEN 03  DEC 0 COMMENT "Código menu"                         OF oDbf
-      FIELD NAME "cCodOrd"          TYPE "C" LEN 02  DEC 0 COMMENT "Código orden"                        OF oDbf
-      FIELD NAME "lIntOrd"          TYPE "L" LEN 1   DEC 0 COMMENT "Orden intercambiable"           HIDE OF oDbf
-      FIELD NAME "nUndAcomp"        TYPE "N" LEN 1   DEC 0 COMMENT "Unidades menú acompañamiento"   HIDE OF oDbf
+      FIELD NAME "cCodMnu"    TYPE "C" LEN 03   DEC 0    COMMENT "Código menu"                         OF oDbf
+      FIELD NAME "cCodOrd"    TYPE "C" LEN 02   DEC 0    COMMENT "Código orden"                        OF oDbf
+      FIELD NAME "lIntOrd"    TYPE "L" LEN 01   DEC 0    COMMENT "Orden intercambiable"           HIDE OF oDbf
+      FIELD NAME "lDgstcn"    TYPE "L" LEN 01   DEC 0    COMMENT "Menú degustación"               HIDE OF oDbf
+      FIELD NAME "nUndAcomp"  TYPE "N" LEN 01   DEC 0    COMMENT "Unidades menú acompañamiento"   HIDE OF oDbf
 
       INDEX TO ( cFileName ) TAG "cCodMnu" ON "cCodMnu"                                        NODELETED OF oDbf
       INDEX TO ( cFileName ) TAG "cCodOrd" ON "cCodOrd"                                        NODELETED OF oDbf
@@ -256,6 +259,11 @@ METHOD Resource()
          WHEN     ( ::nMode != ZOOM_MODE .and. ::oParent:oDbf:lAcomp ) ;
          OF       oDlg
 
+      REDEFINE CHECKBOX ::oDbfVir:lDgstcn ;
+         ID       130 ;
+         WHEN     ( ::nMode != ZOOM_MODE ) ;
+         OF       oDlg
+
       REDEFINE BUTTON ;
          ID       500 ;
          OF       oDlg ;
@@ -418,15 +426,8 @@ METHOD lIntercambiable( cCodOrd )
 
    local lIntercambiable   := .f.
 
-   ::oDbf:GetStatus()
-   ::oDbf:GoTop()
-
-   ::oDbf:OrdSetFocus( "cCodOrd" )
-
-   if( ::oDbf:Seek( cCodOrd ) )
-      if( ::oDbf:lIntOrd )
-         lIntercambiable   := .t.
-      end if
+   if ::oDbf:SeekInOrd( cCodOrd, "cCodOrd" ) 
+      lIntercambiable   := ::oDbf:lIntOrd 
    end if
 
 Return ( lIntercambiable )
@@ -447,6 +448,22 @@ Return ( clogico )
 
 //---------------------------------------------------------------------------//
 
+METHOD lDegustacion( cCodigoMenu, cCodigoOrden )
+
+   local lDegustacion   := .f.
+
+   ::oDbf:GetStatus()
+
+   if ::oDbf:SeekInOrd( cCodigoMenu + cCodigoOrden, "cMnuOrd" )
+      lDegustacion      := ::oDbf:lDgstcn 
+   end if
+
+   ::oDbf:SetStatus()
+
+Return ( lDegustacion )
+
+//---------------------------------------------------------------------------//
+
 METHOD nUnidadesOrdenAcompannamiento( cCodigoMenu, cCodigoOrden )
 
    local nUnidades      := 0
@@ -454,9 +471,7 @@ METHOD nUnidadesOrdenAcompannamiento( cCodigoMenu, cCodigoOrden )
    ::oDbf:GetStatus()
 
    if ::oDbf:SeekInOrd( cCodigoMenu + cCodigoOrden, "cMnuOrd" )
-
-      nUnidades      := ::oDbf:nUndAcomp
-
+      nUnidades         := ::oDbf:nUndAcomp
    end if
 
    ::oDbf:SetStatus()
