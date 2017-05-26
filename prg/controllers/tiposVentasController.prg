@@ -14,7 +14,7 @@ CLASS TiposVentasController FROM SQLBaseController
   
    METHOD   getFieldFromBrowse()          INLINE ( ::getRowSet():fieldGet( "id" ) )
  
-   METHOD   validDialog( oDlg, oGetNombre, oGetCodigo )
+   METHOD   validDialog( oDlg, oGetCodigo, oGetNombre )
 
 END CLASS
 
@@ -32,12 +32,18 @@ Return ( Self )
 
 //---------------------------------------------------------------------------//
 
-METHOD validDialog( oDlg, oGetNombre, oGetCodigo )
+METHOD validDialog( oDlg, oGetCodigo, oGetNombre )
 
    local idForNombre
 
+   if empty( ::oModel:hBuffer[ "codigo" ] )
+      msgStop( "El código del tipo de venta no puede estar vacío." )
+      oGetCodigo:setFocus()
+      RETURN ( .f. )
+   end if
+
    if empty( ::oModel:hBuffer[ "nombre" ] )
-      msgStop( "El nombre de la venta no puede estar vacío." )
+      msgStop( "El nombre del tipo de venta no puede estar vacío." )
       oGetNombre:setFocus()
       RETURN ( .f. )
    end if

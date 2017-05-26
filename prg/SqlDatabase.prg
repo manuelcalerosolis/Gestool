@@ -56,6 +56,8 @@ METHOD New()
    ::cDatabaseSQLite          := ::cPathDatabaseSQLite + "Gestool.db"
 
    ::oConexion                := THDO():new( "sqlite" )
+   
+   ::oConexion:setAttribute( ATTR_ERRMODE, .t. )
 
 Return ( Self )
 
@@ -95,6 +97,7 @@ Function getSQLDatabase()
 
    if empty( oSqlDatabase )
       oSqlDatabase            := SQLDatabase():New()
+
    end if
 
 Return ( oSqlDatabase )

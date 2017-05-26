@@ -17,7 +17,6 @@ CLASS SQLBaseView
 
    DATA     cBrowseState
 
-
    METHOD   New()
 
    METHOD   buildSQLBrowse()
@@ -103,7 +102,7 @@ METHOD GeneralButtons()
       HOTKEY   "E";
       LEVEL    ACC_DELE
 
-rETURN ( Self )
+RETURN ( Self )
 
 //---------------------------------------------------------------------------//
 
@@ -131,7 +130,7 @@ METHOD changeFind( oFind, oBrowse )
 
    oBrowse:refreshCurrent()
 
-Return ( lFind )
+RETURN ( lFind )
 
 //----------------------------------------------------------------------------//
 

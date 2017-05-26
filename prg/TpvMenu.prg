@@ -147,11 +147,11 @@ METHOD DefineFiles( cPath, cDriver )
 
    DEFINE DATABASE oDbf FILE "TpvMenus.Dbf" CLASS "TpvMenus" ALIAS "TpvMenus" PATH ( cPath ) VIA ( cDriver ) COMMENT "Menús TPV" 
 
-      FIELD NAME "cCodMnu"  TYPE "C" LEN  3  DEC 0  COMMENT "Código"                                                    COLSIZE 80                 OF oDbf
+      FIELD NAME "cCodMnu"  TYPE "C" LEN 03  DEC 0  COMMENT "Código"                                                    COLSIZE 80                 OF oDbf
       FIELD NAME "cNomMnu"  TYPE "C" LEN 40  DEC 0  COMMENT "Nombre"                                                    COLSIZE 200                OF oDbf
       FIELD NAME "nImpMnu"  TYPE "N" LEN 16  DEC 6  COMMENT "Precio"                ALIGN RIGHT   PICTURE cPorDiv()     COLSIZE 80                 OF oDbf
-      FIELD NAME "lObsMnu"  TYPE "L" LEN 1   DEC 0  COMMENT "Obsoleto"                                                  HIDE                       OF oDbf
-      FIELD NAME "lAcomp"   TYPE "L" LEN 1   DEC 0  COMMENT "Menú acompañamiento"                                       HIDE                       OF oDbf
+      FIELD NAME "lObsMnu"  TYPE "L" LEN 01  DEC 0  COMMENT "Obsoleto"                                                  HIDE                       OF oDbf
+      FIELD NAME "lAcomp"   TYPE "L" LEN 01  DEC 0  COMMENT "Menú acompañamiento"                                       HIDE                       OF oDbf
 
       INDEX TO "TpvMenus.Cdx" TAG "cCodMnu" ON "cCodMnu"   COMMENT "Código"         NODELETED                                                      OF oDbf
       INDEX TO "TpvMenus.Cdx" TAG "cNomMnu" ON "cNomMnu"   COMMENT "Nombre"         NODELETED                                                      OF oDbf

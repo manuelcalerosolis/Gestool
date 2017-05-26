@@ -894,10 +894,8 @@ FUNCTION FactCli( oMenuItem, oWnd, hHash )
 
       with object ( oWndBrw:AddXCol() )
          :cHeader          := "Código postal"
-         :cSortOrder       := "CodPostal"
          :bEditValue       := {|| alltrim( ( D():FacturasClientes( nView ) )->cPosCli ) }
          :nWidth           := 60
-         :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | oWndBrw:ClickOnHeader( oCol ) }
          :lHide            := .t.
       end with
 
@@ -913,10 +911,8 @@ FUNCTION FactCli( oMenuItem, oWnd, hHash )
 
       with object ( oWndBrw:AddXCol() )
          :cHeader          := "Provincia"
-         :cSortOrder       := "Provincia"
          :bEditValue       := {|| alltrim( ( D():FacturasClientes( nView ) )->cPrvCli ) }
          :nWidth           := 100
-         :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | oWndBrw:ClickOnHeader( oCol ) }
          :lHide            := .t.
       end with
 
@@ -1042,10 +1038,8 @@ FUNCTION FactCli( oMenuItem, oWnd, hHash )
 
       with object ( oWndBrw:AddXCol() )
          :cHeader          := "Su albarán"
-         :cSortOrder       := "cSuAlb"
          :bEditValue       := {|| ( D():FacturasClientes( nView ) )->cSuAlb }
          :nWidth           := 100
-         :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | oWndBrw:ClickOnHeader( oCol ) }
          :lHide            := .t.
       end with
 
@@ -10267,6 +10261,7 @@ Static Function DataReport( oFr )
                                                                                     TiposVentasController():Instance():findByIdInRowSet( ( D():FacturasClientesLineas( nView ) )->id_tipo_v ) } )
    oFr:SetMasterDetail( "Lineas de facturas", "Familia",                      {|| ( D():FacturasClientesLineas( nView ) )->cCodFam } )
    oFr:SetMasterDetail( "Lineas de facturas", "Tipo artículo",                {|| ( D():FacturasClientesLineas( nView ) )->cCodTip } )
+   oFr:SetMasterDetail( "Lineas de facturas", "Tipo de venta",                {|| ( D():FacturasClientesLineas( nView ) )->cTipMov } )
    oFr:SetMasterDetail( "Lineas de facturas", "Ofertas",                      {|| ( D():FacturasClientesLineas( nView ) )->cRef } )
    oFr:SetMasterDetail( "Lineas de facturas", "Unidades de medición",         {|| ( D():FacturasClientesLineas( nView ) )->cUnidad } )
    oFr:SetMasterDetail( "Lineas de facturas", "SAT",                          {|| ( D():FacturasClientesLineas( nView ) )->cNumSat } )
@@ -10293,6 +10288,7 @@ Static Function DataReport( oFr )
    oFr:SetResyncPair(   "Lineas de facturas", "artículos" )
    oFr:SetResyncPair(   "Lineas de facturas", "Familia" )
    oFr:SetResyncPair(   "Lineas de facturas", "Tipo artículo" )
+   oFr:SetResyncPair(   "Lineas de facturas", "Tipo de venta" )
    oFr:SetResyncPair(   "Lineas de facturas", "Ofertas" )
    oFr:SetResyncPair(   "Lineas de facturas", "Unidades de medición" )
    oFr:SetResyncPair(   "Lineas de facturas", "SAT" )
@@ -19114,7 +19110,7 @@ FUNCTION rxFacCli( cPath, cDriver )
       ( cFacCliT )->( __dbPack() )
 
       ( cFacCliT )->( ordCondSet("!Deleted()", {|| !Deleted() } ) )
-      ( cFacCliT )->( ordCreate( cPath + "FACCLIT.CDX", "NNUMFAC", "CSERIE + str(NNUMFAC) + CSUFFAC", {|| Field->cSerie + str( Field->nNumFac ) + Field->cSufFac }, ) )
+      ( cFacCliT )->( ordCreate( cPath + "FACCLIT.CDX", "NNUMFAC", "CSERIE + str( NNUMFAC ) + CSUFFAC", {|| Field->cSerie + str( Field->nNumFac ) + Field->cSufFac }, ) )
 
       ( cFacCliT )->( ordCondSet("!Deleted()", {|| !Deleted() } ) )
       ( cFacCliT )->( ordCreate( cPath + "FACCLIT.CDX", "dFecFac", "dFecFac", {|| Field->dFecFac } ) )
@@ -19156,13 +19152,7 @@ FUNCTION rxFacCli( cPath, cDriver )
       ( cFacCliT )->( ordCreate( cPath + "FacCliT.Cdx", "cNumPre", "cNumPre", {|| Field->cNumPre } ) )
 
       ( cFacCliT )->( ordCondSet("!Deleted()", {|| !Deleted() } ))
-      ( cFacCliT )->( ordCreate( cPath + "FACCLIT.CDX", "cNumPed", "cNumPed", {|| Field->cNumPed } ) )
-
-      ( cFacCliT )->( ordCondSet("!Deleted()", {|| !Deleted() } ))
       ( cFacCliT )->( ordCreate( cPath + "FACCLIT.CDX", "cNumAlb", "cNumAlb", {|| Field->cNumAlb } ) )
-
-      ( cFacCliT )->( ordCondSet( "!Deleted()", {||!Deleted()}  ) )
-      ( cFacCliT )->( ordCreate( cPath + "FacCliT.Cdx", "cCodUsr", "Field->cCodUsr + Dtos( Field->dFecCre ) + Field->cTimCre", {|| Field->cCodUsr + Dtos( Field->dFecCre ) + Field->cTimCre } ) )
 
       ( cFacCliT)->( ordCondSet( "!Deleted()", {|| !Deleted() }  ) )
       ( cFacCliT )->( ordCreate( cPath + "FacCliT.Cdx", "iNumFac", "'11' + cSerie + str( nNumFac ) + Space( 1 ) + cSufFac", {|| '11' + Field->cSerie + str( Field->nNumFac ) + Space( 1 ) + Field->cSufFac } ) )
@@ -19175,18 +19165,6 @@ FUNCTION rxFacCli( cPath, cDriver )
 
       ( cFacCliT )->( ordCondSet( "!Deleted()", {|| !Deleted() }, , , , , , , , , .t. ) )
       ( cFacCliT )->( ordCreate( cPath + "FacCliT.Cdx", "nTotFac", "nTotFac", {|| Field->nTotFac } ) )
-
-      ( cFacCliT )->( ordCondSet("!Deleted()", {||!Deleted()}  ) )
-      ( cFacCliT )->( ordCreate( cPath + "FacCliT.CDX", "Poblacion", "UPPER( Field->cPobCli )", {|| UPPER( Field->cPobCli ) } ) )
-
-      ( cFacCliT )->( ordCondSet("!Deleted()", {||!Deleted()}  ) )
-      ( cFacCliT )->( ordCreate( cPath + "FacCliT.CDX", "Provincia", "UPPER( Field->cPrvCli )", {|| UPPER( Field->cPrvCli ) } ) )
-
-      ( cFacCliT )->( ordCondSet("!Deleted()", {||!Deleted()}  ) )
-      ( cFacCliT )->( ordCreate( cPath + "FacCliT.CDX", "CodPostal", "Field->cPosCli", {|| Field->cPosCli } ) )
-
-      ( cFacCliT )->( ordCondSet("!Deleted()", {||!Deleted()}  ) )
-      ( cFacCliT )->( ordCreate( cPath + "FacCliT.CDX", "cSuAlb", "Field->cSuAlb", {|| Field->cSuAlb } ) )
 
       ( cFacCliT )->( dbCloseArea() )
 

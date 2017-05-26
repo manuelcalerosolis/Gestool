@@ -5886,17 +5886,17 @@ Static Function EndTrans( aTmp, aGet, oSay, oDlg, aTipBar, cTipBar, nMode, oImpC
          ( dbfTmpCodebar )->cCodArt := cCod
 
          if ( dbfTmpCodebar )->lDefBar
-            cCodArt                                               := ( dbfTmpCodebar )->cCodBar
-            nTipBar                                               := ( dbfTmpCodebar )->nTipBar
-            aTmp[ ( D():Articulos( nView ) )->( fieldpos( "CodeBar"  ) ) ]   := ( dbfTmpCodebar )->cCodBar
+            cCodArt                                                           := ( dbfTmpCodebar )->cCodBar
+            nTipBar                                                           := ( dbfTmpCodebar )->nTipBar
+            aTmp[ ( D():Articulos( nView ) )->( fieldpos( "CodeBar"  ) ) ]    := ( dbfTmpCodebar )->cCodBar
          end if
 
          if !empty( ( dbfTmpCodebar )->cValPr1 ) .and. At( Alltrim( aTmp[ ( D():Articulos( nView ) )->( FieldPos( "mValPrp1" ) ) ] ), Alltrim( ( dbfTmpCodebar )->cValPr1 ) ) == 0
-            aTmp[ ( D():Articulos( nView ) )->( FieldPos( "mValPrp1" ) ) ]   := Alltrim( aTmp[ ( D():Articulos( nView ) )->( FieldPos( "mValPrp1" ) ) ] ) + Alltrim( ( dbfTmpCodebar )->cValPr1 ) + ","
+            aTmp[ ( D():Articulos( nView ) )->( FieldPos( "mValPrp1" ) ) ]    := Alltrim( aTmp[ ( D():Articulos( nView ) )->( FieldPos( "mValPrp1" ) ) ] ) + Alltrim( ( dbfTmpCodebar )->cValPr1 ) + ","
          end if
 
          if !empty( ( dbfTmpCodebar )->cValPr2 ) .and. At( Alltrim( aTmp[ ( D():Articulos( nView ) )->( FieldPos( "mValPrp2" ) ) ] ), Alltrim( ( dbfTmpCodebar )->cValPr2 ) ) == 0
-            aTmp[ ( D():Articulos( nView ) )->( FieldPos( "mValPrp2" ) ) ]   := Alltrim( aTmp[ ( D():Articulos( nView ) )->( FieldPos( "mValPrp2" ) ) ] ) + Alltrim( ( dbfTmpCodebar )->cValPr2 ) + ","
+            aTmp[ ( D():Articulos( nView ) )->( FieldPos( "mValPrp2" ) ) ]    := Alltrim( aTmp[ ( D():Articulos( nView ) )->( FieldPos( "mValPrp2" ) ) ] ) + Alltrim( ( dbfTmpCodebar )->cValPr2 ) + ","
          end if
 
          dbPass( dbfTmpCodebar, dbfCodebar, .t. )
@@ -5923,13 +5923,17 @@ Static Function EndTrans( aTmp, aGet, oSay, oDlg, aTipBar, cTipBar, nMode, oImpC
       aTmp[ ( D():Articulos( nView ) )->( fieldpos( "nBnfSbr6") ) ]       := oSay[ 16 ]:nAt
       aTmp[ ( D():Articulos( nView ) )->( fieldpos( "nPosTpv" ) ) ]       -= 0.5
 
-      if !empty( oImpComanda1 )
-         aTmp[ ( D():Articulos( nView ) )->( fieldpos( "cTipImp1" ) ) ]    := aTiposImpresoras[ MinMax( oImpComanda1:nAt, 1, len( aTiposImpresoras ) ) ]
-      end if
+      if !empty(aTiposImpresoras)
 
-      if !empty( oImpComanda2 )
-         aTmp[ ( D():Articulos( nView ) )->( fieldpos( "cTipImp2" ) ) ]    := aTiposImpresoras[ MinMax( oImpComanda2:nAt, 1, len( aTiposImpresoras ) ) ]
-      end if
+         if !empty( oImpComanda1 )
+            aTmp[ ( D():Articulos( nView ) )->( fieldpos( "cTipImp1" ) ) ] := aTiposImpresoras[ MinMax( oImpComanda1:nAt, 1, len( aTiposImpresoras ) ) ]
+         end if
+
+         if !empty( oImpComanda2 )
+            aTmp[ ( D():Articulos( nView ) )->( fieldpos( "cTipImp2" ) ) ] := aTiposImpresoras[ MinMax( oImpComanda2:nAt, 1, len( aTiposImpresoras ) ) ]
+         end if
+
+      end if 
 
       if !empty( oActiveX )
          aTmp[ ( D():Articulos( nView ) )->( fieldpos( "mDesTec" ) ) ]     := oActiveX:DocumentHTML
