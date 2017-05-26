@@ -24,6 +24,8 @@ METHOD New()
 
    ::idUserMap            := "01096"
 
+   ::setTitle( "Situaciones" )
+
    ::Super:New()
 
 Return ( Self )
@@ -34,22 +36,22 @@ METHOD validDialog( oDlg, oGetNombre )
 
    local idForNombre
 
-   if empty( ::oModel:hBuffer[ "situacion" ] )
-      MsgStop( "El nombre de la situaciÃ³n no puede estar vacÃ­o" )
+   if empty( ::oModel:hBuffer[ "nombre" ] )
+      MsgStop( "El nombre de la situación no puede estar vacío" )
       oGetNombre:setFocus()
       Return ( .f. )
    end if
 
-   idForNombre := ::oModel:ChecksForValid( "situacion" )
+   idForNombre := ::oModel:ChecksForValid( "nombre" )
 
    if ( !empty( idForNombre ) )
       if ( idForNombre != ::oModel:hBuffer[ "id" ] .and. !::isDuplicateMode() )
-         msgStop( "Esta situaciÃ³n ya existe" )
+         msgStop( "Esta situación ya existe" )
          oGetNombre:setFocus()
          RETURN ( .f. )
       endif
       if ( idForNombre == ::oModel:hBuffer[ "id" ] .and. ::isDuplicateMode() )
-         msgStop( "Esta situaciÃ³n ya existe" )
+         msgStop( "Esta situación ya existe" )
          oGetNombre:setFocus()
          RETURN ( .f. )
       endif

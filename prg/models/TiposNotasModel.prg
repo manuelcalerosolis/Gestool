@@ -24,12 +24,19 @@ METHOD New()
 
    ::cDbfTableName            	:= "TipoNotas"
 
-   ::hColumns                 	:= { 	"id"     => {  "create"    => "INTEGER PRIMARY KEY AUTOINCREMENT",;
-                                                      "text"      => "Identificador" ,;
-                                                      "dbfField"  => "" },;
-                                       "tipo"   => {  "create"    => "VARCHAR( 30 ) NOT NULL",;
-                                                      "text"      => "Tipo de la nota",;
-                                                      "dbfField"  => "cTipo" } }
+   ::hColumns                    := {  "id"        => {  "create"    => "INTEGER PRIMARY KEY AUTOINCREMENT"    ,;
+                                                         "text"      => "Identificador"                        ,;
+                                                         "header"    => "Id"                                   ,;
+                                                         "visible"   => .f.                                    ,;
+                                                         "width"     => 40}                                    ,;
+                                       "nombre"    => {  "create"    => "VARCHAR( 30 ) NOT NULL"               ,;
+                                                         "text"      => "Tipo de la nota"                      ,;
+                                                         "header"    => "Tipo"                                 ,;
+                                                         "visible"   => .t.                                    ,;
+                                                         "width"     => 100                                    ,;
+                                                         "field"     => "cTipo"                                ,;
+                                                         "type"      => "C"                                    ,;
+                                                         "len"       => 30}                                    }
 
 ::Super:New()
 
@@ -39,7 +46,7 @@ Return ( Self )
 
 METHOD arrayTiposNotas()
 
-   local cSentence         := "SELECT tipo FROM " + ::cTableName
+   local cSentence         := "SELECT nombre FROM " + ::cTableName
    local aSelect           := ::selectFetchArray( cSentence )
 
 Return ( aSelect )

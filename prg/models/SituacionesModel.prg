@@ -14,8 +14,6 @@ CLASS SituacionesModel FROM SQLBaseModel
 
    METHOD   New()
 
-   METHOD   buildRowSetWithRecno()                 INLINE   ( ::buildRowSet( .t. ) )
-
    METHOD   arraySituaciones()
 
 END CLASS
@@ -28,10 +26,17 @@ METHOD New()
 
    ::hColumns                    := {  "id"              => {  "create"    => "INTEGER PRIMARY KEY AUTOINCREMENT"    ,;
                                                                "text"		=> "Identificador"                        ,;
-   															               "dbfField" 	=> "" }                                   ,;
-                                       "situacion"       => {  "create"    => "VARCHAR( 140 ) NOT NULL"              ,;
+   															               "header"    => "Id"                                   ,;
+                                                               "visible"   => .f.                                    ,;
+                                                               "width"     => 40}                                    ,;
+                                       "nombre"          => {  "create"    => "VARCHAR( 140 ) NOT NULL"              ,;
    															               "text"		=> "Tipo de situacion"                    ,;
-   															               "dbfField" 	=> "cSitua" } }
+                                                               "header"    => "Situación"                            ,;
+                                                               "visible"   => .t.                                    ,;
+                                                               "width"     => 200                                    ,;
+   															               "field"   	=> "cSitua"                               ,;
+                                                               "type"      => "C"                                    ,;
+                                                               "len"       => 140}                                   }
 
    ::Super:New()
 
@@ -41,7 +46,7 @@ RETURN ( Self )
 
 METHOD arraySituaciones()
 
-   local cSentence               := "SELECT situacion FROM " + ::cTableName
+   local cSentence               := "SELECT nombre FROM " + ::cTableName
    local aSelect                 := ::selectFetchArray( cSentence ) 
 
 RETURN ( aSelect )

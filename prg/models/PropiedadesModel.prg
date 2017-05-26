@@ -22,35 +22,36 @@ METHOD New()
 
 	::cDbfTableName					:=	"Pro"
 
-	::cWndTitle                   := "Propiedades"
-
 	::hColumns						:=	{	"id"			=>	{	"create"		=>	"INTEGER PRIMARY KEY AUTOINCREMENT"			,;
 																		"text"		=>	"Identificador"									,;
-																		"dbfField"	=>	""														,;
-																		"cHeader"	=>	"Id"													,;
-																		"visible"	=> .f.													,;
-																		"nWidth"		=>	40}													,;
+																		"header"		=>	"Id"													,;
+																		"visible"	=> .f.}													,;
 												"codigo"		=>	{	"create"		=>	"VARCHAR(20) NOT NULL"							,;
 																		"text"		=>	"Código de la propiedad"						,;
-																		"dbfField"	=>	"cCodPro"											,;
-																		"cHeader"	=>	"Código"												,;
+																		"header"		=>	"Código"												,;
 																		"visible"	=> .t.													,;
-																		"nWidth"		=>	100}													,;
+																		"width"		=>	100													,;
+																		"field"		=>	"cCodPro"											,;
+																		"type" 		=> "C" 													,;
+																		"len" 		=> 20	}													,;
 												"nombre"		=>	{	"create"		=>	"VHARCHAR(50) NOT NULL"							,;
 																		"text"		=>	"Nombre de la propiedad"						,;
-																		"dbfField"	=>	"cDesPro"											,;
-																		"cHeader"	=>	"Nombre"												,;
+																		"field"	=>	"cDesPro"												,;
+																		"header"	=>	"Nombre"													,;
 																		"visible"	=> .t.													,;
-																		"nWidth"		=>	200}													,;
+																		"width"		=>	200 													,;
+																		"type"		=> "C"													,;
+																		"len"			=> 50	}													,;
 												"is_color"	=>	{	"create"		=>	"INT(1) NOT NULL"									,;
 																		"text"		=>	"Lógico tipo color"								,;
-																		"dbfField"	=>	"lColor"												,;
-																		"cHeader"	=>	"Es un color"										,;
+																		"field"		=>	"lColor"												,;
+																		"header"		=>	"Es un color"										,;
 																		"visible"	=> .f.													,;
-																		"nWidth"		=>	40}													,;
+																		"width"		=>	40														,;
+																		"type"		=> "L"}													,;
 												"empresa"	=>	{  "create"    => "CHAR ( 4 ) NOT NULL"	              		,;
                                                       "text"      => "Empresa a la que pertenece la etiqueta"	,;
-                                                   	"dbfField"	=>	""														}}
+																		"visible"	=> .f.}													}
 
    ::Super:New()
 

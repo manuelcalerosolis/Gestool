@@ -66,6 +66,8 @@ METHOD New()
 
    ::idUserMap            	:= "01101"
 
+   ::setTitle( "Etiquetas" )
+
    ::nSelectedNode         := nil
 
    ::Super:New()

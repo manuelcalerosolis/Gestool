@@ -17,7 +17,11 @@ CLASS SQLBaseView
 
    DATA     cBrowseState
 
+   DATA     cImageName
+
    METHOD   New()
+
+   METHOD   buildSQLShell()
 
    METHOD   buildSQLBrowse()
 
@@ -154,6 +158,33 @@ METHOD changeCombo( oBrowse, oCombobox )
 
 RETURN ( Self )
 
+//---------------------------------------------------------------------------//
+
+METHOD buildSQLShell()
+
+   disableAcceso()
+
+   ::oShell                := SQLTShell():New( 2, 10, 18, 70, ::oController:cTitle, , oWnd(), , , .f., , , ::oController:oModel, , , , , {}, {|| ::oController:Edit( ::oShell:getBrowse() ) },, {|| ::oController:Delete( ::oShell:getBrowse() ) },, nil, ::oController:nLevel, ::cImageName, ( 104 + ( 0 * 256 ) + ( 63 * 65536 ) ),,, .t. )
+
+      ::oController:generateColumnsForBrowse( ::oShell:getBrowse(), ::oShell:getCombobox() )
+
+      ::oShell:createXFromCode()
+
+      ::oShell:setDClickData( {|| ::oController:Edit( ::oShell:getBrowse() ) } )
+
+      ::AutoButtons()
+
+   ACTIVATE WINDOW ::oShell
+
+   ::oShell:bValid         := {|| ::saveHistoryOfShell( ::oShell:getBrowse() ), .t. }
+   ::oShell:bEnd           := {|| ::oController:destroySQLModel() }
+
+   ::oShell:setComboBoxChange( {|| ::changeCombo( ::oShell:getBrowse(), ::oShell:getCombobox() ) } )
+
+   enableAcceso()
+
+Return ( Self )
+
 //----------------------------------------------------------------------------//
 
 METHOD buildSQLBrowse( title )
@@ -184,7 +215,7 @@ METHOD buildSQLBrowse( title )
 
       oCombobox:bChange       := {|| ::changeCombo( oBrowse, oCombobox ) }
 
-      ::buildSQLNuclearBrowse( 105 )
+      oBrowse := ::buildSQLNuclearBrowse( 105 , oDlg, oCombobox )
 
       REDEFINE BUTTON ;
          ID          IDOK ;
@@ -220,7 +251,7 @@ RETURN ( oDlg:nResult == IDOK )
 
 //---------------------------------------------------------------------------//
 
-METHOD buildSQLNuclearBrowse( idResource, oDlg )
+METHOD buildSQLNuclearBrowse( idResource, oDlg, oCombobox )
 
    local oBrowse
 
@@ -234,7 +265,7 @@ METHOD buildSQLNuclearBrowse( idResource, oDlg )
 
    oBrowse:setModel( ::oController:oModel )
 
-   ::oController:createColumnsForBrowse( oBrowse )
+   ::oController:generateColumnsForBrowse( oBrowse, oCombobox )
 
    oBrowse:bLDblClick      := {|| oDlg:end( IDOK ) }
    oBrowse:bRClicked       := {| nRow, nCol, nFlags | oBrowse:RButtonDown( nRow, nCol, nFlags ) }

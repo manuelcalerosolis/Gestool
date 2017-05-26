@@ -22,6 +22,8 @@ METHOD New()
 
    ::idUserMap            := "01097"
 
+   ::setTitle( "Tipos de notas" )
+
    ::Super:New()
 
 Return ( Self )
@@ -32,13 +34,13 @@ METHOD validDialog( oDlg, oGetNombre )
 
    local idForNombre
 
-   if empty( ::oModel:hBuffer[ "tipo" ] )
+   if empty( ::oModel:hBuffer[ "nombre" ] )
       msgStop( "El nombre de la nota no puede estar vacío." )
       oGetNombre:setFocus()
       RETURN ( .f. )
    end if
 
-   idForNombre := ::oModel:ChecksForValid( "tipo" )
+   idForNombre := ::oModel:ChecksForValid( "nombre" )
 
    if ( !empty( idForNombre ) )
       if ( idForNombre != ::oModel:hBuffer[ "id" ] .and. !::isDuplicateMode() )

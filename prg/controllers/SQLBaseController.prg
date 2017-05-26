@@ -95,6 +95,7 @@ CLASS SQLBaseController
 
    METHOD   setFastReport( oFastReport, cSentence, cColumns )
 
+   METHOD generateColumnsForBrowse( oBrowse, oCombobox )
    METHOD   createColumnsForBrowse( oBrowse, oCombobox )
 
 END CLASS
@@ -145,7 +146,7 @@ METHOD ActivateBrowse( aSelectedItems )
 
    ::oModel:buildRowSetWithRecno()
 
-   if ::oView:buildSQLBrowse( ::oModel:cWndTitle, aSelectedItems )
+   if ::oView:buildSQLBrowse( ::cTitle, aSelectedItems )
       uReturn     := ::getFieldFromBrowse()
    end if
 
@@ -206,7 +207,7 @@ METHOD AssignBrowse( oGet, aSelectedItems )
 
    ::oModel:setIdForRecno( oGet:varGet() )
 
-   uReturn           := ::ActivateBrowse( ::oModel:cWndTitle, aSelectedItems )   
+   uReturn           := ::ActivateBrowse( ::cTitle, aSelectedItems )   
 
    if !empty(uReturn)
       oGet:cText( uReturn )
@@ -542,28 +543,30 @@ RETURN ( self )
 
 //---------------------------------------------------------------------------//
 
-METHOD createColumnsForBrowse( oBrowse, oCombobox )
+METHOD generateColumnsForBrowse( oBrowse, oCombobox )
 
-   local hValues
-   local cKey
+   local hColumnstoBrowse := ::oModel:hColumns
 
-   for each hValues in ::oModel:hColumns
+   if !empty( ::oModel:hExtraColumns )
+      hColumnstoBrowse := hb_HCopy( hColumnstoBrowse, ::oModel:hExtraColumns)
+   end if
 
-      cKey := hValues:__enumkey()
+   hEval( hColumnstoBrowse, { | k, h | if ( h[ "visible" ] , ::createColumnsForBrowse( oBrowse, oCombobox, k, h), ) } )
 
-      if ( hValues["visible"] )
+RETURN ( self )
 
-         with object ( oBrowse:AddCol() )
-            :cHeader             := hValues[ "cHeader" ]
-            :cSortOrder          := cKey
-            :bEditValue          := {|| ::oController:getRowSet():fieldGet( cKey ) }
-            :nWidth              := hValues[ "nWidth" ]
-            :bLClickHeader       := {| nMRow, nMCol, nFlags, oCol | ::oController:clickOnHeader( oCol, oBrowse, oCombobox ) }
-         end with
-          
-      endif
+//---------------------------------------------------------------------------//
 
-   next
+
+METHOD createColumnsForBrowse( oBrowse, oCombobox, k, h )
+
+   with object ( oBrowse:AddCol() )
+      :cHeader             := h[ "header" ]
+      :cSortOrder          := k
+      :bEditValue          := {|| ::getRowSet():fieldGet( k ) }
+      :nWidth              := h[ "width" ]
+      :bLClickHeader       := {| nMRow, nMCol, nFlags, oCol | ::clickOnHeader( oCol, oBrowse, oCombobox ) }
+   end with
 
 RETURN ( self )
 

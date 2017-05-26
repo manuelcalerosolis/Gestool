@@ -26,20 +26,20 @@ METHOD New()
 
    ::cDbfTableName				 	:= "TipImp"
 
-   ::cWndTitle                   := "Tipos de impresoras"
-
    ::hColumns                   	:= {  "id"     => {  "create"    => "INTEGER PRIMARY KEY AUTOINCREMENT" ,;
                                                       "text"		=> "Identificador"                     ,;
-   															      "dbfField" 	=> ""                                  ,;
-                                                      "cHeader"   => "Id"                                ,;
-                                                      "visible"   => .f.                                 ,;
-                                                      "nWidth"    => 40}                                 ,;
+   															      "field" 	   => ""                                  ,;
+                                                      "header"    => "Id"                                ,;
+                                                      "visible"   => .t.                                 ,;
+                                                      "width"     => 40}                                 ,;
                                        "nombre" => {  "create"    => "VARCHAR( 50 ) NOT NULL"            ,;
    															      "text"		=> "Nombre de impresora"               ,;
-   															      "dbfField" 	=> "cTipImp"                           ,;
-                                                      "cHeader"   => "Nombre"                            ,;
+                                                      "header"    => "Nombre"                            ,;
                                                       "visible"   => .t.                                 ,;
-                                                      "nWidth"    => 200}                                }
+                                                      "width"     => 200                                 ,;
+                                                      "field"     => "cTipImp"                           ,;
+                                                      "type"      => "C"                                 ,;
+                                                      "len"       => 50}                                 }
 
    ::Super:New()
 

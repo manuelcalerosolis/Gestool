@@ -22,7 +22,9 @@ END CLASS
 
 METHOD New()
 
-   ::idUserMap            := "01115"
+   ::idUserMap             := "01115"
+
+   ::setTitle( "Tipos de impresoras" )
 
    ::Super:New()
 

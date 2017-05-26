@@ -26,6 +26,8 @@ METHOD New()
 
    ::idUserMap            				:= "01015"
 
+ 	::setTitle( "Propiedades" )
+
    ::Super:New()
 
    // ::oPropiedadesLienasController	:= PropiedadesLineasController():New( Self )

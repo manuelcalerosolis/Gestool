@@ -100,7 +100,7 @@ METHOD makeImportDbfSQL( cPath )
    end if
 
    if !( file( cPath + ::getDbfTableName() ) )
-      msgStop( "El fichero " + cPath + "\" + ::getDbfTableName() + " no se ha localizado", "AtenciÃ³n" )  
+      msgStop( "El fichero " + cPath + "\" + ::getDbfTableName() + " no se ha localizado", "Atención" )  
       Return ( self )
    end if 
 
@@ -139,7 +139,7 @@ METHOD getUpdateSentence()
 
   local cSQLUpdate  := "UPDATE " + ::cTableName + " SET "
 
-  hEval( ::hBuffer, {| k, v | if ( k != ::cColumnKey, if ( empty( v ), cSQLUpdate += k + " = null, ", cSQLUpdate += k + " = " + toSQLString( v ) + ", "), ) } )
+  hEval( ::hBuffer, {| k, v | if ( k != ::cColumnKey, cSQLUpdate += k + " = " + toSQLString( v ) + ", ", ) } )
 
   cSQLUpdate        := ChgAtEnd( cSQLUpdate, '', 2 )
 
@@ -159,7 +159,7 @@ METHOD getInsertSentence()
 
    cSQLInsert        := ChgAtEnd( cSQLInsert, ' ) VALUES ( ', 2 )
 
-   hEval( ::hBuffer, {| k, v | if ( k != ::cColumnKey, if ( k == "empresa", cSQLInsert += + toSQLString( cCodEmp() ) + ", ", cSQLInsert += toSQLString( v ) + ", "), ) } )
+   hEval( ::hBuffer, {| k, v | if ( k != ::cColumnKey, if ( k == "empresa", cSQLInsert += toSQLString( cCodEmp() ) + ", ", cSQLInsert += toSQLString( v ) + ", "), ) } )
 
    cSQLInsert        := ChgAtEnd( cSQLInsert, ' )', 2 )
 

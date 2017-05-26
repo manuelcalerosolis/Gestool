@@ -6,11 +6,7 @@
 
 CLASS Etiquetas FROM SQLBaseView
 
-   DATA     oController
-
    METHOD   New()
-
-   METHOD   buildSQLShell()
 
    METHOD   buildSQLBrowse()
    
@@ -28,6 +24,8 @@ METHOD New( oController )
 
    ::oController     := oController
 
+   ::cImageName      := "gc_bookmarks_16"
+
 Return ( Self )
 
 //---------------------------------------------------------------------------//
@@ -41,55 +39,6 @@ METHOD insertAfterAppendButton()
       BEGIN GROUP;
       HOTKEY   "H";
       LEVEL    ACC_APPD
-
-Return ( Self )
-
-//---------------------------------------------------------------------------//
-
-METHOD buildSQLShell()
-
-   disableAcceso()
-
-   ::oShell                := SQLTShell():New( 2, 10, 18, 70, "Etiquetas", , oWnd(), , , .f., , , ::oController:oModel, , , , , {}, {|| ::oController:Edit( ::oShell:getBrowse() ) },, {|| ::oController:Delete( ::oShell:getBrowse() ) },, nil, ::oController:nLevel, "gc_bookmarks_16", ( 104 + ( 0 * 256 ) + ( 63 * 65536 ) ),,, .t. )
-
-      with object ( ::oShell:AddCol() )
-         :cHeader          := "ID de etiqueta"
-         :cSortOrder       := "id"
-         :bStrData         := {|| ::oController:getRowSet():fieldGet( "id" ) }
-         :nWidth           := 100
-         :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | ::oController:clickOnHeader( oCol, ::oShell:getBrowse(), ::oShell:getCombobox() ) }
-      end with
-
-      with object ( ::oShell:AddCol() )
-         :cHeader          := "Nombre de la etiqueta"
-         :cSortOrder       := "nombre"
-         :bStrData         := {|| ::oController:getRowSet():fieldGet( "nombre" ) }
-         :nWidth           := 400
-         :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | ::oController:clickOnHeader( oCol, ::oShell:getBrowse(), ::oShell:getCombobox() ) }
-      end with
-
-      with object ( ::oShell:AddCol() )
-         :cHeader          := "Nombre del Padre"
-         :cSortOrder       := "nombre_padre"
-         :bStrData         := {|| ::oController:getRowSet():fieldGet( "nombre_padre" ) }
-         :nWidth           := 100
-         :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | ::oController:clickOnHeader( oCol, ::oShell:getBrowse(), ::oShell:getCombobox() ) }
-      end with
-
-      ::oShell:createXFromCode()
-
-      ::oShell:setDClickData( {|| ::oController:Edit( ::oShell:getBrowse() ) } )
-
-      ::AutoButtons()
-
-   ACTIVATE WINDOW ::oShell
-
-   ::oShell:bValid         := {|| ::saveHistoryOfShell( ::oShell:getBrowse() ), .t. }
-   ::oShell:bEnd           := {|| ::oController:destroySQLModel() }
-
-   ::oShell:setComboBoxChange( {|| ::changeCombo( ::oShell:getBrowse(), ::oShell:getCombobox() ) } )
-
-   enableAcceso()
 
 Return ( Self )
 
@@ -176,7 +125,8 @@ METHOD buildSQLBrowse( title, aSelectedItems )
 
       oTree          := TTreeView():Redefine( 110, oDlg )
 
-      ::oController:setAllSelectedNode( aSelectedItems )   
+      ::oController:setAllSelectedNode( aSelectedItems ) 
+
       REDEFINE BUTTON ;
          ID          IDOK ;
          OF          oDlg ;

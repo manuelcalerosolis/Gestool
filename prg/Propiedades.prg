@@ -7,10 +7,6 @@
 CLASS Propiedades FROM SQLBaseView
 
    METHOD   New()
-
-   METHOD   buildSQLShell()
-  
-   //METHOD   buildSQLBrowse()
  
    METHOD   Dialog()
 
@@ -22,46 +18,7 @@ METHOD New( oController )
 
    ::oController     := oController
 
-Return ( Self )
-
-//---------------------------------------------------------------------------//
-
-METHOD buildSQLShell()
-
-   disableAcceso()
-
-   ::oShell                := SQLTShell():New( 2, 10, 18, 70, "Propiedades", , oWnd(), , , .f., , , ::oController:oModel, , , , , {}, {|| ::oController:Edit( ::oShell:getBrowse() ) },, {|| ::oController:Delete( ::oShell:getBrowse() ) },, nil, ::oController:nLevel, "gc_coathanger_16", ( 104 + ( 0 * 256 ) + ( 63 * 65536 ) ),,, .t. )
-
-      with object ( ::oShell:AddCol() )
-         :cHeader          := "Código"
-         :cSortOrder       := "codigo"
-         :bEditValue       := {|| ::oController:getRowSet():fieldGet( "codigo" ) }
-         :nWidth           := 40
-         :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | ::oController:clickOnHeader( oCol, ::oShell:getBrowse(), ::oShell:getCombobox() ) }
-      end with
-
-      with object ( ::oShell:AddCol() )
-         :cHeader          := "Nombre"
-         :cSortOrder       := "nombre"
-         :bEditValue       := {|| ::oController:getRowSet():fieldGet( "nombre" ) }
-         :nWidth           := 800
-         :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | ::oController:clickOnHeader( oCol, ::oShell:getBrowse(), ::oShell:getCombobox() ) }
-      end with
-
-      ::oShell:createXFromCode()
-
-      ::oShell:setDClickData( {|| ::oController:Edit( ::oShell:getBrowse() ) } )
-
-      ::AutoButtons()
-
-   ACTIVATE WINDOW ::oShell
-
-   ::oShell:bValid         := {|| ::saveHistoryOfShell( ::oShell:getBrowse() ), .t. }
-   ::oShell:bEnd           := {|| ::oController:destroySQLModel() }
-
-   ::oShell:setComboBoxChange( {|| ::changeCombo( ::oShell:getBrowse(), ::oShell:getCombobox() ) } )
-
-   enableAcceso()
+   ::cImageName		:= "gc_coathanger_16"
 
 Return ( Self )
 

@@ -13,7 +13,7 @@ CLASS SQLBaseModel
    DATA     cDbfTableName
 	DATA	   hColumns
 
-   DATA     cWndTitle
+   DATA     hExtraColumns
 
    DATA     cGeneralSelect
 
@@ -50,7 +50,7 @@ CLASS SQLBaseModel
    METHOD   setIdForRecno( nIdForRecno )           INLINE ( ::nIdForRecno := nIdForRecno )
 
    METHOD   buildRowSet()
-   METHOD   buildRowSetWithRecno()                 // INLINE   ( ::buildRowSet( .t. ) )
+   METHOD   buildRowSetWithRecno()                 
    METHOD   freeRowSet()                           INLINE   ( if( !empty( ::oRowSet ), ( ::oRowSet := nil ), ) )
    METHOD   getRowSetRecno()                       INLINE   ( if( !empty( ::oRowSet ), ( ::oRowSet:recno() ) , 0 ) )
    METHOD   setRowSetRecno( nRecno )               INLINE   ( if( !empty( ::oRowSet ), ( ::oRowSet:goto( nRecno ) ), ) )
@@ -283,7 +283,7 @@ METHOD getInsertSentence()
 
    cSQLInsert        := ChgAtEnd( cSQLInsert, ' ) VALUES ( ', 2 )
 
-   hEval( ::hBuffer, {| k, v | if ( k != ::cColumnKey, if ( empty( v ), cSQLInsert += "null, ", cSQLInsert += toSQLString( v ) + ", "), ) } )
+   hEval( ::hBuffer, {| k, v | if ( k != ::cColumnKey, cSQLInsert += toSQLString( v ) + ", ", ) } )
 
    cSQLInsert        := ChgAtEnd( cSQLInsert, ' )', 2 )
 
@@ -382,6 +382,7 @@ Return ( ::loadBuffer( 0 ) )
 METHOD loadCurrentBuffer()                
 
    local aColumnNames := hb_hkeys( ::hColumns )
+   local h
 
    if empty( ::oRowSet )
       Return ( .f. )
@@ -389,9 +390,21 @@ METHOD loadCurrentBuffer()
 
    ::hBuffer  := {=>}
 
-   aeval( aColumnNames, {| k | hset( ::hBuffer, k, ::oRowSet:fieldget( k ) ) } )
+   for each h in ::hColumns
 
-Return ( ::hBuffer )   
+      if ( hhaskey( h, "type" ) .and. h[ "type" ] == "L" )
+
+         hset( ::hBuffer, h:__enumkey(), if( ::oRowSet:fieldget( h:__enumkey() ) == 1, .t., .f. ) )
+
+      else
+
+         hset( ::hBuffer, h:__enumkey(), ::oRowSet:fieldget( h:__enumkey() ) )
+
+      end if
+
+   next
+
+Return ( ::hBuffer )
 
 //---------------------------------------------------------------------------//
 
