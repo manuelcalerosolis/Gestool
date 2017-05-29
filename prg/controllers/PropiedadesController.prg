@@ -6,7 +6,7 @@
 
 CLASS PropiedadesController FROM SQLBaseController
 
-	DATA 		oPropiedadesLienasController
+	DATA 		oPropiedadesLineasController
 
    METHOD   New()
 
@@ -30,7 +30,9 @@ METHOD New()
 
    ::Super:New()
 
-   // ::oPropiedadesLienasController	:= PropiedadesLineasController():New( Self )
+   ::oPropiedadesLineasController	:= PropiedadesLineasController():New( Self )
+
+
 
 Return ( Self )
 

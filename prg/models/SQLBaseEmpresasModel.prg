@@ -15,7 +15,6 @@ CLASS SQLBaseEmpresasModel From SQLBaseModel
 
    METHOD   getSelectSentence()
    METHOD   getInsertSentence()                     
-   METHOD   getUpdateSentence()
 
    METHOD   getSelectByColumn()
 
@@ -132,20 +131,6 @@ METHOD getSelectSentence()
    cSQLSelect        += ::getSelectByOrder()
 
 Return ( cSQLSelect )
-
-//---------------------------------------------------------------------------//
-
-METHOD getUpdateSentence()
-
-  local cSQLUpdate  := "UPDATE " + ::cTableName + " SET "
-
-  hEval( ::hBuffer, {| k, v | if ( k != ::cColumnKey, cSQLUpdate += k + " = " + toSQLString( v ) + ", ", ) } )
-
-  cSQLUpdate        := ChgAtEnd( cSQLUpdate, '', 2 )
-
-  cSQLUpdate        += " WHERE empresa = " + toSQLString( cCodEmp() ) + " AND " + ::cColumnKey + " = " + toSQLString( ::hBuffer[ ::cColumnKey ] )
-
-Return ( cSQLUpdate )
 
 //---------------------------------------------------------------------------//
 

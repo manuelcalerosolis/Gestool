@@ -217,13 +217,13 @@ RETURN ( uReturn )
 
 //--------------------------------------------------------------------------//
 
-METHOD showBrowseInDialog( idResource, idOfHeader )
+METHOD showBrowseInDialog( idResource, oDialog)
 
    local oBrowse
 
-   ::oModel:find( idOfHeader )
+   msgalert( "estoy en el show browse")
 
-   oBrowse           := ::oView:buildSQLNuclearBrowse( idResource )  
+   oBrowse           := ::oView:buildSQLNuclearBrowse( idResource, oDialog )  
 
 RETURN ( oBrowse )
 
@@ -327,6 +327,8 @@ METHOD Append( oBrowse )
    nRecno         := ::oModel:getRowSetRecno()
 
    ::oModel:loadBlankBuffer()
+
+   msgalert( "ya he llegado aqui" )
 
    if ::oView:Dialog()
       ::oModel:insertBuffer()

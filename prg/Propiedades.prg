@@ -31,7 +31,9 @@ METHOD Dialog()
    local oGetCodigo
    local oControlBrw
 
-   DEFINE DIALOG oDlg RESOURCE "PROP" TITLE ::lblTitle() + "propiedades"
+   msgalert( "ahora estamos intentando levantar el dialogo")
+
+   DEFINE DIALOG oDlg RESOURCE "PROP_SQL" TITLE ::lblTitle() + "propiedades"
 
    REDEFINE GET   oGetCodigo ;
       VAR         ::oController:oModel:hBuffer[ "codigo" ] ;
@@ -51,39 +53,47 @@ METHOD Dialog()
       ID       	200 ;
       WHEN     	( !::oController:isZoomMode() ) ;
       OF       	oDlg
-/*
+
+      msgalert( "Vamos a mitad de camino.. justo antes de levantar el browse de las lineas")
+
+   ::oController:oPropiedadesLineasController:oModel:setForeignIdToWork( ::oController:oModel:hBuffer[ "id" ] )
+
    oControlBrw 	:= ::oController:oPropiedadesLineasController:showBrowseInDialog( 120, oDlg )
+
+   msgalert( "parece que esta explotando la creacion del browse")
 
    REDEFINE BUTTON;
       ID       	500 ;
       OF       	oDlg ;
       WHEN     	( !::oController:isZoomMode() ) ;
-      ACTION   	( oControlBrw:Append( oControlBrw:oView:oBrowse ) )
+      ACTION   	( ::oController:oPropiedadesLineasController:Append( ::oController:oPropiedadesLineasController:oView:oBrowse ) )
 
    REDEFINE BUTTON;
       ID       	501 ;
       OF       	oDlg ;
       WHEN     	( !::oController:isZoomMode() ) ;
-      ACTION   	( WinEdtRec( oBrw, bEdtDet, dbfTmpProL, aTmp ) )
+      ACTION   	( ::oController:oPropiedadesLineasController:Edit( ::oController:oPropiedadesLineasController:oView:oBrowse ) )
 
    REDEFINE BUTTON;
       ID       	502 ;
       OF       	oDlg ;
       WHEN     	( !::oController:isZoomMode() ) ;
-      ACTION   	( DeleteLinea( oBrw ) )
+      ACTION   	( ::oController:oPropiedadesLineasController:Delete( ::oController:oPropiedadesLineasController:oView:oBrowse ) )
 
-   REDEFINE BUTTON;
+      msgalert("hemos creado los botones de las ediciones de las lineas")
+
+   /*REDEFINE BUTTON;
       ID      		503 ;
       OF       	oDlg ;
       WHEN     	( !::oController:isZoomMode() ) ;
-      ACTION   	( UpDet( oBrw ) )
+      ACTION   	( UpDet( ::oController:oPropiedadesLineasController:oView:oBrowse ) )
 
    REDEFINE BUTTON;
       ID       	504 ;
       OF       	oDlg ;
       WHEN     	( !::oController:isZoomMode() ) ;
-      ACTION   	( DownDet( oBrw ) )
-*/
+      ACTION   	( DownDet( ::oController:oPropiedadesLineasController:oView:oBrowse ) )*/
+
    REDEFINE BUTTON ;
       ID          IDOK ;
       OF          oDlg ;

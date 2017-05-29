@@ -47,7 +47,8 @@ METHOD New()
                                     HistoricosUsuariosModel():New():getSQLCreateTable()   ,;
                                     RelacionesEtiquetasModel():New():getSQLCreateTable()  ,;
                                     TiposVentasModel():New():getSQLCreateTable()          ,;
-                                    PropiedadesModel():New():getSQLCreateTable()          }
+                                    PropiedadesModel():New():getSQLCreateTable()          ,;
+                                    PropiedadesLineasModel():New():getSQLCreateTable()    }
 
                                     
 

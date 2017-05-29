@@ -37,7 +37,7 @@ CLASS SQLBaseModel
    METHOD   getImportSentence( cPath )
    METHOD   makeImportDbfSQL( cPath )
    METHOD   getSelectSentence()
-   METHOD   getInsertSentence()                     
+   METHOD   getInsertSentence()
    METHOD   getUpdateSentence()
    METHOD   getDeleteSentence()
 
@@ -334,6 +334,10 @@ Return ( cSQLSelect )
 METHOD getSelectByColumn( cColumnOrder )
 
    local cSQLSelect     := ""
+
+   msgalert( hb_valtoexp( ::cFind ), "cFind")
+      msgalert( ::cColumnOrder, "cColumnOrder")
+
 
    if !empty( ::cColumnOrder ) .and. !empty( ::cFind )
       cSQLSelect        += " WHERE UPPER(" + ::cColumnOrder +") LIKE '%" + Upper( ::cFind ) + "%'" 

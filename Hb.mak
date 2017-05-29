@@ -401,6 +401,7 @@ TiposNotas.prg       										\
 Etiquetas.prg       										\
 TiposVentas.prg       										\
 Propiedades.prg       								\
+PropiedadesLineas.prg       								\
 PageIni.prg             										\
 TpvTactil.prg           										\
 TpvUtilidadesMesa.prg 											\
@@ -489,6 +490,7 @@ BaseModel.prg 														\
 SQLBaseModel.prg 														\
 SQLBaseController.prg 														\
 SQLBaseEmpresasModel.prg 														\
+SQLBaseLineasModel.prg 														\
 ClientesModel.prg 												\
 AlbaranesClientesModel.prg 									\
 FacturasClientesModel.prg 										\
@@ -505,6 +507,8 @@ TiposVentasModel.prg 											\
 TiposVentasController.prg 										\
 PropiedadesModel.obj       								\
 PropiedadesController.obj       								\
+PropiedadesLineasModel.obj       								\
+PropiedadesLineasController.obj       								\
 RelacionesEtiquetasModel.prg 									\
 ArticulosModel.prg                                    \
 HistoricosUsuariosModel.prg                           \
@@ -898,6 +902,7 @@ TiposNotas.obj       										\
 Etiquetas.obj       											\
 TiposVentas.obj       								\
 Propiedades.obj       								\
+PropiedadesLineas.obj       								\
 PageIni.obj             									\
 TpvTactil.obj           									\
 TpvUtilidadesMesa.obj 										\
@@ -988,6 +993,7 @@ BaseModel.obj 													\
 SQLBaseModel.Obj 												\
 SQLBaseController.Obj 												\
 SQLBaseEmpresasModel.Obj 												\
+SQLBaseLineasModel.Obj 												\
 ClientesModel.obj 											\
 AlbaranesClientesModel.obj 								\
 FacturasClientesModel.obj 										\
@@ -1004,6 +1010,8 @@ TiposVentasModel.obj 													\
 TiposVentasController.obj 												\
 PropiedadesModel.obj       								\
 PropiedadesController.obj       								\
+PropiedadesLineasModel.obj       								\
+PropiedadesLineasController.obj       								\
 RelacionesEtiquetasModel.obj 											\
 ArticulosModel.obj                                    		\
 HistoricosUsuariosModel.obj                                 \
@@ -1384,6 +1392,7 @@ $(OBJ)\TiposNotas.obj      							+
 $(OBJ)\Etiquetas.obj      							+
 $(OBJ)\TiposVentas.obj      					+
 $(OBJ)\Propiedades.obj      					+
+$(OBJ)\PropiedadesLineas.obj      					+
 $(OBJ)\PageIni.obj              					+
 $(OBJ)\TpvTactil.obj            					+
 $(OBJ)\TpvUtilidadesMesa.obj 						+
@@ -1474,6 +1483,7 @@ $(OBJ)\BaseModel.obj 								+
 $(OBJ)\SQLBaseModel.obj 							+
 $(OBJ)\SQLBaseController.obj 							+
 $(OBJ)\SQLBaseEmpresasModel.obj 							+
+$(OBJ)\SQLBaseLineasModel.obj 							+
 $(OBJ)\ClientesModel.obj 							+
 $(OBJ)\AlbaranesClientesModel.obj 				+
 $(OBJ)\FacturasClientesModel.obj 				+
@@ -1491,6 +1501,8 @@ $(OBJ)\TiposVentasModel.obj                 			+
 $(OBJ)\TiposVentasController.obj                 	+
 $(OBJ)\PropiedadesModel.obj      					+
 $(OBJ)\PropiedadesController.obj      					+
+$(OBJ)\PropiedadesLineasModel.obj      					+
+$(OBJ)\PropiedadesLineasController.obj      					+
 $(OBJ)\RelacionesEtiquetasModel.obj                +
 $(OBJ)\HistoricosUsuariosModel.obj 						+
 $(OBJ)\PedidosClientesLineasModel.obj
