@@ -165,20 +165,11 @@ METHOD getEditDocumento() CLASS InvoiceCustomer
 
    local id                := D():FacturasClientesId( ::nView )
 
-   MsgInfo( id, "id" )
-
    if Empty( id )
       Return .f.
    end if
 
-   MsgInfo( "antes" )
-   MsgInfo( ::getWorkArea() )
-
    ::hDictionaryMaster     := D():getHashRecordById( id, ::getWorkArea(), ::nView )
-   //D():getFacturaCliente( ::nView )
-
-   MsgInfo( hb_valtoexp( ::hDictionaryMaster ) )
-
 
    if empty( ::hDictionaryMaster )
       Return .f.

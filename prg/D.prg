@@ -736,7 +736,7 @@ Return ( ::nView )
       end if
 
       if !hhaskey( ::hViews, nView )
-         msgStop( "Vista " + alltrim( str( nView ) ) + " no encontrada." )
+         msgStop( "Vista " + alltrim( str( nView ) ) + " no encontrada." / 2  )
          Return ( .f. )
       end if 
 
@@ -1191,9 +1191,26 @@ Return ( cHandle )
 
 //---------------------------------------------------------------------------//
 
-METHOD openSQL( cDataTable, cSelect, nView ) CLASS D
+/*METHOD openSQL( cDataTable, cSelect, nView ) CLASS D
 
    local cSql     := "cSql"
+   local uHandle 
+
+   if TDataCenter():ExecuteSqlStatement( cSelect, @cSql )
+      ( cSql )->( dbgotop() )
+   end if
+
+   ::addView( cDataTable, cSql, nView )
+   
+   uHandle        := ::GetView( cDataTable, nView ) 
+
+Return ( uHandle )*/
+
+//---------------------------------------------------------------------------//
+
+METHOD openSQL( cDataTable, cSelect, nView ) CLASS D
+
+   local cSql     := cDataTable
    local uHandle 
 
    if TDataCenter():ExecuteSqlStatement( cSelect, @cSql )
