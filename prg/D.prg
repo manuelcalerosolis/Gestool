@@ -149,6 +149,8 @@ CLASS D
 
    METHOD AlbaranesClientesLineasTableName()                INLINE ( "AlbCliL" )
    METHOD AlbaranesClientesLineas( nView )                  INLINE ( ::Get( ::AlbaranesClientesLineasTableName(), nView ) )
+   METHOD AlbaranesClientesLineasFieldPos( fieldName, nView );
+                                                            INLINE ( ( ::Get( ::AlbaranesClientesLineasTableName(), nView ) )->( fieldpos( fieldName ) ) )
    METHOD AlbaranesClientesLineasEscandalloId( nView )      INLINE ( ( ::Get( "AlbCliL", nView ) )->cSerAlb + str( ( ::Get( "AlbCliL", nView ) )->nNumAlb, 9 ) + ( ::Get( "AlbCliL", nView ) )->cSufAlb + Str( ( ::Get( "AlbCliL", nView ) )->nNumLin )+ Str( ( ::Get( "AlbCliL", nView ) )->nNumKit ) )
 
       METHOD getHashBlankAlbaranesClientesLineas( nView )   INLINE ( ::getHashFromBlank( ::AlbaranesClientesLineas( nView ), ::getDictionary( ::AlbaranesClientesLineasTableName(), nView ) ) )

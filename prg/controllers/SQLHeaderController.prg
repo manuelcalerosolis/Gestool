@@ -7,8 +7,8 @@
 CLASS SQLHeaderController FROM SQLBaseController
 
    METHOD beginTransaction()                       INLINE ( getSQLDatabase():beginTransaction() )
-   METHOD commitTransaction()                      INLINE ( getSQLDatabase():commit() )
-   METHOD rollbackTransaction()                    INLINE ( getSQLDatabase():rollback() )
+   METHOD commitTransaction()                      INLINE ( getSQLDatabase():commitTransaction() )
+   METHOD rollbackTransaction()                    INLINE ( getSQLDatabase():rollbackTransaction() )
 
 	METHOD   Append( oBrowse )
       METHOD initAppendMode()                      VIRTUAL

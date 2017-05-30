@@ -6,11 +6,13 @@
 
 CLASS SQLBaseController
 
+   CLASSDATA   oInstance 
+
    DATA     oModel
 
    DATA     oView
 
-	DATA     nLevel
+   DATA     nLevel
 
    DATA     idUserMap      
 
@@ -20,8 +22,6 @@ CLASS SQLBaseController
    DATA     bOnPostAppend
 
    DATA     cTitle                                    INIT ""
-
-   CLASSDATA   oInstance 
  
    METHOD   New()
 
@@ -88,6 +88,10 @@ CLASS SQLBaseController
    METHOD   findByIdInRowSet( uValue )                INLINE ( if( !empty( ::getRowSet() ), ::getRowset():find( uValue, "id", .t. ), ) )
 
    METHOD   isValidGet( oGet )
+   METHOD   isValidCodigo( oGet )
+
+   METHOD   getIdFromCodigo( codigo )                 INLINE ( if( !empty( ::oModel ), ::oModel:getIdFromCodigo( codigo ), ) )
+
    METHOD 	assignBrowse( oGet, aSelectedItems )
    METHOD   showBrowseInDialog( id )
 
@@ -116,7 +120,6 @@ METHOD New()
 RETURN ( self )
 
 //---------------------------------------------------------------------------//
-
 
 METHOD ActivateShell()
 
@@ -511,14 +514,42 @@ METHOD isValidGet( oGet )
 
    uValue            := oGet:varGet()
 
-   if !::oModel:exist( uValue )
-   	msgStop( "El valor introducido no existe", ::getTitle() )
+   if !::oModel:existId( uValue )
+   	msgStop( "El identificador introducido no existe", ::getTitle() )
    	oGet:setFocus()
       RETURN .f.
    end if 
 
    if !empty( oGet:oHelpText )
       oGet:oHelpText:cText( ::oModel:getNameFromId( uValue ) )
+   end if
+
+RETURN ( .t. )
+
+//--------------------------------------------------------------------------//
+
+METHOD isValidCodigo( oGet )
+
+   local uValue
+
+   if empty( oGet )
+      RETURN ( .t. )
+   end if 
+
+   uValue            := oGet:varGet()
+
+   if empty( uValue )
+      RETURN ( .t. )
+   end if 
+
+   if !::oModel:existCodigo( uValue )
+      msgStop( "El código introducido no existe", ::getTitle() )
+      oGet:setFocus()
+      RETURN ( .f. )
+   end if 
+
+   if !empty( oGet:oHelpText )
+      oGet:oHelpText:cText( ::oModel:getNameFromCodigo( uValue ) )
    end if
 
 RETURN ( .t. )

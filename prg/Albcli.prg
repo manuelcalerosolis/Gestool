@@ -4794,20 +4794,17 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbf, oBrw, lTotLin, cCodArtEnt, nMode, aTmpA
          OF       oFld:aDialogs[1]
 
       /*
-      Tipo de moviminto
-      -------------------------------------------------------------------------
+      Tipo de moviminto--------------------------------------------------------
       */
 
-      REDEFINE GET   aGet[ ( D():AlbaranesClientesLineas( nView ) )->( fieldpos( "id_tipo_v" ) ) ] ;
-         VAR         aTmp[ ( D():AlbaranesClientesLineas( nView ) )->( fieldpos( "id_tipo_v" ) ) ] ;
-         WHEN        ( nMode != ZOOM_MODE .AND. !lTotLin ) ;
-         VALID       ( TiposVentasController():Instance():isValidGet( aGet[ ( D():AlbaranesClientesLineas( nView ) )->( fieldpos( "id_tipo_v" ) ) ] ) ) ;
-         BITMAP      "LUPA" ;
-         ON HELP     ( TiposVentasController():Instance():assignBrowse( aGet[ ( D():AlbaranesClientesLineas( nView ) )->( fieldpos( "id_tipo_v" ) ) ] ) ) ;
-         ID          290 ;
-         IDSAY       292 ;
-         IDTEXT      291 ;
-         OF          oFld:aDialogs[1]
+      TiposVentasController();
+         :Instance();
+         :createEditControl(  {  "idGet"  => 290,;
+                                 "idText" => 291,;
+                                 "idSay"  => 292,;
+                                 "dialog" => oFld:aDialogs[ 1 ],;
+                                 "when"   => {|| ( nMode != ZOOM_MODE .and. !lTotLin ) },;
+                                 "value"  => aTmp[ ( D():AlbaranesClientesLineas( nView ) )->( fieldpos( "id_tipo_v" ) ) ] } )
 
       /*
       Tipo de articulo---------------------------------------------------------
@@ -9761,7 +9758,7 @@ STATIC FUNCTION SetDlgMode( aTmp, aTmpAlb, nMode, aGet, oFld, oSayPr1, oSayPr2, 
       oRentLin:Hide()
    end if
 
-   aGet[ ( D():AlbaranesClientesLineas( nView ) )->( fieldpos( "id_tipo_v" ) ) ]:lValid()
+   TiposVentasController():Instance():validEditControl()
 
    do case
    case nMode == APPD_MODE
@@ -11048,9 +11045,11 @@ STATIC FUNCTION SaveDeta( aTmp, aTmpAlb, oFld, aGet, oBrw, bmpImage, oDlg, nMode
 
    aTmp[ _CTIPCTR ]  := cTipoCtrCoste
 
-   aClo              := aClone( aTmp )
-
    aTmp[ _NREQ ]     := nPReq( D():Get( "TIva", nView ), aTmp[ _NIVA ] )
+
+   aTmp[ D():AlbaranesClientesLineasFieldPos( "id_tipo_v", nView ) ]    := TiposVentasController():Instance():getIdFromEditControl()
+
+   aClo              := aClone( aTmp )
 
    // si estamos añadiendo-----------------------------------------------------
 

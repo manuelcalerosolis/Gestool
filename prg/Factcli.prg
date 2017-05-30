@@ -5187,16 +5187,14 @@ STATIC FUNCTION EdtDet( aTmp, aGet, cFacCliL, oBrw, lTotLin, cCodArtEnt, nMode, 
       -------------------------------------------------------------------------
       */
 
-      REDEFINE GET   aGet[ ( D():FacturasClientesLineas( nView ) )->( fieldpos( "id_tipo_v" ) ) ] ;
-         VAR         aTmp[ ( D():FacturasClientesLineas( nView ) )->( fieldpos( "id_tipo_v" ) ) ] ;
-         WHEN        ( nMode != ZOOM_MODE .and. nMode != MULT_MODE .and. !lTotLin ) ;
-         VALID       ( TiposVentasController():Instance():isValidGet( aGet[ ( D():FacturasClientesLineas( nView ) )->( fieldpos( "id_tipo_v" ) ) ] ) ) ;
-         BITMAP      "LUPA" ;
-         ON HELP     ( TiposVentasController():Instance():assignBrowse( aGet[ ( D():FacturasClientesLineas( nView ) )->( fieldpos( "id_tipo_v" ) ) ] ) ) ;
-         ID          290 ;
-         IDSAY       292 ;
-         IDTEXT      291 ;
-         OF          fldGeneral
+      TiposVentasController();
+         :Instance();
+         :createEditControl(  {  "idGet"  => 290,;
+                                 "idText" => 291,;
+                                 "idSay"  => 292,;
+                                 "dialog" => fldGeneral,;
+                                 "when"   => {|| ( nMode != ZOOM_MODE .and. nMode != MULT_MODE .and. !lTotLin ) },;
+                                 "value"  => aTmp[ ( D():FacturasClientesLineas( nView ) )->( fieldpos( "id_tipo_v" ) ) ] } )
 
       REDEFINE GET aGet[ _CALMLIN ] VAR aTmp[ _CALMLIN ] ;
          ID       300 ;
@@ -11729,8 +11727,6 @@ STATIC FUNCTION SetDlgMode( aTmp, aGet, oFld, oSayPr1, oSayPr2, oSayVp1, oSayVp2
 
    end if
 
-   aGet[ ( D():FacturasClientesLineas( nView ) )->( fieldpos( "id_tipo_v" ) ) ]:lValid()
-
    do case
    case nMode == APPD_MODE
 
@@ -13135,6 +13131,7 @@ STATIC FUNCTION SaveDeta( aTmp, aTmpFac, aGet, oBrw, oDlg, oFld, oSayPr1, oSayPr
    end if
 
    aTmp[ _CTIPCTR ]  := cTipoCtrCoste
+   aTmp[ ( D():FacturasClientesLineas( nView ) )->( fieldpos( "id_tipo_v" ) ) ]  := TiposVentasController():Instance():getIdFromEditControl()
 
    // fin de los script--------------------------------------------------------
 

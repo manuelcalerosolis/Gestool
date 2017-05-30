@@ -4754,20 +4754,17 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbf, oBrw, lTotLin, cCodArtEnt, nMode, aTmpP
          OF       oFld:aDialogs[1]
 
       /*
-      Tipo de moviminto
-      -------------------------------------------------------------------------
+      Tipo de moviminto--------------------------------------------------------
       */
 
-      REDEFINE GET   aGet[ ( D():PedidosClientesLineas( nView ) )->( fieldpos( "id_tipo_v" ) ) ] ;
-         VAR         aTmp[ ( D():PedidosClientesLineas( nView ) )->( fieldpos( "id_tipo_v" ) ) ] ;
-         WHEN        ( nMode != ZOOM_MODE .AND. !lTotLin ) ;
-         VALID       ( TiposVentasController():Instance():isValidGet( aGet[ ( D():PedidosClientesLineas( nView ) )->( fieldpos( "id_tipo_v" ) ) ] ) ) ;
-         BITMAP      "LUPA" ;
-         ON HELP     ( TiposVentasController():Instance():assignBrowse( aGet[ ( D():PedidosClientesLineas( nView ) )->( fieldpos( "id_tipo_v" ) ) ] ) ) ;
-         ID          290 ;
-         IDSAY       292 ;
-         IDTEXT      291 ;
-         OF          oFld:aDialogs[1]
+      TiposVentasController();
+         :Instance();
+         :createEditControl(  {  "idGet"  => 290,;
+                                 "idText" => 291,;
+                                 "idSay"  => 292,;
+                                 "dialog" => oFld:aDialogs[ 1 ],;
+                                 "when"   => {|| ( nMode != ZOOM_MODE .and. nMode != MULT_MODE .and. !lTotLin ) },;
+                                 "value"  => aTmp[ ( D():SatClientesLineas( nView ) )->( fieldpos( "id_tipo_v" ) ) ] } )
 
       /*
       Codigo de almacen--------------------------------------------------------
@@ -8989,8 +8986,6 @@ STATIC FUNCTION SetDlgMode( aTmp, aGet, nMode, oStkAct, oSayPr1, oSayPr2, oSayVp
       aGet[ _NPREALQ ]:Show()
    end if
 
-   aGet[ ( D():PedidosClientesLineas( nView ) )->( fieldpos( "id_tipo_v" ) ) ]:lValid()
-
    do case
    case nMode == APPD_MODE
 
@@ -9350,22 +9345,18 @@ STATIC FUNCTION SaveDeta( aTmp, aTmpPed, aGet, oFld, oDlg2, oBrw, bmpImage, nMod
       return nil
    end if 
    
-   /*if aTmp[ _NUNICAJA ] == 0
-      aTmp[ _NUNICAJA ] := 0
-   end if */
-
    // Situaciones atipicas-----------------------------------------------------
 
    CursorWait()
 
-   aTmp[ _CTIPCTR ]              := cTipoCtrCoste
-   aClo                          := aClone( aTmp )
    nRec                          := ( dbfTmpLin )->( RecNo() )
 
-   // Estado de la produccion--------------------------------------------------
-
+   aTmp[ _CTIPCTR ]              := cTipoCtrCoste
    aTmp[ _NREQ ]                 := nPReq( D():TiposIva( nView ), aTmp[ _NIVA ] )
    aTmp[ _NPRODUC ]              := oEstadoProduccion:nAt - 1
+   aTmp[ ( D():PedidosClientesLineas( nView ) )->( fieldpos( "id_tipo_v" ) ) ]   := TiposVentasController():Instance():getIdFromEditControl()
+
+   aClo                          := aClone( aTmp )
 
    if nMode == APPD_MODE
 
