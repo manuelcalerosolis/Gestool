@@ -80,7 +80,7 @@ CLASS SQLBaseController
    METHOD   saveHistory( cHistory, oBrowse )
 
    METHOD   findGet( oFind )
-   METHOD   find( uValue )                            INLINE ( msgalert( uValue, "find" ), ::oModel:find( uValue ) )
+   METHOD   find( uValue )                            INLINE ( ::oModel:find( uValue ) )
 
    METHOD   findByIdInRowSet( uValue )                INLINE ( if( !empty( ::getRowSet() ), ::getRowset():find( uValue, "id", .t. ), ) )
 
@@ -221,8 +221,6 @@ METHOD showBrowseInDialog( idResource, oDialog)
 
    local oBrowse
 
-   msgalert( "estoy en el show browse")
-
    oBrowse           := ::oView:buildSQLNuclearBrowse( idResource, oDialog )  
 
 RETURN ( oBrowse )
@@ -327,8 +325,6 @@ METHOD Append( oBrowse )
    nRecno         := ::oModel:getRowSetRecno()
 
    ::oModel:loadBlankBuffer()
-
-   msgalert( "ya he llegado aqui" )
 
    if ::oView:Dialog()
       ::oModel:insertBuffer()

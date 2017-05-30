@@ -4,7 +4,7 @@
 
 //---------------------------------------------------------------------------//
 
-CLASS PedidosClientesLineasModel FROM SQLBaseEmpresasModel
+CLASS PedidosClientesLineasModel FROM SQLBaseModel
 
    METHOD TranslateCodigoTiposVentaToId( cTable )
 

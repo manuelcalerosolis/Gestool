@@ -31,8 +31,6 @@ METHOD Dialog()
    local oGetCodigo
    local oControlBrw
 
-   msgalert( "ahora estamos intentando levantar el dialogo")
-
    DEFINE DIALOG oDlg RESOURCE "PROP_SQL" TITLE ::lblTitle() + "propiedades"
 
    REDEFINE GET   oGetCodigo ;
@@ -54,13 +52,9 @@ METHOD Dialog()
       WHEN     	( !::oController:isZoomMode() ) ;
       OF       	oDlg
 
-      msgalert( "Vamos a mitad de camino.. justo antes de levantar el browse de las lineas")
-
    ::oController:oPropiedadesLineasController:oModel:setForeignIdToWork( ::oController:oModel:hBuffer[ "id" ] )
 
    oControlBrw 	:= ::oController:oPropiedadesLineasController:showBrowseInDialog( 120, oDlg )
-
-   msgalert( "parece que esta explotando la creacion del browse")
 
    REDEFINE BUTTON;
       ID       	500 ;
@@ -79,8 +73,6 @@ METHOD Dialog()
       OF       	oDlg ;
       WHEN     	( !::oController:isZoomMode() ) ;
       ACTION   	( ::oController:oPropiedadesLineasController:Delete( ::oController:oPropiedadesLineasController:oView:oBrowse ) )
-
-      msgalert("hemos creado los botones de las ediciones de las lineas")
 
    /*REDEFINE BUTTON;
       ID      		503 ;

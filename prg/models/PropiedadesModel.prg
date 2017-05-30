@@ -4,7 +4,7 @@
 
 //---------------------------------------------------------------------------//
 
-CLASS PropiedadesModel FROM SQLBaseEmpresasModel
+CLASS PropiedadesModel FROM SQLBaseModel
 
    DATA cTableName               INIT "propiedades"
 

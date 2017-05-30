@@ -6,6 +6,8 @@
 
 CLASS SituacionesModel FROM SQLBaseModel
 
+   DATA     cColumnCode                            INIT "nombre"
+
    DATA     cTableName                             INIT "situaciones"
 
    DATA     cDbfTableName

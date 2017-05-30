@@ -45,15 +45,7 @@ METHOD getSelectSentence()
 
 	local cSQLSelect
 
-	msgalert( ::cGeneralSelect, "entramos en el getSelectSentence")
-
-	msgalert( toSQLString( ::nForeignIdToWork ), "nForeignIdToWork" )
-
-	cSQLSelect  := ::cGeneralSelect + " = " + toSQLString( ::nForeignIdToWork )
-
-	msgalert( cSQLSelect )
-
-	msgalert( ::cFind , "cFind" )
+	cSQLSelect  		:= ::cGeneralSelect + " = " + toSQLString( ::nForeignIdToWork )
 
    cSQLSelect        += ::getSelectByColumn()
 

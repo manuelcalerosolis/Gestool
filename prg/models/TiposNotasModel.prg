@@ -6,6 +6,8 @@
 
 CLASS TiposNotasModel FROM SQLBaseModel
 
+   DATA cColumnCode             INIT "nombre"
+
 	DATA cTableName              INIT "tipos_notas"
 
    DATA cDbfTableName

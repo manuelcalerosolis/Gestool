@@ -5,7 +5,7 @@
 
 //---------------------------------------------------------------------------//
 
-CLASS EtiquetasModel FROM SQLBaseEmpresasModel
+CLASS EtiquetasModel FROM SQLBaseModel
 
    DATA     cTableName                             INIT "etiquetas"
 

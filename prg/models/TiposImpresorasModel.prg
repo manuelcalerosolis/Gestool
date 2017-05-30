@@ -6,6 +6,8 @@
 
 CLASS TiposImpresorasModel FROM SQLBaseModel
 
+   DATA  cColumnCode             INIT "nombre"
+
    DATA cTableName               INIT "tipos_impresoras"
 
    DATA cDbfTableName

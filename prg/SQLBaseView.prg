@@ -255,8 +255,6 @@ METHOD buildSQLNuclearBrowse( idResource, oDlg, oCombobox )
 
    local oBrowse
 
-   msgalert( "estoy en el nuclear browse")
-
    oBrowse                 := SQLXBrowse():New( oDlg )
 
    oBrowse:bClrSel         := {|| { CLR_BLACK, Rgb( 229, 229, 229 ) } }

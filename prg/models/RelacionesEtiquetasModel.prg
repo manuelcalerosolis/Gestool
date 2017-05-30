@@ -4,7 +4,7 @@
 
 //---------------------------------------------------------------------------//
 
-CLASS RelacionesEtiquetasModel FROM SQLBaseEmpresasModel
+CLASS RelacionesEtiquetasModel FROM SQLBaseModel
 
    DATA cTableName               INIT "relaciones_etiquetas"
 
