@@ -1193,9 +1193,26 @@ Return ( cHandle )
 
 //---------------------------------------------------------------------------//
 
-METHOD openSQL( cDataTable, cSelect, nView ) CLASS D
+/*METHOD openSQL( cDataTable, cSelect, nView ) CLASS D
 
    local cSql     := "cSql"
+   local uHandle 
+
+   if TDataCenter():ExecuteSqlStatement( cSelect, @cSql )
+      ( cSql )->( dbgotop() )
+   end if
+
+   ::addView( cDataTable, cSql, nView )
+   
+   uHandle        := ::GetView( cDataTable, nView ) 
+
+Return ( uHandle )*/
+
+//---------------------------------------------------------------------------//
+
+METHOD openSQL( cDataTable, cSelect, nView ) CLASS D
+
+   local cSql     := cDataTable
    local uHandle 
 
    if TDataCenter():ExecuteSqlStatement( cSelect, @cSql )
