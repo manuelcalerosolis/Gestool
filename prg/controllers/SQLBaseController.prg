@@ -58,16 +58,19 @@ CLASS SQLBaseController
    METHOD   Duplicate( oBrowse )
       METHOD setDuplicateMode()                       INLINE ( ::nMode := __duplicate_mode__ )
       METHOD isDuplicateMode()                        INLINE ( ::nMode == __duplicate_mode__ )
+      METHOD initDuplicateMode()                      VIRTUAL
 
    METHOD   Edit( oBrowse )
       METHOD preEdit()                                VIRTUAL
       METHOD postEdit()                               VIRTUAL
       METHOD setEditMode()                            INLINE ( ::nMode := __edit_mode__ )
       METHOD isEditMode()                             INLINE ( ::nMode == __edit_mode__ )
+      METHOD initEditMode()                           VIRTUAL
 
    METHOD   Zoom( oBrowse )
       METHOD setZoomMode()                            INLINE ( ::nMode := __zoom_mode__ )
       METHOD isZoomMode()                             INLINE ( ::nMode == __zoom_mode__ )
+      METHOD initZoomMode()                           VIRTUAL
 
    METHOD   Delete( oBrowse )
 
@@ -322,18 +325,25 @@ METHOD Append( oBrowse )
       end if
    end if
 
+   ::initAppendMode()
+
    nRecno         := ::oModel:getRowSetRecno()
 
    ::oModel:loadBlankBuffer()
 
    if ::oView:Dialog()
+
       ::oModel:insertBuffer()
+
+      
+
       if ::bOnPostAppend != nil
          lTrigger    := eval( ::bOnPostAppend  )
          if Valtype( lTrigger ) == "L" .and. !lTrigger
             RETURN ( .f. )
          end if
       end if
+
    else 
       ::oModel:setRowSetRecno( nRecno ) 
       RETURN ( .f. )

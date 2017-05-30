@@ -20,7 +20,7 @@ END CLASS
 
 METHOD New()
 
-	::cDbfTableName					:=	"Pro"
+	::cDbfTableName				:=	"Pro"
 
 	::hColumns						:=	{	"id"			=>	{	"create"		=>	"INTEGER PRIMARY KEY AUTOINCREMENT"			,;
 																		"text"		=>	"Identificador"									,;
@@ -36,8 +36,8 @@ METHOD New()
 																		"len" 		=> 20	}													,;
 												"nombre"		=>	{	"create"		=>	"VHARCHAR(50) NOT NULL"							,;
 																		"text"		=>	"Nombre de la propiedad"						,;
-																		"field"	=>	"cDesPro"												,;
-																		"header"	=>	"Nombre"													,;
+																		"field"		=>	"cDesPro"											,;
+																		"header"		=>	"Nombre"												,;
 																		"visible"	=> .t.													,;
 																		"width"		=>	200 													,;
 																		"type"		=> "C"													,;

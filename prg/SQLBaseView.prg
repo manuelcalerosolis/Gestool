@@ -263,6 +263,8 @@ METHOD buildSQLNuclearBrowse( idResource, oDlg, oCombobox )
    oBrowse:lHScroll        := .f.
    oBrowse:nMarqueeStyle   := 6
 
+   msgalert( hb_valtoexp( ::oController:oModel:oRowSet ), "rowset buildSQLNuclearBrowse")
+
    oBrowse:setModel( ::oController:oModel )
 
    ::oController:generateColumnsForBrowse( oBrowse, oCombobox )

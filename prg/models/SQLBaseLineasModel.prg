@@ -7,13 +7,15 @@
 
 CLASS SQLBaseLineasModel From SQLBaseModel
 
-	DATA		nForeignIdToWork
+	DATA		idForeignKey
 	DATA		cForeignColumn
 	DATA		aTmpIdsToConfirm 									INIT {}
 
    METHOD   New()
 
-   METHOD	setForeignIdToWork( nId )						INLINE ( ::nForeignIdToWork := nId )
+   METHOD   setForeignKey( id )                       INLINE ( ::idForeignKey := id )
+
+   METHOD   buildRowSetWhitForeignKey( id )           INLINE ( ::setForeignKey( id ), ::buildRowSet() )
 
 	METHOD 	getSelectSentence()
    METHOD   getInsertSentence()
@@ -45,11 +47,11 @@ METHOD getSelectSentence()
 
 	local cSQLSelect
 
-	cSQLSelect  		:= ::cGeneralSelect + " = " + toSQLString( ::nForeignIdToWork )
+	cSQLSelect  		:= ::cGeneralSelect + " = " + toSQLString( ::idForeignKey )
 
-   cSQLSelect        += ::getSelectByColumn()
+   cSQLSelect        := ::getSelectByColumn( cSQLSelect )
 
-   cSQLSelect        += ::getSelectByOrder()
+   cSQLSelect        := ::getSelectByOrder( cSQLSelect )
 
 RETURN ( cSQLSelect )
 

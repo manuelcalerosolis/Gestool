@@ -52,7 +52,7 @@ METHOD Dialog()
       WHEN     	( !::oController:isZoomMode() ) ;
       OF       	oDlg
 
-   ::oController:oPropiedadesLineasController:oModel:setForeignIdToWork( ::oController:oModel:hBuffer[ "id" ] )
+msgalert( hb_valtoexp( ::oController:oPropiedadesLineasController:oModel ) ,"propiedades lineas")      
 
    oControlBrw 	:= ::oController:oPropiedadesLineasController:showBrowseInDialog( 120, oDlg )
 

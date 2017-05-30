@@ -17,20 +17,24 @@ CLASS SQLDatabase
 
    DATA aModels
 
-   METHOD New()                    CONSTRUCTOR
+   METHOD New()                     CONSTRUCTOR
 
-   METHOD Conexion()               INLINE  ( ::oConexion )
+   METHOD Conexion()                INLINE  ( ::oConexion )
 
    METHOD Connect() 
-   METHOD Disconnect()             INLINE  ( ::oConexion:disconnect() )
+   METHOD Disconnect()              INLINE  ( ::oConexion:disconnect() )
         
    METHOD Exec( cSql )             
-   METHOD Query( cSql )            INLINE ( ::oConexion:Query( cSql ) )
-   METHOD Prepare( cSql )          INLINE ( ::oConexion:Prepare( cSql ) )
+   METHOD Query( cSql )             INLINE ( ::oConexion:Query( cSql ) )
+   METHOD Prepare( cSql )           INLINE ( ::oConexion:Prepare( cSql ) )
 
-   METHOD LastInsertId()           INLINE ( ::oConexion:LASTINSERTID() )
+   METHOD LastInsertId()            INLINE ( ::oConexion:lastInsertId() )
 
-   METHOD errorInfo()              INLINE ( ::oConexion:errorInfo() )
+   METHOD beginTransaction()        INLINE ( ::oConexion:beginTransaction() )
+   METHOD commitTransaction()       INLINE ( ::oConexion:commit() )
+   METHOD rollbackTransaction()     INLINE ( ::oConexion:rollback() )
+
+   METHOD errorInfo()               INLINE ( ::oConexion:errorInfo() )
 
    METHOD checkModelsExistence()   
 
@@ -49,8 +53,6 @@ METHOD New()
                                     TiposVentasModel():New():getSQLCreateTable()          ,;
                                     PropiedadesModel():New():getSQLCreateTable()          ,;
                                     PropiedadesLineasModel():New():getSQLCreateTable()    }
-
-                                    
 
    ::cPathDatabaseSQLite      := fullCurDir() + "Database\" 
 
