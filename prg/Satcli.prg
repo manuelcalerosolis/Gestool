@@ -3856,16 +3856,18 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbfSatCliL, oBrw, lTotLin, cCodArtEnt, nMode
          PICTURE  cPorDiv ;
          OF       oFld:aDialogs[1]
 
-      REDEFINE GET   aGet[ ( D():SatClientesLineas( nView ) )->( fieldpos( "id_tipo_v" ) ) ] ;
-         VAR         aTmp[ ( D():SatClientesLineas( nView ) )->( fieldpos( "id_tipo_v" ) ) ] ;
-         WHEN        ( nMode != ZOOM_MODE .AND. !lTotLin ) ;
-         VALID       ( TiposVentasController():Instance():isValidGet( aGet[ ( D():SatClientesLineas( nView ) )->( fieldpos( "id_tipo_v" ) ) ] ) ) ;
-         BITMAP      "LUPA" ;
-         ON HELP     ( TiposVentasController():Instance():assignBrowse( aGet[ ( D():SatClientesLineas( nView ) )->( fieldpos( "id_tipo_v" ) ) ] ) ) ;
-         ID          290 ;
-         IDSAY       292 ;
-         IDTEXT      291 ;
-         OF          oFld:aDialogs[1]
+      /*
+      Tipo de moviminto--------------------------------------------------------
+      */
+
+      TiposVentasController();
+         :Instance();
+         :createEditControl(  {  "idGet"  => 290,;
+                                 "idText" => 291,;
+                                 "idSay"  => 292,;
+                                 "dialog" => oFld:aDialogs[ 1 ],;
+                                 "when"   => {|| ( nMode != ZOOM_MODE .and. nMode != MULT_MODE .and. !lTotLin ) },;
+                                 "value"  => aTmp[ ( D():SatClientesLineas( nView ) )->( fieldpos( "id_tipo_v" ) ) ] } )
 
       /*
       Tipo de articulo---------------------------------------------------------
@@ -4215,8 +4217,6 @@ STATIC FUNCTION SetDlgMode( aTmp, aGet, nMode, oStkAct, oSayPr1, oSayPr2, oSayVp
 
    end if
 
-   aGet[ ( D():SatClientesLineas( nView ) )->( fieldpos( "id_tipo_v" ) ) ]:lValid()
-
    do case
    case nMode == APPD_MODE
 
@@ -4561,17 +4561,15 @@ STATIC FUNCTION SaveDeta( aTmp, aTmpSat, aGet, oDlg2, oBrw, bmpImage, nMode, oSt
       end if
    end if
 
-   /*if aTmp[ _NUNICAJA ] == 0
-      aTmp[ _NUNICAJA ] := 1
-   end if */
-
    // Recno--------------------------------------------------------------------
 
    aTmp[ _CTIPCTR ]     := cTipoCtrCoste
    nRec                 := ( dbfTmpLin )->( RecNo() )
-   aClo                 := aClone( aTmp )
 
    aTmp[ _NREQ ]        := nPReq( dbfIva, aTmp[ _NIVA ] )
+   aTmp[ ( D():SatClientesLineas( nView ) )->( fieldpos( "id_tipo_v" ) ) ]    := TiposVentasController():Instance():getIdFromEditControl()
+
+   aClo                 := aClone( aTmp )
 
    // Situaciones atipicas-----------------------------------------------------
 
@@ -4582,10 +4580,6 @@ STATIC FUNCTION SaveDeta( aTmp, aTmpSat, aGet, oDlg2, oBrw, bmpImage, nMode, oSt
       if aTmp[ _LLOTE ]
          saveLoteActual( aTmp[ _CREF ], aTmp[ _CLOTE ], nView )   
       end if
-
-      /*if aTmp[ _NCTLSTK ] == 2
-         saveContadorActual( aTmp[ _CREF ], aTmp[ _NCNTACT ], nView )
-      end if*/
 
       // Propiedades ----------------------------------------------------------
 

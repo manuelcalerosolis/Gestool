@@ -20,6 +20,7 @@ CLASS SQLBaseEmpresasModel From SQLBaseModel
    METHOD   getSelectByColumn()
 
    METHOD   getNameFromId( uValue )
+   METHOD   getNameFromCodigo( uValue )
 
    METHOD   checksForValid( cColumnToValid )
 
@@ -193,6 +194,22 @@ METHOD getNameFromId( uValue )
 RETURN ( cName )
 
 //---------------------------------------------------------------------------//
+
+METHOD getNameFromCodigo( uValue )
+
+   local cName       := ""
+   local cSentence   := "SELECT nombre FROM " + ::cTableName + ;
+                           " WHERE empresa = " + toSQLString( cCodEmp() ) + " AND codigo = " + toSQLString( uValue )
+   local aSelect     := ::selectFetchHash( cSentence )
+
+   if !empty( aSelect )
+      cName          := hget( atail( aSelect ), "nombre" )
+   end if 
+
+RETURN ( cName )
+
+//---------------------------------------------------------------------------//
+
 
 METHOD checksForValid( cColumnToValid )
 

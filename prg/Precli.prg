@@ -3771,16 +3771,18 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbf, oBrw, lTotLin, cCodArtEnt, nMode, aTmpP
          PICTURE  cPorDiv ;
          OF       oFld:aDialogs[1]
 
-      REDEFINE GET   aGet[ ( D():PresupuestosClientesLineas( nView ) )->( fieldpos( "id_tipo_v" ) ) ] ;
-         VAR         aTmp[ ( D():PresupuestosClientesLineas( nView ) )->( fieldpos( "id_tipo_v" ) ) ] ;
-         WHEN        ( nMode != ZOOM_MODE .AND. !lTotLin ) ;
-         VALID       ( TiposVentasController():Instance():isValidGet( aGet[ ( D():PresupuestosClientesLineas( nView ) )->( fieldpos( "id_tipo_v" ) ) ] ) ) ;
-         BITMAP      "LUPA" ;
-         ON HELP     ( TiposVentasController():Instance():assignBrowse( aGet[ ( D():PresupuestosClientesLineas( nView ) )->( fieldpos( "id_tipo_v" ) ) ] ) ) ;
-         ID          290 ;
-         IDSAY       292 ;
-         IDTEXT      291 ;
-         OF          oFld:aDialogs[1]
+      /*
+      Tipo de moviminto--------------------------------------------------------
+      */
+
+      TiposVentasController();
+         :Instance();
+         :createEditControl(  {  "idGet"  => 290,;
+                                 "idText" => 291,;
+                                 "idSay"  => 292,;
+                                 "dialog" => oFld:aDialogs[ 1 ],;
+                                 "when"   => {|| ( nMode != ZOOM_MODE .and. !lTotLin ) },;
+                                 "value"  => aTmp[ ( D():SatClientesLineas( nView ) )->( fieldpos( "id_tipo_v" ) ) ] } )
 
       /*
       Tipo de articulo---------------------------------------------------------
@@ -4102,8 +4104,6 @@ STATIC FUNCTION SetDlgMode( aTmp, aGet, nMode, oStkAct, oSayPr1, oSayPr2, oSayVp
       aGet[ _NPREDIV ]:Hide()
       aGet[ _NPREALQ ]:Show()
    end if
-
-   aGet[ ( D():PresupuestosClientesLineas( nView ) )->( fieldpos( "id_tipo_v" ) ) ]:lValid()
 
    do case
    case nMode == APPD_MODE
@@ -4456,11 +4456,13 @@ STATIC FUNCTION SaveDeta( cCodArt, aTmp, aTmpPre, aGet, oDlg2, oBrw, bmpImage, n
 
    // Situaciones atipicas-----------------------------------------------------
 
-   aTmp[ _CTIPCTR ]              := cTipoCtrCoste
-   aClo                          := aClone( aTmp )
    nRec                          := ( dbfTmpLin )->( RecNo() )
 
+   aTmp[ _CTIPCTR ]              := cTipoCtrCoste
    aTmp[ _NREQ ]                 := nPReq( dbfIva, aTmp[ _NIVA ] )
+   aTmp[ ( D():PresupuestosClientesLineas( nView ) )->( fieldpos( "id_tipo_v" ) ) ]   := TiposVentasController():Instance():getIdFromEditControl()
+
+   aClo                          := aClone( aTmp )
 
    if nMode == APPD_MODE
 

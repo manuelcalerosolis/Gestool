@@ -4159,20 +4159,17 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbfFacRecL, oBrw, lTotLin, cCodArtEnt, nMode
          OF       oFld:aDialogs[1]
 
       /*
-      Tipo de moviminto
-      -------------------------------------------------------------------------
+      Tipo de moviminto--------------------------------------------------------
       */
 
-      REDEFINE GET   aGet[ ( D():FacturasRectificativasLineas( nView ) )->( fieldpos( "id_tipo_v" ) ) ] ;
-         VAR         aTmp[ ( D():FacturasRectificativasLineas( nView ) )->( fieldpos( "id_tipo_v" ) ) ] ;
-         WHEN        ( nMode != ZOOM_MODE .and. nMode != MULT_MODE .and. !lTotLin ) ;
-         VALID       ( TiposVentasController():Instance():isValidGet( aGet[ ( D():FacturasRectificativasLineas( nView ) )->( fieldpos( "id_tipo_v" ) ) ] ) ) ;
-         BITMAP      "LUPA" ;
-         ON HELP     ( TiposVentasController():Instance():assignBrowse( aGet[ ( D():FacturasRectificativasLineas( nView ) )->( fieldpos( "id_tipo_v" ) ) ] ) ) ;
-         ID          290 ;
-         IDSAY       292 ;
-         IDTEXT      291 ;
-         OF          oFld:aDialogs[1]
+      TiposVentasController();
+         :Instance();
+         :createEditControl(  {  "idGet"  => 290,;
+                                 "idText" => 291,;
+                                 "idSay"  => 292,;
+                                 "dialog" => oFld:aDialogs[ 1 ],;
+                                 "when"   => {|| ( nMode != ZOOM_MODE .and. !lTotLin ) },;
+                                 "value"  => aTmp[ ( D():AlbaranesClientesLineas( nView ) )->( fieldpos( "id_tipo_v" ) ) ] } )
 
       REDEFINE GET aGet[ _CALMLIN ] VAR aTmp[ _CALMLIN ] ;
          ID       300 ;
@@ -4862,6 +4859,7 @@ STATIC FUNCTION SaveDeta( aTmp, aTmpFac, aGet, oFld, oBrw, oDlg, oSayPr1, oSayPr
    end if
 
    aTmp[ _NREQ ]  := nPReq( dbfIva, aTmp[ _NIVA ] )
+   aTmp[ ( D():FacturasRectificativasLineas( nView ) )->( fieldpos( "id_tipo_v" ) ) ]  := TiposVentasController():Instance():getIdFromEditControl()
 
    if nMode == APPD_MODE
 

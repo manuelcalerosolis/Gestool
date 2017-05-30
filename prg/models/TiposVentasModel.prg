@@ -14,9 +14,10 @@ CLASS TiposVentasModel FROM SQLBaseModel
 
    METHOD   New()
 
-   METHOD   arrayTiposVentas()
+   METHOD   getCodigoFromId( id )
+   METHOD   getIdFromCodigo( codigo )
 
-   METHOD   arrayNombres()
+   METHOD   arrayTiposVentas()
 
 END CLASS
 
@@ -42,12 +43,31 @@ RETURN ( Self )
 
 //---------------------------------------------------------------------------//
 
-METHOD arrayNombres()
+METHOD getCodigoFromId( id )
 
-   local cSentence               := "SELECT nombre FROM " + ::cTableName
-   local aResult                 := ::selectFetchArray( cSentence ) 
+   local cCodigo                 := space( 2 )
+   local cSentence               := "SELECT codigo FROM " + ::cTableName + " WHERE id = " + toSQLString( id )
+   local aSelect                 := ::selectFetchHash( cSentence ) 
 
-RETURN ( aResult )
+   if !empty( aSelect )
+      cCodigo                    := padr( hget( atail( aSelect ), "codigo" ), 2 )
+   end if 
+
+RETURN ( cCodigo )
+
+//---------------------------------------------------------------------------//
+
+METHOD getIdFromCodigo( codigo )
+
+   local id                      := 0
+   local cSentence               := "SELECT id FROM " + ::cTableName + " WHERE codigo = " + toSQLString( codigo )
+   local aSelect                 := ::selectFetchHash( cSentence ) 
+
+   if !empty( aSelect )
+      id                         := hget( atail( aSelect ), "id" )
+   end if 
+
+RETURN ( id )
 
 //---------------------------------------------------------------------------//
 

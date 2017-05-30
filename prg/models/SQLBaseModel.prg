@@ -61,7 +61,9 @@ CLASS SQLBaseModel
    METHOD   setFind( cFind )                       INLINE   ( ::cFind := cFind )
    METHOD   find( cFind )
 
-   METHOD   exist( cValue )
+   METHOD   existId( id )
+   METHOD   existCodigo( codigo )
+
    METHOD   getName()                              INLINE   ( "" )
 
    METHOD   getBuffer( cColumn )                   INLINE   ( hget( ::hBuffer, cColumn ) )
@@ -85,6 +87,7 @@ CLASS SQLBaseModel
    METHOD   checksForValid()
 
    METHOD   getNameFromId( uValue )
+   METHOD   getNameFromCodigo( uValue )
 
 END CLASS
 
@@ -520,9 +523,31 @@ RETURN ( cName )
 
 //---------------------------------------------------------------------------//
 
-METHOD exist( cValue )
+METHOD getNameFromCodigo( uValue )
 
-   local cSentence               := "SELECT " + ::cColumnKey + " FROM " + ::cTableName + " WHERE id = " + toSQLString( cValue )
+   local cName                   := ""
+   local cSentence               := "SELECT nombre FROM " + ::cTableName + " WHERE codigo = " + toSQLString( uValue )
+   local aSelect                 := ::selectFetchHash( cSentence )
+
+   if !empty( aSelect )
+      cName                      := hget( atail( aSelect ), "nombre" )
+   end if 
+
+RETURN ( cName )
+
+//---------------------------------------------------------------------------//
+
+METHOD existId( id )
+
+   local cSentence               := "SELECT " + ::cColumnKey + " FROM " + ::cTableName + " WHERE id = " + toSQLString( id )
+
+RETURN ( !empty( ::selectFetchArray( cSentence ) ) )
+
+//---------------------------------------------------------------------------//
+
+METHOD existCodigo( codigo )
+
+   local cSentence               := "SELECT codigo FROM " + ::cTableName + " WHERE codigo = " + toSQLString( codigo )
 
 RETURN ( !empty( ::selectFetchArray( cSentence ) ) )
 

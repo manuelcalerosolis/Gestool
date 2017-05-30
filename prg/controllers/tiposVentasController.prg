@@ -6,15 +6,23 @@
 
 CLASS TiposVentasController FROM SQLBaseController
 
+   DATA     oEditControl
+   DATA     cEditControl 
+
    METHOD   New()
 
    METHOD   buildSQLModel( this )         INLINE ( TiposVentasModel():New( this ) )
    
    METHOD   buildSQLView( this )				INLINE ( TiposVentas():New( this ) )
   
-   METHOD   getFieldFromBrowse()          INLINE ( ::getRowSet():fieldGet( "id" ) )
+   METHOD   getFieldFromBrowse()          INLINE ( ::getRowSet():fieldGet( "codigo" ) )
  
    METHOD   validDialog( oDlg, oGetCodigo, oGetNombre )
+
+   METHOD   createEditControl( hControl )
+
+   METHOD   validEditControl()            INLINE ( if( !empty( ::oEditControl ), ::oEditControl:lValid(), ) )
+   METHOD   getIdFromEditControl()        INLINE ( if( !hb_isnil( ::cEditControl ), ::getIdFromCodigo( ::cEditControl ), ) )
 
 END CLASS
 
@@ -70,3 +78,46 @@ RETURN ( oDlg:end( IDOK ) )
 
 //---------------------------------------------------------------------------//
 
+METHOD createEditControl( hControl )
+
+   if !hhaskey( hControl, "idGet" )
+      RETURN ( Self )
+   end if 
+
+   if !hhaskey( hControl, "idSay" )
+      RETURN ( Self )
+   end if 
+
+   if !hhaskey( hControl, "idText" )
+      RETURN ( Self )
+   end if 
+
+   if !hhaskey( hControl, "dialog" )
+      RETURN ( Self )
+   end if 
+
+   if !hhaskey( hControl, "value" )
+      RETURN ( Self )
+   end if 
+
+   if !hhaskey( hControl, "when" )
+      RETURN ( Self )
+   end if 
+
+   ::cEditControl := ::oModel:getCodigoFromId( hGet( hControl, "value" ) ) 
+
+   REDEFINE GET   ::oEditControl ;
+      VAR         ::cEditControl ;
+      BITMAP      "Lupa" ;
+      ID          ( hGet( hControl, "idGet" ) ) ;
+      IDSAY       ( hGet( hControl, "idSay" ) ) ;
+      IDTEXT      ( hGet( hControl, "idText" ) ) ;
+      OF          ( hGet( hControl, "dialog" ) )
+
+   ::oEditControl:bWhen    := hGet( hControl, "when" ) 
+   ::oEditControl:bHelp    := {|| ::assignBrowse( ::oEditControl ) }
+   ::oEditControl:bValid   := {|| ::isValidCodigo( ::oEditControl ) }
+
+RETURN ( Self )
+
+//---------------------------------------------------------------------------//
