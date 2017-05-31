@@ -103,7 +103,6 @@ InfPro.prg              \
 InfRut.prg              \
 InfTar.prg              \
 InfTipIva.prg           \
-InfTvta.prg             \
 InfUbi.prg              \
 Infart.prg              \
 Infcli.prg              \
@@ -117,7 +116,6 @@ Linklist.prg            \
 ListRem.prg             \
 ListUsr.prg             \
 Litem.prg               \
-Lqdalm.prg              \
 Maquina.prg             \
 Medicon.prg             \
 Movilges.prg            \
@@ -189,7 +187,6 @@ Tbuscar.prg             \
 Tcajon.prg              \
 Tchgcode.prg            \
 Tchgtar.prg             \
-Tclidifa.prg            \
 Tcomvta.prg             \
 TdAgeAlb.prg            \
 Tdbarray.prg            \
@@ -1138,7 +1135,6 @@ InfPro.obj              \
 InfRut.obj              \
 InfTar.obj              \
 InfTipIva.obj           \
-InfTvta.obj             \
 InfUbi.obj              \
 Infart.obj              \
 Infcli.obj              \
@@ -1152,7 +1148,6 @@ Linklist.obj            \
 ListRem.obj             \
 ListUsr.obj             \
 Litem.obj               \
-Lqdalm.obj              \
 Maquina.obj             \
 Medicon.obj             \
 Metafi32.obj            \
@@ -1226,7 +1221,6 @@ Tbuscar.obj             \
 Tcajon.obj              \
 Tchgcode.obj            \
 Tchgtar.obj             \
-Tclidifa.obj            \
 Tcomvta.obj             \
 TdAgeAlb.obj            \
 Tdbarray.obj            \
@@ -2185,7 +2179,6 @@ $(OBJ)\InfPro.obj               +
 $(OBJ)\InfRut.obj               +
 $(OBJ)\InfTar.obj               +
 $(OBJ)\InfTipIva.obj            +
-$(OBJ)\InfTvta.obj              +
 $(OBJ)\InfUbi.obj               +
 $(OBJ)\Infart.obj               +
 $(OBJ)\Infcli.obj               +
@@ -2199,7 +2192,6 @@ $(OBJ)\Linklist.obj             +
 $(OBJ)\ListRem.obj              +
 $(OBJ)\ListUsr.obj              +
 $(OBJ)\Litem.obj                +
-$(OBJ)\Lqdalm.obj               +
 $(OBJ)\Maquina.obj              +
 $(OBJ)\Medicon.obj              +
 $(OBJ)\Metafi32.obj             +
@@ -2273,7 +2265,6 @@ $(OBJ)\Tbuscar.obj              +
 $(OBJ)\Tcajon.obj               +
 $(OBJ)\Tchgcode.obj             +
 $(OBJ)\Tchgtar.obj              +
-$(OBJ)\Tclidifa.obj             +
 $(OBJ)\Tcomvta.obj              +
 $(OBJ)\TdAgeAlb.obj             +
 $(OBJ)\Tdbarray.obj             +

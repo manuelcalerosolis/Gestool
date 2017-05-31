@@ -18,7 +18,6 @@ CLASS TdAgeVta FROM TInfPAge
    DATA  oFacRecL    AS OBJECT
    DATA  oAntCliT    AS OBJECT
    DATA  oDbfIva     AS OBJECT
-   DATA  oDbfTvta    AS OBJECT
    DATA  oOrdenado   AS OBJECT
    DATA  cOrdenado   AS CHARACTER     INIT  "Fechas"
    DATA  aOrdenado   AS ARRAY    INIT  { "Clientes", "Fechas", "Documento" }
@@ -93,8 +92,6 @@ METHOD OpenFiles()
 
    DATABASE NEW ::oAntCliT  PATH ( cPatEmp() ) FILE "ANTCLIT.DBF" VIA ( cDriver() ) SHARED INDEX "ANTCLIT.CDX"
 
-   DATABASE NEW ::oDbfTvta  PATH ( cPatDat() ) FILE "TVTA.DBF" VIA ( cDriver() ) SHARED INDEX "TVTA.CDX"
-
    DATABASE NEW ::oDbfIva PATH ( cPatDat () ) FILE "TIVA.DBF" VIA ( cDriver() ) SHARED INDEX "TIVA.CDX"
 
    RECOVER
@@ -144,9 +141,6 @@ METHOD CloseFiles()
    if !Empty( ::oDbfIva ) .and. ::oDbfIva:Used()
       ::oDbfIva:End()
    end if
-   if !Empty( ::oDbfTvta ) .and. ::oDbfTvta:Used()
-      ::oDbfTvta:End()
-   end if
    if !Empty ( ::oAntCliT ) .and. ::oAntCliT:Used()
       ::oAntCliT:End()
    end if
@@ -160,7 +154,6 @@ METHOD CloseFiles()
    ::oAlbCliT := nil
    ::oAlbCliL := nil
    ::oDbfIva  := nil
-   ::oDbfTvta := nil
 
 RETURN ( Self )
 

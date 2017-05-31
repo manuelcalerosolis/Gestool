@@ -11,7 +11,6 @@ CLASS TICtaPrv FROM TInfGen
    DATA  oFacPrvT    AS OBJECT
    DATA  oFacPrvL    AS OBJECT
    DATA  oFacPrvP    AS OBJECT
-   DATA  oDbfTvta    AS OBJECT
    DATA  oDbfIva     AS OBJECT
    DATA  oFacPrvP    AS OBJECT
 
@@ -65,8 +64,6 @@ METHOD OpenFiles()
 
    DATABASE NEW ::oFacPrvP PATH ( cPatEmp() ) FILE  "FacPrvP.DBF" VIA ( cDriver() ) SHARED INDEX "FacPrvP.CDX"
 
-   DATABASE NEW ::oDbfTvta  PATH ( cPatDat() ) FILE "TVTA.DBF" VIA ( cDriver() ) SHARED INDEX "TVTA.CDX"
-
    DATABASE NEW ::oDbfIva  PATH ( cPatDat() ) FILE  "TIVA.DBF" VIA ( cDriver() ) SHARED INDEX "TIVA.CDX"
 
    RECOVER
@@ -94,9 +91,6 @@ METHOD CloseFiles()
    if !Empty( ::oFacPrvP ) .and. ::oFacPrvP:Used()
       ::oFacPrvP:End()
    end if
-   if !Empty( ::oDbfTvta ) .and. ::oDbfTvta:Used()
-      ::oDbfTvta:End()
-   end if
    if !Empty( ::oDbfIva ) .and. ::oDbfIva:Used()
       ::oDbfIva:End()
    end if
@@ -104,7 +98,6 @@ METHOD CloseFiles()
    ::oFacPrvT := nil
    ::oFacPrvL := nil
    ::oFacPrvP := nil
-   ::oDbfTvta := nil
    ::oDbfIva  := nil
 
 RETURN ( Self )

@@ -11,7 +11,6 @@ CLASS TdAgeTik FROM TInfGen
    DATA  lExcCero    AS LOGIC    INIT .f.
    DATA  oTikCliT    AS OBJECT
    DATA  oTikCliL    AS OBJECT
-   DATA  oDbfTvta    AS OBJECT
    DATA  oDbfIva     AS OBJECT
    DATA  oOrdenado   AS OBJECT
    DATA  cOrdenado   AS CHARACTER     INIT  "Fechas"
@@ -69,8 +68,6 @@ METHOD OpenFiles() CLASS TdAgeTik
 
    DATABASE NEW ::oDbfCli   PATH ( cPatCli() ) FILE "CLIENT.DBF"  VIA ( cDriver() ) SHARED INDEX "CLIENT.CDX"
 
-   DATABASE NEW ::oDbfTvta  PATH ( cPatDat() ) FILE "TVTA.DBF"    VIA ( cDriver() ) SHARED INDEX "TVTA.CDX"
-
    DATABASE NEW ::oDbfIva   PATH ( cPatDat() ) FILE "TIVA.DBF"    VIA ( cDriver() ) SHARED INDEX "TIVA.CDX"
 
    RECOVER
@@ -95,9 +92,6 @@ METHOD CloseFiles() CLASS TdAgeTik
    if !Empty( ::oTikCliL ) .and. ::oTikCliL:Used()
       ::oTikCliL:End()
    end if
-   if !Empty( ::oDbfTvta ) .and. ::oDbfTvta:Used()
-      ::oDbfTvta:End()
-   end if
    if !Empty( ::oDbfCli ) .and. ::oDbfCli:Used()
       ::oDbfCli:End()
    end if
@@ -107,7 +101,6 @@ METHOD CloseFiles() CLASS TdAgeTik
 
    ::oTikCliT := nil
    ::oTikCliL := nil
-   ::oDbfTvta := nil
    ::oDbfCli  := nil
    ::oDbfIva  := nil
 

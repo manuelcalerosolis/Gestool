@@ -92,7 +92,6 @@ TTemplatesHTML.prg                                 	\
 Tiva.prg                                           	\
 Fpago.prg                                          	\
 Pedprov.prg                                        	\
-Lqdalm.prg                                         	\
 Pedcli.prg                                         	\
 Precli.prg                                         	\
 Satcli.prg                                         	\
@@ -311,7 +310,6 @@ InfTipIva.prg           										\
 InfDiv.prg              										\
 InfFpg.prg              										\
 InfCaj.prg              										\
-InfTvta.prg             										\
 TInfChgCBr.prg          										\
 InfPrePrv.prg           										\
 IMovAlm.prg             										\
@@ -569,7 +567,6 @@ TTemplatesHTML.obj                                 	\
 Tiva.obj                                           	\
 Fpago.obj                                          	\
 Pedprov.obj                                        	\
-Lqdalm.obj                                         	\
 Pedcli.obj                                         	\
 Precli.obj                                         	\
 Satcli.obj 					                           	\
@@ -709,7 +706,6 @@ Ctarem.obj              										\
 Tmasdet.obj             										\
 Tsysdata.obj            										\
 Newimp.obj              										\
-Tclidifa.obj            										\
 Tcajon.obj              										\
 Impfactu.obj            										\
 Impfaccom.obj           										\
@@ -806,7 +802,6 @@ InfTipIva.obj           										\
 InfDiv.obj              										\
 InfFpg.obj              										\
 InfCaj.obj              										\
-InfTvta.obj             										\
 TInfChgCBr.obj          										\
 InfPrePrv.obj           										\
 IMovAlm.obj             										\
@@ -1075,7 +1070,6 @@ $(OBJ)\TTemplatesHTML.obj                                   +
 $(OBJ)\Tiva.obj                                             +
 $(OBJ)\Fpago.obj                                            +
 $(OBJ)\Pedprov.obj                                          +
-$(OBJ)\Lqdalm.obj                                           +
 $(OBJ)\Pedcli.obj                                           +
 $(OBJ)\Precli.obj                                           +
 $(OBJ)\Satcli.obj                                           +
@@ -1288,7 +1282,6 @@ $(OBJ)\InfTipIva.obj            		+
 $(OBJ)\InfDiv.obj               		+
 $(OBJ)\InfFpg.obj               		+
 $(OBJ)\InfCaj.obj               		+
-$(OBJ)\InfTvta.obj              		+
 $(OBJ)\TInfChgCBr.obj           		+
 $(OBJ)\InfPrePrv.obj            		+
 $(OBJ)\IMovAlm.obj              		+

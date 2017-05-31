@@ -16,7 +16,6 @@ CLASS TddAgeFac FROM TInfGen
    DATA  oFacRecL    AS OBJECT
    DATA  oFacCliP    AS OBJECT
    DATA  oAntCliT    AS OBJECT
-   DATA  oDbfTvta    AS OBJECT
    DATA  oDbfIva     AS OBJECT
    DATA  oOrdenado   AS OBJECT
    DATA  cOrdenado   AS CHARACTER     INIT  "Fechas"
@@ -91,8 +90,6 @@ METHOD OpenFiles() CLASS TddAgeFac
 
    DATABASE NEW ::oDbfCli   PATH ( cPatCli() ) FILE "CLIENT.DBF"  VIA ( cDriver() ) SHARED INDEX "CLIENT.CDX"
 
-   DATABASE NEW ::oDbfTvta  PATH ( cPatDat() ) FILE "TVTA.DBF"    VIA ( cDriver() ) SHARED INDEX "TVTA.CDX"
-
    DATABASE NEW ::oDbfIva  PATH ( cPatDat () ) FILE "TIVA.DBF"    VIA ( cDriver() ) SHARED INDEX "TIVA.CDX"
 
    RECOVER
@@ -127,9 +124,6 @@ METHOD CloseFiles() CLASS TddAgeFac
        if !Empty( ::oFacCliP ) .and. ::oFacCliP:Used()
       ::oFacCliP:End()
    end if
-   if !Empty( ::oDbfTvta ) .and. ::oDbfTvta:Used()
-      ::oDbfTvta:End()
-   end if
    if !Empty( ::oDbfCli ) .and. ::oDbfCli:Used()
       ::oDbfCli:End()
    end if
@@ -140,14 +134,12 @@ METHOD CloseFiles() CLASS TddAgeFac
       ::oAntCliT:End()
    end if
 
-
    ::oFacCliT := nil
    ::oFacCliL := nil
    ::oFacRecT := nil
    ::oFacRecL := nil
    ::oFacCliP := nil
    ::oAntCliT := nil
-   ::oDbfTvta := nil
    ::oDbfCli  := nil
    ::oDbfIva  := nil
 

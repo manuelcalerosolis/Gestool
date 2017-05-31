@@ -87,8 +87,6 @@ METHOD OpenFiles() CLASS TdlAgeFac
 
    DATABASE NEW ::oDbfCli   PATH ( cPatCli() ) FILE "CLIENT.DBF"  VIA ( cDriver() ) SHARED INDEX "CLIENT.CDX"
 
-   DATABASE NEW ::oDbfTvta  PATH ( cPatDat() ) FILE "TVTA.DBF"    VIA ( cDriver() ) SHARED INDEX "TVTA.CDX"
-
    RECOVER
 
       msgStop( "Imposible abrir todas las bases de datos" )
@@ -111,16 +109,12 @@ METHOD CloseFiles() CLASS TdlAgeFac
    if !Empty( ::oTpvCliL )
       ::oTpvCliL:End()
    end if
-   if !Empty( ::oDbfTvta )
-      ::oDbfTvta:End()
-   end if
    if !Empty( ::oDbfCli )
       ::oDbfCli:End()
    end if
 
    ::oTpvCliT := Nil
    ::oTpvCliL := Nil
-   ::oDbfTvta := Nil
    ::oDbfCli  := Nil
 
 RETURN ( Self )

@@ -14,7 +14,6 @@ CLASS TdAgePed FROM TInfGen
    DATA  aEstado     AS ARRAY       INIT  { "Pendiente", "Parcilamente", "Entregado", "Todos" }
    DATA  oPedCliT    AS OBJECT
    DATA  oPedCliL    AS OBJECT
-   DATA  oDbfTvta    AS OBJECT
    DATA  oDbfIva     AS OBJECT
    DATA  lTvta       AS LOGIC       INIT .f.
    DATA  cTipVen     AS CHARACTER
@@ -80,8 +79,6 @@ METHOD OpenFiles() CLASS TdAgePed
 
    DATABASE NEW ::oDbfCli   PATH ( cPatCli() ) FILE "CLIENT.DBF"  VIA ( cDriver() ) SHARED INDEX "CLIENT.CDX"
 
-   DATABASE NEW ::oDbfTvta  PATH ( cPatDat() ) FILE "TVTA.DBF"    VIA ( cDriver() ) SHARED INDEX "TVTA.CDX"
-
    DATABASE NEW ::oDbfIva  PATH ( cPatDat () ) FILE "TIVA.DBF"    VIA ( cDriver() ) SHARED INDEX "TIVA.CDX"
 
    RECOVER
@@ -106,9 +103,6 @@ METHOD CloseFiles() CLASS TdAgePed
    if !Empty( ::oPedCliL ) .and. ::oPedCliL:Used()
       ::oPedCliL:End()
    end if
-   if !Empty( ::oDbfTvta ) .and. ::oDbfTvta:Used()
-      ::oDbfTvta:End()
-   end if
    if !Empty( ::oDbfCli ) .and. ::oDbfCli:Used()
       ::oDbfCli:End()
    end if
@@ -118,7 +112,6 @@ METHOD CloseFiles() CLASS TdAgePed
 
    ::oPedCliT := nil
    ::oPedCliL := nil
-   ::oDbfTvta := nil
    ::oDbfCli  := nil
    ::oDbfIva  := nil
 

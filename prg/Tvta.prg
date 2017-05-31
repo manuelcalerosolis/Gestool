@@ -157,17 +157,6 @@ FUNCTION TVta( oMenuItem, oWnd )
          HOTKEY   "E";
          LEVEL    ACC_DELE
 
-#ifndef __TACTIL__
-
-      DEFINE BTNSHELL RESOURCE "IMP" OF oWndBrw ;
-			NOBORDER ;
-         ACTION   ( InfTVta():New( "Listado de tipos de movimiento" ):Play() ) ;
-         TOOLTIP  "(L)istado" ;
-         HOTKEY   "L";
-         LEVEL    ACC_ZOOM
-
-#endif
-
       DEFINE BTNSHELL RESOURCE "END" GROUP OF oWndBrw ;
 			NOBORDER ;
 			ACTION ( oWndBrw:End() ) ;

@@ -52,7 +52,6 @@ CLASS TDAgeTpv FROM TInfGen
    DATA  oTpvCliT    AS OBJECT
    DATA  oTpvCliL    AS OBJECT
    DATA  oTpvCliP    AS OBJECT
-   DATA  oDbfTvta    AS OBJECT
    DATA  oIva        AS OBJECT
    DATA  oSay        AS OBJECT
    DATA  lTvta       AS LOGIC    INIT .f.
@@ -95,8 +94,6 @@ METHOD OpenFiles() CLASS TDAgeTpv
 
    DATABASE NEW ::oDbfCli   PATH ( cPatCli() ) FILE "CLIENT.DBF" VIA ( cDriver() ) SHARED INDEX "CLIENT.CDX"
 
-   DATABASE NEW ::oDbfTvta  PATH ( cPatDat() ) FILE "TVTA.DBF"   VIA ( cDriver() ) SHARED INDEX "TVTA.CDX"
-
    DATABASE NEW ::oIva      PATH ( cPatDat() ) FILE "TIVA.DBF"   VIA ( cDriver() ) SHARED INDEX "TIVA.CDX"
 
    RECOVER USING oError
@@ -124,15 +121,11 @@ METHOD CloseFiles() CLASS TDAgeTpv
       ::oTpvCliL:End()
    end if
 
-   if !Empty( ::oDbfTvta ) .and. ::oDbfTvta:Used()
-      ::oDbfTvta:End()
-   end if
-
-  if !Empty( ::oDbfCli ) .and. ::oDbfCli:Used()
+   if !Empty( ::oDbfCli ) .and. ::oDbfCli:Used()
       ::oDbfCli:End()
    end if
 
-  if !Empty( ::oIva ) .and. ::oIva:Used()
+   if !Empty( ::oIva ) .and. ::oIva:Used()
       ::oIva:End()
    end if
 

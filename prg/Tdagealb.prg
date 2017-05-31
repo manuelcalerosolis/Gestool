@@ -14,7 +14,6 @@ CLASS TdAgeAlb FROM TInfGen
    DATA  aEstado     AS ARRAY          INIT { "No facturados", "Facturados", "Todos" }
    DATA  oAlbCliT    AS OBJECT
    DATA  oAlbCliL    AS OBJECT
-   DATA  oDbfTvta    AS OBJECT
    DATA  oDbfIva     AS OBJECT
    DATA  lTvta       AS LOGIC          INIT .f.
    DATA  oOrdenado   AS OBJECT
@@ -84,8 +83,6 @@ METHOD OpenFiles() CLASS TdAgeAlb
 
    DATABASE NEW ::oDbfCli   PATH ( cPatCli() ) FILE "CLIENT.DBF"  VIA ( cDriver() ) SHARED INDEX "CLIENT.CDX"
 
-   DATABASE NEW ::oDbfTvta  PATH ( cPatDat() ) FILE "TVTA.DBF"    VIA ( cDriver() ) SHARED INDEX "TVTA.CDX"
-
    DATABASE NEW ::oDbfIva  PATH ( cPatDat () ) FILE "TIVA.DBF"    VIA ( cDriver() ) SHARED INDEX "TIVA.CDX"
 
    RECOVER USING oError
@@ -111,10 +108,6 @@ METHOD CloseFiles() CLASS TdAgeAlb
 
    if !Empty( ::oAlbCliL ) .and. ::oAlbCliL:Used()
       ::oAlbCliL:End()
-   end if
-
-   if !Empty( ::oDbfTvta ) .and. ::oDbfTvta:Used()
-      ::oDbfTvta:End()
    end if
 
   if !Empty( ::oDbfCli ) .and. ::oDbfCli:Used()
