@@ -1446,7 +1446,7 @@ Return ( nil )
 
 //---------------------------------------------------------------------------//
 
-FUNCTION imprimeFacturaCliente( cNumeroFactura, cFormatoDocumento )
+FUNCTION imprimeFacturaCliente( cNumeroFactura, cFormatoDocumento, nViewpasado )
 
    local nLevel         := nLevelUsr( _MENUITEM_ )
 
@@ -1455,14 +1455,7 @@ FUNCTION imprimeFacturaCliente( cNumeroFactura, cFormatoDocumento )
       return .t.
    end if
 
-   msgalert( nView, "imprimeFacturaCliente 1458" )
-
-   if OpenFiles()
-
-      msgDbfInfo( ( D():FacturasClientes( nView ) ), "dbinfo" )
-
-      ( D():FacturasClientes( nView ) )->( ordsetfocus( "nNumFac" ) )
-      ( D():FacturasClientes( nView ) )->( browse() )
+   if OpenFiles( nViewpasado )
 
       if dbSeekInOrd( cNumeroFactura, "nNumFac", D():FacturasClientes( nView ) )
 
@@ -1546,9 +1539,7 @@ STATIC FUNCTION OpenFiles()
       Apertura de bases de datos de facturas de clientes-------------------------
       */
 
-      nView             := D():CreateView()
-
-      msgalert( nView, "nueva vista creada")
+      nView    := D():CreateView()
 
       D():FacturasClientes( nView )
 

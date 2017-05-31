@@ -24,8 +24,7 @@ CLASS InvoiceCustomer FROM DocumentsSales
 
    METHOD onPostSaveAppend()              INLINE ( generatePagosFacturaCliente( ::getId(), ::nView ),;
                                                    checkPagosFacturaCliente( ::getId(), ::nView ),;
-                                                   ::ActualizaUltimoLote(),;
-                                                   ::isPrintDocument() )
+                                                   ::ActualizaUltimoLote() )
 
    METHOD onPostSaveEdit()                INLINE ( generatePagosFacturaCliente( ::getId(), ::nView ),;
                                                    checkPagosFacturaCliente( ::getId(), ::nView ) )

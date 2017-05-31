@@ -153,10 +153,6 @@ METHOD Append() CLASS Editable
       lAppend     := ::saveAppend()
    end if
 
-   ::refreshBrowse()
-
-   msgalert( "antes del onPreEnd" )
-
    ::onPreEnd()
 
 Return ( lAppend )

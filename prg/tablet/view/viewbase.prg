@@ -150,7 +150,7 @@ METHOD defineSalir() CLASS ViewBase
                                                    "nWidth"    => 64,;
                                                    "nHeight"   => 64,;
                                                    "cResName"  => "gc_door_open_64",;
-                                                   "bLClicked" => {|| ::oDlg:End() },;
+                                                   "bLClicked" => {|| if ( !Empty( ::oDlg ), ::oDlg:End(), ) },;
                                                    "oWnd"      => ::oDlg } )
 
 Return ( self )
