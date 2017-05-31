@@ -271,7 +271,7 @@ METHOD getUpdateSentence()
 
   local cSQLUpdate  := "UPDATE " + ::cTableName + " SET "
 
-  hEval( ::hBuffer, {| k, v | if ( k != ::cColumnKey, if ( empty( v ), cSQLUpdate += k + " = null, ", cSQLUpdate += k + " = " + toSQLString( v ) + ", "), ) } )
+  hEval( ::hBuffer, {| k, v | if ( k != ::cColumnKey, cSQLUpdate += k + " = " + toSQLString( v ) + ", ", ) } )
 
   cSQLUpdate        := ChgAtEnd( cSQLUpdate, '', 2 )
 
@@ -627,7 +627,7 @@ RETURN ( !empty( ::selectFetchArray( cSentence ) ) )
 
 //---------------------------------------------------------------------------//
 
-METHOD existCodigo( codigo )
+METHOD existCodigo( cValue )
 
    local cSentence               := "SELECT " + ::cColumnKey + " FROM " + ::cTableName + " WHERE " + ::cColumnCode + " = " + toSQLString( cValue )
 

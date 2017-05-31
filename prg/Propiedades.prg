@@ -52,39 +52,37 @@ METHOD Dialog()
       WHEN     	( !::oController:isZoomMode() ) ;
       OF       	oDlg
 
-msgalert( hb_valtoexp( ::oController:oPropiedadesLineasController:oModel ) ,"propiedades lineas")      
-
-   oControlBrw 	:= ::oController:oPropiedadesLineasController:showBrowseInDialog( 120, oDlg )
+   oControlBrw 	:= ::oController:oPropiedadesLineasController:oView:buildSQLNuclearBrowse( 120, oDlg )
 
    REDEFINE BUTTON;
       ID       	500 ;
       OF       	oDlg ;
       WHEN     	( !::oController:isZoomMode() ) ;
-      ACTION   	( ::oController:oPropiedadesLineasController:Append( ::oController:oPropiedadesLineasController:oView:oBrowse ) )
+      ACTION   	( ::oController:oPropiedadesLineasController:Append() )
 
    REDEFINE BUTTON;
       ID       	501 ;
       OF       	oDlg ;
       WHEN     	( !::oController:isZoomMode() ) ;
-      ACTION   	( ::oController:oPropiedadesLineasController:Edit( ::oController:oPropiedadesLineasController:oView:oBrowse ) )
+      ACTION   	( ::oController:oPropiedadesLineasController:Edit() )
 
    REDEFINE BUTTON;
       ID       	502 ;
       OF       	oDlg ;
       WHEN     	( !::oController:isZoomMode() ) ;
-      ACTION   	( ::oController:oPropiedadesLineasController:Delete( ::oController:oPropiedadesLineasController:oView:oBrowse ) )
+      ACTION   	( ::oController:oPropiedadesLineasController:Delete() )
 
    /*REDEFINE BUTTON;
       ID      		503 ;
       OF       	oDlg ;
       WHEN     	( !::oController:isZoomMode() ) ;
-      ACTION   	( UpDet( ::oController:oPropiedadesLineasController:oView:oBrowse ) )
+      ACTION   	( ::oController:oPropiedadesLineasController:UpDet() )
 
    REDEFINE BUTTON;
       ID       	504 ;
       OF       	oDlg ;
       WHEN     	( !::oController:isZoomMode() ) ;
-      ACTION   	( DownDet( ::oController:oPropiedadesLineasController:oView:oBrowse ) )*/
+      ACTION   	( ::oController:oPropiedadesLineasController:DownDet() )*/
 
    REDEFINE BUTTON ;
       ID          IDOK ;

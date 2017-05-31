@@ -51,36 +51,36 @@ CLASS SQLBaseController
    METHOD   setTitle( cTitle )                        INLINE ( ::cTitle := cTitle )
    METHOD   getTitle()                                INLINE ( ::cTitle )
 
-	METHOD   Append( oBrowse )
+	METHOD   Append()
       METHOD setAppendMode()                          INLINE ( ::setMode( __append_mode__ ) )
       METHOD isAppendMode()                           INLINE ( ::nMode == __append_mode__ )
 
-   METHOD   Duplicate( oBrowse )
+   METHOD   Duplicate()
       METHOD setDuplicateMode()                       INLINE ( ::nMode := __duplicate_mode__ )
       METHOD isDuplicateMode()                        INLINE ( ::nMode == __duplicate_mode__ )
       METHOD initDuplicateMode()                      VIRTUAL
 
-   METHOD   Edit( oBrowse )
+   METHOD   Edit()
       METHOD preEdit()                                VIRTUAL
       METHOD postEdit()                               VIRTUAL
       METHOD setEditMode()                            INLINE ( ::nMode := __edit_mode__ )
       METHOD isEditMode()                             INLINE ( ::nMode == __edit_mode__ )
       METHOD initEditMode()                           VIRTUAL
 
-   METHOD   Zoom( oBrowse )
+   METHOD   Zoom()
       METHOD setZoomMode()                            INLINE ( ::nMode := __zoom_mode__ )
       METHOD isZoomMode()                             INLINE ( ::nMode == __zoom_mode__ )
       METHOD initZoomMode()                           VIRTUAL
 
-   METHOD   Delete( oBrowse )
+   METHOD   Delete()
 
-   METHOD   clickOnHeader( oColumn, oBrowse, oCombobox )
+   METHOD   clickOnHeader( oColumn, oCombobox )
 
 	METHOD   getHistory( cWnd )
    METHOD      getHistoryShell()                      
    METHOD      getHistoryBrowse()                     INLINE ( ::getHistory( "_browse" ) )
               
-   METHOD   saveHistory( cHistory, oBrowse )
+   METHOD   saveHistory( cHistory )
 
    METHOD   findGet( oFind )
    METHOD   find( uValue )                            INLINE ( ::oModel:find( uValue ) )
@@ -93,17 +93,15 @@ CLASS SQLBaseController
    METHOD   getIdFromCodigo( codigo )                 INLINE ( if( !empty( ::oModel ), ::oModel:getIdFromCodigo( codigo ), ) )
 
    METHOD 	assignBrowse( oGet, aSelectedItems )
-   METHOD   showBrowseInDialog( id )
-
-	METHOD 	startBrowse( oCombobox, oBrowse )
-	METHOD 	restoreBrowseState( oBrowse )
+	METHOD 	startBrowse( oCombobox )
+	METHOD 	restoreBrowseState()
 
    METHOD 	getRowSet()
 
    METHOD   setFastReport( oFastReport, cSentence, cColumns )
 
-   METHOD generateColumnsForBrowse( oBrowse, oCombobox )
-   METHOD   createColumnsForBrowse( oBrowse, oCombobox )
+   METHOD generateColumnsForBrowse( oCombobox )
+   METHOD   createColumnsForBrowse( oCombobox )
 
 END CLASS
 
@@ -138,7 +136,7 @@ METHOD ActivateShell()
 
    ::oView:buildSQLShell()
 
-   ::startBrowse( ::oView:oShell:getCombobox(), ::oView:oShell:getBrowse() )
+   ::startBrowse( ::oView:oShell:getCombobox(), ::oView:getoBrowse() )
 
 RETURN ( Self )
 
@@ -162,34 +160,34 @@ RETURN ( uReturn )
 
 //---------------------------------------------------------------------------//
 
-METHOD startBrowse( oCombobox, oBrowse )
+METHOD startBrowse( oCombobox )
 
    local oColumn
 
-   if empty( oBrowse )
+   if empty( ::oView:getoBrowse() )
       RETURN ( Self )
    end if 
 
-   oCombobox:SetItems( oBrowse:getColumnHeaders() )
+   oCombobox:SetItems( ::oView:getoBrowse():getColumnHeaders() )
 
-   ::restoreBrowseState( oBrowse )
+   ::restoreBrowseState()
 
-   oColumn        := oBrowse:getColumnOrder( ::oModel:cColumnOrder )
+   oColumn        := ::oView:getoBrowse():getColumnOrder( ::oModel:cColumnOrder )
    if empty( oColumn )
       RETURN ( Self )
    end if 
    
    oCombobox:set( oColumn:cHeader )
 
-   oBrowse:selectColumnOrder( oColumn, ::oModel:cOrientation )
+   ::oView:getoBrowse():selectColumnOrder( oColumn, ::oModel:cOrientation )
 
 RETURN ( Self )
 
 //---------------------------------------------------------------------------//
 
-METHOD restoreBrowseState( oBrowse )
+METHOD restoreBrowseState()
 
-   if empty(oBrowse)
+   if empty(::oView:getoBrowse())
       RETURN ( Self )
    end if 
 
@@ -197,7 +195,7 @@ METHOD restoreBrowseState( oBrowse )
       RETURN ( Self )
    end if 
 
-   oBrowse:restoreState( ::oView:getBrowseState() )
+   ::oView:getoBrowse():restoreState( ::oView:getBrowseState() )
 
 RETURN ( Self )
 
@@ -220,16 +218,6 @@ METHOD AssignBrowse( oGet, aSelectedItems )
    end if 
 
 RETURN ( uReturn )
-
-//--------------------------------------------------------------------------//
-
-METHOD showBrowseInDialog( idResource, oDialog)
-
-   local oBrowse
-
-   oBrowse           := ::oView:buildSQLNuclearBrowse( idResource, oDialog )  
-
-RETURN ( oBrowse )
 
 //--------------------------------------------------------------------------//
 
@@ -273,12 +261,12 @@ RETURN ( self )
 
 //----------------------------------------------------------------------------//
 
-METHOD saveHistory( cWnd, oBrowse )
+METHOD saveHistory( cWnd )
 
    local cBrowseState   := "null"
 
-   if !empty( oBrowse ) 
-      cBrowseState      := quoted( oBrowse:saveState() )
+   if !empty( ::oView:getoBrowse() ) 
+      cBrowseState      := quoted( ::oView:getoBrowse():saveState() )
    end if
 
    HistoricosUsuariosModel():New():saveHistory( ::oModel:cTableName + cWnd, cBrowseState, ::oModel:cColumnOrder, ::oModel:cOrientation, ::oModel:getKeyFieldOfRecno() ) 
@@ -287,9 +275,9 @@ Return ( .t. )
 
 //----------------------------------------------------------------------------//
 
-METHOD clickOnHeader( oColumn, oBrowse, oCombobox )
+METHOD clickOnHeader( oColumn, oCombobox )
 
-   oBrowse:selectColumnOrder( oColumn )
+   ::oView:getoBrowse():selectColumnOrder( oColumn )
 
    if !empty( oCombobox )
       oCombobox:set( oColumn:cHeader )
@@ -303,13 +291,13 @@ METHOD clickOnHeader( oColumn, oBrowse, oCombobox )
 
    ::oModel:buildRowSetWithRecno()
 
-   oBrowse:refreshCurrent()
+   ::oView:getoBrowse():refreshCurrent()
 
 RETURN ( self )
 
 //---------------------------------------------------------------------------//
 
-METHOD Append( oBrowse )
+METHOD Append()
 
    local nRecno   
    local lTrigger
@@ -327,8 +315,6 @@ METHOD Append( oBrowse )
          RETURN ( .f. )
       end if
    end if
-
-   ::initAppendMode()
 
    nRecno         := ::oModel:getRowSetRecno()
 
@@ -352,16 +338,16 @@ METHOD Append( oBrowse )
       RETURN ( .f. )
    end if
 
-   if !empty( oBrowse )
-      oBrowse:refreshCurrent()
-      oBrowse:setFocus()
+   if !empty( ::oView:getoBrowse() )
+      ::oView:getoBrowse():refreshCurrent()
+      ::oView:getoBrowse():setFocus()
    end if
 
 RETURN ( .t. )
 
 //----------------------------------------------------------------------------//
 
-METHOD Duplicate( oBrowse )
+METHOD Duplicate()
 
    local nRecno   
 
@@ -382,16 +368,16 @@ METHOD Duplicate( oBrowse )
       ::oModel:setRowSetRecno( nRecno ) 
    end if
 
-   if !empty( oBrowse )
-      oBrowse:refreshCurrent()
-      oBrowse:setFocus()
+   if !empty( ::oView:getoBrowse() )
+      ::oView:getoBrowse():refreshCurrent()
+      ::oView:getoBrowse():setFocus()
    end if
 
 RETURN ( Self )
 
 //----------------------------------------------------------------------------//
 
-METHOD Edit( oBrowse )  
+METHOD Edit()  
 
    if ::notUserEdit()
       msgStop( "Acceso no permitido." )
@@ -414,16 +400,16 @@ METHOD Edit( oBrowse )
 
    end if 
 
-   if !empty( oBrowse )
-      oBrowse:refreshCurrent()
-      oBrowse:setFocus()
+   if !empty( ::oView:getoBrowse() )
+      ::oView:getoBrowse():refreshCurrent()
+      ::oView:getoBrowse():setFocus()
    end if 
 
 RETURN ( .t. )
 
 //----------------------------------------------------------------------------//
 
-METHOD Zoom( oBrowse )
+METHOD Zoom()
 
    if ::notUserZoom()
       msgStop( "Acceso no permitido." )
@@ -436,15 +422,15 @@ METHOD Zoom( oBrowse )
 
    ::oView:Dialog( ::oModel )
 
-   if !empty( oBrowse )
-      oBrowse:setFocus()
+   if !empty( ::oView:getoBrowse() )
+      ::oView:getoBrowse():setFocus()
    end if 
 
 RETURN ( Self )
 
 //----------------------------------------------------------------------------//
 
-METHOD Delete( oBrowse )
+METHOD Delete()
 
    local nSelected      
    local cNumbersOfDeletes
@@ -454,12 +440,12 @@ METHOD Delete( oBrowse )
       RETURN ( Self )
    end if 
 
-   if empty( oBrowse )
+   if empty( ::oView:getoBrowse() )
       msgStop( "Faltan parametros." )
       RETURN ( Self )
    end if 
 
-   nSelected            := len( oBrowse:aSelected )
+   nSelected            := len( ::oView:getoBrowse():aSelected )
 
    if nSelected > 1
       cNumbersOfDeletes := alltrim( str( nSelected, 3 ) ) + " registros?"
@@ -468,11 +454,11 @@ METHOD Delete( oBrowse )
    end if
 
    if oUser():lNotConfirmDelete() .or. msgNoYes( "¿Desea eliminar " + cNumbersOfDeletes, "Confirme eliminación" )
-      ::oModel:deleteSelection( oBrowse:aSelected )
+      ::oModel:deleteSelection( ::oView:getoBrowse():aSelected )
    end if 
 
-   oBrowse:refreshCurrent()
-   oBrowse:setFocus()
+   ::oView:getoBrowse():refreshCurrent()
+   ::oView:getoBrowse():setFocus()
 
 RETURN ( Self )
 
@@ -582,7 +568,7 @@ RETURN ( self )
 
 //---------------------------------------------------------------------------//
 
-METHOD generateColumnsForBrowse( oBrowse, oCombobox )
+METHOD generateColumnsForBrowse( oCombobox )
 
    local hColumnstoBrowse := ::oModel:hColumns
 
@@ -590,21 +576,21 @@ METHOD generateColumnsForBrowse( oBrowse, oCombobox )
       hColumnstoBrowse := hb_HCopy( hColumnstoBrowse, ::oModel:hExtraColumns)
    end if
 
-   hEval( hColumnstoBrowse, { | k, h | if ( h[ "visible" ] , ::createColumnsForBrowse( oBrowse, oCombobox, k, h), ) } )
+   hEval( hColumnstoBrowse, { | k, h | if ( h[ "visible" ] , ::createColumnsForBrowse( oCombobox, k, h), ) } )
 
 RETURN ( self )
 
 //---------------------------------------------------------------------------//
 
 
-METHOD createColumnsForBrowse( oBrowse, oCombobox, k, h )
+METHOD createColumnsForBrowse( oCombobox, k, h )
 
-   with object ( oBrowse:AddCol() )
+   with object ( ::oView:getoBrowse():AddCol() )
       :cHeader             := h[ "header" ]
       :cSortOrder          := k
       :bEditValue          := {|| ::getRowSet():fieldGet( k ) }
       :nWidth              := h[ "width" ]
-      :bLClickHeader       := {| nMRow, nMCol, nFlags, oCol | ::clickOnHeader( oCol, oBrowse, oCombobox ) }
+      :bLClickHeader       := {| nMRow, nMCol, nFlags, oCol | ::clickOnHeader( oCol, oCombobox ) }
    end with
 
 RETURN ( self )

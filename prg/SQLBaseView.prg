@@ -10,6 +10,8 @@ CLASS SQLBaseView
 
    DATA     oController
 
+   DATA     oBrowse
+
    DATA     hTextMode                                 INIT {   __append_mode__      => "Añadiendo ",;
                                                                __edit_mode__        => "Modificando ",;
                                                                __zoom_mode__        => "Visualizando ",;
@@ -25,6 +27,9 @@ CLASS SQLBaseView
 
    METHOD   buildSQLBrowse()
 
+   METHOD   setoBrowse( oBrowse )                     INLINE   ( ::oBrowse := oBrowse )
+   METHOD   getoBrowse()                              INLINE   ( ::oBrowse )
+
    METHOD   buildSQLNuclearBrowse()
    
    METHOD   lblTitle()                                INLINE ( if( hhaskey( ::hTextMode, ::oController:getMode() ), hget( ::hTextMode, ::oController:getMode() ), "" ) )
@@ -38,12 +43,12 @@ CLASS SQLBaseView
    METHOD   setBrowseState( cBrowseState )            INLINE ( ::cBrowseState := cBrowseState )
    METHOD   getBrowseState()                          INLINE ( ::cBrowseState )
 
-   METHOD   changeFind( oFind, oBrowse )
-   METHOD   changeCombo( oBrowse, oCombobox )
+   METHOD   changeFind( oFind )
+   METHOD   changeCombo( oCombobox )
 
-   METHOD   saveHistoryOfShell( oBrowse )             INLINE ( ::oController:saveHistory( "_shell", oBrowse ) )
+   METHOD   saveHistoryOfShell()                      INLINE ( ::oController:saveHistory( "_shell", ::oBrowse ) )
 
-   METHOD   saveHistoryOfBrowse( oBrowse )            INLINE ( ::oController:saveHistory( "_browse", oBrowse ) )                 
+   METHOD   saveHistoryOfBrowse()                     INLINE ( ::oController:saveHistory( "_browse", ::oBrowse ) )                 
 
 END CLASS
 
@@ -67,7 +72,7 @@ METHOD GeneralButtons()
 
    DEFINE BTNSHELL RESOURCE "NEW" OF ::oShell ;
       NOBORDER ;
-      ACTION   ( ::oController:Append( ::oShell:getBrowse() ) );
+      ACTION   ( ::oController:Append() );
       TOOLTIP  "(A)ñadir";
       BEGIN GROUP;
       HOTKEY   "A";
@@ -77,7 +82,7 @@ METHOD GeneralButtons()
 
    DEFINE BTNSHELL RESOURCE "DUP" OF ::oShell ;
       NOBORDER ;
-      ACTION   ( ::oController:Duplicate( ::oShell:getBrowse() ) );
+      ACTION   ( ::oController:Duplicate() );
       TOOLTIP  "(D)uplicar";
       MRU ;
       HOTKEY   "D";
@@ -85,14 +90,14 @@ METHOD GeneralButtons()
 
    DEFINE BTNSHELL RESOURCE "EDIT" OF ::oShell ;
       NOBORDER ;
-      ACTION   ( ::oController:Edit( ::oShell:getBrowse() ) );
+      ACTION   ( ::oController:Edit() );
       TOOLTIP  "(M)odificar";
       HOTKEY   "M" ;
       LEVEL    ACC_EDIT
 
    DEFINE BTNSHELL RESOURCE "ZOOM" OF ::oShell ;
       NOBORDER ;
-      ACTION   ( ::oController:Zoom( ::oShell:getBrowse() ) );
+      ACTION   ( ::oController:Zoom() );
       TOOLTIP  "(Z)oom";
       MRU ;
       HOTKEY   "Z";
@@ -100,7 +105,7 @@ METHOD GeneralButtons()
 
    DEFINE BTNSHELL RESOURCE "DEL" OF ::oShell ;
       NOBORDER ;
-      ACTION   ( ::oController:Delete( ::oShell:getBrowse() ) );
+      ACTION   ( ::oController:Delete() );
       TOOLTIP  "(E)liminar";
       MRU ;
       HOTKEY   "E";
@@ -122,7 +127,7 @@ RETURN ( Self )
 
 //---------------------------------------------------------------------------//
 
-METHOD changeFind( oFind, oBrowse )
+METHOD changeFind( oFind )
 
    local lFind := ::oController:findGet( oFind )
 
@@ -132,17 +137,17 @@ METHOD changeFind( oFind, oBrowse )
       oFind:SetColor( Rgb( 255, 255, 255 ), Rgb( 255, 102, 102 ) )
    end if
 
-   oBrowse:refreshCurrent()
+   ::oBrowse:refreshCurrent()
 
 RETURN ( lFind )
 
 //----------------------------------------------------------------------------//
 
-METHOD changeCombo( oBrowse, oCombobox )
+METHOD changeCombo( oCombobox )
 
    local oColumn  
 
-   if empty( oBrowse )
+   if empty( ::oBrowse )
       RETURN ( Self )
    end if 
 
@@ -150,10 +155,10 @@ METHOD changeCombo( oBrowse, oCombobox )
       RETURN ( Self )
    end if 
 
-   oColumn           := oBrowse:getColumnHeader( oCombobox:VarGet() )
+   oColumn           := ::oBrowse:getColumnHeader( oCombobox:VarGet() )
 
    if !empty( oColumn )
-      ::oController:clickOnHeader( oColumn, oBrowse )
+      ::oController:clickOnHeader( oColumn, oCombobox )
    end if
 
 RETURN ( Self )
@@ -164,22 +169,24 @@ METHOD buildSQLShell()
 
    disableAcceso()
 
-   ::oShell                := SQLTShell():New( 2, 10, 18, 70, ::oController:cTitle, , oWnd(), , , .f., , , ::oController:oModel, , , , , {}, {|| ::oController:Edit( ::oShell:getBrowse() ) },, {|| ::oController:Delete( ::oShell:getBrowse() ) },, nil, ::oController:nLevel, ::cImageName, ( 104 + ( 0 * 256 ) + ( 63 * 65536 ) ),,, .t. )
+   ::oShell                := SQLTShell():New( 2, 10, 18, 70, ::oController:cTitle, , oWnd(), , , .f., , , ::oController:oModel, , , , , {}, {|| ::oController:Edit() },, {|| ::oController:Delete() },, nil, ::oController:nLevel, ::cImageName, ( 104 + ( 0 * 256 ) + ( 63 * 65536 ) ),,, .t. )
 
-      ::oController:generateColumnsForBrowse( ::oShell:getBrowse(), ::oShell:getCombobox() )
+   ::setoBrowse( ::oShell:getBrowse() )
+
+      ::oController:generateColumnsForBrowse( ::oShell:getCombobox() )
 
       ::oShell:createXFromCode()
 
-      ::oShell:setDClickData( {|| ::oController:Edit( ::oShell:getBrowse() ) } )
+      ::oShell:setDClickData( {|| ::oController:Edit() } )
 
       ::AutoButtons()
 
    ACTIVATE WINDOW ::oShell
 
-   ::oShell:bValid         := {|| ::saveHistoryOfShell( ::oShell:getBrowse() ), .t. }
+   ::oShell:bValid         := {|| ::saveHistoryOfShell(), .t. }
    ::oShell:bEnd           := {|| ::oController:destroySQLModel() }
 
-   ::oShell:setComboBoxChange( {|| ::changeCombo( ::oShell:getBrowse(), ::oShell:getCombobox() ) } )
+   ::oShell:setComboBoxChange( {|| ::changeCombo( ::oShell:getCombobox() ) } )
 
    enableAcceso()
 
@@ -190,7 +197,6 @@ Return ( Self )
 METHOD buildSQLBrowse( title )
 
    local oDlg
-   local oBrowse
    local oFind
    local cFind       := space( 200 )
    local oCombobox
@@ -205,7 +211,7 @@ METHOD buildSQLBrowse( title )
          BITMAP      "FIND" ;
          OF          oDlg
 
-      oFind:bChange       := {|| ::changeFind( oFind, oBrowse ) }
+      oFind:bChange       := {|| ::changeFind( oFind ) }
 
       REDEFINE COMBOBOX oCombobox ;
          VAR         cOrder ;
@@ -213,9 +219,9 @@ METHOD buildSQLBrowse( title )
          ITEMS       aOrden ;
          OF          oDlg
 
-      oCombobox:bChange       := {|| ::changeCombo( oBrowse, oCombobox ) }
+      oCombobox:bChange       := {|| ::changeCombo( oCombobox ) }
 
-      oBrowse := ::buildSQLNuclearBrowse( 105 , oDlg, oCombobox )
+      ::buildSQLNuclearBrowse( 105 , oDlg, oCombobox )
 
       REDEFINE BUTTON ;
          ID          IDOK ;
@@ -231,21 +237,21 @@ METHOD buildSQLBrowse( title )
       REDEFINE BUTTON ;
          ID          500 ;
          OF          oDlg ;
-         ACTION      ( ::oController:Append( oBrowse ) )
+         ACTION      ( ::oController:Append() )
 
       REDEFINE BUTTON ;
          ID          501 ;
          OF          oDlg ;
-         ACTION      ( ::oController:Edit( oBrowse ) )
+         ACTION      ( ::oController:Edit() )
 
       oDlg:AddFastKey( VK_RETURN,   {|| oDlg:end( IDOK ) } )
       oDlg:AddFastKey( VK_F5,       {|| oDlg:end( IDOK ) } )
-      oDlg:AddFastKey( VK_F2,       {|| ::oController:Append( oBrowse ) } )
-      oDlg:AddFastKey( VK_F3,       {|| ::oController:Edit( oBrowse ) } )
+      oDlg:AddFastKey( VK_F2,       {|| ::oController:Append() } )
+      oDlg:AddFastKey( VK_F3,       {|| ::oController:Edit() } )
 
-      oDlg:bStart    := {|| ::oController:startBrowse( oCombobox, oBrowse ) }
+      oDlg:bStart    := {|| ::oController:startBrowse( oCombobox ) }
 
-   oDlg:Activate( , , , .t., {|| ::saveHistoryOfBrowse( oBrowse ) } )
+   oDlg:Activate( , , , .t., {|| ::saveHistoryOfBrowse() } )
 
 RETURN ( oDlg:nResult == IDOK )
 
@@ -253,27 +259,23 @@ RETURN ( oDlg:nResult == IDOK )
 
 METHOD buildSQLNuclearBrowse( idResource, oDlg, oCombobox )
 
-   local oBrowse
+   ::setoBrowse( SQLXBrowse():New( oDlg ) )
 
-   oBrowse                 := SQLXBrowse():New( oDlg )
+   ::oBrowse:bClrSel         := {|| { CLR_BLACK, Rgb( 229, 229, 229 ) } }
+   ::oBrowse:bClrSelFocus    := {|| { CLR_BLACK, Rgb( 167, 205, 240 ) } }
 
-   oBrowse:bClrSel         := {|| { CLR_BLACK, Rgb( 229, 229, 229 ) } }
-   oBrowse:bClrSelFocus    := {|| { CLR_BLACK, Rgb( 167, 205, 240 ) } }
+   ::oBrowse:lHScroll        := .f.
+   ::oBrowse:nMarqueeStyle   := 6
 
-   oBrowse:lHScroll        := .f.
-   oBrowse:nMarqueeStyle   := 6
+   ::oBrowse:setModel( ::oController:oModel )
 
-   msgalert( hb_valtoexp( ::oController:oModel:oRowSet ), "rowset buildSQLNuclearBrowse")
+   ::oController:generateColumnsForBrowse( oCombobox )
 
-   oBrowse:setModel( ::oController:oModel )
+   ::oBrowse:bLDblClick      := {|| oDlg:end( IDOK ) }
+   ::oBrowse:bRClicked       := {| nRow, nCol, nFlags | ::oBrowse:RButtonDown( nRow, nCol, nFlags ) }
 
-   ::oController:generateColumnsForBrowse( oBrowse, oCombobox )
+   ::oBrowse:CreateFromResource( idResource )
 
-   oBrowse:bLDblClick      := {|| oDlg:end( IDOK ) }
-   oBrowse:bRClicked       := {| nRow, nCol, nFlags | oBrowse:RButtonDown( nRow, nCol, nFlags ) }
-
-   oBrowse:CreateFromResource( idResource )
-
-RETURN ( oBrowse )
+RETURN ( self )
 
    //---------------------------------------------------------------------------//

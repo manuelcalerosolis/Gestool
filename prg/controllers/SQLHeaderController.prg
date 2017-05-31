@@ -58,15 +58,9 @@ METHOD Append( oBrowse )
       end if
    end if
 
-   msgalert( "antes del init")
-
    ::initAppendMode()
 
-   msgalert( "beginTransaction")
-
    ::beginTransaction()
-
-   msgalert( hb_valtoexp( ::oModel ) ,"propiedades")
 
    nRecno         := ::oModel:getRowSetRecno()
 
