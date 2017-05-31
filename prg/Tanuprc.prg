@@ -11,7 +11,6 @@ CLASS TAnuPre FROM TInfAlm
    DATA  oEstado     AS OBJECT
    DATA  oPreCliT    AS OBJECT
    DATA  oPreCliL    AS OBJECT
-   DATA  oDbfTvta    AS OBJECT
    DATA  aEstado     AS ARRAY    INIT  { "Pendiente", "Aceptado", "Todos" }
 
    METHOD create ()
@@ -61,8 +60,6 @@ METHOD OpenFiles()
 
    DATABASE NEW ::oDbfCli PATH ( cPatCli() ) FILE "CLIENT.DBF" VIA ( cDriver() ) SHARED INDEX "CLIENT.CDX"
 
-   DATABASE NEW ::oDbfTvta  PATH ( cPatDat() ) FILE "TVTA.DBF" VIA ( cDriver() ) SHARED INDEX "TVTA.CDX"
-
    RECOVER USING oError
 
       lOpen := .f.
@@ -82,7 +79,6 @@ METHOD CloseFiles()
 
    ::oPreCliT:End()
    ::oPreCliL:End()
-   ::oDbfTvta:End()
    ::oDbfCli:End()
 
 RETURN ( Self )

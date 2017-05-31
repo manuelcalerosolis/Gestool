@@ -12,7 +12,6 @@ CLASS TAnuGpre FROM TInfGrp
    DATA  oPreCliT    AS OBJECT
    DATA  oPreCliL    AS OBJECT
    DATA  oDbfArt     AS OBJECT
-   DATA  oDbfTvta    AS OBJECT
    DATA  aEstado     AS ARRAY    INIT  { "Pendiente", "Aceptado", "Todos" }
 
    METHOD Create()
@@ -53,8 +52,6 @@ METHOD OpenFiles() CLASS TAnuGpre
 
    DATABASE NEW ::oDbfFam PATH ( cPatArt() ) FILE "FAMILIAS.DBF" VIA ( cDriver() ) SHARED INDEX "FAMILIAS.CDX"
 
-   DATABASE NEW ::oDbfTvta  PATH ( cPatDat() ) FILE "TVTA.DBF" VIA ( cDriver() ) SHARED INDEX "TVTA.CDX"
-
    DATABASE NEW ::oDbfArt PATH ( cPatArt() ) FILE "ARTICULO.DBF" VIA ( cDriver() ) SHARED INDEX "ARTICULO.CDX"
 
    RECOVER
@@ -79,9 +76,6 @@ METHOD CloseFiles() CLASS TAnuGpre
    if !Empty( ::oPreCliL ) .and. ::oPreCliL:Used()
       ::oPreCliL:End()
    end if
-   if !Empty( ::oDbfTvta ) .and. ::oDbfTvta:Used()
-      ::oDbfTvta:End()
-   end if
    if !Empty( ::oDbfArt ) .and. ::oDbfArt:Used()
       ::oDbfArt:End()
    end if
@@ -91,7 +85,6 @@ METHOD CloseFiles() CLASS TAnuGpre
 
    ::oPreCliT := nil
    ::oPreCliL := nil
-   ::oDbfTvta := nil
    ::oDbfArt  := nil
    ::oDbfFam  := nil
 

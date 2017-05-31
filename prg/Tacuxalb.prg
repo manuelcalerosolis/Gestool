@@ -10,7 +10,6 @@ CLASS TAcuXAlb FROM TInfGCli
    DATA  lExcCero    AS LOGIC    INIT .f.
    DATA  oAlbCliT    AS OBJECT
    DATA  oAlbCliL    AS OBJECT
-   DATA  oDbfTvta    AS OBJECT
    DATA  oDbfArt     AS OBJECT
    DATA  oDbfCli     AS OBJECT
 
@@ -49,8 +48,6 @@ METHOD OpenFiles() CLASS TAcuXAlb
 
    DATABASE NEW ::oAlbCliL PATH ( cPatEmp() ) FILE "ALBCLIL.DBF" VIA ( cDriver() ) SHARED INDEX "ALBCLIL.CDX"
 
-   DATABASE NEW ::oDbfTvta PATH ( cPatDat() ) FILE "TVTA.DBF" VIA ( cDriver() ) SHARED INDEX "TVTA.CDX"
-
    DATABASE NEW ::oDbfArt  PATH ( cPatArt() ) FILE "ARTICULO.DBF" VIA ( cDriver() ) SHARED INDEX "ARTICULO.CDX"
 
    DATABASE NEW ::oDbfCli PATH ( cPatCli() ) FILE "CLIENT.DBF" VIA ( cDriver() ) SHARED INDEX "CLIENT.CDX"
@@ -77,9 +74,6 @@ METHOD CloseFiles() CLASS TAcuXAlb
    if !Empty( ::oAlbCliL ) .and. ::oAlbCliL:Used()
       ::oAlbCliL:End()
    end if
-   if !Empty( ::oDbfTvta ) .and. ::oDbfTvta:Used()
-      ::oDbfTvta:End()
-   end if
    if !Empty( ::oDbfArt ) .and. ::oDbfArt:Used()
       ::oDbfArt:End()
    end if
@@ -89,7 +83,6 @@ METHOD CloseFiles() CLASS TAcuXAlb
 
    ::oAlbCliT := nil
    ::oAlbCliL := nil
-   ::oDbfTvta := nil
    ::oDbfArt  := nil
    ::oDbfCli  := nil
 

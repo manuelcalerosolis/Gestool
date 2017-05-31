@@ -12,7 +12,6 @@ CLASS TAnuTik FROM TInfAlm
    DATA  oEstado     AS OBJECT
    DATA  oTikCliT    AS OBJECT
    DATA  oTikCliL    AS OBJECT
-   DATA  oDbfTvta    AS OBJECT
    DATA  aEstado     AS ARRAY    INIT { "" }
 
    METHOD Create()
@@ -65,8 +64,6 @@ METHOD OpenFiles()
 
    DATABASE NEW ::oDbfCli  PATH ( cPatCli() ) FILE "CLIENT.DBF" VIA ( cDriver() ) SHARED INDEX "CLIENT.CDX"
 
-   DATABASE NEW ::oDbfTvta PATH ( cPatDat() ) FILE "TVTA.DBF" VIA ( cDriver() ) SHARED INDEX "TVTA.CDX"
-
    RECOVER USING oError
 
       lOpen := .f.
@@ -90,10 +87,6 @@ METHOD CloseFiles()
 
   if !Empty( ::oTikCliL ) .and. ::oTikCliL:Used()
       ::oTikCliL:End()
-   end if
-
-   if !Empty( ::oDbfTvta ) .and. ::oDbfTvta:Used()
-      ::oDbfTvta:End()
    end if
 
    if !Empty( ::oDbfCli ) .and. ::oDbfCli:Used()

@@ -486,9 +486,9 @@ backupView.prg                                     	\
 ReindexaPresenter.prg                                 \
 ReindexaView.prg                                      \
 BaseModel.prg 														\
-SQLBaseModel.prg 														\
-SQLBaseController.prg 														\
-SQLBaseEmpresasModel.prg 														\
+SQLBaseModel.prg 													\
+SQLBaseController.prg 											\
+SQLBaseEmpresasModel.prg 										\
 ClientesModel.prg 												\
 AlbaranesClientesModel.prg 									\
 FacturasClientesModel.prg 										\
@@ -496,11 +496,11 @@ RecibosClientesModel.prg 										\
 TicketsClientesModel.prg 										\
 PedidosProveedoresModel.prg									\
 TiposImpresorasModel.prg 										\
-TiposImpresorasController.prg 										\
+TiposImpresorasController.prg 								\
 TiposNotasModel.prg 												\
-TiposNotasController.prg 												\
+TiposNotasController.prg 										\
 EtiquetasModel.prg 												\
-EtiquetasController.prg 												\
+EtiquetasController.prg 										\
 TiposVentasModel.prg 											\
 TiposVentasController.prg 										\
 RelacionesEtiquetasModel.prg 									\

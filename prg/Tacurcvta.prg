@@ -15,7 +15,6 @@ CLASS TAcuRCVta FROM TInfGen
    DATA  oFacRecL    AS OBJECT
    DATA  oTikCliT    AS OBJECT
    DATA  oTikCliL    AS OBJECT
-   DATA  oDbfTVta    AS OBJECT
    DATA  lIncEsc     AS LOGIC         INIT .f.
    DATA  lAllCp      AS LOGIC         INIT .t.
    DATA  cCPOrg      AS CHARACTER     INIT "00000"
@@ -101,8 +100,6 @@ METHOD OpenFiles() CLASS TAcuRCVta
 
    DATABASE NEW ::oFacRecL PATH ( cPatEmp() ) FILE "FACRECL.DBF"  VIA ( cDriver() ) SHARED INDEX "FACRECL.CDX"
 
-   DATABASE NEW ::oDbfTvta PATH ( cPatDat() ) FILE "TVTA.DBF"     VIA ( cDriver() ) SHARED INDEX "TVTA.CDX"
-
    RECOVER
 
       msgStop( "Imposible abrir todas las bases de datos" )
@@ -143,9 +140,6 @@ METHOD CloseFiles() CLASS TAcuRCVta
    if !Empty( ::oAlbCliL ) .and. ::oAlbCliL:Used()
    ::oAlbCliL:End()
    end if
-   if !Empty( ::oDbfTVta ) .and. ::oDbfTVta:Used()
-   ::oDbfTVta:End()
-   end if
 
    ::oTikCliT := nil
    ::oTikCliL := nil
@@ -155,7 +149,6 @@ METHOD CloseFiles() CLASS TAcuRCVta
    ::oFacRecL := nil
    ::oAlbCliT := nil
    ::oAlbCliL := nil
-   ::oDbfTVta := nil
 
 RETURN ( Self )
 

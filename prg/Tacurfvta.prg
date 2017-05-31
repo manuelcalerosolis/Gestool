@@ -17,7 +17,6 @@ CLASS TAcuRFVta FROM TInfGen
    DATA  oDbfCodeBar AS OBJECT
    DATA  oFacRecT    AS OBJECT
    DATA  oFacRecL    AS OBJECT
-   DATA  oDbfTVta    AS OBJECT
    DATA  oCmbFam     AS OBJECT
    DATA  oCmbArt     AS OBJECT
 
@@ -102,8 +101,6 @@ METHOD OpenFiles()
 
    DATABASE NEW ::oFacRecL PATH ( cPatEmp() ) FILE "FACRECL.DBF"  VIA ( cDriver() ) SHARED INDEX "FACRECL.CDX"
 
-   DATABASE NEW ::oDbfTvta PATH ( cPatDat() ) FILE "TVTA.DBF"     VIA ( cDriver() ) SHARED INDEX "TVTA.CDX"
-
    DATABASE NEW ::oDbfCodeBar PATH ( cPatArt() ) FILE "ArtCodebar.DBF"  VIA ( cDriver() ) SHARED INDEX "ArtCodebar.CDX"
 
    RECOVER
@@ -146,9 +143,6 @@ METHOD CloseFiles()
    if !Empty( ::oAlbCliL ) .and. ::oAlbCliL:Used()
    ::oAlbCliL:End()
    end if
-   if !Empty( ::oDbfTVta ) .and. ::oDbfTVta:Used()
-   ::oDbfTVta:End()
-   end if
    if !Empty( ::oDbfCodeBar ) .and. ::oDbfCodeBar:Used()
    ::oDbfCodeBar:End()
    end if
@@ -161,7 +155,6 @@ METHOD CloseFiles()
    ::oFacRecL     := nil
    ::oAlbCliT     := nil
    ::oAlbCliL     := nil
-   ::oDbfTVta     := nil
    ::oDbfCodeBar  := nil
 
 RETURN ( Self )

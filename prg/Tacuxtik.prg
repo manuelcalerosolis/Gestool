@@ -10,7 +10,6 @@ CLASS TAcuXTik FROM TInfGCli
    DATA  lExcMov     AS LOGIC    INIT .f.
    DATA  oTikCliT    AS OBJECT
    DATA  oTikCliL    AS OBJECT
-   DATA  oDbfTvta    AS OBJECT
    DATA  oDbfArt     AS OBJECT
 
    METHOD Create ()
@@ -48,8 +47,6 @@ METHOD OpenFiles() CLASS TAcuXTik
 
    DATABASE NEW ::oTikCliL PATH ( cPatEmp() ) FILE "TIKEL.DBF" VIA ( cDriver() ) SHARED INDEX "TIKEL.CDX"
 
-   DATABASE NEW ::oDbfTvta  PATH ( cPatDat() ) FILE "TVTA.DBF" VIA ( cDriver() ) SHARED INDEX "TVTA.CDX"
-
    DATABASE NEW ::oDbfArt PATH ( cPatArt() ) FILE "ARTICULO.DBF" VIA ( cDriver() ) SHARED INDEX "ARTICULO.CDX"
 
    DATABASE NEW ::oDbfCli PATH ( cPatCli() ) FILE "CLIENT.DBF" VIA ( cDriver() ) SHARED INDEX "CLIENT.CDX"
@@ -76,9 +73,6 @@ METHOD CloseFiles() CLASS TAcuXTik
    if !Empty( ::oTikCliL ) .and. ::oTikCliL:Used()
       ::oTikCliL:End()
    end if
-   if !Empty( ::oDbfTvta ) .and. ::oDbfTvta:Used()
-      ::oDbfTvta:End()
-   end if
    if !Empty( ::oDbfArt ) .and. ::oDbfArt:Used()
       ::oDbfArt:End()
    end if
@@ -88,7 +82,6 @@ METHOD CloseFiles() CLASS TAcuXTik
 
    ::oTikCliT := nil
    ::oTikCliL := nil
-   ::oDbfTvta := nil
    ::oDbfArt  := nil
    ::oDbfCli  := nil
 

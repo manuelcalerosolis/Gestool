@@ -48,7 +48,6 @@ CLASS TInfRentFac FROM TInfGen
    DATA  oFacCliT    AS OBJECT
    DATA  oFacCliL    AS OBJECT
    DATA  oFamilia    AS OBJECT
-   DATA  oDbfTvta    AS OBJECT
 
    METHOD OpenFiles()
 
@@ -82,8 +81,6 @@ METHOD OpenFiles() CLASS TInfVenFac
    DATABASE NEW ::oFacCliL PATH ( cPatEmp() ) FILE "FACCLIL.DBF" VIA ( cDriver() ) SHARED INDEX "FACCLIL.CDX"
    ::oFacCliL:OrdSetFocus( "CREF" )
 
-   DATABASE NEW ::oDbfTvta  PATH ( cPatDat() ) FILE "TVTA.DBF" VIA ( cDriver() ) SHARED INDEX "TVTA.CDX"
-
    DATABASE NEW ::oFamilia PATH ( cPatArt() ) FILE "FAMILIAS.DBF" VIA ( cDriver() ) SHARED INDEX "FAMILIAS.CDX"
 
    RECOVER USING oError
@@ -109,10 +106,6 @@ METHOD CloseFiles() CLASS TInfVenFac
 
    if !Empty( ::oAlbCliL ) .and. ::oAlbCliL:Used()
       ::oAlbCliL:End()
-   end if
-
-   if !Empty( ::oDbfTvta ) .and. ::oDbfTvta:Used()
-      ::oDbfTvta:End()
    end if
 
    if !Empty( ::oFamilia ) .and. ::oFamilia:Used()

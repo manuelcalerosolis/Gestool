@@ -15,7 +15,6 @@ CLASS TAnuNVta FROM TInfPAge
    DATA  oFacRecL    AS OBJECT
    DATA  oTikCliT    AS OBJECT
    DATA  oTikCliL    AS OBJECT
-   DATA  oDbfTvta    AS OBJECT
    DATA  oDbfArt     AS OBJECT
 
    METHOD Create()
@@ -70,8 +69,6 @@ METHOD OpenFiles()
 
    DATABASE NEW ::oDbfCli  PATH ( cPatCli() ) FILE "CLIENT.DBF" VIA ( cDriver() ) SHARED INDEX "CLIENT.CDX"
 
-   DATABASE NEW ::oDbfTvta PATH ( cPatDat() ) FILE "TVTA.DBF" VIA ( cDriver() ) SHARED INDEX "TVTA.CDX"
-
    DATABASE NEW ::oDbfArt PATH ( cPatArt() ) FILE "ARTICULO.DBF" VIA ( cDriver() ) SHARED INDEX "ARTICULO.CDX"
 
    RECOVER
@@ -114,9 +111,6 @@ METHOD CloseFiles()
    if !Empty( ::oTikCliL ) .and. ::oTikCliL:Used()
       ::oTikCliL:End()
    end if
-   if !Empty( ::oDbfTvta ) .and. ::oDbfTvta:Used()
-      ::oDbfTvta:End()
-   end if
    if !Empty( ::oDbfCli ) .and. ::oDbfCli:Used()
       ::oDbfCli:End()
    end if
@@ -132,7 +126,6 @@ METHOD CloseFiles()
    ::oFacRecL := nil
    ::oTikCliT := nil
    ::oTikCliL := nil
-   ::oDbfTvta := nil
    ::oDbfCli  := nil
    ::oDbfArt  := nil
 

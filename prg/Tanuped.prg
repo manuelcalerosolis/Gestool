@@ -11,7 +11,6 @@ CLASS TAnuPed FROM TInfAlm
    DATA  oEstado     AS OBJECT
    DATA  oPedCliT    AS OBJECT
    DATA  oPedCliL    AS OBJECT
-   DATA  oDbfTvta    AS OBJECT
    DATA  aEstado     AS ARRAY    INIT  { "Pendiente", "Parcilamente", "Entregado", "Todos" }
 
    METHOD Create()
@@ -62,8 +61,6 @@ METHOD OpenFiles()
 
    DATABASE NEW ::oDbfCli  PATH ( cPatCli() ) FILE "CLIENT.DBF" VIA ( cDriver() ) SHARED INDEX "CLIENT.CDX"
 
-   DATABASE NEW ::oDbfTvta PATH ( cPatDat() ) FILE "TVTA.DBF" VIA ( cDriver() ) SHARED INDEX "TVTA.CDX"
-
    RECOVER USING oError
 
       lOpen := .f.
@@ -83,7 +80,6 @@ METHOD CloseFiles()
 
    ::oPedCliT:End()
    ::oPedCliL:End()
-   ::oDbfTvta:End()
    ::oDbfCli:End()
 
 RETURN ( Self )

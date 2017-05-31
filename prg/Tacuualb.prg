@@ -10,7 +10,6 @@ CLASS TAcuUAlb FROM TInfRut
    DATA  lExcCero    AS LOGIC    INIT .f.
    DATA  oAlbCliT    AS OBJECT
    DATA  oAlbCliL    AS OBJECT
-   DATA  oDbfTvta    AS OBJECT
    DATA  oDbfArt     AS OBJECT
 
    METHOD Create ()
@@ -48,8 +47,6 @@ METHOD OpenFiles() CLASS TAcuUAlb
 
    DATABASE NEW ::oAlbCliL PATH ( cPatEmp() ) FILE "ALBCLIL.DBF" VIA ( cDriver() ) SHARED INDEX "ALBCLIL.CDX"
 
-   DATABASE NEW ::oDbfTvta PATH ( cPatDat() ) FILE "TVTA.DBF" VIA ( cDriver() ) SHARED INDEX "TVTA.CDX"
-
    DATABASE NEW ::oDbfArt  PATH ( cPatArt() ) FILE "ARTICULO.DBF" VIA ( cDriver() ) SHARED INDEX "ARTICULO.CDX"
 
    RECOVER
@@ -74,16 +71,12 @@ METHOD CloseFiles() CLASS TAcuUAlb
    if !Empty( ::oAlbCliL ) .and. ::oAlbCliL:Used()
       ::oAlbCliL:End()
    end if
-   if !Empty( ::oDbfTvta ) .and. ::oDbfTvta:Used()
-      ::oDbfTvta:End()
-   end if
    if !Empty( ::oDbfArt ) .and. ::oDbfArt:Used()
       ::oDbfArt:End()
    end if
 
    ::oAlbCliT := nil
    ::oAlbCliL := nil
-   ::oDbfTvta := nil
    ::oDbfArt  := nil
 
 RETURN ( Self )

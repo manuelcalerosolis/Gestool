@@ -12,7 +12,6 @@ CLASS TAnuGAlb FROM TInfGrp
    DATA  oAlbCliT    AS OBJECT
    DATA  oAlbCliL    AS OBJECT
    DATA  oDbfArt     AS OBJECT
-   DATA  oDbfTvta    AS OBJECT
    DATA  aEstado     AS ARRAY    INIT { "No facturado", "Facturado", "Todos" }
 
    METHOD Create()
@@ -52,8 +51,6 @@ METHOD OpenFiles() CLASS TAnuGAlb
 
    DATABASE NEW ::oDbfFam PATH ( cPatArt() ) FILE "FAMILIAS.DBF" VIA ( cDriver() ) SHARED INDEX "FAMILIAS.CDX"
 
-   DATABASE NEW ::oDbfTvta  PATH ( cPatDat() ) FILE "TVTA.DBF" VIA ( cDriver() ) SHARED INDEX "TVTA.CDX"
-
    DATABASE NEW ::oDbfArt PATH ( cPatArt() ) FILE "ARTICULO.DBF" VIA ( cDriver() ) SHARED INDEX "ARTICULO.CDX"
 
    RECOVER
@@ -78,9 +75,6 @@ METHOD CloseFiles() CLASS TAnuGAlb
    if !Empty( ::oAlbCliL ) .and. ::oAlbCliL:Used()
       ::oAlbCliL:End()
    end if
-   if !Empty( ::oDbfTvta ) .and. ::oDbfTvta:Used()
-      ::oDbfTvta:End()
-   end if
    if !Empty( ::oDbfArt ) .and. ::oDbfArt:Used()
       ::oDbfArt:End()
    end if
@@ -90,7 +84,6 @@ METHOD CloseFiles() CLASS TAnuGAlb
 
    ::oAlbCliT := nil
    ::oAlbCliL := nil
-   ::oDbfTvta := nil
    ::oDbfArt  := nil
    ::oDbfFam  := nil
 

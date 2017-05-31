@@ -201,6 +201,8 @@ CLASS TFastVentasArticulos FROM TFastReportInfGen
 
    METHOD getTotalUnidadesVendidas( cCodArt )
 
+   METHOD getCampoExtraAlbaranCliente( cField )
+
 END CLASS
 
 //----------------------------------------------------------------------------//
@@ -1833,6 +1835,8 @@ METHOD AddPedidoClientes() CLASS TFastVentasArticulos
          ::oDbf:cHorDoc    := SubStr( ( D():PedidosClientes( ::nView ) )->cTimCre, 1, 2 )
          ::oDbf:cMinDoc    := SubStr( ( D():PedidosClientes( ::nView ) )->cTimCre, 4, 2 )
 
+         ::oDbf:cFormato   := ( D():PedidosClientesLineas( ::nView )  )->cFormato
+
          ::oDbf:cCodGrp    := RetFld( ( D():PresupuestosClientes( ::nView ) )->cCodCli, ( D():Clientes( ::nView ) ), "cCodGrp", "Cod" )
 
          ::oDbf:cCodPago   := ( D():PedidosClientes( ::nView ) )->cCodPgo
@@ -1882,6 +1886,9 @@ METHOD AddPedidoClientes() CLASS TFastVentasArticulos
          end if
 
          ::oDbf:nCargo        := nUnidadesRecibidasAlbaranesClientes( D():PedidosClientesLineasId( ::nView ), ( D():PedidosClientesLineas( ::nView ) )->cRef, ( D():PedidosClientesLineas( ::nView ) )->cValPr1, ( D():PedidosClientesLineas( ::nView ) )->cValPr2, D():AlbaranesClientesLineas( ::nView ) )
+
+         ::oDbf:nPdtEnt       := nTotNPedCli( D():PedidosClientesLineas( ::nView ) ) - nUnidadesRecibidasAlbaranesClientes( D():PedidosClientesLineasId( ::nView ), ( D():PedidosClientesLineas( ::nView ) )->cRef, ( D():PedidosClientesLineas( ::nView ) )->cValPr1, ( D():PedidosClientesLineas( ::nView ) )->cValPr2, D():AlbaranesClientesLineas( ::nView ) ) 
+         ::oDbf:nEntreg       := nUnidadesRecibidasAlbaranesClientes( D():PedidosClientesLineasId( ::nView ), ( D():PedidosClientesLineas( ::nView ) )->cRef, ( D():PedidosClientesLineas( ::nView ) )->cValPr1, ( D():PedidosClientesLineas( ::nView ) )->cValPr2, D():AlbaranesClientesLineas( ::nView ) ) 
          
          if ::oDbf:nUniArt == ::oDbf:nCargo
             ::oDbf:cEstado    := "Finalizado"
@@ -4440,6 +4447,12 @@ METHOD getClave()
    cClave            += ::oDbf:cLote
 
 Return ( cClave )
+
+//---------------------------------------------------------------------------//
+
+METHOD getCampoExtraAlbaranCliente( cField ) CLASS TFastVentasArticulos
+
+Return ( getCustomExtraField( cField, "Albaranes a clientes", D():AlbaranesClientesId( ::nView ) ) )
 
 //---------------------------------------------------------------------------//
 

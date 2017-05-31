@@ -627,14 +627,12 @@ Static Function CreateVentasReportGalery( oTrvArbolGaleria, lArray )
       oTrvDocumento     := AddInforme( lArray, oTrvTipo, "Presupuestos" )
          AddInforme( lArray, oTrvDocumento, "Detalle de artículos de presupuestos por agentes", {|| TInfNPre():New( "Informe detallado de artículos por agentes en presupuestos de clientes" ):Play() } )
          AddInforme( lArray, oTrvDocumento, "Detalle de presupuestos por agentes", {|| TdAgePre():New( "Informe detallado de la liquidación de agentes en presupuestos de clientes" ):Play() } )
-         AddInforme( lArray, oTrvDocumento, "Acumulado de presupuestos por agentes", {|| TAcuNPre():New( "Informe de acumulados de presupuestos por agentes" ):Play() } )
          AddInforme( lArray, oTrvDocumento, "Resumen anual de presupuestos por agentes", {|| TAnuNPre():New( "Informe anual de presupuestos por agentes" ):Play() } )
          AddInforme( lArray, oTrvDocumento, "Rentabilidad de presupuestos por agentes", {|| TRenNPre():New( "Informe de rentabilidad de presupuestos por agentes" ):Play() } )
 
       oTrvDocumento     := AddInforme( lArray, oTrvTipo, "Pedidos" )
          AddInforme( lArray, oTrvDocumento, "Detalle de artículos de pedidos por agentes", {|| TInfNPed():New( "Informe detallado de artículos por agentes en pedidos de clientes" ):Play() } )
          AddInforme( lArray, oTrvDocumento, "Detalle de pedidos por agentes", {|| TdAgePed():New( "Informe detallado de la liquidación de agentes en pedidos de clientes" ):Play() } )
-         AddInforme( lArray, oTrvDocumento, "Acumulado de pedidos por agentes", {|| TAcuNPed():New( "Informe de acumulados de pedidos por agentes" ):Play() } )
          AddInforme( lArray, oTrvDocumento, "Resumen anual de pedidos por agentes", {|| TAnuNPed():New( "Informe anual de pedidos por agentes" ):Play() } )
          AddInforme( lArray, oTrvDocumento, "Rentabilidad de pedidos por agentes", {|| TRenNPed():New( "Informe de rentabilidad de pedidos por agentes" ):Play() } )
 
@@ -656,13 +654,11 @@ Static Function CreateVentasReportGalery( oTrvArbolGaleria, lArray )
 
       oTrvDocumento     := AddInforme( lArray, oTrvTipo, "Facturas rectificativas" )
          AddInforme( lArray, oTrvDocumento, "Detalle de artículos de facturas rectificativas por agentes", {|| TInfNFacRec():New( "Informe detallado de artículos por agentes en facturas rectificativas  de clientes" ):Play() } )
-         AddInforme( lArray, oTrvDocumento, "Acumulado de facturas rectificativas por agentes", {|| TAcuNFacRec():New( "Informe de acumulados de facturas rectificativas por agentes" ):Play() } )
          AddInforme( lArray, oTrvDocumento, "Resumen anual de facturas rectificativas por agentes", {|| TAnuNFacRec():New( "Informe anual de facturas rectificativas por agentes" ):Play() } )
 
       oTrvDocumento     := AddInforme( lArray, oTrvTipo, "Tickets" )
          AddInforme( lArray, oTrvDocumento, "Detalle de artículos de tikets por agentes ", {|| TInfNTik():New( "Informe detallado de artículos por agentes en tikets de clientes" ):Play() } )
          AddInforme( lArray, oTrvDocumento, "Detalle de tikets por agentes", {|| TdAgeTik():New( "Informe detallado de la liquidación de agentes en tikets de clientes" ):Play() } )
-         AddInforme( lArray, oTrvDocumento, "Acumulado de tikets por agentes", {|| TAcuNTik():New( "Informe de acumulados de tikets por agentes" ):Play() } )
          AddInforme( lArray, oTrvDocumento, "Resumen anual de tikets por agentes", {|| TAnuNTik():New( "Informe anual de tikets por agentes" ):Play() } )
          AddInforme( lArray, oTrvDocumento, "Rentabilidad de tikets por agentes", {|| TRenNTik():New( "Informe de rentabilidad de tikets por agentes" ):Play() } )
 
@@ -672,7 +668,6 @@ Static Function CreateVentasReportGalery( oTrvArbolGaleria, lArray )
          AddInforme( lArray, oTrvDocumento, "Detalle de artículos de ventas por agentes, rutas y clientes", {|| TInfNCliRutVta():New( "Detalle de artículos de ventas por agentes, rutas y clientes" ):Play() } )
          AddInforme( lArray, oTrvDocumento, "Detalle de artículos de ventas por agentes y grupos de clientes", {|| TInfNGrCVta():New( "Detalle de artículos de ventas por agentes y grupos de clientes" ):Play() } )
          AddInforme( lArray, oTrvDocumento, "Detalle de ventas por agentes", {|| TdAgeVta():New( "Informe detallado de la liquidación de agentes en ventas de clientes" ):Play() } )
-         AddInforme( lArray, oTrvDocumento, "Acumulado de ventas por agentes", {|| TAcuNVta():New( "Informe de acumulados de ventas por agentes" ):Play() } )
          AddInforme( lArray, oTrvDocumento, "Resumen anual de ventas por agentes", {|| TAnuNVta():New( "Informe anual de ventas por agentes" ):Play() } )
          AddInforme( lArray, oTrvDocumento, "Rentabilidad de ventas por agentes", {|| TRenNVta():New( "Informe de rentabilidad de ventas por agentes" ):Play() } )
 
@@ -2379,9 +2374,6 @@ Return nil
 Function validRunReport()
 Return .t.
 
-Function tCentroCoste()
-Return nil
-
 Function ClientesModel()
 Return nil
 
@@ -2452,6 +2444,47 @@ Function SituacionesModel()
 Return nil
 
 Function SQLTShell()
+Return nil
+
+
+
+Function TiposVentasController()
+Return nil
+
+Function TIPOSIMPRESORASCONTROLLER()
+Return nil
+
+Function ETIQUETASMODEL()
+Return nil
+
+Function TTAGEVER()
+Return nil
+
+Function ETIQUETASCONTROLLER()
+Return nil
+
+Function RELACIONESETIQUETASMODEL()
+Return nil
+
+Function HISTORICOSUSUARIOSMODEL()
+Return nil
+
+Function TIPOSVENTASMODEL()
+Return nil
+
+Function PEDIDOSCLIENTESLINEASMODEL()
+Return nil
+
+Function AITMCATEGORIA()
+Return nil
+
+Function SITUACIONESCONTROLLER()
+Return nil
+
+Function TIPOSNOTASCONTROLLER()
+Return nil
+
+Function STARTTFACAUTOMATICA()
 Return nil
 
 //------------------------------------------------------------------//

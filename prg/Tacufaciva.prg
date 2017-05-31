@@ -12,7 +12,6 @@ CLASS TAcuFacIva FROM TInfGen
    DATA  oFacRecT    AS OBJECT
    DATA  oFacRecL    AS OBJECT
    DATA  oAntCliT    AS OBJECT
-   DATA  oDbfTvta    AS OBJECT
    DATA  oDbfIva     AS OBJECT
    DATA  cIvaDes     AS CHARACTER
    DATA  cIvaHas     AS CHARACTER
@@ -74,8 +73,6 @@ METHOD OpenFiles()
 
    DATABASE NEW ::oDbfIva  PATH ( cPatDat() ) FILE "TIVA.DBF"     VIA ( cDriver() ) SHARED INDEX "TIVA.CDX"
 
-   DATABASE NEW ::oDbfTvta PATH ( cPatDat() ) FILE "TVTA.DBF"     VIA ( cDriver() ) SHARED INDEX "TVTA.CDX"
-
    RECOVER
 
       msgStop( 'Imposible abrir todas las bases de datos' )
@@ -92,7 +89,6 @@ RETURN ( lOpen )
 /*Cerramos las tablas abiertas anteriormente*/
 
 METHOD CloseFiles()
-
 
    if !Empty( ::oFacCliT ) .and. ::oFacCliT:Used()
       ::oFacCliT:End()
@@ -112,16 +108,12 @@ METHOD CloseFiles()
    if !Empty( ::oAntCliT ) .and. ::oAntCliT:Used()
       ::oAntCliT:End()
    end if
-   if !Empty( ::oDbfTvta ) .and. ::oDbfTvta:Used()
-      ::oDbfTvta:End()
-   end if
    if !Empty( ::oDbfIva ) .and. ::oDbfIva:Used()
       ::oDbfIva:End()
    end if
 
    ::oFacCliP := nil
    ::oAntCliT := nil
-   ::oDbfTvta := nil
    ::oDbfIva  := nil
    ::oFacCliT := nil
    ::oFacCliL := nil

@@ -10,7 +10,6 @@ CLASS TAnuXFacRec FROM TInfGCLI
    DATA  lExcCero    AS LOGIC    INIT .f.
    DATA  oFacRecT    AS OBJECT
    DATA  oFacRecL    AS OBJECT
-   DATA  oDbfTvta    AS OBJECT
 
    METHOD create ()
 
@@ -48,8 +47,6 @@ METHOD OpenFiles()
 
    DATABASE NEW ::oDbfCli PATH ( cPatCli() ) FILE "CLIENT.DBF" VIA ( cDriver() ) SHARED INDEX "CLIENT.CDX"
 
-   DATABASE NEW ::oDbfTvta  PATH ( cPatDat() ) FILE "TVTA.DBF" VIA ( cDriver() ) SHARED INDEX "TVTA.CDX"
-
    RECOVER
 
       msgStop( "Imposible abrir todas las bases de datos" )
@@ -72,16 +69,12 @@ METHOD CloseFiles()
    if !Empty( ::oFacRecT ) .and. ::oFacRecT:Used()
       ::oFacRecT:End()
    end if
-   if !Empty( ::oDbfTvta ) .and. ::oDbfTvta:Used()
-      ::oDbfTvta:End()
-   end if
    if !Empty( ::oDbfCli ) .and. ::oDbfCli:Used()
       ::oDbfCli:End()
    end if
 
    ::oFacRecT := nil
    ::oFacRecL := nil
-   ::oDbfTvta := nil
    ::oDbfCli  := nil
 
 RETURN ( Self )

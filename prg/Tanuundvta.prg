@@ -15,7 +15,6 @@ CLASS TAnuUndVta FROM TInfPArt
    DATA  oFacRecL    AS OBJECT
    DATA  oTikCliT    AS OBJECT
    DATA  oTikCliL    AS OBJECT
-   DATA  oDbfTvta    AS OBJECT
    DATA  aEstado     AS ARRAY    INIT  { "Pendiente", "Aceptado", "Todos" }
    DATA  oEstado     AS OBJECT
 
@@ -91,8 +90,6 @@ METHOD OpenFiles()
 
    DATABASE NEW ::oDbfCli  PATH ( cPatCli() ) FILE "CLIENT.DBF"   VIA ( cDriver() ) SHARED INDEX "CLIENT.CDX"
 
-   DATABASE NEW ::oDbfTvta PATH ( cPatDat() ) FILE "TVTA.DBF"     VIA ( cDriver() ) SHARED INDEX "TVTA.CDX"
-
    RECOVER
 
       msgStop( 'Imposible abrir todas las bases de datos' )
@@ -133,9 +130,6 @@ METHOD CloseFiles()
    if !Empty( ::oTikCliL ) .and. ::oTikCliL:Used()
       ::oTikCliL:End()
    end if
-   if !Empty( ::oDbfTvta ) .and. ::oDbfTvta:Used()
-      ::oDbfTvta:End()
-   end if
    if !Empty( ::oDbfCli ) .and. ::oDbfCli:Used()
       ::oDbfCli:End()
    end if
@@ -148,7 +142,6 @@ METHOD CloseFiles()
    ::oFacRecL := nil
    ::oTikCliT := nil
    ::oTikCliL := nil
-   ::oDbfTvta := nil
    ::oDbfCli  := nil
 
 RETURN ( Self )

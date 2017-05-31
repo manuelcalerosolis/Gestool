@@ -10,7 +10,6 @@ CLASS OAcuAAlb FROM TPrvAlm
    DATA  lExcCero    AS LOGIC    INIT .f.
    DATA  oAlbPrvT    AS OBJECT
    DATA  oAlbPrvL    AS OBJECT
-   DATA  oDbfTvta    AS OBJECT
    DATA  oDbfArt     AS OBJECT
 
    METHOD Create ()
@@ -48,8 +47,6 @@ METHOD OpenFiles() CLASS OAcuAAlb
 
    DATABASE NEW ::oAlbPrvL PATH ( cPatEmp() ) FILE "AlbPROVL.DBF" VIA ( cDriver() ) SHARED INDEX "AlbPROVL.CDX"
 
-   DATABASE NEW ::oDbfTvta PATH ( cPatDat() ) FILE "TVTA.DBF" VIA ( cDriver() ) SHARED INDEX "TVTA.CDX"
-
    DATABASE NEW ::oDbfArt  PATH ( cPatArt() ) FILE "ARTICULO.DBF" VIA ( cDriver() ) SHARED INDEX "ARTICULO.CDX"
 
    RECOVER
@@ -74,16 +71,12 @@ METHOD CloseFiles() CLASS OAcuAAlb
    if !Empty( ::oAlbPrvL ) .and. ::oAlbPrvL:Used()
       ::oAlbPrvL:End()
    end if
-   if !Empty( ::oDbfTvta ) .and. ::oDbfTvta:Used()
-      ::oDbfTvta:End()
-   end if
    if !Empty( ::oDbfArt )  .and. ::oDbfArt:Used()
       ::oDbfArt:End()
    end if
 
    ::oAlbPrvT := nil
    ::oAlbPrvL := nil
-   ::oDbfTvta := nil
    ::oDbfArt  := nil
 
 RETURN ( Self )

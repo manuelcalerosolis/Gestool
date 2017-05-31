@@ -14,7 +14,6 @@ CLASS TAnuGFac FROM TInfGrp
    DATA  oDbfArt     AS OBJECT
    DATA  oFacRecT    AS OBJECT
    DATA  oFacRecL    AS OBJECT
-   DATA  oDbfTvta    AS OBJECT
    DATA  aEstado     AS ARRAY    INIT  { "Pendiente", "Liquidada", "Todas" }
 
    METHOD Create()
@@ -55,8 +54,6 @@ METHOD OpenFiles()
 
    DATABASE NEW ::oDbfFam PATH ( cPatArt() ) FILE "FAMILIAS.DBF" VIA ( cDriver() ) SHARED INDEX "FAMILIAS.CDX"
 
-   DATABASE NEW ::oDbfTvta  PATH ( cPatDat() ) FILE "TVTA.DBF" VIA ( cDriver() ) SHARED INDEX "TVTA.CDX"
-
    DATABASE NEW ::oFacRecT PATH ( cPatEmp() ) FILE "FACRECT.DBF" VIA ( cDriver() ) SHARED INDEX "FACRECT.CDX"
 
    DATABASE NEW ::oFacRecL PATH ( cPatEmp() ) FILE "FACRECL.DBF" VIA ( cDriver() ) SHARED INDEX "FACRECL.CDX"
@@ -85,17 +82,11 @@ METHOD CloseFiles()
    if !Empty( ::oFacCliL ) .and. ::oFacCliL:Used()
       ::oFacCliL:End()
    end if
-   if !Empty( ::oDbfTvta ) .and. ::oDbfTvta:Used()
-      ::oDbfTvta:End()
-   end if
    if !Empty( ::oFacRecT ) .and. ::oFacRecT:Used()
       ::oFacRecT:End()
    end if
    if !Empty( ::oFacRecL ) .and. ::oFacRecL:Used()
       ::oFacRecL:End()
-   end if
-   if !Empty( ::oDbfTvta ) .and. ::oDbfTvta:Used()
-      ::oDbfTvta:End()
    end if
    if !Empty( ::oDbfArt ) .and. ::oDbfArt:Used()
       ::oDbfArt:End()
@@ -106,7 +97,6 @@ METHOD CloseFiles()
 
    ::oFacCliT := nil
    ::oFacCliL := nil
-   ::oDbfTvta := nil
    ::oDbfArt  := nil
    ::oDbfFam  := nil
 

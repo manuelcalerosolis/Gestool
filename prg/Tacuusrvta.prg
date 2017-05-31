@@ -17,7 +17,6 @@ CLASS TAcuUsrVta FROM TInfUsr
    DATA  oTikCliT    AS OBJECT
    DATA  oTikCliL    AS OBJECT
    DATA  oDbfArt     AS OBJECT
-   DATA  oDbfTVta    AS OBJECT
 
    METHOD Create ()
 
@@ -68,8 +67,6 @@ METHOD OpenFiles()
 
    DATABASE NEW ::oDbfArt  PATH ( cPatArt() ) FILE "ARTICULO.DBF" VIA ( cDriver() ) SHARED INDEX "ARTICULO.CDX"
 
-   DATABASE NEW ::oDbfTvta PATH ( cPatDat() ) FILE "TVTA.DBF"     VIA ( cDriver() ) SHARED INDEX "TVTA.CDX"
-
    RECOVER
 
       msgStop( "Imposible abrir todas las bases de datos" )
@@ -113,9 +110,6 @@ METHOD CloseFiles()
    if !Empty( ::oDbfArt ) .and. ::oDbfArt:Used()
       ::oDbfArt:End()
    end if
-   if !Empty( ::oDbfTVta ) .and. ::oDbfTVta:Used()
-      ::oDbfTVta:End()
-   end if
 
    ::oFacCliT := nil
    ::oFacCliL := nil
@@ -126,7 +120,6 @@ METHOD CloseFiles()
    ::oTikCliT := nil
    ::oTikCliL := nil
    ::oDbfArt  := nil
-   ::oDbfTVta := nil
 
 RETURN ( Self )
 

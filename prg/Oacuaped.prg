@@ -10,7 +10,6 @@ CLASS OAcuAPed FROM TPrvAlm
    DATA  lExcCero    AS LOGIC    INIT .f.
    DATA  oPedPrvT    AS OBJECT
    DATA  oPedPrvL    AS OBJECT
-   DATA  oDbfTvta    AS OBJECT
    DATA  oDbfArt     AS OBJECT
 
    METHOD Create ()
@@ -48,8 +47,6 @@ METHOD OpenFiles() CLASS OAcuAPed
 
    DATABASE NEW ::oPedPrvL PATH ( cPatEmp() ) FILE "PEDPROVL.DBF" VIA ( cDriver() ) SHARED INDEX "PEDPROVL.CDX"
 
-   DATABASE NEW ::oDbfTvta PATH ( cPatDat() ) FILE "TVTA.DBF" VIA ( cDriver() ) SHARED INDEX "TVTA.CDX"
-
    DATABASE NEW ::oDbfArt  PATH ( cPatArt() ) FILE "ARTICULO.DBF" VIA ( cDriver() ) SHARED INDEX "ARTICULO.CDX"
 
    RECOVER
@@ -74,16 +71,12 @@ METHOD CloseFiles() CLASS OAcuAPed
    if !Empty( ::oPedPrvL ) .and. ::oPedPrvL:Used()
       ::oPedPrvL:End()
    end if
-   if !Empty( ::oDbfTvta ) .and. ::oDbfTvta:Used()
-      ::oDbfTvta:End()
-   end if
    if !Empty( ::oDbfArt )  .and. ::oDbfArt:Used()
       ::oDbfArt:End()
    end if
 
    ::oPedPrvT := nil
    ::oPedPrvL := nil
-   ::oDbfTvta := nil
    ::oDbfArt  := nil
 
 RETURN ( Self )

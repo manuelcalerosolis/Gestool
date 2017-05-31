@@ -13,7 +13,6 @@ CLASS ORenGFac FROM TPrvGrp
    DATA  oFacPrvL    AS OBJECT
    DATA  oEstado     AS OBJECT
    DATA  oArt        AS OBJECT
-   DATA  oDbfTvta    AS OBJECT
    DATA  oDbfFam     AS OBJECT
 
    METHOD Create()
@@ -60,8 +59,6 @@ METHOD OpenFiles() CLASS ORenGFac
 
    DATABASE NEW ::oDbfFam PATH ( cPatArt() ) FILE "FAMILIAS.DBF" VIA ( cDriver() ) SHARED INDEX "FAMILIAS.CDX"
 
-   DATABASE NEW ::oDbfTvta PATH ( cPatDat() ) FILE "TVTA.DBF" VIA ( cDriver() ) SHARED INDEX "TVTA.CDX"
-
    DATABASE NEW ::oFacPrvT PATH ( cPatEmp() ) FILE "FACPRVT.DBF" VIA ( cDriver() ) SHARED INDEX "FACPRVT.CDX"
    ::oFacPrvT:OrdSetFocus( "dFecFac" )
 
@@ -87,7 +84,6 @@ RETURN ( lOpen )
 METHOD CloseFiles() CLASS ORenGFac
 
    ::oArt:End()
-   ::oDbfTvta:End()
    ::oFacPrvT:End()
    ::oFacPrvL:End()
    ::oDbfFam:End()
