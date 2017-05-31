@@ -752,13 +752,17 @@ Return ( ::oViewEditResumen:Resource() )
 
 METHOD isPrintDocument() CLASS DocumentsSales
 
-   msgalert( "isPrintDocument" )
-
    if empty( ::cFormatToPrint ) .or. alltrim( ::cFormatToPrint ) == "No imprimir"
       Return .f.
    end if
 
    ::cFormatToPrint  := left( ::cFormatToPrint, 3 )
+
+   /*
+   Refresca el número de indices----------------------------------------------
+   */
+
+   ( ::getDataTable() )->( OrdKeyCount() )
 
    ::printDocument()
 
@@ -838,6 +842,8 @@ Return ( self )
 //---------------------------------------------------------------------------//
 
 METHOD onPreEnd() CLASS DocumentsSales
+   
+   ::isPrintDocument()
    
    ::oDocumentLines:reset() 
 
