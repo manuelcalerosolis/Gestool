@@ -16,7 +16,6 @@ CLASS OInfLot FROM TInfGen
    DATA  oFacPrvL    AS OBJECT
    DATA  oAlbPrvT    AS OBJECT
    DATA  oAlbPrvL    AS OBJECT
-   DATA  oDbfTVta    AS OBJECT
 
    METHOD Create()
 
@@ -47,8 +46,6 @@ METHOD OpenFiles() CLASS OInfLot
 
    DATABASE NEW ::oAlbPrvL PATH ( cPatEmp() ) FILE "ALBPROVL.DBF" VIA ( cDriver() ) SHARED INDEX "ALBPROVL.CDX"
 
-   DATABASE NEW ::oDbfTVta PATH ( cPatDat() ) FILE "TVTA.DBF"     VIA ( cDriver() ) SHARED INDEX "TVTA.CDX"
-
    RECOVER
 
       msgStop( 'Imposible abrir todas las bases de datos' )
@@ -77,15 +74,11 @@ METHOD CloseFiles() CLASS OInfLot
    if !Empty( ::oAlbPrvL ) .and. ::oAlbPrvL:Used()
       ::oAlbPrvL:End()
    end if
-   if !Empty( ::oDbfTvta ) .and. ::oDbfTvta:Used()
-      ::oDbfTvta:End()
-   end if
 
    ::oFacPrvT := nil
    ::oFacPrvL := nil
    ::oAlbPrvT := nil
    ::oAlbPrvL := nil
-   ::oDbfTvta := nil
 
 RETURN ( Self )
 

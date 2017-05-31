@@ -11,7 +11,6 @@ CLASS TInfAlbTip FROM TInfTip
    DATA  oEstado     AS OBJECT
    DATA  oAlbCliT    AS OBJECT
    DATA  oAlbCliL    AS OBJECT
-   DATA  oDbfTvta    AS OBJECT
    DATA  oArt        AS OBJECT
    DATA  aEstado     AS ARRAY    INIT { "No facturados", "Facturados", "Todos" }
 
@@ -59,8 +58,6 @@ METHOD OpenFiles() CLASS TInfAlbTip
 
    DATABASE NEW ::oAlbCliL PATH ( cPatEmp() ) FILE "AlbCliL.DBF" VIA ( cDriver() ) SHARED INDEX "AlbCliL.CDX"
 
-   DATABASE NEW ::oDbfTvta  PATH ( cPatDat() ) FILE "TVTA.DBF" VIA ( cDriver() ) SHARED INDEX "TVTA.CDX"
-
    DATABASE NEW ::oArt PATH ( cPatArt() ) FILE "ARTICULO.DBF" VIA ( cDriver() ) SHARED INDEX "ARTICULO.CDX"
 
 
@@ -84,7 +81,6 @@ METHOD CloseFiles() CLASS TInfAlbTip
    ::oAlbCliT:End()
    ::oAlbCliL:End()
    ::oArt:End()
-   ::oDbfTvta:End()
 
 RETURN ( Self )
 

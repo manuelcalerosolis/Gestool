@@ -18,7 +18,6 @@ CLASS TAcuXVta FROM TInfGCli
    DATA  oFacRecT    AS OBJECT
    DATA  oFacRecL    AS OBJECT
    DATA  oDbfArt     AS OBJECT
-   DATA  oDbfTVta    AS OBJECT
 
    METHOD Create ()
 
@@ -69,8 +68,6 @@ METHOD OpenFiles() CLASS TAcuXVta
 
    DATABASE NEW ::oDbfArt  PATH ( cPatArt() ) CLASS "ARTICULO" FILE "ARTICULO.DBF" VIA ( cDriver() ) SHARED INDEX "ARTICULO.CDX"
 
-   DATABASE NEW ::oDbfTvta PATH ( cPatDat() ) FILE "TVTA.DBF" VIA ( cDriver() ) SHARED INDEX "TVTA.CDX"
-
    DATABASE NEW ::oDbfCli PATH ( cPatCli() ) FILE "CLIENT.DBF" VIA ( cDriver() ) SHARED INDEX "CLIENT.CDX"
 
    RECOVER
@@ -116,9 +113,6 @@ METHOD CloseFiles() CLASS TAcuXVta
    if !Empty( ::oDbfArt ) .and. ::oDbfArt:Used()
       ::oDbfArt:End()
    end if
-   if !Empty( ::oDbfTVta ) .and. ::oDbfTVta:Used()
-      ::oDbfTVta:End()
-   end if
    if !Empty( ::oDbfCli ) .and. ::oDbfCli:Used()
       ::oDbfCli:End()
    end if
@@ -132,7 +126,6 @@ METHOD CloseFiles() CLASS TAcuXVta
    ::oAlbCliT := nil
    ::oAlbCliL := nil
    ::oDbfArt  := nil
-   ::oDbfTVta := nil
    ::oDbfCli  := nil
 
 RETURN ( Self )

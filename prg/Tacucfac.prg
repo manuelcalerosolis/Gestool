@@ -13,7 +13,6 @@ CLASS TAcuCFac FROM TInfCli
    DATA  oFacCliL    AS OBJECT
    DATA  oFacRecT    AS OBJECT
    DATA  oFacRecL    AS OBJECT
-   DATA  oDbfTvta    AS OBJECT
    DATA  oDbfArt     AS OBJECT
    DATA  oAlbCliT    AS OBJECT
    DATA  oTikCliT    AS OBJECT
@@ -64,8 +63,6 @@ METHOD OpenFiles() CLASS TAcuCFac
 
    DATABASE NEW ::oFacRecL PATH ( cPatEmp() ) FILE "FACRECL.DBF"  VIA ( cDriver() ) SHARED INDEX "FACRECL.CDX"
 
-   DATABASE NEW ::oDbfTvta PATH ( cPatDat() ) FILE "TVTA.DBF"     VIA ( cDriver() ) SHARED INDEX "TVTA.CDX"
-
    DATABASE NEW ::oDbfArt  PATH ( cPatArt() ) FILE "ARTICULO.DBF" VIA ( cDriver() ) SHARED INDEX "ARTICULO.CDX"
 
    ::oAlbCliT := TDataCenter():oAlbCliT()
@@ -112,9 +109,6 @@ METHOD CloseFiles() CLASS TAcuCFac
    if !Empty( ::oFacRecL ) .and. ::oFacRecL:Used()
       ::oFacRecL:End()
    end if
-   if !Empty( ::oDbfTvta ) .and. ::oDbfTvta:Used()
-      ::oDbfTvta:End()
-   end if
    if !Empty( ::oDbfArt ) .and. ::oDbfArt:Used()
       ::oDbfArt:End()
    end if
@@ -137,7 +131,6 @@ METHOD CloseFiles() CLASS TAcuCFac
 
    ::oFacCliT := nil
    ::oFacCliL := nil
-   ::oDbfTvta := nil
    ::oDbfArt  := nil
    ::oAlbCliT := nil
    ::oTikCliT := nil

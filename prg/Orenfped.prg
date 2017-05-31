@@ -13,7 +13,6 @@ CLASS ORenFPed FROM TPrvFam
    DATA  oPedPrvL    AS OBJECT
    DATA  oEstado     AS OBJECT
    DATA  oArt        AS OBJECT
-   DATA  oDbfTvta    AS OBJECT
    DATA  oDbfFam     AS OBJECT
 
    METHOD Create()
@@ -61,8 +60,6 @@ METHOD OpenFiles() CLASS ORenFPed
 
    DATABASE NEW ::oDbfFam PATH ( cPatArt() ) FILE "FAMILIAS.DBF" VIA ( cDriver() ) SHARED INDEX "FAMILIAS.CDX"
 
-   DATABASE NEW ::oDbfTvta PATH ( cPatDat() ) FILE "TVTA.DBF" VIA ( cDriver() ) SHARED INDEX "TVTA.CDX"
-
    DATABASE NEW ::oPedPrvT PATH ( cPatEmp() ) FILE "PEDPROVT.DBF" VIA ( cDriver() ) SHARED INDEX "PEDPROVT.CDX"
    ::oPedPrvT:OrdSetFocus( "dFecPed" )
 
@@ -88,7 +85,6 @@ RETURN ( lOpen )
 METHOD CloseFiles() CLASS ORenFPed
 
    ::oArt:End()
-   ::oDbfTvta:End()
    ::oPedPrvT:End()
    ::oPedPrvL:End()
    ::oDbfFam:End()

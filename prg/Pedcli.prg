@@ -14400,7 +14400,7 @@ FUNCTION rxPedCli( cPath, cDriver )
       ( cPedCliT )->( ordCreate( cPath + "PedCliL.Cdx", "Lote", "cLote", {|| Field->cLote } ) )
 
       ( cPedCliT )->( ordCondSet( "!Deleted()", {|| !Deleted() } ) )
-      ( cPedCliT )->( ordCreate( cPath + "PedCliL.Cdx", "iNumPed", "'09' + cSerPed + Str( nNumPed ) + Space( 1 ) + cSufPed", {|| '09' + Field->cSerPed + Str( Field->nNumPed ) + Space( 1 ) + Field->cSufPed } ) )
+      ( cPedCliT )->( ordCreate( cPath + "PedCliL.Cdx", "iNumPed", "'09' + cSerPed + Str( nNumPed ) + Space( 1 ) + cSufPed + Str( nNumLin )", {|| '09' + Field->cSerPed + Str( Field->nNumPed ) + Space( 1 ) + Field->cSufPed + Str( Field->nNumLin ) } ) )
 
       ( cPedCliT )->( ordCondSet("!Deleted()", {||!Deleted()}  ) )
       ( cPedCliT )->( ordCreate( cPath + "PedCliL.Cdx", "nPosPrint", "cSerPed + Str( nNumPed ) + cSufPed + Str( nPosPrint )", {|| Field->cSerPed + Str( Field->nNumPed ) + Field->cSufPed + Str( Field->nPosPrint )}, ) )

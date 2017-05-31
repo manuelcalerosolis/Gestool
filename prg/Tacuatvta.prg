@@ -16,7 +16,6 @@ CLASS TAcuATVta FROM TInfTip
    DATA  oFacRecT    AS OBJECT
    DATA  oFacRecL    AS OBJECT
    DATA  oDbfArt     AS OBJECT
-   DATA  oDbfTVta    AS OBJECT
 
    METHOD Create ()
 
@@ -84,8 +83,6 @@ METHOD OpenFiles() CLASS TAcuATVta
 
    DATABASE NEW ::oDbfArt  PATH ( cPatArt() ) FILE "ARTICULO.DBF" VIA ( cDriver() ) SHARED INDEX "ARTICULO.CDX"
 
-   DATABASE NEW ::oDbfTvta PATH ( cPatDat() ) FILE "TVTA.DBF"     VIA ( cDriver() ) SHARED INDEX "TVTA.CDX"
-
    RECOVER
 
       msgStop( "Imposible abrir todas las bases de datos" )
@@ -129,9 +126,6 @@ METHOD CloseFiles() CLASS TAcuATVta
    if !Empty( ::oDbfArt ) .and. ::oDbfArt:Used()
       ::oDbfArt:End()
    end if
-   if !Empty( ::oDbfTVta ) .and. ::oDbfTVta:Used()
-      ::oDbfTVta:End()
-   end if
 
    ::oTikCliT := nil
    ::oTikCliL := nil
@@ -142,7 +136,6 @@ METHOD CloseFiles() CLASS TAcuATVta
    ::oAlbCliT := nil
    ::oAlbCliL := nil
    ::oDbfArt  := nil
-   ::oDbfTVta := nil
 
 RETURN ( Self )
 

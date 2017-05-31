@@ -47,7 +47,6 @@ Brwvta.prg              \
 Cajas.prg               \
 Cajero.prg              \
 Catalogo.prg            \
-Categoria.prg           \
 Cccheck.prg             \
 Cfaccli.prg             \
 Client.prg              \
@@ -106,7 +105,6 @@ InfTar.prg              \
 InfTipIva.prg           \
 InfTvta.prg             \
 InfUbi.prg              \
-Infagent.prg            \
 Infart.prg              \
 Infcli.prg              \
 Infencpr.prg            \
@@ -257,9 +255,7 @@ Tinftpvt.prg            \
 Tinfvtat.prg            \
 Tinternet.prg           \
 Tiordcar.prg            \
-TipInci.prg             \
 Tipart.prg              \
-TipoNotas.prg           \
 Tips.prg                \
 Tiremage.prg            \
 Tiva.prg                \
@@ -1029,7 +1025,6 @@ TDiaFPagoFac.prg        \
 TFastReportInfGen.prg   \
 TFastVentasArticulos.prg\
 TFastVentasClientes.prg \
-TipoImpresora.prg       \
 TDataCenter.prg         \
 d.prg                   \
 Valtostr.prg            \
@@ -1054,6 +1049,7 @@ TGenMailDatabaseRecibosClientes.prg \
 TDetMovimientosAlmacen.prg 			\
 TDetSeriesMovimientos.prg 				\
 TTraslations.prg        				\
+CentroCoste.Prg         \
 
 C               =       \
 Metafi32.c              \
@@ -1084,7 +1080,6 @@ Brwvta.obj              \
 Cajas.obj               \
 Cajero.obj              \
 Catalogo.obj            \
-Categoria.obj           \
 Cccheck.obj             \
 Cfaccli.obj             \
 Client.obj              \
@@ -1145,7 +1140,6 @@ InfTar.obj              \
 InfTipIva.obj           \
 InfTvta.obj             \
 InfUbi.obj              \
-Infagent.obj            \
 Infart.obj              \
 Infcli.obj              \
 Infencpr.obj            \
@@ -1299,9 +1293,7 @@ Tinftpvt.obj            \
 Tinfvtat.obj            \
 Tinternet.obj           \
 Tiordcar.obj            \
-TipInci.obj             \
 Tipart.obj              \
-TipoNotas.obj           \
 Tips.obj                \
 Tiremage.obj            \
 Tiva.obj                \
@@ -2073,7 +2065,6 @@ TDiaFPagoFac.obj        \
 TFastReportInfGen.obj   \
 TFastVentasArticulos.obj\
 TFastVentasClientes.obj \
-TipoImpresora.obj       \
 TDataCenter.obj         \
 d.obj                   \
 Valtostr.obj            \
@@ -2098,6 +2089,7 @@ TGenMailDatabaseRecibosClientes.obj \
 TDetMovimientosAlmacen.obj \
 TDetSeriesMovimientos.obj \
 TTraslations.obj        \
+CentroCoste.obj         \
 
 .PRG.OBJ:
    $(HB)\Bin\Harbour $< /n /p$(PPO)\$&.ppo /w /es2 /i$(FWINCLUDE) /i$(HBINCLUDE) /i$(GTINCLUDE) /o$(OBJ)\$&.c
@@ -2135,7 +2127,6 @@ $(OBJ)\Brwvta.obj               +
 $(OBJ)\Cajas.obj                +
 $(OBJ)\Cajero.obj               +
 $(OBJ)\Catalogo.obj             +
-$(OBJ)\Categoria.obj            +
 $(OBJ)\Cccheck.obj              +
 $(OBJ)\Cfaccli.obj              +
 $(OBJ)\Client.obj               +
@@ -2196,7 +2187,6 @@ $(OBJ)\InfTar.obj               +
 $(OBJ)\InfTipIva.obj            +
 $(OBJ)\InfTvta.obj              +
 $(OBJ)\InfUbi.obj               +
-$(OBJ)\Infagent.obj             +
 $(OBJ)\Infart.obj               +
 $(OBJ)\Infcli.obj               +
 $(OBJ)\Infencpr.obj             +
@@ -2350,9 +2340,7 @@ $(OBJ)\Tinftpvt.obj             +
 $(OBJ)\Tinfvtat.obj             +
 $(OBJ)\Tinternet.obj            +
 $(OBJ)\Tiordcar.obj             +
-$(OBJ)\TipInci.obj              +
 $(OBJ)\Tipart.obj               +
-$(OBJ)\TipoNotas.obj            +
 $(OBJ)\Tips.obj                 +
 $(OBJ)\Tiremage.obj             +
 $(OBJ)\Tiva.obj                 +
@@ -3124,7 +3112,6 @@ $(OBJ)\TDiaFPagoFac.obj         	+
 $(OBJ)\TFastReportInfGen.obj    	+
 $(OBJ)\TFastVentasArticulos.obj 	+
 $(OBJ)\TFastVentasClientes.obj  	+
-$(OBJ)\TipoImpresora.obj        	+
 $(OBJ)\TDataCenter.obj          	+
 $(OBJ)\d.obj                     +
 $(OBJ)\Valtostr.obj             	+
@@ -3148,6 +3135,7 @@ $(OBJ)\TGenMailDatabaseRecibosClientes.obj +
 $(OBJ)\TDetMovimientosAlmacen.obj +
 $(OBJ)\TDetSeriesMovimientos.obj +
 $(OBJ)\TTraslations.obj          +
+$(OBJ)\CentroCoste.obj           +
 $(OBJ)\EstadoSat.obj             
 $<,$*
 $(FWLIB)\FiveH.lib               +

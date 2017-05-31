@@ -13,7 +13,6 @@ CLASS ORenFAlb FROM TPrvFam
    DATA  oAlbPrvL    AS OBJECT
    DATA  oEstado     AS OBJECT
    DATA  oArt        AS OBJECT
-   DATA  oDbfTvta    AS OBJECT
    DATA  oDbfFam     AS OBJECT
 
    METHOD Create()
@@ -61,8 +60,6 @@ METHOD OpenFiles() CLASS ORenFAlb
 
       DATABASE NEW ::oDbfFam PATH ( cPatArt() ) FILE "FAMILIAS.DBF" VIA ( cDriver() ) SHARED INDEX "FAMILIAS.CDX"
 
-      DATABASE NEW ::oDbfTvta PATH ( cPatDat() ) FILE "TVTA.DBF" VIA ( cDriver() ) SHARED INDEX "TVTA.CDX"
-
       DATABASE NEW ::oAlbPrvT PATH ( cPatEmp() ) FILE "ALBPROVT.DBF" VIA ( cDriver() ) SHARED INDEX "ALBPROVT.CDX"
       ::oAlbPrvT:OrdSetFocus( "dFecAlb" )
 
@@ -88,7 +85,6 @@ RETURN ( lOpen )
 METHOD CloseFiles() CLASS ORenFAlb
 
    ::oArt:End()
-   ::oDbfTvta:End()
    ::oAlbPrvT:End()
    ::oAlbPrvL:End()
    ::oDbfFam:End()

@@ -10,7 +10,6 @@ CLASS TAcuXPre FROM TInfGCli
    DATA  lExcCero    AS LOGIC    INIT .f.
    DATA  oPreCliT    AS OBJECT
    DATA  oPreCliL    AS OBJECT
-   DATA  oDbfTvta    AS OBJECT
    DATA  oDbfArt     AS OBJECT
    DATA  oDbfCli     AS OBJECT
 
@@ -50,8 +49,6 @@ METHOD OpenFiles() CLASS TAcuXPre
 
    DATABASE NEW ::oPreCliL PATH ( cPatEmp() ) FILE "PRECLIL.DBF" VIA ( cDriver() ) SHARED INDEX "PRECLIL.CDX"
 
-   DATABASE NEW ::oDbfTvta PATH ( cPatDat() ) FILE "TVTA.DBF" VIA ( cDriver() ) SHARED INDEX "TVTA.CDX"
-
    DATABASE NEW ::oDbfArt  PATH ( cPatArt() ) FILE "ARTICULO.DBF" VIA ( cDriver() ) SHARED INDEX "ARTICULO.CDX"
 
    DATABASE NEW ::oDbfCli PATH ( cPatCli() ) FILE "CLIENT.DBF" VIA ( cDriver() ) SHARED INDEX "CLIENT.CDX"
@@ -78,9 +75,6 @@ METHOD CloseFiles() CLASS TAcuXPre
    if !Empty( ::oPreCliL ) .and. ::oPreCliL:Used()
       ::oPreCliL:End()
    end if
-   if !Empty( ::oDbfTvta ) .and. ::oDbfTvta:Used()
-      ::oDbfTvta:End()
-   end if
    if !Empty( ::oDbfArt ) .and. ::oDbfArt:Used()
       ::oDbfArt:End()
    end if
@@ -90,7 +84,6 @@ METHOD CloseFiles() CLASS TAcuXPre
 
    ::oPreCliT := nil
    ::oPreCliL := nil
-   ::oDbfTvta := nil
    ::oDbfArt  := nil
    ::oDbfCli  := nil
 

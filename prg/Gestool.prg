@@ -1,4 +1,3 @@
-
 #include "FiveWin.Ch"
 #include "Factu.ch" 
 #include "Menu.ch" 
@@ -20,7 +19,7 @@
 
 #define HKEY_LOCAL_MACHINE    2147483650
 
-#define FONT_NAME             "Segoe UI"     
+#define FONT_NAME             "Segoe UI"
 
 ANNOUNCE RDDSYS
 

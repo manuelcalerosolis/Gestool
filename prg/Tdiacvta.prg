@@ -20,7 +20,6 @@ CLASS TDiaCVta FROM TInfGen
    DATA  oAntCliT    AS OBJECT
    DATA  oFacRecT    AS OBJECT
    DATA  oFacRecL    AS OBJECT
-   DATA  oDbfTvta    AS OBJECT
    DATA  oDbfIva     AS OBJECT
    DATA  oDbfPgo     AS OBJECT
 
@@ -83,8 +82,6 @@ METHOD OpenFiles()
 
    ::oFacCliP := TDataCenter():oFacCliP()
 
-   DATABASE NEW ::oDbfTvta PATH ( cPatDat() )   FILE "TVTA.DBF"      VIA ( cDriver() ) SHARED INDEX "TVTA.CDX"
-
    DATABASE NEW ::oAntCliT PATH ( cPatEmp() )   FILE "ANTCLIT.DBF"   VIA ( cDriver() ) SHARED INDEX "ANTCLIT.CDX"
 
    DATABASE NEW ::oFacRecT PATH ( cPatEmp() )   FILE "FACRECT.DBF"   VIA ( cDriver() ) SHARED INDEX "FACRECT.CDX"
@@ -130,9 +127,6 @@ METHOD CloseFiles()
    if !Empty( ::oAlbCliL ) .and. ::oAlbCliL:Used()
       ::oAlbCliL:End()
    end if
-   if !Empty( ::oDbfTvta ) .and. ::oDbfTvta:Used()
-      ::oDbfTvta:End()
-   end if
    if !Empty( ::oDbfIva ) .and. ::oDbfIva:Used()
       ::oDbfIva:End()
    end if
@@ -156,7 +150,6 @@ METHOD CloseFiles()
    ::oFacCliP := nil
    ::oAlbCliT := nil
    ::oAlbCliL := nil
-   ::oDbfTvta := nil
    ::oDbfIva  := nil
    ::oAntCliT := nil
    ::oFacRecT := nil

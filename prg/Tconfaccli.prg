@@ -17,7 +17,6 @@ CLASS TConFacCli FROM TInfGen
    DATA  oFacCliL    AS OBJECT
    DATA  oFacRecT    AS OBJECT
    DATA  oFacRecL    AS OBJECT
-   DATA  oDbfTvta    AS OBJECT
    DATA  oDbfCliAtp  AS OBJECT
 
    METHOD Create()
@@ -82,8 +81,6 @@ METHOD OpenFiles() CLASS TConFacCli
 
    DATABASE NEW ::oFacRecL    PATH ( cPatEmp() ) FILE "FACRECL.DBF"  VIA ( cDriver() ) SHARED INDEX "FACRECL.CDX"
 
-   DATABASE NEW ::oDbfTvta    PATH ( cPatDat() ) FILE "TVTA.DBF"     VIA ( cDriver() ) SHARED INDEX "TVTA.CDX"
-
    DATABASE NEW ::oDbfCliAtp  PATH ( cPatCli() ) FILE "CLIATP.DBF"   VIA ( cDriver() ) SHARED INDEX "CLIATP.CDX"
 
    RECOVER USING oError
@@ -122,10 +119,6 @@ METHOD CloseFiles() CLASS TConFacCli
       ::oFacRecL:End()
    end if
 
-   if !Empty( ::oDbfTvta ) .and. ::oDbfTvta:Used()
-      ::oDbfTvta:End()
-   end if
-
    if !Empty( ::oDbfCliAtp ) .and. ::oDbfCliAtp:Used()
       ::oDbfCliAtp:End()
    end if
@@ -135,7 +128,6 @@ METHOD CloseFiles() CLASS TConFacCli
    ::oFacCliL     := nil
    ::oFacRecT     := nil
    ::oFacRecL     := nil
-   ::oDbfTvta     := nil
    ::oDbfCliAtp   := nil
 
 RETURN ( Self )

@@ -12,7 +12,6 @@ CLASS OAcuAFac FROM TPrvAlm
    DATA  oFacPrvL    AS OBJECT
    DATA  oFacPrvP    AS OBJECT
    DATA  oDbfIva     AS OBJECT
-   DATA  oDbfTvta    AS OBJECT
    DATA  oDbfArt     AS OBJECT
 
    METHOD Create ()
@@ -52,8 +51,6 @@ METHOD OpenFiles() CLASS OAcuAFac
 
    DATABASE NEW ::oFacPrvP PATH ( cPatEmp() ) FILE "FACPRVP.DBF"  VIA ( cDriver() ) SHARED INDEX "FACPRVP.CDX"
 
-   DATABASE NEW ::oDbfTvta PATH ( cPatDat() ) FILE "TVTA.DBF"     VIA ( cDriver() ) SHARED INDEX "TVTA.CDX"
-
    DATABASE NEW ::oDbfArt  PATH ( cPatArt() ) FILE "ARTICULO.DBF" VIA ( cDriver() ) SHARED INDEX "ARTICULO.CDX"
 
    DATABASE NEW ::oDbfIva  PATH ( cPatDat() ) FILE "TIVA.DBF"     VIA ( cDriver() ) SHARED INDEX "TIVA.CDX"
@@ -86,10 +83,6 @@ METHOD CloseFiles() CLASS OAcuAFac
       ::oFacPrvP:End()
    end if
 
-   if !Empty( ::oDbfTvta ) .and. ::oDbfTvta:Used()
-      ::oDbfTvta:End()
-   end if
-
    if !Empty( ::oDbfArt )  .and. ::oDbfArt:Used()
       ::oDbfArt:End()
    end if
@@ -101,7 +94,6 @@ METHOD CloseFiles() CLASS OAcuAFac
    ::oFacPrvT  := nil
    ::oFacPrvL  := nil
    ::oFacPrvP  := nil
-   ::oDbfTvta  := nil
    ::oDbfArt   := nil
    ::oDbfIva   := nil
 

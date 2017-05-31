@@ -10,7 +10,6 @@ CLASS TAcuPTik FROM TInfTrn
    DATA  lExcMov     AS LOGIC    INIT .f.
    DATA  oTikCliT    AS OBJECT
    DATA  oTikCliL    AS OBJECT
-   DATA  oDbfTvta    AS OBJECT
    DATA  oDbfArt     AS OBJECT
 
    METHOD Create ()
@@ -55,8 +54,6 @@ METHOD OpenFiles() CLASS TAcuUTik
 
    DATABASE NEW ::oTikCliL PATH ( cPatEmp() ) FILE "TIKEL.DBF" VIA ( cDriver() ) SHARED INDEX "TIKEL.CDX"
 
-   DATABASE NEW ::oDbfTvta  PATH ( cPatDat() ) FILE "TVTA.DBF" VIA ( cDriver() ) SHARED INDEX "TVTA.CDX"
-
    DATABASE NEW ::oDbfArt PATH ( cPatArt() ) FILE "ARTICULO.DBF" VIA ( cDriver() ) SHARED INDEX "ARTICULO.CDX"
 
    DATABASE NEW ::oDbfFam PATH ( cPatArt() ) FILE "FAMILIAS.DBF" VIA ( cDriver() ) SHARED INDEX "FAMILIAS.CDX"
@@ -80,7 +77,6 @@ METHOD CloseFiles() CLASS TAcuUTik
 
    ::oTikCliT:End()
    ::oTikCliL:End()
-   ::oDbfTvta:End()
    ::oDbfArt:End()
    ::oDbfFam:End()
 

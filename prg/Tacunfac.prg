@@ -57,8 +57,6 @@ METHOD OpenFiles() CLASS TAcuNFac
 
    DATABASE NEW ::oFacRecL PATH ( cPatEmp() ) FILE "FACRecL.DBF" VIA ( cDriver() ) SHARED INDEX "FACRecL.CDX"
 
-   DATABASE NEW ::oDbfTvta PATH ( cPatDat() ) FILE "TVTA.DBF" VIA ( cDriver() ) SHARED INDEX "TVTA.CDX"
-
    DATABASE NEW ::oDbfArt  PATH ( cPatArt() ) FILE "ARTICULO.DBF" VIA ( cDriver() ) SHARED INDEX "ARTICULO.CDX"
 
    DATABASE NEW ::oIva PATH ( cPatDat () ) FILE "TIVA.DBF" VIA ( cDriver() ) SHARED INDEX "TIVA.CDX"
@@ -91,9 +89,6 @@ METHOD CloseFiles() CLASS TAcuNFac
    if !Empty( ::oFacRecL ) .and. ::oFacRecL:Used()
    ::oFacRecL:End()
    end if
-   if !Empty( ::oDbfTvta ) .and. ::oDbfTvta:Used()
-   ::oDbfTvta:End()
-   end if
    if !Empty( ::oDbfArt ) .and. ::oDbfArt:Used()
    ::oDbfArt:End()
    end if
@@ -105,7 +100,6 @@ METHOD CloseFiles() CLASS TAcuNFac
    ::oFacCliL := nil
    ::oFacRecT := nil
    ::oFacRecL := nil
-   ::oDbfTvta := nil
    ::oDbfArt  := nil
    ::oIva     := nil
 
