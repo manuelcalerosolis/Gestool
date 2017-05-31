@@ -24,10 +24,7 @@ CLASS SQLBaseLineasModel From SQLBaseModel
 
    METHOD 	confirmIdParentToChildsOf( nId_parent )
 
-   METHOD	deletingUs()
-
-   /*METHOD	deleteChildsOf( nId_parent )
-   METHOD	checkIfYourChildsMustDeleteTheirChilds()	VIRTUAL*/
+   METHOD	deletingOurChilds()
 
 END CLASS
 
@@ -108,13 +105,13 @@ RETURN ( self )
 
 //---------------------------------------------------------------------------//
 
-METHOD deletingUs()
+METHOD deletingOurChilds()
 
 	local cDeleteSentence
 
-	cDeleteSentence := "DELETE FROM " + ::cTableName + " WHERE "
+	cDeleteSentence := "DELETE FROM " + ::cTableName + " WHERE " + ::cForeignColumn + " = null"
 
-	aeval( ::aTmpIdsToConfirm, { | v | cDeleteSentence += ::cColumnKey + " = " + toSQLString( v ) + " OR " } )
+	//aeval( ::aTmpIdsToConfirm, { | v | cDeleteSentence += ::cColumnKey + " = " + toSQLString( v ) + " OR " } )
 
 	getSQLDatabase():Query( cDeleteSentence )
 

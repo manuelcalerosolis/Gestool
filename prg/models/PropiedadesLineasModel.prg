@@ -76,6 +76,11 @@ METHOD New()
 
 		::Super:New()
 
+		::cConstraints		:= "FOREIGN KEY (id_cabecera) REFERENCES propiedades(id) ON DELETE CASCADE ," 
+																//terminar cadena con dos carácteres aleatorios ( aqui es el " ,"), 
+																//hace falta para que el getSQLCreateTable() del base model funcione siempre
+																		//..."ChgAtEnd( cSQLCreateTable, ' )', 2 )"...
+
 Return ( Self )
 
 //---------------------------------------------------------------------------//

@@ -13,6 +13,8 @@ CLASS SQLBaseModel
    DATA     cDbfTableName
 	DATA	   hColumns
 
+   DATA     cConstraints
+
    DATA     hExtraColumns
 
    DATA     cGeneralSelect
@@ -108,6 +110,8 @@ METHOD New()
 
    ::cGeneralSelect              := "SELECT * FROM " + ::cTableName
 
+   ::cConstraints                := "" //Si esto falla, mirar en PropiedadesLineasModel el comentario que explica por qué puede estar fallando
+
    ::cColumnOrder                := "id"
    ::cOrientation                := "A"
    ::nIdForRecno                 := 1
@@ -129,6 +133,8 @@ METHOD getSQLCreateTable()
    Local cSQLCreateTable := "CREATE TABLE " + ::cTableName + " ( "
 
    hEval( ::hColumns, {| k, hash | cSQLCreateTable += k + " " + hget( hash, "create" ) + ", " } )
+
+   cSQLCreateTable        := ::cConstraints
 
    cSQLCreateTable        := ChgAtEnd( cSQLCreateTable, ' )', 2 )
 
