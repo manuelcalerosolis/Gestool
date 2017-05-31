@@ -113,7 +113,9 @@ METHOD New()
    ::cConstraints                := "" //Si esto falla, mirar en PropiedadesLineasModel el comentario que explica por qué puede estar fallando
 
    ::cColumnOrder                := "id"
+
    ::cOrientation                := "A"
+
    ::nIdForRecno                 := 1
 
 Return ( Self )
@@ -130,13 +132,17 @@ Return ( nil )
 
 METHOD getSQLCreateTable()
    
-   Local cSQLCreateTable := "CREATE TABLE " + ::cTableName + " ( "
+   local cSQLCreateTable 
+
+   cSQLCreateTable         := "CREATE TABLE " + ::cTableName + " ( "
 
    hEval( ::hColumns, {| k, hash | cSQLCreateTable += k + " " + hget( hash, "create" ) + ", " } )
 
-   cSQLCreateTable        := ::cConstraints
+   if !empty(::cConstraints )
+      cSQLCreateTable      += ::cConstraints
+   end if
 
-   cSQLCreateTable        := ChgAtEnd( cSQLCreateTable, ' )', 2 )
+   cSQLCreateTable         := ChgAtEnd( cSQLCreateTable, ' )', 2 )
 
 Return ( cSQLCreateTable )
 

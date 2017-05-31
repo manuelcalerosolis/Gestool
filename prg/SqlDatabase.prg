@@ -100,7 +100,6 @@ Function getSQLDatabase()
 
    if empty( oSqlDatabase )
       oSqlDatabase            := SQLDatabase():New()
-
    end if
 
 Return ( oSqlDatabase )

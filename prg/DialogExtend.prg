@@ -75,12 +75,8 @@ STATIC FUNCTION DialogHasError()
    local Self        
    local oControl
 
-   msgalert( "DialogError" )
-
    Self              := HB_QSelf()
    Self:Cargo        := {}
-
-   msgalert( "After init DialogError" )
 
    for each oControl in Self:aControls
       if ( oControl:ClassName() == "TGETHLP" ) .and. !empty( oControl:cError )
