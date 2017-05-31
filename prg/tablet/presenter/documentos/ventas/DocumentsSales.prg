@@ -752,6 +752,8 @@ Return ( ::oViewEditResumen:Resource() )
 
 METHOD isPrintDocument() CLASS DocumentsSales
 
+   msgalert( "isPrintDocument" )
+
    if empty( ::cFormatToPrint ) .or. alltrim( ::cFormatToPrint ) == "No imprimir"
       Return .f.
    end if
@@ -838,8 +840,6 @@ Return ( self )
 METHOD onPreEnd() CLASS DocumentsSales
    
    ::oDocumentLines:reset() 
-
-   ::isPrintDocument()
 
    ( ::getDataTable() )->( OrdSetFocus( ::nOrdenAnterior ) )
 

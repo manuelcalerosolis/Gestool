@@ -1455,7 +1455,14 @@ FUNCTION imprimeFacturaCliente( cNumeroFactura, cFormatoDocumento )
       return .t.
    end if
 
+   msgalert( nView, "imprimeFacturaCliente 1458" )
+
    if OpenFiles()
+
+      msgDbfInfo( ( D():FacturasClientes( nView ) ), "dbinfo" )
+
+      ( D():FacturasClientes( nView ) )->( ordsetfocus( "nNumFac" ) )
+      ( D():FacturasClientes( nView ) )->( browse() )
 
       if dbSeekInOrd( cNumeroFactura, "nNumFac", D():FacturasClientes( nView ) )
 
@@ -1465,7 +1472,7 @@ FUNCTION imprimeFacturaCliente( cNumeroFactura, cFormatoDocumento )
 
       else
 
-         msgStop( "Número de factura " + alltrim( cNumeroFactura ) + " no encontrado" )
+         msgStop( "Número de factura " + alltrim( cNumeroFactura ) + " no encontrado.", "Stop! " + str( len( cNumeroFactura ) ) )
 
       end if
 
@@ -1474,6 +1481,8 @@ FUNCTION imprimeFacturaCliente( cNumeroFactura, cFormatoDocumento )
       CloseFiles()
 
    end if
+
+   nView                := nil
 
 Return .t.
 
@@ -1538,6 +1547,8 @@ STATIC FUNCTION OpenFiles()
       */
 
       nView             := D():CreateView()
+
+      msgalert( nView, "nueva vista creada")
 
       D():FacturasClientes( nView )
 
@@ -10206,8 +10217,8 @@ Static Function DataReport( oFr )
    oFr:SetWorkArea(     "Familias", ( dbfFamilia )->( Select() ) )
    oFr:SetFieldAliases( "Familias", cItemsToReport( aItmFam() ) )
 
-   oFr:SetWorkArea(     "Tipo artículo",  oTipArt:Select() )
-   oFr:SetFieldAliases( "Tipo artículo",  cObjectsToReport( oTipArt:oDbf ) )
+   oFr:SetWorkArea(     "Tipo artículo", oTipArt:Select() )
+   oFr:SetFieldAliases( "Tipo artículo", cObjectsToReport( oTipArt:oDbf ) )
 
    oFr:SetWorkArea(     "Recibos", ( D():FacturasClientesCobros( nView ) )->( Select() ) )
    oFr:SetFieldAliases( "Recibos", cItemsToReport( aItmRecCli() ) )

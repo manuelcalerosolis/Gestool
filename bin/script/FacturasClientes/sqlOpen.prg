@@ -9,7 +9,7 @@ Function SqlOpen()
 
    cStatement           := "SELECT * FROM " + cPatEmp() + "FacCliT WHERE ( NOT lLiquidada ) OR ( dFecFac > '" + cFecha + "' )"
 
-   logwrite( cStatement )
+   msgalert( cStatement, "SqlOpen" )
 
 Return ( cStatement )
 

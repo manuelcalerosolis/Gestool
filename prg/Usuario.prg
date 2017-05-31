@@ -9,46 +9,46 @@ REQUEST DBFCDX
 
 #include "Factu.ch" 
 
-#define _CCODUSE                  1      //   C      3      0
-#define _CNBRUSE                  2      //   C     30      0
-#define _CCLVUSE                  3      //   C     10      0
-#define _LSNDINT                  4
-#define _NLEVUSE                  5      //   N      1      0
-#define _LUSEUSE                  6      //   L      1      0
-#define _CEMPUSE                  7      //   C      2      0
-#define _CPCNUSE                  8      //   C     50      0
-#define _CCAJUSE                  9
-#define _CCJRUSE                 10
-#define _CALMUSE                 11
-#define _CFPGUSE                 12
-#define _NGRPUSE                 13
-#define _CIMAGEN                 14
-#define _LCHGPRC                 15      //   L      1      0
-#define _LSELFAM                 16      //   L      1      0
-#define _LNOTBMP                 17      //   L      1      0
-#define _LNOTINI                 18      //   L      1      0
-#define _NSIZICO                 19      //   L      1      0
-#define _CCODEMP                 20      //   C      2      0
-#define _CCODDLG                 21      //   C      2      0
-#define _LNOTRNT                 22      //   L      1      0
-#define _LNOTCOS                 23      //   L      1      0
-#define _LUSRZUR                 24      //   L      1      0
-#define _LALERTA                 25      //   L      1      0
-#define _LGRUPO                  26      //   L      1      0     Lógico de grupo
-#define _CCODGRP                 27      //   C      3      0     Código de grupo
-#define _LNOTDEL                 28      //   L      1      0     Lógico de pedir autorización al borrar registros
-#define _CCODTRA                 29      //   C      3      0     Código de grupo
-#define _LFILVTA                 30      //   L      1      0     Filtrar ventas por usuario
-#define _LDOCAUT                 31      //   L      1      0     Documentos automáticos
-#define _DULTAUT                 32      //   D      8      0     Último documento aautomático
-#define _LNOOPCAJ                33      //   L      1      0 
-#define _LARQCIE                 34      //   L      1      0
-#define _CCODSALA                36      
-#define _CSERDEF                 37      //   C      1      0
-#define _LNOTUNI                 38      //   L      1      0
-#define _LNOTCOB                 39      //   L      1      0
-#define _LNOTNOT                 40      //   L      1      0
-#define _LNOTCOM                 41      //   L      1      0
+#define _CCODUSE                 ( dbfUser )->( fieldpos( "cCodUse" ) )       //   C      3      0
+#define _CNBRUSE                 ( dbfUser )->( fieldpos( "cNbrUse" ) )       //   C     30      0
+#define _CCLVUSE                 ( dbfUser )->( fieldpos( "cClvUse" ) )       //   C     10      0
+#define _LSNDINT                 ( dbfUser )->( fieldpos( "lSndInt" ) ) 
+#define _NLEVUSE                 ( dbfUser )->( fieldpos( "nLevUse" ) )       //   N      1      0
+#define _LUSEUSE                 ( dbfUser )->( fieldpos( "lUseUse" ) )       //   L      1      0
+#define _CEMPUSE                 ( dbfUser )->( fieldpos( "cEmpUse" ) )       //   C      2      0
+#define _CPCNUSE                 ( dbfUser )->( fieldpos( "cPcnUse" ) )       //   C     50      0
+#define _CCAJUSE                 ( dbfUser )->( fieldpos( "cCajUse" ) ) 
+#define _CCJRUSE                 ( dbfUser )->( fieldpos( "cCjrUse" ) ) 
+#define _CALMUSE                 ( dbfUser )->( fieldpos( "cAlmUse" ) ) 
+#define _CFPGUSE                 ( dbfUser )->( fieldpos( "cFpgUse" ) ) 
+#define _NGRPUSE                 ( dbfUser )->( fieldpos( "nGrpUse" ) ) 
+#define _CIMAGEN                 ( dbfUser )->( fieldpos( "cImaGen" ) ) 
+#define _LCHGPRC                 ( dbfUser )->( fieldpos( "lChgPrc" ) )       //   L      1      0
+#define _LSELFAM                 ( dbfUser )->( fieldpos( "lSelFam" ) )       //   L      1      0
+#define _LNOTBMP                 ( dbfUser )->( fieldpos( "lNotBmp" ) )       //   L      1      0
+#define _LNOTINI                 ( dbfUser )->( fieldpos( "lNotIni" ) )       //   L      1      0
+#define _NSIZICO                 ( dbfUser )->( fieldpos( "nSizIco" ) )       //   L      1      0
+#define _CCODEMP                 ( dbfUser )->( fieldpos( "cCodEmp" ) )       //   C      2      0
+#define _CCODDLG                 ( dbfUser )->( fieldpos( "cCodDlg" ) )       //   C      2      0
+#define _LNOTRNT                 ( dbfUser )->( fieldpos( "lNotRnt" ) )       //   L      1      0
+#define _LNOTCOS                 ( dbfUser )->( fieldpos( "lNotCos" ) )       //   L      1      0
+#define _LUSRZUR                 ( dbfUser )->( fieldpos( "lUsrZur" ) )       //   L      1      0
+#define _LALERTA                 ( dbfUser )->( fieldpos( "lAleRta" ) )       //   L      1      0
+#define _LGRUPO                  ( dbfUser )->( fieldpos( "lGruPo"  ) )       //   L      1      0     Lógico de grupo
+#define _CCODGRP                 ( dbfUser )->( fieldpos( "cCodGrp"  ) )       //   C      3      0     Código de grupo
+#define _LNOTDEL                 ( dbfUser )->( fieldpos( "lNotDel"  ) )       //   L      1      0     Lógico de pedir autorización al borrar registros
+#define _CCODTRA                 ( dbfUser )->( fieldpos( "cCodTra"  ) )       //   C      3      0     Código de grupo
+#define _LFILVTA                 ( dbfUser )->( fieldpos( "lFilVta"  ) )       //   L      1      0     Filtrar ventas por usuario
+#define _LDOCAUT                 ( dbfUser )->( fieldpos( "lDocAut"  ) )       //   L      1      0     Documentos automáticos
+#define _DULTAUT                 ( dbfUser )->( fieldpos( "dUltAut"  ) )       //   D      8      0     Último documento aautomático
+#define _LNOOPCAJ                ( dbfUser )->( fieldpos( "lNooPcaj" ) )       //   L      1      0 
+#define _LARQCIE                 ( dbfUser )->( fieldpos( "lArqCie"  ) )       //   L      1      0
+#define _CCODSALA                ( dbfUser )->( fieldpos( "cCodSala" ) )       
+#define _CSERDEF                 ( dbfUser )->( fieldpos( "cSerDef"  ) )       //   C      1      0
+#define _LNOTUNI                 ( dbfUser )->( fieldpos( "lNotUni"  ) )       //   L      1      0
+#define _LNOTCOB                 ( dbfUser )->( fieldpos( "lNotCob"  ) )       //   L      1      0
+#define _LNOTNOT                 ( dbfUser )->( fieldpos( "lNotNot"  ) )       //   L      1      0
+#define _LNOTCOM                 ( dbfUser )->( fieldpos( "lNotCom"  ) )       //   L      1      0
 
 //----------------------------------------------------------------------------//
 //Comenzamos la parte de código que se compila para el ejecutable normal

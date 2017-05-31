@@ -20,11 +20,12 @@ CLASS InvoiceCustomer FROM DocumentsSales
    METHOD getAppendDetail()
    METHOD deleteLinesDocument()
 
-   METHOD printDocument()                 INLINE ( imprimeFacturaCliente( ::getID(), ::cFormatToPrint ), .t. )
+   METHOD printDocument()                 INLINE ( imprimeFacturaCliente( ::getID(), ::cFormatToPrint, ::nView ), .t. )
 
    METHOD onPostSaveAppend()              INLINE ( generatePagosFacturaCliente( ::getId(), ::nView ),;
                                                    checkPagosFacturaCliente( ::getId(), ::nView ),;
-                                                   ::ActualizaUltimoLote() )
+                                                   ::ActualizaUltimoLote(),;
+                                                   ::isPrintDocument() )
 
    METHOD onPostSaveEdit()                INLINE ( generatePagosFacturaCliente( ::getId(), ::nView ),;
                                                    checkPagosFacturaCliente( ::getId(), ::nView ) )
@@ -87,7 +88,7 @@ METHOD Create( nView ) CLASS InvoiceCustomer
 
    // Areas--------------------------------------------------------------------
 
-   ::setSentenceTable( runScript( "FacturasClientes\SQLOpen.prg" )  )
+   ::setSentenceTable( runScript( "FacturasClientes\SQLOpen.prg" ) )
    ::setDataTable( "FacCliT" )
    ::setDataTableLine( "FacCliL" )
 

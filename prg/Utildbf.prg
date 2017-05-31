@@ -215,7 +215,6 @@ FUNCTION dbFirst( cAlias, nField, oGet, xDesde, nOrd )
       nOrdAct     := ( cAlias )->( OrdSetFocus( nOrd ) )
    end if
 
-
    if empty( xDesde )
       ( cAlias )->( dbGoTop() )
    else
