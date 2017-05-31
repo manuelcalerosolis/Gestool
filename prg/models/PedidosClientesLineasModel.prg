@@ -30,6 +30,10 @@ METHOD TranslateCodigoTiposVentaToId( cTable )
    local hIdTipoVenta
    local aIdTiposVentas    := TiposVentasModel():arrayTiposVentas()
 
+   if empty(aIdTiposVentas)
+      RETURN ( Self )
+   end if 
+
    for each hIdTipoVenta in aIdTiposVentas
 
       cSentenceDBF         := "UPDATE EMP" + cCodEmp() + cTable + " "                              + ;

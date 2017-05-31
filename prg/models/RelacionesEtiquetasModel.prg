@@ -157,22 +157,22 @@ RETURN ( cInsertSentence )
 
 METHOD getRelationsOfEtiquetas( cTableName, nCodLine )
 
-   local cSentence := "SELECT etiquetas FROM " + ::cTableName                       + ;
+   local aResult 
+   local cSentence
+   local aEtiquetas
+
+   cSentence         := "SELECT etiquetas FROM " + ::cTableName                     + ;
                            " WHERE id_empresa = " + toSQLString( cCodEmp() )        + ;
                            " AND tabla_documento = " + toSQLString( cTableName )    + ;
                            " AND id_documento = " + toSQLString( nCodLine )
-
-
-   local aResult := ::selectFetchArray( cSentence )
-
-   local aEtiquetas
+   aResult           := ::selectFetchArray( cSentence )
 
    if empty( aResult )
-       RETURN ( nil )
+      RETURN ( nil )
    endif
 
-   aEtiquetas := hb_deserialize( aResult[1] ) 
+   aEtiquetas        := hb_deserialize( atail( aResult ) )
 
-   RETURN ( aEtiquetas )
+RETURN ( aEtiquetas )
 
 //---------------------------------------------------------------------------//

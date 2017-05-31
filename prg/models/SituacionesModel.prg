@@ -14,7 +14,7 @@ CLASS SituacionesModel FROM SQLBaseModel
 
    METHOD   New()
 
-   METHOD   buildRowSetWithRecno()                 INLINE   ( ::buildRowSet( .t. ) )
+   METHOD   buildRowSetWithRecno()                 INLINE   ( ::buildRowSet( .t. ) ) 
 
    METHOD   arraySituaciones()
 
@@ -26,12 +26,12 @@ METHOD New()
 
    ::cDbfTableName               := "Situa"
 
-   ::hColumns                    := {  "id"              => {  "create"    => "INTEGER PRIMARY KEY AUTOINCREMENT"    ,;
-                                                               "text"		=> "Identificador"                        ,;
-   															               "dbfField" 	=> "" }                                   ,;
-                                       "situacion"       => {  "create"    => "VARCHAR( 140 ) NOT NULL"              ,;
-   															               "text"		=> "Tipo de situacion"                    ,;
-   															               "dbfField" 	=> "cSitua" } }
+   ::hColumns                    := {  "id"        => {  "create"    => "INTEGER PRIMARY KEY AUTOINCREMENT"    ,;
+                                                         "text"		=> "Identificador"                        ,;
+   															         "dbfField" 	=> "" }                                   ,;
+                                       "nombre"    => {  "create"    => "VARCHAR( 140 ) NOT NULL"              ,;
+   															         "text"		=> "Tipo de situacion"                    ,;
+   															         "dbfField" 	=> "cSitua" } }
 
    ::Super:New()
 
@@ -41,7 +41,7 @@ RETURN ( Self )
 
 METHOD arraySituaciones()
 
-   local cSentence               := "SELECT situacion FROM " + ::cTableName
+   local cSentence               := "SELECT nombre FROM " + ::cTableName
    local aSelect                 := ::selectFetchArray( cSentence ) 
 
 RETURN ( aSelect )
