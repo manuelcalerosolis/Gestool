@@ -46,8 +46,16 @@ RETURN ( Self )
 METHOD getCodigoFromId( id )
 
    local cCodigo                 := space( 2 )
-   local cSentence               := "SELECT codigo FROM " + ::cTableName + " WHERE id = " + toSQLString( id )
-   local aSelect                 := ::selectFetchHash( cSentence ) 
+   local aSelect                 
+   local cSentence               
+
+   if empty( id )
+      RETURN ( cCodigo )
+   end if 
+
+   cSentence                     := "SELECT codigo FROM " + ::cTableName + " WHERE id = " + toSQLString( id )
+
+   aSelect                       := ::selectFetchHash( cSentence ) 
 
    if !empty( aSelect )
       cCodigo                    := padr( hget( atail( aSelect ), "codigo" ), 2 )
