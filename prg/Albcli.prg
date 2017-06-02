@@ -4592,6 +4592,9 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbf, oBrw, lTotLin, cCodArtEnt, nMode, aTmpA
          PICTURE  cPicUnd ;
          OF       oFld:aDialogs[1] 
 
+      aGet[ __NBULTOS ]:Cargo          := "nBultos"
+      aGet[ __NBULTOS ]:bPostValidate  := {| oSender | runScript( "AlbaranesClientes\Lineas\validControl.prg", oSender, aGet, nView, nMode, aTmpAlb ) } 
+
       REDEFINE GET aGet[ _NCANENT ] VAR aTmp[ _NCANENT ];
          ID       130 ;
          IDSAY    131 ;
@@ -4602,6 +4605,9 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbf, oBrw, lTotLin, cCodArtEnt, nMode, aTmpA
          VALID    ( lCalcDeta( aTmp, aTmpAlb, nDouDiv, oTotal, oRentLin, cCodDiv ), LoaArt( cCodArt, aTmp, aGet, aTmpAlb, oStkAct, oSayPr1, oSayPr2, oSayVp1, oSayVp2, bmpImage, nMode, .f. ) );
          OF       oFld:aDialogs[1] ;
 
+      aGet[ _NCANENT ]:Cargo          := "nCanEnt"
+      aGet[ _NCANENT ]:bPostValidate  := {| oSender | runScript( "AlbaranesClientes\Lineas\validControl.prg", oSender, aGet, nView, nMode, aTmpAlb ) } 
+
       REDEFINE GET aGet[ _NUNICAJA ] VAR aTmp[ _NUNICAJA ] ;
          ID       140 ;
          IDSAY    141 ;
@@ -4610,6 +4616,9 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbf, oBrw, lTotLin, cCodArtEnt, nMode, aTmpA
          ON CHANGE( lCalcDeta( aTmp, aTmpAlb, nDouDiv, oTotal, oRentLin, cCodDiv ), LoaArt( cCodArt, aTmp, aGet, aTmpAlb, oStkAct, oSayPr1, oSayPr2, oSayVp1, oSayVp2, bmpImage, nMode, .f. ) );
          PICTURE  cPicUnd ;
          OF       oFld:aDialogs[1] ;
+
+      aGet[ _NUNICAJA ]:Cargo          := "nUniCaja"
+      aGet[ _NUNICAJA ]:bPostValidate  := {| oSender | runScript( "AlbaranesClientes\Lineas\validControl.prg", oSender, aGet, nView, nMode, aTmpAlb ) } 
 
       REDEFINE GET aGet[ _NFACCNV ] VAR aTmp[ _NFACCNV ] ;
          ID       295 ;

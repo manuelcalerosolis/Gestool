@@ -50,7 +50,6 @@ CLASS TDiaPFac FROM TInfGen
    DATA  oFacPrvP    AS OBJECT
    DATA  oFacPrvT    AS OBJECT
    DATA  oFacPrvL    AS OBJECT
-   DATA  oDbfTvta    AS OBJECT
    DATA  aEstado     AS ARRAY    INIT  { "Pendiente", "Liquidada", "Todas" }
 
    METHOD OpenFiles()
@@ -87,8 +86,6 @@ METHOD OpenFiles() CLASS TDiaPFac
 
    DATABASE NEW ::oFacPrvP  PATH ( cPatEmp() ) FILE "FACPRVP.DBF"  VIA ( cDriver() ) SHARED INDEX "FACPRVP.CDX"
 
-   DATABASE NEW ::oDbfTvta  PATH ( cPatDat() ) FILE "TVTA.DBF"    VIA ( cDriver() ) SHARED INDEX "TVTA.CDX"
-
    RECOVER USING oError
 
       lOpen := .f.
@@ -118,15 +115,11 @@ METHOD CloseFiles() CLASS TDiaPFac
       ::oFacPrvtP:End()
    end if
 
-   if !Empty( ::oDbfTvta ) .and. ::oDbfTvta:Used()
-      ::oDbfTvta:End()
-   end if
-
-  if !Empty( ::oDbfPrv ) .and. ::oDbfPrv:Used()
+   if !Empty( ::oDbfPrv ) .and. ::oDbfPrv:Used()
       ::oDbfPrv:End()
    end if
 
-  if !Empty( ::oDbfIva ) .and. ::oDbfIva:Used()
+   if !Empty( ::oDbfIva ) .and. ::oDbfIva:Used()
       ::oDbfIva:End()
    end if
 

@@ -12,7 +12,6 @@ CLASS TDiaPAlb FROM TPrvInf
    DATA  oDbfIva     AS OBJECT
    DATA  oAlbPrvT    AS OBJECT
    DATA  oAlbPrvL    AS OBJECT
-   DATA  oDbfTvta    AS OBJECT
    DATA  aEstado     AS ARRAY    INIT  { "No facturados", "Facturados", "Todos" }
 
    METHOD Create()
@@ -69,8 +68,6 @@ METHOD OpenFiles()
 
    DATABASE NEW ::oDbfIva   PATH ( cPatDat() ) FILE "TIVA.DBF"     VIA ( cDriver() ) SHARED INDEX "TIVA.CDX"
 
-   DATABASE NEW ::oDbfTvta  PATH ( cPatDat() ) FILE "TVTA.DBF"     VIA ( cDriver() ) SHARED INDEX "TVTA.CDX"
-
    RECOVER
 
       msgStop( "Imposible abrir todas las bases de datos" )
@@ -93,16 +90,12 @@ METHOD CloseFiles()
    if !Empty( ::oAlbPrvL ) .and. ::oAlbPrvL:Used()
       ::oAlbPrvL:End()
    end if
-   if !Empty( ::oDbfTvta ) .and. ::oDbfTvta:Used()
-      ::oDbfTvta:End()
-   end if
    if !Empty( ::oDbfIva ) .and. ::oDbfIva:Used()
       ::oDbfIva:End()
    end if
 
    ::oAlbPrvT := nil
    ::oAlbPrvL := nil
-   ::oDbfTvta := nil
    ::oDbfPrv  := nil
    ::oDbfIva  := nil
 

@@ -53,7 +53,6 @@ CLASS TDiaCPre FROM TInfGen
    DATA  oEstado     AS OBJECT
    DATA  oPreCliT    AS OBJECT
    DATA  oPreCliL    AS OBJECT
-   DATA  oDbfTvta    AS OBJECT
    DATA  oDbfCli     AS OBJECT
 
    METHOD OpenFiles()
@@ -89,8 +88,6 @@ METHOD OpenFiles() CLASS TDiaCPre
 
    DATABASE NEW ::oDbfPago  PATH ( cPatEmp() ) FILE "FPAGO.DBF"  VIA ( cDriver() ) SHARED INDEX "FPAGO.CDX"
 
-   DATABASE NEW ::oDbfTvta  PATH ( cPatDat() ) FILE "TVTA.DBF"    VIA ( cDriver() ) SHARED INDEX "TVTA.CDX"
-
    RECOVER USING oError
 
       lOpen := .f.
@@ -114,10 +111,6 @@ METHOD CloseFiles() CLASS TDiaCPre
 
    if !Empty( ::oPreCliL ) .and. ::oPreCliL:Used()
       ::oPreCliL:End()
-   end if
-
-   if !Empty( ::oDbfTvta ) .and. ::oDbfTvta:Used()
-      ::oDbfTvta:End()
    end if
 
   if !Empty( ::oDbfCli ) .and. ::oDbfCli:Used()
@@ -225,9 +218,6 @@ METHOD lGenerate() CLASS TDiaCPre
                   ::oDbf:nComAge := ::oPreCliL:nComAge
                   ::oDbf:NTOTDOC := aTotPreCli (::oPreCliT:CSERPRE + Str( ::oPreCliT:NNUMPRE ) + ::oPreCliT:CSUFPRE, ::oPreCliT:cAlias, ::oPreCliL:cAlias, ::oDbfIva:cAlias, ::oDbfDiv:cAlias, ::oDbfPago:cAlias, nil, cDivEmp())[4]
                   ::oDbf:CDOCMOV := ::oPreCliL:CSERPRE + "/" + Str( ::oPreCliL:NNUMPRE ) + "/" + ::oPreCliL:CSUFPRE
-
-                  ::oDbfTvta:Seek (::oPreCliL:cTipMov)
-                  ::oDbf:cTipVen    := ::oDbfTvta:cDesMov
 
                   IF ::oDbfCli:Seek ( ::oPreCliT:CCODCLI )
 

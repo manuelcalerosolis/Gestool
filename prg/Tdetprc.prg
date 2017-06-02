@@ -46,7 +46,6 @@ CLASS TInfDetPrc FROM TInfGen
    DATA  oPreCliT    AS OBJECT
    DATA  oPreCliL    AS OBJECT
    DATA  oFamilia    AS OBJECT
-   DATA  oDbfTvta    AS OBJECT
 
    METHOD OpenFiles()
 
@@ -78,8 +77,6 @@ METHOD OpenFiles() CLASS TInfDetPrc
    DATABASE NEW ::oPreCliL PATH ( cPatEmp() ) FILE "PRECLIL.DBF" VIA ( cDriver() ) SHARED INDEX "PRECLIL.CDX"
    ::oPreCliL:OrdSetFocus( "CREF" )
 
-   DATABASE NEW ::oDbfTvta  PATH ( cPatDat() ) FILE "TVTA.DBF" VIA ( cDriver() ) SHARED INDEX "TVTA.CDX"
-
    DATABASE NEW ::oFamilia PATH ( cPatArt() ) FILE "FAMILIAS.DBF" VIA ( cDriver() ) SHARED INDEX "FAMILIAS.CDX"
 
    RECOVER USING oError
@@ -105,10 +102,6 @@ METHOD CloseFiles() CLASS TInfDetPrc
 
    if !Empty( ::oPreCliL ) .and. ::oPreCliL:Used()
       ::oPreCliL:End()
-
-   if!Empty( ::oDbfTvta ) .and. ::oDbfTvta:Used()
-      ::oDbfTvta:End()
-   end if
 
    if!Empty( ::oFamilia ) .and. ::oFamilia:Used()
       ::oFamilia:End()

@@ -12,7 +12,6 @@ CLASS TDiaCTpv FROM TInfGen
    DATA  oTikCliP    AS OBJECT
    DATA  oTikCliT    AS OBJECT
    DATA  oTikCliL    AS OBJECT
-   DATA  oDbfTvta    AS OBJECT
 
    METHOD Create ()
 
@@ -69,8 +68,6 @@ METHOD OpenFiles() CLASS TDiaCTpv
 
    DATABASE NEW ::oTikCliP  PATH ( cPatEmp() ) FILE "TIKEP.DBF"  VIA ( cDriver() ) SHARED INDEX "TIKEP.CDX"
 
-   DATABASE NEW ::oDbfTvta  PATH ( cPatDat() ) FILE "TVTA.DBF"    VIA ( cDriver() ) SHARED INDEX "TVTA.CDX"
-
    RECOVER USING oError
 
       lOpen := .f.
@@ -92,23 +89,19 @@ METHOD CloseFiles() CLASS TDiaCTpv
       ::oTikCliT:End()
    end if
 
-  if !Empty( ::oTikCliL ) .and. ::oTikCliL:Used()
+   if !Empty( ::oTikCliL ) .and. ::oTikCliL:Used()
       ::oTikCliL:End()
    end if
 
-  if !Empty( ::oTikCliP ) .and. ::oTikCliP:Used()
+   if !Empty( ::oTikCliP ) .and. ::oTikCliP:Used()
       ::oTikCliP:End()
    end if
 
-   if !Empty( ::oDbfTvta ) .and. ::oDbfTvta:Used()
-      ::oDbfTvta:End()
-   end if
-
-  if !Empty( ::oDbfCli ) .and. ::oDbfCli:Used()
+   if !Empty( ::oDbfCli ) .and. ::oDbfCli:Used()
       ::oDbfCli:End()
    end if
 
-  if !Empty( ::oDbfIva ) .and. ::oDbfIva:Used()
+   if !Empty( ::oDbfIva ) .and. ::oDbfIva:Used()
       ::oDbfIva:End()
    end if
 

@@ -14,7 +14,6 @@ CLASS TDiaPrFa FROM TPrvInf
    DATA  oFacPrvT    AS OBJECT
    DATA  oFacPrvL    AS OBJECT
    DATA  oDbfDiv     AS OBJECT
-   DATA  oDbfTvta    AS OBJECT
    DATA  aEstado     AS ARRAY    INIT  { "Pendiente", "Liquidada", "Todas" }
 
    METHOD Create()
@@ -97,8 +96,6 @@ METHOD OpenFiles()
 
    DATABASE NEW ::oFacPrvP  PATH ( cPatEmp() ) FILE "FACPRVP.DBF" VIA ( cDriver() ) SHARED INDEX "FACPRVP.CDX"
 
-   DATABASE NEW ::oDbfTvta  PATH ( cPatDat() ) FILE "TVTA.DBF"    VIA ( cDriver() ) SHARED INDEX "TVTA.CDX"
-
    DATABASE NEW ::oDbfDiv   PATH ( cPatDat() ) FILE "DIVISAS.DBF" VIA ( cDriver() ) SHARED INDEX "DIVISAS.CDX"
 
    RECOVER
@@ -123,9 +120,6 @@ METHOD CloseFiles()
    if !Empty( ::oFacPrvL ) .and. ::oFacPrvL:Used()
       ::oFacPrvL:End()
    end if
-   if !Empty( ::oDbfTvta ) .and. ::oDbfTvta:Used()
-      ::oDbfTvta:End()
-   end if
    if !Empty( ::oDbfIva ) .and. ::oDbfIva:Used()
       ::oDbfIva:End()
    end if
@@ -138,7 +132,6 @@ METHOD CloseFiles()
 
    ::oFacPrvT := nil
    ::oFacPrvL := nil
-   ::oDbfTvta := nil
    ::oDbfIva  := nil
    ::oFacPrvP := nil
    ::oDbfDiv  := nil

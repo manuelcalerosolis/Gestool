@@ -12,7 +12,6 @@ CLASS TDiaXAlb FROM TInfGen
    DATA  oAlbCliT    AS OBJECT
    DATA  oAlbCliL    AS OBJECT
    DATA  oDbfCli     AS OBJECT
-   DATA  oDbfTvta    AS OBJECT
    DATA  aEstado     AS ARRAY    INIT  { "No facturado", "Facturado", "Todos" }
    DATA  lExcCredito AS LOGIC    INIT .f.
    DATA  aEntregado  AS ARRAY    INIT  { "No entregados", "Entregados", "Todos"}
@@ -71,8 +70,6 @@ METHOD OpenFiles() CLASS TDiaXAlb
 
    DATABASE NEW ::oDbfIva   PATH ( cPatDat() ) FILE "TIVA.DBF"  VIA ( cDriver() ) SHARED INDEX "TIVA.CDX"
 
-   DATABASE NEW ::oDbfTvta  PATH ( cPatDat() ) FILE "TVTA.DBF"    VIA ( cDriver() ) SHARED INDEX "TVTA.CDX"
-
    DATABASE NEW ::oDbfCli PATH ( cPatCli() ) FILE "CLIENT.DBF" VIA ( cDriver() ) SHARED INDEX "CLIENT.CDX"
 
    RECOVER
@@ -97,9 +94,6 @@ METHOD CloseFiles() CLASS TDiaXAlb
    if !Empty( ::oAlbCliL ) .and. ::oAlbCliL:Used()
       ::oAlbCliL:End()
    end if
-   if !Empty( ::oDbfTvta ) .and. ::oDbfTvta:Used()
-      ::oDbfTvta:End()
-   end if
    if !Empty( ::oDbfIva ) .and. ::oDbfIva:Used()
       ::oDbfIva:End()
    end if
@@ -109,7 +103,6 @@ METHOD CloseFiles() CLASS TDiaXAlb
 
    ::oAlbCliT := nil
    ::oAlbCliL := nil
-   ::oDbfTvta := nil
    ::oDbfIva  := nil
    ::oDbfCli  := nil
 
