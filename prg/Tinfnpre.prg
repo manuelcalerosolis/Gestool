@@ -13,7 +13,6 @@ CLASS TInfNPre FROM TInfPAge
    DATA  oEstado     AS OBJECT
    DATA  oPreCliT    AS OBJECT
    DATA  oPreCliL    AS OBJECT
-   DATA  oDbfTvta    AS OBJECT
    DATA  oIva        AS OBJECT
    DATA  cTipVen     AS CHARACTER
    DATA  cTipVen2    AS CHARACTER
@@ -57,8 +56,6 @@ METHOD OpenFiles()
 
    DATABASE NEW ::oPreCliL    PATH ( cPatEmp() ) FILE "PRECLIL.DBF"  VIA ( cDriver() ) SHARED INDEX "PRECLIL.CDX"
 
-   DATABASE NEW ::oDbfTvta    PATH ( cPatDat() ) FILE "TVTA.DBF"     VIA ( cDriver() ) SHARED INDEX "TVTA.CDX"
-
    DATABASE NEW ::oIva        PATH ( cPatDat() ) FILE "TIVA.DBF"     VIA ( cDriver() ) SHARED INDEX "TIVA.CDX"
 
    RECOVER
@@ -86,14 +83,10 @@ METHOD CloseFiles()
    if !Empty( ::oIva ) .and. ::oIva:Used()
       ::oIva:End()
    end if
-   if !Empty( ::oDbfTvta ) .and. ::oDbfTvta:Used()
-      ::oDbfTvta:End()
-   end if
 
    ::oPreCliT := nil
    ::oPreCliL := nil
    ::oIva     := nil
-   ::oDbfTvta := nil
 
 RETURN ( Self )
 
@@ -125,27 +118,6 @@ METHOD lResource( cFld )
    if !::lDefArtInf( 150, 160, 170, 180, 800 )
       return .f.
    end if
-
-   /*
-   Damos valor al meter
-   */
-
-   REDEFINE CHECKBOX ::lTvta ;
-      ID       260 ;
-      OF       ::oFld:aDialogs[1]
-
-   REDEFINE GET oTipVen VAR ::cTipVen ;
-      VALID    ( cTVta( oTipVen, This:oDbfTvta:cAlias, oTipVen2 ) ) ;
-      BITMAP   "LUPA" ;
-      ON HELP  ( BrwTVta( oTipVen, This:oDbfTVta:cAlias, oTipVen2 ) ) ;
-      ID       270 ;
-      OF       ::oFld:aDialogs[1]
-
-   REDEFINE GET oTipVen2 VAR ::cTipVen2 ;
-      ID       280 ;
-      WHEN     ( .F. ) ;
-      COLOR    CLR_GET ;
-      OF       ::oFld:aDialogs[1]
 
    ::oMtrInf:SetTotal( ::oPreCliT:Lastrec() )
 
@@ -264,34 +236,6 @@ METHOD lGenerate()
                         ::oDbf:cDocMov := ::oPreCliL:cSerPre + "/" + lTrim( Str( ::oPreCliL:nNumPre ) ) + "/" + lTrim( ::oPreCliL:cSufPre )
                         ::oDbf:cTipDoc := "Presupuesto"
                         ::oDbf:dFecMov := ::oPreCliT:dFecPre
-
-                        if ::oDbfTvta:Seek( ::oPreCliL:cTipMov )
-                           ::oDbf:cTipVen := ::oDbfTvta:cDesMov
-                        end if
-
-                        if ::oDbfTvta:nUndMov == 1
-                           ::oDbf:nNumCaj := ::oPreCliL:nCanEnt
-                           ::oDbf:nNumUni := nTotNPreCli( ::oPreCliL )
-                           ::oDbf:nUniDad := ::oPreCliL:nUniCaja
-                        elseif ::oDbfTvta:nUndMov == 2
-                           ::oDbf:nNumCaj := -::oPreCliL:nCanEnt
-                           ::oDbf:nNumUni := -nTotNPreCli( ::oPreCliL )
-                           ::oDbf:nUniDad := -::oPreCliL:nUniCaja
-                        elseif ::oDbfTvta:nUndMov == 3
-                           ::oDbf:nNumCaj := 0
-                           ::oDbf:nNumUni := 0
-                           ::oDbf:nUniDad := 0
-                        end if
-
-                        if ::oDbfTvta:nImpMov == 3
-                           ::oDbf:nComAge := 0
-                           ::oDbf:nImpTot := 0
-                           ::oDbf:nTotCom := 0
-                        else
-                           ::oDbf:nComAge := ( ::oPreCliL:nComAge )
-                           ::oDbf:nImpTot := nImpLPreCli( ::oPreCliT:cAlias, ::oPreCliL:cAlias, ::nDecOut, ::nDerOut )
-                           ::oDbf:nTotCom := nComLPreCli( ::oPreCliT:cAlias, ::oPreCliL:cAlias, ::nDecOut, ::nDerOut )
-                        end if
 
                         ::oDbf:nImpArt    := nTotUPreCli( ::oPreCliL:cAlias, ::nDecOut, ::nValDiv )
                         ::oDbf:nImpTrn    := nTrnUPreCli( ::oPreCliL:cAlias, ::nDecOut, ::nValDiv )

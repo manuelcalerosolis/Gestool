@@ -16,7 +16,6 @@ CLASS TIvaVta FROM TInfGen
    DATA  oAntCliT    AS OBJECT
    DATA  oTikCliT    AS OBJECT
    DATA  oTikCliL    AS OBJECT
-   DATA  oDbfTvta    AS OBJECT
    DATA  oDbfIva     AS OBJECT
    DATA  oDbfDiv     AS OBJECT
    DATA  lAllIva     AS LOGIC    INIT .t.
@@ -96,8 +95,6 @@ METHOD OpenFiles()
 
    DATABASE NEW ::oDbfIva  PATH ( cPatDat() ) FILE "TIVA.DBF"     VIA ( cDriver() ) SHARED INDEX "TIVA.CDX"
 
-   DATABASE NEW ::oDbfTvta PATH ( cPatDat() ) FILE "TVTA.DBF"     VIA ( cDriver() ) SHARED INDEX "TVTA.CDX"
-
    DATABASE NEW ::oDbfDiv  PATH ( cPatDat() ) FILE "DIVISAS.DBF"  VIA ( cDriver() ) SHARED INDEX "DIVISAS.CDX"
 
    DATABASE NEW ::oAntCliT  PATH ( cPatEmp() ) FILE "ANTCLIT.DBF"  VIA ( cDriver() ) SHARED INDEX "ANTCLIT.CDX"
@@ -140,9 +137,6 @@ METHOD CloseFiles()
    if !Empty( ::oFacCliP ) .and. ::oFacCliP:Used()
       ::oFacCliP:End()
    end if
-   if !Empty( ::oDbfTvta ) .and. ::oDbfTvta:Used()
-      ::oDbfTvta:End()
-   end if
    if !Empty( ::oDbfIva ) .and. ::oDbfIva:Used()
       ::oDbfIva:End()
    end if
@@ -166,7 +160,6 @@ METHOD CloseFiles()
    ::oFacRecT := nil
    ::oFacRecL := nil
    ::oFacCliP := nil
-   ::oDbfTvta := nil
    ::oDbfIva  := nil
    ::oDbfDiv  := nil
    ::oTikCliT := nil

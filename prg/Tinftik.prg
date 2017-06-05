@@ -10,7 +10,6 @@ CLASS TInfDetTik FROM TInfAlm
    DATA  nEstado     AS NUMERIC  INIT 1
    DATA  oTikeT      AS OBJECT
    DATA  oTikeL      AS OBJECT
-   DATA  oDbfTvta    AS OBJECT
 
    METHOD Create()
 
@@ -56,8 +55,6 @@ METHOD OpenFiles()
 
    DATABASE NEW ::oDbfCli PATH ( cPatCli() ) FILE "CLIENT.DBF" VIA ( cDriver() ) SHARED INDEX "CLIENT.CDX"
 
-   DATABASE NEW ::oDbfTvta  PATH ( cPatDat() ) FILE "TVTA.DBF" VIA ( cDriver() ) SHARED INDEX "TVTA.CDX"
-
    RECOVER
 
       msgStop( "Imposible abrir todas las bases de datos" )
@@ -79,10 +76,6 @@ METHOD CloseFiles()
    end if
    if !Empty( ::oTikeL ) .and. ::oTikeL:Used()
       ::oTikeL:End()
-   end if
-
-   if !Empty( ::oDbfTvta ) .and. ::oDbfTvta:Used()
-      ::oDbfTvta:End()
    end if
 
    if !Empty( ::oDbfCli ) .and. ::oDbfCli:Used()

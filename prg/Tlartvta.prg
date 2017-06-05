@@ -17,7 +17,6 @@ CLASS TDlArtVta FROM TInfGen
    DATA  oFacCliP    AS OBJECT
    DATA  oTpvCliT    AS OBJECT
    DATA  oTpvCliL    AS OBJECT
-   DATA  oDbfTvta    AS OBJECT
    DATA  oIva        AS OBJECT
    DATA  oSay        AS OBJECT
    DATA  cTipVen     AS CHARACTER
@@ -81,8 +80,6 @@ METHOD OpenFiles() CLASS TDlAgeVta
 
    DATABASE NEW ::oDbfCli   PATH ( cPatCli() ) FILE "CLIENT.DBF"  VIA ( cDriver() ) SHARED INDEX "CLIENT.CDX"
 
-   DATABASE NEW ::oDbfTvta  PATH ( cPatDat() ) FILE "TVTA.DBF"    VIA ( cDriver() ) SHARED INDEX "TVTA.CDX"
-
    DATABASE NEW ::oIva      PATH ( cPatDat() ) FILE "TIVA.DBF"    VIA ( cDriver() ) SHARED INDEX "TIVA.CDX"
 
 RETURN ( Self )
@@ -93,7 +90,6 @@ METHOD CloseFiles() CLASS TDlAgeVta
 
    ::oAlbCliT:End()
    ::oAlbCliL:End()
-   ::oDbfTvta:End()
    ::oDbfCli:End()
    ::oIva:End()
 
@@ -124,23 +120,6 @@ METHOD Resource( cFld ) CLASS TDlAgeVta
    */
 
    ::lDefArtInf( 110, 120, 130, 140 )
-
-   REDEFINE CHECKBOX ::lTvta ;
-      ID       260 ;
-      OF       ::oFld:aDialogs[1]
-
-   REDEFINE GET oTipVen VAR ::cTipVen ;
-      VALID    ( cTVta( oTipVen, This:oDbfTvta:cAlias, oTipVen2 ) ) ;
-      BITMAP   "LUPA" ;
-      ON HELP  ( BrwTVta( oTipVen, This:oDbfTVta:cAlias, oTipVen2 ) ) ;
-      ID       270 ;
-      OF       ::oFld:aDialogs[1]
-
-   REDEFINE GET oTipVen2 VAR ::cTipVen2 ;
-      ID       280 ;
-      WHEN     ( .F. ) ;
-      COLOR    CLR_GET ;
-      OF       ::oFld:aDialogs[1]
 
    ::oMtrInf:SetTotal( ::oAlbCliT:Lastrec() )
 
@@ -227,35 +206,6 @@ METHOD lGenerate() CLASS TDlAgeVta
 
                         if ( ::oDbfAge:Seek (::oAlbCliT:cCodAge) )
                            ::oDbf:cNomAge := ::oDbfAge:cApeAge + ", " + ::oDbfAge:cNbrAge
-                        end if
-
-                        if ::oDbfTvta:Seek( ::oAlbCliL:cTipMov )
-                           ::oDbf:cTipVen    := ::oDbfTvta:cDesMov
-
-                           if ::oDbfTvta:nUndMov == 1
-                              ::oDbf:NUNDCAJ := ::oAlbCliL:NCANENT
-                              ::oDbf:NCAJUND := nTotNAlbCli( ::oAlbCliL )
-                              ::oDbf:NUNDART := ::oAlbCliL:NUNICAJA
-                           elseif ::oDbfTvta:nUndMov == 2
-                              ::oDbf:NUNDCAJ := - ::oAlbCliL:NCANENT
-                              ::oDbf:NCAJUND := - nTotNAlbCli( ::oAlbCliL )
-                              ::oDbf:NUNDART := - ::oAlbCliL:NUNICAJA
-                           elseif ::oDbfTvta:nUndMov == 3
-                              ::oDbf:NUNDCAJ := 0
-                              ::oDbf:NCAJUND := 0
-                              ::oDbf:NUNDART := 0
-                           end if
-
-                           if ::oDbfTvta:nImpMov == 3
-                              ::oDbf:nComAge := 0
-                              ::oDbf:nBasCom := 0
-                              ::oDbf:nTotCom := 0
-                           else
-                              ::oDbf:nComAge := ::oAlbCliL:nComAge
-                              ::oDbf:nBasCom := nImpLAlbCli( ::oAlbCliT:cAlias, ::oAlbCliL:cAlias, ::nDecOut, ::nDerOut )
-                              ::oDbf:nTotCom := nComLAlbCli( ::oAlbCliT:cAlias, ::oAlbCliL:cAlias, ::nDecOut, ::nDerOut )
-                           end if
-
                         end if
 
                         ::oDbf:Save()

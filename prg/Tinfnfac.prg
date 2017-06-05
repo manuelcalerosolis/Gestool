@@ -15,7 +15,6 @@ CLASS TInfNFac FROM TInfPAge
    DATA  oFacCliP    AS OBJECT
    DATA  oFacRecT    AS OBJECT
    DATA  oFacRecL    AS OBJECT
-   DATA  oDbfTvta    AS OBJECT
    DATA  oIva        AS OBJECT
    DATA  cTipVen     AS CHARACTER
    DATA  cTipVen2    AS CHARACTER
@@ -65,8 +64,6 @@ METHOD OpenFiles() CLASS TInfNFac
 
    ::oFacCliP := TDataCenter():oFacCliP()
 
-   DATABASE NEW ::oDbfTvta  PATH ( cPatDat() ) FILE "TVTA.DBF" VIA ( cDriver() ) SHARED INDEX "TVTA.CDX"
-
    DATABASE NEW ::oIva PATH ( cPatDat () ) FILE "TIVA.DBF" VIA ( cDriver() ) SHARED INDEX "TIVA.CDX"
 
    RECOVER
@@ -100,9 +97,6 @@ METHOD CloseFiles() CLASS TInfNFac
    if !Empty( ::oFacCliP ) .and. ::oFacCliP:Used()
       ::oFacCliP:End()
    end if
-   if !Empty( ::oDbfTVta ) .and. ::oDbfTVta:Used()
-      ::oDbfTVta:End()
-   end if
    if !Empty( ::oIva ) .and. ::oIva:Used()
       ::oIva:End()
    end if
@@ -112,7 +106,6 @@ METHOD CloseFiles() CLASS TInfNFac
    ::oFacRecT := nil
    ::oFacRecL := nil
    ::oFacCliP := nil
-   ::oDbfTVta := nil
    ::oIva     := nil
 
 RETURN ( Self )
@@ -149,23 +142,6 @@ METHOD lResource( cFld ) CLASS TInfNFac
    /*
    Damos valor al meter
    */
-
-   REDEFINE CHECKBOX ::lTvta ;
-      ID       260 ;
-      OF       ::oFld:aDialogs[1]
-
-   REDEFINE GET oTipVen VAR ::cTipVen ;
-      VALID    ( cTVta( oTipVen, This:oDbfTvta:cAlias, oTipVen2 ) ) ;
-      BITMAP   "LUPA" ;
-      ON HELP  ( BrwTVta( oTipVen, This:oDbfTVta:cAlias, oTipVen2 ) ) ;
-      ID       270 ;
-      OF       ::oFld:aDialogs[1]
-
-   REDEFINE GET oTipVen2 VAR ::cTipVen2 ;
-      ID       280 ;
-      WHEN     ( .F. ) ;
-      COLOR    CLR_GET ;
-      OF       ::oFld:aDialogs[1]
 
    ::oMtrInf:SetTotal( ::oFacCliT:Lastrec() )
 
@@ -286,35 +262,6 @@ METHOD lGenerate()
                         ::oDbf:cDocMov := ::oFacCliL:cSerie + "/" + lTrim( Str( ::oFacCliL:nNumFac ) ) + "/" + lTrim( ::oFacCliL:cSufFac )
                         ::oDbf:cTipDoc := "Factura"
                         ::oDbf:dFecMov := ::oFacCliT:dFecFac
-
-                        if ::oDbfTvta:Seek( ::oFacCliL:cTipMov )
-                           ::oDbf:cTipVen := ::oDbfTvta:cDesMov
-                        end if
-
-                        if ::oDbfTvta:nUndMov == 1
-                           ::oDbf:nNumCaj := ::oFacCliL:nCanEnt
-                           ::oDbf:nNumUni := nTotNFacCli( ::oFacCliL )
-                           ::oDbf:nUniDad := ::oFacCliL:nUniCaja
-                        elseif ::oDbfTvta:nUndMov == 2
-                           ::oDbf:nNumCaj := -::oFacCliL:nCanEnt
-                           ::oDbf:nNumUni := -nTotNFacCli( ::oFacCliL )
-                           ::oDbf:nUniDad := -::oFacCliL:nUniCaja
-                        elseif ::oDbfTvta:nUndMov == 3
-                           ::oDbf:nNumCaj := 0
-                           ::oDbf:nNumUni := 0
-                           ::oDbf:nUniDad := 0
-                        end if
-
-                        if ::oDbfTvta:nImpMov == 3
-                           ::oDbf:nComAge := 0
-                           ::oDbf:nImpTot := 0
-                           ::oDbf:nTotCom := 0
-                        else
-                           ::oDbf:nComAge := ( ::oFacCliL:nComAge )
-                           ::oDbf:nImpTot := nImpLFacCli( ::oFacCliT:cAlias, ::oFacCliL:cAlias, ::nDecOut, ::nDerOut )
-                           ::oDbf:nTotCom := nComLFacCli( ::oFacCliT:cAlias, ::oFacCliL:cAlias, ::nDecOut, ::nDerOut )
-                        end if
-
                         ::oDbf:nImpArt    := nImpUFacCli( ::oFacCliT:cAlias, ::oFacCliL:cAlias, ::nDecOut, ::nValDiv )
                         ::oDbf:nImpTrn    := nTrnUFacCli( ::oFacCliL:cAlias, ::nDecOut, ::nValDiv )
                         ::oDbf:nPntVer    := nPntUFacCli( ::oFacCliL:cAlias, ::nDecPnt, ::nValDiv )
@@ -427,35 +374,6 @@ METHOD lGenerate()
                         ::oDbf:cDocMov := ::oFacRecL:cSerie + "/" + lTrim( Str( ::oFacRecL:nNumFac ) ) + "/" + lTrim( ::oFacRecL:cSufFac )
                         ::oDbf:cTipDoc := "Factura"
                         ::oDbf:dFecMov := ::oFacRecT:dFecFac
-
-                        if ::oDbfTvta:Seek( ::oFacRecL:cTipMov )
-                           ::oDbf:cTipVen := ::oDbfTvta:cDesMov
-                        end if
-
-                        if ::oDbfTvta:nUndMov == 1
-                           ::oDbf:nNumCaj := ::oFacRecL:nCanEnt
-                           ::oDbf:nNumUni := nTotNFacRec( ::oFacRecL )
-                           ::oDbf:nUniDad := ::oFacRecL:nUniCaja
-                        elseif ::oDbfTvta:nUndMov == 2
-                           ::oDbf:nNumCaj := -::oFacRecL:nCanEnt
-                           ::oDbf:nNumUni := -nTotNFacRec( ::oFacRecL )
-                           ::oDbf:nUniDad := -::oFacRecL:nUniCaja
-                        elseif ::oDbfTvta:nUndMov == 3
-                           ::oDbf:nNumCaj := 0
-                           ::oDbf:nNumUni := 0
-                           ::oDbf:nUniDad := 0
-                        end if
-
-                        if ::oDbfTvta:nImpMov == 3
-                           ::oDbf:nComAge := 0
-                           ::oDbf:nImpTot := 0
-                           ::oDbf:nTotCom := 0
-                        else
-                           ::oDbf:nComAge := ( ::oFacRecL:nComAge )
-                           ::oDbf:nImpTot := nImpLFacRec( ::oFacRecT:cAlias, ::oFacRecL:cAlias, ::nDecOut, ::nDerOut )
-                           ::oDbf:nTotCom := nComLFacRec( ::oFacRecT:cAlias, ::oFacRecL:cAlias, ::nDecOut, ::nDerOut )
-                        end if
-
                         ::oDbf:nImpArt    := nImpUFacRec( ::oFacRecT:cAlias, ::oFacRecL:cAlias, ::nDecOut, ::nValDiv )
                         ::oDbf:nImpTrn    := nTrnUFacRec( ::oFacRecL:cAlias, ::nDecOut, ::nValDiv )
                         ::oDbf:nPntVer    := nPntUFacRec( ::oFacRecL:cAlias, ::nDecPnt, ::nValDiv )

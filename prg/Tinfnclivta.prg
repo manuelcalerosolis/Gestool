@@ -13,7 +13,6 @@ CLASS TInfNCliVta FROM TInfGen
    DATA  oFacCliL    AS OBJECT
    DATA  oFacRecT    AS OBJECT
    DATA  oFacRecL    AS OBJECT
-   DATA  oDbfTvta    AS OBJECT
    DATA  lAllCP      AS LOGIC          INIT .t.
    DATA  cCPOrg      AS CHARACTER      INIT "00000"
    DATA  cCPDes      AS CHARACTER      INIT "99999"
@@ -50,7 +49,6 @@ METHOD Create()
    ::AddField( "cProCli", "C", 20, 0, {|| "@!" },          "Provincia",            .f., "Provincia"                 , 20, .f. )
    ::AddField( "cCdpCli", "C",  7, 0, {|| "@!" },          "Cod. Postal",          .t., "Cod. Postal"               , 12, .f. )
    ::AddField( "cTlfCli", "C", 12, 0, {|| "@!" },          "Teléfono",             .f., "Teléfono"                  , 12, .f. )
-   ::AddField( "cTipVen", "C", 20, 0, {|| "@!" },          "Venta",                .f., "Tipo de venta"             , 10, .f. )
    ::AddField( "nNumCaj", "N", 16, 6, {|| MasUnd() },      cNombreCajas(),         .f., cNombreCajas()              , 12, .t. )
    ::AddField( "nUniDad", "N", 16, 6, {|| MasUnd() },      cNombreUnidades(),      .f., cNombreUnidades()           , 12, .t. )
    ::AddField( "nNumUni", "N", 16, 6, {|| MasUnd() },      "Tot. " + cNombreUnidades(),.t., "Total " + cNombreUnidades() , 25, .t. )
@@ -89,8 +87,6 @@ METHOD OpenFiles()
 
    DATABASE NEW ::oFacRecL PATH ( cPatEmp() )  FILE "FACRECL.DBF" VIA ( cDriver() ) SHARED INDEX "FACRECL.CDX"
 
-   DATABASE NEW ::oDbfTvta  PATH ( cPatDat() ) FILE "TVTA.DBF"    VIA ( cDriver() ) SHARED INDEX "TVTA.CDX"
-
    RECOVER
 
       msgStop( "Imposible abrir todas las bases de datos" )
@@ -125,9 +121,6 @@ METHOD CloseFiles()
    if !Empty( ::oAlbCliL ) .and. ::oAlbCliL:Used()
       ::oAlbCliL:End()
    end if
-   if !Empty( ::oDbfTvta ) .and. ::oDbfTvta:Used()
-      ::oDbfTvta:End()
-   end if
 
    ::oFacCliT := nil
    ::oFacCliL := nil
@@ -135,7 +128,6 @@ METHOD CloseFiles()
    ::oFacRecL := nil
    ::oAlbCliT := nil
    ::oAlbCliL := nil
-   ::oDbfTvta := nil
 
 RETURN ( Self )
 
@@ -290,9 +282,6 @@ METHOD lGenerate()
                   ::oDbf:cNomVl1    := retValProp( ::oAlbCliL:cCodPr1 + ::oAlbCliL:cValPr1 )
                   ::oDbf:cValPr2    := ::oAlbCliL:cValPr2
                   ::oDbf:cNomVl2    := retValProp( ::oAlbCliL:cCodPr2 + ::oAlbCliL:cValPr2 )
-                  if ::oDbfTvta:Seek( ::oAlbCliL:cTipMov )
-                     ::oDbf:cTipVen := ::oDbfTvta:cDesMov
-                  end if
                   ::oDbf:nNumCaj    := ::oAlbCliL:nCanEnt
                   ::oDbf:nUniDad    := ::oAlbCliL:nUniCaja
                   ::oDbf:nNumUni    := nTotNAlbCli( ::oAlbCliL )
@@ -401,9 +390,6 @@ METHOD lGenerate()
                   ::oDbf:cNomVl1    := retValProp( ::oFacCliL:cCodPr1 + ::oFacCliL:cValPr1 )
                   ::oDbf:cValPr2    := ::oFacCliL:cValPr2
                   ::oDbf:cNomVl2    := retValProp( ::oFacCliL:cCodPr2 + ::oFacCliL:cValPr2 )
-                  if ::oDbfTvta:Seek( ::oFacCliL:cTipMov )
-                     ::oDbf:cTipVen := ::oDbfTvta:cDesMov
-                  end if
                   ::oDbf:nNumCaj    := ::oFacCliL:nCanEnt
                   ::oDbf:nUniDad    := ::oFacCliL:nUniCaja
                   ::oDbf:nNumUni    := nTotNFacCli( ::oFacCliL )
@@ -513,9 +499,6 @@ METHOD lGenerate()
                   ::oDbf:cNomVl1    := retValProp( ::oFacRecL:cCodPr1 + ::oFacRecL:cValPr1 )
                   ::oDbf:cValPr2    := ::oFacRecL:cValPr2
                   ::oDbf:cNomVl2    := retValProp( ::oFacRecL:cCodPr2 + ::oFacRecL:cValPr2 )
-                  if ::oDbfTvta:Seek( ::oFacRecL:cTipMov )
-                     ::oDbf:cTipVen := ::oDbfTvta:cDesMov
-                  end if
                   ::oDbf:nNumCaj    := ( ::oFacRecL:nCanEnt )
                   ::oDbf:nUniDad    := ( ::oFacRecL:nUniCaja )
                   ::oDbf:nNumUni    := ( nTotNFacRec( ::oFacRecL ) )

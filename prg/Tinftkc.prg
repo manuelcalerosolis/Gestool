@@ -50,7 +50,6 @@ CLASS TInfDetTkc FROM TInfGen
    DATA  oEstado     AS OBJECT
    DATA  oTikCliT    AS OBJECT
    DATA  oTikCliL    AS OBJECT
-   DATA  oDbfTvta    AS OBJECT
    DATA  aEstado     AS ARRAY    INIT { "Pendientes", "Cobradas", "Todas" }
 
    METHOD OpenFiles()
@@ -82,8 +81,6 @@ METHOD OpenFiles()
 
    DATABASE NEW ::oDbfCli PATH ( cPatCli() ) FILE "CLIENT.DBF" VIA ( cDriver() ) SHARED INDEX "CLIENT.CDX"
 
-   DATABASE NEW ::oDbfTvta  PATH ( cPatDat() ) FILE "TVTA.DBF" VIA ( cDriver() ) SHARED INDEX "TVTA.CDX"
-
    RECOVER
 
       msgStop( "Imposible abrir todas las bases de datos" )
@@ -106,10 +103,6 @@ METHOD CloseFiles()
 
    if !Empty( ::oTikCliL ) .and. ::oTikCliL:Used()
       ::oTikCliL:End()
-   end if
-
-   if !Empty( ::oDbfTvta ) .and. ::oDbfTvta:Used()
-      ::oDbfTvta:End()
    end if
 
    if !Empty( ::oDbfCli ) .and. ::oDbfCli:Used()
@@ -205,10 +198,6 @@ METHOD lGenerate()
                   ::oDbf:nUntEnt := ::oTikCliL:nUntTil
                   ::oDbf:nPreDiv := nTotLTikCli( ::oTikCliL:cAlias, ::nDecOut, ::nDerOut, ::nValDiv )
                   ::oDbf:CDOCMOV := ::oTikCliL:CSERIE + "/" + Str( ::oTikCliL:NNUMFAC ) + "/" + ::oTikCliL:CSUFFAC
-
-                  if ::oDbfTvta:Seek (::oTikCliL:cTipMov)
-                     ::oDbf:cTipVen    := ::oDbfTvta:cDesMov
-                  end if
 
                   IF ::oDbfCli:Seek ( ::oTikCliT:CNOMCLI )
 

@@ -44,7 +44,6 @@ CLASS TInfDetAge FROM TInfGen
 
    DATA  oAlbCliT    AS OBJECT
    DATA  oAlbCliL    AS OBJECT
-   DATA  oVta        AS OBJECT
    DATA  cVta        INIT  Space( 2 )
    DATA  lVta        AS LOGIC
 
@@ -102,8 +101,6 @@ METHOD OpenFiles()
 
    DATABASE NEW ::oAlbCliL PATH ( cPatEmp() ) FILE "ALBCLIL.DBF" VIA ( cDriver() ) SHARED INDEX "ALBCLIL.CDX"
 
-   DATABASE NEW ::oVta     PATH ( cPatDat() ) FILE "TVTA.DBF"    VIA ( cDriver() ) SHARED INDEX "TVTA.CDX"
-
    RECOVER USING oError
 
       lOpen := .f.
@@ -127,10 +124,6 @@ METHOD CloseFiles()
 
    if !Empty( ::oAlbCliL ) .and. ::oAlbCliL:Used()
       ::oAlbCliL:End()
-   end if
-
-   if !Empty( ::oVta ) .and. ::oVta:Used()
-      ::oVta:End()
    end if
 
 RETURN ( Self )
@@ -161,24 +154,6 @@ METHod lResource( cFld )
    ::lDefArtInf( 110, 120, 130, 140 )
 
    ::oDefExcInf()
-
-   REDEFINE CHECKBOX ::lVta ;
-      ID       210 ;
-      OF       ::oFld:aDialogs[1]
-
-   REDEFINE GET oGet1 VAR ::cVta ;
-      WHEN     ( ::lVta ) ;
-      VALID    ( cTVta( oGet1, This:oVta:cAlias, oGet2 ) ) ;
-      BITMAP   "LUPA" ;
-      ON HELP  ( BrwTVta( oGet1, This:oVta:cAlias, oGet2 ) ) ;
-      ID       220 ;
-      OF       ::oFld:aDialogs[1]
-
-   REDEFINE GET oGet2 VAR cGet2 ;
-      ID       221 ;
-      WHEN     ( .F. ) ;
-      COLOR    CLR_GET ;
-      OF       ::oFld:aDialogs[1]
 
    /*
    Damos valor al meter
@@ -232,11 +207,6 @@ METHOD lGenerate()
 
                IF ::oAlbCliL:CREF >= ::cArtOrg     .AND. ;
                   ::oAlbCliL:CREF <= ::cArtDes
-
-                  IF ::lVta
-                     nComUnd  := nVtaUnd( ::oAlbCliL:CTIPMOV, ::oVta:cAlias )
-                     nComImp  := nVtaImp( ::oAlbCliL:CTIPMOV, ::oVta:cAlias )
-                  END IF
 
                   nUndCaj     := abs( ::oAlbCliL:NCANENT )              * nComUnd
                   nUndArt     := abs( nUnitEnt( ::oAlbCliL:cAlias ) )   * nComUnd

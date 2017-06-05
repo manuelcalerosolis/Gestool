@@ -54,7 +54,6 @@ CLASS TMovCPre FROM TInfGen
    DATA  oEstado     AS OBJECT
    DATA  oPreCliT    AS OBJECT
    DATA  oPreCliL    AS OBJECT
-   DATA  oDbfTvta    AS OBJECT
    DATA  oDbfCli
    DATA  aEstado     AS ARRAY    INIT  { "Pendiente", "Aceptado", "Todos" }
    DATA  cTipVen     AS CHARACTER     INIT  "00"
@@ -89,8 +88,6 @@ METHOD OpenFiles() CLASS TMovCPre
 
    DATABASE NEW ::oDbfCli   PATH ( cPatCli() ) FILE "CLIENT.DBF"  VIA ( cDriver() ) SHARED INDEX "CLIENT.CDX"
 
-   DATABASE NEW ::oDbfTvta  PATH ( cPatDat() ) FILE "TVTA.DBF"    VIA ( cDriver() ) SHARED INDEX "TVTA.CDX"
-
    RECOVER
 
       msgStop( "Imposible abrir todas las bases de datos" )
@@ -113,10 +110,6 @@ METHOD CloseFiles() CLASS TMovCPre
 
    if !Empty( ::oPreCliL ) .and. ::oPreCliL:Used()
       ::oPreCliL:End()
-   end if
-
-   if !Empty( ::oDbfTvta ) .and. ::oDbfTvta:Used()
-      ::oDbfTvta:End()
    end if
 
    if !Empty( ::oDbfCli ) .and. ::oDbfCli:Used()
@@ -159,24 +152,6 @@ METHOD Resource( cFld ) CLASS TMovCPre
    /*
    Damos valor al meter
    */
-
-   REDEFINE CHECKBOX ::lTvta ;
-      ID       260 ;
-      OF       ::oFld:aDialogs[1]
-
-   REDEFINE GET oTipVen VAR ::cTipVen ;
-      WHEN     ( ::lTvta ) ;
-      VALID    ( cTVta( oTipVen, This:oDbfTvta:cAlias, oTipVen2 ) ) ;
-      BITMAP   "LUPA" ;
-      ON HELP  ( BrwTVta( oTipVen, This:oDbfTVta:cAlias, oTipVen2 ) ) ;
-      ID       270 ;
-      OF       ::oFld:aDialogs[1]
-
-   REDEFINE GET oTipVen2 VAR ::cTipVen2 ;
-      ID       280 ;
-      WHEN     ( .F. ) ;
-      COLOR    CLR_GET ;
-      OF       ::oFld:aDialogs[1]
 
    ::oMtrInf:SetTotal( ::oPreCliT:Lastrec() )
 
@@ -254,10 +229,6 @@ METHOD lGenerate() CLASS TMovCPre
 
                   ::oDbf:Append()
 
-                  if ::oDbfTvta:Seek (::oPreCliL:cTipMov)
-                     ::oDbf:cTipVen    := ::oDbfTvta:cDesMov
-                  end if
-
                   ::oDbf:CCODCLI := ::oPreCliT:CCODCLI
                   ::oDbf:CNOMCLI := ::oPreCliT:CNOMCLI
                   ::oDbf:DFECMOV := ::oPreCliT:DFECPRE
@@ -265,39 +236,11 @@ METHOD lGenerate() CLASS TMovCPre
                   ::oDbf:CCODART := ::oPreCliL:CREF
                   ::oDbf:CNOMART := ::oPreCliL:cDetalle
 
-                  if ::lTvta
-
-                     if ::oDbfTvta:nUndMov == 1
-                        ::oDbf:NCAJENT := ::oPreCliL:NCANPRE
-                        ::oDbf:NUNTENT := nTotNPreCli( ::oPreCliL )
-                        ::oDbf:nUnidad := ::oPreCliL:NUNICAJA
-                     elseif ::oDbfTvta:nUndMov == 2
-                        ::oDbf:NCAJENT := (::oPreCliL:NCANPRE) * (-1)
-                        ::oDbf:NUNTENT := nTotNPreCli( ::oPreCliL ) * (-1)
-                        ::oDbf:nUnidad := (::oPreCliL:NUNICAJA) * (-1)
-                     elseif ::oDbfTvta:nUndMov == 3
-                        ::oDbf:NCAJENT := 0
-                        ::oDbf:NUNTENT := 0
-                        ::oDbf:nUnidad := 0
-                     end
-
-                     if ::oDbfTvta:nImpMov == 3
-                        ::oDbf:nComAge := 0
-                        ::oDbf:nPreDiv := 0
-                     else
-                        ::oDbf:nComAge := ::oPreCliL:nComAge
-                        ::oDbf:nPreDiv := nTotLPreCli( ::oPreCliL:cAlias, ::nDecOut, ::nDerOut )
-                     end
-
-                  else
-
-                     ::oDbf:NCAJENT := ::oPreCliL:NCANPRE
-                     ::oDbf:NUNTENT := nTotNPreCli( ::oPreCliL )
-                     ::oDbf:nUnidad := ::oPreCliL:NUNICAJA
-                     ::oDbf:nComAge := ::oPreCliL:nComAge
-                     ::oDbf:nPreDiv := nTotLPreCli( ::oPreCliL:cAlias, ::nDecOut, ::nDerOut )
-
-                  end if
+                  ::oDbf:NCAJENT := ::oPreCliL:NCANPRE
+                  ::oDbf:NUNTENT := nTotNPreCli( ::oPreCliL )
+                  ::oDbf:nUnidad := ::oPreCliL:NUNICAJA
+                  ::oDbf:nComAge := ::oPreCliL:nComAge
+                  ::oDbf:nPreDiv := nTotLPreCli( ::oPreCliL:cAlias, ::nDecOut, ::nDerOut )
 
                   ::oDbf:CDOCMOV := ::oPreCliL:CSERPRE + "/" + Str( ::oPreCliL:NNUMPRE ) + "/" + ::oPreCliL:CSUFPRE
 

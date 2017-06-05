@@ -11,7 +11,6 @@ CLASS TInfTCon FROM TInfGen
    DATA  oEstado       AS OBJECT
    DATA  oAlbCliT      AS OBJECT
    DATA  oAlbCliL      AS OBJECT
-   DATA  oDbfTvta      AS OBJECT
    DATA  oDbfArt       AS OBJECT
    DATA  aEstado       AS ARRAY    INIT { "No facturados", "Facturados", "Todos" }
    DATA  nTotSalmuera  AS OBJECT
@@ -72,8 +71,6 @@ METHOD OpenFiles() CLASS TInfTCon
 
    DATABASE NEW ::oAlbCliL PATH ( cPatEmp() ) FILE "AlbCliL.DBF" VIA ( cDriver() ) SHARED INDEX "AlbCliL.CDX"
 
-   DATABASE NEW ::oDbfTvta  PATH ( cPatDat() ) FILE "TVTA.DBF" VIA ( cDriver() ) SHARED INDEX "TVTA.CDX"
-
    DATABASE NEW ::oDbfArt PATH ( cPatArt() ) FILE "ARTICULO.DBF" VIA ( cDriver() ) SHARED INDEX "ARTICULO.CDX"
 
    RECOVER
@@ -101,14 +98,10 @@ METHOD CloseFiles() CLASS TInfTCon
    if !Empty( ::oDbfArt ) .and. ::oDbfArt:Used()
       ::oDbfArt:End()
    end if
-   if !Empty( ::oDbfTvta ) .and. ::oDbfTvta:Used()
-      ::oDbfTvta:End()
-   end if
 
    ::oAlbCliT := nil
    ::oAlbCliL := nil
    ::oDbfArt  := nil
-   ::oDbfTvta := nil
 
 RETURN ( Self )
 

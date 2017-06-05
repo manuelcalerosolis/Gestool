@@ -13,7 +13,6 @@ CLASS TInfAPre FROM TInfAlm
    DATA  oEstado     AS OBJECT
    DATA  oPreCliT    AS OBJECT
    DATA  oPreCliL    AS OBJECT
-   DATA  oDbfTvta    AS OBJECT
    DATA  aEstado     AS ARRAY    INIT  { "Pendiente", "Aceptado", "Todos" }
 
    METHOD create()
@@ -54,8 +53,6 @@ METHOD OpenFiles()
 
    DATABASE NEW ::oPreCliL PATH ( cPatEmp() )   FILE "PRECLIL.DBF"   VIA ( cDriver() ) SHARED INDEX "PRECLIL.CDX"
 
-   DATABASE NEW ::oDbfTvta  PATH ( cPatDat() )  FILE "TVTA.DBF"      VIA ( cDriver() ) SHARED INDEX "TVTA.CDX"
-
    RECOVER
 
       msgStop( "Imposible abrir todas las bases de datos" )
@@ -78,13 +75,9 @@ METHOD CloseFiles()
    if !Empty( ::oPreCliL ) .and. ::oPreCliL:Used()
       ::oPreCliL:End()
    end if
-   if !Empty( ::oDbfTvta ) .and. ::oDbfTvta:Used()
-      ::oDbfTvta:End()
-   end if
 
    ::oPreCliT := nil
    ::oPreCliL := nil
-   ::oDbfTvta := nil
 
 RETURN ( Self )
 
