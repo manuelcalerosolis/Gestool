@@ -147,6 +147,7 @@ RETURN ( Self )
 
 //----------------------------------------------------------------------------//
 
+
 METHOD buildControllersRowSetWithForeingKey( id )  
 
 RETURN ( hEval( ::hControllers, {| k, oController| oController:oModel:buildRowSetWithForeignKey( id ) } ) )

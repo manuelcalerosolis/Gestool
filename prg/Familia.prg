@@ -96,8 +96,9 @@ static oTreePadre
 #define MENUOPTION   "01012"
 
 //----------------------------------------------------------------------------//
-
-//Comenzamos la parte de código que se compila para el ejecutable normal
+//
+// Comenzamos la parte de código que se compila para el ejecutable normal
+//
 
 FUNCTION BrwFamilia( oGet, oGet2, lAdd )
 
@@ -1122,6 +1123,61 @@ STATIC FUNCTION LoadTree( oTree, cCodFam )
    oTree:Expand()
 
 RETURN ( .t. )
+
+//---------------------------------------------------------------------------//
+
+FUNCTION getHashFamilias()
+
+   local aFamilias   := {}
+
+   ( D():Familias( nView ) )->( dbgotop() )
+
+   while !( D():Familias( nView ) )->( eof() ) 
+
+      aadd( aFamilias, { ( D():Familias( nView ) )->cCodFam, LoadText( alltrim( upper( ( D():Familias( nView ) )->cNomFam ) ), ( D():Familias( nView ) )->cFamCmb ) } )
+
+      ( D():Familias( nView ) )->( dbSkip() )
+
+      SysRefresh()
+
+   end while
+
+   msgalert( hb_valtoexp( aFamilias ), "aFamilias" )
+
+RETURN ( aFamilias )
+
+//---------------------------------------------------------------------------//
+
+STATIC FUNCTION LoadText( cText, cCodFam )
+
+   local nRec
+   local nOrd
+
+   if empty( cCodFam )
+      cCodFam        := Space( 16 )
+   end if
+
+   CursorWait()
+
+   nRec              := ( D():Familias( nView ) )->( Recno() )
+   nOrd              := ( D():Familias( nView ) )->( OrdSetFocus( "cCodFam" ) )
+
+   if ( D():Familias( nView ) )->( dbSeek( cCodFam ) )
+
+      cText          := alltrim( upper( ( D():Familias( nView ) )->cNomFam ) ) + ", " + cText
+
+      LoadText( @cText, ( D():Familias( nView ) )->cFamCmb )
+
+      SysRefresh()
+
+   end if
+
+   ( D():Familias( nView ) )->( OrdSetFocus( nOrd ) )
+   ( D():Familias( nView ) )->( dbGoTo( nRec ) )
+
+   CursorWE()
+
+RETURN ( cText )
 
 //---------------------------------------------------------------------------//
 
@@ -3134,3 +3190,99 @@ FUNCTION BrwFamiliaCombinada( oGet, cFamilia, oGet2 )
 RETURN ( oDlg:nResult == IDOK )
 
 //---------------------------------------------------------------------------//
+
+FUNCTION browseHashFamilia( oGet, oGet2 )
+
+   local oDlg
+   local oBrw
+   local cCod     := Space( 16 )
+   local oGet1
+   local cGet1
+   local oCbxOrd
+   local aCbxOrd  := { "Código", "Nombre" }
+   local cCbxOrd
+   local aFamilias
+
+   if !OpenFiles( .t. )
+      RETURN nil
+   end if
+
+   aFamilias      := getHashFamilias()
+
+   DEFINE DIALOG oDlg RESOURCE "HELPENTRY" TITLE "Familias de artículos"
+
+      REDEFINE GET oGet1 VAR cGet1;
+         ID       104 ;
+         BITMAP   "FIND" ;
+         OF       oDlg
+
+      REDEFINE COMBOBOX oCbxOrd ;
+         VAR      cCbxOrd ;
+         ID       102 ;
+         ITEMS    aCbxOrd ;
+         OF       oDlg
+
+      oBrw                 := IXBrowse():New( oDlg )
+
+      oBrw:bClrSel         := {|| { CLR_BLACK, Rgb( 229, 229, 229 ) } }
+      oBrw:bClrSelFocus    := {|| { CLR_BLACK, Rgb( 167, 205, 240 ) } }
+
+      oBrw:nMarqueeStyle   := 5
+      oBrw:cName           := "Browse.Hash.Familias"
+
+      oBrw:setArray( aFamilias, , , .f. )
+
+      with object ( oBrw:AddCol() )
+         :cHeader          := "Código"
+         :bEditValue       := {|| aFamilias[ oBrw:nArrayAt, 1 ] }
+         :nWidth           := 120
+      end with
+
+      with object ( oBrw:AddCol() )
+         :cHeader          := "Nombre"
+         :bEditValue       := {|| aFamilias[ oBrw:nArrayAt, 2 ] }
+         :nWidth           := 420
+      end with
+
+      oBrw:bLDblClick      := {|| oDlg:end( IDOK ) }
+      oBrw:bRClicked       := {| nRow, nCol, nFlags | oBrw:RButtonDown( nRow, nCol, nFlags ) }
+
+      oBrw:CreateFromResource( 105 )
+
+      REDEFINE BUTTON ;
+         ID       IDOK ;
+         OF       oDlg ;
+         ACTION   ( oDlg:end(IDOK) )
+
+      REDEFINE BUTTON ;
+         ID       IDCANCEL ;
+         OF       oDlg ;
+         ACTION   ( oDlg:end() )
+
+      REDEFINE BUTTON ;
+         ID       500 ;
+         OF       oDlg ;
+
+      REDEFINE BUTTON ;
+         ID       501 ;
+         OF       oDlg ;
+
+   oDlg:AddFastKey( VK_F5,       {|| oDlg:end( IDOK ) } )
+   oDlg:AddFastKey( VK_RETURN,   {|| oDlg:end( IDOK ) } )
+
+   ACTIVATE DIALOG oDlg CENTER
+
+   if oDlg:nResult == IDOK
+
+   end if
+
+   CloseFiles()
+
+   if !empty( oGet )
+      oGet:SetFocus()
+   end if
+
+RETURN ( cCod )
+
+//---------------------------------------------------------------------------//
+
