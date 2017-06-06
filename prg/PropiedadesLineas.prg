@@ -48,15 +48,29 @@ METHOD Dialog()
 
    REDEFINE GET 	oGetOrden ;
    	VAR ::oController:oModel:hBuffer[ "orden" ] ;
+      MEMO ;
       ID       	120 ;
       WHEN     	( !::oController:isZoomMode() ) ;
       OF       	oDlg
 
    REDEFINE GET 	oGetCodigoBarras ;
    	VAR ::oController:oModel:hBuffer[ "codigo_barras" ] ;
+      MEMO ;
       ID       	130 ;
       WHEN     	( !::oController:isZoomMode() ) ;
       OF       	oDlg
+/*
+   REDEFINE GET   oGetColor ;
+      VAR      ::oController:oModel:hBuffer[ "color" ] ;
+      ID       200 ;
+      COLOR    if( aTmpPro[ ( dbfProT )->( FieldPos( "lColor" ) ) ], aTmp[ ( dbfProL )->( FieldPos( "nColor" ) ) ], CLR_GET ), if( aTmpPro[ ( dbfProT )->( FieldPos( "lColor" ) ) ], aTmp[ ( dbfProL )->( FieldPos( "nColor" ) ) ], CLR_GET ) ;
+      BITMAP   "LUPA" ;
+      WHEN     ( nMode != ZOOM_MODE .and. aTmpPro[ ( dbfProT )->( FieldPos( "lColor" ) ) ] ) ;
+      ON HELP  (  aTmp[ ( dbfProL )->( FieldPos( "nColor" ) ) ]  := ChooseColor(),;
+                  aGet[ ( dbfProL )->( FieldPos( "nColor" ) ) ]:SetColor( aTmp[ ( dbfProL )->( FieldPos( "nColor" ) ) ], aTmp[ ( dbfProL )->( FieldPos( "nColor" ) ) ] ),;
+                  aGet[ ( dbfProL )->( FieldPos( "nColor" ) ) ]:Refresh() ) ;
+      OF       oDlg
+*/
 
    REDEFINE BUTTON ;
       ID          IDOK ;

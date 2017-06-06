@@ -80,7 +80,6 @@ METHOD New()
 																//terminar cadena con dos carácteres aleatorios ( aqui es el " ,"), 
 																//hace falta para que el getSQLCreateTable() del base model funcione siempre
 																		//..."ChgAtEnd( cSQLCreateTable, ' )', 2 )"...
-
 Return ( Self )
 
 //---------------------------------------------------------------------------//

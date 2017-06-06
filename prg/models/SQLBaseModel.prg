@@ -58,12 +58,12 @@ CLASS SQLBaseModel
    METHOD   getRowSetRecno()                       INLINE   ( if( !empty( ::oRowSet ), ( ::oRowSet:recno() ) , 0 ) )
    METHOD   setRowSetRecno( nRecno )               INLINE   ( if( !empty( ::oRowSet ), ( ::oRowSet:goto( nRecno ) ), ) )
    METHOD   setIdForRecno( nIdForRecno )           INLINE   ( ::nIdForRecno := nIdForRecno )
-   METHOD   getKeyFieldOfRecno()                   INLINE   ( if( !empty( ::oRowSet ), ( ::oRowSet:fieldGet( ::cColumnKey ) ), ) )
  
    METHOD   getSelectByColumn()
    METHOD   getSelectByOrder()
 
    METHOD   setFind( cFind )                       INLINE   ( ::cFind := cFind )
+
    METHOD   find( cFind )
 
    METHOD   existId( id )
@@ -138,9 +138,7 @@ METHOD getSQLCreateTable()
 
    hEval( ::hColumns, {| k, hash | cSQLCreateTable += k + " " + hget( hash, "create" ) + ", " } )
 
-   if !empty(::cConstraints )
       cSQLCreateTable      += ::cConstraints
-   end if
 
    cSQLCreateTable         := ChgAtEnd( cSQLCreateTable, ' )', 2 )
 

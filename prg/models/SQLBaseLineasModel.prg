@@ -15,7 +15,9 @@ CLASS SQLBaseLineasModel From SQLBaseModel
 
    METHOD   setForeignKey( id )                       INLINE ( ::idForeignKey := id )
 
-   METHOD   buildRowSetWhitForeignKey( id )           INLINE ( ::setForeignKey( id ), ::buildRowSet() )
+   METHOD   buildRowSetWithForeignKey( id )           INLINE ( ::setForeignKey( id ), ::buildRowSet() )
+
+   METHOD 	resetTmpIds()										INLINE ( ::aTmpIdsToConfirm := {} )
 
 	METHOD 	getSelectSentence()
    METHOD   getInsertSentence()
@@ -24,7 +26,7 @@ CLASS SQLBaseLineasModel From SQLBaseModel
 
    METHOD 	confirmIdParentToChildsOf( nId_parent )
 
-   METHOD	deletingOurChilds()
+   METHOD	deletingOurTmpIds()
 
 END CLASS
 
@@ -44,7 +46,17 @@ METHOD getSelectSentence()
 
 	local cSQLSelect
 
-	cSQLSelect  		:= ::cGeneralSelect + " = " + toSQLString( ::idForeignKey )
+	cSQLSelect  		:= ::cGeneralSelect + " = " + toSQLString( ::idForeignKey ) 
+
+	if !empty( ::aTmpIdsToConfirm )
+
+		cSQLSelect += " OR " + ::cColumnKey + " IN ( "
+
+		aeval( ::aTmpIdsToConfirm, { | nID | cSQLSelect += toSQLString( nID ) + ", " } )
+
+		cSQLSelect        := ChgAtEnd( cSQLSelect, ' )', 2 )
+
+	endif
 
    cSQLSelect        := ::getSelectByColumn( cSQLSelect )
 
@@ -62,7 +74,7 @@ METHOD getInsertSentence()
 
    cSQLInsert        := ChgAtEnd( cSQLInsert, ' ) VALUES ( ', 2 )
 
-   hEval( ::hBuffer, {| k, v | if ( k != ::cColumnKey, if ( k == ::cForeignColumn, cSQLInsert += "null" , cSQLInsert += toSQLString( v ) + ", " ), ) } )
+   hEval( ::hBuffer, {| k, v | if ( k != ::cColumnKey, if ( k == ::cForeignColumn, cSQLInsert += "null, " , cSQLInsert += toSQLString( v ) + ", " ), ) } )
 
    cSQLInsert        := ChgAtEnd( cSQLInsert, ' )', 2 )
 
@@ -105,13 +117,19 @@ RETURN ( self )
 
 //---------------------------------------------------------------------------//
 
-METHOD deletingOurChilds()
+METHOD deletingOurTmpIds()
 
 	local cDeleteSentence
 
-	cDeleteSentence := "DELETE FROM " + ::cTableName + " WHERE " + ::cForeignColumn + " = null"
+	if (empty( ::aTmpIdsToConfirm ) )
+		 RETURN ( nil )
+	endif
 
-	//aeval( ::aTmpIdsToConfirm, { | v | cDeleteSentence += ::cColumnKey + " = " + toSQLString( v ) + " OR " } )
+	cDeleteSentence := "DELETE FROM " + ::cTableName + " WHERE "
+
+	aeval( ::aTmpIdsToConfirm, { | v | cDeleteSentence += ::cColumnKey + " = " + toSQLString( v ) + " OR " } )
+
+	cDeleteSentence        := ChgAtEnd( cDeleteSentence, '', 4 )
 
 	getSQLDatabase():Query( cDeleteSentence )
 

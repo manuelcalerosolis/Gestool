@@ -249,8 +249,6 @@ METHOD buildSQLBrowse( title )
       oDlg:AddFastKey( VK_F2,       {|| ::oController:Append() } )
       oDlg:AddFastKey( VK_F3,       {|| ::oController:Edit() } )
 
-      oDlg:bStart    := {|| ::oController:startBrowse( oCombobox ) }
-
    oDlg:Activate( , , , .t., {|| ::saveHistoryOfBrowse() } )
 
 RETURN ( oDlg:nResult == IDOK )
@@ -275,6 +273,8 @@ METHOD buildSQLNuclearBrowse( idResource, oDlg, oCombobox )
    ::oBrowse:bRClicked       := {| nRow, nCol, nFlags | ::oBrowse:RButtonDown( nRow, nCol, nFlags ) }
 
    ::oBrowse:CreateFromResource( idResource )
+
+   ::oController:startBrowse( oCombobox )
 
 RETURN ( self )
 

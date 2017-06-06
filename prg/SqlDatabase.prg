@@ -34,6 +34,9 @@ CLASS SQLDatabase
    METHOD commitTransaction()       INLINE ( ::oConexion:commit() )
    METHOD rollbackTransaction()     INLINE ( ::oConexion:rollback() )
 
+   METHOD startForeignKey()         INLINE ( ::Query( "pragma foreign_keys = ON" ) )
+   METHOD endForeignKey()           INLINE ( ::Query( "pragma foreign_keys = OFF" ) )
+
    METHOD errorInfo()               INLINE ( ::oConexion:errorInfo() )
 
    METHOD checkModelsExistence()   

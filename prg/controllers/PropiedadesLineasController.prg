@@ -35,7 +35,7 @@ METHOD validDialog( oDlg, oGetCodigo )
 	local idForCodigo
 
    if empty( ::oModel:hBuffer[ "codigo" ] )
-      msgStop( "El cÃ³digo de la impresora no puede estar vacÃ­o." )
+      msgStop( "El código de la propiedad no puede estar vacío." )
       oGetCodigo:setFocus()
       RETURN ( .f. )
    end if
@@ -44,17 +44,22 @@ METHOD validDialog( oDlg, oGetCodigo )
    
    if ( !empty( idForCodigo ) )
    	if ( idForCodigo != ::oModel:hBuffer[ "id" ] .and. !::isDuplicateMode() )
-	      msgStop( "El cÃ³digo de la impresora ya existe" )
+	      msgStop( "El código de la propiedad ya existe" )
 	      oGetCodigo:setFocus()
 	      RETURN ( .f. )
       end if
       if ( idForCodigo == ::oModel:hBuffer[ "id" ] .and. ::isDuplicateMode() )
-         msgStop( "El cÃ³digo de la impresora ya existe" )
+         msgStop( "El código de la propiedad ya existe" )
 	      oGetCodigo:setFocus()
 	      RETURN ( .f. )
       end if
    end if
 
+RETURN ( oDlg:end( IDOK ) )
+
 //---------------------------------------------------------------------------//
 
-RETURN ( oDlg:end( IDOK ) )
+/*METHOD UpDet()
+
+   local nOldOrder :=
+*/

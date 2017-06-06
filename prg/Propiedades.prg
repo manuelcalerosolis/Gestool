@@ -29,7 +29,6 @@ METHOD Dialog()
    local oDlg
    local oGetNombre
    local oGetCodigo
-   local oControlBrw
 
    DEFINE DIALOG oDlg RESOURCE "PROP_SQL" TITLE ::lblTitle() + "propiedades"
 
@@ -52,37 +51,37 @@ METHOD Dialog()
       WHEN     	( !::oController:isZoomMode() ) ;
       OF       	oDlg
 
-   oControlBrw 	:= ::oController:oPropiedadesLineasController:oView:buildSQLNuclearBrowse( 120, oDlg )
+   ::oController:hControllers[ 'lineas' ]:oView:buildSQLNuclearBrowse( 120, oDlg )
 
    REDEFINE BUTTON;
       ID       	500 ;
       OF       	oDlg ;
       WHEN     	( !::oController:isZoomMode() ) ;
-      ACTION   	( ::oController:oPropiedadesLineasController:Append() )
+      ACTION   	( ::oController:hControllers[ 'lineas' ]:Append() )
 
    REDEFINE BUTTON;
       ID       	501 ;
       OF       	oDlg ;
       WHEN     	( !::oController:isZoomMode() ) ;
-      ACTION   	( ::oController:oPropiedadesLineasController:Edit() )
+      ACTION   	( ::oController:hControllers[ 'lineas' ]:Edit() )
 
    REDEFINE BUTTON;
       ID       	502 ;
       OF       	oDlg ;
       WHEN     	( !::oController:isZoomMode() ) ;
-      ACTION   	( ::oController:oPropiedadesLineasController:Delete() )
+      ACTION   	( ::oController:hControllers[ 'lineas' ]:Delete() )
 
    /*REDEFINE BUTTON;
       ID      		503 ;
       OF       	oDlg ;
       WHEN     	( !::oController:isZoomMode() ) ;
-      ACTION   	( ::oController:oPropiedadesLineasController:UpDet() )
+      ACTION   	( ::oController:hControllers[ 'lineas' ]:UpDet() )
 
    REDEFINE BUTTON;
       ID       	504 ;
       OF       	oDlg ;
       WHEN     	( !::oController:isZoomMode() ) ;
-      ACTION   	( ::oController:oPropiedadesLineasController:DownDet() )*/
+      ACTION   	( ::oController:hControllers[ 'lineas' ]:DownDet() )*/
 
    REDEFINE BUTTON ;
       ID          IDOK ;

@@ -150,7 +150,7 @@ METHOD AppendChild( oBrowse )
 
    ::setMode( __special_mode__ )
 
-   ::oModel:setIdForRecno( ::oModel:getKeyFieldOfRecno() )
+   ::oModel:setIdForRecno( ::getIdfromRowset() )
 
    ::loadChildBuffer()
 

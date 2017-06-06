@@ -281,7 +281,7 @@ RETURN ( .t. )
 
 FUNCTION Test()
 
-
+propiedadescontroller():new():activateShell()
 
 Return ( nil )
 

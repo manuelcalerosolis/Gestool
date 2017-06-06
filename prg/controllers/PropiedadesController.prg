@@ -6,8 +6,6 @@
 
 CLASS PropiedadesController FROM SQLHeaderController
 
-	DATA 		oPropiedadesLineasController
-
    METHOD   New()
 
    METHOD   buildSQLModel( this )         INLINE ( PropiedadesModel():New( this ) )
@@ -17,12 +15,6 @@ CLASS PropiedadesController FROM SQLHeaderController
    METHOD   getFieldFromBrowse()          INLINE ( ::getRowSet():fieldGet( "id" ) )
  
    METHOD   validDialog( oDlg, oGetNombre )
-
-   METHOD   initAppendMode()              INLINE ( ::oPropiedadesLineasController:oModel:buildRowSetWhitForeignKey( 0 ) )
-
-   METHOD   initEditMode()                INLINE ( ::oPropiedadesLineasController:oModel:buildRowSetWhitForeignKey( ::oModel:hBuffer[ "id" ] ) )
-
-   METHOD   initZoomMode()                INLINE ( ::oPropiedadesLineasController:oModel:buildRowSetWhitForeignKey( ::oModel:hBuffer[ "id" ] ) )
 
 END CLASS
 
@@ -36,7 +28,7 @@ METHOD New()
 
    ::Super:New()
 
-   ::oPropiedadesLineasController	:= PropiedadesLineasController():New( Self )
+   hset( ::hControllers, 'lineas', PropiedadesLineasController():New( Self ) )
 
 Return ( Self )
 

@@ -67,6 +67,7 @@ function Main( paramsMain, paramsSecond, paramsThird )
    // Conexión con SQLite------------------------------------------------------
 
    if ( getSQLDatabase():Connect() )
+      getSQLDatabase():startForeignKey()
       getSQLDatabase():checkModelsExistence()
    end if 
 

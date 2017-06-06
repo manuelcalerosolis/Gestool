@@ -52,20 +52,25 @@ CLASS SQLBaseController
    METHOD   getTitle()                                INLINE ( ::cTitle )
 
 	METHOD   Append()
+      METHOD initAppendMode()                         VIRTUAL
+      METHOD endAppendMode()                          VIRTUAL
+      METHOD cancelAppendMode()                       VIRTUAL
       METHOD setAppendMode()                          INLINE ( ::setMode( __append_mode__ ) )
       METHOD isAppendMode()                           INLINE ( ::nMode == __append_mode__ )
 
    METHOD   Duplicate()
+      METHOD initDuplicateMode()                      VIRTUAL
+      METHOD endDuplicateMode()                       VIRTUAL
+      METHOD cancelDuplicateMode()                    VIRTUAL
       METHOD setDuplicateMode()                       INLINE ( ::nMode := __duplicate_mode__ )
       METHOD isDuplicateMode()                        INLINE ( ::nMode == __duplicate_mode__ )
-      METHOD initDuplicateMode()                      VIRTUAL
 
    METHOD   Edit()
-      METHOD preEdit()                                VIRTUAL
-      METHOD postEdit()                               VIRTUAL
+      METHOD initEditMode()                           VIRTUAL
+      METHOD endEditMode()                            VIRTUAL
+      METHOD cancelEditMode()                         VIRTUAL
       METHOD setEditMode()                            INLINE ( ::nMode := __edit_mode__ )
       METHOD isEditMode()                             INLINE ( ::nMode == __edit_mode__ )
-      METHOD initEditMode()                           VIRTUAL
 
    METHOD   Zoom()
       METHOD setZoomMode()                            INLINE ( ::nMode := __zoom_mode__ )
@@ -73,6 +78,8 @@ CLASS SQLBaseController
       METHOD initZoomMode()                           VIRTUAL
 
    METHOD   Delete()
+
+   METHOD   getIdfromRowset()                         INLINE   ( if( !empty( ::oModel:oRowSet ), ( ::oModel:oRowSet:fieldGet( ::oModel:cColumnKey ) ), ) )
 
    METHOD   clickOnHeader( oColumn, oCombobox )
 
@@ -136,7 +143,7 @@ METHOD ActivateShell()
 
    ::oView:buildSQLShell()
 
-   ::startBrowse( ::oView:oShell:getCombobox(), ::oView:getoBrowse() )
+   ::startBrowse( ::oView:oShell:getCombobox() )
 
 RETURN ( Self )
 
@@ -168,7 +175,9 @@ METHOD startBrowse( oCombobox )
       RETURN ( Self )
    end if 
 
+   if (!empty( oCombobox ) )
    oCombobox:SetItems( ::oView:getoBrowse():getColumnHeaders() )
+   endif
 
    ::restoreBrowseState()
 
@@ -269,7 +278,7 @@ METHOD saveHistory( cWnd )
       cBrowseState      := quoted( ::oView:getoBrowse():saveState() )
    end if
 
-   HistoricosUsuariosModel():New():saveHistory( ::oModel:cTableName + cWnd, cBrowseState, ::oModel:cColumnOrder, ::oModel:cOrientation, ::oModel:getKeyFieldOfRecno() ) 
+   HistoricosUsuariosModel():New():saveHistory( ::oModel:cTableName + cWnd, cBrowseState, ::oModel:cColumnOrder, ::oModel:cOrientation, ::getIdfromRowset() ) 
 
 Return ( .t. )
 
@@ -283,7 +292,7 @@ METHOD clickOnHeader( oColumn, oCombobox )
       oCombobox:set( oColumn:cHeader )
    end if
 
-   ::oModel:setIdForRecno( ::oModel:getKeyFieldOfRecno() )
+   ::oModel:setIdForRecno( ::getIdfromRowset() )
 
    ::oModel:setColumnOrder( oColumn:cSortOrder )
 
@@ -316,6 +325,8 @@ METHOD Append()
       end if
    end if
 
+   ::initAppendMode()
+
    nRecno         := ::oModel:getRowSetRecno()
 
    ::oModel:loadBlankBuffer()
@@ -324,7 +335,7 @@ METHOD Append()
 
       ::oModel:insertBuffer()
 
-      
+      ::endAppendMode()
 
       if ::bOnPostAppend != nil
          lTrigger    := eval( ::bOnPostAppend  )
@@ -333,8 +344,9 @@ METHOD Append()
          end if
       end if
 
-   else 
-      ::oModel:setRowSetRecno( nRecno ) 
+   else
+      ::cancelAppendMode()
+      ::oModel:setRowSetRecno( nRecno )
       RETURN ( .f. )
    end if
 
@@ -358,14 +370,18 @@ METHOD Duplicate()
 
    ::setDuplicateMode()
 
+   ::initDuplicateMode()
+
    nRecno         := ::oModel:getRowSetRecno()
 
    ::oModel:loadCurrentBuffer()
 
-   if ::oView:Dialog( ::oModel )
+   if ::oView:Dialog()
       ::oModel:insertBuffer()
+      ::endDuplicateMode()
    else 
-      ::oModel:setRowSetRecno( nRecno ) 
+      ::oModel:setRowSetRecno( nRecno )
+      ::cancelDuplicateMode()
    end if
 
    if !empty( ::oView:getoBrowse() )
@@ -386,18 +402,19 @@ METHOD Edit()
 
    ::setEditMode()
 
-   ::preEdit()
+   ::initEditMode()
 
-   ::oModel:setIdForRecno( ::oModel:getKeyFieldOfRecno() )
+   ::oModel:setIdForRecno( ::getIdfromRowset() )
 
    ::oModel:loadCurrentBuffer()
 
-   if ::oView:Dialog( ::oModel )
+   if ::oView:Dialog()
       
       ::oModel:updateCurrentBuffer()
 
-      ::postEdit()
-
+      ::endEditMode()
+   else
+   ::cancelEditMode()
    end if 
 
    if !empty( ::oView:getoBrowse() )
@@ -418,9 +435,11 @@ METHOD Zoom()
 
    ::setZoomMode()
 
+   ::initZoomMode()
+
    ::oModel:loadCurrentBuffer()
 
-   ::oView:Dialog( ::oModel )
+   ::oView:Dialog()
 
    if !empty( ::oView:getoBrowse() )
       ::oView:getoBrowse():setFocus()
