@@ -680,6 +680,8 @@ METHOD lAdministratorTask()
 
    local dbfEmp
 
+   getSQLDatabase():checkModelsExistence()
+
    ::configDatabaseCDXLocal()
 
    ::loadEmpresas()
