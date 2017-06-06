@@ -71,7 +71,7 @@ METHOD getIdFromCodigo( codigo )
    local aSelect     
    local cSentence   
 
-   if empty( cCodigo )
+   if empty( codigo )
       RETURN ( id )
    end if 
 
