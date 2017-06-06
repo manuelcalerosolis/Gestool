@@ -76,7 +76,6 @@ CLASS SQLBaseModel
    METHOD   insertBuffer()                         INLINE   ( getSQLDatabase():Query( ::getInsertSentence() ), ::buildRowSet() )
    METHOD   deleteSelection( aRecno )              INLINE   ( getSQLDatabase():Query( ::getdeleteSentence( aRecno ) ), ::buildRowSet() )
 
-   METHOD   loadBuffer( id )
    METHOD   loadBlankBuffer()
    METHOD   loadCurrentBuffer()
 
@@ -110,7 +109,7 @@ METHOD New()
 
    ::cGeneralSelect              := "SELECT * FROM " + ::cTableName
 
-   ::cConstraints                := "" //Si esto falla, mirar en PropiedadesLineasModel el comentario que explica por qué puede estar fallando
+   ::cConstraints                := "" 
 
    ::cColumnOrder                := "id"
 
@@ -137,10 +136,16 @@ METHOD getSQLCreateTable()
    cSQLCreateTable         := "CREATE TABLE " + ::cTableName + " ( "
 
    hEval( ::hColumns, {| k, hash | cSQLCreateTable += k + " " + hget( hash, "create" ) + ", " } )
+   
+   if !empty( ::cConstraints )
 
-      cSQLCreateTable      += ::cConstraints
+      cSQLCreateTable      += ::cConstraints + " )"
 
-   cSQLCreateTable         := ChgAtEnd( cSQLCreateTable, ' )', 2 )
+   else
+
+      cSQLCreateTable      := ChgAtEnd( cSQLCreateTable, ' )', 2 )
+
+   end if 
 
 Return ( cSQLCreateTable )
 
@@ -401,50 +406,53 @@ METHOD loadBlankBuffer()
       Return ( .f. )
    end if 
 
-Return ( ::loadBuffer( 0 ) )
+   ::oRowSet:goto( 0 )
+
+Return ( ::loadCurrentBuffer() )
 
 //---------------------------------------------------------------------------//
 
 METHOD loadCurrentBuffer()                
 
-   local aColumnNames := hb_hkeys( ::hColumns )
    local h
+   local aColumnNames   := hb_hkeys( ::hColumns )
 
    if empty( ::oRowSet )
       Return ( .f. )
    end if 
 
-   ::hBuffer  := {=>}
+   ::hBuffer            := {=>}
 
    for each h in ::hColumns
 
-      if ( hhaskey( h, "type" ) .and. h[ "type" ] == "L" )
+      do case
+         case ( hhaskey( h, "type" ) .and. h[ "type" ] == "L" )
 
-         hset( ::hBuffer, h:__enumkey(), if( ::oRowSet:fieldget( h:__enumkey() ) == 1, .t., .f. ) )
+            hset( ::hBuffer, h:__enumkey(), ::oRowSet:fieldget( h:__enumkey() ) == 1 )
 
-      else
+         case ( hhaskey( h, "type" ) .and. h[ "type" ] == "N" .and. hb_isnil( ::oRowSet:fieldget( h:__enumkey() ) ) )
 
-         hset( ::hBuffer, h:__enumkey(), ::oRowSet:fieldget( h:__enumkey() ) )
+            hset( ::hBuffer, h:__enumkey(), 0 )
+
+         case ( hhaskey( h, "type" ) .and. h[ "type" ] == "C" .and. hhaskey( h, "len" ) )
+
+            if hb_isnil( ::oRowSet:fieldget( h:__enumkey() ) )
+               hset( ::hBuffer, h:__enumkey(), space( h[ "len" ] ) )
+            else 
+               hset( ::hBuffer, h:__enumkey(), padr( ::oRowSet:fieldget( h:__enumkey() ), h[ "len" ] ) )
+            end if 
+
+         otherwise
+
+            hset( ::hBuffer, h:__enumkey(), ::oRowSet:fieldget( h:__enumkey() ) )
 
       end if
 
    next
 
+   msgalert( hb_valtoexp( ::hBuffer ), "hBuffer" )
+
 Return ( ::hBuffer )
-
-//---------------------------------------------------------------------------//
-
-METHOD loadBuffer( id )
-
-   local aColumnNames := hb_hkeys( ::hColumns )
-
-   ::hBuffer  := {=>}
-
-   ::oRowSet:goto( id )
-
-   aeval( aColumnNames, {| k | hset( ::hBuffer, k, ::oRowSet:fieldget( k ) ) } )
-
-Return ( .t. )
 
 //---------------------------------------------------------------------------//
 

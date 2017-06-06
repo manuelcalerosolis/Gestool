@@ -6,8 +6,6 @@
 
 CLASS SQLHeaderController FROM SQLBaseController
 
-   DATA  hControllers                                 INIT {=>}
-
    METHOD New()
 
    METHOD buildControllersRowSetWithForeingKey( id )  
@@ -33,14 +31,11 @@ CLASS SQLHeaderController FROM SQLBaseController
 
    METHOD initZoomMode()
 
-
 END CLASS
 
 //---------------------------------------------------------------------------//
 
 METHOD New()
-
-   ::hControllers    := {=>}
 
    ::Super:New()
 
@@ -150,19 +145,19 @@ RETURN ( Self )
 
 METHOD buildControllersRowSetWithForeingKey( id )  
 
-RETURN ( hEval( ::hControllers, {| k, oController| oController:oModel:buildRowSetWithForeignKey( id ) } ) )
+RETURN ( hEval( ::ControllerContainer:getControllers(), {| k, oController| oController:oModel:buildRowSetWithForeignKey( id ) } ) )
 
 //----------------------------------------------------------------------------//
 
 METHOD clearControllersTmpIds()
 
-RETURN ( hEval( ::hControllers, { | k, oController| oController:oModel:resetTmpIds() } ) )
+RETURN ( hEval( ::ControllerContainer:getControllers(), { | k, oController| oController:oModel:resetTmpIds() } ) )
 
 //----------------------------------------------------------------------------//
 
 METHOD updateIdParentControllersInEdit( id )
 
-RETURN ( hEval( ::hControllers, { | k, oController| oController:oModel:confirmIdParentToChildsOf( ::getIdfromRowset() ) } ) )
+RETURN ( hEval( ::ControllerContainer:getControllers(), { | k, oController| oController:oModel:confirmIdParentToChildsOf( ::getIdfromRowset() ) } ) )
 
 //----------------------------------------------------------------------------//
 
@@ -170,7 +165,7 @@ METHOD updateIdParentControllersInInsert()
 
    local lastId :=  getSQLDatabase():LastInsertId()
 
-RETURN ( hEval( ::hControllers, { | k, oController| oController:oModel:confirmIdParentToChildsOf( lastId ) } ) )
+RETURN ( hEval( ::ControllerContainer:getControllers(), { | k, oController| oController:oModel:confirmIdParentToChildsOf( lastId ) } ) )
 
 //----------------------------------------------------------------------------//
 

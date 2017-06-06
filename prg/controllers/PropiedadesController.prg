@@ -28,60 +28,67 @@ METHOD New()
 
    ::Super:New()
 
-   hset( ::hControllers, 'lineas', PropiedadesLineasController():New( Self ) )
+   ::ControllerContainer:add( 'lineas', PropiedadesLineasController():New( Self ) )
 
 Return ( Self )
 
 //---------------------------------------------------------------------------//
 
-METHOD validDialog( oDlg, oGetNombre, oGetCodigo )
+METHOD validDialog( oDlg, oGetCodigo, oGetNombre )
 
 	local idForNombre
 	local idForCodigo
 
 	if empty( ::oModel:hBuffer[ "codigo" ] )
       msgStop( "El código de la propiedad no puede estar vacío." )
-      oGetCodigo:setFocus()
+      oGetCodigo:setColor( )
       RETURN ( .f. )
    end if
 
-   idForcodigo := ::oModel:ChecksForValid( "codigo" )
+   if empty( ::oModel:hBuffer[ "nombre" ] )
+      msgStop( "El nombre de la propiedad no puede estar vacío." )
+      RETURN ( .f. )
+   end if
+
+   idForCodigo := ::oModel:ChecksForValid( "codigo" )
    
    if ( !empty( idForcodigo ) )
+
    	if ( idForcodigo != ::oModel:hBuffer[ "id" ] .and. !::isDuplicateMode() )
 	      msgStop( "El código de la propiedad ya existe" )
 	      oGetCodigo:setFocus()
 	      RETURN ( .f. )
       end if
+
       if ( idForcodigo == ::oModel:hBuffer[ "id" ] .and. ::isDuplicateMode() )
          msgStop( "El código de la propiedad ya existe" )
 	      oGetCodigo:setFocus()
 	      RETURN ( .f. )
       end if
-   end if
 
-   if empty( ::oModel:hBuffer[ "nombre" ] )
-      msgStop( "El nombre de la propiedad no puede estar vacío." )
-      oGetNombre:setFocus()
-      RETURN ( .f. )
    end if
 
    idForNombre := ::oModel:ChecksForValid( "nombre" )
    
    if ( !empty( idForNombre ) )
+
    	if ( idForNombre != ::oModel:hBuffer[ "id" ] .and. !::isDuplicateMode() )
 	      msgStop( "El nombre de la propiedad ya existe" )
 	      oGetNombre:setFocus()
 	      RETURN ( .f. )
       end if
+
       if ( idForNombre == ::oModel:hBuffer[ "id" ] .and. ::isDuplicateMode() )
          msgStop( "El nombre de la propiedad ya existe" )
 	      oGetNombre:setFocus()
 	      RETURN ( .f. )
       end if
+
    end if
 
-RETURN ( oDlg:end( IDOK ) )
+   oDlg:end( IDOK )
+
+RETURN ( .t. )
 
 //---------------------------------------------------------------------------//
 	

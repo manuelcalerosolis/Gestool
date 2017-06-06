@@ -8,6 +8,8 @@ CLASS SQLBaseController
 
    CLASSDATA   oInstance 
 
+   DATA     ControllerContainer
+
    DATA     oModel
 
    DATA     oView
@@ -110,11 +112,15 @@ CLASS SQLBaseController
    METHOD generateColumnsForBrowse( oCombobox )
    METHOD   createColumnsForBrowse( oCombobox )
 
+   METHOD getController( cController )                INLINE ( ::ControllerContainer:get( cController ) )
+
 END CLASS
 
 //---------------------------------------------------------------------------//
 
 METHOD New()
+
+   ::ControllerContainer                              := ControllerContainer():New()
 
 	::nLevel                                           := nLevelUsr( ::idUserMap )
 
@@ -186,7 +192,9 @@ METHOD startBrowse( oCombobox )
       RETURN ( Self )
    end if 
    
-   oCombobox:set( oColumn:cHeader )
+   if (!empty( oCombobox ) )
+      oCombobox:set( oColumn:cHeader )
+   endif
 
    ::oView:getoBrowse():selectColumnOrder( oColumn, ::oModel:cOrientation )
 

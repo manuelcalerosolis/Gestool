@@ -33,7 +33,7 @@ METHOD New()
 																					"width"		=>	200													,;
 																					"field"		=>	"cCodTbl"											,;
 																					"type"		=>	"C"													,;
-																					"len"			=>	40}													,;
+																					"len"			=>	40 }													,;
 													"nombre"				=>	{	"create"		=>	"VARCHAR(30) NOT NULL"							,;
 																					"text"		=>	"Nombre de la linea de propiedad"			,;
 																					"header"		=>	"Nombre"												,;
@@ -41,7 +41,7 @@ METHOD New()
 																					"width"		=>	150													,;
 																					"field"		=>	"cDesTbl"											,;
 																					"type"		=>	"C"													,;
-																					"len"			=>	30}													,;
+																					"len"			=>	60 }													,;
 													"orden"				=>	{	"create"		=>	"INT NOT NULL"										,;
 																					"text"		=>	"Número de orden para códigos de barras"	,;
 																					"header"		=>	"Orden"												,;
@@ -49,7 +49,7 @@ METHOD New()
 																					"width"		=>	50														,;
 																					"field"		=>	"nOrdTbl"											,;
 																					"type"		=>	"N"													,;
-																					"len"			=>	5}														,;
+																					"len"			=>	5 }													,;
 													"codigo_barras"	=>	{	"create"		=>	"VARCHAR(4)"										,;
 																					"text"		=>	"Código de barras"								,;
 																					"header"		=>	"Código de barras"								,;
@@ -57,7 +57,7 @@ METHOD New()
 																					"width"		=>	20														,;
 																					"field"		=>	"nBarTbl"											,;
 																					"type"		=>	"C"													,;
-																					"len"			=>	4}														,;
+																					"len"			=>	4 }													,;
 													"color"				=>	{	"create"		=>	"INT(9)"												,;
 																					"text"		=>	"Código de color"									,;
 																					"header"		=>	"Color"												,;
@@ -65,21 +65,19 @@ METHOD New()
 																					"width"		=>	50														,;
 																					"field"		=>	"nColor"												,;
 																					"type"		=>	"N"													,;
-																					"len"			=>	9}														,;
+																					"len"			=>	9 }													,;
 													"id_cabecera"		=>	{	"create"		=>	"INTEGER"											,;
 																					"text"		=>	"Identificador de la cabecera"				,;
 																					"header"		=>	"Id"													,;
-																					"visible"	=> .f.}													}
+																					"visible"	=> .f. }													}
 
 
 		::cForeignColumn		:= "id_cabecera"
 
 		::Super:New()
 
-		::cConstraints		:= "FOREIGN KEY (id_cabecera) REFERENCES propiedades(id) ON DELETE CASCADE ," 
-																//terminar cadena con dos carácteres aleatorios ( aqui es el " ,"), 
-																//hace falta para que el getSQLCreateTable() del base model funcione siempre
-																		//..."ChgAtEnd( cSQLCreateTable, ' )', 2 )"...
+		::cConstraints		   := "FOREIGN KEY (id_cabecera) REFERENCES propiedades(id) ON DELETE CASCADE" 
+
 Return ( Self )
 
 //---------------------------------------------------------------------------//
