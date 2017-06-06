@@ -15,7 +15,7 @@ BORLANDLIB           = 	\Bcc582\lib
 IMG2PDFLIB           = 	\Img2Pdf
 
 OBJ                  = 	Obj1406
-SOURCEPRG            = 	.\Prg;.\Prg\mail;.\Prg\Comercio;.\Prg\Models;.\Prg\Controllers;.\Prg\Tablet;.\Prg\tablet\view;.\Prg\tablet\view\documentos;.\Prg\tablet\view\terceros;.\Prg\tablet\view\documentos\ventas;.\Prg\tablet\view\documentos\terceros;.\Prg\tablet\utils;.\Prg\tablet\presenter;.\Prg\tablet\presenter\terceros;.\Prg\tablet\presenter\documentos;.\Prg\tablet\presenter\documentos\ventas;
+SOURCEPRG            = 	.\Prg;.\Prg\mail;.\Prg\Comercio;.\Prg\Models;.\Prg\Controllers;.\Prg\Services;.\Prg\Tablet;.\Prg\tablet\view;.\Prg\tablet\view\documentos;.\Prg\tablet\view\terceros;.\Prg\tablet\view\documentos\ventas;.\Prg\tablet\view\documentos\terceros;.\Prg\tablet\utils;.\Prg\tablet\presenter;.\Prg\tablet\presenter\terceros;.\Prg\tablet\presenter\documentos;.\Prg\tablet\presenter\documentos\ventas;
 SOURCEC 				   =	C
 PPO 					   = 	Ppo1406
 
@@ -32,6 +32,7 @@ PRG            		=    										\
 $(TARGETPRG)             										\
 SQLDatabase.prg 													\
 DialogExtend.prg           									\
+Dialog.prg 															\
 C5Lib.prg               										\
 RpreviewC3.prg 													\
 ReportC3.prg            										\
@@ -327,6 +328,7 @@ ConfImpTiket.prg        										\
 Situaciones.prg         										\
 SituacionesModel.prg       											\
 SituacionesController.prg       										\
+ControllerContainer.prg 										\
 GrpPrv.prg              										\
 InfCategoria.prg        										\
 Temporada.prg           										\
@@ -539,6 +541,7 @@ TFTPLinux.obj 														\
 Comun.obj                                          	\
 AccessCode.obj                                     	\
 DialogExtend.obj                                   	\
+Dialog.obj 															\
 C5Lib.obj                                          	\
 Tgraph.obj                                         	\
 TViewImg.obj                                       	\
@@ -828,7 +831,8 @@ ConfVisor.obj           										\
 ConfCajPorta.obj        										\
 Situaciones.obj         										\
 SituacionesModel.obj       									\
-SituacionesController.obj       									\
+SituacionesController.obj       								\
+ControllerContainer.obj 										\
 GrpPrv.obj              									\
 InfCategoria.obj        									\
 Temporada.obj           									\
@@ -1053,6 +1057,7 @@ $(OBJ)\TFTPLinux.obj 													+
 $(OBJ)\Comun.obj                                            +
 $(OBJ)\AccessCode.obj                                       +
 $(OBJ)\DialogExtend.obj                                     +
+$(OBJ)\Dialog.obj                                     		+
 $(OBJ)\Tgraph.obj                                           +
 $(OBJ)\TViewImg.obj                                         +
 $(OBJ)\Toleexcel.obj                                        +
@@ -1316,8 +1321,9 @@ $(OBJ)\ConfImpTiket.obj         		+
 $(OBJ)\ConfVisor.obj            		+
 $(OBJ)\ConfCajPorta.obj         		+
 $(OBJ)\Situaciones.obj          		+
-$(OBJ)\SituacionesModel.obj          	+
+$(OBJ)\SituacionesModel.obj          			+
 $(OBJ)\SituacionesController.obj          	+
+$(OBJ)\ControllerContainer.obj          		+
 $(OBJ)\GrpPrv.obj               		+
 $(OBJ)\InfCategoria.obj         		+
 $(OBJ)\Temporada.obj            		+

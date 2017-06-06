@@ -51,25 +51,25 @@ METHOD Dialog()
       WHEN     	( !::oController:isZoomMode() ) ;
       OF       	oDlg
 
-   ::oController:hControllers[ 'lineas' ]:oView:buildSQLNuclearBrowse( 120, oDlg )
+   ::oController:getController( 'lineas' ):oView:buildSQLNuclearBrowse( 120, oDlg )
 
    REDEFINE BUTTON;
       ID       	500 ;
       OF       	oDlg ;
       WHEN     	( !::oController:isZoomMode() ) ;
-      ACTION   	( ::oController:hControllers[ 'lineas' ]:Append() )
+      ACTION   	( ::oController:getController( 'lineas' ):Append() )
 
    REDEFINE BUTTON;
       ID       	501 ;
       OF       	oDlg ;
       WHEN     	( !::oController:isZoomMode() ) ;
-      ACTION   	( ::oController:hControllers[ 'lineas' ]:Edit() )
+      ACTION   	( ::oController:getController( 'lineas' ):Edit() )
 
    REDEFINE BUTTON;
       ID       	502 ;
       OF       	oDlg ;
       WHEN     	( !::oController:isZoomMode() ) ;
-      ACTION   	( ::oController:hControllers[ 'lineas' ]:Delete() )
+      ACTION   	( ::oController:getController( 'lineas' ):Delete() )
 
    /*REDEFINE BUTTON;
       ID      		503 ;
@@ -87,7 +87,7 @@ METHOD Dialog()
       ID          IDOK ;
       OF          oDlg ;
       WHEN        ( !::oController:isZoomMode() ) ;
-      ACTION      ( ::oController:validDialog( oDlg, oGetNombre, oGetCodigo ) )
+      ACTION      ( ::oController:validDialog( oDlg, oGetCodigo, oGetNombre ) )
 
    REDEFINE BUTTON ;
       ID          IDCANCEL ;
@@ -97,11 +97,11 @@ METHOD Dialog()
 
    // Teclas rpidas-----------------------------------------------------------
 
-   oDlg:AddFastKey( VK_F5, {|| oDlg:end( IDOK ) } )
+   oDlg:AddFastKey( VK_F5, {|| ::oController:validDialog( oDlg, oGetCodigo, oGetNombre ) } )
 
    // evento bstart-----------------------------------------------------------
 
-   oDlg:bStart    := {|| oGetNombre:setFocus() }
+   oDlg:bStart    := {|| oGetCodigo:setFocus() }
 
    ACTIVATE DIALOG oDlg CENTER
 

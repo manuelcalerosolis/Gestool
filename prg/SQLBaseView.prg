@@ -223,6 +223,8 @@ METHOD buildSQLBrowse( title )
 
       ::buildSQLNuclearBrowse( 105 , oDlg, oCombobox )
 
+      ::oBrowse:bLDblClick      := {|| oDlg:end( IDOK ) }
+
       REDEFINE BUTTON ;
          ID          IDOK ;
          OF          oDlg ;
@@ -259,20 +261,20 @@ METHOD buildSQLNuclearBrowse( idResource, oDlg, oCombobox )
 
    ::setoBrowse( SQLXBrowse():New( oDlg ) )
 
-   ::oBrowse:bClrSel         := {|| { CLR_BLACK, Rgb( 229, 229, 229 ) } }
-   ::oBrowse:bClrSelFocus    := {|| { CLR_BLACK, Rgb( 167, 205, 240 ) } }
+   ::oBrowse:bClrSel          := {|| { CLR_BLACK, Rgb( 229, 229, 229 ) } }
+   ::oBrowse:bClrSelFocus     := {|| { CLR_BLACK, Rgb( 167, 205, 240 ) } }
 
-   ::oBrowse:lHScroll        := .f.
-   ::oBrowse:nMarqueeStyle   := 6
+   ::oBrowse:lHScroll         := .f.
+   ::oBrowse:nMarqueeStyle    := 6
 
    ::oBrowse:setModel( ::oController:oModel )
 
    ::oController:generateColumnsForBrowse( oCombobox )
 
-   ::oBrowse:bLDblClick      := {|| oDlg:end( IDOK ) }
-   ::oBrowse:bRClicked       := {| nRow, nCol, nFlags | ::oBrowse:RButtonDown( nRow, nCol, nFlags ) }
+   ::oBrowse:bLDblClick       := {|| ::oController:Edit() }
+   ::oBrowse:bRClicked        := {| nRow, nCol, nFlags | ::oBrowse:RButtonDown( nRow, nCol, nFlags ) }
 
-   ::oBrowse:CreateFromResource( idResource )
+   ::oBrowse:createFromResource( idResource )
 
    ::oController:startBrowse( oCombobox )
 

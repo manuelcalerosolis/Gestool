@@ -16,7 +16,7 @@ END CLASS
 
 METHOD New( oController )
 
-	::oController		:=oController
+	::oController		  := oController
 
 RETURN ( Self )
 
@@ -25,37 +25,36 @@ RETURN ( Self )
 METHOD Dialog()
 
    local oDlg
+   local oGetOrden
    local oGetNombre
    local oGetCodigo
-   local oGetOrden
    local oGetCodigoBarras
 
    DEFINE DIALOG oDlg RESOURCE "PRODET_SQL" TITLE ::lblTitle() + "propiedad"
 
    REDEFINE GET   oGetCodigo ;
       VAR         ::oController:oModel:hBuffer[ "codigo" ] ;
-      MEMO ;
       ID          100 ;
       WHEN        ( !::oController:isZoomMode() ) ;
+      VALID       ( ::oController:validCodigo( oGetCodigo ) ) ;
       OF          oDlg
 
    REDEFINE GET   oGetNombre ;
       VAR         ::oController:oModel:hBuffer[ "nombre" ] ;
-      MEMO ;
       ID          110 ;
       WHEN        ( !::oController:isZoomMode() ) ;
+      VALID       ( ::oController:validNombre( oGetNombre ) ) ;
       OF          oDlg
 
-   REDEFINE GET 	oGetOrden ;
-   	VAR ::oController:oModel:hBuffer[ "orden" ] ;
-      MEMO ;
+   REDEFINE GET   oGetOrden ;
+   	VAR         ::oController:oModel:hBuffer[ "orden" ] ;
+      PICTURE     "9999" ;
       ID       	120 ;
       WHEN     	( !::oController:isZoomMode() ) ;
       OF       	oDlg
 
    REDEFINE GET 	oGetCodigoBarras ;
-   	VAR ::oController:oModel:hBuffer[ "codigo_barras" ] ;
-      MEMO ;
+   	VAR         ::oController:oModel:hBuffer[ "codigo_barras" ] ;
       ID       	130 ;
       WHEN     	( !::oController:isZoomMode() ) ;
       OF       	oDlg
@@ -76,7 +75,7 @@ METHOD Dialog()
       ID          IDOK ;
       OF          oDlg ;
       WHEN        ( !::oController:isZoomMode() ) ;
-      ACTION      ( ::oController:validDialog( oDlg, oGetNombre, oGetCodigo ) )
+      ACTION      ( oDlg:end( IDOK ) )
 
    REDEFINE BUTTON ;
       ID          IDCANCEL ;
@@ -90,7 +89,7 @@ METHOD Dialog()
 
    // evento bstart-----------------------------------------------------------
 
-   oDlg:bStart    := {|| oGetNombre:setFocus() }
+   oDlg:bStart    := {|| oGetCodigo:setFocus() }
 
    ACTIVATE DIALOG oDlg CENTER
 
