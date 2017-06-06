@@ -12,7 +12,6 @@ CLASS TDiaPPed FROM TPrvInf
    DATA  oDbfIva     AS OBJECT
    DATA  oPedPrvT    AS OBJECT
    DATA  oPedPrvL    AS OBJECT
-   DATA  oDbfTvta    AS OBJECT
    DATA  aEstado     AS ARRAY    INIT  { "Pendiente", "Parcilamente", "Entregado", "Todos" }
 
    METHOD Create()
@@ -67,8 +66,6 @@ METHOD OpenFiles() CLASS TDiaPPed
 
    DATABASE NEW ::oDbfIva   PATH ( cPatDat() ) FILE "TIVA.DBF"     VIA ( cDriver() ) SHARED INDEX "TIVA.CDX"
 
-   DATABASE NEW ::oDbfTvta  PATH ( cPatDat() ) FILE "TVTA.DBF"     VIA ( cDriver() ) SHARED INDEX "TVTA.CDX"
-
    RECOVER
 
       msgStop( "Imposible abrir todas las bases de datos" )
@@ -91,9 +88,6 @@ METHOD CloseFiles() CLASS TDiaPPed
    if !Empty( ::oPedPrvL ) .and. ::oPedPrvL:Used()
       ::oPedPrvL:End()
    end if
-   if !Empty( ::oDbfTvta ) .and. ::oDbfTvta:Used()
-      ::oDbfTvta:End()
-   end if
    if !Empty( ::oDbfPrv ) .and. ::oDbfPrv:Used()
       ::oDbfPrv:End()
    end if
@@ -103,7 +97,6 @@ METHOD CloseFiles() CLASS TDiaPPed
 
    ::oPedPrvT  := nil
    ::oPedPrvL  := nil
-   ::oDbfTvta  := nil
    ::oDbfPrv   := nil
    ::oDbfIva   := nil
 

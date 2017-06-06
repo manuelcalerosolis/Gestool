@@ -12,7 +12,6 @@ CLASS TDiaCTik FROM TInfGen
    DATA  oTikCliP    AS OBJECT
    DATA  oTikCliT    AS OBJECT
    DATA  oTikCliL    AS OBJECT
-   DATA  oDbfTvta    AS OBJECT
 
    METHOD Create ()
 
@@ -62,8 +61,6 @@ METHOD OpenFiles() CLASS TDiaCTik
 
    DATABASE NEW ::oTikCliP  PATH ( cPatEmp() ) FILE "TIKEP.DBF" VIA ( cDriver() ) SHARED INDEX "TIKEP.CDX"
 
-   DATABASE NEW ::oDbfTvta  PATH ( cPatDat() ) FILE "TVTA.DBF"  VIA ( cDriver() ) SHARED INDEX "TVTA.CDX"
-
    RECOVER
 
       msgStop( 'Imposible abrir todas las bases de datos' )
@@ -89,9 +86,6 @@ METHOD CloseFiles() CLASS TDiaCTik
    if !Empty( ::oTikCliP ) .and. ::oTikCliP:Used()
    ::oTikCliP:End()
    end if
-   if !Empty( ::oDbfTvta ) .and. ::oDbfTvta:Used()
-   ::oDbfTvta:End()
-   end if
    if !Empty( ::oDbfIva ) .and. ::oDbfIva:Used()
    ::oDbfIva:End()
    end if
@@ -99,7 +93,6 @@ METHOD CloseFiles() CLASS TDiaCTik
    ::oTikCliT := nil
    ::oTikCliL := nil
    ::oTikCliP := nil
-   ::oDbfTvta := nil
    ::oDbfIva  := nil
 
 RETURN ( Self )

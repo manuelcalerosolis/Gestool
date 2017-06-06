@@ -13,7 +13,6 @@ CLASS TdlAgePre FROM TInfGen
    DATA  oEstado     AS OBJECT
    DATA  oPreCliT    AS OBJECT
    DATA  oPreCliL    AS OBJECT
-   DATA  oDbfTvta    AS OBJECT
    DATA  cTipVen     AS CHARACTER
    DATA  cTipVen2    AS CHARACTER
    DATA  aEstado     AS ARRAY    INIT  { "Pendientes", "Pedidos" , "Todos" }
@@ -62,8 +61,6 @@ METHOD OpenFiles() CLASS TdlAgeAlb
 
    DATABASE NEW ::oDbfCli   PATH ( cPatCli() ) FILE "CLIENT.DBF"  VIA ( cDriver() ) SHARED INDEX "CLIENT.CDX"
 
-   DATABASE NEW ::oDbfTvta  PATH ( cPatDat() ) FILE "TVTA.DBF"    VIA ( cDriver() ) SHARED INDEX "TVTA.CDX"
-
    RECOVER
 
       msgStop( "Imposible abrir todas las bases de datos" )
@@ -85,10 +82,6 @@ METHOD CloseFiles() CLASS TdlAgeAlb
    end if
    if !Empty( ::oPreCliL ) .and. ::oPreCliL:Used()
       ::oPreCliL:End()
-   end if
-
-   if !Empty( ::oDbfTvta ) .and. ::oDbfTvta:Used()
-      ::oDbfTvta:End()
    end if
 
    if !Empty( ::oDbfCli ) .and. ::oDbfCli:Used()
@@ -115,27 +108,6 @@ METHOD Resource( cFld ) CLASS TdlAgeAlb
    */
 
    ::oDefAgeInf( 70, 80, 90, 100 )
-
-   /*
-   Damos valor al meter
-   */
-
-   REDEFINE CHECKBOX ::lTvta ;
-      ID       260 ;
-      OF       ::oFld:aDialogs[1]
-
-   REDEFINE GET oTipVen VAR ::cTipVen ;
-      VALID    ( cTVta( oTipVen, This:oDbfTvta:cAlias, oTipVen2 ) ) ;
-      BITMAP   "LUPA" ;
-      ON HELP  ( BrwTVta( oTipVen, This:oDbfTVta:cAlias, oTipVen2 ) ) ;
-      ID       270 ;
-      OF       ::oFld:aDialogs[1]
-
-   REDEFINE GET oTipVen2 VAR ::cTipVen2 ;
-      ID       280 ;
-      WHEN     ( .F. ) ;
-      COLOR    CLR_GET ;
-      OF       ::oFld:aDialogs[1]
 
    ::oMtrInf:SetTotal( ::oPreCliT:Lastrec() )
 
@@ -231,36 +203,6 @@ METHOD lGenerate() CLASS TdlAgeAlb
                         if ( ::oDbfAge:Seek (::oPreCliT:cCodAge) )
                            ::oDbf:cNomAge := ::oDbfAge:cApeAge + ", " + ::oDbfAge:cNbrAge
                         end if
-
-                        if ::oDbfTvta:Seek( ::oPreCliL:cTipMov )
-                           ::oDbf:cTipVen    := ::oDbfTvta:cDesMov
-
-                           if ::oDbfTvta:nUndMov == 1
-                              ::oDbf:NUNDCAJ := ::oPreCliL:NCANENT
-                              ::oDbf:NCAJUND := NotCaja( ::oPreCliL:NCANENT ) * ::oPreCliL:NUNICAJA
-                              ::oDbf:NUNDART := ::oPreCliL:NUNICAJA
-                           elseif ::oDbfTvta:nUndMov == 2
-                              ::oDbf:NUNDCAJ := (::oPreCliL:NCANENT) * (-1)
-                              ::oDbf:NCAJUND := ( NotCaja( ::oPreCliL:NCANENT ) * ::oPreCliL:NUNICAJA )* (-1)
-                              ::oDbf:NUNDART := (::oPreCliL:NUNICAJA) * (-1)
-                           elseif ::oDbfTvta:nUndMov == 3
-                              ::oDbf:NUNDCAJ := 0
-                              ::oDbf:NCAJUND := 0
-                              ::oDbf:NUNDART := 0
-                           end if
-
-                           if ::oDbfTvta:nImpMov == 3
-                              ::oDbf:nComAge := 0
-                              ::oDbf:nBasCom := 0
-                              ::oDbf:nTotCom := 0
-                           else
-                              ::oDbf:nComAge := ( ::oPreCliL:nComAge )
-                              ::oDbf:nBasCom := nImpLPreCli( ::oPreCliT:cAlias, ::oPreCliL:cAlias, ::nDecOut, ::nDerOut )
-                              ::oDbf:nTotCom := nComLPreCli( ::oPreCliT:cAlias, ::oPreCliL:cAlias, ::nDecOut, ::nDerOut )
-                           end if
-
-                        end if
-
 
                         ::oDbf:Save()
 

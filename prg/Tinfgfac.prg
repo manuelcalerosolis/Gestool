@@ -13,7 +13,6 @@ CLASS TInfGFac FROM TInfGrp
    DATA  oFacRecT    AS OBJECT
    DATA  oFacRecL    AS OBJECT
    DATA  oFacCliL    AS OBJECT
-   DATA  oDbfTvta    AS OBJECT
    DATA  aEstado     AS ARRAY    INIT  { "Pendiente", "Liquidada", "Todas" }
 
    METHOD Create()
@@ -60,8 +59,6 @@ METHOD OpenFiles() CLASS TInfGFac
 
    DATABASE NEW ::oDbfFam PATH ( cPatArt() ) FILE "FAMILIAS.DBF" VIA ( cDriver() ) SHARED INDEX "FAMILIAS.CDX"
 
-   DATABASE NEW ::oDbfTvta  PATH ( cPatDat() ) FILE "TVTA.DBF" VIA ( cDriver() ) SHARED INDEX "TVTA.CDX"
-
    RECOVER
 
       msgStop( "Imposible abrir todas las bases de datos" )
@@ -90,13 +87,9 @@ METHOD CloseFiles() CLASS TInfGFac
    if !Empty( ::oFacRecL ) .and. ::oFacRecL:Used()
       ::oFacRecL:End()
    end if
-   if !Empty( ::oDbfTvta ) .and. ::oDbfTvta:Used()
-      ::oDbfTvta:End()
-   end if
 
    ::oFacCliT := nil
    ::oFacCliL := nil
-   ::oDbfTvta := nil
 
 RETURN ( Self )
 

@@ -58,7 +58,6 @@ CLASS TDiaCFac FROM TInfGen
    DATA  oFacCliT    AS OBJECT
    DATA  oFacCliL    AS OBJECT
    DATA  oAntCliT    AS OBJECT
-   DATA  oDbfTvta    AS OBJECT
    DATA  aEstado     AS ARRAY    INIT  { "Pendiente", "Liquidada", "Todas" }
    DATA  lExcCredito AS LOGIC    INIT .f.
 
@@ -129,8 +128,6 @@ METHOD OpenFiles() CLASS TDiaCFac
 
    ::oFacCliP := TDataCenter():oFacCliP()
 
-   DATABASE NEW ::oDbfTvta  PATH ( cPatDat() ) FILE "TVTA.DBF"    VIA ( cDriver() ) SHARED INDEX "TVTA.CDX"
-
    RECOVER USING oError
 
       lOpen := .f.
@@ -154,10 +151,6 @@ METHOD CloseFiles() CLASS TDiaCFac
 
    if !Empty( ::oFacCliL ) .and. ::oFacCliL:Used()
       ::oFacCliL:End()
-   end if
-
-   if !Empty( ::oDbfTvta ) .and. ::oDbfTvta:Used()
-      ::oDbfTvta:End()
    end if
 
   if !Empty( ::oDbfCli ) .and. ::oDbfCli:Used()

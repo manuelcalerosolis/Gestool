@@ -12,7 +12,6 @@ CLASS TDiaCPed FROM TInfGen
    DATA  oPedCliT    AS OBJECT
    DATA  oPedCliL    AS OBJECT
    DATA  oDbfPago    AS OBJECT
-   DATA  oDbfTvta    AS OBJECT
    DATA  aEstado     AS ARRAY    INIT  { "Pendiente", "Parcialmente", "Entregado", "Todos" }
    DATA  lExcCredito AS LOGIC    INIT .f.
 
@@ -61,8 +60,6 @@ METHOD OpenFiles() CLASS TDiaCPed
 
    DATABASE NEW ::oDbfIva   PATH ( cPatDat() ) FILE "TIVA.DBF"  VIA ( cDriver() ) SHARED INDEX "TIVA.CDX"
 
-   DATABASE NEW ::oDbfTvta  PATH ( cPatDat() ) FILE "TVTA.DBF"    VIA ( cDriver() ) SHARED INDEX "TVTA.CDX"
-
    DATABASE NEW ::oDbfPago  PATH ( cPatEmp() ) FILE "FPAGO.DBF"  VIA ( cDriver() ) SHARED INDEX "FPAGO.CDX"
 
    RECOVER
@@ -87,9 +84,6 @@ METHOD CloseFiles() CLASS TDiaCPed
    if !Empty( ::oPedCliL ) .and. ::oPedCliL:Used()
       ::oPedCliL:End()
    end if
-   if !Empty( ::oDbfTvta ) .and. ::oDbfTvta:Used()
-      ::oDbfTvta:End()
-   end if
    if !Empty( ::oDbfIva ) .and. ::oDbfIva:Used()
       ::oDbfIva:End()
    end if
@@ -99,7 +93,6 @@ METHOD CloseFiles() CLASS TDiaCPed
 
    ::oPedCliT := nil
    ::oPedCliL := nil
-   ::oDbfTvta := nil
    ::oDbfIva  := nil
    ::oDbfPago := nil
 

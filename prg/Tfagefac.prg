@@ -30,8 +30,6 @@ CLASS TflAgeFac FROM TInfGen
 
    METHOD lGenerate()
 
-   METHOD AddTipVta()
-
 END CLASS
 
 //---------------------------------------------------------------------------//
@@ -83,8 +81,6 @@ METHOD OpenFiles()
 
    DATABASE NEW ::oDbfCli   PATH ( cPatCli() ) FILE "CLIENT.DBF"  VIA ( cDriver() ) SHARED INDEX "CLIENT.CDX"
 
-   DATABASE NEW ::oDbfTvta  PATH ( cPatDat() ) FILE "TVTA.DBF"    VIA ( cDriver() ) SHARED INDEX "TVTA.CDX"
-
    DATABASE NEW ::oDbfArt PATH ( cPatArt() ) FILE "ARTICULO.DBF" VIA ( cDriver() ) SHARED INDEX "ARTICULO.CDX"
 
    RECOVER
@@ -115,9 +111,6 @@ METHOD CloseFiles()
    if !Empty( ::oFacRecL ) .and. ::oFacRecL:Used()
       ::oFacRecL:End()
    end if
-   if !Empty( ::oDbfTvta ) .and. ::oDbfTvta:Used()
-      ::oDbfTvta:End()
-   end if
    if !Empty( ::oDbfCli ) .and. ::oDbfCli:Used()
       ::oDbfCli:End()
    end if
@@ -129,7 +122,6 @@ METHOD CloseFiles()
    ::oFacCliL := nil
    ::oFacRecT := nil
    ::oFacRecL := nil
-   ::oDbfTvta := nil
    ::oDbfCli  := nil
    ::oDbfArt  := nil
 
@@ -174,19 +166,6 @@ METHOD lResource( cFld )
 
    ::oDefExcInf( 210 )
    ::oDefExcImp( 211 )
-
-   REDEFINE GET oTipVen VAR ::cTipVen ;
-      VALID    ( cTVta( oTipVen, This:oDbfTvta:cAlias, oTipVen2 ) ) ;
-      BITMAP   "LUPA" ;
-      ON HELP  ( BrwTVta( oTipVen, This:oDbfTVta:cAlias, oTipVen2 ) ) ;
-      ID       270 ;
-      OF       ::oFld:aDialogs[1]
-
-   REDEFINE GET oTipVen2 VAR ::cTipVen2 ;
-      ID       280 ;
-      WHEN     ( .F. ) ;
-      COLOR    CLR_GET ;
-      OF       ::oFld:aDialogs[1]
 
    ::oMtrInf:SetTotal( ::oFacCliT:Lastrec() )
 
@@ -276,101 +255,50 @@ METHOD lGenerate()
                Preguntamos y tratamos el tipo de venta
                */
 
-               if ::lTvta
+               if ::oDbf:Seek( ::oFacCliT:cCodAge + ::oFacCliL:cCodFam + ::oFacCliL:cRef )
 
-                  if ( !Empty( ::cTipVen ) .and. ::oFacCliL:cTipMov == ::cTipVen )            .OR.;
-                     Empty( ::cTipVen )
+                  ::oDbf:Load()
 
-                     if ::oDbf:Seek( ::oFacCliT:cCodAge + ::oFacCliL:cCodFam + ::oFacCliL:cRef )
+                  ::oDbf:NUNDCAJ += ::oFacCliL:NCANENT
+                  ::oDbf:NUNDART += ::oFacCliL:NUNICAJA
+                  ::oDbf:NCAJUND += nTotNFacCli( ::oFacCliL )
+                  ::oDbf:nBasCom += nImpLFacCli( ::oFacCliT:cAlias, ::oFacCliL:cAlias, ::nDecOut, ::nDerOut, ::nValDiv, .f., .t., .f., .f. )
+                  ::oDbf:nPreMed := ::oDbf:nBasCom / ::oDbf:nCajUnd
+                  ::oDbf:nTotCom += nComLFacCli( ::oFacRecT:cAlias, ::oFacCliL:cAlias, ::nDecOut, ::nDerOut, ::nValDiv )
 
-                         ::oDbf:Load()
-                         ::AddTipVta( ::oFacCli:cTipMov )
-                         ::oDbf:Save()
-
-                     else
-
-                         ::oDbf:Append()
-
-                         ::oDbf:cCodFam := ::oFacCliL:cCodFam
-                         ::oDbf:cDesFam := RetFamilia( ::oFacCliL:cCodFam, ::oDbfFam:cAlias )
-                         ::oDbf:cCodAge := ::oFacCliT:cCodAge
-                         ::oDbf:DFECMOV := ::oFacCliT:DFECFAC
-                         ::oDbf:CDOCMOV := ::oFacCliT:cSerie + "/" + Str( ::oFacCliT:nNumFac ) + "/" + ::oFacCliT:cSufFac
-                         ::oDbf:CREFART := ::oFacCliL:CREF
-                         ::oDbf:CDESART := ::oFacCliL:cDetalle
-                         ::oDbf:cCodPr1 := ::oFacCliL:cCodPr1
-                         ::oDbf:cNomPr1 := retProp( ::oFacCliL:cCodPr1 )
-                         ::oDbf:cCodPr2 := ::oFacCliL:cCodPr2
-                         ::oDbf:cNomPr2 := retProp( ::oFacCliL:cCodPr2 )
-                         ::oDbf:cValPr1 := ::oFacRecL:cValPr1
-                         ::oDbf:cNomVl1 := retValProp( ::oFacRecL:cCodPr1 + ::oFacRecL:cValPr1 )
-                         ::oDbf:cValPr2 := ::oFacCliL:cValPr2
-                         ::oDbf:cNomVl2 := retValProp( ::oFacCliL:cCodPr2 + ::oFacCliL:cValPr2 )
-
-                         if ::oDbfAge:Seek( ::oFacCliT:cCodAge )
-                            ::oDbf:cNomAge := ::oDbfAge:cApeAge + ", " + ::oDbfAge:cNbrAge
-                         end if
-
-                         ::AddTipVta( ::oFacCliL:cTipMov )
-
-                         ::oDbf:Save()
-
-                     end if
-
-                  end if
-
-               /*
-               Pasamos de los tipos de ventas
-               */
+                  ::oDbf:Save()
 
                else
 
-                  if ::oDbf:Seek( ::oFacCliT:cCodAge + ::oFacCliL:cCodFam + ::oFacCliL:cRef )
+                  ::oDbf:Append()
 
-                     ::oDbf:Load()
+                  ::oDbf:cCodFam := ::oFacCliL:cCodFam
+                  ::oDbf:cDesFam := RetFamilia( ::oFacCliL:cCodFam, ::oDbfFam )
+                  ::oDbf:cCodAge := ::oFacCliT:cCodAge
+                  ::oDbf:CDOCMOV := ::oFacCliT:cSerie + "/" + Str( ::oFacCliT:nNumFac ) + "/" + ::oFacCliT:cSufFac
+                  ::oDbf:CREFART := ::oFacCliL:cRef
+                  ::oDbf:CDESART := ::oFacCliL:cDetalle
+                  ::oDbf:cCodPr1 := ::oFacCliL:cCodPr1
+                  ::oDbf:cNomPr1 := retProp( ::oFacCliL:cCodPr1 )
+                  ::oDbf:cCodPr2 := ::oFacCliL:cCodPr2
+                  ::oDbf:cNomPr2 := retProp( ::oFacCliL:cCodPr2 )
+                  ::oDbf:cValPr1 := ::oFacCliL:cValPr1
+                  ::oDbf:cNomVl1 := retValProp( ::oFacCliL:cCodPr1 + ::oFacCliL:cValPr1 )
+                  ::oDbf:cValPr2 := ::oFacCliL:cValPr2
+                  ::oDbf:cNomVl2 := retValProp( ::oFacCliL:cCodPr2 + ::oFacCliL:cValPr2 )
 
-                     ::oDbf:NUNDCAJ += ::oFacCliL:NCANENT
-                     ::oDbf:NUNDART += ::oFacCliL:NUNICAJA
-                     ::oDbf:NCAJUND += nTotNFacCli( ::oFacCliL )
-                     ::oDbf:nBasCom += nImpLFacCli( ::oFacCliT:cAlias, ::oFacCliL:cAlias, ::nDecOut, ::nDerOut, ::nValDiv, .f., .t., .f., .f. )
-                     ::oDbf:nPreMed := ::oDbf:nBasCom / ::oDbf:nCajUnd
-                     ::oDbf:nTotCom += nComLFacCli( ::oFacRecT:cAlias, ::oFacCliL:cAlias, ::nDecOut, ::nDerOut, ::nValDiv )
-
-                     ::oDbf:Save()
-
-                  else
-
-                     ::oDbf:Append()
-
-                     ::oDbf:cCodFam := ::oFacCliL:cCodFam
-                     ::oDbf:cDesFam := RetFamilia( ::oFacCliL:cCodFam, ::oDbfFam )
-                     ::oDbf:cCodAge := ::oFacCliT:cCodAge
-                     ::oDbf:CDOCMOV := ::oFacCliT:cSerie + "/" + Str( ::oFacCliT:nNumFac ) + "/" + ::oFacCliT:cSufFac
-                     ::oDbf:CREFART := ::oFacCliL:cRef
-                     ::oDbf:CDESART := ::oFacCliL:cDetalle
-                     ::oDbf:cCodPr1 := ::oFacCliL:cCodPr1
-                     ::oDbf:cNomPr1 := retProp( ::oFacCliL:cCodPr1 )
-                     ::oDbf:cCodPr2 := ::oFacCliL:cCodPr2
-                     ::oDbf:cNomPr2 := retProp( ::oFacCliL:cCodPr2 )
-                     ::oDbf:cValPr1 := ::oFacCliL:cValPr1
-                     ::oDbf:cNomVl1 := retValProp( ::oFacCliL:cCodPr1 + ::oFacCliL:cValPr1 )
-                     ::oDbf:cValPr2 := ::oFacCliL:cValPr2
-                     ::oDbf:cNomVl2 := retValProp( ::oFacCliL:cCodPr2 + ::oFacCliL:cValPr2 )
-
-                     if ::oDbfAge:Seek( ::oFacCliT:cCodAge )
-                     ::oDbf:cNomAge := ::oDbfAge:cApeAge + ", " + ::oDbfAge:cNbrAge
-                     end if
-
-                     ::oDbf:NUNDCAJ := ::oFacCliL:NCANENT
-                     ::oDbf:NUNDART := ::oFacCliL:NUNICAJA
-                     ::oDbf:NCAJUND := nTotNFacCli( ::oFacCliL )
-                     ::oDbf:nBasCom := nImpLFacCli( ::oFacCliT:cAlias, ::oFacCliL:cAlias, ::nDecOut, ::nDerOut, ::nValDiv, .f., .t., .f., .f. )
-                     ::oDbf:nTotCom := nComLFacCli( ::oFacCliT:cAlias, ::oFacCliL:cAlias, ::nDecOut, ::nDerOut, ::nValDiv )
-                     ::oDbf:nPreMed := ::oDbf:nBasCom / ::oDbf:nCajUnd
-
-                     ::oDbf:Save()
-
+                  if ::oDbfAge:Seek( ::oFacCliT:cCodAge )
+                  ::oDbf:cNomAge := ::oDbfAge:cApeAge + ", " + ::oDbfAge:cNbrAge
                   end if
+
+                  ::oDbf:NUNDCAJ := ::oFacCliL:NCANENT
+                  ::oDbf:NUNDART := ::oFacCliL:NUNICAJA
+                  ::oDbf:NCAJUND := nTotNFacCli( ::oFacCliL )
+                  ::oDbf:nBasCom := nImpLFacCli( ::oFacCliT:cAlias, ::oFacCliL:cAlias, ::nDecOut, ::nDerOut, ::nValDiv, .f., .t., .f., .f. )
+                  ::oDbf:nTotCom := nComLFacCli( ::oFacCliT:cAlias, ::oFacCliL:cAlias, ::nDecOut, ::nDerOut, ::nValDiv )
+                  ::oDbf:nPreMed := ::oDbf:nBasCom / ::oDbf:nCajUnd
+
+                  ::oDbf:Save()
 
                end if
 
@@ -395,35 +323,5 @@ METHOD lGenerate()
    ::oDlg:Enable()
 
 RETURN ( ::oDbf:LastRec() > 0 )
-
-//---------------------------------------------------------------------------//
-
-METHOD AddTipVta( cTipMov )
-
-   if ::oDbfTvta:Seek( cTipMov )
-
-      ::oDbf:cTipVen    := ::oDbfTvta:cDesMov
-
-      if ::oDbfTvta:nUndMov == 1
-         ::oDbf:NUNDCAJ += ::oFacRecL:NCANENT
-         ::oDbf:NCAJUND += NotCaja( ::oFacRecL:NCANENT )* ::oFacRecL:NUNICAJA
-         ::oDbf:NUNDART += ::oFacRecL:NUNICAJA
-      elseif ::oDbfTvta:nUndMov == 2
-         ::oDbf:NUNDCAJ += ::oFacRecL:NCANENT * -1
-         ::oDbf:NCAJUND += NotCaja( ::oFacRecL:NCANENT ) * ::oFacRecL:NUNICAJA * -1
-         ::oDbf:NUNDART += ::oFacRecL:NUNICAJA * -1
-      end if
-
-      if ::oDbfTvta:nImpMov == 1
-         ::oDbf:nBasCom += nImpLFacCli( ::oFacRecT:cAlias, ::oFacRecL:cAlias, ::nDecOut, ::nDerOut, ::nValDiv, .f., .t., .f., .f. )
-         ::oDbf:nTotCom += nComLFacCli( ::oFacRecT:cAlias, ::oFacRecL:cAlias, ::nDecOut, ::nDerOut, ::nValDiv )
-      elseif ::oDbfTvta:nImpMov == 2
-         ::oDbf:nBasCom -= nImpLFacCli( ::oFacRecT:cAlias, ::oFacRecL:cAlias, ::nDecOut, ::nDerOut, ::nValDiv, .f., .t., .f., .f. )
-         ::oDbf:nTotCom -= nComLFacCli( ::oFacRecT:cAlias, ::oFacRecL:cAlias, ::nDecOut, ::nDerOut, ::nValDiv )
-      end if
-
-   end if
-
-RETURN nil
 
 //---------------------------------------------------------------------------//

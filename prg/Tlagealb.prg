@@ -12,7 +12,6 @@ CLASS TdlAgeAlb FROM TInfGen
    DATA  oEstado     AS OBJECT
    DATA  oAlbCliT    AS OBJECT
    DATA  oAlbCliL    AS OBJECT
-   DATA  oDbfTvta    AS OBJECT
    DATA  cTipVen
    DATA  cTipVen2
    DATA  aEstado     AS ARRAY    INIT  { "No Facturado", "Facturado", "Todos" }
@@ -68,8 +67,6 @@ METHOD OpenFiles() CLASS TdlAgeAlb
 
    DATABASE NEW ::oDbfCli   PATH ( cPatCli() ) FILE "CLIENT.DBF"  VIA ( cDriver() ) SHARED INDEX "CLIENT.CDX"
 
-   DATABASE NEW ::oDbfTvta  PATH ( cPatDat() ) FILE "TVTA.DBF"    VIA ( cDriver() ) SHARED INDEX "TVTA.CDX"
-
    RECOVER
 
       msgStop( 'Imposible abrir todas las bases de datos' )
@@ -92,16 +89,12 @@ METHOD CloseFiles() CLASS TdlAgeAlb
    if !Empty( ::oAlbCliL ) .and. ::oAlbCliL:Used()
    ::oAlbCliL:End()
    end if
-   if !Empty( ::oDbfTvta ) .and. ::oDbfTvta:Used()
-   ::oDbfTvta:End()
-   end if
    if !Empty( ::oDbfCli ) .and. ::oDbfCli:Used()
    ::oDbfCli:End()
    end if
 
    ::oAlbCliT := nil
    ::oAlbCliL := nil
-   ::oDbfTvta := nil
    ::oDbfCli  := nil
 
 RETURN ( Self )
@@ -134,24 +127,7 @@ METHOD lResource( cFld ) CLASS TdlAgeAlb
    if !::lDefArtInf( 110, 120, 130, 140, 800 )
       return .f.
    end if
-
-   REDEFINE CHECKBOX ::lTvta ;
-      ID       260 ;
-      OF       ::oFld:aDialogs[1]
-
-   REDEFINE GET oTipVen VAR ::cTipVen ;
-      VALID    ( cTVta( oTipVen, This:oDbfTvta:cAlias, oTipVen2 ) ) ;
-      BITMAP   "LUPA" ;
-      ON HELP  ( BrwTVta( oTipVen, This:oDbfTVta:cAlias, oTipVen2 ) ) ;
-      ID       270 ;
-      OF       ::oFld:aDialogs[1]
-
-   REDEFINE GET oTipVen2 VAR ::cTipVen2 ;
-      ID       280 ;
-      WHEN     ( .F. ) ;
-      COLOR    CLR_GET ;
-      OF       ::oFld:aDialogs[1]
-
+   
    ::oMtrInf:SetTotal( ::oAlbCliT:Lastrec() )
 
    ::oDefExcInf( 210 )
@@ -265,40 +241,6 @@ METHOD lGenerate() CLASS TdlAgeAlb
                         if ( ::oDbfAge:Seek (::oAlbCliT:cCodAge) )
                            ::oDbf:cNomAge := ::oDbfAge:cApeAge + ", " + ::oDbfAge:cNbrAge
                         end if
-
-                        if ::oDbfTvta:Seek( ::oAlbCliL:cTipMov )
-                           ::oDbf:cTipVen    := ::oDbfTvta:cDesMov
-
-                           if ::oDbfTvta:nUndMov == 1
-                              ::oDbf:nUndCaj := ::oAlbCliL:nCanEnt
-                              ::oDbf:nCajUnd := NotCaja( ::oAlbCliL:nCanEnt ) * ::oAlbCliL:nUniCaja
-                              ::oDbf:nUndArt := ::oAlbCliL:nUniCaja
-                           elseif ::oDbfTvta:nUndMov == 2
-                              ::oDbf:nUndCaj := (::oAlbCliL:nCanEnt) * (-1)
-                              ::oDbf:nCajUnd := ( NotCaja( ::oAlbCliL:nCanEnt ) * ::oAlbCliL:nUniCaja )* (-1)
-                              ::oDbf:nUndArt := (::oAlbCliL:nUniCaja) * (-1)
-                           elseif ::oDbfTvta:nUndMov == 3
-                              ::oDbf:nUndCaj := 0
-                              ::oDbf:nCajUnd := 0
-                              ::oDbf:nUndArt := 0
-                           end if
-
-                           if ::oDbfTvta:nImpMov == 1
-                              ::oDbf:nComAge := ( ::oAlbCliL:nComAge )
-                              ::oDbf:nBasCom := nImpLAlbCli( ::oAlbCliT:cAlias, ::oAlbCliL:cAlias, ::nDecOut, ::nDerOut )
-                              ::oDbf:nTotCom := nComLAlbCli( ::oAlbCliT:cAlias, ::oAlbCliL:cAlias, ::nDecOut, ::nDerOut )
-                           elseif ::oDbfTvta:nImpMov == 2
-                              ::oDbf:nComAge := ( ::oAlbCliL:nComAge )
-                              ::oDbf:nBasCom := -( nImpLAlbCli( ::oAlbCliT:cAlias, ::oAlbCliL:cAlias, ::nDecOut, ::nDerOut ) )
-                              ::oDbf:nTotCom := -( nComLAlbCli( ::oAlbCliT:cAlias, ::oAlbCliL:cAlias, ::nDecOut, ::nDerOut ) )
-                           elseif ::oDbfTvta:nImpMov == 3
-                              ::oDbf:nComAge := 0
-                              ::oDbf:nBasCom := 0
-                              ::oDbf:nTotCom := 0
-                           end if
-
-                        end if
-
 
                         ::oDbf:Save()
 

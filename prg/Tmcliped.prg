@@ -84,8 +84,6 @@ METHOD OpenFiles() CLASS TMovCPed
 
    DATABASE NEW ::oDbfCli   PATH ( cPatCli() ) FILE "CLIENT.DBF"  VIA ( cDriver() ) SHARED INDEX "CLIENT.CDX"
 
-   DATABASE NEW ::oDbfTvta  PATH ( cPatDat() ) FILE "TVTA.DBF"    VIA ( cDriver() ) SHARED INDEX "TVTA.CDX"
-
 RETURN ( Self )
 
 //---------------------------------------------------------------------------//
@@ -94,7 +92,6 @@ METHOD CloseFiles() CLASS TMovCPed
 
    ::oPedCliT:End()
    ::oPedCliL:End()
-   ::oDbfTvta:End()
    ::oDbfCli:End()
 
 RETURN ( Self )
@@ -144,27 +141,7 @@ METHOD Resource( cFld ) CLASS TMovCPed
       ITEMS    ::aEstado ;
       OF       ::oFld:aDialogs[1]
 
-   REDEFINE CHECKBOX ::lTvta ;
-      ID       260 ;
-      OF       ::oFld:aDialogs[1]
-
-   REDEFINE GET oTipVen VAR ::cTipVen ;
-      WHEN     ( ::lTvta ) ;
-      VALID    ( cTVta( oTipVen, This:oDbfTvta:cAlias, oTipVen2 ) ) ;
-      BITMAP   "LUPA" ;
-      ON HELP  ( BrwTVta( oTipVen, This:oDbfTVta:cAlias, oTipVen2 ) ) ;
-      ID       270 ;
-      OF       ::oFld:aDialogs[1]
-
-   REDEFINE GET oTipVen2 VAR ::cTipVen2 ;
-      ID       280 ;
-      WHEN     ( .F. ) ;
-      COLOR    CLR_GET ;
-      OF       ::oFld:aDialogs[1]
-
-
 RETURN ( Self )
-
 
 //---------------------------------------------------------------------------//
 /*
@@ -175,8 +152,6 @@ METHOD lGenerate() CLASS TMovCPed
 
    local bValid   := {|| .t. }
    local lExcCero := .f.
-
-
 
    ::oDlg:Disable()
 
@@ -234,39 +209,12 @@ METHOD lGenerate() CLASS TMovCPed
 
                   ::oDbf:Append()
 
-                  if ::oDbfTvta:Seek (::oPedCliL:cTipMov)
-                     ::oDbf:cTipVen    := ::oDbfTvta:cDesMov
-                  end if
-
                   ::oDbf:CCODCLI := ::oPedCliT:CCODCLI
                   ::oDbf:CNOMCLI := ::oPedCliT:CNOMCLI
                   ::oDbf:DFECMOV := ::oPedCliT:DFECPED
 
                   ::oDbf:CCODART := ::oPedCliL:CREF
                   ::oDbf:CNOMART := ::oPedCliL:cDetalle
-
-                  if ::oDbfTvta:nUndMov == 1
-                     ::oDbf:NCAJENT := ::oPedCliL:NCANPED
-                     ::oDbf:NUNTENT := nTotNPedCli( ::oPedCliL )
-                     ::oDbf:nUnidad := ::oPedCliL:NUNICAJA
-                  elseif ::oDbfTvta:nUndMov == 2
-                     ::oDbf:NCAJENT := - ::oPedCliL:NCANPED
-                     ::oDbf:NUNTENT := - nTotNPedCli( ::oPedCliL )
-                     ::oDbf:nUnidad := - ::oPedCliL:NUNICAJA
-                  elseif ::oDbfTvta:nUndMov == 3
-                     ::oDbf:NCAJENT := 0
-                     ::oDbf:NUNTENT := 0
-                     ::oDbf:nUnidad := 0
-                  end if
-
-                  if ::oDbfTvta:nImpMov == 3
-                     ::oDbf:nComAge := 0
-                     ::oDbf:nPreDiv := 0
-                  else
-                     ::oDbf:nComAge := ( ::oPedCliL:nComAge )
-                     ::oDbf:nPreDiv := nImpLPedCli( ::oPedCliT:cAlias, ::oPedCliL:cAlias, ::nDecOut, ::nDerOut, ::nValDiv  )
-                     ::oDbf:nTotAge := ( nImpLPedCli( ::oPedCliT:cAlias, ::oPedCliL:cAlias, ::nDecOut, ::nDerOut, ::nValDiv ) * ( ::oPedCliL:nComAge ) )/100
-                  end if
 
                   ::oDbf:CDOCMOV := ::oPedCliL:CSERPED + "/" + Str( ::oPedCliL:NNUMPED ) + "/" + ::oPedCliL:CSUFPED
 

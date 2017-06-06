@@ -51,7 +51,6 @@ CLASS TDiaCAlb FROM TInfGen
    DATA  oDbfIva     AS OBJECT
    DATA  oAlbCliT    AS OBJECT
    DATA  oAlbCliL    AS OBJECT
-   DATA  oDbfTvta    AS OBJECT
    DATA  aEstado     AS ARRAY    INIT  { "No Facturado", "Facturado", "Todos" }
 
    METHOD OpenFiles()
@@ -87,8 +86,6 @@ METHOD OpenFiles() CLASS TDiaCAlb
 
    DATABASE NEW ::oDbfPago  PATH ( cPatEmp() ) FILE "FPAGO.DBF"  VIA ( cDriver() ) SHARED INDEX "FPAGO.CDX"
 
-   DATABASE NEW ::oDbfTvta  PATH ( cPatDat() ) FILE "TVTA.DBF"    VIA ( cDriver() ) SHARED INDEX "TVTA.CDX"
-
    RECOVER USING oError
 
       lOpen := .f.
@@ -120,10 +117,6 @@ METHOD CloseFiles() CLASS TDiaCAlb
 
    if !Empty( ::oDbfIva ) .and. ::oDbfIva:Used()
       ::oDbfIva:End()
-   end if
-
-   if !Empty( ::oDbfTvta ) .and. ::oDbfTvta:Used()
-      ::oDbfTvta:End()
    end if
 
   if !Empty( ::oDbfCli ) .and. ::oDbfCli:Used()

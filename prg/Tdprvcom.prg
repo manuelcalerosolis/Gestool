@@ -15,7 +15,6 @@ CLASS TDPrvCom FROM TPrvInf
    DATA  oFacPrvT    AS OBJECT
    DATA  oFacPrvL    AS OBJECT
    DATA  oFacPrvP    AS OBJECT
-   DATA  oDbfTvta    AS OBJECT
    DATA  oDbfIva     AS OBJECT
 
 
@@ -71,8 +70,6 @@ METHOD OpenFiles()
 
    DATABASE NEW ::oDbfIva   PATH ( cPatDat() ) FILE "TIVA.DBF"     VIA ( cDriver() ) SHARED INDEX "TIVA.CDX"
 
-   DATABASE NEW ::oDbfTvta  PATH ( cPatDat() ) FILE "TVTA.DBF"     VIA ( cDriver() ) SHARED INDEX "TVTA.CDX"
-
    DATABASE NEW ::oFacPrvT  PATH ( cPatEmp() ) FILE "FACPRVT.DBF"  VIA ( cDriver() ) SHARED INDEX "FACPRVT.CDX"
 
    DATABASE NEW ::oFacPrvL  PATH ( cPatEmp() ) FILE "FACPRVL.DBF"  VIA ( cDriver() ) SHARED INDEX "FACPRVL.CDX"
@@ -113,9 +110,6 @@ METHOD CloseFiles()
    if !Empty( ::oDbfIva ) .and. ::oDbfIva:Used()
       ::oDbfIva:End()
    end if
-   if !Empty( ::oDbfTvta ) .and. ::oDbfTvta:Used()
-      ::oDbfTvta:End()
-   end if
 
    ::oAlbPrvT := nil
    ::oAlbPrvL := nil
@@ -123,7 +117,6 @@ METHOD CloseFiles()
    ::oFacPrvL := nil
    ::oFacPrvP := nil
    ::oDbfIva  := nil
-   ::oDbfTvta := nil
 
 RETURN ( Self )
 

@@ -4551,6 +4551,9 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbf, oBrw, lTotLin, cCodArtEnt, nMode, aTmpP
          PICTURE  cPicUnd ;
          OF       oFld:aDialogs[1]
 
+      aGet[ __NBULTOS ]:Cargo          := "nBultos"
+      aGet[ __NBULTOS ]:bPostValidate  := {| oSender | runScript( "PedidosClientes\Lineas\validControl.prg", oSender, aGet, nView, nMode, aTmpPed ) } 
+
 		REDEFINE GET aGet[_NCANPED] VAR aTmp[_NCANPED];
 			ID 		130 ;
 			SPINNER ;
@@ -4561,6 +4564,9 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbf, oBrw, lTotLin, cCodArtEnt, nMode, aTmpP
          OF       oFld:aDialogs[1] ;
          IDSAY    131
 
+      aGet[ _NCANPED ]:Cargo          := "nCanPed"
+      aGet[ _NCANPED ]:bPostValidate  := {| oSender | runScript( "PedidosClientes\Lineas\validControl.prg", oSender, aGet, nView, nMode, aTmpPed ) } 
+
 		REDEFINE GET aGet[_NUNICAJA] VAR aTmp[_NUNICAJA];
 			ID 		140 ;
 			SPINNER ;
@@ -4570,6 +4576,9 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbf, oBrw, lTotLin, cCodArtEnt, nMode, aTmpP
 			PICTURE 	cPicUnd ;
          OF       oFld:aDialogs[1] ;
          IDSAY    141
+
+      aGet[ _NUNICAJA ]:Cargo          := "nUniCaja"
+      aGet[ _NUNICAJA ]:bPostValidate  := {| oSender | runScript( "PedidosClientes\Lineas\validControl.prg", oSender, aGet, nView, nMode, aTmpPed ) } 
 
       /*
       Precios

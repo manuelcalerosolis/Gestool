@@ -11,7 +11,6 @@ CLASS TInfGrfAlb FROM TInfGrp
    DATA  oEstado     AS OBJECT
    DATA  oAlbCliT    AS OBJECT
    DATA  oAlbCliL    AS OBJECT
-   DATA  oDbfTvta    AS OBJECT
    DATA  aMes        AS ARRAY    INIT {.f., .f., .f., .f., .f., .f., .f., .f., .f., .f., .f., .f. }
    DATA  lAno        AS LOGIC    INIT .f.
    DATA  aEstado     AS ARRAY    INIT { "No facturado", "Facturado", "Todos" }
@@ -62,8 +61,6 @@ METHOD OpenFiles() CLASS TInfGrfAlb
 
    DATABASE NEW ::oDbfFam PATH ( cPatArt() ) FILE "FAMILIAS.DBF" VIA ( cDriver() ) SHARED INDEX "FAMILIAS.CDX"
 
-   DATABASE NEW ::oDbfTvta  PATH ( cPatDat() ) FILE "TVTA.DBF" VIA ( cDriver() ) SHARED INDEX "TVTA.CDX"
-
    DATABASE NEW ::oDbfArt PATH ( cPatArt() ) FILE "ARTICULO.DBF" VIA ( cDriver() ) SHARED INDEX "ARTICULO.CDX"
 
    RECOVER USING oError
@@ -89,10 +86,6 @@ METHOD CloseFiles() CLASS TInfGrfAlb
 
    if !Empty( ::oAlbCliL ) .and. ::oAlbCliL:Used()
       ::oAlbCliL:End()
-   end if
-
-   if !Empty( ::oDbfTvta ) .and. ::oDbfTvta:Used()
-      ::oDbfTvta:End()
    end if
 
    if !Empty( ::oDbfArt ) .and. ::oDbfArt:Used()

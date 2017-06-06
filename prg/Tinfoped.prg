@@ -12,7 +12,6 @@ CLASS TInfOPed FROM TInfPgo
    DATA  oEstado     AS OBJECT
    DATA  oPedCliT    AS OBJECT
    DATA  oPedCliL    AS OBJECT
-   DATA  oDbfTvta    AS OBJECT
    DATA  aEstado     AS ARRAY    INIT  { "Pendiente", "Parcilamente", "Entregado", "Todos" }
 
    METHOD Create()
@@ -52,8 +51,6 @@ METHOD OpenFiles() CLASS TInfOPed
 
    DATABASE NEW ::oPedCliL PATH ( cPatEmp() ) FILE "PEDCLIL.DBF"  VIA ( cDriver() ) SHARED INDEX "PEDCLIL.CDX"
 
-   DATABASE NEW ::oDbfTvta PATH ( cPatDat() ) FILE "TVTA.DBF"     VIA ( cDriver() ) SHARED INDEX "TVTA.CDX"
-
    RECOVER
 
       msgStop( 'Imposible abrir todas las bases de datos' )
@@ -76,13 +73,9 @@ METHOD CloseFiles() CLASS TInfOPed
    if !Empty( ::oPedCliL ) .and. ::oPedCliL:Used()
       ::oPedCliL:End()
    end if
-   if !Empty( ::oDbfTvta ) .and. ::oDbfTvta:Used()
-      ::oDbfTvta:End()
-   end if
 
    ::oPedCliT := nil
    ::oPedCliL := nil
-   ::oDbfTvta := nil
 
 RETURN ( Self )
 

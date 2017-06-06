@@ -16,7 +16,6 @@ CLASS TInfFVta FROM TInfFam
    DATA  oFacRecL    AS OBJECT
    DATA  oTikCliT    AS OBJECT
    DATA  oTikCliL    AS OBJECT
-   DATA  oDbfTvta    AS OBJECT
 
    METHOD Create()
 
@@ -68,8 +67,6 @@ METHOD OpenFiles()
 
    DATABASE NEW ::oTikCliL PATH ( cPatEmp() ) FILE "TIKEL.DBF"    VIA ( cDriver() ) SHARED INDEX "TIKEL.CDX"
 
-   DATABASE NEW ::oDbfTvta PATH ( cPatDat() ) FILE "TVTA.DBF"     VIA ( cDriver() ) SHARED INDEX "TVTA.CDX"
-
    RECOVER
 
       msgStop( 'Imposible abrir todas las bases de datos' )
@@ -110,9 +107,6 @@ METHOD CloseFiles()
    if !Empty( ::oTikCliL ) .and. ::oTikCliL:Used()
       ::oTikCliL:End()
    end if
-   if !Empty( ::oDbfTVta ) .and. ::oDbfTVta:Used()
-      ::oDbfTVta:End()
-   end if
 
    ::oAlbCliT := nil
    ::oAlbCliL := nil
@@ -122,7 +116,6 @@ METHOD CloseFiles()
    ::oFacRecL := nil
    ::oTikCliT := nil
    ::oTikCliL := nil
-   ::oDbfTVta := nil
 
 RETURN ( Self )
 

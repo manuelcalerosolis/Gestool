@@ -18,7 +18,6 @@ CLASS TDiaFPagoFac FROM TInfGen
    DATA  oFacRecL    AS OBJECT
    DATA  oFacCliP    AS OBJECT
    DATA  oAntCliT    AS OBJECT
-   DATA  oDbfTvta    AS OBJECT
    DATA  oDbfIva     AS OBJECT
    DATA  oOrdenado   AS OBJECT
    DATA  cOrdenado   AS CHARACTER   INIT  "Fechas"
@@ -87,8 +86,6 @@ METHOD OpenFiles() CLASS TDiaFPagoFac
 
    DATABASE NEW ::oDbfCli   PATH ( cPatCli() ) FILE "CLIENT.DBF"  VIA ( cDriver() ) SHARED INDEX "CLIENT.CDX"
 
-   DATABASE NEW ::oDbfTvta  PATH ( cPatDat() ) FILE "TVTA.DBF"    VIA ( cDriver() ) SHARED INDEX "TVTA.CDX"
-
    DATABASE NEW ::oDbfIva  PATH ( cPatDat () ) FILE "TIVA.DBF"    VIA ( cDriver() ) SHARED INDEX "TIVA.CDX"
 
    DATABASE NEW ::oAntCliT  PATH ( cPatEmp() ) FILE "ANTCLIT.DBF" VIA ( cDriver() ) SHARED INDEX "ANTCLIT.CDX"
@@ -124,9 +121,6 @@ METHOD CloseFiles() CLASS TDiaFPagoFac
    if !Empty( ::oFacCliP ) .and. ::oFacCliP:Used()
       ::oFacCliP:End()
    end if
-   if !Empty( ::oDbfTvta ) .and. ::oDbfTvta:Used()
-      ::oDbfTvta:End()
-   end if
    if !Empty( ::oDbfCli ) .and. ::oDbfCli:Used()
       ::oDbfCli:End()
    end if
@@ -142,7 +136,6 @@ METHOD CloseFiles() CLASS TDiaFPagoFac
    ::oFacRecT := nil
    ::oFacRecL := nil
    ::oFacCliP := nil
-   ::oDbfTvta := nil
    ::oDbfCli  := nil
    ::oDbfIva  := nil
    ::oAntCliT := nil

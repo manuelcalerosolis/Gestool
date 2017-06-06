@@ -12,7 +12,6 @@ CLASS TDiaCPre FROM TInfGen
    DATA  oPreCliT    AS OBJECT
    DATA  oPreCliL    AS OBJECT
    DATA  oDbfPago    AS OBJECT
-   DATA  oDbfTvta    AS OBJECT
    DATA  aEstado     AS ARRAY    INIT  { "Pendiente", "Aceptado", "Todos" }
    DATA  lExcCredito AS LOGIC    INIT .f.
 
@@ -60,8 +59,6 @@ METHOD OpenFiles() CLASS TDiaCPre
 
    DATABASE NEW ::oDbfIva   PATH ( cPatDat() ) FILE "TIVA.DBF"  VIA ( cDriver() ) SHARED INDEX "TIVA.CDX"
 
-   DATABASE NEW ::oDbfTvta  PATH ( cPatDat() ) FILE "TVTA.DBF"    VIA ( cDriver() ) SHARED INDEX "TVTA.CDX"
-
    DATABASE NEW ::oDbfPago  PATH ( cPatEmp() ) FILE "FPAGO.DBF"  VIA ( cDriver() ) SHARED INDEX "FPAGO.CDX"
 
    RECOVER
@@ -86,9 +83,6 @@ METHOD CloseFiles() CLASS TDiaCPre
    if !Empty( ::oPreCliL ) .and. ::oPreCliL:Used()
       ::oPreCliL:End()
    end if
-   if !Empty( ::oDbfTvta ) .and. ::oDbfTvta:Used()
-      ::oDbfTvta:End()
-   end if
    if !Empty( ::oDbfIva ) .and. ::oDbfIva:Used()
       ::oDbfIva:End()
    end if
@@ -98,7 +92,6 @@ METHOD CloseFiles() CLASS TDiaCPre
 
    ::oPreCliT := nil
    ::oPreCliL := nil
-   ::oDbfTvta := nil
    ::oDbfIva  := nil
    ::oDbfPago := nil
 

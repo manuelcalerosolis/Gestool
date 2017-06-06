@@ -62,7 +62,6 @@ CLASS TdlAgeFac FROM TInfGen
    DATA  oEstado     AS OBJECT
    DATA  oFacCliT    AS OBJECT
    DATA  oFacCliL    AS OBJECT
-   DATA  oDbfTvta    AS OBJECT
    DATA  cTipVen     AS CHARACTER
    DATA  cTipVen2    AS CHARACTER
    DATA  aEstado     AS ARRAY    INIT  { "Pendientes", "Cobradas", "Todas" }
@@ -98,8 +97,6 @@ METHOD OpenFiles() CLASS TdlAgeFac
 
    DATABASE NEW ::oDbfCli   PATH ( cPatCli() ) FILE "CLIENT.DBF"  VIA ( cDriver() ) SHARED INDEX "CLIENT.CDX"
 
-   DATABASE NEW ::oDbfTvta  PATH ( cPatDat() ) FILE "TVTA.DBF"    VIA ( cDriver() ) SHARED INDEX "TVTA.CDX"
-
    DATABASE NEW ::oDbfArt PATH ( cPatArt() ) FILE "ARTICULO.DBF" VIA ( cDriver() ) SHARED INDEX "ARTICULO.CDX"
 
    RECOVER
@@ -124,10 +121,6 @@ METHOD CloseFiles() CLASS TdlAgeFac
 
    if !Empty( ::oFacCliL ) .and. ::oFacCliL:Used()
       ::oFacCliL:End()
-   end if
-
-   if !Empty( ::oDbfTvta ) .and. ::oDbfTvta:Used()
-      ::oDbfTvta:End()
    end if
 
    if !Empty( ::oDbfCli ) .and. ::oDbfCli:Used()
@@ -166,10 +159,6 @@ METHOD Resource( cFld ) CLASS TdlAgeFac
    Damos valor al meter
    */
 
-   REDEFINE CHECKBOX ::lTvta ;
-      ID       260 ;
-      OF       ::oFld:aDialogs[1]
-
    ::oDefExcImp()
 
    /*
@@ -177,19 +166,6 @@ METHOD Resource( cFld ) CLASS TdlAgeFac
    */
 
    ::lDefArtInf( 110, 120, 130, 140 )
-
-   REDEFINE GET oTipVen VAR ::cTipVen ;
-      VALID    ( cTVta( oTipVen, This:oDbfTvta:cAlias, oTipVen2 ) ) ;
-      BITMAP   "LUPA" ;
-      ON HELP  ( BrwTVta( oTipVen, This:oDbfTVta:cAlias, oTipVen2 ) ) ;
-      ID       270 ;
-      OF       ::oFld:aDialogs[1]
-
-   REDEFINE GET oTipVen2 VAR ::cTipVen2 ;
-      ID       280 ;
-      WHEN     ( .F. ) ;
-      COLOR    CLR_GET ;
-      OF       ::oFld:aDialogs[1]
 
    REDEFINE COMBOBOX ::oEstado ;
       VAR      ::cEstado ;
@@ -279,38 +255,8 @@ METHOD lGenerate() CLASS TdlAgeFac
 
                         ::AddCliente( ::oFacCliT:CCODCLI, ::oFacCliT, .f. )
 
-                        if ( ::oDbfTvta:Seek ( ::oFacCliL:cTipMov ) )
-                           ::oDbf:cTipVen    := ::oDbfTvta:cDesMov
-                        end if
-
                         if ( ::oDbfAge:Seek (::oFacCliT:cCodAge) )
                            ::oDbf:cNomAge := ::oDbfAge:cApeAge + ", " + ::oDbfAge:cNbrAge
-                        end if
-
-                        if ::oDbfTvta:nUndMov == 1
-                           ::oDbf:NUNDCAJ := ::oFacCliL:NCANENT
-                           ::oDbf:NUNDART := ::oFacCliL:NUNICAJA
-                           ::oDbf:NCAJUND := nTotNFacCli( ::oFacCliL )
-                           ::oDbf:nTotPes := nTotNFacCli( ::oFacCliL ) * nKlgEnt
-                        elseif ::oDbfTvta:nUndMov == 2
-                           ::oDbf:NUNDCAJ := - ::oFacCliL:NCANENT
-                           ::oDbf:NUNDART := - ::oFacCliL:NUNICAJA
-                           ::oDbf:NCAJUND := - nTotNFacCli( ::oFacCliL )
-                           ::oDbf:nTotPes := - nTotNFacCli( ::oFacCliL ) * nKlgEnt
-                        elseif ::oDbfTvta:nUndMov == 3
-                           ::oDbf:NUNDCAJ := 0
-                           ::oDbf:NCAJUND := 0
-                           ::oDbf:NUNDART := 0
-                        end if
-
-                        if ::oDbfTvta:nImpMov == 3
-                           ::oDbf:nComAge := 0
-                           ::oDbf:nBasCom := 0
-                           ::oDbf:nTotCom := 0
-                        else
-                           ::oDbf:nComAge := ( ::oFacCliL:nComAge )
-                           ::oDbf:nBasCom := nImpLFacCli( ::oFacCliT:cAlias, ::oFacCliL:cAlias, ::nDecOut, ::nDerOut, ::nValDiv, .f., .t., .f., .f. )
-                           ::oDbf:nTotCom := nComLFacCli( ::oFacCliT:cAlias, ::oFacCliL:cAlias, ::nDecOut, ::nDerOut, ::nValDiv )
                         end if
 
                         ::oDbf:Save()

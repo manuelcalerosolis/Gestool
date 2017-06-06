@@ -4975,6 +4975,9 @@ STATIC FUNCTION EdtDet( aTmp, aGet, cFacCliL, oBrw, lTotLin, cCodArtEnt, nMode, 
          PICTURE  cPicUnd ;
          OF       fldGeneral
 
+      aGet[ __NBULTOS ]:Cargo          := "nBultos"
+      aGet[ __NBULTOS ]:bPostValidate  := {| oSender | runScript( "FacturasClientes\Lineas\validControl.prg", oSender, aGet, nView, nMode, aTmpFac ) }    
+
       REDEFINE GET aGet[_NCANENT] VAR aTmp[_NCANENT] ;
          ID       130 ;
          SPINNER ;
@@ -4984,6 +4987,9 @@ STATIC FUNCTION EdtDet( aTmp, aGet, cFacCliL, oBrw, lTotLin, cCodArtEnt, nMode, 
          PICTURE  cPicUnd ;
          OF       fldGeneral ;
          IDSAY    131
+
+      aGet[ _NCANENT ]:Cargo          := "nCanEnt"
+      aGet[ _NCANENT ]:bPostValidate  := {| oSender | runScript( "FacturasClientes\Lineas\validControl.prg", oSender, aGet, nView, nMode, aTmpFac ) } 
 
       REDEFINE GET aGet[ _NUNICAJA ] ;
          VAR      aTmp[ _NUNICAJA ] ;
@@ -4995,6 +5001,9 @@ STATIC FUNCTION EdtDet( aTmp, aGet, cFacCliL, oBrw, lTotLin, cCodArtEnt, nMode, 
          PICTURE  cPicUnd ;
          OF       fldGeneral ;
          IDSAY    141
+
+      aGet[ _NUNICAJA ]:Cargo          := "nUniCaja"
+      aGet[ _NUNICAJA ]:bPostValidate  := {| oSender | runScript( "FacturasClientes\Lineas\validControl.prg", oSender, aGet, nView, nMode, aTmpFac ) } 
 
       BrowseProperties():getInstance():setBindingUnidades( aGet[ _NUNICAJA ] )
 

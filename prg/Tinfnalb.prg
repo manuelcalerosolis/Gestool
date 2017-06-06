@@ -12,7 +12,6 @@ CLASS TInfNAlb FROM TInfPAge
    DATA  oEstado     AS OBJECT
    DATA  oAlbCliT    AS OBJECT
    DATA  oAlbCliL    AS OBJECT
-   DATA  oDbfTvta    AS OBJECT
    DATA  oIva        AS OBJECT
    DATA  cTipVen
    DATA  cTipVen2
@@ -56,8 +55,6 @@ METHOD OpenFiles()
 
    DATABASE NEW ::oAlbCliL  PATH ( cPatEmp() ) FILE "ALBCLIL.DBF" VIA ( cDriver() ) SHARED INDEX "ALBCLIL.CDX"
 
-   DATABASE NEW ::oDbfTvta  PATH ( cPatDat() ) FILE "TVTA.DBF"    VIA ( cDriver() ) SHARED INDEX "TVTA.CDX"
-
    DATABASE NEW ::oIva      PATH ( cPatDat() ) FILE "TIVA.DBF"    VIA ( cDriver() ) SHARED INDEX "TIVA.CDX"
 
    RECOVER
@@ -82,16 +79,12 @@ METHOD CloseFiles()
    if !Empty( ::oAlbCliL ) .and. ::oAlbCliL:Used()
       ::oAlbCliL:End()
    end if
-   if !Empty( ::oDbfTvta ) .and. ::oDbfTvta:Used()
-      ::oDbfTvta:End()
-   end if
    if !Empty( ::oIva ) .and. ::oIva:Used()
       ::oIva:End()
    end if
 
    ::oAlbCliT := nil
    ::oAlbCliL := nil
-   ::oDbfTvta := nil
    ::oIva     := nil
 
 RETURN ( Self )
@@ -128,23 +121,6 @@ METHOD lResource( cFld )
    /*
    Damos valor al meter
    */
-
-   REDEFINE CHECKBOX ::lTvta ;
-      ID       260 ;
-      OF       ::oFld:aDialogs[1]
-
-   REDEFINE GET oTipVen VAR ::cTipVen ;
-      VALID    ( cTVta( oTipVen, This:oDbfTvta:cAlias, oTipVen2 ) ) ;
-      BITMAP   "LUPA" ;
-      ON HELP  ( BrwTVta( oTipVen, This:oDbfTVta:cAlias, oTipVen2 ) ) ;
-      ID       270 ;
-      OF       ::oFld:aDialogs[1]
-
-   REDEFINE GET oTipVen2 VAR ::cTipVen2 ;
-      ID       280 ;
-      WHEN     ( .F. ) ;
-      COLOR    CLR_GET ;
-      OF       ::oFld:aDialogs[1]
 
    ::oMtrInf:SetTotal( ::oAlbCliT:Lastrec() )
 
@@ -268,45 +244,6 @@ METHOD lGenerate()
                         ::oDbf:cDocMov := ::oAlbCliL:cSerAlb + "/" + lTrim( Str( ::oAlbCliL:nNumAlb ) ) + "/" + lTrim( ::oAlbCliL:cSufAlb )
                         ::oDbf:cTipDoc := "Albarán"
                         ::oDbf:dFecMov := ::oAlbCliT:dFecAlb
-
-                        if ::oDbfTvta:Seek( ::oAlbCliL:cTipMov )
-                           ::oDbf:cTipVen := ::oDbfTvta:cDesMov
-
-                           if ::oDbfTvta:nUndMov == 1
-                              ::oDbf:nNumCaj := ::oAlbCliL:nCanEnt
-                              ::oDbf:nNumUni := nTotNAlbCli( ::oAlbCliL )
-                              ::oDbf:nUniDad := ::oAlbCliL:nUniCaja
-                           elseif ::oDbfTvta:nUndMov == 2
-                              ::oDbf:nNumCaj := -::oAlbCliL:nCanEnt
-                              ::oDbf:nNumUni := -nTotNAlbCli( ::oAlbCliL )
-                              ::oDbf:nUniDad := -::oAlbCliL:nUniCaja
-                           elseif ::oDbfTvta:nUndMov == 3
-                              ::oDbf:nNumCaj := 0
-                              ::oDbf:nNumUni := 0
-                              ::oDbf:nUniDad := 0
-                           end if
-
-                           if ::oDbfTvta:nImpMov == 1
-                              ::oDbf:nComAge := ( ::oAlbCliL:nComAge )
-                              ::oDbf:nTotCom := nComLAlbCli( ::oAlbCliT:cAlias, ::oAlbCliL:cAlias, ::nDecOut, ::nDerOut )
-                              ::oDbf:nImpTot := nImpLAlbCli( ::oAlbCliT:cAlias, ::oAlbCliL:cAlias, ::nDecOut, ::nDerOut )
-                              ::oDbf:nImpArt := nTotUAlbCli( ::oAlbCliL:cAlias, ::nDecOut, ::nValDiv )
-                              ::oDbf:nIvaTot := nIvaLAlbCli( ::oAlbCliL:cAlias, ::nDecOut, ::nDerOut, ::nValDiv, .t., .t., .t. )
-                           elseif ::oDbfTvta:nImpMov == 2
-                              ::oDbf:nComAge := ( ::oAlbCliL:nComAge )
-                              ::oDbf:nTotCom := -( nComLAlbCli( ::oAlbCliT:cAlias, ::oAlbCliL:cAlias, ::nDecOut, ::nDerOut ) )
-                              ::oDbf:nImpTot := -( nImpLAlbCli( ::oAlbCliT:cAlias, ::oAlbCliL:cAlias, ::nDecOut, ::nDerOut ) )
-                              ::oDbf:nImpArt := -( nTotUAlbCli( ::oAlbCliL:cAlias, ::nDecOut, ::nValDiv ) )
-                              ::oDbf:nIvaTot := -( nIvaLAlbCli( ::oAlbCliL:cAlias, ::nDecOut, ::nDerOut, ::nValDiv, .t., .t., .t. ) )
-                           elseif ::oDbfTvta:nImpMov == 3
-                              ::oDbf:nComAge := 0
-                              ::oDbf:nTotCom := 0
-                              ::oDbf:nImpTot := 0
-                              ::oDbf:nImpArt := 0
-                              ::oDbf:nIvaTot := 0
-                           end if
-
-                        end if
 
                         ::oDbf:nImpTrn    := nTrnUAlbCli( ::oAlbCliL:cAlias, ::nDecOut, ::nValDiv )
                         ::oDbf:nPntVer    := nPntUAlbCli( ::oAlbCliL:cAlias, ::nDecPnt, ::nValDiv )

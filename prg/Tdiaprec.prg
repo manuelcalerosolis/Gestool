@@ -10,7 +10,6 @@ CLASS TDiaPRec FROM TInfGen
    DATA  oEstado     AS OBJECT
    DATA  oDbfIva     AS OBJECT
    DATA  oFacPrvP    AS OBJECT
-   DATA  oDbfTvta    AS OBJECT
    DATA  aEstado     AS ARRAY    INIT  { "Pendientes", "Pagados", "Todos" }
    DATA  lExcCredito AS LOGIC    INIT .f.
 
@@ -59,8 +58,6 @@ METHOD OpenFiles()
 
    DATABASE NEW ::oFacPrvP  PATH ( cPatEmp() ) FILE "FACPRVP.DBF"  VIA ( cDriver() ) SHARED INDEX "FACPRVP.CDX"
 
-   DATABASE NEW ::oDbfTvta  PATH ( cPatDat() ) FILE "TVTA.DBF"    VIA ( cDriver() ) SHARED INDEX "TVTA.CDX"
-
    RECOVER
 
       msgStop( 'Imposible abrir todas las bases de datos' )
@@ -77,9 +74,6 @@ RETURN ( lOpen )
 
 METHOD CloseFiles()
 
-   if !Empty( ::oDbfTvta ) .and. ::oDbfTvta:Used()
-      ::oDbfTvta:End()
-   end if
    if !Empty( ::oDbfIva ) .and. ::oDbfIva:Used()
       ::oDbfIva:End()
    end if
@@ -87,7 +81,6 @@ METHOD CloseFiles()
       ::oFacPrvP:End()
    end if
 
-   ::oDbfTvta := nil
    ::oDbfIva  := nil
    ::oFacPrvP := nil
 

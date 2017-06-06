@@ -10,7 +10,6 @@ CLASS TDiaCRecCob FROM TInfGen
    DATA  lExcCredito AS LOGIC    INIT .f.
    DATA  oDbfIva     AS OBJECT
    DATA  oFacCliP    AS OBJECT
-   DATA  oDbfTvta    AS OBJECT
    DATA  oTikCliP    AS OBJECT
    DATA  oTikCliT    AS OBJECT
 
@@ -65,8 +64,6 @@ METHOD OpenFiles() CLASS TDiaCRecCob
 
    ::oFacCliP     := TDataCenter():oFacCliP()
 
-   DATABASE NEW ::oDbfTvta  PATH ( cPatDat() ) FILE "TVTA.DBF"    VIA ( cDriver() ) SHARED INDEX "TVTA.CDX"
-
    DATABASE NEW ::oTikCliT  PATH ( cPatEmp() ) FILE "TIKET.DBF"   VIA ( cDriver() ) SHARED INDEX "TIKET.CDX"
 
    DATABASE NEW ::oTikCliP  PATH ( cPatEmp() ) FILE "TIKEP.DBF"   VIA ( cDriver() ) SHARED INDEX "TIKEP.CDX"
@@ -89,9 +86,6 @@ RETURN ( lOpen )
 
 METHOD CloseFiles() CLASS TDiaCRecCob
 
-   if !Empty( ::oDbfTvta ) .and. ::oDbfTvta:Used()
-      ::oDbfTvta:End()
-   end if
    if !Empty( ::oDbfIva ) .and. ::oDbfIva:Used()
       ::oDbfIva:End()
    end if
@@ -105,7 +99,6 @@ METHOD CloseFiles() CLASS TDiaCRecCob
       ::oTikCliP:End()
    end if
 
-   ::oDbfTvta  := nil
    ::oDbfIva   := nil
    ::oFacCliP  := nil
    ::oTikCliT  := nil

@@ -16,7 +16,6 @@ CLASS TDiaCFac FROM TInfGen
    DATA  oAntCliT    AS OBJECT
    DATA  oFacRecT    AS OBJECT
    DATA  oFacRecL    AS OBJECT
-   DATA  oDbfTvta    AS OBJECT
    DATA  oDbfObr     AS OBJECT
    DATA  aEstado     AS ARRAY    INIT  { "Pendiente", "Liquidada", "Todas" }
    DATA  aTipo       AS ARRAY    INIT  { "Facturas", "Rectificativas", "Todas" }
@@ -111,8 +110,6 @@ METHOD OpenFiles() CLASS TDiaCFac
 
    ::oFacCliP := TDataCenter():oFacCliP()
 
-   DATABASE NEW ::oDbfTvta    PATH ( cPatDat() ) FILE "TVTA.DBF"     VIA ( cDriver() ) SHARED INDEX "TVTA.CDX"
-
    RECOVER
 
       msgStop( 'Imposible abrir todas las bases de datos' )
@@ -141,9 +138,6 @@ METHOD CloseFiles() CLASS TDiaCFac
    if !Empty( ::oFacRecL ) .and. ::oFacRecL:Used()
       ::oFacRecL:End()
    end if
-   if !Empty( ::oDbfTvta ) .and. ::oDbfTvta:Used()
-      ::oDbfTvta:End()
-   end if
    if !Empty( ::oDbfIva ) .and. ::oDbfIva:Used()
       ::oDbfIva:End()
    end if
@@ -161,7 +155,6 @@ METHOD CloseFiles() CLASS TDiaCFac
    ::oFacCliL  := nil
    ::oFacRecT  := nil
    ::oFacRecL  := nil
-   ::oDbfTvta  := nil
    ::oDbfIva   := nil
    ::oFacCliP  := nil
    ::oAntCliT  := nil

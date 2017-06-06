@@ -14,7 +14,6 @@ CLASS TInfNGrCVta FROM TInfGen
    DATA  oFacRecT    AS OBJECT
    DATA  oFacRecL    AS OBJECT
    DATA  oDbfCli     AS OBJECT
-   DATA  oDbfTvta    AS OBJECT
 
    METHOD Create()
 
@@ -81,8 +80,6 @@ METHOD OpenFiles()
 
    DATABASE NEW ::oFacRecL PATH ( cPatEmp() )  FILE "FACRECL.DBF" VIA ( cDriver() ) SHARED INDEX "FACRECL.CDX"
 
-   DATABASE NEW ::oDbfTvta  PATH ( cPatDat() ) FILE "TVTA.DBF"    VIA ( cDriver() ) SHARED INDEX "TVTA.CDX"
-
    DATABASE NEW ::oDbfCli PATH ( cPatCli() )   FILE "CLIENT.DBF"  VIA ( cDriver() ) SHARED INDEX "CLIENT.CDX"
 
    RECOVER
@@ -119,9 +116,6 @@ METHOD CloseFiles()
    if !Empty( ::oAlbCliL ) .and. ::oAlbCliL:Used()
       ::oAlbCliL:End()
    end if
-   if !Empty( ::oDbfTvta ) .and. ::oDbfTvta:Used()
-      ::oDbfTvta:End()
-   end if
    if !Empty( ::oDbfCli ) .and. ::oDbfCli:Used()
       ::oDbfCli:End()
    end if
@@ -132,7 +126,6 @@ METHOD CloseFiles()
    ::oFacRecL := nil
    ::oAlbCliT := nil
    ::oAlbCliL := nil
-   ::oDbfTvta := nil
    ::oDbfCli  := nil
 
 
@@ -264,9 +257,6 @@ METHOD lGenerate()
                   ::oDbf:cNomVl1    := retValProp( ::oAlbCliL:cCodPr1 + ::oAlbCliL:cValPr1 )
                   ::oDbf:cValPr2    := ::oAlbCliL:cValPr2
                   ::oDbf:cNomVl2    := retValProp( ::oAlbCliL:cCodPr2 + ::oAlbCliL:cValPr2 )
-                  if ::oDbfTvta:Seek( ::oAlbCliL:cTipMov )
-                     ::oDbf:cTipVen := ::oDbfTvta:cDesMov
-                  end if
                   ::oDbf:nNumCaj    := ::oAlbCliL:nCanEnt
                   ::oDbf:nUniDad    := ::oAlbCliL:nUniCaja
                   ::oDbf:nNumUni    := nTotNAlbCli( ::oAlbCliL )
@@ -369,9 +359,6 @@ METHOD lGenerate()
                   ::oDbf:cNomVl1    := retValProp( ::oFacCliL:cCodPr1 + ::oFacCliL:cValPr1 )
                   ::oDbf:cValPr2    := ::oFacCliL:cValPr2
                   ::oDbf:cNomVl2    := retValProp( ::oFacCliL:cCodPr2 + ::oFacCliL:cValPr2 )
-                  if ::oDbfTvta:Seek( ::oFacCliL:cTipMov )
-                     ::oDbf:cTipVen := ::oDbfTvta:cDesMov
-                  end if
                   ::oDbf:nNumCaj    := ::oFacCliL:nCanEnt
                   ::oDbf:nUniDad    := ::oFacCliL:nUniCaja
                   ::oDbf:nNumUni    := nTotNFacCli( ::oFacCliL )
@@ -477,9 +464,6 @@ METHOD lGenerate()
                   ::oDbf:cNomVl1    := retValProp( ::oFacRecL:cCodPr1 + ::oFacRecL:cValPr1 )
                   ::oDbf:cValPr2    := ::oFacRecL:cValPr2
                   ::oDbf:cNomVl2    := retValProp( ::oFacRecL:cCodPr2 + ::oFacRecL:cValPr2 )
-                  if ::oDbfTvta:Seek( ::oFacRecL:cTipMov )
-                     ::oDbf:cTipVen := ::oDbfTvta:cDesMov
-                  end if
                   ::oDbf:nNumCaj    := ::oFacRecL:nCanEnt
                   ::oDbf:nUniDad    := ::oFacRecL:nUniCaja
                   ::oDbf:nNumUni    := nTotNFacRec( ::oFacRecL )

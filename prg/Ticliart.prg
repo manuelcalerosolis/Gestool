@@ -59,7 +59,6 @@ CLASS TInfCliArt FROM TInfGen
    DATA  oFacCliT    AS OBJECT
    DATA  oFacCliL    AS OBJECT
    DATA  oFamilia    AS OBJECT
-   DATA  oDbfTvta    AS OBJECT
    DATA  oDbfArt
    DATA  cCodFam
    DATA  aEstado     AS ARRAY    INIT { "Pendiente", "Liquidada", "Todas" }
@@ -100,8 +99,6 @@ METHOD OpenFiles() CLASS TInfVenFac
 
    DATABASE NEW ::oFacCliL PATH ( cPatEmp() ) FILE "FACCLIL.DBF" VIA ( cDriver() ) SHARED INDEX "FACCLIL.CDX"
 
-   DATABASE NEW ::oDbfTvta  PATH ( cPatDat() ) FILE "TVTA.DBF" VIA ( cDriver() ) SHARED INDEX "TVTA.CDX"
-
    DATABASE NEW ::oDbfArt PATH ( cPatArt() ) FILE "ARTICULO.DBF" VIA ( cDriver() ) SHARED INDEX "ARTICULO.CDX"
 
    RECOVER USING oError
@@ -127,10 +124,6 @@ METHOD CloseFiles() CLASS TInfVenFac
 
    if !Empty( ::oFacCliL ) .and. ::oFacCliL:Used()
       ::oFacCliL:End()
-
-   if !Empty( ::oDbfTvta ) .and. ::oDbfTvta:Used()
-      ::oDbfTvta:End()
-   end if
 
    if !Empty( ::oDbfArt ) .and. ::oDbfArt:Used()
       ::oDbfArt:End()

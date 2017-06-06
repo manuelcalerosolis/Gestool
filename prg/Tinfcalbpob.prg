@@ -15,7 +15,6 @@ CLASS TInfCAlbPob FROM TInfCli
    DATA  oAlbCliT    AS OBJECT
    DATA  oAlbCliL    AS OBJECT
    DATA  oDbfArt     AS OBJECT
-   DATA  oDbfTvta    AS OBJECT
    DATA  cCPOrg      AS CHARACTER     INIT "00000"
    DATA  cCPDes      AS CHARACTER     INIT "99999"
    DATA  oEstado     AS OBJECT
@@ -99,8 +98,6 @@ METHOD OpenFiles()
 
    DATABASE NEW ::oDbfArt  PATH ( cPatArt() )   FILE "ARTICULO.DBF" VIA ( cDriver() ) SHARED INDEX "ARTICULO.CDX"
 
-   DATABASE NEW ::oDbfTvta PATH ( cPatDat() )   FILE "TVTA.DBF"     VIA ( cDriver() ) SHARED INDEX "TVTA.CDX"
-
    RECOVER
 
       msgStop( "Imposible abrir todas las bases de datos" )
@@ -123,9 +120,6 @@ METHOD CloseFiles()
    if !Empty( ::oAlbCliL ) .and. ::oAlbCliL:Used()
       ::oAlbCliL:End()
    end if
-   if !Empty( ::oDbfTvta ) .and. ::oDbfTvta:Used()
-      ::oDbfTvta:End()
-   end if
    if !Empty( ::oDbfArt ) .and. ::oDbfArt:Used()
       ::oDbfArt:End()
    end if
@@ -133,7 +127,6 @@ METHOD CloseFiles()
    ::oAlbCliT := nil
    ::oAlbCliL := nil
    ::oDbfArt  := nil
-   ::oDbfTvta := nil
 
 RETURN ( Self )
 

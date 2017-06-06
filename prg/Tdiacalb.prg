@@ -12,7 +12,6 @@ CLASS TDiaCAlb FROM TInfGen
    DATA  oAlbCliT    AS OBJECT
    DATA  oAlbCliL    AS OBJECT
    DATA  oAlbCliP    AS OBJECT
-   DATA  oDbfTvta    AS OBJECT
    DATA  aEstado     AS ARRAY    INIT  { "No facturado", "Facturado", "Todos" }
    DATA  lExcCredito AS LOGIC    INIT .f.
    DATA  aEntregado  AS ARRAY    INIT  { "No entregados", "Entregados", "Todos"}
@@ -66,8 +65,6 @@ METHOD OpenFiles() CLASS TDiaCAlb
 
    DATABASE NEW ::oDbfIva   PATH ( cPatDat() ) FILE "TIVA.DBF"    VIA ( cDriver() ) SHARED INDEX "TIVA.CDX"
 
-   DATABASE NEW ::oDbfTvta  PATH ( cPatDat() ) FILE "TVTA.DBF"    VIA ( cDriver() ) SHARED INDEX "TVTA.CDX"
-
    RECOVER
 
       msgStop( 'Imposible abrir todas las bases de datos' )
@@ -93,9 +90,6 @@ METHOD CloseFiles() CLASS TDiaCAlb
    if !Empty( ::oAlbCliP ) .and. ::oAlbCliP:Used()
       ::oAlbCliP:End()
    end if
-   if !Empty( ::oDbfTvta ) .and. ::oDbfTvta:Used()
-      ::oDbfTvta:End()
-   end if
    if !Empty( ::oDbfIva ) .and. ::oDbfIva:Used()
       ::oDbfIva:End()
    end if
@@ -103,7 +97,6 @@ METHOD CloseFiles() CLASS TDiaCAlb
    ::oAlbCliT := nil
    ::oAlbCliL := nil
    ::oAlbCliP := nil
-   ::oDbfTvta := nil
    ::oDbfIva  := nil
 
 RETURN ( Self )
