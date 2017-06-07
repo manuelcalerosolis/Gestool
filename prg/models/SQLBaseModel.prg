@@ -457,8 +457,6 @@ METHOD loadCurrentBuffer()
 
    next
 
-   msgalert( hb_valtoexp( ::hBuffer ), "hBuffer" )
-
 Return ( ::hBuffer )
 
 //---------------------------------------------------------------------------//

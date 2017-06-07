@@ -17,7 +17,8 @@ CLASS TiposVentasController FROM SQLBaseController
   
    METHOD   getFieldFromBrowse()          INLINE ( ::getRowSet():fieldGet( "codigo" ) )
  
-   METHOD   validDialog( oDlg, oGetCodigo, oGetNombre )
+   METHOD   validCodigo( oGetCodigo )
+   METHOD   validNombre( oGetNombre )
 
    METHOD   createEditControl( hControl )
 
@@ -40,41 +41,75 @@ Return ( Self )
 
 //---------------------------------------------------------------------------//
 
-METHOD validDialog( oDlg, oGetCodigo, oGetNombre )
+METHOD validCodigo( oGetCodigo )
 
-   local idForNombre
+   local idCodigo
+   local cErrorText  := ""
+
+   oGetCodigo:setColor( Rgb( 0, 0, 0 ), Rgb( 255, 255, 255 ) )
 
    if empty( ::oModel:hBuffer[ "codigo" ] )
-      msgStop( "El código del tipo de venta no puede estar vacío." )
+      cErrorText     += "El código de la propiedad no puede estar vacío." 
+   end if
+
+   idCodigo          := ::oModel:ChecksForValid( "codigo" )
+   
+   if ( !empty( idCodigo ) )
+
+      if ( idCodigo != ::oModel:hBuffer[ "id" ] .and. !::isDuplicateMode() )
+         cErrorText  += "El código de la propiedad ya existe." 
+      end if
+   
+      if ( idCodigo == ::oModel:hBuffer[ "id" ] .and. ::isDuplicateMode() )
+         cErrorText  += "El código de la propiedad ya existe."
+      end if
+   
+   end if
+
+   if !empty( cErrorText )
+      msgStop( cErrorText )
+      oGetCodigo:setColor( Rgb( 255, 255, 255 ), Rgb( 255, 102, 102 ) )
       oGetCodigo:setFocus()
       RETURN ( .f. )
    end if
 
+RETURN ( .t. )
+
+//---------------------------------------------------------------------------//
+
+METHOD validNombre( oGetNombre )
+
+   local idNombre
+   local cErrorText  := ""
+
+   oGetNombre:setColor( Rgb( 0, 0, 0 ), Rgb( 255, 255, 255 ) )
+
    if empty( ::oModel:hBuffer[ "nombre" ] )
-      msgStop( "El nombre del tipo de venta no puede estar vacío." )
+      cErrorText     += "El nombre de la propiedad no puede estar vacío." 
+   end if
+
+   idNombre          := ::oModel:ChecksForValid( "nombre" )
+   
+   if ( !empty( idNombre ) )
+
+      if ( idNombre != ::oModel:hBuffer[ "id" ] .and. !::isDuplicateMode() )
+         cErrorText  += "El nombre de la propiedad ya existe." 
+      end if
+   
+      if ( idNombre == ::oModel:hBuffer[ "id" ] .and. ::isDuplicateMode() )
+         cErrorText  += "El nombre de la propiedad ya existe."
+      end if
+   
+   end if
+
+   if !empty( cErrorText )
+      msgStop( cErrorText )
+      oGetNombre:setColor( Rgb( 255, 255, 255 ), Rgb( 255, 102, 102 ) )
       oGetNombre:setFocus()
       RETURN ( .f. )
    end if
 
-   idForNombre    := ::oModel:ChecksForValid( "nombre" )
-
-   if ( !empty( idForNombre ) )
-
-      if ( idForNombre != ::oModel:hBuffer[ "id" ] .and. !::isDuplicateMode() )
-         msgStop( "El nombre de la venta ya existe" )
-         oGetNombre:setFocus()
-         RETURN ( .f. )
-      end if
-
-      if ( idForNombre == ::oModel:hBuffer[ "id" ] .and. ::isDuplicateMode() )  
-         msgStop( "El nombre de la venta ya existe" )
-         oGetNombre:setFocus()
-         RETURN ( .f. )
-      end if
-
-   end if
-
-RETURN ( oDlg:end( IDOK ) )
+RETURN ( .t. )
 
 //---------------------------------------------------------------------------//
 

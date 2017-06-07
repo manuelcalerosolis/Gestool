@@ -33,16 +33,16 @@ METHOD Dialog()
 
    REDEFINE GET   oGetNombre ;
       VAR         ::oController:oModel:hBuffer[ "nombre" ] ;
-      MEMO ;
       ID          100 ;
       WHEN        ( !::oController:isZoomMode() ) ;
+      VALID       ( ::oController:validNombre( oGetNombre ) ) ;
       OF          oDlg
 
    REDEFINE BUTTON ;
       ID          IDOK ;
       OF          oDlg ;
       WHEN        ( !::oController:isZoomMode() ) ;
-      ACTION      ( ::oController:validDialog( oDlg, oGetNombre ) )
+      ACTION      ( oDlg:end( IDOK ) )
 
    REDEFINE BUTTON ;
       ID          IDCANCEL ;

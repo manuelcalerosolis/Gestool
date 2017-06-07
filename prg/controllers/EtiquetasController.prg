@@ -20,7 +20,9 @@ CLASS EtiquetasController FROM SQLBaseController
 
    METHOD   getFieldFromBrowse()                				INLINE ( ::allSelectedNode )
  
-   METHOD   validDialog( oDlg, oTree, oGetNombre )
+   METHOD   validDialog( oDlg, oTree )
+
+   METHOD   validNombre( oGetNombre )
 
    METHOD   loadChildBuffer()
 
@@ -74,34 +76,47 @@ METHOD New()
 
 RETURN ( self )
 
-//---------------------------------------------------------------------------// 
+//---------------------------------------------------------------------------//
 
-METHOD validDialog( oDlg, oTree, oGetNombre )
+METHOD validNombre( oGetNombre )
 
-	local idForNombre
+   local idNombre
+   local cErrorText  := ""
 
-   ::setSelectedNode( nil )
+   oGetNombre:setColor( Rgb( 0, 0, 0 ), Rgb( 255, 255, 255 ) )
 
    if empty( ::oModel:hBuffer[ "nombre" ] )
-      msgStop( "Nombre de la etiqueta no puede estar vacío." )
+      cErrorText     += "El nombre de la propiedad no puede estar vacío." 
+   end if
+
+   idNombre          := ::oModel:ChecksForValid( "nombre" )
+   
+   if ( !empty( idNombre ) )
+
+      if ( idNombre != ::oModel:hBuffer[ "id" ] .and. !::isDuplicateMode() )
+         cErrorText  += "El nombre de la propiedad ya existe." 
+      end if
+   
+      if ( idNombre == ::oModel:hBuffer[ "id" ] .and. ::isDuplicateMode() )
+         cErrorText  += "El nombre de la propiedad ya existe."
+      end if
+   
+   end if
+
+   if !empty( cErrorText )
+      msgStop( cErrorText )
+      oGetNombre:setColor( Rgb( 255, 255, 255 ), Rgb( 255, 102, 102 ) )
       oGetNombre:setFocus()
       RETURN ( .f. )
    end if
 
-   idForNombre := ::oModel:ChecksForValid( "nombre" )
+RETURN ( .t. )
 
-   if ( !empty( idForNombre ) )
-      if ( idForNombre != ::oModel:hBuffer[ "id" ] .and. !::isDuplicateMode() )
-         msgStop( "El nombre de la etiqueta ya existe" )
-         oGetNombre:setFocus()
-         RETURN ( .f. )
-      end if
-      if ( idForNombre == ::oModel:hBuffer[ "id" ] .and. ::isDuplicateMode() )
-         msgStop( "El nombre de la etiqueta ya existe" )
-         oGetNombre:setFocus()
-         RETURN ( .f. )
-      end if
-   end if
+//---------------------------------------------------------------------------//
+
+METHOD validDialog( oDlg, oTree, oGetNombre )
+
+   ::setSelectedNode( nil )
 
    ::checkSelectedNode( oTree )
 
