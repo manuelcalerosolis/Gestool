@@ -7872,11 +7872,17 @@ STATIC FUNCTION EndTrans( aTmp, aGet, oBrwLin, oBrwInc, nMode, oDlg, lActualizaW
       return .f.
    end if
 
-   // Ejecutamos script del evento before append-------------------------------
+   //Ejecutamos script del evento before append--------------------------------
 
-   if ( nMode == APPD_MODE .or. nMode == DUPL_MODE )
-      if isfalse( runEventScript( "PedidosClientes\beforeAppend", aTmp, nView ) )
-         Return .f.
+   if isAppendOrDuplicateMode( nMode )
+      if isfalse( runEventScript( "PedidosClientes\beforeAppend", aTmp, nView, dbfTmpLin ) )
+         return .f.
+      end if 
+   end if
+
+   if isEditMode( nMode )
+      if isfalse( runEventScript( "PedidosClientes\beforeEdit", aTmp, nView, dbfTmpLin ) )
+         return .f.
       end if 
    end if
 

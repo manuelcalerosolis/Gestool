@@ -1975,8 +1975,13 @@ STATIC FUNCTION EdtRec( aTmp, aGet, cArticulo, oBrw, bWhen, bValid, nMode )
 	   ID 		160 ;
       VALID    ( ExpFamilia( aTmp[ ( D():Articulos( nView ) )->( fieldpos( "FAMILIA" ) ) ], oSay[ 3 ], aGet ) );
       BITMAP   "LUPA" ;
-      ON HELP  ( BrwFamilia( aGet[ ( D():Articulos( nView ) )->( fieldpos( "FAMILIA" ) ) ], oSay[ 3 ] ) );
       OF       fldGeneral
+
+   if uFieldEmpresa( "lBRFAMTRE" )
+      aGet[ ( D():Articulos( nView ) )->( fieldpos( "FAMILIA" ) ) ]:bHelp  := {|| browseHashFamilia( aGet[ ( D():Articulos( nView ) )->( fieldpos( "FAMILIA" ) ) ] ) }
+   else
+      aGet[ ( D():Articulos( nView ) )->( fieldpos( "FAMILIA" ) ) ]:bHelp  := {|| BrwFamilia( aGet[ ( D():Articulos( nView ) )->( fieldpos( "FAMILIA" ) ) ], oSay[ 3 ] ) }
+   end if
 
    if ( "RISI" $ appParamsMain() )
       aGet[ ( D():Articulos( nView ) )->( fieldpos( "FAMILIA" ) ) ]:bWhen    := {|| nMode == APPD_MODE .or. nMode == DUPL_MODE }

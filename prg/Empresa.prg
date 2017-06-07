@@ -1809,6 +1809,10 @@ STATIC FUNCTION EditConfig( aTmp, aGet, dbfEmp, oBrw, nSelFolder, bValid, nMode 
          ID       160;
          OF       fldValores
 
+      REDEFINE CHECKBOX aGet[ _LBRFAMTRE ] VAR aTmp[ _LBRFAMTRE ];
+         ID       650;
+         OF       fldValores
+
       // Page 3 Articulos---------------------------------------------------------
 
       REDEFINE BITMAP oBmpArticulos ;
@@ -6607,6 +6611,7 @@ FUNCTION aItmEmp()
    aAdd( aDbf, {"lOpenTik",   "L",  1, 0, "Lógico permitir tickets abiertos en sesiones",          "", "", "aEmp()", .t. } )
    aAdd( aDbf, {"lContRec",   "L",  1, 0, "Lógico permitir contabilizar recibos con factura sin contabilizar", "", "", "aEmp()", .f. } )
    aAdd( aDbf, {"lStockAlm",  "L",  1, 0, "Lógico mostrar stock por almacén en ventas",            "", "", "aEmp()", .f. } )
+   aAdd( aDbf, {"lBrFamTre",  "L",  1, 0, "Mostrar browse de familias tree",                       "", "", "aEmp()", .f. } )
 
 Return ( aDbf )
 

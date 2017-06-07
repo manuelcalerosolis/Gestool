@@ -3134,3 +3134,246 @@ FUNCTION BrwFamiliaCombinada( oGet, cFamilia, oGet2 )
 RETURN ( oDlg:nResult == IDOK )
 
 //---------------------------------------------------------------------------//
+
+FUNCTION getHashFamilias()
+
+   local aFamilias   := {}
+
+   ( D():Familias( nView ) )->( dbgotop() )
+
+   while !( D():Familias( nView ) )->( eof() ) 
+
+      aadd( aFamilias, { ( D():Familias( nView ) )->cCodFam, AllTrim( Upper( ( D():Familias( nView ) )->cNomFam ) ), LoadText( alltrim( upper( ( D():Familias( nView ) )->cNomFam ) ), ( D():Familias( nView ) )->cFamCmb ) } )
+
+      ( D():Familias( nView ) )->( dbSkip() )
+
+      SysRefresh()
+
+   end while
+
+RETURN ( aFamilias )
+
+//---------------------------------------------------------------------------//
+
+STATIC FUNCTION LoadText( cText, cCodFam )
+
+   local nRec
+   local nOrd
+
+   if empty( cCodFam )
+      cCodFam        := Space( 16 )
+   end if
+
+   CursorWait()
+
+   nRec              := ( D():Familias( nView ) )->( Recno() )
+   nOrd              := ( D():Familias( nView ) )->( OrdSetFocus( "cCodFam" ) )
+
+   if ( D():Familias( nView ) )->( dbSeek( cCodFam ) )
+
+      cText          := alltrim( upper( ( D():Familias( nView ) )->cNomFam ) ) + ", " + cText
+
+      LoadText( @cText, ( D():Familias( nView ) )->cFamCmb )
+
+      SysRefresh()
+
+   end if
+
+   ( D():Familias( nView ) )->( OrdSetFocus( nOrd ) )
+   ( D():Familias( nView ) )->( dbGoTo( nRec ) )
+
+   CursorWE()
+
+RETURN ( cText )
+
+//---------------------------------------------------------------------------//
+
+static function sortHashBrowseFamilia( nOrd, oBrw, oCbxOrd, aFamilias )
+
+   if Empty( oBrw )
+      Return .t.
+   end if
+
+   if !Empty( oCbxOrd )
+      oCbxOrd:Select( nOrd )
+   end if
+
+   asort( aFamilias, , , {|x,y| x[nOrd] < y[nOrd] })
+
+   oBrw:Select(0)
+   oBrw:Select(1)
+   oBrw:Refresh()
+
+RETURN ( .t. )
+
+//---------------------------------------------------------------------------//
+
+static function searchHashBrowseFamilia( nPos, oBrw, cGet1, aFamiliasOriginal, aFamilias )
+
+   local aArray
+
+   if Empty( oBrw )
+      return .t.
+   end if
+
+   if Empty( cGet1 )
+      
+      aFamilias         := aFamiliasOriginal
+
+      oBrw:setArray( aFamilias, , , .f. )
+      oBrw:Select(0)
+      oBrw:Select(1)
+      oBrw:Refresh()
+
+      return .t.
+
+   end if
+
+   aFamilias   := {}
+
+   for each aArray in aFamiliasOriginal
+      
+      if AllTrim( Upper( cGet1 ) ) $ AllTrim( Upper( aArray[nPos] ) )
+         aAdd( aFamilias, aArray )
+      end if
+
+   next
+
+   oBrw:setArray( aFamilias, , , .f. )
+   oBrw:Select(0)
+   oBrw:Select(1)
+   oBrw:Refresh()
+
+RETURN ( .t. )
+
+//---------------------------------------------------------------------------//
+
+FUNCTION browseHashFamilia( oGet )
+
+   local oDlg
+   local oBrw
+   local cCod     := Space( 16 )
+   local oGet1
+   local cGet1
+   local nOrd     := GetBrwOpt( "BrwHashFamilia" )
+   local oCbxOrd
+   local aCbxOrd  := { "Código", "Nombre", "Ruta" }
+   local cCbxOrd
+   local aFamilias
+   local aFamiliasOriginal
+
+   nOrd           := Min( Max( nOrd, 1 ), len( aCbxOrd ) )
+   cCbxOrd        := aCbxOrd[ nOrd ]
+
+   if !OpenFiles( .t. )
+      RETURN nil
+   end if
+
+   aFamiliasOriginal    := getHashFamilias()
+   aFamilias            := aFamiliasOriginal
+
+   DEFINE DIALOG oDlg RESOURCE "HELPENTRY" TITLE "Familias de artículos"
+
+      REDEFINE GET oGet1 VAR cGet1;
+         ID       104 ;
+         BITMAP   "FIND" ;
+         OF       oDlg
+
+         oGet1:bHelp    := {|| searchHashBrowseFamilia( oCbxOrd:nAt, oBrw, cGet1, aFamiliasOriginal, @aFamilias ) }
+         oGet1:bValid   := {|| searchHashBrowseFamilia( oCbxOrd:nAt, oBrw, cGet1, aFamiliasOriginal, @aFamilias ) }
+         oGet1:bChange  := {|| searchHashBrowseFamilia( oCbxOrd:nAt, oBrw, cGet1, aFamiliasOriginal, @aFamilias ) }
+
+      REDEFINE COMBOBOX oCbxOrd ;
+         VAR      cCbxOrd ;
+         ID       102 ;
+         ITEMS    aCbxOrd ;
+         ON CHANGE ( sortHashBrowseFamilia( aScan( aCbxOrd, cCbxOrd ), oBrw, oCbxOrd, @aFamilias ) );
+         OF       oDlg
+
+      oBrw                 := IXBrowse():New( oDlg )
+
+      oBrw:bClrSel         := {|| { CLR_BLACK, Rgb( 229, 229, 229 ) } }
+      oBrw:bClrSelFocus    := {|| { CLR_BLACK, Rgb( 167, 205, 240 ) } }
+
+      oBrw:nMarqueeStyle   := 5
+      oBrw:cName           := "Browse.Hash.Familias"
+
+      oBrw:setArray( aFamilias, , , .f. )
+
+      with object ( oBrw:AddCol() )
+         :cHeader          := "Código"
+         :cSortOrder       := "Código"
+         :bEditValue       := {|| aFamilias[ oBrw:nArrayAt, 1 ] }
+         :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | sortHashBrowseFamilia( aScan( aCbxOrd, oCol:cSortOrder ), oBrw, oCbxOrd, @aFamilias ) }
+         :nWidth           := 70
+      end with
+
+      with object ( oBrw:AddCol() )
+         :cHeader          := "Nombre"
+         :cSortOrder       := "Nombre"
+         :bEditValue       := {|| aFamilias[ oBrw:nArrayAt, 2 ] }
+         :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | sortHashBrowseFamilia( aScan( aCbxOrd, oCol:cSortOrder ), oBrw, oCbxOrd, @aFamilias ) }
+         :nWidth           := 115
+      end with
+
+      with object ( oBrw:AddCol() )
+         :cHeader          := "Ruta"
+         :cSortOrder       := "Ruta"
+         :bEditValue       := {|| aFamilias[ oBrw:nArrayAt, 3 ] }
+         :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | sortHashBrowseFamilia( aScan( aCbxOrd, oCol:cSortOrder ), oBrw, oCbxOrd, @aFamilias ) }
+         :nWidth           := 590
+      end with
+
+      oBrw:bLDblClick      := {|| oDlg:end( IDOK ) }
+      oBrw:bRClicked       := {| nRow, nCol, nFlags | oBrw:RButtonDown( nRow, nCol, nFlags ) }
+
+      oBrw:CreateFromResource( 105 )
+
+      REDEFINE BUTTON ;
+         ID       IDOK ;
+         OF       oDlg ;
+         ACTION   ( oDlg:end(IDOK) )
+
+      REDEFINE BUTTON ;
+         ID       IDCANCEL ;
+         OF       oDlg ;
+         ACTION   ( oDlg:end() )
+
+      REDEFINE BUTTON ;
+         ID       500 ;
+         OF       oDlg ;
+         WHEN     .f. ;
+         ACTION   .t.
+
+      REDEFINE BUTTON ;
+         ID       501 ;
+         OF       oDlg ;
+         WHEN     .f. ;
+         ACTION   .t.
+
+   oDlg:AddFastKey( VK_F5,       {|| oDlg:end( IDOK ) } )
+   oDlg:AddFastKey( VK_RETURN,   {|| oDlg:end( IDOK ) } )
+
+   ACTIVATE DIALOG oDlg ;
+      ON INIT ( sortHashBrowseFamilia( aScan( aCbxOrd, cCbxOrd ), oBrw, oCbxOrd, @aFamilias ) ) ;
+      CENTER
+
+   if oDlg:nResult == IDOK
+
+      if !Empty( oGet ) .and. len( aFamilias ) > 0
+         oGet:cText( aFamilias[ oBrw:nArrayAt, 1 ] )
+      end if
+
+   end if
+
+   CloseFiles()
+
+   SetBrwOpt( "BrwHashFamilia", oCbxOrd:nAt )
+
+   if !empty( oGet )
+      oGet:SetFocus()
+   end if
+
+RETURN ( cCod )
+
+//---------------------------------------------------------------------------//

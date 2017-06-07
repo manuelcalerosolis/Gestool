@@ -11654,9 +11654,15 @@ STATIC FUNCTION EndTrans( aTmp, aGet, oBrw, oBrwInc, nMode, oDlg )
 
    // Ejecutamos script del evento before append-------------------------------
 
-   if ( nMode == APPD_MODE .or. nMode == DUPL_MODE )
-      if isfalse( runEventScript( "AlbaranesClientes\beforeAppend", aTmp, nView ) )
-         Return .f.
+   if isAppendOrDuplicateMode( nMode )
+      if isfalse( runEventScript( "AlbaranesClientes\beforeAppend", aTmp, nView, dbfTmpLin ) )
+         return .f.
+      end if 
+   end if
+
+   if isEditMode( nMode )
+      if isfalse( runEventScript( "AlbaranesClientes\beforeEdit", aTmp, nView, dbfTmpLin ) )
+         return .f.
       end if 
    end if
 

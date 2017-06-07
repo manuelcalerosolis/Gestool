@@ -831,6 +831,16 @@ Meter autoinclemenatado
             [ Upper(<(layout)>) ], <.l2007.>,[<cResName4>], [<cBmpFile4>], <.lTrans.>,;
             !<.lNoRound.>, <bGradColors> )
 
+//----------------------------------------------------------------------------//
+// Creando Estructuras de Datos // Arrays orientados a objetos
+//----------------------------------------------------------------------------//
+
+#command DEFINE STRUCT [<oTArray>] [INIT <aInit>] => ;
+         [<oTArray>:= ]__StructNew(<aInit>)
+#command STRUCT FIELD <(cName)> [INIT <uInit>] [DEFAULT <uDefault>] => ;
+         __StructField(<(cName)>,<uInit>,<uDefault> )
+#command END STRUCT => __StructEnd()
+
 /* Generic error codes (oError:genCode) */
 
 #ifndef EG_ZERODIV

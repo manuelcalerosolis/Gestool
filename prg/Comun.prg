@@ -281,6 +281,114 @@ RETURN ( .t. )
 
 FUNCTION Test()
 
+   /*Local oArray
+   local oArrayData
+
+
+
+
+
+   oArray   := { { "InvoiceNo", "N", 5, 0 }, { "CustomerName", "C", 50, 0 } }
+   MsgInfo( hb_valtoexp( oArray ), "oArray" )
+
+
+
+
+
+   oArrayData := TArrayData():New( , oArray )
+   MsgInfo( oArrayData, "oArrayData" )
+
+
+
+
+
+
+   oArrayData:Append()
+   oArrayData:InvoiceNo       := 25
+   oArrayData:CustomerName    := "Dario"
+   oArrayData:Save()
+
+   oArrayData:Append()
+   oArrayData:InvoiceNo       := 50
+   oArrayData:CustomerName    := "Nombre del Cliente 2"
+   oArrayData:Save()
+
+   oArrayData:Append()
+   oArrayData:InvoiceNo       := 75
+   oArrayData:CustomerName    := "Nombre del Cliente 3"
+   oArrayData:Save()
+
+
+
+
+
+
+
+   MsgInfo( oArrayData:KeyCount(), "oArrayData1" )
+
+   oArrayData:GoTop()
+   
+   for oArrayData:nAt := 1 to oArrayData:LastRec()
+
+      MsgInfo("Invoice InvoiceNo    :" + Str( oArrayData:InvoiceNo, 4 ) + CRLF + ;
+              "Customer CustomerName :" + oArrayData:CustomerName )
+
+      msginfo( hb_valtoexp( oArrayData:nAt ) )
+      
+   next
+
+
+
+   oArrayData:SetFilter( "Upper(CustomerName)='" + Upper("Dario") + "'" )
+
+
+   MsgInfo( oArrayData:KeyCount(), "oArrayData2" )
+
+   oArrayData:GoTop()
+   
+   for oArrayData:nAt := 1 to oArrayData:LastRec()
+
+      MsgInfo("Invoice InvoiceNo    :" + Str( oArrayData:InvoiceNo, 4 ) + CRLF + ;
+              "Customer CustomerName :" + oArrayData:CustomerName )
+
+      msginfo( hb_valtoexp( oArrayData:nAt ) )
+      
+   next
+
+
+
+   oArrayData:SetFilter( "" )
+
+   MsgInfo( oArrayData:KeyCount(), "oArrayData3" )
+
+   oArrayData:GoTop()
+   
+   for oArrayData:nAt := 1 to oArrayData:LastRec()
+
+      MsgInfo("Invoice InvoiceNo    :" + Str( oArrayData:InvoiceNo, 4 ) + CRLF + ;
+              "Customer CustomerName :" + oArrayData:CustomerName )
+
+      msginfo( hb_valtoexp( oArrayData:nAt ) )
+      
+   next
+
+
+
+   /*while !oArrayData:Eof()
+      
+      MsgInfo("Invoice InvoiceNo    :" + Str( oArrayData:InvoiceNo, 4 ) + CRLF + ;
+              "Customer CustomerName :" + oArrayData:CustomerName )
+
+      msginfo( hb_valtoexp( oArrayData:nAt ) )
+      
+      oArrayData:Skip()
+
+   end while*/
+
+   //oArrayData:End()
+   
+   //oArray:End()*/
+
 Return ( nil )
 
 //---------------------------------------------------------------------------//

@@ -2487,6 +2487,9 @@ Return nil
 Function STARTTFACAUTOMATICA()
 Return nil
 
+FUNCTION GETSQLDATABASE()
+Return nil
+
 //------------------------------------------------------------------//
 
 #pragma BEGINDUMP

@@ -13866,13 +13866,13 @@ STATIC FUNCTION EndTrans( aTmp, aGet, oBrw, oBrwDet, oBrwPgo, aNumAlb, nMode, oD
    // Ejecutamos script del evento before append-------------------------------
 
    if isAppendOrDuplicateMode( nMode )
-      if isfalse( runEventScript( "FacturasClientes\beforeAppend", aTmp ) )
+      if isfalse( runEventScript( "FacturasClientes\beforeAppend", aTmp, dbfTmpLin ) )
          return .f.
       end if 
    end if
 
    if isEditMode( nMode )
-      if isfalse( runEventScript( "FacturasClientes\beforeEdit", aTmp ) )
+      if isfalse( runEventScript( "FacturasClientes\beforeEdit", aTmp, dbfTmpLin ) )
          return .f.
       end if 
    end if
