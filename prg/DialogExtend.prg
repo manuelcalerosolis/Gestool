@@ -153,26 +153,39 @@ RETURN ( nil )
 STATIC FUNCTION DialogEvalValid() 
 
    local oControl
-   local lValid      := .t.
-   local Self        := HB_QSelf()
-   local aControls   := Self:aControls
+   local aControls
+
+   msgalert( "DialogEvalValid" )
+
+   aControls   := hb_qself():aControls
 
    if empty( aControls )
-      RETURN ( lValid )
+      RETURN ( .t. )
    end if 
 
    for each oControl in aControls
+
+      msgalert( hb_valtoexp( oControl ), "oControl" )
+
       if empty( oControl:bWhen ) .or. eval( oControl:bWhen )
-         if !empty( oControl:bValid ) .and. !eval( oControl:bValid )
-            lValid   := .f.
+
+         msgalert( "bWhen" )
+
+         if empty( oControl:bValid ) .or. !eval( oControl:bValid )
+
+            msgalert( "bValid" )
+
             oControl:SetFocus()
+            RETURN ( .f. )
          endif
       end if 
    next
 
-RETURN ( lValid )
+RETURN ( .t. )
 
 //----------------------------------------------------------------------------//
+
+
 
 STATIC FUNCTION DialogKeyDown( nKey, nFlags ) 
 
@@ -469,4 +482,32 @@ RETURN oSheet
 
 //----------------------------------------------------------------------------//
 
+FUNCTION validateDialog( oDlg )
+
+   local oControl
+   local aControls   := oDlg:aControls
+
+   if empty( aControls )
+      RETURN ( .t. )
+   end if 
+
+   for each oControl in aControls
+
+      if empty( oControl:bWhen ) .or. eval( oControl:bWhen )
+
+         if !empty( oControl:bValid ) .and. !eval( oControl:bValid )
+
+            oControl:SetFocus()
+
+            RETURN ( .f. )
+
+         endif
+
+      end if 
+
+   next
+
+RETURN ( .t. )
+
+//----------------------------------------------------------------------------//
 

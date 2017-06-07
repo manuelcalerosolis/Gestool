@@ -202,7 +202,7 @@ METHOD buildSQLBrowse( title )
    local oCombobox
    local cOrder
    local aOrden      := { title }
-
+ 
    DEFINE DIALOG oDlg RESOURCE "HELP_BROWSE_SQL" TITLE "Seleccionar " + lower( title )
 
       REDEFINE GET   oFind ; 

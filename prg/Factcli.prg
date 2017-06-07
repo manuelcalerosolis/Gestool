@@ -5,7 +5,7 @@
 #include "Print.ch"
 #include "TWMail.ch"
 #include "FastRepH.ch"
-#include "Xbrowse.ch"
+#include "Xbrowse.ch" 
 
 #define OFN_PATHMUSTEXIST     0x00000800
 #define OFN_NOCHANGEDIR       0x00000008

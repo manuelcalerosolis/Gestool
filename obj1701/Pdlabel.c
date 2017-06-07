@@ -1,0 +1,127 @@
+/*
+ * Harbour 3.2.0dev (r1307082134)
+ * Borland C++ 5.8.2 (32-bit)
+ * Generated C source from ".\.\Prg\Pdlabel.prg"
+ */
+
+#include "hbvmpub.h"
+#include "hbinit.h"
+
+
+HB_FUNC( LBLBEGIN );
+HB_FUNC_EXTERN( AADD );
+HB_FUNC_EXTERN( TLABEL );
+HB_FUNC_EXTERN( ATAIL );
+HB_FUNC( LBLADDITEM );
+HB_FUNC_EXTERN( TLITEM );
+HB_FUNC( LBLADDOITEM );
+HB_FUNC_EXTERN( TLOITEM );
+HB_FUNC( LBLEND );
+HB_FUNC_EXTERN( AEVAL );
+HB_FUNC_EXTERN( ASIZE );
+HB_FUNC_EXTERN( LEN );
+HB_FUNC_EXTERN( FW_GT );
+HB_FUNC_EXTERN( ERRORSYS );
+HB_FUNC_INITSTATICS();
+
+
+HB_INIT_SYMBOLS_BEGIN( hb_vm_SymbolInit_PDLABEL )
+{ "LBLBEGIN", {HB_FS_PUBLIC | HB_FS_FIRST | HB_FS_LOCAL}, {HB_FUNCNAME( LBLBEGIN )}, NULL },
+{ "AADD", {HB_FS_PUBLIC}, {HB_FUNCNAME( AADD )}, NULL },
+{ "NEW", {HB_FS_PUBLIC | HB_FS_MESSAGE}, {NULL}, NULL },
+{ "TLABEL", {HB_FS_PUBLIC}, {HB_FUNCNAME( TLABEL )}, NULL },
+{ "ATAIL", {HB_FS_PUBLIC}, {HB_FUNCNAME( ATAIL )}, NULL },
+{ "LBLADDITEM", {HB_FS_PUBLIC | HB_FS_LOCAL}, {HB_FUNCNAME( LBLADDITEM )}, NULL },
+{ "TLITEM", {HB_FS_PUBLIC}, {HB_FUNCNAME( TLITEM )}, NULL },
+{ "LBLADDOITEM", {HB_FS_PUBLIC | HB_FS_LOCAL}, {HB_FUNCNAME( LBLADDOITEM )}, NULL },
+{ "TLOITEM", {HB_FS_PUBLIC}, {HB_FUNCNAME( TLOITEM )}, NULL },
+{ "LBLEND", {HB_FS_PUBLIC | HB_FS_LOCAL}, {HB_FUNCNAME( LBLEND )}, NULL },
+{ "AEVAL", {HB_FS_PUBLIC}, {HB_FUNCNAME( AEVAL )}, NULL },
+{ "ADDITEM", {HB_FS_PUBLIC | HB_FS_MESSAGE}, {NULL}, NULL },
+{ "ASIZE", {HB_FS_PUBLIC}, {HB_FUNCNAME( ASIZE )}, NULL },
+{ "LEN", {HB_FS_PUBLIC}, {HB_FUNCNAME( LEN )}, NULL },
+{ "FW_GT", {HB_FS_PUBLIC}, {HB_FUNCNAME( FW_GT )}, NULL },
+{ "ERRORSYS", {HB_FS_PUBLIC}, {HB_FUNCNAME( ERRORSYS )}, NULL },
+{ "(_INITSTATICS00002)", {HB_FS_INITEXIT | HB_FS_LOCAL}, {hb_INITSTATICS}, NULL }
+HB_INIT_SYMBOLS_EX_END( hb_vm_SymbolInit_PDLABEL, ".\\.\\Prg\\Pdlabel.prg", 0x0, 0x0003 )
+
+#if defined( HB_PRAGMA_STARTUP )
+   #pragma startup hb_vm_SymbolInit_PDLABEL
+#elif defined( HB_DATASEG_STARTUP )
+   #define HB_DATASEG_BODY    HB_DATASEG_FUNC( hb_vm_SymbolInit_PDLABEL )
+   #include "hbiniseg.h"
+#endif
+
+HB_FUNC( LBLBEGIN )
+{
+	static const HB_BYTE pcode[] =
+	{
+		13,0,14,116,16,0,36,51,0,176,1,0,103,2,
+		0,48,2,0,176,3,0,12,0,95,1,95,2,95,
+		3,95,4,95,5,95,6,95,7,95,8,95,9,95,
+		10,95,11,95,12,95,13,95,14,112,14,4,0,0,
+		4,2,0,20,2,36,53,0,176,4,0,103,2,0,
+		12,1,122,1,110,7
+	};
+
+	hb_vmExecute( pcode, symbols );
+}
+
+HB_FUNC( LBLADDITEM )
+{
+	static const HB_BYTE pcode[] =
+	{
+		13,1,9,116,16,0,36,78,0,48,2,0,176,6,
+		0,12,0,95,1,95,2,95,3,95,4,95,5,95,
+		6,95,7,95,8,95,9,176,4,0,103,2,0,12,
+		1,122,1,112,10,80,10,36,80,0,176,1,0,176,
+		4,0,103,2,0,12,1,92,2,1,95,10,20,2,
+		36,82,0,95,10,110,7
+	};
+
+	hb_vmExecute( pcode, symbols );
+}
+
+HB_FUNC( LBLADDOITEM )
+{
+	static const HB_BYTE pcode[] =
+	{
+		13,1,13,116,16,0,36,115,0,48,2,0,176,8,
+		0,12,0,95,1,95,2,95,3,95,4,95,5,95,
+		6,95,7,95,8,95,9,95,10,95,11,95,12,95,
+		13,176,4,0,103,2,0,12,1,122,1,112,14,80,
+		14,36,117,0,176,1,0,176,4,0,103,2,0,12,
+		1,92,2,1,95,14,20,2,36,119,0,95,14,110,
+		7
+	};
+
+	hb_vmExecute( pcode, symbols );
+}
+
+HB_FUNC( LBLEND )
+{
+	static const HB_BYTE pcode[] =
+	{
+		13,2,0,116,16,0,36,125,0,176,4,0,103,2,
+		0,12,1,122,1,80,1,36,126,0,176,4,0,103,
+		2,0,12,1,92,2,1,80,2,36,128,0,176,10,
+		0,95,2,89,19,0,1,0,1,0,1,0,48,11,
+		0,95,255,95,1,112,1,6,20,2,36,130,0,176,
+		12,0,103,2,0,176,13,0,103,2,0,12,1,122,
+		49,20,2,36,132,0,95,1,110,7
+	};
+
+	hb_vmExecute( pcode, symbols );
+}
+
+HB_FUNC_INITSTATICS()
+{
+	static const HB_BYTE pcode[] =
+	{
+		117,16,0,2,0,116,16,0,4,0,0,82,1,0,
+		4,0,0,82,2,0,7
+	};
+
+	hb_vmExecute( pcode, symbols );
+}
+

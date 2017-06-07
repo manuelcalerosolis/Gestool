@@ -414,7 +414,7 @@ METHOD Edit()
 
    ::oModel:setIdForRecno( ::getIdfromRowset() )
 
-   ::oModel:loadCurrentBuffer()
+   ::oModel:loadCurrentBuffer() 
 
    if ::oView:Dialog()
       

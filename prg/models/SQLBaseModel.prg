@@ -442,11 +442,18 @@ METHOD loadCurrentBuffer()
                hset( ::hBuffer, h:__enumkey(), padr( ::oRowSet:fieldget( h:__enumkey() ), h[ "len" ] ) )
             end if 
 
+         case ( !hhaskey( h, "type" ) .and. empty( ::oRowSet:fieldget( h:__enumkey() ) ) )
+
+            hset( ::hBuffer, h:__enumkey(), nil )
+
          otherwise
 
             hset( ::hBuffer, h:__enumkey(), ::oRowSet:fieldget( h:__enumkey() ) )
 
       end if
+
+      // msgalert( h:__enumkey(),"__enumkey" )
+      // msgalert( ::oRowSet:fieldget( h:__enumkey() ), "fieldget" )
 
    next
 
