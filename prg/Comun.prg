@@ -281,7 +281,7 @@ RETURN ( .t. )
 
 FUNCTION Test()
 
-   browseHashFamilia()
+   propiedadesController():New():ActivateShell()
 
 Return ( nil )
 
