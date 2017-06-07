@@ -3203,11 +3203,11 @@ FUNCTION browseHashFamilia( oGet, oGet2 )
 
    if !OpenFiles( .t. )
       RETURN nil
-   end if
+   end if 
 
    aFamilias      := getHashFamilias()
 
-   DEFINE DIALOG oDlg RESOURCE "HELPENTRY" TITLE "Familias de artículos"
+   DEFINE DIALOG oDlg RESOURCE "HELPENTRY" TITLE "Familias de artículos" 
 
       REDEFINE GET oGet1 VAR cGet1;
          ID       104 ;
@@ -3267,6 +3267,8 @@ FUNCTION browseHashFamilia( oGet, oGet2 )
 
    oDlg:AddFastKey( VK_F5,       {|| oDlg:end( IDOK ) } )
    oDlg:AddFastKey( VK_RETURN,   {|| oDlg:end( IDOK ) } )
+
+   oDlg:bStart    := {|| msgalert( hb_valtoexp( oDlg:oFont ) ) }
 
    ACTIVATE DIALOG oDlg CENTER
 
