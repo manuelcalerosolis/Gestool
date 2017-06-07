@@ -38,7 +38,7 @@ CLASS TInfVenTik FROM TInfGen
    DATA  oTikCliT    AS OBJECT
    DATA  oTikCliL    AS OBJECT
    DATA  oFamilia    AS OBJECT
-   DATA  oDbfTvta    AS OBJECT
+    
    DATA  aEstado     AS ARRAY    INIT { "Todos" }
 
    METHOD OpenFiles()
@@ -64,8 +64,6 @@ METHOD OpenFiles() CLASS TInfVenTik
    DATABASE NEW ::oTikCliL PATH ( cPatEmp() ) FILE "TIKEL.DBF" VIA ( cDriver() ) SHARED INDEX "TIKEL.CDX"
    ::oTikCliL:OrdSetFocus( "cCbaTil" )
 
-   DATABASE NEW ::oDbfTvta  PATH ( cPatDat() ) FILE "TVTA.DBF" VIA ( cDriver() ) SHARED INDEX "TVTA.CDX"
-
    DATABASE NEW ::oFamilia PATH ( cPatArt() ) FILE "FAMILIAS.DBF" VIA ( cDriver() ) SHARED INDEX "FAMILIAS.CDX"
 
 RETURN ( Self )
@@ -76,7 +74,6 @@ METHOD CloseFiles() CLASS TInfVenTik
 
    ::oTikCliT:End()
    ::oTikCliL:End()
-   ::oDbfTvta:End()
    ::oFamilia:End()
 
 RETURN ( Self )

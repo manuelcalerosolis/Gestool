@@ -9,7 +9,7 @@ CLASS OAcuGAlb FROM TPrvGrp
    DATA  lExcMov     AS LOGIC    INIT .f.
    DATA  oAlbPrvT    AS OBJECT
    DATA  oAlbPrvL    AS OBJECT
-   DATA  oDbfTvta    AS OBJECT
+    
    DATA  oDbfArt     AS OBJECT
 
    METHOD Create ()

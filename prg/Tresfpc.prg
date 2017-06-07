@@ -43,7 +43,7 @@ CLASS TInfResFpc FROM TInfGen
    DATA  oEstado     AS OBJECT
    DATA  oPedCliT    AS OBJECT
    DATA  oPedCliL    AS OBJECT
-   DATA  oDbfTvta    AS OBJECT
+    
    DATA  aMes        AS ARRAY    INIT {.f., .f., .f., .f., .f., .f., .f., .f., .f., .f., .f., .f. }
    DATA  lAno        AS LOGIC    INIT .f.
    DATA  aEstado     AS ARRAY    INIT { "Pendiente", "Parcialmente", "Entregado", "Todos" }
@@ -71,8 +71,6 @@ METHOD OpenFiles() CLASS TInfResFpc
 
    DATABASE NEW ::oPedCliL PATH ( cPatEmp() ) FILE "PEDCLIL.DBF" VIA ( cDriver() ) SHARED INDEX "PEDCLIL.CDX"
    ::oPedCliL:SetOrder( "CREF" )
-
-   DATABASE NEW ::oDbfTvta  PATH ( cPatDat() ) FILE "TVTA.DBF" VIA ( cDriver() ) SHARED INDEX "TVTA.CDX"
 
    DATABASE NEW ::oDbfArt PATH ( cPatArt() ) FILE "ARTICULO.DBF" VIA ( cDriver() ) SHARED INDEX "ARTICULO.CDX"
 

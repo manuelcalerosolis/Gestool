@@ -228,10 +228,6 @@ METHOD lGenerate() CLASS TDiaCPed
             ::oDbf:NTOTDOC := aTotPedCli (::oPedCliT:CSERPED + Str( ::oPedCliT:NNUMPED ) + ::oPedCliT:CSUFPED, ::oPedCliT:cAlias, ::oPedCliL:cAlias, ::oDbfIva:cAlias, ::oDbfDiv:cAlias, ::oDbfPago:cAlias, nil, cDivEmp())[4]
             ::oDbf:CDOCMOV := ::oPedCliT:CSERPED + "/" + Str( ::oPedCliT:NNUMPED ) + "/" + ::oPedCliT:CSUFPED
 
-            if ::oDbfTvta:Seek (::oPedCliL:cTipMov)
-               ::oDbf:cTipVen    := ::oDbfTvta:cDesMov
-            end if
-
             IF ::oDbfCli:Seek ( ::oPedCliT:CCODCLI )
 
                ::oDbf:CNIFCLI := ::oDbfCli:Nif

@@ -13,7 +13,7 @@ CLASS TRanking FROM TInfGen
    DATA  oFacCliP    AS OBJECT
    DATA  oFacCliT    AS OBJECT
    DATA  oFacCliL    AS OBJECT
-   DATA  oDbfTvta    AS OBJECT
+    
    DATA  oAntCliT    AS OBJECT
    DATA  oDbfCli     AS OBJECT
    DATA  oLimit      AS OBJECT
@@ -85,8 +85,6 @@ METHOD OpenFiles() CLASS TRanking
 
    ::oFacCliP := TDataCenter():oFacCliP()
 
-   DATABASE NEW ::oDbfTvta  PATH ( cPatDat() ) FILE "TVTA.DBF"    VIA ( cDriver() ) SHARED INDEX "TVTA.CDX"
-
    DATABASE NEW ::oAntCliT  PATH ( cPatEmp() ) FILE "ANTCLIT.DBF" VIA ( cDriver() ) SHARED INDEX "ANTCLIT.CDX"
 
    DATABASE NEW ::oDbfCli   PATH ( cPatCli() ) FILE "CLIENT.DBF"  VIA ( cDriver() ) SHARED INDEX "CLIENT.CDX"
@@ -115,9 +113,7 @@ METHOD CloseFiles() CLASS TRanking
    if !Empty( ::oFacCliL ) .and. ::oFacCliL:Used()
       ::oFacCliL:End()
    end if
-   if !Empty( ::oDbfTvta ) .and. ::oDbfTvta:Used()
-      ::oDbfTvta:End()
-   end if
+    
    if !Empty( ::oDbfIva ) .and. ::oDbfIva:Used()
       ::oDbfIva:End()
    end if
@@ -133,7 +129,7 @@ METHOD CloseFiles() CLASS TRanking
 
    ::oFacCliT := nil
    ::oFacCliL := nil
-   ::oDbfTvta := nil
+    
    ::oDbfIva  := nil
    ::oFacCliP := nil
    ::oAntCliT := nil

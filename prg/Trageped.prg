@@ -12,7 +12,7 @@ CLASS TRlAgePed FROM TInfGen
    DATA  oEstado     AS OBJECT
    DATA  oPedCliT    AS OBJECT
    DATA  oPedCliL    AS OBJECT
-   DATA  oDbfTvta    AS OBJECT
+    
    DATA  cTipVen     AS CHARACTER
    DATA  cTipVen2    AS CHARACTER
    DATA  aEstado     AS ARRAY    INIT  { "Pendientes", "Parcial", "Recibidos", "Todos" }
@@ -68,8 +68,6 @@ METHOD OpenFiles() CLASS TdlAgePed
 
    DATABASE NEW ::oDbfCli   PATH ( cPatCli() ) FILE "CLIENT.DBF"  VIA ( cDriver() ) SHARED INDEX "CLIENT.CDX"
 
-   DATABASE NEW ::oDbfTvta  PATH ( cPatDat() ) FILE "TVTA.DBF"    VIA ( cDriver() ) SHARED INDEX "TVTA.CDX"
-
 RETURN ( Self )
 
 //---------------------------------------------------------------------------//
@@ -78,7 +76,6 @@ METHOD CloseFiles() CLASS TrlAgePed
 
    ::oPedCliT:End()
    ::oPedCliL:End()
-   ::oDbfTvta:End()
    ::oDbfCli:End()
 
 RETURN ( Self )
@@ -101,27 +98,6 @@ METHOD Resource( cFld ) CLASS TrlAgePed
    */
 
    ::oDefAgeInf( 70, 80, 90, 100 )
-
-   /*
-   Damos valor al meter
-   */
-
-   REDEFINE CHECKBOX ::lTvta ;
-      ID       260 ;
-      OF       ::oFld:aDialogs[1]
-
-   REDEFINE GET oTipVen VAR ::cTipVen ;
-      VALID    ( cTVta( oTipVen, This:oDbfTvta:cAlias, oTipVen2 ) ) ;
-      BITMAP   "LUPA" ;
-      ON HELP  ( BrwTVta( oTipVen, This:oDbfTVta:cAlias, oTipVen2 ) ) ;
-      ID       270 ;
-      OF       ::oFld:aDialogs[1]
-
-   REDEFINE GET oTipVen2 VAR ::cTipVen2 ;
-      ID       280 ;
-      WHEN     ( .F. ) ;
-      COLOR    CLR_GET ;
-      OF       ::oFld:aDialogs[1]
 
    ::oMtrInf:SetTotal( ::oPedCliT:Lastrec() )
 
@@ -275,30 +251,6 @@ RETURN ( ::oDbf:LastRec() > 0 )
 //---------------------------------------------------------------------------//
 
 METHOD AddTipVta( cTipMov )
-
-   if ::oDbfTvta:Seek( cTipMov )
-
-      if ::oDbfTvta:nUndMov == 1
-         ::oDbf:NUNDCAJ += ::oPedCliL:NCANENT
-         ::oDbf:NCAJUND += NotCaja( ::oPedCliL:NCANENT )* ::oPedCliL:NUNICAJA
-         ::oDbf:NUNDART += ::oPedCliL:NUNICAJA
-      elseif ::oDbfTvta:nUndMov == 2
-         ::oDbf:NUNDCAJ += ::oPedCliL:NCANENT * -1
-         ::oDbf:NCAJUND += NotCaja( ::oPedCliL:NCANENT ) * ::oPedCliL:NUNICAJA * -1
-         ::oDbf:NUNDART += ::oPedCliL:NUNICAJA * -1
-      end if
-
-      if ::oDbfTvta:nImpMov == 1
-         ::oDbf:nComAge := ::oPedCliL:nComAge
-         ::oDbf:nBasCom += nImpLPedCli( ::oPedCliT:cAlias, ::oPedCliL:cAlias, ::nDecOut, ::nDerOut )
-         ::oDbf:nTotCom += nComLPedCli( ::oPedCliT:cAlias, ::oPedCliL:cAlias, ::nDecOut, ::nDerOut  )
-      elseif ::oDbfTvta:nImpMov == 2
-         ::oDbf:nComAge := ::oPedCliL:nComAge
-         ::oDbf:nBasCom += nImpLPedCli( ::oPedCliT:cAlias, ::oPedCliL:cAlias, ::nDecOut, ::nDerOut ) * -1
-         ::oDbf:nTotCom += nComLPedCli( ::oPedCliT:cAlias, ::oPedCliL:cAlias, ::nDecOut, ::nDerOut  ) * -1
-      end if
-
-   end if
 
 RETURN ( nil )
 

@@ -15,7 +15,7 @@ CLASS TRenXFac FROM TInfGCli
    DATA  oFacRecT    AS OBJECT
    DATA  oFacRecL    AS OBJECT
    DATA  oEstado     AS OBJECT
-   DATA  oDbfTvta    AS OBJECT
+    
    DATA  oDbfCli     AS OBJECT
    DATA  aEstado     AS ARRAY    INIT { "Pendientes", "Cobradas", "Todas" }
 
@@ -41,7 +41,7 @@ METHOD OpenFiles() CLASS TRenXFac
 
    BEGIN SEQUENCE
 
-   DATABASE NEW ::oDbfTvta PATH ( cPatDat() ) FILE "TVTA.DBF" VIA ( cDriver() ) SHARED INDEX "TVTA.CDX"
+    
 
    ::oFacCliT := TDataCenter():oFacCliT()
    ::oFacCliT:OrdSetFocus( "dFecFac" )
@@ -71,9 +71,7 @@ RETURN ( lOpen )
 
 METHOD CloseFiles() CLASS TRenXFac
 
-   if !Empty( ::oDbfTvta ) .and. ::oDbfTvta:Used()
-      ::oDbfTvta:End()
-   end if
+    
    if !Empty( ::oFacCliT ) .and. ::oFacCliT:Used()
       ::oFacCliT:End()
    end if
@@ -90,7 +88,7 @@ METHOD CloseFiles() CLASS TRenXFac
       ::oDbfCli:End()
    end if
 
-   ::oDbfTvta := nil
+    
    ::oFacCliT := nil
    ::oFacCliL := nil
    ::oFacRecT := nil

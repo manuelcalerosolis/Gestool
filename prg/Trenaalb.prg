@@ -14,7 +14,6 @@ CLASS TRenAAlb FROM TInfAlm
    DATA  oAlbCliL    AS OBJECT
    DATA  oEstado     AS OBJECT
    DATA  oFamilia    AS OBJECT
-   DATA  oDbfTvta    AS OBJECT
    DATA  aEstado     AS ARRAY    INIT  { "No facturado", "Facturado", "Todos" } ;
 
    METHOD Create()
@@ -52,8 +51,6 @@ METHOD OpenFiles() CLASS TRenAAlb
 
    BEGIN SEQUENCE
 
-   DATABASE NEW ::oDbfTvta PATH ( cPatDat() ) FILE "TVTA.DBF" VIA ( cDriver() ) SHARED INDEX "TVTA.CDX"
-
    DATABASE NEW ::oFamilia PATH ( cPatArt() ) FILE "FAMILIAS.DBF" VIA ( cDriver() ) SHARED INDEX "FAMILIAS.CDX"
 
    ::oAlbCliT := TDataCenter():oAlbCliT()
@@ -76,9 +73,6 @@ RETURN ( lOpen )
 
 METHOD CloseFiles() CLASS TRenAAlb
 
-   if !Empty( ::oDbfTvta ) .and. ::oDbfTvta:Used()
-      ::oDbfTvta:End()
-   end if
    if !Empty( ::oFamilia ) .and. ::oFamilia:Used()
       ::oFamilia:End()
    end if
@@ -89,7 +83,6 @@ METHOD CloseFiles() CLASS TRenAAlb
       ::oAlbCliL:End()
    end if
 
-   ::oDbfTvta := nil
    ::oFamilia := nil
    ::oAlbCliT := nil
    ::oAlbCliL := nil

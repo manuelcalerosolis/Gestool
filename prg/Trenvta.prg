@@ -20,7 +20,6 @@ CLASS TRenVta FROM TInfPArt
    DATA  oTikCliL       AS OBJECT
    DATA  oTikCliP       AS OBJECT
    DATA  oDbfArt        AS OBJECT
-   DATA  oDbfTvta       AS OBJECT
    DATA  oStock         AS OBJECT
    DATA  oAlbPrvL       AS OBJECT
    DATA  oFacPrvL       AS OBJECT
@@ -99,7 +98,7 @@ METHOD OpenFiles()
 
    DATABASE NEW ::oDbfArt  PATH ( cPatArt() ) FILE "ARTICULO.DBF" VIA ( cDriver() ) SHARED INDEX "ARTICULO.CDX"
 
-   DATABASE NEW ::oDbfTvta PATH ( cPatDat() ) FILE "TVTA.DBF"     VIA ( cDriver() ) SHARED INDEX "TVTA.CDX"
+    
 
    ::oAlbCliT := TDataCenter():oAlbCliT()
 
@@ -157,9 +156,7 @@ METHOD CloseFiles()
    if !Empty( ::oDbfArt ) .and. ::oDbfArt:Used()
       ::oDbfArt:End()
    end if
-   if !Empty( ::oDbfTvta ) .and. ::oDbfTvta:Used()
-      ::oDbfTvta:End()
-   end if
+    
    if !Empty( ::oAlbCliT ) .and. ::oAlbCliT:Used()
       ::oAlbCliT:End()
    end if
@@ -217,7 +214,6 @@ METHOD CloseFiles()
    end if
 
    ::oDbfArt   := nil
-   ::oDbfTvta  := nil
    ::oAlbCliT  := nil
    ::oAlbCliL  := nil
    ::oFacCliT  := nil

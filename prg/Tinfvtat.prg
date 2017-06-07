@@ -17,7 +17,7 @@ CLASS TInfVtaT FROM TInfGen
    DATA  oFacRecL    AS OBJECT
    DATA  oTikCliT    AS OBJECT
    DATA  oTikCliL    AS OBJECT
-   DATA  oDbfTvta    AS OBJECT
+    
 
    METHOD create()
 

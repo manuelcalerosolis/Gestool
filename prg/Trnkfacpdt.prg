@@ -12,7 +12,7 @@ CLASS TRnkFacPdt FROM TInfGen
    DATA  oFacCliP    AS OBJECT
    DATA  oFacCliT    AS OBJECT
    DATA  oFacCliL    AS OBJECT
-   DATA  oDbfTvta    AS OBJECT
+    
    DATA  oAntCliT    AS OBJECT
    DATA  oLimit      AS OBJECT
    DATA  nTotalNeto              INIT 0
@@ -77,8 +77,6 @@ METHOD OpenFiles() CLASS TRnkFacPdt
 
    ::oFacCliP := TDataCenter():oFacCliP()
 
-   DATABASE NEW ::oDbfTvta  PATH ( cPatDat() ) FILE "TVTA.DBF" VIA ( cDriver() ) SHARED INDEX "TVTA.CDX"
-
    DATABASE NEW ::oAntCliT  PATH ( cPatEmp() ) FILE "ANTCLIT.DBF" VIA ( cDriver() ) SHARED INDEX "ANTCLIT.CDX"
 
    ::bForReport   := {|| ::lAllPrc .or. ::oDbf:nTotPdt >= ::nLimit }
@@ -105,9 +103,7 @@ METHOD CloseFiles() CLASS TRnkFacPdt
    if !Empty( ::oFacCliL ) .and. ::oFacCliL:Used()
       ::oFacCliL:End()
    end if
-   if !Empty( ::oDbfTvta ) .and. ::oDbfTvta:Used()
-      ::oDbfTvta:End()
-   end if
+    
    if !Empty( ::oDbfIva ) .and. ::oDbfIva:Used()
       ::oDbfIva:End()
    end if
@@ -120,7 +116,7 @@ METHOD CloseFiles() CLASS TRnkFacPdt
 
    ::oFacCliT := nil
    ::oFacCliL := nil
-   ::oDbfTvta := nil
+    
    ::oDbfIva  := nil
    ::oFacCliP := nil
    ::oAntCliT := nil

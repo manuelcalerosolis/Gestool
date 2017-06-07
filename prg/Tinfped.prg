@@ -12,7 +12,7 @@ CLASS TInfPed FROM TInfGen
    DATA  oEstado     AS OBJECT
    DATA  oPedCliT    AS OBJECT
    DATA  oPedCliL    AS OBJECT
-   DATA  oDbfTvta    AS OBJECT
+    
    DATA  aEstado     AS ARRAY    INIT  { "Pendiente", "Parcilamente", "Entregado", "Todos" }
 
    METHOD create()

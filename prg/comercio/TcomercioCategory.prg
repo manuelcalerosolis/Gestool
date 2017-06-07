@@ -376,7 +376,7 @@ METHOD getCategoryLangs( id, categoryName, categoryLongName )
       end if 
 
       if ( D():FamiliasLenguajes( ::getView() ) )->( dbseekinord( id + hLang:__enumKey, "cCodLen" ) )
-         cLongName      := alltrim( ( D():FamiliasLenguajes( ::getView() ) )->nLngDes )
+         cLongName      := alltrim( ( D():FamiliasLenguajes( ::getView() ) )->mLngDes )
       else 
          cLongName      := categoryLongName
       end if 

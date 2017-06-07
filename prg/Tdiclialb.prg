@@ -219,22 +219,6 @@ METHOD lGenerate() CLASS TDiaCPre
                   ::oDbf:NTOTDOC := aTotPreCli (::oPreCliT:CSERPRE + Str( ::oPreCliT:NNUMPRE ) + ::oPreCliT:CSUFPRE, ::oPreCliT:cAlias, ::oPreCliL:cAlias, ::oDbfIva:cAlias, ::oDbfDiv:cAlias, ::oDbfPago:cAlias, nil, cDivEmp())[4]
                   ::oDbf:CDOCMOV := ::oPreCliL:CSERPRE + "/" + Str( ::oPreCliL:NNUMPRE ) + "/" + ::oPreCliL:CSUFPRE
 
-                  ::oDbfTvta:Seek (::oPreCliL:cTipMov)
-                  ::oDbfTvta:Load ()
-                  ::oDbf:cTipVen    := ::oDbfTvta:cDesMov
-
-                  IF ::oDbfCli:Seek ( ::oPreCliT:CCODCLI )
-                     ::oDbfCli:Load()
-
-                     ::oDbf:CNIFCLI := ::oDbfCli:Nif
-                     ::oDbf:CDOMCLI := ::oDbfCli:Domicilio
-                     ::oDbf:CPOBCLI := ::oDbfCli:Poblacion
-                     ::oDbf:CPROCLI := ::oDbfCli:Provincia
-                     ::oDbf:CCDPCLI := ::oDbfCli:CodPostal
-                     ::oDbf:CTLFCLI := ::oDbfCli:Telefono
-
-                   END IF
-
                   ::oDbf:Save()
 
                end if

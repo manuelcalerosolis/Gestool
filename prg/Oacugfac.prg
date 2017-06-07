@@ -12,7 +12,7 @@ CLASS OAcuGFac FROM TPrvGrp
    DATA  oFacPrvL    AS OBJECT
    DATA  oFacPrvP    AS OBJECT
    DATA  oDbfIva     AS OBJECT
-   DATA  oDbfTvta    AS OBJECT
+    
    DATA  oDbfArt     AS OBJECT
 
    METHOD Create ()

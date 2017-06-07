@@ -14,7 +14,7 @@ CLASS TRecAge FROM TInfGen
    DATA  oOrden      AS OBJECT
    DATA  oFacCliT    AS OBJECT
    DATA  oFacCliL    AS OBJECT
-   DATA  oDbfTvta    AS OBJECT
+    
    DATA  oDbfIva     AS OBJECT
    DATA  oFacCliP    AS OBJECT
    DATA  oAntCliT    AS OBJECT

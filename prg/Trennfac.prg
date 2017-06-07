@@ -15,7 +15,6 @@ CLASS TRenNFac FROM TInfPAge
    DATA  oFacRecL    AS OBJECT
    DATA  oEstado     AS OBJECT
    DATA  oDbfArt     AS OBJECT
-   DATA  oDbfTvta    AS OBJECT
    DATA  aEstado     AS ARRAY    INIT  { "Pendientes", "Cobradas", "Todas" }
 
    METHOD Create()
@@ -41,8 +40,6 @@ METHOD OpenFiles() CLASS TRenNFac
    BEGIN SEQUENCE
 
    DATABASE NEW ::oDbfArt  PATH ( cPatArt() ) FILE "ARTICULO.DBF" VIA ( cDriver() ) SHARED INDEX "ARTICULO.CDX"
-
-   DATABASE NEW ::oDbfTvta PATH ( cPatDat() ) FILE "TVTA.DBF" VIA ( cDriver() ) SHARED INDEX "TVTA.CDX"
 
    ::oFacCliT := TDataCenter():oFacCliT()
 
@@ -71,9 +68,6 @@ METHOD CloseFiles() CLASS TRenNFac
    if !Empty( ::oDbfArt ) .and. ::oDbfArt:Used()
       ::oDbfArt:End()
    end if
-   if !Empty( ::oDbfTvta ) .and. ::oDbfTvta:Used()
-      ::oDbfTvta:End()
-   end if
    if !Empty( ::oFacCliT ) .and. ::oFacCliT:Used()
       ::oFacCliT:End()
    end if
@@ -88,7 +82,6 @@ METHOD CloseFiles() CLASS TRenNFac
    end if
 
    ::oDbfArt  := nil
-   ::oDbfTvta := nil
    ::oFacCliT := nil
    ::oFacCliL := nil
    ::oFacRecT := nil

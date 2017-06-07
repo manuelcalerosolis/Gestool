@@ -10,7 +10,7 @@ CLASS TAcuUFacRec FROM TInfRut
    DATA  lExcCero    AS LOGIC    INIT .f.
    DATA  oFacRecT    AS OBJECT
    DATA  oFacRecL    AS OBJECT
-   DATA  oDbfTvta    AS OBJECT
+    
    DATA  oDbfArt     AS OBJECT
 
    METHOD Create ()

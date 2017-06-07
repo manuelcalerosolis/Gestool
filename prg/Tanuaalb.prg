@@ -12,7 +12,7 @@ CLASS TAnuAAlb FROM TInfAlm
    DATA  oEstado     AS OBJECT
    DATA  oAlbCliT    AS OBJECT
    DATA  oAlbCliL    AS OBJECT
-   DATA  oDbfTvta    AS OBJECT
+    
    DATA  aEstado     AS ARRAY    INIT  { "No facturado", "Facturado", "Todos" }
 
    METHOD Create()

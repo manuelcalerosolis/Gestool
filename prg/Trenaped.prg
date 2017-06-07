@@ -14,7 +14,6 @@ CLASS TRenAPed FROM TInfAlm
    DATA  oPedCliL    AS OBJECT
    DATA  oEstado     AS OBJECT
    DATA  oFamilia    AS OBJECT
-   DATA  oDbfTvta    AS OBJECT
    DATA  aEstado     AS ARRAY    INIT  { "Pendiente", "Parcilamente", "Entregado", "Todos" }
 
    METHOD Create()
@@ -39,8 +38,6 @@ METHOD OpenFiles() CLASS TRenAPed
 
    BEGIN SEQUENCE
 
-   DATABASE NEW ::oDbfTvta PATH ( cPatDat() ) FILE "TVTA.DBF" VIA ( cDriver() ) SHARED INDEX "TVTA.CDX"
-
    DATABASE NEW ::oFamilia PATH ( cPatArt() ) FILE "FAMILIAS.DBF" VIA ( cDriver() ) SHARED INDEX "FAMILIAS.CDX"
 
    ::oPedCliT := TDataCenter():oPedCliT()
@@ -63,9 +60,6 @@ RETURN ( lOpen )
 
 METHOD CloseFiles() CLASS TRenAPed
 
-   if !Empty( ::oDbfTvta ) .and. ::oDbfTvta:Used()
-      ::oDbfTvta:End()
-   end if
    if !Empty( ::oFamilia ) .and. ::oFamilia:Used()
       ::oFamilia:End()
    end if
@@ -76,7 +70,6 @@ METHOD CloseFiles() CLASS TRenAPed
       ::oPedCliL:End()
    end if
 
-   ::oDbfTvta := nil
    ::oFamilia := nil
    ::oPedCliT := nil
    ::oPedCliL := nil

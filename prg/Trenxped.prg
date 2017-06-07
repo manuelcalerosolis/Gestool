@@ -13,7 +13,7 @@ CLASS TRenXPed FROM TInfGCli
    DATA  oPedCliT    AS OBJECT
    DATA  oPedCliL    AS OBJECT
    DATA  oEstado     AS OBJECT
-   DATA  oDbfTvta    AS OBJECT
+    
    DATA  oDbfCli     AS OBJECT
    DATA  aEstado     AS ARRAY    INIT  { "Pendiente", "Parcilamente", "Entregado", "Todos" }
 
@@ -39,7 +39,7 @@ METHOD OpenFiles() CLASS TRenXPed
 
    BEGIN SEQUENCE
 
-   DATABASE NEW ::oDbfTvta PATH ( cPatDat() ) FILE "TVTA.DBF" VIA ( cDriver() ) SHARED INDEX "TVTA.CDX"
+    
 
    ::oPedCliT := TDataCenter():oPedCliT()
 
@@ -63,9 +63,7 @@ RETURN ( lOpen )
 
 METHOD CloseFiles() CLASS TRenXPed
 
-   if !Empty( ::oDbfTvta ) .and. ::oDbfTvta:Used()
-      ::oDbfTvta:End()
-   end if
+    
    if !Empty( ::oPedCliT ) .and. ::oPedCliT:Used()
       ::oPedCliT:End()
    end if
@@ -76,7 +74,7 @@ METHOD CloseFiles() CLASS TRenXPed
       ::oDbfCli:End()
    end if
 
-   ::oDbfTvta := nil
+    
    ::oPedCliT := nil
    ::oPedCliL := nil
    ::oDbfCli  := nil

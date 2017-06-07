@@ -13,7 +13,6 @@ CLASS TRenAlb FROM TInfPArt
    DATA  oAlbCliL    AS OBJECT
    DATA  oEstado     AS OBJECT
    DATA  oDbfArt     AS OBJECT
-   DATA  oDbfTvta    AS OBJECT
    DATA  aEstado     AS ARRAY    INIT  { "No facturado", "Facturado", "Todos" } ;
 
    METHOD Create()
@@ -68,8 +67,6 @@ METHOD OpenFiles() CLASS TRenAlb
 
    DATABASE NEW ::oDbfArt  PATH ( cPatArt() ) FILE "ARTICULO.DBF" VIA ( cDriver() ) SHARED INDEX "ARTICULO.CDX"
 
-   DATABASE NEW ::oDbfTvta PATH ( cPatDat() ) FILE "TVTA.DBF" VIA ( cDriver() ) SHARED INDEX "TVTA.CDX"
-
    ::oAlbCliT := TDataCenter():oAlbCliT()
 
    DATABASE NEW ::oAlbCliL PATH ( cPatEmp() ) FILE "ALBCLIL.DBF" VIA ( cDriver() ) SHARED INDEX "ALBCLIL.CDX"
@@ -93,9 +90,6 @@ METHOD CloseFiles() CLASS TRenAlb
    if !Empty( ::oDbfArt ) .and. ::oDbfArt:Used()
       ::oDbfArt:End()
    end if
-   if !Empty( ::oDbfTvta ) .and. ::oDbfTvta:Used()
-      ::oDbfTvta:End()
-   end if
    if !Empty( ::oAlbCliT ) .and. ::oAlbCliT:Used()
       ::oAlbCliT:End()
    end if
@@ -104,7 +98,6 @@ METHOD CloseFiles() CLASS TRenAlb
    end if
 
    ::oDbfArt  := nil
-   ::oDbfTvta := nil
    ::oAlbCliT := nil
    ::oAlbCliL := nil
 

@@ -11,7 +11,7 @@ CLASS TRenTPed FROM TInfTip
    DATA  lCosAct     AS LOGIC    INIT .f.
    DATA  oPedCliT    AS OBJECT
    DATA  oPedCliL    AS OBJECT
-   DATA  oDbfTvta    AS OBJECT
+    
    DATA  oEstado     AS OBJECT
    DATA  aEstado     AS ARRAY    INIT  { "Pendiente", "Parcilamente", "Entregado", "Todos" }
 
@@ -37,7 +37,7 @@ METHOD OpenFiles() CLASS TRenTPed
 
    BEGIN SEQUENCE
 
-   DATABASE NEW ::oDbfTvta PATH ( cPatDat() ) FILE "TVTA.DBF" VIA ( cDriver() ) SHARED INDEX "TVTA.CDX"
+    
 
    ::oPedCliT := TDataCenter():oPedCliT()
 
@@ -59,9 +59,7 @@ RETURN ( lOpen )
 
 METHOD CloseFiles() CLASS TRenTPed
 
-   if !Empty( ::oDbfTvta ) .and. ::oDbfTvta:Used()
-      ::oDbfTvta:End()
-   end if
+    
    if !Empty( ::oPedCliT ) .and. ::oPedCliT:Used()
       ::oPedCliT:End()
    end if
@@ -69,7 +67,7 @@ METHOD CloseFiles() CLASS TRenTPed
       ::oPedCliL:End()
    end if
 
-   ::oDbfTvta := nil
+    
    ::oPedCliT := nil
    ::oPedCliL := nil
 

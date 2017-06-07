@@ -40,7 +40,7 @@ CLASS TResFamTik FROM TInfGen
    DATA  lExcMov     AS LOGIC    INIT .f.
    DATA  oTikCliT    AS OBJECT
    DATA  oTikCliL    AS OBJECT
-   DATA  oDbfTvta    AS OBJECT
+    
    DATA  aMes        AS ARRAY    INIT {.f., .f., .f., .f., .f., .f., .f., .f., .f., .f., .f., .f. }
    DATA  lAno        AS LOGIC    INIT .f.
 
@@ -90,8 +90,6 @@ METHOD OpenFiles()
    DATABASE NEW ::oTikCliL PATH ( cPatEmp() ) FILE "TIKEL.DBF" VIA ( cDriver() ) SHARED INDEX "TIKEL.CDX"
    ::oTikCliL:SetOrder( "CCBATIL" )
 
-   DATABASE NEW ::oDbfTvta  PATH ( cPatDat() ) FILE "TVTA.DBF" VIA ( cDriver() ) SHARED INDEX "TVTA.CDX"
-
    DATABASE NEW ::oDbfArt PATH ( cPatArt() ) FILE "ARTICULO.DBF" VIA ( cDriver() ) SHARED INDEX "ARTICULO.CDX"
 
 RETURN ( Self )
@@ -102,7 +100,6 @@ METHOD CloseFiles()
 
    ::oTikCliT:End()
    ::oTikCliL:End()
-   ::oDbfTvta:End()
    ::oDbfArt:End()
 
 RETURN ( Self )

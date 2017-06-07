@@ -11,7 +11,7 @@ CLASS TInfTpvT FROM TInfGen
    DATA  lExcCero    AS LOGIC    INIT .f.
    DATA  oTikCliT    AS OBJECT
    DATA  oTikCliL    AS OBJECT
-   DATA  oDbfTvta    AS OBJECT
+    
 
    METHOD create()
 

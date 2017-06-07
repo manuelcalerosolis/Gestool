@@ -13,7 +13,6 @@ CLASS TRenFap FROM TPrvAlm
    DATA  oFacPrvL    AS OBJECT
    DATA  oEstado     AS OBJECT
    DATA  oArt        AS OBJECT
-   DATA  oDbfTvta    AS OBJECT
 
    METHOD Create()
 
@@ -50,8 +49,6 @@ METHOD OpenFiles() CLASS TRenFap
 
    DATABASE NEW ::oArt     PATH ( cPatArt() ) FILE "ARTICULO.DBF" VIA ( cDriver() ) SHARED INDEX "ARTICULO.CDX"
 
-   DATABASE NEW ::oDbfTvta PATH ( cPatDat() ) FILE "TVTA.DBF" VIA ( cDriver() ) SHARED INDEX "TVTA.CDX"
-
    DATABASE NEW ::oFacPrvT PATH ( cPatEmp() ) FILE "FACPRVT.DBF" VIA ( cDriver() ) SHARED INDEX "FACPRVT.CDX"
    ::oFacPrvT:OrdSetFocus( "dFecFac" )
 
@@ -66,7 +63,6 @@ RETURN ( Self )
 METHOD CloseFiles() CLASS TRenFap
 
    ::oArt:End()
-   ::oDbfTvta:End()
    ::oFacPrvT:End()
    ::oFacPrvL:End()
    ::oDbfPrv:End()

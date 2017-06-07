@@ -16,7 +16,7 @@ CLASS TAcuNVta FROM TInfPAge
    DATA  oFacRecT    AS OBJECT
    DATA  oFacRecL    AS OBJECT
    DATA  oDbfArt     AS OBJECT
-   DATA  oDbfTVta    AS OBJECT
+    
    DATA  lTvta       AS LOGIC    INIT .f.
    DATA  oIva        AS OBJECT
    DATA  cTipVen     AS CHARACTER
@@ -116,9 +116,7 @@ METHOD CloseFiles()
    if !Empty( ::oDbfArt ) .and. ::oDbfArt:Used()
       ::oDbfArt:End()
    end if
-   if !Empty( ::oDbfTVta ) .and. ::oDbfTVta:Used()
-      ::oDbfTVta:End()
-   end if
+    
    if !Empty( ::oIva ) .and. ::oIva:Used()
       ::oIva:End()
    end if
@@ -130,7 +128,7 @@ METHOD CloseFiles()
    ::oAlbCliT := nil
    ::oAlbCliL := nil
    ::oDbfArt  := nil
-   ::oDbfTVta := nil
+    
    ::oIva     := nil
 
 RETURN ( Self )
@@ -152,23 +150,6 @@ METHod lResource( cFld )
    if !::oDefAgeInf( 70, 80, 90, 100, 930 )
       return .f.
    end if
-
-   REDEFINE CHECKBOX ::lTvta ;
-      ID       260 ;
-      OF       ::oFld:aDialogs[1]
-
-   REDEFINE GET oTipVen VAR ::cTipVen ;
-      VALID    ( cTVta( oTipVen, This:oDbfTvta:cAlias, oTipVen2 ) ) ;
-      BITMAP   "LUPA" ;
-      ON HELP  ( BrwTVta( oTipVen, This:oDbfTVta:cAlias, oTipVen2 ) ) ;
-      ID       270 ;
-      OF       ::oFld:aDialogs[1]
-
-   REDEFINE GET oTipVen2 VAR ::cTipVen2 ;
-      ID       280 ;
-      WHEN     ( .F. ) ;
-      COLOR    CLR_GET ;
-      OF       ::oFld:aDialogs[1]
 
    ::oDefExcInf( 210 )
    ::oDefExcImp( 211 )
@@ -228,91 +209,7 @@ METHOD lGenerate()
            if !( ::lExcCero .and. nTotNAlbCli( ::oAlbCliL:cAlias ) == 0 ) .and.;
               !( ::lExcImp .and. nImpLAlbCli( ::oAlbCliT:cAlias, ::oAlbCliL:cAlias, ::nDecOut, ::nDerOut, ::nValDiv ) == 0 )
 
-              if ::lTvta
-
-                 if  ( if (!Empty( ::cTipVen ), ::oAlbCliL:cTipMov == ::cTipVen, .t. ) )
-
-                    if !::oDbf:Seek( ::oAlbCliT:cCodAge )
-
-                        ::oDbf:Append()
-
-                        ::oDbf:cCodAge    := ::oAlbCliT:cCodAge
-                        if ( ::oDbfAge:Seek (::oAlbCliT:cCodAge) )
-                           ::oDbf:cNomAge := AllTrim ( ::oDbfAge:cApeAge ) + ", " + AllTrim ( ::oDbfAge:cNbrAge )
-                        end if
-
-                        if ::oDbfTvta:nUndMov == 1
-                           ::oDbf:nNumUni := nTotNAlbCli( ::oAlbCliL )
-                        elseif ::oDbfTvta:nUndMov == 2
-                           ::oDbf:nNumUni := -nTotNAlbCli( ::oAlbCliL )
-                        elseif ::oDbfTvta:nUndMov == 3
-                           ::oDbf:nNumUni := 0
-                        end if
-
-                        if ::oDbfTvta:nImpMov == 3
-                           ::oDbf:nImpTot := 0
-                           ::oDbf:nTotCom := 0
-                        else
-                           ::oDbf:nImpTot := nImpLAlbCli( ::oAlbCliT:cAlias, ::oAlbCliL:cAlias, ::nDecOut, ::nDerOut )
-                           ::oDbf:nTotCom := nComLAlbCli( ::oAlbCliT:cAlias, ::oAlbCliL:cAlias, ::nDecOut, ::nDerOut )
-                        end if
-
-                        ::oDbf:nImpArt    := nTotUAlbCli( ::oAlbCliL:cAlias, ::nDecOut, ::nValDiv )
-                        ::oDbf:nImpTrn    := nTrnUAlbCli( ::oAlbCliL:cAlias, ::nDecOut, ::nValDiv )
-                        ::oDbf:nPntVer    := nPntUAlbCli( ::oAlbCliL:cAlias, ::nDecPnt, ::nValDiv )
-                        ::oDbf:nIvaTot    := nIvaLAlbCli( ::oAlbCliL:cAlias, ::nDecOut, ::nDerOut, ::nValDiv )
-                        ::oDbf:nTotFin    := ::oDbf:nImpTot + ::oDbf:nIvaTot
-                        ::oDbf:nPreMed    := ::oDbf:nImpTot / ::oDbf:nNumUni
-
-                        ::AcuPesVol( ::oAlbCliL:cRef, nTotNAlbCli( ::oAlbCliL ), ::oDbf:nImpTot, .f. )
-
-                        ::oDbf:Save()
-                     else
-
-                        ::oDbf:Load()
-
-                        if ::oDbfTvta:nUndMov == 1
-                           ::oDbf:nNumUni += nTotNAlbCli( ::oAlbCliL )
-                        elseif ::oDbfTvta:nUndMov == 2
-                           ::oDbf:nNumUni += -nTotNAlbCli( ::oAlbCliL )
-                        elseif ::oDbfTvta:nUndMov == 3
-                           ::oDbf:nNumUni += 0
-                        end if
-
-                        if ::oDbfTvta:nImpMov == 3
-                           ::oDbf:nImpTot += 0
-                           ::oDbf:nTotCom += 0
-                        else
-                           ::oDbf:nImpTot += nImpLAlbCli( ::oAlbCliT:cAlias, ::oAlbCliL:cAlias, ::nDecOut, ::nDerOut )
-                           ::oDbf:nTotCom += nComLAlbCli( ::oAlbCliT:cAlias, ::oAlbCliL:cAlias, ::nDecOut, ::nDerOut )
-                        end if
-
-                        ::oDbf:nImpArt    += nTotUAlbCli( ::oAlbCliL:cAlias, ::nDecOut, ::nValDiv )
-                        ::oDbf:nImpTrn    += nTrnUAlbCli( ::oAlbCliL:cAlias, ::nDecOut, ::nValDiv )
-                        ::oDbf:nPntVer    += nPntUAlbCli( ::oAlbCliL:cAlias, ::nDecOut, ::nValDiv )
-                        ::oDbf:nPreMed    := ::oDbf:nImpTot / ::oDbf:nNumUni
-                        ::oDbf:nIvaTot    += nIvaLAlbCli( ::oAlbCliL:cAlias, ::nDecOut, ::nDerOut, ::nValDiv )
-                        ::oDbf:nTotFin    += nImpLAlbCli( ::oAlbCliT:cAlias, ::oAlbCliL:cAlias, ::nDecOut, ::nDerOut, ::nValDiv, , , .t., .t.  )
-                        ::oDbf:nTotFin    += nIvaLAlbCli( ::oAlbCliL:cAlias, ::nDecOut, ::nDerOut, ::nValDiv )
-
-                        ::AcuPesVol( ::oAlbCliL:cRef, nTotNAlbCli( ::oAlbCliL ), ::oDbf:nImpTot, .t. )
-
-                        ::oDbf:Save()
-
-                     end if
-
-
-                 end if
-
-                 /*
-                 Pasamos de los tipos de ventas
-                 */
-
-              else
-
                ::AddAlb( .t. )
-
-              end if
 
            end if
 
@@ -364,90 +261,7 @@ METHOD lGenerate()
            if !( ::lExcCero .AND. nTotNFacCli( ::oFacCliL:cAlias ) == 0 ) .and.;
               !( ::lExcImp .AND. nImpLFacCli( ::oFacCliT:cAlias, ::oFacCliL:cAlias, ::nDecOut, ::nDerOut, ::nValDiv ) == 0 )
 
-              if ::lTvta
-
-                 if  ( if (!Empty( ::cTipVen ), ::oFacCliL:cTipMov == ::cTipVen, .t. ) )
-
-                    if !::oDbf:Seek( ::oFacCliT:cCodAge )
-
-                        ::oDbf:Append()
-
-                        ::oDbf:cCodAge    := ::oFacCliT:cCodAge
-                        if ( ::oDbfAge:Seek (::oFacCliT:cCodAge) )
-                           ::oDbf:cNomAge := AllTrim ( ::oDbfAge:cApeAge ) + ", " + AllTrim ( ::oDbfAge:cNbrAge )
-                        end if
-
-                        if ::oDbfTvta:nUndMov == 1
-                           ::oDbf:nNumUni := nTotNFacCli( ::oFacCliL )
-                        elseif ::oDbfTvta:nUndMov == 2
-                           ::oDbf:nNumUni := -nTotNFacCli( ::oFacCliL )
-                        elseif ::oDbfTvta:nUndMov == 3
-                           ::oDbf:nNumUni := 0
-                        end if
-
-                        if ::oDbfTvta:nImpMov == 3
-                           ::oDbf:nImpTot := 0
-                           ::oDbf:nTotCom := 0
-                        else
-                           ::oDbf:nImpTot := nImpLFacCli( ::oFacCliT:cAlias, ::oFacCliL:cAlias, ::nDecOut, ::nDerOut )
-                           ::oDbf:nTotCom := nComLFacCli( ::oFacCliT:cAlias, ::oFacCliL:cAlias, ::nDecOut, ::nDerOut )
-                        end if
-
-                        ::oDbf:nImpArt    := nImpUFacCli( ::oFacCliT:cAlias, ::oFacCliL:cAlias, ::nDecOut, ::nValDiv )
-                        ::oDbf:nImpTrn    := nTrnUFacCli( ::oFacCliL:cAlias, ::nDecOut, ::nValDiv )
-                        ::oDbf:nPntVer    := nPntUFacCli( ::oFacCliL:cAlias, ::nDecPnt, ::nValDiv )
-                        ::oDbf:nIvaTot    := nIvaLFacCli( ::oFacCliL:cAlias, ::nDecOut, ::nDerOut, ::nValDiv )
-                        ::oDbf:nTotFin    := ::oDbf:nImpTot + ::oDbf:nIvaTot
-                        ::oDbf:nPreMed    := ::oDbf:nImpTot / ::oDbf:nNumUni
-
-                        ::AcuPesVol( ::oFacCliL:cRef, nTotNFacCli( ::oFacCliL ), ::oDbf:nImpTot, .f. )
-
-                        ::oDbf:Save()
-                     else
-
-                        ::oDbf:Load()
-
-                        if ::oDbfTvta:nUndMov == 1
-                           ::oDbf:nNumUni += nTotNFacCli( ::oFacCliL )
-                        elseif ::oDbfTvta:nUndMov == 2
-                           ::oDbf:nNumUni += -nTotNFacCli( ::oFacCliL )
-                        elseif ::oDbfTvta:nUndMov == 3
-                           ::oDbf:nNumUni += 0
-                        end if
-
-                        if ::oDbfTvta:nImpMov == 3
-                           ::oDbf:nImpTot += 0
-                           ::oDbf:nTotCom += 0
-                        else
-                           ::oDbf:nImpTot += nImpLFacCli( ::oFacCliT:cAlias, ::oFacCliL:cAlias, ::nDecOut, ::nDerOut )
-                           ::oDbf:nTotCom += nComLFacCli( ::oFacCliT:cAlias, ::oFacCliL:cAlias, ::nDecOut, ::nDerOut )
-                        end if
-
-                        ::oDbf:nImpArt    += nImpUFacCli( ::oFacCliT:cAlias, ::oFacCliL:cAlias, ::nDecOut, ::nValDiv )
-                        ::oDbf:nImpTrn    += nTrnUFacCli( ::oFacCliL:cAlias, ::nDecOut, ::nValDiv )
-                        ::oDbf:nPntVer    += nPntUFacCli( ::oFacCliL:cAlias, ::nDecOut, ::nValDiv )
-                        ::oDbf:nPreMed    := ::oDbf:nImpTot / ::oDbf:nNumUni
-                        ::oDbf:nIvaTot    += nIvaLFacCli( ::oFacCliL:cAlias, ::nDecOut, ::nDerOut, ::nValDiv )
-                        ::oDbf:nTotFin    += nImpLFacCli( ::oFacCliT:cAlias, ::oFacCliL:cAlias, ::nDecOut, ::nDerOut, ::nValDiv )
-                        ::oDbf:nTotFin    += nIvaLFacCli( ::oFacCliL:cAlias, ::nDecOut, ::nDerOut, ::nValDiv )
-
-                        ::AcuPesVol( ::oFacCliL:cRef, nTotNFacCli( ::oFacCliL ), ::oDbf:nImpTot, .t. )
-
-                        ::oDbf:Save()
-
-                     end if
-
-                 end if
-
-                 /*
-                 Pasamos de los tipos de ventas
-                 */
-
-              else
-
                ::AddFac( .t. )
-
-              end if
 
            end if
 
@@ -499,90 +313,7 @@ METHOD lGenerate()
            if !( ::lExcCero .AND. nTotNFacRec( ::oFacRecL:cAlias ) == 0 ) .and.;
               !( ::lExcImp .AND. nImpLFacRec( ::oFacRecT:cAlias, ::oFacRecL:cAlias, ::nDecOut, ::nDerOut, ::nValDiv ) == 0 )
 
-              if ::lTvta
-
-                 if  ( if (!Empty( ::cTipVen ), ::oFacRecL:cTipMov == ::cTipVen, .t. ) )
-
-                    if !::oDbf:Seek( ::oFacRecT:cCodAge )
-
-                        ::oDbf:Append()
-
-                        ::oDbf:cCodAge    := ::oFacRecT:cCodAge
-                        if ( ::oDbfAge:Seek (::oFacRecT:cCodAge) )
-                           ::oDbf:cNomAge := AllTrim ( ::oDbfAge:cApeAge ) + ", " + AllTrim ( ::oDbfAge:cNbrAge )
-                        end if
-
-                        if ::oDbfTvta:nUndMov == 1
-                           ::oDbf:nNumUni := nTotNFacRec( ::oFacRecL )
-                        elseif ::oDbfTvta:nUndMov == 2
-                           ::oDbf:nNumUni := -nTotNFacRec( ::oFacRecL )
-                        elseif ::oDbfTvta:nUndMov == 3
-                           ::oDbf:nNumUni := 0
-                        end if
-
-                        if ::oDbfTvta:nImpMov == 3
-                           ::oDbf:nImpTot := 0
-                           ::oDbf:nTotCom := 0
-                        else
-                           ::oDbf:nImpTot := nImpLFacRec( ::oFacRecT:cAlias, ::oFacRecL:cAlias, ::nDecOut, ::nDerOut )
-                           ::oDbf:nTotCom := nComLFacRec( ::oFacRecT:cAlias, ::oFacRecL:cAlias, ::nDecOut, ::nDerOut )
-                        end if
-
-                        ::oDbf:nImpArt    := nImpUFacRec( ::oFacRecT:cAlias, ::oFacRecL:cAlias, ::nDecOut, ::nValDiv )
-                        ::oDbf:nImpTrn    := nTrnUFacRec( ::oFacRecL:cAlias, ::nDecOut, ::nValDiv )
-                        ::oDbf:nPntVer    := nPntUFacRec( ::oFacRecL:cAlias, ::nDecPnt, ::nValDiv )
-                        ::oDbf:nIvaTot    := nIvaLFacRec( ::oFacRecL:cAlias, ::nDecOut, ::nDerOut, ::nValDiv )
-                        ::oDbf:nTotFin    := ::oDbf:nImpTot + ::oDbf:nIvaTot
-                        ::oDbf:nPreMed    := ::oDbf:nImpTot / ::oDbf:nNumUni
-
-                        ::AcuPesVol( ::oFacRecL:cRef, nTotNFacRec( ::oFacRecL ), ::oDbf:nImpTot, .f. )
-
-                        ::oDbf:Save()
-                     else
-
-                        ::oDbf:Load()
-
-                        if ::oDbfTvta:nUndMov == 1
-                           ::oDbf:nNumUni += nTotNFacRec( ::oFacRecL )
-                        elseif ::oDbfTvta:nUndMov == 2
-                           ::oDbf:nNumUni += -nTotNFacRec( ::oFacRecL )
-                        elseif ::oDbfTvta:nUndMov == 3
-                           ::oDbf:nNumUni += 0
-                        end if
-
-                        if ::oDbfTvta:nImpMov == 3
-                           ::oDbf:nImpTot += 0
-                           ::oDbf:nTotCom += 0
-                        else
-                           ::oDbf:nImpTot += nImpLFacRec( ::oFacRecT:cAlias, ::oFacRecL:cAlias, ::nDecOut, ::nDerOut )
-                           ::oDbf:nTotCom += nComLFacRec( ::oFacRecT:cAlias, ::oFacRecL:cAlias, ::nDecOut, ::nDerOut )
-                        end if
-
-                        ::oDbf:nImpArt    += nImpUFacRec( ::oFacRecT:cAlias, ::oFacRecL:cAlias, ::nDecOut, ::nValDiv )
-                        ::oDbf:nImpTrn    += nTrnUFacRec( ::oFacRecL:cAlias, ::nDecOut, ::nValDiv )
-                        ::oDbf:nPntVer    += nPntUFacRec( ::oFacRecL:cAlias, ::nDecOut, ::nValDiv )
-                        ::oDbf:nPreMed    := ::oDbf:nImpTot / ::oDbf:nNumUni
-                        ::oDbf:nIvaTot    += nIvaLFacRec( ::oFacRecL:cAlias, ::nDecOut, ::nDerOut, ::nValDiv )
-                        ::oDbf:nTotFin    += nImpLFacRec( ::oFacRecT:cAlias, ::oFacRecL:cAlias, ::nDecOut, ::nDerOut, ::nValDiv )
-                        ::oDbf:nTotFin    += nIvaLFacRec( ::oFacRecL:cAlias, ::nDecOut, ::nDerOut, ::nValDiv )
-
-                        ::AcuPesVol( ::oFacRecL:cRef, nTotNFacRec( ::oFacRecL ), ::oDbf:nImpTot, .t. )
-
-                        ::oDbf:Save()
-
-                     end if
-
-                 end if
-
-                 /*
-                 Pasamos de los tipos de ventas
-                 */
-
-              else
-
                ::AddFacRecVta( .t. )
-
-              end if
 
            end if
 

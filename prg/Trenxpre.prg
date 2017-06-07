@@ -13,7 +13,7 @@ CLASS TRenXPre FROM TInfGCli
    DATA  oPreCliT    AS OBJECT
    DATA  oPreCliL    AS OBJECT
    DATA  oEstado     AS OBJECT
-   DATA  oDbfTvta    AS OBJECT
+    
    DATA  oDbfCli     AS OBJECT
    DATA  aEstado     AS ARRAY    INIT  { "Pendiente", "Aceptado", "Todos" }
 
@@ -39,7 +39,7 @@ METHOD OpenFiles() CLASS TRenXPre
 
    BEGIN SEQUENCE
 
-   DATABASE NEW ::oDbfTvta PATH ( cPatDat() ) FILE "TVTA.DBF" VIA ( cDriver() ) SHARED INDEX "TVTA.CDX"
+    
 
    ::oPreCliT  := TDataCenter():oPreCliT()
 
@@ -63,9 +63,7 @@ RETURN ( lOpen )
 
 METHOD CloseFiles() CLASS TRenXPre
 
-   if !Empty( ::oDbfTvta ) .and. ::oDbfTvta:Used()
-      ::oDbfTvta:End()
-   end if
+    
    if !Empty( ::oPreCliT ) .and. ::oPreCliT:Used()
       ::oPreCliT:End()
    end if
@@ -76,7 +74,7 @@ METHOD CloseFiles() CLASS TRenXPre
       ::oDbfCli:End()
    end if
 
-   ::oDbfTvta := nil
+    
    ::oPreCliT := nil
    ::oPreCliL := nil
    ::oDbfCli  := nil

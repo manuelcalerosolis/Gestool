@@ -17,7 +17,7 @@ CLASS TVtaTip FROM TInfTip
    DATA  oFacCliT    AS OBJECT
    DATA  oFacCliL    AS OBJECT
    DATA  oDbfArt     AS OBJECT
-   DATA  oDbfTvta    AS OBJECT
+    
 
    METHOD Create()
 
@@ -65,8 +65,6 @@ METHOD OpenFiles()
 
    DATABASE NEW ::oFacCliL PATH ( cPatEmp() ) CLASS "FACCLIL" FILE "FACCLIL.DBF" VIA ( cDriver() ) SHARED INDEX "FACCLIL.CDX"
 
-   DATABASE NEW ::oDbfTvta  PATH ( cPatDat() ) FILE "TVTA.DBF" VIA ( cDriver() ) SHARED INDEX "TVTA.CDX"
-
 RETURN ( Self )
 
 //---------------------------------------------------------------------------//
@@ -80,7 +78,6 @@ METHOD CloseFiles()
    ::oAlbCliT:End()
    ::oAlbCliL:End()
    ::oDbfArt:End()
-   ::oDbfTvta:End()
 
 RETURN ( Self )
 

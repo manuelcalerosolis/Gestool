@@ -13,7 +13,7 @@ CLASS TRenUTik FROM TInfRut
    DATA  oTikCliT    AS OBJECT
    DATA  oTikCliL    AS OBJECT
    DATA  oEstado     AS OBJECT
-   DATA  oDbfTvta    AS OBJECT
+    
 
    METHOD Create()
 
@@ -52,7 +52,7 @@ METHOD OpenFiles() CLASS TRenUTik
 
    BEGIN SEQUENCE
 
-   DATABASE NEW ::oDbfTvta PATH ( cPatDat() ) FILE "TVTA.DBF" VIA ( cDriver() ) SHARED INDEX "TVTA.CDX"
+    
 
    DATABASE NEW ::oTikCliT PATH ( cPatEmp() ) FILE "TIKET.DBF" VIA ( cDriver() ) SHARED INDEX "TIKET.CDX"
 
@@ -74,9 +74,7 @@ RETURN ( lOpen )
 
 METHOD CloseFiles() CLASS TRenUTik
 
-   if !Empty( ::oDbfTvta ) .and. ::oDbfTvta:Used()
-      ::oDbfTvta:End()
-   end if
+    
    if !Empty( ::oTikCliT ) .and. ::oTikCliT:Used()
       ::oTikCliT:End()
    end if
@@ -84,7 +82,7 @@ METHOD CloseFiles() CLASS TRenUTik
       ::oTikCliL:End()
    end if
 
-   ::oDbfTvta := nil
+    
    ::oTikCliT := nil
    ::oTikCliL := nil
 

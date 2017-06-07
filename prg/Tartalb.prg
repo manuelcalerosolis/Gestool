@@ -188,10 +188,6 @@ METHOD lGenerate() CLASS TInfArtAlb
                   ::oDbf:CDOCMOV    := Alltrim( ::oAlbCliL:CSERALB + "/" + Str( ::oAlbCliL:NNUMALB ) + "/" + ::oAlbCliL:CSUFALB )
                   ::oDbf:DFECMOV    := ::oAlbCliT:DFECALB
 
-                  if ::oDbfTvta:Seek( ::oAlbCliL:cTipMov )
-                     ::oDbf:cTipVen := ::oDbfTvta:cDesMov
-                  end if
-
                   ::oDbf:Save()
 
                end if

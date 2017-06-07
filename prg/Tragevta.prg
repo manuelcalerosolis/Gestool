@@ -15,7 +15,6 @@ CLASS TrlAgeVta FROM TInfGen
    DATA  oFacCliP    AS OBJECT
    DATA  oTpvCliT    AS OBJECT
    DATA  oTpvCliL    AS OBJECT
-   DATA  oDbfTvta    AS OBJECT
    DATA  oIva        AS OBJECT
    DATA  oSay        AS OBJECT
    DATA  cTipVen     AS CHARACTER
@@ -92,8 +91,6 @@ METHOD OpenFiles() CLASS TDAgeVta
 
    DATABASE NEW ::oDbfCli   PATH ( cPatCli() ) FILE "CLIENT.DBF"  VIA ( cDriver() ) SHARED INDEX "CLIENT.CDX"
 
-   DATABASE NEW ::oDbfTvta  PATH ( cPatDat() ) FILE "TVTA.DBF"    VIA ( cDriver() ) SHARED INDEX "TVTA.CDX"
-
    DATABASE NEW ::oIva      PATH ( cPatDat() ) FILE "TIVA.DBF"    VIA ( cDriver() ) SHARED INDEX "TIVA.CDX"
 
 RETURN ( Self )
@@ -109,7 +106,6 @@ METHOD CloseFiles() CLASS TDAgeVta
    ::oFacCliP:End()
    ::oTpvCliT:End()
    ::oTpvCliL:End()
-   ::oDbfTvta:End()
    ::oDbfCli:End()
    ::oIva:End()
 
@@ -143,23 +139,6 @@ METHOD Resource( cFld ) CLASS TrlAgeAlb
    /*
    Damos valor al meter
    */
-
-   REDEFINE CHECKBOX ::lTvta ;
-      ID       260 ;
-      OF       ::oFld:aDialogs[1]
-
-   REDEFINE GET oTipVen VAR ::cTipVen ;
-      VALID    ( cTVta( oTipVen, This:oDbfTvta:cAlias, oTipVen2 ) ) ;
-      BITMAP   "LUPA" ;
-      ON HELP  ( BrwTVta( oTipVen, This:oDbfTVta:cAlias, oTipVen2 ) ) ;
-      ID       270 ;
-      OF       ::oFld:aDialogs[1]
-
-   REDEFINE GET oTipVen2 VAR ::cTipVen2 ;
-      ID       280 ;
-      WHEN     ( .F. ) ;
-      COLOR    CLR_GET ;
-      OF       ::oFld:aDialogs[1]
 
    REDEFINE SAY ::oSay ;
       ID       217 ;
@@ -212,81 +191,43 @@ METHOD lGenerate() CLASS TrlAgeAlb
 
             if !::oAlbCliL:lControl
 
-               if ::lTvta
+              if ::oDbf:Seek( ::oAlbCliT:cCodAge + ::oAlbCliL:cRef )
 
-                  if ( !Empty( ::cTipVen ) .and. ::oAlbCliL:cTipMov == ::cTipVen )            .OR.;
-                     Empty( ::cTipVen )
+                 ::oDbf:Load()
 
-                     if ::oDbf:Seek( ::oAlbCliT:cCodAge + ::oAlbCliL:cRef )
+                 ::oDbf:NUNDCAJ += ::oAlbCliL:NCANENT
+                 ::oDbf:NCAJUND += nTotNAlbCli( ::oAlbCliL )
+                 ::oDbf:NUNDART += ::oAlbCliL:NUNICAJA
+                 ::oDbf:nComAge := ::oAlbCliL:nComAge
+                 ::oDbf:nBasCom += nImpLAlbCli( ::oAlbCliT:cAlias, ::oAlbCliL:cAlias, ::nDecOut, ::nDerOut, ::nValDiv, .f., .t., .f. )
+                 ::oDbf:nTotCom += nComLAlbCli( ::oAlbCliT:cAlias, ::oAlbCliL:cAlias, ::nDecOut, ::nDerOut, ::nValDiv )
 
-                         ::oDbf:Load()
-                         ::AddTipAlb( ::oAlbCliL:cTipMov )
-                         ::oDbf:Save()
+                 ::oDbf:Save()
 
-                     else
+              else
 
-                         ::oDbf:Append()
+                 ::oDbf:Append()
 
-                         ::oDbf:cCodAge := ::oAlbCliT:cCodAge
-                         ::oDbf:DFECMOV := ::oAlbCliT:dFecAlb
-                         ::oDbf:CDOCMOV := ::oAlbCliT:cSerAlb + "/" + Str( ::oAlbCliT:nNumAlb ) + "/" + ::oAlbCliT:cSufAlb
-                         ::oDbf:CTIPDOC := "Albaran"
-                         ::oDbf:CREFART := ::oAlbCliL:CREF
-                         ::oDbf:CDESART := ::oAlbCliL:cDetalle
+                 ::oDbf:cCodAge := ::oAlbCliT:cCodAge
+                 ::oDbf:CDOCMOV := ::oAlbCliT:cSerAlb + "/" + Str( ::oAlbCliT:nNumAlb ) + "/" + ::oAlbCliT:cSufAlb
+                 ::oDbf:CTIPDOC := "Albaran"
+                 ::oDbf:CREFART := ::oAlbCliL:CREF
+                 ::oDbf:CDESART := ::oAlbCliL:cDetalle
 
-                         if ::oDbfAge:Seek( ::oAlbCliT:cCodAge )
-                            ::oDbf:cNomAge := ::oDbfAge:cApeAge + ", " + ::oDbfAge:cNbrAge
-                         end if
+                 if ::oDbfAge:Seek( ::oAlbCliT:cCodAge )
+                    ::oDbf:cNomAge := ::oDbfAge:cApeAge + ", " + ::oDbfAge:cNbrAge
+                 end if
 
-                         ::AddTipAlb( ::oAlbCliL:cTipMov )
+                 ::oDbf:NUNDCAJ := ::oAlbCliL:NCANENT
+                 ::oDbf:NCAJUND := nTotNAlbCli( ::oAlbCliL )
+                 ::oDbf:NUNDART := ::oAlbCliL:NUNICAJA
+                 ::oDbf:nComAge := ::oAlbCliL:nComAge
+                 ::oDbf:nBasCom := nImpLAlbCli( ::oAlbCliT:cAlias, ::oAlbCliL:cAlias, ::nDecOut, ::nDerOut, ::nValDiv, .f., .t., .f. )
+                 ::oDbf:nTotCom := nComLAlbCli( ::oAlbCliT:cAlias, ::oAlbCliL:cAlias, ::nDecOut, ::nDerOut, ::nValDiv )
 
-                         ::oDbf:Save()
+                 ::oDbf:Save()
 
-                     end if
-
-                  end if
-
-               else
-
-                  if ::oDbf:Seek( ::oAlbCliT:cCodAge + ::oAlbCliL:cRef )
-
-                     ::oDbf:Load()
-
-                     ::oDbf:NUNDCAJ += ::oAlbCliL:NCANENT
-                     ::oDbf:NCAJUND += nTotNAlbCli( ::oAlbCliL )
-                     ::oDbf:NUNDART += ::oAlbCliL:NUNICAJA
-                     ::oDbf:nComAge := ::oAlbCliL:nComAge
-                     ::oDbf:nBasCom += nImpLAlbCli( ::oAlbCliT:cAlias, ::oAlbCliL:cAlias, ::nDecOut, ::nDerOut, ::nValDiv, .f., .t., .f. )
-                     ::oDbf:nTotCom += nComLAlbCli( ::oAlbCliT:cAlias, ::oAlbCliL:cAlias, ::nDecOut, ::nDerOut, ::nValDiv )
-
-                     ::oDbf:Save()
-
-                  else
-
-                     ::oDbf:Append()
-
-                     ::oDbf:cCodAge := ::oAlbCliT:cCodAge
-                     ::oDbf:CDOCMOV := ::oAlbCliT:cSerAlb + "/" + Str( ::oAlbCliT:nNumAlb ) + "/" + ::oAlbCliT:cSufAlb
-                     ::oDbf:CTIPDOC := "Albaran"
-                     ::oDbf:CREFART := ::oAlbCliL:CREF
-                     ::oDbf:CDESART := ::oAlbCliL:cDetalle
-
-                     if ::oDbfAge:Seek( ::oAlbCliT:cCodAge )
-                        ::oDbf:cNomAge := ::oDbfAge:cApeAge + ", " + ::oDbfAge:cNbrAge
-                     end if
-
-                     ::oDbf:NUNDCAJ := ::oAlbCliL:NCANENT
-                     ::oDbf:NCAJUND := nTotNAlbCli( ::oAlbCliL )
-                     ::oDbf:NUNDART := ::oAlbCliL:NUNICAJA
-                     ::oDbf:nComAge := ::oAlbCliL:nComAge
-                     ::oDbf:nBasCom := nImpLAlbCli( ::oAlbCliT:cAlias, ::oAlbCliL:cAlias, ::nDecOut, ::nDerOut, ::nValDiv, .f., .t., .f. )
-                     ::oDbf:nTotCom := nComLAlbCli( ::oAlbCliT:cAlias, ::oAlbCliL:cAlias, ::nDecOut, ::nDerOut, ::nValDiv )
-
-                     ::oDbf:Save()
-
-                  end if
-
-               end if
+              end if
 
             end if
 
@@ -325,83 +266,41 @@ METHOD lGenerate() CLASS TrlAgeAlb
                Preguntamos y tratamos el tipo de venta
                */
 
-               if ::lTvta
+              if ::oDbf:Seek( ::oFacCliT:cCodAge + ::oFacCliL:cRef )
 
-                  if ( !Empty( ::cTipVen ) .and. ::oFacCliL:cTipMov == ::cTipVen )            .OR.;
-                     Empty( ::cTipVen )
+                 ::oDbf:Load()
 
-                     if ::oDbf:Seek( ::oFacCliT:cCodAge + ::oFacCliL:cRef )
+                 ::oDbf:NUNDCAJ += ::oFacCliL:NCANENT
+                 ::oDbf:NUNDART += ::oFacCliL:NUNICAJA
+                 ::oDbf:NCAJUND += nTotNFacCli( ::oFacCliL )
+                 ::oDbf:nBasCom += nImpLFacCli( ::oFacCliT:cAlias, ::oFacCliL:cAlias, ::nDecOut, ::nDerOut, ::nValDiv, .f., .t., .f., .f. )
+                 ::oDbf:nTotCom += nComLFacCli( ::oFacCliT:cAlias, ::oFacCliL:cAlias, ::nDecOut, ::nDerOut, ::nValDiv )
 
-                         ::oDbf:Load()
-                         ::AddTipFac( ::oFacCli:cTipMov )
-                         ::oDbf:Save()
+                 ::oDbf:Save()
 
-                     else
+              else
 
-                         ::oDbf:Append()
+                 ::oDbf:Append()
 
-                         ::oDbf:cCodAge := ::oFacCliT:cCodAge
-                         ::oDbf:DFECMOV := ::oFacCliT:DFECFAC
-                         ::oDbf:CDOCMOV := ::oFacCliT:cSerie + "/" + Str( ::oFacCliT:nNumFac ) + "/" + ::oFacCliT:cSufFac
-                         ::oDbf:CTIPDOC := "Factura"
-                         ::oDbf:CREFART := ::oFacCliL:CREF
-                         ::oDbf:CDESART := ::oFacCliL:cDetalle
+                 ::oDbf:cCodAge := ::oFacCliT:cCodAge
+                 ::oDbf:CDOCMOV := ::oFacCliT:cSerie + "/" + Str( ::oFacCliT:nNumFac ) + "/" + ::oFacCliT:cSufFac
+                 ::oDbf:CTIPDOC := "Factura"
+                 ::oDbf:CREFART := ::oFacCliL:cRef
+                 ::oDbf:CDESART := ::oFacCliL:cDetalle
 
-                         if ::oDbfAge:Seek( ::oFacCliT:cCodAge )
-                            ::oDbf:cNomAge := ::oDbfAge:cApeAge + ", " + ::oDbfAge:cNbrAge
-                         end if
+                 if ::oDbfAge:Seek( ::oFacCliT:cCodAge )
+                 ::oDbf:cNomAge := ::oDbfAge:cApeAge + ", " + ::oDbfAge:cNbrAge
+                 end if
 
-                         ::AddTipFac( ::oFacCliL:cTipMov )
+                 ::oDbf:NUNDCAJ := ::oFacCliL:NCANENT
+                 ::oDbf:NUNDART := ::oFacCliL:NUNICAJA
+                 ::oDbf:NCAJUND := nTotNFacCli( ::oFacCliL )
+                 ::oDbf:nBasCom := nImpLFacCli( ::oFacCliT:cAlias, ::oFacCliL:cAlias, ::nDecOut, ::nDerOut, ::nValDiv, .f., .t., .f., .f. )
+                 ::oDbf:nTotCom := nComLFacCli( ::oFacCliT:cAlias, ::oFacCliL:cAlias, ::nDecOut, ::nDerOut, ::nValDiv )
 
-                         ::oDbf:Save()
+                 ::oDbf:Save()
 
-                     end if
-
-                  end if
-
-               /*
-               Pasamos de los tipos de ventas
-               */
-
-               else
-
-                  if ::oDbf:Seek( ::oFacCliT:cCodAge + ::oFacCliL:cRef )
-
-                     ::oDbf:Load()
-
-                     ::oDbf:NUNDCAJ += ::oFacCliL:NCANENT
-                     ::oDbf:NUNDART += ::oFacCliL:NUNICAJA
-                     ::oDbf:NCAJUND += nTotNFacCli( ::oFacCliL )
-                     ::oDbf:nBasCom += nImpLFacCli( ::oFacCliT:cAlias, ::oFacCliL:cAlias, ::nDecOut, ::nDerOut, ::nValDiv, .f., .t., .f., .f. )
-                     ::oDbf:nTotCom += nComLFacCli( ::oFacCliT:cAlias, ::oFacCliL:cAlias, ::nDecOut, ::nDerOut, ::nValDiv )
-
-                     ::oDbf:Save()
-
-                  else
-
-                     ::oDbf:Append()
-
-                     ::oDbf:cCodAge := ::oFacCliT:cCodAge
-                     ::oDbf:CDOCMOV := ::oFacCliT:cSerie + "/" + Str( ::oFacCliT:nNumFac ) + "/" + ::oFacCliT:cSufFac
-                     ::oDbf:CTIPDOC := "Factura"
-                     ::oDbf:CREFART := ::oFacCliL:cRef
-                     ::oDbf:CDESART := ::oFacCliL:cDetalle
-
-                     if ::oDbfAge:Seek( ::oFacCliT:cCodAge )
-                     ::oDbf:cNomAge := ::oDbfAge:cApeAge + ", " + ::oDbfAge:cNbrAge
-                     end if
-
-                     ::oDbf:NUNDCAJ := ::oFacCliL:NCANENT
-                     ::oDbf:NUNDART := ::oFacCliL:NUNICAJA
-                     ::oDbf:NCAJUND := nTotNFacCli( ::oFacCliL )
-                     ::oDbf:nBasCom := nImpLFacCli( ::oFacCliT:cAlias, ::oFacCliL:cAlias, ::nDecOut, ::nDerOut, ::nValDiv, .f., .t., .f., .f. )
-                     ::oDbf:nTotCom := nComLFacCli( ::oFacCliT:cAlias, ::oFacCliL:cAlias, ::nDecOut, ::nDerOut, ::nValDiv )
-
-                     ::oDbf:Save()
-
-                  end if
-
-               end if
+              end if
 
             end if
 
@@ -483,60 +382,14 @@ RETURN ( ::oDbf:LastRec() > 0 )
 //---------------------------------------------------------------------------//
 
 METHOD AddTipAlb( cTipMov )
-
-   if ::oDbfTvta:Seek( cTipMov )
-
-      if ::oDbfTvta:nUndMov == 1
-         ::oDbf:NUNDCAJ += ::oAlbCliL:NCANENT
-         ::oDbf:NCAJUND += nTotNAlbCli( ::oAlbCliL )
-         ::oDbf:NUNDART += ::oAlbCliL:NUNICAJA
-      elseif ::oDbfTvta:nUndMov == 2
-         ::oDbf:NUNDCAJ += - ::oAlbCliL:NCANENT
-         ::oDbf:NCAJUND += - nTotNAlbCli( ::oAlbCliL )
-         ::oDbf:NUNDART += - ::oAlbCliL:NUNICAJA
-      end if
-
-      if ::oDbfTvta:nImpMov == 1
-         ::oDbf:nComAge := ::oAlbCliL:nComAge
-         ::oDbf:nBasCom += nImpLAlbCli( ::oAlbCliT:cAlias, ::oAlbCliL:cAlias, ::nDecOut, ::nDerOut )
-         ::oDbf:nTotCom += nComLAlbCli( ::oAlbCliT:cAlias, ::oAlbCliL:cAlias, ::nDecOut, ::nDerOut  )
-      elseif ::oDbfTvta:nImpMov == 2
-         ::oDbf:nComAge := ::oAlbCliL:nComAge
-         ::oDbf:nBasCom += nImpLAlbCli( ::oAlbCliT:cAlias, ::oAlbCliL:cAlias, ::nDecOut, ::nDerOut ) * -1
-         ::oDbf:nTotCom += nComLAlbCli( ::oAlbCliT:cAlias, ::oAlbCliL:cAlias, ::nDecOut, ::nDerOut  ) * -1
-      end if
-
-   end if
+  
 
 RETURN NIL
 
 //---------------------------------------------------------------------------//
 
 METHOD AddTipFac( cTipMov ) CLASS TrlAgeVta
-
-   if ::oDbfTvta:Seek( cTipMov )
-
-      ::oDbf:cTipVen    := ::oDbfTvta:cDesMov
-
-      if ::oDbfTvta:nUndMov == 1
-         ::oDbf:NUNDCAJ += ::oFacCliL:NCANENT
-         ::oDbf:NCAJUND += nTotNFacCli( ::oFacCliL )
-         ::oDbf:NUNDART += ::oFacCliL:NUNICAJA
-      elseif ::oDbfTvta:nUndMov == 2
-         ::oDbf:NUNDCAJ += - ::oFacCliL:NCANENT
-         ::oDbf:NCAJUND += - nTotNFacCli( ::oFacCliL )
-         ::oDbf:NUNDART += - ::oFacCliL:NUNICAJA
-      end if
-
-      if ::oDbfTvta:nImpMov == 1
-         ::oDbf:nBasCom += nImpLFacCli( ::oFacCliT:cAlias, ::oFacCliL:cAlias, ::nDecOut, ::nDerOut )
-         ::oDbf:nTotCom += nComLFacCli( ::oFacCliT:cAlias, ::oFacCliL:cAlias, ::nDecOut, ::nDerOut  )
-      elseif ::oDbfTvta:nImpMov == 2
-         ::oDbf:nBasCom -= nImpLFacCli( ::oFacCliT:cAlias, ::oFacCliL:cAlias, ::nDecOut, ::nDerOut )
-         ::oDbf:nTotCom -= nComLFacCli( ::oFacCliT:cAlias, ::oFacCliL:cAlias, ::nDecOut, ::nDerOut  )
-      end if
-
-   end if
+  
 
 RETURN nil
 

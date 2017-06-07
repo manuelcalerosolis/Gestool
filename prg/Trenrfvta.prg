@@ -20,7 +20,6 @@ CLASS TRenRFVta FROM TInfPArt
    DATA  oFacCliL       AS OBJECT
    DATA  oFacRecT       AS OBJECT
    DATA  oFacRecL       AS OBJECT
-   DATA  oDbfTvta       AS OBJECT
 
    DATA  nTotVentas     AS NUMERIC   INIT 0
    DATA  nTotCosto      AS NUMERIC   INIT 0
@@ -66,7 +65,7 @@ METHOD OpenFiles()
 
    BEGIN SEQUENCE
 
-   DATABASE NEW ::oDbfTvta PATH ( cPatDat() ) FILE "TVTA.DBF"     VIA ( cDriver() ) SHARED INDEX "TVTA.CDX"
+    
 
    ::oAlbCliT := TDataCenter():oAlbCliT()
 
@@ -124,9 +123,7 @@ METHOD CloseFiles()
    if !Empty( ::oAlbCliL ) .and. ::oAlbCliL:Used()
       ::oAlbCliL:End()
    end if
-   if !Empty( ::oDbfTvta ) .and. ::oDbfTvta:Used()
-      ::oDbfTvta:End()
-   end if
+    
 
    ::oTikCliT := nil
    ::oTikCliL := nil
@@ -136,7 +133,7 @@ METHOD CloseFiles()
    ::oFacRecL := nil
    ::oAlbCliT := nil
    ::oAlbCliL := nil
-   ::oDbfTvta := nil
+    
 
 RETURN ( Self )
 

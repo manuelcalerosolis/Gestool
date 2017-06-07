@@ -52,7 +52,7 @@ CLASS TRutCliInf FROM TInfGen
    DATA  oEstado     AS OBJECT
    DATA  oAlbCliT    AS OBJECT
    DATA  oAlbCliL    AS OBJECT
-   DATA  oDbfTvta    AS OBJECT
+    
    DATA  aEstado     AS ARRAY    INIT  { "No Facturado", "Facturado", "Todos" } ;
 
    METHOD OpenFiles()
@@ -78,8 +78,6 @@ METHOD OpenFiles()
 
    DATABASE NEW ::oAlbCliL PATH ( cPatEmp() ) FILE "ALBCLIL.DBF" VIA ( cDriver() ) SHARED INDEX "ALBCLIL.CDX"
 
-   DATABASE NEW ::oDbfTvta  PATH ( cPatDat() ) FILE "TVTA.DBF" VIA ( cDriver() ) SHARED INDEX "TVTA.CDX"
-
    DATABASE NEW ::oDbfArt PATH ( cPatArt() ) FILE "ARTICULO.DBF" VIA ( cDriver() ) SHARED INDEX "ARTICULO.CDX"
 
 RETURN ( Self )
@@ -90,7 +88,6 @@ METHOD CloseFiles()
 
    ::oAlbCliT:End()
    ::oAlbCliL:End()
-   ::oDbfTvta:End()
 
 RETURN ( Self )
 

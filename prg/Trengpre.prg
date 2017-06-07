@@ -14,7 +14,6 @@ CLASS TRenGPre FROM TInfGrp
    DATA  oPreCliL    AS OBJECT
    DATA  oEstado     AS OBJECT
    DATA  oDbfFam     AS OBJECT
-   DATA  oDbfTvta    AS OBJECT
    DATA  aEstado     AS ARRAY    INIT { "Pendiente", "Aceptado", "Todos" }
 
    METHOD Create()
@@ -39,8 +38,6 @@ METHOD OpenFiles() CLASS TRenGPre
 
    BEGIN SEQUENCE
 
-   DATABASE NEW ::oDbfTvta PATH ( cPatDat() ) FILE "TVTA.DBF" VIA ( cDriver() ) SHARED INDEX "TVTA.CDX"
-
    DATABASE NEW ::oDbfFam PATH ( cPatArt() )  FILE "FAMILIAS.DBF" VIA ( cDriver() ) SHARED INDEX "FAMILIAS.CDX"
 
    ::oPreCliT  := TDataCenter():oPreCliT()
@@ -63,9 +60,6 @@ RETURN ( lOpen )
 
 METHOD CloseFiles() CLASS TRenGPre
 
-   if !Empty( ::oDbfTvta ) .and. ::oDbfTvta:Used()
-      ::oDbfTvta:End()
-   end if
    if !Empty( ::oDbfFam ) .and. ::oDbfFam:Used()
       ::oDbfFam:End()
    end if
@@ -76,7 +70,6 @@ METHOD CloseFiles() CLASS TRenGPre
       ::oPreCliL:End()
    end if
 
-   ::oDbfTvta := nil
    ::oDbfFam := nil
    ::oPreCliT := nil
    ::oPreCliL := nil

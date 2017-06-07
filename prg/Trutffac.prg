@@ -13,7 +13,7 @@ CLASS TRFFacInf FROM TInfGen
    DATA  oFacCliL    AS OBJECT
    DATA  oFacRecT    AS OBJECT
    DATA  oFacRecL    AS OBJECT
-   DATA  oDbfTvta    AS OBJECT
+    
    DATA  aEstado     AS ARRAY    INIT  { "Pendiente", "Liquidada", "Todas" } ;
 
    METHOD Create()
@@ -75,8 +75,6 @@ METHOD OpenFiles()
 
    DATABASE NEW ::oFacRecL PATH ( cPatEmp() ) FILE "FACRECL.DBF" VIA ( cDriver() ) SHARED INDEX "FACRECL.CDX"
 
-   DATABASE NEW ::oDbfTvta  PATH ( cPatDat() ) FILE "TVTA.DBF" VIA ( cDriver() ) SHARED INDEX "TVTA.CDX"
-
    DATABASE NEW ::oDbfArt PATH ( cPatArt() ) FILE "ARTICULO.DBF" VIA ( cDriver() ) SHARED INDEX "ARTICULO.CDX"
 
    RECOVER
@@ -107,15 +105,13 @@ METHOD CloseFiles()
    if !Empty( ::oFacRecL ) .and. ::oFacRecL:Used()
       ::oFacRecL:End()
    end if
-   if !Empty( ::oDbfTvta ) .and. ::oDbfTvta:Used()
-      ::oDbfTvta:End()
-   end if
+    
 
    ::oFacCliT := nil
    ::oFacCliL := nil
    ::oFacRecT := nil
    ::oFacRecL := nil
-   ::oDbfTvta := nil
+    
 
 RETURN ( Self )
 

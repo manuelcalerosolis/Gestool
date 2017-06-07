@@ -14,7 +14,7 @@ CLASS TRnkArticulo FROM TInfGen
    DATA  oFacCliT    AS OBJECT
    DATA  oFacCliL    AS OBJECT
    DATA  oDbfIva     AS OBJECT
-   DATA  oDbfTvta    AS OBJECT
+    
    DATA  oLimit      AS OBJECT
    DATA  nLimit                  INIT 0
    DATA  lAllPrc     AS LOGIC    INIT .t.
@@ -75,8 +75,6 @@ METHOD OpenFiles() CLASS TRnkArticulo
 
    DATABASE NEW ::oDbfIva   PATH ( cPatDat() ) FILE "TIVA.DBF" VIA ( cDriver() ) SHARED INDEX "TIVA.CDX"
 
-   DATABASE NEW ::oDbfTvta  PATH ( cPatDat() ) FILE "TVTA.DBF" VIA ( cDriver() ) SHARED INDEX "TVTA.CDX"
-
    ::bForReport   := {|| ::lAllPrc .or. ::oDbf:nTotNet >= ::nLimit }
 
    RECOVER
@@ -101,16 +99,14 @@ METHOD CloseFiles() CLASS TRnkArticulo
    if !Empty( ::oFacCliL ) .and. ::oFacCliL:Used()
       ::oFacCliL:End()
    end if
-   if !Empty( ::oDbfTvta ) .and. ::oDbfTvta:Used()
-      ::oDbfTvta:End()
-   end if
+    
    if !Empty( ::oDbfIva ) .and. ::oDbfIva:Used()
       ::oDbfIva:End()
    end if
 
    ::oFacCliT := nil
    ::oFacCliL := nil
-   ::oDbfTvta := nil
+    
    ::oDbfIva  := nil
 
 RETURN ( Self )

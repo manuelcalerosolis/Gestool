@@ -12,7 +12,6 @@ CLASS TInfPedTip FROM TInfTip
    DATA  oPedCliT    AS OBJECT
    DATA  oPedCliL    AS OBJECT
    DATA  oArt        AS OBJECT
-   DATA  oDbfTvta    AS OBJECT
    DATA  aEstado     AS ARRAY    INIT { "Pendiente", "Parcialmente", "Pendiente y parc.", "Entregado", "Todos" }
 
    METHOD Create()
@@ -47,8 +46,6 @@ METHOD OpenFiles() CLASS TInfPedTip
    ::oPedCliT := TDataCenter():oPedCliT()
 
    DATABASE NEW ::oPedCliL PATH ( cPatEmp() ) FILE "PedCliL.DBF" VIA ( cDriver() ) SHARED INDEX "PedCliL.CDX"
-
-   DATABASE NEW ::oDbfTvta  PATH ( cPatDat() ) FILE "TVTA.DBF" VIA ( cDriver() ) SHARED INDEX "TVTA.CDX"
 
    DATABASE NEW ::oArt  PATH ( cPatArt() ) FILE "ARTICULO.DBF" VIA ( cDriver() ) SHARED INDEX "ARTICULO.CDX"
 
@@ -182,10 +179,6 @@ METHOD lGenerate() CLASS TInfPedTip
 
                   ::oDbf:cDocMov    := lTrim( ::oPedCliL:CSERPED ) + "/" + lTrim ( Str( ::oPedCliL:NNUMPED ) ) + "/" + lTrim ( ::oPedCliL:CSUFPED )
                   ::oDbf:dFecMov    := ::oPedCliT:DFECPED
-
-                  if ::oDbfTvta:Seek( ::oPedCliL:cTipMov )
-                     ::oDbf:cTipVen := ::oDbfTvta:cDesMov
-                  end if
 
                   ::oDbf:Save()
 

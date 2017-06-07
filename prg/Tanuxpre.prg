@@ -11,7 +11,7 @@ CLASS TAnuXPre FROM TInfGCLI
    DATA  oEstado     AS OBJECT
    DATA  oPreCliT    AS OBJECT
    DATA  oPreCliL    AS OBJECT
-   DATA  oDbfTvta    AS OBJECT
+    
    DATA  aEstado     AS ARRAY    INIT  { "Pendiente", "Aceptado", "Todos" }
 
    METHOD create ()
@@ -73,16 +73,14 @@ METHOD CloseFiles()
    if !Empty( ::oPreCliL ) .and. ::oPreCliL:Used()
       ::oPreCliL:End()
    end if
-   if !Empty( ::oDbfTvta ) .and. ::oDbfTvta:Used()
-      ::oDbfTvta:End()
-   end if
+    
    if !Empty( ::oDbfCli ) .and. ::oDbfCli:Used()
       ::oDbfCli:End()
    end if
 
    ::oPreCliT := nil
    ::oPreCliL := nil
-   ::oDbfTvta := nil
+    
    ::oDbfCli  := nil
 
 RETURN ( Self )

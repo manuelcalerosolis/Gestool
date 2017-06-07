@@ -13,7 +13,7 @@ CLASS TRenUsrAlb FROM TInfUsr
    DATA  oAlbCliT    AS OBJECT
    DATA  oAlbCliL    AS OBJECT
    DATA  oEstado     AS OBJECT
-   DATA  oDbfTvta    AS OBJECT
+    
    DATA  aEstado     AS ARRAY    INIT  { "No facturado", "Facturado", "Todos" } ;
 
    METHOD Create()
@@ -38,7 +38,7 @@ METHOD OpenFiles()
 
    BEGIN SEQUENCE
 
-   DATABASE NEW ::oDbfTvta PATH ( cPatDat() ) FILE "TVTA.DBF" VIA ( cDriver() ) SHARED INDEX "TVTA.CDX"
+    
 
    ::oAlbCliT := TDataCenter():oAlbCliT()
 
@@ -60,9 +60,7 @@ RETURN ( lOpen )
 
 METHOD CloseFiles()
 
-   if !Empty( ::oDbfTvta ) .and. ::oDbfTvta:Used()
-      ::oDbfTvta:End()
-   end if
+    
    if !Empty( ::oAlbCliT ) .and. ::oAlbCliT:Used()
       ::oAlbCliT:End()
    end if
@@ -70,7 +68,7 @@ METHOD CloseFiles()
       ::oAlbCliL:End()
    end if
 
-   ::oDbfTvta := nil
+    
    ::oAlbCliT := nil
    ::oAlbCliL := nil
 

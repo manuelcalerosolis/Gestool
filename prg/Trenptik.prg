@@ -13,7 +13,7 @@ CLASS TRenPTik FROM TInfTrn
    DATA  oTikCliL    AS OBJECT
    DATA  oEstado     AS OBJECT
    DATA  oArt        AS OBJECT
-   DATA  oDbfTvta    AS OBJECT
+    
 
    METHOD Create()
 
@@ -52,7 +52,7 @@ METHOD OpenFiles() CLASS TRenUTik
 
    DATABASE NEW ::oArt     PATH ( cPatArt() ) FILE "ARTICULO.DBF" VIA ( cDriver() ) SHARED INDEX "ARTICULO.CDX"
 
-   DATABASE NEW ::oDbfTvta PATH ( cPatDat() ) FILE "TVTA.DBF" VIA ( cDriver() ) SHARED INDEX "TVTA.CDX"
+    
 
    DATABASE NEW ::oTikCliT PATH ( cPatEmp() ) FILE "TIKET.DBF" VIA ( cDriver() ) SHARED INDEX "TIKET.CDX"
    ::oTikCliT:OrdSetFocus( "dFecTik" )
@@ -66,7 +66,6 @@ RETURN ( Self )
 METHOD CloseFiles() CLASS TRenUTik
 
    ::oArt:End()
-   ::oDbfTvta:End()
    ::oTikCliT:End()
    ::oTikCliL:End()
 

@@ -13,7 +13,7 @@ CLASS TRenPep FROM TPrvAlm
    DATA  oPedPrvL    AS OBJECT
    DATA  oEstado     AS OBJECT
    DATA  oArt        AS OBJECT
-   DATA  oDbfTvta    AS OBJECT
+    
 
    METHOD Create()
 
@@ -50,7 +50,7 @@ METHOD OpenFiles() CLASS TRenPep
 
    DATABASE NEW ::oArt     PATH ( cPatArt() ) FILE "ARTICULO.DBF" VIA ( cDriver() ) SHARED INDEX "ARTICULO.CDX"
 
-   DATABASE NEW ::oDbfTvta PATH ( cPatDat() ) FILE "TVTA.DBF" VIA ( cDriver() ) SHARED INDEX "TVTA.CDX"
+    
 
    DATABASE NEW ::oPedPrvT PATH ( cPatEmp() ) FILE "PEDPROVT.DBF" VIA ( cDriver() ) SHARED INDEX "PEDPROVT.CDX"
    ::oPedPrvT:OrdSetFocus( "dFecPed" )
@@ -66,7 +66,6 @@ RETURN ( Self )
 METHOD CloseFiles() CLASS TRenPep
 
    ::oArt:End()
-   ::oDbfTvta:End()
    ::oPedPrvT:End()
    ::oPedPrvL:End()
    ::oDbfPrv:End()

@@ -117,10 +117,6 @@ METHOD AddAlb()
    ::oDbf:cDocMov    := lTrim( ::oAlbCliL:CSERALB ) + "/" + lTrim ( Str( ::oAlbCliL:NNUMALB ) ) + "/" + lTrim ( ::oAlbCliL:CSUFALB )
    ::oDbf:dFecMov    := ::oAlbCliT:DFECALB
 
-   if ::oDbfTvta:Seek( ::oAlbCliL:cTipMov )
-      ::oDbf:cTipVen := ::oDbfTvta:cDesMov
-   end if
-
    ::oDbf:Save()
 
 RETURN ( self )
@@ -147,11 +143,7 @@ METHOD AddFac()
 
    ::oDbf:cDocMov    := lTrim( ::oFacCliL:CSERIE ) + "/" + lTrim ( Str( ::oFacCliL:NNUMFAC ) ) + "/" + lTrim ( ::oFacCliL:CSUFFAC )
    ::oDbf:dFecMov    := ::oFacCliT:DFECFAC
-
-   if ::oDbfTvta:Seek( ::oFacCliL:cTipMov )
-      ::oDbf:cTipVen := ::oDbfTvta:cDesMov
-   end if
-
+   
    ::oDbf:Save()
 
 RETURN ( self )

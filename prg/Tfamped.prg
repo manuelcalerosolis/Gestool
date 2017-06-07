@@ -212,9 +212,6 @@ METHOD lGenerate() CLASS TInfFPed
                   ::oDbf:cDocMov    := lTrim( ::oPedCliL:CSERPED ) + "/" + lTrim ( Str( ::oPedCliL:NNUMPED ) ) + "/" + lTrim ( ::oPedCliL:CSUFPED )
                   ::oDbf:dFecMov    := ::oPedCliT:dFecPed
 
-                  if ::oDbfTvta:Seek( ::oPedCliL:cTipMov )
-                     ::oDbf:cTipVen := ::oDbfTvta:cDesMov
-                  end if
                   ::oDbf:Save()
 
             end if

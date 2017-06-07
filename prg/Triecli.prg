@@ -47,7 +47,7 @@ CLASS TRieCli FROM TInfGen
    DATA  oFacCliT    AS OBJECT
    DATA  oFacCliL    AS OBJECT
    DATA  oFacCliP    AS OBJECT
-   DATA  oDbfTvta    AS OBJECT
+    
    DATA  oDbfIva     AS OBJECT
    DATA  oFacCliP    AS OBJECT
 
@@ -75,8 +75,6 @@ METHOD OpenFiles()
 
    ::oFacCliP := TDataCenter():oFacCliP()
 
-   DATABASE NEW ::oDbfTvta PATH ( cPatDat() ) FILE "TVTA.DBF"     VIA ( cDriver() ) SHARED INDEX "TVTA.CDX"
-
    DATABASE NEW ::oDbfIva  PATH ( cPatDat() ) FILE  "TIVA.DBF"    VIA ( cDriver() ) SHARED INDEX "TIVA.CDX"
 
    DATABASE NEW ::oAntCliT PATH ( cPatEmp() ) FILE  "ANTCLIT.DBF" VIA ( cDriver() ) SHARED INDEX "ANTCLIT.CDX"
@@ -90,7 +88,6 @@ METHOD CloseFiles()
    ::oFacCliT:End()
    ::oFacCliL:End()
    ::oFacCliP:End()
-   ::oDbfTvta:End()
    ::oDbfIva:End()
    ::oAntCliT:End()
 

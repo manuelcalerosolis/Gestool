@@ -13,7 +13,6 @@ CLASS TRenCTik FROM TInfCli
    DATA  oTikCliT    AS OBJECT
    DATA  oTikCliL    AS OBJECT
    DATA  oEstado     AS OBJECT
-   DATA  oDbfTvta    AS OBJECT
 
    METHOD Create()
 
@@ -50,8 +49,6 @@ METHOD OpenFiles() CLASS TRenCTik
 
    BEGIN SEQUENCE
 
-   DATABASE NEW ::oDbfTvta PATH ( cPatDat() ) FILE "TVTA.DBF" VIA ( cDriver() ) SHARED INDEX "TVTA.CDX"
-
    DATABASE NEW ::oTikCliT PATH ( cPatEmp() ) FILE "TIKET.DBF" VIA ( cDriver() ) SHARED INDEX "TIKET.CDX"
 
    DATABASE NEW ::oTikCliL PATH ( cPatEmp() ) FILE "TIKEL.DBF" VIA ( cDriver() ) SHARED INDEX "TIKEL.CDX"
@@ -72,9 +69,6 @@ RETURN ( lOpen )
 
 METHOD CloseFiles() CLASS TRenCTik
 
-   if !Empty( ::oDbfTvta ) .and. ::oDbfTvta:Used()
-      ::oDbfTvta:End()
-   end if
    if !Empty( ::oTikCliT ) .and. ::oTikCliT:Used()
       ::oTikCliT:End()
    end if
@@ -82,7 +76,6 @@ METHOD CloseFiles() CLASS TRenCTik
       ::oTikCliL:End()
    end if
 
-   ::oDbfTvta := nil
    ::oTikCliT := nil
    ::oTikCliL := nil
 

@@ -14,7 +14,6 @@ CLASS TRenGAlb FROM TInfGrp
    DATA  oAlbCliL    AS OBJECT
    DATA  oEstado     AS OBJECT
    DATA  oDbfFam     AS OBJECT
-   DATA  oDbfTvta    AS OBJECT
    DATA  aEstado     AS ARRAY    INIT  { "No facturado", "Facturado", "Todos" }
 
    METHOD Create()
@@ -52,8 +51,6 @@ METHOD OpenFiles() CLASS TRenGAlb
 
    BEGIN SEQUENCE
 
-   DATABASE NEW ::oDbfTvta PATH ( cPatDat() ) FILE "TVTA.DBF" VIA ( cDriver() ) SHARED INDEX "TVTA.CDX"
-
    DATABASE NEW ::oDbfFam PATH ( cPatArt() ) FILE "FAMILIAS.DBF" VIA ( cDriver() ) SHARED INDEX "FAMILIAS.CDX"
 
    ::oAlbCliT := TDataCenter():oAlbCliT()
@@ -76,9 +73,6 @@ RETURN ( lOpen )
 
 METHOD CloseFiles() CLASS TRenGAlb
 
-   if !Empty( ::oDbfTvta ) .and. ::oDbfTvta:Used()
-      ::oDbfTvta:End()
-   end if
    if !Empty( ::oDbfFam ) .and. ::oDbfFam:Used()
       ::oDbfFam:End()
    end if
@@ -89,7 +83,6 @@ METHOD CloseFiles() CLASS TRenGAlb
       ::oAlbCliL:End()
    end if
 
-   ::oDbfTvta := nil
    ::oDbfFam  := nil
    ::oAlbCliT := nil
    ::oAlbCliL := nil

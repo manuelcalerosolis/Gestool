@@ -12,7 +12,7 @@ CLASS TDiaPPed FROM TInfGen
    DATA  oPedPrvT    AS OBJECT
    DATA  oPedPrvL    AS OBJECT
    DATA  oDbfPago    AS OBJECT
-   DATA  oDbfTvta    AS OBJECT
+    
    DATA  aEstado     AS ARRAY    INIT  { "Pendiente", "Parcialmente", "Entregado", "Todos" }
    DATA  lExcCredito AS LOGIC    INIT .f.
 

@@ -20,7 +20,7 @@ CLASS TRenUVta FROM TInfRut
    DATA  oFacCliL    AS OBJECT
    DATA  oFacRecT    AS OBJECT
    DATA  oFacRecL    AS OBJECT
-   DATA  oDbfTvta    AS OBJECT
+    
 
    METHOD Create()
 
@@ -56,7 +56,7 @@ METHOD OpenFiles() CLASS TRenUVta
 
    BEGIN SEQUENCE
 
-   DATABASE NEW ::oDbfTvta PATH ( cPatDat() ) FILE "TVTA.DBF"     VIA ( cDriver() ) SHARED INDEX "TVTA.CDX"
+    
 
    ::oAlbCliT := TDataCenter():oAlbCliT()
 
@@ -114,9 +114,7 @@ METHOD CloseFiles() CLASS TRenUVta
    if !Empty( ::oAlbCliL ) .and. ::oAlbCliL:Used()
       ::oAlbCliL:End()
    end if
-   if !Empty( ::oDbfTvta ) .and. ::oDbfTvta:Used()
-      ::oDbfTvta:End()
-   end if
+    
 
    ::oTikCliT := nil
    ::oTikCliL := nil
@@ -126,7 +124,7 @@ METHOD CloseFiles() CLASS TRenUVta
    ::oFacRecL := nil
    ::oAlbCliT := nil
    ::oAlbCliL := nil
-   ::oDbfTvta := nil
+    
 
 RETURN ( Self )
 

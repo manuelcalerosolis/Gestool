@@ -12,7 +12,7 @@ CLASS TInfTFac FROM TInfTip
    DATA  oFacCliT    AS OBJECT
    DATA  oFacCliL    AS OBJECT
    DATA  oArt        AS OBJECT
-   DATA  oDbfTvta    AS OBJECT
+    
    DATA  aEstado     AS ARRAY    INIT { "Pendientes", "Cobradas", "Todas" }
 
    METHOD Create()
@@ -53,8 +53,6 @@ METHOD OpenFiles() CLASS TInfTFac
 
    DATABASE NEW ::oArt PATH ( cPatArt() ) FILE "ARTICULO.DBF" VIA ( cDriver() ) SHARED INDEX "ARTICULO.CDX"
 
-   DATABASE NEW ::oDbfTvta  PATH ( cPatDat() ) FILE "TVTA.DBF" VIA ( cDriver() ) SHARED INDEX "TVTA.CDX"
-
 RETURN ( Self )
 
 //---------------------------------------------------------------------------//
@@ -64,8 +62,6 @@ METHOD CloseFiles() CLASS TInfTFac
    ::oFacCliT:End()
    ::oFacCliL:End()
    ::oArt:End()
-   ::oDbfTvta:End()
-
 
 RETURN ( Self )
 

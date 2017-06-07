@@ -41,7 +41,7 @@ CLASS TInfVenAlb FROM TInfGen
    DATA  oAlbCliT    AS OBJECT
    DATA  oAlbCliL    AS OBJECT
    DATA  oFamilia    AS OBJECT
-   DATA  oDbfTvta    AS OBJECT
+    
    DATA  aEstado     AS ARRAY    INIT { "No facturado", "Facturado", "Todos" }
 
    METHOD OpenFiles()
@@ -67,8 +67,6 @@ METHOD OpenFiles() CLASS TInfVenAlb
    DATABASE NEW ::oAlbCliL PATH ( cPatEmp() ) FILE "ALBCLIL.DBF" VIA ( cDriver() ) SHARED INDEX "ALBCLIL.CDX"
    ::oAlbCliL:OrdSetFocus( "CREF" )
 
-   DATABASE NEW ::oDbfTvta  PATH ( cPatDat() ) FILE "TVTA.DBF" VIA ( cDriver() ) SHARED INDEX "TVTA.CDX"
-
    DATABASE NEW ::oFamilia PATH ( cPatArt() ) FILE "FAMILIAS.DBF" VIA ( cDriver() ) SHARED INDEX "FAMILIAS.CDX"
 
 RETURN ( Self )
@@ -79,7 +77,6 @@ METHOD CloseFiles() CLASS TInfVenAlb
 
    ::oAlbCliT:End()
    ::oAlbCliL:End()
-   ::oDbfTvta:End()
    ::oFamilia:End()
 
 RETURN ( Self )

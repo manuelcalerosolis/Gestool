@@ -16,7 +16,6 @@ CLASS TRenTVta FROM TInfTip
    DATA  oFacCliL       AS OBJECT
    DATA  oFacRecT       AS OBJECT
    DATA  oFacRecL       AS OBJECT
-   DATA  oDbfTvta       AS OBJECT
    DATA  oDbfArt        AS OBJECT
 
    DATA  nTotVentas     AS NUMERIC   INIT 0
@@ -68,7 +67,7 @@ METHOD OpenFiles() CLASS TRenTVta
 
    BEGIN SEQUENCE
 
-   DATABASE NEW ::oDbfTvta PATH ( cPatDat() ) FILE "TVTA.DBF"     VIA ( cDriver() ) SHARED INDEX "TVTA.CDX"
+    
 
    ::oAlbCliT := TDataCenter():oAlbCliT()
 
@@ -128,9 +127,7 @@ METHOD CloseFiles() CLASS TRenTVta
    if !Empty( ::oAlbCliL ) .and. ::oAlbCliL:Used()
       ::oAlbCliL:End()
    end if
-   if !Empty( ::oDbfTvta ) .and. ::oDbfTvta:Used()
-      ::oDbfTvta:End()
-   end if
+    
    if !Empty( ::oDbfArt ) .and. ::oDbfArt:Used()
       ::oDbfArt:End()
    end if
@@ -143,7 +140,7 @@ METHOD CloseFiles() CLASS TRenTVta
    ::oFacRecL := nil
    ::oAlbCliT := nil
    ::oAlbCliL := nil
-   ::oDbfTvta := nil
+    
    ::oDbfArt := nil
 
 RETURN ( Self )

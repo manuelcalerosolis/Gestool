@@ -12,7 +12,6 @@ CLASS TInfTPre FROM TInfTip
    DATA  oPreCliT    AS OBJECT
    DATA  oPreCliL    AS OBJECT
    DATA  oArt        AS OBJECT
-   DATA  oDbfTvta    AS OBJECT
    DATA  aEstado     AS ARRAY    INIT { "Pendiente", "Aceptado", "Todos" }
 
    METHOD Create()
@@ -50,8 +49,6 @@ METHOD OpenFiles() CLASS TInfPreTip
 
    DATABASE NEW ::oPreCliL PATH ( cPatEmp() ) FILE "PRECLIL.DBF" VIA ( cDriver() ) SHARED INDEX "PRECLIL.CDX"
 
-   DATABASE NEW ::oDbfTvta  PATH ( cPatDat() ) FILE "TVTA.DBF" VIA ( cDriver() ) SHARED INDEX "TVTA.CDX"
-
    DATABASE NEW ::oArt PATH ( cPatArt() ) FILE "ARTICULO.DBF" VIA ( cDriver() ) SHARED INDEX "ARTICULO.CDX"
 
 RETURN ( Self )
@@ -62,7 +59,6 @@ METHOD CloseFiles() CLASS TInfPreTip
 
    ::oPreCliT:End()
    ::oPreCliL:End()
-   ::oDbfTvta:End()
    ::oArt:End()
 
 RETURN ( Self )
@@ -182,10 +178,6 @@ METHOD lGenerate() CLASS TInfPreTip
 
                   ::oDbf:cDocMov    := lTrim( ::oPreCliL:CSERPRE ) + "/" + lTrim ( Str( ::oPreCliL:NNUMPRE ) ) + "/" + lTrim ( ::oPreCliL:CSUFPRE )
                   ::oDbf:dFecMov    := ::oPreCliT:DFECPRE
-
-                  if ::oDbfTvta:Seek( ::oPreCliL:cTipMov )
-                     ::oDbf:cTipVen := ::oDbfTvta:cDesMov
-                  end if
 
                   ::oDbf:Save()
 

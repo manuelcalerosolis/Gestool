@@ -20,7 +20,7 @@ CLASS TRenUsrVta FROM TInfUsr
    DATA  oFacRecL    AS OBJECT
    DATA  oTikCliT    AS OBJECT
    DATA  oTikCliL    AS OBJECT
-   DATA  oDbfTvta    AS OBJECT
+    
 
    METHOD Create()
 
@@ -55,8 +55,6 @@ METHOD OpenFiles()
    local oBlock   := ErrorBlock( {| oError | ApoloBreak( oError ) } )
 
    BEGIN SEQUENCE
-
-   DATABASE NEW ::oDbfTvta PATH ( cPatDat() ) FILE "TVTA.DBF"    VIA ( cDriver() ) SHARED INDEX "TVTA.CDX"
 
    ::oAlbCliT := TDataCenter():oAlbCliT()
 
@@ -114,9 +112,7 @@ METHOD CloseFiles()
    if !Empty( ::oTikCliL ) .and. ::oTikCliL:Used()
       ::oTikCliL:End()
    end if
-   if !Empty( ::oDbfTvta ) .and. ::oDbfTvta:Used()
-      ::oDbfTvta:End()
-   end if
+    
 
    ::oFacCliT := nil
    ::oFacCliL := nil
@@ -126,7 +122,7 @@ METHOD CloseFiles()
    ::oAlbCliL := nil
    ::oTikCliT := nil
    ::oTikCliL := nil
-   ::oDbfTvta := nil
+    
 
 RETURN ( Self )
 

@@ -12,7 +12,6 @@ CLASS TTipFam FROM TInfGen
    DATA  lExcCero       AS LOGIC       INIT .f.
    DATA  oFacCliT       AS OBJECT
    DATA  oFacCliL       AS OBJECT
-   DATA  oDbfTvta       AS OBJECT
    DATA  oEstado        AS OBJECT
    DATA  aEstado        AS ARRAY       INIT  { "Pendiente", "Liquidada", "Todas" }
    DATA  oCmbAnio       AS OBJECT
@@ -86,8 +85,6 @@ METHOD OpenFiles()
 
    DATABASE NEW ::oFacCliL    PATH ( cPatEmp() ) FILE "FACCLIL.DBF"  VIA ( cDriver() ) SHARED INDEX "FACCLIL.CDX"
 
-   DATABASE NEW ::oDbfTvta    PATH ( cPatDat() ) FILE "TVTA.DBF"     VIA ( cDriver() ) SHARED INDEX "TVTA.CDX"
-
    DATABASE NEW ::oDbfArt     PATH ( cPatArt() ) FILE "ARTICULO.DBF" VIA ( cDriver() ) SHARED INDEX "ARTICULO.CDX"
 
    RECOVER
@@ -112,16 +109,12 @@ METHOD CloseFiles()
    if !Empty( ::oFacCliL ) .and. ::oFacCliL:Used()
       ::oFacCliL:End()
    end if
-   if !Empty( ::oDbfTvta ) .and. ::oDbfTvta:Used()
-      ::oDbfTvta:End()
-   end if
    if !Empty( ::oDbfArt ) .and. ::oDbfArt:Used()
       ::oDbfArt:End()
    end if
 
    ::oFacCliT := nil
    ::oFacCliL := nil
-   ::oDbfTvta := nil
    ::oDbfArt  := nil
 
 RETURN ( Self )

@@ -16,7 +16,7 @@ CLASS TPerRec FROM TInfGen
    DATA  oFacCliL    AS OBJECT
    DATA  oFacCliP    AS OBJECT
    DATA  oAntCliT    AS OBJECT
-   DATA  oDbfTvta    AS OBJECT
+    
    DATA  oDbfIva     AS OBJECT
    DATA  oEstado
    DATA  cEstado     AS CHARACTER   INIT  "Cobrados"

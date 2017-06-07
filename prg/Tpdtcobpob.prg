@@ -15,7 +15,6 @@ CLASS TPdtCobPob FROM TInfGen
    DATA  oFacRecL    AS OBJECT
    DATA  oFacCliP    AS OBJECT
    DATA  oAntCliT    AS OBJECT
-   DATA  oDbfTvta    AS OBJECT
    DATA  oDbfIva     AS OBJECT
    DATA  lAllCP      AS LOGIC    INIT .t.
    DATA  cCPOrg      AS CHARACTER     INIT "00000"
@@ -78,8 +77,6 @@ METHOD OpenFiles()
 
    ::oFacCliP := TDataCenter():oFacCliP()
 
-   DATABASE NEW ::oDbfTvta  PATH ( cPatDat() ) FILE  "TVTA.DBF"    VIA ( cDriver() ) SHARED INDEX "TVTA.CDX"
-
    DATABASE NEW ::oDbfIva   PATH ( cPatDat() ) FILE  "TIVA.DBF"    VIA ( cDriver() ) SHARED INDEX "TIVA.CDX"
 
    DATABASE NEW ::oAntCliT  PATH ( cPatEmp() ) FILE  "ANTCLIT.DBF" VIA ( cDriver() ) SHARED INDEX "ANTCLIT.CDX"
@@ -112,9 +109,6 @@ METHOD CloseFiles()
    if !Empty( ::oFacRecL ) .and. ::oFacRecL:Used()
       ::oFacRecL:End()
    end if
-   if !Empty( ::oDbfTvta ) .and. ::oDbfTvta:Used()
-      ::oDbfTvta:End()
-   end if
    if !Empty( ::oFacCliP ) .and. ::oFacCliP:Used()
       ::oFacCliP:End()
    end if
@@ -125,7 +119,6 @@ METHOD CloseFiles()
       ::oAntCliT:End()
    end if
 
-   ::oDbfTvta := nil
    ::oFacCliP := nil
    ::oAntCliT := nil
    ::oDbfIva  := nil
@@ -245,14 +238,6 @@ METHOD lGenerate()
          ::oDbf:nTotDoc := nTotFacCli
          ::oDbf:cDocMov := lTrim ( ::oFacCliT:cSerie ) + "/" + lTrim ( Str( ::oFacCliT:nNumFac ) ) + "/" + lTrim ( ::oFacCliT:cSufFac )
 
-         // Buscamos el tipo de venta
-
-         if ::oFacCliL:Seek ( ::oFacCliT:cSerie + Str( ::oFacCliT:nNumFac ) + ::oFacCliT:cSufFac )
-            if ( ::oDbfTvta:Seek( ::oFacCliL:cTipMov ) )
-               ::oDbf:cTipVen    := ::oDbfTvta:cDesMov
-            end if
-         end if
-
          // Datos del cliente en cuestion
 
          ::AddCliente( ::oFacCliT:cCodCli, ::oFacCliT, .f. )
@@ -316,14 +301,6 @@ METHOD lGenerate()
          ::oDbf:dFecMov := ::oFacRecT:dFecFac
          ::oDbf:nTotDoc := nTotFacRec
          ::oDbf:cDocMov := lTrim ( ::oFacRecT:cSerie ) + "/" + lTrim ( Str( ::oFacRecT:nNumFac ) ) + "/" + lTrim ( ::oFacRecT:cSufFac )
-
-         // Buscamos el tipo de venta
-
-         if ::oFacRecL:Seek ( ::oFacRecT:cSerie + Str( ::oFacRecT:nNumFac ) + ::oFacRecT:cSufFac )
-            if ( ::oDbfTvta:Seek( ::oFacRecL:cTipMov ) )
-               ::oDbf:cTipVen    := ::oDbfTvta:cDesMov
-            end if
-         end if
 
          // Datos del cliente en cuestion
 

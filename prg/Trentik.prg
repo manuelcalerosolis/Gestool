@@ -12,7 +12,7 @@ CLASS TRenTik FROM TInfPArt
    DATA  oTikCliT    AS OBJECT
    DATA  oTikCliL    AS OBJECT
    DATA  oDbfArt     AS OBJECT
-   DATA  oDbfTvta    AS OBJECT
+    
 
    METHOD Create()
 
@@ -64,7 +64,7 @@ METHOD OpenFiles() CLASS TRenTik
 
    DATABASE NEW ::oDbfArt  PATH ( cPatArt() ) FILE "ARTICULO.DBF" VIA ( cDriver() ) SHARED INDEX "ARTICULO.CDX"
 
-   DATABASE NEW ::oDbfTvta PATH ( cPatDat() ) FILE "TVTA.DBF" VIA ( cDriver() ) SHARED INDEX "TVTA.CDX"
+    
 
    DATABASE NEW ::oTikCliT PATH ( cPatEmp() ) FILE "TIKET.DBF" VIA ( cDriver() ) SHARED INDEX "TIKET.CDX"
 
@@ -89,9 +89,7 @@ METHOD CloseFiles() CLASS TRenTik
    if !Empty( ::oDbfArt ) .and. ::oDbfArt:Used()
       ::oDbfArt:End()
    end if
-   if !Empty( ::oDbfTvta ) .and. ::oDbfTvta:Used()
-      ::oDbfTvta:End()
-   end if
+    
    if !Empty( ::oTikCliT ) .and. ::oTikCliT:Used()
       ::oTikCliT:End()
    end if
@@ -100,7 +98,7 @@ METHOD CloseFiles() CLASS TRenTik
    end if
 
    ::oDbfArt  := nil
-   ::oDbfTvta := nil
+    
    ::oTikCliT := nil
    ::oTikCliL := nil
 

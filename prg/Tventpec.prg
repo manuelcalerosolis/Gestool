@@ -13,7 +13,7 @@ CLASS TInfVenPed FROM TInfGen
    DATA  oPedCliT    AS OBJECT
    DATA  oPedCliL    AS OBJECT
    DATA  oFamilia    AS OBJECT
-   DATA  oDbfTvta    AS OBJECT
+    
    DATA  aEstado     AS ARRAY    INIT { "Pendiente", "Parcialmente", "Entregado", "Todos" }
 
    METHOD OpenFiles()
@@ -59,8 +59,6 @@ METHOD OpenFiles() CLASS TInfVenPed
    DATABASE NEW ::oPedCliL PATH ( cPatEmp() ) FILE "PEDCLIL.DBF" VIA ( cDriver() ) SHARED INDEX "PEDCLIL.CDX"
    ::oPedCliL:OrdSetFocus( "CREF" )
 
-   DATABASE NEW ::oDbfTvta  PATH ( cPatDat() ) FILE "TVTA.DBF" VIA ( cDriver() ) SHARED INDEX "TVTA.CDX"
-
    DATABASE NEW ::oFamilia PATH ( cPatArt() ) FILE "FAMILIAS.DBF" VIA ( cDriver() ) SHARED INDEX "FAMILIAS.CDX"
 
 RETURN ( Self )
@@ -71,7 +69,6 @@ METHOD CloseFiles() CLASS TInfVenPed
 
    ::oPedCliT:End()
    ::oPedCliL:End()
-   ::oDbfTvta:End()
    ::oFamilia:End()
 
 RETURN ( Self )

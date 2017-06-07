@@ -204,10 +204,6 @@ METHOD lGenerate() CLASS TInfFamPre
                   ::oDbf:cDocMov    := lTrim( ::oPreCliL:CSERPRE ) + "/" + lTrim ( Str( ::oPreCliL:NNUMPRE ) ) + "/" + lTrim ( ::oPreCliL:CSUFPRE )
                   ::oDbf:dFecMov    := ::oPreCliT:DFECPRE
 
-                  if ::oDbfTvta:Seek( ::oPreCliL:cTipMov )
-                     ::oDbf:cTipVen := ::oDbfTvta:cDesMov
-                  end if
-
                   ::oDbf:Save()
 
                end if

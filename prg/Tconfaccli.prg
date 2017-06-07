@@ -166,28 +166,6 @@ METHOD lResource( cFld ) CLASS TConFacCli
    end if
 
    /*
-   Monta los tipos de venta
-   */
-
-   REDEFINE CHECKBOX ::lTvta ;
-      ID       260 ;
-      OF       ::oFld:aDialogs[1]
-
-   REDEFINE GET oTipVen VAR ::cTipVen ;
-      VALID    ( cTVta( oTipVen, This:oDbfTvta:cAlias, oTipVen2 ) ) ;
-      WHEN     ( ::lTvta ) ;
-      BITMAP   "LUPA" ;
-      ON HELP  ( BrwTVta( oTipVen, This:oDbfTVta:cAlias, oTipVen2 ) ) ;
-      ID       270 ;
-      OF       ::oFld:aDialogs[1]
-
-   REDEFINE GET oTipVen2 VAR ::cTipVen2 ;
-      ID       280 ;
-      WHEN     ( .F. ) ;
-      COLOR    CLR_GET ;
-      OF       ::oFld:aDialogs[1]
-
-   /*
    Condiciones para excluir cuando sea 0
    */
 
@@ -289,160 +267,56 @@ METHOD lGenerate() CLASS TConFacCli
 
             while ::oFacCliT:cSerie + Str( ::oFacCliT:nNumFac ) + ::oFacCliT:cSufFac == ::oFacCliL:cSerie + Str( ::oFacCliL:nNumFac ) + ::oFacCliL:cSufFac .AND. ! ::oFacCliL:eof()
 
-               /*Preguntamos si utilizamos el tipo de comportamiento*/
-
-               if ::lTvta
-
-                  if ( if( !Empty(::cTipVen), ::oFacCliL:cTipMov == ::cTipVen, .t. ) )                      .AND.;
-                     !( ::lExcCero .AND. ( nTotNFacCli( ::oFacCliL ) == 0 ) )                               .AND.;
-                     !( ::lExcImp .and. ( nTotLFacCli( ::oFacCliL:cAlias, ::nDecOut, ::nDerOut, ::nValDiv ) == 0 ) )
-
-                     if ::oDbf:Seek( ::oFacCliT:cCodCli + ::oFacCliL:cRef )
-
-                        ::oDbf:Load()
-
-                        if ::oDbfTvta:Seek( ::oFacCliL:cTipMov )
-
-                           if ::oDbfTvta:nUndMov == 1
-                              ::oDbf:nCajEnt += ::oFacCliL:nCanEnt
-                              ::oDbf:nUnidad += ::oFacCliL:nUniCaja
-                              ::oDbf:nUntEnt += nTotNFacCli( ::oFacCliL )
-                           elseif ::oDbfTvta:nUndMov == 2
-                              ::oDbf:nCajEnt += - ::oFacCliL:nCanEnt
-                              ::oDbf:nUnidad += - ::oFacCliL:nUniCaja
-                              ::oDbf:nUntEnt += - nTotNFacCli( ::oFacCliL )
-                           elseif ::oDbfTvta:nUndMov == 3
-                              ::oDbf:nCajEnt += 0
-                              ::oDbf:nUnidad += 0
-                              ::oDbf:nUntEnt += 0
-                           end if
-
-                           if ::oDbfTvta:nImpMov == 1
-                              ::oDbf:nTotAge += nComLFacCli( ::oFacCliT:cAlias, ::oFacCliL:cAlias, ::nDecOut, ::nDerOut, ::nValDiv )
-                              ::oDbf:nPreDiv += nImpLFacCli( ::oFacCliT:cAlias, ::oFacCliL:cAlias, ::nDecOut, ::nDerOut, ::nValDiv )
-                           elseif ::oDbfTvta:nImpMov == 2
-                              ::oDbf:nTotAge += - ( nComLFacCli( ::oFacCliT:cAlias, ::oFacCliL:cAlias, ::nDecOut, ::nDerOut, ::nValDiv ) )
-                              ::oDbf:nPreDiv += - ( nImpLFacCli( ::oFacCliT:cAlias, ::oFacCliL:cAlias, ::nDecOut, ::nDerOut, ::nValDiv ) )
-                           elseif ::oDbfTvta:nImpMov == 3
-                              ::oDbf:nTotAge += 0
-                              ::oDbf:nPreDiv += 0
-                           end if
-
-                        end if
-
-                        ::oDbf:nPreMed := ( ::oDbf:nPreDiv - ::oDbf:nTotAge ) / ::oDbf:nUntEnt
-                        ::oDbf:nNetUnd := ::oDbf:nPreMed - ( ( ::oDbf:nPreMed * ::oDbf:nDtoAtp ) / 100 )
-                        ::oDbf:nMargen := ( ( ::oDbf:nNetUnd - ::oDbf:nCoste ) / ::oDbf:nCoste ) * 100
-                        ::oDbf:nBenef  := ( ::oDbf:nNetUnd - ::oDbf:nCoste ) * ::oDbf:nUntEnt
-
-                        ::oDbf:Save()
-
-                     else
-
-                        ::oDbf:Append()
-
-                        ::oDbf:cCodCli := ::oFacCliT:cCodCli
-                        ::oDbf:cNomCli := ::oFacCliT:cNomCli
-                        ::oDbf:cCodArt := ::oFacCliL:cRef
-                        ::oDbf:cNomArt := ::oFacCliL:cDetalle
-
-                        if ::oDbfTvta:Seek( ::oFacCliL:cTipMov )
-
-                           if ::oDbfTvta:nUndMov == 1
-                              ::oDbf:nCajEnt := ::oFacCliL:nCanEnt
-                              ::oDbf:nUnidad := ::oFacCliL:nUniCaja
-                              ::oDbf:nUntEnt := nTotNFacCli( ::oFacCliL )
-                           elseif ::oDbfTvta:nUndMov == 2
-                              ::oDbf:nCajEnt := - ::oFacCliL:nCanEnt
-                              ::oDbf:nUnidad := - ::oFacCliL:nUniCaja
-                              ::oDbf:nUntEnt := - nTotNFacCli( ::oFacCliL )
-                           elseif ::oDbfTvta:nUndMov == 3
-                              ::oDbf:nCajEnt := 0
-                              ::oDbf:nUnidad := 0
-                              ::oDbf:nUntEnt := 0
-                           end if
-
-                           if ::oDbfTvta:nImpMov == 1
-                              ::oDbf:nTotAge := nComLFacCli( ::oFacCliT:cAlias, ::oFacCliL:cAlias, ::nDecOut, ::nDerOut, ::nValDiv )
-                              ::oDbf:nPreDiv := nImpLFacCli( ::oFacCliT:cAlias, ::oFacCliL:cAlias, ::nDecOut, ::nDerOut, ::nValDiv )
-                           elseif ::oDbfTvta:nImpMov == 2
-                              ::oDbf:nTotAge := - ( nComLFacCli( ::oFacCliT:cAlias, ::oFacCliL:cAlias, ::nDecOut, ::nDerOut, ::nValDiv ) )
-                              ::oDbf:nPreDiv := - ( nImpLFacCli( ::oFacCliT:cAlias, ::oFacCliL:cAlias, ::nDecOut, ::nDerOut, ::nValDiv ) )
-                           elseif ::oDbfTvta:nImpMov == 3
-                              ::oDbf:nTotAge := 0
-                              ::oDbf:nPreDiv := 0
-                           end if
-
-                        ::oDbf:nPreMed := ( ::oDbf:nPreDiv - ::oDbf:nTotAge ) / ::oDbf:nUntEnt
-                        ::oDbf:nDtoAtp := ::nDtoAtpCli( ::oFacCliT:cCodCli )
-                        ::oDbf:nNetUnd := ::oDbf:nPreMed - ( ( ::oDbf:nPreMed * ::oDbf:nDtoAtp ) / 100 )
-                        ::oDbf:nCoste  := ::nCosteCli( ::oFacCliT:cCodCli, ::oFacCliL:cRef )
-                        ::oDbf:nMargen := ( ( ::oDbf:nNetUnd - ::oDbf:nCoste ) / ::oDbf:nCoste ) * 100
-                        ::oDbf:nBenef  := ( ::oDbf:nNetUnd - ::oDbf:nCoste ) * ::oDbf:nUntEnt
-
-                        end if
-
-                        ::oDbf:Save()
-
-                     end if
-
-                  end if
-
-                  ::oFacCliL:Skip()
-
-               else
-
                /* Pasamos de los tipos de comportamiento*/
 
-                  if !( ::lExcCero .and. ( nTotNFacCli( ::oFacCliL ) == 0 ) )                               .AND.;
-                     !( ::lExcImp .and. ( nTotLFacCli( ::oFacCliL:cAlias, ::nDecOut, ::nDerOut, ::nValDiv ) == 0 ) )
+               if !( ::lExcCero .and. ( nTotNFacCli( ::oFacCliL ) == 0 ) )                               .AND.;
+                  !( ::lExcImp .and. ( nTotLFacCli( ::oFacCliL:cAlias, ::nDecOut, ::nDerOut, ::nValDiv ) == 0 ) )
 
-                     /*Aqui entramos para acumular*/
-                     if ::oDbf:Seek( ::oFacCliT:cCodCli + ::oFacCliL:cRef )
+                  /*Aqui entramos para acumular*/
+                  
+                  if ::oDbf:Seek( ::oFacCliT:cCodCli + ::oFacCliL:cRef )
 
-                        ::oDbf:Load()
+                     ::oDbf:Load()
 
-                        ::oDbf:nCajEnt += ::oFacCliL:nCanEnt
-                        ::oDbf:nUnidad += ::oFacCliL:nUniCaja
-                        ::oDbf:nUntEnt += nTotNFacCli( ::oFacCliL )
-                        ::oDbf:nTotAge += nComLFacCli( ::oFacCliT:cAlias, ::oFacCliL:cAlias, ::nDecOut, ::nDerOut, ::nValDiv )
-                        ::oDbf:nPreDiv += nImpLFacCli( ::oFacCliT:cAlias, ::oFacCliL:cAlias, ::nDecOut, ::nDerOut, ::nValDiv )
-                        ::oDbf:nPreMed := ( ::oDbf:nPreDiv - ::oDbf:nTotAge ) / ::oDbf:nUntEnt
-                        ::oDbf:nNetUnd := ::oDbf:nPreMed - ( ( ::oDbf:nPreMed * ::oDbf:nDtoAtp ) / 100 )
-                        ::oDbf:nMargen := ( ( ::oDbf:nNetUnd - ::oDbf:nCoste ) / ::oDbf:nCoste ) * 100
-                        ::oDbf:nBenef  := ( ::oDbf:nNetUnd - ::oDbf:nCoste ) * ::oDbf:nUntEnt
+                     ::oDbf:nCajEnt += ::oFacCliL:nCanEnt
+                     ::oDbf:nUnidad += ::oFacCliL:nUniCaja
+                     ::oDbf:nUntEnt += nTotNFacCli( ::oFacCliL )
+                     ::oDbf:nTotAge += nComLFacCli( ::oFacCliT:cAlias, ::oFacCliL:cAlias, ::nDecOut, ::nDerOut, ::nValDiv )
+                     ::oDbf:nPreDiv += nImpLFacCli( ::oFacCliT:cAlias, ::oFacCliL:cAlias, ::nDecOut, ::nDerOut, ::nValDiv )
+                     ::oDbf:nPreMed := ( ::oDbf:nPreDiv - ::oDbf:nTotAge ) / ::oDbf:nUntEnt
+                     ::oDbf:nNetUnd := ::oDbf:nPreMed - ( ( ::oDbf:nPreMed * ::oDbf:nDtoAtp ) / 100 )
+                     ::oDbf:nMargen := ( ( ::oDbf:nNetUnd - ::oDbf:nCoste ) / ::oDbf:nCoste ) * 100
+                     ::oDbf:nBenef  := ( ::oDbf:nNetUnd - ::oDbf:nCoste ) * ::oDbf:nUntEnt
 
-                        ::oDbf:Save()
+                     ::oDbf:Save()
 
-                     else
+                  else
 
-                        ::oDbf:Append()
+                     ::oDbf:Append()
 
-                        ::oDbf:cCodCli := ::oFacCliT:cCodCli
-                        ::oDbf:cNomCli := ::oFacCliT:cNomCli
-                        ::oDbf:cCodArt := ::oFacCliL:cRef
-                        ::oDbf:cNomArt := ::oFacCliL:cDetalle
-                        ::oDbf:nCajEnt := ::oFacCliL:nCanEnt
-                        ::oDbf:nUnidad := ::oFacCliL:nUniCaja
-                        ::oDbf:nUntEnt := nTotNFacCli( ::oFacCliL )
-                        ::oDbf:nTotAge := nComLFacCli( ::oFacCliT:cAlias, ::oFacCliL:cAlias, ::nDecOut, ::nDerOut, ::nValDiv )
-                        ::oDbf:nPreDiv := nImpLFacCli( ::oFacCliT:cAlias, ::oFacCliL:cAlias, ::nDecOut, ::nDerOut, ::nValDiv )
-                        ::oDbf:nPreMed := ( ::oDbf:nPreDiv - ::oDbf:nTotAge ) / ::oDbf:nUntEnt
-                        ::oDbf:nDtoAtp := ::nDtoAtpCli( ::oFacCliT:cCodCli )
-                        ::oDbf:nNetUnd := ::oDbf:nPreMed - ( ( ::oDbf:nPreMed * ::oDbf:nDtoAtp ) / 100 )
-                        ::oDbf:nCoste  := ::nCosteCli( ::oFacCliT:cCodCli, ::oFacCliL:cRef )
-                        ::oDbf:nMargen := ( ( ::oDbf:nNetUnd - ::oDbf:nCoste ) / ::oDbf:nCoste ) * 100
-                        ::oDbf:nBenef  := ( ::oDbf:nNetUnd - ::oDbf:nCoste ) * ::oDbf:nUntEnt
+                     ::oDbf:cCodCli := ::oFacCliT:cCodCli
+                     ::oDbf:cNomCli := ::oFacCliT:cNomCli
+                     ::oDbf:cCodArt := ::oFacCliL:cRef
+                     ::oDbf:cNomArt := ::oFacCliL:cDetalle
+                     ::oDbf:nCajEnt := ::oFacCliL:nCanEnt
+                     ::oDbf:nUnidad := ::oFacCliL:nUniCaja
+                     ::oDbf:nUntEnt := nTotNFacCli( ::oFacCliL )
+                     ::oDbf:nTotAge := nComLFacCli( ::oFacCliT:cAlias, ::oFacCliL:cAlias, ::nDecOut, ::nDerOut, ::nValDiv )
+                     ::oDbf:nPreDiv := nImpLFacCli( ::oFacCliT:cAlias, ::oFacCliL:cAlias, ::nDecOut, ::nDerOut, ::nValDiv )
+                     ::oDbf:nPreMed := ( ::oDbf:nPreDiv - ::oDbf:nTotAge ) / ::oDbf:nUntEnt
+                     ::oDbf:nDtoAtp := ::nDtoAtpCli( ::oFacCliT:cCodCli )
+                     ::oDbf:nNetUnd := ::oDbf:nPreMed - ( ( ::oDbf:nPreMed * ::oDbf:nDtoAtp ) / 100 )
+                     ::oDbf:nCoste  := ::nCosteCli( ::oFacCliT:cCodCli, ::oFacCliL:cRef )
+                     ::oDbf:nMargen := ( ( ::oDbf:nNetUnd - ::oDbf:nCoste ) / ::oDbf:nCoste ) * 100
+                     ::oDbf:nBenef  := ( ::oDbf:nNetUnd - ::oDbf:nCoste ) * ::oDbf:nUntEnt
 
-                        ::oDbf:Save()
-
-                     end if
+                     ::oDbf:Save()
 
                   end if
 
-                  ::oFacCliL:Skip()
-
                end if
+
+               ::oFacCliL:Skip()
 
             end while
 
@@ -517,160 +391,55 @@ METHOD lGenerate() CLASS TConFacCli
 
             while ::oFacRecT:cSerie + Str( ::oFacRecT:nNumFac ) + ::oFacRecT:cSufFac == ::oFacRecL:cSerie + Str( ::oFacRecL:nNumFac ) + ::oFacRecL:cSufFac .AND. ! ::oFacRecL:eof()
 
-               /*Preguntamos si utilizamos el tipo de comportamiento*/
-
-               if ::lTvta
-
-                  if ( if( !Empty(::cTipVen), ::oFacRecL:cTipMov == ::cTipVen, .t. ) )                      .AND.;
-                     !( ::lExcCero .AND. ( nTotNFacRec( ::oFacRecL ) == 0 ) )                               .AND.;
-                     !( ::lExcImp .and. ( nTotLFacRec( ::oFacRecL:cAlias, ::nDecOut, ::nDerOut, ::nValDiv ) == 0 ) )
-
-                     if ::oDbf:Seek( ::oFacRecT:cCodCli + ::oFacRecL:cRef )
-
-                        ::oDbf:Load()
-
-                        if ::oDbfTvta:Seek( ::oFacRecL:cTipMov )
-
-                           if ::oDbfTvta:nUndMov == 1
-                              ::oDbf:nCajEnt += ::oFacRecL:nCanEnt
-                              ::oDbf:nUnidad += ::oFacRecL:nUniCaja
-                              ::oDbf:nUntEnt += nTotNFacRec( ::oFacRecL )
-                           elseif ::oDbfTvta:nUndMov == 2
-                              ::oDbf:nCajEnt += - ::oFacRecL:nCanEnt
-                              ::oDbf:nUnidad += - ::oFacRecL:nUniCaja
-                              ::oDbf:nUntEnt += - nTotNFacRec( ::oFacRecL )
-                           elseif ::oDbfTvta:nUndMov == 3
-                              ::oDbf:nCajEnt += 0
-                              ::oDbf:nUnidad += 0
-                              ::oDbf:nUntEnt += 0
-                           end if
-
-                           if ::oDbfTvta:nImpMov == 1
-                              ::oDbf:nTotAge += nComLFacRec( ::oFacRecT:cAlias, ::oFacRecL:cAlias, ::nDecOut, ::nDerOut, ::nValDiv )
-                              ::oDbf:nPreDiv += nImpLFacRec( ::oFacRecT:cAlias, ::oFacRecL:cAlias, ::nDecOut, ::nDerOut, ::nValDiv )
-                           elseif ::oDbfTvta:nImpMov == 2
-                              ::oDbf:nTotAge += - ( nComLFacRec( ::oFacRecT:cAlias, ::oFacRecL:cAlias, ::nDecOut, ::nDerOut, ::nValDiv ) )
-                              ::oDbf:nPreDiv += - ( nImpLFacRec( ::oFacRecT:cAlias, ::oFacRecL:cAlias, ::nDecOut, ::nDerOut, ::nValDiv ) )
-                           elseif ::oDbfTvta:nImpMov == 3
-                              ::oDbf:nTotAge += 0
-                              ::oDbf:nPreDiv += 0
-                           end if
-
-                        end if
-
-                        ::oDbf:nPreMed := ( ::oDbf:nPreDiv - ::oDbf:nTotAge ) / ::oDbf:nUntEnt
-                        ::oDbf:nNetUnd := ::oDbf:nPreMed - ( ( ::oDbf:nPreMed * ::oDbf:nDtoAtp ) / 100 )
-                        ::oDbf:nMargen := ( ( ::oDbf:nNetUnd - ::oDbf:nCoste ) / ::oDbf:nCoste ) * 100
-                        ::oDbf:nBenef  := ( ::oDbf:nNetUnd - ::oDbf:nCoste ) * ::oDbf:nUntEnt
-
-                        ::oDbf:Save()
-
-                     else
-
-                        ::oDbf:Append()
-
-                        ::oDbf:cCodCli := ::oFacRecT:cCodCli
-                        ::oDbf:cNomCli := ::oFacRecT:cNomCli
-                        ::oDbf:cCodArt := ::oFacRecL:cRef
-                        ::oDbf:cNomArt := ::oFacRecL:cDetalle
-
-                        if ::oDbfTvta:Seek( ::oFacRecL:cTipMov )
-
-                           if ::oDbfTvta:nUndMov == 1
-                              ::oDbf:nCajEnt := ::oFacRecL:nCanEnt
-                              ::oDbf:nUnidad := ::oFacRecL:nUniCaja
-                              ::oDbf:nUntEnt := nTotNFacRec( ::oFacRecL )
-                           elseif ::oDbfTvta:nUndMov == 2
-                              ::oDbf:nCajEnt := - ::oFacRecL:nCanEnt
-                              ::oDbf:nUnidad := - ::oFacRecL:nUniCaja
-                              ::oDbf:nUntEnt := - nTotNFacRec( ::oFacRecL )
-                           elseif ::oDbfTvta:nUndMov == 3
-                              ::oDbf:nCajEnt := 0
-                              ::oDbf:nUnidad := 0
-                              ::oDbf:nUntEnt := 0
-                           end if
-
-                           if ::oDbfTvta:nImpMov == 1
-                              ::oDbf:nTotAge := nComLFacRec( ::oFacRecT:cAlias, ::oFacRecL:cAlias, ::nDecOut, ::nDerOut, ::nValDiv )
-                              ::oDbf:nPreDiv := nImpLFacRec( ::oFacRecT:cAlias, ::oFacRecL:cAlias, ::nDecOut, ::nDerOut, ::nValDiv )
-                           elseif ::oDbfTvta:nImpMov == 2
-                              ::oDbf:nTotAge := - ( nComLFacRec( ::oFacRecT:cAlias, ::oFacRecL:cAlias, ::nDecOut, ::nDerOut, ::nValDiv ) )
-                              ::oDbf:nPreDiv := - ( nImpLFacRec( ::oFacRecT:cAlias, ::oFacRecL:cAlias, ::nDecOut, ::nDerOut, ::nValDiv ) )
-                           elseif ::oDbfTvta:nImpMov == 3
-                              ::oDbf:nTotAge := 0
-                              ::oDbf:nPreDiv := 0
-                           end if
-
-                        ::oDbf:nPreMed := ( ::oDbf:nPreDiv - ::oDbf:nTotAge ) / ::oDbf:nUntEnt
-                        ::oDbf:nDtoAtp := ::nDtoAtpCli( ::oFacRecT:cCodCli )
-                        ::oDbf:nNetUnd := ::oDbf:nPreMed - ( ( ::oDbf:nPreMed * ::oDbf:nDtoAtp ) / 100 )
-                        ::oDbf:nCoste  := ::nCosteCli( ::oFacRecT:cCodCli, ::oFacRecL:cRef )
-                        ::oDbf:nMargen := ( ( ::oDbf:nNetUnd - ::oDbf:nCoste ) / ::oDbf:nCoste ) * 100
-                        ::oDbf:nBenef  := ( ::oDbf:nNetUnd - ::oDbf:nCoste ) * ::oDbf:nUntEnt
-
-                        end if
-
-                        ::oDbf:Save()
-
-                     end if
-
-                  end if
-
-                  ::oFacRecL:Skip()
-
-               else
-
                /* Pasamos de los tipos de comportamiento*/
 
-                  if !( ::lExcCero .and. ( nTotNFacRec( ::oFacRecL ) == 0 ) )                               .AND.;
-                     !( ::lExcImp .and. ( nTotLFacRec( ::oFacRecL:cAlias, ::nDecOut, ::nDerOut, ::nValDiv ) == 0 ) )
+               if !( ::lExcCero .and. ( nTotNFacRec( ::oFacRecL ) == 0 ) )                               .AND.;
+                  !( ::lExcImp .and. ( nTotLFacRec( ::oFacRecL:cAlias, ::nDecOut, ::nDerOut, ::nValDiv ) == 0 ) )
 
-                     /*Aqui entramos para acumular*/
-                     if ::oDbf:Seek( ::oFacRecT:cCodCli + ::oFacRecL:cRef )
+                  /*Aqui entramos para acumular*/
+                  if ::oDbf:Seek( ::oFacRecT:cCodCli + ::oFacRecL:cRef )
 
-                        ::oDbf:Load()
+                     ::oDbf:Load()
 
-                        ::oDbf:nCajEnt += ::oFacRecL:nCanEnt
-                        ::oDbf:nUnidad += ::oFacRecL:nUniCaja
-                        ::oDbf:nUntEnt += nTotNFacRec( ::oFacRecL )
-                        ::oDbf:nTotAge += nComLFacRec( ::oFacRecT:cAlias, ::oFacRecL:cAlias, ::nDecOut, ::nDerOut, ::nValDiv )
-                        ::oDbf:nPreDiv += nImpLFacRec( ::oFacRecT:cAlias, ::oFacRecL:cAlias, ::nDecOut, ::nDerOut, ::nValDiv )
-                        ::oDbf:nPreMed := ( ::oDbf:nPreDiv - ::oDbf:nTotAge ) / ::oDbf:nUntEnt
-                        ::oDbf:nNetUnd := ::oDbf:nPreMed - ( ( ::oDbf:nPreMed * ::oDbf:nDtoAtp ) / 100 )
-                        ::oDbf:nMargen := ( ( ::oDbf:nNetUnd - ::oDbf:nCoste ) / ::oDbf:nCoste ) * 100
-                        ::oDbf:nBenef  := ( ::oDbf:nNetUnd - ::oDbf:nCoste ) * ::oDbf:nUntEnt
+                     ::oDbf:nCajEnt += ::oFacRecL:nCanEnt
+                     ::oDbf:nUnidad += ::oFacRecL:nUniCaja
+                     ::oDbf:nUntEnt += nTotNFacRec( ::oFacRecL )
+                     ::oDbf:nTotAge += nComLFacRec( ::oFacRecT:cAlias, ::oFacRecL:cAlias, ::nDecOut, ::nDerOut, ::nValDiv )
+                     ::oDbf:nPreDiv += nImpLFacRec( ::oFacRecT:cAlias, ::oFacRecL:cAlias, ::nDecOut, ::nDerOut, ::nValDiv )
+                     ::oDbf:nPreMed := ( ::oDbf:nPreDiv - ::oDbf:nTotAge ) / ::oDbf:nUntEnt
+                     ::oDbf:nNetUnd := ::oDbf:nPreMed - ( ( ::oDbf:nPreMed * ::oDbf:nDtoAtp ) / 100 )
+                     ::oDbf:nMargen := ( ( ::oDbf:nNetUnd - ::oDbf:nCoste ) / ::oDbf:nCoste ) * 100
+                     ::oDbf:nBenef  := ( ::oDbf:nNetUnd - ::oDbf:nCoste ) * ::oDbf:nUntEnt
 
-                        ::oDbf:Save()
+                     ::oDbf:Save()
 
-                     else
+                  else
 
-                        ::oDbf:Append()
+                     ::oDbf:Append()
 
-                        ::oDbf:cCodCli := ::oFacRecT:cCodCli
-                        ::oDbf:cNomCli := ::oFacRecT:cNomCli
-                        ::oDbf:cCodArt := ::oFacRecL:cRef
-                        ::oDbf:cNomArt := ::oFacRecL:cDetalle
-                        ::oDbf:nCajEnt := ::oFacRecL:nCanEnt
-                        ::oDbf:nUnidad := ::oFacRecL:nUniCaja
-                        ::oDbf:nUntEnt := nTotNFacRec( ::oFacRecL )
-                        ::oDbf:nTotAge := nComLFacRec( ::oFacRecT:cAlias, ::oFacRecL:cAlias, ::nDecOut, ::nDerOut, ::nValDiv )
-                        ::oDbf:nPreDiv := nImpLFacRec( ::oFacRecT:cAlias, ::oFacRecL:cAlias, ::nDecOut, ::nDerOut, ::nValDiv )
-                        ::oDbf:nPreMed := ( ::oDbf:nPreDiv - ::oDbf:nTotAge ) / ::oDbf:nUntEnt
-                        ::oDbf:nDtoAtp := ::nDtoAtpCli( ::oFacRecT:cCodCli )
-                        ::oDbf:nNetUnd := ::oDbf:nPreMed - ( ( ::oDbf:nPreMed * ::oDbf:nDtoAtp ) / 100 )
-                        ::oDbf:nCoste  := ::nCosteCli( ::oFacRecT:cCodCli, ::oFacRecL:cRef )
-                        ::oDbf:nMargen := ( ( ::oDbf:nNetUnd - ::oDbf:nCoste ) / ::oDbf:nCoste ) * 100
-                        ::oDbf:nBenef  := ( ::oDbf:nNetUnd - ::oDbf:nCoste ) * ::oDbf:nUntEnt
+                     ::oDbf:cCodCli := ::oFacRecT:cCodCli
+                     ::oDbf:cNomCli := ::oFacRecT:cNomCli
+                     ::oDbf:cCodArt := ::oFacRecL:cRef
+                     ::oDbf:cNomArt := ::oFacRecL:cDetalle
+                     ::oDbf:nCajEnt := ::oFacRecL:nCanEnt
+                     ::oDbf:nUnidad := ::oFacRecL:nUniCaja
+                     ::oDbf:nUntEnt := nTotNFacRec( ::oFacRecL )
+                     ::oDbf:nTotAge := nComLFacRec( ::oFacRecT:cAlias, ::oFacRecL:cAlias, ::nDecOut, ::nDerOut, ::nValDiv )
+                     ::oDbf:nPreDiv := nImpLFacRec( ::oFacRecT:cAlias, ::oFacRecL:cAlias, ::nDecOut, ::nDerOut, ::nValDiv )
+                     ::oDbf:nPreMed := ( ::oDbf:nPreDiv - ::oDbf:nTotAge ) / ::oDbf:nUntEnt
+                     ::oDbf:nDtoAtp := ::nDtoAtpCli( ::oFacRecT:cCodCli )
+                     ::oDbf:nNetUnd := ::oDbf:nPreMed - ( ( ::oDbf:nPreMed * ::oDbf:nDtoAtp ) / 100 )
+                     ::oDbf:nCoste  := ::nCosteCli( ::oFacRecT:cCodCli, ::oFacRecL:cRef )
+                     ::oDbf:nMargen := ( ( ::oDbf:nNetUnd - ::oDbf:nCoste ) / ::oDbf:nCoste ) * 100
+                     ::oDbf:nBenef  := ( ::oDbf:nNetUnd - ::oDbf:nCoste ) * ::oDbf:nUntEnt
 
-                        ::oDbf:Save()
-
-                     end if
+                     ::oDbf:Save()
 
                   end if
 
-                  ::oFacRecL:Skip()
-
                end if
+
+               ::oFacRecL:Skip()
 
             end while
 

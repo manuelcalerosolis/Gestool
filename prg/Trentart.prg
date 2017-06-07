@@ -21,7 +21,7 @@ CLASS TInfRentArt FROM TInfGen
    DATA  oTikCliL    AS OBJECT
    DATA  oArt        AS OBJECT
    DATA  oFamilia    AS OBJECT
-   DATA  oDbfTvta    AS OBJECT
+    
    DATA  aEstado     AS ARRAY    INIT { "Pendiente", "Liquidada", "Todas" }
 
    METHOD Create()
@@ -67,7 +67,7 @@ METHOD OpenFiles() CLASS TInfRentArt
 
    DATABASE NEW ::oArt     PATH ( cPatArt() ) FILE "ARTICULO.DBF" VIA ( cDriver() ) SHARED INDEX "ARTICULO.CDX"
 
-   DATABASE NEW ::oDbfTvta PATH ( cPatDat() ) FILE "TVTA.DBF" VIA ( cDriver() ) SHARED INDEX "TVTA.CDX"
+    
 
    DATABASE NEW ::oFamilia PATH ( cPatArt() ) FILE "FAMILIAS.DBF" VIA ( cDriver() ) SHARED INDEX "FAMILIAS.CDX"
 
@@ -84,7 +84,6 @@ METHOD CloseFiles() CLASS TInfRentArt
    ::oTikCliT:End()
    ::oTikCliL:End()
    ::oArt:End()
-   ::oDbfTvta:End()
    ::oFamilia:End()
 
 RETURN ( Self )

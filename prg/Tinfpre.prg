@@ -15,7 +15,7 @@ CLASS TInfPre FROM TInfGen
    DATA  oPreCliT    AS OBJECT
    DATA  oPreCliL    AS OBJECT
    Data  oDbfObr     AS OBJECT
-   DATA  oDbfTvta    AS OBJECT
+    
    DATA  oOrden      AS OBJECT
    DATA  aEstado     AS ARRAY    INIT  { "Pendiente", "Aceptado", "Todos" }
    DATA  aSitua      AS ARRAY    INIT  { "Todas", "En curso", "En estudio", "Finalizado", "A revisar", "Aceptado", "Rechazado", "Espera", "Enviado", "Pdte. envio" }

@@ -15,7 +15,7 @@ CLASS TInfFacT FROM TInfGen
    DATA  oFacCliL    AS OBJECT
    DATA  oFacRecT    AS OBJECT
    DATA  oFacRecL    AS OBJECT
-   DATA  oDbfTvta    AS OBJECT
+    
    DATA  oOrden      AS OBJECT
    DATA  aEstado     AS ARRAY    INIT  { "Pendientes", "Cobradas", "Todas" }
 

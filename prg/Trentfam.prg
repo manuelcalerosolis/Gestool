@@ -22,7 +22,7 @@ CLASS TInfRenFam FROM TInfGen
    DATA  oArt        AS OBJECT
    DATA  oIva        AS OBJECT
    DATA  oFamilia    AS OBJECT
-   DATA  oDbfTvta    AS OBJECT
+    
    DATA  aEstado     AS ARRAY    INIT { "Pendiente", "Liquidada", "Todas" }
 
    METHOD Create()
@@ -76,7 +76,7 @@ METHOD OpenFiles() CLASS TInfRenFam
 
    //::oIva := DbfServer("TIVA.DBF",):NewOpen("TIVA.DBF",,cDriver() ,,(cPatDat() ),.F.,.T.,.F.,.F. ) ; ::oIva:AddBag("TIVA.CDX" ) ; ::oIva:AddBag() ; ::oIva:AutoIndex()
 
-   DATABASE NEW ::oDbfTvta PATH ( cPatDat() ) FILE "TVTA.DBF" VIA ( cDriver() ) SHARED INDEX "TVTA.CDX"
+    
 
    DATABASE NEW ::oFamilia PATH ( cPatArt() ) FILE "FAMILIAS.DBF" VIA ( cDriver() ) SHARED INDEX "FAMILIAS.CDX"
 
@@ -95,7 +95,6 @@ METHOD CloseFiles() CLASS TInfRenFam
    ::oTikCliL:End()
    ::oArt:End()
    ::oIva:End()
-   ::oDbfTVta:End()
    ::oFamilia:End()
 
 RETURN ( Self )

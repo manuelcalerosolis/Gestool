@@ -10,7 +10,7 @@ CLASS OAcuBPed FROM TPrvInf
    DATA  lExcCero    AS LOGIC    INIT .f.
    DATA  oPedPrvT    AS OBJECT
    DATA  oPedPrvL    AS OBJECT
-   DATA  oDbfTvta    AS OBJECT
+    
    DATA  oDbfArt     AS OBJECT
 
    METHOD Create ()

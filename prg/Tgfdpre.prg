@@ -207,10 +207,6 @@ METHOD lGenerate() CLASS TInfGFDPre
 
                ::AddCliente( ::oPreCliT:cCodCli, ::oPreCliT, .f. )
 
-               if ::oDbfTvta:Seek( ::oPreCliL:cTipMov )
-                  ::oDbf:cTipVen := ::oDbfTvta:cDesMov
-               end if
-
                ::oDbf:Save()
 
             end if

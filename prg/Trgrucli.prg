@@ -13,7 +13,7 @@ CLASS TRGruCliInf FROM TInfGen
    DATA  oFacCliL    AS OBJECT
    DATA  oFacRecT    AS OBJECT
    DATA  oFacRecL    AS OBJECT
-   DATA  oDbfTvta    AS OBJECT
+    
    DATA  oDbfGprCli  AS OBJECT
    DATA  aEstado     AS ARRAY    INIT  { "Pendiente", "Liquidada", "Todas" }
    DATA  cTipVen     AS CHARACTER
@@ -71,8 +71,6 @@ METHOD OpenFiles()
 
       DATABASE NEW ::oFacRecL   PATH ( cPatEmp() ) FILE "FACRECL.DBF" VIA ( cDriver() ) SHARED INDEX "FACRECL.CDX"
 
-      DATABASE NEW ::oDbfTvta   PATH ( cPatDat() ) FILE "TVTA.DBF"    VIA ( cDriver() ) SHARED INDEX "TVTA.CDX"
-
       DATABASE NEW ::oDbfCli    PATH ( cPatCli() ) FILE "CLIENT.DBF"  VIA ( cDriver() ) SHARED INDEX "CLIENT.CDX"
 
    RECOVER
@@ -106,9 +104,6 @@ METHOD CloseFiles()
    if !Empty( ::oFacRecL ) .and. ::oFacRecL:Used()
       ::oFacRecL:End()
    end if
-   if !Empty( ::oDbfTvta ) .and. ::oDbfTvta:Used()
-      ::oDbfTvta:End()
-   end if
    if !Empty( ::oDbfCli ) .and. ::oDbfCli:Used()
       ::oDbfCli:End()
    end if
@@ -117,7 +112,6 @@ METHOD CloseFiles()
    ::oFacCliL := nil
    ::oFacRecT := nil
    ::oFacRecL := nil
-   ::oDbfTvta := nil
    ::oDbfCli  := nil
 
 RETURN ( Self )
@@ -156,24 +150,6 @@ METHOD lResource( cFld )
    if !::lDefArtInf( 150, 160, 170, 180, 800 )
       return .f.
    end if
-
-   REDEFINE CHECKBOX ::lTvta ;
-      ID       260 ;
-      OF       ::oFld:aDialogs[1]
-
-   REDEFINE GET oTipVen VAR ::cTipVen ;
-      WHEN     ( ::lTvta ) ;
-      VALID    ( cTVta( oTipVen, This:oDbfTvta:cAlias, oTipVen2 ) ) ;
-      BITMAP   "LUPA" ;
-      ON HELP  ( BrwTVta( oTipVen, This:oDbfTVta:cAlias, oTipVen2 ) ) ;
-      ID       270 ;
-      OF       ::oFld:aDialogs[1]
-
-   REDEFINE GET oTipVen2 VAR ::cTipVen2 ;
-      ID       280 ;
-      WHEN     ( .f. ) ;
-      COLOR    CLR_GET ;
-      OF       ::oFld:aDialogs[1]
 
    /*
    Damos valor al meter
@@ -258,134 +234,47 @@ METHOD lGenerate()
 
             while ::oFacCliT:cSerie + Str( ::oFacCliT:nNumFac ) + ::oFacCliT:cSufFac == ::oFacCliL:cSerie + Str( ::oFacCliL:nNumFac ) + ::oFacCliL:cSufFac .AND. ! ::oFacCliL:eof()
 
-               if ::lTvta
+               if !( ::lExcCero .AND. ( nTotNFacCli( ::oFacCliL ) == 0 ) )
 
-                     if (if (!Empty(::cTipVen), ::oFacCliL:cTipMov == ::cTipVen, .t. ))                        .AND.;
-                        !( ::lExcCero .AND. nTotNFacCli( ::oFacCliL ) == 0 )
+                  if ::oDbf:Seek( cGruCli( ::oFacCliT:cCodCli, ::oDbfCli ) + ::oFacCliL:CREF )
 
-                        if ::oDbf:Seek( cGruCli( ::oFacCliT:cCodCli, ::oDbfCli ) + ::oFacCliL:cRef )
+                     ::oDbf:Load()
 
-                           ::oDbf:Load()
+                     ::oDbf:NCAJENT += ::oFacCliL:NCANENT
+                     ::oDbf:NUNTENT += nTotNFacCli( ::oFacCliL )
+                     ::oDbf:nUnidad += ::oFacCliL:NUNICAJA
+                     ::oDbf:nComAge += ::oFacCliL:nComAge
+                     ::oDbf:nTotAge += nComLFacCli( ::oFacCliT:cAlias, ::oFacCliL:cAlias, ::nDecOut, ::nDerOut  )
+                     ::oDbf:nPreDiv += nImpLFacCli( ::oFacCliT:cAlias, ::oFacCliL:cAlias, ::nDecOut, ::nDerOut, ::nValDiv, .f., .t., .f., .f. )
 
-                           if ::oDbfTvta:Seek( ::oFacCliL:cTipMov )
+                     ::oDbf:Save()
 
-                              if ::oDbfTvta:nUndMov == 1
-                                 ::oDbf:NCAJENT += ::oFacCliL:NCANENT
-                                 ::oDbf:NUNTENT += nTotNFacCli( ::oFacCliL )
-                                 ::oDbf:nUnidad += ::oFacCliL:NUNICAJA
-                              elseif ::oDbfTvta:nUndMov == 2
-                                 ::oDbf:NCAJENT -= ::oFacCliL:NCANENT
-                                 ::oDbf:NUNTENT -= nTotNFacCli( ::oFacCliL )
-                                 ::oDbf:nUnidad -= ::oFacCliL:NUNICAJA
-                              elseif ::oDbfTvta:nUndMov == 3
-                                 ::oDbf:NCAJENT += 0
-                                 ::oDbf:NUNTENT += 0
-                                 ::oDbf:nUnidad += 0
-                              end if
+                  else
 
-                              if ::oDbfTvta:nImpMov == 3
-                                 ::oDbf:nComAge += 0
-                                 ::oDbf:nPreDiv += 0
-                              else
-                                 ::oDbf:nComAge += ::oFacCliL:nComAge
-                                 ::oDbf:nTotAge += nComLFacCli( ::oFacCliT:cAlias, ::oFacCliL:cAlias, ::nDecOut, ::nDerOut  )
-                                 ::oDbf:nPreDiv += nImpLFacCli( ::oFacCliT:cAlias, ::oFacCliL:cAlias, ::nDecOut, ::nDerOut, ::nValDiv, .f., .t., .f., .f. )
-                              end if
+                     ::oDbf:Append()
 
-                           end if
+                     ::oDbf:cCodGrC := cGruCli( ::oFacCliT:cCodCli, ::oDbfCli )
+                     ::oDbf:cNomGrc := oRetFld( ::oDbf:cCodGrC, ::oGrpCli:oDbf )
+                     ::oDbf:CCODART := ::oFacCliL:CREF
+                     ::oDbf:CNOMART := ::oFacCliL:cDetalle
+                     ::oDbf:NCAJENT := ::oFacCliL:NCANENT
+                     ::oDbf:NUNTENT := nTotNFacCli( ::oFacCliL )
+                     ::oDbf:nUnidad := ::oFacCliL:NUNICAJA
+                     ::oDbf:nComAge := ::oFacCliL:nComAge
+                     ::oDbf:nTotAge := nComLFacCli( ::oFacCliT:cAlias, ::oFacCliL:cAlias, ::nDecOut, ::nDerOut  )
+                     ::oDbf:nPreDiv := nImpLFacCli( ::oFacCliT:cAlias, ::oFacCliL:cAlias, ::nDecOut, ::nDerOut, ::nValDiv, .f., .t., .f., .f. )
 
-                           ::oDbf:Save()
-
-                        else
-
-                        ::oDbf:Append()
-
-                        ::oDbf:cCodGrC := cGruCli( ::oFacCliT:cCodCli, ::oDbfCli )
-                        ::oDbf:cNomGrc := oRetFld( ::oDbf:cCodGrC, ::oGrpCli:oDbf )
-                        ::oDbf:CCODART := ::oFacCliL:cRef
-                        ::oDbf:CNOMART := ::oFacCliL:cDetalle
-
-                        if ::oDbfTvta:Seek( cGruCli( ::oFacCliT:cCodCli, ::oDbfCli ) + ::oFacCliL:cTipMov )
-
-                           if ::oDbfTvta:nUndMov == 1
-                              ::oDbf:NCAJENT := ::oFacCliL:NCANENT
-                              ::oDbf:NUNTENT := nTotNFacCli( ::oFacCliL )
-                              ::oDbf:nUnidad := ::oFacCliL:NUNICAJA
-                           elseif ::oDbfTvta:nUndMov == 2
-                              ::oDbf:NCAJENT := - ::oFacCliL:NCANENT
-                              ::oDbf:NUNTENT := - nTotNFacCli( ::oFacCliL )
-                              ::oDbf:nUnidad := - ::oFacCliL:NUNICAJA
-                           elseif ::oDbfTvta:nUndMov == 3
-                              ::oDbf:NCAJENT := 0
-                              ::oDbf:NUNTENT := 0
-                              ::oDbf:nUnidad := 0
-                           end
-
-                           if ::oDbfTvta:nImpMov == 3
-                              ::oDbf:nComAge := 0
-                              ::oDbf:nTotAge := 0
-                              ::oDbf:nPreDiv := 0
-                           else
-                              ::oDbf:nComAge := ( ::oFacCliL:nComAge )
-                              ::oDbf:nTotAge := nComLFacCli( ::oFacCliT:cAlias, ::oFacCliL:cAlias, ::nDecOut, ::nDerOut  )
-                              ::oDbf:nPreDiv := nImpLFacCli( ::oFacCliT:cAlias, ::oFacCliL:cAlias, ::nDecOut, ::nDerOut, ::nValDiv, .f., .t., .f., .f. )
-                           end
-
-                        end if
-
-                        ::oDbf:Save()
-
-                        end if
-
-                    end if
-
-                    ::oFacCliL:Skip()
-
-                else
-
-                     if !( ::lExcCero .AND. ( nTotNFacCli( ::oFacCliL ) == 0 ) )
-
-                        if ::oDbf:Seek( cGruCli( ::oFacCliT:cCodCli, ::oDbfCli ) + ::oFacCliL:CREF )
-
-                           ::oDbf:Load()
-
-                           ::oDbf:NCAJENT += ::oFacCliL:NCANENT
-                           ::oDbf:NUNTENT += nTotNFacCli( ::oFacCliL )
-                           ::oDbf:nUnidad += ::oFacCliL:NUNICAJA
-                           ::oDbf:nComAge += ::oFacCliL:nComAge
-                           ::oDbf:nTotAge += nComLFacCli( ::oFacCliT:cAlias, ::oFacCliL:cAlias, ::nDecOut, ::nDerOut  )
-                           ::oDbf:nPreDiv += nImpLFacCli( ::oFacCliT:cAlias, ::oFacCliL:cAlias, ::nDecOut, ::nDerOut, ::nValDiv, .f., .t., .f., .f. )
-
-                           ::oDbf:Save()
-
-                        else
-
-                           ::oDbf:Append()
-
-                           ::oDbf:cCodGrC := cGruCli( ::oFacCliT:cCodCli, ::oDbfCli )
-                           ::oDbf:cNomGrc := oRetFld( ::oDbf:cCodGrC, ::oGrpCli:oDbf )
-                           ::oDbf:CCODART := ::oFacCliL:CREF
-                           ::oDbf:CNOMART := ::oFacCliL:cDetalle
-                           ::oDbf:NCAJENT := ::oFacCliL:NCANENT
-                           ::oDbf:NUNTENT := nTotNFacCli( ::oFacCliL )
-                           ::oDbf:nUnidad := ::oFacCliL:NUNICAJA
-                           ::oDbf:nComAge := ::oFacCliL:nComAge
-                           ::oDbf:nTotAge := nComLFacCli( ::oFacCliT:cAlias, ::oFacCliL:cAlias, ::nDecOut, ::nDerOut  )
-                           ::oDbf:nPreDiv := nImpLFacCli( ::oFacCliT:cAlias, ::oFacCliL:cAlias, ::nDecOut, ::nDerOut, ::nValDiv, .f., .t., .f., .f. )
-
-                           ::oDbf:Save()
-
-                        end if
-
-                     end if
-
-                     ::oFacCliL:Skip()
+                     ::oDbf:Save()
 
                   end if
 
+               end if
+
+               ::oFacCliL:Skip()
+
               end while
 
-      end if
+         end if
 
       end if
       ::oFacCliT:Skip()
@@ -446,134 +335,47 @@ METHOD lGenerate()
 
             while ::oFacRecT:cSerie + Str( ::oFacRecT:nNumFac ) + ::oFacRecT:cSufFac == ::oFacRecL:cSerie + Str( ::oFacRecL:nNumFac ) + ::oFacRecL:cSufFac .AND. ! ::oFacRecL:eof()
 
-               if ::lTvta
+               if !( ::lExcCero .AND. ( nTotNFacRec( ::oFacRecL ) == 0 ) )
 
-                     if (if (!Empty(::cTipVen), ::oFacRecL:cTipMov == ::cTipVen, .t. ))                        .AND.;
-                        !( ::lExcCero .AND. nTotNFacRec( ::oFacRecL ) == 0 )
+                  if ::oDbf:Seek( cGruCli( ::oFacRecT:cCodCli, ::oDbfCli ) + ::oFacRecL:CREF )
 
-                        if ::oDbf:Seek( cGruCli( ::oFacRecT:cCodCli, ::oDbfCli ) + ::oFacRecL:cRef )
+                     ::oDbf:Load()
 
-                           ::oDbf:Load()
+                     ::oDbf:NCAJENT += ::oFacRecL:NCANENT
+                     ::oDbf:NUNTENT += nTotNFacRec( ::oFacRecL )
+                     ::oDbf:nUnidad += ::oFacRecL:NUNICAJA
+                     ::oDbf:nComAge += ::oFacRecL:nComAge
+                     ::oDbf:nTotAge += nComLFacRec( ::oFacRecT:cAlias, ::oFacRecL:cAlias, ::nDecOut, ::nDerOut  )
+                     ::oDbf:nPreDiv += nImpLFacRec( ::oFacRecT:cAlias, ::oFacRecL:cAlias, ::nDecOut, ::nDerOut, ::nValDiv, .f., .t., .f., .f. )
 
-                           if ::oDbfTvta:Seek( ::oFacRecL:cTipMov )
+                     ::oDbf:Save()
 
-                              if ::oDbfTvta:nUndMov == 1
-                                 ::oDbf:NCAJENT += ::oFacRecL:NCANENT
-                                 ::oDbf:NUNTENT += nTotNFacRec( ::oFacRecL )
-                                 ::oDbf:nUnidad += ::oFacRecL:NUNICAJA
-                              elseif ::oDbfTvta:nUndMov == 2
-                                 ::oDbf:NCAJENT -= ::oFacRecL:NCANENT
-                                 ::oDbf:NUNTENT -= nTotNFacRec( ::oFacRecL )
-                                 ::oDbf:nUnidad -= ::oFacRecL:NUNICAJA
-                              elseif ::oDbfTvta:nUndMov == 3
-                                 ::oDbf:NCAJENT += 0
-                                 ::oDbf:NUNTENT += 0
-                                 ::oDbf:nUnidad += 0
-                              end if
+                  else
 
-                              if ::oDbfTvta:nImpMov == 3
-                                 ::oDbf:nComAge += 0
-                                 ::oDbf:nPreDiv += 0
-                              else
-                                 ::oDbf:nComAge += ::oFacRecL:nComAge
-                                 ::oDbf:nTotAge += nComLFacRec( ::oFacRecT:cAlias, ::oFacRecL:cAlias, ::nDecOut, ::nDerOut  )
-                                 ::oDbf:nPreDiv += nImpLFacRec( ::oFacRecT:cAlias, ::oFacRecL:cAlias, ::nDecOut, ::nDerOut, ::nValDiv, .f., .t., .f., .f. )
-                              end if
+                     ::oDbf:Append()
 
-                           end if
+                     ::oDbf:cCodGrC := cGruCli( ::oFacRecT:cCodCli, ::oDbfCli )
+                     ::oDbf:cNomGrc := oRetFld( ::oDbf:cCodGrC, ::oGrpCli:oDbf )
+                     ::oDbf:CCODART := ::oFacRecL:CREF
+                     ::oDbf:CNOMART := ::oFacRecL:cDetalle
+                     ::oDbf:NCAJENT := ::oFacRecL:NCANENT
+                     ::oDbf:NUNTENT := nTotNFacRec( ::oFacRecL )
+                     ::oDbf:nUnidad := ::oFacRecL:NUNICAJA
+                     ::oDbf:nComAge := ::oFacRecL:nComAge
+                     ::oDbf:nTotAge := nComLFacRec( ::oFacRecT:cAlias, ::oFacRecL:cAlias, ::nDecOut, ::nDerOut  )
+                     ::oDbf:nPreDiv := nImpLFacRec( ::oFacRecT:cAlias, ::oFacRecL:cAlias, ::nDecOut, ::nDerOut, ::nValDiv, .f., .t., .f., .f. )
 
-                           ::oDbf:Save()
-
-                        else
-
-                        ::oDbf:Append()
-
-                        ::oDbf:cCodGrC := cGruCli( ::oFacRecT:cCodCli, ::oDbfCli )
-                        ::oDbf:cNomGrc := oRetFld( ::oDbf:cCodGrC, ::oGrpCli:oDbf )
-                        ::oDbf:CCODART := ::oFacRecL:cRef
-                        ::oDbf:CNOMART := ::oFacRecL:cDetalle
-
-                        if ::oDbfTvta:Seek( cGruCli( ::oFacRecT:cCodCli, ::oDbfCli ) + ::oFacRecL:cTipMov )
-
-                           if ::oDbfTvta:nUndMov == 1
-                              ::oDbf:NCAJENT := ::oFacRecL:NCANENT
-                              ::oDbf:NUNTENT := nTotNFacRec( ::oFacRecL )
-                              ::oDbf:nUnidad := ::oFacRecL:NUNICAJA
-                           elseif ::oDbfTvta:nUndMov == 2
-                              ::oDbf:NCAJENT := - ::oFacRecL:NCANENT
-                              ::oDbf:NUNTENT := - nTotNFacRec( ::oFacRecL )
-                              ::oDbf:nUnidad := - ::oFacRecL:NUNICAJA
-                           elseif ::oDbfTvta:nUndMov == 3
-                              ::oDbf:NCAJENT := 0
-                              ::oDbf:NUNTENT := 0
-                              ::oDbf:nUnidad := 0
-                           end
-
-                           if ::oDbfTvta:nImpMov == 3
-                              ::oDbf:nComAge := 0
-                              ::oDbf:nTotAge := 0
-                              ::oDbf:nPreDiv := 0
-                           else
-                              ::oDbf:nComAge := ( ::oFacRecL:nComAge )
-                              ::oDbf:nTotAge := nComLFacRec( ::oFacRecT:cAlias, ::oFacRecL:cAlias, ::nDecOut, ::nDerOut  )
-                              ::oDbf:nPreDiv := nImpLFacRec( ::oFacRecT:cAlias, ::oFacRecL:cAlias, ::nDecOut, ::nDerOut, ::nValDiv, .f., .t., .f., .f. )
-                           end
-
-                        end if
-
-                        ::oDbf:Save()
-
-                        end if
-
-                    end if
-
-                    ::oFacRecL:Skip()
-
-                else
-
-                     if !( ::lExcCero .AND. ( nTotNFacRec( ::oFacRecL ) == 0 ) )
-
-                        if ::oDbf:Seek( cGruCli( ::oFacRecT:cCodCli, ::oDbfCli ) + ::oFacRecL:CREF )
-
-                           ::oDbf:Load()
-
-                           ::oDbf:NCAJENT += ::oFacRecL:NCANENT
-                           ::oDbf:NUNTENT += nTotNFacRec( ::oFacRecL )
-                           ::oDbf:nUnidad += ::oFacRecL:NUNICAJA
-                           ::oDbf:nComAge += ::oFacRecL:nComAge
-                           ::oDbf:nTotAge += nComLFacRec( ::oFacRecT:cAlias, ::oFacRecL:cAlias, ::nDecOut, ::nDerOut  )
-                           ::oDbf:nPreDiv += nImpLFacRec( ::oFacRecT:cAlias, ::oFacRecL:cAlias, ::nDecOut, ::nDerOut, ::nValDiv, .f., .t., .f., .f. )
-
-                           ::oDbf:Save()
-
-                        else
-
-                           ::oDbf:Append()
-
-                           ::oDbf:cCodGrC := cGruCli( ::oFacRecT:cCodCli, ::oDbfCli )
-                           ::oDbf:cNomGrc := oRetFld( ::oDbf:cCodGrC, ::oGrpCli:oDbf )
-                           ::oDbf:CCODART := ::oFacRecL:CREF
-                           ::oDbf:CNOMART := ::oFacRecL:cDetalle
-                           ::oDbf:NCAJENT := ::oFacRecL:NCANENT
-                           ::oDbf:NUNTENT := nTotNFacRec( ::oFacRecL )
-                           ::oDbf:nUnidad := ::oFacRecL:NUNICAJA
-                           ::oDbf:nComAge := ::oFacRecL:nComAge
-                           ::oDbf:nTotAge := nComLFacRec( ::oFacRecT:cAlias, ::oFacRecL:cAlias, ::nDecOut, ::nDerOut  )
-                           ::oDbf:nPreDiv := nImpLFacRec( ::oFacRecT:cAlias, ::oFacRecL:cAlias, ::nDecOut, ::nDerOut, ::nValDiv, .f., .t., .f., .f. )
-
-                           ::oDbf:Save()
-
-                        end if
-
-                     end if
-
-                     ::oFacRecL:Skip()
+                     ::oDbf:Save()
 
                   end if
 
+               end if
+
+               ::oFacRecL:Skip()
+
               end while
 
-      end if
+         end if
 
       end if
       ::oFacRecT:Skip()

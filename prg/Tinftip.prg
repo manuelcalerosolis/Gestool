@@ -180,10 +180,6 @@ METHOD AppPre( cCodTip, lAcumula )
       ::oDbf:cTipDoc    := "Presupuesto"
       ::oDbf:dFecMov    := ::oPreCliT:dFecPre
 
-      if ::oDbfTvta:Seek( ::oPreCliL:cTipMov )
-         ::oDbf:cTipVen := ::oDbfTvta:cDesMov
-      end if
-
    else
 
       ::oDbf:nPreMed    := ::oDbf:nImpTot / ::oDbf:nNumUni
@@ -270,10 +266,6 @@ METHOD AppPed( cCodTip, lAcumula )
       ::oDbf:cDocMov    := ::oPedCliL:cSerPed + "/" + lTrim( Str( ::oPedCliL:nNumPed ) ) + "/" + lTrim( ::oPedCliL:cSufPed )
       ::oDbf:cTipDoc    := "Pedido"
       ::oDbf:dFecMov    := ::oPedCliT:dFecPed
-
-      if ::oDbfTvta:Seek( ::oPedCliL:cTipMov )
-         ::oDbf:cTipVen := ::oDbfTvta:cDesMov
-      end if
 
    else
 
@@ -362,10 +354,6 @@ METHOD AppAlb( cCodTip, lAcumula )
       ::oDbf:cTipDoc    := "Albarán"
       ::oDbf:dFecMov    := ::oAlbCliT:dFecAlb
 
-      if ::oDbfTvta:Seek( ::oAlbCliL:cTipMov )
-         ::oDbf:cTipVen := ::oDbfTvta:cDesMov
-      end if
-
    else
 
       ::oDbf:nPreMed    := ::oDbf:nImpTot / ::oDbf:nNumUni
@@ -452,10 +440,6 @@ METHOD AppFac( cCodTip, lAcumula )
       ::oDbf:cDocMov    := ::oFacCliL:cSerie + "/" + lTrim( Str( ::oFacCliL:nNumFac ) ) + "/" + lTrim( ::oFacCliL:cSufFac )
       ::oDbf:cTipDoc    := "Factura"
       ::oDbf:dFecMov    := ::oFacCliT:dFecFac
-
-      if ::oDbfTvta:Seek( ::oFacCliL:cTipMov )
-         ::oDbf:cTipVen := ::oDbfTvta:cDesMov
-      end if
 
    else
 
@@ -544,10 +528,6 @@ METHOD AppFacRec( cCodTip, lAcumula )
       ::oDbf:cTipDoc    := "Fac. rec."
       ::oDbf:dFecMov    := ::oFacRecT:dFecFac
 
-      if ::oDbfTvta:Seek( ::oFacRecL:cTipMov )
-         ::oDbf:cTipVen := ::oDbfTvta:cDesMov
-      end if
-
    else
 
       ::oDbf:nPreMed    := ::oDbf:nImpTot / ::oDbf:nNumUni
@@ -634,10 +614,6 @@ METHOD AppFacRecVta( cCodTip, lAcumula )
       ::oDbf:cDocMov    := ::oFacRecL:cSerie + "/" + lTrim( Str( ::oFacRecL:nNumFac ) ) + "/" + lTrim( ::oFacRecL:cSufFac )
       ::oDbf:cTipDoc    := "Fac. rec."
       ::oDbf:dFecMov    := ::oFacRecT:dFecFac
-
-      if ::oDbfTvta:Seek( ::oFacRecL:cTipMov )
-         ::oDbf:cTipVen := ::oDbfTvta:cDesMov
-      end if
 
    else
 

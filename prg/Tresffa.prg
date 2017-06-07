@@ -45,7 +45,7 @@ CLASS TInfResFfa FROM TInfGen
    DATA  oEstado     AS OBJECT
    DATA  oFacCliT    AS OBJECT
    DATA  oFacCliL    AS OBJECT
-   DATA  oDbfTvta    AS OBJECT
+    
    DATA  aMes        AS ARRAY    INIT {.f., .f., .f., .f., .f., .f., .f., .f., .f., .f., .f., .f. }
    DATA  lAno        AS LOGIC    INIT .f.
    DATA  aEstado     AS ARRAY    INIT { "Pendiente", "Cobrada", "Todas" }
@@ -74,8 +74,6 @@ METHOD OpenFiles() CLASS TInfResFfa
    DATABASE NEW ::oFacCliL PATH ( cPatEmp() ) FILE "FACCLIL.DBF" VIA ( cDriver() ) SHARED INDEX "FACCLIL.CDX"
    ::oFacCliL:SetOrder( "CREF" )
 
-   DATABASE NEW ::oDbfTvta  PATH ( cPatDat() ) FILE "TVTA.DBF" VIA ( cDriver() ) SHARED INDEX "TVTA.CDX"
-
    DATABASE NEW ::oDbfArt PATH ( cPatArt() ) FILE "ARTICULO.DBF" VIA ( cDriver() ) SHARED INDEX "ARTICULO.CDX"
 
 RETURN ( Self )
@@ -86,7 +84,6 @@ METHOD CloseFiles() CLASS TInfResFfa
 
    ::oFacCliT:End()
    ::oFacCliL:End()
-   ::oDbfTvta:End()
    ::oDbfArt:End()
 
 RETURN ( Self )

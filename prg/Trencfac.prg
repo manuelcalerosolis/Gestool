@@ -15,7 +15,6 @@ CLASS TRenCFac FROM TInfCli
    DATA  oFacCliL    AS OBJECT
    DATA  oFacRecT    AS OBJECT
    DATA  oFacRecL    AS OBJECT
-   DATA  oDbfTvta    AS OBJECT
    DATA  aEstado     AS ARRAY    INIT { "Pendientes", "Cobradas", "Todas" }
 
    METHOD Create()
@@ -40,13 +39,9 @@ METHOD OpenFiles() CLASS TRenCFac
 
    BEGIN SEQUENCE
 
-   DATABASE NEW ::oDbfTvta PATH ( cPatDat() ) FILE "TVTA.DBF" VIA ( cDriver() ) SHARED INDEX "TVTA.CDX"
-
    ::oFacCliT := TDataCenter():oFacCliT()
 
    DATABASE NEW ::oFacCliL PATH ( cPatEmp() ) FILE "FACCLIL.DBF" VIA ( cDriver() ) SHARED INDEX "FACCLIL.CDX"
-
-   DATABASE NEW ::oDbfTvta PATH ( cPatDat() ) FILE "TVTA.DBF" VIA ( cDriver() ) SHARED INDEX "TVTA.CDX"
 
    DATABASE NEW ::oFacRecT PATH ( cPatEmp() ) FILE "FACRECT.DBF" VIA ( cDriver() ) SHARED INDEX "FACRECT.CDX"
 
@@ -68,9 +63,6 @@ RETURN ( lOpen )
 
 METHOD CloseFiles() CLASS TRenCFac
 
-   if !Empty( ::oDbfTvta ) .and. ::oDbfTvta:Used()
-      ::oDbfTvta:End()
-   end if
    if !Empty( ::oFacCliT ) .and. ::oFacCliT:Used()
       ::oFacCliT:End()
    end if
@@ -84,7 +76,6 @@ METHOD CloseFiles() CLASS TRenCFac
       ::oFacRecL:End()
    end if
 
-   ::oDbfTvta := nil
    ::oFacCliT := nil
    ::oFacCliL := nil
    ::oFacRecT := nil

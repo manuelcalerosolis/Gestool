@@ -190,10 +190,6 @@ METHOD AddPre( lAcumula )
          ::oDbf:cDocMov := ::oPreCliL:cSerPre + "/" + lTrim( Str( ::oPreCliL:nNumPre ) ) + "/" + lTrim( ::oPreCliL:cSufPre )
          ::oDbf:dFecMov := ::oPreCliT:dFecPre
 
-         if ::oDbfTvta:Seek( ::oPreCliL:cTipMov )
-            ::oDbf:cTipVen := ::oDbfTvta:cDesMov
-         end if
-
       end if
 
       ::oDbf:Save()
@@ -258,10 +254,6 @@ METHOD AddPed( lAcumula )
          ::oDbf:nUniDad := ::oPedCliL:nUniCaja
          ::oDbf:cDocMov := lTrim( ::oPedCliL:cSerPed ) + "/" + lTrim ( Str( ::oPedCliL:nNumPed ) ) + "/" + lTrim ( ::oPedCliL:cSufPed )
          ::oDbf:dFecMov := ::oPedCliT:dFecPed
-
-         if ::oDbfTvta:Seek( ::oPedCliL:cTipMov )
-            ::oDbf:cTipVen := ::oDbfTvta:cDesMov
-         end if
 
       end if
 
@@ -328,10 +320,6 @@ METHOD AddAlb( lAcumula )
          ::oDbf:cDocMov := ::oAlbCliL:cSerAlb + "/" + lTrim ( Str( ::oAlbCliL:nNumAlb ) ) + "/" + lTrim ( ::oAlbCliL:cSufAlb )
          ::oDbf:dFecMov := ::oAlbCliT:dFecAlb
 
-         if ::oDbfTvta:Seek( ::oAlbCliL:cTipMov )
-            ::oDbf:cTipVen := ::oDbfTvta:cDesMov
-         end if
-
       end if
 
    else
@@ -396,10 +384,6 @@ METHOD AddFac( lAcumula )
          ::oDbf:nUniDad := ::oFacCliL:nUniCaja
          ::oDbf:cDocMov := ::oFacCliL:cSerie + "/" + lTrim ( Str( ::oFacCliL:nNumFac ) ) + "/" + lTrim ( ::oFacCliL:cSufFac )
          ::oDbf:dFecMov := ::oFacCliT:dFecFac
-
-         if ::oDbfTvta:Seek( ::oFacCliL:cTipMov )
-            ::oDbf:cTipVen := ::oDbfTvta:cDesMov
-         end if
 
       end if
 
@@ -466,10 +450,6 @@ METHOD AddFacRec( lAcumula )
          ::oDbf:cDocMov := ::oFacRecL:cSerie + "/" + lTrim ( Str( ::oFacRecL:nNumFac ) ) + "/" + lTrim ( ::oFacRecL:cSufFac )
          ::oDbf:dFecMov := ::oFacRecT:dFecFac
 
-         if ::oDbfTvta:Seek( ::oFacRecL:cTipMov )
-            ::oDbf:cTipVen := ::oDbfTvta:cDesMov
-         end if
-
       end if
 
    else
@@ -534,10 +514,6 @@ METHOD AddFacRecVta( lAcumula )
          ::oDbf:nUniDad := ::oFacRecL:nUniCaja
          ::oDbf:cDocMov := ::oFacRecL:cSerie + "/" + lTrim ( Str( ::oFacRecL:nNumFac ) ) + "/" + lTrim ( ::oFacRecL:cSufFac )
          ::oDbf:dFecMov := ::oFacRecT:dFecFac
-
-         if ::oDbfTvta:Seek( ::oFacRecL:cTipMov )
-            ::oDbf:cTipVen := ::oDbfTvta:cDesMov
-         end if
 
       end if
 

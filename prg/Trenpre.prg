@@ -13,7 +13,7 @@ CLASS TRenPre FROM TInfPArt
    DATA  oPreCliL    AS OBJECT
    DATA  oEstado     AS OBJECT
    DATA  oDbfArt     AS OBJECT
-   DATA  oDbfTvta    AS OBJECT
+    
    DATA  aEstado     AS ARRAY    INIT  { "Pendiente", "Aceptado", "Todos" }
 
    METHOD Create()
@@ -68,7 +68,7 @@ METHOD OpenFiles() CLASS TRenPre
 
    DATABASE NEW ::oDbfArt  PATH ( cPatArt() ) FILE "ARTICULO.DBF" VIA ( cDriver() ) SHARED INDEX "ARTICULO.CDX"
 
-   DATABASE NEW ::oDbfTvta PATH ( cPatDat() ) FILE "TVTA.DBF" VIA ( cDriver() ) SHARED INDEX "TVTA.CDX"
+    
 
    ::oPreCliT  := TDataCenter():oPreCliT()
 
@@ -93,9 +93,7 @@ METHOD CloseFiles() CLASS TRenPre
    if !Empty( ::oDbfArt ) .and. ::oDbfArt:Used()
       ::oDbfArt:End()
    end if
-   if !Empty( ::oDbfTvta ) .and. ::oDbfTvta:Used()
-      ::oDbfTvta:End()
-   end if
+    
    if !Empty( ::oPreCliT ) .and. ::oPreCliT:Used()
       ::oPreCliT:End()
    end if
@@ -104,7 +102,7 @@ METHOD CloseFiles() CLASS TRenPre
    end if
 
    ::oDbfArt  := nil
-   ::oDbfTvta := nil
+    
    ::oPreCliT := nil
    ::oPreCliL := nil
 

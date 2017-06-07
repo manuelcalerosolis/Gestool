@@ -14,7 +14,6 @@ CLASS TRenATik FROM TInfAlm
    DATA  oTikCliL    AS OBJECT
    DATA  oEstado     AS OBJECT
    DATA  oFamilia    AS OBJECT
-   DATA  oDbfTvta    AS OBJECT
 
    METHOD Create()
 
@@ -51,8 +50,6 @@ METHOD OpenFiles() CLASS TRenATik
 
    BEGIN SEQUENCE
 
-   DATABASE NEW ::oDbfTvta PATH ( cPatDat() ) FILE "TVTA.DBF" VIA ( cDriver() ) SHARED INDEX "TVTA.CDX"
-
    DATABASE NEW ::oFamilia PATH ( cPatArt() ) FILE "FAMILIAS.DBF" VIA ( cDriver() ) SHARED INDEX "FAMILIAS.CDX"
 
    DATABASE NEW ::oTikCliT PATH ( cPatEmp() ) FILE "TIKET.DBF" VIA ( cDriver() ) SHARED INDEX "TIKET.CDX"
@@ -75,9 +72,6 @@ RETURN ( lOpen )
 
 METHOD CloseFiles() CLASS TRenATik
 
-   if !Empty( ::oDbfTvta ) .and. ::oDbfTvta:Used()
-      ::oDbfTvta:End()
-   end if
    if !Empty( ::oFamilia ) .and. ::oFamilia:Used()
       ::oFamilia:End()
    end if
@@ -88,7 +82,6 @@ METHOD CloseFiles() CLASS TRenATik
       ::oTikCliL:End()
    end if
 
-   ::oDbfTvta := nil
    ::oFamilia := nil
    ::oTikCliT := nil
    ::oTikCliL := nil

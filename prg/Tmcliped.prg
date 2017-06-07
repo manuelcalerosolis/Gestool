@@ -54,7 +54,7 @@ CLASS TMovCPed FROM TInfGen
    DATA  oEstado     AS OBJECT
    DATA  oPedCliT    AS OBJECT
    DATA  oPedCliL    AS OBJECT
-   DATA  oDbfTvta    AS OBJECT
+    
    DATA  oDbfCli     AS OBJECT
    DATA  aEstado     AS ARRAY    INIT { "Pendiente", "Parcialmente", "Entregados", "Todos" }
    DATA  cTipVen     AS CHARACTER     INIT  "00"

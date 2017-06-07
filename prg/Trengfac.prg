@@ -15,7 +15,6 @@ CLASS TRenGFac FROM TInfGrp
    DATA  oFacRecL    AS OBJECT
    DATA  oEstado     AS OBJECT
    DATA  oDbfFam     AS OBJECT
-   DATA  oDbfTvta    AS OBJECT
    DATA  aEstado     AS ARRAY    INIT  { "Pendiente", "Liquidada", "Todas" }
 
    METHOD Create()
@@ -55,8 +54,6 @@ METHOD OpenFiles() CLASS TRenGFac
 
    BEGIN SEQUENCE
 
-   DATABASE NEW ::oDbfTvta PATH ( cPatDat() ) FILE "TVTA.DBF" VIA ( cDriver() ) SHARED INDEX "TVTA.CDX"
-
    DATABASE NEW ::oDbfFam PATH ( cPatArt() ) FILE "FAMILIAS.DBF" VIA ( cDriver() ) SHARED INDEX "FAMILIAS.CDX"
 
    DATABASE NEW ::oFacRecT PATH ( cPatEmp() ) FILE "FACRECT.DBF" VIA ( cDriver() ) SHARED INDEX "FACRECT.CDX"
@@ -83,9 +80,6 @@ RETURN ( lOpen )
 
 METHOD CloseFiles() CLASS TRenGFac
 
-   if !Empty( ::oDbfTvta ) .and. ::oDbfTvta:Used()
-      ::oDbfTvta:End()
-   end if
    if !Empty( ::oDbfFam ) .and. ::oDbfFam:Used()
       ::oDbfFam:End()
    end if
@@ -101,11 +95,8 @@ METHOD CloseFiles() CLASS TRenGFac
    if !Empty( ::oFacRecL ) .and. ::oFacRecL:Used()
       ::oFacRecL:End()
    end if
-   if !Empty( ::oDbfTvta ) .and. ::oDbfTvta:Used()
-      ::oDbfTvta:End()
-   end if
+    
 
-   ::oDbfTvta  := nil
    ::oDbfFam   := nil
    ::oFacCliT  := nil
    ::oFacCliL  := nil

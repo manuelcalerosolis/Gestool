@@ -14,7 +14,6 @@ CLASS TRenGPed FROM TInfGrp
    DATA  oPedCliL    AS OBJECT
    DATA  oEstado     AS OBJECT
    DATA  oDbfFam     AS OBJECT
-   DATA  oDbfTvta    AS OBJECT
    DATA  aEstado     AS ARRAY    INIT  { "Pendiente", "Parcialmente", "Entregado", "Todos" }
 
    METHOD Create()
@@ -39,8 +38,6 @@ METHOD OpenFiles() CLASS TRenGPed
 
    BEGIN SEQUENCE
 
-   DATABASE NEW ::oDbfTvta PATH ( cPatDat() ) FILE "TVTA.DBF" VIA ( cDriver() ) SHARED INDEX "TVTA.CDX"
-
    DATABASE NEW ::oDbfFam PATH ( cPatArt() )  FILE "FAMILIAS.DBF" VIA ( cDriver() ) SHARED INDEX "FAMILIAS.CDX"
 
    ::oPedCliT := TDataCenter():oPedCliT()
@@ -63,9 +60,6 @@ RETURN ( lOpen )
 
 METHOD CloseFiles() CLASS TRenGPed
 
-   if !Empty( ::oDbfTvta ) .and. ::oDbfTvta:Used()
-      ::oDbfTvta:End()
-   end if
    if !Empty( ::oDbfFam ) .and. ::oDbfFam:Used()
       ::oDbfFam:End()
    end if
@@ -76,7 +70,6 @@ METHOD CloseFiles() CLASS TRenGPed
       ::oPedCliL:End()
    end if
 
-   ::oDbfTvta := nil
    ::oDbfFam := nil
    ::oPedCliT := nil
    ::oPedCliL := nil

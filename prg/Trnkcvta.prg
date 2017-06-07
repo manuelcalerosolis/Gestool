@@ -19,7 +19,7 @@ CLASS TRnkCVta FROM TInfGen
    DATA  oAntCliT    AS OBJECT
    DATA  oFacRecT    AS OBJECT
    DATA  oFacRecL    AS OBJECT
-   DATA  oDbfTvta    AS OBJECT
+    
    DATA  oLimit      AS OBJECT
    DATA  nTotalNeto  AS NUMERIC  INIT 0
    DATA  nLimit                  INIT 0
@@ -92,8 +92,6 @@ METHOD OpenFiles()
 
    DATABASE NEW ::oDbfIva   PATH ( cPatDat() ) FILE "TIVA.DBF"    VIA ( cDriver() ) SHARED INDEX "TIVA.CDX"
 
-   DATABASE NEW ::oDbfTvta  PATH ( cPatDat() ) FILE "TVTA.DBF"    VIA ( cDriver() ) SHARED INDEX "TVTA.CDX"
-
    DATABASE NEW ::oAntCliT  PATH ( cPatEmp() ) FILE "ANTCLIT.DBF" VIA ( cDriver() ) SHARED INDEX "ANTCLIT.CDX"
 
    ::bForReport   := {|| ::lAllPrc .or. ::oDbf:nTotNet >= ::nLimit }
@@ -141,9 +139,7 @@ METHOD CloseFiles()
    if !Empty( ::oTikCliL ) .and. ::oTikCliL:Used()
       ::oTikCliL:End()
    end if
-   if !Empty( ::oDbfTvta ) .and. ::oDbfTvta:Used()
-      ::oDbfTvta:End()
-   end if
+    
    if !Empty( ::oDbfIva ) .and. ::oDbfIva:Used()
       ::oDbfIva:End()
    end if
@@ -160,7 +156,7 @@ METHOD CloseFiles()
    ::oFacRecL := nil
    ::oTikCliT := nil
    ::oTikCliL := nil
-   ::oDbfTvta := nil
+    
    ::oDbfIva  := nil
    ::oAntCliT := nil
 

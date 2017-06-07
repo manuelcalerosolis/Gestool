@@ -10,7 +10,7 @@ CLASS TAcuNPed FROM TInfPAge
    DATA  lExcCero    AS LOGIC    INIT .f.
    DATA  oPedCliT    AS OBJECT
    DATA  oPedCliL    AS OBJECT
-   DATA  oDbfTvta    AS OBJECT
+    
    DATA  oDbfArt     AS OBJECT
    DATA  lTvta       AS LOGIC    INIT .f.
    DATA  oIva        AS OBJECT
@@ -78,9 +78,7 @@ METHOD CloseFiles()
    if !Empty( ::oPedCliL ) .and. ::oPedCliL:Used()
       ::oPedCliL:End()
    end if
-   if !Empty( ::oDbfTvta ) .and. ::oDbfTvta:Used()
-      ::oDbfTvta:End()
-   end if
+    
    if !Empty( ::oDbfArt ) .and. ::oDbfArt:Used()
       ::oDbfArt:End()
    end if
@@ -90,7 +88,7 @@ METHOD CloseFiles()
 
    ::oPedCliT := nil
    ::oPedCliL := nil
-   ::oDbfTvta := nil
+    
    ::oDbfArt  := nil
    ::oIva     := nil
 
@@ -111,23 +109,6 @@ METHOD lResource( cFld )
    if !::oDefAgeInf( 70, 80, 90, 100, 930 )
       return .f.
    end if
-
-   REDEFINE CHECKBOX ::lTvta ;
-      ID       260 ;
-      OF       ::oFld:aDialogs[1]
-
-   REDEFINE GET oTipVen VAR ::cTipVen ;
-      VALID    ( cTVta( oTipVen, This:oDbfTvta:cAlias, oTipVen2 ) ) ;
-      BITMAP   "LUPA" ;
-      ON HELP  ( BrwTVta( oTipVen, This:oDbfTVta:cAlias, oTipVen2 ) ) ;
-      ID       270 ;
-      OF       ::oFld:aDialogs[1]
-
-   REDEFINE GET oTipVen2 VAR ::cTipVen2 ;
-      ID       280 ;
-      WHEN     ( .F. ) ;
-      COLOR    CLR_GET ;
-      OF       ::oFld:aDialogs[1]
 
    /*
    Damos valor al meter
@@ -192,96 +173,7 @@ METHOD lGenerate()
 
            if !( ::lExcCero .AND. nImpLPedCli( ::oPedCliT:cAlias, ::oPedCliL:cAlias, ::nDecOut, ::nDerOut, ::nValDiv ) == 0 )
 
-              if ::lTvta
-
-                 if  ( if (!Empty( ::cTipVen ), ::oPedCliL:cTipMov == ::cTipVen, .t. ) )
-
-                    if !::oDbf:Seek( ::oPedCliT:cCodAge )
-
-                        ::oDbf:Append()
-
-                        ::oDbf:cCodAge    := ::oPedCliT:cCodAge
-                        if ( ::oDbfAge:Seek (::oPedCliT:cCodAge) )
-                           ::oDbf:cNomAge := AllTrim ( ::oDbfAge:cApeAge ) + ", " + AllTrim ( ::oDbfAge:cNbrAge )
-                        end if
-
-                        if ::oDbfTvta:nUndMov == 1
-                           ::oDbf:nNumUni := nTotNPedCli( ::oPedCliL )
-                        elseif ::oDbfTvta:nUndMov == 2
-                           ::oDbf:nNumUni := -nTotNPedCli( ::oPedCliL )
-                        elseif ::oDbfTvta:nUndMov == 3
-                           ::oDbf:nNumUni := 0
-                        end if
-
-                        if ::oDbfTvta:nImpMov == 3
-                           ::oDbf:nComAge := 0
-                           ::oDbf:nImpTot := 0
-                           ::oDbf:nTotCom := 0
-                        else
-                           ::oDbf:nComAge := ( ::oPedCliL:nComAge )
-                           ::oDbf:nImpTot := nImpLPedCli( ::oPedCliT:cAlias, ::oPedCliL:cAlias, ::nDecOut, ::nDerOut )
-                           ::oDbf:nTotCom := nComLPedCli( ::oPedCliT:cAlias, ::oPedCliL:cAlias, ::nDecOut, ::nDerOut )
-                        end if
-
-                        ::oDbf:nImpArt    := nTotUPedCli( ::oPedCliL:cAlias, ::nDecOut, ::nValDiv )
-                        ::oDbf:nIvaArt    := nIvaUPedCli( ::oPedCliL:cAlias, ::nDecOut, ::nValDiv )
-                        ::oDbf:nImpTrn    := nTrnUPedCli( ::oPedCliL:cAlias, ::nDecOut, ::nValDiv )
-                        ::oDbf:nPntVer    := nPntUPedCli( ::oPedCliL:cAlias, ::nDecPnt, ::nValDiv )
-                        ::oDbf:nIvaTot    := nIvaLPedCli( ::oPedCliL:cAlias, ::nDecOut, ::nDerOut, ::nValDiv )
-                        ::oDbf:nTotFin    := ::oDbf:nImpTot + ::oDbf:nIvaTot
-                        ::oDbf:nPreMed    := ::oDbf:nImpTot / ::oDbf:nNumUni
-
-                        ::AcuPesVol( ::oPedCliL:cRef, nTotNPedCli( ::oPedCliL ), ::oDbf:nImpTot, .f. )
-
-                        ::oDbf:Save()
-                     else
-
-                        ::oDbf:Load()
-
-                        if ::oDbfTvta:nUndMov == 1
-                           ::oDbf:nNumUni += nTotNPedCli( ::oPedCliL )
-                        elseif ::oDbfTvta:nUndMov == 2
-                           ::oDbf:nNumUni += -nTotNPedCli( ::oPedCliL )
-                        elseif ::oDbfTvta:nUndMov == 3
-                           ::oDbf:nNumUni += 0
-                        end if
-
-                        if ::oDbfTvta:nImpMov == 3
-                           ::oDbf:nComAge += 0
-                           ::oDbf:nImpTot += 0
-                           ::oDbf:nTotCom += 0
-                        else
-                           ::oDbf:nComAge += ( ::oPedCliL:nComAge )
-                           ::oDbf:nImpTot += nImpLPedCli( ::oPedCliT:cAlias, ::oPedCliL:cAlias, ::nDecOut, ::nDerOut )
-                           ::oDbf:nTotCom += nComLPedCli( ::oPedCliT:cAlias, ::oPedCliL:cAlias, ::nDecOut, ::nDerOut )
-                        end if
-
-                        ::oDbf:nImpArt    += nTotUPedCli( ::oPedCliL:cAlias, ::nDecOut, ::nValDiv )
-                        ::oDbf:nIvaArt    += nIvaUPedCli( ::oPedCliL:cAlias, ::nDecOut, ::nValDiv )
-                        ::oDbf:nImpTrn    += nTrnUPedCli( ::oPedCliL:cAlias, ::nDecOut, ::nValDiv )
-                        ::oDbf:nPntVer    += nPntUPedCli( ::oPedCliL:cAlias, ::nDecOut, ::nValDiv )
-                        ::oDbf:nPreMed    := ::oDbf:nImpTot / ::oDbf:nNumUni
-                        ::oDbf:nIvaTot    += nIvaLPedCli( ::oPedCliL:cAlias, ::nDecOut, ::nDerOut, ::nValDiv )
-                        ::oDbf:nTotFin    += nImpLPedCli( ::oPedCliT:cAlias, ::oPedCliL:cAlias, ::nDecOut, ::nDerOut, ::nValDiv  )
-                        ::oDbf:nTotFin    += nIvaLPedCli( ::oPedCliL:cAlias, ::nDecOut, ::nDerOut, ::nValDiv )
-
-                        ::AcuPesVol( ::oPedCliL:cRef, nTotNPedCli( ::oPedCliL ), ::oDbf:nImpTot, .t. )
-
-                        ::oDbf:Save()
-
-                     end if
-
-                 end if
-
-                 /*
-                 Pasamos de los tipos de ventas
-                 */
-
-              else
-
                ::AddPed( .t. )
-
-              end if
 
            end if
 

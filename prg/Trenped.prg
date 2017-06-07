@@ -13,7 +13,6 @@ CLASS TRenPed FROM TInfPArt
    DATA  oPedCliL    AS OBJECT
    DATA  oEstado     AS OBJECT
    DATA  oDbfArt     AS OBJECT
-   DATA  oDbfTvta    AS OBJECT
    DATA  aEstado     AS ARRAY    INIT  { "Pendiente", "Parcilamente", "Entregado", "Todos" }
 
    METHOD Create()
@@ -68,8 +67,6 @@ METHOD OpenFiles() CLASS TRenPed
 
    DATABASE NEW ::oDbfArt  PATH ( cPatArt() ) FILE "ARTICULO.DBF" VIA ( cDriver() ) SHARED INDEX "ARTICULO.CDX"
 
-   DATABASE NEW ::oDbfTvta PATH ( cPatDat() ) FILE "TVTA.DBF" VIA ( cDriver() ) SHARED INDEX "TVTA.CDX"
-
    ::oPedCliT := TDataCenter():oPedCliT()
 
    DATABASE NEW ::oPedCliL PATH ( cPatEmp() ) FILE "PEDCLIL.DBF" VIA ( cDriver() ) SHARED INDEX "PEDCLIL.CDX"
@@ -93,9 +90,6 @@ METHOD CloseFiles() CLASS TRenPed
    if !Empty( ::oDbfArt ) .and. ::oDbfArt:Used()
       ::oDbfArt:End()
    end if
-   if !Empty( ::oDbfTvta ) .and. ::oDbfTvta:Used()
-      ::oDbfTvta:End()
-   end if
    if !Empty( ::oPedCliT ) .and. ::oPedCliT:Used()
       ::oPedCliT:End()
    end if
@@ -104,7 +98,6 @@ METHOD CloseFiles() CLASS TRenPed
    end if
 
    ::oDbfArt  := nil
-   ::oDbfTvta := nil
    ::oPedCliT := nil
    ::oPedCliL := nil
 

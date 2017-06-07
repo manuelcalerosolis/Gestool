@@ -45,7 +45,7 @@ CLASS TInfResFal FROM TInfGen
    DATA  oEstado     AS OBJECT
    DATA  oAlbCliT    AS OBJECT
    DATA  oAlbCliL    AS OBJECT
-   DATA  oDbfTvta    AS OBJECT
+    
    DATA  aMes        AS ARRAY    INIT {.f., .f., .f., .f., .f., .f., .f., .f., .f., .f., .f., .f. }
    DATA  lAno        AS LOGIC    INIT .f.
    DATA  aEstado     AS ARRAY    INIT { "No facturado", "Facturado", "Todos" }
@@ -73,8 +73,6 @@ METHOD OpenFiles() CLASS TInfResFal
 
    DATABASE NEW ::oAlbCliL PATH ( cPatEmp() ) FILE "ALBCLIL.DBF" VIA ( cDriver() ) SHARED INDEX "ALBCLIL.CDX"
    ::oAlbCliL:SetOrder( "CREF" )
-
-   DATABASE NEW ::oDbfTvta  PATH ( cPatDat() ) FILE "TVTA.DBF" VIA ( cDriver() ) SHARED INDEX "TVTA.CDX"
 
    DATABASE NEW ::oDbfArt PATH ( cPatArt() ) FILE "ARTICULO.DBF" VIA ( cDriver() ) SHARED INDEX "ARTICULO.CDX"
 

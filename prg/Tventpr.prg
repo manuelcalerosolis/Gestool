@@ -41,7 +41,7 @@ CLASS TInfVenPre FROM TInfGen
    DATA  oPreCliT    AS OBJECT
    DATA  oPreCliL    AS OBJECT
    DATA  oFamilia    AS OBJECT
-   DATA  oDbfTvta    AS OBJECT
+    
    DATA  aEstado     AS ARRAY    INIT { "Pendiente", "Aceptado", "Todos" }
 
    METHOD OpenFiles()
@@ -67,8 +67,6 @@ METHOD OpenFiles() CLASS TInfVenPre
    DATABASE NEW ::oPreCliL PATH ( cPatEmp() ) FILE "PRECLIL.DBF" VIA ( cDriver() ) SHARED INDEX "PRECLIL.CDX"
    ::oPreCliL:OrdSetFocus( "CREF" )
 
-   DATABASE NEW ::oDbfTvta  PATH ( cPatDat() ) FILE "TVTA.DBF" VIA ( cDriver() ) SHARED INDEX "TVTA.CDX"
-
    DATABASE NEW ::oFamilia PATH ( cPatArt() ) FILE "FAMILIAS.DBF" VIA ( cDriver() ) SHARED INDEX "FAMILIAS.CDX"
 
 RETURN ( Self )
@@ -79,7 +77,6 @@ METHOD CloseFiles() CLASS TInfVenPre
 
    ::oPreCliT:End()
    ::oPreCliL:End()
-   ::oDbfTvta:End()
    ::oFamilia:End()
 
 RETURN ( Self )

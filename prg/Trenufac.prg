@@ -15,7 +15,7 @@ CLASS TRenUFac FROM TInfRut
    DATA  oFacRecT    AS OBJECT
    DATA  oFacRecL    AS OBJECT
    DATA  oEstado     AS OBJECT
-   DATA  oDbfTvta    AS OBJECT
+    
    DATA  aEstado     AS ARRAY    INIT { "Pendientes", "Cobradas", "Todas" }
 
    METHOD Create()
@@ -40,7 +40,7 @@ METHOD OpenFiles() CLASS TRenUFac
 
    BEGIN SEQUENCE
 
-   DATABASE NEW ::oDbfTvta PATH ( cPatDat() ) FILE "TVTA.DBF" VIA ( cDriver() ) SHARED INDEX "TVTA.CDX"
+    
 
    ::oFacCliT := TDataCenter():oFacCliT()
 
@@ -68,9 +68,7 @@ RETURN ( lOpen )
 
 METHOD CloseFiles() CLASS TRenUFac
 
-   if !Empty( ::oDbfTvta ) .and. ::oDbfTvta:Used()
-      ::oDbfTvta:End()
-   end if
+    
 
    if !Empty( ::oFacCliT ) .and. ::oFacCliT:Used()
       ::oFacCliT:End()
@@ -86,7 +84,7 @@ METHOD CloseFiles() CLASS TRenUFac
    end if
 
 
-   ::oDbfTvta := nil
+    
    ::oFacCliT := nil
    ::oFacCliT := nil
    ::oFacRecL := nil

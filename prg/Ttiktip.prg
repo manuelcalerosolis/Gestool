@@ -10,7 +10,7 @@ CLASS TInfTTik FROM TInfTip
    DATA  lExcMov     AS LOGIC    INIT .f.
    DATA  oTikCliT    AS OBJECT
    DATA  oTikCliL    AS OBJECT
-   DATA  oDbfTvta    AS OBJECT
+    
    DATA  oArt        AS OBJECT
 
    METHOD Create()
@@ -49,8 +49,6 @@ METHOD OpenFiles() CLASS TInfTikTip
 
    DATABASE NEW ::oTikCliL PATH ( cPatEmp() ) FILE "TIKEL.DBF" VIA ( cDriver() ) SHARED INDEX "TIKEL.CDX"
 
-   DATABASE NEW ::oDbfTvta  PATH ( cPatDat() ) FILE "TVTA.DBF" VIA ( cDriver() ) SHARED INDEX "TVTA.CDX"
-
    DATABASE NEW ::oArt PATH ( cPatArt() ) FILE "ARTICULO.DBF" VIA ( cDriver() ) SHARED INDEX "ARTICULO.CDX"
 
 RETURN ( Self )
@@ -62,7 +60,6 @@ METHOD CloseFiles() CLASS TInfTikTip
    ::oTikCliT:End()
    ::oTikCliL:End()
    ::oArt:End()
-   ::oDbfTvta:End()
 
 RETURN ( Self )
 
