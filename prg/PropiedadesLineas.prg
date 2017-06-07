@@ -82,7 +82,7 @@ METHOD Dialog()
       ID          IDCANCEL ;
       OF          oDlg ;
       CANCEL ;
-      ACTION      ( if( validateDialog( oDlg ), oDlg:end( IDOK ), ) )
+      ACTION      ( oDlg:end() )
 
    // Teclas rpidas-----------------------------------------------------------
 

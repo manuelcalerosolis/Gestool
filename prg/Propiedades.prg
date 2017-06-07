@@ -27,6 +27,7 @@ Return ( Self )
 METHOD Dialog()
 
    local oDlg
+   local oBtnOk
    local oGetNombre
    local oGetCodigo
 
@@ -83,11 +84,11 @@ METHOD Dialog()
       WHEN     	( !::oController:isZoomMode() ) ;
       ACTION   	( ::oController:hControllers[ 'lineas' ]:DownDet() )*/
 
-   REDEFINE BUTTON ;
+   REDEFINE BUTTON oBtnOk ;
       ID          IDOK ;
       OF          oDlg ;
       WHEN        ( !::oController:isZoomMode() ) ;
-      ACTION      ( oDlg:end( IDOK ) )
+      ACTION      ( if( validateDialog( oDlg ), oDlg:end( IDOK ), ) )
 
    REDEFINE BUTTON ;
       ID          IDCANCEL ;
@@ -97,7 +98,7 @@ METHOD Dialog()
 
    // Teclas rpidas-----------------------------------------------------------
 
-   oDlg:AddFastKey( VK_F5, {|| oDlg:end( IDOK ) } )
+   oDlg:AddFastKey( VK_F5, {|| oBtnOk:Click() } )
 
    // evento bstart-----------------------------------------------------------
 

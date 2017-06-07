@@ -28,6 +28,8 @@ CLASS SQLBaseLineasModel From SQLBaseModel
 
    METHOD	deletingOurTmpIds()
 
+   METHOD 	checksForValid( cColumnToValid )
+
 END CLASS
 
 //---------------------------------------------------------------------------//
@@ -37,6 +39,7 @@ METHOD New()
    ::Super:New()
 
    ::cGeneralSelect 		:= "SELECT * FROM " + ::cTableName + " WHERE " + ::cForeignColumn
+   		//Errores con empresas? si es una linea de una tabla de empresa no deberia tener esa columna la tabla de las lineas. Su cabecera ya se filtra por ellas.
 
 RETURN ( Self )
 
@@ -136,5 +139,23 @@ METHOD deletingOurTmpIds()
 	getSQLDatabase():Query( cDeleteSentence )
 
 RETURN ( self )
+
+//---------------------------------------------------------------------------//
+
+METHOD checksForValid( cColumnToValid )
+
+   local cSentence := "SELECT " + ::cColumnKey + " FROM " + ::cTableName + " WHERE id_cabecera = "+ toSQLString( ::idForeignKey ) + " AND " + cColumnToValid + " = " + toSQLString( ::hBuffer[ cColumnToValid ] )
+   local aIDsToValid
+   local nIDToValid
+
+   aIDsToValid    := ::selectFetchArray( cSentence )
+
+   if empty( aIDsToValid )
+       RETURN ( nil )
+   endif
+   
+   nIDToValid     := aIDsToValid[1]
+
+RETURN ( nIDToValid )
 
 //---------------------------------------------------------------------------//

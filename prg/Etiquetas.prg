@@ -44,9 +44,10 @@ Return ( Self )
 
 //----------------------------------------------------------------------------//
 
-METHOD Dialog( lZoom )
+METHOD Dialog()
 
    local oDlg
+   local oBtnOk
    local oTree
    local oGetNombre
    local oBmpEtiquetas
@@ -70,11 +71,11 @@ METHOD Dialog( lZoom )
    oTree:bItemSelectChanged   := {|| ::oController:changeTree( oTree ) }
    oTree:bWhen                := {|| !::oController:isSpecialMode()  .and. !::oController:isZoomMode() }
 
-   REDEFINE BUTTON ;
+   REDEFINE BUTTON oBtnOk ;
       ID          IDOK ;
       OF          oDlg ;
       WHEN        ( !::oController:isZoomMode() ) ;
-      ACTION      ( ::oController:validDialog( oDlg, oTree ) )
+      ACTION      ( if( validateDialog( oDlg ), oDlg:end( IDOK ), ) )
 
    REDEFINE BUTTON ;
       ID          IDCANCEL ;
@@ -84,7 +85,7 @@ METHOD Dialog( lZoom )
 
    // Teclas rpidas-----------------------------------------------------------
 
-   oDlg:AddFastKey( VK_F5, {|| ::oController:validDialog( oDlg, oTree ) } )
+   oDlg:AddFastKey( VK_F5, {|| oBtnOk:Click() } )
 
    // evento bstart-----------------------------------------------------------
 
