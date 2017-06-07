@@ -16,7 +16,11 @@ CLASS PropiedadesLineasController FROM SQLBaseController
  
    METHOD   validCodigo( oGetCodigo )
 
-   METHOD   validNombre( oDlg, oGetCodigo )
+   METHOD   validNombre( oGetNombre )
+
+  /* METHOD   UpDet()
+
+   METHOD   DownDet()*/
 
 END CLASS
 
@@ -104,7 +108,30 @@ RETURN ( .t. )
 
 //---------------------------------------------------------------------------//
 
-/*METHOD UpDet()
+/*METHOD   UpDet()
 
-   local nOldOrder :=
-*/
+   local newPosition             := getRowSet()fieldget( "orden" ) + 1
+
+   local SentenceForOthers       := "UPDATE FROM " + ::oModel:cTableName + " SET orden = orden - 1 WHERE orden = " + toSQLString( newPosition )
+   local SentenceForMyPosition   := "UPDATE FROM " + ::oModel:cTableName + " SET orden = " + newPosition + " WHERE id = " + toSQLString( getRowSet()[ "id" ] )
+
+   getSQLDatabase():Query( SentenceForOthers )
+   getSQLDatabase():Query( SentenceForMyPosition )
+
+RETURN ( self )
+
+//---------------------------------------------------------------------------//
+
+METHOD   DownDet()
+
+   local newPosition             := getRowSet()fieldget( "orden" ) - 1
+
+   local SentenceForOthers       := "UPDATE FROM " + ::oModel:cTableName + " SET orden = orden + 1 WHERE orden = " + toSQLString( newPosition )
+   local SentenceForMyPosition   := "UPDATE FROM " + ::oModel:cTableName + " SET orden = " + newPosition + " WHERE id = " + toSQLString( getRowSet()[ "id" ] )
+
+   getSQLDatabase():Query( SentenceForOthers )
+   getSQLDatabase():Query( SentenceForMyPosition )
+
+ RETURN ( self )*/
+
+//---------------------------------------------------------------------------//

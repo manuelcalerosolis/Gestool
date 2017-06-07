@@ -34,16 +34,16 @@ METHOD Dialog()
 
    REDEFINE GET   oGetCodigo ;
       VAR         ::oController:oModel:hBuffer[ "codigo" ] ;
-      MEMO ;
       ID          100 ;
       WHEN        ( !::oController:isZoomMode() ) ;
+      VALID       ( ::oController:validCodigo( oGetCodigo ) ) ;
       OF          oDlg
 
    REDEFINE GET   oGetNombre ;
       VAR         ::oController:oModel:hBuffer[ "nombre" ] ;
-      MEMO ;
       ID          110 ;
       WHEN        ( !::oController:isZoomMode() ) ;
+      VALID       ( ::oController:validNombre( oGetNombre ) ) ;
       OF          oDlg
 
    REDEFINE CHECKBOX ::oController:oModel:hBuffer[ "is_color" ] ;
@@ -87,7 +87,7 @@ METHOD Dialog()
       ID          IDOK ;
       OF          oDlg ;
       WHEN        ( !::oController:isZoomMode() ) ;
-      ACTION      ( ::oController:validDialog( oDlg, oGetCodigo, oGetNombre ) )
+      ACTION      ( oDlg:end( IDOK ) )
 
    REDEFINE BUTTON ;
       ID          IDCANCEL ;
@@ -97,7 +97,7 @@ METHOD Dialog()
 
    // Teclas rpidas-----------------------------------------------------------
 
-   oDlg:AddFastKey( VK_F5, {|| ::oController:validDialog( oDlg, oGetCodigo, oGetNombre ) } )
+   oDlg:AddFastKey( VK_F5, {|| oDlg:end( IDOK ) } )
 
    // evento bstart-----------------------------------------------------------
 

@@ -34,23 +34,23 @@ METHOD Dialog( lZoom )
 
    REDEFINE GET   oGetCodigo ;
       VAR         ::oController:oModel:hBuffer[ "codigo" ] ;
-      MEMO ;
       ID          100 ;
       WHEN        ( !::oController:isZoomMode() ) ;
+      VALID       ( ::oController:validCodigo( oGetCodigo ) ) ;
       OF          oDlg
 
    REDEFINE GET   oGetNombre ;
       VAR         ::oController:oModel:hBuffer[ "nombre" ] ;
-      MEMO ;
       ID          110 ;
       WHEN        ( !::oController:isZoomMode() ) ;
+      VALID       ( ::oController:validNombre( oGetNombre ) ) ;
       OF          oDlg
 
    REDEFINE BUTTON ;
       ID          IDOK ;
       OF          oDlg ;
       WHEN        ( !::oController:isZoomMode() ) ;   
-      ACTION      ( ::oController:validDialog( oDlg, oGetCodigo, oGetNombre ) )
+      ACTION      ( oDlg:end( IDOK ) )
 
    REDEFINE BUTTON ;
       ID          IDCANCEL ;

@@ -1142,8 +1142,6 @@ FUNCTION getHashFamilias()
 
    end while
 
-   msgalert( hb_valtoexp( aFamilias ), "aFamilias" )
-
 RETURN ( aFamilias )
 
 //---------------------------------------------------------------------------//

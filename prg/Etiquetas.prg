@@ -61,9 +61,9 @@ METHOD Dialog( lZoom )
 
    REDEFINE GET   oGetNombre ;
       VAR         ::oController:oModel:hBuffer[ "nombre" ] ;
-      MEMO ;
       ID          100 ;
       WHEN        ( !::oController:isZoomMode() ) ;
+      VALID       ( ::oController:validNombre( oGetNombre ) ) ;
       OF          oDlg
 
    oTree                      := TTreeView():Redefine( 110, oDlg )
@@ -74,7 +74,7 @@ METHOD Dialog( lZoom )
       ID          IDOK ;
       OF          oDlg ;
       WHEN        ( !::oController:isZoomMode() ) ;
-      ACTION      ( ::oController:validDialog( oDlg, oTree, oGetNombre ) )
+      ACTION      ( ::oController:validDialog( oDlg, oTree ) )
 
    REDEFINE BUTTON ;
       ID          IDCANCEL ;
@@ -84,7 +84,7 @@ METHOD Dialog( lZoom )
 
    // Teclas rpidas-----------------------------------------------------------
 
-   oDlg:AddFastKey( VK_F5, {|| ::oController:validDialog( oDlg, oTree, oGetNombre ) } )
+   oDlg:AddFastKey( VK_F5, {|| ::oController:validDialog( oDlg, oTree ) } )
 
    // evento bstart-----------------------------------------------------------
 

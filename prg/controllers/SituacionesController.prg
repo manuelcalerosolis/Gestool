@@ -14,7 +14,7 @@ CLASS SituacionesController FROM SQLBaseController
 
    METHOD   buildSQLView( this )			INLINE ( Situaciones():New( this ) )
 
-   METHOD   validDialog( oDlg, oGetNombre )
+   METHOD   validNombre( oGetNombre )
 
 END CLASS
 
@@ -32,31 +32,38 @@ Return ( Self )
 
 //---------------------------------------------------------------------------//
 
-METHOD validDialog( oDlg, oGetNombre )
+METHOD validNombre( oGetNombre )
 
-   local idForNombre
+   local idNombre
+   local cErrorText  := ""
+
+   oGetNombre:setColor( Rgb( 0, 0, 0 ), Rgb( 255, 255, 255 ) )
 
    if empty( ::oModel:hBuffer[ "nombre" ] )
-      MsgStop( "El nombre de la situación no puede estar vacío" )
+      cErrorText     += "El nombre de la propiedad no puede estar vacío." 
+   end if
+
+   idNombre          := ::oModel:ChecksForValid( "nombre" )
+   
+   if ( !empty( idNombre ) )
+
+      if ( idNombre != ::oModel:hBuffer[ "id" ] .and. !::isDuplicateMode() )
+         cErrorText  += "El nombre de la propiedad ya existe." 
+      end if
+   
+      if ( idNombre == ::oModel:hBuffer[ "id" ] .and. ::isDuplicateMode() )
+         cErrorText  += "El nombre de la propiedad ya existe."
+      end if
+   
+   end if
+
+   if !empty( cErrorText )
+      msgStop( cErrorText )
+      oGetNombre:setColor( Rgb( 255, 255, 255 ), Rgb( 255, 102, 102 ) )
       oGetNombre:setFocus()
-      Return ( .f. )
+      RETURN ( .f. )
    end if
 
-   idForNombre := ::oModel:ChecksForValid( "nombre" )
+RETURN ( .t. )
 
-   if ( !empty( idForNombre ) )
-      if ( idForNombre != ::oModel:hBuffer[ "id" ] .and. !::isDuplicateMode() )
-         msgStop( "Esta situación ya existe" )
-         oGetNombre:setFocus()
-         RETURN ( .f. )
-      endif
-      if ( idForNombre == ::oModel:hBuffer[ "id" ] .and. ::isDuplicateMode() )
-         msgStop( "Esta situación ya existe" )
-         oGetNombre:setFocus()
-         RETURN ( .f. )
-      endif
-   end if
-
-RETURN ( oDlg:end( IDOK ) )
-
-//--------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
