@@ -18,15 +18,15 @@ CLASS SQLHeaderController FROM SQLBaseController
    METHOD rollbackTransaction()                       INLINE ( getSQLDatabase():rollbackTransaction() )
 
    METHOD initAppendMode()
-   METHOD endAppendMode()
+   METHOD endAppendModePosInsert()
    METHOD cancelAppendMode()
 
    METHOD initDuplicateMode()
-   METHOD endDuplicateMode()
+   METHOD endDuplicateModePosInsert()
    METHOD cancelDuplicateMode()
 
    METHOD initEditMode()
-   METHOD endEditMode()
+   METHOD endEditModePosUpdate()
    METHOD cancelEditMode()
 
    METHOD initZoomMode()
@@ -55,7 +55,7 @@ RETURN ( Self )
 
 //---------------------------------------------------------------------------//
 
-METHOD endAppendMode()
+METHOD endAppendModePosInsert()
 
    ::commitTransaction()
 
@@ -85,7 +85,7 @@ RETURN ( self )
 
 //----------------------------------------------------------------------------//
 
-METHOD endDuplicateMode()
+METHOD endDuplicateModePosInsert()
 
    ::commitTransaction()
    ::updateIdParentControllersInInsert()
@@ -114,7 +114,7 @@ RETURN ( Self )
 
 //----------------------------------------------------------------------------//
 
-METHOD endEditMode()
+METHOD endEditModePosUpdate()
 
    ::updateIdParentControllersInEdit( ::getIdfromRowset() )
 

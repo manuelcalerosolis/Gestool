@@ -57,7 +57,6 @@ CLASS SQLBaseModel
    METHOD   freeRowSet()                           INLINE   ( if( !empty( ::oRowSet ), ( ::oRowSet := nil ), ) )
    METHOD   getRowSetRecno()                       INLINE   ( if( !empty( ::oRowSet ), ( ::oRowSet:recno() ) , 0 ) )
    METHOD   setRowSetRecno( nRecno )               INLINE   ( if( !empty( ::oRowSet ), ( ::oRowSet:goto( nRecno ) ), ) )
-   METHOD   setIdForRecno( nIdForRecno )           INLINE   ( ::nIdForRecno := nIdForRecno )
  
    METHOD   getSelectByColumn()
    METHOD   getSelectByOrder()
@@ -259,6 +258,9 @@ METHOD buildRowSet( cSentence )
 
    default cSentence    := ::getSelectSentence()
 
+
+   
+
    try
 
       oStmt             := getSQLDatabase():Query( cSentence ) 
@@ -451,9 +453,6 @@ METHOD loadCurrentBuffer()
             hset( ::hBuffer, h:__enumkey(), ::oRowSet:fieldget( h:__enumkey() ) )
 
       end if
-
-      // msgalert( h:__enumkey(),"__enumkey" )
-      // msgalert( ::oRowSet:fieldget( h:__enumkey() ), "fieldget" )
 
    next
 

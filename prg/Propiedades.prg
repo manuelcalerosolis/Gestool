@@ -72,17 +72,17 @@ METHOD Dialog()
       WHEN     	( !::oController:isZoomMode() ) ;
       ACTION   	( ::oController:getController( 'lineas' ):Delete() )
 
-   /*REDEFINE BUTTON;
+   REDEFINE BUTTON;
       ID      		503 ;
       OF       	oDlg ;
       WHEN     	( !::oController:isZoomMode() ) ;
-      ACTION   	( ::oController:hControllers[ 'lineas' ]:UpDet() )
+      ACTION   	( ::oController:getController( 'lineas' ):UpDet() )
 
    REDEFINE BUTTON;
       ID       	504 ;
       OF       	oDlg ;
       WHEN     	( !::oController:isZoomMode() ) ;
-      ACTION   	( ::oController:hControllers[ 'lineas' ]:DownDet() )*/
+      ACTION   	( ::oController:getController( 'lineas' ):DownDet() )
 
    REDEFINE BUTTON oBtnOk ;
       ID          IDOK ;

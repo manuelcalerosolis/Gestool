@@ -52,6 +52,7 @@ METHOD Dialog()
       PICTURE     "9999" ;
       ID       	120 ;
       WHEN     	( !::oController:isZoomMode() ) ;
+      VALID       ( ::oController:validOrden( oGetOrden ) ) ;
       OF       	oDlg
 
    REDEFINE GET 	oGetCodigoBarras ;

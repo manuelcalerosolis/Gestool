@@ -55,21 +55,24 @@ CLASS SQLBaseController
 
 	METHOD   Append()
       METHOD initAppendMode()                         VIRTUAL
-      METHOD endAppendMode()                          VIRTUAL
+      METHOD endAppendModePreInsert()                 VIRTUAL
+      METHOD endAppendModePosInsert()                 VIRTUAL
       METHOD cancelAppendMode()                       VIRTUAL
       METHOD setAppendMode()                          INLINE ( ::setMode( __append_mode__ ) )
       METHOD isAppendMode()                           INLINE ( ::nMode == __append_mode__ )
 
    METHOD   Duplicate()
       METHOD initDuplicateMode()                      VIRTUAL
-      METHOD endDuplicateMode()                       VIRTUAL
+      METHOD endDuplicateModePreInsert()              VIRTUAL
+      METHOD endDuplicateModePosInsert()              VIRTUAL
       METHOD cancelDuplicateMode()                    VIRTUAL
       METHOD setDuplicateMode()                       INLINE ( ::nMode := __duplicate_mode__ )
       METHOD isDuplicateMode()                        INLINE ( ::nMode == __duplicate_mode__ )
 
    METHOD   Edit()
       METHOD initEditMode()                           VIRTUAL
-      METHOD endEditMode()                            VIRTUAL
+      METHOD endEditModePreUpdate()                   VIRTUAL
+      METHOD endEditModePosUpdate()                   VIRTUAL
       METHOD cancelEditMode()                         VIRTUAL
       METHOD setEditMode()                            INLINE ( ::nMode := __edit_mode__ )
       METHOD isEditMode()                             INLINE ( ::nMode == __edit_mode__ )
@@ -80,6 +83,9 @@ CLASS SQLBaseController
       METHOD initZoomMode()                           VIRTUAL
 
    METHOD   Delete()
+      METHOD initDeleteMode()                         VIRTUAL
+      METHOD endDeleteModePreDelete()                 VIRTUAL
+      METHOD endDeleteModePosDelete()                 VIRTUAL
 
    METHOD   getIdfromRowset()                         INLINE   ( if( !empty( ::oModel:oRowSet ), ( ::oModel:oRowSet:fieldGet( ::oModel:cColumnKey ) ), ) )
 
@@ -333,17 +339,19 @@ METHOD Append()
       end if
    end if
 
-   ::initAppendMode()
-
    nRecno         := ::oModel:getRowSetRecno()
 
    ::oModel:loadBlankBuffer()
+   
+   ::initAppendMode()
 
    if ::oView:Dialog()
 
+      ::endAppendModePreInsert()
+
       ::oModel:insertBuffer()
 
-      ::endAppendMode()
+      ::endAppendModePosInsert()
 
       if ::bOnPostAppend != nil
          lTrigger    := eval( ::bOnPostAppend  )
@@ -378,15 +386,16 @@ METHOD Duplicate()
 
    ::setDuplicateMode()
 
-   ::initDuplicateMode()
-
    nRecno         := ::oModel:getRowSetRecno()
 
    ::oModel:loadCurrentBuffer()
 
+   ::initDuplicateMode()
+
    if ::oView:Dialog()
+      ::endDuplicateModePreInsert()
       ::oModel:insertBuffer()
-      ::endDuplicateMode()
+      ::endDuplicateModePosInsert()
    else 
       ::oModel:setRowSetRecno( nRecno )
       ::cancelDuplicateMode()
@@ -410,17 +419,19 @@ METHOD Edit()
 
    ::setEditMode()
 
-   ::initEditMode()
-
    ::oModel:setIdForRecno( ::getIdfromRowset() )
 
    ::oModel:loadCurrentBuffer() 
 
+   ::initEditMode()
+
    if ::oView:Dialog()
       
+      ::endEditModePreUpdate()
+
       ::oModel:updateCurrentBuffer()
 
-      ::endEditMode()
+      ::endEditModePosUpdate()
    else
    ::cancelEditMode()
    end if 
@@ -443,9 +454,9 @@ METHOD Zoom()
 
    ::setZoomMode()
 
-   ::initZoomMode()
-
    ::oModel:loadCurrentBuffer()
+
+   ::initZoomMode()
 
    ::oView:Dialog()
 
@@ -458,6 +469,7 @@ RETURN ( Self )
 //----------------------------------------------------------------------------//
 
 METHOD Delete()
+
 
    local nSelected      
    local cNumbersOfDeletes
@@ -472,6 +484,8 @@ METHOD Delete()
       RETURN ( Self )
    end if 
 
+      ::initDeleteMode()
+
    nSelected            := len( ::oView:getoBrowse():aSelected )
 
    if nSelected > 1
@@ -481,7 +495,9 @@ METHOD Delete()
    end if
 
    if oUser():lNotConfirmDelete() .or. msgNoYes( "¿Desea eliminar " + cNumbersOfDeletes, "Confirme eliminación" )
+      ::endDeleteModePreDelete()
       ::oModel:deleteSelection( ::oView:getoBrowse():aSelected )
+      ::endDeleteModePosDelete()
    end if 
 
    ::oView:getoBrowse():refreshCurrent()
