@@ -20,13 +20,17 @@ CLASS PropiedadesLineasModel FROM SQLBaseLineasModel
 
    METHOD reOrder()
 
+   METHOD getImportSentence( cPath )
+
+   METHOD makeSpecialImportDbfSQL()										INLINE ( ::makeImportDbfSQL( cPatEmp() ) )
+
 END CLASS
 
 //---------------------------------------------------------------------------//
 
 METHOD New()
 
-	::cDbfTableName					:=	"Pro"
+	::cDbfTableName					:=	"TBLPRO"
 
 	::hColumns							:=	{	"id"					=>	{	"create"		=>	"INTEGER PRIMARY KEY AUTOINCREMENT"			,;
 																					"text"		=>	"Identificador"									,;
@@ -60,14 +64,14 @@ METHOD New()
 																					"text"		=>	"Código de barras"								,;
 																					"header"		=>	"Código de barras"								,;
 																					"visible"	=>	.t.													,;
-																					"width"		=>	20														,;
+																					"width"		=>	100													,;
 																					"field"		=>	"nBarTbl"											,;
 																					"type"		=>	"C"													,;
 																					"len"			=>	4 }													,;
 													"color"				=>	{	"create"		=>	"INT(9)"												,;
 																					"text"		=>	"Código de color"									,;
 																					"header"		=>	"Color"												,;
-																					"visible"	=>	.t.													,;
+																					"visible"	=>	.f.													,;
 																					"width"		=>	50														,;
 																					"field"		=>	"nColor"												,;
 																					"type"		=>	"N"													,;
@@ -75,6 +79,7 @@ METHOD New()
 													"id_cabecera"		=>	{	"create"		=>	"INTEGER"											,;
 																					"text"		=>	"Identificador de la cabecera"				,;
 																					"header"		=>	"Id"													,;
+																					"field"		=>	"cCodPro"											,;
 																					"visible"	=> .f. }													}
 
 
@@ -137,5 +142,51 @@ METHOD reOrder()
 	::buildRowSetWithRecno()
 
 Return ( Self )
+
+//---------------------------------------------------------------------------//
+
+METHOD getImportSentence( cPath )
+   
+   local dbf
+   local cValues     := ""
+   local cInsert     := ""
+
+   dbUseArea( .t., cLocalDriver(), cPath + "\" + ::getDbfTableName(), cCheckArea( "dbf", @dbf ), .f. )
+   if ( dbf )->( neterr() )
+      Return ( cInsert )
+   end if
+
+   cInsert              := "INSERT INTO " + ::cTableName + " ( "
+   hEval( ::hColumns, {| k | if ( k != ::cColumnKey, cInsert += k + ", ", ) } )
+   cInsert           := ChgAtEnd( cInsert, ' ) VALUES ', 2 )
+
+
+   ( dbf )->( dbgotop() )
+   while ( dbf )->( !eof() )
+
+      cValues           += "( "
+
+            hEval( ::hColumns, {| k, hash | if ( k != ::cColumnKey,;
+                                                if ( k == "id_cabecera",;
+                                                      cValues += " ( SELECT id FROM propiedades WHERE codigo = " + toSQLString( ( dbf )->( fieldget( fieldpos( hget( hash, "field" ) ) ) ) ) + " )" + ", ",;
+                                                      cValues += toSQLString( ( dbf )->( fieldget( fieldpos( hget( hash, "field" ) ) ) ) ) + ", "), ) } )
+
+      
+      cValues           := chgAtEnd( cValues, ' ), ', 2 )
+
+      ( dbf )->( dbskip() )
+   end while
+
+   ( dbf )->( dbclosearea() )
+
+   if empty( cValues )
+      Return ( nil )
+   end if 
+
+   cValues              := chgAtEnd( cValues, '', 2 )
+
+   cInsert              += cValues
+
+Return ( cInsert )
 
 //---------------------------------------------------------------------------//

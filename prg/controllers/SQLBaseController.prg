@@ -117,6 +117,7 @@ CLASS SQLBaseController
 
    METHOD generateColumnsForBrowse( oCombobox )
    METHOD   createColumnsForBrowse( oCombobox )
+   METHOD   addColumnsForBrowse( oCombobox )          VIRTUAL
 
    METHOD getController( cController )                INLINE ( ::ControllerContainer:get( cController ) )
 
@@ -628,13 +629,21 @@ RETURN ( self )
 
 METHOD createColumnsForBrowse( oCombobox, k, h )
 
-   with object ( ::oView:getoBrowse():AddCol() )
-      :cHeader             := h[ "header" ]
-      :cSortOrder          := k
-      :bEditValue          := {|| ::getRowSet():fieldGet( k ) }
-      :nWidth              := h[ "width" ]
-      :bLClickHeader       := {| nMRow, nMCol, nFlags, oCol | ::clickOnHeader( oCol, oCombobox ) }
-   end with
+   if ( hhaskey( h, "special" ) )
+
+      
+   
+   else
+
+      with object ( ::oView:getoBrowse():AddCol() )
+         :cHeader             := h[ "header" ]
+         :cSortOrder          := k
+         :bEditValue          := {|| ::getRowSet():fieldGet( k ) }
+         :nWidth              := h[ "width" ]
+         :bLClickHeader       := {| nMRow, nMCol, nFlags, oCol | ::clickOnHeader( oCol, oCombobox ) }
+      end with
+   
+   endif
 
 RETURN ( self )
 
