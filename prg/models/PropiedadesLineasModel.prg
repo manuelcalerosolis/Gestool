@@ -14,6 +14,12 @@ CLASS PropiedadesLineasModel FROM SQLBaseLineasModel
 
    METHOD New()
 
+   METHOD updateOrden( Operation, newPosition )
+
+   METHOD largeUpdateOrden( Operation, Conditions )
+
+   METHOD reOrder()
+
 END CLASS
 
 //---------------------------------------------------------------------------//
@@ -77,6 +83,58 @@ METHOD New()
 		::Super:New()
 
 		::cConstraints		   := "FOREIGN KEY (id_cabecera) REFERENCES propiedades(id) ON DELETE CASCADE" 
+
+Return ( Self )
+
+//---------------------------------------------------------------------------//
+
+METHOD updateOrden( Operation, newPosition )
+
+   local SentenceForOthers
+   local SentenceForMyPosition
+
+	SentenceForOthers       := "UPDATE " + ::cTableName + " SET orden = " + Operation + " WHERE orden = " + toSQLString( newPosition )
+   SentenceForMyPosition   := "UPDATE " + ::cTableName + " SET orden = " + toSQLString( newPosition ) + " WHERE id = " + toSQLString( ::oRowSet():fieldget( "id" ) )
+
+   getSQLDatabase():Query( SentenceForOthers )
+   getSQLDatabase():Query( SentenceForMyPosition )
+
+   ::buildRowSetWithRecno()
+
+   RETURN ( self )
+
+//---------------------------------------------------------------------------//
+
+METHOD largeUpdateOrden( Operation, Conditions )
+
+   local SentenceForOthers
+
+	SentenceForOthers       := "UPDATE " + ::cTableName + " SET orden = " + Operation + " WHERE orden " + Conditions
+
+   getSQLDatabase():Query( SentenceForOthers )
+
+   RETURN ( self )
+
+//---------------------------------------------------------------------------//
+
+METHOD reOrder()
+
+	local cSQLUpdate
+	local cSentence	 := "select * from " + ::cTableName + " where id_cabecera = " + toSQLString( ::idForeignKey ) + " order by orden"
+
+	::buildRowSet( cSentence )
+
+	while !::oRowSet:eof()
+
+		cSQLUpdate := "UPDATE " + ::cTableName + " SET orden = " + toSQLString( ::oRowSet:recno() ) + " WHERE id = " + toSQLString( ::oRowSet():fieldget( "id" ) )
+
+		getSQLDatabase():Query( cSQLUpdate )
+
+		::oRowSet:skip(1)
+		
+	END while
+
+	::buildRowSetWithRecno()
 
 Return ( Self )
 
