@@ -110,7 +110,7 @@ METHOD New()
 
    ::cConstraints                := "" 
 
-   ::cColumnOrder                := "id"
+   ::cColumnOrder                := "codigo"
 
    ::cOrientation                := "A"
 

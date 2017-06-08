@@ -40,7 +40,9 @@ METHOD New()
                                                          "type"      => "C"                                    ,;
                                                          "len"       => 30}                                    }
 
-::Super:New()
+   ::Super:New()
+
+   ::cColumnOrder                := "nombre"
 
 Return ( Self )
 

@@ -2736,7 +2736,7 @@ Function setPropertiesTable( cCodArt, cCodPr1, cCodPr2, nPrecioCosto, oGetUnidad
 
    end if
 
-   // Calculo de precios----------------------------------------------------------
+   // Calculo de precios-------------------------------------------------------
 
    for each a in aPropertiesTable
       for each o in a
@@ -2760,7 +2760,7 @@ Function setPropertiesTable( cCodArt, cCodPr1, cCodPr2, nPrecioCosto, oGetUnidad
 
          if isNil( aPropertiesTable[ oBrw:nArrayAt, n ]:Value )
 
-            // Columna del titulo de la propiedad
+            // Columna del titulo de la propiedad------------------------------
 
             with object ( oBrw:AddCol() )
                :Adjust()
