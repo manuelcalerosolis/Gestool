@@ -98,7 +98,12 @@ METHOD Dialog()
 
    // Teclas rpidas-----------------------------------------------------------
 
+   oDlg:AddFastKey( VK_F2, {|| ::oController:getController( 'lineas' ):Append() } )
+   oDlg:AddFastKey( VK_F3, {|| ::oController:getController( 'lineas' ):Edit() } )
+   oDlg:AddFastKey( VK_F4, {|| ::oController:getController( 'lineas' ):Delete() } )
    oDlg:AddFastKey( VK_F5, {|| oBtnOk:Click() } )
+
+
 
    // evento bstart-----------------------------------------------------------
 

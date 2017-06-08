@@ -96,6 +96,7 @@ CLASS SQLBaseController
    METHOD      getHistoryBrowse()                     INLINE ( ::getHistory( "_browse" ) )
               
    METHOD   saveHistory( cHistory )
+      METHOD   saveHistoryBrowse()                    INLINE ( ::saveHistory( "_browse" ) )
 
    METHOD   findGet( oFind )
    METHOD   find( uValue )                            INLINE ( ::oModel:find( uValue ) )

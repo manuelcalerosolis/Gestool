@@ -237,7 +237,7 @@ METHOD makeImportDbfSQL( cPath )
       
    end if 
 
-   frename( cPath + "\" + ::getDbfTableName(), cPath + "\" + ::getOldTableName() )
+  // frename( cPath + "\" + ::getDbfTableName(), cPath + "\" + ::getOldTableName() )
    
 Return ( self )
 

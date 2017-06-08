@@ -283,7 +283,7 @@ METHOD addColumnsForBrowse( oCombobox )
       :cHeader             := "Color"
       :bFooter             := {|| "" }
       :bStrData            := {|| "" }
-      :nWidth              := 16
+      :nWidth              := 75
       :bClrStd             := {|| { ::getRowSet():fieldget("color"), ::getRowSet():fieldget("color") } }
       :bClrSel             := {|| { ::getRowSet():fieldget("color"), ::getRowSet():fieldget("color") } }
       :bClrSelFocus        := {|| { ::getRowSet():fieldget("color"), ::getRowSet():fieldget("color") } }

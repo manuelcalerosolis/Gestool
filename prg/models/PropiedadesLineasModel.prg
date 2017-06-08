@@ -40,7 +40,7 @@ METHOD New()
 																					"text"		=>	"Código de la linea de propiedad"			,;
 																					"header"		=>	"Código"												,;
 																					"visible"	=>	.t.													,;
-																					"width"		=>	200													,;
+																					"width"		=>	100													,;
 																					"field"		=>	"cCodTbl"											,;
 																					"type"		=>	"C"													,;
 																					"len"			=>	40 }													,;
@@ -48,7 +48,7 @@ METHOD New()
 																					"text"		=>	"Nombre de la linea de propiedad"			,;
 																					"header"		=>	"Nombre"												,;
 																					"visible"	=>	.t.													,;
-																					"width"		=>	150													,;
+																					"width"		=>	100													,;
 																					"field"		=>	"cDesTbl"											,;
 																					"type"		=>	"C"													,;
 																					"len"			=>	60 }													,;

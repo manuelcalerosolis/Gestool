@@ -8,6 +8,9 @@ CLASS SQLHeaderController FROM SQLBaseController
 
    METHOD New()
 
+   METHOD getHistoryOfBrowsers()
+   METHOD saveHistoryOfBrowsers()
+
    METHOD buildControllersRowSetWithForeingKey( id )  
    METHOD clearControllersTmpIds()
    METHOD updateIdParentControllersInEdit( id )
@@ -51,6 +54,8 @@ METHOD initAppendMode()
 
    ::beginTransaction()
 
+   ::getHistoryOfBrowsers()
+
 RETURN ( Self )
 
 //---------------------------------------------------------------------------//
@@ -61,6 +66,8 @@ METHOD endAppendModePosInsert()
 
    ::updateIdParentControllersInInsert()
 
+   ::saveHistoryOfBrowsers()
+
 RETURN ( self )
 
 //---------------------------------------------------------------------------//
@@ -68,6 +75,8 @@ RETURN ( self )
 METHOD cancelAppendMode()
 
    ::rollbackTransaction()
+
+   ::saveHistoryOfBrowsers()
 
 RETURN ( self )
 
@@ -81,6 +90,8 @@ METHOD initDuplicateMode()
 
    ::beginTransaction()
 
+   ::getHistoryOfBrowsers()
+
 RETURN ( self )
 
 //----------------------------------------------------------------------------//
@@ -90,6 +101,8 @@ METHOD endDuplicateModePosInsert()
    ::commitTransaction()
    ::updateIdParentControllersInInsert()
 
+   ::saveHistoryOfBrowsers()
+
 RETURN ( self )
 
 //----------------------------------------------------------------------------//
@@ -97,6 +110,8 @@ RETURN ( self )
 METHOD cancelDuplicateMode()
 
    ::rollbackTransaction()
+
+   ::saveHistoryOfBrowsers()
 
 RETURN ( Self )
 
@@ -110,6 +125,8 @@ METHOD initEditMode()
 
    ::beginTransaction()
 
+   ::getHistoryOfBrowsers()
+
 RETURN ( Self )
 
 //----------------------------------------------------------------------------//
@@ -120,6 +137,8 @@ METHOD endEditModePosUpdate()
 
    ::commitTransaction()
 
+   ::saveHistoryOfBrowsers()
+
 RETURN ( Self )
 
 //----------------------------------------------------------------------------//
@@ -127,6 +146,8 @@ RETURN ( Self )
 METHOD cancelEditMode()
 
    ::rollbackTransaction()
+
+   ::saveHistoryOfBrowsers()
 
 RETURN ( self )
 
@@ -137,6 +158,8 @@ METHOD initZoomMode()
    ::clearControllersTmpIds()
 
    ::buildControllersRowSetWithForeingKey( ::oModel:hBuffer[ "id" ] )
+
+   ::getHistoryOfBrowsers()
 
 RETURN ( Self )
 
@@ -166,6 +189,18 @@ METHOD updateIdParentControllersInInsert()
    local lastId :=  getSQLDatabase():LastInsertId()
 
 RETURN ( hEval( ::ControllerContainer:getControllers(), { | k, oController| oController:oModel:confirmIdParentToChildsOf( lastId ) } ) )
+
+//----------------------------------------------------------------------------//
+
+METHOD getHistoryOfBrowsers()
+
+RETURN ( hEval( ::ControllerContainer:getControllers(), { | k, oController| oController:getHistoryBrowse() } ) )
+
+//----------------------------------------------------------------------------//
+
+METHOD saveHistoryOfBrowsers()
+
+RETURN ( hEval( ::ControllerContainer:getControllers(), { | k, oController| oController:saveHistoryBrowse() } ) )
 
 //----------------------------------------------------------------------------//
 
