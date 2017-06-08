@@ -63,10 +63,6 @@ METHOD Dialog()
 
    oDlg:AddFastKey( VK_F5, {|| oBtnOk:Click() } )
 
-   // evento bstart-----------------------------------------------------------
-
-   oDlg:bStart    := {|| oGetCodigo:setFocus() }
-
    ACTIVATE DIALOG oDlg CENTER
 
 RETURN ( oDlg:nResult == IDOK )

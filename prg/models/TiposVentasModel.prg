@@ -36,7 +36,7 @@ METHOD New()
                                                       "text"      => "Código"                               ,; 
                                                       "header"    => "Código"                               ,;
                                                       "visible"   => .t.                                    ,;
-                                                      "width"     => 50                                     ,;
+                                                      "width"     => 80                                     ,;
                                                       "field"     => "cCodMov"                              ,;
                                                       "type"      => "C"                                    ,;
                                                       "len"       => 2}                                     ,;
@@ -44,7 +44,7 @@ METHOD New()
    															      "text"		=> "Nombre"                               ,;
                                                       "header"    => "Nombre"                               ,;
                                                       "visible"   => .t.                                    ,;
-                                                      "width"     => 20                                     ,;
+                                                      "width"     => 600                                    ,;
    															      "field" 	   => "cDesMov"                              ,;
                                                       "type"      => "C"                                    ,;
                                                       "len"       => 20}                                    }

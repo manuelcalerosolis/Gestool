@@ -1,5 +1,5 @@
 #include "FiveWin.Ch"
-#include "Factu.ch" 
+#include "Factu.ch"  
 #include "Folder.ch"
 #include "Report.ch"
 #include "Print.ch"
@@ -13131,6 +13131,7 @@ STATIC FUNCTION SaveDeta( aTmp, aTmpFac, aGet, oBrw, oDlg, oFld, oSayPr1, oSayPr
    end if
 
    aTmp[ _CTIPCTR ]  := cTipoCtrCoste
+   
    aTmp[ ( D():FacturasClientesLineas( nView ) )->( fieldpos( "id_tipo_v" ) ) ]  := TiposVentasController():Instance():getIdFromEditControl()
 
    // fin de los script--------------------------------------------------------
