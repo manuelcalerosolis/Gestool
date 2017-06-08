@@ -2490,6 +2490,9 @@ Return nil
 FUNCTION GETSQLDATABASE()
 Return nil
 
+FUNCTION FWOPENPNGFILE()
+Return nil
+
 //------------------------------------------------------------------//
 
 #pragma BEGINDUMP

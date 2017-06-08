@@ -4,9 +4,8 @@
 
 Function validControl( oSender, aGet, nView, nMode, aTmpFac )
 
-   local nCajas
+   local nBultos
    local nCajasArticulos
-   local nKilosArticulos
 
    /*if ( nMode != APPD_MODE .and. nMode != DUPL_MODE )
       return .t.
@@ -16,21 +15,15 @@ Function validControl( oSender, aGet, nView, nMode, aTmpFac )
       return .t.
    end if 
 	
-   if ( oSender:cargo == "nCanEnt" )
+   if ( oSender:cargo == "nBultos" )
 
-      nCajas            := aGet[ ( D():FacturasClientesLineas( nView ) )->( fieldpos( "nCanEnt" ) ) ]:varget()
+      nBultos            := aGet[ ( D():FacturasClientesLineas( nView ) )->( fieldpos( "nBultos" ) ) ]:varget()
 
       nCajasArticulos   := ( D():Articulos( nView ) )->nCajEnt
-      nKilosArticulos   := ( D():Articulos( nView ) )->nPesoKg
 
       if nCajasArticulos != 0
-         aGet[ ( D():FacturasClientesLineas( nView ) )->( fieldpos( "nBultos" ) ) ]:varPut( nCajas / nCajasArticulos )
-         aGet[ ( D():FacturasClientesLineas( nView ) )->( fieldpos( "nBultos" ) ) ]:refresh()
-      end if 
-
-      if nKilosArticulos != 0
-         aGet[ ( D():FacturasClientesLineas( nView ) )->( fieldpos( "nUniCaja" ) ) ]:varPut( nCajas * nKilosArticulos )
-         aGet[ ( D():FacturasClientesLineas( nView ) )->( fieldpos( "nUniCaja" ) ) ]:refresh()
+         aGet[ ( D():FacturasClientesLineas( nView ) )->( fieldpos( "nCanEnt" ) ) ]:varPut( nBultos * nCajasArticulos )
+         aGet[ ( D():FacturasClientesLineas( nView ) )->( fieldpos( "nCanEnt" ) ) ]:refresh()
       end if 
 
    end if 
