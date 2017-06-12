@@ -13,9 +13,13 @@ function InicioHRB( aTmp, dbfTmpLin )
 
    while !( dbfTmpLin )->( eof() )
 
-      cSerie         := AllTrim( getCustomExtraField( "005", "Lineas de propiedades", ( dbfTmpLin )->cCodPr1 + ( dbfTmpLin )->cValPr1 ) )
-      if Ascan( aSeries, cSerie ) == 0
-         aAdd( aSeries, cSerie )
+      if !( dbfTmpLin )->lControl
+
+         cSerie         := AllTrim( getCustomExtraField( "005", "Lineas de propiedades", ( dbfTmpLin )->cCodPr1 + ( dbfTmpLin )->cValPr1 ) )
+         if Ascan( aSeries, cSerie ) == 0
+            aAdd( aSeries, cSerie )
+         end if
+
       end if
 
       ( dbfTmpLin )->( dbSkip() )
