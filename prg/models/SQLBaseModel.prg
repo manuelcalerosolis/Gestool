@@ -261,9 +261,6 @@ METHOD buildRowSet( cSentence )
 
    default cSentence    := ::getSelectSentence()
 
-
-   
-
    try
 
       oStmt             := getSQLDatabase():Query( cSentence ) 
@@ -347,7 +344,7 @@ Return ( cSQLDelete )
 
 //---------------------------------------------------------------------------//
 
-METHOD getSelectSentence()
+METHOD getSelectSentence() 
 
    local cSQLSelect  := ::cGeneralSelect
 
@@ -365,16 +362,16 @@ Return ( cSQLSelect )
 
 METHOD getSelectByColumn( cSQLSelect )
 
-
    if !empty( ::cColumnOrder ) .and. !empty( ::cFind )
       
       if ( hb_at( "WHERE", cSQLSelect) != 0 )
-         cSQLSelect += " AND"
+         cSQLSelect  += " AND"
       else
-         cSQLSelect += " WHERE"
+         cSQLSelect  += " WHERE"
       end if
 
-      cSQLSelect        += " UPPER(" + ::cColumnOrder +") LIKE '%" + Upper( ::cFind ) + "%'" 
+      cSQLSelect     += " UPPER(" + ::cColumnOrder +") LIKE '%" + Upper( ::cFind ) + "%'" 
+
    end if
 
 Return ( cSQLSelect )

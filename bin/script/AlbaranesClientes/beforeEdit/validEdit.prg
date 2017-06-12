@@ -8,12 +8,17 @@ function InicioHRB( aTmp, nView, dbfTmpLin )
    local lReturn     := .t.
    local n           := 0
    local cSerie      := ""
+   local cCampo      := getCustomExtraField( "005", "Lineas de propiedades", ( dbfTmpLin )->cCodPr1 + ( dbfTmpLin )->cValPr1 )
+
+   if empty(cCampo)
+      return .t.
+   end if 
 
    ( dbfTmpLin )->( dbGoTop() )
 
    while !( dbfTmpLin )->( eof() )
 
-      cSerie         := AllTrim( getCustomExtraField( "005", "Lineas de propiedades", ( dbfTmpLin )->cCodPr1 + ( dbfTmpLin )->cValPr1 ) )
+      cSerie         := alltrim( cCampo )
       if Ascan( aSeries, cSerie ) == 0
          aAdd( aSeries, cSerie )
       end if

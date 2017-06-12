@@ -6,38 +6,6 @@
 
 CLASS SQLHeaderController FROM SQLBaseController
 
-<<<<<<< HEAD
-   METHOD beginTransaction()                       INLINE ( getSQLDatabase():beginTransaction() )
-   METHOD commitTransaction()                      INLINE ( getSQLDatabase():commit() )
-   METHOD rollbackTransaction()                    INLINE ( getSQLDatabase():rollback() )
-
-	METHOD   Append( oBrowse )
-      METHOD initAppendMode()                      VIRTUAL
-      METHOD endAppendMode()                       VIRTUAL
-      METHOD cancelAppendMode()                    VIRTUAL
-
-   METHOD   Duplicate( oBrowse )
-      METHOD initDuplicateMode()                   VIRTUAL
-      METHOD endDuplicateMode()                    VIRTUAL
-      METHOD cancelDuplicateMode()                 VIRTUAL
-
-   METHOD   Edit( oBrowse )
-      METHOD initEditMode()                        VIRTUAL
-      METHOD endEditMode()                         VIRTUAL
-      METHOD cancelEditMode()                      VIRTUAL
-
-   METHOD   Zoom( oBrowse )
-      METHOD initZoomMode()                        VIRTUAL
-      METHOD endZoomMode()                         VIRTUAL
-      METHOD cancelZoomMode()                      VIRTUAL
-
-   METHOD   Delete( oBrowse )
-      METHOD initDeleteMode()                      VIRTUAL
-      METHOD endDeleteMode()                       VIRTUAL
-      METHOD cancelDeleteMode()                    VIRTUAL
-=======
-   METHOD New()
-
    METHOD getHistoryOfBrowsers()
    METHOD saveHistoryOfBrowsers()
 
@@ -62,14 +30,39 @@ CLASS SQLHeaderController FROM SQLBaseController
    METHOD endEditModePosUpdate()
    METHOD cancelEditMode()
 
-   METHOD initZoomMode()
->>>>>>> SQLite
+   METHOD beginTransaction()                       INLINE ( getSQLDatabase():beginTransaction() )
+   METHOD commitTransaction()                      INLINE ( getSQLDatabase():commit() )
+   METHOD rollbackTransaction()                    INLINE ( getSQLDatabase():rollback() )
+
+   METHOD   Append( oBrowse )
+      METHOD initAppendMode()                      VIRTUAL
+      METHOD endAppendMode()                       VIRTUAL
+      METHOD cancelAppendMode()                    VIRTUAL
+
+   METHOD   Duplicate( oBrowse )
+      METHOD initDuplicateMode()                   VIRTUAL
+      METHOD endDuplicateMode()                    VIRTUAL
+      METHOD cancelDuplicateMode()                 VIRTUAL
+
+   METHOD   Edit( oBrowse )
+      METHOD initEditMode()                        VIRTUAL
+      METHOD endEditMode()                         VIRTUAL
+      METHOD cancelEditMode()                      VIRTUAL
+
+   METHOD   Zoom( oBrowse )
+      METHOD initZoomMode()                        VIRTUAL
+      METHOD endZoomMode()                         VIRTUAL
+      METHOD cancelZoomMode()                      VIRTUAL
+
+   METHOD   Delete( oBrowse )
+      METHOD initDeleteMode()                      VIRTUAL
+      METHOD endDeleteMode()                       VIRTUAL
+      METHOD cancelDeleteMode()                    VIRTUAL
 
 END CLASS
 
 //---------------------------------------------------------------------------//
 
-<<<<<<< HEAD
 METHOD Append( oBrowse )
 
    local nRecno   
@@ -164,10 +157,6 @@ METHOD Duplicate( oBrowse )
       oBrowse:refreshCurrent()
       oBrowse:setFocus()
    end if
-=======
-METHOD New()
-
-   ::Super:New()
 
 RETURN ( Self )
 
@@ -239,13 +228,11 @@ METHOD cancelDuplicateMode()
    ::rollbackTransaction()
 
    ::saveHistoryOfBrowsers()
->>>>>>> SQLite
 
 RETURN ( Self )
 
 //----------------------------------------------------------------------------//
 
-<<<<<<< HEAD
 METHOD Edit( oBrowse )  
 
    if ::notUserEdit()
@@ -294,7 +281,11 @@ METHOD Zoom( oBrowse )
    if !empty( oBrowse )
       oBrowse:setFocus()
    end if 
-=======
+
+RETURN ( Self )
+
+//----------------------------------------------------------------------------//
+
 METHOD initEditMode()  
 
    ::clearControllersTmpIds()
@@ -331,20 +322,6 @@ RETURN ( self )
 
 //----------------------------------------------------------------------------//
 
-METHOD initZoomMode()
-
-   ::clearControllersTmpIds()
-
-   ::buildControllersRowSetWithForeingKey( ::oModel:hBuffer[ "id" ] )
-
-   ::getHistoryOfBrowsers()
->>>>>>> SQLite
-
-RETURN ( Self )
-
-//----------------------------------------------------------------------------//
-
-<<<<<<< HEAD
 METHOD Delete( oBrowse )
 
    local nSelected      
@@ -376,7 +353,8 @@ METHOD Delete( oBrowse )
    oBrowse:setFocus()
 
 RETURN ( Self )
-=======
+
+//----------------------------------------------------------------------------//
 
 METHOD buildControllersRowSetWithForeingKey( id )  
 
@@ -413,7 +391,6 @@ RETURN ( hEval( ::ControllerContainer:getControllers(), { | k, oController| oCon
 METHOD saveHistoryOfBrowsers()
 
 RETURN ( hEval( ::ControllerContainer:getControllers(), { | k, oController| oController:saveHistoryBrowse() } ) )
->>>>>>> SQLite
 
 //----------------------------------------------------------------------------//
 

@@ -112,10 +112,16 @@ METHOD ReDefine( nId, bSetGet, oWnd, nHelpId, cPict, bValid, nClrFore,;
                  lReadOnly, lSpinner, bUp, bDown, bMin, bMax, bHelp, bMult,;
                  cBmp, nIdSay, nIdText ) CLASS TGetHlp
 
+   local oError
+   local oBlock
+
+   oBlock            := ErrorBlock( { | oError | ApoloBreak( oError ) } )
+   BEGIN SEQUENCE
+
    DEFAULT cBmp      := ""
    DEFAULT nIdSay    := 0
 
-   ::Super:ReDefine(   nId, bSetGet, oWnd, nHelpId, cPict, bValid, nClrFore,;
+   ::Super:ReDefine( nId, bSetGet, oWnd, nHelpId, cPict, bValid, nClrFore,;
                      nClrBack, oFont, oCursor, cMsg, lUpdate, bWhen, bChanged,;
                      lReadOnly, lSpinner, bUp, bDown, bMin, bMax )
 
@@ -133,6 +139,13 @@ METHOD ReDefine( nId, bSetGet, oWnd, nHelpId, cPict, bValid, nClrFore,;
    if !Empty( nIdText )
       ::oHelpText    := TGet():ReDefine( nIdText, { | u | If( PCount() == 0, ::cHelpText, ::cHelpText := u ) }, oWnd, , , , , , oFont, , , .f., {||.f.} )
    end if
+
+   RECOVER USING oError
+
+      msgStop( "Imposible crear el control TGetHlp." + CRLF + ErrorMessage( oError ) )
+
+   END SEQUENCE
+   ErrorBlock( oBlock )
 
 Return Self
 
