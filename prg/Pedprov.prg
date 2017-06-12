@@ -1005,6 +1005,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, cCodPrv, cCodArt, nMode )
       end if
 
    case nMode == DUPL_MODE
+   
       if !lCajaOpen( oUser():cCaja() ) .and. !oUser():lAdministrador()
          msgStop( "Esta caja " + oUser():cCaja() + " esta cerrada." )
          Return .f.

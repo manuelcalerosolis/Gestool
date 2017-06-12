@@ -10,6 +10,7 @@ FUNCTION appDialogExtend()
 
    __clsAddMsg( hClass, "aErrors", __cls_IncData( hClass ), 9, {}, 1, .f., .f. )
 
+/*
    __clsAddMsg( hClass, "aFastKeys", __cls_IncData( hClass ), 9, {}, 1, .f., .f. )
 
    __clsAddMsg( hClass, "aControlKeys", __cls_IncData( hClass ), 9, {}, 1, .f., .f. )
@@ -17,18 +18,18 @@ FUNCTION appDialogExtend()
    __clsAddMsg( hClass, "AddFastKey", {|Self, nKey, bAction| Self, aAdd( ::aFastKeys, { nKey, bAction } ) }, 3, nil, 1, .f., .f. )
 
    __clsAddMsg( hClass, "AddControlKeys", {|Self, nKey, bAction| Self, aAdd( ::aControlKeys, { nKey, bAction } ) }, 3, nil, 1, .f., .f. )
-
+  
+   __clsAddMsg( hClass, "setControlFastKey", @setControlFastKey(), 0, nil, 1, .f., .f. )
+   
+   __clsModMsg( hClass, "KeyDown", @DialogKeyDown(), 1 )
+*/
    __clsAddMsg( hClass, "Enable", @DialogEnable(), 0, nil, 1, .f., .f. )
 
    __clsAddMsg( hClass, "Disable", @DialogDisable(), 0, nil, 1, .f., .f. )
 
    __clsAddMsg( hClass, "hasErrors", @DialogHasError(), 0, nil, 1, .f., .f. )
 
-   __clsAddMsg( hClass, "setControlFastKey", @setControlFastKey(), 0, nil, 1, .f., .f. )
-
    __clsAddMsg( hClass, "aEvalValid", @DialogEvalValid(), 0, nil, 1, .f., .f. )
-
-   __clsModMsg( hClass, "KeyDown", @DialogKeyDown(), 1 )
 
   //----------------------------------------------------------------------------//
 
@@ -75,12 +76,8 @@ STATIC FUNCTION DialogHasError()
    local Self        
    local oControl
 
-   msgalert( "DialogError" )
-
    Self              := HB_QSelf()
    Self:Cargo        := {}
-
-   msgalert( "After init DialogError" )
 
    for each oControl in Self:aControls
       if ( oControl:ClassName() == "TGETHLP" ) .and. !empty( oControl:cError )
@@ -157,24 +154,35 @@ RETURN ( nil )
 STATIC FUNCTION DialogEvalValid() 
 
    local oControl
-   local lValid      := .t.
-   local Self        := HB_QSelf()
-   local aControls   := Self:aControls
+   local aControls
+
+   msgalert( "DialogEvalValid" )
+
+   aControls   := hb_qself():aControls
 
    if empty( aControls )
-      RETURN ( lValid )
+      RETURN ( .t. )
    end if 
 
    for each oControl in aControls
+
+      msgalert( hb_valtoexp( oControl ), "oControl" )
+
       if empty( oControl:bWhen ) .or. eval( oControl:bWhen )
-         if !empty( oControl:bValid ) .and. !eval( oControl:bValid )
-            lValid   := .f.
+
+         msgalert( "bWhen" )
+
+         if empty( oControl:bValid ) .or. !eval( oControl:bValid )
+
+            msgalert( "bValid" )
+
             oControl:SetFocus()
+            RETURN ( .f. )
          endif
       end if 
    next
 
-RETURN ( lValid )
+RETURN ( .t. )
 
 //----------------------------------------------------------------------------//
 
@@ -473,4 +481,32 @@ RETURN oSheet
 
 //----------------------------------------------------------------------------//
 
+FUNCTION validateDialog( oDlg )
+
+   local oControl
+   local aControls   := oDlg:aControls
+
+   if empty( aControls )
+      RETURN ( .t. )
+   end if 
+
+   for each oControl in aControls
+
+      if empty( oControl:bWhen ) .or. eval( oControl:bWhen )
+
+         if !empty( oControl:bValid ) .and. !eval( oControl:bValid )
+
+            oControl:SetFocus()
+
+            RETURN ( .f. )
+
+         endif
+
+      end if 
+
+   next
+
+RETURN ( .t. )
+
+//----------------------------------------------------------------------------//
 

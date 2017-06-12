@@ -1053,17 +1053,21 @@ METHOD RButtonDown( nRow, nCol, nFlags ) CLASS TShell
    local nFor
    local nLen
    local oCol
+   local oMenu       
    local oMenuItem
-   local oMenu       := MenuBegin( .t. )
-   local bMenuSelect := ::bMenuSelect
+   local bMenuSelect 
 
    // Montamos el menu------------------------------------------------------------
+
+   oMenu             := MenuBegin( .t. )
+
+   bMenuSelect       := ::bMenuSelect
 
    ::bMenuSelect     := nil
 
    MenuAddItem( "Columnas", "Columnas de la rejilla de datos", .f., .t., , , "gc_table_selection_column_16", oMenu )
 
-   MenuBegin( .f.,,, .f. )
+   MenuBegin( .f., , , .f., .f., , , , , , , , , , , , .f., .t., .f., .t. )
 
    for each oCol in ::oBrw:aCols
       MenuAddItem( oCol:cHeader, , !oCol:lHide, ( Len( ::oBrw:aDisplay ) != 1 .or. oCol:nPos != 1 ), GenMenuBlock( oCol ) )

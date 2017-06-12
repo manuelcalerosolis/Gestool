@@ -3329,6 +3329,10 @@ FUNCTION toSQLString( value )
       RETURN ( quoted( alltrim( value ) ) )
    end if
 
+   if hb_islogical( value )
+      RETURN ( if( value, "1", "0" ) )
+   end if
+
 RETURN ( value )
        
 //---------------------------------------------------------------------------//

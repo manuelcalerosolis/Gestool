@@ -97,6 +97,7 @@
 CLASS TTpvMesa FROM TControl
 
    CLASSDATA lRegistered AS LOGICAL
+
    CLASSDATA oFont
 
    DATA nType
@@ -467,10 +468,10 @@ Return ( Self )
 
 METHOD uCreaToolTip( nRow, nCol, nKeyFlags )
 
+   local oBmp
    local oDlgToolTip
    local oBrwLinToolTip
    local aLineasToolTip
-   local oBmp
 
    aLineasToolTip    := ::aCargaLineasToolTip()
 
@@ -535,7 +536,7 @@ METHOD uCreaToolTip( nRow, nCol, nKeyFlags )
 
       REDEFINE BUTTONBMP BITMAP "gc_check_32" ID IDOK OF oDlgToolTip ACTION ( oDlgToolTip:End( IDOK ), ::LButtonUp( nRow, nCol, nKeyFlags ) )
 
-      REDEFINE BUTTONBMP BITMAP "Delete_32" ID IDCANCEL OF oDlgToolTip ACTION ( oDlgToolTip:End() )
+      REDEFINE BUTTONBMP BITMAP "delete_32" ID IDCANCEL OF oDlgToolTip ACTION ( oDlgToolTip:End() )
 
       oDlgToolTip:bStart      := {|| oBrwLinToolTip:Load() }
 
@@ -631,9 +632,6 @@ Return ( .f. )
 
 METHOD LoadBitmap() CLASS TTpvMesa
 
-   local h
-   local aBmpPal
-
    if !Empty( ::hBmp )
       DeleteObject( ::hBmp )
    end if
@@ -653,6 +651,8 @@ METHOD LoadBitmap() CLASS TTpvMesa
       end if
 
    end if
+
+   sysrefresh()
 
 Return ( Self )
 
@@ -724,7 +724,7 @@ METHOD Paint() CLASS TTpvMesa
    local nRowText       := 0
    local nRowTotal      := 0
 
-   FillSolidRect( ::hDC, GetClientRect( ::hWnd ), ::nClrPane )
+   fillSolidRect( ::hDC, GetClientRect( ::hWnd ), ::nClrPane )
 
    if Empty( ::hBmp )
       ::LoadBitmap()
@@ -751,9 +751,6 @@ METHOD Paint() CLASS TTpvMesa
       aBitmap           := ::aBitmapState()
       if !Empty( aBitmap )
          TransparentBlt( ::hDC, aBitmap[ BITMAP_HANDLE ], ( ::nBmpWidth - 16 ) / 2, ( ::nBmpHeight - 16 ) / 2, aBitmap[ BITMAP_WIDTH ], aBitmap[ BITMAP_HEIGHT ] )
-         /*
-         TransBmp( aBitmap[ BITMAP_HANDLE ], aBitmap[ BITMAP_WIDTH ], aBitmap[ BITMAP_HEIGHT ], nZeroZeroClr, ::hDC, ( ::nBmpWidth - 16 ) / 2, ( ::nBmpHeight - 16 ) / 2, nBmpWidth( aBitmap[ BITMAP_HANDLE ] ), nBmpHeight( aBitmap[ BITMAP_HANDLE ] ) )
-         */
       end if
 
    else

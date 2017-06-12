@@ -2836,7 +2836,11 @@ function nLevelUsr( uHelpId )
    local oBlock
    local dbfMapa
    local cLevOpc
-   local nLevOpc  := 0
+   local nLevOpc  := nOr( ACC_APPD, ACC_EDIT, ACC_ZOOM, ACC_DELE, ACC_IMPR )
+
+   if empty( uHelpId )
+      Return ( nLevOpc ) 
+   end if 
 
    CursorWait()
 
@@ -2890,7 +2894,7 @@ function nLevelUsr( uHelpId )
 
    CursorWE()
 
-return ( nLevOpc )
+Return ( nLevOpc )
 
 //----------------------------------------------------------------------------//
 

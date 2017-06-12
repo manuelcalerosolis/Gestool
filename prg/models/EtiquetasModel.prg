@@ -5,7 +5,7 @@
 
 //---------------------------------------------------------------------------//
 
-CLASS EtiquetasModel FROM SQLBaseEmpresasModel
+CLASS EtiquetasModel FROM SQLBaseModel
 
    DATA     cTableName                             INIT "etiquetas"
 
@@ -13,11 +13,7 @@ CLASS EtiquetasModel FROM SQLBaseEmpresasModel
 
    DATA     hColumns
 
-   DATA     hDbfToCategory
-
    METHOD   New()
-
-   METHOD   buildRowSetWithRecno()                 INLINE   ( ::buildRowSet( .t. ) )
 
    METHOD   updateAfterDelete()
 
@@ -49,16 +45,35 @@ METHOD New()
 
    ::cDbfTableName               := ""
 
-   ::hColumns                    := {  "id"        => {  "create"    => "INTEGER PRIMARY KEY AUTOINCREMENT"          ,;
-                                                         "text"		=> "Identificador"}                             ,;
-                                       "nombre"    => {  "create"    => "VARCHAR( 50 ) NOT NULL"                     ,;
-   															         "text"		=> "Nombre de la etiqueta"}                     ,;
-                                       "empresa"   => {  "create"    => "CHAR ( 4 )"                                 ,;
-                                                         "text"      => "Empresa a la que pertenece la etiqueta"}    ,;
-                                       "id_padre"  => {  "create"    => "INTEGER"                                    ,;
-                                                         "text"      => "Identificador de la etiqueta padre"}        ,;
-                                       "codigo"    => {  "create"    => "CHAR ( 10 )"                                ,;
-                                                         "text"      => "Identificador de la etiqueta padre"         }}
+   ::hColumns                    := {  "id"        => {  "create"    => "INTEGER PRIMARY KEY AUTOINCREMENT"             ,;
+                                                         "text"		=> "Identificador"                                 ,;
+                                                         "header"    => "Id"                                            ,;
+                                                         "visible"   => .f.                                             ,;
+                                                         "width"     => 40}                                             ,;
+                                       "codigo"    => {  "create"    => "CHAR ( 10 )"                                   ,;
+                                                         "text"      => "Código DBF de la etiqueta"                     ,;
+                                                         "visible"   => .f.                                             ,;
+                                                         "header"    => "Código"                                        ,;
+                                                         "width"     => 100                                             ,;
+                                                         "type"      => "C"                                             ,;
+                                                         "len"       => 10}                                             ,;
+                                       "nombre"    => {  "create"    => "VARCHAR( 50 ) NOT NULL"                        ,;
+                                                         "text"      => "Nombre de la etiqueta"                         ,;
+                                                         "header"    => "Nombre"                                        ,;
+                                                         "visible"   => .t.                                             ,;
+                                                         "width"     => 200                                             ,;
+                                                         "type"      => "C"                                             ,;
+                                                         "len"       => 50}                                             ,;
+                                       "empresa"   => {  "create"    => "CHAR ( 4 )"                                    ,;
+                                                         "text"      => "Empresa a la que pertenece la etiqueta"        ,;
+                                                         "header"    => "Empresa"                                       ,;
+                                                         "visible"   => .f.                                             ,;
+                                                         "width"     => 50                                              ,;
+                                                         "type"      => "N"                                             ,;
+                                                         "len"       => 4}                                              ,;
+                                       "id_padre"  => {  "create"    => "INTEGER"                                       ,;
+                                                         "text"      => "Identificador de la etiqueta padre"            ,;
+                                                         "visible"   => .f.}                                            }
 
    ::Super:New()
 
@@ -67,10 +82,11 @@ METHOD New()
                                     " ( SELECT id AS id_del_padre, nombre AS nombre_padre FROM " + ::cTableName + " )"  +;
                                     " ON id_padre = id_del_padre"
 
-   ::hDbfToCategory              := {  "Categorias" => { "padre" =>  "Categorias"   ,;
-                                                         "hijos" =>  "cNombre"   }  }
-
-
+   ::hExtraColumns               := { "nombre_padre" =>  {  "visible"   => .t.                           ,;
+                                                            "header"    => "Nombre de la etiqueta padre" ,;
+                                                            "width"     => 200                           ,;
+                                                            "type"      => "C"                           ,;
+                                                            "len"       => 50}                           }
 
 RETURN ( Self )
 
@@ -152,7 +168,7 @@ METHOD makeImportCategorias()
    end if
 
    if !( file( cFullPathEmpresa() + "Categorias.Dbf" ) )
-      msgStop( "El fichero " + cPath + "\Categorias.Dbf no se ha localizado", "AtenciÃ³n" )  
+      msgStop( "El fichero " + cPath + "\Categorias.Dbf no se ha localizado", "Atención" )  
       Return ( self )
    end if 
 

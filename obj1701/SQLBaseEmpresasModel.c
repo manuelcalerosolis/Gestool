@@ -4,6 +4,7 @@
  * Generated C source from ".\Prg\Models\SQLBaseEmpresasModel.prg"
  */
 
+<<<<<<< HEAD
 #include "hbvmpub.h"
 #include "hbinit.h"
 
@@ -455,3 +456,7 @@ HB_FUNC_INITSTATICS()
 	hb_vmExecute( pcode, symbols );
 }
 
+=======
+
+/* Empty source file */
+>>>>>>> SQLite

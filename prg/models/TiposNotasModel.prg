@@ -6,6 +6,8 @@
 
 CLASS TiposNotasModel FROM SQLBaseModel
 
+   DATA cColumnCode             INIT "nombre"
+
 	DATA cTableName              INIT "tipos_notas"
 
    DATA cDbfTableName
@@ -24,14 +26,32 @@ METHOD New()
 
    ::cDbfTableName            	:= "TipoNotas"
 
+<<<<<<< HEAD
    ::hColumns                 	:= { 	"id"     => {  "create"    => "INTEGER PRIMARY KEY AUTOINCREMENT",;
                                                       "text"      => "Identificador" ,;
                                                       "dbfField"  => "" },;
                                        "nombre" => {  "create"    => "VARCHAR( 30 ) NOT NULL",;
                                                       "text"      => "Tipo de la nota",;
                                                       "dbfField"  => "cTipo" } }
+=======
+   ::hColumns                    := {  "id"        => {  "create"    => "INTEGER PRIMARY KEY AUTOINCREMENT"    ,;
+                                                         "text"      => "Identificador"                        ,;
+                                                         "header"    => "Id"                                   ,;
+                                                         "visible"   => .f.                                    ,;
+                                                         "width"     => 40}                                    ,;
+                                       "nombre"    => {  "create"    => "VARCHAR( 30 ) NOT NULL"               ,;
+                                                         "text"      => "Tipo de la nota"                      ,;
+                                                         "header"    => "Tipo"                                 ,;
+                                                         "visible"   => .t.                                    ,;
+                                                         "width"     => 100                                    ,;
+                                                         "field"     => "cTipo"                                ,;
+                                                         "type"      => "C"                                    ,;
+                                                         "len"       => 30}                                    }
 
-::Super:New()
+   ::Super:New()
+>>>>>>> SQLite
+
+   ::cColumnOrder                := "nombre"
 
 Return ( Self )
 

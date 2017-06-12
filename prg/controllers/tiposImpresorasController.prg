@@ -14,7 +14,7 @@ CLASS TiposImpresorasController FROM SQLBaseController
   
    METHOD   getFieldFromBrowse()          INLINE ( ::getRowSet():fieldGet( "nombre" ) )
  
-   METHOD   validDialog( oDlg, oGetNombre )
+   METHOD   validNombre( oGetNombre )
 
 END CLASS
 
@@ -22,7 +22,9 @@ END CLASS
 
 METHOD New()
 
-   ::idUserMap            := "01115"
+   ::idUserMap             := "01115"
+
+   ::setTitle( "Tipos de impresoras" )
 
    ::Super:New()
 
@@ -30,31 +32,38 @@ Return ( Self )
 
 //---------------------------------------------------------------------------//
 
-METHOD validDialog( oDlg, oGetNombre )
+METHOD validNombre( oGetNombre )
 
-	local idForNombre
+   local idNombre
+   local cErrorText  := ""
+
+   oGetNombre:setColor( Rgb( 0, 0, 0 ), Rgb( 255, 255, 255 ) )
 
    if empty( ::oModel:hBuffer[ "nombre" ] )
-      msgStop( "El nombre de la impresora no puede estar vacío." )
+      cErrorText     += "El nombre de la impresora no puede estar vacío." 
+   end if
+
+   idNombre          := ::oModel:ChecksForValid( "nombre" )
+   
+   if ( !empty( idNombre ) )
+
+      if ( idNombre != ::oModel:hBuffer[ "id" ] .and. !::isDuplicateMode() )
+         cErrorText  += "El nombre de la impresora ya existe." 
+      end if
+   
+      if ( idNombre == ::oModel:hBuffer[ "id" ] .and. ::isDuplicateMode() )
+         cErrorText  += "El nombre de la impresora ya existe."
+      end if
+   
+   end if
+
+   if !empty( cErrorText )
+      msgStop( cErrorText )
+      oGetNombre:setColor( Rgb( 255, 255, 255 ), Rgb( 255, 102, 102 ) )
       oGetNombre:setFocus()
       RETURN ( .f. )
    end if
 
-   idForNombre := ::oModel:ChecksForValid( "nombre" )
-   
-   if ( !empty( idForNombre ) )
-   	if ( idForNombre != ::oModel:hBuffer[ "id" ] .and. !::isDuplicateMode() )
-	      msgStop( "El nombre de la impresora ya existe" )
-	      oGetNombre:setFocus()
-	      RETURN ( .f. )
-      end if
-      if ( idForNombre == ::oModel:hBuffer[ "id" ] .and. ::isDuplicateMode() )
-         msgStop( "El nombre de la impresora ya existe" )
-	      oGetNombre:setFocus()
-	      RETURN ( .f. )
-      end if
-   end if
+RETURN ( .t. )
 
 //---------------------------------------------------------------------------//
-
-RETURN ( oDlg:end( IDOK ) )

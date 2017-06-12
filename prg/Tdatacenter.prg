@@ -4842,6 +4842,14 @@ METHOD ConvertEmpresaToSQLite()
       :New();
       :makeImportDbfSQL()
 
+   PropiedadesModel();
+      :New();
+      :makeImportDbfSQL()
+
+   PropiedadesLineasModel(); //obligatorio hacer primero la importacion de las cabeceras
+      :New();
+      :makeSpecialImportDbfSQL()
+
 RETURN ( Self )
 
 //---------------------------------------------------------------------------//
