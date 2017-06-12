@@ -36,6 +36,7 @@ CLASS PropiedadesLineasController FROM SQLBaseController
 
    METHOD   endDeleteModePosDelete()       INLINE ( ::oModel:reOrder() )
 
+   METHOD   addColumnsForBrowse( oCombobox, k, h )
 
 END CLASS
 
@@ -270,6 +271,23 @@ METHOD changeOrdenOnUpdate()
    end if
 
    ::oModel:largeUpdateOrden( Operation, Conditions )
+
+RETURN ( self )
+
+//---------------------------------------------------------------------------//
+
+METHOD addColumnsForBrowse( oCombobox )
+
+   with object ( ::oView:getoBrowse():AddCol() )
+      :Adjust()
+      :cHeader             := "Color"
+      :bFooter             := {|| "" }
+      :bStrData            := {|| "" }
+      :nWidth              := 75
+      :bClrStd             := {|| { ::getRowSet():fieldget("color"), ::getRowSet():fieldget("color") } }
+      :bClrSel             := {|| { ::getRowSet():fieldget("color"), ::getRowSet():fieldget("color") } }
+      :bClrSelFocus        := {|| { ::getRowSet():fieldget("color"), ::getRowSet():fieldget("color") } }
+   end with
 
 RETURN ( self )
 

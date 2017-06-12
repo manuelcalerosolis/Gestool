@@ -181,7 +181,7 @@ METHOD getImportSentence( cPath )
 
             hEval( ::hColumns, {| k, hash | if ( k != ::cColumnKey,;
                                                 if ( k == "empresa",;
-                                                      cValues += + toSQLString( cCodEmp() ) + ", ",;
+                                                      cValues += toSQLString( cCodEmp() ) + ", ",;
                                                       cValues += toSQLString( ( dbf )->( fieldget( fieldpos( hget( hash, "field" ) ) ) ) ) + ", "), ) } )
 
       
@@ -208,12 +208,13 @@ METHOD makeImportDbfSQL( cPath )
 
    local cImportSentence
 
-   if ( hb_HHasKey( ::hColumns, "empresa" ) )
-      default cPath     := cPatEmp()
-   else
-      default cPath     := cPatDat()
+   if empty( cPath ) 
+      if ( hb_HHasKey( ::hColumns, "empresa" ) )
+         cPath     := cPatEmp()
+      else
+         cPath     := cPatDat()
+      end if 
    end if
-
 
    if ( file( cPath + "\" + ::getOldTableName() ) )
       Return ( self )
@@ -230,11 +231,13 @@ METHOD makeImportDbfSQL( cPath )
 
       getSQLDatabase():Exec( ::getSQLCreateTable() )
 
+      msgalert( cImportSentence )
+
       getSQLDatabase():Exec( cImportSentence )
       
    end if 
 
-   frename( cPath + "\" + ::getDbfTableName(), cPath + "\" + ::getOldTableName() )
+  // frename( cPath + "\" + ::getDbfTableName(), cPath + "\" + ::getOldTableName() )
    
 Return ( self )
 

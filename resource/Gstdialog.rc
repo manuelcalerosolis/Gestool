@@ -21287,26 +21287,26 @@ FONT 8, "Segoe UI"
   CONTROL "Código", -1, "Static", WS_GROUP, 4, 9, 31, 8
 }
 
-PROP_SQL DIALOG DISCARDABLE 70, 20, 354, 253
+PROP_SQL DIALOG DISCARDABLE 70, 20, 392, 253
 STYLE WS_POPUP|DS_MODALFRAME|DS_3DLOOK|WS_CAPTION|WS_SYSMENU|WS_VISIBLE
 CAPTION "Propiedades"
 FONT 8, "Helv"
 {
   CONTROL "", 100, "Edit", WS_BORDER|WS_TABSTOP, 50, 13, 60, 11
-  CONTROL "", 110, "Edit", WS_BORDER|WS_TABSTOP, 50, 26, 296, 11
-  CONTROL "Propiedad de tipo color", 200, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 8, 41, 88, 10
+  CONTROL "", 110, "Edit", WS_BORDER|WS_TABSTOP, 50, 26, 335, 11
+  CONTROL "Propiedad de tipo color", 200, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 8, 41, 105, 10
   CONTROL "Aña&dir [F2]", 500, "Button", WS_TABSTOP, 8, 68, 50, 14
-  CONTROL "&Modificar [F3]", 501, "Button", WS_TABSTOP, 63, 68, 50, 14
-  CONTROL "&Eliminar [F4]", 502, "Button", WS_TABSTOP, 118, 68, 50, 14
-  CONTROL "", 120, "SQLXBrowse", WS_TABSTOP|0x00300000, 8, 84, 338, 142
-  CONTROL "&Aceptar [F5]", IDOK, "Button", BS_DEFPUSHBUTTON|WS_TABSTOP, 247, 235, 50, 14
-  CONTROL "&Cancelar", IDCANCEL, "Button", WS_TABSTOP, 300, 235, 50, 14
-  CONTROL "Propiedad", -1, "Button", BS_GROUPBOX, 2, 3, 348, 52
-  CONTROL "Tabla de propiedades", -1, "Button", BS_GROUPBOX, 2, 56, 348, 176
+  CONTROL "&Modificar [F3]", 501, "Button", WS_TABSTOP, 61, 68, 62, 14
+  CONTROL "&Eliminar [F4]", 502, "Button", WS_TABSTOP, 126, 68, 50, 14
+  CONTROL "", 120, "SQLXBrowse", WS_TABSTOP|0x00300000, 8, 84, 376, 142
+  CONTROL "&Aceptar [F5]", IDOK, "Button", BS_DEFPUSHBUTTON|WS_TABSTOP, 282, 235, 50, 14
+  CONTROL "&Cancelar", IDCANCEL, "Button", WS_TABSTOP, 335, 235, 50, 14
+  CONTROL "Propiedad", -1, "Button", BS_GROUPBOX, 2, 3, 387, 52
+  CONTROL "Tabla de propiedades", -1, "Button", BS_GROUPBOX, 2, 56, 387, 176
   CONTROL "Código", -1, "Static", WS_GROUP, 8, 17, 30, 8
   CONTROL "Nombre", -1, "Static", WS_GROUP, 8, 30, 30, 8
-  CONTROL "Bajar", 504, "Button", WS_TABSTOP, 312, 68, 34, 14
-  CONTROL "Subir", 503, "Button", WS_TABSTOP, 275, 68, 34, 14
+  CONTROL "Bajar", 504, "Button", WS_TABSTOP, 350, 68, 34, 14
+  CONTROL "Subir", 503, "Button", WS_TABSTOP, 313, 68, 34, 14
 }
 
 PRODET_SQL DIALOG DISCARDABLE 30, 71, 282, 93

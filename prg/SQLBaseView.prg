@@ -272,6 +272,8 @@ METHOD buildSQLNuclearBrowse( idResource, oDlg, oCombobox )
 
    ::oController:generateColumnsForBrowse( oCombobox )
 
+   ::oController:addColumnsForBrowse( oCombobox )
+
    ::oBrowse:bLDblClick       := {|| ::oController:Edit() }
    ::oBrowse:bRClicked        := {| nRow, nCol, nFlags | ::oBrowse:RButtonDown( nRow, nCol, nFlags ) }
 

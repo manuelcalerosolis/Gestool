@@ -26,6 +26,7 @@ METHOD Dialog()
 
    local oDlg
    local oBtnOk
+   local oGetColor
    local oGetOrden
    local oGetNombre
    local oGetCodigo
@@ -60,18 +61,23 @@ METHOD Dialog()
       ID       	130 ;
       WHEN     	( !::oController:isZoomMode() ) ;
       OF       	oDlg
-/*
+
    REDEFINE GET   oGetColor ;
-      VAR      ::oController:oModel:hBuffer[ "color" ] ;
-      ID       200 ;
-      COLOR    if( aTmpPro[ ( dbfProT )->( FieldPos( "lColor" ) ) ], aTmp[ ( dbfProL )->( FieldPos( "nColor" ) ) ], CLR_GET ), if( aTmpPro[ ( dbfProT )->( FieldPos( "lColor" ) ) ], aTmp[ ( dbfProL )->( FieldPos( "nColor" ) ) ], CLR_GET ) ;
-      BITMAP   "LUPA" ;
-      WHEN     ( nMode != ZOOM_MODE .and. aTmpPro[ ( dbfProT )->( FieldPos( "lColor" ) ) ] ) ;
-      ON HELP  (  aTmp[ ( dbfProL )->( FieldPos( "nColor" ) ) ]  := ChooseColor(),;
-                  aGet[ ( dbfProL )->( FieldPos( "nColor" ) ) ]:SetColor( aTmp[ ( dbfProL )->( FieldPos( "nColor" ) ) ], aTmp[ ( dbfProL )->( FieldPos( "nColor" ) ) ] ),;
-                  aGet[ ( dbfProL )->( FieldPos( "nColor" ) ) ]:Refresh() ) ;
-      OF       oDlg
-*/
+      VAR         ::oController:oModel:hBuffer[ "color" ] ;
+      ID          200 ;
+      BITMAP      "LUPA" ;
+      WHEN        (  !::oController:isZoomMode() ) ;
+      OF          oDlg
+
+   if !empty( ::oController:oModel:hBuffer[ "color" ] )
+      oGetColor:setColor( ::oController:oModel:hBuffer[ "color" ], ::oController:oModel:hBuffer[ "color" ] )
+   else
+      oGetColor:setColor( CLR_GET, CLR_GET )
+   end if 
+
+   oGetColor:bHelp   := {||   ::oController:oModel:hBuffer[ "color" ] := ChooseColor(),;
+                              oGetColor:setColor( ::oController:oModel:hBuffer[ "color" ], ::oController:oModel:hBuffer[ "color" ] ),;
+                              oGetColor:Refresh() }
 
    REDEFINE BUTTON oBtnOk ;
       ID          IDOK ;
