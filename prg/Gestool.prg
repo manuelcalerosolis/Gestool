@@ -1083,13 +1083,13 @@ FUNCTION orderTest()
     local oWnd, oBrw, oCol
     local oDb, oStmt, oRS // Objetos de HDO
 
-    oStmt := getSQLDatabase():query( "SELECT * FROM etiquetas ORDER BY id" )
+    oStmt   := getSQLDatabase():query( "SELECT * FROM etiquetas ORDER BY id" )
    
-    oRS := oStmt:fetchRowSet()
+    oRS     := oStmt:fetchRowSet()
 
     DEFINE WINDOW oWnd TITLE "Testing HDO - Fivewin"
 
-      oBrw := TXBrowse():New()
+      oBrw  := TXBrowse():New()
       
          oCol := oBrw:AddCol()
          oCol:nWidth   := 50
@@ -1112,6 +1112,7 @@ FUNCTION orderTest()
          oCol:cHeader  := oRS:FieldName( 4 )
 
       // Asignamos los codeblock de movimiento
+      
       MySetBrowse( oBrw, oRS )
 
       oWnd:oClient  := oBrw
