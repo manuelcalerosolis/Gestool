@@ -136,6 +136,8 @@ METHOD New()
 
    ::oView                                            := ::buildSQLView( self )
 
+   ? "SQLBaseController new"
+
 RETURN ( self )
 
 //---------------------------------------------------------------------------//

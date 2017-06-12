@@ -481,7 +481,7 @@ RETURN oSheet
 
 //----------------------------------------------------------------------------//
 
-FUNCTION validateDialog( oDlg )
+FUNCTION validateDialog( oDlg ) 
 
    local oControl
    local aControls   := oDlg:aControls

@@ -1071,23 +1071,13 @@ RETURN ( by( nRow ) )
 
 //---------------------------------------------------------------------------//
 
-<<<<<<< HEAD
 Function mainTest()
 
 Return ( nil )
 
 //---------------------------------------------------------------------------//
 
-Function orderTest()
-=======
-FUNCTION mainTest()
-   
-RETURN ( nil )
-
-//---------------------------------------------------------------------------//
-
 FUNCTION orderTest()
->>>>>>> SQLite
 
     local oWnd, oBrw, oCol
     local oDb, oStmt, oRS // Objetos de HDO
@@ -1163,6 +1153,6 @@ RETURN ( nil )
 
 FUNCTION GetSysFont()
 
-RETURN "Ms Sans Serif"
+RETURN "Ms Sans Serif" 
 
 //---------------------------------------------------------------------------//

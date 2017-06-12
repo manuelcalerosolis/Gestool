@@ -4423,13 +4423,15 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbf, oBrw, lTotLin, cCodArtEnt, nMode, aTmpA
    Este valor los guaradamos para detectar los posibles cambios----------------
    */
 
+? 1   
+
    cOldCodArt           := aTmp[ _CREF ]
    cOldPrpArt           := aTmp[ _CCODPR1 ] + aTmp[ _CCODPR2 ] + aTmp[ _CVALPR1 ] + aTmp[ _CVALPR2 ]
    cOldUndMed           := aTmp[ _CUNIDAD ]
 
    cSayGrp              := RetFld( aTmp[ _CGRPFAM ], oGrpFam:GetAlias() )
    cSayFam              := RetFld( aTmp[ _CCODFAM ], D():Familias( nView ) )
-
+? 2
    /*
    Caja de dialogo-------------------------------------------------------------
    */
@@ -4489,7 +4491,7 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbf, oBrw, lTotLin, cCodArtEnt, nMode, aTmpA
          SPINNER ;
          WHEN     ( nMode != ZOOM_MODE ) ;
          OF       oFld:aDialogs[1]
-
+? "propiedades"
       // Propiedades-------------------------------------------------
 
       oBrwProperties                       := IXBrowse():New( oFld:aDialogs[1] )
@@ -4557,7 +4559,7 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbf, oBrw, lTotLin, cCodArtEnt, nMode, aTmpA
          ID       282 ;
          WHEN     .f. ;
          OF       oFld:aDialogs[1]
-
+? "fin propiedades"
       /*
       fin de propiedades
       -------------------------------------------------------------------------
@@ -4779,7 +4781,7 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbf, oBrw, lTotLin, cCodArtEnt, nMode, aTmpA
          WHEN     ( !aTmp[ _LCONTROL ] .and. nMode != ZOOM_MODE .and. !lTotLin ) ;
          PICTURE  "@E 999.99";
          OF       oFld:aDialogs[1]
-
+? "comisión"
       if !aTmp[ __LALQUILER ]
 
       REDEFINE GET oComisionLinea VAR nComisionLinea ;
@@ -4805,7 +4807,7 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbf, oBrw, lTotLin, cCodArtEnt, nMode, aTmpA
       /*
       Tipo de moviminto--------------------------------------------------------
       */
-
+? "tipp moviminto"
       TiposVentasController();
          :Instance();
          :createEditControl(  {  "idGet"  => 290,;
@@ -4818,7 +4820,7 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbf, oBrw, lTotLin, cCodArtEnt, nMode, aTmpA
       /*
       Tipo de articulo---------------------------------------------------------
       */
-
+? "Almacenes"
       REDEFINE GET aGet[ _CCODTIP ] VAR aTmp[ _CCODTIP ] ;
          ID       205 ;
          IDTEXT   206 ;
@@ -4854,7 +4856,7 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbf, oBrw, lTotLin, cCodArtEnt, nMode, aTmpA
          BITMAP   "LUPA" ;
          ON HELP  ( BrwObras( aGet[ _COBRLIN ], aGet[ _COBRLIN ]:oHelpText, aTmpAlb[ _CCODCLI ], dbfObrasT ) ) ;
          OF       oFld:aDialogs[1]
-
+? "stock"
       REDEFINE GET oStkAct VAR nStkAct ;
          ID       310 ;
          WHEN     .f. ;
@@ -4916,7 +4918,7 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbf, oBrw, lTotLin, cCodArtEnt, nMode, aTmpA
          WHEN     ( nMode != ZOOM_MODE ) ;
          ID       220 ;
          OF       oFld:aDialogs[ 2 ]
-
+? "grupo familias"
       /*
       Definición de familias y grupos de familias------------------------------
       */
@@ -5012,7 +5014,7 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbf, oBrw, lTotLin, cCodArtEnt, nMode, aTmpA
          ID       110 ;
          WHEN     ( nMode != ZOOM_MODE ) ;
          OF       oFld:aDialogs[ 3 ]
-
+? "CentroCoste"
       REDEFINE GET aGet[ __CCENTROCOSTE ] VAR aTmp[ __CCENTROCOSTE ] ;
          ID       410 ;
          IDTEXT   411 ;
@@ -5038,7 +5040,7 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbf, oBrw, lTotLin, cCodArtEnt, nMode, aTmpA
          BITMAP   "LUPA" ;
          WHEN     ( nMode != ZOOM_MODE ) ; 
          OF       oFld:aDialogs[4]
-
+? "imagen"
       REDEFINE BITMAP bmpImage ;
          ID       220 ;
          FILE     ( cFileBitmap( cPatImg(), aTmp[ _CIMAGEN ] ) );
@@ -5087,7 +5089,7 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbf, oBrw, lTotLin, cCodArtEnt, nMode, aTmpA
                            if( !empty( cCodArtEnt ), aGet[ _CREF ]:lValid(), ),;
                            loadGet( aGet[ _CTERCTR ], cTipoCtrCoste ), aGet[ _CTERCTR ]:lValid(),;
                            lCalcDeta( aTmp, aTmpAlb, nDouDiv, oTotal, oRentLin, cCodDiv ) }
-
+? "Activate"
    ACTIVATE DIALOG oDlg ;
       ON INIT     ( menuEdtDet( aGet[ _CREF ], oDlg, , if( nMode == APPD_MODE, "", Str( ( dbfTmpLin )->( OrdKeyNo() ) ) ) ) );
       CENTER
@@ -9767,7 +9769,11 @@ STATIC FUNCTION SetDlgMode( aTmp, aTmpAlb, nMode, aGet, oFld, oSayPr1, oSayPr2, 
       oRentLin:Hide()
    end if
 
+   ? 1
+
    TiposVentasController():Instance():validEditControl()
+
+   ? 2
 
    do case
    case nMode == APPD_MODE
@@ -9855,6 +9861,8 @@ STATIC FUNCTION SetDlgMode( aTmp, aTmpAlb, nMode, aGet, oFld, oSayPr1, oSayPr2, 
       
    end case
 
+   ? 3
+
    if !empty(aGet)
 
       if !empty( aTmp[ _CCODPR1 ] )
@@ -9912,13 +9920,13 @@ STATIC FUNCTION SetDlgMode( aTmp, aTmpAlb, nMode, aGet, oFld, oSayPr1, oSayPr2, 
          end if
 
       end if
-
+? 4
       // Ocultamos el precio de costo------------------------------------------------
 
       if !lAccArticulo() .or. oUser():lNotCostos()
          aGet[ _NCOSDIV ]:Hide()
       end if 
-
+? 5
       // Solo pueden modificar los precios los administradores-----------------------
 
       if ( empty( aTmp[ _NPREUNIT ] ) .or. lUsrMaster() .or. oUser():lCambiarPrecio() ) .and. ( nMode != ZOOM_MODE )
@@ -9940,7 +9948,7 @@ STATIC FUNCTION SetDlgMode( aTmp, aTmpAlb, nMode, aGet, oFld, oSayPr1, oSayPr2, 
          aGet[ _NDTODIV  ]:HardDisable()
 
       end if
-
+? 6
       // Ocultamos las tres unidades de medicion-------------------------------------
 
       aGet[ ( D():Get( "AlbCliL", nView ) )->( fieldpos( "nMedUno" ) ) ]:Hide()
@@ -9959,7 +9967,7 @@ STATIC FUNCTION SetDlgMode( aTmp, aTmpAlb, nMode, aGet, oFld, oSayPr1, oSayPr2, 
       end if
 
    end if 
-
+? 7
    // Mostramos u ocultamos las tarifas por líneas--------------------------------
 
    if empty( aTmp[ _NTARLIN ] )
@@ -9991,7 +9999,7 @@ STATIC FUNCTION SetDlgMode( aTmp, aTmpAlb, nMode, aGet, oFld, oSayPr1, oSayPr2, 
    if !empty( oFld )
       oFld:SetOption( 1 )
    end if
-
+? 8
    // Propiedades--------------------------------------------------------------
 
    hidePropertiesTable( oBrwProperties )

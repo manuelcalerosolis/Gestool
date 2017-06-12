@@ -16,11 +16,8 @@ CLASS SituacionesModel FROM SQLBaseModel
 
    METHOD   New()
 
-<<<<<<< HEAD
    METHOD   buildRowSetWithRecno()                 INLINE   ( ::buildRowSet( .t. ) ) 
 
-=======
->>>>>>> SQLite
    METHOD   arraySituaciones()
 
 END CLASS
@@ -31,14 +28,6 @@ METHOD New()
 
    ::cDbfTableName               := "Situa"
 
-<<<<<<< HEAD
-   ::hColumns                    := {  "id"        => {  "create"    => "INTEGER PRIMARY KEY AUTOINCREMENT"    ,;
-                                                         "text"		=> "Identificador"                        ,;
-   															         "dbfField" 	=> "" }                                   ,;
-                                       "nombre"    => {  "create"    => "VARCHAR( 140 ) NOT NULL"              ,;
-   															         "text"		=> "Tipo de situacion"                    ,;
-   															         "dbfField" 	=> "cSitua" } }
-=======
    ::hColumns                    := {  "id"              => {  "create"    => "INTEGER PRIMARY KEY AUTOINCREMENT"    ,;
                                                                "text"		=> "Identificador"                        ,;
    															               "header"    => "Id"                                   ,;
@@ -52,7 +41,6 @@ METHOD New()
    															               "field"   	=> "cSitua"                               ,;
                                                                "type"      => "C"                                    ,;
                                                                "len"       => 140}                                   }
->>>>>>> SQLite
 
    ::Super:New()
 

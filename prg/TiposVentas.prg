@@ -99,7 +99,11 @@ METHOD createEditControl( hControl )
       RETURN ( Self )
    end if 
 
+   msgalert( hb_valtoexp( hControl ) )
+
    ::cEditControl := ::getModel():getCodigoFromId( hGet( hControl, "value" ) ) 
+
+   ? ::cEditControl
 
    REDEFINE GET   ::oEditControl ;
       VAR         ::cEditControl ;
@@ -109,9 +113,13 @@ METHOD createEditControl( hControl )
       IDTEXT      ( hGet( hControl, "idText" ) ) ;
       OF          ( hGet( hControl, "dialog" ) )
 
+   ? "objeto creado"
+
    ::oEditControl:bWhen    := hGet( hControl, "when" ) 
    ::oEditControl:bHelp    := {|| ::oController:assignBrowse( ::oEditControl ) }
    ::oEditControl:bValid   := {|| ::oController:isValidCodigo( ::oEditControl ) }
+
+   ? "valores"
 
 RETURN ( Self )
 

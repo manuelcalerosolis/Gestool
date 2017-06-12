@@ -26,14 +26,6 @@ METHOD New()
 
    ::cDbfTableName            	:= "TipoNotas"
 
-<<<<<<< HEAD
-   ::hColumns                 	:= { 	"id"     => {  "create"    => "INTEGER PRIMARY KEY AUTOINCREMENT",;
-                                                      "text"      => "Identificador" ,;
-                                                      "dbfField"  => "" },;
-                                       "nombre" => {  "create"    => "VARCHAR( 30 ) NOT NULL",;
-                                                      "text"      => "Tipo de la nota",;
-                                                      "dbfField"  => "cTipo" } }
-=======
    ::hColumns                    := {  "id"        => {  "create"    => "INTEGER PRIMARY KEY AUTOINCREMENT"    ,;
                                                          "text"      => "Identificador"                        ,;
                                                          "header"    => "Id"                                   ,;
@@ -49,7 +41,6 @@ METHOD New()
                                                          "len"       => 30}                                    }
 
    ::Super:New()
->>>>>>> SQLite
 
    ::cColumnOrder                := "nombre"
 
