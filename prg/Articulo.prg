@@ -9895,7 +9895,7 @@ STATIC FUNCTION mkChgPrc( cFam, cGetTip, cIva, lCosto, lTarifa1, lTarifa2, lTari
 
    if CreateFastFilter( cExpFlt, D():Articulos( nView ), .f., oMtr )
 
-      if ApoloMsgNoYes( "Se van a reemplazar " + Alltrim( Trans( ( D():Articulos( nView ) )->( OrdKeyCount() ), "9999999" ) ) + " registros.", "¿Desea continuar?" )
+      if ApoloMsgNoYes( "Se van a reemplazar los registros.", "¿Desea continuar?" )
 
          oMtr:SetTotal( ( D():Articulos( nView ) )->( OrdKeyCount() ) )
 

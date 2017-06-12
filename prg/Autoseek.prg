@@ -454,8 +454,8 @@ Function CreateFastFilter( cExpresionFilter, cAlias, lInclude, oMeter, cExpUsuar
       return .f.
    end if
 
-   /*oBlock                  := ErrorBlock( {| oError | ApoloBreak( oError ) } )
-   BEGIN SEQUENCE*/
+   oBlock                  := ErrorBlock( {| oError | ApoloBreak( oError ) } )
+   BEGIN SEQUENCE
 
    if !empty( cExpUsuario )
       cFiltroUsuario       := cExpUsuario
@@ -530,7 +530,7 @@ Function CreateFastFilter( cExpresionFilter, cAlias, lInclude, oMeter, cExpUsuar
 
    end if
 
-   /*RECOVER USING oError
+   RECOVER USING oError
 
       bExpFilter           := nil
 
@@ -538,9 +538,9 @@ Function CreateFastFilter( cExpresionFilter, cAlias, lInclude, oMeter, cExpUsuar
 
    END SEQUENCE
 
-   ErrorBlock( oBlock )*/
+   ErrorBlock( oBlock )
 
-Return ( bExpFilter != nil )
+Return ( .t. )
 
 //---------------------------------------------------------------------------//
 
