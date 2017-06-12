@@ -2966,7 +2966,8 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, cCodCli, cCodArt, nMode, cCodPre 
          WHEN     ( .f. ) ;
          OF       oFld:aDialogs[2]
 
-      REDEFINE GET aGet[_CNUMPRE] VAR aTmp[_CNUMPRE];
+      REDEFINE GET aGet[ _CNUMPRE ] ;
+         VAR      aTmp[ _CNUMPRE ];
          ID       125 ;
          IDSAY    124 ;
          PICTURE  "@R #/#########/##" ;
