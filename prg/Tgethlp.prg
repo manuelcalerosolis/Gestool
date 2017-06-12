@@ -114,26 +114,26 @@ METHOD ReDefine( nId, bSetGet, oWnd, nHelpId, cPict, bValid, nClrFore,;
 
    DEFAULT cBmp      := ""
    DEFAULT nIdSay    := 0
-msgalert("ReDefine")
+
    ::Super:ReDefine( nId, bSetGet, oWnd, nHelpId, cPict, bValid, nClrFore,;
                      nClrBack, oFont, oCursor, cMsg, lUpdate, bWhen, bChanged,;
                      lReadOnly, lSpinner, bUp, bDown, bMin, bMax )
-msgalert("super:ReDefine")
+
    ::bHelp           := bHelp
    ::bMult           := bMult
    ::cBmp            := cBmp
 
    ::lNeedGetFocus   := .f.
    ::lGotFocus       := .f.
-msgalert("variables")
+
    if !Empty( nIdSay )
       ::oSay         := TSay():ReDefine( nIdSay, nil, oWnd )
    end if
-msgalert("say")
+
    if !Empty( nIdText )
       ::oHelpText    := TGet():ReDefine( nIdText, { | u | If( PCount() == 0, ::cHelpText, ::cHelpText := u ) }, oWnd, , , , , , oFont, , , .f., {||.f.} )
    end if
-msgalert("cHelpText")
+
 Return Self
 
 //----------------------------------------------------------------------------//
