@@ -154,8 +154,6 @@ Function EDI_CafesyZymos( lNoExportados, oTree, nView )
 
    local oTEdiExporarFacturas
 
-   MsgInfo( "EDI CARREFOUR" )
-
    oTEdiExporarFacturas          := TEdiExporarFacturas():New( lNoExportados, oTree, nView )
    oTEdiExporarFacturas:Run()
 

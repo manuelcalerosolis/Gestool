@@ -15,11 +15,9 @@ BORLANDLIB           = 	\Bcc582\lib
 IMG2PDFLIB           = 	\Img2Pdf
 
 OBJ                  = 	Obj1701
-<<<<<<< HEAD
+
 SOURCEPRG            = 	.\Prg;.\Prg\mail;.\Prg\Comercio;.\Prg\Models;.\Prg\Controllers;.\Prg\Tablet;.\Prg\tablet\view;.\Prg\tablet\view\documentos;.\Prg\tablet\view\terceros;.\Prg\tablet\view\documentos\ventas;.\Prg\tablet\view\documentos\terceros;.\Prg\tablet\utils;.\Prg\tablet\presenter;.\Prg\tablet\presenter\terceros;.\Prg\tablet\presenter\documentos;.\Prg\tablet\presenter\documentos\ventas;
-=======
-SOURCEPRG            = 	.\Prg;.\Prg\mail;.\Prg\Comercio;.\Prg\Models;.\Prg\Controllers;.\Prg\Services;.\Prg\Tablet;.\Prg\tablet\view;.\Prg\tablet\view\documentos;.\Prg\tablet\view\terceros;.\Prg\tablet\view\documentos\ventas;.\Prg\tablet\view\documentos\terceros;.\Prg\tablet\utils;.\Prg\tablet\presenter;.\Prg\tablet\presenter\terceros;.\Prg\tablet\presenter\documentos;.\Prg\tablet\presenter\documentos\ventas;
->>>>>>> SQLite
+
 SOURCEC 				   =	C
 PPO 					   = 	Ppo1701
 
@@ -491,17 +489,9 @@ backupView.prg                                     	\
 ReindexaPresenter.prg                                 \
 ReindexaView.prg                                      \
 BaseModel.prg 														\
-<<<<<<< HEAD
 SQLBaseModel.prg 													\
 SQLBaseController.prg 											\
 SQLBaseEmpresasModel.prg 										\
-=======
-SQLBaseModel.prg 														\
-SQLBaseController.prg 														\
-SQLHeaderController.prg 													\
-SQLBaseEmpresasModel.prg 													\
-SQLBaseLineasModel.prg 														\
->>>>>>> SQLite
 ClientesModel.prg 												\
 AlbaranesClientesModel.prg 									\
 FacturasClientesModel.prg 										\
@@ -516,10 +506,10 @@ EtiquetasModel.prg 												\
 EtiquetasController.prg 										\
 TiposVentasModel.prg 											\
 TiposVentasController.prg 										\
-PropiedadesModel.obj       								\
+PropiedadesModel.obj       								   \
 PropiedadesController.obj       								\
-PropiedadesLineasModel.obj       								\
-PropiedadesLineasController.obj       								\
+PropiedadesLineasModel.obj       							\
+PropiedadesLineasController.obj       						\
 RelacionesEtiquetasModel.prg 									\
 ArticulosModel.prg                                    \
 HistoricosUsuariosModel.prg                           \
