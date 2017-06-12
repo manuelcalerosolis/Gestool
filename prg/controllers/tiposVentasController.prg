@@ -6,9 +6,6 @@
 
 CLASS TiposVentasController FROM SQLBaseController
 
-   DATA     oEditControl
-   DATA     cEditControl 
-
    METHOD   New()
 
    METHOD   buildSQLModel( this )         INLINE ( TiposVentasModel():New( this ) )
@@ -20,10 +17,10 @@ CLASS TiposVentasController FROM SQLBaseController
    METHOD   validCodigo( oGetCodigo )
    METHOD   validNombre( oGetNombre )
 
-   METHOD   createEditControl( hControl )
+   METHOD   createEditControl( hControl ) INLINE ( ::oView:createEditControl( hControl ) )
 
-   METHOD   validEditControl()            INLINE ( if( !empty( ::oEditControl ), ::oEditControl:lValid(), ) )
-   METHOD   getIdFromEditControl()        INLINE ( if( !hb_isnil( ::cEditControl ), ::getIdFromCodigo( ::cEditControl ), ) )
+   METHOD   validEditControl()            INLINE ( if( !empty( ::oView:oEditControl ), ::oView:oEditControl:lValid(), ) )
+   METHOD   getIdFromEditControl()        INLINE ( if( !hb_isnil( ::oView:cEditControl ), ::getIdFromCodigo( ::oView:cEditControl ), ) )
 
 END CLASS
 
@@ -113,46 +110,3 @@ RETURN ( .t. )
 
 //---------------------------------------------------------------------------//
 
-METHOD createEditControl( hControl )
-
-   if !hhaskey( hControl, "idGet" )
-      RETURN ( Self )
-   end if 
-
-   if !hhaskey( hControl, "idSay" )
-      RETURN ( Self )
-   end if 
-
-   if !hhaskey( hControl, "idText" )
-      RETURN ( Self )
-   end if 
-
-   if !hhaskey( hControl, "dialog" )
-      RETURN ( Self )
-   end if 
-
-   if !hhaskey( hControl, "value" )
-      RETURN ( Self )
-   end if 
-
-   if !hhaskey( hControl, "when" )
-      RETURN ( Self )
-   end if 
-
-   ::cEditControl := ::oModel:getCodigoFromId( hGet( hControl, "value" ) ) 
-
-   REDEFINE GET   ::oEditControl ;
-      VAR         ::cEditControl ;
-      BITMAP      "Lupa" ;
-      ID          ( hGet( hControl, "idGet" ) ) ;
-      IDSAY       ( hGet( hControl, "idSay" ) ) ;
-      IDTEXT      ( hGet( hControl, "idText" ) ) ;
-      OF          ( hGet( hControl, "dialog" ) )
-
-   ::oEditControl:bWhen    := hGet( hControl, "when" ) 
-   ::oEditControl:bHelp    := {|| ::assignBrowse( ::oEditControl ) }
-   ::oEditControl:bValid   := {|| ::isValidCodigo( ::oEditControl ) }
-
-RETURN ( Self )
-
-//---------------------------------------------------------------------------//

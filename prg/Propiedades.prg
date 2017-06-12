@@ -6,9 +6,15 @@
 
 CLASS Propiedades FROM SQLBaseView
 
+   DATA     oEditControl
+
+   DATA     cEditControl 
+
    METHOD   New()
  
    METHOD   Dialog()
+
+   METHOD   createEditControl( hControl )
 
 END CLASS
 
@@ -109,3 +115,48 @@ METHOD Dialog()
 RETURN ( oDlg:nResult == IDOK )
 
 //---------------------------------------------------------------------------//
+
+METHOD createEditControl( uValue, hControl )
+
+   local idSay
+
+   if hb_isnil( uValue )
+      RETURN ( Self )
+   end if 
+
+   if hhaskey( hControl, "idSay" )
+      idSay       := hget( hControl, "idSay" )
+   end if 
+
+   if !hhaskey( hControl, "idGet" )
+      RETURN ( Self )
+   end if 
+
+   if !hhaskey( hControl, "idText" )
+      RETURN ( Self )
+   end if 
+
+   if !hhaskey( hControl, "dialog" )
+      RETURN ( Self )
+   end if 
+
+   if !hhaskey( hControl, "when" )
+      RETURN ( Self )
+   end if 
+
+   REDEFINE GET   ::oEditControl ;
+      VAR         uValue ;
+      BITMAP      "Lupa" ;
+      ID          ( hGet( hControl, "idGet" ) ) ;
+      IDSAY       ( idSay ) ;
+      IDTEXT      ( hGet( hControl, "idText" ) ) ;
+      OF          ( hGet( hControl, "dialog" ) )
+
+   ::oEditControl:bWhen    := hGet( hControl, "when" ) 
+   ::oEditControl:bHelp    := {|| ::oController:assignBrowse( ::oEditControl ) }
+   ::oEditControl:bValid   := {|| ::oController:isValidCodigo( ::oEditControl ) }
+
+RETURN ( Self )
+
+//---------------------------------------------------------------------------//
+

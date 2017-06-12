@@ -39,7 +39,6 @@ CLASS SQLBaseView
       METHOD   insertAfterAppendButton()              VIRTUAL
       METHOD   EndButton()
 
-
    METHOD   setBrowseState( cBrowseState )            INLINE ( ::cBrowseState := cBrowseState )
    METHOD   getBrowseState()                          INLINE ( ::cBrowseState )
 
@@ -48,7 +47,9 @@ CLASS SQLBaseView
 
    METHOD   saveHistoryOfShell()                      INLINE ( ::oController:saveHistory( "_shell", ::oBrowse ) )
 
-   METHOD   saveHistoryOfBrowse()                     INLINE ( ::oController:saveHistory( "_browse", ::oBrowse ) )                 
+   METHOD   saveHistoryOfBrowse()                     INLINE ( ::oController:saveHistory( "_browse", ::oBrowse ) )   
+
+   METHOD   getModel()                                INLINE ( ::oController:oModel )              
 
 END CLASS
 
@@ -169,7 +170,7 @@ METHOD buildSQLShell()
 
    disableAcceso()
 
-   ::oShell                := SQLTShell():New( 2, 10, 18, 70, ::oController:cTitle, , oWnd(), , , .f., , , ::oController:oModel, , , , , {}, {|| ::oController:Edit() },, {|| ::oController:Delete() },, nil, ::oController:nLevel, ::cImageName, ( 104 + ( 0 * 256 ) + ( 63 * 65536 ) ),,, .t. )
+   ::oShell                := SQLTShell():New( 2, 10, 18, 70, ::oController:cTitle, , oWnd(), , , .f., , , ::getModel(), , , , , {}, {|| ::oController:Edit() },, {|| ::oController:Delete() },, nil, ::oController:nLevel, ::cImageName, ( 104 + ( 0 * 256 ) + ( 63 * 65536 ) ),,, .t. )
 
    ::setoBrowse( ::oShell:getBrowse() )
 
@@ -267,7 +268,7 @@ METHOD buildSQLNuclearBrowse( idResource, oDlg, oCombobox )
    ::oBrowse:lHScroll         := .f.
    ::oBrowse:nMarqueeStyle    := 6
 
-   ::oBrowse:setModel( ::oController:oModel )
+   ::oBrowse:setModel( ::getModel() )
 
    ::oController:generateColumnsForBrowse( oCombobox )
 

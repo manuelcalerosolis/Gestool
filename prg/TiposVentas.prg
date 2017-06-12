@@ -6,9 +6,15 @@
 
 CLASS TiposVentas FROM SQLBaseView
 
+   DATA     oEditControl
+
+   DATA     cEditControl 
+
    METHOD   New()
  
    METHOD   Dialog()
+   
+   METHOD   createEditControl( hControl )
 
 END CLASS
 
@@ -34,14 +40,14 @@ METHOD Dialog()
    DEFINE DIALOG oDlg RESOURCE "TIPO_VENTA" TITLE ::lblTitle() + "tipo de venta"
 
    REDEFINE GET   oGetCodigo ;
-      VAR         ::oController:oModel:hBuffer[ "codigo" ] ;
+      VAR         ::getModel():hBuffer[ "codigo" ] ;
       ID          100 ;
       WHEN        ( !::oController:isZoomMode() ) ;
       VALID       ( ::oController:validCodigo( oGetCodigo ) ) ;
       OF          oDlg
 
    REDEFINE GET   oGetNombre ;
-      VAR         ::oController:oModel:hBuffer[ "nombre" ] ;
+      VAR         ::getModel():hBuffer[ "nombre" ] ;
       ID          110 ;
       WHEN        ( !::oController:isZoomMode() ) ;
       VALID       ( ::oController:validNombre( oGetNombre ) ) ;
@@ -59,8 +65,6 @@ METHOD Dialog()
       CANCEL ;
       ACTION      ( oDlg:end() )
 
-   // Teclas rpidas-----------------------------------------------------------
-
    oDlg:AddFastKey( VK_F5, {|| oBtnOk:Click() } )
 
    ACTIVATE DIALOG oDlg CENTER
@@ -68,3 +72,48 @@ METHOD Dialog()
 RETURN ( oDlg:nResult == IDOK )
 
 //---------------------------------------------------------------------------//
+
+METHOD createEditControl( hControl )
+
+   if !hhaskey( hControl, "idGet" )
+      RETURN ( Self )
+   end if 
+
+   if !hhaskey( hControl, "idSay" )
+      RETURN ( Self )
+   end if 
+
+   if !hhaskey( hControl, "idText" )
+      RETURN ( Self )
+   end if 
+
+   if !hhaskey( hControl, "dialog" )
+      RETURN ( Self )
+   end if 
+
+   if !hhaskey( hControl, "value" )
+      RETURN ( Self )
+   end if 
+
+   if !hhaskey( hControl, "when" )
+      RETURN ( Self )
+   end if 
+
+   ::cEditControl := ::getModel():getCodigoFromId( hGet( hControl, "value" ) ) 
+
+   REDEFINE GET   ::oEditControl ;
+      VAR         ::cEditControl ;
+      BITMAP      "Lupa" ;
+      ID          ( hGet( hControl, "idGet" ) ) ;
+      IDSAY       ( hGet( hControl, "idSay" ) ) ;
+      IDTEXT      ( hGet( hControl, "idText" ) ) ;
+      OF          ( hGet( hControl, "dialog" ) )
+
+   ::oEditControl:bWhen    := hGet( hControl, "when" ) 
+   ::oEditControl:bHelp    := {|| ::oController:assignBrowse( ::oEditControl ) }
+   ::oEditControl:bValid   := {|| ::oController:isValidCodigo( ::oEditControl ) }
+
+RETURN ( Self )
+
+//---------------------------------------------------------------------------//
+

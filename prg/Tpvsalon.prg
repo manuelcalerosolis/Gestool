@@ -146,7 +146,8 @@ CLASS TTpvSalon
    Method InitDesign()
 
    METHOD Selector( oDlg )
-   METHOD InitSelector( oDlg )
+   METHOD   InitSelector()
+   METHOD   StartSelector()
 
    METHOD SelectSala( oBtnItem )
 
@@ -1066,7 +1067,9 @@ Method Selector( lPuntosPendientes, lLlevar, nSelectOption ) CLASS TTpvSalon
 
    ::oWnd                     := TDialog():New( , , , , ::cTitle(), "SelectMesa" )
 
-   ::oWnd:Activate( , , , .t., , , {|| ::InitSelector( lPuntosPendientes, lLlevar, nSelectOption ) } )
+   ::oWnd:bStart              := {|| ::StartSelector( lPuntosPendientes, lLlevar, nSelectOption ) }
+
+   ::oWnd:Activate( , , , .t., , .t., {|| ::InitSelector( lPuntosPendientes, lLlevar, nSelectOption ) } )
 
 Return ( ::oWnd:nResult == IDOK )
 
@@ -1080,11 +1083,6 @@ Method InitSelector( lPuntosPendientes, lShowLlevar, nSelectOption ) CLASS TTpvS
    local oBoton
    local nWidth
    local oCarpeta
-   local oBlock
-   local oError
-
-   oBlock                     := ErrorBlock( {| oError | ApoloBreak( oError ) } )
-   BEGIN SEQUENCE
 
    nSala                      := len( ::oSender:aSalas )
 
@@ -1122,10 +1120,12 @@ Method InitSelector( lPuntosPendientes, lShowLlevar, nSelectOption ) CLASS TTpvS
       oGrupo                  := TDotNetGroup():New( oCarpeta, nWidth, "Salones", .f. )
 
       for each sSala in ::oSender:aSalas
+         
          oBoton               := TDotNetButton():New( 60, oGrupo, sSala:cImagen, sSala:cDescripcion, hb_enumindex(), {| oBoton | ::SelectSala( oBoton, lPuntosPendientes ) }, , , .f., .f., .f. )
          oBoton:cName         := sSala:cCodigo
 
          //Si el usuario tiene asignada una sala de venta seleccionamos el boton
+         
          if !empty( oUser():SalaVenta() )
             oBoton:lSelected  := ( sSala:cCodigo == oUser():SalaVenta() )
          else
@@ -1155,19 +1155,25 @@ Method InitSelector( lPuntosPendientes, lShowLlevar, nSelectOption ) CLASS TTpvS
    end if
 
    oGrupo                     := TDotNetGroup():New( oCarpeta, 66, "Acciones", .f., , "gc_door_open2_32" )
-      oBoton                  := TDotNetButton():New( 60, oGrupo, "End32",       "Salir",          1, {|| ::oSelectedPunto := nil, ::Close( IDCANCEL ) }, , , .f., .f., .f. )
+      oBoton                  := TDotNetButton():New( 60, oGrupo, "End32", "Salir", 1, {|| ::oSelectedPunto := nil, ::Close( IDCANCEL ) }, , , .f., .f., .f. )
 
    oGrupo                     := TDotNetGroup():New( oCarpeta, 246, "Leyenda ubicaciones", .f., , "" )
-      oBoton                  := TDotNetButton():New( 120, oGrupo, "gc_check_12",    "Libre",                   1, nil, , , .f., .f., .f. )
-      oBoton                  := TDotNetButton():New( 120, oGrupo, "gc_shape_square_12",   "Ocupada",                 1, nil, , , .f., .f., .f. )
-      oBoton                  := TDotNetButton():New( 120, oGrupo, "gc_delete_12",      "Ticket entregado",        1, nil, , , .f., .f., .f. )
-      oBoton                  := TDotNetButton():New( 120, oGrupo, "",                          "[...] Multiples tickets", 2, nil, , , .f., .f., .f. )
+      oBoton                  := TDotNetButton():New( 120, oGrupo, "gc_check_12", "Libre", 1, nil, , , .f., .f., .f. )
+      oBoton                  := TDotNetButton():New( 120, oGrupo, "gc_shape_square_12", "Ocupada", 1, nil, , , .f., .f., .f. )
+      oBoton                  := TDotNetButton():New( 120, oGrupo, "gc_delete_12", "Ticket entregado", 1, nil, , , .f., .f., .f. )
+      oBoton                  := TDotNetButton():New( 120, oGrupo, "", "[...] Multiples tickets", 2, nil, , , .f., .f., .f. )
 
    ::oWnd:oClient             := TPanelEx():New()
 
+Return ( Self )
+
+//---------------------------------------------------------------------------//
+
+METHOD StartSelector( lPuntosPendientes, lShowLlevar, nSelectOption ) CLASS TTpvSalon
+
    ::oWnd:Maximize()
 
-   //Comprobamos si el usuario tiene una sala de venta asignada por defecto----
+   // Comprobamos si el usuario tiene una sala de venta asignada por defecto----
 
    if !Empty( oUser():SalaVenta() )
       ::LoadFromMemory( oUser():SalaVenta(), lPuntosPendientes )
@@ -1175,53 +1181,50 @@ Method InitSelector( lPuntosPendientes, lShowLlevar, nSelectOption ) CLASS TTpvS
       ::LoadFromMemory( nil, lPuntosPendientes )
    end if
 
-
    /*
    Después de cargar todos los datos me muevo a la ubicaión que me hayan marcado
    */
 
    do case
       case nSelectOption == ubiGeneral
+
          ::oBtnGenerico:Selected()
          ::oBtnLlevar:UnSelected()
          ::oBtnRecoger:UnSelected()
          ::oBtnEncargar:UnSelected()
+         
          ::LoadGenericosPendientes( lPuntosPendientes )
 
       case nSelectOption == ubiLlevar
+
          ::oBtnLlevar:Selected()
          ::oBtnGenerico:UnSelected()
          ::oBtnRecoger:UnSelected()
          ::oBtnEncargar:UnSelected()
+         
          ::LoadLlevarPendientes( lPuntosPendientes )
 
       case nSelectOption == ubiRecoger
+
          ::oBtnRecoger:Selected()
          ::oBtnGenerico:UnSelected()
          ::oBtnLlevar:UnSelected()
          ::oBtnEncargar:UnSelected()
+         
          ::LoadRecogerPendientes( lPuntosPendientes )
 
       case nSelectOption == ubiEncargar
+
          ::oBtnRecoger:UnSelected()
          ::oBtnGenerico:UnSelected()
          ::oBtnLlevar:UnSelected()
          ::oBtnEncargar:Selected()
+         
          ::LoadEncargarPendientes( lPuntosPendientes )
 
    end case
 
-   RECOVER USING oError
-
-      msgStop( ErrorMessage( oError ), "Error al crear salón" )
-
-   END SEQUENCE
-
-   ErrorBlock( oBlock )
-
-   SysRefresh()
-
-Return ( Self )
+RETURN ( self )
 
 //---------------------------------------------------------------------------//
 

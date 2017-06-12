@@ -8,15 +8,17 @@ CLASS PropiedadesController FROM SQLHeaderController
 
    METHOD   New()
 
-   METHOD   buildSQLModel( this )         INLINE ( PropiedadesModel():New( this ) )
+   METHOD   buildSQLModel( this )                  INLINE ( PropiedadesModel():New( this ) )
    
-   METHOD   buildSQLView( this )				INLINE ( Propiedades():New( this ) )
+   METHOD   buildSQLView( this )				         INLINE ( Propiedades():New( this ) )
   
-   METHOD   getFieldFromBrowse()          INLINE ( ::getRowSet():fieldGet( "id" ) )
+   METHOD   getFieldFromBrowse()                   INLINE ( padr( ::getRowSet():fieldGet( "codigo" ), ::oModel:hColumns[ "codigo" ][ "len" ] ) )
  
    METHOD   validCodigo( oGetCodigo )
 
    METHOD   validNombre( oGetNombre )
+
+   METHOD   createEditControl( uValue, hControl )  INLINE ( ::oView:createEditControl( @uValue, hControl ) )
 
 END CLASS
 

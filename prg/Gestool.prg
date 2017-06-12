@@ -45,7 +45,7 @@ static oDb, oSel, oUpd, oIns, oDel, oRS, oWnd
 -------------------------------------------------------------------------------
 */
 
-function Main( paramsMain, paramsSecond, paramsThird )
+FUNCTION Main( paramsMain, paramsSecond, paramsThird )
 
    local oIndex
    local oIconApp
@@ -75,7 +75,7 @@ function Main( paramsMain, paramsSecond, paramsThird )
 
    if ( "ADMINISTRADOR" $ appParamsMain() )
       TDataCenter():lAdministratorTask()
-      Return nil
+      RETURN nil
    end if
 
    // Motor de bases de datos--------------------------------------------------
@@ -84,7 +84,7 @@ function Main( paramsMain, paramsSecond, paramsThird )
 
       if !( appConnectADS() )
          msgStop( "Imposible conectar con GstApolo ADS data dictionary" )
-         Return nil
+         RETURN nil
       end if
 
    else 
@@ -112,7 +112,7 @@ function Main( paramsMain, paramsSecond, paramsThird )
             TSndRecInf():Init():AutoExecute()
          end if
 
-         return nil
+         RETURN nil
 
       case ( "REINDEXA" $ appParamsMain() )
 
@@ -126,7 +126,7 @@ function Main( paramsMain, paramsSecond, paramsThird )
             oIndex:Resource( .t. )
          end if
 
-         return nil
+         RETURN nil
 
       case ( "EMPRESA" $ appParamsMain() )
 
@@ -142,7 +142,7 @@ function Main( paramsMain, paramsSecond, paramsThird )
 
          controllerReportGallery( appParamsThird() )
 
-         return nil
+         RETURN nil
 
    end case
 
@@ -159,7 +159,7 @@ function Main( paramsMain, paramsSecond, paramsThird )
    if !TReindex():lFreeHandle()
       msgStop( "Existen procesos exclusivos, no se puede acceder a la aplicación" + CRLF + ;
                "en estos momentos, reintentelo pasados unos segundos." )
-      Return .f.
+      RETURN .f.
    end if
 
    XbrNumFormat( "E", .t. )
@@ -199,11 +199,11 @@ function Main( paramsMain, paramsSecond, paramsThird )
 
    getSQLDatabase():Disconnect() 
 
-Return Nil
+RETURN Nil
 
 //----------------------------------------------------------------------------//
 
-Static Function controllerReportGallery( cInitOptions )
+STATIC FUNCTION controllerReportGallery( cInitOptions )
 
    local hReportGallery    
 
@@ -234,27 +234,27 @@ Static Function controllerReportGallery( cInitOptions )
 
    end case
 
-Return nil
+RETURN nil
 
 //---------------------------------------------------------------------------//
 
-Function HelpTopic()
+FUNCTION HelpTopic()
 
    msgStop( "Help wanted!" )
 
-Return Nil
+RETURN Nil
 
 //----------------------------------------------------------------------------//
 
-Function HelpIndex()
+FUNCTION HelpIndex()
 
    goWeb( __GSTHELP__ )
 
-Return Nil
+RETURN Nil
 
 //----------------------------------------------------------------------------//
 
-Static Function CreateMainTabletWindow()
+STATIC FUNCTION CreateMainTabletWindow()
 
    lDemoMode( .f. )
 
@@ -262,7 +262,7 @@ Static Function CreateMainTabletWindow()
       MainTablet()
    end if 
 
-Return ( .t. )
+RETURN ( .t. )
 
 //---------------------------------------------------------------------------//
 
@@ -277,7 +277,7 @@ init procedure InitAplication()
 
    loadLibrary( "Riched20.dll" ) // Cargamos la libreria para richedit
 
-return
+RETURN
 
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
@@ -286,7 +286,7 @@ return
 
 #ifdef __HARBOUR__
 
-Static Function CreateMainPdaWindow( oIconApp )
+STATIC FUNCTION CreateMainPdaWindow( oIconApp )
 
    /*
    Chequeo inicial de la aplicacion--------------------------------------------
@@ -294,17 +294,17 @@ Static Function CreateMainPdaWindow( oIconApp )
 
    lInitCheck()
 
-Return nil
+RETURN nil
 
 //---------------------------------------------------------------------------//
 
-Static Function ExecuteMainPdaWindow( oListView, oDlg )
+STATIC FUNCTION ExecuteMainPdaWindow( oListView, oDlg )
 
-Return nil
+RETURN nil
 
 //---------------------------------------------------------------------------//
 
-Static Function InitMainTactilWindow()
+STATIC FUNCTION InitMainTactilWindow()
 
    lDemoMode( .f. )
 
@@ -316,7 +316,7 @@ Static Function InitMainTactilWindow()
 
    TpvTactil():New():Activate( .t. )
 
-Return nil
+RETURN nil
 
 //--------------------------------------------------------------------------//
 // Controla los accesos al programa
@@ -470,7 +470,7 @@ RETURN ( oDlg:nResult == IDOK )
 
 //---------------------------------------------------------------------------//
 
-Function InitBrw( oDlg, oImgUsr, oLstUsr, dbfUsr )
+FUNCTION InitBrw( oDlg, oImgUsr, oLstUsr, dbfUsr )
 
    local nImg     := -1
    local nUser    := 0
@@ -543,7 +543,7 @@ RETURN ( nil )
 //---------------------------------------------------------------------------//
 //Función que chequea el usuario, la clave y nos deja pasar
 
-Static Function clickAccessTctCode( nOpt, oLstUsr, dbfUsr )
+STATIC FUNCTION clickAccessTctCode( nOpt, oLstUsr, dbfUsr )
 
    local oItem
 
@@ -551,7 +551,7 @@ Static Function clickAccessTctCode( nOpt, oLstUsr, dbfUsr )
 
    if Empty( nOpt )
       MsgStop( "Seleccione usuario" )
-      Return .f.
+      RETURN .f.
    end if
 
    oItem       := oLstUsr:GetItem( nOpt )
@@ -563,14 +563,14 @@ Static Function clickAccessTctCode( nOpt, oLstUsr, dbfUsr )
          // Comprobamos la clave del usuario-----------------------------------
 
          if lGetPsw( dbfUsr, .t. )
-            Return .t.
+            RETURN .t.
          end if
 
       else
 
          MsgStop( "Usuario en uso" )
 
-         Return .f.
+         RETURN .f.
 
       end if
 
@@ -580,7 +580,7 @@ Static Function clickAccessTctCode( nOpt, oLstUsr, dbfUsr )
 
    end if
 
-Return ( .f. )
+RETURN ( .f. )
 
 //---------------------------------------------------------------------------//
 
@@ -670,7 +670,7 @@ RETURN ( lCheck )
 
 //---------------------------------------------------------------------------//
 
-function lCheckSaasMode()
+FUNCTION lCheckSaasMode()
 
    local oCon
    local oQuery
@@ -760,11 +760,11 @@ function lCheckSaasMode()
 
    end if
 
-Return ( lCheck )
+RETURN ( lCheck )
 
 //---------------------------------------------------------------------------//
 
-Static Function SetFidelity( oBtnFidelity )
+STATIC FUNCTION SetFidelity( oBtnFidelity ) 
 
    local lFidelity            := !uFieldEmpresa( "lFidelity" )
 
@@ -779,11 +779,11 @@ Static Function SetFidelity( oBtnFidelity )
       end if
    end if
 
-Return ( lFidelity )
+RETURN ( lFidelity )
 
 //--------------------------------------------------------------------------//   
 
-Static Function nDaySaas()
+STATIC FUNCTION nDaySaas()
 
    local cRef  := "SOFTWARE\" + HB_Crypt( "Gestool", SERIALNUMBER )
    local oReg  := TReg32():Create( HKEY_LOCAL_MACHINE, cRef )
@@ -799,11 +799,11 @@ Static Function nDaySaas()
       uVar  := Date()
    end if 
       
-Return ( uVar + __DAYS__ - Date() )
+RETURN ( uVar + __DAYS__ - Date() )
 
 //---------------------------------------------------------------------------//
 
-Static Function DeleteDaySaas()
+STATIC FUNCTION DeleteDaySaas()
 
    local oReg
    local cRef
@@ -813,13 +813,13 @@ Static Function DeleteDaySaas()
    oReg:Delete( cRef )
    oReg:Close()
 
-Return ( nil )
+RETURN ( nil )
  
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 
-Function MainTablet()
+FUNCTION MainTablet()
 
 	local oDlg
    local nRow           
@@ -1064,20 +1064,21 @@ RETURN ( .t. )
 
 //---------------------------------------------------------------------------//
 
-Function nextRow( nRow )
+FUNCTION nextRow( nRow )
 
    nRow := nRow + 3
 
-Return ( by( nRow ) )
+RETURN ( by( nRow ) )
 
 //---------------------------------------------------------------------------//
 
-Function mainTest()
-
+FUNCTION mainTest()
    
-Return ( nil )
+RETURN ( nil )
 
-Function orderTest()
+//---------------------------------------------------------------------------//
+
+FUNCTION orderTest()
 
     local oWnd, oBrw, oCol
     local oDb, oStmt, oRS // Objetos de HDO
@@ -1122,12 +1123,12 @@ Function orderTest()
     oRS:free()
     oStmt:free()
     
-return nil
+RETURN nil
 
 //---------------------------------------------------------------------------//
 // Asigna los codeblock de movimiento a un Browse
 
-static function MySetBrowse( oBrw, oRS )
+STATIC FUNCTION MySetBrowse( oBrw, oRS )
 
    oBrw:lAutoSort := .f.
     oBrw:nDataType := DATATYPE_USER
@@ -1146,6 +1147,12 @@ static function MySetBrowse( oBrw, oRS )
 
    oBrw:lFastEdit := .t.
 
-Return ( nil )
+RETURN ( nil )
+
+//---------------------------------------------------------------------------//
+
+FUNCTION GetSysFont()
+
+RETURN "Ms Sans Serif"
 
 //---------------------------------------------------------------------------//
