@@ -16,7 +16,7 @@ CLASS SituacionesModel FROM SQLBaseModel
 
    METHOD   New()
 
-   METHOD   buildRowSetWithRecno()                 INLINE   ( ::buildRowSet( .t. ) ) 
+   METHOD   buildRowSetWithRecno()                 INLINE   ( ::buildRowSet() ) 
 
    METHOD   arraySituaciones()
 

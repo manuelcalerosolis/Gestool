@@ -75,6 +75,9 @@ RETURN ( oDlg:nResult == IDOK )
 
 METHOD createEditControl( hControl )
 
+   local oError
+   local oBlock
+
    if !hhaskey( hControl, "idGet" )
       RETURN ( Self )
    end if 
@@ -99,11 +102,10 @@ METHOD createEditControl( hControl )
       RETURN ( Self )
    end if 
 
-   msgalert( hb_valtoexp( hControl ) )
+   oBlock            := ErrorBlock( { | oError | ApoloBreak( oError ) } )
+   BEGIN SEQUENCE
 
    ::cEditControl := ::getModel():getCodigoFromId( hGet( hControl, "value" ) ) 
-
-   ? ::cEditControl
 
    REDEFINE GET   ::oEditControl ;
       VAR         ::cEditControl ;
@@ -113,13 +115,16 @@ METHOD createEditControl( hControl )
       IDTEXT      ( hGet( hControl, "idText" ) ) ;
       OF          ( hGet( hControl, "dialog" ) )
 
-   ? "objeto creado"
-
    ::oEditControl:bWhen    := hGet( hControl, "when" ) 
    ::oEditControl:bHelp    := {|| ::oController:assignBrowse( ::oEditControl ) }
    ::oEditControl:bValid   := {|| ::oController:isValidCodigo( ::oEditControl ) }
 
-   ? "valores"
+   RECOVER USING oError
+
+      msgStop( "Imposible crear el control de tipos de ventas." + CRLF + ErrorMessage( oError ) )
+
+   END SEQUENCE
+   ErrorBlock( oBlock )
 
 RETURN ( Self )
 
