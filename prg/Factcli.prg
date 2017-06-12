@@ -1,11 +1,11 @@
 #include "FiveWin.Ch"
-#include "Factu.ch" 
+#include "Factu.ch"  
 #include "Folder.ch"
 #include "Report.ch"
 #include "Print.ch"
 #include "TWMail.ch"
 #include "FastRepH.ch"
-#include "Xbrowse.ch"
+#include "Xbrowse.ch" 
 
 #define OFN_PATHMUSTEXIST     0x00000800
 #define OFN_NOCHANGEDIR       0x00000008
@@ -13142,6 +13142,7 @@ STATIC FUNCTION SaveDeta( aTmp, aTmpFac, aGet, oBrw, oDlg, oFld, oSayPr1, oSayPr
    end if
 
    aTmp[ _CTIPCTR ]  := cTipoCtrCoste
+   
    aTmp[ ( D():FacturasClientesLineas( nView ) )->( fieldpos( "id_tipo_v" ) ) ]  := TiposVentasController():Instance():getIdFromEditControl()
 
    // fin de los script--------------------------------------------------------

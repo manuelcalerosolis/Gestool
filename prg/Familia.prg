@@ -96,8 +96,9 @@ static oTreePadre
 #define MENUOPTION   "01012"
 
 //----------------------------------------------------------------------------//
-
-//Comenzamos la parte de código que se compila para el ejecutable normal
+//
+// Comenzamos la parte de código que se compila para el ejecutable normal
+//
 
 FUNCTION BrwFamilia( oGet, oGet2, lAdd )
 
@@ -1122,6 +1123,59 @@ STATIC FUNCTION LoadTree( oTree, cCodFam )
    oTree:Expand()
 
 RETURN ( .t. )
+
+//---------------------------------------------------------------------------//
+
+FUNCTION getHashFamilias()
+
+   local aFamilias   := {}
+
+   ( D():Familias( nView ) )->( dbgotop() )
+
+   while !( D():Familias( nView ) )->( eof() ) 
+
+      aadd( aFamilias, { ( D():Familias( nView ) )->cCodFam, LoadText( alltrim( upper( ( D():Familias( nView ) )->cNomFam ) ), ( D():Familias( nView ) )->cFamCmb ) } )
+
+      ( D():Familias( nView ) )->( dbSkip() )
+
+      SysRefresh()
+
+   end while
+
+RETURN ( aFamilias )
+
+//---------------------------------------------------------------------------//
+
+STATIC FUNCTION LoadText( cText, cCodFam )
+
+   local nRec
+   local nOrd
+
+   if empty( cCodFam )
+      cCodFam        := Space( 16 )
+   end if
+
+   CursorWait()
+
+   nRec              := ( D():Familias( nView ) )->( Recno() )
+   nOrd              := ( D():Familias( nView ) )->( OrdSetFocus( "cCodFam" ) )
+
+   if ( D():Familias( nView ) )->( dbSeek( cCodFam ) )
+
+      cText          := alltrim( upper( ( D():Familias( nView ) )->cNomFam ) ) + ", " + cText
+
+      LoadText( @cText, ( D():Familias( nView ) )->cFamCmb )
+
+      SysRefresh()
+
+   end if
+
+   ( D():Familias( nView ) )->( OrdSetFocus( nOrd ) )
+   ( D():Familias( nView ) )->( dbGoTo( nRec ) )
+
+   CursorWE()
+
+RETURN ( cText )
 
 //---------------------------------------------------------------------------//
 
@@ -3135,6 +3189,7 @@ RETURN ( oDlg:nResult == IDOK )
 
 //---------------------------------------------------------------------------//
 
+<<<<<<< HEAD
 FUNCTION getHashFamilias()
 
    local aFamilias   := {}
@@ -3249,12 +3304,16 @@ RETURN ( .t. )
 //---------------------------------------------------------------------------//
 
 FUNCTION browseHashFamilia( oGet )
+=======
+FUNCTION browseHashFamilia( oGet, oGet2 )
+>>>>>>> SQLite
 
    local oDlg
    local oBrw
    local cCod     := Space( 16 )
    local oGet1
    local cGet1
+<<<<<<< HEAD
    local nOrd     := GetBrwOpt( "BrwHashFamilia" )
    local oCbxOrd
    local aCbxOrd  := { "Código", "Nombre", "Ruta" }
@@ -3273,21 +3332,41 @@ FUNCTION browseHashFamilia( oGet )
    aFamilias            := aFamiliasOriginal
 
    DEFINE DIALOG oDlg RESOURCE "HELPENTRY" TITLE "Familias de artículos"
+=======
+   local oCbxOrd
+   local aCbxOrd  := { "Código", "Nombre" }
+   local cCbxOrd
+   local aFamilias
+
+   if !OpenFiles( .t. )
+      RETURN nil
+   end if 
+
+   aFamilias      := getHashFamilias()
+
+   DEFINE DIALOG oDlg RESOURCE "HELPENTRY" TITLE "Familias de artículos" 
+>>>>>>> SQLite
 
       REDEFINE GET oGet1 VAR cGet1;
          ID       104 ;
          BITMAP   "FIND" ;
          OF       oDlg
 
+<<<<<<< HEAD
          oGet1:bHelp    := {|| searchHashBrowseFamilia( oCbxOrd:nAt, oBrw, cGet1, aFamiliasOriginal, @aFamilias ) }
          oGet1:bValid   := {|| searchHashBrowseFamilia( oCbxOrd:nAt, oBrw, cGet1, aFamiliasOriginal, @aFamilias ) }
          oGet1:bChange  := {|| searchHashBrowseFamilia( oCbxOrd:nAt, oBrw, cGet1, aFamiliasOriginal, @aFamilias ) }
 
+=======
+>>>>>>> SQLite
       REDEFINE COMBOBOX oCbxOrd ;
          VAR      cCbxOrd ;
          ID       102 ;
          ITEMS    aCbxOrd ;
+<<<<<<< HEAD
          ON CHANGE ( sortHashBrowseFamilia( aScan( aCbxOrd, cCbxOrd ), oBrw, oCbxOrd, @aFamilias ) );
+=======
+>>>>>>> SQLite
          OF       oDlg
 
       oBrw                 := IXBrowse():New( oDlg )
@@ -3302,14 +3381,20 @@ FUNCTION browseHashFamilia( oGet )
 
       with object ( oBrw:AddCol() )
          :cHeader          := "Código"
+<<<<<<< HEAD
          :cSortOrder       := "Código"
          :bEditValue       := {|| aFamilias[ oBrw:nArrayAt, 1 ] }
          :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | sortHashBrowseFamilia( aScan( aCbxOrd, oCol:cSortOrder ), oBrw, oCbxOrd, @aFamilias ) }
          :nWidth           := 70
+=======
+         :bEditValue       := {|| aFamilias[ oBrw:nArrayAt, 1 ] }
+         :nWidth           := 120
+>>>>>>> SQLite
       end with
 
       with object ( oBrw:AddCol() )
          :cHeader          := "Nombre"
+<<<<<<< HEAD
          :cSortOrder       := "Nombre"
          :bEditValue       := {|| aFamilias[ oBrw:nArrayAt, 2 ] }
          :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | sortHashBrowseFamilia( aScan( aCbxOrd, oCol:cSortOrder ), oBrw, oCbxOrd, @aFamilias ) }
@@ -3322,6 +3407,10 @@ FUNCTION browseHashFamilia( oGet )
          :bEditValue       := {|| aFamilias[ oBrw:nArrayAt, 3 ] }
          :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | sortHashBrowseFamilia( aScan( aCbxOrd, oCol:cSortOrder ), oBrw, oCbxOrd, @aFamilias ) }
          :nWidth           := 590
+=======
+         :bEditValue       := {|| aFamilias[ oBrw:nArrayAt, 2 ] }
+         :nWidth           := 420
+>>>>>>> SQLite
       end with
 
       oBrw:bLDblClick      := {|| oDlg:end( IDOK ) }
@@ -3342,18 +3431,25 @@ FUNCTION browseHashFamilia( oGet )
       REDEFINE BUTTON ;
          ID       500 ;
          OF       oDlg ;
+<<<<<<< HEAD
          WHEN     .f. ;
          ACTION   .t.
+=======
+>>>>>>> SQLite
 
       REDEFINE BUTTON ;
          ID       501 ;
          OF       oDlg ;
+<<<<<<< HEAD
          WHEN     .f. ;
          ACTION   .t.
+=======
+>>>>>>> SQLite
 
    oDlg:AddFastKey( VK_F5,       {|| oDlg:end( IDOK ) } )
    oDlg:AddFastKey( VK_RETURN,   {|| oDlg:end( IDOK ) } )
 
+<<<<<<< HEAD
    ACTIVATE DIALOG oDlg ;
       ON INIT ( sortHashBrowseFamilia( aScan( aCbxOrd, cCbxOrd ), oBrw, oCbxOrd, @aFamilias ) ) ;
       CENTER
@@ -3363,17 +3459,32 @@ FUNCTION browseHashFamilia( oGet )
       if !Empty( oGet ) .and. len( aFamilias ) > 0
          oGet:cText( aFamilias[ oBrw:nArrayAt, 1 ] )
       end if
+=======
+   oDlg:bStart    := {|| msgalert( hb_valtoexp( oDlg:oFont ) ) }
+
+   ACTIVATE DIALOG oDlg CENTER
+
+   if oDlg:nResult == IDOK
+>>>>>>> SQLite
 
    end if
 
    CloseFiles()
 
+<<<<<<< HEAD
    SetBrwOpt( "BrwHashFamilia", oCbxOrd:nAt )
 
+=======
+>>>>>>> SQLite
    if !empty( oGet )
       oGet:SetFocus()
    end if
 
 RETURN ( cCod )
 
+<<<<<<< HEAD
 //---------------------------------------------------------------------------//
+=======
+//---------------------------------------------------------------------------//
+
+>>>>>>> SQLite

@@ -29,13 +29,25 @@ METHOD New()
 
    ::hColumns                   	:= {  "id"     => {  "create"    => "INTEGER PRIMARY KEY AUTOINCREMENT"    ,;
                                                       "text"		=> "Identificador"                        ,;
-   															      "dbfField" 	=> ""}                                    ,;
+   															      "header"    => "Id"                                   ,;
+                                                      "visible"   => .f.                                    ,;
+                                                      "width"     => 40}                                    ,;
                                        "codigo" => {  "create"    => "VARCHAR( 2 )"                         ,;
                                                       "text"      => "Código"                               ,; 
-                                                      "dbfField"  => "cCodMov"}                             ,;
+                                                      "header"    => "Código"                               ,;
+                                                      "visible"   => .t.                                    ,;
+                                                      "width"     => 80                                     ,;
+                                                      "field"     => "cCodMov"                              ,;
+                                                      "type"      => "C"                                    ,;
+                                                      "len"       => 2}                                     ,;
                                        "nombre" => {  "create"    => "VARCHAR( 20 ) NOT NULL"               ,;
    															      "text"		=> "Nombre"                               ,;
-   															      "dbfField" 	=> "cDesMov"}                             }
+                                                      "header"    => "Nombre"                               ,;
+                                                      "visible"   => .t.                                    ,;
+                                                      "width"     => 600                                    ,;
+   															      "field" 	   => "cDesMov"                              ,;
+                                                      "type"      => "C"                                    ,;
+                                                      "len"       => 20}                                    }
 
    ::Super:New()
 

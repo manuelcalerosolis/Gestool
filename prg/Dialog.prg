@@ -1,4 +1,7 @@
-#include "FiveWin.Ch"
+//#define UTFREVN
+//----------------------------------------------------------------------------//
+
+#include "FiveWin.ch"
 #include "Constant.ch"
 
 #define LTGRAY_BRUSH     1
@@ -15,6 +18,7 @@
 #define WM_PRINTCLIENT 792
 
 #define CBN_SELCHANGE      1
+#define CBN_CLOSEUP        8
 
 #define GWL_STYLE        -16
 #define GW_CHILD           5
@@ -33,12 +37,11 @@
 #define SWP_NOACTIVATE    16
 
 #define SC_CLOSE       61536   // 0xF060
-
-#ifdef __XPP__
-   #define Super ::TWindow
-#endif
+#define SW_HIDE            0
 
 extern Set
+
+static aGradColors // Colors to use to GRADIENT dialogs
 
 //----------------------------------------------------------------------------//
 
@@ -46,29 +49,33 @@ CLASS TDialog FROM TWindow
 
    CLASSDATA lRegistered AS LOGICAL
 
+   CLASSDATA lClsTruePixel AS LOGICAL INIT .F.
+
+   DATA   lTruePixel AS LOGICAL INIT .F.
    DATA   cResName, cResData
    DATA   hResources
-   DATA   lCentered, lModal, lModify
+   DATA   lCentered, lCenterInWnd, lModal, lModify
    DATA   bStart
    DATA   lHelpIcon  // Windows 95 help icon pressed
    DATA   lResize16  // resize 32 bits resources to look like 16 bits ones
-
-   DATA   aFastKeys
-   DATA   bTmpValid
+   DATA   lTransparent // transparent controls when using bitmaped brushes
+   DATA   bNcActivate
+   DATA   aPanInfo
 
    METHOD New( nTop, nLeft, nBottom, nRight, cCaption, cResName, hResources,;
                lVbx, nStyle, nClrText, nClrBack, oBrush, oWnd, lPixels,;
-               oIco, oFont, nHelpId, nWidth, nHeight ) CONSTRUCTOR
+               oIco, oFont, nHelpId, nWidth, nHeight, lTransparent, aNewGradColors,;
+               cVarName, lUnicode, lTruePixel ) CONSTRUCTOR
 
    METHOD Define( nTop, nLeft, nBottom, nRight, cCaption, nStyle,;
                   nClrText, nClrPane, oBrush ) CONSTRUCTOR
 
    METHOD Activate( bClicked, bMoved, bPainted, lCentered, bValid, lModal,;
-                    bInit, bRClicked, bWhen, lResize16 )
+                    bInit, bRClicked, bWhen, lResize16, lCenterInWnd )
 
    METHOD AdjTop() INLINE WndAdjTop( ::hWnd )
 
-   METHOD ChangeFocus() INLINE PostMessage( ::hWnd, FM_CHANGEFOCUS )
+   METHOD ChangeFocus() INLINE ::PostMsg( FM_CHANGEFOCUS )
 
    METHOD Close( nResult )
 
@@ -76,16 +83,20 @@ CLASS TDialog FROM TWindow
 
    METHOD CtlColor( hWndChild, hDCChild )
 
+   METHOD cGenPrg()
+
    METHOD cToChar( hActiveWnd )
    METHOD DefControl( oControl )
 
-   METHOD Destroy() INLINE Super:Destroy(), If( ! ::lModal, .t., nil )
+   METHOD Destroy() INLINE ::Super:Destroy(), If( ! ::lModal, .t., nil )
 
    METHOD Display() INLINE ::BeginPaint(), ::Paint(), ::EndPaint(),;
                            If( ::bStart != nil,;
                                Eval( ::bStart, ::bStart := nil ),), .f.
 
-   METHOD End( nResult )
+   METHOD ReSize( nSizeType, nWidth, nHeight ) INLINE ( ::Super:Resize( nSizeType, nWidth, nHeight ), ::Refresh() )
+
+   METhod End( nResult )
 
    METHOD EraseBkGnd( hDC )
 
@@ -93,15 +104,12 @@ CLASS TDialog FROM TWindow
 
    METHOD GetItem( nId ) INLINE  GetDlgItem( ::hWnd, nId )
 
-   METHOD GotFocus() INLINE ::lFocused := .t.,;
-                            If( ::bGotFocus != nil, Eval( ::bGotFocus ), nil )
+   METHOD GotFocus( hFromWnd ) INLINE ::lFocused := .t.,;
+                            If( ::bGotFocus != nil, Eval( ::bGotFocus, Self, hFromWnd ), nil )
 
-   #ifdef __CLIPPER__
-   METHOD HandleEvent( nMsg, nWParam, nLParam ) EXTERN ;
-                                 DlgHandleEvent( nMsg, nWParam, nLParam )
-   #else
    METHOD HandleEvent( nMsg, nWParam, nLParam )
-   #endif
+
+//   METHOD HandleGesture( nGesture, nLParam )
 
    METHOD Help( nWParam, nLParam )
 
@@ -111,10 +119,12 @@ CLASS TDialog FROM TWindow
 
    METHOD KeyDown( nKey, nFlags )
 
-   METHOD LostFocus() INLINE ::lFocused := .f.,;
-                             If( ::bLostFocus != nil, Eval( ::bLostFocus ), nil )
+   METHOD LostFocus( hGetFocus ) INLINE ::lFocused := .f.,;
+                             If( ::bLostFocus != nil, Eval( ::bLostFocus, Self, hGetFocus ), nil )
 
    METHOD MouseMove( nRow, nCol, nKeyFlags )
+
+   METHOD NCActivate( lOnOff ) INLINE If( ! Empty( ::bNcActivate ), Eval( ::bNcActivate, lOnOff, Self ),)
 
    METHOD Paint()
 
@@ -127,19 +137,31 @@ CLASS TDialog FROM TWindow
 
    METHOD SetFont( oFont )
 
-   METHOD SysCommand( nWParam, nLParam )
+   METHOD SetSize( nWidth, nHeight, lRepaint ) INLINE ;
+              ::Super:SetSize( nWidth, nHeight, lRepaint ),;
+              If( aGradColors != nil, ::Gradient( aGradColors ),)
 
-   METHOD VbxFireEvent( pEventInfo ) INLINE VBXEvent( pEventInfo )
+   METHOD SysCommand( nWParam, nLParam )
 
    METHOD Help95()
 
-   METHOD AddFastKey( nKey, bAction )  INLINE ( aAdd( ::aFastKeys, { nKey, bAction } ) )
+   //-------------------------------------------------------------------------//
 
-   METHOD Enable()
+   DATA aFastKeys                            INIT {}
 
-   METHOD Disable()
+   DATA aControlKeys                         INIT {}
 
-   METHOD AEvalValid()
+   METHOD addFastKey( nKey, bAction )        INLINE ( aadd( ::aFastKeys, { nKey, bAction } ) )
+
+   METHOD addControlKeys( nKey, bAction )    INLINE ( aadd( ::aControlKeys, { nKey, bAction } ) )
+
+   METHOD initKeys()                         INLINE ( ::aFastKeys := {}, ::aControlKeys := {} )
+
+   METHOD keysControl() 
+
+   METHOD setControlFastKey()
+
+   //-------------------------------------------------------------------------//
 
 ENDCLASS
 
@@ -147,18 +169,17 @@ ENDCLASS
 
 METHOD New( nTop, nLeft, nBottom, nRight, cCaption, cResName, hResources,;
             lVbx, nStyle, nClrText, nClrBack, oBrush, oWnd, lPixels,;
-            oIco, oFont, nHelpId, nWidth, nHeight ) CLASS TDialog
+            oIco, oFont, nHelpId, nWidth, nHeight, lTransparent, aNewGradColors,;
+            cVarName, lUnicode, lTruePixel ) CLASS TDialog
 
    DEFAULT hResources := GetResources(), lVbx := .f.,;
            nClrText   := GetSysColor( COLOR_BTNTEXT ), nClrBack := GetSysColor( COLOR_BTNFACE ),;
            lPixels    := .f., nTop := 0, nLeft := 0, nBottom := 10, nRight := 40,;
-           nWidth     := 0, nHeight := 0
-
-   #ifdef __HARBOUR__
-      DEFAULT nStyle := nOR( DS_MODALFRAME, WS_POPUP, WS_CAPTION, WS_SYSMENU )
-   #else
-      DEFAULT nStyle := nOR( DS_MODALFRAME, WS_POPUP, WS_CAPTION, WS_SYSMENU, 4 )
-   #endif
+           nWidth     := 0, nHeight := 0, lTransparent := .f.,;
+           nStyle     := nOR( DS_MODALFRAME, WS_POPUP, WS_CAPTION, WS_SYSMENU ),;
+           cVarName   := "oDlg",;
+           lUnicode   := FW_SetUnicode(),;
+           lTruePixel := FW_SetTruePixel()
 
    if nWidth != 0 .or. nHeight != 0
       if ! lPixels
@@ -168,9 +189,13 @@ METHOD New( nTop, nLeft, nBottom, nRight, cCaption, cResName, hResources,;
       nRight  = nWidth
    endif
 
+   if ! Empty( aNewGradColors ) .or. ! Empty( aGradColors )
+      lTransparent = .T.
+   endif
+
    ::aControls  = {}
    ::cResName   = cResName
-   ::cCaption   = cCaption
+   ::cCaption   = If( cCaption != nil, RTrim( cCaption ), )
    ::hResources = hResources
    ::lModify    = .t.
    ::lVbx       = lVbx
@@ -179,15 +204,18 @@ METHOD New( nTop, nLeft, nBottom, nRight, cCaption, cResName, hResources,;
    ::nStyle     = nStyle
    ::oWnd       = oWnd
    ::oIcon      = oIco
-   ::oFont      = oFont
+   if oFont != nil
+      oFont:nCount++
+      ::oFont      = oFont
+   endif
    ::nLastKey   = 0
    ::nHelpId    = nHelpId
    ::lResize16  = .f.
-   ::aFastKeys  = {}
-
-   #ifdef __XPP__
-      DEFAULT ::lRegistered := .f.
-   #endif
+   ::lTransparent = lTransparent
+   ::aGradColors  = aNewGradColors
+   ::cVarName   = cVarName
+   ::lUnicode   = lUnicode
+   ::lTruePixel = lTruePixel
 
    if ValType( oIco ) == "C"
       if File( oIco )
@@ -213,105 +241,130 @@ METHOD New( nTop, nLeft, nBottom, nRight, cCaption, cResName, hResources,;
       ::nRight  := int( nRight  * DLG_CHARPIX_W  )
    endif
 
-   if lVbx
-     if ! VbxInit( GetInstance(), "" )
-         msgStop( "VBX support not available" )
-      endif
-   endif
-
    ::Register( nOr( CS_VREDRAW, CS_HREDRAW ) )
 
    SetWndDefault( Self )          //  Set Default DEFINEd Window
+
+   ::initKeys()
 
 return Self
 
 //----------------------------------------------------------------------------//
 
 METHOD Activate( bLClicked, bMoved, bPainted, lCentered, ;
-                 bValid, lModal, bInit, bRClicked, bWhen, lResize16 ) CLASS TDialog
+                 bValid, lModal, bInit, bRClicked, bWhen, lResize16, ;
+                 lCenterInWnd ) CLASS TDialog
 
    static nDlgCount := 0
-? 0
-   local hActiveWnd
-? 1
-   DEFAULT lCentered := .f., lModal := .t., ::hWnd := 0, lResize16 := .f.
-? 2
+
+   local hActiveWnd, hWnd, bDlgProc
+
+   DEFAULT lModal := IfNil( ::lModal, .t. )
+   DEFAULT ::hWnd := 0
+
    ::nLastKey = 0
-? 3
+
    ++nDlgCount
-? 4
+
    hActiveWnd = If( ::oWnd != nil, ::oWnd:hWnd,;
                 If( nDlgCount > 1 .or. lWRunning(),;
                     GetActiveWindow(), GetWndApp() ) )
-? 5
-   ::lCentered   = lCentered
+
+
+   ::lCentered   = lCentered == .t. .or. ::lCentered == .t.
+   ::lCenterInWnd = lCenterInWnd == .t. .or. ::lCenterInWnd == .t.
    ::lModal      = lModal
-   ::bLClicked   = bLClicked
-   ::bRClicked   = bRClicked
-   ::bWhen       = bWhen
-   ::bValid      = bValid
-   ::bInit       = bInit
+   ::bLClicked   = IfNil( bLClicked,::bLClicked )
+   ::bRClicked   = IfNil( bRClicked,::bRClicked )
+   ::bWhen       = IfNil( bWhen,    ::bWhen  )
+   ::bValid      = IfNil( bValid,   ::bValid )
+   ::bInit       = IfNil( bInit, ::bInit )
    ::bPainted    = bPainted
    ::bMoved      = bMoved
    ::nResult     = nil
    ::lValidating = .f.
    ::lVisible    = .t.
-   ::lResize16   = lResize16
-? 6
+   ::lResize16   = IfNil( lResize16, ::lResize16, .f. )
+
    if ::bWhen != nil
       if ! Eval( ::bWhen, Self )
           ::nResult  = IDCANCEL
-          ::lVisible = .f.
-          return nil             // <<---------- Warning: Exiting!
+          ::lVisible = .F.
+          return nil
       endif
    endif
-? 7
-   // ::AEvalWhen()  16-12-04 moved to TDialog:Initiate()
 
    if lModal
-         ::nResult = if( ! Empty( ::cResName ),;
-                      DialogBox( ::hResources, ::cResName,;
+#ifdef UTFREVN
+      ::nResult = if( ! Empty( ::cResName ),;
+                    DialogBoxW( ::hResources, ::cResName, hActiveWnd, Self ),;
+                    DialogBoxIndirectW( GetInstance(),;
+                                      If( ! Empty( ::cResData ), ::cResData, ::cToChar( hActiveWnd ) ),;
+                                      hActiveWnd, Self ) ;
+                    )
+
+#else
+      ::nResult = if( ! Empty( ::cResName ),;
+                    IF( ::lUnicode, DialogBoxW( ::hResources, ::cResName, hActiveWnd, Self ),;
+                                   DialogBox( ::hResources, ::cResName, hActiveWnd, Self ) ),;
+                   IF( ::lUnicode, DialogBoxIndirectW( GetInstance(),;
+                                      If( ! Empty( ::cResData ), ::cResData, ::cToChar( hActiveWnd ) ),;
                                       hActiveWnd, Self ),;
-                      DialogBoxIndirect( GetInstance(),;
-                                         If( ! Empty( ::cResData ), ::cResData, ::cToChar( hActiveWnd ) ),;
-                                         hActiveWnd, Self ) )
-? 8
-         if ::nResult == 65535
-            CreateDlgError( Self )
-         endif
-? 9
+                                   DialogBoxIndirect( GetInstance(),;
+                                      If( ! Empty( ::cResData ), ::cResData, ::cToChar( hActiveWnd ) ),;
+                                      hActiveWnd, Self ) );
+                      )
+#endif
+      if ::nResult == 65535
+         CreateDlgError( Self )
+      endif
+
    else
-? 10
       if ( Len( ::aControls ) > 0 .and. CanRegDialog() ) .or. ;
            Len( ::aControls ) == 0
-? 11
-            ::hWnd = if( ! Empty( ::cResName ),;
-                       CreateDlg( ::hResources, ::cResName,;
-                                  hActiveWnd, Self ),;
-                       CreateDlgIndirect( GetInstance(), ::cToChar( hActiveWnd ),;
-                                  hActiveWnd, Self ) )
+#ifdef UTFREVN
+         ::hWnd = if( ! Empty( ::cResName ),;
+                    CreateDlgW( ::hResources, ::cResName, hActiveWnd, Self ),;
+                    CreateDlgIndirectW( GetInstance(), ::cToChar( hActiveWnd ),;
+                                                       hActiveWnd, Self ) )
 
+#else
+         ::hWnd = if( ! Empty( ::cResName ),;
+                    IF( ::lUnicode, CreateDlgW( ::hResources, ::cResName, hActiveWnd, Self ),;
+                                   CreateDlg( ::hResources, ::cResName, hActiveWnd, Self ) ),;
+                    IF( ::lUnicode, CreateDlgIndirectW( GetInstance(), ::cToChar( hActiveWnd ),;
+                                                       hActiveWnd, Self ),;
+                                   CreateDlgIndirect( GetInstance(), ::cToChar( hActiveWnd ),;
+                                                      hActiveWnd, Self ) ) )
+#endif
          if ::hWnd == 0
             CreateDlgError( Self )
+         else
+            ShowWindow( ::hWnd, SW_HIDE )
          endif
 
          if Len( ::aControls ) > 0 .and. ! RegDialog( ::hWnd )
             ::SendMsg( WM_CLOSE )
-            msgStop( "Not possible to create more non-modal Dialogs" )
+            MsgAlert( "Not possible to create more non-modal Dialogs" )
          endif
-? 12
-         ShowWindow( ::hWnd )
+
+         if ::Initiate()
+            ::SetFocus()
+         endif
+
+         ::Show()
+         ::Refresh() // needed for resource dialogs
       else
-         msgStop( "Not possible to create more non-modal Dialogs" )
+         MsgAlert( "Not possible to create more non-modal Dialogs" )
       endif
    endif
-? 13
+
    nDlgCount--
-? 14
+
    if ::lModal
       ::lVisible = .f.
    endif
-? 15
+
 return nil
 
 //---------------------------------------------------------------------------//
@@ -335,17 +388,11 @@ return nil
 
 METHOD Command( nWParam, nLParam ) CLASS TDialog
 
-   local oWnd, nNotifyCode, nID, hWndCtl
+   local oWnd, nNotifyCode, nID, hWndCtl, oCtrl
 
-   #ifdef __CLIPPER__
-      nNotifyCode = nHiWord( nLParam )
-      nID         = nWParam
-      hWndCtl     = nLoWord( nLParam )
-   #else
-      nNotifyCode = nHiWord( nWParam )
-      nID         = nLoWord( nWParam )
-      hWndCtl     = nLParam
-   #endif
+   nNotifyCode = nHiWord( nWParam )
+   nID         = nLoWord( nWParam )
+   hWndCtl     = nLParam
 
    do case
       case ::oPopup != nil
@@ -357,6 +404,13 @@ METHOD Command( nWParam, nLParam ) CLASS TDialog
 
       case GetClassName( hWndCtl ) == "ToolbarWindow32"
            oWndFromHwnd( hWndCtl ):Command( nWParam, nLParam )
+           return .T. // otherwise a child dialog gets closed
+
+      case ::oMenu != nil .and. nId != 2 .and. nNotifyCode != BN_CLICKED .and. ;
+           nNotifyCode != CBN_SELCHANGE
+           if nNotifyCode == 1
+              ::oMenu:Command( nID )
+           endif
 
       case nID != 0
            do case
@@ -364,37 +418,35 @@ METHOD Command( nWParam, nLParam ) CLASS TDialog
                    if hWndCtl != 0 .and. nID != IDCANCEL
                       oWnd := oWndFromhWnd( hWndCtl )
                       if ValType( ::nResult ) == "O" // latest control which had focus
-                         #ifdef __HARBOUR__  // FWH generates an endless loop when SetWindowText()
-                            if ::nResult:lFocused
-                         #endif
-                               // 28/06/05 AL
-                               // ::nResult:LostFocus()    // updates related variable
-                         #ifdef __HARBOUR__  // FWH generates an endless loop when SetWindowText()
-                            endif
-                         #endif
                          // There is a pending Valid, it is not a clicked button
-                         if ::nResult:nID != nID .and. ! ::nResult:lValid()
-                           if oWnd == nil .or. ! oWnd:lCancel
-                              return nil
-                           endif
+                         if oWnd != nil
+                            if ! oWnd:lCancel
+                               if ::nResult:nID != nID .and. ! ::nResult:lValid()
+                                  return nil
+                               endif
+                            endif
+                         else
+                            if ::nResult:nID != nID .and. ! ::nResult:lValid()
+                               return nil
+                            endif
                          endif
                       endif
 
                       if AScan( ::aControls, { |o| o:nID == nID } ) > 0
-                         #ifdef __XPP__
-                            PostMessage( hWndCtl, FM_CLICK, 0, 0 )
-                         #else
-                            SendMessage( hWndCtl, FM_CLICK, 0, 0 )
-                         #endif
+                         SendMessage( hWndCtl, FM_CLICK, 0, 0 )
                       elseif nID == IDOK
                          ::End( IDOK )
                       endif
                    else
                       if nID == IDOK
                          ::GoNextCtrl( GetFocus() )
+                         if ! ::lModal
+                            return 0
+                         endif
                       elseif hWndCtl != 0 .and. ; // There is a control for IDCANCEL
                              AScan( ::aControls, { |o| o:nID == nID } ) > 0
-                            SendMessage( hWndCtl, FM_CLICK, 0, 0 )
+                             SendMessage( hWndCtl, FM_CLICK, 0, 0 )
+                             return .F.
                       else
                          ::End( IDCANCEL )
                       endif
@@ -403,16 +455,17 @@ METHOD Command( nWParam, nLParam ) CLASS TDialog
               case nNotifyCode == CBN_SELCHANGE
                    SendMessage( hWndCtl, FM_CHANGE, 0, 0 )
 
-              #ifdef __CLIPPER__
+              case nNotifyCode == CBN_CLOSEUP
+                   SendMessage( hWndCtl, FM_CLOSEUP, 0, 0 )
 
-              case nID == FN_ZIP   // FiveWin notifications codes
-                   ::Zip( nLParam )
-
-              case nID == FN_UNZIP
-                   ::UnZip( nPtrWord( nLParam ) )
-
-              #endif
            endcase
+
+      case GetClassName( hWndCtl ) == "Edit"
+           oCtrl := oWndFromHwnd( hWndCtl )
+           if oCtrl != nil .and. oCtrl:ClassName() == "TEDIT"
+              oCtrl:Command( nWParam, nLParam )
+              return nil
+           endif
    endcase
 
 return nil
@@ -423,17 +476,26 @@ METHOD CtlColor( hWndChild, hDCChild ) CLASS TDialog
 
    local uVal
 
-   #ifndef __CLIPPER__
-      if ::oWnd != nil .and. Upper( ::oWnd:ClassName() ) $ "TFOLDER,TPAGES" ;
-         .and. GetClassName( hWndChild ) $ "Button,Static" ;
-         .and. IsAppThemed()
-         uVal = DrawThemed( hWndChild, hDCChild )
-         SendMessage( hWndChild, FM_COLOR, hDCChild )
-         return uVal
-      endif
-   #endif
+   if ::oWnd != nil .and. Upper( ::oWnd:ClassName() ) $ "TFOLDER,TFOLDEREX,TPAGES" ;
+      .and. GetClassName( hWndChild ) $ "Button,Static" ;
+      .and. IsAppThemed()
+      uVal = DrawThemed( hWndChild, hDCChild )
+      SendMessage( hWndChild, FM_COLOR, hDCChild )
+      return uVal
+   endif
 
-return Super:CtlColor( hWndChild, hDCChild )
+return ::Super:CtlColor( hWndChild, hDCChild )
+
+//----------------------------------------------------------------------------//
+
+METHOD cGenPrg() CLASS TDialog
+
+   local cSource := ::Super:cGenPrg( , .T. ) // use dialog units
+
+   cSource = StrTran( cSource, "WINDOW", "DIALOG" )
+   cSource = StrTran( cSource, "oWnd", "oDlg" )
+
+return cSource
 
 //----------------------------------------------------------------------------//
 
@@ -446,22 +508,12 @@ METHOD cToChar( hActiveWnd ) CLASS TDialog
 
    DEFAULT ::cCaption := ""
 
-   #ifndef __CLIPPER__
    cResult = cDlg2Chr( Len( aControls ),;
-                       int( 8 * ( ::nTop  - aRect[ 1 ]   ) / nHiWord( n ) ),;
-                       int( 4 * ( ::nLeft - aRect[ 2 ]   ) / nLoWord( n ) ),;
-                       int( 8 * ( ::nBottom - aRect[ 1 ] ) / nHiWord( n ) ),;
-                       int( 4 * ( ::nRight  - aRect[ 2 ] ) / nLoWord( n ) ),;
-                       ::cCaption + If( Len( ::cCaption ) % 2 != 0, " ", "" ),;
-                       ::nStyle )
-   #else
-   cResult = cDlg2Chr( Len( aControls ),;
-                       int( 8 * ( ::nTop  - aRect[ 1 ]   ) / nHiWord( n ) ),;
-                       int( 4 * ( ::nLeft - aRect[ 2 ]   ) / nLoWord( n ) ),;
-                       int( 8 * ( ::nBottom - aRect[ 1 ] ) / nHiWord( n ) ),;
-                       int( 4 * ( ::nRight  - aRect[ 2 ] ) / nLoWord( n ) ),;
+                       Int( 8 * ( ::nTop  - aRect[ 1 ]   ) / nHiWord( n ) ),;
+                       Int( 4 * ( ::nLeft - aRect[ 2 ]   ) / nLoWord( n ) ),;
+                       Int( 8 * ( ::nBottom - aRect[ 1 ] ) / nHiWord( n ) ),;
+                       Int( 4 * ( ::nRight  - aRect[ 2 ] ) / nLoWord( n ) ),;
                        ::cCaption, ::nStyle )
-   #endif
 
    for n = 1 to Len( aControls )
       cResult += aControls[ n ]:cToChar()
@@ -482,11 +534,11 @@ METHOD Define( nTop, nLeft, nBottom, nRight, cCaption, nStyle, lVbx,;
    ::nLeft     = nLeft
    ::nBottom   = nBottom
    ::nRight    = nRight
-   ::cCaption  = cCaption
+   ::cCaption  = If( cCaption != nil, SubStr( cCaption, 1, Min( Len( cCaption ), 140 ) ), nil )
    ::nStyle    = nStyle
    ::lVbx      = lVbx
    ::nLastKey  = 0
-   ::aFastKeys = {}
+   // ::lHelpIcon = .t.
 
    ::SetColor( nClrText, nClrBack, oBrush )
 
@@ -499,9 +551,7 @@ METHOD End( nResult ) CLASS TDialog
    DEFAULT nResult := 2              // Cancel
 
    if ! ::lModal
-      // if ::oWnd == nil .or. Upper( ::oWnd:ClassName() ) != "TMDICHILD"
-         PostMessage( ::hWnd, WM_CLOSE, nResult )
-      // endif
+      ::PostMsg( WM_CLOSE, nResult )
    else
       if ValType( ::bValid ) == "B"
          if ! Eval( ::bValid, Self )
@@ -510,33 +560,19 @@ METHOD End( nResult ) CLASS TDialog
       endif
       ::nResult = nResult
       EndDialog( ::hWnd, nResult )
-      ::hWnd = 0  // A.L. 22/04/03
    endif
 
-   #ifdef __HARBOUR__
-      SysRefresh()
-      hb_gcAll()         // Garbage collector
-   #endif
+   SysRefresh()
+   // hb_gcAll()         // Garbage collector
 
-return .t.
-
-//----------------------------------------------------------------------------//
-// Conection with Borland's VBX DLL - at run-time !!!
-
-DLL STATIC FUNCTION VbxInitDialog( hWnd AS WORD, hInstance AS WORD,;
-                       cResName AS STRING ) AS BOOL PASCAL LIB "BIVBX10.DLL"
-
-DLL STATIC FUNCTION VbxInit( hInstance AS WORD, cPrefix AS STRING ) ;
-                    AS BOOL PASCAL LIB "BIVBX10.DLL"
-
-DLL STATIC FUNCTION VbxTerm() AS VOID PASCAL LIB "BIVBX10.DLL"
+return .T.
 
 //----------------------------------------------------------------------------//
 
 static function CreateDlgError( Self )
 
    local cRes := If( ValType( ::cResName ) == "N", Str( ::cResName ), ::cResName )
-   local cPad := Replicate( Chr( 255 ), 22 )
+   local cPad := Replicate( Chr( 32 ), 22 )
 
    #define CANNOTCREATE_DIALOG 3
    Eval( ErrorBlock(), ;
@@ -574,16 +610,20 @@ METHOD Help( nWParam, nLParam ) CLASS TDialog
 
    local hWndChild := HelpCtrlHwnd( nLParam ), nAtChild
 
-   if ::lHelpIcon   // Context Help being processed
-      return 0
-   endif
+   static lShow := .f.
 
    ::lHelpIcon = .f.
 
-   if ( nAtChild := AScan( ::aControls, { | o | o:hWnd == hWndChild } ) ) != 0
-      ::aControls[ nAtChild ]:HelpTopic()
-   else
-      ::HelpTopic()
+   if ! lShow
+      lShow = .t.
+      if ( nAtChild := AScan( ::aControls, { | o | o:hWnd == hWndChild } ) ) != 0 .and. ;
+         ! Empty( ::aControls[ nAtChild ]:nHelpID )
+         ::aControls[ nAtChild ]:HelpTopic()
+      else
+         ::HelpTopic()
+      endif
+      lShow = .f.
+      return 1
    endif
 
 return nil
@@ -593,23 +633,14 @@ return nil
 METHOD Initiate( hWndFocus, hWnd ) CLASS TDialog
 
    local lFocus := .t., lResult, hCtrl, lEnd := .f., aRect
+   local oParentWnd
 
    if hWnd != nil
       ::hWnd = hWnd
    endif
 
    if ! ::lModal
-      #ifndef __HARBOUR__
-         ::Link( .f. ) // Just to keep a reference at aWindows. No need to subclass it
-      #else
-         ::Link()
-      #endif
-   endif
-
-   if ::lVbx
-      if ! VbxInitDialog( ::hWnd, GetResources(), ::cResName )
-         msgStop( "Error on VBX's initialization" )
-      endif
+      ::Link()
    endif
 
    if ::oFont == nil
@@ -618,50 +649,56 @@ METHOD Initiate( hWndFocus, hWnd ) CLASS TDialog
       ::SetFont( ::oFont )
    endif
 
-   // We can resist to use something more, more faster !!! <g>
-   // AEval( ::aControls, { | oCtrl | oCtrl:Initiate( ::hWnd ) } )
-   #ifdef __CLIPPER__
-      ASend( ::aControls, "INITIATE", ::hWnd )
-   #else
-      #ifdef __C3__
-         ASend( ::aControls, "INITIATE", ::hWnd )
-      #else
-         ASend( ::aControls, "INITIATE()", ::hWnd )
-      #endif
-   #endif
+   if ! Empty( ::aGradColors )
+      ::Gradient( ::aGradColors )
+   elseif ! Empty( aGradColors )
+      ::Gradient( aGradColors )
+   endif
 
-   #ifndef __CLIPPER__ // This makes FW resources dialogs look the same with FWH/FW++
-      #define SCALE_FACTOR 1.16668
-      if ::lResize16 .and. ! Empty( ::cResName )
-         ::nWidth = ::nWidth * SCALE_FACTOR
-         hCtrl = GetWindow( ::hWnd, GW_CHILD )
-         if hCtrl != 0
-            do while ! lEnd
-               aRect = GetCoors( hCtrl )
-               SetWindowPos( hCtrl, 0, aRect[ 1 ], aRect[ 2 ] * SCALE_FACTOR,;
-                             ( aRect[ 4 ] - aRect[ 2 ] ) * SCALE_FACTOR,;
-                             aRect[ 3 ] - aRect[ 1 ], nOr( SWP_NOZORDER,;
-                             SWP_NOREDRAW, SWP_NOACTIVATE ) )
-               hCtrl = GetWindow( hCtrl, GW_HWNDNEXT )
-               lEnd = ! ( ( hCtrl != 0 ) .and. ( GetParent( hCtrl ) == ::hWnd ) )
-            end
-         endif
+
+   if ::lTransparent
+      FixSays( ::hWnd, ::oBrush:hBrush )
+      AEval( ::aControls,;
+             { | o | If( ! Upper( o:ClassName() ) $ ;
+             "TBAR;TGET;TMULTIGET;TBTNBMP;TCOMBOBOX;TWBROWSE;TCBROWSE;TXBROWSE;TLISTBOX;TDBCOMBO;TDATEPICK" .and. ;
+               ! o:IsKindOf( 'TXBROWSE' ) .and. ! o:isKindOf( "TBTNFLAT" ), o:lTransparent := .T., ) } )
+   endif
+
+   ASend( ::aControls, "INITIATE()", ::hWnd )
+
+   #define SCALE_FACTOR 1.16668
+
+   if ::lResize16 .and. ! Empty( ::cResName )
+      ::nWidth = ::nWidth * SCALE_FACTOR
+      hCtrl = GetWindow( ::hWnd, GW_CHILD )
+      if hCtrl != 0
+         while ! lEnd
+            aRect = GetCoors( hCtrl )
+            SetWindowPos( hCtrl, 0, aRect[ 1 ], aRect[ 2 ] * SCALE_FACTOR,;
+                          ( aRect[ 4 ] - aRect[ 2 ] ) * SCALE_FACTOR,;
+                          aRect[ 3 ] - aRect[ 1 ], nOr( SWP_NOZORDER,;
+                          SWP_NOREDRAW, SWP_NOACTIVATE ) )
+            hCtrl = GetWindow( hCtrl, GW_HWNDNEXT )
+            lEnd = ! ( ( hCtrl != 0 ) .and. ( GetParent( hCtrl ) == ::hWnd ) )
+         end
       endif
-   #endif
+   endif
 
    if ::lCentered
-      WndCenter( ::hWnd )
+      if SetCenterOnParent() .or. ::lCenterInWnd
+         oParentWnd := If( ::oWnd != nil, ::oWnd, WndMain() )
+      endif
+      WndCenter( ::hWnd, If( oParentWnd != nil, oParentWnd:hWnd, 0 ) )
+
    else
-      if Empty( ::cResName )
+      if Empty( ::cResName ) .and. Empty( ::cResData )
          ::Move( ::nTop, ::nLeft )
       endif
    endif
 
    if ::cCaption != nil
-      SetWindowText( ::hWnd, ::cCaption )
+      ::SetText( ::cCaption )
    endif
-
-   ::Help95()  // activates the help icon on the caption
 
    if ! Empty( ::cResName )
       ::nStyle := GetWindowLong( ::hWnd, GWL_STYLE )
@@ -670,12 +707,19 @@ METHOD Initiate( hWndFocus, hWnd ) CLASS TDialog
    if lAnd( ::nStyle, WS_VSCROLL )
       DEFINE SCROLLBAR ::oVScroll VERTICAL OF Self
    endif
+
    if lAnd( ::nStyle, WS_HSCROLL )
       DEFINE SCROLLBAR ::oHScroll HORIZONTAL OF Self
    endif
 
    if ::oIcon != nil
-      SendMessage( ::hWnd, WM_SETICON, 0, ::oIcon:hIcon )
+      ::SendMsg( WM_SETICON, 0, ::oIcon:hIcon )
+   endif
+
+   ::SetAlphaLevel()
+
+   if ::oBar != nil   // added 2016-04-06. It is not necessary to call
+      ::oBar:Adjust() // oDlg:Resize() in ON INIT clause
    endif
 
    if ::bInit != nil
@@ -685,7 +729,11 @@ METHOD Initiate( hWndFocus, hWnd ) CLASS TDialog
       endif
    endif
 
+   ::Help95()  // activates the help icon on the caption
+
    ::AEvalWhen()
+
+   // UseAllGestures( ::hWnd )
 
 return lFocus              // .t. for default focus
 
@@ -698,8 +746,8 @@ METHOD EraseBkGnd( hDC ) CLASS TDialog
    endif
 
    if ::oBrush != nil
-      FillRect( hDC, GetClientRect( ::hWnd ), ::oBrush:hBrush )
-      return 1 // Leave a 1 here 26/01/04 A.L. !!!
+      ::PaintBack( hDC )
+      return 1
    endif
 
 return nil
@@ -711,17 +759,15 @@ METHOD Close( nResult ) CLASS TDialog
    if ! ::lModal
       if ValType( ::bValid ) == "B"
          if ! Eval( ::bValid, Self )
-            #ifdef __CLIPPER__
-               return nil        // keep nil here
-            #else
-               return .f.
-            #endif
+            return .F.
          endif
       endif
-      ::nResult = nResult
-      ::lVisible = .f.
+      if ValType( nResult ) $ "NU"
+         ::nResult = nResult
+      endif
+      ::lVisible = .F.
       DestroyWindow( ::hWnd )
-      return .t.
+      return .T.
    endif
 
 return nil
@@ -731,49 +777,51 @@ return nil
 METHOD KeyChar( nKey, nFlags ) CLASS TDialog
 
    if nKey == VK_ESCAPE
-      if ::oWnd == nil
-         ::End()
-      else
-         if ::oWnd:ChildLevel( TMdiChild() ) != 0
+      if ::oWnd != nil .and. ( ::oWnd:IsKindOf( "TMDICHILD" ) .or. ;
+         ::oWnd:IsKindOf( "TDIALOG" ) .or. ::oWnd:IsKindOf( "TMDIFRAME" ) )
+         if SetDialogEsc()
             ::End()
-         else
-            if ::oWnd:ChildLevel( TDialog() ) != 0
-               ::End()
-            #ifdef __HARBOUR__
-            elseif Upper( ::oWnd:ClassName() ) == "TMDIFRAME" // To avoid ESC being ignored
-               ::End()
-            #endif
-            else
-               return Super:KeyChar( nKey, nFlags )
-            endif
          endif
       endif
-   else
-      return Super:KeyChar( nKey, nFlags )
+      return nil
    endif
 
-return nil
+return ::Super:KeyChar( nKey, nFlags )
 
 //----------------------------------------------------------------------------//
 
 METHOD KeyDown( nKey, nFlags ) CLASS TDialog
 
-   local n
+   if nKey == VK_ESCAPE
+      if ::oWnd == nil
+         if SetDialogEsc()
+            ::End()
+         endif
+      else
+         if ::oWnd:IsKindOf( "TMDICHILD" )
+            if SetDialogEsc()
+               ::End()
+            endif
+         else
+            if ::oWnd:IsKindOf( "TDIALOG" )
+               if SetDialogEsc()
+                  ::End()
+               endif
+            elseif Upper( ::oWnd:ClassName() ) == "TMDIFRAME"
+               if SetDialogEsc() // To avoid ESC being ignored
+                  ::End()
+               endif
+            else
+               return ::Super:KeyDown( nKey, nFlags )
+            endif
+         endif
+      endif
+   else
+      ::keysControl( nKey )
+      return ::Super:KeyDown( nKey, nFlags )
+   endif
 
-   // MCS--------------------------------------------------------------------//
-
-   if !Empty( ::aFastKeys )
-      for n := 1 to len( ::aFastKeys )
-         if nKey == ::aFastKeys[ n, 1 ]
-            Eval( ::aFastKeys[ n, 2 ] )
-            Return 0
-         end if
-      next
-   end if
-
-   // fin MCS----------------------------------------------------------------//
-
-return ( Super:KeyDown( nKey, nFlags ) )
+return nil
 
 //----------------------------------------------------------------------------//
 
@@ -817,7 +865,7 @@ METHOD SetFont( oFont ) CLASS TDialog
    local hCtrl := GetWindow( hDlg, GW_CHILD )
    local hFont := If( ::oFont != nil, ::oFont:hFont, 0 )
 
-   Super:SetFont( oFont )
+   ::Super:SetFont( oFont )
 
    if hFont != 0
       while hCtrl != 0 .and. GetParent( hCtrl ) == hDlg
@@ -833,6 +881,9 @@ return nil
 METHOD SysCommand( nWParam, nLParam ) CLASS TDialog
 
    if nWParam == SC_CLOSE .and. ::lModal
+      if GetCapture() != 0
+         ReleaseCapture()
+      endif
       return .f.
    endif
 
@@ -841,17 +892,13 @@ METHOD SysCommand( nWParam, nLParam ) CLASS TDialog
       return .f.
    endif
 
-return Super:SysCommand( nWParam, nLParam )
+return ::Super:SysCommand( nWParam, nLParam )
 
 //----------------------------------------------------------------------------//
 
 METHOD Help95() CLASS TDialog
 
-   if ::lHelpIcon == NIL
-      ::lHelpIcon := .t.
-   endif
-
-   if ::lHelpIcon
+   if ::lHelpIcon == nil .or. ::lHelpIcon
       SetWindowLong( ::hWnd, GWL_EXSTYLE,;
                     nOr( GetWindowLong( ::hWnd, GWL_EXSTYLE ), WS_EX_CONTEXTHELP ) )
    endif
@@ -861,6 +908,11 @@ return nil
 //----------------------------------------------------------------------------//
 
 METHOD HandleEvent( nMsg, nWParam, nLParam ) CLASS TDialog
+
+   if ::oMenu != nil .and. ::oMenu:oAccTable != nil
+      TranslateAccelerator( ::hWnd, ::oMenu:oAccTable:nHandle,;
+                            GetFocus(), nMsg, nWParam, nLParam )
+   endif
 
    do case
       case nMsg == WM_INITDIALOG
@@ -872,60 +924,150 @@ METHOD HandleEvent( nMsg, nWParam, nLParam ) CLASS TDialog
       case nMsg == WM_PRINTCLIENT
            return ::PrintClient( nWParam )
 
+      case nMsg == WM_LBUTTONDOWN
+           if ::lHelpIcon != nil .and. ::lHelpIcon
+              ::Help()
+           else
+              return ::Super:HandleEvent( nMsg, nWParam, nLParam )
+           endif
+
       otherwise
-           return Super:HandleEvent( nMsg, nWParam, nLParam )
+           return ::Super:HandleEvent( nMsg, nWParam, nLParam )
    endcase
 
 return nil
 
 //----------------------------------------------------------------------------//
 
-METHOD Disable()
+/*
 
-   CursorWait()
+METHOD HandleGesture( nGesture, nLParam ) CLASS TDialog
 
-   ::bTmpValid := ::bValid
-   ::bValid    := {|| .f. }
+   local aInfo, nRow, nCol
 
-   aEval( ::aControls, { | oCtrl | if( oCtrl:ClassName != "TSAY" .and. oCtrl:ClassName != "TBITMAP", oCtrl:Disable(), ) } )
+   if nGesture == GID_PAN
 
-   SysRefresh()
-
-RETURN ( Self )
-
-//----------------------------------------------------------------------------//
-
-METHOD Enable()
-
-   ::bValid    := ::bTmpValid
-
-   aEval( ::aControls, { | oCtrl | if( oCtrl:ClassName != "TSAY" .and. oCtrl:ClassName != "TBITMAP", if( Eval( oCtrl:bWhen, Self ), oCtrl:Enable(), ), ) } )
-
-   SysRefresh()
-
-   CursorWE()
-
-RETURN ( Self )
-
-//----------------------------------------------------------------------------//
-
-METHOD AEvalValid() CLASS TDialog
-
-   local n
-   local lValid      := .t.
-   local aControls   := ::aControls
-
-   if aControls != nil .and. !Empty( aControls )
-      for n = 1 to Len( aControls )
-          if aControls[ n ] != nil .and. aControls[ n ]:bValid != nil
-             if !Eval( aControls[ n ]:bValid )
-                lValid  := .f.
-                ::aControls[ n ]:SetFocus()  // keep this as ::
-             endif
+      aInfo    := GestureInfo( nLParam )
+      if aInfo[ 2 ] == GF_BEGIN
+         ::CoorsUpdate()
+         ::aPanInfo := { aInfo[ 3 ], aInfo[ 4 ], ::nTop, ::nLeft }
+      else
+         if ::aPanInfo != nil
+            nRow     := aInfo[ 3 ]
+            nCol     := aInfo[ 4 ]
+            ::Move( ::aPanInfo[ 3 ] + nRow - ::aPanInfo[ 1 ], ::aPanInfo[ 4 ] + nCol - ::aPanInfo[ 2 ], ;
+                  ::nWidth, ::nHeight, .t. )
          endif
-      next
+         if aInfo[ 2 ] == GF_END
+            ::aPanInfo  := nil
+         endif
+      endif
+      return 0
    endif
 
-return ( lValid )
+return ::Super:HandleGesture( nGesture, nLParam )
+*/
 
 //----------------------------------------------------------------------------//
+
+function SetDialogEsc( lOnOff )
+
+   local lOldStatus
+
+   static lStatus := .T.
+
+   lOldStatus = lStatus
+
+   if PCount() == 1 .and. ValType( lOnOff ) == "L"
+      lStatus = lOnOff
+   endif
+
+return lOldStatus
+
+//----------------------------------------------------------------------------//
+
+function SetCenterOnParent( lOnOff )
+
+   local lOldStatus
+
+   static lStatus := .F.
+
+   lOldStatus = lStatus
+
+   if PCount() == 1 .and. ValType( lOnOff ) == "L"
+      lStatus = lOnOff
+   endif
+
+return lOldStatus
+
+//----------------------------------------------------------------------------//
+
+function SetDlgGradient( aNewGradColors )
+
+   local aOldGradColors := aGradColors
+
+   aGradColors = aNewGradColors
+
+return aOldGradColors
+
+//----------------------------------------------------------------------------//
+
+function FW_SetTruePixel( lOnOff )
+
+   local oDlg := TDialog()
+
+   if lOnOff != nil
+      oDlg:lClsTruePixel = lOnOff
+   endif
+
+return oDlg:lClsTruePixel
+
+//----------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//
+
+METHOD keysControl( nKey ) CLASS TDialog
+
+   if GetKeyState( VK_CONTROL )
+
+      if isArray( ::aControlKeys ) .and. len( ::aControlKeys ) > 0
+         aEval( ::aControlKeys, {|aKey| if( nKey == aKey[1] , Eval( aKey[2] ), ) } )
+      end if
+
+   else
+
+      if isArray( ::aFastKeys ) .and. len( ::aFastKeys ) > 0
+         aEval( ::aFastKeys, {|aKey| if( nKey == aKey[1] , Eval( aKey[2] ), ) } )
+      end if
+
+   end if
+
+RETURN nil
+
+//----------------------------------------------------------------------------//
+
+METHOD setControlFastKey( cDirectory, uParam1, uParam2, uParam3, uParam4, uParam5, uParam6, uParam7, uParam8, uParam9, uParam10 ) CLASS TDialog
+
+   if Empty( cDirectory ) 
+      RETURN ( nil )
+   end if
+  
+   ::AddControlKeys( VK_F2,   {|| runEventScript( cDirectory + "\F2", uParam1, uParam2, uParam3, uParam4, uParam5, uParam6, uParam7, uParam8, uParam9, uParam10 ) } )
+   ::AddControlKeys( VK_F3,   {|| runEventScript( cDirectory + "\F3", uParam1, uParam2, uParam3, uParam4, uParam5, uParam6, uParam7, uParam8, uParam9, uParam10 ) } )
+   ::AddControlKeys( VK_F4,   {|| runEventScript( cDirectory + "\F4", uParam1, uParam2, uParam3, uParam4, uParam5, uParam6, uParam7, uParam8, uParam9, uParam10 ) } )
+   ::AddControlKeys( VK_F5,   {|| runEventScript( cDirectory + "\F5", uParam1, uParam2, uParam3, uParam4, uParam5, uParam6, uParam7, uParam8, uParam9, uParam10 ) } )
+   ::AddControlKeys( VK_F6,   {|| runEventScript( cDirectory + "\F6", uParam1, uParam2, uParam3, uParam4, uParam5, uParam6, uParam7, uParam8, uParam9, uParam10 ) } )
+   ::AddControlKeys( VK_F7,   {|| runEventScript( cDirectory + "\F7", uParam1, uParam2, uParam3, uParam4, uParam5, uParam6, uParam7, uParam8, uParam9, uParam10 ) } )
+   ::AddControlKeys( VK_F8,   {|| runEventScript( cDirectory + "\F8", uParam1, uParam2, uParam3, uParam4, uParam5, uParam6, uParam7, uParam8, uParam9, uParam10 ) } )
+   ::AddControlKeys( VK_F9,   {|| runEventScript( cDirectory + "\F9", uParam1, uParam2, uParam3, uParam4, uParam5, uParam6, uParam7, uParam8, uParam9, uParam10 ) } )
+  
+RETURN ( nil )
+
+//----------------------------------------------------------------------------//
+

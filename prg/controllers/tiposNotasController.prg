@@ -12,7 +12,7 @@ CLASS TiposNotasController FROM SQLBaseController
    
    METHOD   buildSQLView( this )			       INLINE ( TiposNotas():New( this ) )
    
-   METHOD   validDialog( oDlg, oGetNombre )
+   METHOD   validNombre( oGetNombre )
 
 END CLASS
 
@@ -22,38 +22,46 @@ METHOD New()
 
    ::idUserMap            := "01097"
 
+   ::setTitle( "Tipos de notas" )
+
    ::Super:New()
 
 Return ( Self )
 
 //---------------------------------------------------------------------------//
 
-METHOD validDialog( oDlg, oGetNombre )
+METHOD validNombre( oGetNombre )
 
-   local idForNombre
+   local idNombre
+   local cErrorText  := ""
 
-   if empty( ::oModel:hBuffer[ "tipo" ] )
-      msgStop( "El nombre de la nota no puede estar vacío." )
+   oGetNombre:setColor( Rgb( 0, 0, 0 ), Rgb( 255, 255, 255 ) )
+
+   if empty( ::oModel:hBuffer[ "nombre" ] )
+      cErrorText     += "El nombre de la propiedad no puede estar vacío." 
+   end if
+
+   idNombre          := ::oModel:ChecksForValid( "nombre" )
+   
+   if ( !empty( idNombre ) )
+
+      if ( idNombre != ::oModel:hBuffer[ "id" ] .and. !::isDuplicateMode() )
+         cErrorText  += "El nombre de la propiedad ya existe." 
+      end if
+   
+      if ( idNombre == ::oModel:hBuffer[ "id" ] .and. ::isDuplicateMode() )
+         cErrorText  += "El nombre de la propiedad ya existe."
+      end if
+   
+   end if
+
+   if !empty( cErrorText )
+      msgStop( cErrorText )
+      oGetNombre:setColor( Rgb( 255, 255, 255 ), Rgb( 255, 102, 102 ) )
       oGetNombre:setFocus()
       RETURN ( .f. )
    end if
 
-   idForNombre := ::oModel:ChecksForValid( "tipo" )
+RETURN ( .t. )
 
-   if ( !empty( idForNombre ) )
-      if ( idForNombre != ::oModel:hBuffer[ "id" ] .and. !::isDuplicateMode() )
-         msgStop( "Esta nota ya existe" )
-         oGetNombre:setFocus()
-         RETURN ( .f. )
-      end if
-
-      if ( idForNombre == ::oModel:hBuffer[ "id" ] .and. ::isDuplicateMode() )
-         msgStop( "Esta nota ya existe" )
-         oGetNombre:setFocus()
-         RETURN ( .f. )      
-      end if
-   end if
-
-RETURN ( oDlg:end( IDOK ) )
-
-//----------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//

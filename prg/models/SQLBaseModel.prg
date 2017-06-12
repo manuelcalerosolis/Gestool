@@ -13,6 +13,10 @@ CLASS SQLBaseModel
    DATA     cDbfTableName
 	DATA	   hColumns
 
+   DATA     cConstraints
+
+   DATA     hExtraColumns
+
    DATA     cGeneralSelect
 
    DATA     cColumnOrder
@@ -23,6 +27,7 @@ CLASS SQLBaseModel
    DATA     cSQLSelect      
    
    DATA     cColumnKey                     INIT "id"
+   DATA     cColumnCode                    INIT "codigo"
 
   	DATA	   hBuffer   
    DATA     cFind
@@ -35,7 +40,7 @@ CLASS SQLBaseModel
    METHOD   getImportSentence( cPath )
    METHOD   makeImportDbfSQL( cPath )
    METHOD   getSelectSentence()
-   METHOD   getInsertSentence()                     
+   METHOD   getInsertSentence()
    METHOD   getUpdateSentence()
    METHOD   getDeleteSentence()
 
@@ -48,17 +53,16 @@ CLASS SQLBaseModel
    METHOD   setIdForRecno( nIdForRecno )           INLINE ( ::nIdForRecno := nIdForRecno )
 
    METHOD   buildRowSet()
-   METHOD   buildRowSetWithRecno()                 // INLINE   ( ::buildRowSet( .t. ) )
+   METHOD   buildRowSetWithRecno()                 
    METHOD   freeRowSet()                           INLINE   ( if( !empty( ::oRowSet ), ( ::oRowSet := nil ), ) )
    METHOD   getRowSetRecno()                       INLINE   ( if( !empty( ::oRowSet ), ( ::oRowSet:recno() ) , 0 ) )
    METHOD   setRowSetRecno( nRecno )               INLINE   ( if( !empty( ::oRowSet ), ( ::oRowSet:goto( nRecno ) ), ) )
-   METHOD   setIdForRecno( nIdForRecno )           INLINE   ( ::nIdForRecno := nIdForRecno )
-   METHOD   getKeyFieldOfRecno()                   INLINE   ( if( !empty( ::oRowSet ), ( ::oRowSet:fieldGet( ::cColumnKey ) ), ) )
  
    METHOD   getSelectByColumn()
    METHOD   getSelectByOrder()
 
    METHOD   setFind( cFind )                       INLINE   ( ::cFind := cFind )
+
    METHOD   find( cFind )
 
    METHOD   existId( id )
@@ -70,6 +74,9 @@ CLASS SQLBaseModel
    METHOD   updateCurrentBuffer()                  INLINE   ( getSQLDatabase():Query( ::getUpdateSentence() ), ::buildRowSetWithRecno() )
    METHOD   insertBuffer()                         INLINE   ( getSQLDatabase():Query( ::getInsertSentence() ), ::buildRowSet() )
    METHOD   deleteSelection( aRecno )              INLINE   ( getSQLDatabase():Query( ::getdeleteSentence( aRecno ) ), ::buildRowSet() )
+
+   METHOD   loadBlankBuffer()
+   METHOD   loadCurrentBuffer()
 
    METHOD   selectFetch( cSentence )
    METHOD   selectFetchArray( cSentence )          
@@ -101,8 +108,12 @@ METHOD New()
 
    ::cGeneralSelect              := "SELECT * FROM " + ::cTableName
 
-   ::cColumnOrder                := "id"
+   ::cConstraints                := "" 
+
+   ::cColumnOrder                := "codigo"
+
    ::cOrientation                := "A"
+
    ::nIdForRecno                 := 1
 
 Return ( Self )
@@ -119,11 +130,21 @@ Return ( nil )
 
 METHOD getSQLCreateTable()
    
-   Local cSQLCreateTable := "CREATE TABLE " + ::cTableName + " ( "
+   local cSQLCreateTable 
+
+   cSQLCreateTable         := "CREATE TABLE " + ::cTableName + " ( "
 
    hEval( ::hColumns, {| k, hash | cSQLCreateTable += k + " " + hget( hash, "create" ) + ", " } )
+   
+   if !empty( ::cConstraints )
 
-   cSQLCreateTable        := ChgAtEnd( cSQLCreateTable, ' )', 2 )
+      cSQLCreateTable      += ::cConstraints + " )"
+
+   else
+
+      cSQLCreateTable      := ChgAtEnd( cSQLCreateTable, ' )', 2 )
+
+   end if 
 
 Return ( cSQLCreateTable )
 
@@ -143,8 +164,6 @@ METHOD getImportSentence( cPath )
    local cValues     := ""
    local cInsert     := ""
 
-   default cPath     := cPatDat()
-
    dbUseArea( .t., cLocalDriver(), cPath + "\" + ::getDbfTableName(), cCheckArea( "dbf", @dbf ), .f. )
    if ( dbf )->( neterr() )
       Return ( cInsert )
@@ -160,8 +179,11 @@ METHOD getImportSentence( cPath )
 
       cValues           += "( "
 
-      hEval( ::hColumns, {| k, hash | if ( k != ::cColumnKey,;
-                                             cValues += toSQLString( ( dbf )->( fieldget( fieldpos( hget( hash, "dbfField" ) ) ) ) ) + ", " , )  } )
+            hEval( ::hColumns, {| k, hash | if ( k != ::cColumnKey,;
+                                                if ( k == "empresa",;
+                                                      cValues += toSQLString( cCodEmp() ) + ", ",;
+                                                      cValues += toSQLString( ( dbf )->( fieldget( fieldpos( hget( hash, "field" ) ) ) ) ) + ", "), ) } )
+
       
       cValues           := chgAtEnd( cValues, ' ), ', 2 )
 
@@ -186,7 +208,13 @@ METHOD makeImportDbfSQL( cPath )
 
    local cImportSentence
 
-   default cPath     := cPatDat()
+   if empty( cPath ) 
+      if ( hb_HHasKey( ::hColumns, "empresa" ) )
+         cPath     := cPatEmp()
+      else
+         cPath     := cPatDat()
+      end if 
+   end if
 
    if ( file( cPath + "\" + ::getOldTableName() ) )
       Return ( self )
@@ -201,15 +229,15 @@ METHOD makeImportDbfSQL( cPath )
 
    if !empty( cImportSentence )
 
-      getSQLDatabase():Exec( ::getSQLDropTable() )
-
       getSQLDatabase():Exec( ::getSQLCreateTable() )
+
+      msgalert( cImportSentence )
 
       getSQLDatabase():Exec( cImportSentence )
       
    end if 
 
-   frename( cPath + "\" + ::getDbfTableName(), cPath + "\" + ::getOldTableName() )
+  // frename( cPath + "\" + ::getDbfTableName(), cPath + "\" + ::getOldTableName() )
    
 Return ( self )
 
@@ -232,6 +260,9 @@ METHOD buildRowSet( cSentence )
    local oStmt
 
    default cSentence    := ::getSelectSentence()
+
+
+   
 
    try
 
@@ -260,7 +291,7 @@ METHOD getUpdateSentence()
 
   local cSQLUpdate  := "UPDATE " + ::cTableName + " SET "
 
-  hEval( ::hBuffer, {| k, v | if ( k != ::cColumnKey, if ( empty( v ), cSQLUpdate += k + " = null, ", cSQLUpdate += k + " = " + toSQLString( v ) + ", "), ) } )
+  hEval( ::hBuffer, {| k, v | if ( k != ::cColumnKey, cSQLUpdate += k + " = " + toSQLString( v ) + ", ", ) } )
 
   cSQLUpdate        := ChgAtEnd( cSQLUpdate, '', 2 )
 
@@ -274,13 +305,13 @@ METHOD getInsertSentence()
 
    Local cSQLInsert
 
-   cSQLInsert        := "INSERT INTO " + ::cTableName + " ( "
+   cSQLInsert               := "INSERT INTO " + ::cTableName + " ( "
 
    hEval( ::hBuffer, {| k, v | if ( k != ::cColumnKey, cSQLInsert += k + ", ", ) } )
 
    cSQLInsert        := ChgAtEnd( cSQLInsert, ' ) VALUES ( ', 2 )
 
-   hEval( ::hBuffer, {| k, v | if ( k != ::cColumnKey, if ( empty( v ), cSQLInsert += "null, ", cSQLInsert += toSQLString( v ) + ", "), ) } )
+   hEval( ::hBuffer, {| k, v | if ( k != ::cColumnKey, if ( k == "empresa", cSQLInsert += toSQLString( cCodEmp() ) + ", ", cSQLInsert += toSQLString( v ) + ", "), ) } )
 
    cSQLInsert        := ChgAtEnd( cSQLInsert, ' )', 2 )
 
@@ -295,7 +326,7 @@ METHOD convertRecnoToId( aRecno )
 
    for each nRecno in ( aRecno )
       ::oRowset:goto( nRecno )
-      aadd( aId, ::oRowset:fieldget( "id" ) )
+      aadd( aId, ::oRowset:fieldget( ::cColumnKey ) )
    next
 
 Return ( aId )
@@ -320,29 +351,37 @@ METHOD getSelectSentence()
 
    local cSQLSelect  := ::cGeneralSelect
 
-   cSQLSelect        += ::getSelectByColumn()
+   if ( hb_HHasKey( ::hColumns, "empresa" ) )
+      cSQLSelect += " WHERE empresa = " + toSQLString( cCodEmp() )
+   end if
 
-   cSQLSelect        += ::getSelectByOrder()
+   cSQLSelect := ::getSelectByColumn( cSQLSelect )
+
+   cSQLSelect := ::getSelectByOrder( cSQLSelect )
 
 Return ( cSQLSelect )
 
 //---------------------------------------------------------------------------//
 
-METHOD getSelectByColumn( cColumnOrder )
+METHOD getSelectByColumn( cSQLSelect )
 
-   local cSQLSelect     := ""
 
    if !empty( ::cColumnOrder ) .and. !empty( ::cFind )
-      cSQLSelect        += " WHERE UPPER(" + ::cColumnOrder +") LIKE '%" + Upper( ::cFind ) + "%'" 
+      
+      if ( hb_at( "WHERE", cSQLSelect) != 0 )
+         cSQLSelect += " AND"
+      else
+         cSQLSelect += " WHERE"
+      end if
+
+      cSQLSelect        += " UPPER(" + ::cColumnOrder +") LIKE '%" + Upper( ::cFind ) + "%'" 
    end if
 
 Return ( cSQLSelect )
 
 //---------------------------------------------------------------------------//
 
-METHOD getSelectByOrder( cColumnOrder, cOrientation )
-
-   local cSQLSelect  := ""
+METHOD getSelectByOrder( cSQLSelect )
 
    if !empty( ::cColumnOrder )
       cSQLSelect     += " ORDER BY " + ::cColumnOrder 
@@ -363,6 +402,64 @@ METHOD find( cFind )
    ::buildRowSet()
 
 Return ( ::oRowSet:recCount() > 0 )
+
+//----------------------------------------------------------------------------//
+
+METHOD loadBlankBuffer()
+
+   if empty( ::oRowSet )
+      Return ( .f. )
+   end if 
+
+   ::oRowSet:goto( 0 )
+
+Return ( ::loadCurrentBuffer() )
+
+//---------------------------------------------------------------------------//
+
+METHOD loadCurrentBuffer()                
+
+   local h
+   local aColumnNames   := hb_hkeys( ::hColumns )
+
+   if empty( ::oRowSet )
+      Return ( .f. )
+   end if 
+
+   ::hBuffer            := {=>}
+
+   for each h in ::hColumns
+
+      do case
+         case ( hhaskey( h, "type" ) .and. h[ "type" ] == "L" )
+
+            hset( ::hBuffer, h:__enumkey(), ::oRowSet:fieldget( h:__enumkey() ) == 1 )
+
+         case ( hhaskey( h, "type" ) .and. h[ "type" ] == "N" .and. hb_isnil( ::oRowSet:fieldget( h:__enumkey() ) ) )
+
+            hset( ::hBuffer, h:__enumkey(), 0 )
+
+         case ( hhaskey( h, "type" ) .and. h[ "type" ] == "C" .and. hhaskey( h, "len" ) )
+
+            if hb_isnil( ::oRowSet:fieldget( h:__enumkey() ) )
+               hset( ::hBuffer, h:__enumkey(), space( h[ "len" ] ) )
+            else 
+               hset( ::hBuffer, h:__enumkey(), padr( ::oRowSet:fieldget( h:__enumkey() ), h[ "len" ] ) )
+            end if 
+
+         case ( !hhaskey( h, "type" ) .and. empty( ::oRowSet:fieldget( h:__enumkey() ) ) )
+
+            hset( ::hBuffer, h:__enumkey(), nil )
+
+         otherwise
+
+            hset( ::hBuffer, h:__enumkey(), ::oRowSet:fieldget( h:__enumkey() ) )
+
+      end if
+
+   next
+
+Return ( ::hBuffer )
 
 //---------------------------------------------------------------------------//
 
@@ -493,9 +590,13 @@ Return ( cColumns )
 
 METHOD checksForValid( cColumnToValid )
 
-   local cSentence := "SELECT id FROM " + ::cTableName + " WHERE " + cColumnToValid + " = " + toSQLString( ::hBuffer[ cColumnToValid ] )
+   local cSentence := "SELECT " + ::cColumnKey + " FROM " + ::cTableName + " WHERE " + cColumnToValid + " = " + toSQLString( ::hBuffer[ cColumnToValid ] )
    local aIDsToValid
    local nIDToValid
+
+   if ( hb_HHasKey( ::hColumns, "empresa" ) )
+      cSentence += " AND empresa = " + toSQLString( cCodEmp() )
+   end if
 
    aIDsToValid    := ::selectFetchArray( cSentence )
 
@@ -513,7 +614,13 @@ METHOD getNameFromId( uValue )
 
    local cName                   := ""
    local cSentence               := "SELECT nombre FROM " + ::cTableName + " WHERE id = " + toSQLString( uValue )
-   local aSelect                 := ::selectFetchHash( cSentence )
+   local aSelect 
+
+   if ( hb_HHasKey( ::hColumns, "empresa" ) )
+      cSentence += " AND empresa = " + toSQLString( cCodEmp() )
+   end if
+
+   aSelect                       := ::selectFetchHash( cSentence )
 
    if !empty( aSelect )
       cName                      := hget( atail( aSelect ), "nombre" )
@@ -545,9 +652,9 @@ RETURN ( !empty( ::selectFetchArray( cSentence ) ) )
 
 //---------------------------------------------------------------------------//
 
-METHOD existCodigo( codigo )
+METHOD existCodigo( cValue )
 
-   local cSentence               := "SELECT codigo FROM " + ::cTableName + " WHERE codigo = " + toSQLString( codigo )
+   local cSentence               := "SELECT " + ::cColumnKey + " FROM " + ::cTableName + " WHERE " + ::cColumnCode + " = " + toSQLString( cValue )
 
 RETURN ( !empty( ::selectFetchArray( cSentence ) ) )
 

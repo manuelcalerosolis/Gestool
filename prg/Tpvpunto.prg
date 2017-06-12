@@ -145,33 +145,33 @@ CLASS sTpvPunto
 
    DATA oMesa
 
-   Method CreateFromSala( nNumero, oSender )
-   Method CreateFromSalon( nNumero, oSender )
+   METHOD CreateFromSala( nNumero, oSender )
+   METHOD CreateFromSalon( nNumero, oSender )
 
-   Method CreateMesa()
-   Method LoadMesa()
+   METHOD CreateMesa()
+   METHOD LoadMesa()
 
-   Method Llevar()
+   METHOD Llevar()
 
-   Method Encargar()
+   METHOD Encargar()
 
-   Method cPunto()         INLINE ( ::cCodigoSala + ::cPuntoVenta )
-   Method cSala()          INLINE ( ::cCodigoSala )
+   METHOD cPunto()         INLINE ( ::cCodigoSala + ::cPuntoVenta )
+   METHOD cSala()          INLINE ( ::cCodigoSala )
 
-   Method cTiket()         INLINE ( ::cSerie + ::cNumero + ::cSufijo )
-   Method cTextoTiket()    INLINE ( ::cSerie + "/" + Alltrim( ::cNumero ) + "/" + Alltrim( ::cSufijo ) )
+   METHOD cTiket()         INLINE ( ::cSerie + ::cNumero + ::cSufijo )
+   METHOD cTextoTiket()    INLINE ( ::cSerie + "/" + Alltrim( ::cNumero ) + "/" + Alltrim( ::cSufijo ) )
 
-   Method cTextoPunto()
-   Method cImagenPunto( nItem )
+   METHOD cTextoPunto()
+   METHOD cImagenPunto( nItem )
 
-   Method cTexto()         INLINE ( if( !Empty( ::cPuntoVenta ), ::cTextoPunto(), ::cTextoTiket() ) )
+   METHOD cTexto()         INLINE ( if( !Empty( ::cPuntoVenta ), ::cTextoPunto(), ::cTextoTiket() ) )
 
-   Method lGenerico()      INLINE ( ::nUbicacion == ubiGeneral )
-   Method lLlevar()        INLINE ( ::nUbicacion == ubiLlevar )
-   Method lRecoger()       INLINE ( ::nUbicacion == ubiRecoger )
-   Method lEncargar()      INLINE ( ::nUbicacion == ubiEncargar )
+   METHOD lGenerico()      INLINE ( ::nUbicacion == ubiGeneral )
+   METHOD lLlevar()        INLINE ( ::nUbicacion == ubiLlevar )
+   METHOD lRecoger()       INLINE ( ::nUbicacion == ubiRecoger )
+   METHOD lEncargar()      INLINE ( ::nUbicacion == ubiEncargar )
 
-   Method oTiketCabecera() INLINE ( ::oSender:oSender:oSender:oTiketCabecera )
+   METHOD oTiketCabecera() INLINE ( ::oSender:oSender:oSender:oTiketCabecera )
 
    METHOD lMultipleTicket()
 
@@ -195,7 +195,7 @@ oSender           -> sTpvRestaurante
 oSender:oSender   -> sTpvSala
 */
 
-Method CreateFromSala( nNumero, oSender ) CLASS sTpvPunto
+METHOD CreateFromSala( nNumero, oSender ) CLASS sTpvPunto
 
    ::nNumero         := nNumero
    ::oSender         := oSender
@@ -218,16 +218,18 @@ Method CreateFromSala( nNumero, oSender ) CLASS sTpvPunto
 
    ::cImagen         := ::cImagenPunto( ::nType )
 
-Return ( Self )
+RETURN ( Self )
 
 //---------------------------------------------------------------------------//
 /*
 Crea la mesa-------------------------------------------------------------------
 */
 
-Method CreateMesa( lPuntosPendientes ) CLASS sTpvPunto
+METHOD CreateMesa( lPuntosPendientes ) CLASS sTpvPunto
 
-   local oMesa       := TTpvMesa():New( ::nTop, ::nLeft, ::nType, ::GetSalonWnd() )
+   local oMesa       
+
+   oMesa    := TTpvMesa():New( ::nTop, ::nLeft, ::nType, ::GetSalonWnd() )
 
    oMesa:LoadFromPunto( Self )
 
@@ -245,11 +247,11 @@ Method CreateMesa( lPuntosPendientes ) CLASS sTpvPunto
 
    end if
 
-Return ( Self )
+RETURN ( Self )
 
 //---------------------------------------------------------------------------//
 
-Method CreateFromSalon( nNumero, oSender ) CLASS sTpvPunto
+METHOD CreateFromSalon( nNumero, oSender ) CLASS sTpvPunto
 
    ::nNumero         := nNumero
 
@@ -277,11 +279,11 @@ Method CreateFromSalon( nNumero, oSender ) CLASS sTpvPunto
 
    ::nPreCmb         := uFieldEmpresa( "nPreTCmb" )
 
-Return ( Self )
+RETURN ( Self )
 
 //---------------------------------------------------------------------------//
 
-Method Llevar( dbfTikT ) CLASS sTpvPunto
+METHOD Llevar( dbfTikT ) CLASS sTpvPunto
 
    ::nNumero         := 0
 
@@ -322,11 +324,11 @@ Method Llevar( dbfTikT ) CLASS sTpvPunto
    ::cImagen         := "gc_motor_scooter_32"
    ::oSala           := nil
 
-Return ( Self )
+RETURN ( Self )
 
 //---------------------------------------------------------------------------//
 
-Method Encargar( dbfTikT ) CLASS sTpvPunto
+METHOD Encargar( dbfTikT ) CLASS sTpvPunto
 
    ::nNumero         := 0
 
@@ -366,11 +368,11 @@ Method Encargar( dbfTikT ) CLASS sTpvPunto
    ::cImagen         := "gc_notebook2_32"
    ::oSala           := nil
 
-Return ( Self )
+RETURN ( Self )
 
 //---------------------------------------------------------------------------//
 
-Method cTextoPunto() CLASS sTpvPunto
+METHOD cTextoPunto() CLASS sTpvPunto
 
    local cTextoPunto := ""
 
@@ -382,50 +384,50 @@ Method cTextoPunto() CLASS sTpvPunto
       end if
    end if
 
-Return ( cTextoPunto )
+RETURN ( cTextoPunto )
 
 //---------------------------------------------------------------------------//
 
-Method cImagenPunto( nItem ) CLASS sTpvPunto
+METHOD cImagenPunto( nItem ) CLASS sTpvPunto
 
    do case
       case nItem == itmMesaRedonda
-         Return ( "Shape_circle_32" )
+         RETURN ( "Shape_circle_32" )
 
       case nItem == itmMesaEliptica
-         Return ( "Shape_ellipse_32" )
+         RETURN ( "Shape_ellipse_32" )
 
       case nItem == itmMesaCuadrada
-         Return ( "Shape_square_32" )
+         RETURN ( "Shape_square_32" )
 
       case nItem == itmMesaRectangular
-         Return ( "Shape_rectangle_32" )
+         RETURN ( "Shape_rectangle_32" )
 
       case nItem == itmBarrraHorizontal
-         Return ( "Bar_center_32" )
+         RETURN ( "Bar_center_32" )
 
       case nItem == itmBarrraVertical
-         Return ( "Bar_left_32" )
+         RETURN ( "Bar_left_32" )
 
       case nItem == itmBarrraEsquinaDerechaAbajo
-         Return ( "Bar_corner_left_32" )
+         RETURN ( "Bar_corner_left_32" )
 
       case nItem == itmBarrraEsquinaIzquierdaAbajo
-         Return ( "Bar_corner_right_32" )
+         RETURN ( "Bar_corner_right_32" )
 
       case nItem == itmBarrraEsquinaDerechaArriba
-         Return ( "Bar_corner_top_left_32" )
+         RETURN ( "Bar_corner_top_left_32" )
 
       case nItem == itmBarrraEsquinaIzquierdaArriba
-         Return ( "Bar_corner_top_right_32" )
+         RETURN ( "Bar_corner_top_right_32" )
 
    end case
 
-Return ( "" )
+RETURN ( "" )
 
 //---------------------------------------------------------------------------//
 
-Method LoadMesa() CLASS sTpvPunto
+METHOD LoadMesa() CLASS sTpvPunto
 
    local aStatus
 
@@ -464,7 +466,7 @@ Method LoadMesa() CLASS sTpvPunto
 
    ::oTiketCabecera():SetStatus( aStatus )
 
-Return ( Self )
+RETURN ( Self )
 
 //---------------------------------------------------------------------------//
 
@@ -495,7 +497,7 @@ METHOD lMultipleTicket()
 
    end with
 
-Return ( Len( aNumeros ) > 1 )
+RETURN ( Len( aNumeros ) > 1 )
 
 //---------------------------------------------------------------------------//
 
@@ -525,20 +527,20 @@ METHOD nTotalMultipleTicket()
 
    end with
 
-Return nTotal
+RETURN nTotal
 
 //---------------------------------------------------------------------------//
 
-Method cTextoTotalTiket()
+METHOD cTextoTotalTiket()
 
    local cTexto         := ::cTextoTiket() + CRLF
    cTexto               += "[ Total : " + lTrim( Trans( ::nTotal, cPorDiv() ) ) + cSimDiv() + " ]"
 
-Return ( cTexto )
+RETURN ( cTexto )
 
 //------------------------------------------------------------------------//
 
-Method nImagenTiket( n )
+METHOD nImagenTiket( n )
 
    local nImagen        := ( ( ( n + 1 ) * 2 ) - 2 )
 
@@ -546,15 +548,16 @@ Method nImagenTiket( n )
       ++nImagen
    end if
 
-Return ( nImagen )
+RETURN ( nImagen )
 
 //------------------------------------------------------------------------//
 
-Method cAliasTiket( n )
+METHOD cAliasTiket( n )
 
    local cTexto         := Upper( Rtrim( ::cAlias ) ) + CRLF
    cTexto               += "[ Total : " + lTrim( Trans( ::nTotal, cPorDiv() ) ) + cSimDiv() + " ]"
 
-Return ( cTexto )
+RETURN ( cTexto )
 
 //------------------------------------------------------------------------//
+

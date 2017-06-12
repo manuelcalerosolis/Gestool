@@ -3134,6 +3134,16 @@ STATIC FUNCTION EdtRec( aTmp, aGet, cArticulo, oBrw, bWhen, bValid, nMode )
       aGet[ ( D():Articulos( nView ) )->( fieldpos( "cCodPrp1" ) ) ]:bValid  := {|| cProp( aGet[ ( D():Articulos( nView ) )->( fieldpos( "cCodPrp1" ) ) ], aGet[ ( D():Articulos( nView ) )->( fieldpos( "cCodPrp1" ) ) ]:oHelpText ) }
       aGet[ ( D():Articulos( nView ) )->( fieldpos( "cCodPrp1" ) ) ]:bHelp   := {|| brwProp( aGet[ ( D():Articulos( nView ) )->( fieldpos( "cCodPrp1" ) ) ], aGet[ ( D():Articulos( nView ) )->( fieldpos( "cCodPrp1" ) ) ]:oHelpText ) }
 
+      /*
+      PropiedadesController();
+         :Instance();
+         :createEditControl(  @aTmp[ ( D():Articulos( nView ) )->( fieldpos( "cCodPrp1" ) ) ],;
+                              {  "idGet"  => 360,;
+                                 "idText" => 361,;
+                                 "dialog" => fldPropiedades,;
+                                 "when"   => {|| ( nMode != ZOOM_MODE ) } } )
+      */
+
       TBtnBmp():ReDefine( 362, "gc_document_text_pencil_12",,,,,{|| brwSelectPropiedad( aTmp[ ( D():Articulos( nView ) )->( fieldpos( "cCodPrp1" ) ) ], @aTmp[ ( D():Articulos( nView ) )->( fieldpos( "mValPrp1" ) ) ] ) }, fldPropiedades, .f., , .f., "Seleccionar propiedades" )
 
       REDEFINE GET   aGet[ ( D():Articulos( nView ) )->( fieldpos( "cCodPrp2" ) ) ] ;

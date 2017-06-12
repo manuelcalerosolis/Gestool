@@ -4169,7 +4169,7 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbfFacRecL, oBrw, lTotLin, cCodArtEnt, nMode
                                  "idSay"  => 292,;
                                  "dialog" => oFld:aDialogs[ 1 ],;
                                  "when"   => {|| ( nMode != ZOOM_MODE .and. !lTotLin ) },;
-                                 "value"  => aTmp[ ( D():AlbaranesClientesLineas( nView ) )->( fieldpos( "id_tipo_v" ) ) ] } )
+                                 "value"  => aTmp[ ( D():FacturasRectificativasLineas( nView ) )->( fieldpos( "id_tipo_v" ) ) ] } )
 
       REDEFINE GET aGet[ _CALMLIN ] VAR aTmp[ _CALMLIN ] ;
          ID       300 ;
@@ -4473,8 +4473,6 @@ STATIC FUNCTION SetDlgMode( aTmp, aGet, oFld, oSayPr1, oSayPr2, oSayVp1, oSayVp2
          aGet[ _NDTODIV ]:Hide()
       end if
    end if
-
-   aGet[ ( D():FacturasRectificativasLineas( nView ) )->( fieldpos( "id_tipo_v" ) ) ]:lValid()
 
    do case
    case nMode == APPD_MODE
@@ -4859,6 +4857,7 @@ STATIC FUNCTION SaveDeta( aTmp, aTmpFac, aGet, oFld, oBrw, oDlg, oSayPr1, oSayPr
    end if
 
    aTmp[ _NREQ ]  := nPReq( dbfIva, aTmp[ _NIVA ] )
+
    aTmp[ ( D():FacturasRectificativasLineas( nView ) )->( fieldpos( "id_tipo_v" ) ) ]  := TiposVentasController():Instance():getIdFromEditControl()
 
    if nMode == APPD_MODE
@@ -8773,7 +8772,7 @@ Static Function EdtRecMenu( aTmp, oDlg )
 
       MENUITEM    "&1. Rotor"
 
-         MENU
+         MENU 
 
          	MENUITEM    "&1. Campos extra [F9]";
                MESSAGE  "Mostramos y rellenamos los campos extra para la familia" ;

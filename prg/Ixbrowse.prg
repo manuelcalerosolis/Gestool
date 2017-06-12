@@ -345,7 +345,7 @@ METHOD RButtonDown( nRow, nCol, nFlags )
 
    MenuAddItem( "Columnas", "Columnas de la rejilla de datos", .f., .t., , , "gc_table_selection_column_16", oMenu )
 
-   MenuBegin( .f.,,, .f. )
+   MenuBegin( .f., , , .f., .f., , , , , , , , , , , , .f., .t., .f., .t. )
 
    for each oCol in ::aCols
       MenuAddItem( oCol:cHeader, , !oCol:lHide, ( Len( ::aDisplay ) != 1 .or. oCol:nPos != 1 ), GenMenuBlock( oCol ) )
