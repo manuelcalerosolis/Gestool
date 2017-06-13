@@ -209,10 +209,10 @@ METHOD makeImportDbfSQL( cPath )
    local cImportSentence
 
    if empty( cPath ) 
-      if ( hb_HHasKey( ::hColumns, "empresa" ) )
-         cPath     := cPatEmp()
+      if ( hb_hhaskey( ::hColumns, "empresa" ) )
+         cPath       := cPatEmp()
       else
-         cPath     := cPatDat()
+         cPath       := cPatDat()
       end if 
    end if
 

@@ -6140,13 +6140,25 @@ FUNCTION TstEmpresa( cPatDat )
 
    dbUseArea( .t., cDriver(), ( cPatDat() + "Empresa.Dbf" ), cCheckArea( "Empresa", @dbfEmp ), .f. )
 
-   dbUseArea( .t., cDriver(), ( cPatDat() + "Delega.Dbf" ), cCheckArea( "Delega", @dbfDlg ), .f. )
-
    if ( dbfEmp )->( netErr() )
       if( ( dbfEmp )->( Used() ), ( dbfEmp )->( dbCloseArea() ), )
       msgStop( "Error en apertura de fichero de empresa" )
       RETURN .f.
    end if 
+
+   lChangeStruct  := lChangeStruct( dbfEmp, aItmEmp() )
+
+   ( dbfEmp )->( dbCloseArea() )
+
+   if lChangeStruct
+      changeStructEmpresa()
+   end if
+
+   /*
+   Delegaciones----------------------------------------------------------------
+   */
+
+   dbUseArea( .t., cDriver(), ( cPatDat() + "Delega.Dbf" ), cCheckArea( "Delega", @dbfDlg ), .f. )
 
    if ( dbfDlg )->( netErr() )
       if( ( dbfDlg )->( Used() ), ( dbfDlg )->( dbCloseArea() ), )
@@ -6154,14 +6166,12 @@ FUNCTION TstEmpresa( cPatDat )
       RETURN .f.
    end if 
 
-   lChangeStruct  := lChangeStruct( dbfEmp, aItmEmp() ) .or. lChangeStruct( dbfDlg, aItmDlg() )
-
-   ( dbfEmp )->( dbCloseArea() )
+   lChangeStruct  := lChangeStruct( dbfDlg, aItmDlg() )
 
    ( dbfDlg )->( dbCloseArea() )
 
    if lChangeStruct
-      changeStructEmpresa()
+      changeStructDelegacion()
    end if
 
    CursorWait()
@@ -6220,24 +6230,12 @@ RETURN ( .t. )
 
 Static Function changeStructEmpresa()
 
-   TDataCenter():DeleteTableName( "Delega" )
    TDataCenter():DeleteTableName( "Empresa" )
 
    lCdx( .t. )
    lAIS( .f. )
 
    mkEmpresa( cPatEmpTmp(), cLocalDriver() )
-
-   /*
-   Trasbase a delegaciones-----------------------------------------------------
-   */
-
-   appDbf( cPatDat(), cPatEmpTmp(), "Delega", aItmDlg() )
-
-   fEraseTable( cPatDat() + "Delega.Dbf" )
-
-   fRenameTable( cPatEmpTmp() + "Delega.Dbf", cPatDat() + "Delega.Dbf" )
-   fRenameTable( cPatEmpTmp() + "Delega.Cdx", cPatDat() + "Delega.Cdx" )
 
    /*
    Trasbase a empresas---------------------------------------------------------
@@ -6253,12 +6251,40 @@ Static Function changeStructEmpresa()
    lCdx( .f. )
    lAIS( .t. )
 
-   TDataCenter():AddTableName( "Delega" )
    TDataCenter():AddTableName( "Empresa" )
 
 RETURN ( .t. )
 
 //---------------------------------------------------------------------------//
+/*
+Trasbase a delegaciones--------------------------------------------------------
+*/
+
+Static Function changeStructDelegacion()
+
+   TDataCenter():DeleteTableName( "Delega" )
+
+   lCdx( .t. )
+   lAIS( .f. )
+
+   mkEmpresa( cPatEmpTmp(), cLocalDriver() )
+
+   appDbf( cPatDat(), cPatEmpTmp(), "Delega", aItmDlg() )
+
+   fEraseTable( cPatDat() + "Delega.Dbf" )
+
+   fRenameTable( cPatEmpTmp() + "Delega.Dbf", cPatDat() + "Delega.Dbf" )
+   fRenameTable( cPatEmpTmp() + "Delega.Cdx", cPatDat() + "Delega.Cdx" )
+
+   lCdx( .f. )
+   lAIS( .t. )
+
+   TDataCenter():AddTableName( "Delega" )
+
+RETURN ( .t. )
+
+//---------------------------------------------------------------------------//
+
 
 FUNCTION aItmEmp()
 

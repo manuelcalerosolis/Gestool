@@ -553,14 +553,17 @@ CLASS TpvTactil
   
    METHOD IncrementarUnidades()
 
-   METHOD cNombreArticulo()                     INLINE ( Capitalize( Alltrim( if( !Empty( ::oArticulo:cDesTcl ), ::oArticulo:cDesTcl, ::oArticulo:Nombre ) ) ) )
+   METHOD cNombreArticulo()            INLINE ( Capitalize( alltrim( if( !empty( ::oArticulo:cDesTcl ), ::oArticulo:cDesTcl, ::oArticulo:Nombre ) ) ) )
 
    METHOD SeleccionarDefecto( cDefCom, oBrwLineasComentarios, oBrwComentarios )
 
    METHOD lBlankTicket()               INLINE ( alltrim( ::oTiketCabecera:cNumTik ) == "" )
 
    METHOD cNumeroTicket()              INLINE ( ::oTiketCabecera:cSerTik + ::oTiketCabecera:cNumTik + ::oTiketCabecera:cSufTik )
+   
    METHOD cNumeroTicketLinea()         INLINE ( ::oTiketLinea:cSerTil + ::oTiketLinea:cNumTil + ::oTiketLinea:cSufTil )
+   METHOD cTextoTicketLinea()          INLINE ( ::oTiketLinea:cSerTil + "/" + alltrim( ::oTiketLinea:cNumTil ) + "/" + alltrim( ::oTiketLinea:cSufTil ) )
+
    METHOD cNumeroTicketByName()        INLINE ( ::oTiketCabecera:FieldGetByName( "cSerTik" ) + ::oTiketCabecera:FieldGetByName( "cNumTik" ) + ::oTiketCabecera:FieldGetByName( "cSufTik" ) )
    METHOD cNumeroTicketFormato( cNumeroTicket ) ;
                                        INLINE ( if(   Empty( cNumeroTicket ),;
@@ -677,6 +680,7 @@ CLASS TpvTactil
       METHOD eliminarLinea()
       METHOD eliminaMenu( nLineaMenu )
       METHOD eliminaEscandallo( nNumeroLinea )
+      METHOD mailEliminarLinea()
 
    // Colores-----------------------------------------------------------------
 
@@ -9576,9 +9580,39 @@ METHOD eliminarLinea()
 
    end if
 
+   ::mailEliminarLinea()
+
    ::oBrwLineas:Refresh()
 
 Return ( .t. )
+
+//------------------------------------------------------------------------//
+//
+// Envío de  mail al usuario----------------------------------------------
+//
+
+METHOD mailEliminarLinea()
+
+   local hMail          := {=>}
+   local cMensajeMail   := ""
+
+   cMensajeMail         := "Linea eliminada en el ticket " + ::cTextoTicketLinea()     + CRLF  
+   cMensajeMail         += "Descripción : " +  alltrim( ::oTemporalLinea:cNomTil )     + CRLF  
+   cMensajeMail         += "Unidades : " + ::nUnidadesLinea( ::oTemporalLinea, .t. )   + CRLF  
+   cMensajeMail         += "Importe : " + ::nTotalLinea( ::oTemporalLinea, .t. )       + CRLF  
+   cMensajeMail         += "Cajero : " + oUser():cCodigo() + " - " + oUser():cNombre()
+
+   hSet( hMail, "mail", uFieldEmpresa( "cMailTrno" ) ) 
+   hSet( hMail, "subject", "Linea eliminada en T.P.V." )
+   hSet( hMail, "message", cMensajeMail )
+
+   with object TSendMail():New()
+      if :buildMailerObject()
+         :sendMail( hMail )
+      end if 
+   end with
+
+Return ( Self )
 
 //------------------------------------------------------------------------//
 
