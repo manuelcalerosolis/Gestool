@@ -3336,7 +3336,7 @@ Function SetEmpresa( cCodEmp, dbfEmp, dbfDlg, dbfUsr, oBrw )
 
    TDataCenter():BuildEmpresa()
 
-   TDataCenter():BuildData()
+   // TDataCenter():BuildData()
 
    /*
    Ponemos el titulo de la empresa---------------------------------------------
@@ -6122,101 +6122,71 @@ FUNCTION TstEmpresa( cPatDat )
    local lChangeCode
    local lChangeStruct  
 
-   // return .f.
-
-   if lAIS()
-      Return .f.
-   end if 
-
-   CursorWait()
-
-   if !lExistTable( cPatDat() + "EMPRESA.DBF" )
-      dbCreate( cPatDat() + "EMPRESA.DBF", aSqlStruct( aItmEmp() ), cDriver() )
+   if !lExistTable( cPatDat() + "Empresa.Dbf" )
+      dbCreate( cPatDat() + "Empresa.Dbf", aSqlStruct( aItmEmp() ), cDriver() )
    end if
 
-   if !lExistTable( cPatDat() + "DELEGA.DBF" )
-      dbCreate( cPatDat() + "DELEGA.DBF", aSqlStruct( aItmDlg() ), cDriver() )
+   if !lExistTable( cPatDat() + "Delega.Dbf" )
+      dbCreate( cPatDat() + "Delega.Dbf", aSqlStruct( aItmDlg() ), cDriver() )
    end if
 
-   if !lExistIndex( cPatDat() + "EMPRESA.CDX" ) .or. !lExistIndex( cPatDat() + "DELEGA.CDX" )
+   if !lExistIndex( cPatDat() + "Empresa.Cdx" ) .or. !lExistIndex( cPatDat() + "Delega.Cdx" )
       rxEmpresa( cPatDat() )
    end if
 
    /*
-   Empresa------------------------------------------------------------------
+   Empresa---------------------------------------------------------------------
    */
 
    dbUseArea( .t., cDriver(), ( cPatDat() + "Empresa.Dbf" ), cCheckArea( "Empresa", @dbfEmp ), .f. )
 
    dbUseArea( .t., cDriver(), ( cPatDat() + "Delega.Dbf" ), cCheckArea( "Delega", @dbfDlg ), .f. )
 
-   if !( dbfEmp )->( netErr() ) .and. !( dbfDlg )->( netErr() )
+   if ( dbfEmp )->( netErr() )
+      if( ( dbfEmp )->( Used() ), ( dbfEmp )->( dbCloseArea() ), )
+      msgStop( "Error en apertura de fichero de empresa" )
+      RETURN .f.
+   end if 
 
-      lChangeStruct  := lChangeStruct( dbfEmp, aItmEmp() ) .or. lChangeStruct( dbfDlg, aItmDlg() )
+   if ( dbfDlg )->( netErr() )
+      if( ( dbfDlg )->( Used() ), ( dbfDlg )->( dbCloseArea() ), )
+      msgStop( "Error en apertura de fichero de delegaciones" )
+      RETURN .f.
+   end if 
 
-      ( dbfEmp )->( dbCloseArea() )
-      ( dbfDlg )->( dbCloseArea() )
+   lChangeStruct  := lChangeStruct( dbfEmp, aItmEmp() ) .or. lChangeStruct( dbfDlg, aItmDlg() )
 
-      if lChangeStruct
+   ( dbfEmp )->( dbCloseArea() )
 
-         mkEmpresa( cPatEmpTmp(), cLocalDriver() )
+   ( dbfDlg )->( dbCloseArea() )
 
-         /*
-         Trasbase a delegaciones-----------------------------------------------
-         */
-
-         appDbf( cPatDat(), cPatEmpTmp(), "Delega", aItmDlg() )
-
-         fEraseTable( cPatDat() + "Delega.Dbf" )
-
-         fRenameTable( cPatEmpTmp() + "Delega.Dbf", cPatDat() + "Delega.Dbf" )
-         fRenameTable( cPatEmpTmp() + "Delega.Cdx", cPatDat() + "Delega.Cdx" )
-
-         /*
-         Trasbase a empresas---------------------------------------------------
-         */
-
-         appDbf( cPatDat(), cPatEmpTmp(), "Empresa", aItmEmp() )
-
-         fEraseTable( cPatDat() + "Empresa.Dbf" )
-
-         fRenameTable( cPatEmpTmp() + "Empresa.Dbf", cPatDat() + "Empresa.Dbf" )
-         fRenameTable( cPatEmpTmp() + "Empresa.Cdx", cPatDat() + "Empresa.Cdx" )
-
-      end if
-
+   if lChangeStruct
+      changeStructEmpresa()
    end if
 
+   CursorWait()
+
    /*
-   Situacion especial para cambio de codigo---------------------------------
+   Situacion especial para cambio de codigo------------------------------------
    */
 
    dbUseArea( .t.,  cDriver(), ( cPatDat() + "Empresa.Dbf" ), cCheckArea( "EMPRESA", @dbfEmp ), .f. )
       
    if ( dbfEmp )->( netErr() )
       if( ( dbfEmp )->( Used() ), ( dbfEmp )->( dbCloseArea() ), )
-      return .f.
+      RETURN .f.
    else 
       if( !lAIS(), ( dbfEmp )->( ordListAdd( ( cPatDat() + "Empresa.Cdx" ) ) ), ordSetFocus( 1 ) )
    end if 
       
-   dbUseArea( .t.,  cDriver(), ( cPatDat() + "Delega.Dbf" ), cCheckArea( "Delega", @dbfDlg ), .f. )
-            
-   if ( dbfDlg )->( netErr() )
-      if( ( dbfDlg )->( Used() ), ( dbfDlg )->( dbCloseArea() ), )
-      return .f.
-   else 
-      if( !lAIS(), ( dbfDlg )->( ordListAdd( ( cPatDat() + "Delega.Cdx" ) ) ), ordSetFocus( 1 ) )
-   end if    
-
    /*
    Comprobamos la longitud del codigo------------------------------------------
    */
 
-   ( dbfEmp )->( dbGoTop() )
-   while !( dbfEmp )->( Eof() )
+   ( dbfEmp )->( dbgotop() )
+   while !( dbfEmp )->( eof() )
       
-      cCodEmp     := Alltrim( ( dbfEmp )->CodEmp )
+      cCodEmp     := alltrim( ( dbfEmp )->CodEmp )
       
       if len( cCodEmp ) < 4
       
@@ -6225,68 +6195,66 @@ FUNCTION TstEmpresa( cPatDat )
                msgStop( "No he podido renombrar el directorio " + FullCurDir() + "Emp" + cCodEmp )
             end if
          end if 
-      
-         if ( dbfEmp )->( dbRLock() )
-            ( dbfEmp )->CodEmp   := RJust( ( dbfEmp )->CodEmp, "0", 4 )
-            ( dbfEmp )->( dbUnlock() )
-         end if
-      
+    
       end if 
               
-      /*
-      Comprobamos q el codigo de la delegacion no este vacio-------------------
-      */
-
-      if !( dbfDlg )->( dbSeek( ( dbfEmp )->CodEmp ) )
-         
-         if dbAppe( dbfDlg )
-
-            ( dbfDlg )->cCodEmp  := ( dbfEmp )->CodEmp
-            ( dbfDlg )->cCodDlg  := "00"
-            ( dbfDlg )->cNomDlg  := "Central"
-            ( dbfDlg )->( dbUnlock() )
-
-         end if
-
-      end if
-
-      /*
-      Sigiente empresa---------------------------------------------------------
-      */
-                
-      ( dbfEmp )->( dbSkip() )
+      ( dbfEmp )->( dbskip() )
                   
    end while
+
+   ( dbfEmp )->( dbclosearea() )
 
    /*
    Comprobamos que el campo de codigo de empresa de las delegaciones se rellenen por 0
    */
 
-   ( dbfDlg )->( dbGoTop() )
+   EmpresasModel():UpdateEmpresaCodigoEmpresa()
 
-   while !( dbfDlg )->( Eof() )
-
-      if len( AllTrim( ( dbfDlg )->cCodEmp ) ) < 4
-
-         if ( dbfDlg )->( dbRLock() )
-            ( dbfDlg )->cCodEmp  := RJust( ( dbfDlg )->cCodEmp, "0", 4 )
-            ( dbfDlg )->( dbUnlock() )
-         end if
-      
-      end if 
-
-      ( dbfDlg )->( dbSkip() )
-                  
-   end while
-
-   /*
-   Cerramos las bases de datos-------------------------------------------------
-   */
-             
-   ( dbfDlg )->( dbCloseArea() )
-   ( dbfEmp )->( dbCloseArea() )
+   EmpresasModel():UpdateDelegacionCodigoEmpresa()
 
    CursorWE()
+
+RETURN ( .t. )
+
+//---------------------------------------------------------------------------//
+
+Static Function changeStructEmpresa()
+
+   TDataCenter():DeleteTableName( "Delega" )
+   TDataCenter():DeleteTableName( "Empresa" )
+
+   lCdx( .t. )
+   lAIS( .f. )
+
+   mkEmpresa( cPatEmpTmp(), cLocalDriver() )
+
+   /*
+   Trasbase a delegaciones-----------------------------------------------------
+   */
+
+   appDbf( cPatDat(), cPatEmpTmp(), "Delega", aItmDlg() )
+
+   fEraseTable( cPatDat() + "Delega.Dbf" )
+
+   fRenameTable( cPatEmpTmp() + "Delega.Dbf", cPatDat() + "Delega.Dbf" )
+   fRenameTable( cPatEmpTmp() + "Delega.Cdx", cPatDat() + "Delega.Cdx" )
+
+   /*
+   Trasbase a empresas---------------------------------------------------------
+   */
+
+   appDbf( cPatDat(), cPatEmpTmp(), "Empresa", aItmEmp() )
+
+   fEraseTable( cPatDat() + "Empresa.Dbf" )
+
+   fRenameTable( cPatEmpTmp() + "Empresa.Dbf", cPatDat() + "Empresa.Dbf" )
+   fRenameTable( cPatEmpTmp() + "Empresa.Cdx", cPatDat() + "Empresa.Cdx" )
+
+   lCdx( .f. )
+   lAIS( .t. )
+
+   TDataCenter():AddTableName( "Delega" )
+   TDataCenter():AddTableName( "Empresa" )
 
 RETURN ( .t. )
 
@@ -6340,8 +6308,8 @@ FUNCTION aItmEmp()
    aAdd( aDbf, {"CNUMALB",    "C", 50, 0, "Texto a incluir comentarios de nuestro albaran", "",    "", "aEmp()", nil } )
    aAdd( aDbf, {"LSUALB" ,    "L",  1, 0, "Incluir comentarios de su albaran", "",                 "", "aEmp()", nil } )
    aAdd( aDbf, {"CSUALB" ,    "C", 50, 0, "Texto a incluir comentarios de su albaran", "",         "", "aEmp()", nil } )
-   aAdd( aDbf, {"LNUMOBR",    "L",  1, 0, "Incluir comentarios de la dirección",  "",                   "", "aEmp()", nil } )
-   aAdd( aDbf, {"CNUMOBR",    "C", 50, 0, "Texto a incluir comentarios de la dirección", "",            "", "aEmp()", nil } )
+   aAdd( aDbf, {"LNUMOBR",    "L",  1, 0, "Incluir comentarios de la dirección",  "",              "", "aEmp()", nil } )
+   aAdd( aDbf, {"CNUMOBR",    "C", 50, 0, "Texto a incluir comentarios de la dirección", "",       "", "aEmp()", nil } )
    aAdd( aDbf, {"CDEFALM",    "C", 16, 0, "Almacen por defecto",             "",                   "", "aEmp()", nil } )
    aAdd( aDbf, {"CDEFFPG",    "C",  2, 0, "Forma de pago por defecto",       "",                   "", "aEmp()", nil } )
    aAdd( aDbf, {"NDGTUND",    "N",  2, 0, "Número de digitos para las unidades", "",               "", "aEmp()", nil } )

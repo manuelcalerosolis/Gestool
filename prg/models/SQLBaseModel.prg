@@ -551,10 +551,7 @@ METHOD compareCurrentAndActualColumns()
       nPosColumn           := ascan( hb_hkeys( ::hColumns ), hget( hCurrentColumn, "name" ) )
       
       if nPosColumn != 0
-
          hb_HDelAt( ::hColumns, nPosColumn )
-
-
       end if
 
    next

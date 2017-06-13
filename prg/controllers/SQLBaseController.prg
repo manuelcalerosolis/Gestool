@@ -435,7 +435,9 @@ METHOD Edit()
 
       ::endEditModePosUpdate()
    else
-   ::cancelEditMode()
+
+      ::cancelEditMode()
+
    end if 
 
    if !empty( ::oView:getoBrowse() )
@@ -486,7 +488,7 @@ METHOD Delete()
       RETURN ( Self )
    end if 
 
-      ::initDeleteMode()
+   ::initDeleteMode()
 
    nSelected            := len( ::oView:getoBrowse():aSelected )
 
@@ -627,25 +629,16 @@ RETURN ( self )
 
 //---------------------------------------------------------------------------//
 
-
 METHOD createColumnsForBrowse( oCombobox, k, h )
 
-   if ( hhaskey( h, "special" ) )
-
-      
+   with object ( ::oView:getoBrowse():AddCol() )
+      :cHeader             := h[ "header" ]
+      :cSortOrder          := k
+      :bEditValue          := {|| ::getRowSet():fieldGet( k ) }
+      :nWidth              := h[ "width" ]
+      :bLClickHeader       := {| nMRow, nMCol, nFlags, oCol | ::clickOnHeader( oCol, oCombobox ) }
+   end with
    
-   else
-
-      with object ( ::oView:getoBrowse():AddCol() )
-         :cHeader             := h[ "header" ]
-         :cSortOrder          := k
-         :bEditValue          := {|| ::getRowSet():fieldGet( k ) }
-         :nWidth              := h[ "width" ]
-         :bLClickHeader       := {| nMRow, nMCol, nFlags, oCol | ::clickOnHeader( oCol, oCombobox ) }
-      end with
-   
-   endif
-
 RETURN ( self )
 
 //---------------------------------------------------------------------------//

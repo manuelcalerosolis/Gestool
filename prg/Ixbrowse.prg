@@ -324,7 +324,7 @@ METHOD OpenData( cPath )
 
    ErrorBlock( oBlock )
 
-   Return ( Self )
+Return ( Self )
 
 //------------------------------------------------------------------------//
 

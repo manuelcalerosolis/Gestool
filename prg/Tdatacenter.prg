@@ -108,9 +108,12 @@ CLASS TDataCenter
    METHOD CreateColumnTriggerDelete( oTable, cTrigger )
 
    METHOD AddTable( oTable )
+   METHOD AddTableName( cTableName )
+   
    METHOD AddTrigger( oTable, cAction )
 
-   METHOD DeleteTable( oTable )           
+   METHOD DeleteTable( oTable )  
+   METHOD DeleteTableName( cTableName )         
    METHOD DeleteAllTable()
 
    METHOD BuildData()
@@ -1311,18 +1314,26 @@ METHOD DeleteTable( oTable )
 
    local nScan
 
-   /*
-   if !ExistTable( oTable )
-      Return .f.
-   endif
-   */
-
    nScan             := aScan( ::aDDTables, oTable:cName )
    if nScan != 0
       aDel( ::aDDTables, nScan, .t. )
    end if
 
 Return ( AdsDDRemoveTable( Upper( oTable:cName ) ) )
+
+//---------------------------------------------------------------------------//
+
+METHOD DeleteTableName( cTableName )
+
+   local oTable
+
+   oTable         := ::ScanDataTable( cTableName )
+
+   if !empty( oTable )
+      RETURN ::DeleteTable( oTable ) 
+   end if 
+
+RETURN ( .f. )
 
 //---------------------------------------------------------------------------//
 
@@ -1721,6 +1732,20 @@ METHOD AddTable( oTable, lSilent )
    end if
 
 Return ( lAddTable )
+
+//---------------------------------------------------------------------------//
+
+METHOD AddTableName( cTableName )
+
+   local oTable
+
+   oTable         := ::ScanDataTable( cTableName )
+
+   if !empty( oTable )
+      RETURN ::AddTable( oTable ) 
+   end if 
+
+Return ( .f. )
 
 //---------------------------------------------------------------------------//
 

@@ -156,8 +156,6 @@ STATIC FUNCTION DialogEvalValid()
    local oControl
    local aControls
 
-   msgalert( "DialogEvalValid" )
-
    aControls   := hb_qself():aControls
 
    if empty( aControls )
@@ -166,20 +164,18 @@ STATIC FUNCTION DialogEvalValid()
 
    for each oControl in aControls
 
-      msgalert( hb_valtoexp( oControl ), "oControl" )
-
       if empty( oControl:bWhen ) .or. eval( oControl:bWhen )
-
-         msgalert( "bWhen" )
 
          if empty( oControl:bValid ) .or. !eval( oControl:bValid )
 
-            msgalert( "bValid" )
-
             oControl:SetFocus()
+
             RETURN ( .f. )
+
          endif
+
       end if 
+      
    next
 
 RETURN ( .t. )
