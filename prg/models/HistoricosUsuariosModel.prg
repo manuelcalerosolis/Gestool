@@ -78,7 +78,7 @@ METHOD saveHistory( cTable, cBrowseState, cColumnOrder, cOrientation, nIdForRecn
    cInternalSelect   := "( SELECT id FROM " + ::cTableName                 + ;
                            " WHERE cTableName = " + toSQLString( cTable )  + ;
                            " AND "                                         + ;
-                           " usuario_id = " + toSQLString( oUser():cCodigo() )
+                           " usuario_id = " + toSQLString( oUser():cCodigo() ) + " )"
 
    cUpdateHistory    := "REPLACE INTO " + ::cTableName                     + ;
                         "  (  id, "                                        + ;
@@ -88,7 +88,7 @@ METHOD saveHistory( cTable, cBrowseState, cColumnOrder, cOrientation, nIdForRecn
                               "cColumnOrder, "                             + ;
                               "cOrientation, "                             + ;
                               "nIdForRecno ) "                             + ;
-                        "  VALUES (" + cInternalSelect +  " ), "           + ;
+                        "  VALUES (" + cInternalSelect +  ", "             + ;
                               toSQLString( oUser():cCodigo() ) + ", "      + ;
                               toSQLString( cTable ) + ","                  + ;
                               cBrowseState + ", "                          + ;
@@ -96,7 +96,7 @@ METHOD saveHistory( cTable, cBrowseState, cColumnOrder, cOrientation, nIdForRecn
                               toSQLString( cOrientation ) + ", "           + ;
                               alltrim( cvaltostr( nIdForRecno ) )          + ")"
 
-  getSQLDatabase():Query( cUpdateHistory )
+  ::Query( cUpdateHistory )
 
 RETURN ( Self )
 

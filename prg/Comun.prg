@@ -281,6 +281,10 @@ RETURN ( .t. )
 
 FUNCTION Test()
 
+   ConfiguracionEmpresasModel():setValue( 'name', 'value', 'C' )
+
+   msgalert( ConfiguracionEmpresasModel():getValue( 'name' ), "getValue" )
+
 Return ( nil )
 
 //---------------------------------------------------------------------------//

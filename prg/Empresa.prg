@@ -6142,7 +6142,6 @@ FUNCTION TstEmpresa( cPatDat )
 
    if ( dbfEmp )->( netErr() )
       if( ( dbfEmp )->( Used() ), ( dbfEmp )->( dbCloseArea() ), )
-      msgStop( "Error en apertura de fichero de empresa" )
       RETURN .f.
    end if 
 
@@ -6162,7 +6161,6 @@ FUNCTION TstEmpresa( cPatDat )
 
    if ( dbfDlg )->( netErr() )
       if( ( dbfDlg )->( Used() ), ( dbfDlg )->( dbCloseArea() ), )
-      msgStop( "Error en apertura de fichero de delegaciones" )
       RETURN .f.
    end if 
 

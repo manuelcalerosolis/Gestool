@@ -151,9 +151,9 @@ METHOD startDialog() CLASS ViewDetail
 
    ::hideLote()
 
-   ::oGetArticulo:SetFocus()
-
    ::oSender:StartResourceDetail()
+
+   ::oGetArticulo:SetFocus()
 
 Return( Self )
 

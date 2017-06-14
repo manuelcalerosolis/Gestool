@@ -9595,15 +9595,29 @@ METHOD mailEliminarLinea()
 
    local hMail          := {=>}
    local cMensajeMail   := ""
+   local cDireccionMail := uFieldEmpresa( "cMailTrno" )
 
-   cMensajeMail         := "Linea eliminada en el ticket " + ::cTextoTicketLinea()     + CRLF  
-   cMensajeMail         += "Descripción : " +  alltrim( ::oTemporalLinea:cNomTil )     + CRLF  
-   cMensajeMail         += "Unidades : " + ::nUnidadesLinea( ::oTemporalLinea, .t. )   + CRLF  
-   cMensajeMail         += "Importe : " + ::nTotalLinea( ::oTemporalLinea, .t. )       + CRLF  
-   cMensajeMail         += "Cajero : " + oUser():cCodigo() + " - " + oUser():cNombre()
+   if empty( cDireccionMail )
+      cDireccionMail    := uFieldEmpresa( "cCcpMai" )
+   end if 
 
-   hSet( hMail, "mail", uFieldEmpresa( "cMailTrno" ) ) 
-   hSet( hMail, "subject", "Linea eliminada en T.P.V." )
+   if empty( cDireccionMail )
+      cDireccionMail    := uFieldEmpresa( "cCcoMai" )
+   end if 
+
+   if empty( cDireccionMail )
+      Return ( Self )
+   end if 
+
+   cMensajeMail         := "<p>" + "Linea eliminada en el ticket " + ::cTextoTicketLinea()      + "</p>" + CRLF  
+   cMensajeMail         += "<p>" + "Descripción : " +  alltrim( ::oTemporalLinea:cNomTil )      + "</p>" + CRLF  
+   cMensajeMail         += "<p>" + "Unidades : " + ::nUnidadesLinea( ::oTemporalLinea, .t. )    + "</p>" + CRLF  
+   cMensajeMail         += "<p>" + "Importe : " + ::nTotalLinea( ::oTemporalLinea, .t. )        + "</p>" + CRLF  
+   cMensajeMail         += "<p>" + "Cajero : " + oUser():cCodigo() + " - " + oUser():cNombre()  + "</p>" + CRLF  
+   cMensajeMail         += "<p>" + "Fecha y hora : " + dtoc( date() ) + " - " + time()          + "</p>" + CRLF  
+
+   hSet( hMail, "mail", cDireccionMail ) 
+   hSet( hMail, "subject", "Línea eliminada en T.P.V." )
    hSet( hMail, "message", cMensajeMail )
 
    with object TSendMail():New()

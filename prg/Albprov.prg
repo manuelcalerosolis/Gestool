@@ -1459,18 +1459,22 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, cCodPrv, cCodArt, nMode, cCodPed 
          ON HELP  ( ExpAlmacen( aTmp[ _CALMORIGEN ], dbfTmp, oBrwLin ) ) ;
          OF       oFld:aDialogs[1]
 
-      REDEFINE GET aGet[ _CCODALM ] VAR aTmp[ _CCODALM ]  ;
-			ID 		150 ;
-			WHEN 		( nMode != ZOOM_MODE ) ;
-         VALID    ( cAlmacen( aGet[ _CCODALM ], , oSay[ 2 ] ) ) ;
-         BITMAP   "Lupa" ;
-         ON HELP  ( BrwAlmacen( Self, oSay[ 2 ] ) ) ;
-			OF 		oFld:aDialogs[1]
+      REDEFINE GET   aGet[ _CCODALM ] ;
+         VAR         aTmp[ _CCODALM ] ;
+			ID          150 ;
+			WHEN        ( nMode != ZOOM_MODE ) ;
+         VALID       ( cAlmacen( aGet[ _CCODALM ], , oSay[ 2 ] ) ) ;
+         BITMAP      "Lupa" ;
+         ON HELP     ( BrwAlmacen( Self, oSay[ 2 ] ) ) ;
+			OF          oFld:aDialogs[1]
 
-      REDEFINE GET oSay[ 2 ] VAR cSay[ 2 ] ;
-         WHEN     ( nMode != ZOOM_MODE ) ;
-			ID 		151 ;
-         OF       oFld:aDialogs[1]
+      REDEFINE GET   oSay[ 2 ] ;
+         VAR         cSay[ 2 ] ;
+         WHEN        ( nMode != ZOOM_MODE ) ;
+			ID          151 ;
+         BITMAP      "Bot" ;
+         ON HELP     ( ExpAlmacen( aTmp[ _CCODALM ], dbfTmp, oBrwLin ) ) ;
+         OF          oFld:aDialogs[1]
 
 		/*
 		Bitmap________________________________________________________________
