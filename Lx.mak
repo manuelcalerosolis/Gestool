@@ -1,11 +1,11 @@
 HB                   =  \harbour_bcc582\
 
 HBINCLUDE            =  \harbour_bcc582\Include
-FWINCLUDE            =  \Fwh1406\Include
+FWINCLUDE            =  \Fwh1701\Include
 GTINCLUDE            =  .\Include
 
 HBLIB                =  \harbour_bcc582\Lib
-FWLIB                =  \Fwh1406\lib
+FWLIB                =  \Fwh1701\lib
 
 RESOURCE             =  .\Resource
 
@@ -14,10 +14,10 @@ BORLANDLIB           =  \Bcc582\lib
 
 IMG2PDFLIB           =  \Img2Pdf
 
-OBJ                  =  Obj1406
+OBJ                  =  Obj1701
 SOURCEPRG            =  .\Prg
 SOURCEC              =  C
-PPO                  =  Ppo1406
+PPO                  =  Ppo1701
 
 EXE                  =  Bin\RptApolo.exe
 
@@ -28,6 +28,7 @@ EXE                  =  Bin\RptApolo.exe
 PRG                  = 	\
 RptGal.prg              \
 DialogExtend.prg        \ 
+Dialog.prg              \
 Brush.prg               \
 Agenda.prg              \
 Agentes.prg             \
@@ -1058,6 +1059,7 @@ Treeview.c              \
 OBJS            =       \
 RptGal.obj              \
 DialogExtend.obj        \
+Dialog.obj              \
 Brush.obj               \
 Agenda.obj              \
 Agentes.obj             \
@@ -2102,6 +2104,7 @@ $(EXE) 					: $(RESOURCE)\RptApolo.Res $(OBJS)
 (BORLAND)\bin\c0w32.obj         +
 $(OBJ)\RptGal.obj               +
 $(OBJ)\DialogExtend.obj         +
+$(OBJ)\Dialog.obj               +
 $(OBJ)\Brush.obj                +
 $(OBJ)\Agenda.obj               +
 $(OBJ)\Agentes.obj              +

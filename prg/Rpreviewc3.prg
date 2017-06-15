@@ -14,7 +14,7 @@
 #define HSCROLL_RANGE  20*nZFactor
 
 #define TXT_FIRST                                  "&Primera"
-#define TXT_PREVIOUS                               "&Anterior"
+#define TXT_PREVIOUS                               "&Anterior" 
 #define TXT_NEXT                                   "&Siguiente"
 #define TXT_LAST                                   "&Ultima"
 #define TXT_ZOOM                                   "&Zoom"
@@ -134,17 +134,17 @@ function RPreview( oDevice )
           ACTION BottomPage()                ;
           TOOLTIP Strtran(TXT_LAST,"&","") NOBORDER
 
-     DEFINE BUTTON oZoom RESOURCE "PrvZoom" OF oBar GROUP ;
+     DEFINE BUTTON oZoom RESOURCE "Zoom16" OF oBar GROUP ;
           MESSAGE TXT_ZOOM_THE_PREVIEW                 ;
           ACTION Zoom()                                ;
           TOOLTIP Strtran(TXT_ZOOM,"&","") NOBORDER
 
-     DEFINE BUTTON oTwoPages RESOURCE "gc_copy_16" OF oBar  ;
+     DEFINE BUTTON oTwoPages RESOURCE "gc_copy_16" OF oBar  ; 
           MESSAGE TXT_PREVIEW_ON_TWO_PAGES       ;
           ACTION TwoPages()                      ;
           TOOLTIP Strtran(TXT_TWOPAGES,"&","") NOBORDER
 
-     DEFINE BUTTON RESOURCE "Printer" OF oBar GROUP ;
+     DEFINE BUTTON RESOURCE "Imp16" OF oBar GROUP ;
           MESSAGE TXT_PRINT_CURRENT_PAGE            ;
           ACTION PrintPage()                        ;
           TOOLTIP Strtran(TXT_PRINT,"&","") NOBORDER

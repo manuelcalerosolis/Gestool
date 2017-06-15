@@ -22,7 +22,7 @@ Function EDI_seleccion( lNoExportados, oTree, nView )
 
             aDirectorio       := Directory( cPath + cSeleccion + "\*.prg" )
 
-            AEval( aDirectorio, {|x| if( File( cPath + cSeleccion + "\" + x[1] ), RunScript( "FacturasClientes\EDI\" + cSeleccion + "\" + x[1], lNoExportados, oTree, nView ), ) } )
+            AEval( aDirectorio, {|x| if( File( cPath + cSeleccion + "\" + x[1] ), TScripts():CompilarEjecutarFicheroScript( cPath + cSeleccion + "\" + x[1], lNoExportados, oTree, nView ), ) } )
 
          end if
 
