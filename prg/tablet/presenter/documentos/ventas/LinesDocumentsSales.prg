@@ -343,6 +343,10 @@ Return ( self )
 
 METHOD setStockArticulo() 
  
+   if GetPvProfString( "Tablet", "Stock", ".F.", cIniAplication() ) != ".T."
+      Return ( Self )
+   end if 
+
    /*
    Stock por lote------------------------------------------------------------//
    */
@@ -356,7 +360,7 @@ METHOD setStockArticulo()
                                                                      nil ,;
                                                                      ::hGetDetail( "TipoStock" ) )
 
-   if !Empty( ::oViewEditDetail:oGetStock )
+   if !empty( ::oViewEditDetail:oGetStock )
       ::oViewEditDetail:oGetStock:Refresh()
    end if
 
@@ -369,11 +373,11 @@ METHOD setStockArticulo()
                                                                            nil ,;
                                                                            ::hGetDetail( "TipoStock" ) )
 
-   if !Empty( ::oViewEditDetail:oGetStockAlmacen )
+   if !empty( ::oViewEditDetail:oGetStockAlmacen )
       ::oViewEditDetail:oGetStockAlmacen:Refresh()
    end if
 
-Return ( nil )
+Return ( self )
 
 //---------------------------------------------------------------------------//
 
@@ -461,7 +465,7 @@ METHOD ResourceDetail( nMode ) CLASS LinesDocumentsSales
 
    ::oViewEditDetail    := ViewDetail():New( self )
 
-   if !Empty( ::oViewEditDetail )
+   if !empty( ::oViewEditDetail )
 
       ::oViewEditDetail:setTitleDocumento( lblTitle( ::oSender:nModeDetail ) + ::oSender:getTextTitle() )
 
@@ -481,9 +485,11 @@ METHOD StartResourceDetail() CLASS LinesDocumentsSales
 
    ::recalcularTotal()
 
+/*
    ::oViewEditDetail:oGetArticulo:SetFocus()
    ::oViewEditDetail:oGetUnidades:SetFocus()
    ::oViewEditDetail:oGetArticulo:SetFocus()
+*/
 
 Return ( self )
 
@@ -610,7 +616,7 @@ METHOD lValidResourceDetail() CLASS LinesDocumentsSales
 
    ::oViewEditDetail:oGetLote:lValid()
 
-   if ::hGetDetail( "LogicoLote" ) .and. Empty( ::hGetDetail( "Lote" ) )
+   if ::hGetDetail( "LogicoLote" ) .and. empty( ::hGetDetail( "Lote" ) )
 
       apoloMsgStop( "El campo lote es obligatorio" )
 

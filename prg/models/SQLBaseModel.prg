@@ -71,9 +71,12 @@ CLASS SQLBaseModel
    METHOD   getName()                              INLINE   ( "" )
 
    METHOD   getBuffer( cColumn )                   INLINE   ( hget( ::hBuffer, cColumn ) )
-   METHOD   updateCurrentBuffer()                  INLINE   ( getSQLDatabase():Query( ::getUpdateSentence() ), ::buildRowSetWithRecno() )
-   METHOD   insertBuffer()                         INLINE   ( getSQLDatabase():Query( ::getInsertSentence() ), ::buildRowSet() )
-   METHOD   deleteSelection( aRecno )              INLINE   ( getSQLDatabase():Query( ::getdeleteSentence( aRecno ) ), ::buildRowSet() )
+
+   METHOD   Query( cSentence )                     INLINE   ( getSQLDatabase():Query( cSentence ) )
+
+   METHOD   updateCurrentBuffer()                  INLINE   ( ::Query( ::getUpdateSentence() ), ::buildRowSetWithRecno() )
+   METHOD   insertBuffer()                         INLINE   ( ::Query( ::getInsertSentence() ), ::buildRowSet() )
+   METHOD   deleteSelection( aRecno )              INLINE   ( ::Query( ::getdeleteSentence( aRecno ) ), ::buildRowSet() )
 
    METHOD   loadBlankBuffer()
    METHOD   loadCurrentBuffer()
@@ -209,10 +212,10 @@ METHOD makeImportDbfSQL( cPath )
    local cImportSentence
 
    if empty( cPath ) 
-      if ( hb_HHasKey( ::hColumns, "empresa" ) )
-         cPath     := cPatEmp()
+      if ( hb_hhaskey( ::hColumns, "empresa" ) )
+         cPath       := cPatEmp()
       else
-         cPath     := cPatDat()
+         cPath       := cPatDat()
       end if 
    end if
 
@@ -231,13 +234,11 @@ METHOD makeImportDbfSQL( cPath )
 
       getSQLDatabase():Exec( ::getSQLCreateTable() )
 
-      msgalert( cImportSentence )
-
       getSQLDatabase():Exec( cImportSentence )
       
    end if 
 
-  // frename( cPath + "\" + ::getDbfTableName(), cPath + "\" + ::getOldTableName() )
+   frename( cPath + "\" + ::getDbfTableName(), cPath + "\" + ::getOldTableName() )
    
 Return ( self )
 
@@ -263,7 +264,7 @@ METHOD buildRowSet( cSentence )
 
    try
 
-      oStmt             := getSQLDatabase():Query( cSentence ) 
+      oStmt             := ::Query( cSentence ) 
       ::oRowSet         := oStmt:fetchRowSet()
 
    catch
@@ -302,7 +303,7 @@ METHOD getInsertSentence()
 
    Local cSQLInsert
 
-   cSQLInsert               := "INSERT INTO " + ::cTableName + " ( "
+   cSQLInsert        := "INSERT INTO " + ::cTableName + " ( "
 
    hEval( ::hBuffer, {| k, v | if ( k != ::cColumnKey, cSQLInsert += k + ", ", ) } )
 
@@ -468,7 +469,7 @@ METHOD selectFetch( cSentence, fetchType )
    default fetchType := FETCH_ARRAY
 
    try 
-      oStmt          := getSQLDatabase():Query( cSentence )
+      oStmt          := ::Query( cSentence )
       aFetch         := oStmt:fetchAll( fetchType )
 
    catch
@@ -517,7 +518,7 @@ METHOD getColumnsOfCurrentTable()
 
    try
 
-      oStmt                := getSQLDatabase():Query( cSentence )
+      oStmt                := ::Query( cSentence )
       aTableInfo           := oStmt:fetchAll( FETCH_HASH )
 
    catch
@@ -551,10 +552,7 @@ METHOD compareCurrentAndActualColumns()
       nPosColumn           := ascan( hb_hkeys( ::hColumns ), hget( hCurrentColumn, "name" ) )
       
       if nPosColumn != 0
-
          hb_HDelAt( ::hColumns, nPosColumn )
-
-
       end if
 
    next
@@ -569,7 +567,7 @@ METHOD updateTableColumns()
 
    ::compareCurrentAndActualColumns()
 
-   hEval( ::hColumns, {| k, hash | getSQLDatabase():Query( "ALTER TABLE " + ::cTableName + " ADD COLUMN " + k + " " + hget( hash, "create" ) ) } )
+   hEval( ::hColumns, {| k, hash | ::Query( "ALTER TABLE " + ::cTableName + " ADD COLUMN " + k + " " + hget( hash, "create" ) ) } )
 
 Return ( self )
 

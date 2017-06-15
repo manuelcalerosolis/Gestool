@@ -689,7 +689,7 @@ Return ( cExtraField )
 
 Function getCustomExtraField( cFieldName, cDocumentType, Id )
 
-   local cExtraField
+   local cExtraField       := ""
    local cTipoDocumento    := ""
    local oDetCamposExtra
 

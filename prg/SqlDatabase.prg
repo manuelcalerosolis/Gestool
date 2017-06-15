@@ -15,14 +15,14 @@ CLASS SQLDatabase
 
    DATA cPathDatabaseSQLite    
 
-   DATA aModels
+   DATA aModels                     INIT {}
 
    METHOD New()                     CONSTRUCTOR
 
-   METHOD Conexion()                INLINE  ( ::oConexion )
+   METHOD Conexion()                INLINE ( ::oConexion )
 
    METHOD Connect() 
-   METHOD Disconnect()              INLINE  ( ::oConexion:disconnect() )
+   METHOD Disconnect()              INLINE ( ::oConexion:disconnect() )
         
    METHOD Exec( cSql )             
    METHOD Query( cSql )             INLINE ( ::oConexion:Query( cSql ) )
@@ -47,15 +47,25 @@ ENDCLASS
 
 METHOD New() 
 
-   ::aModels                  := {  TiposImpresorasModel():New():getSQLCreateTable()      ,;
-                                    TiposNotasModel():New():getSQLCreateTable()           ,;
-                                    EtiquetasModel():New():getSQLCreateTable()            ,;
-                                    SituacionesModel():New():getSQLCreateTable()          ,;
-                                    HistoricosUsuariosModel():New():getSQLCreateTable()   ,;
-                                    RelacionesEtiquetasModel():New():getSQLCreateTable()  ,;
-                                    TiposVentasModel():New():getSQLCreateTable()          ,;
-                                    PropiedadesModel():New():getSQLCreateTable()          ,;
-                                    PropiedadesLineasModel():New():getSQLCreateTable()    }
+   aadd( ::aModels, TiposImpresorasModel():New():getSQLCreateTable() )
+
+   aadd( ::aModels, TiposNotasModel():New():getSQLCreateTable() )
+
+   aadd( ::aModels, EtiquetasModel():New():getSQLCreateTable() )
+
+   aadd( ::aModels, SituacionesModel():New():getSQLCreateTable() )
+
+   aadd( ::aModels, HistoricosUsuariosModel():New():getSQLCreateTable() )
+
+   aadd( ::aModels, RelacionesEtiquetasModel():New():getSQLCreateTable() )
+                                      
+   aadd( ::aModels, TiposVentasModel():New():getSQLCreateTable() )
+
+   aadd( ::aModels, ConfiguracionEmpresasModel():New():getSQLCreateTable() )
+
+   aadd( ::aModels, PropiedadesModel():New():getSQLCreateTable() )
+
+   aadd( ::aModels, PropiedadesLineasModel():New():getSQLCreateTable() )
 
    ::cPathDatabaseSQLite      := fullCurDir() + "Database\" 
 

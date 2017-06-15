@@ -124,9 +124,7 @@ METHOD Resource( nMode ) CLASS ViewDetail
 
    ::defineAlmacen()
 
-   if ( GetPvProfString( "Tablet", "Stock", ".F.", cIniAplication() ) == ".T." )
-      ::defineStock()
-   end if
+   ::defineStock()
 
    ::defineAceptarCancelar()
 
@@ -151,9 +149,9 @@ METHOD startDialog() CLASS ViewDetail
 
    ::hideLote()
 
-   ::oGetArticulo:SetFocus()
-
    ::oSender:StartResourceDetail()
+
+   ::oGetArticulo:SetFocus()
 
 Return( Self )
 
@@ -491,6 +489,10 @@ Return ( self )
 //---------------------------------------------------------------------------//
 
 METHOD defineStock() CLASS ViewDetail
+
+   if GetPvProfString( "Tablet", "Stock", ".F.", cIniAplication() ) != ".T."
+      Return ( Self )
+   end if 
 
    TGridSay():Build(                   {  "nRow"      => ::getRow(),;
                                           "nCol"      => {|| GridWidth( 0.5, ::oDlg ) },;

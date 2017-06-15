@@ -553,14 +553,17 @@ CLASS TpvTactil
   
    METHOD IncrementarUnidades()
 
-   METHOD cNombreArticulo()                     INLINE ( Capitalize( Alltrim( if( !Empty( ::oArticulo:cDesTcl ), ::oArticulo:cDesTcl, ::oArticulo:Nombre ) ) ) )
+   METHOD cNombreArticulo()            INLINE ( Capitalize( alltrim( if( !empty( ::oArticulo:cDesTcl ), ::oArticulo:cDesTcl, ::oArticulo:Nombre ) ) ) )
 
    METHOD SeleccionarDefecto( cDefCom, oBrwLineasComentarios, oBrwComentarios )
 
    METHOD lBlankTicket()               INLINE ( alltrim( ::oTiketCabecera:cNumTik ) == "" )
 
    METHOD cNumeroTicket()              INLINE ( ::oTiketCabecera:cSerTik + ::oTiketCabecera:cNumTik + ::oTiketCabecera:cSufTik )
+   
    METHOD cNumeroTicketLinea()         INLINE ( ::oTiketLinea:cSerTil + ::oTiketLinea:cNumTil + ::oTiketLinea:cSufTil )
+   METHOD cTextoTicketLinea()          INLINE ( ::oTiketLinea:cSerTil + "/" + alltrim( ::oTiketLinea:cNumTil ) + "/" + alltrim( ::oTiketLinea:cSufTil ) )
+
    METHOD cNumeroTicketByName()        INLINE ( ::oTiketCabecera:FieldGetByName( "cSerTik" ) + ::oTiketCabecera:FieldGetByName( "cNumTik" ) + ::oTiketCabecera:FieldGetByName( "cSufTik" ) )
    METHOD cNumeroTicketFormato( cNumeroTicket ) ;
                                        INLINE ( if(   Empty( cNumeroTicket ),;
@@ -677,6 +680,7 @@ CLASS TpvTactil
       METHOD eliminarLinea()
       METHOD eliminaMenu( nLineaMenu )
       METHOD eliminaEscandallo( nNumeroLinea )
+      METHOD mailEliminarLinea()
 
    // Colores-----------------------------------------------------------------
 
@@ -9576,9 +9580,45 @@ METHOD eliminarLinea()
 
    end if
 
+   ::mailEliminarLinea()
+
    ::oBrwLineas:Refresh()
 
 Return ( .t. )
+
+//------------------------------------------------------------------------//
+//
+// Envío de  mail al usuario----------------------------------------------
+//
+
+METHOD mailEliminarLinea()
+
+   local hMail          := {=>}
+   local cMensajeMail   := ""
+   local cDireccionMail := ConfiguracionEmpresasModel():getValue( 'mail_notificaciones' )
+
+   if empty( cDireccionMail )
+      Return ( Self )
+   end if 
+
+   cMensajeMail         := "<p>" + "Linea eliminada en el ticket " + ::cTextoTicketLinea()      + "</p>" + CRLF  
+   cMensajeMail         += "<p>" + "Descripción : " +  alltrim( ::oTemporalLinea:cNomTil )      + "</p>" + CRLF  
+   cMensajeMail         += "<p>" + "Unidades : " + ::nUnidadesLinea( ::oTemporalLinea, .t. )    + "</p>" + CRLF  
+   cMensajeMail         += "<p>" + "Importe : " + ::nTotalLinea( ::oTemporalLinea, .t. )        + "</p>" + CRLF  
+   cMensajeMail         += "<p>" + "Cajero : " + oUser():cCodigo() + " - " + oUser():cNombre()  + "</p>" + CRLF  
+   cMensajeMail         += "<p>" + "Fecha y hora : " + dtoc( date() ) + " - " + time()          + "</p>" + CRLF  
+
+   hSet( hMail, "mail", cDireccionMail ) 
+   hSet( hMail, "subject", "Línea eliminada en T.P.V." )
+   hSet( hMail, "message", cMensajeMail )
+
+   with object TSendMail():New()
+      if :buildMailerObject()
+         :sendMail( hMail )
+      end if 
+   end with
+
+Return ( Self )
 
 //------------------------------------------------------------------------//
 

@@ -2510,7 +2510,8 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, hHash, bValid, nMode )
       Codigo de Almacen______________________________________________________________
       */
 
-      REDEFINE GET aGet[ _CCODALM ] VAR aTmp[ _CCODALM ] ;
+      REDEFINE GET aGet[ _CCODALM ] ;
+         VAR      aTmp[ _CCODALM ] ;
          ID       200 ;
          WHEN     ( lWhen ) ;
          VALID    ( cAlmacen( aGet[ _CCODALM ], , oSay[ 2 ] ) ) ;

@@ -53,6 +53,7 @@ RETURN ( Self )
 METHOD arraySituaciones()
 
    local cSentence               := "SELECT nombre FROM " + ::cTableName
+   
    local aSelect                 := ::selectFetchArray( cSentence ) 
 
 RETURN ( aSelect )
