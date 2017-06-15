@@ -107,6 +107,8 @@ static oCmbContabilidad
 static cCmbContabilidad        
 static aCmbContabilidad        := { "Contaplus", "A3 CON" }   
 
+static cMailNotificaciones
+
 static nView
 
 static TComercio
@@ -1228,6 +1230,7 @@ STATIC FUNCTION EditConfig( aTmp, aGet, dbfEmp, oBrw, nSelFolder, bValid, nMode 
 
    cNombreSerie                  := aTmp[ _CNOMSERA ]
 
+
    // Detenemos los servicios -------------------------------------------------
 
    StopServices()
@@ -1302,6 +1305,8 @@ STATIC FUNCTION EditConfig( aTmp, aGet, dbfEmp, oBrw, nSelFolder, bValid, nMode 
 
    cCmbContabilidad        := aCmbContabilidad[ Min( Max( aTmp[ _NEXPCONTBL ], 1 ), len( aCmbContabilidad ) ) ] 
 
+   cMailNotificaciones     := padr( ConfiguracionEmpresasModel():getValue( 'mail_notificaciones', '' ), 200 )
+   
    LoaItmEmp( aTmp )
 
    DEFINE DIALOG  oDlg ;
@@ -1614,6 +1619,10 @@ STATIC FUNCTION EditConfig( aTmp, aGet, dbfEmp, oBrw, nSelFolder, bValid, nMode 
          VAR      aTmp[ ( dbfEmp )->( fieldpos( "lOpenTik" ) ) ] ;
          ID       220;
          OF       fldTPV  
+
+      REDEFINE GET cMailNotificaciones ;
+         ID       230 ;
+         OF       fldTPV
 
       // Page 2 Defecto-----------------------------------------------------------
 
@@ -4406,6 +4415,7 @@ Static Function ActDbfEmp( cCodEmp, aMsg, oAni, oDlg, oMsg, oMet, lActEmp, lSinc
 
          ActDbf( cEmpOld, cEmpTmp, "Familias",  "familias", oMet, oMsg, aMsg )
          ActDbf( cEmpOld, cEmpTmp, "FamPrv",    "familias de proveedores", oMet, oMsg, aMsg )
+         ActDbf( cEmpOld, cEmpTmp, "FamLeng",   "familias lenguajes", oMet, oMsg, aMsg )
 
          ActDbf( cEmpOld, cEmpTmp, "Categorias","categorías", oMet, oMsg, aMsg )
 
@@ -5657,6 +5667,8 @@ Static Function SaveEditConfig( aTmp, oSay, oBrw, oDlg, nMode )
       ( tmpCount )->( dbSkip() )
 
    end while
+
+   ConfiguracionEmpresasModel():setValue( 'mail_notificaciones', alltrim( cMailNotificaciones ) )
 
    // Escribimos en el definitivo----------------------------------------------
 

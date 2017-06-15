@@ -6,13 +6,16 @@
 
 CLASS ConfiguracionEmpresasModel FROM SQLBaseModel
 
-   DATA cTableName               INIT "configuracion_empresas"
+   DATA cTableName                     INIT "configuracion_empresas"
 
    DATA hColumns
 
    METHOD New()
 
    METHOD getValue()
+   METHOD getChar( name, default )     INLINE ( ::getValue( name, default ) )
+   METHOD getLogic( name, default )    INLINE ( ".T." $ upper( ::getValue( name, default ) ) )
+   METHOD getVal( name, default )      INLINE ( val( ::getValue( name, default ) ) )
 
    METHOD setValue()
 
@@ -42,13 +45,7 @@ METHOD New()
 																		"visible"	=> .t.													,;
 																		"width"		=>	200 													,;
 																		"type"		=> "C"													,;
-																		"len"			=> 50	}													,;
-												"type"	  =>	{	"create"		=>	"VHARCHAR(1) NOT NULL"                    ,;
-																		"text"		=>	"Tipo de la configuración"						,;
-																		"header"		=>	"Tipo"                                    ,;
-																		"visible"	=> .f.													,;
-																		"width"		=>	40														,;
-																		"type"		=> "L" } }				
+																		"len"			=> 50	} }				
 
    ::Super:New()
 
@@ -58,9 +55,12 @@ RETURN ( Self )
 
 METHOD getValue( name, default )
 
-   local cSentence               := "SELECT value FROM " + ::cTableName + ;
-                                       " WHERE empresa = " + toSQLString( cCodEmp() ) + " AND name = " + toSQLString( name )
-   local aSelect                 := ::selectFetchHash( cSentence )
+   local aSelect                 
+   local cSentence               
+
+   cSentence   := "SELECT value FROM " + ::cTableName + ;
+                     " WHERE empresa = " + toSQLString( cCodEmp() ) + " AND name = " + toSQLString( name )
+   aSelect     := ::selectFetchHash( cSentence )
 
    if !empty( aSelect )
       RETURN ( hget( atail( aSelect ), "value" ) )
@@ -70,10 +70,12 @@ RETURN ( default )
 
 //---------------------------------------------------------------------------//
 
-METHOD setValue( name, value, type )
+METHOD setValue( name, value )
 
    local cSelect
    local cSentence
+
+   value       := cValToStr( value )
 
    cSelect     := "( SELECT id FROM " + ::cTableName + " "  + ;
                      " WHERE empresa = " + toSQLString( cCodEmp() ) + " AND name = " + toSQLString( name ) + " )"
@@ -82,16 +84,12 @@ METHOD setValue( name, value, type )
                   " ( id ,"                                 + ;          
                      "empresa, "                            + ;
                      "name, "                               + ;
-                     "value, "                              + ;
-                     "type ) "                              + ;
+                     "value ) "                             + ;
                   "VALUES"                                  + ;
                   " ( " + cSelect + ", "                    + ;
                      toSQLString( cCodEmp() ) + ", "        + ;
                      toSQLString( name ) + ", "             + ;
-                     toSQLString( value ) + ", "            + ;
-                     toSQLString( type ) + " )"
-
-   msgalert( cSentence )
+                     toSQLString( cValToStr( value ) ) + " )"
 
    ::Query( cSentence )
 

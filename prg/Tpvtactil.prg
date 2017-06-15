@@ -9595,15 +9595,7 @@ METHOD mailEliminarLinea()
 
    local hMail          := {=>}
    local cMensajeMail   := ""
-   local cDireccionMail := uFieldEmpresa( "cMailTrno" )
-
-   if empty( cDireccionMail )
-      cDireccionMail    := uFieldEmpresa( "cCcpMai" )
-   end if 
-
-   if empty( cDireccionMail )
-      cDireccionMail    := uFieldEmpresa( "cCcoMai" )
-   end if 
+   local cDireccionMail := ConfiguracionEmpresasModel():getValue( 'mail_notificaciones' )
 
    if empty( cDireccionMail )
       Return ( Self )

@@ -9,6 +9,8 @@ function InicioHRB( aTmp, dbfTmpLin )
    local n           := 0
    local cSerie      := ""
 
+   Return ( lReturn )
+
    ( dbfTmpLin )->( dbGoTop() )
 
    while !( dbfTmpLin )->( eof() )
@@ -32,6 +34,6 @@ function InicioHRB( aTmp, dbfTmpLin )
       lReturn        := MsgYesNo( "Ha introducido barcos con series distintas", "¿Desea continuar?" )
    end if
 
-return lReturn
+Return lReturn
 
 //---------------------------------------------------------------------------//
