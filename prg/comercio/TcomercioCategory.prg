@@ -15,9 +15,10 @@ CLASS TComercioCategory FROM TComercioConector
 
    DATA  aCategoriesProduct                                 INIT {}
 
-   METHOD buildCategory( id )
+   METHOD buildCategory( id, rootCategory )
+   METHOD getOrBuildCategory( id, rootCategory ) 
 
-   METHOD insertCategories( hCategory )
+   METHOD insertCategories()
       METHOD insertCategory()
       METHOD getCategoryLangs()
          METHOD insertCategoryLang()
@@ -51,7 +52,7 @@ END CLASS
 METHOD buildCategory( id, rootCategory ) CLASS TComercioCategory
 
    local idLang
-   local aLangs         := {}
+   local aLangs            := {}
    local categoryName
    local categoryLongName
    local statusFamilias
@@ -64,7 +65,7 @@ METHOD buildCategory( id, rootCategory ) CLASS TComercioCategory
       RETURN .f.
    end if
 
-   statusFamilias       := aGetStatus( D():Familias( ::getView() ) ) 
+   statusFamilias          := aGetStatus( D():Familias( ::getView() ) ) 
 
    if ( D():Familias( ::getView() ) )->( dbseekinord( id, "cCodFam" ) )  
 
@@ -72,10 +73,10 @@ METHOD buildCategory( id, rootCategory ) CLASS TComercioCategory
          ::buildCategory( ( D():Familias( ::getView() ) )->cFamCmb )
       end if
 
-      categoryName      := alltrim( ( D():Familias( ::getView() ) )->cNomFam )
+      categoryName         := alltrim( ( D():Familias( ::getView() ) )->cNomFam )
 
       if !empty( ( D():Familias( ::getView() ) )->cDesWeb )
-         categoryName   := alltrim( ( D():Familias( ::getView() ) )->cDesWeb )
+         categoryName      := alltrim( ( D():Familias( ::getView() ) )->cDesWeb )
       end if  
 
       if !empty( ( D():Familias( ::getView() ) )->mLngDes )
@@ -84,7 +85,7 @@ METHOD buildCategory( id, rootCategory ) CLASS TComercioCategory
          categoryLongName  := categoryName
       end if  
 
-      aLangs            := ::getCategoryLangs( id, categoryName, categoryLongName )
+      aLangs               := ::getCategoryLangs( id, categoryName, categoryLongName )
 
       aAdd( ::aCategoriesProduct,   {  "id"                 => id,;
                                        "id_parent"          => alltrim( ( D():Familias( ::getView() ) )->cFamCmb ),;
@@ -100,6 +101,20 @@ METHOD buildCategory( id, rootCategory ) CLASS TComercioCategory
    end if   
 
    setStatus( D():Familias( ::getView() ), statusFamilias ) 
+
+RETURN ( Self )
+
+//---------------------------------------------------------------------------//
+
+METHOD getOrBuildCategory( id, rootCategory ) 
+
+   local idCategory
+
+   idCategory  := ::TPrestashopId():getValueCategory( idCategory, ::getCurrentWebName() )
+
+   if empty( idCategory )
+      ::buidCategory( id, rootCategory )
+   end if 
 
 RETURN ( Self )
 
@@ -121,7 +136,9 @@ METHOD truncateAllTables() CLASS TComercioCategory
 RETURN ( self )
 
 //---------------------------------------------------------------------------//
-// Insertamos el root en la tabla de categorias------------------------------
+//
+// Insertamos el root en la tabla de categorias
+//
 
 METHOD cleanGestoolReferences() CLASS TComercioCategory
 
@@ -148,68 +165,6 @@ METHOD buildRootCategoryInformation() CLASS TComercioCategory
    else 
       RETURN ( .f. )
    end if 
-
-   /*
-   Insertamos el root en la tabla de categorias------------------------------
-
-   ::writeText( "Añadiendo categoría raiz" )
-
-   cCommand       := "INSERT INTO " + ::cPrefixTable( "category" ) + " "                                                                  + ;
-                        "( id_category, id_parent, id_shop_default, level_depth, nleft, nright, active, date_add, date_upd, position ) "  + ;
-                     "VALUES "                                                                                                            + ;
-                        "( 1, 0, 1, 0, 0, 0, 1, " + quoted( dtos( GetSysDate() ) ) + ", " + quoted( dtos( GetSysDate() ) ) + ", 0 ), "    + ;
-                        "( 2, 1, 1, 0, 0, 0, 1, " + quoted( dtos( GetSysDate() ) ) + ", " + quoted( dtos( GetSysDate() ) ) + ", 0 )"   
-
-
-   if ::commandExecDirect( cCommand )
-      ::writeText( "He insertado correctamente en la tabla categorías la categoría raiz", 3 )
-   else
-      ::writeText( "Error al insertar la categoría raiz", 3 )
-   end if
-
-   cCommand       := "INSERT INTO " + ::cPrefixTable( "category_shop" ) + " ( id_category, id_shop, position ) VALUES ( '1', '1', '0' )"
-
-   if ::commandExecDirect( cCommand )
-      ::writeText( "He insertado correctamente en la tabla categorias grupo la categoría raiz", 3 )
-   else
-      ::writeText( "Error al insertar la categoría raiz", 3 )
-   end if
-
-   cCommand       := "INSERT INTO " + ::cPrefixTable( "category_group" ) + " ( id_category, id_group ) VALUES ( 1, 1 ), ( 1, 2 ), ( 1, 3 )"
-
-   if ::commandExecDirect( cCommand )
-      ::writeText( "He insertado correctamente en la tabla categorias grupo la categoría raiz", 3 )
-   else
-      ::writeText( "Error al insertar la categoría raiz", 3 )
-   end if
-
-   cCommand       := "INSERT INTO " + ::cPrefixTable( "category_lang" ) + " "                      + ;
-                        "( id_category, id_lang, name, description, link_rewrite, meta_title ) "   + ;
-                     "VALUES "                                                                     + ;
-                        "( 2, " + quoted( ::getLanguage() ) + ", 'Inicio', 'Inicio', 'Inicio')"         
-
-   if ::commandExecDirect( cCommand )
-      ::writeText( "He insertado correctamente en la tabla categorias lenguajes la categoría raiz", 3 )
-   else
-      ::writeText( "Error al insertar la categoría inicio", 3 )
-   end if
-
-   cCommand       := "INSERT INTO " + ::cPrefixTable( "category_shop" ) + " ( id_category, id_shop, position ) VALUES ( 2, 1, 0 )"
-
-   if ::commandExecDirect( cCommand )
-      ::writeText( "He insertado correctamente en la tabla categorias grupo la categoría raiz", 3 )
-   else
-      ::writeText( "Error al insertar la categoría inicio", 3 )
-   end if
-
-   cCommand       := "INSERT INTO " + ::cPrefixTable( "category_group" ) + " ( id_category, id_group ) VALUES ( 2, 1 ), ( 2, 2 ), ( 2, 3 )"
-
-   if ::commandExecDirect( cCommand )
-      ::writeText( "He insertado correctamente en la tabla categorias grupo la categoría raiz", 3 )
-   else
-      ::writeText( "Error al insertar la categoría inicio", 3 )
-   end if
-   */
 
    SysRefresh()
 
@@ -299,7 +254,7 @@ METHOD insertCategory( hCategory ) CLASS TComercioCategory
 
    // Insertamos una familia nueva en las tablas de prestashop-----------------
 
-   cCommand             := "INSERT INTO " + ::cPrefixTable( "category" ) + "( "  + ;
+   cCommand             := "INSERT IGNORE INTO " + ::cPrefixTable( "category" ) + "( "  + ;
                               "level_depth, "                                    + ;
                               "nleft, "                                          + ;
                               "nright, "                                         + ;
@@ -424,7 +379,9 @@ METHOD insertCategoryLang( hCategoryProduct, idCategory )
          idLang         := hget( hLang, "lang")
       end if 
 
-      cCommand          := "INSERT INTO " + ::cPrefixTable( "category_lang" ) + " ( "  + ;
+      idLang            := cvaltostr( idLang )
+
+      cCommand          := "INSERT IGNORE INTO " + ::cPrefixTable( "category_lang" ) + " ( "  + ;
                               "id_category, "                                          + ;
                               "id_lang, "                                              + ;
                               "name, "                                                 + ;
@@ -454,7 +411,7 @@ METHOD insertCategoryShop( hCategory, idCategory ) CLASS TComercioCategory
 
    local cCommand
 
-   cCommand             := "INSERT INTO " + ::cPrefixTable( "category_shop" ) + "( "   + ;
+   cCommand             := "INSERT IGNORE INTO " + ::cPrefixTable( "category_shop" ) + "( "   + ;
                               "id_category, "                                          + ;
                               "id_shop, "                                              + ;
                               "position ) "                                            + ;
@@ -475,7 +432,7 @@ METHOD insertCategoryGroup( hCategory, idCategory ) CLASS TComercioCategory
 
    local cCommand
 
-   cCommand             := "INSERT INTO " + ::cPrefixTable( "category_group" ) + " "   + ;
+   cCommand             := "INSERT IGNORE INTO " + ::cPrefixTable( "category_group" ) + " "   + ;
                               "( id_category, id_group ) "                             + ;
                            "VALUES "                                                   + ;
                               "( " + alltrim( str( idCategory ) ) + ", 1 ), "          + ;
@@ -672,7 +629,7 @@ METHOD insertTopMenuPs() CLASS TComercioCategory
       RETURN ( .f. )
    end if
 
-   aConfig              := hb_atokens( oQuery:FieldGetByName( "value" ), "," )
+   aConfig                 := hb_atokens( oQuery:FieldGetByName( "value" ), "," )
 
    /*
    obtenemos los valores de las categorias que queremos meter------------------

@@ -399,7 +399,7 @@ METHOD getCommandProductToUpdate( hProduct )
 
       if ( .t. ) // ( idProductAttribute != 0 ) .and. ( hget( hStock, "unitStock" ) > 0 )
 
-         cCommand             += "INSERT INTO " + ::cPrefixTable( "stock_available" ) + " ( "                           + ;
+         cCommand             += "INSERT IGNORE INTO " + ::cPrefixTable( "stock_available" ) + " ( "                    + ;
                                     "id_product, "                                                                      + ;
                                     "id_product_attribute, "                                                            + ;
                                     "id_shop, "                                                                         + ;

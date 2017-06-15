@@ -4290,6 +4290,9 @@ METHOD buildEliminaTablas() CLASS TComercio
       ::writeText( 'Error al borrar la tabla ' + ::cPrefixTable( "feature_value_lang" ), 3  )
    end if
 
+   msgalert( ::cPrefixTable( "scene" ), "scene" )
+
+   /*
    cCommand          := "TRUNCATE TABLE " + ::cPrefixTable( "scene" )
 
    if TMSCommand():New( ::oCon ):ExecDirect( cCommand )
@@ -4321,6 +4324,7 @@ METHOD buildEliminaTablas() CLASS TComercio
    else
       ::writeText( 'Error al borrar la tabla ' + ::cPrefixTable( "scene_products" ), 3  )
    end if
+   */
 
    cCommand          := "TRUNCATE TABLE " + ::cPrefixTable( "stock_available" )
 
