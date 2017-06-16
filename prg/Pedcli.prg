@@ -222,6 +222,8 @@ Definici¢n de la base de datos de lineas de detalle
 #define _CTIPCTR                 103
 #define _CTERCTR                 104
 #define _NNUMKIT                 105
+#define _ID_TIPO_V               106
+#define __NREGIVA                107
 
 /*
 Array para impuestos
@@ -7979,6 +7981,8 @@ STATIC FUNCTION EndTrans( aTmp, aGet, oBrwLin, oBrwInc, nMode, oDlg, lActualizaW
 
       if nMode == APPD_MODE .and. dbLock( dbfTmpLin )
 
+         ( dbfTmpLin )->nRegIva     := aTmp[ _NREGIVA ]
+
          if empty( ( dbfTmpLin )->dFecEnt )
             ( dbfTmpLin )->dFecEnt  := aTmp[ _DFECSAL ]
          end if 
@@ -11702,12 +11706,18 @@ RETURN ( DescripLeng( cPedCliL, , cArtLeng ) )
 
 FUNCTION nIvaLPedCli( dbfLin, nDec, nRouDec, nVdv, lDto, lPntVer, lImpTrn, cPouDiv )
 
-   local nCalculo 	:= nTotLPedCli( dbfLin, nDec, nRouDec, nVdv, lDto, lPntVer, lImpTrn, cPouDiv )
+   local nCalculo    := 0
 
-   if !( dbfLin )->lIvaLin
-      nCalculo       := nCalculo * ( dbfLin )->nIva / 100
-   else
-      nCalculo       -= nCalculo / ( 1 + ( dbfLin )->nIva / 100 )
+   if ( dbfLin )->nRegIva <= 1
+
+      nCalculo          := nTotLPedCli( dbfLin, nDec, nRouDec, nVdv, lDto, lPntVer, lImpTrn, cPouDiv )
+
+      if !( dbfLin )->lIvaLin
+         nCalculo       := nCalculo * ( dbfLin )->nIva / 100
+      else
+         nCalculo       -= nCalculo / ( 1 + ( dbfLin )->nIva / 100 )
+      end if
+
    end if
 
 RETURN ( if( cPouDiv != NIL, Trans( nCalculo, cPouDiv ), nCalculo ) )
@@ -12697,6 +12707,13 @@ Function SynPedCli( cPath )
 
       if Empty( ( dbfPedCliL )->nPosPrint )
          ( dbfPedCliL )->nPosPrint    := ( dbfPedCliL )->nNumLin
+      end if
+
+      if ( dbfPedCliL )->nRegIva != RetFld( ( dbfPedCliL )->cSerPed + Str( ( dbfPedCliL )->nNumPed ) + ( dbfPedCliL )->cSufPed, dbfPedCliT, "nRegIva" )
+         if dbLock( dbfPedCliL )
+            ( dbfPedCliL )->nRegIva := RetFld( ( dbfPedCliL )->cSerPed + Str( ( dbfPedCliL )->nNumPed ) + ( dbfPedCliL )->cSufPed, dbfPedCliT, "nRegIva" )
+            ( dbfPedCliL )->( dbUnlock() )
+         end if
       end if
 
       ( dbfPedCliL )->( dbSkip() )
@@ -14765,6 +14782,7 @@ function aColPedCli()
    aAdd( aColPedCli, { "cTerCtr",   "C",   20,  0, "Tercero centro de coste",                         "",                           "", "( cDbfCol )", nil } )
    aAdd( aColPedCli, { "nNumKit",   "N",    4,  0, "Número de línea de escandallo",                   "",                           "", "( cDbfCol )", nil } )
    aAdd( aColPedCli, { "id_tipo_v", "N",   16,  0, "Identificador tipo de venta",                     "IdentificadorTipoVenta",     "", "( cDbfCol )", nil } )
+   aAdd( aColPedCli, { "nRegIva",   "N",    1,  0, "Régimen de " + cImp(),                            "TipoImpuesto",               "", "( cDbfCol )", nil } )
 
 return ( aColPedCli )
 

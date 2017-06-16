@@ -241,6 +241,8 @@ Definici¢n de la base de datos de lineas de detalle
 #define _CTIPCTR                 109
 #define _CTERCTR                 110
 #define _NNUMKIT                 111
+#define _ID_TIPO_V               112
+#define __NREGIVA                113
 
 /*
 Definici¢n de Array para impuestos
@@ -11771,6 +11773,7 @@ STATIC FUNCTION EndTrans( aTmp, aGet, oBrw, oBrwInc, nMode, oDlg )
          ( dbfTmpLin )->dFecAlb        := aTmp[ _DFECALB ]
          ( dbfTmpLin )->tFecAlb        := aTmp[ _TFECALB ]
          ( dbfTmpLin )->cCodCli        := aTmp[ _CCODCLI ]
+         ( dbfTmpLin )->nRegIva        := aTmp[ _NREGIVA ]
          
          if empty( ( dbfTmpLin )->cCtrCoste )
             ( dbfTmpLin )->cCtrCoste   := aTmp[ _CCENTROCOSTE ]
@@ -14089,12 +14092,16 @@ FUNCTION nIvaLAlbCli( cAlbCliL, nDec, nRou, nVdv, lDto, lPntVer, lImpTrn, cPouDi
    DEFAULT lPntVer   := .t.
    DEFAULT lImpTrn   := .t.
 
-   nCalculo          := nTotLAlbCli( cAlbCliL, nDec, nRou, nVdv, lDto, lPntVer, lImpTrn, cPouDiv )   
+   if ( cAlbCliL )->nRegIva <= 1
 
-   if !( cAlbCliL )->lIvaLin
-      nCalculo       := nCalculo * ( cAlbCliL )->nIva / 100
-   else
-      nCalculo       -= nCalculo / ( 1 + ( cAlbCliL )->nIva / 100 )
+      nCalculo          := nTotLAlbCli( cAlbCliL, nDec, nRou, nVdv, lDto, lPntVer, lImpTrn, cPouDiv )   
+
+      if !( cAlbCliL )->lIvaLin
+         nCalculo       := nCalculo * ( cAlbCliL )->nIva / 100
+      else
+         nCalculo       -= nCalculo / ( 1 + ( cAlbCliL )->nIva / 100 )
+      end if
+
    end if
 
    nCalculo          := Round( nCalculo, nRou )
@@ -15118,6 +15125,13 @@ function SynAlbCli( cPath )
             if dbLock( D():Get( "AlbCliL", nView ) )
                ( D():Get( "AlbCliL", nView ) )->nReq       := nPReq( D():Get( "TIva", nView ), ( D():Get( "AlbCliL", nView ) )->nIva )
                ( D():Get( "AlbCliL", nView ) )->( dbUnLock() )
+            end if
+         end if
+
+         if ( D():AlbaranesClientesLineas( nView ) )->nRegIva != RetFld( D():AlbaranesClientesLineasId( nView ), D():AlbaranesClientes( nView ), "nRegIva" )
+            if dbLock( D():AlbaranesClientesLineas( nView ) )
+               ( D():AlbaranesClientesLineas( nView ) )->nRegIva := RetFld( D():AlbaranesClientesLineasId( nView ), D():AlbaranesClientes( nView ), "nRegIva" )
+               ( D():AlbaranesClientesLineas( nView ) )->( dbUnlock() )
             end if
          end if
 
@@ -16363,7 +16377,7 @@ FUNCTION rxAlbCli( cPath, cDriver )
       ( cAlbCliT )->( ordCreate( cPath + "ALBCLIL.CDX", "cPedRef", "cNumPed + cRef", {|| Field->cNumPed + Field->cRef } ) )
 
       ( cAlbCliT )->( ordCondSet( "!Deleted()", {|| !Deleted() } ) )
-      ( cAlbCliT )->( ordCreate( cPath + "AlbCliL.Cdx", "iNumAlb", "'10' + cSerAlb + Str( nNumAlb ) + Space( 1 ) + cSufAlb", {|| '10' + Field->cSerAlb + Str( Field->nNumAlb ) + Space( 1 ) + Field->cSufAlb } ) )
+      ( cAlbCliT )->( ordCreate( cPath + "AlbCliL.Cdx", "iNumAlb", "'10' + cSerAlb + Str( nNumAlb ) + Space( 1 ) + cSufAlb + Str( nNumLin )", {|| '10' + Field->cSerAlb + Str( Field->nNumAlb ) + Space( 1 ) + Field->cSufAlb + Str( Field->nNumLin ) } ) )
 
       ( cAlbCliT )->( ordCondSet("!Deleted()", {||!Deleted()}  ) )
       ( cAlbCliT )->( ordCreate( cPath + "AlbCliL.Cdx", "nPosPrint", "cSerAlb + Str( nNumAlb ) + cSufAlb + Str( nPosPrint )", {|| Field->cSerAlb + Str( Field->nNumAlb ) + Field->cSufAlb + Str( Field->nPosPrint ) } ) )
@@ -16945,6 +16959,7 @@ Function aColAlbCli()
    aAdd( aColAlbCli, { "cTerCtr",   "C", 20, 0, "Tercero centro de coste",                         "",                              "", "( cDbfCol )", nil } )
    aAdd( aColAlbCli, { "nNumKit",   "N",  4, 0, "Número de línea de escandallo",                   "",                              "", "( cDbfCol )", nil } )
    aAdd( aColAlbCli, { "id_tipo_v", "N", 16, 0, "Identificador tipo de venta",                     "IdentificadorTipoVenta",        "", "( cDbfCol )", nil } )
+   aAdd( aColAlbCli, { "nRegIva",   "N",  1, 0, "Régimen de " + cImp(),                            "TipoImpuesto",                  "", "( cDbfCol )", nil } ) 
 
 Return ( aColAlbCli )
 
