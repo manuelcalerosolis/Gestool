@@ -56,11 +56,11 @@ METHOD buildCategory( id, rootCategory ) CLASS TComercioCategory
    local categoryName
    local categoryLongName
    local statusFamilias
-
+/*
    if !( ::isSyncronizeAll() )
       RETURN .f. 
    end if 
-
+*/
    if ascan( ::aCategoriesProduct, {|h| hGet( h, "id" ) == id } ) != 0
       RETURN .f.
    end if
@@ -110,10 +110,16 @@ METHOD getOrBuildCategory( id, rootCategory )
 
    local idCategory
 
-   idCategory  := ::TPrestashopId():getValueCategory( idCategory, ::getCurrentWebName() )
+   msgalert( id, "id" )
+
+   idCategory  := ::TPrestashopId():getValueCategory( id, ::getCurrentWebName() )
 
    if empty( idCategory )
-      ::buidCategory( id, rootCategory )
+
+      ::buildCategory( id, rootCategory )
+
+      msgalert( hb_valtoexp( ::aCategoriesProduct ), "aCategoriesProduct" )
+
    end if 
 
 RETURN ( Self )

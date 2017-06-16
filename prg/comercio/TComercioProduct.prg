@@ -145,7 +145,7 @@ Return ( .t. )
 METHOD buildProductInformation( idProduct ) CLASS TComercioProduct
 
    if !( ::isProductInDatabase( idProduct ) )
-      Return .f.
+      Return ( .f. )
    end if 
 
    if !( ::isProductActiveInCurrentWeb( idProduct ) )
@@ -770,7 +770,9 @@ METHOD cleanGestoolReferences() CLASS TComercioProduct
 Return ( Self )
 
 //---------------------------------------------------------------------------//
-// Subimos los artículos----------------------------------------------------
+//
+// Subimos los artículos
+//
 
 METHOD insertProducts() CLASS TComercioProduct
 
@@ -819,12 +821,18 @@ METHOD insertProduct( hProduct ) CLASS TComercioProduct
    local idProduct
    local idCategory
 
+   msgalert( "insertProduct" )
+
    idCategory           := hGet( hProduct, "id_category_default" )
+
+   ::TComercioCategory():getOrBuildCategory( idCategory ) 
+
+   Return ( Self )
 
    ::idCategoryDefault  := ::TPrestashopId():getValueCategory( idCategory, ::getCurrentWebName(), 2 )
 
    ::idTaxRulesGroup    := ::TPrestashopId():getValueTaxRuleGroup( hGet( hProduct, "id_tax_rules_group" ), ::getCurrentWebName() )
-   
+
    ::idManufacturer     := ::TPrestashopId():getValueManufacturer( hGet( hProduct, "id_manufacturer" ), ::getCurrentWebName() )
 
    // Publicar el articulo en su categoria-------------------------------------

@@ -62,6 +62,7 @@ CLASS ViewBase
    METHOD initDialog()
    METHOD endDialog()                                    VIRTUAL
    METHOD startDialog()                                  VIRTUAL
+   METHOD validDialog()                                  INLINE ( .t. )
 
    METHOD setDialog( oDlg )                              INLINE ( ::oDlg := oDlg )
 
@@ -119,7 +120,7 @@ METHOD Resource() CLASS ViewBase
 
    ::oDlg:bStart           := {|| ::startDialog() }
 
-   ::oDlg:Activate( ,,,.t.,,, {|| ::initDialog() } )
+   ::oDlg:Activate( , , , .t., {|| ::validDialog() }, , {|| ::initDialog() } )
 
 Return ( ::oDlg:nResult == IDOK )
 
