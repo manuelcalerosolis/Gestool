@@ -540,24 +540,16 @@ METHOD validImporteCobro() CLASS ReceiptDocumentSalesViewEdit
    msgalert( ::getValue( "TotalDocumento" ), "TotalDocumento" )
    msgalert( ::nImporteOriginal, "nImporteOriginal" )
 
-   if ::getValue( "ImporteCobro" ) > ::nImporteOriginal
+   if ::getValue( "TotalDocumento" ) > ::nImporteOriginal
 
       apoloMsgStop( "El importe del cobro excede al importe del recibo" )
 
       Return ( .f. )
 
-   end if 
-
-   if ::getValue( "TotalDocumento" ) < ::getValue( "ImporteCobro" ) 
-
-      apoloMsgStop( "El importe del cobro excede al importe del recibo" )
-
-      Return ( .f. )
-
-   else 
+   else
 
       ::setValue( ::getValue( "TotalDocumento" ), "ImporteCobro" )
-
+      
    end if 
 
 /*

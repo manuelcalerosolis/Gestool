@@ -821,13 +821,11 @@ METHOD insertProduct( hProduct ) CLASS TComercioProduct
    local idProduct
    local idCategory
 
-   msgalert( "insertProduct" )
-
    idCategory           := hGet( hProduct, "id_category_default" )
 
-   ::TComercioCategory():getOrBuildCategory( idCategory ) 
+//   ::TComercioCategory():getOrBuildCategory( idCategory ) 
 
-   Return ( Self )
+//   Return ( Self )
 
    ::idCategoryDefault  := ::TPrestashopId():getValueCategory( idCategory, ::getCurrentWebName(), 2 )
 

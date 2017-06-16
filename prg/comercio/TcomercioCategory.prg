@@ -110,8 +110,6 @@ METHOD getOrBuildCategory( id, rootCategory )
 
    local idCategory
 
-   msgalert( id, "id" )
-
    idCategory  := ::TPrestashopId():getValueCategory( id, ::getCurrentWebName() )
 
    if empty( idCategory )
