@@ -485,6 +485,7 @@ CLASS TComercio
    METHOD updateWebProductStocks( oStock )            INLINE ( ::TComercioStock:updateWebProductStocks( oStock ) )
 
    METHOD insertStructureInformation()
+   METHOD insertProductInformation()
    METHOD insertOneProductToPrestashop( idProduct )
    METHOD insertAllProducts()
 
@@ -3950,392 +3951,6 @@ RETURN ( .t. )
 
 METHOD buildEliminaTablas() CLASS TComercio
 
-   local cCommand
-
-   /*
-   Vaciamos las tablas de tipos de Iva-----------------------------------------
-   */
-
-   if TMSCommand():New( ::oCon ):ExecDirect( "TRUNCATE TABLE " + ::cPreFixtable( "tax" ) )
-      ::writeText( 'Tabla ' + ::cPreFixtable( "tax" ) + ' borrada correctamente', 3  )
-   else
-      ::writeText( 'Error al borrar la tabla ' + ::cPreFixtable( "tax" ), 3  )
-   end if
-
-   if TMSCommand():New( ::oCon ):ExecDirect( "TRUNCATE TABLE " + ::cPreFixtable( "tax_lang" ) )
-      ::writeText( 'Tabla ' + ::cPreFixtable( "tax_lang" ) + ' borrada correctamente', 3  )
-   else
-      ::writeText( 'Error al borrar la tabla ' + ::cPreFixtable( "tax_lang" ), 3  )
-   end if
-
-   if TMSCommand():New( ::oCon ):ExecDirect( "TRUNCATE TABLE " + ::cPreFixtable( "tax_rule" ) )
-      ::writeText( 'Tabla ' + ::cPreFixtable( "tax_rule" ) + ' borrada correctamente', 3  )
-   else
-      ::writeText( 'Error al borrar la tabla ' + ::cPreFixtable( "tax_rule" ), 3  )
-   end if
-
-   if TMSCommand():New( ::oCon ):ExecDirect( "TRUNCATE TABLE " + ::cPreFixtable( "tax_rules_group" ) )
-      ::writeText( 'Tabla ' + ::cPreFixtable( "tax_rules_group" ) + ' borrada correctamente', 3  )
-   else
-      ::writeText( 'Error al borrar la tabla ' + ::cPreFixtable( "tax_rules_group" ), 3  )
-   end if
-
-   if TMSCommand():New( ::oCon ):ExecDirect( "TRUNCATE TABLE " + ::cPreFixtable( "tax_rules_group_shop" ) )
-      ::writeText( 'Tabla ' + ::cPreFixtable( "tax_rules_group_shop" ) + ' borrada correctamente', 3  )
-   else
-      ::writeText( 'Error al borrar la tabla ' + ::cPreFixtable( "tax_rules_group_shop" ), 3  )
-   end if
-
-   /*
-   Vaciamos las tablas de fabricantes------------------------------------------
-   */
-
-   if TMSCommand():New( ::oCon ):ExecDirect( "TRUNCATE TABLE " + ::cPrefixTable( "manufacturer" ) )
-      ::writeText( 'Tabla ' + ::cPrefixTable( "manufacturer" ) + ' borrada correctamente', 3  )
-   else
-      ::writeText( 'Error al borrar la tabla ' + ::cPrefixTable( "manufacturer" ), 3  )
-   end if
-
-   if TMSCommand():New( ::oCon ):ExecDirect( "TRUNCATE TABLE " + ::cPrefixTable( "manufacturer_shop" ) )
-      ::writeText( 'Tabla ' + ::cPrefixTable( "manufacturer_shop" ) + ' borrada correctamente', 3 )
-   else
-      ::writeText( 'Error al borrar la tabla ' + ::cPreFixtable( "manufacturer_shop" ), 3 )
-   end if
-
-   if TMSCommand():New( ::oCon ):ExecDirect( "TRUNCATE TABLE " + ::cPrefixTable( "manufacturer_lang" ) )
-      ::writeText( 'Tabla ' + ::cPrefixTable( "manufacturer_lang" ) + ' borrada correctamente', 3  )
-   else
-      ::writeText( 'Error al borrar la tabla ' + ::cPrefixTable( "manufacturer_lang" ), 3  )
-   end if
-
-   /*
-   Vaciamos las tablas de Categorias-------------------------------------------
-   */
-
-   cCommand       := "TRUNCATE TABLE " + ::cPrefixtable( "category" )
-
-   if TMSCommand():New( ::oCon ):ExecDirect( cCommand )
-      ::writeText( 'Tabla ' + ::cPreFixtable( "category" ) + ' borrada correctamente', 3  )
-   else
-      ::writeText( 'Error al borrar la tabla ' + ::cPreFixtable( "category" ), 3  )
-   end if
-
-   cCommand       := "TRUNCATE TABLE " + ::cPrefixTable( "category_lang" )
-
-   if TMSCommand():New( ::oCon ):ExecDirect( cCommand )
-      ::writeText( 'Tabla ' + ::cPrefixTable( "category_lang" ) + ' borrada correctamente', 3  )
-   else
-      ::writeText( 'Error al borrar la tabla ' + ::cPrefixTable( "category_lang" ), 3  )
-   end if
-
-   cCommand       := "TRUNCATE TABLE " + ::cPrefixTable( "category_product" )
-
-   if TMSCommand():New( ::oCon ):ExecDirect( cCommand )
-      ::writeText( 'Tabla ' + ::cPrefixTable( "category_product" ) + ' borrada correctamente', 3  )
-   else
-      ::writeText( 'Error al borrar la tabla ' + ::cPrefixTable( "category_product" ), 3  )
-   end if
-
-   cCommand       := "TRUNCATE TABLE " + ::cPrefixTable( "category_group" )
-
-   if TMSCommand():New( ::oCon ):ExecDirect( cCommand )
-      ::writeText( 'Tabla ' + ::cPrefixTable( "category_group" ) + ' borrada correctamente', 3  )
-   else
-      ::writeText( 'Error al borrar la tabla ' + ::cPrefixTable( "category_group" ), 3  )
-   end if
-
-   cCommand       := "TRUNCATE TABLE " + ::cPrefixTable( "category_shop" )
-
-   if TMSCommand():New( ::oCon ):ExecDirect( cCommand )
-      ::writeText( 'Tabla ' + ::cPrefixTable( "category_shop" ) + ' borrada correctamente', 3  )
-   else
-      ::writeText( 'Error al borrar la tabla '+ ::cPrefixTable( "category_group" ), 3  )
-   end if
-
-   cCommand       := "TRUNCATE TABLE " + ::cPrefixTable( "image" )
-
-   if TMSCommand():New( ::oCon ):ExecDirect( cCommand )
-      ::writeText( 'Tabla ' + ::cPrefixTable( "image" ) + 'borrada correctamente', 3  )
-   else
-      ::writeText( 'Error al borrar la tabla' + ::cPrefixTable( "image" ), 3  )
-   end if
-
-   cCommand       := "TRUNCATE TABLE " + ::cPrefixTable( "image_shop" )
-
-   if TMSCommand():New( ::oCon ):ExecDirect( cCommand )
-      ::writeText( 'Tabla ' + ::cPrefixTable( "image_shop" ) + ' borrada correctamente', 3  )
-   else
-      ::writeText( 'Error al borrar la tabla '+ ::cPrefixTable( "image_shop" ), 3  )
-   end if
-
-   cCommand       := "TRUNCATE TABLE " + ::cPrefixTable( "image_lang" )
-
-   if TMSCommand():New( ::oCon ):ExecDirect( cCommand )
-      ::writeText( 'Tabla ' + ::cPrefixTable( "image_lang" ) + ' borrada correctamente', 3  )
-   else
-      ::writeText( 'Error al borrar la tabla ' + ::cPrefixTable( "image_lang" ), 3  )
-   end if
-
-   /*
-   Cargamos la categoría raiz de la que colgarán todas las demás---------------
-   */
-
-   ::insertRootCategory()
-
-   /*
-   Vaciamos las tablas de propiedades------------------------------------------
-   */
-
-   cCommand       := "TRUNCATE TABLE " + ::cPrefixTable( "attribute" )
-
-   if TMSCommand():New( ::oCon ):ExecDirect( cCommand )
-      ::writeText( 'Tabla ' + ::cPrefixTable( "attribute" ) + ' borrada correctamente', 3  )
-   else
-      ::writeText( 'Error al borrar la tabla ' + ::cPrefixTable( "attribute" ), 3  )
-   end if
-
-   cCommand       := "TRUNCATE TABLE " + ::cPrefixTable( "attribute_lang" )
-
-   if TMSCommand():New( ::oCon ):ExecDirect( cCommand )
-      ::writeText( 'Tabla ' + ::cPrefixTable( "attribute_lang" ) + ' borrada correctamente', 3  )
-   else
-      ::writeText( 'Error al borrar la tabla ' + ::cPrefixTable( "attribute_lang" ), 3  )
-   end if
-
-   cCommand       := "TRUNCATE TABLE " + ::cPrefixTable( "attribute_shop" )
-
-   if TMSCommand():New( ::oCon ):ExecDirect( cCommand )
-      ::writeText( 'Tabla ' + ::cPrefixTable( "attribute_shop" ) + ' borrada correctamente', 3  )
-   else
-      ::writeText( 'Error al borrar la tabla ' + ::cPrefixTable( "attribute_shop" ), 3  )
-   end if
-
-   cCommand       := "TRUNCATE TABLE " + ::cPrefixTable( "attribute_impact" )
-
-   if TMSCommand():New( ::oCon ):ExecDirect( cCommand )
-      ::writeText( 'Tabla ' + ::cPrefixTable( "attribute_impact" ) + ' borrada correctamente', 3  )
-   else
-      ::writeText( 'Error al borrar la tabla ' + ::cPrefixTable( "attribute_impact" ), 3  )
-   end if
-
-   cCommand       := "TRUNCATE TABLE " + ::cPrefixTable( "attribute_group" )
-
-   if TMSCommand():New( ::oCon ):ExecDirect( cCommand )
-      ::writeText( 'Tabla ' + ::cPrefixTable( "attribute_group" ) + ' borrada correctamente', 3  )
-   else
-      ::writeText( 'Error al borrar la tabla ' + ::cPrefixTable( "attribute_group" ), 3  )
-   end if
-
-   cCommand       := "TRUNCATE TABLE " + ::cPrefixTable( "attribute_group_lang" )
-
-   if TMSCommand():New( ::oCon ):ExecDirect( cCommand )
-      ::writeText( 'Tabla ' + ::cPrefixTable( "attribute_group_lang" ) + ' borrada correctamente', 3  )
-   else
-      ::writeText( 'Error al borrar la tabla ' + ::cPrefixTable( "attribute_group_lang" ), 3  )
-   end if
-
-   /*
-   Vaciamos las tablas de Artículos--------------------------------------------
-   */
-
-   cCommand          := "TRUNCATE TABLE " + ::cPrefixTable( "product" )
-
-   if TMSCommand():New( ::oCon ):ExecDirect( cCommand )
-      ::writeText( 'Tabla ' + ::cPrefixTable( "product" ) + ' borrada correctamente', 3  )
-   else
-      ::writeText( 'Error al borrar la tabla ' + ::cPrefixTable( "product" ), 3  )
-   end if
-
-   cCommand          := "TRUNCATE TABLE " + ::cPrefixTable( "product_attachment" )
-
-   if TMSCommand():New( ::oCon ):ExecDirect( cCommand )
-      ::writeText( 'Tabla ' + ::cPrefixTable( "product_attachment" ) + ' borrada correctamente', 3  )
-   else
-      ::writeText( 'Error al borrar la tabla ' + ::cPrefixTable( "product_attachment" ), 3  )
-   end if
-
-   cCommand          := "TRUNCATE TABLE " + ::cPrefixTable( "product_attribute" )
-
-   if TMSCommand():New( ::oCon ):ExecDirect( cCommand )
-      ::writeText( 'Tabla ' + ::cPrefixTable( "product_attribute" ) + ' borrada correctamente', 3  )
-   else
-      ::writeText( 'Error al borrar la tabla ' + ::cPrefixTable( "product_attribute" ), 3  )
-   end if
-
-   cCommand          := "TRUNCATE TABLE " + ::cPrefixTable( "product_attribute_combination" )
-
-   if TMSCommand():New( ::oCon ):ExecDirect( cCommand )
-      ::writeText( 'Tabla ' + ::cPrefixTable( "product_attribute_combination" ) + ' borrada correctamente', 3  )
-   else
-      ::writeText( 'Error al borrar la tabla ' + ::cPrefixTable( "product_attribute_combination" ), 3  )
-   end if
-
-   cCommand          := "TRUNCATE TABLE " + ::cPrefixTable( "product_attribute_shop" )
-
-   if TMSCommand():New( ::oCon ):ExecDirect( cCommand )
-      ::writeText( 'Tabla ' + ::cPrefixTable( "product_attribute_shop" ) + ' borrada correctamente', 3  )
-   else
-      ::writeText( 'Error al borrar la tabla ' + ::cPrefixTable( "product_attribute_shop" ), 3  )
-   end if
-
-   cCommand          := "TRUNCATE TABLE " + ::cPreFixTable( "product_attribute_image" )
-
-   if TMSCommand():New( ::oCon ):ExecDirect( cCommand )
-      ::writeText( 'Tabla ' + ::cPrefixTable( "product_attribute_image" ) + ' borrada correctamente', 3  )
-   else
-      ::writeText( 'Error al borrar la tabla ' + ::cPrefixTable( "product_attribute_image" ), 3  )
-   end if
-
-   cCommand          := "TRUNCATE TABLE " + ::cPrefixTable( "product_country_tax" )
-
-   if TMSCommand():New( ::oCon ):ExecDirect( cCommand )
-      ::writeText( 'Tabla ' + ::cPrefixTable( "product_country_tax" ) + ' borrada correctamente', 3  )
-   else
-      ::writeText( 'Error al borrar la tabla ' + ::cPrefixTable( "product_country_tax" ), 3  )
-   end if
-
-   cCommand          := "TRUNCATE TABLE " + ::cPrefixTable( "product_download" )
-
-   if TMSCommand():New( ::oCon ):ExecDirect( cCommand )
-      ::writeText( 'Tabla ' + ::cPrefixTable( "product_download" ) + ' borrada correctamente', 3  )
-   else
-      ::writeText( 'Error al borrar la table ' + ::cPrefixTable( "product_download" ), 3  )
-   end if
-
-   cCommand          := "TRUNCATE TABLE " + ::cPrefixTable( "product_group_reduction_cache" )
-
-   if TMSCommand():New( ::oCon ):ExecDirect( cCommand )
-      ::writeText( 'Tabla ' + ::cPrefixTable( "product_group_reduction_cache" ) + ' borrada correctamente', 3  )
-   else
-      ::writeText( 'Error al borrar la tabla ' + ::cPrefixTable( "product_group_reduction_cache" ), 3  )
-   end if
-
-   cCommand          := "TRUNCATE TABLE " + ::cPrefixTable( "product_shop" )
-
-   if TMSCommand():New( ::oCon ):ExecDirect( cCommand )
-      ::writeText( 'Tabla ' + ::cPrefixTable( "product_shop" ) + ' borrada correctamente', 3  )
-   else
-      ::writeText( 'Error al borrar la tabla ' + ::cPrefixTable( "product_shop" ), 3  )
-   end if
-
-   cCommand          := "TRUNCATE TABLE " + ::cPrefixTable( "product_lang" )
-
-   if TMSCommand():New( ::oCon ):ExecDirect( cCommand )
-      ::writeText( 'Tabla ' + ::cPrefixTable( "product_lang" ) + ' borrada correctamente', 3  )
-   else
-      ::writeText( 'Error al borrar la tabla ' + ::cPrefixTable( "product_lang" ), 3  )
-   end if
-
-   cCommand          := "TRUNCATE TABLE " + ::cPrefixTable( "product_sale" ) 
-
-   if TMSCommand():New( ::oCon ):ExecDirect( cCommand )
-      ::writeText( 'Tabla ' + ::cPrefixTable( "product_sale" ) + ' borrada correctamente', 3  )
-   else
-      ::writeText( 'Error al borrar la tabla ' + ::cPrefixTable( "product_sale" ), 3  )
-   end if
-
-   cCommand          := "TRUNCATE TABLE " + ::cPrefixTable( "product_tag" )
-
-   if TMSCommand():New( ::oCon ):ExecDirect( cCommand )
-      ::writeText( 'Tabla ' + ::cPrefixTable( "product_tag" ) + ' borrada correctamente', 3  )
-   else
-      ::writeText( 'Error al borrar la tabla ' + ::cPrefixTable( "product_tag" ), 3  )
-   end if
-
-   cCommand          := "TRUNCATE TABLE " + ::cPrefixTable( "specific_price")
-
-   if TMSCommand():New( ::oCon ):ExecDirect( cCommand )
-      ::writeText( 'Tabla ' + ::cPrefixTable( "specific_price" ) + ' borrada correctamente', 3  )
-   else
-      ::writeText( 'Error al borrar la tabla ' + ::cPrefixTable( "specific_price" ), 3  )
-   end if
-
-   cCommand          := "TRUNCATE TABLE " + ::cPrefixTable( "feature" )
-
-   if TMSCommand():New( ::oCon ):ExecDirect( cCommand )
-      ::writeText( 'Tabla '  + ::cPrefixTable( "feature" ) + ' borrada correctamente', 3  )
-   else
-      ::writeText( 'Error al borrar la tabla ' + ::cPrefixTable( "feature" ), 3  )
-   end if
-
-   cCommand          := "TRUNCATE TABLE " + ::cPrefixTable( "feature_lang" )
-
-   if TMSCommand():New( ::oCon ):ExecDirect( cCommand )
-      ::writeText( 'Tabla ' + ::cPrefixTable( "feature_lang" ) + ' borrada correctamente', 3  )
-   else
-      ::writeText( 'Error al borrar la tabla ' + ::cPrefixTable( "feature_lang" ), 3  )
-   end if
-
-   cCommand          := "TRUNCATE TABLE " + ::cPrefixTable( "feature_product" )
-
-   if TMSCommand():New( ::oCon ):ExecDirect( cCommand )
-      ::writeText( 'Tabla ' + ::cPrefixTable( "feature_product" ) + ' borrada correctamente', 3  )
-   else
-      ::writeText( 'Error al borrar la tabla ' + ::cPrefixTable( "feature_product" ), 3  )
-   end if
-
-   cCommand          := "TRUNCATE TABLE " + ::cPrefixTable( "feature_value" )
-
-   if TMSCommand():New( ::oCon ):ExecDirect( cCommand )
-      ::writeText( 'Tabla ' + ::cPrefixTable( "feature_value" ) + ' borrada correctamente', 3  )
-   else
-      ::writeText( 'Error al borrar la tabla ' + ::cPrefixTable( "feature_value" ), 3  )
-   end if
-
-   cCommand          := "TRUNCATE TABLE " + ::cPrefixTable( "feature_value_lang" )
-
-   if TMSCommand():New( ::oCon ):ExecDirect( cCommand )
-      ::writeText( 'Tabla ' + ::cPrefixTable( "feature_value_lang" ) + ' borrada correctamente', 3  )
-   else
-      ::writeText( 'Error al borrar la tabla ' + ::cPrefixTable( "feature_value_lang" ), 3  )
-   end if
-
-   cCommand          := "TRUNCATE TABLE " + ::cPrefixTable( "scene" )
-
-   if TMSCommand():New( ::oCon ):ExecDirect( cCommand )
-      ::writeText( 'Tabla ' + ::cPrefixTable( "scene " ) + ' borrada correctamente', 3  )
-   else
-      ::writeText( 'Error al borrar la tabla ' + ::cPrefixTable( "scene" ), 3  )
-   end if
-
-   cCommand          := "TRUNCATE TABLE " + ::cPrefixTable( "scene_category" )
-
-   if TMSCommand():New( ::oCon ):ExecDirect( cCommand )
-      ::writeText( 'Tabla ' + ::cPrefixTable( "scene_category" ) + ' borrada correctamente', 3  )
-   else
-      ::writeText( 'Error al borrar la tabla' + ::cPrefixTable( "scene_category" ), 3  )
-   end if
-
-   cCommand          := "TRUNCATE TABLE " + ::cPrefixTable( "scene_lang" )
-
-   if TMSCommand():New( ::oCon ):ExecDirect( cCommand )
-      ::writeText( 'Tabla ' + ::cPrefixTable( "scene_lang" ) + ' borrada correctamente', 3  )
-   else
-      ::writeText( 'Error al borrar la tabla ' + ::cPrefixTable( "scene_lang" ), 3  )
-   end if
-
-   cCommand          := "TRUNCATE TABLE " + ::cPrefixTable( "scene_products" )
-
-   if TMSCommand():New( ::oCon ):ExecDirect( cCommand )
-      ::writeText( 'Tabla ' + ::cPrefixTable( "scene_products" ) + ' borrada correctamente', 3  )
-   else
-      ::writeText( 'Error al borrar la tabla ' + ::cPrefixTable( "scene_products" ), 3  )
-   end if
-
-   cCommand          := "TRUNCATE TABLE " + ::cPrefixTable( "stock_available" )
-
-   if TMSCommand():New( ::oCon ):ExecDirect( cCommand )
-      ::writeText( 'Tabla ' + ::cPrefixTable( "stock_available" ) + ' borrada correctamente', 3  )
-   else
-      ::writeText( 'Error al borrar la tabla ' + ::cPrefixTable( "stock_available" ), 3  )
-   end if
-
-   /*
-   Limpiamos las referencias de las tablas de gestool--------------------------
-   */
-
-   ::buildCleanPrestashop()
-
 RETURN ( self )
 
 //---------------------------------------------------------------------------//
@@ -4514,6 +4129,46 @@ METHOD insertStructureInformation() CLASS TComercio
 RETURN .t.
 
 //---------------------------------------------------------------------------//
+
+//---------------------------------------------------------------------------//
+//
+// Construimos la estructura de la informacion de todos los productos----------
+//
+
+METHOD insertProductInformation() CLASS TComercio
+
+   ::TComercioProduct:buildProductInformation( ( D():Articulos( ::getView() ) )->Codigo )
+
+   if ::prestaShopConnect()
+
+      ::MeterTotalText( "Subiendo la información de las categorias." )
+
+      ::TComercioCategory:insertCategories()   
+
+      ::MeterTotalText( "Relacionando categorias." )
+
+      ::TComercioCategory:updateCategoriesParent()
+
+      ::MeterTotalText( "Recalculando posiciones de categorias." )
+
+      ::TComercioCategory:recalculatePositionsCategory()
+
+      ::MeterTotalText( "Subiendo la información adicional a los productos." )
+
+      ::TComercioCategory:insertTopMenuPs()
+      
+      ::MeterTotalText( "Recalculando Top Menu." )
+
+      ::TComercioProduct:insertAditionalInformation()
+
+      ::prestaShopDisConnect()
+
+   end if 
+
+RETURN .t.
+
+//---------------------------------------------------------------------------//
+
 
 METHOD controllerExportOneProductToPrestashop( idProduct ) Class TComercio
 

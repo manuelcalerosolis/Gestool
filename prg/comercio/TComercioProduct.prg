@@ -145,7 +145,7 @@ Return ( .t. )
 METHOD buildProductInformation( idProduct ) CLASS TComercioProduct
 
    if !( ::isProductInDatabase( idProduct ) )
-      Return .f.
+      Return ( .f. )
    end if 
 
    if !( ::isProductActiveInCurrentWeb( idProduct ) )
@@ -733,10 +733,6 @@ METHOD truncateAllTables() CLASS TComercioProduct
                               "feature_product",;
                               "feature_value",;
                               "feature_value_lang",;
-                              "scene",;
-                              "scene_category",;
-                              "scene_lang",;
-                              "scene_products",;
                               "stock_available" }
 
    for each tableToDelete in tablesToDelete
@@ -774,7 +770,9 @@ METHOD cleanGestoolReferences() CLASS TComercioProduct
 Return ( Self )
 
 //---------------------------------------------------------------------------//
-// Subimos los artículos----------------------------------------------------
+//
+// Subimos los artículos
+//
 
 METHOD insertProducts() CLASS TComercioProduct
 
@@ -823,10 +821,18 @@ METHOD insertProduct( hProduct ) CLASS TComercioProduct
    local idProduct
    local idCategory
 
+   msgalert( "insertProduct" )
+
    idCategory           := hGet( hProduct, "id_category_default" )
 
+   ::TComercioCategory():getOrBuildCategory( idCategory ) 
+
+   Return ( Self )
+
    ::idCategoryDefault  := ::TPrestashopId():getValueCategory( idCategory, ::getCurrentWebName(), 2 )
+
    ::idTaxRulesGroup    := ::TPrestashopId():getValueTaxRuleGroup( hGet( hProduct, "id_tax_rules_group" ), ::getCurrentWebName() )
+
    ::idManufacturer     := ::TPrestashopId():getValueManufacturer( hGet( hProduct, "id_manufacturer" ), ::getCurrentWebName() )
 
    // Publicar el articulo en su categoria-------------------------------------
@@ -870,7 +876,7 @@ METHOD insertProductPrestashopTable( hProduct, idCategory ) CLASS TComercioProdu
 
    idProduct         := 0
 
-   cCommand          := "INSERT INTO " + ::cPrefixTable( "product" ) + " ( " + ;
+   cCommand          := "INSERT IGNORE INTO " + ::cPrefixTable( "product" ) + " ( " + ;
                            "id_manufacturer, " + ;
                            "id_tax_rules_group, " + ;
                            "id_category_default, " + ;
@@ -921,7 +927,7 @@ METHOD insertProductShop( idProduct, hProduct ) CLASS TComercioProduct
 
    local cCommand
 
-   cCommand    := "INSERT INTO " + ::cPrefixTable( "product_shop" ) + " ( " +;
+   cCommand    := "INSERT IGNORE INTO " + ::cPrefixTable( "product_shop" ) + " ( " +;
                      "id_product, " + ;
                      "id_shop, " + ;
                      "id_category_default, " + ;
@@ -957,7 +963,7 @@ METHOD insertProductLang( idProduct, hProduct ) CLASS TComercioProduct
    local hLang
    local cCommand
 
-   cCommand    := "INSERT INTO " + ::cPrefixTable( "product_lang" ) + " ( " +;
+   cCommand    := "INSERT IGNORE INTO " + ::cPrefixTable( "product_lang" ) + " ( " +;
                      "id_product, " + ;
                      "id_lang, " + ;
                      "description, " + ;
@@ -988,7 +994,7 @@ METHOD insertProductLang( idProduct, hProduct ) CLASS TComercioProduct
 
    for each hLang in hGet( hProduct, "aLangs" )
 
-      cCommand := "INSERT INTO " + ::cPrefixTable( "product_lang" ) + " ( " +;
+      cCommand := "INSERT IGNORE INTO " + ::cPrefixTable( "product_lang" ) + " ( " +;
                      "id_product, " + ;
                      "id_lang, " + ;
                      "description, " + ;
@@ -1054,7 +1060,7 @@ METHOD insertProductCategory( idProduct, idCategory ) CLASS TComercioProduct
 
    ::commandExecDirect( cCommand )
 
-   cCommand       := "INSERT INTO " + ::cPrefixTable( "category_product" ) + " ( " + ;
+   cCommand       := "INSERT IGNORE INTO " + ::cPrefixTable( "category_product" ) + " ( " + ;
                         "id_category, " + ;
                         "id_product ) " + ;
                      "VALUES ( " + ;
@@ -1111,7 +1117,7 @@ METHOD insertImage( idProduct, hProduct, hImage, nImagePosition )
    local cCommand
    local idImagePrestashop    := 0
 
-   cCommand := "INSERT INTO " + ::cPrefixTable( "image" ) + " ( " +;
+   cCommand := "INSERT IGNORE INTO " + ::cPrefixTable( "image" ) + " ( " +;
                   "id_product, " + ;
                   "position, " + ;
                   "cover ) " + ;
@@ -1139,7 +1145,7 @@ METHOD insertImageLang( hProduct, hImage, idImagePrestashop )
 
    local cCommand
 
-   cCommand := "INSERT INTO " + ::cPrefixTable( "image_lang" ) + " ( "                             + ;
+   cCommand := "INSERT IGNORE INTO " + ::cPrefixTable( "image_lang" ) + " ( "                             + ;
                   "id_image, "                                                                     + ;
                   "id_lang, "                                                                      + ;
                   "legend ) "                                                                      + ;
@@ -1162,7 +1168,7 @@ METHOD insertImageShop( idProduct, hProduct, hImage, idImagePrestashop )
 
    local cCommand 
 
-   cCommand := "INSERT INTO " + ::cPrefixTable( "image_shop" ) + " ( "                                + ;
+   cCommand := "INSERT IGNORE INTO " + ::cPrefixTable( "image_shop" ) + " ( "                                + ;
                   if( ::lProductIdColumnImageShop(), "id_product, ", "" )                             + ;
                   "id_image, "                                                                        + ;
                   "id_shop, "                                                                         + ;
@@ -1236,7 +1242,7 @@ METHOD insertProductAttributePrestashop( idProduct, hProduct, priceProperty ) CL
 
    // Metemos la propiedad de íste artículo---------------------------
 
-   cCommand := "INSERT INTO " + ::cPrefixTable( "product_attribute" ) + " ( "                                     + ;
+   cCommand := "INSERT IGNORE INTO " + ::cPrefixTable( "product_attribute" ) + " ( "                                     + ;
                   if( ::lProductIdColumnProductAttribute(), "id_product, ", "" )                                  + ;
                   "price, "                                                                                       + ;
                   "wholesale_price, "                                                                             + ;
@@ -1280,7 +1286,7 @@ METHOD insertProductAttributeCombination( idFirstProperty, valueFirstProperty, i
       ::writeText( "Error al eliminar la propiedad " + alltrim( str( idAttribute ) ) + " en la tabla " + ::cPrefixTable( "product_attribute_combination" ), 3 )
    end if
 
-   cCommand    := "INSERT INTO " +  ::cPrefixtable( "product_attribute_combination" ) + "( " + ;
+   cCommand    := "INSERT IGNORE INTO " +  ::cPrefixtable( "product_attribute_combination" ) + "( " + ;
                      "id_attribute, "                                                        + ;
                      "id_product_attribute ) "                                               + ;
                   "VALUES ("                                                                 + ;
@@ -1297,7 +1303,7 @@ Return ( idProductAttributeCombination )
 
 METHOD insertProductAttributeShop( idProduct, idProperty, priceProperty, lDefault ) CLASS TComercioProduct
 
-   local cCommand := "INSERT INTO " + ::cPrefixTable( "product_attribute_shop" ) + " ( "  + ;
+   local cCommand := "INSERT IGNORE INTO " + ::cPrefixTable( "product_attribute_shop" ) + " ( "  + ;
                         if( ::lProductIdColumnProductAttributeShop, "id_product, ", "" )  + ;
                         "id_product_attribute, "                                          + ;
                         "id_shop, "                                                       + ;
@@ -1353,7 +1359,7 @@ METHOD insertProductAttributeImage( hProduct, idProductAttribute ) CLASS TComerc
          ::writeText( "Error al eliminar el artículo " + hGet( hProduct, "name" ) + " en la tabla " + ::cPrefixTable( "product_attribute_image" ), 3 )
       end if
 
-      cCommand          := "INSERT INTO " + ::cPrefixTable( "product_attribute_image" ) + " ( " + ;
+      cCommand          := "INSERT IGNORE INTO " + ::cPrefixTable( "product_attribute_image" ) + " ( " + ;
                               "id_product_attribute, "                                          + ;
                               "id_image ) "                                                     + ;
                            "VALUES ( "                                                          + ;
@@ -1846,7 +1852,7 @@ METHOD insertTaxPrestashop( hTax ) CLASS TComercioProduct
    local idGroupWeb        := 0
    local oQuery
 
-   cCommand := "INSERT INTO " + ::cPreFixtable( "tax" ) + " ( " + ;
+   cCommand := "INSERT IGNORE INTO " + ::cPreFixtable( "tax" ) + " ( " + ;
                   "rate, " + ;
                   "active ) " + ;
                "VALUES ( " + ;
@@ -1863,7 +1869,7 @@ METHOD insertTaxPrestashop( hTax ) CLASS TComercioProduct
 
    // Insertamos un tipo de IVA nuevo en la tabla tax_lang------------------------
 
-   cCommand := "INSERT INTO " + ::cPrefixTable( "tax_lang" ) + "( " +;
+   cCommand := "INSERT IGNORE INTO " + ::cPrefixTable( "tax_lang" ) + "( " +;
                   "id_tax, " + ;
                   "id_lang, " + ;
                   "name ) " + ;
@@ -1880,7 +1886,7 @@ METHOD insertTaxPrestashop( hTax ) CLASS TComercioProduct
 
    // Insertamos un tipo de IVA nuevo en la tabla tax_rule_group------------------
 
-   cCommand := "INSERT INTO "+ ::cPrefixTable( "tax_rules_group" ) + "( " + ;
+   cCommand := "INSERT IGNORE INTO "+ ::cPrefixTable( "tax_rules_group" ) + "( " + ;
                   "name, " + ;
                   "active ) " + ;
                "VALUES ( " + ;
@@ -1903,7 +1909,7 @@ METHOD insertTaxPrestashop( hTax ) CLASS TComercioProduct
 
       oQuery:GoTop()
 
-      cCommand := "INSERT INTO " + ::cPrefixTable( "tax_rule" ) + "( " +;
+      cCommand := "INSERT IGNORE INTO " + ::cPrefixTable( "tax_rule" ) + "( " +;
                   "id_tax_rules_group, " + ;
                   "id_country, " + ;
                   "id_tax ) VALUES "
@@ -1931,7 +1937,7 @@ METHOD insertTaxPrestashop( hTax ) CLASS TComercioProduct
    Insertamos un tipo de IVA nuevo en la tabla tax_rule------------------------
    */
 
-   cCommand := "INSERT INTO " + ::cPrefixTable( "tax_rules_group_shop" ) + "( " +;
+   cCommand := "INSERT IGNORE INTO " + ::cPrefixTable( "tax_rules_group_shop" ) + "( " +;
                   "id_tax_rules_group, " + ;
                   "id_shop ) " + ;
                "VALUES ( " + ;
@@ -1963,7 +1969,7 @@ METHOD insertManufacturersPrestashop( hFabricantesData ) CLASS TComercioProduct
    Insertamos un fabricante nuevo en las tablas de prestashop-----------------
    */
 
-   cCommand := "INSERT INTO " + ::cPrefixTable( "manufacturer" ) + "( " +;
+   cCommand := "INSERT IGNORE INTO " + ::cPrefixTable( "manufacturer" ) + "( " +;
                   "name, " + ;
                   "date_add, " + ;
                   "date_upd, " + ;
@@ -1981,7 +1987,7 @@ METHOD insertManufacturersPrestashop( hFabricantesData ) CLASS TComercioProduct
       ::writeText( "Error al insertar el fabricante " + hGet( hFabricantesData, "name" ) + " en la tabla " + ::cPreFixtable( "manufacturer" ), 3 )
    end if
 
-   cCommand := "INSERT INTO " + ::cPrefixTable( "manufacturer_shop" ) + "( "+ ;
+   cCommand := "INSERT IGNORE INTO " + ::cPrefixTable( "manufacturer_shop" ) + "( "+ ;
                   "id_manufacturer, " + ;
                   "id_shop ) " + ;
                "VALUES ( " + ;
@@ -1993,7 +1999,7 @@ METHOD insertManufacturersPrestashop( hFabricantesData ) CLASS TComercioProduct
       ::writeText( "Error al insertar el fabricante " + hGet( hFabricantesData, "name" ) + " en la tabla" + ::cPreFixtable( "manufacturer_shop" ), 3 )
    end if
 
-   cCommand := "INSERT INTO " + ::cPreFixtable( "manufacturer_lang" ) + "( " +;
+   cCommand := "INSERT IGNORE INTO " + ::cPreFixtable( "manufacturer_lang" ) + "( " +;
                   "id_manufacturer, " + ;
                   "id_lang ) " + ;
                "VALUES ( " + ;
@@ -2019,7 +2025,7 @@ METHOD insertPropertiesHeader( hPropertiesHeaderProduct ) CLASS TComercioProduct
    local cCommand          := ""
    local idPrestashop      := 0
 
-   cCommand                := "INSERT INTO " + ::cPrefixTable( "attribute_group" ) + " ( " +; 
+   cCommand                := "INSERT IGNORE INTO " + ::cPrefixTable( "attribute_group" ) + " ( " +; 
                                  "is_color_group, " + ;
                                  "group_type ) " + ;
                               "VALUES ( " + ;
@@ -2033,7 +2039,7 @@ METHOD insertPropertiesHeader( hPropertiesHeaderProduct ) CLASS TComercioProduct
    end if
 
    if !empty( idPrestashop )
-      cCommand             := "INSERT INTO " + ::cPrefixTable( "attribute_group_lang" ) + " ( " + ; 
+      cCommand             := "INSERT IGNORE INTO " + ::cPrefixTable( "attribute_group_lang" ) + " ( " + ; 
                                  "id_attribute_group, " + ;
                                  "id_lang, " + ;
                                  "name, " + ;
@@ -2068,7 +2074,7 @@ METHOD insertPropertiesLineProduct( hPropertiesLineProduct, nPosition ) CLASS TC
       Return ( self )
    end if
 
-   cCommand                := "INSERT INTO " + ::cPrefixTable( "attribute" ) + " ( " + ; 
+   cCommand                := "INSERT IGNORE INTO " + ::cPrefixTable( "attribute" ) + " ( " + ; 
                                  "id_attribute_group, " + ;
                                  "color, " + ;
                                  "position ) " + ;
@@ -2085,7 +2091,7 @@ METHOD insertPropertiesLineProduct( hPropertiesLineProduct, nPosition ) CLASS TC
 
    if !empty( idPrestashop )
 
-      cCommand    := "INSERT INTO " + ::cPrefixTable( "attribute_lang" ) + " ( " + ;
+      cCommand    := "INSERT IGNORE INTO " + ::cPrefixTable( "attribute_lang" ) + " ( " + ;
                         "id_attribute, " + ;
                         "id_lang, " + ;
                         "name ) " + ;
@@ -2098,7 +2104,7 @@ METHOD insertPropertiesLineProduct( hPropertiesLineProduct, nPosition ) CLASS TC
          ::writeText( "Error al insertar la propiedad " + hGet( hPropertiesLineProduct, "name" ) + " en la tabla " + ::cPrefixTable( "attribute_lang" ), 3 )
       end if
 
-      cCommand    := "INSERT INTO " + ::cPrefixTable( "attribute_shop" ) + " ( " + ;
+      cCommand    := "INSERT IGNORE INTO " + ::cPrefixTable( "attribute_shop" ) + " ( " + ;
                         "id_attribute, " + ;
                         "id_shop ) " + ;
                      "VALUES ( " + ;
@@ -2138,7 +2144,7 @@ METHOD insertReduction( idProduct, hProduct ) CLASS TComercioProduct
 
    if hGet( hProduct, "specific_price" ) .and. hGet( hProduct, "reduction" ) != 0
 
-      cCommand          := "INSERT INTO " + ::cPrefixTable( "specific_price" ) + " ( " + ; 
+      cCommand          := "INSERT IGNORE INTO " + ::cPrefixTable( "specific_price" ) + " ( " + ; 
                               "id_specific_price_rule, " + ;
                               "id_cart, " + ;
                               "id_product, " + ;
@@ -2232,7 +2238,7 @@ METHOD insertStockProduct( idProductPrestashop, hStock ) CLASS TComercioProduct
 
       //if idProductAttribute != 0
 
-         cCommand                      := "INSERT INTO " + ::cPrefixTable( "stock_available" ) + " ( "                        + ;
+         cCommand                      := "INSERT IGNORE INTO " + ::cPrefixTable( "stock_available" ) + " ( "                        + ;
                                              "id_product, "                                                                   + ;
                                              "id_product_attribute, "                                                         + ;
                                              "id_shop, "                                                                      + ;
@@ -2255,7 +2261,7 @@ METHOD insertStockProduct( idProductPrestashop, hStock ) CLASS TComercioProduct
 
    else
 
-         cCommand                      := "INSERT INTO " + ::cPrefixTable( "stock_available" ) + " ( "                        + ;
+         cCommand                      := "INSERT IGNORE INTO " + ::cPrefixTable( "stock_available" ) + " ( "                        + ;
                                              "id_product, "                                                                   + ;
                                              "id_product_attribute, "                                                         + ;
                                              "id_shop, "                                                                      + ;

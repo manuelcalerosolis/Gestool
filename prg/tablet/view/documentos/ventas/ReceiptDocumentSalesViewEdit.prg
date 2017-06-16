@@ -5,16 +5,19 @@
 CLASS ReceiptDocumentSalesViewEdit FROM ViewEdit  
   
    DATA oCbxEstado
-   DATA aCbxEstado      INIT { "Cobrado", "Pendiente" }
+   DATA aCbxEstado                        INIT { "Cobrado", "Pendiente" }
    DATA cCbxEstado
 
    DATA oImporteGastos
+
+   DATA nImporteOriginal 
 
    METHOD New()
 
    METHOD insertControls()
 
-   METHOD StartDialog()                  INLINE ( Self )
+   METHOD startDialog()                   INLINE ( ::nImporteOriginal := ::getValue( "ImporteCobro" ) )
+   METHOD validDialog()                   INLINE ( msgalert("validDialog"), ::validImporteCobro() )
 
    METHOD defineNumeroRecibo( nRow )
 
@@ -50,7 +53,7 @@ END CLASS
 
 METHOD New( oSender ) CLASS ReceiptDocumentSalesViewEdit
 
-   ::oSender   := oSender
+   ::oSender            := oSender
 
 Return ( self )
 
@@ -129,7 +132,6 @@ METHOD defineFormaPago( nRow ) CLASS ReceiptDocumentSalesViewEdit
    local cSayTextFPago  := retFld( hGet( ::oSender:hDictionaryMaster, "Pago" ), D():FormasPago( ::oSender:nView ) )
 
    DEFAULT nRow         := 275
-
 
    TGridSay():Build(    {  "nRow"      => nRow,;
                            "nCol"      => {|| GridWidth( 0.5, ::oDlg ) },;
@@ -321,8 +323,7 @@ METHOD defineImporteCobro( nRow ) CLASS ReceiptDocumentSalesViewEdit
                            "nWidth"    => {|| GridWidth( 2.5, ::oDlg ) },;
                            "nHeight"   => 23,;
                            "lPixels"   => .t.,;
-                           "lRight"    => .t.,;
-                           "bValid"    => {|| ::validImporteCobro() } } )
+                           "lRight"    => .t. } )
 
 Return ( self )
 
@@ -535,21 +536,50 @@ Return ( self )
 
 METHOD validImporteCobro() CLASS ReceiptDocumentSalesViewEdit
 
+   msgalert( ::getValue( "ImporteCobro" ), "ImporteCobro" )
+   msgalert( ::getValue( "TotalDocumento" ), "TotalDocumento" )
+   msgalert( ::nImporteOriginal, "nImporteOriginal" )
+
+   if ::getValue( "ImporteCobro" ) > ::nImporteOriginal
+
+      apoloMsgStop( "El importe del cobro excede al importe del recibo" )
+
+      Return ( .f. )
+
+   end if 
+
+   if ::getValue( "TotalDocumento" ) < ::getValue( "ImporteCobro" ) 
+
+      apoloMsgStop( "El importe del cobro excede al importe del recibo" )
+
+      Return ( .f. )
+
+   else 
+
+      ::setValue( ::getValue( "TotalDocumento" ), "ImporteCobro" )
+
+   end if 
+
+/*
    if ::getValue( "ImporteCobro" ) <= ::getValue( "TotalDocumento" )
 
       if ( ::getValue( "ImporteCobro" ) != 0 ) .and. ( ::getValue( "TotalDocumento" ) != ::getValue( "ImporteCobro" ) )
+         
          ::setValue( ( ::getValue( "TotalDocumento" ) - ::getValue( "ImporteCobro" ) ), "ImporteGastos" )
+
          ::oImporteGastos:Refresh()
+
       end if
 
-      Return .t.
+      Return ( .t. )
 
    else
 
       apoloMsgStop( "El importe del cobro excede al importe del recibo" )
 
    end if
+*/
 
-Return ( .f. )
+Return ( .t. )
 
 //---------------------------------------------------------------------------//
