@@ -17,10 +17,7 @@ IMG2PDFLIB           = 	\Img2Pdf
 OBJ                  = 	Obj1701
 
 SOURCEPRG            = 	.\Prg;.\Prg\mail;.\Prg\Comercio;.\Prg\Models;.\Prg\Controllers;.\Prg\Services;.\Prg\Tablet;.\Prg\tablet\view;.\Prg\tablet\view\documentos;.\Prg\tablet\view\terceros;.\Prg\tablet\view\documentos\ventas;.\Prg\tablet\view\documentos\terceros;.\Prg\tablet\utils;.\Prg\tablet\presenter;.\Prg\tablet\presenter\terceros;.\Prg\tablet\presenter\documentos;.\Prg\tablet\presenter\documentos\ventas;
-<<<<<<< HEAD
 
-=======
->>>>>>> origin/master
 SOURCEC 				   =	C
 
 PPO 					   = 	Ppo1701
@@ -500,31 +497,6 @@ SQLBaseController.prg 														\
 SQLHeaderController.prg 													\
 SQLBaseEmpresasModel.prg 													\
 SQLBaseLineasModel.prg 														\
-<<<<<<< HEAD
-=======
-ClientesModel.prg 												\
-AlbaranesClientesModel.prg 									\
-FacturasClientesModel.prg 										\
-RecibosClientesModel.prg 										\
-TicketsClientesModel.prg 										\
-PedidosProveedoresModel.prg									\
-TiposImpresorasModel.prg 										\
-TiposImpresorasController.prg 								\
-TiposNotasModel.prg 												\
-TiposNotasController.prg 										\
-EtiquetasModel.prg 												\
-EtiquetasController.prg 										\
-TiposVentasModel.prg 											\
-TiposVentasController.prg 										\
-PropiedadesModel.obj       								   \
-PropiedadesController.obj       								\
-PropiedadesLineasModel.obj       							\
-PropiedadesLineasController.obj       						\
-RelacionesEtiquetasModel.prg 									\
-ArticulosModel.prg                                    \
-HistoricosUsuariosModel.prg                           \
-PedidosClientesLineasModel.prg 								\
->>>>>>> origin/master
 EmpresasModel.prg 															\
 ClientesModel.prg 															\
 AlbaranesClientesModel.prg 												\
