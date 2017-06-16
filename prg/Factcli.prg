@@ -267,6 +267,8 @@ Definici-n de la base de datos de lineas de detalle
 #define _CTIPCTR           103
 #define _CTERCTR           104
 #define _NNUMKIT           105
+#define _ID_TIPO_V         106
+#define __NREGIVA          107
 
 memvar cDbf
 memvar cDbfCol
@@ -16742,12 +16744,16 @@ FUNCTION nIvaLFacCli( cFacCliL, nDec, nRou, nVdv, lDto, lPntVer, lImpTrn, cPouDi
    DEFAULT lPntVer   := .t.
    DEFAULT lImpTrn   := .t.
 
-   nCalculo          := nTotLFacCli( cFacCliL, nDec, nRou, nVdv, lDto, lPntVer, lImpTrn, cPouDiv ) 
+   if ( cFacCliL )->nRegIva <= 1
+      
+      nCalculo          := nTotLFacCli( cFacCliL, nDec, nRou, nVdv, lDto, lPntVer, lImpTrn, cPouDiv ) 
 
-   if !( cFacCliL )->lIvaLin
-      nCalculo       := nCalculo * ( cFacCliL )->nIva / 100
-   else
-      nCalculo       -= nCalculo / ( 1 + ( cFacCliL )->nIva / 100 )
+      if !( cFacCliL )->lIvaLin
+         nCalculo       := nCalculo * ( cFacCliL )->nIva / 100
+      else
+         nCalculo       -= nCalculo / ( 1 + ( cFacCliL )->nIva / 100 )
+      end if
+
    end if
 
    nCalculo          := Round( nCalculo, nRou )
@@ -18325,6 +18331,12 @@ function SynFacCli( cPath )
             end if
          end if
 
+         if ( D():FacturasClientesLineas( nView ) )->nRegIva != RetFld( ( D():FacturasClientesLineas( nView ) )->cSerie + str( ( D():FacturasClientesLineas( nView ) )->nNumFac ) + ( D():FacturasClientesLineas( nView ) )->cSufFac, D():FacturasClientes( nView ), "nRegIva" )
+            if ( D():FacturasClientesLineas( nView ) )->( dbRLock() )
+               ( D():FacturasClientesLineas( nView ) )->nRegIva    := RetFld( ( D():FacturasClientesLineas( nView ) )->cSerie + str( ( D():FacturasClientesLineas( nView ) )->nNumFac ) + ( D():FacturasClientesLineas( nView ) )->cSufFac, D():FacturasClientes( nView ), "nRegIva" )
+               ( D():FacturasClientesLineas( nView ) )->( dbUnLock() )
+            end if
+         end if
 
          /*
          Esto es para la jaca para que las líneas tengan la misma Comisión de agente que la cabecera
@@ -19052,7 +19064,7 @@ FUNCTION rxFacCli( cPath, cDriver )
       ( cFacCliL )->( ordCreate( cPath + "FacCliL.Cdx", "cNumPed", "cNumPed", {|| Field->cNumPed } ) )
 
       ( cFacCliL)->( ordCondSet( "!Deleted()", {|| !Deleted() }  ) )
-      ( cFacCliL )->( ordCreate( cPath + "FacCliL.Cdx", "iNumFac", "'11' + cSerie + str( nNumFac ) + Space( 1 ) + cSufFac", {|| '11' + Field->cSerie + str( Field->nNumFac ) + Space( 1 ) + Field->cSufFac } ) )
+      ( cFacCliL )->( ordCreate( cPath + "FacCliL.Cdx", "iNumFac", "'11' + cSerie + str( nNumFac ) + Space( 1 ) + cSufFac + Str( nNumLin )", {|| '11' + Field->cSerie + str( Field->nNumFac ) + Space( 1 ) + Field->cSufFac + Str( Field->nNumLin ) } ) )
 
       ( cFacCliL )->( ordCondSet( "!Deleted()", {|| !Deleted() }, , , , , , , , , .t. ) )
       ( cFacCliL )->( ordCreate( cPath + "FacCliL.Cdx", "cRefFec", "cRef + cCodCli + dtos( dFecFac ) + tFecFac", {|| Field->cRef + Field->cCodCli + dtos( Field->dFecFac ) + Field->tFecFac } ) )
@@ -19397,6 +19409,7 @@ function aColFacCli()
    aAdd( aColFacCli, { "cTerCtr",   "C",  20, 0, "Tercero centro de coste"                , "",                            "", "( cDbfCol )", nil } )
    aAdd( aColFacCli, { "nNumKit",   "N",   4, 0, "Número de línea de escandallo"          , "",                            "", "( cDbfCol )", nil } )
    aAdd( aColFacCli, { "id_tipo_v", "N",  16, 0, "Identificador tipo de venta"            , "IdentificadorTipoVenta",      "", "( cDbfCol )", nil } )
+   aAdd( aColFacCli, { "nRegIva",   "N",   1, 0, "Régimen de " + cImp()                   , "TipoImpuesto",                "", "( cDbfCol )", nil } ) 
 
 return ( aColFacCli )
 
@@ -22704,6 +22717,8 @@ Static Function GuardaTemporalesFacCli( cSerFac, nNumFac, cSufFac, dFecFac, tFec
 
    ( dbfTmpLin )->( dbGoTop() )
    while ( dbfTmpLin )->( !eof() )
+
+      ( dbfTmpLin )->nRegIva     := aTmp[ _NREGIVA ]
 
       if !( ( dbfTmpLin )->nUniCaja == 0 .and. ( dbfTmpLin )->lFromAtp )
          

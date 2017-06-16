@@ -198,6 +198,8 @@ Definici¢n de la base de datos de lineas de detalle
 #define __CCENTROCOSTE            92
 #define _CTIPCTR                  93
 #define _CTERCTR                  94
+#define _ID_TIPO_V                95
+#define __NREGIVA                 96
 
 memvar cDbf
 memvar cDbfCol
@@ -6543,6 +6545,7 @@ STATIC FUNCTION EndTrans( aTmp, aGet, nMode, oBrwLin, oBrw, oBrwInc, oDlg )
       ( dbfTmpLin )->dFecSat     := dFecSat
       ( dbfTmpLin )->dFecha      := dFecSat
       ( dbfTmpLin )->cCodCli     := cCodCli
+      ( dbfTmpLin )->nRegIva     := aTmp[ _NREGIVA ]
 
       if isEditMode( nMode ) .and. ( dbfTmpLin )->nCtlstk == 2
 
@@ -9688,12 +9691,18 @@ RETURN ( nCalculo )
 
 FUNCTION nIvaLSatCli( dbfLin, nDec, nRouDec, nVdv, lDto, lPntVer, lImpTrn, cPouDiv )
 
-   local nCalculo := nTotLSatCli( dbfLin, nDec, nRouDec, nVdv, lDto, lPntVer, lImpTrn, cPouDiv )
+   local nCalculo    := 0
 
-   if !( dbfLin )->lIvaLin
-      nCalculo    := nCalculo * ( dbfLin )->nIva / 100
-   else
-      nCalculo    -= nCalculo / ( 1 + ( dbfLin )->nIva / 100 )
+   if ( dbfLin )->nRegIva <= 1
+
+      nCalculo          := nTotLSatCli( dbfLin, nDec, nRouDec, nVdv, lDto, lPntVer, lImpTrn, cPouDiv )
+
+      if !( dbfLin )->lIvaLin
+         nCalculo    := nCalculo * ( dbfLin )->nIva / 100
+      else
+         nCalculo    -= nCalculo / ( 1 + ( dbfLin )->nIva / 100 )
+      end if
+
    end if
 
 RETURN ( if( cPouDiv != nil, Trans( nCalculo, cPouDiv ), nCalculo ) )
@@ -10056,7 +10065,7 @@ FUNCTION rxSatCli( cPath, cDriver )
       ( cSatCliT )->( ordCreate( cPath + "SatCliL.Cdx", "Lote", "cLote", {|| Field->cLote }, ) )
 
       ( cSatCliT )->( ordCondSet( "!Deleted()", {|| !Deleted() } ) )
-      ( cSatCliT )->( ordCreate( cPath + "SatCliL.Cdx", "iNumSat", "'32' + cSerSat + Str( nNumSat ) + Space( 1 ) + cSufSat", {|| '32' + Field->cSerSat + Str( Field->nNumSat ) + Space( 1 ) + Field->cSufSat } ) )
+      ( cSatCliT )->( ordCreate( cPath + "SatCliL.Cdx", "iNumSat", "'32' + cSerSat + Str( nNumSat ) + Space( 1 ) + cSufSat + Str( nNumLin )", {|| '32' + Field->cSerSat + Str( Field->nNumSat ) + Space( 1 ) + Field->cSufSat + Str( Field->nNumLin ) } ) )
 
       ( cSatCliT )->( ordCondSet("!Deleted()", {||!Deleted()}  ) )
       ( cSatCliT )->( ordCreate( cPath + "SatCliL.Cdx", "nNumLin", "Str( NNUMSAT ) + Str( nNumLin )", {|| Str( Field->nNumSat ) + Str( Field->nNumLin ) }, ) )
@@ -10656,6 +10665,7 @@ function aColSatCli()
    aAdd( aColSatCli, { "cTipCtr",  "C",  20,  0, "Tipo tercero centro de coste",                      "",                        "", "( cDbfCol )", nil } )
    aAdd( aColSatCli, { "cTerCtr",  "C",  20,  0, "Tercero centro de coste",                           "",                        "", "( cDbfCol )", nil } )
    aAdd( aColSatCli, { "id_tipo_v","N",  16,  0, "Identificador tipo de venta",                       "IdentificadorTipoVenta",  "", "( cDbfCol )", nil } )
+   aAdd( aColSatCli, { "nRegIva",  "N",   1,  0, "Régimen de " + cImp(),                              "TipoImpuesto",            "", "( cDbfCol )", nil } )
   
 return ( aColSatCli )
 
@@ -10881,6 +10891,13 @@ Function SynSatCli( cPath )
          if Empty( ( cSatCliL )->nPosPrint )
             ( cSatCliL )->nPosPrint  := ( cSatCliL )->nNumLin
          end if 
+
+         if ( cSatCliL )->nRegIva != RetFld( ( cSatCliL )->cSerSat + str( ( cSatCliL )->nNumSat ) + ( cSatCliL )->cSufSat, cSatCliT, "nRegIva" )
+            if ( cSatCliL )->( dbRLock() )
+               ( cSatCliL )->nRegIva    := RetFld( ( cSatCliL )->cSerSat + str( ( cSatCliL )->nNumSat ) + ( cSatCliL )->cSufSat, cSatCliT, "nRegIva" )
+               ( cSatCliL )->( dbUnLock() )
+            end if
+         end if
 
          ( cSatCliL )->( dbSkip() )
 

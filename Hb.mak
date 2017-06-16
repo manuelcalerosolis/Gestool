@@ -15,13 +15,9 @@ BORLANDLIB           = 	\Bcc582\lib
 IMG2PDFLIB           = 	\Img2Pdf
 
 OBJ                  = 	Obj1701
-<<<<<<< HEAD
 
 SOURCEPRG            = 	.\Prg;.\Prg\mail;.\Prg\Comercio;.\Prg\Models;.\Prg\Controllers;.\Prg\Services;.\Prg\Tablet;.\Prg\tablet\view;.\Prg\tablet\view\documentos;.\Prg\tablet\view\terceros;.\Prg\tablet\view\documentos\ventas;.\Prg\tablet\view\documentos\terceros;.\Prg\tablet\utils;.\Prg\tablet\presenter;.\Prg\tablet\presenter\terceros;.\Prg\tablet\presenter\documentos;.\Prg\tablet\presenter\documentos\ventas;
 
-=======
-SOURCEPRG            = 	.\Prg;.\Prg\mail;.\Prg\Comercio;.\Prg\Models;.\Prg\Controllers;.\Prg\Services;.\Prg\Tablet;.\Prg\tablet\view;.\Prg\tablet\view\documentos;.\Prg\tablet\view\terceros;.\Prg\tablet\view\documentos\ventas;.\Prg\tablet\view\documentos\terceros;.\Prg\tablet\utils;.\Prg\tablet\presenter;.\Prg\tablet\presenter\terceros;.\Prg\tablet\presenter\documentos;.\Prg\tablet\presenter\documentos\ventas;
->>>>>>> ab8abfc7269c9289a78fcec0f29c373c8c4d6149
 SOURCEC 				   =	C
 PPO 					   = 	Ppo1701
 
@@ -493,41 +489,13 @@ backupView.prg                                     	\
 ReindexaPresenter.prg                                 \
 ReindexaView.prg                                      \
 BaseModel.prg 														\
-<<<<<<< HEAD
-SQLBaseModel.prg 														\
-=======
 SQLBaseModel.prg 													\
 SQLBaseController.prg 											\
 SQLBaseEmpresasModel.prg 										\
->>>>>>> ab8abfc7269c9289a78fcec0f29c373c8c4d6149
 SQLBaseController.prg 														\
 SQLHeaderController.prg 													\
 SQLBaseEmpresasModel.prg 													\
 SQLBaseLineasModel.prg 														\
-<<<<<<< HEAD
-ClientesModel.prg 												\
-AlbaranesClientesModel.prg 									\
-FacturasClientesModel.prg 										\
-RecibosClientesModel.prg 										\
-TicketsClientesModel.prg 										\
-PedidosProveedoresModel.prg									\
-TiposImpresorasModel.prg 										\
-TiposImpresorasController.prg 								\
-TiposNotasModel.prg 												\
-TiposNotasController.prg 										\
-EtiquetasModel.prg 												\
-EtiquetasController.prg 										\
-TiposVentasModel.prg 											\
-TiposVentasController.prg 										\
-PropiedadesModel.obj       								   \
-PropiedadesController.obj       								\
-PropiedadesLineasModel.obj       							\
-PropiedadesLineasController.obj       						\
-RelacionesEtiquetasModel.prg 									\
-ArticulosModel.prg                                    \
-HistoricosUsuariosModel.prg                           \
-PedidosClientesLineasModel.prg 								\
-=======
 EmpresasModel.prg 															\
 ClientesModel.prg 															\
 AlbaranesClientesModel.prg 												\
@@ -552,7 +520,6 @@ RelacionesEtiquetasModel.prg 												\
 ArticulosModel.prg                                    			\
 HistoricosUsuariosModel.prg                           			\
 PedidosClientesLineasModel.prg 											\
->>>>>>> ab8abfc7269c9289a78fcec0f29c373c8c4d6149
 
 C               =       	            					\
 Img2pdf.c               	            					\

@@ -51,7 +51,8 @@ CLASS TEdiExporarFacturas
 
    METHOD setFacturaClienteGeneradaEDI()
 
-   METHOD writeDatosFijos()            INLINE   ( ::oFileEDI:add( "UHN+EW201733471+INVOIC:D:93A:UN:EAN007" ) )
+   METHOD writeCabecera()              INLINE   ( ::oFileEDI:add( "UNA:+.? '" ) )
+   METHOD writeDatosFijos()            INLINE   ( ::oFileEDI:add( "UHN+EW201733471+INVOIC:D:93A:UN:EAN007'" ) )
    METHOD writeInicioMensaje()
    METHOD writeFechas()
 
@@ -59,7 +60,7 @@ CLASS TEdiExporarFacturas
    METHOD writeNumeroPedido()
 
    METHOD writeSucursalDestino()
-   METHOD writeDepartamento()          INLINE   ( ::oFileEDI:add( "RFF+API:041" ) )
+   METHOD writeDepartamento()          INLINE   ( ::oFileEDI:add( "RFF+API:041'" ) )
 
    METHOD writeReceptorFactura
 
@@ -69,7 +70,7 @@ CLASS TEdiExporarFacturas
 
    METHOD writeEmisorFactura()
    METHOD writeDatosEmisor()
-   METHOD writeNifEmisor()             INLINE   ( ::oFileEDI:add( "RFF+VA:B21173786" ) )
+   METHOD writeNifEmisor()             INLINE   ( ::oFileEDI:add( "RFF+VA:B21173786'" ) )
 
    METHOD writePOEntrega()
 
@@ -91,9 +92,9 @@ CLASS TEdiExporarFacturas
 
    METHOD writeReferenciaCorteIngles()
 
-   METHOD writeSeparador()             INLINE   ( ::oFileEDI:add( "UND+S" ) )
+   METHOD writeSeparador()             INLINE   ( ::oFileEDI:add( "UND+S'" ) )
 
-   METHOD writeNumeroLineas()          INLINE   ( ::oFileEDI:add( "CNT+2:" + AllTrim( Str( ::nLinesCount ) ) ) )
+   METHOD writeNumeroLineas()          INLINE   ( ::oFileEDI:add( "CNT+2:" + AllTrim( Str( ::nLinesCount ) ) + "'" ) )
 
    METHOD writeImporteBruto()
    METHOD writeImporteNeto()
@@ -107,7 +108,7 @@ CLASS TEdiExporarFacturas
    METHOD writeTerceroIva()            INLINE   ( self )
    METHOD writeImporteTerceroIva()     INLINE   ( self )
 
-   METHOD writeColaMensaje()           INLINE   ( ::oFileEDI:add( "UNT+XX+EW201733471" ) )
+   METHOD writeColaMensaje()           INLINE   ( ::oFileEDI:add( "UNT+XX+EW201733471'" ) )
 
 END CLASS
 
@@ -140,6 +141,7 @@ METHOD Run()
 
    if ::isFile()
 
+      ::writeCabecera()
       ::writeDatosFijos()
       ::writeInicioMensaje()
       ::writeFechas()
@@ -231,6 +233,7 @@ METHOD writeInicioMensaje()
 
    local cLine    := "BGM+380+"
    cLine          += D():FacturasClientesIdShort( ::nView )
+   cLine          += "'"
 
    ::oFileEDI:add( cLine )
 
@@ -242,7 +245,7 @@ METHOD writeFechas()
 
    local cLine    := "DTM+137:"
    cLine          += ::getFecha( ( D():FacturasClientes( ::nView ) )->dFecFac )
-   cLine          += ":102"
+   cLine          += ":102'"
 
    ::oFileEDI:add( cLine )
 
@@ -259,6 +262,7 @@ METHOD writeNumeroAlbaran()
 
       cLine       += "RFF+DQ:"
       cLine       += StrTran( cNumAlb, " ", "" )
+      cLine       += "'"
 
       ::oFileEDI:add( cLine )
 
@@ -277,6 +281,7 @@ METHOD writeNumeroPedido()
 
       cLine       += "RFF+ON:"
       cLine       += StrTran( cNumPed, " ", "" )
+      cLine       += "'"
 
       ::oFileEDI:add( cLine )
 
@@ -290,7 +295,7 @@ METHOD writeSucursalDestino()
 
    local cLine    := "NAD+BY+"
    cLine          += AllTrim( RetFld( ( D():FacturasClientes( ::nView ) )->cCodCli, D():Clientes( ::nView ), "cCodEdi" ) )
-   cLine          += "::9"
+   cLine          += "::9'"
 
    ::oFileEDI:add( cLine )
 
@@ -302,7 +307,7 @@ METHOD writeReceptorFactura()
 
    local cLine    := "NAD+IV+"
    cLine          += AllTrim( RetFld( ( D():FacturasClientes( ::nView ) )->cCodCli, D():Clientes( ::nView ), "cCodEdi" ) )
-   cLine          += "::9"
+   cLine          += "::9'"
 
    ::oFileEDI:add( cLine )
 
@@ -320,6 +325,7 @@ METHOD writeDatosComprador()
    cLine          += AllTrim( ( D():FacturasClientes( ::nView ) )->cDirCli ) + ":"
    cLine          += AllTrim( ( D():FacturasClientes( ::nView ) )->cPobCli ) + ":"
    cLine          += AllTrim( ( D():FacturasClientes( ::nView ) )->cPosCli )
+   cLine          += "'"
 
    ::oFileEDI:add( cLine )
 
@@ -333,6 +339,7 @@ METHOD writeNifComprador()
    local cLine    := "RFF+VA"
 
    cLine          += AllTrim( ( D():FacturasClientes( ::nView ) )->cDniCli )
+   cLine          += "'"
 
    ::oFileEDI:add( cLine )
 
@@ -347,7 +354,7 @@ METHOD writeEmisorFactura()
 
    if !Empty( cExtraField )
       cLine             += AllTrim( cExtraField )
-      cLine             += "::9"
+      cLine             += "::9'"
 
       ::oFileEDI:add( cLine )
 
@@ -364,7 +371,7 @@ METHOD writeDatosEmisor()
    cLine          += ":"
    cLine          += "POLIGONO PESQUERO NORTE S/N:"
    cLine          += "HUELVA:"
-   cLine          += "21002"
+   cLine          += "21002'"
 
    ::oFileEDI:add( cLine )
 
@@ -376,7 +383,7 @@ METHOD writePOEntrega()
 
    local cLine    := "NAD+DP+"
    cLine          += AllTrim( RetFld( ( D():FacturasClientes( ::nView ) )->cCodCli, D():Clientes( ::nView ), "cCodEdi" ) )
-   cLine          += "::9"
+   cLine          += "::9'"
 
    ::oFileEDI:add( cLine )
 
@@ -388,7 +395,7 @@ METHOD writeImporteFactura()
 
    local cLine    := "CUX+2:"
    cLine          += AllTrim( Trans( ( D():FacturasClientes( ::nView ) )->nTotFac, cPouDiv() ) )
-   cLine          += ":4"
+   cLine          += ":4'"
 
    ::oFileEDI:add( cLine )
 
@@ -445,7 +452,7 @@ METHOD writeEan13()
       cLine       += AllTrim( ( D():Articulos( ::nView ) )->Codigo )
    end if
 
-   cLine          += ":EN" 
+   cLine          += ":EN'" 
 
    ::oFileEDI:add( cLine )
 
@@ -459,7 +466,7 @@ METHOD writeReferenciaCorteIngles()
    local cLine    := "PIA+5+:"
 
    cLine          += AllTrim( ( D():Articulos( ::nView ) )->cRefAux )
-   cLine          += ":IN" 
+   cLine          += ":IN'" 
 
    ::oFileEDI:add( cLine )
 
@@ -473,6 +480,7 @@ METHOD writeDescripcion()
 
    cLine          += "IMD+F+M+:::"
    cLine          += AllTrim( ( D():FacturasClientesLineas( ::nView ) )->cDetalle )
+   cLine          += "'"
 
    ::oFileEDI:add( cLine )
 
@@ -486,6 +494,7 @@ METHOD writeUnidades()
 
    cLine          += "QTY+47:"
    cLine          += AllTrim( Trans( nTotNFacCli( D():FacturasClientesLineas( ::nView ) ), MasUnd() ) )
+   cLine          += "'"
 
    ::oFileEDI:add( cLine )
 
@@ -499,6 +508,7 @@ local cLine    := ""
 
    cLine          += "MOA+66:"
    cLine          += AllTrim( Trans( nTotLFacCli( D():FacturasClientesLineas( ::nView ) ), cPouDiv() ) )
+   cLine          += "'"
 
    ::oFileEDI:add( cLine )
 
@@ -512,6 +522,7 @@ local cLine    := ""
 
    cLine          += "PRI+AAB:"
    cLine          += AllTrim( Trans( ( D():FacturasClientesLineas( ::nView ) )->nPreUnit, cPouDiv() ) )
+   cLine          += "'"
 
    ::oFileEDI:add( cLine )
 
@@ -524,6 +535,7 @@ METHOD writeImporteBruto()
    local cLine    := "MOA+98:"
 
    cLine          += AllTrim( Trans( ::sTotalFactura:nTotalBruto, cPouDiv() ) )
+   cLine          += "'"
 
    ::oFileEDI:add( cLine )
 
@@ -536,6 +548,7 @@ METHOD writeImporteNeto()
    local cLine    := "MOA+79:"
 
    cLine          += AllTrim( Trans( ::sTotalFactura:nTotalNeto, cPouDiv() ) )
+   cLine          += "'"
 
    ::oFileEDI:add( cLine )
 
@@ -548,6 +561,7 @@ METHOD writeBaseImponible()
    local cLine    := "MOA+125:"
 
    cLine          += AllTrim( Trans( ::sTotalFactura:TotalBase(), cPouDiv() ) )
+   cLine          += "'"
 
    ::oFileEDI:add( cLine )
 
@@ -560,6 +574,7 @@ METHOD writeImporteTotal()
    local cLine    := "MOA+139:"
 
    cLine          += AllTrim( Trans( ::sTotalFactura:nTotalDocumento(), cPouDiv() ) )
+   cLine          += "'"
 
    ::oFileEDI:add( cLine )
 
@@ -572,6 +587,7 @@ METHOD writePrimerIva()
    local cLine    := "TAX+7+VAT+++:::"
 
    cLine          += AllTrim( Trans( ::sTotalFactura:aPorcentajeIva[1], "@E 99.9" ) )
+   cLine          += "'"
 
    ::oFileEDI:add( cLine )
 
@@ -584,6 +600,7 @@ METHOD writeImportePrimerIva()
    local cLine    := "MOA+176:"
 
    cLine          += AllTrim( Trans( ::sTotalFactura:nTotalIva, "@E 99.9" ) )
+   cLine          += "'"
 
    ::oFileEDI:add( cLine )
 

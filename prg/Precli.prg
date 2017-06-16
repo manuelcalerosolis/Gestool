@@ -192,6 +192,8 @@ Definici¢n de la base de datos de lineas de detalle
 #define __CCENTROCOSTE            89
 #define _CTIPCTR                  90
 #define _CTERCTR                  91
+#define _ID_TIPO_V                92
+#define __NREGIVA                 93
 
 memvar cDbf
 memvar cDbfCol
@@ -6512,6 +6514,8 @@ STATIC FUNCTION EndTrans( aTmp, aGet, nMode, oBrwLin, oBrw, oBrwInc, oDlg, lActu
    ( dbfTmpLin )->( dbGoTop() )
    do while !( dbfTmpLin )->( Eof() )
 
+      ( dbfTmpLin )->nRegIva     := aTmp[ _NREGIVA ]
+
       dbPass( dbfTmpLin, D():PresupuestosClientesLineas( nView ), .t., cSerPre, nNumPre, cSufPre )
       ( dbfTmpLin )->( dbSkip() )
 
@@ -9607,12 +9611,18 @@ RETURN ( nCalculo )
 
 FUNCTION nIvaLPreCli( dbfLin, nDec, nRouDec, nVdv, lDto, lPntVer, lImpTrn, cPouDiv )
 
-   local nCalculo := nTotLPreCli( dbfLin, nDec, nRouDec, nVdv, lDto, lPntVer, lImpTrn, cPouDiv )
+   local nCalculo    := 0
 
-   if !( dbfLin )->lIvaLin
-      nCalculo    := nCalculo * ( dbfLin )->nIva / 100
-   else
-      nCalculo    -= nCalculo / ( 1 + ( dbfLin )->nIva / 100 )
+   if ( dbfLin )->nRegIva <= 1
+
+      nCalculo          := nTotLPreCli( dbfLin, nDec, nRouDec, nVdv, lDto, lPntVer, lImpTrn, cPouDiv )
+
+      if !( dbfLin )->lIvaLin
+         nCalculo       := nCalculo * ( dbfLin )->nIva / 100
+      else
+         nCalculo       -= nCalculo / ( 1 + ( dbfLin )->nIva / 100 )
+      end if
+
    end if
 
 RETURN ( if( cPouDiv != nil, Trans( nCalculo, cPouDiv ), nCalculo ) )
@@ -9927,7 +9937,7 @@ FUNCTION rxPreCli( cPath, cDriver )
       ( dbfPreCliT )->( ordCreate( cPath + "PreCliL.Cdx", "Lote", "cLote", {|| Field->cLote }, ) )
 
       ( dbfPreCliT )->( ordCondSet( "!Deleted()", {|| !Deleted() } ) )
-      ( dbfPreCliT )->( ordCreate( cPath + "PreCliL.Cdx", "iNumPre", "'08' + cSerPre + Str( nNumPre ) + Space( 1 ) + cSufPre", {|| '08' + Field->cSerPre + Str( Field->nNumPre ) + Space( 1 ) + Field->cSufPre } ) )
+      ( dbfPreCliT )->( ordCreate( cPath + "PreCliL.Cdx", "iNumPre", "'08' + cSerPre + Str( nNumPre ) + Space( 1 ) + cSufPre + Str( nNumLin )", {|| '08' + Field->cSerPre + Str( Field->nNumPre ) + Space( 1 ) + Field->cSufPre + Str( Field->nNumLin ) } ) )
 
       ( dbfPreCliT )->( ordCondSet("!Deleted()", {||!Deleted()}  ) )
       ( dbfPreCliT )->( ordCreate( cPath + "PreCliL.Cdx", "nNumLin", "Str( NNUMPRE ) + Str( nNumLin )", {|| Str( Field->nNumPre ) + Str( Field->nNumLin ) }, ) )
@@ -10576,6 +10586,7 @@ function aColPreCli()
    aAdd( aColPreCli, { "cTipCtr",  "C",  20,  0, "Tipo tercero centro de coste",             "",                              "", "( cDbfCol )", nil } )
    aAdd( aColPreCli, { "cTerCtr",  "C",  20,  0, "Tercero centro de coste",                  "",                              "", "( cDbfCol )", nil } )
    aAdd( aColPreCli, { "id_tipo_v","N",  16,  0, "Identificador tipo de venta",              "IdentificadorTipoVenta",        "", "( cDbfCol )", nil } )
+   aAdd( aColPreCli, { "nRegIva",  "N",   1,  0, "Régimen de " + cImp(),                     "TipoImpuesto",                  "", "( cDbfCol )", nil } )
 
 return ( aColPreCli )
 
@@ -10948,6 +10959,13 @@ Function SynPreCli( cPath )
 
       if Empty( ( dbfPreCliL )->nPosPrint )
          ( dbfPreCliL )->nPosPrint     := ( dbfPreCliL )->nNumLin
+      end if
+
+      if ( dbfPreCliL )->nRegIva != RetFld( ( dbfPreCliL )->cSerPre + Str( ( dbfPreCliL )->nNumPre ) + ( dbfPreCliL )->cSufPre, dbfPreCliT, "nRegIva" )
+         if dbLock( dbfPreCliL )
+            ( dbfPreCliL )->nRegIva := RetFld( ( dbfPreCliL )->cSerPre + Str( ( dbfPreCliL )->nNumPre ) + ( dbfPreCliL )->cSufPre, dbfPreCliT, "nRegIva" )
+            ( dbfPreCliL )->( dbUnlock() )
+         end if
       end if
 
       ( dbfPreCliL )->( dbSkip() )

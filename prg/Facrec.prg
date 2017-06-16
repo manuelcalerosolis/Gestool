@@ -204,6 +204,8 @@ Definici¢n de la base de datos de lineas de detalle
 #define _NPOSPRINT         		85
 #define _CTIPCTR                 86
 #define _CTERCTR                 87
+#define _ID_TIPO_V               88
+#define __NREGIVA                89
 
 memvar cDbf
 memvar cDbfCol
@@ -7597,6 +7599,8 @@ STATIC FUNCTION EndTrans( aTmp, aGet, oBrw, oBrwDet, oBrwPgo, aNumAlb, nMode, oD
    ( dbfTmpLin )->( dbGoTop() )
    while ( dbfTmpLin )->( !eof() )
 
+      ( dbfTmpLin )->nRegIva    := aTmp[ _NREGIVA ]
+
       if ( dbfTmpLin )->dFecFac != aTmp[ _DFECFAC ]
          ( dbfTmpLin )->dFecFac := aTmp[ _DFECFAC ]
       end if
@@ -10983,12 +10987,16 @@ FUNCTION nIvaLFacRec( cFacRecL, nDec, nRou, nVdv, lDto, lPntVer, lImpTrn, cPouDi
    DEFAULT lPntVer   := .t.
    DEFAULT lImpTrn   := .t.
 
-   nCalculo          := nTotLFacRec( cFacRecL, nDec, nRou, nVdv, lDto, lPntVer, lImpTrn, cPouDiv )   
+   if ( cFacRecL )->nRegIva <= 1
 
-   if !( cFacRecL )->lIvaLin
-      nCalculo       := nCalculo * ( cFacRecL )->nIva / 100
-   else
-      nCalculo       -= nCalculo / ( 1 + ( cFacRecL )->nIva / 100 )
+      nCalculo          := nTotLFacRec( cFacRecL, nDec, nRou, nVdv, lDto, lPntVer, lImpTrn, cPouDiv )   
+
+      if !( cFacRecL )->lIvaLin
+         nCalculo       := nCalculo * ( cFacRecL )->nIva / 100
+      else
+         nCalculo       -= nCalculo / ( 1 + ( cFacRecL )->nIva / 100 )
+      end if
+
    end if
 
    nCalculo          := Round( nCalculo, nRou )
@@ -11873,7 +11881,7 @@ FUNCTION rxFacRec( cPath, oMeter, cDriver )
       ( dbfFacRecL )->( ordCreate( cPath + "FacRecL.Cdx", "cStkFast", "cRef + cAlmLin + dtos( dFecFac ) + tFecFac", {|| Field->cRef + Field->cAlmLin + dtos( Field->dFecFac ) + Field->tFecFac } ) )
 
       ( dbfFacRecL)->( ordCondSet( "!Deleted()", {|| !Deleted() }  ) )
-      ( dbfFacRecL )->( ordCreate( cPath + "FacRecL.Cdx", "iNumFac", "'14' + cSerie + Str( nNumFac ) + Space( 1 ) + cSufFac", {|| '14' + Field->cSerie + Str( Field->nNumFac ) + Space( 1 ) + Field->cSufFac } ) )
+      ( dbfFacRecL )->( ordCreate( cPath + "FacRecL.Cdx", "iNumFac", "'14' + cSerie + Str( nNumFac ) + Space( 1 ) + cSufFac + Str( nNumLin )", {|| '14' + Field->cSerie + Str( Field->nNumFac ) + Space( 1 ) + Field->cSufFac + Str( Field->nNumLin ) } ) )
 
       ( dbfFacRecL )->( ordCondSet("!Deleted()", {|| !Deleted() } ) )
       ( dbfFacRecL )->( ordCreate( cPath + "FacRecL.CDX", "nPosPrint", "cSerie + Str(nNumFac) + cSufFac + str( nPosPrint )", {|| Field->cSerie + Str( Field->nNumFac ) + Field->cSufFac + Str( Field->nPosPrint ) }, ) )
@@ -12994,6 +13002,7 @@ function aColFacRec()
    aAdd( aColFacRec, { "cTipCtr"     ,"C", 20, 0, "Tipo tercero centro de coste"          , "",                            "", "( cDbfCol )", nil } )
    aAdd( aColFacRec, { "cTerCtr"     ,"C", 20, 0, "Tercero centro de coste"               , "",                            "", "( cDbfCol )", nil } )
    aAdd( aColFacRec, { "id_tipo_v"   ,"N", 16, 0, "Identificador tipo de venta"           , "IdentificadorTipoVenta",      "", "( cDbfCol )", nil } )
+   aAdd( aColFacRec, { "nRegIva"     ,"N",  1, 0, "Régimen de " + cImp()                  , "TipoImpuesto",                "", "( cDbfCol )", nil } ) 
 
 return ( aColFacRec )
 
@@ -13446,6 +13455,13 @@ function SynFacRec( cPath )
 	      
          if empty( ( dbfFacRecL )->cAlmLin )
             ( dbfFacRecL )->cAlmLin    := RetFld( ( dbfFacRecL )->cSerie + Str( ( dbfFacRecL )->nNumFac ) + ( dbfFacRecL )->cSufFac, dbfFacRecT, "cCodAlm" )
+         end if
+
+         if ( dbfFacRecL )->nRegIva != RetFld( ( dbfFacRecL )->cSerie + str( ( dbfFacRecL )->nNumFac ) + ( dbfFacRecL )->cSufFac, dbfFacRecT, "nRegIva" )
+            if ( dbfFacRecL )->( dbRLock() )
+               ( dbfFacRecL )->nRegIva    := RetFld( ( dbfFacRecL )->cSerie + str( ( dbfFacRecL )->nNumFac ) + ( dbfFacRecL )->cSufFac, dbfFacRecT, "nRegIva" )
+               ( dbfFacRecL )->( dbUnLock() )
+            end if
          end if
 
 	      if !empty( ( dbfFacRecL )->mNumSer )
