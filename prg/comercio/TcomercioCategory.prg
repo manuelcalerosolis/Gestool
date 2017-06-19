@@ -45,6 +45,8 @@ CLASS TComercioCategory FROM TComercioConector
 
    METHOD insertTopMenuPs()
 
+   METHOD cleanCategoriesProduct()                          INLINE ( ::aCategoriesProduct := {} )
+
 END CLASS
 
 //---------------------------------------------------------------------------//
@@ -54,13 +56,19 @@ METHOD buildCategory( id, rootCategory ) CLASS TComercioCategory
    local idLang
    local aLangs            := {}
    local categoryName
-   local categoryLongName
    local statusFamilias
+   local categoryLongName
+
+   if hb_isnil( rootCategory )
+      rootCategory         := 2
+   end if 
+
 /*
    if !( ::isSyncronizeAll() )
       RETURN .f. 
    end if 
 */
+   
    if ascan( ::aCategoriesProduct, {|h| hGet( h, "id" ) == id } ) != 0
       RETURN .f.
    end if
@@ -110,17 +118,31 @@ METHOD getOrBuildCategory( id, rootCategory )
 
    local idCategory
 
-   idCategory  := ::TPrestashopId():getValueCategory( id, ::getCurrentWebName() )
+   idCategory     := ::TPrestashopId():getValueCategory( id, ::getCurrentWebName() )
+
+   msgalert( idCategory, "idCategory" )
 
    if empty( idCategory )
 
+      msgalert( "cleanCategoriesProduct" )
+
+      ::cleanCategoriesProduct()
+
+      msgalert( "buildCategory")
+
       ::buildCategory( id, rootCategory )
 
-      msgalert( hb_valtoexp( ::aCategoriesProduct ), "aCategoriesProduct" )
+      idCategory  := ::insertCategories()
+
+      msgalert( hb_valtoexp( ::aCategoriesProduct ), "updateCategoriesParent" )
+
+      ::updateCategoriesParent()
+
+      msgalert( idCategory, "idCategory" )
 
    end if 
 
-RETURN ( Self )
+RETURN ( idCategory )
 
 //---------------------------------------------------------------------------//
 
@@ -198,7 +220,7 @@ METHOD insertCategories() CLASS TComercioCategory
 
    next 
 
-RETURN ( Self )
+RETURN ( idCategory )
 
 //---------------------------------------------------------------------------//
 
@@ -251,8 +273,8 @@ METHOD insertCategory( hCategory ) CLASS TComercioCategory
    local nLevelDepth
    local isRootCategory
 
-   nLevelDepth    := if( hget( hCategory, "root_category" ) != nil, hget( hCategory, "root_category" ), 2 )
-   isRootCategory := if( hget( hCategory, "root_category" ) != nil, 1, 0 )
+   nLevelDepth          := if( hget( hCategory, "root_category" ) != nil, hget( hCategory, "root_category" ), 2 )
+   isRootCategory       := if( hget( hCategory, "root_category" ) != nil, 1, 0 )
 
    ::writeText( "Añadiendo categoría : " + hGet( hCategory, "name" ) )
 

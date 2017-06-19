@@ -4176,7 +4176,7 @@ METHOD controllerExportOneProductToPrestashop( idProduct ) Class TComercio
       RETURN .f.
    end if 
 
-   ::oWaitMeter         := TWaitMeter():New( "Actualizando articulos", "Espere por favor..." )
+   ::oWaitMeter         := TWaitMeter():New( "Actualizando artículos", "Espere por favor..." )
    ::oWaitMeter:Run()
 
    ::ftpConnect()
@@ -4202,8 +4202,6 @@ METHOD insertOneProductToPrestashop( idProduct ) Class TComercio
       ::TComercioProduct:insertProducts()
 
       ::prestaShopDisConnect()
-
-      // subiendo imagenes-----------------------------------------------------
 
       ::TComercioProduct:uploadImagesToPrestashop()
 

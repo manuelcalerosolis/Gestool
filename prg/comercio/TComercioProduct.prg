@@ -823,11 +823,11 @@ METHOD insertProduct( hProduct ) CLASS TComercioProduct
 
    idCategory           := hGet( hProduct, "id_category_default" )
 
-//   ::TComercioCategory():getOrBuildCategory( idCategory ) 
+   // ::TComercioCategory():getOrBuildCategory( idCategory ) 
 
-//   Return ( Self )
+   // ::idCategoryDefault  := ::TPrestashopId():getValueCategory( idCategory, ::getCurrentWebName(), 2 )
 
-   ::idCategoryDefault  := ::TPrestashopId():getValueCategory( idCategory, ::getCurrentWebName(), 2 )
+   ::idCategoryDefault  := ::TComercioCategory():getOrBuildCategory( idCategory ) 
 
    ::idTaxRulesGroup    := ::TPrestashopId():getValueTaxRuleGroup( hGet( hProduct, "id_tax_rules_group" ), ::getCurrentWebName() )
 

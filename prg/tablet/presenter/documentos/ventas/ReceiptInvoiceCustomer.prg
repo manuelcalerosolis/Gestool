@@ -288,21 +288,34 @@ METHOD FilterTable( cTextFilter ) CLASS ReceiptInvoiceCustomer
 
    do case
       case cTextFilter == "Todos delegación"
-         ( ::getDataTable() )->( dbSetFilter( {|| Field->cSufFac == oUser():cDelegacion() }, "cSufFac=" + oUser():cDelegacion() ) )
+
+         ( ::getDataTable() )->( adsSetAOF( "Field->cSufFac == '" + oUser():cDelegacion() + "'" ) )
+
       case cTextFilter == "Pendientes delegación"
-         ( ::getDataTable() )->( dbSetFilter( {|| !Field->lCobrado .and. Field->cSufFac == oUser():cDelegacion() }, "!lCobrado .and. cSufFac=" + oUser():cDelegacion() ) )
+
+         ( ::getDataTable() )->( adsSetAOF( "!Field->lCobrado .and. Field->cSufFac == '" + oUser():cDelegacion() + "'" ) )
+      
       case cTextFilter == "Cobrados delegación"
-         ( ::getDataTable() )->( dbSetFilter( {|| Field->lCobrado .and. Field->cSufFac == oUser():cDelegacion() }, "lCobrado .and. cSufFac=" + oUser():cDelegacion() ) )
-      case cTextFilter == "Todos"
-         ( ::getDataTable() )->( dbClearFilter() )
+         
+         ( ::getDataTable() )->( adsSetAOF( "Field->lCobrado .and. Field->cSufFac = '" + oUser():cDelegacion() + "'" ) )
+      
       case cTextFilter == "Pendientes"
-         ( ::getDataTable() )->( dbSetFilter( {|| !Field->lCobrado }, "!lCobrado" ) )
+
+         ( ::getDataTable() )->( adsSetAOF( "!Field->lCobrado" ) )
+      
       case cTextFilter == "Cobrados"
-         ( ::getDataTable() )->( dbSetFilter( {|| Field->lCobrado }, "lCobrado" ) )
+
+         ( ::getDataTable() )->( adsSetAOF( "Field->lCobrado" ) )
+      
+      case cTextFilter == "Todos"
+
+         ( ::getDataTable() )->( adsClearAOF() )
+
    end case
 
-   ( ::getDataTable() )->( dbGoTop() )
+   ( ::getDataTable() )->( dbgotop() )
 
+   ::oViewSearchNavigator:oBrowse:SelectCurrent()
    ::oViewSearchNavigator:oBrowse:Refresh()
 
 return ( .t. )
@@ -328,17 +341,17 @@ METHOD onPreRunNavigator() CLASS ReceiptInvoiceCustomer
 
    if !Empty( ::cNumeroFactura )
 
-      ( ::getWorkArea() )->( dbsetfilter( {|| Field->cSerie + Str( Field->nNumFac ) + Field->cSufFac == ::cNumeroFactura }, "Field->cSerie + Str( Field->nNumFac ) + Field->cSufFac == '" + ::cNumeroFactura + "'" ) )
+      ( ::getWorkArea() )->( adsSetAOF( "Field->cSerie + Str( Field->nNumFac ) + Field->cSufFac == '" + ::cNumeroFactura + "'" ) )
       ( ::getWorkArea() )->( dbgotop() )
 
    else
 
       if ( accessCode():lFilterByAgent ) .and. !empty( accessCode():cAgente )
       
-         ( ::getWorkArea() )->( dbsetfilter( {|| Field->cCodAge == accessCode():cAgente }, "Field->cCodAge == '" + accessCode():cAgente + "'" ) )
+         ( ::getWorkArea() )->( adsSetAOF( "Field->cCodAge == '" + accessCode():cAgente + "'" ) )
          ( ::getWorkArea() )->( dbgotop() )
 
-         ( D():Clientes( ::nView ) )->( dbsetfilter( {|| Field->cAgente == accessCode():cAgente }, "Field->cCodAge == '" + accessCode():cAgente + "'" ) )
+         ( D():Clientes( ::nView ) )->( adsSetAOF( "Field->cCodAge == '" + accessCode():cAgente + "'" ) )
          ( D():Clientes( ::nView ) )->( dbgotop() )
 
       end if 

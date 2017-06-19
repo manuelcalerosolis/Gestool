@@ -10,6 +10,8 @@ CLASS HistoricosUsuariosModel FROM SQLBaseModel
 
    METHOD   New()
 
+   METHOD   deleteHistory( cTable )
+
    METHOD   getHistory( cTable )
 
    METHOD   saveHistory( cTable, cBrowseState, cColumnOrder, cOrientation, nIdForRecno )
@@ -71,9 +73,9 @@ METHOD saveHistory( cTable, cBrowseState, cColumnOrder, cOrientation, nIdForRecn
    local cUpdateHistory 
    local cInternalSelect
 
-   if empty( nIdForRecno )
-      RETURN ( Self )
-   end if 
+   DEFAULT cColumnOrder    := ""
+   DEFAULT cOrientation    := ""
+   DEFAULT nIdForRecno     := 0
 
    cInternalSelect   := "( SELECT id FROM " + ::cTableName                 + ;
                            " WHERE cTableName = " + toSQLString( cTable )  + ;
@@ -96,8 +98,33 @@ METHOD saveHistory( cTable, cBrowseState, cColumnOrder, cOrientation, nIdForRecn
                               toSQLString( cOrientation ) + ", "           + ;
                               alltrim( cvaltostr( nIdForRecno ) )          + ")"
 
-  ::Query( cUpdateHistory )
+   ::Query( cUpdateHistory )
 
 RETURN ( Self )
 
+//---------------------------------------------------------------------------//
+
+METHOD deleteHistory( cTable )
+
+   local oStmt
+   local cSentence   := "DELETE FROM " + ::cTableName + " " + ;
+                           "WHERE cTableName = " + toSQLString( cTable ) + " AND usuario_id = " + toSQLString( oUser():cCodigo() )
+
+   try 
+      oStmt          := getSQLDatabase():Execute( cSentence )
+
+   catch
+
+      msgstop( hb_valtoexp( getSQLDatabase():errorInfo() ) )
+
+   finally
+
+      if !empty( oStmt )
+        oStmt:free()
+      end if    
+   
+   end
+
+Return ( nil )
+       
 //---------------------------------------------------------------------------//

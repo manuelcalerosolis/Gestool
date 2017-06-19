@@ -290,6 +290,10 @@ METHOD saveHistory( cWnd )
 
    local cBrowseState   := "null"
 
+   if empty( ::getIdfromRowset() )
+      Return ( .t. )
+   end if 
+
    if !empty( ::oView:getoBrowse() ) 
       cBrowseState      := quoted( ::oView:getoBrowse():saveState() )
    end if

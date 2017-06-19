@@ -120,7 +120,7 @@ METHOD Resource() CLASS CustomerSalesViewSearchNavigator
 
    ::oDlg:bResized            := {|| ::resizeDialog() }
 
-   ::oDlg:Activate( , , ,.t., {|| ::validDialog() },, {|| ::initDialog() } )
+   ::oDlg:Activate( , , , .t., , , {|| ::initDialog() } )
 
    ::endDialog()
 
