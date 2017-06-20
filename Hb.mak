@@ -17,10 +17,6 @@ IMG2PDFLIB           = 	\Img2Pdf
 OBJ                  = 	Obj1701
 
 SOURCEPRG            = 	.\Prg;.\Prg\mail;.\Prg\Comercio;.\Prg\Models;.\Prg\Controllers;.\Prg\Services;.\Prg\Tablet;.\Prg\tablet\view;.\Prg\tablet\view\documentos;.\Prg\tablet\view\terceros;.\Prg\tablet\view\documentos\ventas;.\Prg\tablet\view\documentos\terceros;.\Prg\tablet\utils;.\Prg\tablet\presenter;.\Prg\tablet\presenter\terceros;.\Prg\tablet\presenter\documentos;.\Prg\tablet\presenter\documentos\ventas;
-<<<<<<< HEAD
-=======
-
->>>>>>> 9d4225623558e0b94a20ddf6bc6995d15a7bc187
 SOURCEC 				   =	C
 
 PPO 					   = 	Ppo1701
@@ -62,6 +58,7 @@ TComercioCategory.prg 											\
 TComercioConfig.prg 												\
 TComercioId.prg 													\
 TComercioStock.prg 												\
+TComercioTax.prg 													\
 TFTPLinux.prg 														\
 Comun.prg               										\
 AccessCode.prg          										\
@@ -500,7 +497,6 @@ SQLBaseController.prg 														\
 SQLHeaderController.prg 													\
 SQLBaseEmpresasModel.prg 													\
 SQLBaseLineasModel.prg 														\
-<<<<<<< HEAD
 ClientesModel.prg 															\
 AlbaranesClientesModel.prg 												\
 FacturasClientesModel.prg 													\
@@ -523,8 +519,6 @@ RelacionesEtiquetasModel.prg 												\
 ArticulosModel.prg                                    			\
 HistoricosUsuariosModel.prg                           			\
 PedidosClientesLineasModel.prg 											\
-=======
->>>>>>> 9d4225623558e0b94a20ddf6bc6995d15a7bc187
 EmpresasModel.prg 															\
 ClientesModel.prg 															\
 AlbaranesClientesModel.prg 												\
@@ -570,6 +564,7 @@ TComercioCategory.obj 											\
 TComercioConfig.obj 												\
 TComercioId.obj 													\
 TComercioStock.obj 												\
+TComercioTax.obj 													\
 TFTPLinux.obj 														\
 Comun.obj                                          	\
 AccessCode.obj                                     	\
@@ -1085,6 +1080,7 @@ $(OBJ)\TComercioCategory.obj  										+
 $(OBJ)\TComercioConfig.obj 											+
 $(OBJ)\TComercioId.obj 													+
 $(OBJ)\TComercioStock.obj 												+
+$(OBJ)\TComercioTax.obj 												+
 $(OBJ)\TFTPLinux.obj 													+
 $(OBJ)\Comun.obj                                            +
 $(OBJ)\AccessCode.obj                                       +
