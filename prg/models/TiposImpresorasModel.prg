@@ -56,6 +56,8 @@ METHOD arrayTiposImpresoras()
    local cSentence               := "SELECT nombre FROM " + ::cTableName
    local aResult                 := ::selectFetchArray( cSentence ) 
 
+   aadd( aResult, "" )
+
 RETURN ( aResult )
 
 //---------------------------------------------------------------------------//

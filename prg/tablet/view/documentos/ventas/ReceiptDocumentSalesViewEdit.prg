@@ -9,6 +9,8 @@ CLASS ReceiptDocumentSalesViewEdit FROM ViewEdit
    DATA cCbxEstado
 
    DATA oImporteGastos
+   DATA oImporteCobro
+   DATA oTotalDocumento
 
    DATA nImporteOriginal 
 
@@ -17,7 +19,6 @@ CLASS ReceiptDocumentSalesViewEdit FROM ViewEdit
    METHOD insertControls()
 
    METHOD startDialog()                   INLINE ( ::nImporteOriginal := ::getValue( "ImporteCobro" ) )
-   METHOD validDialog()                   INLINE ( msgalert("validDialog"), ::validImporteCobro() )
 
    METHOD defineNumeroRecibo( nRow )
 
@@ -45,7 +46,9 @@ CLASS ReceiptDocumentSalesViewEdit FROM ViewEdit
 
    METHOD defineAceptarCancelar()
 
-   METHOD validImporteCobro()
+   METHOD validCobro()
+
+   METHOD validTotalDocumento()
 
 END CLASS
 
@@ -284,16 +287,16 @@ METHOD defineImporte( nRow ) CLASS ReceiptDocumentSalesViewEdit
                            "nHeight"   => 23,;
                            "lDesign"   => .f. } )
 
-   TGridGet():Build(    {  "nRow"      => nRow,;
-                           "nCol"      => {|| GridWidth( 2.5, ::oDlg ) },;
-                           "bSetGet"   => {|u| ::SetGetValue( u, "TotalDocumento" ) },;
-                           "oWnd"      => ::oDlg,;
-                           "cPict"     => cPorDiv(),;
-                           "nWidth"    => {|| GridWidth( 2.5, ::oDlg ) },;
-                           "nHeight"   => 23,;
-                           "lPixels"   => .t.,;
-                           "lRight"    => .t.,;
-                           "bValid"    => {|| .t. } } )
+   ::oTotalDocumento := TGridGet():Build(    {  "nRow"      => nRow,;
+                                                "nCol"      => {|| GridWidth( 2.5, ::oDlg ) },;
+                                                "bSetGet"   => {|u| ::SetGetValue( u, "TotalDocumento" ) },;
+                                                "oWnd"      => ::oDlg,;
+                                                "cPict"     => cPorDiv(),;
+                                                "nWidth"    => {|| GridWidth( 2.5, ::oDlg ) },;
+                                                "nHeight"   => 23,;
+                                                "lPixels"   => .t.,;
+                                                "lRight"    => .t.,;
+                                                "bValid"    => {|| ::validTotalDocumento() } } )
 
 Return ( self )
 
@@ -315,15 +318,15 @@ METHOD defineImporteCobro( nRow ) CLASS ReceiptDocumentSalesViewEdit
                            "nHeight"   => 23,;
                            "lDesign"   => .f. } )
 
-   TGridGet():Build(    {  "nRow"      => nRow,;
-                           "nCol"      => {|| GridWidth( 2.5, ::oDlg ) },;
-                           "bSetGet"   => {|u| ::SetGetValue( u, "ImporteCobro" ) },;
-                           "oWnd"      => ::oDlg,;
-                           "cPict"     => cPorDiv(),;
-                           "nWidth"    => {|| GridWidth( 2.5, ::oDlg ) },;
-                           "nHeight"   => 23,;
-                           "lPixels"   => .t.,;
-                           "lRight"    => .t. } )
+   ::oImporteCobro   := TGridGet():Build( {  "nRow"      => nRow,;
+                                             "nCol"      => {|| GridWidth( 2.5, ::oDlg ) },;
+                                             "bSetGet"   => {|u| ::SetGetValue( u, "ImporteCobro" ) },;
+                                             "oWnd"      => ::oDlg,;
+                                             "cPict"     => cPorDiv(),;
+                                             "nWidth"    => {|| GridWidth( 2.5, ::oDlg ) },;
+                                             "nHeight"   => 23,;
+                                             "lPixels"   => .t.,;
+                                             "lRight"    => .t. } )
 
 Return ( self )
 
@@ -527,18 +530,14 @@ METHOD defineAceptarCancelar() CLASS ReceiptDocumentSalesViewEdit
                            "nWidth"    => 64,;
                            "nHeight"   => 64,;
                            "cResName"  => "gc_ok_64",;
-                           "bLClicked" => {|| ::oSender:onViewSave() },;
+                           "bLClicked" => {|| if( ::validCobro(), ::oSender:onViewSave(), ) },;
                            "oWnd"      => ::oDlg } )
 
 Return ( self )
 
 //---------------------------------------------------------------------------//
 
-METHOD validImporteCobro() CLASS ReceiptDocumentSalesViewEdit
-
-   msgalert( ::getValue( "ImporteCobro" ), "ImporteCobro" )
-   msgalert( ::getValue( "TotalDocumento" ), "TotalDocumento" )
-   msgalert( ::nImporteOriginal, "nImporteOriginal" )
+METHOD validTotalDocumento() CLASS ReceiptDocumentSalesViewEdit
 
    if ::getValue( "TotalDocumento" ) > ::nImporteOriginal
 
@@ -549,28 +548,36 @@ METHOD validImporteCobro() CLASS ReceiptDocumentSalesViewEdit
    else
 
       ::setValue( ::getValue( "TotalDocumento" ), "ImporteCobro" )
-      
+
    end if 
 
-/*
-   if ::getValue( "ImporteCobro" ) <= ::getValue( "TotalDocumento" )
+   ::oImporteCobro:refresh()
 
-      if ( ::getValue( "ImporteCobro" ) != 0 ) .and. ( ::getValue( "TotalDocumento" ) != ::getValue( "ImporteCobro" ) )
-         
-         ::setValue( ( ::getValue( "TotalDocumento" ) - ::getValue( "ImporteCobro" ) ), "ImporteGastos" )
+Return ( .t. )
 
-         ::oImporteGastos:Refresh()
+//---------------------------------------------------------------------------//
 
-      end if
+METHOD validCobro() CLASS ReceiptDocumentSalesViewEdit
 
-      Return ( .t. )
+   if ::getValue( "ImporteCobro" ) > ::nImporteOriginal
 
-   else
+      apoloMsgStop( "El importe del gasto excede al importe del recibo" )
+
+      Return ( .f. )
+
+   end if 
+
+   if ::getValue( "TotalDocumento" ) > ::nImporteOriginal
 
       apoloMsgStop( "El importe del cobro excede al importe del recibo" )
 
-   end if
-*/
+      Return ( .f. )
+
+   else
+
+      ::setValue( ::getValue( "TotalDocumento" ), "ImporteCobro" )
+
+   end if 
 
 Return ( .t. )
 

@@ -74,15 +74,18 @@ CLASS ViewBase
    METHOD setValue( uValue, cFieldName )                 INLINE ( hSet( ::oSender:hDictionaryMaster, cFieldName, uValue ) ) 
 
    METHOD setErrorValidator( cErrorText )
+   METHOD setErrorValidator()                            INLINE ( if( !empty( ::cErrorValidator ), apoloMsgStop( ::cErrorValidator ), ) )
 
    METHOD errorValidator() 
 
    METHOD endView()                                      INLINE ( ::oDlg:goNextCtrl( GetFocus() ),;
                                                                   ::oDlg:goPrevCtrl( GetFocus() ),;
-                                                                  iif( ::errorValidator(), apoloMsgStop( ::cErrorValidator ), ::oDlg:End( IDOK ) ) )
+                                                                  if( ::validateDialog(), ::oDlg:End( IDOK ), ::showErrorValidator() ) )
    METHOD cancelView()                                   INLINE ( if( ApoloMsgNoYes( "¿Desea terminar el proceso?", "¡Atención!", .t. ), ::oDlg:End(), ) )
 
    METHOD evalDialog()
+
+   METHOD validateDialog()                               INLINE ( msgalert( "validateDialog" ), ::evalDialog() .and. ::validDialog() )
 
    METHOD getRow()                                       INLINE ( ::nRow )
    METHOD resetRow()                                     INLINE ( ::nRow := __initialRow__ )
@@ -120,7 +123,7 @@ METHOD Resource() CLASS ViewBase
 
    ::oDlg:bStart           := {|| ::startDialog() }
 
-   ::oDlg:Activate( , , , .t., {|| ::validDialog() }, , {|| ::initDialog() } )
+   ::oDlg:Activate( , , , .t., , , {|| ::initDialog() } )
 
 Return ( ::oDlg:nResult == IDOK )
 
@@ -233,6 +236,7 @@ METHOD evalDialog() CLASS ViewBase
          if !empty( oControl:bValid ) .and. !eval( oControl:bValid )
 
             lValid   := .f.
+
             oControl:SetFocus()
 
          endif

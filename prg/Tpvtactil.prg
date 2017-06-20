@@ -2088,7 +2088,7 @@ METHOD Resource() CLASS TpvTactil
    // Boton de orden de comanda------------------------------------------------
 
    if ::l1280()
-      ::oBtnOrdenComandaActual   := TButton():ReDefine( 505, {|| ::SelectorOrdenComanda() }, ::oDlg, , , .f., , , "Orden comanda" )
+      ::oBtnOrdenComandaActual   := TButton():ReDefine( 511, {|| ::SelectorOrdenComanda() }, ::oDlg, , , .f., , , "Orden comanda" )
       ::oBtnOrdenComandaActual:setFont( ::oFntNum )
    else
       ::oBtnOrdenComandaActual   := TButtonBmp():ReDefine( 505, {|| ::SelectorOrdenComanda() }, ::oDlg, , , .f., , , "", .f., "gc_sort_az_descending_32" ) //
@@ -2099,15 +2099,11 @@ METHOD Resource() CLASS TpvTactil
    ::oGetCambiarOrden:setColor( GetSysColor( COLOR_WINDOWTEXT ), GetSysColor( COLOR_WINDOW ) )
    ::oGetCambiarOrden:setFont( ::oFntNum )
 
-   ::oBtnAgregarLibre            := TButtonBmp():ReDefine( 502, {|| ::AgregarLibre() },            ::oDlg, , , .f., , , , .f., "gc_more_32" ) //
-   ::oBtnCombinado               := TButtonBmp():ReDefine( 503, {|| ::SetCombinando() },           ::oDlg, , , .f., , , , .f., "gc_pin_blue_32" )
-   ::oBtnCalculadora             := TButtonBmp():ReDefine( 504, {|| ::SetCalculadora() },          ::oDlg, , , .f., , , , .f., "gc_calculator_32" )
+   ::oBtnAgregarLibre            := TButtonBmp():ReDefine( 502, {|| ::AgregarLibre() }, ::oDlg, , , .f., , , , .f., "gc_more_32" ) //
+   ::oBtnCombinado               := TButtonBmp():ReDefine( 503, {|| ::SetCombinando() }, ::oDlg, , , .f., , , , .f., "gc_pin_blue_32" )
+   ::oBtnCalculadora             := TButtonBmp():ReDefine( 504, {|| ::SetCalculadora() }, ::oDlg, , , .f., , , , .f., "gc_calculator_32" )
 
-   if !::l1024() 
-      ::oBtnSSalir               := TButtonBmp():ReDefine( 509, {|| ::oDlg:End },                  ::oDlg, , , .f., , , , .f., "End32" )
-   else
-      ::oBtnBalanza              := TButtonBmp():ReDefine( 510, {|| ::GetPesoBalanza() },          ::oDlg, , , .f., , , , .f., "gc_scales_32" )
-   end if
+   ::oBtnBalanza                 := TButtonBmp():ReDefine( 510, {|| ::GetPesoBalanza() }, ::oDlg, , , .f., , , , .f., "gc_scales_32" )
 
    /*
    Datos de la sala y del Usuario-------------------------------------------
@@ -2448,12 +2444,12 @@ METHOD Resource() CLASS TpvTactil
 
    /*
    Redefinimos botones especiales para las resoluciones pequeñas---------------
-   */
 
    if !::l1024()
       ::oBtnSEntregar         := TButtonBmp():ReDefine( 507, {|| ::OnClickEntregaNota() }, ::oDlg, , , .f., , , , .f., "gc_printer2_32" )
       ::oBtnSCobrar           := TButtonBmp():ReDefine( 508, {|| ::OnClickCobro() }, ::oDlg, , , .f., , , , .f., "gc_money2_32" )
    end if
+   */
 
    /*
    Definimos el meter--------------------------------------------------------
@@ -2668,6 +2664,9 @@ METHOD StartResource() CLASS TpvTactil
    if ::oOrdenComanda:EmptyOrdenComanda()
       ::oBtnOrdenComandaActual:Hide()
       ::oGetCambiarOrden:Hide()
+   else 
+      ::oBtnOrdenComandaActual:Show()
+      ::oGetCambiarOrden:Show()
    end if  
 
    /*
@@ -2796,15 +2795,23 @@ METHOD ResizedResource() CLASS TpvTactil
    ::oBtnArticulosPageUp:Move( ::oBtnArticulosPageUp:nTop + nDialogHeight, , , , .f. )
    ::oBtnArticulosPageDown:Move( ::oBtnArticulosPageDown:nTop + nDialogHeight, , , , .f. )
 
+
+/*
    if ::l1280()
       ::oBtnOrdenComandaActual:Move( ::oBtnOrdenComandaActual:nTop + nDialogHeight, ::oBtnOrdenComandaActual:nLeft + nDialogWidth -100, 262, , .f. )
    else     
       ::oBtnOrdenComandaActual:Move( ::oBtnOrdenComandaActual:nTop + nDialogHeight, ::oBtnOrdenComandaActual:nLeft + nDialogWidth, , , .f. )
    end if 
 
+   msgalert( ::l1280(), "::l1280()" )
+   msgalert( ::oBtnOrdenComandaActual:nTop + nDialogHeight, "::oBtnOrdenComandaActual:nTop + nDialogHeight" )
+   msgalert( ::oBtnOrdenComandaActual:nLeft + nDialogWidth -100, "::oBtnOrdenComandaActual:nLeft + nDialogWidth -100" )
+*/
    // ::oGetCambiarOrden:Move( ::oGetCambiarOrden:nTop + nDialogHeight, ::oGetCambiarOrden:nLeft + nDialogWidth - 100, 200, , .f. )
 
-   ::oGetCambiarOrden:Hide()
+   ::oGetCambiarOrden:Hide() 
+
+   ::oBtnOrdenComandaActual:Move( ::oBtnOrdenComandaActual:nTop + nDialogHeight, ::oBtnOrdenComandaActual:nLeft + nDialogWidth, , , .f. )
 
    ::oBtnAgregarLibre:Move( ::oBtnAgregarLibre:nTop + nDialogHeight, ::oBtnAgregarLibre:nLeft + nDialogWidth, , , .f. )
 
@@ -2835,9 +2842,11 @@ METHOD ResizedResource() CLASS TpvTactil
    ::oBrwFamilias:Move( , ::oBrwFamilias:nLeft + nDialogWidth, , ::oBrwFamilias:nHeight() + nDialogHeight, .f. )
 
    ::oBtnFamiliasUp:Move( ::oBtnFamiliasUp:nTop + nDialogHeight, ::oBtnFamiliasUp:nLeft + nDialogWidth, , , .f. )
+
    ::oBtnFamiliasDown:Move( ::oBtnFamiliasDown:nTop + nDialogHeight, ::oBtnFamiliasDown:nLeft + nDialogWidth, , , .f. )
 
    ::oBtnPreviewDocumento:Move( ::oBtnPreviewDocumento:nTop + nDialogHeight, ::oBtnPreviewDocumento:nLeft + nDialogWidth, , , .f. )
+
    ::oBtnPrintDocumento:Move( ::oBtnPrintDocumento:nTop + nDialogHeight, ::oBtnPrintDocumento:nLeft + nDialogWidth, , , .f. )
 
    ::oBtnCalculadora:Move( ::oBtnCalculadora:nTop + nDialogHeight, ::oBtnCalculadora:nLeft + nDialogWidth, , , .f.)
@@ -5800,7 +5809,7 @@ METHOD SelecionaCliente() CLASS TpvTactil
       ::SetSerie()
 
       // Situamos las tarifas--------------------------------------------------
-
+      /*
       nTarifaSolo                   := Max( oRetFld( cCliente, ::oCliente, "nTarifa" ), 1 ) // ::nTarifaSolo
       nTarifaCombinado              := Max( oRetFld( cCliente, ::oCliente, "nTarCmb" ), 1 ) // ::nTarifaCombinado
 
@@ -5811,7 +5820,7 @@ METHOD SelecionaCliente() CLASS TpvTactil
          ::SetTarifaCombinado( nTarifaCombinado )
 
          // Comprobamos que han cambiado la tarifa del cliente-----------------
-
+      
          if ( ::oTemporalLinea:RecCount() != 0 ) .and. ;
             ApoloMsgNoYes( "La tarifa del cliente ha cambiado, ¿desea actualizar los precios de todas las líneas?",;
                            "Confirmación", .t. )
@@ -5819,8 +5828,8 @@ METHOD SelecionaCliente() CLASS TpvTactil
             ::ActualizaTarifaCliente()
 
          end if
-
       end if   
+      */
 
    end if
 

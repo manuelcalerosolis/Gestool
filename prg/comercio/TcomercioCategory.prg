@@ -45,6 +45,8 @@ CLASS TComercioCategory FROM TComercioConector
 
    METHOD insertTopMenuPs()
 
+   METHOD cleanCategoriesProduct()                          INLINE ( ::aCategoriesProduct := {} )
+
 END CLASS
 
 //---------------------------------------------------------------------------//
@@ -54,13 +56,19 @@ METHOD buildCategory( id, rootCategory ) CLASS TComercioCategory
    local idLang
    local aLangs            := {}
    local categoryName
-   local categoryLongName
    local statusFamilias
+   local categoryLongName
+
+   if hb_isnil( rootCategory )
+      rootCategory         := 2
+   end if 
+
 /*
    if !( ::isSyncronizeAll() )
       RETURN .f. 
    end if 
 */
+   
    if ascan( ::aCategoriesProduct, {|h| hGet( h, "id" ) == id } ) != 0
       RETURN .f.
    end if
@@ -69,8 +77,13 @@ METHOD buildCategory( id, rootCategory ) CLASS TComercioCategory
 
    if ( D():Familias( ::getView() ) )->( dbseekinord( id, "cCodFam" ) )  
 
-      if !empty( ( D():Familias( ::getView() ) )->cFamCmb )
+      if !empty( ( D():Familias( ::getView() ) )->cFamCmb ) .and. ;
+         empty( ::TPrestashopId():getValueCategory( ( D():Familias( ::getView() ) )->cFamCmb, ::getCurrentWebName() ) )
+         
+         // msgalert( ( D():Familias( ::getView() ) )->cFamCmb, "padre" )
+
          ::buildCategory( ( D():Familias( ::getView() ) )->cFamCmb )
+
       end if
 
       categoryName         := alltrim( ( D():Familias( ::getView() ) )->cNomFam )
@@ -110,17 +123,21 @@ METHOD getOrBuildCategory( id, rootCategory )
 
    local idCategory
 
-   idCategory  := ::TPrestashopId():getValueCategory( id, ::getCurrentWebName() )
+   idCategory     := ::TPrestashopId():getValueCategory( id, ::getCurrentWebName() )
 
    if empty( idCategory )
 
+      ::cleanCategoriesProduct()
+
       ::buildCategory( id, rootCategory )
 
-      msgalert( hb_valtoexp( ::aCategoriesProduct ), "aCategoriesProduct" )
+      idCategory  := ::insertCategories()
+
+      ::updateCategoriesParent()
 
    end if 
 
-RETURN ( Self )
+RETURN ( idCategory )
 
 //---------------------------------------------------------------------------//
 
@@ -198,7 +215,7 @@ METHOD insertCategories() CLASS TComercioCategory
 
    next 
 
-RETURN ( Self )
+RETURN ( idCategory )
 
 //---------------------------------------------------------------------------//
 
@@ -222,6 +239,9 @@ METHOD updateCategoryParent( hCategoryProduct ) CLASS TComercioCategory
 
    nParent           := ::TPrestashopId():getValueCategory( hGet( hCategoryProduct, "id_parent" ), ::getCurrentWebName(), 0 )
    nCategory         := ::TPrestashopId():getValueCategory( hGet( hCategoryProduct, "id" ), ::getCurrentWebName() )
+
+//    msgalert( hGet( hCategoryProduct, "id_parent" ), "codigo del padre" )
+//    msgalert( nParent, "identificador del padre" )
 
    if !empty( nParent ) .and. !empty( nCategory )
 
@@ -251,8 +271,8 @@ METHOD insertCategory( hCategory ) CLASS TComercioCategory
    local nLevelDepth
    local isRootCategory
 
-   nLevelDepth    := if( hget( hCategory, "root_category" ) != nil, hget( hCategory, "root_category" ), 2 )
-   isRootCategory := if( hget( hCategory, "root_category" ) != nil, 1, 0 )
+   nLevelDepth          := if( hget( hCategory, "root_category" ) != nil, hget( hCategory, "root_category" ), 2 )
+   isRootCategory       := if( hget( hCategory, "root_category" ) != nil, 1, 0 )
 
    ::writeText( "Añadiendo categoría : " + hGet( hCategory, "name" ) )
 

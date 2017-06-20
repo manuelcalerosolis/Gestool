@@ -97,10 +97,7 @@ METHOD New( oWnd )
    ::l2007           := .f.
    ::bClrSel         := {|| { CLR_BLACK, Rgb( 229, 229, 229 ) } }
    ::bClrSelFocus    := {|| { CLR_BLACK, Rgb( 167, 205, 240 ) } }
-
-#ifndef __XHARBOUR__
    ::lSortDescend    := .f. 
-#endif
 
 Return ( Self )
 
@@ -126,19 +123,19 @@ return nil
 //----------------------------------------------------------------------------//
 
 METHOD CreateData( cPath )
-
+/*
    DEFAULT cPath  := cPatEmp()
 
    if !lExistTable( cPath + "CfgUse.Dbf" )
       dbCreate( cPath + "CfgUse.Dbf", aSqlStruct( aItmHea() ), cDriver() )
    end if
-
+*/
 Return ( Self )
 
 //------------------------------------------------------------------------//
 
 METHOD ReindexData( cPath )
-
+/*
    local dbfUse
 
    DEFAULT cPath  := cPatEmp()
@@ -163,7 +160,7 @@ METHOD ReindexData( cPath )
       msgStop( "Imposible abrir en modo exclusivo la tabla de ventanas" )
 
    end if
-
+*/
 Return ( Self )
 
 //------------------------------------------------------------------------//
@@ -172,24 +169,32 @@ METHOD LoadData()
 
    local oBlock
    local oError
-
+   local hHistroy
 
    oBlock               := ErrorBlock( {| oError | ApoloBreak( oError ) } )
    BEGIN SEQUENCE
 
-      ::cOriginal       := ::SaveState()
+      ::getOriginal()
 
-      if !Empty( ::dbfUsr ) .and. ( ::dbfUsr )->( Used() )
+      /*
+      if !empty( ::dbfUsr ) .and. ( ::dbfUsr )->( Used() )
 
          if ( ::dbfUsr )->( dbSeek( cCurUsr() + ::cName ) )
 
-            if !Empty( ( ::dbfUsr )->cBrwCfg )
+            if !empty( ( ::dbfUsr )->cBrwCfg )
                ::RestoreState( ( ::dbfUsr )->cBrwCfg )
             end if
 
          end if
 
       end if
+      */
+
+      hHistroy          := HistoricosUsuariosModel():getHistory( ::cName )
+
+      if !empty( hHistroy )
+         ::restoreState( hget( hHistroy, "cBrowseState" ) )
+      end if 
 
    RECOVER USING oError
 
@@ -203,18 +208,18 @@ Return ( Self )
 
 //------------------------------------------------------------------------//
 
-METHOD SaveConfigColumn( lSaveBrowseState )
+METHOD SaveConfigColumn( lMessage )
 
    local oError
    local oBlock
 
-   DEFAULT lSaveBrowseState      := .t.
+   DEFAULT lMessage         := .t.
 
-   oBlock                        := ErrorBlock( {| oError | ApoloBreak( oError ) } )
+   oBlock                   := ErrorBlock( {| oError | ApoloBreak( oError ) } )
    BEGIN SEQUENCE
 
    // Datos del browse --------------------------------------------------------
-
+   /*
    if !Empty( ::dbfUsr ) .and. ( ::dbfUsr )->( Used() )
 
       if ( ::dbfUsr )->( dbSeek( cCurUsr() + ::cName ) )
@@ -236,11 +241,18 @@ METHOD SaveConfigColumn( lSaveBrowseState )
 
       end if
 
-      if lSaveBrowseState
+      if lMessage
          msgInfo( "Configuración de columnas guardada", "Información" )
       end if
 
    end if
+   */
+
+      HistoricosUsuariosModel():saveHistory( ::cName, quoted( ::SaveState() ) )
+
+      if lMessage
+         msgInfo( "Configuración de columnas guardada", "Información" )
+      end if
 
    RECOVER USING oError
 
@@ -254,43 +266,66 @@ Return ( Self )
 
 //------------------------------------------------------------------------//
 
-METHOD CleanData()
+METHOD CleanData( lMessage )
 
    // Limpiar las configuraciones----------------------------------------------
-
+   /*
    if !Empty( ::dbfUsr ) .and. ( ::dbfUsr )->( Used() )
       while ( ::dbfUsr )->( dbSeek( cCurUsr() + ::cName ) )
          dbDel( ::dbfUsr )
       end while
    end if
+   */
+
+   local oError
+   local oBlock
+
+   DEFAULT lMessage     := .t.
+
+   oBlock               := ErrorBlock( {| oError | ApoloBreak( oError ) } )
+   BEGIN SEQUENCE
+
+      HistoricosUsuariosModel():deleteHistory( ::cName )
+
+      if lMessage
+         msgInfo( "Configuración de columnas eliminada", "Información" )
+      end if
+
+   RECOVER USING oError
+
+      msgStop( "Imposible eliminar las configuraciones de columnas" + CRLF + ErrorMessage( oError ) )
+
+   END SEQUENCE
+
+   ErrorBlock( oBlock )
 
 Return ( Self )
 
 //------------------------------------------------------------------------//
 
 METHOD DeleteData()
-
+/*
    fErase( cPatEmp() + "CfgUse.Dbf" )
    fErase( cPatEmp() + "CfgUse.Cdx" )
-
+*/
 Return ( Self )
 
 //------------------------------------------------------------------------//
 
 METHOD CloseData()
-
+/*
    if !Empty( ::dbfUsr ) .and. ( ::dbfUsr )->( Used() )
       ( ::dbfUsr )->( dbCloseArea() )
    end if
 
    ::lOpenData          := .f.
-
+*/
 Return ( Self )
 
 //------------------------------------------------------------------------//
 
 METHOD OpenData( cPath )
-
+/*
    local oBlock
    local oError
 
@@ -323,7 +358,7 @@ METHOD OpenData( cPath )
    END SEQUENCE
 
    ErrorBlock( oBlock )
-
+*/
 Return ( Self )
 
 //------------------------------------------------------------------------//
@@ -347,31 +382,31 @@ METHOD RButtonDown( nRow, nCol, nFlags )
 
    MenuBegin( .f., , , .f., .f., , , , , , , , , , , , .f., .t., .f., .t. )
 
-   for each oCol in ::aCols
-      MenuAddItem( oCol:cHeader, , !oCol:lHide, ( Len( ::aDisplay ) != 1 .or. oCol:nPos != 1 ), GenMenuBlock( oCol ) )
-   next
+      for each oCol in ::aCols
+         MenuAddItem( oCol:cHeader, , !oCol:lHide, ( Len( ::aDisplay ) != 1 .or. oCol:nPos != 1 ), GenMenuBlock( oCol ) )
+      next
 
-   MenuEnd()
+      MenuEnd()
 
-   if !Empty( ::cName )
+      if !Empty( ::cName )
 
-      MenuAddItem( "Guardar vista actual", "Guarda la vista actual de la rejilla de datos", .f., .t., {|| ::Save() }, , "gc_table_selection_column_disk_16", oMenu )
+         MenuAddItem( "Guardar vista actual", "Guarda la vista actual de la rejilla de datos", .f., .t., {|| ::Save() }, , "gc_table_selection_column_disk_16", oMenu )
 
-      MenuAddItem( "Cargar vista por defecto", "Carga la vista por defecto de la rejilla de datos", .f., .t., {|| ::SetOriginal() }, , "gc_table_selection_column_refresh_16", oMenu )
+         MenuAddItem( "Cargar vista por defecto", "Carga la vista por defecto de la rejilla de datos", .f., .t., {|| ::SetOriginal() }, , "gc_table_selection_column_refresh_16", oMenu )
 
-   end if
+      end if
 
-   MenuAddItem( "Seleccionar &todo", "Selecciona todas las filas de la rejilla", .f., .t., {|| ::SelectAll() }, , "gc_table_selection_all_16", oMenu )
+      MenuAddItem( "Seleccionar &todo", "Selecciona todas las filas de la rejilla", .f., .t., {|| ::SelectAll() }, , "gc_table_selection_all_16", oMenu )
 
-   MenuAddItem( "&Quitar selección", "Quita la selección de todas las filas de la rejilla", .f., .t., {|| ::SelectNone() }, , "gc_table_16", oMenu )
+      MenuAddItem( "&Quitar selección", "Quita la selección de todas las filas de la rejilla", .f., .t., {|| ::SelectNone() }, , "gc_table_16", oMenu )
 
-   MenuAddItem()
+      MenuAddItem()
 
-   MenuAddItem( "Exportar a E&xcel", "Exportar rejilla de datos a Excel", .f., .t., {|| ::ExportToExcel() }, , "gc_spreadsheet_sum_16", oMenu )
+      MenuAddItem( "Exportar a E&xcel", "Exportar rejilla de datos a Excel", .f., .t., {|| ::ExportToExcel() }, , "gc_spreadsheet_sum_16", oMenu )
 
-   if !empty( ::bExportLector )
-      MenuAddItem( "Exportar códigos y unidades", "Exportar códigos y unidades", .f., .t., {|| ::ExportLector() }, , "gc_spreadsheet_sum_16", oMenu )
-   end if
+      if !empty( ::bExportLector )
+         MenuAddItem( "Exportar códigos y unidades", "Exportar códigos y unidades", .f., .t., {|| ::ExportLector() }, , "gc_spreadsheet_sum_16", oMenu )
+      end if
 
    MenuEnd() 
 

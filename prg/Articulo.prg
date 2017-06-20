@@ -1694,6 +1694,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, cArticulo, oBrw, bWhen, bValid, nMode )
    local oBmpUbicaciones
    local oBmpImagenes
    local oBmpTactil
+   local oBmpAdicionales
    local aIdEtiquetas
    local aNombreEtiquetas
    local oImpComanda1
@@ -2096,6 +2097,12 @@ STATIC FUNCTION EdtRec( aTmp, aGet, cArticulo, oBrw, bWhen, bValid, nMode )
    /*
    Adicional------------------------------------------------------------------------
    */
+
+   REDEFINE BITMAP oBmpAdicionales ;
+         ID       500 ;
+         RESOURCE "gc_information_48" ;
+         TRANSPARENT ;
+         OF       fldAdicionales
 
    REDEFINE CHECKBOX aTmp[ ( D():Articulos( nView ) )->( fieldpos( "lLote" ) ) ] ;
          ID       600 ;
@@ -4658,7 +4665,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, cArticulo, oBrw, bWhen, bValid, nMode )
    ACTIVATE DIALOG oDlg ;
       CENTER ;
       ON INIT     (  EdtRecMenu( aTmp, aGet, oSay, oDlg, oFld, aBar, cSay, nMode ) ) ;
-      VALID       (  KillTrans( oMenu, oBmpTemporada, oBmpEstado, oBmpGeneral, oBmpPrecios, oBmpDescripciones, oBmpPropiedades, oBmpLogistica, oBmpStocks, oBmpContabilidad, oBmpOfertas, oBmpEscandallos, oBmpWeb, oBmpUbicaciones, oBmpImagenes, oBmpTactil ) )
+      VALID       (  KillTrans( oMenu, oBmpTemporada, oBmpEstado, oBmpGeneral, oBmpPrecios, oBmpDescripciones, oBmpPropiedades, oBmpLogistica, oBmpStocks, oBmpContabilidad, oBmpOfertas, oBmpEscandallos, oBmpWeb, oBmpUbicaciones, oBmpImagenes, oBmpTactil, oBmpAdicionales ) )
 /*
    RECOVER USING oError
 
@@ -5941,11 +5948,12 @@ Static Function EndTrans( aTmp, aGet, oSay, oDlg, aTipBar, cTipBar, nMode, oImpC
       if !empty(aTiposImpresoras)
 
          if !empty( oImpComanda1 )
-            aTmp[ ( D():Articulos( nView ) )->( fieldpos( "cTipImp1" ) ) ] := aTiposImpresoras[ MinMax( oImpComanda1:nAt, 1, len( aTiposImpresoras ) ) ]
+            aTmp[ ( D():Articulos( nView ) )->( fieldpos( "cTipImp1" ) ) ] := oImpComanda1:varGet()
+            // aTiposImpresoras[ MinMax( oImpComanda1:nAt, 1, len( aTiposImpresoras ) ) ]
          end if
 
          if !empty( oImpComanda2 )
-            aTmp[ ( D():Articulos( nView ) )->( fieldpos( "cTipImp2" ) ) ] := aTiposImpresoras[ MinMax( oImpComanda2:nAt, 1, len( aTiposImpresoras ) ) ]
+            aTmp[ ( D():Articulos( nView ) )->( fieldpos( "cTipImp2" ) ) ] := oImpComanda2:varGet()
          end if
 
       end if 
@@ -6034,7 +6042,7 @@ Return ( .t. )
 
 //-----------------------------------------------------------------------//
 
-Static Function KillTrans( oMenu, oBmpCategoria, oBmpTemporada, oBmpEstado, oBmpGeneral, oBmpPrecios, oBmpDescripciones, oBmpPropiedades, oBmpLogistica, oBmpStocks, oBmpContabilidad, oBmpOfertas, oBmpEscandallos, oBmpWeb, oBmpUbicaciones, oBmpImagenes, oBmpTactil )
+Static Function KillTrans( oMenu, oBmpCategoria, oBmpTemporada, oBmpEstado, oBmpGeneral, oBmpPrecios, oBmpDescripciones, oBmpPropiedades, oBmpLogistica, oBmpStocks, oBmpContabilidad, oBmpOfertas, oBmpEscandallos, oBmpWeb, oBmpUbicaciones, oBmpImagenes, oBmpTactil, oBmpAdicionales )
 
    /*
    Quitamos los filtros de stock-----------------------------------------------
@@ -6166,6 +6174,10 @@ Static Function KillTrans( oMenu, oBmpCategoria, oBmpTemporada, oBmpEstado, oBmp
 
    if !empty( oBmpTactil )
       oBmpTactil:End()
+   end if
+
+   if !empty(oBmpAdicionales)
+      oBmpAdicionales:End()
    end if
 
 Return .t.

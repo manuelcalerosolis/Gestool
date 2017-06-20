@@ -61,16 +61,15 @@ METHOD New( oWnd )
 RETURN ( Self )
 
 //------------------------------------------------------------------------//
+/*
+Montamos el menu------------------------------------------------------------
+*/
 
 METHOD RButtonDown( nRow, nCol, nFlags )
 
    local oCol
    local oMenu
    local bMenuSelect
-
-   /*
-   Montamos el menu------------------------------------------------------------
-   */
 
    oMenu             := MenuBegin( .t. )
    bMenuSelect       := ::bMenuSelect
@@ -79,21 +78,21 @@ METHOD RButtonDown( nRow, nCol, nFlags )
 
    MenuAddItem( "Columnas", "Columnas de la rejilla de datos", .f., .t., , , "gc_table_selection_column_16", oMenu )
 
-   MenuBegin( .f.,,, .f. )
+      MenuBegin( .f., , , .f., .f., , , , , , , , , , , , .f., .t., .f., .t. )
 
-   for each oCol in ::aCols
-      MenuAddItem( oCol:cHeader, , !oCol:lHide, ( Len( ::aDisplay ) != 1 .or. oCol:nPos != 1 ), GenMenuBlock( oCol ) )
-   next
+         for each oCol in ::aCols
+            MenuAddItem( oCol:cHeader, , !oCol:lHide, ( Len( ::aDisplay ) != 1 .or. oCol:nPos != 1 ), GenMenuBlock( oCol ) )
+         next
 
-   MenuEnd()
+      MenuEnd()
 
-   MenuAddItem( "Seleccionar &todo", "Selecciona todas las filas de la rejilla", .f., .t., {|| ::SelectAll() }, , "gc_table_selection_all_16", oMenu )
+      MenuAddItem( "Seleccionar &todo", "Selecciona todas las filas de la rejilla", .f., .t., {|| ::SelectAll() }, , "gc_table_selection_all_16", oMenu )
 
-   MenuAddItem( "&Quitar selección", "Quita la selección de todas las filas de la rejilla", .f., .t., {|| ::SelectNone() }, , "gc_table_16", oMenu )
+      MenuAddItem( "&Quitar selección", "Quita la selección de todas las filas de la rejilla", .f., .t., {|| ::SelectNone() }, , "gc_table_16", oMenu )
 
-   MenuAddItem()
+      MenuAddItem()
 
-   MenuAddItem( "Exportar a E&xcel", "Exportar rejilla de datos a Excel", .f., .t., {|| ::ExportToExcel() }, , "gc_spreadsheet_sum_16", oMenu )
+      MenuAddItem( "Exportar a E&xcel", "Exportar rejilla de datos a Excel", .f., .t., {|| ::ExportToExcel() }, , "gc_spreadsheet_sum_16", oMenu )
 
    MenuEnd() 
 

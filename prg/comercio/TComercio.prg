@@ -36,6 +36,7 @@ CLASS TComercio
    DATA  TComercioProduct
    DATA  TComercioCategory
    DATA  TComercioStock
+   DATA  TComercioTax
 
    DATA  aSend
    DATA  oInt
@@ -592,6 +593,8 @@ METHOD Default() CLASS TComercio
    ::TComercioCategory     := TComercioCategory():New( Self )
 
    ::TComercioStock        := TComercioStock():New( Self )
+
+   ::TComercioTax          := TComercioTax():New( Self )
 
    ::TPrestashopId         := TPrestashopId():New( Self )
    ::TPrestashopId:openService()
@@ -4115,10 +4118,11 @@ METHOD insertStructureInformation() CLASS TComercio
 
       ::TComercioCategory:recalculatePositionsCategory()
 
-      ::MeterTotalText( "Subiendo la información adicional a los productos." )
+      ::MeterTotalText( "Recalculando Top Menu." )
 
       ::TComercioCategory:insertTopMenuPs()
-      ::MeterTotalText( "Recalculando Top Menu." )
+      
+      ::MeterTotalText( "Subiendo la información adicional a los productos." )
 
       ::TComercioProduct:insertAditionalInformation()
 
@@ -4127,8 +4131,6 @@ METHOD insertStructureInformation() CLASS TComercio
    end if 
 
 RETURN .t.
-
-//---------------------------------------------------------------------------//
 
 //---------------------------------------------------------------------------//
 //
@@ -4169,14 +4171,13 @@ RETURN .t.
 
 //---------------------------------------------------------------------------//
 
-
 METHOD controllerExportOneProductToPrestashop( idProduct ) Class TComercio
 
    if !( ::isAviableWebToExport() )
       RETURN .f.
    end if 
 
-   ::oWaitMeter         := TWaitMeter():New( "Actualizando articulos", "Espere por favor..." )
+   ::oWaitMeter         := TWaitMeter():New( "Actualizando artículos", "Espere por favor..." )
    ::oWaitMeter:Run()
 
    ::ftpConnect()
@@ -4203,8 +4204,6 @@ METHOD insertOneProductToPrestashop( idProduct ) Class TComercio
 
       ::prestaShopDisConnect()
 
-      // subiendo imagenes-----------------------------------------------------
-
       ::TComercioProduct:uploadImagesToPrestashop()
 
    else 
@@ -4226,7 +4225,9 @@ METHOD insertAllProducts( idProduct ) CLASS TComercio //*//
       while ( alltrim( ( D():Articulos( ::getView() ) )->cWebShop ) == ::getCurrentWebName() ) .and. !( D():Articulos( ::getView() ) )->( eof() )  
 
          if ::insertOneProductToPrestashop( ( D():Articulos( ::getView() ) )->Codigo )
+
             ::saveLastInsertProduct( ( D():Articulos( ::getView() ) )->Codigo )
+         
          end if 
 
          ( D():Articulos( ::getView() ) )->( dbskip() )
