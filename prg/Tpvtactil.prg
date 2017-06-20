@@ -903,6 +903,9 @@ CLASS TpvTactil
    METHOD setCodigoOrdenComandaActual( idOrdenComanda )        INLINE ( ::cCodigoOrdenComandaActual := idOrdenComanda )
    METHOD getCodigoOrdenComandaActual()                        INLINE ( ::cCodigoOrdenComandaActual )
 
+
+   METHOD resetTextButtonOrdenComandaActual()                  INLINE ( ::setTextButtonOrdenComandaActual( "Orden comanda" ) )
+
    METHOD setTextButtonOrdenComandaActual( textoOrdenComanda ) INLINE ( if (  !empty( ::oBtnOrdenComandaActual ) .and. ::l1280(),;
                                                                               ::oBtnOrdenComandaActual:setText( textoOrdenComanda ), ) )
 
@@ -10181,7 +10184,7 @@ METHOD initOrdenComanda()
       
       ::setCodigoOrdenComandaActual( idOrdenComanda ) 
 
-      ::setTextButtonOrdenComandaActual( idOrdenComanda )
+      ::resetTextButtonOrdenComandaActual()
 
    end if 
 

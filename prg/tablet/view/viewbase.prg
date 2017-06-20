@@ -85,7 +85,7 @@ CLASS ViewBase
 
    METHOD evalDialog()
 
-   METHOD validateDialog()                               INLINE ( msgalert( "validateDialog" ), ::evalDialog() .and. ::validDialog() )
+   METHOD validateDialog()                               INLINE ( ::evalDialog() .and. ::validDialog() )
 
    METHOD getRow()                                       INLINE ( ::nRow )
    METHOD resetRow()                                     INLINE ( ::nRow := __initialRow__ )
