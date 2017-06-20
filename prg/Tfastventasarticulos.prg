@@ -609,6 +609,7 @@ METHOD Create( uParam ) CLASS TFastVentasArticulos
    ::AddField( "nCosArt",     "N", 16, 6, {|| "" },   "Total costo artículo"                    )
    ::AddField( "nPctAge",     "N",  6, 2, {|| "" },   "Porcentaje agente"                       )
    ::AddField( "nComAge",     "N", 16, 6, {|| "" },   "Comision agente"                         )
+   ::AddField( "nIva",        "N",  6, 2, {|| "" },   "Porcentaje " + cImp()                    )
 
    ::AddField( "cCodPr1",     "C", 20, 0, {|| "" },   "Código de la primera propiedad"          )
    ::AddField( "cCodPr2",     "C", 20, 0, {|| "" },   "Código de la segunda propiedad"          )
@@ -1414,6 +1415,8 @@ METHOD AddSATClientes() CLASS TFastVentasArticulos
 
          ::oDbf:cLote      := ( D():SATClientesLineas( ::nView ) )->cLote
 
+         ::oDbf:nIva       := ( D():SATClientesLineas( ::nView ) )->nIva
+
          ::oDbf:cCodPrv    := ( D():SATClientesLineas( ::nView ) )->cCodPrv
          ::oDbf:cNomPrv    := RetFld( ( D():SATClientesLineas( ::nView ) )->cCodPrv, D():Proveedores( ::nView ) )
 
@@ -1620,6 +1623,7 @@ METHOD AddPresupuestoClientes() CLASS TFastVentasArticulos
          ::oDbf:nDtoArt    := ( D():PresupuestosClientesLineas( ::nView ) )->nDto
          ::oDbf:nLinArt    := ( D():PresupuestosClientesLineas( ::nView ) )->nDtoDiv
          ::oDbf:nPrmArt    := ( D():PresupuestosClientesLineas( ::nView ) )->nDtoPrm
+         ::oDbf:nIva       := ( D():PresupuestosClientesLineas( ::nView ) )->nIva
 
          ::oDbf:cCodTip    := ( D():PresupuestosClientesLineas( ::nView ) )->cCodTip
 
@@ -1803,6 +1807,7 @@ METHOD AddPedidoClientes() CLASS TFastVentasArticulos
          ::oDbf:TipoIva    := cCodigoIva( D():TiposIva( ::nView ), ( D():PedidosClientesLineas( ::nView ) )->nIva )
 
          ::oDbf:cCodObr    := ( D():PedidosClientesLineas( ::nView ) )->cObrLin
+         ::oDbf:nIva       := ( D():PedidosClientesLineas( ::nView ) )->nIva
 
          ::oDbf:lKitArt    := ( D():PedidosClientesLineas( ::nView )  )->lKitArt
          ::oDbf:lKitChl    := ( D():PedidosClientesLineas( ::nView )  )->lKitChl
@@ -1993,6 +1998,7 @@ METHOD AddAlbaranCliente( lFacturados ) CLASS TFastVentasArticulos
          ::oDbf:cNomFam    := RetFld( ::oDbf:cCodFam, D():Familias( ::nView ) )
          ::oDbf:cGrpFam    := ( D():AlbaranesClientesLineas( ::nView )  )->cGrpFam
          ::oDbf:cCodAlm    := ( D():AlbaranesClientesLineas( ::nView )  )->cAlmLin
+         ::oDbf:nIva       := ( D():AlbaranesClientesLineas( ::nView ) )->nIva
          
          ::oDbf:cCodObr    := ( D():AlbaranesClientesLineas( ::nView )  )->cObrLin
 
@@ -2199,6 +2205,8 @@ METHOD AddFacturaCliente() CLASS TFastVentasArticulos
          ::oDbf:nLinArt    := ( D():FacturasClientesLineas( ::nView ) )->nDtoDiv
          ::oDbf:nPrmArt    := ( D():FacturasClientesLineas( ::nView ) )->nDtoPrm
 
+         ::oDbf:nIva       := ( D():FacturasClientesLineas( ::nView ) )->nIva
+
          ::oDbf:nTotDto    := nDtoLFacCli( ( D():FacturasClientesLineas( ::nView ) ), ::nDecOut, ::nDerOut, ::nValDiv )
          ::oDbf:nTotPrm    := nPrmLFacCli( ( D():FacturasClientesLineas( ::nView ) ), ::nDecOut, ::nDerOut, ::nValDiv )
          ::oDbf:nPntArt    := nPntLFacCli( ( D():FacturasClientesLineas( ::nView ) ), ::nDecOut, ::nValDiv )
@@ -2377,6 +2385,8 @@ METHOD AddFacturaRectificativa() CLASS TFastVentasArticulos
 
          ::oDbf:cCodAlm    := ( D():FacturasRectificativasLineas( ::nView ) )->cAlmLin
          ::oDbf:cCodObr    := ( D():FacturasRectificativasLineas( ::nView ) )->cObrLin
+
+         ::oDbf:nIva       := ( D():FacturasRectificativasLineas( ::nView ) )->nIva
 
          ::oDbf:nUniArt    := nTotNFacRec( ( D():FacturasRectificativasLineas( ::nView ) ) ) * if( ::lUnidadesNegativo, -1, 1 )
 
