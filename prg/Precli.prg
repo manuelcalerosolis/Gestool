@@ -3784,7 +3784,7 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbf, oBrw, lTotLin, cCodArtEnt, nMode, aTmpP
                                  "idSay"  => 292,;
                                  "dialog" => oFld:aDialogs[ 1 ],;
                                  "when"   => {|| ( nMode != ZOOM_MODE .and. !lTotLin ) },;
-                                 "value"  => aTmp[ ( D():SatClientesLineas( nView ) )->( fieldpos( "id_tipo_v" ) ) ] } )
+                                 "value"  => aTmp[ ( D():PresupuestosClientesLineas( nView ) )->( fieldpos( "id_tipo_v" ) ) ] } )
 
       /*
       Tipo de articulo---------------------------------------------------------
