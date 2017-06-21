@@ -399,6 +399,13 @@ HB_FUNC( TRANSIDDOCUMENT );
 HB_FUNC( CNOBRACKETS );
 HB_FUNC( TRIMEDSECONDS );
 HB_FUNC( SERIALIZEARRAY );
+HB_FUNC( CREATEGUID32 );
+HB_FUNC_EXTERN( NEWGUID32 );
+HB_FUNC_EXTERN( CHARREM );
+HB_FUNC( CREATEGUID16 );
+HB_FUNC_EXTERN( NEWGUID16 );
+HB_FUNC_EXTERN( DECTOHEX );
+HB_FUNC_EXTERN( POSINS );
 HB_FUNC_EXTERN( FW_GT );
 HB_FUNC_EXTERN( ERRORSYS );
 HB_FUNC_INITSTATICS();
@@ -879,6 +886,13 @@ HB_INIT_SYMBOLS_BEGIN( hb_vm_SymbolInit_UTILDBF )
 { "CNOBRACKETS", {HB_FS_PUBLIC | HB_FS_LOCAL}, {HB_FUNCNAME( CNOBRACKETS )}, NULL },
 { "TRIMEDSECONDS", {HB_FS_PUBLIC | HB_FS_LOCAL}, {HB_FUNCNAME( TRIMEDSECONDS )}, NULL },
 { "SERIALIZEARRAY", {HB_FS_PUBLIC | HB_FS_LOCAL}, {HB_FUNCNAME( SERIALIZEARRAY )}, NULL },
+{ "CREATEGUID32", {HB_FS_PUBLIC | HB_FS_LOCAL}, {HB_FUNCNAME( CREATEGUID32 )}, NULL },
+{ "NEWGUID32", {HB_FS_PUBLIC}, {HB_FUNCNAME( NEWGUID32 )}, NULL },
+{ "CHARREM", {HB_FS_PUBLIC}, {HB_FUNCNAME( CHARREM )}, NULL },
+{ "CREATEGUID16", {HB_FS_PUBLIC | HB_FS_LOCAL}, {HB_FUNCNAME( CREATEGUID16 )}, NULL },
+{ "NEWGUID16", {HB_FS_PUBLIC}, {HB_FUNCNAME( NEWGUID16 )}, NULL },
+{ "DECTOHEX", {HB_FS_PUBLIC}, {HB_FUNCNAME( DECTOHEX )}, NULL },
+{ "POSINS", {HB_FS_PUBLIC}, {HB_FUNCNAME( POSINS )}, NULL },
 { "FW_GT", {HB_FS_PUBLIC}, {HB_FUNCNAME( FW_GT )}, NULL },
 { "ERRORSYS", {HB_FS_PUBLIC}, {HB_FUNCNAME( ERRORSYS )}, NULL },
 { "(_INITSTATICS00008)", {HB_FS_INITEXIT | HB_FS_LOCAL}, {hb_INITSTATICS}, NULL }
@@ -1679,7 +1693,7 @@ HB_FUNC( TDESDEHASTA )
 {
 	static const HB_BYTE pcode[] =
 	{
-		149,3,0,116,220,1,36,205,3,103,7,0,100,8,
+		149,3,0,116,227,1,36,205,3,103,7,0,100,8,
 		29,84,2,176,142,0,104,7,0,12,1,29,73,2,
 		166,11,2,0,122,80,1,48,143,0,176,144,0,12,
 		0,106,12,84,68,101,115,100,101,72,97,115,116,97,
@@ -2404,7 +2418,7 @@ HB_FUNC( SETSCRIPTSYSTEM )
 {
 	static const HB_BYTE pcode[] =
 	{
-		13,0,1,116,220,1,36,10,6,95,1,82,6,0,
+		13,0,1,116,227,1,36,10,6,95,1,82,6,0,
 		36,12,6,100,110,7
 	};
 
@@ -2415,7 +2429,7 @@ HB_FUNC( RUNSCRIPTBEFOREAPPEND )
 {
 	static const HB_BYTE pcode[] =
 	{
-		116,220,1,36,18,6,176,9,0,103,6,0,12,1,
+		116,227,1,36,18,6,176,9,0,103,6,0,12,1,
 		31,30,36,19,6,176,236,0,103,6,0,106,14,92,
 		98,101,102,111,114,101,65,112,112,101,110,100,0,72,
 		20,1,36,22,6,100,110,7
@@ -2428,7 +2442,7 @@ HB_FUNC( RUNSCRIPTAFTERAPPEND )
 {
 	static const HB_BYTE pcode[] =
 	{
-		116,220,1,36,28,6,176,9,0,103,6,0,12,1,
+		116,227,1,36,28,6,176,9,0,103,6,0,12,1,
 		31,29,36,29,6,176,236,0,103,6,0,106,13,92,
 		97,102,116,101,114,65,112,112,101,110,100,0,72,20,
 		1,36,32,6,100,110,7
@@ -2441,7 +2455,7 @@ HB_FUNC( RUNSCRIPTBEFOREEDIT )
 {
 	static const HB_BYTE pcode[] =
 	{
-		116,220,1,36,38,6,176,9,0,103,6,0,12,1,
+		116,227,1,36,38,6,176,9,0,103,6,0,12,1,
 		31,28,36,39,6,176,236,0,103,6,0,106,12,92,
 		98,101,102,111,114,101,69,100,105,116,0,72,20,1,
 		36,42,6,100,110,7
@@ -2454,7 +2468,7 @@ HB_FUNC( RUNSCRIPTAFTEREDIT )
 {
 	static const HB_BYTE pcode[] =
 	{
-		116,220,1,36,48,6,176,9,0,103,6,0,12,1,
+		116,227,1,36,48,6,176,9,0,103,6,0,12,1,
 		31,27,36,49,6,176,236,0,103,6,0,106,11,92,
 		97,102,116,101,114,69,100,105,116,0,72,20,1,36,
 		52,6,100,110,7
@@ -3840,7 +3854,7 @@ HB_FUNC( ADSFILE )
 {
 	static const HB_BYTE pcode[] =
 	{
-		13,1,1,116,220,1,36,214,12,176,9,0,103,3,
+		13,1,1,116,227,1,36,214,12,176,9,0,103,3,
 		0,12,1,28,13,36,215,12,176,99,1,12,0,82,
 		3,0,36,218,12,103,3,0,96,2,0,129,1,1,
 		28,24,36,220,12,95,2,95,1,8,28,8,36,221,
@@ -4328,7 +4342,7 @@ HB_FUNC( SETLENGUAJESEGUNDARIO )
 {
 	static const HB_BYTE pcode[] =
 	{
-		13,0,1,116,220,1,36,225,14,176,9,0,95,1,
+		13,0,1,116,227,1,36,225,14,176,9,0,95,1,
 		12,1,31,10,36,226,14,95,1,82,4,0,36,229,
 		14,120,110,7
 	};
@@ -4340,7 +4354,7 @@ HB_FUNC( GETLENGUAJESEGUNDARIO )
 {
 	static const HB_BYTE pcode[] =
 	{
-		116,220,1,36,235,14,103,4,0,110,7
+		116,227,1,36,235,14,103,4,0,110,7
 	};
 
 	hb_vmExecute( pcode, symbols );
@@ -4375,7 +4389,7 @@ HB_FUNC( EXCLUYENTARRAY )
 {
 	static const HB_BYTE pcode[] =
 	{
-		149,3,0,116,220,1,36,3,15,103,8,0,100,8,
+		149,3,0,116,227,1,36,3,15,103,8,0,100,8,
 		29,131,1,176,142,0,104,8,0,12,1,29,120,1,
 		166,58,1,0,122,80,1,48,143,0,176,144,0,12,
 		0,106,15,101,120,99,108,117,121,101,110,116,65,114,
@@ -4771,15 +4785,108 @@ HB_FUNC( SERIALIZEARRAY )
 	hb_vmExecute( pcode, symbols );
 }
 
+HB_FUNC( CREATEGUID32 )
+{
+	static const HB_BYTE pcode[] =
+	{
+		13,1,1,36,84,16,176,219,1,12,0,80,2,36,
+		86,16,95,1,100,8,28,5,120,80,1,36,88,16,
+		95,1,28,34,36,89,16,176,220,1,106,2,123,0,
+		95,2,12,2,80,2,36,90,16,176,220,1,106,2,
+		125,0,95,2,12,2,80,2,36,93,16,176,219,1,
+		20,0,7
+	};
+
+	hb_vmExecute( pcode, symbols );
+}
+
+HB_FUNC( CREATEGUID16 )
+{
+	static const HB_BYTE pcode[] =
+	{
+		13,4,1,36,99,16,121,80,2,36,100,16,106,1,
+		0,80,3,36,101,16,122,80,4,36,102,16,106,1,
+		0,80,5,36,104,16,95,1,100,8,28,5,9,80,
+		1,36,106,16,176,222,1,12,0,80,3,36,108,16,
+		122,165,80,4,25,37,36,109,16,176,66,0,95,3,
+		95,4,122,12,3,80,2,36,110,16,96,5,0,176,
+		223,1,95,2,12,1,135,36,108,16,175,4,0,176,
+		72,0,95,3,12,1,15,28,213,36,113,16,176,220,
+		1,106,2,104,0,95,5,12,2,80,5,36,114,16,
+		176,224,1,95,5,106,2,45,0,92,9,12,3,80,
+		5,36,115,16,176,224,1,95,5,106,2,45,0,92,
+		14,12,3,80,5,36,116,16,176,224,1,95,5,106,
+		2,45,0,92,19,12,3,80,5,36,117,16,176,224,
+		1,95,5,106,2,45,0,92,24,12,3,80,5,36,
+		119,16,95,1,31,19,36,120,16,106,2,123,0,95,
+		5,72,106,2,125,0,72,80,5,36,123,16,95,5,
+		110,7
+	};
+
+	hb_vmExecute( pcode, symbols );
+}
+
 HB_FUNC_INITSTATICS()
 {
 	static const HB_BYTE pcode[] =
 	{
-		117,220,1,8,0,116,220,1,4,0,0,82,1,0,
+		117,227,1,8,0,116,227,1,4,0,0,82,1,0,
 		4,0,0,82,2,0,4,0,0,82,3,0,106,1,
 		0,82,4,0,177,0,0,82,5,0,7
 	};
 
 	hb_vmExecute( pcode, symbols );
+}
+
+#line 4224 ".\\.\\Prg\\Utildbf.prg"
+
+/*
+llamada a encabezados de api de xharbour y windows SDK
+*/
+
+#include "hbapi.h"
+#include "hbapiitm.h"
+#include "hbapierr.h"
+
+#include "shlobj.h"
+#include "windows.h"
+
+//----------------------------------------------------------------------------//
+/*
+funcion wrapper para obtener una cadena GUID de 16 bits
+*/
+
+HB_FUNC( NEWGUID16 )
+{
+   GUID mguid;
+
+   if( !CoCreateGuid(&mguid) )
+   {
+      memset( ( LPVOID ) &mguid,'?',sizeof( mguid ));
+   }
+
+   hb_retclen( (char *) &mguid,sizeof( mguid ) );
+}
+
+//----------------------------------------------------------------------------//
+/*
+funcion wrapper para obtener una cadena GUID de 32 bits
+*/
+
+HB_FUNC( NEWGUID32 )
+{
+   GUID guid;
+   char obuff[38];
+   memset( obuff, 0x0, 38 );
+
+   if( CoCreateGuid( &guid ) )
+   {
+      OLECHAR tmpbuff[ 76 ];
+
+      StringFromGUID2( &guid, tmpbuff, 76 );
+      WideCharToMultiByte( CP_OEMCP, 0, tmpbuff, -1, obuff, 38, NULL, NULL );
+   }
+
+   hb_retclen( obuff, 38 );
 }
 

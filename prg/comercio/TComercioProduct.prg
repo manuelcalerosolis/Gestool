@@ -154,7 +154,7 @@ METHOD buildProductInformation( idProduct ) CLASS TComercioProduct
       RETURN ( .f. )
    end if 
 
-   ::buildTaxRuleGroup( ( D():Articulos( ::getView() ) )->TipoIva )
+   ::TComercioTax():buildTaxRuleGroup( ( D():Articulos( ::getView() ) )->TipoIva )
 
    ::buildManufacturerProduct( ( D():Articulos( ::getView() ) )->cCodFab )
 

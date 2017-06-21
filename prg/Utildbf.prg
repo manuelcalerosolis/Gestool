@@ -289,7 +289,7 @@ Busca el ultimo registro dentro de un indice
 
 FUNCTION dbLastIdx( cAlias, nOrden, oGet, xHasta )
 
-	LOCAL xValRet
+	local xValRet
 
 	DEFAULT cAlias := Alias()
 
@@ -4174,3 +4174,106 @@ FUNCTION serializeArray( aArray )
 RETURN ( cSerialized )
 
 //----------------------------------------------------------------------------//
+
+FUNCTION CreateGuID32( lNoBracket )
+
+   local cGuID          := newGuid32()
+
+   DEFAULT lNoBracket   := .t.
+
+   if lNoBracket
+      cGuid             := CharRem ("{", cGuid )
+      cGuid             := CharRem ("}", cGuid )
+   end if
+
+RETURN ( newGuid32() )
+
+//----------------------------------------------------------------------------//
+
+FUNCTION CreateGuID16( lNoBracket )
+
+   local nID            := 0
+   local cID            := ""
+   local nCnt           := 1
+   local cGuID          := ""
+
+   DEFAULT lNoBracket   := .f.
+
+   cID                  := newGuid16()
+
+   for nCnt := 1 to len( cID )
+      nID               := substr( cID, nCnt, 1 )
+      cGuID             := cGuID + DecToHex( nID )
+   next
+
+   cGuid                := CharRem ( "h", cGuid )
+   cGuid                := PosIns( cGuid, "-", 09 )
+   cGuid                := PosIns( cGuid, "-", 14 )
+   cGuid                := PosIns( cGuid, "-", 19 )
+   cGuid                := PosIns( cGuid, "-", 24 )
+
+   if !lNoBracket
+      cGuid             := "{" + cGuid + "}"
+   end if
+
+RETURN ( cGuID )
+
+//----------------------------------------------------------------------------//
+
+#pragma BEGINDUMP
+
+/*
+llamada a encabezados de api de xharbour y windows SDK
+*/
+
+#include "hbapi.h"
+#include "hbapiitm.h"
+#include "hbapierr.h"
+
+#include "shlobj.h"
+#include "windows.h"
+
+//----------------------------------------------------------------------------//
+/*
+funcion wrapper para obtener una cadena GUID de 16 bits
+*/
+
+HB_FUNC( NEWGUID16 )
+{
+   GUID mguid;
+
+   if( !CoCreateGuid(&mguid) )
+   {
+      memset( ( LPVOID ) &mguid,'?',sizeof( mguid ));
+   }
+
+   hb_retclen( (char *) &mguid,sizeof( mguid ) );
+}
+
+//----------------------------------------------------------------------------//
+/*
+funcion wrapper para obtener una cadena GUID de 32 bits
+*/
+
+HB_FUNC( NEWGUID32 )
+{
+   GUID guid;
+   char obuff[38];
+   memset( obuff, 0x0, 38 );
+
+   if( CoCreateGuid( &guid ) )
+   {
+      OLECHAR tmpbuff[ 76 ];
+
+      StringFromGUID2( &guid, tmpbuff, 76 );
+      WideCharToMultiByte( CP_OEMCP, 0, tmpbuff, -1, obuff, 38, NULL, NULL );
+   }
+
+   hb_retclen( obuff, 38 );
+}
+
+#pragma ENDDUMP
+
+//----------------------------------------------------------------------------//
+
+

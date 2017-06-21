@@ -41,7 +41,7 @@ METHOD New()
                                                       "width"     => 200                                 ,;
                                                       "field"     => "cTipImp"                           ,;
                                                       "type"      => "C"                                 ,;
-                                                      "len"       => 50}                                 }
+                                                      "len"       => 50}                                 } 
 
    ::Super:New()
 
@@ -56,7 +56,9 @@ METHOD arrayTiposImpresoras()
    local cSentence               := "SELECT nombre FROM " + ::cTableName
    local aResult                 := ::selectFetchArray( cSentence ) 
 
-   aadd( aResult, "" )
+   if !empty(aResult)
+      aadd( aResult, "" )
+   end if 
 
 RETURN ( aResult )
 

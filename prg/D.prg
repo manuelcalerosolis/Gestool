@@ -1341,15 +1341,14 @@ RETURN ( lAppend )
 
 METHOD editHashRecord( hTable, cDataTable, nView ) CLASS D
 
-   local nSeconds
-
    local lEdit       := .f.
+   local nSeconds
    local workArea    
    local hDictionary 
 
-   workArea    := ::Get( cDataTable, nView )   
+   workArea          := ::Get( cDataTable, nView )   
 
-   hDictionary := ::getDictionary( cDataTable, nView )
+   hDictionary       := ::getDictionary( cDataTable, nView )
 
    if empty( workArea )
       return ( lEdit )
@@ -1384,6 +1383,7 @@ METHOD saveFieldsToRecord( cKeyDictionary, uValueDictionary, workArea, hDictiona
    local cField
 
    cField   := ::getFieldFromDictionary( cKeyDictionary, hDictionary )
+
    if !empty( cField )
       ( workArea )->( fieldput( ( workArea )->( fieldPos( cField ) ), uValueDictionary ) )
    end if

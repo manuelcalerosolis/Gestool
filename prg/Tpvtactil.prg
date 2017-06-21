@@ -375,8 +375,8 @@ CLASS TpvTactil
    DATA oVerticalSplitterRight
    DATA oVerticalSplitterCenter
 
-   DATA nDialogWidth
-   DATA nDialogHeight
+   DATA nDialogWidth                INIT 0
+   DATA nDialogHeight               INIT 0
 
    DATA nNumeroLinea
    DATA nPosPrint
@@ -620,7 +620,7 @@ CLASS TpvTactil
 
    METHOD OnClickUsuarios()
 
-   METHOD OnclickEntrdaSalida          INLINE ( AppEntSal() )
+   METHOD OnclickEntrdaSalida()        INLINE ( AppEntSal() )
    METHOD OnClickSeleccionarCajas()    INLINE ( SelCajTactil() )
 
    METHOD OnClickInvitacion()
@@ -7271,15 +7271,15 @@ METHOD CargaDocumento( cNumeroTicket ) CLASS TpvTactil
 
       end if
 
-      // Refrescamos el browse-------------------------------------------------------
+      // Refrescamos el browse-------------------------------------------------
 
       ::oBrwLineas:Refresh()
    
-      // Calculamos el total---------------------------------------------------------
+      // Calculamos el total---------------------------------------------------
 
       ::SetTotal()
    
-      // Pintamos la información de la zona donde nos encontramos--------------------
+      // Pintamos la información de la zona donde nos encontramos--------------
    
       ::SetUbicacion()
 
@@ -7287,9 +7287,13 @@ METHOD CargaDocumento( cNumeroTicket ) CLASS TpvTactil
 
       ::SetCliente()
    
-      // Datos del documento---------------------------------------------------------
+      // Datos del documento---------------------------------------------------
    
       ::SetInfo()
+
+      // Colocamos el texto de las comandas a su valor inicial-----------------
+
+      ::resetTextButtonOrdenComandaActual()
 
    end if
 
@@ -7316,6 +7320,7 @@ METHOD EliminarDocumento( cNumeroTicket ) CLASS TpvTactil
       ::DisableDialog()
 
       ::oTiketCabecera:GetStatus()
+
       ::oTiketLinea:GetStatus()
 
       if ::oTiketCabecera:Seek( cNumeroTicket )
@@ -7327,6 +7332,7 @@ METHOD EliminarDocumento( cNumeroTicket ) CLASS TpvTactil
       end while
 
       ::oTiketCabecera:SetStatus()
+
       ::oTiketLinea:SetStatus()
 
       logwrite( "Ticket eliminado " + cNumeroTicket, "Eliminados.txt" )
