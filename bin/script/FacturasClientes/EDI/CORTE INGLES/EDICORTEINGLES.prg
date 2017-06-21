@@ -211,7 +211,7 @@ CLASS TEdiExporarFacturas
 
    METHOD writeDivisa()
 
-   METHOD writeMarcaCalculoTotales()         INLINE   ( ::oFileEDI:add( "CNTRES|" + AllTrim( Str( ::nNumeroLineas ) ) ) )
+   METHOD writeMarcaCalculoTotales()         INLINE   ( ::oFileEDI:add( "CNTRES|2" ) )
 
    METHOD writeResumenTotales()
    METHOD writeResumenPrimerImpuesto()
@@ -276,7 +276,7 @@ METHOD Run()
       ::writeFechas()
       ::writeFormadePago()
 
-      ::writeObservaciones()
+      //::writeObservaciones()
 
       ::writeReferenciaAlbaran()
       ::writeReferenciaPedido()
@@ -638,7 +638,7 @@ METHOD writeLineas()
                ::writeCabeceraLinea()
                ::writeDescripcionesLinea()
                ::writeCantidadLinea()
-               ::writeObservacionesLinea()
+               //::writeObservacionesLinea()
                ::writeTotalLinea()
                ::writePrecioBrutoUnitarioLinea()
                ::writeImpuestosLinea()
