@@ -3931,6 +3931,14 @@ Static Function NewTiket( aGet, aTmp, nMode, nSave, lBig, oBrw, oBrwDet )
    end if
 
    /*
+   Inicializamos Variables
+   */
+
+   oTotDiv              := TotalesTPV():Init()
+
+   nTotTik              := nTotTik( aTmp[ _CSERTIK ] + aTmp[ _CNUMTIK ] + aTmp[ _CSUFTIK ], D():Tikets( nView ), dbfTmpL, dbfDiv, aTmp, nil, .f. )
+
+   /*
    Requisitos especiales segun el tipo de documento----------------------------
    */
 
@@ -4050,6 +4058,27 @@ Static Function NewTiket( aGet, aTmp, nMode, nSave, lBig, oBrw, oBrwDet )
          end if
 
       end if
+
+      case nSave == SAVTIK .and. nTotTik >= 400
+
+         if !empty( aGet[ _CNOMTIK ] ) .and. empty( aTmp[ _CNOMTIK ] )
+            msgStop( "Nombre de cliente no puede estar vacio." )
+            aGet[ _CCLITIK ]:SetFocus()
+            lSaveNewTik         := .f.
+            return .f.
+         end if
+
+         if empty( aTmp[ _CDIRCLI ] ) .and. !( "GA" $ oWnd():Cargo )
+            msgStop( "Domicilio de cliente no puede estar vacio." )
+            lSaveNewTik         := .f.
+            return .f.
+         end if
+
+         if empty( aTmp[ _CDNICLI ] ) .and. !( "GA" $ oWnd():Cargo )
+            msgStop( "D.N.I. / C.I.F. de cliente no puede estar vacio." )
+            lSaveNewTik         := .f.
+            return .f.
+         end if
 
    end case
 
