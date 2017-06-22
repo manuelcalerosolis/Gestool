@@ -1452,6 +1452,13 @@ METHOD Resource( nMode, aDatosAnterior )
       end with
 
       with object ( ::oBrwMaterialProducido:AddCol() )
+         :cHeader          := "Volumen"
+         :bStrData         := {|| ::oDetProduccion:oDbfVir:FieldGetByName( "nVolumen" ) }
+         :nWidth           := 100
+         :lHide            := .t.
+      end with
+
+      with object ( ::oBrwMaterialProducido:AddCol() )
          :cHeader          := getConfigTraslation( "Grupo familia" )
          :bStrData         := {|| AllTrim( ::oDetProduccion:oDbfVir:FieldGetByName( "cGrpFam" ) ) + Space( 1 ) + oRetFld( ::oDetProduccion:oDbfVir:FieldGetByName( "cGrpFam" ), ::oGrupoFamilia:oDbf )  }
          :nWidth           := 55
@@ -1603,6 +1610,13 @@ METHOD Resource( nMode, aDatosAnterior )
          :cHeader          := "Almacén"
          :bStrData         := {|| ::oDetMaterial:oDbfVir:FieldGetByName( "cAlmOrd" ) }
          :nWidth           := 60
+      end with
+
+      with object ( ::oBrwMateriaPrima:AddCol() )
+         :cHeader          := "Volumen"
+         :bStrData         := {|| ::oDetMaterial:oDbfVir:FieldGetByName( "nVolumen" ) }
+         :nWidth           := 100
+         :lHide            := .t.
       end with
 
       with object ( ::oBrwMateriaPrima:AddCol() )

@@ -15605,6 +15605,7 @@ Function aItmStockaAlmacenes()
    aAdd( aBase, { "cCodAlm",   "C", 16, 0, "Código de almacen"             , "",                  "", "( cDbfArt )", nil } )
    aAdd( aBase, { "nStkMin",   "N", 16, 6, "Stock mínimo por almacen"      , "",                  "", "( cDbfArt )", nil } )
    aAdd( aBase, { "nStkMax",   "N", 16, 6, "Stock maximo por almacen"      , "",                  "", "( cDbfArt )", nil } )
+   aAdd( aBase, { "cUbica",    "C", 60, 0, "Ubicación de almacén"          , "",                  "", "( cDbfArt )", nil } )
 
 Return ( aBase )
 
@@ -18629,7 +18630,7 @@ Static Function StockAlmacenes( aTmp, aGet, nMode )
       with object ( oBrwAlm:AddCol() )
          :cHeader          := "Almacén"
          :bEditValue       := {|| RetAlmacen( ( dbfTmpAlm )->cCodAlm, dbfAlmT ) }
-         :nWidth           := 260
+         :nWidth           := 150
       end with
 
       with object ( oBrwAlm:AddCol() )
@@ -18648,6 +18649,12 @@ Static Function StockAlmacenes( aTmp, aGet, nMode )
          :cEditPicture     := MasUnd()
          :nDataStrAlign    := AL_RIGHT
          :nHeadStrAlign    := AL_RIGHT
+      end with
+
+      with object ( oBrwAlm:AddCol() )
+         :cHeader          := "Ubicación"
+         :bEditValue       := {|| AllTrim( ( dbfTmpAlm )->cUbica ) }
+         :nWidth           := 150
       end with
 
       if nMode != ZOOM_MODE
@@ -18730,6 +18737,12 @@ STATIC FUNCTION EdtAlm( aTmp, aGet, dbfTmpAlm, oBrw, bWhen, bValid, nMode )
          ID          120 ;
          PICTURE     ( cPicUnd );
          SPINNER ;
+         WHEN        ( nMode != ZOOM_MODE ) ;
+         OF          oDlg
+
+      REDEFINE GET   aGet[ ( dbfTmpAlm )->( fieldPos( "cUbica" ) ) ] ;
+         VAR         aTmp[ ( dbfTmpAlm )->( fieldPos( "cUbica" ) ) ] ;
+         ID          130 ;
          WHEN        ( nMode != ZOOM_MODE ) ;
          OF          oDlg
 
