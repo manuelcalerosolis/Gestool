@@ -37,6 +37,8 @@ CLASS TComercio
    DATA  TComercioCategory
    DATA  TComercioStock
    DATA  TComercioTax
+   DATA  TComercioManufacturer
+   DATA  TComercioProperty
 
    DATA  aSend
    DATA  oInt
@@ -595,6 +597,10 @@ METHOD Default() CLASS TComercio
    ::TComercioStock        := TComercioStock():New( Self )
 
    ::TComercioTax          := TComercioTax():New( Self )
+
+   ::TComercioManufacturer := TComercioManufacturer():New( Self )
+
+   ::TComercioProperty     := TComercioProperty():New( Self )
 
    ::TPrestashopId         := TPrestashopId():New( Self )
    ::TPrestashopId:openService()
@@ -4076,6 +4082,8 @@ METHOD controllerExportPrestashop( idProduct ) Class TComercio
 
    ::EnableDialog()
 
+   msgInfo( "Proceso finalizado" )
+
 RETURN .t.
 
 //---------------------------------------------------------------------------//
@@ -4200,7 +4208,7 @@ METHOD insertOneProductToPrestashop( idProduct ) Class TComercio
 
    if ::prestaShopConnect()
 
-      ::TComercioProduct:insertProducts()
+      ::TComercioProduct:insertOneProducts()
 
       ::prestaShopDisConnect()
 

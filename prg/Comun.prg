@@ -281,6 +281,8 @@ RETURN ( .t. )
 
 FUNCTION Test()
 
+   // msgalert( win_uuidcreatestring(), "win_uuidcreatestring" )
+
 Return ( nil )
 
 //---------------------------------------------------------------------------//
@@ -5488,22 +5490,26 @@ RETURN ( appParamsThird )
 
 FUNCTION appConnectADS()
 
-    local TDataCenter     := TDataCenter()
+   local TDataCenter     := TDataCenter()
 
-    lAIS( .t. )
-    
-    rddRegister( 'ADS', 1 )
-    rddSetDefault( 'ADSCDX' )
+   lAIS( .t. )
 
-    adsSetServerType( nAdsServer() )    // TODOS
-    adsSetFileType( 2 )                 // ADS_CDX
-    adsRightsCheck( .f. )
-    adsSetDeleted( .t. )
-    adsCacheOpenTables( 250 )
+   rddRegister( 'ADS', 1 )
+   rddSetDefault( 'ADSCDX' )
 
-    // Conexion con el motor de base de datos--------------------------------
+   adsSetServerType( nAdsServer() )    // TODOS
+   adsSetFileType( 2 )                 // ADS_CDX
+   adsRightsCheck( .f. )
 
-    TDataCenter:ConnectDataDictionary()
+   adsLocking( .t. )                   // NON-compatible locking mode
+   adsTestRecLocks( .T. )
+
+   adsSetDeleted( .t. )
+   adsCacheOpenTables( 250 )
+
+   // Conexion con el motor de base de datos-----------------------------------
+
+   TDataCenter:ConnectDataDictionary()
 
 RETURN ( TDataCenter:lAdsConnection )
 

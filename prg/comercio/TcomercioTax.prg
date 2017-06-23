@@ -51,11 +51,7 @@ RETURN ( idTaxRulesGroup )
 //---------------------------------------------------------------------------//
 
 METHOD buildTaxRuleGroup( id ) 
-/*
-   if !( ::isSyncronizeAll() )
-      RETURN .f. 
-   end if 
-*/
+
    if aScan( ::aTaxProducts, {|h| hGet( h, "id" ) == id } ) != 0
       RETURN .f. 
    end if 

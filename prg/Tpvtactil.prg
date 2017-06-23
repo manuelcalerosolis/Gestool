@@ -903,8 +903,8 @@ CLASS TpvTactil
    METHOD setCodigoOrdenComandaActual( idOrdenComanda )        INLINE ( ::cCodigoOrdenComandaActual := idOrdenComanda )
    METHOD getCodigoOrdenComandaActual()                        INLINE ( ::cCodigoOrdenComandaActual )
 
-
-   METHOD resetTextButtonOrdenComandaActual()                  INLINE ( ::setTextButtonOrdenComandaActual( "Orden comanda" ) )
+   METHOD resetTextButtonOrdenComandaActual()                  INLINE ( ::setCodigoOrdenComandaActual( "" ),;
+                                                                        ::setTextButtonOrdenComandaActual( "Orden comanda" ) )
 
    METHOD setTextButtonOrdenComandaActual( textoOrdenComanda ) INLINE ( if (  !empty( ::oBtnOrdenComandaActual ) .and. ::l1280(),;
                                                                               ::oBtnOrdenComandaActual:setText( textoOrdenComanda ), ) )
@@ -3051,6 +3051,8 @@ METHOD GuardaDocumentoPendiente()
 
   ::GuardaDocumento()
 
+  ::resetTextButtonOrdenComandaActual()
+
   ::ProcesaDocumentosInternos()
 
   ::gotoUbicacionGeneral()
@@ -3098,6 +3100,8 @@ METHOD GuardaDocumentoCerrado()
    ::oTiketCabecera:lAbierto  := ( ::oTiketCabecera:nUbiTik == ubiLlevar )
 
    ::guardaDocumento( .f. )
+
+   ::resetTextButtonOrdenComandaActual()
 
    ::procesaDocumentosInternos()
 
@@ -6525,6 +6529,8 @@ METHOD OnClickCobro() CLASS TpvTactil
       // Datos del documento---------------------------------------------------
 
       ::SetInfo()
+
+      ::resetTextButtonOrdenComandaActual()
       
       ::SetCliente()
       
@@ -6628,6 +6634,8 @@ METHOD OnClickAlbaran() CLASS TpvTactil
       */
 
       ::SetInfo()
+
+      ::resetTextButtonOrdenComandaActual()
 
       /*
       Datos del cliente--------------------------------------------------
@@ -6916,6 +6924,10 @@ METHOD OnClickCloseTurno( lParcial ) CLASS TpvTactil
       ::InstanceFastReport()
 
       ::SetInfo()
+
+      // Colocamos el texto de las comandas a su valor inicial-----------
+
+      ::resetTextButtonOrdenComandaActual()
 
    end if
 
@@ -7618,6 +7630,10 @@ METHOD OnClickSalaVenta( nSelectOption ) CLASS TpvTactil
 
             ::SetTotal()
 
+            // Colocamos el texto de las comandas a su valor inicial-----------
+
+            ::resetTextButtonOrdenComandaActual()
+
          else
 
             // Inicializa los valores para un nuevo documento General----------
@@ -7736,6 +7752,10 @@ METHOD gotoUbicacionGeneral() CLASS TpvTactil
 
    ::SetTotal()
 
+   // Colocamos el texto de las comandas a su valor inicial-----------
+
+   ::resetTextButtonOrdenComandaActual()  
+
 Return ( Self )
 
 //---------------------------------------------------------------------------//
@@ -7813,6 +7833,10 @@ METHOD OnClickParaRecoger() CLASS TpvTactil
          */
 
          ::SetInfo()
+
+         // Colocamos el texto de las comandas a su valor inicial-----------
+
+         ::resetTextButtonOrdenComandaActual()
 
       end if
 
@@ -7916,6 +7940,10 @@ METHOD OnClickParaLlevar() CLASS TpvTactil
 
    ::SetInfo()
 
+   // Colocamos el texto de las comandas a su valor inicial-----------
+
+   ::resetTextButtonOrdenComandaActual()
+
    ::EnableDialog()
 
    RECOVER USING oError
@@ -8014,6 +8042,10 @@ METHOD OnClickEncargar() CLASS TpvTactil
 
    ::SetInfo()
 
+   // Colocamos el texto de las comandas a su valor inicial-----------
+
+   ::resetTextButtonOrdenComandaActual()
+
    ::EnableDialog()
 
    RECOVER USING oError
@@ -8065,6 +8097,10 @@ METHOD OnClickCambiaUbicacion() CLASS TpvTactil
 
          ::SetInfo()
 
+         // Colocamos el texto de las comandas a su valor inicial-----------
+
+         ::resetTextButtonOrdenComandaActual()
+
          // Informamos del cambio de ubicación------------------------------------
 
          MsgInfo( "El ticket ha sido movido a la ubicación " + ::cUbicacion() )
@@ -8096,6 +8132,10 @@ METHOD OnClickCambiaUbicacion() CLASS TpvTactil
             // Datos del documento---------------------------------------------------
 
             ::SetInfo()
+
+            // Colocamos el texto de las comandas a su valor inicial-----------
+
+            ::resetTextButtonOrdenComandaActual()
 
             // Informamos del cambio de ubicación------------------------------------
 
@@ -8207,6 +8247,10 @@ METHOD SetAliasDocumento( cTexto ) CLASS TpvTactil
       // Datos del documento---------------------------------------------------------
 
       ::SetInfo()
+
+      // Colocamos el texto de las comandas a su valor inicial-----------
+
+      ::resetTextButtonOrdenComandaActual()
 
       Return ( .t. )
 
@@ -8732,6 +8776,8 @@ METHOD OnClickGuardar() CLASS TpvTactil
    ::DisableDialog()
 
    ::GuardaDocumento( .f. )
+
+   ::resetTextButtonOrdenComandaActual()
 
    // Mandamos las comandas a imprimir--------------------------------------------
 
@@ -10591,6 +10637,10 @@ METHOD OnClickReabrirTicket()
       ::oTiketCabecera:lAbierto  := .t. 
 
       ::GuardaDocumento( .f. )
+
+      // Colocamos el texto de las comandas a su valor inicial-----------
+
+      ::resetTextButtonOrdenComandaActual()
 
       CursorWE()
 

@@ -34,9 +34,6 @@ REQUEST AdsSetRelKeyPos
 
 static hDLLRich
 
-static oDb, oSel, oUpd, oIns, oDel, oRS, oWnd
-
-
 //---------------------------------------------------------------------------//
 /*
 -------------------------------------------------------------------------------
@@ -264,7 +261,6 @@ STATIC FUNCTION CreateMainTabletWindow()
 RETURN ( .t. )
 
 //---------------------------------------------------------------------------//
-
 
 init procedure InitAplication()
 

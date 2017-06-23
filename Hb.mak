@@ -59,6 +59,8 @@ TComercioConfig.prg 												\
 TComercioId.prg 													\
 TComercioStock.prg 												\
 TComercioTax.prg 													\
+TComercioManufacturer.prg 										\
+TComercioProperty.prg 											\
 TFTPLinux.prg 														\
 Comun.prg               										\
 AccessCode.prg          										\
@@ -565,6 +567,8 @@ TComercioConfig.obj 												\
 TComercioId.obj 													\
 TComercioStock.obj 												\
 TComercioTax.obj 													\
+TComercioManufacturer.obj 										\
+TComercioProperty.obj 											\
 TFTPLinux.obj 														\
 Comun.obj                                          	\
 AccessCode.obj                                     	\
@@ -1081,6 +1085,8 @@ $(OBJ)\TComercioConfig.obj 											+
 $(OBJ)\TComercioId.obj 													+
 $(OBJ)\TComercioStock.obj 												+
 $(OBJ)\TComercioTax.obj 												+
+$(OBJ)\TComercioManufacturer.obj 									+
+$(OBJ)\TComercioProperty.obj 											+
 $(OBJ)\TFTPLinux.obj 													+
 $(OBJ)\Comun.obj                                            +
 $(OBJ)\AccessCode.obj                                       +

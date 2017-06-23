@@ -15,13 +15,9 @@ CLASS TComercioProduct FROM TComercioConector
 
    DATA  aProducts                                          INIT {}
 
-   DATA  aManufacturersProduct                              INIT {}
-   DATA  aPropertiesHeaderProduct                           INIT {}
-   DATA  aPropertiesLineProduct                             INIT {}
-
    DATA  idCategoryDefault  
    DATA  idTaxRulesGroup 
-   DATA  idManufacturer    
+   DATA  idManufacturer
 
    METHOD isProductInDatabase( idProduct )                         
    METHOD isProductActiveInCurrentWeb()    
@@ -29,12 +25,6 @@ CLASS TComercioProduct FROM TComercioConector
 
    METHOD buildAllProductInformation()
    METHOD buildProductInformation( idProduct )
-
-      METHOD getOrBuildManufacturerProduct( id )
-      METHOD buildManufacturerProduct( id )
-      METHOD cleanManufacturerProduct()                     INLINE ( ::aManufacturersProduct := {} )
-      
-      METHOD buildPropertyProduct( id )
 
       METHOD buildProduct( id )
       METHOD buildDeleteProduct( idProduct, lCleanProducts )
@@ -65,14 +55,8 @@ CLASS TComercioProduct FROM TComercioConector
                METHOD insertImageLang( hProduct, hImage, idImagePrestashop )
                METHOD insertImageShop( idProduct, hProduct, hImage, idImagePrestashop )
 
-      METHOD processPropertyProduct( idProduct, hProduct )
-         METHOD insertProductAttributePrestashop( idProduct, hProduct, priceProperty )
-         METHOD insertProductAttributeCombination( idFirstProperty, valueFirstProperty, idProperty )
-         METHOD insertProductAttributeShop( lDefault, idProduct, idProperty, priceProperty )
-         METHOD insertProductAttributeImage( hProduct, idProductAttribute )
-
-      METHOD insertPropertiesHeader( hPropertiesHeaderProduct ) 
-      METHOD insertPropertiesLineProduct( hPropertiesLineProduct )
+   METHOD insertOneProducts()
+      METHOD insertOneProduct( hProduct )
 
    METHOD deleteProducts()
 
@@ -81,8 +65,6 @@ CLASS TComercioProduct FROM TComercioConector
    METHOD insertAditionalInformation()
 
    METHOD truncateAllTables() 
-
-   METHOD insertManufacturersPrestashop( hManufacturers )
 
    METHOD deleteProduct( hProduct )
    METHOD deleteImages( idProductPrestashop )
@@ -114,9 +96,6 @@ CLASS TComercioProduct FROM TComercioConector
    METHOD getCoverValue( lValue )                              
 
    METHOD notValidProductId( idProduct )                       INLINE ( empty( idProduct ) .and. !( ::TComercio:lDebugMode ) )
-
-   METHOD buildImagesManufacturers( hManufacturer )
-   METHOD uploadImagesManufacturers( hManufacturer )
 
 END CLASS
 
@@ -156,11 +135,11 @@ METHOD buildProductInformation( idProduct ) CLASS TComercioProduct
 
    ::TComercioTax():buildTaxRuleGroup( ( D():Articulos( ::getView() ) )->TipoIva )
 
-   ::buildManufacturerProduct( ( D():Articulos( ::getView() ) )->cCodFab )
+   ::TComercioManufacturer():buildManufacturerProduct( ( D():Articulos( ::getView() ) )->cCodFab )
 
    ::TComercioCategory():buildCategory( ( D():Articulos( ::getView() ) )->Familia )
    
-   ::buildPropertyProduct( ( D():Articulos( ::getView() ) )->Codigo )
+   ::TComercioProperty():buildPropertyProduct( ( D():Articulos( ::getView() ) )->Codigo )
       
 RETURN ( .t. )
 
@@ -206,163 +185,6 @@ METHOD isProductDeleteInCurrentWeb( idProduct ) CLASS TComercioProduct
    end if 
 
 RETURN .t.
-
-//---------------------------------------------------------------------------//
-
-METHOD getOrBuildManufacturerProduct( id )
-
-   local hManufacturerProduct
-   local idManufacturerProduct   := ::TPrestashopId():getValueManufacturer( id, ::getCurrentWebName() )
-
-   msgalert( idManufacturerProduct, "idManufacturerProduct")
-
-   if empty( idManufacturerProduct )
-
-      ::cleanManufacturerProduct()
-
-      ::buildManufacturerProduct( id )
-
-      for each hManufacturerProduct in ::aManufacturersProduct
-
-         msgalert( hb_valtoexp( ::aManufacturersProduct ), "aManufacturersProduct" )
-
-         idManufacturerProduct   := ::insertManufacturersPrestashop( hManufacturerProduct )
-
-         ::buildImagesManufacturers( hManufacturerProduct )
-         
-         ::uploadImagesManufacturers( hManufacturerProduct )
-
-      next
-
-   end if 
-
-RETURN ( idManufacturerProduct )
-
-//---------------------------------------------------------------------------//
-
-METHOD buildManufacturerProduct( id ) CLASS TComercioProduct
-/*
-   if !( ::isSyncronizeAll() )
-      RETURN .f. 
-   end if 
-*/
-   if !( ::TComercioConfig():getSyncronizeManufacturers() )
-      RETURN .f. 
-   end if 
-
-   if aScan( ::aManufacturersProduct, {|h| hGet( h, "id" ) == id } ) != 0
-      RETURN .f.
-   end if 
-
-   if ::TPrestashopId():getValueManufacturer( id, ::getCurrentWebName() ) != 0
-      RETURN .f.
-   end if 
-
-   if D():gotoIdFabricantes( id, ::getView() )
-      aadd( ::aManufacturersProduct,   {  "id"              => id,;
-                                          "name"            => rtrim( ( D():Fabricantes( ::getView() ) )->cNomFab ),;
-                                          "image"           => rtrim( ( D():Fabricantes( ::getView() ) )->cImgLogo ),;
-                                          "aTypeImages"     => {} ,;
-                                          "cPrefijoNombre"  => "" } )
-   end if 
-
-RETURN ( .t. )
-
-//---------------------------------------------------------------------------//
-
-METHOD buildPropertyProduct( id ) CLASS TComercioProduct
-
-   /*
-   Primera propiedad--------------------------------------------------------
-   */
-
-   if ( D():Propiedades( ::getView() ) )->( dbseekinord( ( D():Articulos( ::getView() ) )->cCodPrp1, "cCodPro" ) )
-
-      if aScan( ::aPropertiesHeaderProduct, {|h| hGet( h, "id" ) == ( D():Propiedades( ::getView() ) )->cCodPro } ) == 0
-
-         if ::isSyncronizeAll() .or. ::TPrestashopId():getValueAttributeGroup( id, ::getCurrentWebName() ) == 0
-
-            aAdd( ::aPropertiesHeaderProduct,   {  "id"     => ( D():Propiedades( ::getView() ) )->cCodPro,;
-                                                   "name"   => if( empty( ( D():Propiedades( ::getView() ) )->cNomInt ), alltrim( ( D():Propiedades( ::getView() ) )->cDesPro ), alltrim( ( D():Propiedades( ::getView() ) )->cNomInt ) ),;
-                                                   "lColor" => ( D():Propiedades( ::getView() ) )->lColor } )
-
-         end if
-
-      end if 
-
-   end if
-
-   /*
-   Segunda propiedad--------------------------------------------------------
-   */
-
-   if ( D():Propiedades( ::getView() ) )->( dbseekinord( ( D():Articulos( ::getView() ) )->cCodPrp2, "cCodPro" ) )
-
-      if aScan( ::aPropertiesHeaderProduct, {|h| hGet( h, "id" ) == ( D():Propiedades( ::getView() ) )->cCodPro } ) == 0
-
-         if ::isSyncronizeAll() .or. ::TPrestashopId():getValueAttributeGroup( id, ::getCurrentWebName() ) == 0
-
-            aAdd( ::aPropertiesHeaderProduct,   {  "id"     => ( D():Propiedades( ::getView() ) )->cCodPro,;
-                                                   "name"   => if( empty( ( D():Propiedades( ::getView() ) )->cNomInt ), alltrim( ( D():Propiedades( ::getView() ) )->cDesPro ), alltrim( ( D():Propiedades( ::getView() ) )->cNomInt ) ),;
-                                                   "lColor" => ( D():Propiedades( ::getView() ) )->lColor } )
-
-         end if
-
-      end if 
-
-   end if
-
-   /*
-   Líneas de propiedades de un artículo-------------------------------------
-   */
-
-   if ( D():ArticuloPrecioPropiedades( ::getView() ) )->( dbseek( ( D():Articulos( ::getView() ) )->Codigo ) ) 
-
-      while ( D():ArticuloPrecioPropiedades( ::getView() ) )->cCodArt == ( D():Articulos( ::getView() ) )->Codigo .and. !( D():ArticuloPrecioPropiedades( ::getView() ) )->( eof() )
-
-         if D():gotoIdPropiedadesLineas( ( D():ArticuloPrecioPropiedades( ::getView() ) )->cCodPr1 + ( D():ArticuloPrecioPropiedades( ::getView() ) )->cValPr1, ::getView() )
-
-            if ::isSyncronizeAll() .or. ::TPrestashopId():getValueAttribute( ( D():PropiedadesLineas( ::getView() ) )->cCodPro + ( D():PropiedadesLineas( ::getView() ) )->cCodTbl, ::getCurrentWebName() ) == 0
-
-               if aScan( ::aPropertiesLineProduct, {|h| hGet( h, "id" ) == ( D():PropiedadesLineas( ::getView() ) )->cCodTbl .and. hGet( h, "idparent" ) == ( D():PropiedadesLineas( ::getView() ) )->cCodPro } ) == 0
-      
-                  aAdd( ::aPropertiesLineProduct,  {  "id"           => ( D():PropiedadesLineas( ::getView() ) )->cCodTbl,;
-                                                      "idparent"     => ( D():PropiedadesLineas( ::getView() ) )->cCodPro,; 
-                                                      "name"         => alltrim( ( D():PropiedadesLineas( ::getView() ) )->cDesTbl ),;
-                                                      "color"        => alltrim( RgbToRgbHex( ( D():PropiedadesLineas( ::getView() ) )->nColor ) ),;
-                                                      "position"     => ( D():PropiedadesLineas( ::getView() ) )->nOrdTbl } )
-
-               end if
-
-            end if
-
-         end if
-
-         if D():gotoIdPropiedadesLineas( ( D():ArticuloPrecioPropiedades( ::getView() ) )->cCodPr2 + ( D():ArticuloPrecioPropiedades( ::getView() ) )->cValPr2, ::getView() )
-
-            if ::isSyncronizeAll() .or. ::TPrestashopId():getValueAttribute( ( D():PropiedadesLineas( ::getView() ) )->cCodPro + ( D():PropiedadesLineas( ::getView() ) )->cCodTbl, ::getCurrentWebName() ) == 0
-
-               if aScan( ::aPropertiesLineProduct, {|h| hGet( h, "id" ) == ( D():PropiedadesLineas( ::getView() ) )->cCodTbl .and. hGet( h, "idparent" ) == ( D():PropiedadesLineas( ::getView() ) )->cCodPro } ) == 0
-      
-                  aAdd( ::aPropertiesLineProduct,  {  "id"           => ( D():PropiedadesLineas( ::getView() ) )->cCodTbl,;
-                                                      "idparent"     => ( D():PropiedadesLineas( ::getView() ) )->cCodPro,; 
-                                                      "name"         => alltrim( ( D():PropiedadesLineas( ::getView() ) )->cDesTbl ),;
-                                                      "color"        => alltrim( RgbToRgbHex( ( D():PropiedadesLineas( ::getView() ) )->nColor ) ),;
-                                                      "position"     => ( D():PropiedadesLineas( ::getView() ) )->nOrdTbl } )
-
-               end if
-
-            end if
-
-         end if
-
-         ( D():ArticuloPrecioPropiedades( ::getView() ) )->( dbskip() )
-
-      end while
-
-   end if
-
-RETURN ( Self )
 
 //---------------------------------------------------------------------------//
 
@@ -810,6 +632,14 @@ RETURN ( Self )
 
 //---------------------------------------------------------------------------//
 
+METHOD insertOneProducts() CLASS TComercioProduct
+
+   aeval( ::aProducts, {|hProduct| ::deleteProduct( hProduct ), ::insertOneProduct( hProduct ) } )
+
+RETURN ( Self )
+
+//---------------------------------------------------------------------------//
+
 METHOD deleteProducts() CLASS TComercioProduct
 
    local hProduct
@@ -832,44 +662,22 @@ RETURN ( Self )
 METHOD insertProduct( hProduct ) CLASS TComercioProduct
 
    local idProduct
-   local idCategory
-   local idTaxRulesGroup 
-   local idManufacturer 
 
-   idCategory              := hGet( hProduct, "id_category_default" )
-   idTaxRulesGroup         := hGet( hProduct, "id_tax_rules_group" )
-   idManufacturer          := hGet( hProduct, "id_manufacturer" )
+   ::idCategoryDefault  := ::TPrestashopId():getValueCategory( hGet( hProduct, "id_category_default" ), ::getCurrentWebName(), 2 )
 
-   if ( ::isSyncronizeAll() )
-      
-      ::idCategoryDefault  := ::TPrestashopId():getValueCategory( idCategory, ::getCurrentWebName(), 2 )
+   ::idTaxRulesGroup    := ::TPrestashopId():getValueTaxRuleGroup( hGet( hProduct, "id_tax_rules_group" ), ::getCurrentWebName() )
 
-      ::idTaxRulesGroup    := ::TPrestashopId():getValueTaxRuleGroup( idTaxRulesGroup, ::getCurrentWebName() )
-
-      ::idManufacturer     := ::TPrestashopId():getValueManufacturer( idManufacturer, ::getCurrentWebName() )
-
-   else
-
-      ::idCategoryDefault  := ::TComercioCategory():getOrBuildCategory( idCategory ) 
-
-      ::idTaxRulesGroup    := ::TComercioTax():getOrBuildTaxRulesGroup( idTaxRulesGroup )
-
-      ::idManufacturer     := ::getOrBuildManufacturerProduct( idManufacturer )
-
-   end if 
+   ::idManufacturer     := ::TPrestashopId():getValueManufacturer( hGet( hProduct, "id_manufacturer" ), ::getCurrentWebName() )
 
    // Publicar el articulo en su categoria-------------------------------------
 
-   idProduct               := ::insertProductPrestashopTable( hProduct, idCategory )
+   idProduct               := ::insertProductPrestashopTable( hProduct, hGet( hProduct, "id_category_default" ) )
 
    if ::notValidProductId( idProduct )
-
-      msgalert( "salida por notValidProductId")
-
       RETURN ( Self )
    end if 
 
-   ::insertNodeProductCategory( idProduct, idCategory )
+   ::insertNodeProductCategory( idProduct, hGet( hProduct, "id_category_default" ) )
 
    // Publicar el articulo en el root------------------------------------------
 
@@ -883,19 +691,59 @@ METHOD insertProduct( hProduct ) CLASS TComercioProduct
 
    ::processImageProducts( idProduct, hProduct )
 
-   ::processPropertyProduct( idProduct, hProduct )
+   ::TComercioProperty():processPropertyProduct( idProduct, hProduct )
 
    ::insertReduction( idProduct, hProduct )
 
    ::processStockProduct( idProduct, hProduct )
 
-   if !( ::isSyncronizeAll() )
+RETURN ( Self )
 
-      ::TComercioCategory():recalculatePositionsCategory()
+//---------------------------------------------------------------------------//
 
-      ::TComercioCategory():insertTopMenuPs()
+METHOD insertOneProduct( hProduct ) CLASS TComercioProduct
 
+   local idProduct
+
+   ::idCategoryDefault  := ::TComercioCategory():getOrBuildCategory( hGet( hProduct, "id_category_default" ) ) 
+
+   ::idTaxRulesGroup    := ::TComercioTax():getOrBuildTaxRulesGroup( hGet( hProduct, "id_tax_rules_group" ) )
+
+   ::idManufacturer     := ::TComercioManufacturer():getOrBuildManufacturerProduct( hGet( hProduct, "id_manufacturer" ) )
+
+   ::TComercioProperty():getOrBuildProperties( hGet( hProduct, "id") )
+
+   // Publicar el articulo en su categoria-------------------------------------
+
+   idProduct            := ::insertProductPrestashopTable( hProduct, hGet( hProduct, "id_category_default" ) )
+
+   if ::notValidProductId( idProduct )
+      RETURN ( Self )
    end if 
+
+   ::insertNodeProductCategory( idProduct, hGet( hProduct, "id_category_default" ) )
+
+   // Publicar el articulo en el root------------------------------------------
+
+   if hGet( hProduct, "lPublicRoot" )
+      ::insertNodeProductCategory( idProduct, 2 )
+   end if
+
+   ::insertProductShop( idProduct, hProduct )
+
+   ::insertProductLang( idProduct, hProduct )
+
+   ::processImageProducts( idProduct, hProduct )
+
+   ::TComercioProperty():processPropertyProduct( idProduct, hProduct )
+
+   ::insertReduction( idProduct, hProduct )
+
+   ::processStockProduct( idProduct, hProduct )
+
+   ::TComercioCategory():recalculatePositionsCategory()
+
+   ::TComercioCategory():insertTopMenuPs()
 
 RETURN ( Self )
 
@@ -1220,195 +1068,6 @@ METHOD insertImageShop( idProduct, hProduct, hImage, idImagePrestashop )
    end if
 
 RETURN .t.
-
-//---------------------------------------------------------------------------//
-
-METHOD processPropertyProduct( idProduct, hProduct ) CLASS TComercioProduct
-
-   local lDefault          := .t.
-   local idProperty        := 0
-   local priceProperty     := 0
-
-   msgalert( "processPropertyProduct" )
-
-   // Comprobamos si el artículo tiene propiedades y metemos las propiedades
-
-   if ( D():ArticuloPrecioPropiedades( ::getView() ) )->( dbSeekInOrd( hGet( hProduct, "id" ), "cCodArt" ) )
-
-      while ( D():ArticuloPrecioPropiedades( ::getView() ) )->cCodArt == hGet( hProduct, "id" ) .and. ( D():ArticuloPrecioPropiedades( ::getView() ) )->( !eof() ) 
-
-         if !empty( ( D():ArticuloPrecioPropiedades( ::getView() ) )->cValPr1 )
-
-            priceProperty  := nPrePro( hGet( hProduct, "id" ), ( D():ArticuloPrecioPropiedades( ::getView() ) )->cCodPr1, ( D():ArticuloPrecioPropiedades( ::getView() ) )->cValPr1, space( 20 ), space( 20 ), 1, .f., D():ArticuloPrecioPropiedades( ::getView() ) )
-
-            idProperty     := ::insertProductAttributePrestashop( idProduct, hProduct, priceProperty )
-
-            ::insertProductAttributeCombination( ( D():ArticuloPrecioPropiedades( ::getView() ) )->cCodPr1, ( D():ArticuloPrecioPropiedades( ::getView() ) )->cValPr1, idProperty )
-
-            if !empty( ( D():ArticuloPrecioPropiedades( ::getView() ) )->cValPr2 )
-            
-               ::insertProductAttributeCombination( ( D():ArticuloPrecioPropiedades( ::getView() ) )->cCodPr2, ( D():ArticuloPrecioPropiedades( ::getView() ) )->cValPr2, idProperty )
-
-            end if 
-
-            ::TPrestashopId:setValueProductAttributeCombination( hGet( hProduct, "id" ) + ( D():ArticuloPrecioPropiedades( ::getView() ) )->cCodPr1 + ( D():ArticuloPrecioPropiedades( ::getView() ) )->cValPr1 + ( D():ArticuloPrecioPropiedades( ::getView() ) )->cCodPr2 + ( D():ArticuloPrecioPropiedades( ::getView() ) )->cValPr2, ::getCurrentWebName(), idProperty )        
-
-            ::insertProductAttributeShop( idProduct, idProperty, priceProperty, lDefault )
-
-            ::insertProductAttributeImage( hProduct, idProperty )
-
-         end if 
-
-         ( D():ArticuloPrecioPropiedades( ::getView() ) )->( dbskip() )
-
-         lDefault    := .f.
-
-      end while
-
-   end if
-
-RETURN ( self )
-
-//---------------------------------------------------------------------------//
-
-METHOD insertProductAttributePrestashop( idProduct, hProduct, priceProperty ) CLASS TComercioProduct
-
-   local cCommand
-   local idProductAttribute   := 0
-
-   // Metemos la propiedad de íste artículo---------------------------
-
-   cCommand                   := "INSERT IGNORE INTO " + ::cPrefixTable( "product_attribute" ) + " ( "                              + ;
-                                    if( ::lProductIdColumnProductAttribute(), "id_product, ", "" )                                  + ;
-                                    "price, "                                                                                       + ;
-                                    "wholesale_price, "                                                                             + ;
-                                    "quantity, "                                                                                    + ;
-                                    "minimal_quantity ) "                                                                           + ;
-                                 "VALUES ( "                                                                                        + ;
-                                    if( ::lProductIdColumnProductAttribute(), "'" + alltrim( str( idProduct ) ) + "', ", "" )       + ;      //id_product
-                                    "'" + alltrim( str( priceProperty ) ) + "', "                                                   + ;      //price
-                                    "'" + alltrim( str( priceProperty ) ) + "', "                                                   + ;      //wholesale_price
-                                    "'10000', "                                                                                     + ;      //quantity
-                                    "'1' )"                                                                                                  //minimal_quantity
-
-   if ::commandExecDirect( cCommand )
-      idProductAttribute      := ::oConexionMySQLDatabase():GetInsertId()
-   else
-      ::writeText( "Error al insertar la propiedad " + alltrim( ( D():ArticuloPrecioPropiedades( ::getView() ) )->cValPr1 ) + " - " + alltrim( ( D():ArticuloPrecioPropiedades( ::getView() ) )->cValPr2 ) + " en la tabla " + ::cPrefixTable( "product_attribute" ), 3 )
-   end if
-
-RETURN ( idProductAttribute )
-
-//---------------------------------------------------------------------------//
-
-METHOD insertProductAttributeCombination( idFirstProperty, valueFirstProperty, idProperty ) CLASS TComercioProduct
-
-   local cCommand
-   local idAttribute
-   local idProductAttributeCombination   
-
-   if !( ( D():PropiedadesLineas( ::getView() ) )->( dbseekinord( upper( idFirstProperty ) + upper( valueFirstProperty ), "cCodPro" ) ) )
-      ::writeText( "Error al buscar en tabla de propiedades " + alltrim( idFirstProperty ) + " : " + alltrim( valueFirstProperty ), 3 )
-      RETURN .f.
-   end if 
-
-   idAttribute := ::TPrestashopId():getValueAttribute( idFirstProperty + valueFirstProperty, ::getCurrentWebName() ) 
-
-   cCommand    := "DELETE FROM " +  ::cPrefixtable( "product_attribute_combination" ) + " "  + ;
-                     "WHERE id_attribute = " + alltrim( str( idAttribute ) ) + " "           + ;
-                     "AND id_product_attribute = " + alltrim( str( idProperty ) )
-
-   if !::commandExecDirect( cCommand ) 
-      ::writeText( "Error al eliminar la propiedad " + alltrim( str( idAttribute ) ) + " en la tabla " + ::cPrefixTable( "product_attribute_combination" ), 3 )
-   end if
-
-   cCommand    := "INSERT IGNORE INTO " +  ::cPrefixtable( "product_attribute_combination" ) + "( " + ;
-                     "id_attribute, "                                                        + ;
-                     "id_product_attribute ) "                                               + ;
-                  "VALUES ("                                                                 + ;
-                     "'" + alltrim( str( idAttribute ) ) + "', "                             + ;   //id_attribute
-                     "'" + alltrim( str( idProperty ) ) + "' )"                                    //id_product_attribute
-
-   if !( ::commandExecDirect( cCommand ) )
-      ::writeText( "Error al insertar la propiedad " + alltrim( ( D():PropiedadesLineas( ::getView() ) )->cDesTbl ) + " en la tabla " + ::cPrefixTable( "product_attribute_combination" ), 3 )
-   end if
-
-RETURN ( idProductAttributeCombination )
-
-//---------------------------------------------------------------------------//
-
-METHOD insertProductAttributeShop( idProduct, idProperty, priceProperty, lDefault ) CLASS TComercioProduct
-
-   local cCommand := "INSERT IGNORE INTO " + ::cPrefixTable( "product_attribute_shop" ) + " ( "  + ;
-                        if( ::lProductIdColumnProductAttributeShop, "id_product, ", "" )  + ;
-                        "id_product_attribute, "                                          + ;
-                        "id_shop, "                                                       + ;
-                        "wholesale_price, "                                               + ;
-                        "price, "                                                         + ;
-                        "ecotax, "                                                        + ;
-                        "weight, "                                                        + ;
-                        "unit_price_impact, "                                             + ;
-                        if( lDefault, "default_on, ", "" )                                + ;
-                        "minimal_quantity ) "                                             + ;
-                     "VALUES ( "                                                          + ;
-                        if( ::lProductIdColumnProductAttributeShop(), "'" + alltrim( str( idProduct ) ) + "', ", "" ) + ;  // id_product
-                        "'" + alltrim( str( idProperty ) ) + "', "                        + ;
-                        "'1', "                                                           + ;
-                        "'" + alltrim( str( priceProperty ) ) + "', "                     + ;
-                        "'" + alltrim( str( priceProperty ) ) + "', "                     + ;
-                        "'0', "                                                           + ;
-                        "'0', "                                                           + ;
-                        "'0', "                                                           + ;
-                        if( lDefault, "'1',", "" )                                        + ;
-                        "'1' )"
-
-   if !::commandExecDirect( cCommand )
-      ::writeText( "Error al insertar la propiedad " + alltrim( ( D():PropiedadesLineas( ::getView() ) )->cDesTbl ) + " en la tabla " + ::cPrefixTable( "product_attribute_shop" ), 3 )
-   end if
-
-RETURN ( .t. )
-
-//---------------------------------------------------------------------------//
-
-METHOD insertProductAttributeImage( hProduct, idProductAttribute ) CLASS TComercioProduct
-
-   local hImage
-   local aImages
-   local cCommand
-   local idProductImage
-
-   aImages              := hget( hProduct, "aImages" )
-
-   if empty( aImages )
-      RETURN ( self )
-   end if 
-
-   for each hImage in aImages
-
-      idProductImage    := ::TPrestashopId():getValueImage( hGet( hProduct, "id" ) + str( hget( hImage, "id" ), 10 ), ::getCurrentWebName() )
-
-      cCommand          := "DELETE FROM " +  ::cPrefixtable( "product_attribute_image" ) + " "              + ;
-                              "WHERE id_product_attribute = " + alltrim( str( idProductAttribute ) ) + " "  + ;
-                              "AND id_image = " + alltrim( str( idProductImage ) )
-
-      if !::commandExecDirect( cCommand ) 
-         ::writeText( "Error al eliminar el artículo " + hGet( hProduct, "name" ) + " en la tabla " + ::cPrefixTable( "product_attribute_image" ), 3 )
-      end if
-
-      cCommand          := "INSERT IGNORE INTO " + ::cPrefixTable( "product_attribute_image" ) + " ( " + ;
-                              "id_product_attribute, "                                          + ;
-                              "id_image ) "                                                     + ;
-                           "VALUES ( "                                                          + ;
-                              "'" + alltrim( str( idProductAttribute ) ) + "', "                + ;   // id_product_attribute
-                              "'" + alltrim( str( idProductImage ) ) + "' )"                         // id_image
-
-      if !::commandExecDirect( cCommand )
-         ::writeText( "Error al insertar el artículo " + hGet( hProduct, "name" ) + " en la tabla " + ::cPrefixTable( "product_attribute_image" ), 3 )
-      end if
-
-   next   
-
-RETURN ( self )
 
 //---------------------------------------------------------------------------//
 
@@ -1780,7 +1439,6 @@ RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 
-
 METHOD ftpUploadFilesProductImages( hProductImage ) CLASS TComercioProduct
 
    local cTypeImage
@@ -1814,231 +1472,13 @@ RETURN ( nil )
 
 METHOD insertAditionalInformation() CLASS TComercioProduct
 
-   local hTax
-   local hCategory
-   local hManufacturer
-   local hPropertiesHeaderProduct
-   local hPropertiesLineProduct
-
-   // Subimos los tipos de IVA----------------------------------------------
-
    ::TComercioTax():insertTaxesPrestashop()
 
-   // Subimos fabricantes---------------------------------------------------
+   ::TComercioManufacturer():insertManufacturersPrestashop()
 
-   if ::TComercioConfig():getSyncronizeManufacturers()
-
-      ::meterProcesoSetTotal( len( ::aManufacturersProduct ) )
-
-      for each hManufacturer in ::aManufacturersProduct
-
-         ::insertManufacturersPrestashop( hManufacturer )
-
-         ::buildImagesManufacturers( hManufacturer )
-
-         ::uploadImagesManufacturers( hManufacturer )
-
-         ::meterProcesoText( "Subiendo fabricantes " + alltrim(str(hb_enumindex())) + " de " + alltrim(str(len(::aManufacturersProduct))) )
-
-      next 
-
-   end if 
-
-   // Subimos las cabeceras de propiedades necesarias-----------------------
-
-   ::meterProcesoSetTotal( len( ::aPropertiesHeaderProduct ) )
-
-   for each hPropertiesHeaderProduct in ::aPropertiesHeaderProduct
-
-      ::insertPropertiesHeader( hPropertiesHeaderProduct )
-
-      ::meterProcesoText( "Subiendo propiedad " + alltrim(str(hb_enumindex())) + " de " + alltrim(str(len(::aPropertiesHeaderProduct))) )
-
-   next
-
-   // Subimos las Lineas de propiedades necesarias--------------------------
-
-   ::meterProcesoSetTotal( len( ::aPropertiesLineProduct ) )
-
-   asort( ::aPropertiesLineProduct, , , {|x,y| hget( x, "position" ) < hget( y, "position" ) } )
-
-   for each hPropertiesLineProduct in ::aPropertiesLineProduct
-
-      ::insertPropertiesLineProduct( hPropertiesLineProduct, hb_enumindex() )
-
-      ::meterProcesoText( "Subiendo propiedad " + alltrim(str(hb_enumindex())) + " de " + alltrim(str(len(::aPropertiesLineProduct))) )
-
-   next
+   ::TComercioProperty():insertPropertiesPrestashop()
  
 RETURN ( Self )
-
-//---------------------------------------------------------------------------//
-
-
-METHOD insertManufacturersPrestashop( hManufacturers ) CLASS TComercioProduct
-
-   local oImagen
-   local nParent           := 1
-   local cCommand          := ""    
-   local idManufacturer    := 0
-
-   /*
-   Insertamos un fabricante nuevo en las tablas de prestashop-----------------
-   */
-
-   cCommand                := "INSERT IGNORE INTO " + ::cPrefixTable( "manufacturer" ) + "( " +;
-                                 "name, " + ;
-                                 "date_add, " + ;
-                                 "date_upd, " + ;
-                                 "active ) " + ;
-                              "VALUES ( " + ;
-                                 "'" + hGet( hManufacturers, "name" ) + "', " + ; //name
-                                 "'" + dtos( GetSysDate() ) + "', " + ;             //date_add
-                                 "'" + dtos( GetSysDate() ) + "', " + ;             //date_upd
-                                 "'1' )"                                            //active
-
-   if ::commandExecDirect( cCommand )
-      idManufacturer       := ::oConexionMySQLDatabase():GetInsertId()
-      hset( hManufacturers, "cPrefijoNombre", alltrim( str( idManufacturer ) ) )
-   else
-      ::writeText( "Error al insertar el fabricante " + hGet( hManufacturers, "name" ) + " en la tabla " + ::cPreFixtable( "manufacturer" ), 3 )
-   end if
-
-   cCommand                := "INSERT IGNORE INTO " + ::cPrefixTable( "manufacturer_shop" ) + "( "+ ;
-                                 "id_manufacturer, " + ;
-                                 "id_shop ) " + ;
-                              "VALUES ( " + ;
-                                 "'" + alltrim( str( idManufacturer ) ) + "', " + ;      // id_manufacturer
-                                 "'1' )"                                             // id_shop                  
-
-
-   if !::commandExecDirect( cCommand )
-      ::writeText( "Error al insertar el fabricante " + hGet( hManufacturers, "name" ) + " en la tabla" + ::cPreFixtable( "manufacturer_shop" ), 3 )
-   end if
-
-   cCommand                := "INSERT IGNORE INTO " + ::cPreFixtable( "manufacturer_lang" ) + "( " +;
-                                 "id_manufacturer, " + ;
-                                 "id_lang ) " + ;
-                              "VALUES ( " + ;
-                                 "'" + alltrim( str( idManufacturer ) ) + "', " + ;     // id_manufacturer
-                                 "'" + ::TComercio:nLanguage + "' )"         // id_lang
-
-   if !::commandExecDirect( cCommand )
-      ::writeText( "Error al insertar el fabricante " + hGet( hManufacturers, "name" ) + " en la tabla" + ::cPreFixtable( "manufacturer_lang" ), 3 )
-   end if
-
-   // Guardo referencia a la web-----------------------------------------------
-
-   if !empty( idManufacturer )
-      ::TPrestashopId():setValueManufacturer( hget( hManufacturers, "id" ), ::getCurrentWebName(), idManufacturer )
-   end if 
-
-RETURN ( idManufacturer )
-
-//---------------------------------------------------------------------------//
-
-METHOD insertPropertiesHeader( hPropertiesHeaderProduct ) CLASS TComercioProduct
-
-   local cCommand          := ""
-   local idPrestashop      := 0
-
-   cCommand                := "INSERT IGNORE INTO " + ::cPrefixTable( "attribute_group" ) + " ( " +; 
-                                 "is_color_group, " + ;
-                                 "group_type ) " + ;
-                              "VALUES ( " + ;
-                                 "'" + if( hGet( hPropertiesHeaderProduct, "lColor" ), "1", "0" ) + "', " + ;         // is_color_group
-                                 "'" + if( hGet( hPropertiesHeaderProduct, "lColor" ), "color", "select" ) + "' )"    // group_type                        
-
-   if ::commandExecDirect( cCommand )
-      idPrestashop         := ::oConexionMySQLDatabase():GetInsertId()
-   else
-      ::writeText( "Error al insertar la propiedad " + hGet( hPropertiesHeaderProduct, "name" ) + " en la tabla " + ::cPrefixTable( "attribute_group" ), 3 )
-   end if
-
-   if !empty( idPrestashop )
-      cCommand             := "INSERT IGNORE INTO " + ::cPrefixTable( "attribute_group_lang" ) + " ( " + ; 
-                                 "id_attribute_group, " + ;
-                                 "id_lang, " + ;
-                                 "name, " + ;
-                                 "public_name ) " + ;
-                              "VALUES ( " + ;
-                                 "'" + alltrim( str( idPrestashop ) ) + "', " + ;            // id_attribute_group
-                                 ::getLanguage() + ", " + ;                                  // id_lang
-                                 "'" + hGet( hPropertiesHeaderProduct, "name" ) + "', " + ;  // name
-                                 "'" + hGet( hPropertiesHeaderProduct, "name" ) + "' )"      // public_name
-
-      if !::commandExecDirect( cCommand )
-         ::writeText( "Error al insertar la propiedad " + hGet( hPropertiesHeaderProduct, "name" ) + " en la tabla " + ::cPrefixTable( "attribute_group_lang" ), 3 )
-      end if
-
-      // Guardo referencia a la web-----------------------------------------------
-
-      ::TPrestashopId():setValueAttributeGroup( hget( hPropertiesHeaderProduct, "id" ), ::getCurrentWebName(), idPrestashop )
-
-   end if 
-
-RETURN self
-
-//---------------------------------------------------------------------------//
-
-METHOD insertPropertiesLineProduct( hPropertiesLineProduct, nPosition ) CLASS TComercioProduct
-
-   local idPrestashop      := 0
-   local cCommand          := ""
-   local nCodigoGrupo      := ::TPrestashopId():getValueAttributeGroup( hGet( hPropertiesLineProduct, "idparent" ), ::getCurrentWebName() )
-
-   if Empty( hGet( hPropertiesLineProduct, "idparent" ) ) .and. Empty( hGet( hPropertiesLineProduct, "id" ) )
-      RETURN ( self )
-   end if
-
-   cCommand                := "INSERT IGNORE INTO " + ::cPrefixTable( "attribute" ) + " ( " + ; 
-                                 "id_attribute_group, " + ;
-                                 "color, " + ;
-                                 "position ) " + ;
-                              "VALUES ( " + ;
-                                 "'" + alltrim( str( nCodigoGrupo ) ) + "', " + ;            // id_attribute_group
-                                 "'" + hGet( hPropertiesLineProduct, "color" ) + "' ," + ;   // color
-                                 "'" + alltrim( str( nPosition ) ) + "' )"                   // posicion
-
-   if ::commandExecDirect( cCommand )
-      idPrestashop         := ::oConexionMySQLDatabase():GetInsertId()
-   else
-      ::writeText( "Error al insertar la propiedad " + hGet( hPropertiesLineProduct, "name" ) + " en la tabla " + ::cPreFixtable( "attribute" ), 3 )
-   end if
-
-   if !empty( idPrestashop )
-
-      cCommand             := "INSERT IGNORE INTO " + ::cPrefixTable( "attribute_lang" ) + " ( " + ;
-                                 "id_attribute, " + ;
-                                 "id_lang, " + ;
-                                 "name ) " + ;
-                              "VALUES ( " + ;
-                                 "'" + alltrim( str( idPrestashop ) ) + "', " + ;                                             // id_attribute
-                                 ::getLanguage() + ", " + ;                                                                   // id_lang
-                                 "'" + ::oConexionMySQLDatabase():Escapestr( hGet( hPropertiesLineProduct, "name" ) ) + "' )" // name
-
-      if !::commandExecDirect( cCommand )
-         ::writeText( "Error al insertar la propiedad " + hGet( hPropertiesLineProduct, "name" ) + " en la tabla " + ::cPrefixTable( "attribute_lang" ), 3 )
-      end if
-
-      cCommand             := "INSERT IGNORE INTO " + ::cPrefixTable( "attribute_shop" ) + " ( " + ;
-                                 "id_attribute, " + ;
-                                 "id_shop ) " + ;
-                              "VALUES ( " + ;
-                                 "'" + alltrim( str( idPrestashop ) ) + "', " + ;   // id_attribute
-                                 "'1' )"                                            // id_shop
-
-      if !::commandExecDirect( cCommand )
-         ::writeText( "Error al insertar la propiedad " + hGet( hPropertiesLineProduct, "name" ) + " en la tabla " + ::cPrefixTable( "attribute_shop" ), 3 )
-      end if
-
-      // Guardo referencia a la web-----------------------------------------------
-
-      ::TPrestashopId():setValueAttribute( hGet( hPropertiesLineProduct, "idparent" ) + hGet( hPropertiesLineProduct, "id" ), ::getCurrentWebName(), idPrestashop )
-
-   end if 
-
-RETURN ( self )
 
 //---------------------------------------------------------------------------//
 
@@ -2412,71 +1852,3 @@ RETURN '0'
 
 //---------------------------------------------------------------------------//
 
-METHOD buildImagesManufacturers( hManufacturer )
-
-   local oTipoImage
-   local fileImage
-   local cTmpFile
-
-   fileImage   := hget( hManufacturer, "image" )
-
-   if !File( fileImage )
-      RETURN nil
-   end if
-
-   for each oTipoImage in ::aTypeImagesPrestashop()
-
-      if !Empty( hget( hManufacturer, "image" ) ) .and. oTipoImage:lManufactures
-
-         if File( fileImage )
-
-            cTmpFile    := cPatTmp() + hget( hManufacturer, "cPrefijoNombre" ) + "-" + oTipoImage:cNombreTipo + ".jpg"
-
-            saveImage( fileImage, cTmpFile, oTipoImage:nAnchoTipo, oTipoImage:nAltoTipo )
-
-            aadd( hget( hManufacturer, "aTypeImages" ), cTmpFile )
-
-         end if
-
-         SysRefresh()
-
-      end if 
-
-   next
-
-   cTmpFile    := cPatTmp() + hget( hManufacturer, "cPrefijoNombre" ) + ".jpg"
-
-   saveImage( fileImage, cTmpFile )
-
-   aadd( hget( hManufacturer, "aTypeImages" ), cTmpFile )
-
-RETURN nil
-
-//---------------------------------------------------------------------------//
-
-METHOD uploadImagesManufacturers( hManufacturer )
-
-   local cTypeImage
-   local cRemoteImage
-
-   if !hhaskey( hManufacturer, "aTypeImages")
-      RETURN ( nil )
-   end if 
-
-   for each cTypeImage in hget( hManufacturer, "aTypeImages" )
-
-      ::meterProcesoText( "Subiendo imagen " + cTypeImage )
-
-      ::oFtp():CreateFile( cTypeImage, ::cDirectoryManufacture() + "/" )
-
-      SysRefresh()
-
-      ferase( cTypeImage )
-
-      SysRefresh()
-
-   next
-
-RETURN nil
-
-//---------------------------------------------------------------------------//

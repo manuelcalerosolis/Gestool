@@ -31,6 +31,8 @@ CLASS TComercioConector
    METHOD TComercioProduct()                                INLINE ( ::TComercio:TComercioProduct )
    METHOD TComercioCategory()                               INLINE ( ::TComercio:TComercioCategory )
    METHOD TComercioTax()                                    INLINE ( ::TComercio:TComercioTax )
+   METHOD TComercioManufacturer()                           INLINE ( ::TComercio:TComercioManufacturer )
+   METHOD TComercioProperty()                               INLINE ( ::TComercio:TComercioProperty )
 
    METHOD getCurrentWebName()                               INLINE ( ::TComercio:getCurrentWebName() )
 

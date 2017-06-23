@@ -77,11 +77,8 @@ METHOD buildCategory( id, rootCategory ) CLASS TComercioCategory
 
    if ( D():Familias( ::getView() ) )->( dbseekinord( id, "cCodFam" ) )  
 
-      if !empty( ( D():Familias( ::getView() ) )->cFamCmb ) .and. ;
-         empty( ::TPrestashopId():getValueCategory( ( D():Familias( ::getView() ) )->cFamCmb, ::getCurrentWebName() ) )
+      if !empty( ( D():Familias( ::getView() ) )->cFamCmb ) .and. empty( ::TPrestashopId():getValueCategory( ( D():Familias( ::getView() ) )->cFamCmb, ::getCurrentWebName() ) )
          
-         // msgalert( ( D():Familias( ::getView() ) )->cFamCmb, "padre" )
-
          ::buildCategory( ( D():Familias( ::getView() ) )->cFamCmb )
 
       end if
@@ -239,9 +236,6 @@ METHOD updateCategoryParent( hCategoryProduct ) CLASS TComercioCategory
 
    nParent           := ::TPrestashopId():getValueCategory( hGet( hCategoryProduct, "id_parent" ), ::getCurrentWebName(), 0 )
    nCategory         := ::TPrestashopId():getValueCategory( hGet( hCategoryProduct, "id" ), ::getCurrentWebName() )
-
-//    msgalert( hGet( hCategoryProduct, "id_parent" ), "codigo del padre" )
-//    msgalert( nParent, "identificador del padre" )
 
    if !empty( nParent ) .and. !empty( nCategory )
 
