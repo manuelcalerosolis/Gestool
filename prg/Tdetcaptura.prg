@@ -449,6 +449,20 @@ Method CheckDefault( cCod, lNew )
       ::oDbf:lBitmap    := .f.
       ::oDbf:Save()
 
+      ::oDbf:Append()
+      ::oDbf:cCodigo    := cCod
+      ::oDbf:nNumero    := 24
+      ::oDbf:cNombre    := "Ubicacion"
+      ::oDbf:lEditable  := .f.
+      ::oDbf:lVisible   := .t.
+      ::oDbf:nCaptura   := 2
+      ::oDbf:cTitulo    := "Ubi."
+      ::oDbf:lAlign     := .f.
+      ::oDbf:cPicture   := Space( 60 )
+      ::oDbf:nAncho     := 100
+      ::oDbf:lBitmap    := .f.
+      ::oDbf:Save()
+
    end if
 
 RETURN ( .t. )
