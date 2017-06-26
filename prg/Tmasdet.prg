@@ -34,6 +34,7 @@ CLASS TMasDet FROM TMant
    DATA  bOnPreDelete, bOnPostDelete
    DATA  bOnPreSave, bOnPostSave
    DATA  bOnPreLoad, bOnPostLoad
+   DATA  bDefaultValues
 
    DATA  bOnPreInsertDetail
    DATA  bOnPreAppendDetail, bOnPostAppendDetail
@@ -276,6 +277,10 @@ METHOD LoadDetails( lAppend ) CLASS TMasDet
             if ::oDbfVir != nil
 
                ::oDbfVir:Activate( .f., .f. )
+
+               if !lAppend .and. ::bDefaultValues != nil
+                  Eval( ::bDefaultValues, Self )
+               end if
 
                if ( lAppend ) .and. ::oDbfDet:Seek( ::cFirstKey )
 
@@ -586,7 +591,7 @@ METHOD Append( oBrw ) CLASS TMasDet
    ::oDbf:Blank()
    ::oDbf:SetDefault()
 
-   ::LoadDetails( .f. )
+   ::LoadDetails( .t. )
 
    lAppend       := ::Resource( 1 )
 
