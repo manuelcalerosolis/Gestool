@@ -19337,12 +19337,3 @@ Static Function dialogInfoWeb( aInfo )
 RETURN ( oDlg:nResult == IDOK )
 
 //---------------------------------------------------------------------------//
-
-Function cUbicacionAlmacen( cArticulo, cAlmacen, nView )
-
-MsgInfo( cArticulo, "Art" )
-MsgInfo( cAlmacen, "Almacén" )
-
-Return retFld( cArticulo + cAlmacen, D():ArticuloStockAlmacenes( nView ), "cUbica" )
-
-//---------------------------------------------------------------------------//
