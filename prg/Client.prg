@@ -863,7 +863,7 @@ FUNCTION Client( oMenuItem, oWnd, cCodCli )
 
       with object ( oWndBrw:AddXCol() )
          :cHeader          := "Observaciones"
-         :bEditValue       := {|| RTFToGTF( ( D():Clientes( nView ) )->mObserv ) }
+         :bEditValue       := {|| cTextRichText( ( D():Clientes( nView ) )->mObserv ) }
          :nWidth           := 200
          :lHide            := .t.
       end with
