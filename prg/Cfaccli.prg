@@ -62,6 +62,7 @@ FUNCTION CntFacCli( lSimula, lPago, lExcCnt, lMessage, oTree, nAsiento, aSimula,
    local newIva
    local aIvm        := {}
    local aTrn        := {}
+   local aAsiento    := {}
    local nCalculo    := 0
    local nBase       := 0
    local aVentas     := {}
@@ -764,7 +765,7 @@ FUNCTION CntFacCli( lSimula, lPago, lExcCnt, lMessage, oTree, nAsiento, aSimula,
                nBaseImp += uIva[ 6 ]
             end if
 
-            aAdd( aSimula, MkAsiento(  nAsiento, ;                          
+            aAsiento    := MkAsiento(  nAsiento, ;                          
                                        cCodDiv, ;                          
                                        dFecha, ;                          
                                        uIva[ 12 ],;                           // Cuenta de impuestos                          
@@ -773,7 +774,7 @@ FUNCTION CntFacCli( lSimula, lPago, lExcCnt, lMessage, oTree, nAsiento, aSimula,
                                        cConcepto,;                          
                                        uIva[ 8 ] - uIva[ 11 ],;               // Ptas. Haber                          
                                        cFactura,;                          
-                                       nBaseImp,;                       // Base Imponible                          
+                                       nBaseImp,;                             // Base Imponible                          
                                        uIva[ 3 ],;                          
                                        if( lRecargo, uIva[ 4 ], 0 ),;         // Tipo de recargo                         
                                        ,;                          
@@ -784,7 +785,11 @@ FUNCTION CntFacCli( lSimula, lPago, lExcCnt, lMessage, oTree, nAsiento, aSimula,
                                        ,;                          
                                        lSimula,;                          
                                        cTerNif,;                          
-                                       cTerNom ) )                          
+                                       cTerNom )
+
+            msgalert( hb_valtoexp( aAsiento ), "aAsiento" )
+
+            aAdd( aSimula, aAsiento )                          
 
          end if
 
@@ -1310,6 +1315,7 @@ Function CntTiket( lSimula, lCobro, lDev, lMessage, oTree, nAsiento, aSimula, db
    local aIvm        := {}
    local aVentas     := {}
    local aPago       := {}
+   local aAsiento    := {}
    local nTotTik     := 0
    local nTotPgo     := 0
    local cCtaPgo     := cCtaCob()
@@ -1780,7 +1786,7 @@ Function CntTiket( lSimula, lCobro, lDev, lMessage, oTree, nAsiento, aSimula, db
                nBaseImp := aIva[n, 3 ]
             end if
 
-            aAdd( aSimula, MkAsiento(  nAsiento, ;                 
+            aAsiento    := MkAsiento(  nAsiento, ;                 
                                        cCodDiv, ;                 
                                        dFecha, ;                           // Fecha                 
                                        aIva[ n, 1 ],;                      // Cuenta de impuestos
@@ -1800,7 +1806,9 @@ Function CntTiket( lSimula, lCobro, lDev, lMessage, oTree, nAsiento, aSimula, db
                                        ,;                 
                                        lSimula,;                 
                                        cTerNif,;                 
-                                       cTerNom ) )         
+                                       cTerNom )
+
+            aAdd( aSimula, aAsiento )         
 
          end if
 
@@ -6054,7 +6062,7 @@ FUNCTION CntFacRec( lSimula, lPago, lExcCnt, lMessage, oTree, nAsiento, aSimula,
 
             nBaseImp    := uIva[ 2 ] - uIva[ 10 ] 
 
-            if uFieldEmpresa( "lIvaImpEsp")
+            if uFieldEmpresa( "lIvaImpEsp" )
                nBaseImp += uIva[ 6 ]
             end if
 
@@ -6078,7 +6086,10 @@ FUNCTION CntFacRec( lSimula, lPago, lExcCnt, lMessage, oTree, nAsiento, aSimula,
                                        ,;                          
                                        lSimula,;                          
                                        cTerNif,;                          
-                                       cTerNom ) )                          
+                                       cTerNom,;
+                                       ,;
+                                       ,;
+                                       .t. ) )                       
 
          end if
 

@@ -40,8 +40,9 @@
 
 static cDiario
 static cCuenta
-static cSubCuenta
 static cEmpresa
+static cDiarioSii
+static cSubCuenta
 
 static aLenSubCuenta             := {}
 
@@ -62,6 +63,7 @@ static lAsientoIntraComunitario  := .f.
 //----------------------------------------------------------------------------//
 
 Function getDiarioDatabaseContaplus()     ; return ( cDiario )
+Function getDiarioSiiDatabaseContaplus()  ; return ( cDiarioSii )
 Function getCuentaDatabaseContaplus()     ; return ( cCuenta )
 Function getSubCuentaDatabaseContaplus()  ; return ( cSubCuenta )
 Function getEmpresaDatabaseContaplus()    ; return ( cEmpresa )
@@ -1260,6 +1262,8 @@ Function OpenDiario( cRuta, cCodEmp, lMessage )
          lOpenDiario := .f.
       end if
 
+      cDiarioSii     := OpnDiarioSii( cRuta, cCodEmp, lMessage )
+
    RECOVER USING oError
 
       lOpenDiario    := .f.
@@ -1292,10 +1296,15 @@ FUNCTION CloseDiario()
       ( cEmpresa )->( dbCloseArea() )
    end if
 
+   if !empty( cDiarioSii )
+      ( cDiarioSii )->( dbCloseArea() )
+   end if 
+
    cDiario           := nil
    cCuenta           := nil
-   cSubCuenta        := nil
    cEmpresa          := nil
+   cSubCuenta        := nil
+   cDiarioSii        := nil
 
    lOpenDiario       := .f.
 
@@ -1354,7 +1363,8 @@ FUNCTION MkAsiento( 	Asien,;
                      cNif,;
                      cNombre,;
                      nEjeCon,;
-                     cEjeCta )
+                     cEjeCta,;
+                     l340 )
 
    local cSerie            := "A"
    local oError
@@ -1446,7 +1456,8 @@ FUNCTION MkAsiento( 	Asien,;
                                                 cNif,;
                                                 cNombre,;
                                                 nEjeCon,;
-                                                cEjeCta )   
+                                                cEjeCta,;
+                                                l340 )   
 
    RECOVER USING oError
 
@@ -1482,7 +1493,8 @@ Static Function MkAsientoContaplus( Asien,;
                                     cNif,;
                                     cNombre,;
                                     nEjeCon,;
-                                    cEjeCta )
+                                    cEjeCta,;
+                                    l340 )
 
    local aTemp
 
@@ -1559,6 +1571,12 @@ Static Function MkAsientoContaplus( Asien,;
 
    if ( cDiario )->( FieldPos( "TERIDNIF" ) ) != 0
       aTemp[ ( cDiario )->( FieldPos( "TERIDNIF" ) ) ]   := if( getAsientoIntraComunitario(), 2, 1 )
+   end if
+
+   // Conectores GUID--------------------------------------------
+
+   if ( cDiario )->( FieldPos( "Guid" ) ) != 0
+      aTemp[ ( cDiario )->( FieldPos( "Guid" ) ) ]       := win_uuidcreatestring()
    end if
 
    // escritura en el fichero--------------------------------------------
@@ -2559,6 +2577,65 @@ Function OpnDiario( cRuta, cCodEmp, lMessage )
 Return ( dbfDiario )
 
 //----------------------------------------------------------------------------//
+
+Function OpnDiarioSii( cRuta, cCodEmp, lMessage )
+
+   local oBlock
+   local dbfDiarioSii   := nil
+
+   DEFAULT cRuta        := cRutCnt()
+   DEFAULT cCodEmp      := cEmpCnt()
+   DEFAULT lMessage     := .f.
+
+   if Empty( cRuta )
+      if lMessage
+         MsgStop( "Ruta de Contaplus ® no valida" )
+      end if
+      Return nil
+   end if
+
+   cRuta                := cPath( cRuta )
+   cCodEmp              := alltrim( cCodEmp )
+
+   oBlock               := ErrorBlock( { | oError | ApoloBreak( oError ) } )
+   BEGIN SEQUENCE
+
+      if File( cRuta + "EMP" + cCodEmp + "\DIARIOF.CDX" )
+
+         USE ( cRuta + "EMP" + cCodEmp + "\DIARIOF.DBF" ) NEW SHARED VIA ( cLocalDriver() ) ALIAS ( cCheckArea( "DIARIO", @dbfDiarioSii ) )
+         SET INDEX TO ( cRuta + "EMP" + cCodEmp + "\DIARIOF.CDX" ) ADDITIVE
+         SET TAG TO "NUASI"
+
+         if ( dbfDiarioSii )->( RddName() ) == nil .or. ( dbfDiarioSii )->( NetErr() )
+
+            if lMessage
+               msgStop( "Imposible acceder a fichero Contaplus ®.", "Abriendo diario" )
+            end if
+
+            dbfDiarioSii   := nil
+
+         end if
+
+      else
+
+         if lMessage
+            msgStop( "Ficheros no encontrados en ruta " + cRuta + " empresa " + cCodEmp, "Abriendo diario" )
+         end if
+
+      end if
+
+   RECOVER
+
+      msgStop( "Imposible abrir las bases de datos del diario de Contaplus ®." )
+
+   END SEQUENCE
+
+   ErrorBlock( oBlock )
+
+Return ( dbfDiarioSii )
+
+//----------------------------------------------------------------------------//
+
 
 Function OpnBalance( cRuta, cCodEmp, lMessage )
 
