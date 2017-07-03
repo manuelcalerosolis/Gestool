@@ -91,7 +91,8 @@ CLASS TFastVentasArticulos FROM TFastReportInfGen
    METHOD processAllClients()
 
    METHOD idDocumento()                   INLINE ( ::oDbf:cClsDoc + ::oDbf:cSerDoc + ::oDbf:cNumDoc + ::oDbf:cSufDoc ) 
-   METHOD IdDocumentoLinea()              INLINE ( ::idDocumento() + Str( ::oDbf:nNumLin ) )
+   METHOD idDocumentoLinea()              INLINE ( ::idDocumento() + Str( ::oDbf:nNumLin ) )
+   METHOD idArticuloAlmacen()             INLINE ( ::oDbf:cCodArt + ::oDbf:cCodAlm )
 
    METHOD StockArticulo()                 INLINE ( ::oStock:nStockAlmacen( ::oDbf:cCodArt, ::oDbf:cCodAlm, ::oDbf:cValPr1, ::oDbf:cValPr2, ::oDbf:cLote, ::dIniInf, ::dFinInf ) )
 
@@ -898,11 +899,11 @@ METHOD BuildReportCorrespondences()
                      "Stocks" => ;
                         {  "Generate" =>  {||   ::AddArticulo() },;
                            "Variable" =>  {||   ::AddVariableStock() },;
-                           "Data" =>      {||   nil } },;
+                           "Data" =>      {||   ::FastReportStock() } },;
                      "Stocks almacenes" => ;
                         {  "Generate" =>  {||   ::AddArticulo( .t. ) },;
                            "Variable" =>  {||   ::AddVariableStock() },;
-                           "Data" =>      {||   nil } } }
+                           "Data" =>      {||   ::FastReportStock() } } }
 
 Return ( Self )
 

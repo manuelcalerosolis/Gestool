@@ -255,6 +255,8 @@ CLASS TFastReportInfGen FROM TNewInfGen
    METHOD FastReportFacturaProveedor()
    METHOD FastReportRectificativaProveedor()
 
+   METHOD FastReportStock()
+
    METHOD AddVariableSATCliente()
    METHOD AddVariableLineasSATCliente()
    METHOD cDetalleSATClientes()                                   INLINE ( cDesSatCli ( D():SATClientesLineas( ::nView )  ) )
@@ -2618,6 +2620,19 @@ METHOD FastReportRectificativaProveedor()
 
    ::oFastReport:SetResyncPair(     "Informe", "Rectificativas de proveedor" )
    ::oFastReport:SetResyncPair(     "Informe", "Lineas rectificativas de proveedor" )
+
+RETURN ( Self )
+
+//---------------------------------------------------------------------------//
+
+METHOD FastReportStock()
+   
+   ::oFastReport:SetWorkArea(       "Artículos almacenes", ( D():ArticuloStockAlmacenes( ::nView ) )->( select() ) )
+   ::oFastReport:SetFieldAliases(   "Artículos almacenes", cItemsToReport( aItmStockaAlmacenes() ) )
+   
+   ::oFastReport:SetMasterDetail(   "Informe", "Artículos almacenes",   {|| ::idArticuloAlmacen() } )
+
+   ::oFastReport:SetResyncPair(     "Informe", "Artículos almacenes" )
 
 RETURN ( Self )
 

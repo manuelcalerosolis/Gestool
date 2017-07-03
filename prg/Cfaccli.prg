@@ -924,7 +924,7 @@ Static Function lCntFacCli( nFactura, pFactura, nAsiento, lPago, oTree, dbfFacCl
 
    // Ponemos el ticket como contabilizado-------------------------------------
 
-   if ( dbfFacCliT )->( dbRLock() )
+   if dbDialogLock( dbfFacCliT )
       ( dbfFacCliT )->lContab := .t.
       ( dbfFacCliT )->( dbUnLock() )
    end if

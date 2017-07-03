@@ -63,12 +63,6 @@ METHOD buildCategory( id, rootCategory ) CLASS TComercioCategory
       rootCategory         := 2
    end if 
 
-/*
-   if !( ::isSyncronizeAll() )
-      RETURN .f. 
-   end if 
-*/
-   
    if ascan( ::aCategoriesProduct, {|h| hGet( h, "id" ) == id } ) != 0
       RETURN .f.
    end if
@@ -77,8 +71,8 @@ METHOD buildCategory( id, rootCategory ) CLASS TComercioCategory
 
    if ( D():Familias( ::getView() ) )->( dbseekinord( id, "cCodFam" ) )  
 
-      if !empty( ( D():Familias( ::getView() ) )->cFamCmb ) .and. empty( ::TPrestashopId():getValueCategory( ( D():Familias( ::getView() ) )->cFamCmb, ::getCurrentWebName() ) )
-         
+      if !empty( ( D():Familias( ::getView() ) )->cFamCmb ) // .and. empty( ::TPrestashopId():getValueCategory( ( D():Familias( ::getView() ) )->cFamCmb, ::getCurrentWebName() ) )
+
          ::buildCategory( ( D():Familias( ::getView() ) )->cFamCmb )
 
       end if
@@ -197,21 +191,26 @@ METHOD insertCategories() CLASS TComercioCategory
 
    for each hCategoryProduct in ::aCategoriesProduct
 
-      idCategory  := ::insertCategory( hCategoryProduct )
+      idCategory     := ::insertCategory( hCategoryProduct )
    
       if !empty( idCategory )
 
          ::insertCategoryLang( hCategoryProduct, idCategory )
+
          ::insertCategoryShop( hCategoryProduct, idCategory )
+         
          ::insertCategoryGroup( hCategoryProduct, idCategory )
 
          ::buildImageCategory( hCategoryProduct )
+         
          ::uploadImageCategory( hCategoryProduct )
       
       end if 
 
    next 
 
+   sysrefresh() 
+   
 RETURN ( idCategory )
 
 //---------------------------------------------------------------------------//
@@ -232,10 +231,17 @@ METHOD updateCategoryParent( hCategoryProduct ) CLASS TComercioCategory
 
    local nParent  
    local cCommand    
-   local nCategory   
+   local nCategory 
+
+   sysRefresh()
 
    nParent           := ::TPrestashopId():getValueCategory( hGet( hCategoryProduct, "id_parent" ), ::getCurrentWebName(), 0 )
    nCategory         := ::TPrestashopId():getValueCategory( hGet( hCategoryProduct, "id" ), ::getCurrentWebName() )
+
+   ::writeText( "Actualizando categoría padre : " + cvaltostr( nParent ) )
+   ::writeText( "Actualizando categoría : " + cvaltostr( nCategory ) )
+
+   sysRefresh()
 
    if !empty( nParent ) .and. !empty( nCategory )
 
@@ -524,14 +530,14 @@ METHOD recalculatePositionsCategory() CLASS TComercioCategory
       do case
          case oQuery:FieldGet( 1 ) == 1
 
-            cCommand    := "UPDATE " + ::cPrefixTable( "category" ) + " SET nLeft = '1', nRight='" + alltrim( str( nTotalCategory * 2 ) ) + "' WHERE id_category = 1" 
+            cCommand       := "UPDATE " + ::cPrefixTable( "category" ) + " SET nLeft = '1', nRight='" + alltrim( str( nTotalCategory * 2 ) ) + "' WHERE id_category = 1" 
             if !::commandExecDirect( cCommand )
                ::writeText( "Error al actualizar el grupo de familia en la tabla category", 3 )
             end if
 
          case oQuery:FieldGet( 1 ) == 2
 
-            cCommand    := "UPDATE " + ::cPrefixTable( "category" ) + " SET nLeft = '2', nRight='" + alltrim( str( ( nTotalCategory * 2 ) -1 ) ) + "' WHERE id_category = 2"
+            cCommand       := "UPDATE " + ::cPrefixTable( "category" ) + " SET nLeft = '2', nRight='" + alltrim( str( ( nTotalCategory * 2 ) -1 ) ) + "' WHERE id_category = 2"
             if !::commandExecDirect( cCommand )
                ::writeText( "Error al actualizar el grupo de familia en la tabla category", 3 )
             end if

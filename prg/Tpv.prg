@@ -330,6 +330,8 @@ static TComercio
 static oCaptura
 static oFideliza
 static oComercio
+static oUbicacion
+static cUbicacion          := ""
 
 static oMetMsg
 static nMetMsg
@@ -7845,6 +7847,15 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbfTmpL, oBrw, bWhen, cCodArt, nMode, aTik )
                            RIGHT ;
                            OF       oDlgDet
 
+            case cName == "Ubicación"
+
+               @ 0, 0 GET  oUbicacion VAR cUbicacion;
+                           NOBORDER ;
+                           FONT     oBrw:oFont ;
+                           WHEN     ( .t. ) ;
+                           PICTURE  "@!" ;
+                           OF       oDlgDet
+
             case cName == "Código de barras"
 
                @ 0, 0 GET  oCodBarras VAR cCodBarras ;
@@ -13164,6 +13175,8 @@ Function NameToField( cName )
          cField   := {|| ( dbfTmpL )->lLinOfe }
       case cName == "Número de línea"
          cField   := {|| Trans( ( dbfTmpL )->nNumLin, "9999" ) }
+      case cName == "Ubicación"
+         cField   := {|| retFld( ( dbfTmpL )->cCbaTil + ( dbfTmpL )->cAlmLin, D():ArticuloStockAlmacenes( nView ), "cUbica" ) }
       case cName == "Código de barras"
          cField   := {|| cCodigoBarrasDefecto( ( dbfTmpL )->cCbaTil, dbfCodeBar ) }
       case cName == "Porcentaje I.V.A."

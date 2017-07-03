@@ -15,7 +15,7 @@ BORLANDLIB           =  \Bcc582\lib
 IMG2PDFLIB           =  \Img2Pdf
 
 OBJ                  =  Obj1701
-SOURCEPRG            =  .\Prg
+SOURCEPRG            =  .\Prg;.\Prg\mail;.\Prg\Comercio;.\Prg\Models;.\Prg\Controllers;.\Prg\Services;.\Prg\Tablet;.\Prg\tablet\view;.\Prg\tablet\view\documentos;.\Prg\tablet\view\terceros;.\Prg\tablet\view\documentos\ventas;.\Prg\tablet\view\documentos\terceros;.\Prg\tablet\utils;.\Prg\tablet\presenter;.\Prg\tablet\presenter\terceros;.\Prg\tablet\presenter\documentos;.\Prg\tablet\presenter\documentos\ventas;
 SOURCEC              =  C
 PPO                  =  Ppo1701
 
@@ -1047,7 +1047,10 @@ TGenMailDatabaseRecibosClientes.prg \
 TDetMovimientosAlmacen.prg 			\
 TDetSeriesMovimientos.prg 				\
 TTraslations.prg        				\
-CentroCoste.Prg         \
+CentroCoste.prg                     \
+TgenmailDatabaseRecibosClientes.prg \
+TDetMovimientosAlmacen.prg          \
+Tdetseriesmovimientos.prg           \
 
 C               =       \
 Metafi32.c              \
@@ -2086,6 +2089,9 @@ TDetMovimientosAlmacen.obj \
 TDetSeriesMovimientos.obj \
 TTraslations.obj        \
 CentroCoste.obj         \
+TgenmailDatabaseRecibosClientes.obj \
+TDetMovimientosAlmacen.obj          \
+Tdetseriesmovimientos.obj           \
 
 .PRG.OBJ:
    $(HB)\Bin\Harbour $< /n /p$(PPO)\$&.ppo /w /es2 /i$(FWINCLUDE) /i$(HBINCLUDE) /i$(GTINCLUDE) /o$(OBJ)\$&.c
@@ -3125,11 +3131,11 @@ $(OBJ)\Provincias.obj            +
 $(OBJ)\CamposExtra.obj           +
 $(OBJ)\DetCamposExtra.obj        +
 $(OBJ)\TScripts.obj              +
-$(OBJ)\TGenMailDatabaseRecibosClientes.obj +
-$(OBJ)\TDetMovimientosAlmacen.obj +
-$(OBJ)\TDetSeriesMovimientos.obj +
-$(OBJ)\TTraslations.obj          +
 $(OBJ)\CentroCoste.obj           +
+$(OBJ)\TTraslations.obj          +
+$(OBJ)\TgenmailDatabaseRecibosClientes.obj +
+$(OBJ)\TDetMovimientosAlmacen.obj          +
+$(OBJ)\Tdetseriesmovimientos.obj           +
 $(OBJ)\EstadoSat.obj             
 $<,$*
 $(FWLIB)\FiveH.lib               +

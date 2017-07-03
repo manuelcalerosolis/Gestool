@@ -237,26 +237,26 @@ CLASS TComercio
    DATA  oTree
 
    DATA  oMeterTotal
-   DATA  nMeterTotal                   INIT 0
+   DATA  nMeterTotal                      INIT 0
 
-   METHOD MeterTotal( oMeterTotal)     INLINE ( iif( oMeterTotal != nil, ::oMeterTotal := oMeterTotal, ::oMeterTotal ) )
-   METHOD setMeterTotal( nTotal )      INLINE ( ::nTotMeter := nTotal, ( if( !empty( ::oMeterProceso ), ::oMeterProceso:SetTotal( ::nTotMeter ), ) ) )
-   METHOD getMeterTotal()              INLINE ( ::nTotMeter )
+   METHOD MeterTotal( oMeterTotal)        INLINE ( iif( oMeterTotal != nil, ::oMeterTotal := oMeterTotal, ::oMeterTotal ) )
+   METHOD setMeterTotal( nTotal )         INLINE ( ::nTotMeter := nTotal, ( if( !empty( ::oMeterProceso ), ::oMeterProceso:SetTotal( ::nTotMeter ), ) ) )
+   METHOD getMeterTotal()                 INLINE ( ::nTotMeter )
 
    DATA  oTextTotal
    DATA  cTextTotal
 
-   METHOD TextTotal( oTextTotal )      INLINE ( iif( oTextTotal != nil, ::oTextTotal := oTextTotal, ::oTextTotal ) )
+   METHOD TextTotal( oTextTotal )         INLINE ( iif( oTextTotal != nil, ::oTextTotal := oTextTotal, ::oTextTotal ) )
 
    DATA  oMeterProceso
-   DATA  nMeterProceso                 INIT 0
+   DATA  nMeterProceso                    INIT 0
 
-   DATA  aIvaData                      INIT {}
-   DATA  aFabricantesData              INIT {}
-   DATA  aFamiliaData                  INIT {}
-   DATA  aProductData                  INIT {}
-   DATA  aPropiedadesCabeceraData      INIT {}
-   DATA  aPropiedadesLineasData        INIT {}
+   DATA  aIvaData                         INIT {}
+   DATA  aFabricantesData                 INIT {}
+   DATA  aFamiliaData                     INIT {}
+   DATA  aProductData                     INIT {}
+   DATA  aPropiedadesCabeceraData         INIT {}
+   DATA  aPropiedadesLineasData           INIT {}
    
    DATA  cDirImagen
 
@@ -267,7 +267,7 @@ CLASS TComercio
    METHOD meterProcesoText( cText )
    METHOD meterProcesoSetTotal( nTotal )
 
-   METHOD oProductDatabase()           INLINE ( ::oArt )
+   METHOD oProductDatabase()              INLINE ( ::oArt )
    
    // Controladores---------------------------------------------------------------
 
@@ -277,6 +277,8 @@ CLASS TComercio
       METHOD controllerOrderPrestashop()
       METHOD controllerUpdateStockPrestashop()
       METHOD controllerDeleteOneProductToPrestashop( idProduct )
+
+      METHOD controllerExportOneCategoryToPrestashop( idCategory )
 
    METHOD AppendIvaPrestashop()
    METHOD InsertIvaPrestashop()
@@ -489,6 +491,7 @@ CLASS TComercio
 
    METHOD insertStructureInformation()
    METHOD insertProductInformation()
+   METHOD insertProductToPrestashop( idProduct )
    METHOD insertOneProductToPrestashop( idProduct )
    METHOD insertAllProducts()
 
@@ -2885,24 +2888,6 @@ RETURN ( Self )
 
 METHOD uploadInformationToPrestashop( idProduct )
 
-   // Eliminamos las bases de datos--------------------------------------------
-
-   ::MeterTotalText( "Eliminando la bases de datos." )
-
-   if ::lSyncAll 
-      ::buildEliminaTablas()
-   end if
-
-   if !empty( idProduct )
-      ::buildDeleteProductPrestashop( idProduct )
-   end if 
-
-   // Subimos la informacion a mysql-------------------------------------------
-
-   ::MeterTotalText( "Subiendo la información adicional." )
-
-   ::uploadAditionalInformationToPrestashop()
-
 RETURN ( Self )
 
 //---------------------------------------------------------------------------//
@@ -4010,20 +3995,32 @@ RETURN ( .t. )
 
 //---------------------------------------------------------------------------//
 
-METHOD isAviableWebToExport() Class TComercio
+METHOD isAviableWebToExport( lSilent ) Class TComercio
+
+   DEFAULT lSilent   := .f.
 
    if !( ::isValidNameWebToExport() )
       RETURN .f.
    end if 
 
    if !( ::TComercioConfig:setCurrentWebName( ::getWebToExport() ) )
-      msgStop( "No se puede poner en uso la web " + ::getWebToExport() )
+   
+      if !lSilent
+         msgStop( "No se puede poner en uso la web " + ::getWebToExport() )
+      end if 
+   
       RETURN .f.
+   
    end if 
 
    if !( ::TComercioConfig:isActive() )
-      msgStop( "Web " + ::getWebToExport() + " esta actualmente desactivada" )
+
+      if !lSilent
+         msgStop( "Web " + ::getWebToExport() + " esta actualmente desactivada" )
+      end if 
+   
       RETURN .f.
+   
    end if 
 
 RETURN .t.
@@ -4147,34 +4144,6 @@ RETURN .t.
 
 METHOD insertProductInformation() CLASS TComercio
 
-   ::TComercioProduct:buildProductInformation( ( D():Articulos( ::getView() ) )->Codigo )
-
-   if ::prestaShopConnect()
-
-      ::MeterTotalText( "Subiendo la información de las categorias." )
-
-      ::TComercioCategory:insertCategories()   
-
-      ::MeterTotalText( "Relacionando categorias." )
-
-      ::TComercioCategory:updateCategoriesParent()
-
-      ::MeterTotalText( "Recalculando posiciones de categorias." )
-
-      ::TComercioCategory:recalculatePositionsCategory()
-
-      ::MeterTotalText( "Subiendo la información adicional a los productos." )
-
-      ::TComercioCategory:insertTopMenuPs()
-      
-      ::MeterTotalText( "Recalculando Top Menu." )
-
-      ::TComercioProduct:insertAditionalInformation()
-
-      ::prestaShopDisConnect()
-
-   end if 
-
 RETURN .t.
 
 //---------------------------------------------------------------------------//
@@ -4197,6 +4166,39 @@ METHOD controllerExportOneProductToPrestashop( idProduct ) Class TComercio
    ::oWaitMeter:End()
 
 RETURN .t.
+
+//---------------------------------------------------------------------------//
+
+METHOD controllerExportOneCategoryToPrestashop( idCategory ) Class TComercio
+
+   local cSql        := "Articulos"
+
+   ::oWaitMeter      := TWaitMeter():New( "Actualizando familia", "Espere por favor..." )
+   ::oWaitMeter:Run()
+
+   ArticulosModel():getArticulosToPrestrashopInFamilia( idCategory, @cSql )
+
+   while ( !( cSql )->( eof() ) )
+
+      ::setWebToExport( ( cSql )->cWebShop ) 
+
+      if ::isAviableWebToExport( .t. ) 
+
+         ::ftpConnect()
+
+         ::insertOneProductToPrestashop( ( cSql )->Codigo )
+         
+         ::ftpDisConnect()
+
+      end if 
+
+      ( cSql )->( dbskip() )
+
+   end while
+
+   ::oWaitMeter:End()
+
+RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 
@@ -4224,6 +4226,30 @@ RETURN .t.
 
 //---------------------------------------------------------------------------//
 
+METHOD insertProductToPrestashop( idProduct ) Class TComercio
+
+   if !( ::TComercioProduct:buildProduct( idProduct, .t. ) )
+      RETURN .f.
+   end if 
+
+   if ::prestaShopConnect()
+
+      ::TComercioProduct:insertProducts()
+
+      ::prestaShopDisConnect()
+
+      ::TComercioProduct:uploadImagesToPrestashop()
+
+   else 
+
+      ::writeText( "Error al conectarse a PrestaShop" )
+
+   end if 
+
+RETURN .t.
+
+//---------------------------------------------------------------------------//
+
 METHOD insertAllProducts( idProduct ) CLASS TComercio //*//
 
    local ordenAnterior  := ( D():Articulos( ::getView() ) )->( ordsetfocus( "lWebShop" ) )
@@ -4232,7 +4258,7 @@ METHOD insertAllProducts( idProduct ) CLASS TComercio //*//
 
       while ( alltrim( ( D():Articulos( ::getView() ) )->cWebShop ) == ::getCurrentWebName() ) .and. !( D():Articulos( ::getView() ) )->( eof() )  
 
-         if ::insertOneProductToPrestashop( ( D():Articulos( ::getView() ) )->Codigo )
+         if ::insertProductToPrestashop( ( D():Articulos( ::getView() ) )->Codigo )
 
             ::saveLastInsertProduct( ( D():Articulos( ::getView() ) )->Codigo )
          
@@ -5114,8 +5140,7 @@ RETURN ( Self )
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
-
-
+//---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//

@@ -281,7 +281,7 @@ RETURN ( .t. )
 
 FUNCTION Test()
 
-   // msgalert( win_uuidcreatestring(), "win_uuidcreatestring" )
+   // MovimientosAlmacenController():New():activateShell()
 
 Return ( nil )
 
@@ -295,11 +295,11 @@ FUNCTION WndResize( oWnd )
    oBlock         := ErrorBlock( {| oError | ApoloBreak( oError ) } )
    BEGIN SEQUENCE
 
-   if !Empty( oWnd )
+   if !empty( oWnd )
 
       aEval( oWnd:oWndClient:aWnd, {|o| oWnd:oWndClient:ChildMaximize( o ) } )
 
-      if !Empty( oWndBar )
+      if !empty( oWndBar )
          oWndBar:CreateLogo()
       end if
 
@@ -433,11 +433,11 @@ STATIC FUNCTION EndApp()
 
       ACTIVATE DIALOG oDlg CENTER
 
-      if !Empty( oBrush )
+      if !empty( oBrush )
          oBrush:End()
       end if
 
-      if !Empty( oBmpVersion )
+      if !empty( oBmpVersion )
          oBmpVersion:End()
       end if 
 
@@ -639,37 +639,37 @@ FUNCTION ExitDialog( oDlg, nLicencia, nSerialHD, nSerialUSR, oSerialUsr, oSayAlq
 
       case nLicencia == 2
 
-         if Empty( cSayAlquiler[1] )
+         if empty( cSayAlquiler[1] )
             MsgStop( "El campo N.I.F./ C.I.F. no puede estar vacío" )
             oSayAlquiler[1]:SetFocus()
             RETURN .f.
          end if
 
-         if Empty( cSayAlquiler[2] )
+         if empty( cSayAlquiler[2] )
             MsgStop( "El campo nombre no puede estar vacío" )
             oSayAlquiler[2]:SetFocus()
             RETURN .f.
          end if
 
-         if Empty( cSayAlquiler[3] )
+         if empty( cSayAlquiler[3] )
             MsgStop( "El campo domicilio no puede estar vacío" )
             oSayAlquiler[3]:SetFocus()
             RETURN .f.
          end if
 
-         if Empty( cSayAlquiler[4] )
+         if empty( cSayAlquiler[4] )
             MsgStop( "El campo población no puede estar vacío" )
             oSayAlquiler[4]:SetFocus()
             RETURN .f.
          end if
 
-         if Empty( cSayAlquiler[5] )
+         if empty( cSayAlquiler[5] )
             MsgStop( "El campo código postal no puede estar vacío" )
             oSayAlquiler[5]:SetFocus()
             RETURN .f.
          end if
 
-         if Empty( cSayAlquiler[6] )
+         if empty( cSayAlquiler[6] )
             MsgStop( "El campo email no puede estar vacío" )
             oSayAlquiler[6]:SetFocus()
             RETURN .f.
@@ -681,13 +681,13 @@ FUNCTION ExitDialog( oDlg, nLicencia, nSerialHD, nSerialUSR, oSerialUsr, oSayAlq
             RETURN .f.
          end if
 
-         if Empty( cSayAlquiler[7] )
+         if empty( cSayAlquiler[7] )
             MsgStop( "El campo teléfono no puede estar vacío" )
             oSayAlquiler[7]:SetFocus()
             RETURN .f.
          end if
 
-         if Empty( cSayAlquiler[8] )
+         if empty( cSayAlquiler[8] )
             MsgStop( "El campo provincia no puede estar vacío" )
             oSayAlquiler[8]:SetFocus()
             RETURN .f.
@@ -918,7 +918,7 @@ Static FUNCTION FinishAplication() //  Static FUNCTION
 
    CursorWait()
 
-   if !Empty( cCodEmp() )
+   if !empty( cCodEmp() )
       WritePProString( "main", "Ultima Empresa", cCodEmp(), cIniAplication() )
    end if 
 
@@ -1012,7 +1012,7 @@ static FUNCTION WndPaint( hDC, oWnd )
    oBlock               := ErrorBlock( {| oError | ApoloBreak( oError ) } )
    BEGIN SEQUENCE
 
-      if !Empty( oWnd ) .and. !Empty( oWnd:oWndClient )
+      if !empty( oWnd ) .and. !empty( oWnd:oWndClient )
 
          if len( oWnd:oWndClient:aWnd ) > 0
             aTail( oWnd:oWndClient:aWnd ):SetFocus()
@@ -1042,7 +1042,7 @@ RETURN cNbr
 
 FUNCTION cCajUsr( cCaj )
 
-   if !Empty( cCaj ) .and. oMsgCaja != nil
+   if !empty( cCaj ) .and. oMsgCaja != nil
       oMsgCaja:SetText( "Caja : " + RTrim( cCaj ) )
    end if
 
@@ -1062,13 +1062,13 @@ RETURN ( cDlg )
 
 FUNCTION EnableAcceso()
 
-RETURN ( nil ) // if( !Empty( oWndBar ), oWndBar:Enable(), ) )
+RETURN ( nil ) // if( !empty( oWndBar ), oWndBar:Enable(), ) )
 
 //---------------------------------------------------------------------------//
 
 FUNCTION DisableAcceso()
 
-RETURN ( nil ) // if( !Empty( oWndBar ), oWndBar:Disable(), ) )
+RETURN ( nil ) // if( !empty( oWndBar ), oWndBar:Disable(), ) )
 
 //---------------------------------------------------------------------------//
 
@@ -2821,7 +2821,7 @@ RETURN ( cNameVersion )
 
 FUNCTION cTypeVersion( cType )
 
-   if !Empty( cType )
+   if !empty( cType )
       cTypeVersion   := cType
    end if 
 
@@ -3060,15 +3060,15 @@ FUNCTION lInitCheck( oMessage, oProgress )
 
    CursorWait()
 
-   if !Empty( oProgress )
+   if !empty( oProgress )
       oProgress:SetTotal( 6  )
    end if
 
-   if !Empty( oMessage )
+   if !empty( oMessage )
       oMessage:SetText( 'Comprobando directorios' )
    end if
 
-   if !Empty( oProgress )
+   if !empty( oProgress )
       oProgress:AutoInc()
    end if
 
@@ -3078,11 +3078,11 @@ FUNCTION lInitCheck( oMessage, oProgress )
 
    // Cargamos los datos de la empresa-----------------------------------------
 
-   if !Empty( oMessage )
+   if !empty( oMessage )
       oMessage:SetText( 'Control de tablas de empresa' )
    end if
 
-   if !Empty( oProgress )
+   if !empty( oProgress )
       oProgress:AutoInc()
    end if
 
@@ -3092,11 +3092,11 @@ FUNCTION lInitCheck( oMessage, oProgress )
 
    // Cargamos los datos de la divisa------------------------------------------
 
-   if !Empty( oMessage )
+   if !empty( oMessage )
       oMessage:SetText( 'Control de tablas de divisas' )
    end if
 
-   if !Empty( oProgress )
+   if !empty( oProgress )
       oProgress:AutoInc()
    end if
 
@@ -3106,11 +3106,11 @@ FUNCTION lInitCheck( oMessage, oProgress )
 
    // Cargamos los datos de la cajas-------------------------------------------
 
-   if !Empty( oMessage )
+   if !empty( oMessage )
       oMessage:SetText( 'Control de tablas de cajas' )
    end if
 
-   if !Empty( oProgress )
+   if !empty( oProgress )
       oProgress:AutoInc()
    end if
 
@@ -3120,11 +3120,11 @@ FUNCTION lInitCheck( oMessage, oProgress )
 
    // Inicializamos classes----------------------------------------------------
 
-   if !Empty( oMessage )
+   if !empty( oMessage )
       oMessage:SetText( 'Inicializamos las clases de la aplicación' )
    end if
 
-   if !Empty( oProgress )
+   if !empty( oProgress )
       oProgress:AutoInc()
    end if
 
@@ -3132,11 +3132,11 @@ FUNCTION lInitCheck( oMessage, oProgress )
 
    // Apertura de ficheros-----------------------------------------------------
 
-   if !Empty( oMessage )
+   if !empty( oMessage )
       oMessage:SetText( 'Selección de la empresa actual' ) 
    end if
 
-   if !Empty( oProgress )
+   if !empty( oProgress )
       oProgress:AutoInc()
    end if
 
@@ -3146,11 +3146,11 @@ FUNCTION lInitCheck( oMessage, oProgress )
 
    runEventScript( "IniciarAplicacion" )
 
-   if !Empty( oMessage )
+   if !empty( oMessage )
       oMessage:SetText( 'Comprobaciones finalizadas' )
    end if
 
-   if !Empty( oProgress )
+   if !empty( oProgress )
       oProgress:AutoInc()
    end if
 
@@ -3214,7 +3214,7 @@ FUNCTION nAjuste( nNumber, cAdjust )
    local aAdjust
    local aNumber        := {}
 
-   if Empty( nNumber )
+   if empty( nNumber )
       RETURN ( 0 )
    end if 
 
@@ -3265,7 +3265,7 @@ Static FUNCTION nAjusteDecimales( cAjuste )
 
   if hHasKey( hMapaAjuste, cAjuste )
     hAjuste             := hGet( hMapaAjuste, cAjuste )
-    if !Empty( hAjuste )
+    if !empty( hAjuste )
       nAjusteDecimales  := hGet( hAjuste, "Round" )
     end if
   end if
@@ -3281,7 +3281,7 @@ Static FUNCTION nAjusteIncrementa( cAjuste )
 
   if hHasKey( hMapaAjuste, cAjuste )
     hAjuste             := hGet( hMapaAjuste, cAjuste )
-    if !Empty( hAjuste )
+    if !empty( hAjuste )
       nAjusteIncrementa := hGet( hAjuste, "Incrementa" )
     end if
   end if
@@ -3297,7 +3297,7 @@ Static FUNCTION nAjusteDecrementa( cAjuste )
 
   if hHasKey( hMapaAjuste, cAjuste )
     hAjuste             := hGet( hMapaAjuste, cAjuste )
-    if !Empty( hAjuste )
+    if !empty( hAjuste )
       nAjusteDecrementa := hGet( hAjuste, "Decrementa" )
     end if
   end if
@@ -3313,7 +3313,7 @@ Static FUNCTION nAjusteCeros( cAjuste )
 
   if hHasKey( hMapaAjuste, cAjuste )
     hAjuste             := hGet( hMapaAjuste, cAjuste )
-    if !Empty( hAjuste )
+    if !empty( hAjuste )
       nAjusteCeros      := hGet( hAjuste, "Ceros" )
     end if
   end if
@@ -3380,7 +3380,7 @@ FUNCTION cAdsData( cSetData )
       cAdsData  := cSetData
    end if
 
-RETURN ( if( !Empty( cAdsData ), cPath( cAdsData ), "" ) )
+RETURN ( if( !empty( cAdsData ), cPath( cAdsData ), "" ) )
 
 //----------------------------------------------------------------------------//
 
@@ -3521,7 +3521,7 @@ RETURN ( 'DBFCDX' )
 
 FUNCTION cNombrePc( xValue )
 
-   if !Empty( xValue )
+   if !empty( xValue )
       cNombrePc   := xValue
    end if
 
@@ -3633,15 +3633,15 @@ RETURN ( fullCurDir() + "Emp" + cCodGrp + "\" )
 
 FUNCTION cPatTmp()
 
-   if Empty( cPatTmp )
+   if empty( cPatTmp )
 
       cPatTmp     := GetEnv( 'TEMP' )
 
-      if Empty( cPatTmp )
+      if empty( cPatTmp )
          cPatTmp  := GetEnv( 'TMP' )
       endif
 
-      if Empty( cPatTmp ) .or. ! lIsDir( cPatTmp )
+      if empty( cPatTmp ) .or. ! lIsDir( cPatTmp )
          cPatTmp  := GetWinDir()
       endif
 
@@ -3690,7 +3690,7 @@ FUNCTION cPatScriptEmp( cPath, lShort )
    DEFAULT cPath    := ""
    DEFAULT lShort   := .f.
 
-   if !Empty( cPath )
+   if !empty( cPath )
       cPatScriptEmp := "Script" + cPath
    end if
 
@@ -3748,7 +3748,7 @@ RETURN ( if( !lShort, fullCurDir(), "" ) + "Xml\" )
 
 FUNCTION PicIn()
 
-   if Empty( cDefPicIn )
+   if empty( cDefPicIn )
       cDefPicIn   := cPirDiv( cDivEmp() )
    end if
 
@@ -4135,11 +4135,11 @@ FUNCTION aEmpresa( cEmp, dbfEmp, dbfDlg, dbfUser, lRptGal )
 
       if !lRptGal
 
-         if Empty( oUser():cCaja() )
+         if empty( oUser():cCaja() )
             oUser():cCaja( cCajUsr( ( dbfEmp )->cDefCaj ) )
          end if
 
-         if Empty( oUser():cAlmacen() )
+         if empty( oUser():cAlmacen() )
             oUser():cAlmacen( cAlmUsr( ( dbfEmp )->cDefAlm ) )
          end if
 
@@ -4278,7 +4278,7 @@ FUNCTION GetCodEmp( dbfEmp )
    Quitamos la empresa actual--------------------------------------------------
    */
 
-   if Empty( cCodEmp )
+   if empty( cCodEmp )
       ( dbfEmp )->( dbGoTop() )
       cCodEmp     := ( dbfEmp )->CodEmp
    end if
@@ -4459,7 +4459,7 @@ FUNCTION GoogleMaps( cStreetTo, cCityTo, cCountryTo )
    cStreetTo         := Padr( cStreetTo, 200 )
    cCityTo           := Padr( cCityTo, 200 )
 
-   if Empty( cCountryTo )
+   if empty( cCountryTo )
       cCountryTo     := Padr( "Spain", 100 )
    end if
 
@@ -4509,7 +4509,7 @@ static FUNCTION ShowInWin( cStreetFrom, cCityFrom, cCountryFrom, cStreetTo, cCit
 
    oWebMap:aAddress  := {}
 
-   if !Empty( cStreetFrom )
+   if !empty( cStreetFrom )
       oWebMap:AddStopSep( cStreetFrom, cCityFrom, , , cCountryFrom )
    end if
 
@@ -4517,7 +4517,7 @@ static FUNCTION ShowInWin( cStreetFrom, cCityFrom, cCountryFrom, cStreetTo, cCit
 
    oWebMap:GenLink()
 
-   if !Empty( oWebMap:cLink )
+   if !empty( oWebMap:cLink )
       oActiveX:Do( "Navigate", oWebMap:cLink )
       sysrefresh()
    end if
@@ -4530,7 +4530,7 @@ static FUNCTION ShowInExplorer( cStreetFrom, cCityFrom, cCountryFrom, cStreetTo,
 
    oWebMap:aAddress  := {}
 
-   if !Empty( cStreetFrom )
+   if !empty( cStreetFrom )
       oWebMap:AddStopSep( cStreetFrom, cCityFrom, , , cCountryFrom )
    end if
 
@@ -4548,21 +4548,21 @@ FUNCTION cUnidadMedicion( cDbf, lParentesis )
 
    DEFAULT lParentesis  := .f.
 
-   if !Empty( ( cDbf )->nMedUno )
+   if !empty( ( cDbf )->nMedUno )
       cUnidad           += AllTrim( Trans( ( cDbf )->nMedUno, MasUnd() ) )
    end if
 
-   if !Empty( ( cDbf )->nMedDos )
+   if !empty( ( cDbf )->nMedDos )
       cUnidad           += " x "
       cUnidad           += AllTrim( Trans( ( cDbf )->nMedDos, MasUnd() ) )
    end if
 
-   if !Empty( ( cDbf )->nMedTre )
+   if !empty( ( cDbf )->nMedTre )
       cUnidad           += " x "
       cUnidad           += AllTrim( Trans( ( cDbf )->nMedTre, MasUnd() ) )
    end if
 
-   if lParentesis .and. !Empty( cUnidad )
+   if lParentesis .and. !empty( cUnidad )
       cUnidad           := "(" + cUnidad + ")"
    end if
 
@@ -4728,7 +4728,7 @@ FUNCTION PrinterPreferences( oGet )
 
    PrinterSetup()
 
-   if !Empty( oGet )
+   if !empty( oGet )
       oGet:cText( PrnGetName() )
    end if
 
@@ -4797,7 +4797,7 @@ FUNCTION ReportBackLine( oInf, nLines )
 
    DEFAULT nLines := 1
 
-   if !Empty( oInf )
+   if !empty( oInf )
       oInf:BackLine( nLines )
    end if
 
@@ -4831,7 +4831,7 @@ RETURN ( getPvProfString( "grid", cName, "", cPatEmp() + "Empresa.Ini" ) )
 
 FUNCTION cPatPc( cPath )
 
-   if !Empty( cPath )
+   if !empty( cPath )
       cPathPC     := cPath
    end if
 
@@ -4859,7 +4859,7 @@ FUNCTION lGrupoEmpresa( cCodEmp, dbfEmpresa )
    oBlock         := ErrorBlock( {| oError | ApoloBreak( oError ) } )
    BEGIN SEQUENCE
 
-   if Empty( dbfEmpresa )
+   if empty( dbfEmpresa )
       USE ( cPatDat() + "EMPRESA.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "EMPRESA", @dbfEmpresa ) )
       SET ADSINDEX TO ( cPatDat() + "EMPRESA.CDX" ) ADDITIVE
       lClose      := .t.
@@ -4896,7 +4896,7 @@ FUNCTION cCodigoGrupo( cCodEmp, dbfEmpresa )
    oBlock         := ErrorBlock( {| oError | ApoloBreak( oError ) } )
    BEGIN SEQUENCE
 
-   if Empty( dbfEmpresa )
+   if empty( dbfEmpresa )
       dbUseArea( .t., ( cDriver() ), ( cPatDat() + "Empresa.Dbf" ), ( cCheckArea( "Empresa", @dbfEmpresa ) ), .t. )
       if !lAIS() ; ( dbfEmpresa )->( ordListAdd( ( cPatDat() + "Empresa.Cdx" ) ) ) ; else ; ordSetFocus( 1 ) ; end
 
@@ -4933,7 +4933,7 @@ FUNCTION cItemsToReport( aItems )
    local cString  := ""
 
    for each aItem in aItems
-      if !Empty( aItem[ 5 ] )
+      if !empty( aItem[ 5 ] )
          cString  += aItem[ 1 ] + "=" + aItem[ 5 ] + ";"
       end if
    next
@@ -4949,7 +4949,7 @@ FUNCTION cObjectsToReport( oDbf )
 
    for each oItem in oDbf:aTField
 
-      if !Empty( oItem:cComment ) .and. !( oItem:lCalculate )
+      if !empty( oItem:cComment ) .and. !( oItem:lCalculate )
          cString  += oItem:cName + "=" + oItem:cComment + ";"
       end if
 
@@ -4967,9 +4967,9 @@ FUNCTION aEmpGrp( cCodGrp, dbfEmp, lEmpresa )
 
    DEFAULT lEmpresa        := .f.
 
-   if !Empty( cCodGrp )
+   if !empty( cCodGrp )
 
-      if Empty( dbfEmp )
+      if empty( dbfEmp )
 
          USE ( cPatDat() + "EMPRESA.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "EMPRESA", @dbfEmp ) )
          SET ADSINDEX TO ( cPatDat() + "EMPRESA.CDX" ) ADDITIVE
@@ -5046,13 +5046,13 @@ FUNCTION Descrip( cFacCliL, cFacCliS )
    local cKey
    local cRETURN     := ""
 
-   if !Empty( ( cFacCliL )->cDetalle )
+   if !empty( ( cFacCliL )->cDetalle )
       cRETURN        := Rtrim( ( cFacCliL )->cDetalle )
    else
       cRETURN        := Rtrim( ( cFacCliL )->mLngDes )
    end if
 
-   if !Empty( cFacCliS )
+   if !empty( cFacCliS )
 
       ckey           := ( cFacCliL )->( fieldget( 1 ) ) + Str( ( cFacCliL )->( fieldget( 2 ) ) ) + ( cFacCliL )->( fieldget( 3 ) ) + Str( ( cFacCliL )->nNumLin, 4 ) 
 
@@ -5073,7 +5073,7 @@ FUNCTION DescripLeng( cFacCliL, cFacCliS, cArtLeng )
 
     if !( cArtLeng )->( dbSeek( ( cFacCliL )->cRef + getLenguajeSegundario() ) )
 
-      if !Empty( ( cFacCliL )->cDetalle )
+      if !empty( ( cFacCliL )->cDetalle )
         cRETURN       := Rtrim( ( cFacCliL )->cDetalle ) 
       else
         cRETURN       := Rtrim( ( cFacCliL )->mLngDes )
@@ -5081,7 +5081,7 @@ FUNCTION DescripLeng( cFacCliL, cFacCliS, cArtLeng )
 
     else
 
-      if !Empty( ( cArtLeng )->cDesArt ) 
+      if !empty( ( cArtLeng )->cDesArt ) 
         cRETURN       := AllTrim( ( cArtLeng )->cDesArt )
       else
         cRETURN       := AllTrim( ( cArtLeng )->cDesTik )
@@ -5089,7 +5089,7 @@ FUNCTION DescripLeng( cFacCliL, cFacCliS, cArtLeng )
 
     end if
 
-    if !Empty( cFacCliS )
+    if !empty( cFacCliS )
 
         nOrd           := ( cFacCliL )->( OrdSetFocus( 1 ) )
         cKey           := ( cFacCliL )->( OrdKeyVal() ) + Str( ( cFacCliL )->nNumLin, 4 )
@@ -5123,7 +5123,7 @@ FUNCTION SerialDescrip( cKey, cFacCliS )
 
       while ( ( cFacCliS )->( ordKeyVal() ) == cKey .and. !( cFacCliS )->( eof() ) )
 
-         if Empty( nPrior )
+         if empty( nPrior )
             nInc           := 0
             cPrior         := ( cFacCliS )->cNumSer
             nPrior         := SpecialVal( ( cFacCliS )->cNumSer )
@@ -5131,7 +5131,7 @@ FUNCTION SerialDescrip( cKey, cFacCliS )
             nInc++
          end if
 
-         if !Empty( nPrior ) .and. ( nInc != 0 )
+         if !empty( nPrior ) .and. ( nInc != 0 )
 
             if ( SpecialVal( ( cFacCliS )->cNumSer ) == nPrior + nInc )
 
@@ -5142,7 +5142,7 @@ FUNCTION SerialDescrip( cKey, cFacCliS )
 
                cRETURN     += Alltrim( cPrior )    // cRETURN     += Alltrim( Str( nPrior ) )
 
-               if !Empty( nLast )
+               if !empty( nLast )
                   cRETURN  += "-"
                   cRETURN  += Alltrim( cLast )     // Alltrim( Str( nLast ) )
                end if
@@ -5162,11 +5162,11 @@ FUNCTION SerialDescrip( cKey, cFacCliS )
 
       end while
 
-      if !Empty( nPrior )
+      if !empty( nPrior )
          cRETURN           += Alltrim( cPrior )    // Alltrim( Str( nPrior ) )
       end if
 
-      if !Empty( nLast )
+      if !empty( nLast )
          cRETURN           += "-"
          cRETURN           += Alltrim( cLast )     // Alltrim( Str( nLast ) )
       end if
@@ -5215,7 +5215,7 @@ FUNCTION AppDbf( cEmpOld, cEmpTmp, cFile, aStruct )
       SET ADSINDEX TO ( cdxNamTmp ) ADDITIVE
    end if
 
-   if !Empty( aStruct )
+   if !empty( aStruct )
 
       while !( dbfOld )->( eof() )
          dbAppendDefault( dbfOld, dbfTmp, aStruct )
@@ -5251,7 +5251,7 @@ FUNCTION cPatGrp( cPath, lFull, lEmpresa )
    DEFAULT lFull     := .f.
    DEFAULT lEmpresa  := .t.
 
-   if !Empty( cPath )
+   if !empty( cPath )
       cPatGrp        := "Emp" + cPath
    end if
 
@@ -5280,7 +5280,7 @@ FUNCTION cPatCli( cPath, lFull, lEmpresa )
    DEFAULT lFull     := .f.
    DEFAULT lEmpresa  := .t.
 
-   if !Empty( cPath )
+   if !empty( cPath )
       if lEmpresa
          cPatCli     := "Emp" + cPath
       else
@@ -5313,7 +5313,7 @@ FUNCTION cPatArt( cPath, lFull, lEmpresa )
    DEFAULT lFull     := .f.
    DEFAULT lEmpresa  := .t.
 
-   if !Empty( cPath )
+   if !empty( cPath )
 
       if lEmpresa
          cPatArt     := "Emp" + cPath
@@ -5348,7 +5348,7 @@ FUNCTION cPatPrv( cPath, lFull, lEmpresa )
    DEFAULT lFull     := .f.
    DEFAULT lEmpresa  := .t.
 
-   if !Empty( cPath )
+   if !empty( cPath )
 
       if lEmpresa
          cPatPrv     := "Emp" + cPath
@@ -5383,7 +5383,7 @@ FUNCTION cPatAlm( cPath, lFull, lEmpresa )
    DEFAULT lFull     := .f.
    DEFAULT lEmpresa  := .t.
 
-   if !Empty( cPath )
+   if !empty( cPath )
 
       if lEmpresa
          cPatAlm     := "Emp" + cPath
@@ -5434,7 +5434,7 @@ FUNCTION cPatEmp( cPath, lFull )
    DEFAULT cPath  := ""
    DEFAULT lFull  := .f.
 
-   if !Empty( cPath )
+   if !empty( cPath )
       cPatEmp     := "Emp" + cPath
    end if
 
@@ -5741,7 +5741,7 @@ FUNCTION cCharToVal( xVal, cType )
    do case
       case cType == "C" .or. cType == "M"
 
-         if !Empty( xVal )
+         if !empty( xVal )
             cTemp   := Padr( Rtrim( xVal ), 100 )
          end if
          
@@ -5833,7 +5833,7 @@ FUNCTION LogWrite( cText, cFileName )
 
    DEFAULT cFileName := "Trace.Log"
 
-   if !Empty( cText )
+   if !empty( cText )
 
       if !File( cFileName )
          nHand       := fCreate( cFileName )
@@ -5866,7 +5866,7 @@ ENDCLASS
 
 FUNCTION PicOut()
 
-   if Empty( cDefPicOut )
+   if empty( cDefPicOut )
       cDefPicOut  := cPorDiv( cDivEmp() )
    end if
 
@@ -5876,7 +5876,7 @@ RETURN ( cDefPicOut )
 
 FUNCTION cUsrTik( cCodUsr )
 
-   if !Empty( cCodUsr )
+   if !empty( cCodUsr )
       cUsrTik     := cCodUsr
    end if
 
@@ -5902,7 +5902,7 @@ RETURN ( if( !lShort, fullCurDir(), "" ) + "Log\" )
 
 FUNCTION cCodigoEmpresa( xValue )
 
-   if !Empty( xValue )
+   if !empty( xValue )
       cCodEmp     := xValue
    end if
 
@@ -5932,7 +5932,7 @@ FUNCTION lCheckPerpetuoMode( nSerialUSR )
    local aSerialCRC     := {}
    local nSerialCRC     := 0
 
-   if Empty( nSerialHD )
+   if empty( nSerialHD )
       RETURN .f.
    end if
 
@@ -5944,7 +5944,7 @@ FUNCTION lCheckPerpetuoMode( nSerialUSR )
 
       nSerialCRC        := Val( GetPvProfString( "Main", "Access code " + Str( n, 2 ), "0", cFileIni ) )
    
-      if !Empty( nSerialCRC )
+      if !empty( nSerialCRC )
    
          aAdd( aSerialCRC, nSerialCRC )
             
@@ -5960,7 +5960,7 @@ FUNCTION lCheckPerpetuoMode( nSerialUSR )
 
    // Parametro para registrar la aplicacion-----------------------------------
 
-   if !Empty( nSerialUSR )
+   if !empty( nSerialUSR )
 
       if nSerialUSR == nXor( nSerialHD, SERIALNUMBER )
 
@@ -6276,7 +6276,7 @@ RETURN ( Descend( uParam ) )
 
 FUNCTION CreateFastReport()
 
-   if Empty( oFastReport )
+   if empty( oFastReport )
 
       oFastReport    := frReportManager():new()
 
@@ -6291,7 +6291,7 @@ RETURN ( oFastReport )
 
 FUNCTION DestroyFastReport()
 
-   if Empty( oFastReport )
+   if empty( oFastReport )
       oFastReport:DestroyFR()
    end if
 
@@ -6335,7 +6335,7 @@ FUNCTION InfoStack()
    i              := 2
    cStack         := ""
 
-   while !Empty( ProcName( i ) )
+   while !empty( ProcName( i ) )
       cStack      += "Llamado desde " + Trim( ProcName( i ) ) + "(" + LTrim( Str( ProcLine( i ) ) ) + ")" + CRLF
       i++
    enddo
@@ -6453,7 +6453,7 @@ FUNCTION hashDefaultValue( aItems )
   local hash        := {=>}
 
   for each aItem in aItems
-    if !Empty( aItem[6] ) .and. isBlock( aItem[9] )
+    if !empty( aItem[6] ) .and. isBlock( aItem[9] )
       hSet( hash, aItem[6], aItem[9] )
     end if
   next
@@ -6657,7 +6657,7 @@ FUNCTION ADSRunSQL( cAlias, cSql, aParameters, hConnection, lShow )
    DEFAULT hConnection := hConn
    DEFAULT lShow       := FALSE
 
-   IF !Empty( cAlias ) .and. !Empty( cSql )
+   IF !empty( cAlias ) .and. !empty( cSql )
 
       cSql := StrTran( cSql, ";", "" )
 
@@ -6683,7 +6683,7 @@ FUNCTION ADSRunSQL( cAlias, cSql, aParameters, hConnection, lShow )
          ENDIF
       ENDIF
 
-      IF !Empty( cOldAlias )
+      IF !empty( cOldAlias )
          DBSelectArea( cOldAlias )
       ENDIF
 
@@ -6831,5 +6831,24 @@ FUNCTION getVariablesToHash( cClave )
    end if
 
 RETURN ( uVariable )
+
+//---------------------------------------------------------------------------//
+
+Function cTextRichText( cText )
+
+   local nLen     := 0
+   local nPos     := 1
+   local cFormat  := ""
+   local cTexto   := ""
+
+   nLen           := At( "\rtf", SubStr( cText, nPos ) )
+   nPos           += nLen
+   cFormat        := Upper( SubStr( cText, nPos, 3 ) )
+
+   if cFormat == "RTF"
+      cTexto      := RTFToGTF( cText )
+   end if
+
+Return cTexto
 
 //---------------------------------------------------------------------------//

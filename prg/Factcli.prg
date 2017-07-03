@@ -1052,6 +1052,18 @@ FUNCTION FactCli( oMenuItem, oWnd, hHash )
          :lHide            := .t.
       end with
 
+      with object ( oWndBrw:AddXCol() )
+         :cHeader          := "Bultos"
+         :bEditValue       := {|| ( D():FacturasClientes( nView ) )->nBultos }
+         :cEditPicture     := "99999"
+         :nWidth           := 95
+         :nDataStrAlign    := 1
+         :nHeadStrAlign    := 1
+         :lHide            := .t.
+         :nEditType        := 1
+         :bOnPostEdit      := {|oCol, uNewValue, nKey| ChangeBultos( oCol, uNewValue, nKey ) }
+      end with
+
    oDetCamposExtra:addCamposExtra( oWndBrw )
 
    oWndBrw:cHtmlHelp    := "Factura a clientes"
@@ -18086,6 +18098,8 @@ function SynFacCli( cPath )
    oBlock               := ErrorBlock( { | oError | ApoloBreak( oError ) } )
    BEGIN SEQUENCE
 
+   FacturasClientesModel():defaultSufijo()
+
    if OpenFiles()
 
       // Cabeceras ------------------------------------------------------------
@@ -18094,13 +18108,6 @@ function SynFacCli( cPath )
       ( D():FacturasClientes( nView ) )->( dbGoTop() )
 
       while !( D():FacturasClientes( nView ) )->( eof() )
-
-         if empty( ( D():FacturasClientes( nView ) )->cSufFac )
-            if ( D():FacturasClientes( nView ) )->( dbRLock() )
-               ( D():FacturasClientes( nView ) )->cSufFac := "00"
-               ( D():FacturasClientes( nView ) )->( dbUnLock() )
-            end if
-         end if
 
          if !empty( ( D():FacturasClientes( nView ) )->cNumPre ) .and. Len( AllTrim( ( D():FacturasClientes( nView ) )->cNumPre ) ) != 12
             if ( D():FacturasClientes( nView ) )->( dbRLock() )
@@ -23159,5 +23166,20 @@ static Function menuEdtDet( oCodArt, oDlg, lOferta, nIdLin )
    oDlg:SetMenu( oDetMenu )
 
 Return ( oDetMenu )
+
+//---------------------------------------------------------------------------//
+
+Static Function ChangeBultos( oCol, uNewValue, nKey )
+
+   if IsNum( nKey ) .and. ( nKey != VK_ESCAPE ) .and. !IsNil( uNewValue )
+
+      if dbLock( D():FacturasClientes( nView ) )
+         ( D():FacturasClientes( nView ) )->nBultos    := uNewValue
+         ( D():FacturasClientes( nView ) )
+      end if
+
+   end if
+
+Return .t.
 
 //---------------------------------------------------------------------------//
