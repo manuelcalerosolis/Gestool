@@ -19,15 +19,15 @@ CLASS SQLBaseModel
 
    DATA     cGeneralSelect
 
-   DATA     cColumnOrder
    DATA     cOrientation
    DATA     nIdForRecno
 
-   DATA	   cSQLInsert     
+   DATA     cSQLInsert     
    DATA     cSQLSelect      
    
-   DATA     cColumnKey                     INIT "id"
-   DATA     cColumnCode                    INIT "codigo"
+   DATA     cColumnOrder                  INIT "codigo"
+   DATA     cColumnKey                    INIT "id"
+   DATA     cColumnCode                   INIT "codigo"
 
   	DATA	   hBuffer   
    DATA     cFind
@@ -54,6 +54,7 @@ CLASS SQLBaseModel
 
    METHOD   buildRowSet()
    METHOD   buildRowSetWithRecno()                 
+   METHOD   getRowSet()                            INLINE   ( if( empty( ::oRowSet ), ::buildRowSet(), ), ::oRowSet )
    METHOD   freeRowSet()                           INLINE   ( if( !empty( ::oRowSet ), ( ::oRowSet := nil ), ) )
    METHOD   getRowSetRecno()                       INLINE   ( if( !empty( ::oRowSet ), ( ::oRowSet:recno() ) , 0 ) )
    METHOD   setRowSetRecno( nRecno )               INLINE   ( if( !empty( ::oRowSet ), ( ::oRowSet:goto( nRecno ) ), ) )
@@ -112,8 +113,6 @@ METHOD New()
    ::cGeneralSelect              := "SELECT * FROM " + ::cTableName
 
    ::cConstraints                := "" 
-
-   ::cColumnOrder                := "codigo"
 
    ::cOrientation                := "A"
 
@@ -186,7 +185,6 @@ METHOD getImportSentence( cPath )
                                                 if ( k == "empresa",;
                                                       cValues += toSQLString( cCodEmp() ) + ", ",;
                                                       cValues += toSQLString( ( dbf )->( fieldget( fieldpos( hget( hash, "field" ) ) ) ) ) + ", "), ) } )
-
       
       cValues           := chgAtEnd( cValues, ' ), ', 2 )
 

@@ -29,6 +29,10 @@ METHOD ExecuteSqlStatement( cSql, cSqlStatement, hStatement )
    DEFAULT cSqlStatement   := "ADS" + trimedSeconds()
    DEFAULT hStatement      := ADS_CDX
 
+   if !( lAIS() )
+      RETURN ( .f. )
+   end if
+
    oBlock                  := ErrorBlock( {| oError | ApoloBreak( oError ) } )
    BEGIN SEQUENCE
 

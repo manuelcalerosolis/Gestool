@@ -9,6 +9,8 @@ CLASS FacturasClientesModel FROM BaseModel
 
    METHOD UltimoDocumento( idCliente )
 
+   METHOD defaultSufijo()
+
 END CLASS
 
 //---------------------------------------------------------------------------//
@@ -27,4 +29,16 @@ METHOD UltimoDocumento( idCliente )
 Return ( ctod( "" ) )
 
 //---------------------------------------------------------------------------//
+
+METHOD defaultSufijo()
+
+   local cStm
+   local cSql  := "UPDATE " + ::getHeaderTableName() + ;
+                     " SET cSufFac = '00'" + ;
+                     " WHERE cSufFac = ''"
+
+Return ( ::ExecuteSqlStatement( cSql, @cStm ) )
+
+//---------------------------------------------------------------------------//
+
 

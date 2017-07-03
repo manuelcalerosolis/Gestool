@@ -276,6 +276,9 @@ CLASS TDbf
     METHOD setCustomFilter( cExpresionFilter )
     METHOD quitCustomFilter( cExpresionFilter )
 
+    METHOD adsSetAOF( cExpresionFilter ) INLINE ( ( ::nArea )->( adsSetAOF( cExpresionFilter ) ) )
+    METHOD adsClearAOF()                 INLINE ( ( ::nArea )->( adsClearAOF() ) )  
+
 ENDCLASS
 
 //----------------------------------------------------------------------------//
@@ -1715,11 +1718,17 @@ METHOD SetBrowse( oBrw ) CLASS TDbf
                                   iif( ( ::cAlias )->( Used() ), ( ::cAlias )->( RecNo() ), 0 ),;
                                   iif( ( ::cAlias )->( Used() ), ( ::cAlias )->( DbGoto( n ) ), 0 ) ) }
 
-      oBrw:bKeyNo       := {| n | iif( n == nil,;
-                                  iif( ( ::cAlias )->( Used() ), ( ::cAlias )->( OrdKeyNo() ), 0 ),;
-                                  iif( ( ::cAlias )->( Used() ), ( ::cAlias )->( OrdKeyGoto( n ) ), 0 ) ) }
-
-      oBrw:bKeyCount    := {|| if( ( ::cAlias )->( Used() ), ( ::cAlias )->( OrdKeyCount() ), 0 ) }
+      if lAIS()
+         oBrw:bKeyNo    := {| n | iif( n == nil,;
+                              iif( ( ::cAlias )->( Used() ), ( ::cAlias )->( adsKeyNo(,,1) ), 0 ),;
+                              iif( ( ::cAlias )->( Used() ), ( ::cAlias )->( OrdKeyGoto( n ) ), 0 ) ) }
+         oBrw:bKeyCount := {|| if( ( ::cAlias )->( Used() ), ( ::cAlias )->( ADSKeyCount(,,1) ), ) }
+      else
+         oBrw:bKeyNo    := {| n | iif( n == nil,;
+                              iif( ( ::cAlias )->( Used() ), ( ::cAlias )->( OrdKeyNo() ), 0 ),;
+                              iif( ( ::cAlias )->( Used() ), ( ::cAlias )->( OrdKeyGoto( n ) ), 0 ) ) }
+         oBrw:bKeyCount := {|| if( ( ::cAlias )->( Used() ), ( ::cAlias )->( OrdKeyCount() ), 0 ) }
+      end if
 
       oBrw:bLock        := {|| if( ( ::cAlias )->( Used() ), ( ::cAlias )->( DbrLock() ), ) }
       oBrw:bUnlock      := {|| if( ( ::cAlias )->( Used() ), ( ::cAlias )->( DbrUnlock() ), ) }

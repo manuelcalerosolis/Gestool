@@ -2112,6 +2112,7 @@ METHOD BuildEmpresa()
    oDataTable:cIndexFile   := cPatEmp( , .t. ) + "RemMovT.Cdx"
    oDataTable:cDescription := "Remesas de movimientos"
    oDataTable:bCreateFile  := {| cPath | TRemMovAlm():BuildFiles( cPath ) }
+   oDataTable:bCreateIndex := {| cPath | TRemMovAlm():Reindexa( cPath ) }
    oDataTable:bSyncFile    := {|| SynRemMov( cPatEmp() ) }
    ::AddEmpresaTable( oDataTable )
 

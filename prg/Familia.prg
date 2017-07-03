@@ -93,6 +93,8 @@ static dbfFamPrv
 
 static oTreePadre
 
+static oBtnAceptarActualizarWeb
+
 #define MENUOPTION   "01012"
 
 //----------------------------------------------------------------------------//
@@ -288,6 +290,8 @@ STATIC FUNCTION OpenFiles()
          lOpenFiles     := .f.
       end if
 
+      TComercioConfig():getInstance():loadJSON()
+
    RECOVER USING oError
 
       msgStop( ErrorMessage( oError ), "Imposible abrir todas las bases de datos de familias" )
@@ -329,6 +333,8 @@ STATIC FUNCTION CloseFiles()
    if !empty( oLenguajes )
       oLenguajes:End()
    end if
+
+   TComercioConfig():DestroyInstance()
 
    oWndBrw        := nil
 
@@ -965,6 +971,12 @@ STATIC FUNCTION EdtRec( aTmp, aGet, cFamilia, oBrw, bWhen, bValid, nMode )
 
          // Grabamos-----------------------------------------------------------------
 
+         REDEFINE BUTTON oBtnAceptarActualizarWeb;
+            ID       3 ;
+            OF       oDlg ;
+            WHEN     ( nMode != ZOOM_MODE ) ;
+            ACTION   ( EndTrans( aTmp, aGet, nMode, oBrwPrv, oDlg, .t. ) )
+
          REDEFINE BUTTON ;
             ID       IDOK ;
             OF       oDlg ;
@@ -985,7 +997,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, cFamilia, oBrw, bWhen, bValid, nMode )
 
          oDlg:AddFastKey( VK_F5, {|| EndTrans( aTmp, aGet, nMode, oBrwPrv, oDlg ) } )
 
-         if uFieldEmpresa( "lRealWeb" )
+         if ( TComercioConfig():getInstance():isRealTimeConexion() )
             oDlg:AddFastKey( VK_F6, {|| EndTrans( aTmp, aGet, nMode, oBrwPrv, oDlg, .t. ) } )
          end if
 
@@ -1075,6 +1087,14 @@ STATIC FUNCTION StartEdtRec( aGet, aTmp, bmpImage )
    SetTreeState( , , aTmp[ _CFAMCMB ] )
 
    ChgBmp( aGet[ _CIMGBTN ], bmpImage )
+
+   // Tiendas en prestashop----------------------------------------------------
+
+   if TComercioConfig():getInstance():isRealTimeConexion()
+      oBtnAceptarActualizarWeb:Show()
+   else   
+      oBtnAceptarActualizarWeb:Hide()
+   end if
 
 RETURN .t.
 
@@ -1614,11 +1634,9 @@ Return ( .t. )
 
 STATIC FUNCTION actualizaWeb( cCodFam )
 
-   with object ( TComercio():New() )
-      :MeterTotal( getAutoMeterDialog() )
-      :TextTotal( getAutoTextDialog() )
-      :TComercioCategory:buildCategory( cCodFam )
-   end with
+   local TComercio   := TComercio():New( nView )
+
+   TComercio:controllerExportOneCategoryToPrestashop( cCodFam )
 
 RETURN .t.
 

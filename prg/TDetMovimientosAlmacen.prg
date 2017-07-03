@@ -387,7 +387,7 @@ METHOD Resource( nMode ) CLASS TDetMovimientos
    DEFINE DIALOG oDlg RESOURCE "LMovAlm" TITLE lblTitle( nMode ) + "lineas de movimientos de almacén"
 
       REDEFINE GET ::oRefMov VAR ::oDbfVir:cRefMov ;
-			ID 		100 ;
+         ID       100 ;
          WHEN     ( nMode != ZOOM_MODE ) ;
          BITMAP   "LUPA" ;
          OF       oDlg
@@ -396,7 +396,7 @@ METHOD Resource( nMode ) CLASS TDetMovimientos
       ::oRefMov:bHelp      := {|| BrwArticulo( ::oRefMov, ::oGetDetalle , , , , ::oGetLote, ::oDbfVir:cCodPr1, ::oDbfVir:cCodPr2, ::oValPr1, ::oValPr2  ) }
 
       REDEFINE GET ::oGetDetalle VAR ::oDbfVir:cNomMov ;
-         ID 		110 ;
+         ID       110 ;
          WHEN     ( .f. ) ;
          OF       oDlg
 
@@ -498,7 +498,7 @@ METHOD Resource( nMode ) CLASS TDetMovimientos
 
       REDEFINE GET ::oCajMov VAR ::oDbfVir:nCajMov;
          ID       140;
-			SPINNER ;
+         SPINNER ;
          WHEN     ( lUseCaj() .and. nMode != ZOOM_MODE ) ;
          ON CHANGE( oTotUnd:Refresh(), oSayPre:Refresh() );
          VALID    ( oTotUnd:Refresh(), oSayPre:Refresh(), .t. );
@@ -511,7 +511,7 @@ METHOD Resource( nMode ) CLASS TDetMovimientos
 
       REDEFINE GET ::oUndMov VAR ::oDbfVir:nUndMov ;
          ID       150;
-			SPINNER ;
+         SPINNER ;
          WHEN     ( nMode != ZOOM_MODE ) ;
          ON CHANGE( oTotUnd:Refresh(), oSayPre:Refresh() );
          VALID    ( oTotUnd:Refresh(), oSayPre:Refresh(), .t. );
@@ -531,12 +531,12 @@ METHOD Resource( nMode ) CLASS TDetMovimientos
          VAR      ::oDbfVir:nPreDiv ;
          ID       180 ;
          IDSAY    181 ;
-			SPINNER ;
+         SPINNER ;
          ON CHANGE( oSayPre:Refresh() ) ;
          VALID    ( oSayPre:Refresh(), .t. ) ;
          WHEN     ( nMode != ZOOM_MODE ) ;
          PICTURE  ::oParent:cPinDiv ;
-			OF 		oDlg
+         OF       oDlg
 
       REDEFINE SAY oSayTotal ;
          ID       191 ;
@@ -545,7 +545,7 @@ METHOD Resource( nMode ) CLASS TDetMovimientos
       REDEFINE SAY oSayPre PROMPT nTotLMovAlm( ::oDbfVir ) ;
          ID       190 ;
          PICTURE  ::oParent:cPirDiv ;
-			OF 		oDlg
+         OF       oDlg
      
       /*
       Almacen origen-----------------------------------------------------------
@@ -623,21 +623,21 @@ METHOD Resource( nMode ) CLASS TDetMovimientos
 
       REDEFINE BUTTON ::oBtnSerie ;
          ID       500 ;
-			OF 		oDlg ;
+         OF       oDlg ;
          ACTION   ( nil )
 
       ::oBtnSerie:bAction     := {|| ::oParent:oDetSeriesMovimientos:Resource( nMode ) }
 
       REDEFINE BUTTON oBtn;
          ID       510 ;
-			OF 		oDlg ;
-			WHEN 		( nMode != ZOOM_MODE ) ;
+         OF       oDlg ;
+         WHEN     ( nMode != ZOOM_MODE ) ;
          ACTION   ( ::ValidResource( nMode, oDlg, oBtn ) )
 
-		REDEFINE BUTTON ;
+      REDEFINE BUTTON ;
          ID       520 ;
-			OF 		oDlg ;
-			ACTION 	( oDlg:end() )
+         OF       oDlg ;
+         ACTION   ( oDlg:end() )
 
       if nMode != ZOOM_MODE
 

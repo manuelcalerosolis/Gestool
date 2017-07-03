@@ -212,7 +212,7 @@ METHOD buildSQLBrowse( title )
          BITMAP      "FIND" ;
          OF          oDlg
 
-      oFind:bChange       := {|| ::changeFind( oFind ) }
+      oFind:bChange  := {|| ::changeFind( oFind ) }
 
       REDEFINE COMBOBOX oCombobox ;
          VAR         cOrder ;
@@ -220,11 +220,11 @@ METHOD buildSQLBrowse( title )
          ITEMS       aOrden ;
          OF          oDlg
 
-      oCombobox:bChange       := {|| ::changeCombo( oCombobox ) }
+      oCombobox:bChange    := {|| ::changeCombo( oCombobox ) }
 
       ::buildSQLNuclearBrowse( 105 , oDlg, oCombobox )
 
-      ::oBrowse:bLDblClick      := {|| oDlg:end( IDOK ) }
+      ::oBrowse:bLDblClick := {|| oDlg:end( IDOK ) }
 
       REDEFINE BUTTON ;
          ID          IDOK ;

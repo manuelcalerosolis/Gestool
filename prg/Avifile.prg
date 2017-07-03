@@ -255,14 +255,14 @@ ENDCLASS
 
 //--------------------------------------------------------------------------//
 
-METHOD New( cTitle, cMsg, nTotal ) CLASS TWaitMeter
+METHOD New( cTitle, cMessage, nTotal ) CLASS TWaitMeter
 
-   DEFAULT cMsg         := "Procesando"
    DEFAULT cTitle       := "Espere por favor..."
+   DEFAULT cMessage     := "Procesando"
    DEFAULT nTotal       := 0
 
-   ::cMessage           := cMsg
    ::cTitle             := cTitle
+   ::cMessage           := cMessage
    ::nTotal             := nTotal
    ::nCurrent           := 0
 
@@ -282,6 +282,8 @@ METHOD Run() CLASS TWaitMeter
 
    ::oProgress          := TApoloMeter():ReDefine( 120, { | u | If( pCount() == 0, nPrgWat, nPrgWat := u ) }, ::nTotal, ::oDlgWait, .f., , , .t. )
 
+   ::oDlgWait:bValid    := {|| .f. }
+
    ::oDlgWait:Activate( , , , .t., ,.f. )
 
    SysRefresh()
@@ -293,6 +295,8 @@ RETURN ( Self )
 METHOD End() CLASS TWaitMeter
 
    ::RefreshMeter( 0 )
+
+   ::oDlgWait:bValid    := {|| .t. }
 
    ::oBitmap:End()
 
