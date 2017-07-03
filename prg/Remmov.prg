@@ -466,7 +466,7 @@ METHOD Activate() CLASS TRemMovAlm
 
       DEFINE BTNSHELL oImp RESOURCE "IMP" OF ::oWndBrw ;
          ACTION   ( ::GenRemMov( .t. ) ) ;
-			TOOLTIP 	"(I)mprimir";
+         TOOLTIP  "(I)mprimir";
          HOTKEY   "I";
          LEVEL    ACC_IMPR
 
@@ -1051,13 +1051,13 @@ METHOD Resource( nMode ) CLASS TRemMovAlm
         OF       oDlg
 
       REDEFINE GET ::oNumRem VAR ::oDbf:nNumRem ;
-			ID 		100 ;
+         ID       100 ;
          WHEN     ( .f. ) ;
          PICTURE  ::oDbf:FieldByName( "nNumRem" ):cPict ;
-			OF 		oDlg
+         OF       oDlg
 
       REDEFINE GET ::oSufRem VAR ::oDbf:cSufRem ;
-			ID 		110 ;
+         ID       110 ;
          WHEN     ( .f. ) ;
          PICTURE  ::oDbf:FieldByName( "cSufRem" ):cPict ;
          OF       oDlg
@@ -1065,8 +1065,8 @@ METHOD Resource( nMode ) CLASS TRemMovAlm
       REDEFINE GET ::oFecRem VAR ::oDbf:dFecRem ;
          ID       120 ;
          SPINNER ;
-			WHEN 		( nMode != ZOOM_MODE ) ;
-			OF 		oDlg
+         WHEN     ( nMode != ZOOM_MODE ) ;
+         OF       oDlg
 
       REDEFINE GET ::oTimRem VAR ::oDbf:cTimRem ;
          ID       121 ;
@@ -1116,7 +1116,7 @@ METHOD Resource( nMode ) CLASS TRemMovAlm
       REDEFINE GET oSay[ 3 ] VAR cSay[ 3 ] UPDATE ;
          ID       141 ;
          WHEN     ( .f. ) ;
-			OF 		oDlg
+         OF       oDlg
 
       REDEFINE SAY oSay[ 4 ] PROMPT "Almacén origen" ;
          ID       152 ;
@@ -1127,7 +1127,7 @@ METHOD Resource( nMode ) CLASS TRemMovAlm
          WHEN     ( nMode != ZOOM_MODE ) ;
          PICTURE  ::oDbf:FieldByName( "cAlmOrg" ):cPict ;
          BITMAP   "LUPA" ;
-			OF 		oDlg
+         OF       oDlg
       ::oAlmOrg:bValid     := {|| cAlmacen( ::oAlmOrg, ::oAlmacenOrigen:cAlias, oSay[1] ) }
       ::oAlmOrg:bHelp      := {|| BrwAlmacen( ::oAlmOrg, oSay[1] ) }
 
@@ -1135,14 +1135,14 @@ METHOD Resource( nMode ) CLASS TRemMovAlm
          UPDATE ;
          ID       151 ;
          WHEN     ( .f. ) ;
-			OF 		oDlg
+         OF       oDlg
 
       REDEFINE GET ::oAlmDes VAR ::oDbf:cAlmDes UPDATE ;
          ID       160 ;
          WHEN     ( nMode != ZOOM_MODE ) ;
          PICTURE  ::oDbf:FieldByName( "cAlmDes" ):cPict ;
          BITMAP   "LUPA" ;
-			OF 		oDlg
+         OF       oDlg
 
       ::oAlmDes:bValid     := {|| cAlmacen( ::oAlmDes, ::oAlmacenDestino:cAlias, oSay[2] ) }
       ::oAlmDes:bHelp      := {|| BrwAlmacen( ::oAlmDes, oSay[2] ) }
@@ -1150,15 +1150,15 @@ METHOD Resource( nMode ) CLASS TRemMovAlm
       REDEFINE GET oSay[ 2 ] VAR cSay[ 2 ] UPDATE ;
          ID       161 ;
          WHEN     ( .f. ) ;
-			OF 		oDlg
+         OF       oDlg
 
       ::oDefDiv( 190, 191, 192, oDlg, nMode )
 
       REDEFINE GET ::oDbf:cComMov ;
          ID       170 ;
          SPINNER ;
-			WHEN 		( nMode != ZOOM_MODE ) ;
-			OF 		oDlg
+         WHEN     ( nMode != ZOOM_MODE ) ;
+         OF       oDlg
 
       REDEFINE GET ::oCodAge VAR ::oDbf:cCodAge;
          ID       210;
@@ -1178,8 +1178,8 @@ METHOD Resource( nMode ) CLASS TRemMovAlm
        Botones de acceso________________________________________________________________
        */
 
-		REDEFINE BUTTON ;
-			ID 		500 ;
+      REDEFINE BUTTON ;
+         ID       500 ;
          OF       oDlg ;
          WHEN     ( nMode != ZOOM_MODE .and. !empty( ::oDbf:cAlmDes ) ) ;
          ACTION   ( ::oDetMovimientos:AppendDetail() )
@@ -1190,8 +1190,8 @@ METHOD Resource( nMode ) CLASS TRemMovAlm
          WHEN     ( nMode != ZOOM_MODE .and. !empty( ::oDbf:cAlmDes ) ) ;
          ACTION   ( ::EditDetalleMovimientos( oDlg ) )
 
-		REDEFINE BUTTON ;
-			ID 		502 ;
+      REDEFINE BUTTON ;
+         ID       502 ;
          OF       oDlg ;
          WHEN     ( nMode != ZOOM_MODE .and. !empty( ::oDbf:cAlmDes ) ) ;
          ACTION   ( ::DeleteDet() )
@@ -1440,13 +1440,13 @@ METHOD Resource( nMode ) CLASS TRemMovAlm
 
       REDEFINE BUTTON ::buttonSaveResourceWithCalculate;
          ID       IDOK ;
-			OF 		oDlg ;
-			WHEN 		( nMode != ZOOM_MODE ) ;
+         OF       oDlg ;
+         WHEN     ( nMode != ZOOM_MODE ) ;
          ACTION   ( ::saveResourceWithCalculate( nMode, oDlg ) )
 
-		REDEFINE BUTTON ;
+      REDEFINE BUTTON ;
          ID       IDCANCEL ;
-			OF 		oDlg ;
+         OF       oDlg ;
          CANCEL ;
          ACTION   ( oDlg:End() )
 
@@ -1484,23 +1484,23 @@ RETURN ( oDlg:nResult == IDOK )
 
 METHOD Search() CLASS TRemMovAlm
 
-	local oDlg
-	local oIndice
+   local oDlg
+   local oIndice
    local cIndice  := "Código"
    local aIndice  := { "Código", "Nombre" }
-	local oCadena
+   local oCadena
    local xCadena  := space( 100 )
    local nOrdAnt  := ::oDetMovimientos:oDbfVir:OrdSetFocus( "cRefMov" )
 
    DEFINE DIALOG oDlg RESOURCE "sSearch"
 
-	REDEFINE GET oCadena VAR xCadena ;
+   REDEFINE GET oCadena VAR xCadena ;
       ID          100 ;
       OF          oDlg
       
       oCadena:bChange   := {|| oCadena:Assign(), ::oDetMovimientos:oDbfVir:Seek( UPPER( Rtrim( xCadena ) ), .t. ), ::oBrwDet:Refresh() }
 
-	REDEFINE COMBOBOX oIndice ;
+   REDEFINE COMBOBOX oIndice ;
       VAR         cIndice ;
       ITEMS       aIndice ;
       ID          101 ;
@@ -1511,12 +1511,12 @@ METHOD Search() CLASS TRemMovAlm
                                  oCadena:SetFocus(),;
                                  oCadena:SelectAll() }
 
-	REDEFINE BUTTON ;
-		ID 		   510 ;
-		OF          oDlg ;
+   REDEFINE BUTTON ;
+      ID          510 ;
+      OF          oDlg ;
       ACTION      ( oDlg:end() )
 
-	ACTIVATE DIALOG oDlg CENTER
+   ACTIVATE DIALOG oDlg CENTER
 
    ::oDetMovimientos:oDbfVir:OrdSetFocus( nOrdAnt )
 
@@ -1633,8 +1633,8 @@ Return Nil
 
 METHOD EPage( oInf, cCodDoc ) CLASS TRemMovAlm 
 
-	private nPagina		:= oInf:nPage
-	private lEnd			:= oInf:lFinish
+   private nPagina      := oInf:nPage
+   private lEnd         := oInf:lFinish
 
    PrintItems( cCodDoc, oInf )
 
@@ -4020,4 +4020,3 @@ Function DesignLabelRemesasMovimientosAlmacen( oFr, cDoc )
 Return ( nil )
 
 //---------------------------------------------------------------------------//
-

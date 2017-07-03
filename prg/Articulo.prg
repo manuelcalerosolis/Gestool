@@ -18367,8 +18367,8 @@ Return .t.
 
 Static Function debugWeb( aTmp )
 
-   local idProduct   := aTmp[ ( D():Articulos( nView ) )->( fieldpos( "Codigo" ) ) ]
    local idShop      := aTmp[ ( D():Articulos( nView ) )->( fieldpos( "cWebShop" ) ) ]
+   local idProduct   := aTmp[ ( D():Articulos( nView ) )->( fieldpos( "Codigo" ) ) ]
    local TComercio   := TComercio():New( nView, oStock )
 
    TComercio:setDebugMode()

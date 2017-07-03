@@ -621,26 +621,49 @@ RETURN ( self )
 
 METHOD generateColumnsForBrowse( oCombobox )
 
-   local hColumnstoBrowse := ::oModel:hColumns
+   local hColumnstoBrowse  := ::oModel:hColumns
 
    if !empty( ::oModel:hExtraColumns )
-      hColumnstoBrowse := hb_HCopy( hColumnstoBrowse, ::oModel:hExtraColumns)
+      hColumnstoBrowse     := hb_hcopy( hColumnstoBrowse, ::oModel:hExtraColumns)
    end if
 
-   hEval( hColumnstoBrowse, { | k, h | if ( h[ "visible" ] , ::createColumnsForBrowse( oCombobox, k, h), ) } )
+   hEval( hColumnstoBrowse, { | k, hColumn | ::createColumnsForBrowse( oCombobox, k, hColumn ) } )
 
 RETURN ( self )
 
 //---------------------------------------------------------------------------//
 
-METHOD createColumnsForBrowse( oCombobox, k, h )
+METHOD createColumnsForBrowse( oCombobox, k, hColumn )
+
+   if !hhaskey( hColumn, "visible" )
+      RETURN ( Self )
+   end if 
+
+   if !hhaskey( hColumn, "header" )
+      RETURN ( Self )
+   end if 
+
+   if !hhaskey( hColumn, "width" )
+      RETURN ( Self )
+   end if 
+
+   if !hget( hColumn, "visible" )
+      RETURN ( Self )
+   end if 
 
    with object ( ::oView:getoBrowse():AddCol() )
-      :cHeader             := h[ "header" ]
+
+      :cHeader             := hColumn[ "header" ]
       :cSortOrder          := k
-      :bEditValue          := {|| ::getRowSet():fieldGet( k ) }
-      :nWidth              := h[ "width" ]
+      :nWidth              := hColumn[ "width" ]
       :bLClickHeader       := {| nMRow, nMCol, nFlags, oCol | ::clickOnHeader( oCol, oCombobox ) }
+
+      if hhaskey( hColumn, "edit" )
+         :bEditValue       := hget( hColumn, "edit" )
+      else
+         :bEditValue       := {|| ::getRowSet():fieldGet( k ) }
+      end if 
+
    end with
    
 RETURN ( self )

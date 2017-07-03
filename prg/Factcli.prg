@@ -18098,6 +18098,8 @@ function SynFacCli( cPath )
    oBlock               := ErrorBlock( { | oError | ApoloBreak( oError ) } )
    BEGIN SEQUENCE
 
+   FacturasClientesModel():defaultSufijo()
+
    if OpenFiles()
 
       // Cabeceras ------------------------------------------------------------
@@ -18106,13 +18108,6 @@ function SynFacCli( cPath )
       ( D():FacturasClientes( nView ) )->( dbGoTop() )
 
       while !( D():FacturasClientes( nView ) )->( eof() )
-
-         if empty( ( D():FacturasClientes( nView ) )->cSufFac )
-            if ( D():FacturasClientes( nView ) )->( dbRLock() )
-               ( D():FacturasClientes( nView ) )->cSufFac := "00"
-               ( D():FacturasClientes( nView ) )->( dbUnLock() )
-            end if
-         end if
 
          if !empty( ( D():FacturasClientes( nView ) )->cNumPre ) .and. Len( AllTrim( ( D():FacturasClientes( nView ) )->cNumPre ) ) != 12
             if ( D():FacturasClientes( nView ) )->( dbRLock() )

@@ -67,6 +67,8 @@ METHOD New()
 
    aadd( ::aModels, PropiedadesLineasModel():New():getSQLCreateTable() )
 
+   aadd( ::aModels, MovimientosAlmacenModel():New():getSQLCreateTable() )
+
    ::cPathDatabaseSQLite      := fullCurDir() + "Database\" 
 
    ::cDatabaseSQLite          := ::cPathDatabaseSQLite + "Gestool.db"

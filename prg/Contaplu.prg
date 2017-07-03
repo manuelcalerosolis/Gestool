@@ -1543,7 +1543,7 @@ Static Function MkAsientoContaplus( Asien,;
          aTemp[ ( cDiario )->( FieldPos( "METAL") ) ]       := .t.
       end if
       if ( cDiario )->( FieldPos( "METALIMP" ) ) != 0      
-         aTemp[ ( cDiario )->( FieldPos( "METALIMP" ) ) ]   := If ( nImporteDebe != NIL,  nImporteDebe,  aTemp[ ( cDiario )->( FieldPos( "METALIMP" ) ) ] )      
+         aTemp[ ( cDiario )->( FieldPos( "METALIMP" ) ) ]   := if( nImporteDebe != NIL,  nImporteDebe,  aTemp[ ( cDiario )->( FieldPos( "METALIMP" ) ) ] )      
       end if
       if ( cDiario )->( FieldPos( "METALEJE" ) ) != 0
          aTemp[ ( cDiario )->( FieldPos( "METALEJE") ) ]    := nEjeCon 

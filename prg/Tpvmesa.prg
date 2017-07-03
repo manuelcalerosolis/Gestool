@@ -475,19 +475,17 @@ METHOD uCreaToolTip( nRow, nCol, nKeyFlags )
 
    aLineasToolTip    := ::aCargaLineasToolTip()
 
-   if Len( aLineasToolTip ) == 0
+   if !hb_isarray( aLineasToolTip ) .or. ( len( aLineasToolTip ) == 0 )
+      RETURN .f.
+   end if 
 
-      return .f.
-
-   else
-
-      DEFINE DIALOG oDlgToolTip RESOURCE "ToolTipSala"
+   DEFINE DIALOG oDlgToolTip RESOURCE "ToolTipSala"
 
       REDEFINE BITMAP oBmp ;
-         ID       500 ;
-         RESOURCE "gc_notebook2_48" ;
+         ID          500 ;
+         RESOURCE    "gc_notebook2_48" ;
          TRANSPARENT ;
-         OF       oDlgToolTip
+         OF          oDlgToolTip
 
       oBrwLinToolTip                        := IXBrowse():New( oDlgToolTip )
 
@@ -540,11 +538,9 @@ METHOD uCreaToolTip( nRow, nCol, nKeyFlags )
 
       oDlgToolTip:bStart      := {|| oBrwLinToolTip:Load() }
 
-      ACTIVATE DIALOG oDlgToolTip
+   ACTIVATE DIALOG oDlgToolTip
 
-      oBrwLinToolTip:CloseData()
-
-   end if   
+   oBrwLinToolTip:CloseData()
 
    if !Empty( oBmp )
       oBmp:End()

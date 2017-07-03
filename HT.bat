@@ -1,12 +1,18 @@
-cd \fw195\gestool\
+cd \fw195\gestblt\
 
-taskkill /F /IM gestool.exe
+taskkill /F /IM gestblt.exe
 
-\BCC55\BIN\MAKE -S -fHB.MAK -D__GST__
+\BCC582\BIN\MAKE -S -fHT.MAK -D__GST__ TARGET=gestool
 
 cd \fw195\gestool\bin\
 
-gestool.exe /TABLET
+if "%1"=="" goto NOPASSWORD
 
-cd \fw195\gestool\
+   gestblt.exe %1
+   goto EXIT
 
+:NOPASSWORD
+   gestblt.exe /NOPASSWORD
+
+:EXIT
+   cd \fw195\gestool\

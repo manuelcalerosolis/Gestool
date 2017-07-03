@@ -6,7 +6,7 @@
 
 CLASS PropiedadesLineasModel FROM SQLBaseLineasModel
 
-   DATA cTableName               INIT "propiedades_lineas"
+   DATA cTableName                     INIT "propiedades_lineas"
 
    DATA cDbfTableName
 
@@ -22,7 +22,7 @@ CLASS PropiedadesLineasModel FROM SQLBaseLineasModel
 
    METHOD getImportSentence( cPath )
 
-   METHOD makeSpecialImportDbfSQL()										INLINE ( ::makeImportDbfSQL( cPatEmp() ) )
+   METHOD makeSpecialImportDbfSQL()	   INLINE ( ::makeImportDbfSQL( cPatEmp() ) )
 
 END CLASS
 
@@ -82,7 +82,6 @@ METHOD New()
 																					"field"		=>	"cCodPro"											,;
 																					"visible"	=> .f. }													}
 
-
 		::cForeignColumn		:= "id_cabecera"
 
 		::Super:New()
@@ -125,13 +124,13 @@ METHOD largeUpdateOrden( Operation, Conditions )
 METHOD reOrder()
 
 	local cSQLUpdate
-	local cSentence	 := "select * from " + ::cTableName + " where id_cabecera = " + toSQLString( ::idForeignKey ) + " order by orden"
+	local cSentence	 := "SELECT * FROM " + ::cTableName + " WHERE id_cabecera = " + toSQLString( ::idForeignKey ) + " ORDER by orden"
 
 	::buildRowSet( cSentence )
 
 	while !::oRowSet:eof()
 
-		cSQLUpdate := "UPDATE " + ::cTableName + " SET orden = " + toSQLString( ::oRowSet:recno() ) + " WHERE id = " + toSQLString( ::oRowSet():fieldget( "id" ) )
+		cSQLUpdate      := "UPDATE " + ::cTableName + " SET orden = " + toSQLString( ::oRowSet:recno() ) + " WHERE id = " + toSQLString( ::oRowSet():fieldget( "id" ) )
 
 		getSQLDatabase():Query( cSQLUpdate )
 
@@ -156,7 +155,7 @@ METHOD getImportSentence( cPath )
       Return ( cInsert )
    end if
 
-   cInsert              := "INSERT INTO " + ::cTableName + " ( "
+   cInsert           := "INSERT INTO " + ::cTableName + " ( "
    hEval( ::hColumns, {| k | if ( k != ::cColumnKey, cInsert += k + ", ", ) } )
    cInsert           := ChgAtEnd( cInsert, ' ) VALUES ', 2 )
 
@@ -164,7 +163,7 @@ METHOD getImportSentence( cPath )
    ( dbf )->( dbgotop() )
    while ( dbf )->( !eof() )
 
-      cValues           += "( "
+      cValues        += "( "
 
             hEval( ::hColumns, {| k, hash | if ( k != ::cColumnKey,;
                                                 if ( k == "id_cabecera",;
@@ -172,7 +171,7 @@ METHOD getImportSentence( cPath )
                                                       cValues += toSQLString( ( dbf )->( fieldget( fieldpos( hget( hash, "field" ) ) ) ) ) + ", "), ) } )
 
       
-      cValues           := chgAtEnd( cValues, ' ), ', 2 )
+      cValues        := chgAtEnd( cValues, ' ), ', 2 )
 
       ( dbf )->( dbskip() )
    end while
@@ -183,9 +182,9 @@ METHOD getImportSentence( cPath )
       Return ( nil )
    end if 
 
-   cValues              := chgAtEnd( cValues, '', 2 )
+   cValues           := chgAtEnd( cValues, '', 2 )
 
-   cInsert              += cValues
+   cInsert           += cValues
 
 Return ( cInsert )
 
