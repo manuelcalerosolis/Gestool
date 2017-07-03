@@ -436,6 +436,7 @@ METHOD writeDatosComprador()
    end if
 
    cLine          += AllTrim( ( D():FacturasClientes( ::nView ) )->cDniCli ) + __separator__                                              //NIF
+   cLine          += "182" + __separator__
 
    ::oFileEDI:add( cLine )
 

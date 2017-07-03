@@ -6833,3 +6833,22 @@ FUNCTION getVariablesToHash( cClave )
 RETURN ( uVariable )
 
 //---------------------------------------------------------------------------//
+
+Function cTextRichText( cText )
+
+   local nLen     := 0
+   local nPos     := 1
+   local cFormat  := ""
+   local cTexto   := ""
+
+   nLen           := At( "\rtf", SubStr( cText, nPos ) )
+   nPos           += nLen
+   cFormat        := Upper( SubStr( cText, nPos, 3 ) )
+
+   if cFormat == "RTF"
+      cTexto      := RTFToGTF( cText )
+   end if
+
+Return cTexto
+
+//---------------------------------------------------------------------------//

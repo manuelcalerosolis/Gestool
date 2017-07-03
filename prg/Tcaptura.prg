@@ -69,7 +69,8 @@ Method New( cPath, oWndParent, oMenuItem )
    ::oCapCampos            := TDetCaptura():New( cPath, , Self )
    ::AddDetail( ::oCapCampos )
 
-   ::bOnPreAppend          := {|| ::oCapCampos:CheckDefault( Space( 3 ), .t. ) }
+   //::bOnPreAppend        := {|| ::oCapCampos:CheckDefault( Space( 3 ), .t. ) }
+   ::oCapCampos:bDefaultValues        := {|| ::oCapCampos:CheckDefaultVir() }
    ::bOnPreEdit            := {|| if( ::oDbf:cCodigo == DEFAULT_CODE, ( msgStop( "No se puede modificar la captura por defecto" ),.f. ), .t. ) }
 
 RETURN ( Self )
@@ -541,11 +542,13 @@ METHOD Activate()
 
       DEFINE BTNSHELL RESOURCE "NEW" OF ::oWndBrw ;
          NOBORDER ;
-         ACTION   ( if( ::oDbf:Seek( DEFAULT_CODE ), ::oWndBrw:RecDup(), MsgStop( "No se ha encontrado la captura por defecto" ) ) );
+         ACTION   ( ::oWndBrw:RecAdd() );
          TOOLTIP  "(A)ñadir";
          BEGIN GROUP ;
          HOTKEY   "A" ;
          LEVEL    ACC_APPD
+
+      //ACTION   ( if( ::oDbf:Seek( DEFAULT_CODE ), ::oWndBrw:RecDup(), MsgStop( "No se ha encontrado la captura por defecto" ) ) );         
 
       DEFINE BTNSHELL RESOURCE "DUP" OF ::oWndBrw ;
          NOBORDER ;

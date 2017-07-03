@@ -18,6 +18,8 @@ CLASS TDetCaptura FROM TDet
 
    Method CheckDefault()
 
+   Method CheckDefaultVir()
+
    Method SaveLines()
 
 END CLASS
@@ -127,8 +129,8 @@ Method CheckDefault( cCod, lNew )
 
    if empty( cCod ) .or. !( ::oDbf:Seek( cCod ) )
 
-      ::oDbf:Append()
       ::oDbf:cCodigo    := cCod
+      ::oDbf:Append()
       ::oDbf:nNumero    := 1
       ::oDbf:cNombre    := "Código del artículo"
       ::oDbf:lEditable  := .f.
@@ -424,6 +426,20 @@ Method CheckDefault( cCod, lNew )
       ::oDbf:Append()
       ::oDbf:cCodigo    := cCod
       ::oDbf:nNumero    := 22
+      ::oDbf:cNombre    := "Ubicación"
+      ::oDbf:lEditable  := .f.
+      ::oDbf:lVisible   := .t.
+      ::oDbf:nCaptura   := 2
+      ::oDbf:cTitulo    := "Ubi."
+      ::oDbf:lAlign     := .f.
+      ::oDbf:cPicture   := Space( 60 )
+      ::oDbf:nAncho     := 100
+      ::oDbf:lBitmap    := .f.
+      ::oDbf:Save()
+
+      ::oDbf:Append()
+      ::oDbf:cCodigo    := cCod
+      ::oDbf:nNumero    := 23
       ::oDbf:cNombre    := "Factor"
       ::oDbf:lEditable  := .t.
       ::oDbf:lVisible   := .f.
@@ -437,7 +453,7 @@ Method CheckDefault( cCod, lNew )
 
       ::oDbf:Append()
       ::oDbf:cCodigo    := cCod
-      ::oDbf:nNumero    := 23
+      ::oDbf:nNumero    := 24
       ::oDbf:cNombre    := "Porcentaje I.V.A."
       ::oDbf:lEditable  := .t.
       ::oDbf:lVisible   := .t.
@@ -449,21 +465,349 @@ Method CheckDefault( cCod, lNew )
       ::oDbf:lBitmap    := .f.
       ::oDbf:Save()
 
-      ::oDbf:Append()
-      ::oDbf:cCodigo    := cCod
-      ::oDbf:nNumero    := 24
-      ::oDbf:cNombre    := "Ubicacion"
-      ::oDbf:lEditable  := .f.
-      ::oDbf:lVisible   := .t.
-      ::oDbf:nCaptura   := 2
-      ::oDbf:cTitulo    := "Ubi."
-      ::oDbf:lAlign     := .f.
-      ::oDbf:cPicture   := Space( 60 )
-      ::oDbf:nAncho     := 100
-      ::oDbf:lBitmap    := .f.
-      ::oDbf:Save()
-
    end if
+
+RETURN ( .t. )
+
+//---------------------------------------------------------------------------//
+
+Method CheckDefaultVir()
+
+      ::oDbfVir:Append()
+      ::oDbfVir:cCodigo    := Space( 3 )
+      ::oDbfVir:nNumero    := 1
+      ::oDbfVir:cNombre    := "Código del artículo"
+      ::oDbfVir:lEditable  := .f.
+      ::oDbfVir:lVisible   := .t.
+      ::oDbfVir:nCaptura   := 3
+      ::oDbfVir:cTitulo    := "Código"
+      ::oDbfVir:lAlign     := .f.
+      ::oDbfVir:cPicture   := Space( 50 )
+      ::oDbfVir:nAncho     := 100
+      ::oDbfVir:lBitmap    := .f.
+      ::oDbfVir:Save()
+
+      ::oDbfVir:Append()
+      ::oDbfVir:cCodigo    := Space( 3 )
+      ::oDbfVir:nNumero    := 2
+      ::oDbfVir:cNombre    := "Unidades"
+      ::oDbfVir:lEditable  := .f.
+      ::oDbfVir:lVisible   := .t.
+      ::oDbfVir:nCaptura   := 3
+      ::oDbfVir:cTitulo    := "Und."
+      ::oDbfVir:lAlign     := .t.
+      ::oDbfVir:cPicture   := "cPicUnd"
+      ::oDbfVir:nAncho     := 60
+      ::oDbfVir:lBitmap    := .f.
+      ::oDbfVir:Save()
+
+      ::oDbfVir:Append()
+      ::oDbfVir:cCodigo    := Space( 3 )
+      ::oDbfVir:nNumero    := 3
+      ::oDbfVir:cNombre    := "Medición 1"
+      ::oDbfVir:lEditable  := .t.
+      ::oDbfVir:lVisible   := .f.
+      ::oDbfVir:nCaptura   := 1
+      ::oDbfVir:cTitulo    := "Med. 1"
+      ::oDbfVir:lAlign     := .t.
+      ::oDbfVir:cPicture   := "cPicUnd"
+      ::oDbfVir:nAncho     := 60
+      ::oDbfVir:lBitmap    := .f.
+      ::oDbfVir:Save()
+
+      ::oDbfVir:Append()
+      ::oDbfVir:cCodigo    := Space( 3 )
+      ::oDbfVir:nNumero    := 4
+      ::oDbfVir:cNombre    := "Medición 2"
+      ::oDbfVir:lEditable  := .t.
+      ::oDbfVir:lVisible   := .f.
+      ::oDbfVir:nCaptura   := 1
+      ::oDbfVir:cTitulo    := "Med. 2"
+      ::oDbfVir:lAlign     := .t.
+      ::oDbfVir:cPicture   := "cPicUnd"
+      ::oDbfVir:nAncho     := 60
+      ::oDbfVir:lBitmap    := .f.
+      ::oDbfVir:Save()
+
+      ::oDbfVir:Append()
+      ::oDbfVir:cCodigo    := Space( 3 )
+      ::oDbfVir:nNumero    := 5
+      ::oDbfVir:cNombre    := "Medición 3"
+      ::oDbfVir:lEditable  := .t.
+      ::oDbfVir:lVisible   := .f.
+      ::oDbfVir:nCaptura   := 1
+      ::oDbfVir:cTitulo    := "Med. 3"
+      ::oDbfVir:lAlign     := .t.
+      ::oDbfVir:cPicture   := "cPicUnd"
+      ::oDbfVir:nAncho     := 60
+      ::oDbfVir:lBitmap    := .f.
+      ::oDbfVir:Save()
+
+      ::oDbfVir:Append()
+      ::oDbfVir:cCodigo    := Space( 3 )
+      ::oDbfVir:nNumero    := 6
+      ::oDbfVir:cNombre    := "Propiedad 1"
+      ::oDbfVir:lEditable  := .t.
+      ::oDbfVir:lVisible   := .f.
+      ::oDbfVir:nCaptura   := 2
+      ::oDbfVir:cTitulo    := "Prop. 1"
+      ::oDbfVir:lAlign     := .f.
+      ::oDbfVir:cPicture   := Space( 50 )
+      ::oDbfVir:nAncho     := 40
+      ::oDbfVir:lBitmap    := .f.
+      ::oDbfVir:Save()
+
+      ::oDbfVir:Append()
+      ::oDbfVir:cCodigo    := Space( 3 )
+      ::oDbfVir:nNumero    := 7
+      ::oDbfVir:cNombre    := "Propiedad 2"
+      ::oDbfVir:lEditable  := .t.
+      ::oDbfVir:lVisible   := .f.
+      ::oDbfVir:nCaptura   := 2
+      ::oDbfVir:cTitulo    := "Prop. 2"
+      ::oDbfVir:lAlign     := .f.
+      ::oDbfVir:cPicture   := Space( 50 )
+      ::oDbfVir:nAncho     := 40
+      ::oDbfVir:lBitmap    := .f.
+      ::oDbfVir:Save()
+
+      ::oDbfVir:Append()
+      ::oDbfVir:cCodigo    := Space( 3 )
+      ::oDbfVir:nNumero    := 8
+      ::oDbfVir:cNombre    := "Nombre propiedad 1"
+      ::oDbfVir:lEditable  := .t.
+      ::oDbfVir:lVisible   := .f.
+      ::oDbfVir:nCaptura   := 2
+      ::oDbfVir:cTitulo    := "Nombre prp. 1"
+      ::oDbfVir:lAlign     := .f.
+      ::oDbfVir:cPicture   := Space( 50 )
+      ::oDbfVir:nAncho     := 40
+      ::oDbfVir:lBitmap    := .f.
+      ::oDbfVir:Save()
+
+      ::oDbfVir:Append()
+      ::oDbfVir:cCodigo    := Space( 3 )
+      ::oDbfVir:nNumero    := 9
+      ::oDbfVir:cNombre    := "Nombre propiedad 2"
+      ::oDbfVir:lEditable  := .t.
+      ::oDbfVir:lVisible   := .f.
+      ::oDbfVir:nCaptura   := 2
+      ::oDbfVir:cTitulo    := "Nombre prp. 2"
+      ::oDbfVir:lAlign     := .f.
+      ::oDbfVir:cPicture   := Space( 50 )
+      ::oDbfVir:nAncho     := 40
+      ::oDbfVir:lBitmap    := .f.
+      ::oDbfVir:Save()
+
+      ::oDbfVir:Append()
+      ::oDbfVir:cCodigo    := Space( 3 )
+      ::oDbfVir:nNumero    := 10
+      ::oDbfVir:cNombre    := "Lote"
+      ::oDbfVir:lEditable  := .t.
+      ::oDbfVir:lVisible   := .f.
+      ::oDbfVir:nCaptura   := 2
+      ::oDbfVir:cTitulo    := "Lote"
+      ::oDbfVir:lAlign     := .t.
+      ::oDbfVir:cPicture   := "@Z 999999999"
+      ::oDbfVir:nAncho     := 60
+      ::oDbfVir:lBitmap    := .f.
+      ::oDbfVir:Save()
+
+      ::oDbfVir:Append()
+      ::oDbfVir:cCodigo    := Space( 3 )
+      ::oDbfVir:nNumero    := 11
+      ::oDbfVir:cNombre    := "Caducidad"
+      ::oDbfVir:lEditable  := .t.
+      ::oDbfVir:lVisible   := .f.
+      ::oDbfVir:nCaptura   := 2
+      ::oDbfVir:cTitulo    := "Caducidad"
+      ::oDbfVir:lAlign     := .t.
+      ::oDbfVir:cPicture   := ""
+      ::oDbfVir:nAncho     := 75
+      ::oDbfVir:lBitmap    := .f.
+      ::oDbfVir:Save()
+
+      ::oDbfVir:Append()
+      ::oDbfVir:cCodigo    := Space( 3 )
+      ::oDbfVir:nNumero    := 12
+      ::oDbfVir:cNombre    := "Detalle"
+      ::oDbfVir:lEditable  := .t.
+      ::oDbfVir:lVisible   := .t.
+      ::oDbfVir:nCaptura   := 2
+      ::oDbfVir:cTitulo    := "Detalle"
+      ::oDbfVir:lAlign     := .f.
+      ::oDbfVir:cPicture   := Space( 50 )
+      ::oDbfVir:nAncho     := 200
+      ::oDbfVir:lBitmap    := .f.
+      ::oDbfVir:Save()
+
+      ::oDbfVir:Append()
+      ::oDbfVir:cCodigo    := Space( 3 )
+      ::oDbfVir:nNumero    := 13
+      ::oDbfVir:cNombre    := "Importe"
+      ::oDbfVir:lEditable  := .t.
+      ::oDbfVir:lVisible   := .t.
+      ::oDbfVir:nCaptura   := 2
+      ::oDbfVir:cTitulo    := "Importe"
+      ::oDbfVir:lAlign     := .t.
+      ::oDbfVir:cPicture   := "cPouDiv"
+      ::oDbfVir:nAncho     := 80
+      ::oDbfVir:lBitmap    := .f.
+      ::oDbfVir:Save()
+
+      ::oDbfVir:Append()
+      ::oDbfVir:cCodigo    := Space( 3 )
+      ::oDbfVir:nNumero    := 14
+      ::oDbfVir:cNombre    := "Descuento lineal"
+      ::oDbfVir:lEditable  := .t.
+      ::oDbfVir:lVisible   := .t.
+      ::oDbfVir:nCaptura   := 2
+      ::oDbfVir:cTitulo    := "Dto. lin."
+      ::oDbfVir:lAlign     := .t.
+      ::oDbfVir:cPicture   := "cPouDiv"
+      ::oDbfVir:nAncho     := 80
+      ::oDbfVir:lBitmap    := .f.
+      ::oDbfVir:Save()
+
+      ::oDbfVir:Append()
+      ::oDbfVir:cCodigo    := Space( 3 )
+      ::oDbfVir:nNumero    := 15
+      ::oDbfVir:cNombre    := "Descuento porcentual"
+      ::oDbfVir:lEditable  := .t.
+      ::oDbfVir:lVisible   := .t.
+      ::oDbfVir:nCaptura   := 2
+      ::oDbfVir:cTitulo    := "%Dto."
+      ::oDbfVir:lAlign     := .t.
+      ::oDbfVir:cPicture   := '"@E 99.99"'
+      ::oDbfVir:nAncho     := 40
+      ::oDbfVir:lBitmap    := .f.
+      ::oDbfVir:Save()
+
+      ::oDbfVir:Append()
+      ::oDbfVir:cCodigo    := Space( 3 )
+      ::oDbfVir:nNumero    := 16
+      ::oDbfVir:cNombre    := "Total"
+      ::oDbfVir:lEditable  := .f.
+      ::oDbfVir:lVisible   := .t.
+      ::oDbfVir:nCaptura   := 2
+      ::oDbfVir:cTitulo    := "Total"
+      ::oDbfVir:lAlign     := .t.
+      ::oDbfVir:cPicture   := 'cPorDiv'
+      ::oDbfVir:nAncho     := 80
+      ::oDbfVir:lBitmap    := .f.
+      ::oDbfVir:Save()
+
+      ::oDbfVir:Append()
+      ::oDbfVir:cCodigo    := Space( 3 )
+      ::oDbfVir:nNumero    := 17
+      ::oDbfVir:cNombre    := "Número de serie"
+      ::oDbfVir:lEditable  := .t.
+      ::oDbfVir:lVisible   := .f.
+      ::oDbfVir:nCaptura   := 2
+      ::oDbfVir:cTitulo    := "Nº Serie"
+      ::oDbfVir:lAlign     := .f.
+      ::oDbfVir:cPicture   := Space( 50 )
+      ::oDbfVir:nAncho     := 56
+      ::oDbfVir:lBitmap    := .f.
+      ::oDbfVir:Save()
+
+      ::oDbfVir:Append()
+      ::oDbfVir:cCodigo    := Space( 3 )
+      ::oDbfVir:nNumero    := 18
+      ::oDbfVir:cNombre    := "Número de línea"
+      ::oDbfVir:lEditable  := .t.
+      ::oDbfVir:lVisible   := .f.
+      ::oDbfVir:nCaptura   := 2
+      ::oDbfVir:cTitulo    := "Nº Línea"
+      ::oDbfVir:lAlign     := .t.
+      ::oDbfVir:cPicture   := "9999"
+      ::oDbfVir:nAncho     := 40
+      ::oDbfVir:lBitmap    := .f.
+      ::oDbfVir:Save()
+
+      ::oDbfVir:Append()
+      ::oDbfVir:cCodigo    := Space( 3 )
+      ::oDbfVir:nNumero    := 19
+      ::oDbfVir:cNombre    := "Código de barras"
+      ::oDbfVir:lEditable  := .t.
+      ::oDbfVir:lVisible   := .t.
+      ::oDbfVir:nCaptura   := 2
+      ::oDbfVir:cTitulo    := "C. barras"
+      ::oDbfVir:lAlign     := .f.
+      ::oDbfVir:cPicture   := Space( 50 )
+      ::oDbfVir:nAncho     := 100
+      ::oDbfVir:lBitmap    := .f.
+      ::oDbfVir:Save()
+
+      ::oDbfVir:Append()
+      ::oDbfVir:cCodigo    := Space( 3 )
+      ::oDbfVir:nNumero    := 20
+      ::oDbfVir:cNombre    := "Promoción"
+      ::oDbfVir:lEditable  := .t.
+      ::oDbfVir:lVisible   := .f.
+      ::oDbfVir:nCaptura   := 2
+      ::oDbfVir:cTitulo    := "Prm."
+      ::oDbfVir:lAlign     := .f.
+      ::oDbfVir:cPicture   := Space( 50 )
+      ::oDbfVir:nAncho     := 20
+      ::oDbfVir:lBitmap    := .t.
+      ::oDbfVir:Save()
+
+      ::oDbfVir:Append()
+      ::oDbfVir:cCodigo    := Space( 3 )
+      ::oDbfVir:nNumero    := 21
+      ::oDbfVir:cNombre    := "Oferta"
+      ::oDbfVir:lEditable  := .t.
+      ::oDbfVir:lVisible   := .f.
+      ::oDbfVir:nCaptura   := 2
+      ::oDbfVir:cTitulo    := "Ofe."
+      ::oDbfVir:lAlign     := .f.
+      ::oDbfVir:cPicture   := Space( 50 )
+      ::oDbfVir:nAncho     := 20
+      ::oDbfVir:lBitmap    := .t.
+      ::oDbfVir:Save()
+
+      ::oDbfVir:Append()
+      ::oDbfVir:cCodigo    := Space( 3 )
+      ::oDbfVir:nNumero    := 22
+      ::oDbfVir:cNombre    := "Ubicación"
+      ::oDbfVir:lEditable  := .f.
+      ::oDbfVir:lVisible   := .t.
+      ::oDbfVir:nCaptura   := 2
+      ::oDbfVir:cTitulo    := "Ubi."
+      ::oDbfVir:lAlign     := .f.
+      ::oDbfVir:cPicture   := Space( 60 )
+      ::oDbfVir:nAncho     := 100
+      ::oDbfVir:lBitmap    := .f.
+      ::oDbfVir:Save()
+
+      ::oDbfVir:Append()
+      ::oDbfVir:cCodigo    := Space( 3 )
+      ::oDbfVir:nNumero    := 23
+      ::oDbfVir:cNombre    := "Factor"
+      ::oDbfVir:lEditable  := .t.
+      ::oDbfVir:lVisible   := .f.
+      ::oDbfVir:nCaptura   := 3
+      ::oDbfVir:cTitulo    := "Factor"
+      ::oDbfVir:lAlign     := .t.
+      ::oDbfVir:cPicture   := "@E 999,999.999999"
+      ::oDbfVir:nAncho     := 60
+      ::oDbfVir:lBitmap    := .f.
+      ::oDbfVir:Save()
+
+      ::oDbfVir:Append()
+      ::oDbfVir:cCodigo    := Space( 3 )
+      ::oDbfVir:nNumero    := 24
+      ::oDbfVir:cNombre    := "Porcentaje I.V.A."
+      ::oDbfVir:lEditable  := .t.
+      ::oDbfVir:lVisible   := .t.
+      ::oDbfVir:nCaptura   := 2
+      ::oDbfVir:cTitulo    := "%IVA"
+      ::oDbfVir:lAlign     := .t.
+      ::oDbfVir:cPicture   := '"@E 99.99"'
+      ::oDbfVir:nAncho     := 40
+      ::oDbfVir:lBitmap    := .f.
+      ::oDbfVir:Save()
 
 RETURN ( .t. )
 

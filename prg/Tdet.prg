@@ -44,6 +44,7 @@ CLASS TDet
    DATA  bOnPreSave, bOnPostSave
    DATA  bOnPreSaveDetail, bOnPostSaveDetail
    DATA  bOnPreLoad, bOnPostLoad
+   DATA  bDefaultValues
 
    // Datas para la selecion generica de registros-----------------------------
 
@@ -188,7 +189,13 @@ METHOD Load( lAppend ) CLASS TDet
       ::oDbfVir:Activate( .f., .f. )
    end if
 
-   ::oDbfVir:Zap()   
+   ::oDbfVir:Zap()
+
+   if Empty( ::oParent:cFirstKey )
+      if ::bDefaultValues != nil
+         Eval( ::bDefaultValues, Self )
+      end if
+   end if
 
    if !Empty( ::oParent )
 

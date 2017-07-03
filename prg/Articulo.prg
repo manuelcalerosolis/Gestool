@@ -19337,4 +19337,3 @@ Static Function dialogInfoWeb( aInfo )
 RETURN ( oDlg:nResult == IDOK )
 
 //---------------------------------------------------------------------------//
-
