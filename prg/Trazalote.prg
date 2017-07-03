@@ -926,7 +926,7 @@ METHOD AddPedPrv()
    ::oDbfTmp:cCodigo    := ::oPedPrvL:cRef
    ::oDbfTmp:cLote      := ::oPedPrvL:cLote
    ::oDbfTmp:cNomArt    := ::oPedPrvL:cDetalle
-   ::oDbfTmp:nUnidades  := nTotNPedPrv( ::oPedPrvL:cName )
+   ::oDbfTmp:nUnidades  := nTotNPedPrv( ::oPedPrvL:cAlias )
    ::oDbfTmp:dFecDoc    := oRetFld( ::oPedPrvL:cSerPed + Str( ::oPedPrvL:nNumPed ) + ::oPedPrvL:cSufPed, ::oPedPrvT, "dFecPed" )
    ::oDbfTmp:cCodCli    := oRetFld( ::oPedPrvL:cSerPed + Str( ::oPedPrvL:nNumPed ) + ::oPedPrvL:cSufPed, ::oPedPrvT, "cCodPrv" )
    ::oDbfTmp:cNomCli    := oRetFld( ::oPedPrvL:cSerPed + Str( ::oPedPrvL:nNumPed ) + ::oPedPrvL:cSufPed, ::oPedPrvT, "cNomPrv" )
@@ -947,7 +947,7 @@ METHOD AddAlbPrv()
    ::oDbfTmp:cCodigo    := ::oAlbPrvL:cRef
    ::oDbfTmp:cNomArt    := ::oAlbPrvL:cDetalle
    ::oDbfTmp:cLote      := ::oAlbPrvL:cLote
-   ::oDbfTmp:nUnidades  := nTotNAlbPrv( ::oAlbPrvL:cName )
+   ::oDbfTmp:nUnidades  := nTotNAlbPrv( ::oAlbPrvL:cAlias )
    ::oDbfTmp:dFecDoc    := oRetFld( ::oAlbPrvL:cSerAlb + Str( ::oAlbPrvL:nNumAlb ) + ::oAlbPrvL:cSufAlb, ::oAlbPrvT, "dFecAlb" )
    ::oDbfTmp:cCodCli    := oRetFld( ::oAlbPrvL:cSerAlb + Str( ::oAlbPrvL:nNumAlb ) + ::oAlbPrvL:cSufAlb, ::oAlbPrvT, "cCodPrv" )
    ::oDbfTmp:cNomCli    := oRetFld( ::oAlbPrvL:cSerAlb + Str( ::oAlbPrvL:nNumAlb ) + ::oAlbPrvL:cSufAlb, ::oAlbPrvT, "cNomPrv" )
@@ -969,7 +969,7 @@ METHOD AddFacPrv()
    ::oDbfTmp:cCodigo    := ::oFacPrvL:cRef
    ::oDbfTmp:cNomArt    := ::oFacPrvL:cDetalle
    ::oDbfTmp:cLote      := ::oFacPrvL:cLote
-   ::oDbfTmp:nUnidades  := nTotNFacPrv( ::oFacPrvL:cName )
+   ::oDbfTmp:nUnidades  := nTotNFacPrv( ::oFacPrvL:cAlias )
    ::oDbfTmp:dFecDoc    := oRetFld( ::oFacPrvL:cSerFac + Str( ::oFacPrvL:nNumFac ) + ::oFacPrvL:cSufFac, ::oFacPrvT, "dFecFac" )
    ::oDbfTmp:cCodCli    := oRetFld( ::oFacPrvL:cSerFac + Str( ::oFacPrvL:nNumFac ) + ::oFacPrvL:cSufFac, ::oFacPrvT, "cCodPrv" )
    ::oDbfTmp:cNomCli    := oRetFld( ::oFacPrvL:cSerFac + Str( ::oFacPrvL:nNumFac ) + ::oFacPrvL:cSufFac, ::oFacPrvT, "cNomPrv" )
@@ -991,7 +991,7 @@ METHOD AddPreCli()
    ::oDbfTmp:cCodigo    := ::oPreCliL:cRef
    ::oDbfTmp:cNomArt    := ::oPreCliL:cDetalle
    ::oDbfTmp:cLote      := ::oPreCliL:cLote
-   ::oDbfTmp:nUnidades  := nTotNPreCli( ::oPreCliL:cName )
+   ::oDbfTmp:nUnidades  := nTotNPreCli( ::oPreCliL:cAlias )
    ::oDbfTmp:dFecDoc    := oRetFld( ::oPreCliL:cSerPre + Str( ::oPreCliL:nNumPre ) + ::oPreCliL:cSufPre, ::oPreCliT, "dFecPre" )
    ::oDbfTmp:cCodCli    := oRetFld( ::oPreCliL:cSerPre + Str( ::oPreCliL:nNumPre ) + ::oPreCliL:cSufPre, ::oPreCliT, "cCodCli" )
    ::oDbfTmp:cNomCli    := oRetFld( ::oPreCliL:cSerPre + Str( ::oPreCliL:nNumPre ) + ::oPreCliL:cSufPre, ::oPreCliT, "cNomCli" )
@@ -1013,7 +1013,7 @@ METHOD AddPedCli()
    ::oDbfTmp:cCodigo    := ::oPedCliL:cRef
    ::oDbfTmp:cNomArt    := ::oPedCliL:cDetalle
    ::oDbfTmp:cLote      := ::oPedCliL:cLote
-   ::oDbfTmp:nUnidades  := nTotNPedCli( ::oPedCliL:cName )
+   ::oDbfTmp:nUnidades  := nTotNPedCli( ::oPedCliL:cAlias )
    ::oDbfTmp:dFecDoc    := oRetFld( ::oPedCliL:cSerPed + Str( ::oPedCliL:nNumPed ) + ::oPedCliL:cSufPed, ::oPedCliT, "dFecPed" )
    ::oDbfTmp:cCodCli    := oRetFld( ::oPedCliL:cSerPed + Str( ::oPedCliL:nNumPed ) + ::oPedCliL:cSufPed, ::oPedCliT, "cCodCli" )
    ::oDbfTmp:cNomCli    := oRetFld( ::oPedCliL:cSerPed + Str( ::oPedCliL:nNumPed ) + ::oPedCliL:cSufPed, ::oPedCliT, "cNomCli" )
@@ -1035,7 +1035,7 @@ METHOD AddAlbCli()
    ::oDbfTmp:cCodigo    := ::oAlbCliL:cRef
    ::oDbfTmp:cNomArt    := ::oAlbCliL:cDetalle
    ::oDbfTmp:cLote      := ::oAlbCliL:cLote
-   ::oDbfTmp:nUnidades  := nTotNAlbCli( ::oAlbCliL:cName )
+   ::oDbfTmp:nUnidades  := nTotNAlbCli( ::oAlbCliL:cAlias )
    ::oDbfTmp:dFecDoc    := oRetFld( ::oAlbCliL:cSerAlb + Str( ::oAlbCliL:nNumAlb ) + ::oAlbCliL:cSufAlb, ::oAlbCliT, "dFecAlb" )
    ::oDbfTmp:cCodCli    := oRetFld( ::oAlbCliL:cSerAlb + Str( ::oAlbCliL:nNumAlb ) + ::oAlbCliL:cSufAlb, ::oAlbCliT, "cCodCli" )
    ::oDbfTmp:cNomCli    := oRetFld( ::oAlbCliL:cSerAlb + Str( ::oAlbCliL:nNumAlb ) + ::oAlbCliL:cSufAlb, ::oAlbCliT, "cNomCli" )
@@ -1049,7 +1049,6 @@ RETURN ( Self )
 
 METHOD AddFacCli()
 
-
    ::oDbfTmp:Append()
    ::oDbfTmp:cTipDoc    := "Factura de cliente"
    ::oDbfTmp:cNumDoc    := ::oFacCliL:cSerie + "/" + Ltrim( Str( ::oFacCliL:nNumFac ) ) + "/" + ::oFacCliL:cSufFac
@@ -1057,7 +1056,7 @@ METHOD AddFacCli()
    ::oDbfTmp:cCodigo    := ::oFacCliL:cRef
    ::oDbfTmp:cNomArt    := ::oFacCliL:cDetalle
    ::oDbfTmp:cLote      := ::oFacCliL:cLote
-   ::oDbfTmp:nUnidades  := nTotNFacCli( ::oFacCliL:cName )
+   ::oDbfTmp:nUnidades  := nTotNFacCli( ::oFacCliL:cAlias )
    ::oDbfTmp:dFecDoc    := oRetFld( ::oFacCliL:cSerie + Str( ::oFacCliL:nNumFac ) + ::oFacCliL:cSufFac, ::oFacCliT, "dFecFac" )
    ::oDbfTmp:cCodCli    := oRetFld( ::oFacCliL:cSerie + Str( ::oFacCliL:nNumFac ) + ::oFacCliL:cSufFac, ::oFacCliT, "cCodCli" )
    ::oDbfTmp:cNomCli    := oRetFld( ::oFacCliL:cSerie + Str( ::oFacCliL:nNumFac ) + ::oFacCliL:cSufFac, ::oFacCliT, "cNomCli" )
@@ -1079,7 +1078,7 @@ METHOD AddFacRec()
    ::oDbfTmp:cCodigo    := ::oFacRecL:cRef
    ::oDbfTmp:cNomArt    := ::oFacRecL:cDetalle
    ::oDbfTmp:cLote      := ::oFacRecL:cLote
-   ::oDbfTmp:nUnidades  := nTotNFacRec( ::oFacRecL:cName )
+   ::oDbfTmp:nUnidades  := nTotNFacRec( ::oFacRecL:cAlias )
    ::oDbfTmp:dFecDoc    := oRetFld( ::oFacRecL:cSerie + Str( ::oFacRecL:nNumFac ) + ::oFacRecL:cSufFac, ::oFacRecT, "dFecFac" )
    ::oDbfTmp:cCodCli    := oRetFld( ::oFacRecL:cSerie + Str( ::oFacRecL:nNumFac ) + ::oFacRecL:cSufFac, ::oFacRecT, "cCodCli" )
    ::oDbfTmp:cNomCli    := oRetFld( ::oFacRecL:cSerie + Str( ::oFacRecL:nNumFac ) + ::oFacRecL:cSufFac, ::oFacRecT, "cNomCli" )
@@ -1100,7 +1099,7 @@ METHOD AddTikCli()
    ::oDbfTmp:cCodigo    := ::oTikCliL:cCbaTil
    ::oDbfTmp:cNomArt    := ::oTikCliL:cNomTil
    ::oDbfTmp:cLote      := ::oTikCliL:cLote
-   ::oDbfTmp:nUnidades  := nTotNTpv( ::oTikCliL:cName )
+   ::oDbfTmp:nUnidades  := nTotNTpv( ::oTikCliL:cAlias )
    ::oDbfTmp:dFecDoc    := oRetFld( ::oTikCliL:cSerTil + ::oTikCliL:cNumTil + ::oTikCliL:cSufTil, ::oTikCliT, "dFecTik" )
    ::oDbfTmp:cCodCli    := oRetFld( ::oTikCliL:cSerTil + ::oTikCliL:cNumTil + ::oTikCliL:cSufTil, ::oTikCliT, "cCliTik" )
    ::oDbfTmp:cNomCli    := oRetFld( ::oTikCliL:cSerTil + ::oTikCliL:cNumTil + ::oTikCliL:cSufTil, ::oTikCliT, "cNomTik" )

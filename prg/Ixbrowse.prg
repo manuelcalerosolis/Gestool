@@ -190,11 +190,15 @@ METHOD LoadData()
       end if
       */
 
-      hHistroy          := HistoricosUsuariosModel():getHistory( ::cName )
+      if !Empty( HistoricosUsuariosModel() ) //Comprobación para galería vieja de informes
 
-      if !empty( hHistroy )
-         ::restoreState( hget( hHistroy, "cBrowseState" ) )
-      end if 
+         hHistroy          := HistoricosUsuariosModel():getHistory( ::cName )
+
+         if !empty( hHistroy )
+            ::restoreState( hget( hHistroy, "cBrowseState" ) )
+         end if 
+
+      end if
 
    RECOVER USING oError
 

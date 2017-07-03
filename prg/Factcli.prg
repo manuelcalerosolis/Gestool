@@ -1052,6 +1052,18 @@ FUNCTION FactCli( oMenuItem, oWnd, hHash )
          :lHide            := .t.
       end with
 
+      with object ( oWndBrw:AddXCol() )
+         :cHeader          := "Bultos"
+         :bEditValue       := {|| ( D():FacturasClientes( nView ) )->nBultos }
+         :cEditPicture     := "99999"
+         :nWidth           := 95
+         :nDataStrAlign    := 1
+         :nHeadStrAlign    := 1
+         :lHide            := .t.
+         :nEditType        := 1
+         :bOnPostEdit      := {|oCol, uNewValue, nKey| ChangeBultos( oCol, uNewValue, nKey ) }
+      end with
+
    oDetCamposExtra:addCamposExtra( oWndBrw )
 
    oWndBrw:cHtmlHelp    := "Factura a clientes"
@@ -23154,5 +23166,20 @@ static Function menuEdtDet( oCodArt, oDlg, lOferta, nIdLin )
    oDlg:SetMenu( oDetMenu )
 
 Return ( oDetMenu )
+
+//---------------------------------------------------------------------------//
+
+Static Function ChangeBultos( oCol, uNewValue, nKey )
+
+   if IsNum( nKey ) .and. ( nKey != VK_ESCAPE ) .and. !IsNil( uNewValue )
+
+      if dbLock( D():FacturasClientes( nView ) )
+         ( D():FacturasClientes( nView ) )->nBultos    := uNewValue
+         ( D():FacturasClientes( nView ) )
+      end if
+
+   end if
+
+Return .t.
 
 //---------------------------------------------------------------------------//
