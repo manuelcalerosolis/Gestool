@@ -51,18 +51,13 @@ RETURN ( Self )
 
 //---------------------------------------------------------------------------//
 
-METHOD arrayTiposImpresoras()
+METHOD arrayTiposImpresoras() 
 
    local cSentence               := "SELECT nombre FROM " + ::cTableName
    local aResult                 := ::selectFetchArray( cSentence )
 
-<<<<<<< HEAD
-   if !empty( aResult )
-      aadd( aResult, "" )
-=======
    if hb_isnil( aResult )
       aResult                    := {}
->>>>>>> 889dcf498cc76ec3cb65771747723c41d235b711
    end if 
 
    aadd( aResult, "" )
