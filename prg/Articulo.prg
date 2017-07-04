@@ -245,6 +245,7 @@ STATIC FUNCTION OpenFiles( lExt, cPath )
    local oBlock
    local nSeconds
    local nStockArticulo
+   local oTipoImpresorasModel
 
    if lOpenFiles
       MsgStop( 'Imposible abrir ficheros de artículos' )
@@ -476,7 +477,11 @@ STATIC FUNCTION OpenFiles( lExt, cPath )
          TComercioConfig():getInstance():loadJSON()
       end if
 
-      aTiposImpresoras     := TiposImpresorasModel():New():arrayTiposImpresoras()
+      oTipoImpresorasModel := TiposImpresorasModel():New()
+
+      if !Empty( oTipoImpresorasModel )
+         aTiposImpresoras  := oTipoImpresorasModel:arrayTiposImpresoras()
+      end if
 
       /*
       Cargamos el valor del Euro y de la Peseta-----------------------------------
