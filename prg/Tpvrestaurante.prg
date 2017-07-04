@@ -183,69 +183,69 @@ CLASS TTpvRestaurante FROM TMasDet
    DATA cArticulo
    DATA lMultiplicar       AS LOGIC    INIT .f.
 
-   Method New( cPath, oWndParent, oMenuItem )
-   Method Create( cPath )
+   METHOD New( cPath, oWndParent, oMenuItem )
+   METHOD Create( cPath )
 
-   Method SetSender( oSender )   INLINE ( ::oSender := oSender )
+   METHOD SetSender( oSender )   INLINE ( ::oSender := oSender )
 
-   Method End()
+   METHOD End()
 
-   Method Selector( lPuntosPendientes, lLlevar )
+   METHOD Selector( lPuntosPendientes, lLlevar )
 
-   Method BuildSalas()
-   Method InitSala()
-   Method Sala( lPuntosPendientes )
+   METHOD BuildSalas()
+   METHOD InitSala()
+   METHOD Sala( lPuntosPendientes )
 
-   Method OpenFiles( lExclusive )
-   Message OpenService( lExclusive )   Method OpenFiles( lExclusive )
-   Method CloseFiles()
-   Method DefineFiles()
+   METHOD OpenFiles( lExclusive )
+   MESSAGE OpenService( lExclusive )   METHOD OpenFiles( lExclusive )
+   METHOD CloseFiles()
+   METHOD DefineFiles()
 
-   Method SetPunto( sPunto )
+   METHOD SetPunto( sPunto )
 
-   Method cSelected()            INLINE ( if( !empty( ::cSelectedSala ), ::cSelectedSala + ::cSelectedPunto, Space( 3 ) + ::cSelectedPunto ) )
+   METHOD cSelected()                  INLINE ( if( !empty( ::cSelectedSala ), ::cSelectedSala + ::cSelectedPunto, Space( 3 ) + ::cSelectedPunto ) )
 
-   Method cTextoSala()
+   METHOD cTextoSala()
 
-   Method SetTicket()
+   METHOD SetTicket()
 
-   Method Resource( nMode )
+   METHOD Resource( nMode )
 
-   Method lPreSave( nMode )
+   METHOD lPreSave( nMode )
 
-   Method Dialog()
-   Method InitDialog( oImgUsr, oLstUsr )
-   Method SelectDialog( nOpt, oDlg, oLstSala )
+   METHOD Dialog()
+   METHOD InitDialog( oImgUsr, oLstUsr )
+   METHOD SelectDialog( nOpt, oDlg, oLstSala )
 
-   Method Tikets()
-   Method InitTikets( oImgUsr, oLstUsr )
-   Method SelectTikets( nOpt, oDlg, oLstSala )
+   METHOD Tikets()
+   METHOD InitTikets( oImgUsr, oLstUsr )
+   METHOD SelectTikets( nOpt, oDlg, oLstSala )
 
-   Method Reset( oBtnTarifa )
+   METHOD Reset( oBtnTarifa )
 
-   Method ConfigButton( oBtnTarifa )
+   METHOD ConfigButton( oBtnTarifa )
 
-   Method cTextoPunto( sSala, sPunto )
-   Method cTextoGenerico( sPunto )
-   Method cTextoTiket( sSala, sPunto )
-   Method nStatePunto( sPunto )
-   Method nImagenPunto( sPunto, n )
-   Method nImagenTiket( sSala, sPunto, n )
+   METHOD cTextoPunto( sSala, sPunto )
+   METHOD cTextoGenerico( sPunto )
+   METHOD cTextoTiket( sSala, sPunto )
+   METHOD nStatePunto( sPunto )
+   METHOD nImagenPunto( sPunto, n )
+   METHOD nImagenTiket( sSala, sPunto, n )
 
-   Method lCambiaPunto( cTiket ) INLINE ( !empty( ::cSelectedTiket ) .and. ( cTiket != ::cSelectedTiket ) )
+   METHOD lCambiaPunto( cTiket ) INLINE ( !empty( ::cSelectedTiket ) .and. ( cTiket != ::cSelectedTiket ) )
 
-   Method cSelectedTicket()      INLINE ( ::cSelectedTiket )
+   METHOD cSelectedTicket()      INLINE ( ::cSelectedTiket )
 
-   Method SetSelected( aTmp )
-   Method SetSelectedImagen()
-   Method SetSelectedTexto()
+   METHOD SetSelected( aTmp )
+   METHOD SetSelectedImagen()
+   METHOD SetSelectedTexto()
 
-   Method SetGenerico( sPunto )
-   Method SetLlevar( sPunto )
+   METHOD SetGenerico( sPunto )
+   METHOD SetLlevar( sPunto )
 
-   Method lLlevar()              INLINE ( empty( ::cSelectedSala ) .and. AllTrim( ::cSelectedPunto ) == "Llevar" )
-   Method lGeneric()             INLINE ( !::lNotGeneric() )
-   Method lNotGeneric()          INLINE ( !empty( ::cSelectedSala ) .and. !empty( ::cSelectedPunto ) )
+   METHOD lLlevar()              INLINE ( empty( ::cSelectedSala ) .and. AllTrim( ::cSelectedPunto ) == "Llevar" )
+   METHOD lGeneric()             INLINE ( !::lNotGeneric() )
+   METHOD lNotGeneric()          INLINE ( !empty( ::cSelectedSala ) .and. !empty( ::cSelectedPunto ) )
 
    METHOD cImagen()              INLINE ( ::aImagen[ Min( Max( ::oDbf:nImagen, 1 ), len( ::aImagen ) ) ] )
    METHOD cPrecio()              INLINE ( ::aPrecio[ Min( Max( ::oDbf:nPrecio, 1 ), len( ::aPrecio ) ) ] )
@@ -255,9 +255,9 @@ CLASS TTpvRestaurante FROM TMasDet
 
    METHOD cTextoPrecio( nPrecio )
 
-   Method GetSelectedTexto()
+   METHOD GetSelectedTexto()
 
-   Method SetSalaVta( aTmp, dbfTikT )
+   METHOD SetSalaVta( aTmp, dbfTikT )
 
    METHOD SelectedPrecio( nPrecio )       INLINE ( if(   !empty( nPrecio ),;
                                                          ::nSelectedPrecio    := if( nPrecio == 7, Max( uFieldEmpresa( "nPreTPro" ), 1 ), nPrecio ),;
@@ -313,7 +313,7 @@ RETURN ( Self )
 
 //---------------------------------------------------------------------------//
 
-Method Selector( lPuntosPendientes, lLlevar, nSelectOption ) CLASS TTpvRestaurante
+METHOD Selector( lPuntosPendientes, lLlevar, nSelectOption ) CLASS TTpvRestaurante
 
    local lSelector         := .t.
 
@@ -356,7 +356,7 @@ Return ( lSelector )
 // Han seleccionado un ticket
 //
 
-Method SetTicket() CLASS TTpvRestaurante
+METHOD SetTicket() CLASS TTpvRestaurante
 
    local aStatus
 
@@ -412,7 +412,7 @@ Return ( Self )
 
 //---------------------------------------------------------------------------//
 
-Method Sala( lPuntosPendientes, lLlevar, nSelectOption ) CLASS TTpvRestaurante
+METHOD Sala( lPuntosPendientes, lLlevar, nSelectOption ) CLASS TTpvRestaurante
 
    if Len( ::aSalas ) < 1
       MsgStop( "No existen salas de ventas para seleccionar" )
@@ -451,7 +451,7 @@ Return ( .t. )
 
 //---------------------------------------------------------------------------//
 
-Method BuildSalas() CLASS TTpvRestaurante
+METHOD BuildSalas() CLASS TTpvRestaurante
 
    local n                 := 0
    local sSala
@@ -499,7 +499,7 @@ RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 
-Method InitSala() CLASS TTpvRestaurante
+METHOD InitSala() CLASS TTpvRestaurante
 
    do case
       case ( IsTrue( ::lPuntosVenta ) )
@@ -610,7 +610,7 @@ RETURN ( ::oDbf )
 
 //---------------------------------------------------------------------------//
 
-Method End() CLASS TTpvRestaurante
+METHOD End() CLASS TTpvRestaurante
 
    if !empty( ::oSalon )
       ::oSalon:End()
@@ -749,7 +749,7 @@ Return .t.
 
 //--------------------------------------------------------------------------//
 
-Method Dialog( oBtnTarifa, lPuntosLibres ) CLASS TTpvRestaurante
+METHOD Dialog( oBtnTarifa, lPuntosLibres ) CLASS TTpvRestaurante
 
    local oDlg
    local oImgSala
@@ -783,7 +783,7 @@ Return ( Self )
 
 //--------------------------------------------------------------------------//
 
-Method InitDialog( oImgSala, oLstSala, lPuntosLibres ) CLASS TTpvRestaurante
+METHOD InitDialog( oImgSala, oLstSala, lPuntosLibres ) CLASS TTpvRestaurante
 
    local n                 := 0
    local sSala
@@ -824,7 +824,7 @@ Return ( Self )
 
 //---------------------------------------------------------------------------//
 
-Method SelectDialog( nOpt, oDlg, oBtnTarifa, lPuntosLibres ) CLASS TTpvRestaurante
+METHOD SelectDialog( nOpt, oDlg, oBtnTarifa, lPuntosLibres ) CLASS TTpvRestaurante
 
    local sSala
    local sPunto
@@ -870,7 +870,7 @@ Return ( Self )
 
 //---------------------------------------------------------------------------//
 
-Method Tikets( oBtnTarifa, oBtnRenombrar ) CLASS TTpvRestaurante
+METHOD Tikets( oBtnTarifa, oBtnRenombrar ) CLASS TTpvRestaurante
 
    local oDlg
    local oImgSala
@@ -896,7 +896,7 @@ Return ( oDlg:nResult == IDOK )
 
 //--------------------------------------------------------------------------//
 
-Method InitTikets( oImgSala, oLstSala ) CLASS TTpvRestaurante
+METHOD InitTikets( oImgSala, oLstSala ) CLASS TTpvRestaurante
 
    local n           := 0
    local nOrd
@@ -1059,7 +1059,7 @@ Return ( Self )
 
 //---------------------------------------------------------------------------//
 
-Method SelectTikets( nOpt, oDlg, oBtnTarifa, oBtnRenombrar ) CLASS TTpvRestaurante
+METHOD SelectTikets( nOpt, oDlg, oBtnTarifa, oBtnRenombrar ) CLASS TTpvRestaurante
 
    local sPunto            := ::aTikets[ Min( Max( nOpt, 1 ), len( ::aTikets ) ) ]
 
@@ -1080,7 +1080,7 @@ Return ( Self )
 
 //---------------------------------------------------------------------------//
 
-Method ConfigButton( oBtnTarifa, oBtnRenombrar ) CLASS TTpvRestaurante
+METHOD ConfigButton( oBtnTarifa, oBtnRenombrar ) CLASS TTpvRestaurante
 
    do case
       case ( IsNil( ::lPuntosVenta ) )
@@ -1125,7 +1125,7 @@ Return ( Self )
 
 //---------------------------------------------------------------------------//
 
-Method Reset( oBtnTarifa ) CLASS TTpvRestaurante
+METHOD Reset( oBtnTarifa ) CLASS TTpvRestaurante
 
    if !empty( oBtnTarifa )
       oBtnTarifa:cBmp( "gc_cup_48" )
@@ -1136,7 +1136,7 @@ RETURN ( Self )
 
 //---------------------------------------------------------------------------//
 
-Method nImagenTiket( sSala, sPunto, n ) CLASS TTpvRestaurante
+METHOD nImagenTiket( sSala, sPunto, n ) CLASS TTpvRestaurante
 
    local nImagen        := ( ( ( n + 1 ) * 2 ) - 2 )
 
@@ -1154,7 +1154,7 @@ RETURN ( nImagen )
 
 //---------------------------------------------------------------------------//
 
-Method nStatePunto( sPunto ) CLASS TTpvRestaurante
+METHOD nStatePunto( sPunto ) CLASS TTpvRestaurante
 
    local nImagen        := 1
 
@@ -1174,7 +1174,7 @@ RETURN ( nImagen )
 
 //---------------------------------------------------------------------------//
 
-Method nImagenPunto( sPunto, n ) CLASS TTpvRestaurante
+METHOD nImagenPunto( sPunto, n ) CLASS TTpvRestaurante
 
    local nImagen        := ( ( ( n + 1 ) * 2 ) - 2 )
 
@@ -1192,7 +1192,7 @@ RETURN ( nImagen )
 
 //---------------------------------------------------------------------------//
 
-Method cTextoTiket( sPunto ) CLASS TTpvRestaurante
+METHOD cTextoTiket( sPunto ) CLASS TTpvRestaurante
 
    local cTextoPunto
 
@@ -1211,7 +1211,7 @@ RETURN ( cTextoPunto )
 
 //---------------------------------------------------------------------------//
 
-Method cTextoPunto( sPunto ) CLASS TTpvRestaurante
+METHOD cTextoPunto( sPunto ) CLASS TTpvRestaurante
 
    local cTextoPunto
 
@@ -1238,7 +1238,7 @@ RETURN ( cTextoPunto )
 
 //---------------------------------------------------------------------------//
 
-Method cTextoGenerico( sPunto ) CLASS TTpvRestaurante
+METHOD cTextoGenerico( sPunto ) CLASS TTpvRestaurante
 
    local nRecno
    local cTextoPunto
@@ -1282,7 +1282,7 @@ Return ( ::aPrecio[ Min( Max( nPrecio, 1 ), len( ::aPrecio ) ) ] )
 
 //---------------------------------------------------------------------------//
 
-Method SetSelectedImagen() CLASS TTpvRestaurante
+METHOD SetSelectedImagen() CLASS TTpvRestaurante
 
    local nScan
 
@@ -1310,7 +1310,7 @@ Return ( Self )
 
 //---------------------------------------------------------------------------//
 
-Method SetSelectedTexto() CLASS TTpvRestaurante
+METHOD SetSelectedTexto() CLASS TTpvRestaurante
 
    local nScan
 
@@ -1333,7 +1333,7 @@ Return ( Self )
 
 //---------------------------------------------------------------------------//
 
-Method SetGenerico( sPunto ) CLASS TTpvRestaurante
+METHOD SetGenerico( sPunto ) CLASS TTpvRestaurante
 
    ::cSelectedSala               := ""
    ::cSelectedPunto              := "General"
@@ -1353,7 +1353,7 @@ Return ( Self )
 
 //---------------------------------------------------------------------------//
 
-Method SetLlevar( sPunto ) CLASS TTpvRestaurante
+METHOD SetLlevar( sPunto ) CLASS TTpvRestaurante
 
    ::cSelectedSala               := ""
    ::cSelectedPunto              := "Llevar"
@@ -1373,7 +1373,7 @@ Return ( Self )
 
 //---------------------------------------------------------------------------//
 
-Method SetSelected( uTmp, sPunto ) CLASS TTpvRestaurante
+METHOD SetSelected( uTmp, sPunto ) CLASS TTpvRestaurante
 
    if empty( sPunto )
       if !empty( ::oSelectedPunto )
@@ -1444,7 +1444,7 @@ Return ( Self )
 
 //---------------------------------------------------------------------------//
 
-Method GetSelectedTexto( lExtend ) CLASS TTpvRestaurante
+METHOD GetSelectedTexto( lExtend ) CLASS TTpvRestaurante
 
    local nRecno
    local cTextoPunto    := Rtrim( ::cSelectedPunto )
@@ -1455,7 +1455,7 @@ Return ( cTextoPunto )
 
 //---------------------------------------------------------------------------//
 
-Method SetSalaVta( aTmp, dbfTikT ) CLASS TTpvRestaurante
+METHOD SetSalaVta( aTmp, dbfTikT ) CLASS TTpvRestaurante
 
    DEFAULT dbfTikT   := ::cTikT
 
@@ -1483,7 +1483,7 @@ return .t.
 
 //---------------------------------------------------------------------------//
 
-Method SetPunto( sPunto ) CLASS TTpvRestaurante
+METHOD SetPunto( sPunto ) CLASS TTpvRestaurante
 
    if !empty( sPunto )
 
@@ -1517,7 +1517,7 @@ Return ( Self )
 
 //---------------------------------------------------------------------------//
 
-Method cTextoSala( cSala ) CLASS TTpvRestaurante
+METHOD cTextoSala( cSala ) CLASS TTpvRestaurante
 
    local nScan
    local cTextoSala  := ""
@@ -1545,7 +1545,7 @@ CLASS TDetSalaVenta FROM TDet
    METHOD OpenFiles( lExclusive )
    MESSAGE OpenService( lExclusive )   METHOD OpenFiles( lExclusive )
 
-   Method CloseFiles()
+   METHOD CloseFiles()
 
    METHOD DefineFiles()
 

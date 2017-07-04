@@ -1642,47 +1642,20 @@ Method CreateMesa( oSalon, lPuntosPendientes ) CLASS sPunto
    Crea la mesa----------------------------------------------------------------
    */
 
-   if !lPda()
+   oMesa                := oSalon:ClickSalon( ::nTipo, ::nFila, ::nColumna, ::cPuntoVenta )
 
-      oMesa                := oSalon:ClickSalon( ::nTipo, ::nFila, ::nColumna, ::cPuntoVenta )
+   if !Empty( oMesa ) .and. IsChar( oMesa:cTooltip )
 
-      if !Empty( oMesa ) .and. IsChar( oMesa:cTooltip )
+      oMesa:nEstado     := ::nEstado
 
-         oMesa:nEstado     := ::nEstado
+      oMesa:sPunto      := Self
 
-         oMesa:sPunto      := Self
-
-         if ( IsTrue( lPuntosPendientes ) .and. ::nEstado <= 1 )
-            oMesa:Disable()
-         end if
-
-         if ( IsFalse( lPuntosPendientes ) .and. ::nEstado > 1 )
-            oMesa:Disable()
-         end if
-
+      if ( IsTrue( lPuntosPendientes ) .and. ::nEstado <= 1 )
+         oMesa:Disable()
       end if
 
-   else
-
-      if !Empty( ::cPuntoVenta )
-
-         ::aMesas          := {}
-
-         oMesa             := oSalon:ClickSalonTS( ::nTipo, ::nFila, ::nColumna, Self )
-
-         if !Empty( oMesa ) .and. IsChar( oMesa:oBtnBmp:cTooltip )
-
-            oMesa:nEstado  := ::nEstado
-            oMesa:sPunto   := Self
-
-            if ( IsTrue( lPuntosPendientes ) .and. ::nEstado <= 1 )
-               oMesa:Disable()
-            end if
-
-         end if
-
-         aAdd( ::aMesas, oMesa )
-
+      if ( IsFalse( lPuntosPendientes ) .and. ::nEstado > 1 )
+         oMesa:Disable()
       end if
 
    end if

@@ -190,8 +190,8 @@ METHOD New( nTop, nLeft, nType, oWnd ) CLASS TTpvMesa
    local oBlock
    local oError
 
-   oBlock            := ErrorBlock( {| oError | ApoloBreak( oError ) } )
-   BEGIN SEQUENCE
+   // oBlock            := ErrorBlock( {| oError | ApoloBreak( oError ) } )
+   // BEGIN SEQUENCE
 
       ::nStyle       := nOR( WS_CHILD, WS_VISIBLE, WS_TABSTOP, 0 ) //, WS_CLIPCHILDREN
       ::nId          := ::GetNewId()
@@ -226,13 +226,13 @@ METHOD New( nTop, nLeft, nType, oWnd ) CLASS TTpvMesa
          ::oWnd:DefControl( Self )
       endif
 
-   RECOVER USING oError
+   //RECOVER USING oError
 
-      msgStop( ErrorMessage( oError ), "Error al crear mesas" )
+   //   msgStop( ErrorMessage( oError ), "Error al crear mesas" )
 
-   END SEQUENCE
+   //END SEQUENCE
 
-   ErrorBlock( oBlock )
+   // ErrorBlock( oBlock )
 
 Return ( Self )
 
@@ -552,11 +552,11 @@ Return ( Self )
 
 METHOD aCargaLineasToolTip()
 
+   local oLineas
    local aLineas  := {}
    local oParent  := ::oSender:oSender:oSender:oSender
    local nRec     := oParent:oTiketLinea:Recno()
    local nOrdAnt  := oParent:oTiketLinea:OrdSetFocus( "CNUMTIL" )
-   local oLineas
 
    if oParent:oTiketLinea:Seek( ::oSender:cSerie + ::oSender:cNumero + ::oSender:cSufijo )
 

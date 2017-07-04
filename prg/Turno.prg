@@ -403,246 +403,246 @@ CLASS TTurno FROM TMasDet
 
    DATA lArqueoCiego                               INIT .f.
 
-   Method New( cPath, oWndParent, oMenuItem )
-   Method Initiate( cText, oSender )               CONSTRUCTOR
-   Method Build( cPath, oWndParent, oMenuItem )    CONSTRUCTOR
+   METHOD New( cPath, oWndParent, oMenuItem )
+   METHOD Initiate( cText, oSender )               CONSTRUCTOR
+   METHOD Build( cPath, oWndParent, oMenuItem )    CONSTRUCTOR
 
    METHOD lArqueoTactil()                          INLINE lTactilMode()
 
    // Ficheros ----------------------------------------------------------------
 
-   Method OpenFiles( lExclusive )
-   Method OpenService( lExclusive )
-   Method CloseFiles()
-   Method CloseService()
-   Method DefineFiles()
-   Method CheckFiles()
+   METHOD OpenFiles( lExclusive )
+   METHOD OpenService( lExclusive )
+   METHOD CloseFiles()
+   METHOD CloseService()
+   METHOD DefineFiles()
+   METHOD CheckFiles()
 
-   Method Resource( nMode )
-      Method Activate()
+   METHOD Resource( nMode )
+      METHOD Activate()
 
-   Method lOpenTurno()
-   Method lOpenCaja()
-   Method lAnyOpenCaja()
+   METHOD lOpenTurno()
+   METHOD lOpenCaja()
+   METHOD lAnyOpenCaja()
 
-   Method lCloseCaja()
+   METHOD lCloseCaja()
    
-   Method lAllCloseTurno()
-   Method lOneCloseTurno()
+   METHOD lAllCloseTurno()
+   METHOD lOneCloseTurno()
 
-   Method lCloseCajaSeleccionada( oDlg )
+   METHOD lCloseCajaSeleccionada( oDlg )
 
-   Method DialogCreateTurno()
-      Method StartCreateTurno( oImporte, oDivisa, oBmpDiv, oCodUsr )
-      Method CreateTurno( oDlg )
-         Method CreateCabeceraTruno()
-         Method CreateCajaTurno()
-         Method CreateEntradaTurno()
+   METHOD DialogCreateTurno()
+      METHOD StartCreateTurno( oImporte, oDivisa, oBmpDiv, oCodUsr )
+      METHOD CreateTurno( oDlg )
+         METHOD CreateCabeceraTruno()
+         METHOD CreateCajaTurno()
+         METHOD CreateEntradaTurno()
 
-   Method cNombreUser()
+   METHOD cNombreUser()
 
    METHOD SetCurrentTurno()                        INLINE   ( ::cCurTurno  := ::oDbf:cNumTur + ::oDbf:cSufTur )
-   Method GetCurrentTurno()                        INLINE   ( ::GetLastOpen() )
-   Method GoCurrentTurno()
+   METHOD GetCurrentTurno()                        INLINE   ( ::GetLastOpen() )
+   METHOD GoCurrentTurno()
 
    METHOD GetCurrentCaja()                         INLINE   ( ::cCurCaja   := oUser():cCaja() )
 
    METHOD GetFullTurno()                           INLINE   ( ::cCurTurno + ::cCurCaja )
 
-   Method cValidTurno()
+   METHOD cValidTurno()
 
-   Method lSelectTurno( lSel )
-   Method lSelectAll( lSel )
-   Method MarkTurno( lMark )
+   METHOD lSelectTurno( lSel )
+   METHOD lSelectAll( lSel )
+   METHOD MarkTurno( lMark )
 
-   Method lInvCierre()
-   Method InvCierre( oAni, oMsg )
+   METHOD lInvCierre()
+   METHOD InvCierre( oAni, oMsg )
 
    // Dialogo de cierre de turno-----------------------------------------------
 
    DATA  oDlgTurno
    DATA  oFldTurno
 
-   Method lArqueoTurno( lZoom, lParcial )
-      Method InitArqueoTurno()
-      Method StartArqueoTurno()
-      Method GoPrev( oBrwCnt, oBrwCaj )
-      Method GoNext()
+   METHOD lArqueoTurno( lZoom, lParcial )
+      METHOD InitArqueoTurno()
+      METHOD StartArqueoTurno()
+      METHOD GoPrev( oBrwCnt, oBrwCaj )
+      METHOD GoNext()
 
-   Method lIsContadores()
-   Method LoadContadores()
-   Method TotContadores()
+   METHOD lIsContadores()
+   METHOD LoadContadores()
+   METHOD TotContadores()
 
-   Method SelCajas()
-   Method SelAllCajas()
-   Method lValidCajas()
-   Method lChangeCajas()
-   Method lAnyCajaSelect()
-   Method lOneCajaSelect()
+   METHOD SelCajas()
+   METHOD SelAllCajas()
+   METHOD lValidCajas()
+   METHOD lChangeCajas()
+   METHOD lAnyCajaSelect()
+   METHOD lOneCajaSelect()
 
-   Method TotVenta( cTurno, cCaja )
-   Method TotEntrada( cTurno, cCaja )
-   Method TotCompra( cTurno, cCaja )
-   Method TotCobro( cTurno, cCaja )
-   Method TotPago( cTurno, cCaja )
-   Method TotTipoIva( cTurno, cCaja  )
+   METHOD TotVenta( cTurno, cCaja )
+   METHOD TotEntrada( cTurno, cCaja )
+   METHOD TotCompra( cTurno, cCaja )
+   METHOD TotCobro( cTurno, cCaja )
+   METHOD TotPago( cTurno, cCaja )
+   METHOD TotTipoIva( cTurno, cCaja  )
 
-   Method lCalTurno()
-   Method ClickBrwTotales()
+   METHOD lCalTurno()
+   METHOD ClickBrwTotales()
 
-   Method GetLastOpen()
-   Method GetLastClose()
-   Method GetLastEfectivo()
+   METHOD GetLastOpen()
+   METHOD GetLastClose()
+   METHOD GetLastEfectivo()
 
-   Method EdtCol( oLbx )
-   Method EdtAnt( oLbx )
+   METHOD EdtCol( oLbx )
+   METHOD EdtAnt( oLbx )
 
-   Method EdtLine( oLbx )
+   METHOD EdtLine( oLbx )
 
-   Method SyncAllDbf()
-   Method Reindexa( oMeter )
+   METHOD SyncAllDbf()
+   METHOD Reindexa( oMeter )
 
-   Method MixApunte( aApunte )
+   METHOD MixApunte( aApunte )
 
-   Method Asiento()
+   METHOD Asiento()
 
-   Method DlgImprimir()
-      Method StartDlgImprimir()
-      Method ExecuteDlgImprimir()
+   METHOD DlgImprimir()
+      METHOD StartDlgImprimir()
+      METHOD ExecuteDlgImprimir()
 
-   Method PrintArqueo( cCodCaj, nDevice, cCaption, cCodDoc, cPrinter, nCopies )
+   METHOD PrintArqueo( cCodCaj, nDevice, cCaption, cCodDoc, cPrinter, nCopies )
 
-   Method DefineTemporal()
-   Method DestroyTemporal()
-   Method AppendInTemporal( cGrupo, cKey, cNaturaleza, nImporte )
-   Method FillTemporal( cCodCaj )
+   METHOD DefineTemporal()
+   METHOD DestroyTemporal()
+   METHOD AppendInTemporal( cGrupo, cKey, cNaturaleza, nImporte )
+   METHOD FillTemporal( cCodCaj )
 
-   Method lNowOpen()
-   Method RellenaIva()
-   Method RollBack()             VIRTUAL
+   METHOD lNowOpen()
+   METHOD RellenaIva()
+   METHOD RollBack()             VIRTUAL
 
-   Method lCloTiket( lClose )
-   Method lCloEntSal( lClose )
-   Method lCloPgoTik( lClose )
-   Method lCloPedPrv( lClose )
-   Method lCloAlbPrv( lClose )
-   Method lCloFacPrv( lClose )
-   Method lCloRctPrv( lClose )
-   Method lCloPreCli( lClose )
-   Method lCloPedCli( lClose )
-   Method lCloAlbCli( lClose )
-   Method lCloFacCli( lClose )
+   METHOD lCloTiket( lClose )
+   METHOD lCloEntSal( lClose )
+   METHOD lCloPgoTik( lClose )
+   METHOD lCloPedPrv( lClose )
+   METHOD lCloAlbPrv( lClose )
+   METHOD lCloFacPrv( lClose )
+   METHOD lCloRctPrv( lClose )
+   METHOD lCloPreCli( lClose )
+   METHOD lCloPedCli( lClose )
+   METHOD lCloAlbCli( lClose )
+   METHOD lCloFacCli( lClose )
 
-   Method ActTactil()
+   METHOD ActTactil()
 
    // Envios-------------------------------------------------------------------
 
-   Method CreateData()
-   Method RestoreData()
-   Method SendData()
-   Method ReciveData()
-   Method nGetNumberToSend()
-   Method SetNumberToSend()      INLINE   WritePProString( "Numero", ::cText, cValToChar( ::nNumberSend ), ::cIniFile )
-   Method IncNumberToSend()      INLINE   WritePProString( "Numero", ::cText, cValToChar( ++::nNumberSend ), ::cIniFile )
-   Method lContaTiket()          VIRTUAL
-   Method Process()
+   METHOD CreateData()
+   METHOD RestoreData()
+   METHOD SendData()
+   METHOD ReciveData()
+   METHOD nGetNumberToSend()
+   METHOD SetNumberToSend()      INLINE   WritePProString( "Numero", ::cText, cValToChar( ::nNumberSend ), ::cIniFile )
+   METHOD IncNumberToSend()      INLINE   WritePProString( "Numero", ::cText, cValToChar( ++::nNumberSend ), ::cIniFile )
+   METHOD lContaTiket()          VIRTUAL
+   METHOD Process()
 
-   Method Save()
-   Method Load()
+   METHOD Save()
+   METHOD Load()
 
-   Method ChangedTreeImpresion() VIRTUAL
+   METHOD ChangedTreeImpresion() VIRTUAL
 
    // Impresion----------------------------------------------------------------
 
-   Method InitDlgImprimir()
-   Method PrintReport( cTurno, cCaja, nDevice, nCopies, cPrinter, dbfDoc )
-   Method DataReport( oFastReport )
-   Method VariableReport( oFastReport )
-   Method DesignReport( dbfDoc )
+   METHOD InitDlgImprimir()
+   METHOD PrintReport( cTurno, cCaja, nDevice, nCopies, cPrinter, dbfDoc )
+   METHOD DataReport( oFastReport )
+   METHOD VariableReport( oFastReport )
+   METHOD DesignReport( dbfDoc )
 
-   Method cTxtAlbaranCliente()  Inline ( ::oAlbCliT:cSerAlb + "/" + Alltrim( Str( ::oAlbCliT:nNumAlb ) ) + "/" + Alltrim( ::oAlbCliT:cSufAlb ) + Space( 1 ) + Dtoc( ::oAlbCliT:dFecAlb ) + Space( 1 ) + ( ::oAlbCliT:cTimCre ) + Space( 1 ) + ::oAlbCliT:cCodCaj + Space( 1 ) + Rtrim( ::oAlbCliT:cCodCli ) + Space( 1 ) + Rtrim( ::oAlbCliT:cNomCli ) )
-   Method nTotAlbaranCliente()  Inline ( ::oAlbCliT:nTotAlb )
-   Method nCntAlbaranCliente()  Inline ( nTotAlbCli( ::oAlbCliT:cSerAlb + Str( ::oAlbCliT:nNumAlb ) + ::oAlbCliT:cSufAlb, ::oAlbCliT:cAlias, ::oAlbCliL:cAlias, ::oIvaImp:cAlias, ::oDbfDiv:cAlias(), nil, cDivEmp(), .f., .f. ) )
-   Method bEdtAlbaranCliente()
+   METHOD cTxtAlbaranCliente()  INLINE ( ::oAlbCliT:cSerAlb + "/" + Alltrim( Str( ::oAlbCliT:nNumAlb ) ) + "/" + Alltrim( ::oAlbCliT:cSufAlb ) + Space( 1 ) + Dtoc( ::oAlbCliT:dFecAlb ) + Space( 1 ) + ( ::oAlbCliT:cTimCre ) + Space( 1 ) + ::oAlbCliT:cCodCaj + Space( 1 ) + Rtrim( ::oAlbCliT:cCodCli ) + Space( 1 ) + Rtrim( ::oAlbCliT:cNomCli ) )
+   METHOD nTotAlbaranCliente()  INLINE ( ::oAlbCliT:nTotAlb )
+   METHOD nCntAlbaranCliente()  INLINE ( nTotAlbCli( ::oAlbCliT:cSerAlb + Str( ::oAlbCliT:nNumAlb ) + ::oAlbCliT:cSufAlb, ::oAlbCliT:cAlias, ::oAlbCliL:cAlias, ::oIvaImp:cAlias, ::oDbfDiv:cAlias(), nil, cDivEmp(), .f., .f. ) )
+   METHOD bEdtAlbaranCliente()
 
-   Method cTxtFacturaCliente()  Inline ( ::oFacCliT:cSerie + "/" + Alltrim( Str( ::oFacCliT:nNumFac ) ) + "/" + Alltrim( ::oFacCliT:cSufFac ) + Space( 1 ) + Dtoc( ::oFacCliT:dFecFac ) + Space( 1 ) + ( ::oFacCliT:cTimCre ) + Space( 1 ) + ::oFacCliT:cCodCaj + Space( 1 ) + Rtrim( ::oFacCliT:cCodCli ) + Space( 1 ) + Rtrim( ::oFacCliT:cNomCli ) )
-   Method nTotFacturaCliente()  Inline ( ::oFacCliT:nTotFac )
-   Method nCntFacturaCliente()  Inline ( nTotFacCli( ::oFacCliT:cSerie + Str( ::oFacCliT:nNumFac ) + ::oFacCliT:cSufFac, ::oFacCliT:cAlias, ::oFacCliL:cAlias, ::oIvaImp:cAlias, ::oDbfDiv:cAlias, ::oFacCliP:cAlias, ::oAntCliT:cAlias, nil, cDivEmp(), .f., .f. ) )
-   Method bEdtFacturaCliente()
+   METHOD cTxtFacturaCliente()  INLINE ( ::oFacCliT:cSerie + "/" + Alltrim( Str( ::oFacCliT:nNumFac ) ) + "/" + Alltrim( ::oFacCliT:cSufFac ) + Space( 1 ) + Dtoc( ::oFacCliT:dFecFac ) + Space( 1 ) + ( ::oFacCliT:cTimCre ) + Space( 1 ) + ::oFacCliT:cCodCaj + Space( 1 ) + Rtrim( ::oFacCliT:cCodCli ) + Space( 1 ) + Rtrim( ::oFacCliT:cNomCli ) )
+   METHOD nTotFacturaCliente()  INLINE ( ::oFacCliT:nTotFac )
+   METHOD nCntFacturaCliente()  INLINE ( nTotFacCli( ::oFacCliT:cSerie + Str( ::oFacCliT:nNumFac ) + ::oFacCliT:cSufFac, ::oFacCliT:cAlias, ::oFacCliL:cAlias, ::oIvaImp:cAlias, ::oDbfDiv:cAlias, ::oFacCliP:cAlias, ::oAntCliT:cAlias, nil, cDivEmp(), .f., .f. ) )
+   METHOD bEdtFacturaCliente()
 
-   Method cTxtFacturaRectificativaCliente()  Inline ( ::oRctCliT:cSerie + "/" + Alltrim( Str( ::oRctCliT:nNumFac ) ) + "/" + Alltrim( ::oRctCliT:cSufFac ) + Space( 1 ) + Dtoc( ::oRctCliT:dFecFac ) + Space( 1 ) + ( ::oRctCliT:cTimCre ) + Space( 1 ) + ::oRctCliT:cCodCaj + Space( 1 ) + Rtrim( ::oRctCliT:cCodCli ) + Space( 1 ) + Rtrim( ::oRctCliT:cNomCli ) )
-   Method nTotFacturaRectificativaCliente()  Inline ( ::oRctCliT:nTotFac )
-   Method nCntFacturaRectificativaCliente()  Inline ( nTotFacRec( ::oRctCliT:cSerie + Str( ::oRctCliT:nNumFac ) + ::oRctCliT:cSufFac, ::oRctCliT:cAlias, ::oRctCliL:cAlias, ::oIvaImp:cAlias, ::oDbfDiv:cAlias, nil, cDivEmp(), .f., .f. ) )
-   Method bEdtFacturaRectificativaCliente()
+   METHOD cTxtFacturaRectificativaCliente()  INLINE ( ::oRctCliT:cSerie + "/" + Alltrim( Str( ::oRctCliT:nNumFac ) ) + "/" + Alltrim( ::oRctCliT:cSufFac ) + Space( 1 ) + Dtoc( ::oRctCliT:dFecFac ) + Space( 1 ) + ( ::oRctCliT:cTimCre ) + Space( 1 ) + ::oRctCliT:cCodCaj + Space( 1 ) + Rtrim( ::oRctCliT:cCodCli ) + Space( 1 ) + Rtrim( ::oRctCliT:cNomCli ) )
+   METHOD nTotFacturaRectificativaCliente()  INLINE ( ::oRctCliT:nTotFac )
+   METHOD nCntFacturaRectificativaCliente()  INLINE ( nTotFacRec( ::oRctCliT:cSerie + Str( ::oRctCliT:nNumFac ) + ::oRctCliT:cSufFac, ::oRctCliT:cAlias, ::oRctCliL:cAlias, ::oIvaImp:cAlias, ::oDbfDiv:cAlias, nil, cDivEmp(), .f., .f. ) )
+   METHOD bEdtFacturaRectificativaCliente()
 
-   Method cTxtTiketCliente()    Inline ( ::oTikT:cSerTik + "/" + Alltrim( ::oTikT:cNumTik ) + "/" + Alltrim( ::oTikT:cSufTik ) + Space( 1 ) + Dtoc( ::oTikT:dFecTik ) + Space( 1 ) + ( ::oTikT:cHorTik ) + Space( 1 ) + ::oTikT:cNcjTik + Space( 1 ) + Rtrim( ::oTikT:cCliTik ) + Space( 1 ) + Rtrim( ::oTikT:cNomTik ) )
-   Method nTotTiketCliente()    Inline ( ::oTikT:nTotTik )
-   Method nCntTiketCliente()    Inline ( nTotTik( ::oTikT:cSerTik + ::oTikT:cNumTik + ::oTikT:cSufTik, ::oTikT:cAlias, ::oTikL:cAlias, ::oDbfDiv:cAlias, nil, cDivEmp(), .f., .f. ) )
+   METHOD cTxtTiketCliente()    INLINE ( ::oTikT:cSerTik + "/" + Alltrim( ::oTikT:cNumTik ) + "/" + Alltrim( ::oTikT:cSufTik ) + Space( 1 ) + Dtoc( ::oTikT:dFecTik ) + Space( 1 ) + ( ::oTikT:cHorTik ) + Space( 1 ) + ::oTikT:cNcjTik + Space( 1 ) + Rtrim( ::oTikT:cCliTik ) + Space( 1 ) + Rtrim( ::oTikT:cNomTik ) )
+   METHOD nTotTiketCliente()    INLINE ( ::oTikT:nTotTik )
+   METHOD nCntTiketCliente()    INLINE ( nTotTik( ::oTikT:cSerTik + ::oTikT:cNumTik + ::oTikT:cSufTik, ::oTikT:cAlias, ::oTikL:cAlias, ::oDbfDiv:cAlias, nil, cDivEmp(), .f., .f. ) )
 
-   Method bEdtTiketCliente()
-   Method bZooTiketCliente()
+   METHOD bEdtTiketCliente()
+   METHOD bZooTiketCliente()
 
-   Method cTxtAnticipoCliente() Inline ( ::oAntCliT:cSerAnt + "/" + Alltrim( Str( ::oAntCliT:nNumAnt ) ) + "/" + Alltrim( ::oAntCliT:cSufAnt ) + Space( 1 ) + Dtoc( ::oAntCliT:dFecAnt ) + Space( 1 ) + ( ::oAntCliT:cTimCre ) + Space( 1 ) + ::oAntCliT:cCodCaj + Space( 1 ) +  Rtrim( ::oAntCliT:cCodCli ) + Space( 1 ) + Rtrim( ::oAntCliT:cNomCli ) )
-   Method nTotAnticipoCliente() Inline ( nTotAntCli( ::oAntCliT:cAlias, ::oIvaImp:cAlias, ::oDbfDiv:cAlias ) )
-   Method bEdtAnticipoCliente()
+   METHOD cTxtAnticipoCliente() INLINE ( ::oAntCliT:cSerAnt + "/" + Alltrim( Str( ::oAntCliT:nNumAnt ) ) + "/" + Alltrim( ::oAntCliT:cSufAnt ) + Space( 1 ) + Dtoc( ::oAntCliT:dFecAnt ) + Space( 1 ) + ( ::oAntCliT:cTimCre ) + Space( 1 ) + ::oAntCliT:cCodCaj + Space( 1 ) +  Rtrim( ::oAntCliT:cCodCli ) + Space( 1 ) + Rtrim( ::oAntCliT:cNomCli ) )
+   METHOD nTotAnticipoCliente() INLINE ( nTotAntCli( ::oAntCliT:cAlias, ::oIvaImp:cAlias, ::oDbfDiv:cAlias ) )
+   METHOD bEdtAnticipoCliente()
 
-   Method cTxtAlbaranProveedor() Inline ( ::oAlbPrvT:cSerAlb + "/" + Alltrim( Str( ::oAlbPrvT:nNumAlb ) ) + "/" + Alltrim( ::oAlbPrvT:cSufAlb ) + Space( 1 ) + Dtoc( ::oAlbPrvT:dFecAlb ) + Space( 1 ) + ( ::oAlbPrvT:cTimChg ) + Space( 1 ) + ::oAlbPrvT:cCodCaj + Space( 1 ) + Rtrim( ::oAlbPrvT:cCodPrv ) + Space( 1 ) + Rtrim( ::oAlbPrvT:cNomPrv ) )
-   Method nTotAlbaranProveedor() Inline ( ::oAlbPrvT:nTotAlb )
-   Method bEdtAlbaranProveedor()
+   METHOD cTxtAlbaranProveedor() INLINE ( ::oAlbPrvT:cSerAlb + "/" + Alltrim( Str( ::oAlbPrvT:nNumAlb ) ) + "/" + Alltrim( ::oAlbPrvT:cSufAlb ) + Space( 1 ) + Dtoc( ::oAlbPrvT:dFecAlb ) + Space( 1 ) + ( ::oAlbPrvT:cTimChg ) + Space( 1 ) + ::oAlbPrvT:cCodCaj + Space( 1 ) + Rtrim( ::oAlbPrvT:cCodPrv ) + Space( 1 ) + Rtrim( ::oAlbPrvT:cNomPrv ) )
+   METHOD nTotAlbaranProveedor() INLINE ( ::oAlbPrvT:nTotAlb )
+   METHOD bEdtAlbaranProveedor()
 
-   Method cTxtFacturaProveedor() Inline ( ::oFacPrvT:cSerFac + "/" + Alltrim( Str( ::oFacPrvT:nNumFac ) ) + "/" + Alltrim( ::oFacPrvT:cSufFac ) + Space( 1 ) + Dtoc( ::oFacPrvT:dFecFac ) + Space( 1 ) + ( ::oFacPrvT:cTimChg ) + Space( 1 ) + ::oFacPrvT:cCodCaj + Space( 1 ) + Rtrim( ::oFacPrvT:cCodPrv ) + Space( 1 ) + Rtrim( ::oFacPrvT:cNomPrv ) )
-   Method nTotFacturaProveedor() Inline ( ::oFacPrvT:nTotFac )
-   Method bEdtFacturaProveedor()
+   METHOD cTxtFacturaProveedor() INLINE ( ::oFacPrvT:cSerFac + "/" + Alltrim( Str( ::oFacPrvT:nNumFac ) ) + "/" + Alltrim( ::oFacPrvT:cSufFac ) + Space( 1 ) + Dtoc( ::oFacPrvT:dFecFac ) + Space( 1 ) + ( ::oFacPrvT:cTimChg ) + Space( 1 ) + ::oFacPrvT:cCodCaj + Space( 1 ) + Rtrim( ::oFacPrvT:cCodPrv ) + Space( 1 ) + Rtrim( ::oFacPrvT:cNomPrv ) )
+   METHOD nTotFacturaProveedor() INLINE ( ::oFacPrvT:nTotFac )
+   METHOD bEdtFacturaProveedor()
 
-   Method cTxtFacturaRectificativaProveedor() Inline ( ::oRctPrvT:cSerFac + "/" + Alltrim( Str( ::oRctPrvT:nNumFac ) ) + "/" + Alltrim( ::oRctPrvT:cSufFac ) + Space( 1 ) + Dtoc( ::oRctPrvT:dFecFac ) + Space( 1 ) + ( ::oRctPrvT:cTimChg ) + Space( 1 ) + ::oRctPrvT:cCodCaj + Space( 1 ) +Rtrim( ::oRctPrvT:cCodPrv ) + Space( 1 ) + Rtrim( ::oRctPrvT:cNomPrv ) )
-   Method nTotFacturaRectificativaProveedor() Inline ( nTotRctPrv( ::oRctPrvT:cSerFac + Str( ::oRctPrvT:nNumFac ) + ::oRctPrvT:cSufFac, ::oRctPrvT:cAlias, ::oRctPrvL:cAlias, ::oIvaImp:cAlias, ::oDbfDiv:cAlias, ::oFacPrvP:cAlias ) )
-   Method bEdtFacturaRectificativaProveedor()
+   METHOD cTxtFacturaRectificativaProveedor() INLINE ( ::oRctPrvT:cSerFac + "/" + Alltrim( Str( ::oRctPrvT:nNumFac ) ) + "/" + Alltrim( ::oRctPrvT:cSufFac ) + Space( 1 ) + Dtoc( ::oRctPrvT:dFecFac ) + Space( 1 ) + ( ::oRctPrvT:cTimChg ) + Space( 1 ) + ::oRctPrvT:cCodCaj + Space( 1 ) +Rtrim( ::oRctPrvT:cCodPrv ) + Space( 1 ) + Rtrim( ::oRctPrvT:cNomPrv ) )
+   METHOD nTotFacturaRectificativaProveedor() INLINE ( nTotRctPrv( ::oRctPrvT:cSerFac + Str( ::oRctPrvT:nNumFac ) + ::oRctPrvT:cSufFac, ::oRctPrvT:cAlias, ::oRctPrvL:cAlias, ::oIvaImp:cAlias, ::oDbfDiv:cAlias, ::oFacPrvP:cAlias ) )
+   METHOD bEdtFacturaRectificativaProveedor()
 
-   Method nTotTiketCobro()       Inline ( nTotLCobTik( ::oTikP, ::oDbfDiv, cDivEmp() ) )
-   Method nTotValTikCobro()      Inline ( nTotValTik( ::oTikP:cSerTik + ::oTikP:cNumTik + ::oTikP:cSufTik, ::oTikT:cAlias, ::oTikL:cAlias, ::oDbfDiv, cDivEmp() ) )
-   Method cTxtTiketCobro()       Inline ( ::oTikP:cSerTik + "/" + Alltrim( ::oTikP:cNumTik ) + "/" + Rtrim( ::oTikP:cSufTik ) + Space( 1 ) + Dtoc( ::oTikP:dPgoTik ) + Space( 1 ) + ( ::oTikP:cTimTik ) + Space( 1 ) + ::oTikP:cCodCaj + Space( 1 ) + ::oTikP:cFpgPgo + Space( 1 ) + Rtrim( oRetfld( ::oTikP:cSerTik + ::oTikP:cNumTik + ::oTikP:cSufTik, ::oTikT, "cCliTik", 1 ) ) + Space( 1 ) + Rtrim( oRetfld( ::oTikP:cSerTik + ::oTikP:cNumTik + ::oTikP:cSufTik, ::oTikT, "cNomTik", 1 ) ) )
-   Method bEdtTiketCobro()
-   Method bZooTiketCobro()
+   METHOD nTotTiketCobro()       INLINE ( nTotLCobTik( ::oTikP, ::oDbfDiv, cDivEmp() ) )
+   METHOD nTotValTikCobro()      INLINE ( nTotValTik( ::oTikP:cSerTik + ::oTikP:cNumTik + ::oTikP:cSufTik, ::oTikT:cAlias, ::oTikL:cAlias, ::oDbfDiv, cDivEmp() ) )
+   METHOD cTxtTiketCobro()       INLINE ( ::oTikP:cSerTik + "/" + Alltrim( ::oTikP:cNumTik ) + "/" + Rtrim( ::oTikP:cSufTik ) + Space( 1 ) + Dtoc( ::oTikP:dPgoTik ) + Space( 1 ) + ( ::oTikP:cTimTik ) + Space( 1 ) + ::oTikP:cCodCaj + Space( 1 ) + ::oTikP:cFpgPgo + Space( 1 ) + Rtrim( oRetfld( ::oTikP:cSerTik + ::oTikP:cNumTik + ::oTikP:cSufTik, ::oTikT, "cCliTik", 1 ) ) + Space( 1 ) + Rtrim( oRetfld( ::oTikP:cSerTik + ::oTikP:cNumTik + ::oTikP:cSufTik, ::oTikT, "cNomTik", 1 ) ) )
+   METHOD bEdtTiketCobro()
+   METHOD bZooTiketCobro()
 
-   Method nTotFacturaCobro()     Inline ( nTotCobCli( ::oFacCliP, ::oDbfDiv, cDivEmp(), .f. ) )
-   Method cTxtFacturaCobro()     Inline ( ::oFacCliP:cSerie + "/" + Alltrim( Str( ::oFacCliP:nNumFac ) ) + "/" + Rtrim( ::oFacCliP:cSufFac ) + Space( 1 ) + Dtoc( ::oFacCliP:dEntrada ) + Space( 1 ) + ::oFacCliP:cCodCaj + Space( 1 ) + ::oFacCliP:cCodPgo + Space( 1 ) + Rtrim( oRetfld( ::oFacCliP:cSerie + Str( ::oFacCliP:nNumFac ) + ::oFacCliP:cSufFac, ::oFacCliT, "cCodCli", 1 ) ) + Space( 1 ) + Rtrim( oRetfld( ::oFacCliP:cSerie + Str( ::oFacCliP:nNumFac ) + ::oFacCliP:cSufFac, ::oFacCliT, "cNomCli", 1 ) ) )
-   Method bEdtFacturaCobro()
+   METHOD nTotFacturaCobro()     INLINE ( nTotCobCli( ::oFacCliP, ::oDbfDiv, cDivEmp(), .f. ) )
+   METHOD cTxtFacturaCobro()     INLINE ( ::oFacCliP:cSerie + "/" + Alltrim( Str( ::oFacCliP:nNumFac ) ) + "/" + Rtrim( ::oFacCliP:cSufFac ) + Space( 1 ) + Dtoc( ::oFacCliP:dEntrada ) + Space( 1 ) + ::oFacCliP:cCodCaj + Space( 1 ) + ::oFacCliP:cCodPgo + Space( 1 ) + Rtrim( oRetfld( ::oFacCliP:cSerie + Str( ::oFacCliP:nNumFac ) + ::oFacCliP:cSufFac, ::oFacCliT, "cCodCli", 1 ) ) + Space( 1 ) + Rtrim( oRetfld( ::oFacCliP:cSerie + Str( ::oFacCliP:nNumFac ) + ::oFacCliP:cSufFac, ::oFacCliT, "cNomCli", 1 ) ) )
+   METHOD bEdtFacturaCobro()
 
-   Method nTotPedidoEntrega()    Inline ( nEntPedCli( ::oPedCliP, ::oDbfDiv, cDivEmp(), .f. ) )
-   Method cTxtPedidoEntrega()    Inline ( ::oPedCliT:cSerPed + "/" + Alltrim( Str( ::oPedCliP:nNumPed ) ) + "/" + Rtrim( ::oPedCliP:cSufPed ) + Space( 1 ) + Dtoc( ::oPedCliP:dEntrega ) + Space( 1 ) + ::oPedCliP:cCodCaj + Space( 1 ) + ::oPedCliP:cCodPgo + Space( 1 ) + Rtrim( ::oPedCliP:cCodCli ) + Space( 1 ) + oRetFld( ::oPedCliP:cCodCli, ::oClient, "Titulo" ) )
-   Method bEdtPedidoEntrega()
+   METHOD nTotPedidoEntrega()    INLINE ( nEntPedCli( ::oPedCliP, ::oDbfDiv, cDivEmp(), .f. ) )
+   METHOD cTxtPedidoEntrega()    INLINE ( ::oPedCliT:cSerPed + "/" + Alltrim( Str( ::oPedCliP:nNumPed ) ) + "/" + Rtrim( ::oPedCliP:cSufPed ) + Space( 1 ) + Dtoc( ::oPedCliP:dEntrega ) + Space( 1 ) + ::oPedCliP:cCodCaj + Space( 1 ) + ::oPedCliP:cCodPgo + Space( 1 ) + Rtrim( ::oPedCliP:cCodCli ) + Space( 1 ) + oRetFld( ::oPedCliP:cCodCli, ::oClient, "Titulo" ) )
+   METHOD bEdtPedidoEntrega()
 
-   Method nTotAlbaranEntrega()   Inline ( nEntAlbCli( ::oAlbCliP, ::oDbfDiv, cDivEmp(), .f. ) )
-   Method cTxtAlbaranEntrega()   Inline ( ::oAlbCliP:cSerAlb + "/" + Alltrim( Str( ::oAlbCliP:nNumAlb ) ) + "/" + Rtrim( ::oAlbCliP:cSufAlb ) + Space( 1 ) + Dtoc( ::oAlbCliP:dEntrega ) + Space( 1 ) + ::oAlbCliP:cCodCaj + Space( 1 ) + ::oAlbCliP:cCodPgo + Space( 1 ) + Rtrim( ::oAlbCliP:cCodCli ) + Space( 1 ) + oRetFld( ::oAlbCliP:cCodCli, ::oClient, "Titulo" ) )
-   Method bEdtAlbaranEntrega()
+   METHOD nTotAlbaranEntrega()   INLINE ( nEntAlbCli( ::oAlbCliP, ::oDbfDiv, cDivEmp(), .f. ) )
+   METHOD cTxtAlbaranEntrega()   INLINE ( ::oAlbCliP:cSerAlb + "/" + Alltrim( Str( ::oAlbCliP:nNumAlb ) ) + "/" + Rtrim( ::oAlbCliP:cSufAlb ) + Space( 1 ) + Dtoc( ::oAlbCliP:dEntrega ) + Space( 1 ) + ::oAlbCliP:cCodCaj + Space( 1 ) + ::oAlbCliP:cCodPgo + Space( 1 ) + Rtrim( ::oAlbCliP:cCodCli ) + Space( 1 ) + oRetFld( ::oAlbCliP:cCodCli, ::oClient, "Titulo" ) )
+   METHOD bEdtAlbaranEntrega()
 
-   Method nTotEntradasSalidas()  Inline ( if( ::oEntSal:nTipEnt == 1, nTotES( nil, ::oEntSal:cAlias, ::oDbfDiv, cDivEmp(), .f. ), - nTotES( nil, ::oEntSal:cAlias, ::oDbfDiv, cDivEmp(), .f. ) ) )
-   Method cTxtEntradasSalidas()  Inline ( Dtoc( ::oEntSal:dFecEnt ) + Space( 1 ) + Space( 1 ) + Rtrim( ::oEntSal:cDesEnt ) )
-   Method bEdtEntradasSalidas()
+   METHOD nTotEntradasSalidas()  INLINE ( if( ::oEntSal:nTipEnt == 1, nTotES( nil, ::oEntSal:cAlias, ::oDbfDiv, cDivEmp(), .f. ), - nTotES( nil, ::oEntSal:cAlias, ::oDbfDiv, cDivEmp(), .f. ) ) )
+   METHOD cTxtEntradasSalidas()  INLINE ( Dtoc( ::oEntSal:dFecEnt ) + Space( 1 ) + Space( 1 ) + Rtrim( ::oEntSal:cDesEnt ) )
+   METHOD bEdtEntradasSalidas()
 
-   Method nTotFacturaPago()      Inline ( nTotRecPrv( ::oFacPrvP, ::oDbfDiv, cDivEmp(), .f. ) )
-   Method cTxtFacturaPago()      Inline ( ::oFacPrvP:cSerFac + "/" + Alltrim( Str( ::oFacPrvP:nNumFac ) ) + "/" + Rtrim( ::oFacPrvP:cSufFac ) + Space( 1 ) + Dtoc( ::oFacPrvP:dEntrada ) + Space( 1 ) + ::oFacPrvP:cCodCaj + Space( 1 ) + ::oFacPrvP:cCodPgo + Space( 1 ) + Rtrim( oRetfld( ::oFacPrvP:cSerFac + Str( ::oFacPrvP:nNumFac ) + ::oFacPrvP:cSufFac, ::oFacPrvT, "cCodPrv", 1 ) ) + Space( 1 ) + Rtrim( oRetfld( ::oFacPrvP:cSerFac + Str( ::oFacPrvP:nNumFac ) + ::oFacPrvP:cSufFac, ::oFacPrvT, "cNomPrv", 1 ) ) )
-   Method bEdtFacturaPago()
+   METHOD nTotFacturaPago()      INLINE ( nTotRecPrv( ::oFacPrvP, ::oDbfDiv, cDivEmp(), .f. ) )
+   METHOD cTxtFacturaPago()      INLINE ( ::oFacPrvP:cSerFac + "/" + Alltrim( Str( ::oFacPrvP:nNumFac ) ) + "/" + Rtrim( ::oFacPrvP:cSufFac ) + Space( 1 ) + Dtoc( ::oFacPrvP:dEntrada ) + Space( 1 ) + ::oFacPrvP:cCodCaj + Space( 1 ) + ::oFacPrvP:cCodPgo + Space( 1 ) + Rtrim( oRetfld( ::oFacPrvP:cSerFac + Str( ::oFacPrvP:nNumFac ) + ::oFacPrvP:cSufFac, ::oFacPrvT, "cCodPrv", 1 ) ) + Space( 1 ) + Rtrim( oRetfld( ::oFacPrvP:cSerFac + Str( ::oFacPrvP:nNumFac ) + ::oFacPrvP:cSufFac, ::oFacPrvT, "cNomPrv", 1 ) ) )
+   METHOD bEdtFacturaPago()
 
-   Method Contabiliza()
-   Method ContabilizaContadores()
+   METHOD Contabiliza()
+   METHOD ContabilizaContadores()
 
-   Method ContabilizaSesiones()
-   Method StartContabilizaSesiones( oImageList )
-   Method EvalContabilizaSesiones()
+   METHOD ContabilizaSesiones()
+   METHOD StartContabilizaSesiones( oImageList )
+   METHOD EvalContabilizaSesiones()
 
-   Method CambiaEstado()
+   METHOD CambiaEstado()
 
-   Method MailArqueo()
+   METHOD MailArqueo()
 
-   Method ActualizaStockWeb()
+   METHOD ActualizaStockWeb()
 
-   Method SetFastReport( oFastReport ) Inline ( if( !empty( oFastReport ), ::oFastReport := oFastReport, ) )
+   METHOD SetFastReport( oFastReport )          INLINE ( if( !empty( oFastReport ), ::oFastReport := oFastReport, ) )
 
-   Method lInCajaSelect( cCodigoCaja ) Inline ( aScan( ::aCajaSelect, cCodigoCaja ) != 0 )
-   Method nInCajaSelect( cCodigoCaja ) Inline ( aScan( ::aCajaSelect, cCodigoCaja ) )
+   METHOD lInCajaSelect( cCodigoCaja )          INLINE ( aScan( ::aCajaSelect, cCodigoCaja ) != 0 )
+   METHOD nInCajaSelect( cCodigoCaja )          INLINE ( aScan( ::aCajaSelect, cCodigoCaja ) )
 
-   Method End()
+   METHOD End()
 
    METHOD TotSesion( cTurno, cCaja )
 
@@ -662,17 +662,20 @@ CLASS TTurno FROM TMasDet
 
    METHOD cInfoAperturaCierreCaja()
 
-   METHOD idTruno()                    INLINE ( ::oDbf:cNumTur + ::oDbf:cSufTur + ::oDbf:cCodCaj )
+   METHOD idTruno()                             INLINE ( ::oDbf:cNumTur + ::oDbf:cSufTur + ::oDbf:cCodCaj )
 
-   METHOD cNumeroCurrentTurno()        INLINE ( SubStr( ::cCurTurno, 1, 6 ) )
-   METHOD cSufijoCurrentTurno()        INLINE ( SubStr( ::cCurTurno, 7, 2 ) )
-   METHOD cNumeroSufijoCurrentTurno()  INLINE ( SubStr( ::cCurTurno, 1, 8 ) )
+   METHOD cNumeroCurrentTurno()                 INLINE ( SubStr( ::cCurTurno, 1, 6 ) )
+   METHOD cSufijoCurrentTurno()                 INLINE ( SubStr( ::cCurTurno, 7, 2 ) )
+   METHOD cNumeroSufijoCurrentTurno()           INLINE ( SubStr( ::cCurTurno, 1, 8 ) )
 
-   METHOD cCajaCurrentTurno()          INLINE ( SubStr( ::cCurTurno, 9, 3 ) )
+   METHOD cCajaCurrentTurno()                   INLINE ( SubStr( ::cCurTurno, 9, 3 ) )
    
    METHOD GetItemTree()
    METHOD GetImporteTree()
    METHOD GetColorTree()               
+
+   METHOD setTpvRestaurante( oTpvRestaurante )  INLINE ( ::oTpvRestaurante := oTpvRestaurante )
+   METHOD getTpvRestaurante()                   INLINE ( ::oTpvRestaurante )
 
 END CLASS
 
@@ -954,11 +957,6 @@ METHOD OpenFiles( lExclusive )
 
       ::oCuentasBancarias        := TCuentasBancarias():Create( cPatEmp() )
       if !::oCuentasBancarias:OpenFiles()
-         lOpen                   := .f.
-      end if
-
-      ::oTpvRestaurante          := TTpvRestaurante():New( cPatEmp() )
-      if !::oTpvRestaurante:OpenFiles()
          lOpen                   := .f.
       end if
 
@@ -1516,10 +1514,6 @@ METHOD CloseFiles()
       ::oCuentasBancarias:End()
    end if
 
-   if !empty( ::oTpvRestaurante )
-      ::oTpvRestaurante:End()
-   end if
-
    if !empty( ::oNewImp )
       ::oNewImp:end()
    end if
@@ -1929,7 +1923,7 @@ RETURN ( .t. )
 
 //--------------------------------------------------------------------------//
 
-Method lOneCloseTurno( cCurrentTurno )
+METHOD lOneCloseTurno( cCurrentTurno )
 
    DEFAULT cCurrentTurno   := ::cCurTurno
 
@@ -1950,7 +1944,7 @@ RETURN ( .t. )
 
 //--------------------------------------------------------------------------//
 
-Method lAllCloseTurno( cCurrentTurno )
+METHOD lAllCloseTurno( cCurrentTurno )
 
    local aStatus
 
@@ -2185,7 +2179,7 @@ RETURN ( oDlg:nResult == IDOK )
 
 //----------------------------------------------------------------------------//
 
-Method StartCreateTurno( oDivisa, oImporte, oCodUsr )
+METHOD StartCreateTurno( oDivisa, oImporte, oCodUsr )
 
    oDivisa:lValid()
 
@@ -2198,7 +2192,7 @@ Return ( Self )
 
 //---------------------------------------------------------------------------//
 
-Method CreateTurno( oDlg )
+METHOD CreateTurno( oDlg )
 
    if empty( ::cCajeroTurno )
       MsgStop( "Debe de cumplimentar el usuario", "Imposible realizar apertura" )
@@ -3448,25 +3442,25 @@ METHOD lArqueoTurno( lZoom, lParcial ) CLASS TTurno
 
       // Formas de pago-----------------------------------------------------------
 
-      REDEFINE SAY ::oSayTotalEfectivo ;
-         ID       401 ;
-         OF       ::oFldTurno:aDialogs[3]
+      REDEFINE SAY   ::oSayTotalEfectivo ;
+         ID          401 ;
+         OF          ::oFldTurno:aDialogs[3]
 
-      REDEFINE SAY ::oSayTotalTarjeta ;
-         ID       402 ;
-         OF       ::oFldTurno:aDialogs[3]  
+      REDEFINE SAY   ::oSayTotalTarjeta ;
+         ID          402 ;
+         OF          ::oFldTurno:aDialogs[3]  
             
-      REDEFINE SAY ::oSayTotalNoEfectivo ;
-         ID       403 ;
-         OF       ::oFldTurno:aDialogs[3]     
+      REDEFINE SAY   ::oSayTotalNoEfectivo ;
+         ID          403 ;
+         OF          ::oFldTurno:aDialogs[3]     
 
-      REDEFINE SAY ::oSayTotalCobros ;
-         ID      404 ;
-         OF      ::oFldTurno:aDialogs[3] 
+      REDEFINE SAY   ::oSayTotalCobros ;
+         ID          404 ;
+         OF          ::oFldTurno:aDialogs[3] 
             
       REDEFINE GROUP ::oGrpCobros ;
-         ID      500;
-         OF      ::oFldTurno:aDialogs[3]    
+         ID          500;
+         OF          ::oFldTurno:aDialogs[3]    
 
       if ::lArqueoTactil()
 
@@ -3877,7 +3871,7 @@ Return ( if( !empty( ::oDlgTurno ), ::oDlgTurno:nResult == IDOK, .f. ) )
 
 //---------------------------------------------------------------------------//
 
-Method InitArqueoTurno()
+METHOD InitArqueoTurno()
 
    if .t. // uFieldEmpresa( "lDesCajas") 
       ::oBtnSelectAllCajas:Hide()
@@ -3968,7 +3962,7 @@ Return ( nil )
 
 //---------------------------------------------------------------------------//
 
-Method InitDlgImprimir()
+METHOD InitDlgImprimir()
 
    local oSubTree
 
@@ -4041,7 +4035,7 @@ Return ( Self )
 
 //---------------------------------------------------------------------------//
 
-Method StartArqueoTurno( oBtnMod, oCajTur, oBrwCaj, oBrwCnt, oComentario )
+METHOD StartArqueoTurno( oBtnMod, oCajTur, oBrwCaj, oBrwCnt, oComentario )
 
    ::oBtnPrv:Hide()
 
@@ -4244,7 +4238,7 @@ return nil
 
 //--------------------------------------------------------------------------//
 
-Method lIsContadores()
+METHOD lIsContadores()
 
    local lIsContadores  := .f.
 
@@ -4259,7 +4253,7 @@ Return ( lIsContadores )
 
 //---------------------------------------------------------------------------//
 
-Method LoadContadores( lReLoad )
+METHOD LoadContadores( lReLoad )
 
    local nIva
 
@@ -4331,7 +4325,7 @@ Return Nil
 
 //--------------------------------------------------------------------------//
 
-Method CreateCajaTurno()
+METHOD CreateCajaTurno()
 
    local oError
    local oBlock
@@ -4376,7 +4370,7 @@ Return Nil
 
 //---------------------------------------------------------------------------//
 
-Method SelCajas( lSelect, oBrw, lMessage )
+METHOD SelCajas( lSelect, oBrw, lMessage )
 
    local nPos
 
@@ -4415,7 +4409,7 @@ Return Nil
 
 //--------------------------------------------------------------------------//
 
-Method SelAllCajas( lSelect, oBrw )
+METHOD SelAllCajas( lSelect, oBrw )
 
    ::oDbfCaj:GetRecno()
 
@@ -4443,7 +4437,7 @@ Return Nil
 // Devuelve si hay alguna caja seleccionada
 //
 
-Method lAnyCajaSelect()
+METHOD lAnyCajaSelect()
 
    local lAny  := .f. 
 
@@ -4475,7 +4469,7 @@ Return ( lAny )
 // Devuelve si solo hay una caja seleccionada
 //
 
-Method lOneCajaSelect()
+METHOD lOneCajaSelect()
 
    local nOne  := 0
 
@@ -4500,7 +4494,7 @@ Return ( nOne == 1 )
 
 //---------------------------------------------------------------------------//
 
-Method lValidCajas()
+METHOD lValidCajas()
 
    local nUsrCaj
    local lValidCajas    := .t.
@@ -4540,7 +4534,7 @@ Return ( lValidCajas )
 
 //--------------------------------------------------------------------------//
 
-Method lChangeCajas( oNomCaj )
+METHOD lChangeCajas( oNomCaj )
 
    local cCodCaj     := ::oCodCaj:VarGet()
 
@@ -4878,7 +4872,7 @@ RETURN ( .t. )
 
 //--------------------------------------------------------------------------//
 
-Method ClickBrwTotales()
+METHOD ClickBrwTotales()
 
    if len( ::oBrwTotales:Cargo:Cargo ) >= 3 .and. !empty( ::oBrwTotales:Cargo:Cargo[ 3 ] )
       Eval( ::oBrwTotales:Cargo:Cargo[ 3 ] )
@@ -5922,7 +5916,7 @@ RETURN ( Self )
 
 //---------------------------------------------------------------------------//
 
-Method EdtCol( oCol, xValue, nLastKey )
+METHOD EdtCol( oCol, xValue, nLastKey )
 
    if nLastKey == 13
       ::oDbfDet:FieldPutByName( "nCanAct", xValue )
@@ -5932,7 +5926,7 @@ return ( .t. )
 
 //--------------------------------------------------------------------------//
 
-Method EdtAnt( oCol, xValue, nLastKey )
+METHOD EdtAnt( oCol, xValue, nLastKey )
 
    if nLastKey == 13
       ::oDbfDet:FieldPutByName( "nCanAnt", xValue )
@@ -6118,7 +6112,7 @@ Return ( Self )
 
 //---------------------------------------------------------------------------//
 
-Method StartDlgImprimir()
+METHOD StartDlgImprimir()
 
    ::oPrnArq:oHelpText:cText( oRetFld( ::cPrnArq, ::oDbfDoc, "cDescrip", 1 ) )
 
@@ -6134,7 +6128,7 @@ RETURN ( Self )
 
 //---------------------------------------------------------------------------//
 
-Method ExecuteDlgImprimir( cCodCaj, nDevice, oDlg )
+METHOD ExecuteDlgImprimir( cCodCaj, nDevice, oDlg )
 
    oDlg:Disable()
 
@@ -6148,7 +6142,7 @@ RETURN ( .t. )
 
 //---------------------------------------------------------------------------//
 
-Method PrintArqueo( cTurno, cCaja, nDevice, cCaption, cDocumento, cPrinter, nCopies )
+METHOD PrintArqueo( cTurno, cCaja, nDevice, cCaption, cDocumento, cPrinter, nCopies )
 
    DEFAULT cTurno       := ::cCurTurno
    DEFAULT cCaja        := ::cCurCaja
@@ -6577,7 +6571,7 @@ RETURN ( Self )
 
 //--------------------------------------------------------------------------//
 
-Method MixApunte()
+METHOD MixApunte()
 
    local n
    local nLen
@@ -7415,7 +7409,7 @@ RETURN NIL
 
 //-------------------------------------------------------------------------//
 
-Method CreateData()
+METHOD CreateData()
 
    local lSnd        := .f.
    local oTurno
@@ -7507,7 +7501,7 @@ Return ( Self )
 
 //----------------------------------------------------------------------------//
 
-Method RestoreData()
+METHOD RestoreData()
 
    ::cPath     := cPatEmp()
 
@@ -7531,7 +7525,7 @@ Return ( Self )
 
 //----------------------------------------------------------------------------//
 
-Method SendData()
+METHOD SendData()
 
    local cFileName         := "Tur" + StrZero( ::nGetNumberToSend(), 6 ) + "." + RetSufEmp()
 
@@ -7551,7 +7545,7 @@ Return ( Self )
 
 //----------------------------------------------------------------------------//
 
-Method ReciveData()
+METHOD ReciveData()
 
    local n
    local aExt        := aRetDlgEmp()
@@ -7572,7 +7566,7 @@ Return Self
 
 //----------------------------------------------------------------------------//
 
-Method Process()
+METHOD Process()
 
    local m
    local oBlock
@@ -7721,7 +7715,7 @@ RETURN ( Self )
 
 //----------------------------------------------------------------------------//
 
-Method nGetNumberToSend()
+METHOD nGetNumberToSend()
 
    ::nNumberSend     := GetPvProfInt( "Numero", ::cText, ::nNumberSend, ::cIniFile )
 
@@ -8195,7 +8189,7 @@ RETURN ( Self )
 
 //---------------------------------------------------------------------------//
 
-Method AppendInTemporal( cKey, cNaturaleza, nImporte )
+METHOD AppendInTemporal( cKey, cNaturaleza, nImporte )
 
    local oError
    local oBlock
@@ -9709,7 +9703,7 @@ METHOD FillTemporal( cCodCaj )
    Ventas por salas---------------------------------------------------------
    */
 
-   if ::GetItemCheckState( "Ventas por salas" )
+   if ::GetItemCheckState( "Ventas por salas" ) .and. !empty( ::getTpvRestaurante() )
 
       if ::oTikT:Seek( cTurnoCaja )
 
@@ -9722,7 +9716,7 @@ METHOD FillTemporal( cCodCaj )
 
                      while ::oTikL:cSerTil + ::oTikL:cNumTil + ::oTikL:cSufTil == ::oTikT:cSerTik + ::oTikT:cNumTik + ::oTikT:cSufTik .and. !::oTikL:eof()
 
-                        ::AppendInTemporal( ::oTikT:cCodSala, Rtrim( ::oTikT:cCodSala ) + Space( 1 ) + Rtrim( oRetFld( ::oTikT:cCodSala, ::oTpvRestaurante:oDbf ) ), nImpLTpv( ::oTikT:cAlias, ::oTikL:cAlias, ::nDouDiv, ::nDorDiv ) )
+                        ::AppendInTemporal( ::oTikT:cCodSala, Rtrim( ::oTikT:cCodSala ) + Space( 1 ) + Rtrim( oRetFld( ::oTikT:cCodSala, ::getTpvRestaurante():oDbf ) ), nImpLTpv( ::oTikT:cAlias, ::oTikL:cAlias, ::nDouDiv, ::nDorDiv ) )
 
                         ::oTikL:Skip()
 
@@ -9738,7 +9732,7 @@ METHOD FillTemporal( cCodCaj )
 
                      while ::oTikL:cSerTil + ::oTikL:cNumTil + ::oTikL:cSufTil == ::oTikT:cSerTik + ::oTikT:cNumTik + ::oTikT:cSufTik .and. !::oTikL:eof()
 
-                        ::AppendInTemporal( ::oTikT:cCodSala, Rtrim( ::oTikT:cCodSala ) + Space( 1 ) + Rtrim( oRetFld( ::oTikT:cCodSala, ::oTpvRestaurante:oDbf ) ), - nImpLTpv( ::oTikT:cAlias, ::oTikL:cAlias, ::nDouDiv, ::nDorDiv ) )
+                        ::AppendInTemporal( ::oTikT:cCodSala, Rtrim( ::oTikT:cCodSala ) + Space( 1 ) + Rtrim( oRetFld( ::oTikT:cCodSala, ::getTpvRestaurante():oDbf ) ), - nImpLTpv( ::oTikT:cAlias, ::oTikL:cAlias, ::nDouDiv, ::nDorDiv ) )
 
                         ::oTikL:Skip()
 
@@ -10491,7 +10485,7 @@ RETURN ( Self )
 
 //---------------------------------------------------------------------------//
 
-Method bEdtAlbaranCliente()
+METHOD bEdtAlbaranCliente()
 
    local cNumeroDocumento  := by( ::oAlbCliT:cSerAlb + Str( ::oAlbCliT:nNumAlb ) + ::oAlbCliT:cSufAlb )
 
@@ -10499,7 +10493,7 @@ Return ( {|| EdtAlbCli( cNumeroDocumento ) } )
 
 //---------------------------------------------------------------------------//
 
-Method bEdtFacturaCliente()
+METHOD bEdtFacturaCliente()
 
    local cNumeroDocumento  := by( ::oFacCliT:cSerie + Str( ::oFacCliT:nNumFac ) + ::oFacCliT:cSufFac )
 
@@ -10507,7 +10501,7 @@ Return ( {|| EdtFacCli( cNumeroDocumento ) } )
 
 //---------------------------------------------------------------------------//
 
-Method bEdtFacturaRectificativaCliente()
+METHOD bEdtFacturaRectificativaCliente()
 
    local cNumeroDocumento  := by( ::oRctCliT:cSerie + Str( ::oRctCliT:nNumFac ) + ::oRctCliT:cSufFac )
 
@@ -10515,7 +10509,7 @@ Return ( {|| EdtFacRec( cNumeroDocumento ) } )
 
 //---------------------------------------------------------------------------//
 
-Method bEdtTiketCliente()
+METHOD bEdtTiketCliente()
 
    local cNumeroDocumento  := by( ::oTikT:cSerTik + ::oTikT:cNumTik + ::oTikT:cSufTik )
 
@@ -10527,7 +10521,7 @@ Return ( { || EdtTikCli( cNumeroDocumento ) } )
 
 //---------------------------------------------------------------------------//
 
-Method bZooTiketCliente()
+METHOD bZooTiketCliente()
 
    local cNumeroDocumento  := by( ::oTikT:cSerTik + ::oTikT:cNumTik + ::oTikT:cSufTik )
 
@@ -10535,7 +10529,7 @@ Return ( { || ZooTikCli( cNumeroDocumento ) } )
 
 //---------------------------------------------------------------------------//
 
-Method bEdtAnticipoCliente()
+METHOD bEdtAnticipoCliente()
 
    local cNumeroDocumento  := by( ::oAntCliT:cSerAnt + Str( ::oAntCliT:nNumAnt ) + ::oAntCliT:cSufAnt )
 
@@ -10543,7 +10537,7 @@ Return ( {|| EdtAntCli( cNumeroDocumento ) } )
 
 //---------------------------------------------------------------------------//
 
-Method bEdtAlbaranProveedor()
+METHOD bEdtAlbaranProveedor()
 
    local cNumeroDocumento  := by( ::oAlbPrvT:cSerAlb + Str( ::oAlbPrvT:nNumAlb ) + ::oAlbPrvT:cSufAlb )
 
@@ -10551,7 +10545,7 @@ Return ( {|| EdtAlbPrv( cNumeroDocumento ) } )
 
 //---------------------------------------------------------------------------//
 
-Method bEdtFacturaProveedor()
+METHOD bEdtFacturaProveedor()
 
    local cNumeroDocumento  := by( ::oFacPrvT:cSerFac + Str( ::oFacPrvT:nNumFac ) + ::oFacPrvT:cSufFac )
 
@@ -10559,7 +10553,7 @@ Return ( {|| EdtFacPrv( cNumeroDocumento ) } )
 
 //---------------------------------------------------------------------------//
 
-Method bEdtFacturaRectificativaProveedor()
+METHOD bEdtFacturaRectificativaProveedor()
 
    local cNumeroDocumento  := by( ::oRctPrvT:cSerFac + Str( ::oRctPrvT:nNumFac ) + ::oRctPrvT:cSufFac )
 
@@ -10567,7 +10561,7 @@ Return ( {|| EdtRctPrv( cNumeroDocumento ) } )
 
 //---------------------------------------------------------------------------//
 
-Method bEdtTiketCobro()
+METHOD bEdtTiketCobro()
 
    local cNumeroDocumento  := by( ::oTikP:cSerTik + ::oTikP:cNumTik + ::oTikP:cSufTik )
 
@@ -10575,7 +10569,7 @@ Return ( {|| EdtTikCli( cNumeroDocumento ) } )
 
 //---------------------------------------------------------------------------//
 
-Method bZooTiketCobro()
+METHOD bZooTiketCobro()
 
    local cNumeroDocumento  := by( ::oTikP:cSerTik + ::oTikP:cNumTik + ::oTikP:cSufTik )
 
@@ -10583,7 +10577,7 @@ Return ( {|| ZooTikCli( cNumeroDocumento ) } )
 
 //---------------------------------------------------------------------------//
 
-Method bEdtFacturaCobro()
+METHOD bEdtFacturaCobro()
 
    local cNumeroDocumento  := ::oFacCliP:cSerie + Str( ::oFacCliP:nNumFac ) + ::oFacCliP:cSufFac
 
@@ -10595,7 +10589,7 @@ Return ( {|| EdtFacCli( cNumeroDocumento ) } )
 
 //---------------------------------------------------------------------------//
 
-Method bEdtPedidoEntrega()
+METHOD bEdtPedidoEntrega()
 
    local cNumeroDocumento  := ::oPedCliT:cSerPed + Str( ::oPedCliP:nNumPed ) + ::oPedCliP:cSufPed
 
@@ -10603,7 +10597,7 @@ Return ( {|| EdtPedCli( cNumeroDocumento ) } )
 
 //---------------------------------------------------------------------------//
 
-Method bEdtAlbaranEntrega()
+METHOD bEdtAlbaranEntrega()
 
    local cNumeroDocumento  := ::oAlbCliP:cSerAlb + Str( ::oAlbCliP:nNumAlb ) +::oAlbCliP:cSufAlb
 
@@ -10611,7 +10605,7 @@ Return ( {|| EdtAlbCli( cNumeroDocumento ) } )
 
 //---------------------------------------------------------------------------//
 
-Method bEdtEntradasSalidas()
+METHOD bEdtEntradasSalidas()
 
    local cNumeroDocumento  := ::oEntSal:Recno()
 
@@ -10619,7 +10613,7 @@ Return ( {|| EdtEntSal( cNumeroDocumento ) } )
 
 //---------------------------------------------------------------------------//
 
-Method bEdtFacturaPago()
+METHOD bEdtFacturaPago()
 
    local cNumeroDocumento  := ::oFacPrvP:cSerFac + Str( ::oFacPrvP:nNumFac ) + ::oFacPrvP:cSufFac
 
@@ -11124,7 +11118,7 @@ Return ( Self )
 
 //---------------------------------------------------------------------------//
 
-Method ActualizaStockWeb()
+METHOD ActualizaStockWeb()
 
 //   with object ( TComercio():New() )
 //      :buildActualizaStockProductPrestashop()        
@@ -11134,7 +11128,7 @@ Return ( self )
 
 //---------------------------------------------------------------------------//
 
-Method TotSesion( cTurno, cCaja )
+METHOD TotSesion( cTurno, cCaja )
 
    DEFAULT cTurno    := ::cCurTurno
    DEFAULT cCaja     := ::cCurCaja
@@ -11162,7 +11156,7 @@ Return ( nil )
 
 //------------------------------------------------------------------------//
 
-Method GetTreeState( aItems )
+METHOD GetTreeState( aItems )
 
    local oItem
 
@@ -11184,7 +11178,7 @@ Return ( nil )
 
 //------------------------------------------------------------------------//
 
-Method SetTreeState( aItems )
+METHOD SetTreeState( aItems )
 
    local oItem
 
@@ -11206,7 +11200,7 @@ Return ( nil )
 
 //------------------------------------------------------------------------//
 
-Method SaveImporte( cCodCaj )
+METHOD SaveImporte( cCodCaj )
 
    ::oDbfCaj:GetRecno()
 
@@ -11226,7 +11220,7 @@ Return ( nil )
 
 //------------------------------------------------------------------------//
 
-Method LoadImporte( cCodCaj )
+METHOD LoadImporte( cCodCaj )
 
    ::oDbfCaj:GetRecno()
 
@@ -11250,7 +11244,7 @@ Return ( nil )
 
 //------------------------------------------------------------------------//
 
-Method GetItemCheckState( cPrompt )
+METHOD GetItemCheckState( cPrompt )
 
    local lState      := .t.
 
@@ -11271,7 +11265,7 @@ Return ( lState )
 
 //------------------------------------------------------------------------//
 
-Method RefreshTurno()
+METHOD RefreshTurno()
 
    if !empty( ::oTotalEfectivo )
       ::oTotalEfectivo:Refresh()
@@ -11337,7 +11331,7 @@ Return ( .t. )
 
 //------------------------------------------------------------------------//
 
-Method cBancoCuenta( uRctCli ) 
+METHOD cBancoCuenta( uRctCli ) 
 
    local cBanco      := ""
    local cCuenta     := ""
@@ -11357,13 +11351,13 @@ Return ( cCuenta )
 
 //------------------------------------------------------------------------//
 
-Method cEstadoSesion()
+METHOD cEstadoSesion()
 
 Return( ::aEstadoSesion[ MinMax( ::oDbf:nStaTur + 1, 1, 3 ) ] )
 
 //------------------------------------------------------------------------//
 
-Method cInfoAperturaCierreCaja()
+METHOD cInfoAperturaCierreCaja()
 
    local cInfoAperturaCierreCaja := ""
    cInfoAperturaCierreCaja       += Dtoc( ::oDbfCaj:FieldGetByName( "dFecOpe" ) ) + Space(1)

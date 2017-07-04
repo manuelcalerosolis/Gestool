@@ -1403,8 +1403,10 @@ METHOD LoadFromMemory( cCodigoSala, lPuntosPendientes ) CLASS TTpvSalon
          if sSala:cCodigo == cCodigoSala
 
             for each sPunto in sSala:aPunto
+
                sPunto:LoadMesa()
                sPunto:CreateMesa( lPuntosPendientes )
+
             next
 
          end if
@@ -1414,13 +1416,10 @@ METHOD LoadFromMemory( cCodigoSala, lPuntosPendientes ) CLASS TTpvSalon
    end if
 
    RECOVER USING oError
-
       msgStop( ErrorMessage( oError ), "Error al crear las mesas" )
-
    END SEQUENCE
-
    ErrorBlock( oBlock )
-
+   
    CursorWE()
 
 Return ( Self )

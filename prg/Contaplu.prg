@@ -1502,81 +1502,81 @@ Static Function MkAsientoContaplus( Asien,;
 
    aTemp                   := dbBlankRec( cDiario )
 
-   aTemp[ ( cDiario )->( FieldPos( "ASIEN" ) ) ]         := If ( Asien    != NIL, Asien,      RetLastAsi() )
-   aTemp[ ( cDiario )->( FieldPos( "FECHA" ) ) ]         := If ( Fecha    != NIL, Fecha,      aTemp[ ( cDiario )->( FieldPos( "FECHA" ) ) ] )
+   aTemp[ ( cDiario )->( fieldpos( "ASIEN" ) ) ]         := If ( Asien    != nil, Asien,      RetLastAsi() )
+   aTemp[ ( cDiario )->( fieldpos( "FECHA" ) ) ]         := If ( Fecha    != nil, Fecha,      aTemp[ ( cDiario )->( fieldpos( "FECHA" ) ) ] )
 
-   if ( cDiario )->( FieldPos( "FECHA_OP" ) ) != 0
-      aTemp[ ( cDiario )->( FieldPos( "FECHA_OP" ) ) ]   := If ( Fecha    != NIL, Fecha,      aTemp[ ( cDiario )->( FieldPos( "FECHA_OP" ) ) ] )
+   if ( cDiario )->( fieldpos( "FECHA_OP" ) ) != 0
+      aTemp[ ( cDiario )->( fieldpos( "FECHA_OP" ) ) ]   := If ( Fecha    != nil, Fecha,      aTemp[ ( cDiario )->( fieldpos( "FECHA_OP" ) ) ] )
    end if
 
-   if ( cDiario )->( FieldPos( "FECHA_EX" ) ) != 0
-      aTemp[ ( cDiario )->( FieldPos( "FECHA_EX" ) ) ]   := If ( Fecha    != NIL, Fecha,      aTemp[ ( cDiario )->( FieldPos( "FECHA_EX" ) ) ] )
+   if ( cDiario )->( fieldpos( "FECHA_EX" ) ) != 0
+      aTemp[ ( cDiario )->( fieldpos( "FECHA_EX" ) ) ]   := If ( Fecha    != nil, Fecha,      aTemp[ ( cDiario )->( fieldpos( "FECHA_EX" ) ) ] )
    end if
 
-   aTemp[ ( cDiario )->( FieldPos( "SERIE" ) ) ]         := If ( cSerie   != NIL, cSerie,     aTemp[ ( cDiario )->( FieldPos( "SERIE" ) ) ] )
-   aTemp[ ( cDiario )->( FieldPos( "FACTURA" ) ) ]       := If ( Factura  != NIL, Factura,    aTemp[ ( cDiario )->( FieldPos( "FACTURA" ) ) ] )
+   aTemp[ ( cDiario )->( fieldpos( "SERIE" ) ) ]         := If ( cSerie   != nil, cSerie,     aTemp[ ( cDiario )->( fieldpos( "SERIE" ) ) ] )
+   aTemp[ ( cDiario )->( fieldpos( "FACTURA" ) ) ]       := If ( Factura  != nil, Factura,    aTemp[ ( cDiario )->( fieldpos( "FACTURA" ) ) ] )
 
-   aTemp[ ( cDiario )->( FieldPos( "BASEEURO" ) ) ]      := If ( BaseImponible != NIL, BaseImponible,   aTemp[ ( cDiario )->( FieldPos( "BASEEURO" ) ) ] )
-   aTemp[ ( cDiario )->( FieldPos( "EURODEBE" ) ) ]      := If ( nImporteDebe  != NIL, nImporteDebe,    aTemp[ ( cDiario )->( FieldPos( "EURODEBE" ) ) ] )
-   aTemp[ ( cDiario )->( FieldPos( "EUROHABER" ) ) ]     := If ( nImporteHaber != NIL, nImporteHaber,   aTemp[ ( cDiario )->( FieldPos( "EUROHABER" ) ) ] )
+   aTemp[ ( cDiario )->( fieldpos( "BASEEURO" ) ) ]      := If ( BaseImponible != nil, BaseImponible,   aTemp[ ( cDiario )->( fieldpos( "BASEEURO" ) ) ] )
+   aTemp[ ( cDiario )->( fieldpos( "EURODEBE" ) ) ]      := If ( nImporteDebe  != nil, nImporteDebe,    aTemp[ ( cDiario )->( fieldpos( "EURODEBE" ) ) ] )
+   aTemp[ ( cDiario )->( fieldpos( "EUROHABER" ) ) ]     := If ( nImporteHaber != nil, nImporteHaber,   aTemp[ ( cDiario )->( fieldpos( "EUROHABER" ) ) ] )
 
-   aTemp[ ( cDiario )->( FieldPos( "SUBCTA" ) ) ]        := If ( Subcuenta   != NIL, Subcuenta,     aTemp[ ( cDiario )->( FieldPos( "SUBCTA" ) ) ] )
-   aTemp[ ( cDiario )->( FieldPos( "CONTRA" ) ) ]        := If ( Contrapartida   != NIL, Contrapartida,     aTemp[ ( cDiario )->( FieldPos( "CONTRA" ) ) ] )
+   aTemp[ ( cDiario )->( fieldpos( "SUBCTA" ) ) ]        := If ( Subcuenta   != nil, Subcuenta,     aTemp[ ( cDiario )->( fieldpos( "SUBCTA" ) ) ] )
+   aTemp[ ( cDiario )->( fieldpos( "CONTRA" ) ) ]        := If ( Contrapartida   != nil, Contrapartida,     aTemp[ ( cDiario )->( fieldpos( "CONTRA" ) ) ] )
 
-   aTemp[ ( cDiario )->( FieldPos( "CONCEPTO" ) ) ]      := If ( Concepto != NIL, Concepto,   aTemp[ ( cDiario )->( FieldPos( "CONCEPTO" ) ) ] )
+   aTemp[ ( cDiario )->( fieldpos( "CONCEPTO" ) ) ]      := If ( Concepto != nil, Concepto,   aTemp[ ( cDiario )->( fieldpos( "CONCEPTO" ) ) ] )
 
-   aTemp[ ( cDiario )->( FieldPos( "IVA" ) )       ]     := If ( IVA      != NIL, IVA,        aTemp[ ( cDiario )->( FieldPos( "IVA" ) )        ] )
-   aTemp[ ( cDiario )->( FieldPos( "RECEQUIV" ) )  ]     := If ( RecargoEquivalencia != NIL, RecargoEquivalencia,   aTemp[ ( cDiario )->( FieldPos( "RECEQUIV" ) )   ] )
-   aTemp[ ( cDiario )->( FieldPos( "DOCUMENTO" ) ) ]     := If ( Documento!= NIL, Documento,  aTemp[ ( cDiario )->( FieldPos( "DOCUMENTO" ) )  ] )
-   aTemp[ ( cDiario )->( FieldPos( "DEPARTA" ) )   ]     := If ( Departamento != NIL, Departamento,    aTemp[ ( cDiario )->( FieldPos( "DEPARTA" ) )    ] )
-   aTemp[ ( cDiario )->( FieldPos( "CLAVE" ) )     ]     := If ( Clave    != NIL, Clave,      aTemp[ ( cDiario )->( FieldPos( "CLAVE" ) )      ] )
-   aTemp[ ( cDiario )->( FieldPos( "NCASADO" ) )   ]     := If ( nCasado  != NIL, nCasado,    aTemp[ ( cDiario )->( FieldPos( "NCASADO" ) )    ] )
-   aTemp[ ( cDiario )->( FieldPos( "TCASADO" ) )   ]     := If ( tCasado  != NIL, tCasado,    aTemp[ ( cDiario )->( FieldPos( "TCASADO" ) )    ] )
+   aTemp[ ( cDiario )->( fieldpos( "IVA" ) )       ]     := If ( IVA      != nil, IVA,        aTemp[ ( cDiario )->( fieldpos( "IVA" ) )        ] )
+   aTemp[ ( cDiario )->( fieldpos( "RECEQUIV" ) )  ]     := If ( RecargoEquivalencia != nil, RecargoEquivalencia,   aTemp[ ( cDiario )->( fieldpos( "RECEQUIV" ) )   ] )
+   aTemp[ ( cDiario )->( fieldpos( "DOCUMENTO" ) ) ]     := If ( Documento!= nil, Documento,  aTemp[ ( cDiario )->( fieldpos( "DOCUMENTO" ) )  ] )
+   aTemp[ ( cDiario )->( fieldpos( "DEPARTA" ) )   ]     := If ( Departamento != nil, Departamento,    aTemp[ ( cDiario )->( fieldpos( "DEPARTA" ) )    ] )
+   aTemp[ ( cDiario )->( fieldpos( "CLAVE" ) )     ]     := If ( Clave    != nil, Clave,      aTemp[ ( cDiario )->( fieldpos( "CLAVE" ) )      ] )
+   aTemp[ ( cDiario )->( fieldpos( "NCASADO" ) )   ]     := If ( nCasado  != nil, nCasado,    aTemp[ ( cDiario )->( fieldpos( "NCASADO" ) )    ] )
+   aTemp[ ( cDiario )->( fieldpos( "TCASADO" ) )   ]     := If ( tCasado  != nil, tCasado,    aTemp[ ( cDiario )->( fieldpos( "TCASADO" ) )    ] )
 
-   if ( cDiario )->( FieldPos( "TERNIF" ) ) != 0
-      aTemp[ ( cDiario )->( FieldPos( "TERNIF" ) ) ]     := If ( cNif  != NIL, cNif,    aTemp[ ( cDiario )->( FieldPos( "TERNIF" ) ) ] )
+   if ( cDiario )->( fieldpos( "TERNIF" ) ) != 0
+      aTemp[ ( cDiario )->( fieldpos( "TERNIF" ) ) ]     := If ( cNif  != nil, cNif,    aTemp[ ( cDiario )->( fieldpos( "TERNIF" ) ) ] )
    end if
 
-   if ( cDiario )->( FieldPos( "TERNOM" ) ) != 0
-      aTemp[ ( cDiario )->( FieldPos( "TERNOM" ) ) ]     := If ( cNombre  != NIL, cNombre,    aTemp[ ( cDiario )->( FieldPos( "TERNOM" ) ) ] )
+   if ( cDiario )->( fieldpos( "TERNOM" ) ) != 0
+      aTemp[ ( cDiario )->( fieldpos( "TERNOM" ) ) ]     := If ( cNombre  != nil, cNombre,    aTemp[ ( cDiario )->( fieldpos( "TERNOM" ) ) ] )
    end if
 
-   aTemp[ ( cDiario )->( FieldPos( "RECTIFICA" ) ) ]     := lRectificativa
+   aTemp[ ( cDiario )->( fieldpos( "RECTIFICA" ) ) ]     := lRectificativa
 
    // Para contaplus euro 2000----------------------------------------------------
 
-   aTemp[ ( cDiario )->( FieldPos( "MONEDAUSO" ) ) ]     := "2"
+   aTemp[ ( cDiario )->( fieldpos( "MONEDAUSO" ) ) ]     := "2"
 
    // Pagos en metalico-----------------------------------------------------------
 
    if !Empty( nEjeCon ) .and. !Empty( cEjeCta )
 
-      if ( cDiario )->( FieldPos( "METAL" ) ) != 0
-         aTemp[ ( cDiario )->( FieldPos( "METAL") ) ]       := .t.
+      if ( cDiario )->( fieldpos( "METAL" ) ) != 0
+         aTemp[ ( cDiario )->( fieldpos( "METAL") ) ]       := .t.
       end if
-      if ( cDiario )->( FieldPos( "METALIMP" ) ) != 0      
-         aTemp[ ( cDiario )->( FieldPos( "METALIMP" ) ) ]   := if( nImporteDebe != NIL,  nImporteDebe,  aTemp[ ( cDiario )->( FieldPos( "METALIMP" ) ) ] )      
+      if ( cDiario )->( fieldpos( "METALIMP" ) ) != 0      
+         aTemp[ ( cDiario )->( fieldpos( "METALIMP" ) ) ]   := if( nImporteDebe != nil,  nImporteDebe,  aTemp[ ( cDiario )->( fieldpos( "METALIMP" ) ) ] )      
       end if
-      if ( cDiario )->( FieldPos( "METALEJE" ) ) != 0
-         aTemp[ ( cDiario )->( FieldPos( "METALEJE") ) ]    := nEjeCon 
+      if ( cDiario )->( fieldpos( "METALEJE" ) ) != 0
+         aTemp[ ( cDiario )->( fieldpos( "METALEJE") ) ]    := nEjeCon 
       end if
 
    end if 
 
    // Operaciones intracomunitarias--------------------------------------------
 
-   if ( cDiario )->( FieldPos( "TipoOpe" ) ) != 0
-      aTemp[ ( cDiario )->( FieldPos( "TipoOpe" ) ) ]    := if( getAsientoIntraComunitario(), "P", "" )
+   if ( cDiario )->( fieldpos( "TipoOpe" ) ) != 0
+      aTemp[ ( cDiario )->( fieldpos( "TipoOpe" ) ) ]    := if( getAsientoIntraComunitario(), "P", "" )
    end if
 
-   if ( cDiario )->( FieldPos( "TERIDNIF" ) ) != 0
-      aTemp[ ( cDiario )->( FieldPos( "TERIDNIF" ) ) ]   := if( getAsientoIntraComunitario(), 2, 1 )
+   if ( cDiario )->( fieldpos( "TERIDNIF" ) ) != 0
+      aTemp[ ( cDiario )->( fieldpos( "TERIDNIF" ) ) ]   := if( getAsientoIntraComunitario(), 2, 1 )
    end if
 
    // Conectores GUID--------------------------------------------
 
-   if ( cDiario )->( FieldPos( "Guid" ) ) != 0
-      aTemp[ ( cDiario )->( FieldPos( "Guid" ) ) ]       := win_uuidcreatestring()
+   if ( cDiario )->( fieldpos( "Guid" ) ) != 0
+      aTemp[ ( cDiario )->( fieldpos( "Guid" ) ) ]       := win_uuidcreatestring()
    end if
 
    // escritura en el fichero--------------------------------------------
@@ -1607,39 +1607,39 @@ Function WriteAsiento( aTemp, cDivisa, lMessage )
    oBlock            := ErrorBlock( { | oError | ApoloBreak( oError ) } )
    BEGIN SEQUENCE
 
-   if !Empty( cDiario ) .and. !Empty( aTemp[ ( cDiario )->( FieldPos( "FECHA" ) ) ] )
+   if !Empty( cDiario ) .and. !Empty( aTemp[ ( cDiario )->( fieldpos( "FECHA" ) ) ] )
 
       WinGather( aTemp, , cDiario, , APPD_MODE, , .f. )
 
-      cMes           := Rjust( Month( aTemp[ ( cDiario )->( FieldPos( "FECHA" ) ) ] ), "0", 2 )
+      cMes           := Rjust( Month( aTemp[ ( cDiario )->( fieldpos( "FECHA" ) ) ] ), "0", 2 )
 
-      if ( cSubCuenta )->( dbSeek( aTemp[ ( cDiario )->( FieldPos( "SubCta" ) ) ] ) ) .and. ( cSubCuenta )->( dbRLock() )
+      if ( cSubCuenta )->( dbSeek( aTemp[ ( cDiario )->( fieldpos( "SubCta" ) ) ] ) ) .and. ( cSubCuenta )->( dbRLock() )
 
-         ( cSubCuenta )->SUMADBEU               += aTemp[ ( cDiario )->( FieldPos( "EURODEBE" ) ) ]
-         ( cSubCuenta )->SUMAHBEU               += aTemp[ ( cDiario )->( FieldPos( "EUROHABER" ) ) ]
+         ( cSubCuenta )->SUMADBEU               += aTemp[ ( cDiario )->( fieldpos( "EURODEBE" ) ) ]
+         ( cSubCuenta )->SUMAHBEU               += aTemp[ ( cDiario )->( fieldpos( "EUROHABER" ) ) ]
 
-         nFld        := ( cSubCuenta )->( FieldPos( "SDB" + cMes + "EU" ) )
+         nFld        := ( cSubCuenta )->( fieldpos( "SDB" + cMes + "EU" ) )
          nVal        := ( cSubCuenta )->( FieldGet( nFld ) )
-         ( cSubCuenta )->( FieldPut( nFld, nVal + aTemp[ ( cDiario )->( FieldPos( "EURODEBE" ) ) ] ) )
+         ( cSubCuenta )->( FieldPut( nFld, nVal + aTemp[ ( cDiario )->( fieldpos( "EURODEBE" ) ) ] ) )
 
-         nFld        := ( cSubCuenta )->( FieldPos( "SHB" + cMes + "EU" ) )
+         nFld        := ( cSubCuenta )->( fieldpos( "SHB" + cMes + "EU" ) )
          nVal        := ( cSubCuenta )->( FieldGet( nFld ) )
-         ( cSubCuenta )->( FieldPut( nFld, nVal + aTemp[ ( cDiario )->( FieldPos( "EUROHABER" ) ) ] ) )
+         ( cSubCuenta )->( FieldPut( nFld, nVal + aTemp[ ( cDiario )->( fieldpos( "EUROHABER" ) ) ] ) )
 
-         nFld        := ( cSubCuenta )->( FieldPos( "NDB" + cMes + "EU" ) )
+         nFld        := ( cSubCuenta )->( fieldpos( "NDB" + cMes + "EU" ) )
          nVal        := ( cSubCuenta )->( FieldGet( nFld ) )
-         ( cSubCuenta )->( FieldPut( nFld, nVal + aTemp[ ( cDiario )->( FieldPos( "EURODEBE" ) ) ] ) )
+         ( cSubCuenta )->( FieldPut( nFld, nVal + aTemp[ ( cDiario )->( fieldpos( "EURODEBE" ) ) ] ) )
 
-         nFld        := ( cSubCuenta )->( FieldPos( "NHB" + cMes + "EU" ) )
+         nFld        := ( cSubCuenta )->( fieldpos( "NHB" + cMes + "EU" ) )
          nVal        := ( cSubCuenta )->( FieldGet( nFld ) )
-         ( cSubCuenta )->( FieldPut( nFld, nVal + aTemp[ ( cDiario )->( FieldPos( "EUROHABER" ) ) ] ) )
+         ( cSubCuenta )->( FieldPut( nFld, nVal + aTemp[ ( cDiario )->( fieldpos( "EUROHABER" ) ) ] ) )
 
          ( cSubCuenta )->( dbUnLock() )
 
       else
 
          if lMessage
-            MsgStop( "Subcuenta no encontrada " + aTemp[ ( cDiario )->( FieldPos( "SubCta" ) ) ], "Imposible actualizar saldos" )
+            MsgStop( "Subcuenta no encontrada " + aTemp[ ( cDiario )->( fieldpos( "SubCta" ) ) ], "Imposible actualizar saldos" )
          end if
 
       end if
@@ -1658,12 +1658,26 @@ Return ( nil )
 
 //----------------------------------------------------------------------------//
 
+Function WriteAsientoSii( a )
+
+   if len( a ) >= ( cDiario )->( fieldpos( "Guid" ) )
+      msgalert( "hago el asiento Sii" )
+   end if
+
+Return ( nil )
+
+//----------------------------------------------------------------------------//
+
 Function aWriteAsiento( aTemp, cDivisa, lMessage )
 
    local a
 
    for each a in aTemp
+
       WriteAsiento( a, cDivisa, lMessage )
+
+      WriteAsientoSii( a )
+
    next
 
 Return ( nil )
@@ -1770,7 +1784,7 @@ FUNCTION cCtaConta( oGet, dbfCuentas, oGet2 )
       xValor      := RJustObj( oGet, "0", nLenCuentaContaplus() )
    end if
 
-   if dbfCuentas == NIL
+   if dbfCuentas == nil
 
       if OpenSubCuenta( cRuta, cCodEmp, @dbfCuentas )
          lClose   := .t.
@@ -1784,7 +1798,7 @@ FUNCTION cCtaConta( oGet, dbfCuentas, oGet2 )
 
       oGet:cText( ( dbfCuentas )->Cod )
 
-		IF oGet2 != NIL
+		IF oGet2 != nil
          oGet2:cText( ( dbfCuentas )->Titulo )
 		END IF
 
@@ -2071,31 +2085,31 @@ FUNCTION MsgTblCon( aTable, cDivisa, dbfDiv, lConAsi, cTitle, bConta )
 
       with object ( oBrw:AddCol() )
          :cHeader          := "Asiento"
-         :bEditValue       := {|| aTable[ oBrw:nArrayAt, ( cDiario )->( FieldPos( "Asien" ) ) ] }
+         :bEditValue       := {|| aTable[ oBrw:nArrayAt, ( cDiario )->( fieldpos( "Asien" ) ) ] }
          :nWidth           := 50
       end with
 
       with object ( oBrw:AddCol() )
          :cHeader          := "Fecha"
-         :bEditValue       := {|| aTable[ oBrw:nArrayAt, ( cDiario )->( FieldPos( "Fecha" ) ) ] }
+         :bEditValue       := {|| aTable[ oBrw:nArrayAt, ( cDiario )->( fieldpos( "Fecha" ) ) ] }
          :nWidth           := 70
       end with
 
       with object ( oBrw:AddCol() )
          :cHeader          := "Subcuenta"
-         :bEditValue       := {|| aTable[ oBrw:nArrayAt, ( cDiario )->( FieldPos( "SubCta" ) ) ] }
+         :bEditValue       := {|| aTable[ oBrw:nArrayAt, ( cDiario )->( fieldpos( "SubCta" ) ) ] }
          :nWidth           := 80
       end with
 
       with object ( oBrw:AddCol() )
          :cHeader          := "Contapartida"
-         :bEditValue       := {|| aTable[ oBrw:nArrayAt, ( cDiario )->( FieldPos( "Contra" ) ) ] }
+         :bEditValue       := {|| aTable[ oBrw:nArrayAt, ( cDiario )->( fieldpos( "Contra" ) ) ] }
          :nWidth           := 80
       end with
 
       with object ( oBrw:AddCol() )
          :cHeader          := "Debe"
-         :bEditValue       := {|| if( .t. , aTable[ oBrw:nArrayAt, ( cDiario )->( FieldPos( "EuroDebe" ) ) ], aTable[ oBrw:nArrayAt, ( cDiario )->( FieldPos( "PtaDebe" ) ) ] ) }
+         :bEditValue       := {|| if( .t. , aTable[ oBrw:nArrayAt, ( cDiario )->( fieldpos( "EuroDebe" ) ) ], aTable[ oBrw:nArrayAt, ( cDiario )->( fieldpos( "PtaDebe" ) ) ] ) }
          :bFooter          := {|| nTotDebe( aTable, cDivisa ) }
          :cEditPicture     := cPorDiv
          :nWidth           := 70
@@ -2106,13 +2120,13 @@ FUNCTION MsgTblCon( aTable, cDivisa, dbfDiv, lConAsi, cTitle, bConta )
 
       with object ( oBrw:AddCol() )
          :cHeader          := "Concepto"
-         :bEditValue       := {|| aTable[ oBrw:nArrayAt, ( cDiario )->( FieldPos( "Concepto" ) ) ] }
+         :bEditValue       := {|| aTable[ oBrw:nArrayAt, ( cDiario )->( fieldpos( "Concepto" ) ) ] }
          :nWidth           := 170
       end with
 
       with object ( oBrw:AddCol() )
          :cHeader          := "Haber"
-         :bEditValue       := {|| if( .t., aTable[ oBrw:nArrayAt, ( cDiario )->( FieldPos( "EuroHaber" ) ) ], aTable[ oBrw:nArrayAt, ( cDiario )->( FieldPos( "PtaHaber" ) ) ] ) }
+         :bEditValue       := {|| if( .t., aTable[ oBrw:nArrayAt, ( cDiario )->( fieldpos( "EuroHaber" ) ) ], aTable[ oBrw:nArrayAt, ( cDiario )->( fieldpos( "PtaHaber" ) ) ] ) }
          :bFooter          := {|| nTotHaber( aTable, cDivisa ) }
          :cEditPicture     := cPorDiv
          :nWidth           := 70
@@ -2123,19 +2137,19 @@ FUNCTION MsgTblCon( aTable, cDivisa, dbfDiv, lConAsi, cTitle, bConta )
 
       with object ( oBrw:AddCol() )
          :cHeader          := "Serie"
-         :bEditValue       := {|| aTable[ oBrw:nArrayAt, ( cDiario )->( FieldPos( "Serie" ) ) ] }
+         :bEditValue       := {|| aTable[ oBrw:nArrayAt, ( cDiario )->( fieldpos( "Serie" ) ) ] }
          :nWidth           := 20
       end with
 
       with object ( oBrw:AddCol() )
          :cHeader          := "Factura"
-         :bEditValue       := {|| aTable[ oBrw:nArrayAt, ( cDiario )->( FieldPos( "Factura" ) ) ] }
+         :bEditValue       := {|| aTable[ oBrw:nArrayAt, ( cDiario )->( fieldpos( "Factura" ) ) ] }
          :nWidth           := 80
       end with
 
       with object ( oBrw:AddCol() )
          :cHeader          := "Base imponible"
-         :bEditValue       := {|| if( .t. , aTable[ oBrw:nArrayAt, ( cDiario )->( FieldPos( "BaseEuro" ) ) ], aTable[ oBrw:nArrayAt, ( cDiario )->( FieldPos( "BaseImponible" ) ) ] ) }
+         :bEditValue       := {|| if( .t. , aTable[ oBrw:nArrayAt, ( cDiario )->( fieldpos( "BaseEuro" ) ) ], aTable[ oBrw:nArrayAt, ( cDiario )->( fieldpos( "BaseImponible" ) ) ] ) }
          :cEditPicture     := cPorDiv
          :nWidth           := 80
          :nDataStrAlign    := 1
@@ -2144,7 +2158,7 @@ FUNCTION MsgTblCon( aTable, cDivisa, dbfDiv, lConAsi, cTitle, bConta )
 
       with object ( oBrw:AddCol() )
          :cHeader          := cImp()
-         :bEditValue       := {|| aTable[ oBrw:nArrayAt, ( cDiario )->( FieldPos( "IVA" ) ) ] }
+         :bEditValue       := {|| aTable[ oBrw:nArrayAt, ( cDiario )->( fieldpos( "IVA" ) ) ] }
          :cEditPicture     := cPorDiv
          :nWidth           := 80
          :nDataStrAlign    := 1
@@ -2153,7 +2167,7 @@ FUNCTION MsgTblCon( aTable, cDivisa, dbfDiv, lConAsi, cTitle, bConta )
 
       with object ( oBrw:AddCol() )
          :cHeader          := "R.E."
-         :bEditValue       := {|| aTable[ oBrw:nArrayAt, ( cDiario )->( FieldPos( "RecargoEquivalencia" ) ) ] }
+         :bEditValue       := {|| aTable[ oBrw:nArrayAt, ( cDiario )->( fieldpos( "RecargoEquivalencia" ) ) ] }
          :cEditPicture     := cPorDiv
          :nWidth           := 80
          :nDataStrAlign    := 1
@@ -2162,25 +2176,25 @@ FUNCTION MsgTblCon( aTable, cDivisa, dbfDiv, lConAsi, cTitle, bConta )
 
       with object ( oBrw:AddCol() )
          :cHeader          := "Documento"
-         :bEditValue       := {|| aTable[ oBrw:nArrayAt, ( cDiario )->( FieldPos( "Documento" ) ) ] }
+         :bEditValue       := {|| aTable[ oBrw:nArrayAt, ( cDiario )->( fieldpos( "Documento" ) ) ] }
          :nWidth           := 100
       end with
 
       with object ( oBrw:AddCol() )
          :cHeader          := "Departamento"
-         :bEditValue       := {|| aTable[ oBrw:nArrayAt, ( cDiario )->( FieldPos( "Departamento" ) ) ] }
+         :bEditValue       := {|| aTable[ oBrw:nArrayAt, ( cDiario )->( fieldpos( "Departamento" ) ) ] }
          :nWidth           := 40
       end with
 
       with object ( oBrw:AddCol() )
          :cHeader          := "Clave"
-         :bEditValue       := {|| aTable[ oBrw:nArrayAt, ( cDiario )->( FieldPos( "Clave" ) ) ] }
+         :bEditValue       := {|| aTable[ oBrw:nArrayAt, ( cDiario )->( fieldpos( "Clave" ) ) ] }
          :nWidth           := 60
       end with
 
       with object ( oBrw:AddCol() )
          :cHeader          := "Estado"
-         :bEditValue       := {|| aTable[ oBrw:nArrayAt, ( cDiario )->( FieldPos( "Estado" ) ) ] }
+         :bEditValue       := {|| aTable[ oBrw:nArrayAt, ( cDiario )->( fieldpos( "Estado" ) ) ] }
          :nWidth           := 40
       end with
 
@@ -2224,9 +2238,9 @@ function nTotDebe( aTable, cDivisa, cPorDiv )
    if !Empty( aTable )
 
    if .t. // cDivisa == "EUR"
-      aEval( aTable, {|x| nTotal += if( valType( x[ ( cDiario )->( FieldPos( "EURODEBE" ) ) ] ) == "N", x[ ( cDiario )->( FieldPos( "EURODEBE" ) ) ], 0 ) } )
+      aEval( aTable, {|x| nTotal += if( valType( x[ ( cDiario )->( fieldpos( "EURODEBE" ) ) ] ) == "N", x[ ( cDiario )->( fieldpos( "EURODEBE" ) ) ], 0 ) } )
    else
-      aEval( aTable, {|x| nTotal += if( valType( x[ ( cDiario )->( FieldPos( "PTADEBE" ) ) ] ) == "N", x[ ( cDiario )->( FieldPos( "PTADEBE" ) ) ], 0 ) } )
+      aEval( aTable, {|x| nTotal += if( valType( x[ ( cDiario )->( fieldpos( "PTADEBE" ) ) ] ) == "N", x[ ( cDiario )->( fieldpos( "PTADEBE" ) ) ], 0 ) } )
    end if
 
    end if
@@ -2251,9 +2265,9 @@ function nTotHaber( aTable, cDivisa, cPorDiv )
    BEGIN SEQUENCE
 
    if .t. // cDivisa == "EUR"
-      aEval( aTable, {|x| nTotal += if( valType( x[ ( cDiario )->( FieldPos( "EUROHABER" ) ) ] ) == "N", x[ ( cDiario )->( FieldPos( "EUROHABER" ) ) ], 0 ) } )
+      aEval( aTable, {|x| nTotal += if( valType( x[ ( cDiario )->( fieldpos( "EUROHABER" ) ) ] ) == "N", x[ ( cDiario )->( fieldpos( "EUROHABER" ) ) ], 0 ) } )
    else
-      aEval( aTable, {|x| nTotal += if( valType( x[ ( cDiario )->( FieldPos( "PTAHABER" ) ) ] ) == "N", x[ ( cDiario )->( FieldPos( "PTAHABER" ) ) ], 0 ) } )
+      aEval( aTable, {|x| nTotal += if( valType( x[ ( cDiario )->( fieldpos( "PTAHABER" ) ) ] ) == "N", x[ ( cDiario )->( fieldpos( "PTAHABER" ) ) ], 0 ) } )
    end if
 
    RECOVER USING oError
@@ -2488,7 +2502,7 @@ FUNCTION CloseProyecto()
 
    ( cProyecto  )->( dbCloseArea() )
 
-RETURN NIL
+RETURN nil
 
 //----------------------------------------------------------------------------//
 

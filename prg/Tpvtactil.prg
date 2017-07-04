@@ -1195,6 +1195,7 @@ METHOD Activate( lAlone ) CLASS TpvTactil
    ::oTpvUtilidadesMesa       := TpvUtilidadesMesa():New( Self )
 
    ::oTurno                   := TTurno():New( cPatEmp(), cDriver(), oWnd(), "01001" )
+   ::oTurno:setTpvRestaurante( ::oRestaurante )
 
    if lFamInTpv( ::oFamilias:cAlias )
 
@@ -2919,55 +2920,55 @@ Return ( Self )
 
 METHOD EditArticulo( nRow, nCol )
 
-  local nOpt
+   local nOpt
 
-  if !Empty( ::oLstArticulos )
+   if !Empty( ::oLstArticulos )
 
-     ::oLstArticulos:nOption       := ::oLstArticulos:GetOption( nRow, nCol )
-     ::oLstArticulos:Refresh()
+      ::oLstArticulos:nOption       := ::oLstArticulos:GetOption( nRow, nCol )
+      ::oLstArticulos:Refresh()
 
-     nOpt                          := ::oLstArticulos:nOption
+      nOpt                          := ::oLstArticulos:nOption
 
-     if Empty( nOpt )
-        RETURN ( .f. )
-     end if
+      if Empty( nOpt )
+         RETURN ( .f. )
+      end if
 
-     if !Empty( ::oLstArticulos:oVScroll )
-        ::oLstArticulos:oVScroll:SetPos( ::oLstArticulos:nCurLine() )
-     end if
+      if !Empty( ::oLstArticulos:oVScroll )
+         ::oLstArticulos:oVScroll:SetPos( ::oLstArticulos:nCurLine() )
+      end if
 
-     nOpt                          := Max( Min( nOpt, len( ::oLstArticulos:aItems ) ), 1 )
+      nOpt                          := Max( Min( nOpt, len( ::oLstArticulos:aItems ) ), 1 )
 
-     if nOpt > 0 .and. nOpt <= len( ::oLstArticulos:aItems )
+      if nOpt > 0 .and. nOpt <= len( ::oLstArticulos:aItems )
 
-        if EdtArticulo( ::oLstArticulos:aItems[ nOpt ]:Cargo )
+         if EdtArticulo( ::oLstArticulos:aItems[ nOpt ]:Cargo )
 
-           ::CargaBrowseFamilias()
+            ::CargaBrowseFamilias()
 
-           ::ChangeFamilias()
+            ::ChangeFamilias()
 
-        end if
+         end if
 
-     end if
+      end if
 
-  end if
+   end if
 
-  RETURN ( .t. )
+RETURN ( .t. )
 
 //------------------------------------------------------------------------//
 
 METHOD InstanceFastReport()
 
-  /*
-  Creamos el objeto FastReport---------------------------------------------
-  */
+   /*
+   Creamos el objeto FastReport---------------------------------------------
+   */
 
-  ::oFastReport     := frReportManager():New()
-  ::oFastReport:LoadLangRes( "Spanish.Xml" )
+   ::oFastReport     := frReportManager():New()
+   ::oFastReport:LoadLangRes( "Spanish.Xml" )
 
-  ::DataReport()
+   ::DataReport()
 
-  RETURN ( Self )
+RETURN ( Self )
 
 //------------------------------------------------------------------------//
 
@@ -6925,7 +6926,7 @@ METHOD OnClickCloseTurno( lParcial ) CLASS TpvTactil
 
       ::SetInfo()
 
-      // Colocamos el texto de las comandas a su valor inicial-----------
+      // Colocamos el texto de las comandas a su valor inicial-----------------
 
       ::resetTextButtonOrdenComandaActual()
 
@@ -10662,7 +10663,7 @@ METHOD getComensales( nUbicacion )
 
       ::OnClickComensales()
 
-      // unidades 
+      // unidades-------------------------------------------------------------- 
 
       if ( ::oRestaurante:lMultiplicar .and. ::oTiketCabecera:nNumCom > 0 )
          ::setUnidades( ::oTiketCabecera:nNumCom )
@@ -10670,7 +10671,7 @@ METHOD getComensales( nUbicacion )
 
    end if
 
-   // Articulos al inicio
+   // articulos al inicio------------------------------------------------------
 
    if !empty( ::oRestaurante:cArticulo ) 
       ::AgregarArticulosInicio( ::oRestaurante:cArticulo )         

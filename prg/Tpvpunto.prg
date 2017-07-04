@@ -229,7 +229,7 @@ METHOD CreateMesa( lPuntosPendientes ) CLASS sTpvPunto
 
    local oMesa       
 
-   oMesa    := TTpvMesa():New( ::nTop, ::nLeft, ::nType, ::GetSalonWnd() )
+   oMesa             := TTpvMesa():New( ::nTop, ::nLeft, ::nType, ::GetSalonWnd() )
 
    oMesa:LoadFromPunto( Self )
 
