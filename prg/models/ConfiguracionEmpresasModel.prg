@@ -14,7 +14,7 @@ CLASS ConfiguracionEmpresasModel FROM SQLBaseModel
 
    METHOD getValue()
    METHOD getChar( name, default )     INLINE ( ::getValue( name, default ) )
-   METHOD getLogic( name, default )    INLINE ( ".T." $ upper( ::getValue( name, default ) ) )
+   METHOD getLogic( name, default )    
    METHOD getVal( name, default )      INLINE ( val( ::getValue( name, default ) ) )
 
    METHOD setValue()
@@ -64,6 +64,24 @@ METHOD getValue( name, default )
 
    if !empty( aSelect )
       RETURN ( hget( atail( aSelect ), "value" ) )
+   end if 
+
+RETURN ( default )
+
+//---------------------------------------------------------------------------//
+
+METHOD getLogic( name, default )
+
+   local cValue
+
+   if !hb_islogical( default )
+      default  := .f.
+   end if 
+
+   cValue      := ::getValue( name )
+
+   if !empty( cValue )
+      RETURN ( ".T." $ upper( cValue ) )
    end if 
 
 RETURN ( default )

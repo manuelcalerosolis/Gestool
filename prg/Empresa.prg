@@ -108,6 +108,7 @@ static cCmbContabilidad
 static aCmbContabilidad        := { "Contaplus", "A3 CON" }   
 
 static cMailNotificaciones
+static lSendMailsToClient 
 
 static nView
 
@@ -1307,6 +1308,8 @@ STATIC FUNCTION EditConfig( aTmp, aGet, dbfEmp, oBrw, nSelFolder, bValid, nMode 
 
    cMailNotificaciones     := padr( ConfiguracionEmpresasModel():getValue( 'mail_notificaciones', '' ), 200 )
    
+   lSendMailsToClient      := ConfiguracionEmpresasModel():getLogic( 'mail_to_client', .f. )
+   
    LoaItmEmp( aTmp )
 
    DEFINE DIALOG  oDlg ;
@@ -1615,14 +1618,18 @@ STATIC FUNCTION EditConfig( aTmp, aGet, dbfEmp, oBrw, nSelFolder, bValid, nMode 
          ID       210;
          OF       fldTPV  
 
-      REDEFINE CHECKBOX aGet[ ( dbfEmp )->( fieldpos( "lOpenTik" ) ) ] ;
-         VAR      aTmp[ ( dbfEmp )->( fieldpos( "lOpenTik" ) ) ] ;
-         ID       220;
+      REDEFINE CHECKBOX lSendMailsToClient ;
+         ID       240;
          OF       fldTPV  
 
       REDEFINE GET cMailNotificaciones ;
          ID       230 ;
          OF       fldTPV
+
+      REDEFINE CHECKBOX aGet[ ( dbfEmp )->( fieldpos( "lOpenTik" ) ) ] ;
+         VAR      aTmp[ ( dbfEmp )->( fieldpos( "lOpenTik" ) ) ] ;
+         ID       220;
+         OF       fldTPV  
 
       // Page 2 Defecto-----------------------------------------------------------
 
@@ -5668,7 +5675,8 @@ Static Function SaveEditConfig( aTmp, oSay, oBrw, oDlg, nMode )
 
    end while
 
-   ConfiguracionEmpresasModel():setValue( 'mail_notificaciones', alltrim( cMailNotificaciones ) )
+   ConfiguracionEmpresasModel():setValue( 'mail_notificaciones',  alltrim( cMailNotificaciones ) )
+   ConfiguracionEmpresasModel():setValue( 'mail_to_client',       lSendMailsToClient )
 
    // Escribimos en el definitivo----------------------------------------------
 

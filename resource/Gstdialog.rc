@@ -5565,7 +5565,8 @@ FONT 8, "Ms Sans Serif"
   CONTROL "Permitir tickets abiertos al cerrar la sesión", 220, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 50, 220, 143, 10
   CONTROL "", 210, "ComboBox", WS_BORDER|CBS_DROPDOWNLIST|WS_VSCROLL|WS_TABSTOP, 138, 232, 96, 91
   CONTROL "", 230, "Edit", WS_BORDER|WS_TABSTOP, 138, 247, 286, 11
-  CONTROL "Propiedades", -1, "Button", BS_GROUPBOX, 44, 29, 386, 235
+  CONTROL "Enviar documentos de venta al cliente", 240, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 50, 261, 143, 10
+  CONTROL "Propiedades", -1, "Button", BS_GROUPBOX, 44, 29, 386, 247
   CONTROL "", 500, "Static", SS_BITMAP|SS_CENTERIMAGE, 4, 3, 34, 30
   CONTROL "Opciones para el terminal punto de venta", -1, "Static", SS_LEFTNOWORDWRAP, 44, 3, 384, 8
   CONTROL "Opción impresión al cobrar", -1, "Static", WS_GROUP, 50, 235, 86, 8

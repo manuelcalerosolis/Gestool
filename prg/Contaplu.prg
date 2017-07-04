@@ -80,7 +80,7 @@ Function ChkRuta( cRutaConta, lMessage )
       Return .t.
    end if
 
-   if Empty( cRutaConta )
+   if empty( cRutaConta )
       Return .f.
    end if
 
@@ -133,17 +133,17 @@ FUNCTION ChkFecha( cRuta, cCodEmp, dFecha, lMessage, oTree, cText )
       Return ( .t. )
    end if 
 
-   if Empty( cRuta )
+   if empty( cRuta )
       Return ( .f. )
    end if
 
-   if ( Empty( dFecha ) .or. Empty( cRuta ) )
+   if ( empty( dFecha ) .or. empty( cRuta ) )
       Return ( .t. )
    end if
 
-   if Empty( cEmpresa )
+   if empty( cEmpresa )
       cEmpresa       := OpnEmpresa( cRuta, lMessage )
-      if Empty( cEmpresa )
+      if empty( cEmpresa )
          return .f.
       else
          lClose      := .t.
@@ -184,7 +184,7 @@ FUNCTION ChkFecha( cRuta, cCodEmp, dFecha, lMessage, oTree, cText )
             msgStop( cText )
          end if
 
-         if !Empty( oTree )
+         if !empty( oTree )
             oTree:Select( oTree:Add( Alltrim( cText ) ) )
          end if
 
@@ -215,20 +215,20 @@ FUNCTION ChkEmpresaContaplus( cRuta, cCodEmp, oGetEmp, lMessage )
       Return ( .t. )
    end if 
 
-   if Empty( cRuta )
+   if empty( cRuta )
       Return ( .f. )
    end if
 
-   if Empty( cCodEmp )
-      if !Empty( oGetEmp )
+   if empty( cCodEmp )
+      if !empty( oGetEmp )
          oGetEmp:cText( "" )
       end if
       Return ( .f. )
    end if
 
-   if Empty( cEmpresa )
+   if empty( cEmpresa )
       cEmpresa       := OpnEmpresa( cRuta, lMessage )
-      if Empty( cEmpresa )
+      if empty( cEmpresa )
          Return ( .f. )
       else
          lClose      := .t.
@@ -237,7 +237,7 @@ FUNCTION ChkEmpresaContaplus( cRuta, cCodEmp, oGetEmp, lMessage )
 
    lEmpresa          := ( cEmpresa )->( dbSeek( cCodEmp ) )
    if lEmpresa
-      if !Empty( oGetEmp )
+      if !empty( oGetEmp )
          oGetEmp:cText( ( cEmpresa )->Nombre )
       end if
    else
@@ -266,17 +266,17 @@ FUNCTION cEmpresaContaplus( cRuta, cCodEmp )
       Return ( cNbrEmp )
    end if
 
-   if Empty( cRuta )
+   if empty( cRuta )
       Return ( cNbrEmp )
    end if
 
-   if Empty( cCodEmp )
+   if empty( cCodEmp )
       Return ( cNbrEmp )
    end if
 
-   if Empty( cEmpresa )
+   if empty( cEmpresa )
       cEmpresa       := OpnEmpresa( cRuta, .f. )
-      if Empty( cEmpresa )
+      if empty( cEmpresa )
          Return ( cNbrEmp )
       else
          lClose      := .t.
@@ -315,13 +315,13 @@ FUNCTION BrwEmpresaContaplus( cRuta, oGetEmp )
 
    DEFAULT cRuta     := cRutCnt()
 
-   if Empty( cRuta )
+   if empty( cRuta )
       return .f.
    end if
 
-   if Empty( cEmpresa )
+   if empty( cEmpresa )
       cEmpresa       := OpnEmpresa( cRuta, .t. )
-      if Empty( cEmpresa )
+      if empty( cEmpresa )
          return .f.
       else
          lClose      := .t.
@@ -404,7 +404,7 @@ FUNCTION BrwEmpresaContaplus( cRuta, oGetEmp )
 
    ACTIVATE DIALOG oDlg CENTER
 
-   if oDlg:nResult == IDOK .and. !Empty( oGetEmp )
+   if oDlg:nResult == IDOK .and. !empty( oGetEmp )
       oGetEmp:cText( ( cEmpresa )->Cod )
    end if
 
@@ -456,16 +456,16 @@ FUNCTION nLenSubcuentaContaplus( cRuta, cCodEmp, lMensaje )
       Return ( aLenSubCuenta[ nPosition, 2 ] )
    end if
 
-   if Empty( cRuta )
+   if empty( cRuta )
       if lMensaje
          msgStop( "Ruta vacia" )
       end if
       Return ( nReturn )
    end if
 
-   if Empty( cEmpresa )
+   if empty( cEmpresa )
       cEmpresa       := OpnEmpresa( cRuta, lMensaje )
-      if Empty( cEmpresa )
+      if empty( cEmpresa )
          Return ( nReturn )
       else
          lClose      := .t.
@@ -507,16 +507,16 @@ FUNCTION nEjercicioContaplus( cRuta, cCodEmp, lMensaje )
    DEFAULT cCodEmp   := cEmpCnt()
    DEFAULT lMensaje  := .f.
 
-   if Empty( cRuta )
+   if empty( cRuta )
       if lMensaje
          msgStop( "Ruta vacia" )
       end if
       Return ( nReturn )
    end if
 
-   if Empty( cEmpresa )
+   if empty( cEmpresa )
       cEmpresa       := OpnEmpresa( cRuta, lMensaje )
-      if Empty( cEmpresa )
+      if empty( cEmpresa )
          Return ( nReturn )
       else
          lClose      := .t.
@@ -561,13 +561,13 @@ FUNCTION ChkCta( cCodCuenta, oGetCta, lMessage, cRuta, cCodEmp )
    DEFAULT cCodEmp   := cEmpCnt( "A" )
    DEFAULT cRuta     := cRutCnt()
 
-   if Empty( cRuta )
+   if empty( cRuta )
       Return ( .f. )
    end if
 
    cRuta             := cPath( cRuta )
 
-   if Empty( cCodCuenta )
+   if empty( cCodCuenta )
       Return .t.
    end if
 
@@ -604,7 +604,7 @@ RETURN lReturn
 
 //----------------------------------------------------------------------------//
 
-FUNCTION ChkSubcuenta( cRuta, cCodEmp, cCodSubcuenta, oGetCta, lMessage, lEmpty )
+FUNCTION ChkSubcuenta( cRuta, cCodEmp, cCodSubcuenta, oGetCta, lMessage, lempty )
 
    local lClose      := .f.
    local lReturn     := .t.
@@ -615,23 +615,23 @@ FUNCTION ChkSubcuenta( cRuta, cCodEmp, cCodSubcuenta, oGetCta, lMessage, lEmpty 
 
    DEFAULT cCodEmp   := cEmpCnt( "A" )
    DEFAULT lMessage  := .f.
-   DEFAULT lEmpty    := .t.
+   DEFAULT lempty    := .t.
    DEFAULT cRuta     := cRutCnt()
 
-   if Empty( cRuta )
+   if empty( cRuta )
       Return ( .f. )
    end if
 
    cRuta             := cPath( cRuta )
    cCodSubcuenta        := Padr( cCodSubcuenta, 12 )
 
-   if ( Empty( cCodSubcuenta ) .or. Empty( cRuta ) ) .and. lEmpty
+   if ( empty( cCodSubcuenta ) .or. empty( cRuta ) ) .and. lempty
       return .t.
    end if
 
-   if Empty( cSubCuenta )
+   if empty( cSubCuenta )
       cSubCuenta     := OpnSubCuenta( cRuta, cCodEmp, lMessage )
-      if Empty( cSubCuenta )
+      if empty( cSubCuenta )
          return .f.
       else
          lClose      := .t.
@@ -640,7 +640,7 @@ FUNCTION ChkSubcuenta( cRuta, cCodEmp, cCodSubcuenta, oGetCta, lMessage, lEmpty 
 
    if ( cSubCuenta )->( dbSeek( cCodSubcuenta ) )
 
-      if !Empty( oGetCta )
+      if !empty( oGetCta )
          oGetCta:cText( ( cSubCuenta )->Titulo )
       end if
 
@@ -681,7 +681,7 @@ FUNCTION BrwChkCta( oCodCta, oGetCta, cRuta, cCodEmp )
    DEFAULT cCodEmp   := cEmpCnt()
    DEFAULT cRuta     := cRutCnt()
 
-   if Empty( cRuta )
+   if empty( cRuta )
       Return ( nil )
    end if
 
@@ -689,7 +689,7 @@ FUNCTION BrwChkCta( oCodCta, oGetCta, cRuta, cCodEmp )
 
    if OpnCta( cRuta, cCodEmp, @cArea, .t. )
 
-      ( cArea )->( dbSetFilter( {|| !Empty( Field->Cta ) }, "!Empty( Field->Cta )" ) )
+      ( cArea )->( dbSetFilter( {|| !empty( Field->Cta ) }, "!empty( Field->Cta )" ) )
       ( cArea )->( dbGoTop() )
 
       DEFINE DIALOG oDlg RESOURCE "HELPENTRY" TITLE "Cuentas de contaplus ®"
@@ -806,7 +806,7 @@ FUNCTION BrwChkSubcuenta( oCodCta, oGetCta, cRuta, cCodEmp )
    DEFAULT cCodEmp   := cEmpCnt( "A" )
    DEFAULT cRuta     := cRutCnt()
 
-   if Empty( cRuta )
+   if empty( cRuta )
       msgStop( "Ruta no definida" )
       Return ( nil )
    end if
@@ -940,7 +940,7 @@ FUNCTION mkSubcuenta( oGetSubcuenta, aTemp, oGet, cRuta, cCodEmp, oGetDebe, oGet
    DEFAULT cCodEmp      := cEmpCnt( "A" )
    DEFAULT cRuta        := cRutCnt()
 
-   if Empty( cRuta )
+   if empty( cRuta )
       Return ( .f. )
    end if
 
@@ -959,7 +959,7 @@ FUNCTION mkSubcuenta( oGetSubcuenta, aTemp, oGet, cRuta, cCodEmp, oGetDebe, oGet
 
       cCodEmp           := cCodEmpCnt( aSerie[ n ] )
 
-      if !Empty( cCodEmp ) .and. aScan( aEmpProced, cCodEmp ) == 0
+      if !empty( cCodEmp ) .and. aScan( aEmpProced, cCodEmp ) == 0
 
          if OpenSubCuenta( cRuta, cCodEmp, @cArea )
 
@@ -1088,7 +1088,7 @@ FUNCTION LoadSubcuenta( cCodSubcuenta, cRuta, dbfTmp )
 
    DEFAULT cRuta     := cRutCnt()
 
-   if Empty( cRuta )
+   if empty( cRuta )
       Return .f.
    end if
 
@@ -1096,7 +1096,7 @@ FUNCTION LoadSubcuenta( cCodSubcuenta, cRuta, dbfTmp )
 
    ( dbfTmp )->( __dbZap() )
 
-   if Empty( AllTrim( cCodSubcuenta ) )
+   if empty( AllTrim( cCodSubcuenta ) )
       return .t.
    end if
 
@@ -1104,7 +1104,7 @@ FUNCTION LoadSubcuenta( cCodSubcuenta, cRuta, dbfTmp )
 
       cCodEmp        := cCodEmpCnt( aSerie[ n ] )
 
-      if !Empty( cCodEmp ) .and. aScan( aEmpProced, cCodEmp ) == 0
+      if !empty( cCodEmp ) .and. aScan( aEmpProced, cCodEmp ) == 0
 
          dbfDiario   := OpnDiario( cRuta, cCodEmp, .f. )
          if dbfDiario != nil
@@ -1165,7 +1165,7 @@ FUNCTION RetCtaEsp( nCuenta, cRuta, cCodEmp, lMessage )
    DEFAULT lMessage  := .f.
    DEFAULT cRuta     := cRutCnt()
 
-   if Empty( cRuta )
+   if empty( cRuta )
       Return ( cCtaEsp )
    end if
 
@@ -1228,7 +1228,7 @@ Function OpenDiario( cRuta, cCodEmp, lMessage )
       Return ( lOpenDiario )
    end if
 
-   if Empty( cRuta )
+   if empty( cRuta )
       if lMessage
          MsgStop( "Ruta de contaplus ® no valida" )
       end if
@@ -1243,22 +1243,22 @@ Function OpenDiario( cRuta, cCodEmp, lMessage )
       cRuta          := cPath( cRuta )
 
       cDiario        := OpnDiario( cRuta, cCodEmp, lMessage )
-      if Empty( cDiario )
+      if empty( cDiario )
          lOpenDiario := .f.
       end if
 
       cCuenta        := OpnBalance( cRuta, cCodEmp, lMessage )
-      if Empty( cCuenta )
+      if empty( cCuenta )
          lOpenDiario := .f.
       end if
 
       cSubCuenta     := OpnSubCuenta( cRuta, cCodEmp, lMessage )
-      if Empty( cSubCuenta )
+      if empty( cSubCuenta )
          lOpenDiario := .f.
       end if
 
       cEmpresa       := OpnEmpresa( cRuta, lMessage )
-      if Empty( cEmpresa )
+      if empty( cEmpresa )
          lOpenDiario := .f.
       end if
 
@@ -1280,19 +1280,19 @@ Return ( lOpenDiario )
 
 FUNCTION CloseDiario()
 
-   if !Empty( cDiario )
+   if !empty( cDiario )
       ( cDiario )->( dbCloseArea() )
    end if
 
-   if !Empty( cCuenta )
+   if !empty( cCuenta )
       ( cCuenta )->( dbCloseArea() )
    end if
 
-   if !Empty( cSubCuenta )
+   if !empty( cSubCuenta )
       ( cSubCuenta )->( dbCloseArea() )
    end if
 
-   if !Empty( cEmpresa )
+   if !empty( cEmpresa )
       ( cEmpresa )->( dbCloseArea() )
    end if
 
@@ -1322,7 +1322,7 @@ Function RetLastAsi()
       Return ( nLastAsi )
    end if
 
-   if !Empty( cDiario ) .and. ( cDiario )->( Used() )
+   if !empty( cDiario ) .and. ( cDiario )->( Used() )
 
       nRecno         := ( cDiario )->( Recno() )
 
@@ -1549,7 +1549,7 @@ Static Function MkAsientoContaplus( Asien,;
 
    // Pagos en metalico-----------------------------------------------------------
 
-   if !Empty( nEjeCon ) .and. !Empty( cEjeCta )
+   if !empty( nEjeCon ) .and. !empty( cEjeCta )
 
       if ( cDiario )->( fieldpos( "METAL" ) ) != 0
          aTemp[ ( cDiario )->( fieldpos( "METAL") ) ]       := .t.
@@ -1607,7 +1607,7 @@ Function WriteAsiento( aTemp, cDivisa, lMessage )
    oBlock            := ErrorBlock( { | oError | ApoloBreak( oError ) } )
    BEGIN SEQUENCE
 
-   if !Empty( cDiario ) .and. !Empty( aTemp[ ( cDiario )->( fieldpos( "FECHA" ) ) ] )
+   if !empty( cDiario ) .and. !empty( aTemp[ ( cDiario )->( fieldpos( "FECHA" ) ) ] )
 
       WinGather( aTemp, , cDiario, , APPD_MODE, , .f. )
 
@@ -1619,20 +1619,20 @@ Function WriteAsiento( aTemp, cDivisa, lMessage )
          ( cSubCuenta )->SUMAHBEU               += aTemp[ ( cDiario )->( fieldpos( "EUROHABER" ) ) ]
 
          nFld        := ( cSubCuenta )->( fieldpos( "SDB" + cMes + "EU" ) )
-         nVal        := ( cSubCuenta )->( FieldGet( nFld ) )
-         ( cSubCuenta )->( FieldPut( nFld, nVal + aTemp[ ( cDiario )->( fieldpos( "EURODEBE" ) ) ] ) )
+         nVal        := ( cSubCuenta )->( fieldget( nFld ) )
+         ( cSubCuenta )->( fieldput( nFld, nVal + aTemp[ ( cDiario )->( fieldpos( "EURODEBE" ) ) ] ) )
 
          nFld        := ( cSubCuenta )->( fieldpos( "SHB" + cMes + "EU" ) )
-         nVal        := ( cSubCuenta )->( FieldGet( nFld ) )
-         ( cSubCuenta )->( FieldPut( nFld, nVal + aTemp[ ( cDiario )->( fieldpos( "EUROHABER" ) ) ] ) )
+         nVal        := ( cSubCuenta )->( fieldget( nFld ) )
+         ( cSubCuenta )->( fieldput( nFld, nVal + aTemp[ ( cDiario )->( fieldpos( "EUROHABER" ) ) ] ) )
 
          nFld        := ( cSubCuenta )->( fieldpos( "NDB" + cMes + "EU" ) )
-         nVal        := ( cSubCuenta )->( FieldGet( nFld ) )
-         ( cSubCuenta )->( FieldPut( nFld, nVal + aTemp[ ( cDiario )->( fieldpos( "EURODEBE" ) ) ] ) )
+         nVal        := ( cSubCuenta )->( fieldget( nFld ) )
+         ( cSubCuenta )->( fieldput( nFld, nVal + aTemp[ ( cDiario )->( fieldpos( "EURODEBE" ) ) ] ) )
 
          nFld        := ( cSubCuenta )->( fieldpos( "NHB" + cMes + "EU" ) )
-         nVal        := ( cSubCuenta )->( FieldGet( nFld ) )
-         ( cSubCuenta )->( FieldPut( nFld, nVal + aTemp[ ( cDiario )->( fieldpos( "EUROHABER" ) ) ] ) )
+         nVal        := ( cSubCuenta )->( fieldget( nFld ) )
+         ( cSubCuenta )->( fieldput( nFld, nVal + aTemp[ ( cDiario )->( fieldpos( "EUROHABER" ) ) ] ) )
 
          ( cSubCuenta )->( dbUnLock() )
 
@@ -1700,7 +1700,7 @@ FUNCTION retCtaVta( cCodArt, lDevolucion, dbfArticulo )
          cCtaVta        := rtrim( ( dbfArticulo )->cCtaVtaDev )
       end if 
 
-      if empty(cCtaVta)
+      if empty( cCtaVta )
          cCtaVta        := rtrim( ( dbfArticulo )->cCtaVta )
       end if 
    
@@ -1756,7 +1756,7 @@ FUNCTION RetGrpVta( cCodArt, cRuta, cCodEmp, cAlias, nIva )
 
    local cCtaVent := Replicate( "0", nLenCuentaContaplus( cRuta, cCodEmp ) )
 
-   if ( cAlias )->( dbSeek( cCodArt ) ) .and. !Empty( ( cAlias )->GrpVent )
+   if ( cAlias )->( dbSeek( cCodArt ) ) .and. !empty( ( cAlias )->GrpVent )
       cCtaVent    := Rtrim( ( cAlias )->GrpVent )
    else
       if nIva != nil
@@ -1776,7 +1776,7 @@ FUNCTION cCtaConta( oGet, dbfCuentas, oGet2 )
    local cRuta    := cRutCnt()
    local cCodEmp  := cEmpCnt()
 
-   if Empty( xValor )
+   if empty( xValor )
       Return .t.
    elseif At( ".", xValor ) != 0
       xValor      := PntReplace( oGet, "0", nLenCuentaContaplus() )
@@ -1830,7 +1830,7 @@ STATIC FUNCTION OpnEmpresa( cRuta, lMessage )
    DEFAULT lMessage  := .f.
    DEFAULT cRuta     := cRutCnt()
 
-   if Empty( cRuta )
+   if empty( cRuta )
       return ( nil )
    end if
 
@@ -1863,7 +1863,7 @@ Return ( cEmpresa )
 
 Function CloEmpresa()
 
-   if !Empty( cEmpresa )
+   if !empty( cEmpresa )
       ( cEmpresa )->( dbCloseArea() )
    end if
 
@@ -1884,7 +1884,7 @@ STATIC FUNCTION OpnCta( cRuta, cCodEmp, cArea, lMessage )
    DEFAULT cRuta     := cRutCnt()
    DEFAULT lMessage  := .f.
 
-   if Empty( cRuta )
+   if empty( cRuta )
       return .f.
    end if
 
@@ -1947,7 +1947,7 @@ FUNCTION OpenSubCuenta( cRuta, cCodEmp, cArea, lMessage )
    DEFAULT cCodEmp   := cEmpCnt()   
    DEFAULT lMessage  := .f.
 
-   if Empty( cRuta )
+   if empty( cRuta )
       msgStop( "Ruta de Contaplus esta vacia")
       Return ( .f. )
    end if
@@ -2005,7 +2005,7 @@ FUNCTION OpenVencimientos( cRuta, cCodEmp, cArea, lMessage )
    DEFAULT cCodEmp   := cEmpCnt()   
    DEFAULT lMessage  := .f.
 
-   if Empty( cRuta )
+   if empty( cRuta )
       msgStop( "Ruta de Contaplus esta vacia")
       Return ( .f. )
    end if
@@ -2203,7 +2203,7 @@ FUNCTION MsgTblCon( aTable, cDivisa, dbfDiv, lConAsi, cTitle, bConta )
       REDEFINE BUTTON oBtnCon ;
          ID       110 ;
 			OF 		oDlg ;
-         ACTION   ( if( !Empty( bConta ), Eval( bConta ), ), oDlg:end() )
+         ACTION   ( if( !empty( bConta ), Eval( bConta ), ), oDlg:end() )
 
       REDEFINE BUTTON ;
          ID       120 ;
@@ -2216,9 +2216,9 @@ FUNCTION MsgTblCon( aTable, cDivisa, dbfDiv, lConAsi, cTitle, bConta )
          CANCEL ;
          ACTION   ( oDlg:end() )
 
-      oDlg:AddFastKey( VK_F5, {|| if( !Empty( bConta ), Eval( bConta ), ), oDlg:end() } )
+      oDlg:AddFastKey( VK_F5, {|| if( !empty( bConta ), Eval( bConta ), ), oDlg:end() } )
 
-      oDlg:bStart          := {|| if( !lConAsi .or. Empty( bConta ), oBtnCon:Hide(), ) }
+      oDlg:bStart          := {|| if( !lConAsi .or. empty( bConta ), oBtnCon:Hide(), ) }
 
 	ACTIVATE DIALOG oDlg CENTER
 
@@ -2235,7 +2235,7 @@ function nTotDebe( aTable, cDivisa, cPorDiv )
    oBlock            := ErrorBlock( { | oError | ApoloBreak( oError ) } )
    BEGIN SEQUENCE
 
-   if !Empty( aTable )
+   if !empty( aTable )
 
    if .t. // cDivisa == "EUR"
       aEval( aTable, {|x| nTotal += if( valType( x[ ( cDiario )->( fieldpos( "EURODEBE" ) ) ] ) == "N", x[ ( cDiario )->( fieldpos( "EURODEBE" ) ) ], 0 ) } )
@@ -2251,7 +2251,7 @@ function nTotDebe( aTable, cDivisa, cPorDiv )
 
    ErrorBlock( oBlock )
 
-return ( if( Empty( cPorDiv ), nTotal, Trans( nTotal, cPorDiv ) ) )
+return ( if( empty( cPorDiv ), nTotal, Trans( nTotal, cPorDiv ) ) )
 
 //-------------------------------------------------------------------------//
 
@@ -2276,7 +2276,7 @@ function nTotHaber( aTable, cDivisa, cPorDiv )
 
    ErrorBlock( oBlock )
 
-return ( if( Empty( cPorDiv ), nTotal, Trans( nTotal, cPorDiv ) ) )
+return ( if( empty( cPorDiv ), nTotal, Trans( nTotal, cPorDiv ) ) )
 
 //-------------------------------------------------------------------------//
 
@@ -2300,7 +2300,7 @@ FUNCTION BrwProyecto( oCodPro, oGetPro, cRuta, cCodEmp )
    DEFAULT cCodEmp   := cEmpCnt( "A" )
    DEFAULT cRuta     := cRutCnt()
 
-   if Empty( cRuta )
+   if empty( cRuta )
       return .f.
    end if
 
@@ -2410,13 +2410,13 @@ FUNCTION ChkProyecto( cCodPro, oGetPro, cRuta, cCodEmp, lMessage )
    DEFAULT cCodEmp         := cEmpCnt()
    DEFAULT lMessage        := .f.
 
-   if Empty( cRuta )
+   if empty( cRuta )
       return ( cNombreProyecto )
    end if
 
    cRuta                   := cPath( cRuta )
 
-   if Empty( cCodPro ) .OR. Empty( cRuta )
+   if empty( cCodPro ) .OR. empty( cRuta )
       return ( cNombreProyecto )
    end if
 
@@ -2434,7 +2434,7 @@ FUNCTION ChkProyecto( cCodPro, oGetPro, cRuta, cCodEmp, lMessage )
 
       end if
 
-      if !Empty( oGetPro )
+      if !empty( oGetPro )
          oGetPro:cText( cNombreProyecto )
       end if
 
@@ -2453,7 +2453,7 @@ FUNCTION OpnProyecto( cRuta, cCodEmp )
    DEFAULT cCodEmp   := cEmpCnt()
    DEFAULT cRuta     := cRutCnt()
 
-   if Empty( cRuta )
+   if empty( cRuta )
       return .f.
    end if
 
@@ -2543,7 +2543,7 @@ Function OpnDiario( cRuta, cCodEmp, lMessage )
    DEFAULT cCodEmp      := cEmpCnt()
    DEFAULT lMessage     := .f.
 
-   if Empty( cRuta )
+   if empty( cRuta )
       if lMessage
          MsgStop( "Ruta de Contaplus ® no valida" )
       end if
@@ -2601,7 +2601,7 @@ Function OpnDiarioSii( cRuta, cCodEmp, lMessage )
    DEFAULT cCodEmp      := cEmpCnt()
    DEFAULT lMessage     := .f.
 
-   if Empty( cRuta )
+   if empty( cRuta )
       if lMessage
          MsgStop( "Ruta de Contaplus ® no valida" )
       end if
@@ -2659,7 +2659,7 @@ Function OpnBalance( cRuta, cCodEmp, lMessage )
    DEFAULT lMessage  := .f.
    DEFAULT cRuta     := cRutCnt()
 
-   if Empty( cRuta )
+   if empty( cRuta )
       if lMessage
          MsgStop( "Ruta de Contaplus ® no valida" )
       end if
@@ -2705,7 +2705,7 @@ Function OpnSubCuenta( cRuta, cCodEmp, lMessage )
    DEFAULT cCodEmp   := cEmpCnt()
    DEFAULT lMessage  := .f.
 
-   if Empty( cRuta )
+   if empty( cRuta )
       if lMessage
          MsgStop( "Ruta de Contaplus ® no valida" )
       end if
@@ -2744,7 +2744,7 @@ Return ( dbfSubcuenta )
 
 Function CloSubCuenta()
 
-   if !Empty( cSubCuenta )
+   if !empty( cSubCuenta )
       ( cSubCuenta )->( dbCloseArea() )
    end if
 
@@ -2824,9 +2824,9 @@ CLASS EnlaceA3
    METHOD Add( hAsiento )                 INLINE ( if( hhaskey( hAsiento, "Render" ) .and. !empty( hGet( hAsiento, "Render" ) ), aAdd( ::aAsiento, hAsiento ), ) )
    METHOD Show()                          INLINE ( msgInfo( ::cBuffer ) )
 
-   METHOD Directory( cValue )             INLINE ( if( !Empty( cValue ), ::cDirectory        := cValue,                 ::cDirectory ) )
-   METHOD File( cValue )                  INLINE ( if( !Empty( cValue ), ::cFile             := cValue,                 ::cFile ) )
-   METHOD cDate( dValue )                 INLINE ( if( !Empty( dValue ), ::cDate             := DateToString( dValue ), ::cDate ) )
+   METHOD Directory( cValue )             INLINE ( if( !empty( cValue ), ::cDirectory        := cValue,                 ::cDirectory ) )
+   METHOD File( cValue )                  INLINE ( if( !empty( cValue ), ::cFile             := cValue,                 ::cFile ) )
+   METHOD cDate( dValue )                 INLINE ( if( !empty( dValue ), ::cDate             := DateToString( dValue ), ::cDate ) )
    METHOD cFullFile()                     INLINE ( ::cDirectory + "\" + ::cFile )
    
    METHOD Render()
@@ -2930,7 +2930,7 @@ ENDCLASS
 
    METHOD GetInstance() CLASS EnlaceA3
 
-      if Empty( ::oInstance )
+      if empty( ::oInstance )
          ::oInstance                      := ::New()
       end if
 
