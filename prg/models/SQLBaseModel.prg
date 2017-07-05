@@ -171,10 +171,9 @@ METHOD getImportSentence( cPath )
       Return ( cInsert )
    end if
 
-   cInsert              := "INSERT INTO " + ::cTableName + " ( "
+   cInsert           := "INSERT INTO " + ::cTableName + " ( "
    hEval( ::hColumns, {| k | if ( k != ::cColumnKey, cInsert += k + ", ", ) } )
    cInsert           := ChgAtEnd( cInsert, ' ) VALUES ', 2 )
-
 
    ( dbf )->( dbgotop() )
    while ( dbf )->( !eof() )
@@ -301,19 +300,36 @@ METHOD getInsertSentence()
 
    Local cSQLInsert
 
+   msgalert( hb_valtoexp( ::hBuffer ), "hBuffer" )
+
    cSQLInsert        := "INSERT INTO " + ::cTableName + " ( "
 
    hEval( ::hBuffer, {| k, v | if ( k != ::cColumnKey, cSQLInsert += k + ", ", ) } )
 
+   msgalert( cSQLInsert, "cSQLInsert paso 1" )
+
    cSQLInsert        := ChgAtEnd( cSQLInsert, ' ) VALUES ( ', 2 )
 
-   hEval( ::hBuffer, {| k, v | if ( k != ::cColumnKey, if ( k == "empresa", cSQLInsert += toSQLString( cCodEmp() ) + ", ", cSQLInsert += toSQLString( v ) + ", "), ) } )
+   msgalert( cSQLInsert, "cSQLInsert paso 2" )
 
+//   hEval( ::hBuffer, {| k, v | if ( k != ::cColumnKey, if ( k == "empresa", cSQLInsert += toSQLString( cCodEmp() ) + ", ", cSQLInsert += toSQLString( v ) + ", "), ) } )
+   hEval( ::hBuffer, {| k, v | if ( k != ::cColumnKey, cSQLInsert += ::getValueField( k, v ) + ", "), ) } )
+
+   msgalert( cSQLInsert, "cSQLInsert paso 3" )
+   
    cSQLInsert        := ChgAtEnd( cSQLInsert, ' )', 2 )
+
+   msgalert( cSQLInsert, "::getInsertSentence() cSQLInsert" )
 
 Return ( cSQLInsert )
 
 //---------------------------------------------------------------------------//
+
+METHOD getValueField( cColumn, uValue )
+
+   hscan( cColumn, ::hColumns )
+
+
 
 METHOD convertRecnoToId( aRecno )
 
@@ -321,7 +337,7 @@ METHOD convertRecnoToId( aRecno )
    local aId         := {}
 
    for each nRecno in ( aRecno )
-      ::oRowset:goto( nRecno )
+      ::oRowset:goTo( nRecno )
       aadd( aId, ::oRowset:fieldget( ::cColumnKey ) )
    next
 

@@ -50,7 +50,7 @@ METHOD New()
 																		"width"		=>	40														,;
 																		"type"		=> "L"}													,;
 												"empresa"	=>	{  "create"    => "CHAR ( 4 ) NOT NULL"	              		,;
-                                                      "text"      => "Empresa a la que pertenece la etiqueta"	,;
+                                                      "text"      => "Empresa"											,;
 																		"visible"	=> .f.}													}
 
    ::Super:New()
