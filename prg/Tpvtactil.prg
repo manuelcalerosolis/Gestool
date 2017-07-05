@@ -680,7 +680,6 @@ CLASS TpvTactil
       METHOD eliminarLinea()
       METHOD eliminaMenu( nLineaMenu )
       METHOD eliminaEscandallo( nNumeroLinea )
-      METHOD mailEliminarLinea()
 
    // Colores-----------------------------------------------------------------
 
@@ -798,6 +797,8 @@ CLASS TpvTactil
 
    METHOD ImprimeDesglosado()
 
+   METHOD PdfTicket()
+
    METHOD SonidoComanda( cImpresora )
 
    //------------------------------------------------------------------------//
@@ -914,6 +915,13 @@ CLASS TpvTactil
       
    METHOD moveLineUp()
    METHOD moveLineDown()
+
+   /*
+   Notificaciones--------------------------------------------------------------
+   */
+
+   METHOD mailEliminarLinea()
+   METHOD mailDocumentoCliente()
 
    METHOD isLineaValidaComanda( lCopia )
 
@@ -6519,6 +6527,10 @@ METHOD OnClickCobro() CLASS TpvTactil
 
       ::ImprimePago()
 
+      // Envia el mail para el cliente-----------------------------------------
+
+      // ::MailDocumentoCliente()
+
       // Inicializa los valores para el documento------------------------------
 
       ::InitDocumento( ubiGeneral )
@@ -8368,8 +8380,8 @@ METHOD ImprimeTicket()
 
    end case
 
-   ::nDispositivo    := IS_PRINTER
-   ::lComanda        := .f.
+   ::nDispositivo       := IS_PRINTER
+   ::lComanda           := .f.
 
    ::ImprimeDocumento()
 
@@ -8433,6 +8445,28 @@ METHOD ImprimeDesglosado()
   ::lComanda        := .f.
 
   ::ImprimeDocumento()
+
+RETURN ( Self )
+
+//-----------------------------------------------------------------------//
+
+METHOD PdfTicket()
+
+   if !::lValidatePreSave()
+      Return ( Self )
+   end if
+
+   ::cFormato     := ::oFormatosImpresion:cFormatoTiket
+
+   ::cImpresora   := ::oFormatosImpresion:cPrinterTik
+
+   ::nCopias      := Max( ::oFormatosImpresion:nCopiasTik, 1 )
+
+   ::nDispositivo := IS_PDF
+
+   ::lComanda     := .f.
+
+   ::ImprimeDocumento()
 
 RETURN ( Self )
 
@@ -9687,6 +9721,40 @@ Return ( Self )
 
 //------------------------------------------------------------------------//
 
+METHOD mailDocumentoCliente()
+
+   local hMail          := {=>}
+   local cMensajeMail   := ""
+
+   if !( ConfiguracionEmpresasModel():getLogic( 'mail_to_client' ) )
+      Return ( Self )
+   end if 
+
+   // comprobar el mail de cliente q no este vacio-----------------------------
+
+   msgalert( "comprobar el mail de cliente q no este vacio-----------------------------" )
+/*
+   cMensajeMail         := "<p>" + "Linea eliminada en el ticket " + ::cTextoTicketLinea()      + "</p>" + CRLF  
+   cMensajeMail         += "<p>" + "Descripción : " +  alltrim( ::oTemporalLinea:cNomTil )      + "</p>" + CRLF  
+   cMensajeMail         += "<p>" + "Unidades : " + ::nUnidadesLinea( ::oTemporalLinea, .t. )    + "</p>" + CRLF  
+   cMensajeMail         += "<p>" + "Importe : " + ::nTotalLinea( ::oTemporalLinea, .t. )        + "</p>" + CRLF  
+   cMensajeMail         += "<p>" + "Cajero : " + oUser():cCodigo() + " - " + oUser():cNombre()  + "</p>" + CRLF  
+   cMensajeMail         += "<p>" + "Fecha y hora : " + dtoc( date() ) + " - " + time()          + "</p>" + CRLF  
+
+   hSet( hMail, "mail",    cDireccionMail ) 
+   hSet( hMail, "subject", "Línea eliminada en T.P.V." )
+   hSet( hMail, "message", cMensajeMail )
+
+   with object TSendMail():New()
+      if :buildMailerObject()
+         :sendMail( hMail )
+      end if 
+   end with
+*/
+Return ( Self )
+
+//------------------------------------------------------------------------//
+
 METHOD EliminaMenu( nLineaMenu )
 
    ::oTemporalLinea:GetStatus()
@@ -9712,24 +9780,24 @@ Return( Self )
 
 METHOD EliminaEscandallo( nNumeroLinea )
 
-  ::oTemporalLinea:GetStatus()
+   ::oTemporalLinea:GetStatus()
 
-  ::oTemporalLinea:OrdSetFocus( "nNumLin" )
-  ::oTemporalLinea:GoTop()
+   ::oTemporalLinea:OrdSetFocus( "nNumLin" )
+   ::oTemporalLinea:GoTop()
 
-  while !( ::oTemporalLinea:eof() )
+   while !( ::oTemporalLinea:eof() )
 
-     if ( nNumeroLinea == ::oTemporalLinea:nNumLin ) 
+      if ( nNumeroLinea == ::oTemporalLinea:nNumLin ) 
 
-        ::EliminaLineaTemporal()
+         ::EliminaLineaTemporal()
 
-     end if
+      end if
 
-     ::SaltaLineaTemporal()
+      ::SaltaLineaTemporal()
 
-  end while
+   end while
 
-  ::oTemporalLinea:SetStatus()
+   ::oTemporalLinea:SetStatus()
 
 Return( Self )
 

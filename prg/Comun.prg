@@ -283,6 +283,24 @@ FUNCTION Test()
 
    // MovimientosAlmacenController():New():activateShell()
 
+   /*
+   local hMail          := {=>}
+   local cMensajeMail   := ""
+   local cDireccionMail := "mcalero@gestool.es"
+
+   cMensajeMail         := "<p>" + "Linea eliminada en el ticket " + "</p>" + CRLF  
+
+   hSet( hMail, "mail",    cDireccionMail ) 
+   hSet( hMail, "subject", "Línea eliminada en T.P.V." )
+   hSet( hMail, "message", cMensajeMail )
+
+   with object TSendMail():New()
+      if :buildMailerObject()
+         :sendMail( hMail )
+      end if 
+   end with
+   */
+
 Return ( nil )
 
 //---------------------------------------------------------------------------//
