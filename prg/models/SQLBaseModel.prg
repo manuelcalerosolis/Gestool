@@ -100,6 +100,8 @@ CLASS SQLBaseModel
    METHOD   getNameFromId( uValue )
    METHOD   getNameFromCodigo( uValue )
 
+   METHOD   getValueField( cColumn, uValue )
+
 END CLASS
 
 //---------------------------------------------------------------------------//
@@ -313,7 +315,7 @@ METHOD getInsertSentence()
    msgalert( cSQLInsert, "cSQLInsert paso 2" )
 
 //   hEval( ::hBuffer, {| k, v | if ( k != ::cColumnKey, if ( k == "empresa", cSQLInsert += toSQLString( cCodEmp() ) + ", ", cSQLInsert += toSQLString( v ) + ", "), ) } )
-   hEval( ::hBuffer, {| k, v | if ( k != ::cColumnKey, cSQLInsert += ::getValueField( k, v ) + ", "), ) } )
+   hEval( ::hBuffer, {| k, v | if ( k != ::cColumnKey, cSQLInsert += ::getValueField( k, v ) + ", ", ) } )
 
    msgalert( cSQLInsert, "cSQLInsert paso 3" )
    
@@ -327,9 +329,31 @@ Return ( cSQLInsert )
 
 METHOD getValueField( cColumn, uValue )
 
-   hscan( cColumn, ::hColumns )
+   local hCol
+   local cReturn  := ""
+   local bValue
 
+   if hhaskey( ::hColumns, cColumn )
 
+      hCol        := hGet( ::hColumns, cColumn )
+
+      if hhaskey( hCol, "default" )
+
+         bValue   := hGet( hCol, "default" )
+         
+         if !Empty( bValue )
+            cReturn  := Eval( bValue )
+         end if
+
+      end if
+
+   end if
+
+   MsgAlert( cReturn, "Valor por defecto" )
+
+Return cReturn
+
+//---------------------------------------------------------------------------//
 
 METHOD convertRecnoToId( aRecno )
 
