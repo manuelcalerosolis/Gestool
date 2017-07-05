@@ -88,3 +88,5 @@ METHOD cTextoMovimiento()
    nPosition         := min( nPosition, len( ::aTextoMovimiento ) )
 
 RETURN ( ::aTextoMovimiento[ nPosition ] ) // [ nPosition ] ) 
+
+//---------------------------------------------------------------------------//
