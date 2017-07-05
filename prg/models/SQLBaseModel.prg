@@ -315,7 +315,7 @@ METHOD getInsertSentence()
    msgalert( cSQLInsert, "cSQLInsert paso 2" )
 
 //   hEval( ::hBuffer, {| k, v | if ( k != ::cColumnKey, if ( k == "empresa", cSQLInsert += toSQLString( cCodEmp() ) + ", ", cSQLInsert += toSQLString( v ) + ", "), ) } )
-   hEval( ::hBuffer, {| k, v | if ( k != ::cColumnKey, cSQLInsert += ::getValueField( k, v ) + ", ", ) } )
+   hEval( ::hBuffer, {| k, v | if ( k != ::cColumnKey, cSQLInsert += toSQLString( ::getValueField( k, v ) ) + ", ", ) } )
 
    msgalert( cSQLInsert, "cSQLInsert paso 3" )
    
@@ -329,29 +329,28 @@ Return ( cSQLInsert )
 
 METHOD getValueField( cColumn, uValue )
 
-   local hCol
-   local cReturn  := ""
    local bValue
+   local hColumn
 
-   if hhaskey( ::hColumns, cColumn )
+   if !hhaskey( ::hColumns, cColumn )
+      Return ( uValue )
+   end if 
 
-      hCol        := hGet( ::hColumns, cColumn )
+   hColumn        := hGet( ::hColumns, cColumn )
 
-      if hhaskey( hCol, "default" )
+   if hhaskey( hColumn, "default" )
 
-         bValue   := hGet( hCol, "default" )
-         
-         if !Empty( bValue )
-            cReturn  := Eval( bValue )
-         end if
-
+      bValue      := hGet( hColumn, "default" )
+      
+      if !empty( bValue ) .and. hb_isblock( bValue )
+         uValue   := eval( bValue )
       end if
 
    end if
 
-   MsgAlert( cReturn, "Valor por defecto" )
+   MsgAlert( uValue, "Valor por defecto" )
 
-Return cReturn
+Return ( uValue )
 
 //---------------------------------------------------------------------------//
 

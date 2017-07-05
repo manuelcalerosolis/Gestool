@@ -211,6 +211,7 @@ CLASS D
       METHOD FacturasClientesLineasEscandalloId( nView )    INLINE ( ( ::Get( "FacCliL", nView ) )->cSerie + str( ( ::Get( "FacCliL", nView ) )->nNumFac, 9 ) + ( ::Get( "FacCliL", nView ) )->cSufFac + Str( ( ::Get( "FacCliL", nView ) )->nNumLin )+ Str( ( ::Get( "FacCliL", nView ) )->nNumKit ) )
       METHOD FacturasClientesLineasEof( nView )             INLINE ( ( ::FacturasClientesLineas( nView ) )->( eof() ) )
       METHOD FacturasClientesLineasNotEof( nView )          INLINE (!( ::FacturasClientesLineasEof( nView ) ) ) 
+      METHOD gotoIdFacturasClientesLineas( id, nView )      INLINE ( ::seekInOrd( ::FacturasClientesLineas( nView ), id, "nNumFac" ) ) 
 
       METHOD setFocusFacturasClientesLineas( cTag, nView )  INLINE ( ::cTag   := ( ::FacturasClientesLineas( nView ) )->( ordSetFocus( cTag ) ) )
 
@@ -237,7 +238,8 @@ CLASS D
       METHOD FacturasClientesEntidadesId( nView )           INLINE ( ( ::FacturasClientesEntidades(nView) ) )->cSerFac + Str( ( ::FacturasClientesEntidades(nView) )->nNumFac ) + ( ( ::FacturasClientesEntidades(nView) )->cSufFac )
       METHOD gotoIdFacturasClientesEntidades( id, nView )   INLINE ( ::seek( ::FacturasClientesEntidades( nView ), id ) ) 
       METHOD deleteFacturasClientesEntidades( nView )       INLINE ( iif(  dbLock( ( ::FacturasClientesEntidades( nView ) ) ),;
-                                                                           ( ( ::FacturasClientesEntidades( nView ) )->( dbDelete() ), ( ::FacturasClientesEntidades( nView ) )->( dbUnLock() ) ),;
+                                                                           ( ( ::FacturasClientesEntidades( nView ) )->( dbDelete() ),;
+                                                                           ( ::FacturasClientesEntidades( nView ) )->( dbUnLock() ) ),;
                                                                      ) )  
       METHOD eofFacturasClientesEntidades( nView )          INLINE ( ( ::FacturasClientesEntidades( nView ) )->( eof() ) )
 
