@@ -498,11 +498,10 @@ ReindexaPresenter.prg                                 			\
 ReindexaView.prg                                      			\
 BaseModel.prg 																	\
 SQLBaseModel.prg 																\
-SQLBaseController.prg 														\
 SQLBaseEmpresasModel.prg 													\
+SQLBaseController.prg 														\
 SQLBaseController.prg 														\
 SQLHeaderController.prg 													\
-SQLBaseEmpresasModel.prg 													\
 SQLBaseLineasModel.prg 														\
 ClientesModel.prg 															\
 AlbaranesClientesModel.prg 												\
@@ -1035,9 +1034,9 @@ ReindexaPresenter.obj                              \
 ReindexaView.obj                                   \
 BaseModel.obj 													\
 SQLBaseModel.Obj 												\
+SQLBaseEmpresasModel.Obj 												\
 SQLBaseController.Obj 													\
 SQLHeaderController.obj													\
-SQLBaseEmpresasModel.Obj 												\
 SQLBaseLineasModel.Obj 													\
 EmpresasModel.obj 														\
 ClientesModel.obj 														\
@@ -1536,9 +1535,9 @@ $(OBJ)\Reporting.obj                         				+
 $(OBJ)\ViewReporting.obj 											+
 $(OBJ)\BaseModel.obj 												+
 $(OBJ)\SQLBaseModel.obj 											+
+$(OBJ)\SQLBaseEmpresasModel.obj 									+
 $(OBJ)\SQLBaseController.obj 										+
 $(OBJ)\SQLHeaderController.obj 									+
-$(OBJ)\SQLBaseEmpresasModel.obj 									+
 $(OBJ)\SQLBaseLineasModel.obj 									+
 $(OBJ)\EmpresasModel.obj 											+
 $(OBJ)\ClientesModel.obj 											+

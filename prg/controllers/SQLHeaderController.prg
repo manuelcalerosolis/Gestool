@@ -14,40 +14,23 @@ CLASS SQLHeaderController FROM SQLBaseController
    METHOD updateIdParentControllersInEdit( id )
    METHOD updateIdParentControllersInInsert()                
 
-   METHOD beginTransaction()                          INLINE ( getSQLDatabase():beginTransaction() )
-   METHOD commitTransaction()                         INLINE ( getSQLDatabase():commitTransaction() )
-   METHOD rollbackTransaction()                       INLINE ( getSQLDatabase():rollbackTransaction() )
-
-   METHOD initAppendMode()
-   METHOD endAppendModePosInsert()
-   METHOD cancelAppendMode()
-
-   METHOD initDuplicateMode()
-   METHOD endDuplicateModePosInsert()
-   METHOD cancelDuplicateMode()
-
-   METHOD initEditMode()
-   METHOD endEditModePosUpdate()
-   METHOD cancelEditMode()
-
    METHOD beginTransaction()                       INLINE ( getSQLDatabase():beginTransaction() )
    METHOD commitTransaction()                      INLINE ( getSQLDatabase():commit() )
    METHOD rollbackTransaction()                    INLINE ( getSQLDatabase():rollback() )
 
    METHOD   Append( oBrowse )
-      METHOD initAppendMode()                      VIRTUAL
-      METHOD endAppendMode()                       VIRTUAL
-      METHOD cancelAppendMode()                    VIRTUAL
-
+   
    METHOD   Duplicate( oBrowse )
-      METHOD initDuplicateMode()                   VIRTUAL
+      METHOD initDuplicateMode()                   
       METHOD endDuplicateMode()                    VIRTUAL
-      METHOD cancelDuplicateMode()                 VIRTUAL
+      METHOD cancelDuplicateMode()                 
+      METHOD endDuplicateModePosInsert()
 
    METHOD   Edit( oBrowse )
-      METHOD initEditMode()                        VIRTUAL
+      METHOD initEditMode()                        
       METHOD endEditMode()                         VIRTUAL
-      METHOD cancelEditMode()                      VIRTUAL
+      METHOD cancelEditMode()                      
+      METHOD endEditModePosUpdate()
 
    METHOD   Zoom( oBrowse )
       METHOD initZoomMode()                        VIRTUAL
@@ -73,16 +56,19 @@ METHOD Append( oBrowse )
       RETURN ( .f. )
    end if 
 
-   ::setAppendMode()
-
-   if ::bOnPreAppend != nil
-      lTrigger    := eval( ::bOnPreAppend )
-      if Valtype( lTrigger ) == "L" .and. !lTrigger
-         RETURN ( .f. )
-      end if
+   if !::evalOnPreAppend()
+      RETURN ( .f. )
    end if
 
+   ::setAppendMode()
+
    ::initAppendMode()
+
+   ::clearControllersTmpIds()
+
+   ::buildControllersRowSetWithForeingKey( 0 )
+
+   ::getHistoryOfBrowsers()
 
    ::beginTransaction()
 
@@ -91,31 +77,32 @@ METHOD Append( oBrowse )
    ::oModel:loadBlankBuffer()
 
    if ::oView:Dialog()
+   
+      ::endAppendModePreInsert()
 
       ::oModel:insertBuffer()
 
-      ::endAppendMode()
-
       ::commitTransaction()
 
-      if ::bOnPostAppend != nil
-         lTrigger    := eval( ::bOnPostAppend  )
-         if Valtype( lTrigger ) == "L" .and. !lTrigger
-            RETURN ( .f. )
-         end if
-      end if
+      ::updateIdParentControllersInInsert()
+
+      ::endAppendModePostInsert()
+
+      ::evalOnPostAppend()
 
    else 
 
-      ::cancelAppendMode()
-
       ::rollbackTransaction()
+
+      ::cancelAppendMode()
 
       ::oModel:setRowSetRecno( nRecno ) 
 
       RETURN ( .f. )
 
    end if
+
+   ::saveHistoryOfBrowsers()
 
    if !empty( oBrowse )
       oBrowse:refreshCurrent()
@@ -156,49 +143,11 @@ RETURN ( Self )
 
 //---------------------------------------------------------------------------//
 
-METHOD initAppendMode()
-
-   ::clearControllersTmpIds()
-
-   ::buildControllersRowSetWithForeingKey( 0 )
-
-   ::beginTransaction()
-
-   ::getHistoryOfBrowsers()
-
-RETURN ( Self )
-
-//---------------------------------------------------------------------------//
-
-METHOD endAppendModePosInsert()
-
-   ::commitTransaction()
-
-   ::updateIdParentControllersInInsert()
-
-   ::saveHistoryOfBrowsers()
-
-RETURN ( self )
-
-//---------------------------------------------------------------------------//
-
-METHOD cancelAppendMode()
-
-   ::rollbackTransaction()
-
-   ::saveHistoryOfBrowsers()
-
-RETURN ( self )
-
-//----------------------------------------------------------------------------//
-
 METHOD initDuplicateMode()
 
    ::clearControllersTmpIds()
 
    ::buildControllersRowSetWithForeingKey( ::getIdfromRowset() )
-
-   ::beginTransaction()
 
    ::getHistoryOfBrowsers()
 
@@ -208,7 +157,6 @@ RETURN ( self )
 
 METHOD endDuplicateModePosInsert()
 
-   ::commitTransaction()
    ::updateIdParentControllersInInsert()
 
    ::saveHistoryOfBrowsers()
@@ -218,8 +166,6 @@ RETURN ( self )
 //----------------------------------------------------------------------------//
 
 METHOD cancelDuplicateMode()
-
-   ::rollbackTransaction()
 
    ::saveHistoryOfBrowsers()
 

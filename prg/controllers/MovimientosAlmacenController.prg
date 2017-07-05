@@ -4,15 +4,13 @@
 
 //---------------------------------------------------------------------------//
 
-CLASS MovimientosAlmacenController FROM SQLBaseController
+CLASS MovimientosAlmacenController FROM SQLHeaderController
 
    METHOD   New()
 
    METHOD   buildSQLModel( this )         INLINE ( MovimientosAlmacenModel():New( this ) )
    
    METHOD   buildSQLView( this )				INLINE ( MovimientosAlmacen():New( this ) )
-
-   METHOD   initAppendMode() 
 
 END CLASS
 
@@ -30,14 +28,6 @@ Return ( Self )
 
 //---------------------------------------------------------------------------//
 
-METHOD initAppendMode() 
-
-   ::oModel:hBuffer[ "delegacion"   ]  := retSufEmp()
-   ::oModel:hBuffer[ "usuario"      ]  := cCurUsr()
-
-Return ( Self )
-
-//---------------------------------------------------------------------------//
 
 
 

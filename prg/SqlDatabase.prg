@@ -31,8 +31,8 @@ CLASS SQLDatabase
    METHOD LastInsertId()            INLINE ( ::oConexion:lastInsertId() )
 
    METHOD beginTransaction()        INLINE ( ::oConexion:beginTransaction() )
-   METHOD commitTransaction()       INLINE ( ::oConexion:commit() )
-   METHOD rollbackTransaction()     INLINE ( ::oConexion:rollback() )
+   METHOD commit()                  INLINE ( ::oConexion:commit() )
+   METHOD rollback()                INLINE ( ::oConexion:rollback() )
 
    METHOD startForeignKey()         INLINE ( ::Query( "pragma foreign_keys = ON" ) )
    METHOD endForeignKey()           INLINE ( ::Query( "pragma foreign_keys = OFF" ) )

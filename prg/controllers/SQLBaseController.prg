@@ -56,7 +56,7 @@ CLASS SQLBaseController
 	METHOD   Append()
       METHOD initAppendMode()                         VIRTUAL
       METHOD endAppendModePreInsert()                 VIRTUAL
-      METHOD endAppendModePosInsert()                 VIRTUAL
+      METHOD endAppendModePostInsert()                 VIRTUAL
       METHOD cancelAppendMode()                       VIRTUAL
       METHOD setAppendMode()                          INLINE ( ::setMode( __append_mode__ ) )
       METHOD isAppendMode()                           INLINE ( ::nMode == __append_mode__ )
@@ -87,7 +87,7 @@ CLASS SQLBaseController
       METHOD endDeleteModePreDelete()                 VIRTUAL
       METHOD endDeleteModePosDelete()                 VIRTUAL
 
-   METHOD   getIdfromRowset()                         INLINE   ( if( !empty( ::oModel:oRowSet ), ( ::oModel:oRowSet:fieldGet( ::oModel:cColumnKey ) ), ) )
+   METHOD   getIdFromRowSet()                         INLINE   ( if( !empty( ::getRowSet() ), ( ::getRowSet():fieldGet( ::oModel:cColumnKey ) ), ) )
 
    METHOD   clickOnHeader( oColumn, oCombobox )
 
@@ -121,6 +121,10 @@ CLASS SQLBaseController
    METHOD   addColumnsForBrowse( oCombobox )          VIRTUAL
 
    METHOD getController( cController )                INLINE ( ::ControllerContainer:get( cController ) )
+
+   METHOD evalOnEvent()
+   METHOD evalOnPreAppend()                           INLINE ( ::evalOnEvent( ::bOnPreAppend ) )
+   METHOD evalOnPostAppend()                          INLINE ( ::evalOnEvent( ::bOnPostAppend ) )
 
 END CLASS
 
@@ -326,6 +330,21 @@ RETURN ( self )
 
 //---------------------------------------------------------------------------//
 
+METHOD evalOnEvent( bEvent )
+
+   local lTrigger
+
+   if bEvent != nil
+      lTrigger    := eval( bEvent )
+      if Valtype( lTrigger ) == "L" .and. !lTrigger
+         RETURN ( .f. )
+      end if
+   end if
+
+RETURN ( .t. )
+
+//---------------------------------------------------------------------------//
+
 METHOD Append()
 
    local nRecno   
@@ -336,14 +355,11 @@ METHOD Append()
       RETURN ( .f. )
    end if 
 
-   ::setAppendMode()
-
-   if ::bOnPreAppend != nil
-      lTrigger    := eval( ::bOnPreAppend )
-      if Valtype( lTrigger ) == "L" .and. !lTrigger
-         RETURN ( .f. )
-      end if
+   if !::evalOnPreAppend()
+      RETURN ( .f. )
    end if
+
+   ::setAppendMode()
 
    nRecno         := ::oModel:getRowSetRecno()
 
@@ -357,19 +373,18 @@ METHOD Append()
 
       ::oModel:insertBuffer()
 
-      ::endAppendModePosInsert()
+      ::endAppendModePostInsert()
 
-      if ::bOnPostAppend != nil
-         lTrigger    := eval( ::bOnPostAppend  )
-         if Valtype( lTrigger ) == "L" .and. !lTrigger
-            RETURN ( .f. )
-         end if
-      end if
+      ::evalOnPostAppend()
 
    else
+      
       ::cancelAppendMode()
+
       ::oModel:setRowSetRecno( nRecno )
+      
       RETURN ( .f. )
+
    end if
 
    if !empty( ::oView:getoBrowse() )
