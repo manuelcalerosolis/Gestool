@@ -378,22 +378,25 @@ Return ( Self )
 METHOD LoadFromDatabase( cCodigoSala ) CLASS TTpvSalon
 
    local oMesa
+   local oDbfVir  := ::oSender:oDetSalaVta:oDbfVir
 
-   if Empty( cCodigoSala )
+   if empty( cCodigoSala )
 
-      if !Empty( ::oSender:oDetSalaVta:oDbfVir ) .and. ( ::oSender:oDetSalaVta:oDbfVir:Used() )
+      if !empty( oDbfVir ) .and. ( oDbfVir:Used() )
 
-         ::oSender:oDetSalaVta:oDbfVir:GoTop()
-         while !::oSender:oDetSalaVta:oDbfVir:Eof()
+         oDbfVir:GoTop()
+         while !oDbfVir:Eof()
 
-            oMesa    := TTpvMesa():New( ::oSender:oDetSalaVta:oDbfVir:nFila, ::oSender:oDetSalaVta:oDbfVir:nColumna, ::oSender:oDetSalaVta:oDbfVir:nTipo, ::oWnd:oClient )
+            msgalert( "mesa " + str( oDbfVir:nTipo ), "nTipo" )
+ 
+            oMesa    := TTpvMesa():New( oDbfVir:nFila, oDbfVir:nColumna, oDbfVir:nTipo, ::oWnd:oClient )
             oMesa:LoadFromSala( ::oSender )
 
-            ::oSender:oDetSalaVta:oDbfVir:Skip()
+            oDbfVir:Skip()
 
          end while
 
-         ::oSender:oDetSalaVta:oDbfVir:GoTop()
+         oDbfVir:GoTop()
 
       end if
 
@@ -735,9 +738,9 @@ Return ( Self )
 
 METHOD UnSelectButtons() CLASS TTpvSalon
 
-   local oCarpeta
    local oGrupo
    local oBoton
+   local oCarpeta
 
    /*
    Quita la selección de todos los controles-----------------------------------
@@ -1382,13 +1385,14 @@ METHOD LoadFromMemory( cCodigoSala, lPuntosPendientes ) CLASS TTpvSalon
    local sPunto
    local oBlock
    local oError
+   local seconds     := seconds()
 
    CursorWait()
 
    oBlock            := ErrorBlock( {| oError | ApoloBreak( oError ) } )
    BEGIN SEQUENCE
 
-   if Empty( cCodigoSala ) .and. len( ::oSender:aSalas ) >= 1
+   if empty( cCodigoSala ) .and. len( ::oSender:aSalas ) >= 1
       cCodigoSala    := ::oSender:aSalas[ 1 ]:cCodigo
    end if
 
@@ -1421,6 +1425,8 @@ METHOD LoadFromMemory( cCodigoSala, lPuntosPendientes ) CLASS TTpvSalon
    ErrorBlock( oBlock )
    
    CursorWE()
+
+   msgalert( seconds() - seconds, "seconds()" )
 
 Return ( Self )
 

@@ -56,7 +56,7 @@ CLASS SQLBaseController
 	METHOD   Append()
       METHOD initAppendMode()                         VIRTUAL
       METHOD endAppendModePreInsert()                 VIRTUAL
-      METHOD endAppendModePostInsert()                 VIRTUAL
+      METHOD endAppendModePostInsert()                VIRTUAL
       METHOD cancelAppendMode()                       VIRTUAL
       METHOD setAppendMode()                          INLINE ( ::setMode( __append_mode__ ) )
       METHOD isAppendMode()                           INLINE ( ::nMode == __append_mode__ )

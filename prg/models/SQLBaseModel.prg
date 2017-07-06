@@ -80,6 +80,7 @@ CLASS SQLBaseModel
    METHOD   deleteSelection( aRecno )              INLINE   ( ::Query( ::getdeleteSentence( aRecno ) ), ::buildRowSet() )
 
    METHOD   loadBlankBuffer()
+   METHOD   defaultCurrentBuffer()
    METHOD   loadCurrentBuffer()
 
    METHOD   selectFetch( cSentence )
@@ -302,23 +303,14 @@ METHOD getInsertSentence()
 
    Local cSQLInsert
 
-   msgalert( hb_valtoexp( ::hBuffer ), "hBuffer" )
-
    cSQLInsert        := "INSERT INTO " + ::cTableName + " ( "
 
    hEval( ::hBuffer, {| k, v | if ( k != ::cColumnKey, cSQLInsert += k + ", ", ) } )
 
-   msgalert( cSQLInsert, "cSQLInsert paso 1" )
-
    cSQLInsert        := ChgAtEnd( cSQLInsert, ' ) VALUES ( ', 2 )
 
-   msgalert( cSQLInsert, "cSQLInsert paso 2" )
+   hEval( ::hBuffer, {| k, v | if ( k != ::cColumnKey, cSQLInsert += toSQLString( v ) + ", ", ) } )
 
-//   hEval( ::hBuffer, {| k, v | if ( k != ::cColumnKey, if ( k == "empresa", cSQLInsert += toSQLString( cCodEmp() ) + ", ", cSQLInsert += toSQLString( v ) + ", "), ) } )
-   hEval( ::hBuffer, {| k, v | if ( k != ::cColumnKey, cSQLInsert += toSQLString( ::getValueField( k, v ) ) + ", ", ) } )
-
-   msgalert( cSQLInsert, "cSQLInsert paso 3" )
-   
    cSQLInsert        := ChgAtEnd( cSQLInsert, ' )', 2 )
 
    msgalert( cSQLInsert, "::getInsertSentence() cSQLInsert" )
@@ -448,14 +440,15 @@ METHOD loadBlankBuffer()
 
    ::oRowSet:goto( 0 )
 
-Return ( ::loadCurrentBuffer() )
+   ::loadCurrentBuffer()
+
+Return ( ::defaultCurrentBuffer() )
 
 //---------------------------------------------------------------------------//
 
 METHOD loadCurrentBuffer()                
 
    local h
-   local aColumnNames   := hb_hkeys( ::hColumns )
 
    if empty( ::oRowSet )
       Return ( .f. )
@@ -489,6 +482,24 @@ METHOD loadCurrentBuffer()
          otherwise
 
             hset( ::hBuffer, h:__enumkey(), ::oRowSet:fieldget( h:__enumkey() ) )
+
+      end if
+
+   next
+
+Return ( ::hBuffer )
+
+//---------------------------------------------------------------------------//
+
+METHOD defaultCurrentBuffer()                
+
+   local h
+
+   for each h in ::hColumns
+
+      if hhaskey( h, "default" ) .and. hb_isblock( hget( h, "default" ) )
+
+         hset( ::hBuffer, h:__enumkey(), eval( hget( h, "default" ) ) )
 
       end if
 

@@ -6,7 +6,7 @@
 
 CLASS SQLHeaderController FROM SQLBaseController
 
-   METHOD getHistoryOfBrowsers()
+   METHOD getControllersHistoryBrowser()
    METHOD saveHistoryOfBrowsers()
 
    METHOD buildControllersRowSetWithForeingKey( id )  
@@ -56,19 +56,17 @@ METHOD Append( oBrowse )
       RETURN ( .f. )
    end if 
 
-   if !::evalOnPreAppend()
-      RETURN ( .f. )
-   end if
-
    ::setAppendMode()
 
-   ::initAppendMode()
+   if isFalse( ::initAppendMode() )
+      RETURN ( .f. )
+   end if
 
    ::clearControllersTmpIds()
 
    ::buildControllersRowSetWithForeingKey( 0 )
 
-   ::getHistoryOfBrowsers()
+   ::getControllersHistoryBrowser()
 
    ::beginTransaction()
 
@@ -77,7 +75,7 @@ METHOD Append( oBrowse )
    ::oModel:loadBlankBuffer()
 
    if ::oView:Dialog()
-   
+
       ::endAppendModePreInsert()
 
       ::oModel:insertBuffer()
@@ -149,7 +147,7 @@ METHOD initDuplicateMode()
 
    ::buildControllersRowSetWithForeingKey( ::getIdfromRowset() )
 
-   ::getHistoryOfBrowsers()
+   ::getControllersHistoryBrowser()
 
 RETURN ( self )
 
@@ -234,7 +232,7 @@ METHOD initEditMode()
 
    ::beginTransaction()
 
-   ::getHistoryOfBrowsers()
+   ::getControllersHistoryBrowser()
 
 RETURN ( Self )
 
@@ -322,7 +320,7 @@ RETURN ( hEval( ::ControllerContainer:getControllers(), { | k, oController| oCon
 
 //----------------------------------------------------------------------------//
 
-METHOD getHistoryOfBrowsers()
+METHOD getControllersHistoryBrowser()
 
 RETURN ( hEval( ::ControllerContainer:getControllers(), { | k, oController| oController:getHistoryBrowse() } ) )
 

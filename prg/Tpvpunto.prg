@@ -227,7 +227,7 @@ Crea la mesa-------------------------------------------------------------------
 
 METHOD CreateMesa( lPuntosPendientes ) CLASS sTpvPunto
 
-   local oMesa       
+   local oMesa
 
    oMesa             := TTpvMesa():New( ::nTop, ::nLeft, ::nType, ::GetSalonWnd() )
 
@@ -430,41 +430,44 @@ RETURN ( "" )
 METHOD LoadMesa() CLASS sTpvPunto
 
    local aStatus
+   local oTiketCabecera
 
-   ::cSerie       := ""
-   ::cNumero      := ""
-   ::cSufijo      := ""
-   ::dFecha       := Ctod( "" )
-   ::cHora        := ""
-   ::cAlias       := ""
-   ::cNombre      := ""
-   ::nTotal       := 0
-   ::nEstado      := 1
-   ::lMultiple    := .f.
+   ::cSerie          := ""
+   ::cNumero         := ""
+   ::cSufijo         := ""
+   ::dFecha          := Ctod( "" )
+   ::cHora           := ""
+   ::cAlias          := ""
+   ::cNombre         := ""
+   ::nTotal          := 0
+   ::nEstado         := 1
+   ::lMultiple       := .f.
+   
+   oTiketCabecera    := ::oTiketCabecera()
 
-   aStatus        := ::oTiketCabecera():GetStatus()
+   aStatus           := oTiketCabecera:GetStatus()
 
-   if ::oTiketCabecera():SeekInOrd( ::cPunto(), "cCodSal" )
+   if oTiketCabecera:SeekInOrd( ::cPunto(), "cCodSal" )
 
-      ::cSerie    := ::oTiketCabecera():FieldGetByName( "cSerTik"   )
-      ::cNumero   := ::oTiketCabecera():FieldGetByName( "cNumTik"   )
-      ::cSufijo   := ::oTiketCabecera():FieldGetByName( "cSufTik"   )
-      ::dFecha    := ::oTiketCabecera():FieldGetByName( "dFecTik"   )
-      ::cHora     := ::oTiketCabecera():FieldGetByName( "cHorTik"   )
-      ::cAlias    := ::oTiketCabecera():FieldGetByName( "cAliasTik" )
-      ::cNombre   := ::oTiketCabecera():FieldGetByName( "cNomTik"   )
-      ::nEstado   := if( ::oTiketCabecera():FieldGetByName( "lAbierto" ), 2, 3 )
-      ::lMultiple := ::lMultipleTicket()
+      ::cSerie       := oTiketCabecera:fieldGetByName( "cSerTik"   )
+      ::cNumero      := oTiketCabecera:fieldGetByName( "cNumTik"   )
+      ::cSufijo      := oTiketCabecera:fieldGetByName( "cSufTik"   )
+      ::dFecha       := oTiketCabecera:fieldGetByName( "dFecTik"   )
+      ::cHora        := oTiketCabecera:fieldGetByName( "cHorTik"   )
+      ::cAlias       := oTiketCabecera:fieldGetByName( "cAliasTik" )
+      ::cNombre      := oTiketCabecera:fieldGetByName( "cNomTik"   )
+      ::nEstado      := if( oTiketCabecera:fieldGetByName( "lAbierto" ), 2, 3 )
 
+      ::lMultiple    := ::lMultipleTicket()
       if ::lMultiple 
-         ::nTotal := ::nTotalMultipleTicket()
+         ::nTotal    := ::nTotalMultipleTicket()
       else
-         ::nTotal := ::oTiketCabecera():FieldGetByName( "nTotTik"   )   
+         ::nTotal    := oTiketCabecera:fieldGetByName( "nTotTik"   )   
       end if
 
    end if
 
-   ::oTiketCabecera():SetStatus( aStatus )
+   oTiketCabecera:SetStatus( aStatus )
 
 RETURN ( Self )
 
