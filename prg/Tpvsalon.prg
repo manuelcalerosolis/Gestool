@@ -1385,7 +1385,6 @@ METHOD LoadFromMemory( cCodigoSala, lPuntosPendientes ) CLASS TTpvSalon
    local sPunto
    local oBlock
    local oError
-   local seconds     := seconds()
 
    CursorWait()
 
@@ -1425,8 +1424,6 @@ METHOD LoadFromMemory( cCodigoSala, lPuntosPendientes ) CLASS TTpvSalon
    ErrorBlock( oBlock )
    
    CursorWE()
-
-   msgalert( seconds() - seconds, "seconds()" )
 
 Return ( Self )
 
