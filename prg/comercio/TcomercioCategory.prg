@@ -156,6 +156,10 @@ METHOD cleanGestoolReferences() CLASS TComercioCategory
 
    ::writeText( "Limpiamos las referencias de las tablas de familias" )
 
+   MsgInfo( "Limpiamos las referencias de las tablas de familias" )
+
+   MsgInfo( ::getCurrentWebName() )
+
    ::TPrestashopId():deleteDocumentValuesCategory( ::getCurrentWebName() )
 
 RETURN ( Self )

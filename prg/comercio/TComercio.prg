@@ -4101,7 +4101,9 @@ METHOD insertStructureInformation() CLASS TComercio
 
    ::TComercioProduct:cleanGestoolReferences()
 
+   ?"antes de cleanGestoolReferences de Categoria"
    ::TComercioCategory:cleanGestoolReferences()
+   ?"despues de cleanGestoolReferences de Categoria"
 
    if ::prestaShopConnect()
 
