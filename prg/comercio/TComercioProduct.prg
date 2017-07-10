@@ -1413,7 +1413,11 @@ METHOD buildFilesProductImages( hProductImage ) CLASS TComercioProduct
 
    rootImage               := ::getRootImage( hProductImage )
 
+   ::meterProcesoText( "Root imagen obtenida : " + rootImage )
+
    saveImage( hget( hProductImage, "name" ), rootImage )
+
+   ::meterProcesoText( "Imagen : " + hget( hProductImage, "name" ) + ", guardada como : " + rootImage )
 
    aadd( hget( hProductImage, "aTypeImages" ), rootImage )
 

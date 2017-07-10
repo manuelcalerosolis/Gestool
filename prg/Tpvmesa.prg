@@ -147,7 +147,7 @@ CLASS TTpvMesa FROM TControl
    METHOD LoadFromPunto( oSender )
    METHOD LoadFromSala( oSender )
 
-   METHOD End()            INLINE ( if( !Empty( ::hBmp ), ::DeleteBitmap(), ), ::Super:End() )
+   METHOD End()            INLINE ( if( !empty( ::hBmp ), ::DeleteBitmap(), ), ::Super:End() )
 
    METHOD HandleEvent( nMsg, nWParam, nLParam )
 
@@ -190,8 +190,8 @@ METHOD New( nTop, nLeft, nType, oWnd ) CLASS TTpvMesa
    local oBlock
    local oError
 
-   // oBlock            := ErrorBlock( {| oError | ApoloBreak( oError ) } )
-   // BEGIN SEQUENCE
+   oBlock            := ErrorBlock( {| oError | ApoloBreak( oError ) } )
+   BEGIN SEQUENCE
 
       ::nStyle       := nOR( WS_CHILD, WS_VISIBLE, WS_TABSTOP, 0 ) //, WS_CLIPCHILDREN
       ::nId          := ::GetNewId()
@@ -206,11 +206,11 @@ METHOD New( nTop, nLeft, nType, oWnd ) CLASS TTpvMesa
       ::oFont        := TFont():New( "Segoe UI",  0, -12, .f., .f. )
 
       ::nType        := nType
-      ::cBitmap      := ::cBitmapMesa( ::nType )
 
       ::nClrPane     := Rgb( 255, 255, 255 )
 
-      if !Empty( ::cBitmap )
+      ::cBitmap      := ::cBitmapMesa( ::nType )
+      if !empty( ::cBitmap )
          ::LoadBitmap()
       end if
 
@@ -219,22 +219,19 @@ METHOD New( nTop, nLeft, nType, oWnd ) CLASS TTpvMesa
 
       ::Register( nOR( CS_VREDRAW, CS_HREDRAW ) )
 
-      if !Empty( ::oWnd:hWnd )
+      if !empty( ::oWnd:hWnd )
          ::Create()
          ::oWnd:AddControl( Self )
       else
          ::oWnd:DefControl( Self )
       endif
 
-   //RECOVER USING oError
+   RECOVER USING oError
+      msgStop( ErrorMessage( oError ), "Error al crear mesas" )
+   END SEQUENCE
+   ErrorBlock( oBlock )
 
-   //   msgStop( ErrorMessage( oError ), "Error al crear mesas" )
-
-   //END SEQUENCE
-
-   // ErrorBlock( oBlock )
-
-Return ( Self )
+RETURN ( Self )
 
 //----Rtrim( ::oSender:oDetSalaVta:oDbf::cDescrip------------------------------------------------------------------------//
 //
@@ -271,7 +268,7 @@ METHOD LoadFromPunto( oSender ) CLASS TTpvMesa
 
    ErrorBlock( oBlock )
 
-Return ( Self )
+RETURN ( Self )
 
 //----------------------------------------------------------------------------//
 //
@@ -301,7 +298,7 @@ METHOD LoadFromSala( oSender ) CLASS TTpvMesa
 
    ErrorBlock( oBlock )
 
-Return ( Self )
+RETURN ( Self )
 
 //----------------------------------------------------------------------------//
 
@@ -309,115 +306,115 @@ Method cBitmapMesa( nItem ) CLASS TTpvMesa
 
    do case
       case nItem == itmMesaRedonda
-         Return ( "Shape_circle_80" )
+         RETURN ( "Shape_circle_80" )
 
       case nItem == itmMesaEliptica
-         Return ( "Shape_ellipse_80" )
+         RETURN ( "Shape_ellipse_80" )
 
       case nItem == itmMesaCuadrada
-         Return ( "Shape_square_80" )
+         RETURN ( "Shape_square_80" )
 
       case nItem == itmMesaRectangular
-         Return ( "Shape_rectangle_80" )
+         RETURN ( "Shape_rectangle_80" )
 
       case nItem == itmBarrraHorizontal
-         Return ( "Bar_center_64" )
+         RETURN ( "Bar_center_64" )
 
       case nItem == itmBarrraVertical
-         Return ( "Bar_left_64" )
+         RETURN ( "Bar_left_64" )
 
       case nItem == itmBarrraEsquinaDerechaAbajo
-         Return ( "Bar_corner_left_64" )
+         RETURN ( "Bar_corner_left_64" )
 
       case nItem == itmBarrraEsquinaIzquierdaAbajo
-         Return ( "Bar_corner_right_64" )
+         RETURN ( "Bar_corner_right_64" )
 
       case nItem == itmBarrraEsquinaDerechaArriba
-         Return ( "Bar_corner_top_left_64" )
+         RETURN ( "Bar_corner_top_left_64" )
 
       case nItem == itmBarrraEsquinaIzquierdaArriba
-         Return ( "Bar_corner_top_right_64" )
+         RETURN ( "Bar_corner_top_right_64" )
 
       case nItem == itmPlantaBlanca
-         Return( "Flower_white_32" )
+         RETURN( "Flower_white_32" )
 
       case nItem == itmPlantaAzul
-         Return( "Flower_blue_32" )
+         RETURN( "Flower_blue_32" )
 
       case nItem == itmPlantaAmarilla
-         Return( "Flower_yellow_32" )
+         RETURN( "Flower_yellow_32" )
 
       case nItem == itmPlantaRoja
-         Return( "Flower_red_32" )
+         RETURN( "Flower_red_32" )
 
       case nItem == itmPanelHorizontal
-         Return( "Navigate2_minus_64" )
+         RETURN( "Navigate2_minus_64" )
 
       case nItem == itmPanelVertical
-         Return( "Navigate_panel_64" )
+         RETURN( "Navigate_panel_64" )
 
       case nItem == itmPanelCruce
-         Return( "Navigate2_plus_64" )
+         RETURN( "Navigate2_plus_64" )
 
       case nItem == itmPanelConexionArriba
-         Return( "Navigate_connection_up_64" )
+         RETURN( "Navigate_connection_up_64" )
 
       case nItem == itmPanelConexionAbajo
-         Return( "Navigate_connection_down_64" )
+         RETURN( "Navigate_connection_down_64" )
 
       case nItem == itmPanelCurvaAbajo
-         Return( "Navigate_corner_left_64" )
+         RETURN( "Navigate_corner_left_64" )
 
       case nItem == itmPanelCurvaArriba
-         Return( "Navigate_corner_right_top_64" )
+         RETURN( "Navigate_corner_right_top_64" )
 
       case nItem == itmPanelCurvaDerecha
-         Return( "Navigate_corner_right_64" )
+         RETURN( "Navigate_corner_right_64" )
 
       case nItem == itmPanelCurvaIzquierda
-         Return( "Navigate_corner_right_down_64" )
+         RETURN( "Navigate_corner_right_down_64" )
 
       case nItem == itmPanelConexionDerecha
-         Return( "Navigate_right_64"  )
+         RETURN( "Navigate_right_64"  )
 
       case nItem == itmPanelConexionIzquierda
-         Return( "Navigate_left_64" )
+         RETURN( "Navigate_left_64" )
 
       case nItem == itmGenerico
-         Return( "gc_cash_register_160" )
+         RETURN( "gc_cash_register_160" )
 
       case nItem == itmLlevar
-         Return( "gc_motor_scooter_160" )
+         RETURN( "gc_motor_scooter_160" )
 
       case nItem == itmNewGenerico
-         Return( "gc_cash_register_160" )
+         RETURN( "gc_cash_register_160" )
 
       case nItem == itmNewLlevar
-         Return( "gc_motor_scooter_160" )
+         RETURN( "gc_motor_scooter_160" )
 
       case nItem == itmEncargar
-         Return( "gc_notebook2_160" )
+         RETURN( "gc_notebook2_160" )
 
       case nItem == itmRecoger
-         Return( "gc_shopping_basket_160" )
+         RETURN( "gc_shopping_basket_160" )
 
    end case
 
-Return ( "" )
+RETURN ( "" )
 
 //----------------------------------------------------------------------------//
 
 METHOD LButtonUp( nRow, nCol, nKeyFlags ) CLASS TTpvMesa
 
    if ::lDesign
-      Return ( Self )
+      RETURN ( Self )
    end if 
    
    if ::lSeleccionable()
       ::oSender:GetSalon():SelectPunto( ::oSender )
    end if
 
-Return ( Self )
+RETURN ( Self )
 
 //---------------------------------------------------------------------------//
 
@@ -462,7 +459,7 @@ METHOD RButtonDown( nRow, nCol, nKeyFlags ) CLASS TTpvMesa
 
    end if
 
-Return ( Self )
+RETURN ( Self )
 
 //---------------------------------------------------------------------------//
 
@@ -542,11 +539,11 @@ METHOD uCreaToolTip( nRow, nCol, nKeyFlags )
 
    oBrwLinToolTip:CloseData()
 
-   if !Empty( oBmp )
+   if !empty( oBmp )
       oBmp:End()
    end if
 
-Return ( Self )
+RETURN ( Self )
 
 //---------------------------------------------------------------------------//
 
@@ -582,7 +579,7 @@ METHOD aCargaLineasToolTip()
    oParent:oTiketLinea:OrdSetFocus( nOrdAnt )
    oParent:oTiketLinea:GoTo( nRec )
 
-return aLineas
+RETURN aLineas
 
 //---------------------------------------------------------------------------//
 
@@ -592,10 +589,10 @@ METHOD nTotLinToolTip( aLineasToolTip )
    local aLinToolTip
 
    for each aLinToolTip in aLineasToolTip
-       nTotal              += aLinToolTip:nImporte
+      nTotal         += aLinToolTip:nImporte
    next
 
-Return nTotal
+RETURN nTotal
 
 //---------------------------------------------------------------------------//
 
@@ -618,51 +615,41 @@ METHOD lSeleccionable() CLASS TTpvMesa
       ::nType == itmNewGenerico                    .or.;
       ::nType == itmNewLlevar
 
-      return .t.
+      RETURN .t.
 
    end if
 
-Return ( .f. )
+RETURN ( .f. )
 
 //---------------------------------------------------------------------------//
 
 METHOD LoadBitmap() CLASS TTpvMesa
 
-   if !Empty( ::hBmp )
+   if !empty( ::hBmp )
       DeleteObject( ::hBmp )
    end if
 
-   if !Empty( ::cBitmap )
-
-      /*
-      aBmpPal        := PalBmpLoad( ::cBitmap )
-      ::hBmp         := aBmpPal[ 1 ]
-      ::hPalette     := aBmpPal[ 2 ]
-      */
-
-      ::hBmp            := LoadBitmap( GetResources(), ::cBitmap )
-      if ::hBmp != 0
-         ::nBmpWidth    := nBmpWidth( ::hBmp )
-         ::nBmpHeight   := nBmpHeight( ::hBmp )
-      end if
-
+   ::hBmp            := LoadBitmap( GetResources(), ::cBitmap )
+   if ::hBmp != 0
+      ::nBmpWidth    := nBmpWidth( ::hBmp )
+      ::nBmpHeight   := nBmpHeight( ::hBmp )
    end if
 
-   sysrefresh()
+   // sysrefresh()
 
-Return ( Self )
+RETURN ( Self )
 
 //---------------------------------------------------------------------------//
 
 METHOD DeleteBitmap() CLASS TTpvMesa
 
-   if !Empty( ::hBmp )
+   if !empty( ::hBmp )
       DeleteObject( ::hBmp )
    end if
 
    ::hBmp               := 0
 
-Return ( Self )
+RETURN ( Self )
 
 //---------------------------------------------------------------------------//
 
@@ -670,25 +657,25 @@ METHOD HandleEvent( nMsg, nWParam, nLParam ) CLASS TTpvMesa
 
    do case
       case nMsg == 0x00A4 // WM_NCRBUTTONDOWN
-         return ::RButtonDown( nHiWord( nLParam ), nLoWord( nLParam ), nWParam )
+         RETURN ::RButtonDown( nHiWord( nLParam ), nLoWord( nLParam ), nWParam )
 
       case nMsg == 0x00A3 // Doble click
-         return 0
+         RETURN 0
 
       case nMsg == WM_NCHITTEST .and. ::lDesign
          // ::Refresh()
-         return HTCAPTION
-         //return DefWindowProc( ::hWnd, nMsg, nWParam, nLParam )
+         RETURN HTCAPTION
+         //RETURN DefWindowProc( ::hWnd, nMsg, nWParam, nLParam )
 
          /*
          */
 
       case nMsg == WM_ERASEBKGND
-         return 1
+         RETURN 1
 
    end case
 
-Return ( ::Super:HandleEvent( nMsg, nWParam, nLParam ) )
+RETURN ( ::Super:HandleEvent( nMsg, nWParam, nLParam ) )
 
 //---------------------------------------------------------------------------//
 
@@ -698,12 +685,12 @@ METHOD Rename() CLASS TTpvMesa
 
    cPuntoVenta       := VirtualKey( .f., cPuntoVenta, "Nombre de la mesa" )
 
-   if !Empty( cPuntoVenta )
+   if !empty( cPuntoVenta )
       ::cPuntoVenta  := cPuntoVenta
       ::Refresh()
    end if
 
-Return ( ::cPuntoVenta )
+RETURN ( ::cPuntoVenta )
 
 //---------------------------------------------------------------------------//
 
@@ -722,7 +709,7 @@ METHOD Paint() CLASS TTpvMesa
 
    fillSolidRect( ::hDC, GetClientRect( ::hWnd ), ::nClrPane )
 
-   if Empty( ::hBmp )
+   if empty( ::hBmp )
       ::LoadBitmap()
    end if
 
@@ -745,7 +732,7 @@ METHOD Paint() CLASS TTpvMesa
       // Bitmap del estado--------------------------------------------------
 
       aBitmap           := ::aBitmapState()
-      if !Empty( aBitmap )
+      if !empty( aBitmap )
          TransparentBlt( ::hDC, aBitmap[ BITMAP_HANDLE ], ( ::nBmpWidth - 16 ) / 2, ( ::nBmpHeight - 16 ) / 2, aBitmap[ BITMAP_WIDTH ], aBitmap[ BITMAP_HEIGHT ] )
       end if
 
@@ -765,37 +752,37 @@ METHOD Paint() CLASS TTpvMesa
 
    // Nombre de la mesa--------------------------------------------------------
 
-   if !Empty( ::cPuntoVenta ) .and. ( ::nUbicacion == ubiSala )
+   if !empty( ::cPuntoVenta ) .and. ( ::nUbicacion == ubiSala )
       DrawText( ::hDC, Rtrim( ::cPuntoVenta ), { nRowText, 0, ::nBmpHeight, ::nBmpWidth }, nOR( DT_CENTER, DT_WORDBREAK, DT_WORD_ELLIPSIS, DT_TOP ) )
    end if
 
    // Alias de la ubicacion----------------------------------------------------
 
-   if !Empty( ::cAlias ) .and. ( ::nUbicacion == ubiGeneral )
+   if !empty( ::cAlias ) .and. ( ::nUbicacion == ubiGeneral )
       DrawText( ::hDC, Rtrim( ::cAlias ), { nRowText, 0, ::nBmpHeight, ::nBmpWidth }, nOR( DT_CENTER, DT_WORDBREAK, DT_WORD_ELLIPSIS, DT_TOP ) )
    end if
 
    // Alias de la ubicacion----------------------------------------------------
 
-   if !Empty( ::cAlias ) .and. ( ::nUbicacion == ubiRecoger )
+   if !empty( ::cAlias ) .and. ( ::nUbicacion == ubiRecoger )
       DrawText( ::hDC, Rtrim( ::cAlias ), { nRowText, 0, ::nBmpHeight, ::nBmpWidth }, nOR( DT_CENTER, DT_WORDBREAK, DT_WORD_ELLIPSIS, DT_TOP ) )
    end if
 
    // Cliente para llevar------------------------------------------------------
 
-   if !Empty( ::cNombre ) .and. ( ::nUbicacion == ubiLlevar )
+   if !empty( ::cNombre ) .and. ( ::nUbicacion == ubiLlevar )
       DrawText( ::hDC, Rtrim( ::cNombre ), { nRowText, 0, ::nBmpHeight, ::nBmpWidth }, nOR( DT_CENTER, DT_WORDBREAK, DT_WORD_ELLIPSIS, DT_TOP ) )
    end if
 
    // Cliente encargar------------------------------------------------------
 
-   if !Empty( ::cNombre ) .and. ( ::nUbicacion == ubiEncargar )
+   if !empty( ::cNombre ) .and. ( ::nUbicacion == ubiEncargar )
       DrawText( ::hDC, Rtrim( ::cNombre ), { nRowText, 0, ::nBmpHeight, ::nBmpWidth }, nOR( DT_CENTER, DT_WORDBREAK, DT_WORD_ELLIPSIS, DT_TOP ) )
    end if
 
    // Total de la mesa---------------------------------------------------------
 
-   if !Empty( ::nTotal )
+   if !empty( ::nTotal )
 
       if ::lMultiple
          DrawText( ::hDC, "[" + Alltrim( Trans( ::nTotal, cPorDiv() ) ) + cSimDiv() + "]", { nRowTotal, 0, ::nBmpHeight, ::nBmpWidth }, nOR( DT_CENTER, DT_WORDBREAK, DT_WORD_ELLIPSIS, DT_TOP ) )
@@ -809,7 +796,7 @@ METHOD Paint() CLASS TTpvMesa
    SetTextColor( ::hDC, nColor   )
    SelectObject( ::hDC, hFont    )
 
-Return 0
+RETURN 0
 
 //---------------------------------------------------------------------------//
 
@@ -817,7 +804,7 @@ Method aBitmapState()
 
    local aBitmapState
 
-   if IsNum( ::nEstado ) .and. !Empty( ::cPuntoVenta )
+   if IsNum( ::nEstado ) .and. !empty( ::cPuntoVenta )
 
       if ::nEstado > 0 .and. ::nEstado <= len( ::oSender:GetSalon():aBitmapsState )
          aBitmapState   := ::oSender:GetSalon():aBitmapsState[ ::nEstado ]
@@ -825,7 +812,7 @@ Method aBitmapState()
 
    end if
 
-Return ( aBitmapState )
+RETURN ( aBitmapState )
 
 //---------------------------------------------------------------------------//
 

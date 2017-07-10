@@ -560,6 +560,7 @@ CLASS TpvTactil
    METHOD lBlankTicket()               INLINE ( alltrim( ::oTiketCabecera:cNumTik ) == "" )
 
    METHOD cNumeroTicket()              INLINE ( ::oTiketCabecera:cSerTik + ::oTiketCabecera:cNumTik + ::oTiketCabecera:cSufTik )
+   METHOD cTextoTicket()               INLINE ( ::oTiketCabecera:cSerTik + "/" + alltrim( ::oTiketCabecera:cNumTik ) + "/" + ::oTiketCabecera:cSufTik )
    
    METHOD cNumeroTicketLinea()         INLINE ( ::oTiketLinea:cSerTil + ::oTiketLinea:cNumTil + ::oTiketLinea:cSufTil )
    METHOD cTextoTicketLinea()          INLINE ( ::oTiketLinea:cSerTil + "/" + alltrim( ::oTiketLinea:cNumTil ) + "/" + alltrim( ::oTiketLinea:cSufTil ) )
@@ -797,7 +798,7 @@ CLASS TpvTactil
 
    METHOD ImprimeDesglosado()
 
-   METHOD PdfTicket()
+   METHOD mailTicket()
 
    METHOD SonidoComanda( cImpresora )
 
@@ -6529,7 +6530,7 @@ METHOD OnClickCobro() CLASS TpvTactil
 
       // Envia el mail para el cliente-----------------------------------------
 
-      // ::MailDocumentoCliente()
+      ::MailDocumentoCliente()
 
       // Inicializa los valores para el documento------------------------------
 
@@ -8450,7 +8451,7 @@ RETURN ( Self )
 
 //-----------------------------------------------------------------------//
 
-METHOD PdfTicket()
+METHOD mailTicket()
 
    if !::lValidatePreSave()
       Return ( Self )
@@ -8460,9 +8461,9 @@ METHOD PdfTicket()
 
    ::cImpresora   := ::oFormatosImpresion:cPrinterTik
 
-   ::nCopias      := Max( ::oFormatosImpresion:nCopiasTik, 1 )
+   ::nCopias      := 1
 
-   ::nDispositivo := IS_PDF
+   ::nDispositivo := IS_MAIL
 
    ::lComanda     := .f.
 
@@ -8830,6 +8831,11 @@ Return ( .t. )
 
 METHOD BuildReport() CLASS TpvTactil
 
+   local pdfFile  := ::cTextoTicket() + ".pdf"
+
+   msgalert( pdfFile, "pdfFile" )
+   return ( nil )
+
    SysRefresh()
 
    /*
@@ -8881,6 +8887,17 @@ METHOD BuildReport() CLASS TpvTactil
             ::oFastReport:SetProperty(  "PDFExport", "EmbeddedFonts",    .t. )
             ::oFastReport:SetProperty(  "PDFExport", "PrintOptimized",   .t. )
             ::oFastReport:SetProperty(  "PDFExport", "Outline",          .t. )
+            ::oFastReport:DoExport(     "PDFExport" )
+
+         case ::nDispositivo == IS_MAIL
+
+            ::oFastReport:SetProperty(  "PDFExport", "ShowDialog",       .f. )
+            ::oFastReport:SetProperty(  "PDFExport", "DefaultPath",      cPatTmp() )
+            ::oFastReport:SetProperty(  "PDFExport", "FileName",         pdfFile )
+            ::oFastReport:SetProperty(  "PDFExport", "EmbeddedFonts",    .t. )
+            ::oFastReport:SetProperty(  "PDFExport", "PrintOptimized",   .t. )
+            ::oFastReport:SetProperty(  "PDFExport", "Outline",          .t. )
+            ::oFastReport:SetProperty(  "PDFExport", "OpenAfterExport",  .f. )
             ::oFastReport:DoExport(     "PDFExport" )
 
       end case
@@ -9725,14 +9742,37 @@ METHOD mailDocumentoCliente()
 
    local hMail          := {=>}
    local cMensajeMail   := ""
+   local cMailCliente   := ""
+   local cCodigoCliente := ::oTiketCabecera:cCliTik
 
-   if !( ConfiguracionEmpresasModel():getLogic( 'mail_to_client' ) )
-      Return ( Self )
-   end if 
+   // if !( ConfiguracionEmpresasModel():getLogic( 'mail_to_client' ) )
+   //    Return ( Self )
+   // end if 
 
    // comprobar el mail de cliente q no este vacio-----------------------------
 
    msgalert( "comprobar el mail de cliente q no este vacio-----------------------------" )
+
+   if empty( cCodigoCliente )
+      msgalert( "salida por 1")
+      RETURN ( self )
+   end if 
+
+   if isFalse( oRetFld( cCodigoCliente, ::oCliente, "lMail" ) )
+      msgalert( "salida por 2")
+      RETURN ( self )
+   end if 
+
+   cMailCliente         := oRetFld( cCodigoCliente, ::oCliente, "cMeiInt" )
+   if empty( cMailCliente )
+      msgalert( "salida por 3")
+      RETURN ( self )
+   end if 
+
+   ::mailTicket()
+
+   msgalert( ::oFastReport:getProperty(  "PDFExport", "FileName" ) )
+
 /*
    cMensajeMail         := "<p>" + "Linea eliminada en el ticket " + ::cTextoTicketLinea()      + "</p>" + CRLF  
    cMensajeMail         += "<p>" + "Descripción : " +  alltrim( ::oTemporalLinea:cNomTil )      + "</p>" + CRLF  
