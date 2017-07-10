@@ -97,6 +97,8 @@ CLASS TPrestaShopId FROM TMant
 
    METHOD writeText( cText )                                                  INLINE ( ::TComercio:writeText( cText ) )
 
+   METHOD deleteAllReferencesWeb( cWeb )
+
 END CLASS
 
 //---------------------------------------------------------------------------//
@@ -245,12 +247,28 @@ RETURN ( .t. )
 
 METHOD deleteDocumentValues( cTipoDocumento, cWeb )
 
+   Local cStm
+
    cTipoDocumento    := upper( cTipoDocumento )
    cWeb              := upper( cWeb )
 
    while ::oDbf:seekInOrd( cTipoDocumento + cWeb, "cDocuWeb" )
       ::oDbf:delete()
    end while
+
+RETURN ( .t. )
+
+//---------------------------------------------------------------------------//
+
+METHOD deleteAllReferencesWeb( cWeb )
+
+   Local cStm
+
+   cWeb              := upper( cWeb )
+
+   cStm        := "DELETE FROM " + cPatEmp() + "PrestaId" + " WHERE cWeb = " + quoted( cWeb )
+   
+   TDataCenter():ExecuteSqlStatement( cStm, "aaa" )
 
 RETURN ( .t. )
 

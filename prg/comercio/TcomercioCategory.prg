@@ -223,8 +223,6 @@ METHOD updateCategoriesParent() CLASS TComercioCategory
 
    local hCategoryProduct
 
-   msgalert( "updateCategoryParent" ) 
-
    for each hCategoryProduct in ::aCategoriesProduct
       ::updateCategoryParent( hCategoryProduct )
    next 

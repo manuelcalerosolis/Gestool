@@ -4099,11 +4099,7 @@ METHOD insertStructureInformation() CLASS TComercio
 
    ::TComercioProduct:buildAllProductInformation()
 
-   ::TComercioProduct:cleanGestoolReferences()
-
-   ?"antes de cleanGestoolReferences de Categoria"
-   ::TComercioCategory:cleanGestoolReferences()
-   ?"despues de cleanGestoolReferences de Categoria"
+   ::TPrestashopId():deleteAllReferencesWeb( ::getCurrentWebName() )
 
    if ::prestaShopConnect()
 
