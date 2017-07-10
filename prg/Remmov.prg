@@ -3009,6 +3009,7 @@ METHOD PrintReportRemMov( nDevice, nCopies, cPrinter, dbfDoc ) CLASS TRemMovAlm
 
    local oFr
    local oWaitMeter
+   local nOrdAnt
 
    DEFAULT nDevice      := IS_SCREEN
    DEFAULT nCopies      := 1
@@ -3033,6 +3034,8 @@ METHOD PrintReportRemMov( nDevice, nCopies, cPrinter, dbfDoc ) CLASS TRemMovAlm
    /*
    Zona de datos---------------------------------------------------------------
    */
+
+   nOrdAnt              := ::oDetMovimientos:oDbf:OrdSetFocus( "nNumLin" )
 
    ::DataReport( oFr )
 
@@ -3090,6 +3093,8 @@ METHOD PrintReportRemMov( nDevice, nCopies, cPrinter, dbfDoc ) CLASS TRemMovAlm
    */
 
    oFr:DestroyFr()
+
+   ::oDetMovimientos:oDbf:OrdSetFocus( nOrdAnt )
 
 Return .t.
 

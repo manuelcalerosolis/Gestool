@@ -281,7 +281,7 @@ RETURN ( .t. )
 
 FUNCTION Test()
 
-   MovimientosAlmacenController():New():activateShell()
+   //MovimientosAlmacenController():New():activateShell()
 
    /*
    local hMail          := {=>}
