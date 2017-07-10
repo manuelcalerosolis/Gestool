@@ -281,15 +281,7 @@ RETURN ( .t. )
 
 FUNCTION Test()
 
-<<<<<<< HEAD
    MovimientosAlmacenController():New():activateShell()
-=======
-<<<<<<< HEAD
-   // MovimientosAlmacenController():New():activateShell()
-=======
-   //MovimientosAlmacenController():New():activateShell()
->>>>>>> 4c208e5a1ba5751c97eb38ce3eac6d55506858b1
->>>>>>> origin/master
 
    /*
    local hMail          := {=>}
