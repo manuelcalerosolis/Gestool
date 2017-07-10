@@ -313,8 +313,6 @@ METHOD getInsertSentence()
 
    cSQLInsert        := ChgAtEnd( cSQLInsert, ' )', 2 )
 
-   msgalert( cSQLInsert, "::getInsertSentence() cSQLInsert" )
-
 Return ( cSQLInsert )
 
 //---------------------------------------------------------------------------//
@@ -339,8 +337,6 @@ METHOD getValueField( cColumn, uValue )
       end if
 
    end if
-
-   MsgAlert( uValue, "Valor por defecto" )
 
 Return ( uValue )
 
