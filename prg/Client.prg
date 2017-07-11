@@ -1217,6 +1217,10 @@ STATIC FUNCTION EdtBig( aTmp, aGet, dbfCli, oBrw, bWhen, bValid, nMode )
    local oBmpGeneral
    local cResource      := "BigEdtCliente"
 
+   if getSysMetrics( 1 ) == 560
+      cResource         := "BigEdtCliente_1024x576"
+   end if 
+
    if ( nMode == APPD_MODE .or. nMode == DUPL_MODE )
       aTmp[ _COD     ]  := NextKey( aTmp[ _COD ], ( D():Clientes( nView ) ), "0", RetNumCodCliEmp() )
       aTmp[ _LSNDINT ]  := .t.
@@ -1228,15 +1232,9 @@ STATIC FUNCTION EdtBig( aTmp, aGet, dbfCli, oBrw, bWhen, bValid, nMode )
       aTmp[ _NTARCMB ]  := 1
    end case
 
-   if GetSysMetrics( 1 ) == 560
-
-      DEFINE DIALOG oDlg RESOURCE "BigEdtCliente_1024x576" TITLE ( LblTitle( nMode ) + "cliente" )
-
-   else
-
-      DEFINE DIALOG oDlg RESOURCE cResource TITLE ( LblTitle( nMode ) + "cliente" )
-
-   end if
+   DEFINE DIALOG  oDlg ;
+      RESOURCE    ( cResource ) ;
+      TITLE       ( LblTitle( nMode ) + "cliente" )
 
       REDEFINE BITMAP oBmpGeneral ;
         ID       500 ;
@@ -1244,40 +1242,44 @@ STATIC FUNCTION EdtBig( aTmp, aGet, dbfCli, oBrw, bWhen, bValid, nMode )
         TRANSPARENT ;
         OF       oDlg
 
-      REDEFINE GET aGet[ _COD ] VAR aTmp[ _COD ] ;
+      REDEFINE GET aGet[ _COD ] ;
+         VAR      aTmp[ _COD ]  ;
          ID       100 ;
          PICTURE  ( Replicate( "X", RetNumCodCliEmp() ) );
          WHEN     ( nMode == APPD_MODE .or. nMode == DUPL_MODE ) ;
          VALID    ( NotValid( aGet[ _COD ], ( D():Clientes( nView ) ), .t., "0", 1, RetNumCodCliEmp() ) ) ;
          OF       oDlg
 
-      REDEFINE GET aGet[ _TITULO ] VAR aTmp[ _TITULO ];
+      REDEFINE GET aGet[ _TITULO ] ;
+         VAR      aTmp[ _TITULO ] ;
          ID       110 ;
          PICTURE  "@!" ;
-         COLOR    CLR_GET ;
          ON CHANGE( ActTitle( nKey, nFlags, Self, nMode, oDlg, aTmp[ _COD ] ) );
          WHEN     ( nMode != ZOOM_MODE ) ;
          VALID    ( if( nMode == APPD_MODE, lValidNombre( aGet[_TITULO] ), .t. ) ) ;
          OF       oDlg
 
-      REDEFINE GET aGet[ _DOMICILIO ] VAR aTmp[ _DOMICILIO ];
+      REDEFINE GET aGet[ _DOMICILIO ] ;
+         VAR      aTmp[ _DOMICILIO ] ;
          ID       120 ;
          ON HELP  GoogleMaps( aTmp[ _DOMICILIO ], Rtrim( aTmp[ _POBLACION ] ) + Space( 1 ) + Rtrim( aTmp[ _PROVINCIA ] ) ) ;
          WHEN     ( nMode != ZOOM_MODE ) ;
          OF       oDlg
 
-      REDEFINE GET aGet[ _POBLACION ] VAR aTmp[ _POBLACION ];
+      REDEFINE GET aGet[ _POBLACION ] ;
+         VAR      aTmp[ _POBLACION ] ;
          ID       130 ;
-         COLOR    CLR_GET ;
          WHEN     ( nMode != ZOOM_MODE ) ;
          OF       oDlg
 
-      REDEFINE GET aGet[ _CODPOSTAL ] VAR aTmp[ _CODPOSTAL ] ;
+      REDEFINE GET aGet[ _CODPOSTAL ] ;
+         VAR      aTmp[ _CODPOSTAL ]  ;
          ID       140 ;
          WHEN     ( nMode != ZOOM_MODE ) ;
          OF       oDlg
 
-      REDEFINE GET aGet[ _TELEFONO ] VAR aTmp[ _TELEFONO ] ;
+      REDEFINE GET aGet[ _TELEFONO ] ;
+         VAR      aTmp[ _TELEFONO ] ;
          ID       150 ;
          WHEN     ( nMode != ZOOM_MODE ) ;
          VALID    ( if( nMode == APPD_MODE, lValidTlf( aGet[ _TELEFONO ] ), .t. ) ) ;
@@ -1285,7 +1287,8 @@ STATIC FUNCTION EdtBig( aTmp, aGet, dbfCli, oBrw, bWhen, bValid, nMode )
 
       if uFieldEmpresa( "nCifRut" ) <= 1
 
-      REDEFINE GET aGet[ _NIF ] VAR aTmp[ _NIF ] ;
+      REDEFINE GET aGet[ _NIF ] ;
+         VAR      aTmp[ _NIF ] ;
          ID       160 ;
          PICTURE  "@!" ;
          WHEN     ( nMode != ZOOM_MODE ) ;
@@ -1294,7 +1297,8 @@ STATIC FUNCTION EdtBig( aTmp, aGet, dbfCli, oBrw, bWhen, bValid, nMode )
 
       else
 
-      REDEFINE GET aGet[ _NIF ] VAR aTmp[ _NIF ] ;
+      REDEFINE GET aGet[ _NIF ] ;
+         VAR      aTmp[ _NIF ] ;
          ID       160 ;
          PICTURE  "@R 999999999-9" ;
          WHEN     ( nMode != ZOOM_MODE ) ;
@@ -1303,18 +1307,23 @@ STATIC FUNCTION EdtBig( aTmp, aGet, dbfCli, oBrw, bWhen, bValid, nMode )
 
       end if
 
-      REDEFINE GET aGet[ _CMEIINT ] VAR aTmp[ _CMEIINT ] ;
+      REDEFINE CHECKBOX aTmp[ _LMAIL ] ;
+         ID       165 ;
+         WHEN     ( nMode != ZOOM_MODE ) ;
+         OF       oDlg
+
+      REDEFINE GET aGet[ _CMEIINT ] ;
+         VAR      aTmp[ _CMEIINT ] ;
          ID       170 ;
          WHEN     ( nMode != ZOOM_MODE ) ;
-         COLOR    CLR_GET ;
          ON HELP  ( ShellExecute( oDlg:hWnd, "open", "mailto:" + Rtrim( aGet[ _CMEIINT ]:cText() ) ) ) ;
          UPDATE ;
          OF       oDlg
 
-      REDEFINE GET aGet[ _MCOMENT ] VAR aTmp[ _MCOMENT ];
+      REDEFINE GET aGet[ _MCOMENT ] ;
+         VAR      aTmp[ _MCOMENT ] ;
          ID       180 ;
          MEMO ;
-         COLOR    CLR_GET ;
          WHEN     ( nMode != ZOOM_MODE ) ;
          OF       oDlg
 

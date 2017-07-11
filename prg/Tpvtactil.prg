@@ -798,6 +798,7 @@ CLASS TpvTactil
    METHOD ImprimeDesglosado()
 
    METHOD mailTicket()
+   METHOD htmlTicket()
 
    METHOD SonidoComanda( cImpresora )
 
@@ -924,6 +925,7 @@ CLASS TpvTactil
    METHOD mailDocumentoCliente()
 
    METHOD pdfFile()                                            INLINE ( ::oTiketCabecera:cSerTik + "-" + alltrim( ::oTiketCabecera:cNumTik ) + "-" + ::oTiketCabecera:cSufTik + ".pdf" )
+   METHOD htmlFile()                                           INLINE ( ::oTiketCabecera:cSerTik + "-" + alltrim( ::oTiketCabecera:cNumTik ) + "-" + ::oTiketCabecera:cSufTik + ".html" )
 
    METHOD isLineaValidaComanda( lCopia )
 
@@ -8474,6 +8476,28 @@ RETURN ( Self )
 
 //-----------------------------------------------------------------------//
 
+METHOD htmlTicket()
+
+   if !::lValidatePreSave()
+      Return ( Self )
+   end if
+
+   ::cFormato     := ::oFormatosImpresion:cFormatoTiket
+
+   ::cImpresora   := ::oFormatosImpresion:cPrinterTik
+
+   ::nCopias      := 1
+
+   ::nDispositivo := IS_HTML
+
+   ::lComanda     := .f.
+
+   ::ImprimeDocumento()
+
+RETURN ( Self )
+
+//-----------------------------------------------------------------------//
+
 METHOD SonidoComanda( cImpresora )
 
   local cWav        := AllTrim( cWavImpresoraComanda( oUser():cCaja(), cImpresora, ::oCajaLinea:cAlias ) )
@@ -8895,6 +8919,13 @@ METHOD BuildReport() CLASS TpvTactil
             ::oFastReport:SetProperty(  "PDFExport", "Outline",          .t. )
             ::oFastReport:SetProperty(  "PDFExport", "OpenAfterExport",  .f. )
             ::oFastReport:DoExport(     "PDFExport" )
+
+         case ::nDispositivo == IS_HTML
+            ::oFastReport:PrepareReport()
+            ::oFastReport:SetProperty( "HTMLExport", "ShowDialog",      .f. )
+            ::oFastReport:SetProperty( "HTMLExport", "DefaultPath",     cPatTmp() )
+            ::oFastReport:SetProperty( "HTMLExport", "FileName",        ::htmlFile() )
+            ::oFastReport:DoExport(    "HTMLExport" )
 
       end case
 
@@ -9747,34 +9778,27 @@ METHOD mailDocumentoCliente()
 
    // comprobar el mail de cliente q no este vacio-----------------------------
 
-   msgalert( "comprobar el mail de cliente q no este vacio-----------------------------" )
-
    if empty( cCodigoCliente )
-      msgalert( "salida por 1")
       RETURN ( self )
    end if 
 
    if isFalse( oRetFld( cCodigoCliente, ::oCliente, "lMail" ) )
-      msgalert( "salida por 2")
       RETURN ( self )
    end if 
 
    cMailCliente         := oRetFld( cCodigoCliente, ::oCliente, "cMeiInt" )
    if empty( cMailCliente )
-      msgalert( "salida por 3")
       RETURN ( self )
    end if 
 
    ::mailTicket()
 
-   msgalert( ::pdfFile(), "fichero creado")
-
    if !file( cPatTmp() + ::pdfFile() )
       RETURN ( self )
    end if 
-   
-   hSet( hMail, "subject",       "Tu ticket" )
-   hSet( hMail, "message",       "<p>" + "Adjuntamos su ticket" + "</p>" + CRLF )
+
+   hSet( hMail, "subject",       "Envio de factura simplificada" )
+   hSet( hMail, "message",       "<p>" + "Adjuntamos su factura simplificada" + "<p>" ) 
    hSet( hMail, "mail",          cMailCliente ) 
    hSet( hMail, "attachments",   cPatTmp() + ::pdfFile() )
 
