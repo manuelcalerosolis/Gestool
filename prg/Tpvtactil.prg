@@ -9779,9 +9779,11 @@ METHOD mailDocumentoCliente()
    hSet( hMail, "attachments",   cPatTmp() + ::pdfFile() )
 
    with object TSendMail():New()
+      :showNoModalDialog()
       if :buildMailerObject()
          :sendMail( hMail )
       end if 
+      :endNoModalDialog()
    end with
 
 Return ( Self )

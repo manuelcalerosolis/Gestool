@@ -4378,11 +4378,20 @@ STATIC FUNCTION EdtRec( aTmp, aGet, cArticulo, oBrw, bWhen, bValid, nMode )
          TRANSPARENT ;
          OF       fldWeb
 
+   // Web---------------------------------------------------------------------- 
+
    REDEFINE CHECKBOX aTmp[ ( D():Articulos( nView ) )->( fieldpos( "LPUBINT" ) ) ] ;
          ID       100 ;
-			WHEN 		( nMode != ZOOM_MODE ) ;
+         WHEN     ( nMode != ZOOM_MODE ) ;
          ON CHANGE( ChangePublicarTemporal( aTmp ) ) ;
          OF       fldWeb
+
+   REDEFINE COMBOBOX aGet[ ( D():Articulos( nView ) )->( fieldPos( "cWebShop" ) ) ] ;
+      VAR         aTmp[ ( D():Articulos( nView ) )->( fieldPos( "cWebShop" ) ) ] ;
+      ITEMS       TComercioConfig():getInstance():getWebsNames() ;
+      ID          110 ;
+      WHEN        ( nMode != ZOOM_MODE .and. aTmp[ ( D():Articulos( nView ) )->( fieldpos( "lPubInt" ) ) ] ) ;
+      OF          fldWeb
 
    /*
    Tarifas---------------------------------------------------------------------
@@ -4393,15 +4402,6 @@ STATIC FUNCTION EdtRec( aTmp, aGet, cArticulo, oBrw, bWhen, bValid, nMode )
       WHEN     ( nMode != ZOOM_MODE ) ;
       ON CHANGE( ChangeTarifaPrecioWeb( aGet, aTmp ), CalculaDescuentoWeb( aGet, aTmp ) ) ;
       OF       fldWeb
-
-   // Web---------------------------------------------------------------------- 
-
-   REDEFINE COMBOBOX aGet[ ( D():Articulos( nView ) )->( fieldPos( "cWebShop" ) ) ] ;
-      VAR         aTmp[ ( D():Articulos( nView ) )->( fieldPos( "cWebShop" ) ) ] ;
-      ITEMS       TComercioConfig():getInstance():getWebsNames() ;
-      ID          110 ;
-      WHEN        ( nMode != ZOOM_MODE .and. aTmp[ ( D():Articulos( nView ) )->( fieldpos( "lPubInt" ) ) ] ) ;
-      OF          fldWeb
 
    // Tarifa-------------------------------------------------------------------
 

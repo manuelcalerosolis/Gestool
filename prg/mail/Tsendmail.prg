@@ -26,6 +26,8 @@ CLASS TSendMail
    DATA cLogFile              
    DATA hLogFile              INIT  -1 
 
+   DATA oDlg
+
    METHOD New( oSender )
 
    // Metodos para controlar la vista
@@ -100,6 +102,10 @@ CLASS TSendMail
                               INLINE ( iif(  !empty( ::getPostSendFromHash( hMail ) ),;
                                              eval( ::getPostSendFromHash( hMail ), hMail ), ) )
 
+   METHOD showNoModalDialog( cTitle, cText )
+
+   METHOD endNoModalDialog()
+
 END CLASS
 
 //---------------------------------------------------------------------------//
@@ -116,13 +122,13 @@ METHOD New( oSender ) CLASS TSendMail
    ::mailServerAuthenticate   := uFieldEmpresa( "lAutMai")
    ::mailServerSSL            := uFieldEmpresa( "lSSLMai")
 
-Return ( Self )
+RETURN ( Self )
 
 //---------------------------------------------------------------------------//
 
 METHOD isMailServer()
 
-Return ( !empty( ::mailServerHost ) .and. !empty( ::mailServerUserName ) .and. !empty( ::mailServerPassword ) )
+RETURN ( !empty( ::mailServerHost ) .and. !empty( ::mailServerUserName ) .and. !empty( ::mailServerPassword ) )
 
 //---------------------------------------------------------------------------//
 
@@ -162,7 +168,7 @@ METHOD sendList( aMails ) CLASS TSendMail
 
    CursorArrow()
 
-Return ( Self )
+RETURN ( Self )
 
 //--------------------------------------------------------------------------//
 
@@ -172,7 +178,7 @@ METHOD setButtonCancel() CLASS TSendMail
       ::oSender:oBtnCancel:bAction := {|| ::lCancel := .t. }
    end if 
 
-Return ( self )
+RETURN ( self )
 
 //--------------------------------------------------------------------------//
 
@@ -182,7 +188,7 @@ METHOD setButtonEnd() CLASS TSendMail
       ::oSender:oBtnCancel:bAction := {|| ::oSender:oDlg:End() } 
    end if 
 
-Return ( self )
+RETURN ( self )
 
 //--------------------------------------------------------------------------//
 
@@ -194,24 +200,46 @@ METHOD buildMailerObject() CLASS TSendMail
       ::mailServer   := TSendMailOutlook():New( self )
    end if 
 
-Return ( !empty( ::mailServer ) )
+RETURN ( !empty( ::mailServer ) )
 
 //--------------------------------------------------------------------------//
 
-METHOD sendMail( hMail ) 
+METHOD sendMail( hMail ) CLASS TSendMail
    
    local cMail    := ::getMailsFromHash( hMail )
 
    if empty( cMail )
       ::messenger( "El correo electrónico con el asunto '" + ::getSubjectFromHash( hMail ) + "' esta vacio." )
-      Return .f.
+      RETURN .f.
    end if 
 
    if empty( ::mailServer )
       ::messenger( "No se ha creado el objeto para los envios" )
-      Return .f.
+      RETURN .f.
    end if
 
-Return ( isTrue( ::mailServer:sendMail( hMail ) ) )
+RETURN ( isTrue( ::mailServer:sendMail( hMail ) ) )
+
+//--------------------------------------------------------------------------//
+
+METHOD showNoModalDialog( cTitle, cText ) CLASS TSendMail
+
+   DEFAULT cTitle    := "Por favor espere..."
+   DEFAULT cText     := "Generando correo electrónico"
+
+   ::oDlg            := TWaitMeter():New( cText, cTitle )
+   ::oDlg:run()
+
+RETURN ( self )
+
+//--------------------------------------------------------------------------//
+
+METHOD endNoModalDialog() CLASS TSendMail
+
+   if !empty( ::oDlg )
+      ::oDlg:end()
+   end if 
+
+RETURN ( self )
 
 //--------------------------------------------------------------------------//

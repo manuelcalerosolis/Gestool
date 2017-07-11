@@ -1166,7 +1166,7 @@ FUNCTION RetCtaEsp( nCuenta, cRuta, cCodEmp, lMessage )
    DEFAULT cRuta     := cRutCnt()
 
    if empty( cRuta )
-      Return ( cCtaEsp )
+      RETURN ( cCtaEsp )
    end if
 
    cRuta             := cPath( cRuta )
@@ -1174,22 +1174,22 @@ FUNCTION RetCtaEsp( nCuenta, cRuta, cCodEmp, lMessage )
    oBlock            := ErrorBlock( { | oError | ApoloBreak( oError ) } )
    BEGIN SEQUENCE
 
-   do case
-   case File( cRuta + "EMP" + cCodEmp + "\TCTA" + cCodEmp + ".DBF" )
+      do case
+      case File( cRuta + "EMP" + cCodEmp + "\TCTA" + cCodEmp + ".DBF" )
 
-      USE ( cRuta + "EMP" + cCodEmp + "\TCTA" + cCodEmp + ".DBF" ) NEW VIA ( cLocalDriver() ) ALIAS ( cCheckArea( "CUENTA", @cArea ) )
+         USE ( cRuta + "EMP" + cCodEmp + "\TCTA" + cCodEmp + ".DBF" ) NEW VIA ( cLocalDriver() ) ALIAS ( cCheckArea( "CUENTA", @cArea ) )
 
-   case File( cRuta + "EMP" + cCodEmp + "\TCTA.DBF" )
+      case File( cRuta + "EMP" + cCodEmp + "\TCTA.DBF" )
 
-      USE ( cRuta + "EMP" + cCodEmp + "\TCTA.DBF" ) NEW VIA ( cLocalDriver() ) ALIAS ( cCheckArea( "CUENTA", @cArea ) )
+         USE ( cRuta + "EMP" + cCodEmp + "\TCTA.DBF" ) NEW VIA ( cLocalDriver() ) ALIAS ( cCheckArea( "CUENTA", @cArea ) )
 
-   end case
+      end case
 
-   ( cArea )->( dbGoTo( nCuenta ) )
+      ( cArea )->( dbgoto( nCuenta ) )
 
-   cCtaEsp           := Rtrim( ( cArea )->Cuenta )
+      cCtaEsp           := rtrim( ( cArea )->Cuenta )
 
-	CLOSE ( cArea )
+   	CLOSE ( cArea )
 
    RECOVER
 

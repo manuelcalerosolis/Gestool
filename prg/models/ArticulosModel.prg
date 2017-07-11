@@ -38,7 +38,7 @@ Return ( ::ExecuteSqlStatement( cSql, @cArea ) )
 METHOD getArticulosToPrestrashopInFamilia( idFamilia, cArea )
 
    local cSql  := "SELECT Codigo, cWebShop FROM " + ::getHeaderTableName() + ;
-                     " WHERE Familia = " + quoted( idFamilia ) + " AND lSbrInt"
+                     " WHERE Familia = " + quoted( idFamilia ) + " AND lPubInt"
 
 Return ( ::ExecuteSqlStatement( cSql, @cArea ) )
 
