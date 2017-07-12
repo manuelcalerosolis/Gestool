@@ -1313,28 +1313,28 @@ Return ( lOpenDiario )
 //----------------------------------------------------------------------------//
 // Esta funci¢n devuelve el ultimo numero de asiento de Contaplus
 
-Function RetLastAsi()
+Function contaplusUltimoAsiento()
 
    local nRecno
-   local nLastAsi    := 0
+   local contaplusUltimoAsiento    := 0
 
    if lAplicacionA3()
-      Return ( nLastAsi )
+      Return ( contaplusUltimoAsiento )
    end if
 
    if !empty( cDiario ) .and. ( cDiario )->( Used() )
 
-      nRecno         := ( cDiario )->( Recno() )
+      nRecno                        := ( cDiario )->( Recno() )
 
       ( cDiario )->( dbGoBottom() )
 
-      nLastAsi       := ( cDiario )->Asien + 1
+      contaplusUltimoAsiento       := ( cDiario )->Asien + 1
 
       ( cDiario )->( dbGoTo( nRecno ) )
 
    end if
 
-Return ( nLastAsi )
+Return ( contaplusUltimoAsiento )
 
 //----------------------------------------------------------------------------//
 /*
@@ -1364,7 +1364,7 @@ FUNCTION MkAsiento( 	Asien,;
                      cNombre,;
                      nEjeCon,;
                      cEjeCta,;
-                     l340 )
+                     lSII )
 
    local cSerie            := "A"
    local oError
@@ -1383,6 +1383,7 @@ FUNCTION MkAsiento( 	Asien,;
    DEFAULT nImporteDebe    := 0
    DEFAULT nImporteHaber   := 0
    DEFAULT nEjeCon         := 0
+   DEFAULT lSII            := .f.
 
    if ischar( Factura ) 
       cSerie               := substr( Factura, 1, 1 )
@@ -1433,31 +1434,31 @@ FUNCTION MkAsiento( 	Asien,;
       Asignacion de campos--------------------------------------------------------
       */
 
-      aAsiento          :=  MkAsientoContaplus( Asien,;
-                                                cDivisa,;
-                                                Fecha,;
-                                                Subcuenta,;
-                                                Contrapartida,;
-                                                nImporteDebe,;
-                                                Concepto,;
-                                                nImporteHaber,;
-                                                cSerie,;
-                                                Factura,;
-                                                BaseImponible,;
-                                                IVA,;
-                                                RecargoEquivalencia,;
-                                                Documento,;
-                                                Departamento,;
-                                                Clave,;
-                                                lRectificativa,;
-                                                nCasado,;
-                                                tCasado,;
-                                                lSimula,;
-                                                cNif,;
-                                                cNombre,;
-                                                nEjeCon,;
-                                                cEjeCta,;
-                                                l340 )   
+      aAsiento             :=  MkAsientoContaplus( Asien,;
+                                                   cDivisa,;
+                                                   Fecha,;
+                                                   Subcuenta,;
+                                                   Contrapartida,;
+                                                   nImporteDebe,;
+                                                   Concepto,;
+                                                   nImporteHaber,;
+                                                   cSerie,;
+                                                   Factura,;
+                                                   BaseImponible,;
+                                                   IVA,;
+                                                   RecargoEquivalencia,;
+                                                   Documento,;
+                                                   Departamento,;
+                                                   Clave,;
+                                                   lRectificativa,;
+                                                   nCasado,;
+                                                   tCasado,;
+                                                   lSimula,;
+                                                   cNif,;
+                                                   cNombre,;
+                                                   nEjeCon,;
+                                                   cEjeCta,;
+                                                   lSII )   
 
    RECOVER USING oError
 
@@ -1494,7 +1495,7 @@ Static Function MkAsientoContaplus( Asien,;
                                     cNombre,;
                                     nEjeCon,;
                                     cEjeCta,;
-                                    l340 )
+                                    lSII )
 
    local aTemp
 
@@ -1502,7 +1503,7 @@ Static Function MkAsientoContaplus( Asien,;
 
    aTemp                   := dbBlankRec( cDiario )
 
-   aTemp[ ( cDiario )->( fieldpos( "ASIEN" ) ) ]         := If ( Asien    != nil, Asien,      RetLastAsi() )
+   aTemp[ ( cDiario )->( fieldpos( "ASIEN" ) ) ]         := If ( Asien    != nil, Asien,      contaplusUltimoAsiento() )
    aTemp[ ( cDiario )->( fieldpos( "FECHA" ) ) ]         := If ( Fecha    != nil, Fecha,      aTemp[ ( cDiario )->( fieldpos( "FECHA" ) ) ] )
 
    if ( cDiario )->( fieldpos( "FECHA_OP" ) ) != 0
@@ -1579,11 +1580,30 @@ Static Function MkAsientoContaplus( Asien,;
       aTemp[ ( cDiario )->( fieldpos( "Guid" ) ) ]       := win_uuidcreatestring()
    end if
 
-   // escritura en el fichero--------------------------------------------
+   // l340/lSII
 
-   if !lSimula
-      WriteAsiento( aTemp, cDivisa )
+   if ( cDiario )->( fieldpos( "l340" ) ) != 0
+      aTemp[ ( cDiario )->( fieldpos( "l340" ) ) ]       := ! ConfiguracionEmpresasModel():getLogic( 'informacion_inmediata', .f. )
    end if
+
+   // timestamp
+
+   if ( cDiario )->( fieldpos( "cTimeStamp" ) ) != 0
+      aTemp[ ( cDiario )->( fieldpos( "cTimeStamp" ) ) ] := hb_ttoc( hb_datetime() )
+   end if
+
+   // escritura en el fichero--------------------------------------------
+   /*
+   if !lSimula
+      
+      WriteAsiento( aTemp, cDivisa )
+
+      msgalert( "desde dentro sii" )
+
+      WriteAsientoSII( aTemp, cDivisa )
+
+   end if
+   */
 
 Return ( aTemp )
 
@@ -1658,10 +1678,12 @@ Return ( nil )
 
 //----------------------------------------------------------------------------//
 
-Function WriteAsientoSii( a )
+Function WriteAsientoSii( aTemp, cDivisa, cGuid )
 
-   if len( a ) >= ( cDiario )->( fieldpos( "Guid" ) )
-      msgalert( "hago el asiento Sii" )
+   msgalert( "WriteAsientoSii" )
+
+   if ( cDiario )->( fieldpos( "Guid" ) ) == 0
+      Return ( nil )
    end if
 
 Return ( nil )
@@ -1676,9 +1698,9 @@ Function aWriteAsiento( aTemp, cDivisa, lMessage )
 
       WriteAsiento( a, cDivisa, lMessage )
 
-      WriteAsientoSii( a )
-
    next
+
+   WriteAsientoSii( a )
 
 Return ( nil )
 
@@ -2565,7 +2587,7 @@ Function OpnDiario( cRuta, cCodEmp, lMessage )
          if ( dbfDiario )->( RddName() ) == nil .or. ( dbfDiario )->( NetErr() )
 
             if lMessage
-               msgStop( "Imposible acceder a fichero Contaplus ®.", "Abriendo diario" )
+               msgStop( "Imposible abrir las bases de datos del diario de Contaplus ®" )
             end if
 
             dbfDiario   := nil
@@ -2578,11 +2600,15 @@ Function OpnDiario( cRuta, cCodEmp, lMessage )
             msgStop( "Ficheros no encontrados en ruta " + cRuta + " empresa " + cCodEmp, "Abriendo diario" )
          end if
 
+         dbfDiario      := nil
+
       end if
 
    RECOVER
 
-      msgStop( "Imposible abrir las bases de datos del diario de Contaplus ®." )
+      msgStop( "Imposible abrir las bases de datos del diario de Contaplus ®" )
+
+      dbfDiario         := nil
 
    END SEQUENCE
 
@@ -2623,7 +2649,7 @@ Function OpnDiarioSii( cRuta, cCodEmp, lMessage )
          if ( dbfDiarioSii )->( RddName() ) == nil .or. ( dbfDiarioSii )->( NetErr() )
 
             if lMessage
-               msgStop( "Imposible acceder a fichero Contaplus ®.", "Abriendo diario" )
+               msgStop( "Imposible abrir las bases de datos del diario de Contaplus ®" )
             end if
 
             dbfDiarioSii   := nil
@@ -2636,11 +2662,15 @@ Function OpnDiarioSii( cRuta, cCodEmp, lMessage )
             msgStop( "Ficheros no encontrados en ruta " + cRuta + " empresa " + cCodEmp, "Abriendo diario" )
          end if
 
+         dbfDiarioSii      := nil
+
       end if
 
    RECOVER
 
-      msgStop( "Imposible abrir las bases de datos del diario de Contaplus ®." )
+      msgStop( "Imposible abrir las bases de datos del diario de Contaplus ®" )
+
+      dbfDiarioSii         := nil
 
    END SEQUENCE
 
@@ -2649,7 +2679,6 @@ Function OpnDiarioSii( cRuta, cCodEmp, lMessage )
 Return ( dbfDiarioSii )
 
 //----------------------------------------------------------------------------//
-
 
 Function OpnBalance( cRuta, cCodEmp, lMessage )
 

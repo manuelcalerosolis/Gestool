@@ -281,7 +281,10 @@ RETURN ( .t. )
 
 FUNCTION Test()
 
-   MovimientosAlmacenController():New():activateShell()
+   msgalert( hb_ttoc( hb_datetime()))
+   msgalert( hb_ttos( hb_datetime()))
+
+   // MovimientosAlmacenController():New():activateShell()
 
    /*
    local hMail          := {=>}

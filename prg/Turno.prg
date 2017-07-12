@@ -6229,7 +6229,7 @@ METHOD Contabiliza()
    */
 
    if OpenDiario( cRutCnt(), ::cGetEmpresaContaplus )
-      ::nAsiento     := RetLastAsi()
+      ::nAsiento     := contaplusUltimoAsiento()
       CloseDiario()
    else
       ::oTreeSelect:Add( "Sesión : " + Alltrim( ::oDbf:cNumTur ) + "/" + Rtrim( ::oDbf:cSufTur ) + " imposible abrir ficheros de contaplus", 0 )

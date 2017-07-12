@@ -4084,7 +4084,7 @@ STATIC FUNCTION ContabilizarAnticipos( lSimula, lPago, oTree )
    */
 
    if OpenDiario( , cCodEmp )
-      nAsiento          := RetLastAsi()
+      nAsiento          := contaplusUltimoAsiento()
    else
       oTree:Select( oTree:Add( "Factura : " + Rtrim( cFactura ) + " imposible abrir ficheros.", 0 ) )
       Return .f.

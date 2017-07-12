@@ -499,7 +499,7 @@ FUNCTION CntFacCli( lSimula, lPago, lExcCnt, lMessage, oTree, nAsiento, aSimula,
    if lSimula .or. !lErrorFound
 
       if lOpenDiario .or. OpenDiario( , cCodEmp )
-         nAsiento    := RetLastAsi()
+         nAsiento    := contaplusUltimoAsiento()
       else
          oTree:Select( oTree:Add( "Factura cliente : " + Rtrim( pFactura ) + " imposible abrir ficheros de contaplus.", 0 ) )
          Return .f.
@@ -896,6 +896,8 @@ FUNCTION CntFacCli( lSimula, lPago, lExcCnt, lMessage, oTree, nAsiento, aSimula,
    else
 
       if !lErrorFound
+         aWriteAsiento( aSimula, cCodDiv, lMessage, oTree, pFactura, nAsiento )
+
          lReturn  := lCntFacCli( nFactura, pFactura, nAsiento, lPago, oTree, dbfFacCliT )
       end if
 
@@ -1677,7 +1679,7 @@ Function CntTiket( lSimula, lCobro, lDev, lMessage, oTree, nAsiento, aSimula, db
    if lSimula .or. !lErrorFound
 
       if OpenDiario( , cCodEmp )
-         nAsiento                := RetLastAsi()
+         nAsiento                := contaplusUltimoAsiento()
       else
          oTree:Select( oTree:Add( "Tiket : " + cTxtNumTik + " imposible abrir ficheros.", 0 ) )
          return .f.
@@ -2385,7 +2387,7 @@ FUNCTION CntAlbCli( lSimula, lExcCnt, lMessage, oTree, nAsiento, aSimula, dbfAlb
       */
 
       if OpenDiario( , cCodEmp )
-         nAsiento := RetLastAsi()
+         nAsiento := contaplusUltimoAsiento()
       else
          oTree:Select( oTree:Add( "Albaran cliente : " + Rtrim( nAlbaran ) + " imposible abrir ficheros.", 0 ) )
          return .f.
@@ -3085,7 +3087,7 @@ FUNCTION CntFacRec2( lSimula, lPago, lExcCnt, lMessage, oTree, nAsiento, aSimula
       */
 
       if OpenDiario( , cCodEmp )
-         nAsiento := RetLastAsi()
+         nAsiento := contaplusUltimoAsiento()
       else
          oTree:Select( oTree:Add( "Factura rectificativa de cliente : " + rtrim( pFactura ) + " imposible abrir ficheros.", 0 ) )
          return .f.
@@ -3780,7 +3782,7 @@ FUNCTION CntFacPrv( lSimula, lPago, lMessage, oTree, nAsiento, aSimula, dbfFacPr
       */
 
       if OpenDiario( , cCodEmp )
-         nAsiento    := RetLastAsi()
+         nAsiento    := contaplusUltimoAsiento()
       else
          oTree:Select( oTree:Add( "Factura proveedor : " + Rtrim( cFactura ) + " imposible abrir ficheros de contaplus.", 0 ) )
          return .f.
@@ -4359,7 +4361,7 @@ FUNCTION CntRctPrv( lSimula, lPago, lMessage, oTree, nAsiento, aSimula, dbfRctPr
       */
 
       if OpenDiario( , cCodEmp )
-         nAsiento    := RetLastAsi()
+         nAsiento    := contaplusUltimoAsiento()
       else
          oTree:Add( "Factura rectificativa proveedor : " + Rtrim( cFactura ) + " imposible abrir ficheros de contaplus.", 0 )
          return .f.
@@ -4675,7 +4677,7 @@ Function CntRecPrv( lSimula, oTree, nAsiento, aSimula, lFromFactura, dbfFacPrvT,
    if !lFromFactura
 
       if OpenDiario( , cCodEmp )
-         nAsiento          := RetLastAsi()
+         nAsiento          := contaplusUltimoAsiento()
       else
          oTree:Select( oTree:Add( "Recibo : " + Rtrim( cRecibo ) + " imposible abrir ficheros de contaplus.", 0 ) )
          Return .f.
@@ -4797,7 +4799,7 @@ Function CntRecPrv( lSimula, oTree, nAsiento, aSimula, lFromFactura, dbfFacPrvT,
    */
 
    if !lFromFactura
-      nAsiento    := RetLastAsi()
+      nAsiento    := contaplusUltimoAsiento()
    end if
 
    /*
@@ -4941,7 +4943,7 @@ FUNCTION ContabilizaReciboCliente( oBrw, oTree, lSimula, aSimula, dbfFacCliT, db
    if !lFromFactura
 
       if OpenDiario( , cCodEmp )
-         nAsiento       := RetLastAsi()
+         nAsiento       := contaplusUltimoAsiento()
       else
          oTree:Select( oTree:Add( "Recibo : " + Rtrim( cRecibo ) + " imposible abrir ficheros de contaplus.", 0 ) )
          Return .f.
@@ -5800,7 +5802,7 @@ FUNCTION CntFacRec( lSimula, lPago, lExcCnt, lMessage, oTree, nAsiento, aSimula,
    if lSimula .or. !lErrorFound
 
       if lOpenDiario .or. OpenDiario( , cCodEmp )
-         nAsiento    := RetLastAsi()
+         nAsiento    := contaplusUltimoAsiento()
       else
          oTree:Select( oTree:Add( "Factura rectificativa cliente : " + Rtrim( pFactura ) + " imposible abrir ficheros de contaplus.", 0 ) )
          Return .f.

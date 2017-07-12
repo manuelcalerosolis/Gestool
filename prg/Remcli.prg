@@ -1934,7 +1934,7 @@ METHOD contabilizaRemesas( lSimula )
    // Realización de Asientos--------------------------------------------------
 
    if OpenDiario( , cCodEmp )
-      nAsiento             := RetLastAsi()
+      nAsiento             := contaplusUltimoAsiento()
    else
       ::oTreeSelect:Add( "Remesa : " + ::cNumRem() + " imposible abrir ficheros.", 0 )
       RETURN .F.

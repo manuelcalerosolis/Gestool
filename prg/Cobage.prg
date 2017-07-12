@@ -2502,7 +2502,7 @@ METHOD Contabilizar( lSimula ) CLASS TCobAge
    */
 
    if OpenDiario( , cCodEmp )
-      nAsiento       := RetLastAsi()
+      nAsiento       := contaplusUltimoAsiento()
    else
       ::oTreeSelect:Select( ::oTreeSelect:Add( cLiquidacion + " imposible abrir ficheros de contaplus", 0 ) )
       Return .f.
