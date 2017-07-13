@@ -357,9 +357,7 @@ METHOD Create( uParam ) CLASS TFastVentasClientes
    ::AddField( "lCobRec",  "L",  1, 0, {|| "" },   "Lógico recibo cobrado"                   )
    ::AddField( "nComAge",  "N",  6, 2, {|| "" },   "Comisión agente"                         )
 
-   ::AddField( "cSrlTot1",  "M", 10, 0, {|| "" },   "Total serializado1"                       )
-   ::AddField( "cSrlTot2",  "M", 10, 0, {|| "" },   "Total serializado2"                       )
-   ::AddField( "cSrlTot3",  "M", 10, 0, {|| "" },   "Total serializado3"                       )
+   ::AddField( "cSrlTot",  "M", 10, 0, {|| "" },   "Total serializado"                       )
 
    ::AddField( "uCargo",   "C", 20, 0, {|| "" },   "Cargo"                                   )
 
@@ -1448,20 +1446,8 @@ METHOD AddFacturaCliente( cCodigoCliente ) CLASS TFastVentasClientes
          ::oDbf:nTotRet    := sTot:nTotalRetencion
          ::oDbf:nTotCob    := sTot:nTotalCobrado
 
-         msgalert( hb_valtoexp( sTot:aTotalIva[1] ), valtype( sTot:aTotalIva[1] ) )
-
-         ::oDbf:cSrlTot1   := hb_serialize( sTot:aTotalIva[1] )
+         ::oDbf:cSrlTot    := sTot:saveToText()
          
-         MsgInfo( ::oDbf:cSrlTot1 )
-
-
-         ::oDbf:cSrlTot2   := hb_serialize( sTot:aTotalIva[2] )
-         ::oDbf:cSrlTot3   := hb_serialize( sTot:aTotalIva[3] )
-
-         
-
-
-
          ::oDbf:nRieCli    := RetFld( ( D():FacturasClientes( ::nView ) )->cCodCli, ( D():Clientes( ::nView ) ) , "Riesgo", "Cod" )
          ::oDbf:cDniCli    := RetFld( ( D():FacturasClientes( ::nView ) )->cCodCli, ( D():Clientes( ::nView ) ), "Nif", "Cod" )
 

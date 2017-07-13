@@ -15159,7 +15159,7 @@ CLASS sTotal FROM HBPersistent
    DATA nTotalAgente                   INIT 0
 
    DATA nTotalIva                      INIT 0
-   DATA aTotalIva                                                    PERSISTENT
+   DATA aTotalIva                                                    PERSISTENT 
 
    DATA aPorcentajeIva                 INIT { nil, nil, nil }
 
@@ -17084,25 +17084,22 @@ RETURN ( if( nPos != 0, aIva[ nPos, nRet ], 0 ) )
 
 //---------------------------------------------------------------------------//
 
-FUNCTION nValorArrayIVAFacturaCliente( cSerializeTotal1, cSerializeTotal2, cSerializeTotal3, nPorcentajeIva, nValor )
+FUNCTION nValorArrayIVAFacturaCliente( cSerializeTotal, nPorcentajeIva, nValor )
 
    local nPos
    local aTotalIva   := {}
+   local sTotal      := sTotal():New()
 
    DEFAULT nValor    := 2  // Base
 
-   //MsgAlert( hb_valtoexp( cSerializeTotal ), "Parmetro serializado" )
-   
-   aAdd( aTotalIva, hb_deserialize( cSerializeTotal1 ) )
-   aAdd( aTotalIva, hb_deserialize( cSerializeTotal2 ) )
-   aAdd( aTotalIva, hb_deserialize( cSerializeTotal3 ) )
+   sTotal:loadFromText( cSerializeTotal )
+
+   aTotalIva         := sTotal:aTotalIva
 
    if empty( aTotalIva )
       MsgAlert( "Me voy retornando 0" )
       RETURN ( 0 )
    end if 
-
-   msgAlert( hb_valtoexp( aTotalIva ), "aTotalIva" )
 
    nPos              := aScan( aTotalIva, {| aIva | aIva[ 3 ] == nPorcentajeIva } )
 
