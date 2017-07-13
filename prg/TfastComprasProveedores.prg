@@ -188,30 +188,6 @@ METHOD Create( uParam ) CLASS TFastComprasProveedores
    ::AddField( "nTotRet",     "N", 16, 6, {|| "" },   "Total retenciones"                       )
    ::AddField( "nTotPag",     "N", 16, 6, {|| "" },   "Total pagos"                             )
 
-   ::AddField( "nBrtIva1",    "N", 16, 6, {|| "" },   "Bruto primer tipo de IVA"                )
-   ::AddField( "nBrtIva2",    "N", 16, 6, {|| "" },   "Bruto segundo tipo de IVA"               )
-   ::AddField( "nBrtIva3",    "N", 16, 6, {|| "" },   "Bruto tercer tipo de IVA"                )
-
-   ::AddField( "nBasIva1",    "N", 16, 6, {|| "" },   "Base primer tipo de IVA"                 )
-   ::AddField( "nBasIva2",    "N", 16, 6, {|| "" },   "Base segundo tipo de IVA"                )
-   ::AddField( "nBasIva3",    "N", 16, 6, {|| "" },   "Base tercer tipo de IVA"                 )
-   
-   ::AddField( "nPorIva1",    "N",  6, 2, {|| "" },   "Porcentaje primer tipo de IVA"           )
-   ::AddField( "nPorIva2",    "N",  6, 2, {|| "" },   "Porcentaje segundo tipo de IVA"          )
-   ::AddField( "nPorIva3",    "N",  6, 2, {|| "" },   "Porcentaje tercer tipo de IVA"           )
-
-   ::AddField( "nPorRe1",     "N", 16, 6, {|| "" },   "Porcentaje primer tipo de RE"            )
-   ::AddField( "nPorRe2",     "N", 16, 6, {|| "" },   "Porcentaje segundo tipo de RE"           )
-   ::AddField( "nPorRe3",     "N", 16, 6, {|| "" },   "Porcentaje tercer tipo de RE"            )
-
-   ::AddField( "nImpIva1",    "N", 16, 6, {|| "" },   "Importe primer tipo de IVA"              )
-   ::AddField( "nImpIva2",    "N", 16, 6, {|| "" },   "Importe segundo tipo de IVA"             )
-   ::AddField( "nImpIva3",    "N", 16, 6, {|| "" },   "Importe tercer tipo de IVA"              )
-
-   ::AddField( "nImpRe1",     "N", 16, 6, {|| "" },   "Importe primer tipo de RE"               )
-   ::AddField( "nImpRe2",     "N", 16, 6, {|| "" },   "Importe segundo tipo de RE"              )
-   ::AddField( "nImpRe3",     "N", 16, 6, {|| "" },   "Importe tercer tipo de RE"               )
-
    ::AddField( "uCargo",      "C", 20, 0, {|| "" },   "Cargo"                                   )
 
    ::AddTmpIndex( "cCodPrv", "cCodPrv" )
@@ -439,36 +415,6 @@ METHOD AddFacturaProveedor( cCodigoProveedor ) CLASS TFastComprasProveedores
       ::oDbf:nTotIva := sTot:nTotalIva
       ::oDbf:nTotReq := sTot:nTotalRecargoEquivalencia
       ::oDbf:nTotDoc := sTot:nTotalDocumento
-
-      /*
-      Metemos el desglose de iva--------------------------------------------
-      */
-
-      aTotIva              := aTotFacPrv( ( D():FacturasProveedores( ::nView ) )->cSerFac + Str( ( D():FacturasProveedores( ::nView ) )->nNumFac ) + ( D():FacturasProveedores( ::nView ) )->cSufFac,;
-                                          D():FacturasProveedores( ::nView ),;
-                                          D():FacturasProveedoresLineas( ::nView ),;
-                                          D():TiposIva( ::nView ),;
-                                          D():Divisas( ::nView ),;
-                                          D():FacturasProveedoresPagos( ::nView ) )[5]
-
-      ::oDbf:nBrtIva1      := aTotIva[ 1, 1 ]
-      ::oDbf:nBrtIva2      := aTotIva[ 2, 1 ]
-      ::oDbf:nBrtIva3      := aTotIva[ 3, 1 ]
-      ::oDbf:nBasIva1      := aTotIva[ 1, 2 ]
-      ::oDbf:nBasIva2      := aTotIva[ 2, 2 ]
-      ::oDbf:nBasIva3      := aTotIva[ 3, 2 ]
-      ::oDbf:nPorIva1      := aTotIva[ 1, 3 ]
-      ::oDbf:nPorIva2      := aTotIva[ 2, 3 ]
-      ::oDbf:nPorIva3      := aTotIva[ 3, 3 ]
-      ::oDbf:nPorRe1       := aTotIva[ 1, 4 ]
-      ::oDbf:nPorRe2       := aTotIva[ 2, 4 ]
-      ::oDbf:nPorRe3       := aTotIva[ 3, 4 ]
-      ::oDbf:nImpIva1      := aTotIva[ 1, 8 ]
-      ::oDbf:nImpIva2      := aTotIva[ 2, 8 ]
-      ::oDbf:nImpIva3      := aTotIva[ 3, 8 ]
-      ::oDbf:nImpRe1       := aTotIva[ 1, 9 ]
-      ::oDbf:nImpRe2       := aTotIva[ 2, 9 ]
-      ::oDbf:nImpRe3       := aTotIva[ 3, 9 ]
 
       if ::lValidRegister()
          ::oDbf:Insert()
