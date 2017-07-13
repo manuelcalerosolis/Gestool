@@ -785,9 +785,10 @@ FUNCTION CntFacCli( lSimula, lPago, lExcCnt, lMessage, oTree, nAsiento, aSimula,
                                        ,;                          
                                        lSimula,;                          
                                        cTerNif,;                          
-                                       cTerNom )
-
-            msgalert( hb_valtoexp( aAsiento ), "aAsiento" )
+                                       cTerNom,;
+                                       ,;
+                                       ,;
+                                       .t. )
 
             aAdd( aSimula, aAsiento )                          
 

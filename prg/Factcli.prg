@@ -15143,7 +15143,7 @@ return .t.
 //--------------------------------------------------------------------------//
 //--------------------------------------------------------------------------//
 
-CLASS sTotal
+CLASS sTotal FROM HBPersistent
 
    DATA nTotalNeto                     INIT 0
 
@@ -15159,7 +15159,7 @@ CLASS sTotal
    DATA nTotalAgente                   INIT 0
 
    DATA nTotalIva                      INIT 0
-   DATA aTotalIva
+   DATA aTotalIva                                                    PERSISTENT
 
    DATA aPorcentajeIva                 INIT { nil, nil, nil }
 
@@ -15212,15 +15212,15 @@ CLASS sTotal
    METHOD nBaseSegundoIva()            INLINE ( ::aTotalIva[ 2, 2 ] )
    METHOD nBaseTercerIva()             INLINE ( ::aTotalIva[ 3, 2 ] )
 
-   METHOD nPorcentajePrimerIva()       INLINE ( ::aPorcentajeIva[1] )
-   METHOD nPorcentajeSegundoIva()      INLINE ( ::aPorcentajeIva[2] )
-   METHOD nPorcentajeTercerIva()       INLINE ( ::aPorcentajeIva[3] )
+   METHOD nPorcentajePrimerIva()                INLINE ( ::aPorcentajeIva[1] )
+   METHOD nPorcentajeSegundoIva()               INLINE ( ::aPorcentajeIva[2] )
+   METHOD nPorcentajeTercerIva()                INLINE ( ::aPorcentajeIva[3] )
 
-   METHOD nTotalPrimerIva()            INLINE ( if( empty( ::aTotalIva ), ::aIvaTik[1], ::aTotalIva[ 1, 8 ] ) )
-   METHOD nTotalSegundoIva()           INLINE ( if( empty( ::aTotalIva ), ::aIvaTik[2], ::aTotalIva[ 2, 8 ] ) )
-   METHOD nTotalTercerIva()            INLINE ( if( empty( ::aTotalIva ), ::aIvaTik[3], ::aTotalIva[ 3, 8 ] ) )
+   METHOD nTotalPrimerIva()                     INLINE ( if( empty( ::aTotalIva ), ::aIvaTik[1], ::aTotalIva[ 1, 8 ] ) )
+   METHOD nTotalSegundoIva()                    INLINE ( if( empty( ::aTotalIva ), ::aIvaTik[2], ::aTotalIva[ 2, 8 ] ) )
+   METHOD nTotalTercerIva()                     INLINE ( if( empty( ::aTotalIva ), ::aIvaTik[3], ::aTotalIva[ 3, 8 ] ) )
 
-   METHOD TotalIva()                   INLINE ( ::nTotalPrimerIva() + ::nTotalSegundoIva() + ::nTotalTercerIva() )
+   METHOD TotalIva()                            INLINE ( ::nTotalPrimerIva() + ::nTotalSegundoIva() + ::nTotalTercerIva() )
 
    METHOD nTotalPrimerImpuestoHidrocarburos()   INLINE ( ::aTotalImpuestoHidrocarburos[ 1 ] )
    METHOD nTotalSegundoImpuestoHidrocarburos()  INLINE ( ::aTotalImpuestoHidrocarburos[ 2 ] )
@@ -17114,9 +17114,9 @@ function nTotDFacCli( cCodArt, dbfFacCliL, cCodAlm )
 
    if ( D():FacturasClientesLineas( nView ) )->( dbSeek( cCodArt ) )
 
-      while ( D():FacturasClientesLineas( nView ) )->CREF == cCodArt .and. !( D():FacturasClientesLineas( nView ) )->( eof() )
+      while ( D():FacturasClientesLineas( nView ) )->cRef == cCodArt .and. !( D():FacturasClientesLineas( nView ) )->( eof() )
 
-         if !( D():FacturasClientesLineas( nView ) )->LTOTLIN
+         if !( D():FacturasClientesLineas( nView ) )->lTotLin
             if cCodAlm != nil
                if cCodAlm == ( D():FacturasClientesLineas( nView ) )->cAlmLin
                   nTotVta  += nTotNFacCli( D():FacturasClientesLineas( nView ) ) * NotCero( ( D():FacturasClientesLineas( nView ) )->nFacCnv )

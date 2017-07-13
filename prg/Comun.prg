@@ -281,6 +281,22 @@ RETURN ( .t. )
 
 FUNCTION Test()
 
+   local cText
+   local sTotal         := sTotal()
+
+   sTotal:aTotalIva     := {{"1", 2, nil},{"3",4,nil}}
+
+   cText                := sTotal:saveToText() 
+
+   msgalert( cText, "cText")
+
+   sTotal               := nil
+
+   sTotal               := sTotal():New()
+   sTotal:loadFromText( cText ) 
+
+   msgalert( hb_valtoexp( sTotal:aTotalIva ), ValType( sTotal:aTotalIva ) )
+
    // MovimientosAlmacenController():New():activateShell()
 
    /*
