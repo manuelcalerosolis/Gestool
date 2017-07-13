@@ -1503,43 +1503,43 @@ Static Function MkAsientoContaplus( Asien,;
 
    aTemp                   := dbBlankRec( cDiario )
 
-   aTemp[ ( cDiario )->( fieldpos( "ASIEN" ) ) ]         := If ( Asien    != nil, Asien,      contaplusUltimoAsiento() )
-   aTemp[ ( cDiario )->( fieldpos( "FECHA" ) ) ]         := If ( Fecha    != nil, Fecha,      aTemp[ ( cDiario )->( fieldpos( "FECHA" ) ) ] )
+   aTemp[ ( cDiario )->( fieldpos( "ASIEN" ) ) ]         := if( Asien    != nil, Asien,      contaplusUltimoAsiento() )
+   aTemp[ ( cDiario )->( fieldpos( "FECHA" ) ) ]         := if( Fecha    != nil, Fecha,      aTemp[ ( cDiario )->( fieldpos( "FECHA" ) ) ] )
 
    if ( cDiario )->( fieldpos( "FECHA_OP" ) ) != 0
-      aTemp[ ( cDiario )->( fieldpos( "FECHA_OP" ) ) ]   := If ( Fecha    != nil, Fecha,      aTemp[ ( cDiario )->( fieldpos( "FECHA_OP" ) ) ] )
+      aTemp[ ( cDiario )->( fieldpos( "FECHA_OP" ) ) ]   := if( Fecha    != nil, Fecha,      aTemp[ ( cDiario )->( fieldpos( "FECHA_OP" ) ) ] )
    end if
 
    if ( cDiario )->( fieldpos( "FECHA_EX" ) ) != 0
-      aTemp[ ( cDiario )->( fieldpos( "FECHA_EX" ) ) ]   := If ( Fecha    != nil, Fecha,      aTemp[ ( cDiario )->( fieldpos( "FECHA_EX" ) ) ] )
+      aTemp[ ( cDiario )->( fieldpos( "FECHA_EX" ) ) ]   := if( Fecha    != nil, Fecha,      aTemp[ ( cDiario )->( fieldpos( "FECHA_EX" ) ) ] )
    end if
 
-   aTemp[ ( cDiario )->( fieldpos( "SERIE" ) ) ]         := If ( cSerie   != nil, cSerie,     aTemp[ ( cDiario )->( fieldpos( "SERIE" ) ) ] )
-   aTemp[ ( cDiario )->( fieldpos( "FACTURA" ) ) ]       := If ( Factura  != nil, Factura,    aTemp[ ( cDiario )->( fieldpos( "FACTURA" ) ) ] )
+   aTemp[ ( cDiario )->( fieldpos( "SERIE" ) ) ]         := if( cSerie   != nil, cSerie,     aTemp[ ( cDiario )->( fieldpos( "SERIE" ) ) ] )
+   aTemp[ ( cDiario )->( fieldpos( "FACTURA" ) ) ]       := if( Factura  != nil, Factura,    aTemp[ ( cDiario )->( fieldpos( "FACTURA" ) ) ] )
 
-   aTemp[ ( cDiario )->( fieldpos( "BASEEURO" ) ) ]      := If ( BaseImponible != nil, BaseImponible,   aTemp[ ( cDiario )->( fieldpos( "BASEEURO" ) ) ] )
-   aTemp[ ( cDiario )->( fieldpos( "EURODEBE" ) ) ]      := If ( nImporteDebe  != nil, nImporteDebe,    aTemp[ ( cDiario )->( fieldpos( "EURODEBE" ) ) ] )
-   aTemp[ ( cDiario )->( fieldpos( "EUROHABER" ) ) ]     := If ( nImporteHaber != nil, nImporteHaber,   aTemp[ ( cDiario )->( fieldpos( "EUROHABER" ) ) ] )
+   aTemp[ ( cDiario )->( fieldpos( "BASEEURO" ) ) ]      := if( BaseImponible != nil, BaseImponible,   aTemp[ ( cDiario )->( fieldpos( "BASEEURO" ) ) ] )
+   aTemp[ ( cDiario )->( fieldpos( "EURODEBE" ) ) ]      := if( nImporteDebe  != nil, nImporteDebe,    aTemp[ ( cDiario )->( fieldpos( "EURODEBE" ) ) ] )
+   aTemp[ ( cDiario )->( fieldpos( "EUROHABER" ) ) ]     := if( nImporteHaber != nil, nImporteHaber,   aTemp[ ( cDiario )->( fieldpos( "EUROHABER" ) ) ] )
 
-   aTemp[ ( cDiario )->( fieldpos( "SUBCTA" ) ) ]        := If ( Subcuenta   != nil, Subcuenta,     aTemp[ ( cDiario )->( fieldpos( "SUBCTA" ) ) ] )
-   aTemp[ ( cDiario )->( fieldpos( "CONTRA" ) ) ]        := If ( Contrapartida   != nil, Contrapartida,     aTemp[ ( cDiario )->( fieldpos( "CONTRA" ) ) ] )
+   aTemp[ ( cDiario )->( fieldpos( "SUBCTA" ) ) ]        := if( Subcuenta   != nil, Subcuenta,     aTemp[ ( cDiario )->( fieldpos( "SUBCTA" ) ) ] )
+   aTemp[ ( cDiario )->( fieldpos( "CONTRA" ) ) ]        := if( Contrapartida   != nil, Contrapartida,     aTemp[ ( cDiario )->( fieldpos( "CONTRA" ) ) ] )
 
-   aTemp[ ( cDiario )->( fieldpos( "CONCEPTO" ) ) ]      := If ( Concepto != nil, Concepto,   aTemp[ ( cDiario )->( fieldpos( "CONCEPTO" ) ) ] )
+   aTemp[ ( cDiario )->( fieldpos( "CONCEPTO" ) ) ]      := if( Concepto != nil, Concepto,   aTemp[ ( cDiario )->( fieldpos( "CONCEPTO" ) ) ] )
 
-   aTemp[ ( cDiario )->( fieldpos( "IVA" ) )       ]     := If ( IVA      != nil, IVA,        aTemp[ ( cDiario )->( fieldpos( "IVA" ) )        ] )
-   aTemp[ ( cDiario )->( fieldpos( "RECEQUIV" ) )  ]     := If ( RecargoEquivalencia != nil, RecargoEquivalencia,   aTemp[ ( cDiario )->( fieldpos( "RECEQUIV" ) )   ] )
-   aTemp[ ( cDiario )->( fieldpos( "DOCUMENTO" ) ) ]     := If ( Documento!= nil, Documento,  aTemp[ ( cDiario )->( fieldpos( "DOCUMENTO" ) )  ] )
-   aTemp[ ( cDiario )->( fieldpos( "DEPARTA" ) )   ]     := If ( Departamento != nil, Departamento,    aTemp[ ( cDiario )->( fieldpos( "DEPARTA" ) )    ] )
-   aTemp[ ( cDiario )->( fieldpos( "CLAVE" ) )     ]     := If ( Clave    != nil, Clave,      aTemp[ ( cDiario )->( fieldpos( "CLAVE" ) )      ] )
-   aTemp[ ( cDiario )->( fieldpos( "NCASADO" ) )   ]     := If ( nCasado  != nil, nCasado,    aTemp[ ( cDiario )->( fieldpos( "NCASADO" ) )    ] )
-   aTemp[ ( cDiario )->( fieldpos( "TCASADO" ) )   ]     := If ( tCasado  != nil, tCasado,    aTemp[ ( cDiario )->( fieldpos( "TCASADO" ) )    ] )
+   aTemp[ ( cDiario )->( fieldpos( "IVA" ) )       ]     := if( IVA      != nil, IVA,        aTemp[ ( cDiario )->( fieldpos( "IVA" ) )        ] )
+   aTemp[ ( cDiario )->( fieldpos( "RECEQUIV" ) )  ]     := if( RecargoEquivalencia != nil, RecargoEquivalencia,   aTemp[ ( cDiario )->( fieldpos( "RECEQUIV" ) )   ] )
+   aTemp[ ( cDiario )->( fieldpos( "DOCUMENTO" ) ) ]     := if( Documento!= nil, Documento,  aTemp[ ( cDiario )->( fieldpos( "DOCUMENTO" ) )  ] )
+   aTemp[ ( cDiario )->( fieldpos( "DEPARTA" ) )   ]     := if( Departamento != nil, Departamento,    aTemp[ ( cDiario )->( fieldpos( "DEPARTA" ) )    ] )
+   aTemp[ ( cDiario )->( fieldpos( "CLAVE" ) )     ]     := if( Clave    != nil, Clave,      aTemp[ ( cDiario )->( fieldpos( "CLAVE" ) )      ] )
+   aTemp[ ( cDiario )->( fieldpos( "NCASADO" ) )   ]     := if( nCasado  != nil, nCasado,    aTemp[ ( cDiario )->( fieldpos( "NCASADO" ) )    ] )
+   aTemp[ ( cDiario )->( fieldpos( "TCASADO" ) )   ]     := if( tCasado  != nil, tCasado,    aTemp[ ( cDiario )->( fieldpos( "TCASADO" ) )    ] )
 
    if ( cDiario )->( fieldpos( "TERNIF" ) ) != 0
-      aTemp[ ( cDiario )->( fieldpos( "TERNIF" ) ) ]     := If ( cNif  != nil, cNif,    aTemp[ ( cDiario )->( fieldpos( "TERNIF" ) ) ] )
+      aTemp[ ( cDiario )->( fieldpos( "TERNIF" ) ) ]     := if( cNif  != nil, cNif,    aTemp[ ( cDiario )->( fieldpos( "TERNIF" ) ) ] )
    end if
 
    if ( cDiario )->( fieldpos( "TERNOM" ) ) != 0
-      aTemp[ ( cDiario )->( fieldpos( "TERNOM" ) ) ]     := If ( cNombre  != nil, cNombre,    aTemp[ ( cDiario )->( fieldpos( "TERNOM" ) ) ] )
+      aTemp[ ( cDiario )->( fieldpos( "TERNOM" ) ) ]     := if( cNombre  != nil, cNombre,    aTemp[ ( cDiario )->( fieldpos( "TERNOM" ) ) ] )
    end if
 
    aTemp[ ( cDiario )->( fieldpos( "RECTIFICA" ) ) ]     := lRectificativa
@@ -1681,6 +1681,7 @@ Return ( nil )
 Function WriteAsientoSii( aTemp, cDivisa, cGuid )
 
    msgalert( "WriteAsientoSii" )
+   msgalert( hb_valtoexp( aTemp ), "aTemp" )
 
    if ( cDiario )->( fieldpos( "Guid" ) ) == 0
       Return ( nil )
@@ -1700,7 +1701,7 @@ Function aWriteAsiento( aTemp, cDivisa, lMessage )
 
    next
 
-   WriteAsientoSii( a )
+   WriteAsientoSii( atail( aTemp ) )
 
 Return ( nil )
 

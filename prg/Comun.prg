@@ -281,9 +281,6 @@ RETURN ( .t. )
 
 FUNCTION Test()
 
-   msgalert( hb_ttoc( hb_datetime()))
-   msgalert( hb_ttos( hb_datetime()))
-
    // MovimientosAlmacenController():New():activateShell()
 
    /*

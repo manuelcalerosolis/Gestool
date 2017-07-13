@@ -16800,7 +16800,6 @@ Devuelve el total de una lina con impuestos incluido
 
 FUNCTION nIncLFacCli( cDbfLin, nDec, nRouDec, nVdv, lDto, lPntVer, lImpTrn, cPorDiv )
 
-
    local lIvaInc  
    local nCalculo    := 0
 
@@ -16815,7 +16814,7 @@ FUNCTION nIncLFacCli( cDbfLin, nDec, nRouDec, nVdv, lDto, lPntVer, lImpTrn, cPor
    nCalculo          := nTotLFacCli( cDbfLin, nDec, nRouDec, nVdv, lDto, lPntVer, lImpTrn )
 
    if !( cDbfLin )->lIvaLin
-      nCalculo    += nCalculo * ( cDbfLin )->nIva / 100
+      nCalculo       += nCalculo * ( cDbfLin )->nIva / 100
    end if
 
 RETURN ( if( cPorDiv != NIL, Trans( nCalculo, cPorDiv ), nCalculo ) )
@@ -17085,6 +17084,24 @@ RETURN ( if( nPos != 0, aIva[ nPos, nRet ], 0 ) )
 
 //---------------------------------------------------------------------------//
 
+FUNCTION nValorArrayIVAFacturaCliente( cSerializeTotal, nPorcentajeIva, nValor )
+
+   local nPos
+   local sTotal
+
+   DEFAULT nValor    := 2  // Base
+
+   sTotal            := hb_deserialize( cSerializeTotal )
+
+   if empty(sTotal)
+      RETURN ( 0 )
+   end if 
+
+   nPos              := aScan( sTotal:aTotalIva, {| aIva | aIva[ 3 ] == nPorcentajeIva } )
+
+RETURN ( if( nPos != 0, sTotal:aTotalIva[ nPos, nValor ], 0 ) )
+
+//---------------------------------------------------------------------------//
 //
 // Devuelve el total de la compra en facturas de proveedores de un articulo
 //
