@@ -281,7 +281,34 @@ RETURN ( .t. )
 
 FUNCTION Test()
 
+<<<<<<< HEAD
    //MovimientosAlmacenController():New():activateShell()
+=======
+<<<<<<< HEAD
+   local cText
+   local sTotal         := sTotal()
+
+   sTotal:aTotalIva     := {{"1", 2, nil},{"3",4,nil}}
+
+   cText                := sTotal:saveToText() 
+
+   msgalert( cText, "cText")
+
+   sTotal               := nil
+
+   sTotal               := sTotal():New()
+   sTotal:loadFromText( cText ) 
+
+   msgalert( hb_valtoexp( sTotal:aTotalIva ), ValType( sTotal:aTotalIva ) )
+
+=======
+<<<<<<< HEAD
+   //MovimientosAlmacenController():New():activateShell()
+=======
+>>>>>>> 19f06c29f090df98f7334cbed4aeace1571133a1
+   // MovimientosAlmacenController():New():activateShell()
+>>>>>>> origin/master
+>>>>>>> origin/master
 
    /*
    local hMail          := {=>}

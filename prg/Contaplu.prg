@@ -1592,6 +1592,10 @@ Static Function MkAsientoContaplus( Asien,;
       aTemp[ ( cDiario )->( fieldpos( "cTimeStamp" ) ) ] := hb_ttoc( hb_datetime() )
    end if
 
+   // si tenemos q usar un apunte SII vamos a usar este dato q no se usa
+
+   aTemp[ ( cDiario )->( fieldpos( "lPeriodico" ) ) ]    := isTrue( lSII )
+
    // escritura en el fichero--------------------------------------------
    /*
    if !lSimula
@@ -1666,6 +1670,12 @@ Function WriteAsiento( aTemp, cDivisa, lMessage )
 
    end if
 
+   // Apunte de SII------------------------------------------------------------
+
+   if ( aTemp[ ( cDiario )->( fieldpos( "lPeriodico" ) ) ] ) .and. !empty( cDiarioSii )
+      msgalert("asiento SII")
+   end if 
+
    RECOVER USING oError
 
       msgStop( "Error al escribir apunte contable." + CRLF + ErrorMessage( oError ) )
@@ -1696,12 +1706,8 @@ Function aWriteAsiento( aTemp, cDivisa, lMessage )
    local a
 
    for each a in aTemp
-
       WriteAsiento( a, cDivisa, lMessage )
-
    next
-
-   WriteAsientoSii( atail( aTemp ) )
 
 Return ( nil )
 
