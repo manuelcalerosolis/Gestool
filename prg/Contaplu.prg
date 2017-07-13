@@ -1313,28 +1313,28 @@ Return ( lOpenDiario )
 //----------------------------------------------------------------------------//
 // Esta funci¢n devuelve el ultimo numero de asiento de Contaplus
 
-Function RetLastAsi()
+Function contaplusUltimoAsiento()
 
    local nRecno
-   local nLastAsi    := 0
+   local contaplusUltimoAsiento    := 0
 
    if lAplicacionA3()
-      Return ( nLastAsi )
+      Return ( contaplusUltimoAsiento )
    end if
 
    if !empty( cDiario ) .and. ( cDiario )->( Used() )
 
-      nRecno         := ( cDiario )->( Recno() )
+      nRecno                        := ( cDiario )->( Recno() )
 
       ( cDiario )->( dbGoBottom() )
 
-      nLastAsi       := ( cDiario )->Asien + 1
+      contaplusUltimoAsiento       := ( cDiario )->Asien + 1
 
       ( cDiario )->( dbGoTo( nRecno ) )
 
    end if
 
-Return ( nLastAsi )
+Return ( contaplusUltimoAsiento )
 
 //----------------------------------------------------------------------------//
 /*
@@ -1364,7 +1364,7 @@ FUNCTION MkAsiento( 	Asien,;
                      cNombre,;
                      nEjeCon,;
                      cEjeCta,;
-                     l340 )
+                     lSII )
 
    local cSerie            := "A"
    local oError
@@ -1383,6 +1383,7 @@ FUNCTION MkAsiento( 	Asien,;
    DEFAULT nImporteDebe    := 0
    DEFAULT nImporteHaber   := 0
    DEFAULT nEjeCon         := 0
+   DEFAULT lSII            := .f.
 
    if ischar( Factura ) 
       cSerie               := substr( Factura, 1, 1 )
@@ -1433,31 +1434,31 @@ FUNCTION MkAsiento( 	Asien,;
       Asignacion de campos--------------------------------------------------------
       */
 
-      aAsiento          :=  MkAsientoContaplus( Asien,;
-                                                cDivisa,;
-                                                Fecha,;
-                                                Subcuenta,;
-                                                Contrapartida,;
-                                                nImporteDebe,;
-                                                Concepto,;
-                                                nImporteHaber,;
-                                                cSerie,;
-                                                Factura,;
-                                                BaseImponible,;
-                                                IVA,;
-                                                RecargoEquivalencia,;
-                                                Documento,;
-                                                Departamento,;
-                                                Clave,;
-                                                lRectificativa,;
-                                                nCasado,;
-                                                tCasado,;
-                                                lSimula,;
-                                                cNif,;
-                                                cNombre,;
-                                                nEjeCon,;
-                                                cEjeCta,;
-                                                l340 )   
+      aAsiento             :=  MkAsientoContaplus( Asien,;
+                                                   cDivisa,;
+                                                   Fecha,;
+                                                   Subcuenta,;
+                                                   Contrapartida,;
+                                                   nImporteDebe,;
+                                                   Concepto,;
+                                                   nImporteHaber,;
+                                                   cSerie,;
+                                                   Factura,;
+                                                   BaseImponible,;
+                                                   IVA,;
+                                                   RecargoEquivalencia,;
+                                                   Documento,;
+                                                   Departamento,;
+                                                   Clave,;
+                                                   lRectificativa,;
+                                                   nCasado,;
+                                                   tCasado,;
+                                                   lSimula,;
+                                                   cNif,;
+                                                   cNombre,;
+                                                   nEjeCon,;
+                                                   cEjeCta,;
+                                                   lSII )   
 
    RECOVER USING oError
 
@@ -1494,7 +1495,7 @@ Static Function MkAsientoContaplus( Asien,;
                                     cNombre,;
                                     nEjeCon,;
                                     cEjeCta,;
-                                    l340 )
+                                    lSII )
 
    local aTemp
 
@@ -1502,43 +1503,43 @@ Static Function MkAsientoContaplus( Asien,;
 
    aTemp                   := dbBlankRec( cDiario )
 
-   aTemp[ ( cDiario )->( fieldpos( "ASIEN" ) ) ]         := If ( Asien    != nil, Asien,      RetLastAsi() )
-   aTemp[ ( cDiario )->( fieldpos( "FECHA" ) ) ]         := If ( Fecha    != nil, Fecha,      aTemp[ ( cDiario )->( fieldpos( "FECHA" ) ) ] )
+   aTemp[ ( cDiario )->( fieldpos( "ASIEN" ) ) ]         := if( Asien    != nil, Asien,      contaplusUltimoAsiento() )
+   aTemp[ ( cDiario )->( fieldpos( "FECHA" ) ) ]         := if( Fecha    != nil, Fecha,      aTemp[ ( cDiario )->( fieldpos( "FECHA" ) ) ] )
 
    if ( cDiario )->( fieldpos( "FECHA_OP" ) ) != 0
-      aTemp[ ( cDiario )->( fieldpos( "FECHA_OP" ) ) ]   := If ( Fecha    != nil, Fecha,      aTemp[ ( cDiario )->( fieldpos( "FECHA_OP" ) ) ] )
+      aTemp[ ( cDiario )->( fieldpos( "FECHA_OP" ) ) ]   := if( Fecha    != nil, Fecha,      aTemp[ ( cDiario )->( fieldpos( "FECHA_OP" ) ) ] )
    end if
 
    if ( cDiario )->( fieldpos( "FECHA_EX" ) ) != 0
-      aTemp[ ( cDiario )->( fieldpos( "FECHA_EX" ) ) ]   := If ( Fecha    != nil, Fecha,      aTemp[ ( cDiario )->( fieldpos( "FECHA_EX" ) ) ] )
+      aTemp[ ( cDiario )->( fieldpos( "FECHA_EX" ) ) ]   := if( Fecha    != nil, Fecha,      aTemp[ ( cDiario )->( fieldpos( "FECHA_EX" ) ) ] )
    end if
 
-   aTemp[ ( cDiario )->( fieldpos( "SERIE" ) ) ]         := If ( cSerie   != nil, cSerie,     aTemp[ ( cDiario )->( fieldpos( "SERIE" ) ) ] )
-   aTemp[ ( cDiario )->( fieldpos( "FACTURA" ) ) ]       := If ( Factura  != nil, Factura,    aTemp[ ( cDiario )->( fieldpos( "FACTURA" ) ) ] )
+   aTemp[ ( cDiario )->( fieldpos( "SERIE" ) ) ]         := if( cSerie   != nil, cSerie,     aTemp[ ( cDiario )->( fieldpos( "SERIE" ) ) ] )
+   aTemp[ ( cDiario )->( fieldpos( "FACTURA" ) ) ]       := if( Factura  != nil, Factura,    aTemp[ ( cDiario )->( fieldpos( "FACTURA" ) ) ] )
 
-   aTemp[ ( cDiario )->( fieldpos( "BASEEURO" ) ) ]      := If ( BaseImponible != nil, BaseImponible,   aTemp[ ( cDiario )->( fieldpos( "BASEEURO" ) ) ] )
-   aTemp[ ( cDiario )->( fieldpos( "EURODEBE" ) ) ]      := If ( nImporteDebe  != nil, nImporteDebe,    aTemp[ ( cDiario )->( fieldpos( "EURODEBE" ) ) ] )
-   aTemp[ ( cDiario )->( fieldpos( "EUROHABER" ) ) ]     := If ( nImporteHaber != nil, nImporteHaber,   aTemp[ ( cDiario )->( fieldpos( "EUROHABER" ) ) ] )
+   aTemp[ ( cDiario )->( fieldpos( "BASEEURO" ) ) ]      := if( BaseImponible != nil, BaseImponible,   aTemp[ ( cDiario )->( fieldpos( "BASEEURO" ) ) ] )
+   aTemp[ ( cDiario )->( fieldpos( "EURODEBE" ) ) ]      := if( nImporteDebe  != nil, nImporteDebe,    aTemp[ ( cDiario )->( fieldpos( "EURODEBE" ) ) ] )
+   aTemp[ ( cDiario )->( fieldpos( "EUROHABER" ) ) ]     := if( nImporteHaber != nil, nImporteHaber,   aTemp[ ( cDiario )->( fieldpos( "EUROHABER" ) ) ] )
 
-   aTemp[ ( cDiario )->( fieldpos( "SUBCTA" ) ) ]        := If ( Subcuenta   != nil, Subcuenta,     aTemp[ ( cDiario )->( fieldpos( "SUBCTA" ) ) ] )
-   aTemp[ ( cDiario )->( fieldpos( "CONTRA" ) ) ]        := If ( Contrapartida   != nil, Contrapartida,     aTemp[ ( cDiario )->( fieldpos( "CONTRA" ) ) ] )
+   aTemp[ ( cDiario )->( fieldpos( "SUBCTA" ) ) ]        := if( Subcuenta   != nil, Subcuenta,     aTemp[ ( cDiario )->( fieldpos( "SUBCTA" ) ) ] )
+   aTemp[ ( cDiario )->( fieldpos( "CONTRA" ) ) ]        := if( Contrapartida   != nil, Contrapartida,     aTemp[ ( cDiario )->( fieldpos( "CONTRA" ) ) ] )
 
-   aTemp[ ( cDiario )->( fieldpos( "CONCEPTO" ) ) ]      := If ( Concepto != nil, Concepto,   aTemp[ ( cDiario )->( fieldpos( "CONCEPTO" ) ) ] )
+   aTemp[ ( cDiario )->( fieldpos( "CONCEPTO" ) ) ]      := if( Concepto != nil, Concepto,   aTemp[ ( cDiario )->( fieldpos( "CONCEPTO" ) ) ] )
 
-   aTemp[ ( cDiario )->( fieldpos( "IVA" ) )       ]     := If ( IVA      != nil, IVA,        aTemp[ ( cDiario )->( fieldpos( "IVA" ) )        ] )
-   aTemp[ ( cDiario )->( fieldpos( "RECEQUIV" ) )  ]     := If ( RecargoEquivalencia != nil, RecargoEquivalencia,   aTemp[ ( cDiario )->( fieldpos( "RECEQUIV" ) )   ] )
-   aTemp[ ( cDiario )->( fieldpos( "DOCUMENTO" ) ) ]     := If ( Documento!= nil, Documento,  aTemp[ ( cDiario )->( fieldpos( "DOCUMENTO" ) )  ] )
-   aTemp[ ( cDiario )->( fieldpos( "DEPARTA" ) )   ]     := If ( Departamento != nil, Departamento,    aTemp[ ( cDiario )->( fieldpos( "DEPARTA" ) )    ] )
-   aTemp[ ( cDiario )->( fieldpos( "CLAVE" ) )     ]     := If ( Clave    != nil, Clave,      aTemp[ ( cDiario )->( fieldpos( "CLAVE" ) )      ] )
-   aTemp[ ( cDiario )->( fieldpos( "NCASADO" ) )   ]     := If ( nCasado  != nil, nCasado,    aTemp[ ( cDiario )->( fieldpos( "NCASADO" ) )    ] )
-   aTemp[ ( cDiario )->( fieldpos( "TCASADO" ) )   ]     := If ( tCasado  != nil, tCasado,    aTemp[ ( cDiario )->( fieldpos( "TCASADO" ) )    ] )
+   aTemp[ ( cDiario )->( fieldpos( "IVA" ) )       ]     := if( IVA      != nil, IVA,        aTemp[ ( cDiario )->( fieldpos( "IVA" ) )        ] )
+   aTemp[ ( cDiario )->( fieldpos( "RECEQUIV" ) )  ]     := if( RecargoEquivalencia != nil, RecargoEquivalencia,   aTemp[ ( cDiario )->( fieldpos( "RECEQUIV" ) )   ] )
+   aTemp[ ( cDiario )->( fieldpos( "DOCUMENTO" ) ) ]     := if( Documento!= nil, Documento,  aTemp[ ( cDiario )->( fieldpos( "DOCUMENTO" ) )  ] )
+   aTemp[ ( cDiario )->( fieldpos( "DEPARTA" ) )   ]     := if( Departamento != nil, Departamento,    aTemp[ ( cDiario )->( fieldpos( "DEPARTA" ) )    ] )
+   aTemp[ ( cDiario )->( fieldpos( "CLAVE" ) )     ]     := if( Clave    != nil, Clave,      aTemp[ ( cDiario )->( fieldpos( "CLAVE" ) )      ] )
+   aTemp[ ( cDiario )->( fieldpos( "NCASADO" ) )   ]     := if( nCasado  != nil, nCasado,    aTemp[ ( cDiario )->( fieldpos( "NCASADO" ) )    ] )
+   aTemp[ ( cDiario )->( fieldpos( "TCASADO" ) )   ]     := if( tCasado  != nil, tCasado,    aTemp[ ( cDiario )->( fieldpos( "TCASADO" ) )    ] )
 
    if ( cDiario )->( fieldpos( "TERNIF" ) ) != 0
-      aTemp[ ( cDiario )->( fieldpos( "TERNIF" ) ) ]     := If ( cNif  != nil, cNif,    aTemp[ ( cDiario )->( fieldpos( "TERNIF" ) ) ] )
+      aTemp[ ( cDiario )->( fieldpos( "TERNIF" ) ) ]     := if( cNif  != nil, cNif,    aTemp[ ( cDiario )->( fieldpos( "TERNIF" ) ) ] )
    end if
 
    if ( cDiario )->( fieldpos( "TERNOM" ) ) != 0
-      aTemp[ ( cDiario )->( fieldpos( "TERNOM" ) ) ]     := If ( cNombre  != nil, cNombre,    aTemp[ ( cDiario )->( fieldpos( "TERNOM" ) ) ] )
+      aTemp[ ( cDiario )->( fieldpos( "TERNOM" ) ) ]     := if( cNombre  != nil, cNombre,    aTemp[ ( cDiario )->( fieldpos( "TERNOM" ) ) ] )
    end if
 
    aTemp[ ( cDiario )->( fieldpos( "RECTIFICA" ) ) ]     := lRectificativa
@@ -1579,11 +1580,30 @@ Static Function MkAsientoContaplus( Asien,;
       aTemp[ ( cDiario )->( fieldpos( "Guid" ) ) ]       := win_uuidcreatestring()
    end if
 
-   // escritura en el fichero--------------------------------------------
+   // l340/lSII
 
-   if !lSimula
-      WriteAsiento( aTemp, cDivisa )
+   if ( cDiario )->( fieldpos( "l340" ) ) != 0
+      aTemp[ ( cDiario )->( fieldpos( "l340" ) ) ]       := ! ConfiguracionEmpresasModel():getLogic( 'informacion_inmediata', .f. )
    end if
+
+   // timestamp
+
+   if ( cDiario )->( fieldpos( "cTimeStamp" ) ) != 0
+      aTemp[ ( cDiario )->( fieldpos( "cTimeStamp" ) ) ] := hb_ttoc( hb_datetime() )
+   end if
+
+   // escritura en el fichero--------------------------------------------
+   /*
+   if !lSimula
+      
+      WriteAsiento( aTemp, cDivisa )
+
+      msgalert( "desde dentro sii" )
+
+      WriteAsientoSII( aTemp, cDivisa )
+
+   end if
+   */
 
 Return ( aTemp )
 
@@ -1658,10 +1678,13 @@ Return ( nil )
 
 //----------------------------------------------------------------------------//
 
-Function WriteAsientoSii( a )
+Function WriteAsientoSii( aTemp, cDivisa, cGuid )
 
-   if len( a ) >= ( cDiario )->( fieldpos( "Guid" ) )
-      msgalert( "hago el asiento Sii" )
+   msgalert( "WriteAsientoSii" )
+   msgalert( hb_valtoexp( aTemp ), "aTemp" )
+
+   if ( cDiario )->( fieldpos( "Guid" ) ) == 0
+      Return ( nil )
    end if
 
 Return ( nil )
@@ -1676,9 +1699,9 @@ Function aWriteAsiento( aTemp, cDivisa, lMessage )
 
       WriteAsiento( a, cDivisa, lMessage )
 
-      WriteAsientoSii( a )
-
    next
+
+   WriteAsientoSii( atail( aTemp ) )
 
 Return ( nil )
 
@@ -2565,7 +2588,7 @@ Function OpnDiario( cRuta, cCodEmp, lMessage )
          if ( dbfDiario )->( RddName() ) == nil .or. ( dbfDiario )->( NetErr() )
 
             if lMessage
-               msgStop( "Imposible acceder a fichero Contaplus ®.", "Abriendo diario" )
+               msgStop( "Imposible abrir las bases de datos del diario de Contaplus ®" )
             end if
 
             dbfDiario   := nil
@@ -2578,11 +2601,15 @@ Function OpnDiario( cRuta, cCodEmp, lMessage )
             msgStop( "Ficheros no encontrados en ruta " + cRuta + " empresa " + cCodEmp, "Abriendo diario" )
          end if
 
+         dbfDiario      := nil
+
       end if
 
    RECOVER
 
-      msgStop( "Imposible abrir las bases de datos del diario de Contaplus ®." )
+      msgStop( "Imposible abrir las bases de datos del diario de Contaplus ®" )
+
+      dbfDiario         := nil
 
    END SEQUENCE
 
@@ -2623,7 +2650,7 @@ Function OpnDiarioSii( cRuta, cCodEmp, lMessage )
          if ( dbfDiarioSii )->( RddName() ) == nil .or. ( dbfDiarioSii )->( NetErr() )
 
             if lMessage
-               msgStop( "Imposible acceder a fichero Contaplus ®.", "Abriendo diario" )
+               msgStop( "Imposible abrir las bases de datos del diario de Contaplus ®" )
             end if
 
             dbfDiarioSii   := nil
@@ -2636,11 +2663,15 @@ Function OpnDiarioSii( cRuta, cCodEmp, lMessage )
             msgStop( "Ficheros no encontrados en ruta " + cRuta + " empresa " + cCodEmp, "Abriendo diario" )
          end if
 
+         dbfDiarioSii      := nil
+
       end if
 
    RECOVER
 
-      msgStop( "Imposible abrir las bases de datos del diario de Contaplus ®." )
+      msgStop( "Imposible abrir las bases de datos del diario de Contaplus ®" )
+
+      dbfDiarioSii         := nil
 
    END SEQUENCE
 
@@ -2649,7 +2680,6 @@ Function OpnDiarioSii( cRuta, cCodEmp, lMessage )
 Return ( dbfDiarioSii )
 
 //----------------------------------------------------------------------------//
-
 
 Function OpnBalance( cRuta, cCodEmp, lMessage )
 

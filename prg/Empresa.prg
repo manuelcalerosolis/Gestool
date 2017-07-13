@@ -108,7 +108,7 @@ static cCmbContabilidad
 static aCmbContabilidad        := { "Contaplus", "A3 CON" }   
 
 static cMailNotificaciones
-static lSendMailsToClient 
+static lInformacionInmediata 
 
 static nView
 
@@ -1308,8 +1308,8 @@ STATIC FUNCTION EditConfig( aTmp, aGet, dbfEmp, oBrw, nSelFolder, bValid, nMode 
 
    cMailNotificaciones     := padr( ConfiguracionEmpresasModel():getValue( 'mail_notificaciones', '' ), 200 )
    
-   lSendMailsToClient      := ConfiguracionEmpresasModel():getLogic( 'mail_to_client', .f. )
-   
+   lInformacionInmediata   := ConfiguracionEmpresasModel():getLogic( 'informacion_inmediata', .f. )
+
    LoaItmEmp( aTmp )
 
    DEFINE DIALOG  oDlg ;
@@ -1616,10 +1616,6 @@ STATIC FUNCTION EditConfig( aTmp, aGet, dbfEmp, oBrw, nSelFolder, bValid, nMode 
       REDEFINE COMBOBOX aGet[ _NTIPIMPTPV ] VAR aTmp[ _NTIPIMPTPV ] ;
          ITEMS    aTipImpTpv ;
          ID       210;
-         OF       fldTPV  
-
-      REDEFINE CHECKBOX lSendMailsToClient ;
-         ID       240;
          OF       fldTPV  
 
       REDEFINE GET cMailNotificaciones ;
@@ -2397,6 +2393,10 @@ STATIC FUNCTION EditConfig( aTmp, aGet, dbfEmp, oBrw, nSelFolder, bValid, nMode 
       REDEFINE CHECKBOX aGet[ _LCONTREC ] VAR aTmp[ _LCONTREC ] ;
          ID       530 ;
          OF       fldContabilidad
+
+      REDEFINE CHECKBOX lInformacionInmediata ;
+         ID       240;
+         OF       fldContabilidad  
 
       // Page 6 Envios------------------------------------------------------------
 
@@ -5675,8 +5675,8 @@ Static Function SaveEditConfig( aTmp, oSay, oBrw, oDlg, nMode )
 
    end while
 
-   ConfiguracionEmpresasModel():setValue( 'mail_notificaciones',  alltrim( cMailNotificaciones ) )
-   ConfiguracionEmpresasModel():setValue( 'mail_to_client',       lSendMailsToClient )
+   ConfiguracionEmpresasModel():setValue( 'mail_notificaciones',     alltrim( cMailNotificaciones ) )
+   ConfiguracionEmpresasModel():setValue( 'informacion_inmediata',   lInformacionInmediata )
 
    // Escribimos en el definitivo----------------------------------------------
 

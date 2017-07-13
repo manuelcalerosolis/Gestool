@@ -9772,10 +9772,6 @@ METHOD mailDocumentoCliente()
    local cMailCliente   := ""
    local cCodigoCliente := ::oTiketCabecera:cCliTik
 
-   // if !( ConfiguracionEmpresasModel():getLogic( 'mail_to_client' ) )
-   //    Return ( Self )
-   // end if 
-
    // comprobar el mail de cliente q no este vacio-----------------------------
 
    if empty( cCodigoCliente )
@@ -9797,7 +9793,7 @@ METHOD mailDocumentoCliente()
       RETURN ( self )
    end if 
 
-   hSet( hMail, "subject",       "Envio de factura simplificada" )
+   hSet( hMail, "subject",       "Envio de factura simplificada." )
    hSet( hMail, "message",       "<p>" + "Adjuntamos su factura simplificada" + "<p>" ) 
    hSet( hMail, "mail",          cMailCliente ) 
    hSet( hMail, "attachments",   cPatTmp() + ::pdfFile() )

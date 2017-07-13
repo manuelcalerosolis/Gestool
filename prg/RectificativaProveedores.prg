@@ -5754,7 +5754,7 @@ STATIC FUNCTION ContabilizaRectificativa( lSimula, lPago, oTree )
       */
 
       if OpenDiario( , cCodEmp )
-         nAsiento := RetLastAsi()
+         nAsiento := contaplusUltimoAsiento()
       else
          oTree:Add( "Factura rectificativa : " + Rtrim( cFactura ) + " imposible abrir ficheros de contaplus.", 0 )
          return .f.

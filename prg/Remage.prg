@@ -1200,7 +1200,7 @@ METHOD Conta( lSimula )
    */
 
    if OpenDiario( , cCodEmp )
-      nAsiento := RetLastAsi()
+      nAsiento := contaplusUltimoAsiento()
    else
       aadd( ::amsg, { .f., "Remesa : " + Str( ::oDbf:nNumCob, 9 ) + " imposible abrir ficheros." } )
       return .f.

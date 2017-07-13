@@ -5565,8 +5565,7 @@ FONT 8, "Ms Sans Serif"
   CONTROL "Permitir tickets abiertos al cerrar la sesión", 220, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 50, 220, 143, 10
   CONTROL "", 210, "ComboBox", WS_BORDER|CBS_DROPDOWNLIST|WS_VSCROLL|WS_TABSTOP, 138, 232, 96, 91
   CONTROL "", 230, "Edit", WS_BORDER|WS_TABSTOP, 138, 247, 286, 11
-  CONTROL "Enviar documentos de venta al cliente", 240, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 50, 261, 143, 10
-  CONTROL "Propiedades", -1, "Button", BS_GROUPBOX, 44, 29, 386, 247
+  CONTROL "Propiedades", -1, "Button", BS_GROUPBOX, 44, 29, 386, 236
   CONTROL "", 500, "Static", SS_BITMAP|SS_CENTERIMAGE, 4, 3, 34, 30
   CONTROL "Opciones para el terminal punto de venta", -1, "Static", SS_LEFTNOWORDWRAP, 44, 3, 384, 8
   CONTROL "Opción impresión al cobrar", -1, "Static", WS_GROUP, 50, 235, 86, 8
@@ -5900,10 +5899,12 @@ FONT 8, "Ms Sans Serif"
   CONTROL "", 550, "Edit", WS_BORDER|WS_TABSTOP, 151, 282, 50, 11
   CONTROL "", 560, "Edit", WS_BORDER|WS_TABSTOP, 151, 294, 50, 11
   CONTROL "Realizar apunte siempre incluso con importes a cero", 470, "Button", BS_AUTOCHECKBOX|BS_MULTILINE|WS_TABSTOP, 50, 309, 177, 11
-  CONTROL "Utilizar decimales en cuentas con recargos de equivalencia", 480, "Button", BS_AUTOCHECKBOX|BS_MULTILINE|WS_TABSTOP, 50, 322, 213, 11
-  CONTROL "Permitir realizar apuntes en negativo", 490, "Button", BS_AUTOCHECKBOX|BS_MULTILINE|WS_TABSTOP, 293, 335, 127, 11
-  CONTROL "Impuesto + Recargo de equivalencia", 420, "Button", BS_AUTORADIOBUTTON, 293, 310, 129, 10
-  CONTROL "Recargo de equivalencia + Impuesto", 421, "Button", BS_AUTORADIOBUTTON, 293, 322, 129, 10
+  CONTROL "Utilizar decimales en cuentas con recargos", 480, "Button", BS_AUTOCHECKBOX|BS_MULTILINE|WS_TABSTOP, 50, 322, 148, 11
+  CONTROL "Contabilizar recibo sin contabilizar la factura", 530, "Button", BS_AUTOCHECKBOX|BS_MULTILINE|WS_TABSTOP, 50, 334, 150, 11
+  CONTROL "Permitir apuntes en negativo", 490, "Button", BS_AUTOCHECKBOX|BS_MULTILINE|WS_TABSTOP, 237, 309, 103, 11
+  CONTROL "S.I.I.", 240, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 237, 323, 28, 10
+  CONTROL "Impuesto + Recargo", 420, "Button", BS_AUTORADIOBUTTON, 349, 310, 77, 10
+  CONTROL "Recargo + Impuesto", 421, "Button", BS_AUTORADIOBUTTON, 349, 322, 77, 10
   CONTROL "", 461, "Edit", WS_BORDER, 202, 270, 225, 11
   CONTROL "Propiedades del enlace", -1, "Button", BS_GROUPBOX, 44, 29, 388, 94
   CONTROL "Directorio", -1, "Static", WS_GROUP, 50, 56, 35, 9
@@ -5929,7 +5930,6 @@ FONT 8, "Ms Sans Serif"
   CONTROL "", 561, "Edit", WS_BORDER, 202, 294, 225, 11
   CONTROL "Compras soportado en UE", -1, "Static", WS_GROUP, 50, 285, 98, 8
   CONTROL "Compras repercutido en UE", -1, "Static", WS_GROUP, 50, 297, 98, 8
-  CONTROL "Contabilizar recibo sin contabilizar la factura", 530, "Button", BS_AUTOCHECKBOX|BS_MULTILINE|WS_TABSTOP, 50, 334, 213, 11
 }
 
 EMPRESACFG DIALOG DISCARDABLE 137, 27, 435, 429

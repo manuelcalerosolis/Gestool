@@ -357,6 +357,8 @@ METHOD Create( uParam ) CLASS TFastVentasClientes
    ::AddField( "lCobRec",  "L",  1, 0, {|| "" },   "Lógico recibo cobrado"                   )
    ::AddField( "nComAge",  "N",  6, 2, {|| "" },   "Comisión agente"                         )
 
+   ::AddField( "cSrlTot",  "M", 10, 0, {|| "" },   "Total serializado"                       )
+
    ::AddField( "uCargo",   "C", 20, 0, {|| "" },   "Cargo"                                   )
 
    ::AddField( "nNumRem",  "N",  9, 0, {|| "999999999" },   "Número de la remesa"            )
@@ -906,6 +908,8 @@ METHOD AddSATCliente( cCodigoCliente ) CLASS TFastVentasClientes
          ::oDbf:dFecDoc    := ( D():SatClientes( ::nView ) )->dFecSat
          ::oDbf:cHorDoc    := SubStr( ( D():SatClientes( ::nView ) )->cTimCre, 1, 2 )
          ::oDbf:cMinDoc    := SubStr( ( D():SatClientes( ::nView ) )->cTimCre, 4, 2 )
+
+         ::oDbf:cSrlTot    := hb_serialize( sTot )
 
          ::oDbf:nTotNet    := sTot:nTotalNeto
          ::oDbf:nTotIva    := sTot:nTotalIva
@@ -1821,7 +1825,7 @@ METHOD insertFacturaCliente()
    local oBlock
    local aTotIva
 
-   oBlock               := ErrorBlock( {| oError | ApoloBreak( oError ) } )
+   oBlock                        := ErrorBlock( {| oError | ApoloBreak( oError ) } )
    BEGIN SEQUENCE
    
       ( D():FacturasClientesFecha( ::nView ) )->( OrdSetFocus( "dFecFac" ) )
@@ -1845,7 +1849,7 @@ METHOD insertFacturaCliente()
 
       ::setFilterAlmacenId()
 
-   // Procesando facturas-----------------------------------------------------
+      // Procesando facturas-----------------------------------------------------
 
       ::setMeterText( "Procesando facturas" )
 
@@ -1857,7 +1861,7 @@ METHOD insertFacturaCliente()
 
       while !::lBreak .and. !( D():FacturasClientesFecha( ::nView ) )-> ( eof() )
 
-         sTot              := sTotFacCli( ( D():FacturasClientesFecha( ::nView ) )->cSerie + Str( ( D():FacturasClientesFecha( ::nView ) )->nNumFac ) + ( D():FacturasClientesFecha( ::nView ) )->cSufFac, D():FacturasClientesFecha( ::nView ), D():FacturasClientesLineas( ::nView ), D():TiposIva( ::nView ), D():Divisas( ::nView ), D():FacturasClientesCobros( ::nView ), D():AnticiposClientes( ::nView ) )
+         sTot                    := sTotFacCli( ( D():FacturasClientesFecha( ::nView ) )->cSerie + Str( ( D():FacturasClientesFecha( ::nView ) )->nNumFac ) + ( D():FacturasClientesFecha( ::nView ) )->cSufFac, D():FacturasClientesFecha( ::nView ), D():FacturasClientesLineas( ::nView ), D():TiposIva( ::nView ), D():Divisas( ::nView ), D():FacturasClientesCobros( ::nView ), D():AnticiposClientes( ::nView ) )
 
          for each aTotIva in sTot:aTotalIva 
 

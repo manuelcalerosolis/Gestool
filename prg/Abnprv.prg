@@ -2166,7 +2166,7 @@ STATIC FUNCTION TransAbono( oBrw )
 
 	OpenDiario()
 
-	nAsiento	:= RetLastAsi()
+	nAsiento	:= contaplusUltimoAsiento()
 
 	MkAsiento( nAsiento,;
                cCodDiv,;

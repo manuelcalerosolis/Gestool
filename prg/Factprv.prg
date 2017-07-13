@@ -6190,7 +6190,7 @@ STATIC FUNCTION ContFactu( lSimula, lPago, oTree )
       */
 
       if OpenDiario( , cCodEmp )
-         nAsiento    := RetLastAsi()
+         nAsiento    := contaplusUltimoAsiento()
       else
          oTree:Select( oTree:Add( "Factura : " + Rtrim( cFactura ) + " imposible abrir ficheros de contaplus.", 0 ) )
          return .f.
