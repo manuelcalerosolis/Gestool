@@ -357,7 +357,9 @@ METHOD Create( uParam ) CLASS TFastVentasClientes
    ::AddField( "lCobRec",  "L",  1, 0, {|| "" },   "Lógico recibo cobrado"                   )
    ::AddField( "nComAge",  "N",  6, 2, {|| "" },   "Comisión agente"                         )
 
-   ::AddField( "cSrlTot",  "M", 10, 0, {|| "" },   "Total serializado"                       )
+   ::AddField( "cSrlTot1",  "M", 10, 0, {|| "" },   "Total serializado1"                       )
+   ::AddField( "cSrlTot2",  "M", 10, 0, {|| "" },   "Total serializado2"                       )
+   ::AddField( "cSrlTot3",  "M", 10, 0, {|| "" },   "Total serializado3"                       )
 
    ::AddField( "uCargo",   "C", 20, 0, {|| "" },   "Cargo"                                   )
 
@@ -842,8 +844,8 @@ METHOD AddSATCliente( cCodigoCliente ) CLASS TFastVentasClientes
    local oError
    local oBlock
    
-  /* oBlock               := ErrorBlock( {| oError | ApoloBreak( oError ) } )
-   BEGIN SEQUENCE*/
+   oBlock               := ErrorBlock( {| oError | ApoloBreak( oError ) } )
+   BEGIN SEQUENCE
    
       ( D():SatClientes( ::nView ) )->( OrdSetFocus( "cCodCli" ) )
       // filtros para la cabecera------------------------------------------------
@@ -909,8 +911,6 @@ METHOD AddSATCliente( cCodigoCliente ) CLASS TFastVentasClientes
          ::oDbf:cHorDoc    := SubStr( ( D():SatClientes( ::nView ) )->cTimCre, 1, 2 )
          ::oDbf:cMinDoc    := SubStr( ( D():SatClientes( ::nView ) )->cTimCre, 4, 2 )
 
-         ::oDbf:cSrlTot    := hb_serialize( sTot )
-
          ::oDbf:nTotNet    := sTot:nTotalNeto
          ::oDbf:nTotIva    := sTot:nTotalIva
          ::oDbf:nTotReq    := sTot:nTotalRecargoEquivalencia
@@ -951,13 +951,13 @@ METHOD AddSATCliente( cCodigoCliente ) CLASS TFastVentasClientes
 
       end while
 
-   /*RECOVER USING oError
+   RECOVER USING oError
 
       msgStop( ErrorMessage( oError ), "Imposible añadir SAT de clientes" )
 
    END SEQUENCE
 
-   ErrorBlock( oBlock )*/
+   ErrorBlock( oBlock )
    
 RETURN ( Self )
 
@@ -1447,6 +1447,20 @@ METHOD AddFacturaCliente( cCodigoCliente ) CLASS TFastVentasClientes
          ::oDbf:nTotRnt    := sTot:nTotalRentabilidad
          ::oDbf:nTotRet    := sTot:nTotalRetencion
          ::oDbf:nTotCob    := sTot:nTotalCobrado
+
+         msgalert( hb_valtoexp( sTot:aTotalIva[1] ), valtype( sTot:aTotalIva[1] ) )
+
+         ::oDbf:cSrlTot1   := hb_serialize( sTot:aTotalIva[1] )
+         
+         MsgInfo( ::oDbf:cSrlTot1 )
+
+
+         ::oDbf:cSrlTot2   := hb_serialize( sTot:aTotalIva[2] )
+         ::oDbf:cSrlTot3   := hb_serialize( sTot:aTotalIva[3] )
+
+         
+
+
 
          ::oDbf:nRieCli    := RetFld( ( D():FacturasClientes( ::nView ) )->cCodCli, ( D():Clientes( ::nView ) ) , "Riesgo", "Cod" )
          ::oDbf:cDniCli    := RetFld( ( D():FacturasClientes( ::nView ) )->cCodCli, ( D():Clientes( ::nView ) ), "Nif", "Cod" )
