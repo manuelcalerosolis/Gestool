@@ -280,6 +280,7 @@ RETURN ( .t. )
 //---------------------------------------------------------------------------//
 
 FUNCTION Test()
+<<<<<<< HEAD
 /*
    local cText
    local sTotal         := sTotal()
@@ -297,6 +298,9 @@ FUNCTION Test()
 
    msgalert( hb_valtoexp( sTotal:aTotalIva ), ValType( sTotal:aTotalIva ) )
 */
+=======
+
+>>>>>>> 927d18bcde12d9b1abdd6137c0575990b83bbc86
    //MovimientosAlmacenController():New():activateShell()
 
    /*

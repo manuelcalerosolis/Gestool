@@ -842,8 +842,8 @@ METHOD AddSATCliente( cCodigoCliente ) CLASS TFastVentasClientes
    local oError
    local oBlock
    
-  /* oBlock               := ErrorBlock( {| oError | ApoloBreak( oError ) } )
-   BEGIN SEQUENCE*/
+   oBlock               := ErrorBlock( {| oError | ApoloBreak( oError ) } )
+   BEGIN SEQUENCE
    
       ( D():SatClientes( ::nView ) )->( OrdSetFocus( "cCodCli" ) )
       // filtros para la cabecera------------------------------------------------
@@ -909,8 +909,6 @@ METHOD AddSATCliente( cCodigoCliente ) CLASS TFastVentasClientes
          ::oDbf:cHorDoc    := SubStr( ( D():SatClientes( ::nView ) )->cTimCre, 1, 2 )
          ::oDbf:cMinDoc    := SubStr( ( D():SatClientes( ::nView ) )->cTimCre, 4, 2 )
 
-         ::oDbf:cSrlTot    := hb_serialize( sTot )
-
          ::oDbf:nTotNet    := sTot:nTotalNeto
          ::oDbf:nTotIva    := sTot:nTotalIva
          ::oDbf:nTotReq    := sTot:nTotalRecargoEquivalencia
@@ -951,13 +949,13 @@ METHOD AddSATCliente( cCodigoCliente ) CLASS TFastVentasClientes
 
       end while
 
-   /*RECOVER USING oError
+   RECOVER USING oError
 
       msgStop( ErrorMessage( oError ), "Imposible añadir SAT de clientes" )
 
    END SEQUENCE
 
-   ErrorBlock( oBlock )*/
+   ErrorBlock( oBlock )
    
 RETURN ( Self )
 
@@ -1448,6 +1446,8 @@ METHOD AddFacturaCliente( cCodigoCliente ) CLASS TFastVentasClientes
          ::oDbf:nTotRet    := sTot:nTotalRetencion
          ::oDbf:nTotCob    := sTot:nTotalCobrado
 
+         ::oDbf:cSrlTot    := sTot:saveToText()
+         
          ::oDbf:nRieCli    := RetFld( ( D():FacturasClientes( ::nView ) )->cCodCli, ( D():Clientes( ::nView ) ) , "Riesgo", "Cod" )
          ::oDbf:cDniCli    := RetFld( ( D():FacturasClientes( ::nView ) )->cCodCli, ( D():Clientes( ::nView ) ), "Nif", "Cod" )
 
