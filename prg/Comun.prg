@@ -280,8 +280,7 @@ RETURN ( .t. )
 //---------------------------------------------------------------------------//
 
 FUNCTION Test()
-
-<<<<<<< HEAD
+/*
    local cText
    local sTotal         := sTotal()
 
@@ -297,14 +296,8 @@ FUNCTION Test()
    sTotal:loadFromText( cText ) 
 
    msgalert( hb_valtoexp( sTotal:aTotalIva ), ValType( sTotal:aTotalIva ) )
-
-=======
-<<<<<<< HEAD
+*/
    //MovimientosAlmacenController():New():activateShell()
-=======
->>>>>>> 19f06c29f090df98f7334cbed4aeace1571133a1
-   // MovimientosAlmacenController():New():activateShell()
->>>>>>> origin/master
 
    /*
    local hMail          := {=>}
