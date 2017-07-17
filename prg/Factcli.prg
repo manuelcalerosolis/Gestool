@@ -17084,7 +17084,7 @@ RETURN ( if( nPos != 0, aIva[ nPos, nRet ], 0 ) )
 
 //---------------------------------------------------------------------------//
 
-FUNCTION nValorArrayIVAFacturaCliente( cSerializeTotal, nPorcentajeIva, nValor )
+FUNCTION nValorArrayIVA( cSerializeTotal, nPorcentajeIva, nValor )
 
    local nPos
    local aTotalIva   := {}

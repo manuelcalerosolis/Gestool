@@ -188,6 +188,8 @@ METHOD Create( uParam ) CLASS TFastComprasProveedores
    ::AddField( "nTotRet",     "N", 16, 6, {|| "" },   "Total retenciones"                       )
    ::AddField( "nTotPag",     "N", 16, 6, {|| "" },   "Total pagos"                             )
 
+   ::AddField( "cSrlTot",     "M", 10, 0, {|| "" },   "Total serializado"                       )
+
    ::AddField( "uCargo",      "C", 20, 0, {|| "" },   "Cargo"                                   )
 
    ::AddTmpIndex( "cCodPrv", "cCodPrv" )
@@ -416,6 +418,8 @@ METHOD AddFacturaProveedor( cCodigoProveedor ) CLASS TFastComprasProveedores
       ::oDbf:nTotReq := sTot:nTotalRecargoEquivalencia
       ::oDbf:nTotDoc := sTot:nTotalDocumento
 
+      ::oDbf:cSrlTot := sTot:saveToText()
+
       if ::lValidRegister()
          ::oDbf:Insert()
       else
@@ -488,6 +492,8 @@ METHOD AddFacturaRectificativa() CLASS TFastComprasProveedores
       ::oDbf:nTotIva := sTot:nTotalIva
       ::oDbf:nTotReq := sTot:nTotalRecargoEquivalencia
       ::oDbf:nTotDoc := sTot:nTotalDocumento
+
+      ::oDbf:cSrlTot := sTot:saveToText()
 
       if ::lValidRegister()
          ::oDbf:Insert()
