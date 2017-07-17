@@ -1574,29 +1574,25 @@ Static Function MkAsientoContaplus( Asien,;
       aTemp[ ( cDiario )->( fieldpos( "TERIDNIF" ) ) ]   := if( getAsientoIntraComunitario(), 2, 1 )
    end if
 
-   // Conectores GUID--------------------------------------------
+   // Conectores GUID----------------------------------------------------------
 
    if ( cDiario )->( fieldpos( "Guid" ) ) != 0
       aTemp[ ( cDiario )->( fieldpos( "Guid" ) ) ]       := win_uuidcreatestring()
    end if
 
-   // l340/lSII
+   // l340/lSII----------------------------------------------------------------
 
    if ( cDiario )->( fieldpos( "l340" ) ) != 0
       aTemp[ ( cDiario )->( fieldpos( "l340" ) ) ]       := ! ConfiguracionEmpresasModel():getLogic( 'informacion_inmediata', .f. )
    end if
 
-   // timestamp
+   // timestamp----------------------------------------------------------------
 
    if ( cDiario )->( fieldpos( "cTimeStamp" ) ) != 0
       aTemp[ ( cDiario )->( fieldpos( "cTimeStamp" ) ) ] := hb_ttoc( hb_datetime() )
    end if
 
-   // si tenemos q usar un apunte SII vamos a usar este dato q no se usa
-
-   aTemp[ ( cDiario )->( fieldpos( "lPeriodico" ) ) ]    := isTrue( lSII )
-
-   // escritura en el fichero--------------------------------------------
+   // escritura en el fichero--------------------------------------------------
    /*
    if !lSimula
       
@@ -1613,7 +1609,14 @@ Return ( aTemp )
 
 //---------------------------------------------------------------------------//
 
-Function WriteAsiento( aTemp, cDivisa, lMessage )
+
+Function aWriteAsiento( aAsientos, cDivisa, lMessage )
+
+Return ( aeval( aAsientos, {|aAsiento| WriteAsiento( aAsiento, cDivisa, lMessage ) } ) )
+
+//----------------------------------------------------------------------------//
+
+Function WriteAsiento( aAsiento, cDivisa, lMessage )
 
    local cMes
    local nFld
@@ -1623,58 +1626,56 @@ Function WriteAsiento( aTemp, cDivisa, lMessage )
 
    DEFAULT lMessage  := .f.
 
-   if isFalse( runEventScript( "Contaplus\beforeWriteAsiento", aTemp ) )
+   if isFalse( runEventScript( "Contaplus\beforeWriteAsiento", aAsiento ) )
       debug( "isFalse" )
       Return .f.
    end if    
 
+   if empty( cDiario )
+      Return .f.
+   end if 
+
    oBlock            := ErrorBlock( { | oError | ApoloBreak( oError ) } )
    BEGIN SEQUENCE
 
-   if !empty( cDiario ) .and. !empty( aTemp[ ( cDiario )->( fieldpos( "FECHA" ) ) ] )
+   if !empty( aAsiento[ ( cDiario )->( fieldpos( "FECHA" ) ) ] )
 
-      WinGather( aTemp, , cDiario, , APPD_MODE, , .f. )
+      WinGather( aAsiento, , cDiario, , APPD_MODE, , .f. )
 
-      cMes           := Rjust( Month( aTemp[ ( cDiario )->( fieldpos( "FECHA" ) ) ] ), "0", 2 )
+      cMes           := Rjust( Month( aAsiento[ ( cDiario )->( fieldpos( "FECHA" ) ) ] ), "0", 2 )
 
-      if ( cSubCuenta )->( dbSeek( aTemp[ ( cDiario )->( fieldpos( "SubCta" ) ) ] ) ) .and. ( cSubCuenta )->( dbRLock() )
+      if ( cSubCuenta )->( dbSeek( aAsiento[ ( cDiario )->( fieldpos( "SubCta" ) ) ] ) ) .and. ( cSubCuenta )->( dbRLock() )
 
-         ( cSubCuenta )->SUMADBEU               += aTemp[ ( cDiario )->( fieldpos( "EURODEBE" ) ) ]
-         ( cSubCuenta )->SUMAHBEU               += aTemp[ ( cDiario )->( fieldpos( "EUROHABER" ) ) ]
+         ( cSubCuenta )->SUMADBEU               += aAsiento[ ( cDiario )->( fieldpos( "EURODEBE" ) ) ]
+         ( cSubCuenta )->SUMAHBEU               += aAsiento[ ( cDiario )->( fieldpos( "EUROHABER" ) ) ]
 
          nFld        := ( cSubCuenta )->( fieldpos( "SDB" + cMes + "EU" ) )
          nVal        := ( cSubCuenta )->( fieldget( nFld ) )
-         ( cSubCuenta )->( fieldput( nFld, nVal + aTemp[ ( cDiario )->( fieldpos( "EURODEBE" ) ) ] ) )
+         ( cSubCuenta )->( fieldput( nFld, nVal + aAsiento[ ( cDiario )->( fieldpos( "EURODEBE" ) ) ] ) )
 
          nFld        := ( cSubCuenta )->( fieldpos( "SHB" + cMes + "EU" ) )
          nVal        := ( cSubCuenta )->( fieldget( nFld ) )
-         ( cSubCuenta )->( fieldput( nFld, nVal + aTemp[ ( cDiario )->( fieldpos( "EUROHABER" ) ) ] ) )
+         ( cSubCuenta )->( fieldput( nFld, nVal + aAsiento[ ( cDiario )->( fieldpos( "EUROHABER" ) ) ] ) )
 
          nFld        := ( cSubCuenta )->( fieldpos( "NDB" + cMes + "EU" ) )
          nVal        := ( cSubCuenta )->( fieldget( nFld ) )
-         ( cSubCuenta )->( fieldput( nFld, nVal + aTemp[ ( cDiario )->( fieldpos( "EURODEBE" ) ) ] ) )
+         ( cSubCuenta )->( fieldput( nFld, nVal + aAsiento[ ( cDiario )->( fieldpos( "EURODEBE" ) ) ] ) )
 
          nFld        := ( cSubCuenta )->( fieldpos( "NHB" + cMes + "EU" ) )
          nVal        := ( cSubCuenta )->( fieldget( nFld ) )
-         ( cSubCuenta )->( fieldput( nFld, nVal + aTemp[ ( cDiario )->( fieldpos( "EUROHABER" ) ) ] ) )
+         ( cSubCuenta )->( fieldput( nFld, nVal + aAsiento[ ( cDiario )->( fieldpos( "EUROHABER" ) ) ] ) )
 
          ( cSubCuenta )->( dbUnLock() )
 
       else
 
          if lMessage
-            MsgStop( "Subcuenta no encontrada " + aTemp[ ( cDiario )->( fieldpos( "SubCta" ) ) ], "Imposible actualizar saldos" )
+            MsgStop( "Subcuenta no encontrada " + aAsiento[ ( cDiario )->( fieldpos( "SubCta" ) ) ], "Imposible actualizar saldos" )
          end if
 
       end if
 
    end if
-
-   // Apunte de SII------------------------------------------------------------
-
-   if ( aTemp[ ( cDiario )->( fieldpos( "lPeriodico" ) ) ] ) .and. !empty( cDiarioSii )
-      msgalert("asiento SII")
-   end if 
 
    RECOVER USING oError
 
@@ -1688,26 +1689,74 @@ Return ( nil )
 
 //----------------------------------------------------------------------------//
 
-Function WriteAsientoSii( aTemp, cDivisa, cGuid )
+FUNCTION MkAsientoSII( aAsiento )
 
-   msgalert( "WriteAsientoSii" )
-   msgalert( hb_valtoexp( aTemp ), "aTemp" )
+   local guid
+   local aTemp
+
+   if empty( cDiario )
+      Return ( nil )
+   end if
+
+   if empty( cDiarioSii )
+      Return ( nil )
+   end if  
 
    if ( cDiario )->( fieldpos( "Guid" ) ) == 0
       Return ( nil )
    end if
 
-Return ( nil )
+   if ( cDiario )->( fieldpos( "l340" ) ) == 0
+      Return ( nil )
+   end if
+
+   if aAsiento[( cDiario )->( fieldpos( "l340" ) ) ]
+      Return ( nil )
+   end if 
+
+   guid                                               := aAsiento[ ( cDiario )->( fieldpos( "Guid" ) ) ]
+   if empty( guid )
+      Return ( nil )
+   end if 
+
+   // Asignacion de campos--------------------------------------------------------
+
+   aTemp                                              := dbBlankRec( cDiarioSii )
+
+   aTemp[ ( cDiarioSii )->( fieldpos( "Guid" ) ) ]    := guid
+   aTemp[ ( cDiarioSii )->( fieldpos( "Estado" ) ) ]  := 3
+
+Return ( aTemp )
 
 //----------------------------------------------------------------------------//
 
-Function aWriteAsiento( aTemp, cDivisa, lMessage )
+Function aWriteAsientoSII( aAsientos )
 
-   local a
+Return ( aeval( aAsientos, {|aAsiento| WriteAsientoSII( aAsiento) } ) )
 
-   for each a in aTemp
-      WriteAsiento( a, cDivisa, lMessage )
-   next
+//----------------------------------------------------------------------------//
+
+Function WriteAsientoSII( aAsiento )
+
+   local oBlock
+   local oError
+
+   if empty( cDiarioSii )
+      Return .f.
+   end if 
+
+   oBlock            := ErrorBlock( { | oError | ApoloBreak( oError ) } )
+   BEGIN SEQUENCE
+
+      WinGather( aAsiento, , cDiarioSii, , APPD_MODE, , .f. )
+
+   RECOVER USING oError
+
+      msgStop( "Error al escribir apunte contable SII." + CRLF + ErrorMessage( oError ) )
+
+   END SEQUENCE
+
+   ErrorBlock( oBlock )
 
 Return ( nil )
 

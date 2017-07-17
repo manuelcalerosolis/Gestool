@@ -15196,21 +15196,21 @@ CLASS sTotal FROM HBPersistent
    DATA aIvmTik                        INIT { 0, 0, 0 }
    DATA aIvaTik                        INIT { 0, 0, 0 }
 
-   METHOD nTotalPrimerBruto()          INLINE ( ::aTotalBruto[ 1 ] )
-   METHOD nTotalSegundoBruto()         INLINE ( ::aTotalBruto[ 2 ] )
-   METHOD nTotalTercerBruto()          INLINE ( ::aTotalBruto[ 3 ] )
+   METHOD nTotalPrimerBruto()                   INLINE ( ::aTotalBruto[ 1 ] )
+   METHOD nTotalSegundoBruto()                  INLINE ( ::aTotalBruto[ 2 ] )
+   METHOD nTotalTercerBruto()                   INLINE ( ::aTotalBruto[ 3 ] )
 
-   METHOD TotalBruto()                 INLINE ( ::aTotalBruto[ 1 ] + ::aTotalBruto[ 2 ] + ::aTotalBruto[ 3 ] )
+   METHOD TotalBruto()                          INLINE ( ::aTotalBruto[ 1 ] + ::aTotalBruto[ 2 ] + ::aTotalBruto[ 3 ] )
 
-   METHOD nTotalPrimeraBase()          INLINE ( ::aTotalBase[ 1 ] )
-   METHOD nTotalSegundaBase()          INLINE ( ::aTotalBase[ 2 ] )
-   METHOD nTotalTerceraBase()          INLINE ( ::aTotalBase[ 3 ] )
+   METHOD nTotalPrimeraBase()                   INLINE ( ::aTotalBase[ 1 ] )
+   METHOD nTotalSegundaBase()                   INLINE ( ::aTotalBase[ 2 ] )
+   METHOD nTotalTerceraBase()                   INLINE ( ::aTotalBase[ 3 ] )
 
-   METHOD TotalBase()                  INLINE ( ::aTotalBase[ 1 ] + ::aTotalBase[ 2 ] + ::aTotalBase[ 3 ] )
+   METHOD TotalBase()                           INLINE ( ::aTotalBase[ 1 ] + ::aTotalBase[ 2 ] + ::aTotalBase[ 3 ] )
 
-   METHOD nBasePrimerIva()             INLINE ( ::aTotalIva[ 1, 2 ] )
-   METHOD nBaseSegundoIva()            INLINE ( ::aTotalIva[ 2, 2 ] )
-   METHOD nBaseTercerIva()             INLINE ( ::aTotalIva[ 3, 2 ] )
+   METHOD nBasePrimerIva()                      INLINE ( ::aTotalIva[ 1, 2 ] )
+   METHOD nBaseSegundoIva()                     INLINE ( ::aTotalIva[ 2, 2 ] )
+   METHOD nBaseTercerIva()                      INLINE ( ::aTotalIva[ 3, 2 ] )
 
    METHOD nPorcentajePrimerIva()                INLINE ( ::aPorcentajeIva[1] )
    METHOD nPorcentajeSegundoIva()               INLINE ( ::aPorcentajeIva[2] )
@@ -15228,14 +15228,14 @@ CLASS sTotal FROM HBPersistent
 
    METHOD TotalImpuestoHidrocarburos()          INLINE ( ::aTotalImpuestoHidrocarburos[ 1 ] + ::aTotalImpuestoHidrocarburos[ 2 ] + ::aTotalImpuestoHidrocarburos[ 3 ] )
 
-   METHOD TotalDescuento()             INLINE ( ::nTotalDescuentoGeneral + ::nTotalDescuentoProntoPago + ::nTotalDescuentoUno + ::nTotalDescuentoDos )
+   METHOD TotalDescuento()                      INLINE ( ::nTotalDescuentoGeneral + ::nTotalDescuentoProntoPago + ::nTotalDescuentoUno + ::nTotalDescuentoDos )
 
-   METHOD TotalDocumento()             INLINE ( Round( ::nTotalDocumento, ::nDecimalesRedondeo ) )
+   METHOD TotalDocumento()                      INLINE ( Round( ::nTotalDocumento, ::nDecimalesRedondeo ) )
 
-   METHOD TotalRentabilidad()          INLINE ( Round( ::aTotalBase - ::nTotalCosto, ::nDecimalesRedondeo ) )
-   METHOD PorcentajeRentabilidad()     INLINE ( nRentabilidad( ::aTotalBase, 0, ::nTotalCosto ) )
+   METHOD TotalRentabilidad()                   INLINE ( Round( ::aTotalBase - ::nTotalCosto, ::nDecimalesRedondeo ) )
+   METHOD PorcentajeRentabilidad()              INLINE ( nRentabilidad( ::aTotalBase, 0, ::nTotalCosto ) )
 
-   METHOD nTotalCobro()                INLINE ( Round( ::nCobrado - ::nCambio, ::nDecimalesRedondeo ) )
+   METHOD nTotalCobro()                         INLINE ( Round( ::nCobrado - ::nCambio, ::nDecimalesRedondeo ) )
 
 ENDCLASS
 

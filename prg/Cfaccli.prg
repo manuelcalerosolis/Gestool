@@ -56,69 +56,71 @@ FUNCTION CntFacCli( lSimula, lPago, lExcCnt, lMessage, oTree, nAsiento, aSimula,
    local aTotAnt
    local nNetAnt
    local nIvaAnt
-   local nAcuAnt     := 0
-   local nTotAnt     := 0
+   local nAcuAnt        := 0
+   local nTotAnt        := 0
    local uIva
    local newIva
-   local aIvm        := {}
-   local aTrn        := {}
-   local aAsiento    := {}
-   local nCalculo    := 0
-   local nBase       := 0
-   local aVentas     := {}
-   local lIvaInc     := ( dbfFacCliT )->lIvaInc
-   local cCodDiv     := ( dbfFacCliT )->cDivFac
-   local cCtaCli     := cCliCta( ( dbfFacCliT )->cCodCli, dbfCli )
-   local cCtaCliVta  := cCliCtaVta( ( dbfFacCliT )->cCodCli, dbfCli )
-   local cCtaAnticipo:= cCtaAnt()
-   local nFactura    := ( dbfFacCliT )->cSerie + str( ( dbfFacCliT )->nNumFac ) + ( dbfFacCliT )->cSufFac
-   local cFactura    := ( dbfFacCliT )->cSerie + alltrim( str( ( dbfFacCliT )->nNumFac ) )
-   local pFactura    := ( dbfFacCliT )->cSerie + "/" + alltrim( str( ( dbfFacCliT )->nNumFac ) ) + "/" + ( dbfFacCliT )->cSufFac
-   local lRecargo    := ( dbfFacCliT )->lRecargo
-   local cTerNif     := ( dbfFacCliT )->cDniCli
-   local cTerNom     := ( dbfFacCliT )->cNomCli
-   local lErrorFound := .f.
+   local aIvm           := {}
+   local aTrn           := {}
+   local aAsiento       := {}
+   local nCalculo       := 0
+   local nBase          := 0
+   local aVentas        := {}
+   local lIvaInc        := ( dbfFacCliT )->lIvaInc
+   local cCodDiv        := ( dbfFacCliT )->cDivFac
+   local cCtaCli        := cCliCta( ( dbfFacCliT )->cCodCli, dbfCli )
+   local cCtaCliVta     := cCliCtaVta( ( dbfFacCliT )->cCodCli, dbfCli )
+   local cCtaAnticipo   := cCtaAnt()
+   local nFactura       := ( dbfFacCliT )->cSerie + str( ( dbfFacCliT )->nNumFac ) + ( dbfFacCliT )->cSufFac
+   local cFactura       := ( dbfFacCliT )->cSerie + alltrim( str( ( dbfFacCliT )->nNumFac ) )
+   local pFactura       := ( dbfFacCliT )->cSerie + "/" + alltrim( str( ( dbfFacCliT )->nNumFac ) ) + "/" + ( dbfFacCliT )->cSufFac
+   local lRecargo       := ( dbfFacCliT )->lRecargo
+   local cTerNif        := ( dbfFacCliT )->cDniCli
+   local cTerNom        := ( dbfFacCliT )->cNomCli
+   local lErrorFound    := .f.
    local cProyecto
    local cClave
    local sTotFacCli
    local ptaDebe
    local ptaRet
-   local lReturn     := .t.
-   local lOpenDiario := lOpenDiario()
-   local nTotDebe    := 0
-   local nTotHaber   := 0
-   local nDtoEsp     := 0
-   local nDpp        := 0
-   local nDtoUno     := 0
-   local nDtoDos     := 0
-   local nPctDto     := 0
-   local nPctIva     := 0
-   local nBaseImp    := 0
+   local lReturn        := .t.
+   local lOpenDiario    := lOpenDiario()
+   local nTotDebe       := 0
+   local nTotHaber      := 0
+   local nDtoEsp        := 0
+   local nDpp           := 0
+   local nDtoUno        := 0
+   local nDtoDos        := 0
+   local nPctDto        := 0
+   local nPctIva        := 0
+   local nBaseImp       := 0
+   local aAsientoSII
+   local aAsientosSII   := {}
 
-   DEFAULT lSimula   := .t.
-   DEFAULT nAsiento  := 0
-   DEFAULT aSimula   := {}
-   DEFAULT cCodEmp   := cCodEmpCnt( ( dbfFacCliT )->cSerie )
-   DEFAULT cCodPro   := ( dbfFacCliT )->cCodPro
+   DEFAULT lSimula      := .t.
+   DEFAULT nAsiento     := 0
+   DEFAULT aSimula      := {}
+   DEFAULT cCodEmp      := cCodEmpCnt( ( dbfFacCliT )->cSerie )
+   DEFAULT cCodPro      := ( dbfFacCliT )->cCodPro
 
-   nDouDiv           := nDouDiv( ( dbfFacCliT )->cDivFac, dbfDiv )
-   nRouDiv           := nRouDiv( ( dbfFacCliT )->cDivFac, dbfDiv )
-   nDpvDiv           := nDpvDiv( ( dbfFacCliT )->cDivFac, dbfDiv )
+   nDouDiv              := nDouDiv( ( dbfFacCliT )->cDivFac, dbfDiv )
+   nRouDiv              := nRouDiv( ( dbfFacCliT )->cDivFac, dbfDiv )
+   nDpvDiv              := nDpvDiv( ( dbfFacCliT )->cDivFac, dbfDiv )
 
-   dFecha            := ( dbfFacCliT )->dFecFac
-   nDtoEsp           := ( dbfFacCliT )->nDtoEsp
-   nDpp              := ( dbfFacCliT )->nDpp
-   nDtoUno           := ( dbfFacCliT )->nDtoUno
-   nDtoDos           := ( dbfFacCliT )->nDtoDos
-   nPctDto           := ( dbfFacCliT )->nPctDto
+   dFecha               := ( dbfFacCliT )->dFecFac
+   nDtoEsp              := ( dbfFacCliT )->nDtoEsp
+   nDpp                 := ( dbfFacCliT )->nDpp
+   nDtoUno              := ( dbfFacCliT )->nDtoUno
+   nDtoDos              := ( dbfFacCliT )->nDtoDos
+   nPctDto              := ( dbfFacCliT )->nPctDto
 
-   sTotFacCli        := sTotFacCli( ( dbfFacCliT )->cSerie + str( ( dbfFacCliT )->nNumFac ) + ( dbfFacCliT )->cSufFac, dbfFacCliT, dbfFacCliL, dbfIva, dbfDiv, dbfFacCliP, dbfAntCliT, nil, nil, .f., lExcCnt  )
-   ptaDebe           := sTotFacCli:nTotalDocumento
-   ptaRet            := sTotFacCli:nTotalRetencion
-   newIva            := sTotFacCli:aTotalIva
+   sTotFacCli           := sTotFacCli( ( dbfFacCliT )->cSerie + str( ( dbfFacCliT )->nNumFac ) + ( dbfFacCliT )->cSufFac, dbfFacCliT, dbfFacCliL, dbfIva, dbfDiv, dbfFacCliP, dbfAntCliT, nil, nil, .f., lExcCnt  )
+   ptaDebe              := sTotFacCli:nTotalDocumento
+   ptaRet               := sTotFacCli:nTotalRetencion
+   newIva               := sTotFacCli:aTotalIva
 
-   cProyecto         := Left( cCodPro, 3 )
-   cClave            := Right( cCodPro, 6 )
+   cProyecto            := Left( cCodPro, 3 )
+   cClave               := Right( cCodPro, 6 )
 
    /*
    Seleccionamos las empresa dependiendo de la serie de factura----------------
@@ -785,12 +787,19 @@ FUNCTION CntFacCli( lSimula, lPago, lExcCnt, lMessage, oTree, nAsiento, aSimula,
                                        ,;                          
                                        lSimula,;                          
                                        cTerNif,;                          
-                                       cTerNom,;
-                                       ,;
-                                       ,;
-                                       .t. )
+                                       cTerNom )
 
-            aAdd( aSimula, aAsiento )                          
+            aAdd( aSimula, aAsiento ) 
+
+            // Asiento SII-----------------------------------------------------
+
+            aAsientoSII := MkAsientoSII( aAsiento )
+
+            msgalert( hb_valtoexp( aAsientoSII ), "aAsientoSII" )
+
+            if !empty( aAsientoSII )
+               aAdd( aAsientosSII, aAsientoSII )
+            end if 
 
          end if
 
@@ -891,13 +900,18 @@ FUNCTION CntFacCli( lSimula, lPago, lExcCnt, lMessage, oTree, nAsiento, aSimula,
    if lSimula
 
       if lMessage
-         lReturn  := msgTblCon( aSimula, cCodDiv, dbfDiv, !lErrorFound, pFactura, {|| aWriteAsiento( aSimula, cCodDiv, lMessage, oTree, pFactura, nAsiento ), lCntFacCli( nFactura, pFactura, nAsiento, lPago, oTree, dbfFacCliT, dbfFacCliP ) } )
+         lReturn  := msgTblCon(  aSimula, cCodDiv, dbfDiv, !lErrorFound, pFactura,;
+                                 {||   aWriteAsiento( aSimula, cCodDiv, lMessage, oTree, pFactura, nAsiento ),;
+                                       aWriteAsientoSII( aAsientosSII ),;
+                                       lCntFacCli( nFactura, pFactura, nAsiento, lPago, oTree, dbfFacCliT, dbfFacCliP ) } )
       end if
 
    else
 
       if !lErrorFound
          aWriteAsiento( aSimula, cCodDiv, lMessage, oTree, pFactura, nAsiento )
+
+         aWriteAsientoSII( aAsientosSII )
 
          lReturn  := lCntFacCli( nFactura, pFactura, nAsiento, lPago, oTree, dbfFacCliT )
       end if
