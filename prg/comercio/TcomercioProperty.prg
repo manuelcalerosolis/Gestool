@@ -215,8 +215,8 @@ METHOD insertPropertiesHeader( hPropertiesHeaderProduct )
                               "VALUES ( " + ;
                                  "'" + alltrim( str( idPrestashop ) ) + "', " + ;            // id_attribute_group
                                  ::getLanguage() + ", " + ;                                  // id_lang
-                                 "'" + hGet( hPropertiesHeaderProduct, "name" ) + "', " + ;  // name
-                                 "'" + hGet( hPropertiesHeaderProduct, "name" ) + "' )"      // public_name
+                                 "'" + ::oConexionMySQLDatabase():escapeStr( hGet( hPropertiesHeaderProduct, "name" ) ) + "', " + ;  // name
+                                 "'" + ::oConexionMySQLDatabase():escapeStr( hGet( hPropertiesHeaderProduct, "name" ) ) + "' )"      // public_name
 
       if !::commandExecDirect( cCommand )
          ::writeText( "Error al insertar la propiedad " + hGet( hPropertiesHeaderProduct, "name" ) + " en la tabla " + ::cPrefixTable( "attribute_group_lang" ), 3 )

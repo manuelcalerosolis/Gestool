@@ -71,7 +71,7 @@ METHOD buildCategory( id, rootCategory ) CLASS TComercioCategory
 
    if ( D():Familias( ::getView() ) )->( dbseekinord( id, "cCodFam" ) )  
 
-      if !empty( ( D():Familias( ::getView() ) )->cFamCmb ) // .and. empty( ::TPrestashopId():getValueCategory( ( D():Familias( ::getView() ) )->cFamCmb, ::getCurrentWebName() ) )
+      if !empty( ( D():Familias( ::getView() ) )->cFamCmb ) .and. empty( ::TPrestashopId():getValueCategory( ( D():Familias( ::getView() ) )->cFamCmb, ::getCurrentWebName() ) )
 
          ::buildCategory( ( D():Familias( ::getView() ) )->cFamCmb )
 
@@ -418,8 +418,8 @@ METHOD insertCategoryLang( hCategoryProduct, idCategory )
                            "VALUES ( "                                                 + ;
                               alltrim( str( idCategory ) ) + ", "                      + ;
                               alltrim( idLang ) + ", "                                 + ;
-                              quoted( hget( hLang, 'name' ) ) + ", "                   + ;
-                              quoted( hget( hLang, 'description' ) ) + ", "            + ;
+                              ::oConexionMySQLDatabase():escapeStr( quoted( hget( hLang, 'name' ) ) ) + ", "                   + ;
+                              ::oConexionMySQLDatabase():escapeStr( quoted( hget( hLang, 'description' ) ) ) + ", "            + ;
                               quoted( hget( hLang, 'link_rewrite' ) ) + " ) "
 
 
@@ -505,7 +505,7 @@ METHOD recalculatePositionsCategory() CLASS TComercioCategory
    local nContador         := 2
    local cQuery
    local oQuery         
-   local cCommand
+   local cCommand          := ""
    local nTotalCategory
    local nLeft             := 0  
    local nRight            := 0
@@ -534,7 +534,7 @@ METHOD recalculatePositionsCategory() CLASS TComercioCategory
       do case
          case oQuery:FieldGet( 1 ) == 1
 
-            cCommand       := "UPDATE " + ::cPrefixTable( "category" ) + " SET nLeft = '1', nRight='" + alltrim( str( nTotalCategory * 2 ) ) + "' WHERE id_category = 1" 
+            cCommand       := "UPDATE " + ::cPrefixTable( "category" ) + " SET nLeft = '1', nRight='" + alltrim( str( nTotalCategory * 2 ) ) + "' WHERE id_category = 1"
             if !::commandExecDirect( cCommand )
                ::writeText( "Error al actualizar el grupo de familia en la tabla category", 3 )
             end if
