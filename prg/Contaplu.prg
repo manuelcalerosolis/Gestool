@@ -1689,7 +1689,7 @@ Return ( nil )
 
 //----------------------------------------------------------------------------//
 
-FUNCTION MkAsientoSII( aAsiento )
+FUNCTION mkAsientoSII( aAsiento, nTipoFactura )
 
    local guid
    local aTemp
@@ -1714,17 +1714,23 @@ FUNCTION MkAsientoSII( aAsiento )
       Return ( nil )
    end if 
 
-   guid                                               := aAsiento[ ( cDiario )->( fieldpos( "Guid" ) ) ]
+   guid                                                  := aAsiento[ ( cDiario )->( fieldpos( "Guid" ) ) ]
    if empty( guid )
       Return ( nil )
    end if 
 
+   DEFAULT nTipoFactura                                  := 1
+
    // Asignacion de campos--------------------------------------------------------
 
-   aTemp                                              := dbBlankRec( cDiarioSii )
+   aTemp                                                 := dbBlankRec( cDiarioSii )
 
-   aTemp[ ( cDiarioSii )->( fieldpos( "Guid" ) ) ]    := guid
-   aTemp[ ( cDiarioSii )->( fieldpos( "Estado" ) ) ]  := 3
+   aTemp[ ( cDiarioSii )->( fieldpos( "Guid" ) ) ]       := guid
+   aTemp[ ( cDiarioSii )->( fieldpos( "Estado" ) ) ]     := 0
+   aTemp[ ( cDiarioSii )->( fieldpos( "TipoClave" ) ) ]  := 1
+   aTemp[ ( cDiarioSii )->( fieldpos( "TipoExenci" ) ) ] := 1
+   aTemp[ ( cDiarioSii )->( fieldpos( "TipoNoSuje" ) ) ] := 1
+   aTemp[ ( cDiarioSii )->( fieldpos( "TipoFact" ) ) ]   := nTipoFactura
 
 Return ( aTemp )
 
