@@ -3581,7 +3581,7 @@ METHOD AgregarLote() CLASS TpvTactil
       Return ( .t. )
    end if
 
-   if (!::lEditableDocumento())
+   if !::lEditableDocumento()
       MsgStop( "El documento ya está cerrado" )
       Return ( .t. )
    end if
@@ -6782,15 +6782,6 @@ METHOD OnClickLista() CLASS TpvTactil
       end if
    end if
 
-   /*
-   Si el docmuento no es nuevo y no tiene lineas lo tengo q borrar-------------
-   */
-
-   /*if ::lEmptyLineas()
-      ::EliminarDocumento( ::cNumeroTicket() )
-      lGuardaDocumento     := .f.
-   end if*/
-
    ::DisableDialog()
 
    oBlock                  := ErrorBlock( {| oError | ApoloBreak( oError ) } )
@@ -7408,11 +7399,7 @@ METHOD CargaValoresDefecto( nUbicacion ) CLASS TpvTactil
 
    if Empty( ::oTiketCabecera:cTurTik )
       ::oTiketCabecera:cTurTik   := cCurSesion()
-   else
-      if ::oTiketCabecera:cTurTik != cCurSesion()
-         ::oTiketCabecera:cTurTik   := cCurSesion()  
-      end if
-   end if
+   end if 
 
    /*
    Usuario del ticket----------------------------------------------------------
@@ -7510,7 +7497,7 @@ METHOD CargaValoresDefecto( nUbicacion ) CLASS TpvTactil
       ::oTiketCabecera:cHorTik   := Substr( Time(), 1, 5 )
    end if
 
-   if IsNum( nUbicacion )
+   if hb_isnumeric( nUbicacion )
       ::oTiketCabecera:nUbiTik   := nUbicacion
    end if
 

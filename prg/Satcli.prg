@@ -3305,7 +3305,7 @@ Static Function EdtRecMenu( aTmp, oDlg )
             MENUITEM    "&7. Firmar documento";
                MESSAGE  "Firmar documento" ;
                RESOURCE "gc_sign_document_16" ;
-               ACTION   ( if( empty( aTmp[ _MFIRMA ] ) .or.  msgNoYes( "El documento ya esta firmado, ¿Desea voler a firmarlo?" ),;
+               ACTION   ( if( empty( aTmp[ _MFIRMA ] ) .or.  msgNoYes( "El documento ya está firmado, ¿Desea voler a firmarlo?" ),;
                               aTmp[ _MFIRMA ] := signatureToMemo(),;
                               ) ) 
 
