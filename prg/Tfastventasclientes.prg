@@ -1568,6 +1568,8 @@ METHOD AddFacturaRectificativa( cCodigoCliente ) CLASS TFastVentasClientes
          ::oDbf:nTotRet    := sTot:nTotalRetencion
          ::oDbf:nTotCob    := sTot:nTotalCobrado
 
+         ::oDbf:cSrlTot    := sTot:saveToText()
+
          ::oDbf:nRieCli    := RetFld( ( D():FacturasRectificativas( ::nView ) )->cCodCli, ( D():Clientes( ::nView ) ), "Riesgo", "Cod" )
          ::oDbf:cDniCli    := RetFld( ( D():FacturasRectificativas( ::nView ) )->cCodCli, ( D():Clientes( ::nView ) ), "Nif", "Cod" )
 

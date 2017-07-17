@@ -741,7 +741,9 @@ METHOD insertOneProduct( hProduct ) CLASS TComercioProduct
 
    ::processStockProduct( idProduct, hProduct )
 
-   ::TComercioCategory():recalculatePositionsCategory()
+   if len( ::TComercioCategory():aCategoriesProduct ) != 0
+      ::TComercioCategory():recalculatePositionsCategory()
+   end if
 
    ::TComercioCategory():insertTopMenuPs()
 
@@ -861,12 +863,12 @@ METHOD insertProductLang( idProduct, hProduct ) CLASS TComercioProduct
                      "'" + alltrim( str( idProduct ) ) + "', " + ;                                             // id_product
                      ::getLanguage() + ", " + ;                                                                // id_lang
                      "'" + ::oConexionMySQLDatabase():escapeStr( hGet( hProduct, "description" ) ) + "', " + ; // description
-                     "'" + hGet( hProduct, "description_short" ) + "', " + ;                                   // description_short
+                     "'" + ::oConexionMySQLDatabase():escapeStr( hGet( hProduct, "description_short" ) ) + "', " + ;                                   // description_short
                      "'" + hGet( hProduct, "link_rewrite" ) + "', " + ;                                        // link_rewrite
-                     "'" + hGet( hProduct, "meta_title" ) + "', " + ;                                          // Meta_título
-                     "'" + hGet( hProduct, "meta_description" ) + "', " + ;                                    // Meta_description
-                     "'" + hGet( hProduct, "meta_keywords" ) + "', " + ;                                       // Meta_keywords
-                     "'" + hGet( hProduct, "name" ) + "', " + ;                                                // name
+                     "'" + ::oConexionMySQLDatabase():escapeStr( hGet( hProduct, "meta_title" ) ) + "', " + ;                                          // Meta_título
+                     "'" + ::oConexionMySQLDatabase():escapeStr( hGet( hProduct, "meta_description" ) ) + "', " + ;                                    // Meta_description
+                     "'" + ::oConexionMySQLDatabase():escapeStr( hGet( hProduct, "meta_keywords" ) ) + "', " + ;                                       // Meta_keywords
+                     "'" + ::oConexionMySQLDatabase():escapeStr( hGet( hProduct, "name" ) ) + "', " + ;                                                // name
                      "'En stock', " + ;                                                                        // avatible_now
                      "'' )"
 
@@ -892,12 +894,12 @@ METHOD insertProductLang( idProduct, hProduct ) CLASS TComercioProduct
                      "'" + alltrim( str( idProduct ) ) + "', " + ;                                                // id_product
                      hget( hLang, "idLang" ) + ", " + ;                                                           // id_lang
                      "'" + ::oConexionMySQLDatabase():escapeStr( hGet( hLang, "longDescription" ) ) + "', " + ;   // description
-                     "'" + hGet( hLang, "shortDescription" ) + "', " + ;                                          // description_short
+                     "'" + ::oConexionMySQLDatabase():escapeStr( hGet( hLang, "shortDescription" ) ) + "', " + ;                                          // description_short
                      "'" + hGet( hProduct, "link_rewrite" ) + "', " + ;                                           // link_rewrite
-                     "'" + hGet( hProduct, "meta_title" ) + "', " + ;                                             // Meta_título
-                     "'" + hGet( hProduct, "meta_description" ) + "', " + ;                                       // Meta_description
-                     "'" + hGet( hProduct, "meta_keywords" ) + "', " + ;                                          // Meta_keywords
-                     "'" + hGet( hProduct, "name" ) + "', " + ;                                                   // name
+                     "'" + ::oConexionMySQLDatabase():escapeStr( hGet( hProduct, "meta_title" ) ) + "', " + ;                                             // Meta_título
+                     "'" + ::oConexionMySQLDatabase():escapeStr( hGet( hProduct, "meta_description" ) ) + "', " + ;                                       // Meta_description
+                     "'" + ::oConexionMySQLDatabase():escapeStr( hGet( hProduct, "meta_keywords" ) ) + "', " + ;                                          // Meta_keywords
+                     "'" + ::oConexionMySQLDatabase():escapeStr( hGet( hProduct, "name" ) ) + "', " + ;                                                   // name
                      "'En stock', " + ;                                                                           // avatible_now
                      "'' )"
 
