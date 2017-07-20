@@ -580,7 +580,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfAbnPrvT, oBrw, bWhen, bValid, nMode )
 
          oBrw2:cWndName       := "Linea de albarán proveedor detalle"
 
-         oBrw2:LoadData()
+         oBrw2:Load()
 
 			IF nMode	!= ZOOM_MODE
 				oBrw2:bLDblClick	= {|| EdtDeta( oBrw2, bEdit2, aTmp ) }

@@ -374,13 +374,13 @@ METHOD getSelectSentence()
 
    local cSQLSelect  := ::cGeneralSelect
 
-   if ( hb_HHasKey( ::hColumns, "empresa" ) )
-      cSQLSelect += " WHERE empresa = " + toSQLString( cCodEmp() )
+   if ( hb_hhaskey( ::hColumns, "empresa" ) )
+      cSQLSelect     += " WHERE empresa = " + toSQLString( cCodEmp() )
    end if
 
-   cSQLSelect := ::getSelectByColumn( cSQLSelect )
+   cSQLSelect        := ::getSelectByColumn( cSQLSelect )
 
-   cSQLSelect := ::getSelectByOrder( cSQLSelect )
+   cSQLSelect        := ::getSelectByOrder( cSQLSelect )
 
 Return ( cSQLSelect )
 

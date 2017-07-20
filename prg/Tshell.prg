@@ -81,7 +81,7 @@ CLASS TShell FROM TMdiChild
    DATA  dbfUsr
    DATA  dbfCol
    DATA  nRec        AS NUMERIC  INIT 0
-   DATA  nTab        AS NUMERIC  INIT 1
+   DATA  nTab        
    DATA  cCfg
    DATA  lMin
    DATA  lZoom
@@ -312,15 +312,13 @@ CLASS TShell FROM TMdiChild
    METHOD KillFilter()                       
 
    METHOD CreateData()
+      METHOD AppendData( cPath, cPathFrom )
    METHOD OpenData()
-   METHOD CleanData()
    METHOD DeleteData()
    METHOD CloseData()
    METHOD ReindexData()
    METHOD LoadData()
    METHOD SaveData()
-
-   METHOD AppendData( cPath, cPathFrom )
 
    METHOD DefControl()                       VIRTUAL
 
@@ -804,7 +802,7 @@ METHOD End( lForceExit ) CLASS TShell
 
       // Ventanas--------------------------------------------------------------
 
-      ::SaveData( .f. )
+      ::oBrw:saveRecnoAndOrder( ::nRec, ::nTab )
 
       ::CloseData()
 
@@ -1075,7 +1073,7 @@ METHOD RButtonDown( nRow, nCol, nFlags ) CLASS TShell
 
    MenuEnd()
 
-   MenuAddItem( "Guardar vista actual", "Guarda la vista actual de la rejilla de datos", .f., .t., {|| ::SaveData() }, , "gc_table_selection_column_disk_16", oMenu )
+   MenuAddItem( "Guardar vista actual", "Guarda la vista actual de la rejilla de datos", .f., .t., {|| ::oBrw:Save( .t. ) }, , "gc_table_selection_column_disk_16", oMenu )
 
    MenuAddItem( "Cargar vista por defecto", "Carga la vista por defecto de la rejilla de datos", .f., .t., {|| ::PutOriginal() }, , "gc_table_selection_column_refresh_16", oMenu )
 
@@ -1771,6 +1769,10 @@ METHOD ChgCombo( nTab ) CLASS TShell
    local oCol
    local cOrd                 := ""
 
+   if empty( nTab ) .and. ( ::xAlias )->( used() )
+      nTab                    := ( ::xAlias )->( ordnumber() )
+   end if 
+
    if empty( nTab ) .and. !empty( ::oWndBar )
       nTab                    := ::oWndBar:GetComboBoxAt( .t. )
    end if
@@ -2024,7 +2026,7 @@ Return ( Self )
 //---------------------------------------------------------------------------//
 
 METHOD OpenData( cPath )
-
+/*
    local oBlock
    local oError
 
@@ -2055,13 +2057,13 @@ METHOD OpenData( cPath )
    END SEQUENCE
 
    ErrorBlock( oBlock )
-
+*/
 Return ( Self )
 
 //---------------------------------------------------------------------------//
 
 METHOD CreateData( cPath )
-
+/*
    DEFAULT cPath  := cPatEmp()
 
    if !lExistTable( cPath + "CfgUse.Dbf" )
@@ -2073,13 +2075,13 @@ METHOD CreateData( cPath )
    end if
 
    ::ReindexData( cPath )
-
+*/
 Return ( Self )
 
 //---------------------------------------------------------------------------//
 
 METHOD ReindexData( cPath )
-
+/*
    local dbfUse
    local dbfCol
 
@@ -2122,13 +2124,13 @@ METHOD ReindexData( cPath )
       msgStop( "Imposible abrir en modo exclusivo la tabla de configuración de ventanas" )
 
    end if
-
+*/
 Return ( self )
 
 //---------------------------------------------------------------------------//
 
 METHOD AppendData( cPath, cPathFrom )
-
+/*
    ::OpenData( cPath )
 
    if ::lOpenData
@@ -2140,13 +2142,13 @@ METHOD AppendData( cPath, cPathFrom )
       ::CloseData()
 
    end if
-
+*/
 Return ( self )
 
 //---------------------------------------------------------------------------//
 
 METHOD LoadData()
-
+/*
    local n
    local oError
    local oBlock   := ErrorBlock( { | oError | ApoloBreak( oError ) } )
@@ -2184,6 +2186,13 @@ METHOD LoadData()
    END SEQUENCE
 
    ErrorBlock( oBlock )
+*/
+
+   if !::lAutoPos
+      RETURN ( Self )
+   end if 
+
+   ::oBrw:LoadRecnoAndOrder()
 
 Return ( Self )
 
@@ -2191,13 +2200,7 @@ Return ( Self )
 
 METHOD SaveData( lSaveBrowseState )
 
-   local n
-   local nCols
-   local oError
-   local oBlock
-
-   DEFAULT lSaveBrowseState      := .t.
-
+   /*
    oBlock                        := ErrorBlock( { | oError | ApoloBreak( oError ) } )
    BEGIN SEQUENCE
 
@@ -2236,7 +2239,7 @@ METHOD SaveData( lSaveBrowseState )
       if lSaveBrowseState
          msgInfo( "Configuración de columnas guardada." )
       end if
-
+      
    end if
 
    RECOVER USING oError
@@ -2246,18 +2249,7 @@ METHOD SaveData( lSaveBrowseState )
    END SEQUENCE
 
    ErrorBlock( oBlock )
-
-Return ( Self )
-
-//---------------------------------------------------------------------------//
-
-METHOD CleanData() CLASS TShell
-
-   // Limpiar las configuraciones----------------------------------------------
-
-   while ( ::dbfCol )->( dbSeek( ::cCodigoUsuario + ::cWinName ) )
-      dbDel( ::dbfCol )
-   end while
+   */
 
 Return ( Self )
 
@@ -2308,9 +2300,10 @@ METHOD CreateXBrowse() CLASS TShell
    oBlock                  := ErrorBlock( { | oError | ApoloBreak( oError ) } )
    BEGIN SEQUENCE
 
-      ::oBrw                  := TXBrowse():New( Self )
+      ::oBrw                  := IXBrowse():New( Self )
       ::oBrw:nStyle           := nOr( WS_CHILD, WS_VISIBLE, WS_TABSTOP )
       ::oBrw:l2007            := .f.
+      ::oBrw:cName            := ::cWinName
 
       ::oBrw:lRecordSelector  := .f.
       ::oBrw:lAutoSort        := .t.
@@ -2390,11 +2383,11 @@ METHOD CreateXFromCode()
 
    // Apertura de configuraciones----------------------------------------------
 
-   ::OpenData()
+   // ::OpenData()
 
-   if ::lOpenData
-      ::LoadData()
-   end if
+   // if ::lOpenData
+   //   ::oBrw:Load()
+   // end if
 
    // Insertamos el action por columnas----------------------------------------
 
@@ -2404,42 +2397,24 @@ METHOD CreateXFromCode()
       end if 
    next
 
-   // Insertamos los fastbuttons-----------------------------------------------
-   /*
-   if ::lFastButtons 
-
-      with object ( ::oBrw:AddCol() )
-         :cHeader             := "Restar unidades"
-         :bStrData            := {|| "" }
-         :bOnPreEdit          := {|| msgStop( "preedit") }
-         :bOnPostEdit         := {|| .t. }
-         :bEditBlock          := {|| ::RecEdit() }
-         :bBmpData            := {|| 1 }
-         :nEditType           := 3
-         :nWidth              := 20
-         :nHeadBmpNo          := 1
-         :nBtnBmp             := 1
-         :nHeadBmpAlign       := 1
-         :AddResource( "gc_document_text_pencil_16" )
-      end with
-
-   end if
-   */
    // Creamos el objeto -------------------------------------------------------
 
    ::oBrw:CreateFromCode()
 
    // Guadamos la situación original-------------------------------------------
 
-   ::SaveOriginal()
+   // ::SaveOriginal()
 
    // Restaura el estado-------------------------------------------------------
 
-   if !empty( ::cCfg )
-      ::oBrw:RestoreState( ::cCfg )
-   end if
+   // if !empty( ::cCfg )
+   //   ::oBrw:RestoreState( ::cCfg )
+   //end if
 
    // Enterprise---------------------------------------------------------------
+
+   ::oBrw:Load()
+   ::oBrw:LoadRecnoAndOrder()
 
    ::oBrw:SetFocus()
 
@@ -2683,9 +2658,7 @@ METHOD setWindowsBar()
       ::oWndBar:ShowYearCombobox()
    end if
 
-   if !empty( ::nTab ) 
-      ::chgCombo( ::nTab )
-   end if
+   ::chgCombo( ::nTab )
 
 Return ( Self )
 
