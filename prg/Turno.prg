@@ -3990,6 +3990,7 @@ METHOD InitDlgImprimir()
 
    oSubTree       := ::oTreeImpresion:Add( "Incidencias" )
                      oSubTree:Add( "Tickets lineas borradas" )
+                     oSubTree:Add( "Cobros de ventas anteriores" )
 
    oSubTree       := ::oTreeImpresion:Add( "Liquidaciones" )
                      oSubTree:Add( "Vales liquidados de clientes" )
@@ -8633,6 +8634,57 @@ METHOD FillTemporal( cCodCaj )
 
    end if
 
+   /*
+   Cobros de ventas anteriores-------------------------------------------------
+   */
+
+   if ::GetItemCheckState( "Cobros de ventas anteriores" )
+
+      ::oTikP:GetStatus()
+      ::oTikP:OrdSetFocus( "cTurPgo" )
+
+      if ::oTikP:Seek( cTurnoCaja )
+
+         while ::oTikP:cTurPgo + ::oTikP:cSufTik + ::oTikP:cCodCaj == cTurnoCaja .and. !::oTikP:eof()
+
+            /*cTipTik        := oRetFld( ::oTikP:cSerTik + ::oTikP:cNumTik + ::oTikP:cSufTik, ::oTikT, "cTipTik", 1 )
+
+            do case
+               case cTipTik == SAVTIK // Como devolucion
+                  nTotLin  := nTotLCobTik( ::oTikP, ::oDbfDiv, cDivEmp() )
+
+               case cTipTik == SAVDEV // Como devolucion
+                  nTotLin  := - nTotLCobTik( ::oTikP, ::oDbfDiv, cDivEmp() )
+
+               case cTipTik == SAVVAL // Como vale
+                  nTotLin  := 0
+
+            end case
+
+            if nTotLin != 0
+
+               ::AppendInTemporal(  nil,;
+                                    ::oTikP:cSerTik + "/" + Alltrim( ::oTikP:cNumTik ) + "/" + Rtrim( ::oTikP:cSufTik )            + Space( 1 ) + ;
+                                    ::oTikP:cFpgPgo                                                                                + Space( 1 ) + ;
+                                    Rtrim( oRetfld( ::oTikP:cSerTik + ::oTikP:cNumTik + ::oTikP:cSufTik, ::oTikT, "cCliTik", 1 ) ) + Space( 1 ) + ;
+                                    Rtrim( oRetfld( ::oTikP:cSerTik + ::oTikP:cNumTik + ::oTikP:cSufTik, ::oTikT, "cNomTik", 1 ) ) ,;
+                                    nTotLin )*/
+
+               ::AppendInTemporal(  nil, "Recibo de pruebas", 98 )
+
+            //end if
+
+            ::oTikP:Skip()
+
+            SysRefresh()
+
+         end while
+
+      end if
+
+      ::oTikP:SetStatus()
+
+   end if
 
    /*
    Anticipos liquidados de clientes--------------------------------------------
