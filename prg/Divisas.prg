@@ -878,7 +878,7 @@ FUNCTION BrwDiv( oGet, oBmp, oGetDiv, dbfDiv, oBan, lBigStyle )
 			OF 		oDlg ;
 			ACTION 	( oDlg:end() )
 
-      oDlg:bStart := { || oBrw:LoadData() }
+      oDlg:bStart := { || oBrw:Load() }
 
    ACTIVATE DIALOG oDlg CENTER
 

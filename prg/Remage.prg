@@ -538,7 +538,7 @@ METHOD Resource( nMode )
 
          ::oBrwDet:cWndName      := "Linea de cobro agente detalle"
 
-         ::oBrwDet:LoadData()
+         ::oBrwDet:Load()
 
 REDEFINE APOLOMETER ::oMeter VAR ::nMeter ;
          ID       160 ;

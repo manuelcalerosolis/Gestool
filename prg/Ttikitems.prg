@@ -714,7 +714,7 @@ Static Function EdtTikItems( aTmp, aGet, dbfDoc, oBrw, bWhen, bValid, nMode )
          oBrwCab:bLDblClick   := {|| if( nMode != ZOOM_MODE, WinEdtRec( oBrwCab, bEdtTikLines, dbfTmpCab, , , aTmp ), ) }
          oBrwCab:bDel         := {|| DBDelRec( oBrwCab, dbfTmpCab ) }
          oBrwCab:cWndName     := "Linea de tickets cabecera"
-         oBrwCab:LoadData()
+         oBrwCab:Load()
 
    /*
    Cuerpo
@@ -783,7 +783,7 @@ Static Function EdtTikItems( aTmp, aGet, dbfDoc, oBrw, bWhen, bValid, nMode )
          oBrwCue:bLDblClick   := {|| if( nMode != ZOOM_MODE, WinEdtRec( oBrwCue, bEdtTikLines, dbfTmpCue, , , aTmp ), ) }
          oBrwCue:bDel         := {|| DBDelRec( oBrwCue, dbfTmpCue ) }
          oBrwCue:cWndName     := "Linea de ticket cuerpo"
-         oBrwCue:LoadData()
+         oBrwCue:Load()
 
    /*
    Píe
@@ -852,7 +852,7 @@ Static Function EdtTikItems( aTmp, aGet, dbfDoc, oBrw, bWhen, bValid, nMode )
          oBrwPie:bLDblClick   := {|| if( nMode != ZOOM_MODE, WinEdtRec( oBrwPie, bEdtTikLines, dbfTmpPie, , , aTmp ), ) }
          oBrwPie:bDel         := {|| DBDelRec( oBrwPie, dbfTmpPie ) }
          oBrwPie:cWndName     := "Linea de ticket pie"
-         oBrwPie:LoadData()
+         oBrwPie:Load()
 
 	/*
 	Boton de Salida

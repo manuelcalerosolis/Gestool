@@ -44,18 +44,18 @@ CLASS IXBrowse FROM TXBrowse
    METHOD GetOriginal()       INLINE ( ::cOriginal := ::SaveState() )
    METHOD SetOriginal()       INLINE ( ::RestoreState( ::cOriginal ) )
 
-   METHOD Load()              INLINE ( ::OpenData(), ::LoadData(), ::CloseData() )
-   METHOD Save()              INLINE ( ::OpenData(), ::SaveConfigColumn( .t. ), ::CloseData() )
+   METHOD Load()              
+      METHOD LoadRecnoAndOrder()
+
+   METHOD Save( lMessage, nBrowseRecno, nBrowseOrder )
+      METHOD SaveRecnoAndOrder( nBrowseRecno, nBrowseOrder );
+                              INLINE ( ColumnasUsuariosModel():set( ::cName, nil, nBrowseRecno, nBrowseOrder ) )
 
    METHOD SelectCurrent()     INLINE ( ::Select( 0 ), ::Select( 1 ) )
 
    METHOD CreateData( cPath )
 
    METHOD ReindexData( cPath )
-
-   METHOD LoadData()
-
-   METHOD SaveConfigColumn( lSaveBrowseState )
 
    METHOD CleanData()
 
@@ -99,120 +99,70 @@ METHOD New( oWnd )
    ::bClrSelFocus    := {|| { CLR_BLACK, Rgb( 167, 205, 240 ) } }
    ::lSortDescend    := .f. 
 
-Return ( Self )
+RETURN ( Self )
 
-//----------------------------------------------------------------------------//
-/*
-METHOD GoLeftMost()
-
-   ::CancelEdit()
-
-   ::nColSel         := 1
-   ::nColOffset      := ::nFreeze
-   ::GetDisplayCols()
-   ::Super:Refresh( ::FullPaint() )
-
-   if ::oHScroll != nil
-      ::oHScroll:SetPos( 1 )
-   endif
-
-   ::Change( .f. )
-
-return nil
-*/
 //----------------------------------------------------------------------------//
 
 METHOD CreateData( cPath )
-/*
-   DEFAULT cPath  := cPatEmp()
 
-   if !lExistTable( cPath + "CfgUse.Dbf" )
-      dbCreate( cPath + "CfgUse.Dbf", aSqlStruct( aItmHea() ), cDriver() )
-   end if
-*/
-Return ( Self )
+RETURN ( Self )
 
 //------------------------------------------------------------------------//
 
 METHOD ReindexData( cPath )
-/*
-   local dbfUse
 
-   DEFAULT cPath  := cPatEmp()
-
-   if !lExistTable( cPath + "CfgUse.Dbf" )
-      ::CreateData( cPath )
-   end if
-
-   dbUseArea( .t., cDriver(), cPath + "CfgUse.Dbf", cCheckArea( "CfgUse", @dbfUse ), .f. )
-
-   if !( dbfUse )->( neterr() )
-
-      ( dbfUse )->( __dbPack() )
-
-      ( dbfUse )->( ordCondSet( "!Deleted()", {|| !Deleted() }  ) )
-      ( dbfUse )->( ordCreate( cPath + "CfgUse.Cdx", "cCodUse", "cCodUse + cNomCfg", {|| Field->cCodUse + Field->cNomCfg } ) )
-
-      ( dbfUse )->( dbCloseArea() )
-
-   else
-
-      msgStop( "Imposible abrir en modo exclusivo la tabla de ventanas" )
-
-   end if
-*/
-Return ( Self )
+RETURN ( Self )
 
 //------------------------------------------------------------------------//
 
-METHOD LoadData()
+METHOD Load()
 
-   local oBlock
-   local oError
-   local hHistroy
+   local cBrowseState
 
-   oBlock               := ErrorBlock( {| oError | ApoloBreak( oError ) } )
-   BEGIN SEQUENCE
+   ::getOriginal()
 
-      ::getOriginal()
+   cBrowseState         := ColumnasUsuariosModel():getState( ::cName )
 
-      /*
-      if !empty( ::dbfUsr ) .and. ( ::dbfUsr )->( Used() )
+   if !empty( cBrowseState )
+      ::restoreState( cBrowseState )
+   end if 
 
-         if ( ::dbfUsr )->( dbSeek( cCurUsr() + ::cName ) )
-
-            if !empty( ( ::dbfUsr )->cBrwCfg )
-               ::RestoreState( ( ::dbfUsr )->cBrwCfg )
-            end if
-
-         end if
-
-      end if
-      */
-
-      if !Empty( HistoricosUsuariosModel() ) //Comprobación para galería vieja de informes
-
-         hHistroy          := HistoricosUsuariosModel():getHistory( ::cName )
-
-         if !empty( hHistroy )
-            ::restoreState( hget( hHistroy, "cBrowseState" ) )
-         end if 
-
-      end if
-
-   RECOVER USING oError
-
-      msgStop( "Error al establecer la configuración de columnas." + CRLF + ErrorMessage( oError ) )
-
-   END SEQUENCE
-
-   ErrorBlock( oBlock )
-
-Return ( Self )
+RETURN ( Self )
 
 //------------------------------------------------------------------------//
 
-METHOD SaveConfigColumn( lMessage )
+METHOD LoadRecnoAndOrder()
+
+   local nRecno
+   local nOrder
+   local hBrowseInformation
+
+   hBrowseInformation   := ColumnasUsuariosModel():get( ::cName )
+
+   if empty( hBrowseInformation )
+      RETURN ( Self )
+   end if 
+
+   nRecno               := max( hget( hBrowseInformation, "Recno" ), 1 )
+   nOrder               := max( hget( hBrowseInformation, "Order" ), 1 )
+
+   if ( ::cAlias )->( used() )
+
+      ( ::cAlias )->( dbgoto( nRecno ) )
+
+      if ( ::cAlias )->( recno() ) != nRecno .or. nRecno > ( ::cAlias )->( lastrec() )
+         ( ::cAlias )->( dbgotop() )
+      end if
+
+      ( ::cAlias )->( ordsetfocus( nOrder ) )
+
+   end if 
+
+RETURN ( Self )
+
+//------------------------------------------------------------------------//
+
+METHOD Save( lMessage, nBrowseRecno, nBrowseOrder )
 
    local oError
    local oBlock
@@ -222,37 +172,7 @@ METHOD SaveConfigColumn( lMessage )
    oBlock                   := ErrorBlock( {| oError | ApoloBreak( oError ) } )
    BEGIN SEQUENCE
 
-   // Datos del browse --------------------------------------------------------
-   /*
-   if !Empty( ::dbfUsr ) .and. ( ::dbfUsr )->( Used() )
-
-      if ( ::dbfUsr )->( dbSeek( cCurUsr() + ::cName ) )
-
-         if ( ::dbfUsr )->( dbRLock() )
-            ( ::dbfUsr )->cBrwCfg   := ::SaveState()
-            ( ::dbfUsr )->( dbRUnLock() )
-         end if
-
-      else
-
-         ( ::dbfUsr )->( dbAppend() )
-         if !( ::dbfUsr )->( neterr() )
-            ( ::dbfUsr )->cCodUse   := cCurUsr()
-            ( ::dbfUsr )->cNomCfg   := ::cName
-            ( ::dbfUsr )->cBrwCfg   := ::SaveState()
-         end if
-         ( ::dbfUsr )->( dbRUnLock() )
-
-      end if
-
-      if lMessage
-         msgInfo( "Configuración de columnas guardada", "Información" )
-      end if
-
-   end if
-   */
-
-      HistoricosUsuariosModel():saveHistory( ::cName, quoted( ::SaveState() ) )
+      ColumnasUsuariosModel():set( ::cName, ::SaveState(), nBrowseRecno, nBrowseOrder )
 
       if lMessage
          msgInfo( "Configuración de columnas guardada", "Información" )
@@ -266,104 +186,39 @@ METHOD SaveConfigColumn( lMessage )
 
    ErrorBlock( oBlock )
 
-Return ( Self )
+RETURN ( Self )
 
 //------------------------------------------------------------------------//
 
 METHOD CleanData( lMessage )
 
-   // Limpiar las configuraciones----------------------------------------------
-   /*
-   if !Empty( ::dbfUsr ) .and. ( ::dbfUsr )->( Used() )
-      while ( ::dbfUsr )->( dbSeek( cCurUsr() + ::cName ) )
-         dbDel( ::dbfUsr )
-      end while
-   end if
-   */
-
-   local oError
-   local oBlock
-
    DEFAULT lMessage     := .t.
 
-   oBlock               := ErrorBlock( {| oError | ApoloBreak( oError ) } )
-   BEGIN SEQUENCE
+   ColumnasUsuariosModel():delete( ::cName )
 
-      HistoricosUsuariosModel():deleteHistory( ::cName )
+   if lMessage
+      msgInfo( "Configuración de columnas eliminada", "Información" )
+   end if
 
-      if lMessage
-         msgInfo( "Configuración de columnas eliminada", "Información" )
-      end if
-
-   RECOVER USING oError
-
-      msgStop( "Imposible eliminar las configuraciones de columnas" + CRLF + ErrorMessage( oError ) )
-
-   END SEQUENCE
-
-   ErrorBlock( oBlock )
-
-Return ( Self )
+RETURN ( Self )
 
 //------------------------------------------------------------------------//
 
 METHOD DeleteData()
-/*
-   fErase( cPatEmp() + "CfgUse.Dbf" )
-   fErase( cPatEmp() + "CfgUse.Cdx" )
-*/
-Return ( Self )
+
+RETURN ( Self )
 
 //------------------------------------------------------------------------//
 
 METHOD CloseData()
-/*
-   if !Empty( ::dbfUsr ) .and. ( ::dbfUsr )->( Used() )
-      ( ::dbfUsr )->( dbCloseArea() )
-   end if
 
-   ::lOpenData          := .f.
-*/
-Return ( Self )
+RETURN ( Self )
 
 //------------------------------------------------------------------------//
 
 METHOD OpenData( cPath )
-/*
-   local oBlock
-   local oError
 
-   DEFAULT cPath        := cPatEmp()
-
-   if !lExistTable( cPath + "CfgUse.Dbf" )
-      ::CreateData( cPath )
-   end if
-
-   if !lExistIndex( cPath + "CfgUse.Cdx" )
-      ::ReindexData( cPath )
-   end if
-
-   oBlock               := ErrorBlock( {| oError | ApoloBreak( oError ) } )
-   BEGIN SEQUENCE
-
-      if !::lOpenData
-
-         dbUseArea( .t., cDriver(), ( cPath + "CfgUse.Dbf" ), ( ::dbfUsr := cCheckArea( "CfgUse" ) ), .t. )
-         if( !lAIS(), ( ::dbfUsr )->( OrdListAdd( cPath + "CfgUse.Cdx" ) ), ( ::dbfUsr )->( OrdSetFocus( 1 ) ) )
-
-         ::lOpenData    := .t.
-
-      end if
-
-   RECOVER USING oError
-
-      msgStop( "Imposible abrir todas las bases de datos" + CRLF + ErrorMessage( oError ) )
-
-   END SEQUENCE
-
-   ErrorBlock( oBlock )
-*/
-Return ( Self )
+RETURN ( Self )
 
 //------------------------------------------------------------------------//
 
@@ -394,7 +249,7 @@ METHOD RButtonDown( nRow, nCol, nFlags )
 
       if !Empty( ::cName )
 
-         MenuAddItem( "Guardar vista actual", "Guarda la vista actual de la rejilla de datos", .f., .t., {|| ::Save() }, , "gc_table_selection_column_disk_16", oMenu )
+         MenuAddItem( "Guardar vista actual", "Guarda la vista actual de la rejilla de datos", .f., .t., {|| ::Save( .t. ) }, , "gc_table_selection_column_disk_16", oMenu )
 
          MenuAddItem( "Cargar vista por defecto", "Carga la vista por defecto de la rejilla de datos", .f., .t., {|| ::SetOriginal() }, , "gc_table_selection_column_refresh_16", oMenu )
 
@@ -422,20 +277,20 @@ METHOD RButtonDown( nRow, nCol, nFlags )
 
    ::SetFocus()
 
-Return ( Self )
+RETURN ( Self )
 
 //----------------------------------------------------------------------------//
 
 static function GenMenuBlock( oCol )
 
-return {|| iif( oCol:lHide, oCol:Show(), oCol:Hide() ) }
+RETURN {|| iif( oCol:lHide, oCol:Show(), oCol:Hide() ) }
 
 //----------------------------------------------------------------------------//
 
 METHOD CheckExtendInfo()
 
    if Empty( ::bToolTip )
-      Return ( Self )
+      RETURN ( Self )
    endif
 
    if !Empty( ::oToolTip )
@@ -462,7 +317,7 @@ METHOD CheckExtendInfo()
       ::oToolTip:End()
    end if
 
-Return ( Self )
+RETURN ( Self )
 
 //----------------------------------------------------------------------------//
 
@@ -509,7 +364,7 @@ METHOD ShowExtendInfo()
 
    ::lOnProcess      := .f.
 
-Return ( Self )
+RETURN ( Self )
 
 //----------------------------------------------------------------------------//
 /*
@@ -519,7 +374,7 @@ METHOD Refresh( lComplete )
    ::Super:MakeTotals()
    end if 
 
-Return ( ::Super:Refresh( lComplete ) )
+RETURN ( ::Super:Refresh( lComplete ) )
 */
 //----------------------------------------------------------------------------//
 
@@ -533,7 +388,7 @@ METHOD SetRDD( lAddColumns, lAutoOrder, aFldNames ) CLASS IXBrowse
    if Empty( ::cAlias )
       ::cAlias 		  		:= Alias()
       if Empty( ::cAlias )
-         return nil
+         RETURN nil
       endif
    endif
 
@@ -578,7 +433,7 @@ METHOD SetRDD( lAddColumns, lAutoOrder, aFldNames ) CLASS IXBrowse
       ::Refresh()
    endif
 
-Return nil
+RETURN nil
 
 //----------------------------------------------------------------------------//
 
@@ -604,7 +459,7 @@ METHOD ExportToExcel()
 
    ErrorBlock( oBlock )
 
-Return nil
+RETURN nil
 
 //----------------------------------------------------------------------------//
 
@@ -619,7 +474,7 @@ METHOD ExportLector()
 
    nRows             := eval( ::bKeyCount )
    if ( nRows == 0 )
-      Return ( Self )
+      RETURN ( Self )
    endif
 
    oBlock            := ErrorBlock( {| oError | ApoloBreak( oError ) } )
@@ -655,7 +510,7 @@ METHOD ExportLector()
    END SEQUENCE
    ErrorBlock( oBlock )
 
-Return ( Self )
+RETURN ( Self )
 
 //----------------------------------------------------------------------------//
 
@@ -734,7 +589,7 @@ METHOD MakeTotals( aCols ) CLASS IXBrowse
 
    endif
 
-return Self
+RETURN Self
 
 //----------------------------------------------------------------------------//
 
@@ -744,7 +599,7 @@ METHOD ArrayIncrSeek( cSeek, nGoTo ) CLASS IXBrowse
    local lExact
 
    if ::lIncrFilter
-      return ::ArrayIncrFilter( cSeek, @nGoTo )
+      RETURN ::ArrayIncrFilter( cSeek, @nGoTo )
    endif
 
    if ( nBrwCol := AScan( ::aCols, { |o| !Empty( o:cOrder ) } ) ) > 0
@@ -775,14 +630,14 @@ METHOD ArrayIncrSeek( cSeek, nGoTo ) CLASS IXBrowse
                endif
                if ! Empty( nAt )
                   ::nArrayAt  := nAt
-                  return .t.
+                  RETURN .t.
                endif
             endif
          next nRow
       endif
    endif
 
-return .f.
+RETURN .f.
 
 //----------------------------------------------------------------------------//
 
@@ -818,7 +673,7 @@ static function FindTag( cFld, nOrder )
       next
    endif
 
-return cTag
+RETURN cTag
 
 //------------------------------------------------------------------//
 
@@ -844,6 +699,6 @@ METHOD ReDefine( nId, cResName1, cResName2, cBmpFile1, cBmpFile2, cMsg, bAction,
 
    // ::setColor( rgb( 0, 0, 0 ), rgb( 118, 216, 38 ) )
 
-Return ( Self )
+RETURN ( Self )
 
 //----------------------------------------------------------------------------//

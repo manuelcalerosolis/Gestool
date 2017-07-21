@@ -426,7 +426,7 @@ METHOD Resource( nMode )
          ::oBrwDet:lDrawFooters  := .t.
          ::oBrwDet:cWndName      := "Linea de liquidación de agente detalle"
 
-         ::oBrwDet:LoadData()
+         ::oBrwDet:Load()
 
          if nMode != ZOOM_MODE
             ::oBrwDet:bAdd       := {|| ::EdtLiqAge( APPD_MODE ) }

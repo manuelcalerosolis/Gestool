@@ -1107,7 +1107,7 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbf, oBrw, bWhen, bValid, nMode, cCodTar )
          OF       oFld:aDialogs[2]
 
          oBrwExt:cWndName        := "Tarifas de precios agentes"
-         oBrwExt:LoadData()
+         oBrwExt:Load()
 
 			IF nMode	!= ZOOM_MODE
             oBrwExt:bLDblClick   := {|| EdtDet2( oBrwExt, bEdit3, aTmp ) }

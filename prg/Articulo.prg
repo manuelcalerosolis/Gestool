@@ -5224,31 +5224,31 @@ Static Function StartDlg( aGet, aTmp, nMode, oSay, oDlg, oCosto, aBtnDiv, oFnt, 
    IXBrowse():OpenData()
 
    if !empty( oBrwPrv )
-      oBrwPrv:LoadData()
+      oBrwPrv:Load()
    end if
 
    if !empty( oBrwDiv )
-      oBrwDiv:LoadData()
+      oBrwDiv:Load()
    end if
 
    if !empty( oBrwStk )
-      oBrwStk:LoadData()
+      oBrwStk:Load()
    end if
 
    if !empty( oBrwKit )
-      oBrwKit:LoadData()
+      oBrwKit:Load()
    end if
 
    if !empty( oBrwOfe )
-      oBrwOfe:LoadData()
+      oBrwOfe:Load()
    end if
 
    if !empty( oBrwImg )
-      oBrwImg:LoadData()
+      oBrwImg:Load()
    end if
 
    if !empty( oBrwLeng )
-      oBrwLeng:LoadData()
+      oBrwLeng:Load()
    end if
 
    IXBrowse():CloseData()

@@ -1598,7 +1598,6 @@ Static Function MkAsientoContaplus( Asien,;
       
       WriteAsiento( aTemp, cDivisa )
 
-      msgalert( "desde dentro sii" )
 
       WriteAsientoSII( aTemp, cDivisa )
 

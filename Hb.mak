@@ -523,6 +523,7 @@ PropiedadesLineasModel.obj       										\
 PropiedadesLineasController.obj       									\
 RelacionesEtiquetasModel.prg 												\
 ArticulosModel.prg                                    			\
+ColumnasUsuariosModel.prg 													\
 HistoricosUsuariosModel.prg                           			\
 PedidosClientesLineasModel.prg 											\
 EmpresasModel.prg 															\
@@ -546,7 +547,6 @@ PropiedadesController.obj       											\
 PropiedadesLineasModel.obj       										\
 PropiedadesLineasController.obj       									\
 RelacionesEtiquetasModel.prg 												\
-ArticulosModel.prg                                    			\
 HistoricosUsuariosModel.prg                           			\
 PedidosClientesLineasModel.prg 											\
 
@@ -1062,6 +1062,7 @@ RelacionesEtiquetasModel.obj 											\
 ArticulosModel.obj                                    		\
 HistoricosUsuariosModel.obj                                 \
 PedidosClientesLineasModel.obj 										\
+ColumnasUsuariosModel.obj 												\
 
 .PRG.OBJ:
   	$(HB)\Bin\Harbour $? /n /p$(PPO)\$&.ppo /w /es2 /i$(FWINCLUDE) /gc0 /i$(HBINCLUDE) /i$(GTINCLUDE) /o$(OBJ)\$&.c
@@ -1544,6 +1545,7 @@ $(OBJ)\ClientesModel.obj 											+
 $(OBJ)\AlbaranesClientesModel.obj 								+
 $(OBJ)\FacturasClientesModel.obj 								+
 $(OBJ)\ArticulosModel.obj                    				+
+$(OBJ)\ColumnasUsuariosModel.obj               				+
 $(OBJ)\RecibosClientesModel.obj									+
 $(OBJ)\TicketsClientesModel.obj 	 								+							
 $(OBJ)\PedidosProveedoresModel.obj 								+

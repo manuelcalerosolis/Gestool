@@ -284,7 +284,7 @@ Function GenFacAlqCli( oBrw, aDbfBmp, dbfAlqCliT, dbfAlqCliL, dbfAlqCliP, dbfCli
 
    oBrwAlq:bLDblClick   := {|| oDbfTmp:lFacAlq := !oDbfTmp:lFacAlq, oBrwAlq:refresh() }
    oBrwAlq:cWndName     := "Linea de generar factura cliente detalle"
-   oBrwAlq:LoadData()
+   oBrwAlq:Load()
 
    oDbfTmp:SetBrowse( oBrwAlq )
 

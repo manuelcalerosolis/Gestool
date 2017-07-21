@@ -387,8 +387,6 @@ METHOD LoadFromDatabase( cCodigoSala ) CLASS TTpvSalon
          oDbfVir:GoTop()
          while !oDbfVir:Eof()
 
-            msgalert( "mesa " + str( oDbfVir:nTipo ), "nTipo" )
- 
             oMesa    := TTpvMesa():New( oDbfVir:nFila, oDbfVir:nColumna, oDbfVir:nTipo, ::oWnd:oClient )
             oMesa:LoadFromSala( ::oSender )
 

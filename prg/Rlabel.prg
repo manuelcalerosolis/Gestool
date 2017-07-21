@@ -510,7 +510,7 @@ STATIC FUNCTION EdtLabel( aTmp, aoGet, dbfLblT, oBrw, bWhen, bValid, nMode )
 
          oBrwLin:cWndName        := "Linea de etiqueta detalle"
 
-         oBrwLin:LoadData()
+         oBrwLin:Load()
 
       /*
       Botones de la caja de diálogo

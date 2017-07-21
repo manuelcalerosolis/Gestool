@@ -17097,7 +17097,6 @@ FUNCTION nValorArrayIVA( cSerializeTotal, nPorcentajeIva, nValor )
    aTotalIva         := sTotal:aTotalIva
 
    if empty( aTotalIva )
-      MsgAlert( "Me voy retornando 0" )
       RETURN ( 0 )
    end if 
 

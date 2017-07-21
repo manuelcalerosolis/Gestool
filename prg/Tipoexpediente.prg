@@ -275,7 +275,7 @@ METHOD Resource( nMode )
          oDlg:AddFastKey( VK_F5, {|| ::lPreSave( nMode, oGet, oDlg ) } )
       end if
 
-      oDlg:bStart := {|| oBrw:LoadData() }
+      oDlg:bStart := {|| oBrw:Load() }
 
 	ACTIVATE DIALOG oDlg	CENTER
 
