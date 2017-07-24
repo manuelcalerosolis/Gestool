@@ -283,7 +283,9 @@ FUNCTION Test()
 
    // ColumnasUsuariosModel():set( "Testing", "my tasting" )
 
-   //MovimientosAlmacenController():New():activateShell()
+   msgalert( hb_datetime() )
+
+   MovimientosAlmacenController():New():activateShell()
 
    /*
    local hMail          := {=>}

@@ -52,11 +52,12 @@ METHOD New()
                                              "type"      => "N"                                       ,;
                                              "len"       => 4 }                                       )
 
-   hset( ::hColumns, "fecha",             {  "create"    => "DATE"                                    ,;
+   hset( ::hColumns, "fecha",             {  "create"    => "DATETIME DEFAULT CURRENT_TIMESTAMP"      ,;
                                              "text"      => "Fecha"                                   ,;
                                              "header"    => "Fecha"                                   ,;
                                              "field"     => "dFecRem"                                 ,;
                                              "visible"   => .t.                                       ,;
+                                             "type"      => "T"                                       ,;
                                              "width"     => 40 }                                       )
 
    ::TimeStampFields()

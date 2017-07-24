@@ -16,7 +16,7 @@ IMG2PDFLIB           = 	\Img2Pdf
 
 OBJ                  = 	Obj1701
 
-SOURCEPRG            = 	.\Prg;.\Prg\mail;.\Prg\Comercio;.\Prg\Models;.\Prg\Controllers;.\Prg\Services;.\Prg\Tablet;.\Prg\tablet\view;.\Prg\tablet\view\documentos;.\Prg\tablet\view\terceros;.\Prg\tablet\view\documentos\ventas;.\Prg\tablet\view\documentos\terceros;.\Prg\tablet\utils;.\Prg\tablet\presenter;.\Prg\tablet\presenter\terceros;.\Prg\tablet\presenter\documentos;.\Prg\tablet\presenter\documentos\ventas;
+SOURCEPRG            = 	.\Prg;.\Prg\mail;.\Prg\Comercio;.\Prg\Models;.\Prg\Views;.\Prg\Controllers;.\Prg\Services;.\Prg\Tablet;.\Prg\tablet\view;.\Prg\tablet\view\documentos;.\Prg\tablet\view\terceros;.\Prg\tablet\view\documentos\ventas;.\Prg\tablet\view\documentos\terceros;.\Prg\tablet\utils;.\Prg\tablet\presenter;.\Prg\tablet\presenter\terceros;.\Prg\tablet\presenter\documentos;.\Prg\tablet\presenter\documentos\ventas;
 SOURCEC 				   =	C
 
 PPO 					   = 	Ppo1701
@@ -333,7 +333,7 @@ ConfImpTiket.prg        													\
 Situaciones.prg         													\
 SituacionesModel.prg       												\
 SituacionesController.prg       											\
-MovimientosAlmacen.prg  													\
+MovimientosAlmacenView.prg													\
 MovimientosAlmacenController.prg 										\
 MovimientosAlmacenModel.prg 												\
 ControllerContainer.prg 													\
@@ -867,7 +867,7 @@ ConfCajPorta.obj        										\
 Situaciones.obj         										\
 SituacionesModel.obj       									\
 SituacionesController.obj       								\
-MovimientosAlmacen.obj  										\
+MovimientosAlmacenView.obj										\
 MovimientosAlmacenController.obj 							\
 MovimientosAlmacenModel.obj 									\
 ControllerContainer.obj 										\
@@ -1367,7 +1367,7 @@ $(OBJ)\ConfCajPorta.obj         									+
 $(OBJ)\Situaciones.obj          									+
 $(OBJ)\SituacionesModel.obj          							+
 $(OBJ)\SituacionesController.obj          					+
-$(OBJ)\MovimientosAlmacen.obj  									+
+$(OBJ)\MovimientosAlmacenView.obj 								+
 $(OBJ)\MovimientosAlmacenController.obj 						+
 $(OBJ)\MovimientosAlmacenModel.obj 								+
 $(OBJ)\ControllerContainer.obj          						+
