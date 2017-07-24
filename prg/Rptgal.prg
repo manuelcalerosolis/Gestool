@@ -2493,6 +2493,9 @@ Return nil
 FUNCTION EmpresasModel()
 Return nil
 
+FUNCTION ColumnasUsuariosModel()
+Return nil 
+
 //------------------------------------------------------------------//
 
 #pragma BEGINDUMP

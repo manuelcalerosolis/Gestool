@@ -6476,6 +6476,7 @@ METHOD OnClickCobro() CLASS TpvTactil
    if oUser():lNotCobrarTPV()
       MsgStop( "El usuario no esta autorizado para cobrar tickes." )
       Return .f.
+
    end if
 
    if ::isArticulosSinPeso()
