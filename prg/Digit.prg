@@ -1,4 +1,5 @@
 #include "FiveWin.Ch"
+#include "Factu.Ch"
 
 #define __LENCIF__            9
 #define __LENSS__             12
@@ -1650,15 +1651,6 @@ Function ReadCodeGS128( cCode )
 
     if Substr( cCode, 1, 2 ) == "10"
 
-      /*
-      cCode   := Substr( cCode, 3 )
-      while Substr( cCode, 1, 1 ) != Space( 1 )
-        cLote += Substr( cCode, 1, 1 )
-        cCode := Substr( cCode, 2 )
-      end while
-      cCode   := Substr( cCode, 2 )
-      */
-
       cLote   := Substr( cCode, 3, 6 )
 
       hSet( hCodeGS128, "10", { "Codigo" => cLote,;
@@ -1726,6 +1718,73 @@ Function ReadCodeGS128( cCode )
     end if 
 
 Return ( hCodeGS128 )
+
+//---------------------------------------------------------------------------//
+
+Function ReadHashCodeGS128( cCode, hCodeGS128 )
+
+  local hStruct
+  local nAncho  := ""
+  local cValor  := 0
+
+  if Empty( hCodeGS128 )
+    hCodeGS128  := {=>}
+  end if
+
+  if Len( cCode ) != 0
+
+    if HB_IsArray( STRUCT_CODEGS128 ) .and. len( STRUCT_CODEGS128 ) > 0
+
+      for each hStruct in STRUCT_CODEGS128
+
+        /*
+        Compruebo que sea uno de los valores----------------------------------
+        */
+
+        if SubStr( cCode, 1, Len( hGet( hStruct, "Codigo" ) ) ) == hGet( hStruct, "Codigo" )
+
+          nAncho  := hGet( hStruct, "Ancho" ) + hGet( hStruct, "Decimales" )
+          cValor  := formatCodeGS128( SubStr( cCode, Len( hGet( hStruct, "Codigo" ) ) + 1, nAncho ), hGet( hStruct, "Tipo" ), hGet( hStruct, "Ancho" ), hGet( hStruct, "Decimales" ) )
+          cCode   := SubStr( cCode, Len( hGet( hStruct, "Codigo" ) ) + nAncho + 1 )
+
+          /*
+          Lo metemos en el hash------------------------------------------------
+          */
+
+          hSet( hCodeGS128, hGet( hStruct, "Codigo" ), cValor )
+
+          ReadHashCodeGS128( @cCode, hCodeGS128 )
+
+        end if  
+
+      next
+
+    end if
+
+  end if
+
+Return ( hCodeGS128 )
+
+//---------------------------------------------------------------------------//
+
+static function formatCodeGS128( cValor, cTipo, nAncho, nDecimales )
+
+  if Empty( cValor )
+    Return cValor
+  end if
+
+  do case
+    case cTipo == "C"
+      cValor := Padr( cValor, nAncho )
+
+    case cTipo == "N"
+
+    case cTipo == "D"
+      cValor := DateGS128( cValor )
+      
+  end case
+
+return cValor
 
 //---------------------------------------------------------------------------//
 
