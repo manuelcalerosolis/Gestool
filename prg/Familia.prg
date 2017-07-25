@@ -1632,13 +1632,18 @@ Return ( .t. )
 
 //---------------------------------------------------------------------------//
 
-STATIC FUNCTION actualizaWeb( cCodFam )
+STATIC FUNCTION actualizaWeb( cCodigoFamilia )
 
    local TComercio   := TComercio():New( nView )
+   local aChildTree  := {}
 
-   TComercio:controllerExportOneCategoryToPrestashop( cCodFam )
+   aChildTree        := aChildTree( cCodigoFamilia, aChildTree )
 
-RETURN .t.
+   aadd( aChildTree, cCodigoFamilia )
+
+   aeval( aChildTree, {|cCodigoFamilia| TComercio:controllerExportOneCategoryToPrestashop( cCodigoFamilia ) } )
+
+RETURN ( nil )
 
 //----------------------------------------------------------------------------//
 

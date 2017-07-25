@@ -471,6 +471,10 @@ METHOD loadCurrentBuffer()
                hset( ::hBuffer, h:__enumkey(), padr( ::oRowSet:fieldget( h:__enumkey() ), h[ "len" ] ) )
             end if 
 
+         case ( hhaskey( h, "type" ) .and. h[ "type" ] == "T" .and. hb_isnil( ::oRowSet:fieldget( h:__enumkey() ) ) )
+
+            hset( ::hBuffer, h:__enumkey(), hb_datetime() )
+
          case ( !hhaskey( h, "type" ) .and. empty( ::oRowSet:fieldget( h:__enumkey() ) ) )
 
             hset( ::hBuffer, h:__enumkey(), nil )

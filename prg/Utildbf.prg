@@ -3333,6 +3333,11 @@ FUNCTION toSQLString( value )
       RETURN ( if( value, "1", "0" ) )
    end if
 
+   if hb_isdatetime( value )
+      msgAlert( ValType( value ), "ValType" )
+      RETURN ( quoted( hb_tstostr( value ) ) )
+   end if 
+
 RETURN ( value )
        
 //---------------------------------------------------------------------------//

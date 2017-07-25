@@ -1618,10 +1618,10 @@ Function ReadCodeGS128( cCode )
 
     if Substr( cCode, 1, 2 ) == "00"
 
-      hSet( hCodeGS128, "00", { "Codigo" => Substr( cCode, 3, 18 ),;
-                                "Descripcion" => "Serial Shipping Container",;
-                                "Tipo" => "C",;
-                                "Decimales" => 0 } )
+      hSet( hCodeGS128, "00", { "Codigo"        => Substr( cCode, 3, 18 ),;
+                                "Descripcion"   => "Serial Shipping Container",;
+                                "Tipo"          => "C",;
+                                "Decimales"     => 0 } )
 
       cCode   := Substr( cCode, 21 )
 
@@ -1629,10 +1629,10 @@ Function ReadCodeGS128( cCode )
 
     if Substr( cCode, 1, 2 ) == "01"
 
-      hSet( hCodeGS128, "01", { "Codigo" => Substr( cCode, 3, 14 ),;
-                                "Descripcion" => "Shipping Container Code",;
-                                "Tipo" => "C",;
-                                "Decimales" => 0 } )
+      hSet( hCodeGS128, "01", { "Codigo"        => Substr( cCode, 3, 14 ),;
+                                "Descripcion"   => "Shipping Container Code",;
+                                "Tipo"          => "C",;
+                                "Decimales"     => 0 } )
 
       cCode   := Substr( cCode, 17 )
 
@@ -1640,10 +1640,10 @@ Function ReadCodeGS128( cCode )
 
     if Substr( cCode, 1, 2 ) == "02"
 
-      hSet( hCodeGS128, "02", { "Codigo" => Substr( cCode, 3, 14 ),;
-                                "Descripcion" => "Number of containers",;
-                                "Tipo" => "N",;
-                                "Decimales" => 0 } )
+      hSet( hCodeGS128, "02", { "Codigo"        => Substr( cCode, 3, 14 ),;
+                                "Descripcion"   => "Number of containers",;
+                                "Tipo"          => "N",;
+                                "Decimales"     => 0 } )
 
       cCode   := Substr( cCode, 17 )
 
@@ -1653,10 +1653,10 @@ Function ReadCodeGS128( cCode )
 
       cLote   := Substr( cCode, 3, 6 )
 
-      hSet( hCodeGS128, "10", { "Codigo" => cLote,;
-                                "Descripcion" => "Batch Number",;
-                                "Tipo" => "C",;
-                                "Decimales" => 0 } )
+      hSet( hCodeGS128, "10", { "Codigo"        => cLote,;
+                                "Descripcion"   => "Batch Number",;
+                                "Tipo"          => "C",;
+                                "Decimales"     => 0 } )
 
       cCode   := Substr( cCode, 9 )
 
@@ -1664,10 +1664,10 @@ Function ReadCodeGS128( cCode )
 
     if Substr( cCode, 1, 2 ) == "11"
 
-      hSet( hCodeGS128, "11", { "Codigo" => DateGS128( Substr( cCode, 3, 6 ) ),;
-                                "Descripcion" => "Production Date",;
-                                "Tipo" => "D",;
-                                "Decimales" => 0 } )
+      hSet( hCodeGS128, "11", { "Codigo"        => DateGS128( Substr( cCode, 3, 6 ) ),;
+                                "Descripcion"   => "Production Date",;
+                                "Tipo"          => "D",;
+                                "Decimales"     => 0 } )
 
       cCode   := Substr( cCode, 9 )
 
@@ -1675,10 +1675,10 @@ Function ReadCodeGS128( cCode )
     
     if Substr( cCode, 1, 2 ) == "13"
 
-      hSet( hCodeGS128, "13", { "Codigo" => DateGS128( Substr( cCode, 3, 6 ) ),;
-                                "Descripcion" => "Packaging Date",;
-                                "Tipo" => "D",;
-                                "Decimales" => 0 } )
+      hSet( hCodeGS128, "13", { "Codigo"        => DateGS128( Substr( cCode, 3, 6 ) ),;
+                                "Descripcion"   => "Packaging Date",;
+                                "Tipo"          => "D",;
+                                "Decimales"     => 0 } )
 
       cCode   := Substr( cCode, 9 )
 
@@ -1686,10 +1686,10 @@ Function ReadCodeGS128( cCode )
     
     if Substr( cCode, 1, 2 ) == "15"
 
-      hSet( hCodeGS128, "15", { "Codigo" => DateGS128( Substr( cCode, 3, 6 ) ),;
-                                "Descripcion" => "Sell by Date",;
-                                "Tipo" => "D",;
-                                "Decimales" => 0 } )
+      hSet( hCodeGS128, "15", { "Codigo"        => DateGS128( Substr( cCode, 3, 6 ) ),;
+                                "Descripcion"   => "Sell by Date",;
+                                "Tipo"          => "D",;
+                                "Decimales"     => 0 } )
 
       cCode   := Substr( cCode, 9 )
 
@@ -1697,10 +1697,10 @@ Function ReadCodeGS128( cCode )
 
     if Substr( cCode, 1, 2 ) == "17"
 
-      hSet( hCodeGS128, "17", { "Codigo" => DateGS128( Substr( cCode, 3, 6 ) ),;
-                                "Descripcion" => "Expiration Date",;
-                                "Tipo" => "D",;
-                                "Decimales" => 0 } )
+      hSet( hCodeGS128, "17", { "Codigo"        => DateGS128( Substr( cCode, 3, 6 ) ),;
+                                "Descripcion"   => "Expiration Date",;
+                                "Tipo"          => "D",;
+                                "Decimales"     => 0 } )
 
       cCode   := Substr( cCode, 9 )
 
@@ -1708,12 +1708,12 @@ Function ReadCodeGS128( cCode )
 
     if Substr( cCode, 1, 2 ) == "20"
       
-      hSet( hCodeGS128, "20", { "Codigo" => Val( Substr( cCode, 3, 2 ) ),;
-                                "Descripcion" => "Product Variant",;
-                                "Tipo" => "N",;
-                                "Decimales" => 0 } )
+      hSet( hCodeGS128, "20", { "Codigo"        => Val( Substr( cCode, 3, 2 ) ),;
+                                "Descripcion"   => "Product Variant",;
+                                "Tipo"          => "N",;
+                                "Decimales"     => 0 } )
 
-        cCode   := Substr( cCode, 5 )
+      cCode    := Substr( cCode, 5 )
 
     end if 
 
