@@ -1643,7 +1643,7 @@ STATIC FUNCTION actualizaWeb( cCodigoFamilia )
 
    aeval( aChildTree, {|cCodigoFamilia| TComercio:controllerExportOneCategoryToPrestashop( cCodigoFamilia ) } )
 
-RETURN .t.
+RETURN ( nil )
 
 //----------------------------------------------------------------------------//
 
