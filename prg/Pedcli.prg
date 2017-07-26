@@ -9919,6 +9919,7 @@ STATIC FUNCTION LoaArt( cCodArt, aTmp, aGet, aTmpPed, oStkAct, oSayPr1, oSayPr2,
    local nTarOld              := aTmp[ _NTARLIN ]
    local dFecPed              := aTmpPed[ _DFECPED ]
    local hAtipica
+   local nUnidades            := 0
 
    DEFAULT lFocused           := .t.
 
@@ -9983,10 +9984,15 @@ STATIC FUNCTION LoaArt( cCodArt, aTmp, aGet, aTmpPed, oStkAct, oSayPr1, oSayPr2,
 
       if Len( Alltrim( cCodArt ) ) > 18
 
-         hHas128                 := ReadCodeGS128( cCodArt )
+         hHas128                 := ReadHashCodeGS128( cCodArt )
          if !Empty( hHas128 )
-            cCodArt              := uGetCodigo( hHas128, "01" )
-            cLote                := uGetCodigo( hHas128, "10" )
+            
+            cCodArt              := uGetCodigo( hHas128, "00" )
+
+            if Empty( cCodArt )
+               cCodArt           := uGetCodigo( hHas128, "01" )
+            end if
+
          end if 
 
       end if 

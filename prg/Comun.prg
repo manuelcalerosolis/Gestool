@@ -281,17 +281,11 @@ RETURN ( .t. )
 
 FUNCTION Test()
 
-   local cCode    := "019841158574002117170716310303826010170116220"
-
-   MsgInfo( hb_ValToExp( ReadHashCodeGS128( cCode ) ) )
-
-   hEval( ReadHashCodeGS128( cCode ), {|k, v| MsgInfo( v, k + "/" + ValType( v ) ) } )
-
    // ColumnasUsuariosModel():set( "Testing", "my tasting" )
 
-   msgalert( hb_datetime() )
+   //msgalert( hb_datetime() )
 
-   MovimientosAlmacenController():New():activateShell()
+   //MovimientosAlmacenController():New():activateShell()
 
    /*
    local hMail          := {=>}

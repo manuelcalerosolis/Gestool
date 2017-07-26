@@ -1778,6 +1778,7 @@ static function formatCodeGS128( cValor, cTipo, nAncho, nDecimales )
       cValor := Padr( cValor, nAncho )
 
     case cTipo == "N"
+      cValor := Val( cValor ) / 1000
 
     case cTipo == "D"
       cValor := DateGS128( cValor )
@@ -1791,13 +1792,16 @@ return cValor
 Function uGetCodigo( hHash, cAI )
 
   local uGetCodigo
-  local hCodeGS128
 
-  if hHasKey( hHash, cAI )
+  /*if hHasKey( hHash, cAI )
     hCodeGS128    := hGet( hHash, cAI )
     if !Empty( hCodeGS128 )
       uGetCodigo  := hGet( hCodeGS128, "Codigo" )
     end if
+  end if*/
+
+  if hHasKey( hHash, cAI )
+    uGetCodigo  := hGet( hHash, cAI )
   end if
 
 Return ( uGetCodigo )

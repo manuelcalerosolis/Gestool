@@ -5253,10 +5253,15 @@ STATIC FUNCTION LoaArt( cCodArt, aTmp, aGet, aTmpPre, oStkAct, oSayPr1, oSayPr2,
 
       if len( alltrim( cCodArt ) ) > 18
 
-         hHas128                 := ReadCodeGS128( cCodArt )
+         hHas128                 := ReadHashCodeGS128( cCodArt )
          if !empty( hHas128 )
-            cCodArt              := uGetCodigo( hHas128, "01" )
-            cLote                := uGetCodigo( hHas128, "10" )
+            
+            cCodArt              := uGetCodigo( hHas128, "00" )
+            
+            if Empty( cCodArt )
+               cCodArt           := uGetCodigo( hHas128, "01" )
+            end if
+
          end if 
 
       end if 
