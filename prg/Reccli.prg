@@ -1976,22 +1976,21 @@ Function nTotRecCli( uFacCliP, cDbfDiv, cDivRet, lPic )
    DEFAULT lPic         := .f.
 
    if IsObject( uFacCliP )
-      nTotRec  := uFacCliP:nImporte
-      cDivPgo        := uFacCliP:cDivPgo
+      nTotRec           := uFacCliP:nImporte
+      cDivPgo           := uFacCliP:cDivPgo
    else
-      nTotRec  := ( uFacCliP )->nImporte
-      cDivPgo        := ( uFacCliP )->cDivPgo
+      nTotRec           := ( uFacCliP )->nImporte
+      cDivPgo           := ( uFacCliP )->cDivPgo
    end if
 
-   nRouDiv           := nRouDiv( cDivPgo, cDbfDiv )
-   cPorDiv           := cPorDiv( cDivPgo, cDbfDiv )
-
-   nTotRec           := Round( nTotRec, nRouDiv )
+   nRouDiv              := nRouDiv( cDivPgo, cDbfDiv )
+   cPorDiv              := cPorDiv( cDivPgo, cDbfDiv )
+   nTotRec              := Round( nTotRec, nRouDiv )
 
    if cDivRet != cDivPgo
-      nRouDiv        := nRouDiv( cDivRet, cDbfDiv )
-      cPorDiv        := cPorDiv( cDivRet, cDbfDiv )
-      nTotRec        := nCnv2Div( nTotRec, cDivPgo, cDivRet )
+      nRouDiv           := nRouDiv( cDivRet, cDbfDiv )
+      cPorDiv           := cPorDiv( cDivRet, cDbfDiv )
+      nTotRec           := nCnv2Div( nTotRec, cDivPgo, cDivRet )
    end if
 
 RETURN ( if( lPic, Trans( nTotRec, cPorDiv ), nTotRec ) )
@@ -2252,57 +2251,63 @@ function SynRecCli( cPath )
    while !( cFacCliP )->( eof() )
 
       if empty( ( cFacCliP )->cSufFac )
-         ( cFacCliP )->cSufFac := "00"
+         ( cFacCliP )->cSufFac      := "00"
       end if
 
       // Casos raros ----------------------------------------------------------
 
       if ( cFacCliP )->nImpCob == 0 .and. ( cFacCliP )->lCobrado
-         ( cFacCliP )->nImpCob := ( cFacCliP )->nImporte
+         ( cFacCliP )->nImpCob      := ( cFacCliP )->nImporte
       end if
 
+      if ( cFacCliP )->nImpCob > ( cFacCliP )->nImporte
+         ( cFacCliP )->nImpCob      := ( cFacCliP )->nImporte
+      end if      
+
+      // Valores por defecto --------------------------------------------------
+
       if empty( ( cFacCliP )->cTurRec )
-         ( cFacCliP )->cTurRec := RetFld( ( cFacCliP )->cSerie + str( ( cFacCliP )->nNumFac ) + ( cFacCliP )->cSufFac, cFacCliT, "cTurFac" )
+         ( cFacCliP )->cTurRec      := RetFld( ( cFacCliP )->cSerie + str( ( cFacCliP )->nNumFac ) + ( cFacCliP )->cSufFac, cFacCliT, "cTurFac" )
       end if
 
       if empty( ( cFacCliP )->cNomCli )
-         ( cFacCliP )->cNomCli   := retClient( ( cFacCliP )->cCodCli, cClient )
+         ( cFacCliP )->cNomCli      := retClient( ( cFacCliP )->cCodCli, cClient )
       end if
 
       if empty( ( cFacCliP )->cCodCaj )
          if ( cFacCliP )->cTipRec == "R"
-            ( cFacCliP )->cCodCaj := RetFld( ( cFacCliP )->cSerie + str( ( cFacCliP )->nNumFac ) + ( cFacCliP )->cSufFac, cFacRecT, "CCODCAJ" )
+            ( cFacCliP )->cCodCaj   := RetFld( ( cFacCliP )->cSerie + str( ( cFacCliP )->nNumFac ) + ( cFacCliP )->cSufFac, cFacRecT, "CCODCAJ" )
          else
-            ( cFacCliP )->cCodCaj := RetFld( ( cFacCliP )->cSerie + str( ( cFacCliP )->nNumFac ) + ( cFacCliP )->cSufFac, cFacCliT, "CCODCAJ" )
+            ( cFacCliP )->cCodCaj   := RetFld( ( cFacCliP )->cSerie + str( ( cFacCliP )->nNumFac ) + ( cFacCliP )->cSufFac, cFacCliT, "CCODCAJ" )
          end if
       end if
 
       if empty( ( cFacCliP )->cCodUsr )
          if ( cFacCliP )->cTipRec == "R"
-            ( cFacCliP )->cCodUsr := RetFld( ( cFacCliP )->cSerie + str( ( cFacCliP )->nNumFac ) + ( cFacCliP )->cSufFac, cFacRecT, "CCODUSR" )
+            ( cFacCliP )->cCodUsr   := RetFld( ( cFacCliP )->cSerie + str( ( cFacCliP )->nNumFac ) + ( cFacCliP )->cSufFac, cFacRecT, "CCODUSR" )
          else
-            ( cFacCliP )->cCodUsr := RetFld( ( cFacCliP )->cSerie + str( ( cFacCliP )->nNumFac ) + ( cFacCliP )->cSufFac, cFacCliT, "CCODUSR" )
+            ( cFacCliP )->cCodUsr   := RetFld( ( cFacCliP )->cSerie + str( ( cFacCliP )->nNumFac ) + ( cFacCliP )->cSufFac, cFacCliT, "CCODUSR" )
          end if
       end if
 
       if empty( ( cFacCliP )->cCodPgo )
          if ( cFacCliP )->cTipRec == "R"
-            ( cFacCliP )->cCodPgo := RetFld( ( cFacCliP )->cSerie + str( ( cFacCliP )->nNumFac ) + ( cFacCliP )->cSufFac, cFacRecT, "cCodPago" )
+            ( cFacCliP )->cCodPgo   := RetFld( ( cFacCliP )->cSerie + str( ( cFacCliP )->nNumFac ) + ( cFacCliP )->cSufFac, cFacRecT, "cCodPago" )
          else
-            ( cFacCliP )->cCodPgo := RetFld( ( cFacCliP )->cSerie + str( ( cFacCliP )->nNumFac ) + ( cFacCliP )->cSufFac, cFacCliT, "cCodPago" )
+            ( cFacCliP )->cCodPgo   := RetFld( ( cFacCliP )->cSerie + str( ( cFacCliP )->nNumFac ) + ( cFacCliP )->cSufFac, cFacCliT, "cCodPago" )
          end if
       end if
 
       if empty( ( cFacCliP )->cCtaRec )
-         ( cFacCliP )->cCtaRec    := RetFld( ( cFacCliP )->cCodPgo, cFPago, "cCtaCobro" )
+         ( cFacCliP )->cCtaRec      := RetFld( ( cFacCliP )->cCodPgo, cFPago, "cCtaCobro" )
       end if
 
       if empty( ( cFacCliP )->cCtaGas )
-         ( cFacCliP )->cCtaGas    := RetFld( ( cFacCliP )->cCodPgo, cFPago, "cCtaGas" )
+         ( cFacCliP )->cCtaGas      := RetFld( ( cFacCliP )->cCodPgo, cFPago, "cCtaGas" )
       end if
 
       if empty( ( cFacCliP )->cCtaCli )
-         ( cFacCliP )->cCtaCli    := RetFld( ( cFacCliP )->cCodCli, cClient, "SubCta" )
+         ( cFacCliP )->cCtaCli      := RetFld( ( cFacCliP )->cCodCli, cClient, "SubCta" )
       end if
 
       /*
@@ -2310,8 +2315,8 @@ function SynRecCli( cPath )
       */
 
       if !( cFacCliP )->lCobrado
-         ( cFacCliP )->cDigCli    := cDgtControl( ( cFacCliP )->cEntCli, ( cFacCliP )->cSucCli, ( cFacCliP )->cDigCli, ( cFacCliP )->cCtaCli )
-         ( cFacCliP )->cCtrlIBAN  := IbanDigit( ( cFacCliP )->cPaisIBAN, ( cFacCliP )->cEntCli, ( cFacCliP )->cSucCli, ( cFacCliP )->cDigCli, ( cFacCliP )->cCtaCli )
+         ( cFacCliP )->cDigCli      := cDgtControl( ( cFacCliP )->cEntCli, ( cFacCliP )->cSucCli, ( cFacCliP )->cDigCli, ( cFacCliP )->cCtaCli )
+         ( cFacCliP )->cCtrlIBAN    := IbanDigit( ( cFacCliP )->cPaisIBAN, ( cFacCliP )->cEntCli, ( cFacCliP )->cSucCli, ( cFacCliP )->cDigCli, ( cFacCliP )->cCtaCli )
       end if
 
       ( cFacCliP )->( dbSkip() )
