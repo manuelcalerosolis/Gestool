@@ -12124,6 +12124,7 @@ STATIC FUNCTION LoaArt( cCodArt, aGet, aTmp, aTmpFac, oStkAct, oSayPr1, oSayPr2,
    local lChgPrpArt        := ( cOldPrpArt != aTmp[ _CCODPR1 ] + aTmp[ _CCODPR2 ] + aTmp[ _CVALPR1 ] + aTmp[ _CVALPR2 ] )
    local lChgLotArt        := ( cOldLotArt != rtrim( aTmp[ _CLOTE ] ) )
    local nComisionAgenteTarifa
+   local nUnidades         := 0
 
    DEFAULT lFocused        := .t.
 
@@ -12196,12 +12197,26 @@ STATIC FUNCTION LoaArt( cCodArt, aGet, aTmp, aTmpFac, oStkAct, oSayPr1, oSayPr2,
    
    if Len( Alltrim( cCodArt ) ) > 18
 
-      hHas128              := ReadCodeGS128( cCodArt )
+      hHas128              := ReadHashCodeGS128( cCodArt )
 
       if !empty( hHas128 )
-         cCodArt           := uGetCodigo( hHas128, "01" )
+         
+         cCodArt           := uGetCodigo( hHas128, "00" )
+
+         if Empty( cCodArt )
+            cCodArt        := uGetCodigo( hHas128, "01" )
+         end if
+         
          cLote             := uGetCodigo( hHas128, "10" )
+         
          dFechaCaducidad   := uGetCodigo( hHas128, "15" )    
+         
+         if Empty( dFechaCaducidad )
+            dFechaCaducidad   := uGetCodigo( hHas128, "17" )
+         end if
+
+         nUnidades         := uGetCodigo( hHas128, "3103" )
+
       end if 
 
    end if
@@ -12482,7 +12497,11 @@ STATIC FUNCTION LoaArt( cCodArt, aGet, aTmp, aTmpFac, oStkAct, oSayPr1, oSayPr2,
             aGet[ _NCANENT ]:cText(  (D():Articulos( nView ) )->nCajEnt )
          end if
 
-         if ( D():Articulos( nView ) )->nUniCaja != 0
+         if !Empty( nUnidades )
+            aGet[ _NUNICAJA ]:cText( nUnidades )
+         end if
+
+         if Empty( nUnidades ) .and. ( D():Articulos( nView ) )->nUniCaja != 0
             aGet[ _NUNICAJA ]:cText( ( D():Articulos( nView ) )->nUniCaja )
          end if
 
