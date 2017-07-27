@@ -418,8 +418,8 @@ METHOD insertCategoryLang( hCategoryProduct, idCategory )
                            "VALUES ( "                                                 + ;
                               alltrim( str( idCategory ) ) + ", "                      + ;
                               alltrim( idLang ) + ", "                                 + ;
-                              ::oConexionMySQLDatabase():escapeStr( quoted( hget( hLang, 'name' ) ) ) + ", "                   + ;
-                              ::oConexionMySQLDatabase():escapeStr( quoted( hget( hLang, 'description' ) ) ) + ", "            + ;
+                              quoted( ::oConexionMySQLDatabase():escapeStr( hget( hLang, 'name' ) ) ) + ", "                   + ;
+                              quoted( ::oConexionMySQLDatabase():escapeStr( hget( hLang, 'description' ) ) ) + ", "            + ;
                               quoted( hget( hLang, 'link_rewrite' ) ) + " ) "
 
 
