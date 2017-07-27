@@ -19539,9 +19539,28 @@ METHOD Load( dbfCajT )
    ::cSayFmtFac      := cNombreDoc( ::cFmtFac )
 
    ::cPrinterTik     := cPrinterTiket(    cCodCaj, dbfCajT )
+
+   if Empty( ::cPrinterTik )
+      ::cPrinterTik  := PrnGetName()
+   end if
+
    ::cPrinterVal     := cPrinterVale(     cCodCaj, dbfCajT )
+
+   if Empty( ::cPrinterVal )
+      ::cPrinterVal  := PrnGetName()
+   end if
+
    ::cPrinterAlb     := cPrinterAlbaran(  cCodCaj, dbfCajT )
+
+   if Empty( ::cPrinterAlb )
+      ::cPrinterAlb  := PrnGetName()
+   end if
+
    ::cPrinterFac     := cPrinterFactura(  cCodCaj, dbfCajT )
+
+   if Empty( ::cPrinterAlb )
+      ::cPrinterAlb  := PrnGetName()
+   end if
 
    ::cFormatoRegalo  := cFormatoTicketRegaloEnCaja(   cCodCaj, dbfCajT )
    ::cPrinterRegalo  := cPrinterRegalo(               cCodCaj, dbfCajT )

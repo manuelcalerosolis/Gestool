@@ -283,10 +283,10 @@ FUNCTION Test()
 
    // ColumnasUsuariosModel():set( "Testing", "my tasting" )
 
-   with object MovimientosAlmacenController()
+   /*with object MovimientosAlmacenController()
       :New()
       :activateShell()
-   end with
+   end with*/
 
    /*
 
