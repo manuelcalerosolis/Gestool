@@ -20,12 +20,15 @@ CLASS SQLBaseController
 
    DATA     nMode                                     AS NUMERIC
 
+   DATA     nView
+
    DATA     bOnPreAppend
    DATA     bOnPostAppend
 
    DATA     cTitle                                    INIT ""
  
    METHOD   New()
+   METHOD   End()
 
    METHOD   Instance()                                INLINE ( if( empty( ::oInstance ), ::oInstance := ::New(), ), ::oInstance ) 
 
@@ -140,7 +143,21 @@ METHOD New()
 
    ::oView                                            := ::buildSQLView( self )
 
+   ::nView                                            := D():CreateView()
+
+   msgalert( ::nView, "nView" )
+
 RETURN ( self )
+
+//---------------------------------------------------------------------------//
+
+METHOD End()
+
+   D():DeleteView( ::nView )
+
+   ::nView                                            := nil
+
+RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 

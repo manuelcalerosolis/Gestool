@@ -429,6 +429,57 @@ Definici¢n de Array para impuestos---------------------------------------------
 
 #define DOCUMENT_SERIES         { "A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z" }
 
+#define STRUCT_CODEGS128        { {     "Codigo" => "00",;
+                                        "Descripcion" => "Código SSCC1",;
+                                        "Tipo" => "C",;
+                                        "Ancho" => 18,;
+                                        "Decimales" => 0 },;
+                                  {     "Codigo" => "01",;
+                                        "Descripcion" => "Código de barras",;
+                                        "Tipo" => "C",;
+                                        "Ancho" => 14,;
+                                        "Decimales" => 0 },;
+                                  {     "Codigo" => "02",;
+                                        "Descripcion" => "Número de artículos",;
+                                        "Tipo" => "C",;
+                                        "Ancho" => 16,;
+                                        "Decimales" => 0 },;
+                                  {     "Codigo" => "10",;
+                                        "Descripcion" => "Número de lote",;
+                                        "Tipo" => "C",;
+                                        "Ancho" => 9,;
+                                        "Decimales" => 0 },;
+                                  {     "Codigo" => "11",;
+                                        "Descripcion" => "Fecha de producción",;
+                                        "Tipo" => "D",;
+                                        "Ancho" => 6,;
+                                        "Decimales" => 0 },;
+                                  {     "Codigo" => "13",;
+                                        "Descripcion" => "Fecha de envasado",;
+                                        "Tipo" => "D",;
+                                        "Ancho" => 6,;
+                                        "Decimales" => 0 },;
+                                  {     "Codigo" => "15",;
+                                        "Descripcion" => "Fecha de mínima duración",;
+                                        "Tipo" => "D",;
+                                        "Ancho" => 6,;
+                                        "Decimales" => 0 },;
+                                  {     "Codigo" => "17",;
+                                        "Descripcion" => "Fecha de máxima duración",;
+                                        "Tipo" => "D",;
+                                        "Ancho" => 6,;
+                                        "Decimales" => 0 },;
+                                  {     "Codigo" => "20",;
+                                        "Descripcion" => "Variante del producto",;
+                                        "Tipo" => "N",;
+                                        "Ancho" => 2,;
+                                        "Decimales" => 0 },;
+                                  {     "Codigo" => "3103",;
+                                        "Descripcion" => "Peso del producto",;
+                                        "Tipo" => "N",;
+                                        "Ancho" => 3,;
+                                        "Decimales" => 3 } }
+
 #command SET TAG TO <tag> [OF <(cdx)>] ;
       => ordSetFocus( <(tag)> [, <(cdx)>] )
 
@@ -489,7 +540,7 @@ Extend FW
             [ ON HELP <uHelp> ];
             [ BITMAP <cBmp> ];
             [ IDSAY <nIdSay> ];
-            [ IDTEXT <nIdText> ];
+            [ <help: IDHELP, IDTEXT> <nIdText> ];
             => ;
             [ <oGet> := ] TGetHlp():ReDefine( <nId>, bSETGET(<uVar>), <oDlg>,;
             <nHelpId>, <cPict>, <{ValidFunc}>, <nClrFore>, <nClrBack>,;

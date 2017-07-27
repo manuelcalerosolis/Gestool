@@ -52,13 +52,27 @@ METHOD New()
                                              "type"      => "N"                                       ,;
                                              "len"       => 4 }                                       )
 
-   hset( ::hColumns, "fecha",             {  "create"    => "DATETIME DEFAULT CURRENT_TIMESTAMP"      ,;
+   hset( ::hColumns, "fecha_hora",        {  "create"    => "DATETIME DEFAULT CURRENT_TIMESTAMP"      ,;
                                              "text"      => "Fecha"                                   ,;
                                              "header"    => "Fecha"                                   ,;
                                              "field"     => "dFecRem"                                 ,;
                                              "visible"   => .t.                                       ,;
                                              "type"      => "T"                                       ,;
                                              "width"     => 40 }                                       )
+
+   hset( ::hColumns, "almacen_origen",    {  "create"    => "CHAR ( 16 )"                             ,;
+                                             "text"      => "Almacén origen"                          ,;
+                                             "header"    => "Almacén origen"                          ,;
+                                             "visible"   => .t.                                       ,;
+                                             "type"      => "C"                                       ,;
+                                             "field"     => "cAlmOrg" }                                )
+
+   hset( ::hColumns, "almacen_destino",   {  "create"    => "CHAR ( 16 )"                             ,;
+                                             "text"      => "Almacén destino"                         ,;
+                                             "header"    => "Almacén destino"                         ,;
+                                             "visible"   => .t.                                       ,;
+                                             "type"      => "C"                                       ,;
+                                             "field"     => "cAlmDes" }                                )
 
    ::TimeStampFields()
 

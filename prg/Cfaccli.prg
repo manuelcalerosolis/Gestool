@@ -4154,6 +4154,7 @@ FUNCTION ContabilizaReciboCliente( oBrw, oTree, lSimula, aSimula, dbfFacCliT, db
    nDpvDiv              := nDpvDiv( cCodDiv, dbfDiv )
 
    DEFAULT lSimula      := .f.
+   DEFAULT aSimula      := {}
    DEFAULT lFromFactura := .f.
    DEFAULT nAsiento     := 0
 
@@ -4252,7 +4253,7 @@ FUNCTION ContabilizaReciboCliente( oBrw, oTree, lSimula, aSimula, dbfFacCliT, db
    if ( dbfFacCliP )->( dbSeek( nRecibo ) )
 
       /*
-      Si el recibo no trae forma especifica de pago entonces lo buscamos
+      Si el recibo no trae forma especifica de pago entonces lo buscamos-------
       */
 
       cCtaPgo           := ( dbfFacCliP )->cCtaRec
@@ -4515,7 +4516,9 @@ FUNCTION ContabilizaReciboCliente( oBrw, oTree, lSimula, aSimula, dbfFacCliT, db
       end if
 
       if ( lSimula .and. !lFromFactura )
-         lReturn     := msgTblCon( aSimula, cCodDiv, dbfDiv, !lErrorFound, cRecibo, {|| aWriteAsiento( aSimula, cCodDiv, .t., oTree, cRecibo, nAsiento ), lContabilizaReciboCliente( cRecibo, nAsiento, lFromFactura, oTree, dbfFacCliP ) } )
+         lReturn     := msgTblCon( aSimula, cCodDiv, dbfDiv, !lErrorFound, cRecibo, ;
+                                    {||   aWriteAsiento( aSimula, cCodDiv, .t., oTree, cRecibo, nAsiento ), ;
+                                          lContabilizaReciboCliente( cRecibo, nAsiento, lFromFactura, oTree, dbfFacCliP ) } )
       end if
 
    end if

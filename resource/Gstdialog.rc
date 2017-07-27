@@ -17160,7 +17160,7 @@ FONT 8, "Ms Sans Serif"
   CONTROL "", 191, "TBitMap", 0x00800000, 396, 89, 19, 11
   CONTROL "Artículos", -1, "Button", BS_GROUPBOX|WS_TABSTOP, 44, 153, 617, 193
   CONTROL "Almacén origen", 152, "Static", WS_GROUP, 251, 40, 55, 8
-  CONTROL "Almacén destino", -1, "Static", WS_GROUP, 251, 53, 55, 8
+  CONTROL "Almacén destino", 162, "Static", WS_GROUP, 251, 53, 55, 8
   CONTROL "Número", -1, "Static", WS_GROUP, 50, 42, 38, 8
   CONTROL "Fecha", -1, "Static", WS_GROUP, 50, 55, 38, 8
   CONTROL "Comentarios", -1, "Static", WS_GROUP, 251, 105, 55, 8

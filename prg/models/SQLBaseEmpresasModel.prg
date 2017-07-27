@@ -51,7 +51,8 @@ METHOD TimeStampFields()
 
    hset( ::hColumns, "creacion_timestamp",   {  "create"    => "DATETIME DEFAULT CURRENT_TIMESTAMP"      ,;
                                                 "text"      => "Creación fecha y hora"                   ,;
-                                                "header"    => "Creación" }                               )
+                                                "header"    => "Creación"                                ,;
+                                                "default"   => {|| hb_datetime() } }                      )
 
 
 RETURN ( ::hColumns )

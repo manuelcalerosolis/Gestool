@@ -182,7 +182,9 @@ METHOD buildSQLShell()
 
       ::AutoButtons()
 
-   ACTIVATE WINDOW ::oShell
+   ::oShell:Activate()
+
+   // ACTIVATE WINDOW ::oShell
 
    ::oShell:bValid         := {|| ::saveHistoryOfShell(), .t. }
    ::oShell:bEnd           := {|| ::oController:destroySQLModel() }
