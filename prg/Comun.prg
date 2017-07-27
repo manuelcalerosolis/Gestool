@@ -283,10 +283,13 @@ FUNCTION Test()
 
    // ColumnasUsuariosModel():set( "Testing", "my tasting" )
 
-   msgalert( hb_datetime() )
-
-   MovimientosAlmacenController():New():activateShell()
-
+   /*
+   with object MovimientosAlmacenController()
+      :New()
+      :activateShell()
+   end with
+   */
+   
    /*
    local hMail          := {=>}
    local cMensajeMail   := ""

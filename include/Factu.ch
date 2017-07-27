@@ -489,7 +489,7 @@ Extend FW
             [ ON HELP <uHelp> ];
             [ BITMAP <cBmp> ];
             [ IDSAY <nIdSay> ];
-            [ IDTEXT <nIdText> ];
+            [ <help: IDHELP, IDTEXT> <nIdText> ];
             => ;
             [ <oGet> := ] TGetHlp():ReDefine( <nId>, bSETGET(<uVar>), <oDlg>,;
             <nHelpId>, <cPict>, <{ValidFunc}>, <nClrFore>, <nClrBack>,;

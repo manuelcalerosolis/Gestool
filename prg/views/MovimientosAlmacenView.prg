@@ -10,6 +10,8 @@ CLASS MovimientosAlmacenView FROM SQLBaseView
 
    METHOD   Dialog()
 
+   METHOD   stampAlmacenNombre( oGetAlmacenOrigen )
+
 END CLASS
 
 //---------------------------------------------------------------------------//
@@ -28,6 +30,8 @@ METHOD Dialog()
 
    local oDlg
    local oBmpGeneral
+   local oGetAlmacenOrigen
+   local oGetAlmacenDestino
 
    DEFINE DIALOG oDlg RESOURCE "RemMov" TITLE ::lblTitle() + "movimientos de almacén"
 
@@ -47,7 +51,7 @@ METHOD Dialog()
          WHEN        ( .f. ) ;
          OF          oDlg
 
-      REDEFINE GET   ::oController:oModel:hBuffer[ "fecha" ] ;
+      REDEFINE GET   ::oController:oModel:hBuffer[ "fecha_hora" ] ;
          ID          120 ;
          PICTURE     "@DT" ;
          WHEN        ( !::oController:isZoomMode() ) ;
@@ -62,6 +66,33 @@ METHOD Dialog()
          ID          130, 131, 132, 133 ;
          WHEN        ( !::oController:isZoomMode() ) ;
          OF          oDlg
+
+      REDEFINE GET   oGetAlmacenOrigen ;
+         VAR         ::oController:oModel:hBuffer[ "almacen_origen" ] ;
+         ID          150 ;
+         IDHELP      151 ;
+         IDSAY       152 ;
+         WHEN        ( !::oController:isZoomMode() ) ;
+         PICTURE     "@!" ;
+         BITMAP      "Lupa" ;
+         OF          oDlg
+
+      oGetAlmacenOrigen:bValid   := {|| ::stampAlmacenNombre( oGetAlmacenOrigen ) }
+      oGetAlmacenOrigen:bHelp    := {|| brwAlmacen( oGetAlmacenOrigen, oGetAlmacenOrigen:oHelpText ) }
+
+      REDEFINE GET   oGetAlmacenDestino ;
+         VAR         ::oController:oModel:hBuffer[ "almacen_destino" ] ;
+         ID          160 ;
+         IDHELP      161 ;
+         IDSAY       162 ;
+         WHEN        ( !::oController:isZoomMode() ) ;
+         PICTURE     "@!" ;
+         BITMAP      "Lupa" ;
+         OF          oDlg
+
+      oGetAlmacenDestino:bValid   := {|| ::stampAlmacenNombre( oGetAlmacenDestino ) }
+      oGetAlmacenDestino:bHelp    := {|| brwAlmacen( oGetAlmacenDestino, oGetAlmacenDestino:oHelpText ) }
+
 
       REDEFINE BUTTON ;
          ID          IDOK ;
@@ -88,3 +119,13 @@ RETURN ( oDlg:nResult == IDOK )
 
 //---------------------------------------------------------------------------//
 
+METHOD stampAlmacenNombre( oGetAlmacenOrigen )
+
+   local cCodigoAlmacen    := oGetAlmacenOrigen:varGet()
+   local cNombreAlmacen    := AlmacenesModel():getNombre( cCodigoAlmacen )
+
+   oGetAlmacenOrigen:oHelpText:cText( cNombreAlmacen )
+
+RETURN ( !empty( cNombreAlmacen ) )
+
+//---------------------------------------------------------------------------//

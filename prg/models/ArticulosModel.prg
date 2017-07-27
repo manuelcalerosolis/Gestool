@@ -11,7 +11,7 @@ CLASS ArticulosModel FROM BaseModel
 
    METHOD getPrimerValorPropiedad( cCodPro, cArea )
 
-   METHOD getArticulosToPrestrashopInFamilia( idFamilia )
+   METHOD getArticulosToPrestaShopInFamilia( idFamilia, cWebShop, cArea )
 
 END CLASS
 
@@ -35,10 +35,12 @@ Return ( ::ExecuteSqlStatement( cSql, @cArea ) )
 
 //---------------------------------------------------------------------------//
 
-METHOD getArticulosToPrestrashopInFamilia( idFamilia, cArea )
+METHOD getArticulosToPrestaShopInFamilia( idFamilia, cWebShop, cArea )
 
    local cSql  := "SELECT Codigo, cWebShop FROM " + ::getHeaderTableName() + ;
-                     " WHERE Familia = " + quoted( idFamilia ) + " AND lPubInt"
+                     " WHERE Familia = " + quoted( idFamilia ) + " AND "   + ;
+                        "cWebShop = " + quoted( cWebShop ) + " AND "       + ;        
+                        "lPubInt"
 
 Return ( ::ExecuteSqlStatement( cSql, @cArea ) )
 

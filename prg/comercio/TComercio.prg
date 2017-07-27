@@ -192,6 +192,7 @@ CLASS TComercio
    DATA oWaitMeter
 
    DATA lDebugMode                        INIT .f.
+   DATA lIncrementalMode                  INIT .f.
 
    METHOD New()                           CONSTRUCTOR
    METHOD Default()
@@ -205,6 +206,10 @@ CLASS TComercio
    METHOD setDebugMode()                  INLINE ( ::lDebugMode   := .t. )
    METHOD quitDebugMode()                 INLINE ( ::lDebugMode   := .f. )
    METHOD isDebugMode()                   INLINE ( ::lDebugMode )
+
+   METHOD setIncrementalMode()            INLINE ( ::lIncrementalMode   := .t. )
+   METHOD quitIncrementalMode()           INLINE ( ::lIncrementalMode   := .f. )
+   METHOD isIncrementalMode()             INLINE ( ::lIncrementalMode )
 
    METHOD MeterTotal( oMeterTotal )       INLINE ( iif( oMeterTotal == nil, ::oMeterTotal := oMeterTotal, ::oMeterTotal ) )
    METHOD TextTotal( oTextTotal )         INLINE ( iif( oTextTotal == nil, ::oTextTotal := oTextTotal, ::oTextTotal ) )
@@ -279,6 +284,7 @@ CLASS TComercio
       METHOD controllerDeleteOneProductToPrestashop( idProduct )
 
       METHOD controllerExportOneCategoryToPrestashop( idCategory )
+         METHOD ExportOneCategoryToPrestashop( idCategory, cWebShop )
 
    METHOD AppendIvaPrestashop()
    METHOD InsertIvaPrestashop()
@@ -4169,32 +4175,45 @@ RETURN .t.
 
 METHOD controllerExportOneCategoryToPrestashop( idCategory ) Class TComercio
 
-   local cSql        := "Articulos"
+   local cWeb
+   local aWebs       := ::TComercioConfig:getWebsNames()
 
    ::oWaitMeter      := TWaitMeter():New( "Actualizando familia", "Espere por favor..." )
    ::oWaitMeter:Run()
 
-   ArticulosModel():getArticulosToPrestrashopInFamilia( idCategory, @cSql )
+   for each cWeb in aWebs
+      ::ExportOneCategoryToPrestashop( idCategory, cWeb )
+   next 
+
+   ::oWaitMeter:End()
+
+RETURN ( nil )
+
+//---------------------------------------------------------------------------//
+
+METHOD ExportOneCategoryToPrestashop( idCategory, cWeb )
+
+   local cSql        := "Articulos"
+
+   ::setWebToExport( cWeb ) 
+
+   if !::isAviableWebToExport( .t. ) 
+      RETURN ( nil )
+   end if 
+
+   ArticulosModel():getArticulosToPrestashopInFamilia( idCategory, cWeb, @cSql )
+
+   ::ftpConnect()
 
    while ( !( cSql )->( eof() ) )
 
-      ::setWebToExport( ( cSql )->cWebShop ) 
-
-      if ::isAviableWebToExport( .t. ) 
-
-         ::ftpConnect()
-
-         ::insertOneProductToPrestashop( ( cSql )->Codigo )
+      ::insertOneProductToPrestashop( ( cSql )->Codigo )
          
-         ::ftpDisConnect()
-
-      end if 
-
       ( cSql )->( dbskip() )
 
    end while
 
-   ::oWaitMeter:End()
+   ::ftpDisConnect()
 
 RETURN ( nil )
 
@@ -4225,6 +4244,8 @@ RETURN .t.
 //---------------------------------------------------------------------------//
 
 METHOD insertProductToPrestashop( idProduct ) Class TComercio
+
+   msgalert( ::isIncrementalMode(), "isIncrementalMode" )
 
    if !( ::TComercioProduct:buildProduct( idProduct, .t. ) )
       RETURN .f.

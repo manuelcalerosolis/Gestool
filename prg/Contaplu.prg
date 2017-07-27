@@ -1608,7 +1608,6 @@ Return ( aTemp )
 
 //---------------------------------------------------------------------------//
 
-
 Function aWriteAsiento( aAsientos, cDivisa, lMessage )
 
 Return ( aeval( aAsientos, {|aAsiento| WriteAsiento( aAsiento, cDivisa, lMessage ) } ) )

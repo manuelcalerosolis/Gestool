@@ -153,7 +153,7 @@ STATIC FUNCTION OpenFiles()
 
    if lOpenFiles
       MsgStop( 'Los ficheros de recibos de clientes ya estan abiertos.' )
-      Return ( .f. )
+      RETURN ( .f. )
    end if
 
    oBlock               := ErrorBlock( {| oError | ApoloBreak( oError ) } )
@@ -248,7 +248,7 @@ STATIC FUNCTION CloseFiles()
 
    lOpenFiles  := .f.
 
-Return .t.
+RETURN .t.
 
 //--------------------------------------------------------------------------//
 
@@ -275,7 +275,7 @@ FUNCTION RecCli( oMenuItem, oWnd, aNumRec )
    nLevel               := nLevelUsr( oMenuItem )
    if nAnd( nLevel, 1 ) != 0
       msgStop( "Acceso no permitido." )
-      return nil
+      RETURN nil
    end if
 
    /*
@@ -287,7 +287,7 @@ FUNCTION RecCli( oMenuItem, oWnd, aNumRec )
    end if
 
    if !OpenFiles()
-      Return .f.
+      RETURN .f.
    end if
 
    /*
@@ -731,7 +731,7 @@ end if
       end if
    end if 
 
-Return .t.
+RETURN .t.
 
 //--------------------------------------------------------------------------//
 
@@ -832,12 +832,12 @@ FUNCTION EdtCob( aTmp, aGet, cFacCliP, oBrw, lRectificativa, nSpecialMode, nMode
       case nMode == EDIT_MODE
 
          if aTmp[ _LCONPGO ] .and. !ApoloMsgNoYes( 'La modificación de este recibo puede provocar descuadres contables.' + CRLF + '¿Desea continuar?', 'Recibo ya contabilizado' )
-            return .f.
+            RETURN .f.
          end if
 
          if aTmp[ _LCLOPGO ] .and. !oUser():lAdministrador()
             msgStop( "Solo pueden modificar los recibos cerrados los administradores." )
-            return .f.
+            RETURN .f.
          end if
 
          if !empty( aTmp[ _CNUMMTR ] )
@@ -1448,7 +1448,7 @@ RETURN ( oDlg:nResult == IDOK )
 
 //--------------------------------------------------------------------------//
 
-Static Function StartEdtRec( aTmp, aGet, nMode )
+STATIC FUNCTION StartEdtRec( aTmp, aGet, nMode )
 
    cursorWait()
 
@@ -1467,15 +1467,15 @@ Static Function StartEdtRec( aTmp, aGet, nMode )
 
    cursorWE()
 
-Return .t.
+RETURN .t.
 
 //---------------------------------------------------------------------------//
 
-Static Function KillTrans( oDlg )
+STATIC FUNCTION KillTrans( oDlg )
 
    oDlg:End()
 
-Return .t.
+RETURN .t.
 
 //---------------------------------------------------------------------------//
 /*
@@ -1495,7 +1495,7 @@ RETURN NIL
 
 //-------------------------------------------------------------------------//
 
-Static Function GetReciboCliente( cCodCli, oBrwRec )
+STATIC FUNCTION GetReciboCliente( cCodCli, oBrwRec )
 
    local lResult  := .t.
    local cNumRec  := ""
@@ -1503,7 +1503,7 @@ Static Function GetReciboCliente( cCodCli, oBrwRec )
 
    if empty( cCodCli )
       MsgStop( "Tiene que seleccionar un cliente." )
-      Return nil
+      RETURN nil
    end if
 
    aRecibosSeleccionados      := browseRecCli( cCodCli, D():FacturasClientesCobros( nView ), D():Divisas( nView ) )
@@ -1546,11 +1546,11 @@ Static Function GetReciboCliente( cCodCli, oBrwRec )
 
    setTotalRelacionados()
 
-Return nil
+RETURN nil
 
 //-------------------------------------------------------------------------//
 
-Static Function DelReciboCliente( oBrwRec )
+STATIC FUNCTION DelReciboCliente( oBrwRec )
    
    local n
    local aDelete  := {}
@@ -1579,7 +1579,7 @@ Static Function DelReciboCliente( oBrwRec )
       oBrwRec:Refresh()
    end if
 
-Return nil
+RETURN nil
 
 //-------------------------------------------------------------------------//
 
@@ -1587,7 +1587,7 @@ Return nil
 Contabiliza los recibos
 */
 
-Static Function dlgContabilizaReciboCliente( oBrw, cTitle, cOption, lChgState )
+STATIC FUNCTION dlgContabilizaReciboCliente( oBrw, cTitle, cOption, lChgState )
 
 	local oDlg
    local oBrwCon
@@ -1778,7 +1778,7 @@ RETURN NIL
 
 //------------------------------------------------------------------------//
 
-Static Function startContabilizaReciboCliente( oSerIni, oSimula, cOption )
+STATIC FUNCTION startContabilizaReciboCliente( oSerIni, oSimula, cOption )
 
    oSerIni:SetFocus()
 
@@ -1790,7 +1790,7 @@ RETURN NIL
 
 //------------------------------------------------------------------------//
 
-Static Function TreeChanged( oTree )
+STATIC FUNCTION TreeChanged( oTree )
 
    local oItemTree   := oTree:GetItem()
 
@@ -1843,7 +1843,7 @@ STATIC FUNCTION initContabilizaReciboCliente( cDocIni, cDocFin, dDesde, dHasta, 
 
             ( D():FacturasClientesCobros( nView ) )->( dbgoto( nRecord ) )
          
-            makeContabilizaReciboCliente( cTipo, oTree, lSimula, lChgState, aSimula )
+            makeContabilizaReciboCliente( cTipo, oTree, lSimula, lChgState, nil )
 
             oMtrInf:Set( ( D():FacturasClientesCobros( nView ) )->( ordkeyno() ) )
          
@@ -1854,7 +1854,7 @@ STATIC FUNCTION initContabilizaReciboCliente( cDocIni, cDocFin, dDesde, dHasta, 
          ( D():FacturasClientesCobros( nView ) )->( dbGoTop() )
          while ( lWhile .and. !( D():FacturasClientesCobros( nView ) )->( eof() ) )
 
-            makeContabilizaReciboCliente( cTipo, oTree, lSimula, lChgState, aSimula )
+            makeContabilizaReciboCliente( cTipo, oTree, lSimula, lChgState, nil )
 
             ( D():FacturasClientesCobros( nView ) )->( dbSkip() )
 
@@ -1870,7 +1870,7 @@ STATIC FUNCTION initContabilizaReciboCliente( cDocIni, cDocFin, dDesde, dHasta, 
                                  ( D():FacturasClientesCobros( nView ) )->cSerie + str( ( D():FacturasClientesCobros( nView ) )->nNumFac ) + ( D():FacturasClientesCobros( nView ) )->cSufFac + str( ( D():FacturasClientesCobros( nView ) )->nNumRec ) <= cDocFin .and. ;
                                  !( D():FacturasClientesCobros( nView ) )->( eof() ) ) )
 
-            makeContabilizaReciboCliente( cTipo, oTree, lSimula, lChgState, aSimula )
+            makeContabilizaReciboCliente( cTipo, oTree, lSimula, lChgState, nil )
 
             ( D():FacturasClientesCobros( nView ) )->( dbSkip() )
 
@@ -1887,7 +1887,7 @@ STATIC FUNCTION initContabilizaReciboCliente( cDocIni, cDocFin, dDesde, dHasta, 
                ( D():FacturasClientesCobros( nView ) )->dEntrada >= dDesde .and. ;
                ( D():FacturasClientesCobros( nView ) )->dEntrada <= dHasta
 
-               makeContabilizaReciboCliente( cTipo, oTree, lSimula, lChgState, aSimula )
+               makeContabilizaReciboCliente( cTipo, oTree, lSimula, lChgState, nil )
 
             end if 
 
@@ -1896,7 +1896,6 @@ STATIC FUNCTION initContabilizaReciboCliente( cDocIni, cDocFin, dDesde, dHasta, 
             oMtrInf:Set( ( D():FacturasClientesCobros( nView ) )->( OrdKeyNo() ) )
 
          end do
-
 
    end if
 
@@ -1921,7 +1920,7 @@ STATIC FUNCTION initContabilizaReciboCliente( cDocIni, cDocFin, dDesde, dHasta, 
    oBtnCancel:bAction   := {|| oDlg:End() }
 
    if lSimula
-      WndCenter( oDlg:hWnd ) // Move( aPos[ 1 ], aPos[ 2 ] + 200 )
+      WndCenter( oDlg:hWnd ) 
    end if
 
    oDlg:Enable()
@@ -1934,30 +1933,30 @@ RETURN NIL
 
 //---------------------------------------------------------------------------//
 
-Static Function makeContabilizaReciboCliente( cTipo, oTree, lSimula, lChgState, aSimula )
+STATIC FUNCTION makeContabilizaReciboCliente( cTipo, oTree, lSimula, lChgState, aSimula )
 
-   local lReturn     := .f.
+   local lRETURN     := .f.
 
    do case
       case ( cTipo == "Facturas" .or. cTipo == "Todas" ) .and. empty( ( D():FacturasClientesCobros( nView ) )->cTipRec )
 
          if lChgState
-            lReturn  := ChgState( lSimula )
+            lRETURN  := ChgState( lSimula )
          else
-            lReturn  := ContabilizaReciboCliente( nil, oTree, lSimula, aSimula, D():FacturasClientes( nView ), D():FacturasClientesCobros( nView ), D():FormasPago( nView ), D():Clientes( nView ), D():Divisas( nView ), .f. )
+            lRETURN  := ContabilizaReciboCliente( nil, oTree, lSimula, aSimula, D():FacturasClientes( nView ), D():FacturasClientesCobros( nView ), D():FormasPago( nView ), D():Clientes( nView ), D():Divisas( nView ), .f. )
          end if
 
       case ( cTipo == "Rectificativas" .or. cTipo == "Todas" ) .and. !empty( ( D():FacturasClientesCobros( nView ) )->cTipRec )
 
          if lChgState
-            lReturn  := ChgState( lSimula )
+            lRETURN  := ChgState( lSimula )
          else
-            lReturn  := ContabilizaReciboCliente( nil, oTree, lSimula, aSimula, D():FacturasRectificativas( nView ), D():FacturasClientesCobros( nView ), D():FormasPago( nView ), D():Clientes( nView ), D():Divisas( nView ), .f. )
+            lRETURN  := ContabilizaReciboCliente( nil, oTree, lSimula, aSimula, D():FacturasRectificativas( nView ), D():FacturasClientesCobros( nView ), D():FormasPago( nView ), D():Clientes( nView ), D():Divisas( nView ), .f. )
          end if
 
    end case
 
-Return ( nil )
+RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 
@@ -1999,7 +1998,7 @@ RETURN ( if( lPic, Trans( nTotRec, cPorDiv ), nTotRec ) )
 
 //------------------------------------------------------------------------//
 
-static function nTotalArrayRelacionados()
+STATIC FUNCTION nTotalArrayRelacionados()
 
    local nImporte       := 0
    local cRecibo        := ""
@@ -2013,7 +2012,7 @@ static function nTotalArrayRelacionados()
 
    end if
 
-return nImporte
+RETURN nImporte
 
 //------------------------------------------------------------------------//
 
@@ -2025,7 +2024,7 @@ function setTotalRelacionados()
       oTotalRelacionados:Refresh()
    end if 
 
-return .t.
+RETURN .t.
 
 //------------------------------------------------------------------------//
 
@@ -2188,7 +2187,7 @@ Function cCtaRecCli( cFacCliP, cBncCli )
    DEFAULT cFacCliP     := D():FacturasClientesCobros( nView )
    DEFAULT cBncCli      := D():ClientesBancos( nView )
 
-Return ( cClientCuenta( ( cFacCliP )->cCodCli, cBncCli ) )
+RETURN ( cClientCuenta( ( cFacCliP )->cCodCli, cBncCli ) )
 
 //------------------------------------------------------------------------//
 //
@@ -2415,11 +2414,11 @@ function SynRecCli( cPath )
    CLOSE ( cClient  )
    CLOSE ( cFPago   )
 
-return nil
+RETURN nil
 
 //------------------------------------------------------------------------//
 
-static function lGenRecCli( oBrw, oBtn, nDevice )
+STATIC FUNCTION lGenRecCli( oBrw, oBtn, nDevice )
 
    local bAction
    local nOrdAnt     := ( D():Documentos( nView ) )->( OrdSetFocus( "cTipo" ) )
@@ -2453,17 +2452,17 @@ static function lGenRecCli( oBrw, oBtn, nDevice )
 
    ( D():Documentos( nView ) )->( OrdSetFocus( nOrdAnt ) )
 
-return nil
+RETURN nil
 
 //---------------------------------------------------------------------------//
 
-static function bGenRecCli( nDevice, cCodDoc, cTitle )
+STATIC FUNCTION bGenRecCli( nDevice, cCodDoc, cTitle )
 
    local nDev  := by( nDevice )
    local cCod  := by( cCodDoc   )
    local cTit  := by( cTitle    )
 
-return {|| ImpPago( nil, nDev, cCod, cTit ) }
+RETURN {|| ImpPago( nil, nDev, cCod, cTit ) }
 
 //---------------------------------------------------------------------------//
 
@@ -2724,23 +2723,23 @@ FUNCTION browseRecCli( cCodCli, cFacCliP, cDiv )
 
    local cDbfRecCli     := getDatabaseRecibosClientes( cCodCli, cFacCliP )
 
-Return resourceBrowseRecCli( cDbfRecCli, cDiv )
+RETURN resourceBrowseRecCli( cDbfRecCli, cDiv )
    
 //---------------------------------------------------------------------------//
 
-static function getDatabaseRecibosClientes( cCodCli, cFacCliP )
+STATIC FUNCTION getDatabaseRecibosClientes( cCodCli, cFacCliP )
    
    if lAIS()
-      return getAdsFilterRecibosClientes( cCodCli )
+      RETURN getAdsFilterRecibosClientes( cCodCli )
    else
-      return getDbfFilterRecibosClientes( cCodCli, cFacCliP )
+      RETURN getDbfFilterRecibosClientes( cCodCli, cFacCliP )
    end if
 
-Return nil
+RETURN nil
 
 //---------------------------------------------------------------------------//
 
-static function getAdsFilterRecibosClientes( cCodCli )
+STATIC FUNCTION getAdsFilterRecibosClientes( cCodCli )
 
    local cStm
 
@@ -2751,20 +2750,20 @@ static function getAdsFilterRecibosClientes( cCodCli )
    
    TDataCenter():ExecuteSqlStatement( cStm, "RecibosFacturasClientes" )
 
-Return ( "RecibosFacturasClientes" )
+RETURN ( "RecibosFacturasClientes" )
 
 //---------------------------------------------------------------------------//
 
-static function getDbfFilterRecibosClientes( cCliente, cFacCliP )
+STATIC FUNCTION getDbfFilterRecibosClientes( cCliente, cFacCliP )
 
    ( cFacCliP )->( dbSetFilter( {|| !Field->lCobrado .and. Field->cCodCli == cCliente }, "!lCobrado .and. cCodCli == cCliente" ) )
    ( cFacCliP )->( dbGoTop() )
 
-Return cFacCliP
+RETURN cFacCliP
 
 //---------------------------------------------------------------------------//
 
-static function resourceBrowseRecCli( cFacCliP, cDiv )
+STATIC FUNCTION resourceBrowseRecCli( cFacCliP, cDiv )
 
    local oDlg
    local oBrw
@@ -2989,7 +2988,7 @@ FUNCTION aCalRecCli()
    aAdd( aCalRecCli, {"cTxtRecCli( cDbfRec, cDbfDiv )", "C",100, 0, "Importe en letras",  "",            "", "" } )
    aAdd( aCalRecCli, {"nTotFac",                        "N", 16, 6, "Total factura",      "cPorDivRec",  "", "" } )
 
-return ( aCalRecCli )
+RETURN ( aCalRecCli )
 
 //---------------------------------------------------------------------------//
 
@@ -3011,7 +3010,7 @@ RETURN ( aDoc )
 
 //----------------------------------------------------------------------------//
 
-static function lLiquida( oBrw, lCobrado )
+STATIC FUNCTION lLiquida( oBrw, lCobrado )
 
    local nRec
 
@@ -3058,7 +3057,7 @@ static function lLiquida( oBrw, lCobrado )
       oBrw:Refresh()
    end if
 
-return nil
+RETURN nil
 
 //---------------------------------------------------------------------------//
 
@@ -3282,7 +3281,7 @@ RETURN NIL
 
 //---------------------------------------------------------------------------//
 
-Static Function EdtRecMenu( aTmp, oDlg )
+STATIC FUNCTION EdtRecMenu( aTmp, oDlg )
 
    MENU oMenu
 
@@ -3317,9 +3316,9 @@ RETURN ( oMenu )
 
 //---------------------------------------------------------------------------//
 
-Static Function EndEdtRecMenu()
+STATIC FUNCTION EndEdtRecMenu()
 
-Return( oMenu:End() )
+RETURN( oMenu:End() )
 
 //---------------------------------------------------------------------------//
 
@@ -3333,7 +3332,7 @@ Function EdtRecCli( cNumFac, lOpenBrowse, lRectificativa )
 
    if nAnd( nLevel, 1 ) != 0 .or. nAnd( nLevel, ACC_EDIT ) == 0
       msgStop( 'Acceso no permitido.' )
-      return .t.
+      RETURN .t.
    end if
 
    if lOpenBrowse
@@ -3362,7 +3361,7 @@ Function EdtRecCli( cNumFac, lOpenBrowse, lRectificativa )
 
    end if
 
-Return ( lEdit )
+RETURN ( lEdit )
 
 //----------------------------------------------------------------------------//
 
@@ -3374,7 +3373,7 @@ FUNCTION ZooRecCli( cNumFac, lOpenBrowse )
 
    if nAnd( nLevel, 1 ) != 0 .or. nAnd( nLevel, ACC_ZOOM ) == 0
       msgStop( 'Acceso no permitido.' )
-      return .t.
+      RETURN .t.
    end if
 
    if lOpenBrowse
@@ -3398,7 +3397,7 @@ FUNCTION ZooRecCli( cNumFac, lOpenBrowse )
 
    end if
 
-Return .t.
+RETURN .t.
 
 //----------------------------------------------------------------------------//
 
@@ -3410,7 +3409,7 @@ FUNCTION DelRecCli( cNumFac, lOpenBrowse )
 
    if nAnd( nLevel, 1 ) != 0 .or. nAnd( nLevel, ACC_DELE ) == 0
       msgStop( 'Acceso no permitido.' )
-      return .t.
+      RETURN .t.
    end if
 
    if lOpenBrowse
@@ -3437,7 +3436,7 @@ FUNCTION DelRecCli( cNumFac, lOpenBrowse )
 
    end if
 
-Return .t.
+RETURN .t.
 
 //----------------------------------------------------------------------------//
 
@@ -3449,7 +3448,7 @@ FUNCTION PrnRecCli( cNumFac, lOpenBrowse )
 
    if nAnd( nLevel, 1 ) != 0 .or. nAnd( nLevel, ACC_IMPR ) == 0
       msgStop( 'Acceso no permitido.' )
-      return .t.
+      RETURN .t.
    end if
 
    if lOpenBrowse
@@ -3476,7 +3475,7 @@ FUNCTION PrnRecCli( cNumFac, lOpenBrowse )
 
    end if
 
-Return .t.
+RETURN .t.
 
 //---------------------------------------------------------------------------//
 
@@ -3488,7 +3487,7 @@ FUNCTION VisRecCli( cNumFac, lOpenBrowse )
 
    if nAnd( nLevel, 1 ) != 0 .or. nAnd( nLevel, ACC_IMPR ) == 0
       msgStop( 'Acceso no permitido.' )
-      return .t.
+      RETURN .t.
    end if
 
    if lOpenBrowse
@@ -3515,7 +3514,7 @@ FUNCTION VisRecCli( cNumFac, lOpenBrowse )
 
    end if
 
-Return .t.
+RETURN .t.
 
 //---------------------------------------------------------------------------//
 
@@ -3525,7 +3524,7 @@ FUNCTION IntEdtRecCli( cNumFac )
 
    if nAnd( nLevel, 1 ) != 0 .or. nAnd( nLevel, ACC_ZOOM ) == 0
       msgStop( 'Acceso no permitido.' )
-      return .t.
+      RETURN .t.
    end if
 
    if dbSeekInOrd( cNumFac, "nNumFac", D():FacturasClientesCobros( nView ) )
@@ -3534,7 +3533,7 @@ FUNCTION IntEdtRecCli( cNumFac )
       MsgStop( "No se encuentra recibo" )
    end if
 
-Return .t.
+RETURN .t.
 
 //----------------------------------------------------------------------------//
 
@@ -3552,14 +3551,14 @@ FUNCTION ExtEdtRecCli( cFacCliP, nVista, lRectificativa, oCta, oCtrCoste )
 
    if nAnd( nLevel, 1 ) != 0 .or. nAnd( nLevel, ACC_EDIT ) == 0
       msgStop( 'Acceso no permitido.' )
-      return .t.
+      RETURN .t.
    end if
 
    WinEdtRec( nil, bEdit, cFacCliP, lRectificativa )
 
    lActualizarEstadoFactura   := .t.
 
-Return .t.
+RETURN .t.
 
 //----------------------------------------------------------------------------//
 
@@ -3569,12 +3568,12 @@ FUNCTION ExtDelRecCli( cFacCliP )
 
    if nAnd( nLevel, 1 ) != 0 .or. nAnd( nLevel, ACC_DELE ) == 0
       msgStop( 'Acceso no permitido.' )
-      return .t.
+      RETURN .t.
    end if
 
    DelCobCli( nil, cFacCliP )
 
-Return .t.
+RETURN .t.
 
 //----------------------------------------------------------------------------//
 
@@ -3782,7 +3781,7 @@ STATIC FUNCTION StartPrint( cCodDoc, nRad, dFecIni, dFecFin, cDocIni, cDocFin, c
    local cCaption       := 'Imprimiendo recibos'
 
    if empty( cCodDoc )
-      return nil
+      RETURN nil
    end if
 
    private cDbfRec      := D():FacturasClientesCobros( nView )
@@ -3886,7 +3885,7 @@ RETURN NIL
 
 //--------------------------------------------------------------------------//
 
-Static Function Skipping( nRad, dFecIni, dFecFin, cDocIni, cDocFin, cCodDoc, cCodPgo, lNotRem, lNotImp, lNotCob, nCopPrn, oInf )
+STATIC FUNCTION Skipping( nRad, dFecIni, dFecFin, cDocIni, cDocFin, cCodDoc, cCodPgo, lNotRem, lNotImp, lNotCob, nCopPrn, oInf )
 
    local nOrd
    local nCopYet  := 0
@@ -3977,7 +3976,7 @@ STATIC FUNCTION ImpPago( cNumRec, nDevice, cCodDoc, cCaption, nCopies )
    end if
 
    if !lExisteDocumento( cCodDoc, D():Documentos( nView ) )
-      return nil
+      RETURN nil
    end if
 
    /*
@@ -4100,11 +4099,11 @@ Function bGenEdtRecCli( cDocumento, lFromFactura )
       bGen              := {|| IntEdtRecCli( cDoc ) }
    end if
 
-return ( bGen )
+RETURN ( bGen )
 
 //-------------------------------------------------------------------------//
 
-Static Function DataReport( oFr )
+STATIC FUNCTION DataReport( oFr )
 
    /*
    Zona de datos------------------------------------------------------------
@@ -4157,11 +4156,11 @@ Static Function DataReport( oFr )
    oFr:SetResyncPair(   "Recibos", "Bancos" )
    oFr:SetResyncPair(   "Recibos", "Compensaciones" )
 
-Return nil
+RETURN nil
 
 //---------------------------------------------------------------------------//
 
-Static Function VariableReport( oFr )
+STATIC FUNCTION VariableReport( oFr )
 
    oFr:DeleteCategory(  "Recibos" )
 
@@ -4176,7 +4175,7 @@ Static Function VariableReport( oFr )
    oFr:AddVariable(     "Recibos", "Total rectificativa",      "CallHbFunc('nTotRectificativa')" )
    oFr:AddVariable(     "Recibos", "Cuenta bancaria cliente",  "CallHbFunc('cCtaRecCli')" )
 
-Return nil
+RETURN nil
 
 //---------------------------------------------------------------------------//
 
@@ -4270,21 +4269,21 @@ Function DesignReportRecCli( oFr, cDbfDoc )
 
    else
 
-      Return .f.
+      RETURN .f.
 
    end if
 
-Return .t.
+RETURN .t.
 
 //---------------------------------------------------------------------------//
 
 Function mailReportRecCli( cCodigoDocumento )
 
-Return ( PrintReportRecCli( IS_MAIL, 1, prnGetName(), cCodigoDocumento ) )
+RETURN ( PrintReportRecCli( IS_MAIL, 1, prnGetName(), cCodigoDocumento ) )
 
 //---------------------------------------------------------------------------//
 
-static Function PrintReportRecCli( nDevice, nCopies, cPrinter, cCodigoDocumento )
+STATIC FUNCTION PrintReportRecCli( nDevice, nCopies, cPrinter, cCodigoDocumento )
 
    local oFr
    local cFilePdf             := cPatTmp() + "RecibosCliente" + strTran( ( D():FacturasClientesCobros( nView ) )->cSerie + str( ( D():FacturasClientesCobros( nView ) )->nNumFac ) + ( D():FacturasClientesCobros( nView ) )->cSufFac, " ", "" ) + ".Pdf"
@@ -4296,12 +4295,12 @@ static Function PrintReportRecCli( nDevice, nCopies, cPrinter, cCodigoDocumento 
 
    if empty( cCodigoDocumento )
       msgStop( "El código del documento esta vacio" )
-      Return ( nil )
+      RETURN ( nil )
    end if 
 
    if !lMemoDocumento( cCodigoDocumento, D():Documentos( nView ) )
       msgStop( "El formato " + cCodigoDocumento + " no se encuentra, o no es un formato visual." )
-      Return ( nil )
+      RETURN ( nil )
    end if 
 
    SysRefresh()
@@ -4394,7 +4393,7 @@ static Function PrintReportRecCli( nDevice, nCopies, cPrinter, cCodigoDocumento 
 
    oFr:DestroyFr()
 
-Return ( cFilePdf )
+RETURN ( cFilePdf )
 
 //---------------------------------------------------------------------------//
 
@@ -4408,7 +4407,7 @@ Function nTotFactura( cNumRec, cFacCliT, cFacCliL, cDbfIva, cDbfDiv, cFacCliP, c
    DEFAULT cFacCliP  := D():FacturasClientesCobros( nView )
    DEFAULT cAntCliT  := D():AnticiposClientes( nView )
 
-Return ( nTotFacCli( cNumRec, cFacCliT, cFacCliL, cDbfIva, cDbfDiv, cFacCliP, cAntCliT, , , .f. ) )
+RETURN ( nTotFacCli( cNumRec, cFacCliT, cFacCliL, cDbfIva, cDbfDiv, cFacCliP, cAntCliT, , , .f. ) )
 
 //---------------------------------------------------------------------------//
 
@@ -4426,7 +4425,7 @@ Function nTotCobros( cNumRec, cFacCliT, cFacCliL, cDbfIva, cDbfDiv, cFacCliP, cA
 
    sTotCobros        := sTotFacCli( cNumRec, cFacCliT, cFacCliL, cDbfIva, cDbfDiv, cFacCliP, cAntCliT )
 
-Return ( sTotCobros:nTotalCobrado )
+RETURN ( sTotCobros:nTotalCobrado )
 
 //---------------------------------------------------------------------------//
 
@@ -4438,7 +4437,7 @@ function nTotRectificativa( cNumRec, cFacRecT, cFacRecL, cDbfIva, cDbfDiv )
    DEFAULT cDbfIva   := D():TiposIva( nView )
    DEFAULT cDbfDiv   := D():Divisas( nView )
 
-Return ( nTotFacRec( cNumRec, cFacRecT, cFacRecL, cDbfIva, cDbfDiv, nil, nil, .f. ) )
+RETURN ( nTotFacRec( cNumRec, cFacRecT, cFacRecL, cDbfIva, cDbfDiv, nil, nil, .f. ) )
 
 //---------------------------------------------------------------------------//
 
@@ -4458,7 +4457,7 @@ function nTotRecibo( cNumRec, cFacCliP, cDiv )
 
    hSetStatus( hStatus )
 
-Return ( nTotRec )
+RETURN ( nTotRec )
 
 //---------------------------------------------------------------------------//
 /*
@@ -4723,7 +4722,7 @@ FUNCTION aItmRecCli()
    aAdd( aBasRecCli, {"cCtrCoste"   ,"C",  9, 0, "Código del centro de coste",                           "CentroCoste",          "", "( cDbfRec )", nil } )
    aAdd( aBasRecCli, {"nImpRel"     ,"N", 16, 6, "Importe relacionados",                                 "ImporteRelacionados",  "", "( cDbfRec )", nil } )
 
-Return ( aBasRecCli )
+RETURN ( aBasRecCli )
 
 //---------------------------------------------------------------------------//
 
@@ -4734,7 +4733,7 @@ FUNCTION aItmGruposRecibos()
    aAdd( aBasRecCli, {"cNumMtr"     ,"C", 14, 0, "Número de recibo matriz",         "",                "", "( cDbfRec )" } )
    aAdd( aBasRecCli, {"cNumRec"     ,"C", 14, 0, "Número de recibo relacionado",    "",                "", "( cDbfRec )" } )
 
-Return ( aBasRecCli )
+RETURN ( aBasRecCli )
 
 //---------------------------------------------------------------------------//
 // 
@@ -4745,7 +4744,7 @@ FUNCTION generatePagosFacturaCliente( Id, nView, nMode )
 
    sysrefresh()
 
-Return ( genPgoFacCli( Id, D():FacturasClientes( nView ), D():FacturasClientesLineas( nView ), D():FacturasClientesCobros( nView ), D():AnticiposClientes( nView ), D():Clientes( nView ), D():FormasPago( nView ), D():Divisas( nView ), D():TiposIva( nView ), nMode, .f. ) )   
+RETURN ( genPgoFacCli( Id, D():FacturasClientes( nView ), D():FacturasClientesLineas( nView ), D():FacturasClientesCobros( nView ), D():AnticiposClientes( nView ), D():Clientes( nView ), D():FormasPago( nView ), D():Divisas( nView ), D():TiposIva( nView ), nMode, .f. ) )   
 
 //---------------------------------------------------------------------------//
 
@@ -4998,7 +4997,7 @@ RETURN NIL
 
 //---------------------------------------------------------------------------//
 /*
-static function generaRecibosFacturasClientes( cNumFac, cFacCliT, cFacCliL, cFacCliP, cAntCliT, cClient, cFPago, cDiv, cIva, nMode, lMessage )
+STATIC FUNCTION generaRecibosFacturasClientes( cNumFac, cFacCliT, cFacCliL, cFacCliP, cAntCliT, cClient, cFPago, cDiv, cIva, nMode, lMessage )
 
    local nPlazo
    local nPlazos                 := 0
@@ -5017,7 +5016,7 @@ static function generaRecibosFacturasClientes( cNumFac, cFacCliT, cFacCliL, cFac
 
    if !( dbSeekInOrd( cCodPgo, "cCodPago", cFPago ) )
       msgStop( "Forma de pago no econtrada, imposible generar recibos" )
-      Return .f.
+      RETURN .f.
    end if
 
    nPlazos                       := max( ( cFPago )->nPlazos, 1 )
@@ -5034,7 +5033,7 @@ static function generaRecibosFacturasClientes( cNumFac, cFacCliT, cFacCliL, cFac
 
 
 
-static function generaReciboFacturaCliente( cNumFac, nImporteRecibo, nPlazo, cFacCliT, cFacCliP )
+STATIC FUNCTION generaReciboFacturaCliente( cNumFac, nImporteRecibo, nPlazo, cFacCliT, cFacCliP )
 
    local nRecno   := ( cFacCliT )->( recno() )
 
@@ -5129,7 +5128,7 @@ FUNCTION dNexDay( dFecPgo, dbfCli )
    local nYea
 
    if empty( dbfCli )
-      Return ( dFecPgo )
+      RETURN ( dFecPgo )
    end if
 
    nDay        := Day( dFecPgo )
@@ -5196,7 +5195,7 @@ Function ValCobro( aGet, aTmp )
          aGet[ _NIMPGAS ]:cText( aTmp[ _NIMPORTE ] - aTmp[ _NIMPCOB ] )
       end if
 
-      Return .t.
+      RETURN .t.
 
    else
 
@@ -5204,7 +5203,7 @@ Function ValCobro( aGet, aTmp )
 
    end if
 
-Return .f.
+RETURN .f.
 
 //---------------------------------------------------------------------------//
 
@@ -5227,7 +5226,7 @@ Function ValCheck( aGet, aTmp )
 
    end if
 
-Return .t.
+RETURN .t.
 
 //---------------------------------------------------------------------------//
 
@@ -5324,7 +5323,7 @@ Function lChangeDevolucion( aGet, aTmp, lIntro )
       aGet[ _CRECDEV ]:Enable()
    end if
 
-return .t.
+RETURN .t.
 
 //---------------------------------------------------------------------------//
 
@@ -5332,43 +5331,43 @@ Function DelCobCli( oBrw, cFacCliP )
 
    if ( cFacCliP )->lCloPgo .and. !oUser():lAdministrador()
       MsgStop( "Solo pueden eliminar los recibos cerrados los administradores." )
-      return .f.
+      RETURN .f.
    end if
 
    if !empty( ( cFacCliP )->nNumRem ) .and. !oUser():lAdministrador()
       msgStop( "Este tiket pertenece a una remesa de clientes.", "Imposible eliminar" )
-      return .f.
+      RETURN .f.
    end if
 
    if !empty( ( cFacCliP )->nNumCob ) .and. !oUser():lAdministrador()
       msgStop( "Este tiket pertenece a una remesa de cobros.", "Imposible eliminar" )
-      return .f.
+      RETURN .f.
    end if
 
    if ( cFacCliP )->lCobrado .and. !oUser():lAdministrador()
       msgStop( "Este tiket esta cobrado.", "Imposible eliminar" )
-      return .f.
+      RETURN .f.
    end if
 
    if ( cFacCliP )->lRecDto .and. !oUser():lAdministrador()
       msgStop( "Este tiket esta descontado.", "Imposible eliminar" )
-      return .f.
+      RETURN .f.
    end if
 
    if !empty( ( cFacCliP )->cNumMtr )
       msgStop( "Este recibo está compensado", "Imposible eliminar" )
-      return .f.
+      RETURN .f.
    end if
 
 /*
    if !empty( ( cFacCliP )->lCobrado )
       msgStop( "Este recibo está liquidado", "Imposible eliminar" )
-      return .f.
+      RETURN .f.
    end if
 */
    WinDelRec( oBrw, cFacCliP, {|| QuiRecCli( cFacCliP ) } )
 
-return .t.
+RETURN .t.
 
 //---------------------------------------------------------------------------//
 
@@ -5411,7 +5410,7 @@ Function QuiRecCli( cFacCliP )
    ( cFacCliP )->( OrdSetFocus( nOrdAnt ) )
    ( cFacCliP )->( dbGoTo( nRec ) )
 
-Return .t.
+RETURN .t.
 
 //---------------------------------------------------------------------------//
 
@@ -5457,11 +5456,11 @@ function nNewReciboCliente( cNumFac, cTipRec, cFacCliP )
 
    MsgInfo( ( cFacCliP )->( dbInfo( DBI_DBFILTER ) ) )*/
 
-return ( nCon )
+RETURN ( nCon )
 
 //------------------------------------------------------------------------//
 
-Static Function YearComboBoxChange()
+STATIC FUNCTION YearComboBoxChange()
 
    if ( oWndBrw:oWndBar:cYearComboBox() != __txtAllYearsFilter__ )
       oWndBrw:oWndBar:setYearComboBoxExpression( "Year( Field->dPreCob ) == " + oWndBrw:oWndBar:cYearComboBox() )
@@ -5471,11 +5470,11 @@ Static Function YearComboBoxChange()
 
    oWndBrw:chgFilter()
 
-Return nil
+RETURN nil
 
 //---------------------------------------------------------------------------//
 
-Static Function EndTrans( aTmp, aGet, cFacCliP, oBrw, oDlg, nMode, nSpecialMode )
+STATIC FUNCTION EndTrans( aTmp, aGet, cFacCliP, oBrw, oDlg, nMode, nSpecialMode )
 
    local nRec        
    local nImp
@@ -5502,7 +5501,7 @@ Static Function EndTrans( aTmp, aGet, cFacCliP, oBrw, oDlg, nMode, nSpecialMode 
    if nSpecialMode == LIBRE_MODE
 
       if !lValidReciboLibre( aTmp )
-         Return .f.
+         RETURN .f.
       end if
 
       cSerie            := cNewSer( "nRecCli", D():Contadores( nView ) )
@@ -5531,7 +5530,7 @@ Static Function EndTrans( aTmp, aGet, cFacCliP, oBrw, oDlg, nMode, nSpecialMode 
    */
 
    if !aGet[ _NIMPCOB ]:lValid()
-      return .f.
+      RETURN .f.
    end if
 
    /*
@@ -5540,7 +5539,7 @@ Static Function EndTrans( aTmp, aGet, cFacCliP, oBrw, oDlg, nMode, nSpecialMode 
    if nSpecialMode != LIBRE_MODE
       if nImpTmp > nImpFld
          msgStop( "El importe no puede ser superior al actual." )
-         return nil
+         RETURN nil
       end if
    end if
    */
@@ -5548,7 +5547,7 @@ Static Function EndTrans( aTmp, aGet, cFacCliP, oBrw, oDlg, nMode, nSpecialMode 
    if !lExisteTurno( aGet[ _CTURREC ]:VarGet(), D():Turnos( nView ) )
       msgStop( "La sesión introducida no existe." )
       aGet[ _CTURREC ]:SetFocus()
-      return nil
+      RETURN nil
    end if
 
    oDlg:Disable()
@@ -5793,28 +5792,28 @@ Static Function EndTrans( aTmp, aGet, cFacCliP, oBrw, oDlg, nMode, nSpecialMode 
 
    oDlg:End( IDOK )
 
-return .t.
+RETURN .t.
 
 //---------------------------------------------------------------------------//
 
-static function lValidReciboLibre( aTmp )
+STATIC FUNCTION lValidReciboLibre( aTmp )
 
    if empty( aTmp[ _CCODCLI ] )
       MsgInfo( "El código del cliente no puede estar vacío para un recibo libre" )
-      Return .f.
+      RETURN .f.
    end if
 
    if empty( aTmp[ _CCODPGO ] )
       MsgInfo( "El código de la forma de pago no puede estar vacío para un recibo libre" )
-      Return .f.
+      RETURN .f.
    end if
 
    if aTmp[ _NIMPORTE ] == 0 .and. empty( oClienteCompensar )
       MsgInfo( "No puede hacer un recibo libre con importe 0" )
-      Return .f.
+      RETURN .f.
    end if
 
-return ( .t. )
+RETURN ( .t. )
 
 //---------------------------------------------------------------------------//
 
@@ -5845,13 +5844,13 @@ function RollBackRecibosRelacionados( cNumRecTip, cFacCliP )
    ( cFacCliP )->( dbGoTo( nRec ) )
    ( cFacCliP )->( OrdSetFocus( nOrdAnt ) )
 
-Return .t.
+RETURN .t.
 
 //---------------------------------------------------------------------------//
 
 function nEstadoRecibo( uFacCliP )
 
-Return ( hGetPos( hEstadoRecibo, cEstadoRecibo( uFacCliP ) ) )
+RETURN ( hGetPos( hEstadoRecibo, cEstadoRecibo( uFacCliP ) ) )
 
 //---------------------------------------------------------------------------//
 
@@ -5862,7 +5861,7 @@ function cEstadoRecibo( uFacCliP )
    DEFAULT uFacCliP     := D():FacturasClientesCobros( nView )
 
    if empty( uFacCliP )
-      Return ( cEstadoRecibo )
+      RETURN ( cEstadoRecibo )
    end if 
 
    do case
@@ -5878,7 +5877,7 @@ function cEstadoRecibo( uFacCliP )
          cEstadoRecibo  := "Pendiente"
    end case
 
-Return ( cEstadoRecibo )
+RETURN ( cEstadoRecibo )
 
 //---------------------------------------------------------------------------//
 
@@ -5888,10 +5887,10 @@ Function lReciboMatriz( cNumRec, uFacCliP )
    DEFAULT cNumRec      := ( D():FacturasClientesCobros( nView ) )->cSerie + str( ( D():FacturasClientesCobros( nView ) )->nNumFac ) + ( D():FacturasClientesCobros( nView ) )->cSufFac + str( ( D():FacturasClientesCobros( nView ) )->nNumRec ) + ( D():FacturasClientesCobros( nView ) )->cTipRec
 
    if dbSeekInOrd( cNumRec, "cNumMtr", uFacCliP )
-      Return .t.
+      RETURN .t.
    end if 
 
-Return .f.
+RETURN .f.
 
 //---------------------------------------------------------------------------//
 
@@ -5919,7 +5918,7 @@ Function nEstadoMatriz( uFacCliP )
       nEstado        := 3
    end if
 
-Return nEstado
+RETURN nEstado
 
 //---------------------------------------------------------------------------//
 
@@ -5935,7 +5934,7 @@ Function cEstadoMatriz( uFacCliP )
          cEstadoMatriz  := "Compensado"
    end case
 
-Return ( cEstadoMatriz )
+RETURN ( cEstadoMatriz )
 
 //---------------------------------------------------------------------------//
 
@@ -5958,11 +5957,11 @@ Function cCuentaEmpresaRecibo( uFacCliP )
 
    end case
 
-Return ( cCuentaEmpresaRecibo )
+RETURN ( cCuentaEmpresaRecibo )
 
 //---------------------------------------------------------------------------//
 
-static function lUpdateSubCta( aGet, aTmp )
+STATIC FUNCTION lUpdateSubCta( aGet, aTmp )
 
    if !empty( aTmp[ _CCODPGO ] )
 
@@ -5978,34 +5977,34 @@ static function lUpdateSubCta( aGet, aTmp )
 
    end if
 
-Return .t.
+RETURN .t.
 
 //---------------------------------------------------------------------------//
 
-static function lValidCompensado( aTmp )
+STATIC FUNCTION lValidCompensado( aTmp )
 
    local cNumRec  := aTmp[ _CSERIE ] + "/" + allTrim( str( aTmp[ _NNUMFAC ] ) ) + "/" + aTmp[ _CSUFFAC ] + "-" + AllTrim( str( aTmp[ _NNUMREC ] ) )
 
    if aTmp[ _LCOBRADO ]
       msgStop( "Recibo ya cobrado.", "Recibo: " + cNumRec )
-      Return .f.
+      RETURN .f.
    end if 
 
    if aTmp[ _LREMESA ]
       msgStop( "Recibo ya remesado.", "Recibo: " + cNumRec )
-      Return .f.
+      RETURN .f.
    end if 
 
    if !empty( aTmp[ _CNUMMTR ] )
       msgStop( "Recibo ya pertenece a otra matriz.", "Recibo: " + cNumRec )
-      Return .f.
+      RETURN .f.
    end if 
 
-Return .t.
+RETURN .t.
 
 //---------------------------------------------------------------------------//
 
-Static Function cTipoRecibo( cTipo )
+STATIC FUNCTION cTipoRecibo( cTipo )
 
    local cTipoRecibo    := "Factura"
 
@@ -6016,18 +6015,18 @@ Static Function cTipoRecibo( cTipo )
          cTipoRecibo    := "Libre"
    end case
 
-Return ( cTipoRecibo )
+RETURN ( cTipoRecibo )
 
 //---------------------------------------------------------------------------//
 
-Static Function loadCliente( aGet, aTmp )
+STATIC FUNCTION loadCliente( aGet, aTmp )
 
    local lValid      := .t.
    local cCodCli     := aGet[ _CCODCLI ]:varGet()
    local lChgCodCli  := ( empty( cOldCodCli ) .or. cOldCodCli != cCodCli )
 
    if empty( cCodCli )
-      Return .t.
+      RETURN .t.
    elseif At( ".", cCodCli ) != 0
       cCodCli     := PntReplace( aGet[ _CCODCLI ], "0", RetNumCodCliEmp() )
    else
@@ -6083,11 +6082,11 @@ Static Function loadCliente( aGet, aTmp )
 
    end if
 
-Return ( lValid )
+RETURN ( lValid )
 
 //---------------------------------------------------------------------------//
 
-Static Function CompensarReciboCliente( oBrw )
+STATIC FUNCTION CompensarReciboCliente( oBrw )
 
    local oDlg
    local oBmp
@@ -6233,32 +6232,32 @@ Static Function CompensarReciboCliente( oBrw )
       oBrw:Refresh()
    end if
 
-Return ( .t. )
+RETURN ( .t. )
 
 //---------------------------------------------------------------------------//
 
-Static Function lPreSaveCompensarReciboCliente()
+STATIC FUNCTION lPreSaveCompensarReciboCliente()
 
    if empty( oClienteCompensar:VarGet() )
       MsgStop( "Tiene que seleccionar un cliente" )
       oClienteCompensar:SetFocus()
-      Return .f.
+      RETURN .f.
    end if
 
    if Len( aRecibosRelacionados ) < 1
       MsgStop( "Tiene que seleccionar recibos para crear una compensación" )
-      Return .f.
+      RETURN .f.
    end if
 
    if !WinAppRec( oWndBrw:oBrw, bEdit, D():FacturasClientesCobros( nView ), , LIBRE_MODE )
-      Return .f.
+      RETURN .f.
    end if
 
-Return .t.
+RETURN .t.
 
 //---------------------------------------------------------------------------//
 
-Static Function ZoomReciboCliente( cNumFac )
+STATIC FUNCTION ZoomReciboCliente( cNumFac )
 
    local nRec     := ( D():FacturasClientesCobros( nView ) )->( Recno() )
    local nOrdAnt  := ( D():FacturasClientesCobros( nView ) )->( OrdSetFocus( "nNumFac" ) )
@@ -6270,11 +6269,11 @@ Static Function ZoomReciboCliente( cNumFac )
    ( D():FacturasClientesCobros( nView ) )->( OrdSetFocus( nOrdAnt ) )
    ( D():FacturasClientesCobros( nView ) )->( dbGoTo( nRec ) )
 
-Return .t.
+RETURN .t.
 
 //---------------------------------------------------------------------------//
 
-static Function aRecibosAgrupados( uFacCliP )
+STATIC FUNCTION aRecibosAgrupados( uFacCliP )
 
    local nRec
    local nOrd
@@ -6311,11 +6310,11 @@ static Function aRecibosAgrupados( uFacCliP )
    ( uFacCliP )->( ordsetfocus( nOrd ) )
    ( uFacCliP )->( dbgoto( nRec ) )
 
-Return nil
+RETURN nil
 
 //---------------------------------------------------------------------------//
 
-static function deleteRecibosFacturasClientes( cNumeroFactura, dbfFacCliP )
+STATIC FUNCTION deleteRecibosFacturasClientes( cNumeroFactura, dbfFacCliP )
 
    while ( dbfFacCliP )->( dbSeek( cNumeroFactura ) ) .and. ( dbfFacCliP )->( !eof() )
 
@@ -6328,11 +6327,11 @@ static function deleteRecibosFacturasClientes( cNumeroFactura, dbfFacCliP )
 
    end while
 
-Return nil
+RETURN nil
 
 //---------------------------------------------------------------------------//
 
-Static Function cFormatoRecibosClientes( cSerie )
+STATIC FUNCTION cFormatoRecibosClientes( cSerie )
 
    local cFormato
 
@@ -6344,14 +6343,14 @@ Static Function cFormatoRecibosClientes( cSerie )
       cFormato       := cFirstDoc( "RF", D():Documentos( nView ) )
    end if
 
-Return ( cFormato )
+RETURN ( cFormato )
 
 //---------------------------------------------------------------------------//
 
-Static Function actualizarEstadoFactura( cTipoRecibo, cNumeroFactura )
+STATIC FUNCTION actualizarEstadoFactura( cTipoRecibo, cNumeroFactura )
 
    if !( lActualizarEstadoFactura )
-      Return ( .f. )
+      RETURN ( .f. )
    end if 
 
    do case 
@@ -6369,7 +6368,7 @@ Static Function actualizarEstadoFactura( cTipoRecibo, cNumeroFactura )
 
    end case
 
-Return nil
+RETURN nil
 
 //---------------------------------------------------------------------------//
 
@@ -6454,7 +6453,7 @@ Function LiquidaRecibo( nImporte, dbfRecCli, cFacCliT )
 
    end if
 
-Return nil
+RETURN nil
 
 //---------------------------------------------------------------------------//
 
@@ -6466,32 +6465,32 @@ Function insertVencimientoContaplus( cFacCliP, cClient )
    // Si el recibo esta pagado nos vamos--------------------------------------
 
    if ( ( cFacCliP )->lCobrado ) 
-      Return ( .f. )
+      RETURN ( .f. )
    end if 
 
    // si no estamos usando una version de contaplus----------------------------
 
    if lAplicacionA3()
-      Return ( .f. )
+      RETURN ( .f. )
    end if 
 
    // si esta vacia la ruta de contaplus---------------------------------------
 
    if empty( cRutCnt() )
-      Return ( .f. )
+      RETURN ( .f. )
    end if 
 
    // la serie del recibo tiene empresa contable asociada----------------------
 
    cEmpresaContaplus    := cEmpCnt( ( cFacCliP )->cSerie )
    if empty(cEmpresaContaplus)
-      Return ( .f. )
+      RETURN ( .f. )
    end if 
 
    // Apertura de base de dtos de vencimiento en contaplis
 
    if !( OpenVencimientos( cRutCnt(), cEmpresaContaplus, @cArea ) )
-      Return ( .f. )
+      RETURN ( .f. )
    end if 
 
    // Añadir campos a base de datos de contaplus
@@ -6513,6 +6512,6 @@ Function insertVencimientoContaplus( cFacCliP, cClient )
 
    Close( cArea )
 
-Return nil
+RETURN nil
 
 //---------------------------------------------------------------------------//
