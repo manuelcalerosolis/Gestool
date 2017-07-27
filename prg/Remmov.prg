@@ -2852,6 +2852,7 @@ METHOD DataReport( oFr ) CLASS TRemMovAlm
    oFr:SetFieldAliases( "Movimiento", cObjectsToReport( ::oDbf ) )
 
    if !empty( ::oDetMovimientos )
+      ::oDetMovimientos:oDbf:OrdSetFocus( "nNumRem" )
       oFr:SetWorkArea(     "Lineas de movimientos", ::oDetMovimientos:oDbf:nArea )
       oFr:SetFieldAliases( "Lineas de movimientos", cObjectsToReport( ::oDetMovimientos:oDbf ) )
    end if
