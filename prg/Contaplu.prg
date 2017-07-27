@@ -1583,7 +1583,7 @@ Static Function MkAsientoContaplus( Asien,;
    // l340/lSII----------------------------------------------------------------
 
    if ( cDiario )->( fieldpos( "l340" ) ) != 0
-      aTemp[ ( cDiario )->( fieldpos( "l340" ) ) ]       := ! ConfiguracionEmpresasModel():getLogic( 'informacion_inmediata', .f. )
+      aTemp[ ( cDiario )->( fieldpos( "l340" ) ) ]       := .t.
    end if
 
    // timestamp----------------------------------------------------------------
