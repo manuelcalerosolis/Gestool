@@ -723,7 +723,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfHisMov, oBrw, cCodArt, nTipMov, nMode, lE
          WHEN     ( nMode != ZOOM_MODE ) ;
          VALID    ( cTMov( aGet[ _CCODMOV ], dbfTMov, oSay2 ) ) ;
          BITMAP   "LUPA" ;
-         ON HELP  ( BrwTMov( aGet[ _CCODMOV ], dbfTMov, oSay2 ) ) ;
+         ON HELP  ( browseGruposMovimientos( aGet[ _CCODMOV ], oSay2, dbfTMov ) ) ;
          OF       oDlg
 
       REDEFINE GET oSay2 VAR cSay2 ;

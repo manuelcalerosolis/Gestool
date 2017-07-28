@@ -110,7 +110,7 @@ METHOD lResource( cFld )
       OF       ::oFld:aDialogs[1]
 
       oTMovOrg:bValid   := {|| cTMov( oTMovOrg, ::oDbfTMov:cAlias, oSayTMovOrg ) }
-      oTMovOrg:bHelp    := {|| BrwTMov( oTMovOrg, ::oDbfTMov:cAlias, oSayTMovOrg ) }
+      oTMovOrg:bHelp    := {|| browseGruposMovimientos( oTMovOrg, oSayTMovOrg, ::oDbfTMov:cAlias ) }
 
    REDEFINE GET oSayTMovOrg VAR cSayTMovOrg ;
       ID       ( 80 );
@@ -126,7 +126,7 @@ METHOD lResource( cFld )
       OF       ::oFld:aDialogs[1]
 
       oTMovDes:bValid   := {|| cTMov( oTMovDes, ::oDbfTMov:cAlias, oSayTMovDes ) }
-      oTMovDes:bHelp    := {|| BrwTMov( oTMovDes, ::oDbfTMov:cAlias, oSayTMovDes ) }
+      oTMovDes:bHelp    := {|| browseGruposMovimientos( oTMovDes, oSayTMovDes, ::oDbfTMov:cAlias ) }
 
    REDEFINE GET oSayTMovDes VAR cSayTMovDes ;
       WHEN     .f.;

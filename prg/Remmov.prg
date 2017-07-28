@@ -1111,7 +1111,7 @@ METHOD Resource( nMode ) CLASS TRemMovAlm
          OF       oDlg
 
       ::oCodMov:bValid     := {|| cTMov( ::oCodMov, ::oTMov:cAlias, oSay[ 3 ] ) }
-      ::oCodMov:bHelp      := {|| BrwTMov( ::oCodMov, ::oTMov:cAlias, oSay[ 3 ] ) }
+      ::oCodMov:bHelp      := {|| browseGruposMovimientos( ::oCodMov, oSay[ 3 ], ::oTMov:cAlias ) }
 
       REDEFINE GET oSay[ 3 ] VAR cSay[ 3 ] UPDATE ;
          ID       141 ;

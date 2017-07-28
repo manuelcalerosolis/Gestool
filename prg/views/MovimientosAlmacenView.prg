@@ -12,6 +12,10 @@ CLASS MovimientosAlmacenView FROM SQLBaseView
 
    METHOD   stampAlmacenNombre( oGetAlmacenOrigen )
 
+   METHOD   stampGrupoMovimientoNombre( oGetGrupoMovimiento )
+
+   METHOD   changeTipoMovimiento( oRadioTipoMovimento, oGetAlmacenOrigen )
+
 END CLASS
 
 //---------------------------------------------------------------------------//
@@ -30,8 +34,10 @@ METHOD Dialog()
 
    local oDlg
    local oBmpGeneral
+   local oGetGrupoMovimiento
    local oGetAlmacenOrigen
    local oGetAlmacenDestino
+   local oRadioTipoMovimento
 
    DEFINE DIALOG oDlg RESOURCE "RemMov" TITLE ::lblTitle() + "movimientos de almacén"
 
@@ -54,7 +60,7 @@ METHOD Dialog()
       REDEFINE GET   ::oController:oModel:hBuffer[ "fecha_hora" ] ;
          ID          120 ;
          PICTURE     "@DT" ;
-         WHEN        ( !::oController:isZoomMode() ) ;
+         WHEN        ( ::oController:isNotZoomMode() ) ;
          OF          oDlg
 
       REDEFINE GET   ::oController:oModel:hBuffer[ "usuario" ] ;
@@ -62,9 +68,11 @@ METHOD Dialog()
          WHEN        ( .f. ) ;
          OF          oDlg
 
-      REDEFINE RADIO ::oController:oModel:hBuffer[ "tipo_movimiento" ] ;
+      REDEFINE RADIO oRadioTipoMovimento ;
+         VAR         ::oController:oModel:hBuffer[ "tipo_movimiento" ] ;
          ID          130, 131, 132, 133 ;
-         WHEN        ( !::oController:isZoomMode() ) ;
+         WHEN        ( ::oController:isNotZoomMode() ) ;
+         ON CHANGE   ( ::changeTipoMovimiento( oRadioTipoMovimento, oGetAlmacenOrigen ) ) ;
          OF          oDlg
 
       REDEFINE GET   oGetAlmacenOrigen ;
@@ -72,7 +80,7 @@ METHOD Dialog()
          ID          150 ;
          IDHELP      151 ;
          IDSAY       152 ;
-         WHEN        ( !::oController:isZoomMode() ) ;
+         WHEN        ( ::oController:isNotZoomMode() ) ;
          PICTURE     "@!" ;
          BITMAP      "Lupa" ;
          OF          oDlg
@@ -85,7 +93,7 @@ METHOD Dialog()
          ID          160 ;
          IDHELP      161 ;
          IDSAY       162 ;
-         WHEN        ( !::oController:isZoomMode() ) ;
+         WHEN        ( ::oController:isNotZoomMode() ) ;
          PICTURE     "@!" ;
          BITMAP      "Lupa" ;
          OF          oDlg
@@ -93,11 +101,22 @@ METHOD Dialog()
       oGetAlmacenDestino:bValid   := {|| ::stampAlmacenNombre( oGetAlmacenDestino ) }
       oGetAlmacenDestino:bHelp    := {|| brwAlmacen( oGetAlmacenDestino, oGetAlmacenDestino:oHelpText ) }
 
+      REDEFINE GET   oGetGrupoMovimiento ;
+         VAR         ::oController:oModel:hBuffer[ "grupo_movimiento" ] ;
+         ID          140 ;
+         IDHELP      141 ;
+         WHEN        ( ::oController:isNotZoomMode() ) ;
+         PICTURE     "@!" ;
+         BITMAP      "Lupa" ;
+         OF          oDlg
+
+      oGetGrupoMovimiento:bValid   := {|| ::stampGrupoMovimientoNombre( oGetGrupoMovimiento ) }
+      oGetGrupoMovimiento:bHelp    := {|| browseGruposMovimientos( oGetGrupoMovimiento, oGetGrupoMovimiento:oHelpText ) }
 
       REDEFINE BUTTON ;
          ID          IDOK ;
          OF          oDlg ;
-         WHEN        ( !::oController:isZoomMode() ) ;
+         WHEN        ( ::oController:isNotZoomMode() ) ;
          ACTION      ( oDlg:end( IDOK ) )
 
       REDEFINE BUTTON ;
@@ -127,5 +146,28 @@ METHOD stampAlmacenNombre( oGetAlmacenOrigen )
    oGetAlmacenOrigen:oHelpText:cText( cNombreAlmacen )
 
 RETURN ( !empty( cNombreAlmacen ) )
+
+//---------------------------------------------------------------------------//
+
+METHOD stampGrupoMovimientoNombre( oGetGrupoMovimiento )
+
+   local cCodigoGrupo      := oGetGrupoMovimiento:varGet()
+   local cNombreGrupo      := GruposMovimientosModel():getNombre( cCodigoGrupo )
+
+   oGetGrupoMovimiento:oHelpText:cText( cNombreGrupo )
+
+RETURN ( !empty( cNombreGrupo ) )
+
+//---------------------------------------------------------------------------//
+
+METHOD changeTipoMovimiento( oRadioTipoMovimento, oGetAlmacenOrigen )
+
+   if oRadioTipoMovimento:nOption() == __tipo_movimiento_entre_almacenes__
+      oGetAlmacenOrigen:Show()
+   else
+      oGetAlmacenOrigen:Hide()
+   end if                                         
+
+RETURN ( .t. )
 
 //---------------------------------------------------------------------------//

@@ -17159,16 +17159,16 @@ FONT 8, "Ms Sans Serif"
   CONTROL "", 250, "Edit", ES_MULTILINE|WS_BORDER|WS_TABSTOP, 137, 78, 94, 12
   CONTROL "", 191, "TBitMap", 0x00800000, 396, 89, 19, 11
   CONTROL "Artículos", -1, "Button", BS_GROUPBOX|WS_TABSTOP, 44, 153, 617, 193
-  CONTROL "Almacén origen", 152, "Static", WS_GROUP, 251, 40, 55, 8
-  CONTROL "Almacén destino", 162, "Static", WS_GROUP, 251, 53, 55, 8
+  CONTROL "Almacén origen", 152, "Static", WS_GROUP, 249, 40, 55, 8
+  CONTROL "Almacén destino", 162, "Static", WS_GROUP, 249, 53, 55, 8
   CONTROL "Número", -1, "Static", WS_GROUP, 50, 42, 38, 8
   CONTROL "Fecha", -1, "Static", WS_GROUP, 50, 55, 38, 8
-  CONTROL "Comentarios", -1, "Static", WS_GROUP, 251, 105, 55, 8
+  CONTROL "Comentarios", -1, "Static", WS_GROUP, 249, 105, 55, 8
   CONTROL "Movimiento", -1, "Button", BS_GROUPBOX|WS_TABSTOP, 45, 30, 192, 62
-  CONTROL "Tipo movimiento", -1, "Static", WS_GROUP, 251, 66, 55, 8
-  CONTROL "Divisa", -1, "Static", WS_GROUP, 251, 92, 55, 8
+  CONTROL "Grupo movimiento", -1, "Static", WS_GROUP, 249, 66, 62, 8
+  CONTROL "Divisa", -1, "Static", WS_GROUP, 249, 92, 55, 8
   CONTROL "Cambio divisa", -1, "Static", WS_GROUP, 419, 92, 44, 8
-  CONTROL "Agente", -1, "Static", WS_GROUP, 251, 79, 55, 8
+  CONTROL "Agente", -1, "Static", WS_GROUP, 249, 79, 55, 8
   CONTROL "Usuario", -1, "Static", WS_GROUP, 50, 68, 38, 8
   CONTROL "Delegación", -1, "Static", WS_GROUP, 50, 81, 38, 8
   CONTROL "General", -1, "Button", BS_GROUPBOX|WS_TABSTOP, 243, 30, 418, 121

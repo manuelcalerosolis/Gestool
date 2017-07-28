@@ -282,12 +282,12 @@ RETURN ( .t. )
 FUNCTION Test()
 
    // ColumnasUsuariosModel():set( "Testing", "my tasting" )
-   /*
+   
    with object MovimientosAlmacenController()
       :New()
       :activateShell()
    end with
-   */
+   
    /*
 
    A1732400-1
