@@ -282,18 +282,29 @@ RETURN ( .t. )
 FUNCTION Test()
 
    // ColumnasUsuariosModel():set( "Testing", "my tasting" )
+<<<<<<< HEAD
 
    /*with object MovimientosAlmacenController()
       :New()
       :activateShell()
    end with*/
 
+=======
+   /*
+   with object MovimientosAlmacenController()
+      :New()
+      :activateShell()
+   end with
+   */
+>>>>>>> origin/master
    /*
 
    A1732400-1
 
    cobrado -> nimpcob
    importe -> nimporte
+
+   497f0cd2-4c95-4405-b659-1ea4a71f8e27 
 
 
    local hMail          := {=>}
