@@ -1051,6 +1051,7 @@ CentroCoste.prg                     \
 TgenmailDatabaseRecibosClientes.prg \
 TDetMovimientosAlmacen.prg          \
 Tdetseriesmovimientos.prg           \
+Categoria.prg                       \
 
 C               =       \
 Metafi32.c              \
@@ -2092,6 +2093,7 @@ CentroCoste.obj         \
 TgenmailDatabaseRecibosClientes.obj \
 TDetMovimientosAlmacen.obj          \
 Tdetseriesmovimientos.obj           \
+Categoria.obj                       \
 
 .PRG.OBJ:
    $(HB)\Bin\Harbour $< /n /p$(PPO)\$&.ppo /w /es2 /i$(FWINCLUDE) /i$(HBINCLUDE) /i$(GTINCLUDE) /o$(OBJ)\$&.c
@@ -3136,6 +3138,7 @@ $(OBJ)\TTraslations.obj          +
 $(OBJ)\TgenmailDatabaseRecibosClientes.obj +
 $(OBJ)\TDetMovimientosAlmacen.obj          +
 $(OBJ)\Tdetseriesmovimientos.obj           +
+$(OBJ)\Categoria.obj                       +
 $(OBJ)\EstadoSat.obj             
 $<,$*
 $(FWLIB)\FiveH.lib               +

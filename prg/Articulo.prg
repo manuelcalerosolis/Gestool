@@ -56,6 +56,7 @@ static oTagsEver
 static dbfProv
 static dbfCatalogo
 static dbfTemporada
+static dbfCategoria
 static dbfFamPrv
 static dbfTMov
 static dbfTarPreT 
@@ -298,6 +299,9 @@ STATIC FUNCTION OpenFiles( lExt, cPath )
 
       USE ( cPatArt() + "Temporadas.Dbf" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "TEMPORADA", @dbfTemporada ) )
       SET ADSINDEX TO ( cPatArt() + "Temporadas.Cdx" ) ADDITIVE
+
+      USE ( cPatArt() + "Categorias.Dbf" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "Categorias", @dbfCategoria ) )
+      SET ADSINDEX TO ( cPatArt() + "Categorias.Cdx" ) ADDITIVE
 
       USE ( cPatArt() + "FamPrv.Dbf" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "FAMPRV", @dbfFamPrv ) )
       SET ADSINDEX TO ( cPatArt() + "FamPrv.Cdx" ) ADDITIVE
@@ -553,6 +557,10 @@ STATIC FUNCTION CloseFiles( lDestroy )
       ( dbfTemporada )->( dbCloseArea() )
    end if
 
+   if dbfCategoria != nil
+      ( dbfCategoria )->( dbCloseArea() )
+   end if
+
    if dbfFamPrv != nil
       ( dbfFamPrv )->( dbCloseArea() )
    end if
@@ -753,6 +761,7 @@ STATIC FUNCTION CloseFiles( lDestroy )
    oNewImp           := nil
    oFraPub           := nil
    dbfDoc            := nil
+   dbfCategoria      := nil
    dbfTemporada      := nil
    dbfAlbPrvL        := nil
    dbfFacPrvL        := nil
@@ -970,6 +979,15 @@ Function Articulo( oMenuItem, oWnd, bOnInit )
       :cHeader          := "Tipo"
       :cSortOrder       := "cCodTip"
       :bStrData         := {|| AllTrim( ( D():Articulos( nView ) )->cCodTip ) + if( !empty( ( D():Articulos( nView ) )->cCodTip ), " - ", "" ) + oRetFld( ( D():Articulos( nView ) )->cCodTip, oTipArt:oDbf, "cNomTip" ) }
+      :nWidth           := 140
+      :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | oWndBrw:ClickOnHeader( oCol ) }
+      :lHide            := .t. 
+   end with
+
+   with object ( oWndBrw:AddXCol() )
+      :cHeader          := "Categoría"
+      :cSortOrder       := "cCodCate"
+      :bStrData         := {|| AllTrim( ( D():Articulos( nView ) )->cCodCate ) + if( !empty( ( D():Articulos( nView ) )->cCodCate ), " - ", "" ) + RetFld( ( D():Articulos( nView ) )->cCodCate, dbfCategoria, "cNombre" ) }
       :nWidth           := 140
       :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | oWndBrw:ClickOnHeader( oCol ) }
       :lHide            := .t. 
@@ -1681,6 +1699,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, cArticulo, oBrw, bWhen, bValid, nMode )
    local oNom3
    local aBtn                 := Array( 14 )
    local oBmpTemporada
+   local oBmpCategoria
    local oBmpEstado
    local cCbxPrecio           := "Ventas"
    local nTotStkAct           := 0
@@ -2041,10 +2060,25 @@ STATIC FUNCTION EdtRec( aTmp, aGet, cArticulo, oBrw, bWhen, bValid, nMode )
          ID       900 ;
          OF       fldGeneral
 
+   REDEFINE GET   aGet[ ( D():Articulos( nView ) )->( fieldpos( "cCodCate" ) ) ] ;
+         VAR      aTmp[ ( D():Articulos( nView ) )->( fieldpos( "cCodCate" ) ) ] ;
+         ID       230 ;
+         IDTEXT   231 ;
+         WHEN     ( nMode != ZOOM_MODE ) ;
+         VALID    ( cCategoria( aGet[ ( D():Articulos( nView ) )->( fieldpos( "cCodCate" ) ) ], dbfCategoria, aGet[ ( D():Articulos( nView ) )->( fieldpos( "cCodCate" ) ) ]:oHelpText, oBmpCategoria ) ) ;
+         ON HELP  ( BrwCategoria( aGet[ ( D():Articulos( nView ) )->( fieldpos( "cCodCate" ) ) ], aGet[ ( D():Articulos( nView ) )->( fieldpos( "cCodCate" ) ) ]:oHelpText, oBmpCategoria ) ) ;
+         BITMAP   "LUPA" ;
+         OF       fldGeneral
+
+   REDEFINE BITMAP oBmpCategoria ;
+         ID       232 ;
+         TRANSPARENT ;
+         OF       fldGeneral
+
    REDEFINE SAY ;
          PROMPT   getConfigTraslation( "Temporada" );
          ID       800 ;
-         OF       fldGeneral
+         OF       fldGeneral      
 
    REDEFINE GET   aGet[ ( D():Articulos( nView ) )->( fieldpos( "cCodTemp" ) ) ] ;
          VAR      aTmp[ ( D():Articulos( nView ) )->( fieldpos( "cCodTemp" ) ) ] ;
@@ -6123,6 +6157,10 @@ Static Function KillTrans( oMenu, oBmpCategoria, oBmpTemporada, oBmpEstado, oBmp
 
    if !empty( oBmpTemporada )
       oBmpTemporada:End()
+   end if
+
+   if !empty( oBmpCategoria )
+      oBmpCategoria:End()
    end if
 
    if !empty( oBmpEstado )

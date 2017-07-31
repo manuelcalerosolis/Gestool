@@ -9,18 +9,18 @@
 
 static oWndBrw
 static dbfCategoria
-static aStrTipo      := {  "CÃ­rculo azul",;
-                           "CÃ­rculo verde",;
-                           "CÃ­rculo rojo",;
-                           "CÃ­rculo amarillo",;
+static aStrTipo      := {  "Círculo azul",;
+                           "Círculo verde",;
+                           "Círculo rojo",;
+                           "Círculo amarillo",;
                            "Cuadrado azul",;
                            "Cuadrado verde",;
                            "Cuadrado rojo",;
                            "Cuadrado amarillo",;
-                           "TriÃ¡ngulo azul",;
-                           "TriÃ¡ngulo verde",;
-                           "TriÃ¡ngulo rojo",;
-                           "TriÃ¡ngulo amarillo" }
+                           "Triángulo azul",;  
+                           "Triángulo verde",;
+                           "Triángulo rojo",;
+                           "Triángulo amarillo" }
 
 static aResTipo      := {  "BULLET_BALL_GLASS_BLUE_16",;
                            "BULLET_BALL_GLASS_GREEN_16",;
@@ -39,16 +39,16 @@ static bEdit         := {| aTmp, aGet, dbfCategoria, oBrw, bWhen, bValid, nMode 
 
 //---------------------------------------------------------------------------//
 /*
-Funcion con los campos de la base de datos de las categorias de artÃ­culos
+Funcion con los campos de la base de datos de las categorias de artículos
 */
 
 Function aItmCategoria()
 
    local aBase := { }
 
-   aAdd( aBase, { "cCodigo",   "C", 10, 0, "CÃ³digo de la categorÃ­a" ,   "",   "", "( cDbfCategoria )"} )
-   aAdd( aBase, { "cNombre",   "C", 50, 0, "Nombre de la categorÃ­a" ,   "",   "", "( cDbfCategoria )"} )
-   aAdd( aBase, { "cTipo",     "C", 30, 0, "Tipo de la categorÃ­a" ,     "",   "", "( cDbfCategoria )"} )
+   aAdd( aBase, { "cCodigo",   "C", 10, 0, "Código de la categoría" ,   "",   "", "( cDbfCategoria )"} )
+   aAdd( aBase, { "cNombre",   "C", 50, 0, "Nombre de la categoría" ,   "",   "", "( cDbfCategoria )"} )
+   aAdd( aBase, { "cTipo",     "C", 30, 0, "Tipo de la categoría" ,     "",   "", "( cDbfCategoria )"} )
 
 Return ( aBase )
 
@@ -112,7 +112,7 @@ Function rxCategoria( cPath )
 
       ( dbfCategoria )->( dbCloseArea() )
    else
-      msgStop( "Imposible abrir en modo exclusivo la tabla de " + getConfigTraslation( "CategorÃ­as" ) )
+      msgStop( "Imposible abrir en modo exclusivo la tabla de " + getConfigTraslation( "Categorías" ) )
    end if
 
 Return ( nil )
@@ -211,8 +211,8 @@ FUNCTION Categoria( oMenuItem, oWnd )
 
       DEFINE SHELL oWndBrw FROM 2, 10 TO 18, 70 ;
       XBROWSE ;
-      TITLE    getConfigTraslation( "CategorÃ­as" ) ;
-      PROMPT   "CÃ³digo",;
+      TITLE    getConfigTraslation( "Categorías" ) ;
+      PROMPT   "Código",;
                "Nombre";
       ALIAS    ( dbfCategoria ) ;
       MRU      "gc_photographic_filters_16" ;
@@ -225,7 +225,7 @@ FUNCTION Categoria( oMenuItem, oWnd )
       OF       oWnd
 
       with object ( oWndBrw:AddXCol() )
-         :cHeader          := "CÃ³digo"
+         :cHeader          := "Código"
          :cSortOrder       := "cCodigo"
          :bStrData         := {|| ( dbfCategoria )->cCodigo }
          :bBmpData         := {|| nBitmapTipoCategoria( ( dbfCategoria )->cTipo ) }
@@ -256,7 +256,7 @@ FUNCTION Categoria( oMenuItem, oWnd )
          NOBORDER ;
          ACTION   ( oWndBrw:RecAdd() );
          ON DROP  ( oWndBrw:RecDup() );
-         TOOLTIP  "(A)Ã±adir";
+         TOOLTIP  "(A)ñadir";
          BEGIN GROUP;
          HOTKEY   "A";
          LEVEL    ACC_APPD
@@ -290,13 +290,6 @@ FUNCTION Categoria( oMenuItem, oWnd )
          HOTKEY   "E";
          LEVEL    ACC_DELE
 
-      DEFINE BTNSHELL RESOURCE "IMP" GROUP OF oWndBrw ;
-         NOBORDER ;
-         ACTION   ( TListadoCategorias():New( "Listado de " + getConfigTraslation( "CategorÃ­as" ) ):Play( dbfCategoria ) );
-         TOOLTIP  "(L)istado";
-         HOTKEY   "L" ;
-         LEVEL    ACC_IMPR
-
       DEFINE BTNSHELL RESOURCE "END" GROUP OF oWndBrw ;
          NOBORDER ;
          ACTION   ( oWndBrw:End() ) ;
@@ -324,7 +317,7 @@ Static Function EdtRec( aTmp, aGet, dbfCategoria, oBrw, bWhen, bValid, nMode )
       aTmp[ ( dbfCategoria )->( fieldpos( "cTipo" ) ) ]  := aStrTipo[ 1 ]
    end if
 
-   DEFINE DIALOG oDlg RESOURCE "CATEGORIA" TITLE LblTitle( nMode ) + getConfigTraslation( "categorÃ­a" )
+   DEFINE DIALOG oDlg RESOURCE "CATEGORIA" TITLE LblTitle( nMode ) + getConfigTraslation( "categoría" )
 
       REDEFINE GET aGet[ ( dbfCategoria )->( fieldpos( "cCodigo" ) ) ] ;
          VAR      aTmp[ ( dbfCategoria )->( fieldpos( "cCodigo" ) ) ] ;
@@ -374,7 +367,7 @@ Static Function EdtRec( aTmp, aGet, dbfCategoria, oBrw, bWhen, bValid, nMode )
 Return ( oDlg:nResult == IDOK )
 
 //---------------------------------------------------------------------------//
-/*Funcion que finaliza la ediciÃ³n del registro y lo guarda*/
+/*Funcion que finaliza la edición del registro y lo guarda*/
 
 Static Function EndTrans( aTmp, aGet, nMode, oBrw, oDlg )
 
@@ -384,35 +377,35 @@ Static Function EndTrans( aTmp, aGet, nMode, oBrw, oDlg )
    if nMode == APPD_MODE .or. nMode == DUPL_MODE
 
       /*
-      Estos Campos no pueden estar vacÃ­os
+      Estos Campos no pueden estar vacíos
       */
 
       if Empty( aTmp[ ( dbfCategoria )->( fieldpos( "cCodigo" ) ) ] )
-         MsgStop( "CÃ³digo no puede estar vacÃ­o" )
+         MsgStop( "Código no puede estar vacío" )
          aGet[ ( dbfCategoria )->( fieldpos( "cCodigo" ) ) ]:SetFocus()
          return nil
       end if
 
       if dbSeekInOrd( aTmp[ ( dbfCategoria )->( fieldpos( "cCodigo" ) ) ], "CODIGO", dbfCategoria )
-         MsgStop( "CÃ³digo ya existe " + Rtrim( aTmp[ ( dbfCategoria )->( fieldpos( "cCodigo" ) ) ] ) )
+         MsgStop( "Código ya existe " + Rtrim( aTmp[ ( dbfCategoria )->( fieldpos( "cCodigo" ) ) ] ) )
          return nil
       end if
 
       if Empty( aTmp[ ( dbfCategoria )->( fieldpos( "cNombre" ) ) ] )
-         MsgStop( "Nombre no puede estar vacÃ­o" )
+         MsgStop( "Nombre no puede estar vacío" )
          aGet[ ( dbfCategoria )->( fieldpos( "cNombre" ) ) ]:SetFocus()
          return nil
       end if
 
       /*
-      Comprobamos que el nombre sea Ãºnico
+      Comprobamos que el nombre sea único
       */
 
       nRec     := ( dbfCategoria )->( Recno() )
       nOrdAnt  := ( dbfCategoria )->( OrdSetFocus( "NOMBRE" ) )
 
       if( dbfCategoria )->( dbSeek( Upper( aTmp[ ( dbfCategoria )->( fieldpos( "cNombre" ) ) ] ) ) )
-         MsgStop( "Nombre de " + getConfigTraslation( "categorÃ­a" ) + " existente" )
+         MsgStop( "Nombre de " + getConfigTraslation( "categoría" ) + " existente" )
          aGet[ ( dbfCategoria )->( fieldpos( "cNombre" ) ) ]:SetFocus()
          ( dbfCategoria )->( OrdSetFocus( nOrdAnt ) )
          ( dbfCategoria )->( dbGoTo( nRec ) )
@@ -505,7 +498,7 @@ Function cCategoria( oGet, dbfCategoria, oGet2, oBmpCategoria  )
       lValid            := .t.
 
    else
-      msgStop( getConfigTraslation( "CategorÃ­a" ) + " no encontrada", "Aviso del sistema" )
+      msgStop( getConfigTraslation( "Categoría" ) + " no encontrada", "Aviso del sistema" )
    end if
 
    ( dbfCategoria )->( OrdSetFocus( nOrd ) )
@@ -535,7 +528,7 @@ Function BrwCategoria( oGet, oGet2, oBmpCategoria )
    local cGet1
    local nOrd           := GetBrwOpt( "BrwCategoria" )
    local oCbxOrd
-   local aCbxOrd        := { "CÃ³digo", "Nombre" }
+   local aCbxOrd        := { "Código", "Nombre" }
    local cCbxOrd
    local nLevelUsr
 
@@ -552,7 +545,7 @@ Function BrwCategoria( oGet, oGet2, oBmpCategoria )
 
    nLevelUsr            := nLevelUsr( MENUITEM )
 
-   DEFINE DIALOG oDlg RESOURCE "HELPENTRY" TITLE getConfigTraslation( "CategorÃ­as" )
+   DEFINE DIALOG oDlg RESOURCE "HELPENTRY" TITLE getConfigTraslation( "Categorías" )
 
       REDEFINE GET oGet1 VAR cGet1;
          ID       104 ;
@@ -578,7 +571,7 @@ Function BrwCategoria( oGet, oGet2, oBmpCategoria )
       oBrw:cName           := "Browse.Categoria"
 
       with object ( oBrw:AddCol() )
-         :cHeader          := "CÃ³digo"
+         :cHeader          := "Código"
          :cSortOrder       := "Codigo"
          :bStrData         := {|| ( dbfCategoria )->cCodigo }
          :bBmpData         := {|| nBitmapTipoCategoria( ( dbfCategoria )->cTipo ) }
@@ -678,7 +671,7 @@ Function BrwInternalCategoria( oGet, dbfArticulo, oGet2 )
    local nRec
    local nOrd           := GetBrwOpt( "BrwCategoria" )
    local oCbxOrd
-   local aCbxOrd        := { "CÃ³digo", "Nombre" }
+   local aCbxOrd        := { "Código", "Nombre" }
    local cCbxOrd
    local oBtnEdit
    local oBtnAppend
@@ -694,7 +687,7 @@ Function BrwInternalCategoria( oGet, dbfArticulo, oGet2 )
 
    nLevelUsr            := nLevelUsr( MENUITEM )
 
-   DEFINE DIALOG oDlg RESOURCE "HELPENTRY" TITLE getConfigTraslation( "CategorÃ­as" )
+   DEFINE DIALOG oDlg RESOURCE "HELPENTRY" TITLE getConfigTraslation( "Categorías" )
 
       REDEFINE GET oGet1 VAR cGet1;
          ID       104 ;
@@ -724,7 +717,7 @@ Function BrwInternalCategoria( oGet, dbfArticulo, oGet2 )
       oBrw:CreateFromResource( 105 )
 
       with object ( oBrw:AddCol() )
-         :cHeader             := "CÃ³digo"
+         :cHeader             := "Código"
          :cSortOrder          := "Codigo"
          :bEditValue          := {|| ( dbfCategoria )->cCodigo }
          :nWidth              := 60
