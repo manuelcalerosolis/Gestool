@@ -13133,6 +13133,7 @@ Static Function PrintReportAlbCli( nDevice, nCopies, cPrinter, cCodigoDocumento 
    DEFAULT nCopies            := 1
    DEFAULT cPrinter           := PrnGetName()
    DEFAULT cCodigoDocumento   := cFormatoAlbaranesClientes()
+   DEFAULT cCodigoDocumento   := cFormatoAlbaranesClientes()
 
    if empty( cCodigoDocumento )
       msgStop( "El código del documento esta vacio" )
