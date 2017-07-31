@@ -74,6 +74,13 @@ METHOD New()
                                              "type"      => "C"                                       ,;
                                              "field"     => "cAlmDes" }                                )
 
+   hset( ::hColumns, "grupo_movimiento",  {  "create"    => "CHAR ( 2 )"                              ,;
+                                             "text"      => "Grupo movimiento"                        ,;
+                                             "header"    => "Grupo movimiento"                        ,;
+                                             "visible"   => .t.                                       ,;
+                                             "type"      => "C"                                       ,;
+                                             "field"     => "cCodMov" }                                )
+
    ::TimeStampFields()
 
    ::Super:New()

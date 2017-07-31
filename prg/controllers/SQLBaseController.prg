@@ -83,6 +83,7 @@ CLASS SQLBaseController
    METHOD   Zoom()
       METHOD setZoomMode()                            INLINE ( ::nMode := __zoom_mode__ )
       METHOD isZoomMode()                             INLINE ( ::nMode == __zoom_mode__ )
+      METHOD isNotZoomMode()                          INLINE ( ::nMode != __zoom_mode__ )
       METHOD initZoomMode()                           VIRTUAL
 
    METHOD   Delete()

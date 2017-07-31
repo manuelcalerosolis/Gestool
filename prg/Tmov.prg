@@ -531,7 +531,7 @@ RETURN cTemp
 
 //---------------------------------------------------------------------------//
 
-FUNCTION BrwTMov( oGet, dbfTMov, oGet2 )
+FUNCTION browseGruposMovimientos( oGet, oGet2, dbfTMov )
 
    local oBlock
    local oError
@@ -576,20 +576,14 @@ FUNCTION BrwTMov( oGet, dbfTMov, oGet2 )
 
       ( dbfTMov )->( dbGoTop() )
 
-#ifndef __PDA__
       DEFINE DIALOG oDlg RESOURCE "HELPENTRY"
-#else
-      DEFINE DIALOG oDlg RESOURCE "HELPENTRY_PDA"
-#endif
-
 
          REDEFINE GET oGet1 VAR cGet1;
             ID       104 ;
             ON CHANGE( AutoSeek( nKey, nFlags, Self, oBrw, dbfTMov ) );
             VALID    ( OrdClearScope( oBrw, dbfTMov ) );
-         BITMAP   "FIND" ;
+            BITMAP   "FIND" ;
             OF       oDlg
-
 
          REDEFINE COMBOBOX oCbxOrd ;
             VAR      cCbxOrd ;
@@ -597,8 +591,6 @@ FUNCTION BrwTMov( oGet, dbfTMov, oGet2 )
             ITEMS    aCbxOrd ;
             ON CHANGE( ( dbfTMov )->( OrdSetFocus( oCbxOrd:nAt ) ), oBrw:refresh(), oGet1:SetFocus() ) ;
             OF oDlg
-
-#ifndef __PDA__
 
          oBrw                 := IXBrowse():New( oDlg )
 
@@ -641,24 +633,6 @@ FUNCTION BrwTMov( oGet, dbfTMov, oGet2 )
 
          oBrw:CreateFromResource( 105 )
 
-#else
-
-         REDEFINE LISTBOX oBrw ;
-            FIELDS ;
-                     ( dbfTMov )->cCodMov + CRLF + ( dbfTMov )->cDesMov ;
-            HEAD ;
-                     "Código" + CRLF + "Nombre" ;
-            ID       105 ;
-            ALIAS    ( dbfTMov ) ;
-            OF       oDlg
-
-            oBrw:aActions        := {| nCol | lPressCol( nCol, oBrw, oCbxOrd, aCbxOrd, dbfTMov ) }
-            oBrw:bLDblClick      := {|| oDlg:end( IDOK ) }
-
-#endif
-
-#ifndef __PDA__
-
          REDEFINE BUTTON ;
             ID       IDOK ;
             OF       oDlg ;
@@ -687,13 +661,6 @@ FUNCTION BrwTMov( oGet, dbfTMov, oGet2 )
       oDlg:AddFastKey( VK_RETURN,   {|| oDlg:end( IDOK ) } )
 
       ACTIVATE DIALOG oDlg CENTER
-
-#else
-
-      ACTIVATE DIALOG oDlg ;
-         ON INIT ( pdaMenuEdtRec( oDlg, oBrw ) )
-
-#endif
 
       if oDlg:nResult == IDOK
 
@@ -727,31 +694,6 @@ FUNCTION BrwTMov( oGet, dbfTMov, oGet2 )
 RETURN ( oDlg:nResult == IDOK )
 
 //---------------------------------------------------------------------------//
-
-#ifdef __PDA__
-
-static function pdaMenuEdtRec( oDlg, oBrw )
-
-   local oMenu
-
-   DEFINE MENU oMenu ;
-      RESOURCE 100 ;
-      BITMAPS  10 ; // bitmaps resoruces ID
-      IMAGES   3     // number of images in the bitmap
-
-      REDEFINE MENUITEM ID 110 OF oMenu ACTION ( oDlg:End( IDOK ) )
-
-      REDEFINE MENUITEM ID 120 OF oMenu ACTION ( oDlg:End( IDCANCEL ) )
-
-   oDlg:SetMenu( oMenu )
-
-   oBrw:GoTop()
-
-Return oMenu
-
-#endif
-
-//--------------------------------------------------------------------------//
 
 FUNCTION lTMov( dbfTMov, cCodMov )
 

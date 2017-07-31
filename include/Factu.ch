@@ -480,6 +480,11 @@ Definici¢n de Array para impuestos---------------------------------------------
                                         "Ancho" => 3,;
                                         "Decimales" => 3 } }
 
+#define __tipo_movimiento_entre_almacenes__           1                                        
+#define __tipo_movimiento_regularizacion__            2                                        
+#define __tipo_movimiento_regularizaon_objetivos__    3                                        
+#define __tipo_movimiento_consolidacion__             4                                        
+
 #command SET TAG TO <tag> [OF <(cdx)>] ;
       => ordSetFocus( <(tag)> [, <(cdx)>] )
 

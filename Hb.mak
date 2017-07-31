@@ -337,6 +337,7 @@ MovimientosAlmacenView.prg													\
 MovimientosAlmacenController.prg 										\
 MovimientosAlmacenModel.prg 												\
 AlmacenesModel.prg 															\
+GruposMovimientosModel.prg 												\
 ControllerContainer.prg 													\
 GrpPrv.prg              													\
 InfCategoria.prg        													\
@@ -868,6 +869,7 @@ ConfCajPorta.obj        										\
 Situaciones.obj         										\
 SituacionesModel.obj       									\
 AlmacenesModel.obj 												\
+GruposMovimientosModel.obj 									\
 SituacionesController.obj       								\
 MovimientosAlmacenView.obj										\
 MovimientosAlmacenController.obj 							\
@@ -1369,6 +1371,7 @@ $(OBJ)\ConfCajPorta.obj         									+
 $(OBJ)\Situaciones.obj          									+
 $(OBJ)\SituacionesModel.obj          							+
 $(OBJ)\AlmacenesModel.obj 											+
+$(OBJ)\GruposMovimientosModel.obj 								+
 $(OBJ)\SituacionesController.obj          					+
 $(OBJ)\MovimientosAlmacenView.obj 								+
 $(OBJ)\MovimientosAlmacenController.obj 						+

@@ -283,6 +283,9 @@ FUNCTION Test()
 
    // ColumnasUsuariosModel():set( "Testing", "my tasting" )
 <<<<<<< HEAD
+   
+=======
+<<<<<<< HEAD
 
    /*with object MovimientosAlmacenController()
       :New()
@@ -291,12 +294,17 @@ FUNCTION Test()
 
 =======
    /*
+>>>>>>> 18bdc7c74485b9605d246f05379819c8f5f456d7
    with object MovimientosAlmacenController()
       :New()
       :activateShell()
    end with
+<<<<<<< HEAD
+   
+=======
    */
 >>>>>>> origin/master
+>>>>>>> 18bdc7c74485b9605d246f05379819c8f5f456d7
    /*
 
    A1732400-1
