@@ -62,7 +62,8 @@ FUNCTION Main( paramsMain, paramsSecond, paramsThird )
 
    // Conexión con SQLite------------------------------------------------------
 
-   if ( getSQLDatabase():Connect() )
+   if !empty( getSQLDatabase() )
+      getSQLDatabase():Connect()
       getSQLDatabase():startForeignKey()
       getSQLDatabase():checkModelsExistence()
    end if 
@@ -173,17 +174,21 @@ FUNCTION Main( paramsMain, paramsSecond, paramsThird )
             CreateMainPdaWindow( oIconApp )
          end if
 
-      case ( "TABLET" $ appParamsMain() )
+      otherwise
          
+#ifdef __TABLET__
+
          if AccessCode():loadTableConfiguration()
             CreateMainTabletWindow( oIconApp )
          end if
 
-      otherwise
-         
+#else
+
          if AccessCode():Resource()
             CreateMainWindow( oIconApp )
          end if
+
+#endif
 
    end case
 

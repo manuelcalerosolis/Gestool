@@ -14,12 +14,12 @@ BORLANDLIB           = 	\Bcc582\lib
 
 IMG2PDFLIB           = 	\Img2Pdf
 
-OBJ                  = 	Obj1701
+OBJ                  = 	Obj1701Tblt
 
-SOURCEPRG            = 	.\Prg;.\Prg\mail;.\Prg\Comercio;.\Prg\Models;.\Prg\Controllers;.\Prg\Services;.\Prg\Tablet;.\Prg\tablet\view;.\Prg\tablet\view\documentos;.\Prg\tablet\view\terceros;.\Prg\tablet\view\documentos\ventas;.\Prg\tablet\view\documentos\terceros;.\Prg\tablet\utils;.\Prg\tablet\presenter;.\Prg\tablet\presenter\terceros;.\Prg\tablet\presenter\documentos;.\Prg\tablet\presenter\documentos\ventas;
+SOURCEPRG            = 	.\Prg;.\Prg\mail;.\Prg\Comercio;.\Prg\Models;.\Prg\Views;.\Prg\Controllers;.\Prg\Services;.\Prg\Tablet;.\Prg\tablet\view;.\Prg\tablet\view\documentos;.\Prg\tablet\view\terceros;.\Prg\tablet\view\documentos\ventas;.\Prg\tablet\view\documentos\terceros;.\Prg\tablet\utils;.\Prg\tablet\presenter;.\Prg\tablet\presenter\terceros;.\Prg\tablet\presenter\documentos;.\Prg\tablet\presenter\documentos\ventas;
 SOURCEC 				   =	C
 
-PPO 					   = 	Ppo1701
+PPO 					   = 	Ppo1701Tblt
 
 EXE 					   = 	Bin\$(TARGET).exe
 
@@ -31,7 +31,7 @@ TARGETOBJ 				= $(TARGET).obj
 .path.obj      		=	.\$(OBJ)
 
 PRG            		=    										\
-$(TARGETPRG)             										\
+Gestool.prg             										\
 SQLDatabase.prg 													\
 DialogExtend.prg           									\
 Dialog.prg 															\
@@ -116,6 +116,7 @@ Ruta.prg                										\
 Contaplu.prg            										\
 Ritems.prg              										\
 Tdet.prg                										\
+TDetailGuid.prg 													\
 Grpvent.prg             										\
 Count.prg               										\
 Almacen.prg             										\
@@ -212,6 +213,7 @@ Tdiprvfa.prg            										\
 Tcomvta.prg             										\
 Ctarem.prg              										\
 Tmasdet.prg             										\
+TMasterDetailGuid.prg 											\
 Newimp.prg              										\
 Tcajon.prg              										\
 Impfactu.prg            										\
@@ -331,6 +333,11 @@ ConfImpTiket.prg        													\
 Situaciones.prg         													\
 SituacionesModel.prg       												\
 SituacionesController.prg       											\
+MovimientosAlmacenView.prg													\
+MovimientosAlmacenController.prg 										\
+MovimientosAlmacenModel.prg 												\
+AlmacenesModel.prg 															\
+GruposMovimientosModel.prg 												\
 ControllerContainer.prg 													\
 GrpPrv.prg              													\
 InfCategoria.prg        													\
@@ -493,11 +500,10 @@ ReindexaPresenter.prg                                 			\
 ReindexaView.prg                                      			\
 BaseModel.prg 																	\
 SQLBaseModel.prg 																\
-SQLBaseController.prg 														\
 SQLBaseEmpresasModel.prg 													\
+SQLBaseController.prg 														\
 SQLBaseController.prg 														\
 SQLHeaderController.prg 													\
-SQLBaseEmpresasModel.prg 													\
 SQLBaseLineasModel.prg 														\
 ClientesModel.prg 															\
 AlbaranesClientesModel.prg 												\
@@ -519,6 +525,7 @@ PropiedadesLineasModel.obj       										\
 PropiedadesLineasController.obj       									\
 RelacionesEtiquetasModel.prg 												\
 ArticulosModel.prg                                    			\
+ColumnasUsuariosModel.prg 													\
 HistoricosUsuariosModel.prg                           			\
 PedidosClientesLineasModel.prg 											\
 EmpresasModel.prg 															\
@@ -529,7 +536,6 @@ RecibosClientesModel.prg 													\
 TicketsClientesModel.prg 													\
 PedidosProveedoresModel.prg												\
 TiposImpresorasModel.prg 													\
-MovimientosAlmacenModel.prg 												\
 TiposImpresorasController.prg 											\
 TiposNotasModel.prg 															\
 TiposNotasController.prg 													\
@@ -543,7 +549,6 @@ PropiedadesController.obj       											\
 PropiedadesLineasModel.obj       										\
 PropiedadesLineasController.obj       									\
 RelacionesEtiquetasModel.prg 												\
-ArticulosModel.prg                                    			\
 HistoricosUsuariosModel.prg                           			\
 PedidosClientesLineasModel.prg 											\
 
@@ -552,7 +557,7 @@ Img2pdf.c               	            					\
 Treeview.c 					               					\
 
 OBJS            =                                  	\
-$(TARGETOBJ)                                       	\
+Gestool.obj                                        	\
 SQLDatabase.obj 													\
 Tinitshell.obj                                     	\
 TTagEver.obj 														\
@@ -630,6 +635,7 @@ Ruta.obj                                           	\
 Contaplu.obj                                       	\
 Ritems.obj                                         	\
 Tdet.obj                                           	\
+TDetailGuid.obj 													\
 Grpvent.obj                                        	\
 Count.obj                                          	\
 Tmov.obj                                           	\
@@ -749,6 +755,7 @@ Tinftik.obj             										\
 Tcomvta.obj             										\
 Ctarem.obj              										\
 Tmasdet.obj             										\
+TMasterDetailGuid.obj 											\
 Tsysdata.obj            										\
 Newimp.obj              										\
 Tcajon.obj              										\
@@ -861,7 +868,12 @@ ConfVisor.obj           										\
 ConfCajPorta.obj        										\
 Situaciones.obj         										\
 SituacionesModel.obj       									\
+AlmacenesModel.obj 												\
+GruposMovimientosModel.obj 									\
 SituacionesController.obj       								\
+MovimientosAlmacenView.obj										\
+MovimientosAlmacenController.obj 							\
+MovimientosAlmacenModel.obj 									\
 ControllerContainer.obj 										\
 GrpPrv.obj              									\
 InfCategoria.obj        									\
@@ -1026,9 +1038,9 @@ ReindexaPresenter.obj                              \
 ReindexaView.obj                                   \
 BaseModel.obj 													\
 SQLBaseModel.Obj 												\
+SQLBaseEmpresasModel.Obj 												\
 SQLBaseController.Obj 													\
 SQLHeaderController.obj													\
-SQLBaseEmpresasModel.Obj 												\
 SQLBaseLineasModel.Obj 													\
 EmpresasModel.obj 														\
 ClientesModel.obj 														\
@@ -1038,7 +1050,6 @@ TicketsClientesModel.obj 												\
 RecibosClientesModel.obj 												\
 PedidosProveedoresModel.obj 											\
 TiposImpresorasModel.obj 												\
-MovimientosAlmacenModel.obj 											\
 TiposImpresorasController.obj 										\
 TiposNotasModel.obj 														\
 TiposNotasController.obj 												\
@@ -1055,9 +1066,10 @@ RelacionesEtiquetasModel.obj 											\
 ArticulosModel.obj                                    		\
 HistoricosUsuariosModel.obj                                 \
 PedidosClientesLineasModel.obj 										\
+ColumnasUsuariosModel.obj 												\
 
 .PRG.OBJ:
-  	$(HB)\Bin\Harbour $? /n /p$(PPO)\$&.ppo /w /es2 /i$(FWINCLUDE) /gc0 /i$(HBINCLUDE) /i$(GTINCLUDE) /o$(OBJ)\$&.c
+  	$(HB)\Bin\Harbour $? /n /p$(PPO)\$&.ppo /w /es2 /i$(FWINCLUDE) /gc0 /i$(HBINCLUDE) /i$(GTINCLUDE) /o$(OBJ)\$&.c /d__TABLET__
   	$(BORLAND)\Bin\Bcc32 -c -tWM -I$(HBINCLUDE) -o$(OBJ)\$& $(OBJ)\$&.c
 
 $(EXE)                  : $( PRG:.PRG=.OBJ )
@@ -1071,7 +1083,7 @@ $(EXE) : $(RESOURCE)\GstDialog.Res $(OBJS)
   	$(BORLAND)\Bin\iLink32 @&&|
   	-Gn -aa -Tpe -s -r -m -V4.0                              +
 (BORLAND)\lib\c0w32.obj                                     +
-$(OBJ)\$(TARGETOBJ)                                         +
+$(OBJ)\Gestool.obj                                         	+
 $(OBJ)\SQLDatabase.obj                                      +
 $(OBJ)\Tinitshell.obj                                       +
 $(OBJ)\TTagEver.obj 														+
@@ -1149,6 +1161,7 @@ $(OBJ)\Contaplu.obj              									+
 $(OBJ)\Ritems.obj                									+
 $(OBJ)\Trentfam.obj              									+
 $(OBJ)\Tdet.obj                  									+
+$(OBJ)\TDetailGuid.obj             									+
 $(OBJ)\Grpvent.obj               									+
 $(OBJ)\Count.obj                 									+
 $(OBJ)\Almacen.obj               									+
@@ -1255,6 +1268,7 @@ $(OBJ)\Tinftik.obj              										+
 $(OBJ)\Tcomvta.obj              										+
 $(OBJ)\Ctarem.obj               										+
 $(OBJ)\Tmasdet.obj              										+
+$(OBJ)\TMasterDetailGuid.obj    										+
 $(OBJ)\Tsysdata.obj             										+
 $(OBJ)\Newimp.obj               										+
 $(OBJ)\Tcajon.obj               										+
@@ -1285,78 +1299,83 @@ $(OBJ)\Stock.obj                										+
 $(OBJ)\Xbrowse.obj               									+
 $(OBJ)\IXbrowse.obj             										+
 $(OBJ)\SQLXbrowse.obj             									+
-$(OBJ)\Autoseek.obj             		+
-$(OBJ)\Cccheck.obj              		+
-$(OBJ)\Digit.obj                		+
-$(OBJ)\Dlgtools.obj             		+
-$(OBJ)\Toolbar.obj              		+
-$(OBJ)\Medicon.obj              		+
-$(OBJ)\Utildbf.obj              		+
-$(OBJ)\Remmov.obj               		+
-$(OBJ)\TDetMovimientosAlmacen.obj	+ 
-$(OBJ)\TDetSeriesMovimientos.obj 	+	
-$(OBJ)\Dummy.obj                		+
-$(OBJ)\Rccs.obj                 		+
-$(OBJ)\Ttarage.obj              		+
-$(OBJ)\Tdbaux.obj               		+
-$(OBJ)\Tiremage.obj             		+
-$(OBJ)\Tchgcode.obj             		+
-$(OBJ)\Tgethlp.obj              		+
-$(OBJ)\Tget.obj               		+
-$(OBJ)\Pdreport.obj             		+
-$(OBJ)\RpreviewC3.obj 					+
-$(OBJ)\ReportC3.obj             		+
-$(OBJ)\RcolumnC3.obj            		+
-$(OBJ)\Metafi32.obj             		+
-$(OBJ)\Tseanum.obj              		+
-$(OBJ)\Siges.obj                		+
-$(OBJ)\Trazalote.obj            		+
-$(OBJ)\Trazadocumento.obj       		+
-$(OBJ)\TInfseanum.obj           		+
-$(OBJ)\TInftrazarlote.obj       		+
-$(OBJ)\Ean.obj                  		+
-$(OBJ)\TInfGCli.obj             		+
-$(OBJ)\TdAgeAlb.obj             		+
-$(OBJ)\TInfTrn.obj              		+
-$(OBJ)\TInfUsr.obj              		+
-$(OBJ)\TInfLArt.obj             		+
-$(OBJ)\BrwCli.obj               		+
-$(OBJ)\TInfLCli.obj             		+
-$(OBJ)\BrwPrv.obj               		+
-$(OBJ)\TInfLPrv.obj             		+
-$(OBJ)\Movilges.obj             		+
-$(OBJ)\Tinfofr.obj              		+
-$(OBJ)\Catalogo.obj             		+
-$(OBJ)\Ubicacion.obj            		+
-$(OBJ)\TInfListInci.obj         		+
-$(OBJ)\TTarCli.obj              		+
-$(OBJ)\InfAge.obj               		+
-$(OBJ)\InfAlm.obj               		+
-$(OBJ)\InfMovAlm.obj            		+
-$(OBJ)\InfUbi.obj               		+
-$(OBJ)\InfRut.obj               		+
-$(OBJ)\InfPro.obj               		+
-$(OBJ)\InfTar.obj               		+
-$(OBJ)\InfCnv.obj               		+
-$(OBJ)\InfTipIva.obj            		+
-$(OBJ)\InfDiv.obj               		+
-$(OBJ)\InfFpg.obj               		+
-$(OBJ)\InfCaj.obj               		+
-$(OBJ)\TInfChgCBr.obj           		+
-$(OBJ)\InfPrePrv.obj            		+
-$(OBJ)\IMovAlm.obj              		+
-$(OBJ)\ListUsr.obj              		+
-$(OBJ)\IEntSal.obj              		+
-$(OBJ)\ListRem.obj              		+
-$(OBJ)\IGrpVen.obj              		+
-$(OBJ)\InfPreCli.obj            		+
-$(OBJ)\TInfAtp.obj              		+
-$(OBJ)\ConfImpTiket.obj         		+
-$(OBJ)\ConfVisor.obj            		+
-$(OBJ)\ConfCajPorta.obj         		+
-$(OBJ)\Situaciones.obj          		+
+$(OBJ)\Autoseek.obj             									+
+$(OBJ)\Cccheck.obj              									+
+$(OBJ)\Digit.obj                									+
+$(OBJ)\Dlgtools.obj             									+
+$(OBJ)\Toolbar.obj              									+
+$(OBJ)\Medicon.obj              									+
+$(OBJ)\Utildbf.obj              									+
+$(OBJ)\Remmov.obj               									+
+$(OBJ)\TDetMovimientosAlmacen.obj								+ 
+$(OBJ)\TDetSeriesMovimientos.obj 								+	
+$(OBJ)\Dummy.obj                									+
+$(OBJ)\Rccs.obj                 									+
+$(OBJ)\Ttarage.obj              									+
+$(OBJ)\Tdbaux.obj               									+
+$(OBJ)\Tiremage.obj             									+
+$(OBJ)\Tchgcode.obj             									+
+$(OBJ)\Tgethlp.obj              									+
+$(OBJ)\Tget.obj               									+
+$(OBJ)\Pdreport.obj             									+
+$(OBJ)\RpreviewC3.obj 												+
+$(OBJ)\ReportC3.obj             									+
+$(OBJ)\RcolumnC3.obj            									+
+$(OBJ)\Metafi32.obj             									+
+$(OBJ)\Tseanum.obj              									+
+$(OBJ)\Siges.obj                									+
+$(OBJ)\Trazalote.obj            									+
+$(OBJ)\Trazadocumento.obj       									+
+$(OBJ)\TInfseanum.obj           									+
+$(OBJ)\TInftrazarlote.obj       									+
+$(OBJ)\Ean.obj                  									+
+$(OBJ)\TInfGCli.obj             									+
+$(OBJ)\TdAgeAlb.obj             									+
+$(OBJ)\TInfTrn.obj              									+
+$(OBJ)\TInfUsr.obj              									+
+$(OBJ)\TInfLArt.obj             									+
+$(OBJ)\BrwCli.obj               									+
+$(OBJ)\TInfLCli.obj             									+
+$(OBJ)\BrwPrv.obj               									+
+$(OBJ)\TInfLPrv.obj             									+
+$(OBJ)\Movilges.obj             									+
+$(OBJ)\Tinfofr.obj              									+
+$(OBJ)\Catalogo.obj             									+
+$(OBJ)\Ubicacion.obj            									+
+$(OBJ)\TInfListInci.obj         									+
+$(OBJ)\TTarCli.obj              									+
+$(OBJ)\InfAge.obj               									+
+$(OBJ)\InfAlm.obj               									+
+$(OBJ)\InfMovAlm.obj            									+
+$(OBJ)\InfUbi.obj               									+
+$(OBJ)\InfRut.obj               									+
+$(OBJ)\InfPro.obj               									+
+$(OBJ)\InfTar.obj               									+
+$(OBJ)\InfCnv.obj               									+
+$(OBJ)\InfTipIva.obj            									+
+$(OBJ)\InfDiv.obj               									+
+$(OBJ)\InfFpg.obj               									+
+$(OBJ)\InfCaj.obj               									+
+$(OBJ)\TInfChgCBr.obj           									+
+$(OBJ)\InfPrePrv.obj            									+
+$(OBJ)\IMovAlm.obj              									+
+$(OBJ)\ListUsr.obj              									+
+$(OBJ)\IEntSal.obj              									+
+$(OBJ)\ListRem.obj              									+
+$(OBJ)\IGrpVen.obj              									+
+$(OBJ)\InfPreCli.obj            									+
+$(OBJ)\TInfAtp.obj              									+
+$(OBJ)\ConfImpTiket.obj         									+
+$(OBJ)\ConfVisor.obj            									+
+$(OBJ)\ConfCajPorta.obj         									+
+$(OBJ)\Situaciones.obj          									+
 $(OBJ)\SituacionesModel.obj          							+
+$(OBJ)\AlmacenesModel.obj 											+
+$(OBJ)\GruposMovimientosModel.obj 								+
 $(OBJ)\SituacionesController.obj          					+
+$(OBJ)\MovimientosAlmacenView.obj 								+
+$(OBJ)\MovimientosAlmacenController.obj 						+
+$(OBJ)\MovimientosAlmacenModel.obj 								+
 $(OBJ)\ControllerContainer.obj          						+
 $(OBJ)\GrpPrv.obj               									+
 $(OBJ)\InfCategoria.obj         									+
@@ -1523,15 +1542,16 @@ $(OBJ)\Reporting.obj                         				+
 $(OBJ)\ViewReporting.obj 											+
 $(OBJ)\BaseModel.obj 												+
 $(OBJ)\SQLBaseModel.obj 											+
+$(OBJ)\SQLBaseEmpresasModel.obj 									+
 $(OBJ)\SQLBaseController.obj 										+
 $(OBJ)\SQLHeaderController.obj 									+
-$(OBJ)\SQLBaseEmpresasModel.obj 									+
 $(OBJ)\SQLBaseLineasModel.obj 									+
 $(OBJ)\EmpresasModel.obj 											+
 $(OBJ)\ClientesModel.obj 											+
 $(OBJ)\AlbaranesClientesModel.obj 								+
 $(OBJ)\FacturasClientesModel.obj 								+
 $(OBJ)\ArticulosModel.obj                    				+
+$(OBJ)\ColumnasUsuariosModel.obj               				+
 $(OBJ)\RecibosClientesModel.obj									+
 $(OBJ)\TicketsClientesModel.obj 	 								+							
 $(OBJ)\PedidosProveedoresModel.obj 								+
@@ -1591,10 +1611,7 @@ $(HBLIB)\hbcplr.lib            									+
 $(IMG2PDFLIB)\Image2pdf.lib      								+
 $(HBLIB)\b32\rddads.lib          								+
 $(HBLIB)\ace32.lib               								+
-$(HBLIB)\sqlite.lib          										+
-$(HBLIB)\hdo.lib               									+
-$(HBLIB)\rdlsqlite.lib 												+
-$(BORLANDLIB)\cw32mt.lib         								+ 
+$(BORLANDLIB)\cw32.lib         									+ 
 $(BORLANDLIB)\uuid.lib           								+ 
 $(BORLANDLIB)\import32.lib       								+ 
 $(BORLANDLIB)\ws2_32.lib         								+ 

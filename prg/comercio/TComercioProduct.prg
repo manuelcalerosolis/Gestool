@@ -22,6 +22,7 @@ CLASS TComercioProduct FROM TComercioConector
    METHOD isProductInDatabase( idProduct )                         
    METHOD isProductActiveInCurrentWeb()    
    METHOD isProductDeleteInCurrentWeb()                       
+   METHOD isProductInIncremental( idProduct ) 
 
    METHOD buildAllProductInformation()
    METHOD buildProductInformation( idProduct )
@@ -133,6 +134,10 @@ METHOD buildProductInformation( idProduct ) CLASS TComercioProduct
       RETURN ( .f. )
    end if 
 
+   if !( ::isProductInIncremental( idProduct ) )
+      RETURN ( .f. )
+   end if 
+
    ::TComercioTax():buildTaxRuleGroup( ( D():Articulos( ::getView() ) )->TipoIva )
 
    ::TComercioManufacturer():buildManufacturerProduct( ( D():Articulos( ::getView() ) )->cCodFab )
@@ -165,6 +170,20 @@ METHOD isProductActiveInCurrentWeb( idProduct ) CLASS TComercioProduct
 
    if ( alltrim( ( D():Articulos( ::getView() ) )->cWebShop ) != ::getCurrentWebName() ) 
       ::writeText( "Artículo " + alltrim( idProduct ) + " no pertence a la web seleccionada" )
+      RETURN .f.
+   end if 
+
+RETURN .t.
+
+//---------------------------------------------------------------------------//
+
+METHOD isProductInIncremental( idProduct ) CLASS TComercioProduct
+
+   if !::TComercio:isIncrementalMode()
+      RETURN .f.
+   end if 
+
+   if !empty( ::TPrestashopId():getValueProduct( idProduct, ::getCurrentWebName() ) )
       RETURN .f.
    end if 
 

@@ -5,7 +5,7 @@
 
 CLASS GruposMovimientosModel FROM BaseModel
 
-   METHOD getHeaderTableName()                  INLINE ::getDatosTableName( "TMov" )
+   METHOD getHeaderTableName()                  INLINE ::getDatosTableName( "TMov" ) 
 
    METHOD exist()
 
