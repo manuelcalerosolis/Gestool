@@ -312,7 +312,10 @@ METHOD IncluyeRiesgo()
       ::oDbf:Load()
 
       ::oDbf:nRieEst    := RetFld( ::oDbf:cCodCli, ::oDbfCli:cAlias, "Riesgo", "COD" )
-      ::oDbf:nRieAlc    := ::oStock:nRiesgo( ::oDbf:cCodcli )
+      
+      if !Empty( ::oStock )
+        ::oDbf:nRieAlc  := ::oStock:nRiesgo( ::oDbf:cCodcli )
+      end if
 
       ::oDbf:Save()
 
@@ -341,11 +344,16 @@ METHOD IncluyeRiesgo()
             !::oDbf:Seek( ::oDbfCli:Cod )
 
             ::oDbf:Append()
+            
             ::oDbf:Blank()
             ::oDbf:cCodCli    := ::oDbfCli:Cod
             ::oDbf:cNomCli    := ::oDbfCli:Titulo
             ::oDbf:nRieEst    := RetFld( ::oDbf:cCodCli, ::oDbfCli:cAlias, "Riesgo", "COD" )
-            ::oDbf:nRieAlc    := ::oStock:nRiesgo( ::oDbf:cCodcli )
+            
+            if !Empty( ::oStock )
+              ::oDbf:nRieAlc    := ::oStock:nRiesgo( ::oDbf:cCodcli )
+            end if
+
             ::oDbf:Save()
 
          end if
