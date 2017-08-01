@@ -22,6 +22,8 @@ memvar cGrupoProveedorDesde
 memvar cGrupoProveedorHasta
 memvar cGrupoTemporadaDesde
 memvar cGrupoTemporadaHasta
+memvar cGrupoCategoriaDesde
+memvar cGrupoCategoriaHasta
 memvar cGrupoEstadoArticuloDesde
 memvar cGrupoEstadoArticuloHasta
 memvar cGrupoFamiliaDesde
@@ -103,6 +105,7 @@ CLASS TNewInfGen FROM TInfGen
    DATA oGrupoAgente
    DATA oGrupoUsuario
    DATA oGrupoCaja
+   DATA oGrupoCategoria
    DATA oGrupoTransportista
    DATA oGrupoGCliente
    DATA oGrupoGProveedor
@@ -222,6 +225,8 @@ CLASS TNewInfGen FROM TInfGen
    METHOD lGrupoFacturasCompras( lInitGroup, lImp )
 
    METHOD lGrupoTemporada( lInitGroup, lImp )
+
+   METHOD lGrupoCategoria( lInitGroup, lImp )
 
    METHOD lGrupoIva( lInitGroup, lImp )
 
@@ -3193,8 +3198,8 @@ METHOD lGrupoTemporada( lInitGroup, lImp ) CLASS TNewInfGen
    ::oGrupoTemporada:Cargo:Nombre      := getConfigTraslation( "Temporada" )
    ::oGrupoTemporada:Cargo:Expresion   := "cCodTmp"
    ::oGrupoTemporada:Cargo:Todos       := .t.
-   ::oGrupoTemporada:Cargo:Desde       := Space( 10 )            // dbFirst( ::oDbfTmp, 1 )
-   ::oGrupoTemporada:Cargo:Hasta       := Replicate( "Z", 10 )   // dbLast( ::oDbfTmp, 1 )
+   ::oGrupoTemporada:Cargo:Desde       := Space( 10 )            // dbFirst( ::oDbfCat, 1 )
+   ::oGrupoTemporada:Cargo:Hasta       := Replicate( "Z", 10 )   // dbLast( ::oDbfCat, 1 )
    ::oGrupoTemporada:Cargo:cPicDesde   := "@!"
    ::oGrupoTemporada:Cargo:cPicHasta   := "@!"
    ::oGrupoTemporada:Cargo:TextDesde   := {|| oRetFld( ::oGrupoTemporada:Cargo:Desde, ::oDbfTmp, "cNombre", "Codigo", .t. ) }
@@ -3235,6 +3240,81 @@ METHOD lGrupoTemporada( lInitGroup, lImp ) CLASS TNewInfGen
       msgStop( ErrorMessage( oError ), 'Imposible abrir todas las bases de datos' )
 
       if !Empty( ::oDbfTmp )
+         ::oDbfTmp:End()
+      end if
+
+      lOpen          := .f.
+
+   END SEQUENCE
+
+   ErrorBlock( oBlock )
+
+RETURN ( lOpen )
+
+//---------------------------------------------------------------------------//
+
+METHOD lGrupoCategoria( lInitGroup, lImp ) CLASS TNewInfGen
+
+   local lOpen          := .t.
+   local oError
+   local oBlock         := ErrorBlock( {| oError | ApoloBreak( oError ) } )
+
+   DEFAULT lImp         := .t.
+
+   BEGIN SEQUENCE
+
+   if ::oDbfCat == nil .or. !::oDbfCat:Used()
+      DATABASE NEW ::oDbfCat PATH ( cPatArt() ) FILE "Categorias.DBF" VIA ( cDriver() ) SHARED INDEX "Categorias.Cdx"
+   end if
+
+   ::oGrupoCategoria                   := TRGroup():New( {|| ::oDbf:cCodCate }, {|| "Categoría : " + AllTrim( ::oDbf:cCodCate ) }, {|| "Total categoría..." }, {|| 3 }, ::lSalto )
+
+   ::oGrupoCategoria:Cargo             := TItemGroup()
+   ::oGrupoCategoria:Cargo:Nombre      := "Categoría"
+   ::oGrupoCategoria:Cargo:Expresion   := "cCodCate"
+   ::oGrupoCategoria:Cargo:Todos       := .t.
+   ::oGrupoCategoria:Cargo:Desde       := Space( 10 )
+   ::oGrupoCategoria:Cargo:Hasta       := Replicate( "Z", 10 )
+   ::oGrupoCategoria:Cargo:cPicDesde   := "@!"
+   ::oGrupoCategoria:Cargo:cPicHasta   := "@!"
+   ::oGrupoCategoria:Cargo:TextDesde   := {|| oRetFld( ::oGrupoCategoria:Cargo:Desde, ::oDbfCat, "cNombre", "Codigo", .t. ) }
+   ::oGrupoCategoria:Cargo:TextHasta   := {|| oRetFld( ::oGrupoCategoria:Cargo:Hasta, ::oDbfCat, "cNombre", "Codigo", .t. ) }
+   ::oGrupoCategoria:Cargo:HelpDesde   := {|| BrwCategoria( ::oDesde, ::oSayDesde, , .f. ) }
+   ::oGrupoCategoria:Cargo:HelpHasta   := {|| BrwCategoria( ::oHasta, ::oSayHasta, , .f. ) }
+   ::oGrupoCategoria:Cargo:ValidDesde  := {|oGet| if( cCategoria( if( !Empty( oGet ), oGet, ::oDesde ), ::oDbfCat:cAlias, ::oSayDesde ), ( ::ChangeValor(), .t. ), .f. ) }
+   ::oGrupoCategoria:Cargo:ValidHasta  := {|oGet| if( cCategoria( if( !Empty( oGet ), oGet, ::oHasta ), ::oDbfCat:cAlias, ::oSayHasta ), ( ::ChangeValor(), .t. ), .f. ) }
+   ::oGrupoCategoria:Cargo:lImprimir   := lImp
+   ::oGrupoCategoria:Cargo:cBitmap     := "gc_photographic_filters_16"
+
+   if !Empty( ::oImageList )
+      ::oImageList:AddMasked( TBitmap():Define( "gc_photographic_filters_16" ), Rgb( 255, 0, 255 ) )
+   end if
+
+   if lInitGroup != nil
+
+      aAdd( ::aSelectionGroup, ::oGrupoCategoria )
+
+      if !Empty( ::oImageGroup )
+         ::oImageGroup:AddMasked( TBitmap():Define( "gc_photographic_filters_16" ), Rgb( 255, 0, 255 ) )
+         ::oGrupoCategoria:Cargo:Imagen    := len( ::oImageGroup:aBitmaps ) - 1
+      end if
+
+      if lInitGroup
+         if !Empty( ::oColNombre )
+            ::oColNombre:AddResource( ::oGrupoCategoria:Cargo:cBitmap )
+         end if
+         aAdd( ::aInitGroup, ::oGrupoCategoria )
+      end if
+
+   end if
+
+   aAdd( ::aSelectionRango, ::oGrupoCategoria )
+
+   RECOVER USING oError
+
+      msgStop( ErrorMessage( oError ), 'Imposible abrir todas las bases de datos' )
+
+      if !Empty( ::oDbfCat )
          ::oDbfTmp:End()
       end if
 
@@ -4374,6 +4454,14 @@ Method AddVariable() CLASS TNewInfGen
 
       ::oFastReport:AddVariable(       "Informe", "Desde código de temporada",  "GetHbVar('cGrupoTemporadaDesde')" )
       ::oFastReport:AddVariable(       "Informe", "Hasta código de temporada",  "GetHbVar('cGrupoTemporadaHasta')" )
+   end if
+
+   if !Empty( ::oGrupoCategoria )
+      public cGrupoCategoriaDesde           := ::oGrupoCategoria:Cargo:Desde
+      public cGrupoCategoriaHasta           := ::oGrupoCategoria:Cargo:Hasta
+
+      ::oFastReport:AddVariable(       "Informe", "Desde código de categoría",  "GetHbVar('cGrupoCategoriaDesde')" )
+      ::oFastReport:AddVariable(       "Informe", "Hasta código de Categoría",  "GetHbVar('cGrupoCategoriaHasta')" )
    end if
 
    if !Empty( ::oGrupoIVA )

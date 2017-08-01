@@ -781,6 +781,10 @@ METHOD End() CLASS TInfGen
       ::oDbfTmp:End()
    end if
 
+   if ::oDbfCat != nil .and. ::oDbfCat:Used()
+      ::oDbfCat:End()
+   end if
+
    if ::oDbfRemCli != nil .and. ::oDbfRemCli:Used()
       ::oDbfRemCli:End()
    end if

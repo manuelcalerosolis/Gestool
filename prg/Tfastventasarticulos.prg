@@ -243,6 +243,10 @@ METHOD lResource( cFld ) CLASS TFastVentasArticulos
       return .f.
    end if
 
+   if !::lGrupoCategoria( .t. )
+      return .f.
+   end if   
+
    if !::lGrupoTemporada( .t. )
       return .f.
    end if
@@ -576,6 +580,7 @@ METHOD Create( uParam ) CLASS TFastVentasArticulos
    ::AddField( "cCodOpe",     "C",  5, 0, {|| "@!" }, "Código operario"                         )
    ::AddField( "cCodEnv",     "C",  3, 0, {|| "@!" }, "Código tipo de envase"                   )
    ::AddField( "cCodCaj",     "C",  3, 0, {|| "@!" }, "Código caja"                             )
+   ::AddField( "cCodCate",    "C", 10, 0, {|| "@!" }, "Código categoría"                        )
 
    ::AddField( "cCodCli",     "C", 12, 0, {|| "@!" }, "Código cliente/proveedor"                )
    ::AddField( "cNomCli",     "C", 80, 0, {|| "@!" }, "Nombre cliente/proveedor"                )
@@ -947,6 +952,10 @@ Method lValidRegister() CLASS TFastVentasArticulos
       Return .f.
    end if
 
+   if !empty( ::oGrupoCategoria ) .and. !( ::oDbf:cCodCate     >= ::oGrupoCategoria:Cargo:getDesde()        .and. ::oDbf:cCodCate   <= ::oGrupoCategoria:Cargo:getHasta() )
+      Return .f.
+   end if
+
    if !empty( ::oGrupoFabricante ) .and. !( ::oDbf:cCodFab     >= ::oGrupoFabricante:Cargo:getDesde()       .and. ::oDbf:cCodFab    <= ::oGrupoFabricante:Cargo:getHasta() )
       Return .f.
    end if
@@ -1168,6 +1177,9 @@ METHOD DataReport() CLASS TFastVentasArticulos
    ::oFastReport:SetWorkArea(       "Temporadas",                    ( D():Temporadas( ::nView ) )->( select() ) )
    ::oFastReport:SetFieldAliases(   "Temporadas",                    cItemsToReport( aItmTemporada() ) )
 
+   ::oFastReport:SetWorkArea(       "Categorías",                    ( D():Categorias( ::nView ) )->( select() ) )
+   ::oFastReport:SetFieldAliases(   "Categorías",                    cItemsToReport( aItmCategoria() ) )
+
    ::oFastReport:SetWorkArea(       "Fabricantes",                   ::oDbfFab:Select() )
    ::oFastReport:SetFieldAliases(   "Fabricantes",                   cObjectsToReport( ::oDbfFab:oDbf ) )
 
@@ -1239,6 +1251,7 @@ METHOD DataReport() CLASS TFastVentasArticulos
    ::oFastReport:SetMasterDetail(   "Artículos.Informe", "Familias",                {|| ( D():Articulos( ::nView ) )->Familia } )
    ::oFastReport:SetMasterDetail(   "Artículos.Informe", "Tipo artículos",          {|| ( D():Articulos( ::nView ) )->cCodTip } )
    ::oFastReport:SetMasterDetail(   "Artículos.Informe", "Temporadas",              {|| ( D():Articulos( ::nView ) )->cCodTemp } )
+   ::oFastReport:SetMasterDetail(   "Artículos.Informe", "Categorías",              {|| ( D():Articulos( ::nView ) )->cCodCate } )
    ::oFastReport:SetMasterDetail(   "Artículos.Informe", "Fabricantes",             {|| ( D():Articulos( ::nView ) )->cCodFab } )
    ::oFastReport:SetMasterDetail(   "Artículos.Informe", "Tipos de " + cImp(),      {|| ( D():Articulos( ::nView ) )->TipoIva } )
 
@@ -1283,6 +1296,7 @@ METHOD DataReport() CLASS TFastVentasArticulos
    ::oFastReport:SetResyncPair(     "Artículos.Informe", "Familias" )
    ::oFastReport:SetResyncPair(     "Artículos.Informe", "Tipo artículos" )
    ::oFastReport:SetResyncPair(     "Artículos.Informe", "Temporadas" )
+   ::oFastReport:SetResyncPair(     "Artículos.Informe", "Categorías" )
    ::oFastReport:SetResyncPair(     "Artículos.Informe", "Fabricantes" )
    ::oFastReport:SetResyncPair(     "Artículos.Informe", "Tipos de " + cImp() )
    
@@ -1332,6 +1346,8 @@ METHOD loadPropiedadesArticulos( cCodigoArticulo )
       ::oDbf:cCodEst    := ( ( D():Articulos( ::nView ) ) )->cCodEst
       ::oDbf:cCodTemp   := ( ( D():Articulos( ::nView ) ) )->cCodTemp
       ::oDbf:cCodFab    := ( ( D():Articulos( ::nView ) ) )->cCodFab
+      ::oDbf:cCodCate   := ( ( D():Articulos( ::nView ) ) )->cCodCate
+      ::oDbf:cDesUbi    := ( ( D():Articulos( ::nView ) ) )->cDesUbi
    end if 
 
 Return ( Self )
@@ -1989,11 +2005,8 @@ METHOD AddAlbaranCliente( lFacturados ) CLASS TFastVentasArticulos
          ::oDbf:cNomPrv    := RetFld( ( D():AlbaranesClientesLineas( ::nView )  )->cCodPrv, D():Proveedores( ::nView ) )
 
          ::oDbf:TipoIva    := cCodigoIva( D():TiposIva( ::nView ), ( D():AlbaranesClientesLineas( ::nView )  )->nIva )
-         ::oDbf:cCodTip    := RetFld( ( D():AlbaranesClientesLineas( ::nView )  )->cRef, ( D():Articulos( ::nView ) ), "cCodTip", "Codigo" )
-         ::oDbf:cCodEst    := RetFld( ( D():AlbaranesClientesLineas( ::nView )  )->cRef, ( D():Articulos( ::nView ) ), "cCodEst", "Codigo" )
-         ::oDbf:cCodTemp   := RetFld( ( D():AlbaranesClientesLineas( ::nView )  )->cRef, ( D():Articulos( ::nView ) ), "cCodTemp", "Codigo" )
-         ::oDbf:cCodFab    := RetFld( ( D():AlbaranesClientesLineas( ::nView )  )->cRef, ( D():Articulos( ::nView ) ), "cCodFab", "Codigo" )
-         ::oDbf:cDesUbi    := RetFld( ( D():AlbaranesClientesLineas( ::nView )  )->cRef, ( D():Articulos( ::nView ) ), "cDesUbi", "Codigo" )
+         
+         ::loadPropiedadesArticulos( ( D():AlbaranesClientesLineas( ::nView )  )->cRef )
          
          ::oDbf:cCodFam    := ( D():AlbaranesClientesLineas( ::nView )  )->cCodFam
          ::oDbf:cNomFam    := RetFld( ::oDbf:cCodFam, D():Familias( ::nView ) )
@@ -2191,11 +2204,8 @@ METHOD AddFacturaCliente() CLASS TFastVentasArticulos
          ::oDbf:cNomFam    := RetFld( ::oDbf:cCodFam, D():Familias( ::nView ) )
          ::oDbf:cGrpFam    :=( D():FacturasClientesLineas( ::nView ) )->cGrpFam
          ::oDbf:TipoIva    := cCodigoIva( D():TiposIva( ::nView ),( D():FacturasClientesLineas( ::nView ) )->nIva )
-         ::oDbf:cCodTip    := RetFld(( D():FacturasClientesLineas( ::nView ) )->cRef, ( D():Articulos( ::nView ) ), "cCodTip", "Codigo" )
-         ::oDbf:cCodEst    := RetFld(( D():FacturasClientesLineas( ::nView ) )->cRef, ( D():Articulos( ::nView ) ), "cCodEst", "Codigo" )
-         ::oDbf:cCodTemp   := RetFld(( D():FacturasClientesLineas( ::nView ) )->cRef, ( D():Articulos( ::nView ) ), "cCodTemp", "Codigo" )
-         ::oDbf:cCodFab    := RetFld(( D():FacturasClientesLineas( ::nView ) )->cRef, ( D():Articulos( ::nView ) ), "cCodFab", "Codigo" )
-         ::oDbf:cDesUbi    := RetFld(( D():FacturasClientesLineas( ::nView ) )->cRef, ( D():Articulos( ::nView ) ), "cDesUbi", "Codigo" )
+         
+         ::loadPropiedadesArticulos( ( D():FacturasClientesLineas( ::nView )  )->cRef )
          
          ::oDbf:cCodAlm    :=( D():FacturasClientesLineas( ::nView ) )->cAlmLin
          ::oDbf:cCodObr    :=( D():FacturasClientesLineas( ::nView ) )->cCodObr
@@ -2378,11 +2388,8 @@ METHOD AddFacturaRectificativa() CLASS TFastVentasArticulos
          ::oDbf:cNomFam    := RetFld( ::oDbf:cCodFam, D():Familias( ::nView ) )
          ::oDbf:cGrpFam    := ( D():FacturasRectificativasLineas( ::nView ) )->cGrpFam
          ::oDbf:TipoIva    := cCodigoIva( D():TiposIva( ::nView ), ( D():FacturasRectificativasLineas( ::nView ) )->nIva )
-         ::oDbf:cCodTip    := RetFld( ( D():FacturasRectificativasLineas( ::nView ) )->cRef, ( D():Articulos( ::nView ) ), "cCodTip", "Codigo" )
-         ::oDbf:cCodEst    := RetFld( ( D():FacturasRectificativasLineas( ::nView ) )->cRef, ( D():Articulos( ::nView ) ), "cCodEst", "Codigo" )
-         ::oDbf:cCodTemp   := RetFld( ( D():FacturasRectificativasLineas( ::nView ) )->cRef, ( D():Articulos( ::nView ) ), "cCodTemp", "Codigo" )
-         ::oDbf:cCodFab    := RetFld( ( D():FacturasRectificativasLineas( ::nView ) )->cRef, ( D():Articulos( ::nView ) ), "cCodFab", "Codigo" )
-         ::oDbf:cDesUbi    := RetFld( ( D():FacturasRectificativasLineas( ::nView ) )->cRef, ( D():Articulos( ::nView ) ), "cDesUbi", "Codigo" )
+         
+         ::loadPropiedadesArticulos( ( D():FacturasRectificativasLineas( ::nView )  )->cRef )
 
          ::oDbf:cCodAlm    := ( D():FacturasRectificativasLineas( ::nView ) )->cAlmLin
          ::oDbf:cCodObr    := ( D():FacturasRectificativasLineas( ::nView ) )->cObrLin
@@ -2569,11 +2576,7 @@ METHOD AddTicket() CLASS TFastVentasArticulos
                ::oDbf:cNomFam    := RetFld( ::oDbf:cCodFam, D():Familias( ::nView ) )
                ::oDbf:cGrpFam    := ( D():TiketsLineas( ::nView ) )->cGrpFam
 
-               ::oDbf:cCodTip    := RetFld( ( D():TiketsLineas( ::nView ) )->cCbaTil, ( D():Articulos( ::nView ) ), "cCodTip", "Codigo" )
-               ::oDbf:cCodEst    := RetFld( ( D():TiketsLineas( ::nView ) )->cCbaTil, ( D():Articulos( ::nView ) ), "cCodEst", "Codigo" )
-               ::oDbf:cCodTemp   := RetFld( ( D():TiketsLineas( ::nView ) )->cCbaTil, ( D():Articulos( ::nView ) ), "cCodTemp", "Codigo" )
-               ::oDbf:cCodFab    := RetFld( ( D():TiketsLineas( ::nView ) )->cCbaTil, ( D():Articulos( ::nView ) ), "cCodFab", "Codigo" )
-               ::oDbf:cDesUbi    := RetFld( ( D():TiketsLineas( ::nView ) )->cCbaTil, ( D():Articulos( ::nView ) ), "cDesUbi", "Codigo" )
+               ::loadPropiedadesArticulos( ( D():TiketsLineas( ::nView ) )->cCbaTil )
 
                if ( D():Atipicas( ::nView ) )->( dbseek( ( D():Tikets( ::nView ) )->cCliTik + ( D():TiketsLineas( ::nView ) )->cCbaTil ) ) .and. !empty( ( D():Atipicas( ::nView ) )->cCodEnv )
                   ::oDbf:cCodEnv := ( D():Atipicas( ::nView ) )->cCodEnv
@@ -2670,11 +2673,8 @@ METHOD AddTicket() CLASS TFastVentasArticulos
                ::oDbf:cCodFam    := ( D():TiketsLineas( ::nView ) )->cCodFam
                ::oDbf:cNomFam    := RetFld( ::oDbf:cCodFam, D():Familias( ::nView ) )
                ::oDbf:cGrpFam    := ( D():TiketsLineas( ::nView ) )->cGrpFam
-               ::oDbf:cCodTip    := RetFld( ( D():TiketsLineas( ::nView ) )->cCbaTil, ( D():Articulos( ::nView ) ), "cCodTip", "Codigo" )
-               ::oDbf:cCodEst    := RetFld( ( D():TiketsLineas( ::nView ) )->cCbaTil, ( D():Articulos( ::nView ) ), "cCodEst", "Codigo" )
-               ::oDbf:cCodTemp   := RetFld( ( D():TiketsLineas( ::nView ) )->cCbaTil, ( D():Articulos( ::nView ) ), "cCodTemp", "Codigo" )
-               ::oDbf:cCodFab    := RetFld( ( D():TiketsLineas( ::nView ) )->cCbaTil, ( D():Articulos( ::nView ) ), "cCodFab", "Codigo" )
-               ::oDbf:cDesUbi    := RetFld( ( D():TiketsLineas( ::nView ) )->cCbaTil, ( D():Articulos( ::nView ) ), "cDesUbi", "Codigo" )
+
+               ::loadPropiedadesArticulos( ( D():TiketsLineas( ::nView ) )->cCbaTil )
                
                if ( D():Atipicas( ::nView ) )->( dbseek( ( D():Tikets( ::nView ) )->cCliTik + ( D():TiketsLineas( ::nView ) )->cCbaTil ) ) .and. !empty( ( D():Atipicas( ::nView ) )->cCodEnv )
                   ::oDbf:cCodEnv    := ( D():Atipicas( ::nView ) )->cCodEnv
@@ -2784,6 +2784,7 @@ METHOD listadoArticulo() CLASS TFastVentasArticulos
       ::oDbf:cCodTip  := ( D():Articulos( ::nView ) )->cCodTip
       ::oDbf:cCodTemp := ( D():Articulos( ::nView ) )->cCodTemp
       ::oDbf:cCodFab  := ( D():Articulos( ::nView ) )->cCodFab
+      ::oDbf:cCodCate := ( D():Articulos( ::nView ) )->cCodCate
       ::oDbf:cCodEst  := ( D():Articulos( ::nView ) )->cCodEst
       ::oDbf:cDesUbi  := ( D():Articulos( ::nView ) )->cDesUbi
       ::oDbf:cCodEnv  := ( D():Articulos( ::nView ) )->cCodFra
@@ -2951,6 +2952,7 @@ METHOD fillFromArticulo() CLASS TFastVentasArticulos
    ::oDbf:cCodEst    := ( D():Articulos( ::nView ) )->cCodEst
    ::oDbf:cCodTemp   := ( D():Articulos( ::nView ) )->cCodTemp
    ::oDbf:cCodFab    := ( D():Articulos( ::nView ) )->cCodFab
+   ::oDbf:cCodCate   := ( D():Articulos( ::nView ) )->cCodCate
    ::oDbf:nCosArt    := nCosto( nil, ( D():Articulos( ::nView ) ), D():Kit( ::nView ) )
    ::oDbf:cPrvHab    := ( D():Articulos( ::nView ) )->cPrvHab
    ::oDbf:cDesUbi    := ( D():Articulos( ::nView ) )->cDesUbi
@@ -2990,6 +2992,8 @@ METHOD AddProducido() CLASS TFastVentasArticulos
          ::oDbf:cCodTip    := ( D():PartesProduccionMaterial( ::nView ) )->cCodTip
          ::oDbf:cCodTemp   := ( D():PartesProduccionMaterial( ::nView ) )->cCodTmp
          ::oDbf:cCodFab    := ( D():PartesProduccionMaterial( ::nView ) )->cCodFab
+         ::oDbf:cCodCate   := ( D():PartesProduccionMaterial( ::nView ) )->cCodCat
+
          ::oDbf:cCodAlm    := ( D():PartesProduccionMaterial( ::nView ) )->cAlmOrd
          ::oDbf:cDesUbi    := RetFld( ( D():PartesProduccionMaterial( ::nView ) )->cCodArt, ( D():Articulos( ::nView ) ), "cDesUbi", "Codigo" )
          ::oDbf:cCodEnv    := RetFld( ( D():PartesProduccionMaterial( ::nView ) )->cCodArt, ( D():Articulos( ::nView ) ), "cCodFra", "Codigo" )                    
@@ -3068,6 +3072,7 @@ METHOD AddConsumido() CLASS TFastVentasArticulos
          ::oDbf:cCodTip    := ( D():PartesProduccionMateriaPrima( ::nView ) )->cCodTip
          ::oDbf:cCodTemp   := ( D():PartesProduccionMateriaPrima( ::nView ) )->cCodTmp
          ::oDbf:cCodFab    := ( D():PartesProduccionMateriaPrima( ::nView ) )->cCodFab
+         ::oDbf:cCodCate   := ( D():PartesProduccionMateriaPrima( ::nView ) )->cCodCat
          ::oDbf:cCodAlm    := ( D():PartesProduccionMateriaPrima( ::nView ) )->cAlmOrd
          ::oDbf:cDesUbi    := RetFld( ( D():PartesProduccionMateriaPrima( ::nView ) )->cCodArt, ( D():Articulos( ::nView ) ), "cDesUbi", "Codigo" )
          ::oDbf:cCodEnv    := RetFld( ( D():PartesProduccionMateriaPrima( ::nView ) )->cCodArt, ( D():Articulos( ::nView ) ), "cCodFra", "Codigo" )                    
@@ -3155,6 +3160,7 @@ METHOD AddMovimientoAlmacen() CLASS TFastVentasArticulos
       ::oDbf:cCodTip    := RetFld( ( D():MovimientosAlmacenLineas( ::nView ) )->cRefMov, ( D():Articulos( ::nView ) ), "cCodTip", "Codigo" )
       ::oDbf:cCodTemp   := RetFld( ( D():MovimientosAlmacenLineas( ::nView ) )->cRefMov, ( D():Articulos( ::nView ) ), "cCodTemp", "Codigo" )
       ::oDbf:cCodFab    := RetFld( ( D():MovimientosAlmacenLineas( ::nView ) )->cRefMov, ( D():Articulos( ::nView ) ), "cCodFab", "Codigo" )
+      ::oDbf:cCodCate   := RetFld( ( D():MovimientosAlmacenLineas( ::nView ) )->cRefMov, ( D():Articulos( ::nView ) ), "cCodCate", "Codigo" )
       ::oDbf:cCodAlm    := ( D():MovimientosAlmacenLineas( ::nView ) )->cAliMov
       ::oDbf:cAlmOrg    := ( D():MovimientosAlmacenLineas( ::nView ) )->cAloMov
       ::oDbf:cDesUbi    := RetFld( ( D():MovimientosAlmacenLineas( ::nView ) )->cRefMov, ( D():Articulos( ::nView ) ), "cDesUbi", "Codigo" )
@@ -3278,6 +3284,7 @@ METHOD AddPedidoProveedor() CLASS TFastVentasArticulos
          ::oDbf:cCodEst    := RetFld( ( D():PedidosProveedoresLineas( ::nView ) )->cRef, ( D():Articulos( ::nView ) ), "cCodEst", "Codigo" )
          ::oDbf:cCodTemp   := RetFld( ( D():PedidosProveedoresLineas( ::nView ) )->cRef, ( D():Articulos( ::nView ) ), "cCodTemp", "Codigo" )
          ::oDbf:cCodFab    := RetFld( ( D():PedidosProveedoresLineas( ::nView ) )->cRef, ( D():Articulos( ::nView ) ), "cCodFab", "Codigo" )
+         ::oDbf:cCodCate   := RetFld( ( D():PedidosProveedoresLineas( ::nView ) )->cRef, ( D():Articulos( ::nView ) ), "cCodCate", "Codigo" )
          ::oDbf:cCodGrp    := RetFld( ( D():PedidosProveedoresLineas( ::nView ) )->cRef, ( D():Articulos( ::nView ) ), "GrpVent", "Codigo" )
          ::oDbf:cDesUbi    := RetFld( ( D():PedidosProveedoresLineas( ::nView ) )->cRef, ( D():Articulos( ::nView ) ), "cDesUbi", "Codigo" )
          ::oDbf:cCodEnv    := RetFld( ( D():PedidosProveedoresLineas( ::nView ) )->cRef, ( D():Articulos( ::nView ) ), "cCodFra", "Codigo" )
@@ -3407,6 +3414,7 @@ METHOD AddAlbaranProveedor( lFacturados ) CLASS TFastVentasArticulos
          ::oDbf:cCodEst    := RetFld( ( D():AlbaranesProveedoresLineas( ::nView ) )->cRef, ( D():Articulos( ::nView ) ), "cCodEst", "Codigo" )
          ::oDbf:cCodTemp   := RetFld( ( D():AlbaranesProveedoresLineas( ::nView ) )->cRef, ( D():Articulos( ::nView ) ), "cCodTemp", "Codigo" )
          ::oDbf:cCodFab    := RetFld( ( D():AlbaranesProveedoresLineas( ::nView ) )->cRef, ( D():Articulos( ::nView ) ), "cCodFab", "Codigo" )
+         ::oDbf:cCodCate   := RetFld( ( D():AlbaranesProveedoresLineas( ::nView ) )->cRef, ( D():Articulos( ::nView ) ), "cCodCate", "Codigo" )
          ::oDbf:cCodGrp    := RetFld( ( D():AlbaranesProveedoresLineas( ::nView ) )->cRef, ( D():Articulos( ::nView ) ), "GrpVent", "Codigo" )
          ::oDbf:cDesUbi    := RetFld( ( D():AlbaranesProveedoresLineas( ::nView ) )->cRef, ( D():Articulos( ::nView ) ), "cDesUbi", "Codigo" )
          ::oDbf:cCodEnv    := RetFld( ( D():AlbaranesProveedoresLineas( ::nView ) )->cRef, ( D():Articulos( ::nView ) ), "cCodFra", "Codigo" )
@@ -3535,6 +3543,7 @@ METHOD AddFacturaProveedor( cCodigoArticulo ) CLASS TFastVentasArticulos
          ::oDbf:cCodEst    := RetFld( ( D():FacturasProveedoresLineas( ::nView ) )->cRef, ( D():Articulos( ::nView ) ), "cCodEst", "Codigo" )
          ::oDbf:cCodTemp   := RetFld( ( D():FacturasProveedoresLineas( ::nView ) )->cRef, ( D():Articulos( ::nView ) ), "cCodTemp", "Codigo" )
          ::oDbf:cCodFab    := RetFld( ( D():FacturasProveedoresLineas( ::nView ) )->cRef, ( D():Articulos( ::nView ) ), "cCodFab", "Codigo" )
+         ::oDbf:cCodCate   := RetFld( ( D():FacturasProveedoresLineas( ::nView ) )->cRef, ( D():Articulos( ::nView ) ), "cCodCate", "Codigo" )
          ::oDbf:cCodGrp    := RetFld( ( D():FacturasProveedoresLineas( ::nView ) )->cRef, ( D():Articulos( ::nView ) ), "GrpVent", "Codigo" )
          ::oDbf:cDesUbi    := RetFld( ( D():FacturasProveedoresLineas( ::nView ) )->cRef, ( D():Articulos( ::nView ) ), "cDesUbi", "Codigo" )
          ::oDbf:cCodEnv    := RetFld( ( D():FacturasProveedoresLineas( ::nView ) )->cRef, ( D():Articulos( ::nView ) ), "cCodFra", "Codigo" )
@@ -3662,6 +3671,7 @@ METHOD AddRectificativaProveedor( cCodigoArticulo ) CLASS TFastVentasArticulos
          ::oDbf:cCodEst    := RetFld( ( D():FacturasRectificativasProveedoresLineas( ::nView ) )->cRef, ( D():Articulos( ::nView ) ), "cCodEst", "Codigo" )
          ::oDbf:cCodTemp   := RetFld( ( D():FacturasRectificativasProveedoresLineas( ::nView ) )->cRef, ( D():Articulos( ::nView ) ), "cCodTemp", "Codigo" )
          ::oDbf:cCodFab    := RetFld( ( D():FacturasRectificativasProveedoresLineas( ::nView ) )->cRef, ( D():Articulos( ::nView ) ), "cCodFab", "Codigo" )
+         ::oDbf:cCodCate   := RetFld( ( D():FacturasRectificativasProveedoresLineas( ::nView ) )->cRef, ( D():Articulos( ::nView ) ), "cCodCate", "Codigo" )
          ::oDbf:cCodGrp    := RetFld( ( D():FacturasRectificativasProveedoresLineas( ::nView ) )->cRef, ( D():Articulos( ::nView ) ), "GrpVent", "Codigo" )
          ::oDbf:cDesUbi    := RetFld( ( D():FacturasRectificativasProveedoresLineas( ::nView ) )->cRef, ( D():Articulos( ::nView ) ), "cDesUbi", "Codigo" )
          ::oDbf:cCodEnv    := RetFld( ( D():FacturasRectificativasProveedoresLineas( ::nView ) )->cRef, ( D():Articulos( ::nView ) ), "cCodFra", "Codigo" )
