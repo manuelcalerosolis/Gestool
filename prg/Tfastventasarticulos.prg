@@ -16,6 +16,7 @@ CLASS TFastVentasArticulos FROM TFastReportInfGen
    DATA  aTypeDocs                        INIT { "C", "N", "D", "L", "C" }
 
    DATA  lUnidadesNegativo                INIT .f.
+   DATA  oProCab
    DATA  oProLin
    DATA  oProMat
    DATA  oHisMov
@@ -95,6 +96,8 @@ CLASS TFastVentasArticulos FROM TFastReportInfGen
    METHOD idArticuloAlmacen()             INLINE ( ::oDbf:cCodArt + ::oDbf:cCodAlm )
 
    METHOD StockArticulo()                 INLINE ( ::oStock:nStockAlmacen( ::oDbf:cCodArt, ::oDbf:cCodAlm, ::oDbf:cValPr1, ::oDbf:cValPr2, ::oDbf:cLote, ::dIniInf, ::dFinInf ) )
+
+   METHOD SaldoAnterior()                 INLINE ( ::oStock:nStockAlmacen( ::oDbf:cCodArt, ::oDbf:cCodAlm, ::oDbf:cValPr1, ::oDbf:cValPr2, ::oDbf:cLote, cToD( "01/01/2000" ), ::dIniInf ) )
 
    METHOD nTotalStockArticulo()           INLINE ( ::oStock:nStockArticulo( ::oDbf:cCodArt ) )
    METHOD nBultosStockArticulo()          INLINE ( ::oStock:nBultosArticulo( ::oDbf:cCodArt ) )

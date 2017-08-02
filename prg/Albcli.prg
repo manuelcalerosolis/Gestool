@@ -5675,7 +5675,7 @@ STATIC FUNCTION cPedCli( aGet, aTmp, oBrwLin, oBrwPgo, nMode )
          nTotRet                 -= nUnidadesRecibidasAlbaranesClientes( cPedido, ( dbfPedCliL )->cRef, ( dbfPedCliL )->cValPr1, ( dbfPedCliL )->cValPr2, D():Get( "AlbCliL", nView ) )
          nTotRet                 -= nUnidadesRecibidasFacturasClientes( cPedido, ( dbfPedCliL )->cRef, ( dbfPedCliL )->cValPr1, ( dbfPedCliL )->cValPr2, D():Get( "FacCliL", nView ) )
 
-         if ( nTotRet > 0 )                                       // ->  nTotNPedCli( dbfPedCliL ) == 0 .or. para meter lineas en negativo
+         if ( nTotRet > 0 ) .or. nTotNPedCli( dbfPedCliL ) == 0
 
             (dbfTmpLin)->( dbAppend() )
 
