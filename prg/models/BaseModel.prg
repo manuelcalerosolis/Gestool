@@ -46,13 +46,17 @@ METHOD ExecuteSqlStatement( cSql, cSqlStatement, hStatement )
          lOk               := ADSExecuteSQLDirect( cSql )
          if !lOk
             nError         := AdsGetLastError( @cErrorAds )
-            msgStop( "Error : " + Str( nError) + "[" + cErrorAds + "]", 'ERROR en AdsExecuteSqlDirect' )
+            msgStop( "Error : " + Str( nError) + "[" + cErrorAds + "]" + CRLF +  ;
+                     "Sentence : " + cSqlStatement                              ,;
+                     'ERROR en ADSCreateSQLStatement' )
          endif
    
       else
    
          nError            := AdsGetLastError( @cErrorAds )
-         msgStop( "Error : " + Str( nError) + "[" + cErrorAds + "]", 'ERROR en ADSCreateSQLStatement' )
+         msgStop( "Error : " + Str( nError) + "[" + cErrorAds + "]" + CRLF +  ;
+                  "Sentence : " + cSqlStatement                              ,;
+                  'ERROR en ADSCreateSQLStatement' )
    
       end if
    
@@ -62,11 +66,8 @@ METHOD ExecuteSqlStatement( cSql, cSqlStatement, hStatement )
       endif
 
    RECOVER USING oError
-
       msgStop( ErrorMessage( oError ), "Error en sentencia SQL" )
-   
    END SEQUENCE
-
    ErrorBlock( oBlock )
 
 RETURN ( lOk )

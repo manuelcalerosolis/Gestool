@@ -297,7 +297,7 @@ FUNCTION Empresa( oMenuItem, oWnd )
       */
 
       if oWnd != nil
-         SysRefresh(); oWnd:CloseAll(); SysRefresh()
+         sysrefresh(); oWnd:CloseAll(); sysrefresh()
       end if
 
       /*
@@ -486,20 +486,20 @@ Static Function initialProccesBuildEmpresa()
    local cNombreEmpresa := ( dbfEmp )->cNombre
 
    /*
-   Cerramos la ventana------------------------------------------------------
+   Cerramos la ventana---------------------------------------------------------
    */
 
    oWndBrw:QuitOnProcess()
    oWndBrw:End()
 
    /*
-   Cerramos todas los servicios---------------------------------------------
+   Cerramos todas los servicios------------------------------------------------
    */
 
    stopServices()
 
    /*
-   Creamos empresa----------------------------------------------------------
+   Creamos empresa-------------------------------------------------------------
    */
 
    dbCloseAll()
@@ -3566,7 +3566,7 @@ FUNCTION mkPathEmp( cCodEmpNew, cNomEmpNew, cCodEmpOld, aImportacion, lDialog, l
 
    end if
 
-   SysRefresh()
+   sysrefresh()
 
 Return ( .t. )
 
@@ -3580,10 +3580,10 @@ Static Function StartPathEmp( cPath, cPathOld, cCodEmpNew, cNomEmpNew, cCodEmpOl
    local cPathGrp       := ""
    local lAIS           := lAIS()
 
-   if lAIS()
-      msgStop( "Esta opción no esta permitida para motor de bases de datos ADS.")
-      Return ( nil )
-   end if
+//   if lAIS()
+//      msgStop( "Esta opción no esta permitida para motor de bases de datos ADS.")
+//      Return ( nil )
+//   end if
 
    // oBlock               := ErrorBlock( {| oError | ApoloBreak( oError ) } )
    // BEGIN SEQUENCE
@@ -3594,7 +3594,7 @@ Static Function StartPathEmp( cPath, cPathOld, cCodEmpNew, cNomEmpNew, cCodEmpOl
 
    dbCloseAll()
 
-   SysRefresh()
+   sysrefresh()
 
    if lChDir( cNamePath( cPath ) ) .or. makeDir( cNamePath( cPath ) ) != -1
 
@@ -3624,43 +3624,43 @@ Static Function StartPathEmp( cPath, cPathOld, cCodEmpNew, cNomEmpNew, cCodEmpOl
       if oMsg != nil
          oMsg:SetText( "Creando familias" )
       end if
-      mkFamilia( cPath, aImportacion:lArticulos, cPathGrp ) ; rxFamilia( cPath ) ; sysRefresh()
+      mkFamilia( cPath, aImportacion:lArticulos, cPathGrp ) ; rxFamilia( cPath ) ; sysrefresh()
 
       if oMsg != nil
          oMsg:SetText( "Creando Estados de los SAT" )
       end if
-      mkEstadoSat( cPath, aImportacion:lSatCli, cPathGrp ); rxEstadoSat( cPath )   ; SysRefresh()
+      mkEstadoSat( cPath, aImportacion:lSatCli, cPathGrp ); rxEstadoSat( cPath )   ; sysrefresh()
 
       if oMsg != nil
          oMsg:SetText( "Creando " + getConfigTraslation( "temporadas" ) )
       end if
-      mkTemporada( cPath, aImportacion:lArticulos, cPathGrp ); rxTemporada( cPath )   ; SysRefresh()
+      mkTemporada( cPath, aImportacion:lArticulos, cPathGrp ); rxTemporada( cPath )   ; sysrefresh()
 
       if oMsg != nil
          oMsg:SetText( "Creando grupos de familias" )
       end if
       if cPathOld != nil
-         TGrpFam():Create( cPath ):CheckFiles( cPathGrp + "GrpFam.Dbf" )   ; SysRefresh()
+         TGrpFam():Create( cPath ):CheckFiles( cPathGrp + "GrpFam.Dbf" )   ; sysrefresh()
       else
-         TGrpFam():Create( cPath ):CheckFiles()                            ; SysRefresh()
+         TGrpFam():Create( cPath ):CheckFiles()                            ; sysrefresh()
       end if
 
       if oMsg != nil
          oMsg:SetText( "Creando comandas" )
       end if
       if cPathOld != nil
-         TComandas():Create( cPath ):CheckFiles( cPathGrp + "TComandas.Dbf" ); SysRefresh()
+         TComandas():Create( cPath ):CheckFiles( cPathGrp + "TComandas.Dbf" ); sysrefresh()
       else
-         TComandas():Create( cPath ):CheckFiles()                            ; SysRefresh()
+         TComandas():Create( cPath ):CheckFiles()                            ; sysrefresh()
       end if
 
       if oMsg != nil
          oMsg:SetText( "Creando fabricantes" )
       end if
       if cPathOld != nil
-         TFabricantes():Create( cPath ):CheckFiles( cPathGrp + "Fabricantes.Dbf" )  ; SysRefresh()
+         TFabricantes():Create( cPath ):CheckFiles( cPathGrp + "Fabricantes.Dbf" )  ; sysrefresh()
       else
-         TFabricantes():Create( cPath ):CheckFiles()                                ; SysRefresh()
+         TFabricantes():Create( cPath ):CheckFiles()                                ; sysrefresh()
       end if
 
       if oMsg != nil
@@ -3687,9 +3687,9 @@ Static Function StartPathEmp( cPath, cPathOld, cCodEmpNew, cNomEmpNew, cCodEmpOl
          oMsg:SetText( "Creando catálogos" )
       end if
       if cPathOld != nil
-         TCatalogo():Create( cPath ):CheckFiles( cPathGrp + "Catalogo.Dbf" )  ; SysRefresh()
+         TCatalogo():Create( cPath ):CheckFiles( cPathGrp + "Catalogo.Dbf" )  ; sysrefresh()
       else
-         TCatalogo():Create( cPath ):CheckFiles()                             ; sysRefresh()
+         TCatalogo():Create( cPath ):CheckFiles()                             ; sysrefresh()
       end if
 
       if oMsg != nil
@@ -3697,9 +3697,9 @@ Static Function StartPathEmp( cPath, cPathOld, cCodEmpNew, cNomEmpNew, cCodEmpOl
       end if
 
       if cPathOld != nil
-         UniMedicion():Create( cPath ):CheckFiles( cPathGrp + "UndMed.Dbf" ) ; SysRefresh()
+         UniMedicion():Create( cPath ):CheckFiles( cPathGrp + "UndMed.Dbf" ) ; sysrefresh()
       else
-         UniMedicion():Create( cPath ):CheckFiles() ; sysRefresh()
+         UniMedicion():Create( cPath ):CheckFiles() ; sysrefresh()
       end if
 
       if oMsg != nil
@@ -3772,21 +3772,21 @@ Static Function StartPathEmp( cPath, cPathOld, cCodEmpNew, cNomEmpNew, cCodEmpOl
       end if
 
       if cPathOld != nil
-         TPVMenu():Create( cPath ):CheckFiles( cPathGrp + "TpvMenus.Dbf" ) ; SysRefresh()
+         TPVMenu():Create( cPath ):CheckFiles( cPathGrp + "TpvMenus.Dbf" ) ; sysrefresh()
       else
-         TPVMenu():Create( cPath ):CheckFiles() ; sysRefresh()
+         TPVMenu():Create( cPath ):CheckFiles() ; sysrefresh()
       end if
 
       if cPathOld != nil
-         TPVMenuArticulo():Create( cPath ):CheckFiles( cPathGrp + "TpvMnuArt.Dbf" )   ; SysRefresh()
+         TPVMenuArticulo():Create( cPath ):CheckFiles( cPathGrp + "TpvMnuArt.Dbf" ) ; sysrefresh()
       else
-         TPVMenuArticulo():Create( cPath ):CheckFiles()                            ; sysRefresh()
+         TPVMenuArticulo():Create( cPath ):CheckFiles()                             ; sysrefresh()
       end if
 
       if cPathOld != nil
-         TPVMenuOrdenes():Create( cPath ):CheckFiles( cPathGrp + "TpvMnuOrd.Dbf" )  ; SysRefresh()
+         TPVMenuOrdenes():Create( cPath ):CheckFiles( cPathGrp + "TpvMnuOrd.Dbf" )  ; sysrefresh()
       else
-         TPVMenuOrdenes():Create( cPath ):CheckFiles()                              ; sysRefresh()
+         TPVMenuOrdenes():Create( cPath ):CheckFiles()                              ; sysrefresh()
       end if
 
       if oMsg != nil
@@ -3826,7 +3826,7 @@ Static Function StartPathEmp( cPath, cPathOld, cCodEmpNew, cNomEmpNew, cCodEmpOl
          TEntidades():Create( cPath ):CheckFiles()
       end if
 
-      SysRefresh()
+      sysrefresh()
 
       if oMsg != nil
          oMsg:SetText( "Creando impuesto de hidrocarburos" )
@@ -3843,9 +3843,9 @@ Static Function StartPathEmp( cPath, cPathOld, cCodEmpNew, cNomEmpNew, cCodEmpOl
       end if
 
       if cPathOld != nil .and. aImportacion:lArticulos
-         TTipArt():Create( cPath ):CheckFiles( cPathOld + "TipArt.Dbf" )   ; SysRefresh()
+         TTipArt():Create( cPath ):CheckFiles( cPathOld + "TipArt.Dbf" )   ; sysrefresh()
       else
-         TTipArt():Create( cPath ):CheckFiles()                            ; SysRefresh()
+         TTipArt():Create( cPath ):CheckFiles()                            ; sysrefresh()
       end if
 
       if oMsg != nil
@@ -3857,9 +3857,9 @@ Static Function StartPathEmp( cPath, cPathOld, cCodEmpNew, cNomEmpNew, cCodEmpOl
       end if
 
       if cPathOld != nil .and. aImportacion:lArticulos
-         TAtipicas():Create( cPath ):CheckFiles( cPathOld + "CliAtp.Dbf" ) ; SysRefresh()
+         TAtipicas():Create( cPath ):CheckFiles( cPathOld + "CliAtp.Dbf" ) ; sysrefresh()
       else
-         TAtipicas():Create( cPath ):CheckFiles()                          ; SysRefresh()
+         TAtipicas():Create( cPath ):CheckFiles()                          ; sysrefresh()
       end if
 
       if oMsg != nil
@@ -3867,9 +3867,9 @@ Static Function StartPathEmp( cPath, cPathOld, cCodEmpNew, cNomEmpNew, cCodEmpOl
       end if
 
       if cPathOld != nil .and. aImportacion:lClientes
-         TGrpCli():Create( cPath ):CheckFiles( cPathOld + "GrpCli.Dbf" )   ; SysRefresh()
+         TGrpCli():Create( cPath ):CheckFiles( cPathOld + "GrpCli.Dbf" )   ; sysrefresh()
       else
-         TGrpCli():Create( cPath ):CheckFiles()                            ; SysRefresh()
+         TGrpCli():Create( cPath ):CheckFiles()                            ; sysrefresh()
       end if
 
       if oMsg != nil
@@ -3877,9 +3877,9 @@ Static Function StartPathEmp( cPath, cPathOld, cCodEmpNew, cNomEmpNew, cCodEmpOl
       end if
 
       if cPathOld != nil .and. aImportacion:lClientes
-         TGrpFacturasAutomaticas():Create( cPath ):CheckFiles( cPathOld + "GrpFac.Dbf" )   ; SysRefresh()
+         TGrpFacturasAutomaticas():Create( cPath ):CheckFiles( cPathOld + "GrpFac.Dbf" )   ; sysrefresh()
       else
-         TGrpFacturasAutomaticas():Create( cPath ):CheckFiles()                            ; SysRefresh()
+         TGrpFacturasAutomaticas():Create( cPath ):CheckFiles()                            ; sysrefresh()
       end if
 
       if oMsg != nil
@@ -3887,9 +3887,9 @@ Static Function StartPathEmp( cPath, cPathOld, cCodEmpNew, cNomEmpNew, cCodEmpOl
       end if
 
       if cPathOld != nil .and. aImportacion:lClientes
-         TTrans():Create( cPath ):CheckFiles( cPathOld + "Transpor.Dbf" )  ; SysRefresh()
+         TTrans():Create( cPath ):CheckFiles( cPathOld + "Transpor.Dbf" )  ; sysrefresh()
       else
-         TTrans():Create( cPath ):CheckFiles()                             ; SysRefresh()
+         TTrans():Create( cPath ):CheckFiles()                             ; sysrefresh()
       end if
 
       if oMsg != nil
@@ -3897,9 +3897,9 @@ Static Function StartPathEmp( cPath, cPathOld, cCodEmpNew, cNomEmpNew, cCodEmpOl
       end if
 
       if cPathOld != nil .and. aImportacion:lProveedor
-         TGrpPrv():Create( cPath ):CheckFiles( cPathOld + "GrpPrv.Dbf" )   ; SysRefresh()
+         TGrpPrv():Create( cPath ):CheckFiles( cPathOld + "GrpPrv.Dbf" )   ; sysrefresh()
       else
-         TGrpPrv():Create( cPath ):CheckFiles()                            ; SysRefresh()
+         TGrpPrv():Create( cPath ):CheckFiles()                            ; sysrefresh()
       end if
 
       if oMsg != nil
@@ -3907,9 +3907,9 @@ Static Function StartPathEmp( cPath, cPathOld, cCodEmpNew, cNomEmpNew, cCodEmpOl
       end if
 
       if cPathOld != nil
-         TCtaRem():Create( cPath ):CheckFiles( cPathOld + "CtaRem.Dbf" )   ; SysRefresh()
+         TCtaRem():Create( cPath ):CheckFiles( cPathOld + "CtaRem.Dbf" )   ; sysrefresh()
       else
-         TCtaRem():Create( cPath ):CheckFiles()                            ; SysRefresh()
+         TCtaRem():Create( cPath ):CheckFiles()                            ; sysrefresh()
       end if
 
       if oMsg != nil
@@ -3917,15 +3917,15 @@ Static Function StartPathEmp( cPath, cPathOld, cCodEmpNew, cNomEmpNew, cCodEmpOl
       end if
 
       if cPathOld != nil
-         TTpvRestaurante():Create( cPath ):CheckFiles( cPathOld + "SalaVta.Dbf" )     ; SysRefresh()
-         TDetSalaVta():Create( cPath ):CheckFiles( cPathOld + "SlaPnt.Dbf" )     ; SysRefresh()
+         TTpvRestaurante():Create( cPath ):CheckFiles( cPathOld + "SalaVta.Dbf" )     ; sysrefresh()
+         TDetSalaVta():Create( cPath ):CheckFiles( cPathOld + "SlaPnt.Dbf" )     ; sysrefresh()
       else
-         TTpvRestaurante():Create( cPath ):CheckFiles()                               ; SysRefresh()
-         TDetSalaVta():Create( cPath ):CheckFiles()                              ; SysRefresh()
+         TTpvRestaurante():Create( cPath ):CheckFiles()                               ; sysrefresh()
+         TDetSalaVta():Create( cPath ):CheckFiles()                              ; sysrefresh()
       end if
 
       /*
-      Documentos de proveedores
+      Documentos de proveedores------------------------------------------------
 		*/
 
       if oMsg != nil
@@ -3954,7 +3954,7 @@ Static Function StartPathEmp( cPath, cPathOld, cCodEmpNew, cNomEmpNew, cCodEmpOl
       mkRecPrv( cPath, nil ) ; sysrefresh()
 
 		/*
-      Documentos de clientes
+      Documentos de clientes---------------------------------------------------
 		*/
 
       if oMsg != nil
@@ -3975,28 +3975,28 @@ Static Function StartPathEmp( cPath, cPathOld, cCodEmpNew, cNomEmpNew, cCodEmpOl
       if oMsg != nil
          oMsg:SetText( "Creando albaranes a clientes" )
       end if
-      mkAlbCli( cPath, aImportacion:lAlbCli, cPathOld, nil, {| dbf | !lFacturado( dbf ) } ) ; SysRefresh()
+      mkAlbCli( cPath, aImportacion:lAlbCli, cPathOld, nil, {| dbf | !lFacturado( dbf ) } ) ; sysrefresh()
 
       if oMsg != nil
          oMsg:SetText( "Creando facturas a clientes" )
       end if
-      mkFacCli( cPath ) ; SysRefresh()
+      mkFacCli( cPath ) ; sysrefresh()
 
       if oMsg != nil
          oMsg:SetText( "Creando facturas rectificativas a clientes" )
       end if
-      mkFacRec( cPath ) ; SysRefresh()
+      mkFacRec( cPath ) ; sysrefresh()
 
       if oMsg != nil
          oMsg:SetText( "Creando recibos a clientes" )
       end if
-      mkRecCli( cPath ) ; SysRefresh()
+      mkRecCli( cPath ) ; sysrefresh()
 
       if oMsg != nil
          oMsg:SetText( "Creando facturas de anticipos a clientes" )
       end if
       mkAntCli( cPath, aImportacion:lAnticipo, cPathOld )
-      SysRefresh()
+      sysrefresh()
 
       /*
       Tablas de producción----------------------------------------------
@@ -4011,7 +4011,7 @@ Static Function StartPathEmp( cPath, cPathOld, cCodEmpNew, cNomEmpNew, cCodEmpOl
       else
          TSeccion():Create( cPath ):CheckFiles()
       end if
-      SysRefresh()
+      sysrefresh()
 
       if oMsg != nil
          oMsg:SetText( "Creando horas de producción" )
@@ -4032,7 +4032,7 @@ Static Function StartPathEmp( cPath, cPathOld, cCodEmpNew, cNomEmpNew, cCodEmpOl
       else
          TDetHoras():Create( cPath ):CheckFiles()
       end if
-      SysRefresh()
+      sysrefresh()
 
       if oMsg != nil
          oMsg:SetText( "Creando operarios de producción" )
@@ -4043,7 +4043,7 @@ Static Function StartPathEmp( cPath, cPathOld, cCodEmpNew, cNomEmpNew, cCodEmpOl
       else
          TOperarios():Create( cPath ):CheckFiles()
       end if
-      SysRefresh()
+      sysrefresh()
 
       if oMsg != nil
          oMsg:SetText( "Creando operaciones de producción" )
@@ -4054,7 +4054,7 @@ Static Function StartPathEmp( cPath, cPathOld, cCodEmpNew, cNomEmpNew, cCodEmpOl
       else
          TOperacion():Create( cPath ):CheckFiles()
       end if
-      SysRefresh()
+      sysrefresh()
 
       if oMsg != nil
          oMsg:SetText( "Creando tipos de operaciones de producción" )
@@ -4065,7 +4065,7 @@ Static Function StartPathEmp( cPath, cPathOld, cCodEmpNew, cNomEmpNew, cCodEmpOl
       else
          TTipOpera():Create( cPath ):CheckFiles()
       end if
-      SysRefresh()
+      sysrefresh()
 
       if oMsg != nil
          oMsg:SetText( "Creando maquinarias de producción" )
@@ -4076,7 +4076,7 @@ Static Function StartPathEmp( cPath, cPathOld, cCodEmpNew, cNomEmpNew, cCodEmpOl
       else
          TMaquina():Create( cPath ):CheckFiles()
       end if
-      SysRefresh()
+      sysrefresh()
 
       if oMsg != nil
          oMsg:SetText( "Creando costos de maquinarias de producción" )
@@ -4087,28 +4087,28 @@ Static Function StartPathEmp( cPath, cPathOld, cCodEmpNew, cNomEmpNew, cCodEmpOl
       else
          TCosMaq():Create( cPath ):CheckFiles()
       end if
-      SysRefresh()
+      sysrefresh()
 
       if cPathOld != nil
          TFideliza():Create( cPath ):CheckFiles( cPathOld + "Fideliza.Dbf" )
       else
          TFideliza():Create( cPath ):CheckFiles()
       end if
-      SysRefresh()
+      sysrefresh()
 
       if cPathOld != nil
          TDetFideliza():Create( cPath ):CheckFiles( cPathOld + "DetFideliza.Dbf" )
       else
          TDetFideliza():Create( cPath ):CheckFiles()
       end if
-      SysRefresh()
+      sysrefresh()
 
       if oMsg != nil
          oMsg:SetText( "Creando identificadores de prestashop" )
       end if
 
       TPrestaShopId():Create( cPath ):CheckFiles()
-      SysRefresh()
+      sysrefresh()
 
       // Columnas de usuario---------------------------------------------------
 
@@ -4148,7 +4148,7 @@ Static Function StartPathEmp( cPath, cPathOld, cCodEmpNew, cNomEmpNew, cCodEmpOl
       Cerramos todas las tablas------------------------------------------------
       */
 
-      SysRefresh()
+      dbDialog()
 
       /*
       Calculo de stocks--------------------------------------------------------
@@ -4165,6 +4165,8 @@ Static Function StartPathEmp( cPath, cPathOld, cCodEmpNew, cNomEmpNew, cCodEmpOl
       /*
       Si hay nueva empresa calculamos stocks y regeneramos indices-------------
       */
+
+      dbDialog()
 
       if lNewEmp
          reindexaEmp( cPath, cCodEmpNew, oMsg )
@@ -4207,17 +4209,17 @@ RETURN .t.
 
 //---------------------------------------------------------------------------//
 
-function ReindexaEmp( cPath, cCodEmpNew, oMsg )
+Function ReindexaEmp( cPath, cCodigoEmpresa, oMsg )
 
    with object ( TReindex():New( nil, nil, cPath ) )
       :lEmpresa      := .f.
+      :lDatos        := .f.
       :lMessageEnd   := .f.
-      :cCodEmp       := cCodEmpNew
-      :cPatCli       := cPatCli( cCodEmpNew, .f., .t. )
-      :cPatArt       := cPatArt( cCodEmpNew, .f., .t. )
-      :cPatPrv       := cPatPrv( cCodEmpNew, .f., .t. )
-      :cPatAlm       := cPatAlm( cCodEmpNew, .f., .t. )
-      //:cPatGrp       := cPatGrp( cCodEmpNew, .f., .t. )
+      :cCodEmp       := cCodigoEmpresa
+      :cPatCli       := cPatCli( cCodigoEmpresa, .f., .t. )
+      :cPatArt       := cPatArt( cCodigoEmpresa, .f., .t. )
+      :cPatPrv       := cPatPrv( cCodigoEmpresa, .f., .t. )
+      :cPatAlm       := cPatAlm( cCodigoEmpresa, .f., .t. )
       :GenIndices( oMsg )
    end with
 
@@ -4235,10 +4237,10 @@ FUNCTION lActualiza( cCodEmp, oWndBrw, lNoWait, cNomEmp, lSincroniza )
    local oAct
    local oMsg
    local oDlgWat
-   local hBmp        := LoadBitmap( GetResources(), "BSTOP" )
-   local cMsg        := ""
-   local aMsg        := {}
-   local acImages    := { "BAR_01" }
+   local hBmp           := LoadBitmap( GetResources(), "BSTOP" )
+   local cMsg           := ""
+   local aMsg           := {}
+   local acImages       := { "BAR_01" }
    local oBtnAceptar
    local oBtnCancelar
 
@@ -4262,7 +4264,7 @@ FUNCTION lActualiza( cCodEmp, oWndBrw, lNoWait, cNomEmp, lSincroniza )
    end if
 
    if lNoWait
-      lActEmp        := .t.
+      lActEmp           := .t.
    end if
 
    if oWndBrw != nil
@@ -5048,7 +5050,7 @@ FUNCTION ActDbf( cEmpOld, cEmpTmp, cFile, cText, oMtr, oMsg )
    local nField               := 0
    local aField
 
-   SysRefresh()
+   sysrefresh()
 
    if oMsg != nil
       oMsg:SetText( "Añadiendo " + cText )
@@ -5094,7 +5096,7 @@ FUNCTION ActDbf( cEmpOld, cEmpTmp, cFile, cText, oMtr, oMsg )
 
       ( dbfOld )->( dbSkip() )
 
-      SysRefresh()
+      sysrefresh()
 
    end while
 
@@ -5286,7 +5288,7 @@ FUNCTION ConfEmpresa( oWnd, oMenuItem, nSelFolder )
    */
 
    if oWnd != nil
-      SysRefresh(); oWnd:CloseAll(); SysRefresh()
+      sysrefresh(); oWnd:CloseAll(); sysrefresh()
    end if
 
    if OpenFiles()
@@ -7452,7 +7454,7 @@ function ActualizaEstructuras( dbfEmp, dbfDlg, dbfUser, oBrw, oWnd )
 
    oBrw:End()
 
-   SysRefresh()
+   sysrefresh()
 
    lActualiza( cCodEmp, oBrw, .f., cNomEmp )
    

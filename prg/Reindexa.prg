@@ -126,8 +126,8 @@ METHOD GenIndices( oMsg )
       dbCloseAll()
    end if
 
-   oBlock            := ErrorBlock( {| oError | ApoloBreak( oError ) } )
-   BEGIN SEQUENCE
+   // oBlock            := ErrorBlock( {| oError | ApoloBreak( oError ) } )
+   // BEGIN SEQUENCE
 
    if !Empty( oMsg )
       ::oMsg         := oMsg
@@ -153,99 +153,52 @@ METHOD GenIndices( oMsg )
 
    if ::aLgcIndices[ 1 ]
 
-      if !Empty( ::aProgress[ 1 ] )
-
-         if ::lNotGrupo
-
-            if ::lEmpresa
-               ::nProgress[ 1 ]  += 5
-            end if
-
-            ::nProgress[ 1 ]     += 9
-
-         end if
-
-         if ::lDatos
-
-            if ::lEmpresa
-               ::nProgress[ 1 ]  += 1
-            end if
-
-            ::nProgress[ 1 ]     += 9
-
-            if ::lNotGrupo
-               ::nProgress[ 1 ]  += 9
-            end if
-
-         end if
-
-         ::nActualProgress       := 0
-
-         ::aProgress[ 1 ]:SetTotal( ::nProgress[ 1 ] )
-
-      end if
-
       // Regenración de indices -----------------------------------------------
 
-      if ::lNotGrupo
-
-         if ::lEmpresa
-
-            ::SetText( "Generando índices : Empresas", ::aProgress[ 1 ] )        ; rxEmpresa(  ::cPathDat )
-            ::SetText( "Generando índices : Usuarios", ::aProgress[ 1 ] )        ; rxUsuario(  ::cPathDat )
-            ::SetText( "Generando índices : Divisas", ::aProgress[ 1 ]  )        ; rxDiv(      ::cPathDat )
-            ::SetText( "Generando índices : Configuración", ::aProgress[ 1 ] )   ; TShell():ReindexData()
-
-         end if
-
-         ::SetText( "Generando índices : Tipo de " + cImp(), ::aProgress[ 1 ] )  ; rxTIva(     ::cPathDat )
-         ::SetText( "Generando índices : Movimientos", ::aProgress[ 1 ] )        ; rxTMov(     ::cPathDat )
-         ::SetText( "Generando índices : Tablas conversión", ::aProgress[ 1 ] )  ; rxTblCnv(   ::cPathDat )
-         ::SetText( "Generando índices : Filtros", ::aProgress[ 1 ] )            ; TFilterDatabase():Create( ::cPathDat ):Reindexa()
-         ::SetText( "Generando índices : Notas", ::aProgress[ 1 ] )              ; TNotas():Create( ::cPathDat ):Reindexa()
-         ::SetText( "Generando índices : Agenda", ::aProgress[ 1 ] )             ; TAgenda():Create( ::cPathDat ):Reindexa()
-         // ::SetText( "Generando índices : Tanques", ::aProgress[ 1 ] )            ; TTankes():Create( ::cPathDat ):Reindexa()
-         // ::SetText( "Generando índices : Auditoria", ::aProgress[ 1 ] )          ; TAuditor():Create( ::cPathDat ):Reindexa()
-
+      if ::lEmpresa
+         ::SetText( "Generando índices : Empresas", ::aProgress[ 1 ] )        ; rxEmpresa( ::cPathDat )
+         ::SetText( "Generando índices : Usuarios", ::aProgress[ 1 ] )        ; rxUsuario( ::cPathDat )
+         ::SetText( "Generando índices : Divisas", ::aProgress[ 1 ]  )        ; rxDiv( ::cPathDat )
+         ::SetText( "Generando índices : Configuración", ::aProgress[ 1 ] )   ; TShell():ReindexData()
       end if
 
       if ::lDatos
+         ::SetText( "Generando índices : Tipo de " + cImp(), ::aProgress[ 1 ] )  ; rxTIva( ::cPathDat )
+         ::SetText( "Generando índices : Movimientos", ::aProgress[ 1 ] )        ; rxTMov( ::cPathDat )
+         ::SetText( "Generando índices : Tablas conversión", ::aProgress[ 1 ] )  ; rxTblCnv( ::cPathDat )
+         ::SetText( "Generando índices : Filtros", ::aProgress[ 1 ] )            ; TFilterDatabase():Create( ::cPathDat ):Reindexa()
+         ::SetText( "Generando índices : Notas", ::aProgress[ 1 ] )              ; TNotas():Create( ::cPathDat ):Reindexa()
+         ::SetText( "Generando índices : Agenda", ::aProgress[ 1 ] )             ; TAgenda():Create( ::cPathDat ):Reindexa()
+      end if
 
-         ::SetText( "Generando índices : Familias", ::aProgress[ 1 ] )              ; rxFamilia( ::cPatArt )
-         ::SetText( "Generando índices : Estados del SAT", ::aProgress[ 1 ] )       ; rxEstadoSat()
-         ::SetText( "Generando índices : Tempordas", ::aProgress[ 1 ] )             ; rxTemporada( ::cPatArt )
-         ::SetText( "Generando índices : Grupos de familias", ::aProgress[ 1 ] )    ; TGrpFam():Create( ::cPatArt ):Reindexa()
-         ::SetText( "Generando índices : Fabricantes", ::aProgress[ 1 ] )           ; TFabricantes():Create( ::cPatArt ):Reindexa()
-         ::SetText( "Generando índices : Grupos de clientes", ::aProgress[ 1 ] )    ; TGrpCli():Create( ::cPatCli ):Reindexa()
-         ::SetText( "Generando índices : Grupos de proveedores", ::aProgress[ 1 ] ) ; TGrpPrv():Create( ::cPatPrv ):Reindexa()
-         ::SetText( "Generando índices : Tipos de artículos", ::aProgress[ 1 ] )    ; TTipArt():Create( ::cPatArt ):Reindexa()
-         ::SetText( "Generando índices : Proyectos", ::aProgress[ 1 ] )             ; TProyecto():Create( ::cPathEmp ):Reindexa()
-         ::SetText( "Generando índices : Catálogos", ::aProgress[ 1 ] )             ; TCatalogo():Create( ::cPathEmp ):Reindexa()
-         ::SetText( "Generando índices : Unidades de medición", ::aProgress[ 1 ] )  ; UniMedicion():Create( ::cPathEmp ):Reindexa()
-         ::SetText( "Generando índices : Transportistas", ::aProgress[ 1 ] )        ; TTrans():Create( ::cPatCli ):Reindexa()
-         ::SetText( "Generando índices : Tipos de comandas", ::aProgress[ 1 ] )     ; TComandas():Create( ::cPatArt ):Reindexa()
+      ::SetText( "Generando índices : Familias", ::aProgress[ 1 ] )              ; rxFamilia( ::cPatArt )
+      ::SetText( "Generando índices : Estados del SAT", ::aProgress[ 1 ] )       ; rxEstadoSat()
+      ::SetText( "Generando índices : Tempordas", ::aProgress[ 1 ] )             ; rxTemporada( ::cPatArt )
+      ::SetText( "Generando índices : Grupos de familias", ::aProgress[ 1 ] )    ; TGrpFam():Create( ::cPatArt ):Reindexa()
+      ::SetText( "Generando índices : Fabricantes", ::aProgress[ 1 ] )           ; TFabricantes():Create( ::cPatArt ):Reindexa()
+      ::SetText( "Generando índices : Grupos de clientes", ::aProgress[ 1 ] )    ; TGrpCli():Create( ::cPatCli ):Reindexa()
+      ::SetText( "Generando índices : Grupos de proveedores", ::aProgress[ 1 ] ) ; TGrpPrv():Create( ::cPatPrv ):Reindexa()
+      ::SetText( "Generando índices : Tipos de artículos", ::aProgress[ 1 ] )    ; TTipArt():Create( ::cPatArt ):Reindexa()
+      ::SetText( "Generando índices : Proyectos", ::aProgress[ 1 ] )             ; TProyecto():Create( ::cPathEmp ):Reindexa()
+      ::SetText( "Generando índices : Catálogos", ::aProgress[ 1 ] )             ; TCatalogo():Create( ::cPathEmp ):Reindexa()
+      ::SetText( "Generando índices : Unidades de medición", ::aProgress[ 1 ] )  ; UniMedicion():Create( ::cPathEmp ):Reindexa()
+      ::SetText( "Generando índices : Transportistas", ::aProgress[ 1 ] )        ; TTrans():Create( ::cPatCli ):Reindexa()
+      ::SetText( "Generando índices : Tipos de comandas", ::aProgress[ 1 ] )     ; TComandas():Create( ::cPatArt ):Reindexa()
+      ::SetText( "Generando índices : Cuentas de remesas", ::aProgress[ 1 ] )          ; TCtaRem():Create( ::cPatCli ):Reindexa()
+      ::SetText( "Generando índices : Tipo de envasado", ::aProgress[ 1 ] )            ; TFrasesPublicitarias():Create( cPatArt() ):Reindexa()
+      ::SetText( "Generando índices : Sala de venta", ::aProgress[ 1 ] )               ; TTpvRestaurante():Create( ::cPathEmp ):Reindexa()
+      ::SetText( "Generando índices : Puntos de venta", ::aProgress[ 1 ] )             ; TDetSalaVta():Create( ::cPathEmp ):Reindexa()
+      ::SetText( "Generando índices : Configuración de informes", ::aProgress[ 1 ] )   ; TInfGen():Reindexa( ::cPathEmp )
+      ::SetText( "Generando índices : Configuración de favoritos", ::aProgress[ 1 ] )  ; rxReport( ::cPathEmp )
+      ::SetText( "Generando índices : Impuesto IVMH", ::aProgress[ 1 ] )               ; TNewImp():Create( ::cPathEmp ):Reindexa()
+      ::SetText( "Generando índices : Reporting", ::aProgress[ 1 ] )                   ; TFastReportInfGen():Reindexa( ::cPathEmp )
 
-         if ::lNotGrupo
-
-            ::SetText( "Generando índices : Cuentas de remesas", ::aProgress[ 1 ] )          ; TCtaRem():Create( ::cPatCli ):Reindexa()
-            ::SetText( "Generando índices : Tipo de envasado", ::aProgress[ 1 ] )            ; TFrasesPublicitarias():Create( cPatArt() ):Reindexa()
-            ::SetText( "Generando índices : Sala de venta", ::aProgress[ 1 ] )               ; TTpvRestaurante():Create( ::cPathEmp ):Reindexa()
-            ::SetText( "Generando índices : Puntos de venta", ::aProgress[ 1 ] )             ; TDetSalaVta():Create( ::cPathEmp ):Reindexa()
-            ::SetText( "Generando índices : Configuración de informes", ::aProgress[ 1 ] )   ; TInfGen():Reindexa( ::cPathEmp )
-            ::SetText( "Generando índices : Configuración de favoritos", ::aProgress[ 1 ] )  ; rxReport( ::cPathEmp )
-            ::SetText( "Generando índices : Impuesto IVMH", ::aProgress[ 1 ] )               ; TNewImp():Create( ::cPathEmp ):Reindexa()
-            ::SetText( "Generando índices : Reporting", ::aProgress[ 1 ] )                   ; TFastReportInfGen():Reindexa( ::cPathEmp )
-
-            if ::lEmpresa
-               ::SetText( "Generando índices : Codigos postales", ::aProgress[ 1 ] )         ; CodigosPostales():Create( ::cPathDat ):Reindexa()
-               ::SetText( "Generando índices : Provincia", ::aProgress[ 1 ] )                ; Provincias():Create( ::cPathDat ):Reindexa()
-               ::SetText( "Generando índices : Paises", ::aProgress[ 1 ] )                   ; TPais():Create( ::cPathDat ):Reindexa()
-               ::SetText( "Generando índices : Lenguaje", ::aProgress[ 1 ] )                 ; TLenguaje():Create( ::cPathDat ):Reindexa()
-               ::SetText( "Generando índices : Centro de coste", ::aProgress[ 1 ] )          ; TCentroCoste():Create( ::cPathDat ):Reindexa()
-            end if
-
-         end if
-
+      if ::lEmpresa
+         ::SetText( "Generando índices : Codigos postales", ::aProgress[ 1 ] )         ; CodigosPostales():Create( ::cPathDat ):Reindexa()
+         ::SetText( "Generando índices : Provincia", ::aProgress[ 1 ] )                ; Provincias():Create( ::cPathDat ):Reindexa()
+         ::SetText( "Generando índices : Paises", ::aProgress[ 1 ] )                   ; TPais():Create( ::cPathDat ):Reindexa()
+         ::SetText( "Generando índices : Lenguaje", ::aProgress[ 1 ] )                 ; TLenguaje():Create( ::cPathDat ):Reindexa()
+         ::SetText( "Generando índices : Centro de coste", ::aProgress[ 1 ] )          ; TCentroCoste():Create( ::cPathDat ):Reindexa()
       end if
 
    end if
@@ -254,48 +207,25 @@ METHOD GenIndices( oMsg )
 
    if ::aLgcIndices[ 2 ]
 
-      if !Empty( ::aProgress[ 2 ] )
-
-         if ::lDatos
-            ::nProgress[ 2 ]     := 19
-         else
-            ::nProgress[ 2 ]     := 8
-         end if
-
-         ::nActualProgress       := 0
-
-         ::aProgress[ 2 ]:SetTotal( ::nProgress[ 2 ] )
-
-      end if
-
-      if ::lDatos
-
-         ::SetText( "Generando índices : Formas de pago", ::aProgress[ 2 ] )           ; rxFpago(    ::cPathEmp )
-         ::SetText( "Generando índices : Bancos", ::aProgress[ 2 ] )                   ; TBancos():Create( ::cPathEmp ):Reindexa()
-         ::SetText( "Generando índices : Cuentas bancarias", ::aProgress[ 2 ] )        ; TCuentasBancarias():Create( ::cPathEmp ):Reindexa()
-         ::SetText( "Generando índices : Artículos", ::aProgress[ 2 ] )                ; rxArticulo( ::cPatArt )
-         ::SetText( "Generando índices : Clientes", ::aProgress[ 2 ] )                 ; rxClient(   ::cPatCli )
-         ::SetText( "Generando índices : Proveedores", ::aProgress[ 2 ] )              ; rxProvee(   ::cPatPrv )
-         ::SetText( "Generando índices : Tarifas clientes y grupos", ::aProgress[ 2 ] ); TAtipicas():Create( ::cPatCli ):Reindexa()
-         ::SetText( "Generando índices : Ofertas", ::aProgress[ 2 ] )                  ; rxOferta(   ::cPatArt )
-         ::SetText( "Generando índices : Propiedades", ::aProgress[ 2 ] )              ; rxPro(      ::cPatArt )
-         ::SetText( "Generando índices : Agentes", ::aProgress[ 2 ] )                  ; rxAgentes(  ::cPatCli )
-         ::SetText( "Generando índices : Rutas", ::aProgress[ 2 ] )                    ; rxRuta(     ::cPatCli )
-         ::SetText( "Generando índices : Almacén", ::aProgress[ 2 ] )                  ; rxAlmacen(  ::cPatAlm )
-
-         if ::lNotGrupo
-
-            ::SetText( "Generando índices : Grupos de ventas", ::aProgress[ 2 ] )      ; rxGrpVenta( ::cPathEmp )
-            ::SetText( "Generando índices : Documentos", ::aProgress[ 2 ] )            ; rxDocs(     ::cPathEmp )
-            ::SetText( "Generando índices : Tarifas de precios", ::aProgress[ 2 ] )    ; rxTarifa(   ::cPatArt )
-            ::SetText( "Generando índices : Promociones", ::aProgress[ 2 ] )           ; rxPromo(    ::cPatArt )
-            // ::SetText( "Generando índices : Movimientos", ::aProgress[ 2 ] )           ; rxHisMov(   ::cPathEmp )
-            ::SetText( "Generando índices : Grupos de venta", ::aProgress[ 2 ] )       ; rxGrpVenta( ::cPathEmp )
-            ::SetText( "Generando índices : Ubicaciones", ::aProgress[ 2 ] )           ; rxUbi(      ::cPatAlm )
-
-         end if
-
-      end if
+      ::SetText( "Generando índices : Formas de pago", ::aProgress[ 2 ] )           ; rxFpago(    ::cPathEmp )
+      ::SetText( "Generando índices : Bancos", ::aProgress[ 2 ] )                   ; TBancos():Create( ::cPathEmp ):Reindexa()
+      ::SetText( "Generando índices : Cuentas bancarias", ::aProgress[ 2 ] )        ; TCuentasBancarias():Create( ::cPathEmp ):Reindexa()
+      ::SetText( "Generando índices : Artículos", ::aProgress[ 2 ] )                ; rxArticulo( ::cPatArt )
+      ::SetText( "Generando índices : Clientes", ::aProgress[ 2 ] )                 ; rxClient(   ::cPatCli )
+      ::SetText( "Generando índices : Proveedores", ::aProgress[ 2 ] )              ; rxProvee(   ::cPatPrv )
+      ::SetText( "Generando índices : Tarifas clientes y grupos", ::aProgress[ 2 ] ); TAtipicas():Create( ::cPatCli ):Reindexa()
+      ::SetText( "Generando índices : Ofertas", ::aProgress[ 2 ] )                  ; rxOferta(   ::cPatArt )
+      ::SetText( "Generando índices : Propiedades", ::aProgress[ 2 ] )              ; rxPro(      ::cPatArt )
+      ::SetText( "Generando índices : Agentes", ::aProgress[ 2 ] )                  ; rxAgentes(  ::cPatCli )
+      ::SetText( "Generando índices : Rutas", ::aProgress[ 2 ] )                    ; rxRuta(     ::cPatCli )
+      ::SetText( "Generando índices : Almacén", ::aProgress[ 2 ] )                  ; rxAlmacen(  ::cPatAlm )
+      ::SetText( "Generando índices : Grupos de ventas", ::aProgress[ 2 ] )      ; rxGrpVenta( ::cPathEmp )
+      ::SetText( "Generando índices : Documentos", ::aProgress[ 2 ] )            ; rxDocs(     ::cPathEmp )
+      ::SetText( "Generando índices : Tarifas de precios", ::aProgress[ 2 ] )    ; rxTarifa(   ::cPatArt )
+      ::SetText( "Generando índices : Promociones", ::aProgress[ 2 ] )           ; rxPromo(    ::cPatArt )
+      ::SetText( "Generando índices : Grupos de venta", ::aProgress[ 2 ] )       ; rxGrpVenta( ::cPathEmp )
+      ::SetText( "Generando índices : Ubicaciones", ::aProgress[ 2 ] )           ; rxUbi(      ::cPatAlm )
+      // ::SetText( "Generando índices : Movimientos", ::aProgress[ 2 ] )           ; rxHisMov(   ::cPathEmp )
 
    end if
 
@@ -528,13 +458,10 @@ METHOD GenIndices( oMsg )
       MsgInfo( "Proceso finalizado con éxito, tiempo empleado : " + AllTrim( Str( Seconds() - nSeconds ) ) + " seg.", "Información" )
    end if
 
-   RECOVER USING oError
-
-      msgStop( ErrorMessage( oError ), "Error al realizar el proceso de organización" )
-
-   END SEQUENCE
-
-   ErrorBlock( oBlock )
+   // RECOVER USING oError
+   //    msgStop( ErrorMessage( oError ), "Error al realizar el proceso de organización" )
+   // END SEQUENCE
+   // ErrorBlock( oBlock )
 
    if ::oDlg != nil
       ::oDlg:bValid  := {|| .t. }

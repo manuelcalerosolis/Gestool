@@ -1,4 +1,4 @@
 #include "FiveWin.Ch"
 
-function about()
+function about() 
 return mgsInfo()

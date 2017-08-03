@@ -1622,7 +1622,7 @@ METHOD SetDefault() CLASS TDbf
 
     // ::aBuffer  := {}
     // ( ::nArea )->( AEval(::aTField, {|oFld| AAdd( ::aBuffer, oFld:SetDefault() ) } ) )
-    ( ::nArea )->( aeval(::aTField, {|oFld| oFld:SetDefault() } ) )
+    ( ::nArea )->( aeval( ::aTField, {|oFld| oFld:SetDefault() } ) )
 
 return( Self )
 

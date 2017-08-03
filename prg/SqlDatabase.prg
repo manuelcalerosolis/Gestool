@@ -111,12 +111,12 @@ METHOD Exec( cSql )
       lExec       := .f.
    end
 
-Return ( lExec )
+Return ( lExec )  
 
 //----------------------------------------------------------------------------//
 
 METHOD checkModelsExistence()
-    
+     
 Return ( aeval( ::aModels, { |cModel| ::Exec( cModel ) } ) )
 
 //----------------------------------------------------------------------------//

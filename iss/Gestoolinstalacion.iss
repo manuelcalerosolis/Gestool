@@ -120,7 +120,7 @@ Source: "c:\fw195\gestool\bin\frsysth.dll";            DestDir: "{app}"; Flags: 
 Source: "c:\fw195\gestool\bin\ace32.dll";              DestDir: "{app}"; Flags: ignoreversion
 Source: "c:\fw195\gestool\bin\aicu32.dll";             DestDir: "{app}"; Flags: ignoreversion
 Source: "c:\fw195\gestool\bin\axcws32.dll";            DestDir: "{app}"; Flags: ignoreversion
-; Source: "c:\fw195\gestool\bin\adsloc32.dll";           DestDir: "{app}"; Flags: ignoreversion
+Source: "c:\fw195\gestool\bin\adsloc32.dll";           DestDir: "{app}"; Flags: ignoreversion
 
 Source: "c:\fw195\gestool\bin\libcurl.dll";             DestDir: "{app}"; Flags: ignoreversion
 Source: "c:\fw195\gestool\bin\libcrypto.dll";           DestDir: "{app}"; Flags: ignoreversion
@@ -135,8 +135,8 @@ Source: "c:\fw195\gestool\bin\jmail.dll";              DestDir: "{app}"; Flags: 
 
 Source: "c:\fw195\gestool\bin\aeatfact.dll";           DestDir: "{app}"; Flags: ignoreversion regserver
 
-; Source: "c:\fw195\gestool\bin\adslocal.cfg";           DestDir: "{app}"; Flags: ignoreversion
-; Source: "c:\fw195\gestool\bin\ads.ini";                DestDir: "{app}"; Flags: ignoreversion
+Source: "c:\fw195\gestool\bin\adslocal.cfg";           DestDir: "{app}"; Flags: ignoreversion
+Source: "c:\fw195\gestool\bin\ads.ini";                DestDir: "{app}"; Flags: ignoreversion
 
 Source: "c:\fw195\gestool\bin\ansi.chr";               DestDir: "{app}"; Flags: ignoreversion
 Source: "c:\fw195\gestool\bin\extend.chr";             DestDir: "{app}"; Flags: ignoreversion

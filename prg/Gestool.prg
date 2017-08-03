@@ -19,7 +19,7 @@
 
 #define HKEY_LOCAL_MACHINE    2147483650
 
-#define FONT_NAME             "Segoe UI"
+#define FONT_NAME             "Segoe UI" 
 
 ANNOUNCE RDDSYS
 
@@ -174,21 +174,17 @@ FUNCTION Main( paramsMain, paramsSecond, paramsThird )
             CreateMainPdaWindow( oIconApp )
          end if
 
-      otherwise
-         
-#ifdef __TABLET__
+      case ( "TABLET" $ appParamsMain() ) 
 
          if AccessCode():loadTableConfiguration()
             CreateMainTabletWindow( oIconApp )
          end if
 
-#else
+      otherwise
 
          if AccessCode():Resource()
             CreateMainWindow( oIconApp )
          end if
-
-#endif
 
    end case
 

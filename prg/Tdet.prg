@@ -507,11 +507,13 @@ METHOD Reindexa()
    ::oDbf:IdxFDel()
 
    if ::OpenService( .t. )
+
       ::oDbf:IdxFCheck()
       ::oDbf:Pack()
+   
+      ::CloseFiles()
+   
    end if
-
-   ::CloseFiles()
 
 RETURN ( Self )
 

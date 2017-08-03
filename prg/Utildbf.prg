@@ -3363,7 +3363,7 @@ RETURN .f.
 
 //----------------------------------------------------------------------------//
 
-FUNCTION DbDialog( cTitle )
+FUNCTION dbDialog( cTitle )
 
    local j
    local n
