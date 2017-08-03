@@ -406,9 +406,13 @@ Return ( self )
 
 METHOD writeDatosProveedor()
 
-::oFileEDI:add( "NADSU|" + AllTrim( uFieldEmpresa( "cCodEdi" ) ) + "|MARISCOS MENDEZ  SL|R.M.Huelva,Tomo269 Gral.Lb.96 Secc.1,Fol.96, Hoja H-1925 Inscr.1|POLIGONO PESQUERO NORTE S/N|HUELVA|21002     |B21173786" )
+//::oFileEDI:add( "NADSU|" + AllTrim( uFieldEmpresa( "cCodEdi" ) ) + "|MARISCOS MENDEZ  SL|R.M.Huelva,Tomo269 Gral.Lb.96 Secc.1,Fol.96, Hoja H-1925 Inscr.1|POLIGONO PESQUERO NORTE S/N|HUELVA|21002     |B21173786" )
 
-::oFileEDI:add( "NADSCO|" + AllTrim( uFieldEmpresa( "cCodEdi" ) ) + "|MARISCOS MENDEZ  SL|R.M.Huelva,Tomo269 Gral.Lb.96 Secc.1,Fol.96, Hoja H-1925 Inscr.1|POLIGONO PESQUERO NORTE S/N|HUELVA|21002     |B21173786" )
+//::oFileEDI:add( "NADSCO|" + AllTrim( uFieldEmpresa( "cCodEdi" ) ) + "|MARISCOS MENDEZ  SL|R.M.Huelva,Tomo269 Gral.Lb.96 Secc.1,Fol.96, Hoja H-1925 Inscr.1|POLIGONO PESQUERO NORTE S/N|HUELVA|21002     |B21173786" )
+
+::oFileEDI:add( "NADSU|" + AllTrim( getCustomExtraField( "025", "Clientes", ( D():FacturasClientes( ::nView ) )->cCodCli ) ) + "|MARISCOS MENDEZ  SL|R.M.Huelva,Tomo269 Gral.Lb.96 Secc.1,Fol.96, Hoja H-1925 Inscr.1|POLIGONO PESQUERO NORTE S/N|HUELVA|21002     |B21173786" )
+
+::oFileEDI:add( "NADSCO|" + AllTrim( getCustomExtraField( "025", "Clientes", ( D():FacturasClientes( ::nView ) )->cCodCli ) ) + "|MARISCOS MENDEZ  SL|R.M.Huelva,Tomo269 Gral.Lb.96 Secc.1,Fol.96, Hoja H-1925 Inscr.1|POLIGONO PESQUERO NORTE S/N|HUELVA|21002     |B21173786" )
 
 Return ( self )
 
@@ -476,13 +480,13 @@ Return ( self )
 METHOD writeEmisorFactura()
 
    local cLine    := "NADII" + __separator__
-   cLine          += AllTrim( uFieldEmpresa( "cCodEdi" ) ) + __separator__    //Codigo EDI
-   cLine          += "MARISCOS MENDEZ  SL" + __separator__                    //Nombre
-   cLine          += "POLIGONO PESQUERO NORTE S/N" + __separator__            //Domicilio
-   cLine          += "HUELVA" + __separator__                                 //Población
-   cLine          += "21002     " + __separator__                             //Código postal
-   cLine          += "B21173786" + __separator__                              //CIF
-   cLine          += "ES"                                                     //Pais
+   cLine          += AllTrim( getCustomExtraField( "025", "Clientes", ( D():FacturasClientes( ::nView ) )->cCodCli ) ) + __separator__    //Codigo EDI
+   cLine          += "MARISCOS MENDEZ  SL" + __separator__                                                                                //Nombre
+   cLine          += "POLIGONO PESQUERO NORTE S/N" + __separator__                                                                        //Domicilio
+   cLine          += "HUELVA" + __separator__                                                                                             //Población
+   cLine          += "21002     " + __separator__                                                                                         //Código postal
+   cLine          += "B21173786" + __separator__                                                                                          //CIF
+   cLine          += "ES"                                                                                                                 //Pais
 
    ::oFileEDI:add( cLine )
 
