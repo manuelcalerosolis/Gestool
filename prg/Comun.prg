@@ -288,6 +288,19 @@ FUNCTION Test()
       :activateShell()
    end with*/
 
+<<<<<<< HEAD
+=======
+   /*
+>>>>>>> 18bdc7c74485b9605d246f05379819c8f5f456d7
+   with object MovimientosAlmacenController()
+      :New()
+      :activateShell()
+   end with
+<<<<<<< HEAD
+   
+=======
+   */
+>>>>>>> 82dfa64243425f7e8decb49a52be522e6a7c922b
    /*
 
    A1732400-1
@@ -1334,6 +1347,17 @@ FUNCTION CreateAcceso( oWnd )
    oItem:cId            := "01129"
    oItem:cBmp           := "gc_box_closed_16"
    oItem:cBmpBig        := "gc_box_closed_32"
+   oItem:lShow          := .f.
+   oItem:lLittle        := .t.
+
+   oItem                := oItemArchivo:Add()
+   oItem:oGroup         := oGrupo
+   oItem:cPrompt        := "Categorías"
+   oItem:cMessage       := 'Acceso al fichero de categorías'
+   oItem:bAction        := {|| Categoria( "01130", oWnd() ) }
+   oItem:cId            := "01130"
+   oItem:cBmp           := "gc_photographic_filters_16"
+   oItem:cBmpBig        := "gc_photographic_filters_32"
    oItem:lShow          := .f.
    oItem:lLittle        := .t.
 

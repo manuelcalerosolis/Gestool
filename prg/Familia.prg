@@ -85,6 +85,8 @@ static oDetCamposExtra
 static cFileProveedor
 static cFileLenguaje
 
+static oComercio
+
 static bEdit         := { |aTmp, aGet, dbfFam, oBrw, bWhen, bValid, nMode | EdtRec( aTmp, aGet, dbfFam, oBrw, bWhen, bValid, nMode ) }
 static bEdit2        := { |aTmp, aGet, tmpProveedor, oBrw, bWhen, bValid, nMode | EdtDet( aTmp, aGet, tmpProveedor, oBrw, bWhen, bValid, nMode ) }
 static bEditLenguaje := { |aTmp, aGet, dbf, oBrw, bWhen, bValid, nMode, aTmpArt | EditLenguaje( aTmp, aGet, dbf, oBrw, bWhen, bValid, nMode, aTmpArt ) }
@@ -243,7 +245,7 @@ STATIC FUNCTION OpenFiles()
    local lOpen       := .t.
    local oError
    local oBlock
-
+   
    oBlock            := ErrorBlock( {| oError | ApoloBreak( oError ) } )
    BEGIN SEQUENCE
 
@@ -290,7 +292,11 @@ STATIC FUNCTION OpenFiles()
          lOpenFiles     := .f.
       end if
 
-      TComercioConfig():getInstance():loadJSON()
+      oComercio         := TComercioConfig()
+      
+      if !Empty( oComercio )
+         oComercio:getInstance():loadJSON()
+      end if
 
    RECOVER USING oError
 
@@ -334,7 +340,9 @@ STATIC FUNCTION CloseFiles()
       oLenguajes:End()
    end if
 
-   TComercioConfig():DestroyInstance()
+   if !Empty( oComercio )
+      oComercio:DestroyInstance()
+   end if
 
    oWndBrw        := nil
 

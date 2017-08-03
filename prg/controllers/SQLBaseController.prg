@@ -146,8 +146,6 @@ METHOD New()
 
    ::nView                                            := D():CreateView()
 
-   msgalert( ::nView, "nView" )
-
 RETURN ( self )
 
 //---------------------------------------------------------------------------//

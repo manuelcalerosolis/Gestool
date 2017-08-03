@@ -2510,9 +2510,9 @@ Produccion----------------------------------------------------------------------
 
 METHOD FastReportParteProduccion()
 
-   ::oProCab:OrdSetFocus( "iNumOrd" )
+   ( D():PartesProduccion( ::nView ) )->( OrdSetFocus( "iNumOrd" ) )
    
-   ::oFastReport:SetWorkArea(       "Partes de producción", ::oProCab:nArea )
+   ::oFastReport:SetWorkArea(       "Partes de producción", ( D():PartesProduccion( ::nView ) )->( select() ) )
    ::oFastReport:SetFieldAliases(   "Partes de producción", cObjectsToReport( TProduccion():DefineFiles() ) )
     
    ( D():PartesProduccionMaterial( ::nView ) )->( OrdSetFocus( "iNumOrd" ) )

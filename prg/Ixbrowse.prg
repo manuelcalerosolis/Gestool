@@ -118,10 +118,15 @@ RETURN ( Self )
 METHOD Load()
 
    local cBrowseState
+   local oColumnasUsuariosModel
 
    ::getOriginal()
 
-   cBrowseState         := ColumnasUsuariosModel():getState( ::cName )
+   oColumnasUsuariosModel  := ColumnasUsuariosModel()
+
+   if !Empty( oColumnasUsuariosModel )
+      cBrowseState         := oColumnasUsuariosModel:getState( ::cName )
+   end if
 
    if !empty( cBrowseState )
       ::restoreState( cBrowseState )

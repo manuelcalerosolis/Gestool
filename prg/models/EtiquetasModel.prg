@@ -190,7 +190,7 @@ Return ( self )
 
 METHOD makeImportDbfSQL()
 
-   ::makeImportCategorias()
+   //::makeImportCategorias()
    
 Return ( self )
 

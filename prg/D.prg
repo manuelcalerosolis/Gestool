@@ -593,6 +593,8 @@ CLASS D
    
    METHOD Temporadas( nView )                                     INLINE ( ::Get( "Temporadas", nView ) )
 
+   METHOD Categorias( nView )                                     INLINE ( ::Get( "Categorias", nView ) )
+
    METHOD Kit( nView )                                            INLINE ( ::Get( "ArtKit", nView ) )
       METHOD getStatusKit( nView )                                INLINE ( aGetStatus( ::Kit( nView ) ) )
       METHOD setStatusKit( aStatus, nView )                       INLINE ( SetStatus( ::Kit( nView ), aStatus ) ) 

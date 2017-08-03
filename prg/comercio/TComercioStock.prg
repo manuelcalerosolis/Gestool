@@ -101,6 +101,10 @@ METHOD appendProductsToUpadateStocks( idProduct, nView )
    local cWebShop
    local idProductPrestashop
 
+   if Empty( nView )
+      Return ( self )
+   end if
+
    if D():gotoArticulos( idProduct, nView )
       cWebShop                := ( D():Articulos( nView ) )->cWebShop
    end if 

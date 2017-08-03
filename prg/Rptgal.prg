@@ -2496,6 +2496,9 @@ Return nil
 FUNCTION ColumnasUsuariosModel()
 Return nil 
 
+FUNCTION MovimientosAlmacenController()
+Return nil
+
 //------------------------------------------------------------------//
 
 #pragma BEGINDUMP

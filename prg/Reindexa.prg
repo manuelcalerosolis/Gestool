@@ -171,6 +171,7 @@ METHOD GenIndices( oMsg )
          ::SetText( "Generando índices : Agenda", ::aProgress[ 1 ] )             ; TAgenda():Create( ::cPathDat ):Reindexa()
       end if
 
+<<<<<<< HEAD
       ::SetText( "Generando índices : Familias", ::aProgress[ 1 ] )              ; rxFamilia( ::cPatArt )
       ::SetText( "Generando índices : Estados del SAT", ::aProgress[ 1 ] )       ; rxEstadoSat()
       ::SetText( "Generando índices : Tempordas", ::aProgress[ 1 ] )             ; rxTemporada( ::cPatArt )
@@ -199,6 +200,46 @@ METHOD GenIndices( oMsg )
          ::SetText( "Generando índices : Paises", ::aProgress[ 1 ] )                   ; TPais():Create( ::cPathDat ):Reindexa()
          ::SetText( "Generando índices : Lenguaje", ::aProgress[ 1 ] )                 ; TLenguaje():Create( ::cPathDat ):Reindexa()
          ::SetText( "Generando índices : Centro de coste", ::aProgress[ 1 ] )          ; TCentroCoste():Create( ::cPathDat ):Reindexa()
+=======
+      if ::lDatos
+
+         ::SetText( "Generando índices : Familias", ::aProgress[ 1 ] )              ; rxFamilia( ::cPatArt )
+         ::SetText( "Generando índices : Estados del SAT", ::aProgress[ 1 ] )       ; rxEstadoSat()
+         ::SetText( "Generando índices : Tempordas", ::aProgress[ 1 ] )             ; rxTemporada( ::cPatArt )
+         ::SetText( "Generando índices : Categorías", ::aProgress[ 1 ] )            ; rxCategoria( ::cPatArt )
+         ::SetText( "Generando índices : Grupos de familias", ::aProgress[ 1 ] )    ; TGrpFam():Create( ::cPatArt ):Reindexa()
+         ::SetText( "Generando índices : Fabricantes", ::aProgress[ 1 ] )           ; TFabricantes():Create( ::cPatArt ):Reindexa()
+         ::SetText( "Generando índices : Grupos de clientes", ::aProgress[ 1 ] )    ; TGrpCli():Create( ::cPatCli ):Reindexa()
+         ::SetText( "Generando índices : Grupos de proveedores", ::aProgress[ 1 ] ) ; TGrpPrv():Create( ::cPatPrv ):Reindexa()
+         ::SetText( "Generando índices : Tipos de artículos", ::aProgress[ 1 ] )    ; TTipArt():Create( ::cPatArt ):Reindexa()
+         ::SetText( "Generando índices : Proyectos", ::aProgress[ 1 ] )             ; TProyecto():Create( ::cPathEmp ):Reindexa()
+         ::SetText( "Generando índices : Catálogos", ::aProgress[ 1 ] )             ; TCatalogo():Create( ::cPathEmp ):Reindexa()
+         ::SetText( "Generando índices : Unidades de medición", ::aProgress[ 1 ] )  ; UniMedicion():Create( ::cPathEmp ):Reindexa()
+         ::SetText( "Generando índices : Transportistas", ::aProgress[ 1 ] )        ; TTrans():Create( ::cPatCli ):Reindexa()
+         ::SetText( "Generando índices : Tipos de comandas", ::aProgress[ 1 ] )     ; TComandas():Create( ::cPatArt ):Reindexa()
+
+         if ::lNotGrupo
+
+            ::SetText( "Generando índices : Cuentas de remesas", ::aProgress[ 1 ] )          ; TCtaRem():Create( ::cPatCli ):Reindexa()
+            ::SetText( "Generando índices : Tipo de envasado", ::aProgress[ 1 ] )            ; TFrasesPublicitarias():Create( cPatArt() ):Reindexa()
+            ::SetText( "Generando índices : Sala de venta", ::aProgress[ 1 ] )               ; TTpvRestaurante():Create( ::cPathEmp ):Reindexa()
+            ::SetText( "Generando índices : Puntos de venta", ::aProgress[ 1 ] )             ; TDetSalaVta():Create( ::cPathEmp ):Reindexa()
+            ::SetText( "Generando índices : Configuración de informes", ::aProgress[ 1 ] )   ; TInfGen():Reindexa( ::cPathEmp )
+            ::SetText( "Generando índices : Configuración de favoritos", ::aProgress[ 1 ] )  ; rxReport( ::cPathEmp )
+            ::SetText( "Generando índices : Impuesto IVMH", ::aProgress[ 1 ] )               ; TNewImp():Create( ::cPathEmp ):Reindexa()
+            ::SetText( "Generando índices : Reporting", ::aProgress[ 1 ] )                   ; TFastReportInfGen():Reindexa( ::cPathEmp )
+
+            if ::lEmpresa
+               ::SetText( "Generando índices : Codigos postales", ::aProgress[ 1 ] )         ; CodigosPostales():Create( ::cPathDat ):Reindexa()
+               ::SetText( "Generando índices : Provincia", ::aProgress[ 1 ] )                ; Provincias():Create( ::cPathDat ):Reindexa()
+               ::SetText( "Generando índices : Paises", ::aProgress[ 1 ] )                   ; TPais():Create( ::cPathDat ):Reindexa()
+               ::SetText( "Generando índices : Lenguaje", ::aProgress[ 1 ] )                 ; TLenguaje():Create( ::cPathDat ):Reindexa()
+               ::SetText( "Generando índices : Centro de coste", ::aProgress[ 1 ] )          ; TCentroCoste():Create( ::cPathDat ):Reindexa()
+            end if
+
+         end if
+
+>>>>>>> 82dfa64243425f7e8decb49a52be522e6a7c922b
       end if
 
    end if

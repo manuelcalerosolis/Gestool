@@ -14409,6 +14409,10 @@ Static Function GenTikCli( nDevice, cCaption, cCodDoc, cPrinter )
    DEFAULT cCodDoc      := cFormatoTicketEnCaja( oUser():cCaja(), dbfCajT )
    DEFAULT cPrinter     := cWindowsPrinterEnCaja( oUser():cCaja(), dbfCajT )
 
+   if Empty( cPrinter ) 
+      cPrinter          := PrnGetName()
+   end if
+
    if empty( cCodDoc )
       cCodDoc           := cFormatoTicketEnCaja( oUser():cCaja(), dbfCajT )
    end if

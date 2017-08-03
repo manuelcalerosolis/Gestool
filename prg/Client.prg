@@ -349,8 +349,8 @@ STATIC FUNCTION OpenFiles( lExt )
 
    lExternal            := lExt
 
-   oBlock               := ErrorBlock( {| oError | ApoloBreak( oError ) } )
-   BEGIN SEQUENCE
+   /*oBlock               := ErrorBlock( {| oError | ApoloBreak( oError ) } )
+   BEGIN SEQUENCE*/
 
       DisableAcceso()
 
@@ -501,7 +501,7 @@ STATIC FUNCTION OpenFiles( lExt )
 
       EnableAcceso()
 
-   RECOVER USING oError
+   /*RECOVER USING oError
 
       lOpenFiles           := .f.
 
@@ -511,7 +511,7 @@ STATIC FUNCTION OpenFiles( lExt )
 
    END SEQUENCE
 
-   ErrorBlock( oBlock )
+   ErrorBlock( oBlock )*/
 
    if !lOpenFiles
       CloseFiles()
