@@ -1597,10 +1597,6 @@ STATIC FUNCTION EditConfig( aTmp, aGet, dbfEmp, oBrw, nSelFolder, bValid, nMode 
          ID       129 ;
          OF       fldTPV
 
-      REDEFINE CHECKBOX aGet[ _LFACTCT ] VAR aTmp[ _LFACTCT ] ;
-         ID       130 ;
-         OF       fldTPV
-
       REDEFINE CHECKBOX aGet[ _LSHOWLIN ] VAR aTmp[ _LSHOWLIN ] ;
          ID       131 ;
          OF       fldTPV

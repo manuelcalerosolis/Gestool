@@ -5563,17 +5563,16 @@ FONT 8, "Ms Sans Serif"
   CONTROL "Crear tickets de encargos desde táctil", 127, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 50, 148, 132, 10
   CONTROL "No acumular unidades en táctil", 128, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 50, 160, 111, 10
   CONTROL "Albaranes en táctil", 129, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 50, 172, 71, 10
-  CONTROL "Facturas en táctil", 130, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 50, 184, 67, 10
-  CONTROL "Ocultar líneas borradas", 131, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 50, 196, 100, 10
-  CONTROL "Mostrar total al cobrar", 200, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 50, 208, 82, 10
-  CONTROL "Permitir tickets abiertos al cerrar la sesión", 220, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 50, 220, 143, 10
-  CONTROL "", 210, "ComboBox", WS_BORDER|CBS_DROPDOWNLIST|WS_VSCROLL|WS_TABSTOP, 138, 232, 96, 91
-  CONTROL "", 230, "Edit", WS_BORDER|WS_TABSTOP, 138, 247, 286, 11
-  CONTROL "Propiedades", -1, "Button", BS_GROUPBOX, 44, 29, 386, 236
+  CONTROL "Ocultar líneas borradas", 131, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 50, 184, 100, 10
+  CONTROL "Mostrar total al cobrar", 200, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 50, 196, 82, 10
+  CONTROL "Permitir tickets abiertos al cerrar la sesión", 220, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 50, 208, 143, 10
+  CONTROL "", 210, "ComboBox", WS_BORDER|CBS_DROPDOWNLIST|WS_VSCROLL|WS_TABSTOP, 138, 220, 96, 91
+  CONTROL "", 230, "Edit", WS_BORDER|WS_TABSTOP, 138, 235, 286, 11
+  CONTROL "Propiedades", -1, "Button", BS_GROUPBOX, 44, 29, 386, 223
   CONTROL "", 500, "Static", SS_BITMAP|SS_CENTERIMAGE, 4, 3, 34, 30
   CONTROL "Opciones para el terminal punto de venta", -1, "Static", SS_LEFTNOWORDWRAP, 44, 3, 384, 8
-  CONTROL "Opción impresión al cobrar", -1, "Static", WS_GROUP, 50, 235, 86, 8
-  CONTROL "Correo para notificaciones", -1, "Static", WS_GROUP, 50, 249, 86, 8
+  CONTROL "Opción impresión al cobrar", -1, "Static", WS_GROUP, 50, 223, 86, 8
+  CONTROL "Correo para notificaciones", -1, "Static", WS_GROUP, 50, 237, 86, 8
 }
 
 EMPRESA_2 DIALOG DISCARDABLE 31, 12, 441, 347
