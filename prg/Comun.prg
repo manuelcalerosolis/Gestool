@@ -288,6 +288,8 @@ FUNCTION Test()
       :activateShell()
    end with*/
 
+<<<<<<< HEAD
+=======
    /*
 >>>>>>> 18bdc7c74485b9605d246f05379819c8f5f456d7
    with object MovimientosAlmacenController()
@@ -298,6 +300,7 @@ FUNCTION Test()
    
 =======
    */
+>>>>>>> 82dfa64243425f7e8decb49a52be522e6a7c922b
    /*
 
    A1732400-1
@@ -5555,7 +5558,7 @@ FUNCTION appConnectADS()
    adsRightsCheck( .f. )
 
    adsLocking( .t. )                   // NON-compatible locking mode
-   adsTestRecLocks( .T. )
+   adsTestRecLocks( .t. )
 
    adsSetDeleted( .t. )
    adsCacheOpenTables( 250 )

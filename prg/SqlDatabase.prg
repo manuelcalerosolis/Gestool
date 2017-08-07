@@ -22,22 +22,22 @@ CLASS SQLDatabase
    METHOD Conexion()                INLINE ( ::oConexion )
 
    METHOD Connect() 
-   METHOD Disconnect()              INLINE ( ::oConexion:disconnect() )
+   METHOD Disconnect()              INLINE ( if( !empty( ::oConexion ), ::oConexion:disconnect(), ) )
         
    METHOD Exec( cSql )             
-   METHOD Query( cSql )             INLINE ( ::oConexion:Query( cSql ) )
-   METHOD Prepare( cSql )           INLINE ( ::oConexion:Prepare( cSql ) )
+   METHOD Query( cSql )             INLINE ( if( !empty( ::oConexion ), ::oConexion:Query( cSql ), ) )
+   METHOD Prepare( cSql )           INLINE ( if( !empty( ::oConexion ), ::oConexion:Prepare( cSql ), ) )
 
-   METHOD LastInsertId()            INLINE ( ::oConexion:lastInsertId() )
+   METHOD LastInsertId()            INLINE ( if( !empty( ::oConexion ), ::oConexion:lastInsertId(), ) )
 
-   METHOD beginTransaction()        INLINE ( ::oConexion:beginTransaction() )
-   METHOD commit()                  INLINE ( ::oConexion:commit() )
-   METHOD rollback()                INLINE ( ::oConexion:rollback() )
+   METHOD beginTransaction()        INLINE ( if( !empty( ::oConexion ), ::oConexion:beginTransaction(), ) )
+   METHOD commit()                  INLINE ( if( !empty( ::oConexion ), ::oConexion:commit(), ) )
+   METHOD rollback()                INLINE ( if( !empty( ::oConexion ), ::oConexion:rollback(), ) )
 
    METHOD startForeignKey()         INLINE ( ::Query( "pragma foreign_keys = ON" ) )
    METHOD endForeignKey()           INLINE ( ::Query( "pragma foreign_keys = OFF" ) )
 
-   METHOD errorInfo()               INLINE ( ::oConexion:errorInfo() )
+   METHOD errorInfo()               INLINE ( if( !empty( ::oConexion ), ::oConexion:errorInfo(), ) )
 
    METHOD checkModelsExistence()   
 
@@ -73,9 +73,13 @@ METHOD New()
 
    ::cDatabaseSQLite          := ::cPathDatabaseSQLite + "Gestool.db"
 
+#ifndef __TABLET__ 
+
    ::oConexion                := THDO():new( "sqlite" )
    
    ::oConexion:setAttribute( ATTR_ERRMODE, .t. )
+
+#endif
 
 Return ( Self )
 
@@ -86,8 +90,12 @@ METHOD Connect()
    if !lIsDir( ::cPathDatabaseSQLite )
       makedir( ::cPathDatabaseSQLite )
    end if 
-    
-Return ( ::oConexion:Connect( ::cDatabaseSQLite ) )
+
+   if !empty(::oConexion)
+      Return ( ::oConexion:Connect( ::cDatabaseSQLite ) )
+   end if 
+
+Return ( nil )    
 
 //----------------------------------------------------------------------------//
 
@@ -96,17 +104,19 @@ METHOD Exec( cSql )
    local lExec    := .t.
 
    try
-      ::oConexion:Exec( cSql )
+      if !empty( ::oConexion )
+         ::oConexion:Exec( cSql )
+      end if 
    catch
       lExec       := .f.
    end
 
-Return ( lExec )
+Return ( lExec )  
 
 //----------------------------------------------------------------------------//
 
 METHOD checkModelsExistence()
-    
+     
 Return ( aeval( ::aModels, { |cModel| ::Exec( cModel ) } ) )
 
 //----------------------------------------------------------------------------//

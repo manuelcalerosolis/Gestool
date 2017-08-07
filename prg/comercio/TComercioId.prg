@@ -3,7 +3,7 @@
 #include "Xbrowse.ch"
 #include "MesDbf.ch"
 #include "Factu.ch" 
-#include "FastRepH.ch"
+#include "FastRepH.ch" 
 
 //---------------------------------------------------------------------------//
     
@@ -118,8 +118,8 @@ RETURN ( Self )
 
 METHOD DefineFiles( cPath, cDriver ) 
 
-   DEFAULT cPath        := ::cPath
-   DEFAULT cDriver      := cDriver()
+   DEFAULT cPath           := ::cPath
+   DEFAULT cDriver         := cDriver()
 
    DEFINE DATABASE ::oDbf FILE "PrestaId.Dbf" CLASS "PRESTAID" ALIAS "PRESTAID" PATH ( cPath ) VIA ( cDriver ) COMMENT "Prestashop id"
 

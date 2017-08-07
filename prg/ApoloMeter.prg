@@ -5,7 +5,7 @@
 
 CLASS TApoloMeter FROM TMeter
 
-   CLASSDATA lRegistered 		AS LOGICAL
+   CLASSDATA lRegistered   AS LOGICAL
 
    DATA nCurrent    			INIT 0
 

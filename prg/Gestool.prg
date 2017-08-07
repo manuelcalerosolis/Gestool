@@ -19,7 +19,7 @@
 
 #define HKEY_LOCAL_MACHINE    2147483650
 
-#define FONT_NAME             "Segoe UI"
+#define FONT_NAME             "Segoe UI" 
 
 ANNOUNCE RDDSYS
 
@@ -62,7 +62,8 @@ FUNCTION Main( paramsMain, paramsSecond, paramsThird )
 
    // Conexión con SQLite------------------------------------------------------
 
-   if ( getSQLDatabase():Connect() )
+   if !empty( getSQLDatabase() )
+      getSQLDatabase():Connect()
       getSQLDatabase():startForeignKey()
       getSQLDatabase():checkModelsExistence()
    end if 
@@ -173,14 +174,14 @@ FUNCTION Main( paramsMain, paramsSecond, paramsThird )
             CreateMainPdaWindow( oIconApp )
          end if
 
-      case ( "TABLET" $ appParamsMain() )
-         
+      case ( "TABLET" $ appParamsMain() ) 
+
          if AccessCode():loadTableConfiguration()
             CreateMainTabletWindow( oIconApp )
          end if
 
       otherwise
-         
+
          if AccessCode():Resource()
             CreateMainWindow( oIconApp )
          end if

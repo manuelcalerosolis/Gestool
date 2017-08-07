@@ -44,13 +44,13 @@
 #define documentoFactura            3 
 
 #define nParcial                    1
-#define nPagado                     2
+#define nPagado                     2 
 
-#define calcDistance                240
+#define calcDistance                240 
 
 #define __bottomNumber__            9999
 
-static aResources                   := {}   
+static aResources                   := {}    
 
 static oThis
 
@@ -464,8 +464,8 @@ CLASS TpvTactil
    METHOD CreateTemporal()
    METHOD DestroyTemporal()
 
-   METHOD CargaValoresDefecto( nUbicacion )
-   METHOD initValoresDefecto()
+   METHOD cargaValoresDefecto( nUbicacion )
+   // METHOD initValoresDefecto()
 
    METHOD CargaContador()
 
@@ -2717,6 +2717,7 @@ METHOD StartResource() CLASS TpvTactil
    // Tarifas de ventas--------------------------------------------------------
 
    ::SetTarifaSolo()
+
    ::SetTarifaCombinado()
 
    /*
@@ -5607,13 +5608,13 @@ METHOD EndInvitacion( oDlg ) CLASS TpvTactil
 
    if Empty( ::cCodigoInvitacion )
       msgStop( "Debe seleccionar un código de invitación." )
-      return nil
+      RETURN NIL
    end if 
 
 
    if Empty( ::cTextoInvitacion )
       msgStop( "Debe seleccionar un motivo o texto valido." )
-      return nil
+      RETURN NIL
    end if 
 
    if ::oBtnUnaLinea:lBtnDown
@@ -5925,7 +5926,7 @@ METHOD SetCliente() CLASS TpvTactil
 
    end if
 
-Return nil
+RETURN NIL
 
 //---------------------------------------------------------------------------//
 
@@ -5935,37 +5936,37 @@ METHOD SetSerie() Class TpvTactil
       ::oGrpSeries:cPrompt  := "Serie: " + ::oTiketCabecera:cSerTik
    end if   
 
-Return nil
+RETURN NIL
 
 //---------------------------------------------------------------------------//
 
 METHOD SetTarifaSolo( nPrecio ) CLASS TpvTactil
 
-   DEFAULT nPrecio   := ::nTarifaSolo
-
-   ::nTarifaSolo     := nPrecio
+   if !empty( nPrecio )
+      ::nTarifaSolo     := nPrecio
+   end if
 
    if !empty( ::oBtnTarifaSolo )
-      ::oBtnTarifaSolo:cCaption( "Precio solo : " + ::cTextoTarifa( nPrecio ) )
+      ::oBtnTarifaSolo:cCaption( "Precio solo : " + ::cTextoTarifa( ::nTarifaSolo ) )
       ::oBtnTarifaSolo:Refresh()
    end if
 
-Return nil
+RETURN NIL
 
 //---------------------------------------------------------------------------//
 
 METHOD SetTarifaCombinado( nPrecio ) CLASS TpvTactil
 
-   DEFAULT nPrecio      := ::nTarifaCombinado
-
-   ::nTarifaCombinado   := nPrecio
+   if !empty( nPrecio )
+      ::nTarifaCombinado   := nPrecio
+   end if
 
    if !empty( ::oBtnTarifaCombinado )
-      ::oBtnTarifaCombinado:cCaption( "Precio combinado : " +::cTextoTarifa( nPrecio ) )
+      ::oBtnTarifaCombinado:cCaption( "Precio combinado : " +::cTextoTarifa( ::nTarifaCombinado ) )
       ::oBtnTarifaCombinado:Refresh()
    end if
 
-Return nil 
+RETURN NIL 
 
 //---------------------------------------------------------------------------//
 
@@ -7512,18 +7513,19 @@ Return ( Self )
 
 //---------------------------------------------------------------------------//
 
+/*
 METHOD initValoresDefecto() CLASS TpvTactil
 
    ::oTiketCabecera:lAbierto  := .t.
    ::oTiketCabecera:lCloTik   := .f.
    ::oTiketCabecera:lSndDoc   := .t.
-
    if !empty( cDefCli() )
       ::SetTarifaSolo(        Max( oRetFld( cDefCli(), ::oCliente, "nTarifa" ), 1 ) )
       ::SetTarifaCombinado(   Max( oRetFld( cDefCli(), ::oCliente, "nTarCmb" ), 1 ) )
    end if
 
 Return ( Self )
+*/
 
 //---------------------------------------------------------------------------//
 
@@ -9181,7 +9183,7 @@ METHOD BuildRelationReport() CLASS TpvTactil
 
    end case
 
-Return nil
+RETURN NIL
 
 //---------------------------------------------------------------------------//
 
@@ -9304,7 +9306,7 @@ METHOD ClearRelationReport() CLASS TpvTactil
 
    end case    
 
-Return nil
+RETURN NIL
 
 //---------------------------------------------------------------------------//
 
@@ -9430,7 +9432,7 @@ METHOD VariableReport() CLASS TpvTactil
 
    end case
 
-   Return nil
+   RETURN NIL
 
 //---------------------------------------------------------------------------//
 
@@ -9941,13 +9943,17 @@ METHOD InitDocumento( nUbicacion )
 	CursorWait()
 
 	::oTiketCabecera:Blank()
-	::oTiketCabecera:SetDefault()
+	::oTiketCabecera:setDefault()
+
+   ::oTiketCabecera:lAbierto  := .t.
+   ::oTiketCabecera:lCloTik   := .f.
+   ::oTiketCabecera:lSndDoc   := .t.
 
    // Cargamos los valores por defecto--------------------------------------
 
    ::cargaValoresDefecto( nUbicacion )
 
-   ::initValoresDefecto()
+   // ::initValoresDefecto()
 
    CursorWE()
 
@@ -11001,7 +11007,7 @@ Return ( Self )
 
 function SetResDebug( lOnOff ) // for backwards compatibility
 
-return nil
+RETURN NIL
 
 //----------------------------------------------------------------------------//
 
@@ -11009,7 +11015,7 @@ function FWCleanResource()
 
    aResources := {}
 
-return nil
+RETURN NIL
 
 //----------------------------------------------------------------------------//
 
@@ -11028,7 +11034,7 @@ function FWAddResource( nHResource, cType )
 
    AAdd( aResources, { cType, nHResource, cInfo } )
 
-return nil
+RETURN NIL
 
 //----------------------------------------------------------------------------//
 
@@ -11041,7 +11047,7 @@ function FWDelResource( nHResource )
       ASize( aResources, Len( aResources ) - 1 )
    endif
 
-return nil
+RETURN NIL
 
 //----------------------------------------------------------------------------//
 
@@ -11060,7 +11066,7 @@ function CheckRes()
 
    LogFile( "checkres.txt", { Replicate( "=", 100 ) } )
 
-return nil
+RETURN NIL
 
 //---------------------------------------------------------------------------//
 
