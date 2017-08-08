@@ -224,6 +224,7 @@ Definici¢n de la base de datos de lineas de detalle
 #define _NNUMKIT                 105
 #define _ID_TIPO_V               106
 #define __NREGIVA                107
+#define _NPRCULTCOM              108
 
 /*
 Array para impuestos
@@ -2403,6 +2404,17 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, cCodCli, cCodArt, nMode, cCodPre 
          :lHide               := .t.
          :nFooterType         := AGGR_SUM
          :bLClickHeader       := {| nMRow, nMCol, nFlags, oCol | if( !empty( oCol ), oCol:SetOrder(), ) }         
+      end with
+
+      with object ( oBrwLin:AddCol() )
+         :cHeader             := "Último precio"
+         :bEditValue          := {|| ( dbfTmpLin )->nPrcUltCom }
+         :cEditPicture        := cPouDiv
+         :nWidth              := 60
+         :nDataStrAlign       := 1
+         :nHeadStrAlign       := 1
+         :lHide               := .t.
+         :nFooterType         := AGGR_SUM
       end with
 
       with object ( oBrwLin:AddCol() )
@@ -11160,6 +11172,7 @@ Static Function AppendDatosAtipicas( aTmpPed )
    
          ( dbfTmpLin )->dFecUltCom     := dFechaUltimaVenta( aTmpPed[ _CCODCLI ], ( D():Atipicas( nView ) )->cCodArt, dbfAlbCliL, dbfFacCliL )
          ( dbfTmpLin )->nUniUltCom     := nUnidadesUltimaVenta( aTmpPed[ _CCODCLI ], ( D():Atipicas( nView ) )->cCodArt, dbfAlbCliL, dbfFacCliL )
+         ( dbfTmpLin )->nPrcUltCom     := nPrecioUltimaVenta( aTmpPed[ _CCODCLI ], ( D():Atipicas( nView ) )->cCodArt, dbfAlbCliL, dbfFacCliL )
 
          /*
          Vamos a por los catos de la tarifa
@@ -14789,6 +14802,7 @@ function aColPedCli()
    aAdd( aColPedCli, { "nNumKit",   "N",    4,  0, "Número de línea de escandallo",                   "",                           "", "( cDbfCol )", nil } )
    aAdd( aColPedCli, { "id_tipo_v", "N",   16,  0, "Identificador tipo de venta",                     "IdentificadorTipoVenta",     "", "( cDbfCol )", nil } )
    aAdd( aColPedCli, { "nRegIva",   "N",    1,  0, "Régimen de " + cImp(),                            "TipoImpuesto",               "", "( cDbfCol )", nil } )
+   aAdd( aColPedCli, { "nPrcUltCom","N",   16,  6, "Precio última compra",                            "PrecioUltimaVenta",          "", "( cDbfCol )", nil } ) 
 
 return ( aColPedCli )
 

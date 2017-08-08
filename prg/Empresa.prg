@@ -1612,7 +1612,7 @@ STATIC FUNCTION EditConfig( aTmp, aGet, dbfEmp, oBrw, nSelFolder, bValid, nMode 
       REDEFINE COMBOBOX aGet[ _NTIPIMPTPV ] VAR aTmp[ _NTIPIMPTPV ] ;
          ITEMS    aTipImpTpv ;
          ID       210;
-         OF       fldTPV  
+         OF       fldTPV
 
       REDEFINE GET cMailNotificaciones ;
          ID       230 ;

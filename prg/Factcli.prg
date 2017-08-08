@@ -269,6 +269,7 @@ Definici-n de la base de datos de lineas de detalle
 #define _NNUMKIT           105
 #define _ID_TIPO_V         106
 #define __NREGIVA          107
+#define _NPRCULTCOM        108
 
 memvar cDbf
 memvar cDbfCol
@@ -3093,6 +3094,17 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, hHash, bValid, nMode )
          :cHeader             := "última unidades"
          :bEditValue          := {|| ( dbfTmpLin )->nUniUltCom }
          :cEditPicture        := MasUnd()
+         :nWidth              := 60
+         :nDataStrAlign       := 1
+         :nHeadStrAlign       := 1
+         :lHide               := .t.
+         :nFooterType         := AGGR_SUM
+      end with
+
+      with object ( oBrwLin:AddCol() )
+         :cHeader             := "Último precio"
+         :bEditValue          := {|| ( dbfTmpLin )->nPrcUltCom }
+         :cEditPicture        := cPouDiv
          :nWidth              := 60
          :nDataStrAlign       := 1
          :nHeadStrAlign       := 1
@@ -16390,6 +16402,7 @@ Static Function AppendDatosAtipicas( aTmpFac )
    
          ( dbfTmpLin )->dFecUltCom     := dFechaUltimaVenta( aTmpFac[ _CCODCLI ], ( D():Atipicas( nView ) )->cCodArt, dbfAlbCliL, D():FacturasClientesLineas( nView ) )
          ( dbfTmpLin )->nUniUltCom     := nUnidadesUltimaVenta( aTmpFac[ _CCODCLI ], ( D():Atipicas( nView ) )->cCodArt, dbfAlbCliL, D():FacturasClientesLineas( nView ) )
+         ( dbfTmpLin )->nPrcUltCom     := nPrecioUltimaVenta( aTmpFac[ _CCODCLI ], ( D():Atipicas( nView ) )->cCodArt, dbfAlbCliL, D():FacturasClientesLineas( nView ) )
 
          /*
          Vamos a por los catos de la tarifa
@@ -19456,6 +19469,7 @@ function aColFacCli()
    aAdd( aColFacCli, { "nNumKit",   "N",   4, 0, "Número de línea de escandallo"          , "",                            "", "( cDbfCol )", nil } )
    aAdd( aColFacCli, { "id_tipo_v", "N",  16, 0, "Identificador tipo de venta"            , "IdentificadorTipoVenta",      "", "( cDbfCol )", nil } )
    aAdd( aColFacCli, { "nRegIva",   "N",   1, 0, "Régimen de " + cImp()                   , "TipoImpuesto",                "", "( cDbfCol )", nil } ) 
+   aAdd( aColFacCli, { "nPrcUltCom","N",  16, 6, "Precio última compra"                   , "PrecioUltimaVenta",           "", "( cDbfCol )", nil } ) 
 
 return ( aColFacCli )
 
@@ -21446,6 +21460,59 @@ Function nUnidadesUltimaVenta( cCodCli, cCodArt, dbfAlbCliL, dbfFacCliL, dbfTikL
    CursorWE()
 
 Return ( nUnidades )
+
+//---------------------------------------------------------------------------//
+
+Function nPrecioUltimaVenta( cCodCli, cCodArt, dbfAlbCliL, dbfFacCliL, dbfTikL )
+
+   local nPrecio           := 0
+   local nRecAlbL          := ( dbfAlbCliL )->( Recno() )
+   local nRecFacL          := ( dbfFacCliL )->( Recno() )
+   local nOrdAlbL          := ( dbfAlbCliL )->( OrdSetFocus( "cRefFec" ) )
+   local nOrdFacL          := ( dbfFacCliL )->( OrdSetFocus( "cRefFec" ) )
+   local dUltimaFactura    := ctod( "" )
+   local dUltimoAlbaran    := ctod( "" )
+
+   CursorWait()
+
+   /*
+   Buscamos por los Facturas no facturados-----------------------------------
+   */
+
+   if ( dbfAlbCliL )->( dbSeek( cCodArt + cCodCli ) )
+      dUltimoAlbaran       := ( dbfAlbCliL )->dFecAlb 
+   end if
+
+   /*
+   Buscamos ahora por loas facturas--------------------------------------------
+   */
+
+   if ( dbfFacCliL )->( dbSeek( cCodArt + cCodCli ) )
+      dUltimaFactura       := ( dbfFacCliL )->dFecFac
+   end if
+
+   if !empty(dUltimaFactura) .or. !empty(dUltimoAlbaran)
+
+      if ( dUltimaFactura > dUltimoAlbaran )
+         nPrecio           := ( dbfFacCliL )->nPreUnit
+      else 
+         nPrecio           := ( dbfAlbCliL )->nPreUnit
+      end if
+
+   end if
+
+   /*
+   Dejamos las tablas como estaban------------------------------------------
+   */
+
+   ( dbfAlbCliL )->( OrdSetFocus( nOrdAlbL ) )
+   ( dbfFacCliL )->( OrdSetFocus( nOrdFacL ) )
+   ( dbfAlbCliL )->( dbGoTo( nRecAlbL ) )
+   ( dbfFacCliL )->( dbGoTo( nRecFacL ) )
+
+   CursorWE()
+
+Return ( nPrecio )
 
 //---------------------------------------------------------------------------//
 
