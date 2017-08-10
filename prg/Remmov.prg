@@ -69,6 +69,8 @@ CLASS TRemMovAlm FROM TMasDet
    DATA  TComercio
    DATA  oStock
 
+   DATA  oMenuItem
+
    DATA  oPedPrvT
    DATA  oPedPrvL
    DATA  oAlbPrvT
@@ -270,10 +272,10 @@ METHOD New( cPath, cDriver, oWndParent, oMenuItem ) CLASS TRemMovAlm
    DEFAULT oWndParent      := oWnd()
    DEFAULT oMenuItem       := "01050"
 
-   ::nLevel                := nLevelUsr( oMenuItem )
-
    ::cPath                 := cPath
    ::cDriver               := cDriver
+   ::oMenuItem             := oMenuItem
+
    ::oWndParent            := oWndParent
    ::oDbf                  := nil
 
@@ -381,8 +383,9 @@ METHOD Activate() CLASS TRemMovAlm
    local oDel
    local oImp
    local oPrv
+   local nLevel   := nLevelUsr( ::oMenuItem )
 
-   if nAnd( ::nLevel, 1 ) == 0
+   if nAnd( nLevel, 1 ) == 0
 
       /*
       Cerramos todas las ventanas----------------------------------------------
@@ -392,9 +395,7 @@ METHOD Activate() CLASS TRemMovAlm
          ::oWndParent:CloseAll()
       end if
 
-      ::CreateShell( ::nLevel )
-
-      // ::oWndBrw:oBrw:bDup  := nil
+      ::CreateShell( nLevel )
 
       DEFINE BTNSHELL RESOURCE "BUS" OF ::oWndBrw ;
          NOBORDER ;

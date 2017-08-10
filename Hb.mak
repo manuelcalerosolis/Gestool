@@ -536,6 +536,8 @@ RecibosClientesModel.prg 													\
 TicketsClientesModel.prg 													\
 PedidosProveedoresModel.prg												\
 TiposImpresorasModel.prg 													\
+UsuariosModel.prg 															\
+DelegacionesModel.prg 														\
 TiposImpresorasController.prg 											\
 TiposNotasModel.prg 															\
 TiposNotasController.prg 													\
@@ -1051,6 +1053,8 @@ TicketsClientesModel.obj 												\
 RecibosClientesModel.obj 												\
 PedidosProveedoresModel.obj 											\
 TiposImpresorasModel.obj 												\
+UsuariosModel.obj															\
+DelegacionesModel.obj													\
 TiposImpresorasController.obj 										\
 TiposNotasModel.obj 														\
 TiposNotasController.obj 												\
@@ -1559,6 +1563,8 @@ $(OBJ)\TicketsClientesModel.obj 	 								+
 $(OBJ)\PedidosProveedoresModel.obj 								+
 $(OBJ)\TiposImpresorasModel.obj                 			+
 $(OBJ)\MovimientosAlmacenModel.obj               			+
+$(OBJ)\UsuariosModel.obj 											+
+$(OBJ)\DelegacionesModel.obj 										+
 $(OBJ)\TiposImpresorasController.obj               		+
 $(OBJ)\TiposNotasModel.obj                 					+
 $(OBJ)\TiposNotasController.obj                 			+

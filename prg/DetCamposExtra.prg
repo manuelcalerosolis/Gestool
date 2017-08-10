@@ -32,7 +32,7 @@ CLASS TDetCamposExtra FROM TMant
    DATA bId
 
    METHOD Create( cPath, cDriver )              CONSTRUCTOR
-   Method New( cPath, oWndParent, oMenuItem )   CONSTRUCTOR
+   Method New( cPath, oWndParent )              CONSTRUCTOR
 
    Method DefineFiles()
 
@@ -109,15 +109,12 @@ RETURN ( Self )
 
 //---------------------------------------------------------------------------//
 
-
-METHOD New( cPath, cDriver, oWndParent, oMenuItem ) CLASS TDetCamposExtra
+METHOD New( cPath, cDriver, oWndParent ) CLASS TDetCamposExtra
 
    DEFAULT oWndParent      := oWnd()
-   DEFAULT oMenuItem       := "01124"
 
    ::Create( cPath, cDriver )
 
-   ::nLevel                := nLevelUsr( oMenuItem )
    ::oWndParent            := oWndParent
 
 RETURN ( Self )
@@ -165,8 +162,6 @@ METHOD OpenFiles( lExclusive ) CLASS TDetCamposExtra
 
       ::oDbf:Activate( .f., !( lExclusive ) )
 
-      ::lLoadDivisa()
-
       ::oCamposExtra       := TCamposExtra():New( ::cPath, ::cDriver )
       ::lOpenFiles         := ::oCamposExtra:OpenFiles()
 
@@ -195,8 +190,6 @@ METHOD CloseFiles() CLASS TDetCamposExtra
    if ::oDbf != nil .and. ::oDbf:Used()
       ::oDbf:End()
    end if
-
-   ::closeDivisa()
 
    if ::oCamposExtra != nil
       ::oCamposExtra:CloseFiles()

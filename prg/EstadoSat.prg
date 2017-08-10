@@ -63,8 +63,8 @@ Function mkEstadoSat( cPath, lAppend, cPathOld )
 
    local dbfEstadoSat
 
-	DEFAULT lAppend := .f.
    DEFAULT cPath   := cPatEmp()
+   DEFAULT lAppend := .f.
 
    dbCreate( cPath + "EstadoSat.Dbf", aSqlStruct( aItmEstadoSat() ), cDriver() )
 
@@ -94,10 +94,6 @@ Function rxEstadoSat( cPath )
 
    DEFAULT cPath  := cPatEmp()
 
-   if !lExistTable( cPath + "EstadoSat.Dbf" )
-      mkEstadoSat( cPath )
-   end if
-
    if lExistIndex( cPath + "EstadoSat.Cdx" )
       ferase( cPath + "EstadoSat.Cdx" )
    end if
@@ -107,7 +103,7 @@ Function rxEstadoSat( cPath )
       ( dbfEstadoSat )->( __dbPack() )
 
       ( dbfEstadoSat )->( ordCondSet("!Deleted()", {||!Deleted()}  ) )
-      ( dbfEstadoSat )->( ordCreate( cPath + "EstadoSat.CDX", "CODIGO", "CCODIGO", {|| Field->CCODIGO }, ) )
+      ( dbfEstadoSat )->( ordCreate( cPath + "EstadoSat.CDX", "Codigo", "cCodigo", {|| Field->cCodigo }, ) )
 
       ( dbfEstadoSat )->( ordCondSet("!Deleted()", {||!Deleted()}  ) )
       ( dbfEstadoSat )->( ordCreate( cPath + "EstadoSat.CDX", "Nombre", "Upper( cNombre )", {|| Upper( Field->cNombre ) } ) )

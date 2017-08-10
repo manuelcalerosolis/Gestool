@@ -821,9 +821,10 @@ FUNCTION MainTablet()
    local nRow           
    local oGridTree
    local cAgente        := GetPvProfString( "Tablet", "Agente", "", cIniAplication() )
+   local cTitle         := "GESTOOL TABLET : " + uFieldEmpresa( "CodEmp" ) + "-" + uFieldEmpresa( "cNombre" )
 
    nRow                 := 0
-   oDlg                 := TDialog():New( 1, 5, 40, 100, "GESTOOL TABLET",,, .f., nOR( DS_MODALFRAME, WS_POPUP, WS_CAPTION, WS_SYSMENU, WS_MINIMIZEBOX, WS_MAXIMIZEBOX ),, rgb( 255, 255, 255 ),,, .F.,, oGridFont(),,,, .f.,, "oDlg" )  
+   oDlg                 := TDialog():New( 1, 5, 40, 100, cTitle,,, .f., nOR( DS_MODALFRAME, WS_POPUP, WS_CAPTION, WS_SYSMENU, WS_MINIMIZEBOX, WS_MAXIMIZEBOX ),, rgb( 255, 255, 255 ),,, .F.,, oGridFont(),,,, .f.,, "oDlg" )  
 
 	/*
 	Cabeceras------------------------------------------------------------------

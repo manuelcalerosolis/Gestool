@@ -2440,8 +2440,6 @@ Return nil
 Function SQLTShell()
 Return nil
 
-
-
 Function TiposVentasController()
 Return nil
 

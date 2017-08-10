@@ -88,15 +88,15 @@ CLASS TDataCenter
    METHOD CreateDataUser( oDataUser )
 
    METHOD CreateDataTable()
-   METHOD CreateEmpresaTable()
+   METHOD addEmpresaTablesToDataDictionary()
 
    METHOD ReLoadTables()                  INLINE ( ::aDDTables := AdsDirectory() )
 
    METHOD CreateDataTrigger()
    METHOD CreateEmpresaTrigger()
 
-   METHOD ExistTable( oTable )
-   METHOD ExistTrigger( oTable )
+   METHOD isTableInDataDictionary( oTable )
+   METHOD isTriggerInDataDictionary( oTable )
 
    METHOD CreateTriggerUpdate( oTable )
    METHOD CreateColumnTriggerUpdate( oTable, cTrigger )
@@ -107,14 +107,16 @@ CLASS TDataCenter
    METHOD CreateTriggerDelete( oTable )
    METHOD CreateColumnTriggerDelete( oTable, cTrigger )
 
-   METHOD AddTable( oTable )
+   METHOD addTableToDataDictionary( oTable )
    METHOD AddTableName( cTableName )
    
    METHOD AddTrigger( oTable, cAction )
 
-   METHOD DeleteTable( oTable )  
-   METHOD DeleteTableName( cTableName )         
-   METHOD DeleteAllTable()
+   METHOD deleteEmpresaTablesFromDataDictionary()
+   METHOD deleteTableFromDataDictionary( oTable )  
+   METHOD deleteTableNameFromDataDictionary( cTableName )         
+   
+   METHOD deleteAllTableFromDataDictionary()
 
    METHOD BuildData()
    METHOD BuildEmpresa()
@@ -141,7 +143,6 @@ CLASS TDataCenter
    METHOD GetAllLocksTablesUsers()
    METHOD CloseAllLocksTablesUsers()      INLINE ( ::CloseArea( "AllLocks" ) )
 
-   METHOD configDatabaseADSLocal()
    METHOD configDatabaseCDXLocal()
    METHOD dialogEmpresas()
    METHOD loadEmpresas()
@@ -251,7 +252,7 @@ END CLASS
 METHOD CheckData() CLASS TDataCenter
 
    if lAIS()
-      aeval( ::aDataTables, {|oTable| ::AddTable( oTable, .t. ) } )
+      aeval( ::aDataTables, {|oTable| ::AddTableToDataDictionary( oTable, .t. ) } )
    end if 
 
 RETURN ( Self )  
@@ -261,7 +262,7 @@ RETURN ( Self )
 METHOD CheckEmpresa() CLASS TDataCenter
 
    if lAIS()
-      aeval( ::aEmpresaTables, {|oTable| ::AddTable( oTable, .t. ) } )
+      aeval( ::aEmpresaTables, {|oTable| ::AddTableToDataDictionary( oTable, .t. ) } )
    end if
 
 RETURN ( Self )  
@@ -276,50 +277,18 @@ METHOD oFacCliP() CLASS TDataCenter
 
       DATABASE NEW oFacCliP PATH ( cPatEmp() ) FILE "FacCliP.Dbf" VIA ( cDriver() ) SHARED INDEX "FacCliP.Cdx"
 
-         /*if lAIS() .and. !oUser():lAdministrador()
-      
-            cFilter     := "Field->cSufFac == '" + oUser():cDelegacion() + "' .and. Field->cCodCaj == '" + oUser():cCaja() + "'"
-            if oUser():lFiltroVentas()         
-               cFilter  += " .and. Field->cCodUsr == '" + oUser():cCodigo() + "'"
-            end if 
-
-            ( oFacCliP:cAlias )->( AdsSetAOF( cFilter ) )
-
-         end if*/
-
-      Return ( oFacCliP )   
+Return ( oFacCliP )   
 
 //---------------------------------------------------------------------------//
 
 METHOD OpenFacCliP( dbf ) CLASS TDataCenter
 
-   local lOpen
    local cFilter
 
    USE ( cPatEmp() + "FacCliP.Dbf" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "FACCLIP", @dbf ) )
    SET ADSINDEX TO ( cPatEmp() + "FacCliP.Cdx" ) ADDITIVE
 
-   lOpen             := !neterr()
-   if lOpen
-
-      /*
-      Limitaciones de cajero y cajas----------------------------------------
-      */
-
-      /*if lAIS() .and. !oUser():lAdministrador()
-   
-         cFilter     := "Field->cSufFac == '" + oUser():cDelegacion() + "' .and. Field->cCodCaj == '" + oUser():cCaja() + "'"
-         if oUser():lFiltroVentas()         
-            cFilter  += " .and. Field->cCodUsr == '" + oUser():cCodigo() + "'"
-         end if 
-
-         ( dbf )->( AdsSetAOF( cFilter ) )
-
-      end if*/
-
-   end if 
-
-Return ( lOpen )   
+Return ( !neterr() )   
 
 //---------------------------------------------------------------------------//
 
@@ -330,50 +299,18 @@ METHOD oAlbCliT() CLASS TDataCenter
 
    DATABASE NEW oAlbCliT PATH ( cPatEmp() ) FILE "AlbCliT.Dbf" VIA ( cDriver() ) SHARED INDEX "AlbCliT.Cdx"
 
-      /*if lAIS() .and. !oUser():lAdministrador()
-   
-         cFilter     := "Field->cSufAlb == '" + oUser():cDelegacion() + "' .and. Field->cCodCaj == '" + oUser():cCaja() + "'"
-         if oUser():lFiltroVentas()         
-            cFilter  += " .and. Field->cCodUsr == '" + oUser():cCodigo() + "'"
-         end if 
-
-         ( oAlbCliT:cAlias )->( AdsSetAOF( cFilter ) )
-
-      end if*/
-
 Return ( oAlbCliT )   
 
 //---------------------------------------------------------------------------//
 
 METHOD OpenAlbCliT( dbf ) CLASS TDataCenter
 
-      local lOpen
-      local cFilter
+   local cFilter
 
-      USE ( cPatEmp() + "AlbCliT.Dbf" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "AlbCliT", @dbf ) )
-      SET ADSINDEX TO ( cPatEmp() + "AlbCliT.Cdx" ) ADDITIVE
+   USE ( cPatEmp() + "AlbCliT.Dbf" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "AlbCliT", @dbf ) )
+   SET ADSINDEX TO ( cPatEmp() + "AlbCliT.Cdx" ) ADDITIVE
 
-      lOpen             := !neterr()
-      if lOpen
-
-         /*
-         Limitaciones de cajero y cajas----------------------------------------
-         */
-
-         /*if lAIS() .and. !oUser():lAdministrador()
-      
-            cFilter     := "Field->cSufAlb == '" + oUser():cDelegacion() + "' .and. Field->cCodCaj == '" + oUser():cCaja() + "'"
-            if oUser():lFiltroVentas()         
-               cFilter  += " .and. Field->cCodUsr == '" + oUser():cCodigo() + "'"
-            end if 
-
-            ( dbf )->( AdsSetAOF( cFilter ) )
-
-         end if*/
-
-      end if 
-
-      Return ( lOpen )   
+Return ( !neterr() )   
 
    //---------------------------------------------------------------------------//
 
@@ -384,50 +321,16 @@ METHOD oPedCliT() CLASS TDataCenter
 
    DATABASE NEW oPedCliT PATH ( cPatEmp() ) FILE "PedCliT.Dbf" VIA ( cDriver() ) SHARED INDEX "PedCliT.Cdx"
 
-   /*if lAIS() .and. !oUser():lAdministrador()
-
-      cFilter     := "Field->cSufPed == '" + oUser():cDelegacion() + "' .and. Field->cCodCaj == '" + oUser():cCaja() + "'"
-      if oUser():lFiltroVentas()         
-         cFilter  += " .and. Field->cCodUsr == '" + oUser():cCodigo() + "'"
-      end if 
-
-      ( oPedCliT:cAlias )->( AdsSetAOF( cFilter ) )
-
-   end if*/
-
 Return ( oPedCliT )   
 
 //---------------------------------------------------------------------------//
 
 METHOD OpenPedCliT( dbf ) CLASS TDataCenter
 
-	local lOpen
-	local cFilter
-
 	USE ( cPatEmp() + "PedCliT.Dbf" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "PedCliT", @dbf ) )
 	SET ADSINDEX TO ( cPatEmp() + "PedCliT.Cdx" ) ADDITIVE
 
-	lOpen             := !neterr()
-	if lOpen
-
-		/*
-		Limitaciones de cajero y cajas----------------------------------------
-		*/
-
-		/*if lAIS() .and. !oUser():lAdministrador()
-
-			cFilter   	:= "Field->cSufPed == '" + oUser():cDelegacion() + "' .and. Field->cCodCaj == '" + oUser():cCaja() + "'"
-			if oUser():lFiltroVentas()         
-		   		cFilter += " .and. Field->cCodUsr == '" + oUser():cCodigo() + "'"
-			end if 
-
-			( dbf )->( AdsSetAOF( cFilter ) )
-
-		end if*/
-
-	end if 
-
-Return ( lOpen )   
+Return ( !neterr() )   
 
 //---------------------------------------------------------------------------//
 
@@ -695,20 +598,6 @@ RETURN ( Self )
 
 //---------------------------------------------------------------------------//
 
-METHOD configDatabaseADSLocal()
-
-   rddRegister( "ADS", 1 )
-   rddSetDefault( "ADS" )
-
-   adsSetServerType( ADS_LOCAL_SERVER )
-   adsSetFileType( ADS_CDX )   
-
-   setIndexToADS()
-
-Return ( Self )
-
-//---------------------------------------------------------------------------//
-
 METHOD configDatabaseCDXLocal()
 
    setIndexToCdx()
@@ -880,7 +769,7 @@ METHOD StartAdministratorTask()
             	::oMtrActualiza:Set( hb_EnumIndex() )
             end if
 
-            setEmpresa( aEmpresa[ 1 ] )
+            selectEmpresa( aEmpresa[ 1 ] )
 
             lActualiza( aEmpresa[ 1 ], nil, .t., aEmpresa[ 2 ], .f. )
 
@@ -918,7 +807,7 @@ METHOD StartAdministratorTask()
 
       ::oMsg:SetText( "Eliminando tablas anteriores de diccionario de datos" )
       
-      ::DeleteAllTable()
+      ::deleteAllTableFromDataDictionary()
       
       // Construimos la base de datos de estructura----------------------------
 
@@ -946,7 +835,7 @@ METHOD StartAdministratorTask()
 
             ::BuildEmpresa()  
                
-            ::CreateEmpresaTable()
+            ::addEmpresaTablesToDataDictionary()
 
             ::Reindex()
 
@@ -1064,7 +953,7 @@ METHOD CreateDataTable()
    local oTable
 
    for each oTable in ::aDataTables
-      ::AddTable( oTable )
+      ::AddTableToDataDictionary( oTable )
    next
 
    ::ReLoadTables()
@@ -1250,15 +1139,27 @@ RETURN ( Self )
 
 //---------------------------------------------------------------------------//
 
-METHOD CreateEmpresaTable()
+METHOD addEmpresaTablesToDataDictionary( lSilent )
 
    local oTable
 
    for each oTable in ::aEmpresaTables
-      ::AddTable( oTable )
+      ::addTableToDataDictionary( oTable, lSilent )
    next
 
    ::ReLoadTables()
+
+RETURN ( Self )
+
+//---------------------------------------------------------------------------//
+
+METHOD deleteEmpresaTablesFromDataDictionary()
+
+   local oTable
+
+   for each oTable in ::aEmpresaTables
+      ::deleteTableFromDataDictionary( oTable )
+   next
 
 RETURN ( Self )
 
@@ -1288,7 +1189,7 @@ RETURN ( Self )
 
 //---------------------------------------------------------------------------//
 
-METHOD ExistTable( uTable )
+METHOD isTableInDataDictionary( uTable )
 
    local cTable
    local lExistTable := .f.
@@ -1310,7 +1211,7 @@ Return ( lExistTable )
 
 //---------------------------------------------------------------------------//
 
-METHOD DeleteTable( oTable )
+METHOD deleteTableFromDataDictionary( oTable )
 
    local nScan
 
@@ -1323,21 +1224,21 @@ Return ( AdsDDRemoveTable( Upper( oTable:cName ) ) )
 
 //---------------------------------------------------------------------------//
 
-METHOD DeleteTableName( cTableName )
+METHOD deleteTableNameFromDataDictionary( cTableName )
 
    local oTable
 
    oTable         := ::ScanDataTable( cTableName )
 
    if !empty( oTable )
-      RETURN ::DeleteTable( oTable ) 
+      RETURN ::deleteTableFromDataDictionary( oTable ) 
    end if 
 
 RETURN ( .f. )
 
 //---------------------------------------------------------------------------//
 
-METHOD DeleteAllTable()
+METHOD DeleteAllTableFromDataDictionary()
 
    if Empty( ::aDDTables )
       ::aDDTables    := AdsDirectory()
@@ -1351,7 +1252,7 @@ Return ( Self )
 
 //---------------------------------------------------------------------------//
 
-METHOD ExistTrigger( oTable )
+METHOD isTriggerInDataDictionary( oTable )
 
    local cTrigger
 
@@ -1686,14 +1587,14 @@ RETURN ( ::ExecuteSqlStatement( cStm, "AllLocks" ) )
 
 //---------------------------------------------------------------------------//
 
-METHOD AddTable( oTable, lSilent )
+METHOD addTableToDataDictionary( oTable, lSilent )
 
    local cError
    local lAddTable      := .t.
 
    DEFAULT lSilent      := .f.
 
-   if !::ExistTable( oTable )
+   if !::isTableInDataDictionary( oTable )
 
       if file( oTable:cDataFile ) .and. file( oTable:cIndexFile )
 
@@ -1726,7 +1627,7 @@ METHOD AddTable( oTable, lSilent )
    else 
       
       if !lSilent
-         msgStop( "La tabla " + ( oTable:cDataFile ) + "ya existe en el diccionario de datos." )
+         msgStop( "La tabla " + ( oTable:cDataFile ) + " ya existe en el diccionario de datos." )
       end if
 
    end if
@@ -1742,7 +1643,7 @@ METHOD AddTableName( cTableName )
    oTable         := ::ScanDataTable( cTableName )
 
    if !empty( oTable )
-      RETURN ::AddTable( oTable ) 
+      RETURN ::AddTableToDataDictionary( oTable ) 
    end if 
 
 Return ( .f. )
@@ -2552,18 +2453,12 @@ METHOD BuildEmpresa()
    oDataTable:bCreateFile  := {| cPath | TCobAge():BuildFiles( cPath ) }
    ::AddEmpresaTable( oDataTable )
 
-   oDataTable              := TDataTable():New( "CfgCol" )
-   oDataTable:cDataFile    := cPatEmp( , .t. ) + "CfgCol.Dbf"
-   oDataTable:cIndexFile   := cPatEmp( , .t. ) + "CfgCol.Cdx"
-   oDataTable:cDescription := "Configuración"
-   oDataTable:bCreateFile  := {| cPath | TShell():CreateData( cPath ) }
-   oDataTable:bCreateIndex := {| cPath | TShell():ReindexData( cPath ) }
-   ::AddEmpresaTable( oDataTable )
-
    oDataTable              := TDataTable():New( "CfgUse" )
    oDataTable:cDataFile    := cPatEmp( , .t. ) + "CfgUse.Dbf"
    oDataTable:cIndexFile   := cPatEmp( , .t. ) + "CfgUse.Cdx"
    oDataTable:cDescription := "Configuración"
+   oDataTable:bCreateFile  := {| cPath | ColumnasUsuariosModel():CreateFile( cPath ) }
+   oDataTable:bCreateIndex := {| cPath | ColumnasUsuariosModel():CreateIndex( cPath ) }
    ::AddEmpresaTable( oDataTable )
 
    oDataTable              := TDataTable():New( "CfgInf" )
@@ -4237,7 +4132,9 @@ METHOD Reindex()
 
          if !Empty( ::aProgress[ 1 ] )
             ::aProgress[ 1 ]:Set( hb_EnumIndex() )
-         end if 
+         end if
+
+         sysrefresh() 
 
       next
 
@@ -4262,6 +4159,8 @@ METHOD Reindex()
          if !Empty( ::aProgress[ 2 ] )
             ::aProgress[ 2 ]:Set( hb_EnumIndex() )
          end if 
+
+         sysrefresh() 
 
       next
 
@@ -4452,10 +4351,6 @@ METHOD ActualizaEmpresa( oMsg )
       ::oMsg            := oMsg
    end if               
 
-   // ::BuildData()
-
-   // ::BuildEmpresa()
-
    // Recargamos el diccionario de datos---------------------------------------
 
    ::ReLoadTables()
@@ -4503,10 +4398,10 @@ METHOD ActualizaEmpresa( oMsg )
    for each oTable in ::aDataTables
 
       ::oMsg:SetText( "Eliminado tabla del diccionario : " + oTable:cDescription )
-      ::DeleteTable( oTable )
+      ::deleteTableFromDataDictionary( oTable )
 
       ::oMsg:SetText( "Añadiendo tabla al diccionario de datos : " + oTable:cDescription )
-      ::AddTable( oTable )
+      ::AddTableToDataDictionary( oTable )
 
       ::oMsg:SetText( "Reindexando : " + oTable:cDescription )
       ::ReindexTable( oTable )
@@ -4516,10 +4411,10 @@ METHOD ActualizaEmpresa( oMsg )
    for each oTable in ::aEmpresaTables
 
       ::oMsg:SetText( "Eliminado tabla del diccionario : " + oTable:cDescription )
-      ::DeleteTable( oTable )
+      ::deleteTableFromDataDictionary( oTable )
 
       ::oMsg:SetText( "Añadiendo tabla al diccionario de datos : " + oTable:cDescription )
-      ::AddTable( oTable )
+      ::AddTableToDataDictionary( oTable )
 
       ::oMsg:SetText( "Reindexando : " + oTable:cDescription )
       ::ReindexTable( oTable )
@@ -5023,7 +4918,7 @@ Function ApoloDDAddTable( cTableName, cTableDatabase, cTableIndex )
    local cError
    local lAddTable   := .t.
 
-   if !AdsExistTable( cTableName )
+   if !AdsisTableInDataDictionary( cTableName )
       if !AdsDDaddTable( cTableName, cTableDatabase, cTableIndex )
          lAddTable   := .f.
          msgInfo( "Error adding table : " + cValToChar( adsGetLastError( @cError ) ), cError )
@@ -5034,7 +4929,7 @@ Return ( lAddTable )
 
 //--------------------------------------------------------------------------//
 
-Function AdsExistTable( cTable )
+Function AdsisTableInDataDictionary( cTable )
 
    local aAdsTables
 

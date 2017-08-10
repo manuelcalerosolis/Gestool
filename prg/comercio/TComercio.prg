@@ -4245,8 +4245,6 @@ RETURN .t.
 
 METHOD insertProductToPrestashop( idProduct ) Class TComercio
 
-   msgalert( ::isIncrementalMode(), "isIncrementalMode" )
-
    if !( ::TComercioProduct:buildProduct( idProduct, .t. ) )
       RETURN .f.
    end if 

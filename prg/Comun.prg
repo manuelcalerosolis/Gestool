@@ -281,35 +281,11 @@ RETURN ( .t. )
 
 FUNCTION Test()
 
-   // ColumnasUsuariosModel():set( "Testing", "my tasting" )
-
+   
    /*with object MovimientosAlmacenController()
       :New()
       :activateShell()
-   end with*/
-
-<<<<<<< HEAD
-=======
-   /*
->>>>>>> 18bdc7c74485b9605d246f05379819c8f5f456d7
-   with object MovimientosAlmacenController()
-      :New()
-      :activateShell()
    end with
-<<<<<<< HEAD
-   
-=======
-   */
->>>>>>> 82dfa64243425f7e8decb49a52be522e6a7c922b
-   /*
-
-   A1732400-1
-
-   cobrado -> nimpcob
-   importe -> nimporte
-
-   497f0cd2-4c95-4405-b659-1ea4a71f8e27 
-
 
    local hMail          := {=>}
    local cMensajeMail   := ""
@@ -2796,7 +2772,6 @@ RETURN ( oAcceso )
 
 //---------------------------------------------------------------------------//
 
-
 FUNCTION IsReport()
 
 RETURN ( .f. )
@@ -4145,114 +4120,39 @@ RETURN ( aItmCom )
 
 //----------------------------------------------------------------------------//
 
-FUNCTION aEmpresa( cEmp, dbfEmp, dbfDlg, dbfUser, lRptGal )
+FUNCTION aEmpresa( cCodigoEmpresa )
 
-   local cDlg
-   local oBlock
-   local oError
-   local lEmpFnd     := .t.
-   local lCloDlg     := .f.
-   local lCloEmp     := .f.
-   local lCloUsr     := .f.
+   setArrayEmpresa( EmpresasModel():scatter( cCodigoEmpresa ) )
 
-   DEFAULT lRptGal   := .f.
+   /*
+   Configuraciones desde el usuario-----------------------------------------
+   */
 
-   cDlg              := oUser():cDelegacion()
-   aDlgEmp           := {}
+   if !( isReport() )
 
-   oBlock            := ErrorBlock( {| oError | ApoloBreak( oError ) } )
-   BEGIN SEQUENCE
+      if empty( oUser():cCaja() )
+         oUser():cCaja( cCajUsr( uFieldEmpresa( "cDefCaj" ) ) )
+      end if
 
-   if dbfEmp == nil
-      USE ( cPatDat() + "EMPRESA.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "EMPRESA", @dbfEmp ) )
-      SET ADSINDEX TO ( cPatDat() + "EMPRESA.CDX" ) ADDITIVE
-      lCloEmp        := .t.
-   end if
-
-   if dbfUser == nil
-      USE ( cPatDat() + "USERS.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "USERS", @dbfUser ) )
-      SET ADSINDEX TO ( cPatDat() + "USERS.CDX" ) ADDITIVE
-      lCloUsr        := .t.
-   end if
-
-   if dbfDlg == nil
-      USE ( cPatDat() + "DELEGA.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "DELEGA", @dbfDlg ) )
-      SET ADSINDEX TO ( cPatDat() + "DELEGA.CDX" ) ADDITIVE
-      lCloDlg        := .t.
-   end if
-
-   if dbSeekInOrd( cEmp, "CodEmp", dbfEmp )
-
-      aEmpresa       := dbScatter( dbfEmp )
-
-      /*
-      Configuraciones desde el usuario-----------------------------------------
-      */
-
-      if !lRptGal
-
-         if empty( oUser():cCaja() )
-            oUser():cCaja( cCajUsr( ( dbfEmp )->cDefCaj ) )
-         end if
-
-         if empty( oUser():cAlmacen() )
-            oUser():cAlmacen( cAlmUsr( ( dbfEmp )->cDefAlm ) )
-         end if
-
+      if empty( oUser():cAlmacen() )
+         oUser():cAlmacen( cAlmUsr( uFieldEmpresa( "cCodAlm" ) ) )
       end if
 
       /*
-      Verificamos la existencia de la delegacion-------------------------------
+      Cargamos el programa contable--------------------------------------
       */
 
-      if !( dbfDlg )->( dbSeek( cEmp + cDlg ) )
-         oUser():cDelegacion()
-      end if 
-
-      /*
-      Cargamos las delegaciones------------------------------------------------
-      */
-
-      if ( dbfDlg )->( dbSeek( cEmp ) )
-         while ( dbfDlg )->cCodEmp == cEmp .and. ( dbfDlg )->( !eof() )
-            aAdd( aDlgEmp, ( dbfDlg )->cCodDlg )
-            ( dbfDlg )->( dbSkip() )
-         end while
-      else
-         aDlgEmp     := { "" }
-      end if
-
-      // Cargamos el programa contable-----------------------------------------
-
-      SetAplicacionContable( ( dbfEmp )->nExpContbl )
-
-   else
-
-      lEmpFnd        := .f.
+      setAplicacionContable( uFieldEmpresa( "nExpContbl" ) )
 
    end if
 
-   RECOVER USING oError
+   /*
+   Verificamos la existencia de la delegacion-------------------------------
+   */
 
-      msgStop( "Imposible abrir todas las bases de datos " + CRLF + ErrorMessage( oError ) )
+   setArrayDelegacionEmpresa( DelegacionesModel():arrayDelegaciones( cCodigoEmpresa ) )
 
-   END SEQUENCE
-
-   ErrorBlock( oBlock )
-
-   if lCloDlg
-      CLOSE ( dbfDlg )
-   end if
-
-   if lCloUsr
-      CLOSE ( dbfUser )
-   end if
-
-   if lCloEmp
-      CLOSE ( dbfEmp )
-   end if
-
-RETURN ( lEmpFnd )
+RETURN ( .t. )
 
 //---------------------------------------------------------------------------//
 
@@ -4267,6 +4167,14 @@ FUNCTION SetEmp( uVal, nPos )
 //---------------------------------------------------------------------------//
 
 FUNCTION aRetDlgEmp() ; RETURN ( aDlgEmp )
+
+//---------------------------------------------------------------------------//
+
+FUNCTION setArrayDelegacionEmpresa( aDelegaciones )
+
+   aDlgEmp  := aDelegaciones
+
+RETURN ( aDlgEmp )
 
 //---------------------------------------------------------------------------//
 
@@ -5476,6 +5384,18 @@ RETURN ( if( dSysDate != nil, dSysDate, Date() ) )
 //---------------------------------------------------------------------------//
 
 FUNCTION aEmp() ; RETURN ( aEmpresa )
+
+//---------------------------------------------------------------------------//
+
+FUNCTION getArrayEmpresa() ; RETURN ( aEmpresa )
+
+//---------------------------------------------------------------------------//
+
+FUNCTION setArrayEmpresa( aEmp )
+
+   aEmpresa    := aEmp
+
+RETURN ( aEmpresa )
 
 //---------------------------------------------------------------------------//
 

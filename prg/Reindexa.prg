@@ -7,7 +7,7 @@
 
 FUNCTION Reindexa()
 
-   if lAis()
+   if lAIS()
       TDataCenter():Resource( "01067" )
    else
       TReindex():New( oWnd(), "01067" ):Resource()
@@ -31,7 +31,6 @@ CLASS TReindex
    DATA  aProgress
    DATA  nProgress
    DATA  nActualProgress
-   DATA  nLevel
 
    DATA  cPathDat
    DATA  cPathEmp
@@ -78,7 +77,6 @@ END CLASS
 
 METHOD New( oWnd, oMenuItem, cPatEmp, cPatDat )
 
-   DEFAULT oMenuItem := "01067"
    DEFAULT cPatEmp   := cPatEmp()
    DEFAULT cPatDat   := cPatDat()
 
@@ -100,8 +98,6 @@ METHOD New( oWnd, oMenuItem, cPatEmp, cPatDat )
    ::aMtrIndices     := Array( NUM_IND )
    ::aNumIndices     := Array( NUM_IND )
    ::aNumIndices     := Afill( ::aNumIndices, 1 )
-
-   ::nLevel          := nLevelUsr( oMenuItem )
 
 RETURN ( Self )
 
@@ -139,15 +135,6 @@ METHOD GenIndices( oMsg )
    end if
 
    /*
-   Chequamos los contadores----------------------------------------------------
-   */
-
-   if ::lNotGrupo
-      rxCount( ::cPathEmp )
-      synCount( ::cPathEmp )
-   end if
-
-   /*
    Ficheros Maestros - Barra 1 ------------------------------------------------
    */
 
@@ -160,6 +147,7 @@ METHOD GenIndices( oMsg )
          ::SetText( "Generando índices : Usuarios", ::aProgress[ 1 ] )        ; rxUsuario( ::cPathDat )
          ::SetText( "Generando índices : Divisas", ::aProgress[ 1 ]  )        ; rxDiv( ::cPathDat )
          ::SetText( "Generando índices : Configuración", ::aProgress[ 1 ] )   ; TShell():ReindexData()
+         ::SetText( "Generando índices : Contadores", ::aProgress[ 1 ] )      ; rxCount( ::cPathDat ); synCount( ::cPathEmp )
       end if
 
       if ::lDatos
@@ -169,9 +157,13 @@ METHOD GenIndices( oMsg )
          ::SetText( "Generando índices : Filtros", ::aProgress[ 1 ] )            ; TFilterDatabase():Create( ::cPathDat ):Reindexa()
          ::SetText( "Generando índices : Notas", ::aProgress[ 1 ] )              ; TNotas():Create( ::cPathDat ):Reindexa()
          ::SetText( "Generando índices : Agenda", ::aProgress[ 1 ] )             ; TAgenda():Create( ::cPathDat ):Reindexa()
+         ::SetText( "Generando índices : Codigos postales", ::aProgress[ 1 ] )   ; CodigosPostales():Create( ::cPathDat ):Reindexa()
+         ::SetText( "Generando índices : Provincia", ::aProgress[ 1 ] )          ; Provincias():Create( ::cPathDat ):Reindexa()
+         ::SetText( "Generando índices : Paises", ::aProgress[ 1 ] )             ; TPais():Create( ::cPathDat ):Reindexa()
+         ::SetText( "Generando índices : Lenguaje", ::aProgress[ 1 ] )           ; TLenguaje():Create( ::cPathDat ):Reindexa()
+         ::SetText( "Generando índices : Centro de coste", ::aProgress[ 1 ] )    ; TCentroCoste():Create( ::cPathDat ):Reindexa()
       end if
 
-<<<<<<< HEAD
       ::SetText( "Generando índices : Familias", ::aProgress[ 1 ] )              ; rxFamilia( ::cPatArt )
       ::SetText( "Generando índices : Estados del SAT", ::aProgress[ 1 ] )       ; rxEstadoSat()
       ::SetText( "Generando índices : Tempordas", ::aProgress[ 1 ] )             ; rxTemporada( ::cPatArt )
@@ -193,54 +185,6 @@ METHOD GenIndices( oMsg )
       ::SetText( "Generando índices : Configuración de favoritos", ::aProgress[ 1 ] )  ; rxReport( ::cPathEmp )
       ::SetText( "Generando índices : Impuesto IVMH", ::aProgress[ 1 ] )               ; TNewImp():Create( ::cPathEmp ):Reindexa()
       ::SetText( "Generando índices : Reporting", ::aProgress[ 1 ] )                   ; TFastReportInfGen():Reindexa( ::cPathEmp )
-
-      if ::lEmpresa
-         ::SetText( "Generando índices : Codigos postales", ::aProgress[ 1 ] )         ; CodigosPostales():Create( ::cPathDat ):Reindexa()
-         ::SetText( "Generando índices : Provincia", ::aProgress[ 1 ] )                ; Provincias():Create( ::cPathDat ):Reindexa()
-         ::SetText( "Generando índices : Paises", ::aProgress[ 1 ] )                   ; TPais():Create( ::cPathDat ):Reindexa()
-         ::SetText( "Generando índices : Lenguaje", ::aProgress[ 1 ] )                 ; TLenguaje():Create( ::cPathDat ):Reindexa()
-         ::SetText( "Generando índices : Centro de coste", ::aProgress[ 1 ] )          ; TCentroCoste():Create( ::cPathDat ):Reindexa()
-=======
-      if ::lDatos
-
-         ::SetText( "Generando índices : Familias", ::aProgress[ 1 ] )              ; rxFamilia( ::cPatArt )
-         ::SetText( "Generando índices : Estados del SAT", ::aProgress[ 1 ] )       ; rxEstadoSat()
-         ::SetText( "Generando índices : Tempordas", ::aProgress[ 1 ] )             ; rxTemporada( ::cPatArt )
-         ::SetText( "Generando índices : Categorías", ::aProgress[ 1 ] )            ; rxCategoria( ::cPatArt )
-         ::SetText( "Generando índices : Grupos de familias", ::aProgress[ 1 ] )    ; TGrpFam():Create( ::cPatArt ):Reindexa()
-         ::SetText( "Generando índices : Fabricantes", ::aProgress[ 1 ] )           ; TFabricantes():Create( ::cPatArt ):Reindexa()
-         ::SetText( "Generando índices : Grupos de clientes", ::aProgress[ 1 ] )    ; TGrpCli():Create( ::cPatCli ):Reindexa()
-         ::SetText( "Generando índices : Grupos de proveedores", ::aProgress[ 1 ] ) ; TGrpPrv():Create( ::cPatPrv ):Reindexa()
-         ::SetText( "Generando índices : Tipos de artículos", ::aProgress[ 1 ] )    ; TTipArt():Create( ::cPatArt ):Reindexa()
-         ::SetText( "Generando índices : Proyectos", ::aProgress[ 1 ] )             ; TProyecto():Create( ::cPathEmp ):Reindexa()
-         ::SetText( "Generando índices : Catálogos", ::aProgress[ 1 ] )             ; TCatalogo():Create( ::cPathEmp ):Reindexa()
-         ::SetText( "Generando índices : Unidades de medición", ::aProgress[ 1 ] )  ; UniMedicion():Create( ::cPathEmp ):Reindexa()
-         ::SetText( "Generando índices : Transportistas", ::aProgress[ 1 ] )        ; TTrans():Create( ::cPatCli ):Reindexa()
-         ::SetText( "Generando índices : Tipos de comandas", ::aProgress[ 1 ] )     ; TComandas():Create( ::cPatArt ):Reindexa()
-
-         if ::lNotGrupo
-
-            ::SetText( "Generando índices : Cuentas de remesas", ::aProgress[ 1 ] )          ; TCtaRem():Create( ::cPatCli ):Reindexa()
-            ::SetText( "Generando índices : Tipo de envasado", ::aProgress[ 1 ] )            ; TFrasesPublicitarias():Create( cPatArt() ):Reindexa()
-            ::SetText( "Generando índices : Sala de venta", ::aProgress[ 1 ] )               ; TTpvRestaurante():Create( ::cPathEmp ):Reindexa()
-            ::SetText( "Generando índices : Puntos de venta", ::aProgress[ 1 ] )             ; TDetSalaVta():Create( ::cPathEmp ):Reindexa()
-            ::SetText( "Generando índices : Configuración de informes", ::aProgress[ 1 ] )   ; TInfGen():Reindexa( ::cPathEmp )
-            ::SetText( "Generando índices : Configuración de favoritos", ::aProgress[ 1 ] )  ; rxReport( ::cPathEmp )
-            ::SetText( "Generando índices : Impuesto IVMH", ::aProgress[ 1 ] )               ; TNewImp():Create( ::cPathEmp ):Reindexa()
-            ::SetText( "Generando índices : Reporting", ::aProgress[ 1 ] )                   ; TFastReportInfGen():Reindexa( ::cPathEmp )
-
-            if ::lEmpresa
-               ::SetText( "Generando índices : Codigos postales", ::aProgress[ 1 ] )         ; CodigosPostales():Create( ::cPathDat ):Reindexa()
-               ::SetText( "Generando índices : Provincia", ::aProgress[ 1 ] )                ; Provincias():Create( ::cPathDat ):Reindexa()
-               ::SetText( "Generando índices : Paises", ::aProgress[ 1 ] )                   ; TPais():Create( ::cPathDat ):Reindexa()
-               ::SetText( "Generando índices : Lenguaje", ::aProgress[ 1 ] )                 ; TLenguaje():Create( ::cPathDat ):Reindexa()
-               ::SetText( "Generando índices : Centro de coste", ::aProgress[ 1 ] )          ; TCentroCoste():Create( ::cPathDat ):Reindexa()
-            end if
-
-         end if
-
->>>>>>> 82dfa64243425f7e8decb49a52be522e6a7c922b
-      end if
 
    end if
 
@@ -276,84 +220,68 @@ METHOD GenIndices( oMsg )
 
    if ::aLgcIndices[ 3 ]
 
-      if !Empty( ::aProgress[ 3 ] )
+      ::SetText( "Generando índices : Pedidos a proveedor", ::aProgress[ 3 ] );                    rxPedPrv( ::cPathEmp )
+      ::SetText( "Generando índices : Albaranes de proveedor", ::aProgress[ 3 ] );                 rxAlbPrv( ::cPathEmp )
+      ::SetText( "Generando índices : Facturas de proveedor", ::aProgress[ 3 ] );                  rxFacPrv( ::cPathEmp )
+      ::SetText( "Generando índices : Facturas rectificativas de proveedor", ::aProgress[ 3 ] );   rxRctPrv( ::cPathEmp )
+      ::SetText( "Generando índices : Recibos de proveedor", ::aProgress[ 3 ] );                   rxRecPrv( ::cPathEmp )
+      ::SetText( "Generando índices : Presupuestos de clientes", ::aProgress[ 3 ] );               rxPreCli( ::cPathEmp )
+      ::SetText( "Generando índices : S.A.T. de clientes", ::aProgress[ 3 ] );                     rxSatCli( ::cPathEmp )
+      ::SetText( "Generando índices : Pedidos de clientes", ::aProgress[ 3 ] );                    rxPedCli( ::cPathEmp )
+      ::SetText( "Generando índices : Albaranes de clientes", ::aProgress[ 3 ] );                  rxAlbCli( ::cPathEmp )
+      ::SetText( "Generando índices : Facturas de clientes", ::aProgress[ 3 ] );                   rxFacCli( ::cPathEmp )
+      ::SetText( "Generando índices : Facturas rectificativas", ::aProgress[ 3 ] );                rxFacRec( ::cPathEmp )
+      ::SetText( "Generando índices : Facturas de anticipos", ::aProgress[ 3 ] );                  rxAntCli( ::cPathEmp )
+      ::SetText( "Generando índices : Recibos de clientes", ::aProgress[ 3 ] );                    rxRecCli( ::cPathEmp )
 
-         if ::lNotGrupo .and. ::lDatos
-            ::nProgress[ 3 ]     := 49
-         end if
+      ::SetText( "Generando índices : Facturas plantillas de ventas automáticas", ::aProgress[ 3 ] );      TFacAutomatica():Create( ::cPathEmp ):Reindexa()
+      ::SetText( "Generando índices : Líneas de plantillas de ventas automáticas", ::aProgress[ 3 ] );     TDetFacAutomatica():New( ::cPathEmp ):Reindexa()
+      ::SetText( "Generando índices : Histórico de plantillas de ventas automáticas", ::aProgress[ 3 ] );  THisFacAutomatica():New( ::cPathEmp ):Reindexa()
 
-         ::aProgress[ 3 ]:SetTotal( ::nProgress[ 3 ] )
+      ::SetText( "Generando índices : Remesas bancarias", ::aProgress[ 3 ] );          TRemesas():Create( ::cPathEmp ):Reindexa()
+      ::SetText( "Generando índices : Remesas de movimientos", ::aProgress[ 3 ] );     TRemMovAlm():New( ::cPathEmp ):Reindexa()
+      ::SetText( "Generando índices : Envios y recepciones", ::aProgress[ 3 ] );       TSndRecInf():Reindexa( ::cPathEmp )
 
-         ::nActualProgress       := 0
+      ::SetText( "Generando índices : Campos extra", ::aProgress[ 3 ] );               TCamposExtra():New( ::cPathEmp ):Reindexa()
+      ::SetText( "Generando índices : Detalles de campos extra", ::aProgress[ 3 ] );   TDetCamposExtra():New( ::cPathEmp ):Reindexa()
 
-      end if
+      ::SetText( "Generando índices : Secciones", ::aProgress[ 3 ] );                        TSeccion():Create( ::cPathEmp ):Reindexa()
+      ::SetText( "Generando índices : Tipos de horas", ::aProgress[ 3 ] );                   THoras():Create( ::cPathEmp ):Reindexa()
+      ::SetText( "Generando índices : Operarios", ::aProgress[ 3 ] );                        TOperarios():Create( ::cPathEmp ):Reindexa()
+      ::SetText( "Generando índices : Horas de operarios", ::aProgress[ 3 ] );               TDetHoras():Create( ::cPathEmp ):Reindexa()
+      ::SetText( "Generando índices : Operaciones", ::aProgress[ 3 ] );                      TOperacion():Create( ::cPathEmp ):Reindexa()
+      ::SetText( "Generando índices : Tipos de operaciones", ::aProgress[ 3 ] );             TTipOpera():Create( ::cPathEmp ):Reindexa()
+      ::SetText( "Generando índices : Costes maquinaria", ::aProgress[ 3 ] );                TCosMaq():Create( ::cPathEmp ):Reindexa()
+      ::SetText( "Generando índices : Máquinas", ::aProgress[ 3 ] );                         TMaquina():Create( ::cPathEmp ):Reindexa()
+      ::SetText( "Generando índices : Detalle máquinas", ::aProgress[ 3 ] );                 TDetCostes():New( ::cPathEmp ):Reindexa()
+      ::SetText( "Generando índices : Partes de producción", ::aProgress[ 3 ] );             TProduccion():Create( ::cPathEmp ):Reindexa()
+      ::SetText( "Generando índices : Líneas de partes de producción", ::aProgress[ 3 ] );   TDetProduccion():New( ::cPathEmp ):Reindexa()
+      ::SetText( "Generando índices : Series de pares de producción", ::aProgress[ 3 ] );    TDetSeriesProduccion():New( ::cPathEmp ):Reindexa()
+      ::SetText( "Generando índices : Líneas de personal", ::aProgress[ 3 ] );               TDetPersonal():New( ::cPathEmp ):Reindexa()
+      ::SetText( "Generando índices : Líneas de horas de personal", ::aProgress[ 3 ] );      TDetHorasPersonal():New( ::cPathEmp ):Reindexa()
+      ::SetText( "Generando índices : Líneas de materias primas", ::aProgress[ 3 ] );        TDetMaterial():New( ::cPathEmp ):Reindexa()
+      ::SetText( "Generando índices : Series de materias primas", ::aProgress[ 3 ] );        TDetSeriesMaterial():New( ::cPathEmp ):Reindexa()
+      ::SetText( "Generando índices : Líneas de maquinaria", ::aProgress[ 3 ] );             TDetMaquina():New( ::cPathEmp ):Reindexa()
 
-      if ::lNotGrupo .and. ::lDatos
+      ::SetText( "Generando índices : Movimientos de almacén", ::aProgress[ 3 ] );           TDetMovimientos():New( ::cPathEmp ):Reindexa()
+      ::SetText( "Generando índices : Series de movimientos de almacen", ::aProgress[ 3 ] ); TDetSeriesMovimientos():New( ::cPathEmp ):Reindexa()
 
-         ::SetText( "Generando índices : Pedidos a proveedor", ::aProgress[ 3 ] );                    rxPedPrv( ::cPathEmp )
-         ::SetText( "Generando índices : Albaranes de proveedor", ::aProgress[ 3 ] );                 rxAlbPrv( ::cPathEmp )
-         ::SetText( "Generando índices : Facturas de proveedor", ::aProgress[ 3 ] );                  rxFacPrv( ::cPathEmp )
-         ::SetText( "Generando índices : Facturas rectificativas de proveedor", ::aProgress[ 3 ] );   rxRctPrv( ::cPathEmp )
-         ::SetText( "Generando índices : Recibos de proveedor", ::aProgress[ 3 ] );                   rxRecPrv( ::cPathEmp )
-         ::SetText( "Generando índices : Presupuestos de clientes", ::aProgress[ 3 ] );               rxPreCli( ::cPathEmp )
-         ::SetText( "Generando índices : S.A.T. de clientes", ::aProgress[ 3 ] );                     rxSatCli( ::cPathEmp )
-         ::SetText( "Generando índices : Pedidos de clientes", ::aProgress[ 3 ] );                    rxPedCli( ::cPathEmp )
-         ::SetText( "Generando índices : Albaranes de clientes", ::aProgress[ 3 ] );                  rxAlbCli( ::cPathEmp )
-         ::SetText( "Generando índices : Facturas de clientes", ::aProgress[ 3 ] );                   rxFacCli( ::cPathEmp )
-         ::SetText( "Generando índices : Facturas rectificativas", ::aProgress[ 3 ] );                rxFacRec( ::cPathEmp )
-         ::SetText( "Generando índices : Facturas de anticipos", ::aProgress[ 3 ] );                  rxAntCli( ::cPathEmp )
-         ::SetText( "Generando índices : Recibos de clientes", ::aProgress[ 3 ] );                    rxRecCli( ::cPathEmp )
+      ::SetText( "Generando índices : Expediente", ::aProgress[ 3 ] );                       TExpediente():Create( ::cPathEmp ):Reindexa()
+      ::SetText( "Generando índices : Tipos de expedientes", ::aProgress[ 3 ] );             TTipoExpediente():Create( ::cPathEmp ):Reindexa()
+      ::SetText( "Generando índices : Subtipos de expediente", ::aProgress[ 3 ] );           TDetTipoExpediente():New( ::cPathEmp ):Reindexa()
+      ::SetText( "Generando índices : Entidades", ::aProgress[ 3 ] );                        TEntidades():Create( ::cPathEmp ):Reindexa()
+      ::SetText( "Generando índices : Colaboradores", ::aProgress[ 3 ] );                    TColaboradores():Create( ::cPathEmp ):Reindexa()
+      ::SetText( "Generando índices : Actuaciones", ::aProgress[ 3 ] );                      TActuaciones():Create( ::cPathEmp ):Reindexa()
+      ::SetText( "Generando índices : Expedientes", ::aProgress[ 3 ] );                      TExpediente():Create( ::cPathEmp ):Reindexa()
+      ::SetText( "Generando índices : Actuaciones de expedientes", ::aProgress[ 3 ] );       TDetActuacion():Create( ::cPathEmp ):Reindexa()
 
-         ::SetText( "Generando índices : Facturas plantillas de ventas automáticas", ::aProgress[ 3 ] );      TFacAutomatica():Create( ::cPathEmp ):Reindexa()
-         ::SetText( "Generando índices : Líneas de plantillas de ventas automáticas", ::aProgress[ 3 ] );     TDetFacAutomatica():New( ::cPathEmp ):Reindexa()
-         ::SetText( "Generando índices : Histórico de plantillas de ventas automáticas", ::aProgress[ 3 ] );  THisFacAutomatica():New( ::cPathEmp ):Reindexa()
+      ::SetText( "Generando índices : Ordenes de carga", ::aProgress[ 3 ] );                 TOrdCarga():Create( ::cPathEmp ):Reindexa()
+      ::SetText( "Generando índices : Líneas de ordenes de carga", ::aProgress[ 3 ] );       TDetOrdCar():New( ::cPathEmp ):Reindexa()
 
-         ::SetText( "Generando índices : Remesas bancarias", ::aProgress[ 3 ] );          TRemesas():Create( ::cPathEmp ):Reindexa()
-         ::SetText( "Generando índices : Remesas de movimientos", ::aProgress[ 3 ] );     TRemMovAlm():New( ::cPathEmp ):Reindexa()
-         ::SetText( "Generando índices : Envios y recepciones", ::aProgress[ 3 ] );       TSndRecInf():Reindexa( ::cPathEmp )
+      ::SetText( "Generando índices : Programas de fidelización", ::aProgress[ 3 ] );           TFideliza():Create( ::cPatArt ):Reindexa()
+      ::SetText( "Generando índices : Líneas de programas de fidelización", ::aProgress[ 3 ] ); TDetFideliza():New( ::cPatArt ):Reindexa()
 
-         ::SetText( "Generando índices : Campos extra", ::aProgress[ 3 ] );               TCamposExtra():New( ::cPathEmp ):Reindexa()
-         ::SetText( "Generando índices : Detalles de campos extra", ::aProgress[ 3 ] );   TDetCamposExtra():New( ::cPathEmp ):Reindexa()
-
-         ::SetText( "Generando índices : Secciones", ::aProgress[ 3 ] );                        TSeccion():Create( ::cPathEmp ):Reindexa()
-         ::SetText( "Generando índices : Tipos de horas", ::aProgress[ 3 ] );                   THoras():Create( ::cPathEmp ):Reindexa()
-         ::SetText( "Generando índices : Operarios", ::aProgress[ 3 ] );                        TOperarios():Create( ::cPathEmp ):Reindexa()
-         ::SetText( "Generando índices : Horas de operarios", ::aProgress[ 3 ] );               TDetHoras():Create( ::cPathEmp ):Reindexa()
-         ::SetText( "Generando índices : Operaciones", ::aProgress[ 3 ] );                      TOperacion():Create( ::cPathEmp ):Reindexa()
-         ::SetText( "Generando índices : Tipos de operaciones", ::aProgress[ 3 ] );             TTipOpera():Create( ::cPathEmp ):Reindexa()
-         ::SetText( "Generando índices : Costes maquinaria", ::aProgress[ 3 ] );                TCosMaq():Create( ::cPathEmp ):Reindexa()
-         ::SetText( "Generando índices : Máquinas", ::aProgress[ 3 ] );                         TMaquina():Create( ::cPathEmp ):Reindexa()
-         ::SetText( "Generando índices : Detalle máquinas", ::aProgress[ 3 ] );                 TDetCostes():New( ::cPathEmp ):Reindexa()
-         ::SetText( "Generando índices : Partes de producción", ::aProgress[ 3 ] );             TProduccion():Create( ::cPathEmp ):Reindexa()
-         ::SetText( "Generando índices : Líneas de partes de producción", ::aProgress[ 3 ] );   TDetProduccion():New( ::cPathEmp ):Reindexa()
-         ::SetText( "Generando índices : Series de pares de producción", ::aProgress[ 3 ] );    TDetSeriesProduccion():New( ::cPathEmp ):Reindexa()
-         ::SetText( "Generando índices : Líneas de personal", ::aProgress[ 3 ] );               TDetPersonal():New( ::cPathEmp ):Reindexa()
-         ::SetText( "Generando índices : Líneas de horas de personal", ::aProgress[ 3 ] );      TDetHorasPersonal():New( ::cPathEmp ):Reindexa()
-         ::SetText( "Generando índices : Líneas de materias primas", ::aProgress[ 3 ] );        TDetMaterial():New( ::cPathEmp ):Reindexa()
-         ::SetText( "Generando índices : Series de materias primas", ::aProgress[ 3 ] );        TDetSeriesMaterial():New( ::cPathEmp ):Reindexa()
-         ::SetText( "Generando índices : Líneas de maquinaria", ::aProgress[ 3 ] );             TDetMaquina():New( ::cPathEmp ):Reindexa()
-
-         ::SetText( "Generando índices : Movimientos de almacén", ::aProgress[ 3 ] );           TDetMovimientos():New( ::cPathEmp ):Reindexa()
-         ::SetText( "Generando índices : Series de movimientos de almacen", ::aProgress[ 3 ] ); TDetSeriesMovimientos():New( ::cPathEmp ):Reindexa()
-
-         ::SetText( "Generando índices : Expediente", ::aProgress[ 3 ] );                       TExpediente():Create( ::cPathEmp ):Reindexa()
-         ::SetText( "Generando índices : Tipos de expedientes", ::aProgress[ 3 ] );             TTipoExpediente():Create( ::cPathEmp ):Reindexa()
-         ::SetText( "Generando índices : Subtipos de expediente", ::aProgress[ 3 ] );           TDetTipoExpediente():New( ::cPathEmp ):Reindexa()
-         ::SetText( "Generando índices : Entidades", ::aProgress[ 3 ] );                        TEntidades():Create( ::cPathEmp ):Reindexa()
-         ::SetText( "Generando índices : Colaboradores", ::aProgress[ 3 ] );                    TColaboradores():Create( ::cPathEmp ):Reindexa()
-         ::SetText( "Generando índices : Actuaciones", ::aProgress[ 3 ] );                      TActuaciones():Create( ::cPathEmp ):Reindexa()
-         ::SetText( "Generando índices : Expedientes", ::aProgress[ 3 ] );                      TExpediente():Create( ::cPathEmp ):Reindexa()
-         ::SetText( "Generando índices : Actuaciones de expedientes", ::aProgress[ 3 ] );       TDetActuacion():Create( ::cPathEmp ):Reindexa()
-
-         ::SetText( "Generando índices : Ordenes de carga", ::aProgress[ 3 ] );                 TOrdCarga():Create( ::cPathEmp ):Reindexa()
-         ::SetText( "Generando índices : Líneas de ordenes de carga", ::aProgress[ 3 ] );       TDetOrdCar():New( ::cPathEmp ):Reindexa()
-
-         ::SetText( "Generando índices : Programas de fidelización", ::aProgress[ 3 ] );           TFideliza():Create( ::cPatArt ):Reindexa()
-         ::SetText( "Generando índices : Líneas de programas de fidelización", ::aProgress[ 3 ] ); TDetFideliza():New( ::cPatArt ):Reindexa()
-
-         ::SetText( "Generando índices : Scripts", ::aProgress[ 3 ] );                             TScripts():Create( ::cPathEmp ):Reindexa()
-
-      end if
+      ::SetText( "Generando índices : Scripts", ::aProgress[ 3 ] );                             TScripts():Create( ::cPathEmp ):Reindexa()
 
    end if
 
@@ -363,90 +291,38 @@ METHOD GenIndices( oMsg )
 
    if ::aLgcIndices[ 4 ]
 
-      if !Empty( ::aProgress[ 4 ] )
-
-         ::nProgress[ 4 ]           := 1
-
-         if ::lNotGrupo
-            if ::lDatos
-               ::nProgress[ 4 ]     += 3
-            end if
-            ::nProgress[ 4 ]        += 13
-         end if
-
-         ::nActualProgress          := 0
-
-         ::aProgress[ 4 ]:SetTotal( ::nProgress[ 4 ] )
-
-      end if
-
-      ::SetText( "Generando índices : invitaciones", ::aProgress[ 4 ] ) ;                 TInvitacion():Create( ::cPathEmp ):Reindexa()
-
-      if ::lNotGrupo
-
-         if ::lDatos
-
-            ::SetText( "Generando índices : Tickets de clientes", ::aProgress[ 4 ] );     rxTpv( ::cPathEmp )
-            ::SetText( "Generando índices : Entradas y salidas", ::aProgress[ 4 ] );      rxEntSal( ::cPathEmp )
-            ::SetText( "Generando índices : Turnos", ::aProgress[ 4 ] );                  TTurno():New( ::cPathEmp ):Reindexa():End()
-            ::SetText( "Generando índices : Comentarios", ::aProgress[ 4 ] );             TComentarios():Create( ::cPatArt ):Reindexa()
-            ::SetText( "Generando índices : Lineas de comentarios", ::aProgress[ 4 ] );   TDetComentarios():Create( ::cPatArt ):Reindexa()
-
-            ::SetText( "Generando índices : Ordenenes de comanda", ::aProgress[ 4 ] );    TOrdenComanda():Create( ::cPatArt ):Reindexa()
-
-            ::SetText( "Generando índices : Tvp Menu", ::aProgress[ 4 ] );                TpvMenu():Create( ::cPatArt ):Reindexa()            
-            ::SetText( "Generando índices : Ordenenes de menu", ::aProgress[ 4 ] );       TpvMenuOrdenes():Create( ::cPatArt ):Reindexa()
-            ::SetText( "Generando índices : Artículos de menu", ::aProgress[ 4 ] );       TpvMenuArticulo():Create( ::cPatArt ):Reindexa()            
-
-         end if
-
+      if ::lDatos
          ::SetText( "Generando índices : Cajas", ::aProgress[ 4 ] );                      rxCajas( ::cPathDat )
          ::SetText( "Generando índices : Impresoras de tickets", ::aProgress[ 4 ] );      rxImpTik( ::cPathDat )
          ::SetText( "Generando índices : Visor", ::aProgress[ 4 ] );                      rxVisor( ::cPathDat )
          ::SetText( "Generando índices : Cajón Portamonedas", ::aProgress[ 4 ] );         rxCajPorta( ::cPathDat )
-         ::SetText( "Generando índices : Log cajón Portamonedas", ::aProgress[ 4 ] );     rxLogPorta( ::cPathEmp )
-
          ::SetText( "Generando índices : Capturas", ::aProgress[ 4 ] );                   TCaptura():Create( ::cPathDat ):Reindexa()
          ::SetText( "Generando índices : Detalle de capturas", ::aProgress[ 4 ] );        TDetCaptura():New( ::cPathDat ):Reindexa()
+      end if 
 
-         ::SetText( "Generando índices : Plantillas XML", ::aProgress[ 4 ] );             TPlantillaXml():Create( ::cPathEmp ):Reindexa()
-         ::SetText( "Generando índices : Detalle de plantillas XML", ::aProgress[ 4 ] );  TDetCabeceraPlantillaXML():New( ::cPathEmp ):Reindexa()
+      ::SetText( "Generando índices : invitaciones", ::aProgress[ 4 ] ) ;                 TInvitacion():Create( ::cPathEmp ):Reindexa()
 
-         ::SetText( "Generando índices : Liquidación de agentes", ::aProgress[ 4 ] );           TCobAge():Create( ::cPathEmp ):Reindexa()
-         ::SetText( "Generando índices : Lineas de liquidación de agentes", ::aProgress[ 4 ] ); TDetCobAge():Create( ::cPathEmp ):Reindexa()
+      ::SetText( "Generando índices : Tickets de clientes", ::aProgress[ 4 ] );           rxTpv( ::cPathEmp )
+      ::SetText( "Generando índices : Entradas y salidas", ::aProgress[ 4 ] );            rxEntSal( ::cPathEmp )
+      ::SetText( "Generando índices : Turnos", ::aProgress[ 4 ] );                        TTurno():New( ::cPathEmp ):Reindexa():End()
+      ::SetText( "Generando índices : Comentarios", ::aProgress[ 4 ] );                   TComentarios():Create( ::cPatArt ):Reindexa()
+      ::SetText( "Generando índices : Lineas de comentarios", ::aProgress[ 4 ] );         TDetComentarios():Create( ::cPatArt ):Reindexa()
 
-      end if
+      ::SetText( "Generando índices : Ordenenes de comanda", ::aProgress[ 4 ] );          TOrdenComanda():Create( ::cPatArt ):Reindexa()
 
-   end if
+      ::SetText( "Generando índices : Tvp Menu", ::aProgress[ 4 ] );                      TpvMenu():Create( ::cPatArt ):Reindexa()            
+      ::SetText( "Generando índices : Ordenenes de menu", ::aProgress[ 4 ] );             TpvMenuOrdenes():Create( ::cPatArt ):Reindexa()
+      ::SetText( "Generando índices : Artículos de menu", ::aProgress[ 4 ] );             TpvMenuArticulo():Create( ::cPatArt ):Reindexa()            
 
-	/*
-   Procesos - Barra 5 ---------------------------------------------------------
-   */
 
-   if ::aLgcIndices[ 5 ] .and. ::lSincroniza
+      ::SetText( "Generando índices : Log cajón Portamonedas", ::aProgress[ 4 ] );        rxLogPorta( ::cPathEmp )
+      ::SetText( "Generando índices : Plantillas XML", ::aProgress[ 4 ] );                TPlantillaXml():Create( ::cPathEmp ):Reindexa()
+      ::SetText( "Generando índices : Detalle de plantillas XML", ::aProgress[ 4 ] );     TDetCabeceraPlantillaXML():New( ::cPathEmp ):Reindexa()
 
-      if !Empty( ::aProgress[ 5 ] )
-
-         ::nActualProgress          := 0
-
-         ::aProgress[ 5 ]:SetTotal( 1 )
-
-      end if
-
-      if ::lNotGrupo .and. ::lDatos
-
-         ::SetText( "Calculo del riesgo de clientes", ::aProgress[ 5 ] )
-
-         if ::aMtrIndices[ 51 ] != nil
-            CalRiesgo( ::cPathEmp, nil, nil, ::oMsg, nil, ::oDlg )
-         else
-            CalRiesgo( ::cPathEmp )
-         end if
-
-      end if
+      ::SetText( "Generando índices : Liquidación de agentes", ::aProgress[ 4 ] );           TCobAge():Create( ::cPathEmp ):Reindexa()
+      ::SetText( "Generando índices : Lineas de liquidación de agentes", ::aProgress[ 4 ] ); TDetCobAge():Create( ::cPathEmp ):Reindexa()
 
    end if
-
 
    /*
    Syncronizando - Barra 7 ----------------------------------------------------
@@ -454,46 +330,28 @@ METHOD GenIndices( oMsg )
 
    if ::aLgcIndices[ 6 ] .and. ::lSincroniza
 
-      if !Empty( ::aProgress[ 6 ] )
-
-         ::nActualProgress          := 0
-
-         if ::lNotGrupo .and. ::lDatos
-            ::nProgress[ 6 ]        := 17
-         end if
-
-         ::aProgress[ 6 ]:SetTotal( ::nProgress[ 6 ] )
-
-      end if
-
-      if ::lNotGrupo .and. ::lDatos
-
-         ::SetText( "Sincroniza bancos de clientes", ::aProgress[ 6 ] )                      ; SynClient( ::cPathEmp )
-         ::SetText( "Sincroniza bancos de proveedores", ::aProgress[ 6 ] )                   ; SynProvee( ::cPathEmp )
-         ::SetText( "Sincroniza artículos", ::aProgress[ 6 ] )                               ; SynArt(    ::cPathEmp )
-         ::SetText( "Sincroniza líneas de SAT de clientes", ::aProgress[ 6 ]  )              ; SynSatCli( ::cPathEmp )
-         ::SetText( "Sincroniza líneas de presupuestos", ::aProgress[ 6 ]  )                 ; SynPreCli( ::cPathEmp )
-         ::SetText( "Sincroniza líneas de pedidos de clientes", ::aProgress[ 6 ]  )          ; SynPedCli( ::cPathEmp )
-         ::SetText( "Sincroniza líneas de albaranes de clientes", ::aProgress[ 6 ]  )        ; SynAlbCli( ::cPathEmp )
-         ::SetText( "Sincroniza líneas de facturas de clientes", ::aProgress[ 6 ]  )         ; SynFacCli( ::cPathEmp )
-         ::SetText( "Sincroniza líneas de facturas de rectificativas", ::aProgress[ 6 ]  )   ; SynFacRec( ::cPathEmp )
-         ::SetText( "Sincroniza recibos de clientes", ::aProgress[ 6 ] )                     ; SynRecCli( ::cPathEmp )
-         ::SetText( "Sincroniza líneas de tikets de clientes", ::aProgress[ 6 ]  )           ; SynTikCli( ::cPathEmp )
-         ::SetText( "Sincroniza líneas de pedidos a proveedor", ::aProgress[ 6 ]  )          ; SynPedPrv( ::cPathEmp )
-         ::SetText( "Sincroniza líneas de albaranes a proveedor", ::aProgress[ 6 ]  )        ; SynAlbPrv( ::cPathEmp )
-         ::SetText( "Sincroniza líneas de facturas a proveedor", ::aProgress[ 6 ]  )         ; SynFacPrv( ::cPathEmp )
-         ::SetText( "Sincroniza líneas de rectificativas a proveedor", ::aProgress[ 6 ]  )   ; SynRctPrv( ::cPathEmp )
-         ::SetText( "Sincroniza recibos de proveedores", ::aProgress[ 6 ]  )                 ; SynRecPrv( ::cPathEmp )
-         ::SetText( "Sincroniza líneas de ordenes de carga", ::aProgress[ 6 ]  )             ; SynOrdCar( ::cPathEmp )
-         ::SetText( "Sincroniza líneas de movimientos de almacén", ::aProgress[ 6 ]  )       ; SynRemMov( ::cPathEmp )
-         ::SetText( "Sincroniza unidades de medición", ::aProgress[ 6 ]  )                   ; UniMedicion():Create():Syncronize()
-         ::SetText( "Sincroniza Fabricantes", ::aProgress[ 6 ]  )                            ; TFabricantes():Create():Syncronize()
-
-      end if
+      ::SetText( "Sincroniza bancos de clientes", ::aProgress[ 6 ] )                      ; SynClient( ::cPathEmp )
+      ::SetText( "Sincroniza bancos de proveedores", ::aProgress[ 6 ] )                   ; SynProvee( ::cPathEmp )
+      ::SetText( "Sincroniza artículos", ::aProgress[ 6 ] )                               ; SynArt(    ::cPathEmp )
+      ::SetText( "Sincroniza líneas de SAT de clientes", ::aProgress[ 6 ]  )              ; SynSatCli( ::cPathEmp )
+      ::SetText( "Sincroniza líneas de presupuestos", ::aProgress[ 6 ]  )                 ; SynPreCli( ::cPathEmp )
+      ::SetText( "Sincroniza líneas de pedidos de clientes", ::aProgress[ 6 ]  )          ; SynPedCli( ::cPathEmp )
+      ::SetText( "Sincroniza líneas de albaranes de clientes", ::aProgress[ 6 ]  )        ; SynAlbCli( ::cPathEmp )
+      ::SetText( "Sincroniza líneas de facturas de clientes", ::aProgress[ 6 ]  )         ; SynFacCli( ::cPathEmp )
+      ::SetText( "Sincroniza líneas de facturas de rectificativas", ::aProgress[ 6 ]  )   ; SynFacRec( ::cPathEmp )
+      ::SetText( "Sincroniza recibos de clientes", ::aProgress[ 6 ] )                     ; SynRecCli( ::cPathEmp )
+      ::SetText( "Sincroniza líneas de tikets de clientes", ::aProgress[ 6 ]  )           ; SynTikCli( ::cPathEmp )
+      ::SetText( "Sincroniza líneas de pedidos a proveedor", ::aProgress[ 6 ]  )          ; SynPedPrv( ::cPathEmp )
+      ::SetText( "Sincroniza líneas de albaranes a proveedor", ::aProgress[ 6 ]  )        ; SynAlbPrv( ::cPathEmp )
+      ::SetText( "Sincroniza líneas de facturas a proveedor", ::aProgress[ 6 ]  )         ; SynFacPrv( ::cPathEmp )
+      ::SetText( "Sincroniza líneas de rectificativas a proveedor", ::aProgress[ 6 ]  )   ; SynRctPrv( ::cPathEmp )
+      ::SetText( "Sincroniza recibos de proveedores", ::aProgress[ 6 ]  )                 ; SynRecPrv( ::cPathEmp )
+      ::SetText( "Sincroniza líneas de ordenes de carga", ::aProgress[ 6 ]  )             ; SynOrdCar( ::cPathEmp )
+      ::SetText( "Sincroniza líneas de movimientos de almacén", ::aProgress[ 6 ]  )       ; SynRemMov( ::cPathEmp )
+      ::SetText( "Sincroniza unidades de medición", ::aProgress[ 6 ]  )                   ; UniMedicion():Create():Syncronize()
+      ::SetText( "Sincroniza Fabricantes", ::aProgress[ 6 ]  )                            ; TFabricantes():Create():Syncronize()
 
    end if
-
-   ::SetText( "Proceso finalizado" )
 
    if ::lMessageEnd
       MsgInfo( "Proceso finalizado con éxito, tiempo empleado : " + AllTrim( Str( Seconds() - nSeconds ) ) + " seg.", "Información" )
@@ -554,10 +412,10 @@ METHOD GetMeter( nId )
    local n  := aScan( ::aMtrIndices, {|o| o:nId == nId } )
 
    if n != 0 .and. ::aMtrIndices[ n ] != nil
-      Return ( ::aMtrIndices[ n ] )
+      RETURN ( ::aMtrIndices[ n ] )
    end if
 
-Return ( nil )
+RETURN ( nil )
 
 //------------------------------------------------------------------------//
 
@@ -565,12 +423,15 @@ METHOD Resource( lAutoInit )
 
    local n
    local oBmp
+   local nLevel 
 
    DEFAULT lAutoInit       := .f.
 
-   if nAnd( ::nLevel, 1 ) != 0
+   nLevel                  := nLevelUsr( "01067" )
+
+   if nAnd( nLevel, 1 ) != 0
       msgStop( "Acceso no permitido." )
-      return nil
+      RETURN nil
    end if
 
    if oWnd() != nil
@@ -579,17 +440,17 @@ METHOD Resource( lAutoInit )
 
    if nUsrInUse() > 1
       msgStop( "Hay más de un usuario conectado a la aplicación", "Atención" )
-      return nil
+      RETURN nil
    end if
 
    if !::lCreateHandle()
       msgStop( "Esta opción ya ha sido inicada por otro usuario", "Atención" )
-      return nil
+      RETURN nil
    end if
 
    if lAIS()
       TDataCenter():Reindex()
-      return nil
+      RETURN nil
    end if
 
    /*
@@ -685,7 +546,7 @@ Method lCreateHandle()
 
    ::nHandle         := fOpen( ::cFile, 16 )
 
-Return ( ::nHandle != -1 )
+RETURN ( ::nHandle != -1 )
 
 //---------------------------------------------------------------------------//
 
@@ -693,10 +554,10 @@ Method lCloseHandle()
 
    if !fClose( ::nHandle )
       MsgStop( "No puedo cerrar el fichero" )
-      Return ( .f. )
+      RETURN ( .f. )
    end if
 
-Return ( .t. )
+RETURN ( .t. )
 
 //---------------------------------------------------------------------------//
 
@@ -705,14 +566,14 @@ Method lFreeHandle()
    local nHandle
 
    if !file( ::cFile )
-      Return .t.
+      RETURN .t.
    end if
 
    if ( nHandle := fOpen( ::cFile, 16 ) ) != -1
       fClose( nHandle )
-      Return .t.
+      RETURN .t.
    end if
 
-Return ( .f. )
+RETURN ( .f. )
 
 //---------------------------------------------------------------------------//

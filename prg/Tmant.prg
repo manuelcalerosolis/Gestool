@@ -15,6 +15,8 @@ CLASS TMant
    DATA nView
 
    DATA nLevel
+   
+   DATA oMenuItem
 
    DATA nMode
 

@@ -227,33 +227,33 @@ RETURN ( lOpen )
 
 //--------------------------------------------------------------------------//
 
-Static Function CloseFiles()
+STATIC FUNCTION CloseFiles()
 
-   if !Empty( dbfEmp )
+   if !empty( dbfEmp )
       ( dbfEmp )->( dbCloseArea() )
    end if
 
-   if !Empty( dbfDiv )
+   if !empty( dbfDiv )
       ( dbfDiv )->( dbCloseArea() )
    end if
 
-   if !Empty( dbfDlg )
+   if !empty( dbfDlg )
       ( dbfDlg )->( dbCloseArea() )
    end if
 
-   if !Empty( dbfUser )
+   if !empty( dbfUser )
       ( dbfUser )->( dbCloseArea() )
    end if
 
-   if !Empty( dbfCount )
+   if !empty( dbfCount )
       ( dbfCount )->( dbCloseArea() )
    end if
 
-   if !Empty( oBanco )
+   if !empty( oBanco )
       oBanco:End()
    end if
 
-   if !Empty( oPais )
+   if !empty( oPais )
       oPais:End()
    end if
 
@@ -268,7 +268,7 @@ Static Function CloseFiles()
    oPais       := nil
    oWndBrw     := nil
 
-Return .t.
+RETURN .t.
 
 //----------------------------------------------------------------------------//
 
@@ -289,7 +289,7 @@ FUNCTION Empresa( oMenuItem, oWnd )
 
       if nAnd( nLevel, 1 ) != 0
          msgStop( "Acceso no permitido." )
-         return nil
+         RETURN nil
       end if
 
       /*
@@ -305,7 +305,7 @@ FUNCTION Empresa( oMenuItem, oWnd )
       */
 
       if !OpenFiles()
-         return nil
+         RETURN nil
       end if
 
       /*
@@ -329,9 +329,9 @@ FUNCTION Empresa( oMenuItem, oWnd )
       oWndBrw:lAutoPos              := .f.
 
       if oUser():lCambiarEmpresa 
-         oWndBrw:oBrw:bLDblClick    := {||   setEmpresa( ( dbfEmp )->CodEmp, dbfEmp, dbfDlg, dbfUser ),;
+         oWndBrw:oBrw:bLDblClick    := {||   setEmpresa( ( dbfEmp )->CodEmp ),;
                                              chkTurno( , oWnd ),;
-                                             if( !Empty( oWndBrw ), oWndBrw:End( .t. ), ) }
+                                             if( !empty( oWndBrw ), oWndBrw:End( .t. ), ) }
       else
          oWndBrw:oBrw:bLDblClick    := {|| nil }
       end if
@@ -460,17 +460,42 @@ RETURN NIL
 
 //----------------------------------------------------------------------------//
 
-Static Function WinAppEmp()
+STATIC FUNCTION WinAppEmp()
 
-   if WinAppRec( oWndBrw, bEdit, dbfEmp )
-      initialProccesBuildEmpresa()
+   local cCodigoEmpresa 
+   local cNombreEmpresa 
+
+   if winAppRec( oWndBrw, bEdit, dbfEmp )
+
+      cCodigoEmpresa    := ( dbfEmp )->CodEmp
+      cNombreEmpresa    := ( dbfEmp )->cNombre
+
+      /*
+      Cerramos la ventana---------------------------------------------------------
+      */
+
+      oWndBrw:QuitOnProcess()
+      oWndBrw:End()
+
+      /*
+      Cerramos todas los servicios------------------------------------------------
+      */
+
+      stopServices()
+
+      /*
+      Proceso de creacion de empresa-------------------------------------------
+      */
+
+      initialProccesBuildEmpresa( cCodigoEmpresa, cNombreEmpresa )
+
    end if
 
 RETURN ( nil )
        
 //----------------------------------------------------------------------------//
 
-Static Function WinDupEmp()
+STATIC FUNCTION WinDupEmp()
 
    if WinDupRec( oWndBrw, bEdit, dbfEmp )
       initialProccesBuildEmpresa()
@@ -480,23 +505,7 @@ RETURN ( nil )
        
 //----------------------------------------------------------------------------//
 
-Static Function initialProccesBuildEmpresa()
-
-   local cCodigoEmpresa := ( dbfEmp )->CodEmp
-   local cNombreEmpresa := ( dbfEmp )->cNombre
-
-   /*
-   Cerramos la ventana---------------------------------------------------------
-   */
-
-   oWndBrw:QuitOnProcess()
-   oWndBrw:End()
-
-   /*
-   Cerramos todas los servicios------------------------------------------------
-   */
-
-   stopServices()
+STATIC FUNCTION initialProccesBuildEmpresa( cCodigoEmpresa, cNombreEmpresa )
 
    /*
    Creamos empresa-------------------------------------------------------------
@@ -512,13 +521,11 @@ Static Function initialProccesBuildEmpresa()
 
    setEmpresa( cCodigoEmpresa )
 
-   chkTurno( , oWnd() )
-
    /*
-   Reindexamos--------------------------------------------------------------
+   Inicio del turno------------------------------------------------------------
    */
 
-   reindexaEmp( cPatEmpOld( cCodigoEmpresa ), cCodigoEmpresa )
+   chkTurno( , oWnd() )
 
    /*
    Iniciamos todas los servicios---------------------------------------------
@@ -530,7 +537,7 @@ RETURN ( nil )
        
 //----------------------------------------------------------------------------//
 
-Static Function WinEdtEmp()
+STATIC FUNCTION WinEdtEmp()
 
    if WinEdtRec( oWndBrw, bEdit, dbfEmp )
       setEmpresa( ( dbfEmp )->CodEmp )
@@ -547,46 +554,39 @@ Devuelve el Nombre de la Empresa Activa
 STATIC FUNCTION WinDelEmp()
 
    local lRet     := .f.
-   local cPath    := FullCurDir() + "Emp" + ( dbfEmp )->CodEmp + "\"
+   local cEmp     := ( dbfEmp )->CodEmp
+   local cPath    := fullCurDir() + "Emp" + cEmp + "\"
 
    if nUsrInUse() > 1
-      msgStop( "Hay más de un usuario conectado a la aplicación", "Atención" )
-      return ( lRet )
+      msgStop( "Hay más de un usuario conectado a la aplicación" )
+      RETURN ( lRet )
    end if
 
-   if ( dbfEmp )->CodEmp == cCodigoEmpresaEnUso()
-
+   if cEmp == cCodigoEmpresaEnUso()
       msgStop( "Imposible borrar empresa activa" )
+      RETURN ( lRet )
+   end if
 
-   else
+   if ApoloMsgNoYes( "Confirme eliminación de empresa", "Supresión de empresa" ) .and. ;
+      ApoloMsgNoYes( "Eliminara DEFINITIVAMENTE los datos de la empresa : " + Rtrim( ( dbfEmp )->cNombre ), "Confirme supresión de empresa" )
 
-      if ApoloMsgNoYes( "Confirme eliminación de empresa", "Supresión de empresa" )
+      CursorWait()
 
-         if ApoloMsgNoYes( "Eliminara DEFINITIVAMENTE los datos de la empresa : " + Rtrim( ( dbfEmp )->cNombre ), "Confirme supresión de empresa" )
-
-            CursorWait()
-
-            if IsDirectory( cPath )
-               EraseFilesInDirectory(cPath )
-            end if
-
-            while ( dbfDlg )->( dbSeek( ( dbfEmp )->CodEmp ) )
-               if dbLock( dbfDlg )
-                  ( dbfDlg )->( dbDelete() )
-                  ( dbfDlg )->( dbUnLock() )
-               end if
-            end while
-
-
-            DelRecno( dbfEmp, oWndBrw )
-
-            lRet  := .t.
-
-            CursorWE()
-
-         end if
-
+      if IsDirectory( cPath )
+         EraseFilesInDirectory(cPath )
       end if
+
+      DelegacionesModel():DeleteDelegacionesEmpresa( cEmp ) 
+
+      EmpresasModel():DeleteEmpresa( cEmp )
+
+      if !empty( oWndBrw )
+         oWndBrw:goUp(); oWndBrw:goDown(); oWndBrw:SetFocus()
+      end if 
+
+      lRet  := .t.
+
+      CursorWE()
 
    end if
 
@@ -626,7 +626,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfEmp, oBrw, bWhen, bValid, nMode )
 
    if ( lAppendMode ) .and. ( nUsrInUse() > 1 )
       msgStop( "Hay más de un usuario conectado a la aplicación", "Atención" )
-      return .f.
+      RETURN .f.
    end if
 
    cOldCodigoEmpresa       := Space( 4 )
@@ -676,7 +676,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfEmp, oBrw, bWhen, bValid, nMode )
    cSayGrp                 := RetFld( aTmp[ _CCODGRP ], dbfEmp )
 
    if BeginEdtRec( aTmp, nMode )
-      Return .f.
+      RETURN .f.
    end if
 
    DEFINE DIALOG oDlg RESOURCE "EMPRESA" TITLE LblTitle( nMode ) + "Empresas"
@@ -714,7 +714,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfEmp, oBrw, bWhen, bValid, nMode )
    REDEFINE GET   aGet[ _CODEMP ] VAR aTmp[ _CODEMP ];
 			ID 		100 ;
          WHEN     ( lAppendMode ) ;
-         VALID    ( NotValid( aGet[ _CODEMP ], dbfEmp, .t., "0" ) .and. !Empty( aTmp[ _CODEMP ] ) ) ;
+         VALID    ( NotValid( aGet[ _CODEMP ], dbfEmp, .t., "0" ) .and. !empty( aTmp[ _CODEMP ] ) ) ;
          PICTURE  "@!" ;
          OF       fldGeneral
 
@@ -917,117 +917,117 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfEmp, oBrw, bWhen, bValid, nMode )
 
       REDEFINE CHECKBOX aImportacion:lArticulos ;
          ID       230 ;
-         WHEN     ( !Empty( cOldCodigoEmpresa ) .AND. ( lAppendMode ) ) ;
+         WHEN     ( !empty( cOldCodigoEmpresa ) .AND. ( lAppendMode ) ) ;
          OF       oFld:aDialogs[2]
 
       REDEFINE RADIO aImportacion:nCosto ;
          ID       231, 232 ;
-         WHEN     ( ( !Empty( cOldCodigoEmpresa ) .AND. ( lAppendMode ) ) .and. aImportacion:lArticulos ) ;
+         WHEN     ( ( !empty( cOldCodigoEmpresa ) .AND. ( lAppendMode ) ) .and. aImportacion:lArticulos ) ;
          OF       oFld:aDialogs[2]
 
       REDEFINE CHECKBOX aImportacion:lClientes ;
          ID       240 ;
-         WHEN     ( !Empty( cOldCodigoEmpresa ) .AND. ( lAppendMode ) ) ;
+         WHEN     ( !empty( cOldCodigoEmpresa ) .AND. ( lAppendMode ) ) ;
          OF       oFld:aDialogs[2]
 
       REDEFINE CHECKBOX aImportacion:lProveedor ;
          ID       250 ;
-         WHEN     ( !Empty( cOldCodigoEmpresa ) .AND. ( lAppendMode ) ) ;
+         WHEN     ( !empty( cOldCodigoEmpresa ) .AND. ( lAppendMode ) ) ;
          OF       oFld:aDialogs[2]
 
       REDEFINE CHECKBOX aImportacion:lOferta ;
          ID       251 ;
-         WHEN     ( !Empty( cOldCodigoEmpresa ) .AND. ( lAppendMode ) ) ;
+         WHEN     ( !empty( cOldCodigoEmpresa ) .AND. ( lAppendMode ) ) ;
          OF       oFld:aDialogs[2]
 
       REDEFINE CHECKBOX aImportacion:lPromocion ;
          ID       252 ;
-         WHEN     ( !Empty( cOldCodigoEmpresa ) .AND. ( lAppendMode ) ) ;
+         WHEN     ( !empty( cOldCodigoEmpresa ) .AND. ( lAppendMode ) ) ;
          OF       oFld:aDialogs[2]
 
       REDEFINE CHECKBOX aImportacion:lAlmacen ;
          ID       260 ;
-         WHEN     ( !Empty( cOldCodigoEmpresa ) .AND. ( lAppendMode ) ) ;
+         WHEN     ( !empty( cOldCodigoEmpresa ) .AND. ( lAppendMode ) ) ;
          OF       oFld:aDialogs[2]
 
       REDEFINE CHECKBOX aImportacion:lAgente ;
          ID       270 ;
-         WHEN     ( !Empty( cOldCodigoEmpresa ) .AND. ( lAppendMode ) ) ;
+         WHEN     ( !empty( cOldCodigoEmpresa ) .AND. ( lAppendMode ) ) ;
          OF       oFld:aDialogs[2]
 
       REDEFINE CHECKBOX aImportacion:lRuta ;
          ID       280 ;
-         WHEN     ( !Empty( cOldCodigoEmpresa ) .AND. ( lAppendMode ) ) ;
+         WHEN     ( !empty( cOldCodigoEmpresa ) .AND. ( lAppendMode ) ) ;
          OF       oFld:aDialogs[2]
 
       REDEFINE CHECKBOX aImportacion:lDocument ;
          ID       285 ;
-         WHEN     ( !Empty( cOldCodigoEmpresa ) .AND. ( lAppendMode ) ) ;
+         WHEN     ( !empty( cOldCodigoEmpresa ) .AND. ( lAppendMode ) ) ;
          OF       oFld:aDialogs[2]
 
       REDEFINE CHECKBOX aImportacion:lStockIni ;
          ID       290 ;
-         WHEN     ( !Empty( cOldCodigoEmpresa ) .AND. ( lAppendMode ) ) ;
+         WHEN     ( !empty( cOldCodigoEmpresa ) .AND. ( lAppendMode ) ) ;
          OF       oFld:aDialogs[2]
 
       REDEFINE CHECKBOX aImportacion:lFPago ;
          ID       300 ;
-         WHEN     ( !Empty( cOldCodigoEmpresa ) .AND. ( lAppendMode ) ) ;
+         WHEN     ( !empty( cOldCodigoEmpresa ) .AND. ( lAppendMode ) ) ;
          OF       oFld:aDialogs[2]
 
       REDEFINE CHECKBOX aImportacion:lPedPrv ;
          ID       310 ;
-         WHEN     ( !Empty( cOldCodigoEmpresa ) .AND. ( lAppendMode ) ) ;
+         WHEN     ( !empty( cOldCodigoEmpresa ) .AND. ( lAppendMode ) ) ;
          OF       oFld:aDialogs[2]
 
       REDEFINE CHECKBOX aImportacion:lAlbPrv ;
          ID       320 ;
-         WHEN     ( !Empty( cOldCodigoEmpresa ) .AND. ( lAppendMode ) ) ;
+         WHEN     ( !empty( cOldCodigoEmpresa ) .AND. ( lAppendMode ) ) ;
          OF       oFld:aDialogs[2]
 
       REDEFINE CHECKBOX aImportacion:lPreCli ;
          ID       330 ;
-         WHEN     ( !Empty( cOldCodigoEmpresa ) .AND. ( lAppendMode ) ) ;
+         WHEN     ( !empty( cOldCodigoEmpresa ) .AND. ( lAppendMode ) ) ;
          OF       oFld:aDialogs[2]
 
       REDEFINE CHECKBOX aImportacion:lPedCli ;
          ID       340 ;
-         WHEN     ( !Empty( cOldCodigoEmpresa ) .AND. ( lAppendMode ) ) ;
+         WHEN     ( !empty( cOldCodigoEmpresa ) .AND. ( lAppendMode ) ) ;
          OF       oFld:aDialogs[2]
 
       REDEFINE CHECKBOX aImportacion:lAlbCli ;
          ID       350 ;
-         WHEN     ( !Empty( cOldCodigoEmpresa ) .AND. ( lAppendMode ) ) ;
+         WHEN     ( !empty( cOldCodigoEmpresa ) .AND. ( lAppendMode ) ) ;
          OF       oFld:aDialogs[2]
 
       REDEFINE CHECKBOX aImportacion:lVale ;
          ID       360 ;
-         WHEN     ( !Empty( cOldCodigoEmpresa ) .AND. ( lAppendMode ) ) ;
+         WHEN     ( !empty( cOldCodigoEmpresa ) .AND. ( lAppendMode ) ) ;
          OF       oFld:aDialogs[2]
 
       REDEFINE CHECKBOX aImportacion:lAnticipo ;
          ID       370 ;
-         WHEN     ( !Empty( cOldCodigoEmpresa ) .AND. ( lAppendMode ) ) ;
+         WHEN     ( !empty( cOldCodigoEmpresa ) .AND. ( lAppendMode ) ) ;
          OF       oFld:aDialogs[2]
 
       REDEFINE CHECKBOX aImportacion:lProduccion ;
          ID       380 ;
-         WHEN     ( !Empty( cOldCodigoEmpresa ) .AND. ( lAppendMode ) ) ;
+         WHEN     ( !empty( cOldCodigoEmpresa ) .AND. ( lAppendMode ) ) ;
          OF       oFld:aDialogs[2]
 
       REDEFINE CHECKBOX aImportacion:lBancos ;
          ID       390 ;
-         WHEN     ( !Empty( cOldCodigoEmpresa ) .AND. ( lAppendMode ) ) ;
+         WHEN     ( !empty( cOldCodigoEmpresa ) .AND. ( lAppendMode ) ) ;
          OF       oFld:aDialogs[2]
 
       REDEFINE CHECKBOX aImportacion:lScript ;
          ID       400 ;
-         WHEN     ( !Empty( cOldCodigoEmpresa ) .AND. ( lAppendMode ) ) ;
+         WHEN     ( !empty( cOldCodigoEmpresa ) .AND. ( lAppendMode ) ) ;
          OF       oFld:aDialogs[2]
 
       REDEFINE CHECKBOX aImportacion:lEntidades ;
          ID       410 ;
-         WHEN     ( !Empty( cOldCodigoEmpresa ) .AND. ( lAppendMode ) ) ;
+         WHEN     ( !empty( cOldCodigoEmpresa ) .AND. ( lAppendMode ) ) ;
          OF       oFld:aDialogs[2]
 
       REDEFINE GET oGetSemilla VAR nSemillaContadores ;
@@ -1140,15 +1140,15 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfEmp, oBrw, bWhen, bValid, nMode )
    oBmpChg:End()
    oBmpEmp:End()
 
-   if !Empty( oBmpGeneral )
+   if !empty( oBmpGeneral )
       oBmpGeneral:End()
    end if
 
-   if !Empty( oBmpImportacion )
+   if !empty( oBmpImportacion )
       oBmpImportacion:End()
    end if
 
-   if !Empty( oBmpDelegaciones )
+   if !empty( oBmpDelegaciones )
       oBmpDelegaciones:End()
    end if
 
@@ -1209,16 +1209,16 @@ STATIC FUNCTION EditConfig( aTmp, aGet, dbfEmp, oBrw, nSelFolder, bValid, nMode 
 
    if nAnd( nLevelUsr( _MENUITEM_ ), ACC_EDIT ) == 0
       msgStop( "Acceso no permitido." )
-      return .f.
+      RETURN .f.
    end if
 
    if lGrupoEmpresa( ( ( dbfEmp )->CodEmp ), dbfEmp )
       msgStop( "No se puede configurar un grupo de empresas." )
-      return .f.
+      RETURN .f.
    end if
 
    if BeginEditConfig( aTmp, nMode )
-      return .f.
+      RETURN .f.
    end if
 
    cCmbDocumentos                := aDocumentos[ 1 ]
@@ -1238,7 +1238,7 @@ STATIC FUNCTION EditConfig( aTmp, aGet, dbfEmp, oBrw, nSelFolder, bValid, nMode 
 
    // Seleccionamos la empresa ------------------------------------------------
 
-   setEmpresa( ( dbfEmp )->CodEmp, dbfEmp, dbfDlg, dbfUser, oBrw )
+   setEmpresa( ( dbfEmp )->CodEmp, oBrw )
 
    checkEmpresaTablesExistences()
 
@@ -1247,35 +1247,35 @@ STATIC FUNCTION EditConfig( aTmp, aGet, dbfEmp, oBrw, nSelFolder, bValid, nMode 
    oBlock                  := ErrorBlock( {| oError | ApoloBreak( oError ) } )
    BEGIN SEQUENCE
 
-   if Empty( aTmp[ _CDEFSER ] )
+   if empty( aTmp[ _CDEFSER ] )
       aTmp[ _CDEFSER ]     := Space( 1 )
    end if
 
-   if Empty( aTmp[ _CENVUSR ] )
+   if empty( aTmp[ _CENVUSR ] )
       aTmp[ _CENVUSR ]     := "Cliente"
    end if
 
-   if Empty( aTmp[ _CRUTCON ] )
+   if empty( aTmp[ _CRUTCON ] )
       aTmp[ _CRUTCON ]     := "A:"
    end if
 
-   if Empty( aTmp[ _CNBRCAJ ] )
+   if empty( aTmp[ _CNBRCAJ ] )
       aTmp[ _CNBRCAJ ]     := Padr( "Cajas", 100 )
    end if
 
-   if Empty( aTmp[ _CNBRUND ] )
+   if empty( aTmp[ _CNBRUND ] )
       aTmp[ _CNBRUND ]     := Padr( "Unidades", 100 )
    end if
 
-   if Empty( aTmp[ _CNBRBULTOS ] )
+   if empty( aTmp[ _CNBRBULTOS ] )
       aTmp[ _CNBRBULTOS ]  := Padr( "Bultos", 100 )
    end if
 
-   if Empty( aTmp[ _CINIJOR ] )
+   if empty( aTmp[ _CINIJOR ] )
       aTmp[ _CINIJOR ]     := "0800"
    end if
 
-   if Empty( aTmp[ _CNOMIMP ] )
+   if empty( aTmp[ _CNOMIMP ] )
       aTmp[ _CNOMIMP ]     := "IVA" 
    end if
 
@@ -1288,7 +1288,7 @@ STATIC FUNCTION EditConfig( aTmp, aGet, dbfEmp, oBrw, nSelFolder, bValid, nMode 
       aTmp[ _CPRNPDF ]     := Space( 200 )
    end if
 
-   if Empty( nSelFolder )
+   if empty( nSelFolder )
       nSelFolder           := 1
    end if
 
@@ -2098,7 +2098,7 @@ STATIC FUNCTION EditConfig( aTmp, aGet, dbfEmp, oBrw, nSelFolder, bValid, nMode 
             SPINNER ;
             ON UP    ( UpSerie( oGetSerie ) );
             ON DOWN  ( DwSerie( oGetSerie ) );
-            VALID    ( Empty( cGetSerie ) .or. ( cGetSerie >= "A" .and. cGetSerie <= "Z" ) ) ;
+            VALID    ( empty( cGetSerie ) .or. ( cGetSerie >= "A" .and. cGetSerie <= "Z" ) ) ;
             OF       fldContadores 
 
       REDEFINE COMBOBOX oCmbSerie VAR cCmbSerie ;
@@ -2576,7 +2576,7 @@ STATIC FUNCTION EditConfig( aTmp, aGet, dbfEmp, oBrw, nSelFolder, bValid, nMode 
    KillTrans()
 
    if oDlg:nResult == IDOK
-      setEmpresa( ( dbfEmp )->CodEmp, dbfEmp, dbfDlg, dbfUser, oBrw )
+      setEmpresa( ( dbfEmp )->CodEmp, oBrw )
       
       checkEmpresaTablesExistences()
 
@@ -2589,39 +2589,39 @@ STATIC FUNCTION EditConfig( aTmp, aGet, dbfEmp, oBrw, nSelFolder, bValid, nMode 
 
    // Matamos los objetos con las imágenes----------------------------------------
 
-   if !Empty( oBmpComportamiento )
+   if !empty( oBmpComportamiento )
       oBmpComportamiento:End()
    end if
 
-   if !Empty( oBmpDefecto )
+   if !empty( oBmpDefecto )
       oBmpDefecto:End()
    end if
 
-   if !Empty( oBmpArticulos )
+   if !empty( oBmpArticulos )
       oBmpArticulos:End()
    end if
 
-   if !Empty( oBmpContadores )
+   if !empty( oBmpContadores )
       oBmpContadores:End()
    end if
 
-   if !Empty( oBmpContabilidad )
+   if !empty( oBmpContabilidad )
       oBmpContabilidad:End()
    end if
 
-   if !Empty( oBmpEnvios )
+   if !empty( oBmpEnvios )
       oBmpEnvios:End()
    end if
 
-   if !Empty( oBmpComunicacion )
+   if !empty( oBmpComunicacion )
       oBmpComunicacion:End()
    end if
 
-   if !Empty( oBmpTPV )
+   if !empty( oBmpTPV )
       oBmpTPV:End()
    end if 
 
-   if !Empty( oFnt )
+   if !empty( oFnt )
       oFnt:End()
    end if
 
@@ -2629,15 +2629,15 @@ RETURN ( oDlg:nResult == IDOK )
 
 //--------------------------------------------------------------------------//
 
-Static Function InitEditConfig( oFld, nSelFolder )
+STATIC FUNCTION InitEditConfig( oFld, nSelFolder )
 
    oFld:SetOption( nSelFolder ) 
 
-Return ( nil )
+RETURN ( nil )
 
 //--------------------------------------------------------------------------//
 
-Static Function StartEditConfig( aTmp, oSay, oBrw, oDlg, oFld, nMode )
+STATIC FUNCTION StartEditConfig( aTmp, oSay, oBrw, oDlg, oFld, nMode )
 
    local oBoton
    local oGrupo
@@ -2672,35 +2672,35 @@ Static Function StartEditConfig( aTmp, oSay, oBrw, oDlg, oFld, nMode )
 
    CmbDocumentosChanged( .f. ) 
 
-Return nil
+RETURN nil
 
 //---------------------------------------------------------------------------//
 
-Static Function KillTrans()
+STATIC FUNCTION KillTrans()
 
 	/*
    Borramos los ficheros-------------------------------------------------------
    */
 
-   if !Empty( tmpDlg ) .and. ( tmpDlg )->( Used() )
+   if !empty( tmpDlg ) .and. ( tmpDlg )->( Used() )
       ( tmpDlg )->( dbCloseArea() )
       tmpDlg         := nil
    end if
 
    dbfErase( cNewDlg )
 
-   if !Empty( tmpCount ) .and. ( tmpCount )->( Used() )
+   if !empty( tmpCount ) .and. ( tmpCount )->( Used() )
       ( tmpCount )->( dbCloseArea() )
       tmpCount      := nil
    end if
 
    dbfErase( cTmpCon )
 
-Return nil
+RETURN nil
 
 //------------------------------------------------------------------------//
 
-Static Function CmbDocumentosChanged( lCmbSerieSaved )
+STATIC FUNCTION CmbDocumentosChanged( lCmbSerieSaved )
 
    local cItemText
 
@@ -2711,8 +2711,8 @@ Static Function CmbDocumentosChanged( lCmbSerieSaved )
    */
 
    cItemText               := Upper( Rtrim( cCmbDocumentos ) )
-   if Empty( cItemText )
-      return ( .t. )
+   if empty( cItemText )
+      RETURN ( .t. )
    end if
 
    /*
@@ -2774,11 +2774,11 @@ Static Function CmbDocumentosChanged( lCmbSerieSaved )
 
    end if
 
-Return ( .t. )
+RETURN ( .t. )
 
 //--------------------------------------------------------------------------//
 
-Static Function CmbSerieSave( uSerie )
+STATIC FUNCTION CmbSerieSave( uSerie )
 
    local cSerie
 
@@ -2789,8 +2789,8 @@ Static Function CmbSerieSave( uSerie )
          cSerie         := uSerie
    end case 
 
-   if Empty( cSerie )
-      Return ( .t. )
+   if empty( cSerie )
+      RETURN ( .t. )
    end if
 
    /*
@@ -2801,7 +2801,7 @@ Static Function CmbSerieSave( uSerie )
             "nGetNFCPrefijo : " + cGetNFCPrefijo   + CRLF + ;
             "cGetNFCContador : " + cGetNFCContador, "CmbSerieSave" ) */
 
-   if !Empty( cSerie ) .and. dbDialogLock( tmpCount )
+   if !empty( cSerie ) .and. dbDialogLock( tmpCount )
       ( tmpCount )->( FieldPut( FieldPos( cSerie ),               nGetContador      ) )
       ( tmpCount )->( FieldPut( FieldPos( "Doc"    + cSerie ),    cGetFormato       ) )
       ( tmpCount )->( FieldPut( FieldPos( "Copias" + cSerie ),    nGetCopias        ) )
@@ -2813,20 +2813,20 @@ Static Function CmbSerieSave( uSerie )
       ( tmpCount )->( dbUnLock() )
    end if
 
-Return ( .t. )
+RETURN ( .t. )
 
 //--------------------------------------------------------------------------//
 
-Static Function CmbSerieChanged()
+STATIC FUNCTION CmbSerieChanged()
 
    local cSerie         
 
    if empty( oCmbSerie )
-      return .t.
+      RETURN .t.
    end if 
    cSerie               := oCmbSerie:VarGet()
 
-   if !Empty( cOldSerie ) .and. ( cOldSerie != cSerie )
+   if !empty( cOldSerie ) .and. ( cOldSerie != cSerie )
       cmbSerieSave( cOldSerie )
    end if
 
@@ -2843,11 +2843,11 @@ Static Function CmbSerieChanged()
 
    cOldSerie            := cSerie
 
-Return ( .t. )
+RETURN ( .t. )
 
 //--------------------------------------------------------------------------//
 
-Static Function EdtDet( aTmp, aGet, tmpDlg, oBrw, bVal, bWhe, nMode, cCod )
+STATIC FUNCTION EdtDet( aTmp, aGet, tmpDlg, oBrw, bVal, bWhe, nMode, cCod )
 
    local oDlg
 
@@ -2885,34 +2885,34 @@ RETURN ( oDlg:nResult == IDOK )
 
 //--------------------------------------------------------------------------//
 
-Static Function EndDelega( aTmp, aGet, tmpDlg, oBrw, nMode, oDlg, cCod )
+STATIC FUNCTION EndDelega( aTmp, aGet, tmpDlg, oBrw, nMode, oDlg, cCod )
 
    if nMode == APPD_MODE
-      if Empty( aTmp[ ( tmpDlg )->( FieldPos( "cCodDlg" ) ) ] ) .or. ( tmpDlg )->( dbSeek( cCod + aTmp[ ( tmpDlg )->( FieldPos( "cCodDlg" ) ) ] ) )
+      if empty( aTmp[ ( tmpDlg )->( FieldPos( "cCodDlg" ) ) ] ) .or. ( tmpDlg )->( dbSeek( cCod + aTmp[ ( tmpDlg )->( FieldPos( "cCodDlg" ) ) ] ) )
          MsgStop( "Código no valido" )
-         return nil
+         RETURN nil
       end if
    end if
 
    WinGather( aTmp, aGet, tmpDlg, oBrw, nMode )
 
-Return ( oDlg:end( IDOK ) )
+RETURN ( oDlg:end( IDOK ) )
 
 //--------------------------------------------------------------------------//
 
-Static Function lValidDelega( cCodEmpresa, cCodDelega )
+STATIC FUNCTION lValidDelega( cCodEmpresa, cCodDelega )
 
-   if Empty( cCodDelega )
+   if empty( cCodDelega )
       MsgStop( "Código de delgación no puede estar vacio" )
-      return .f.
+      RETURN .f.
    end if
 
    if ( tmpDlg )->( dbSeek( cCodEmpresa + cCodDelega ) )
       MsgStop( "Delegación existente" )
-      return .f.
+      RETURN .f.
    end if
 
-Return .t.
+RETURN .t.
 
 //---------------------------------------------------------------------------//
 
@@ -2924,12 +2924,12 @@ STATIC FUNCTION EdtCon( oBrwCon )
    local bValid
 
    if nCol <= 1
-      return .f.
+      RETURN .f.
    end if
 
    if nCol == 2
       cPic        := "@!"
-      bValid      := { |oGet| Empty( oGet:VarGet() ) .or. ( oGet:VarGet() >= "A" .and. oGet:VarGet() <= "Z" ) }
+      bValid      := { |oGet| empty( oGet:VarGet() ) .or. ( oGet:VarGet() >= "A" .and. oGet:VarGet() <= "Z" ) }
    else
       cPic        := "999999999"
       bValid      := { |oGet| oGet:VarGet() > 0 }
@@ -2956,13 +2956,13 @@ FUNCTION cEmpresa( oGet, dbfEmp, oGet2, aGet, aTmp, tmpDlg, dbfDlg )
    local lValid   := .f.
    local cCodEmp  := oGet:VarGet()
 
-   if Empty( cCodEmp )
+   if empty( cCodEmp )
 
-      if !Empty( oGet2 )
+      if !empty( oGet2 )
 			oGet2:cText( "" )
       end if
 
-      return .t.
+      RETURN .t.
 
    end if
 
@@ -2972,7 +2972,7 @@ FUNCTION cEmpresa( oGet, dbfEmp, oGet2, aGet, aTmp, tmpDlg, dbfDlg )
 
       oGet:cText( ( dbfEmp )->CodEmp )
 
-      if !Empty( oGet2 )
+      if !empty( oGet2 )
          oGet2:cText( ( dbfEmp )->cNombre )
       end if
 
@@ -2995,11 +2995,11 @@ FUNCTION lEmpresa( cCodEmp, dbfEmp )
    local lClose   := .f.
    local lValid   := .f.
 
-   if Empty( cCodEmp )
-      return .f.
+   if empty( cCodEmp )
+      RETURN .f.
    end if
 
-   if Empty( dbfEmp )
+   if empty( dbfEmp )
       USE ( cPatDat() + "EMPRESA.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "EMPRESA", @dbfEmp ) )
       SET ADSINDEX TO ( cPatDat() + "EMPRESA.CDX" ) ADDITIVE
       lClose      := .t.
@@ -3017,12 +3017,12 @@ RETURN lValid
 
 //---------------------------------------------------------------------------//
 
-Static Function lGrupo( cCodEmp, dbfEmp )
+STATIC FUNCTION lGrupo( cCodEmp, dbfEmp )
 
    local lGrupo   := .f.
 
-   if Empty( cCodEmp )
-      return .f.
+   if empty( cCodEmp )
+      RETURN .f.
    end if
 
    if dbSeekInOrd( cCodEmp, "CodEmp", dbfEmp )
@@ -3163,17 +3163,11 @@ RETURN ( oDlg:nResult == IDOK )
 
 //---------------------------------------------------------------------------//
 
-Function SetEmpresa( cCodEmp, dbfEmp, dbfDlg, dbfUsr, oBrw )
+FUNCTION SetEmpresa( cCodEmp, oBrw )
 
-   local nOrd
    local oBlock
    local oError
    local lError      := .f.
-   local lCloDlg     := .f.
-   local lCloEmp     := .f.
-   local lCloUsr     := .f.
-   local lCmbEmpUsr  := oUser():lCambiarEmpresa
-   local cCodEmpUsr  := oUser():_EmpresaFija
 
    if !empty( oWnd() )
       oWnd():Disable()
@@ -3181,105 +3175,30 @@ Function SetEmpresa( cCodEmp, dbfEmp, dbfDlg, dbfUsr, oBrw )
 
    CursorWait()
 
-   oBlock            := ErrorBlock( {| oError | ApoloBreak( oError ) } )
-   BEGIN SEQUENCE
-   
-   if Empty( dbfEmp )
-      USE ( cPatDat() + "EMPRESA.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "EMPRESA", @dbfEmp ) )
-      SET ADSINDEX TO ( cPatDat() + "EMPRESA.CDX" ) ADDITIVE
-      lCloEmp        := .t.
-   end if
-
-   if Empty( dbfUsr )
-      USE ( cPatDat() + "USERS.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "USERS", @dbfUsr ) )
-      SET ADSINDEX TO ( cPatDat() + "USERS.CDX" ) ADDITIVE
-      lCloUsr        := .t.
-   end if
-
-   if Empty( dbfDlg )
-      USE ( cPatDat() + "DELEGA.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "DELEGA", @dbfDlg ) )
-      SET ADSINDEX TO ( cPatDat() + "DELEGA.CDX" ) ADDITIVE
-      lCloDlg        := .t.
-   end if
+   // oBlock            := ErrorBlock( {| oError | ApoloBreak( oError ) } )
+   // BEGIN SEQUENCE
 
    /*
    Si la empresa esta vacia----------------------------------------------------
    */
 
-   if Empty( cCodEmp )
-
-      if ( dbfEmp )->( lastrec() ) == 0
-         AppEmpresa()
-      end if
-
-      if !Empty( cEmpUsr() )
-         cCodEmp     := cEmpUsr()
-      else
-         cCodEmp     := GetCodEmp( dbfEmp )
-      end if
-
+   if empty( cCodEmp ) .and. !empty( cEmpUsr() )
+      cCodEmp        := cEmpUsr()
    end if
 
-   /*
-   Quitamos la empresa actual--------------------------------------------------
-   */
+   if empty( cCodEmp )
+      cCodEmp        := EmpresasModel():getCodigoActiva()
+   end if 
 
-   if Empty( cCodEmp )
-      ( dbfEmp )->( dbGoTop() )
-      cCodEmp        := ( dbfEmp )->CodEmp 
+   if empty( cCodEmp )
+      cCodEmp        := EmpresasModel():getPrimera() 
    end if
 
    cCodEmp           := RJust( cCodEmp, "0", 4 ) 
 
-   nOrd              := ( dbfEmp )->( OrdSetFocus( "CodEmp" ) )
-   if !( dbfEmp )->( dbSeek( cCodEmp ) )
+   if !lIsDir( FullCurDir() + "Emp" + cCodEmp )
       lError         := .t.
-      msgStop( "La empresa " + cCodEmp + " no existe." )
-   else
-      if ( dbfEmp )->lGrupo
-         lError      := .t.
-         msgStop( "La empresa que desea seleccionar es un grupo de empresas no existe." )
-      end if
-   end if
-  ( dbfEmp )->( OrdSetFocus( nOrd ) )
-
-   if !lAdsRdd()
-      if !lIsDir( FullCurDir() + "Emp" + cCodEmp )
-         lError      := .t.
-         msgStop( "El directorio de la empresa " + cCodEmp + " no existe." )
-      end if
-   end if
-
-   /*
-   Si hay errores buscamos alternativas----------------------------------------
-   */
-
-   if lError
-
-      ( dbfEmp )->( dbGoTop() )
-      while !( dbfEmp )->( eof() )
-
-         if ( dbfEmp )->lGrupo
-
-            ( dbfEmp )->( dbSkip() )
-
-         else
-
-            if dbLock( dbfEmp )
-               ( dbfEmp )->lActiva  := .t.
-               ( dbfEmp )->( dbUnLock() )
-            end if
-
-            msgStop( "La nueva empresa activa es " + ( dbfEmp )->CodEmp + " - " + Rtrim( ( dbfEmp )->cNombre ) )
-
-            cCodEmp  := Alltrim( ( dbfEmp )->CodEmp )
-
-            exit
-
-         end if
-
-      end while
-
+      msgStop( "El directorio de la empresa " + cCodEmp + " no existe." )
    end if
 
    /*
@@ -3294,55 +3213,21 @@ Function SetEmpresa( cCodEmp, dbfEmp, dbfDlg, dbfUsr, oBrw )
    Directorios si no tiene grupo-----------------------------------------------
    */
 
-   if Empty( ( dbfEmp )->cCodGrp ) 
+   cPatCli( EmpresasModel():getCodigoGrupoCliente( cCodEmp ), nil, .t. )
 
-      cPatCli( cCodEmp, nil, .t. )
+   cPatPrv( EmpresasModel():getCodigoGrupoProveedor( cCodEmp ), nil, .t. )
 
-      cPatArt( cCodEmp, nil, .t. )
+   cPatArt( EmpresasModel():getCodigoGrupoArticulo( cCodEmp ), nil, .t. )
 
-      cPatPrv( cCodEmp, nil, .t. )
-
-      cPatAlm( cCodEmp, nil, .t. )
-
-      aEmpGrp( cCodEmp, dbfEmp, .t. )
-
-   else
-
-      if RetFld( cCodEmp, dbfEmp, "lGrpCli", "CodEmp" )
-         cPatCli( ( dbfEmp )->cCodGrp, nil, .f. )
-      else
-         cPatCli( cCodEmp, nil, .t. )
-      end if
-
-      if RetFld( cCodEmp, dbfEmp, "lGrpArt", "CodEmp" )
-         cPatArt( ( dbfEmp )->cCodGrp, nil, .f. )
-      else
-         cPatArt( cCodEmp, nil, .t. )
-      end if
-
-      if RetFld( cCodEmp, dbfEmp, "lGrpPrv", "CodEmp" )
-         cPatPrv( ( dbfEmp )->cCodGrp, nil, .f. )
-      else
-         cPatPrv( cCodEmp, nil, .t. )
-      end if
-
-      if RetFld( cCodEmp, dbfEmp, "lGrpAlm", "CodEmp" )
-         cPatAlm( ( dbfEmp )->cCodGrp, nil, .f. )
-      else
-         cPatAlm( cCodEmp, nil, .t. )
-      end if
-
-      aEmpGrp( ( dbfEmp )->cCodGrp, dbfEmp, .f. )
-
-   end if
-
+   cPatAlm( EmpresasModel():getCodigoGrupoAlmacen( cCodEmp ), nil, .t. )
+   
    /*
    Cargamos el buffer----------------------------------------------------------
    */
 
    cCodigoEmpresaEnUso( cCodEmp )
 
-   if !aEmpresa( cCodEmp, dbfEmp, dbfDlg, dbfUsr )
+   if !aEmpresa( cCodEmp )
       Empresa()
    end if
    
@@ -3351,8 +3236,6 @@ Function SetEmpresa( cCodEmp, dbfEmp, dbfDlg, dbfUsr, oBrw )
    */
 
    TDataCenter():BuildEmpresa()
-
-   // TDataCenter():BuildData()
 
    /*
    Ponemos el titulo de la empresa---------------------------------------------
@@ -3370,43 +3253,17 @@ Function SetEmpresa( cCodEmp, dbfEmp, dbfDlg, dbfUsr, oBrw )
    Colocamos la empresa actual a usuario actual-------------------------------
    */
 
-   if !Empty( dbfUsr ) .and. ( dbfUsr )->( dbSeek( cCurUsr() ) )
-      if ( dbfUsr )->( dbRLock() )
-         ( dbfUsr )->cEmpUse  := cCodEmp
-         ( dbfUsr )->( dbRUnLock() )
-      end if
-   end if
+   UsuariosModel():UpdateEmpresaEnUso( cCurUsr(), cCodEmp )
 
-   /*
-   Cerrando ficheros-----------------------------------------------------------
-   */
-
-   if !Empty( dbfDlg ) .and. lCloDlg
-      ( dbfDlg )->( dbCloseArea() )
-   end if
-
-   if !Empty( dbfUsr ) .and. lCloUsr
-      ( dbfUsr )->( dbCloseArea() )
-   end if
-
-   if !Empty( dbfEmp )
-      if lCloEmp
-         ( dbfEmp )->( dbCloseArea() )
-      end if
-   end if
-
-   if !Empty( oBrw )
+   if !empty( oBrw )
       oBrw:Refresh()
       oBrw:SetFocus()
    end if
 
-   RECOVER USING oError
-
-      msgStop( "Imposible seleccionar empresa" + CRLF + ErrorMessage( oError ) )
-
-   END SEQUENCE
-
-   ErrorBlock( oBlock )
+   // RECOVER USING oError
+   //    msgStop( "Imposible seleccionar empresa" + CRLF + ErrorMessage( oError ) )
+   // END SEQUENCE
+   // ErrorBlock( oBlock )
 
    CursorWE()
 
@@ -3414,11 +3271,56 @@ Function SetEmpresa( cCodEmp, dbfEmp, dbfDlg, dbfUsr, oBrw )
       oWnd():Enable()
    end if
 
-Return nil
+RETURN ( lError )
 
 //---------------------------------------------------------------------------//
 
-Function checkEmpresaTablesExistences()
+FUNCTION SelectEmpresa( cCodEmp )
+
+   cCodEmp           := RJust( cCodEmp, "0", 4 ) 
+
+   if !lIsDir( FullCurDir() + "Emp" + cCodEmp )
+      msgStop( "El directorio de la empresa " + cCodEmp + " no existe." )
+      RETURN ( .f. )
+   end if
+
+   /*
+   Ponemos el directorio para los ficheros-------------------------------------
+   */
+
+   cPatEmp( cCodEmp )
+   
+   cPatScriptEmp( cCodEmp )
+
+   /*
+   Directorios si no tiene grupo-----------------------------------------------
+   */
+
+   cPatCli( cCodEmp, nil, .t. )
+
+   cPatPrv( cCodEmp, nil, .t. )
+
+   cPatArt( cCodEmp, nil, .t. )
+
+   cPatAlm( cCodEmp, nil, .t. )
+   
+   /*
+   Cargamos el buffer----------------------------------------------------------
+   */
+
+   cCodigoEmpresaEnUso( cCodEmp )
+
+   /*
+   Cargamos la estructura de ficheros de la empresa----------------------------
+   */
+
+   TDataCenter():BuildEmpresa()
+
+RETURN ( .t. )
+
+//---------------------------------------------------------------------------//
+
+FUNCTION checkEmpresaTablesExistences()
 
    oMsgText( 'Comprobando existencia de tablas' )
    IsEntSal()
@@ -3462,7 +3364,7 @@ Function checkEmpresaTablesExistences()
    oMsgText( 'Comprobando contadores' )
    IsCount()
 
-Return nil
+RETURN nil
 
 //---------------------------------------------------------------------------//
 
@@ -3477,13 +3379,13 @@ STATIC FUNCTION WinDelGrp( oBrw, dbfEmp )
 
    if nUsrInUse() > 1
       msgStop( "Hay más de un usuario conectado a la aplicación", "Atención" )
-      return ( lRet )
+      RETURN ( lRet )
    end if
 
    if dbSeekInOrd( cCodEmp, "CCODGRP", dbfEmp )
       msgStop( "No se puede eliminar un grupo asignado a empresas" )
       ( dbfEmp )->( dbGoto( nRec ) )
-      return ( lRet )
+      RETURN ( lRet )
    end if
 
    ( dbfEmp )->( dbGoto( nRec ) )
@@ -3523,7 +3425,7 @@ FUNCTION mkPathEmp( cCodEmpNew, cNomEmpNew, cCodEmpOld, aImportacion, lDialog, l
    local acImages       := { "BAR_01" }
    local cMsg           := "Creando nueva empresa"
    local cPath          := cPatEmpOld( cCodEmpNew )
-   local cPathOld       := if( !Empty( cCodEmpOld ), cPatEmpOld( cCodEmpOld ), nil )
+   local cPathOld       := if( !empty( cCodEmpOld ), cPatEmpOld( cCodEmpOld ), nil )
 
    DEFAULT lDialog      := .f.
    DEFAULT lNewEmp      := .f.
@@ -3568,11 +3470,11 @@ FUNCTION mkPathEmp( cCodEmpNew, cNomEmpNew, cCodEmpOld, aImportacion, lDialog, l
 
    sysrefresh()
 
-Return ( .t. )
+RETURN ( .t. )
 
 //---------------------------------------------------------------------------//
 
-Static Function StartPathEmp( cPath, cPathOld, cCodEmpNew, cNomEmpNew, cCodEmpOld, aImportacion, lDialog, lNewEmp, nGetSemilla, oMsg )
+STATIC FUNCTION StartPathEmp( cPath, cPathOld, cCodEmpNew, cNomEmpNew, cCodEmpOld, aImportacion, lDialog, lNewEmp, nGetSemilla, oMsg )
 
    local oError
    local oBlock
@@ -3580,13 +3482,15 @@ Static Function StartPathEmp( cPath, cPathOld, cCodEmpNew, cNomEmpNew, cCodEmpOl
    local cPathGrp       := ""
    local lAIS           := lAIS()
 
-//   if lAIS()
-//      msgStop( "Esta opción no esta permitida para motor de bases de datos ADS.")
-//      Return ( nil )
-//   end if
+   if cCodEmpOld != nil
+      cCodGrp           := EmpresasModel():getCodigoGrupo( cCodEmpOld )
+   end if
 
-   // oBlock               := ErrorBlock( {| oError | ApoloBreak( oError ) } )
-   // BEGIN SEQUENCE
+   if !empty( cCodGrp )
+      cPathGrp          := cPatStk( cCodGrp, , , .t. )
+   else
+      cPathGrp          := cPathOld
+   end if
 
    if lAIS
       setIndexToCDX()
@@ -3598,16 +3502,6 @@ Static Function StartPathEmp( cPath, cPathOld, cCodEmpNew, cNomEmpNew, cCodEmpOl
 
    if lChDir( cNamePath( cPath ) ) .or. makeDir( cNamePath( cPath ) ) != -1
 
-      if cCodEmpOld != nil
-         cCodGrp        := cCodigoGrupo( cCodEmpOld )
-      end if
-
-      if !Empty( cCodGrp )
-         cPathGrp       := cPatStk( cCodGrp, , , .t. )
-      else
-         cPathGrp       := cPathOld
-      end if
-
       /*
       Contadores---------------------------------------------------------------
       */
@@ -3615,7 +3509,13 @@ Static Function StartPathEmp( cPath, cPathOld, cCodEmpNew, cNomEmpNew, cCodEmpOl
       if oMsg != nil
          oMsg:SetText( "Creando contadores" )
       end if
-      mkCount( cPath ); synCount( cPath, nGetSemilla ); sysrefresh()
+      mkCount( cPath ); synCount( cPath, nGetSemilla ) ; sysrefresh()
+
+      if oMsg != nil
+         oMsg:SetText( "Creando configuración de columnas" )
+      end if
+      ColumnasUsuariosModel():createFile( cPath ) ; sysrefresh()
+      ColumnasUsuariosModel():createIndex( cPath ) ; sysrefresh()
 
 		/*
       Ficheros Maestros--------------------------------------------------------
@@ -3629,17 +3529,17 @@ Static Function StartPathEmp( cPath, cPathOld, cCodEmpNew, cNomEmpNew, cCodEmpOl
       if oMsg != nil
          oMsg:SetText( "Creando Estados de los SAT" )
       end if
-      mkEstadoSat( cPath, aImportacion:lSatCli, cPathGrp ); rxEstadoSat( cPath )   ; sysrefresh()
+      mkEstadoSat( cPath, aImportacion:lSatCli, cPathGrp ); rxEstadoSat( cPath ) ; sysrefresh()
 
       if oMsg != nil
          oMsg:SetText( "Creando " + getConfigTraslation( "temporadas" ) )
       end if
-      mkTemporada( cPath, aImportacion:lArticulos, cPathGrp ); rxTemporada( cPath )   ; sysrefresh()
+      mkTemporada( cPath, aImportacion:lArticulos, cPathGrp ); rxTemporada( cPath ) ; sysrefresh()
 
       if oMsg != nil
          oMsg:SetText( "Creando grupos de familias" )
       end if
-      if cPathOld != nil
+      if cPathGrp != nil
          TGrpFam():Create( cPath ):CheckFiles( cPathGrp + "GrpFam.Dbf" )   ; sysrefresh()
       else
          TGrpFam():Create( cPath ):CheckFiles()                            ; sysrefresh()
@@ -3648,7 +3548,7 @@ Static Function StartPathEmp( cPath, cPathOld, cCodEmpNew, cNomEmpNew, cCodEmpOl
       if oMsg != nil
          oMsg:SetText( "Creando comandas" )
       end if
-      if cPathOld != nil
+      if cPathGrp != nil
          TComandas():Create( cPath ):CheckFiles( cPathGrp + "TComandas.Dbf" ); sysrefresh()
       else
          TComandas():Create( cPath ):CheckFiles()                            ; sysrefresh()
@@ -3657,7 +3557,7 @@ Static Function StartPathEmp( cPath, cPathOld, cCodEmpNew, cNomEmpNew, cCodEmpOl
       if oMsg != nil
          oMsg:SetText( "Creando fabricantes" )
       end if
-      if cPathOld != nil
+      if cPathGrp != nil
          TFabricantes():Create( cPath ):CheckFiles( cPathGrp + "Fabricantes.Dbf" )  ; sysrefresh()
       else
          TFabricantes():Create( cPath ):CheckFiles()                                ; sysrefresh()
@@ -3686,7 +3586,7 @@ Static Function StartPathEmp( cPath, cPathOld, cCodEmpNew, cNomEmpNew, cCodEmpOl
       if oMsg != nil
          oMsg:SetText( "Creando catálogos" )
       end if
-      if cPathOld != nil
+      if cPathGrp != nil
          TCatalogo():Create( cPath ):CheckFiles( cPathGrp + "Catalogo.Dbf" )  ; sysrefresh()
       else
          TCatalogo():Create( cPath ):CheckFiles()                             ; sysrefresh()
@@ -3696,7 +3596,7 @@ Static Function StartPathEmp( cPath, cPathOld, cCodEmpNew, cNomEmpNew, cCodEmpOl
          oMsg:SetText( "Creando unidades de medición" )
       end if
 
-      if cPathOld != nil
+      if cPathGrp != nil
          UniMedicion():Create( cPath ):CheckFiles( cPathGrp + "UndMed.Dbf" ) ; sysrefresh()
       else
          UniMedicion():Create( cPath ):CheckFiles() ; sysrefresh()
@@ -3710,12 +3610,12 @@ Static Function StartPathEmp( cPath, cPathOld, cCodEmpNew, cNomEmpNew, cCodEmpOl
       if oMsg != nil
          oMsg:SetText( "Creando tarifas" )
       end if
-      mkTarifa(   cPath, nil, aImportacion:lArticulos, cPathOld )       ; sysrefresh()
+      mkTarifa(   cPath, nil, aImportacion:lArticulos, cPathGrp )       ; sysrefresh()
 
       if oMsg != nil
          oMsg:SetText( "Creando promociones" )
       end if
-      mkPromo(    cPath, aImportacion:lPromocion, cPathOld )            ; sysrefresh()
+      mkPromo(    cPath, aImportacion:lPromocion, cPathGrp )            ; sysrefresh()
 
       if oMsg != nil
          oMsg:SetText( "Creando articulos" )
@@ -3725,7 +3625,7 @@ Static Function StartPathEmp( cPath, cPathOld, cCodEmpNew, cNomEmpNew, cCodEmpOl
       if oMsg != nil
          oMsg:SetText( "Creando grupos de venta" )
       end if
-      mkGrpVenta( cPath, aImportacion:lArticulos, cPathOld )            ; sysrefresh()
+      mkGrpVenta( cPath, aImportacion:lArticulos, cPathGrp )            ; sysrefresh()
 
       if oMsg != nil
          oMsg:SetText( "Creando clientes" )
@@ -3740,22 +3640,27 @@ Static Function StartPathEmp( cPath, cPathOld, cCodEmpNew, cNomEmpNew, cCodEmpOl
       if oMsg != nil
          oMsg:SetText( "Creando agentes" )
       end if
-      mkAgentes( cPath, aImportacion:lAgente, cPathGrp, nil )          ; sysrefresh()
+      mkAgentes( cPath, aImportacion:lAgente, cPathGrp )          ; sysrefresh()
 
       if oMsg != nil
          oMsg:SetText( "Creando rutas" )
       end if
-      mkRuta( cPath, aImportacion:lRuta, cPathGrp, nil )            ; sysrefresh()
+      mkRuta( cPath, aImportacion:lRuta, cPathGrp )            ; sysrefresh()
 
       if oMsg != nil
          oMsg:SetText( "Creando almacén" )
       end if
-      mkAlmacen( cPath, aImportacion:lAlmacen, cPathGrp, nil ) ; sysrefresh()
+      mkAlmacen( cPath, aImportacion:lAlmacen, cPathGrp ) ; sysrefresh()
+
+      if oMsg != nil
+         oMsg:SetText( "Creando categoría" )
+      end if
+      mkCategoria( cPath ) ; sysrefresh()
 
       if oMsg != nil
          oMsg:SetText( "Creando ubicaciones" )
       end if
-      mkUbi( cPath, aImportacion:lAlmacen, cPathGrp, nil ) ; sysrefresh()
+      mkUbi( cPath, aImportacion:lAlmacen, cPathGrp ) ; sysrefresh()
 
       if oMsg != nil
          oMsg:SetText( "Creando ofertas" )
@@ -3765,25 +3670,24 @@ Static Function StartPathEmp( cPath, cPathOld, cCodEmpNew, cNomEmpNew, cCodEmpOl
       if oMsg != nil
          oMsg:SetText( "Creando tpv" )
       end if
-      mkTpv( cPath, aImportacion:lVale, cPathOld ) ; sysrefresh()
+      mkTpv( cPath, aImportacion:lVale, cPathGrp ) ; sysrefresh()
 
       if oMsg != nil
          oMsg:SetText( "Creando menus tpv" )
       end if
-
-      if cPathOld != nil
+      if cPathGrp != nil
          TPVMenu():Create( cPath ):CheckFiles( cPathGrp + "TpvMenus.Dbf" ) ; sysrefresh()
       else
          TPVMenu():Create( cPath ):CheckFiles() ; sysrefresh()
       end if
 
-      if cPathOld != nil
+      if cPathGrp != nil
          TPVMenuArticulo():Create( cPath ):CheckFiles( cPathGrp + "TpvMnuArt.Dbf" ) ; sysrefresh()
       else
          TPVMenuArticulo():Create( cPath ):CheckFiles()                             ; sysrefresh()
       end if
 
-      if cPathOld != nil
+      if cPathGrp != nil
          TPVMenuOrdenes():Create( cPath ):CheckFiles( cPathGrp + "TpvMnuOrd.Dbf" )  ; sysrefresh()
       else
          TPVMenuOrdenes():Create( cPath ):CheckFiles()                              ; sysrefresh()
@@ -3802,26 +3706,26 @@ Static Function StartPathEmp( cPath, cPathOld, cCodEmpNew, cNomEmpNew, cCodEmpOl
       if oMsg != nil
          oMsg:SetText( "Creando bancos" )
       end if
-      if cPathOld != nil .and. aImportacion:lBancos
-         TBancos():Create( cPath ):CheckFiles( cPathOld + "Bancos.Dbf" )
+      if cPathGrp != nil .and. aImportacion:lBancos
+         TBancos():Create( cPath ):CheckFiles( cPathGrp + "Bancos.Dbf" )
       else
          TBancos():Create( cPath ):CheckFiles()
       end if
 
-      if cPathOld != nil .and. aImportacion:lBancos
-         TCuentasBancarias():Create( cPath ):CheckFiles( cPathOld + "EmpBnc.Dbf" )
+      if cPathGrp != nil .and. aImportacion:lBancos
+         TCuentasBancarias():Create( cPath ):CheckFiles( cPathGrp + "EmpBnc.Dbf" )
       else
          TCuentasBancarias():Create( cPath ):CheckFiles()
       end if
 
-      if cPathOld != nil .and. aImportacion:lScript
-         TScripts():Create( cPath ):CheckFiles( cPathOld + "Scripts.Dbf" )
+      if cPathGrp != nil .and. aImportacion:lScript
+         TScripts():Create( cPath ):CheckFiles( cPathGrp + "Scripts.Dbf" )
       else
          TScripts():Create( cPath ):CheckFiles()
       end if
 
-      if cPathOld != nil .and. aImportacion:lEntidades
-         TEntidades():Create( cPath ):CheckFiles( cPathOld + "Entidades.Dbf" )
+      if cPathGrp != nil .and. aImportacion:lEntidades
+         TEntidades():Create( cPath ):CheckFiles( cPathGrp + "Entidades.Dbf" )
       else
          TEntidades():Create( cPath ):CheckFiles()
       end if
@@ -3831,21 +3735,20 @@ Static Function StartPathEmp( cPath, cPathOld, cCodEmpNew, cNomEmpNew, cCodEmpOl
       if oMsg != nil
          oMsg:SetText( "Creando impuesto de hidrocarburos" )
       end if
-      TNewImp():Create( cPath ):CheckFiles()                            ; sysrefresh()
+      TNewImp():Create( cPath ):CheckFiles() ; sysrefresh()
 
       if oMsg != nil
          oMsg:SetText( "Creando sesiones" )
       end if
-      TTurno():Create( cPath ):CheckFiles()                             ; sysrefresh()
+      TTurno():Create( cPath ):CheckFiles() ; sysrefresh()
 
       if oMsg != nil
          oMsg:SetText( "Creando tipos de articulos" )
       end if
-
-      if cPathOld != nil .and. aImportacion:lArticulos
-         TTipArt():Create( cPath ):CheckFiles( cPathOld + "TipArt.Dbf" )   ; sysrefresh()
+      if cPathGrp != nil .and. aImportacion:lArticulos
+         TTipArt():Create( cPath ):CheckFiles( cPathGrp + "TipArt.Dbf" ) ; sysrefresh()
       else
-         TTipArt():Create( cPath ):CheckFiles()                            ; sysrefresh()
+         TTipArt():Create( cPath ):CheckFiles() ; sysrefresh()
       end if
 
       if oMsg != nil
@@ -3856,8 +3759,8 @@ Static Function StartPathEmp( cPath, cPathOld, cCodEmpNew, cNomEmpNew, cCodEmpOl
          oMsg:SetText( "Creando atípicas de clientes y grupos" )
       end if
 
-      if cPathOld != nil .and. aImportacion:lArticulos
-         TAtipicas():Create( cPath ):CheckFiles( cPathOld + "CliAtp.Dbf" ) ; sysrefresh()
+      if cPathGrp != nil .and. aImportacion:lArticulos
+         TAtipicas():Create( cPath ):CheckFiles( cPathGrp + "CliAtp.Dbf" ) ; sysrefresh()
       else
          TAtipicas():Create( cPath ):CheckFiles()                          ; sysrefresh()
       end if
@@ -3866,8 +3769,8 @@ Static Function StartPathEmp( cPath, cPathOld, cCodEmpNew, cNomEmpNew, cCodEmpOl
          oMsg:SetText( "Creando grupos de clientes" )
       end if
 
-      if cPathOld != nil .and. aImportacion:lClientes
-         TGrpCli():Create( cPath ):CheckFiles( cPathOld + "GrpCli.Dbf" )   ; sysrefresh()
+      if cPathGrp != nil .and. aImportacion:lClientes
+         TGrpCli():Create( cPath ):CheckFiles( cPathGrp + "GrpCli.Dbf" )   ; sysrefresh()
       else
          TGrpCli():Create( cPath ):CheckFiles()                            ; sysrefresh()
       end if
@@ -3876,8 +3779,8 @@ Static Function StartPathEmp( cPath, cPathOld, cCodEmpNew, cNomEmpNew, cCodEmpOl
          oMsg:SetText( "Creando grupos de facturas automáticas" )
       end if
 
-      if cPathOld != nil .and. aImportacion:lClientes
-         TGrpFacturasAutomaticas():Create( cPath ):CheckFiles( cPathOld + "GrpFac.Dbf" )   ; sysrefresh()
+      if cPathGrp != nil .and. aImportacion:lClientes
+         TGrpFacturasAutomaticas():Create( cPath ):CheckFiles( cPathGrp + "GrpFac.Dbf" )   ; sysrefresh()
       else
          TGrpFacturasAutomaticas():Create( cPath ):CheckFiles()                            ; sysrefresh()
       end if
@@ -3886,8 +3789,8 @@ Static Function StartPathEmp( cPath, cPathOld, cCodEmpNew, cNomEmpNew, cCodEmpOl
          oMsg:SetText( "Creando transportistas" )
       end if
 
-      if cPathOld != nil .and. aImportacion:lClientes
-         TTrans():Create( cPath ):CheckFiles( cPathOld + "Transpor.Dbf" )  ; sysrefresh()
+      if cPathGrp != nil .and. aImportacion:lClientes
+         TTrans():Create( cPath ):CheckFiles( cPathGrp + "Transpor.Dbf" )  ; sysrefresh()
       else
          TTrans():Create( cPath ):CheckFiles()                             ; sysrefresh()
       end if
@@ -3896,8 +3799,8 @@ Static Function StartPathEmp( cPath, cPathOld, cCodEmpNew, cNomEmpNew, cCodEmpOl
          oMsg:SetText( "Creando grupos de proveedores" )
       end if
 
-      if cPathOld != nil .and. aImportacion:lProveedor
-         TGrpPrv():Create( cPath ):CheckFiles( cPathOld + "GrpPrv.Dbf" )   ; sysrefresh()
+      if cPathGrp != nil .and. aImportacion:lProveedor
+         TGrpPrv():Create( cPath ):CheckFiles( cPathGrp + "GrpPrv.Dbf" )   ; sysrefresh()
       else
          TGrpPrv():Create( cPath ):CheckFiles()                            ; sysrefresh()
       end if
@@ -3906,8 +3809,8 @@ Static Function StartPathEmp( cPath, cPathOld, cCodEmpNew, cNomEmpNew, cCodEmpOl
          oMsg:SetText( "Creando cuentas de remesas" )
       end if
 
-      if cPathOld != nil
-         TCtaRem():Create( cPath ):CheckFiles( cPathOld + "CtaRem.Dbf" )   ; sysrefresh()
+      if cPathGrp != nil
+         TCtaRem():Create( cPath ):CheckFiles( cPathGrp + "CtaRem.Dbf" )   ; sysrefresh()
       else
          TCtaRem():Create( cPath ):CheckFiles()                            ; sysrefresh()
       end if
@@ -3916,9 +3819,9 @@ Static Function StartPathEmp( cPath, cPathOld, cCodEmpNew, cNomEmpNew, cCodEmpOl
          oMsg:SetText( "Creando salas y puntos de ventas" )
       end if
 
-      if cPathOld != nil
-         TTpvRestaurante():Create( cPath ):CheckFiles( cPathOld + "SalaVta.Dbf" )     ; sysrefresh()
-         TDetSalaVta():Create( cPath ):CheckFiles( cPathOld + "SlaPnt.Dbf" )     ; sysrefresh()
+      if cPathGrp != nil
+         TTpvRestaurante():Create( cPath ):CheckFiles( cPathGrp + "SalaVta.Dbf" )     ; sysrefresh()
+         TDetSalaVta():Create( cPath ):CheckFiles( cPathGrp + "SlaPnt.Dbf" )     ; sysrefresh()
       else
          TTpvRestaurante():Create( cPath ):CheckFiles()                               ; sysrefresh()
          TDetSalaVta():Create( cPath ):CheckFiles()                              ; sysrefresh()
@@ -3931,12 +3834,12 @@ Static Function StartPathEmp( cPath, cPathOld, cCodEmpNew, cNomEmpNew, cCodEmpOl
       if oMsg != nil
          oMsg:SetText( "Creando pedido a proveedores" )
       end if
-      mkPedPrv( cPath, aImportacion:lAlbPrv, cPathOld, nil, {| dbf | ( dbf )->nEstado != 3 } ) ; sysrefresh()
+      mkPedPrv( cPath, aImportacion:lAlbPrv, cPathGrp, nil, {| dbf | ( dbf )->nEstado != 3 } ) ; sysrefresh()
 
       if oMsg != nil
          oMsg:SetText( "Creando albaran a proveedores" )
       end if
-      mkAlbPrv( cPath, aImportacion:lAlbPrv, cPathOld, nil, {| dbf | !( dbf )->nFacturado != 3 } ) ; sysrefresh()
+      mkAlbPrv( cPath, aImportacion:lAlbPrv, cPathGrp, nil, {| dbf | !( dbf )->nFacturado != 3 } ) ; sysrefresh()
 
       if oMsg != nil
          oMsg:SetText( "Creando factura a proveedores" )
@@ -3960,22 +3863,22 @@ Static Function StartPathEmp( cPath, cPathOld, cCodEmpNew, cNomEmpNew, cCodEmpOl
       if oMsg != nil
          oMsg:SetText( "Creando presupuesto a clientes" )
       end if
-      mkPreCli( cPath, aImportacion:lPreCli, cPathOld, nil, {| dbf | !( dbf )->lEstado } ) ; sysrefresh()
+      mkPreCli( cPath, aImportacion:lPreCli, cPathGrp, nil, {| dbf | !( dbf )->lEstado } ) ; sysrefresh()
 
       if oMsg != nil
          oMsg:SetText( "Creando S.A.T. a clientes" )
       end if
-      mkSatCli( cPath, aImportacion:lSatCli, cPathOld, nil, {| dbf | !( dbf )->lEstado } ) ; sysrefresh()
+      mkSatCli( cPath, aImportacion:lSatCli, cPathGrp, nil, {| dbf | !( dbf )->lEstado } ) ; sysrefresh()
 
       if oMsg != nil
          oMsg:SetText( "Creando pedidos a clientes" )
       end if
-      mkPedCli( cPath, aImportacion:lPedCli, cPathOld, nil, {| dbf | ( dbf )->nEstado != 3 } ) ; sysrefresh()
+      mkPedCli( cPath, aImportacion:lPedCli, cPathGrp, nil, {| dbf | ( dbf )->nEstado != 3 } ) ; sysrefresh()
 
       if oMsg != nil
          oMsg:SetText( "Creando albaranes a clientes" )
       end if
-      mkAlbCli( cPath, aImportacion:lAlbCli, cPathOld, nil, {| dbf | !lFacturado( dbf ) } ) ; sysrefresh()
+      mkAlbCli( cPath, aImportacion:lAlbCli, cPathGrp, nil, {| dbf | !lFacturado( dbf ) } ) ; sysrefresh()
 
       if oMsg != nil
          oMsg:SetText( "Creando facturas a clientes" )
@@ -3995,7 +3898,7 @@ Static Function StartPathEmp( cPath, cPathOld, cCodEmpNew, cNomEmpNew, cCodEmpOl
       if oMsg != nil
          oMsg:SetText( "Creando facturas de anticipos a clientes" )
       end if
-      mkAntCli( cPath, aImportacion:lAnticipo, cPathOld )
+      mkAntCli( cPath, aImportacion:lAnticipo, cPathGrp )
       sysrefresh()
 
       /*
@@ -4006,8 +3909,8 @@ Static Function StartPathEmp( cPath, cPathOld, cCodEmpNew, cNomEmpNew, cCodEmpOl
          oMsg:SetText( "Creando secciones de producción" )
       end if
 
-      if cPathOld != nil
-         TSeccion():Create( cPath ):CheckFiles( cPathOld + "Seccion.Dbf" )
+      if cPathGrp != nil
+         TSeccion():Create( cPath ):CheckFiles( cPathGrp + "Seccion.Dbf" )
       else
          TSeccion():Create( cPath ):CheckFiles()
       end if
@@ -4017,8 +3920,8 @@ Static Function StartPathEmp( cPath, cPathOld, cCodEmpNew, cNomEmpNew, cCodEmpOl
          oMsg:SetText( "Creando horas de producción" )
       end if
 
-      if cPathOld != nil
-         THoras():Create( cPath ):CheckFiles( cPathOld + "Horas.Dbf" )
+      if cPathGrp != nil
+         THoras():Create( cPath ):CheckFiles( cPathGrp + "Horas.Dbf" )
       else
          THoras():Create( cPath ):CheckFiles()
       end if
@@ -4027,8 +3930,8 @@ Static Function StartPathEmp( cPath, cPathOld, cCodEmpNew, cNomEmpNew, cCodEmpOl
          oMsg:SetText( "Creando detalle de horas de producción" )
       end if
 
-      if cPathOld != nil
-         TDetHoras():Create( cPath ):CheckFiles( cPathOld + "OpeL.Dbf" )
+      if cPathGrp != nil
+         TDetHoras():Create( cPath ):CheckFiles( cPathGrp + "OpeL.Dbf" )
       else
          TDetHoras():Create( cPath ):CheckFiles()
       end if
@@ -4038,8 +3941,8 @@ Static Function StartPathEmp( cPath, cPathOld, cCodEmpNew, cNomEmpNew, cCodEmpOl
          oMsg:SetText( "Creando operarios de producción" )
       end if
 
-      if cPathOld != nil
-         TOperarios():Create( cPath ):CheckFiles( cPathOld + "OpeT.Dbf" )
+      if cPathGrp != nil
+         TOperarios():Create( cPath ):CheckFiles( cPathGrp + "OpeT.Dbf" )
       else
          TOperarios():Create( cPath ):CheckFiles()
       end if
@@ -4049,8 +3952,8 @@ Static Function StartPathEmp( cPath, cPathOld, cCodEmpNew, cNomEmpNew, cCodEmpOl
          oMsg:SetText( "Creando operaciones de producción" )
       end if
 
-      if cPathOld != nil
-         TOperacion():Create( cPath ):CheckFiles( cPathOld + "Operacio.Dbf" )
+      if cPathGrp != nil
+         TOperacion():Create( cPath ):CheckFiles( cPathGrp + "Operacio.Dbf" )
       else
          TOperacion():Create( cPath ):CheckFiles()
       end if
@@ -4060,8 +3963,8 @@ Static Function StartPathEmp( cPath, cPathOld, cCodEmpNew, cNomEmpNew, cCodEmpOl
          oMsg:SetText( "Creando tipos de operaciones de producción" )
       end if
 
-      if cPathOld != nil
-         TTipOpera():Create( cPath ):CheckFiles( cPathOld + "TipOpera.Dbf" )
+      if cPathGrp != nil
+         TTipOpera():Create( cPath ):CheckFiles( cPathGrp + "TipOpera.Dbf" )
       else
          TTipOpera():Create( cPath ):CheckFiles()
       end if
@@ -4071,8 +3974,8 @@ Static Function StartPathEmp( cPath, cPathOld, cCodEmpNew, cNomEmpNew, cCodEmpOl
          oMsg:SetText( "Creando maquinarias de producción" )
       end if
 
-      if cPathOld != nil
-         TMaquina():Create( cPath ):CheckFiles( cPathOld + "MaqCosT.Dbf" )
+      if cPathGrp != nil
+         TMaquina():Create( cPath ):CheckFiles( cPathGrp + "MaqCosT.Dbf" )
       else
          TMaquina():Create( cPath ):CheckFiles()
       end if
@@ -4082,22 +3985,22 @@ Static Function StartPathEmp( cPath, cPathOld, cCodEmpNew, cNomEmpNew, cCodEmpOl
          oMsg:SetText( "Creando costos de maquinarias de producción" )
       end if
 
-      if cPathOld != nil
-         TCosMaq():Create( cPath ):CheckFiles( cPathOld + "Costes.Dbf" )
+      if cPathGrp != nil
+         TCosMaq():Create( cPath ):CheckFiles( cPathGrp + "Costes.Dbf" )
       else
          TCosMaq():Create( cPath ):CheckFiles()
       end if
       sysrefresh()
 
-      if cPathOld != nil
-         TFideliza():Create( cPath ):CheckFiles( cPathOld + "Fideliza.Dbf" )
+      if cPathGrp != nil
+         TFideliza():Create( cPath ):CheckFiles( cPathGrp + "Fideliza.Dbf" )
       else
          TFideliza():Create( cPath ):CheckFiles()
       end if
       sysrefresh()
 
-      if cPathOld != nil
-         TDetFideliza():Create( cPath ):CheckFiles( cPathOld + "DetFideliza.Dbf" )
+      if cPathGrp != nil
+         TDetFideliza():Create( cPath ):CheckFiles( cPathGrp + "DetFideliza.Dbf" )
       else
          TDetFideliza():Create( cPath ):CheckFiles()
       end if
@@ -4116,8 +4019,8 @@ Static Function StartPathEmp( cPath, cPathOld, cCodEmpNew, cNomEmpNew, cCodEmpOl
          oMsg:SetText( "Creando columnas de usuarios" )
       end if
 
-      if cPathOld != nil
-         TShell():AppendData( cPath, cPathOld )
+      if cPathGrp != nil
+         TShell():AppendData( cPath, cPathGrp )
       else
          TShell():ReindexData( cPath )
       end if
@@ -4128,8 +4031,8 @@ Static Function StartPathEmp( cPath, cPathOld, cCodEmpNew, cNomEmpNew, cCodEmpOl
          oMsg:SetText( "Creando favoritos de informes" )
       end if
 
-      if cPathOld != nil
-         mkReport( cPath, .t., cPathOld )
+      if cPathGrp != nil
+         mkReport( cPath, .t., cPathGrp )
       else
          mkReport( cPath )
       end if
@@ -4141,14 +4044,7 @@ Static Function StartPathEmp( cPath, cPathOld, cCodEmpNew, cNomEmpNew, cCodEmpOl
       if oMsg != nil
          oMsg:SetText( "Creando documentos" )
       end if
-
-      mkDocs( cPath, aImportacion:lDocument, cPathOld ) ; sysrefresh()
-
-      /*
-      Cerramos todas las tablas------------------------------------------------
-      */
-
-      dbDialog()
+      mkDocs( cPath, aImportacion:lDocument, cPathGrp ) ; sysrefresh()
 
       /*
       Calculo de stocks--------------------------------------------------------
@@ -4157,7 +4053,6 @@ Static Function StartPathEmp( cPath, cPathOld, cCodEmpNew, cNomEmpNew, cCodEmpOl
       if oMsg != nil
          oMsg:SetText( "Creando stocks" )
       end if
-
       if aImportacion:lStockIni .and. cPathOld != nil
          TStock():StockInit( cPath, cPathOld, oMsg, aImportacion:nCosto )
       end if
@@ -4165,8 +4060,6 @@ Static Function StartPathEmp( cPath, cPathOld, cCodEmpNew, cNomEmpNew, cCodEmpOl
       /*
       Si hay nueva empresa calculamos stocks y regeneramos indices-------------
       */
-
-      dbDialog()
 
       if lNewEmp
          reindexaEmp( cPath, cCodEmpNew, oMsg )
@@ -4178,28 +4071,29 @@ Static Function StartPathEmp( cPath, cPathOld, cCodEmpNew, cNomEmpNew, cCodEmpOl
 
    end if
 
-//   RECOVER USING oError
-//
-//      msgStop( "Error creando estructura de directorios" + CRLF + ErrorMessage( oError ) )
-//
-//   END SEQUENCE
-//
-//   ErrorBlock( oBlock )
-
    /*
    Tipo de driver q usamos--------------------------------------------------
    */
 
    if lAIS
 
-      msgStop( "Tenemos q meter esta empresa en el diccionario de datos")
+      selectEmpresa( cCodEmpNew )
 
-      with object ( TDataCenter() )
-         :CreateEmpresaTable()
-         :BuildEmpresa()     
-      end with
+      if oMsg != nil
+         oMsg:SetText( "Insertando tablas en el diccionario de datos" )
+      end if
 
-      SetIndexToADSCDX()
+      TDataCenter():buildEmpresa() 
+      TDataCenter():deleteEmpresaTablesFromDataDictionary()
+      TDataCenter():addEmpresaTablesToDataDictionary()
+
+      setIndexToADSCDX()
+
+      if oMsg != nil
+         oMsg:SetText( "Optimizando indices" )
+      end if
+
+      TDataCenter():Reindex()
 
       msgStop( "Proceso finalizado")
 
@@ -4209,11 +4103,12 @@ RETURN .t.
 
 //---------------------------------------------------------------------------//
 
-Function ReindexaEmp( cPath, cCodigoEmpresa, oMsg )
+FUNCTION ReindexaEmp( cPath, cCodigoEmpresa, oMsg )
 
    with object ( TReindex():New( nil, nil, cPath ) )
       :lEmpresa      := .f.
       :lDatos        := .f.
+      :lSincroniza   := .f.
       :lMessageEnd   := .f.
       :cCodEmp       := cCodigoEmpresa
       :cPatCli       := cPatCli( cCodigoEmpresa, .f., .t. )
@@ -4223,7 +4118,7 @@ Function ReindexaEmp( cPath, cCodigoEmpresa, oMsg )
       :GenIndices( oMsg )
    end with
 
-Return .t.
+RETURN .t.
 
 //---------------------------------------------------------------------------//
 /*
@@ -4249,18 +4144,18 @@ FUNCTION lActualiza( cCodEmp, oWndBrw, lNoWait, cNomEmp, lSincroniza )
 
    if nUsrInUse() > 1
       msgStop( "Hay más de un usuario conectado a la aplicación", "Atención" )
-      return .f.
+      RETURN .f.
    end if
 
    if !TReindex():lFreeHandle()
       msgStop( "Existen procesos exclusivos, no se puede acceder a la aplicación" + CRLF + ;
                "en estos momentos, reintentelo pasados unos segundos." )
-      return .f.
+      RETURN .f.
    end if
 
    if !TReindex():lCreateHandle()
       msgStop( "Esta opción ya ha sido inicada por otro usuario", "Atención" )
-      return .f.
+      RETURN .f.
    end if
 
    if lNoWait
@@ -4320,7 +4215,7 @@ RETURN ( oDlgWat:nResult == IDOK )
 
 //--------------------------------------------------------------------------//
 
-Static Function ActualizaEmpresa( cCodEmp, aMsg, oAni, oBtnAceptar, oBtnCancelar, oDlg, oMsg, oAct, lActEmp, lSincroniza )
+STATIC FUNCTION ActualizaEmpresa( cCodEmp, aMsg, oAni, oBtnAceptar, oBtnCancelar, oDlg, oMsg, oAct, lActEmp, lSincroniza )
 
    oDlg:bValid          := {|| .f. }
 
@@ -4338,11 +4233,11 @@ Static Function ActualizaEmpresa( cCodEmp, aMsg, oAni, oBtnAceptar, oBtnCancelar
 
    oDlg:End( IDOK )
 
-Return nil
+RETURN nil
 
 //---------------------------------------------------------------------------//
 
-Static Function ActDbfEmp( cCodEmp, aMsg, oAni, oDlg, oMsg, oMet, lActEmp, lSincroniza )
+STATIC FUNCTION ActDbfEmp( cCodEmp, aMsg, oAni, oDlg, oMsg, oMet, lActEmp, lSincroniza )
 
    local oBlock
    local oError
@@ -4844,29 +4739,29 @@ RETURN .t.
 
 //---------------------------------------------------------------------------//
 
-Static Function cGetInfo( uVal )
+STATIC FUNCTION cGetInfo( uVal )
 
    local cType := ValType( uVal )
 
    do case
       case cType == "C"
-           return uVal
+           RETURN uVal
 
       case cType == "O"
-           return "Class: " + uVal:ClassName()
+           RETURN "Class: " + uVal:ClassName()
 
       case cType == "A"
-           return "Len: " + Str( Len( uVal ), 4 )
+           RETURN "Len: " + Str( Len( uVal ), 4 )
 
       otherwise
-           return cValToChar( uVal )
+           RETURN cValToChar( uVal )
    endcase
 
-return nil
+RETURN nil
 
 //---------------------------------------------------------------------------//
 
-static function IsChgStru( dbfOld, dbfNew )
+STATIC FUNCTION IsChgStru( dbfOld, dbfNew )
 
    local i
    local lChg     := .f.
@@ -4888,11 +4783,11 @@ static function IsChgStru( dbfOld, dbfNew )
       next
    endif
 
-return lChg
+RETURN lChg
 
 //---------------------------------------------------------------------------//
 
-Static Function BeginEdtRec( aTmp )
+STATIC FUNCTION BeginEdtRec( aTmp )
 
    local oBlock
    local oError
@@ -4951,11 +4846,11 @@ Static Function BeginEdtRec( aTmp )
 
    ErrorBlock( oBlock )
 
-Return ( lErrors )
+RETURN ( lErrors )
 
 //---------------------------------------------------------------------------//
 
-Static Function BeginEditConfig( aTmp )
+STATIC FUNCTION BeginEditConfig( aTmp )
 
    local oBlock
    local oError
@@ -5016,11 +4911,11 @@ Static Function BeginEditConfig( aTmp )
 
    ErrorBlock( oBlock )
 
-Return ( lErrors )
+RETURN ( lErrors )
 
 //---------------------------------------------------------------------------//
 
-Static Function PrvTrans( oFld, oBtnOk )
+STATIC FUNCTION PrvTrans( oFld, oBtnOk )
 
    if oFld:nOption > 1
       oFld:SetOption( oFld:nOption - 1 )
@@ -5030,7 +4925,7 @@ Static Function PrvTrans( oFld, oBtnOk )
       SetWindowText( oBtnOk:hWnd, "&Siguiente >" )
    end if
 
-Return nil
+RETURN nil
 
 //---------------------------------------------------------------------------//
 
@@ -5057,23 +4952,23 @@ FUNCTION ActDbf( cEmpOld, cEmpTmp, cFile, cText, oMtr, oMsg )
    end if
 
    if !lExistTable( dbfNamOld + ".Dbf" )
-      return .f.
+      RETURN .f.
    end if
 
    if !lExistTable( dbfNamTmp + ".Dbf" )
-      return .f.
+      RETURN .f.
    end if
 
    USE ( dbfNamOld + ".Dbf" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "OLD", @dbfOld ) )
    if NetErr()
       msgStop( "Error al abrir el fichero " + ( dbfNamOld ) + ".Dbf" )
-      return .f.
+      RETURN .f.
    end if
 
    USE ( dbfNamTmp + ".Dbf" ) NEW VIA ( cLocalDriver() ) EXCLUSIVE ALIAS ( cCheckArea( "TMP", @dbfTmp ) )
    if NetErr()
       msgStop( "Error al abrir el fichero " + ( dbfNamTmp ) + ".Dbf" )
-      return .f.
+      RETURN .f.
    end if
 
    // Numero de campos------------------------------------------------------------
@@ -5145,7 +5040,7 @@ FUNCTION ActDbf( cEmpOld, cEmpTmp, cFile, cText, oMtr, oMsg )
 
    end if
 
-Return ( lCopy )
+RETURN ( lCopy )
 
 //-----------------------------------------------------------------------//
 
@@ -5165,13 +5060,13 @@ STATIC FUNCTION EndTrans( aTmp, aGet, oBrw, oFld, oDlg, oBtnOk, oBrwDet, dbfEmp,
             SetWindowText( oBtnOk:hWnd, "&Terminar" )
          end if
 
-         Return nil
+         RETURN nil
 
       end if
 
-      if !Empty( cOldCodigoEmpresa ) .and. !dbSeekInOrd( cOldCodigoEmpresa, "CodEmp", dbfEmp )
+      if !empty( cOldCodigoEmpresa ) .and. !dbSeekInOrd( cOldCodigoEmpresa, "CodEmp", dbfEmp )
          msgStop( "Empresa " + cOldCodigoEmpresa + " no encontrada." )
-         Return nil
+         RETURN nil
       end if
 
    end if
@@ -5212,23 +5107,23 @@ STATIC FUNCTION EndTrans( aTmp, aGet, oBrw, oFld, oDlg, oBtnOk, oBrwDet, dbfEmp,
          next 
       end if
 */
-      if Empty( aTmp[ _CDEFFPG ] )
+      if empty( aTmp[ _CDEFFPG ] )
          aTmp[ _CDEFFPG ]  := "00"
       end if
 
-      if Empty( aTmp[ _CDEFALM ] )
+      if empty( aTmp[ _CDEFALM ] )
          aTmp[ _CDEFALM ]  := "000"
       end if
 
-      if Empty( aTmp[ _CDEFCAJ ] )
+      if empty( aTmp[ _CDEFCAJ ] )
          aTmp[ _CDEFCAJ ]  := "000"
       end if
 
-      if Empty( aTmp[ _CDEFCJR ] )
+      if empty( aTmp[ _CDEFCJR ] )
          aTmp[ _CDEFCJR ]  := "000"
       end if
 
-      if Empty( aTmp[ _CDIRIMG ] )
+      if empty( aTmp[ _CDIRIMG ] )
          aTmp[ _CDIRIMG ]  := ".\Imagen"
       end if
 
@@ -5260,7 +5155,7 @@ STATIC FUNCTION EndTrans( aTmp, aGet, oBrw, oFld, oDlg, oBtnOk, oBrwDet, dbfEmp,
    oDlg:Enable()
    oDlg:End( IDOK )
 
-Return .t.
+RETURN .t.
 
 //---------------------------------------------------------------------------//
 
@@ -5280,7 +5175,7 @@ FUNCTION ConfEmpresa( oWnd, oMenuItem, nSelFolder )
 
    if nAnd( nLevel, 1 ) != 0
       msgStop( "Acceso no permitido." )
-      return nil
+      RETURN nil
    end if
 
    /*
@@ -5307,7 +5202,7 @@ RETURN NIL
 
 //------------------------------------------------------------------------//
 
-Static Function AppFromEmpresa( cCodEmp, dbfEmp, aGet, aTmp, tmpDlg, dbfDlg )
+STATIC FUNCTION AppFromEmpresa( cCodEmp, dbfEmp, aGet, aTmp, tmpDlg, dbfDlg )
 
    local nRec              := ( dbfEmp )->( Recno() )
 
@@ -5397,11 +5292,11 @@ Static Function AppFromEmpresa( cCodEmp, dbfEmp, aGet, aTmp, tmpDlg, dbfDlg )
 
    ( dbfEmp )->( dbGoTo( nRec ) )
 
-return ( .t. )
+RETURN ( .t. )
 
 //---------------------------------------------------------------------------//
 
-Function ChkAllEmp( lForced )
+FUNCTION ChkAllEmp( lForced )
 
    local n
    local dbfEmp
@@ -5424,7 +5319,7 @@ Function ChkAllEmp( lForced )
                            "Seleccione una opción" )
 
 
-         if !Empty( oWnd() )
+         if !empty( oWnd() )
             oWnd():Disable()
          end if
 
@@ -5438,7 +5333,7 @@ Function ChkAllEmp( lForced )
 
          next
 
-         if !Empty( oWnd() )
+         if !empty( oWnd() )
             oWnd():Enable()
          end if
 
@@ -5549,7 +5444,7 @@ RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 
-Static Function SaveEditConfig( aTmp, oSay, oBrw, oDlg, nMode )
+STATIC FUNCTION SaveEditConfig( aTmp, oSay, oBrw, oDlg, nMode )
 
    CursorWait()
 
@@ -5689,11 +5584,11 @@ Static Function SaveEditConfig( aTmp, oSay, oBrw, oDlg, nMode )
 
    CursorWE()
 
-Return nil
+RETURN nil
 
 //---------------------------------------------------------------------------//
 
-static function LoaItmEmp( aTmp )
+STATIC FUNCTION LoaItmEmp( aTmp )
 
    aItmEmp       := {}
 
@@ -5726,11 +5621,11 @@ static function LoaItmEmp( aTmp )
 
    nIvaReq     := if( aTmp[ _LIVAREQ ], 1, 2 )
 
-return nil
+RETURN nil
 
 //---------------------------------------------------------------------------//
 
-Function PosEmpresa( cCodEmp, dbfEmp, oWndBrw )
+FUNCTION PosEmpresa( cCodEmp, dbfEmp, oWndBrw )
 
    local nRec           := ( dbfEmp )->( Recno() )
    local nOrd           := ( dbfEmp )->( OrdSetFocus( "CodEmp" ) )
@@ -5743,7 +5638,7 @@ Function PosEmpresa( cCodEmp, dbfEmp, oWndBrw )
 
    oWndBrw:Refresh()
 
-Return nil
+RETURN nil
 
 //---------------------------------------------------------------------------//
 
@@ -5812,7 +5707,7 @@ Method False() Class AImportacion
    ::lScript         := .f.
    ::lEntidades      := .f.
 
-Return ( Self )
+RETURN ( Self )
 
 //---------------------------------------------------------------------------//
 
@@ -5823,17 +5718,17 @@ Method Load( aTmp ) Class AImportacion
    ::lProveedor      := aTmp[ _LGRPPRV ]
    ::lAlmacen        := aTmp[ _LGRPALM ]
 
-Return ( Self )
+RETURN ( Self )
 
 //---------------------------------------------------------------------------//
 
-FUNCTION cPrinterPDF() ; return ( if( !Empty( aEmp()[ _CPRNPDF ] ), Rtrim( aEmp()[ _CPRNPDF ] ), "" ) )
+FUNCTION cPrinterPDF() ; RETURN ( if( !empty( aEmp()[ _CPRNPDF ] ), Rtrim( aEmp()[ _CPRNPDF ] ), "" ) )
 
 //---------------------------------------------------------------------------//
 
 FUNCTION nUltimaRecpcionInformacion( nRecepcion )
 
-   if !Empty( nRecepcion )
+   if !empty( nRecepcion )
       SetFieldEmpresa( nRecepcion, "nRecInf" )
    end if
 
@@ -5843,7 +5738,7 @@ RETURN ( aEmp()[ _NRECINF ] )
 
 FUNCTION nUltimoEnvioInformacion( nEnvio )
 
-   if !Empty( nEnvio )
+   if !empty( nEnvio )
       SetFieldEmpresa( nEnvio, "nSndInf" )
    end if
 
@@ -5851,7 +5746,7 @@ RETURN ( aEmp()[ _NSNDINF ] )
 
 //---------------------------------------------------------------------------//
 
-function BrwDelegacion( oGet, dbfDelega, oGetNombre, cCodigoEmpresa )
+FUNCTION BrwDelegacion( oGet, dbfDelega, oGetNombre, cCodigoEmpresa )
 
 	local oDlg
 	local oBrw
@@ -5966,24 +5861,24 @@ function BrwDelegacion( oGet, dbfDelega, oGetNombre, cCodigoEmpresa )
 
 	oGet:SetFocus()
 
-Return ( oDlg:nResult == IDOK )
+RETURN ( oDlg:nResult == IDOK )
 
 //---------------------------------------------------------------------------//
 
-function cDelegacion( oGet, dbfDelega, oGetNombre, cCodigoEmpresa )
+FUNCTION cDelegacion( oGet, dbfDelega, oGetNombre, cCodigoEmpresa )
 
    local lValid            := .f.
    local cCodDlg           := oGet:varGet()
 
    DEFAULT cCodigoEmpresa  := cCodEmp()
 
-   if Empty( cCodDlg )
+   if empty( cCodDlg )
 
-      if !Empty( oGetNombre )
+      if !empty( oGetNombre )
 			oGetNombre:cText( "" )
       end if
 
-      return .t.
+      RETURN .t.
 
    end if
 
@@ -5991,7 +5886,7 @@ function cDelegacion( oGet, dbfDelega, oGetNombre, cCodigoEmpresa )
 
       oGet:cText( ( dbfDelega )->cCodDlg )
 
-      if !Empty( oGetNombre )
+      if !empty( oGetNombre )
          oGetNombre:cText( ( dbfDelega )->cNomDlg )
       end if
       
@@ -6003,11 +5898,11 @@ function cDelegacion( oGet, dbfDelega, oGetNombre, cCodigoEmpresa )
 
    end if
 
-return lValid
+RETURN lValid
 
 //---------------------------------------------------------------------------//
 
-Function AppEmpresa()
+FUNCTION AppEmpresa()
 
    if OpenFiles( .f. )
 
@@ -6021,10 +5916,10 @@ RETURN .t.
 
 //---------------------------------------------------------------------------//
 
-Function NextEmpresa()
+FUNCTION NextEmpresa()
 
-   if Empty( oWnd() )
-      Return .f.
+   if empty( oWnd() )
+      RETURN .f.
    end if
 
    /*
@@ -6033,7 +5928,7 @@ Function NextEmpresa()
 
    if nAnd( nLevelUsr( _MENUITEM_ ), 1 ) != 0
       msgStop( "Acceso no permitido." )
-      return .f.
+      RETURN .f.
    end if
 
    CursorWait()
@@ -6057,7 +5952,7 @@ Function NextEmpresa()
             ( dbfEmp )->( dbSkip() )
          end if
 
-         setEmpresa( ( dbfEmp )->CodEmp, dbfEmp, dbfDlg, dbfUser )
+         setEmpresa( ( dbfEmp )->CodEmp )
 
          chkTurno()
 
@@ -6077,10 +5972,10 @@ RETURN .t.
 
 //---------------------------------------------------------------------------//
 
-Function PriorEmpresa()
+FUNCTION PriorEmpresa()
 
-   if Empty( oWnd() )
-      Return .f.
+   if empty( oWnd() )
+      RETURN .f.
    end if
 
    /*
@@ -6089,7 +5984,7 @@ Function PriorEmpresa()
 
    if nAnd( nLevelUsr( _MENUITEM_ ), 1 ) != 0
       msgStop( "Acceso no permitido." )
-      return .f.
+      RETURN .f.
    end if
 
    CursorWait()
@@ -6113,7 +6008,7 @@ Function PriorEmpresa()
             ( dbfEmp )->( dbSkip( -1 ) )
          end if
 
-         setEmpresa( ( dbfEmp )->CodEmp, dbfEmp, dbfDlg, dbfUser )
+         setEmpresa( ( dbfEmp )->CodEmp )
 
          chkTurno()
 
@@ -6240,7 +6135,7 @@ FUNCTION TstEmpresa( cPatDat )
 
    EmpresasModel():UpdateEmpresaCodigoEmpresa()
 
-   EmpresasModel():UpdateDelegacionCodigoEmpresa()
+   DelegacionesModel():UpdateDelegacionCodigoEmpresa()
 
    CursorWE()
 
@@ -6248,7 +6143,7 @@ RETURN ( .t. )
 
 //---------------------------------------------------------------------------//
 
-Static Function changeStructEmpresa()
+STATIC FUNCTION changeStructEmpresa()
 
    TDataCenter():DeleteTableName( "Empresa" )
 
@@ -6280,7 +6175,7 @@ RETURN ( .t. )
 Trasbase a delegaciones--------------------------------------------------------
 */
 
-Static Function changeStructDelegacion()
+STATIC FUNCTION changeStructDelegacion()
 
    TDataCenter():DeleteTableName( "Delega" )
 
@@ -6627,11 +6522,11 @@ FUNCTION aItmEmp()
    aAdd( aDbf, {"lStockAlm",  "L",  1, 0, "Lógico mostrar stock por almacén en ventas",            "", "", "aEmp()", .f. } )
    aAdd( aDbf, {"lBrFamTre",  "L",  1, 0, "Mostrar browse de familias tree",                       "", "", "aEmp()", .f. } )
 
-Return ( aDbf )
+RETURN ( aDbf )
 
 //---------------------------------------------------------------------------//
 
-static function aItmDlg()
+STATIC FUNCTION aItmDlg()
 
    local aItmDlg  := {}
 
@@ -6639,7 +6534,7 @@ static function aItmDlg()
    aAdd( aItmDlg, { "CCODDLG", "C", 2, 0, "Código de delegación" } )
    aAdd( aItmDlg, { "CNOMDLG", "C",50, 0, "Nombre de delegación" } )
 
-return ( aItmDlg )
+RETURN ( aItmDlg )
 
 //---------------------------------------------------------------------------//
 
@@ -6717,75 +6612,75 @@ RETURN NIL
 Valida la fecha del documento que estamos haciendo para que estén en el rango marcado en la empresa
 */
 
-Function lValidaOperacion( dOperacion, lMessage )
+FUNCTION lValidaOperacion( dOperacion, lMessage )
 
    DEFAULT lMessage  := .t.
 
-   if ( Empty( aEmp()[ _DINIOPE ] ) .OR. Empty( aEmp()[ _DFINOPE ] ) ) .or. ;
+   if ( empty( aEmp()[ _DINIOPE ] ) .OR. empty( aEmp()[ _DFINOPE ] ) ) .or. ;
       ( dOperacion >= aEmp()[ _DINIOPE ] .and. dOperacion <= aEmp()[ _DFINOPE ] )
-      Return .t.
+      RETURN .t.
    end if
 
    if lMessage
       msgStop( "La fecha del documento no está entre la fecha de operaciones marcada en la empresa" )
    end if
 
-Return ( .f. )
+RETURN ( .f. )
 
 //---------------------------------------------------------------------------//
 
-Function lValidaSerie( cSerie, lMessage )
+FUNCTION lValidaSerie( cSerie, lMessage )
 
    DEFAULT lMessage  := .t.
 
    if ( cSerie >= "A" .and. cSerie <= "Z" )
-      Return .t.
+      RETURN .t.
    end if
 
    if lMessage
       msgStop( "La serie del documento debe estar comprendida entre la A y la Z." )
    end if 
 
-Return ( .f. )
+RETURN ( .f. )
 
 //---------------------------------------------------------------------------//
 
-Function cNombreUnidades()
+FUNCTION cNombreUnidades()
 
    local cNombreUnidades   := "Unidades"
 
-   if !Empty( aEmp() ) .and. _CNBRUND <= len( aEmp() ) .and. !Empty( aEmp()[ _CNBRUND ] )
+   if !empty( aEmp() ) .and. _CNBRUND <= len( aEmp() ) .and. !empty( aEmp()[ _CNBRUND ] )
       cNombreUnidades      := Rtrim( aEmp()[ _CNBRUND ] )
    end if
 
-Return ( cNombreUnidades )
+RETURN ( cNombreUnidades )
 
 //---------------------------------------------------------------------------//
 
-Function cNombreCajas()
+FUNCTION cNombreCajas()
 
    local cNombreCajas   := "Cajas"
 
-   if !Empty( aEmp() ) .and. _CNBRCAJ <= len( aEmp() ) .and. !Empty( aEmp()[ _CNBRCAJ ] )
+   if !empty( aEmp() ) .and. _CNBRCAJ <= len( aEmp() ) .and. !empty( aEmp()[ _CNBRCAJ ] )
       cNombreCajas      := Rtrim( aEmp()[ _CNBRCAJ ] )
    end if
 
-Return ( cNombreCajas )
+RETURN ( cNombreCajas )
 
 //---------------------------------------------------------------------------//
 
-Static function lChgCajCaj( aGet, aTmp )
+STATIC FUNCTION lChgCajCaj( aGet, aTmp )
 
    if !aTmp[ _LUSECAJ ]
       aTmp[ _LCALCAJ ]  := .f.
       aGet[ _LCALCAJ ]:Refresh()
    end if
 
-Return (.t.)
+RETURN (.t.)
 
 //---------------------------------------------------------------------------//
 
-Static Function cTiempoToCadena( nTiempo )
+STATIC FUNCTION cTiempoToCadena( nTiempo )
 
    local cTiempo  := aTiempo[ 1 ]
 
@@ -6816,11 +6711,11 @@ Static Function cTiempoToCadena( nTiempo )
          cTiempo  := aTiempo[ 12 ]
    endcase
 
-Return ( cTiempo )
+RETURN ( cTiempo )
 
 //---------------------------------------------------------------------------//
 
-Static Function cTiempoToCadenaImp( nTiempo )
+STATIC FUNCTION cTiempoToCadenaImp( nTiempo )
 
    local cTiempo  := aTiempoImp[ 1 ]
 
@@ -6853,11 +6748,11 @@ Static Function cTiempoToCadenaImp( nTiempo )
          cTiempo  := aTiempoImp[ 13 ]
    endcase
 
-Return ( cTiempo )
+RETURN ( cTiempo )
 
 //---------------------------------------------------------------------------//
 
-Static Function cCadenaToTiempo( cTiempo )
+STATIC FUNCTION cCadenaToTiempo( cTiempo )
 
    local nTiempo := 0
 
@@ -6888,17 +6783,17 @@ Static Function cCadenaToTiempo( cTiempo )
          nTiempo  := 480
    endcase
 
-Return ( nTiempo )
+RETURN ( nTiempo )
 
 //---------------------------------------------------------------------------//
 
-Function SetTituloEmpresa()
+FUNCTION SetTituloEmpresa()
 
    if oWnd() != nil
       oWnd():cTitle( __GSTROTOR__ + Space( 1 ) + __GSTVERSION__ + Space( 1 ) + cTypeVersion() + " : " + uFieldEmpresa( "CodEmp", "" ) + " - " + Rtrim( uFieldEmpresa( "cNombre", "" ) ) )
    end if
 
-Return ( nil )
+RETURN ( nil )
 
 //--------------------------------------------------------------------------//
 
@@ -6977,10 +6872,10 @@ FUNCTION BrwBncEmp( oGet, oGetPaisIBAN, oGetControlIBAN, oGetEntidad, oGetSucurs
 
    if !lExistTable( cPatEmp() + "EmpBnc.Dbf" )
       MsgStop( 'No existe el fichero de bancos' )
-      Return .f.
+      RETURN .f.
    end if
 
-   if Empty( dbfBancos )
+   if empty( dbfBancos )
       USE ( cPatEmp() + "EmpBnc.Dbf" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "EMPBNC", @dbfBancos ) )
       SET ADSINDEX TO ( cPatEmp() + "EmpBnc.Cdx" ) ADDITIVE
       lClose         := .t.
@@ -7133,7 +7028,7 @@ RETURN ( oDlg:nResult == IDOK )
 
 //---------------------------------------------------------------------------//
 
-static function ChangeSerie( aGet, aTmp, oSerie, cSerie, lDown )
+STATIC FUNCTION ChangeSerie( aGet, aTmp, oSerie, cSerie, lDown )
 
    /*
    Guardamos el nombre de la serie que tenemos seleccionada--------------------
@@ -7157,11 +7052,11 @@ static function ChangeSerie( aGet, aTmp, oSerie, cSerie, lDown )
 
    CargaNombreSerie( aTmp, oSerie )
 
-return ( .t. )
+RETURN ( .t. )
 
 //---------------------------------------------------------------------------//
 
-static function GuardaNombreSerie( aTmp, cSerie )
+STATIC FUNCTION GuardaNombreSerie( aTmp, cSerie )
 
    do case
       case cSerie == "A"
@@ -7218,11 +7113,11 @@ static function GuardaNombreSerie( aTmp, cSerie )
          aTmp[ _CNOMSERZ ] := cNombreSerie
    end case
 
-return ( .t. )
+RETURN ( .t. )
 
 //---------------------------------------------------------------------------//
 
-static function CargaNombreSerie( aTmp, oSerie )
+STATIC FUNCTION CargaNombreSerie( aTmp, oSerie )
 
    do Case
       case oSerie:VarGet() == "A"
@@ -7279,11 +7174,11 @@ static function CargaNombreSerie( aTmp, oSerie )
          oNombreSerie:cText( aTmp[ _CNOMSERZ ] )
    end case
 
-return ( .t. )
+RETURN ( .t. )
 
 //---------------------------------------------------------------------------//
 
-Static Function ValidRutaContabilidad( aGet, aTmp )
+STATIC FUNCTION ValidRutaContabilidad( aGet, aTmp )
 
    // Contaplus----------------------------------------------------------------
 
@@ -7293,18 +7188,18 @@ Static Function ValidRutaContabilidad( aGet, aTmp )
 
    else 
 
-      if !Empty( aTmp[ _CRUTCNT ] ) .and. !IsDir( aTmp[ _CRUTCNT ] )
+      if !empty( aTmp[ _CRUTCNT ] ) .and. !IsDir( aTmp[ _CRUTCNT ] )
          msgStop( "Directorio " + alltrim( aTmp[ _CRUTCNT ] ) + " no existe." )
-         Return .f.
+         RETURN .f.
       end if 
 
    end if 
 
-Return ( .t. )
+RETURN ( .t. )
 
 //---------------------------------------------------------------------------//
 
-Function SelectDelegacion()
+FUNCTION SelectDelegacion()
 
    local oDlg
    local oBrw
@@ -7407,11 +7302,11 @@ Function SelectDelegacion()
       ChkTurno()
    end if
 
-   if !Empty( dbfDlg )
+   if !empty( dbfDlg )
       ( dbfDlg )->( dbCloseArea() )
    end if 
 
-   if !Empty( oBmp )
+   if !empty( oBmp )
       oBmp:End()
    end if
 
@@ -7419,14 +7314,14 @@ RETURN ( oDlg:nResult == IDOK )
 
 //---------------------------------------------------------------------------//
 
-function ActualizaEstructuras( dbfEmp, dbfDlg, dbfUser, oBrw, oWnd )
+FUNCTION ActualizaEstructuras( dbfEmp, dbfDlg, dbfUser, oBrw, oWnd )
 
    local cCodEmp  := ""
    local cNomEmp  := ""
 
    if lAIS()
       msgStop( "Esta opción no esta disponible para versiones ADS.", "Actualizar empresas." )
-      Return nil
+      RETURN nil
    end if 
 
    // Paramos los servicios----------------------------------------------------
@@ -7444,7 +7339,7 @@ function ActualizaEstructuras( dbfEmp, dbfDlg, dbfUser, oBrw, oWnd )
 
    if !( dbfEmp )->lGrupo
       
-      setEmpresa( cCodEmp, dbfEmp, dbfDlg, dbfUser )
+      setEmpresa( cCodEmp )
 
       checkEmpresaTablesExistences()      
       
@@ -7468,13 +7363,13 @@ RETURN nil
 
 //---------------------------------------------------------------------------//
 
-Function aSerializedEmpresas()
+FUNCTION aSerializedEmpresas()
 
-Return ( aFullEmpresas( .t., .t. ) )
+RETURN ( aFullEmpresas( .t., .t. ) )
 
 //---------------------------------------------------------------------------//
 
-Function aFullEmpresas( lExcludeGroup, lSerialize )
+FUNCTION aFullEmpresas( lExcludeGroup, lSerialize )
 
    local dbfEmp
    local aFullEmpresas     := {}
@@ -7501,20 +7396,20 @@ Function aFullEmpresas( lExcludeGroup, lSerialize )
 
    ( dbfEmp )->( dbCloseArea() )
 
-Return ( aFullEmpresas )
+RETURN ( aFullEmpresas )
 
 //---------------------------------------------------------------------------//
 
-Static Function TestConexionDatabase()
+STATIC FUNCTION TestConexionDatabase()
 
    local lConected   := .f.
 
    if !( TComercio:isValidNameWebToExport() )
-      Return .f.
+      RETURN .f.
    end if 
 
    if !( TComercio:TComercioConfig:setCurrentWebName( TComercio:getWebToExport() ) )
-      Return .f.
+      RETURN .f.
    end if 
 
    msgRun( "Intentando conectar con base de datos", "Espere por favor...", {|| lConected  :=  TComercio:prestaShopConnect() } )
@@ -7530,20 +7425,20 @@ Static Function TestConexionDatabase()
                "Error al conectar con la base de datos" ) 
    end if     
 
-Return ( .t. )
+RETURN ( .t. )
 
 //---------------------------------------------------------------------------//
 
-Static Function TestConexionFTP()
+STATIC FUNCTION TestConexionFTP()
 
    local lConected   := .f.
 
    if !( TComercio:isValidNameWebToExport() )
-      Return .f.
+      RETURN .f.
    end if 
 
    if !( TComercio:TComercioConfig:setCurrentWebName( TComercio:getWebToExport() ) )
-      Return .f.
+      RETURN .f.
    end if 
 
    msgRun( "Intentando conectar con servidor FTP", "Espere por favor...", {|| TComercio:buildFTP(), lConected := TComercio:oFtp:CreateConexion() } )
@@ -7555,7 +7450,7 @@ Static Function TestConexionFTP()
       msgStop( "Error al conectar con servidor FTP" )
    end if 
 
-Return ( .t. )
+RETURN ( .t. )
 
 //---------------------------------------------------------------------------//
 
