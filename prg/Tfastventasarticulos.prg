@@ -3991,12 +3991,9 @@ METHOD sqlPedidoClientes() CLASS TFastVentasArticulos
 
    cStm           += "ORDER BY lineasDocumento." + ::getNameFieldLine( "Articulo" )    
 
-   logWrite( cStm )
-
    TDataCenter():ExecuteSqlStatement( cStm, "lineasDocumento" ) 
 
    ( "lineasDocumento" )->( browse() )
-
 
 RETURN ( Self )
 

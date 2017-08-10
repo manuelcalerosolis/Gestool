@@ -1597,10 +1597,6 @@ STATIC FUNCTION EditConfig( aTmp, aGet, dbfEmp, oBrw, nSelFolder, bValid, nMode 
          ID       129 ;
          OF       fldTPV
 
-      REDEFINE CHECKBOX aGet[ _LFACTCT ] VAR aTmp[ _LFACTCT ] ;
-         ID       130 ;
-         OF       fldTPV
-
       REDEFINE CHECKBOX aGet[ _LSHOWLIN ] VAR aTmp[ _LSHOWLIN ] ;
          ID       131 ;
          OF       fldTPV
@@ -1616,7 +1612,7 @@ STATIC FUNCTION EditConfig( aTmp, aGet, dbfEmp, oBrw, nSelFolder, bValid, nMode 
       REDEFINE COMBOBOX aGet[ _NTIPIMPTPV ] VAR aTmp[ _NTIPIMPTPV ] ;
          ITEMS    aTipImpTpv ;
          ID       210;
-         OF       fldTPV  
+         OF       fldTPV
 
       REDEFINE GET cMailNotificaciones ;
          ID       230 ;

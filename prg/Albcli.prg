@@ -243,6 +243,7 @@ Definici¢n de la base de datos de lineas de detalle
 #define _NNUMKIT                 111
 #define _ID_TIPO_V               112
 #define __NREGIVA                113
+#define _NPRCULTCOM              114
 
 /*
 Definici¢n de Array para impuestos
@@ -2796,6 +2797,17 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, hHash, bValid, nMode )
          :lHide               := .t.
          :nFooterType         := AGGR_SUM
          :bLClickHeader       := {| nMRow, nMCol, nFlags, oCol | if( !empty( oCol ), oCol:SetOrder(), ) }         
+      end with
+
+      with object ( oBrwLin:AddCol() )
+         :cHeader             := "Último precio"
+         :bEditValue          := {|| ( dbfTmpLin )->nPrcUltCom }
+         :cEditPicture        := cPouDiv
+         :nWidth              := 60
+         :nDataStrAlign       := 1
+         :nHeadStrAlign       := 1
+         :lHide               := .t.
+         :nFooterType         := AGGR_SUM
       end with
 
       with object ( oBrwLin:AddCol() )
@@ -12929,6 +12941,7 @@ Static Function AppendDatosAtipicas( aTmpAlb )
 
          ( dbfTmpLin )->dFecUltCom     := dFechaUltimaVenta( aTmpAlb[ _CCODCLI ], ( D():Atipicas( nView ) )->cCodArt, D():Get( "AlbCliL", nView ), D():Get( "FacCliL", nView ) )
          ( dbfTmpLin )->nUniUltCom     := nUnidadesUltimaVenta( aTmpAlb[ _CCODCLI ], ( D():Atipicas( nView ) )->cCodArt, D():Get( "AlbCliL", nView ), D():Get( "FacCliL", nView ) )
+         ( dbfTmpLin )->nPrcUltCom     := nPrecioUltimaVenta( aTmpAlb[ _CCODCLI ], ( D():Atipicas( nView ) )->cCodArt, D():Get( "AlbCliL", nView ), D():Get( "FacCliL", nView ) )
          ( dbfTmpLin )->nPreUnit       := nRetPreArt( ( dbfTmpLin )->nTarLin, aTmpAlb[ _CDIVALB ], aTmpAlb[ _LIVAINC ], D():Articulos( nView ), D():Get( "Divisas", nView ), dbfKit, D():Get( "TIva", nView ), , , oNewImp )
 
          /*
@@ -16963,8 +16976,8 @@ Function aColAlbCli()
    aAdd( aColAlbCli, { "cNumSat",   "C", 12, 0, "Número del SAT" ,                                 "NumeroSat",                     "", "( cDbfCol )", nil } )
    aAdd( aColAlbCli, { "lFromAtp",  "L",  1, 0, "",                                                "",                              "", "( cDbfCol )", nil } )
    aAdd( aColAlbCli, { "cCodCli",   "C", 12, 0, "Código de cliente",                               "Cliente",                       "", "( cDbfCol )", nil } )
-   aAdd( aColAlbCli, { "dFecUltCom","D",  8, 0, "Fecha última compra",                             "FechaUltimaCompra",             "", "( cDbfCol )", nil } )
-   aAdd( aColAlbCli, { "nUniUltCom","N", 16, 6, "Unidades última compra",                          "UnidadesUltimaCompra",          "", "( cDbfCol )", nil } )
+   aAdd( aColAlbCli, { "dFecUltCom","D",  8, 0, "Fecha última compra",                             "FechaUltimaVenta",             "", "( cDbfCol )", nil } )
+   aAdd( aColAlbCli, { "nUniUltCom","N", 16, 6, "Unidades última compra",                          "UnidadesUltimaVenta",          "", "( cDbfCol )", nil } )
    aAdd( aColAlbCli, { "nBultos",   "N", 16, 6, "Numero de bultos",                                "",                              "", "( cDbfCol )", nil } )
    aAdd( aColAlbCli, { "cFormato",  "C",100, 0, "Formato de venta",                                "",                              "", "( cDbfCol )", nil } )
    aAdd( aColAlbCli, { "tFecAlb" ,  "C",  6, 0, "Hora del albarán",                                "Hora",                          "", "( cDbfCol )", {|| GetSysTime() } } )
@@ -16980,6 +16993,7 @@ Function aColAlbCli()
    aAdd( aColAlbCli, { "nNumKit",   "N",  4, 0, "Número de línea de escandallo",                   "",                              "", "( cDbfCol )", nil } )
    aAdd( aColAlbCli, { "id_tipo_v", "N", 16, 0, "Identificador tipo de venta",                     "IdentificadorTipoVenta",        "", "( cDbfCol )", nil } )
    aAdd( aColAlbCli, { "nRegIva",   "N",  1, 0, "Régimen de " + cImp(),                            "TipoImpuesto",                  "", "( cDbfCol )", nil } ) 
+   aAdd( aColAlbCli, { "nPrcUltCom","N", 16, 6, "Precio última compra",                            "PrecioUltimaVenta",           "", "( cDbfCol )", nil } ) 
 
 Return ( aColAlbCli )
 

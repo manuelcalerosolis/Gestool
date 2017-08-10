@@ -236,10 +236,6 @@ METHOD Say( cTxtLine1, cTxtLine2 )
          ::oPrn:Write( ::cReset )
       end if
 
-      logWrite( PadR( cTxtLine1, ::nChrLineas ) )
-      logWrite( PadL( cTxtLine2, ::nChrLineas ) )
-      logwrite( PadR( cTxtLine1, ::nChrLineas ) + PadL( cTxtLine2, ::nChrLineas ) )
-
       ::oPrn:Write( PadR( cTxtLine1, ::nChrLineas ) + PadL( cTxtLine2, ::nChrLineas ) )
 
       if ::oTimer != nil
@@ -276,12 +272,7 @@ METHOD SetBufferLine( cTxtLine, nLine )
 
       nLen                 := Len( AllTrim( cTxtLine[ 2 ] ) ) + 1
 
-      logWrite( nlen )
-      
       ::aTextLine[ nLine ] := PadR( cTxtLine[ 1 ], ::nChrLineas - nLen ) + PadL( AllTrim( cTxtLine[ 2 ] ), nLen )
-
-      logwrite( ::aTextLine[ nLine ] )
-      logwrite( len( ::aTextLine[ nLine ] ) )
 
    else
 

@@ -3828,6 +3828,7 @@ METHOD aStockArticulo( cCodArt, cCodAlm, oBrw, lLote, lNumeroSerie, dFecIni, dFe
    local nOrdAnt
    local oStocks
    local aAlmacenes
+   local nSeconds       := seconds()
 
    DEFAULT lLote        := !uFieldEmpresa( "lCalLot" )
    DEFAULT lNumeroSerie := !uFieldEmpresa( "lCalSer" )
@@ -3881,10 +3882,16 @@ METHOD aStockArticulo( cCodArt, cCodAlm, oBrw, lLote, lNumeroSerie, dFecIni, dFe
       ::SetCodigoAlmacen( cCodAlm )
       SysRefresh()
 
+      logwrite( "SetCodigoAlmacen" + str( seconds() - nSeconds ) )
+      nSeconds          := seconds()
+
       // Movimientos de almacén------------------------------------------------" )
 
       ::aStockMovimientosAlmacen( cCodArt, cCodAlm, lLote, lNumeroSerie )
       SysRefresh()
+
+      logwrite( "aStockMovimientosAlmacen" + str( seconds() - nSeconds ) )
+      nSeconds          := seconds()
 
       // Albaranes de proveedor------------------------------------------------------" )
 
@@ -3893,20 +3900,33 @@ METHOD aStockArticulo( cCodArt, cCodAlm, oBrw, lLote, lNumeroSerie, dFecIni, dFe
          SysRefresh()
       end if 
 
+      logwrite( "aStockAlbaranProveedor" + str( seconds() - nSeconds ) )
+      nSeconds          := seconds()
+
       // Facturas proveedor----------------------------------------------------" )
 
       ::aStockFacturaProveedor( cCodArt, cCodAlm, lLote, lNumeroSerie )
       SysRefresh()
+
+      logwrite( "aStockAlbaranProveedor" + str( seconds() - nSeconds ) )
+      nSeconds          := seconds()
 
       // Rectificativas de provedor--------------------------------------------" )
 
       ::aStockRectificativaProveedor( cCodArt, cCodAlm, lLote, lNumeroSerie )
       SysRefresh()
 
+      logwrite( "aStockRectificativaProveedor" + str( seconds() - nSeconds ) )
+      nSeconds          := seconds()
+
       // Pedidos de clientes-------------------------------------------------" )
 
       if ::lCalculateUnidadesPendientesRecibir
          ::aStockPedidoCliente( cCodArt, cCodAlm, lLote )
+
+         logwrite( "aStockPedidoCliente" + str( seconds() - nSeconds ) )
+         nSeconds          := seconds()
+
          SysRefresh()
       end if 
 
@@ -3915,36 +3935,58 @@ METHOD aStockArticulo( cCodArt, cCodAlm, oBrw, lLote, lNumeroSerie, dFecIni, dFe
       ::aStockAlbaranCliente( cCodArt, cCodAlm, lLote, lNumeroSerie )
       SysRefresh()
 
+      logwrite( "aStockAlbaranCliente" + str( seconds() - nSeconds ) )
+      nSeconds          := seconds()
+
       // Factura de clientes--------------------------------------------------" )
 
       ::aStockFacturaCliente( cCodArt, cCodAlm, lLote, lNumeroSerie )
       SysRefresh()
+
+      logwrite( "aStockFacturaCliente" + str( seconds() - nSeconds ) )
+      nSeconds          := seconds()
 
       // Rectificativas de clientes--------------------------------------------" )
 
       ::aStockRectificativaCliente( cCodArt, cCodAlm, lLote, lNumeroSerie )
       SysRefresh()
 
+      logwrite( "aStockRectificativaCliente" + str( seconds() - nSeconds ) )
+      nSeconds          := seconds()
+
       // Tickets de clientes---------------------------------------------------" )
 
       ::aStockTicketsCliente( cCodArt, cCodAlm, lLote, lNumeroSerie )
       SysRefresh()
+
+      logwrite( "aStockTicketsCliente" + str( seconds() - nSeconds ) )
+      nSeconds          := seconds()
 
       // Produccion------------------------------------------------------------" )
 
       ::aStockProduccion( cCodArt, cCodAlm, lLote, lNumeroSerie )
       SysRefresh()
 
+      logwrite( "aStockProduccion" + str( seconds() - nSeconds ) )
+      nSeconds          := seconds()
+
       // Materia prima---------------------------------------------------------" )
 
       ::aStockMateriaPrima( cCodArt, cCodAlm, lLote, lNumeroSerie )
       SysRefresh()
+
+      logwrite( "aStockMateriaPrima" + str( seconds() - nSeconds ) )
+      nSeconds          := seconds()
 
       // Stock pendiente de entregar-------------------------------------------" )
 
       if !( ::getNotPendiente() )
          ::aStockPendiente( cCodArt, cCodAlm, lLote, lNumeroSerie )
          SysRefresh()
+
+         logwrite( "aStockPendiente" + str( seconds() - nSeconds ) )
+         nSeconds          := seconds()
+
       end if 
 
    next 
@@ -3954,6 +3996,9 @@ METHOD aStockArticulo( cCodArt, cCodAlm, oBrw, lLote, lNumeroSerie, dFecIni, dFe
    for each cSerie in ::aSeries
       aScan( ::aStocks, {|o| if( o:cNumeroSerie == cSerie, o:nUnidades -= 1, ) } )
    next
+
+   logwrite( "for each aSeries " + str( seconds() - nSeconds ) )
+   nSeconds          := seconds()
 
    // Asignamos el array al browse------------------------------------------------" )
 

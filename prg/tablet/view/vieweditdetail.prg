@@ -35,6 +35,9 @@ CLASS ViewDetail FROM ViewBase
    DATA oGetNombreAlmacen
    DATA textNombreAlmacen
 
+   DATA oGetUltPrecio
+   DATA oGetUltFecha
+
    DATA oTotalLinea
   
    METHOD New()
@@ -59,6 +62,7 @@ CLASS ViewDetail FROM ViewBase
    METHOD defineTotal()
    METHOD defineAlmacen()
    METHOD defineStock()
+   METHOD defineUltimoPrecio()
 
    METHOD showLote()                         INLINE ( ::oGetLote:Show(), ::oSayLote:Show() )
    METHOD hideLote()                         INLINE ( ::oGetLote:Hide(), ::oSayLote:Hide() )
@@ -76,6 +80,7 @@ CLASS ViewDetail FROM ViewBase
    METHOD refreshGetDescuentoLineal()        INLINE ( ::oGetDescuentoLineal:Refresh() )
    METHOD refreshGetAlmacen()                INLINE ( ::oGetAlmacen:Refresh() )
    METHOD refreshGetStock()                  INLINE ( if( !Empty( ::oGetStock ), ::oGetStock:Refresh(), ) )
+   METHOD refreshUltPrecio()                 INLINE ( if( !Empty( ::oGetUltPrecio ), ::oGetUltPrecio:Refresh(), ), if( !Empty( ::oGetUltFecha ), ::oGetUltFecha:Refresh(), ) )
 
    METHOD RefreshDialog()
       METHOD startDialog()
@@ -125,6 +130,8 @@ METHOD Resource( nMode ) CLASS ViewDetail
    ::defineAlmacen()
 
    ::defineStock()
+
+   ::defineUltimoPrecio()
 
    ::defineAceptarCancelar()
 
@@ -534,6 +541,62 @@ Return ( self )
 
 //---------------------------------------------------------------------------//
 
+METHOD defineUltimoPrecio() CLASS ViewDetail
+
+   if GetPvProfString( "Tablet", "UltimoPrecioVenta", ".F.", cIniAplication() ) != ".T."
+      Return ( Self )
+   end if 
+
+   TGridSay():Build(                   {  "nRow"      => ::getRow(),;
+                                          "nCol"      => {|| GridWidth( 0.5, ::oDlg ) },;
+                                          "bText"     => {|| "Ult. fecha" },;
+                                          "oWnd"      => ::oDlg,;
+                                          "oFont"     => oGridFont(),;
+                                          "lPixels"   => .t.,;
+                                          "nClrText"  => Rgb( 0, 0, 0 ),;
+                                          "nClrBack"  => Rgb( 255, 255, 255 ),;
+                                          "nWidth"    => {|| GridWidth( 2, ::oDlg ) },;
+                                          "nHeight"   => 23,;
+                                          "lDesign"   => .f. } )
+               
+   ::oGetUltFecha := TGridGet():Build( {  "nRow"      => ::getRow(),;
+                                          "nCol"      => {|| GridWidth( 2.5, ::oDlg ) },;
+                                          "bSetGet"   => {|u| ::SetGetValue( u, "FechaUltimaVenta" ) },;
+                                          "oWnd"      => ::oDlg,;
+                                          "lPixels"   => .t.,;
+                                          "nWidth"    => {|| GridWidth( 3, ::oDlg ) },;
+                                          "lRight"    => .t.,;
+                                          "nHeight"   => 23,;
+                                          "bWhen"     => {|| .f. } } ) 
+
+   TGridSay():Build(                   {  "nRow"      => ::getRow(),;
+                                          "nCol"      => {|| GridWidth( 5.5, ::oDlg ) },;
+                                          "bText"     => {|| "Ult. precio" },;
+                                          "oWnd"      => ::oDlg,;
+                                          "oFont"     => oGridFont(),;
+                                          "lPixels"   => .t.,;
+                                          "nClrText"  => Rgb( 0, 0, 0 ),;
+                                          "nClrBack"  => Rgb( 255, 255, 255 ),;
+                                          "nWidth"    => {|| GridWidth( 2, ::oDlg ) },;
+                                          "nHeight"   => 23,;
+                                          "lDesign"   => .f. } )
+
+   ::oGetUltPrecio := TGridGet():Build( {  "nRow"      => ::getRow(),;
+                                          "nCol"      => {|| GridWidth( 7.5, ::oDlg ) },;
+                                          "bSetGet"   => {|u| ::SetGetValue( u, "PrecioUltimaVenta" ) },;
+                                          "oWnd"      => ::oDlg,;
+                                          "lPixels"   => .t.,;
+                                          "nWidth"    => {|| GridWidth( 4, ::oDlg ) },;
+                                          "lRight"    => .t.,;
+                                          "nHeight"   => 23,;
+                                          "bWhen"     => {|| .f. } } )
+
+   ::nextRow()
+
+Return ( self )
+
+//---------------------------------------------------------------------------//
+
 METHOD RefreshDialog() CLASS ViewDetail
 
    ::refreshGetArticulo()
@@ -546,6 +609,7 @@ METHOD RefreshDialog() CLASS ViewDetail
    ::refreshGetDescuentoLineal()
    ::refreshGetAlmacen()
    ::refreshGetStock()
+   ::refreshUltPrecio()
 
 Return ( Self )
 
