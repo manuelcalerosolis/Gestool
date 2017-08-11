@@ -8,7 +8,7 @@ CLASS MovimientosAlmacenController FROM SQLHeaderController
 
    METHOD   New()
 
-   METHOD   buildSQLModel( this )         INLINE ( MovimientosAlmacenModel():New( this ) )
+   METHOD   buildSQLModel( this )         INLINE ( SQLMovimientosAlmacenModel():New( this ) )
    
    METHOD   buildSQLView( this )				INLINE ( MovimientosAlmacenView():New( this ) )
 

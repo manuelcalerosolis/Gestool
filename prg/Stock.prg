@@ -5271,6 +5271,7 @@ METHOD GetConsolidacion( cCodArt, cCodAlm, cCodPrp1, cCodPrp2, cValPrp1, cValPrp
                      
    local nRec           
    local nOrd           
+   local dConsolidacion
 
    DEFAULT cCodAlm      := Space( 16 )  
    DEFAULT cCodPrp1     := Space( 20 )
@@ -5300,19 +5301,21 @@ METHOD GetConsolidacion( cCodArt, cCodAlm, cCodPrp1, cCodPrp2, cValPrp1, cValPrp
 
       while ( ::cHisMovT )->cRefMov == cCodArt .and. ( ::cHisMovT )->cAliMov == cCodAlm .and. ( ::cHisMovT )->cValPr1 == cValPrp1 .and. ( ::cHisMovT )->cValPr2 == cValPrp2 .and. ( ::cHisMovT )->cLote == cLote .and. !( ::cHisMovT )->( eof() )
 
+         dConsolidacion          := ::getFechaHoraConsolidacion( ( ::cHisMovT )->dFecMov, ( ::cHisMovT )->cTimMov )
+
          if empty( ::dConsolidacion )
 
-            ::dConsolidacion     := ::getFechaHoraConsolidacion()
+            ::dConsolidacion     := dConsolidacion
 
          else
 
-            if !empty( ::getFechaHoraConsolidacion() ) .and. ( ::getFechaHoraConsolidacion() > ::dConsolidacion )
-               ::dConsolidacion  := ::getFechaHoraConsolidacion()
+            if !empty( dConsolidacion ) .and. ( dConsolidacion > ::dConsolidacion )
+               ::dConsolidacion  := dConsolidacion
             end if
 
          end if
 
-         ( ::cHisMovT)->( dbSkip() )
+         ( ::cHisMovT )->( dbSkip() )
 
       end while
 
@@ -5329,7 +5332,9 @@ Return ( ::dConsolidacion )
 
 METHOD lCheckConsolidacion( cCodArt, cCodAlm, cCodPrp1, cCodPrp2, cValPrp1, cValPrp2, cLote, dFecha, tHora )
 
-   local dConsolidacion := ::GetConsolidacion( cCodArt, cCodAlm, cCodPrp1, cCodPrp2, cValPrp1, cValPrp2, cLote )
+   // local dConsolidacion := ::GetConsolidacion( cCodArt, cCodAlm, cCodPrp1, cCodPrp2, cValPrp1, cValPrp2, cLote )
+
+   local dConsolidacion := MovimientosAlmacenesLineasModel():getFechaHoraConsolidacion( cCodArt, cCodAlm, cValPrp1, cValPrp2, cLote )
 
 Return ( empty( dConsolidacion ) .or. dtos( dFecha ) + tHora >= dConsolidacion )
 
@@ -6650,17 +6655,17 @@ Return .t.
 
 //---------------------------------------------------------------------------//
 
-METHOD getFechaHoraConsolidacion() CLASS TStock
+METHOD getFechaHoraConsolidacion( dFechaMovimiento, cHoraMovimiento ) CLASS TStock
 
-   if !empty( ::dFechaFin ) .and. ( ::cHisMovT )->dFecMov > ::dFechaFin
+   if !empty( ::dFechaFin ) .and. dFechaMovimiento > ::dFechaFin
       Return ( nil )
    end if 
 
-   if !empty( ::dFechaFin ) .and. !empty( ::tHoraFin ) .and. dtos( ( ::cHisMovT )->dFecMov ) + ( ::cHisMovT )->cTimMov > dtos( ::dFechaFin ) + ::tHoraFin
+   if !empty( ::dFechaFin ) .and. !empty( ::tHoraFin ) .and. dtos( dFechaMovimiento ) + cHoraMovimiento > dtos( ::dFechaFin ) + ::tHoraFin
       Return ( nil )
    end if 
 
-Return ( dtos( ( ::cHisMovT )->dFecMov ) + ( ::cHisMovT )->cTimMov )
+Return ( dtos( dFechaMovimiento ) + cHoraMovimiento )
 
 //---------------------------------------------------------------------------//
 

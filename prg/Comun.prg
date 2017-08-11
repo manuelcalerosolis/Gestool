@@ -281,7 +281,8 @@ RETURN ( .t. )
 
 FUNCTION Test()
 
-   
+   ( FacturasClientesLineasModel():getLineasFacturasAgrupadas( '9', '2', '', '', '1234' ) )->( browse() )
+
    /*with object MovimientosAlmacenController()
       :New()
       :activateShell()
