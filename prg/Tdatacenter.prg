@@ -136,7 +136,7 @@ CLASS TDataCenter
 
    METHOD CreateTemporalTable( oTable )
 
-   METHOD CloseArea( cArea )              INLINE ( if( Select( cArea ) > 0, ( cArea )->( dbCloseArea() ), ), dbSelectArea( 0 ), .t. )
+   METHOD CloseArea( cArea )              INLINE ( if( select( cArea ) > 0, ( cArea )->( dbclosearea() ), ), dbselectarea( 0 ), .t. )
 
    METHOD CreateAllLocksTablesUsers()
    METHOD DeleteAllLocksTablesUsers()
@@ -584,7 +584,7 @@ RETURN ( Self )
 
 METHOD lAdministratorTask()
 
-   local dbfEmp
+   dbcloseall()
 
    getSQLDatabase():checkModelsExistence()
 
@@ -4519,8 +4519,12 @@ METHOD ExecuteSqlStatement( cSql, cSqlStatement, hStatement )
    local oBlock
    local cErrorAds
 
-   DEFAULT cSqlStatement   := "ADS" + alltrim( strtran( str( seconds() ), ".", "" ) )
+   DEFAULT cSqlStatement   := "ADSArea" // + alltrim( strtran( str( seconds() ), ".", "" ) )
    DEFAULT hStatement      := ADS_CDX
+
+   if hStatement == ADS_ADT
+      msgalert( cSql, "ADS_ADT" )
+   end if 
 
    CursorWait()
 
@@ -4528,6 +4532,8 @@ METHOD ExecuteSqlStatement( cSql, cSqlStatement, hStatement )
    BEGIN SEQUENCE
 
       ::CloseArea( cSqlStatement )
+
+      ADSCacheOpenCursors( 0 )
 
       dbSelectArea( 0 )
 
@@ -4929,7 +4935,7 @@ Return ( lAddTable )
 
 //--------------------------------------------------------------------------//
 
-Function AdsisTableInDataDictionary( cTable )
+Function adsIsTableInDataDictionary( cTable )
 
    local aAdsTables
 
@@ -4941,7 +4947,7 @@ Return ( aScan( aAdsTables, {|c| Left( Upper( c ), len( c ) - 1 ) == Upper( cTab
 
 //--------------------------------------------------------------------------//
 
-Function ADSSelectSQLScript( cScript )
+Function adsSelectSQLScript( cScript )
 
    local i
    local aData             := {}
@@ -5004,6 +5010,7 @@ Function ADSExecuteSQLScript( cScript )
    if !Empty( cScript )
 
       AdsCacheOpenCursors( 0 )
+
       dbSelectArea( 0 )
 
       if Select( cSqlAlias ) > 0

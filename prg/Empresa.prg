@@ -3678,26 +3678,30 @@ STATIC FUNCTION StartPathEmp( cPath, cPathOld, cCodEmpNew, cNomEmpNew, cCodEmpOl
       end if
 
       if cPathGrp != nil
-         TPVMenuArticulo():Create( cPath ):CheckFiles( cPathGrp + "TpvMnuArt.Dbf" ) ; sysrefresh()
+         TPVMenuArticulo():Create( cPath ):CheckFiles( cPathGrp + "TpvMnuArt.Dbf" )
       else
-         TPVMenuArticulo():Create( cPath ):CheckFiles()                             ; sysrefresh()
+         TPVMenuArticulo():Create( cPath ):CheckFiles() 
       end if
+      sysrefresh()
 
       if cPathGrp != nil
-         TPVMenuOrdenes():Create( cPath ):CheckFiles( cPathGrp + "TpvMnuOrd.Dbf" )  ; sysrefresh()
+         TPVMenuOrdenes():Create( cPath ):CheckFiles( cPathGrp + "TpvMnuOrd.Dbf" )
       else
-         TPVMenuOrdenes():Create( cPath ):CheckFiles()                              ; sysrefresh()
+         TPVMenuOrdenes():Create( cPath ):CheckFiles() 
       end if
+      sysrefresh()
 
       if oMsg != nil
          oMsg:SetText( "Creando forma de pago" )
       end if
-      mkFPago( cPath, aImportacion:lFPago, cPathGrp )                ; sysrefresh()
+      mkFPago( cPath, aImportacion:lFPago, cPathGrp ) 
+      sysrefresh()
 
       if oMsg != nil
          oMsg:SetText( "Creando entrada y salidas" )
       end if
-      mkEntSal( cPath )                                               ; sysrefresh()
+      mkEntSal( cPath )
+      sysrefresh()
 
       if oMsg != nil
          oMsg:SetText( "Creando bancos" )
@@ -4090,6 +4094,10 @@ STATIC FUNCTION StartPathEmp( cPath, cPathOld, cCodEmpNew, cNomEmpNew, cCodEmpOl
       end if
 
       TDataCenter():Reindex()
+
+      if oMsg != nil
+         oMsg:SetText( "Proceso finalizado" )
+      end if
 
       msgStop( "Proceso finalizado")
 

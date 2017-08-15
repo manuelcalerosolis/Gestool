@@ -432,21 +432,17 @@ Camino completo dentro de un disco
 
 FUNCTION FullCurDir()
 
-   if Empty( cFullCurDir )
+   if empty( cFullCurDir )
 
-#ifdef __XHARBOUR__
-      cFullCurDir    := curdrive()
-#else
       cFullCurDir    := hb_curdrive()
-#endif   
  
-      if IsAlpha( cFullCurDir ) .and. ( cFullCurDir != "A" )
+      if isalpha( cFullCurDir ) .and. ( cFullCurDir != "A" )
          cFullCurDir += ":\"
       else 
          cFullCurDir := "\"
       end if
 
-      cFullCurDir    += CurDir() + If( !Empty( CurDir() ), "\", "" )
+      cFullCurDir    += curdir() + if( !empty( curdir() ), "\", "" )
 
    end if
 

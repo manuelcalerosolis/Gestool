@@ -52,9 +52,7 @@ static cAdsIp           := ""
 static cAdsPort         := ""
 static cAdsData         := ""
 static nAdsServer       := 7
-static cAdsLocal        := ""
 static cAdsFile         := "Gestool.Add"
-static cAdsType         := ""
 
 static appParamsMain    := ""
 static appParamsSecond  := ""
@@ -281,9 +279,27 @@ RETURN ( .t. )
 
 FUNCTION Test()
 
-   ( FacturasClientesLineasModel():getLineasFacturasAgrupadas( '9', '2', '', '', '1234' ) )->( browse() )
+   /*
+   local hFec
+   local cStm  := FacturasClientesLineasModel():getLineasFacturasAgrupadas( '9', '2', '', '', '1234' )
 
-   /*with object MovimientosAlmacenController()
+   msgalert( cStm, "cStm" )
+
+   while ( cStm )->( !eof() )
+
+      hFec     := MovimientosAlmacenesLineasModel():getFechaHoraConsolidacion( (cStm)->cRef, (cStm)->cAlmLin, (cStm)->cValPr1, (cStm)->cValPr2, (cStm)->cLote )
+
+      FacturasClientesLineasModel():getLineasFacturasAgrupadasUltimaConsolidacion((cStm)->cRef, (cStm)->cAlmLin, (cStm)->cValPr1, (cStm)->cValPr2, (cStm)->cLote, hFec )
+
+      ( cStm )->( dbskip() )
+
+   end while
+
+   ( cStm )->( dbclosearea() )
+
+
+
+   with object MovimientosAlmacenController()
       :New()
       :activateShell()
    end with
@@ -3426,16 +3442,6 @@ RETURN ( nAdsServer )
 
 //----------------------------------------------------------------------------//
 
-FUNCTION cAdsLocal( cLocal )
-
-   if IsChar( cLocal )
-      cAdsLocal    := cLocal
-   end if
-
-RETURN ( cAdsLocal )
-
-//----------------------------------------------------------------------------//
-
 FUNCTION cAdsUNC()
 
 RETURN ( cAdsIp() + cPath( cAdsData() ) )
@@ -3449,16 +3455,6 @@ FUNCTION cAdsFile( cFile )
    end if 
 
 RETURN ( cAdsFile )
-
-//----------------------------------------------------------------------------//
-
-FUNCTION cAdsType( cType )
-
-   if ( isChar( cType ) .and. !empty( cType ) )
-      cAdsType    := cType
-   end if 
-
-RETURN ( cAdsType )
 
 //----------------------------------------------------------------------------//
 
@@ -3595,18 +3591,6 @@ FUNCTION cPatDat( lFull )
 
    if lAIS() 
       RETURN ( if( lFull, cAdsUNC() + cPathDatos() + "\", cPathDatos() ) )
-   end if
-
-RETURN ( fullCurDir() + cPathDatos() + "\" )
-
-//----------------------------------------------------------------------------//
-
-FUNCTION cPathDatosLocal( lFull )
-
-   DEFAULT lFull  := .f.
-
-   if lAIS()
-      RETURN ( if( lFull, cAdsLocal() + cPathDatos() + "\", cPathDatos() + "\" ) )
    end if
 
 RETURN ( fullCurDir() + cPathDatos() + "\" )
@@ -4584,13 +4568,11 @@ FUNCTION appLoadAds()
       fRename( fullCurDir() + "Gestion.Ini", cIniAplication() )
    end if
 
-   cAdsType(   GetPvProfString(  "ADS",      "Type",     "",   cIniAplication() ) )
-   cAdsIp(     GetPvProfString(  "ADS",      "Ip",       "",   cIniAplication() ) )
+   cAdsIp(     GetPvProfString(  "ADS",      "Ip",       hb_curdrive() + ":\", cIniAplication() ) )
+   cAdsData(   GetPvProfString(  "ADS",      "Data",     curdir() + if( !empty( curdir() ), "\", "" ), cIniAplication() ) )
    cAdsPort(   GetPvProfString(  "ADS",      "Port",     "",   cIniAplication() ) )
-   cAdsData(   GetPvProfString(  "ADS",      "Data",     "",   cIniAplication() ) )
    nAdsServer( GetPvProfInt(     "ADS",      "Server",   7,    cIniAplication() ) )
-   cAdsFile(   GetPvProfString(  "ADS",      "File",     "",   cIniAplication() ) )
-   cAdsLocal(  GetPvProfString(  "ADS",      "Local",    "",   cIniAplication() ) )
+   cAdsFile(   GetPvProfString(  "ADS",      "File",     "Gestool.add",   cIniAplication() ) )
 
 RETURN nil 
 

@@ -357,27 +357,27 @@ METHOD setStockArticulo()
    Stock por lote------------------------------------------------------------//
    */
 
-   ::oViewEditDetail:nGetStock   := ::oSender:oStock:nTotStockAct(   ::hGetDetail( "Articulo" ),;
-                                                                     ::hGetDetail( "Almacen" ),;
-                                                                     ::hGetDetail( "ValorPropiedad1" ),;
-                                                                     ::hGetDetail( "ValorPropiedad2" ),;
-                                                                     ::hGetDetail( "Lote" ),;
-                                                                     ::hGetDetail( "LineaEscandallo" ),;
-                                                                     nil ,;
-                                                                     ::hGetDetail( "TipoStock" ) )
+   ::oViewEditDetail:nGetStock   := ::oSender:oStock:nCacheStockActual( ::hGetDetail( "Articulo" ),;
+                                                                        ::hGetDetail( "Almacen" ),;
+                                                                        ::hGetDetail( "ValorPropiedad1" ),;
+                                                                        ::hGetDetail( "ValorPropiedad2" ),;
+                                                                        ::hGetDetail( "Lote" ),;
+                                                                        ::hGetDetail( "LineaEscandallo" ),;
+                                                                        nil ,;
+                                                                        ::hGetDetail( "TipoStock" ) )
 
    if !empty( ::oViewEditDetail:oGetStock )
       ::oViewEditDetail:oGetStock:Refresh()
    end if
 
-   ::oViewEditDetail:nGetStockAlmacen   := ::oSender:oStock:nTotStockAct(  ::hGetDetail( "Articulo" ),;
-                                                                           ::hGetDetail( "Almacen" ),;
-                                                                           Space( 20 ),;
-                                                                           Space( 20 ),;
-                                                                           Space( 14 ),;
-                                                                           .f.,;
-                                                                           nil ,;
-                                                                           ::hGetDetail( "TipoStock" ) )
+   ::oViewEditDetail:nGetStockAlmacen   := ::oSender:oStock:nCacheStockActual(  ::hGetDetail( "Articulo" ),;
+                                                                                 ::hGetDetail( "Almacen" ),;
+                                                                                 space( 20 ),;
+                                                                                 space( 20 ),;
+                                                                                 space( 14 ),;
+                                                                                 .f.,;
+                                                                                 nil ,;
+                                                                                 ::hGetDetail( "TipoStock" ) )
 
    if !empty( ::oViewEditDetail:oGetStockAlmacen )
       ::oViewEditDetail:oGetStockAlmacen:Refresh()

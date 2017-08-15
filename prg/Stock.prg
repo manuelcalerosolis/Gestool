@@ -6,12 +6,14 @@
 
 CLASS TStock
 
-   CLASSDATA aStocks                
+   CLASSDATA aStocks
    CLASSDATA cCodigoAlmacen
    CLASSDATA cCodigoArticulo
 
-   CLASSDATA cCodigoConsolidacion
    CLASSDATA dConsolidacion
+
+   CLASSDATA aCacheStockActual      INIT {}                
+   CLASSDATA aConsolidacion         INIT {}
 
    DATA cPath
    DATA cDriver
@@ -135,7 +137,7 @@ CLASS TStock
    METHOD Create( cPath, cDriver )
    METHOD End()                              INLINE ( if( !empty( ::oTree ), ::oTree:End(), ), ::CloseFiles() )
 
-   METHOD Reset()                            INLINE ( ::aStocks := {} )
+   METHOD Reset()                            INLINE ( ::aStocks := {}, ::aConsolidacion := {} )
 
    METHOD setNotPendiente( lNotPendiente)    INLINE ( ::lNotPendiente := lNotPendiente )
    METHOD getNotPendiente()                  INLINE ( ::lNotPendiente )
@@ -177,7 +179,13 @@ CLASS TStock
 
    METHOD nStockActual( cCodArt, cCodAlm, cValPr1, cValPr2 )
 
-   METHOD nTotStockAct( cCodArt, cCodAlm, cValPr1, cValPr2, cLote, lKitArt, nKitStk )
+   METHOD nTotStockAct()
+      METHOD nCacheStockActual() 
+      METHOD addCacheStockActual()
+      METHOD scanCacheStockActual()
+      METHOD getCacheStockActual()
+      METHOD deleteCacheStockActual()
+      METHOD recalculateCacheStockActual()
 
    METHOD nPutStockActual( cCodArt, cCodAlm, cValPr1, cValPr2, cLote, lKitAct, nKitStk, oSay )
 
@@ -274,6 +282,8 @@ CLASS TStock
 
    METHOD GetConsolidacion( cCodArt, cCodAlm, cCodPrp1, cCodPrp2, cValPrp1, cValPrp2, cLote )
       METHOD lCheckConsolidacion()
+      METHOD addConsolidacion( cCodArt, cCodAlm, cValPrp1, cValPrp2, cLote, dConsolidacion )
+      METHOD scanConsolidacion( cCodArt, cCodAlm, cValPrp1, cValPrp2, cLote )
 
    METHOD lValoracionCostoMedio( nTipMov )
 
@@ -334,7 +344,7 @@ METHOD Create( cPath, cDriver ) CLASS TStock
 
    ::Reset()
 
-Return Self
+RETURN Self
 
 //---------------------------------------------------------------------------//
 
@@ -344,7 +354,7 @@ METHOD New( cPath, cDriver ) CLASS TStock
 
    ::lOpenFiles()
 
-Return Self
+RETURN Self
 
 //---------------------------------------------------------------------------//
 
@@ -621,7 +631,7 @@ METHOD CloseFiles() CLASS TStock
    if ( !empty( ::cDbfIva ),  ( ::cDbfIva )->( dbCloseArea() ), )
    if ( !empty( ::cDbfFPago ),( ::cDbfFPago )->( dbCloseArea() ), )
 
-Return ( Self )
+RETURN ( Self )
 
 //---------------------------------------------------------------------------//
 //
@@ -642,7 +652,7 @@ METHOD PedPrv( cNumPed, cCodAlm, lDelete, lIncremento ) CLASS TStock
 
    if ::cPedPrvL == nil .or. cNumPed == nil
       msgStop( "Imposible realizar la actualización de stocks.", "Atención" )
-      return self
+      RETURN self
    end if
 
    if ( ::cPedPrvL )->( dbSeek( cNumPed ) )
@@ -679,13 +689,13 @@ METHOD PedPrv( cNumPed, cCodAlm, lDelete, lIncremento ) CLASS TStock
 
    end if
 
-return self
+RETURN self
 
 //---------------------------------------------------------------------------//
 
 METHOD AlbPrv( cNumAlb, cCodAlm, cNumPed, lDelete, lIncremento, lIgnEstado, lActPendientes ) CLASS TStock
 
-Return Self
+RETURN Self
 
 //---------------------------------------------------------------------------//
 
@@ -699,7 +709,7 @@ METHOD SetPedPrv( cNumPed ) CLASS TStock
    local nTotLineaAct   := 0
 
    if empty( ::cPedPrvT ) .or. empty( ::cPedPrvL )
-      return .f.
+      RETURN .f.
    end if
 
    nRegAnt              := ( ::cPedPrvT )->( RecNo() )
@@ -765,7 +775,7 @@ METHOD SetPedPrv( cNumPed ) CLASS TStock
    ( ::cPedPrvT )->( ordsetfocus( nOrdAnt ) )
    ( ::cPedPrvT )->( DbGoTo( nRegAnt ) )
 
-Return ( Self )
+RETURN ( Self )
 
 //---------------------------------------------------------------------------//
 
@@ -783,7 +793,7 @@ METHOD FacPrv( cNumFac, cCodAlm, lDelete, lIncremento ) CLASS TStock
 
    if ::cFacPrvL == nil .or. cNumFac == nil
       msgStop( "Imposible realizar la actualización de stocks.", "Atención" )
-      return self
+      RETURN self
    end if
 
    if ( ::cFacPrvL )->( dbSeek( cNumFac ) )
@@ -827,13 +837,13 @@ METHOD FacPrv( cNumFac, cCodAlm, lDelete, lIncremento ) CLASS TStock
 
    //::ChkFacPrv( cNumFac )
 
-Return ( Self )
+RETURN ( Self )
 
 //---------------------------------------------------------------------------//
 
 METHOD ChkFacPrv( cNumFac ) CLASS TStock
 
-return self
+RETURN self
 
 //---------------------------------------------------------------------------//
 
@@ -851,7 +861,7 @@ METHOD RctPrv( cNumFac, cCodAlm, lDelete, lIncremento ) CLASS TStock
 
    if ::cRctPrvL == nil .or. cNumFac == nil
       msgStop( "Imposible realizar la actualización de stocks.", "Atención" )
-      return self
+      RETURN self
    end if
 
    if ( ::cRctPrvL )->( dbSeek( cNumFac ) )
@@ -895,13 +905,13 @@ METHOD RctPrv( cNumFac, cCodAlm, lDelete, lIncremento ) CLASS TStock
 
    //::ChkRctPrv( cNumFac )
 
-Return ( Self )
+RETURN ( Self )
 
 //---------------------------------------------------------------------------//
 
 METHOD ChkRctPrv( cNumFac ) CLASS TStock
 
-return self
+RETURN self
 
 //---------------------------------------------------------------------------//
 
@@ -920,7 +930,7 @@ METHOD PedCli( cNumPed, cCodAlm, lDelete, lIncremento ) CLASS TStock
 
    if empty( cNumPed ) .or. empty( ::cPedCliL ) .or. empty( ::cAlbCliT ) .or. empty( ::cAlbCliL ) .or. empty( ::cAlbPrvL )
       msgStop( "Imposible realizar la actualización de stocks.", "Atención" )
-      return self
+      RETURN self
    end if
 
    if ( ::cPedCliL )->( dbSeek( cNumPed ) )
@@ -981,7 +991,7 @@ METHOD PedCli( cNumPed, cCodAlm, lDelete, lIncremento ) CLASS TStock
 
    end if
 
-return self
+RETURN self
 
 //---------------------------------------------------------------------------//
 
@@ -994,7 +1004,7 @@ METHOD SetEstadoPedCli( cNumPed ) CLASS TStock
    local nTotalUnidadesRecibidas    := 0
 
    if empty( ::cPedCliT ) .or. empty( ::cPedCliL )
-      return .f.
+      RETURN .f.
    end if
 
    /*
@@ -1002,7 +1012,7 @@ METHOD SetEstadoPedCli( cNumPed ) CLASS TStock
    */
 
    if !( ::cPedCliL )->( dbSeek( cNumPed ) )
-      return .f.
+      RETURN .f.
    end if
    
    while ( ::cPedCliL )->cSerPed + Str( ( ::cPedCliL )->nNumPed ) + ( ::cPedCliL )->cSufPed == cNumPed .and. !( ::cPedCliL )->( eof() )
@@ -1042,11 +1052,11 @@ METHOD SetEstadoPedCli( cNumPed ) CLASS TStock
    end case
 
    if !( ::cPedCliT )->( dbSeek( cNumPed ) )
-      Return .f.
+      RETURN .f.
    end if 
 
    if ( ::cPedCliT )->nEstado == nEstadoPedido
-      Return .f.
+      RETURN .f.
    end if 
 
    if dblock( ::cPedCliT )
@@ -1057,14 +1067,14 @@ METHOD SetEstadoPedCli( cNumPed ) CLASS TStock
       ( ::cPedCliT )->( dbUnlock() )
    end if
 
-Return .t.
+RETURN .t.
 
 //---------------------------------------------------------------------------//
 
 METHOD SetEstadoSatCli( cNumSat ) CLASS TStock
 
    if empty( ::cSatCliT ) 
-      return .f.
+      RETURN .f.
    end if
 
    /*
@@ -1086,7 +1096,7 @@ METHOD SetEstadoSatCli( cNumSat ) CLASS TStock
 
    end if
 
-Return .t.
+RETURN .t.
 
 //---------------------------------------------------------------------------//
 
@@ -1102,7 +1112,7 @@ METHOD SetRecibidoPedCli( cNumPed ) CLASS TStock
    */
 
    if empty( cNumPed ) .or. empty( ::cPedCliT ) .or. empty( ::cPedCliL ) .or. empty( ::cAlbPrvL )
-      return self
+      RETURN self
    end if
 
    if ( ::cPedCliT )->( dbSeek( cNumPed ) ) .and. ( ::cPedCliL )->( dbSeek( cNumPed ) )
@@ -1141,7 +1151,7 @@ METHOD SetRecibidoPedCli( cNumPed ) CLASS TStock
 
    end if
 
-Return ( Self )
+RETURN ( Self )
 
 //---------------------------------------------------------------------------//
 
@@ -1159,7 +1169,7 @@ METHOD SetGeneradoPedCli( cNumPed ) CLASS TStock
 
    if empty( cNumPed ) .or. empty( ::cPedCliT ) .or. empty( ::cPedCliL ) .or. empty( ::cPedPrvL )
       msgStop( "Imposible actualizar el estado del pedido.", "Atención" )
-      return self
+      RETURN self
    end if
 
    if ( ::cPedCliT )->( dbSeek( cNumPed ) )  .and. ;
@@ -1208,7 +1218,7 @@ METHOD SetGeneradoPedCli( cNumPed ) CLASS TStock
    ( ::cPedCliT )->( dbGoTo( nRecCliT ) )
    ( ::cPedCliL )->( dbGoTo( nRecCliL ) )
 
-Return ( Self )
+RETURN ( Self )
 
 //---------------------------------------------------------------------------//
 
@@ -1237,31 +1247,31 @@ RETURN ( nTotal )
 
 METHOD AlbCli( cNumAlb, cCodAlm, lDelete, lIncremento, lIgnEstado, lChequea, lActPendientes ) CLASS TStock
 
-return self
+RETURN self
 
 //---------------------------------------------------------------------------//
 
 METHOD ChkAlbCli( cNumAlb ) CLASS TStock
 
-return self
+RETURN self
 
 //---------------------------------------------------------------------------//
 
 METHOD AlqCli( cNumAlq, cCodAlm, lDelete, lIncremento, lIgnEstado, lChequea ) CLASS TStock
 
-Return ( Self )
+RETURN ( Self )
 
 //---------------------------------------------------------------------------//
 
 METHOD FacCli( cNumFac, cCodAlm, lDelete, lIncremento, lActPendientes ) CLASS TStock
 
-return self
+RETURN self
 
 //---------------------------------------------------------------------------//
 
 METHOD ChkFacCli( cNumFac ) CLASS TStock
 
-return self
+RETURN self
 
 //---------------------------------------------------------------------------//
 
@@ -1281,7 +1291,7 @@ METHOD FacRec( cNumFac, cCodAlm, lDelete, lIncremento, lActPendientes ) CLASS TS
 
    if ::cFacRecL == nil .or. cNumFac == nil
       msgStop( "Imposible realizar la actualización de stocks.", "Atención" )
-      return self
+      RETURN self
    end if
 
    if ( ::cFacRecL )->( dbSeek( cNumFac ) )
@@ -1330,7 +1340,7 @@ METHOD FacRec( cNumFac, cCodAlm, lDelete, lIncremento, lActPendientes ) CLASS TS
    end if
 
 
-return self
+RETURN self
 
 //---------------------------------------------------------------------------//
 
@@ -1349,7 +1359,7 @@ METHOD TpvCli( cNumTik, cCodAlm, lIncremento, lDevolucion, lChequea ) CLASS TSto
    */
 
    if ::cTikL == nil .or. cNumTik == nil
-      return self
+      RETURN self
    end if
 
    if lDevolucion
@@ -1410,13 +1420,13 @@ METHOD TpvCli( cNumTik, cCodAlm, lIncremento, lDevolucion, lChequea ) CLASS TSto
       ::ChkTikCli( cNumTik )
    end if*/
 
-return self
+RETURN self
 
 //---------------------------------------------------------------------------//
 
 METHOD ChkTikCli( cNumTik ) CLASS TStock
 
-return self
+RETURN self
 
 //---------------------------------------------------------------------------//
 //
@@ -1425,10 +1435,91 @@ return self
 
 METHOD nStockActual( cCodArt, cCodAlm, cValPr1, cValPr2, cLote ) CLASS TStock
 
-   local aSta
    local nUnits   := 0
 
 RETURN ( nUnits )
+
+//---------------------------------------------------------------------------//
+
+METHOD nCacheStockActual( cCodArt, cCodAlm, cValPrp1, cValPrp2, cLote, lKitArt, nKitStk, nCtlStk ) CLASS TStock
+   
+   local nCacheStockActual    := ::getCacheStockActual( cCodArt, cCodAlm, cValPrp1, cValPrp2, cLote, lKitArt, nKitStk, nCtlStk )
+
+   if isNum( nCacheStockActual )
+      RETURN ( nCacheStockActual )      
+   end if 
+
+   nCacheStockActual          := ::nTotStockAct( cCodArt, cCodAlm, cValPrp1, cValPrp2, cLote, lKitArt, nKitStk, nCtlStk )
+
+   ::addCacheStockActual( cCodArt, cCodAlm, cValPrp1, cValPrp2, cLote, lKitArt, nKitStk, nCtlStk, nCacheStockActual )
+
+RETURN ( nCacheStockActual )
+
+//---------------------------------------------------------------------------//
+
+METHOD getCacheStockActual( cCodArt, cCodAlm, cValPrp1, cValPrp2, cLote, lKitArt, nKitStk, nCtlStk ) CLASS TStock
+
+   local nPos  := ::scanCacheStockActual( cCodArt, cCodAlm, cValPrp1, cValPrp2, cLote, lKitArt, nKitStk, nCtlStk )
+
+   if nPos != 0
+      RETURN ( hget( ::aCacheStockActual[nPos], "stock" ) )
+   end if 
+
+RETURN ( nil )
+
+//---------------------------------------------------------------------------//
+
+METHOD scanCacheStockActual( cCodArt, cCodAlm, cValPrp1, cValPrp2, cLote, lKitArt, nKitStk, nCtlStk ) CLASS TStock
+
+   local nPos  := ascan(   ::aCacheStockActual                       ,; 
+                           {|h|  h["codigo"] == cCodArt        .and. ;
+                                 h["almacen"] == cCodAlm       .and. ;
+                                 h["propiedad1"] == cValPrp1   .and. ;
+                                 h["propiedad2"] == cValPrp2   .and. ;
+                                 h["lote"] == cLote            .and. ;
+                                 h["articuloKit"] == lKitArt   .and. ;
+                                 h["stockKit"] == nKitStk      .and. ;
+                                 h["controlStock"] == nCtlStk } )
+
+RETURN ( nPos )
+
+//---------------------------------------------------------------------------//
+
+METHOD addCacheStockActual( cCodArt, cCodAlm, cValPrp1, cValPrp2, cLote, lKitArt, nKitStk, nCtlStk, nStock ) CLASS TStock
+
+   aadd( ::aCacheStockActual, {  "codigo" => cCodArt        ,;
+                                 "almacen" => cCodAlm       ,;
+                                 "propiedad1" => cValPrp1   ,;
+                                 "propiedad2" => cValPrp2   ,;
+                                 "lote" => cLote            ,;
+                                 "articuloKit" => lKitArt   ,;
+                                 "stockKit" => nKitStk      ,;
+                                 "controlStock" => nCtlStk  ,;
+                                 "stock" => nStock } )
+
+RETURN ( nStock )
+
+//---------------------------------------------------------------------------//
+
+METHOD deleteCacheStockActual( cCodArt, cCodAlm, cValPrp1, cValPrp2, cLote, lKitArt, nKitStk, nCtlStk ) CLASS TStock
+
+   local nPos  := ::scanCacheStockActual( cCodArt, cCodAlm, cValPrp1, cValPrp2, cLote, lKitArt, nKitStk, nCtlStk )
+
+   if nPos != 0
+      adel( ::aCacheStockActual, nPos, .t. )
+   end if 
+
+RETURN ( nil )
+
+//---------------------------------------------------------------------------//
+
+METHOD recalculateCacheStockActual( cCodArt, cCodAlm, cValPrp1, cValPrp2, cLote, lKitArt, nKitStk, nCtlStk ) CLASS TStock
+
+   ::deleteCacheStockActual( cCodArt, cCodAlm, cValPrp1, cValPrp2, cLote, lKitArt, nKitStk, nCtlStk )
+
+   ::nCacheStockActual( cCodArt, cCodAlm, cValPrp1, cValPrp2, cLote, lKitArt, nKitStk, nCtlStk ) 
+
+RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 //
@@ -1437,10 +1528,7 @@ RETURN ( nUnits )
 
 METHOD nTotStockAct( cCodArt, cCodAlm, cValPr1, cValPr2, cLote, lKitArt, nKitStk, nCtlStk ) CLASS TStock
 
-   local aSta
    local nUnits         := 0
-   local oError
-   local oBlock
 
    DEFAULT lKitArt      := .t.
    DEFAULT nKitStk      := 0
@@ -1449,9 +1537,6 @@ METHOD nTotStockAct( cCodArt, cCodAlm, cValPr1, cValPr2, cLote, lKitArt, nKitStk
    if empty( cCodArt )
       RETURN ( nUnits )
    end if 
-
-   oBlock               := ErrorBlock( {| oError | ApoloBreak( oError ) } )
-   BEGIN SEQUENCE
 
    if nCtlStk <= 1
 
@@ -1481,25 +1566,17 @@ METHOD nTotStockAct( cCodArt, cCodAlm, cValPr1, cValPr2, cLote, lKitArt, nKitStk
 
    end if
 
-   RECOVER USING oError
-
-      msgStop( "Error en calculo de stock." + CRLF + ErrorMessage( oError )  )
-
-   END SEQUENCE
-
-   ErrorBlock( oBlock )
-
 RETURN ( nUnits )
 
 //---------------------------------------------------------------------------//
 
-METHOD nPutStockActual( cCodArt, cCodAlm, cValPr1, cValPr2, cLote, lKitArt, nKitStk, oSay ) CLASS TStock
+METHOD nPutStockActual( cCodArt, cCodAlm, cValPr1, cValPr2, cLote, lKitArt, nCtlStk, oSay ) CLASS TStock
 
    local cClass   
    local nStock   := 0
 
    if !uFieldEmpresa( "lNStkAct" )
-      nStock      := ::nTotStockAct( cCodArt, cCodAlm, cValPr1, cValPr2, cLote, lKitArt, nKitStk, nKitStk )
+      nStock      := ::nTotStockAct( cCodArt, cCodAlm, cValPr1, cValPr2, cLote, lKitArt, nil, nCtlStk )
    end if
 
    if !empty( oSay )
@@ -1515,7 +1592,7 @@ METHOD nPutStockActual( cCodArt, cCodAlm, cValPr1, cValPr2, cLote, lKitArt, nKit
 
    end if
 
-return ( nStock )
+RETURN ( nStock )
 
 //---------------------------------------------------------------------------//
 
@@ -1523,7 +1600,7 @@ METHOD lPutStockActual( cCodArt, cCodAlm, cValPr1, cValPr2, cLote, lKitArt, nKit
 
    ::nPutStockActual( cCodArt, cCodAlm, cValPr1, cValPr2, cLote, lKitArt, nKitStk, oSay )
 
-return ( .t. )
+RETURN ( .t. )
 
 //---------------------------------------------------------------------------//
 
@@ -2173,7 +2250,7 @@ METHOD StockInit( cPath, cPathOld, oMsg, nCalcCosto ) CLASS TStock
    local oldFacRecL
 
    if empty( cPathOld )
-      Return nil
+      RETURN nil
    end if
 
    aAlm              := {}
@@ -2373,7 +2450,7 @@ METHOD AppMovAlm( cRefMov, cValPr1, cValPr2, cCodAlm, nCajMov, nUndMov, dbfHisMo
    end if
 
    if nTotMov == 0
-      Return ( Self )
+      RETURN ( Self )
    end if
 
    if !lApp
@@ -3839,7 +3916,7 @@ METHOD aStockArticulo( cCodArt, cCodAlm, oBrw, lLote, lNumeroSerie, dFecIni, dFe
    ::Reset()
 
    if empty( cCodArt )
-      Return ( ::aStocks )
+      RETURN ( ::aStocks )
    else
       cCodArt           := left( cCodArt, 18 )
    end if
@@ -3882,16 +3959,10 @@ METHOD aStockArticulo( cCodArt, cCodAlm, oBrw, lLote, lNumeroSerie, dFecIni, dFe
       ::SetCodigoAlmacen( cCodAlm )
       SysRefresh()
 
-      logwrite( "SetCodigoAlmacen" + str( seconds() - nSeconds ) )
-      nSeconds          := seconds()
-
       // Movimientos de almacén------------------------------------------------" )
 
       ::aStockMovimientosAlmacen( cCodArt, cCodAlm, lLote, lNumeroSerie )
       SysRefresh()
-
-      logwrite( "aStockMovimientosAlmacen" + str( seconds() - nSeconds ) )
-      nSeconds          := seconds()
 
       // Albaranes de proveedor------------------------------------------------------" )
 
@@ -3900,33 +3971,20 @@ METHOD aStockArticulo( cCodArt, cCodAlm, oBrw, lLote, lNumeroSerie, dFecIni, dFe
          SysRefresh()
       end if 
 
-      logwrite( "aStockAlbaranProveedor" + str( seconds() - nSeconds ) )
-      nSeconds          := seconds()
-
       // Facturas proveedor----------------------------------------------------" )
 
       ::aStockFacturaProveedor( cCodArt, cCodAlm, lLote, lNumeroSerie )
       SysRefresh()
-
-      logwrite( "aStockAlbaranProveedor" + str( seconds() - nSeconds ) )
-      nSeconds          := seconds()
 
       // Rectificativas de provedor--------------------------------------------" )
 
       ::aStockRectificativaProveedor( cCodArt, cCodAlm, lLote, lNumeroSerie )
       SysRefresh()
 
-      logwrite( "aStockRectificativaProveedor" + str( seconds() - nSeconds ) )
-      nSeconds          := seconds()
-
       // Pedidos de clientes-------------------------------------------------" )
 
       if ::lCalculateUnidadesPendientesRecibir
          ::aStockPedidoCliente( cCodArt, cCodAlm, lLote )
-
-         logwrite( "aStockPedidoCliente" + str( seconds() - nSeconds ) )
-         nSeconds          := seconds()
-
          SysRefresh()
       end if 
 
@@ -3935,58 +3993,36 @@ METHOD aStockArticulo( cCodArt, cCodAlm, oBrw, lLote, lNumeroSerie, dFecIni, dFe
       ::aStockAlbaranCliente( cCodArt, cCodAlm, lLote, lNumeroSerie )
       SysRefresh()
 
-      logwrite( "aStockAlbaranCliente" + str( seconds() - nSeconds ) )
-      nSeconds          := seconds()
-
       // Factura de clientes--------------------------------------------------" )
 
       ::aStockFacturaCliente( cCodArt, cCodAlm, lLote, lNumeroSerie )
       SysRefresh()
-
-      logwrite( "aStockFacturaCliente" + str( seconds() - nSeconds ) )
-      nSeconds          := seconds()
 
       // Rectificativas de clientes--------------------------------------------" )
 
       ::aStockRectificativaCliente( cCodArt, cCodAlm, lLote, lNumeroSerie )
       SysRefresh()
 
-      logwrite( "aStockRectificativaCliente" + str( seconds() - nSeconds ) )
-      nSeconds          := seconds()
-
       // Tickets de clientes---------------------------------------------------" )
 
       ::aStockTicketsCliente( cCodArt, cCodAlm, lLote, lNumeroSerie )
       SysRefresh()
-
-      logwrite( "aStockTicketsCliente" + str( seconds() - nSeconds ) )
-      nSeconds          := seconds()
 
       // Produccion------------------------------------------------------------" )
 
       ::aStockProduccion( cCodArt, cCodAlm, lLote, lNumeroSerie )
       SysRefresh()
 
-      logwrite( "aStockProduccion" + str( seconds() - nSeconds ) )
-      nSeconds          := seconds()
-
       // Materia prima---------------------------------------------------------" )
 
       ::aStockMateriaPrima( cCodArt, cCodAlm, lLote, lNumeroSerie )
       SysRefresh()
-
-      logwrite( "aStockMateriaPrima" + str( seconds() - nSeconds ) )
-      nSeconds          := seconds()
 
       // Stock pendiente de entregar-------------------------------------------" )
 
       if !( ::getNotPendiente() )
          ::aStockPendiente( cCodArt, cCodAlm, lLote, lNumeroSerie )
          SysRefresh()
-
-         logwrite( "aStockPendiente" + str( seconds() - nSeconds ) )
-         nSeconds          := seconds()
-
       end if 
 
    next 
@@ -3996,9 +4032,6 @@ METHOD aStockArticulo( cCodArt, cCodAlm, oBrw, lLote, lNumeroSerie, dFecIni, dFe
    for each cSerie in ::aSeries
       aScan( ::aStocks, {|o| if( o:cNumeroSerie == cSerie, o:nUnidades -= 1, ) } )
    next
-
-   logwrite( "for each aSeries " + str( seconds() - nSeconds ) )
-   nSeconds          := seconds()
 
    // Asignamos el array al browse------------------------------------------------" )
 
@@ -4038,7 +4071,7 @@ METHOD aStockArticulo( cCodArt, cCodAlm, oBrw, lLote, lNumeroSerie, dFecIni, dFe
 //   END SEQUENCE
 //   ErrorBlock( oBlock )
 
-Return ( ::aStocks )
+RETURN ( ::aStocks )
 
 //---------------------------------------------------------------------------//
 
@@ -4050,7 +4083,7 @@ METHOD nStockArticulo( cCodArt, cCodAlm, oBrw, lLote, lNumeroSerie, dFecIni, dFe
 
    aEval( ::aStocks, {|o| nStockArticulo += o:nUnidades } )
 
-Return ( nStockArticulo )
+RETURN ( nStockArticulo )
 
 //---------------------------------------------------------------------------//
 
@@ -4062,7 +4095,7 @@ METHOD nBultosArticulo( cCodArt, cCodAlm, oBrw, lLote, lNumeroSerie, dFecIni, dF
 
    aEval( ::aStocks, {|o| nBultosArticulo += o:nBultos } )
 
-Return ( nBultosArticulo )
+RETURN ( nBultosArticulo )
 
 //---------------------------------------------------------------------------//
 
@@ -4078,7 +4111,7 @@ METHOD nStockAlmacen( cCodArt, cCodAlm, cValPr1, cValPr2, cLote, dFecIni, dFecFi
                               ( empty( cLote   ) .or. alltrim( cLote   ) == alltrim( o:cLote )   ),;
                               nStockArticulo += o:nUnidades, ) } )
 
-Return ( nStockArticulo )
+RETURN ( nStockArticulo )
 
 //---------------------------------------------------------------------------//
 
@@ -4360,7 +4393,7 @@ METHOD nStockSerie( cCodArt, cCodAlm, cNumeroSerie ) CLASS TStock
    ( ::cProducP )->( ordsetfocus( nOrdProducP ) )
    ( ::cHisMovS )->( ordsetfocus( nOrdHisMovS ) )
 
-return ( nUnidades )
+RETURN ( nUnidades )
 
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
@@ -4824,7 +4857,7 @@ METHOD aStockAlmacen( oRemMov ) CLASS TStock
    ( ::cProducM )->( ordsetfocus( nOrdProducM ) )
    ( ::cHisMovT )->( ordsetfocus( nOrdHisMov  ) )
 
-return ( ::aStocks )
+RETURN ( ::aStocks )
 
 //---------------------------------------------------------------------------//
 
@@ -4858,7 +4891,7 @@ Method Integra( sStocks ) CLASS TStock
 
    end if 
 
-Return ( nil )
+RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 
@@ -4917,7 +4950,7 @@ METHOD lValidNumeroSerie( cCodArt, cCodAlm, uNumSer, lMessage )
       lValid            := ( ::nStockSerie( cCodArt, cCodAlm, uNumSer ) > 0 )
    end if
 
-return ( lValid )
+RETURN ( lValid )
 
 //---------------------------------------------------------------------------//
 
@@ -5017,7 +5050,7 @@ METHOD BrowseNumeroSerie( oCol, cCodArt, cCodAlm, aNumSer, oBrwSer )
       uRet                 := oBrw:aArrayData[ oBrw:nArrayAt ]:cNumeroSerie
    end if
 
-Return ( uRet )
+RETURN ( uRet )
 
 //---------------------------------------------------------------------------//
 
@@ -5028,7 +5061,7 @@ METHOD nPedidoCliente( cCodCli )
    local nOrdAnt     := ( ::cPedCliT )->( ordsetfocus( "cCodCli" ) )
 
    if empty( cCodCli )
-      Return nTotal
+      RETURN nTotal
    end if
 
    if ( ::cPedCliT )->( dbSeek( cCodCli ) )
@@ -5046,31 +5079,31 @@ METHOD nPedidoCliente( cCodCli )
    ( ::cPedCliT )->( ordsetfocus( nOrdAnt ) )
    ( ::cPedCliT )->( dbGoTo( nRec ) )
 
-Return ( nTotal )
+RETURN ( nTotal )
 
 //---------------------------------------------------------------------------//
 
 Method nOperacionesCliente( idCliente, lRiesgo )
 
-Return ( 0 )
+RETURN ( 0 )
 
 //---------------------------------------------------------------------------//
 
 Method nFacturacionPendiente( idCliente )
 
-Return ( 0 )
+RETURN ( 0 )
 
 //---------------------------------------------------------------------------//
 
 METHOD nPagadoCliente( idCliente )
 
-Return ( 0 )
+RETURN ( 0 )
 
 //---------------------------------------------------------------------------//
 
 METHOD nFacturacionCliente( idCliente )
 
-Return ( 0 )
+RETURN ( 0 )
 
 //---------------------------------------------------------------------------//
 
@@ -5263,7 +5296,7 @@ METHOD setRiesgo( idCliente, oGetRiesgo, nRiesgoCliente, lAviso )
 
    end if
 
-Return ( nRiesgo )
+RETURN ( nRiesgo )
 
 //---------------------------------------------------------------------------//
 
@@ -5326,7 +5359,7 @@ METHOD GetConsolidacion( cCodArt, cCodAlm, cCodPrp1, cCodPrp2, cValPrp1, cValPrp
    ( ::cHisMovT )->( ordsetfocus( nOrd ) )
    ( ::cHisMovT )->( dbgoto( nRec ) )
 
-Return ( ::dConsolidacion )
+RETURN ( ::dConsolidacion )
 
 //---------------------------------------------------------------------------//
 
@@ -5334,9 +5367,37 @@ METHOD lCheckConsolidacion( cCodArt, cCodAlm, cCodPrp1, cCodPrp2, cValPrp1, cVal
 
    // local dConsolidacion := ::GetConsolidacion( cCodArt, cCodAlm, cCodPrp1, cCodPrp2, cValPrp1, cValPrp2, cLote )
 
-   local dConsolidacion := MovimientosAlmacenesLineasModel():getFechaHoraConsolidacion( cCodArt, cCodAlm, cValPrp1, cValPrp2, cLote )
+   local nSeconds       := seconds()
+   local dConsolidacion := ::scanConsolidacion( cCodArt, cCodAlm, cValPrp1, cValPrp2, cLote )
 
-Return ( empty( dConsolidacion ) .or. dtos( dFecha ) + tHora >= dConsolidacion )
+   if isfalse( dConsolidacion )
+      dConsolidacion    := MovimientosAlmacenesLineasModel():getFechaHoraConsolidacion( cCodArt, cCodAlm, cValPrp1, cValPrp2, cLote )
+      ::addConsolidacion( cCodArt, cCodAlm, cValPrp1, cValPrp2, cLote, dConsolidacion )
+   end if 
+
+   logwrite( "lCheckConsolidacion -> " + str( seconds() - nSeconds ) )
+
+RETURN ( empty( dConsolidacion ) .or. dtos( dFecha ) + tHora >= dConsolidacion )
+
+//---------------------------------------------------------------------------//
+
+METHOD addConsolidacion( cCodArt, cCodAlm, cValPrp1, cValPrp2, cLote, dConsolidacion )
+   
+   aadd( ::aConsolidacion, {"codigo" => cCodArt, "almacen" => cCodAlm, "propiedad1" => cValPrp1, "propiedad2" => cValPrp2, "lote" => cLote, "consolidacion" => dConsolidacion } )
+
+RETURN ( dConsolidacion )
+
+//---------------------------------------------------------------------------//
+
+METHOD scanConsolidacion( cCodArt, cCodAlm, cValPrp1, cValPrp2, cLote )
+
+   local nPos  := ascan( ::aConsolidacion, {|h| h["codigo"] == cCodArt .and. h["almacen"] == cCodAlm .and. h["propiedad1"] == cValPrp1 .and. h["propiedad2"] == cValPrp2 .and. h["lote"] == cLote } )
+   
+   if nPos != 0
+      RETURN ( hget( ::aConsolidacion[nPos], "consolidacion" ) )
+   end if 
+
+RETURN ( .f. )
 
 //---------------------------------------------------------------------------//
 
@@ -5349,21 +5410,21 @@ METHOD SetCodigoAlmacen( cCodigoAlmacen )
       ::uCodigoAlmacen  := cCodigoAlmacen
    end if 
 
-Return ( ::uCodigoAlmacen )
+RETURN ( ::uCodigoAlmacen )
 
 //---------------------------------------------------------------------------//
 
 METHOD lCodigoAlmacen( cCodigoAlmacen )
 
    if empty( cCodigoAlmacen )
-      return .t.
+      RETURN .t.
    end if 
 
    if empty( ::uCodigoAlmacen )
-      return .t.
+      RETURN .t.
    end if
 
-Return ( aScan( ::uCodigoAlmacen, cCodigoAlmacen ) != 0 )
+RETURN ( aScan( ::uCodigoAlmacen, cCodigoAlmacen ) != 0 )
 
 //---------------------------------------------------------------------------//
 //
@@ -5452,7 +5513,7 @@ METHOD aStockMovimientosAlmacen( cCodArt, cCodAlm, lLote, lNumeroSerie )
 
    ( ::cHisMovT )->( ordsetfocus( nOrdHisMov ) )
 
-Return ( nil )
+RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 //
@@ -6265,7 +6326,7 @@ Static Function SeekOnStock( cSeek, oBrw )
 
    oBrw:Refresh()
 
-Return ( .t. )
+RETURN ( .t. )
 
 //---------------------------------------------------------------------------//
 
@@ -6294,7 +6355,7 @@ Static Function InsertOnStock( oCol, oBrw, oDlg, oBrwSer )
 
    end if
 
-Return ( .t. )
+RETURN ( .t. )
 
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
@@ -6540,7 +6601,7 @@ METHOD consolidationDateTime( cCodArt ) CLASS TSqlStock
 
    MsgInfo( ( hb_valtoExp( aPruebas ) ) )
 
-Return ( nil )
+RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 
@@ -6636,41 +6697,41 @@ RETURN ( Self )
 METHOD validateDateTime( dFecMov, tTimMov ) CLASS TStock
 
    if !empty( ::dFechaInicio ) .and. dFecMov < ::dFechaInicio
-      Return .f.
+      RETURN .f.
    end if 
 
    if !empty( ::dFechaInicio ) .and. !empty( ::tHoraInicio ) .and. dtos( dFecMov ) + tTimMov < dtos( ::dFechaInicio ) + ::tHoraInicio
-      Return .f.
+      RETURN .f.
    end if 
 
    if !empty( ::dFechaFin ) .and. dFecMov > ::dFechaFin
-      Return .f.
+      RETURN .f.
    end if 
 
    if !empty( ::dFechaFin ) .and. !empty( ::tHoraFin ) .and. dtos( dFecMov ) + tTimMov > dtos( ::dFechaFin ) + ::tHoraFin
-      Return .f.
+      RETURN .f.
    end if 
 
-Return .t.
+RETURN .t.
 
 //---------------------------------------------------------------------------//
 
 METHOD getFechaHoraConsolidacion( dFechaMovimiento, cHoraMovimiento ) CLASS TStock
 
    if !empty( ::dFechaFin ) .and. dFechaMovimiento > ::dFechaFin
-      Return ( nil )
+      RETURN ( nil )
    end if 
 
    if !empty( ::dFechaFin ) .and. !empty( ::tHoraFin ) .and. dtos( dFechaMovimiento ) + cHoraMovimiento > dtos( ::dFechaFin ) + ::tHoraFin
-      Return ( nil )
+      RETURN ( nil )
    end if 
 
-Return ( dtos( dFechaMovimiento ) + cHoraMovimiento )
+RETURN ( dtos( dFechaMovimiento ) + cHoraMovimiento )
 
 //---------------------------------------------------------------------------//
 
 METHOD nRiesgo( idCliente ) CLASS TStock
 
-Return ( ClientesModel():Riesgo( idCliente ) )
+RETURN ( ClientesModel():Riesgo( idCliente ) )
 
 //---------------------------------------------------------------------------//
