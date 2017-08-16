@@ -311,7 +311,6 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfCajT, oBrw, bWhen, bValid, nMode )
       aTmp[ ( dbfCajT )->( FieldPos( "nCopDev" ) ) ]     := 1
       aTmp[ ( dbfCajT )->( FieldPos( "nCopEnt" ) ) ]     := 1
       aTmp[ ( dbfCajT )->( FieldPos( "nCopAlb" ) ) ]     := 1
-      aTmp[ ( dbfCajT )->( FieldPos( "nCopFac" ) ) ]     := 1
       aTmp[ ( dbfCajT )->( FieldPos( "nCopPgo" ) ) ]     := 1
       aTmp[ ( dbfCajT )->( FieldPos( "nCopArq" ) ) ]     := 1
       aTmp[ ( dbfCajT )->( FieldPos( "nCopPar" ) ) ]     := 1
@@ -747,7 +746,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfCajT, oBrw, bWhen, bValid, nMode )
          WHEN     ( nMode != ZOOM_MODE ) ;
          VALID    ( cDocumento( aGet[ ( dbfCajT )->( FieldPos( "cPrnAlb" ) ) ], aGet[ ( dbfCajT )->( FieldPos( "cPrnAlb" ) ) ]:oHelpText, dbfDoc ) );
          BITMAP   "LUPA" ;
-         ON HELP  ( BrwDocumento( aGet[ ( dbfCajT )->( FieldPos( "cPrnAlb" ) ) ], aGet[ ( dbfCajT )->( FieldPos( "cPrnAlb" ) ) ]:oHelpText ) );
+         ON HELP  ( BrwDocumento( aGet[ ( dbfCajT )->( FieldPos( "cPrnAlb" ) ) ], aGet[ ( dbfCajT )->( FieldPos( "cPrnAlb" ) ) ]:oHelpText, "AC" ) );
          OF       oFld:aDialogs[2]
 
       TBtnBmp():ReDefine( 202, "gc_document_text_pencil_12",,,,,{|| EdtDocumento( aTmp[ ( dbfCajT )->( FieldPos( "cPrnAlb" ) ) ] ) }, oFld:aDialogs[2], .f., , .f.,  )
@@ -760,40 +759,6 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfCajT, oBrw, bWhen, bValid, nMode )
          MAX      99 ;
          PICTURE  "99" ;
          WHEN     ( nMode != ZOOM_MODE .and. !aTmp[ ( dbfCajT )->( FieldPos( "lPrnAlb" ) ) ] ) ;
-         OF       oFld:aDialogs[2]
-
-      /*
-      Formato de facturas
-      -------------------------------------------------------------------------
-      */
-
-      REDEFINE CHECKBOX aGet[ ( dbfCajT )->( FieldPos( "lPrnFac" ) ) ] ;
-         VAR      aTmp[ ( dbfCajT )->( FieldPos( "lPrnFac" ) ) ] ;
-         ID       213 ;
-         WHEN     (  nMode != ZOOM_MODE ) ;
-         ON CHANGE( aGet[ ( dbfCajT )->( FieldPos( "nCopFac" ) ) ]:Refresh() );
-         OF       oFld:aDialogs[2]
-
-      REDEFINE GET aGet[ ( dbfCajT )->( FieldPos( "cPrnFac" ) ) ] ;
-         VAR      aTmp[ ( dbfCajT )->( FieldPos( "cPrnFac" ) ) ] ;
-         ID       210 ;
-         IDTEXT   211 ;
-         WHEN     ( nMode != ZOOM_MODE ) ;
-         VALID    ( cDocumento( aGet[ ( dbfCajT )->( FieldPos( "cPrnFac" ) ) ], aGet[ ( dbfCajT )->( FieldPos( "cPrnFac" ) ) ]:oHelpText, dbfDoc ) );
-         BITMAP   "LUPA" ;
-         ON HELP  ( BrwDocumento( aGet[ ( dbfCajT )->( FieldPos( "cPrnFac" ) ) ], aGet[ ( dbfCajT )->( FieldPos( "cPrnFac" ) ) ]:oHelpText ) );
-         OF       oFld:aDialogs[2]
-
-      TBtnBmp():ReDefine( 212, "gc_document_text_pencil_12",,,,,{|| EdtDocumento( aTmp[ ( dbfCajT )->( FieldPos( "cPrnFac" ) ) ] ) }, oFld:aDialogs[2], .f., , .f.,  )
-
-      REDEFINE GET aGet[ ( dbfCajT )->( FieldPos( "nCopFac" ) ) ] ;
-         VAR      aTmp[ ( dbfCajT )->( FieldPos( "nCopFac" ) ) ] ;
-         ID       214 ;
-         SPINNER ;
-         MIN      0 ;
-         MAX      99 ;
-         PICTURE  "99" ;
-         WHEN     ( nMode != ZOOM_MODE .and. !aTmp[ ( dbfCajT )->( FieldPos( "lPrnFac" ) ) ] ) ;
          OF       oFld:aDialogs[2]
 
       /*
@@ -1153,7 +1118,6 @@ Static Function StartRec( aGet, aTmp )
    aGet[ ( dbfCajT )->( FieldPos( "cPrnDev" ) ) ]:oHelpText:cText( RetFld( aTmp[ ( dbfCajT )->( FieldPos( "cPrnDev" ) ) ], dbfDoc, "cDescrip" ) )
    aGet[ ( dbfCajT )->( FieldPos( "cPrnEnt" ) ) ]:oHelpText:cText( RetFld( aTmp[ ( dbfCajT )->( FieldPos( "cPrnEnt" ) ) ], dbfDoc, "cDescrip" ) )
    aGet[ ( dbfCajT )->( FieldPos( "cPrnAlb" ) ) ]:oHelpText:cText( RetFld( aTmp[ ( dbfCajT )->( FieldPos( "cPrnAlb" ) ) ], dbfDoc, "cDescrip" ) )
-   aGet[ ( dbfCajT )->( FieldPos( "cPrnFac" ) ) ]:oHelpText:cText( RetFld( aTmp[ ( dbfCajT )->( FieldPos( "cPrnFac" ) ) ], dbfDoc, "cDescrip" ) )
    aGet[ ( dbfCajT )->( FieldPos( "cPrnPgo" ) ) ]:oHelpText:cText( RetFld( aTmp[ ( dbfCajT )->( FieldPos( "cPrnPgo" ) ) ], dbfDoc, "cDescrip" ) )
    aGet[ ( dbfCajT )->( FieldPos( "cPrnArq" ) ) ]:oHelpText:cText( RetFld( aTmp[ ( dbfCajT )->( FieldPos( "cPrnArq" ) ) ], dbfDoc, "cDescrip" ) )
    aGet[ ( dbfCajT )->( FieldPos( "cPrnPar" ) ) ]:oHelpText:cText( RetFld( aTmp[ ( dbfCajT )->( FieldPos( "cPrnPar" ) ) ], dbfDoc, "cDescrip" ) )
@@ -2172,8 +2136,7 @@ Function IsCaja()
       ( dbfCaja )->cNomCaj := "Caja principal"
       ( dbfCaja )->cCapCaj := "000"
       ( dbfCaja )->cPrnTik := "TKA"
-      ( dbfCaja )->cPrnAlb := "TKB"
-      ( dbfCaja )->cPrnFac := "TKC"
+      ( dbfCaja )->cPrnAlb := "ACA"
       ( dbfCaja )->cPrnVal := "TKD"
       ( dbfCaja )->cPrnDev := "TKE"
       ( dbfCaja )->cPrnArq := "ARA"
@@ -2182,7 +2145,6 @@ Function IsCaja()
       ( dbfCaja )->nCopDev := 1
       ( dbfCaja )->nCopEnt := 1
       ( dbfCaja )->nCopAlb := 1
-      ( dbfCaja )->nCopFac := 1
       ( dbfCaja )->nCopPgo := 1
       ( dbfCaja )->nCopArq := 1
       ( dbfCaja )->nCopReg := 1
@@ -2486,12 +2448,6 @@ Return ( RecursiveSeekEnCaja( cCodCaj, dbfCajT, "cPrnAlb", Space( 3 ) ) )
 
 //---------------------------------------------------------------------------//
 
-Function cFormatoFacturaEnCaja( cCodCaj, dbfCajT )
-
-Return ( RecursiveSeekEnCaja( cCodCaj, dbfCajT, "cPrnFac", Space( 3 ) ) )
-
-//---------------------------------------------------------------------------//
-
 Function cFormatoValeEnCaja( cCodCaj, dbfCajT )
 
 Return ( RecursiveSeekEnCaja( cCodCaj, dbfCajT, "cPrnVal", Space( 3 ) ) )
@@ -2615,12 +2571,6 @@ Return ( RecursiveSeekEnCaja( cCodCaj, dbfCajT, "lPrnEnt", .f. ) )
 Function lImpAlbaranesEnImpresora( cCodCaj, dbfCajT )
 
 Return ( RecursiveSeekEnCaja( cCodCaj, dbfCajT, "lPrnAlb", .f. ) )
-
-//---------------------------------------------------------------------------//
-
-Function lImpFacturasEnImpresora( cCodCaj, dbfCajT )
-
-Return ( RecursiveSeekEnCaja( cCodCaj, dbfCajT, "lPrnFac", .f. ) )
 
 //---------------------------------------------------------------------------//
 
@@ -2814,16 +2764,6 @@ Return ( alltrim( cPrn ) )
 Function cPrinterFactura( cCodCaj, dbfCajT )
 
    local cPrn  := ""
-
-   if dbSeekInOrd( cCodCaj, "cCodCaj", dbfCajT )
-
-      if ( dbfCajT )->lPrnFac
-         cPrn     := Rtrim( ( dbfCajT )->cPrnWin )
-      else
-         cPrn     := Rtrim( ( dbfCajT )->cWinTik )
-      endif
-
-   end if
 
 Return ( cPrn )
 
@@ -3059,10 +2999,6 @@ Return ( NotCero( nCop ) )
 Function nCopiasFacturasEnCaja( cCodCaj, dbfCajT )
 
    local nCop  := 1
-
-   if dbSeekInOrd( cCodCaj, "cCodCaj", dbfCajT )
-      nCop        := ( dbfCajT )->nCopFac
-   end if
 
 Return ( NotCero( nCop ) )
 

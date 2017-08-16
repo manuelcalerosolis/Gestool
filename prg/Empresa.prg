@@ -6144,7 +6144,7 @@ FUNCTION TstEmpresa( cPatDat )
 
    EmpresasModel():UpdateEmpresaCodigoEmpresa()
 
-   DelegacionesModel():UpdateDelegacionCodigoEmpresa()
+   //DelegacionesModel():UpdateDelegacionCodigoEmpresa()
 
    CursorWE()
 

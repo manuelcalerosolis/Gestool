@@ -1808,83 +1808,59 @@ Static Function ImpTiket( nDevice, lEntrega, lImpMenu, dbfImp, oDatos )
    ----------------------------------------------------------------------------
    */
 
-   do case
-      case ( D():Tikets( nView ) )->cTipTik == SAVTIK
+   if Empty( cNuevoAlbaran )
 
-         do case
-            case ( lRegalo )
+      do case
+         case ( D():Tikets( nView ) )->cTipTik == SAVTIK
 
-               nGenTikCli( nDevice, "Imprimiendo tickets", oDatos:cFormatoRegalo, oDatos:cPrinterRegalo )
+            do case
+               case ( lRegalo )
 
-               lRegalo  := .f.
+                  nGenTikCli( nDevice, "Imprimiendo tickets", oDatos:cFormatoRegalo, oDatos:cPrinterRegalo )
 
-            case ( lEntrega )
+                  lRegalo  := .f.
 
-               nGenTikCli( nDevice, "Imprimiendo tickets", oDatos:cFormatoEntrega, oDatos:cPrinterEntrega )
+               case ( lEntrega )
 
-            otherwise
+                  nGenTikCli( nDevice, "Imprimiendo tickets", oDatos:cFormatoEntrega, oDatos:cPrinterEntrega )
 
+               otherwise
+
+                  nGenTikCli( nDevice, "Imprimiendo tickets", oDatos:cFormatoTiket, oDatos:cPrinterTik )
+
+            end case
+
+         case ( D():Tikets( nView ) )->cTipTik == SAVVAL
+
+            if ( D():Tikets( nView ) )->lFreTik
+
+               nGenTikCli( nDevice, "Imprimiendo cheques regalo", oDatos:cFmtTikChk, oDatos:cPrinterTikChk )
+
+            else
+
+               nGenTikCli( nDevice, "Imprimiendo vales", oDatos:cFmtVal, oDatos:cPrinterTikChk )
+
+            end if
+
+         case ( D():Tikets( nView ) )->cTipTik == SAVDEV
+
+            nGenTikCli( nDevice, "Imprimiendo devoluciones", oDatos:cFmtTikDev, oDatos:cPrinterDev )
+
+         case ( D():Tikets( nView ) )->cTipTik == SAVPDA
+
+            if lEntrega
+               nGenTikCli( nDevice, "Imprimiendo tickets", oDatos:cFmtEntCaj, oDatos:cPrinterEntCaj )
+            else
                nGenTikCli( nDevice, "Imprimiendo tickets", oDatos:cFormatoTiket, oDatos:cPrinterTik )
-
-         end case
-
-      case ( D():Tikets( nView ) )->cTipTik == SAVVAL
-
-         if ( D():Tikets( nView ) )->lFreTik
-
-            nGenTikCli( nDevice, "Imprimiendo cheques regalo", oDatos:cFmtTikChk, oDatos:cPrinterTikChk )
-
-         else
-
-            nGenTikCli( nDevice, "Imprimiendo vales", oDatos:cFmtVal, oDatos:cPrinterTikChk )
-
-         end if
-
-      case ( D():Tikets( nView ) )->cTipTik == SAVDEV
-
-         nGenTikCli( nDevice, "Imprimiendo devoluciones", oDatos:cFmtTikDev, oDatos:cPrinterDev )
-
-      case ( D():Tikets( nView ) )->cTipTik == SAVALB
-
-         if lImpAlbaranesEnImpresora( ( D():Tikets( nView ) )->cNcjTik, dbfCajT )
-
-            if nDevice == IS_SCREEN
-               VisAlbCli( ( D():Tikets( nView ) )->cNumDoc, .f., "Imprimiendo albaranes", oDatos:cFmtAlbCaj, oDatos:cPrinterAlbCaj )
-            else
-               PrnAlbCli( ( D():Tikets( nView ) )->cNumDoc, .f., "Imprimiendo albaranes", oDatos:cFmtAlbCaj, oDatos:cPrinterAlbCaj )
             end if
 
-         else
-            nGenTikCli( nDevice, "Imprimiendo albaranes", oDatos:cFmtAlb, oDatos:cPrinterAlb )
-         end if
+         case ( D():Tikets( nView ) )->cTipTik == SAVAPT
 
-      case ( D():Tikets( nView ) )->cTipTik == SAVFAC
+            nGenTikCli( nDevice, "Imprimiendo apartados", oDatos:cFmtApt, oDatos:cPrinterApt )
 
-         if lImpFacturasEnImpresora( ( D():Tikets( nView ) )->cNcjTik, dbfCajT )
+      end case
 
-            if nDevice == IS_SCREEN
-               VisFacCli( ( D():Tikets( nView ) )->cNumDoc, .f., "Imprimiendo facturas", oDatos:cFmtFacCaj, oDatos:cPrinterFacCaj )
-            else
-               PrnFacCli( ( D():Tikets( nView ) )->cNumDoc, .f., "Imprimiendo facturas", oDatos:cFmtFacCaj, oDatos:cPrinterFacCaj )
-            end if
-
-         else
-            nGenTikCli( nDevice, "Imprimiendo facturas", oDatos:cFmtFac, oDatos:cPrinterFac )
-         end if
-
-      case ( D():Tikets( nView ) )->cTipTik == SAVPDA
-
-         if lEntrega
-            nGenTikCli( nDevice, "Imprimiendo tickets", oDatos:cFmtEntCaj, oDatos:cPrinterEntCaj )
-         else
-            nGenTikCli( nDevice, "Imprimiendo tickets", oDatos:cFormatoTiket, oDatos:cPrinterTik )
-         end if
-
-      case ( D():Tikets( nView ) )->cTipTik == SAVAPT
-
-         nGenTikCli( nDevice, "Imprimiendo apartados", oDatos:cFmtApt, oDatos:cPrinterApt )
-
-   end case
+   end if
 
    /*
    Cambio el estado a imprimido para que el ticket no se vuelva a imprimir-----
@@ -1902,6 +1878,24 @@ Static Function ImpTiket( nDevice, lEntrega, lImpMenu, dbfImp, oDatos )
             ( dbfImp )->cHTikImp    := Substr( Time(), 1, 5 )
             ( dbfImp )->( dbUnLock() )
          end if
+
+      end if
+
+   end if
+
+   if !Empty( cNuevoAlbaran )
+
+      if lImpAlbaranesEnImpresora( ( D():Tikets( nView ) )->cNcjTik, dbfCajT )
+
+         if nDevice == IS_SCREEN
+            VisAlbCli( cNuevoAlbaran, .f., "Imprimiendo albaranes", oDatos:cFmtAlbCaj, oDatos:cPrinterAlbCaj )
+         else
+            PrnAlbCli( cNuevoAlbaran, .f., "Imprimiendo albaranes", oDatos:cFmtAlbCaj, oDatos:cPrinterAlbCaj )
+         end if
+
+      else
+
+         PrnAlbCli( cNuevoAlbaran, .f., "Imprimiendo albaranes", oDatos:cFmtAlb, oDatos:cPrinterAlb )
 
       end if
 
@@ -4479,11 +4473,7 @@ Static Function NewTiket( aGet, aTmp, nMode, nSave, lBig, oBrw, oBrwDet )
          */
 
          if lCopTik .and. ( nSave != SAVAPT ) // .and. nCopTik != 0  //Comprobamos que hayamos pulsado el botón de aceptar e imprimir
-            if nSave == SAVALB .and. !Empty( cNuevoAlbaran )
-               MsgInfo( "Imprimiremos albarán nº: " + cNuevoAlbaran, cNuevoAlbaran )
-            else
-               ImpTiket( IS_PRINTER )
-            end if
+            ImpTiket( IS_PRINTER )
          end if
 
          /*
@@ -19462,12 +19452,10 @@ METHOD Load( dbfCajT )
    ::cFormatoTiket   := cFormatoTicketEnCaja(   cCodCaj, dbfCajT )
    ::cFmtVal         := cFormatoValeEnCaja(     cCodCaj, dbfCajT )
    ::cFmtAlb         := cFormatoAlbaranEnCaja(  cCodCaj, dbfCajT )
-   ::cFmtFac         := cFormatoFacturaEnCaja(  cCodCaj, dbfCajT )
 
    ::cSayFmtTik      := cNombreDoc( ::cFormatoTiket )
    ::cSayFmtVal      := cNombreDoc( ::cFmtVal )
    ::cSayFmtAlb      := cNombreDoc( ::cFmtAlb )
-   ::cSayFmtFac      := cNombreDoc( ::cFmtFac )
 
    ::cPrinterTik     := cPrinterTiket(    cCodCaj, dbfCajT )
 
@@ -19487,12 +19475,6 @@ METHOD Load( dbfCajT )
       ::cPrinterAlb  := PrnGetName()
    end if
 
-   ::cPrinterFac     := cPrinterFactura(  cCodCaj, dbfCajT )
-
-   if Empty( ::cPrinterAlb )
-      ::cPrinterAlb  := PrnGetName()
-   end if
-
    ::cFormatoRegalo  := cFormatoTicketRegaloEnCaja(   cCodCaj, dbfCajT )
    ::cPrinterRegalo  := cPrinterRegalo(               cCodCaj, dbfCajT )
 
@@ -19506,9 +19488,6 @@ METHOD Load( dbfCajT )
    ::cFmtAlbCaj      := cFormatoAlbaranEnCaja(     cCodCaj, dbfCajT )
    ::cPrinterAlbCaj  := cWindowsPrinterEnCaja(     cCodCaj, dbfCajT )
 
-   ::cFmtFacCaj      := cFormatoFacturaEnCaja(  cCodCaj, dbfCajT )
-   ::cPrinterFacCaj  := cWindowsPrinterEnCaja(  cCodCaj, dbfCajT )
-
    ::cFmtEntCaj      := cFormatoEntregaEnCaja(  cCodCaj, dbfCajT )
    ::cPrinterEntCaj  := cPrinterEntrega(        cCodCaj, dbfCajT )
 
@@ -19517,7 +19496,6 @@ METHOD Load( dbfCajT )
 
    ::nCopiasTik      := nCopiasTicketsEnCaja(         cCodCaj, dbfCajT )
    ::nCopiasAlb      := nCopiasAlbaranesEnCaja(       cCodCaj, dbfCajT )
-   ::nCopiasFac      := nCopiasFacturasEnCaja(        cCodCaj, dbfCajT )
    ::nCopiasEntrega  := nCopiasEntregasEnCaja(        cCodCaj, dbfCajT )
    ::nCopiasRegalo   := nCopiasTicketsRegaloEnCaja(   cCodCaj, dbfCajT )    
    
