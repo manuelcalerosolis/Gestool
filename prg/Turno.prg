@@ -11629,7 +11629,9 @@ Return ( lCajaOpen )
 
 Function chkTurno( oMenuItem )
 
-   local oTurno   := TTurno():New( cPatEmp(), cDriver(), oWnd(), oMenuItem )   
+   local oTurno
+
+   oTurno         := TTurno():New( cPatEmp(), cDriver(), oWnd(), oMenuItem )   
 
    if !empty( oTurno )
 

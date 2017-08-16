@@ -819,8 +819,6 @@ METHOD assignLinesDocument() CLASS DocumentsSales
       oDocumentLine:setFechaMaster( ::hDictionaryMaster )
       oDocumentLine:setHoraMaster( ::hDictionaryMaster )
 
-      logwrite( hb_valtoexp( oDocumentLine:hDictionary ) )
-
    next
 
 Return( self )

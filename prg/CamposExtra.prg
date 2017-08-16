@@ -116,10 +116,10 @@ METHOD New( cPath, oWndParent, oMenuItem ) CLASS TCamposExtra
    DEFAULT oWndParent      := oWnd()
    DEFAULT oMenuItem       := "01124"
 
-   ::nLevel                := nLevelUsr( oMenuItem )
-
    ::cPath                 := cPath
    ::oWndParent            := oWndParent
+   ::oMenuItem             := oMenuItem
+
    ::oDbf                  := nil
 
    ::hActions              := {  "Texto"  => {|| ::enableLongitud(), ::disableDefecto(), ::cTextLongitud( 1, 0 ) } ,;
@@ -168,8 +168,9 @@ METHOD Activate() CLASS TCamposExtra
    local oDel
    local oImp
    local oPrv
+   local nLevel   := nLevelUsr( ::oMenuItem )
 
-   if nAnd( ::nLevel, 1 ) == 0
+   if nAnd( nLevel, 1 ) == 0
 
       /*
       Cerramos todas las ventanas----------------------------------------------
@@ -179,7 +180,7 @@ METHOD Activate() CLASS TCamposExtra
          ::oWndParent:CloseAll()
       end if
 
-      ::CreateShell( ::nLevel )
+      ::CreateShell( nLevel )
 
       DEFINE BTNSHELL RESOURCE "BUS" OF ::oWndBrw ;
          NOBORDER ;
@@ -248,8 +249,6 @@ METHOD OpenFiles( lExclusive ) CLASS TCamposExtra
 
          ::oDbf:Activate( .f., !( lExclusive ) )
 
-         ::lLoadDivisa()
-
          ::lOpenFiles      := .t.
 
       end if
@@ -279,8 +278,6 @@ METHOD CloseFiles() CLASS TCamposExtra
    end if
 
    ::oDbf         := nil
-
-   ::closeDivisa()
 
    ::lOpenFiles   := .f.
 
@@ -647,7 +644,7 @@ FUNCTION CamposExtra( oMenuItem, oWnd )
 
       AddMnuNext( "Campos extra", ProcName() )
 
-      oCamposExtra        := TCamposExtra():New( cPatEmp(), oWnd, oMenuItem )
+      oCamposExtra        := TCamposExtra():New( cPatEmp(), oWnd )
       
       if !Empty( oCamposExtra )
          oCamposExtra:Play()

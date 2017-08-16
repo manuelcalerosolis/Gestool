@@ -6,19 +6,27 @@
 
 CLASS BaseModel
 
-   METHOD getEmpresaTableName( cTableName )     INLINE ( cPatEmp() + cTableName )
+   DATA cTableName
 
-   METHOD getDatosTableName( cTableName )       INLINE ( cPatDat() + cTableName )
+   METHOD getEmpresaTableName( cTableName )     INLINE ( cPatEmp() + if( empty(cTableName), ::cTableName, cTableName ) )
 
-   METHOD ExecuteSqlStatement( cSql, cSqlStatement, hStatement )
+   METHOD getDatosTableName( cTableName )       INLINE ( cPatDat() + if( empty(cTableName), ::cTableName, cTableName ) )
 
-   METHOD CloseArea( cArea )                    INLINE ( if( Select( cArea ) > 0, ( cArea )->( dbCloseArea() ), ), dbSelectArea( 0 ), .t. )
+   METHOD getFileName( cPath, cTableName )      INLINE ( cPath + "\" + if( empty(cTableName), ::cTableName, cTableName ) )
+
+   METHOD createFile( cPath )
+   
+   METHOD createIndex( cPath )
+
+   METHOD executeSqlStatement( cSql, cSqlStatement, hStatement )
+
+   METHOD closeArea( cArea )                    INLINE ( if( select( cArea ) > 0, ( cArea )->( dbclosearea() ), ), dbselectarea( 0 ), .t. )
 
 END CLASS
 
 //---------------------------------------------------------------------------//
 
-METHOD ExecuteSqlStatement( cSql, cSqlStatement, hStatement )
+METHOD executeSqlStatement( cSql, cSqlStatement, hStatement )
 
    local lOk
    local nError
@@ -26,7 +34,7 @@ METHOD ExecuteSqlStatement( cSql, cSqlStatement, hStatement )
    local oBlock
    local cErrorAds
 
-   DEFAULT cSqlStatement   := "ADS" + trimedSeconds()
+   DEFAULT cSqlStatement   := "ADSArea" //  + trimedSeconds()
    DEFAULT hStatement      := ADS_CDX
 
    if !( lAIS() )
@@ -36,8 +44,10 @@ METHOD ExecuteSqlStatement( cSql, cSqlStatement, hStatement )
    oBlock                  := ErrorBlock( {| oError | ApoloBreak( oError ) } )
    BEGIN SEQUENCE
 
-      ::CloseArea( cSqlStatement )
+      ::closeArea( cSqlStatement )
 
+      ADSCacheOpenCursors( 0 )
+      
       dbSelectArea( 0 )
 
       lOk                  := ADSCreateSQLStatement( cSqlStatement, hStatement )
@@ -46,16 +56,18 @@ METHOD ExecuteSqlStatement( cSql, cSqlStatement, hStatement )
          lOk               := ADSExecuteSQLDirect( cSql )
          if !lOk
             nError         := AdsGetLastError( @cErrorAds )
-            msgStop( "Error : " + Str( nError) + "[" + cErrorAds + "]" + CRLF +  ;
-                     "Sentence : " + cSqlStatement                              ,;
+            msgStop( "Error : " + str( nError) + "[" + cErrorAds + "]" + CRLF + CRLF + ;
+                     "SQL : " + cSql                                                   ,;
                      'ERROR en ADSCreateSQLStatement' )
          endif
    
       else
+
+         ::closeArea( cSqlStatement )
    
          nError            := AdsGetLastError( @cErrorAds )
-         msgStop( "Error : " + Str( nError) + "[" + cErrorAds + "]" + CRLF +  ;
-                  "Sentence : " + cSqlStatement                              ,;
+         msgStop( "Error : " + str( nError) + "[" + cErrorAds + "]" + CRLF + CRLF +    ;
+                  "SQL : " + cSql                                                      ,;
                   'ERROR en ADSCreateSQLStatement' )
    
       end if
@@ -64,7 +76,7 @@ METHOD ExecuteSqlStatement( cSql, cSqlStatement, hStatement )
          ADSCacheOpenCursors( 0 )
          ADSClrCallBack()
       endif
-
+   
    RECOVER USING oError
       msgStop( ErrorMessage( oError ), "Error en sentencia SQL" )
    END SEQUENCE
@@ -74,5 +86,38 @@ RETURN ( lOk )
 
 //---------------------------------------------------------------------------//
 
+METHOD createFile( cPath )
 
+   if !lExistTable( ::getFileName( cPath ) )
+      dbCreate( ::getFileName( cPath ), ::getStruct(), cDriver() )
+   end if
+
+RETURN ( Self )
+
+//---------------------------------------------------------------------------//
+
+METHOD createIndex( cPath )
+
+   local cAlias
+   local aIndex
+
+   dbUseArea( .t., cDriver(), ::getFileName( cPath ), cCheckArea( "Alias", @cAlias ), .f. )
+
+   if ( cAlias )->( neterr() )
+      msgStop( "Imposible abrir en modo exclusivo la tabla : " + ::getFileName( cPath ) )
+      RETURN ( Self )
+   end if 
+
+   ( cAlias)->( __dbPack() )
+
+   for each aIndex in ::getIndexes
+      ( cAlias )->( ordCondSet( "!Deleted()", {|| !Deleted() }, , , , , , , , , aIndex[ 4 ] ) )
+      ( cAlias )->( ordCreate( ::getFileName( cPath ), aIndex[ 1 ], aIndex[ 2 ], aIndex[ 3 ] ) )
+   next 
+
+   ( cAlias )->( dbCloseArea() )
+
+RETURN ( Self )
+
+//---------------------------------------------------------------------------//
 

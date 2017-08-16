@@ -344,6 +344,8 @@ STATIC FUNCTION CloseFiles()
       oComercio:DestroyInstance()
    end if
 
+   D():DeleteView( nView )
+
    oWndBrw        := nil
 
    dbfArticulo    := nil

@@ -72,19 +72,11 @@ Function Main( cCodEmp, cCodUsr, cInitOptions )
 
    // Motor de bases de datos--------------------------------------------------
  
-   if ( "ADSINTERNET" $ cAdsType() )
-
-      if !( appConnectADS() )
-         msgStop( "Imposible conectar con GstApolo ADS data dictionary" )
-         Return nil
-      end if
-      
-   else 
-
-      appConnectCDX()
-
+   if !( appConnectADS() )
+      msgStop( "Imposible conectar con GstApolo ADS data dictionary" )
+      Return nil
    end if
-
+      
    TDataCenter():BuildData()
 
    // Seleccionamos el usuario-------------------------------------------------
@@ -2439,8 +2431,6 @@ Return nil
 
 Function SQLTShell()
 Return nil
-
-
 
 Function TiposVentasController()
 Return nil

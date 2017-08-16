@@ -5,7 +5,13 @@
 
 CLASS ColumnasUsuariosModel FROM BaseModel
 
-   METHOD getHeaderTableName()                  INLINE ::getEmpresaTableName( "CfgUse" )
+   DATA cTableName                              INIT "CfgUse"
+
+   METHOD getHeaderTableName()                  INLINE ::getEmpresaTableName()
+
+   METHOD getStruct()
+
+   METHOD getIndexes()
 
    METHOD set()
 
@@ -21,6 +27,31 @@ CLASS ColumnasUsuariosModel FROM BaseModel
    METHOD delete()
 
 END CLASS
+
+//---------------------------------------------------------------------------//
+
+METHOD getStruct()
+
+   local aStruct  := {}
+
+   aAdd( aStruct, { "cCodUse",  "C",  3, 0, "Código usuario"           } )
+   aAdd( aStruct, { "cNomCfg",  "C", 30, 0, "Nombre ventana"           } )
+   aAdd( aStruct, { "nRecCfg",  "N", 10, 0, "Recno de la ventana"      } )
+   aAdd( aStruct, { "nTabCfg",  "N", 10, 0, "Orden de la ventana"      } )
+   aAdd( aStruct, { "cOrdCfg",  "C", 60, 0, "Tag de la ventana"        } )
+   aAdd( aStruct, { "cBrwCfg",  "M", 10, 0, "Configuración del browse" } )
+
+Return ( aStruct )
+
+//---------------------------------------------------------------------------//
+
+METHOD getIndexes()
+
+   local aIndexes    := {}
+
+   aAdd( aIndexes, { "cCodUse",  "cCodUse + cNomCfg", {|| Field->cCodUse + Field->cNomCfg }, .f. } )
+
+Return ( aIndexes )
 
 //---------------------------------------------------------------------------//
 

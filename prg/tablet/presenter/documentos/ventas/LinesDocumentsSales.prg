@@ -155,7 +155,7 @@ METHOD New( oSender ) CLASS LinesDocumentsSales
 
    ::oSender      := oSender
 
-Return ( self )
+RETURN ( self )
 
 //---------------------------------------------------------------------------//
 
@@ -166,12 +166,12 @@ METHOD lSeekArticulo( cCodigoArticulo ) CLASS LinesDocumentsSales
    end if 
 
    if empty( cCodigoArticulo )
-      Return .f.
+      RETURN .f.
    end if
 
    cCodigoArticulo            := cSeekCodebarView( cCodigoArticulo, ::getView() )
 
-Return ( dbSeekArticuloUpperLower( cCodigoArticulo, ::getView() ) )
+RETURN ( dbSeekArticuloUpperLower( cCodigoArticulo, ::getView() ) )
 
 //---------------------------------------------------------------------------//
 
@@ -180,24 +180,24 @@ METHOD lSeekAlmacen() CLASS LinesDocumentsSales
    local cCodigoAlmacen     := ::oViewEditDetail:oGetAlmacen:varGet()   //::hGetDetail( "Articulo" )
 
    if empty( cCodigoAlmacen )
-      Return .f.
+      RETURN .f.
    end if
 
-Return ( cSeekStoreView( cCodigoAlmacen, ::getView() ) )
+RETURN ( cSeekStoreView( cCodigoAlmacen, ::getView() ) )
 
 //---------------------------------------------------------------------------//
 
 METHOD lArticuloObsoleto() CLASS LinesDocumentsSales
 
    if !( D():Articulos( ::getView() ) )->lObs
-      Return .f.
+      RETURN .f.
    end if
 
    ApoloMsgStop( "Artículo catalogado como obsoleto" )
 
    ::oViewEditDetail:oGetArticulo:SetFocus()
 
-Return .t.
+RETURN .t.
 
 //---------------------------------------------------------------------------//   
 
@@ -206,7 +206,7 @@ METHOD setAtipicasCliente() CLASS LinesDocumentsSales
    local hAtipica    := hAtipica( ::buildAtipicaClienteValues() )
 
    if empty( hAtipica )
-      Return ( self )
+      RETURN ( self )
    end if 
 
    if hhaskey( hAtipica, "nImporte" ) .and. hget( hAtipica, "nImporte" ) != 0
@@ -221,7 +221,7 @@ METHOD setAtipicasCliente() CLASS LinesDocumentsSales
       ::setDescuentoLineal( hget( hAtipica, "nDescuentoLineal" ) )   
    end if
 
-Return ( self )
+RETURN ( self )
 
 //---------------------------------------------------------------------------//
 
@@ -247,7 +247,7 @@ METHOD buildAtipicaClienteValues() CLASS LinesDocumentsSales
    hAtipicaClienteValues[ "dFecha"            ] := ::hGetMaster( "Fecha" )   
    hAtipicaClienteValues[ "nDescuentoTarifa"  ] := ::hGetMaster( "DescuentoTarifa" )   
 
-Return ( hAtipicaClienteValues )
+RETURN ( hAtipicaClienteValues )
 
 //---------------------------------------------------------------------------//
 
@@ -256,7 +256,7 @@ METHOD setDescuentoPromocional() CLASS LinesDocumentsSales
    ::setDescuentoPromocionalTarifaCliente()     //Método Virtual no creado
    ::setDescuentoPromocionalAtipicaCliente()    //Método Virtual no creado
 
-Return ( self )
+RETURN ( self )
 
 //---------------------------------------------------------------------------//
 
@@ -343,47 +343,47 @@ METHOD setLineFromArticulo() CLASS LinesDocumentsSales
 
    ::setStockArticulo()
 
-Return ( self )
+RETURN ( self )
 
 //---------------------------------------------------------------------------//
 
 METHOD setStockArticulo() 
  
    if GetPvProfString( "Tablet", "Stock", ".F.", cIniAplication() ) != ".T."
-      Return ( Self )
+      RETURN ( Self )
    end if 
 
    /*
    Stock por lote------------------------------------------------------------//
    */
 
-   ::oViewEditDetail:nGetStock   := ::oSender:oStock:nTotStockAct(   ::hGetDetail( "Articulo" ),;
-                                                                     ::hGetDetail( "Almacen" ),;
-                                                                     ::hGetDetail( "ValorPropiedad1" ),;
-                                                                     ::hGetDetail( "ValorPropiedad2" ),;
-                                                                     ::hGetDetail( "Lote" ),;
-                                                                     ::hGetDetail( "LineaEscandallo" ),;
-                                                                     nil ,;
-                                                                     ::hGetDetail( "TipoStock" ) )
+   ::oViewEditDetail:nGetStock   := ::oSender:oStock:nCacheStockActual( ::hGetDetail( "Articulo" ),;
+                                                                        ::hGetDetail( "Almacen" ),;
+                                                                        ::hGetDetail( "ValorPropiedad1" ),;
+                                                                        ::hGetDetail( "ValorPropiedad2" ),;
+                                                                        ::hGetDetail( "Lote" ),;
+                                                                        ::hGetDetail( "LineaEscandallo" ),;
+                                                                        nil ,;
+                                                                        ::hGetDetail( "TipoStock" ) )
 
    if !empty( ::oViewEditDetail:oGetStock )
       ::oViewEditDetail:oGetStock:Refresh()
    end if
 
-   ::oViewEditDetail:nGetStockAlmacen   := ::oSender:oStock:nTotStockAct(  ::hGetDetail( "Articulo" ),;
-                                                                           ::hGetDetail( "Almacen" ),;
-                                                                           Space( 20 ),;
-                                                                           Space( 20 ),;
-                                                                           Space( 14 ),;
-                                                                           .f.,;
-                                                                           nil ,;
-                                                                           ::hGetDetail( "TipoStock" ) )
+   ::oViewEditDetail:nGetStockAlmacen   := ::oSender:oStock:nCacheStockActual(  ::hGetDetail( "Articulo" ),;
+                                                                                 ::hGetDetail( "Almacen" ),;
+                                                                                 space( 20 ),;
+                                                                                 space( 20 ),;
+                                                                                 space( 14 ),;
+                                                                                 .f.,;
+                                                                                 nil ,;
+                                                                                 ::hGetDetail( "TipoStock" ) )
 
    if !empty( ::oViewEditDetail:oGetStockAlmacen )
       ::oViewEditDetail:oGetStockAlmacen:Refresh()
    end if
 
-Return ( self )
+RETURN ( self )
 
 //---------------------------------------------------------------------------//
 
@@ -394,20 +394,20 @@ METHOD CargaArticulo( cCodigoArticulo ) CLASS LinesDocumentsSales
    end if
 
    if empty( cCodigoArticulo )
-      Return .f.
+      RETURN .f.
    end if
 
    if ( cCodigoArticulo == ::cOldCodigoArticulo )
-      Return .t.
+      RETURN .t.
    end if
 
    if !::lSeekArticulo( cCodigoArticulo )
       apoloMsgStop( "Artículo no encontrado" )
-      Return .f.
+      RETURN .f.
    end if
 
    if ::lArticuloObsoleto()
-      return .f.
+      RETURN .f.
    end if
 
    ::oViewEditDetail:disableDialog()
@@ -426,7 +426,7 @@ METHOD CargaArticulo( cCodigoArticulo ) CLASS LinesDocumentsSales
 
    ::oViewEditDetail:refreshDialog()
 
-Return ( .t. )
+RETURN ( .t. )
 
 //---------------------------------------------------------------------------//
 
@@ -440,7 +440,7 @@ METHOD cargaLote( cCodigoArticulo ) CLASS LinesDocumentsSales
 
    ::oViewEditDetail:refreshDialog()
 
-Return ( .t. )
+RETURN ( .t. )
 
 //---------------------------------------------------------------------------//
 
@@ -448,7 +448,7 @@ METHOD cargaAlmacen() CLASS LinesDocumentsSales
 
    if !::lSeekAlmacen()
       apoloMsgStop( "Almacén no encontrado" )
-      Return .f.
+      RETURN .f.
    end if
 
    ::setNombreAlmacen( ( D():Almacen( ::getView() ) )->cNomAlm )
@@ -461,7 +461,7 @@ METHOD cargaAlmacen() CLASS LinesDocumentsSales
 
    ::oViewEditDetail:refreshDialog()
 
-Return ( .t. )
+RETURN ( .t. )
 
 //---------------------------------------------------------------------------//
 
@@ -479,7 +479,7 @@ METHOD ResourceDetail( nMode ) CLASS LinesDocumentsSales
 
    end if
 
-Return ( lResult )   
+RETURN ( lResult )   
 
 //---------------------------------------------------------------------------//
 
@@ -497,7 +497,7 @@ METHOD StartResourceDetail() CLASS LinesDocumentsSales
    ::oViewEditDetail:oGetArticulo:SetFocus()
 */
 
-Return ( self )
+RETURN ( self )
 
 //---------------------------------------------------------------------------//
 
@@ -514,7 +514,7 @@ RETURN ( .t. )
 METHOD runGridProduct() CLASS LinesDocumentsSales
 
    if empty( ::oSender:oProduct:oGridProduct )
-      Return ( Self )
+      RETURN ( Self )
    end if
 
    if GetPvProfString( "Tablet", "OcultarObsoletos", ".F.", cIniAplication() ) == ".T."
@@ -540,7 +540,7 @@ METHOD runGridProduct() CLASS LinesDocumentsSales
       ::clearFilerObsoletos()
    end if
 
-Return ( self )
+RETURN ( self )
 
 //---------------------------------------------------------------------------//
 
@@ -549,7 +549,7 @@ METHOD setFilerObsoletos() CLASS LinesDocumentsSales
    ( D():Articulos( ::oSender:nView ) )->( dbsetfilter( {|| !Field->lObs }, "!Field->lObs" ) )
    ( D():Articulos( ::oSender:nView ) )->( dbgotop() )
 
-Return ( self )
+RETURN ( self )
 
 //---------------------------------------------------------------------------//
 
@@ -557,14 +557,14 @@ METHOD clearFilerObsoletos() CLASS LinesDocumentsSales
 
    ( D():Articulos( ::oSender:nView ) )->( dbClearFilter() )
 
-Return ( self )
+RETURN ( self )
 
 //---------------------------------------------------------------------------//
 
 METHOD runGridLote() CLASS LinesDocumentsSales
 
    if empty( ::oSender:oProductStock:oGridProductStock )
-      Return ( Self )
+      RETURN ( Self )
    end if
 
    ::oViewEditDetail:oGetLote:Disable()
@@ -585,18 +585,18 @@ METHOD runGridLote() CLASS LinesDocumentsSales
    ::oViewEditDetail:oGetLote:setFocus()
    ::oViewEditDetail:oGetLote:Refresh()
 
-Return ( self )
+RETURN ( self )
 
 //---------------------------------------------------------------------------//
 
 METHOD runGridStore() CLASS LinesDocumentsSales
 
    if ( GetPvProfString( "Tablet", "BloqueoAlmacen", ".F.", cIniAplication() ) == ".T." )
-      Return ( self )
+      RETURN ( self )
    end if
 
    if empty( ::oSender:oStore:oGrid )
-      Return ( Self )
+      RETURN ( Self )
    end if 
 
    ::oViewEditDetail:oGetAlmacen:Disable()
@@ -612,7 +612,7 @@ METHOD runGridStore() CLASS LinesDocumentsSales
    ::oViewEditDetail:oGetAlmacen:Enable()
    ::oViewEditDetail:oGetAlmacen:setFocus()
 
-Return ( self )
+RETURN ( self )
 
 //---------------------------------------------------------------------------//
 
@@ -628,15 +628,15 @@ METHOD lValidResourceDetail() CLASS LinesDocumentsSales
 
       ::oViewEditDetail:oGetLote:SetFocus()
  
-      Return ( .f. )
+      RETURN ( .f. )
 
    end if
 
    if !::lValidStockLote()
-      Return ( .f. )
+      RETURN ( .f. )
    end if
 
-Return ( .t. )
+RETURN ( .t. )
 
 //---------------------------------------------------------------------------//
 
@@ -668,14 +668,14 @@ METHOD onPostSaveAppendDetail() CLASS LinesDocumentsSales
 
    D():setStatusKit( aStatusKit, ::getView() )
 
-Return ( nil )
+RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 
 METHOD insertKit( nUnidadesArticulo, lLineaPertencienteEscandallo ) CLASS LinesDocumentsSales
 
    if !::lSeekArticulo( ( D():Kit( ::getView() ) )->cRefKit )
-      Return .f.
+      RETURN .f.
    end if
 
    ::oSender:getAppendDetail()
@@ -696,7 +696,7 @@ METHOD insertKit( nUnidadesArticulo, lLineaPertencienteEscandallo ) CLASS LinesD
 
    ::oSender:saveAppendDetail()
 
-Return ( nil )
+RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 
@@ -712,7 +712,7 @@ METHOD setObsequio() CLASS LinesDocumentsSales
 
    ::oViewEditDetail:refreshDialog()
 
-Return ( nil )
+RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 
@@ -721,16 +721,16 @@ METHOD lValidStockLote() CLASS LinesDocumentsSales
    local nUnidades   := 0
 
    if !::hGetDetail( "NoPermitirSinStock" )
-      Return .t.
+      RETURN .t.
    end if
 
    nUnidades         := NotCaja( ::hGetDetail( "Cajas" ) ) * ::hGetDetail( "Unidades" )
 
    if ( ::oViewEditDetail:nGetStock - nUnidades ) < 0
       ApoloMsgStop( "No hay stock suficiente." )
-      Return .f.
+      RETURN .f.
    end if
 
-Return .t.
+RETURN .t.
 
 //---------------------------------------------------------------------------//

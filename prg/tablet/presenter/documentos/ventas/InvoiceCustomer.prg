@@ -22,18 +22,19 @@ CLASS InvoiceCustomer FROM DocumentsSales
 
    METHOD printDocument()                 INLINE ( imprimeFacturaCliente( ::getID(), ::cFormatToPrint, ::nView ), .t. )
 
-   METHOD onPostSaveAppend()              INLINE ( generatePagosFacturaCliente( ::getId(), ::nView ),;
-                                                   checkPagosFacturaCliente( ::getId(), ::nView ),;
-                                                   ::ActualizaUltimoLote() )
+   METHOD onPostSaveAppend()              INLINE ( ::onPostSaveEdit(), ::actualizaUltimoLote() )
 
    METHOD onPostSaveEdit()                INLINE ( generatePagosFacturaCliente( ::getId(), ::nView ),;
-                                                   checkPagosFacturaCliente( ::getId(), ::nView ) )
+                                                   checkPagosFacturaCliente( ::getId(), ::nView ),;
+                                                   ::recalculateCacheStock() )
 
    METHOD appendButtonMode()              INLINE ( ::lAppendMode() .or. ( ::lEditMode() .and. accessCode():lInvoiceModify ) )
    METHOD editButtonMode()                INLINE ( ::appendButtonMode() )
    METHOD deleteButtonMode()              INLINE ( ::appendButtonMode() )
-   METHOD ActualizaUltimoLote()
    METHOD onPreEditDocumento()
+
+   METHOD actualizaUltimoLote()
+   METHOD recalculateCacheStock() 
 
 END CLASS
 
@@ -248,23 +249,22 @@ Return ( Self )
 
 //---------------------------------------------------------------------------//
 
-METHOD ActualizaUltimoLote() CLASS InvoiceCustomer
+METHOD actualizaUltimoLote() CLASS InvoiceCustomer
 
    local nRec        := ( D():FacturasClientesLineas( ::nView ) )->( Recno() )
    local nOrdAnt     := ( D():FacturasClientesLineas( ::nView ) )->( ordSetFocus( "nNumFac" ) )
 
    if ( D():FacturasClientesLineas( ::nView ) )->( dbSeek( ::getId() ) )
 
-      while ( D():FacturasClientesLineas( ::nView ) )->cSerie + Str( ( D():FacturasClientesLineas( ::nView ) )->nNumFac ) + ( D():FacturasClientesLineas( ::nView ) )->cSufFac == ::getId() .and.;
-            !( D():FacturasClientesLineas( ::nView ) )->( Eof() )
+      while ( D():FacturasClientesLineasId( ::nView ) == ::getId() .and. D():FacturasClientesLineasNotEof( ::nView ) )
 
-            if !Empty( ( D():FacturasClientesLineas( ::nView ) )->cRef ) .and. ( D():FacturasClientesLineas( ::nView ) )->lLote
+         if !Empty( ( D():FacturasClientesLineas( ::nView ) )->cRef ) .and. ( D():FacturasClientesLineas( ::nView ) )->lLote
 
-               saveLoteActual( ( D():FacturasClientesLineas( ::nView ) )->cRef, ( D():FacturasClientesLineas( ::nView ) )->cLote, ::nView )
+            saveLoteActual( ( D():FacturasClientesLineas( ::nView ) )->cRef, ( D():FacturasClientesLineas( ::nView ) )->cLote, ::nView )
 
-            end if
+         end if
 
-            ( D():FacturasClientesLineas( ::nView ) )->( dbSkip() )
+         ( D():FacturasClientesLineas( ::nView ) )->( dbSkip() )
 
       end while
 
@@ -276,6 +276,39 @@ METHOD ActualizaUltimoLote() CLASS InvoiceCustomer
 Return ( self )
 
 //---------------------------------------------------------------------------//
+
+METHOD recalculateCacheStock() CLASS InvoiceCustomer
+
+   local nRec        := ( D():FacturasClientesLineas( ::nView ) )->( recno() )
+   local nOrdAnt     := ( D():FacturasClientesLineas( ::nView ) )->( ordsetfocus( "nNumFac" ) )
+
+   cursorWait()
+
+   if ( D():FacturasClientesLineas( ::nView ) )->( dbseek( ::getId() ) )
+
+      while ( D():FacturasClientesLineasId( ::nView ) == ::getId() .and. D():FacturasClientesLineasNotEof( ::nView ) )
+
+         if !empty( ( D():FacturasClientesLineas( ::nView ) )->cRef )
+
+            ::oStock:recalculateCacheStockActual( ( D():FacturasClientesLineas( ::nView ) )->cRef, ( D():FacturasClientesLineas( ::nView ) )->cAlmLin, ( D():FacturasClientesLineas( ::nView ) )->cValPr1, ( D():FacturasClientesLineas( ::nView ) )->cValPr2, ( D():FacturasClientesLineas( ::nView ) )->cLote, ( D():FacturasClientesLineas( ::nView ) )->lKitArt, nil, ( D():FacturasClientesLineas( ::nView ) )->nCtlStk )                      
+
+         end if
+
+         ( D():FacturasClientesLineas( ::nView ) )->( dbskip() )
+
+      end while
+
+   end if
+
+   ( D():FacturasClientesLineas( ::nView ) )->( ordsetfocus( nOrdAnt ) )
+   ( D():FacturasClientesLineas( ::nView ) )->( dbgoto( nRec ) )
+
+   cursorWE()
+
+Return ( self )
+
+//---------------------------------------------------------------------------//
+
 
 METHOD onPreEditDocumento() CLASS InvoiceCustomer
 

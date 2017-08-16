@@ -984,8 +984,8 @@ METHOD Close() CLASS TDbf
     local lRet := ( ::Used() .and. Eval( ::bOnClose, Self ) )
 
     if lRet
-        ( ::nArea )->( OrdListClear() )
-        ( ::nArea )->( DbCloseArea() )
+        ( ::nArea )->( ordlistclear() )
+        ( ::nArea )->( dbclosearea() )
 
         ::nArea  := 0
         ::cAlias := ""

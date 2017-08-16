@@ -52,9 +52,7 @@ static cAdsIp           := ""
 static cAdsPort         := ""
 static cAdsData         := ""
 static nAdsServer       := 7
-static cAdsLocal        := ""
 static cAdsFile         := "Gestool.Add"
-static cAdsType         := ""
 
 static appParamsMain    := ""
 static appParamsSecond  := ""
@@ -281,35 +279,30 @@ RETURN ( .t. )
 
 FUNCTION Test()
 
-   // ColumnasUsuariosModel():set( "Testing", "my tasting" )
-
-   /*with object MovimientosAlmacenController()
-      :New()
-      :activateShell()
-   end with*/
-
-<<<<<<< HEAD
-=======
    /*
->>>>>>> 18bdc7c74485b9605d246f05379819c8f5f456d7
+   local hFec
+   local cStm  := FacturasClientesLineasModel():getLineasFacturasAgrupadas( '9', '2', '', '', '1234' )
+
+   msgalert( cStm, "cStm" )
+
+   while ( cStm )->( !eof() )
+
+      hFec     := MovimientosAlmacenesLineasModel():getFechaHoraConsolidacion( (cStm)->cRef, (cStm)->cAlmLin, (cStm)->cValPr1, (cStm)->cValPr2, (cStm)->cLote )
+
+      FacturasClientesLineasModel():getLineasFacturasAgrupadasUltimaConsolidacion((cStm)->cRef, (cStm)->cAlmLin, (cStm)->cValPr1, (cStm)->cValPr2, (cStm)->cLote, hFec )
+
+      ( cStm )->( dbskip() )
+
+   end while
+
+   ( cStm )->( dbclosearea() )
+
+
+
    with object MovimientosAlmacenController()
       :New()
       :activateShell()
    end with
-<<<<<<< HEAD
-   
-=======
-   */
->>>>>>> 82dfa64243425f7e8decb49a52be522e6a7c922b
-   /*
-
-   A1732400-1
-
-   cobrado -> nimpcob
-   importe -> nimporte
-
-   497f0cd2-4c95-4405-b659-1ea4a71f8e27 
-
 
    local hMail          := {=>}
    local cMensajeMail   := ""
@@ -2796,7 +2789,6 @@ RETURN ( oAcceso )
 
 //---------------------------------------------------------------------------//
 
-
 FUNCTION IsReport()
 
 RETURN ( .f. )
@@ -3450,16 +3442,6 @@ RETURN ( nAdsServer )
 
 //----------------------------------------------------------------------------//
 
-FUNCTION cAdsLocal( cLocal )
-
-   if IsChar( cLocal )
-      cAdsLocal    := cLocal
-   end if
-
-RETURN ( cAdsLocal )
-
-//----------------------------------------------------------------------------//
-
 FUNCTION cAdsUNC()
 
 RETURN ( cAdsIp() + cPath( cAdsData() ) )
@@ -3473,16 +3455,6 @@ FUNCTION cAdsFile( cFile )
    end if 
 
 RETURN ( cAdsFile )
-
-//----------------------------------------------------------------------------//
-
-FUNCTION cAdsType( cType )
-
-   if ( isChar( cType ) .and. !empty( cType ) )
-      cAdsType    := cType
-   end if 
-
-RETURN ( cAdsType )
 
 //----------------------------------------------------------------------------//
 
@@ -3619,18 +3591,6 @@ FUNCTION cPatDat( lFull )
 
    if lAIS() 
       RETURN ( if( lFull, cAdsUNC() + cPathDatos() + "\", cPathDatos() ) )
-   end if
-
-RETURN ( fullCurDir() + cPathDatos() + "\" )
-
-//----------------------------------------------------------------------------//
-
-FUNCTION cPathDatosLocal( lFull )
-
-   DEFAULT lFull  := .f.
-
-   if lAIS()
-      RETURN ( if( lFull, cAdsLocal() + cPathDatos() + "\", cPathDatos() + "\" ) )
    end if
 
 RETURN ( fullCurDir() + cPathDatos() + "\" )
@@ -4145,114 +4105,39 @@ RETURN ( aItmCom )
 
 //----------------------------------------------------------------------------//
 
-FUNCTION aEmpresa( cEmp, dbfEmp, dbfDlg, dbfUser, lRptGal )
+FUNCTION aEmpresa( cCodigoEmpresa )
 
-   local cDlg
-   local oBlock
-   local oError
-   local lEmpFnd     := .t.
-   local lCloDlg     := .f.
-   local lCloEmp     := .f.
-   local lCloUsr     := .f.
+   setArrayEmpresa( EmpresasModel():scatter( cCodigoEmpresa ) )
 
-   DEFAULT lRptGal   := .f.
+   /*
+   Configuraciones desde el usuario-----------------------------------------
+   */
 
-   cDlg              := oUser():cDelegacion()
-   aDlgEmp           := {}
+   if !( isReport() )
 
-   oBlock            := ErrorBlock( {| oError | ApoloBreak( oError ) } )
-   BEGIN SEQUENCE
+      if empty( oUser():cCaja() )
+         oUser():cCaja( cCajUsr( uFieldEmpresa( "cDefCaj" ) ) )
+      end if
 
-   if dbfEmp == nil
-      USE ( cPatDat() + "EMPRESA.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "EMPRESA", @dbfEmp ) )
-      SET ADSINDEX TO ( cPatDat() + "EMPRESA.CDX" ) ADDITIVE
-      lCloEmp        := .t.
-   end if
-
-   if dbfUser == nil
-      USE ( cPatDat() + "USERS.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "USERS", @dbfUser ) )
-      SET ADSINDEX TO ( cPatDat() + "USERS.CDX" ) ADDITIVE
-      lCloUsr        := .t.
-   end if
-
-   if dbfDlg == nil
-      USE ( cPatDat() + "DELEGA.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "DELEGA", @dbfDlg ) )
-      SET ADSINDEX TO ( cPatDat() + "DELEGA.CDX" ) ADDITIVE
-      lCloDlg        := .t.
-   end if
-
-   if dbSeekInOrd( cEmp, "CodEmp", dbfEmp )
-
-      aEmpresa       := dbScatter( dbfEmp )
-
-      /*
-      Configuraciones desde el usuario-----------------------------------------
-      */
-
-      if !lRptGal
-
-         if empty( oUser():cCaja() )
-            oUser():cCaja( cCajUsr( ( dbfEmp )->cDefCaj ) )
-         end if
-
-         if empty( oUser():cAlmacen() )
-            oUser():cAlmacen( cAlmUsr( ( dbfEmp )->cDefAlm ) )
-         end if
-
+      if empty( oUser():cAlmacen() )
+         oUser():cAlmacen( cAlmUsr( uFieldEmpresa( "cCodAlm" ) ) )
       end if
 
       /*
-      Verificamos la existencia de la delegacion-------------------------------
+      Cargamos el programa contable--------------------------------------
       */
 
-      if !( dbfDlg )->( dbSeek( cEmp + cDlg ) )
-         oUser():cDelegacion()
-      end if 
-
-      /*
-      Cargamos las delegaciones------------------------------------------------
-      */
-
-      if ( dbfDlg )->( dbSeek( cEmp ) )
-         while ( dbfDlg )->cCodEmp == cEmp .and. ( dbfDlg )->( !eof() )
-            aAdd( aDlgEmp, ( dbfDlg )->cCodDlg )
-            ( dbfDlg )->( dbSkip() )
-         end while
-      else
-         aDlgEmp     := { "" }
-      end if
-
-      // Cargamos el programa contable-----------------------------------------
-
-      SetAplicacionContable( ( dbfEmp )->nExpContbl )
-
-   else
-
-      lEmpFnd        := .f.
+      setAplicacionContable( uFieldEmpresa( "nExpContbl" ) )
 
    end if
 
-   RECOVER USING oError
+   /*
+   Verificamos la existencia de la delegacion-------------------------------
+   */
 
-      msgStop( "Imposible abrir todas las bases de datos " + CRLF + ErrorMessage( oError ) )
+   setArrayDelegacionEmpresa( DelegacionesModel():arrayDelegaciones( cCodigoEmpresa ) )
 
-   END SEQUENCE
-
-   ErrorBlock( oBlock )
-
-   if lCloDlg
-      CLOSE ( dbfDlg )
-   end if
-
-   if lCloUsr
-      CLOSE ( dbfUser )
-   end if
-
-   if lCloEmp
-      CLOSE ( dbfEmp )
-   end if
-
-RETURN ( lEmpFnd )
+RETURN ( .t. )
 
 //---------------------------------------------------------------------------//
 
@@ -4267,6 +4152,14 @@ FUNCTION SetEmp( uVal, nPos )
 //---------------------------------------------------------------------------//
 
 FUNCTION aRetDlgEmp() ; RETURN ( aDlgEmp )
+
+//---------------------------------------------------------------------------//
+
+FUNCTION setArrayDelegacionEmpresa( aDelegaciones )
+
+   aDlgEmp  := aDelegaciones
+
+RETURN ( aDlgEmp )
 
 //---------------------------------------------------------------------------//
 
@@ -4675,13 +4568,11 @@ FUNCTION appLoadAds()
       fRename( fullCurDir() + "Gestion.Ini", cIniAplication() )
    end if
 
-   cAdsType(   GetPvProfString(  "ADS",      "Type",     "",   cIniAplication() ) )
-   cAdsIp(     GetPvProfString(  "ADS",      "Ip",       "",   cIniAplication() ) )
+   cAdsIp(     GetPvProfString(  "ADS",      "Ip",       hb_curdrive() + ":\", cIniAplication() ) )
+   cAdsData(   GetPvProfString(  "ADS",      "Data",     curdir() + if( !empty( curdir() ), "\", "" ), cIniAplication() ) )
    cAdsPort(   GetPvProfString(  "ADS",      "Port",     "",   cIniAplication() ) )
-   cAdsData(   GetPvProfString(  "ADS",      "Data",     "",   cIniAplication() ) )
    nAdsServer( GetPvProfInt(     "ADS",      "Server",   7,    cIniAplication() ) )
-   cAdsFile(   GetPvProfString(  "ADS",      "File",     "",   cIniAplication() ) )
-   cAdsLocal(  GetPvProfString(  "ADS",      "Local",    "",   cIniAplication() ) )
+   cAdsFile(   GetPvProfString(  "ADS",      "File",     "Gestool.add",   cIniAplication() ) )
 
 RETURN nil 
 
@@ -5476,6 +5367,18 @@ RETURN ( if( dSysDate != nil, dSysDate, Date() ) )
 //---------------------------------------------------------------------------//
 
 FUNCTION aEmp() ; RETURN ( aEmpresa )
+
+//---------------------------------------------------------------------------//
+
+FUNCTION getArrayEmpresa() ; RETURN ( aEmpresa )
+
+//---------------------------------------------------------------------------//
+
+FUNCTION setArrayEmpresa( aEmp )
+
+   aEmpresa    := aEmp
+
+RETURN ( aEmpresa )
 
 //---------------------------------------------------------------------------//
 

@@ -67,7 +67,7 @@ METHOD New()
 
    aadd( ::aModels, PropiedadesLineasModel():New():getSQLCreateTable() )
 
-   aadd( ::aModels, MovimientosAlmacenModel():New():getSQLCreateTable() )
+   aadd( ::aModels, SQLMovimientosAlmacenModel():New():getSQLCreateTable() )
 
    ::cPathDatabaseSQLite      := fullCurDir() + "Database\" 
 

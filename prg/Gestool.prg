@@ -21,18 +21,42 @@
 
 #define FONT_NAME             "Segoe UI" 
 
-ANNOUNCE RDDSYS
-
-REQUEST ADS
-REQUEST DBFCDX
-REQUEST DBFFPT
-
-REQUEST AdsKeyNo
-REQUEST AdsKeyCount
-REQUEST AdsGetRelKeyPos 
-REQUEST AdsSetRelKeyPos
-
 static hDLLRich
+
+//---------------------------------------------------------------------------//
+
+PROCEDURE RddInit()
+
+   ANNOUNCE RDDSYS
+
+   REQUEST DBFCDX
+   REQUEST DBFFPT
+   REQUEST ADS
+
+   REQUEST OrdKeyCount
+   REQUEST OrdKeyNo
+   REQUEST OrdKeyGoto
+
+   REQUEST AdsKeyNo
+   REQUEST AdsKeyCount
+   REQUEST AdsGetRelKeyPos 
+   REQUEST AdsSetRelKeyPos
+
+RETURN
+
+//---------------------------------------------------------------------------//
+
+INIT PROCEDURE InitAplication()
+
+   REQUEST HB_LANG_ES         // Para establecer idioma de Mensajes, fechas, etc..
+   REQUEST HB_CODEPAGE_ESWIN  // Para establecer código de página a Español (Ordenación, etc..)
+
+   hb_langselect( "ES" )      // Para mensajes, fechas, etc..
+   hb_setcodepage( "ESWIN" )  // Para ordenación (arrays, cadenas, etc..) *Requiere CodePage.lib
+
+   loadLibrary( "Riched20.dll" ) // Cargamos la libreria para richedit
+
+RETURN
 
 //---------------------------------------------------------------------------//
 /*
@@ -77,17 +101,9 @@ FUNCTION Main( paramsMain, paramsSecond, paramsThird )
 
    // Motor de bases de datos--------------------------------------------------
 
-   if ( "ADSINTERNET" $ cAdsType() )
-
-      if !( appConnectADS() )
-         msgStop( "Imposible conectar con GstApolo ADS data dictionary" )
-         RETURN nil
-      end if
-
-   else 
-      
-      appConnectCDX()
-
+   if !( appConnectADS() )
+      msgStop( "Imposible conectar con GstApolo ADS data dictionary" )
+      RETURN nil
    end if
 
    TDataCenter():BuildData()
@@ -260,20 +276,6 @@ STATIC FUNCTION CreateMainTabletWindow()
    end if 
 
 RETURN ( .t. )
-
-//---------------------------------------------------------------------------//
-
-init procedure InitAplication()
-
-   REQUEST HB_LANG_ES         // Para establecer idioma de Mensajes, fechas, etc..
-   REQUEST HB_CODEPAGE_ESWIN  // Para establecer código de página a Español (Ordenación, etc..)
-
-   hb_langselect( "ES" )      // Para mensajes, fechas, etc..
-   hb_setcodepage( "ESWIN" )  // Para ordenación (arrays, cadenas, etc..) *Requiere CodePage.lib
-
-   loadLibrary( "Riched20.dll" ) // Cargamos la libreria para richedit
-
-RETURN
 
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
@@ -821,9 +823,10 @@ FUNCTION MainTablet()
    local nRow           
    local oGridTree
    local cAgente        := GetPvProfString( "Tablet", "Agente", "", cIniAplication() )
+   local cTitle         := "GESTOOL TABLET : " + uFieldEmpresa( "CodEmp" ) + "-" + uFieldEmpresa( "cNombre" )
 
    nRow                 := 0
-   oDlg                 := TDialog():New( 1, 5, 40, 100, "GESTOOL TABLET",,, .f., nOR( DS_MODALFRAME, WS_POPUP, WS_CAPTION, WS_SYSMENU, WS_MINIMIZEBOX, WS_MAXIMIZEBOX ),, rgb( 255, 255, 255 ),,, .F.,, oGridFont(),,,, .f.,, "oDlg" )  
+   oDlg                 := TDialog():New( 1, 5, 40, 100, cTitle,,, .f., nOR( DS_MODALFRAME, WS_POPUP, WS_CAPTION, WS_SYSMENU, WS_MINIMIZEBOX, WS_MAXIMIZEBOX ),, rgb( 255, 255, 255 ),,, .F.,, oGridFont(),,,, .f.,, "oDlg" )  
 
 	/*
 	Cabeceras------------------------------------------------------------------
