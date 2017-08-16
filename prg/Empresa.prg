@@ -3633,6 +3633,11 @@ Static Function StartPathEmp( cPath, cPathOld, cCodEmpNew, cNomEmpNew, cCodEmpOl
       mkTemporada( cPath, aImportacion:lArticulos, cPathGrp ); rxTemporada( cPath )   ; sysrefresh()
 
       if oMsg != nil
+         oMsg:SetText( "Creando categorías" )
+      end if
+      mkCategoria( cPath, aImportacion:lArticulos, cPathGrp ); rxCategoria( cPath )   ; sysrefresh()
+
+      if oMsg != nil
          oMsg:SetText( "Creando grupos de familias" )
       end if
       if cPathOld != nil

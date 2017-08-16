@@ -428,6 +428,8 @@ static aImpComanda         := {}
 static oTipArt
 static oFabricante
 
+static cNuevoAlbaran       := ""
+
 static lExternal           := .t.
 static nNumBtnFam          := NUM_BTN_FAM
 static nNumBtnArt          := NUM_BTN_ART
@@ -1565,12 +1567,12 @@ else
       HOTKEY   "F";
       LEVEL    ACC_IMPR
 
-   DEFINE BTNSHELL RESOURCE "GC_DOCUMENT_TEXT_USER_" OF oWndBrw ;
+   /*DEFINE BTNSHELL RESOURCE "GC_DOCUMENT_TEXT_USER_" OF oWndBrw ;
       NOBORDER ;
       ACTION   ( WinDupRec( oWndBrw:oBrw, bEditT, D():Tikets( nView ) ) );
       TOOLTIP  "Ti(k)et a factura";
       HOTKEY   "K";
-      LEVEL    ACC_APPD
+      LEVEL    ACC_APPD*/
 
    DEFINE BTNSHELL RESOURCE "BMPCONTA" OF oWndBrw ;
       NOBORDER ;
@@ -1702,11 +1704,11 @@ else
          FROM     oRotor ;
          CLOSED ;
 
-      DEFINE BTNSHELL RESOURCE "GC_DOCUMENT_TEXT_USER_" OF oWndBrw ;
+      /*DEFINE BTNSHELL RESOURCE "GC_DOCUMENT_TEXT_USER_" OF oWndBrw ;
          ALLOW    EXIT ;
          ACTION   ( lFacturaAlbaran() ) ;
          TOOLTIP  "Generar factura" ;
-         FROM     oRotor ;
+         FROM     oRotor ;*/
 
    DEFINE BTNSHELL RESOURCE "END" GROUP OF oWndBrw ;
       NOBORDER ;
@@ -2799,14 +2801,13 @@ Static Function StartEdtRec( aTmp, aGet, nMode, oDlgTpv, oBrw, oBrwDet, hDocumen
          oBtnEdt        := TDotNetButton():New( 60, oGrupo, "gc_pencil__32",              "Modificar [F3]",       2, {|| WinEdtRec( oBrwDet, bEditL, dbfTmpL, , , aTmp ), lRecTotal( aTmp ), aGet[ _CCLITIK ]:SetFocus() }, , , .f., .f., .f. )
          oBtnDel        := TDotNetButton():New( 60, oGrupo, "Del32",                      "Eliminar [F4]",        3, {|| deleteLineTicket( aTmp, oBrwDet ) }, , {|| nMode != ZOOM_MODE }, .f., .f., .f. )
 
-      oGrupo            := TDotNetGroup():New( oCarpeta, 436, "Cobros", .f. )
+      oGrupo            := TDotNetGroup():New( oCarpeta, 376, "Cobros", .f. )
          oBtnTik        := TDotNetButton():New( 60, oGrupo, "gc_money2_32",               "Cobrar [F5]",          1, {|| NewTiket( aGet, aTmp, nMode, SAVTIK, .f., oBrw, oBrwDet ) }, , {|| nMode != ZOOM_MODE }, .f., .f., .f. )
          oBtnAlb        := TDotNetButton():New( 60, oGrupo, "gc_document_empty_32",       "Albarán [F7]",         2, {|| NewTiket( aGet, aTmp, nMode, SAVALB, .f., oBrw, oBrwDet ) }, , {|| nMode != ZOOM_MODE }, .f., .f., .f. )
-         oBtnFac        := TDotNetButton():New( 70, oGrupo, "gc_document_text_user_32",   "Factura [F8]",         3, {|| NewTiket( aGet, aTmp, nMode, SAVFAC, .f., oBrw, oBrwDet ) }, , {|| nMode != ZOOM_MODE }, .f., .f., .f. )
-         oBtnApt        := TDotNetButton():New( 60, oGrupo, "gc_cash_stop_32",            "Apartar [F9]",         4, {|| GuardaApartado( aGet, aTmp, @nMode, SAVAPT, .f., oBrw, oBrwDet, oDlgTpv ) }, , {|| nMode != ZOOM_MODE }, .f., .f., .f. )
-         oBtnVal        := TDotNetButton():New( 60, oGrupo, "gc_cash_money_32",           "Cheque regalo",        5, {|| NewTiket( aGet, aTmp, nMode, SAVRGL, .f., oBrw, oBrwDet ) }, , {|| nMode != ZOOM_MODE }, .f., .f., .f. )
-         oBtnDev        := TDotNetButton():New( 60, oGrupo, "gc_cash_delete_32",          "Devolución",           6, {|| NewTiket( aGet, aTmp, nMode, SAVDEV, .f., oBrw, oBrwDet ) }, , {|| nMode == APPD_MODE }, .f., .f., .f. )
-         oBtnOld        := TDotNetButton():New( 60, oGrupo, "gc_cash_scroll_32",          "Vale",                 7, {|| NewTiket( aGet, aTmp, nMode, SAVVAL, .f., oBrw, oBrwDet ) }, , {|| nMode != ZOOM_MODE }, .f., .f., .f. )
+         oBtnApt        := TDotNetButton():New( 60, oGrupo, "gc_cash_stop_32",            "Apartar [F9]",         3, {|| GuardaApartado( aGet, aTmp, @nMode, SAVAPT, .f., oBrw, oBrwDet, oDlgTpv ) }, , {|| nMode != ZOOM_MODE }, .f., .f., .f. )
+         oBtnVal        := TDotNetButton():New( 60, oGrupo, "gc_cash_money_32",           "Cheque regalo",        4, {|| NewTiket( aGet, aTmp, nMode, SAVRGL, .f., oBrw, oBrwDet ) }, , {|| nMode != ZOOM_MODE }, .f., .f., .f. )
+         oBtnDev        := TDotNetButton():New( 60, oGrupo, "gc_cash_delete_32",          "Devolución",           5, {|| NewTiket( aGet, aTmp, nMode, SAVDEV, .f., oBrw, oBrwDet ) }, , {|| nMode == APPD_MODE }, .f., .f., .f. )
+         oBtnOld        := TDotNetButton():New( 60, oGrupo, "gc_cash_scroll_32",          "Vale",                 6, {|| NewTiket( aGet, aTmp, nMode, SAVVAL, .f., oBrw, oBrwDet ) }, , {|| nMode != ZOOM_MODE }, .f., .f., .f. )
 
       oGrupo            := TDotNetGroup():New( oCarpeta, 126, "Tickets", .f. )
          oBtnAssDev     := TDotNetButton():New( 60, oGrupo, "gc_cash_delete_32",          "Asistente devolución", 1, {|| AsistenteDevolucionTiket( aTmp, aGet, nMode, .t. ) }, , {|| nMode == APPD_MODE }, .f., .f., .f. )
@@ -2829,7 +2830,8 @@ Static Function StartEdtRec( aTmp, aGet, nMode, oDlgTpv, oBrw, oBrwDet, hDocumen
    end if
 
    if nMode == DUPL_MODE
-      stateButtons( .f., { oBtnFac } )
+      //stateButtons( .f., { oBtnFac } )
+      stateButtons( .f. )
    end if
 
    if isHash( hDocument )
@@ -2930,7 +2932,7 @@ Static Function StateButtons( lState, aExcept )
 
    oBtnTik:lEnabled     := lState
    oBtnAlb:lEnabled     := lState
-   oBtnFac:lEnabled     := lState
+   //oBtnFac:lEnabled     := lState
    oBtnApt:lEnabled     := lState
    oBtnVal:lEnabled     := lState
    oBtnDev:lEnabled     := lState
@@ -2947,7 +2949,7 @@ Static Function StateButtons( lState, aExcept )
 
    oBtnTik:Refresh()
    oBtnAlb:Refresh()
-   oBtnFac:Refresh()
+   //oBtnFac:Refresh()
    oBtnApt:Refresh()
    oBtnVal:Refresh()
    oBtnDev:Refresh()
@@ -2968,7 +2970,7 @@ Static Function SetButtonEdtRec( nMode, aTmp )
 
    oBtnTik:lEnabled     := ( nMode == APPD_MODE ) .or. ( ( aTmp[ _CTIPTIK ] == SAVTIK .or. aTmp[ _CTIPTIK ] == SAVAPT ) .and. ( nMode == EDIT_MODE ) )
    oBtnAlb:lEnabled     := ( nMode == APPD_MODE ) .or. ( ( aTmp[ _CTIPTIK ] == SAVALB .or. aTmp[ _CTIPTIK ] == SAVAPT ) .and. ( nMode == EDIT_MODE ) )
-   oBtnFac:lEnabled     := ( nMode == APPD_MODE ) .or. ( ( aTmp[ _CTIPTIK ] == SAVFAC .or. aTmp[ _CTIPTIK ] == SAVAPT ) .and. ( nMode == EDIT_MODE ) )
+   //oBtnFac:lEnabled     := ( nMode == APPD_MODE ) .or. ( ( aTmp[ _CTIPTIK ] == SAVFAC .or. aTmp[ _CTIPTIK ] == SAVAPT ) .and. ( nMode == EDIT_MODE ) )
    oBtnApt:lEnabled     := ( nMode == APPD_MODE ) .or. ( ( aTmp[ _CTIPTIK ] == SAVVAL .or. aTmp[ _CTIPTIK ] == SAVAPT ) .and. ( nMode == EDIT_MODE ) )
    oBtnVal:lEnabled     := ( nMode == APPD_MODE ) .or. ( ( aTmp[ _CTIPTIK ] == SAVVAL .or. aTmp[ _CTIPTIK ] == SAVAPT ) .and. ( nMode == EDIT_MODE ) )
    oBtnDev:lEnabled     := ( nMode == APPD_MODE ) .or. ( ( aTmp[ _CTIPTIK ] == SAVVAL .or. aTmp[ _CTIPTIK ] == SAVDEV .or. aTmp[ _CTIPTIK ] == SAVAPT ) .and. ( nMode == EDIT_MODE ) )
@@ -3945,68 +3947,7 @@ Static Function NewTiket( aGet, aTmp, nMode, nSave, lBig, oBrw, oBrwDet )
    */
 
    do case
-   case nSave == SAVFAC
-
-      /*
-      Estos campos no pueden estar vacios--------------------------------------
-      */
-
-      if !empty( aGet[ _CNOMTIK ] ) .and. empty( aTmp[ _CNOMTIK ] ) .and. !( "GA" $ oWnd():Cargo )
-         msgStop( "Nombre de cliente no puede estar vacio." )
-         aGet[ _CCLITIK ]:SetFocus()
-         lSaveNewTik         := .f.
-         return .f.
-      end if
-
-      if empty( aTmp[ _CDIRCLI ] ) .and. !( "GA" $ oWnd():Cargo )
-         msgStop( "Domicilio de cliente no puede estar vacio." )
-         lSaveNewTik         := .f.
-         return .f.
-      end if
-
-      if empty( aTmp[ _CDNICLI ] ) .and. !( "GA" $ oWnd():Cargo )
-         msgStop( "D.N.I. / C.I.F. de cliente no puede estar vacio." )
-         lSaveNewTik         := .f.
-         return .f.
-      end if
-
-      if lClienteRiesgoAlcanzado( aTmp[ _CCLITIK ], oStock, dbfClient , nTotTik, nMode )
-         msgStop( "Este cliente supera el limite de riesgo permitido." )
-         aGet[ _CCLITIK ]:SetFocus()
-         return .f.
-      end if
-
-      if !lBig
-
-         if empty( aTmp[ _CFPGTIK ] )
-            MsgStop( "Debe de introducir una forma de pago", "Imposible archivar como factura" )
-            aGet[ _CFPGTIK ]:SetFocus()
-            lSaveNewTik         := .f.
-            return .f.
-         end if
-
-         if !( aGet[ _CFPGTIK ]:lValid() )
-            aGet[ _CFPGTIK ]:SetFocus()
-            lSaveNewTik         := .f.
-            return .f.
-         end if
-
-         if lObras() .and. !empty( aGet[ _CCODOBR ] ) .and. empty( aTmp[ _CCODOBR ] )
-            MsgStop( "Debe de introducir una dirección", "Imposible archivar como factura" )
-            aGet[ _CCODOBR ]:SetFocus()
-            lSaveNewTik         := .f.
-            return .f.
-         end if
-
-         if lObras() .and. !empty( aGet[ _CCODOBR ] ) .and. !( aGet[ _CCODOBR ]:lValid() )
-            aGet[ _CCODOBR ]:SetFocus()
-            lSaveNewTik         := .f.
-            return .f.
-         end if
-
-      end if
-
-   case nSave == SAVALB
+      case nSave == SAVALB
 
       if empty( aTmp[ _CCLITIK ] )
          msgStop( "Código de cliente no puede estar vacio." )
@@ -4213,9 +4154,13 @@ Static Function NewTiket( aGet, aTmp, nMode, nSave, lBig, oBrw, oBrwDet )
 
             setAutoTextDialog( 'Obtenemos el nuevo número' )
 
-            aTmp[ _CNUMTIK ]  := Str( nNewDoc( aTmp[ _CSERTIK ], D():Tikets( nView ), "nTikCli", 10, dbfCount ), 10 )
-            aTmp[ _CSUFTIK ]  := RetSufEmp()
-            nNumTik           := aTmp[ _CSERTIK ] + aTmp[ _CNUMTIK ] + aTmp[ _CSUFTIK ]
+            if nSave != SAVALB
+
+               aTmp[ _CNUMTIK ]  := Str( nNewDoc( aTmp[ _CSERTIK ], D():Tikets( nView ), "nTikCli", 10, dbfCount ), 10 )
+               aTmp[ _CSUFTIK ]  := RetSufEmp()
+               nNumTik           := aTmp[ _CSERTIK ] + aTmp[ _CNUMTIK ] + aTmp[ _CSUFTIK ]
+
+            end if
 
             /*
             Fechas y horas de creacon del tiket--------------------------------
@@ -4456,10 +4401,6 @@ Static Function NewTiket( aGet, aTmp, nMode, nSave, lBig, oBrw, oBrwDet )
 
                SavTik2Alb( aTmp, aGet, nMode, nSave )
 
-            case nSave == SAVFAC
-
-               SavTik2Fac( aTmp, aGet, nMode, nSave, nTotTik )
-
             otherwise
 
                SavTik2Tik( aTmp, aGet, nMode, nSave )
@@ -4524,31 +4465,6 @@ Static Function NewTiket( aGet, aTmp, nMode, nSave, lBig, oBrw, oBrwDet )
          dbCommitAll()
 
          /*
-         Chequeo de los pago------------------------------------------------------
-         */
-
-         if ( D():Tikets( nView ) )->cTipTik == SAVFAC
-
-            if dbLock( dbfFacCliT )
-               ( dbfFacCliT )->lSndDoc       := .t.
-               ( dbfFacCliT )->( dbUnLock() )
-            end if
-
-            /*
-            Generar los pagos de las facturas-------------------------------------
-            */
-
-            GenPgoFacCli( ( dbfFacCliT )->cSerie + Str( ( dbfFacCliT )->nNumFac ) + ( dbfFacCliT )->cSufFac, dbfFacCliT, dbfFacCliL, dbfFacCliP, dbfAntCliT, dbfClient, dbfFPago, dbfDiv, dbfIva, EDIT_MODE )
-
-            /*
-            Estado de la factura-----------------------------------------------
-            */
-
-            ChkLqdFacCli( nil, dbfFacCliT, dbfFacCliL, dbfFacCliP, dbfAntCliT, dbfIva, dbfDiv )
-
-         end if
-
-         /*
          Apertura de la caja---------------------------------------------------
          */
 
@@ -4563,7 +4479,11 @@ Static Function NewTiket( aGet, aTmp, nMode, nSave, lBig, oBrw, oBrwDet )
          */
 
          if lCopTik .and. ( nSave != SAVAPT ) // .and. nCopTik != 0  //Comprobamos que hayamos pulsado el botón de aceptar e imprimir
-            ImpTiket( IS_PRINTER )
+            if nSave == SAVALB .and. !Empty( cNuevoAlbaran )
+               MsgInfo( "Imprimiremos albarán nº: " + cNuevoAlbaran, cNuevoAlbaran )
+            else
+               ImpTiket( IS_PRINTER )
+            end if
          end if
 
          /*
@@ -4603,6 +4523,7 @@ Static Function NewTiket( aGet, aTmp, nMode, nSave, lBig, oBrw, oBrwDet )
          */
 
          nSaveMode               := APPD_MODE
+         cNuevoAlbaran           := ""
 
          // Cerrando-----------------------------------------------------------------
 
@@ -8060,7 +7981,7 @@ Static Function EdtDetKeyDown( nKey, aGet, oDlg, oBtn )
 
          end if
 
-      case nKey == VK_F8
+      /*case nKey == VK_F8
 
          if !empty( aGet[ _CCBATIL ]:VarGet() )
 
@@ -8074,7 +7995,7 @@ Static Function EdtDetKeyDown( nKey, aGet, oDlg, oBtn )
                Eval( oBtnFac:bAction )
             end if
 
-         end if
+         end if*/
 
       case nKey == VK_F9
 
@@ -11770,6 +11691,12 @@ Function SavTik2Alb( aTik, aGet, nMode, nSave )
       cNumTik                    := nNewDoc( aTik[ _CSERTIK ], dbfAlbCliT, "nAlbCli", , dbfCount )
       cSufTik                    := RetSufEmp()
 
+      /*
+      Guardamos el valor del número de albarán para después poder imprimir-----
+      */
+
+      cNuevoAlbaran              := cSerTik + Str( cNumTik ) + cSufTik
+
       ( dbfAlbCliT )->( dbAppend() )
 
       ( dbfAlbCliT )->cSerAlb    := cSerTik
@@ -12004,7 +11931,7 @@ Function SavTik2Alb( aTik, aGet, nMode, nSave )
    Escribimos definitivamente en el disco--------------------------------------
    */
 
-   WinGather( aTik, aGet, D():Tikets( nView ), oBrwDet, nMode, nil, .t. )
+   /*WinGather( aTik, aGet, D():Tikets( nView ), oBrwDet, nMode, nil, .t. )*/
 
 return ( nNewAlbCli )
 

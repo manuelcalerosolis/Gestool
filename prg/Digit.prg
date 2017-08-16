@@ -1569,8 +1569,6 @@ Function VirtualKey( lPassword, uGetKey, cTitle )
 
       REDEFINE BUTTON ID 150 OF oDlg ACTION ( setFocus( oGet:hWnd ), oGet:keyDown( VK_BACK ) )  //oGet:KeyChar( VK_BACK ) )
 
-      // REDEFINE BUTTON ID 150 OF oDlg ACTION ( setFocus( oGet:hWnd ), oGet:KeyChar( 127 ) )
-
       REDEFINE BUTTON ID 151 OF oDlg ACTION ( keybPressed( oGet, " " ) )
 
       REDEFINE BUTTON ID IDOK       OF oDlg ACTION ( oDlg:End( IDOK ) )
