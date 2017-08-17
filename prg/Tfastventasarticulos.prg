@@ -1862,7 +1862,7 @@ METHOD AddPedidoClientes() CLASS TFastVentasArticulos
 
          ::oDbf:cFormato   := ( D():PedidosClientesLineas( ::nView )  )->cFormato
 
-         ::oDbf:cCodGrp    := RetFld( ( D():PresupuestosClientes( ::nView ) )->cCodCli, ( D():Clientes( ::nView ) ), "cCodGrp", "Cod" )
+         ::oDbf:cCodGrp    := RetFld( ( D():PedidosClientes( ::nView ) )->cCodCli, ( D():Clientes( ::nView ) ), "cCodGrp", "Cod" )
 
          ::oDbf:cCodPago   := ( D():PedidosClientes( ::nView ) )->cCodPgo
          ::oDbf:cCodRut    := ( D():PedidosClientes( ::nView ) )->cCodRut
