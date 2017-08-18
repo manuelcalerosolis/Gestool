@@ -5365,17 +5365,16 @@ RETURN ( ::dConsolidacion )
 
 METHOD lCheckConsolidacion( cCodArt, cCodAlm, cCodPrp1, cCodPrp2, cValPrp1, cValPrp2, cLote, dFecha, tHora )
 
-   // local dConsolidacion := ::GetConsolidacion( cCodArt, cCodAlm, cCodPrp1, cCodPrp2, cValPrp1, cValPrp2, cLote )
 
-   local nSeconds       := seconds()
    local dConsolidacion := ::scanConsolidacion( cCodArt, cCodAlm, cValPrp1, cValPrp2, cLote )
 
    if isfalse( dConsolidacion )
-      dConsolidacion    := MovimientosAlmacenesLineasModel():getFechaHoraConsolidacion( cCodArt, cCodAlm, cValPrp1, cValPrp2, cLote )
+      dConsolidacion    := ::GetConsolidacion( cCodArt, cCodAlm, cCodPrp1, cCodPrp2, cValPrp1, cValPrp2, cLote )
+      
+      // dConsolidacion    := MovimientosAlmacenesLineasModel():getTimeStampConsolidacion( cCodArt, cCodAlm, cValPrp1, cValPrp2, cLote )
+
       ::addConsolidacion( cCodArt, cCodAlm, cValPrp1, cValPrp2, cLote, dConsolidacion )
    end if 
-
-   logwrite( "lCheckConsolidacion -> " + str( seconds() - nSeconds ) )
 
 RETURN ( empty( dConsolidacion ) .or. dtos( dFecha ) + tHora >= dConsolidacion )
 

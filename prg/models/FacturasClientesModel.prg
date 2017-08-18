@@ -7,7 +7,7 @@ CLASS FacturasClientesModel FROM BaseModel
 
    METHOD getHeaderTableName()                  INLINE ::getEmpresaTableName( "FacCliT" )
 
-   METHOD UltimoDocumento( idCliente )
+   METHOD UltimoDocumento( cCodigoCliente )
 
    METHOD defaultSufijo()
 
@@ -15,12 +15,12 @@ END CLASS
 
 //---------------------------------------------------------------------------//
 
-METHOD UltimoDocumento( idCliente )
+METHOD UltimoDocumento( cCodigoCliente )
 
    local cStm
    local cSql  := "SELECT TOP 1 dFecFac " + ;
                      "FROM " + ::getHeaderTableName() + " " + ;
-                     "WHERE cCodCli = " + quoted( idCliente ) + " ORDER BY dFecFac DESC"
+                     "WHERE cCodCli = " + quoted( cCodigoCliente ) + " ORDER BY dFecFac DESC"
 
    if ::ExecuteSqlStatement( cSql, @cStm )
       Return ( ( cStm )->dFecFac )
@@ -40,5 +40,4 @@ METHOD defaultSufijo()
 Return ( ::ExecuteSqlStatement( cSql, @cStm ) )
 
 //---------------------------------------------------------------------------//
-
 

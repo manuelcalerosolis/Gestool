@@ -3745,13 +3745,24 @@ RETURN ( alltrim( cText ) )
 
 FUNCTION DateToString( dDate )
       
-   local cDateFrm := Set( 4, "yyyy/mm/dd" )
-   local strDate  := if( dDate != NIL, dtos( dDate ), dtos( date() ) )
-   Set( 4, cDateFrm )
+   local cDateFormat    := set( 4, "yyyy/mm/dd" )
+   local strDate        := if( dDate != nil, dtos( dDate ), dtos( date() ) )
+   set( 4, cDateFormat )
 
 RETURN( strDate )
 
 //---------------------------------------------------------------------------//
+
+FUNCTION DateToSQLString( dDate )
+      
+   local cDateFormat    := set( 4, "yyyy-mm-dd" )
+   local strDate        := if( dDate != nil, dtoc( dDate ), dtoc( date() ) )
+   set( 4, cDateFormat )
+
+RETURN( strDate )
+
+//---------------------------------------------------------------------------//
+
 
 FUNCTION DlgWait( nRetardo )
 
