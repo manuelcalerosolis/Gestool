@@ -5916,57 +5916,6 @@ Static Function DlgPrnTicket( oBrw )
 
       TBtnBmp():ReDefine( 265, "gc_document_text_pencil_12",,,,,{|| EdtDocumento( oDatos:cFmtVal ) }, oDlg, .f., , .f.,  )
 
-      /*
-      Formato e impresora para albaranes
-      */
-
-      REDEFINE GET oDatos:oFmtAlb VAR oDatos:cFmtAlb ;
-         ID       191 ;
-         VALID    ( cDocumento( oDatos:oFmtAlb, oDatos:oSayFmtAlb, dbfDoc ) ) ;
-         BITMAP   "LUPA" ;
-         ON HELP  ( BrwDocumento( oDatos:oFmtAlb, oDatos:oSayFmtAlb, "TK" ) ) ;
-         OF       oDlg
-
-      REDEFINE GET oDatos:oSayFmtAlb VAR oDatos:cSayFmtAlb ;
-         ID       192 ;
-         WHEN     ( .f. );
-         OF       oDlg
-
-      REDEFINE GET oDatos:oPrinterAlb VAR oDatos:cPrinterAlb;
-         WHEN     ( .f. ) ;
-         ID       193 ;
-         OF       oDlg
-
-      TBtnBmp():ReDefine( 194, "gc_printer2_check_16",,,,,{|| PrinterPreferences( oDatos:oPrinterAlb ) }, oDlg, .f., , .f.,  )
-
-      TBtnBmp():ReDefine( 195, "gc_document_text_pencil_12",,,,,{|| EdtDocumento( oDatos:cFmtAlb ) }, oDlg, .f., , .f.,  )
-
-      /*
-      Formato e impresora para facturas
-      */
-
-      REDEFINE GET oDatos:oFmtFac VAR oDatos:cFmtFac ;
-         ID       201 ;
-         VALID    ( cDocumento( oDatos:oFmtFac, oDatos:oSayFmtFac, dbfDoc ) ) ;
-         BITMAP   "LUPA" ;
-         ON HELP  ( BrwDocumento( oDatos:oFmtAlb, oDatos:oSayFmtFac, "TK" ) ) ;
-         OF       oDlg
-
-      REDEFINE GET oDatos:oSayFmtFac VAR oDatos:cSayFmtFac ;
-         ID       202 ;
-         WHEN     ( .f. );
-         OF       oDlg
-
-      REDEFINE GET oDatos:oPrinterFac VAR oDatos:cPrinterFac;
-         WHEN     ( .f. ) ;
-         ID       203 ;
-         OF       oDlg
-
-      TBtnBmp():ReDefine( 204, "gc_printer2_check_16",,,,,{|| PrinterPreferences( oDatos:oPrinterFac ) }, oDlg, .f., , .f.,  )
-
-      TBtnBmp():ReDefine( 205, "gc_document_text_pencil_12",,,,,{|| EdtDocumento( oDatos:cFmtFac ) }, oDlg, .f., , .f.,  )
-
-
       REDEFINE CHECKBOX lInvOrden ;
          ID       500 ;
          OF       oDlg
@@ -6038,7 +5987,7 @@ Static Function PrnSerTik( nSelTik, cNumDes, cNumHas, dFecDes, dFecHas, oDlg, lI
 
       if ( D():Tikets( nView ) )->( dbSeek( uNumDes, .t. ) )
 
-         while !( D():Tikets( nView ) )->( eof())                    .AND.;
+         while !( D():Tikets( nView ) )->( eof() )                    .AND.;
                ( D():Tikets( nView ) )->( OrdKeyVal() ) >= uNumDes   .AND.;
                ( D():Tikets( nView ) )->( OrdKeyVal() ) <= uNumHas
 
@@ -6058,7 +6007,7 @@ Static Function PrnSerTik( nSelTik, cNumDes, cNumHas, dFecDes, dFecHas, oDlg, lI
                ( D():Tikets( nView ) )->( OrdKeyVal() ) <= uNumHas   .and.;
                !( D():Tikets( nView ) )->( Bof() )
 
-            impTiket( IS_PRINTER, , .t., , oDatos )
+            ImpTiket( IS_PRINTER, , .t., , oDatos )
 
             ( D():Tikets( nView ) )->( dbSkip( -1 ) )
 
