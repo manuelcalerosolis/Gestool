@@ -38,6 +38,7 @@ CLASS LinesDocumentsSales FROM Editable
 
    METHOD setLogicoLote( lLote )                            INLINE ( ::hSetDetail( "LogicoLote", lLote ) )
    METHOD setLote( cLote )                                  INLINE ( ::hSetDetail( "Lote", cLote ) )
+   METHOD setFechaCaducidad( dFecha )                       INLINE ( ::hSetDetail( "FechaCaducidad", dFecha ) )
    METHOD setTipoVenta( lTipoVenta )                        INLINE ( ::hSetDetail( "AvisarSinStock", lTipoVenta ) )
    METHOD setNoPermitirVentaSinStock( lVentaSinStock )      INLINE ( ::hSetDetail( "NoPermitirSinStock", lVentaSinStock ) )
    METHOD setFamilia( cCodigoFamilia )                      INLINE ( ::hSetDetail( "Familia", cCodigoFamilia ) )
@@ -330,6 +331,14 @@ METHOD setLineFromArticulo() CLASS LinesDocumentsSales
       if accessCode():lAddLote
          ::setLote( ( D():Articulos( ::getView() ) )->cLote )
       end if
+
+      ::setFechaCaducidad( dFechaCaducidadLote( ::hGetDetail( "Articulo" ),;
+                                                ::hGetDetail( "ValorPropiedad1" ),;
+                                                ::hGetDetail( "ValorPropiedad2" ),;
+                                                ::hGetDetail( "Lote" ),;
+                                                D():AlbaranesProveedoresLineas( ::getView() ),;
+                                                D():FacturasProveedoresLineas( ::getView() ),;
+                                                D():PartesProduccionMaterial( ::getView() ) ) )
       
       ::oViewEditDetail:ShowLote()
 
