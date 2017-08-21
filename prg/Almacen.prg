@@ -59,7 +59,7 @@ FUNCTION Almacen( oMenuItem, oWnd )
       nLevel            := nLevelUsr( oMenuItem )
       if nAnd( nLevel, 1 ) != 0
          msgStop( "Acceso no permitido." )
-         return nil
+         RETURN nil
       end if
 
       /*
@@ -75,7 +75,7 @@ FUNCTION Almacen( oMenuItem, oWnd )
       */
 
       if !lOpenFiles()
-         return nil
+         RETURN nil
       end if
 
       /*
@@ -429,7 +429,7 @@ Static Function StartEdtRec( aTemp )
 
    SetTreeState( , , aTemp[ _CCOMALM ] )
 
-Return nil
+RETURN nil
 
 //---------------------------------------------------------------------------//
 
@@ -468,7 +468,7 @@ Static Function BeginTrans( aTemp )
 
    end if
 
-Return nil
+RETURN nil
 
 //-----------------------------------------------------------------------//
 
@@ -514,12 +514,12 @@ STATIC FUNCTION EndTrans( aTemp, aoGet, dbfAlmT, oBrw, nMode, oDlg, oGet, oGet2 
       if Empty( aTemp[ _CCODALM ] )
          MsgStop( "El código del almacén no puede estar vacío." )
          oGet:SetFocus()
-         Return nil
+         RETURN nil
       end if
 
       if dbSeekInOrd( aTemp[ _CCODALM ], "CCODALM", dbfAlmT )
          MsgStop( "Código ya existe " + Rtrim( aTemp[ _CCODALM ] ) )
-         return nil
+         RETURN nil
       end if
 
    end if
@@ -527,7 +527,7 @@ STATIC FUNCTION EndTrans( aTemp, aoGet, dbfAlmT, oBrw, nMode, oDlg, oGet, oGet2 
    if Empty( aTemp[ _CNOMALM ] )
       MsgStop( "El nombre del almacén no puede estar vacío." )
       oGet2:SetFocus()
-      Return nil
+      RETURN nil
    end if
 
    // Relaciones entre almacenes-----------------------------------------------
@@ -539,13 +539,13 @@ STATIC FUNCTION EndTrans( aTemp, aoGet, dbfAlmT, oBrw, nMode, oDlg, oGet, oGet2 
    if ( aTemp[ _CCOMALM ] == aTemp[ _CCODALM ] )
       MsgStop( "Almacén padre no puede ser el mismo" )
       oTreePadre:SetFocus()
-      Return nil
+      RETURN nil
    end if
 
    if aScan( aChildAlmacen( aTemp[ _CCODALM ] ), aTemp[ _CCOMALM ] ) != 0
       MsgStop( "Almacén padre contiene referencia circular" )
       oTreePadre:SetFocus()
-      Return nil
+      RETURN nil
    end if
 
 	/*
@@ -684,12 +684,12 @@ Static Function lPreSave( aTemp, aoGet, dbfTmp, oBrw, nMode, oDlg, oGet )
    if Empty( aTemp[ (dbfAlmL)->( FieldPos( "CCODAGE" ) ) ] )
       MsgStop( "El código del agente no puede estar vacío" )
       oGet:SetFocus()
-      Return nil
+      RETURN nil
    end if
 
    WinGather( aTemp, aoGet, dbfTmp, oBrw, nMode )
 
-Return ( oDlg:end( IDOK ) )
+RETURN ( oDlg:end( IDOK ) )
 
 //-------------------------------------------------------------------------//
 
@@ -806,7 +806,7 @@ Function aItmAlmAgente()
    aAdd( aItmAlmAgente, { "CCODALM",  "C",     16,     0, "" } )
    aAdd( aItmAlmAgente, { "CCODAGE",  "C",      3,     0, "" } )
 
-Return aItmAlmAgente
+RETURN aItmAlmAgente
 
 //---------------------------------------------------------------------------//
 //Funcion que devuelve el nombre de la ubicación, diciendole
@@ -816,7 +816,7 @@ Function cGetUbica( cCodAlm, dbfAlm, nNumUbica )
 
    local cNomUbica := ""
 
-return cNomUbica
+RETURN cNomUbica
 
 //---------------------------------------------------------------------------//
 
@@ -831,7 +831,7 @@ Function SelectAlmacen()
    local cCbxOrden      := "Código"
 
    if !lOpenFiles()
-      return .f.
+      RETURN .f.
    end if
 
    DEFINE DIALOG oDlg ;
@@ -938,7 +938,7 @@ static function pdaMenuEdtRec( oDlg, oBrw )
 
    oBrw:GoTop()
 
-Return oMenu
+RETURN oMenu
 
 //--------------------------------------------------------------------------//
 
@@ -1004,7 +1004,7 @@ Method CreateData( oPgrActual, oSayStatus, cPatPreVenta ) CLASS pdaAlmacenSender
    CLOSE ( tmpAlm )
    CLOSE ( dbfAlm )
 
-Return ( Self )
+RETURN ( Self )
 
 function IsAlmacen( cPatEmp )
 
@@ -1049,7 +1049,7 @@ function IsAlmacen( cPatEmp )
 
    ErrorBlock( oBlock )
 
-return ( lIsAlmacen )
+RETURN ( lIsAlmacen )
 
 //---------------------------------------------------------------------------//
 
@@ -1143,10 +1143,10 @@ RETURN NIL
 Function cSeekStoreView( cCodigoAlmacen, nView )
 
    if dbSeekInOrd( cCodigoAlmacen, "cCodAlm", D():Almacen( nView ) )
-      Return .t.
+      RETURN .t.
    end if 
 
-Return ( .f. )
+RETURN ( .f. )
 
 //--------------------------------------------------------------------------//
 
@@ -1154,10 +1154,10 @@ Function lValidAlmacen( cCodigoAlmacen, dbfAlmacen )
 
    if !( dbfAlmacen )->( dbSeekInOrd( cCodigoAlmacen, "cCodAlm",  dbfAlmacen ) )
       msgStop( "Almacén no encontrado" )
-      Return .f.
+      RETURN .f.
    end if 
 
-Return ( .t. )
+RETURN ( .t. )
 
 //--------------------------------------------------------------------------//
 
@@ -1171,7 +1171,7 @@ FUNCTION cAlmacen( oGet, dbfAlmT, oGet2 )
 
    if Empty( xValor ) .or. ( xValor == Replicate( "Z", 16 ) )
       if( oGet2 != nil, oGet2:cText( "" ), )
-      return .t.
+      RETURN .t.
    end if
 
    oBlock            := ErrorBlock( {| oError | ApoloBreak( oError ) } )
@@ -1243,7 +1243,7 @@ FUNCTION BrwAlmacen( oGet, oGet2, lBigStyle )
    local nLevel         := nLevelUsr( "01035" )
    local oSayText
    local cSayText       := "Listado de almacenes"
-   local cReturn        := ""
+   local cRETURN        := ""
 
    nOrdAnt              := Min( Max( nOrdAnt, 1 ), len( aCbxOrd ) )
    cCbxOrd              := aCbxOrd[ nOrdAnt ]
@@ -1376,12 +1376,12 @@ FUNCTION BrwAlmacen( oGet, oGet2, lBigStyle )
 
       ACTIVATE DIALOG oDlg CENTER
 
-      cReturn                 := ( dbfAlmT )->cCodAlm
+      cRETURN                 := ( dbfAlmT )->cCodAlm
 
       if oDlg:nResult == IDOK
 
          if !Empty( oGet )
-            oGet:cText( cReturn )
+            oGet:cText( cRETURN )
             oGet:lValid()
          end if
 
@@ -1403,7 +1403,7 @@ FUNCTION BrwAlmacen( oGet, oGet2, lBigStyle )
 
    end if
 
-RETURN ( cReturn )
+RETURN ( cRETURN )
 
 //---------------------------------------------------------------------------//
 
@@ -1454,7 +1454,7 @@ STATIC FUNCTION CloseFiles()
 
    oWndBrw   := nil
 
-Return .t.
+RETURN .t.
 
 //----------------------------------------------------------------------------//
 /*
@@ -1467,7 +1467,7 @@ FUNCTION EdtAlm( cCodAlm )
 
    if nAnd( nLevel, 1 ) != 0 .or. nAnd( nLevel, ACC_EDIT ) == 0
       msgStop( 'Acceso no permitido.' )
-      return .t.
+      RETURN .t.
    end if
 
    if lOpenFiles()
@@ -1523,7 +1523,7 @@ static function LoadTree( oTree, cComAlm )
 
    oTree:Expand()
 
-Return ( .t. )
+RETURN ( .t. )
 
 //---------------------------------------------------------------------------//
 
@@ -1556,7 +1556,7 @@ static function SetTreeState( oTree, aItems, cComAlm )
 
    next
 
-Return ( .t. )
+RETURN ( .t. )
 
 //---------------------------------------------------------------------------//
 
@@ -1585,7 +1585,7 @@ Static Function ChangeTreeState( oTree, aItems )
 
    next
 
-Return ( .t. )
+RETURN ( .t. )
 
 //---------------------------------------------------------------------------//
 
@@ -1613,7 +1613,7 @@ Static Function GetTreeState( aTemp, oTree, aItems )
 
    next
 
-Return ( aTemp )
+RETURN ( aTemp )
 
 //---------------------------------------------------------------------------//
 
@@ -1649,6 +1649,41 @@ Function aChildAlmacen( cCodigoAlmacen, aChild, dbfAlmacen )
 
    CursorWE()
 
-Return ( aChild )
+RETURN ( aChild )
 
 //---------------------------------------------------------------------------//
+
+Function aAllAlmacen( cCodigoAlmacen, aChild, dbfAlmacen )
+
+   local nRec
+   local nOrd
+
+   DEFAULT aChild       := {}
+   DEFAULT dbfAlmacen   := dbfAlmT
+
+   CursorWait()
+
+   nRec                 := ( dbfAlmacen )->( recno() )
+   nOrd                 := ( dbfAlmacen )->( ordsetfocus( "cCodAlm" ) )
+
+   ( dbfAlmacen )->( dbgotop() )
+
+   while !( dbfAlmacen )->( eof() ) 
+
+      if ascan( aChild, ( dbfAlmacen )->cCodAlm ) == 0
+         aadd( aChild, ( dbfAlmacen )->cCodAlm )
+      end if 
+
+      ( dbfAlmacen )->( dbskip() )
+
+   end while
+
+   ( dbfAlmacen )->( ordsetfocus( nOrd ) )
+   ( dbfAlmacen )->( dbgoto( nRec ) )
+
+   CursorWE()
+
+RETURN ( aChild )
+
+//---------------------------------------------------------------------------//
+

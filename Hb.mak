@@ -334,6 +334,7 @@ Situaciones.prg         													\
 SituacionesModel.prg       												\
 MovimientosAlmacenesLineasModel.prg 									\
 FacturasClientesLineasModel.prg 											\
+AlbaranesClientesLineasModel.prg 										\
 SituacionesController.prg       											\
 MovimientosAlmacenView.prg													\
 MovimientosAlmacenController.prg 										\
@@ -878,6 +879,7 @@ GruposMovimientosModel.obj 									\
 SituacionesController.obj       								\
 MovimientosAlmacenesLineasModel.obj 						\
 FacturasClientesLineasModel.obj 								\
+AlbaranesClientesLineasModel.obj 							\
 MovimientosAlmacenView.obj										\
 MovimientosAlmacenController.obj 							\
 SQLMovimientosAlmacenModel.obj 								\
@@ -1384,6 +1386,7 @@ $(OBJ)\AlmacenesModel.obj 											+
 $(OBJ)\GruposMovimientosModel.obj 								+
 $(OBJ)\MovimientosAlmacenesLineasModel.obj 					+
 $(OBJ)\FacturasClientesLineasModel.obj 						+
+$(OBJ)\AlbaranesClientesLineasModel.obj 						+
 $(OBJ)\SituacionesController.obj          					+
 $(OBJ)\MovimientosAlmacenView.obj 								+
 $(OBJ)\MovimientosAlmacenController.obj 						+

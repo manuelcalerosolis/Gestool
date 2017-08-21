@@ -177,7 +177,8 @@ CLASS TStock
    METHOD TpvCli( cNumFac, cCodAlm, lIncremento )
    METHOD ChkTikCli( cNumTik )
 
-   METHOD nStockActual( cCodArt, cCodAlm, cValPr1, cValPr2 )
+   METHOD nSQLStockActual( cCodArt, cCodAlm, cValPr1, cValPr2 )
+      METHOD nSQLGlobalStockActual( cCodArt, cCodAlm )
 
    METHOD nTotStockAct()
       METHOD nCacheStockActual() 
@@ -317,7 +318,7 @@ CLASS TStock
    METHOD nPendientesRecibirInStock()  
    METHOD nPendientesEntregarInStock()  
 
-   METHOD SetCodigoAlmacen( cCodigoAlmacen )
+   METHOD setCodigoAlmacen( cCodigoAlmacen )
    METHOD lCodigoAlmacen( cCodigoAlmacen )
 
    METHOD getFechaHoraConsolidacion()
@@ -1433,13 +1434,152 @@ RETURN self
 // Devuelve el numero de unidades en almacen de un producto
 //
 
-METHOD nStockActual( cCodArt, cCodAlm, cValPr1, cValPr2, cLote ) CLASS TStock
+METHOD nSQLStockActual( cCodArt, cCodAlm, cValPr1, cValPr2, cLote ) CLASS TStock
 
-   local nUnits   := 0
+   local nSeconds                := seconds()
+   local nSQLStockActual         := 0
+   local tHoraConsolidacion
+   local dFechaConsolidacion
+   local hFechaHoraConsolidacion
 
-RETURN ( nUnits )
+   if empty( cCodArt )
+      RETURN ( nSQLStockActual )
+   end if 
+
+   cCodArt                       := padr( cCodArt, 18 )
+
+   // Almacenes----------------------------------------------------------------
+
+   ::setCodigoAlmacen( cCodAlm )   
+
+   for each cCodAlm in ::uCodigoAlmacen
+
+      // Obtenermos el dato de la consolidacion--------------------------------
+
+      hFechaHoraConsolidacion    := MovimientosAlmacenesLineasModel():getFechaHoraConsolidacion( cCodArt, cCodAlm, cValPr1, cValPr2, cLote )
+
+      if !empty( hFechaHoraConsolidacion )
+         dFechaConsolidacion     := hGet( hFechaHoraConsolidacion, "fecha" )
+         tHoraConsolidacion      := hGet( hFechaHoraConsolidacion, "hora" )
+      end if 
+
+      // Movimientos de almacén------------------------------------------------" )
+
+      nSQLStockActual            += MovimientosAlmacenesLineasModel():totalUnidadesEntradas( cCodArt, dFechaConsolidacion, tHoraConsolidacion, cCodAlm, cValPr1, cValPr2, cLote )
+
+      nSQLStockActual            -= MovimientosAlmacenesLineasModel():totalUnidadesSalidas( cCodArt, dFechaConsolidacion, tHoraConsolidacion, cCodAlm, cValPr1, cValPr2, cLote )
+
+      // ::aStockMovimientosAlmacen( cCodArt, cCodAlm, lLote, lNumeroSerie )
+      // SysRefresh()
+
+      // Albaranes de proveedor------------------------------------------------------" )
+
+      // if IsTrue( ::lAlbPrv ) 
+      //    ::aStockAlbaranProveedor( cCodArt, cCodAlm, lLote, lNumeroSerie )
+      //    SysRefresh()
+      // end if 
+
+      // Facturas proveedor----------------------------------------------------" )
+
+      // ::aStockFacturaProveedor( cCodArt, cCodAlm, lLote, lNumeroSerie )
+      // SysRefresh()
+
+      // Rectificativas de provedor--------------------------------------------" )
+
+      // ::aStockRectificativaProveedor( cCodArt, cCodAlm, lLote, lNumeroSerie )
+      // SysRefresh()
+
+      // Pedidos de clientes-------------------------------------------------" )
+
+      // if ::lCalculateUnidadesPendientesRecibir
+      //    ::aStockPedidoCliente( cCodArt, cCodAlm, lLote )
+      //    SysRefresh()
+      // end if 
+
+      // Albaranes de clientes-------------------------------------------------" )
+
+      nSQLStockActual            -= AlbaranesClientesLineasModel():totalUnidadesVentas( cCodArt, dFechaConsolidacion, tHoraConsolidacion, cCodAlm, cValPr1, cValPr2, cLote )
+
+      // ::aStockAlbaranCliente( cCodArt, cCodAlm, lLote, lNumeroSerie )
+      // SysRefresh()
+
+      // Factura de clientes--------------------------------------------------" )
+
+      nSQLStockActual            -= FacturasClientesLineasModel():totalUnidadesVentas( cCodArt, dFechaConsolidacion, tHoraConsolidacion, cCodAlm, cValPr1, cValPr2, cLote )
+
+      // ::aStockFacturaCliente( cCodArt, cCodAlm, lLote, lNumeroSerie )
+      // SysRefresh()
+
+      // Rectificativas de clientes--------------------------------------------" )
+
+      // ::aStockRectificativaCliente( cCodArt, cCodAlm, lLote, lNumeroSerie )
+      // SysRefresh()
+
+      // Tickets de clientes---------------------------------------------------" )
+
+      // ::aStockTicketsCliente( cCodArt, cCodAlm, lLote, lNumeroSerie )
+      // SysRefresh()
+
+      // Produccion------------------------------------------------------------" )
+
+      // ::aStockProduccion( cCodArt, cCodAlm, lLote, lNumeroSerie )
+      // SysRefresh()
+
+      // Materia prima---------------------------------------------------------" )
+
+      // ::aStockMateriaPrima( cCodArt, cCodAlm, lLote, lNumeroSerie )
+      // SysRefresh()
+
+   next 
+
+   // Control de erroress-------------------------------------------------------
+
+//   RECOVER USING oError
+//      msgStop( ErrorMessage( oError ), "Calculo de stock" )
+//   END SEQUENCE
+//   ErrorBlock( oBlock )
+
+   msgalert( seconds() - nSeconds, "seconds()" )
+
+RETURN ( nSQLStockActual )
 
 //---------------------------------------------------------------------------//
+
+METHOD nSQLGlobalStockActual( cCodArt, cCodAlm ) CLASS TStock
+
+   local nSeconds                := seconds()
+   local aGlobal                 := {}
+   local cStm
+   local nSQLStockActual         := 0
+
+   if empty( cCodArt )
+      RETURN ( nSQLStockActual )
+   end if 
+
+   cCodArt                       := padr( cCodArt, 18 )
+
+   // Almacenes----------------------------------------------------------------
+
+   ::setCodigoAlmacen( cCodAlm )   
+
+   for each cCodAlm in ::uCodigoAlmacen
+
+      cStm                       := AlbaranesClientesLineasModel():getLineasAlbaranesAgrupadas( cCodArt, cCodAlm )
+
+      if !empty(cStm)
+         aadd( aGlobal, { ( cStm )->cCodigoArticulo, ( cStm )->cCodigoAlmacen, ( cStm )->cValorPropiedad1, ( cStm )->cValorPropiedad2, ( cStm )->cLote } )
+      end if 
+
+   next 
+
+   // Control de erroress-------------------------------------------------------
+
+   msgalert( seconds() - nSeconds, "seconds()" )
+
+RETURN ( aGlobal )
+
+//---------------------------------------------------------------------------//
+
 
 METHOD nCacheStockActual( cCodArt, cCodAlm, cValPrp1, cValPrp2, cLote, lKitArt, nKitStk, nCtlStk ) CLASS TStock
    
@@ -5365,7 +5505,6 @@ RETURN ( ::dConsolidacion )
 
 METHOD lCheckConsolidacion( cCodArt, cCodAlm, cCodPrp1, cCodPrp2, cValPrp1, cValPrp2, cLote, dFecha, tHora )
 
-
    local dConsolidacion := ::scanConsolidacion( cCodArt, cCodAlm, cValPrp1, cValPrp2, cLote )
 
    if isfalse( dConsolidacion )
@@ -5402,11 +5541,11 @@ RETURN ( .f. )
 
 METHOD SetCodigoAlmacen( cCodigoAlmacen )
 
-   if !empty( cCodigoAlmacen )
+   if empty( cCodigoAlmacen )
+      aAllAlmacen( cCodigoAlmacen, ::uCodigoAlmacen, ::cAlm )
+   else
       ::uCodigoAlmacen  := { cCodigoAlmacen }
       aChildAlmacen( cCodigoAlmacen, ::uCodigoAlmacen, ::cAlm )
-   else
-      ::uCodigoAlmacen  := cCodigoAlmacen
    end if 
 
 RETURN ( ::uCodigoAlmacen )

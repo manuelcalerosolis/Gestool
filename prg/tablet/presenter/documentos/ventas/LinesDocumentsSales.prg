@@ -358,7 +358,7 @@ RETURN ( self )
 
 METHOD setStockArticulo() 
  
-   if GetPvProfString( "Tablet", "Stock", ".F.", cIniAplication() ) != ".T."
+   if Upper( GetPvProfString( "Tablet", "Stock", ".F.", cIniAplication() ) ) != ".T."
       RETURN ( Self )
    end if 
 
@@ -366,7 +366,7 @@ METHOD setStockArticulo()
    Stock por lote------------------------------------------------------------//
    */
 
-   ::oViewEditDetail:nGetStock   := ::oSender:oStock:nCacheStockActual( ::hGetDetail( "Articulo" ),;
+   ::oViewEditDetail:nGetStock   := ::oSender:oStock:nSQLStockActual(   ::hGetDetail( "Articulo" ),;
                                                                         ::hGetDetail( "Almacen" ),;
                                                                         ::hGetDetail( "ValorPropiedad1" ),;
                                                                         ::hGetDetail( "ValorPropiedad2" ),;
@@ -378,20 +378,22 @@ METHOD setStockArticulo()
    if !empty( ::oViewEditDetail:oGetStock )
       ::oViewEditDetail:oGetStock:Refresh()
    end if
+/*
+   ::oViewEditDetail:nGetStockAlmacen   := ::oSender:oStock:nSQLStockActual(  ::hGetDetail( "Articulo" ),;
+                                                                              nil,;
+                                                                              nil,;
+                                                                              nil,;
+                                                                              nil,;
+                                                                              .f.,;
+                                                                              nil ,;
+                                                                              ::hGetDetail( "TipoStock" ) )
 
-   ::oViewEditDetail:nGetStockAlmacen   := ::oSender:oStock:nCacheStockActual(  ::hGetDetail( "Articulo" ),;
-                                                                                 ::hGetDetail( "Almacen" ),;
-                                                                                 space( 20 ),;
-                                                                                 space( 20 ),;
-                                                                                 space( 14 ),;
-                                                                                 .f.,;
-                                                                                 nil ,;
-                                                                                 ::hGetDetail( "TipoStock" ) )
+   msgalert( ::oViewEditDetail:nGetStockAlmacen, "::oViewEditDetail:nGetStockAlmacen" )
 
    if !empty( ::oViewEditDetail:oGetStockAlmacen )
       ::oViewEditDetail:oGetStockAlmacen:Refresh()
    end if
-
+*/
 RETURN ( self )
 
 //---------------------------------------------------------------------------//

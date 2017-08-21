@@ -3,13 +3,13 @@
 
 //---------------------------------------------------------------------------//
 
-CLASS FacturasClientesLineasModel FROM BaseModel
+CLASS AlbaranesClientesLineasModel FROM BaseModel
 
-   METHOD getTableName()                     INLINE ::getEmpresaTableName( "FacCliL" )
+   METHOD getTableName()                     INLINE ::getEmpresaTableName( "AlbCliL" )
 
-   METHOD getLineasFacturasAgrupadas( cCodigoArticulo, cCodigoAlmacen, cValorPropiedad1, cValorPropiedad2, cLote )
+   METHOD getLineasAlbaranesAgrupadas( cCodigoArticulo, cCodigoAlmacen, cValorPropiedad1, cValorPropiedad2, cLote )
 
-   METHOD getLineasFacturasAgrupadasUltimaConsolidacion( cCodigoArticulo, cCodigoAlmacen, cValorPropiedad1, cValorPropiedad2, cLote, dConsolidacion )
+   METHOD getLineasAlbaranesAgrupadasUltimaConsolidacion( cCodigoArticulo, cCodigoAlmacen, cValorPropiedad1, cValorPropiedad2, cLote, dConsolidacion )
 
    METHOD totalUnidadesVentas( cCodigoArticulo, dConsolidacion, tConsolidacion, cCodigoAlmacen, cValorPropiedad1, cValorPropiedad2, cLote )
 
@@ -17,7 +17,7 @@ END CLASS
 
 //---------------------------------------------------------------------------//
 
-METHOD getLineasFacturasAgrupadas( cCodigoArticulo, cCodigoAlmacen, cValorPropiedad1, cValorPropiedad2, cLote )
+METHOD getLineasAlbaranesAgrupadas( cCodigoArticulo, cCodigoAlmacen, cValorPropiedad1, cValorPropiedad2, cLote )
 
    local cStm  := "ADSLineasAgrupadas"
    local cSql  := "SELECT "                                                + ;
@@ -28,6 +28,7 @@ METHOD getLineasFacturasAgrupadas( cCodigoArticulo, cCodigoAlmacen, cValorPropie
                      "cLote as cLote "                                     + ;
                   "FROM " + ::getTableName() + " "                         + ;
                   "WHERE nCtlStk < 2 "                                     + ;
+                     "AND NOT lFacturado "                                 + ;
                      "AND cRef = " + quoted( cCodigoArticulo ) + " "       + ;
                      "AND cAlmLin = " + quoted( cCodigoAlmacen ) + " "     + ;
                      "GROUP BY cRef, cAlmLin, cValPr1, cValPr2, cLote"
@@ -36,11 +37,11 @@ METHOD getLineasFacturasAgrupadas( cCodigoArticulo, cCodigoAlmacen, cValorPropie
       RETURN ( cStm )
    end if 
 
-RETURN ( nil )
+Return ( nil )
 
 //---------------------------------------------------------------------------//
 
-METHOD getLineasFacturasAgrupadasUltimaConsolidacion( cCodigoArticulo, cCodigoAlmacen, cValorPropiedad1, cValorPropiedad2, cLote, hConsolidacion )
+METHOD getLineasAlbaranesAgrupadasUltimaConsolidacion( cCodigoArticulo, cCodigoAlmacen, cValorPropiedad1, cValorPropiedad2, cLote, hConsolidacion )
 
    local cStm  
    local cSql  := "SELECT nCanEnt "                                                    + ;
@@ -61,16 +62,16 @@ METHOD getLineasFacturasAgrupadasUltimaConsolidacion( cCodigoArticulo, cCodigoAl
       RETURN ( cStm )
    end if 
 
-RETURN ( nil )
+Return ( nil )
 
 //---------------------------------------------------------------------------//
 
 METHOD totalUnidadesVentas( cCodigoArticulo, dConsolidacion, tConsolidacion, cCodigoAlmacen, cValorPropiedad1, cValorPropiedad2, cLote )
 
    local cStm
-   local cSql  := "SELECT SUM( IIF( nCanEnt = 0, 1, nCanEnt ) * nUniCaja ) as [totalUnidadesVentas] " + ;
-                     "FROM " + ::getTableName() + " " + ;
-                     "WHERE cRef = " + quoted( cCodigoArticulo ) + " "
+   local cSql  := "SELECT SUM( IIF( nCanEnt = 0, 1, nCanEnt ) * nUniCaja ) as [totalUnidadesVentas] "       + ;
+                     "FROM " + ::getTableName()                                                       + " " + ;
+                     "WHERE cRef = " + quoted( cCodigoArticulo ) + " AND NOT lFacturado "
    
    if !empty( dConsolidacion )                     
          cSql  +=    "AND CAST( dFecFac AS SQL_CHAR ) >= " + quoted( dateToSQLString( dConsolidacion ) ) + " "
@@ -97,19 +98,12 @@ METHOD totalUnidadesVentas( cCodigoArticulo, dConsolidacion, tConsolidacion, cCo
    end if 
 
    if ::ExecuteSqlStatement( cSql, @cStm )
-      RETURN ( ( cStm )->totalUnidadesVentas )
+      Return ( ( cStm )->totalUnidadesVentas )
    end if 
 
-RETURN ( 0 )
+Return ( 0 )
 
 //---------------------------------------------------------------------------//
-/*
 
-select  as [totalUnidades], cRef, cAlmLin , ( dfecfac ), tFecFac   
-   from emp016afacclil 
-   where cRef = '9' and CAST( dfecfac AS SQL_CHAR ) >= '2017-01-20' and tfecfac > '072515' // and cAlmLin = '000'
-   group by cRef, cAlmLin, dfecfac, tfecfac, cAlmLin
-
-*/
 
 

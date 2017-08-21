@@ -1,0 +1,24 @@
+12:16:09- 44169.4370 SELECT TOP 1 dFecMov, cTimMov FROM Emp016AHisMov  WHERE nTipMov = 4 AND cRefMov = '1' AND cAliMov = '2' AND cLote = 'OAN0671912' ORDER BY dFecMov DESC, cTimMov DESC
+12:16:11- 44171.9960 SELECT SUM( IIF( nCajMov = 0, 1, nCajMov ) * nUndMov ) as [totalUnidadesStock] FROM Emp016AHisMov WHERE nTipMov <> 4 AND cRefMov = '1' AND cAliMov = '2' AND cLote = 'OAN0671912' 
+12:16:16- 44176.6210 SELECT SUM( IIF( nCajMov = 0, 1, nCajMov ) * nUndMov ) as [totalUnidadesStock] FROM Emp016AHisMov WHERE nTipMov <> 4 AND cRefMov = '1' AND cAloMov = '2' AND cLote = 'OAN0671912' 
+12:16:17- 44177.9640 SELECT SUM( IIF( nCanEnt = 0, 1, nCanEnt ) * nUniCaja ) as [totalUnidadesStock] FROM Emp016AFacCliL WHERE cRef = '1' AND cAlmLin = '2' AND cLote = 'OAN0671912' 
+12:23:32- 44612.7870 SELECT TOP 1 dFecMov, cTimMov FROM Emp016AHisMov  WHERE nTipMov = 4 AND cRefMov = '9' AND cAliMov = '2' AND cLote = '1234' ORDER BY dFecMov DESC, cTimMov DESC
+12:23:35- 44615.4690 SELECT SUM( IIF( nCajMov = 0, 1, nCajMov ) * nUndMov ) as [totalUnidadesStock] FROM Emp016AHisMov WHERE nTipMov <> 4 AND cRefMov = '9' AND CAST( dFecMov AS SQL_CHAR ) >= '2017-08-12' AND cTimMov >= '110925' AND cAliMov = '2' AND cLote = '1234' 
+12:23:35- 44615.8540 SELECT SUM( IIF( nCajMov = 0, 1, nCajMov ) * nUndMov ) as [totalUnidadesStock] FROM Emp016AHisMov WHERE nTipMov <> 4 AND cRefMov = '9' AND CAST( dFecMov AS SQL_CHAR ) >= '2017-08-12' AND cTimMov >= '110925' AND cAloMov = '2' AND cLote = '1234' 
+12:23:36- 44616.8280 SELECT SUM( IIF( nCanEnt = 0, 1, nCanEnt ) * nUniCaja ) as [totalUnidadesStock] FROM Emp016AFacCliL WHERE cRef = '9' AND CAST( dFecFac AS SQL_CHAR ) >= '2017-08-12' AND tFecFac >= '110925' AND cAlmLin = '2' AND cLote = '1234' 
+13:23:25- 48205.4600 SELECT TOP 1 dFecMov, cTimMov FROM Emp016AHisMov  WHERE nTipMov = 4 AND cRefMov = '1' AND cAliMov = '000' AND cLote = 'OAN0671912' ORDER BY dFecMov DESC, cTimMov DESC
+13:23:26- 48206.6590 SELECT SUM( IIF( nCajMov = 0, 1, nCajMov ) * nUndMov ) as [totalUnidadesStock] FROM Emp016AHisMov WHERE nTipMov <> 4 AND cRefMov = '1' AND cAliMov = '000' AND cLote = 'OAN0671912' 
+13:23:27- 48207.8190 SELECT SUM( IIF( nCajMov = 0, 1, nCajMov ) * nUndMov ) as [totalUnidadesStock] FROM Emp016AHisMov WHERE nTipMov <> 4 AND cRefMov = '1' AND cAloMov = '000' AND cLote = 'OAN0671912' 
+13:23:29- 48209.0840 SELECT SUM( IIF( nCanEnt = 0, 1, nCanEnt ) * nUniCaja ) as [totalUnidadesVentas] FROM Emp016AFacCliL WHERE cRef = '1' AND cAlmLin = '000' AND cLote = 'OAN0671912' 
+13:23:39- 48219.5640 SELECT TOP 1 dFecMov, cTimMov FROM Emp016AHisMov  WHERE nTipMov = 4 AND cRefMov = '1' AND cAliMov = '2' AND cLote = 'OAN0671912' ORDER BY dFecMov DESC, cTimMov DESC
+13:23:41- 48221.2210 SELECT SUM( IIF( nCajMov = 0, 1, nCajMov ) * nUndMov ) as [totalUnidadesStock] FROM Emp016AHisMov WHERE nTipMov <> 4 AND cRefMov = '1' AND cAliMov = '2' AND cLote = 'OAN0671912' 
+13:23:42- 48222.3720 SELECT SUM( IIF( nCajMov = 0, 1, nCajMov ) * nUndMov ) as [totalUnidadesStock] FROM Emp016AHisMov WHERE nTipMov <> 4 AND cRefMov = '1' AND cAloMov = '2' AND cLote = 'OAN0671912' 
+13:23:43- 48223.6830 SELECT SUM( IIF( nCanEnt = 0, 1, nCanEnt ) * nUniCaja ) as [totalUnidadesVentas] FROM Emp016AFacCliL WHERE cRef = '1' AND cAlmLin = '2' AND cLote = 'OAN0671912' 
+13:40:50- 49250.2750 SELECT TOP 1 dFecMov, cTimMov FROM Emp016AHisMov  WHERE nTipMov = 4 AND cRefMov = '1' AND cAliMov = '2' AND cLote = 'OAN0671912' ORDER BY dFecMov DESC, cTimMov DESC
+13:40:51- 49251.5550 SELECT SUM( IIF( nCajMov = 0, 1, nCajMov ) * nUndMov ) as [totalUnidadesStock] FROM Emp016AHisMov WHERE nTipMov <> 4 AND cRefMov = '1' AND cAliMov = '2' AND cLote = 'OAN0671912' 
+13:40:52- 49252.8830 SELECT SUM( IIF( nCajMov = 0, 1, nCajMov ) * nUndMov ) as [totalUnidadesStock] FROM Emp016AHisMov WHERE nTipMov <> 4 AND cRefMov = '1' AND cAloMov = '2' AND cLote = 'OAN0671912' 
+13:40:53- 49253.9470 SELECT SUM( IIF( nCanEnt = 0, 1, nCanEnt ) * nUniCaja ) as [totalUnidadesVentas] FROM Emp016AAlbCliL WHERE cRef = '1' AND NOT lFacturado AND cAlmLin = '2' AND cLote = 'OAN0671912' 
+13:40:55- 49255.2040 SELECT SUM( IIF( nCanEnt = 0, 1, nCanEnt ) * nUniCaja ) as [totalUnidadesVentas] FROM Emp016AFacCliL WHERE cRef = '1' AND cAlmLin = '2' AND cLote = 'OAN0671912' 
+13:49:09- 49749.9660 SELECT TOP 1 dFecMov, cTimMov FROM Emp016AHisMov  WHERE nTipMov = 4 AND cRefMov = '9' AND cAliMov = '2' AND cLote = '1234' ORDER BY dFecMov DESC, cTimMov DESC
+13:50:17- 49817.4630 SELECT TOP 1 dFecMov, cTimMov FROM Emp016AHisMov  WHERE nTipMov = 4 AND cRefMov = '1' AND cAliMov = '000' AND cLote = 'OAN0671912' ORDER BY dFecMov DESC, cTimMov DESC
+13:50:21- 49821.6350 SELECT TOP 1 dFecMov, cTimMov FROM Emp016AHisMov  WHERE nTipMov = 4 AND cRefMov = '1' AND cAliMov = '2' AND cLote = 'OAN0671912' ORDER BY dFecMov DESC, cTimMov DESC
