@@ -17026,7 +17026,7 @@ FUNCTION rxTpv( cPath, cDriver )
       ( dbfTikP )->( ordCreate( cPath + "TIKEP.CDX", "NNUMPGO", "Str( nNumPgo ) + cSufPgo", {|| Str( Field->nNumPgo ) + Field->cSufPgo } ) )
 
       ( dbfTikP )->( ordCondSet( "!Deleted()", {||!Deleted()}  ) )
-      ( dbfTikP )->( ordCreate( cPath + "TikeP.Cdx", "iNumTik", "'12' + cSerTik + cNumTik + cSufTik", {|| '12' + Field->cSerTik + Field->cNumTik + Field->cSufTik } ) )
+      ( dbfTikP )->( ordCreate( cPath + "TikeP.Cdx", "iNumTik", "'31' + cSerTik + cNumTik + cSufTik + Str( nNumRec )", {|| '31' + Field->cSerTik + Field->cNumTik + Field->cSufTik + Str( Field->nNumRec ) } ) )
 
       ( dbfTikP )->( dbCloseArea() )
    else
