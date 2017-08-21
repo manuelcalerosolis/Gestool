@@ -48,6 +48,8 @@ CLASS TFastVentasClientes FROM TFastReportInfGen
    METHOD AddRecibosClienteCobro()        INLINE ( ::addRecibosCliente( 'dEntrada' ) )
    METHOD AddRecibosClienteVencimiento()  INLINE ( ::addRecibosCliente( 'dFecVto' ) )
 
+   METHOD AddCobrosTickets()
+
    METHOD insertFacturaCliente()
    METHOD insertRectificativa()
    METHOD insertTicketCliente()
@@ -218,6 +220,8 @@ METHOD OpenFiles() CLASS TFastVentasClientes
       D():TiketsClientes( ::nView )
 
       D():TiketsLineas( ::nView )
+
+      D():TiketsCobros( ::nView )      
 
       D():ClientesDirecciones( ::nView )
 
@@ -436,6 +440,7 @@ METHOD BuildTree( oTree, lLoadFile ) CLASS TFastVentasClientes
                      { "Title" => "Recibos fecha de emisión",           "Image" =>21, "Type" => "Recibos emisión",                     "Directory" => "Clientes\Ventas\Recibos",                      "File" => "Recibos de clientes.fr3" },;
                      { "Title" => "Recibos fecha de cobro",             "Image" =>21, "Type" => "Recibos cobro",                       "Directory" => "Clientes\Ventas\RecibosCobro",                 "File" => "Recibos de clientes fecha de cobro.fr3" },;
                      { "Title" => "Recibos fecha de vencimiento",       "Image" =>21, "Type" => "Recibos vencimiento",                 "Directory" => "Clientes\Ventas\RecibosVencimiento",           "File" => "Recibos de clientes fecha de vencimiento.fr3" },;
+                     { "Title" => "Cobros de tikets",                   "Image" =>10, "Type" => "Cobros tickets",                      "Directory" => "Clientes\Ventas\CobrosTickets",                "File" => "Cobros de tickets.fr3" },;
                   } ;
                   },;
                   {  "Title" => "Tipo de impuesto",                     "Image" =>23, "Type" => "Tipo de impuesto",                    "Directory" => "Clientes\TipoImpuesto",                         "File" => "Ventas por tipo de impuesto.fr3"  } }
@@ -595,6 +600,10 @@ METHOD DataReport() CLASS TFastVentasClientes
 
          ::FastReportRecibosCliente() 
 
+      case ( "Cobros" $ ::cReportType )
+
+         ::FastReportCobrosTickets()
+
       case ::cReportType == "Tipo de impuesto"
 
          ::FastReportFacturaCliente()
@@ -696,6 +705,10 @@ METHOD AddVariable() CLASS TFastVentasClientes
 
          ::AddVariableRecibosCliente()
 
+      case ( "Cobros" $ ::cReportType )
+
+         ::AddVariableCobrosTickets()
+
       case ::cReportType == "Tipo de impuesto"
          
          ::AddVariableLineasFacturaCliente()
@@ -787,6 +800,10 @@ METHOD lGenerate() CLASS TFastVentasClientes
       case ::cReportType == "Recibos vencimiento"
 
          ::AddRecibosClienteVencimiento()   
+
+      case ::cReportType == "Cobros tickets"
+
+         ::AddCobrosTickets()   
 
       case ::cReportType == "Tipo de impuesto"
 
@@ -1811,6 +1828,117 @@ METHOD AddRecibosCliente( cFieldOrder ) CLASS TFastVentasClientes
    RECOVER USING oError
 
       msgStop( ErrorMessage( oError ), "Imposible añadir recibos de clientes" )
+
+   END SEQUENCE
+
+   ErrorBlock( oBlock )
+   
+RETURN ( Self )
+
+//---------------------------------------------------------------------------//
+
+METHOD AddCobrosTickets() CLASS TFastVentasClientes
+
+   local sTot
+   local oError
+   local oBlock
+   
+   oBlock               := ErrorBlock( {| oError | ApoloBreak( oError ) } )
+   BEGIN SEQUENCE
+
+      ( D():TiketsCobros( ::nView ) )->( OrdSetFocus( "iNumTik" ) )
+
+      // filtros para la cabecera------------------------------------------------
+
+      ::cExpresionHeader          := '( Field->dPgoTik >= Ctod( "' + Dtoc( ::dIniInf ) + '" ) .and. Field->dPgoTik <= Ctod( "' + Dtoc( ::dFinInf ) + '" ) )'
+      
+      if !Empty( ::oGrupoSerie )
+         ::cExpresionHeader       += ' .and. ( Field->cSerTik >= "' + Rtrim( ::oGrupoSerie:Cargo:Desde ) + '" .and. Field->cSerTik <= "' + Rtrim( ::oGrupoSerie:Cargo:Hasta ) + '" )'
+      end if
+
+      if !Empty( ::oGrupoSufijo )
+         ::cExpresionHeader       += ' .and. ( Field->cSufTik >= "' + Rtrim( ::oGrupoSufijo:Cargo:Desde ) + '" .and. Field->cSufTik <= "' + Rtrim( ::oGrupoSufijo:Cargo:Hasta ) + '" )'
+      end if
+
+      /*::cExpresionHeader          += ' .and. ( Rtrim( cCliTik ) >= "' + Rtrim( ::oGrupoCliente:Cargo:Desde )   + '" .and. Rtrim( cCliTik ) <= "' + Rtrim( ::oGrupoCliente:Cargo:Hasta ) + '")'
+
+      /*::setFilterPaymentId()
+
+      ::setFilterAgentId()
+      
+      ::setFilterUserId()*/
+
+      // Procesando recibos------------------------------------------------------
+
+      ::setMeterText( "Procesando cobros" )
+
+      MsgInfo( ::cExpresionHeader )
+
+      ( D():TiketsCobros( ::nView ) )->( setCustomFilter( ::cExpresionHeader ) )
+
+      ::setMeterTotal( ( D():TiketsCobros( ::nView ) )->( dbcustomkeycount() ) )
+
+      ( D():TiketsCobros( ::nView ) )->( dbgotop() )
+      while !::lBreak .and. !( D():TiketsCobros( ::nView ) )->( eof() )
+
+         ::oDbf:Blank()
+
+         /*::oDbf:cCodCli    := ( D():FacturasClientesCobros( ::nView ) )->cCodCli
+         ::oDbf:cNomCli    := ( D():FacturasClientesCobros( ::nView ) )->cNomCli
+         ::oDbf:cCodAge    := ( D():FacturasClientesCobros( ::nView ) )->cCodAge
+         ::oDbf:cCodPgo    := ( D():FacturasClientesCobros( ::nView ) )->cCodPgo
+         ::oDbf:cCodUsr    := ( D():FacturasClientesCobros( ::nView ) )->cCodUsr
+
+         ::oDbf:cCodRut    := RetFld( ( D():FacturasClientesCobros( ::nView ) )->cCodCli, ( D():Clientes( ::nView ) ), 'cCodRut' )
+         ::oDbf:cCodPos    := RetFld( ( D():FacturasClientesCobros( ::nView ) )->cCodCli, ( D():Clientes( ::nView ) ), 'cCodPos' )
+         ::oDbf:cCodGrp    := RetFld( ( D():FacturasClientesCobros( ::nView ) )->cCodCli, ( D():Clientes( ::nView ) ), "cCodGrp", "Cod")*/
+
+         ::oDbf:cTipDoc    := "Cobros de tickets"
+         ::oDbf:cClsDoc    := COB_TIK          
+         ::oDbf:cSerDoc    := ( D():TiketsCobros( ::nView ) )->cSerTik
+         ::oDbf:cNumDoc    := ( D():TiketsCobros( ::nView ) )->cNumTik
+         ::oDbf:cSufDoc    := ( D():TiketsCobros( ::nView ) )->cSufTik
+         ::oDbf:cNumRec    := Str( ( D():TiketsCobros( ::nView ) )->nNumRec )
+         ::oDbf:cIdeDoc    := Upper( ::oDbf:cClsDoc ) + ::oDbf:cSerDoc + ::oDbf:cNumDoc + ::oDbf:cSufDoc
+
+         ::oDbf:nAnoDoc    := Year( ( D():TiketsCobros( ::nView ) )->dPgoTik )
+         ::oDbf:nMesDoc    := Month( ( D():TiketsCobros( ::nView ) )->dPgoTik )
+         ::oDbf:dFecDoc    := ( D():TiketsCobros( ::nView ) )->dPgoTik
+         ::oDbf:cHorDoc    := SubStr( ( D():TiketsCobros( ::nView ) )->cTimTik, 1, 2 )
+         ::oDbf:cMinDoc    := SubStr( ( D():TiketsCobros( ::nView ) )->cTimTik, 4, 2 )
+
+         /*::oDbf:nTotNet    := nTotRecCli( D():FacturasClientesCobros( ::nView ) )
+         ::oDbf:nTotCob    := nTotCobCli( D():FacturasClientesCobros( ::nView ) )
+
+         ::oDbf:nNumRem    := ( D():FacturasClientesCobros( ::nView ) )->nNumRem
+         ::oDbf:cSufRem    := ( D():FacturasClientesCobros( ::nView ) )->cSufRem
+
+         ::oDbf:dFecVto    := ( D():FacturasClientesCobros( ::nView ) )->dFecVto
+
+         ::oDbf:cEstado    := cEstadoRecibo( D():FacturasClientesCobros( ::nView ) )
+
+         ::oDbf:nRieCli    := RetFld( ( D():FacturasClientesCobros( ::nView ) )->cCodCli, ( D():Clientes( ::nView ) ), "Riesgo", "Cod" )
+         ::oDbf:cDniCli    := RetFld( ( D():FacturasClientesCobros( ::nView ) )->cCodCli, ( D():Clientes( ::nView ) ), "Nif", "Cod" )
+
+         */
+
+         // Añadimos un nuevo registro--------------------------------------------
+
+         if ::lValidRegister()
+            ::oDbf:Insert()
+         else
+            ::oDbf:Cancel()
+         end if
+
+         ( D():TiketsCobros( ::nView ) )->( dbskip() )
+
+         ::setMeterAutoIncremental()
+
+      end while
+   
+   RECOVER USING oError
+
+      msgStop( ErrorMessage( oError ), "Imposible añadir cobros de tickets" )
 
    END SEQUENCE
 

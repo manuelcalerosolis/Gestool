@@ -3103,6 +3103,7 @@ METHOD BuildEmpresa()
    ::AddEmpresaTable( oDataTable )
 
    oDataTable              := TDataTable():New( "TikeP" )
+   oDataTable:lTrigger     := ::lTriggerAuxiliares
    oDataTable:cDataFile    := cPatEmp( , .t. ) + "TikeP.Dbf"
    oDataTable:cIndexFile   := cPatEmp( , .t. ) + "TikeP.Cdx"
    oDataTable:cDescription := "Pagos de tickets de clientes"

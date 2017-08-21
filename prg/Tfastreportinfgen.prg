@@ -472,6 +472,9 @@ CLASS TFastReportInfGen FROM TNewInfGen
    METHOD setMeterText( cText )                          INLINE ( if ( !empty( ::oMtrInf ), ::oMtrInf:cText := cText, ) )
    METHOD setMeterTotal( nTotal )                        INLINE ( if ( !empty( ::oMtrInf ), ::oMtrInf:SetTotal( nTotal ), ) )
    METHOD setMeterAutoIncremental()                      INLINE ( if ( !empty( ::oMtrInf ), ::oMtrInf:AutoInc(), ) )
+
+   METHOD FastReportCobrosTickets()
+   METHOD AddVariableCobrosTickets()
    
 END CLASS
 
@@ -2504,6 +2507,22 @@ METHOD FastReportRecibosCliente()
 
 RETURN ( Self )
 
+//---------------------------------------------------------------------------//
+
+METHOD FastReportCobrosTickets()
+
+   ( D():TiketsCobros( ::nView ) )->( ordsetfocus( "iNumFac" ) )
+   
+   ::oFastReport:SetWorkArea(       "Cobros de tickets", ( D():TiketsCobros( ::nView ) )->( select() ) )
+   ::oFastReport:SetFieldAliases(   "Cobros de tickets", cItemsToReport( aPgoTik() ) )
+
+   ::oFastReport:SetMasterDetail(   "Informe", "Cobros de tickets",   {|| ::idDocumento() + ::oDbf:cNumRec } )
+   ::oFastReport:SetResyncPair(     "Informe", "Cobros de tickets" )
+
+RETURN ( Self )
+
+//---------------------------------------------------------------------------//
+
 /*
 Produccion--------------------------------------------------------------------------
 */
@@ -2771,6 +2790,12 @@ RETURN ( Self )
 //---------------------------------------------------------------------------//
 
 METHOD AddVariableRecibosCliente()
+
+RETURN ( Self )
+
+//---------------------------------------------------------------------------//
+
+METHOD AddVariableCobrosTickets()
 
 RETURN ( Self )
 

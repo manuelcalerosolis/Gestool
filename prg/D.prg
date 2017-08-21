@@ -293,6 +293,8 @@ CLASS D
       METHOD TiketsLineasEof( nView )                          INLINE ( ( ::TiketsLineas( nView ) )->( eof() ) )
       METHOD TiketsLineasNotEof( nView )                       INLINE ( ! ( ::TiketsLineasEof( nView ) ) ) 
 
+   METHOD TiketsCobros( nView )                                INLINE ( ::Get( "TikeP", nView ) )
+
    METHOD getStatusTiketsLineas( nView )                       INLINE ( ::aStatus := aGetStatus( ::TiketsLineas( nView ) ) )
    METHOD setStatusTiketsLineas( nView )                       INLINE ( SetStatus( ::TiketsLineas( nView ), ::aStatus ) )
 
