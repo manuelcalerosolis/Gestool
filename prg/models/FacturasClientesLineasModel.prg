@@ -13,7 +13,9 @@ CLASS FacturasClientesLineasModel FROM BaseModel
 
    METHOD getLineasAgrupadasUltimaConsolidacion( cCodigoArticulo, cCodigoAlmacen, cValorPropiedad1, cValorPropiedad2, cLote, dConsolidacion )
 
-   METHOD totalUnidadesVentas( cCodigoArticulo, dConsolidacion, tConsolidacion, cCodigoAlmacen, cValorPropiedad1, cValorPropiedad2, cLote )
+   METHOD getSQLSentenceTotalUnidadesStock( cCodigoArticulo, cCodigoAlmacen, cValorPropiedad1, cValorPropiedad2, cLote )
+
+   METHOD totalUnidadesStock( cCodigoArticulo, dConsolidacion, tConsolidacion, cCodigoAlmacen, cValorPropiedad1, cValorPropiedad2, cLote )
 
 END CLASS
 
@@ -75,10 +77,9 @@ RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 
-METHOD totalUnidadesVentas( cCodigoArticulo, dConsolidacion, tConsolidacion, cCodigoAlmacen, cValorPropiedad1, cValorPropiedad2, cLote )
+METHOD getSQLSentenceTotalUnidadesStock( cCodigoArticulo, dConsolidacion, tConsolidacion, cCodigoAlmacen, cValorPropiedad1, cValorPropiedad2, cLote )
 
-   local cStm
-   local cSql  := "SELECT SUM( IIF( nCanEnt = 0, 1, nCanEnt ) * nUniCaja ) as [totalUnidadesVentas] " + ;
+   local cSql  := "SELECT SUM( IIF( nCanEnt = 0, 1, nCanEnt ) * nUniCaja ) as [totalUnidadesStock] " + ;
                      "FROM " + ::getTableName() + " " + ;
                      "WHERE cRef = " + quoted( cCodigoArticulo ) + " "
    
@@ -106,20 +107,19 @@ METHOD totalUnidadesVentas( cCodigoArticulo, dConsolidacion, tConsolidacion, cCo
          cSql  +=    "AND cLote = " + quoted( cLote ) + " "
    end if 
 
+RETURN ( cSql )
+
+//---------------------------------------------------------------------------//
+
+METHOD totalUnidadesStock( cCodigoArticulo, dConsolidacion, tConsolidacion, cCodigoAlmacen, cValorPropiedad1, cValorPropiedad2, cLote )
+
+   local cStm
+   local cSql  := ::getSQLSentenceTotalUnidadesStock( cCodigoArticulo, dConsolidacion, tConsolidacion, cCodigoAlmacen, cValorPropiedad1, cValorPropiedad2, cLote )
+
    if ::ExecuteSqlStatement( cSql, @cStm )
-      RETURN ( ( cStm )->totalUnidadesVentas )
+      RETURN ( ( cStm )->totalUnidadesStock )
    end if 
 
 RETURN ( 0 )
 
 //---------------------------------------------------------------------------//
-/*
-
-select  as [totalUnidades], cRef, cAlmLin , ( dfecfac ), tFecFac   
-   from emp016afacclil 
-   where cRef = '9' and CAST( dfecfac AS SQL_CHAR ) >= '2017-01-20' and tfecfac > '072515' // and cAlmLin = '000'
-   group by cRef, cAlmLin, dfecfac, tfecfac, cAlmLin
-
-*/
-
-

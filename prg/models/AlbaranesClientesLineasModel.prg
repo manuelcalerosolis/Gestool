@@ -15,7 +15,9 @@ CLASS AlbaranesClientesLineasModel FROM BaseModel
 
    METHOD getLineasAlbaranesAgrupadasUltimaConsolidacion( cCodigoArticulo, cCodigoAlmacen, cValorPropiedad1, cValorPropiedad2, cLote, dConsolidacion )
 
-   METHOD totalUnidadesVentas( cCodigoArticulo, dConsolidacion, tConsolidacion, cCodigoAlmacen, cValorPropiedad1, cValorPropiedad2, cLote )
+   METHOD getSQLSentenceTotalUnidadesStock( cCodigoArticulo, dConsolidacion, tConsolidacion, cCodigoAlmacen, cValorPropiedad1, cValorPropiedad2, cLote )
+   
+   METHOD totalUnidadesStock( cCodigoArticulo, dConsolidacion, tConsolidacion, cCodigoAlmacen, cValorPropiedad1, cValorPropiedad2, cLote )
 
 END CLASS
 
@@ -78,11 +80,10 @@ Return ( nil )
 
 //---------------------------------------------------------------------------//
 
-METHOD totalUnidadesVentas( cCodigoArticulo, dConsolidacion, tConsolidacion, cCodigoAlmacen, cValorPropiedad1, cValorPropiedad2, cLote )
+METHOD getSQLSentenceTotalUnidadesStock( cCodigoArticulo, dConsolidacion, tConsolidacion, cCodigoAlmacen, cValorPropiedad1, cValorPropiedad2, cLote )
 
-   local cStm
-   local cSql  := "SELECT SUM( IIF( nCanEnt = 0, 1, nCanEnt ) * nUniCaja ) as [totalUnidadesVentas] "       + ;
-                     "FROM " + ::getTableName()                                                       + " " + ;
+   local cSql  := "SELECT SUM( IIF( nCanEnt = 0, 1, nCanEnt ) * nUniCaja ) as [totalUnidadesStock] " + ;
+                     "FROM " + ::getTableName() + " " + ;
                      "WHERE cRef = " + quoted( cCodigoArticulo ) + " AND NOT lFacturado "
    
    if !empty( dConsolidacion )                     
@@ -109,13 +110,20 @@ METHOD totalUnidadesVentas( cCodigoArticulo, dConsolidacion, tConsolidacion, cCo
          cSql  +=    "AND cLote = " + quoted( cLote ) + " "
    end if 
 
-   if ::ExecuteSqlStatement( cSql, @cStm )
-      Return ( ( cStm )->totalUnidadesVentas )
-   end if 
-
-Return ( 0 )
+RETURN ( cSql )
 
 //---------------------------------------------------------------------------//
 
+METHOD totalUnidadesStock( cCodigoArticulo, dConsolidacion, tConsolidacion, cCodigoAlmacen, cValorPropiedad1, cValorPropiedad2, cLote )
 
+   local cStm
+   local cSql  := ::getSQLSentenceTotalUnidadesStock( cCodigoArticulo, dConsolidacion, tConsolidacion, cCodigoAlmacen, cValorPropiedad1, cValorPropiedad2, cLote )
+
+   if ::ExecuteSqlStatement( cSql, @cStm )
+      RETURN ( ( cStm )->totalUnidadesStock )
+   end if 
+
+RETURN ( 0 )
+
+//---------------------------------------------------------------------------//
 

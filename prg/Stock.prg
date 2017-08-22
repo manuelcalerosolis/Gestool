@@ -1498,22 +1498,7 @@ METHOD nSQLStockActual( cCodArt, cCodAlm, cValPr1, cValPr2, cLote ) CLASS TStock
 
       // Albaranes de clientes-------------------------------------------------" )
 
-      nSQLStockActual            -= AlbaranesClientesLineasModel():totalUnidadesVentas( cCodArt, dFechaConsolidacion, tHoraConsolidacion, cCodAlm, cValPr1, cValPr2, cLote )
-
-      // ::aStockAlbaranCliente( cCodArt, cCodAlm, lLote, lNumeroSerie )
-      // SysRefresh()
-
-      // Factura de clientes--------------------------------------------------" )
-
-      nSQLStockActual            -= FacturasClientesLineasModel():totalUnidadesVentas( cCodArt, dFechaConsolidacion, tHoraConsolidacion, cCodAlm, cValPr1, cValPr2, cLote )
-
-      // ::aStockFacturaCliente( cCodArt, cCodAlm, lLote, lNumeroSerie )
-      // SysRefresh()
-
-      // Rectificativas de clientes--------------------------------------------" )
-
-      // ::aStockRectificativaCliente( cCodArt, cCodAlm, lLote, lNumeroSerie )
-      // SysRefresh()
+      nSQLStockActual            -= StocksModel():getTotalUnidadesStockVentas( cCodArt, dFechaConsolidacion, tHoraConsolidacion, cCodAlm, cValPr1, cValPr2, cLote )
 
       // Tickets de clientes---------------------------------------------------" )
 

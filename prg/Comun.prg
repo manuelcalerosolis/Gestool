@@ -279,15 +279,15 @@ RETURN ( .t. )
 
 FUNCTION Test()
 
-   local cStm
-   local seconds  := seconds()
+   //local cStm
+   //local seconds  := seconds()
+   //
+   //   cStm           := TStock():nSQLGlobalStockActual( '9', '2' )
+   //
+   //   msgalert( seconds() - seconds, "seconds()" )
+   //msgalert( cStm, "cStm")
 
-   cStm           := TStock():nSQLGlobalStockActual( '9', '2' )
-
-   msgalert( seconds() - seconds, "seconds()" )
-   msgalert( cStm, "cStm")
-
-   // cStm     := FacturasClientesLineasModel():getLineasFacturasAgrupadas( '9', '2', '', '', '1234' ) // OAN0671912   
+   // cStm     := FacturasClientesLineasModel():getLineasAgrupadas( '9', '2', '', '', '1234' ) // OAN0671912   
 
    // cStm     := AlbaranesClientesLineasModel():getLineasAlbaranesAgrupadas( '9', '2', '', '', '1234' ) // OAN0671912   
 
@@ -300,7 +300,7 @@ FUNCTION Test()
 
       hFec     := MovimientosAlmacenesLineasModel():getFechaHoraConsolidacion( (cStm)->cRef, (cStm)->cAlmLin, (cStm)->cValPr1, (cStm)->cValPr2, (cStm)->cLote )
 
-      FacturasClientesLineasModel():getLineasFacturasAgrupadasUltimaConsolidacion((cStm)->cRef, (cStm)->cAlmLin, (cStm)->cValPr1, (cStm)->cValPr2, (cStm)->cLote, hFec )
+      FacturasClientesLineasModel():getLineasAgrupadasUltimaConsolidacion((cStm)->cRef, (cStm)->cAlmLin, (cStm)->cValPr1, (cStm)->cValPr2, (cStm)->cLote, hFec )
 
       ( cStm )->( dbskip() )
 
