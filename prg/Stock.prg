@@ -142,7 +142,7 @@ CLASS TStock
    METHOD setNotPendiente( lNotPendiente)    INLINE ( ::lNotPendiente := lNotPendiente )
    METHOD getNotPendiente()                  INLINE ( ::lNotPendiente )
 
-   METHOD lOpenFiles( )
+   METHOD lOpenFiles()
    METHOD CloseFiles()
 
    METHOD OpenService()                      INLINE ( ::lOpenFiles() )
@@ -1539,7 +1539,7 @@ METHOD nSQLStockActual( cCodArt, cCodAlm, cValPr1, cValPr2, cLote ) CLASS TStock
 //   END SEQUENCE
 //   ErrorBlock( oBlock )
 
-   msgalert( seconds() - nSeconds, "seconds()" )
+   // msgalert( seconds() - nSeconds, "seconds()" )
 
 RETURN ( nSQLStockActual )
 
@@ -1548,7 +1548,6 @@ RETURN ( nSQLStockActual )
 METHOD nSQLGlobalStockActual( cCodArt, cCodAlm ) CLASS TStock
 
    local nSeconds                := seconds()
-   local aGlobal                 := {}
    local cStm
    local nSQLStockActual         := 0
 
@@ -1564,19 +1563,19 @@ METHOD nSQLGlobalStockActual( cCodArt, cCodAlm ) CLASS TStock
 
    for each cCodAlm in ::uCodigoAlmacen
 
-      cStm                       := AlbaranesClientesLineasModel():getLineasAlbaranesAgrupadas( cCodArt, cCodAlm )
+      cStm                       := StocksModel():getLineasAgrupadas( cCodArt, cCodAlm )
 
-      if !empty(cStm)
-         aadd( aGlobal, { ( cStm )->cCodigoArticulo, ( cStm )->cCodigoAlmacen, ( cStm )->cValorPropiedad1, ( cStm )->cValorPropiedad2, ( cStm )->cLote } )
-      end if 
+      ( cStm )->( dbgotop() )
+      while !( cStm )->( eof() )
+         nSQLStockActual         += ::nSQLStockActual( ( cStm )->cCodigoArticulo, ( cStm )->cCodigoAlmacen, ( cStm )->cValorPropiedad1, ( cStm )->cValorPropiedad2, ( cStm )->cLote )
+         ( cStm )->( dbskip() )
+      end while
+
+      StocksModel():closeAreaLineasAgrupadas()
 
    next 
 
-   // Control de erroress-------------------------------------------------------
-
-   msgalert( seconds() - nSeconds, "seconds()" )
-
-RETURN ( aGlobal )
+RETURN ( nSQLStockActual )
 
 //---------------------------------------------------------------------------//
 

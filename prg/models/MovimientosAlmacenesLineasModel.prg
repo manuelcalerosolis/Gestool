@@ -15,6 +15,8 @@ CLASS MovimientosAlmacenesLineasModel FROM BaseModel
 
    METHOD totalUnidadesSalidas( cCodigoArticulo, dConsolidacion, tConsolidacion, cCodigoAlmacen, cValorPropiedad1, cValorPropiedad2, cLote )
 
+   METHOD getSQLSentenceLineasAgrupadas( cCodigoArticulo, cCodigoAlmacen, cValorPropiedad1, cValorPropiedad2, cLote )
+
 END CLASS
 
 //---------------------------------------------------------------------------//
@@ -145,4 +147,20 @@ Return ( 0 )
 
 //---------------------------------------------------------------------------//
 
+METHOD getSQLSentenceLineasAgrupadas( cCodigoArticulo, cCodigoAlmacen, cValorPropiedad1, cValorPropiedad2, cLote )
+
+   local cSql  := "SELECT "                                                + ;
+                     "cRefMov as cCodigoArticulo, "                        + ;
+                     "cAliMov as cCodigoAlmacen, "                         + ;
+                     "cValPr1 as cValorPropiedad1, "                       + ;
+                     "cValPr2 as cValorPropiedad2, "                       + ;
+                     "cLote as cLote "                                     + ;
+                  "FROM " + ::getTableName() + " "                         + ;
+                  "WHERE cRefMov = " + quoted( cCodigoArticulo ) + " "     + ;
+                     "AND cAliMov = " + quoted( cCodigoAlmacen ) + " "     + ;
+                     "GROUP BY cRefMov, cAliMov, cValPr1, cValPr2, cLote "
+
+Return ( cSql )
+
+//---------------------------------------------------------------------------//
 

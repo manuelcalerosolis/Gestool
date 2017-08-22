@@ -8,6 +8,10 @@ CLASS AlbaranesClientesLineasModel FROM BaseModel
    METHOD getTableName()                     INLINE ::getEmpresaTableName( "AlbCliL" )
 
    METHOD getLineasAlbaranesAgrupadas( cCodigoArticulo, cCodigoAlmacen, cValorPropiedad1, cValorPropiedad2, cLote )
+   
+   METHOD getSQLSentenceLineasAlbaranesAgrupadas( cCodigoArticulo, cCodigoAlmacen, cValorPropiedad1, cValorPropiedad2, cLote )
+
+   METHOD getLineasAlbaranesAgrupadas( cCodigoArticulo, cCodigoAlmacen, cValorPropiedad1, cValorPropiedad2, cLote )
 
    METHOD getLineasAlbaranesAgrupadasUltimaConsolidacion( cCodigoArticulo, cCodigoAlmacen, cValorPropiedad1, cValorPropiedad2, cLote, dConsolidacion )
 
@@ -17,9 +21,8 @@ END CLASS
 
 //---------------------------------------------------------------------------//
 
-METHOD getLineasAlbaranesAgrupadas( cCodigoArticulo, cCodigoAlmacen, cValorPropiedad1, cValorPropiedad2, cLote )
+METHOD getSQLSentenceLineasAlbaranesAgrupadas( cCodigoArticulo, cCodigoAlmacen, cValorPropiedad1, cValorPropiedad2, cLote )
 
-   local cStm  := "ADSLineasAgrupadas"
    local cSql  := "SELECT "                                                + ;
                      "cRef as cCodigoArticulo, "                           + ;
                      "cAlmLin as cCodigoAlmacen, "                         + ;
@@ -31,7 +34,16 @@ METHOD getLineasAlbaranesAgrupadas( cCodigoArticulo, cCodigoAlmacen, cValorPropi
                      "AND NOT lFacturado "                                 + ;
                      "AND cRef = " + quoted( cCodigoArticulo ) + " "       + ;
                      "AND cAlmLin = " + quoted( cCodigoAlmacen ) + " "     + ;
-                     "GROUP BY cRef, cAlmLin, cValPr1, cValPr2, cLote"
+                     "GROUP BY cRef, cAlmLin, cValPr1, cValPr2, cLote "
+
+Return ( cSql )
+
+//---------------------------------------------------------------------------//
+
+METHOD getLineasAlbaranesAgrupadas( cCodigoArticulo, cCodigoAlmacen, cValorPropiedad1, cValorPropiedad2, cLote )
+
+   local cStm  := "ADSLineasAgrupadas"
+   local cSql  := ::getSQLSentenceLineasAlbaranesAgrupadas( cCodigoArticulo, cCodigoAlmacen, cValorPropiedad1, cValorPropiedad2, cLote )
 
    if ::ExecuteSqlStatement( cSql, @cStm )
       RETURN ( cStm )
@@ -54,8 +66,8 @@ METHOD getLineasAlbaranesAgrupadasUltimaConsolidacion( cCodigoArticulo, cCodigoA
                         " AND cLote = " + quoted( cLote )                              
 
    if !empty(hConsolidacion)
-      cSql     +=       " AND dFecFac >= " + quoted( hget( hConsolidacion, "fecha" ) )
-      cSql     +=       " AND tFecFac >= " + quoted( hget( hConsolidacion, "hora" ) )
+      cSql     +=       " AND dFecAlb >= " + quoted( hget( hConsolidacion, "fecha" ) )
+      cSql     +=       " AND tFecAlb >= " + quoted( hget( hConsolidacion, "hora" ) )
    end if 
 
    if ::ExecuteSqlStatement( cSql, @cStm )
@@ -74,11 +86,11 @@ METHOD totalUnidadesVentas( cCodigoArticulo, dConsolidacion, tConsolidacion, cCo
                      "WHERE cRef = " + quoted( cCodigoArticulo ) + " AND NOT lFacturado "
    
    if !empty( dConsolidacion )                     
-         cSql  +=    "AND CAST( dFecFac AS SQL_CHAR ) >= " + quoted( dateToSQLString( dConsolidacion ) ) + " "
+         cSql  +=    "AND CAST( dFecAlb AS SQL_CHAR ) >= " + quoted( dateToSQLString( dConsolidacion ) ) + " "
    end if 
 
    if !empty( tConsolidacion )                     
-         cSql  +=    "AND tFecFac >= " + quoted( tConsolidacion ) + " "
+         cSql  +=    "AND tFecAlb >= " + quoted( tConsolidacion ) + " "
    end if 
 
    if !empty( cCodigoAlmacen )                     

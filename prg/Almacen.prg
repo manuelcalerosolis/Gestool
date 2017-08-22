@@ -1625,6 +1625,10 @@ Function aChildAlmacen( cCodigoAlmacen, aChild, dbfAlmacen )
    DEFAULT dbfAlmacen   := dbfAlmT
    DEFAULT aChild       := {}
 
+   if empty( dbfAlmacen )
+      RETURN ( aChild )
+   end if 
+
    CursorWait()
 
    nRec                 := ( dbfAlmacen )->( Recno() )

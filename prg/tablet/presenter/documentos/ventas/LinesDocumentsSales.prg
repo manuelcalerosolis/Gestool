@@ -378,22 +378,14 @@ METHOD setStockArticulo()
    if !empty( ::oViewEditDetail:oGetStock )
       ::oViewEditDetail:oGetStock:Refresh()
    end if
-/*
-   ::oViewEditDetail:nGetStockAlmacen   := ::oSender:oStock:nSQLStockActual(  ::hGetDetail( "Articulo" ),;
-                                                                              nil,;
-                                                                              nil,;
-                                                                              nil,;
-                                                                              nil,;
-                                                                              .f.,;
-                                                                              nil ,;
-                                                                              ::hGetDetail( "TipoStock" ) )
 
-   msgalert( ::oViewEditDetail:nGetStockAlmacen, "::oViewEditDetail:nGetStockAlmacen" )
+   ::oViewEditDetail:nGetStockAlmacen  := ::oSender:oStock:nSQLGlobalStockActual(   ::hGetDetail( "Articulo" ),;
+                                                                                    ::hGetDetail( "Almacen" ) )
 
    if !empty( ::oViewEditDetail:oGetStockAlmacen )
       ::oViewEditDetail:oGetStockAlmacen:Refresh()
    end if
-*/
+
 RETURN ( self )
 
 //---------------------------------------------------------------------------//

@@ -282,17 +282,16 @@ FUNCTION Test()
    local cStm
    local seconds  := seconds()
 
-   TStock():nSQLGlobalStockActual( '9', '2' )
+   cStm           := TStock():nSQLGlobalStockActual( '9', '2' )
+
+   msgalert( seconds() - seconds, "seconds()" )
+   msgalert( cStm, "cStm")
 
    // cStm     := FacturasClientesLineasModel():getLineasFacturasAgrupadas( '9', '2', '', '', '1234' ) // OAN0671912   
-
-   // ( cStm )->( browse() )
 
    // cStm     := AlbaranesClientesLineasModel():getLineasAlbaranesAgrupadas( '9', '2', '', '', '1234' ) // OAN0671912   
 
    // ( cStm )->( browse() )
-
-   msgalert( seconds() - seconds, "seconds()" )
 
    /*
    local hFec
