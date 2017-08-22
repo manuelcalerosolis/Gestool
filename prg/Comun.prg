@@ -279,6 +279,7 @@ RETURN ( .t. )
 
 FUNCTION Test()
 
+<<<<<<< HEAD
    /*local hFec
    local dFec
    local cTim
@@ -287,19 +288,25 @@ FUNCTION Test()
    hFec     := MovimientosAlmacenesLineasModel():getFechaHoraConsolidacion( '9', '2', '', '', '1234' )
 
    msgalert( hb_valtoexp( hFec ) )
+=======
+   //local cStm
+   //local seconds  := seconds()
+   //
+   //   cStm           := TStock():nSQLGlobalStockActual( '9', '2' )
+   //
+   //   msgalert( seconds() - seconds, "seconds()" )
+   //msgalert( cStm, "cStm")
+>>>>>>> origin/master
 
-   if !empty(hFec)
-      dFec  := hGet( hFec, "fecha" )
-      cTim  := hGet( hFec, "hora" )
-   end if 
+   // cStm     := FacturasClientesLineasModel():getLineasAgrupadas( '9', '2', '', '', '1234' ) // OAN0671912   
 
-   cStm     := MovimientosAlmacenesLineasModel():totalUnidadesEntradas( '9', dFec, cTim, '2', '', '', '1234' )
-   
-   msgalert( cStm, "totalUnidadesEntradas" )
+   // cStm     := AlbaranesClientesLineasModel():getLineasAlbaranesAgrupadas( '9', '2', '', '', '1234' ) // OAN0671912   
 
-   cStm     := FacturasClientesLineasModel():totalUnidadesStock( '9', dFec, cTim, '2', '', '', '1234' )
-
+<<<<<<< HEAD
    msgalert( cStm, "totalUnidadesStock" )*/
+=======
+   // ( cStm )->( browse() )
+>>>>>>> origin/master
 
    /*
    local hFec
@@ -308,7 +315,7 @@ FUNCTION Test()
 
       hFec     := MovimientosAlmacenesLineasModel():getFechaHoraConsolidacion( (cStm)->cRef, (cStm)->cAlmLin, (cStm)->cValPr1, (cStm)->cValPr2, (cStm)->cLote )
 
-      FacturasClientesLineasModel():getLineasFacturasAgrupadasUltimaConsolidacion((cStm)->cRef, (cStm)->cAlmLin, (cStm)->cValPr1, (cStm)->cValPr2, (cStm)->cLote, hFec )
+      FacturasClientesLineasModel():getLineasAgrupadasUltimaConsolidacion((cStm)->cRef, (cStm)->cAlmLin, (cStm)->cValPr1, (cStm)->cValPr2, (cStm)->cLote, hFec )
 
       ( cStm )->( dbskip() )
 
