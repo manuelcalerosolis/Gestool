@@ -279,7 +279,7 @@ RETURN ( .t. )
 
 FUNCTION Test()
 
-   local hFec
+   /*local hFec
    local dFec
    local cTim
    local cStm
@@ -299,7 +299,7 @@ FUNCTION Test()
 
    cStm     := FacturasClientesLineasModel():totalUnidadesStock( '9', dFec, cTim, '2', '', '', '1234' )
 
-   msgalert( cStm, "totalUnidadesStock" )
+   msgalert( cStm, "totalUnidadesStock" )*/
 
    /*
    local hFec
