@@ -279,6 +279,16 @@ RETURN ( .t. )
 
 FUNCTION Test()
 
+<<<<<<< HEAD
+   /*local hFec
+   local dFec
+   local cTim
+   local cStm
+
+   hFec     := MovimientosAlmacenesLineasModel():getFechaHoraConsolidacion( '9', '2', '', '', '1234' )
+
+   msgalert( hb_valtoexp( hFec ) )
+=======
    //local cStm
    //local seconds  := seconds()
    //
@@ -286,12 +296,17 @@ FUNCTION Test()
    //
    //   msgalert( seconds() - seconds, "seconds()" )
    //msgalert( cStm, "cStm")
+>>>>>>> origin/master
 
    // cStm     := FacturasClientesLineasModel():getLineasAgrupadas( '9', '2', '', '', '1234' ) // OAN0671912   
 
    // cStm     := AlbaranesClientesLineasModel():getLineasAlbaranesAgrupadas( '9', '2', '', '', '1234' ) // OAN0671912   
 
+<<<<<<< HEAD
+   msgalert( cStm, "totalUnidadesStock" )*/
+=======
    // ( cStm )->( browse() )
+>>>>>>> origin/master
 
    /*
    local hFec

@@ -6154,7 +6154,7 @@ RETURN ( .t. )
 
 STATIC FUNCTION changeStructEmpresa()
 
-   TDataCenter():DeleteTableName( "Empresa" )
+   TDataCenter():deleteTableNameFromDataDictionary( "Empresa" )
 
    lCdx( .t. )
    lAIS( .f. )

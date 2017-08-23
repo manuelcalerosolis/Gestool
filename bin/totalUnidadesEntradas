@@ -1,0 +1,9 @@
+<<<<<<< HEAD
+14:39:14- 52754.7260 SELECT SUM( IIF( nCajMov = 0, 1, nCajMov ) * nUndMov ) as [totalUnidadesStock] FROM Emp016AHisMov WHERE cRefMov = '9' AND CAST( dFecMov AS SQL_CHAR ) >= '2017-08-12' AND cTimMov >= '110925' AND cAliMov = '2' AND cLote = '1234' 
+14:40:05- 52805.6620 SELECT SUM( IIF( nCajMov = 0, 1, nCajMov ) * nUndMov ) as [totalUnidadesStock] FROM Emp016AHisMov WHERE cRefMov = '9' AND CAST( dFecMov AS SQL_CHAR ) >= '2017-08-12' AND cTimMov >= '110925' AND cAliMov = '2' AND cLote = '1234' 
+14:46:15- 53175.3100 SELECT SUM( IIF( nCajMov = 0, 1, nCajMov ) * nUndMov ) as [totalUnidadesStock] FROM Emp016AHisMov WHERE cRefMov = '9' AND CAST( dFecMov AS SQL_CHAR ) >= '2017-08-12' AND cTimMov >= '110925' AND cAliMov = '2' AND cLote = '1234' 
+14:47:22- 53242.5420 SELECT SUM( IIF( nCajMov = 0, 1, nCajMov ) * nUndMov ) as [totalUnidadesStock] FROM Emp016AHisMov WHERE nTipMov != 4 AND cRefMov = '9' AND CAST( dFecMov AS SQL_CHAR ) >= '2017-08-12' AND cTimMov >= '110925' AND cAliMov = '2' AND cLote = '1234' 
+14:48:30- 53310.6690 SELECT SUM( IIF( nCajMov = 0, 1, nCajMov ) * nUndMov ) as [totalUnidadesStock] FROM Emp016AHisMov WHERE nTipMov <> 4 AND cRefMov = '9' AND CAST( dFecMov AS SQL_CHAR ) >= '2017-08-12' AND cTimMov >= '110925' AND cAliMov = '2' AND cLote = '1234' 
+09:08:15- 32895.7620 SELECT SUM( IIF( nCajMov = 0, 1, nCajMov ) * nUndMov ) as [totalUnidadesStock] FROM EmpYYYYHisMov WHERE nTipMov <> 4 AND cRefMov = '9' AND cAliMov = '2' AND cLote = '1234' 
+=======
+>>>>>>> origin/master

@@ -1859,20 +1859,12 @@ METHOD AddCobrosTickets() CLASS TFastVentasClientes
       if !Empty( ::oGrupoSufijo )
          ::cExpresionHeader       += ' .and. ( Field->cSufTik >= "' + Rtrim( ::oGrupoSufijo:Cargo:Desde ) + '" .and. Field->cSufTik <= "' + Rtrim( ::oGrupoSufijo:Cargo:Hasta ) + '" )'
       end if
-
-      /*::cExpresionHeader          += ' .and. ( Rtrim( cCliTik ) >= "' + Rtrim( ::oGrupoCliente:Cargo:Desde )   + '" .and. Rtrim( cCliTik ) <= "' + Rtrim( ::oGrupoCliente:Cargo:Hasta ) + '")'
-
-      /*::setFilterPaymentId()
-
-      ::setFilterAgentId()
       
-      ::setFilterUserId()*/
+      ::cExpresionHeader          += ' .and. ( Field->cFpgPgo >= "' + ::oGrupoFpago:Cargo:Desde + '" .and. Field->cFpgPgo <= "' + ::oGrupoFpago:Cargo:Hasta + '" )'
 
       // Procesando recibos------------------------------------------------------
 
       ::setMeterText( "Procesando cobros" )
-
-      MsgInfo( ::cExpresionHeader )
 
       ( D():TiketsCobros( ::nView ) )->( setCustomFilter( ::cExpresionHeader ) )
 
@@ -1882,16 +1874,6 @@ METHOD AddCobrosTickets() CLASS TFastVentasClientes
       while !::lBreak .and. !( D():TiketsCobros( ::nView ) )->( eof() )
 
          ::oDbf:Blank()
-
-         /*::oDbf:cCodCli    := ( D():FacturasClientesCobros( ::nView ) )->cCodCli
-         ::oDbf:cNomCli    := ( D():FacturasClientesCobros( ::nView ) )->cNomCli
-         ::oDbf:cCodAge    := ( D():FacturasClientesCobros( ::nView ) )->cCodAge
-         ::oDbf:cCodPgo    := ( D():FacturasClientesCobros( ::nView ) )->cCodPgo
-         ::oDbf:cCodUsr    := ( D():FacturasClientesCobros( ::nView ) )->cCodUsr
-
-         ::oDbf:cCodRut    := RetFld( ( D():FacturasClientesCobros( ::nView ) )->cCodCli, ( D():Clientes( ::nView ) ), 'cCodRut' )
-         ::oDbf:cCodPos    := RetFld( ( D():FacturasClientesCobros( ::nView ) )->cCodCli, ( D():Clientes( ::nView ) ), 'cCodPos' )
-         ::oDbf:cCodGrp    := RetFld( ( D():FacturasClientesCobros( ::nView ) )->cCodCli, ( D():Clientes( ::nView ) ), "cCodGrp", "Cod")*/
 
          ::oDbf:cTipDoc    := "Cobros de tickets"
          ::oDbf:cClsDoc    := COB_TIK          
@@ -1907,20 +1889,15 @@ METHOD AddCobrosTickets() CLASS TFastVentasClientes
          ::oDbf:cHorDoc    := SubStr( ( D():TiketsCobros( ::nView ) )->cTimTik, 1, 2 )
          ::oDbf:cMinDoc    := SubStr( ( D():TiketsCobros( ::nView ) )->cTimTik, 4, 2 )
 
-         /*::oDbf:nTotNet    := nTotRecCli( D():FacturasClientesCobros( ::nView ) )
-         ::oDbf:nTotCob    := nTotCobCli( D():FacturasClientesCobros( ::nView ) )
+         ::oDbf:cCodPgo    := ( D():TiketsCobros( ::nView ) )->cFpgPgo
 
-         ::oDbf:nNumRem    := ( D():FacturasClientesCobros( ::nView ) )->nNumRem
-         ::oDbf:cSufRem    := ( D():FacturasClientesCobros( ::nView ) )->cSufRem
+         ::oDbf:cCodCli    := RetFld( ( D():TiketsCobros( ::nView ) )->cSerTik + ( D():TiketsCobros( ::nView ) )->cNumTik + ( D():TiketsCobros( ::nView ) )->cSufTik, ( D():TiketsClientes( ::nView ) ), "cCliTik", "CNUMTIK" )
+         ::oDbf:cNomCli    := RetFld( ( D():TiketsCobros( ::nView ) )->cSerTik + ( D():TiketsCobros( ::nView ) )->cNumTik + ( D():TiketsCobros( ::nView ) )->cSufTik, ( D():TiketsClientes( ::nView ) ), "cNomTik", "CNUMTIK" )
+         ::oDbf:cDniCli    := RetFld( ( D():TiketsCobros( ::nView ) )->cSerTik + ( D():TiketsCobros( ::nView ) )->cNumTik + ( D():TiketsCobros( ::nView ) )->cSufTik, ( D():TiketsClientes( ::nView ) ), "cDniCli", "CNUMTIK" )
+         ::oDbf:cCodUsr    := RetFld( ( D():TiketsCobros( ::nView ) )->cSerTik + ( D():TiketsCobros( ::nView ) )->cNumTik + ( D():TiketsCobros( ::nView ) )->cSufTik, ( D():TiketsClientes( ::nView ) ), "cCcjTik", "CNUMTIK" )
+         ::oDbf:cCodAlm    := RetFld( ( D():TiketsCobros( ::nView ) )->cSerTik + ( D():TiketsCobros( ::nView ) )->cNumTik + ( D():TiketsCobros( ::nView ) )->cSufTik, ( D():TiketsClientes( ::nView ) ), "cAlmTik", "CNUMTIK" )
 
-         ::oDbf:dFecVto    := ( D():FacturasClientesCobros( ::nView ) )->dFecVto
-
-         ::oDbf:cEstado    := cEstadoRecibo( D():FacturasClientesCobros( ::nView ) )
-
-         ::oDbf:nRieCli    := RetFld( ( D():FacturasClientesCobros( ::nView ) )->cCodCli, ( D():Clientes( ::nView ) ), "Riesgo", "Cod" )
-         ::oDbf:cDniCli    := RetFld( ( D():FacturasClientesCobros( ::nView ) )->cCodCli, ( D():Clientes( ::nView ) ), "Nif", "Cod" )
-
-         */
+         ::oDbf:nTotNet    := ( D():TiketsCobros( ::nView ) )->nImpTik
 
          // Añadimos un nuevo registro--------------------------------------------
 
