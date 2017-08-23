@@ -513,10 +513,13 @@ SQLBaseLineasModel.prg 														\
 ClientesModel.prg 															\
 AlbaranesClientesModel.prg 												\
 FacturasClientesModel.prg 													\
+TicketsClientesLineasModel.prg 											\
 RecibosClientesModel.prg 													\
 TicketsClientesModel.prg 													\
 PedidosProveedoresModel.prg												\
 TiposImpresorasModel.prg 													\
+MaterialesProducidosLineasModel.prg 									\
+MaterialesConsumidosLineasModel.prg 									\
 TiposImpresorasController.prg 											\
 TiposNotasModel.prg 															\
 TiposNotasController.prg 													\
@@ -536,7 +539,6 @@ PedidosClientesLineasModel.prg 											\
 EmpresasModel.prg 															\
 ClientesModel.prg 															\
 AlbaranesClientesModel.prg 												\
-FacturasClientesModel.prg 													\
 RecibosClientesModel.prg 													\
 TicketsClientesModel.prg 													\
 PedidosProveedoresModel.prg												\
@@ -1059,10 +1061,13 @@ EmpresasModel.obj 														\
 ClientesModel.obj 														\
 AlbaranesClientesModel.obj 											\
 FacturasClientesModel.obj 												\
+TicketsClientesLineasModel.obj 										\
 TicketsClientesModel.obj 												\
 RecibosClientesModel.obj 												\
 PedidosProveedoresModel.obj 											\
 TiposImpresorasModel.obj 												\
+MaterialesProducidosLineasModel.obj 								\
+MaterialesConsumidosLineasModel.obj 								\
 UsuariosModel.obj															\
 DelegacionesModel.obj													\
 TiposImpresorasController.obj 										\
@@ -1571,6 +1576,7 @@ $(OBJ)\EmpresasModel.obj 											+
 $(OBJ)\ClientesModel.obj 											+
 $(OBJ)\AlbaranesClientesModel.obj 								+
 $(OBJ)\FacturasClientesModel.obj 								+
+$(OBJ)\TicketsClientesLineasModel.obj 							+
 $(OBJ)\ArticulosModel.obj                    				+
 $(OBJ)\ColumnasUsuariosModel.obj               				+
 $(OBJ)\RecibosClientesModel.obj									+
@@ -1578,6 +1584,8 @@ $(OBJ)\TicketsClientesModel.obj 	 								+
 $(OBJ)\PedidosProveedoresModel.obj 								+
 $(OBJ)\TiposImpresorasModel.obj                 			+
 $(OBJ)\SQLMovimientosAlmacenModel.obj               		+
+$(OBJ)\MaterialesProducidosLineasModel.obj 					+
+$(OBJ)\MaterialesConsumidosLineasModel.obj 					+
 $(OBJ)\UsuariosModel.obj 											+
 $(OBJ)\DelegacionesModel.obj 										+
 $(OBJ)\TiposImpresorasController.obj               		+

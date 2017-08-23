@@ -1465,12 +1465,7 @@ METHOD nSQLStockActual( cCodArt, cCodAlm, cValPr1, cValPr2, cLote ) CLASS TStock
 
       // Movimientos de almacén------------------------------------------------" )
 
-      nSQLStockActual            += MovimientosAlmacenesLineasModel():totalUnidadesEntradas( cCodArt, dFechaConsolidacion, tHoraConsolidacion, cCodAlm, cValPr1, cValPr2, cLote )
-
-      nSQLStockActual            -= MovimientosAlmacenesLineasModel():totalUnidadesSalidas( cCodArt, dFechaConsolidacion, tHoraConsolidacion, cCodAlm, cValPr1, cValPr2, cLote )
-
-      // ::aStockMovimientosAlmacen( cCodArt, cCodAlm, lLote, lNumeroSerie )
-      // SysRefresh()
+      nSQLStockActual            += StocksModel():getTotalUnidadesStockEntradas( cCodArt, dFechaConsolidacion, tHoraConsolidacion, cCodAlm, cValPr1, cValPr2, cLote )
 
       // Albaranes de proveedor------------------------------------------------------" )
 
@@ -1489,31 +1484,9 @@ METHOD nSQLStockActual( cCodArt, cCodAlm, cValPr1, cValPr2, cLote ) CLASS TStock
       // ::aStockRectificativaProveedor( cCodArt, cCodAlm, lLote, lNumeroSerie )
       // SysRefresh()
 
-      // Pedidos de clientes-------------------------------------------------" )
+      // Ventas----------------------------------------------------------------
 
-      // if ::lCalculateUnidadesPendientesRecibir
-      //    ::aStockPedidoCliente( cCodArt, cCodAlm, lLote )
-      //    SysRefresh()
-      // end if 
-
-      // Albaranes de clientes-------------------------------------------------" )
-
-      nSQLStockActual            -= StocksModel():getTotalUnidadesStockVentas( cCodArt, dFechaConsolidacion, tHoraConsolidacion, cCodAlm, cValPr1, cValPr2, cLote )
-
-      // Tickets de clientes---------------------------------------------------" )
-
-      // ::aStockTicketsCliente( cCodArt, cCodAlm, lLote, lNumeroSerie )
-      // SysRefresh()
-
-      // Produccion------------------------------------------------------------" )
-
-      // ::aStockProduccion( cCodArt, cCodAlm, lLote, lNumeroSerie )
-      // SysRefresh()
-
-      // Materia prima---------------------------------------------------------" )
-
-      // ::aStockMateriaPrima( cCodArt, cCodAlm, lLote, lNumeroSerie )
-      // SysRefresh()
+      nSQLStockActual            -= StocksModel():getTotalUnidadesStockSalidas( cCodArt, dFechaConsolidacion, tHoraConsolidacion, cCodAlm, cValPr1, cValPr2, cLote )
 
    next 
 
@@ -2257,14 +2230,14 @@ METHOD InsertStockMaterialesProducidos( lNumeroSerie )
       :nCajas              := ( ::cProducL )->nCajOrd
       :nBultos             := ( ::cProducL )->nBultos
 
-       if IsTrue( lNumeroSerie )
+      if isTrue( lNumeroSerie )
          :nUnidades        := if( nUnidades > 0, 1, -1 )
          :cNumeroSerie     := ( ::cProducS )->cNumSer
       else
          :nUnidades        := nUnidades
       end if
 
-         ::Integra( hb_QWith() )
+      ::Integra( hb_QWith() )
 
    end with
 

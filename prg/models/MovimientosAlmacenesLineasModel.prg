@@ -7,15 +7,19 @@ CLASS MovimientosAlmacenesLineasModel FROM BaseModel
 
    METHOD getTableName()                     INLINE ::getEmpresaTableName( "HisMov" )
 
-   METHOD getFechaHoraConsolidacion( cCodigoArticulo, cCodigoAlmacen, cValorPropiedad1, cValorPropiedad2, cLote )
+   METHOD getFechaHoraConsolidacion()
 
-   METHOD getTimeStampConsolidacion( cCodigoArticulo, cCodigoAlmacen, cValorPropiedad1, cValorPropiedad2, cLote ) 
+   METHOD getTimeStampConsolidacion() 
 
-   METHOD totalUnidadesEntradas( cCodigoArticulo, dConsolidacion, tConsolidacion, cCodigoAlmacen, cValorPropiedad1, cValorPropiedad2, cLote )
+   METHOD totalUnidadesEntradas()
 
-   METHOD totalUnidadesSalidas( cCodigoArticulo, dConsolidacion, tConsolidacion, cCodigoAlmacen, cValorPropiedad1, cValorPropiedad2, cLote )
+   METHOD totalUnidadesSalidas()
 
-   METHOD getSQLSentenceLineasAgrupadas( cCodigoArticulo, cCodigoAlmacen, cValorPropiedad1, cValorPropiedad2, cLote )
+   METHOD getSQLSentenceLineasAgrupadas()
+
+   METHOD getSQLSentenceTotalUnidadesEntradasStock()
+
+   METHOD getSQLSentenceTotalUnidadesSalidasStock()
 
 END CLASS
 
@@ -67,9 +71,8 @@ RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 
-METHOD totalUnidadesEntradas( cCodigoArticulo, dConsolidacion, tConsolidacion, cCodigoAlmacen, cValorPropiedad1, cValorPropiedad2, cLote )
+METHOD getSQLSentenceTotalUnidadesEntradasStock( cCodigoArticulo, dConsolidacion, tConsolidacion, cCodigoAlmacen, cValorPropiedad1, cValorPropiedad2, cLote )
 
-   local cStm
    local cSql  := "SELECT SUM( IIF( nCajMov = 0, 1, nCajMov ) * nUndMov ) as [totalUnidadesStock] " + ;
                      "FROM " + ::getTableName() + " " + ;
                      "WHERE nTipMov <> 4 " + ;
@@ -99,6 +102,15 @@ METHOD totalUnidadesEntradas( cCodigoArticulo, dConsolidacion, tConsolidacion, c
          cSql  +=    "AND cLote = " + quoted( cLote ) + " "
    end if 
 
+RETURN ( cSql )
+
+//---------------------------------------------------------------------------//
+
+METHOD totalUnidadesEntradas( cCodigoArticulo, dConsolidacion, tConsolidacion, cCodigoAlmacen, cValorPropiedad1, cValorPropiedad2, cLote )
+
+   local cStm
+   local cSql  := ::getSQLSentenceTotalUnidadesEntradasStock( cCodigoArticulo, dConsolidacion, tConsolidacion, cCodigoAlmacen, cValorPropiedad1, cValorPropiedad2, cLote )
+
    if ::ExecuteSqlStatement( cSql, @cStm )
       Return ( ( cStm )->totalUnidadesStock )
    end if 
@@ -107,9 +119,8 @@ Return ( 0 )
 
 //---------------------------------------------------------------------------//
 
-METHOD totalUnidadesSalidas( cCodigoArticulo, dConsolidacion, tConsolidacion, cCodigoAlmacen, cValorPropiedad1, cValorPropiedad2, cLote )
+METHOD getSQLSentenceTotalUnidadesSalidasStock( cCodigoArticulo, dConsolidacion, tConsolidacion, cCodigoAlmacen, cValorPropiedad1, cValorPropiedad2, cLote )
 
-   local cStm
    local cSql  := "SELECT SUM( IIF( nCajMov = 0, 1, nCajMov ) * nUndMov ) as [totalUnidadesStock] " + ;
                      "FROM " + ::getTableName() + " " + ;
                      "WHERE nTipMov <> 4 " + ;
@@ -138,6 +149,15 @@ METHOD totalUnidadesSalidas( cCodigoArticulo, dConsolidacion, tConsolidacion, cC
    if !empty( cLote )                     
          cSql  +=    "AND cLote = " + quoted( cLote ) + " "
    end if 
+
+Return ( cSql )
+
+//---------------------------------------------------------------------------//
+
+METHOD totalUnidadesSalidas( cCodigoArticulo, dConsolidacion, tConsolidacion, cCodigoAlmacen, cValorPropiedad1, cValorPropiedad2, cLote )
+
+   local cStm
+   local cSql  := ::getSQLSentenceTotalUnidadesSalidasStock( cCodigoArticulo, dConsolidacion, tConsolidacion, cCodigoAlmacen, cValorPropiedad1, cValorPropiedad2, cLote )
 
    if ::ExecuteSqlStatement( cSql, @cStm )
       Return ( ( cStm )->totalUnidadesStock )

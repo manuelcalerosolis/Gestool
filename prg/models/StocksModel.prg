@@ -7,9 +7,11 @@ CLASS StocksModel FROM BaseModel
 
    METHOD getLineasAgrupadas()
 
-   METHOD getTotalUnidadesStockVentas()
+   METHOD getTotalUnidadesStockSalidas()
 
-   METHOD closeAreaLineasAgrupadas()   INLINE ( ::closeArea( "ADSLineasAgrupadas" ) )
+   METHOD getTotalUnidadesStockEntradas()
+
+   METHOD closeAreaLineasAgrupadas()      INLINE ( ::closeArea( "ADSLineasAgrupadas" ) )
 
 END CLASS
 
@@ -20,9 +22,15 @@ METHOD getLineasAgrupadas( cCodigoArticulo, cCodigoAlmacen, cValorPropiedad1, cV
    local cStm  := "ADSLineasAgrupadas"
    local cSql  := MovimientosAlmacenesLineasModel():getSQLSentenceLineasAgrupadas( cCodigoArticulo, cCodigoAlmacen, cValorPropiedad1, cValorPropiedad2, cLote )
    cSql        += "UNION "
-   cSql        += AlbaranesClientesLineasModel():getSQLSentenceLineasAlbaranesAgrupadas( cCodigoArticulo, cCodigoAlmacen, cValorPropiedad1, cValorPropiedad2, cLote )
+   cSql        += AlbaranesClientesLineasModel():getSQLSentenceLineasAgrupadas( cCodigoArticulo, cCodigoAlmacen, cValorPropiedad1, cValorPropiedad2, cLote )
    cSql        += "UNION "
-   cSql        += FacturasClientesLineasModel():getSQLSentenceLineasFacturasAgrupadas( cCodigoArticulo, cCodigoAlmacen, cValorPropiedad1, cValorPropiedad2, cLote )
+   cSql        += FacturasClientesLineasModel():getSQLSentenceLineasAgrupadas( cCodigoArticulo, cCodigoAlmacen, cValorPropiedad1, cValorPropiedad2, cLote )
+   cSql        += "UNION "
+   cSql        += TicketsClientesLineasModel():getSQLSentenceLineasAgrupadas( cCodigoArticulo, cCodigoAlmacen, cValorPropiedad1, cValorPropiedad2, cLote )
+   cSql        += "UNION "
+   cSql        += MaterialesConsumidosLineasModel():getSQLSentenceLineasAgrupadas( cCodigoArticulo, cCodigoAlmacen, cValorPropiedad1, cValorPropiedad2, cLote )
+   cSql        += "UNION "
+   cSql        += MaterialesProducidosLineasModel():getSQLSentenceLineasAgrupadas( cCodigoArticulo, cCodigoAlmacen, cValorPropiedad1, cValorPropiedad2, cLote )
 
    if ::ExecuteSqlStatement( cSql, @cStm )
       RETURN ( cStm )
@@ -32,17 +40,23 @@ RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 
-METHOD getTotalUnidadesStockVentas( cCodigoArticulo, dConsolidacion, tConsolidacion, cCodigoAlmacen, cValorPropiedad1, cValorPropiedad2, cLote )
+METHOD getTotalUnidadesStockSalidas( cCodigoArticulo, dConsolidacion, tConsolidacion, cCodigoAlmacen, cValorPropiedad1, cValorPropiedad2, cLote )
 
    local cStm  
    local cSql  := "SELECT SUM( totalUnidadesStock ) as [totalUnidadesStock]"
    cSql        += "FROM ( "
+   cSql        += MovimientosAlmacenesLineasModel():getSQLSentenceTotalUnidadesSalidasStock( cCodigoArticulo, dConsolidacion, tConsolidacion, cCodigoAlmacen, cValorPropiedad1, cValorPropiedad2, cLote )
+   cSql        += "UNION "
    cSql        += AlbaranesClientesLineasModel():getSQLSentenceTotalUnidadesStock( cCodigoArticulo, dConsolidacion, tConsolidacion, cCodigoAlmacen, cValorPropiedad1, cValorPropiedad2, cLote )
    cSql        += "UNION "
    cSql        += FacturasClientesLineasModel():getSQLSentenceTotalUnidadesStock( cCodigoArticulo, dConsolidacion, tConsolidacion, cCodigoAlmacen, cValorPropiedad1, cValorPropiedad2, cLote )
    cSql        += "UNION "
    cSql        += RectificativasClientesLineasModel():getSQLSentenceTotalUnidadesStock( cCodigoArticulo, dConsolidacion, tConsolidacion, cCodigoAlmacen, cValorPropiedad1, cValorPropiedad2, cLote )
-   cSql        += " ) StockVentas"
+   cSql        += "UNION "
+   cSql        += TicketsClientesLineasModel():getSQLSentenceTotalUnidadesStock( cCodigoArticulo, dConsolidacion, tConsolidacion, cCodigoAlmacen, cValorPropiedad1, cValorPropiedad2, cLote )
+   cSql        += "UNION "
+   cSql        += MaterialesConsumidosLineasModel():getSQLSentenceTotalUnidadesStock( cCodigoArticulo, dConsolidacion, tConsolidacion, cCodigoAlmacen, cValorPropiedad1, cValorPropiedad2, cLote )
+   cSql        += " ) StockSalidas"
 
    logwrite( cSql, "cSql" )
 
@@ -53,3 +67,24 @@ METHOD getTotalUnidadesStockVentas( cCodigoArticulo, dConsolidacion, tConsolidac
 RETURN ( 0 )
 
 //---------------------------------------------------------------------------//
+
+METHOD getTotalUnidadesStockEntradas( cCodigoArticulo, dConsolidacion, tConsolidacion, cCodigoAlmacen, cValorPropiedad1, cValorPropiedad2, cLote )
+
+   local cStm  
+   local cSql  := "SELECT SUM( totalUnidadesStock ) as [totalUnidadesStock]"
+   cSql        += "FROM ( "
+   cSql        += MovimientosAlmacenesLineasModel():getSQLSentenceTotalUnidadesEntradasStock( cCodigoArticulo, dConsolidacion, tConsolidacion, cCodigoAlmacen, cValorPropiedad1, cValorPropiedad2, cLote )
+   cSql        += "UNION "
+   cSql        += MaterialesProducidosLineasModel():getSQLSentenceTotalUnidadesStock( cCodigoArticulo, dConsolidacion, tConsolidacion, cCodigoAlmacen, cValorPropiedad1, cValorPropiedad2, cLote )
+   cSql        += " ) StockEntradas"
+
+   logwrite( cSql, "cSql" )
+
+   if ::ExecuteSqlStatement( cSql, @cStm )
+      RETURN ( (cStm)->totalUnidadesStock )
+   end if 
+
+RETURN ( 0 )
+
+//---------------------------------------------------------------------------//
+

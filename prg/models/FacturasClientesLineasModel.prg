@@ -7,7 +7,7 @@ CLASS FacturasClientesLineasModel FROM BaseModel
 
    METHOD getTableName()                     INLINE ::getEmpresaTableName( "FacCliL" )
 
-   METHOD getSQLSentenceLineasFacturasAgrupadas( cCodigoArticulo, cCodigoAlmacen, cValorPropiedad1, cValorPropiedad2, cLote )
+   METHOD getSQLSentenceLineasAgrupadas( cCodigoArticulo, cCodigoAlmacen, cValorPropiedad1, cValorPropiedad2, cLote )
 
    METHOD getLineasAgrupadas( cCodigoArticulo, cCodigoAlmacen, cValorPropiedad1, cValorPropiedad2, cLote )
 
@@ -21,7 +21,7 @@ END CLASS
 
 //---------------------------------------------------------------------------//
 
-METHOD getSQLSentenceLineasFacturasAgrupadas( cCodigoArticulo, cCodigoAlmacen, cValorPropiedad1, cValorPropiedad2, cLote )
+METHOD getSQLSentenceLineasAgrupadas( cCodigoArticulo, cCodigoAlmacen, cValorPropiedad1, cValorPropiedad2, cLote )
 
    local cSql  := "SELECT "                                                + ;
                      "cRef as cCodigoArticulo, "                           + ;
@@ -42,7 +42,7 @@ Return ( cSql )
 METHOD getLineasAgrupadas( cCodigoArticulo, cCodigoAlmacen, cValorPropiedad1, cValorPropiedad2, cLote )
 
    local cStm  := "ADSLineasAgrupadas"
-   local cSql  := ::getSQLSentenceLineasFacturasAgrupadas( cCodigoArticulo, cCodigoAlmacen, cValorPropiedad1, cValorPropiedad2, cLote )
+   local cSql  := ::getSQLSentenceLineasAgrupadas( cCodigoArticulo, cCodigoAlmacen, cValorPropiedad1, cValorPropiedad2, cLote )
 
    if ::ExecuteSqlStatement( cSql, @cStm )
       RETURN ( cStm )

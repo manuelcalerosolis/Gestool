@@ -15689,6 +15689,10 @@ Function SynTikCli( cPath )
          ( dbfTikL )->dFecTik := RetFld( ( dbfTikL )->cSerTil + ( dbfTikL )->cNumTil + ( dbfTikL )->cSufTil, cTikT, "dFecTik" )
       end if
 
+      if ( dbfTikL )->tFecTik != RetFld( ( dbfTikL )->cSerTil + ( dbfTikL )->cNumTil + ( dbfTikL )->cSufTil, cTikT, "tFecTik" )
+         ( dbfTikL )->tFecTik := RetFld( ( dbfTikL )->cSerTil + ( dbfTikL )->cNumTil + ( dbfTikL )->cSufTil, cTikT, "tFecTik" )
+      end if
+
       if empty( ( dbfTikL )->nPosPrint ) 
          ( dbfTikL )->nPosPrint := ( dbfTikL )->nNumLin 
       end if

@@ -3,20 +3,18 @@
 
 //---------------------------------------------------------------------------//
 
-CLASS AlbaranesClientesLineasModel FROM BaseModel
+CLASS TicketsClientesLineasModel FROM BaseModel
 
-   METHOD getTableName()                     INLINE ::getEmpresaTableName( "AlbCliL" )
+   METHOD getTableName()                     INLINE ::getEmpresaTableName( "TikeL" )
 
-   METHOD getLineasAlbaranesAgrupadas( cCodigoArticulo, cCodigoAlmacen, cValorPropiedad1, cValorPropiedad2, cLote )
-   
    METHOD getSQLSentenceLineasAgrupadas( cCodigoArticulo, cCodigoAlmacen, cValorPropiedad1, cValorPropiedad2, cLote )
 
-   METHOD getLineasAlbaranesAgrupadas( cCodigoArticulo, cCodigoAlmacen, cValorPropiedad1, cValorPropiedad2, cLote )
+   METHOD getLineasAgrupadas( cCodigoArticulo, cCodigoAlmacen, cValorPropiedad1, cValorPropiedad2, cLote )
 
-   METHOD getLineasAlbaranesAgrupadasUltimaConsolidacion( cCodigoArticulo, cCodigoAlmacen, cValorPropiedad1, cValorPropiedad2, cLote, dConsolidacion )
+   METHOD getLineasAgrupadasUltimaConsolidacion( cCodigoArticulo, cCodigoAlmacen, cValorPropiedad1, cValorPropiedad2, cLote, dConsolidacion )
 
-   METHOD getSQLSentenceTotalUnidadesStock( cCodigoArticulo, dConsolidacion, tConsolidacion, cCodigoAlmacen, cValorPropiedad1, cValorPropiedad2, cLote )
-   
+   METHOD getSQLSentenceTotalUnidadesStock( cCodigoArticulo, cCodigoAlmacen, cValorPropiedad1, cValorPropiedad2, cLote )
+
    METHOD totalUnidadesStock( cCodigoArticulo, dConsolidacion, tConsolidacion, cCodigoAlmacen, cValorPropiedad1, cValorPropiedad2, cLote )
 
 END CLASS
@@ -26,23 +24,22 @@ END CLASS
 METHOD getSQLSentenceLineasAgrupadas( cCodigoArticulo, cCodigoAlmacen, cValorPropiedad1, cValorPropiedad2, cLote )
 
    local cSql  := "SELECT "                                                + ;
-                     "cRef as cCodigoArticulo, "                           + ;
+                     "cCbaTil as cCodigoArticulo, "                        + ;
                      "cAlmLin as cCodigoAlmacen, "                         + ;
                      "cValPr1 as cValorPropiedad1, "                       + ;
                      "cValPr2 as cValorPropiedad2, "                       + ;
                      "cLote as cLote "                                     + ;
                   "FROM " + ::getTableName() + " "                         + ;
                   "WHERE nCtlStk < 2 "                                     + ;
-                     "AND NOT lFacturado "                                 + ;
-                     "AND cRef = " + quoted( cCodigoArticulo ) + " "       + ;
+                     "AND cCbaTil = " + quoted( cCodigoArticulo ) + " "    + ;
                      "AND cAlmLin = " + quoted( cCodigoAlmacen ) + " "     + ;
-                     "GROUP BY cRef, cAlmLin, cValPr1, cValPr2, cLote "
+                     "GROUP BY cCbaTil, cAlmLin, cValPr1, cValPr2, cLote "
 
 Return ( cSql )
 
 //---------------------------------------------------------------------------//
 
-METHOD getLineasAlbaranesAgrupadas( cCodigoArticulo, cCodigoAlmacen, cValorPropiedad1, cValorPropiedad2, cLote )
+METHOD getLineasAgrupadas( cCodigoArticulo, cCodigoAlmacen, cValorPropiedad1, cValorPropiedad2, cLote )
 
    local cStm  := "ADSLineasAgrupadas"
    local cSql  := ::getSQLSentenceLineasAgrupadas( cCodigoArticulo, cCodigoAlmacen, cValorPropiedad1, cValorPropiedad2, cLote )
@@ -51,47 +48,47 @@ METHOD getLineasAlbaranesAgrupadas( cCodigoArticulo, cCodigoAlmacen, cValorPropi
       RETURN ( cStm )
    end if 
 
-Return ( nil )
+RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 
-METHOD getLineasAlbaranesAgrupadasUltimaConsolidacion( cCodigoArticulo, cCodigoAlmacen, cValorPropiedad1, cValorPropiedad2, cLote, hConsolidacion )
+METHOD getLineasAgrupadasUltimaConsolidacion( cCodigoArticulo, cCodigoAlmacen, cValorPropiedad1, cValorPropiedad2, cLote, hConsolidacion )
 
    local cStm  
-   local cSql  := "SELECT nCanEnt "                                                    + ;
-                  "  FROM " + ::getTableName()                                         + ;
-                  "  WHERE nCtlStk < 2"                                                + ;
-                        " AND cRef = " + quoted( cCodigoArticulo )                     + ;
-                        " AND cAlmLin = " + quoted( cCodigoAlmacen )                   + ;
-                        " AND cValPr1 = " + quoted( cValorPropiedad1 )                 + ;
-                        " AND cValPr2 = " + quoted( cValorPropiedad2 )                 + ;
+   local cSql  := "SELECT nCanEnt "                                     + ;
+                  "  FROM " + ::getTableName()                          + ;
+                  "  WHERE nCtlStk < 2"                                 + ;
+                        " AND cCbaTil = " + quoted( cCodigoArticulo )   + ;
+                        " AND cAlmLin = " + quoted( cCodigoAlmacen )    + ;
+                        " AND cValPr1 = " + quoted( cValorPropiedad1 )  + ;
+                        " AND cValPr2 = " + quoted( cValorPropiedad2 )  + ;
                         " AND cLote = " + quoted( cLote )                              
 
    if !empty(hConsolidacion)
-      cSql     +=       " AND dFecAlb >= " + quoted( hget( hConsolidacion, "fecha" ) )
-      cSql     +=       " AND tFecAlb >= " + quoted( hget( hConsolidacion, "hora" ) )
+      cSql     +=       " AND dFecFac >= " + quoted( hget( hConsolidacion, "fecha" ) )
+      cSql     +=       " AND tFecFac >= " + quoted( hget( hConsolidacion, "hora" ) )
    end if 
 
    if ::ExecuteSqlStatement( cSql, @cStm )
       RETURN ( cStm )
    end if 
 
-Return ( nil )
+RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 
 METHOD getSQLSentenceTotalUnidadesStock( cCodigoArticulo, dConsolidacion, tConsolidacion, cCodigoAlmacen, cValorPropiedad1, cValorPropiedad2, cLote )
 
-   local cSql  := "SELECT SUM( IIF( nCanEnt = 0, 1, nCanEnt ) * nUniCaja ) as [totalUnidadesStock] " + ;
-                     "FROM " + ::getTableName() + " " + ;
-                     "WHERE cRef = " + quoted( cCodigoArticulo ) + " AND NOT lFacturado "
+   local cSql  := "SELECT SUM( nUntTil ) as [totalUnidadesStock] "         + ;
+                     "FROM " + ::getTableName() + " "                      + ;
+                     "WHERE cCbaTil = " + quoted( cCodigoArticulo ) + " "
    
    if !empty( dConsolidacion )                     
-         cSql  +=    "AND CAST( dFecAlb AS SQL_CHAR ) >= " + quoted( dateToSQLString( dConsolidacion ) ) + " "
+         cSql  +=    "AND CAST( dFecTik AS SQL_CHAR ) >= " + quoted( dateToSQLString( dConsolidacion ) ) + " "
    end if 
 
    if !empty( tConsolidacion )                     
-         cSql  +=    "AND tFecAlb >= " + quoted( tConsolidacion ) + " "
+         cSql  +=    "AND tFecTik >= " + quoted( tConsolidacion ) + " "
    end if 
 
    if !empty( cCodigoAlmacen )                     
@@ -126,4 +123,3 @@ METHOD totalUnidadesStock( cCodigoArticulo, dConsolidacion, tConsolidacion, cCod
 RETURN ( 0 )
 
 //---------------------------------------------------------------------------//
-
