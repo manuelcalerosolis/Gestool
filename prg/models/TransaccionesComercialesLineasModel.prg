@@ -3,19 +3,24 @@
 
 //---------------------------------------------------------------------------//
 
-CLASS AlbaranesClientesLineasModel FROM BaseModel
+CLASS TransaccionesComercialesLineasModel FROM BaseModel
 
-   METHOD getTableName()                     INLINE ::getEmpresaTableName( "AlbCliL" )
+   METHOD getTableName()                           VIRTUAL
 
-   METHOD getLineasAgrupadas( cCodigoArticulo, cCodigoAlmacen, cValorPropiedad1, cValorPropiedad2, cLote )
+   METHOD getExtraWhere()                          INLINE ( "AND nCtlStk < 2" )
+
+   METHOD getFechaFieldName()                      INLINE ( "dFecAlb" )
+   METHOD getHoraFieldName()                       INLINE ( "tFecAlb" )
+
+   METHOD getLineasAgrupadas()
    
-   METHOD getSQLSentenceLineasAgrupadas( cCodigoArticulo, cCodigoAlmacen, cValorPropiedad1, cValorPropiedad2, cLote )
+   METHOD getSQLSentenceLineasAgrupadas()
 
-   METHOD getLineasAgrupadasUltimaConsolidacion( cCodigoArticulo, cCodigoAlmacen, cValorPropiedad1, cValorPropiedad2, cLote, dConsolidacion )
+   METHOD getLineasAgrupadasUltimaConsolidacion()
 
-   METHOD getSQLSentenceTotalUnidadesStock( cCodigoArticulo, dConsolidacion, tConsolidacion, cCodigoAlmacen, cValorPropiedad1, cValorPropiedad2, cLote )
+   METHOD getSQLSentenceTotalUnidadesStock()
    
-   METHOD totalUnidadesStock( cCodigoArticulo, dConsolidacion, tConsolidacion, cCodigoAlmacen, cValorPropiedad1, cValorPropiedad2, cLote )
+   METHOD totalUnidadesStock()
 
 END CLASS
 
@@ -30,11 +35,12 @@ METHOD getSQLSentenceLineasAgrupadas( cCodigoArticulo, cCodigoAlmacen, cValorPro
                      "cValPr2 as cValorPropiedad2, "                       + ;
                      "cLote as cLote "                                     + ;
                   "FROM " + ::getTableName() + " "                         + ;
-                  "WHERE nCtlStk < 2 "                                     + ;
-                     "AND NOT lFacturado "                                 + ;
-                     "AND cRef = " + quoted( cCodigoArticulo ) + " "       + ;
-                     "AND cAlmLin = " + quoted( cCodigoAlmacen ) + " "     + ;
-                     "GROUP BY cRef, cAlmLin, cValPr1, cValPr2, cLote "
+                  "WHERE cRef = " + quoted( cCodigoArticulo ) + " "        + ;
+                     "AND cAlmLin = " + quoted( cCodigoAlmacen ) + " "     
+
+   cSql        +=    ::getExtraWhere() + " "
+
+   cSql        +=    "GROUP BY cRef, cAlmLin, cValPr1, cValPr2, cLote "
 
 Return ( cSql )
 
@@ -56,18 +62,19 @@ Return ( nil )
 METHOD getLineasAgrupadasUltimaConsolidacion( cCodigoArticulo, cCodigoAlmacen, cValorPropiedad1, cValorPropiedad2, cLote, hConsolidacion )
 
    local cStm  
-   local cSql  := "SELECT nCanEnt "                                                    + ;
-                  "  FROM " + ::getTableName()                                         + ;
-                  "  WHERE nCtlStk < 2"                                                + ;
-                        " AND cRef = " + quoted( cCodigoArticulo )                     + ;
-                        " AND cAlmLin = " + quoted( cCodigoAlmacen )                   + ;
-                        " AND cValPr1 = " + quoted( cValorPropiedad1 )                 + ;
-                        " AND cValPr2 = " + quoted( cValorPropiedad2 )                 + ;
-                        " AND cLote = " + quoted( cLote )                              
+   local cSql  := "SELECT nCanEnt "                                           + ;
+                     "FROM " + ::getTableName() + " "                         + ;
+                     "WHERE cRef = " + quoted( cCodigoArticulo ) + " "        + ;
+                        "AND cAlmLin = " + quoted( cCodigoAlmacen ) + " "     + ;
+                        "AND cValPr1 = " + quoted( cValorPropiedad1 ) + " "   + ;
+                        "AND cValPr2 = " + quoted( cValorPropiedad2 ) + " "   + ;
+                        "AND cLote = " + quoted( cLote )                               
+
+   cSql        +=       ::getExtraWhere() + " "
 
    if !empty(hConsolidacion)
-      cSql     +=       " AND dFecAlb >= " + quoted( hget( hConsolidacion, "fecha" ) )
-      cSql     +=       " AND tFecAlb >= " + quoted( hget( hConsolidacion, "hora" ) )
+      cSql     +=       "AND " + ::getFechaFieldName() + " >= " + quoted( hget( hConsolidacion, "fecha" ) ) + " "
+      cSql     +=       "AND " + ::getHoraFieldName() + " >= " + quoted( hget( hConsolidacion, "hora" ) ) + " " 
    end if 
 
    if ::ExecuteSqlStatement( cSql, @cStm )
@@ -82,14 +89,14 @@ METHOD getSQLSentenceTotalUnidadesStock( cCodigoArticulo, dConsolidacion, tConso
 
    local cSql  := "SELECT SUM( IIF( nCanEnt = 0, 1, nCanEnt ) * nUniCaja ) as [totalUnidadesStock] " + ;
                      "FROM " + ::getTableName() + " " + ;
-                     "WHERE cRef = " + quoted( cCodigoArticulo ) + " AND NOT lFacturado "
+                     "WHERE cRef = " + quoted( cCodigoArticulo ) + " "
    
    if !empty( dConsolidacion )                     
-         cSql  +=    "AND CAST( dFecAlb AS SQL_CHAR ) >= " + quoted( dateToSQLString( dConsolidacion ) ) + " "
+         cSql  +=    "AND CAST( " + ::getFechaFieldName() + " AS SQL_CHAR ) >= " + quoted( dateToSQLString( dConsolidacion ) ) + " "
    end if 
 
    if !empty( tConsolidacion )                     
-         cSql  +=    "AND tFecAlb >= " + quoted( tConsolidacion ) + " "
+         cSql  +=    "AND " + ::getHoraFieldName() + " >= " + quoted( tConsolidacion ) + " "
    end if 
 
    if !empty( cCodigoAlmacen )                     
@@ -107,6 +114,8 @@ METHOD getSQLSentenceTotalUnidadesStock( cCodigoArticulo, dConsolidacion, tConso
    if !empty( cLote )                     
          cSql  +=    "AND cLote = " + quoted( cLote ) + " "
    end if 
+
+   cSql        +=    ::getExtraWhere() + " "
 
 RETURN ( cSql )
 

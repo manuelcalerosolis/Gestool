@@ -6684,8 +6684,6 @@ METHOD consolidationDateTime( cCodArt ) CLASS TSqlStock
    cSentencia        += "ON lineasMovFecha.cRefMov = lineasMov.cRefMov AND lineasMovFecha.dFecMov >= lineasMov.dFecMov AND lineasMovFecha.cTimMov >= lineasMov.cTimMov "
    cSentencia        += "WHERE lineasMov.cRefMov='" + cCodArt + "' "
 
-   LogWrite( cSentencia )
-   
    if TDataCenter():ExecuteSqlStatement( cSentencia, "resultado" )
       
       resultado->( dbGoTop() )
@@ -6693,8 +6691,6 @@ METHOD consolidationDateTime( cCodArt ) CLASS TSqlStock
       aPruebas       :=  dbScatter( "resultado" )
          
    end if
-
-   MsgInfo( ( hb_valtoExp( aPruebas ) ) )
 
 RETURN ( nil )
 
