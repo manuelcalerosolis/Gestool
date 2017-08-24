@@ -1876,7 +1876,7 @@ METHOD AddCobrosTickets() CLASS TFastVentasClientes
          ::oDbf:Blank()
 
          ::oDbf:cTipDoc    := "Cobros de tickets"
-         ::oDbf:cClsDoc    := COB_TIK          
+         ::oDbf:cClsDoc    := COB_TIK
          ::oDbf:cSerDoc    := ( D():TiketsCobros( ::nView ) )->cSerTik
          ::oDbf:cNumDoc    := ( D():TiketsCobros( ::nView ) )->cNumTik
          ::oDbf:cSufDoc    := ( D():TiketsCobros( ::nView ) )->cSufTik
