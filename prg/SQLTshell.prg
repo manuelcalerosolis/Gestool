@@ -95,7 +95,11 @@ Return ( lCreateXBrowse )
 
 METHOD CreateXFromCode()
 
+   msgalert( "::oBrw:CreateFromCode()" )
+   
    ::oBrw:CreateFromCode()
+
+   msgalert( "::oBrw:SetFocus()" )
 
    ::oBrw:SetFocus()
 

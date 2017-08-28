@@ -5,6 +5,10 @@
 #include "Report.ch"
 #include "Factu.ch" 
 
+#define CS_DBLCLKS            8
+#define GWL_STYLE             -16
+#define GWL_EXSTYLE           -20   // 2009-11-11
+
 //----------------------------------------------------------------------------//
 
 CLASS SQLXBrowse FROM TXBrowse
@@ -298,3 +302,4 @@ METHOD getColumnOrder( cSortOrder )
 RETURN ( nil )
 
 //----------------------------------------------------------------------------//
+

@@ -694,6 +694,10 @@ METHOD createColumnsForBrowse( oCombobox, k, hColumn )
       RETURN ( Self )
    end if 
 
+   msgalert("createColumnsForBrowse", k )
+   
+   msgalert(::getRowSet():fieldGet( k ),"fieldget(nField)")
+
    with object ( ::oView:getoBrowse():AddCol() )
 
       :cHeader             := hColumn[ "header" ]

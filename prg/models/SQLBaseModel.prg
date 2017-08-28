@@ -7,6 +7,7 @@
 
 CLASS SQLBaseModel
   
+   DATA     oStatement
    DATA     oRowSet
 
    DATA     cTableName
@@ -59,12 +60,14 @@ CLASS SQLBaseModel
    METHOD   freeRowSet()                           INLINE   ( if( !empty( ::oRowSet ), ( ::oRowSet := nil ), ) )
    METHOD   getRowSetRecno()                       INLINE   ( if( !empty( ::oRowSet ), ( ::oRowSet:recno() ) , 0 ) )
    METHOD   setRowSetRecno( nRecno )               INLINE   ( if( !empty( ::oRowSet ), ( ::oRowSet:goto( nRecno ) ), ) )
+
+   METHOD   getStatement()                         INLINE   ( ::oStatement )
+   METHOD   freeStatement()                        INLINE   ( if( !empty( ::oStatement ), ( ::oStatement := nil ), ) )
  
    METHOD   getSelectByColumn()
    METHOD   getSelectByOrder()
 
    METHOD   setFind( cFind )                       INLINE   ( ::cFind := cFind )
-
    METHOD   find( cFind )
 
    METHOD   existId( id )
@@ -76,6 +79,7 @@ CLASS SQLBaseModel
 
    METHOD   Query( cSentence )                     INLINE   ( getSQLDatabase():Query( cSentence ) )
    METHOD   Exec( cSentence )                      INLINE   ( getSQLDatabase():Exec( cSentence ) )
+   METHOD   Prepare( cSentence )                   INLINE   ( getSQLDatabase():Prepare( cSentence ) )
 
    METHOD   updateCurrentBuffer()                  INLINE   ( ::Query( ::getUpdateSentence() ), ::buildRowSetAndFind() )
    METHOD   insertBuffer()                         INLINE   ( ::Query( ::getInsertSentence() ), ::buildRowSet() )
@@ -123,7 +127,7 @@ METHOD New()
 
    ::cOrientation                := "A"
 
-   ::idToFind                    := 1
+   ::idToFind                    := 0
 
 RETURN ( Self )
 
@@ -132,6 +136,8 @@ RETURN ( Self )
 METHOD End()
    
    ::freeRowSet()
+
+   ::freeStatement()
 
 RETURN ( nil )
 
@@ -161,9 +167,7 @@ RETURN ( cSQLCreateTable )
 
 METHOD getSQLDropTable()
    
-   local cSQLDropTable := "DROP TABLE " + ::cTableName
-
-RETURN ( cSQLDropTable )
+RETURN ( "DROP TABLE " + ::cTableName )
 
 //---------------------------------------------------------------------------//
 
@@ -260,15 +264,15 @@ RETURN ( self )
 
 METHOD buildRowSet( cSentence )
 
-   local oStmt
-
    default cSentence    := ::getSelectSentence()
 
    try
 
-      oStmt             := ::Query( cSentence )
+      //oStatement             := ::Query( cSentence )
+      ::oStatement      := ::Prepare( cSentence )
+      ::oRowSet         := ::oStatement:fetchRowSet()
 
-      ::oRowSet         := oStmt:fetchRowSet()
+      msgalert( hb_valtoexp( ::oRowset ), "oRowset" )
 
    catch
       
@@ -276,9 +280,9 @@ METHOD buildRowSet( cSentence )
       
    finally
 
-      if !empty( oStmt )
-         oStmt:free()
-      end if    
+//      if !empty( oStatement )
+//         oStatement:free()
+//      end if    
    
    end
 
@@ -534,16 +538,15 @@ RETURN ( ::hBuffer )
 
 METHOD selectFetch( cSentence, fetchType )
 
-   local oStmt
    local aFetch
 
    default fetchType := FETCH_ARRAY
 
    try 
 
-      oStmt          := ::Query( cSentence )
+      ::oStatement   := ::Prepare( cSentence )
    
-      aFetch         := oStmt:fetchAll( fetchType )
+      aFetch         := ::oStatement:fetchAll( fetchType )
 
    catch
 
@@ -551,9 +554,9 @@ METHOD selectFetch( cSentence, fetchType )
 
    finally
 
-      if !empty( oStmt )
-        oStmt:free()
-      end if    
+      // if !empty( oStatement )
+      //   oStatement:free()
+      // end if    
    
    end
 
@@ -581,19 +584,19 @@ RETURN ( nil )
 
 METHOD getSchemaColumns()
 
-   local oStmt
+   local oStatement
    local aSchemaColumns
    local cSentence
 
-   cSentence   := "SELECT COLUMN_NAME "                              +;
-                     "FROM INFORMATION_SCHEMA.COLUMNS "              +;
-                     "WHERE table_name = " + quoted( ::cTableName )
+   cSentence         := "SELECT COLUMN_NAME "                              +;
+                           "FROM INFORMATION_SCHEMA.COLUMNS "              +;
+                           "WHERE table_name = " + quoted( ::cTableName )
 
    try
 
-      oStmt    := ::Query( cSentence )
+      oStatement           := ::Query( cSentence )
    
-      aSchemaColumns := oStmt:fetchAll( FETCH_HASH )
+      aSchemaColumns       := oStatement:fetchAll( FETCH_HASH )
 
    catch
 
@@ -601,8 +604,8 @@ METHOD getSchemaColumns()
 
    finally
 
-      if !empty( oStmt )
-        oStmt:free()
+      if !empty( oStatement )
+        oStatement:free()
       end if    
    
    end
@@ -677,7 +680,7 @@ METHOD checksForValid( cColumnToValid )
    local aIDsToValid
    local nIDToValid
 
-   if ( hb_HHasKey( ::hColumns, "empresa" ) )
+   if ( hb_hhaskey( ::hColumns, "empresa" ) )
       cSentence += " AND empresa = " + toSQLString( cCodEmp() )
    end if
 
@@ -699,7 +702,7 @@ METHOD getNameFromId( uValue )
    local cSentence               := "SELECT nombre FROM " + ::cTableName + " WHERE id = " + toSQLString( uValue )
    local aSelect 
 
-   if ( hb_HHasKey( ::hColumns, "empresa" ) )
+   if ( hb_hhaskey( ::hColumns, "empresa" ) )
       cSentence += " AND empresa = " + toSQLString( cCodEmp() )
    end if
 

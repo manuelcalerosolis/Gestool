@@ -170,17 +170,31 @@ METHOD buildSQLShell()
 
    disableAcceso()
 
+   msgalert("SQLTShell")
+
    ::oShell                := SQLTShell():New( 2, 10, 18, 70, ::oController:cTitle, , oWnd(), , , .f., , , ::getModel(), , , , , {}, {|| ::oController:Edit() },, {|| ::oController:Delete() },, nil, ::oController:nLevel, ::cImageName, ( 104 + ( 0 * 256 ) + ( 63 * 65536 ) ),,, .t. )
+
+   msgalert("setoBrowse")
 
    ::setoBrowse( ::oShell:getBrowse() )
 
+      msgalert("generateColumnsForBrowse")
+
       ::oController:generateColumnsForBrowse( ::oShell:getCombobox() )
+
+      msgalert("createXFromCode")
 
       ::oShell:createXFromCode()
 
+      msgalert("setDClickData")
+
       ::oShell:setDClickData( {|| ::oController:Edit() } )
 
+      msgalert("AutoButtons")
+
       ::AutoButtons()
+
+      msgalert("Activate")
 
    ::oShell:Activate()
 

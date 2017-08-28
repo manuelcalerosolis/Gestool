@@ -72,6 +72,7 @@ RETURN ( nil )
 
 METHOD saveHistory( cTable, cBrowseState, cColumnOrder, cOrientation, idToFind )
 
+   local id
    local cUpdateHistory 
    local cInternalSelect
 
@@ -79,26 +80,49 @@ METHOD saveHistory( cTable, cBrowseState, cColumnOrder, cOrientation, idToFind )
    DEFAULT cOrientation    := ""
    DEFAULT idToFind        := 0
 
-   cInternalSelect         := "( SELECT id FROM " + ::cTableName                 + ;
-                                 " WHERE table_name = " + toSQLString( cTable )  + ;
-                                 " AND "                                         + ;
-                                 " usuario_id = " + toSQLString( oUser():cCodigo() ) + " )"
+   cInternalSelect         := "SELECT id FROM " + ::cTableName + " "                         + ;
+                                 "WHERE table_name = " + toSQLString( cTable ) + " "         + ;
+                                    "AND "                                                   + ;
+                                    "usuario_id = " + toSQLString( oUser():cCodigo() ) 
 
-   cUpdateHistory          := "REPLACE INTO " + ::cTableName                     + ;
-                              "  (  id, "                                        + ;
-                                    "usuario_id, "                               + ;
-                                    "table_name, "                               + ;
-                                    "browse_state, "                             + ;
-                                    "column_order, "                             + ;
-                                    "orientation, "                              + ;
-                                    "id_to_find ) "                              + ;
-                              "  VALUES (" + cInternalSelect +  ", "             + ;
-                                    toSQLString( oUser():cCodigo() ) + ", "      + ;
-                                    toSQLString( cTable ) + ","                  + ;
-                                    cBrowseState + ", "                          + ;
-                                    toSQLString( cColumnOrder ) + ", "           + ;
-                                    toSQLString( cOrientation ) + ", "           + ;
-                                    alltrim( cvaltostr( idToFind ) )             + ")"
+   logwrite( cUpdateHistory, "cSql" )                                    
+
+   id                      := ::selectFetchArray( cInternalSelect )                   
+
+   msgalert( hb_valtoexp( id ) )
+
+   if empty(id)
+
+      cUpdateHistory       := "INSERT INTO " + ::cTableName + " ( "                          + ;
+                                    "usuario_id, "                                           + ;
+                                    "table_name, "                                           + ;
+                                    "browse_state, "                                         + ;
+                                    "column_order, "                                         + ;
+                                    "orientation, "                                          + ;
+                                    "id_to_find ) "                                          + ;
+                                 "VALUES ( "                                                 + ;
+                                    toSQLString( oUser():cCodigo() ) + ", "                  + ;
+                                    toSQLString( cTable ) + ","                              + ;
+                                    cBrowseState + ", "                                      + ;
+                                    toSQLString( cColumnOrder ) + ", "                       + ;
+                                    toSQLString( cOrientation ) + ", "                       + ;
+                                    alltrim( cvaltostr( idToFind ) )                         + ")"
+
+      logwrite( cUpdateHistory, "cSql" )                                    
+
+   else                                     
+
+      cUpdateHistory       := "UPDATE " + ::cTableName + " "                                 + ;
+                                 "SET browse_state = " + cBrowseState + ", "                 + ;
+                                    "column_order = " + toSQLString( cColumnOrder ) + ", "   + ;
+                                    "orientation = " + toSQLString( cOrientation ) + ", "    + ;
+                                    "id_to_find = " + alltrim( cvaltostr( idToFind ) ) + " " + ;
+                                 "WHERE id = " + alltrim( cvaltostr( id ) )  
+
+
+      logwrite( cUpdateHistory, "cSql" )                                    
+
+   end if 
 
    ::Query( cUpdateHistory )
 
