@@ -33,6 +33,8 @@ PROCEDURE RddInit()
    REQUEST DBFFPT
    REQUEST ADS
 
+   REQUEST RDLMYSQL
+
    REQUEST OrdKeyCount
    REQUEST OrdKeyNo
    REQUEST OrdKeyGoto
@@ -87,9 +89,12 @@ FUNCTION Main( paramsMain, paramsSecond, paramsThird )
    // Conexión con SQLite------------------------------------------------------
 
    if !empty( getSQLDatabase() )
-      getSQLDatabase():Connect()
-      getSQLDatabase():startForeignKey()
-      getSQLDatabase():checkModelsExistence()
+      if getSQLDatabase():Connect()
+         getSQLDatabase():startForeignKey()
+         getSQLDatabase():checkModelsExistence()
+      else 
+         msgStop( "No se ha podido conectar a la base de datos MySQL" )
+      end if 
    end if 
 
    // Motor de bases de datos--------------------------------------------------

@@ -279,6 +279,10 @@ RETURN ( .t. )
 
 FUNCTION Test()
 
+   TiposNotasController();
+      :New();
+      :activateShell()
+
 Return ( nil )
 
 //---------------------------------------------------------------------------//
@@ -4536,8 +4540,6 @@ RETURN nil
 
 //---------------------------------------------------------------------------//
 
-//---------------------------------------------------------------------------//
-
 FUNCTION AppSql( cEmpDbf, cEmpSql, cFile )
 
    local oBlock
@@ -5407,7 +5409,7 @@ RETURN ( appParamsThird )
 
 FUNCTION appConnectADS()
 
-   local TDataCenter     := TDataCenter()
+   local TDataCenter     
 
    lAIS( .t. )
 
@@ -5425,6 +5427,8 @@ FUNCTION appConnectADS()
    adsCacheOpenTables( 250 )
 
    // Conexion con el motor de base de datos-----------------------------------
+
+   TDataCenter          := TDataCenter()
 
    TDataCenter:ConnectDataDictionary()
 

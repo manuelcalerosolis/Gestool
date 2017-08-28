@@ -30,7 +30,7 @@ END CLASS
 
 METHOD New()
 
-   ::hColumns                   	:= {  "id"              	=> {  "create"    => "INTEGER PRIMARY KEY AUTOINCREMENT"       						,;
+   ::hColumns                   	:= {  "id"              	=> {  "create"    => "INTEGER PRIMARY KEY AUTO_INCREMENT"       						,;
                                                                   "text"		=> "Identificador"}                           						,;                        					
                                        "id_padre"           => {  "create"    => "INTEGER"                                                   ,;
                                                                   "text"      => "Identificador padre"}                                      ,;                                     

@@ -28,7 +28,7 @@ METHOD New()
 
    ::cDbfTableName				 	:= "TipImp"
 
-   ::hColumns                   	:= {  "id"     => {  "create"    => "INTEGER PRIMARY KEY AUTOINCREMENT" ,;
+   ::hColumns                   	:= {  "id"     => {  "create"    => "INTEGER PRIMARY KEY AUTO_INCREMENT",;
                                                       "text"		=> "Identificador"                     ,;
    															      "field" 	   => ""                                  ,;
                                                       "header"    => "Id"                                ,;
@@ -43,9 +43,9 @@ METHOD New()
                                                       "type"      => "C"                                 ,;
                                                       "len"       => 50}                                 } 
 
-   ::Super:New()
-
    ::cColumnOrder                := "nombre"
+
+   ::Super:New()
 
 RETURN ( Self )
 

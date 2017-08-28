@@ -31,6 +31,10 @@ METHOD getLineasAgrupadas( cCodigoArticulo, cCodigoAlmacen, cValorPropiedad1, cV
    cSql        += MaterialesConsumidosLineasModel():getSQLSentenceLineasAgrupadas( cCodigoArticulo, cCodigoAlmacen, cValorPropiedad1, cValorPropiedad2, cLote )
    cSql        += "UNION "
    cSql        += MaterialesProducidosLineasModel():getSQLSentenceLineasAgrupadas( cCodigoArticulo, cCodigoAlmacen, cValorPropiedad1, cValorPropiedad2, cLote )
+   cSql        += "UNION "
+   cSql        += AlbaranesProveedoresLineasModel():getSQLSentenceLineasAgrupadas( cCodigoArticulo, cCodigoAlmacen, cValorPropiedad1, cValorPropiedad2, cLote )
+   cSql        += "UNION "
+   cSql        += FacturasProveedoresLineasModel():getSQLSentenceLineasAgrupadas( cCodigoArticulo, cCodigoAlmacen, cValorPropiedad1, cValorPropiedad2, cLote )
 
    if ::ExecuteSqlStatement( cSql, @cStm )
       RETURN ( cStm )

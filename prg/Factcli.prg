@@ -19232,6 +19232,9 @@ FUNCTION rxFacCli( cPath, cDriver )
       ( cFacCliT )->( ordCreate( cPath + "FacCliT.Cdx", "cNumPre", "cNumPre", {|| Field->cNumPre } ) )
 
       ( cFacCliT )->( ordCondSet("!Deleted()", {|| !Deleted() } ))
+      ( cFacCliT )->( ordCreate( cPath + "FacCliT.Cdx", "cNumPed", "cNumPed", {|| Field->cNumPed } ) )
+
+      ( cFacCliT )->( ordCondSet("!Deleted()", {|| !Deleted() } ))
       ( cFacCliT )->( ordCreate( cPath + "FACCLIT.CDX", "cNumAlb", "cNumAlb", {|| Field->cNumAlb } ) )
 
       ( cFacCliT)->( ordCondSet( "!Deleted()", {|| !Deleted() }  ) )

@@ -269,13 +269,12 @@ RETURN ( Self )
 
 //---------------------------------------------------------------------------//
 
-
 METHOD oFacCliP() CLASS TDataCenter
 
-      local cFilter
-      local oFacCliP
+   local cFilter
+   local oFacCliP
 
-      DATABASE NEW oFacCliP PATH ( cPatEmp() ) FILE "FacCliP.Dbf" VIA ( cDriver() ) SHARED INDEX "FacCliP.Cdx"
+   DATABASE NEW oFacCliP PATH ( cPatEmp() ) FILE "FacCliP.Dbf" VIA ( cDriver() ) SHARED INDEX "FacCliP.Cdx"
 
 Return ( oFacCliP )   
 
@@ -856,14 +855,14 @@ METHOD StartAdministratorTask()
 
       // Creamos las tablas de operacioens-------------------------------------
 
-      ::oMsg:SetText( "Creando tablas de operaciones" )
+      // ::oMsg:SetText( "Creando tablas de operaciones" )
 
-      ::CreateOperationLogTable()
+      // ::CreateOperationLogTable()
 
-      ::CreateColumnLogTable()
+      // ::CreateColumnLogTable()
 
-      // ::CreateAllLocksTablesUsers() da error--------------------------------
-
+      // ::CreateAllLocksTablesUsers() 
+      
       if !empty(::oMtrDiccionario)
 	      ::oMtrDiccionario:Set( 3 )
 	   end if
@@ -4731,23 +4730,23 @@ METHOD AlterTableSQLite()
 
    TiposImpresorasModel();
       :New();
-      :updateTableColumns()
+      :checkTable()
 
    TiposNotasModel();
       :New();
-      :updateTableColumns()
+      :checkTable()
 
    SituacionesModel();
       :New();
-      :updateTableColumns()
+      :checkTable()
 
    HistoricosUsuariosModel();
       :New();
-      :updateTableColumns()
+      :checkTable()
 
    EtiquetasModel();
       :New();
-      :updateTableColumns()
+      :checkTable()
 
 RETURN ( Self )
 

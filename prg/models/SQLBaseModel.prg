@@ -20,7 +20,7 @@ CLASS SQLBaseModel
    DATA     cGeneralSelect
 
    DATA     cOrientation
-   DATA     nIdForRecno
+   DATA     idToFind
 
    DATA     cSQLInsert     
    DATA     cSQLSelect      
@@ -46,14 +46,15 @@ CLASS SQLBaseModel
 
    METHOD   convertRecnoToId( aRecno )
 
-   METHOD   getTableName                           INLINE ( ::cTableName )
+   METHOD   getTableName                           INLINE   ( ::cTableName )
 
-   METHOD   setColumnOrder( cColumnOrder )         INLINE ( ::cColumnOrder := cColumnOrder )
-   METHOD   setOrientation( cOrientation )         INLINE ( ::cOrientation := cOrientation )
-   METHOD   setIdForRecno( nIdForRecno )           INLINE ( ::nIdForRecno := nIdForRecno )
+   METHOD   setColumnOrder( cColumnOrder )         INLINE   ( ::cColumnOrder := cColumnOrder )
+   METHOD   setOrientation( cOrientation )         INLINE   ( ::cOrientation := cOrientation )
+   METHOD   setIdToFind( idToFind )                INLINE   ( ::idToFind := idToFind )
 
    METHOD   buildRowSet()
-   METHOD   buildRowSetWithRecno()                 
+   METHOD   buildRowSetAndFind()       
+   METHOD   findInRowSet()          
    METHOD   getRowSet()                            INLINE   ( if( empty( ::oRowSet ), ::buildRowSet(), ), ::oRowSet )
    METHOD   freeRowSet()                           INLINE   ( if( !empty( ::oRowSet ), ( ::oRowSet := nil ), ) )
    METHOD   getRowSetRecno()                       INLINE   ( if( !empty( ::oRowSet ), ( ::oRowSet:recno() ) , 0 ) )
@@ -74,8 +75,9 @@ CLASS SQLBaseModel
    METHOD   getBuffer( cColumn )                   INLINE   ( hget( ::hBuffer, cColumn ) )
 
    METHOD   Query( cSentence )                     INLINE   ( getSQLDatabase():Query( cSentence ) )
+   METHOD   Exec( cSentence )                      INLINE   ( getSQLDatabase():Exec( cSentence ) )
 
-   METHOD   updateCurrentBuffer()                  INLINE   ( ::Query( ::getUpdateSentence() ), ::buildRowSetWithRecno() )
+   METHOD   updateCurrentBuffer()                  INLINE   ( ::Query( ::getUpdateSentence() ), ::buildRowSetAndFind() )
    METHOD   insertBuffer()                         INLINE   ( ::Query( ::getInsertSentence() ), ::buildRowSet() )
    METHOD   deleteSelection( aRecno )              INLINE   ( ::Query( ::getdeleteSentence( aRecno ) ), ::buildRowSet() )
 
@@ -90,9 +92,11 @@ CLASS SQLBaseModel
    METHOD   getDbfTableName()                      INLINE   ( ::cDbfTableName + ".dbf" )
    METHOD   getOldTableName()                      INLINE   ( ::cDbfTableName + ".old" )
 
-   METHOD   getColumnsOfCurrentTable()
-   METHOD   compareCurrentAndActualColumns()
-   METHOD   updateTableColumns()
+   METHOD   getSchemaColumns()
+
+   METHOD   checkTable()
+   METHOD   createTable()
+   METHOD   updateTable()
 
    METHOD   serializeColumns()
 
@@ -119,9 +123,9 @@ METHOD New()
 
    ::cOrientation                := "A"
 
-   ::nIdForRecno                 := 1
+   ::idToFind                    := 1
 
-Return ( Self )
+RETURN ( Self )
 
 //---------------------------------------------------------------------------//
 
@@ -129,7 +133,7 @@ METHOD End()
    
    ::freeRowSet()
 
-Return ( nil )
+RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 
@@ -151,7 +155,7 @@ METHOD getSQLCreateTable()
 
    end if 
 
-Return ( cSQLCreateTable )
+RETURN ( cSQLCreateTable )
 
 //---------------------------------------------------------------------------//
 
@@ -159,7 +163,7 @@ METHOD getSQLDropTable()
    
    local cSQLDropTable := "DROP TABLE " + ::cTableName
 
-Return ( cSQLDropTable )
+RETURN ( cSQLDropTable )
 
 //---------------------------------------------------------------------------//
 
@@ -171,7 +175,7 @@ METHOD getImportSentence( cPath )
 
    dbUseArea( .t., cLocalDriver(), cPath + "\" + ::getDbfTableName(), cCheckArea( "dbf", @dbf ), .f. )
    if ( dbf )->( neterr() )
-      Return ( cInsert )
+      RETURN ( cInsert )
    end if
 
    cInsert           := "INSERT INTO " + ::cTableName + " ( "
@@ -181,14 +185,14 @@ METHOD getImportSentence( cPath )
    ( dbf )->( dbgotop() )
    while ( dbf )->( !eof() )
 
-      cValues           += "( "
+      cValues        += "( "
 
             hEval( ::hColumns, {| k, hash | if ( k != ::cColumnKey,;
                                                 if ( k == "empresa",;
                                                       cValues += toSQLString( cCodEmp() ) + ", ",;
                                                       cValues += toSQLString( ( dbf )->( fieldget( fieldpos( hget( hash, "field" ) ) ) ) ) + ", "), ) } )
       
-      cValues           := chgAtEnd( cValues, ' ), ', 2 )
+      cValues        := chgAtEnd( cValues, ' ), ', 2 )
 
       ( dbf )->( dbskip() )
    end while
@@ -196,14 +200,14 @@ METHOD getImportSentence( cPath )
    ( dbf )->( dbclosearea() )
 
    if empty( cValues )
-      Return ( nil )
+      RETURN ( nil )
    end if 
 
-   cValues              := chgAtEnd( cValues, '', 2 )
+   cValues           := chgAtEnd( cValues, '', 2 )
 
-   cInsert              += cValues
+   cInsert           += cValues
 
-Return ( cInsert )
+RETURN ( cInsert )
 
 //---------------------------------------------------------------------------//
 
@@ -220,39 +224,37 @@ METHOD makeImportDbfSQL( cPath )
    end if
 
    if ( file( cPath + "\" + ::getOldTableName() ) )
-      Return ( self )
+      RETURN ( self )
    end if
 
    if !( file( cPath + "\" + ::getDbfTableName() ) )
       msgStop( "El fichero " + cPath + "\" + ::getDbfTableName() + " no se ha localizado", "Atención" )  
-      Return ( self )
+      RETURN ( self )
    end if 
 
    cImportSentence   := ::getImportSentence( cPath )
 
    if !empty( cImportSentence )
 
-      getSQLDatabase():Exec( ::getSQLCreateTable() )
+      ::Exec( ::getSQLCreateTable() )
 
-      getSQLDatabase():Exec( cImportSentence )
+      ::Exec( cImportSentence )
       
    end if 
 
    frename( cPath + "\" + ::getDbfTableName(), cPath + "\" + ::getOldTableName() )
    
-Return ( self )
+RETURN ( self )
 
 //---------------------------------------------------------------------------//
 
-METHOD buildRowSetWithRecno()
+METHOD buildRowSetAndFind()
 
    ::buildRowSet()
 
-   if ::oRowSet:find( ::nIdForRecno, ::cColumnKey, .t. ) == 0
-      ::oRowSet:goTop()
-   end if
+   ::findInRowSet()
 
-Return ( self )
+RETURN ( self )
 
 //---------------------------------------------------------------------------//
 
@@ -264,7 +266,8 @@ METHOD buildRowSet( cSentence )
 
    try
 
-      oStmt             := ::Query( cSentence ) 
+      oStmt             := ::Query( cSentence )
+
       ::oRowSet         := oStmt:fetchRowSet()
 
    catch
@@ -281,7 +284,25 @@ METHOD buildRowSet( cSentence )
 
    ::oRowSet:goTop()
 
-Return ( self )
+RETURN ( self )
+
+//---------------------------------------------------------------------------//
+
+METHOD findInRowSet()
+
+   if empty( ::oRowSet )
+      RETURN ( self )
+   end if 
+
+   if empty( ::idToFind ) .or. empty( ::cColumnKey )
+      RETURN ( self )
+   end if 
+
+   if ::oRowSet:find( ::idToFind, ::cColumnKey, .t. ) == 0
+      ::oRowSet:goTop()
+   end if
+
+RETURN ( self )
 
 //---------------------------------------------------------------------------//
 
@@ -295,7 +316,7 @@ METHOD getUpdateSentence()
 
   cSQLUpdate        += " WHERE " + ::cColumnKey + " = " + toSQLString( ::hBuffer[ ::cColumnKey ] )
 
-Return ( cSQLUpdate )
+RETURN ( cSQLUpdate )
 
 //---------------------------------------------------------------------------//
 
@@ -315,7 +336,7 @@ METHOD getInsertSentence()
 
    msgalert( cSQLInsert, "getInsertSentence" )
 
-Return ( cSQLInsert )
+RETURN ( cSQLInsert )
 
 //---------------------------------------------------------------------------//
 
@@ -325,7 +346,7 @@ METHOD getValueField( cColumn, uValue )
    local hColumn
 
    if !hhaskey( ::hColumns, cColumn )
-      Return ( uValue )
+      RETURN ( uValue )
    end if 
 
    hColumn        := hGet( ::hColumns, cColumn )
@@ -340,7 +361,7 @@ METHOD getValueField( cColumn, uValue )
 
    end if
 
-Return ( uValue )
+RETURN ( uValue )
 
 //---------------------------------------------------------------------------//
 
@@ -354,7 +375,7 @@ METHOD convertRecnoToId( aRecno )
       aadd( aId, ::oRowset:fieldget( ::cColumnKey ) )
    next
 
-Return ( aId )
+RETURN ( aId )
 
 //---------------------------------------------------------------------------//
 
@@ -368,7 +389,7 @@ METHOD getDeleteSentence( aRecno )
 
    cSQLDelete           := ChgAtEnd( cSQLDelete, '', 4 )
 
-Return ( cSQLDelete )
+RETURN ( cSQLDelete )
 
 //---------------------------------------------------------------------------//
 
@@ -384,7 +405,7 @@ METHOD getSelectSentence()
 
    cSQLSelect        := ::getSelectByOrder( cSQLSelect )
 
-Return ( cSQLSelect )
+RETURN ( cSQLSelect )
 
 //---------------------------------------------------------------------------//
 
@@ -402,7 +423,7 @@ METHOD getSelectByColumn( cSQLSelect )
 
    end if
 
-Return ( cSQLSelect )
+RETURN ( cSQLSelect )
 
 //---------------------------------------------------------------------------//
 
@@ -416,7 +437,7 @@ METHOD getSelectByOrder( cSQLSelect )
       cSQLSelect     += " DESC"
    end if
 
-Return ( cSQLSelect )
+RETURN ( cSQLSelect )
 
 //---------------------------------------------------------------------------//
 
@@ -426,21 +447,21 @@ METHOD find( cFind )
 
    ::buildRowSet()
 
-Return ( ::oRowSet:recCount() > 0 )
+RETURN ( ::oRowSet:recCount() > 0 )
 
 //----------------------------------------------------------------------------//
 
 METHOD loadBlankBuffer()
 
    if empty( ::oRowSet )
-      Return ( .f. )
+      RETURN ( .f. )
    end if 
 
    ::oRowSet:goto( 0 )
 
    ::loadCurrentBuffer()
 
-Return ( ::defaultCurrentBuffer() )
+RETURN ( ::defaultCurrentBuffer() )
 
 //---------------------------------------------------------------------------//
 
@@ -449,7 +470,7 @@ METHOD loadCurrentBuffer()
    local h
 
    if empty( ::oRowSet )
-      Return ( .f. )
+      RETURN ( .f. )
    end if 
 
    ::hBuffer            := {=>}
@@ -489,7 +510,7 @@ METHOD loadCurrentBuffer()
 
    next
 
-Return ( ::hBuffer )
+RETURN ( ::hBuffer )
 
 //---------------------------------------------------------------------------//
 
@@ -507,7 +528,7 @@ METHOD defaultCurrentBuffer()
 
    next
 
-Return ( ::hBuffer )
+RETURN ( ::hBuffer )
 
 //---------------------------------------------------------------------------//
 
@@ -519,7 +540,9 @@ METHOD selectFetch( cSentence, fetchType )
    default fetchType := FETCH_ARRAY
 
    try 
+
       oStmt          := ::Query( cSentence )
+   
       aFetch         := oStmt:fetchAll( fetchType )
 
    catch
@@ -556,20 +579,21 @@ RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 
-METHOD getColumnsOfCurrentTable()
+METHOD getSchemaColumns()
 
    local oStmt
+   local aSchemaColumns
    local cSentence
-   local aTableInfo
-   local hFetch
-   local aCurrentColumns   := {}
 
-   cSentence               := "PRAGMA table_info(" + ::cTableName + ")"
+   cSentence   := "SELECT COLUMN_NAME "                              +;
+                     "FROM INFORMATION_SCHEMA.COLUMNS "              +;
+                     "WHERE table_name = " + quoted( ::cTableName )
 
    try
 
-      oStmt                := ::Query( cSentence )
-      aTableInfo           := oStmt:fetchAll( FETCH_HASH )
+      oStmt    := ::Query( cSentence )
+   
+      aSchemaColumns := oStmt:fetchAll( FETCH_HASH )
 
    catch
 
@@ -583,45 +607,59 @@ METHOD getColumnsOfCurrentTable()
    
    end
 
-   if empty( aTableInfo ) .or. !hb_isarray( aTableInfo )
-      Return ( nil )
+   if empty( aSchemaColumns ) .or. !hb_isarray( aSchemaColumns )
+      RETURN ( nil )
    end if
 
-Return ( aTableInfo )
+RETURN ( aSchemaColumns )
 
 //---------------------------------------------------------------------------//
 
-METHOD compareCurrentAndActualColumns()
+METHOD updateTable( aSchemaColumns )
 
-   local nPosColumn
-   local hCurrentColumn
-   local aCurrentColumns   := ::getColumnsOfCurrentTable()
+   local hColumn
+   local hColumns
+   local nPosition
 
-   for each hCurrentColumn in aCurrentColumns
+   hColumns       := hClone( ::hColumns )
 
-      nPosColumn           := ascan( hb_hkeys( ::hColumns ), hget( hCurrentColumn, "name" ) )
+   for each hColumn in aSchemaColumns
+
+      nPosition   := ascan( hb_hkeys( hColumns ), hget( hColumn, "COLUMN_NAME" ) )
       
-      if nPosColumn != 0
-         hb_HDelAt( ::hColumns, nPosColumn )
+      if nPosition != 0
+         hb_hdelat( hColumns, nPosition )
       end if
 
    next
 
-Return ( self )
+   if !empty( hColumns )
+      heval( hColumns, {| k, hash | ::Exec( "ALTER TABLE " + ::cTableName + " ADD COLUMN " + k + " " + hget( hash, "create" ) ) } )
+   end if 
+
+RETURN ( self )
 
 //---------------------------------------------------------------------------//
 
-METHOD updateTableColumns()
+METHOD checkTable()
 
-   local cAlterTables := ""
+   local aSchemaColumns    := ::getSchemaColumns()
 
-   ::compareCurrentAndActualColumns()
+   if empty( aSchemaColumns )
+      ::createTable()
+   else 
+      ::updateTable( aSchemaColumns )
+   end if 
 
-   hEval( ::hColumns, {| k, hash | ::Query( "ALTER TABLE " + ::cTableName + " ADD COLUMN " + k + " " + hget( hash, "create" ) ) } )
-
-Return ( self )
+RETURN ( self )
 
 //---------------------------------------------------------------------------//
+
+METHOD createTable()
+
+RETURN ( ::Exec( ::getSQLCreateTable() ) )  
+
+//----------------------------------------------------------------------------//
 
 METHOD serializeColumns()
 
@@ -629,7 +667,7 @@ METHOD serializeColumns()
 
    heval( ::hColumns, {|k| cColumns += k + ";" } )
 
-Return ( cColumns )
+RETURN ( cColumns )
 
 //---------------------------------------------------------------------------//
 

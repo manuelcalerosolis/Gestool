@@ -96,8 +96,8 @@ CLASS SQLBaseController
    METHOD   clickOnHeader( oColumn, oCombobox )
 
 	METHOD   getHistory( cWnd )
-   METHOD      getHistoryShell()                      
-   METHOD      getHistoryBrowse()                     INLINE ( ::getHistory( "_browse" ) )
+      METHOD getHistoryShell()                      
+      METHOD getHistoryBrowse()                       INLINE ( ::getHistory( "_browse" ) )
               
    METHOD   saveHistory( cHistory )
       METHOD   saveHistoryBrowse()                    INLINE ( ::saveHistory( "_browse" ) )
@@ -136,6 +136,8 @@ END CLASS
 
 METHOD New()
 
+   msgalert("SQLBaseController")
+
    ::ControllerContainer                              := ControllerContainer():New()
 
 	::nLevel                                           := nLevelUsr( ::idUserMap )
@@ -143,6 +145,8 @@ METHOD New()
    ::oModel                                           := ::buildSQLModel( self )
 
    ::oView                                            := ::buildSQLView( self )
+
+   msgalert( "antes del view")
 
    ::nView                                            := D():CreateView()
 
@@ -171,11 +175,19 @@ METHOD ActivateShell()
       SysRefresh(); oWnd():CloseAll(); SysRefresh()
    end if
 
+   msgalert( "getHistoryShell")
+
    ::getHistoryShell()
 
-   ::oModel:buildRowSetWithRecno()
+   msgalert( "buildRowSetAndFind" )
+
+   ::oModel:buildRowSetAndFind()
+
+   msgalert("buildSQLShell")
 
    ::oView:buildSQLShell()
+
+   msgalert( "startBrowse" )
 
    ::startBrowse( ::oView:oShell:getCombobox() )
 
@@ -189,7 +201,7 @@ METHOD ActivateBrowse( aSelectedItems )
 
    ::getHistoryBrowse()
 
-   ::oModel:buildRowSetWithRecno()
+   ::oModel:buildRowSetAndFind()
 
    if ::oView:buildSQLBrowse( ::cTitle, aSelectedItems )
       uReturn     := ::getFieldFromBrowse()
@@ -254,7 +266,7 @@ METHOD AssignBrowse( oGet, aSelectedItems )
       RETURN ( uReturn )
    end if
 
-   ::oModel:setIdForRecno( oGet:varGet() )
+   ::oModel:setIdToFind( oGet:varGet() )
 
    uReturn           := ::ActivateBrowse( ::cTitle, aSelectedItems )   
 
@@ -298,8 +310,8 @@ METHOD getHistoryShell()
       ::oModel:setOrientation( hFetch[ "cOrientation" ] )
    end if 
 
-   if hhaskey( hFetch, "nIdForRecno" ) 
-      ::oModel:setIdForRecno( hFetch[ "nIdForRecno" ] )
+   if hhaskey( hFetch, "idToFind" ) 
+      ::oModel:setIdToFind( hFetch[ "idToFind" ] )
    end if
    
 RETURN ( self )
@@ -332,13 +344,13 @@ METHOD clickOnHeader( oColumn, oCombobox )
       oCombobox:set( oColumn:cHeader )
    end if
 
-   ::oModel:setIdForRecno( ::getIdfromRowset() )
+   ::oModel:setIdToFind( ::getIdfromRowset() )
 
    ::oModel:setColumnOrder( oColumn:cSortOrder )
 
    ::oModel:setOrientation( oColumn:cOrder )
 
-   ::oModel:buildRowSetWithRecno()
+   ::oModel:buildRowSetAndFind()
 
    ::oView:getoBrowse():refreshCurrent()
 
@@ -456,7 +468,7 @@ METHOD Edit()
 
    ::setEditMode()
 
-   ::oModel:setIdForRecno( ::getIdfromRowset() )
+   ::oModel:setIdToFind( ::getIdfromRowset() )
 
    ::oModel:loadCurrentBuffer() 
 

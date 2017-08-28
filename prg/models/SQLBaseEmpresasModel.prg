@@ -16,7 +16,7 @@ END CLASS
 
 METHOD CommunFields()
 
-   ::hColumns              := {  "id"              => {  "create"    => "INTEGER PRIMARY KEY AUTOINCREMENT"       ,;
+   ::hColumns              := {  "id"              => {  "create"    => "INTEGER PRIMARY KEY AUTO_INCREMENT"      ,;
                                                          "text"      => "Identificador"                           ,;
                                                          "header"    => "Id"                                      ,;
                                                          "visible"   => .f.}                                      ,;

@@ -32,7 +32,7 @@ METHOD New()
 
 	::cDbfTableName					:=	"TBLPRO"
 
-	::hColumns							:=	{	"id"					=>	{	"create"		=>	"INTEGER PRIMARY KEY AUTOINCREMENT"			,;
+	::hColumns							:=	{	"id"					=>	{	"create"		=>	"INTEGER PRIMARY KEY AUTO_INCREMENT"		,;
 																					"text"		=>	"Identificador"									,;
 																					"header"		=> "Id"													,;
 																					"visible"	=>	.f.}													,;
@@ -103,7 +103,7 @@ METHOD updateOrden( Operation, newPosition )
    getSQLDatabase():Query( SentenceForOthers )
    getSQLDatabase():Query( SentenceForMyPosition )
 
-   ::buildRowSetWithRecno()
+   ::buildRowSetAndFind()
 
    RETURN ( self )
 
@@ -138,7 +138,7 @@ METHOD reOrder()
 		
 	END while
 
-	::buildRowSetWithRecno()
+	::buildRowSetAndFind()
 
 Return ( Self )
 

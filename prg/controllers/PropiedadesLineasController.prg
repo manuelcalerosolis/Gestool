@@ -180,7 +180,7 @@ METHOD   UpDet()
        RETURN ( self )
    endif
 
-   ::oModel:setIdForRecno( ::getIdfromRowset() )
+   ::oModel:setIdToFind( ::getIdfromRowset() )
 
    ::oModel:updateOrden( Operation, newPosition )
 
@@ -203,7 +203,7 @@ METHOD   DownDet()
     RETURN ( self )
    endif
 
-   ::oModel:setIdForRecno( ::getIdfromRowset() )
+   ::oModel:setIdToFind( ::getIdfromRowset() )
 
    ::oModel:updateOrden( Operation, newPosition )
 

@@ -259,7 +259,6 @@ Tdbaux.prg              													\
 Tiremage.prg            													\
 Tchgcode.prg            													\
 Tgethlp.prg             													\
-Tget.prg                   												\
 Ean.prg                 													\
 TInfseanum.prg          													\
 TInftrazarlote.prg      													\
@@ -817,7 +816,6 @@ TDbaux.obj              										\
 Tiremage.obj            										\
 Tchgcode.obj            										\
 Tgethlp.obj             										\
-Tget.obj                										\
 Pdreport.obj            										\
 RcolumnC3.obj           										\
 Metafi32.obj            										\
@@ -1344,7 +1342,6 @@ $(OBJ)\Tdbaux.obj               									+
 $(OBJ)\Tiremage.obj             									+
 $(OBJ)\Tchgcode.obj             									+
 $(OBJ)\Tgethlp.obj              									+
-$(OBJ)\Tget.obj               									+
 $(OBJ)\Pdreport.obj             									+
 $(OBJ)\RpreviewC3.obj 												+
 $(OBJ)\ReportC3.obj             									+
@@ -1619,7 +1616,7 @@ $<,$*
 $(FWLIB)\FiveH.lib               								+
 $(FWLIB)\FiveHC.lib              								+
 $(HBLIB)\Eagle1.lib              								+
-$(FWLIB)\libmysql.lib            								+
+$(HBLIB)\libmysql.lib            								+
 $(HBLIB)\hbwin.lib               								+
 $(HBLIB)\gtwin.lib               								+ 
 $(HBLIB)\gtgui.lib               								+ 
@@ -1657,6 +1654,7 @@ $(HBLIB)\ace32.lib               								+
 $(HBLIB)\sqlite.lib          										+
 $(HBLIB)\hdo.lib               									+
 $(HBLIB)\rdlsqlite.lib 												+
+$(HBLIB)\rdlmysql.lib 												+
 $(BORLANDLIB)\cw32mt.lib         								+ 
 $(BORLANDLIB)\uuid.lib           								+ 
 $(BORLANDLIB)\import32.lib       								+ 

@@ -24,25 +24,25 @@ END CLASS
 
 METHOD New()
 
-   ::cDbfTableName            	:= "TipoNotas"
+   ::cDbfTableName         := "TipoNotas"
 
-   ::hColumns                    := {  "id"        => {  "create"    => "INTEGER PRIMARY KEY AUTOINCREMENT"    ,;
-                                                         "text"      => "Identificador"                        ,;
-                                                         "header"    => "Id"                                   ,;
-                                                         "visible"   => .f.                                    ,;
-                                                         "width"     => 40}                                    ,;
-                                       "nombre"    => {  "create"    => "VARCHAR( 30 ) NOT NULL"               ,;
-                                                         "text"      => "Tipo de la nota"                      ,;
-                                                         "header"    => "Tipo"                                 ,;
-                                                         "visible"   => .t.                                    ,;
-                                                         "width"     => 100                                    ,;
-                                                         "field"     => "cTipo"                                ,;
-                                                         "type"      => "C"                                    ,;
-                                                         "len"       => 30}                                    }
+   ::hColumns              := {  "id"        => {  "create"    => "INTEGER PRIMARY KEY AUTO_INCREMENT"   ,;
+                                                   "text"      => "Identificador"                        ,;
+                                                   "header"    => "Id"                                   ,;
+                                                   "visible"   => .f.                                    ,;
+                                                   "width"     => 40}                                    ,;
+                                 "nombre"    => {  "create"    => "VARCHAR( 30 ) NOT NULL"               ,;
+                                                   "text"      => "Tipo de la nota"                      ,;
+                                                   "header"    => "Tipo"                                 ,;
+                                                   "visible"   => .t.                                    ,;
+                                                   "width"     => 100                                    ,;
+                                                   "field"     => "cTipo"                                ,;
+                                                   "type"      => "C"                                    ,;
+                                                    "len"       => 30}                                    }
 
    ::Super:New()
 
-   ::cColumnOrder                := "nombre"
+   ::cColumnOrder          := "nombre"
 
 Return ( Self )
 
