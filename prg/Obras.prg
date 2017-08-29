@@ -602,10 +602,8 @@ FUNCTION BrwObras( oGet, oGet2, cCodCli, dbfObrasT )
       lClose      := .t.
    END IF
 
-   ( dbfObrasT )->( ordSetFocus( nOrd ) )
+   ( dbfObrasT )->( adsSetAOF( "Field->cCodCli == '" + cCodCli + "'" ) ) 
 
-   ( dbfObrasT )->( OrdScope( 0, cCodCli ) )
-   ( dbfObrasT )->( OrdScope( 1, cCodCli ) )
    ( dbfObrasT )->( dbGoTop() )
 
    DEFINE DIALOG     oDlg ;
@@ -622,9 +620,7 @@ FUNCTION BrwObras( oGet, oGet2, cCodCli, dbfObrasT )
 			VAR 		   cCbxOrd ;
 			ID 		   102 ;
          ITEMS       aCbxOrd ;
-         ON CHANGE   (  ( dbfObrasT )->( OrdSetFocus( oCbxOrd:nAt ) ),;
-                     ( dbfObrasT )->( OrdScope( 0, cCodCli ) ),;
-                     ( dbfObrasT )->( OrdScope( 1, cCodCli ) ),;
+         ON CHANGE   ( ( dbfObrasT )->( OrdSetFocus( oCbxOrd:nAt ) ),;
                      oBrw:Refresh(),;
                      oGet1:SetFocus() );
 			OF 		   oDlg
@@ -639,7 +635,7 @@ FUNCTION BrwObras( oGet, oGet2, cCodCli, dbfObrasT )
 
       with object ( oBrw:AddCol() )
          :cHeader          := "Código"
-         :cSortOrder       := "Codigo"
+         :cSortOrder       := "CCODCLI"
          :bEditValue       := {|| ( dbfObrasT )->cCodObr }
          :nWidth           := 80
          :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | oCbxOrd:Set( oCol:cHeader ) }
@@ -647,7 +643,7 @@ FUNCTION BrwObras( oGet, oGet2, cCodCli, dbfObrasT )
 
       with object ( oBrw:AddCol() )
          :cHeader          := "Nombre"
-         :cSortOrder       := "Nombre"
+         :cSortOrder       := "CNOMOBR"
          :bEditValue       := {|| ( dbfObrasT )->cNomObr }
          :nWidth           := 360
          :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | oCbxOrd:Set( oCol:cHeader ) }
@@ -696,9 +692,8 @@ FUNCTION BrwObras( oGet, oGet2, cCodCli, dbfObrasT )
    if lClose
       ( dbfObrasT )->( dbCloseArea() )
    else
+      ( dbfObrasT )->( adsClearAOF() ) 
       ( dbfObrasT )->( OrdSetFocus( nOrd ) )
-      ( dbfObrasT )->( OrdScope( 0, nil ) )
-      ( dbfObrasT )->( OrdScope( 1, nil ) )
    end if
 
 	oGet:setFocus()

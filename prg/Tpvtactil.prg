@@ -7105,7 +7105,7 @@ METHOD GuardaDocumentoAlbaran() CLASS TpvTactil
    BeginTransaction()
 
    /*
-   Creamos la cabecera del albarán---------------------------------------------
+   Creamos la cabecera del albarán--------------------------------------------- 
    */
 
    ::oAlbaranClienteCabecera:Append()

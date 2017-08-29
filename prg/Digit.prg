@@ -1485,7 +1485,9 @@ Function VirtualKey( lPassword, uGetKey, cTitle )
       DEFINE DIALOG oDlg NAME "KEYB"         TITLE cTitle // FONT oFnt
    end if
 
-      REDEFINE GET oGet VAR cVar FONT oFnt ID 100 OF oDlg
+      //REDEFINE GET oGet VAR cVar FONT oFnt ID 100 OF oDlg
+
+      oGet           := TGet():ReDefine( 100, { | u | if( pcount() == 0, cVar, cVar:= u ) }, oDlg,,,,,, oFnt,,, .f.,,, .f., .f. ) 
 
       REDEFINE BUTTON ID 101 OF oDlg ACTION ( keybPressed( oGet, "1" ) )
 
