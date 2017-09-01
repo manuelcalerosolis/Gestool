@@ -248,6 +248,7 @@ METHOD EndResource( oDlg ) CLASS AccessCode
       ::oMessage:Show()
 
       lInitCheck( ::oMessage, ::oProgress )
+
       lSetCaja()
 
       ::oProgress:Hide()
@@ -889,6 +890,8 @@ METHOD lCheckUsuario() CLASS AccessCode
       ( dbfUser )->( dbSkip() )
 
    end while
+
+   CLOSE ( dbfUser )
 
 Return ( Self )
 

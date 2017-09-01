@@ -69,6 +69,8 @@ CLASS LinesDocumentsSales FROM Editable
    METHOD setFechaVentaAnterior( dFechaAnterior )           INLINE ( ::hSetDetail( "FechaUltimaVenta", dFechaAnterior ) ) 
    METHOD setPrecioVentaAnterior( nPrecioAnterior )         INLINE ( ::hSetDetail( "PrecioUltimaVenta", nPrecioAnterior ) )
 
+   METHOD setCliente( cCodigoCliente )                      INLINE ( ::hSetDetail( "Cliente", cCodigoCliente ) )
+
    METHOD getUnidadesKit( nUnidadesArticulo )               INLINE ( if (  ( D():Kit( ::getView() ) )->nUndKit != 0,;
                                                                            nUnidadesArticulo * ( D():Kit( ::getView() ) )->nUndKit,;
                                                                            nUnidadesArticulo ) )
@@ -263,6 +265,9 @@ RETURN ( self )
 
 METHOD setLineFromArticulo() CLASS LinesDocumentsSales
 
+   local nPrecio           := 0
+   local nPrecioAnterior   := 0
+
    ::setCodigo( ( D():Articulos( ::getView() ) )->Codigo )
    
    ::setDetalle( ( D():Articulos( ::getView() ) )->Nombre )
@@ -317,12 +322,25 @@ METHOD setLineFromArticulo() CLASS LinesDocumentsSales
 
    ::setTarifa()
 
-   ::setPrecioVenta( nRetPreArt( ::hGetDetail( "NumeroTarifa" ), ::hGetMaster( "Divisa" ), ::hGetMaster( "ImpuestosIncluidos" ), D():Articulos( ::getView() ), D():Divisas( ::getView() ), D():Kit( ::getView() ), D():TiposIva( ::getView() ) ) )
+   nPrecio        := nRetPreArt( ::hGetDetail( "NumeroTarifa" ),;
+                                 ::hGetMaster( "Divisa" ),; 
+                                 ::hGetMaster( "ImpuestosIncluidos" ),;
+                                 D():Articulos( ::getView() ),;
+                                 D():Divisas( ::getView() ),;
+                                 D():Kit( ::getView() ),;
+                                 D():TiposIva( ::getView() ) )
+
+   ::setPrecioVenta( nPrecio )
 
    ::setPrecioCosto( ( D():Articulos( ::getView() ) )->pCosto ) 
 
    ::setFechaVentaAnterior( dFechaUltimaVenta( ::hGetMaster( "Cliente" ), ( D():Articulos( ::getView() ) )->Codigo, D():AlbaranesClientesLineas( ::getView() ), D():FacturasClientesLineas( ::getView() ) ) ) 
-   ::setPrecioVentaAnterior( nPrecioUltimaVenta( ::hGetMaster( "Cliente" ), ( D():Articulos( ::getView() ) )->Codigo, D():AlbaranesClientesLineas( ::getView() ), D():FacturasClientesLineas( ::getView() ) ) ) 
+   
+   nPrecioAnterior   := nPrecioUltimaVenta( ::hGetMaster( "Cliente" ), ( D():Articulos( ::getView() ) )->Codigo, D():AlbaranesClientesLineas( ::getView() ), D():FacturasClientesLineas( ::getView() ) )
+
+   ::setCliente( ::hGetMaster( "Cliente" ) )
+
+   ::setPrecioVentaAnterior( if( Empty( nPrecioAnterior ), nPrecio, nPrecioAnterior ) )
 
    if ( D():Articulos( ::getView() ) )->lLote
       

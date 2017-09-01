@@ -128,8 +128,12 @@ FUNCTION CreateMainWindow( oIconApp )
       ICON     oIconApp ;
       MENU     ( BuildMenu() )
 
+   //TDataCenter():GetAllTables( "Entro en el CreateMainWindow" )
+
    oWndBar                    := CreateAcceso( oWnd )
    oWndBar:CreateButtonBar( oWnd )
+
+   //TDataCenter():GetAllTables( "despues de CreateButtonBar" )
 
    // Set the bar messages-----------------------------------------------------
 
@@ -278,6 +282,8 @@ RETURN ( .t. )
 //---------------------------------------------------------------------------//
 
 FUNCTION Test()
+
+   //TDataCenter():GetAllTables( "cuando he entrado en el programa TEST" )
 
 Return ( nil )
 
@@ -5422,7 +5428,7 @@ FUNCTION appConnectADS()
    adsTestRecLocks( .t. )
 
    adsSetDeleted( .t. )
-   adsCacheOpenTables( 250 )
+   //adsCacheOpenTables( 250 )
 
    // Conexion con el motor de base de datos-----------------------------------
 

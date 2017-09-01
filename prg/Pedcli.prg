@@ -225,6 +225,7 @@ Definici¢n de la base de datos de lineas de detalle
 #define _ID_TIPO_V               106
 #define __NREGIVA                107
 #define _NPRCULTCOM              108
+#define __CCODCLI                109
 
 /*
 Array para impuestos
@@ -4275,6 +4276,7 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbf, oBrw, lTotLin, cCodArtEnt, nMode, aTmpP
       aTmp[ __DFECENT   ]  := aTmpPed[ _DFECENTR]
       aTmp[ _NTARLIN    ]  := oGetTarifa:getTarifa()
       aTmp[ _COBRLIN    ]  := aTmpPed[ _CCODOBR ]
+      aTmp[ __CCODCLI   ]  := aTmpPed[ _CCODCLI ]
 
       if !Empty( cCodArtEnt )
          cCodArt        	:= Padr( cCodArtEnt, 200 )
@@ -14803,6 +14805,7 @@ function aColPedCli()
    aAdd( aColPedCli, { "id_tipo_v", "N",   16,  0, "Identificador tipo de venta",                     "IdentificadorTipoVenta",     "", "( cDbfCol )", nil } )
    aAdd( aColPedCli, { "nRegIva",   "N",    1,  0, "Régimen de " + cImp(),                            "TipoImpuesto",               "", "( cDbfCol )", nil } )
    aAdd( aColPedCli, { "nPrcUltCom","N",   16,  6, "Precio última compra",                            "PrecioUltimaVenta",          "", "( cDbfCol )", nil } ) 
+   aAdd( aColPedCli, { "cCodCli",   "C",   12,  0, "Código de cliente",                               "Cliente",                    "", "( cDbfCol )", nil } )
 
 return ( aColPedCli )
 

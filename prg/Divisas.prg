@@ -1151,8 +1151,8 @@ FUNCTION hBmpDiv( cCodDiv, dbfDiv, oBan, lDefDiv )
    BEGIN SEQUENCE
 
    if dbfDiv == NIL
-      USE ( cPatDat() + "DIVISAS.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "DIVISAS", @dbfDiv ) )
-      SET ADSINDEX TO ( cPatDat() + "DIVISAS.CDX" ) ADDITIVE
+      dbUseArea( .t., ( cDriver() ), ( cPatDat() + "Divisas.Dbf" ), ( cCheckArea( "Divisas", @dbfDiv ) ), .f., .f. )
+      ( dbfDiv )->( ordSetFocus( 1 ) )
       lCloDiv        := .t.
    end if
 
@@ -1376,8 +1376,8 @@ FUNCTION cFilBmpDiv( cCodDiv, dbfDiv, oBan )
    BEGIN SEQUENCE
 
    if dbfDiv == NIL
-      USE ( cPatDat() + "DIVISAS.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "DIVISAS", @dbfDiv ) )
-      SET ADSINDEX TO ( cPatDat() + "DIVISAS.CDX" ) ADDITIVE
+      dbUseArea( .t., ( cDriver() ), ( cPatDat() + "Divisas.Dbf" ), ( cCheckArea( "Divisas", @dbfDiv ) ), .f., .f. )
+      ( dbfDiv )->( ordSetFocus( 1 ) )
 		lCloDiv	:= .t.
    end if
 
@@ -1504,8 +1504,8 @@ STATIC FUNCTION OpenFiles()
    oBlock            := ErrorBlock( {| oError | ApoloBreak( oError ) } )
    BEGIN SEQUENCE
 
-      USE ( cPatDat() + "Divisas.Dbf" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "DIVISAS", @dbfDiv ) )
-      SET ADSINDEX TO ( cPatDat() + "Divisas.Cdx" ) ADDITIVE
+      dbUseArea( .t., ( cDriver() ), ( cPatDat() + "Divisas.Dbf" ), ( cCheckArea( "Divisas", @dbfDiv ) ), .f., .f. )
+      ( dbfDiv )->( ordSetFocus( 1 ) )
 
    RECOVER USING oError
 
@@ -1794,8 +1794,8 @@ Static Function aDivBuf( cCodDiv, dbfDiv )
    BEGIN SEQUENCE
 
    if dbfDiv == nil
-      USE ( cPatDat() + "Divisas.Dbf" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "Divisas", @dbfDiv ) )
-      SET ADSINDEX TO ( cPatDat() + "Divisas.Cdx" ) ADDITIVE
+      dbUseArea( .t., ( cDriver() ), ( cPatDat() + "Divisas.Dbf" ), ( cCheckArea( "Divisas", @dbfDiv ) ), .t., .f. )
+      ( dbfDiv )->( ordSetFocus( 1 ) )
       lCloDiv        := .t.
    end if
 
@@ -1859,15 +1859,12 @@ Static Function aDivBuf( cCodDiv, dbfDiv )
    end case
 
    RECOVER USING oError
-
       msgStop( "Imposible abrir todas las bases de datos de divisas" + CRLF + ErrorMessage( oError ) )
-
    END SEQUENCE
-
    ErrorBlock( oBlock )
 
    if lCloDiv
-      CLOSE ( dbfDiv )
+      ( dbfDiv )->( dbCloseArea() )
    end if
 
    cCodBuf           := cCodDiv
@@ -2040,6 +2037,7 @@ FUNCTION TstDivisas( cPatDat )
 
    dbUseArea( .t., cDriver(), cPatDat() + "Divisas.Dbf", cCheckArea( "Divisas", @dbfDiv ), .f. )
 
+   
    if !( dbfDiv )->( netErr() )
 
       n           := ( dbfDiv )->( fCount() )

@@ -754,8 +754,11 @@ Method lOpenDatabase()
 
       ::MakeDatabase()
 
-      USE ( cPatDat() + "UsrBtnBar.Dbf" ) NEW VIA ( cDriver() ) SHARED ALIAS ( ::cDbf := cCheckArea( "UsrBtnBar" ) )
-      SET ADSINDEX TO ( cPatDat() + "UsrBtnBar.Cdx" ) ADDITIVE
+      //USE ( cPatDat() + "UsrBtnBar.Dbf" ) NEW VIA ( cDriver() ) SHARED ALIAS ( ::cDbf := cCheckArea( "UsrBtnBar" ) )
+      //SET ADSINDEX TO ( cPatDat() + "UsrBtnBar.Cdx" ) ADDITIVE
+
+      dbUseArea( .T., ( cDriver() ), ( cPatDat() + "UsrBtnBar.Dbf" ), ( ::cDbf := cCheckArea( "UsrBtnBar" ) ), .T., .F. )
+      if !lAIS() ; ordListAdd( ( cPatDat() + "UsrBtnBar.Cdx" ) ) ; else ; ordSetFocus( 1 ) ; end
 
       ::lOpenFiles   := .t.
 

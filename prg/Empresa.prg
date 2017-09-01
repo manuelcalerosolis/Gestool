@@ -3171,8 +3171,8 @@ FUNCTION SetEmpresa( cCodEmp, oBrw )
 
    CursorWait()
 
-   // oBlock            := ErrorBlock( {| oError | ApoloBreak( oError ) } )
-   // BEGIN SEQUENCE
+   oBlock            := ErrorBlock( {| oError | ApoloBreak( oError ) } )
+   BEGIN SEQUENCE
 
    /*
    Si la empresa esta vacia----------------------------------------------------
@@ -3216,7 +3216,7 @@ FUNCTION SetEmpresa( cCodEmp, oBrw )
    cPatArt( EmpresasModel():getCodigoGrupoArticulo( cCodEmp ), nil, .t. )
 
    cPatAlm( EmpresasModel():getCodigoGrupoAlmacen( cCodEmp ), nil, .t. )
-   
+
    /*
    Cargamos el buffer----------------------------------------------------------
    */
@@ -3226,7 +3226,7 @@ FUNCTION SetEmpresa( cCodEmp, oBrw )
    if !aEmpresa( cCodEmp )
       Empresa()
    end if
-   
+
    /*
    Cargamos la estructura de ficheros de la empresa----------------------------
    */
@@ -3256,10 +3256,10 @@ FUNCTION SetEmpresa( cCodEmp, oBrw )
       oBrw:SetFocus()
    end if
 
-   // RECOVER USING oError
-   //    msgStop( "Imposible seleccionar empresa" + CRLF + ErrorMessage( oError ) )
-   // END SEQUENCE
-   // ErrorBlock( oBlock )
+   RECOVER USING oError
+      msgStop( "Imposible seleccionar empresa" + CRLF + ErrorMessage( oError ) )
+   END SEQUENCE
+   ErrorBlock( oBlock )
 
    CursorWE()
 

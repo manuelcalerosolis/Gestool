@@ -836,6 +836,8 @@ METHOD End( lForceExit ) CLASS TShell
    
    sysRefresh()
 
+   //closeUsuarios()
+
    CursorWE()
 
 Return ( .t. )

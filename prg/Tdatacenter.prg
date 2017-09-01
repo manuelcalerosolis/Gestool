@@ -244,6 +244,7 @@ CLASS TDataCenter
    METHOD ConvertDatosToSQLite()
    METHOD ConvertEmpresaToSQLite()
    METHOD MigrateEmpresaToSQLite()
+   METHOD GetAllTables()
 
 END CLASS
 
@@ -4088,15 +4089,11 @@ METHOD StartResource()
 
    ::BuildData()
 
-   ::BuildEmpresa()
-
    ::Reindex()
 
    ::Syncronize()
     
    CursorWE()
-
-   msgInfo( "Proceso finalizado con exito.")
 
    ::oDlg:bValid  := {|| .t. }
    ::oDlg:Enable()
@@ -4118,7 +4115,7 @@ METHOD Reindex()
    // Bases de datos de directorio datos------------------------------------------
 
    if ::aLgcIndices[ 1 ]
-      
+
       if !Empty( ::aProgress[ 1 ] )
          ::aProgress[ 1 ]:SetTotal( len( ::aDataTables ) )
       end if 
@@ -4221,18 +4218,14 @@ METHOD ReindexTable( oTable )
 
    oBlock         := ErrorBlock( { | oError | ApoloBreak( oError ) } )
    BEGIN SEQUENCE
-/*
-      if !empty( oTable:adsCreateIndex )
-         eval( oTable:adsCreateIndex )
-      else
-*/      
-         dbusearea( .t., ( cDriver() ), ( oTable:cName ), "Table", .f. )
-         if !neterr() .and. ( "Table" )->( used() )
-            ( "Table" )->( ordsetfocus( 1 ) )
-            ( "Table" )->( adsReindex() )
-            ( "Table" )->( dbclosearea() )
-         end if 
-//    end if 
+
+      dbusearea( .t., ( cDriver() ), ( oTable:cName ), "ADSWork", .f. )
+
+      if !neterr() .and. ( "ADSWork" )->( used() )
+         ( "ADSWork" )->( ordsetfocus( 1 ) )
+         ( "ADSWork" )->( adsReindex() )
+         ( "ADSWork" )->( dbclosearea() )
+      end if 
 
    RECOVER USING oError
 
@@ -4455,6 +4448,26 @@ METHOD EnableTriggers()
    cStm           := "EXECUTE PROCEDURE sp_enableTriggers( NULL, NULL, FALSE, 0 );"
 
 RETURN ( ::ExecuteSqlStatement( cStm, "EnableTriggers" ) )
+
+//---------------------------------------------------------------------------//
+
+METHOD GetAllTables( ctext )
+
+   local cStm
+
+   DEFAULT cText := ""
+
+   /*
+   Creamos la instruccion------------------------------------------------------
+   */
+
+   cStm           := "EXECUTE PROCEDURE sp_mgGetAllTables();"
+
+   ::ExecuteSqlStatement( cStm, "GetAllTables" )
+
+   ( "GetAllTables" )->( browse( cText ) )
+
+RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 

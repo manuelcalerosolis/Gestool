@@ -165,8 +165,6 @@ METHOD Run( nView ) CLASS ImportarPedidosClientesEDI
 
    ::aEDIFiles       := Directory( __localDirectory + "*.pla" )
 
-   MsgInfo( hb_valtoexp( ::aEDIFiles ) )
-
    if !empty( ::aEDIFiles )
       for each aEDIFile in ::aEDIFiles
          ::ProccessEDIFiles( aEDIFile[ 1 ] )
@@ -451,22 +449,17 @@ Return ( nil )
 METHOD isbuildPedidoCliente()
 
    if ::isDocumentImported()
-      ?"1"
       msgStop( "El documento ya ha sido importado" )
       Return ( .f. )
    end if 
 
    if ::isClient()
-      ?"2"
       return ( .t. )
    end if
 
    if ::isDireccion()
-      ?"3"
       return ( .t. )
    end if
-
-   ?"Me salgo por fuera"
 
 return .f.
 
@@ -474,25 +467,13 @@ return .f.
 
 METHOD buildPedidoCliente()
 
-   MsgInfo( "Entro en el buildPedidoCliente" )
-
-   MsgInfo( ::isbuildPedidoCliente(), "::isbuildPedidoCliente()" )
-
    if ::isbuildPedidoCliente()
-
-      ?"1"
 
       ::buildCabeceraPedido()
 
-      ?"2"
-
       ::buildLineasPedido()
 
-      ?"3"
-
       ::buildTotalPedido()
-
-      ?"4"
 
    end if 
 
@@ -522,9 +503,7 @@ METHOD isClient()
    D():getStatusClientes( ::nView )
    D():setFocusClientes( "cCodEdi", ::nView )
 
-   MsgInfo( ::hDocument[ "comprador" ] + Padr( ::hDocument[ "departamento" ], 4 ), "Lo que buscamos en el Cliente" )
-
-   isClient         := ( D():Clientes( ::nView ) )->( dbseek( AllTrim( ::hDocument[ "comprador" ] ) + Padr( ::hDocument[ "departamento" ], 4 ) ) )
+   isClient         := ( D():Clientes( ::nView ) )->( dbseek( ::hDocument[ "comprador" ] + Padr( ::hDocument[ "departamento" ], 4 ) ) )
 
    D():setStatusClientes( ::nView )
 
@@ -539,7 +518,7 @@ METHOD isDireccion()
    D():getStatusClientesDirecciones( ::nView )
    D():setFocusClientesDirecciones( "cCodEdi", ::nView )
 
-   isDireccion         := ( D():ClientesDirecciones( ::nView ) )->( dbseek( AllTrim( ::hDocument[ "comprador" ] ) + ::hDocument[ "departamento" ] ) )
+   isDireccion         := ( D():ClientesDirecciones( ::nView ) )->( dbseek( ::hDocument[ "comprador" ] + ::hDocument[ "departamento" ] ) )
 
    D():setStatusClientesDirecciones( ::nView )
 
