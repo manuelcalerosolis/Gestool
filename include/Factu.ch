@@ -157,6 +157,13 @@ Defines para ficheros INI
 #define __zoom_mode__           3
 #define __duplicate_mode__      4
 
+#define ACC_ACCE                1        // Acceso
+#define ACC_APPD                2        // Acceso añadir
+#define ACC_EDIT                4        // Solo modificar
+#define ACC_ZOOM                8        // Solo visualizar
+#define ACC_DELE                16       // Acceso eliminar
+#define ACC_IMPR                32       // Acceso imprimir
+
 #define PED_PRV                 '01'
 #define ALB_PRV                 '02'
 #define FAC_PRV                 '03'
@@ -199,12 +206,6 @@ Defines para ficheros INI
 #define LIN_PRO_ART             '40'
 #define LIN_PED_PRV             '41'
 
-#define ACC_ACCE                1        // Acceso
-#define ACC_APPD                2        // Acceso añadir
-#define ACC_EDIT                4        // Solo modificar
-#define ACC_ZOOM                8        // Solo visualizar
-#define ACC_DELE                16       // Acceso eliminar
-#define ACC_IMPR                32       // Acceso imprimir
 
 #define IS_PRINTER              1
 #define IS_SCREEN               2

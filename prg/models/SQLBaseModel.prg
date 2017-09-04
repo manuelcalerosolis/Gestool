@@ -12,11 +12,11 @@ CLASS SQLBaseModel
 
    DATA     cTableName
    DATA     cDbfTableName
-	DATA	   hColumns
 
    DATA     cConstraints
 
-   DATA     hExtraColumns
+	DATA	   hColumns                      INIT {=>}
+   DATA     hExtraColumns                 INIT {=>}
 
    DATA     cGeneralSelect
 
@@ -35,6 +35,14 @@ CLASS SQLBaseModel
 
    METHOD   New()
    METHOD   End()
+
+   // Facades -----------------------------------------------------------------
+
+   METHOD getColumns()                             INLINE ( ::hColumns )
+   METHOD getColumnsForNavigator()
+   METHOD getHeadersForNavigator()
+
+   // Facades -----------------------------------------------------------------
  
    METHOD   getSQLCreateTable()
    METHOD   getSQLDropTable()
@@ -44,6 +52,8 @@ CLASS SQLBaseModel
    METHOD   getInsertSentence()
    METHOD   getUpdateSentence()
    METHOD   getDeleteSentence()
+
+   METHOD   getEditValue()
 
    METHOD   convertRecnoToId( aRecno )
 
@@ -77,9 +87,9 @@ CLASS SQLBaseModel
 
    METHOD   getBuffer( cColumn )                   INLINE   ( hget( ::hBuffer, cColumn ) )
 
-   METHOD   Query( cSentence )                     INLINE   ( getSQLDatabase():Query( cSentence ) )
-   METHOD   Exec( cSentence )                      INLINE   ( getSQLDatabase():Exec( cSentence ) )
-   METHOD   Prepare( cSentence )                   INLINE   ( getSQLDatabase():Prepare( cSentence ) )
+   METHOD   Exec( cSentence )                      INLINE   ( if( !empty( getSQLDatabase() ), getSQLDatabase():Exec( cSentence ), msgstop( "No ha conexiones disponibles" ) ) )
+   METHOD   Query( cSentence )                     INLINE   ( if( !empty( getSQLDatabase() ), getSQLDatabase():Query( cSentence ), msgstop( "No ha conexiones disponibles" ) ) )
+   METHOD   Prepare( cSentence )                   INLINE   ( if( !empty( getSQLDatabase() ), getSQLDatabase():Prepare( cSentence ), msgstop( "No ha conexiones disponibles" ) ) )
 
    METHOD   updateCurrentBuffer()                  INLINE   ( ::Query( ::getUpdateSentence() ), ::buildRowSetAndFind() )
    METHOD   insertBuffer()                         INLINE   ( ::Query( ::getInsertSentence() ), ::buildRowSet() )
@@ -272,8 +282,6 @@ METHOD buildRowSet( cSentence )
       ::oStatement      := ::Prepare( cSentence )
       ::oRowSet         := ::oStatement:fetchRowSet()
 
-      msgalert( hb_valtoexp( ::oRowset ), "oRowset" )
-
    catch
       
       msgstop( hb_valtoexp( getSQLDatabase():errorInfo() ) )
@@ -338,8 +346,6 @@ METHOD getInsertSentence()
 
    cSQLInsert        := ChgAtEnd( cSQLInsert, ' )', 2 )
 
-   msgalert( cSQLInsert, "getInsertSentence" )
-
 RETURN ( cSQLInsert )
 
 //---------------------------------------------------------------------------//
@@ -369,6 +375,25 @@ RETURN ( uValue )
 
 //---------------------------------------------------------------------------//
 
+METHOD getEditValue( cColumn )
+
+   local bValue
+   local hColumn
+
+   if !hhaskey( ::hColumns, cColumn )
+      RETURN ( nil )
+   end if 
+
+   hColumn        := hGet( ::hColumns, cColumn )
+
+   if hhaskey( hColumn, "edit" )
+      RETURN ( hGet( hColumn, "edit" ) )
+   end if 
+      
+RETURN ( {|| ::getRowSet():fieldGet( cColumn ) } )
+
+//---------------------------------------------------------------------------//
+
 METHOD convertRecnoToId( aRecno )
 
    local nRecno
@@ -376,7 +401,7 @@ METHOD convertRecnoToId( aRecno )
 
    for each nRecno in ( aRecno )
       ::oRowset:goTo( nRecno )
-      aadd( aId, ::oRowset:fieldget( ::cColumnKey ) )
+      aadd( aId, ::oRowSet:fieldget( ::cColumnKey ) )
    next
 
 RETURN ( aId )
@@ -743,5 +768,35 @@ METHOD existCodigo( cValue )
    local cSentence               := "SELECT " + ::cColumnKey + " FROM " + ::cTableName + " WHERE " + ::cColumnCode + " = " + toSQLString( cValue )
 
 RETURN ( !empty( ::selectFetchArray( cSentence ) ) )
+
+//---------------------------------------------------------------------------//
+
+STATIC FUNCTION validColumnForNavigator( hash )
+
+RETURN ( hhaskey( hash, "visible" ) .and. hget( hash, "visible" ) .and. hhaskey( hash, "header" ) .and. hhaskey( hash, "width" ) )
+                                    
+//---------------------------------------------------------------------------//
+
+METHOD getColumnsForNavigator()
+   
+   local hColumns    := {=>}
+
+   hEval( ::hColumns, {|k,v| if( validColumnForNavigator( v ), hset( hColumns, k, v ), ) } )
+         
+   hEval( ::hExtraColumns, {|k,v| if( validColumnForNavigator( v ), hset( hColumns, k, v ), ) } )
+
+RETURN ( hColumns )
+
+//---------------------------------------------------------------------------//
+
+METHOD getHeadersForNavigator()
+
+   local aHeaders    := {}
+
+   hEval( ::hColumns, {|k,v| if( validColumnForNavigator( v ), aadd( aHeaders, hget( v, "header" ) ), ) } )
+         
+   hEval( ::hExtraColumns, {|k,v| if( validColumnForNavigator( v ), aadd( aHeaders, hget( v, "header" ) ), ) } )
+
+RETURN ( aHeaders )
 
 //---------------------------------------------------------------------------//

@@ -12,7 +12,9 @@ CLASS SQLBaseController
 
    DATA     oModel
 
-   DATA     oView
+   DATA     oDialogView
+
+   DATA     oNavigatorView
 
    DATA     nLevel
 
@@ -20,21 +22,29 @@ CLASS SQLBaseController
 
    DATA     nMode                                     AS NUMERIC
 
-   DATA     nView
-
    DATA     bOnPreAppend
    DATA     bOnPostAppend
 
    DATA     cTitle                                    INIT ""
+
+   DATA     cImage                                    INIT ""
  
    METHOD   New()
    METHOD   End()
+
+   // Facades -----------------------------------------------------------------
+
+   METHOD   getModel()                                INLINE ( ::oModel )
+   METHOD   getModelColumns()                         INLINE ( if( !empty( ::oModel ) .and. !empty( ::oModel:hColumns ), ( ::oModel:hColumns ), ) )
+   METHOD   getModelExtraColumns()                    INLINE ( if( !empty( ::oModel ) .and. !empty( ::oModel:hExtraColumns ), ( ::oModel:hExtraColumns ), ) )
+
+   // Facades -----------------------------------------------------------------
 
    METHOD   Instance()                                INLINE ( if( empty( ::oInstance ), ::oInstance := ::New(), ), ::oInstance ) 
 
    METHOD   destroySQLModel()                         INLINE ( if( !empty(::oModel), ::oModel:end(), ) )
 
-	METHOD   ActivateShell()
+	METHOD   ActivateNavigatorView()
 	METHOD   ActivateBrowse()
 
    METHOD   isUserAccess()                            INLINE ( nAnd( ::nLevel, ACC_ACCE ) == 0 )
@@ -69,7 +79,7 @@ CLASS SQLBaseController
       METHOD endDuplicateModePreInsert()              VIRTUAL
       METHOD endDuplicateModePosInsert()              VIRTUAL
       METHOD cancelDuplicateMode()                    VIRTUAL
-      METHOD setDuplicateMode()                       INLINE ( ::nMode := __duplicate_mode__ )
+      METHOD setDuplicateMode()                       INLINE ( ::setMode( __duplicate_mode__ ) )
       METHOD isDuplicateMode()                        INLINE ( ::nMode == __duplicate_mode__ )
 
    METHOD   Edit()
@@ -77,11 +87,11 @@ CLASS SQLBaseController
       METHOD endEditModePreUpdate()                   VIRTUAL
       METHOD endEditModePosUpdate()                   VIRTUAL
       METHOD cancelEditMode()                         VIRTUAL
-      METHOD setEditMode()                            INLINE ( ::nMode := __edit_mode__ )
+      METHOD setEditMode()                            INLINE ( ::setMode( __edit_mode__ ) )
       METHOD isEditMode()                             INLINE ( ::nMode == __edit_mode__ )
 
    METHOD   Zoom()
-      METHOD setZoomMode()                            INLINE ( ::nMode := __zoom_mode__ )
+      METHOD setZoomMode()                            INLINE ( ::setMode( __zoom_mode__ ) )
       METHOD isZoomMode()                             INLINE ( ::nMode == __zoom_mode__ )
       METHOD isNotZoomMode()                          INLINE ( ::nMode != __zoom_mode__ )
       METHOD initZoomMode()                           VIRTUAL
@@ -120,8 +130,8 @@ CLASS SQLBaseController
 
    METHOD   setFastReport( oFastReport, cSentence, cColumns )
 
-   METHOD generateColumnsForBrowse( oCombobox )
-   METHOD   createColumnsForBrowse( oCombobox )
+   METHOD generateBrowseColumns()
+   METHOD   addBrowseColumns( oCombobox )
    METHOD   addColumnsForBrowse( oCombobox )          VIRTUAL
 
    METHOD getController( cController )                INLINE ( ::ControllerContainer:get( cController ) )
@@ -130,13 +140,12 @@ CLASS SQLBaseController
    METHOD evalOnPreAppend()                           INLINE ( ::evalOnEvent( ::bOnPreAppend ) )
    METHOD evalOnPostAppend()                          INLINE ( ::evalOnEvent( ::bOnPostAppend ) )
 
+
 END CLASS
 
 //---------------------------------------------------------------------------//
 
 METHOD New()
-
-   msgalert("SQLBaseController")
 
    ::ControllerContainer                              := ControllerContainer():New()
 
@@ -146,25 +155,21 @@ METHOD New()
 
    ::oView                                            := ::buildSQLView( self )
 
-   msgalert( "antes del view")
-
-   ::nView                                            := D():CreateView()
-
 RETURN ( self )
 
 //---------------------------------------------------------------------------//
 
 METHOD End()
 
-   D():DeleteView( ::nView )
-
-   ::nView                                            := nil
-
 RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 
-METHOD ActivateShell()
+METHOD ActivateNavigatorView()
+
+   if empty( ::oNavigatorView )
+      RETURN ( Self )
+   end if 
 
    if ::notUserAccess()
       msgStop( "Acceso no permitido." )
@@ -175,21 +180,9 @@ METHOD ActivateShell()
       SysRefresh(); oWnd():CloseAll(); SysRefresh()
    end if
 
-   msgalert( "getHistoryShell")
+   ::oModel:buildRowSet()
 
-   ::getHistoryShell()
-
-   msgalert( "buildRowSetAndFind" )
-
-   ::oModel:buildRowSetAndFind()
-
-   msgalert("buildSQLShell")
-
-   ::oView:buildSQLShell()
-
-   msgalert( "startBrowse" )
-
-   ::startBrowse( ::oView:oShell:getCombobox() )
+   ::oNavigatorView:Activate()
 
 RETURN ( Self )
 
@@ -280,7 +273,7 @@ RETURN ( uReturn )
 
 METHOD getHistory( cWnd )
 
-   local hFetch      := HistoricosUsuariosModel():New():getHistory( ::oModel:cTableName + cWnd )
+   local hFetch      := HistoricosUsuariosModel():getHistory( ::oModel:cTableName + cWnd )
 
    if empty(hFetch)
    	 RETURN ( nil )
@@ -298,8 +291,8 @@ METHOD getHistoryShell()
 
    local hFetch   := ::getHistory( "_shell" )
 
-   if empty(hFetch)
-   	 RETURN ( nil )
+   if empty( hFetch )
+   	RETURN ( nil )
    endif
 
    if hhaskey( hFetch, "cColumnOrder" )
@@ -338,12 +331,6 @@ Return ( .t. )
 
 METHOD clickOnHeader( oColumn, oCombobox )
 
-   ::oView:getoBrowse():selectColumnOrder( oColumn )
-
-   if !empty( oCombobox )
-      oCombobox:set( oColumn:cHeader )
-   end if
-
    ::oModel:setIdToFind( ::getIdfromRowset() )
 
    ::oModel:setColumnOrder( oColumn:cSortOrder )
@@ -351,8 +338,6 @@ METHOD clickOnHeader( oColumn, oCombobox )
    ::oModel:setOrientation( oColumn:cOrder )
 
    ::oModel:buildRowSetAndFind()
-
-   ::oView:getoBrowse():refreshCurrent()
 
 RETURN ( self )
 
@@ -662,7 +647,7 @@ RETURN ( self )
 
 //---------------------------------------------------------------------------//
 
-METHOD generateColumnsForBrowse( oCombobox )
+METHOD generateBrowseColumns( oBrowse, oCombobox )
 
    local hColumnstoBrowse  := ::oModel:hColumns
 
@@ -670,13 +655,13 @@ METHOD generateColumnsForBrowse( oCombobox )
       hColumnstoBrowse     := hb_hcopy( hColumnstoBrowse, ::oModel:hExtraColumns)
    end if
 
-   hEval( hColumnstoBrowse, { | k, hColumn | ::createColumnsForBrowse( oCombobox, k, hColumn ) } )
+   hEval( hColumnstoBrowse, { | cColumn, hColumn | ::addBrowseColumns( oBrowse, oCombobox, cColumn, hColumn ) } )
 
 RETURN ( self )
 
 //---------------------------------------------------------------------------//
 
-METHOD createColumnsForBrowse( oCombobox, k, hColumn )
+METHOD addBrowseColumns( oBrowse, oCombobox, cColumn, hColumn )
 
    if !hhaskey( hColumn, "visible" )
       RETURN ( Self )
@@ -694,21 +679,17 @@ METHOD createColumnsForBrowse( oCombobox, k, hColumn )
       RETURN ( Self )
    end if 
 
-   msgalert("createColumnsForBrowse", k )
-   
-   msgalert(::getRowSet():fieldGet( k ),"fieldget(nField)")
-
-   with object ( ::oView:getoBrowse():AddCol() )
+   with object ( oBrowse:AddCol() )
 
       :cHeader             := hColumn[ "header" ]
-      :cSortOrder          := k
+      :cSortOrder          := cColumn
       :nWidth              := hColumn[ "width" ]
-      :bLClickHeader       := {| nMRow, nMCol, nFlags, oCol | ::clickOnHeader( oCol, oCombobox ) }
+      :bLClickHeader       := {| nMRow, nMCol, nFlags, oColumn | ::clickOnHeader( oColumn, oCombobox ) }
 
       if hhaskey( hColumn, "edit" )
          :bEditValue       := hget( hColumn, "edit" )
       else
-         :bEditValue       := {|| ::getRowSet():fieldGet( k ) }
+         :bEditValue       := {|| ::getRowSet():fieldGet( cColumn ) }
       end if 
 
    end with

@@ -620,25 +620,31 @@ RETURN cCadena
 
 FUNCTION PntReplace( oGet, cChar, nLen )
 
-	local nPointPos
-	local cCadena := oGet:varGet()
+   local cCadena     := ""
+   local nPointPos
 
-	DEFAULT cChar	:= "0"
-	DEFAULT nLen  	:= Len( cCadena )
+   if !hb_isobject( oGet )
+      RETURN cCadena
+   end if 
 
-	nPointPos 		:= At( ".", cCadena )
+   cCadena           := oGet:varGet()
 
-	IF nPointPos	!= 0
+   DEFAULT cChar     := "0"
+   DEFAULT nLen      := len( cCadena )
 
-		cCadena := StrTran( cCadena, ".", "0" )
+   nPointPos         := at( ".", cCadena )
 
-		WHILE len( AllTrim( cCadena ) ) < nLen
-			cCadena := SubStr( cCadena, 1, nPointPos - 1 ) + cChar + SubStr( cCadena, nPointPos )
-		END WHILE
+	if nPointPos != 0
+
+      cCadena        := strtran( cCadena, ".", "0" )
+
+		while len( alltrim( cCadena ) ) < nLen
+			cCadena     := substr( cCadena, 1, nPointPos - 1 ) + cChar + substr( cCadena, nPointPos )
+		end while
 
 		oGet:cText( cCadena )
 
-	END IF
+	end if
 
 RETURN cCadena
 

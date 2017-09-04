@@ -27,9 +27,6 @@ CLASS SQLBaseView
 
    METHOD   buildSQLBrowse()
 
-   METHOD   setoBrowse( oBrowse )                     INLINE   ( ::oBrowse := oBrowse )
-   METHOD   getoBrowse()                              INLINE   ( ::oBrowse )
-
    METHOD   buildSQLNuclearBrowse()
    
    METHOD   lblTitle()                                INLINE ( if( hhaskey( ::hTextMode, ::oController:getMode() ), hget( ::hTextMode, ::oController:getMode() ), "" ) )
@@ -172,11 +169,7 @@ METHOD buildSQLShell()
 
    msgalert("SQLTShell")
 
-   ::oShell                := SQLTShell():New( 2, 10, 18, 70, ::oController:cTitle, , oWnd(), , , .f., , , ::getModel(), , , , , {}, {|| ::oController:Edit() },, {|| ::oController:Delete() },, nil, ::oController:nLevel, ::cImageName, ( 104 + ( 0 * 256 ) + ( 63 * 65536 ) ),,, .t. )
-
-   msgalert("setoBrowse")
-
-   ::setoBrowse( ::oShell:getBrowse() )
+   // ::oShell                := SQLTShell():New( 2, 10, 18, 70, ::oController:cTitle, , oWnd(), , , .f., , , ::getModel(), , , , , {}, {|| ::oController:Edit() },, {|| ::oController:Delete() },, nil, ::oController:nLevel, ::cImageName, ( 104 + ( 0 * 256 ) + ( 63 * 65536 ) ),,, .t. )
 
       msgalert("generateColumnsForBrowse")
 
@@ -275,8 +268,6 @@ RETURN ( oDlg:nResult == IDOK )
 //---------------------------------------------------------------------------//
 
 METHOD buildSQLNuclearBrowse( idResource, oDlg, oCombobox )
-
-   ::setoBrowse( SQLXBrowse():New( oDlg ) )
 
    ::oBrowse:bClrSel          := {|| { CLR_BLACK, Rgb( 229, 229, 229 ) } }
    ::oBrowse:bClrSelFocus     := {|| { CLR_BLACK, Rgb( 167, 205, 240 ) } }

@@ -1,4 +1,52 @@
-13:15:32- 47732.3770 UPDATE historicos_usuarios SET browse_state = 'XS1:{{"_nCreationOrders",{1}},{"_nRowHeight",17},{"_nWidths",{100}},{"_lHides",{.F.}},{"_cGrpHdrs",{}},{"_cHeaders",{"Tipo"}}}', column_order = 'nombre', orientation = 'A', id_to_find = 1 WHERE id = Object
-13:26:11- 48371.6090 UPDATE historicos_usuarios SET browse_state = 'XS1:{{"_nCreationOrders",{1}},{"_nRowHeight",17},{"_nWidths",{100}},{"_lHides",{.F.}},{"_cGrpHdrs",{}},{"_cHeaders",{"Tipo"}}}', column_order = 'nombre', orientation = 'A', id_to_find = 1 WHERE id = 1
-13:48:03- 49683.6570 UPDATE historicos_usuarios SET browse_state = 'XS1:{{"_nCreationOrders",{1}},{"_nRowHeight",17},{"_nWidths",{100}},{"_lHides",{.F.}},{"_cGrpHdrs",{}},{"_cHeaders",{"Tipo"}}}', column_order = 'nombre', orientation = 'A', id_to_find = 1 WHERE id = 1
-13:52:13- 49933.0300 UPDATE historicos_usuarios SET browse_state = 'XS1:{{"_nCreationOrders",{1}},{"_nRowHeight",17},{"_nWidths",{100}},{"_lHides",{.F.}},{"_cGrpHdrs",{}},{"_cHeaders",{"Tipo"}}}', column_order = 'nombre', orientation = 'A', id_to_find = 1 WHERE id = 1
+20:36:59- 74219.8280 SELECT browse_state, column_order, orientation, id_to_find FROM historicos_usuarios WHERE cTableName = 'tipos_notas_shell' AND usuario_id = '000' LIMIT 1
+20:37:00- 74220.0020 finally
+20:37:00- 74220.0020 hb_isarray( aFetch )
+20:37:09- 74229.8910 UPDATE historicos_usuarios SET browse_state = 'XS1:{{"_nCreationOrders",{1}},{"_nRowHeight",17},{"_nWidths",{100}},{"_lHides",{.F.}},{"_cGrpHdrs",{}},{"_cHeaders",{"Tipo"}}}', column_order = 'nombre', orientation = 'A', id_to_find = 1 WHERE id = 1
+20:37:25- 74245.5910 SELECT browse_state, column_order, orientation, id_to_find FROM historicos_usuarios WHERE cTableName = 'tipos_notas_shell' AND usuario_id = '000' LIMIT 1
+20:37:25- 74245.7660 finally
+20:37:25- 74245.7660 hb_isarray( aFetch )
+20:37:30- 74250.1240 UPDATE historicos_usuarios SET browse_state = 'XS1:{{"_nCreationOrders",{1}},{"_nRowHeight",17},{"_nWidths",{100}},{"_lHides",{.F.}},{"_cGrpHdrs",{}},{"_cHeaders",{"Tipo"}}}', column_order = 'nombre', orientation = 'A', id_to_find = 1 WHERE id = 1
+20:37:46- 74266.5640 SELECT browse_state, column_order, orientation, id_to_find FROM historicos_usuarios WHERE cTableName = 'tipos_notas_shell' AND usuario_id = '000' LIMIT 1
+20:39:38- 74378.1710 SELECT browse_state, column_order, orientation, id_to_find FROM historicos_usuarios WHERE cTableName = 'tipos_notas_shell' AND usuario_id = '000' LIMIT 1
+20:41:54- 74514.8260 SELECT browse_state, column_order, orientation, id_to_find FROM historicos_usuarios WHERE cTableName = 'tipos_notas_shell' AND usuario_id = '000' LIMIT 1
+20:41:54- 74514.9780 finally
+20:41:54- 74514.9790 hb_isarray( aFetch )
+20:42:06- 74526.7510 SELECT browse_state, column_order, orientation, id_to_find FROM historicos_usuarios WHERE cTableName = 'tipos_notas_shell' AND usuario_id = '000' LIMIT 1
+20:42:06- 74526.9210 finally
+20:42:06- 74526.9220 hb_isarray( aFetch )
+20:42:12- 74532.4560 UPDATE historicos_usuarios SET browse_state = 'XS1:{{"_nCreationOrders",{1}},{"_nRowHeight",17},{"_nWidths",{100}},{"_lHides",{.F.}},{"_cGrpHdrs",{}},{"_cHeaders",{"Tipo"}}}', column_order = 'nombre', orientation = 'A', id_to_find = 1 WHERE id = 1
+20:42:20- 74540.4510 SELECT browse_state, column_order, orientation, id_to_find FROM historicos_usuarios WHERE cTableName = 'tipos_notas_shell' AND usuario_id = '000' LIMIT 1
+20:42:20- 74540.6270 finally
+20:42:20- 74540.6270 hb_isarray( aFetch )
+20:42:27- 74547.1870 UPDATE historicos_usuarios SET browse_state = 'XS1:{{"_nCreationOrders",{1}},{"_nRowHeight",17},{"_nWidths",{100}},{"_lHides",{.F.}},{"_cGrpHdrs",{}},{"_cHeaders",{"Tipo"}}}', column_order = 'nombre', orientation = 'A', id_to_find = 1 WHERE id = 1
+20:42:35- 74555.2050 SELECT browse_state, column_order, orientation, id_to_find FROM historicos_usuarios WHERE cTableName = 'tipos_notas_shell' AND usuario_id = '000' LIMIT 1
+20:42:35- 74555.3630 finally
+20:42:35- 74555.3640 hb_isarray( aFetch )
+20:42:39- 74559.0000 UPDATE historicos_usuarios SET browse_state = 'XS1:{{"_nCreationOrders",{1}},{"_nRowHeight",17},{"_nWidths",{100}},{"_lHides",{.F.}},{"_cGrpHdrs",{}},{"_cHeaders",{"Tipo"}}}', column_order = 'nombre', orientation = 'A', id_to_find = 1 WHERE id = 1
+20:42:48- 74568.8170 SELECT browse_state, column_order, orientation, id_to_find FROM historicos_usuarios WHERE cTableName = 'tipos_notas_shell' AND usuario_id = '000' LIMIT 1
+20:42:48- 74568.9960 finally
+20:42:48- 74568.9960 hb_isarray( aFetch )
+20:42:51- 74571.6820 UPDATE historicos_usuarios SET browse_state = 'XS1:{{"_nCreationOrders",{1}},{"_nRowHeight",17},{"_nWidths",{100}},{"_lHides",{.F.}},{"_cGrpHdrs",{}},{"_cHeaders",{"Tipo"}}}', column_order = 'nombre', orientation = 'A', id_to_find = 1 WHERE id = 1
+20:43:05- 74585.3010 SELECT browse_state, column_order, orientation, id_to_find FROM historicos_usuarios WHERE cTableName = 'tipos_notas_shell' AND usuario_id = '000' LIMIT 1
+20:43:05- 74585.5060 finally
+20:43:05- 74585.5070 hb_isarray( aFetch )
+20:43:13- 74593.6800 UPDATE historicos_usuarios SET browse_state = 'XS1:{{"_nCreationOrders",{1}},{"_nRowHeight",17},{"_nWidths",{100}},{"_lHides",{.F.}},{"_cGrpHdrs",{}},{"_cHeaders",{"Tipo"}}}', column_order = 'nombre', orientation = 'A', id_to_find = 1 WHERE id = 1
+20:43:23- 74603.7410 SELECT browse_state, column_order, orientation, id_to_find FROM historicos_usuarios WHERE cTableName = 'tipos_notas_shell' AND usuario_id = '000' LIMIT 1
+20:43:23- 74603.9070 finally
+20:43:23- 74603.9080 hb_isarray( aFetch )
+20:43:27- 74607.9150 UPDATE historicos_usuarios SET browse_state = 'XS1:{{"_nCreationOrders",{1}},{"_nRowHeight",17},{"_nWidths",{100}},{"_lHides",{.F.}},{"_cGrpHdrs",{}},{"_cHeaders",{"Tipo"}}}', column_order = 'nombre', orientation = 'A', id_to_find = 1 WHERE id = 1
+20:43:40- 74620.9660 SELECT browse_state, column_order, orientation, id_to_find FROM historicos_usuarios WHERE cTableName = 'tipos_notas_shell' AND usuario_id = '000' LIMIT 1
+20:43:41- 74621.1550 finally
+20:43:41- 74621.1560 hb_isarray( aFetch )
+20:43:44- 74624.9540 UPDATE historicos_usuarios SET browse_state = 'XS1:{{"_nCreationOrders",{1}},{"_nRowHeight",17},{"_nWidths",{100}},{"_lHides",{.F.}},{"_cGrpHdrs",{}},{"_cHeaders",{"Tipo"}}}', column_order = 'nombre', orientation = 'A', id_to_find = 1 WHERE id = 1
+20:44:17- 74657.2990 SELECT browse_state, column_order, orientation, id_to_find FROM historicos_usuarios WHERE cTableName = 'tipos_notas_shell' AND usuario_id = '000' LIMIT 1
+20:44:17- 74657.4670 finally
+20:44:17- 74657.4680 hb_isarray( aFetch )
+20:44:23- 74663.1590 UPDATE historicos_usuarios SET browse_state = 'XS1:{{"_nCreationOrders",{1}},{"_nRowHeight",17},{"_nWidths",{100}},{"_lHides",{.F.}},{"_cGrpHdrs",{}},{"_cHeaders",{"Tipo"}}}', column_order = 'nombre', orientation = 'A', id_to_find = 1 WHERE id = 1
+21:02:23- 75743.9410 SELECT browse_state, column_order, orientation, id_to_find FROM historicos_usuarios WHERE table_name = 'tipos_notas_shell' AND usuario_id = '000' LIMIT 1
+21:02:23- 75743.9420 ::Query( cSentence )
+21:02:23- 75743.9430 oStmt:fetchAll( FETCH_HASH )
+21:02:23- 75743.9430 finally
+21:02:23- 75743.9440 oStmt:free()
+21:02:23- 75743.9440 hb_isarray( aFetch )
+21:02:23- 75743.9450 RETURN( aFetch )

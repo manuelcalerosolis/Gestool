@@ -263,15 +263,13 @@ FUNCTION lStartCheck()
       // openWebBrowser()
    // end if
 
-   // Test---------------------------------------------------------------------
-
-   Test()
-
    // Texto limpio y a trabajar------------------------------------------------
 
    oMsgText()
 
    CursorWe()
+
+   Test()
 
 RETURN ( .t. )
 
@@ -279,11 +277,7 @@ RETURN ( .t. )
 
 FUNCTION Test()
 
-   TiposNotasController();
-      :New();
-      :activateShell()
-
-Return ( nil )
+RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 
@@ -2712,7 +2706,7 @@ FUNCTION CreateAcceso( oWnd )
 
    oGrupo               := TGrupoAcceso()
 
-   oGrupo:nBigItems     := 3
+   oGrupo:nBigItems     := 4
    oGrupo:cPrompt       := 'Ayudas'
    oGrupo:cLittleBitmap := "gc_lifebelt_16"
    oGrupo:cBigBitmap    := "gc_lifebelt_32"
@@ -2743,6 +2737,16 @@ FUNCTION CreateAcceso( oWnd )
    oItem:cMessage       := 'Solicitar asistencia remota'
    oItem:bAction        := {|| RunAsistenciaRemota() }
    oItem:cId            := "01095"
+   oItem:cBmp           := "gc_user_headset_16"
+   oItem:cBmpBig        := "gc_user_headset_32"
+   oItem:lShow          := .f.
+
+   oItem                := oItemAyudas:Add()
+   oItem:oGroup         := oGrupo
+   oItem:cPrompt        := 'Test'
+   oItem:cMessage       := 'Test'
+   oItem:bAction        := {||TiposImpresorasController():New():ActivateNavigatorView() }
+   oItem:cId            := "99999"
    oItem:cBmp           := "gc_user_headset_16"
    oItem:cBmpBig        := "gc_user_headset_32"
    oItem:lShow          := .f.
@@ -5424,7 +5428,7 @@ FUNCTION appConnectADS()
    adsTestRecLocks( .t. )
 
    adsSetDeleted( .t. )
-   adsCacheOpenTables( 250 )
+   // adsCacheOpenTables( 250 )
 
    // Conexion con el motor de base de datos-----------------------------------
 

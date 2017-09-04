@@ -4391,6 +4391,8 @@ FUNCTION ContabilizaReciboCliente( oBrw, oTree, lSimula, aSimula, dbfFacCliT, db
 
       if lAplicacionContaplus()
 
+         setLastGuid()
+
          if nImpRec != 0
 
              aadd( aSimula, MkAsiento( nAsiento,;
@@ -4511,14 +4513,14 @@ FUNCTION ContabilizaReciboCliente( oBrw, oTree, lSimula, aSimula, dbfFacCliT, db
 
          aWriteAsiento( aSimula, cCodDiv, .t., oTree, cRecibo, nAsiento )
 
-         lReturn     := lContabilizaReciboCliente( cRecibo, nAsiento, lFromFactura, oTree, dbfFacCliP )
+         lReturn     := lContabilizaReciboCliente( nRecibo, aSimula, nAsiento, lFromFactura, oTree, dbfFacCliP )
 
       end if
 
       if ( lSimula .and. !lFromFactura )
          lReturn     := msgTblCon( aSimula, cCodDiv, dbfDiv, !lErrorFound, cRecibo, ;
                                     {||   aWriteAsiento( aSimula, cCodDiv, .t., oTree, cRecibo, nAsiento ), ;
-                                          lContabilizaReciboCliente( cRecibo, nAsiento, lFromFactura, oTree, dbfFacCliP ) } )
+                                          lContabilizaReciboCliente( nRecibo, aSimula, nAsiento, lFromFactura, oTree, dbfFacCliP ) } )
       end if
 
    end if
@@ -4538,16 +4540,37 @@ RETURN ( lReturn )
 
 //------------------------------------------------------------------------//
 
-Function lContabilizaReciboCliente( cRecibo, nAsiento, lFromFactura, oTree, dbfFacCliP )
+Function lContabilizaReciboCliente( nRecibo, aSimula, nAsiento, lFromFactura, oTree, dbfFacCliP )
 
-   if dbLock( dbfFacCliP )
-      ( dbfFacCliP )->lConPgo  := .t.
-      ( dbfFacCliP )->( dbUnLock() )
-   end if
+   local aAsiento := atail( aSimula )
+   local nRecno   := ( dbfFacCliP )->( recno() )
+   local cOrder   := ( dbfFacCliP )->( ordsetfocus() )
 
-   if !lFromFactura
-      oTree:Select( oTree:Add( "Recibo : " + rtrim( cRecibo ) + " asiento generado num. " + alltrim( str( nAsiento ) ), 1 ) )
-   end if
+   if dbseekinord( nRecibo, "nNumFac", dbfFacCliP )
+
+      if dbDialogLock( dbfFacCliP )
+         
+         ( dbfFacCliP )->lConPgo       := .t.
+         if ( getDiarioDatabaseContaplus() )->( fieldpos( "Guid" ) ) != 0
+            ( dbfFacCliP )->cConGuid   := aAsiento[ ( getDiarioDatabaseContaplus() )->( fieldpos( "Guid" ) ) ]
+         end if 
+
+         ( dbfFacCliP )->( dbunlock() )
+
+      end if
+
+      if !lFromFactura
+         oTree:Select( oTree:Add( "Recibo : " + rtrim( nRecibo ) + " asiento generado num. " + alltrim( str( nAsiento ) ), 1 ) )
+      end if
+
+   else 
+
+      msgStop( "Recibo " + nRecibo + " no encontado" )
+
+   end if 
+
+   ( dbfFacCliP )->( ordsetfocus( cOrder ) )
+   ( dbfFacCliP )->( dbgoto( nRecno ) )
 
 RETURN ( .t. )
 

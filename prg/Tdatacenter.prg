@@ -141,6 +141,7 @@ CLASS TDataCenter
    METHOD CreateAllLocksTablesUsers()
    METHOD DeleteAllLocksTablesUsers()
    METHOD GetAllLocksTablesUsers()
+   METHOD GetAllTables()
    METHOD CloseAllLocksTablesUsers()      INLINE ( ::CloseArea( "AllLocks" ) )
 
    METHOD configDatabaseCDXLocal()
@@ -1583,6 +1584,26 @@ METHOD GetAllLocksTablesUsers()
    cStm           := "EXECUTE PROCEDURE mgGetAllLocksAllTablesAllUsers();"
 
 RETURN ( ::ExecuteSqlStatement( cStm, "AllLocks" ) )
+
+//---------------------------------------------------------------------------//
+
+METHOD GetAllTables( ctext )
+
+  local cStm
+
+  DEFAULT cText := ""
+
+  /*
+  Creamos la instruccion------------------------------------------------------
+  */
+
+  cStm           := "EXECUTE PROCEDURE sp_mgGetAllTables();"
+
+  ::ExecuteSqlStatement( cStm, "GetAllTables" )
+
+  ( "GetAllTables" )->( browse( cText ) )
+
+RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 

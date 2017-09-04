@@ -1,11 +1,11 @@
 HB                   = 	\harbour_bcc582\
 
 HBINCLUDE            = 	\harbour_bcc582\Include
-FWINCLUDE            = 	\Fwh1701\Include
+FWINCLUDE            = 	\Fwh1705\Include
 GTINCLUDE            = 	.\Include
 
 HBLIB                = 	\harbour_bcc582\Lib
-FWLIB                = 	\Fwh1701\lib
+FWLIB                = 	\Fwh1705\lib
 
 RESOURCE             = 	.\Resource
 
@@ -14,12 +14,12 @@ BORLANDLIB           = 	\Bcc582\lib
 
 IMG2PDFLIB           = 	\Img2Pdf
 
-OBJ                  = 	Obj1701
+OBJ                  = 	Obj1705
 
 SOURCEPRG            = 	.\Prg;.\Prg\mail;.\Prg\Comercio;.\Prg\Models;.\Prg\Views;.\Prg\Controllers;.\Prg\Services;.\Prg\Tablet;.\Prg\tablet\view;.\Prg\tablet\view\documentos;.\Prg\tablet\view\terceros;.\Prg\tablet\view\documentos\ventas;.\Prg\tablet\view\documentos\terceros;.\Prg\tablet\utils;.\Prg\tablet\presenter;.\Prg\tablet\presenter\terceros;.\Prg\tablet\presenter\documentos;.\Prg\tablet\presenter\documentos\ventas;
 SOURCEC 				   =	C
 
-PPO 					   = 	Ppo1701
+PPO 					   = 	Ppo1705
 
 EXE 					   = 	Bin\$(TARGET).exe
 
@@ -162,7 +162,8 @@ Tblconv.prg             										\
 Regalm.prg              										\
 Rhtml.prg               										\
 Tshell.prg              										\
-SQLTshell.prg 														\
+SQLNavigatorView.prg 											\
+SQLShellView.prg 													\
 Rfile.prg               										\
 TdprnC3.prg             										\
 Animat.prg              										\
@@ -412,7 +413,7 @@ SincronizaPreventa.prg  													\
 MsTable.prg             													\
 MsError.prg 																	\
 SQLBaseView.prg 																\
-TiposImpresoras.prg       													\
+TiposImpresorasView.prg       													\
 TiposNotas.prg       														\
 Etiquetas.prg       															\
 TiposVentas.prg       														\
@@ -694,7 +695,8 @@ Tblconv.obj                                        	\
 Regalm.obj                                         	\
 Rhtml.obj                                          	\
 Tshell.obj                                         	\
-SQLTshell.obj 														\
+SQLNavigatorView.obj 											\
+SQLShellView.obj 													\
 RpreviewC3.obj 													\
 ReportC3.obj                                       	\
 RocolumnC3.obj                                     	\
@@ -960,7 +962,7 @@ SincronizaPreventa.obj  									\
 MsTable.obj             									\
 MsError.obj 													\
 SQLBaseView.obj 															\
-TiposImpresoras.obj       												\
+TiposImpresorasView.obj       												\
 TiposNotas.obj       													\
 Etiquetas.obj       														\
 TiposVentas.obj       													\
@@ -1232,7 +1234,8 @@ $(OBJ)\Tblconv.obj               									+
 $(OBJ)\Regalm.obj                									+
 $(OBJ)\Rhtml.obj                 									+
 $(OBJ)\Tshell.obj                									+
-$(OBJ)\SQLTshell.obj              									+
+$(OBJ)\SQLNavigatorView.obj              							+
+$(OBJ)\SQLShellView.obj            									+
 $(OBJ)\RocolumnC3.obj            									+
 $(OBJ)\Rfile.obj                 									+
 $(OBJ)\Tdprnc3.obj               									+
@@ -1478,7 +1481,7 @@ $(OBJ)\SincronizaPreventa.obj   									+
 $(OBJ)\MsTable.obj   												+ 
 $(OBJ)\MsError.obj   												+ 
 $(OBJ)\SQLBaseView.obj 												+
-$(OBJ)\TiposImpresoras.obj      									+
+$(OBJ)\TiposImpresorasView.obj      							+
 $(OBJ)\TiposNotas.obj      										+
 $(OBJ)\Etiquetas.obj      											+
 $(OBJ)\TiposVentas.obj      										+

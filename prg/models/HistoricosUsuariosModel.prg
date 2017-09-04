@@ -40,15 +40,23 @@ METHOD getHistory( cTable )
 
    local oStmt
    local aFetch
-   local cSentence   := "SELECT browse_state, column_order, orientation, id_to_find "                                   + ;
-                           "FROM " + ::cTableName + " "                                                                 + ;
-                           "WHERE cTableName = " + toSQLString( cTable ) + " AND usuario_id = " + toSQLString( oUser():cCodigo() )
+   local cSentence   := "SELECT browse_state, column_order, orientation, id_to_find "        + ;
+                           "FROM " + ::cTableName + " "                                      + ;
+                           "WHERE table_name = " + toSQLString( cTable ) + " "               + ;
+                              "AND usuario_id = " + toSQLString( oUser():cCodigo() ) + " "   + ;
+                           "LIMIT 1"
 
    try 
 
-    	oStmt          := getSQLDatabase():Query( cSentence )
+      logwrite( cSentence, "cSql" )
+
+    	oStmt          := ::Query( cSentence )
+
+      logwrite( "::Query( cSentence )", "cSql" )
 
     	aFetch         := oStmt:fetchAll( FETCH_HASH )
+
+      logwrite( "oStmt:fetchAll( FETCH_HASH )", "cSql" )
 
    catch
 
@@ -56,14 +64,24 @@ METHOD getHistory( cTable )
 
    finally
 
+      logwrite( "finally", "cSql" )
+
       if !empty( oStmt )
-        oStmt:free()
+
+         logwrite( "oStmt:free()", "cSql" )
+
+         oStmt:free()
       end if    
    
    end
 
-   if !empty( aFetch ) .and. hb_isarray( aFetch )
-    	RETURN ( atail( aFetch ) )
+   logwrite( "hb_isarray( aFetch )", "cSql" )
+
+   if hb_isarray( aFetch )
+
+      logwrite( "RETURN( aFetch )", "cSql" )
+
+    	RETURN ( aFetch )
    end if 
 
 RETURN ( nil )

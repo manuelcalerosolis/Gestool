@@ -112,7 +112,7 @@ RETURN ( Self )
 
 //----------------------------------------------------------------------------//
 
-static function GenMenuBlock( oCol )
+STATIC FUNCTION GenMenuBlock( oCol )
 
 RETURN {|| iif( oCol:lHide, oCol:Show(), oCol:Hide() ) }
 

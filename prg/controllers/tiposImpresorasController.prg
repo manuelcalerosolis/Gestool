@@ -8,10 +8,6 @@ CLASS TiposImpresorasController FROM SQLBaseController
 
    METHOD   New()
 
-   METHOD   buildSQLModel( this )         INLINE ( TiposImpresorasModel():New( this ) )
-   
-   METHOD   buildSQLView( this )				INLINE ( TiposImpresoras():New( this ) )
-  
    METHOD   getFieldFromBrowse()          INLINE ( ::getRowSet():fieldGet( "nombre" ) )
  
    METHOD   validNombre( oGetNombre )
@@ -22,13 +18,19 @@ END CLASS
 
 METHOD New()
 
-   ::idUserMap             := "01115"
+   ::cTitle                := "Tipos de impresoras"
 
-   ::setTitle( "Tipos de impresoras" )
+   ::cImage                := "gc_printer2_16"
 
-   ::Super:New()
+   ::nLevel                := nLevelUsr( "01115" )
 
-Return ( Self )
+   ::oModel                := TiposImpresorasModel():New( self )
+
+   ::oDialogView           := TiposImpresorasView():New( self )
+
+   ::oNavigatorView        := SQLNavigatorView():New( self )
+
+RETURN ( Self )
 
 //---------------------------------------------------------------------------//
 

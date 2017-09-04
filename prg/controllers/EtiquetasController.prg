@@ -43,7 +43,6 @@ CLASS EtiquetasController FROM SQLBaseController
 
    METHOD   validBrowse()
 
-
    METHOD   initTree( oTree )                               INLINE ( oTree:deleteAll(), oTree:Refresh() )
 
    METHOD   setTreeSelectedItems( oTree )

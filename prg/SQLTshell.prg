@@ -8,7 +8,7 @@
 // Clases/métodos del programa
 //------------------------------------------------------------------------//
 
-CLASS SQLTShell FROM TShell
+CLASS SQLNavigatorView FROM TMdiChild
 
    DATA  bEnd
 
@@ -16,6 +16,7 @@ CLASS SQLTShell FROM TShell
 
    METHOD setXAlias( oModel )             INLINE ( if( hb_isobject( oModel ), ::oModel := oModel, ) )
 
+   METHOD getXBrowse()                    INLINE ( ::oBrw )
    METHOD createXBrowse()
    METHOD createXFromCode()
 
@@ -23,11 +24,14 @@ CLASS SQLTShell FROM TShell
 
    METHOD setFilter()                     INLINE ( Self )
 
-   METHOD setComboBoxChange( bChange )    INLINE ( ::oWndBar:SetComboBoxChange( bChange ) )
-
    METHOD fastSeek()
 
-   METHOD setDClickData( bAction )       
+   // Events-------------------------------------------------------------------
+
+   METHOD setDoubleClickInData( bAction )  
+   METHOD setComboBoxChange( bChange )    INLINE ( ::oWndBar:SetComboBoxChange( bChange ) )
+   METHOD setValid( bAction )             INLINE ( ::bValid := bAction ) 
+   METHOD setEnd( bAction )               INLINE ( ::bEnd := bAction ) 
 
    METHOD end()
 
@@ -39,7 +43,6 @@ METHOD CreateXBrowse()
 
    local oError
    local oBlock
-   local lCreateXBrowse       := .t.
 
    oBlock                     := ErrorBlock( { | oError | ApoloBreak( oError ) } )
    BEGIN SEQUENCE
@@ -75,21 +78,16 @@ METHOD CreateXBrowse()
          ::oBrw:nRowHeight    := 36
       endif
 
-      ::oBrw:nLeft            := dfnTreeViewWidth + dfnSplitterWidth // 1
+      ::oBrw:nLeft            := dfnTreeViewWidth + dfnSplitterWidth 
       ::oBrw:nRight           := ::nRight - ::nLeft
       ::oBrw:nBottom          := ::nBottom - ::nTop
 
    RECOVER USING oError
-
       msgStop( ErrorMessage( oError ), "Imposible crear rejilla de datos" )
-
-      lCreateXBrowse          := .f.
-
    END SEQUENCE
-
    ErrorBlock( oBlock )
 
-Return ( lCreateXBrowse )
+Return ( ::oBrw )
 
 //---------------------------------------------------------------------------//
 
@@ -160,7 +158,7 @@ Return ( lFind )
 
 //--------------------------------------------------------------------------//
 
-METHOD setDClickData( bAction )
+METHOD setDoubleClickInData( bAction )
 
    aeval( ::oBrw:aCols, {|oCol| if( empty( oCol:bLDClickData ) .and. !( oCol:lEditable ), oCol:bLDClickData := bAction, ) } )
 

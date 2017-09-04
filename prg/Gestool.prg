@@ -82,8 +82,6 @@ FUNCTION Main( paramsMain, paramsSecond, paramsThird )
    
    appDialogExtend() 
 
-   mainTest()
-
    appLoadAds()
 
    // Conexión con SQLite------------------------------------------------------
@@ -112,6 +110,8 @@ FUNCTION Main( paramsMain, paramsSecond, paramsThird )
    end if
 
    TDataCenter():BuildData()
+
+   mainTest()
 
    // Icono--------------------------------------------------------------------
 

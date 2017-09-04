@@ -1126,15 +1126,7 @@ FUNCTION Client( oMenuItem, oWnd, cCodCli )
          TOOLTIP  "Rotor" ;
          LEVEL    ACC_EDIT
 
-         /*DEFINE BTNSHELL RESOURCE "GC_FORM_PLUS2_" OF oWndBrw ;
-            NOBORDER ;
-            ACTION   ( oDetCamposExtra:Play( ( D():Clientes( nView ) )->Cod ) );
-            TOOLTIP  "Campos extra" ;
-            FROM     oRotor ;
-            ALLOW    EXIT ;
-            LEVEL    ACC_EDIT*/
-
-         DEFINE BTNSHELL RESOURCE "GC_NOTEBOOK_USER_" OF oWndBrw ;
+       DEFINE BTNSHELL RESOURCE "GC_NOTEBOOK_USER_" OF oWndBrw ;
             ALLOW    EXIT ;
             ACTION   ( PreCli( nil, oWnd, ( D():Clientes( nView ) )->Cod, nil ) );
             TOOLTIP  "Añadir presupuesto de cliente" ;

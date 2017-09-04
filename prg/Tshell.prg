@@ -164,7 +164,7 @@ CLASS TShell FROM TMdiChild
    METHOD CreateXBrowse()
    METHOD CreateXFromCode()
 
-   METHOD getBrowse()            INLINE ( ::oBrw )
+   METHOD getBrowse()            INLINE ( msgalert(hb_valtoexp(::oBrw)), ::oBrw )
 
    METHOD AddXCol()              INLINE ( ::oBrw:AddCol() )
    METHOD AddCol()               INLINE ( ::oBrw:AddCol() )
@@ -490,9 +490,9 @@ METHOD New(  nTop, nLeft, nBottom, nRight, cTitle, oMenu, oWnd, oIcon,;
 
    // Montamos el objeto browse------------------------------------------------
 
-   if !::CreateXBrowse()
-      Return .f.
-   end if
+   ::CreateXBrowse()
+
+   // Splitters----------------------------------------------------------------
 
    ::oHorizontalSplitter         := TSplitter():New( dfnSplitterHeight , 0, .f., { ::oBtnTop }, .t., { ::oBtnBar, ::oBrw }, .t., {|| 0}, {|| 0}, Self, , 800, 0, .t., .t., Rgb( 255, 255, 255 ), .f., .f., .f. )
    ::oHorizontalSplitter:lStatic := .t.
@@ -1633,9 +1633,7 @@ RETURN ( cTemp )
 
 METHOD Maximize() CLASS TShell
 
-   local oWnd
-
-   oWnd        := GetWndFrame()
+   local oWnd  := GetWndFrame()
 
    ::Restore()
 
@@ -1769,13 +1767,13 @@ METHOD ChgCombo( nTab ) CLASS TShell
    local oCol
    local cOrd                 := ""
 
-   if empty( nTab ) .and. ( ::xAlias )->( used() )
-      nTab                    := ( ::xAlias )->( ordnumber() )
-   end if 
-
    if empty( nTab ) .and. !empty( ::oWndBar )
       nTab                    := ::oWndBar:GetComboBoxAt( .t. )
    end if
+
+   if empty( nTab ) .and. ( ::xAlias )->( used() )
+      nTab                    := ( ::xAlias )->( ordnumber() )
+   end if 
 
    nTab                       := Max( nTab, 1 )
 
@@ -2307,10 +2305,7 @@ METHOD CreateXBrowse() CLASS TShell
 
       ::oBrw:lRecordSelector  := .f.
       ::oBrw:lAutoSort        := .t.
-
-#ifndef __XHARBOUR__
       ::oBrw:lSortDescend     := .f.   
-#endif
 
       // Propiedades del control ----------------------------------------------
 
