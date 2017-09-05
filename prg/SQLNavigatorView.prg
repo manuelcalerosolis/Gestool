@@ -12,8 +12,6 @@ CLASS SQLNavigatorView
 
    DATA oController
 
-   DATA oMdiChild
-
    DATA aRect
 
    METHOD New( oController )
@@ -30,6 +28,18 @@ CLASS SQLNavigatorView
 
    METHOD getModelColumnsForNavigator()   INLINE ( if( !empty( ::getModel() ), ::getModel():getColumnsForNavigator(), ) )
    METHOD getModelHeadersForNavigator()   INLINE ( if( !empty( ::getModel() ), ::getModel():getHeadersForNavigator(), ) )
+
+   // MDI child----------------------------------------------------------------
+
+   DATA oMdiChild
+
+   METHOD CreateMDIChild()                INLINE ( ::oMdiChild := TMdiChild():New(  ::aRect[ 1 ], ::aRect[ 2 ], ::aRect[ 3 ], ::aRect[ 4 ], /*cTitle*/, /*nStyle*/, /*oMenu*/, oWnd(),;
+                                                                                    /*oIcon*/, /*lVScroll*/, /*nClrText*/, /*nClrBack*/, /*oCursor*/, /*oBrush*/, /*lPixel*/ .t.,;
+                                                                                    /*lHScroll*/, /*nHelpId*/, /*cBorder*/ "NONE", /*lSysMenu*/, /*lCaption*/ .f., /*lMin*/, /*lMax*/, /*nMenuInfo*/ ) )
+
+   METHOD ActivateMDIChild()              INLINE ( ::oMdiChild:Activate() )   // cShow, bLClicked, bRClicked, bMoved, bResized, bPainted,;
+                                                                              // bKeyDown, bInit, bUp, bDown, bPgUp, bPgDn,;
+                                                                              // bLeft, bRight, bPgLeft, bPgRight, bValid )
 
    // Top webbar---------------------------------------------------------------
 
@@ -104,6 +114,8 @@ CLASS SQLNavigatorView
 
    METHOD onChangeSearch()
 
+   METHOD refreshNavigator()           INLINE ( ::oTreeMenu:Select( ::oButtonMainTreeMenu ), ::oBrowse:SetFocus() )
+
 ENDCLASS
 
 //----------------------------------------------------------------------------//
@@ -124,9 +136,7 @@ RETURN ( Self )
 
 METHOD Activate()
 
-   ::oMdiChild    := TMdiChild():New(  ::aRect[ 1 ], ::aRect[ 2 ], ::aRect[ 3 ], ::aRect[ 4 ], /*cTitle*/, /*nStyle*/, /*oMenu*/, oWnd(),;
-                                       /*oIcon*/, /*lVScroll*/, /*nClrText*/, /*nClrBack*/, /*oCursor*/, /*oBrush*/, /*lPixel*/ .t.,;
-                                       /*lHScroll*/, /*nHelpId*/, /*cBorder*/ "NONE", /*lSysMenu*/, /*lCaption*/ .f., /*lMin*/, /*lMax*/, /*nMenuInfo*/ ) 
+   ::CreateMDIChild()
    
    ::CreateTopWebBar()
 
@@ -142,9 +152,7 @@ METHOD Activate()
 
    ::CreateSplitters()
 
-   ::oMdiChild:Activate()  // cShow, bLClicked, bRClicked, bMoved, bResized, bPainted,;
-                           // bKeyDown, bInit, bUp, bDown, bPgUp, bPgDn,;
-                           // bLeft, bRight, bPgLeft, bPgRight, bValid )
+   ::ActivateMDIChild()
 
    ::oWindowsBar:setComboBoxChange( {|| ::onChangeCombo() } )
 
@@ -340,11 +348,11 @@ RETURN ( nImageList )
 
 METHOD AddSearchButtonTreeMenu()    
 
-RETURN ( ::AddButtonTreeMenu( "Buscar", "Bus16", {|| ::oController:Search() }, "B" ) )
+RETURN ( ::AddButtonTreeMenu( "Buscar", "Bus16", {|| ::oWindowsBar:SetFocusGet() }, "B" ) )
 
 METHOD AddAppendButtonTreeMenu()    
 
-RETURN ( ::AddButtonTreeMenu( "Añadir", "New16", {|| ::oController:Append() }, "A", ACC_APPD ) )
+RETURN ( ::AddButtonTreeMenu( "Añadir", "New16", {|| ::oController:Append(), ::refreshNavigator() }, "A", ACC_APPD ) )
 
 METHOD AddDuplicateButtonTreeMenu() 
 
@@ -386,10 +394,6 @@ METHOD onClickTreeMenu()
 
    eval( oItem:bAction )
 
-   ::oTreeMenu:Select( ::oButtonMainTreeMenu )
-
-   ::oBrowse:SetFocus()
-
 RETURN ( Self )
 
 //----------------------------------------------------------------------------//
@@ -404,20 +408,23 @@ METHOD EnableWindowsBar()
 
    ::oWindowsBar:EnableComboBox( ::getModelHeadersForNavigator() )
 
+   ::onChangeCombo( ::oBrowse:getFirstVisibleColumn() )
+
 RETURN ( Self )
 
 //----------------------------------------------------------------------------//
 
-METHOD onChangeCombo()
+METHOD onChangeCombo( oColumn )
 
-   local oColumn
-   local oCombobox   := ::oWindowsBar:oComboBox()
+   local oComboBox   := ::oWindowsBar:oComboBox()
 
    if empty( oComboBox )
       RETURN ( Self )
    end if 
 
-   oColumn           := ::oBrowse:getColumnHeader( oComboBox:VarGet() )
+   if empty( oColumn )
+      oColumn        := ::oBrowse:getColumnHeader( oComboBox:VarGet() )
+   end if 
 
    if empty( oColumn )
       RETURN ( Self )
@@ -460,20 +467,28 @@ RETURN ( ::onChangeCombo() )
 METHOD onChangeSearch()
 
    local uValue
-   local lFind    := .t.
-   local oSearch  := ::oWindowsBar:oGet()
+   local nFind          := 0
+   local oSearch        := ::oWindowsBar:oGet()
+   local cOrder         := ::oWindowsBar:GetComboBox()
+   local cColumnOrder   := ::oBrowse:getColumnOrderByHeader( cOrder )
 
    if empty( oSearch )
       RETURN ( Self )
    end if 
 
-   uValue         := oSearch:oGet:Buffer()
-   uValue         := alltrim( upper( cvaltochar( uValue ) ) )
-   uValue         := strtran( uValue, chr( 8 ), "" )
+   if empty( cColumnOrder )
+      RETURN ( Self )
+   end if 
 
-   msgalert( uValue, "uValue" )
+   uValue               := oSearch:oGet:Buffer()
+   uValue               := alltrim( ( cvaltochar( uValue ) ) )
+   uValue               := strtran( uValue, chr( 8 ), "" )
 
-   if lFind 
+   nFind                := ::oController:find( uValue, cColumnOrder )
+
+   msgalert( nFind, "lFind" )
+
+   if nFind > 0
       oSearch:SetColor( Rgb( 0, 0, 0 ), Rgb( 255, 255, 255 ) )
    else
       oSearch:SetColor( Rgb( 255, 255, 255 ), Rgb( 255, 102, 102 ) )
@@ -481,6 +496,6 @@ METHOD onChangeSearch()
 
    ::oBrowse:refreshCurrent()
 
-RETURN ( lFind )
+RETURN ( nFind > 0 )
 
 //----------------------------------------------------------------------------//

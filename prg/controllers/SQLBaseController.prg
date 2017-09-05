@@ -112,8 +112,7 @@ CLASS SQLBaseController
    METHOD   saveHistory( cHistory )
       METHOD   saveHistoryBrowse()                    INLINE ( ::saveHistory( "_browse" ) )
 
-   METHOD   findGet( oFind )
-   METHOD   find( uValue )                            INLINE ( ::oModel:find( uValue ) )
+   METHOD find( uValue, cColumn )                     INLINE ( ::oModel:find( uValue, cColumn ) )
 
    METHOD   findByIdInRowSet( uValue )                INLINE ( if( !empty( ::getRowSet() ), ::getRowset():find( uValue, "id", .t. ), ) )
 
@@ -542,22 +541,6 @@ METHOD Delete()
 RETURN ( Self )
 
 //----------------------------------------------------------------------------//
-
-METHOD findGet( oFind )
-
-	local uValue
-
-   if empty( oFind )
-      RETURN ( .f. )
-   end if 
-
-	uValue        := oFind:oGet:Buffer()
-	uValue        := alltrim( upper( cvaltochar( uValue ) ) )
-	uValue        := strtran( uValue, chr( 8 ), "" )
-
-RETURN ( ::find( uValue ) )
-
-//---------------------------------------------------------------------------//
 
 METHOD getRowSet()
 

@@ -470,13 +470,12 @@ RETURN ( cSQLSelect )
 
 //---------------------------------------------------------------------------//
 
-METHOD find( cFind )
+METHOD find( uValue, cColumn )
 
-   ::setFind( cFind )
+   msgalert(uValue, "uValue SQLBaseModel")
+   msgalert(cColumn, "cColumn SQLBaseModel")
 
-   ::buildRowSet()
-
-RETURN ( ::oRowSet:recCount() > 0 )
+RETURN ( ::getRowSet():find( uValue, cColumn ) )
 
 //----------------------------------------------------------------------------//
 

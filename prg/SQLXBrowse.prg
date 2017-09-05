@@ -41,6 +41,9 @@ CLASS SQLXBrowse FROM TXBrowse
    
    METHOD getColumnHeader( cHeader )
    METHOD getColumnOrder( cSortOrder )
+   METHOD getColumnOrderByHeader( cHeader )  
+
+   METHOD getFirstVisibleColumn()
 
    METHOD RButtonDown( nRow, nCol, nFlags )
 
@@ -281,7 +284,13 @@ RETURN ( Self )
 
 METHOD getColumnHeader( cHeader )
 
-   local nPosition   := ascan( ::aCols, {|o| o:cHeader == cHeader } )
+   local nPosition   
+
+   if !hb_ischar( cHeader )
+      RETURN ( nil )
+   end if 
+
+   nPosition   := ascan( ::aCols, {|o| o:cHeader == cHeader } )
 
    if nPosition != 0
       RETURN ( ::aCols[ nPosition ] )
@@ -293,11 +302,43 @@ RETURN ( nil )
 
 METHOD getColumnOrder( cSortOrder )
 
-   local nPosition   := ascan( ::aCols, {|o| o:cSortOrder == cSortOrder } )
+   local nPosition   
+
+   if !hb_ischar( cSortOrder )
+      RETURN ( nil )
+   end if 
+
+   nPosition   := ascan( ::aCols, {|o| o:cSortOrder == cSortOrder } )
 
    if nPosition != 0
       RETURN ( ::aCols[ nPosition ] )
    end if 
+
+RETURN ( nil )
+
+//----------------------------------------------------------------------------//
+
+METHOD getColumnOrderByHeader( cHeader )
+
+   local oCol        := ::getColumnHeader( cHeader )
+
+   if !empty( oCol )
+      RETURN ( oCol:cSortOrder )
+   end if 
+
+RETURN ( nil )
+
+//----------------------------------------------------------------------------//
+
+METHOD getFirstVisibleColumn()
+
+   local oCol
+
+   for each oCol in ::aCols
+      if !oCol:lHide
+         RETURN ( oCol )
+      end if 
+   next
 
 RETURN ( nil )
 

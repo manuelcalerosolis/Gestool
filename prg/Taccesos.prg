@@ -156,6 +156,7 @@ CLASS TAcceso
    METHOD EnableGet()                     INLINE ( if( !empty( ::oGet ), ( ::oGet:Enable(), ::oGet:Show(), ::oGet:SetColor( Rgb( 0, 0, 0 ), Rgb( 255, 255, 255 ) ) ), ) )
    METHOD CleanGet()                      INLINE ( if( !empty( ::oGet ), ( ::oGet:cText( Space( 200 ) ), ::oGet:SetColor( Rgb( 0, 0, 0 ), Rgb( 255, 255, 255 ) ) ), ) )
    METHOD SetGetFocus()                   INLINE ( if( !empty( ::oGet ), ::oGet:SetFocus(), ) )
+   METHOD SetFocusGet()                   INLINE ( if( !empty( ::oGet ), ::oGet:SetFocus(), ) )   
    METHOD HideGet()                       INLINE ( if( !empty( ::oGet ), ::oGet:Hide(), ) )
 
    METHOD ShowButtonFilter()              INLINE ( if( !empty( ::oButtonFilter ), ::oButtonFilter:Show(), ) )
