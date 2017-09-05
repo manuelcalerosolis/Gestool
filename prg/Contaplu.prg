@@ -60,8 +60,6 @@ static aSerie                    := {"A","B","C","D","E","F","G","H","I","J","K"
 
 static lAsientoIntraComunitario  := .f.
 
-static cLastGuid
-
 //----------------------------------------------------------------------------//
 
 FUNCTION getDiarioDatabaseContaplus()     ; RETURN ( cDiario )
@@ -69,20 +67,6 @@ FUNCTION getDiarioSiiDatabaseContaplus()  ; RETURN ( cDiarioSii )
 FUNCTION getCuentaDatabaseContaplus()     ; RETURN ( cCuenta )
 FUNCTION getSubCuentaDatabaseContaplus()  ; RETURN ( cSubCuenta )
 FUNCTION getEmpresaDatabaseContaplus()    ; RETURN ( cEmpresa )
-
-//----------------------------------------------------------------------------//
-
-FUNCTION setLastGuid( cGuid )
-
-   cLastGuid   := cGuid
-
-RETURN ( cLastGuid )
-
-//----------------------------------------------------------------------------//
-
-FUNCTION getLastGuid( cGuid )
-
-RETURN ( if( hb_isnil( cLastGuid ), "", cLastGuid ) )
 
 //----------------------------------------------------------------------------//
 
@@ -1513,7 +1497,6 @@ Static FUNCTION MkAsientoContaplus( Asien,;
                                     lSII )
 
    local aTemp
-   local cGuid 
 
    // Asignacion de campos--------------------------------------------------------
 
@@ -1593,9 +1576,7 @@ Static FUNCTION MkAsientoContaplus( Asien,;
    // Conectores GUID----------------------------------------------------------
 
    if ( cDiario )->( fieldpos( "Guid" ) ) != 0
-      cGuid                                              := win_uuidcreatestring()
-      aTemp[ ( cDiario )->( fieldpos( "Guid" ) ) ]       := cGuid
-      setLastGuid( cGuid )
+      aTemp[ ( cDiario )->( fieldpos( "Guid" ) ) ]       := win_uuidcreatestring()
    end if
 
    // l340/lSII----------------------------------------------------------------

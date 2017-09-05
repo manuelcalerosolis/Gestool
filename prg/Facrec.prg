@@ -13,105 +13,107 @@
 #define _CSERIE              1      //,"C",  1, 0, "Serie de la factura A o B" },;
 #define _NNUMFAC             2      //,"N",  9, 0, "Número de la factura" },;
 #define _CSUFFAC             3      //,"C",  2, 0, "Sufijo de la factura" },;
-#define _CTURFAC             4      //,"C",  2, 0, "Sufijo de la factura" },;
-#define _DFECFAC             5      //,"D",  8, 0, "Fecha de la factura" },;
-#define _CCODCLI             6      //,"C", 12, 0, "Codigo del cliente" },;
-#define _CCODALM             7      //,"C", 16, 0, "Codigo de almacen" },;
-#define _CCODCAJ             8      //,"C",  3, 0, "Codigo de almacen" },;
-#define _CNOMCLI             9      //,"C", 50, 0, "Nombre del cliente" },;
-#define _CDIRCLI            10      //,"C", 60, 0, "dirección del cliente" },;
-#define _CPOBCLI            11      //,"C", 25, 0, "Población del cliente" },;
-#define _CPRVCLI            12      //,"C", 20, 0, "Provincia del cliente" },;
-#define _NCODPROV           13      //,"N",  2, 0, "Número de provincia cliente" },;
-#define _CPOSCLI            14      //,"C",  5, 0, "Codigos postal del cliente" },;
-#define _CDNICLI            15      //,"C", 15, 0, "DNI/CIF del cliente" },;
-#define _LMODCLI            16
-#define _LMAYOR             17      //,"L",  1, 0, "Lógico de mayorista" },;
-#define _NTARIFA            18      //,"L",  1, 0, "Lógico de mayorista" },;
-#define _CCODAGE            19      //,"C",  3, 0, "Codigo del agente" },;
-#define _CCODRUT            20      //,"C",  4, 0, "Codigo de la ruta" },;
-#define _CCODTAR            21      //,"C",  5, 0, "Codigo de la tarifa" },;
-#define _CCODOBR            22      //,"C",  3, 0, "Codigo de la dirección" },;
-#define _NPCTCOMAGE         23      //,"N",  6, 2, "Porcentaje de comisión del agente" },;
-#define _LLIQUIDADA         24      //,"L",  1, 0, "Lógico de la liquidación" },;
-#define _LCONTAB            25      //,"L",  1, 0, "Lógico de la contabilización" },;
-#define _DFECENT            26      //,"D",  8, 0, "Fecha de entrega" },;
-#define _CSUFAC             27      //,"C", 10, 0, "Su factura" },;
-#define _LIMPALB            28      //,"L", 10, 0, "Su pedido" },;
-#define _CCONDENT           29      //,"C", 20, 0, "Condición de entrada" },;
-#define _MCOMENT            30      //,"M", 10, 0, "Comentarios" },;
-#define _MOBSERV            31      //,"M", 10, 0, "Observaciones" },;
-#define _CCODPAGO           32      //,"C",  2, 0, "Codigo del tipo de pago" },;
-#define _NBULTOS            33      //,"N",  3, 0, "Número de bultos" },;
-#define _NPORTES            34      //,"N",  6, 0, "Valor de los portes" },;
-#define _NIVAMAN            35      //,"N",  6, 0, "Valor de la mano de dirección" },;
-#define _NMANOBR            36      //,"N",  6, 0, "Valor de la mano de dirección" },;
-#define _CNUMFAC            37      //,"C", 12, 0, "Número de albaran" },;
-#define _NTIPOFAC           38      //,"N",  1, 0, "Número del tipo de factura" },;
-#define _CDTOESP            39      //,"N",  5, 2, "Porcentaje de descuento especial" },;
-#define _NDTOESP            40      //,"N",  5, 2, "Porcentaje de descuento especial" },;
-#define _CDPP               41      //,"N",  5, 2, "Porcentaje de descuento por pronto pago" },;
-#define _NDPP               42      //,"N",  5, 2, "Porcentaje de descuento por pronto pago" },;
-#define _CDTOUNO            43      //,"C", 25, 0, "Descripción de porcentaje de descuento personalizado"
-#define _NDTOUNO            44      //,"N",  4, 1, "Porcentaje de descuento por descuento personalizado"
-#define _CDTODOS            45      //,"C", 25, 0, "Descripción de porcentaje de descuento personalizado"
-#define _NDTODOS            46      //,"N",  4, 1, "Porcentaje de descuento por descuento personalizado"
-#define _NDTOCNT            47      //,"N",  6, 2, "Porcentaje de Descuento por pago de Contado" },;
-#define _NDTORAP            48      //,"N",  6, 2, "Porcentaje de Descuento por Rappel" },;
-#define _NDTOPUB            49      //,"N",  6, 2, "Porcentaje de Descuento por Publicidad" },;
-#define _NDTOPGO            50      //,"N",  6, 2, "Porcentaje de Descuento por Pago Centralizado" },;
-#define _NDTOPTF            51      //,"N",  7, 2, "Descuento por plataforma" },;
-#define _NTIPOIVA           52      //,"N",  1, 0, "Número del tipo de " + cImp() },;
-#define _NPORCIVA           53      //,"N",  4, 1, "Porcentaje de " + cImp() },;
-#define _LRECARGO           54      //,"L",  1, 0, "Lógico para recargo" },;
-#define _CREMITIDO          55      //,"C", 50, 0, "Campo de remitido" },;
-#define _LIVAINC            56      //,"N",  1, 0, "Selección de " + cImp() },;
-#define _LSNDDOC            57      //,"L",  1, 0, "Lógico para documento enviado" },;
-#define _CDIVFAC            58      //,"C",  3, 0, "Codigo de la divisa" },;
-#define _NVDVFAC            59      //,"N", 10, 4, "Cambio de la divisa" },;
-#define _CRETPOR            60      //,"C",100, 0, "Retirado por" },;
-#define _CRETMAT            61      //,"C",  8, 0, "Matricula" } }
-#define _CNUMDOC            62      //,"C",  8, 0, "Matricula" } }
-#define _NREGIVA            63
-#define _CCODPRO            64
-#define _CDOCORG            65
-#define _NNUMLIQ            66     //"N",  9, 0, "Número liquidación" }                                  "",                   "", "( cDbf )"} )
-#define _CSUFLIQ            67     //"C",  2, 0, "Sufijo liquidación" }                                  "",                   "", "( cDbf )"} )
-#define _NIMPLIQ            68     //"N", 16, 6, "Importe liquidación" }                                 "",                   "", "( cDbf )"} )
-#define _LLIQUID            69     //"L",  1, 0, "Logico de liquidado" }                                 "",                   "", "( cDbf )"} )
-#define _CCODTRN            70     //"L",  1, 0, "Logico de liquidado" }                                 "",                   "", "( cDbf )"} )
-#define _NKGSTRN            71     //"L",  1, 0, "Logico de liquidado" }                                 "",                   "", "( cDbf )"} )
-#define _LCLOFAC            72     //"L",  1, 0, "Logico de liquidado" }                                 "",                   "", "( cDbf )"} )
-#define _CABNFAC            73     //"C", 12, 0, "Número de presupuesto
-#define _CANTFAC            74     //"C", 12, 0, "Número de presupuesto
-#define _NPCTRET            75
-#define _CCODUSR            76
-#define _DFECCRE            77
-#define _CTIMCRE            78
-#define _CCODGRP            79
-#define _LIMPRIMIDO         80      //   L      1     0
-#define _DFECIMP            81      //   D      8     0
-#define _CHORIMP            82      //   C      5     0
-#define _CCODDLG            83
-#define _CMANOBR            84
-#define _CMOTREC            85      //   C     35     0
-#define _CCAUREC            86      //   C     35     0
-#define _CTLFCLI            87      //   C     20     0
-#define _NTOTNET            88
-#define _NTOTIVA            89
-#define _NTOTREQ            90
-#define _NTOTFAC            91
-#define _CBANCO             92
-#define _CPAISIBAN          93
-#define _CCTRLIBAN          94
-#define _CENTBNC            95
-#define _CSUCBNC            96
-#define _CDIGBNC            97
-#define _CCTABNC            98
-#define _LOPERPV            99
-#define _NDTOTARIFA 	      100
-#define _TFECFAC 		      101
-#define _CCENTROCOSTE	   102
+#define _CGUID               4  
+#define _CTURFAC             5      //,"C",  2, 0, "Sufijo de la factura" },;
+#define _DFECFAC             6      //,"D",  8, 0, "Fecha de la factura" },;
+#define _CCODCLI             7      //,"C", 12, 0, "Codigo del cliente" },;
+#define _CCODALM             8      //,"C", 16, 0, "Codigo de almacen" },;
+#define _CCODCAJ             9      //,"C",  3, 0, "Codigo de almacen" },;
+#define _CNOMCLI            10      //,"C", 50, 0, "Nombre del cliente" },;
+#define _CDIRCLI            11      //,"C", 60, 0, "dirección del cliente" },;
+#define _CPOBCLI            12      //,"C", 25, 0, "Población del cliente" },;
+#define _CPRVCLI            13      //,"C", 20, 0, "Provincia del cliente" },;
+#define _NCODPROV           14      //,"N",  2, 0, "Número de provincia cliente" },;
+#define _CPOSCLI            15      //,"C",  5, 0, "Codigos postal del cliente" },;
+#define _CDNICLI            16      //,"C", 15, 0, "DNI/CIF del cliente" },;
+#define _LMODCLI            17
+#define _LMAYOR             18      //,"L",  1, 0, "Lógico de mayorista" },;
+#define _NTARIFA            19      //,"L",  1, 0, "Lógico de mayorista" },;
+#define _CCODAGE            20      //,"C",  3, 0, "Codigo del agente" },;
+#define _CCODRUT            21      //,"C",  4, 0, "Codigo de la ruta" },;
+#define _CCODTAR            22      //,"C",  5, 0, "Codigo de la tarifa" },;
+#define _CCODOBR            23      //,"C",  3, 0, "Codigo de la dirección" },;
+#define _NPCTCOMAGE         24      //,"N",  6, 2, "Porcentaje de comisión del agente" },;
+#define _LLIQUIDADA         25      //,"L",  1, 0, "Lógico de la liquidación" },;
+#define _LCONTAB            26       //,"L",  1, 0, "Lógico de la contabilización" },;
+#define _CCONGUID           27  
+#define _DFECENT            28      //,"D",  8, 0, "Fecha de entrega" },;
+#define _CSUFAC             29      //,"C", 10, 0, "Su factura" },;
+#define _LIMPALB            30      //,"L", 10, 0, "Su pedido" },;
+#define _CCONDENT           31      //,"C", 20, 0, "Condición de entrada" },;
+#define _MCOMENT            32      //,"M", 10, 0, "Comentarios" },;
+#define _MOBSERV            33      //,"M", 10, 0, "Observaciones" },;
+#define _CCODPAGO           34      //,"C",  2, 0, "Codigo del tipo de pago" },;
+#define _NBULTOS            35      //,"N",  3, 0, "Número de bultos" },;
+#define _NPORTES            36      //,"N",  6, 0, "Valor de los portes" },;
+#define _NIVAMAN            37      //,"N",  6, 0, "Valor de la mano de dirección" },;
+#define _NMANOBR            38      //,"N",  6, 0, "Valor de la mano de dirección" },;
+#define _CNUMFAC            39      //,"C", 12, 0, "Número de albaran" },;
+#define _NTIPOFAC           40      //,"N",  1, 0, "Número del tipo de factura" },;
+#define _CDTOESP            41      //,"N",  5, 2, "Porcentaje de descuento especial" },;
+#define _NDTOESP            42      //,"N",  5, 2, "Porcentaje de descuento especial" },;
+#define _CDPP               43      //,"N",  5, 2, "Porcentaje de descuento por pronto pago" },;
+#define _NDPP               44      //,"N",  5, 2, "Porcentaje de descuento por pronto pago" },;
+#define _CDTOUNO            45      //,"C", 25, 0, "Descripción de porcentaje de descuento personalizado"
+#define _NDTOUNO            46      //,"N",  4, 1, "Porcentaje de descuento por descuento personalizado"
+#define _CDTODOS            47      //,"C", 25, 0, "Descripción de porcentaje de descuento personalizado"
+#define _NDTODOS            48      //,"N",  4, 1, "Porcentaje de descuento por descuento personalizado"
+#define _NDTOCNT            49      //,"N",  6, 2, "Porcentaje de Descuento por pago de Contado" },;
+#define _NDTORAP            50      //,"N",  6, 2, "Porcentaje de Descuento por Rappel" },;
+#define _NDTOPUB            51      //,"N",  6, 2, "Porcentaje de Descuento por Publicidad" },;
+#define _NDTOPGO            52      //,"N",  6, 2, "Porcentaje de Descuento por Pago Centralizado" },;
+#define _NDTOPTF            53      //,"N",  7, 2, "Descuento por plataforma" },;
+#define _NTIPOIVA           54      //,"N",  1, 0, "Número del tipo de " + cImp() },;
+#define _NPORCIVA           55      //,"N",  4, 1, "Porcentaje de " + cImp() },;
+#define _LRECARGO           56      //,"L",  1, 0, "Lógico para recargo" },;
+#define _CREMITIDO          57      //,"C", 50, 0, "Campo de remitido" },;
+#define _LIVAINC            58      //,"N",  1, 0, "Selección de " + cImp() },;
+#define _LSNDDOC            59      //,"L",  1, 0, "Lógico para documento enviado" },;
+#define _CDIVFAC            60      //,"C",  3, 0, "Codigo de la divisa" },;
+#define _NVDVFAC            61      //,"N", 10, 4, "Cambio de la divisa" },;
+#define _CRETPOR            62      //,"C",100, 0, "Retirado por" },;
+#define _CRETMAT            63      //,"C",  8, 0, "Matricula" } }
+#define _CNUMDOC            64      //,"C",  8, 0, "Matricula" } }
+#define _NREGIVA            65
+#define _CCODPRO            66
+#define _CDOCORG            67
+#define _NNUMLIQ            68     //"N",  9, 0, "Número liquidación" }                                  "",                   "", "( cDbf )"} )
+#define _CSUFLIQ            69     //"C",  2, 0, "Sufijo liquidación" }                                  "",                   "", "( cDbf )"} )
+#define _NIMPLIQ            70     //"N", 16, 6, "Importe liquidación" }                                 "",                   "", "( cDbf )"} )
+#define _LLIQUID            71     //"L",  1, 0, "Logico de liquidado" }                                 "",                   "", "( cDbf )"} )
+#define _CCODTRN            72     //"L",  1, 0, "Logico de liquidado" }                                 "",                   "", "( cDbf )"} )
+#define _NKGSTRN            73     //"L",  1, 0, "Logico de liquidado" }                                 "",                   "", "( cDbf )"} )
+#define _LCLOFAC            74     //"L",  1, 0, "Logico de liquidado" }                                 "",                   "", "( cDbf )"} )
+#define _CABNFAC            75     //"C", 12, 0, "Número de presupuesto
+#define _CANTFAC            76     //"C", 12, 0, "Número de presupuesto
+#define _NPCTRET            77
+#define _CCODUSR            78
+#define _DFECCRE            79
+#define _CTIMCRE            80
+#define _CCODGRP            81
+#define _LIMPRIMIDO         82      //   L      1     0
+#define _DFECIMP            83      //   D      8     0
+#define _CHORIMP            84      //   C      5     0
+#define _CCODDLG            85
+#define _CMANOBR            86
+#define _CMOTREC            87      //   C     35     0
+#define _CCAUREC            88      //   C     35     0
+#define _CTLFCLI            89      //   C     20     0
+#define _NTOTNET            90
+#define _NTOTIVA            91
+#define _NTOTREQ            92
+#define _NTOTFAC            93
+#define _CBANCO             94
+#define _CPAISIBAN          95
+#define _CCTRLIBAN          96
+#define _CENTBNC            97
+#define _CSUCBNC            98
+#define _CDIGBNC            99
+#define _CCTABNC           100
+#define _LOPERPV           101
+#define _NDTOTARIFA 	      102
+#define _TFECFAC 		      103
+#define _CCENTROCOSTE	   104
 
 /*
 Definici¢n de la base de datos de lineas de detalle
@@ -12768,6 +12770,7 @@ function aItmFacRec()
    aAdd( aItmFacRec, { "cSerie"      ,"C",  1, 0, "Serie de la factura " ,                                   "Serie",                   "", "( cDbf )", nil } )
    aAdd( aItmFacRec, { "nNumFac"     ,"N",  9, 0, "Número de la factura" ,                                   "Numero",                  "", "( cDbf )", nil } )
    aAdd( aItmFacRec, { "cSufFac"     ,"C",  2, 0, "Sufijo de la factura" ,                                   "Sufijo",                  "", "( cDbf )", nil } )
+   aAdd( aItmFacRec, { "cGuid"       ,"C", 40, 0, "Guid de la factura" ,                                     "GUID",                        "", "( cDbf )", {|| win_uuidcreatestring() } } )
    aAdd( aItmFacRec, { "cTurFac"     ,"C",  6, 0, "Sesión de la factura" ,                                   "Turno",                   "", "( cDbf )", nil } )
    aAdd( aItmFacRec, { "dFecFac"     ,"D",  8, 0, "Fecha de la factura" ,                                    "Fecha",                   "", "( cDbf )", nil } )
    aAdd( aItmFacRec, { "cCodCli"     ,"C", 12, 0, "Código del cliente" ,                                     "Cliente",                 "", "( cDbf )", nil } )
@@ -12789,11 +12792,12 @@ function aItmFacRec()
    aAdd( aItmFacRec, { "cCodObr"     ,"C", 10, 0, "Código de la dirección" ,                                 "Direccion",               "", "( cDbf )", nil } )
    aAdd( aItmFacRec, { "nPctComAge"  ,"N",  6, 2, "Porcentaje de comisión del agente" ,                      "ComisionAgente",          "", "( cDbf )", nil } )
    aAdd( aItmFacRec, { "lLiquidada"  ,"L",  1, 0, "Lógico de la liquidación" ,                               "",                        "", "( cDbf )", nil } )
-   aAdd( aItmFacRec, { "lConTab"     ,"L",  1, 0, "Lógico de la contabilización" ,                           "Contabilizada",           "", "( cDbf )", nil } )
+   aAdd( aItmFacRec, { "lContab"     ,"L",  1, 0, "Lógico de la contabilización" ,                           "Contabilizada",           "", "( cDbf )", nil } )
+   aAdd( aItmFacRec, { "cConGuid"    ,"C", 40, 0, "Guid del apunte contable" ,                               "GuidApunteContable",      "", "( cDbf )", nil } )
    aAdd( aItmFacRec, { "dFecEnt"     ,"D",  8, 0, "Fecha de entrega" ,                                       "FechaEntrega",            "", "( cDbf )", nil } )
-   aAdd( aItmFacRec, { "cSufAc"      ,"C", 10, 0, "Su factura" ,                                             "SuFactura",               "", "( cDbf )", nil } )
+   aAdd( aItmFacRec, { "cSufac"      ,"C", 10, 0, "Su factura" ,                                             "SuFactura",               "", "( cDbf )", nil } )
    aAdd( aItmFacRec, { "lImpAlb"     ,"L",  1, 0, "Lógico si la factura se importó de albaranes" ,           "ImportadaAlbaran",        "", "( cDbf )", nil } )
-   aAdd( aItmFacRec, { "cCondent"    ,"C",100, 0, "Condición de entrada" ,                                   "CondicionEntrada",        "", "( cDbf )", nil } )
+   aAdd( aItmFacRec, { "cCondEnt"    ,"C",100, 0, "Condición de entrada" ,                                   "CondicionEntrada",        "", "( cDbf )", nil } )
    aAdd( aItmFacRec, { "mComent"     ,"M", 10, 0, "Comentarios" ,                                            "Comentarios",             "", "( cDbf )", nil } )
    aAdd( aItmFacRec, { "mObserv"     ,"M", 10, 0, "Observaciones" ,                                          "Observaciones",           "", "( cDbf )", nil } )
    aAdd( aItmFacRec, { "cCodPago"    ,"C",  2, 0, "Código del tipo de pago" ,                                "Pago",                    "", "( cDbf )", nil } )
@@ -13431,19 +13435,27 @@ function SynFacRec( cPath )
 
       while !( dbfFacRecT )->( eof() )
 
-        if empty( ( dbfFacRecT )->cSufFac )
-           ( dbfFacRecT )->cSufFac := "00"
-        end if
+         if empty( ( dbfFacRecT )->cSufFac )
+            ( dbfFacRecT )->cSufFac := "00"
+         end if
 
-		if !empty( ( dbfFacRecT )->cNumFac ) .and. Len( AllTrim( ( dbfFacRecT )->cNumFac ) ) != 12
-        	( dbfFacRecT )->cNumFac := AllTrim( ( dbfFacRecT )->cNumFac ) + "00"
+         if !empty( ( dbfFacRecT )->cNumFac ) .and. Len( AllTrim( ( dbfFacRecT )->cNumFac ) ) != 12
+        	   ( dbfFacRecT )->cNumFac := AllTrim( ( dbfFacRecT )->cNumFac ) + "00"
       	end if
 
-        if empty( ( dbfFacRecT )->cCodCaj )
-           ( dbfFacRecT )->cCodCaj := "000"
-        end if
+         if empty( ( dbfFacRecT )->cCodCaj )
+            ( dbfFacRecT )->cCodCaj := "000"
+         end if
 
-        ( dbfFacRecT )->( dbSkip() )
+         /*
+         GUID localizadores universales para el registo------------------------
+         */
+        
+         if empty( ( dbfFacRecT )->cGuid )
+            ( dbfFacRecT )->cGuid  := win_uuidcreatestring()
+         end if
+
+         ( dbfFacRecT )->( dbSkip() )
 
       end while
 
