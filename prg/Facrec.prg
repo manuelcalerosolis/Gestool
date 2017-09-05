@@ -1435,7 +1435,7 @@ FUNCTION FacRec( oMenuItem, oWnd, cCodCli, cCodArt, cCodPed, aNumDoc )
       with object ( oWndBrw:AddXCol() )
          :cHeader          := "Número"
          :cSortOrder       := "nNumFac"
-         :bEditValue       := {|| ( D():FacturasRectificativas( nView ) )->cSerie + "/" + Alltrim( Str( ( D():FacturasRectificativas( nView ) )->nNumFac ) )  }
+         :bEditValue       := {|| ( D():FacturasRectificativas( nView ) )->cSerie + "/" + alltrim( Str( ( D():FacturasRectificativas( nView ) )->nNumFac ) )  }
          :nWidth           := 80
          :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | oWndBrw:ClickOnHeader( oCol ) }
       end with
@@ -1490,7 +1490,7 @@ FUNCTION FacRec( oMenuItem, oWnd, cCodCli, cCodArt, cCodPed, aNumDoc )
       with object ( oWndBrw:AddXCol() )
          :cHeader          := "Código"
          :cSortOrder       := "cCodCli"
-         :bEditValue       := {|| AllTrim( ( D():FacturasRectificativas( nView ) )->cCodCli ) }
+         :bEditValue       := {|| alltrim( ( D():FacturasRectificativas( nView ) )->cCodCli ) }
          :nWidth           := 70
          :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | oWndBrw:ClickOnHeader( oCol ) }
       end with
@@ -1498,7 +1498,7 @@ FUNCTION FacRec( oMenuItem, oWnd, cCodCli, cCodArt, cCodPed, aNumDoc )
       with object ( oWndBrw:AddXCol() )
          :cHeader          := "Nombre"
          :cSortOrder       := "cNomCli"
-         :bEditValue       := {|| AllTrim( ( D():FacturasRectificativas( nView ) )->cNomCli ) }
+         :bEditValue       := {|| alltrim( ( D():FacturasRectificativas( nView ) )->cNomCli ) }
          :nWidth           := 180
          :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | oWndBrw:ClickOnHeader( oCol ) }
       end with
@@ -1515,7 +1515,7 @@ FUNCTION FacRec( oMenuItem, oWnd, cCodCli, cCodArt, cCodPed, aNumDoc )
       with object ( oWndBrw:AddXCol() )
          :cHeader          := "Población"
          :cSortOrder       := "cPobCli"
-         :bEditValue       := {|| allTrim( ( D():FacturasRectificativas( nView ) )->cPobCli ) }
+         :bEditValue       := {|| alltrim( ( D():FacturasRectificativas( nView ) )->cPobCli ) }
          :nWidth           := 180
          :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | oWndBrw:ClickOnHeader( oCol ) }
          :lHide            := .t.
@@ -3740,7 +3740,7 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbfFacRecL, oBrw, lTotLin, cCodArtEnt, nMode
    local cSayFam  := ""
    local cCodArt  := Padr( aTmp[ _CREF ], 32 )
 
-   cTipoCtrCoste  := AllTrim( aTmp[ _CTIPCTR ] )
+   cTipoCtrCoste  := alltrim( aTmp[ _CTIPCTR ] )
 
    do case
    case nMode == APPD_MODE
@@ -5164,16 +5164,16 @@ STATIC FUNCTION AppendKit( uTmpLin, aTmpAlb )
                   case oUser():lNotAllowSales( nStkActual - nUnidades < 0 )
 
                      MsgStop( "No hay stock suficiente para realizar la venta" + CRLF + ;
-                              "del componente " + AllTrim( ( dbfKit )->cRefKit ) + " - " + AllTrim( ( D():Articulos( nView ) )->Nombre ),;
+                              "del componente " + alltrim( ( dbfKit )->cRefKit ) + " - " + alltrim( ( D():Articulos( nView ) )->Nombre ),;
                               "¡Atención!" )
 
                   case oUser():lNotAllowSales( nStkActual - nUnidades < nStockMinimo )
 
-                     MsgStop( "El stock del componente " + AllTrim( ( dbfKit )->cRefKit ) + " - " + AllTrim( ( D():Articulos( nView ) )->Nombre )  + CRLF + ;
+                     MsgStop( "El stock del componente " + alltrim( ( dbfKit )->cRefKit ) + " - " + alltrim( ( D():Articulos( nView ) )->Nombre )  + CRLF + ;
                               "está bajo minimo."                                                                                                  + CRLF + ;
-                              "Unidades a vender : " + AllTrim( Trans( nUnidades, MasUnd() ) )                                                     + CRLF + ;
-                              "Stock minimo : " + AllTrim( Trans( nStockMinimo, MasUnd() ) )                                                       + CRLF + ;
-                              "Stock actual : " + AllTrim( Trans( nStkActual, MasUnd() ) ),;
+                              "Unidades a vender : " + alltrim( Trans( nUnidades, MasUnd() ) )                                                     + CRLF + ;
+                              "Stock minimo : " + alltrim( Trans( nStockMinimo, MasUnd() ) )                                                       + CRLF + ;
+                              "Stock actual : " + alltrim( Trans( nStkActual, MasUnd() ) ),;
                               "¡Atención!" )
 
                end case
@@ -5561,16 +5561,16 @@ STATIC FUNCTION AppKit( aClo, aTmpFac, dbfTmpLin, dbfKit )
                   case nStkActual - nUnidades < 0
 
                         MsgStop( "No hay stock suficiente para realizar la venta" + CRLF + ;
-                                 "del componente " + AllTrim( ( dbfKit )->cRefKit ) + " - " + AllTrim( ( D():Articulos( nView ) )->Nombre ),;
+                                 "del componente " + alltrim( ( dbfKit )->cRefKit ) + " - " + alltrim( ( D():Articulos( nView ) )->Nombre ),;
                                  "¡Atención!" )
 
                   case nStkActual - nUnidades < nStockMinimo
 
-                        MsgStop( "El stock del componente " + AllTrim( ( dbfKit )->cRefKit ) + " - " + AllTrim( ( D():Articulos( nView ) )->Nombre ) + CRLF + ;
+                        MsgStop( "El stock del componente " + alltrim( ( dbfKit )->cRefKit ) + " - " + alltrim( ( D():Articulos( nView ) )->Nombre ) + CRLF + ;
                                  "está bajo minimo." + CRLF + ;
-                                 "Unidades a vender : " + AllTrim( Trans( nUnidades, MasUnd() ) ) + CRLF + ;
-                                 "Stock minimo : " + AllTrim( Trans( nStockMinimo, MasUnd() ) ) + CRLF + ;
-                                 "Stock actual : " + AllTrim( Trans( nStkActual, MasUnd() ) ),;
+                                 "Unidades a vender : " + alltrim( Trans( nUnidades, MasUnd() ) ) + CRLF + ;
+                                 "Stock minimo : " + alltrim( Trans( nStockMinimo, MasUnd() ) ) + CRLF + ;
+                                 "Stock actual : " + alltrim( Trans( nStkActual, MasUnd() ) ),;
                                  "¡Atención!" )
                end case
 
@@ -6057,7 +6057,7 @@ STATIC FUNCTION lCalcDeta( aTmp, aTmpFac, lTotal )
    end if
 
    if !empty( oRentabilidadLinea )
-      oRentabilidadLinea:cText( AllTrim( Trans( nMargen, cPorDiv ) + AllTrim( cSimDiv( cCodDiv, dbfDiv ) ) + " : " + AllTrim( Trans( nRentabilidad, "999.99" ) ) + "%" ) )
+      oRentabilidadLinea:cText( alltrim( Trans( nMargen, cPorDiv ) + alltrim( cSimDiv( cCodDiv, dbfDiv ) ) + " : " + alltrim( Trans( nRentabilidad, "999.99" ) ) + "%" ) )
    end if
 
    if !empty( oComisionLinea )
@@ -6161,7 +6161,7 @@ STATIC FUNCTION LoaArt( cCodArt, aGet, aTmp, aTmpFac, oStkAct, oSayPr1, oSayPr2,
    Buscamos codificacion GS1-128--------------------------------------------
    */
    
-   if Len( Alltrim( cCodArt ) ) > 18
+   if Len( alltrim( cCodArt ) ) > 18
 
       hHas128              := ReadHashCodeGS128( )
 
@@ -8545,7 +8545,7 @@ STATIC FUNCTION DelStart( oDesde, oDlg, oBtnAceptar, oBtnCancel, oTxtDel, lCance
 
             ++nDeleted
 
-            oTxtDel:cText  := "Eliminando : " + ( D():FacturasRectificativas( nView ) )->cSerie + "/" + Alltrim( Str( ( D():FacturasRectificativas( nView ) )->nNumFac ) ) + "/" + ( D():FacturasRectificativas( nView ) )->cSufFac
+            oTxtDel:cText  := "Eliminando : " + ( D():FacturasRectificativas( nView ) )->cSerie + "/" + alltrim( Str( ( D():FacturasRectificativas( nView ) )->nNumFac ) ) + "/" + ( D():FacturasRectificativas( nView ) )->cSufFac
 
             WinDelRec( nil, D():FacturasRectificativas( nView ), {|| QuiFacRec() } )
 
@@ -8575,7 +8575,7 @@ STATIC FUNCTION DelStart( oDesde, oDlg, oBtnAceptar, oBtnCancel, oTxtDel, lCance
 
             ++nDeleted
 
-            oTxtDel:cText  := "Eliminando : " + ( D():FacturasRectificativas( nView ) )->cSerie + "/" + Alltrim( Str( ( D():FacturasRectificativas( nView ) )->nNumFac ) ) + "/" + ( D():FacturasRectificativas( nView ) )->cSufFac
+            oTxtDel:cText  := "Eliminando : " + ( D():FacturasRectificativas( nView ) )->cSerie + "/" + alltrim( Str( ( D():FacturasRectificativas( nView ) )->nNumFac ) ) + "/" + ( D():FacturasRectificativas( nView ) )->cSufFac
 
             WinDelRec( nil, D():FacturasRectificativas( nView ), {|| QuiFacRec() } )
 
@@ -9585,7 +9585,7 @@ Static Function EndPgo( aTmp, aGet, lPgdOld, nImpOld, dbfTmpPgo, oBrw, oDlg, nMo
       ( dbfTmpPgo )->dEntrada    := Ctod( "" )
       ( dbfTmpPgo )->nImporte    := nImp
       ( dbfTmpPgo )->nImpGas     := 0
-      ( dbfTmpPgo )->cDescrip    := "Recibo nº" + AllTrim( Str( nCon ) ) + " de factura " + aTmp[ ( dbfTmpPgo )->( FieldPos( "CSERIE" ) ) ] + '/' + AllTrim( Str( aTmp[ ( dbfTmpPgo )->( FieldPos( "NNUMFAC" ) ) ] ) ) + '/' + aTmp[ ( dbfTmpPgo )->( FieldPos( "CSUFFAC" ) ) ]
+      ( dbfTmpPgo )->cDescrip    := "Recibo nº" + alltrim( Str( nCon ) ) + " de factura " + aTmp[ ( dbfTmpPgo )->( FieldPos( "CSERIE" ) ) ] + '/' + alltrim( Str( aTmp[ ( dbfTmpPgo )->( FieldPos( "NNUMFAC" ) ) ] ) ) + '/' + aTmp[ ( dbfTmpPgo )->( FieldPos( "CSUFFAC" ) ) ]
       ( dbfTmpPgo )->dPreCob     := dFecFacRec( aTmp[ ( dbfTmpPgo )->( FieldPos( "CSERIE" ) ) ] + Str( aTmp[ ( dbfTmpPgo )->( FieldPos( "NNUMFAC" ) ) ] ) + aTmp[ ( dbfTmpPgo )->( FieldPos( "CSUFFAC" ) ) ], D():FacturasRectificativas( nView ) )
       ( dbfTmpPgo )->dFecVto     := dFecFacRec( aTmp[ ( dbfTmpPgo )->( FieldPos( "CSERIE" ) ) ] + Str( aTmp[ ( dbfTmpPgo )->( FieldPos( "NNUMFAC" ) ) ] ) + aTmp[ ( dbfTmpPgo )->( FieldPos( "CSUFFAC" ) ) ], D():FacturasRectificativas( nView ) )
       ( dbfTmpPgo )->cPgdoPor    := ""
@@ -9646,7 +9646,7 @@ STATIC FUNCTION DupStart( oDesde, oDlg, oBtnAceptar, oBtnCancel, oTxtDup, lCance
 
             ++nDuplicados
 
-            oTxtDup:cText  := "Duplicando : " + ( D():FacturasRectificativas( nView ) )->cSerie + "/" + Alltrim( Str( ( D():FacturasRectificativas( nView ) )->nNumFac ) ) + "/" + ( D():FacturasRectificativas( nView ) )->cSufFac
+            oTxtDup:cText  := "Duplicando : " + ( D():FacturasRectificativas( nView ) )->cSerie + "/" + alltrim( Str( ( D():FacturasRectificativas( nView ) )->nNumFac ) ) + "/" + ( D():FacturasRectificativas( nView ) )->cSufFac
 
             DupFactura( cFecDoc )
 
@@ -9675,7 +9675,7 @@ STATIC FUNCTION DupStart( oDesde, oDlg, oBtnAceptar, oBtnCancel, oTxtDup, lCance
 
             ++nDuplicados
 
-            oTxtDup:cText  := "Duplicando : " + ( D():FacturasRectificativas( nView ) )->cSerie + "/" + Alltrim( Str( ( D():FacturasRectificativas( nView ) )->nNumFac ) ) + "/" + ( D():FacturasRectificativas( nView ) )->cSufFac
+            oTxtDup:cText  := "Duplicando : " + ( D():FacturasRectificativas( nView ) )->cSerie + "/" + alltrim( Str( ( D():FacturasRectificativas( nView ) )->nNumFac ) ) + "/" + ( D():FacturasRectificativas( nView ) )->cSufFac
 
             DupFactura( cFecDoc )
 
@@ -13439,8 +13439,8 @@ function SynFacRec( cPath )
             ( dbfFacRecT )->cSufFac := "00"
          end if
 
-         if !empty( ( dbfFacRecT )->cNumFac ) .and. Len( AllTrim( ( dbfFacRecT )->cNumFac ) ) != 12
-        	   ( dbfFacRecT )->cNumFac := AllTrim( ( dbfFacRecT )->cNumFac ) + "00"
+         if !empty( ( dbfFacRecT )->cNumFac ) .and. Len( alltrim( ( dbfFacRecT )->cNumFac ) ) != 12
+        	   ( dbfFacRecT )->cNumFac := alltrim( ( dbfFacRecT )->cNumFac ) + "00"
       	end if
 
          if empty( ( dbfFacRecT )->cCodCaj )
@@ -13468,16 +13468,16 @@ function SynFacRec( cPath )
 
       while !( dbfFacRecL )->( eof() )
 
-	    if empty( ( dbfFacRecL )->cSufFac )
+         if empty( ( dbfFacRecL )->cSufFac )
 	      	( dbfFacRecL )->cSufFac 	:= "00"
-	    end if
+         end if
 
-	    if !empty( ( dbfFacRecL )->cCodAlb ) .and. Len( AllTrim( ( dbfFacRecL )->cCodAlb ) ) != 12
-        	( dbfFacRecL )->cCodAlb 		:= AllTrim( ( dbfFacRecL )->cCodAlb ) + "00"
+         if !empty( ( dbfFacRecL )->cCodAlb ) .and. Len( alltrim( ( dbfFacRecL )->cCodAlb ) ) != 12
+        	   ( dbfFacRecL )->cCodAlb    := alltrim( ( dbfFacRecL )->cCodAlb ) + "00"
       	end if
 	        
 	      if empty( ( dbfFacRecL )->cLote ) .and. !empty( ( dbfFacRecL )->nLote )
-	         ( dbfFacRecL )->cLote      := AllTrim( Str( ( dbfFacRecL )->nLote ) )
+	         ( dbfFacRecL )->cLote      := alltrim( Str( ( dbfFacRecL )->nLote ) )
 	      end if
 
 	      if empty( ( dbfFacRecL )->nVolumen )
@@ -14773,7 +14773,7 @@ Method CreateData() CLASS TFacturasRectificativasSenderReciver
             lSndFacRec  := .t.
 
             dbPass( cFacRecT, tmpFacRecT, .t. )
-            ::oSender:SetText( ( cFacRecT )->cSerie + "/" + AllTrim( Str( ( cFacRecT )->nNumFac ) ) + "/" + AllTrim( ( cFacRecT )->cSufFac ) + "; " + Dtoc( ( cFacRecT )->dFecFac ) + ";" + AllTrim( ( cFacRecT )->cCodCli ) + "; " + ( cFacRecT )->cNomCli )
+            ::oSender:SetText( ( cFacRecT )->cSerie + "/" + alltrim( Str( ( cFacRecT )->nNumFac ) ) + "/" + alltrim( ( cFacRecT )->cSufFac ) + "; " + Dtoc( ( cFacRecT )->dFecFac ) + ";" + alltrim( ( cFacRecT )->cCodCli ) + "; " + ( cFacRecT )->cNomCli )
 
             if ( dbfFacRecL )->( dbSeek( ( cFacRecT )->cSerie + Str( ( cFacRecT )->nNumFac ) + ( cFacRecT )->cSufFac ) )
                while ( ( dbfFacRecL )->cSerie + Str( ( dbfFacRecL )->nNumFac ) + ( dbfFacRecL )->cSufFac ) == ( ( cFacRecT )->cSerie + Str( ( cFacRecT )->nNumFac ) + ( cFacRecT )->cSufFac ) .AND. !( dbfFacRecL )->( eof() )
@@ -14986,7 +14986,7 @@ Method Process() CLASS TFacturasRectificativasSenderReciver
                if ::validateRecepcion( tmpFacRecT, cFacRecT )
 
                   cNumeroFactura    := ( tmpFacRecT )->cSerie + str( ( tmpFacRecT )->nNumFac ) + ( tmpFacRecT )->cSufFac
-                  cTextoFactura     := ( tmpFacRecT )->cSerie + "/" + AllTrim( str( ( tmpFacRecT )->nNumFac ) ) + "/" + AllTrim( ( tmpFacRecT )->cSufFac ) + "; " + Dtoc( ( tmpFacRecT )->dFecFac ) + "; " + AllTrim( ( tmpFacRecT )->cCodCli ) + "; " + ( tmpFacRecT )->cNomCli
+                  cTextoFactura     := ( tmpFacRecT )->cSerie + "/" + alltrim( str( ( tmpFacRecT )->nNumFac ) ) + "/" + alltrim( ( tmpFacRecT )->cSufFac ) + "; " + Dtoc( ( tmpFacRecT )->dFecFac ) + "; " + alltrim( ( tmpFacRecT )->cCodCli ) + "; " + ( tmpFacRecT )->cNomCli
 
                   while ( cFacRecT )->( dbseek( cNumeroFactura ) )
                      dbLockDelete( cFacRecT )

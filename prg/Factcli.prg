@@ -22007,6 +22007,8 @@ Method Process() CLASS TFacturasClientesSenderReciver
    local m
    local oStock
 
+   local dbfIva
+   local dbfDiv
    local dbfFacCliT
    local dbfFacCliL
    local dbfFacCliP
@@ -22075,6 +22077,12 @@ Method Process() CLASS TFacturasClientesSenderReciver
 
             USE ( cPatEmp() + "AntCliT.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "AntCliT", @dbfAntCliT ) )
             SET ADSINDEX TO ( cPatEmp() + "AntCliT.CDX" ) ADDITIVE
+
+            USE ( cPatDat() + "TIVA.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "TIVA", @dbfIva ) )
+            SET ADSINDEX TO ( cPatDat() + "TIVA.CDX" ) ADDITIVE
+
+            USE ( cPatDat() + "DIVISAS.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "DIVISAS", @dbfDiv ) )
+            SET ADSINDEX TO ( cPatDat() + "DIVISAS.CDX" ) ADDITIVE
 
             while ( tmpFacCliT )->( !eof() )
 
@@ -22150,6 +22158,12 @@ Method Process() CLASS TFacturasClientesSenderReciver
                   
                   ::oSender:SetText( "Añadido recibo : " + cTextoRecibo )
 
+                  // Actualizamos el estado de la factura----------------------
+
+                  if ( dbfFacCliP )->( dbseek( cNumeroRecibo ) )
+                     chkLqdFacCli( nil, dbfFacCliT, dbfFacCliL, dbfFacCliP, dbfAntCliT, dbfIva, dbfDiv )
+                  end if 
+
                end if
 
                SysRefresh()
@@ -22162,6 +22176,9 @@ Method Process() CLASS TFacturasClientesSenderReciver
             CLOSE ( dbfFacCliL )
             CLOSE ( dbfFacCliP )
             CLOSE ( dbfCliente )
+            CLOSE ( dbfIva )
+            CLOSE ( dbfDiv )
+
             CLOSE ( tmpFacCliT )
             CLOSE ( tmpFacCliL )
             CLOSE ( tmpFacCliP )
@@ -22194,16 +22211,19 @@ Method Process() CLASS TFacturasClientesSenderReciver
 
       RECOVER USING oError
 
-        CLOSE ( dbfFacCliT )
-        CLOSE ( dbfFacCliL )
-        CLOSE ( dbfFacCliP )
-        CLOSE ( tmpFacCliT )
-        CLOSE ( tmpFacCliL )
-        CLOSE ( tmpFacCliP )
-        CLOSE ( dbfCliente )
+         CLOSE ( dbfFacCliT )
+         CLOSE ( dbfFacCliL )
+         CLOSE ( dbfFacCliP )
+         CLOSE ( dbfIva )
+         CLOSE ( dbfDiv )
 
-        ::oSender:SetText( "Error procesando fichero " + aFiles[ m, 1 ] )
-        ::oSender:SetText( ErrorMessage( oError ) )
+         CLOSE ( tmpFacCliT )
+         CLOSE ( tmpFacCliL )
+         CLOSE ( tmpFacCliP )
+         CLOSE ( dbfCliente )
+
+         ::oSender:SetText( "Error procesando fichero " + aFiles[ m, 1 ] )
+         ::oSender:SetText( ErrorMessage( oError ) )
 
       END SEQUENCE
 
