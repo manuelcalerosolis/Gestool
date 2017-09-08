@@ -27,6 +27,7 @@
 #define _CRUTDOC                15      //   C    250     0
 #define _NNUMENT                16      //   N      9     0 
 #define _CGUID                  17      //   C     40     0 
+#define _CMONEDAS               18      //   C    200     0
 
 static oWndBrw
 
@@ -43,10 +44,11 @@ static dbfCount
 static bBmp
 static bBmpSnd
 static oBtnEfectivo
-static bEdit      := { |aTmp, aGet, dbfEntT, oBrw, bWhen, bValid, nMode | EdtRec( aTmp, aGet, dbfEntT, oBrw, bWhen, bValid, nMode ) }
-static bEditTct   := { |aTmp, aGet, dbfEntT, oBrw, bWhen, bValid, nMode | EdtRecTct( aTmp, aGet, dbfEntT, oBrw, bWhen, bValid, nMode ) }
+static bEdit            := { |aTmp, aGet, dbfEntT, oBrw, bWhen, bValid, nMode | EdtRec( aTmp, aGet, dbfEntT, oBrw, bWhen, bValid, nMode ) }
+static bEditTct         := { |aTmp, aGet, dbfEntT, oBrw, bWhen, bValid, nMode | EdtRecTct( aTmp, aGet, dbfEntT, oBrw, bWhen, bValid, nMode ) }
 
-static aTextTipo  := { "Entrada", "Salida", "Retirada efectivo", "Retirada tarjeta" }
+static aTextTipo        := { "Entrada", "Salida", "Retirada efectivo", "Retirada tarjeta" }
+static oMoneyEfectivo
 
 //---------------------------------------------------------------------------//
 
@@ -71,6 +73,7 @@ function aItmEntSal()
    aAdd( aItmEntSal, { "CRUTDOC",   "C",250,  0, "Documento adjunto",                     "",   "", "( cDbf )"} )
    aAdd( aItmEntSal, { "NNUMENT",   "N",  9,  0, "Número de la entrada de caja",          "",   "", "( cDbf )"} )
    aAdd( aItmEntSal, { "CGUID",     "C", 40,  0, "Guid de la entrada o salida",           "",   "", "( cDbf )", win_uuidcreatestring()} )
+   aAdd( aItmEntSal, { "CMONEDAS",  "C",200,  0, "Monedas y billetes",                    "",   "", "( cDbf )"} )
 
 return ( aItmEntSal )
 
@@ -397,6 +400,8 @@ STATIC FUNCTION OpenFiles()
    bBmp           := LoadBitmap( GetResources(), "BmpLock" )
    bBmpSnd        := LoadBitmap( GetResources(), "gc_satellite_dish2_16" )
 
+   oMoneyEfectivo := TVirtualMoney():New()
+
    RECOVER
 
       msgStop( "Imposible abrir todas las bases de datos" )
@@ -472,6 +477,8 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfEntT, oBrw, nTipoDocumento, bValid, nMode
       aTmp[ _NTIPENT ]  := nTipoDocumento
       aTmp[ _CGUID ]    := win_uuidcreatestring()
 
+      oMoneyEfectivo:SetStream( "" )
+
    case nMode == DUPL_MODE
 
       if !lCajaOpen( oUser():cCaja() ) .and. !oUser():lAdministrador()
@@ -491,6 +498,8 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfEntT, oBrw, nTipoDocumento, bValid, nMode
       aTmp[ _LSNDENT ]  := .t.
       aTmp[ _CGUID ]    := win_uuidcreatestring()
 
+      oMoneyEfectivo:SetStream( "" )
+
    case nMode == EDIT_MODE
 
       if aTmp[ _LCLOENT ] .AND. !oUser():lAdministrador()
@@ -502,6 +511,8 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfEntT, oBrw, nTipoDocumento, bValid, nMode
          MsgStop( "Sólo el administrador puede modificar" )
          Return .f.
       end if
+
+      oMoneyEfectivo:SetStream( aTmp[ _CMONEDAS ] )
 
    end case
 
@@ -622,7 +633,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfEntT, oBrw, nTipoDocumento, bValid, nMode
          PICTURE  ( cPicImp ) ;
          OF       oDlg
 
-      oBtnEfectivo               := TBtnBmp():ReDefine( 220, "gc_money2_16",,,,,{|| MsgInfo( "Meto las monedas" ) }, oDlg, .f., , .f., "Conteo de efectivo" )
+      oBtnEfectivo               := TBtnBmp():ReDefine( 220, "gc_money2_16",,,,,{|| oMoneyEfectivo:Dialog( aGet[ _NIMPENT ] ) }, oDlg, .f., , .f., "Conteo de efectivo" )
       oBtnEfectivo:lTransparent  := .t.
       oBtnEfectivo:lBoxSelect    := .f.
 
@@ -656,7 +667,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfEntT, oBrw, nTipoDocumento, bValid, nMode
          oDlg:AddFastKey( VK_F5, {|| SaveRec( aTmp, aGet, dbfEntT, oBrw, oDlg, nMode ) } )
       end if
 
-      oDlg:bStart := {|| SetDlgMode( aGet, aTmp ) }
+      oDlg:bStart := {|| SetDlgMode( aGet, aTmp, oBtnEfectivo ) }
 
    ACTIVATE DIALOG oDlg CENTER
 
@@ -670,7 +681,7 @@ RETURN ( oDlg:nResult == IDOK )
 
 //--------------------------------------------------------------------------//
 
-STATIC FUNCTION SetDlgMode( aGet, aTmp )
+STATIC FUNCTION SetDlgMode( aGet, aTmp, oBtnEfectivo )
 
    aGet[ _CCODDIV ]:lValid()
    aGet[ _CCODCAJ ]:lValid()
@@ -678,6 +689,10 @@ STATIC FUNCTION SetDlgMode( aGet, aTmp )
 
    if aTmp[ _NTIPENT ] > 2
       aGet[ _NTIPENT ]:Hide()
+   end if
+
+   if aTmp[ _NTIPENT ] > 3
+      oBtnEfectivo:Hide()
    end if
 
 Return nil
@@ -1010,6 +1025,8 @@ Static Function SaveRec( aTmp, aGet, dbfEntT, oBrw, oDlg, nMode )
    if nMode == APPD_MODE .or. nMode == DUPL_MODE
       aTmp[ _NNUMENT ]     := nNewDoc( , dbfEntT, "NENTSAL", , dbfCount )
    end if
+
+   aTmp[ _CMONEDAS ] := oMoneyEfectivo:GetStream()
 
    WinGather( aTmp, aGet, dbfEntT, oBrw, nMode )
 
