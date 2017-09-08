@@ -1052,6 +1052,13 @@ TgenmailDatabaseRecibosClientes.prg \
 TDetMovimientosAlmacen.prg          \
 Tdetseriesmovimientos.prg           \
 Categoria.prg                       \
+MovimientosAlmacenesLineasModel.prg \
+DelegacionesModel.prg               \
+UsuariosModel.prg                   \
+ConfiguracionEmpresasModel.prg      \  
+EmpresasModel.prg                   \
+BaseModel.prg                       \
+SqlBaseModel.prg 
 
 C               =       \
 Metafi32.c              \
@@ -2094,6 +2101,13 @@ TgenmailDatabaseRecibosClientes.obj \
 TDetMovimientosAlmacen.obj          \
 Tdetseriesmovimientos.obj           \
 Categoria.obj                       \
+MovimientosAlmacenesLineasModel.obj \
+DelegacionesModel.obj               \
+UsuariosModel.obj                   \
+ConfiguracionEmpresasModel.obj      \  
+EmpresasModel.obj                   \
+BaseModel.obj                       \
+SqlBaseModel.obj                    \ 
 
 .PRG.OBJ:
    $(HB)\Bin\Harbour $< /n /p$(PPO)\$&.ppo /w /es2 /i$(FWINCLUDE) /i$(HBINCLUDE) /i$(GTINCLUDE) /o$(OBJ)\$&.c
@@ -3139,6 +3153,13 @@ $(OBJ)\TgenmailDatabaseRecibosClientes.obj +
 $(OBJ)\TDetMovimientosAlmacen.obj          +
 $(OBJ)\Tdetseriesmovimientos.obj           +
 $(OBJ)\Categoria.obj                       +
+$(OBJ)\MovimientosAlmacenesLineasModel.obj +
+$(OBJ)\DelegacionesModel.obj               +
+$(OBJ)\UsuariosModel.obj                   +
+$(OBJ)\ConfiguracionEmpresasModel.obj      +  
+$(OBJ)\EmpresasModel.obj                   +
+$(OBJ)\BaseModel.obj                       +
+$(OBJ)\SqlBaseModel.obj                    +
 $(OBJ)\EstadoSat.obj             
 $<,$*
 $(FWLIB)\FiveH.lib               +

@@ -2477,16 +2477,13 @@ Return nil
 FUNCTION FWOPENPNGFILE()
 Return nil
 
-FUNCTION ConfiguracionEmpresasModel()
-Return nil
-
-FUNCTION EmpresasModel()
-Return nil
-
 FUNCTION ColumnasUsuariosModel()
 Return nil 
 
 FUNCTION MovimientosAlmacenController()
+Return nil
+
+FUNCTION StocksModel()
 Return nil
 
 //------------------------------------------------------------------//

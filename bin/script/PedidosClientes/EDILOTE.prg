@@ -32,6 +32,8 @@ CLASS ImportarPedidosClientesEDI
 
    DATA aTokens
 
+   DATA cLote
+
    DATA hDocument
    DATA hLine
 
@@ -161,18 +163,24 @@ METHOD Run( nView ) CLASS ImportarPedidosClientesEDI
 
    local aEDIFile
 
+   ::cLote  := Space( 100 )
+   MsgGet( "Seleccione el lote a importar", "Lote: ", @::cLote )
+
    ::nView           := nView
 
    ::aEDIFiles       := Directory( __localDirectory + "*.pla" )
 
    if !empty( ::aEDIFiles )
       for each aEDIFile in ::aEDIFiles
+         MsgWait( aEDIFile[ 1 ], "Procesando fichero...", 0.1 )
          ::ProccessEDIFiles( aEDIFile[ 1 ] )
          ::buildPedidoCliente()
       next
    else
       msgStop( "No hay ficheros en el directorio")
    end if 
+
+   MsgInfo( "Proceso terminado con éxito" )
 
 Return ( nil )
 
@@ -749,7 +757,7 @@ METHOD datosArticulo( cNormalizado )
       ::hPedidoLinea[ "Familia" ]                  := ( D():Articulos( ::nView ) )->Familia
       ::hPedidoLinea[ "GrupoFamilia" ]             := if( !Empty( ( D():Articulos( ::nView ) )->Familia ), cGruFam( ( D():Articulos( ::nView ) )->Familia, D():Familias( ::nView ) ), "" )
       ::hPedidoLinea[ "LogicoLote" ]               := ( D():Articulos( ::nView ) )->lLote
-      //::hPedidoLinea[ "Lote" ]                     := if( ( D():Articulos( ::nView ) )->lLote, ( D():Articulos( ::nView ) )->cLote, "" )
+      ::hPedidoLinea[ "Lote" ]                     := ::cLote
       ::hPedidoLinea[ "AvisarSinStock" ]           := ( D():Articulos( ::nView ) )->lMsgVta
       ::hPedidoLinea[ "NoPermitirSinStock" ]       := ( D():Articulos( ::nView ) )->lNotVta
       ::hPedidoLinea[ "Peso" ]                     := ( D():Articulos( ::nView ) )->nPesoKg

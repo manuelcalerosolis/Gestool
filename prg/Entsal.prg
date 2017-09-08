@@ -5,6 +5,8 @@
 
 #define ENTRADA						1
 #define SALIDA 						2
+#define _RETIRADA_EFECTIVO       3
+#define _RETIRADA_TARJETA        4
 
 #define _MENUITEM_               "01065"
 
@@ -24,6 +26,7 @@
 #define _CCODUSR                14      //   C      3     0
 #define _CRUTDOC                15      //   C    250     0
 #define _NNUMENT                16      //   N      9     0 
+#define _CGUID                  17      //   C     40     0 
 
 static oWndBrw
 
@@ -39,8 +42,11 @@ static dbfCaj
 static dbfCount
 static bBmp
 static bBmpSnd
+static oBtnEfectivo
 static bEdit      := { |aTmp, aGet, dbfEntT, oBrw, bWhen, bValid, nMode | EdtRec( aTmp, aGet, dbfEntT, oBrw, bWhen, bValid, nMode ) }
 static bEditTct   := { |aTmp, aGet, dbfEntT, oBrw, bWhen, bValid, nMode | EdtRecTct( aTmp, aGet, dbfEntT, oBrw, bWhen, bValid, nMode ) }
+
+static aTextTipo  := { "Entrada", "Salida", "Retirada efectivo", "Retirada tarjeta" }
 
 //---------------------------------------------------------------------------//
 
@@ -64,6 +70,7 @@ function aItmEntSal()
    aAdd( aItmEntSal, { "CCODUSR",   "C",  3,  0, "Código de usuario",                     "",   "", "( cDbf )"} )
    aAdd( aItmEntSal, { "CRUTDOC",   "C",250,  0, "Documento adjunto",                     "",   "", "( cDbf )"} )
    aAdd( aItmEntSal, { "NNUMENT",   "N",  9,  0, "Número de la entrada de caja",          "",   "", "( cDbf )"} )
+   aAdd( aItmEntSal, { "CGUID",     "C", 40,  0, "Guid de la entrada o salida",           "",   "", "( cDbf )", win_uuidcreatestring()} )
 
 return ( aItmEntSal )
 
@@ -140,12 +147,14 @@ FUNCTION EntSal( oMenuItem, oWnd )
 
       with object ( oWndBrw:AddXCol() )
          :cHeader          := "Tipo"
-         :bEditValue       := {|| if( ( dbfEntT )->nTipEnt == 1, "Entrada", "Salida" ) }
-         :bBmpData         := {|| if( ( dbfEntT )->nTipEnt <= 1, 1, 2 ) }
-         :nWidth           := 80
+         :bEditValue       := {|| aTextTipo[ Max( ( dbfEntT )->nTipEnt, 1 ) ] }
+         :bBmpData         := {|| if( ( dbfEntT )->nTipEnt <= 1, 1, ( dbfEntT )->nTipEnt ) }
+         :nWidth           := 160
          :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | oWndBrw:ClickOnHeader( oCol ) }
          :AddResource( "Sel16" )
          :AddResource( "Cnt16" )
+         :AddResource( "gc_money2_16" )
+         :AddResource( "gc_credit_cards_16" )
       end with
 
       with object ( oWndBrw:AddXCol() )
@@ -230,6 +239,26 @@ FUNCTION EntSal( oMenuItem, oWnd )
          BEGIN GROUP;
          HOTKEY   "A";
          LEVEL    ACC_APPD
+
+   if lUsrMaster()
+
+      DEFINE BTNSHELL RESOURCE "gc_money2_" OF oWndBrw ;
+         NOBORDER ;
+         ACTION   ( WinAppRec( oWndBrw:oBrw, bEdit, dbfEntT, _RETIRADA_EFECTIVO ) );
+         TOOLTIP  "(R)etirada efectivo";
+         BEGIN GROUP;
+         HOTKEY   "R";
+         LEVEL    ACC_APPD
+         
+      DEFINE BTNSHELL RESOURCE "gc_credit_cards_" OF oWndBrw ;
+         NOBORDER ;
+         ACTION   ( WinAppRec( oWndBrw:oBrw, bEdit, dbfEntT, _RETIRADA_TARJETA ) );
+         TOOLTIP  "Retirada tar(j)eta";
+         BEGIN GROUP;
+         HOTKEY   "J";
+         LEVEL    ACC_APPD
+
+   end if
 
 		DEFINE BTNSHELL RESOURCE "DUP" OF oWndBrw ;
 			NOBORDER ;
@@ -404,7 +433,7 @@ RETURN .T.
 
 //----------------------------------------------------------------------------//
 
-STATIC FUNCTION EdtRec( aTmp, aGet, dbfEntT, oBrw, bWhen, bValid, nMode )
+STATIC FUNCTION EdtRec( aTmp, aGet, dbfEntT, oBrw, nTipoDocumento, bValid, nMode )
 
 	local oDlg
    local oSay
@@ -414,6 +443,14 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfEntT, oBrw, bWhen, bValid, nMode )
    local oSayUsr
    local cSayUsr
    local oBmpGeneral
+   local oSayTittle
+   local cBmpGeneral
+   local cWindowTittle
+   local cSayTittle
+
+   if Empty( nTipoDocumento )
+      nTipoDocumento       := ENTRADA
+   end if
 
    do case
    case nMode == APPD_MODE
@@ -432,6 +469,8 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfEntT, oBrw, bWhen, bValid, nMode )
       aTmp[ _DFECCRE ]  := GetSysDate()
       aTmp[ _CTIMCRE ]  := SubStr( Time(), 1, 5 )
       aTmp[ _CCODUSR ]  := cCurUsr()
+      aTmp[ _NTIPENT ]  := nTipoDocumento
+      aTmp[ _CGUID ]    := win_uuidcreatestring()
 
    case nMode == DUPL_MODE
 
@@ -440,11 +479,17 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfEntT, oBrw, bWhen, bValid, nMode )
          Return .f.
       end if
 
+      if aTmp[ _NTIPENT ] > 2 .and. !lUsrMaster()
+         MsgStop( "Sólo el administrador puede duplicar" )
+         Return .f.
+      end if
+
       aTmp[ _CTURENT ]  := cCurSesion()
       aTmp[ _CCODCAJ ]  := oUser():cCaja()
       aTmp[ _DFECCRE ]  := GetSysDate()
       aTmp[ _CSUFENT ]  := RetSufEmp()
       aTmp[ _LSNDENT ]  := .t.
+      aTmp[ _CGUID ]    := win_uuidcreatestring()
 
    case nMode == EDIT_MODE
 
@@ -452,6 +497,32 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfEntT, oBrw, bWhen, bValid, nMode )
          msgStop( "Solo puede modificar las entradas cerradas los administradores." )
          return .f.
       end if
+
+      if aTmp[ _NTIPENT ] > 2 .and. !lUsrMaster()
+         MsgStop( "Sólo el administrador puede modificar" )
+         Return .f.
+      end if
+
+   end case
+
+   do case
+      case aTmp[ _NTIPENT ] == _RETIRADA_EFECTIVO
+
+         cBmpGeneral       := "gc_money2_48"
+         cWindowTittle     := "retirada efectivo"
+         cSayTittle        := "Retirada efectivo"
+
+      case aTmp[ _NTIPENT ] == _RETIRADA_TARJETA
+
+         cBmpGeneral       := "gc_credit_cards_48"
+         cWindowTittle     := "retirada tarjeta"
+         cSayTittle        := "Retirada tarjeta"
+
+      otherwise
+
+         cBmpGeneral       := "gc_cash_register_refresh_48"
+         cWindowTittle     := "movimientos de entradas y salidas"
+         cSayTittle        := "Entradas y salidas de caja"
 
    end case
 
@@ -473,13 +544,18 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfEntT, oBrw, bWhen, bValid, nMode )
 
    cPicImp              := cPorDiv( aTmp[ _CCODDIV ], dbfDivisa )
 
-   DEFINE DIALOG oDlg RESOURCE "EntSal" TITLE LblTitle( nMode ) + "movimientos de entradas y salidas"
+   DEFINE DIALOG oDlg RESOURCE "EntSal" TITLE LblTitle( nMode ) + cWindowTittle
 
       REDEFINE BITMAP oBmpGeneral ;
          ID       500 ;
-         RESOURCE "gc_central_bank_euro_48" ;
+         RESOURCE cBmpGeneral ;
          TRANSPARENT ;
          OF       oDlg
+
+      REDEFINE SAY oSayTittle ;
+         VAR      cSayTittle ;
+         ID       501 ;
+         OF       oDlg   
 
       REDEFINE GET aGet[ _NNUMENT ] VAR aTmp[ _NNUMENT ] ;
          ID       300 ;
@@ -546,6 +622,10 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfEntT, oBrw, bWhen, bValid, nMode )
          PICTURE  ( cPicImp ) ;
          OF       oDlg
 
+      oBtnEfectivo               := TBtnBmp():ReDefine( 220, "gc_money2_16",,,,,{|| MsgInfo( "Meto las monedas" ) }, oDlg, .f., , .f., "Conteo de efectivo" )
+      oBtnEfectivo:lTransparent  := .t.
+      oBtnEfectivo:lBoxSelect    := .f.
+
       REDEFINE GET aGet[ _CRUTDOC ] VAR aTmp[ _CRUTDOC ] ;
          ID       160 ;
          WHEN     ( nMode != ZOOM_MODE ) ;
@@ -576,7 +656,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfEntT, oBrw, bWhen, bValid, nMode )
          oDlg:AddFastKey( VK_F5, {|| SaveRec( aTmp, aGet, dbfEntT, oBrw, oDlg, nMode ) } )
       end if
 
-      oDlg:bStart := {|| aGet[ _CCODDIV ]:lValid(), aGet[ _CCODCAJ ]:lValid(), aGet[ _NIMPENT ]:SetFocus() }
+      oDlg:bStart := {|| SetDlgMode( aGet, aTmp ) }
 
    ACTIVATE DIALOG oDlg CENTER
 
@@ -587,6 +667,20 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfEntT, oBrw, bWhen, bValid, nMode )
    end if
 
 RETURN ( oDlg:nResult == IDOK )
+
+//--------------------------------------------------------------------------//
+
+STATIC FUNCTION SetDlgMode( aGet, aTmp )
+
+   aGet[ _CCODDIV ]:lValid()
+   aGet[ _CCODCAJ ]:lValid()
+   aGet[ _NIMPENT ]:SetFocus()
+
+   if aTmp[ _NTIPENT ] > 2
+      aGet[ _NTIPENT ]:Hide()
+   end if
+
+Return nil
 
 //--------------------------------------------------------------------------//
 

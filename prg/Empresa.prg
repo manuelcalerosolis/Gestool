@@ -15,7 +15,7 @@
 #define fldContabilidad       oFld:aDialogs[ 6 ]
 #define fldEnvios             oFld:aDialogs[ 7 ]
 #define fldComunicaciones     oFld:aDialogs[ 8 ]
-
+      
 static oWndBrw
 static dbfEmp
 static dbfDiv

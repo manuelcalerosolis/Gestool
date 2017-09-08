@@ -62,15 +62,15 @@ static lAsientoIntraComunitario  := .f.
 
 //----------------------------------------------------------------------------//
 
-Function getDiarioDatabaseContaplus()     ; return ( cDiario )
-Function getDiarioSiiDatabaseContaplus()  ; return ( cDiarioSii )
-Function getCuentaDatabaseContaplus()     ; return ( cCuenta )
-Function getSubCuentaDatabaseContaplus()  ; return ( cSubCuenta )
-Function getEmpresaDatabaseContaplus()    ; return ( cEmpresa )
+FUNCTION getDiarioDatabaseContaplus()     ; RETURN ( cDiario )
+FUNCTION getDiarioSiiDatabaseContaplus()  ; RETURN ( cDiarioSii )
+FUNCTION getCuentaDatabaseContaplus()     ; RETURN ( cCuenta )
+FUNCTION getSubCuentaDatabaseContaplus()  ; RETURN ( cSubCuenta )
+FUNCTION getEmpresaDatabaseContaplus()    ; RETURN ( cEmpresa )
 
 //----------------------------------------------------------------------------//
 
-Function ChkRuta( cRutaConta, lMessage )
+FUNCTION ChkRuta( cRutaConta, lMessage )
 
    local lReturn     := .f.
 
@@ -106,7 +106,7 @@ RETURN lReturn
 
 //----------------------------------------------------------------------------//
 
-Function chkEmpresaAsociada( cCodigoEmpresa )
+FUNCTION chkEmpresaAsociada( cCodigoEmpresa )
 
    if lAplicacionA3()
       Return ( .t. )
@@ -419,7 +419,7 @@ RETURN ( nil )
 Devuelve el numero de digitos de una subcuenta
 */
 
-Function nLenSubcuenta( cRuta, cCodEmp, lMensaje )
+FUNCTION nLenSubcuenta( cRuta, cCodEmp, lMensaje )
 
 Return ( nLenCuentaContaplus( cRuta, cCodEmp, lMensaje ) + 3 )
 
@@ -946,7 +946,6 @@ FUNCTION mkSubcuenta( oGetSubcuenta, aTemp, oGet, cRuta, cCodEmp, oGetDebe, oGet
 
    cRuta                := cPath( cRuta )
 
-   cCodSubcuenta        := oGetSubcuenta:varGet()
    cCodSubcuenta        := pntReplace( oGetSubcuenta, "0", nLenSubcuenta() )
    cCodSubcuenta        := padr( cCodSubcuenta, nLenSubcuenta() )
    cCodSubcuenta        := alltrim( cCodSubcuenta )
@@ -1205,13 +1204,13 @@ RETURN ( cCtaEsp )
 
 //----------------------------------------------------------------------------//
 
-Function lOpenDiario()
+FUNCTION lOpenDiario()
 
 Return ( lOpenDiario )
 
 //----------------------------------------------------------------------------//
 
-Function OpenDiario( cRuta, cCodEmp, lMessage )
+FUNCTION OpenDiario( cRuta, cCodEmp, lMessage )
 
    local oError
    local oBlock
@@ -1313,7 +1312,7 @@ Return ( lOpenDiario )
 //----------------------------------------------------------------------------//
 // Esta funci¢n devuelve el ultimo numero de asiento de Contaplus
 
-Function contaplusUltimoAsiento()
+FUNCTION contaplusUltimoAsiento()
 
    local nRecno
    local contaplusUltimoAsiento    := 0
@@ -1471,7 +1470,7 @@ RETURN ( aAsiento )
 
 //----------------------------------------------------------------------------//
 
-Static Function MkAsientoContaplus( Asien,;
+Static FUNCTION MkAsientoContaplus( Asien,;
                                     cDivisa,;
                                     Fecha,;
                                     Subcuenta,;
@@ -1608,13 +1607,13 @@ Return ( aTemp )
 
 //---------------------------------------------------------------------------//
 
-Function aWriteAsiento( aAsientos, cDivisa, lMessage )
+FUNCTION aWriteAsiento( aAsientos, cDivisa, lMessage )
 
 Return ( aeval( aAsientos, {|aAsiento| WriteAsiento( aAsiento, cDivisa, lMessage ) } ) )
 
 //----------------------------------------------------------------------------//
 
-Function WriteAsiento( aAsiento, cDivisa, lMessage )
+FUNCTION WriteAsiento( aAsiento, cDivisa, lMessage )
 
    local cMes
    local nFld
@@ -1640,12 +1639,12 @@ Function WriteAsiento( aAsiento, cDivisa, lMessage )
 
       WinGather( aAsiento, , cDiario, , APPD_MODE, , .f. )
 
-      cMes           := Rjust( Month( aAsiento[ ( cDiario )->( fieldpos( "FECHA" ) ) ] ), "0", 2 )
+      cMes                          := Rjust( Month( aAsiento[ ( cDiario )->( fieldpos( "FECHA" ) ) ] ), "0", 2 )
 
       if ( cSubCuenta )->( dbSeek( aAsiento[ ( cDiario )->( fieldpos( "SubCta" ) ) ] ) ) .and. ( cSubCuenta )->( dbRLock() )
 
-         ( cSubCuenta )->SUMADBEU               += aAsiento[ ( cDiario )->( fieldpos( "EURODEBE" ) ) ]
-         ( cSubCuenta )->SUMAHBEU               += aAsiento[ ( cDiario )->( fieldpos( "EUROHABER" ) ) ]
+         ( cSubCuenta )->SUMADBEU   += aAsiento[ ( cDiario )->( fieldpos( "EURODEBE" ) ) ]
+         ( cSubCuenta )->SUMAHBEU   += aAsiento[ ( cDiario )->( fieldpos( "EUROHABER" ) ) ]
 
          nFld        := ( cSubCuenta )->( fieldpos( "SDB" + cMes + "EU" ) )
          nVal        := ( cSubCuenta )->( fieldget( nFld ) )
@@ -1734,13 +1733,13 @@ Return ( aTemp )
 
 //----------------------------------------------------------------------------//
 
-Function aWriteAsientoSII( aAsientos )
+FUNCTION aWriteAsientoSII( aAsientos )
 
 Return ( aeval( aAsientos, {|aAsiento| WriteAsientoSII( aAsiento) } ) )
 
 //----------------------------------------------------------------------------//
 
-Function WriteAsientoSII( aAsiento )
+FUNCTION WriteAsientoSII( aAsiento )
 
    local oBlock
    local oError
@@ -1943,7 +1942,7 @@ Return ( cEmpresa )
 
 //--------------------------------------------------------------------------//
 
-Function CloEmpresa()
+FUNCTION CloEmpresa()
 
    if !empty( cEmpresa )
       ( cEmpresa )->( dbCloseArea() )
@@ -2308,7 +2307,7 @@ RETURN ( oDlg:nResult == IDOK )
 
 //-------------------------------------------------------------------------//
 
-function nTotDebe( aTable, cDivisa, cPorDiv )
+FUNCTION nTotDebe( aTable, cDivisa, cPorDiv )
 
    local nTotal      := 0
    local oError
@@ -2337,7 +2336,7 @@ return ( if( empty( cPorDiv ), nTotal, Trans( nTotal, cPorDiv ) ) )
 
 //-------------------------------------------------------------------------//
 
-function nTotHaber( aTable, cDivisa, cPorDiv )
+FUNCTION nTotHaber( aTable, cDivisa, cPorDiv )
 
    local nTotal   := 0
    local oError
@@ -2588,7 +2587,7 @@ RETURN nil
 
 //----------------------------------------------------------------------------//
 
-function cCodEmpCnt( cSer )
+FUNCTION cCodEmpCnt( cSer )
 
    local cCodEmp  := ""
 
@@ -2600,23 +2599,23 @@ RETURN ( cCodEmp )
 
 //---------------------------------------------------------------------------//
 
-function dbfDiario() ; return ( cDiario )
+FUNCTION dbfDiario() ; return ( cDiario )
 
 //---------------------------------------------------------------------------//
 
-function dbfCuenta() ; return ( cCuenta )
+FUNCTION dbfCuenta() ; return ( cCuenta )
 
 //---------------------------------------------------------------------------//
 
-function dbfSubcuenta() ; return ( cSubCuenta )
+FUNCTION dbfSubcuenta() ; return ( cSubCuenta )
 
 //---------------------------------------------------------------------------//
 
-function dbfProyecto() ; return ( cProyecto )
+FUNCTION dbfProyecto() ; return ( cProyecto )
 
 //---------------------------------------------------------------------------//
 
-Function OpnDiario( cRuta, cCodEmp, lMessage )
+FUNCTION OpnDiario( cRuta, cCodEmp, lMessage )
 
    local oBlock
    local dbfDiario      := nil
@@ -2678,7 +2677,7 @@ Return ( dbfDiario )
 
 //----------------------------------------------------------------------------//
 
-Function OpnDiarioSii( cRuta, cCodEmp, lMessage )
+FUNCTION OpnDiarioSii( cRuta, cCodEmp, lMessage )
 
    local oBlock
    local dbfDiarioSii   := nil
@@ -2740,7 +2739,7 @@ Return ( dbfDiarioSii )
 
 //----------------------------------------------------------------------------//
 
-Function OpnBalance( cRuta, cCodEmp, lMessage )
+FUNCTION OpnBalance( cRuta, cCodEmp, lMessage )
 
    local dbfBalance
 
@@ -2786,7 +2785,7 @@ Return ( dbfBalance )
 
 //----------------------------------------------------------------------------//
 
-Function OpnSubCuenta( cRuta, cCodEmp, lMessage )
+FUNCTION OpnSubCuenta( cRuta, cCodEmp, lMessage )
 
    local dbfSubcuenta
 
@@ -2831,7 +2830,7 @@ Return ( dbfSubcuenta )
 
 //----------------------------------------------------------------------------//
 
-Function CloSubCuenta()
+FUNCTION CloSubCuenta()
 
    if !empty( cSubCuenta )
       ( cSubCuenta )->( dbCloseArea() )
@@ -2843,19 +2842,19 @@ Return ( cSubCuenta )
 
 //----------------------------------------------------------------------------//
 
-Function ODiario()
+FUNCTION ODiario()
 
 Return ( nil )
 
 //----------------------------------------------------------------------------//
 
-Function CDiario()
+FUNCTION CDiario()
 
 Return ( nil )
 
 //----------------------------------------------------------------------------//
 
-Function SetAplicacionContable( nAplicacion )
+FUNCTION SetAplicacionContable( nAplicacion )
    
    if nAplicacionContable != nAplicacion
       nAplicacionContable := nAplicacion
@@ -2865,19 +2864,19 @@ Return ( nAplicacion )
 
 //---------------------------------------------------------------------------//
        
-Function lAplicacionContaplus()
+FUNCTION lAplicacionContaplus()
 
 Return ( nAplicacionContable <= 1 )
 
 //---------------------------------------------------------------------------//
 
-Function lAplicacionA3()
+FUNCTION lAplicacionA3()
 
 Return ( nAplicacionContable == 2 )
 
 //---------------------------------------------------------------------------//
 
-Function setAsientoIntraComunitario( lIntracomunitario )
+FUNCTION setAsientoIntraComunitario( lIntracomunitario )
 
    lAsientoIntraComunitario   := lIntracomunitario
 
@@ -2885,7 +2884,7 @@ Return ( lAsientoIntraComunitario )
 
 //---------------------------------------------------------------------------//
 
-Function getAsientoIntraComunitario()
+FUNCTION getAsientoIntraComunitario()
 
 Return ( lAsientoIntraComunitario )
 

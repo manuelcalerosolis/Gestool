@@ -6063,6 +6063,8 @@ FONT 8, "Ms Sans Serif"
   CONTROL "Divisa\r\n", -1, "Static", WS_GROUP, 290, 108, 27, 8
   CONTROL "Documento", -1, "Button", BS_GROUPBOX, 44, 29, 341, 28
   CONTROL "Número", -1, "Static", WS_GROUP, 50, 43, 27, 8
+  CONTROL "", 220, "TBtnBmp", 0x00000000, 153, 105, 12, 11
+  CONTROL "Entradas y salidas de caja", 501, "Static", SS_LEFTNOWORDWRAP, 43, 3, 347, 8
 }
 
 ENVIADO DIALOG DISCARDABLE 113, 59, 121, 39

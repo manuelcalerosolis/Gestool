@@ -901,7 +901,7 @@ FUNCTION CntFacCli( lSimula, lPago, lExcCnt, lMessage, oTree, nAsiento, aSimula,
          lReturn  := msgTblCon(  aSimula, cCodDiv, dbfDiv, !lErrorFound, pFactura,;
                                  {||   aWriteAsiento( aSimula, cCodDiv, lMessage, oTree, pFactura, nAsiento ),;
                                        aWriteAsientoSII( aAsientosSII ),;
-                                       lCntFacCli( nFactura, pFactura, nAsiento, lPago, oTree, dbfFacCliT, dbfFacCliP ) } )
+                                       lContabilizaFacturaCliente( nFactura, pFactura, nAsiento, aSimula, lPago, oTree, dbfFacCliT, dbfFacCliP ) } )
       end if
 
    else
@@ -911,7 +911,7 @@ FUNCTION CntFacCli( lSimula, lPago, lExcCnt, lMessage, oTree, nAsiento, aSimula,
 
          aWriteAsientoSII( aAsientosSII )
 
-         lReturn  := lCntFacCli( nFactura, pFactura, nAsiento, lPago, oTree, dbfFacCliT )
+         lReturn  := lContabilizaFacturaCliente( nFactura, pFactura, nAsiento, aSimula, lPago, oTree, dbfFacCliT )
       end if
 
    end if
@@ -934,7 +934,9 @@ RETURN ( lReturn )
 
 //---------------------------------------------------------------------------//
 
-Static Function lCntFacCli( nFactura, pFactura, nAsiento, lPago, oTree, dbfFacCliT, dbfFacCliP )
+Static Function lContabilizaFacturaCliente( nFactura, pFactura, nAsiento, aSimula, lPago, oTree, dbfFacCliT, dbfFacCliP )
+
+   local aAsiento                   := atail( aSimula )
 
    // Contabilizamos desde aki A3---------------------------------------------
 
@@ -945,8 +947,15 @@ Static Function lCntFacCli( nFactura, pFactura, nAsiento, lPago, oTree, dbfFacCl
    // Ponemos el ticket como contabilizado-------------------------------------
 
    if dbDialogLock( dbfFacCliT )
-      ( dbfFacCliT )->lContab := .t.
+
+      ( dbfFacCliT )->lContab       := .t.
+
+      if ( getDiarioDatabaseContaplus() )->( fieldpos( "Guid" ) ) != 0
+         ( dbfFacCliT )->cConGuid   := aAsiento[ ( getDiarioDatabaseContaplus() )->( fieldpos( "Guid" ) ) ]
+      end if 
+
       ( dbfFacCliT )->( dbUnLock() )
+
    end if
 
    // Mensaje------------------------------------------------------------------
@@ -965,7 +974,7 @@ Static Function lCntFacCli( nFactura, pFactura, nAsiento, lPago, oTree, dbfFacCl
 
          while ( ( dbfFacCliP )->cSerie + str( ( dbfFacCliP )->nNumFac ) + ( dbfFacCliP )->cSufFac == nFactura ) .and. !( dbfFacCliP )->( eof() )
 
-            lContabilizaReciboCliente( nil, nil, .t., oTree, dbfFacCliP )
+            lContabilizaReciboClienteFactura( aSimula, oTree, dbfFacCliP )
 
             ( dbfFacCliP )->( dbSkip() )
 
@@ -2666,11 +2675,28 @@ RETURN ( lReturn )
 
 //---------------------------------------------------------------------------//
 
-Static Function lCntFacRec( nFactura, pFactura, nAsiento, lPago, oTree, dbfFacRecT, dbfFacCliP )
+Static Function lContabilizaFacturaRectificativa( nFactura, pFactura, nAsiento, aSimula, lPago, oTree, dbfFacRecT, dbfFacCliP )
 
-   if ( dbfFacRecT )->( dbRLock() )
-      ( dbfFacRecT )->lContab := .t.
+   local aAsiento                   := atail( aSimula )
+
+   // Contabilizamos desde aki A3---------------------------------------------
+
+   if lAplicacionA3()
+      EnlaceA3():getInstance():Render()
+   end if 
+
+   // Ponemos la factura como contabilizado-------------------------------------
+
+   if dbDialogLock( dbfFacRecT )
+
+      ( dbfFacRecT )->lContab       := .t.
+
+      if ( getDiarioDatabaseContaplus() )->( fieldpos( "Guid" ) ) != 0
+         ( dbfFacRecT )->cConGuid   := aAsiento[ ( getDiarioDatabaseContaplus() )->( fieldpos( "Guid" ) ) ]
+      end if 
+
       ( dbfFacRecT )->( dbUnLock() )
+
    end if
 
    oTree:Select( oTree:Add( "Factura rectificativa : " + rtrim( pFactura ) + " asiento generado num. " + alltrim( str( nAsiento ) ), 1 ) )
@@ -2681,7 +2707,7 @@ Static Function lCntFacRec( nFactura, pFactura, nAsiento, lPago, oTree, dbfFacRe
 
          while ( ( dbfFacCliP )->cSerie + str( ( dbfFacCliP )->nNumFac ) + ( dbfFacCliP )->cSufFac == nFactura ) .and. !( dbfFacCliP )->( eof() )
 
-            lContabilizaReciboCliente( nil, nil, .t., oTree, dbfFacCliP )
+            lContabilizaReciboClienteFactura( aSimula, oTree, dbfFacCliP )
 
             ( dbfFacCliP )->( dbSkip() )
 
@@ -4336,13 +4362,9 @@ FUNCTION ContabilizaReciboCliente( oBrw, oTree, lSimula, aSimula, dbfFacCliT, db
 
    if ( !lErrorFound )
 
-      if Empty( ( dbfFacCliP )->dPreCob )
-
-         if dbDialogLock( dbfFacCliP )
-            ( dbfFacCliP )->dPreCob := date()
-            ( dbfFacCliP )->( dbUnLock() )
-         end if
-
+      if empty( ( dbfFacCliP )->dPreCob ) .and. dbDialogLock( dbfFacCliP )
+         ( dbfFacCliP )->dPreCob    := date()
+         ( dbfFacCliP )->( dbUnLock() )
       end if
 
    end if
@@ -4354,36 +4376,13 @@ FUNCTION ContabilizaReciboCliente( oBrw, oTree, lSimula, aSimula, dbfFacCliT, db
 
    if ( lSimula .or. !lErrorFound )
 
-      if lAplicacionContaplus()
-
-         if ( dbfFacCliP )->lDevuelto
-            cConcepto      := "Dev./Recibo. " + cRecibo
-            dFecha         := ( dbfFacCliP )->dFecDev
-         else
-            cConcepto      := "C/Recibo. " + cRecibo
-            dFecha         := ( dbfFacCliP )->dEntrada
-         end if
-
+      if ( dbfFacCliP )->lDevuelto
+         cConcepto      := "Dev./Recibo. " + cRecibo
+         dFecha         := ( dbfFacCliP )->dFecDev
       else
-
-         if ( dbfFacCliP )->lDevuelto
-            cConcepto      := "Dev./Recibo. " + nRecibo
-            dFecha         := ( dbfFacCliP )->dFecDev
-         else
-            cConcepto      := "C/Recibo. " + nRecibo
-            dFecha         := ( dbfFacCliP )->dEntrada
-         end if
-
+         cConcepto      := "C/Recibo. " + cRecibo
+         dFecha         := ( dbfFacCliP )->dEntrada
       end if
-
-   end if
-
-   /*
-   Contabilizaci¢n de Pagos
-   --------------------------------------------------------------------------
-   */
-
-   if ( lSimula .or. !lErrorFound )
 
       /*
       Cliente por el total_____________________________________________________
@@ -4511,14 +4510,14 @@ FUNCTION ContabilizaReciboCliente( oBrw, oTree, lSimula, aSimula, dbfFacCliT, db
 
          aWriteAsiento( aSimula, cCodDiv, .t., oTree, cRecibo, nAsiento )
 
-         lReturn     := lContabilizaReciboCliente( cRecibo, nAsiento, lFromFactura, oTree, dbfFacCliP )
+         lReturn     := lContabilizaReciboCliente( nRecibo, cRecibo, nAsiento, aSimula, lFromFactura, oTree, dbfFacCliP )
 
       end if
 
       if ( lSimula .and. !lFromFactura )
          lReturn     := msgTblCon( aSimula, cCodDiv, dbfDiv, !lErrorFound, cRecibo, ;
                                     {||   aWriteAsiento( aSimula, cCodDiv, .t., oTree, cRecibo, nAsiento ), ;
-                                          lContabilizaReciboCliente( cRecibo, nAsiento, lFromFactura, oTree, dbfFacCliP ) } )
+                                          lContabilizaReciboCliente( nRecibo, cRecibo, nAsiento, aSimula, lFromFactura, oTree, dbfFacCliP ) } )
       end if
 
    end if
@@ -4538,16 +4537,44 @@ RETURN ( lReturn )
 
 //------------------------------------------------------------------------//
 
-Function lContabilizaReciboCliente( cRecibo, nAsiento, lFromFactura, oTree, dbfFacCliP )
+Function lContabilizaReciboClienteFactura( aSimula, oTree, dbfFacCliP )
 
-   if dbLock( dbfFacCliP )
-      ( dbfFacCliP )->lConPgo  := .t.
-      ( dbfFacCliP )->( dbUnLock() )
-   end if
+RETURN ( lContabilizaReciboCliente( nil, nil, nil, aSimula, .t., oTree, dbfFacCliP ) )
 
-   if !lFromFactura
-      oTree:Select( oTree:Add( "Recibo : " + rtrim( cRecibo ) + " asiento generado num. " + alltrim( str( nAsiento ) ), 1 ) )
-   end if
+//------------------------------------------------------------------------//
+
+Function lContabilizaReciboCliente( nRecibo, cRecibo, nAsiento, aSimula, lFromFactura, oTree, dbfFacCliP )
+
+   local aAsiento := atail( aSimula )
+   local nRecno   := ( dbfFacCliP )->( recno() )
+   local cOrder   := ( dbfFacCliP )->( ordsetfocus() )
+
+   if dbseekinord( nRecibo, "nNumFac", dbfFacCliP )
+
+      if dbDialogLock( dbfFacCliP )
+         
+         ( dbfFacCliP )->lConPgo       := .t.
+
+         if ( getDiarioDatabaseContaplus() )->( fieldpos( "Guid" ) ) != 0
+            ( dbfFacCliP )->cConGuid   := aAsiento[ ( getDiarioDatabaseContaplus() )->( fieldpos( "Guid" ) ) ]
+         end if 
+
+         ( dbfFacCliP )->( dbunlock() )
+
+      end if
+
+      if !lFromFactura
+         oTree:Select( oTree:Add( "Recibo : " + rtrim( cRecibo ) + " asiento generado num. " + alltrim( str( nAsiento ) ), 1 ) )
+      end if
+
+   else 
+
+      msgStop( "Recibo " + nRecibo + " no encontado" )
+
+   end if 
+
+   ( dbfFacCliP )->( ordsetfocus( cOrder ) )
+   ( dbfFacCliP )->( dbgoto( nRecno ) )
 
 RETURN ( .t. )
 
@@ -5428,7 +5455,7 @@ FUNCTION CntFacRec( lSimula, lPago, lExcCnt, lMessage, oTree, nAsiento, aSimula,
          lReturn  := msgTblCon( aSimula, cCodDiv, dbfDiv, !lErrorFound, pFactura,;  
                         {||   aWriteAsiento( aSimula, cCodDiv, lMessage, oTree, pFactura, nAsiento ),;
                               aWriteAsientoSII( aAsientosSII ),;
-                              lCntFacRec( nFactura, pFactura, nAsiento, lPago, oTree, dbfFacRecT, dbfFacCliP ) } )
+                              lContabilizaFacturaRectificativa( nFactura, pFactura, nAsiento, aSimula, lPago, oTree, dbfFacRecT, dbfFacCliP ) } )
       end if
 
    else
@@ -5436,7 +5463,7 @@ FUNCTION CntFacRec( lSimula, lPago, lExcCnt, lMessage, oTree, nAsiento, aSimula,
       if !lErrorFound
          aWriteAsiento( aSimula, cCodDiv, lMessage, oTree, pFactura, nAsiento )
          aWriteAsientoSII( aAsientosSII )
-         lReturn  := lCntFacRec( nFactura, pFactura, nAsiento, lPago, oTree, dbfFacRecT )
+         lReturn  := lContabilizaFacturaRectificativa( nFactura, pFactura, nAsiento, aSimula, lPago, oTree, dbfFacRecT )
       end if
 
    end if

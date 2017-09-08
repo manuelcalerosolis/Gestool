@@ -1771,13 +1771,13 @@ METHOD ChgCombo( nTab ) CLASS TShell
    local oCol
    local cOrd                 := ""
 
-   if empty( nTab ) .and. ( ::xAlias )->( used() )
-      nTab                    := ( ::xAlias )->( ordnumber() )
-   end if 
-
    if empty( nTab ) .and. !empty( ::oWndBar )
       nTab                    := ::oWndBar:GetComboBoxAt( .t. )
    end if
+
+   if empty( nTab ) .and. ( ::xAlias )->( used() )
+      nTab                    := ( ::xAlias )->( ordnumber() )
+   end if 
 
    nTab                       := Max( nTab, 1 )
 

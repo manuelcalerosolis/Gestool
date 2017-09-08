@@ -5596,7 +5596,7 @@ Static Function DataReport( oFr )
    oFr:SetWorkArea(     "Pedidos", ( D():PedidosProveedores( nView ) )->( Select() ), .f., { FR_RB_CURRENT, FR_RB_CURRENT, 0 } )
    oFr:SetFieldAliases( "Pedidos", cItemsToReport( aItmPedPrv() ) )
 
-   ( D():PedidosProveedoresLineas( nView ) )->( ordsetfocus( "cCodFam" ) )
+   ( D():PedidosProveedoresLineas( nView ) )->( ordsetfocus( "nPosPrint" ) )
    oFr:SetWorkArea(     "Lineas de pedidos", ( D():PedidosProveedoresLineas( nView ) )->( Select() ) )
    oFr:SetFieldAliases( "Lineas de pedidos", cItemsToReport( aColPedPrv() ) )
 
