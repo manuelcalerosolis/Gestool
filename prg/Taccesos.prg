@@ -130,6 +130,7 @@ CLASS TAcceso
    METHOD DisableComboBox()               INLINE ( if( !empty( ::oComboBox ), ( ::SetComboBoxItems( {} ), ::oComboBox:Hide() ), ) )
    METHOD EnableComboBox( aItems )        INLINE ( if( !empty( ::oComboBox ) .and. IsArray( aItems ), ( ::SetComboBoxItems( aItems ), ::oComboBox:Show(), ::oComboBox:Enable() ), ) )
    METHOD HideComboBox()                  INLINE ( if( !empty( ::oComboBox ), ::oComboBox:Hide(), ) )
+   METHOD setCombo( cItem )               INLINE ( if( !empty( ::oComboBox ), ::oComboBox:Set( cItem ), ) )
 
    METHOD setComboFilterItems( aItems )   INLINE ( if( !empty( ::oComboFilter ), ::oComboFilter:SetItems( aItems ), ) )
    METHOD setComboFilterSelect( nItems )  INLINE ( if( !empty( ::oComboFilter ), ( ::oGet:cText( Space( 200 ) ), ::oGet:oGet:Home(), ::oComboFilter:Select( nItems ) ), ) )

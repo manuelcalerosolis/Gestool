@@ -13,33 +13,34 @@
 
 CLASS SQLXBrowse FROM TXBrowse
 
-   CLASSDATA lRegistered      AS LOGICAL
+   CLASSDATA lRegistered                        AS LOGICAL
 
-   DATA  cOriginal            AS CHARACTER   INIT ""
-   DATA  cName                AS CHARACTER   INIT ""
+   DATA  cOriginal                              AS CHARACTER   INIT ""
+   DATA  cName                                  AS CHARACTER   INIT ""
 
-   DATA  aHeaders             AS ARRAY       INIT {}
+   DATA  aHeaders                               AS ARRAY       INIT {}
 
-   DATA  lOnProcess           AS LOGIC       INIT .f.
+   DATA  lOnProcess                             AS LOGIC       INIT .f.
 
    DATA  nVScrollPos
 
-   ACCESS BookMark            INLINE Eval( ::bBookMark )
-   ASSIGN BookMark(u)         INLINE Eval( ::bBookMark, u )
+   ACCESS BookMark                              INLINE Eval( ::bBookMark )
+   ASSIGN BookMark(u)                           INLINE Eval( ::bBookMark, u )
 
    METHOD New( oWnd )
 
    METHOD setModel( oModel )  
 
-   METHOD setOriginal()       INLINE ( ::RestoreState( ::cOriginal ) )
-   METHOD getOriginal()       INLINE ( ::cOriginal := ::SaveState() )
+   METHOD setOriginal()                         INLINE ( ::RestoreState( ::cOriginal ) )
+   METHOD getOriginal()                         INLINE ( ::cOriginal := ::SaveState() )
 
-   METHOD refreshCurrent()    INLINE ( ::Refresh(), ::Select( 0 ), ::Select( 1 ) )
+   METHOD refreshCurrent()                      INLINE ( ::Refresh(), ::Select( 0 ), ::Select( 1 ) )
 
-   METHOD getColumnHeaders()
+   METHOD getColumnByHeaders()
    METHOD selectColumnOrder( oCol )
-   
-   METHOD getColumnHeader( cHeader )
+   METHOD selectColumnOrderByHeader( cHeader )  INLINE ( ::selectColumnOrder( ::getColumnByHeader( cHeader ) ) )
+
+   METHOD getColumnByHeader( cHeader )
    METHOD getColumnOrder( cSortOrder )
    METHOD getColumnOrderByHeader( cHeader )  
 
@@ -250,7 +251,7 @@ RETURN ( Self )
 
 //----------------------------------------------------------------------------//
 
-METHOD getColumnHeaders()
+METHOD getColumnByHeaders()
 
    ::aHeaders := {}
 
@@ -282,7 +283,7 @@ RETURN ( Self )
 
 //----------------------------------------------------------------------------//
 
-METHOD getColumnHeader( cHeader )
+METHOD getColumnByHeader( cHeader )
 
    local nPosition   
 
@@ -320,7 +321,7 @@ RETURN ( nil )
 
 METHOD getColumnOrderByHeader( cHeader )
 
-   local oCol        := ::getColumnHeader( cHeader )
+   local oCol        := ::getColumnByHeader( cHeader )
 
    if !empty( oCol )
       RETURN ( oCol:cSortOrder )

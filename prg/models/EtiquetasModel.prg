@@ -41,8 +41,6 @@ END CLASS
 
 METHOD New()
 
-   ::Super:New()
-
    ::cDbfTableName               := ""
 
    ::hColumns                    := {  "id"        => {  "create"    => "INTEGER PRIMARY KEY AUTO_INCREMENT"            ,;

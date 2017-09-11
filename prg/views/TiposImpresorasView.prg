@@ -18,8 +18,6 @@ METHOD New( oController )
 
    ::oController     := oController
 
-   ::cImageName      := "gc_printer2_16"
-
 Return ( Self )
 
 //---------------------------------------------------------------------------//
@@ -36,14 +34,15 @@ METHOD Dialog()
       VAR         ::oController:oModel:hBuffer[ "nombre" ] ;
       ID          100 ;
       WHEN        ( !::oController:isZoomMode() ) ;
-      VALID       ( ::oController:validNombre( oGetNombre ) ) ;
+      PICTURE     "@S40" ;
+      VALID       ( ::oController:validate( oGetNombre, "nombre" ) ) ;
       OF          oDlg
 
    REDEFINE BUTTON oBtnOk ;
       ID          IDOK ;
       OF          oDlg ;
       WHEN        ( !::oController:isZoomMode() ) ;
-      ACTION      ( if( validateDialog( oDlg ), oDlg:end( IDOK ), ) )
+      ACTION      ( oDlg:end( IDOK ) )
 
    REDEFINE BUTTON ;
       ID          IDCANCEL ;
@@ -62,3 +61,5 @@ METHOD Dialog()
    ACTIVATE DIALOG oDlg CENTER
 
 RETURN ( oDlg:nResult == IDOK )
+
+//---------------------------------------------------------------------------//

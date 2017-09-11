@@ -88,8 +88,8 @@ FUNCTION Main( paramsMain, paramsSecond, paramsThird )
 
    if !empty( getSQLDatabase() )
       if getSQLDatabase():Connect()
-         getSQLDatabase():startForeignKey()
-         getSQLDatabase():checkModelsExistence()
+         getSQLDatabase():addModels()
+         getSQLDatabase():checkModels()
       else 
          msgStop( "No se ha podido conectar a la base de datos MySQL" )
       end if 

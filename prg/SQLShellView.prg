@@ -66,7 +66,7 @@ METHOD Activate()
    ::oShell:setDoubleClickInData(   {|| ::oController:Edit() } )
    ::oShell:setComboBoxChange(      {|| ::changeCombo( ::oShell:getCombobox() ) } )
    ::oShell:setValid(               {|| ::oController:saveHistory( "_shell", ::oShell:getBrowse() ) } )
-   ::oShell:setEnd(                 {|| ::oController:destroySQLModel() } )
+   ::oShell:setEnd(                 {|| ::oController:endModel() } )
 
    ::oShell:Activate()
 
@@ -167,7 +167,7 @@ METHOD changeCombo( oCombobox )
       RETURN ( Self )
    end if 
 
-   oColumn           := ::oShell:getColumnHeader( oCombobox:VarGet() )
+   oColumn           := ::oShell:getColumnByHeader( oCombobox:VarGet() )
 
    if !empty( oColumn )
       ::oController:clickOnHeader( oColumn, oCombobox )

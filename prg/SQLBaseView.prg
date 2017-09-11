@@ -153,7 +153,7 @@ METHOD changeCombo( oCombobox )
       RETURN ( Self )
    end if 
 
-   oColumn           := ::oBrowse:getColumnHeader( oCombobox:VarGet() )
+   oColumn           := ::oBrowse:getColumnByHeader( oCombobox:VarGet() )
 
    if !empty( oColumn )
       ::oController:clickOnHeader( oColumn, oCombobox )
@@ -194,7 +194,7 @@ METHOD buildSQLShell()
    // ACTIVATE WINDOW ::oShell
 
    ::oShell:bValid         := {|| ::saveHistoryOfShell(), .t. }
-   ::oShell:bEnd           := {|| ::oController:destroySQLModel() }
+   ::oShell:bEnd           := {|| ::oController:endModel() }
 
    ::oShell:setComboBoxChange( {|| ::changeCombo( ::oShell:getCombobox() ) } )
 

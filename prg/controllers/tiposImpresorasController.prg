@@ -8,10 +8,6 @@ CLASS TiposImpresorasController FROM SQLBaseController
 
    METHOD   New()
 
-   METHOD   getFieldFromBrowse()          INLINE ( ::getRowSet():fieldGet( "nombre" ) )
- 
-   METHOD   validNombre( oGetNombre )
-
 END CLASS
 
 //---------------------------------------------------------------------------//
@@ -30,16 +26,18 @@ METHOD New()
 
    ::oNavigatorView        := SQLNavigatorView():New( self )
 
+   ::oValidator            := TiposImpresorasValidator():New( self )
+
 RETURN ( Self )
 
 //---------------------------------------------------------------------------//
-
-METHOD validNombre( oGetNombre )
+/*
+METHOD validNombre( oGet, cColumn )
 
    local idNombre
    local cErrorText  := ""
 
-   oGetNombre:setColor( Rgb( 0, 0, 0 ), Rgb( 255, 255, 255 ) )
+   oGet:setColor( Rgb( 0, 0, 0 ), Rgb( 255, 255, 255 ) )
 
    if empty( ::oModel:hBuffer[ "nombre" ] )
       cErrorText     += "El nombre de la impresora no puede estar vacío." 
@@ -61,11 +59,11 @@ METHOD validNombre( oGetNombre )
 
    if !empty( cErrorText )
       msgStop( cErrorText )
-      oGetNombre:setColor( Rgb( 255, 255, 255 ), Rgb( 255, 102, 102 ) )
-      oGetNombre:setFocus()
+      oGet:setColor( Rgb( 255, 255, 255 ), Rgb( 255, 102, 102 ) )
+      oGet:setFocus()
       RETURN ( .f. )
    end if
 
 RETURN ( .t. )
-
+*/
 //---------------------------------------------------------------------------//

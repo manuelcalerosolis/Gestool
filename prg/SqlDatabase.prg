@@ -27,6 +27,7 @@ CLASS SQLDatabase
    METHOD Disconnect()              INLINE ( if( !empty( ::oConexion ), ::oConexion:disconnect(), ) )
         
    METHOD Exec( cSql )             
+   METHOD Execs( aSql )             
    METHOD Query( cSql )             INLINE ( if( !empty( ::oConexion ), ::oConexion:Query( cSql ), ) )
    METHOD Prepare( cSql )           INLINE ( if( !empty( ::oConexion ), ::oConexion:Prepare( cSql ), ) )
 
@@ -42,7 +43,10 @@ CLASS SQLDatabase
    METHOD errorInfo()               INLINE ( if( !empty( ::oConexion ), ::oConexion:errorInfo(), ) )
 
    METHOD addModels()
-   METHOD checkModelsExistence()   
+
+   METHOD checkModels()   
+   METHOD checkModel( oModel )   
+   METHOD getSchemaColumns()
 
 ENDCLASS
 
@@ -95,41 +99,91 @@ RETURN ( lExec )
 
 //----------------------------------------------------------------------------//
 
-METHOD checkModelsExistence()
+METHOD Execs( aSql )
 
-   TiposImpresorasModel():New():checkTable()
-
-   if empty( ::aModels )
-      ::addModels()
-   end if 
-     
-RETURN ( nil ) // aeval( ::aModels, { |cModel| ::Exec( cModel ) } ) )
+RETURN ( aeval( aSql, {|cSql| ::Exec( cSql ) } ) ) 
 
 //----------------------------------------------------------------------------//
 
+METHOD checkModels()
+
+RETURN ( aeval( ::aModels, {|oModel| ::checkModel( oModel ) } ) )
+
+//----------------------------------------------------------------------------//
+
+METHOD checkModel( oModel )
+
+   local aSchemaColumns    := ::getSchemaColumns( oModel )
+
+   if empty( aSchemaColumns )
+      ::Exec( oModel:getCreateTableSentence() )
+   else
+      ::Execs( oModel:getAlterTableSentences( aSchemaColumns ) )
+   end if 
+  
+RETURN ( Self )
+
+//----------------------------------------------------------------------------//
+
+METHOD getSchemaColumns( oModel )
+
+   local cSentence
+   local oStatement
+   local aSchemaColumns
+
+   cSentence               := "SELECT COLUMN_NAME "                              +;
+                                 "FROM INFORMATION_SCHEMA.COLUMNS "              +;
+                                 "WHERE table_name = " + quoted( oModel:cTableName )
+
+   try
+
+      oStatement           := getSQLDatabase():Query( cSentence )
+   
+      aSchemaColumns       := oStatement:fetchAll( FETCH_HASH )
+
+   catch
+
+      msgstop( hb_valtoexp( getSQLDatabase():errorInfo() ) )
+
+   finally
+
+      if !empty( oStatement )
+        oStatement:free()
+      end if    
+   
+   end
+
+   if empty( aSchemaColumns ) .or. !hb_isarray( aSchemaColumns )
+      RETURN ( nil )
+   end if
+
+RETURN ( aSchemaColumns )
+
+//---------------------------------------------------------------------------//
+
 METHOD addModels()
 
-   aadd( ::aModels, TiposImpresorasModel():New():getSQLCreateTable() )
+   aadd( ::aModels, TiposImpresorasModel():New() )
 
-   aadd( ::aModels, TiposNotasModel():New():getSQLCreateTable() )
+   aadd( ::aModels, TiposNotasModel():New() )
 
-   aadd( ::aModels, EtiquetasModel():New():getSQLCreateTable() )
+   aadd( ::aModels, EtiquetasModel():New() )
 
-   aadd( ::aModels, SituacionesModel():New():getSQLCreateTable() )
+   aadd( ::aModels, SituacionesModel():New() )
 
-   aadd( ::aModels, HistoricosUsuariosModel():New():getSQLCreateTable() )
+   aadd( ::aModels, HistoricosUsuariosModel():New() )
 
-   aadd( ::aModels, RelacionesEtiquetasModel():New():getSQLCreateTable() )
+   aadd( ::aModels, RelacionesEtiquetasModel():New() )
                                       
-   aadd( ::aModels, TiposVentasModel():New():getSQLCreateTable() )
+   aadd( ::aModels, TiposVentasModel():New() )
 
-   aadd( ::aModels, ConfiguracionEmpresasModel():New():getSQLCreateTable() )
+   aadd( ::aModels, ConfiguracionEmpresasModel():New() )
 
-   aadd( ::aModels, PropiedadesModel():New():getSQLCreateTable() )
+   aadd( ::aModels, PropiedadesModel():New() )
 
-   aadd( ::aModels, PropiedadesLineasModel():New():getSQLCreateTable() )
+   aadd( ::aModels, PropiedadesLineasModel():New() )
 
-   aadd( ::aModels, SQLMovimientosAlmacenModel():New():getSQLCreateTable() )
+   aadd( ::aModels, SQLMovimientosAlmacenModel():New() )
 
 RETURN ( ::aModels )
 

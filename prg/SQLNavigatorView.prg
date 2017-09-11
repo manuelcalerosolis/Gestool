@@ -23,11 +23,14 @@ CLASS SQLNavigatorView
    // Facades -----------------------------------------------------------------
 
    METHOD getModel()                      INLINE ( ::oController:getModel() )
+
    METHOD getModelColumns()               INLINE ( if( !empty( ::getModel() ), ::getModel():hColumns, ) )
    METHOD getModelExtraColumns()          INLINE ( if( !empty( ::getModel() ), ::getModel():hExtraColumns, ) )
 
    METHOD getModelColumnsForNavigator()   INLINE ( if( !empty( ::getModel() ), ::getModel():getColumnsForNavigator(), ) )
    METHOD getModelHeadersForNavigator()   INLINE ( if( !empty( ::getModel() ), ::getModel():getHeadersForNavigator(), ) )
+
+   METHOD getModelHeaderFromColumnOrder() INLINE ( if( !empty( ::getModel() ), ::getModel():getHeaderFromColumnOrder(), ) )
 
    // MDI child----------------------------------------------------------------
 
@@ -52,7 +55,7 @@ CLASS SQLNavigatorView
    DATA oTreeMenu
    DATA oImageListTreeMenu
    DATA oButtonMainTreeMenu
-   DATA aFastKeyTreeMenu               INIT  {}
+   DATA aFastKeyTreeMenu                  INIT  {}
 
    METHOD CreateTreeMenu()
 
@@ -68,16 +71,16 @@ CLASS SQLNavigatorView
    METHOD AddDeleteButtonTreeMenu()    
    METHOD AddSalirButtonTreeMenu()     
 
-   METHOD AddGeneralButtonTreeMenu()   INLINE ( ::AddSearchButtonTreeMenu(),;
-                                                ::AddAppendButtonTreeMenu(),;
-                                                ::AddDuplicateButtonTreeMenu(),;
-                                                ::AddEditButtonTreeMenu(),;
-                                                ::AddZoomButtonTreeMenu(),;
-                                                ::AddDeleteButtonTreeMenu() )
+   METHOD AddGeneralButtonTreeMenu()      INLINE ( ::AddSearchButtonTreeMenu(),;
+                                                   ::AddAppendButtonTreeMenu(),;
+                                                   ::AddDuplicateButtonTreeMenu(),;
+                                                   ::AddEditButtonTreeMenu(),;
+                                                   ::AddZoomButtonTreeMenu(),;
+                                                   ::AddDeleteButtonTreeMenu() )
 
-   METHOD AddAutoButtonTreeMenu()      INLINE ( ::AddGeneralButtonTreeMenu(),;
-                                                ::AddSalirButtonTreeMenu(),;
-                                                ::oButtonMainTreeMenu:Expand() )
+   METHOD AddAutoButtonTreeMenu()         INLINE ( ::AddGeneralButtonTreeMenu(),;
+                                                   ::AddSalirButtonTreeMenu(),;
+                                                   ::oButtonMainTreeMenu:Expand() )
 
    METHOD onClickTreeMenu()
 
@@ -91,7 +94,7 @@ CLASS SQLNavigatorView
 
    METHOD AddColumnBrowse( cColumn, hColumn )
 
-   METHOD CreateFromCodeBrowse()       INLINE ( ::oBrowse:CreateFromCode() )
+   METHOD CreateFromCodeBrowse()          INLINE ( ::oBrowse:CreateFromCode() )
 
    // Splitters------------------------------------------------------------------
 
@@ -106,6 +109,8 @@ CLASS SQLNavigatorView
 
    METHOD EnableWindowsBar()
 
+   METHOD DisableWindowsBar()
+
    // Eventos------------------------------------------------------------------
 
    METHOD onChangeCombo()
@@ -114,7 +119,7 @@ CLASS SQLNavigatorView
 
    METHOD onChangeSearch()
 
-   METHOD refreshNavigator()           INLINE ( ::oTreeMenu:Select( ::oButtonMainTreeMenu ), ::oBrowse:SetFocus() )
+   METHOD refreshNavigator()              INLINE ( ::oTreeMenu:Select( ::oButtonMainTreeMenu ), ::oBrowse:SetFocus() )
 
 ENDCLASS
 
@@ -166,6 +171,14 @@ RETURN ( Self )
 
 METHOD End()
 
+   ::DisableWindowsBar()
+
+   ::oController:End()
+
+   if !empty( ::oMdiChild )
+      ::oMdiChild:End()
+   end if 
+
    if !empty( ::oImageListTreeMenu )
       ::oImageListTreeMenu:End()
    end if 
@@ -202,7 +215,7 @@ METHOD CreateBrowse()
    ::oBrowse:lAutoSort        := .t.
    ::oBrowse:lSortDescend     := .f.   
 
-   // Propiedades del control ----------------------------------------------
+   // Propiedades del control -------------------------------------------------
 
    ::oBrowse:nMarqueeStyle    := MARQSTYLE_HIGHLROWMS
 
@@ -212,7 +225,7 @@ METHOD CreateBrowse()
 
    ::oBrowse:bRClicked        := {| nRow, nCol, nFlags | ::RButtonDown( nRow, nCol, nFlags ) }
 
-   ::oBrowse:setModel( ::oController:oModel )
+   ::oBrowse:setModel( ::getModel() )
 
    ::oBrowse:bKeyChar         := {|nKey| ::onBrowseKeyChar( nKey ) }
 
@@ -280,16 +293,16 @@ RETURN ( Self )
 
 METHOD CreateTreeMenu()
 
-   ::oTreeMenu             := TTreeView():New( 0, 0, ::oMdiChild, , , .t., .f., dfnTreeViewWidth, ::aRect[ 3 ] - dfnSplitterHeight ) // Rgb( 51, 51, 51 )
+   ::oTreeMenu                := TTreeView():New( 0, 0, ::oMdiChild, , , .t., .f., dfnTreeViewWidth, ::aRect[ 3 ] - dfnSplitterHeight ) // Rgb( 51, 51, 51 )
    
    ::oTreeMenu:SetImagelist( ::oImageListTreeMenu )
 
    ::oTreeMenu:SetItemHeight( 20 )
 
-   ::oTreeMenu:OnClick     := {|| ::onClickTreeMenu() }
+   ::oTreeMenu:OnClick        := {|| ::onClickTreeMenu() }
 
    if !empty( ::oController:cImage )
-      ::oButtonMainTreeMenu    := ::oTreeMenu:Add( ::oController:cTitle, ::AddImageTreeMenu( ::oController:cImage ) )
+      ::oButtonMainTreeMenu   := ::oTreeMenu:Add( ::oController:cTitle, ::AddImageTreeMenu( ::oController:cImage ) )
    end if 
 
 RETURN ( ::oTreeMenu  )
@@ -329,7 +342,7 @@ RETURN ( oTreeButton )
 METHOD AddImageTreeMenu( cImage )
 
    local oImage
-   local nImageList     := 0
+   local nImageList  := 0
 
    if empty( cImage )
       RETURN ( nImageList )
@@ -356,23 +369,23 @@ RETURN ( ::AddButtonTreeMenu( "Añadir", "New16", {|| ::oController:Append(), ::r
 
 METHOD AddDuplicateButtonTreeMenu() 
 
-RETURN ( ::AddButtonTreeMenu( "Duplicar", "Dup16", {|| ::oController:Duplicate() }, "D", ACC_APPD ) )
+RETURN ( ::AddButtonTreeMenu( "Duplicar", "Dup16", {|| ::oController:Duplicate(), ::refreshNavigator() }, "D", ACC_APPD ) )
 
 METHOD AddEditButtonTreeMenu()      
 
-RETURN ( ::AddButtonTreeMenu( "Modificar", "Edit16", {|| ::oController:Edit() }, "M", ACC_EDIT ) )
+RETURN ( ::AddButtonTreeMenu( "Modificar", "Edit16", {|| ::oController:Edit(), ::refreshNavigator() }, "M", ACC_EDIT ) )
 
 METHOD AddZoomButtonTreeMenu()      
 
-RETURN ( ::AddButtonTreeMenu( "Zoom", "Zoom16", {|| ::oController:Zoom() }, "Z", ACC_ZOOM ) )
+RETURN ( ::AddButtonTreeMenu( "Zoom", "Zoom16", {|| ::oController:Zoom(), ::refreshNavigator() }, "Z", ACC_ZOOM ) )
 
 METHOD AddDeleteButtonTreeMenu()    
 
-RETURN ( ::AddButtonTreeMenu( "Eliminar", "Del16", {|| ::oController:Delete() }, "E", ACC_DELE ) )
+RETURN ( ::AddButtonTreeMenu( "Eliminar", "Del16", {|| ::oController:Delete( ::oBrowse:aSelected ), ::refreshNavigator() }, "E", ACC_DELE ) )
 
 METHOD AddSalirButtonTreeMenu()
 
-RETURN ( ::AddButtonTreeMenu( "Salir", "End16", {|| ::oController:Exit() }, "S" ) )
+RETURN ( ::AddButtonTreeMenu( "Salir", "End16", {|| ::End() }, "S" ) )
 
 //----------------------------------------------------------------------------//
 
@@ -408,7 +421,25 @@ METHOD EnableWindowsBar()
 
    ::oWindowsBar:EnableComboBox( ::getModelHeadersForNavigator() )
 
-   ::onChangeCombo( ::oBrowse:getFirstVisibleColumn() )
+   ::oWindowsBar:setCombo( ::getModelHeaderFromColumnOrder() )
+
+   ::oBrowse:selectColumnOrderByHeader( ::getModelHeaderFromColumnOrder() )
+
+   ::refreshNavigator()
+
+RETURN ( Self )
+
+//----------------------------------------------------------------------------//
+
+METHOD DisableWindowsBar()
+
+   if empty( ::oWindowsBar )
+      RETURN ( Self )
+   end if 
+
+   ::oWindowsBar:DisableGet()
+
+   ::oWindowsBar:DisableComboBox()
 
 RETURN ( Self )
 
@@ -423,7 +454,7 @@ METHOD onChangeCombo( oColumn )
    end if 
 
    if empty( oColumn )
-      oColumn        := ::oBrowse:getColumnHeader( oComboBox:VarGet() )
+      oColumn        := ::oBrowse:getColumnByHeader( oComboBox:VarGet() )
    end if 
 
    if empty( oColumn )
@@ -432,7 +463,7 @@ METHOD onChangeCombo( oColumn )
 
    oComboBox:set( oColumn:cHeader )
 
-   ::oController:clickOnHeader( oColumn, oComboBox )
+   ::oController:changeModelOrderAndOrientation( oColumn:cSortOrder, oColumn:cOrder )
 
    ::oBrowse:selectColumnOrder( oColumn )
 
@@ -481,19 +512,15 @@ METHOD onChangeSearch()
    end if 
 
    uValue               := oSearch:oGet:Buffer()
-   uValue               := alltrim( ( cvaltochar( uValue ) ) )
+   uValue               := alltrim( upper( cvaltochar( uValue ) ) )
    uValue               := strtran( uValue, chr( 8 ), "" )
-
-   nFind                := ::oController:find( uValue, cColumnOrder )
-
-   msgalert( nFind, "lFind" )
-
-   if nFind > 0
+   
+   if ::getModel():find( uValue, cColumnOrder )
       oSearch:SetColor( Rgb( 0, 0, 0 ), Rgb( 255, 255, 255 ) )
    else
       oSearch:SetColor( Rgb( 255, 255, 255 ), Rgb( 255, 102, 102 ) )
    end if
-
+   
    ::oBrowse:refreshCurrent()
 
 RETURN ( nFind > 0 )
