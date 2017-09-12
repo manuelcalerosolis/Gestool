@@ -122,6 +122,8 @@ CLASS SQLBaseModel
    METHOD   loadCurrentBuffer()
 
    METHOD   selectFetch( cSentence )
+   METHOD selectValue( cSentence )
+
    METHOD   selectFetchArray( cSentence )          
    METHOD   selectFetchHash( cSentence )           INLINE   ( ::selectFetch( cSentence, FETCH_HASH ) )
 
@@ -387,7 +389,6 @@ RETURN ( self )
 
 //---------------------------------------------------------------------------//
 
-
 METHOD buildRowSet( cSentence )
 
    default cSentence    := ::getSelectSentence()
@@ -402,12 +403,6 @@ METHOD buildRowSet( cSentence )
       
       msgstop( hb_valtoexp( getSQLDatabase():errorInfo() ) )
       
-   finally
-
-//      if !empty( oStatement )
-//         oStatement:free()
-//      end if    
-   
    end
 
    ::oRowSet:goTop()
@@ -607,7 +602,7 @@ METHOD selectFetch( cSentence, fetchType )
 
    try 
 
-      ::oStatement   := ::Prepare( cSentence )
+      ::oStatement   := ::Query( cSentence )
    
       aFetch         := ::oStatement:fetchAll( fetchType )
 
@@ -615,12 +610,6 @@ METHOD selectFetch( cSentence, fetchType )
 
       msgstop( hb_valtoexp( getSQLDatabase():errorInfo() ) )
 
-   finally
-
-      // if !empty( oStatement )
-      //   oStatement:free()
-      // end if    
-   
    end
 
    if !empty( aFetch ) .and. hb_isarray( aFetch )
@@ -628,6 +617,39 @@ METHOD selectFetch( cSentence, fetchType )
    end if
 
 RETURN ( nil )
+
+//---------------------------------------------------------------------------//
+
+METHOD selectValue( cSentence )
+
+   local nValue
+   local oStatement
+
+   try 
+
+      msgalert( 1 )
+      oStatement     := ::Query( cSentence )
+      msgalert( 2 )
+      oStatement:fetchDirect()
+   
+      msgalert( 3 )
+      nValue         := oStatement:getValue( 1 ) 
+
+   catch
+
+      msgstop( hb_valtoexp( getSQLDatabase():errorInfo() ) )
+
+   finally
+
+      msgalert( 4 )
+
+      if !empty( oStatement )
+         oStatement:End()
+      end if 
+
+   end
+
+RETURN ( nValue )
 
 //---------------------------------------------------------------------------//
 

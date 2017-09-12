@@ -37,11 +37,14 @@ CLASS SQLBaseController
 
    METHOD getModel()                                  INLINE ( ::oModel )
    METHOD getModelColumnKey()                         INLINE ( if( !empty( ::oModel ), ::oModel:cColumnKey, ) )
+   METHOD getModelTableName()                         INLINE ( if( !empty( ::oModel ), ::oModel:cTableName, ) )
    METHOD getModelColumns()                           INLINE ( if( !empty( ::oModel ) .and. !empty( ::oModel:hColumns ), ( ::oModel:hColumns ), ) )
    METHOD getModelExtraColumns()                      INLINE ( if( !empty( ::oModel ) .and. !empty( ::oModel:hExtraColumns ), ( ::oModel:hExtraColumns ), ) )
    
    METHOD getModelBuffer( cColumn )                   INLINE ( if( !empty( ::oModel ) .and. !empty( ::oModel:hBuffer ), ( hget( ::oModel:hBuffer, cColumn ) ), ) )
    METHOD getModelBufferColumnKey()                   INLINE ( ::getModelBuffer( ( ::oModel:cColumnKey ) ) )
+   
+   METHOD getModelSelectValue( cSentence )            INLINE ( if( !empty( ::oModel ), ::oModel:SelectValue( cSentence ), ) )
 
    METHOD endModel()                                  INLINE ( if( !empty( ::oModel ), ::oModel:end(), ) )
 

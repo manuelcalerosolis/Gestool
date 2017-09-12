@@ -119,6 +119,8 @@ CLASS SQLNavigatorView
 
    METHOD onChangeSearch()
 
+   METHOD onBrowseKeyChar( nKey )
+
    METHOD refreshNavigator()              INLINE ( ::oTreeMenu:Select( ::oButtonMainTreeMenu ), ::oBrowse:SetFocus() )
 
 ENDCLASS
@@ -526,3 +528,11 @@ METHOD onChangeSearch()
 RETURN ( nFind > 0 )
 
 //----------------------------------------------------------------------------//
+
+METHOD onBrowseKeyChar( nKey )
+
+
+RETURN ( self )
+
+//----------------------------------------------------------------------------//
+

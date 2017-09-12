@@ -6,6 +6,11 @@
 
 CLASS TiposImpresorasValidator FROM SQLBaseValidator
 
+   DATA uColumnBuffer
+   DATA cColumnToValidate
+   DATA cValidateMethod  
+   DATA cValidateMessage   
+
    METHOD New( oController )
 
    METHOD Validate()
@@ -46,33 +51,39 @@ METHOD Validate( cColumn )
       RETURN ( .t. )
    end if 
 
-   uColumnBuffer           := ::oController:getModelBuffer( cColumn )
+   ::cColumnToValidate     := cColumn
+   ::uColumnBuffer         := ::oController:getModelBuffer( cColumn )
 
    for each hColumnValidator in hColumnValidators
-      if !::executeValidate( uColumnBuffer, hColumnValidator:__enumKey(), hColumnValidator:__enumValue() )
+
+      ::cValidateMethod    := hColumnValidator:__enumKey()
+      ::cValidateMessage   := hColumnValidator:__enumValue()
+
+      if !::executeValidate()
          RETURN ( .f. )
       end if 
+
    next 
 
 RETURN ( .t. )
 
 //---------------------------------------------------------------------------//
 
-METHOD ExecuteValidate( uColumnBuffer, cValidateMethod, cValidateMessage )
+METHOD ExecuteValidate()
 
    local lValidate   := .f.
 
    try 
 
-      lValidate      := Self:&( cValidateMethod )( uColumnBuffer ) 
+      lValidate      := Self:&( ::cValidateMethod )
 
       if !lValidate
-         msgstop( cValidateMessage, "Error" )
+         msgstop( ::cValidateMessage, "Error" )
       end if
 
    catch
 
-      msgstop( "Error el metodo " + cValidateMethod + " no está definido" )
+      msgstop( "Error el método " + ::cValidateMethod + " no está definido" )
 
    end 
 
@@ -80,23 +91,30 @@ RETURN ( lValidate )
 
 //---------------------------------------------------------------------------//
 
-METHOD Required( uColumnBuffer )
+METHOD Required()
 
-RETURN ( !empty( uColumnBuffer ) )
+RETURN ( !empty( ::uColumnBuffer ) )
 
 //---------------------------------------------------------------------------//
 
-METHOD Unique( uColumnBuffer )
+METHOD Unique()
 
-   local cSQLSentence   
+   local id
+   local cSQLSentence
 
-   "SELECT nombre FROM " + ::cTableName + " WHERE nombre = " + toSQLString( cValue )
+   cSQLSentence      := "SELECT COUNT(*) FROM " + ::oController:getModelTableName() 
+   cSQLSentence      += " WHERE " + ::cColumnToValidate + " = " + toSQLString( ::uColumnBuffer )
 
-   if empty(xExpr)
+   id                := ::oController:getModelBufferColumnKey()
+   if !empty(id)
+      cSQLSentence   += " AND " + ::oController:getModelColumnKey() + " <> " + toSQLString( id )
+   end if 
 
-   msgalert( ::oController:getModelBufferColumnKey(), "Unique" )
+   msgalert( cSQLSentence, "Unique" )
 
-RETURN ( empty( uColumnBuffer ) )
+   msgalert( hb_valtoexp( ::oController:getModelSelectValue( "PEPIOto" ) ), "getModelSelectFetch" )
+
+RETURN ( .t. )
 
 
 
