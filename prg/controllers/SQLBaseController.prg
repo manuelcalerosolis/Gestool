@@ -18,32 +18,36 @@ CLASS SQLBaseController
 
    DATA oValidator
 
-   DATA     nLevel
+   DATA nLevel
 
-   DATA     nMode                                     AS NUMERIC
+   DATA nMode                                         AS NUMERIC
 
-   DATA     bOnPreAppend
-   DATA     bOnPostAppend
+   DATA bOnPreAppend
+   DATA bOnPostAppend
 
-   DATA     cTitle                                    INIT ""
+   DATA cTitle                                        INIT ""
 
-   DATA     cImage                                    INIT ""
+   DATA cImage                                        INIT ""
  
-   METHOD   New()
-   METHOD   Instance()                                INLINE ( if( empty( ::oInstance ), ::oInstance := ::New(), ), ::oInstance ) 
-   METHOD   End()
+   METHOD New()
+   METHOD Instance()                                  INLINE ( if( empty( ::oInstance ), ::oInstance := ::New(), ), ::oInstance ) 
+   METHOD End()
 
    // Facades -----------------------------------------------------------------
 
-   METHOD   getModel()                                INLINE ( ::oModel )
-   METHOD   getModelColumns()                         INLINE ( if( !empty( ::oModel ) .and. !empty( ::oModel:hColumns ), ( ::oModel:hColumns ), ) )
-   METHOD   getModelExtraColumns()                    INLINE ( if( !empty( ::oModel ) .and. !empty( ::oModel:hExtraColumns ), ( ::oModel:hExtraColumns ), ) )
-   METHOD   endModel()                                INLINE ( if( !empty( ::oModel ), ::oModel:end(), ) )
+   METHOD getModel()                                  INLINE ( ::oModel )
+   METHOD getModelColumnKey()                         INLINE ( if( !empty( ::oModel ), ::oModel:cColumnKey, ) )
+   METHOD getModelColumns()                           INLINE ( if( !empty( ::oModel ) .and. !empty( ::oModel:hColumns ), ( ::oModel:hColumns ), ) )
+   METHOD getModelExtraColumns()                      INLINE ( if( !empty( ::oModel ) .and. !empty( ::oModel:hExtraColumns ), ( ::oModel:hExtraColumns ), ) )
+   
+   METHOD getModelBuffer( cColumn )                   INLINE ( if( !empty( ::oModel ) .and. !empty( ::oModel:hBuffer ), ( hget( ::oModel:hBuffer, cColumn ) ), ) )
+   METHOD getModelBufferColumnKey()                   INLINE ( ::getModelBuffer( ( ::oModel:cColumnKey ) ) )
 
-   METHOD validate( oGet, cColumn )                   INLINE ( if( !empty( ::oValidator ), ::oValidator:validate( oGet, cColumn ), ) )
+   METHOD endModel()                                  INLINE ( if( !empty( ::oModel ), ::oModel:end(), ) )
+
+   METHOD validate( cColumn )                         INLINE ( if( !empty( ::oValidator ), ::oValidator:validate( cColumn ), ) )
 
    // Facades -----------------------------------------------------------------
-
 
 	METHOD   ActivateNavigatorView()
 	METHOD   ActivateBrowse()

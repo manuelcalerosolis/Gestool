@@ -7,6 +7,8 @@
 CLASS SQLBaseValidator
 
    DATA oController
+
+   DATA hValidators
   
    METHOD New()
    METHOD End()

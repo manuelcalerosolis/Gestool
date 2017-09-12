@@ -35,7 +35,7 @@ METHOD Dialog()
       ID          100 ;
       WHEN        ( !::oController:isZoomMode() ) ;
       PICTURE     "@S40" ;
-      VALID       ( ::oController:validate( oGetNombre, "nombre" ) ) ;
+      VALID       ( ::oController:validate( "nombre" ) ) ;
       OF          oDlg
 
    REDEFINE BUTTON oBtnOk ;

@@ -7,6 +7,8 @@
 
 CLASS SQLBaseModel
   
+   DATA oController
+
    DATA     oStatement
    DATA     oRowSet
 
@@ -139,7 +141,9 @@ END CLASS
 
 //---------------------------------------------------------------------------//
 
-METHOD New()
+METHOD New( oController )
+
+   ::oController                 := oController
 
    if empty( ::hColumns )
       msgstop( "La definición de columnas no puede estar vacia" )
@@ -154,7 +158,7 @@ METHOD New()
       ::cColumnOrder             := hGetKeyAt( ::hColumns, 1 )
    end if 
 
-   ::cColumnOrientation                := "A"
+   ::cColumnOrientation          := "A"
 
    ::cGeneralSelect              := "SELECT * FROM " + ::cTableName
 
@@ -205,8 +209,6 @@ METHOD getSelectSentence()
    cSQLSelect        := ::getSelectByColumn( cSQLSelect )
 
    cSQLSelect        := ::getSelectByOrder( cSQLSelect )
-
-   msgalert( cSQLSelect, "getSelectSentence" )
 
 RETURN ( cSQLSelect )
 
