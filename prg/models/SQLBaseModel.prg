@@ -596,19 +596,27 @@ RETURN ( ::hBuffer )
 
 METHOD selectFetch( cSentence, fetchType )
 
+   local oError
    local aFetch
+   local oStatement
 
    default fetchType := FETCH_ARRAY
 
    try 
 
-      ::oStatement   := ::Query( cSentence )
+      oStatement     := ::Query( cSentence )
    
-      aFetch         := ::oStatement:fetchAll( fetchType )
+      aFetch         := oStatement:fetchAll( fetchType )
 
-   catch
+   catch oError
 
-      msgstop( hb_valtoexp( getSQLDatabase():errorInfo() ) )
+      eval( errorBlock(), oError )
+
+   finally
+
+      if !empty( oStatement )
+         oStatement:Free()
+      end if
 
    end
 
@@ -622,29 +630,26 @@ RETURN ( nil )
 
 METHOD selectValue( cSentence )
 
+   local oError
    local nValue
    local oStatement
 
    try 
 
-      msgalert( 1 )
       oStatement     := ::Query( cSentence )
-      msgalert( 2 )
+
       oStatement:fetchDirect()
    
-      msgalert( 3 )
-      nValue         := oStatement:getValue( 1 ) 
+      nValue         := oStatement:getValue( 1 )
 
-   catch
+   catch oError
 
-      msgstop( hb_valtoexp( getSQLDatabase():errorInfo() ) )
+      eval( errorBlock(), oError )
 
    finally
 
-      msgalert( 4 )
-
       if !empty( oStatement )
-         oStatement:End()
+         oStatement:Free()
       end if 
 
    end

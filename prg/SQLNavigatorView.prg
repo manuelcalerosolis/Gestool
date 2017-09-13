@@ -55,7 +55,7 @@ CLASS SQLNavigatorView
    DATA oTreeMenu
    DATA oImageListTreeMenu
    DATA oButtonMainTreeMenu
-   DATA aFastKeyTreeMenu                  INIT  {}
+   DATA hFastKeyTreeMenu                  INIT  {=>}
 
    METHOD CreateTreeMenu()
 
@@ -231,6 +231,8 @@ METHOD CreateBrowse()
 
    ::oBrowse:bKeyChar         := {|nKey| ::onBrowseKeyChar( nKey ) }
 
+   ::oBrowse:bLDblClick       := {|| ::oController:Edit(), ::refreshNavigator() }
+
    // Dimensiones del control -------------------------------------------------
 
    ::oBrowse:nTop             := dfnSplitterHeight + dfnSplitterWidth
@@ -334,7 +336,7 @@ METHOD AddButtonTreeMenu( cText, cResource, bAction, cKey, nLevel, oGroup, lAllo
    oTreeButton:Cargo    := lAllowExit
 
    if hb_ischar( cKey )
-      aAdd( ::aFastKeyTreeMenu, { cKey, bAction } )
+      hset( ::hFastKeyTreeMenu, cKey, bAction )
    end if
 
 RETURN ( oTreeButton )
@@ -531,8 +533,7 @@ RETURN ( nFind > 0 )
 
 METHOD onBrowseKeyChar( nKey )
 
-
-RETURN ( self )
-
+RETURN ( heval( ::hFastKeyTreeMenu, {|k,v| if( nKey == asc( upper( k ) ) .or. nKey == asc( lower( k ) ), eval( v ), ) } ) ) 
+   
 //----------------------------------------------------------------------------//
 

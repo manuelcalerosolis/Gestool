@@ -1,14 +1,13 @@
 #include "FiveWin.Ch"
 #include "Factu.ch" 
-#include "MesDbf.ch"
 
 //---------------------------------------------------------------------------//
 
 CLASS TiposImpresorasView FROM SQLBaseView
 
-   METHOD   New()
+   METHOD New()
  
-   METHOD   Dialog()
+   METHOD Dialog()
 
 END CLASS
 
@@ -33,8 +32,8 @@ METHOD Dialog()
    REDEFINE GET   oGetNombre ;
       VAR         ::oController:oModel:hBuffer[ "nombre" ] ;
       ID          100 ;
+      MEMO ;
       WHEN        ( !::oController:isZoomMode() ) ;
-      PICTURE     "@S40" ;
       VALID       ( ::oController:validate( "nombre" ) ) ;
       OF          oDlg
 
@@ -52,7 +51,7 @@ METHOD Dialog()
 
    // Teclas rpidas-----------------------------------------------------------
 
-   oDlg:AddFastKey( VK_F5, {|| oBtnOk:Click() } )
+   oDlg:AddFastKey( VK_F5, {|| if( validateDialog( oDlg ), oBtnOk:Click(), ) } )
 
    // evento bstart-----------------------------------------------------------
 

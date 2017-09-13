@@ -16,7 +16,7 @@ IMG2PDFLIB           = 	\Img2Pdf
 
 OBJ                  = 	Obj1705
 
-SOURCEPRG            = 	.\Prg;.\Prg\mail;.\Prg\Comercio;.\Prg\Models;.\Prg\Views;.\Prg\Controllers;.\Prg\Validators;.\Prg\Services;.\Prg\Tablet;.\Prg\tablet\view;.\Prg\tablet\view\documentos;.\Prg\tablet\view\terceros;.\Prg\tablet\view\documentos\ventas;.\Prg\tablet\view\documentos\terceros;.\Prg\tablet\utils;.\Prg\tablet\presenter;.\Prg\tablet\presenter\terceros;.\Prg\tablet\presenter\documentos;.\Prg\tablet\presenter\documentos\ventas;
+SOURCEPRG            = 	.\Prg;.\Prg\mail;.\Prg\Comercio;.\Prg\Models;.\Prg\Views;.\Prg\Controllers;.\Prg\Validators;.\Prg\Repositories;.\Prg\Services;.\Prg\Tablet;.\Prg\tablet\view;.\Prg\tablet\view\documentos;.\Prg\tablet\view\terceros;.\Prg\tablet\view\documentos\ventas;.\Prg\tablet\view\documentos\terceros;.\Prg\tablet\utils;.\Prg\tablet\presenter;.\Prg\tablet\presenter\terceros;.\Prg\tablet\presenter\documentos;.\Prg\tablet\presenter\documentos\ventas;
 SOURCEC 				   =	C
 
 PPO 					   = 	Ppo1705
@@ -416,6 +416,8 @@ SQLBaseView.prg 																\
 TiposImpresorasView.prg       											\
 SQLBaseValidator.prg 														\
 TiposImpresorasValidator.prg 												\
+SQLBaseRepository.prg 														\
+TiposImpresorasRepository.prg 											\
 TiposNotas.prg       														\
 Etiquetas.prg       															\
 TiposVentas.prg       														\
@@ -967,6 +969,8 @@ SQLBaseView.obj 															\
 TiposImpresorasView.obj       										\
 SQLBaseValidator.obj 													\
 TiposImpresorasValidator.obj 											\
+SQLBaseRepository.obj 													\
+TiposImpresorasRepository.obj 										\
 TiposNotas.obj       													\
 Etiquetas.obj       														\
 TiposVentas.obj       													\
@@ -1487,6 +1491,8 @@ $(OBJ)\MsError.obj   												+
 $(OBJ)\SQLBaseView.obj 												+
 $(OBJ)\SQLBaseValidator.obj 										+
 $(OBJ)\TiposImpresorasValidator.obj								+
+$(OBJ)\SQLBaseRepository.obj 										+
+$(OBJ)\TiposImpresorasRepository.obj							+
 $(OBJ)\TiposImpresorasView.obj      							+
 $(OBJ)\TiposNotas.obj      										+
 $(OBJ)\Etiquetas.obj      											+

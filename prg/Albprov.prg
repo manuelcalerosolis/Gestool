@@ -333,7 +333,7 @@ static aTipoCtrCoste   := { "Centro de coste", "Proveedor", "Agente", "Cliente" 
 
 //----------------------------------------------------------------------------//
 
-Static Function initPublics()
+Static FUNCTION initPublics()
 
    public nTotAlb       := 0
    public nTotBrt       := 0
@@ -353,7 +353,7 @@ Static Function initPublics()
    public aImpVto       := {}
    public aDatVto       := {}
 
-Return nil 
+RETURN nil 
 
 //----------------------------------------------------------------------------//
 
@@ -385,7 +385,7 @@ FUNCTION AlbPrv( oMenuItem, oWnd, cCodPrv, cCodArt, cCodPed )
    nLevel            := nLevelUsr( oMenuItem )
    if nAnd( nLevel, 1 ) != 0
       msgStop( "Acceso no permitido." )
-      return .f.
+      RETURN .f.
    end if
 
    /*
@@ -397,7 +397,7 @@ FUNCTION AlbPrv( oMenuItem, oWnd, cCodPrv, cCodArt, cCodPed )
    end if
 
    if !OpenFiles()
-      return .f.
+      RETURN .f.
    end if
 
    /*
@@ -915,7 +915,7 @@ STATIC FUNCTION OpenFiles( lExt )
 
    if lOpenFiles
       MsgStop( 'Ficheros de albaranes de proveedores ya abiertos' )
-      Return ( .f. )
+      RETURN ( .f. )
    end if
 
    DEFAULT lExt         := .f.
@@ -1176,7 +1176,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, cCodPrv, cCodArt, nMode, cCodPed 
 
       if !lCajaOpen( oUser():cCaja() ) .and. !oUser():lAdministrador()
          msgStop( "Esta caja " + oUser():cCaja() + " esta cerrada." )
-         Return .f.
+         RETURN .f.
       end if
 
       aTmp[ _CSERALB ]     := cNewSer( "NALBPRV", D():Contadores( nView ) )
@@ -1206,7 +1206,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, cCodPrv, cCodArt, nMode, cCodPed 
 
       if !lCajaOpen( oUser():cCaja() ) .and. !oUser():lAdministrador()
          msgStop( "Esta caja " + oUser():cCaja() + " esta cerrada." )
-         Return .f.
+         RETURN .f.
       end if
 
       aTmp[ _CTURALB ]     := cCurSesion()
@@ -1220,12 +1220,12 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, cCodPrv, cCodArt, nMode, cCodPed 
 
       if aTmp[ _NFACTURADO ] == 3
          msgStop( "Albarán ya fue facturado." )
-         Return .t.
+         RETURN .t.
       end if
 
       if aTmp[ _LCLOALB ] .AND. !oUser():lAdministrador()
          msgStop( "Solo puede modificar los albaranes cerrados los administradores." )
-         Return .f.
+         RETURN .f.
       end if
 
    END CASE
@@ -1239,7 +1239,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, cCodPrv, cCodArt, nMode, cCodPed 
    end if
 
    if BeginTrans( aTmp, nMode )
-      Return .f.
+      RETURN .f.
    end if
 
    /*
@@ -2317,7 +2317,7 @@ RETURN ( oDlg:nResult == IDOK )
 
 //----------------------------------------------------------------------------//
 
-Static Function initEdtRec( cCodPed, aTmp, oDlg, oBrwLin, aGet )
+Static FUNCTION initEdtRec( cCodPed, aTmp, oDlg, oBrwLin, aGet )
 
    if !Empty( cCodPed )
       aGet[ _CNUMPED ]:lValid()
@@ -2333,7 +2333,7 @@ return( .t. )
 
 //----------------------------------------------------------------------------//
 
-Static Function ChangePrecio( oCol, uNewValue, nKey, aTmp )
+Static FUNCTION ChangePrecio( oCol, uNewValue, nKey, aTmp )
 
    /*
    Cambiamos el valor de las unidades de la linea de la factura---------------
@@ -2347,11 +2347,11 @@ Static Function ChangePrecio( oCol, uNewValue, nKey, aTmp )
 
    end if
 
-Return .t.
+RETURN .t.
 
 //----------------------------------------------------------------------------//
 
-Static Function ChangeCajas( oCol, uNewValue, nKey, aTmp )
+Static FUNCTION ChangeCajas( oCol, uNewValue, nKey, aTmp )
 
    /*
    Cambiamos el valor de las unidades de la linea de la factura---------------
@@ -2365,11 +2365,11 @@ Static Function ChangeCajas( oCol, uNewValue, nKey, aTmp )
 
    end if
 
-Return .t.
+RETURN .t.
 
 //----------------------------------------------------------------------------//
 
-Static Function ChangeUnidades( oCol, uNewValue, nKey, aTmp )
+Static FUNCTION ChangeUnidades( oCol, uNewValue, nKey, aTmp )
 
    /*
    Cambiamos el valor de las unidades de la linea de la factura---------------
@@ -2383,11 +2383,11 @@ Static Function ChangeUnidades( oCol, uNewValue, nKey, aTmp )
 
    end if
 
-Return .t.
+RETURN .t.
 
 //----------------------------------------------------------------------------//
 
-Static Function StartEdtRecAlbProv( aGet, oSay, nMode )
+Static FUNCTION StartEdtRecAlbProv( aGet, oSay, nMode )
 
    if uFieldEmpresa( "lShowOrg" )
       aGet[ _CALMORIGEN ]:Show()
@@ -2407,11 +2407,11 @@ Static Function StartEdtRecAlbProv( aGet, oSay, nMode )
 
 
 
-Return ( .t. )
+RETURN ( .t. )
 
 //----------------------------------------------------------------------------//
 
-Static Function edtRecMenu( aTmp, aGet, oBrwLin, oDlg )
+Static FUNCTION edtRecMenu( aTmp, aGet, oBrwLin, oDlg )
 
    MENU oMenu
 
@@ -2458,17 +2458,17 @@ Static Function edtRecMenu( aTmp, aGet, oBrwLin, oDlg )
 
    oDlg:SetMenu( oMenu )
 
-Return ( oMenu )
+RETURN ( oMenu )
 
 //----------------------------------------------------------------------------//
 
-Static Function EndEdtRecMenu()
+Static FUNCTION EndEdtRecMenu()
 
-Return ( oMenu:End() )
+RETURN ( oMenu:End() )
 
 //---------------------------------------------------------------------------//
 
-Static Function RecalculaAlbaranProveedores( aTmp, oDlg )
+Static FUNCTION RecalculaAlbaranProveedores( aTmp, oDlg )
 
    local nRecNum
    local nPreCom
@@ -2478,7 +2478,7 @@ Static Function RecalculaAlbaranProveedores( aTmp, oDlg )
                   "todos los precios se recalcularán en función de"  + CRLF + ;
                   "los valores en las bases de datos.",;
                   "¿ Desea proceder ?" )
-      return nil
+      RETURN nil
    end if
 
    oDlg:Disable()
@@ -2546,7 +2546,7 @@ Static Function RecalculaAlbaranProveedores( aTmp, oDlg )
 
    oDlg:Enable()
 
-return nil
+RETURN nil
 
 //----------------------------------------------------------------------------//
 
@@ -2561,7 +2561,7 @@ STATIC FUNCTION LoaPrv( aGet, aTmp, nMode, oSay, oTlfPrv )
    local lChgCodCli  := ( Empty( cOldCodCli ) .or. cOldCodCli != cNewCodCli )
 
    if Empty( cNewCodCli )
-      Return .t.
+      RETURN .t.
    elseif At( ".", cNewCodCli ) != 0
       cNewCodCli     := PntReplace( aGet[ _CCODPRV ], "0", RetNumCodPrvEmp() )
    else
@@ -2572,7 +2572,7 @@ STATIC FUNCTION LoaPrv( aGet, aTmp, nMode, oSay, oTlfPrv )
 
       if ( D():Proveedores( nView ) )->lBlqPrv
          msgStop( "Proveedor bloqueado, no se pueden realizar operaciones de compra" )
-         return .f.
+         RETURN .f.
       end if
 
       aGet[ _CCODPRV ]:cText( ( D():Proveedores( nView ) )->Cod )
@@ -2719,7 +2719,7 @@ STATIC FUNCTION DelDeta()
 
    CursorWE()
 
-Return ( .t. )
+RETURN ( .t. )
 
 //--------------------------------------------------------------------------//
 /*
@@ -3598,7 +3598,7 @@ RETURN ( oDlg:nResult == IDOK )
 
 //---------------------------------------------------------------------------//
 
-Static Function SetDlgMode( aGet, aTmp, aTmpAlb, nMode, oSayPr1, oSayPr2, oSayVp1, oSayVp2, oBrwPrp, oBmp, oDlg, oSayLote, oTotal )
+Static FUNCTION SetDlgMode( aGet, aTmp, aTmpAlb, nMode, oSayPr1, oSayPr2, oSayVp1, oSayVp2, oBrwPrp, oBmp, oDlg, oSayLote, oTotal )
 
    local cCodArt        := Left( aGet[ _CREF ]:VarGet(), 18 )
 
@@ -3794,28 +3794,28 @@ STATIC FUNCTION SaveDeta( aTmp, aGet, oDlg, oFld, oBrw, nMode, oTotal, oGet, aTm
    oBtn:SetFocus()
 
    if !aGet[ _CREF ]:lValid()
-      Return nil
+      RETURN nil
    end if
 
    if !lMoreIva( aTmp[ _NIVA ] )
-      Return nil
+      RETURN nil
    end if
 
    if Empty( aTmp[ _CALMLIN ] )
       MsgStop( "Código de almacén no puede estar vacio" )
       aGet[ _CALMLIN ]:SetFocus()
-      Return nil
+      RETURN nil
    end if
 
    if ( aTmp[ _CALMLIN ] == aTmp[ __CALMORIGEN ] )
       MsgStop( "El almacén de origen debe ser distinto al almacén de destino" )
       aGet[ __CALMORIGEN ]:SetFocus()
-      Return nil
+      RETURN nil
    end if
 
    if !cAlmacen( aGet[ _CALMLIN ] )
       MsgStop( "Código de almacén no encontrado" )
-      Return nil
+      RETURN nil
    end if
 
    aTmp[ __CSUALB ]  := aTmpAlb[ _CSUALB ]
@@ -3837,7 +3837,7 @@ STATIC FUNCTION SaveDeta( aTmp, aGet, oDlg, oFld, oBrw, nMode, oTotal, oGet, aTm
 
          EditarNumerosSerie( aTmp, nMode )
 
-         Return .f.
+         RETURN .f.
 
       end if
 
@@ -3934,7 +3934,7 @@ RETURN NIL
 
 //---------------------------------------------------------------------------//
 
-Static Function EdtInc( aTmp, aGet, dbf, oBrw, bWhen, bValid, nMode, aTmpAlb )
+Static FUNCTION EdtInc( aTmp, aGet, dbf, oBrw, bWhen, bValid, nMode, aTmpAlb )
 
    local oDlg
 
@@ -3989,11 +3989,11 @@ Static Function EdtInc( aTmp, aGet, dbf, oBrw, bWhen, bValid, nMode, aTmpAlb )
 
    ACTIVATE DIALOG oDlg CENTER
 
-Return ( oDlg:nResult == IDOK )
+RETURN ( oDlg:nResult == IDOK )
 
 //---------------------------------------------------------------------------//
 
-Static Function EdtDoc( aTmp, aGet, dbf, oBrw, bWhen, bValid, nMode, aTmpLin )
+Static FUNCTION EdtDoc( aTmp, aGet, dbf, oBrw, bWhen, bValid, nMode, aTmpLin )
 
    local oDlg
    local oRuta
@@ -4038,7 +4038,7 @@ Static Function EdtDoc( aTmp, aGet, dbf, oBrw, bWhen, bValid, nMode, aTmpLin )
 
    ACTIVATE DIALOG oDlg CENTER
 
-Return ( oDlg:nResult == IDOK )
+RETURN ( oDlg:nResult == IDOK )
 
 //---------------------------------------------------------------------------//
 
@@ -4350,7 +4350,7 @@ STATIC FUNCTION GenAlbPrv( nDevice, cCaption, cCodDoc, cPrinter, nCopies )
    local nAlbaran
 
    if ( D():AlbaranesProveedores( nView ) )->( Lastrec() ) == 0
-      Return nil
+      RETURN nil
    end if
 
    nAlbaran             := ( D():AlbaranesProveedores( nView ) )->cSerAlb + Str( ( D():AlbaranesProveedores( nView ) )->nNumAlb ) + ( D():AlbaranesProveedores( nView ) )->CSUFALB
@@ -4365,7 +4365,7 @@ STATIC FUNCTION GenAlbPrv( nDevice, cCaption, cCodDoc, cPrinter, nCopies )
    end if
 
    if !lExisteDocumento( cCodDoc, D():Documentos( nView ) )
-      return nil
+      RETURN nil
    end if
 
    /*
@@ -4384,7 +4384,7 @@ RETURN NIL
 
 //---------------------------------------------------------------------------//
 
-static function nGenAlbPrv( nDevice, cTitle, cCodDoc, cPrinter, nCopy )
+static FUNCTION nGenAlbPrv( nDevice, cTitle, cCodDoc, cPrinter, nCopy )
 
    local nImpYet     := 1
    local nCopyClient := Retfld( ( D():AlbaranesProveedores( nView ) )->cCodPrv, D():Proveedores( nView ), "nCopiasF" )
@@ -4402,7 +4402,7 @@ static function nGenAlbPrv( nDevice, cTitle, cCodDoc, cPrinter, nCopy )
    //Funcion para marcar el documento como imprimido
    lChgImpDoc( D():AlbaranesProveedores( nView ) )
 
-return nil
+RETURN nil
 
 //--------------------------------------------------------------------------//
 
@@ -4420,7 +4420,7 @@ RETURN NIL
 Total de unidades en un albaran
 */
 
-static function nTotalUnd( nAlbaran, cPicUnd )
+static FUNCTION nTotalUnd( nAlbaran, cPicUnd )
 
    local nTotUnd  := 0
 
@@ -4435,7 +4435,7 @@ RETURN ( Trans( nTotUnd, cPicUnd ) )
 
 //--------------------------------------------------------------------------//
 
-Static Function RecalculaTotal( aTmp )
+Static FUNCTION RecalculaTotal( aTmp )
 
    nTotAlbPrv( nil, D():AlbaranesProveedores( nView ), dbfTmp, D():TiposIva( nView ), D():Divisas( nView ), aTmp )
 
@@ -4451,17 +4451,17 @@ Static Function RecalculaTotal( aTmp )
 
    oGetIvm:SetText( Trans( nTotIvm, cPirDiv ) )
 
-Return .t.
+RETURN .t.
 
 //--------------------------------------------------------------------------//
 
-Static Function GetArtPrv( cRefPrv, cCodPrv, aGet )
+Static FUNCTION GetArtPrv( cRefPrv, cCodPrv, aGet )
 
    local nOrdAnt  := ( D():ProveedorArticulo( nView ) )->( ordSetFocus( "cRefPrv" ) )
 
    if Empty( cRefPrv )
 
-      return .t.
+      RETURN .t.
 
    else
 
@@ -4480,11 +4480,11 @@ Static Function GetArtPrv( cRefPrv, cCodPrv, aGet )
 
    end if
 
-Return .t.
+RETURN .t.
 
 //----------------------------------------------------------------------------//
 
-Static Function LoaArt( cCodArt, aGet, aTmp, aTmpAlb, oFld, oSayPr1, oSayPr2, oSayVp1, oSayVp2, oBmp, oBrwPrp, oDlg, oSayLote, oBeneficioSobre, oTotal, nMode )
+Static FUNCTION LoaArt( cCodArt, aGet, aTmp, aTmpAlb, oFld, oSayPr1, oSayPr2, oSayVp1, oSayVp2, oBmp, oBrwPrp, oDlg, oSayLote, oBeneficioSobre, oTotal, nMode )
 
    local hHas128
    local cLote
@@ -4509,7 +4509,7 @@ Static Function LoaArt( cCodArt, aGet, aTmp, aTmpAlb, oFld, oSayPr1, oSayPr2, oS
 
       if lRetCodArt()
          MsgStop( "No se pueden añadir lineas sin codificar" )
-         return .f.
+         RETURN .f.
       end if
 
       aGet[ _NIVA    ]:bWhen  := {|| .t. }
@@ -4556,7 +4556,7 @@ Static Function LoaArt( cCodArt, aGet, aTmp, aTmpAlb, oFld, oSayPr1, oSayPr2, oS
 
             if ( D():Articulos( nView ) )->lObs
                MsgStop( "Artículo catalogado como obsoleto" )
-               return .f.
+               RETURN .f.
             end if
 
             oFld:aEnable         := { .t., .t., .t., .t. }
@@ -4938,7 +4938,7 @@ Static Function LoaArt( cCodArt, aGet, aTmp, aTmpAlb, oFld, oSayPr1, oSayPr2, oS
 
          msgStop( "Artículo no encontrado" )
 
-         Return .f.
+         RETURN .f.
 
       end if
 
@@ -4947,11 +4947,11 @@ Static Function LoaArt( cCodArt, aGet, aTmp, aTmpAlb, oFld, oSayPr1, oSayPr2, oS
    cOldCodArt        := cCodArt
    cOldPrpArt        := cPrpArt
 
-Return .t.
+RETURN .t.
 
 //----------------------------------------------------------------------------//
 
-Static Function cPedPrv( aGet, aTmp, oBrw, nMode )
+Static FUNCTION cPedPrv( aGet, aTmp, oBrw, nMode )
 
    local nDiv
    local cOldEst
@@ -4964,7 +4964,7 @@ Static Function cPedPrv( aGet, aTmp, oBrw, nMode )
    local nAlbaran    := aGet[ _NNUMALB ]:varGet()
 
    if ( nMode != APPD_MODE ) .or. Empty( cPedido )
-      Return .t.
+      RETURN .t.
    end if
 
    if ( D():PedidosProveedores( nView ) )->( dbSeek( cPedido ) )
@@ -5222,7 +5222,7 @@ Static Function cPedPrv( aGet, aTmp, oBrw, nMode )
 
    nTotAlbPrv( nil, D():AlbaranesProveedores( nView ), dbfTmp, D():TiposIva( nView ), D():Divisas( nView ), aTmp )
 
-Return lValid
+RETURN lValid
 
 //---------------------------------------------------------------------------//
 
@@ -5230,7 +5230,7 @@ Return lValid
 Calcula totales en las lineas de Detalle
 */
 
-Static Function lCalcDeta( aTmp, aTmpAlb, aGet, oTotal )
+Static FUNCTION lCalcDeta( aTmp, aTmpAlb, aGet, oTotal )
 
    oTotal:cText( nTotLAlbPrv( aTmp, nDinDiv, nDirDiv ) )
 
@@ -5286,7 +5286,7 @@ Static Function lCalcDeta( aTmp, aTmpAlb, aGet, oTotal )
       aGet[ _LCHGLIN ]:Click( aTmp[ _NPREDIV ] != 0 )
    end if
 
-Return .t.
+RETURN .t.
 
 //---------------------------------------------------------------------------//
 
@@ -5482,7 +5482,7 @@ STATIC FUNCTION EndTrans( aTmp, aGet, nDec, nRec, oBrw, nMode, oDlg )
    */
 
    if !lValidaOperacion( aTmp[ _DFECALB ] )
-      Return .f.
+      RETURN .f.
    end if
 
    /*
@@ -5492,30 +5492,30 @@ STATIC FUNCTION EndTrans( aTmp, aGet, nDec, nRec, oBrw, nMode, oDlg )
    if Empty( aTmp[ _CCODPRV ] )
       msgStop( "Código de proveedor no puede estar vacío." )
       aGet[ _CCODPRV ]:SetFocus()
-      return .f.
+      RETURN .f.
    end if
 
    if Empty( aTmp[ _CCODCAJ ] )
       msgStop( "Caja no puede estar vacía." )
       aGet[ _CCODCAJ ]:SetFocus()
-      return .f.
+      RETURN .f.
    end if
 
    if Empty( aTmp[ _CCODALM ] )
       msgStop( "Almacén no puede estar vacío." )
       aGet[ _CCODALM ]:SetFocus()
-      return .f.
+      RETURN .f.
    end if
 
    if ( aTmp[ _CCODALM ] == aTmp[ _CALMORIGEN ] )
       msgStop( "Almacén origen debe ser distinto al almacén destino" )
       aGet[ _CALMORIGEN ]:SetFocus()
-      return .f.
+      RETURN .f.
    end if
 
    if ( dbfTmp )->( eof() )
       MsgStop( "No puede almacenar un documento sin líneas." )
-      return .f.
+      RETURN .f.
    end if
 
    // Paramos las pantallas----------------------------------------------------
@@ -5763,7 +5763,7 @@ STATIC FUNCTION EndTrans( aTmp, aGet, nDec, nRec, oBrw, nMode, oDlg )
 
    CursorWE()
 
-return .t.
+RETURN .t.
 
 //------------------------------------------------------------------------//
 
@@ -5873,26 +5873,26 @@ RETURN .F.
 
 //---------------------------------------------------------------------------//
 
-static function lNotOpen()
+static FUNCTION lNotOpen()
 
    if NetErr()
       MsgStop( 'Imposible abrir ficheros de albaranes de proveedores' )
       CloseFiles()
-      return .t.
+      RETURN .t.
    end if
 
-return .f.
+RETURN .f.
 
 //---------------------------------------------------------------------------//
 
-static function lGenAlb( oBrw, oBtn, nDevice )
+static FUNCTION lGenAlb( oBrw, oBtn, nDevice )
 
    local bAction
 
    DEFAULT nDevice   := IS_PRINTER
 
    if Empty( oBtn )
-      return nil
+      RETURN nil
    end if
 
    if !( D():Documentos( nView ) )->( dbSeek( "AP" ) )
@@ -5922,17 +5922,17 @@ static function lGenAlb( oBrw, oBtn, nDevice )
 
    SysRefresh()
 
-return nil
+RETURN nil
 
 //---------------------------------------------------------------------------//
 
-static function nCanEnt()
+static FUNCTION nCanEnt()
 
-return ( If( ( D():AlbaranesProveedoresLineas( nView ) )->NCANENT != 0, ( D():AlbaranesProveedoresLineas( nView ) )->NCANENT, 1 ) * ( D():AlbaranesProveedoresLineas( nView ) )->NUNICAJA )
+RETURN ( If( ( D():AlbaranesProveedoresLineas( nView ) )->NCANENT != 0, ( D():AlbaranesProveedoresLineas( nView ) )->NCANENT, 1 ) * ( D():AlbaranesProveedoresLineas( nView ) )->NUNICAJA )
 
 //---------------------------------------------------------------------------//
 
-static function nTotUnd( uDbf )
+static FUNCTION nTotUnd( uDbf )
 
    local nTotUnd
 
@@ -5942,14 +5942,14 @@ static function nTotUnd( uDbf )
       nTotUnd  := NotCaja( ( uDbf )->NCANENT ) * ( uDbf )->NUNICAJA
    end if
 
-return ( nTotUnd )
+RETURN ( nTotUnd )
 
 //---------------------------------------------------------------------------//
 /*
 Borra todas las lineas de detalle de un Albarán
 */
 
-Static Function QuiAlbPrv( lDetail )
+Static FUNCTION QuiAlbPrv( lDetail )
 
    local cNumPed
    local nRecAnt
@@ -5963,7 +5963,7 @@ Static Function QuiAlbPrv( lDetail )
 
    if ( D():AlbaranesProveedores( nView ) )->lCloAlb .and. !oUser():lAdministrador()
       msgStop( "Solo puede eliminar albaranes cerrados los administradores." )
-      return .f.
+      RETURN .f.
    end if
 
    CursorWait()
@@ -6093,7 +6093,7 @@ Static Function QuiAlbPrv( lDetail )
 
    CursorWE()
 
-Return .t.
+RETURN .t.
 
 //--------------------------------------------------------------------------//
 
@@ -6107,7 +6107,7 @@ STATIC FUNCTION nClrText( dbfTmp )
       cClr     := CLR_BLACK
    end if
 
-Return cClr
+RETURN cClr
 
 //----------------------------------------------------------------------------//
 
@@ -6135,7 +6135,7 @@ STATIC FUNCTION GrpPed( aGet, aTmp, oBrw, nMode )
 
    if Empty( cCodPrv )
       msgStop( "Es necesario codificar un proveedor", "Agrupar pedidos" )
-      return .t.
+      RETURN .t.
    end if
 
    //Captura en una array los pedidos del proveedor seleccionado
@@ -6172,7 +6172,7 @@ STATIC FUNCTION GrpPed( aGet, aTmp, oBrw, nMode )
 
    if Len( aAlbaranes ) == 0
       msgStop( "No existen pedidos de este proveedor" )
-      return .t.
+      RETURN .t.
    end if
 
    //Ordena la base de datos de pedidos de proveedores por el codigo de proveedor
@@ -6638,7 +6638,7 @@ RETURN .T.
 
 //---------------------------------------------------------------------------//
 
-Static Function nEstadoIncidencia( cNumAlb )
+Static FUNCTION nEstadoIncidencia( cNumAlb )
 
    local nEstado  := 0
 
@@ -6668,11 +6668,11 @@ Static Function nEstadoIncidencia( cNumAlb )
 
    end if
 
-Return ( nEstado )
+RETURN ( nEstado )
 
 //---------------------------------------------------------------------------//
 
-Static Function GetCliente( cNumPed )
+Static FUNCTION GetCliente( cNumPed )
 
    local nRec     := ( D():PedidosClientes( nView ) )->( Recno() )
    local nOrdAnt  := ( D():PedidosClientes( nView ) )->( OrdSetFocus( "NNUMPED" ) )
@@ -6685,7 +6685,7 @@ Static Function GetCliente( cNumPed )
    ( D():PedidosClientes( nView ) )->( nOrdAnt )
    ( D():PedidosClientes( nView ) )->( dbGoTo( nRec ) )
 
-Return cCliente
+RETURN cCliente
 
 //----------------------------------------------------------------------------//
 
@@ -6780,7 +6780,7 @@ RETURN .t.
 
 //-------------------------------------------------------------------------//
 
-Static Function DataReport( oFr )
+Static FUNCTION DataReport( oFr )
 
    /*
    Zona de datos------------------------------------------------------------
@@ -6849,11 +6849,11 @@ Static Function DataReport( oFr )
    oFr:SetResyncPair(   "Lineas de albaranes", "Código de proveedores" )
    oFr:SetResyncPair(   "Lineas de albaranes", "Unidades de medición" )
 
-Return nil
+RETURN nil
 
 //---------------------------------------------------------------------------//
 
-Static Function VariableReport( oFr )
+Static FUNCTION VariableReport( oFr )
 
    oFr:DeleteCategory(  "Albaranes" )
    oFr:DeleteCategory(  "Lineas de albaranes" )
@@ -6904,11 +6904,11 @@ Static Function VariableReport( oFr )
 
    oFr:AddVariable(     "Lineas de albaranes",   "Stock actual en almacén",                  "CallHbFunc('nStockLineaAlbPrv')" )
 
-Return nil
+RETURN nil
 
 //---------------------------------------------------------------------------//
 
-Static Function YearComboBoxChange()
+Static FUNCTION YearComboBoxChange()
 
    if ( oWndBrw:oWndBar:cYearComboBox() != __txtAllYearsFilter__ )
       oWndBrw:oWndBar:setYearComboBoxExpression( "Year( Field->dFecAlb ) == " + oWndBrw:oWndBar:cYearComboBox() )
@@ -6918,7 +6918,7 @@ Static Function YearComboBoxChange()
 
    oWndBrw:chgFilter()
 
-Return nil
+RETURN nil
 
 //---------------------------------------------------------------------------//
 
@@ -6931,7 +6931,7 @@ Return nil
 
 //---------------------------------------------------------------------------//
 
-Static Function AddFicheroICG( aFichero, oBrwFichero )
+Static FUNCTION AddFicheroICG( aFichero, oBrwFichero )
 
    local i
    local cFile
@@ -6976,7 +6976,7 @@ RETURN ( aFichero )
 
 //---------------------------------------------------------------------------//
 
-Static Function DelFicheroICG( aFichero, oBrwFichero )
+Static FUNCTION DelFicheroICG( aFichero, oBrwFichero )
 
    aDel( aFichero, oBrwFichero:nArrayAt, .t. )
 
@@ -6986,7 +6986,7 @@ RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 
-Static Function IcgCabAlbPrv( cSerDoc, nNumDoc, cSufDoc, dFecDoc )
+Static FUNCTION IcgCabAlbPrv( cSerDoc, nNumDoc, cSufDoc, dFecDoc )
 
    local lApp
    local cCodPrv                 := Replicate( "0", RetNumCodPrvEmp() )
@@ -7048,7 +7048,7 @@ RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 
-Static Function IcgDetAlbPrv( cSerDoc, cSufDoc, cDesLin, nUntLin, nPvpLin, nDtoLin, cRefLin )
+Static FUNCTION IcgDetAlbPrv( cSerDoc, cSufDoc, cDesLin, nUntLin, nPvpLin, nDtoLin, cRefLin )
 
    if !dbSeekInOrd( cRefLin, "Codigo", D():Articulos( nView ) )
       cInforme                += "Articulo " + cRefLin + " no existe en la base de datos, albaran número " + cSerDoc + "/" + Alltrim( Str( nNumAlb ) ) + "/" + RetSufEmp() + CRLF
@@ -7078,7 +7078,7 @@ RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 
-Static Function EditarNumerosSerie( aTmp, nMode )
+Static FUNCTION EditarNumerosSerie( aTmp, nMode )
 
    oNumerosSerie:nMode              := nMode
 
@@ -7108,11 +7108,11 @@ Static Function EditarNumerosSerie( aTmp, nMode )
 
    oNumerosSerie:Resource()
 
-Return ( nil )
+RETURN ( nil )
 
 //--------------------------------------------------------------------------//
 
-Static Function AutoNumerosSerie( aTmp, nMode )
+Static FUNCTION AutoNumerosSerie( aTmp, nMode )
 
    oNumerosSerie:nMode              := nMode
 
@@ -7129,26 +7129,26 @@ Static Function AutoNumerosSerie( aTmp, nMode )
        oNumerosSerie:AutoSerializa()
    end if
 
-Return ( nil )
+RETURN ( nil )
 
 //----------------------------------------------------------------------------//
 
-Static Function EliminarNumeroSerie( aTmp )
+Static FUNCTION EliminarNumeroSerie( aTmp )
 
    while ( ( dbfTmpSer )->( dbSeek( Str( aTmp[ _NNUMLIN ], 4 ) + aTmp[ _CREF ] ) ) ) .and. !( dbfTmpSer )->( Eof() )
       ( dbfTmpSer )->( dbDelete() )
    end while
 
-Return ( nil )
+RETURN ( nil )
 
 //----------------------------------------------------------------------------//
-Function mailReportAlbPrv( cCodigoDocumento )
+FUNCTION mailReportAlbPrv( cCodigoDocumento )
 
-Return ( printReportAlbPrv( IS_MAIL, 1, prnGetName(), cCodigoDocumento ) )
+RETURN ( printReportAlbPrv( IS_MAIL, 1, prnGetName(), cCodigoDocumento ) )
 
 //---------------------------------------------------------------------------//
 
-static Function PrintReportAlbPrv( nDevice, nCopies, cPrinter, cDoc )
+static FUNCTION PrintReportAlbPrv( nDevice, nCopies, cPrinter, cDoc )
 
    local oFr
    local cFilePdf       := cPatTmp() + "AlbaranProveedor" +  ( D():AlbaranesProveedores( nView ) )->cSerAlb + Alltrim( Str( ( D():AlbaranesProveedores( nView ) )->nNumAlb ) ) + ".Pdf"
@@ -7250,11 +7250,11 @@ static Function PrintReportAlbPrv( nDevice, nCopies, cPrinter, cDoc )
 
    ( D():AlbaranesProveedoresLineas( nView ) )->( ordSetFocus( nOrd ) )
 
-Return cFilePdf
+RETURN cFilePdf
 
 //---------------------------------------------------------------------------//
 
-Static Function IcgMotor()
+Static FUNCTION IcgMotor()
 
    local oDlg
    local aFichero
@@ -7354,7 +7354,7 @@ RETURN ( nil )
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 
-Function ExcelImport( aTmpAlb, dbfTmp, cArticulo, cArtCom, cFamilia, cDiv, oBrw, lPedido, cKit )
+FUNCTION ExcelImport( aTmpAlb, dbfTmp, cArticulo, cArtCom, cFamilia, cDiv, oBrw, lPedido, cKit )
 
    local n
    local m
@@ -7457,7 +7457,7 @@ Function ExcelImport( aTmpAlb, dbfTmp, cArticulo, cArtCom, cFamilia, cDiv, oBrw,
 
    end if
 
-Return nil
+RETURN nil
 
 //---------------------------------------------------------------------------//
 
@@ -7729,7 +7729,7 @@ RETURN ( { nTotNet, nTotIva, nTotReq, nTotAlb, aTotIva } )
 
 //--------------------------------------------------------------------------//
 
-Function sTotAlbPrv( cAlbaran, dbfMaster, dbfLine, cIva, cDiv, cDivRet )
+FUNCTION sTotAlbPrv( cAlbaran, dbfMaster, dbfLine, cIva, cDiv, cDivRet )
 
    local sTotal
 
@@ -7747,7 +7747,7 @@ Function sTotAlbPrv( cAlbaran, dbfMaster, dbfLine, cIva, cDiv, cDivRet )
    sTotal:nTotalDescuentoUno              := nTotUno
    sTotal:nTotalDescuentoDos              := nTotDos
 
-Return ( sTotal )
+RETURN ( sTotal )
 
 //--------------------------------------------------------------------------//
 
@@ -7760,7 +7760,7 @@ FUNCTION nTotFAlbPrv( uAlbPrvL, nDec, nRec, nVdv, cPirDiv )
    nCalculo       += nTotLAlbPrv( uAlbPrvL, nDec, nRec, nVdv, cPirDiv )
    nCalculo       += nIvaLAlbPrv( uAlbPrvL, nDec, nRec, nVdv, cPirDiv )
 
-return ( if( cPirDiv != nil, Trans( nCalculo, cPirDiv ), nCalculo ) )
+RETURN ( if( cPirDiv != nil, Trans( nCalculo, cPirDiv ), nCalculo ) )
 
 //---------------------------------------------------------------------------//
 // Precio del articulo
@@ -8090,9 +8090,9 @@ RETURN ( if( cPorDiv != NIL, Trans( nCalculo, cPorDiv ), nCalculo ) )
 
 //----------------------------------------------------------------------------//
 
-Function nStockLineaAlbPrv()
+FUNCTION nStockLineaAlbPrv()
 
-Return ( oStock:nTotStockAct( ( D():AlbaranesProveedoresLineas( nView ) )->cRef, ( D():AlbaranesProveedoresLineas( nView ) )->cAlmLin, ( D():AlbaranesProveedoresLineas( nView ) )->cValPr1, ( D():AlbaranesProveedoresLineas( nView ) )->cValPr2 ) )
+RETURN ( oStock:nTotStockAct( ( D():AlbaranesProveedoresLineas( nView ) )->cRef, ( D():AlbaranesProveedoresLineas( nView ) )->cAlmLin, ( D():AlbaranesProveedoresLineas( nView ) )->cValPr1, ( D():AlbaranesProveedoresLineas( nView ) )->cValPr2 ) )
 
 //---------------------------------------------------------------------------//
 
@@ -8361,7 +8361,7 @@ FUNCTION mkAlbPrv( cPath, lAppend, cPathOld, oMeter, bFor, dbfMov )
 
    END IF
 
-Return nil
+RETURN nil
 
 //---------------------------------------------------------------------------//
 
@@ -8554,7 +8554,7 @@ RETURN NIL
 
 //--------------------------------------------------------------------------//
 
-function aIncAlbPrv()
+FUNCTION aIncAlbPrv()
 
    local aIncAlbPrv  := {}
 
@@ -8567,11 +8567,11 @@ function aIncAlbPrv()
    aAdd( aIncAlbPrv, { "lListo",  "L",    1,  0, "Lógico de listo" ,                 "",                   "", "( cDbfCol )" } )
    aAdd( aIncAlbPrv, { "lAviso",  "L",    1,  0, "Lógico de aviso" ,                 "",                   "", "( cDbfCol )" } )
 
-return ( aIncAlbPrv )
+RETURN ( aIncAlbPrv )
 
 //---------------------------------------------------------------------------//
 
-function aAlbPrvDoc()
+FUNCTION aAlbPrvDoc()
 
    local aAlbPrvDoc  := {}
 
@@ -8582,7 +8582,7 @@ function aAlbPrvDoc()
    aAdd( aAlbPrvDoc, { "cRuta",   "C",  240,  0, "Ruta del documento" ,              "",                   "", "( cDbfCol )" } )
    aAdd( aAlbPrvDoc, { "mObsDoc", "M",   10,  0, "Observaciones del documento" ,     "",                   "", "( cDbfCol )" } )
 
-return ( aAlbPrvDoc )
+RETURN ( aAlbPrvDoc )
 
 //---------------------------------------------------------------------------//
 
@@ -8653,7 +8653,7 @@ RETURN ( lFacAlb )
 // Devuelve el total de la compra en albaranes de proveedores de un articulo
 //
 
-function nTotVAlbPrv( cCodArt, cAlbPrvL )
+FUNCTION nTotVAlbPrv( cCodArt, cAlbPrvL )
 
    local nTotVta  := 0
    local nRecno   := ( cAlbPrvL )->( Recno() )
@@ -8671,14 +8671,14 @@ function nTotVAlbPrv( cCodArt, cAlbPrvL )
 
    ( cAlbPrvL )->( dbGoTo( nRecno ) )
 
-return ( nTotVta )
+RETURN ( nTotVta )
 
 //----------------------------------------------------------------------------//
 //
 // Devuelve el total de unidades de la compra en albaranes de proveedores de un articulo
 //
 
-function nTotDAlbPrv( cCodArt, cAlbPrvL, cAlbPrvT, cCodAlm )
+FUNCTION nTotDAlbPrv( cCodArt, cAlbPrvL, cAlbPrvT, cCodAlm )
 
    local lFacAlb  := .f.
    local nTotVta  := 0
@@ -8710,7 +8710,7 @@ function nTotDAlbPrv( cCodArt, cAlbPrvL, cAlbPrvT, cCodAlm )
 
    ( cAlbPrvL )->( dbGoTo( nRecno ) )
 
-return ( nTotVta )
+RETURN ( nTotVta )
 
 //---------------------------------------------------------------------------//
 //
@@ -8754,7 +8754,7 @@ RETURN ( round( nCalculo, nDec ) )
 
 //---------------------------------------------------------------------------//
 
-static function bGenAlb( nDevice, cTitle, cCodDoc )
+static FUNCTION bGenAlb( nDevice, cTitle, cCodDoc )
 
    local bGen
    local nDev  := by( nDevice )
@@ -8767,7 +8767,7 @@ static function bGenAlb( nDevice, cTitle, cCodDoc )
       bGen     := {|| GenAlbPrv( nDevice, cTit, cCod ) }
    end if
 
-return bGen
+RETURN bGen
 
 //---------------------------------------------------------------------------//
 
@@ -8811,11 +8811,11 @@ FUNCTION Ped2Alb( cNumPed, lZoom )
       msgStop( "No hay albarán asociado" )
    end if
 
-return NIL
+RETURN NIL
 
 //---------------------------------------------------------------------------//
 
-function nVtaAlbPrv( cCodPrv, dDesde, dHasta, cAlbPrvT, cAlbPrvL, cIva, cDiv )
+FUNCTION nVtaAlbPrv( cCodPrv, dDesde, dHasta, cAlbPrvT, cAlbPrvL, cIva, cDiv )
 
    local nCon     := 0
    local nRec     := ( cAlbPrvT )->( Recno() )
@@ -8843,7 +8843,7 @@ function nVtaAlbPrv( cCodPrv, dDesde, dHasta, cAlbPrvT, cAlbPrvL, cIva, cDiv )
 
    ( cAlbPrvT )->( dbGoTo( nRec ) )
 
-return nCon
+RETURN nCon
 
 //---------------------------------------------------------------------------//
 
@@ -8975,7 +8975,7 @@ FUNCTION nBrtLAlbPrv( uTmpLin, nDec, nRec, nVdv, cPorDiv )
 
    nCalculo          := Round( nCalculo / nVdv, nRec )
 
-Return ( if( cPorDiv != nil, Trans( nCalculo, cPorDiv ), nCalculo ) )
+RETURN ( if( cPorDiv != nil, Trans( nCalculo, cPorDiv ), nCalculo ) )
 
 //---------------------------------------------------------------------------//
 
@@ -9017,7 +9017,7 @@ RETURN ( if( cPorDiv != nil, Trans( nCalculo, cPorDiv ), nCalculo ) )
 
 //---------------------------------------------------------------------------//
 
-function aItmAlbPrv()
+FUNCTION aItmAlbPrv()
 
    local aItmAlbPrv  := {}
 
@@ -9086,11 +9086,11 @@ function aItmAlbPrv()
    aAdd( aItmAlbPrv, { "tFecAlb",      "C",  6,  0, "Hora del albarán" ,           "",                   "", "( cDbf )"} )
    aAdd( aItmAlbPrv, { "cCtrCoste",    "C",  9,  0, "Código del centro de coste" , "",                   "", "( cDbf )"} )
 
-Return ( aItmAlbPrv )
+RETURN ( aItmAlbPrv )
 
 //---------------------------------------------------------------------------//
 
-function aColAlbPrv()
+FUNCTION aColAlbPrv()
 
    local aColAlbPrv  := {}
 
@@ -9221,11 +9221,11 @@ function aColAlbPrv()
    aAdd( aColAlbPrv, { "cTipCtr",      "C", 20,  0, "Tipo tercero centro de coste",          "",                           "", "( cDbfCol )", nil } )
    aAdd( aColAlbPrv, { "cTerCtr",      "C", 20,  0, "Tercero centro de coste" ,              "",                           "", "( cDbfCol )", nil } )
 
-return ( aColAlbPrv )
+RETURN ( aColAlbPrv )
 
 //---------------------------------------------------------------------------//
 
-function aSerAlbPrv()
+FUNCTION aSerAlbPrv()
 
    local aColAlbPrv  := {}
 
@@ -9240,7 +9240,7 @@ function aSerAlbPrv()
    aAdd( aColAlbPrv,  { "lUndNeg",     "L",  1,   0, "Lógico de unidades en negativo",   "",                  "", "(cDbfCol)" } )
    aAdd( aColAlbPrv,  { "cNumSer",     "C", 30,   0, "Numero de serie",                  "",                  "", "(cDbfCol)" } )
 
-return ( aColAlbPrv )
+RETURN ( aColAlbPrv )
 
 //---------------------------------------------------------------------------//
 
@@ -9248,7 +9248,7 @@ return ( aColAlbPrv )
 // Unidades recibidas en albaranes de proveedor desde un pedido de cliente
 //
 
-function nUnidadesRecibidasPedCli( cPedCli, cCodArt, cValPr1, cValPr2, cRefPrv, cDetalle, cAlbPrvL )
+FUNCTION nUnidadesRecibidasPedCli( cPedCli, cCodArt, cValPr1, cValPr2, cRefPrv, cDetalle, cAlbPrvL )
 
    local nRec
    local nOrd
@@ -9275,11 +9275,11 @@ function nUnidadesRecibidasPedCli( cPedCli, cCodArt, cValPr1, cValPr2, cRefPrv, 
    ( cAlbPrvL )->( OrdSetFocus( nOrd ) )
    ( cAlbPrvL )->( dbGoTo( nRec ) )
 
-return ( nTot )
+RETURN ( nTot )
 
 //-----------------------------------------------------------------------------//
 
-function nUnidadesRecibidasPedPrv( cPedPrv, cCodArt, cValPr1, cValPr2, cRefPrv, cAlbPrvL )
+FUNCTION nUnidadesRecibidasPedPrv( cPedPrv, cCodArt, cValPr1, cValPr2, cRefPrv, cAlbPrvL )
 
    local nRec
    local nOrd
@@ -9306,11 +9306,11 @@ function nUnidadesRecibidasPedPrv( cPedPrv, cCodArt, cValPr1, cValPr2, cRefPrv, 
    ( cAlbPrvL )->( OrdSetFocus( nOrd ) )
    ( cAlbPrvL )->( dbGoTo( nRec ) )
 
-return ( nTot )
+RETURN ( nTot )
 
 //-----------------------------------------------------------------------------//
 
-Function SynAlbPrv( cPath )
+FUNCTION SynAlbPrv( cPath )
 
    local oError
    local oBlock      
@@ -9754,11 +9754,11 @@ Function SynAlbPrv( cPath )
 
    end if       
 
-return nil
+RETURN nil
 
 //------------------------------------------------------------------------//
 
-Function AppAlbPrv( cCodPrv, cCodArt, lOpenBrowse )
+FUNCTION AppAlbPrv( cCodPrv, cCodArt, lOpenBrowse )
 
    local nLevel         := nLevelUsr( _MENUITEM_ )
 
@@ -9766,7 +9766,7 @@ Function AppAlbPrv( cCodPrv, cCodArt, lOpenBrowse )
 
    if nAnd( nLevel, 1 ) != 0 .or. nAnd( nLevel, ACC_APPD ) == 0
       msgStop( 'Acceso no permitido.' )
-      return .t.
+      RETURN .t.
    end if
 
    if lOpenBrowse
@@ -9796,7 +9796,7 @@ FUNCTION EdtAlbPrv( nNumAlb, lOpenBrowse )
 
    if nAnd( nLevel, 1 ) != 0 .or. nAnd( nLevel, ACC_EDIT ) == 0
       msgStop( 'Acceso no permitido.' )
-      return .t.
+      RETURN .t.
    end if
 
    if lOpenBrowse
@@ -9834,7 +9834,7 @@ FUNCTION ZooAlbPrv( nNumAlb, lOpenBrowse )
 
    if nAnd( nLevel, 1 ) != 0 .or. nAnd( nLevel, ACC_ZOOM ) == 0
       msgStop( 'Acceso no permitido.' )
-      return .t.
+      RETURN .t.
    end if
 
    if lOpenBrowse
@@ -9872,7 +9872,7 @@ FUNCTION DelAlbPrv( nNumAlb, lOpenBrowse )
 
    if nAnd( nLevel, 1 ) != 0 .or. nAnd( nLevel, ACC_ZOOM ) == 0
       msgStop( 'Acceso no permitido.' )
-      return .t.
+      RETURN .t.
    end if
 
    if lOpenBrowse
@@ -9898,7 +9898,7 @@ FUNCTION DelAlbPrv( nNumAlb, lOpenBrowse )
 
    end if
 
-Return nil
+RETURN nil
 
 //----------------------------------------------------------------------------//
 
@@ -9910,7 +9910,7 @@ FUNCTION PrnAlbPrv( nNumAlb, lOpenBrowse )
 
    if nAnd( nLevel, 1 ) != 0 .or. nAnd( nLevel, ACC_ZOOM ) == 0
       msgStop( 'Acceso no permitido.' )
-      return .t.
+      RETURN .t.
    end if
 
    if lOpenBrowse
@@ -9948,7 +9948,7 @@ FUNCTION VisAlbPrv( nNumAlb, lOpenBrowse )
 
    if nAnd( nLevel, 1 ) != 0 .or. nAnd( nLevel, ACC_ZOOM ) == 0
       msgStop( 'Acceso no permitido.' )
-      return .t.
+      RETURN .t.
    end if
 
    if lOpenBrowse
@@ -9974,7 +9974,7 @@ FUNCTION VisAlbPrv( nNumAlb, lOpenBrowse )
 
    end if
 
-Return nil
+RETURN nil
 
 //---------------------------------------------------------------------------//
 
@@ -9982,7 +9982,7 @@ FUNCTION setNoFacturadoAlbaranProveedorLinea( nView )
 
    local id := ( D():FacturasProveedoresLineas( nView ) )->iNumAlb
 
-Return ( setEstadoFacturadoAlbaranProveedorLinea( .f., id, nView ) )
+RETURN ( setEstadoFacturadoAlbaranProveedorLinea( .f., id, nView ) )
 
 //---------------------------------------------------------------------------//
 
@@ -9990,7 +9990,7 @@ FUNCTION setFacturadoAlbaranProveedorLinea( cSerFac, nNumFac, cSufFac, nView )
 
    local id := ( D():FacturasProveedoresLineas( nView ) )->iNumAlb
 
-Return ( setEstadoFacturadoAlbaranProveedorLinea( .t., id, nView, cSerFac, nNumFac, cSufFac ) )
+RETURN ( setEstadoFacturadoAlbaranProveedorLinea( .t., id, nView, cSerFac, nNumFac, cSufFac ) )
 
 //---------------------------------------------------------------------------//
 
@@ -10022,7 +10022,7 @@ FUNCTION setEstadoFacturadoAlbaranProveedorLinea( lFacturado, id, nView, cSerFac
    D():restoreFocusAlbaranesProveedoresLineas( nView )
    D():setStatusAlbaranesProveedoresLineas( nView )
 
-Return ( nil )
+RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 
@@ -10059,7 +10059,7 @@ FUNCTION setFacturadoAlbaranProveedores( nView )
    cTxt                 := "¿Desea cambiar el estado del documento?"
 
    if isNil( oWndBrw )
-      Return .f.
+      RETURN .f.
    end if 
 
    nSelected            := len( oWndBrw:oBrw:aSelected  )
@@ -10068,7 +10068,7 @@ FUNCTION setFacturadoAlbaranProveedores( nView )
    end if
 
    if !apoloMsgNoYes( cTxt, "Elija una opción" )
-      Return .f.
+      RETURN .f.
    end if 
 
    nRecHead                := ( D():AlbaranesProveedores( nView ) )->( recNo() )
@@ -10216,7 +10216,7 @@ FUNCTION setEstadoAlbaranProveedor( id, nView )
    local nFacturado     := 0
 
    if empty( id )
-      return ( nFacturado )
+      RETURN ( nFacturado )
    end if 
 
    nOrd                 := ( D():AlbaranesProveedores( nView ) )->( OrdSetFocus( "nNumAlb" ) )
@@ -10237,31 +10237,31 @@ RETURN ( nFacturado )
 
 //---------------------------------------------------------------------------//
 
-Function IsAlbPrv( cPath )
+FUNCTION IsAlbPrv( cPath )
 
-Return ( .t. )
+RETURN ( .t. )
 
 //---------------------------------------------------------------------------//
 
 FUNCTION cCodAlbPrv( cAlbPrvL )
 
-   local cReturn     := ""
+   local cRETURN     := ""
 
    DEFAULT cAlbPrvL  := if( !Empty( tmpAlbPrvL ), tmpAlbPrvL, D():AlbaranesProveedoresLineas( nView ) )
 
-   cReturn           += Alltrim( ( cAlbPrvL )->cRef )
+   cRETURN           += Alltrim( ( cAlbPrvL )->cRef )
 
    if !Empty( ( cAlbPrvL )->cValPr1 )
-      cReturn        += "."
-      cReturn        += Alltrim( ( cAlbPrvL )->cValPr1 )
+      cRETURN        += "."
+      cRETURN        += Alltrim( ( cAlbPrvL )->cValPr1 )
    end if
 
    if !Empty( ( cAlbPrvL )->cValPr2 )
-      cReturn        += "."
-      cReturn        += Alltrim( ( cAlbPrvL )->cValPr2 )
+      cRETURN        += "."
+      cRETURN        += Alltrim( ( cAlbPrvL )->cValPr2 )
    end if
 
-RETURN ( cReturn )
+RETURN ( cRETURN )
 
 //---------------------------------------------------------------------------//
 
@@ -10284,13 +10284,13 @@ RETURN ( DescripLeng( cAlbPrvL, cAlbPrvS, cArtLeng ) )
 
 //---------------------------------------------------------------------------//
 
-Function DesignLabelAlbaranProveedor( oFr, cDbfDoc )
+FUNCTION DesignLabelAlbaranProveedor( oFr, cDbfDoc )
 
    local oLabel   
    local lOpenFiles  := empty( nView ) 
 
    if lOpenFiles .and. !Openfiles()
-      Return .f.
+      RETURN .f.
    endif
 
    oLabel            := TLabelGeneratorAlbaranProveedores():New( nView, oNewImp )
@@ -10333,11 +10333,11 @@ Function DesignLabelAlbaranProveedor( oFr, cDbfDoc )
       closeFiles()
    end if 
 
-Return .t.
+RETURN .t.
 
 //---------------------------------------------------------------------------//
 
-Function DesignReportAlbPrv( oFr, dbfDoc )
+FUNCTION DesignReportAlbPrv( oFr, dbfDoc )
 
    local lOpen    := .f.
    local lFlag    := .f.
@@ -10437,11 +10437,11 @@ Function DesignReportAlbPrv( oFr, dbfDoc )
 
    else
 
-      Return .f.
+      RETURN .f.
 
    end if
 
-Return .t.
+RETURN .t.
 
 //---------------------------------------------------------------------------//
 
@@ -10508,31 +10508,31 @@ RETURN ( cBarPrp2 )
 
 //---------------------------------------------------------------------------//
 
-Function dFechaCaducidadLote( cCodArt, cValPr1, cValPr2, cLote, cAlbPrvL, cFacPrvL, cProLin )
+FUNCTION dFechaCaducidadLote( cCodArt, cValPr1, cValPr2, cLote, cAlbPrvL, cFacPrvL, cProLin )
 
    local dFechaCaducidad      := Ctod( "" )
 
    if dbSeekInOrd( cCodArt + cValPr1 + cValPr2 + cLote, "cStkRef", cAlbPrvL )
-      dFechaCaducidad      := ( cAlbPrvL )->dFecCad
-      RETURN( dFechaCaducidad)
+      dFechaCaducidad         := ( cAlbPrvL )->dFecCad
+      RETURN( dFechaCaducidad )
    endif
 
    if dbSeekInOrd( cCodArt + cValPr1 + cValPr2 + cLote, "cRefLote", cFacPrvL )
-      dFechaCaducidad      := ( cFacPrvL )->dFecCad
-      RETURN( dFechaCaducidad)
+      dFechaCaducidad         := ( cFacPrvL )->dFecCad
+      RETURN( dFechaCaducidad )
    endif
    
-   if cProLin != nil 
+   if !empty( cProLin )
       if dbSeekInOrd( cCodArt + cValPr1 + cValPr2 + cLote, "cArtLot", cProLin )
-         dFechaCaducidad      := ( cProLin )-> dFecCad             
+         dFechaCaducidad      := ( cProLin )->dFecCad
       end if
    end if
 
-Return ( dFechaCaducidad )
+RETURN ( dFechaCaducidad )
 
 //---------------------------------------------------------------------------//
 
-Static Function AppendPropiedadesArticulos( aTbl, aTmp )
+Static FUNCTION AppendPropiedadesArticulos( aTbl, aTmp )
 
    if !( D():ArticuloPrecioPropiedades( nView ) )->( dbSeek( aTbl[ _CREF ] +  aTbl[ _CCODPR1 ] + aTbl[ _CCODPR2 ] + aTbl[ _CVALPR1 ] + aTbl[ _CVALPR2 ] ) )
       
@@ -10548,7 +10548,7 @@ Static Function AppendPropiedadesArticulos( aTbl, aTmp )
 
    end if 
 
-Return ( nil )
+RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
@@ -10688,7 +10688,7 @@ Method CreateData() CLASS TAlbaranesProveedorSenderReciver
 
    end if
 
-Return ( Self )
+RETURN ( Self )
 
 //----------------------------------------------------------------------------//
 /*
@@ -10723,7 +10723,7 @@ Method RestoreData() CLASS TAlbaranesProveedorSenderReciver
 
    end if
 
-Return ( Self )
+RETURN ( Self )
 
 //----------------------------------------------------------------------------//
 /*
@@ -10748,7 +10748,7 @@ Method SendData() CLASS TAlbaranesProveedorSenderReciver
 
    end if
 
-Return ( Self )
+RETURN ( Self )
 
 //----------------------------------------------------------------------------//
 
@@ -10771,7 +10771,7 @@ Method ReciveData() CLASS TAlbaranesProveedorSenderReciver
 
    ::oSender:SetText( "Albaranes de proveedores recibidos" )
 
-Return Self
+RETURN Self
 
 //----------------------------------------------------------------------------//
 
@@ -10870,7 +10870,7 @@ Method Process() CLASS TAlbaranesProveedorSenderReciver
 
    next
 
-Return Self
+RETURN Self
 
 //---------------------------------------------------------------------------//
 
@@ -10880,35 +10880,35 @@ METHOD validateRecepcion( tmpAlbPrvT, dbfAlbPrvT ) CLASS TAlbaranesProveedorSend
 
    if !( lValidaOperacion( ( tmpAlbPrvT )->dFecAlb, .f. ) )
       ::cErrorRecepcion    += "la fecha " + dtoc( ( tmpAlbPrvT )->dFecAlb ) + " no es valida en esta empresa"
-      Return .f. 
+      RETURN .f. 
    end if 
 
    if !( ( dbfAlbPrvT )->( dbSeek( ( tmpAlbPrvT )->cSerAlb + Str( ( tmpAlbPrvT )->nNumAlb ) + ( tmpAlbPrvT )->cSufAlb ) ) )
-      Return .t.
+      RETURN .t.
    end if 
 
    if dtos( ( dbfAlbPrvT )->dFecChg ) + ( dbfAlbPrvT )->cTimChg >= dtos( ( tmpAlbPrvT )->dFecChg ) + ( tmpAlbPrvT )->cTimChg 
       ::cErrorRecepcion    += "la fecha en la empresa " + dtoc( ( dbfAlbPrvT )->dFecChg ) + " " + ( dbfAlbPrvT )->cTimChg + " es más reciente que la recepción " + dtoc( ( tmpAlbPrvT )->dFecChg ) + " " + ( tmpAlbPrvT )->cTimChg 
-      Return .f.
+      RETURN .f.
    end if
 
-Return ( .t. )
+RETURN ( .t. )
 
 //---------------------------------------------------------------------------//
 
-Function getNumeroAlbaranProveedorLinea( nView )
+FUNCTION getNumeroAlbaranProveedorLinea( nView )
 
-Return ( substr( ( D():FacturasProveedoresLineas( nView ) )->iNumAlb, 1, 12 ) )
-
-//---------------------------------------------------------------------------//
-
-Function getExtraFieldAlbaranProveedor( cFieldName )
-
-Return ( getExtraField( cFieldName, oDetCamposExtra, D():AlbaranesProveedoresId( nView ) ) )
+RETURN ( substr( ( D():FacturasProveedoresLineas( nView ) )->iNumAlb, 1, 12 ) )
 
 //---------------------------------------------------------------------------//
 
-Static Function ImportarLineasPedidosProveedor( aTmp, aGet, oBrwLin )
+FUNCTION getExtraFieldAlbaranProveedor( cFieldName )
+
+RETURN ( getExtraField( cFieldName, oDetCamposExtra, D():AlbaranesProveedoresId( nView ) ) )
+
+//---------------------------------------------------------------------------//
+
+Static FUNCTION ImportarLineasPedidosProveedor( aTmp, aGet, oBrwLin )
 
    local oLine
    local cCodigoProveedor
@@ -10920,13 +10920,13 @@ Static Function ImportarLineasPedidosProveedor( aTmp, aGet, oBrwLin )
 
    if empty( cCodigoProveedor )
       msgStop( "Es necesario codificar un proveedor.", "Importar pedidos" )
-      return .t.
+      RETURN .t.
    end if
 
    oConversionPedidosProveedores    := TConversionPedidosProveedores():New( nView, oStock )
 
    if empty( oConversionPedidosProveedores )
-      Return .f.
+      RETURN .f.
    end if 
 
    oConversionPedidosProveedores:setCodigoProveedor( cCodigoProveedor ) 
@@ -10940,11 +10940,11 @@ Static Function ImportarLineasPedidosProveedor( aTmp, aGet, oBrwLin )
 
    oBrwLin:refresh()
 
-Return .t.
+RETURN .t.
 
 //---------------------------------------------------------------------------//
 
-Static Function appendLineasPedidosProveedor( aLines )
+Static FUNCTION appendLineasPedidosProveedor( aLines )
 
    local oLine
 
@@ -10963,11 +10963,11 @@ Static Function appendLineasPedidosProveedor( aLines )
       end if 
    next 
 
-Return .t.
+RETURN .t.
 
 //---------------------------------------------------------------------------//
 
-Static Function calculateUnidadesPendientesRecepcion( oLine )
+Static FUNCTION calculateUnidadesPendientesRecepcion( oLine )
 
    local nMod
    local nUnidadesRecibidas
@@ -10988,27 +10988,27 @@ Static Function calculateUnidadesPendientesRecepcion( oLine )
 
    end if
 
-Return ( oLine )
+RETURN ( oLine )
 
 //---------------------------------------------------------------------------//
 
-Function nombrePrimeraPropiedadAlbaranProveedoresLineas( view )
+FUNCTION nombrePrimeraPropiedadAlbaranProveedoresLineas( view )
 
    DEFAULT view   := nView
 
-Return ( nombrePropiedad( ( D():AlbaranesProveedoresLineas( view ) )->cCodPr1, ( D():AlbaranesProveedoresLineas( view ) )->cValPr1, view ) )
+RETURN ( nombrePropiedad( ( D():AlbaranesProveedoresLineas( view ) )->cCodPr1, ( D():AlbaranesProveedoresLineas( view ) )->cValPr1, view ) )
 
 //---------------------------------------------------------------------------//
 
-Function nombreSegundaPropiedadAlbaranProveedoresLineas( view )
+FUNCTION nombreSegundaPropiedadAlbaranProveedoresLineas( view )
 
    DEFAULT view   := nView
 
-Return ( nombrePropiedad( ( D():AlbaranesProveedoresLineas( view ) )->cCodPr2, ( D():AlbaranesProveedoresLineas( view ) )->cValPr2, view ) )
+RETURN ( nombrePropiedad( ( D():AlbaranesProveedoresLineas( view ) )->cCodPr2, ( D():AlbaranesProveedoresLineas( view ) )->cValPr2, view ) )
 
 //---------------------------------------------------------------------------//
 
-static Function menuEdtDet( oCodArt, oDlg, nIdLin )
+static FUNCTION menuEdtDet( oCodArt, oDlg, nIdLin )
 
    MENU oDetMenu
 
@@ -11038,6 +11038,6 @@ static Function menuEdtDet( oCodArt, oDlg, nIdLin )
 
    oDlg:SetMenu( oDetMenu )
 
-Return ( oDetMenu )
+RETURN ( oDetMenu )
 
 //---------------------------------------------------------------------------//

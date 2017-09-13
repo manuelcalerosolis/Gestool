@@ -968,6 +968,12 @@ METHOD loadArticulo( nMode, lSilenceMode ) CLASS TDetMovimientos
 
          // Precios de costo---------------------------------------------------
 
+         if !empty( ::oFechaCaducidad )
+            ::oFechaCaducidad:cText( dFechaCaducidadLote( ::oDbfVir:cRefMov, ::oDbfVir:cValPr1, ::oDbfVir:cValPr2, ::oDbfVir:cLote, ::oParent:oAlbPrvL:cAlias, ::oParent:oFacPrvL:cAlias, ::oParent:oDbfProLin:cAlias ) )
+         end if 
+        
+         // Precios de costo---------------------------------------------------
+
          if !empty(::oPreDiv)
             ::oPreDiv:cText( ::getPrecioCosto() )
          else
