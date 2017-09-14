@@ -32,14 +32,14 @@ METHOD New()
                                     "empresa"   => {  "create"    => "CHAR ( 4 ) NOT NULL"                     ,;
                                                       "text"      => "Empresa"                                 ,;
                                                       "visible"   => .f.}                                      ,;
-												"name"		=>	{	"create"		=>	"VHARCHAR(50) NOT NULL"							,;
+												"name"		=>	{	"create"		=>	"VARCHAR(50) NOT NULL"							,;
 																		"text"		=>	"Nombre de la configuración"					,;
 																		"header"		=>	"Nombre"												,;
 																		"visible"	=> .t.													,;
 																		"width"		=>	200 													,;
 																		"type"		=> "C"													,;
 																		"len"			=> 50	}													,;
-												"value"		=>	{	"create"		=>	"VHARCHAR(50) NOT NULL"							,;
+												"value"		=>	{	"create"		=>	"VARCHAR(50) NOT NULL"							,;
 																		"text"		=>	"Valor de la configuración"					,;
 																		"header"		=>	"Valor"												,;
 																		"visible"	=> .t.													,;

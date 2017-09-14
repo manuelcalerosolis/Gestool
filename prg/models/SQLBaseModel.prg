@@ -9,7 +9,7 @@ CLASS SQLBaseModel
   
    DATA oController
 
-   DATA     oStatement
+   DATA oStatement
    DATA     oRowSet
 
    DATA     cTableName
@@ -40,10 +40,10 @@ CLASS SQLBaseModel
 
    METHOD TimeStampFields()
 
-   METHOD getTableName()                           INLINE ( ::cTableName )
 
    // Facades -----------------------------------------------------------------
 
+   METHOD getTableName()                           INLINE ( ::cTableName )
    METHOD getColumns()                             INLINE ( ::hColumns )
    METHOD getColumnsForNavigator()
    METHOD getHeadersForNavigator()
@@ -51,10 +51,6 @@ CLASS SQLBaseModel
    METHOD getValueFromColumn( cColumn, cKey )
    METHOD getHeaderFromColumn( cColumn )           INLINE ( ::getValueFromColumn( cColumn, "header" ) )
    METHOD getHeaderFromColumnOrder()               INLINE ( ::getValueFromColumn( ::cColumnOrder, "header" ) )
-
-   METHOD Exec( cSentence )                        INLINE   ( if( !empty( getSQLDatabase() ), getSQLDatabase():Exec( cSentence ), msgstop( "No ha conexiones disponibles" ) ) )
-   METHOD Query( cSentence )                       INLINE   ( if( !empty( getSQLDatabase() ), getSQLDatabase():Query( cSentence ), msgstop( "No ha conexiones disponibles" ) ) )
-   METHOD Prepare( cSentence )                     INLINE   ( if( !empty( getSQLDatabase() ), getSQLDatabase():Prepare( cSentence ), msgstop( "No ha conexiones disponibles" ) ) )
 
    // -------------------------------------------------------------------------
 
@@ -109,33 +105,19 @@ CLASS SQLBaseModel
    METHOD   setFind( cFind )                       INLINE   ( ::cFind := cFind )
    METHOD   find( cFind )
 
-   METHOD   existId( id )
-   METHOD   existCodigo( codigo )
-
    METHOD   getBuffer( cColumn )                   INLINE   ( hget( ::hBuffer, cColumn ) )
-   METHOD   updateCurrentBuffer()                  INLINE   ( ::Query( ::getUpdateSentence() ), ::buildRowSetAndFind() )
-   METHOD   insertBuffer()                         INLINE   ( ::Query( ::getInsertSentence() ), ::buildRowSet() )
-   METHOD   deleteSelection( aRecno )              INLINE   ( ::Query( ::getdeleteSentence( aRecno ) ), ::buildRowSet() )
+   METHOD   updateCurrentBuffer()                  INLINE   ( getSQLDatabase():Query( ::getUpdateSentence() ), ::buildRowSetAndFind() )
+   METHOD   insertBuffer()                         INLINE   ( getSQLDatabase():Query( ::getInsertSentence() ), ::buildRowSet() )
+   METHOD   deleteSelection( aRecno )              INLINE   ( getSQLDatabase():Query( ::getdeleteSentence( aRecno ) ), ::buildRowSet() )
 
    METHOD   loadBlankBuffer()
    METHOD   defaultCurrentBuffer()
    METHOD   loadCurrentBuffer()
 
-   METHOD   selectFetch( cSentence )
-   METHOD selectValue( cSentence )
-
-   METHOD   selectFetchArray( cSentence )          
-   METHOD   selectFetchHash( cSentence )           INLINE   ( ::selectFetch( cSentence, FETCH_HASH ) )
-
    METHOD   getDbfTableName()                      INLINE   ( ::cDbfTableName + ".dbf" )
    METHOD   getOldTableName()                      INLINE   ( ::cDbfTableName + ".old" )
 
    METHOD   serializeColumns()
-
-   METHOD   checksForValid()
-
-   METHOD   getNameFromId( uValue )
-   METHOD   getNameFromCodigo( uValue )
 
    METHOD   getValueField( cColumn, uValue )
 
@@ -162,7 +144,7 @@ METHOD New( oController )
 
    ::cColumnOrientation          := "A"
 
-   ::cGeneralSelect              := "SELECT * FROM " + ::cTableName
+   ::cGeneralSelect              := "SELECT * FROM " + ::getTableName()
 
    ::cConstraints                := "" 
 
@@ -377,9 +359,9 @@ METHOD makeImportDbfSQL( cPath )
 
    if !empty( cImportSentence )
 
-      ::Exec( ::getCreateTableSentence() )
+      getSQLDatabase():Exec( ::getCreateTableSentence() )
 
-      ::Exec( cImportSentence )
+      getSQLDatabase():Exec( cImportSentence )
       
    end if 
 
@@ -391,18 +373,27 @@ RETURN ( self )
 
 METHOD buildRowSet( cSentence )
 
+   local oError
+   local oStatement
+
    default cSentence    := ::getSelectSentence()
 
    try
 
-      //oStatement             := ::Query( cSentence )
-      ::oStatement      := ::Prepare( cSentence )
-      ::oRowSet         := ::oStatement:fetchRowSet()
+      oStatement        := getSQLDatabase():Query( cSentence )
+      
+      ::oRowSet         := oStatement:fetchRowSet()
 
-   catch
-      
-      msgstop( hb_valtoexp( getSQLDatabase():errorInfo() ) )
-      
+   catch oError
+
+      eval( errorBlock(), oError )
+
+   finally
+
+      if !empty( oStatement )
+         oStatement:Free()
+      end if
+
    end
 
    ::oRowSet:goTop()
@@ -594,84 +585,6 @@ RETURN ( ::hBuffer )
 
 //---------------------------------------------------------------------------//
 
-METHOD selectFetch( cSentence, fetchType )
-
-   local oError
-   local aFetch
-   local oStatement
-
-   default fetchType := FETCH_ARRAY
-
-   try 
-
-      oStatement     := ::Query( cSentence )
-   
-      aFetch         := oStatement:fetchAll( fetchType )
-
-   catch oError
-
-      eval( errorBlock(), oError )
-
-   finally
-
-      if !empty( oStatement )
-         oStatement:Free()
-      end if
-
-   end
-
-   if !empty( aFetch ) .and. hb_isarray( aFetch )
-      RETURN ( aFetch )
-   end if
-
-RETURN ( nil )
-
-//---------------------------------------------------------------------------//
-
-METHOD selectValue( cSentence )
-
-   local oError
-   local nValue
-   local oStatement
-
-   try 
-
-      oStatement     := ::Query( cSentence )
-
-      oStatement:fetchDirect()
-   
-      nValue         := oStatement:getValue( 1 )
-
-   catch oError
-
-      eval( errorBlock(), oError )
-
-   finally
-
-      if !empty( oStatement )
-         oStatement:Free()
-      end if 
-
-   end
-
-RETURN ( nValue )
-
-//---------------------------------------------------------------------------//
-
-METHOD selectFetchArray( cSentence )
-
-   local aResult  := {}
-   local aFetch   := ::selectFetch( cSentence, FETCH_ARRAY )
-
-   if !empty( aFetch ) .and. hb_isarray( aFetch )
-      aeval( aFetch, {|a| aadd( aResult, a[ 1 ] ) } )
-      RETURN ( aResult )
-   end if
-
-RETURN ( nil )
-
-//---------------------------------------------------------------------------//
-
 METHOD serializeColumns()
 
    local cColumns       := ""
@@ -679,74 +592,6 @@ METHOD serializeColumns()
    heval( ::hColumns, {|k| cColumns += k + ";" } )
 
 RETURN ( cColumns )
-
-//---------------------------------------------------------------------------//
-
-METHOD checksForValid( cColumnToValid )
-
-   local nIDToValid
-   local aIDsToValid
-   local cSentence   := "SELECT " + ::cColumnKey + " FROM " + ::cTableName + " WHERE " + cColumnToValid + " = " + toSQLString( ::hBuffer[ cColumnToValid ] )
-
-   cSentence         += ::getAndEmpresa()
-
-   aIDsToValid       := ::selectFetchArray( cSentence )
-
-   if empty( aIDsToValid )
-      RETURN ( nil )
-   endif
-   
-   nIDToValid     := aIDsToValid[1]
-
-RETURN ( nIDToValid )
-
-//---------------------------------------------------------------------------//
-
-METHOD getNameFromId( uValue )
-
-   local cName          := ""
-   local aSelect 
-   local cSentence      := "SELECT nombre FROM " + ::cTableName + " WHERE id = " + toSQLString( uValue )
-
-   cSentence            += ::getAndEmpresa()
-
-   aSelect              := ::selectFetchHash( cSentence )
-
-   if !empty( aSelect )
-      cName             := hget( atail( aSelect ), "nombre" )
-   end if 
-
-RETURN ( cName )
-
-//---------------------------------------------------------------------------//
-
-METHOD getNameFromCodigo( uValue )
-
-   local cName          := ""
-   local cSentence      := "SELECT nombre FROM " + ::cTableName + " WHERE codigo = " + toSQLString( uValue )
-   local aSelect        := ::selectFetchHash( cSentence )
-
-   if !empty( aSelect )
-      cName             := hget( atail( aSelect ), "nombre" )
-   end if 
-
-RETURN ( cName )
-
-//---------------------------------------------------------------------------//
-
-METHOD existId( id )
-
-   local cSentence               := "SELECT " + ::cColumnKey + " FROM " + ::cTableName + " WHERE id = " + toSQLString( id )
-
-RETURN ( !empty( ::selectFetchArray( cSentence ) ) )
-
-//---------------------------------------------------------------------------//
-
-METHOD existCodigo( cValue )
-
-   local cSentence               := "SELECT " + ::cColumnKey + " FROM " + ::cTableName + " WHERE " + ::cColumnCode + " = " + toSQLString( cValue )
-
-RETURN ( !empty( ::selectFetchArray( cSentence ) ) )
 
 //---------------------------------------------------------------------------//
 

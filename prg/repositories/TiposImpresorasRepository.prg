@@ -4,9 +4,9 @@
 
 //---------------------------------------------------------------------------//
 
-CLASS TiposImpresorasRepository
+CLASS TiposImpresorasRepository FROM SQLBaseRepository
 
-   METHOD New()
+   METHOD getTableName()      INLINE ( if( !empty( ::getController() ), ::getModelTableName(), TiposImpresorasModel():getTableName() ) )
 
    METHOD getAll()
 
@@ -14,28 +14,14 @@ END CLASS
 
 //---------------------------------------------------------------------------//
 
-METHOD New( oModel )
-
-   DEFAULT oModel    := TiposImpresorasModel():New()
-
-   ::oModel          := oModel
-
-RETURN ( Self )
-
-//---------------------------------------------------------------------------//
-
 METHOD getAll() 
 
-   local cSentence               := "SELECT nombre FROM " + ::getModel():cTableName
-   local aTiposImpresoras        := ::getModel():selectFetchArray( cSentence )
+   local cSentence               := "SELECT nombre FROM " + ::getTableName()
+   local aNombresImpresoras      := getSQLDatabase():selectFetchArrayOneColumn( cSentence )
 
-   if hb_isnil( aTiposImpresoras )
-      aTiposImpresoras           := {}
-   end if 
+   ains( aNombresImpresoras, 1, "", .t. )
 
-   aadd( aTiposImpresoras, "" )
-
-RETURN ( aTiposImpresoras )
+RETURN ( aNombresImpresoras )
 
 //---------------------------------------------------------------------------//
 

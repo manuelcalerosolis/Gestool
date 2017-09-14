@@ -22,13 +22,13 @@ METHOD New()
 
    ::oModel                := TiposImpresorasModel():New( self )
 
+   ::oRepository           := TiposImpresorasRepository():New( self )
+
    ::oDialogView           := TiposImpresorasView():New( self )
 
    ::oNavigatorView        := SQLNavigatorView():New( self )
 
    ::oValidator            := TiposImpresorasValidator():New( self )
-
-   ::oRepository           := TiposImpresorasRepository():New( self )
 
    ::Super:New()
 

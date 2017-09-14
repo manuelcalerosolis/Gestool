@@ -18,6 +18,8 @@ CLASS SQLBaseController
 
    DATA oValidator
 
+   DATA oRepository
+
    DATA nLevel
 
    DATA nMode                                         AS NUMERIC
@@ -109,18 +111,12 @@ CLASS SQLBaseController
       METHOD endDeleteModePreDelete()                 VIRTUAL
       METHOD endDeleteModePosDelete()                 VIRTUAL
 
-   METHOD   getIdFromRowSet()                         INLINE   ( if( !empty( ::getRowSet() ), ( ::getRowSet():fieldGet( ::oModel:cColumnKey ) ), ) )
+   METHOD getIdFromRowSet()                           INLINE   ( if( !empty( ::getRowSet() ), ( ::getRowSet():fieldGet( ::oModel:cColumnKey ) ), ) )
 
-   METHOD   changeModelOrderAndOrientation()
+   METHOD changeModelOrderAndOrientation()
 
    METHOD find( uValue, cColumn )                     INLINE ( ::oModel:find( uValue, cColumn ) )
-
-   METHOD   findByIdInRowSet( uValue )                INLINE ( if( !empty( ::getRowSet() ), ::getRowset():find( uValue, "id", .t. ), ) )
-
-   METHOD   isValidGet( oGet )
-   METHOD   isValidCodigo( oGet )
-
-   METHOD   getIdFromCodigo( codigo )                 INLINE ( if( !empty( ::oModel ), ::oModel:getIdFromCodigo( codigo ), ) )
+   METHOD findByIdInRowSet( uValue )                  INLINE ( if( !empty( ::getRowSet() ), ::getRowset():find( uValue, "id", .t. ), ) )
 
    METHOD 	assignBrowse( oGet, aSelectedItems )
 	METHOD 	startBrowse( oCombobox )
@@ -206,7 +202,7 @@ METHOD startBrowse( oCombobox )
    end if 
 
    if (!empty( oCombobox ) )
-   oCombobox:SetItems( ::oDialogView:getoBrowse():getColumnHeaders() )
+      oCombobox:SetItems( ::oDialogView:getoBrowse():getColumnHeaders() )
    endif
 
    ::restoreBrowseState()
@@ -472,58 +468,6 @@ METHOD getRowSet()
 Return ( ::oModel:oRowSet )
 
 //---------------------------------------------------------------------------//
-
-METHOD isValidGet( oGet )
-
-   local uValue
-
-   if empty( oGet )
-      RETURN ( .t. )
-   end if 
-
-   uValue            := oGet:varGet()
-
-   if !::oModel:existId( uValue )
-   	msgStop( "El identificador introducido no existe", ::getTitle() )
-   	oGet:setFocus()
-      RETURN .f.
-   end if 
-
-   if !empty( oGet:oHelpText )
-      oGet:oHelpText:cText( ::oModel:getNameFromId( uValue ) )
-   end if
-
-RETURN ( .t. )
-
-//--------------------------------------------------------------------------//
-
-METHOD isValidCodigo( oGet )
-
-   local uValue
-
-   if empty( oGet )
-      RETURN ( .t. )
-   end if 
-
-   uValue            := oGet:varGet()
-
-   if empty( uValue )
-      RETURN ( .t. )
-   end if 
-
-   if !::oModel:existCodigo( uValue )
-      msgStop( "El código introducido no existe", ::getTitle() )
-      oGet:setFocus()
-      RETURN ( .f. )
-   end if 
-
-   if !empty( oGet:oHelpText )
-      oGet:oHelpText:cText( ::oModel:getNameFromCodigo( uValue ) )
-   end if
-
-RETURN ( .t. )
-
-//--------------------------------------------------------------------------//
 
 METHOD setFastReport( oFastReport, cSentence, cColumns )
 

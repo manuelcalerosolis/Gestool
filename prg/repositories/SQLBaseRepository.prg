@@ -6,19 +6,22 @@
 
 CLASS SQLBaseRepository
 
-   DATA oModel
+   DATA oController
 
    METHOD New()
 
-   METHOD getModel()    INLINE ( ::oModel )
+   METHOD getController()        INLINE ( ::oController )
+
+   METHOD getModel()             INLINE ( ::getController():getModel() )
+   METHOD getModelTableName()    INLINE ( ::getController():getModelTableName()  )
 
 END CLASS
 
 //---------------------------------------------------------------------------//
 
-METHOD New( oModel )
+METHOD New( oController )
 
-   ::oModel       := oModel
+   ::oController                 := oController
 
 Return ( Self )
 
