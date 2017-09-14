@@ -70,6 +70,8 @@ METHOD New()
    ::cPasswordMySQL           := GetPvProfString(  "MySQL",    "Password", "",            cIniAplication() )
 
    ::oConexion                := THDO():new( "mysql" )
+
+   msgalert( valtype( ::oConexion ), "valtype" )
    
    ::oConexion:setAttribute( ATTR_ERRMODE, .t. )
 
@@ -200,8 +202,16 @@ RETURN ( nValue )
 METHOD selectFetchArrayOneColumn( cSentence )
 
    local uFetch
-   local aFetch   := ::selectFetchArray( cSentence )
-   local aResult  := array( len( aFetch ) )
+   local aFetch   
+   local aResult  
+
+   aFetch         := ::selectFetchArray( cSentence )
+
+   if !hb_isarray( aFetch )
+      RETURN ( nil )
+   end if 
+
+   aResult        := array( len( aFetch ) )
 
    for each uFetch in aFetch 
       aResult[ hb_enumindex() ]  := uFetch[ 1 ] 

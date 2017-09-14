@@ -6,6 +6,8 @@
 
 CLASS SQLBaseValidator
 
+   DATA oDatabase
+
    DATA oController
 
    DATA hValidators
@@ -33,7 +35,9 @@ END CLASS
 
 METHOD New( oController )
 
-   ::oController     := oController
+   ::oDatabase                   := getSQLDatabase()
+
+   ::oController                 := oController
 
 Return ( Self )
 
@@ -121,7 +125,7 @@ METHOD Unique()
       cSQLSentence   += " AND " + ::oController:getModelColumnKey() + " <> " + toSQLString( id )
    end if 
 
-   nCount            := ::oController:getModelSelectValue( cSQLSentence )
+   nCount            := ::oDatabase:SelectValue( cSQLSentence )
 
 RETURN ( hb_isnumeric( nCount ) .and. nCount == 0 )
 

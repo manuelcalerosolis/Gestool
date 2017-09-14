@@ -7,39 +7,42 @@
 
 CLASS SQLBaseModel
   
+   DATA oDatabase
+
    DATA oController
 
-   DATA oStatement
-   DATA     oRowSet
+   DATA oRowSet
 
-   DATA     cTableName
-   DATA     cDbfTableName
+   DATA cTableName
 
-   DATA     cConstraints
+   DATA cConstraints
 
-	DATA	   hColumns                      INIT {=>}
-   DATA     hExtraColumns                 INIT {=>}
+   DATA hColumns                                   INIT {=>}
+   DATA hExtraColumns                              INIT {=>}
 
-   DATA     cGeneralSelect
+   DATA cGeneralSelect
 
-   DATA     cColumnOrientation
-   DATA     idToFind
+   DATA cColumnOrientation
 
-   DATA     cSQLInsert     
-   DATA     cSQLSelect      
+   DATA cSQLInsert     
+   DATA cSQLSelect      
    
-   DATA     cColumnOrder                  
-   DATA     cColumnKey                    
-   DATA     cColumnCode                   INIT "codigo"
+   DATA cColumnOrder                  
+   DATA cColumnKey                    
+   DATA cColumnCode                                INIT "codigo"
 
-  	DATA	   hBuffer   
-   DATA     cFind
+   DATA hBuffer 
+
+   DATA cFind
+   DATA idToFind
 
    METHOD New()
    METHOD End()
 
-   METHOD TimeStampFields()
+   METHOD setDatabase( oDb )                       INLINE ( ::oDatabase := oDb )
+   METHOD getDatabase()                            INLINE ( if( empty( ::oDatabase ), getSQLDatabase(), ::oDatabase ) )
 
+   METHOD TimeStampFields()
 
    // Facades -----------------------------------------------------------------
 
@@ -78,14 +81,14 @@ CLASS SQLBaseModel
    METHOD getWhereEmpresa()                        INLINE ( if( ::isEmpresaColumn(), " WHERE empresa = " + toSQLString( cCodEmp() ), "" ) )
    METHOD getAndEmpresa()                          INLINE ( if( ::isEmpresaColumn(), " AND empresa = " + toSQLString( cCodEmp() ), "" ) )
 
-   METHOD   getEditValue()
+   METHOD getEditValue()
 
-   METHOD   convertRecnoToId( aRecno )
+   METHOD convertRecnoToId( aRecno )
 
-   METHOD   setIdToFind( idToFind )                INLINE ( ::idToFind := idToFind )
-   METHOD   saveIdToFind()                         INLINE ( ::idToFind := ::getRowSet():fieldGet( ::cColumnKey ) ) 
-   METHOD   setColumnOrder( cColumnOrder )         INLINE ( ::cColumnOrder := cColumnOrder )
-   METHOD   setColumnOrientation( cColumnOrientation )   INLINE ( ::cColumnOrientation := cColumnOrientation )
+   METHOD setIdToFind( idToFind )                  INLINE ( ::idToFind := idToFind )
+   METHOD saveIdToFind()                           INLINE ( ::idToFind := ::getRowSet():fieldGet( ::cColumnKey ) ) 
+   METHOD setColumnOrder( cColumnOrder )           INLINE ( ::cColumnOrder := cColumnOrder )
+   METHOD setColumnOrientation( cColumnOrientation )  INLINE ( ::cColumnOrientation := cColumnOrientation )
 
    METHOD   buildRowSet()
    METHOD   buildRowSetAndFind()                   INLINE ( ::buildRowSet(), ::findInRowSet() )
@@ -96,9 +99,6 @@ CLASS SQLBaseModel
    METHOD   getRowSetRecno()                       INLINE   ( if( !empty( ::oRowSet ), ( ::oRowSet:recno() ) , 0 ) )
    METHOD   setRowSetRecno( nRecno )               INLINE   ( if( !empty( ::oRowSet ), ( ::oRowSet:goto( nRecno ) ), ) )
 
-   METHOD   getStatement()                         INLINE   ( ::oStatement )
-   METHOD   freeStatement()                        INLINE   ( if( !empty( ::oStatement ), ( ::oStatement := nil ), ) )
- 
    METHOD   getSelectByColumn()
    METHOD   getSelectByOrder()
 
@@ -106,16 +106,13 @@ CLASS SQLBaseModel
    METHOD   find( cFind )
 
    METHOD   getBuffer( cColumn )                   INLINE   ( hget( ::hBuffer, cColumn ) )
-   METHOD   updateCurrentBuffer()                  INLINE   ( getSQLDatabase():Query( ::getUpdateSentence() ), ::buildRowSetAndFind() )
-   METHOD   insertBuffer()                         INLINE   ( getSQLDatabase():Query( ::getInsertSentence() ), ::buildRowSet() )
-   METHOD   deleteSelection( aRecno )              INLINE   ( getSQLDatabase():Query( ::getdeleteSentence( aRecno ) ), ::buildRowSet() )
+   METHOD   updateCurrentBuffer()                  INLINE   ( ::getDatabase():Query( ::getUpdateSentence() ), ::buildRowSetAndFind() )
+   METHOD   insertBuffer()                         INLINE   ( ::getDatabase():Query( ::getInsertSentence() ), ::buildRowSet() )
+   METHOD   deleteSelection( aRecno )              INLINE   ( ::getDatabase():Query( ::getdeleteSentence( aRecno ) ), ::buildRowSet() )
 
    METHOD   loadBlankBuffer()
    METHOD   defaultCurrentBuffer()
    METHOD   loadCurrentBuffer()
-
-   METHOD   getDbfTableName()                      INLINE   ( ::cDbfTableName + ".dbf" )
-   METHOD   getOldTableName()                      INLINE   ( ::cDbfTableName + ".old" )
 
    METHOD   serializeColumns()
 
@@ -126,6 +123,8 @@ END CLASS
 //---------------------------------------------------------------------------//
 
 METHOD New( oController )
+
+   ::oDatabase                   := getSQLDatabase()
 
    ::oController                 := oController
 
@@ -359,9 +358,9 @@ METHOD makeImportDbfSQL( cPath )
 
    if !empty( cImportSentence )
 
-      getSQLDatabase():Exec( ::getCreateTableSentence() )
+      ::getDatabase():Exec( ::getCreateTableSentence() )
 
-      getSQLDatabase():Exec( cImportSentence )
+      ::getDatabase():Exec( cImportSentence )
       
    end if 
 
@@ -380,7 +379,7 @@ METHOD buildRowSet( cSentence )
 
    try
 
-      oStatement        := getSQLDatabase():Query( cSentence )
+      oStatement        := ::getDatabase():Query( cSentence )
       
       ::oRowSet         := oStatement:fetchRowSet()
 

@@ -87,7 +87,13 @@ FUNCTION Main( paramsMain, paramsSecond, paramsThird )
    // Conexión con SQLite------------------------------------------------------
 
    if !empty( getSQLDatabase() )
+
+      msgalert("getSQLDatabase:Connect")
+
       if getSQLDatabase():Connect()
+
+         msgalert( "Conectacod")
+
          getSQLDatabase():addModels()
          getSQLDatabase():checkModels()
       else 
