@@ -36,6 +36,8 @@ METHOD getLineasAgrupadas( cCodigoArticulo, cCodigoAlmacen, cValorPropiedad1, cV
    cSql        += "UNION "
    cSql        += FacturasProveedoresLineasModel():getSQLSentenceLineasAgrupadas( cCodigoArticulo, cCodigoAlmacen, cValorPropiedad1, cValorPropiedad2, cLote )
 
+   logwrite( cSql )
+
    if ::ExecuteSqlStatement( cSql, @cStm )
       RETURN ( cStm )
    end if 
@@ -62,6 +64,9 @@ METHOD getTotalUnidadesStockSalidas( cCodigoArticulo, dConsolidacion, tConsolida
    cSql        += MaterialesConsumidosLineasModel():getSQLSentenceTotalUnidadesStock( cCodigoArticulo, dConsolidacion, tConsolidacion, cCodigoAlmacen, cValorPropiedad1, cValorPropiedad2, cLote )
    cSql        += " ) StockSalidas"
 
+   logwrite( "getTotalUnidadesStockSalidas" )
+   logwrite( cSql )
+
    if ::ExecuteSqlStatement( cSql, @cStm )
       RETURN ( (cStm)->totalUnidadesStock )
    end if 
@@ -85,6 +90,9 @@ METHOD getTotalUnidadesStockEntradas( cCodigoArticulo, dConsolidacion, tConsolid
    cSql        += "UNION "
    cSql        += RectificativasProveedoresLineasModel():getSQLSentenceTotalUnidadesStock( cCodigoArticulo, dConsolidacion, tConsolidacion, cCodigoAlmacen, cValorPropiedad1, cValorPropiedad2, cLote )
    cSql        += " ) StockEntradas"
+
+   logwrite( "getTotalUnidadesStockEntradas" )
+   logwrite( cSql )
 
    if ::ExecuteSqlStatement( cSql, @cStm )
       RETURN ( (cStm)->totalUnidadesStock )

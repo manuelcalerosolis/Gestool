@@ -277,7 +277,7 @@ RETURN ( .t. )
 
 FUNCTION Test()
 
-   msgalert( hb_valtoexp( TiposImpresorasRepository():getAll() ), "TiposImpresorasRepository" )
+   // msgalert( hb_valtoexp( TiposImpresorasRepository():getAll() ), "TiposImpresorasRepository" )
 
 RETURN ( nil )
 

@@ -162,6 +162,7 @@ Tblconv.prg             										\
 Regalm.prg              										\
 Rhtml.prg               										\
 Tshell.prg              										\
+SQLBrowseableView.prg 											\
 SQLNavigatorView.prg 											\
 SQLShellView.prg 													\
 Rfile.prg               										\
@@ -699,6 +700,7 @@ Tblconv.obj                                        	\
 Regalm.obj                                         	\
 Rhtml.obj                                          	\
 Tshell.obj                                         	\
+SQLBrowseableView.obj 											\
 SQLNavigatorView.obj 											\
 SQLShellView.obj 													\
 RpreviewC3.obj 													\
@@ -1242,6 +1244,7 @@ $(OBJ)\Tblconv.obj               									+
 $(OBJ)\Regalm.obj                									+
 $(OBJ)\Rhtml.obj                 									+
 $(OBJ)\Tshell.obj                									+
+$(OBJ)\SQLBrowseableView.obj             							+
 $(OBJ)\SQLNavigatorView.obj              							+
 $(OBJ)\SQLShellView.obj            									+
 $(OBJ)\RocolumnC3.obj            									+

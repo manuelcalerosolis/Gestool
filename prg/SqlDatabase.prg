@@ -71,8 +71,6 @@ METHOD New()
 
    ::oConexion                := THDO():new( "mysql" )
 
-   msgalert( valtype( ::oConexion ), "valtype" )
-   
    ::oConexion:setAttribute( ATTR_ERRMODE, .t. )
 
 RETURN ( Self )

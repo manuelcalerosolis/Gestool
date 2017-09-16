@@ -1436,7 +1436,6 @@ RETURN self
 
 METHOD nSQLStockActual( cCodArt, cCodAlm, cValPr1, cValPr2, cLote ) CLASS TStock
 
-   local nSeconds                := seconds()
    local nSQLStockActual         := 0
    local tHoraConsolidacion
    local dFechaConsolidacion
@@ -1458,35 +1457,37 @@ METHOD nSQLStockActual( cCodArt, cCodAlm, cValPr1, cValPr2, cLote ) CLASS TStock
 
       hFechaHoraConsolidacion    := MovimientosAlmacenesLineasModel():getFechaHoraConsolidacion( cCodArt, cCodAlm, cValPr1, cValPr2, cLote )
 
+      logwrite( "cCodArt : " + cCodArt )
+      logwrite( "cCodAlm : " + cCodAlm )
+      logwrite( "cValPr1 : " + cValPr1 )
+      logwrite( "cValPr2 : " + cValPr2 )
+      logwrite( "cLote : " + cLote   )
+      logwrite( "hFechaHoraConsolidacion : " + hb_valtoexp( hFechaHoraConsolidacion ) ,  )
+
       if !empty( hFechaHoraConsolidacion )
          dFechaConsolidacion     := hGet( hFechaHoraConsolidacion, "fecha" )
          tHoraConsolidacion      := hGet( hFechaHoraConsolidacion, "hora" )
+      else
+         dFechaConsolidacion     := nil
+         tHoraConsolidacion      := nil
       end if 
 
-      // Movimientos de almacén------------------------------------------------" )
+      // Entradas--------------------------------------------------------------
+
+      logwrite( "Entradas" )
+      logwrite( StocksModel():getTotalUnidadesStockEntradas( cCodArt, dFechaConsolidacion, tHoraConsolidacion, cCodAlm, cValPr1, cValPr2, cLote ) )
 
       nSQLStockActual            += StocksModel():getTotalUnidadesStockEntradas( cCodArt, dFechaConsolidacion, tHoraConsolidacion, cCodAlm, cValPr1, cValPr2, cLote )
 
-      // Albaranes de proveedor------------------------------------------------------" )
+      // Salidas----------------------------------------------------------------
 
-      // if IsTrue( ::lAlbPrv ) 
-      //    ::aStockAlbaranProveedor( cCodArt, cCodAlm, lLote, lNumeroSerie )
-      //    SysRefresh()
-      // end if 
-
-      // Facturas proveedor----------------------------------------------------" )
-
-      // ::aStockFacturaProveedor( cCodArt, cCodAlm, lLote, lNumeroSerie )
-      // SysRefresh()
-
-      // Rectificativas de provedor--------------------------------------------" )
-
-      // ::aStockRectificativaProveedor( cCodArt, cCodAlm, lLote, lNumeroSerie )
-      // SysRefresh()
-
-      // Ventas----------------------------------------------------------------
+      logwrite( "Salidas" )
+      logwrite( StocksModel():getTotalUnidadesStockSalidas( cCodArt, dFechaConsolidacion, tHoraConsolidacion, cCodAlm, cValPr1, cValPr2, cLote ) )
 
       nSQLStockActual            -= StocksModel():getTotalUnidadesStockSalidas( cCodArt, dFechaConsolidacion, tHoraConsolidacion, cCodAlm, cValPr1, cValPr2, cLote )
+
+      logwrite( "Saldo" )
+      logwrite( StocksModel():getTotalUnidadesStockEntradas( cCodArt, dFechaConsolidacion, tHoraConsolidacion, cCodAlm, cValPr1, cValPr2, cLote ) - StocksModel():getTotalUnidadesStockSalidas( cCodArt, dFechaConsolidacion, tHoraConsolidacion, cCodAlm, cValPr1, cValPr2, cLote ) )
 
    next 
 
@@ -1523,10 +1524,15 @@ METHOD nSQLGlobalStockActual( cCodArt, cCodAlm ) CLASS TStock
 
       cStm                       := StocksModel():getLineasAgrupadas( cCodArt, cCodAlm )
 
+      ( cStm )->( browse() )
+
       ( cStm )->( dbgotop() )
       while !( cStm )->( eof() )
+
          nSQLStockActual         += ::nSQLStockActual( ( cStm )->cCodigoArticulo, ( cStm )->cCodigoAlmacen, ( cStm )->cValorPropiedad1, ( cStm )->cValorPropiedad2, ( cStm )->cLote )
+
          ( cStm )->( dbskip() )
+
       end while
 
       StocksModel():closeAreaLineasAgrupadas()

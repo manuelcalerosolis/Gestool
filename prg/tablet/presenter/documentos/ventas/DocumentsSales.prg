@@ -514,43 +514,50 @@ RETURN lValid
 
 METHOD ChangeRuta() CLASS DocumentsSales
 
+   local nOrdAnt           
+   local cFilter
    local cCliente          := ""
-   local nOrdAnt           := ( D():Clientes( ::nView ) )->( ordsetfocus() )
 
-   if hhaskey( ::hOrdenRutas, alltrim( str( ::oViewEdit:oCbxRuta:nAt ) ) )
+   msgalert( hhaskey( ::hOrdenRutas, alltrim( str( ::oViewEdit:oCbxRuta:nAt ) ) ), "ChangeRuta" )
+   msgalert( hget( ::hOrdenRutas, alltrim( str( ::oViewEdit:oCbxRuta:nAt ) ) ), "Filtro" )
 
-      nOrdAnt              := ( D():Clientes( ::nView ) )->( ordsetfocus( ::hOrdenRutas[ alltrim( str( ::oViewEdit:oCbxRuta:nAt ) ) ] ) )
+   if !hhaskey( ::hOrdenRutas, alltrim( str( ::oViewEdit:oCbxRuta:nAt ) ) )
+      RETURN ( cCliente )
+   end if 
 
-      if ( D():Clientes( ::nView ) )->( OrdKeyCount() ) != 0 
-         
-         ( D():Clientes( ::nView ) )->( dbgotop() )
+   cFilter                 := hget( ::hOrdenRutas, alltrim( str( ::oViewEdit:oCbxRuta:nAt ) ) )
 
-         if !( D():Clientes( ::nView ) )->( eof() )
-            cCliente       := ( D():Clientes( ::nView ) )->Cod
-         end if   
+   GetPvProfString( "Tablet", "Agente", "", cIniAplication() )   
 
-         if !empty( ::oViewEdit:getRuta )
-            ::oViewEdit:getRuta:cText( alltrim( Str( ( D():Clientes( ::nView ) )->( OrdKeyNo() ) ) ) + "/" + alltrim( str( ( D():Clientes( ::nView ) )->( OrdKeyCount() ) ) ) )
-            ::oViewEdit:getRuta:Refresh()
-         end if
+   ( D():Clientes( ::nView ) )->( adsSetAOF( cFilter ) )
+   ( D():Clientes( ::nView ) )->( dbgotop() ) 
 
-      else
+   if !( D():Clientes( ::nView ) )->( eof() )
+      cCliente       := ( D():Clientes( ::nView ) )->Cod
+   end if   
 
-         ( D():Clientes( ::nView ) )->( ordsetfocus( "Cod" ) )
-         ( D():Clientes( ::nView ) )->( dbgotop() )
-
-         cCliente          := ( D():Clientes( ::nView ) )->Cod
-
-         if !empty( ::oViewEdit:getRuta )
-            ::oViewEdit:getRuta:cText( "1/1" )
-            ::oViewEdit:getRuta:Refresh()
-         end if
-      
-      end if   
-
-      ( D():Clientes( ::nView ) )->( ordsetfocus( nOrdAnt ) )
-
+   if !empty( ::oViewEdit:getRuta )
+      ::oViewEdit:getRuta:cText( alltrim( Str( ( D():Clientes( ::nView ) )->( ADSKeyNo( , , 1 ) ) ) ) + "/" + alltrim( str( ( D():Clientes( ::nView ) )->( ADSKeyCount( , , 1 ) ) ) ) )
+      ::oViewEdit:getRuta:Refresh()
    end if
+
+   /*
+
+   else
+
+      ( D():Clientes( ::nView ) )->( ordsetfocus( "Cod" ) )
+      ( D():Clientes( ::nView ) )->( dbgotop() )
+
+      cCliente          := ( D():Clientes( ::nView ) )->Cod
+
+      if !empty( ::oViewEdit:getRuta )
+         ::oViewEdit:getRuta:cText( "1/1" )
+         ::oViewEdit:getRuta:Refresh()
+      end if
+   
+   end if   
+
+   */
 
    if !empty( ::oViewEdit:getCodigoCliente )
       ::oViewEdit:getCodigoCliente:cText( cCliente )
@@ -568,55 +575,43 @@ return cCliente
 
 METHOD moveClient( lAnterior ) CLASS DocumentsSales
 
-   local lSet              := .f.
-   local nOrdAnt
+   local lSet           := .f.
 
-   if hhaskey( ::hOrdenRutas, alltrim( Str( ::oViewEdit:oCbxRuta:nAt ) ) )
+   if isTrue( lAnterior )
+      ( D():Clientes( ::nView ) )->( dbSkip( -1 ) )
+      lSet           := .t.
+   end if 
+
+   if isFalse( lAnterior )
+
+      if ( D():Clientes( ::nView ) )->( ADSKeyNo( , , 1 ) ) < ( D():Clientes( ::nView ) )->( ADSKeyCount( , , 1 ) ) 
+         ( D():Clientes( ::nView ) )->( dbSkip() )
+      end if 
       
-      nOrdAnt              := ( D():Clientes( ::nView ) )->( ordsetfocus( ::hOrdenRutas[ alltrim( str( ::oViewEdit:oCbxRuta:nAt ) ) ] ) )
+      lSet           := .t.
 
-      if isTrue( lAnterior )
+   end if   
 
-         if ( D():Clientes( ::nView ) )->( OrdKeyNo() ) != 1
-            ( D():Clientes( ::nView ) )->( dbSkip( -1 ) )
-            lSet           := .t.
-         end if
+   if isNil( lAnterior )
+      lSet           := .t.
+   end if 
 
-      end if 
+   if !empty( ::oViewEdit:getRuta )
+      ::oViewEdit:getRuta:cText( alltrim( str( ( D():Clientes( ::nView ) )->( ADSKeyNo( , , 1 ) ) ) ) + "/" + alltrim( str( ( D():Clientes( ::nView ) )->( ADSKeyCount( , , 1 ) ) ) ) )
+      ::oViewEdit:getRuta:Refresh()
+   end if
 
-      if isFalse( lAnterior )
+   if lSet
 
-         if ( D():Clientes( ::nView ) )->( OrdKeyNo() ) != ( D():Clientes( ::nView ) )->( OrdKeyCount() )
-            ( D():Clientes( ::nView ) )->( dbSkip() )
-            lSet           := .t.
-         end if
+      ::oViewEdit:getCodigoCliente:cText( ( D():Clientes( ::nView ) )->Cod )
+      ::oViewEdit:getCodigoCliente:lValid()
 
-      end if   
-
-      if isNil( lAnterior )
-         lSet              := .t.
-      end if 
-
-      if !empty( ::oViewEdit:getRuta )
-         ::oViewEdit:getRuta:cText( alltrim( str( ( D():Clientes( ::nView ) )->( OrdKeyNo() ) ) ) + "/" + alltrim( str( ( D():Clientes( ::nView ) )->( OrdKeyCount() ) ) ) )
-         ::oViewEdit:getRuta:Refresh()
-      end if
-
-      ( D():Clientes( ::nView ) )->( ordsetfocus( nOrdAnt ) )   
-
-      if lSet
-
-         ::oViewEdit:getCodigoCliente:cText( ( D():Clientes( ::nView ) )->Cod )
-         ::oViewEdit:getCodigoCliente:lValid()
-
-         //::oViewEdit:getCodigoDireccion:cText( Space( 10 ) )
-         //::oViewEdit:getCodigoDireccion:lValid()
-
-      end if
+      //::oViewEdit:getCodigoDireccion:cText( Space( 10 ) )
+      //::oViewEdit:getCodigoDireccion:lValid()
 
    end if
 
-Return ( .t. )
+RETURN ( .t. )
 
 //---------------------------------------------------------------------------//
 
@@ -991,7 +986,7 @@ METHOD setAgentToDocument()
 
    local tabletAgent         := GetPvProfString( "Tablet", "Agente", "", cIniAplication() )
 
-   if !empty(tabletAgent)
+   if !empty( tabletAgent )
       hSet( ::hDictionaryMaster, "Agente", tabletAgent )
    end if 
 

@@ -84,21 +84,17 @@ FUNCTION Main( paramsMain, paramsSecond, paramsThird )
 
    appLoadAds()
 
-   // Conexión con SQLite------------------------------------------------------
+   // Conexión con MySql------------------------------------------------------
 
    if !empty( getSQLDatabase() )
 
-      msgalert("getSQLDatabase:Connect")
-
       if getSQLDatabase():Connect()
-
-         msgalert( "Conectacod")
-
          getSQLDatabase():addModels()
          getSQLDatabase():checkModels()
       else 
          msgStop( "No se ha podido conectar a la base de datos MySQL" )
       end if 
+
    end if 
 
    // Motor de bases de datos--------------------------------------------------

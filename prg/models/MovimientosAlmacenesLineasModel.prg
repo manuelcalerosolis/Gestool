@@ -47,6 +47,9 @@ METHOD getFechaHoraConsolidacion( cCodigoArticulo, cCodigoAlmacen, cValorPropied
 
    cSql        +=       " ORDER BY dFecMov DESC, cTimMov DESC"
 
+   logwrite( "getFechaHoraConsolidacion" )
+   logwrite( cSql )
+
    if ::ExecuteSqlStatement( cSql, @cStm )
       if !empty( ( cStm )->dFecMov ) 
          RETURN ( {"fecha" => ( cStm )->dFecMov, "hora" => ( cStm )->cTimMov } )
@@ -73,15 +76,14 @@ METHOD getSQLSentenceTotalUnidadesEntradasStock( cCodigoArticulo, dConsolidacion
 
    local cSql  := "SELECT SUM( IIF( nCajMov = 0, 1, nCajMov ) * nUndMov ) as [totalUnidadesStock] " + ;
                      "FROM " + ::getTableName() + " " + ;
-                     "WHERE nTipMov <> 4 " + ;
-                     "AND cRefMov = " + quoted( cCodigoArticulo ) + " "
+                     "WHERE cRefMov = " + quoted( cCodigoArticulo ) + " " // WHERE nTipMov <> 4 
    
-   if !empty( dConsolidacion )                     
+   if !empty( dConsolidacion ) 
+      if !empty( tConsolidacion )                    
+         cSql  +=    "AND CAST( dFecMov AS SQL_CHAR ) + cTimMov >= " + quoted( dateToSQLString( dConsolidacion ) + tConsolidacion ) + " "
+      else 
          cSql  +=    "AND CAST( dFecMov AS SQL_CHAR ) >= " + quoted( dateToSQLString( dConsolidacion ) ) + " "
-   end if 
-
-   if !empty( tConsolidacion )                     
-         cSql  +=    "AND cTimMov >= " + quoted( tConsolidacion ) + " "
+      end if 
    end if 
 
    if !empty( cCodigoAlmacen )                     
@@ -121,15 +123,14 @@ METHOD getSQLSentenceTotalUnidadesSalidasStock( cCodigoArticulo, dConsolidacion,
 
    local cSql  := "SELECT SUM( IIF( nCajMov = 0, 1, nCajMov ) * nUndMov ) as [totalUnidadesStock] " + ;
                      "FROM " + ::getTableName() + " " + ;
-                     "WHERE nTipMov <> 4 " + ;
-                     "AND cRefMov = " + quoted( cCodigoArticulo ) + " "
+                     "WHERE cRefMov = " + quoted( cCodigoArticulo ) + " " // nTipMov <> 4 
    
-   if !empty( dConsolidacion )                     
+   if !empty( dConsolidacion ) 
+      if !empty( tConsolidacion )                    
+         cSql  +=    "AND CAST( dFecMov AS SQL_CHAR ) + cTimMov >= " + quoted( dateToSQLString( dConsolidacion ) + tConsolidacion ) + " "
+      else 
          cSql  +=    "AND CAST( dFecMov AS SQL_CHAR ) >= " + quoted( dateToSQLString( dConsolidacion ) ) + " "
-   end if 
-
-   if !empty( tConsolidacion )                     
-         cSql  +=    "AND cTimMov >= " + quoted( tConsolidacion ) + " "
+      end if 
    end if 
 
    if !empty( cCodigoAlmacen )                     

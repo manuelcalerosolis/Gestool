@@ -8,9 +8,7 @@
 
 //------------------------------------------------------------------------//
 
-CLASS SQLNavigatorView 
-
-   DATA oController
+CLASS SQLNavigatorView FROM SQLBrowseableView
 
    DATA aRect
 
@@ -19,18 +17,6 @@ CLASS SQLNavigatorView
    METHOD Activate()
 
    METHOD End()
-
-   // Facades -----------------------------------------------------------------
-
-   METHOD getModel()                      INLINE ( ::oController:getModel() )
-
-   METHOD getModelColumns()               INLINE ( if( !empty( ::getModel() ), ::getModel():hColumns, ) )
-   METHOD getModelExtraColumns()          INLINE ( if( !empty( ::getModel() ), ::getModel():hExtraColumns, ) )
-
-   METHOD getModelColumnsForNavigator()   INLINE ( if( !empty( ::getModel() ), ::getModel():getColumnsForNavigator(), ) )
-   METHOD getModelHeadersForNavigator()   INLINE ( if( !empty( ::getModel() ), ::getModel():getHeadersForNavigator(), ) )
-
-   METHOD getModelHeaderFromColumnOrder() INLINE ( if( !empty( ::getModel() ), ::getModel():getHeaderFromColumnOrder(), ) )
 
    // MDI child----------------------------------------------------------------
 
