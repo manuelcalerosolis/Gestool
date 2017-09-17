@@ -1689,7 +1689,7 @@ STATIC FUNCTION OpenFiles()
       oDetCamposExtra:SetTipoDocumento( "Albaranes a clientes" )
       oDetCamposExtra:setbId( {|| D():AlbaranesClientesId( nView ) } )
 
-      oLinDetCamposExtra               := TDetCamposExtra():New()
+      oLinDetCamposExtra   := TDetCamposExtra():New()
       oLinDetCamposExtra:OpenFiles()
       oLinDetCamposExtra:setTipoDocumento( "Lineas de albaranes a clientes" )
       oLinDetCamposExtra:setbId( {|| D():AlbaranesClientesLineasEscandalloId( nView ) } )

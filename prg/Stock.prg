@@ -1457,13 +1457,6 @@ METHOD nSQLStockActual( cCodArt, cCodAlm, cValPr1, cValPr2, cLote ) CLASS TStock
 
       hFechaHoraConsolidacion    := MovimientosAlmacenesLineasModel():getFechaHoraConsolidacion( cCodArt, cCodAlm, cValPr1, cValPr2, cLote )
 
-      logwrite( "cCodArt : " + cCodArt )
-      logwrite( "cCodAlm : " + cCodAlm )
-      logwrite( "cValPr1 : " + cValPr1 )
-      logwrite( "cValPr2 : " + cValPr2 )
-      logwrite( "cLote : " + cLote   )
-      logwrite( "hFechaHoraConsolidacion : " + hb_valtoexp( hFechaHoraConsolidacion ) ,  )
-
       if !empty( hFechaHoraConsolidacion )
          dFechaConsolidacion     := hGet( hFechaHoraConsolidacion, "fecha" )
          tHoraConsolidacion      := hGet( hFechaHoraConsolidacion, "hora" )
@@ -1474,20 +1467,11 @@ METHOD nSQLStockActual( cCodArt, cCodAlm, cValPr1, cValPr2, cLote ) CLASS TStock
 
       // Entradas--------------------------------------------------------------
 
-      logwrite( "Entradas" )
-      logwrite( StocksModel():getTotalUnidadesStockEntradas( cCodArt, dFechaConsolidacion, tHoraConsolidacion, cCodAlm, cValPr1, cValPr2, cLote ) )
-
       nSQLStockActual            += StocksModel():getTotalUnidadesStockEntradas( cCodArt, dFechaConsolidacion, tHoraConsolidacion, cCodAlm, cValPr1, cValPr2, cLote )
 
       // Salidas----------------------------------------------------------------
 
-      logwrite( "Salidas" )
-      logwrite( StocksModel():getTotalUnidadesStockSalidas( cCodArt, dFechaConsolidacion, tHoraConsolidacion, cCodAlm, cValPr1, cValPr2, cLote ) )
-
       nSQLStockActual            -= StocksModel():getTotalUnidadesStockSalidas( cCodArt, dFechaConsolidacion, tHoraConsolidacion, cCodAlm, cValPr1, cValPr2, cLote )
-
-      logwrite( "Saldo" )
-      logwrite( StocksModel():getTotalUnidadesStockEntradas( cCodArt, dFechaConsolidacion, tHoraConsolidacion, cCodAlm, cValPr1, cValPr2, cLote ) - StocksModel():getTotalUnidadesStockSalidas( cCodArt, dFechaConsolidacion, tHoraConsolidacion, cCodAlm, cValPr1, cValPr2, cLote ) )
 
    next 
 

@@ -346,7 +346,7 @@ FUNCTION AccesTctCode()
    if( !lIsDir( cPatUsr() ), MakeDir( cNamePath( cPatUsr() ) ), )
 
    cPath          := cPatDat()
-   cPcnUsr        := Rtrim( NetName() )
+   cPcnUsr        := rtrim( NetName() )
 
    // Comprobamos q exista al menos un usuario master--------------------------
 
@@ -506,9 +506,9 @@ FUNCTION InitBrw( oDlg, oImgUsr, oLstUsr, dbfUsr )
 
          if !( dbfUsr )->lUseUse .and. !( dbfUsr )->lGrupo
 
-            if !Empty( ( dbfUsr )->cImagen ) .and. File( Rtrim( ( dbfUsr )->cImagen ) )
+            if !Empty( ( dbfUsr )->cImagen ) .and. File( rtrim( ( dbfUsr )->cImagen ) )
 
-               oImgUsr:Add( TBitmap():Define( , Rtrim( ( dbfUsr )->cImagen ) ) )
+               oImgUsr:Add( TBitmap():Define( , rtrim( ( dbfUsr )->cImagen ) ) )
 
                nImg++
 
@@ -827,12 +827,12 @@ RETURN ( nil )
 FUNCTION MainTablet()
 
 	local oDlg
-   local nRow           
-   local oGridTree
-   local cAgente        := GetPvProfString( "Tablet", "Agente", "", cIniAplication() )
+   local nRow           := 0           
    local cTitle         := "GESTOOL TABLET : " + uFieldEmpresa( "CodEmp" ) + "-" + uFieldEmpresa( "cNombre" )
+   local oGridTree
 
-   nRow                 := 0
+   cCodigoAgente( GetPvProfString( "Tablet", "Agente", "", cIniAplication() ) )
+
    oDlg                 := TDialog():New( 1, 5, 40, 100, cTitle,,, .f., nOR( DS_MODALFRAME, WS_POPUP, WS_CAPTION, WS_SYSMENU, WS_MINIMIZEBOX, WS_MAXIMIZEBOX ),, rgb( 255, 255, 255 ),,, .F.,, oGridFont(),,,, .f.,, "oDlg" )  
 
 	/*
@@ -910,7 +910,7 @@ FUNCTION MainTablet()
                            "nClrVisit" => nGridColor(),;
                            "bAction"   => {|| OrderCustomer():New():Play() } } )
 
-   //----------------Resumen diario
+   //----------------Resumen diario--------------------------------------------
 
    if AccessCode():lSalesView
 
@@ -1057,11 +1057,11 @@ FUNCTION MainTablet()
 
    oDlg:bResized       := {|| GridResize( oDlg ) }
    oDlg:bStart         := {|| oGridTree:Add( "Empresa : "      + uFieldEmpresa( "CodEmp" ) + "-" + uFieldEmpresa( "cNombre" ) ),;
-                              oGridTree:Add( "Usuario : "      + Rtrim( oUser():cNombre() ) ),;
-                              oGridTree:Add( "Delegación : "   + Rtrim( oUser():cDelegacion() ) ),;
+                              oGridTree:Add( "Usuario : "      + rtrim( oUser():cNombre() ) ),;
+                              oGridTree:Add( "Delegación : "   + rtrim( oUser():cDelegacion() ) ),;
                               oGridTree:Add( "Caja : "         + oUser():cCaja() ),;
-                              oGridTree:Add( "Almacén : "      + Rtrim( oUser():cAlmacen() ) + "-" + RetAlmacen( oUser():cAlmacen() ) ),;
-                              oGridTree:Add( "Agente : "       + Rtrim( cAgente ) + "-" + AllTrim( RetNbrAge( cAgente ) ) ),;
+                              oGridTree:Add( "Almacén : "      + rtrim( oUser():cAlmacen() ) + "-" + RetAlmacen( oUser():cAlmacen() ) ),;
+                              oGridTree:Add( "Agente : "       + rtrim( cCodigoAgente() ) + "-" + AllTrim( RetNbrAge( cCodigoAgente() ) ) ),;
                               oGridTree:Add( "Sesión : "       + Alltrim( Transform( cCurSesion(), "######" ) ) ) } 
 
 	ACTIVATE DIALOG oDlg CENTER ON INIT ( GridMaximize( oDlg ) )

@@ -230,15 +230,10 @@ METHOD onPreRunNavigator() CLASS DocumentsSales
    ( ::getWorkArea() )->( dbgotop() ) 
 
    if ( accessCode():lFilterByAgent ) .and. !empty( accessCode():cAgente )
-
       ( ::getWorkArea() )->( adsSetAOF( "cCodAge = " + quoted( accessCode():cAgente ) ) )
       ( ::getWorkArea() )->( dbgotop() )
-
-      ( D():Clientes( ::nView ) )->( adsSetAOF( "cCodAge = " + quoted( accessCode():cAgente ) ) )
-      ( D():Clientes( ::nView ) )->( dbgotop() )
-
    end if 
-
+      
 Return ( .t. )
 
 //---------------------------------------------------------------------------//
@@ -518,22 +513,21 @@ METHOD ChangeRuta() CLASS DocumentsSales
    local cFilter
    local cCliente          := ""
 
-   msgalert( hhaskey( ::hOrdenRutas, alltrim( str( ::oViewEdit:oCbxRuta:nAt ) ) ), "ChangeRuta" )
-   msgalert( hget( ::hOrdenRutas, alltrim( str( ::oViewEdit:oCbxRuta:nAt ) ) ), "Filtro" )
-
    if !hhaskey( ::hOrdenRutas, alltrim( str( ::oViewEdit:oCbxRuta:nAt ) ) )
       RETURN ( cCliente )
    end if 
 
    cFilter                 := hget( ::hOrdenRutas, alltrim( str( ::oViewEdit:oCbxRuta:nAt ) ) )
 
-   GetPvProfString( "Tablet", "Agente", "", cIniAplication() )   
+   if ( accessCode():lFilterByAgent ) .and. !empty( accessCode():cAgente )
+      cFilter              += " .and. cAgente = " + quoted( accessCode():cAgente )
+   end if 
 
    ( D():Clientes( ::nView ) )->( adsSetAOF( cFilter ) )
    ( D():Clientes( ::nView ) )->( dbgotop() ) 
 
    if !( D():Clientes( ::nView ) )->( eof() )
-      cCliente       := ( D():Clientes( ::nView ) )->Cod
+      cCliente             := ( D():Clientes( ::nView ) )->Cod
    end if   
 
    if !empty( ::oViewEdit:getRuta )
@@ -631,27 +625,23 @@ Return ( self )
 
 METHOD gotoUltimoCliente() CLASS DocumentsSales
 
-   local nOrdAnt     := ( D():Clientes( ::nView ) )->( ordsetfocus( ::hOrdenRutas[ alltrim( str( ::oViewEdit:oCbxRuta:nAt ) ) ] ) )
+   msgalert( ::nUltimoCliente, "gotoUltimoCliente" )
 
    if empty( ::nUltimoCliente )
       ( D():Clientes( ::nView ) )->( dbgotop() )
    else
-      ( D():Clientes( ::nView ) )->( OrdKeyGoto( ::nUltimoCliente ) )
+      ( D():Clientes( ::nView ) )->( dbgoto( ::nUltimoCliente ) )
    end if 
 
-   ( D():Clientes( ::nView ) )->( ordsetfocus( nOrdAnt ) ) 
-         
 Return .t.
 
 //---------------------------------------------------------------------------//
 
 METHOD setUltimoCliente() CLASS DocumentsSales
 
-   local nOrdAnt     := ( D():Clientes( ::nView ) )->( ordsetfocus( ::hOrdenRutas[ alltrim( Str( ::oViewEdit:oCbxRuta:nAt ) ) ] ) )
+   ::nUltimoCliente  := ( D():Clientes( ::nView ) )->( recno() )
 
-   ::nUltimoCliente  := ( D():Clientes( ::nView ) )->( OrdKeyNo() )
-
-   ( D():Clientes( ::nView ) )->( ordsetfocus( nOrdAnt ) ) 
+   msgalert( ::nUltimoCliente, "setUltimoCliente" )
 
 Return nil
 
