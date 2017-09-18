@@ -36,8 +36,6 @@ METHOD getLineasAgrupadas( cCodigoArticulo, cCodigoAlmacen, cValorPropiedad1, cV
    cSql        += "UNION "
    cSql        += FacturasProveedoresLineasModel():getSQLSentenceLineasAgrupadas( cCodigoArticulo, cCodigoAlmacen, cValorPropiedad1, cValorPropiedad2, cLote )
 
-   logwrite( cSql )
-
    if ::ExecuteSqlStatement( cSql, @cStm )
       RETURN ( cStm )
    end if 

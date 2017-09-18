@@ -1,27 +1,27 @@
 HB                   = 	\harbour_bcc582\
 
 HBINCLUDE            = 	\harbour_bcc582\Include
-FWINCLUDE            = 	\Fwh1705\Include
+FWINCLUDE            = 	\fwh1705\Include
 GTINCLUDE            = 	.\Include
 
 HBLIB                = 	\harbour_bcc582\Lib
-FWLIB                = 	\Fwh1705\lib
+FWLIB                = 	\fwh1705\lib
 
-RESOURCE             = 	.\Resource
+RESOURCE             = 	.\resource
 
-BORLAND              = 	\Bcc582
-BORLANDLIB           = 	\Bcc582\lib
+BORLAND              = 	\bcc582
+BORLANDLIB           = 	\bcc582\lib
 
-IMG2PDFLIB           = 	\Img2Pdf
+IMG2PDFLIB           = 	\img2Pdf
 
-OBJ                  = 	Obj1705
+OBJ                  = 	obj1705
 
 SOURCEPRG            = 	.\Prg;.\Prg\mail;.\Prg\Comercio;.\Prg\Models;.\Prg\Views;.\Prg\Controllers;.\Prg\Validators;.\Prg\Repositories;.\Prg\Services;.\Prg\Tablet;.\Prg\tablet\view;.\Prg\tablet\view\documentos;.\Prg\tablet\view\terceros;.\Prg\tablet\view\documentos\ventas;.\Prg\tablet\view\documentos\terceros;.\Prg\tablet\utils;.\Prg\tablet\presenter;.\Prg\tablet\presenter\terceros;.\Prg\tablet\presenter\documentos;.\Prg\tablet\presenter\documentos\ventas;
 SOURCEC 				   =	C
 
-PPO 					   = 	Ppo1705
+PPO 					   = 	ppo1705
 
-EXE 					   = 	Bin\$(TARGET).exe
+EXE 					   = 	bin\$(TARGET).exe
 
 TARGETPRG 				= $(TARGET).prg
 TARGETOBJ 				= $(TARGET).obj

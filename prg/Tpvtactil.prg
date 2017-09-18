@@ -7357,8 +7357,6 @@ METHOD EliminarDocumento( cNumeroTicket ) CLASS TpvTactil
 
       ::oTiketLinea:SetStatus()
 
-      logwrite( "Ticket eliminado " + cNumeroTicket, "Eliminados.txt" )
-
       lElimina             := .t.
 
       ::EnableDialog()

@@ -47,9 +47,6 @@ METHOD getFechaHoraConsolidacion( cCodigoArticulo, cCodigoAlmacen, cValorPropied
 
    cSql        +=       " ORDER BY dFecMov DESC, cTimMov DESC"
 
-   logwrite( "getFechaHoraConsolidacion" )
-   logwrite( cSql )
-
    if ::ExecuteSqlStatement( cSql, @cStm )
       if !empty( ( cStm )->dFecMov ) 
          RETURN ( {"fecha" => ( cStm )->dFecMov, "hora" => ( cStm )->cTimMov } )

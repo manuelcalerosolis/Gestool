@@ -1508,8 +1508,6 @@ METHOD nSQLGlobalStockActual( cCodArt, cCodAlm ) CLASS TStock
 
       cStm                       := StocksModel():getLineasAgrupadas( cCodArt, cCodAlm )
 
-      ( cStm )->( browse() )
-
       ( cStm )->( dbgotop() )
       while !( cStm )->( eof() )
 
