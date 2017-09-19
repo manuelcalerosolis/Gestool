@@ -12,6 +12,7 @@ CLASS SQLBaseModel
    DATA oController
 
    DATA oRowSet
+   DATA oStatement
 
    DATA cTableName
 
@@ -90,14 +91,18 @@ CLASS SQLBaseModel
    METHOD setColumnOrder( cColumnOrder )           INLINE ( ::cColumnOrder := cColumnOrder )
    METHOD setColumnOrientation( cColumnOrientation )  INLINE ( ::cColumnOrientation := cColumnOrientation )
 
-   METHOD   buildRowSet()
-   METHOD   buildRowSetAndFind()                   INLINE ( ::buildRowSet(), ::findInRowSet() )
+   METHOD buildRowSet()
+   METHOD buildRowSetAndFind()                     INLINE ( ::buildRowSet(), ::findInRowSet() )
 
-   METHOD   findInRowSet()          
-   METHOD   getRowSet()                            INLINE   ( if( empty( ::oRowSet ), ::buildRowSet(), ), ::oRowSet )
-   METHOD   freeRowSet()                           INLINE   ( if( !empty( ::oRowSet ), ( ::oRowSet := nil ), ) )
-   METHOD   getRowSetRecno()                       INLINE   ( if( !empty( ::oRowSet ), ( ::oRowSet:recno() ) , 0 ) )
-   METHOD   setRowSetRecno( nRecno )               INLINE   ( if( !empty( ::oRowSet ), ( ::oRowSet:goto( nRecno ) ), ) )
+   METHOD findInRowSet()          
+   METHOD getRowSet()                              INLINE   ( if( empty( ::oRowSet ), ::buildRowSet(), ), ::oRowSet )
+   METHOD freeRowSet()                             INLINE   ( if( !empty( ::oRowSet ), ( ::oRowSet:free(), ::oRowSet := nil ), ) )
+   METHOD freeStatement()                          INLINE   ( if( !empty( ::oStatement ), ( ::oStatement:free(), ::oStatement := nil ), ) )
+
+   METHOD getRowSetRecno()                         INLINE   ( ::getRowSet():recno() )
+   METHOD getRowGoTo( nRecno )                     INLINE   ( ::getRowSet():goto( nRecno ) )
+   METHOD getRowSetFieldGet( cColumn )             INLINE   ( ::getRowSet():fieldget( cColumn ) )
+   METHOD getRowSetFieldValueByName( cColumn )     INLINE   ( ::getRowSet():getValueByName( cColumn ) )
 
    METHOD   getSelectByColumn()
    METHOD   getSelectByOrder()
@@ -309,10 +314,10 @@ METHOD getImportSentence( cPath )
 
       cValues        += "( "
 
-            hEval( ::hColumns, {| k, hash | if ( k != ::cColumnKey,;
-                                                if ( k == "empresa",;
-                                                      cValues += toSQLString( cCodEmp() ) + ", ",;
-                                                      cValues += toSQLString( ( dbf )->( fieldget( fieldpos( hget( hash, "field" ) ) ) ) ) + ", "), ) } )
+         hEval( ::hColumns, {| k, hash | if ( k != ::cColumnKey,;
+                                             if ( k == "empresa",;
+                                                   cValues += toSQLString( cCodEmp() ) + ", ",;
+                                                   cValues += toSQLString( ( dbf )->( fieldget( fieldpos( hget( hash, "field" ) ) ) ) ) + ", "), ) } )
       
       cValues        := chgAtEnd( cValues, ' ), ', 2 )
 
@@ -373,25 +378,20 @@ RETURN ( self )
 METHOD buildRowSet( cSentence )
 
    local oError
-   local oStatement
 
    default cSentence    := ::getSelectSentence()
 
    try
 
-      oStatement        := ::getDatabase():Query( cSentence )
+      ::freeStatement()
+
+      ::oStatement      := ::getDatabase():Query( cSentence )
       
-      ::oRowSet         := oStatement:fetchRowSet()
+      ::oRowSet         := ::oStatement:fetchRowSet()
 
    catch oError
 
       eval( errorBlock(), oError )
-
-   finally
-
-      if !empty( oStatement )
-         oStatement:Free()
-      end if
 
    end
 
@@ -505,7 +505,7 @@ METHOD getEditValue( cColumn )
    if hhaskey( hColumn, "edit" )
       RETURN ( hGet( hColumn, "edit" ) )
    end if 
-      
+
 RETURN ( {|| ::getRowSet():fieldGet( cColumn ) } )
 
 //---------------------------------------------------------------------------//
@@ -559,8 +559,6 @@ METHOD loadCurrentBuffer()
    ::hBuffer            := {=>}
 
    hEval( ::hColumns, {|k| hset( ::hBuffer, k, ::oRowSet:fieldget( k ) ) } )
-
-   msgalert( hb_valtoexp( ::hBuffer ), "hBuffer" )
 
 RETURN ( ::hBuffer )
 

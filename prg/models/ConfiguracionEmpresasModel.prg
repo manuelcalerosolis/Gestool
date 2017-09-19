@@ -60,7 +60,7 @@ METHOD getValue( name, default )
 
    cSentence   := "SELECT value FROM " + ::cTableName + ;
                      " WHERE empresa = " + toSQLString( cCodEmp() ) + " AND name = " + toSQLString( name )
-   aSelect     := ::selectFetchHash( cSentence )
+   aSelect     := SQLDataBase():selectFetchHash( cSentence )
 
    if !empty( aSelect )
       RETURN ( hget( atail( aSelect ), "value" ) )

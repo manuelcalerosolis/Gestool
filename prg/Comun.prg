@@ -277,7 +277,7 @@ RETURN ( .t. )
 
 FUNCTION Test()
 
-   // msgalert( hb_valtoexp( TiposImpresorasRepository():getAll() ), "TiposImpresorasRepository" )
+   // msgalert( hb_valtoexp( TiposImpresorasModel():New():getRowSetFieldGet( "nombre" ) ), "TiposImpresoras" ) 
 
 RETURN ( nil )
 
@@ -5430,7 +5430,6 @@ FUNCTION appConnectADS()
    adsTestRecLocks( .t. )
 
    adsSetDeleted( .t. )
-   // adsCacheOpenTables( 250 )
 
    // Conexion con el motor de base de datos-----------------------------------
 

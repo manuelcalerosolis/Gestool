@@ -249,6 +249,8 @@ METHOD GenerateColumnsBrowse()
 
    local hColumnstoBrowse  := ::getModelColumnsForNavigator()
 
+   msgalert( hb_valtoexp( hColumnstoBrowse ) )
+
    if empty( hColumnstoBrowse )
       RETURN ( self )
    end if 
@@ -260,7 +262,16 @@ RETURN ( self )
 //---------------------------------------------------------------------------//
 
 METHOD addColumnBrowse( cColumn, hColumn )
+   
+   with object ( ::oBrowse:AddCol() )
+      :cSortOrder          := "cColumn"
+      :cHeader             := "header" 
+      :nWidth              := 100
+//      :bLClickHeader       := {| nMRow, nMCol, nFlags, oColumn | ::onClickHeaderBrowse( oColumn ) }
+      :bEditValue          := {|| "cColumn" }
+   end with
 
+/*
    with object ( ::oBrowse:AddCol() )
       :cSortOrder          := cColumn
       :cHeader             := hColumn[ "header" ]
@@ -268,6 +279,7 @@ METHOD addColumnBrowse( cColumn, hColumn )
       :bLClickHeader       := {| nMRow, nMCol, nFlags, oColumn | ::onClickHeaderBrowse( oColumn ) }
       :bEditValue          := ::getModel():getEditValue( cColumn )
    end with
+*/
 
 RETURN ( self )
 

@@ -113,6 +113,7 @@ Source: "c:\fw195\gestool\resource\gestool.ico";    DestDir: "{app}"; Flags: ign
 Source: "c:\fw195\gestool\bin\image2pdf stdcall.dll";  DestDir: "{app}"; Flags: ignoreversion
 
 Source: "c:\fw195\gestool\bin\libmysql.dll";           DestDir: "{app}"; Flags: ignoreversion
+Source: "c:\fw195\gestool\bin\libmysqld.dll";          DestDir: "{app}"; Flags: ignoreversion
 Source: "c:\fw195\gestool\bin\freeImage.dll";          DestDir: "{app}"; Flags: ignoreversion
 
 Source: "c:\fw195\gestool\bin\frsysth.dll";            DestDir: "{app}"; Flags: ignoreversion

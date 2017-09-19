@@ -22,6 +22,7 @@ CLASS SQLDatabase
    DATA aModels                           INIT {}
 
    METHOD New()                           CONSTRUCTOR
+   METHOD NewEmbedded()                   CONSTRUCTOR
    
    METHOD Conexion()                      INLINE ( ::oConexion )
    METHOD Connect() 
@@ -64,6 +65,10 @@ METHOD New()
 
    ::cPathDatabaseMySQL       := fullCurDir() + "Database\" 
 
+   if !lIsDir( ::cPathDatabaseMySQL )
+      makedir( ::cPathDatabaseMySQL )
+   end if 
+
    ::cDatabaseMySQL           := GetPvProfString(  "MySQL",    "Database", "gestool",     cIniAplication() )
    ::cIpMySQL                 := GetPvProfString(  "MySQL",    "Ip",       "127.0.0.1",   cIniAplication() )
    ::cUserMySQL               := GetPvProfString(  "MySQL",    "User",     "root",        cIniAplication() )
@@ -77,17 +82,37 @@ RETURN ( Self )
 
 //----------------------------------------------------------------------------//
 
+METHOD NewEmbedded()
+
+   local aOptions := { 'GESTOOL', '--defaults-file=./mysql.cnf' }
+   // local aOptions := { 'GESTOOL', '--datadir=./data/' } 
+   local aGroup   := { "server", "embedded" }
+   
+   // ::oConexion    := MySQLEmbNew( aOptions, aGroup, "embedded" )
+
+   ::oConexion:setAttribute( ATTR_ERRMODE, .t. )
+
+RETURN ( Self )
+
+//----------------------------------------------------------------------------//
+
 METHOD Connect()
 
-   if !lIsDir( ::cPathDatabaseMySQL )
-      makedir( ::cPathDatabaseMySQL )
-   end if 
+   local lConnect    := .t.
 
-   if !empty( ::oConexion )
-      RETURN ( ::oConexion:Connect( ::cDatabaseMySQL, ::cIpMySQL, ::cUserMySQL, ::cPasswordMySQL ) )
-   end if 
+   try
+   
+      if !empty( ::oConexion )
+         lConnect    := ::oConexion:Connect( ::cDatabaseMySQL, ::cIpMySQL, ::cUserMySQL, ::cPasswordMySQL )
+      end if 
+       
+   catch 
 
-RETURN ( .f. )    
+      lConnect       := .f.
+   
+   end
+
+RETURN ( lConnect )    
 
 //----------------------------------------------------------------------------//
 

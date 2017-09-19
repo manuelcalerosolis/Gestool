@@ -641,8 +641,6 @@ METHOD setUltimoCliente() CLASS DocumentsSales
 
    ::nUltimoCliente  := ( D():Clientes( ::nView ) )->( recno() )
 
-   msgalert( ::nUltimoCliente, "setUltimoCliente" )
-
 RETURN nil
 
 //---------------------------------------------------------------------------//

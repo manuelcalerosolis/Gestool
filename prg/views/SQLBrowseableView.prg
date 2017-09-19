@@ -14,6 +14,8 @@ CLASS SQLBrowseableView
 
    // Facades -----------------------------------------------------------------
 
+   METHOD getController()                 INLINE ( ::oController )
+
    METHOD getModel()                      INLINE ( ::oController:getModel() )
 
    METHOD getModelColumns()               INLINE ( if( !empty( ::getModel() ), ::getModel():hColumns, ) )

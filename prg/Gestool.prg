@@ -86,13 +86,20 @@ FUNCTION Main( paramsMain, paramsSecond, paramsThird )
 
    // Conexión con MySql------------------------------------------------------
 
-   if !empty( getSQLDatabase() )
+   if !( "TABLET" $ appParamsMain() ) .and. !empty( getSQLDatabase() )
 
-      if getSQLDatabase():Connect()
+      if getSQLDatabase():Connect() 
+         
          getSQLDatabase():addModels()
+      
          getSQLDatabase():checkModels()
+      
       else 
+         
          msgStop( "No se ha podido conectar a la base de datos MySQL" )
+
+         RETURN ( nil )
+
       end if 
 
    end if 
@@ -106,7 +113,7 @@ FUNCTION Main( paramsMain, paramsSecond, paramsThird )
 
    // Motor de bases de datos--------------------------------------------------
 
-   if !( appConnectADS() )
+   if !( appConnectADS() ) 
       msgStop( "Imposible conectar con GstApolo ADS data dictionary" )
       RETURN nil
    end if
@@ -219,7 +226,7 @@ FUNCTION Main( paramsMain, paramsSecond, paramsThird )
 
    getSQLDatabase():Disconnect() 
 
-RETURN Nil
+RETURN ( nil )
 
 //----------------------------------------------------------------------------//
 
@@ -856,9 +863,10 @@ FUNCTION MainTablet()
                            "nWidth"    => 138,;
                            "nHeight"   => 64,;
                            "cResName"  => "Gestool",;
+                           "bLClicked" => {|| runAsistenciaRemota() },;
                            "oWnd"      => oDlg } )
 
-   //----------------Clientes
+   //----------------Clientes--------------------------------------------------
 
    TGridImage():Build(  {  "nTop"      => {|| GridRow( 3 ) },;
                            "nLeft"     => {|| GridWidth( 0.5, oDlg ) },;
@@ -879,7 +887,7 @@ FUNCTION MainTablet()
                            "nClrVisit" => nGridColor(),;
                            "bAction"   => {|| Customer():New():runNavigatorCustomer() } } )
 
-   //----------------Salir
+   //----------------Salir-----------------------------------------------------
 
    TGridImage():Build(  {  "nTop"      => {|| GridRow( 3 ) },;
                            "nLeft"     => {|| GridWidth( 11.5, oDlg ) - 64 },;
@@ -889,7 +897,7 @@ FUNCTION MainTablet()
                            "bLClicked" => {|| oDlg:End() },;
                            "oWnd"      => oDlg } )
    
-   //----------------Pedidos de clientes
+   //----------------Pedidos de clientes---------------------------------------
 
    TGridImage():Build(  {  "nTop"      => {|| GridRow( 6 ) },;
                            "nLeft"     => {|| GridWidth( 0.5, oDlg ) },;
@@ -925,7 +933,7 @@ FUNCTION MainTablet()
    end if 
 
    /*
-   GALERÍA DE INFORMES*********************************************************
+   GALERÍA DE INFORMES---------------------------------------------------------
    */
 
    TGridImage():Build(  {  "nTop"      => {|| GridRow( 9 ) },;
@@ -936,7 +944,7 @@ FUNCTION MainTablet()
                            "bLClicked" => {|| Reporting():New():Resource() },;
                            "oWnd"      => oDlg } )
 
-   //----------------Albaranes de clientes
+   //----------------Albaranes de clientes-------------------------------------
    
    TGridImage():Build(  {  "nTop"      => {|| GridRow( 9 ) },;
                            "nLeft"     => {|| GridWidth( 0.5, oDlg ) },;
@@ -958,7 +966,7 @@ FUNCTION MainTablet()
                            "bAction"   => {|| DeliveryNoteCustomer():New():Play() } } )
 
    /*
-   Copias de Seguridad*********************************************************
+   Copias de Seguridad---------------------------------------------------------
    */
 
    TGridImage():Build(  {  "nTop"      => {|| GridRow( 12 ) },;

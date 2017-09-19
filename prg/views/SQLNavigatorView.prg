@@ -36,43 +36,11 @@ CLASS SQLNavigatorView FROM SQLBrowseableView
 
    METHOD CreateTopWebBar()
 
-   // Tree menu----------------------------------------------------------------
-
-   DATA oTreeMenu
-   DATA oImageListTreeMenu
-   DATA oButtonMainTreeMenu
-   DATA hFastKeyTreeMenu                  INIT  {=>}
-
-   METHOD CreateTreeMenu()
-
-   METHOD AddImageTreeMenu()
-
-   METHOD AddButtonTreeMenu()
-
-   METHOD AddSearchButtonTreeMenu()    
-   METHOD AddAppendButtonTreeMenu()    
-   METHOD AddDuplicateButtonTreeMenu() 
-   METHOD AddEditButtonTreeMenu()      
-   METHOD AddZoomButtonTreeMenu()      
-   METHOD AddDeleteButtonTreeMenu()    
-   METHOD AddSalirButtonTreeMenu()     
-
-   METHOD AddGeneralButtonTreeMenu()      INLINE ( ::AddSearchButtonTreeMenu(),;
-                                                   ::AddAppendButtonTreeMenu(),;
-                                                   ::AddDuplicateButtonTreeMenu(),;
-                                                   ::AddEditButtonTreeMenu(),;
-                                                   ::AddZoomButtonTreeMenu(),;
-                                                   ::AddDeleteButtonTreeMenu() )
-
-   METHOD AddAutoButtonTreeMenu()         INLINE ( ::AddGeneralButtonTreeMenu(),;
-                                                   ::AddSalirButtonTreeMenu(),;
-                                                   ::oButtonMainTreeMenu:Expand() )
-
-   METHOD onClickTreeMenu()
-
    // XBrowse------------------------------------------------------------------
 
    DATA oBrowse
+
+   METHOD getBrowse()                     INLINE ( ::oBrowse )
 
    METHOD CreateBrowse()
 
@@ -107,7 +75,7 @@ CLASS SQLNavigatorView FROM SQLBrowseableView
 
    METHOD onBrowseKeyChar( nKey )
 
-   METHOD refreshNavigator()              INLINE ( ::oTreeMenu:Select( ::oButtonMainTreeMenu ), ::oBrowse:SetFocus() )
+   METHOD Refresh()                       INLINE ( ::oMenuTreeView:SelectButtonMain(), ::oBrowse:SetFocus() )
 
 ENDCLASS
 
@@ -117,7 +85,7 @@ METHOD New( oController )
 
    ::oController           := oController
 
-   ::oImageListTreeMenu    := TImageList():New( 16, 16 )
+   ::oMenuTreeView         := MenuTreeView():New( Self )
 
    ::aRect                 := GetWndRect( GetDeskTopWindow() )
 
@@ -130,12 +98,12 @@ RETURN ( Self )
 METHOD Activate()
 
    ::CreateMDIChild()
-   
+
    ::CreateTopWebBar()
 
-   ::CreateTreeMenu()
+   ::oMenuTreeView:MDIActivate( dfnTreeViewWidth, ::aRect[ 3 ] - dfnSplitterHeight )
 
-      ::AddAutoButtonTreeMenu()
+   ::oMenuTreeView:AddAutoButtonTreeMenu()
 
    ::CreateBrowse()
 
@@ -167,8 +135,8 @@ METHOD End()
       ::oMdiChild:End()
    end if 
 
-   if !empty( ::oImageListTreeMenu )
-      ::oImageListTreeMenu:End()
+   if !empty( ::oMenuTreeView )
+      ::oMenuTreeView:End()
    end if 
 
    if !empty( ::oTopWebBar )
@@ -217,7 +185,7 @@ METHOD CreateBrowse()
 
    ::oBrowse:bKeyChar         := {|nKey| ::onBrowseKeyChar( nKey ) }
 
-   ::oBrowse:bLDblClick       := {|| ::oController:Edit(), ::refreshNavigator() }
+   ::oBrowse:bLDblClick       := {|| ::oController:Edit(), ::Refresh() }
 
    // Dimensiones del control -------------------------------------------------
 
@@ -252,7 +220,7 @@ METHOD addColumnBrowse( cColumn, hColumn )
       :cHeader             := hColumn[ "header" ]
       :nWidth              := hColumn[ "width" ]
       :bLClickHeader       := {| nMRow, nMCol, nFlags, oColumn | ::onClickHeaderBrowse( oColumn ) }
-      :bEditValue          := ::getModel():getEditValue( cColumn )
+      :bEditValue          := ::getModel():getEditValue( cColumn ) 
    end with
 
 RETURN ( self )
@@ -261,145 +229,25 @@ RETURN ( self )
 
 METHOD CreateSplitters()
 
-   ::oHorizontalSplitter         := TSplitter():New(  /*nRow*/ dfnSplitterHeight, /*nCol*/ dfnTreeViewWidth, /*lVertical*/ .f.,;
-                                                      /*aPrevCtrols*/ { ::oTopWebBar }, /*lAdjPrev*/ .t.,;
-                                                      /*aHindCtrols*/ { ::oBrowse }, /*lAdjHind*/ .t.,;
-                                                      /*bMargin1*/ {|| 0}, /*bMargin2*/ {|| 0}, /*oWnd*/ ::oMdiChild,;
-                                                      /*bChange*/, /*nWidth*/ ::aRect[ 4 ], /*nHeight*/ dfnSplitterWidth, /*lPixel*/ .t.,;
-                                                      /*l3D*/ .t., /*nClrBack*/ rgb( 255, 255, 255 ), /*lDesign*/ .f.,;
-                                                      /*lUpdate*/ .f., /*lStyle*/ .f., /*aGradient*/, /*aGradientOver*/ )
+   ::oHorizontalSplitter   := TSplitter():New(  /*nRow*/ dfnSplitterHeight, /*nCol*/ dfnTreeViewWidth, /*lVertical*/ .f.,;
+                                                /*aPrevCtrols*/ { ::oTopWebBar }, /*lAdjPrev*/ .t.,;
+                                                /*aHindCtrols*/ { ::oBrowse }, /*lAdjHind*/ .t.,;
+                                                /*bMargin1*/ {|| 0}, /*bMargin2*/ {|| 0}, /*oWnd*/ ::oMdiChild,;
+                                                /*bChange*/, /*nWidth*/ ::aRect[ 4 ], /*nHeight*/ dfnSplitterWidth, /*lPixel*/ .t.,;
+                                                /*l3D*/ .t., /*nClrBack*/ rgb( 255, 255, 255 ), /*lDesign*/ .f.,;
+                                                /*lUpdate*/ .f., /*lStyle*/ .f., /*aGradient*/, /*aGradientOver*/ )
    ::oHorizontalSplitter:lStatic := .t.
 
-   ::oVerticalSplitter           := TSplitter():New( /*nRow*/ 0, /*nCol*/ dfnTreeViewWidth, /*lVertical*/ .t.,;
-                                                      /*aPrevCtrols*/ { ::oTreeMenu }, /*lAdjPrev*/ .t., /*aHindCtrols*/ { ::oTopWebBar, ::oHorizontalSplitter, ::oBrowse },;
-                                                      /*lAdjHind*/ .t., /*bMargin1*/ {|| 0}, /*bMargin2*/ {|| 0}, /*oWnd*/ ::oMdiChild,;
-                                                      /*bChange*/, /*nWidth*/ dfnSplitterWidth, /*nHeight*/ ::aRect[ 3 ] - dfnSplitterHeight, /*lPixel*/ .t., /*l3D*/.t.,;
-                                                      /*nClrBack*/ , /*lDesign*/ .f., /*lUpdate*/ .t., /*lStyle*/ .t. )  
+   ::oVerticalSplitter     := TSplitter():New(  /*nRow*/ 0, /*nCol*/ dfnTreeViewWidth, /*lVertical*/ .t.,;
+                                                /*aPrevCtrols*/ { ::oMenuTreeView }, /*lAdjPrev*/ .t., /*aHindCtrols*/ { ::oTopWebBar, ::oHorizontalSplitter, ::oBrowse },;
+                                                /*lAdjHind*/ .t., /*bMargin1*/ {|| 0}, /*bMargin2*/ {|| 0}, /*oWnd*/ ::oMdiChild,;
+                                                /*bChange*/, /*nWidth*/ dfnSplitterWidth, /*nHeight*/ ::aRect[ 3 ] - dfnSplitterHeight, /*lPixel*/ .t., /*l3D*/.t.,;
+                                                /*nClrBack*/ , /*lDesign*/ .f., /*lUpdate*/ .t., /*lStyle*/ .t. )  
 
 
 RETURN ( Self )
 
 //---------------------------------------------------------------------------//
-
-METHOD CreateTreeMenu()
-
-   ::oTreeMenu                := TTreeView():New( 0, 0, ::oMdiChild, , , .t., .f., dfnTreeViewWidth, ::aRect[ 3 ] - dfnSplitterHeight ) // Rgb( 51, 51, 51 )
-   
-   ::oTreeMenu:SetImagelist( ::oImageListTreeMenu )
-
-   ::oTreeMenu:SetItemHeight( 20 )
-
-   ::oTreeMenu:OnClick        := {|| ::onClickTreeMenu() }
-
-   if !empty( ::oController:cImage )
-      ::oButtonMainTreeMenu   := ::oTreeMenu:Add( ::oController:cTitle, ::AddImageTreeMenu( ::oController:cImage ) )
-   end if 
-
-RETURN ( ::oTreeMenu  )
-
-//----------------------------------------------------------------------------//
-
-METHOD AddButtonTreeMenu( cText, cResource, bAction, cKey, nLevel, oGroup, lAllowExit ) 
-
-   local oTreeButton
-
-   DEFAULT oGroup       := ::oButtonMainTreeMenu
-   DEFAULT lAllowExit   := .f.
-
-   // El nombre del boton es necesario-----------------------------------------
-
-   if empty( cText )
-      RETURN ( nil )
-   end if 
-
-   // Chequeamos los niveles de acceso si es mayor no montamos el boton--------
-
-   if nLevel != nil .and. nAnd( ::oController:nLevel, nLevel ) == 0
-      RETURN ( nil )
-   end if
-
-   oTreeButton          := oGroup:Add( cText, ::AddImageTreeMenu( cResource ), bAction )
-   oTreeButton:Cargo    := lAllowExit
-
-   if hb_ischar( cKey )
-      hset( ::hFastKeyTreeMenu, cKey, bAction )
-   end if
-
-RETURN ( oTreeButton )
-
-//----------------------------------------------------------------------------//
-
-METHOD AddImageTreeMenu( cImage )
-
-   local oImage
-   local nImageList  := 0
-
-   if empty( cImage )
-      RETURN ( nImageList )
-   end if 
-
-   oImage            := TBitmap():Define( cImage )
-   oImage:cResName   := cImage
-
-   ::oImageListTreeMenu:addMasked( oImage, Rgb( 255, 0, 255 ) )
-   
-   nImageList        := len( ::oImageListTreeMenu:aBitmaps ) - 1
-
-RETURN ( nImageList )
-
-//----------------------------------------------------------------------------//
-
-METHOD AddSearchButtonTreeMenu()    
-
-RETURN ( ::AddButtonTreeMenu( "Buscar", "Bus16", {|| ::oWindowsBar:SetFocusGet() }, "B" ) )
-
-METHOD AddAppendButtonTreeMenu()    
-
-RETURN ( ::AddButtonTreeMenu( "Añadir", "New16", {|| ::oController:Append(), ::refreshNavigator() }, "A", ACC_APPD ) )
-
-METHOD AddDuplicateButtonTreeMenu() 
-
-RETURN ( ::AddButtonTreeMenu( "Duplicar", "Dup16", {|| ::oController:Duplicate(), ::refreshNavigator() }, "D", ACC_APPD ) )
-
-METHOD AddEditButtonTreeMenu()      
-
-RETURN ( ::AddButtonTreeMenu( "Modificar", "Edit16", {|| ::oController:Edit(), ::refreshNavigator() }, "M", ACC_EDIT ) )
-
-METHOD AddZoomButtonTreeMenu()      
-
-RETURN ( ::AddButtonTreeMenu( "Zoom", "Zoom16", {|| ::oController:Zoom(), ::refreshNavigator() }, "Z", ACC_ZOOM ) )
-
-METHOD AddDeleteButtonTreeMenu()    
-
-RETURN ( ::AddButtonTreeMenu( "Eliminar", "Del16", {|| ::oController:Delete( ::oBrowse:aSelected ), ::refreshNavigator() }, "E", ACC_DELE ) )
-
-METHOD AddSalirButtonTreeMenu()
-
-RETURN ( ::AddButtonTreeMenu( "Salir", "End16", {|| ::End() }, "S" ) )
-
-//----------------------------------------------------------------------------//
-
-METHOD onClickTreeMenu()
-
-   local oItem       := ::oTreeMenu:GetSelected()
-
-   if empty( oItem )
-      RETURN ( nil )
-   end if 
-
-   if ( oItem:ClassName() != "TTVITEM" ) 
-      RETURN ( nil )
-   end if 
-
-   if ( !hb_isblock( oItem:bAction ) )
-      RETURN ( nil )
-   end if 
-
-   eval( oItem:bAction )
-
-RETURN ( Self )
-
-//----------------------------------------------------------------------------//
 
 METHOD EnableWindowsBar()
 
@@ -415,7 +263,7 @@ METHOD EnableWindowsBar()
 
    ::oBrowse:selectColumnOrderByHeader( ::getModelHeaderFromColumnOrder() )
 
-   ::refreshNavigator()
+   ::Refresh()
 
 RETURN ( Self )
 
@@ -519,7 +367,7 @@ RETURN ( nFind > 0 )
 
 METHOD onBrowseKeyChar( nKey )
 
-RETURN ( heval( ::hFastKeyTreeMenu, {|k,v| if( nKey == asc( upper( k ) ) .or. nKey == asc( lower( k ) ), eval( v ), ) } ) ) 
+RETURN ( heval( ::oMenuTreeView:hFastKeyTreeMenu, {|k,v| if( nKey == asc( upper( k ) ) .or. nKey == asc( lower( k ) ), eval( v ), ) } ) ) 
    
 //----------------------------------------------------------------------------//
 

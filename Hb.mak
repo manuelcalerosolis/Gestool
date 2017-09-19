@@ -165,6 +165,7 @@ Tshell.prg              										\
 SQLBrowseableView.prg 											\
 SQLNavigatorView.prg 											\
 SQLShellView.prg 													\
+MenuTreeView.prg 													\
 Rfile.prg               										\
 TdprnC3.prg             										\
 Animat.prg              										\
@@ -703,6 +704,7 @@ Tshell.obj                                         	\
 SQLBrowseableView.obj 											\
 SQLNavigatorView.obj 											\
 SQLShellView.obj 													\
+MenuTreeView.obj 													\
 RpreviewC3.obj 													\
 ReportC3.obj                                       	\
 RocolumnC3.obj                                     	\
@@ -1247,6 +1249,7 @@ $(OBJ)\Tshell.obj                									+
 $(OBJ)\SQLBrowseableView.obj             							+
 $(OBJ)\SQLNavigatorView.obj              							+
 $(OBJ)\SQLShellView.obj            									+
+$(OBJ)\MenuTreeView.obj 												+
 $(OBJ)\RocolumnC3.obj            									+
 $(OBJ)\Rfile.obj                 									+
 $(OBJ)\Tdprnc3.obj               									+
@@ -1633,8 +1636,10 @@ $(OBJ)\PedidosClientesLineasModel.obj
 $<,$*
 $(FWLIB)\FiveH.lib               								+
 $(FWLIB)\FiveHC.lib              								+
-$(HBLIB)\Eagle1.lib              								+
+$(HBLIB)\hdo.lib               									+
+$(HBLIB)\rdlmysql.lib 												+
 $(HBLIB)\libmysql.lib            								+
+$(HBLIB)\Eagle1.lib              								+
 $(HBLIB)\hbwin.lib               								+
 $(HBLIB)\gtwin.lib               								+ 
 $(HBLIB)\gtgui.lib               								+ 
@@ -1669,10 +1674,6 @@ $(HBLIB)\hbcplr.lib            									+
 $(IMG2PDFLIB)\Image2pdf.lib      								+
 $(HBLIB)\b32\rddads.lib          								+
 $(HBLIB)\ace32.lib               								+
-$(HBLIB)\sqlite.lib          										+
-$(HBLIB)\hdo.lib               									+
-$(HBLIB)\rdlsqlite.lib 												+
-$(HBLIB)\rdlmysql.lib 												+
 $(BORLANDLIB)\cw32mt.lib         								+ 
 $(BORLANDLIB)\uuid.lib           								+ 
 $(BORLANDLIB)\import32.lib       								+ 

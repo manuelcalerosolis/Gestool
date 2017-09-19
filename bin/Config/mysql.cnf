@@ -1,0 +1,10 @@
+[server]
+basedir=./share
+datadir=./database
+language=./share/spanish
+character-sets-dir=./share/charsets
+log_error=./share/logs/error.log
+general_log_file=./share/logs/error_general.log
+
+[embedded]
+lnguage=./share/spanish
