@@ -174,7 +174,7 @@ RETURN ( ::AddButtonTreeMenu( "Eliminar", "Del16", {|| ::getController():Delete(
 
 METHOD AddSalirButtonTreeMenu()
 
-RETURN ( ::AddButtonTreeMenu( "Salir", "End16", {|| ::End() }, "S" ) )
+RETURN ( ::AddButtonTreeMenu( "Salir", "End16", {|| ::oSender:End() }, "S" ) )
 
 //----------------------------------------------------------------------------//
 

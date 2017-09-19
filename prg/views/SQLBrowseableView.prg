@@ -12,6 +12,8 @@ CLASS SQLBrowseableView
 
    DATA oController
 
+   DATA oMenuTreeView
+
    // Facades -----------------------------------------------------------------
 
    METHOD getController()                 INLINE ( ::oController )
@@ -21,8 +23,8 @@ CLASS SQLBrowseableView
    METHOD getModelColumns()               INLINE ( if( !empty( ::getModel() ), ::getModel():hColumns, ) )
    METHOD getModelExtraColumns()          INLINE ( if( !empty( ::getModel() ), ::getModel():hExtraColumns, ) )
 
-   METHOD getModelColumnsForNavigator()   INLINE ( if( !empty( ::getModel() ), ::getModel():getColumnsForNavigator(), ) )
-   METHOD getModelHeadersForNavigator()   INLINE ( if( !empty( ::getModel() ), ::getModel():getHeadersForNavigator(), ) )
+   METHOD getModelColumnsForBrowse()      INLINE ( if( !empty( ::getModel() ), ::getModel():getColumnsForBrowse(), ) )
+   METHOD getModelHeadersForBrowse()      INLINE ( if( !empty( ::getModel() ), ::getModel():getHeadersForBrowse(), ) )
 
    METHOD getModelHeaderFromColumnOrder() INLINE ( if( !empty( ::getModel() ), ::getModel():getHeaderFromColumnOrder(), ) )
 

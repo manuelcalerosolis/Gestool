@@ -164,7 +164,9 @@ Rhtml.prg               										\
 Tshell.prg              										\
 SQLBrowseableView.prg 											\
 SQLNavigatorView.prg 											\
+SQLSelectorView.prg 												\
 SQLShellView.prg 													\
+SQLBrowseView.prg 												\
 MenuTreeView.prg 													\
 Rfile.prg               										\
 TdprnC3.prg             										\
@@ -703,7 +705,9 @@ Rhtml.obj                                          	\
 Tshell.obj                                         	\
 SQLBrowseableView.obj 											\
 SQLNavigatorView.obj 											\
+SQLSelectorView.obj 												\
 SQLShellView.obj 													\
+SQLBrowseView.obj 												\
 MenuTreeView.obj 													\
 RpreviewC3.obj 													\
 ReportC3.obj                                       	\
@@ -1248,7 +1252,9 @@ $(OBJ)\Rhtml.obj                 									+
 $(OBJ)\Tshell.obj                									+
 $(OBJ)\SQLBrowseableView.obj             							+
 $(OBJ)\SQLNavigatorView.obj              							+
+$(OBJ)\SQLSelectorView.obj              							+
 $(OBJ)\SQLShellView.obj            									+
+$(OBJ)\SQLBrowseView.obj             								+
 $(OBJ)\MenuTreeView.obj 												+
 $(OBJ)\RocolumnC3.obj            									+
 $(OBJ)\Rfile.obj                 									+

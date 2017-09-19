@@ -49,8 +49,8 @@ CLASS SQLBaseModel
 
    METHOD getTableName()                           INLINE ( ::cTableName )
    METHOD getColumns()                             INLINE ( ::hColumns )
-   METHOD getColumnsForNavigator()
-   METHOD getHeadersForNavigator()
+   METHOD getColumnsForBrowse()
+   METHOD getHeadersForBrowse()
 
    METHOD getValueFromColumn( cColumn, cKey )
    METHOD getHeaderFromColumn( cColumn )           INLINE ( ::getValueFromColumn( cColumn, "header" ) )
@@ -598,7 +598,7 @@ RETURN ( hhaskey( hash, "visible" ) .and. hget( hash, "visible" ) .and. hhaskey(
                                     
 //---------------------------------------------------------------------------//
 
-METHOD getColumnsForNavigator()
+METHOD getColumnsForBrowse()
    
    local hColumns    := {=>}
 
@@ -610,7 +610,7 @@ RETURN ( hColumns )
 
 //---------------------------------------------------------------------------//
 
-METHOD getHeadersForNavigator()
+METHOD getHeadersForBrowse()
 
    local aHeaders    := {}
 

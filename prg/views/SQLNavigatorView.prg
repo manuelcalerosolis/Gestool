@@ -12,11 +12,22 @@ CLASS SQLNavigatorView FROM SQLBrowseableView
 
    DATA aRect
 
+   DATA oMenuTreeView
+
+   DATA oSQLBrowseView
+
    METHOD New( oController )
 
    METHOD Activate()
 
    METHOD End()
+
+   // Facades------------------------------------------------------------------
+
+   METHOD getBrowse()                     INLINE ( ::oSQLBrowseView:oBrowse )
+
+   METHOD getComboBoxOrder()              INLINE ( ::oWindowsBar:oComboBox() )
+   METHOD getGetSearch()                  INLINE ( ::oWindowsBar:oGet() )
 
    // MDI child----------------------------------------------------------------
 
@@ -35,20 +46,6 @@ CLASS SQLNavigatorView FROM SQLBrowseableView
    DATA oTopWebBar
 
    METHOD CreateTopWebBar()
-
-   // XBrowse------------------------------------------------------------------
-
-   DATA oBrowse
-
-   METHOD getBrowse()                     INLINE ( ::oBrowse )
-
-   METHOD CreateBrowse()
-
-   METHOD GenerateColumnsBrowse()
-
-   METHOD AddColumnBrowse( cColumn, hColumn )
-
-   METHOD CreateFromCodeBrowse()          INLINE ( ::oBrowse:CreateFromCode() )
 
    // Splitters------------------------------------------------------------------
 
@@ -75,7 +72,7 @@ CLASS SQLNavigatorView FROM SQLBrowseableView
 
    METHOD onBrowseKeyChar( nKey )
 
-   METHOD Refresh()                       INLINE ( ::oMenuTreeView:SelectButtonMain(), ::oBrowse:SetFocus() )
+   METHOD Refresh()                       INLINE ( ::oMenuTreeView:SelectButtonMain(), ::getBrowse():SetFocus() )
 
 ENDCLASS
 
@@ -85,9 +82,11 @@ METHOD New( oController )
 
    ::oController           := oController
 
+   ::aRect                 := GetWndRect( GetDeskTopWindow() )
+
    ::oMenuTreeView         := MenuTreeView():New( Self )
 
-   ::aRect                 := GetWndRect( GetDeskTopWindow() )
+   ::oSQLBrowseView        := SQLBrowseView():New( Self )
 
    ::oWindowsBar           := oWndBar()
 
@@ -101,23 +100,31 @@ METHOD Activate()
 
    ::CreateTopWebBar()
 
+   // Tree menu ---------------------------------------------------------------
+
    ::oMenuTreeView:MDIActivate( dfnTreeViewWidth, ::aRect[ 3 ] - dfnSplitterHeight )
 
    ::oMenuTreeView:AddAutoButtonTreeMenu()
 
-   ::CreateBrowse()
+   // Browse view --------------------------------------------------------------
 
-      ::GenerateColumnsBrowse()
+   ::oSQLBrowseView:Create( dfnSplitterHeight + dfnSplitterWidth, dfnTreeViewWidth + dfnSplitterWidth, ::oMdiChild:nRight - ::oMdiChild:nLeft, ::oMdiChild:nBottom - ::oMdiChild:nTop )
 
-      ::CreateFromCodeBrowse()
+   ::oSQLBrowseView:GenerateColumns()
+
+   ::oSQLBrowseView:CreateFromCode()
+
+   // Splitters----------------------------------------------------------------
 
    ::CreateSplitters()
 
    ::ActivateMDIChild()
 
-   ::oWindowsBar:setComboBoxChange( {|| ::onChangeCombo() } )
+   // Eventos------------------------------------------------------------------
 
-   ::oWindowsBar:setGetChange( {|| ::onChangeSearch() } ) 
+   ::getComboBoxOrder():bChange  := {|| ::onChangeCombo() } 
+
+   ::getGetSearch():bChange      := {|| ::onChangeSearch() } 
 
    ::EnableWindowsBar()
 
@@ -139,12 +146,12 @@ METHOD End()
       ::oMenuTreeView:End()
    end if 
 
-   if !empty( ::oTopWebBar )
-      ::oTopWebBar:End()
+   if !empty( ::oSQLBrowseView )
+      ::oSQLBrowseView:End()
    end if 
 
-   if !empty( ::oBrowse )
-      ::oBrowse:End()
+   if !empty( ::oTopWebBar )
+      ::oTopWebBar:End()
    end if 
 
 RETURN ( nil )
@@ -161,77 +168,11 @@ RETURN ( ::oTopWebBar  )
 
 //----------------------------------------------------------------------------//
 
-METHOD CreateBrowse() 
-
-   ::oBrowse                  := SQLXBrowse():New( ::oMdiChild )
-   ::oBrowse:nStyle           := nOr( WS_CHILD, WS_VISIBLE, WS_TABSTOP )
-   ::oBrowse:l2007            := .f.
-
-   ::oBrowse:lRecordSelector  := .f.
-   ::oBrowse:lAutoSort        := .t.
-   ::oBrowse:lSortDescend     := .f.   
-
-   // Propiedades del control -------------------------------------------------
-
-   ::oBrowse:nMarqueeStyle    := MARQSTYLE_HIGHLROWMS
-
-   ::oBrowse:bClrStd          := {|| { CLR_BLACK, CLR_WHITE } }
-   ::oBrowse:bClrSel          := {|| { CLR_BLACK, Rgb( 229, 229, 229 ) } }
-   ::oBrowse:bClrSelFocus     := {|| { CLR_BLACK, Rgb( 167, 205, 240 ) } }
-
-   ::oBrowse:bRClicked        := {| nRow, nCol, nFlags | ::RButtonDown( nRow, nCol, nFlags ) }
-
-   ::oBrowse:setModel( ::getModel() )
-
-   ::oBrowse:bKeyChar         := {|nKey| ::onBrowseKeyChar( nKey ) }
-
-   ::oBrowse:bLDblClick       := {|| ::oController:Edit(), ::Refresh() }
-
-   // Dimensiones del control -------------------------------------------------
-
-   ::oBrowse:nTop             := dfnSplitterHeight + dfnSplitterWidth
-
-   ::oBrowse:nLeft            := dfnTreeViewWidth + dfnSplitterWidth 
-   ::oBrowse:nRight           := ::oMdiChild:nRight - ::oMdiChild:nLeft
-   ::oBrowse:nBottom          := ::oMdiChild:nBottom - ::oMdiChild:nTop
-
-RETURN ( ::oBrowse )
-
-//---------------------------------------------------------------------------//
-
-METHOD GenerateColumnsBrowse()
-
-   local hColumnstoBrowse  := ::getModelColumnsForNavigator()
-
-   if empty( hColumnstoBrowse )
-      RETURN ( self )
-   end if 
-
-   hEval( hColumnstoBrowse, { | cColumn, hColumn | ::addColumnBrowse( cColumn, hColumn ) } )
-
-RETURN ( self )
-
-//---------------------------------------------------------------------------//
-
-METHOD addColumnBrowse( cColumn, hColumn )
-
-   with object ( ::oBrowse:AddCol() )
-      :cSortOrder          := cColumn
-      :cHeader             := hColumn[ "header" ]
-      :nWidth              := hColumn[ "width" ]
-      :bLClickHeader       := {| nMRow, nMCol, nFlags, oColumn | ::onClickHeaderBrowse( oColumn ) }
-      :bEditValue          := ::getModel():getEditValue( cColumn ) 
-   end with
-
-RETURN ( self )
-
-//---------------------------------------------------------------------------//
-
 METHOD CreateSplitters()
 
    ::oHorizontalSplitter   := TSplitter():New(  /*nRow*/ dfnSplitterHeight, /*nCol*/ dfnTreeViewWidth, /*lVertical*/ .f.,;
                                                 /*aPrevCtrols*/ { ::oTopWebBar }, /*lAdjPrev*/ .t.,;
-                                                /*aHindCtrols*/ { ::oBrowse }, /*lAdjHind*/ .t.,;
+                                                /*aHindCtrols*/ { ::getBrowse() }, /*lAdjHind*/ .t.,;
                                                 /*bMargin1*/ {|| 0}, /*bMargin2*/ {|| 0}, /*oWnd*/ ::oMdiChild,;
                                                 /*bChange*/, /*nWidth*/ ::aRect[ 4 ], /*nHeight*/ dfnSplitterWidth, /*lPixel*/ .t.,;
                                                 /*l3D*/ .t., /*nClrBack*/ rgb( 255, 255, 255 ), /*lDesign*/ .f.,;
@@ -239,7 +180,7 @@ METHOD CreateSplitters()
    ::oHorizontalSplitter:lStatic := .t.
 
    ::oVerticalSplitter     := TSplitter():New(  /*nRow*/ 0, /*nCol*/ dfnTreeViewWidth, /*lVertical*/ .t.,;
-                                                /*aPrevCtrols*/ { ::oMenuTreeView }, /*lAdjPrev*/ .t., /*aHindCtrols*/ { ::oTopWebBar, ::oHorizontalSplitter, ::oBrowse },;
+                                                /*aPrevCtrols*/ { ::oMenuTreeView }, /*lAdjPrev*/ .t., /*aHindCtrols*/ { ::oTopWebBar, ::oHorizontalSplitter, ::getBrowse() },;
                                                 /*lAdjHind*/ .t., /*bMargin1*/ {|| 0}, /*bMargin2*/ {|| 0}, /*oWnd*/ ::oMdiChild,;
                                                 /*bChange*/, /*nWidth*/ dfnSplitterWidth, /*nHeight*/ ::aRect[ 3 ] - dfnSplitterHeight, /*lPixel*/ .t., /*l3D*/.t.,;
                                                 /*nClrBack*/ , /*lDesign*/ .f., /*lUpdate*/ .t., /*lStyle*/ .t. )  
@@ -257,11 +198,11 @@ METHOD EnableWindowsBar()
 
    ::oWindowsBar:EnableGet()
 
-   ::oWindowsBar:EnableComboBox( ::getModelHeadersForNavigator() )
+   ::oWindowsBar:EnableComboBox( ::getModelHeadersForBrowse() )
 
    ::oWindowsBar:setCombo( ::getModelHeaderFromColumnOrder() )
 
-   ::oBrowse:selectColumnOrderByHeader( ::getModelHeaderFromColumnOrder() )
+   ::getBrowse():selectColumnOrderByHeader( ::getModelHeaderFromColumnOrder() )
 
    ::Refresh()
 
@@ -292,7 +233,7 @@ METHOD onChangeCombo( oColumn )
    end if 
 
    if empty( oColumn )
-      oColumn        := ::oBrowse:getColumnByHeader( oComboBox:VarGet() )
+      oColumn        := ::getBrowse():getColumnByHeader( oComboBox:VarGet() )
    end if 
 
    if empty( oColumn )
@@ -303,9 +244,9 @@ METHOD onChangeCombo( oColumn )
 
    ::oController:changeModelOrderAndOrientation( oColumn:cSortOrder, oColumn:cOrder )
 
-   ::oBrowse:selectColumnOrder( oColumn )
+   ::getBrowse():selectColumnOrder( oColumn )
 
-   ::oBrowse:refreshCurrent()
+   ::getBrowse():refreshCurrent()
 
 RETURN ( Self )
 
@@ -313,7 +254,7 @@ RETURN ( Self )
 
 METHOD onClickHeaderBrowse( oColumn )
 
-   local oCombobox   := ::oWindowsBar:oComboBox()
+   local oCombobox   := ::getComboBoxOrder()
 
    if empty( oComboBox )
       RETURN ( Self )
@@ -339,7 +280,7 @@ METHOD onChangeSearch()
    local nFind          := 0
    local oSearch        := ::oWindowsBar:oGet()
    local cOrder         := ::oWindowsBar:GetComboBox()
-   local cColumnOrder   := ::oBrowse:getColumnOrderByHeader( cOrder )
+   local cColumnOrder   := ::getBrowse():getColumnOrderByHeader( cOrder )
 
    if empty( oSearch )
       RETURN ( Self )
@@ -359,7 +300,7 @@ METHOD onChangeSearch()
       oSearch:SetColor( Rgb( 255, 255, 255 ), Rgb( 255, 102, 102 ) )
    end if
    
-   ::oBrowse:refreshCurrent()
+   ::getBrowse():refreshCurrent()
 
 RETURN ( nFind > 0 )
 
