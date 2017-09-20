@@ -12,9 +12,11 @@ CLASS SQLBaseController
 
    DATA oModel
 
-   DATA oDialogView
+   DATA oSelectorView
 
    DATA oNavigatorView
+
+   DATA oDialogView
 
    DATA oValidator
 
@@ -54,8 +56,9 @@ CLASS SQLBaseController
 
    // Facades -----------------------------------------------------------------
 
-	METHOD   ActivateNavigatorView()
-	METHOD   ActivateBrowse()
+	METHOD ActivateNavigatorView()
+   METHOD ActivateSelectorView()
+	METHOD ActivateBrowse()
 
    METHOD   isUserAccess()                            INLINE ( nAnd( ::nLevel, ACC_ACCE ) == 0 )
    METHOD   notUserAccess()                           INLINE ( !::isUserAccess() )
@@ -170,6 +173,25 @@ METHOD ActivateNavigatorView()
    ::oModel:buildRowSet()
 
    ::oNavigatorView:Activate()
+
+RETURN ( Self )
+
+//---------------------------------------------------------------------------//
+
+METHOD ActivateSelectorView()
+
+   if empty( ::oSelectorView )
+      RETURN ( Self )
+   end if 
+
+   if ::notUserAccess()
+      msgStop( "Acceso no permitido." )
+      RETURN ( Self )
+   end if
+
+   ::oModel:buildRowSet()
+
+   ::oSelectorView:Activate()
 
 RETURN ( Self )
 

@@ -28,6 +28,8 @@ METHOD New()
 
    ::oNavigatorView        := SQLNavigatorView():New( self )
 
+   ::oSelectorView         := SQLSelectorView():New( self )
+
    ::oValidator            := TiposImpresorasValidator():New( self )
 
    ::Super:New()

@@ -2708,7 +2708,7 @@ FUNCTION CreateAcceso( oWnd )
 
    oGrupo               := TGrupoAcceso()
 
-   oGrupo:nBigItems     := 4
+   oGrupo:nBigItems     := 5
    oGrupo:cPrompt       := 'Ayudas'
    oGrupo:cLittleBitmap := "gc_lifebelt_16"
    oGrupo:cBigBitmap    := "gc_lifebelt_32"
@@ -2745,13 +2745,24 @@ FUNCTION CreateAcceso( oWnd )
 
    oItem                := oItemAyudas:Add()
    oItem:oGroup         := oGrupo
-   oItem:cPrompt        := 'Test'
-   oItem:cMessage       := 'Test'
+   oItem:cPrompt        := 'Test navigator'
+   oItem:cMessage       := 'Test navigator'
    oItem:bAction        := {||TiposImpresorasController():New():ActivateNavigatorView() }
    oItem:cId            := "99999"
    oItem:cBmp           := "gc_user_headset_16"
    oItem:cBmpBig        := "gc_user_headset_32"
    oItem:lShow          := .f.
+
+   oItem                := oItemAyudas:Add()
+   oItem:oGroup         := oGrupo
+   oItem:cPrompt        := 'Test selector'
+   oItem:cMessage       := 'Test selector'
+   oItem:bAction        := {||TiposImpresorasController():New():ActivateSelectorView() }
+   oItem:cId            := "99999"
+   oItem:cBmp           := "gc_user_headset_16"
+   oItem:cBmpBig        := "gc_user_headset_32"
+   oItem:lShow          := .f.
+
 
 RETURN ( oAcceso )
 

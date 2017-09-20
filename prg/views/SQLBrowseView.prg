@@ -16,9 +16,10 @@ CLASS SQLBrowseView
 
    METHOD New( oSender )
 
-   METHOD Activate()
-
    METHOD End()
+
+   METHOD ActivateMDI()
+   METHOD ActivateDialog()
 
    METHOD getBrowse()                     INLINE ( ::oBrowse )
 
@@ -54,9 +55,21 @@ RETURN ( Self )
 
 //----------------------------------------------------------------------------//
 
-METHOD Activate()
+METHOD ActivateMDI( nTop, nLeft, nRight, nBottom )
 
-   ::Create()
+   ::Create( nTop, nLeft, nRight, nBottom )
+
+   ::GenerateColumns()
+
+   ::CreateFromCodeBrowse()
+
+RETURN ( Self )
+
+//----------------------------------------------------------------------------//
+
+METHOD ActivateDialog( id )
+
+   ::Create( nTop, nLeft, nRight, nBottom )
 
    ::GenerateColumns()
 

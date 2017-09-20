@@ -104,15 +104,11 @@ METHOD Activate()
 
    ::oMenuTreeView:MDIActivate( dfnTreeViewWidth, ::aRect[ 3 ] - dfnSplitterHeight )
 
-   ::oMenuTreeView:AddAutoButtonTreeMenu()
+   ::oMenuTreeView:AddAutoButtons()
 
    // Browse view --------------------------------------------------------------
 
-   ::oSQLBrowseView:Create( dfnSplitterHeight + dfnSplitterWidth, dfnTreeViewWidth + dfnSplitterWidth, ::oMdiChild:nRight - ::oMdiChild:nLeft, ::oMdiChild:nBottom - ::oMdiChild:nTop )
-
-   ::oSQLBrowseView:GenerateColumns()
-
-   ::oSQLBrowseView:CreateFromCode()
+   ::oSQLBrowseView:MDIActivate( dfnSplitterHeight + dfnSplitterWidth, dfnTreeViewWidth + dfnSplitterWidth, ::oMdiChild:nRight - ::oMdiChild:nLeft, ::oMdiChild:nBottom - ::oMdiChild:nTop )
 
    // Splitters----------------------------------------------------------------
 

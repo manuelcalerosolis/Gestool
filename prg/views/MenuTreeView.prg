@@ -18,43 +18,47 @@ CLASS MenuTreeView
 
    DATA oButtonMain
 
-   DATA hFastKeyTreeMenu                  INIT  {=>}
+   DATA hFastKey                          INIT  {=>}
 
    METHOD New( oSender )
 
    METHOD End()
 
-   METHOD MDIActivate()
+   METHOD ActivateMDI()
+   METHOD ActivateDialog()
+
+   METHOD Default()
+   METHOD setImageList()                  INLINE ( ::oTreeView:SetImagelist( ::oImageList ) )
  
    METHOD getController()                 INLINE ( ::oSender:getController() )
    METHOD getBrowse()                     INLINE ( ::oSender:getBrowse() )
 
-   METHOD AddImageTreeMenu()
+   METHOD AddImage()
 
-   METHOD AddButtonTreeMenu()
+   METHOD AddButton()
 
-   METHOD AddSearchButtonTreeMenu()    
-   METHOD AddAppendButtonTreeMenu()    
-   METHOD AddDuplicateButtonTreeMenu() 
-   METHOD AddEditButtonTreeMenu()      
-   METHOD AddZoomButtonTreeMenu()      
-   METHOD AddDeleteButtonTreeMenu()    
-   METHOD AddSalirButtonTreeMenu()     
+   METHOD AddSearchButton()    
+   METHOD AddAppendButton()    
+   METHOD AddDuplicateButton() 
+   METHOD AddEditButton()      
+   METHOD AddZoomButton()      
+   METHOD AddDeleteButton()    
+   METHOD AddSalirButton()     
 
-   METHOD AddGeneralButtonTreeMenu()      INLINE ( ::AddSearchButtonTreeMenu(),;
-                                                   ::AddAppendButtonTreeMenu(),;
-                                                   ::AddDuplicateButtonTreeMenu(),;
-                                                   ::AddEditButtonTreeMenu(),;
-                                                   ::AddZoomButtonTreeMenu(),;
-                                                   ::AddDeleteButtonTreeMenu() )
+   METHOD AddGeneralButton()              INLINE ( ::AddSearchButton(),;
+                                                   ::AddAppendButton(),;
+                                                   ::AddDuplicateButton(),;
+                                                   ::AddEditButton(),;
+                                                   ::AddZoomButton(),;
+                                                   ::AddDeleteButton() )
 
-   METHOD AddAutoButtonTreeMenu()         INLINE ( ::AddGeneralButtonTreeMenu(),;
-                                                   ::AddSalirButtonTreeMenu(),;
+   METHOD AddAutoButtons()                INLINE ( ::AddGeneralButton(),;
+                                                   ::AddSalirButton(),;
                                                    ::oButtonMain:Expand() )
 
    METHOD SelectButtonMain()              INLINE ( ::oTreeView:Select( ::oButtonMain ) )
 
-   METHOD onClickTreeMenu()
+   METHOD onClick()
 
 ENDCLASS
 
@@ -70,18 +74,34 @@ RETURN ( Self )
 
 //----------------------------------------------------------------------------//
 
-METHOD MDIActivate( nWidth, nHeight )
+METHOD ActivateMDI( nWidth, nHeight )
 
    ::oTreeView          := TTreeView():New( 0, 0, ::oSender:oMdiChild, , , .t., .f., nWidth, nHeight ) 
    
-   ::oTreeView:SetImagelist( ::oImageList )
+   ::Default()
+
+RETURN ( Self )
+
+//----------------------------------------------------------------------------//
+
+METHOD ActivateDialog( id )
+
+   ::oTreeView          := TTreeView():Redefine( id, ::oSender:getDialog() ) 
+
+RETURN ( Self )
+
+//----------------------------------------------------------------------------//
+
+METHOD Default()
+
+   ::SetImagelist()
 
    ::oTreeView:SetItemHeight( 20 )
 
-   ::oTreeView:OnClick  := {|| ::onClickTreeMenu() }
+   ::oTreeView:bChanged := {|| ::onClick() }
 
    if !empty( ::getController():cImage )
-      ::oButtonMain     := ::oTreeView:Add( ::getController():cTitle, ::AddImageTreeMenu( ::getController():cImage ) )
+      ::oButtonMain     := ::oTreeView:Add( ::getController():cTitle, ::AddImage( ::getController():cImage ) )
    end if 
 
 RETURN ( Self )
@@ -98,7 +118,7 @@ RETURN ( nil )
 
 //----------------------------------------------------------------------------//
 
-METHOD AddButtonTreeMenu( cText, cResource, bAction, cKey, nLevel, oGroup, lAllowExit ) 
+METHOD AddButton( cText, cResource, bAction, cKey, nLevel, oGroup, lAllowExit ) 
 
    local oTreeButton
 
@@ -117,18 +137,18 @@ METHOD AddButtonTreeMenu( cText, cResource, bAction, cKey, nLevel, oGroup, lAllo
       RETURN ( nil )
    end if
 
-   oTreeButton          := oGroup:Add( cText, ::AddImageTreeMenu( cResource ), bAction )
+   oTreeButton          := oGroup:Add( cText, ::AddImage( cResource ), bAction )
    oTreeButton:Cargo    := lAllowExit
 
    if hb_ischar( cKey )
-      hset( ::hFastKeyTreeMenu, cKey, bAction )
+      hset( ::hFastKey, cKey, bAction )
    end if
 
 RETURN ( oTreeButton )
 
 //----------------------------------------------------------------------------//
 
-METHOD AddImageTreeMenu( cImage )
+METHOD AddImage( cImage )
 
    local oImage
    local nImageList  := 0
@@ -148,39 +168,41 @@ RETURN ( nImageList )
 
 //----------------------------------------------------------------------------//
 
-METHOD AddSearchButtonTreeMenu()    
+METHOD AddSearchButton()    
 
-RETURN ( ::AddButtonTreeMenu( "Buscar", "Bus16", {|| ::oWindowsBar:SetFocusGet() }, "B" ) )
+RETURN ( ::AddButton( "Buscar", "Bus16", {|| ::oSender:getGetSearch():setFocus() }, "B" ) )
 
-METHOD AddAppendButtonTreeMenu()    
+METHOD AddAppendButton()    
 
-RETURN ( ::AddButtonTreeMenu( "Añadir", "New16", {|| ::getController():Append(), ::oSender:Refresh() }, "A", ACC_APPD ) )
+RETURN ( ::AddButton( "Añadir", "New16", {|| ::getController():Append(), ::oSender:Refresh() }, "A", ACC_APPD ) )
 
-METHOD AddDuplicateButtonTreeMenu() 
+METHOD AddDuplicateButton() 
 
-RETURN ( ::AddButtonTreeMenu( "Duplicar", "Dup16", {|| ::getController():Duplicate(), ::oSender:Refresh() }, "D", ACC_APPD ) )
+RETURN ( ::AddButton( "Duplicar", "Dup16", {|| ::getController():Duplicate(), ::oSender:Refresh() }, "D", ACC_APPD ) )
 
-METHOD AddEditButtonTreeMenu()      
+METHOD AddEditButton()      
 
-RETURN ( ::AddButtonTreeMenu( "Modificar", "Edit16", {|| ::getController():Edit(), ::oSender:Refresh() }, "M", ACC_EDIT ) )
+RETURN ( ::AddButton( "Modificar", "Edit16", {|| ::getController():Edit(), ::oSender:Refresh() }, "M", ACC_EDIT ) )
 
-METHOD AddZoomButtonTreeMenu()      
+METHOD AddZoomButton()      
 
-RETURN ( ::AddButtonTreeMenu( "Zoom", "Zoom16", {|| ::getController():Zoom(), ::oSender:Refresh() }, "Z", ACC_ZOOM ) )
+RETURN ( ::AddButton( "Zoom", "Zoom16", {|| ::getController():Zoom(), ::oSender:Refresh() }, "Z", ACC_ZOOM ) )
 
-METHOD AddDeleteButtonTreeMenu()    
+METHOD AddDeleteButton()    
 
-RETURN ( ::AddButtonTreeMenu( "Eliminar", "Del16", {|| ::getController():Delete( ::oSender:oBrowse:aSelected ), ::oSender:Refresh() }, "E", ACC_DELE ) )
+RETURN ( ::AddButton( "Eliminar", "Del16", {|| ::getController():Delete( ::oSender:oBrowse:aSelected ), ::oSender:Refresh() }, "E", ACC_DELE ) )
 
-METHOD AddSalirButtonTreeMenu()
+METHOD AddSalirButton()
 
-RETURN ( ::AddButtonTreeMenu( "Salir", "End16", {|| ::oSender:End() }, "S" ) )
+RETURN ( ::AddButton( "Salir", "End16", {|| ::oSender:End() }, "S" ) )
 
 //----------------------------------------------------------------------------//
 
-METHOD onClickTreeMenu()
+METHOD onClick()
 
-   local oItem       := ::oTreeView:GetSelected()
+   local oItem       
+
+   oItem          := ::oTreeView:GetSelected()
 
    if empty( oItem )
       RETURN ( nil )
