@@ -79,20 +79,20 @@ CLASS SQLBaseModel
 
    // Data in empresa----------------------------------------------------------
 
-   METHOD getWhereEmpresa()                        INLINE ( if( ::isEmpresaColumn(), " WHERE empresa = " + toSQLString( cCodEmp() ), "" ) )
-   METHOD getAndEmpresa()                          INLINE ( if( ::isEmpresaColumn(), " AND empresa = " + toSQLString( cCodEmp() ), "" ) )
+   METHOD getWhereEmpresa()                           INLINE ( if( ::isEmpresaColumn(), " WHERE empresa = " + toSQLString( cCodEmp() ), "" ) )
+   METHOD getAndEmpresa()                             INLINE ( if( ::isEmpresaColumn(), " AND empresa = " + toSQLString( cCodEmp() ), "" ) )
 
    METHOD getEditValue()
 
    METHOD convertRecnoToId( aRecno )
 
-   METHOD setIdToFind( idToFind )                  INLINE ( ::idToFind := idToFind )
-   METHOD saveIdToFind()                           INLINE ( ::idToFind := ::getRowSet():fieldGet( ::cColumnKey ) ) 
-   METHOD setColumnOrder( cColumnOrder )           INLINE ( ::cColumnOrder := cColumnOrder )
+   METHOD setIdToFind( idToFind )                     INLINE ( ::idToFind := idToFind )
+   METHOD saveIdToFind()                              INLINE ( ::idToFind := ::getRowSet():fieldGet( ::cColumnKey ) ) 
+   METHOD setColumnOrder( cColumnOrder )              INLINE ( ::cColumnOrder := cColumnOrder )
    METHOD setColumnOrientation( cColumnOrientation )  INLINE ( ::cColumnOrientation := cColumnOrientation )
 
    METHOD buildRowSet()
-   METHOD buildRowSetAndFind()                     INLINE ( ::buildRowSet(), ::findInRowSet() )
+   METHOD buildRowSetAndFind()                        INLINE ( ::buildRowSet(), ::findInRowSet() )
 
    METHOD findInRowSet()          
    METHOD getRowSet()                              INLINE   ( if( empty( ::oRowSet ), ::buildRowSet(), ), ::oRowSet )
@@ -129,14 +129,14 @@ END CLASS
 
 METHOD New( oController )
 
-   ::oDatabase                   := getSQLDatabase()
-
-   ::oController                 := oController
-
    if empty( ::hColumns )
       msgstop( "La definición de columnas no puede estar vacia" )
       RETURN ( Self )
    end if 
+
+   ::oController                 := oController
+
+   ::oDatabase                   := getSQLDatabase()
 
    if empty( ::cColumnKey )
       ::cColumnKey               := hGetKeyAt( ::hColumns, 1 )
@@ -380,6 +380,8 @@ METHOD buildRowSet( cSentence )
    local oError
 
    default cSentence    := ::getSelectSentence()
+
+   msgalert( cSentence, "cSentence" )
 
    try
 

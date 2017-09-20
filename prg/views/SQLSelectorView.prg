@@ -8,7 +8,10 @@ CLASS SQLSelectorView FROM SQLBrowseableView
    DATA oDialog
 
    DATA oGetSearch
-   DATA cGetSearch         INIT space( 200 )
+   DATA cGetSearch                        INIT space( 200 )
+
+   DATA oComboBoxOrder
+   DATA cComboBoxOrder
 
    METHOD New( oController )
 
@@ -18,8 +21,9 @@ CLASS SQLSelectorView FROM SQLBrowseableView
 
    METHOD Start()
 
-   METHOD getDialog()      INLINE ( ::oDialog )
-   METHOD getGetSearch()   INLINE ( ::oGetSearch )
+   METHOD getGetSearch()                  INLINE ( ::oGetSearch )
+   METHOD getComboBoxOrder()              INLINE ( ::oComboBoxOrder )
+   METHOD getWindow()                     INLINE ( ::oDialog )
 
 ENDCLASS
 
@@ -38,6 +42,12 @@ METHOD New( oController )
          BITMAP            "FIND" ;
          OF                ::oDialog
 
+      REDEFINE COMBOBOX    ::oComboBoxOrder ;
+         VAR               ::cComboBoxOrder ;
+         ID                110 ;
+         ITEMS             ::getModelHeadersForBrowse() ;
+         OF                ::oDialog
+
       ::oMenuTreeView      := MenuTreeView():New( Self )
 
       ::oSQLBrowseView     := SQLBrowseView():New( Self )
@@ -48,14 +58,9 @@ RETURN ( Self )
 
 METHOD Activate()
 
-   ::oMenuTreeView:DialogActivate( 120 )
+   ::oMenuTreeView:ActivateDialog( 120 )
 
-   ::oSQLBrowseView:Create( dfnSplitterHeight + dfnSplitterWidth, dfnTreeViewWidth + dfnSplitterWidth, ::oMdiChild:nRight - ::oMdiChild:nLeft, ::oMdiChild:nBottom - ::oMdiChild:nTop )
-
-   ::oSQLBrowseView:GenerateColumns()
-
-   ::oSQLBrowseView:CreateFromCode()
-   
+   ::oSQLBrowseView:ActivateDialog( 130 )
 
    ::oDialog:bStart        := {|| ::Start() }
 

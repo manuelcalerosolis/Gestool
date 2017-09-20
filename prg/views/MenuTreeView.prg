@@ -43,9 +43,11 @@ CLASS MenuTreeView
    METHOD AddEditButton()      
    METHOD AddZoomButton()      
    METHOD AddDeleteButton()    
-   METHOD AddSalirButton()     
+   METHOD AddRefreshButton()
+   METHOD AddSalirButton()
 
    METHOD AddGeneralButton()              INLINE ( ::AddSearchButton(),;
+                                                   ::AddRefreshButton(),;
                                                    ::AddAppendButton(),;
                                                    ::AddDuplicateButton(),;
                                                    ::AddEditButton(),;
@@ -58,7 +60,7 @@ CLASS MenuTreeView
 
    METHOD SelectButtonMain()              INLINE ( ::oTreeView:Select( ::oButtonMain ) )
 
-   METHOD onClick()
+   METHOD onChange()
 
 ENDCLASS
 
@@ -76,7 +78,7 @@ RETURN ( Self )
 
 METHOD ActivateMDI( nWidth, nHeight )
 
-   ::oTreeView          := TTreeView():New( 0, 0, ::oSender:oMdiChild, , , .t., .f., nWidth, nHeight ) 
+   ::oTreeView          := TTreeView():New( 0, 0, ::oSender:getWindow(), , , .t., .f., nWidth, nHeight ) 
    
    ::Default()
 
@@ -86,7 +88,7 @@ RETURN ( Self )
 
 METHOD ActivateDialog( id )
 
-   ::oTreeView          := TTreeView():Redefine( id, ::oSender:getDialog() ) 
+   ::oTreeView          := TTreeView():Redefine( id, ::oSender:getWindow() ) 
 
 RETURN ( Self )
 
@@ -98,7 +100,7 @@ METHOD Default()
 
    ::oTreeView:SetItemHeight( 20 )
 
-   ::oTreeView:bChanged := {|| ::onClick() }
+   ::oTreeView:bChanged := {|| ::onChange() }
 
    if !empty( ::getController():cImage )
       ::oButtonMain     := ::oTreeView:Add( ::getController():cTitle, ::AddImage( ::getController():cImage ) )
@@ -172,6 +174,10 @@ METHOD AddSearchButton()
 
 RETURN ( ::AddButton( "Buscar", "Bus16", {|| ::oSender:getGetSearch():setFocus() }, "B" ) )
 
+METHOD AddRefreshButton()
+
+RETURN ( ::AddButton( "Refrescar", "Refresh16", {|| ::oSender:RefreshRowSet() }, "R" ) )
+
 METHOD AddAppendButton()    
 
 RETURN ( ::AddButton( "Añadir", "New16", {|| ::getController():Append(), ::oSender:Refresh() }, "A", ACC_APPD ) )
@@ -190,7 +196,7 @@ RETURN ( ::AddButton( "Zoom", "Zoom16", {|| ::getController():Zoom(), ::oSender:
 
 METHOD AddDeleteButton()    
 
-RETURN ( ::AddButton( "Eliminar", "Del16", {|| ::getController():Delete( ::oSender:oBrowse:aSelected ), ::oSender:Refresh() }, "E", ACC_DELE ) )
+RETURN ( ::AddButton( "Eliminar", "Del16", {|| ::getController():Delete( ::getBrowse():aSelected ), ::oSender:Refresh() }, "E", ACC_DELE ) )
 
 METHOD AddSalirButton()
 
@@ -198,7 +204,7 @@ RETURN ( ::AddButton( "Salir", "End16", {|| ::oSender:End() }, "S" ) )
 
 //----------------------------------------------------------------------------//
 
-METHOD onClick()
+METHOD onChange()
 
    local oItem       
 

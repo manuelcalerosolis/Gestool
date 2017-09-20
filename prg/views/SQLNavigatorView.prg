@@ -24,10 +24,10 @@ CLASS SQLNavigatorView FROM SQLBrowseableView
 
    // Facades------------------------------------------------------------------
 
-   METHOD getBrowse()                     INLINE ( ::oSQLBrowseView:oBrowse )
-
    METHOD getComboBoxOrder()              INLINE ( ::oWindowsBar:oComboBox() )
    METHOD getGetSearch()                  INLINE ( ::oWindowsBar:oGet() )
+
+   METHOD getWindow()                     INLINE ( ::oMdiChild )
 
    // MDI child----------------------------------------------------------------
 
@@ -64,15 +64,11 @@ CLASS SQLNavigatorView FROM SQLBrowseableView
 
    // Eventos------------------------------------------------------------------
 
-   METHOD onChangeCombo()
-
    METHOD onClickHeaderBrowse()
 
    METHOD onChangeSearch()
 
    METHOD onBrowseKeyChar( nKey )
-
-   METHOD Refresh()                       INLINE ( ::oMenuTreeView:SelectButtonMain(), ::getBrowse():SetFocus() )
 
 ENDCLASS
 
@@ -102,13 +98,13 @@ METHOD Activate()
 
    // Tree menu ---------------------------------------------------------------
 
-   ::oMenuTreeView:MDIActivate( dfnTreeViewWidth, ::aRect[ 3 ] - dfnSplitterHeight )
+   ::oMenuTreeView:ActivateMDI( dfnTreeViewWidth, ::aRect[ 3 ] - dfnSplitterHeight )
 
    ::oMenuTreeView:AddAutoButtons()
 
    // Browse view --------------------------------------------------------------
 
-   ::oSQLBrowseView:MDIActivate( dfnSplitterHeight + dfnSplitterWidth, dfnTreeViewWidth + dfnSplitterWidth, ::oMdiChild:nRight - ::oMdiChild:nLeft, ::oMdiChild:nBottom - ::oMdiChild:nTop )
+   ::oSQLBrowseView:ActivateMDI( dfnSplitterHeight + dfnSplitterWidth, dfnTreeViewWidth + dfnSplitterWidth, ::oMdiChild:nRight - ::oMdiChild:nLeft, ::oMdiChild:nBottom - ::oMdiChild:nTop )
 
    // Splitters----------------------------------------------------------------
 
@@ -220,34 +216,6 @@ RETURN ( Self )
 
 //----------------------------------------------------------------------------//
 
-METHOD onChangeCombo( oColumn )
-
-   local oComboBox   := ::oWindowsBar:oComboBox()
-
-   if empty( oComboBox )
-      RETURN ( Self )
-   end if 
-
-   if empty( oColumn )
-      oColumn        := ::getBrowse():getColumnByHeader( oComboBox:VarGet() )
-   end if 
-
-   if empty( oColumn )
-      RETURN ( Self )
-   end if 
-
-   oComboBox:set( oColumn:cHeader )
-
-   ::oController:changeModelOrderAndOrientation( oColumn:cSortOrder, oColumn:cOrder )
-
-   ::getBrowse():selectColumnOrder( oColumn )
-
-   ::getBrowse():refreshCurrent()
-
-RETURN ( Self )
-
-//---------------------------------------------------------------------------//
-
 METHOD onClickHeaderBrowse( oColumn )
 
    local oCombobox   := ::getComboBoxOrder()
@@ -274,8 +242,8 @@ METHOD onChangeSearch()
 
    local uValue
    local nFind          := 0
-   local oSearch        := ::oWindowsBar:oGet()
-   local cOrder         := ::oWindowsBar:GetComboBox()
+   local oSearch        := ::getGetSearch()
+   local cOrder         := ::getComboBoxOrder()
    local cColumnOrder   := ::getBrowse():getColumnOrderByHeader( cOrder )
 
    if empty( oSearch )

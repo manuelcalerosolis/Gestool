@@ -318,6 +318,7 @@ CNT16 BITMAP "..\\bmp\\gc_delete_12.bmp"
 GC_LOCK2_12 BITMAP "..\\bmp\\gc_lock2_12.bmp"
 GC_LOCK2_16 BITMAP "..\\bmp\\gc_lock2_16.bmp"
 ZOOM16 BITMAP "..\\bmp\\gc_lock2_16.bmp"
+REFRESH16 BITMAP "..\\bmp\\gc_recycle_16.bmp"
 
 GC_MONEY2_16 BITMAP "..\\bmp\\gc_money2_16.bmp"
 GC_MONEY2_24 BITMAP "..\\bmp\\gc_money2_24.bmp"

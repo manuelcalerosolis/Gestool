@@ -29,15 +29,18 @@ CLASS SQLBrowseView
    METHOD getModelColumnsForBrowse()      INLINE ( ::getModel():getColumnsForBrowse() )
    METHOD getModelHeadersForBrowse()      INLINE ( ::getModel():getHeadersForBrowse() )
 
-   METHOD getComboBoxOrder()               INLINE ( ::oSender:getComboBoxOrder() )
+   METHOD getComboBoxOrder()              INLINE ( ::oSender:getComboBoxOrder() )
+   METHOD getMenuTreeView()               INLINE ( ::oSender:getMenuTreeView() )
 
    METHOD Create()
+   METHOD CreateDialog( nId ) 
 
    METHOD GenerateColumns()
 
    METHOD AddColumn( cColumn, hColumn )
 
    METHOD CreateFromCode()                INLINE ( ::oBrowse:CreateFromCode() )
+   METHOD CreateFromResource( id )        INLINE ( ::oBrowse:CreateFromResource( id ) )
 
    METHOD onKeyChar( nKey )
 
@@ -57,11 +60,18 @@ RETURN ( Self )
 
 METHOD ActivateMDI( nTop, nLeft, nRight, nBottom )
 
-   ::Create( nTop, nLeft, nRight, nBottom )
+   ::Create()
+
+   ::oBrowse:nStyle           := nOr( WS_CHILD, WS_VISIBLE, WS_TABSTOP )
+
+   ::oBrowse:nTop             := nTop 
+   ::oBrowse:nLeft            := nLeft 
+   ::oBrowse:nRight           := nRight 
+   ::oBrowse:nBottom          := nBottom 
 
    ::GenerateColumns()
 
-   ::CreateFromCodeBrowse()
+   ::CreateFromCode()
 
 RETURN ( Self )
 
@@ -69,11 +79,11 @@ RETURN ( Self )
 
 METHOD ActivateDialog( id )
 
-   ::Create( nTop, nLeft, nRight, nBottom )
+   ::Create()
 
    ::GenerateColumns()
 
-   ::CreateFromCodeBrowse()
+   ::CreateFromResource( id )
 
 RETURN ( Self )
 
@@ -89,7 +99,36 @@ RETURN ( nil )
 
 //----------------------------------------------------------------------------//
 
-METHOD Create( nTop, nLeft, nRight, nBottom ) 
+METHOD Create() 
+
+   ::oBrowse                  := SQLXBrowse():New( ::oSender:getWindow() )
+   ::oBrowse:l2007            := .f.
+
+   ::oBrowse:lRecordSelector  := .f.
+   ::oBrowse:lAutoSort        := .t.
+   ::oBrowse:lSortDescend     := .f.   
+
+   // Propiedades del control -------------------------------------------------
+
+   ::oBrowse:nMarqueeStyle    := MARQSTYLE_HIGHLROWMS
+
+   ::oBrowse:bClrStd          := {|| { CLR_BLACK, CLR_WHITE } }
+   ::oBrowse:bClrSel          := {|| { CLR_BLACK, Rgb( 229, 229, 229 ) } }
+   ::oBrowse:bClrSelFocus     := {|| { CLR_BLACK, Rgb( 167, 205, 240 ) } }
+
+   ::oBrowse:bRClicked        := {| nRow, nCol, nFlags | ::RButtonDown( nRow, nCol, nFlags ) }
+
+   ::oBrowse:setModel( ::getModel() )
+
+   ::oBrowse:bKeyChar         := {|nKey| ::onKeyChar( nKey ) }
+
+   ::oBrowse:bLDblClick       := {|| ::oSender:getController():Edit(), ::Refresh() }
+
+RETURN ( ::oBrowse )
+
+//---------------------------------------------------------------------------//
+
+METHOD CreateDialog( nId ) 
 
    ::oBrowse                  := SQLXBrowse():New( ::oSender:oMdiChild )
    ::oBrowse:nStyle           := nOr( WS_CHILD, WS_VISIBLE, WS_TABSTOP )
@@ -114,13 +153,6 @@ METHOD Create( nTop, nLeft, nRight, nBottom )
    ::oBrowse:bKeyChar         := {|nKey| ::onKeyChar( nKey ) }
 
    ::oBrowse:bLDblClick       := {|| ::oSender:getController():Edit(), ::Refresh() }
-
-   // Dimensiones del control -------------------------------------------------
-
-   ::oBrowse:nTop             := nTop 
-   ::oBrowse:nLeft            := nLeft 
-   ::oBrowse:nRight           := nRight 
-   ::oBrowse:nBottom          := nBottom 
 
 RETURN ( ::oBrowse )
 
@@ -178,7 +210,7 @@ RETURN ( ::oSender:onChangeCombo() )
 
 METHOD onKeyChar( nKey )
 
-RETURN ( heval( ::oMenuTreeView:hFastKeyTreeMenu, {|k,v| if( nKey == asc( upper( k ) ) .or. nKey == asc( lower( k ) ), eval( v ), ) } ) ) 
+RETURN ( heval( ::oSender:oMenuTreeView:hFastKey, {|k,v| if( nKey == asc( upper( k ) ) .or. nKey == asc( lower( k ) ), eval( v ), ) } ) ) 
    
 //----------------------------------------------------------------------------//
 
