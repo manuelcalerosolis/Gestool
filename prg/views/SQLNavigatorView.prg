@@ -68,8 +68,6 @@ CLASS SQLNavigatorView FROM SQLBrowseableView
 
    METHOD onChangeSearch()
 
-   METHOD onBrowseKeyChar( nKey )
-
 ENDCLASS
 
 //----------------------------------------------------------------------------//
@@ -270,9 +268,4 @@ RETURN ( nFind > 0 )
 
 //----------------------------------------------------------------------------//
 
-METHOD onBrowseKeyChar( nKey )
-
-RETURN ( heval( ::oMenuTreeView:hFastKeyTreeMenu, {|k,v| if( nKey == asc( upper( k ) ) .or. nKey == asc( lower( k ) ), eval( v ), ) } ) ) 
-   
-//----------------------------------------------------------------------------//
 

@@ -24,6 +24,7 @@ CLASS SQLBaseController
 
    DATA nLevel
 
+
    DATA nMode                                         AS NUMERIC
 
    DATA bOnPreAppend
@@ -47,18 +48,20 @@ CLASS SQLBaseController
    
    METHOD getModelBuffer( cColumn )                   INLINE ( if( !empty( ::oModel ) .and. !empty( ::oModel:hBuffer ), ( hget( ::oModel:hBuffer, cColumn ) ), ) )
    METHOD getModelBufferColumnKey()                   INLINE ( ::getModelBuffer( ( ::oModel:cColumnKey ) ) )
-   
+
    METHOD getModelSelectValue( cSentence )            INLINE ( if( !empty( ::oModel ), ::oModel:SelectValue( cSentence ), ) )
 
    METHOD endModel()                                  INLINE ( if( !empty( ::oModel ), ::oModel:end(), ) )
+   
+   METHOD getContainer( cController )                 INLINE ( ::ControllerContainer:get( cController ) )
 
    METHOD validate( cColumn )                         INLINE ( if( !empty( ::oValidator ), ::oValidator:validate( cColumn ), ) )
 
    // Facades -----------------------------------------------------------------
 
-	METHOD ActivateNavigatorView()
+   METHOD ActivateNavigatorView()
    METHOD ActivateSelectorView()
-	METHOD ActivateBrowse()
+   METHOD ActivateBrowse()
 
    METHOD   isUserAccess()                            INLINE ( nAnd( ::nLevel, ACC_ACCE ) == 0 )
    METHOD   notUserAccess()                           INLINE ( !::isUserAccess() )
@@ -79,7 +82,7 @@ CLASS SQLBaseController
    METHOD   setTitle( cTitle )                        INLINE ( ::cTitle := cTitle )
    METHOD   getTitle()                                INLINE ( ::cTitle )
 
-	METHOD   Append()
+   METHOD   Append()
       METHOD initAppendMode()                         VIRTUAL
       METHOD endAppendModePreInsert()                 VIRTUAL
       METHOD endAppendModePostInsert()                VIRTUAL
@@ -121,15 +124,22 @@ CLASS SQLBaseController
    METHOD find( uValue, cColumn )                     INLINE ( ::oModel:find( uValue, cColumn ) )
    METHOD findByIdInRowSet( uValue )                  INLINE ( if( !empty( ::getRowSet() ), ::getRowset():find( uValue, "id", .t. ), ) )
 
-   METHOD 	assignBrowse( oGet, aSelectedItems )
-	METHOD 	startBrowse( oCombobox )
-	METHOD 	restoreBrowseState()
+   METHOD assignBrowse( oGet, aSelectedItems )
+   METHOD startBrowse( oCombobox )
+   METHOD restoreBrowseState()
 
    METHOD getRowSet()
 
    METHOD setFastReport( oFastReport, cSentence, cColumns )
 
-   METHOD getContainer( cController )                 INLINE ( ::ControllerContainer:get( cController ) )
+   // Fastkeys-----------------------------------------------------------------
+
+   DATA hFastKey                                      INIT {=>}
+
+   METHOD addFastKey( uKey )
+   METHOD onKeyChar( nKey )                           
+
+   // Events-------------------------------------------------------------------
 
    METHOD evalOnEvent()
    METHOD evalOnPreAppend()                           INLINE ( ::evalOnEvent( ::bOnPreAppend ) )
@@ -491,6 +501,21 @@ Return ( ::oModel:oRowSet )
 
 //---------------------------------------------------------------------------//
 
+METHOD addFastKey( uKey, bAction )
+
+   if hb_ischar( uKey )
+      hset( ::hFastKey, asc( upper( uKey ) ), bAction )
+      hset( ::hFastKey, asc( lower( uKey ) ), bAction )
+   end if
+
+   if hb_isnumeric( uKey )
+      hset( ::hFastKey, uKey, bAction )
+   end if 
+
+RETURN ( Self )
+
+//----------------------------------------------------------------------------//
+
 METHOD setFastReport( oFastReport, cSentence, cColumns )
 
    default cColumns  := ::oModel:serializeColumns() 
@@ -517,3 +542,8 @@ RETURN ( self )
 
 //---------------------------------------------------------------------------//
 
+METHOD onKeyChar( nKey )
+
+RETURN ( heval( ::hFastKey, {|k,v| if( k == nKey, eval( v ), ) } ) ) 
+   
+//----------------------------------------------------------------------------//

@@ -6,10 +6,10 @@ MVC - ToDo
 
 - No funciona el boton buscar en Navigator
 
-- Icono de zoom no es transparente
-
 - Ordenes iniciales en Selector
 
-- Boton seleccionar en Selector
+- Boton seleccionar en Selector, falta devolver el registro.
+
+- Icono de zoom no es transparente (done)
 
 - Meter botones de refresco (done)

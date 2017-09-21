@@ -33,7 +33,8 @@ CLASS SQLBrowseView
    METHOD getMenuTreeView()               INLINE ( ::oSender:getMenuTreeView() )
 
    METHOD Create()
-   METHOD CreateDialog( nId ) 
+
+   METHOD setSize( nTop, nLeft, nRight, nBottom )
 
    METHOD GenerateColumns()
 
@@ -62,12 +63,7 @@ METHOD ActivateMDI( nTop, nLeft, nRight, nBottom )
 
    ::Create()
 
-   ::oBrowse:nStyle           := nOr( WS_CHILD, WS_VISIBLE, WS_TABSTOP )
-
-   ::oBrowse:nTop             := nTop 
-   ::oBrowse:nLeft            := nLeft 
-   ::oBrowse:nRight           := nRight 
-   ::oBrowse:nBottom          := nBottom 
+   ::setSize( nTop, nLeft, nRight, nBottom )
 
    ::GenerateColumns()
 
@@ -120,41 +116,24 @@ METHOD Create()
 
    ::oBrowse:setModel( ::getModel() )
 
-   ::oBrowse:bKeyChar         := {|nKey| ::onKeyChar( nKey ) }
+   ::oBrowse:bKeyChar         := {|nKey| ::getController():onKeyChar( nKey ) }
 
-   ::oBrowse:bLDblClick       := {|| ::oSender:getController():Edit(), ::Refresh() }
+   ::oBrowse:bLDblClick       := {|| ::getController():Edit(), ::Refresh() }
 
 RETURN ( ::oBrowse )
 
 //---------------------------------------------------------------------------//
 
-METHOD CreateDialog( nId ) 
+METHOD setSize( nTop, nLeft, nRight, nBottom )
 
-   ::oBrowse                  := SQLXBrowse():New( ::oSender:oMdiChild )
    ::oBrowse:nStyle           := nOr( WS_CHILD, WS_VISIBLE, WS_TABSTOP )
-   ::oBrowse:l2007            := .f.
 
-   ::oBrowse:lRecordSelector  := .f.
-   ::oBrowse:lAutoSort        := .t.
-   ::oBrowse:lSortDescend     := .f.   
+   ::oBrowse:nTop             := nTop 
+   ::oBrowse:nLeft            := nLeft 
+   ::oBrowse:nRight           := nRight 
+   ::oBrowse:nBottom          := nBottom 
 
-   // Propiedades del control -------------------------------------------------
-
-   ::oBrowse:nMarqueeStyle    := MARQSTYLE_HIGHLROWMS
-
-   ::oBrowse:bClrStd          := {|| { CLR_BLACK, CLR_WHITE } }
-   ::oBrowse:bClrSel          := {|| { CLR_BLACK, Rgb( 229, 229, 229 ) } }
-   ::oBrowse:bClrSelFocus     := {|| { CLR_BLACK, Rgb( 167, 205, 240 ) } }
-
-   ::oBrowse:bRClicked        := {| nRow, nCol, nFlags | ::RButtonDown( nRow, nCol, nFlags ) }
-
-   ::oBrowse:setModel( ::getModel() )
-
-   ::oBrowse:bKeyChar         := {|nKey| ::onKeyChar( nKey ) }
-
-   ::oBrowse:bLDblClick       := {|| ::oSender:getController():Edit(), ::Refresh() }
-
-RETURN ( ::oBrowse )
+RETURN ( self )
 
 //---------------------------------------------------------------------------//
 
@@ -210,7 +189,7 @@ RETURN ( ::oSender:onChangeCombo() )
 
 METHOD onKeyChar( nKey )
 
-RETURN ( heval( ::oSender:oMenuTreeView:hFastKey, {|k,v| if( nKey == asc( upper( k ) ) .or. nKey == asc( lower( k ) ), eval( v ), ) } ) ) 
+RETURN ( heval( ::oSender:oMenuTreeView:hFastKey, {|k,v| msgalert( nKey, "nKey" ), if( k == nKey, eval( v ), ) } ) ) 
    
 //----------------------------------------------------------------------------//
 

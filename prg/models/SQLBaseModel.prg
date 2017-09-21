@@ -644,3 +644,10 @@ METHOD getValueFromColumn( cColumn, cKey )
 RETURN ( uValue )
 
 //---------------------------------------------------------------------------//
+
+// METHOD onKeyChar( nKey )
+// 
+// RETURN ( heval( ::oSender:oMenuTreeView:hFastKey, {|k,v| if( nKey == asc( upper( k ) ) .or. nKey == asc( lower( k ) ), eval( v ), ) } ) ) 
+   
+//----------------------------------------------------------------------------//
+

@@ -6,6 +6,8 @@
 #define dfnSplitterHeight     76
 #define dfnColorTop           rgb( 238, 110, 115 )
 
+#define K_ENTER               13   //   Enter, Ctrl-M
+
 //------------------------------------------------------------------------//
 
 CLASS MenuTreeView
@@ -17,8 +19,6 @@ CLASS MenuTreeView
    DATA oImageList
 
    DATA oButtonMain
-
-   DATA hFastKey                          INIT  {=>}
 
    METHOD New( oSender )
 
@@ -44,6 +44,7 @@ CLASS MenuTreeView
    METHOD AddZoomButton()      
    METHOD AddDeleteButton()    
    METHOD AddRefreshButton()
+   METHOD AddSelectButton()
    METHOD AddSalirButton()
 
    METHOD AddGeneralButton()              INLINE ( ::AddSearchButton(),;
@@ -55,6 +56,11 @@ CLASS MenuTreeView
                                                    ::AddDeleteButton() )
 
    METHOD AddAutoButtons()                INLINE ( ::AddGeneralButton(),;
+                                                   ::AddSalirButton(),;
+                                                   ::oButtonMain:Expand() )
+
+   METHOD AddSelectorButtons()            INLINE ( ::AddGeneralButton(),;
+                                                   ::AddSelectButton(),;
                                                    ::AddSalirButton(),;
                                                    ::oButtonMain:Expand() )
 
@@ -120,7 +126,7 @@ RETURN ( nil )
 
 //----------------------------------------------------------------------------//
 
-METHOD AddButton( cText, cResource, bAction, cKey, nLevel, oGroup, lAllowExit ) 
+METHOD AddButton( cText, cResource, bAction, uKey, nLevel, oGroup, lAllowExit ) 
 
    local oTreeButton
 
@@ -142,9 +148,7 @@ METHOD AddButton( cText, cResource, bAction, cKey, nLevel, oGroup, lAllowExit )
    oTreeButton          := oGroup:Add( cText, ::AddImage( cResource ), bAction )
    oTreeButton:Cargo    := lAllowExit
 
-   if hb_ischar( cKey )
-      hset( ::hFastKey, cKey, bAction )
-   end if
+   ::getController():addFastKey( uKey, bAction )
 
 RETURN ( oTreeButton )
 
@@ -198,9 +202,13 @@ METHOD AddDeleteButton()
 
 RETURN ( ::AddButton( "Eliminar", "Del16", {|| ::getController():Delete( ::getBrowse():aSelected ), ::oSender:Refresh() }, "E", ACC_DELE ) )
 
+METHOD AddSelectButton()    
+
+RETURN ( ::AddButton( "Seleccionar [Enter]", "Select16", {|| msgalert( "Seleccionar" ) }, K_ENTER ) )
+
 METHOD AddSalirButton()
 
-RETURN ( ::AddButton( "Salir", "End16", {|| ::oSender:End() }, "S" ) )
+RETURN ( ::AddButton( "Salir [ESC]", "End16", {|| ::oSender:End() }, "S" ) )
 
 //----------------------------------------------------------------------------//
 

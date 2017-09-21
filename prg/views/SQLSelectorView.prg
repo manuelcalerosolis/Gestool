@@ -82,7 +82,7 @@ METHOD Start()
 
    ::oMenuTreeView:Default()
 
-   ::oMenuTreeView:AddAutoButtons()
+   ::oMenuTreeView:AddSelectorButtons()
 
 RETURN ( Self )
 
