@@ -62,12 +62,6 @@ CLASS SQLNavigatorView FROM SQLBrowseableView
 
    METHOD DisableWindowsBar()
 
-   // Eventos------------------------------------------------------------------
-
-   METHOD onClickHeaderBrowse()
-
-   METHOD onChangeSearch()
-
 ENDCLASS
 
 //----------------------------------------------------------------------------//
@@ -213,59 +207,4 @@ METHOD DisableWindowsBar()
 RETURN ( Self )
 
 //----------------------------------------------------------------------------//
-
-METHOD onClickHeaderBrowse( oColumn )
-
-   local oCombobox   := ::getComboBoxOrder()
-
-   if empty( oComboBox )
-      RETURN ( Self )
-   end if 
-
-   if empty( oColumn )
-      RETURN ( Self )
-   end if 
-
-   if ascan( oCombobox:aItems, oColumn:cHeader ) == 0
-      RETURN ( Self )
-   end if
-
-   oComboBox:Set( oColumn:cHeader )
-   
-RETURN ( ::onChangeCombo() )
-
-//---------------------------------------------------------------------------//
-
-METHOD onChangeSearch()
-
-   local uValue
-   local nFind          := 0
-   local oSearch        := ::getGetSearch()
-   local cOrder         := ::getComboBoxOrder()
-   local cColumnOrder   := ::getBrowse():getColumnOrderByHeader( cOrder )
-
-   if empty( oSearch )
-      RETURN ( Self )
-   end if 
-
-   if empty( cColumnOrder )
-      RETURN ( Self )
-   end if 
-
-   uValue               := oSearch:oGet:Buffer()
-   uValue               := alltrim( upper( cvaltochar( uValue ) ) )
-   uValue               := strtran( uValue, chr( 8 ), "" )
-   
-   if ::getModel():find( uValue, cColumnOrder )
-      oSearch:SetColor( Rgb( 0, 0, 0 ), Rgb( 255, 255, 255 ) )
-   else
-      oSearch:SetColor( Rgb( 255, 255, 255 ), Rgb( 255, 102, 102 ) )
-   end if
-   
-   ::getBrowse():refreshCurrent()
-
-RETURN ( nFind > 0 )
-
-//----------------------------------------------------------------------------//
-
 

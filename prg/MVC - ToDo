@@ -1,15 +1,15 @@
 MVC - ToDo
 
-- Error SetRowSetRecno
+- Dobrle click en selector peta
 
-- Buscar en Selector
+- Ordenes iniciales en Selector (done)
 
-- No funciona el boton buscar en Navigator
+- Buscar en Selector ( done)
 
-- Ordenes iniciales en Selector
-
-- Boton seleccionar en Selector, falta devolver el registro.
+- Boton seleccionar en Selector, falta devolver el registro (done).
 
 - Icono de zoom no es transparente (done)
 
 - Meter botones de refresco (done)
+
+- Error SetRowSetRecno (done)

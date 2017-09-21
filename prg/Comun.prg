@@ -6789,3 +6789,15 @@ Function cTextRichText( cText )
 Return cTexto
 
 //---------------------------------------------------------------------------//
+
+Function fwBmpAsc()
+
+RETURN ( LoadBitMap( GetResources(), "Up16" ) )
+
+//---------------------------------------------------------------------------//
+
+Function fwBmpDes()
+
+RETURN ( LoadBitMap( GetResources(), "Down16" ) )
+
+//---------------------------------------------------------------------------//

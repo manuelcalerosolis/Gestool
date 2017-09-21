@@ -61,7 +61,6 @@ CLASS SQLBaseController
 
    METHOD ActivateNavigatorView()
    METHOD ActivateSelectorView()
-   METHOD ActivateBrowse()
 
    METHOD   isUserAccess()                            INLINE ( nAnd( ::nLevel, ACC_ACCE ) == 0 )
    METHOD   notUserAccess()                           INLINE ( !::isUserAccess() )
@@ -124,7 +123,6 @@ CLASS SQLBaseController
    METHOD find( uValue, cColumn )                     INLINE ( ::oModel:find( uValue, cColumn ) )
    METHOD findByIdInRowSet( uValue )                  INLINE ( if( !empty( ::getRowSet() ), ::getRowset():find( uValue, "id", .t. ), ) )
 
-   METHOD assignBrowse( oGet, aSelectedItems )
    METHOD startBrowse( oCombobox )
    METHOD restoreBrowseState()
 
@@ -191,37 +189,17 @@ RETURN ( Self )
 METHOD ActivateSelectorView()
 
    if empty( ::oSelectorView )
-      RETURN ( Self )
+      RETURN ( nil )
    end if 
 
    if ::notUserAccess()
       msgStop( "Acceso no permitido." )
-      RETURN ( Self )
+      RETURN ( nil )
    end if
 
    ::oModel:buildRowSet()
 
-   ::oSelectorView:Activate()
-
-RETURN ( Self )
-
-//---------------------------------------------------------------------------//
-
-METHOD ActivateBrowse( aSelectedItems )
-
-   local uReturn
-
-   ::getHistoryBrowse()
-
-   ::oModel:buildRowSetAndFind()
-
-   if ::oDialogView:buildSQLBrowse( ::cTitle, aSelectedItems )
-      uReturn     := ::getFieldFromBrowse()
-   end if
-
-   ::endModel()
-
-RETURN ( uReturn )
+RETURN ( ::oSelectorView:Activate() )
 
 //---------------------------------------------------------------------------//
 
@@ -269,26 +247,6 @@ METHOD restoreBrowseState()
 RETURN ( Self )
 
 //----------------------------------------------------------------------------//
-
-METHOD AssignBrowse( oGet, aSelectedItems )
-
-   local uReturn
-
-   if empty( oGet )
-      RETURN ( uReturn )
-   end if
-
-   ::oModel:setIdToFind( oGet:varGet() )
-
-   uReturn           := ::ActivateBrowse( ::cTitle, aSelectedItems )   
-
-   if !empty(uReturn)
-      oGet:cText( uReturn )
-   end if 
-
-RETURN ( uReturn )
-
-//--------------------------------------------------------------------------//
 
 METHOD changeModelOrderAndOrientation( cColumnOrder, cColumnOrientation )
 
@@ -477,7 +435,7 @@ METHOD Delete( aSelected )
       cNumbersOfDeletes := "el registro en curso?"
    end if
 
-   if oUser():lNotConfirmDelete() .or. msgNoYes( "¿Desea eliminar " + cNumbersOfDeletes, "Confirme eliminación" )
+   if oUser():lNotConfirmDelete() .or. msgNoYes( "ï¿½Desea eliminar " + cNumbersOfDeletes, "Confirme eliminaciï¿½n" )
       
       ::endDeleteModePreDelete()
 

@@ -160,7 +160,7 @@ FUNCTION Cajas( oMenuItem, oWnd )
       DEFINE SHELL oWndBrw FROM 2, 10 TO 18, 70 ;
          XBROWSE ;
 			TITLE 	"Cajas" ;
-         PROMPT   "Código",;
+         PROMPT   "Cï¿½digo",;
 						"Nombre" ;
          MRU      "gc_cash_register_16";
 			ALIAS		( dbfCajT ) ;
@@ -183,7 +183,7 @@ FUNCTION Cajas( oMenuItem, oWnd )
       end with
 
       with object ( oWndBrw:AddXCol() )
-         :cHeader          := "Código"
+         :cHeader          := "Cï¿½digo"
          :cSortOrder       := "cCodCaj"
          :bEditValue       := {|| ( dbfCajT )->cCodCaj }
          :nWidth           := 80
@@ -221,7 +221,7 @@ FUNCTION Cajas( oMenuItem, oWnd )
 			NOBORDER ;
          ACTION   ( oWndBrw:RecAdd() );
          ON DROP  ( oWndBrw:RecDup() );
-         TOOLTIP  "(A)ñadir";
+         TOOLTIP  "(A)ï¿½adir";
          BEGIN GROUP;
          HOTKEY   "A";
          LEVEL    ACC_APPD
@@ -336,7 +336,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfCajT, oBrw, bWhen, bValid, nMode )
                "CAJAS_02"
 
       /*
-      Primera caja de diálogo--------------------------------------------------
+      Primera caja de diï¿½logo--------------------------------------------------
       */
 
       REDEFINE BITMAP oBmpGeneral ;
@@ -346,7 +346,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfCajT, oBrw, bWhen, bValid, nMode )
          OF       oFld:aDialogs[1]
 
       /*
-      Código y nombre de la caja
+      Cï¿½digo y nombre de la caja
       -------------------------------------------------------------------------
       */
 
@@ -499,7 +499,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfCajT, oBrw, bWhen, bValid, nMode )
       end with
 
       /*
-      Segunda caja de diálogo--------------------------------------------------
+      Segunda caja de diï¿½logo--------------------------------------------------
       */
 
       REDEFINE BITMAP oBmpFormatos ;
@@ -762,7 +762,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfCajT, oBrw, bWhen, bValid, nMode )
          OF       oFld:aDialogs[2]
 
       /*
-      Formato de pagos en táctil
+      Formato de pagos en tï¿½ctil
       -------------------------------------------------------------------------
       */
 
@@ -1009,7 +1009,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfCajT, oBrw, bWhen, bValid, nMode )
          OF       oFld:aDialogs[2]
 
       /*
-      Cajón portamonedas
+      Cajï¿½n portamonedas
       -------------------------------------------------------------------------
       */
 
@@ -1041,7 +1041,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfCajT, oBrw, bWhen, bValid, nMode )
          OF       oFld:aDialogs[2]
 
       /*
-      Código de corte
+      Cï¿½digo de corte
       -------------------------------------------------------------------------
       */
 
@@ -1051,7 +1051,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfCajT, oBrw, bWhen, bValid, nMode )
          WHEN     ( nMode != ZOOM_MODE ) ;
          OF       oFld:aDialogs[2]
 
-      TBtnBmp():ReDefine( 331, "gc_cut_16",,,,,{|| PrintEscCode( aTmp[ ( dbfCajT )->( FieldPos( "cCodCut" ) ) ], aTmp[ ( dbfCajT )->( FieldPos( "cWinTik" ) ) ] ) }, oFld:aDialogs[2], .f., , .f., "Test de código" )
+      TBtnBmp():ReDefine( 331, "gc_cut_16",,,,,{|| PrintEscCode( aTmp[ ( dbfCajT )->( FieldPos( "cCodCut" ) ) ], aTmp[ ( dbfCajT )->( FieldPos( "cWinTik" ) ) ] ) }, oFld:aDialogs[2], .f., , .f., "Test de cï¿½digo" )
 
       /*
       Formato para crote
@@ -1071,7 +1071,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfCajT, oBrw, bWhen, bValid, nMode )
       TBtnBmp():ReDefine( 362, "gc_document_text_pencil_12",,,,,{|| EdtDocumento( aTmp[ ( dbfCajT )->( FieldPos( "cPrnCut" ) ) ] ) }, oFld:aDialogs[2], .f., , .f.,  )
 
       /*
-      Botones de la caja de diálogo
+      Botones de la caja de diï¿½logo
       -------------------------------------------------------------------------
       */
 
@@ -1136,14 +1136,14 @@ Static Function SavRec( aTmp, aGet, dbfCajT, oBrw, oDlg, nMode )
    if nMode == APPD_MODE .or. nMode == DUPL_MODE
 
       if dbSeekInOrd( aTmp[ ( dbfCajT )->( FieldPos( "cCodCaj" ) ) ], "CCODCAJ", dbfCajT )
-         MsgStop( "Código ya existe " + Rtrim( aTmp[ ( dbfCajT )->( FieldPos( "cCodCaj" ) ) ] ) )
+         MsgStop( "Cï¿½digo ya existe " + Rtrim( aTmp[ ( dbfCajT )->( FieldPos( "cCodCaj" ) ) ] ) )
          return nil
       end if
 
    end if
 
    if empty( aTmp[ ( dbfCajT )->( FieldPos( "cNomCaj" ) ) ] )
-      MsgStop( "Nombre de caja no puede estar vacío" )
+      MsgStop( "Nombre de caja no puede estar vacï¿½o" )
       aGet[ ( dbfCajT )->( FieldPos( "cNomCaj" ) ) ]:SetFocus()
       Return nil
    end if
@@ -1157,7 +1157,7 @@ Static Function SavRec( aTmp, aGet, dbfCajT, oBrw, oDlg, nMode )
       end if
    end while
 
-   //Le ponemos el nuevo código en el caso de duplicar-------------------------
+   //Le ponemos el nuevo cï¿½digo en el caso de duplicar-------------------------
 
    if nMode == DUPL_MODE
 
@@ -1177,7 +1177,7 @@ Static Function SavRec( aTmp, aGet, dbfCajT, oBrw, oDlg, nMode )
       ( dbfTmpLin )->( dbSkip() )
    end while
 
-   // Asignación a la variable de texto----------------------------------------
+   // Asignaciï¿½n a la variable de texto----------------------------------------
 
    aTmp[ ( dbfCajT )->( FieldPos( "cNumTur" ) ) ]  := Str( nNumTur, 6 )
 
@@ -1221,7 +1221,7 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbfTmpLin, oBrw, bWhen, bValid, nMode, aTmpC
          ID          130 ;
          OF          oDlg
 
-      TBtnBmp():ReDefine( 131, "gc_cut_16",,,,,{|| PrintEscCode( aTmp[ ( dbfTmpLin )->( FieldPos( "cCodCut" ) ) ], aTmp[ ( dbfTmpLin )->( FieldPos( "cNomPrn" ) ) ] ) }, oDlg, .f., , .f., "Test de código" )
+      TBtnBmp():ReDefine( 131, "gc_cut_16",,,,,{|| PrintEscCode( aTmp[ ( dbfTmpLin )->( FieldPos( "cCodCut" ) ) ], aTmp[ ( dbfTmpLin )->( FieldPos( "cNomPrn" ) ) ] ) }, oDlg, .f., , .f., "Test de cï¿½digo" )
 
       /*
       Formato para comandas
@@ -1279,7 +1279,9 @@ RETURN ( oDlg:nResult == IDOK )
 
 STATIC FUNCTION browseTipoImpresora( oGet )
 
-   local cTipoImpresora    := TiposImpresorasController():New():activateBrowse() 
+   local cTipoImpresora    := TiposImpresorasController():New():ActivateSelectorView() 
+
+   msgalert( hb_valtoexp( cTipoImpresora ), "cTippI" )
 
    if !empty( cTipoImpresora )
       oGet:cText( padr( cTipoImpresora, 50 ) )
@@ -1296,11 +1298,11 @@ STATIC FUNCTION EndDetalle( aTmp, aGet, dbfTmpLin, oBrw, oDlg, nMode, aTmpCaj )
    //Comprobaciones antes de guardar-------------------------------------------
 
    if empty( aTmp[ ( dbfTmpLin )->( FieldPos( "cTipImp" ) ) ] )
-      cErrors     += "* El tipo de impresora no puede estar vacío" + CRLF
+      cErrors     += "* El tipo de impresora no puede estar vacï¿½o" + CRLF
    end if
 
    if empty( aTmp[ ( dbfTmpLin )->( FieldPos( "cNomPrn" ) ) ] )
-      cErrors     += "* El nombre de impresora no puede estar vacío" + CRLF
+      cErrors     += "* El nombre de impresora no puede estar vacï¿½o" + CRLF
    end if
 
    if nMode == APPD_MODE .and. dbSeekInOrd( Upper( Padr( aTmp[ ( dbfTmpLin )->( FieldPos( "cTipImp" ) ) ], 50 ) ), "cTipImp", dbfTmpLin )
@@ -1317,7 +1319,7 @@ STATIC FUNCTION EndDetalle( aTmp, aGet, dbfTmpLin, oBrw, oDlg, nMode, aTmpCaj )
    end if 
 
    /*
-   Rellenamos el campo con el código de la caja-------------------------------
+   Rellenamos el campo con el cï¿½digo de la caja-------------------------------
    */
 
    aTmp[ ( dbfTmpLin )->( FieldPos( "cCodCaj" ) ) ]   := aTmpCaj[ ( dbfCajT )->( FieldPos( "cCodCaj" ) ) ]
@@ -1329,7 +1331,7 @@ STATIC FUNCTION EndDetalle( aTmp, aGet, dbfTmpLin, oBrw, oDlg, nMode, aTmpCaj )
    WinGather( aTmp, aGet, dbfTmpLin, oBrw, nMode )
 
    /*
-   Cerramos el diálogo---------------------------------------------------------
+   Cerramos el diï¿½logo---------------------------------------------------------
    */
 
    oDlg:end( IDOK )
@@ -1376,7 +1378,7 @@ FUNCTION cCajas( oGet, dbfCajT, oGet2 )
 
    else
 
-      msgStop( "Código de caja no encontrada" )
+      msgStop( "Cï¿½digo de caja no encontrada" )
 
    end if
 
@@ -1404,7 +1406,7 @@ FUNCTION BrwCajas( oGet, oGet2, lBigStyle )
 	local oBrw
    local nOrd        := GetBrwOpt( "BrwCajas" )
 	local oCbxOrd
-   local aCbxOrd     := { "Código", "Nombre" }
+   local aCbxOrd     := { "Cï¿½digo", "Nombre" }
    local cCbxOrd
    local nLevel      := nLevelUsr( "01040" )
 
@@ -1439,7 +1441,7 @@ FUNCTION BrwCajas( oGet, oGet2, lBigStyle )
       REDEFINE BUTTON ;
          ID       110 ;
          OF       oDlg ;
-         ACTION   ( ( dbfCajT )->( OrdSetFocus( "cCodCaj" ) ), oBrw:Refresh(), oDlg:cTitle( "Seleccionar cajas ordenado por: código" ) )
+         ACTION   ( ( dbfCajT )->( OrdSetFocus( "cCodCaj" ) ), oBrw:Refresh(), oDlg:cTitle( "Seleccionar cajas ordenado por: cï¿½digo" ) )
 
       REDEFINE BUTTON ;
          ID       120 ;
@@ -1479,7 +1481,7 @@ FUNCTION BrwCajas( oGet, oGet2, lBigStyle )
       end if
 
       with object ( oBrw:AddCol() )
-         :cHeader          := "Código"
+         :cHeader          := "Cï¿½digo"
          :cSortOrder       := "cCodCaj"
          :bEditValue       := {|| ( dbfCajT )->cCodCaj }
          :nWidth           := 80
@@ -1623,11 +1625,11 @@ Function BrwCajaTactil( oGet, dbfCaja, oGet2, lReturnCaja, lParaLlevar )
 
    if GetSysMetrics( 1 ) == 560
 
-      DEFINE DIALOG oDlg RESOURCE "HelpEntryTactilCli_1024x576" TITLE "Seleccionar cliente ordenado por: Teléfono"
+      DEFINE DIALOG oDlg RESOURCE "HelpEntryTactilCli_1024x576" TITLE "Seleccionar cliente ordenado por: Telï¿½fono"
 
    else
 
-      DEFINE DIALOG oDlg RESOURCE cResource TITLE "Seleccionar cliente ordenado por: Teléfono"
+      DEFINE DIALOG oDlg RESOURCE cResource TITLE "Seleccionar cliente ordenado por: Telï¿½fono"
 
    end if
 
@@ -1644,7 +1646,7 @@ Function BrwCajaTactil( oGet, dbfCaja, oGet2, lReturnCaja, lParaLlevar )
       REDEFINE BUTTON ;
          ID       120 ;
          OF       oDlg ;
-         ACTION   ( ( dbfCaja )->( OrdSetFocus( "cCodCaj" ) ), oBrw:Refresh(), oDlg:cTitle( "Seleccionar caja ordenada por: código" ) )
+         ACTION   ( ( dbfCaja )->( OrdSetFocus( "cCodCaj" ) ), oBrw:Refresh(), oDlg:cTitle( "Seleccionar caja ordenada por: cï¿½digo" ) )
 
       REDEFINE BUTTON ;
          ID       130 ;
@@ -1684,7 +1686,7 @@ Function BrwCajaTactil( oGet, dbfCaja, oGet2, lReturnCaja, lParaLlevar )
       oBrw:CreateFromResource( 105 )
 
       with object ( oBrw:AddCol() )
-         :cHeader          := "Código"
+         :cHeader          := "Cï¿½digo"
          :bEditValue       := {|| AllTrim( ( dbfCaja )->cCodCaj ) }
          :nWidth           := 200
       end with
@@ -1770,7 +1772,7 @@ FUNCTION BrwCaj( oGet, dbfCajT, oGet2 )
 	local oBrw
    local nOrd        := GetBrwOpt( "BrwCajas" )
 	local oCbxOrd
-   local aCbxOrd     := { "Código", "Nombre" }
+   local aCbxOrd     := { "Cï¿½digo", "Nombre" }
    local cCbxOrd
    local nRec
 
@@ -1808,7 +1810,7 @@ FUNCTION BrwCaj( oGet, dbfCajT, oGet2 )
       oBrw:cName           := "Browse.Cajas reducido"
 
       with object ( oBrw:AddCol() )
-         :cHeader          := "Código"
+         :cHeader          := "Cï¿½digo"
          :cSortOrder       := "cCodCaj"
          :bEditValue       := {|| ( dbfCajT )->cCodCaj }
          :nWidth           := 80
@@ -1981,7 +1983,7 @@ Static Function ValidCajaPadre( aGet, aTmp )
 
       if aTmp[ ( dbfCajT )->( FieldPos( "cCajPrt" ) ) ] == aTmp[ ( dbfCajT )->( FieldPos( "cCodCaj" ) ) ]
       
-         msgStop( "Código de caja padre no puede ser la misma." )
+         msgStop( "Cï¿½digo de caja padre no puede ser la misma." )
 
          lValid   := .f.
 
@@ -1989,7 +1991,7 @@ Static Function ValidCajaPadre( aGet, aTmp )
 
    else 
       
-      msgStop( "Código de caja no existe." )
+      msgStop( "Cï¿½digo de caja no existe." )
       
       lValid      := .f.
 
@@ -2293,36 +2295,36 @@ Function aItmCaja()
 
    local aBase := {}
 
-   aAdd( aBase, { "cCodCaj",   "C",  3,   0, "Código de la caja" } )
+   aAdd( aBase, { "cCodCaj",   "C",  3,   0, "Cï¿½digo de la caja" } )
    aAdd( aBase, { "cNomCaj",   "C", 30,   0, "Nombre de la caja" } )
-   aAdd( aBase, { "cAlmCaj",   "C",  3,   0, "Almacén de la caja" } )
+   aAdd( aBase, { "cAlmCaj",   "C",  3,   0, "Almacï¿½n de la caja" } )
    aAdd( aBase, { "cLocCaj",   "C", 50,   0, "" } )
    aAdd( aBase, { "nUsrCaj",   "N",  3,   0, "" } )
-   aAdd( aBase, { "lPrnTik",   "L",  1,   0, "Lógico impresora normal tickets" } )
+   aAdd( aBase, { "lPrnTik",   "L",  1,   0, "Lï¿½gico impresora normal tickets" } )
    aAdd( aBase, { "cPrnTik",   "C",  3,   0, "Formato tickets" } )
-   aAdd( aBase, { "lPrnAlb",   "L",  1,   0, "Lógico impresora normal albaranes" } )
+   aAdd( aBase, { "lPrnAlb",   "L",  1,   0, "Lï¿½gico impresora normal albaranes" } )
    aAdd( aBase, { "cPrnAlb",   "C",  3,   0, "Formato albaranes" } )
-   aAdd( aBase, { "lPrnFac",   "L",  1,   0, "Lógico impresora normal facturas" } )
+   aAdd( aBase, { "lPrnFac",   "L",  1,   0, "Lï¿½gico impresora normal facturas" } )
    aAdd( aBase, { "cPrnFac",   "C",  3,   0, "Formatos facturas" } )
-   aAdd( aBase, { "cCapCaj",   "C",  3,   0, "Código captura" } )
-   aAdd( aBase, { "lPrnVal",   "L",  1,   0, "Lógico impresora normal vales" } )
+   aAdd( aBase, { "cCapCaj",   "C",  3,   0, "Cï¿½digo captura" } )
+   aAdd( aBase, { "lPrnVal",   "L",  1,   0, "Lï¿½gico impresora normal vales" } )
    aAdd( aBase, { "cPrnVal",   "C",  3,   0, "Formato vales" } )
-   aAdd( aBase, { "lPrnDev",   "L",  1,   0, "Lógico impresora normal devoluciones" } )
+   aAdd( aBase, { "lPrnDev",   "L",  1,   0, "Lï¿½gico impresora normal devoluciones" } )
    aAdd( aBase, { "cPrnDev",   "C",  3,   0, "Formato devoluciones" } )
    aAdd( aBase, { "nPrnTik",   "N",  1,   0, "Tipo impresora" } )
    aAdd( aBase, { "cPrnWin",   "C",  250, 0, "Impresora de windows" } )
-   aAdd( aBase, { "cCodPrn",   "C",  3,   0, "Código impresora de tickets" } )
-   aAdd( aBase, { "cCodVis",   "C",  3,   0, "Código visor" } )
-   aAdd( aBase, { "cCajon",    "C",  3,   0, "Código cajón portamonedas" } )
-   aAdd( aBase, { "lPrnArq",   "L",  1,   0, "Lógico impresora normal arqueos" } )
+   aAdd( aBase, { "cCodPrn",   "C",  3,   0, "Cï¿½digo impresora de tickets" } )
+   aAdd( aBase, { "cCodVis",   "C",  3,   0, "Cï¿½digo visor" } )
+   aAdd( aBase, { "cCajon",    "C",  3,   0, "Cï¿½digo cajï¿½n portamonedas" } )
+   aAdd( aBase, { "lPrnArq",   "L",  1,   0, "Lï¿½gico impresora normal arqueos" } )
    aAdd( aBase, { "nPrnArq",   "N",  1,   0, "Tipo impresora arqueos" } )
    aAdd( aBase, { "cWinArq",   "C",  250, 0, "Impresora de arqueos" } )
    aAdd( aBase, { "cPrnArq",   "C",  3,   0, "Formato arqueos" } )
    aAdd( aBase, { "cPrnPgo",   "C",  3,   0, "Formato metapagos" } )
-   aAdd( aBase, { "lPrnEnt",   "L",  1,   0, "Lógico impresora normal entrega" } )
+   aAdd( aBase, { "lPrnEnt",   "L",  1,   0, "Lï¿½gico impresora normal entrega" } )
    aAdd( aBase, { "cPrnEnt",   "C",  3,   0, "formato de entrega" } )
    aAdd( aBase, { "cWinTik",   "C",  250, 0, "Impresora de tickets" } )
-   aAdd( aBase, { "lPrnPgo",   "L",  1,   0, "Lógico impresora normal metapagos" } )
+   aAdd( aBase, { "lPrnPgo",   "L",  1,   0, "Lï¿½gico impresora normal metapagos" } )
    aAdd( aBase, { "nCopTik",   "N",  2,   0, "Copias tickets" } )
    aAdd( aBase, { "nCopVal",   "N",  2,   0, "Copias vales" } )
    aAdd( aBase, { "nCopDev",   "N",  2,   0, "Copias devoluciones" } )
@@ -2331,36 +2333,36 @@ Function aItmCaja()
    aAdd( aBase, { "nCopFac",   "N",  2,   0, "Copias facturas" } )
    aAdd( aBase, { "nCopPgo",   "N",  2,   0, "Copias metapagos" } )
    aAdd( aBase, { "nCopArq",   "N",  2,   0, "Copias arqueos" } )
-   aAdd( aBase, { "cCodBal",   "C",  3,   0, "Código de la balanza" } )
-   aAdd( aBase, { "cCodCut",   "C",  120, 0, "Código de corte de papel" } )
+   aAdd( aBase, { "cCodBal",   "C",  3,   0, "Cï¿½digo de la balanza" } )
+   aAdd( aBase, { "cCodCut",   "C",  120, 0, "Cï¿½digo de corte de papel" } )
    aAdd( aBase, { "cPrnCom",   "C",  3,   0, "Formato comandas" } )
    aAdd( aBase, { "nCopCom",   "N",  2,   0, "Copias comandas" } )
    aAdd( aBase, { "cWinCom1",  "C",  250, 0, "Primera impresora de comandas" } )
    aAdd( aBase, { "cWinCom2",  "C",  250, 0, "Segunda impresora de comandas" } )
    aAdd( aBase, { "cWinCom3",  "C",  250, 0, "Tercera impresora de comandas" } )
-   aAdd( aBase, { "lPrnPar",   "L",  1,   0, "Lógico impresora normal arqueo parcial" } )
+   aAdd( aBase, { "lPrnPar",   "L",  1,   0, "Lï¿½gico impresora normal arqueo parcial" } )
    aAdd( aBase, { "cPrnPar",   "C",  3,   0, "Formato arqueo parcial" } )
    aAdd( aBase, { "nCopPar",   "N",  2,   0, "Copias arqueo parcial" } )
-   aAdd( aBase, { "lPrnReg",   "L",  1,   0, "Lógico impresora normal ticket regalo" } )
+   aAdd( aBase, { "lPrnReg",   "L",  1,   0, "Lï¿½gico impresora normal ticket regalo" } )
    aAdd( aBase, { "cPrnReg",   "C",  3,   0, "Formato ticket regalo" } )
    aAdd( aBase, { "nCopReg",   "N",  2,   0, "Copias ticket regalo" } )
-   aAdd( aBase, { "lPrnApt",   "L",  1,   0, "Lógico impresora normal apartados" } )
+   aAdd( aBase, { "lPrnApt",   "L",  1,   0, "Lï¿½gico impresora normal apartados" } )
    aAdd( aBase, { "cPrnApt",   "C",  3,   0, "Formato apartados" } )
    aAdd( aBase, { "nCopApt",   "N",  2,   0, "Copias apartados" } )
-   aAdd( aBase, { "lPrnChk",   "L",  1,   0, "Lógico impresora normal cheques regalo" } )
+   aAdd( aBase, { "lPrnChk",   "L",  1,   0, "Lï¿½gico impresora normal cheques regalo" } )
    aAdd( aBase, { "cPrnChk",   "C",  3,   0, "Formato cheques regalo" } )
    aAdd( aBase, { "nCopChk",   "N",  2,   0, "Copias cheques regalo" } )
    aAdd( aBase, { "cPrnAnu",   "C",  3,   0, "Formato anulaciones" } )
    aAdd( aBase, { "nCopAnu",   "N",  2,   0, "Copias anulaciones" } )
-   aAdd( aBase, { "lPrnEna",   "L",  1,   0, "Lógico impresora normal entregas a cuenta de albaranes" } )
+   aAdd( aBase, { "lPrnEna",   "L",  1,   0, "Lï¿½gico impresora normal entregas a cuenta de albaranes" } )
    aAdd( aBase, { "cPrnEna",   "C",  3,   0, "Formato entregas a cuenta de albaranes" } )
    aAdd( aBase, { "nCopEna",   "N",  2,   0, "Copias entregas a cuenta de albaranes" } )
-   aAdd( aBase, { "lNoArq",    "L",  1,   0, "Lógico para no incluir en arqueo" } )
-   aAdd( aBase, { "lPrnCie",   "L",  1,   0, "Lógico impresora normal arqueos ciegos" } )
+   aAdd( aBase, { "lNoArq",    "L",  1,   0, "Lï¿½gico para no incluir en arqueo" } )
+   aAdd( aBase, { "lPrnCie",   "L",  1,   0, "Lï¿½gico impresora normal arqueos ciegos" } )
    aAdd( aBase, { "cPrnCie",   "C",  3,   0, "Formato para arqueos ciegos" } )
    aAdd( aBase, { "nCopCie",   "N",  2,   0, "Copias para arqueos ciegos" } )
    aAdd( aBase, { "cPrnNota",  "C",  250, 0, "Impresora de entregas de notas" } )
-   aAdd( aBase, { "cNumTur",   "C",  6,   0, "Número del turno" } )
+   aAdd( aBase, { "cNumTur",   "C",  6,   0, "Nï¿½mero del turno" } )
    aAdd( aBase, { "cCajPrt",   "C",  3,   0, "Caja padre" } )
    aAdd( aBase, { "cPrnCut",   "C",  3,   0, "Formato corte" } )
 
@@ -2372,11 +2374,11 @@ Function aItmCajaL()
 
    local aBase := {}
 
-   aAdd( aBase, { "cCodCaj",   "C",     3,   0, "Código de la caja" } )
+   aAdd( aBase, { "cCodCaj",   "C",     3,   0, "Cï¿½digo de la caja" } )
    aAdd( aBase, { "cTipImp",   "C",    50,   0, "Tipo de impresora" } )
    aAdd( aBase, { "cNomPrn",   "C",   250,   0, "Nombre de la impresora" } )
    aAdd( aBase, { "cWavFil",   "C",   250,   0, "Fichero a reproducir" } )
-   aAdd( aBase, { "cCodCut",   "C",   120,   0, "Código de corte de papel" } )
+   aAdd( aBase, { "cCodCut",   "C",   120,   0, "Cï¿½digo de corte de papel" } )
    aAdd( aBase, { "cPrnCom",   "C",     3,   0, "Formato comandas" } )
    aAdd( aBase, { "cPrnAnu",   "C",     3,   0, "Formato anulaciones" } )
 
@@ -2388,7 +2390,7 @@ Function aItmCajaImpresiones()
 
    local aBase := {}
 
-   aAdd( aBase, { "cCodCaj",   "C",     3,   0, "Código de la caja" } )
+   aAdd( aBase, { "cCodCaj",   "C",     3,   0, "Cï¿½digo de la caja" } )
    aAdd( aBase, { "cTipDoc",   "C",     2,   0, "Tipo de documento" } )
    aAdd( aBase, { "cSerDoc",   "C",     1,   0, "Serie de documento" } )
    aAdd( aBase, { "cImpDoc",   "C",   250,   0, "Impresora del documento" } )
@@ -3064,7 +3066,7 @@ Return ( NotCero( nCop ) )
 
 //---------------------------------------------------------------------------//
 /*
-Devuelve el código de la impresora de tickets que usa esta caja
+Devuelve el cï¿½digo de la impresora de tickets que usa esta caja
 */
 
 Function cImpresoraTicketEnCaja( cCodCaj, dbfCajT )
@@ -3225,7 +3227,7 @@ Static Function InitBrwBigCaj( oDlg, oImgCaj, oLstCaj, dbfCaj )
 RETURN ( nil )
 
 //---------------------------------------------------------------------------//
-// Función que chequea la caja y nos deja pasar
+// Funciï¿½n que chequea la caja y nos deja pasar
 
 Static Function SelBrwBigCaj( nOpt, oLstCaj, oDlg, dbfCaj )
 
@@ -3258,7 +3260,7 @@ Function SelectCajas()
    local oGetBuscar
    local cGetBuscar     := Space( 100 )
    local oCbxOrden
-   local cCbxOrden      := "Código"
+   local cCbxOrden      := "Cï¿½digo"
 
    if !lOpenFiles()
       return .f.
@@ -3284,7 +3286,7 @@ Function SelectCajas()
       REDEFINE COMBOBOX oCbxOrden ;
          VAR      cCbxOrden ;
          ID       110 ;
-         ITEMS    { "Código", "Nombre" } ;
+         ITEMS    { "Cï¿½digo", "Nombre" } ;
          ON CHANGE( ( dbfCajT )->( OrdSetFocus( oCbxOrden:nAt ) ), oBrw:Refresh(), oGetBuscar:SetFocus() ) ;
 			OF 		oDlg
 
@@ -3300,7 +3302,7 @@ Function SelectCajas()
       oBrw:CreateFromResource( 200 )
 
       with object ( oBrw:AddCol() )
-         :cHeader          := "Código"
+         :cHeader          := "Cï¿½digo"
          :cSortOrder       := "cCodCaj"
          :bEditValue       := {|| ( dbfCajT )->cCodCaj }
          :nWidth           := 40
@@ -3344,7 +3346,7 @@ Function SelectCajas()
 
    else
 
-      msgInfo( "No selecciono ninguna caja, se establecerá la caja por defecto." + CRLF + ;
+      msgInfo( "No selecciono ninguna caja, se establecerï¿½ la caja por defecto." + CRLF + ;
                "Caja actual, " + oUser():cCaja() )
    end if
 
@@ -3543,7 +3545,7 @@ Function cNumeroSesionCaja( cCodCaj, dbfCaja, dbfTurno )
 
    else 
 
-      msgStop( "Código de caja " + cCodCaj + " no encontrada." )
+      msgStop( "Cï¿½digo de caja " + cCodCaj + " no encontrada." )
 
    end if
 

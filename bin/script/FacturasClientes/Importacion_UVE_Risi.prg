@@ -23,7 +23,7 @@ Function Inicio()
    ErrorBlock( oBlock )
 */
 
-Return ( nil )
+RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 
@@ -55,7 +55,7 @@ CREATE CLASS ImportacionUVERisi
 
    DATA oComboDistributor
 
-   DATA aDitributors                            INIT { "90 - Blanco", "91 - Begines", "92 - Dismaga", "Vacio" }
+   DATA aDitributors                            INIT { "90 - Blanco", "91 - Begines", "92 - Dismaga", "93 - Jujuca", "94 - Gonzalo Marin", "Vacio" }
    DATA cDistributor                            INIT "90 - Blanco"
 
    DATA oComboSeparator
@@ -69,10 +69,73 @@ CREATE CLASS ImportacionUVERisi
                                                             "Zoyo"      =>  { "Delimitador" => ";", "IdCliente" => "C1", "Segmentacion" => { { "06" => "01" },;
 */
 
-   DATA hSegmentacion                           INIT  {  "V20"       => {  "06" => "01",;    // Blanco
-                                                                           "07" => "02" },;
-                                                         "V1"        => {  "06" => "01",;    // Carlos Conde
-                                                                           "07" => "02" } }
+   DATA hSegmentacion                           INIT  {  "V6"        => {  "0105" => "0001",;
+                                                                           "0001" => "0001",;
+                                                                           "0111" => "0002",;
+                                                                           "0002" => "0002",;
+                                                                           "0101" => "0003",;
+                                                                           "0100" => "0004",; 
+                                                                           "0011" => "0004",;
+                                                                           "0004" => "0004",;
+                                                                           "0000" => "0004",;
+                                                                           "0103" => "0005",;
+                                                                           "0005" => "0005",;
+                                                                           "0006" => "0006",;
+                                                                           "0107" => "0007",; 
+                                                                           "0007" => "0007",; 
+                                                                           "0106" => "0006",;  
+                                                                           "0108" => "0008",;
+                                                                           "0008" => "0008",;
+                                                                           "0109" => "0009",;
+                                                                           "0104" => "0010",;
+                                                                           "0010" => "0010",;
+                                                                           "0110" => "0011",;
+                                                                           "0030" => "0011",;
+                                                                           "0003" => "0011",;
+                                                                           "0025" => "0012",;                                                                          
+                                                                           "0112" => "0012" },;
+                                                         "V1"        => {  "0001" => "0004",;    
+                                                                           "0005" => "0001",;
+                                                                           "0002" => "0003",;
+                                                                           "0003" => "0005",;
+                                                                           "0004" => "0010",;
+                                                                           "0010" => "0011" },;
+                                                         "V7"        => {  "0006" => "0001",;    
+                                                                           "0011" => "0002",;
+                                                                           "0001" => "0003",;
+                                                                           "0002" => "0004",;
+                                                                           "0003" => "0005",;
+                                                                           "0007" => "0008",;
+                                                                           "0008" => "0009",;
+                                                                           "0009" => "0010",;
+                                                                           "0010" => "0011" },;
+                                                         "V8"        => {  "0006" => "0001",;    
+                                                                           "0011" => "0002",;
+                                                                           "0001" => "0003",;
+                                                                           "0002" => "0004",;
+                                                                           "0003" => "0005",;
+                                                                           "0007" => "0008",;
+                                                                           "0008" => "0009",;
+                                                                           "0009" => "0010",;
+                                                                           "0010" => "0011" } ,;
+                                                         "V9"        => {  "0006" => "0001",;    
+                                                                           "0011" => "0002",;
+                                                                           "0001" => "0003",;
+                                                                           "0002" => "0004",;
+                                                                           "0003" => "0005",;
+                                                                           "0007" => "0008",;
+                                                                           "0008" => "0009",;
+                                                                           "0009" => "0010",;
+                                                                           "0010" => "0011" },;
+                                                         "V10"        => { "0006" => "0001",;    
+                                                                           "0011" => "0002",;
+                                                                           "0001" => "0003",;
+                                                                           "0002" => "0004",;
+                                                                           "0003" => "0005",;
+                                                                           "0007" => "0008",;
+                                                                           "0008" => "0009",;
+                                                                           "0009" => "0010",;
+                                                                           "0010" => "0011" }}
 
    DATA hVendedores                             INIT  {  { "Delegacion" => "02", "Vendedor" => "027", "CodigoVendedor" => "V1", "NombreVendedor" => "CARLOS CONDE",                 "IdCliente" => "C1" },;
                                                          { "Delegacion" => "75", "Vendedor" => "001", "CodigoVendedor" => "V2", "NombreVendedor" => "MANUEL MARTIN JIMENEZ",        "IdCliente" => "C2" },;
@@ -86,11 +149,13 @@ CREATE CLASS ImportacionUVERisi
                                                          { "Delegacion" => "7",  "Vendedor" => "002", "CodigoVendedor" => "V3", "NombreVendedor" => "JUAN MANUEL MARTIN RUIZ",      "IdCliente" => "C2" },;
                                                          { "Delegacion" => "36", "Vendedor" => "035", "CodigoVendedor" => "V4", "NombreVendedor" => "ENRIQUE FERNANDEZ ZOYO",       "IdCliente" => "C3" },;
                                                          { "Delegacion" => "91", "Vendedor" => "000", "CodigoVendedor" => "V6", "NombreVendedor" => "MANUEL BEGINES",               "IdCliente" => "C5" },;
+                                                         { "Delegacion" => "91", "Vendedor" => "V6",  "CodigoVendedor" => "V6", "NombreVendedor" => "MANUEL BEGINES",               "IdCliente" => "C5" },;
                                                          { "Delegacion" => "40", "Vendedor" => "040", "CodigoVendedor" => "V5", "NombreVendedor" => "JOSE ANTONIO NIETO",           "IdCliente" => "C4" },;
                                                          { "Delegacion" => "00", "Vendedor" => "011", "CodigoVendedor" => "V7", "NombreVendedor" => "GENESIS CENTRAL",              "IdCliente" => "GE" },;
                                                          { "Delegacion" => "00", "Vendedor" => "COO", "CodigoVendedor" => "V7", "NombreVendedor" => "GENESIS CENTRAL",              "IdCliente" => "GE" },;
                                                          { "Delegacion" => "00", "Vendedor" => "NAV", "CodigoVendedor" => "V7", "NombreVendedor" => "GENESIS CENTRAL",              "IdCliente" => "GE" },;
                                                          { "Delegacion" => "00", "Vendedor" => "",    "CodigoVendedor" => "V7", "NombreVendedor" => "GENESIS CENTRAL",              "IdCliente" => "GE" },;
+                                                         { "Delegacion" => "00", "Vendedor" => "001", "CodigoVendedor" => "V7", "NombreVendedor" => "GENESIS CENTRAL",              "IdCliente" => "GE" },;
                                                          { "Delegacion" => "02", "Vendedor" => "",    "CodigoVendedor" => "V8", "NombreVendedor" => "ESPINOLA",                     "IdCliente" => "GE" },;
                                                          { "Delegacion" => "02", "Vendedor" => "COO", "CodigoVendedor" => "V8", "NombreVendedor" => "ESPINOLA",                     "IdCliente" => "GE" },;
                                                          { "Delegacion" => "02", "Vendedor" => "011", "CodigoVendedor" => "V8", "NombreVendedor" => "ESPINOLA",                     "IdCliente" => "GE" },;
@@ -107,7 +172,9 @@ CREATE CLASS ImportacionUVERisi
                                                          { "Delegacion" => "66", "Vendedor" => "066", "CodigoVendedor" => "V12","NombreVendedor" => "JESUS PARI",                   "IdCliente" => "C7" },;
                                                          { "Delegacion" => "31", "Vendedor" => "030", "CodigoVendedor" => "V13","NombreVendedor" => "JOSELE",                       "IdCliente" => "C8" },;
                                                          { "Delegacion" => "73", "Vendedor" => "001", "CodigoVendedor" => "V14","NombreVendedor" => "JUAN RODRIGUEZ",               "IdCliente" => "C9" },;
+                                                         { "Delegacion" => "72", "Vendedor" => "001", "CodigoVendedor" => "V14","NombreVendedor" => "JUAN RODRIGUEZ",               "IdCliente" => "C9" },;
                                                          { "Delegacion" => "23", "Vendedor" => "023", "CodigoVendedor" => "V15","NombreVendedor" => "JOSE LAVADO",                  "IdCliente" => "C10" },;
+                                                         { "Delegacion" => "23", "Vendedor" => "060", "CodigoVendedor" => "V15","NombreVendedor" => "JOSE LAVADO",                  "IdCliente" => "C10" },;
                                                          { "Delegacion" => "81", "Vendedor" => "054", "CodigoVendedor" => "V16","NombreVendedor" => "MANOLO RUIZ",                  "IdCliente" => "C11" },;
                                                          { "Delegacion" => "32", "Vendedor" => "001", "CodigoVendedor" => "V17","NombreVendedor" => "JOSE PRADA",                   "IdCliente" => "C12" },;
                                                          { "Delegacion" => "11", "Vendedor" => "011", "CodigoVendedor" => "V18","NombreVendedor" => "MARIANGLES. RAFAEL PADRE",     "IdCliente" => "C13" },;
@@ -117,6 +184,7 @@ CREATE CLASS ImportacionUVERisi
                                                          { "Delegacion" => "67", "Vendedor" => "067", "CodigoVendedor" => "V21","NombreVendedor" => "JAVIER PARIS",                 "IdCliente" => "C15" },;
                                                          { "Delegacion" => "56", "Vendedor" => "027", "CodigoVendedor" => "V22","NombreVendedor" => "JOSE NOGUERO",                 "IdCliente" => "C16" },;
                                                          { "Delegacion" => "51", "Vendedor" => "051", "CodigoVendedor" => "V23","NombreVendedor" => "ADRIAN ORELLANA",              "IdCliente" => "C17" },;
+                                                         { "Delegacion" => "51", "Vendedor" => "035", "CodigoVendedor" => "V23","NombreVendedor" => "ADRIAN ORELLANA",              "IdCliente" => "C17" },;
                                                          { "Delegacion" => "50", "Vendedor" => "",    "CodigoVendedor" => "V23","NombreVendedor" => "ADRIAN ORELLANA",              "IdCliente" => "C17" },;
                                                          { "Delegacion" => "C3", "Vendedor" => "",    "CodigoVendedor" => "D1", "NombreVendedor" => "FRANCISCO ROMERO VALLE",       "IdCliente" => "DC" },;
                                                          { "Delegacion" => "CE", "Vendedor" => " ",   "CodigoVendedor" => "D2", "NombreVendedor" => "CENTRAL DISGOMA",              "IdCliente" => "DC" },;
@@ -132,19 +200,37 @@ CREATE CLASS ImportacionUVERisi
                                                          { "Delegacion" => "M5", "Vendedor" => "A02", "CodigoVendedor" => "D7", "NombreVendedor" => "JESUS RODRIGUEZ DE GUZMAN",    "IdCliente" => "DJ" },;
                                                          { "Delegacion" => "M6", "Vendedor" => "C04", "CodigoVendedor" => "D7", "NombreVendedor" => "JESUS RODRIGUEZ DE GUZMAN",    "IdCliente" => "DJ" },;
                                                          { "Delegacion" => "M2", "Vendedor" => "A01", "CodigoVendedor" => "D8", "NombreVendedor" => "JUAN DIAZ PINTADO",            "IdCliente" => "DP" },;
-                                                         { "Delegacion" => "M1", "Vendedor" => "A01", "CodigoVendedor" => "D8", "NombreVendedor" => "JUAN DIAZ PINTADO",            "IdCliente" => "DP" };
+                                                         { "Delegacion" => "M1", "Vendedor" => "A01", "CodigoVendedor" => "D8", "NombreVendedor" => "JUAN DIAZ PINTADO",            "IdCliente" => "DP" },;
+                                                         { "Delegacion" => "92", "Vendedor" => "14",  "CodigoVendedor" => "C8", "NombreVendedor" => "JUAN DIAZ MOYA.DISMAGA",       "IdCliente" => "CA7" },;
+                                                         { "Delegacion" => "92", "Vendedor" => "2",   "CodigoVendedor" => "C9", "NombreVendedor" => "RAFAEL. DISMAGA",              "IdCliente" => "CA7" },;
+                                                         { "Delegacion" => "92", "Vendedor" => "6",   "CodigoVendedor" => "C10","NombreVendedor" => "VTA PUBLICO. DISMAGA",         "IdCliente" => "CA7" },;
+                                                         { "Delegacion" => "92", "Vendedor" => "3",   "CodigoVendedor" => "C11","NombreVendedor" => "MANOLO. DISMAGA",              "IdCliente" => "CA7" },;
+                                                         { "Delegacion" => "92", "Vendedor" => "19",  "CodigoVendedor" => "C12","NombreVendedor" => "PACO ANTEQUERA. DISMAGA",      "IdCliente" => "CA7" },;
+                                                         { "Delegacion" => "92", "Vendedor" => "4",   "CodigoVendedor" => "C13","NombreVendedor" => "M. ANGELES CORTIJO. DISMAGA",  "IdCliente" => "CA7" },;
+                                                         { "Delegacion" => "92", "Vendedor" => "16",  "CodigoVendedor" => "C14","NombreVendedor" => "RUTA 16. DISMAGA",             "IdCliente" => "CA7" },;
+                                                         { "Delegacion" => "31", "Vendedor" => "032", "CodigoVendedor" => "C15","NombreVendedor" => "MANUEL GUILLOTO",              "IdCliente" => "CA8" },;
+                                                         { "Delegacion" => "31", "Vendedor" => "010", "CodigoVendedor" => "C15","NombreVendedor" => "MANUEL GUILLOTO",              "IdCliente" => "CA8" },;
+                                                         { "Delegacion" => "94", "Vendedor" => "0",   "CodigoVendedor" => "C16","NombreVendedor" => "GONZALO MARIN",                "IdCliente" => "CA9" },;
+                                                         { "Delegacion" => "93", "Vendedor" => "",    "CodigoVendedor" => "C7", "NombreVendedor" => "JUJUCA",                       "IdCliente" => "CA6" },;
+                                                         { "Delegacion" => "21", "Vendedor" => "022", "CodigoVendedor" => "C6", "NombreVendedor" => "CRISTOBAL MARTINEZ",           "IdCliente" => "CA5" },;
+                                                         { "Delegacion" => "16", "Vendedor" => "012", "CodigoVendedor" => "C5", "NombreVendedor" => "JOSE MANUEL GOMEZ",            "IdCliente" => "CA4" },;
+                                                         { "Delegacion" => "51", "Vendedor" => "053", "CodigoVendedor" => "C3", "NombreVendedor" => "JUAN RODRIGUEZ.CHICLANA",      "IdCliente" => "CA3" },;
+                                                         { "Delegacion" => "52", "Vendedor" => "053", "CodigoVendedor" => "C3", "NombreVendedor" => "JUAN RODRIGUEZ.CHICLANA",      "IdCliente" => "CA3" },;
+                                                         { "Delegacion" => "52", "Vendedor" => "050", "CodigoVendedor" => "C3", "NombreVendedor" => "JUAN RODRIGUEZ.CHICLANA",      "IdCliente" => "CA3" },;
+                                                         { "Delegacion" => "52", "Vendedor" => "054", "CodigoVendedor" => "C4", "NombreVendedor" => "DAVID. CHICLANA",              "IdCliente" => "CA3" },;
+                                                         { "Delegacion" => "51", "Vendedor" => "054", "CodigoVendedor" => "C4", "NombreVendedor" => "DAVID. CHICLANA",              "IdCliente" => "CA3" },;
+                                                         { "Delegacion" => "51", "Vendedor" => "050", "CodigoVendedor" => "C4", "NombreVendedor" => "DAVID. CHICLANA",              "IdCliente" => "CA3" },;
+                                                         { "Delegacion" => "11", "Vendedor" => "",    "CodigoVendedor" => "C2", "NombreVendedor" => "EMILIO MOLERO",                "IdCliente" => "CA2" },;
+                                                         { "Delegacion" => "11", "Vendedor" => "012", "CodigoVendedor" => "C2", "NombreVendedor" => "EMILIO MOLERO",                "IdCliente" => "CA2" },;
+                                                         { "Delegacion" => "36", "Vendedor" => "012", "CodigoVendedor" => "C1", "NombreVendedor" => "MANUEL CALVO",                 "IdCliente" => "CA1" },;
+                                                         { "Delegacion" => "36", "Vendedor" => "12",  "CodigoVendedor" => "C1", "NombreVendedor" => "MANUEL CALVO",                 "IdCliente" => "CA1" },;
+                                                         { "Delegacion" => "36", "Vendedor" => "37",  "CodigoVendedor" => "C1", "NombreVendedor" => "MANUEL CALVO",                 "IdCliente" => "CA1" },;
+                                                         { "Delegacion" => "36", "Vendedor" => "037", "CodigoVendedor" => "C1", "NombreVendedor" => "MANUEL CALVO",                 "IdCliente" => "CA1" };
                                                          }
-
-
 
    /*
    01 -> Kiosko
    */
-
-
-   DATA hSegementacion                          INIT  {  "C1"  => {  { "06" => "01" },;
-                                                                     { "07" => "02" } } }
-
 
    DATA codigoVendedor   
    DATA nombreVendedor    
@@ -166,6 +252,8 @@ CREATE CLASS ImportacionUVERisi
       METHOD insertInvoiceHeader( hUVELine )
       METHOD getNewInvoiceNumber( hUVELine )
       METHOD insertInvoiceLine( hUVELine )
+
+   METHOD deleteInvoiceByReference()
 
    METHOD deleteInvoiceIfExist()
 
@@ -202,13 +290,13 @@ ENDCLASS
 METHOD New() CLASS ImportacionUVERisi
 
    if !::Dialog()
-      Return ( Self )
+      RETURN ( Self )
    end if
 
    ::getFileUVE()
 
    if !::isFileUVE()
-      Return ( Self )
+      RETURN ( Self )
    end if
 
    if ::openFileUVE()
@@ -217,7 +305,7 @@ METHOD New() CLASS ImportacionUVERisi
    end if 
 
    if !::OpenFiles()
-      Return ( Self )
+      RETURN ( Self )
    end if 
 
    ::sortUveLinesByInvoiceId()
@@ -228,7 +316,7 @@ METHOD New() CLASS ImportacionUVERisi
 
    msgInfo( "Proceso finalizado" )
 
-Return ( Self )
+RETURN ( Self )
 
 //---------------------------------------------------------------------------//
 
@@ -250,7 +338,7 @@ METHOD Dialog() CLASS ImportacionUVERisi
 
    ::oDlg:Activate( , , , .t. )
 
-Return ( ::oDlg:nResult == 1 )
+RETURN ( ::oDlg:nResult == 1 )
 
 //---------------------------------------------------------------------------//
 
@@ -259,17 +347,17 @@ METHOD getFileUVE()
 
    ::cFileUVE  := cGetFile( "Csv ( *.* ) | " + "*.*", "Seleccione el fichero a importar" )
 
-Return ( Self )
+RETURN ( Self )
 
 //---------------------------------------------------------------------------//
 
 METHOD isFileUVE()
 
    if !empty( ::cFileUVE )
-      Return ( file( ::cFileUVE ) )
+      RETURN ( file( ::cFileUVE ) )
    end if 
 
-Return ( .f. )
+RETURN ( .f. )
 
 //---------------------------------------------------------------------------//
 
@@ -278,10 +366,10 @@ METHOD openFileUVE()
    ::nFileHandle := fOpen( ::cFileUVE )
 
    if ferror() != 0
-      Return ( .f. )
+      RETURN ( .f. )
    end if  
 
-Return ( .t. )
+RETURN ( .t. )
 
 //---------------------------------------------------------------------------//
 
@@ -293,7 +381,7 @@ METHOD processFileUVE()
       ::processLineUVE( cLine )
    end while  
    
-Return ( Self )
+RETURN ( Self )
 
 //---------------------------------------------------------------------------//
 
@@ -307,17 +395,17 @@ METHOD processLineUVE( cLine )
 
    if !( hb_isarray( aLine ) )
       msgalert( "La linea no se puede convertir en array.", "", .1 )
-      Return ( Self )
+      RETURN ( Self )
    end if 
 
    if !( len( aLine ) >= 30 )
       msgwait( hb_valtoexp( aline ), "la linea no contiene los campos necesarios", .1 )
-      Return ( Self )
+      RETURN ( Self )
    end if 
 
    ::insertLineUVE( aLine )
 
-Return ( Self )
+RETURN ( Self )
 
 //---------------------------------------------------------------------------//
 
@@ -358,7 +446,7 @@ METHOD insertLineUVE( aLine )
 
    aadd( ::aUVELines, hUve )
 
-Return ( Self )
+RETURN ( Self )
 
 //---------------------------------------------------------------------------//
 
@@ -403,7 +491,7 @@ METHOD OpenFiles()
 
    ErrorBlock( oBlock )
 
-Return ( lOpenFiles )
+RETURN ( lOpenFiles )
 
 //---------------------------------------------------------------------------//
 
@@ -411,7 +499,7 @@ METHOD sortUveLinesByInvoiceId()
 
    // asort( ::aUVELines, , , {|x,y| hget( x, "NumeroFactura" ) < hget( y, "NumeroFactura" ) } ) // + hget( y, "NumeroLinea" )
 
-Return ( self )
+RETURN ( self )
 
 //---------------------------------------------------------------------------//
 
@@ -425,8 +513,10 @@ METHOD processUVELinesByInvoiceId()
 
          ::getNewInvoiceNumber( hUVELine )
 
+         ::deleteInvoiceByReference( hUVELine )
+
          ::getDataVendedor( hUVELine )
- 	
+   
          ::deleteInvoiceIfExist()
 
          if !( ::isClient( hUVELine ) )
@@ -457,33 +547,33 @@ METHOD processUVELinesByInvoiceId()
 
    next
 
-Return ( self )
+RETURN ( self )
 
 //---------------------------------------------------------------------------//
 
 METHOD getNewInvoiceNumber( hUVELine )
 
-   ::currentInvoice     	:= alltrim( hget( hUVELine, "NumeroFactura" ) )
+   ::currentInvoice        := alltrim( hget( hUVELine, "NumeroFactura" ) )
    
-	if ::cDistributor == "Vacio"
-		
-		::serieInvoice       := substr( ::currentInvoice, 1, 1 )
-   	::numberInvoice      := val( substr( ::currentInvoice, 2, len( ::currentInvoice ) - 3 ) )
-   	::delegationInvoice  := right( ::currentInvoice, 2 )
+   if ::cDistributor == "Vacio"
+      
+      ::serieInvoice       := substr( ::currentInvoice, 1, 1 )
+      ::numberInvoice      := val( substr( ::currentInvoice, 2, len( ::currentInvoice ) - 3 ) )
+      ::delegationInvoice  := right( ::currentInvoice, 2 )
 
-		::calculateInvoice 	:= ::currentInvoice 
+      ::calculateInvoice   := ::currentInvoice 
 
-	else
+   else
 
-   	::delegationInvoice  := substr( ::cDistributor, 1, 2 )
-   	::calculateInvoice 	:= ::currentInvoice + "." + ::delegationInvoice
+      ::delegationInvoice  := substr( ::cDistributor, 1, 2 )
+      ::calculateInvoice   := ::currentInvoice + "." + ::delegationInvoice
 
-	   ::serieInvoice       := "A"
-   	::numberInvoice      := nNewDoc( ::serieInvoice, D():FacturasClientes( ::nView ), "nFacCli", , D():Contadores( ::nView ) )
+      ::serieInvoice       := "A"
+      ::numberInvoice      := nNewDoc( ::serieInvoice, D():FacturasClientes( ::nView ), "nFacCli", , D():Contadores( ::nView ) )
    
    end if 
 
-Return ( self )
+RETURN ( self )
 
 //---------------------------------------------------------------------------//
 
@@ -507,7 +597,7 @@ RETURN ( idClient )
 
 METHOD isClient( hUVELine )
 
-Return ( dbSeekInOrd( ::getIdClient( hUVELine ), "Cod", D():Clientes( ::nView ) ) )
+RETURN ( dbSeekInOrd( ::getIdClient( hUVELine ), "Cod", D():Clientes( ::nView ) ) )
 
 //---------------------------------------------------------------------------//
 
@@ -530,7 +620,7 @@ METHOD createClient( hUVELine )
 
    ( D():Clientes( ::nView ) )->( dbrunlock() )
 
-Return ( self )
+RETURN ( self )
 
 //---------------------------------------------------------------------------//
 
@@ -541,30 +631,62 @@ METHOD getTipoCliente( hUVELine )
    local hSegmentos
    local cTipoCliente      := hget( hUVELine, "TipoCliente" )
 
+   // msgalert( cTipoCliente, "valor obtenido en ctipocliente")
+   
+   // msgalert( ::codigoVendedor, "codigoVendedor" )
+
    if empty( ::codigoVendedor )
-      Return ( rjust( cTipoCliente, "0", 4 ) )
+      RETURN ( rjust( cTipoCliente, "0", 4 ) )
    end if 
 
-   nPosition               := hscan( ::hSegmentacion, {|k,v,i| k == ::codigoVendedor } )
+   nPosition               := hscan( ::hSegmentacion, {|k| alltrim( k ) == alltrim( ::codigoVendedor ) } )
 
    if nPosition != 0
-      
-      hSegmentos           := hgetValueAt( ::hSegmentacion, nPosition )
 
-      nScan                := hscan( hSegmentos, {|k,v,i| k == cTipoCliente } )
+      hSegmentos           := hgetValueAt( ::hSegmentacion, nPosition )
+      
+      // msgalert( hb_valtoexp( hSegmentos ), "hSegmentos" )
+
+      nScan                := hscan( hSegmentos, {|k| val( alltrim( k ) ) == val( alltrim( cTipoCliente ) ) } )
       if nScan != 0
+
          cTipoCliente      := hgetValueAt( hSegmentos, nScan )
+      
+      else
+
+         msgalert( "no encuentro el tipo de cliente " + cTipoCliente )
+
       end if 
+
+   else
+
+      // msgalert( "no encuentro el vendedor" )
             
    end if 
 
-Return ( cTipoCliente ) 
+RETURN ( rjust( cTipoCliente, "0", 4 ) )
 
 //---------------------------------------------------------------------------//
 
-METHOD deleteInvoiceIfExist()
+METHOD deleteInvoiceByReference()
 
-   local cNumeroFactura    := ::serieInvoice + str( ::numberInvoice, 9 ) + ::delegationInvoice
+   if empty( ::calculateInvoice )
+      RETURN ( Self )
+   end if 
+
+   if D():seekInOrd( D():FacturasClientes( ::nView ), ::calculateInvoice, "nNumPed" )
+      ::deleteInvoiceIfExist( D():FacturasClientesId( ::nView ) )
+   end if
+
+RETURN ( Self )
+
+//---------------------------------------------------------------------------//
+
+METHOD deleteInvoiceIfExist( cNumeroFactura )
+
+   if empty( cNumeroFactura )
+      cNumeroFactura    := ::serieInvoice + str( ::numberInvoice, 9 ) + ::delegationInvoice
+   end if 
 
    while D():seekInOrd( D():FacturasClientes( ::nView ), cNumeroFactura, "nNumFac" ) .and. !( D():FacturasClientes( ::nView ) )->( eof() )
       if dbLock( D():FacturasClientes( ::nView ) )
@@ -582,7 +704,7 @@ METHOD deleteInvoiceIfExist()
       end if 
    end while
 
-Return ( Self )
+RETURN ( Self )
 
 //---------------------------------------------------------------------------//
 
@@ -596,6 +718,7 @@ METHOD insertInvoiceHeader( hUVELine )
    // recerencia a la factura de UVE-------------------------------------------
 
    ( D():FacturasClientes( ::nView ) )->cSuFac     := ::calculateInvoice
+   ( D():FacturasClientes( ::nView ) )->cNumPed    := ::calculateInvoice
 
    ( D():FacturasClientes( ::nView ) )->cCodAlm    := oUser():cAlmacen()
    ( D():FacturasClientes( ::nView ) )->cCodCaj    := oUser():cCaja()
@@ -606,11 +729,11 @@ METHOD insertInvoiceHeader( hUVELine )
    ( D():FacturasClientes( ::nView ) )->cTimCre    := time() 
    ( D():FacturasClientes( ::nView ) )->cCodDlg    := oUser():cDelegacion()
 
-	if ::cDistributor == "Vacio"
-	   ( D():FacturasClientes( ::nView ) )->dFecFac := stod( hget( hUVELine, "FechaFactura" ) )
-	else
-	   ( D():FacturasClientes( ::nView ) )->dFecFac := ctod( hget( hUVELine, "FechaFactura" ) )
-	end if
+   if ::cDistributor == "Vacio" .or. ::cDistributor == "93 - Jujuca" 
+      ( D():FacturasClientes( ::nView ) )->dFecFac := stod( hget( hUVELine, "FechaFactura" ) )
+   else
+      ( D():FacturasClientes( ::nView ) )->dFecFac := ctod( hget( hUVELine, "FechaFactura" ) )
+   end if
 
    ( D():FacturasClientes( ::nView ) )->cCodCli    := ::getIdClient( hUVELine )
    ( D():FacturasClientes( ::nView ) )->cNomCli    := hget( hUVELine, "Nombre" )
@@ -627,13 +750,13 @@ METHOD insertInvoiceHeader( hUVELine )
    
    ::nLineNumber        := 1
 
-Return ( self )
+RETURN ( self )
 
 //---------------------------------------------------------------------------//
 
 METHOD isProduct( hUVELine )
 
-Return ( dbSeekInOrd( hget( hUVELine, "CodigoProducto" ), "Codigo", D():Articulos( ::nView ) ) )
+RETURN ( dbSeekInOrd( hget( hUVELine, "CodigoProducto" ), "Codigo", D():Articulos( ::nView ) ) )
 
 //---------------------------------------------------------------------------//
 
@@ -648,7 +771,7 @@ METHOD createProduct( hUVELine )
    
    ( D():Articulos( ::nView ) )->( dbrunlock() )
 
-Return ( self )
+RETURN ( self )
 
 //---------------------------------------------------------------------------//
 
@@ -678,13 +801,13 @@ METHOD insertInvoiceLine( hUVELine )
 
    ::nLineNumber++
    
-Return ( self )
+RETURN ( self )
 
 //---------------------------------------------------------------------------//
 
 METHOD isGrupoCliente( hUVELine )
 
-Return ( dbSeekInOrd( rjust( hget( hUVELine, "TipoCliente" ), "0", 4 ), "cCodGrp", D():GrupoClientes( ::nView ) ) )
+RETURN ( dbSeekInOrd( rjust( hget( hUVELine, "TipoCliente" ), "0", 4 ), "cCodGrp", D():GrupoClientes( ::nView ) ) )
 
 //---------------------------------------------------------------------------//
 
@@ -697,13 +820,13 @@ METHOD createGrupoCliente( hUVELine )
 
    ( D():GrupoClientes( ::nView ) )->( dbrunlock() )
 
-Return ( self )
+RETURN ( self )
 
 //---------------------------------------------------------------------------//
 
 METHOD isRuta( hUVELine )
 
-Return ( dbSeekInOrd( hget( hUVELine, "Ruta" ), "cCodRut", D():Get( "Ruta", ::nView ) ) )
+RETURN ( dbSeekInOrd( hget( hUVELine, "Ruta" ), "cCodRut", D():Get( "Ruta", ::nView ) ) )
 
 //---------------------------------------------------------------------------//
 
@@ -716,13 +839,13 @@ METHOD createRuta( hUVELine )
 
    ( D():Get( "Ruta", ::nView ) )->( dbrunlock() )
 
-Return ( self )
+RETURN ( self )
 
 //---------------------------------------------------------------------------//
 
 METHOD isAgente( codigoVendedor )
 
-Return ( dbSeekInOrd( codigoVendedor, "cCodAge", D():Get( "Agentes", ::nView ) ) )
+RETURN ( dbSeekInOrd( codigoVendedor, "cCodAge", D():Get( "Agentes", ::nView ) ) )
 
 //---------------------------------------------------------------------------//
 
@@ -735,13 +858,13 @@ METHOD createAgente( codigoVendedor, nombreVendedor )
 
    ( D():Get( "Agentes", ::nView ) )->( dbrunlock() )
 
-Return ( self )
+RETURN ( self )
 
 //---------------------------------------------------------------------------//
 
 METHOD isInvoiceChange( hUVELine )
 
-Return ( hget( hUVELine, "NumeroFactura" ) != ::currentInvoice )
+RETURN ( hget( hUVELine, "NumeroFactura" ) != ::currentInvoice )
 
 //---------------------------------------------------------------------------//
 
@@ -767,7 +890,7 @@ METHOD getDataVendedor( hUVELine ) CLASS ImportacionUVERisi
          ::nombreVendedor  := hget( hVendedor, "NombreVendedor" )
          ::idCliente       := hget( hVendedor, "IdCliente" )
 
-         Return ( .t. )
+         RETURN ( .t. )
 
       end if 
 
@@ -777,7 +900,7 @@ METHOD getDataVendedor( hUVELine ) CLASS ImportacionUVERisi
    
    msgalert( hb_valtoexp( hUVELine ), "getDataVendedor" )
 
-Return ( .f. )
+RETURN ( .f. )
 
 //---------------------------------------------------------------------------//
 

@@ -204,7 +204,7 @@ RETURN ( ::AddButton( "Eliminar", "Del16", {|| ::getController():Delete( ::getBr
 
 METHOD AddSelectButton()    
 
-RETURN ( ::AddButton( "Seleccionar [Enter]", "Select16", {|| msgalert( "Seleccionar" ) }, K_ENTER ) )
+RETURN ( ::AddButton( "Seleccionar [Enter]", "Select16", {|| ::oSender:Select() }, K_ENTER ) )
 
 METHOD AddSalirButton()
 

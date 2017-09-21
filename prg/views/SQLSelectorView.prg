@@ -13,9 +13,13 @@ CLASS SQLSelectorView FROM SQLBrowseableView
    DATA oComboBoxOrder
    DATA cComboBoxOrder
 
+   DATA hSelectedBuffer
+
    METHOD New( oController )
 
    METHOD Activate()
+
+   METHOD Select()
 
    METHOD End()
 
@@ -24,6 +28,8 @@ CLASS SQLSelectorView FROM SQLBrowseableView
    METHOD getGetSearch()                  INLINE ( ::oGetSearch )
    METHOD getComboBoxOrder()              INLINE ( ::oComboBoxOrder )
    METHOD getWindow()                     INLINE ( ::oDialog )
+
+   METHOD getSelectedBuffer()             INLINE ( ::hSelectedBuffer )
 
 ENDCLASS
 
@@ -62,17 +68,35 @@ METHOD Activate()
 
    ::oSQLBrowseView:ActivateDialog( 130 )
 
-   ::oDialog:bStart        := {|| ::Start() }
+   // Eventos------------------------------------------------------------------
+
+   ::oDialog:bStart              := {|| ::Start() }
+
+   ::getComboBoxOrder():bChange  := {|| ::onChangeCombo() } 
+
+   ::getGetSearch():bChange      := {|| ::onChangeSearch() } 
 
    ACTIVATE DIALOG ::oDialog CENTER
 
-RETURN ( Self )
+RETURN ( ::getSelectedBuffer() )
 
 //----------------------------------------------------------------------------//
 
 METHOD End()
 
+   ::hSelectedBuffer    := nil      
+
    ::oDialog:End()
+
+RETURN ( nil )
+
+//----------------------------------------------------------------------------//
+
+METHOD Select()
+
+   ::hSelectedBuffer    := ::getModel():loadCurrentBuffer()
+
+   ::oDialog:end( IDOK )
 
 RETURN ( nil )
 
@@ -83,6 +107,12 @@ METHOD Start()
    ::oMenuTreeView:Default()
 
    ::oMenuTreeView:AddSelectorButtons()
+
+   msgalert( ::getModelHeaderFromColumnOrder(), "::getModelHeaderFromColumnOrder()" )
+
+   ::getComboBoxOrder():Set( ::getModelHeaderFromColumnOrder() )
+
+   ::getBrowse():selectColumnOrderByHeader( ::getModelHeaderFromColumnOrder() )
 
 RETURN ( Self )
 

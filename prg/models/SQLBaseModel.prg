@@ -100,7 +100,7 @@ CLASS SQLBaseModel
    METHOD freeStatement()                          INLINE   ( if( !empty( ::oStatement ), ( ::oStatement:free(), ::oStatement := nil ), ) )
 
    METHOD getRowSetRecno()                         INLINE   ( ::getRowSet():recno() )
-   METHOD getRowGoTo( nRecno )                     INLINE   ( ::getRowSet():goto( nRecno ) )
+   METHOD setRowSetRecno( nRecno )                 INLINE   ( ::getRowSet():goto( nRecno ) )
    METHOD getRowSetFieldGet( cColumn )             INLINE   ( ::getRowSet():fieldget( cColumn ) )
    METHOD getRowSetFieldValueByName( cColumn )     INLINE   ( ::getRowSet():getValueByName( cColumn ) )
 
