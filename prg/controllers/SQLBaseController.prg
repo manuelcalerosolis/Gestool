@@ -56,7 +56,8 @@ CLASS SQLBaseController
    
    METHOD getContainer( cController )                 INLINE ( ::ControllerContainer:get( cController ) )
 
-   METHOD validate( cColumn )                         INLINE ( if( !empty( ::oValidator ), ::oValidator:validate( cColumn ), ) )
+   METHOD Validate( cColumn )                         INLINE ( if( !empty( ::oValidator ), ::oValidator:Validate( cColumn ), ) )
+   METHOD Assert( cColumn, uValue )                   INLINE ( if( !empty( ::oValidator ), ::oValidator:Assert( cColumn, uValue ), ) )
 
    // Facades -----------------------------------------------------------------
 

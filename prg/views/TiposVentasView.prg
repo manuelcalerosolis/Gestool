@@ -6,15 +6,16 @@
 
 CLASS TiposVentasView FROM SQLBaseView
 
-   DATA     oEditControl
+   DATA oEditControl
 
-   DATA     cEditControl 
+   DATA cEditControl 
 
-   METHOD   New()
+   METHOD New()
  
-   METHOD   Dialog()
+   METHOD Dialog()
    
-   METHOD   createEditControl( hControl )
+   METHOD createEditControl( hControl )
+      METHOD selectorEditControl()
 
 END CLASS
 
@@ -74,57 +75,53 @@ RETURN ( oDlg:nResult == IDOK )
 METHOD createEditControl( hControl )
 
    local oError
-   local oBlock
 
-   if !hhaskey( hControl, "idGet" )
+   if !hhaskey( hControl, "idGet" )    .or.  ;
+      !hhaskey( hControl, "idSay" )    .or.  ;
+      !hhaskey( hControl, "idText" )   .or.  ;
+      !hhaskey( hControl, "dialog" )   .or.  ;
+      !hhaskey( hControl, "value" )    .or.  ; 
+      !hhaskey( hControl, "when" )
       RETURN ( Self )
    end if 
 
-   if !hhaskey( hControl, "idSay" )
-      RETURN ( Self )
-   end if 
+   try 
 
-   if !hhaskey( hControl, "idText" )
-      RETURN ( Self )
-   end if 
+      ::cEditControl := ::getModel():getCodigoFromId( hGet( hControl, "value" ) ) 
 
-   if !hhaskey( hControl, "dialog" )
-      RETURN ( Self )
-   end if 
+      REDEFINE GET   ::oEditControl ;
+         VAR         ::cEditControl ;
+         BITMAP      "Lupa" ;
+         ID          ( hGet( hControl, "idGet" ) ) ;
+         IDSAY       ( hGet( hControl, "idSay" ) ) ;
+         IDTEXT      ( hGet( hControl, "idText" ) ) ;
+         OF          ( hGet( hControl, "dialog" ) )
 
-   if !hhaskey( hControl, "value" )
-      RETURN ( Self )
-   end if 
+      ::oEditControl:bWhen    := hGet( hControl, "when" ) 
+      ::oEditControl:bHelp    := {|| ::selectorEditControl() }
+      ::oEditControl:bValid   := {|| ::oController:assert( "codigo", ::cEditControl ) }
 
-   if !hhaskey( hControl, "when" )
-      RETURN ( Self )
-   end if 
-
-   oBlock         := ErrorBlock( { | oError | ApoloBreak( oError ) } )
-   BEGIN SEQUENCE
-
-   ::cEditControl := ::getModel():getCodigoFromId( hGet( hControl, "value" ) ) 
-
-   REDEFINE GET   ::oEditControl ;
-      VAR         ::cEditControl ;
-      BITMAP      "Lupa" ;
-      ID          ( hGet( hControl, "idGet" ) ) ;
-      IDSAY       ( hGet( hControl, "idSay" ) ) ;
-      IDTEXT      ( hGet( hControl, "idText" ) ) ;
-      OF          ( hGet( hControl, "dialog" ) )
-
-   ::oEditControl:bWhen    := hGet( hControl, "when" ) 
-   ::oEditControl:bHelp    := {|| ::oController:activateSelectorView() }
-   ::oEditControl:bValid   := {|| ::oController:isValidCodigo( ::oEditControl ) }
-
-   RECOVER USING oError
+   catch oError
 
       msgStop( "Imposible crear el control de tipos de ventas." + CRLF + ErrorMessage( oError ) )
 
-   END SEQUENCE
-   ErrorBlock( oBlock )
+   end
 
 RETURN ( Self )
 
 //---------------------------------------------------------------------------//
+
+METHOD selectorEditControl()
+
+   local hBuffer  := ::oController:activateSelectorView()
+
+   if !empty( hBuffer )
+      ::oEditControl:cText( hget( hBuffer, "codigo" ) )
+      ::oEditControl:oHelpText:cText( hget( hBuffer, "nombre" ) )
+   end if 
+
+RETURN ( Self )
+
+//---------------------------------------------------------------------------//
+
 

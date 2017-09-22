@@ -39,6 +39,12 @@ METHOD New( oController )
 
    ::oController           := oController
 
+RETURN ( Self )
+
+//----------------------------------------------------------------------------//
+
+METHOD Activate()
+
    DEFINE DIALOG ::oDialog RESOURCE "SELECTOR_VIEW"
 
       REDEFINE GET         ::oGetSearch;
@@ -57,12 +63,6 @@ METHOD New( oController )
       ::oMenuTreeView      := MenuTreeView():New( Self )
 
       ::oSQLBrowseView     := SQLBrowseView():New( Self )
-
-RETURN ( Self )
-
-//----------------------------------------------------------------------------//
-
-METHOD Activate()
 
    ::oMenuTreeView:ActivateDialog( 120 )
 
