@@ -115,9 +115,10 @@ CLASS SQLBaseModel
    METHOD   insertBuffer()                         INLINE   ( ::getDatabase():Query( ::getInsertSentence() ), ::buildRowSet() )
    METHOD   deleteSelection( aRecno )              INLINE   ( ::getDatabase():Query( ::getdeleteSentence( aRecno ) ), ::buildRowSet() )
 
-   METHOD   loadBlankBuffer()
-   METHOD   defaultCurrentBuffer()
-   METHOD   loadCurrentBuffer()
+   METHOD loadBlankBuffer()
+   METHOD loadDuplicateBuffer() 
+   METHOD loadCurrentBuffer()
+   METHOD defaultCurrentBuffer()
 
    METHOD   serializeColumns()
 
@@ -314,10 +315,10 @@ METHOD getImportSentence( cPath )
 
       cValues        += "( "
 
-         hEval( ::hColumns, {| k, hash | if ( k != ::cColumnKey,;
-                                             if ( k == "empresa",;
-                                                   cValues += toSQLString( cCodEmp() ) + ", ",;
-                                                   cValues += toSQLString( ( dbf )->( fieldget( fieldpos( hget( hash, "field" ) ) ) ) ) + ", "), ) } )
+      hEval( ::hColumns, {| k, hash | if ( k != ::cColumnKey,;
+                                          if ( k == "empresa",;
+                                                cValues += toSQLString( cCodEmp() ) + ", ",;
+                                                cValues += toSQLString( ( dbf )->( fieldget( fieldpos( hget( hash, "field" ) ) ) ) ) + ", "), ) } )
       
       cValues        := chgAtEnd( cValues, ' ), ', 2 )
 
@@ -559,6 +560,22 @@ METHOD loadCurrentBuffer()
    ::hBuffer            := {=>}
 
    hEval( ::hColumns, {|k| hset( ::hBuffer, k, ::oRowSet:fieldget( k ) ) } )
+
+RETURN ( ::hBuffer )
+
+//---------------------------------------------------------------------------//
+
+METHOD loadDuplicateBuffer()                
+
+   local h
+
+   if empty( ::oRowSet )
+      RETURN ( .f. )
+   end if 
+
+   ::hBuffer            := {=>}
+
+   hEval( ::hColumns, {|k| if( k != ::cColumnKey, hset( ::hBuffer, k, ::oRowSet:fieldget( k ) ), ) } )
 
 RETURN ( ::hBuffer )
 

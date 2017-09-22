@@ -30,7 +30,7 @@ METHOD New()
    ::hColumns                   	:= {  "id"     => {  "create"    => "INTEGER PRIMARY KEY AUTO_INCREMENT"   ,;
                                                       "text"		=> "Identificador"                        ,;
    															      "header"    => "Id"                                   ,;
-                                                      "visible"   => .f.                                    ,;
+                                                      "visible"   => .t.                                    ,;
                                                       "width"     => 40}                                    ,;
                                        "codigo" => {  "create"    => "VARCHAR( 2 )"                         ,;
                                                       "text"      => "Código"                               ,; 

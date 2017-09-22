@@ -41,14 +41,14 @@ METHOD Dialog()
       VAR         ::getModel():hBuffer[ "codigo" ] ;
       ID          100 ;
       WHEN        ( !::oController:isZoomMode() ) ;
-      VALID       ( ::oController:validCodigo( oGetCodigo ) ) ;
+      VALID       ( ::oController:validate( "codigo" ) ) ;
       OF          oDlg
 
    REDEFINE GET   oGetNombre ;
       VAR         ::getModel():hBuffer[ "nombre" ] ;
       ID          110 ;
       WHEN        ( !::oController:isZoomMode() ) ;
-      VALID       ( ::oController:validNombre( oGetNombre ) ) ;
+      VALID       ( ::oController:validate( "nombre" ) ) ;
       OF          oDlg
 
    REDEFINE BUTTON oBtnOk ;
@@ -100,7 +100,7 @@ METHOD createEditControl( hControl )
       RETURN ( Self )
    end if 
 
-   oBlock            := ErrorBlock( { | oError | ApoloBreak( oError ) } )
+   oBlock         := ErrorBlock( { | oError | ApoloBreak( oError ) } )
    BEGIN SEQUENCE
 
    ::cEditControl := ::getModel():getCodigoFromId( hGet( hControl, "value" ) ) 
@@ -114,7 +114,7 @@ METHOD createEditControl( hControl )
       OF          ( hGet( hControl, "dialog" ) )
 
    ::oEditControl:bWhen    := hGet( hControl, "when" ) 
-   ::oEditControl:bHelp    := {|| ::oController:assignBrowse( ::oEditControl ) }
+   ::oEditControl:bHelp    := {|| ::oController:activateSelectorView() }
    ::oEditControl:bValid   := {|| ::oController:isValidCodigo( ::oEditControl ) }
 
    RECOVER USING oError

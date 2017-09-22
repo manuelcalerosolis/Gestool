@@ -24,7 +24,6 @@ CLASS SQLBaseController
 
    DATA nLevel
 
-
    DATA nMode                                         AS NUMERIC
 
    DATA bOnPreAppend
@@ -46,12 +45,14 @@ CLASS SQLBaseController
    METHOD getModelColumns()                           INLINE ( if( !empty( ::oModel ) .and. !empty( ::oModel:hColumns ), ( ::oModel:hColumns ), ) )
    METHOD getModelExtraColumns()                      INLINE ( if( !empty( ::oModel ) .and. !empty( ::oModel:hExtraColumns ), ( ::oModel:hExtraColumns ), ) )
    
-   METHOD getModelBuffer( cColumn )                   INLINE ( if( !empty( ::oModel ) .and. !empty( ::oModel:hBuffer ), ( hget( ::oModel:hBuffer, cColumn ) ), ) )
+   METHOD getModelBuffer( cColumn )                   
    METHOD getModelBufferColumnKey()                   INLINE ( ::getModelBuffer( ( ::oModel:cColumnKey ) ) )
 
    METHOD getModelSelectValue( cSentence )            INLINE ( if( !empty( ::oModel ), ::oModel:SelectValue( cSentence ), ) )
 
    METHOD endModel()                                  INLINE ( if( !empty( ::oModel ), ::oModel:end(), ) )
+
+   METHOD getDialogView()                             INLINE ( ::oDialogView )
    
    METHOD getContainer( cController )                 INLINE ( ::ControllerContainer:get( cController ) )
 
@@ -339,7 +340,7 @@ METHOD Duplicate()
 
    nRecno         := ::oModel:getRowSetRecno()
 
-   ::oModel:loadCurrentBuffer()
+   ::oModel:loadDuplicateBuffer()
 
    ::initDuplicateMode()
 
@@ -439,7 +440,7 @@ METHOD Delete( aSelected )
       cNumbersOfDeletes := "el registro en curso?"
    end if
 
-   if oUser():lNotConfirmDelete() .or. msgNoYes( "ï¿½Desea eliminar " + cNumbersOfDeletes, "Confirme eliminaciï¿½n" )
+   if oUser():lNotConfirmDelete() .or. msgNoYes( "¿Desea eliminar " + cNumbersOfDeletes, "Confirme eliminación" )
       
       ::endDeleteModePreDelete()
 
@@ -450,6 +451,24 @@ METHOD Delete( aSelected )
    end if 
 
 RETURN ( Self )
+
+//----------------------------------------------------------------------------//
+
+METHOD getModelBuffer( cColumn )
+
+   if empty( ::oModel )
+      RETURN ( nil )
+   end if 
+
+   if empty( ::oModel:hBuffer )
+      RETURN ( nil )
+   end if 
+
+   if !hhaskey( ::oModel:hBuffer, cColumn )
+      RETURN ( nil )
+   end if  
+
+RETURN ( hget( ::oModel:hBuffer, cColumn ) )
 
 //----------------------------------------------------------------------------//
 

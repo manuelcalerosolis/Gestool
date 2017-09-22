@@ -1567,7 +1567,7 @@ FUNCTION CreateAcceso( oWnd )
    oItem:oGroup         := oGrupo
    oItem:cPrompt        := "Tipos de ventas"
    oItem:cMessage       := "Acceso a los tipos de ventas"
-   oItem:bAction        := {|| TiposVentasController():New():activateShell() }
+   oItem:bAction        := {|| TiposVentasController():New():ActivateNavigatorView() }
    oItem:cId            := "01043"
    oItem:cBmp           := "gc_wallet_16"
    oItem:cBmpBig        := "gc_wallet_32"

@@ -17,6 +17,8 @@ CLASS SQLBaseValidator
 
    DATA cValidateMethod  
    DATA cValidateMessage   
+
+   DATA lDebugMode                     INIT .f.
   
    METHOD New()
    METHOD End()
@@ -107,6 +109,10 @@ RETURN ( lValidate )
 
 METHOD Required()
 
+   if ::lDebugMode
+      msgInfo( !empty( ::uColumnBuffer ), "Required validator" )
+   end if 
+
 RETURN ( !empty( ::uColumnBuffer ) )
 
 //---------------------------------------------------------------------------//
@@ -123,6 +129,10 @@ METHOD Unique()
    id                := ::oController:getModelBufferColumnKey()
    if !empty(id)
       cSQLSentence   += " AND " + ::oController:getModelColumnKey() + " <> " + toSQLString( id )
+   end if 
+
+   if ::lDebugMode
+      msgInfo( cSQLSentence, "Unique validator" )
    end if 
 
    nCount            := ::oDatabase:SelectValue( cSQLSentence )
