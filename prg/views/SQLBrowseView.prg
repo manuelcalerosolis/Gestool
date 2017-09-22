@@ -1,11 +1,6 @@
 #include "FiveWin.Ch"
 #include "Factu.Ch"
 
-#define dfnTreeViewWidth      250
-#define dfnSplitterWidth      1
-#define dfnSplitterHeight     76
-#define dfnColorTop           rgb( 238, 110, 115 )
-
 //------------------------------------------------------------------------//
 
 CLASS SQLBrowseView
@@ -42,6 +37,8 @@ CLASS SQLBrowseView
 
    METHOD CreateFromCode()                INLINE ( ::oBrowse:CreateFromCode() )
    METHOD CreateFromResource( id )        INLINE ( ::oBrowse:CreateFromResource( id ) )
+
+   METHOD setLDblClick( bLDblClick )      INLINE ( ::oBrowse:bLDblClick := bLDblClick )
 
    METHOD onKeyChar( nKey )
 

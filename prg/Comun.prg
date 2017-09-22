@@ -1617,7 +1617,7 @@ FUNCTION CreateAcceso( oWnd )
    oItem:oGroup         := oGrupo
    oItem:cPrompt        := "Tipos de impresoras"
    oItem:cMessage       := "Acceso a los tipos de impresoras"
-   oItem:bAction        := {|| TiposImpresorasController():New():activateShell() }
+   oItem:bAction        := {|| TiposImpresorasController():New():ActivateNavigatorView() }
    oItem:cId            := "01115"
    oItem:cBmp           := "gc_printer2_16"
    oItem:cBmpBig        := "gc_printer2_32"

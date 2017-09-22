@@ -135,7 +135,7 @@ CLASS SQLBaseController
    DATA hFastKey                                      INIT {=>}
 
    METHOD addFastKey( uKey )
-   METHOD onKeyChar( nKey )                           
+   METHOD onKeyChar( nKey )   
 
    // Events-------------------------------------------------------------------
 
@@ -150,6 +150,10 @@ END CLASS
 METHOD New()
 
    ::ControllerContainer                              := ControllerContainer():New()
+
+   ::oNavigatorView                                   := SQLNavigatorView():New( self )
+
+   ::oSelectorView                                    := SQLSelectorView():New( self )
 
 RETURN ( self )
 

@@ -381,8 +381,6 @@ METHOD buildRowSet( cSentence )
 
    default cSentence    := ::getSelectSentence()
 
-   msgalert( cSentence, "cSentence" )
-
    try
 
       ::freeStatement()

@@ -4,7 +4,8 @@
 #define dfnTreeViewWidth      250
 #define dfnSplitterWidth      1
 #define dfnSplitterHeight     76
-#define dfnColorTop           rgb( 238, 110, 115 )
+#define dfnBackColorTop       rgb( 255, 255, 255 )
+#define dfnTextColorTop       rgb( 0, 0, 0 )
 
 //------------------------------------------------------------------------//
 
@@ -144,7 +145,7 @@ RETURN ( nil )
 
 METHOD CreateTopWebBar()
 
-   ::oTopWebBar   := TWebBar():New( 0, dfnTreeViewWidth, ::aRect[ 4 ] - dfnTreeViewWidth, dfnSplitterHeight,,,, rgb( 255, 255, 255 ), dfnColorTop, , , , , , ::oMdiChild )
+   ::oTopWebBar   := TWebBar():New( 0, dfnTreeViewWidth, ::aRect[ 4 ] - dfnTreeViewWidth, dfnSplitterHeight,,,, dfnTextColorTop, dfnBackColorTop, , , , , , ::oMdiChild )
    
    ::oTopWebBar:Say( 0, dfnSplitterWidth + 10, ::oController:cTitle ) 
 

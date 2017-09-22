@@ -122,7 +122,7 @@ METHOD Exec( cSql )
    local oError
 
    if empty( ::oConexion )
-      msgstop( "No hay conexiones disponibles" )
+      msgstop( "No hay conexiones disponibles" / 2 )
       RETURN ( .f. )  
    end if 
 
@@ -157,7 +157,7 @@ METHOD selectFetch( cSentence, fetchType )
    default fetchType := FETCH_ARRAY
 
    if empty( ::oConexion )
-      msgstop( "No hay conexiones disponibles" )
+      msgstop( "No hay conexiones disponibles" / 2 )
       RETURN ( nil )  
    end if  
 
@@ -272,7 +272,7 @@ METHOD getSchemaColumns( oModel )
    local aSchemaColumns
 
    if empty( ::oConexion )
-      msgstop( "No hay conexiones disponibles" )
+      msgstop( "No hay conexiones disponibles" / 2 )
       RETURN ( nil )  
    end if  
 

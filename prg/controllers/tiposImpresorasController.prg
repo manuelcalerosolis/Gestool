@@ -26,10 +26,6 @@ METHOD New()
 
    ::oDialogView           := TiposImpresorasView():New( self )
 
-   ::oNavigatorView        := SQLNavigatorView():New( self )
-
-   ::oSelectorView         := SQLSelectorView():New( self )
-
    ::oValidator            := TiposImpresorasValidator():New( self )
 
    ::Super:New()

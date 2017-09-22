@@ -9726,7 +9726,7 @@ METHOD mailEliminarLinea()
 
    local hMail          := {=>}
    local cMensajeMail   := ""
-   local cDireccionMail := ConfiguracionEmpresasModel():getValue( 'mail_notificaciones' )
+   local cDireccionMail := ConfiguracionEmpresasRepository():getValue( 'mail_notificaciones' )
 
    if empty( cDireccionMail )
       Return ( Self )

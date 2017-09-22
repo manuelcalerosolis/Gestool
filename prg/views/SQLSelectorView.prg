@@ -70,6 +70,8 @@ METHOD Activate()
 
    // Eventos------------------------------------------------------------------
 
+   ::oSQLBrowseView:setLDblClick( {|| ::Select() } ) 
+
    ::oDialog:bStart              := {|| ::Start() }
 
    ::getComboBoxOrder():bChange  := {|| ::onChangeCombo() } 
@@ -107,8 +109,6 @@ METHOD Start()
    ::oMenuTreeView:Default()
 
    ::oMenuTreeView:AddSelectorButtons()
-
-   msgalert( ::getModelHeaderFromColumnOrder(), "::getModelHeaderFromColumnOrder()" )
 
    ::getComboBoxOrder():Set( ::getModelHeaderFromColumnOrder() )
 
