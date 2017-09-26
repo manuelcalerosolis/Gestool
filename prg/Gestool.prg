@@ -92,11 +92,10 @@ FUNCTION Main( paramsMain, paramsSecond, paramsThird )
          
          getSQLDatabase():addModels()
       
-         getSQLDatabase():checkModels()
-      
+    
       else 
          
-         msgStop( "No se ha podido conectar a la base de datos MySQL" )
+         msgStop( "No se ha podido conectar a la base de datos MySQL" + CRLF + getSQLDatabase():sayConexionInfo() )
 
          RETURN ( nil )
 

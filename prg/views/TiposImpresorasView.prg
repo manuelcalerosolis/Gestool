@@ -27,7 +27,7 @@ METHOD Dialog()
    local oBtnOk
    local oGetNombre
 
-   DEFINE DIALOG oDlg RESOURCE "TIPO_IMPRESORA" TITLE ::lblTitle() + "tipo de impresora"
+   DEFINE DIALOG oDlg RESOURCE "TIPO_GENERAL" TITLE ::lblTitle() + "tipo de impresora"
 
    REDEFINE GET   oGetNombre ;
       VAR         ::oController:oModel:hBuffer[ "nombre" ] ;

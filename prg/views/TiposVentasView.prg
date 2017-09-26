@@ -16,6 +16,7 @@ CLASS TiposVentasView FROM SQLBaseView
    
    METHOD createEditControl( hControl )
       METHOD selectorEditControl()
+      METHOD assertEditControl()
 
 END CLASS
 
@@ -36,18 +37,11 @@ METHOD Dialog()
    local oGetCodigo
    local oGetNombre
 
-   DEFINE DIALOG oDlg RESOURCE "TIPO_VENTA" TITLE ::lblTitle() + "tipo de venta"
-
-   REDEFINE GET   oGetCodigo ;
-      VAR         ::getModel():hBuffer[ "codigo" ] ;
-      ID          100 ;
-      WHEN        ( !::oController:isZoomMode() ) ;
-      VALID       ( ::oController:validate( "codigo" ) ) ;
-      OF          oDlg
+   DEFINE DIALOG oDlg RESOURCE "TIPO_GENERAL" TITLE ::lblTitle() + "tipo de venta"
 
    REDEFINE GET   oGetNombre ;
       VAR         ::getModel():hBuffer[ "nombre" ] ;
-      ID          110 ;
+      ID          100 ;
       WHEN        ( !::oController:isZoomMode() ) ;
       VALID       ( ::oController:validate( "nombre" ) ) ;
       OF          oDlg
@@ -72,7 +66,7 @@ RETURN ( oDlg:nResult == IDOK )
 
 //---------------------------------------------------------------------------//
 
-METHOD createEditControl( hControl )
+METHOD createEditControl( hControl, uValue )
 
    local oError
 
@@ -80,17 +74,18 @@ METHOD createEditControl( hControl )
       !hhaskey( hControl, "idSay" )    .or.  ;
       !hhaskey( hControl, "idText" )   .or.  ;
       !hhaskey( hControl, "dialog" )   .or.  ;
-      !hhaskey( hControl, "value" )    .or.  ; 
       !hhaskey( hControl, "when" )
+      RETURN ( Self )
+   end if 
+
+   if hb_isnil( uValue )
       RETURN ( Self )
    end if 
 
    try 
 
-      ::cEditControl := ::getModel():getCodigoFromId( hGet( hControl, "value" ) ) 
-
       REDEFINE GET   ::oEditControl ;
-         VAR         ::cEditControl ;
+         VAR         uValue ;
          BITMAP      "Lupa" ;
          ID          ( hGet( hControl, "idGet" ) ) ;
          IDSAY       ( hGet( hControl, "idSay" ) ) ;
@@ -99,7 +94,10 @@ METHOD createEditControl( hControl )
 
       ::oEditControl:bWhen    := hGet( hControl, "when" ) 
       ::oEditControl:bHelp    := {|| ::selectorEditControl() }
-      ::oEditControl:bValid   := {|| ::oController:assert( "codigo", ::cEditControl ) }
+      ::oEditControl:bValid   := {|| ::assertEditControl() }
+
+      ::oEditControl:oHelpText:cText( ::getController():getRepository():getNombreWhereId( uValue ) )
+
 
    catch oError
 
@@ -113,14 +111,27 @@ RETURN ( Self )
 
 METHOD selectorEditControl()
 
-   local hBuffer  := ::oController:activateSelectorView()
+   local hBuffer     := ::oController:activateSelectorView()
 
    if !empty( hBuffer )
-      ::oEditControl:cText( hget( hBuffer, "codigo" ) )
+      ::oEditControl:cText( hget( hBuffer, "id" ) )
       ::oEditControl:oHelpText:cText( hget( hBuffer, "nombre" ) )
    end if 
 
 RETURN ( Self )
+
+//---------------------------------------------------------------------------//
+
+METHOD assertEditControl()
+
+   local uValue      := ::oEditControl:VarGet()
+   local lAssert     := ::oController:assert( "id", uValue )
+
+   if lAssert 
+      ::oEditControl:oHelpText:cText( ::getController():getRepository():getNombreWhereId( uValue ) )
+   end if 
+
+RETURN ( lAssert )
 
 //---------------------------------------------------------------------------//
 

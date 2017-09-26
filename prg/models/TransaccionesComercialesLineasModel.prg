@@ -5,12 +5,12 @@
 
 CLASS TransaccionesComercialesLineasModel FROM BaseModel
 
-   METHOD getTableName()                           VIRTUAL
+   METHOD getTableName()                                                VIRTUAL
 
-   METHOD getExtraWhere()                          INLINE ( "AND nCtlStk < 2" )
+   METHOD getExtraWhere()                                               INLINE ( "AND nCtlStk < 2" )
 
-   METHOD getFechaFieldName()                      INLINE ( "dFecAlb" )
-   METHOD getHoraFieldName()                       INLINE ( "tFecAlb" )
+   METHOD getFechaFieldName()                                           INLINE ( "dFecAlb" )
+   METHOD getHoraFieldName()                                            INLINE ( "tFecAlb" )
 
    METHOD getLineasAgrupadas()
    
@@ -21,6 +21,20 @@ CLASS TransaccionesComercialesLineasModel FROM BaseModel
    METHOD getSQLSentenceTotalUnidadesStock()
    
    METHOD totalUnidadesStock()
+
+   METHOD TranslateCodigoTiposVentaToId( cTable )
+
+   METHOD TranslateSATClientesLineasCodigoTiposVentaToId()              INLINE ( ::TranslateCodigoTiposVentaToId( "SatCliL" ) )
+
+   METHOD TranslatePresupuestoClientesLineasCodigoTiposVentaToId()      INLINE ( ::TranslateCodigoTiposVentaToId( "PreCliL" ) )
+
+   METHOD TranslatePedidosClientesLineasCodigoTiposVentaToId()          INLINE ( ::TranslateCodigoTiposVentaToId( "PedCliL" ) )
+
+   METHOD TranslateAlbaranesClientesLineasCodigoTiposVentaToId()        INLINE ( ::TranslateCodigoTiposVentaToId( "AlbCliL" ) )
+
+   METHOD TranslateFacturasClientesLineasCodigoTiposVentaToId()         INLINE ( ::TranslateCodigoTiposVentaToId( "FacCliL" ) )
+
+   METHOD TranslateFacturasRectificativasLineasCodigoTiposVentaToId()   INLINE ( ::TranslateCodigoTiposVentaToId( "FacRecL" ) )
 
 END CLASS
 
@@ -134,3 +148,27 @@ RETURN ( 0 )
 
 //---------------------------------------------------------------------------//
 
+METHOD TranslateCodigoTiposVentaToId( cTable )
+
+   local cSentence
+   local hIdTipoVenta
+   local aIdTiposVentas    := TiposVentasRepository():getAll()
+
+   if empty( aIdTiposVentas )
+      RETURN ( Self )
+   end if 
+
+   for each hIdTipoVenta in aIdTiposVentas
+
+      cSentence            := "UPDATE " + ::getEmpresaTableName( cTable )                       + space( 1 ) + ;
+                                 "SET id_tipo_v = " + toSqlString( hIdTipoVenta[ "id" ] ) + "," + space( 1 ) + ;
+                                    "cTipMov = ''"                                              + space( 1 ) + ;
+                                 "WHERE cTipMov = " + toSqlString( hIdTipoVenta[ "codigo" ] )
+      
+      BaseModel():ExecuteSqlStatement( cSentence )
+
+   next 
+
+RETURN ( Self )
+
+//---------------------------------------------------------------------------//

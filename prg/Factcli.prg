@@ -5222,7 +5222,7 @@ STATIC FUNCTION EdtDet( aTmp, aGet, cFacCliL, oBrw, lTotLin, cCodArtEnt, nMode, 
          OF       fldGeneral
 
       /*
-      Tipo de moviminto
+      Tipo de movimiento
       -------------------------------------------------------------------------
       */
 
@@ -5233,8 +5233,13 @@ STATIC FUNCTION EdtDet( aTmp, aGet, cFacCliL, oBrw, lTotLin, cCodArtEnt, nMode, 
                                  "idText" => 291,;
                                  "idSay"  => 292,;
                                  "dialog" => fldGeneral,;
-                                 "when"   => {|| ( nMode != ZOOM_MODE .and. nMode != MULT_MODE .and. !lTotLin ) },;
-                                 "value"  => aTmp[ ( D():FacturasClientesLineas( nView ) )->( fieldpos( "id_tipo_v" ) ) ] } )
+                                 "when"   => {|| ( nMode != ZOOM_MODE .and. nMode != MULT_MODE .and. !lTotLin ) } },;
+                                 @aTmp[ ( D():FacturasClientesLineas( nView ) )->( fieldpos( "id_tipo_v" ) ) ] )
+
+      /*
+      Almacen
+      -------------------------------------------------------------------------
+      */
 
       REDEFINE GET aGet[ _CALMLIN ] VAR aTmp[ _CALMLIN ] ;
          ID       300 ;
@@ -13194,11 +13199,11 @@ STATIC FUNCTION SaveDeta( aTmp, aTmpFac, aGet, oBrw, oDlg, oFld, oSayPr1, oSayPr
 
    aTmp[ _CTIPCTR ]  := cTipoCtrCoste
    
-   aTmp[ ( D():FacturasClientesLineas( nView ) )->( fieldpos( "id_tipo_v" ) ) ]  := TiposVentasController():Instance():getIdFromEditControl()
+   msgalert( aTmp[ ( D():FacturasClientesLineas( nView ) )->( fieldpos( "id_tipo_v" ) ) ] )
 
    // fin de los script--------------------------------------------------------
 
-   aClo        := aClone( aTmp )
+   aClo              := aClone( aTmp )
 
    // Modo de edición multiple los cambios afectan a todos los registros seleccionados
 

@@ -31,11 +31,6 @@ CLASS SQLBaseView
    
    METHOD   lblTitle()                                INLINE ( if( hhaskey( ::hTextMode, ::oController:getMode() ), hget( ::hTextMode, ::oController:getMode() ), "" ) )
 
-   METHOD   AutoButtons()                             INLINE ( ::GeneralButtons(), ::EndButton() )
-      METHOD   GeneralButtons()
-      METHOD   insertAfterAppendButton()              VIRTUAL
-      METHOD   EndButton()
-
    METHOD   setBrowseState( cBrowseState )            INLINE ( ::cBrowseState := cBrowseState )
    METHOD   getBrowseState()                          INLINE ( ::cBrowseState )
 
@@ -46,80 +41,18 @@ CLASS SQLBaseView
 
    METHOD   saveHistoryOfBrowse()                     INLINE ( ::oController:saveHistory( "_browse", ::oBrowse ) )   
 
-   METHOD   getModel()                                INLINE ( ::oController:oModel )              
+   // Facades------------------------------------------------------------------
+
+   METHOD getModel()                                  INLINE ( ::oController:oModel )  
+   METHOD getController()                             INLINE ( ::oController )            
 
 END CLASS
 
 //---------------------------------------------------------------------------//
 
-METHOD New()
+METHOD New( oController )
 
-RETURN ( Self )
-
-//---------------------------------------------------------------------------//
-
-METHOD GeneralButtons()
-
-   DEFINE BTNSHELL RESOURCE "BUS" OF ::oShell ;
-      NOBORDER ;
-      ACTION   ( ::oShell:SearchSetFocus() ) ;
-      TOOLTIP  "(B)uscar" ;
-      HOTKEY   "B"
-
-   ::oShell:AddSeaBar()
-
-   DEFINE BTNSHELL RESOURCE "NEW" OF ::oShell ;
-      NOBORDER ;
-      ACTION   ( ::oController:Append() );
-      TOOLTIP  "(A)ñadir";
-      BEGIN GROUP;
-      HOTKEY   "A";
-      LEVEL    ACC_APPD
-
-   ::insertAfterAppendButton()
-
-   DEFINE BTNSHELL RESOURCE "DUP" OF ::oShell ;
-      NOBORDER ;
-      ACTION   ( ::oController:Duplicate() );
-      TOOLTIP  "(D)uplicar";
-      MRU ;
-      HOTKEY   "D";
-      LEVEL    ACC_APPD
-
-   DEFINE BTNSHELL RESOURCE "EDIT" OF ::oShell ;
-      NOBORDER ;
-      ACTION   ( ::oController:Edit() );
-      TOOLTIP  "(M)odificar";
-      HOTKEY   "M" ;
-      LEVEL    ACC_EDIT
-
-   DEFINE BTNSHELL RESOURCE "ZOOM" OF ::oShell ;
-      NOBORDER ;
-      ACTION   ( ::oController:Zoom() );
-      TOOLTIP  "(Z)oom";
-      MRU ;
-      HOTKEY   "Z";
-      LEVEL    ACC_ZOOM
-
-   DEFINE BTNSHELL RESOURCE "DEL" OF ::oShell ;
-      NOBORDER ;
-      ACTION   ( ::oController:Delete() );
-      TOOLTIP  "(E)liminar";
-      MRU ;
-      HOTKEY   "E";
-      LEVEL    ACC_DELE
-
-RETURN ( Self )
-
-//---------------------------------------------------------------------------//
-
-METHOD EndButton()
-
-   DEFINE BTNSHELL RESOURCE "END" GROUP OF ::oShell ;
-      NOBORDER ;
-      ACTION   ( ::oShell:end() ) ;
-      TOOLTIP  "(S)alir" ;
-      HOTKEY   "S"
+   ::oController  := oController
 
 RETURN ( Self )
 

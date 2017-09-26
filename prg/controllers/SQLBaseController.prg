@@ -54,6 +54,8 @@ CLASS SQLBaseController
 
    METHOD getDialogView()                             INLINE ( ::oDialogView )
    
+   METHOD getRepository()                             INLINE ( ::oRepository )
+
    METHOD getContainer( cController )                 INLINE ( ::ControllerContainer:get( cController ) )
 
    METHOD Validate( cColumn )                         INLINE ( if( !empty( ::oValidator ), ::oValidator:Validate( cColumn ), ) )

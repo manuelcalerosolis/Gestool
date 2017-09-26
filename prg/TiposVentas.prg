@@ -105,15 +105,15 @@ METHOD createEditControl( hControl )
    oBlock            := ErrorBlock( { | oError | ApoloBreak( oError ) } )
    BEGIN SEQUENCE
 
-   ::cEditControl := ::getModel():getCodigoFromId( hGet( hControl, "value" ) ) 
+   ::cEditControl    := ::getModel():getCodigoFromId( hGet( hControl, "value" ) ) 
 
-   REDEFINE GET   ::oEditControl ;
-      VAR         ::cEditControl ;
-      BITMAP      "Lupa" ;
-      ID          ( hGet( hControl, "idGet" ) ) ;
-      IDSAY       ( hGet( hControl, "idSay" ) ) ;
-      IDTEXT      ( hGet( hControl, "idText" ) ) ;
-      OF          ( hGet( hControl, "dialog" ) )
+   REDEFINE GET      ::oEditControl ;
+      VAR            ::cEditControl ;
+      BITMAP         "Lupa" ;
+      ID             ( hGet( hControl, "idGet" ) ) ;
+      IDSAY          ( hGet( hControl, "idSay" ) ) ;
+      IDTEXT         ( hGet( hControl, "idText" ) ) ;
+      OF             ( hGet( hControl, "dialog" ) )
 
    ::oEditControl:bWhen    := hGet( hControl, "when" ) 
    ::oEditControl:bHelp    := {|| ::oController:assignBrowse( ::oEditControl ) }

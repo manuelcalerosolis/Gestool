@@ -11,10 +11,14 @@ CLASS SQLBrowseView
 
    METHOD New( oSender )
 
+   METHOD Create()
+
    METHOD End()
 
    METHOD ActivateMDI()
    METHOD ActivateDialog()
+
+   // Facades------------------------------------------------------------------
 
    METHOD getBrowse()                     INLINE ( ::oBrowse )
 
@@ -27,7 +31,7 @@ CLASS SQLBrowseView
    METHOD getComboBoxOrder()              INLINE ( ::oSender:getComboBoxOrder() )
    METHOD getMenuTreeView()               INLINE ( ::oSender:getMenuTreeView() )
 
-   METHOD Create()
+   // Columns------------------------------------------------------------------
 
    METHOD setSize( nTop, nLeft, nRight, nBottom )
 
@@ -35,13 +39,18 @@ CLASS SQLBrowseView
 
    METHOD AddColumn( cColumn, hColumn )
 
+   // Browse methods-----------------------------------------------------------
+
    METHOD CreateFromCode()                INLINE ( ::oBrowse:CreateFromCode() )
    METHOD CreateFromResource( id )        INLINE ( ::oBrowse:CreateFromResource( id ) )
 
    METHOD setLDblClick( bLDblClick )      INLINE ( ::oBrowse:bLDblClick := bLDblClick )
 
-   METHOD onKeyChar( nKey )
+   METHOD Refresh()                       INLINE ( ::oBrowse:Refresh() )
 
+   // Events---------------------------------------------------------------------
+
+   METHOD onKeyChar( nKey )
    METHOD onClickHeader( oColumn )
 
 ENDCLASS

@@ -3864,12 +3864,13 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbfSatCliL, oBrw, lTotLin, cCodArtEnt, nMode
 
       TiposVentasController();
          :Instance();
+         :getDialogView();
          :createEditControl(  {  "idGet"  => 290,;
                                  "idText" => 291,;
                                  "idSay"  => 292,;
-                                 "dialog" => oFld:aDialogs[ 1 ],;
-                                 "when"   => {|| ( nMode != ZOOM_MODE .and. nMode != MULT_MODE .and. !lTotLin ) },;
-                                 "value"  => aTmp[ ( D():SatClientesLineas( nView ) )->( fieldpos( "id_tipo_v" ) ) ] } )
+                                 "dialog" => oFld:aDialogs[1],;
+                                 "when"   => {|| ( nMode != ZOOM_MODE .and. nMode != MULT_MODE .and. !lTotLin ) } },;
+                                 @aTmp[ ( D():SatClientesLineas( nView ) )->( fieldpos( "id_tipo_v" ) ) ] )
 
       /*
       Tipo de articulo---------------------------------------------------------
@@ -4569,7 +4570,6 @@ STATIC FUNCTION SaveDeta( aTmp, aTmpSat, aGet, oDlg2, oBrw, bmpImage, nMode, oSt
    nRec                 := ( dbfTmpLin )->( RecNo() )
 
    aTmp[ _NREQ ]        := nPReq( dbfIva, aTmp[ _NIVA ] )
-   aTmp[ ( D():SatClientesLineas( nView ) )->( fieldpos( "id_tipo_v" ) ) ]    := TiposVentasController():Instance():getIdFromEditControl()
 
    aClo                 := aClone( aTmp )
 

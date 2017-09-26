@@ -57,6 +57,11 @@ CLASS SQLDatabase
    METHOD checkModel( oModel )   
    METHOD getSchemaColumns()
 
+   METHOD sayConexionInfo()               INLINE ( "Database : " + ::cDatabaseMySQL + CRLF + ;
+                                                   "IP : " + ::cIpMySQL             + CRLF + ;
+                                                   "User : " + ::cUserMySQL         + CRLF + ;
+                                                   "Password : " + ::cPasswordMySQL )
+
 ENDCLASS
 
 //----------------------------------------------------------------------------//
