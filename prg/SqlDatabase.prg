@@ -73,13 +73,14 @@ METHOD New()
 
    ::cDatabaseSQLite          := ::cPathDatabaseSQLite + "Gestool.db"
 
-#ifndef __TABLET__ 
+   if ( "TABLET" $ appParamsMain() )
 
-   ::oConexion                := THDO():new( "sqlite" )
+      ::oConexion             := THDO():new( "sqlite" )
    
-   ::oConexion:setAttribute( ATTR_ERRMODE, .t. )
+      ::oConexion:setAttribute( ATTR_ERRMODE, .t. )
+      
 
-#endif
+   endif
 
 Return ( Self )
 

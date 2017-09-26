@@ -84,11 +84,11 @@ METHOD getSQLSentenceTotalUnidadesStock( cCodigoArticulo, dConsolidacion, tConso
                      "WHERE cCbaTil = " + quoted( cCodigoArticulo ) + " "
    
    if !empty( dConsolidacion )                     
+      if !empty( tConsolidacion )                     
+         cSql  +=    "AND CAST( dFecTik AS SQL_CHAR ) + tFecTik >= " + quoted( dateToSQLString( dConsolidacion ) + tConsolidacion ) + " "
+      else
          cSql  +=    "AND CAST( dFecTik AS SQL_CHAR ) >= " + quoted( dateToSQLString( dConsolidacion ) ) + " "
-   end if 
-
-   if !empty( tConsolidacion )                     
-         cSql  +=    "AND tFecTik >= " + quoted( tConsolidacion ) + " "
+      end if 
    end if 
 
    if !empty( cCodigoAlmacen )                     

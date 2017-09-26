@@ -19,7 +19,7 @@ CLASS EtiquetasModel FROM SQLBaseModel
 
    METHOD   deleteSelection( aRecno )              INLINE   ( getSQLDatabase():Query( ::getdeleteSentence( aRecno ) ), ::updateAfterDelete( aRecno ), ::buildRowSet() )
 
-   METHOD   insertChildBuffer()                    INLINE   ( getSQLDatabase():Query( ::getInsertSentence() ), ::buildRowSetWithRecno() )
+   METHOD   insertChildBuffer()                    INLINE   ( getSQLDatabase():Query( ::getInsertSentence() ), ::buildRowSetAndFind() )
 
    METHOD   makeParent()
 
@@ -41,11 +41,9 @@ END CLASS
 
 METHOD New()
 
-   ::Super:New()
-
    ::cDbfTableName               := ""
 
-   ::hColumns                    := {  "id"        => {  "create"    => "INTEGER PRIMARY KEY AUTOINCREMENT"             ,;
+   ::hColumns                    := {  "id"        => {  "create"    => "INTEGER PRIMARY KEY AUTO_INCREMENT"            ,;
                                                          "text"		=> "Identificador"                                 ,;
                                                          "header"    => "Id"                                            ,;
                                                          "visible"   => .f.                                             ,;

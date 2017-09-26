@@ -22,7 +22,7 @@ METHOD New()
 
 	::cDbfTableName				:=	"Pro"
 
-	::hColumns						:=	{	"id"			=>	{	"create"		=>	"INTEGER PRIMARY KEY AUTOINCREMENT"			,;
+	::hColumns						:=	{	"id"			=>	{	"create"		=>	"INTEGER PRIMARY KEY AUTO_INCREMENT"		,;
 																		"text"		=>	"Identificador"									,;
 																		"header"		=>	"Id"													,;
 																		"visible"	=> .f.}													,;
@@ -34,7 +34,7 @@ METHOD New()
 																		"field"		=>	"cCodPro"											,;
 																		"type" 		=> "C" 													,;
 																		"len" 		=> 20	}													,;
-												"nombre"		=>	{	"create"		=>	"VHARCHAR(50) NOT NULL"							,;
+												"nombre"		=>	{	"create"		=>	"VARCHAR(50) NOT NULL"							,;
 																		"text"		=>	"Nombre de la propiedad"						,;
 																		"field"		=>	"cDesPro"											,;
 																		"header"		=>	"Nombre"												,;

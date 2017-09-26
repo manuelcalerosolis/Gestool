@@ -92,11 +92,11 @@ METHOD getSQLSentenceTotalUnidadesStock( cCodigoArticulo, dConsolidacion, tConso
                      "WHERE cRef = " + quoted( cCodigoArticulo ) + " "
    
    if !empty( dConsolidacion )                     
+      if !empty( tConsolidacion )                     
+         cSql  +=    "AND CAST( " + ::getFechaFieldName() + " AS SQL_CHAR ) + " + ::getHoraFieldName() + " >= " + quoted( dateToSQLString( dConsolidacion ) + tConsolidacion ) + " "
+      else 
          cSql  +=    "AND CAST( " + ::getFechaFieldName() + " AS SQL_CHAR ) >= " + quoted( dateToSQLString( dConsolidacion ) ) + " "
-   end if 
-
-   if !empty( tConsolidacion )                     
-         cSql  +=    "AND " + ::getHoraFieldName() + " >= " + quoted( tConsolidacion ) + " "
+      end if 
    end if 
 
    if !empty( cCodigoAlmacen )                     

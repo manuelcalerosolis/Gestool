@@ -1293,11 +1293,6 @@ Return nil
 
 //---------------------------------------------------------------------------//
 
-Function oWndBar() ; Return oWndBar
-
-//---------------------------------------------------------------------------//
-
-
 Function lHideBmp()
 
 Return nil
@@ -1310,27 +1305,9 @@ Return nil
 
 //---------------------------------------------------------------------------//
 
-Function oMsgText()
-
-Return nil
-
-//---------------------------------------------------------------------------//
-
 Function IsReport()
 
 Return ( .t. )
-
-//---------------------------------------------------------------------------//
-
-Function cAlmUsr()
-
-Return nil
-
-//---------------------------------------------------------------------------//
-
-Function cDlgUsr()
-
-Return nil
 
 //---------------------------------------------------------------------------//
 
@@ -2033,18 +2010,6 @@ Return nil
 
 //---------------------------------------------------------------------------//
 
-Function InitServices()
-
-Return nil
-
-//---------------------------------------------------------------------------//
-
-Function StopServices()
-
-Return nil
-
-//---------------------------------------------------------------------------//
-
 Function CursorOpenHand()
 
 Return ( 0 )
@@ -2135,24 +2100,6 @@ Return nil
 
 //---------------------------------------------------------------------------//
 
-Function lInitCheck()
-
-Return nil
-
-//---------------------------------------------------------------------------//
-
-Function EnableAcceso()
-
-Return nil
-
-//---------------------------------------------------------------------------//
-
-Function DisableAcceso()
-
-Return nil
-
-//---------------------------------------------------------------------------//
-
 Function TSeaNumSer()
 
 Return nil
@@ -2160,12 +2107,6 @@ Return nil
 //---------------------------------------------------------------------------//
 
 Function TNumerosSerie()
-
-Return nil
-
-//---------------------------------------------------------------------------//
-
-Function cNameVersion()
 
 Return nil
 
@@ -2182,10 +2123,6 @@ Return nil
 Function TTpvRestaurante()
 
 Return nil
-
-Function cTypeVersion( cType )
-
-Return nil 
 
 Function TComercio()
 
@@ -2357,9 +2294,6 @@ Return nil
 Function TConversionPedidosClientes()
 Return nil
 
-Function validRunReport()
-Return .t.
-
 Function ClientesModel()
 Return nil
 
@@ -2457,9 +2391,6 @@ Function TIPOSVENTASMODEL()
 Return nil
 
 Function PEDIDOSCLIENTESLINEASMODEL()
-Return nil
-
-Function AITMCATEGORIA()
 Return nil
 
 Function SITUACIONESCONTROLLER()

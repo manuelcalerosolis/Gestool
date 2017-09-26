@@ -86,18 +86,21 @@ FUNCTION Main( paramsMain, paramsSecond, paramsThird )
 
    // Conexión con SQLite------------------------------------------------------
 
-   if !empty( getSQLDatabase() )
-      getSQLDatabase():Connect()
-      getSQLDatabase():startForeignKey()
-      getSQLDatabase():checkModelsExistence()
-   end if 
+   // if !empty( getSQLDatabase() )
+   //    getSQLDatabase():Connect()
+   //    getSQLDatabase():startForeignKey()
+   //    getSQLDatabase():checkModelsExistence()
+   // end if 
 
    // Motor de bases de datos--------------------------------------------------
 
    if ( "ADMINISTRADOR" $ appParamsMain() )
+
+      msgalert("ADMINISTRADOR")
+
       TDataCenter():lAdministratorTask()
       RETURN nil
-   end if
+   end if 
 
    // Motor de bases de datos--------------------------------------------------
 
@@ -1015,7 +1018,7 @@ FUNCTION MainTablet()
                            "bLClicked" => {|| ReindexaPresenter():New():Play() },;
                            "oWnd"      => oDlg } )
 
-   //----------------Envio y recepcion
+   // Envio y recepcion--------------------------------------------------------
 
    TGridImage():Build(  {  "nTop"      => {|| GridRow( 18 ) },;
                            "nLeft"     => {|| GridWidth( 0.5, oDlg ) },;
@@ -1035,6 +1038,14 @@ FUNCTION MainTablet()
                            "nClrOver"  => nGridColor(),;
                            "nClrVisit" => nGridColor(),;
                            "bAction"   => {|| TSndRecInf():New():ActivateTablet() } } )
+
+   TGridImage():Build(  {  "nTop"      => {|| GridRow( 18 ) },;
+                           "nLeft"     => {|| GridWidth( 11.5, oDlg ) - 64 },;
+                           "nWidth"    => 64,;
+                           "nHeight"   => 64,;
+                           "cResName"  => "gc_binocular_64",;
+                           "bLClicked" => {|| RunAsistenciaRemota() },;
+                           "oWnd"      => oDlg } )
 
    //----------------Informacion empresa
 

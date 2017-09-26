@@ -4532,11 +4532,11 @@ FUNCTION appLoadAds()
       fRename( fullCurDir() + "Gestion.Ini", cIniAplication() )
    end if
 
-   cAdsIp(     GetPvProfString(  "ADS",      "Ip",       hb_curdrive() + ":\", cIniAplication() ) )
-   cAdsData(   GetPvProfString(  "ADS",      "Data",     curdir() + if( !empty( curdir() ), "\", "" ), cIniAplication() ) )
-   cAdsPort(   GetPvProfString(  "ADS",      "Port",     "",   cIniAplication() ) )
-   nAdsServer( GetPvProfInt(     "ADS",      "Server",   7,    cIniAplication() ) )
-   cAdsFile(   GetPvProfString(  "ADS",      "File",     "Gestool.add",   cIniAplication() ) )
+   cAdsIp(     GetPvProfString(  "ADS",      "Ip",       hb_curdrive() + ":\",                           cIniAplication() ) )
+   cAdsData(   GetPvProfString(  "ADS",      "Data",     curdir() + if( !empty( curdir() ), "\", "" ),   cIniAplication() ) )
+   cAdsPort(   GetPvProfString(  "ADS",      "Port",     "",                                             cIniAplication() ) )
+   nAdsServer( GetPvProfInt(     "ADS",      "Server",   7,                                              cIniAplication() ) )
+   cAdsFile(   GetPvProfString(  "ADS",      "File",     "Gestool.add",                                  cIniAplication() ) )
 
 RETURN nil 
 

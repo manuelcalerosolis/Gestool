@@ -10278,7 +10278,7 @@ Static Function DataReport( oFr )
    oFr:SetWorkArea(     "Impuestos especiales",  oNewImp:Select() )
    oFr:SetFieldAliases( "Impuestos especiales",  cObjectsToReport( oNewImp:oDbf ) )
 
-   TiposVentasController():Instance():setFastReport( oFr )
+   // TiposVentasController():Instance():setFastReport( oFr )
 
    oFr:SetMasterDetail( "Facturas", "Lineas de facturas",                     {|| D():FacturasClientesId( nView ) } )
    oFr:SetMasterDetail( "Facturas", "Incidencias de facturas",                {|| D():FacturasClientesId( nView ) } )
@@ -10297,8 +10297,8 @@ Static Function DataReport( oFr )
    oFr:SetMasterDetail( "Facturas", "Bancos",                                 {|| ( D():FacturasClientes( nView ) )->cCodCli } )
    oFr:SetMasterDetail( "Facturas", "País",                                   {|| retFld( ( D():FacturasClientes( nView ) )->cCodCli, D():Clientes( nView ), "cCodPai" ) } )
 
-   oFr:SetMasterDetail( "Lineas de facturas", "artículos",                    {|| ( D():FacturasClientesLineas( nView ) )->cRef,;
-                                                                                    TiposVentasController():Instance():findByIdInRowSet( ( D():FacturasClientesLineas( nView ) )->id_tipo_v ) } )
+   oFr:SetMasterDetail( "Lineas de facturas", "artículos",                    {|| ( D():FacturasClientesLineas( nView ) )->cRef } )
+   //                                                                                 TiposVentasController():Instance():findByIdInRowSet( ( D():FacturasClientesLineas( nView ) )->id_tipo_v ) } )
    oFr:SetMasterDetail( "Lineas de facturas", "Familia",                      {|| ( D():FacturasClientesLineas( nView ) )->cCodFam } )
    oFr:SetMasterDetail( "Lineas de facturas", "Tipo artículo",                {|| ( D():FacturasClientesLineas( nView ) )->cCodTip } )
    oFr:SetMasterDetail( "Lineas de facturas", "Tipo de venta",                {|| ( D():FacturasClientesLineas( nView ) )->cTipMov } )

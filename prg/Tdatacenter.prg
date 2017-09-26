@@ -587,11 +587,13 @@ METHOD lAdministratorTask()
 
    dbcloseall()
 
-   getSQLDatabase():checkModelsExistence()
+   // getSQLDatabase():checkModelsExistence()
 
    ::configDatabaseCDXLocal()
 
    ::loadEmpresas()
+
+   msgalert( "loadEmpresas")
 
    ::dialogEmpresas()
 
