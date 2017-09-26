@@ -1607,7 +1607,7 @@ FUNCTION CreateAcceso( oWnd )
    oItem:oGroup         := oGrupo
    oItem:cPrompt        := "Tipos de notas"
    oItem:cMessage       := "Acceso a los tipos de notas"
-   oItem:bAction        := {|| TiposNotasController():New():activateShell() }
+   oItem:bAction        := {|| TiposNotasController():New():ActivateNavigatorView() }
    oItem:cId            := "01101"
    oItem:cBmp           := "gc_folder2_16"
    oItem:cBmpBig        := "gc_folder2_32"

@@ -53,7 +53,7 @@ CLASS SQLBaseController
    METHOD endModel()                                  INLINE ( if( !empty( ::oModel ), ::oModel:end(), ) )
 
    METHOD getDialogView()                             INLINE ( ::oDialogView )
-   
+
    METHOD getRepository()                             INLINE ( ::oRepository )
 
    METHOD getContainer( cController )                 INLINE ( ::ControllerContainer:get( cController ) )
@@ -85,7 +85,7 @@ CLASS SQLBaseController
    METHOD   setTitle( cTitle )                        INLINE ( ::cTitle := cTitle )
    METHOD   getTitle()                                INLINE ( ::cTitle )
 
-   METHOD   Append()
+   METHOD Append()
       METHOD initAppendMode()                         VIRTUAL
       METHOD endAppendModePreInsert()                 VIRTUAL
       METHOD endAppendModePostInsert()                VIRTUAL
@@ -93,7 +93,7 @@ CLASS SQLBaseController
       METHOD setAppendMode()                          INLINE ( ::setMode( __append_mode__ ) )
       METHOD isAppendMode()                           INLINE ( ::nMode == __append_mode__ )
 
-   METHOD   Duplicate()
+   METHOD Duplicate()
       METHOD initDuplicateMode()                      VIRTUAL
       METHOD endDuplicateModePreInsert()              VIRTUAL
       METHOD endDuplicateModePosInsert()              VIRTUAL
@@ -101,7 +101,7 @@ CLASS SQLBaseController
       METHOD setDuplicateMode()                       INLINE ( ::setMode( __duplicate_mode__ ) )
       METHOD isDuplicateMode()                        INLINE ( ::nMode == __duplicate_mode__ )
 
-   METHOD   Edit()
+   METHOD Edit()
       METHOD initEditMode()                           VIRTUAL
       METHOD endEditModePreUpdate()                   VIRTUAL
       METHOD endEditModePosUpdate()                   VIRTUAL
@@ -109,13 +109,13 @@ CLASS SQLBaseController
       METHOD setEditMode()                            INLINE ( ::setMode( __edit_mode__ ) )
       METHOD isEditMode()                             INLINE ( ::nMode == __edit_mode__ )
 
-   METHOD   Zoom()
+   METHOD Zoom()
       METHOD setZoomMode()                            INLINE ( ::setMode( __zoom_mode__ ) )
       METHOD isZoomMode()                             INLINE ( ::nMode == __zoom_mode__ )
       METHOD isNotZoomMode()                          INLINE ( ::nMode != __zoom_mode__ )
       METHOD initZoomMode()                           VIRTUAL
 
-   METHOD   Delete()
+   METHOD Delete()
       METHOD initDeleteMode()                         VIRTUAL
       METHOD endDeleteModePreDelete()                 VIRTUAL
       METHOD endDeleteModePosDelete()                 VIRTUAL

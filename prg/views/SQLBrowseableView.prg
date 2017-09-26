@@ -41,7 +41,6 @@ CLASS SQLBrowseableView
    //--------------------------------------------------------------------------
 
    METHOD onChangeCombo()
-
    METHOD onChangeSearch()
 
 ENDCLASS

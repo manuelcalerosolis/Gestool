@@ -4,9 +4,9 @@
 
 //---------------------------------------------------------------------------//
 
-CLASS TiposVentasRepository FROM SQLBaseRepository
+CLASS TiposNotasRepository FROM SQLBaseRepository
 
-   METHOD getTableName()         INLINE ( if( !empty( ::getController() ), ::getModelTableName(), TiposVentasModel():getTableName() ) )
+   METHOD getTableName()         INLINE ( if( !empty( ::getController() ), ::getModelTableName(), TiposNotasModel():getTableName() ) )
 
 END CLASS
 

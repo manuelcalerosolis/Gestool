@@ -38,9 +38,11 @@ CLASS SQLNavigatorView FROM SQLBrowseableView
                                                                                     /*oIcon*/, /*lVScroll*/, /*nClrText*/, /*nClrBack*/, /*oCursor*/, /*oBrush*/, /*lPixel*/ .t.,;
                                                                                     /*lHScroll*/, /*nHelpId*/, /*cBorder*/ "NONE", /*lSysMenu*/, /*lCaption*/ .f., /*lMin*/, /*lMax*/, /*nMenuInfo*/ ) )
 
-   METHOD ActivateMDIChild()              INLINE ( ::oMdiChild:Activate() )   // cShow, bLClicked, bRClicked, bMoved, bResized, bPainted,;
-                                                                              // bKeyDown, bInit, bUp, bDown, bPgUp, bPgDn,;
-                                                                              // bLeft, bRight, bPgLeft, bPgRight, bValid )
+   METHOD ActivateMDIChild()              INLINE ( ::oMdiChild:Activate(   /*cShow*/, /*bLClicked*/, /*bRClicked*/, /*bMoved*/, /*bResized*/, /*bPainted*/,;
+                                                                           /*bKeyDown*/, /*bInit*/, /*bUp*/, /*bDown*/, /*bPgUp*/, /*bPgDn*/,;
+                                                                           /*bLeft*/, /*bRight*/, /*bPgLeft*/, /*bPgRight*/, /*bValid*/ ) ) 
+
+   METHOD keyDown( nKey )
 
    // Top webbar---------------------------------------------------------------
 
@@ -106,6 +108,8 @@ METHOD Activate()
    ::ActivateMDIChild()
 
    // Eventos------------------------------------------------------------------
+
+   ::oMdiChild:bKeyDown          := {|nKey, nFlags| ::keyDown( nKey, nFlags ) }
 
    ::getComboBoxOrder():bChange  := {|| ::onChangeCombo() } 
 
@@ -209,3 +213,27 @@ RETURN ( Self )
 
 //----------------------------------------------------------------------------//
 
+METHOD keyDown( nKey, nFlags )
+
+   do case
+      case nKey == VK_ESCAPE
+         ::End()
+      case nKey == VK_INSERT 
+         ::oController:Append() 
+      case nKey == VK_RETURN 
+         ::oController:Edit() 
+      case nKey == VK_DELETE 
+         ::oController:Delete( ::getBrowse():aSelected )
+      case nKey == VK_F5
+         ::RefreshRowSet()
+      // case nKey == VK_F9
+      //    ::PutOriginal()
+      // case nKey == VK_F2
+      //    ::NextTabOption()
+      // case nKey == VK_F3
+      //    ::PrevTabOption()
+   end case
+
+RETURN ( 0 )
+
+//----------------------------------------------------------------------------//

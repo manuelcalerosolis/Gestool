@@ -4,7 +4,7 @@
 
 //---------------------------------------------------------------------------//
 
-CLASS TiposVentasView FROM SQLBaseView
+CLASS TiposNotasView FROM SQLBaseView
 
    DATA oEditControl
 
@@ -37,7 +37,7 @@ METHOD Dialog()
    local oGetCodigo
    local oGetNombre
 
-   DEFINE DIALOG oDlg RESOURCE "TIPO_GENERAL" TITLE ::lblTitle() + "tipo de venta"
+   DEFINE DIALOG oDlg RESOURCE "TIPO_GENERAL" TITLE ::lblTitle() + "tipo de nota"
 
    REDEFINE GET   oGetNombre ;
       VAR         ::getModel():hBuffer[ "nombre" ] ;
