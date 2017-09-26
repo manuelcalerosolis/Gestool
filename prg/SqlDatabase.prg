@@ -63,7 +63,7 @@ METHOD New()
 
    aadd( ::aModels, ConfiguracionEmpresasModel():New():getSQLCreateTable() )
 
-   aadd( ::aModels, PropiedadesModel():New():getSQLCreateTable() )
+   aadd( ::aModels, PropiedadesModel():New():getSQLCreateTable() ) 
 
    aadd( ::aModels, PropiedadesLineasModel():New():getSQLCreateTable() )
 
