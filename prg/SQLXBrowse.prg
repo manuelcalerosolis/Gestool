@@ -5,38 +5,47 @@
 #include "Report.ch"
 #include "Factu.ch" 
 
+#define CS_DBLCLKS            8
+#define GWL_STYLE             -16
+#define GWL_EXSTYLE           -20   // 2009-11-11
+
 //----------------------------------------------------------------------------//
 
-CLASS SQLXBrowse FROM TXBrowse
+CLASS SQLXBrowse FROM TXBrowse 
 
-   CLASSDATA lRegistered      AS LOGICAL
+   CLASSDATA lRegistered                        AS LOGICAL
 
-   DATA  cOriginal            AS CHARACTER   INIT ""
-   DATA  cName                AS CHARACTER   INIT ""
+   DATA  cOriginal                              AS CHARACTER   INIT ""
+   DATA  cName                                  AS CHARACTER   INIT ""
 
-   DATA  aHeaders             AS ARRAY       INIT {}
+   DATA  aHeaders                               AS ARRAY       INIT {}
 
-   DATA  lOnProcess           AS LOGIC       INIT .f.
+   DATA  lOnProcess                             AS LOGIC       INIT .f.
 
    DATA  nVScrollPos
 
-   ACCESS BookMark            INLINE Eval( ::bBookMark )
-   ASSIGN BookMark(u)         INLINE Eval( ::bBookMark, u )
+   ACCESS BookMark                              INLINE Eval( ::bBookMark )
+   ASSIGN BookMark(u)                           INLINE Eval( ::bBookMark, u )
 
    METHOD New( oWnd )
 
    METHOD setModel( oModel )  
 
-   METHOD setOriginal()       INLINE ( ::RestoreState( ::cOriginal ) )
-   METHOD getOriginal()       INLINE ( ::cOriginal := ::SaveState() )
+   METHOD setOriginal()                         INLINE ( ::RestoreState( ::cOriginal ) )
+   METHOD getOriginal()                         INLINE ( ::cOriginal := ::SaveState() )
 
-   METHOD refreshCurrent()    INLINE ( ::Refresh(), ::Select( 0 ), ::Select( 1 ) )
+   METHOD refreshCurrent()                      INLINE ( ::Refresh(), ::Select( 0 ), ::Select( 1 ) )
 
-   METHOD getColumnHeaders()
+   METHOD getColumnByHeaders()
    METHOD selectColumnOrder( oCol )
    
-   METHOD getColumnHeader( cHeader )
+   METHOD selectColumnOrderByHeader( cHeader )  INLINE ( ::selectColumnOrder( ::getColumnByHeader( cHeader ) ) )
+
+   METHOD getColumnByHeader( cHeader )
    METHOD getColumnOrder( cSortOrder )
+   METHOD getColumnOrderByHeader( cHeader )  
+
+   METHOD getFirstVisibleColumn()
 
    METHOD RButtonDown( nRow, nCol, nFlags )
 
@@ -108,7 +117,7 @@ RETURN ( Self )
 
 //----------------------------------------------------------------------------//
 
-static function GenMenuBlock( oCol )
+STATIC FUNCTION GenMenuBlock( oCol )
 
 RETURN {|| iif( oCol:lHide, oCol:Show(), oCol:Hide() ) }
 
@@ -243,7 +252,7 @@ RETURN ( Self )
 
 //----------------------------------------------------------------------------//
 
-METHOD getColumnHeaders()
+METHOD getColumnByHeaders()
 
    ::aHeaders := {}
 
@@ -275,9 +284,15 @@ RETURN ( Self )
 
 //----------------------------------------------------------------------------//
 
-METHOD getColumnHeader( cHeader )
+METHOD getColumnByHeader( cHeader )
 
-   local nPosition   := ascan( ::aCols, {|o| o:cHeader == cHeader } )
+   local nPosition   
+
+   if !hb_ischar( cHeader )
+      RETURN ( nil )
+   end if 
+
+   nPosition   := ascan( ::aCols, {|o| o:cHeader == cHeader } )
 
    if nPosition != 0
       RETURN ( ::aCols[ nPosition ] )
@@ -289,7 +304,13 @@ RETURN ( nil )
 
 METHOD getColumnOrder( cSortOrder )
 
-   local nPosition   := ascan( ::aCols, {|o| o:cSortOrder == cSortOrder } )
+   local nPosition   
+
+   if !hb_ischar( cSortOrder )
+      RETURN ( nil )
+   end if 
+
+   nPosition   := ascan( ::aCols, {|o| o:cSortOrder == cSortOrder } )
 
    if nPosition != 0
       RETURN ( ::aCols[ nPosition ] )
@@ -298,3 +319,30 @@ METHOD getColumnOrder( cSortOrder )
 RETURN ( nil )
 
 //----------------------------------------------------------------------------//
+
+METHOD getColumnOrderByHeader( cHeader )
+
+   local oCol        := ::getColumnByHeader( cHeader )
+
+   if !empty( oCol )
+      RETURN ( oCol:cSortOrder )
+   end if 
+
+RETURN ( nil )
+
+//----------------------------------------------------------------------------//
+
+METHOD getFirstVisibleColumn()
+
+   local oCol
+
+   for each oCol in ::aCols
+      if !oCol:lHide
+         RETURN ( oCol )
+      end if 
+   next
+
+RETURN ( nil )
+
+//----------------------------------------------------------------------------//
+

@@ -277,7 +277,7 @@ RETURN ( .t. )
 
 FUNCTION Test()
 
-   msgalert( hb_valtoexp( TiposImpresorasRepository():getAll() ), "TiposImpresorasRepository" )
+   // msgalert( hb_valtoexp( TiposImpresorasModel():New():getRowSetFieldGet( "nombre" ) ), "TiposImpresoras" ) 
 
 RETURN ( nil )
 
@@ -1567,7 +1567,7 @@ FUNCTION CreateAcceso( oWnd )
    oItem:oGroup         := oGrupo
    oItem:cPrompt        := "Tipos de ventas"
    oItem:cMessage       := "Acceso a los tipos de ventas"
-   oItem:bAction        := {|| TiposVentasController():New():activateShell() }
+   oItem:bAction        := {|| TiposVentasController():New():ActivateNavigatorView() }
    oItem:cId            := "01043"
    oItem:cBmp           := "gc_wallet_16"
    oItem:cBmpBig        := "gc_wallet_32"
@@ -1587,7 +1587,7 @@ FUNCTION CreateAcceso( oWnd )
    oItem:oGroup         := oGrupo
    oItem:cPrompt        := "Situaciones"
    oItem:cMessage       := "Acceso a los tipos de situaciones"
-   oItem:bAction        := {|| SituacionesController():New():activateShell() }
+   oItem:bAction        := {|| SituacionesController():New():ActivateNavigatorView() }
    oItem:cId            := "01096"
    oItem:cBmp           := "gc_document_attachment_16"
    oItem:cBmpBig        := "gc_document_attachment_32"
@@ -1597,7 +1597,7 @@ FUNCTION CreateAcceso( oWnd )
    oItem:oGroup         := oGrupo
    oItem:cPrompt        := 'Etiquetas'
    oItem:cMessage       := 'Etiquetas'
-   oItem:bAction        := {|| EtiquetasController():New():activateShell() }
+   oItem:bAction        := {|| EtiquetasController():New():ActivateNavigatorView() }
    oItem:cId            := "01126"
    oItem:cBmp           := "gc_bookmarks_16"
    oItem:cBmpBig        := "gc_bookmarks_32"
@@ -1607,7 +1607,7 @@ FUNCTION CreateAcceso( oWnd )
    oItem:oGroup         := oGrupo
    oItem:cPrompt        := "Tipos de notas"
    oItem:cMessage       := "Acceso a los tipos de notas"
-   oItem:bAction        := {|| TiposNotasController():New():activateShell() }
+   oItem:bAction        := {|| TiposNotasController():New():ActivateNavigatorView() }
    oItem:cId            := "01101"
    oItem:cBmp           := "gc_folder2_16"
    oItem:cBmpBig        := "gc_folder2_32"
@@ -1617,7 +1617,7 @@ FUNCTION CreateAcceso( oWnd )
    oItem:oGroup         := oGrupo
    oItem:cPrompt        := "Tipos de impresoras"
    oItem:cMessage       := "Acceso a los tipos de impresoras"
-   oItem:bAction        := {|| TiposImpresorasController():New():activateShell() }
+   oItem:bAction        := {|| TiposImpresorasController():New():ActivateNavigatorView() }
    oItem:cId            := "01115"
    oItem:cBmp           := "gc_printer2_16"
    oItem:cBmpBig        := "gc_printer2_32"
@@ -2708,7 +2708,7 @@ FUNCTION CreateAcceso( oWnd )
 
    oGrupo               := TGrupoAcceso()
 
-   oGrupo:nBigItems     := 4
+   oGrupo:nBigItems     := 5
    oGrupo:cPrompt       := 'Ayudas'
    oGrupo:cLittleBitmap := "gc_lifebelt_16"
    oGrupo:cBigBitmap    := "gc_lifebelt_32"
@@ -2745,13 +2745,24 @@ FUNCTION CreateAcceso( oWnd )
 
    oItem                := oItemAyudas:Add()
    oItem:oGroup         := oGrupo
-   oItem:cPrompt        := 'Test'
-   oItem:cMessage       := 'Test'
+   oItem:cPrompt        := 'Test navigator'
+   oItem:cMessage       := 'Test navigator'
    oItem:bAction        := {||TiposImpresorasController():New():ActivateNavigatorView() }
    oItem:cId            := "99999"
    oItem:cBmp           := "gc_user_headset_16"
    oItem:cBmpBig        := "gc_user_headset_32"
    oItem:lShow          := .f.
+
+   oItem                := oItemAyudas:Add()
+   oItem:oGroup         := oGrupo
+   oItem:cPrompt        := 'Test selector'
+   oItem:cMessage       := 'Test selector'
+   oItem:bAction        := {||TiposImpresorasController():New():ActivateSelectorView() }
+   oItem:cId            := "99999"
+   oItem:cBmp           := "gc_user_headset_16"
+   oItem:cBmpBig        := "gc_user_headset_32"
+   oItem:lShow          := .f.
+
 
 RETURN ( oAcceso )
 
@@ -5430,7 +5441,6 @@ FUNCTION appConnectADS()
    adsTestRecLocks( .t. )
 
    adsSetDeleted( .t. )
-   // adsCacheOpenTables( 250 )
 
    // Conexion con el motor de base de datos-----------------------------------
 
@@ -6777,5 +6787,17 @@ Function cTextRichText( cText )
    end if
 
 Return cTexto
+
+//---------------------------------------------------------------------------//
+
+Function fwBmpAsc()
+
+RETURN ( LoadBitMap( GetResources(), "Up16" ) )
+
+//---------------------------------------------------------------------------//
+
+Function fwBmpDes()
+
+RETURN ( LoadBitMap( GetResources(), "Down16" ) )
 
 //---------------------------------------------------------------------------//

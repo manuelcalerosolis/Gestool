@@ -224,7 +224,6 @@ Method CreateData() CLASS TClienteSenderReciver
 
          if ( dbfCliAtp )->( dbSeek( ( dbfClient )->Cod ) )
             while ( dbfCliAtp )->cCodCli == ( dbfClient )->Cod .and. !( dbfCliAtp )->( Eof() )
-               Logwrite( ( dbfcliatp )->( OrdKeyNo() ) )
                dbPass( dbfCliAtp, tmpAtp, .t. )
                SysRefresh()
                ( dbfCliAtp )->( dbSkip() )

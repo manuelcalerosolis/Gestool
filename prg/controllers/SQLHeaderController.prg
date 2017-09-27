@@ -182,7 +182,7 @@ METHOD Edit( oBrowse )
 
    ::preEdit()
 
-   ::oModel:setIdForRecno( ::oModel:getKeyFieldOfRecno() )
+   ::oModel:setIdToFind( ::oModel:getKeyFieldOfRecno() )
 
    ::oModel:loadCurrentBuffer()
 

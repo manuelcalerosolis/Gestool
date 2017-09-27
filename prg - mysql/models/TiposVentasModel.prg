@@ -17,8 +17,6 @@ CLASS TiposVentasModel FROM SQLBaseModel
    METHOD   getCodigoFromId( id )
    METHOD   getIdFromCodigo( codigo )
 
-   METHOD   arrayTiposVentas()
-
 END CLASS
 
 //---------------------------------------------------------------------------//
@@ -30,12 +28,12 @@ METHOD New()
    ::hColumns                   	:= {  "id"     => {  "create"    => "INTEGER PRIMARY KEY AUTO_INCREMENT"   ,;
                                                       "text"		=> "Identificador"                        ,;
    															      "header"    => "Id"                                   ,;
-                                                      "visible"   => .f.                                    ,;
+                                                      "visible"   => .t.                                    ,;
                                                       "width"     => 40}                                    ,;
                                        "codigo" => {  "create"    => "VARCHAR( 2 )"                         ,;
                                                       "text"      => "Código"                               ,; 
                                                       "header"    => "Código"                               ,;
-                                                      "visible"   => .t.                                    ,;
+                                                      "visible"   => .f.                                    ,;
                                                       "width"     => 80                                     ,;
                                                       "field"     => "cCodMov"                              ,;
                                                       "type"      => "C"                                    ,;
@@ -67,7 +65,7 @@ METHOD getCodigoFromId( id )
 
    cSentence                     := "SELECT codigo FROM " + ::cTableName + " WHERE id = " + toSQLString( id )
 
-   aSelect                       := ::selectFetchHash( cSentence ) 
+   aSelect                       := ::getDatabase():selectFetchHash( cSentence ) 
 
    if !empty( aSelect )
       cCodigo                    := padr( hget( atail( aSelect ), "codigo" ), 2 )
@@ -89,22 +87,13 @@ METHOD getIdFromCodigo( codigo )
 
    cSentence                     := "SELECT id FROM " + ::cTableName + " WHERE codigo = " + toSQLString( codigo )
 
-   aSelect                       := ::selectFetchHash( cSentence ) 
+   aSelect                       := ::getDatabase():selectFetchHash( cSentence ) 
 
    if !empty( aSelect )
       id                         := hget( atail( aSelect ), "id" )
    end if 
 
 RETURN ( id )
-
-//---------------------------------------------------------------------------//
-
-METHOD arrayTiposVentas()
-
-   local cSentence               := "SELECT id, codigo FROM " + ::cTableName
-   local aResult                 := ::selectFetchHash( cSentence ) 
-
-RETURN ( aResult )
 
 //---------------------------------------------------------------------------//
 

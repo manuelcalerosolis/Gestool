@@ -6,15 +6,7 @@
 
 CLASS TiposImpresorasController FROM SQLBaseController
 
-   METHOD   New()
-
-   METHOD   buildSQLModel( this )         INLINE ( TiposImpresorasModel():New( this ) )
-   
-   METHOD   buildSQLView( this )				INLINE ( TiposImpresoras():New( this ) )
-  
-   METHOD   getFieldFromBrowse()          INLINE ( ::getRowSet():fieldGet( "nombre" ) )
- 
-   METHOD   validNombre( oGetNombre )
+   METHOD New()
 
 END CLASS
 
@@ -22,48 +14,26 @@ END CLASS
 
 METHOD New()
 
-   ::idUserMap             := "01115"
+   msgalert( "New")
 
-   ::setTitle( "Tipos de impresoras" )
-
+   ::cTitle                := "Tipos de impresoras"
+msgalert( "1")
+   ::cImage                := "gc_printer2_16"
+msgalert( "2")
+   ::nLevel                := nLevelUsr( "01115" )
+msgalert( "3")
+   ::oModel                := TiposImpresorasModel():New( self )
+msgalert( "4")
+   ::oRepository           := TiposImpresorasRepository():New( self )
+msgalert( "5")
+   ::oDialogView           := TiposImpresorasView():New( self )
+msgalert( "6")
+   ::oValidator            := TiposImpresorasValidator():New( self )
+msgalert( "7")
    ::Super:New()
 
-Return ( Self )
+   msgalert( "super new")
 
-//---------------------------------------------------------------------------//
-
-METHOD validNombre( oGetNombre )
-
-   local idNombre
-   local cErrorText  := ""
-
-   oGetNombre:setColor( Rgb( 0, 0, 0 ), Rgb( 255, 255, 255 ) )
-
-   if empty( ::oModel:hBuffer[ "nombre" ] )
-      cErrorText     += "El nombre de la impresora no puede estar vacío." 
-   end if
-
-   idNombre          := ::oModel:ChecksForValid( "nombre" )
-   
-   if ( !empty( idNombre ) )
-
-      if ( idNombre != ::oModel:hBuffer[ "id" ] .and. !::isDuplicateMode() )
-         cErrorText  += "El nombre de la impresora ya existe." 
-      end if
-   
-      if ( idNombre == ::oModel:hBuffer[ "id" ] .and. ::isDuplicateMode() )
-         cErrorText  += "El nombre de la impresora ya existe."
-      end if
-   
-   end if
-
-   if !empty( cErrorText )
-      msgStop( cErrorText )
-      oGetNombre:setColor( Rgb( 255, 255, 255 ), Rgb( 255, 102, 102 ) )
-      oGetNombre:setFocus()
-      RETURN ( .f. )
-   end if
-
-RETURN ( .t. )
+RETURN ( Self )
 
 //---------------------------------------------------------------------------//

@@ -336,7 +336,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfCajT, oBrw, bWhen, bValid, nMode )
                "CAJAS_02"
 
       /*
-      Primera caja de diálogo--------------------------------------------------
+      Primera caja de dialogo--------------------------------------------------
       */
 
       REDEFINE BITMAP oBmpGeneral ;
@@ -384,15 +384,15 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfCajT, oBrw, bWhen, bValid, nMode )
 
       // Proximo turno------------------------------------------------------------
 
-      REDEFINE GET aGet[ ( dbfCajT )->( FieldPos( "cNumTur" ) ) ] ;
-         VAR      nNumTur ;
-         ID       190 ;
+      REDEFINE GET   aGet[ ( dbfCajT )->( FieldPos( "cNumTur" ) ) ] ;
+         VAR         nNumTur ;
+         ID          190 ;
          SPINNER ;
-         MIN      0 ;
-         MAX      999999 ;
-         PICTURE  "999999" ;
-         WHEN     ( nMode != ZOOM_MODE ) ;
-         OF       oFld:aDialogs[1]
+         MIN         0 ;
+         MAX         999999 ;
+         PICTURE     "999999" ;
+         WHEN        ( nMode != ZOOM_MODE ) ;
+         OF          oFld:aDialogs[1]
 
       /*
       Captura por defecto
@@ -499,7 +499,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfCajT, oBrw, bWhen, bValid, nMode )
       end with
 
       /*
-      Segunda caja de diálogo--------------------------------------------------
+      Segunda caja de dialogo--------------------------------------------------
       */
 
       REDEFINE BITMAP oBmpFormatos ;
@@ -514,86 +514,86 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfCajT, oBrw, bWhen, bValid, nMode )
       */
 
       REDEFINE CHECKBOX aGet[ ( dbfCajT )->( FieldPos( "lPrnTik" ) ) ] ;
-         VAR      aTmp[ ( dbfCajT )->( FieldPos( "lPrnTik" ) ) ] ;
-         ID       163 ;
-         WHEN     ( nMode != ZOOM_MODE ) ;
-         OF       oFld:aDialogs[2]
+         VAR            aTmp[ ( dbfCajT )->( FieldPos( "lPrnTik" ) ) ] ;
+         ID             163 ;
+         WHEN           ( nMode != ZOOM_MODE ) ;
+         OF             oFld:aDialogs[2]
 
-      REDEFINE GET aGet[ ( dbfCajT )->( FieldPos( "cPrnTik" ) ) ] ;
-         VAR      aTmp[ ( dbfCajT )->( FieldPos( "cPrnTik" ) ) ] ;
-         ID       160 ;
-         IDTEXT   161 ;
-         WHEN     ( nMode != ZOOM_MODE ) ;
-         VALID    ( cDocumento( aGet[ ( dbfCajT )->( FieldPos( "cPrnTik" ) ) ], aGet[ ( dbfCajT )->( FieldPos( "cPrnTik" ) ) ]:oHelpText, dbfDoc ) );
-         BITMAP   "LUPA" ;
-         ON HELP  ( BrwDocumento( aGet[ ( dbfCajT )->( FieldPos( "cPrnTik" ) ) ], aGet[ ( dbfCajT )->( FieldPos( "cPrnTik" ) ) ]:oHelpText, "TK" ) );
-         OF       oFld:aDialogs[2]
+      REDEFINE GET      aGet[ ( dbfCajT )->( FieldPos( "cPrnTik" ) ) ] ;
+         VAR            aTmp[ ( dbfCajT )->( FieldPos( "cPrnTik" ) ) ] ;
+         ID             160 ;
+         IDTEXT         161 ;
+         WHEN           ( nMode != ZOOM_MODE ) ;
+         VALID          ( cDocumento( aGet[ ( dbfCajT )->( FieldPos( "cPrnTik" ) ) ], aGet[ ( dbfCajT )->( FieldPos( "cPrnTik" ) ) ]:oHelpText, dbfDoc ) );
+         BITMAP         "LUPA" ;
+         ON HELP        ( BrwDocumento( aGet[ ( dbfCajT )->( FieldPos( "cPrnTik" ) ) ], aGet[ ( dbfCajT )->( FieldPos( "cPrnTik" ) ) ]:oHelpText, "TK" ) );
+         OF             oFld:aDialogs[2]
 
       TBtnBmp():ReDefine( 162, "gc_document_text_pencil_12",,,,,{|| EdtDocumento( aTmp[ ( dbfCajT )->( FieldPos( "cPrnTik" ) ) ] ) }, oFld:aDialogs[2], .f., , .f.,  )
 
-      REDEFINE GET aGet[ ( dbfCajT )->( FieldPos( "nCopTik" ) ) ] ;
-         VAR      aTmp[ ( dbfCajT )->( FieldPos( "nCopTik" ) ) ] ;
-         ID       164 ;
+      REDEFINE GET      aGet[ ( dbfCajT )->( FieldPos( "nCopTik" ) ) ] ;
+         VAR            aTmp[ ( dbfCajT )->( FieldPos( "nCopTik" ) ) ] ;
+         ID             164 ;
          SPINNER ;
-         MIN      0 ;
-         MAX      99 ;
-         PICTURE  "99" ;
-         WHEN     ( nMode != ZOOM_MODE ) ;
-         OF       oFld:aDialogs[2]
+         MIN            0 ;
+         MAX            99 ;
+         PICTURE        "99" ;
+         WHEN           ( nMode != ZOOM_MODE ) ;
+         OF             oFld:aDialogs[2]
 
       /*
       Formato para comandas
       -------------------------------------------------------------------------
       */
 
-      REDEFINE GET aGet[ ( dbfCajT )->( FieldPos( "cPrnCom" ) ) ] ;
-         VAR      aTmp[ ( dbfCajT )->( FieldPos( "cPrnCom" ) ) ] ;
-         ID       240 ;
-         IDTEXT   241 ;
-         WHEN     ( nMode != ZOOM_MODE ) ;
-         VALID    ( cDocumento( aGet[ ( dbfCajT )->( FieldPos( "cPrnCom" ) ) ], aGet[ ( dbfCajT )->( FieldPos( "cPrnCom" ) ) ]:oHelpText, dbfDoc ) );
-         BITMAP   "LUPA" ;
-         ON HELP  ( BrwDocumento( aGet[ ( dbfCajT )->( FieldPos( "cPrnCom" ) ) ], aGet[ ( dbfCajT )->( FieldPos( "cPrnCom" ) ) ]:oHelpText, "TK" ) );
-         OF       oFld:aDialogs[2]
+      REDEFINE GET      aGet[ ( dbfCajT )->( FieldPos( "cPrnCom" ) ) ] ;
+         VAR            aTmp[ ( dbfCajT )->( FieldPos( "cPrnCom" ) ) ] ;
+         ID             240 ;
+         IDTEXT         241 ;
+         WHEN           ( nMode != ZOOM_MODE ) ;
+         VALID          ( cDocumento( aGet[ ( dbfCajT )->( FieldPos( "cPrnCom" ) ) ], aGet[ ( dbfCajT )->( FieldPos( "cPrnCom" ) ) ]:oHelpText, dbfDoc ) );
+         BITMAP         "LUPA" ;
+         ON HELP        ( BrwDocumento( aGet[ ( dbfCajT )->( FieldPos( "cPrnCom" ) ) ], aGet[ ( dbfCajT )->( FieldPos( "cPrnCom" ) ) ]:oHelpText, "TK" ) );
+         OF             oFld:aDialogs[2]
 
       TBtnBmp():ReDefine( 242, "gc_document_text_pencil_12",,,,,{|| EdtDocumento( aTmp[ ( dbfCajT )->( FieldPos( "cPrnCom" ) ) ] ) }, oFld:aDialogs[2], .f., , .f.,  )
 
-      REDEFINE GET aGet[ ( dbfCajT )->( FieldPos( "nCopCom" ) ) ] ;
-         VAR      aTmp[ ( dbfCajT )->( FieldPos( "nCopCom" ) ) ] ;
-         ID       244 ;
+      REDEFINE GET      aGet[ ( dbfCajT )->( FieldPos( "nCopCom" ) ) ] ;
+         VAR            aTmp[ ( dbfCajT )->( FieldPos( "nCopCom" ) ) ] ;
+         ID             244 ;
          SPINNER ;
-         MIN      0 ;
-         MAX      99 ;
-         PICTURE  "99" ;
-         WHEN     ( nMode != ZOOM_MODE ) ;
-         OF       oFld:aDialogs[2]
+         MIN            0 ;
+         MAX            99 ;
+         PICTURE        "99" ;
+         WHEN           ( nMode != ZOOM_MODE ) ;
+         OF             oFld:aDialogs[2]
 
       /*
       Formato para anulacion
       -------------------------------------------------------------------------
       */
 
-      REDEFINE GET aGet[ ( dbfCajT )->( FieldPos( "cPrnAnu" ) ) ] ;
-         VAR      aTmp[ ( dbfCajT )->( FieldPos( "cPrnAnu" ) ) ] ;
-         ID       290 ;
-         IDTEXT   291 ;
-         WHEN     ( nMode != ZOOM_MODE ) ;
-         VALID    ( cDocumento( aGet[ ( dbfCajT )->( FieldPos( "cPrnAnu" ) ) ], aGet[ ( dbfCajT )->( FieldPos( "cPrnAnu" ) ) ]:oHelpText, dbfDoc ) );
-         BITMAP   "LUPA" ;
-         ON HELP  ( BrwDocumento( aGet[ ( dbfCajT )->( FieldPos( "cPrnAnu" ) ) ], aGet[ ( dbfCajT )->( FieldPos( "cPrnAnu" ) ) ]:oHelpText, "TK" ) );
-         OF       oFld:aDialogs[2]
+      REDEFINE GET      aGet[ ( dbfCajT )->( FieldPos( "cPrnAnu" ) ) ] ;
+         VAR            aTmp[ ( dbfCajT )->( FieldPos( "cPrnAnu" ) ) ] ;
+         ID             290 ;
+         IDTEXT         291 ;
+         WHEN           ( nMode != ZOOM_MODE ) ;
+         VALID          ( cDocumento( aGet[ ( dbfCajT )->( FieldPos( "cPrnAnu" ) ) ], aGet[ ( dbfCajT )->( FieldPos( "cPrnAnu" ) ) ]:oHelpText, dbfDoc ) );
+         BITMAP         "LUPA" ;
+         ON HELP        ( BrwDocumento( aGet[ ( dbfCajT )->( FieldPos( "cPrnAnu" ) ) ], aGet[ ( dbfCajT )->( FieldPos( "cPrnAnu" ) ) ]:oHelpText, "TK" ) );
+         OF             oFld:aDialogs[2]
 
       TBtnBmp():ReDefine( 292, "gc_document_text_pencil_12",,,,,{|| EdtDocumento( aTmp[ ( dbfCajT )->( FieldPos( "cPrnAnu" ) ) ] ) }, oFld:aDialogs[2], .f., , .f.,  )
 
-      REDEFINE GET aGet[ ( dbfCajT )->( FieldPos( "nCopAnu" ) ) ] ;
-         VAR      aTmp[ ( dbfCajT )->( FieldPos( "nCopAnu" ) ) ] ;
-         ID       294 ;
+      REDEFINE GET      aGet[ ( dbfCajT )->( FieldPos( "nCopAnu" ) ) ] ;
+         VAR            aTmp[ ( dbfCajT )->( FieldPos( "nCopAnu" ) ) ] ;
+         ID             294 ;
          SPINNER ;
-         MIN      0 ;
-         MAX      99 ;
-         PICTURE  "99" ;
-         WHEN     ( nMode != ZOOM_MODE ) ;
-         OF       oFld:aDialogs[2]
+         MIN            0 ;
+         MAX            99 ;
+         PICTURE        "99" ;
+         WHEN           ( nMode != ZOOM_MODE ) ;
+         OF             oFld:aDialogs[2]
 
       /*
       Formato de vales
@@ -762,7 +762,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfCajT, oBrw, bWhen, bValid, nMode )
          OF       oFld:aDialogs[2]
 
       /*
-      Formato de pagos en táctil
+      Formato de pagos en tctil
       -------------------------------------------------------------------------
       */
 
@@ -1071,7 +1071,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfCajT, oBrw, bWhen, bValid, nMode )
       TBtnBmp():ReDefine( 362, "gc_document_text_pencil_12",,,,,{|| EdtDocumento( aTmp[ ( dbfCajT )->( FieldPos( "cPrnCut" ) ) ] ) }, oFld:aDialogs[2], .f., , .f.,  )
 
       /*
-      Botones de la caja de diálogo
+      Botones de la caja de dialogo
       -------------------------------------------------------------------------
       */
 
@@ -1177,7 +1177,7 @@ Static Function SavRec( aTmp, aGet, dbfCajT, oBrw, oDlg, nMode )
       ( dbfTmpLin )->( dbSkip() )
    end while
 
-   // Asignación a la variable de texto----------------------------------------
+   // Asignacin a la variable de texto----------------------------------------
 
    aTmp[ ( dbfCajT )->( FieldPos( "cNumTur" ) ) ]  := Str( nNumTur, 6 )
 
@@ -1279,10 +1279,10 @@ RETURN ( oDlg:nResult == IDOK )
 
 STATIC FUNCTION browseTipoImpresora( oGet )
 
-   local cTipoImpresora    := TiposImpresorasController():New():activateBrowse() 
+   local hTipoImpresora    := TiposImpresorasController():New():ActivateSelectorView() 
 
-   if !empty( cTipoImpresora )
-      oGet:cText( padr( cTipoImpresora, 50 ) )
+   if !empty( hTipoImpresora )
+      oGet:cText( padr( hget( hTipoImpresora, "nombre" ), 50 ) )
    end if 
 
 RETURN ( .t. )
@@ -1307,9 +1307,6 @@ STATIC FUNCTION EndDetalle( aTmp, aGet, dbfTmpLin, oBrw, oDlg, nMode, aTmpCaj )
       cErrors     += "* El tipo de impresora ya ha sido introducido" + CRLF
    end if
 
-   if !( TiposImpresorasModel():existTiposImpresoras( aTmp[ ( dbfTmpLin )->( FieldPos( "cTipImp" ) ) ] ) )
-      cErrors     += "* El tipo de impresora no existe"
-   end if 
 
    if !empty( cErrors )
       msgStop( cErrors, "El formulario contiene errores" )
@@ -1329,7 +1326,7 @@ STATIC FUNCTION EndDetalle( aTmp, aGet, dbfTmpLin, oBrw, oDlg, nMode, aTmpCaj )
    WinGather( aTmp, aGet, dbfTmpLin, oBrw, nMode )
 
    /*
-   Cerramos el diálogo---------------------------------------------------------
+   Cerramos el dialogo---------------------------------------------------------
    */
 
    oDlg:end( IDOK )
@@ -1783,19 +1780,19 @@ FUNCTION BrwCaj( oGet, dbfCajT, oGet2 )
 
    DEFINE DIALOG oDlg RESOURCE "HELPENTRY" TITLE "Seleccionar cajas"
 
-		REDEFINE GET oGet1 VAR cGet1;
-			ID 		104 ;
-			ON CHANGE( AutoSeek( nKey, nFlags, Self, oBrw, dbfCajT ) );
-         VALID    ( OrdClearScope( oBrw, dbfCajT ) );
-         BITMAP   "FIND" ;
-         OF       oDlg
+		REDEFINE GET    oGet1 VAR cGet1;
+			ID 		    104 ;
+			ON CHANGE   ( AutoSeek( nKey, nFlags, Self, oBrw, dbfCajT ) );
+         VALID       ( OrdClearScope( oBrw, dbfCajT ) );
+         BITMAP      "FIND" ;
+         OF          oDlg
 
 		REDEFINE COMBOBOX oCbxOrd ;
-			VAR 		cCbxOrd ;
-			ID 		102 ;
-         ITEMS    aCbxOrd ;
-         ON CHANGE( ( dbfCajT )->( OrdSetFocus( oCbxOrd:nAt ) ), oBrw:refresh(), oGet1:SetFocus() ) ;
-			OF 		oDlg
+			VAR 		   cCbxOrd ;
+         ID          102 ;
+         ITEMS       aCbxOrd ;
+         ON CHANGE   ( ( dbfCajT )->( OrdSetFocus( oCbxOrd:nAt ) ), oBrw:refresh(), oGet1:SetFocus() ) ;
+			OF          oDlg
 
       oBrw                 := IXBrowse():New( oDlg )
 
@@ -2320,7 +2317,7 @@ Function aItmCaja()
    aAdd( aBase, { "cPrnArq",   "C",  3,   0, "Formato arqueos" } )
    aAdd( aBase, { "cPrnPgo",   "C",  3,   0, "Formato metapagos" } )
    aAdd( aBase, { "lPrnEnt",   "L",  1,   0, "Lógico impresora normal entrega" } )
-   aAdd( aBase, { "cPrnEnt",   "C",  3,   0, "formato de entrega" } )
+   aAdd( aBase, { "cPrnEnt",   "C",  3,   0, "Formato de entrega" } )
    aAdd( aBase, { "cWinTik",   "C",  250, 0, "Impresora de tickets" } )
    aAdd( aBase, { "lPrnPgo",   "L",  1,   0, "Lógico impresora normal metapagos" } )
    aAdd( aBase, { "nCopTik",   "N",  2,   0, "Copias tickets" } )
@@ -3225,7 +3222,7 @@ Static Function InitBrwBigCaj( oDlg, oImgCaj, oLstCaj, dbfCaj )
 RETURN ( nil )
 
 //---------------------------------------------------------------------------//
-// Función que chequea la caja y nos deja pasar
+// Funcin que chequea la caja y nos deja pasar
 
 Static Function SelBrwBigCaj( nOpt, oLstCaj, oDlg, dbfCaj )
 

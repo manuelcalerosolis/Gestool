@@ -559,8 +559,7 @@ CLASS TXBrowse FROM TControl
    METHOD GetDisplayCols()
    METHOD GetVisibleCols() // returns an array of visible (Not hided) column objects
    METHOD GetDisplayColsWidth( aOptionalReturnedSizes )
-   METHOD ColAtPos( nPos ) INLINE ::aCols[ ::aDisplay[ MinMax( If( nPos == nil .or. ;
-                                  nPos == 0, 1, nPos ), 1, Len( ::aDisplay ) ) ] ]
+   METHOD ColAtPos( nPos ) INLINE ::aCols[ ::aDisplay[ MinMax( If( nPos == nil .or. nPos == 0, 1, nPos ), 1, Len( ::aDisplay ) ) ] ]
    METHOD ColPos( oCol )
    METHOD SelectedCol() INLINE ::ColAtPos( ::nColSel )
 
@@ -830,11 +829,15 @@ METHOD CreateFromCode() CLASS TXBrowse
 
    if ! Empty( ::oWnd:hWnd )
       ::Create()
+
       if ::oFont != nil
          ::SetFont( ::oFont )
       endif
+
       ::Initiate()
+
       ::lVisible := .t.
+
       ::oWnd:AddControl( Self )
    else
       ::lVisible := .f.
@@ -957,6 +960,7 @@ METHOD Initiate( hDlg ) CLASS TXBrowse
    endif
 
    ::Adjust()
+
    ::MakeBrush()
 
 return Self
@@ -1064,7 +1068,6 @@ METHOD Adjust() CLASS TXBrowse
    for nFor := 1 to nLen
       ::aCols[ nFor ]:Adjust()
    next
-
    ::ReleaseDC()
 
    ::CalcHdrHeight()
@@ -9064,6 +9067,7 @@ METHOD Adjust() CLASS TXBrwColumn
    if ValType( ::oBrw:aArrayData ) == 'A'
       DEFAULT ::cEditPicture := { |u| If( ValType( u ) == 'N', ;
                NumPict( ::nWidthChr, Len( AfterAtNum( '.', cValToChar( u ) ) ) ), nil ) }
+
       if ::bEditValue == nil
          if ::nArrayCol > 0
             ::bEditValue   := ;
@@ -9093,12 +9097,10 @@ METHOD Adjust() CLASS TXBrwColumn
       if Empty( ::cDataType ) .or. ::cDataType == 'U' //$ 'CU'
          ::cDataType := ValType( ::Value )
       endif
-
       if ::cEditPicture == nil .and. ::cDataType == 'N' .and. ;
          ::nDataLen != nil .and. ::oBrw:nDataType != DATATYPE_ARRAY
          ::cEditPicture := NumPict( ::nDataLen, ::nDataDec, .t. )
       endif
-
 #ifdef __XHARBOUR__
       if ::cDataType == 'T'
          DEFAULT ::cEditPicture  := '@D'

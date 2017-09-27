@@ -16,7 +16,7 @@ CLASS EtiquetasController FROM SQLBaseController
 
    METHOD   buildSQLModel( this )         						INLINE ( EtiquetasModel():New( this ) )
    
-   METHOD   buildSQLView( this )										INLINE ( Etiquetas():New( this ) )
+   METHOD   buildSQLView( this )										INLINE ( EtiquetasView():New( this ) )
 
    METHOD   getFieldFromBrowse()                				INLINE ( ::allSelectedNode )
  
@@ -58,11 +58,10 @@ CLASS EtiquetasController FROM SQLBaseController
 
    METHOD 	isSpecialMode()                             		INLINE ( ::nMode == __special_mode__ )
 
-
 END CLASS
 
 //---------------------------------------------------------------------------// 
-
+/*
 METHOD New()
 
    ::idUserMap            	:= "01101"
@@ -74,6 +73,29 @@ METHOD New()
    ::Super:New()
 
 RETURN ( self )
+
+*/
+//---------------------------------------------------------------------------//
+
+METHOD New()
+
+   ::cTitle                := "Etiquetas"
+
+   ::cImage                := "gc_bookmarks_16"
+
+   ::nLevel                := nLevelUsr( "01101" )
+
+   ::oModel                := EtiquetasModel():New( self )
+
+   ::oRepository           := EtiquetasRepository():New( self )
+
+   ::oDialogView           := EtiquetasView():New( self )
+
+   ::oValidator            := EtiquetasValidator():New( self )
+
+   ::Super:New()
+
+RETURN ( Self )
 
 //---------------------------------------------------------------------------//
 

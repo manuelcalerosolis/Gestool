@@ -241,10 +241,9 @@ CLASS TDataCenter
 
    	METHOD oCliBnc()
 
-   METHOD AlterTableSQLite()      
-   METHOD ConvertDatosToSQLite()
-   METHOD ConvertEmpresaToSQLite()
-   METHOD MigrateEmpresaToSQLite()
+   METHOD ConvertDatosToSQL()
+   METHOD ConvertEmpresaToSQL()
+   METHOD MigrateEmpresaToSQL()
 
 END CLASS
 
@@ -586,8 +585,8 @@ METHOD lAdministratorTask()
 
    dbcloseall()
 
-   getSQLDatabase():checkModelsExistence()
-
+   getSQLDatabase():checkModels()
+   
    ::configDatabaseCDXLocal()
 
    ::loadEmpresas()
@@ -747,11 +746,11 @@ METHOD StartAdministratorTask()
 
    // Alteracion de tablas de SQLite------------------------------------------
 
-   ::AlterTableSQLite()
+   // ::AlterTableSQLite()
 
    // Conversion de tablas a SQLite-------------------------------------------
 
-   ::ConvertDatosToSQLite()
+   // ::ConvertDatosToSQL()
    
    // Recorremos el array de las empresas par actualizarlas--------------------
 
@@ -775,7 +774,7 @@ METHOD StartAdministratorTask()
 
             aEmpresa[ 4 ]      := .t.
 
-            ::ConvertEmpresaToSQLite()
+            ::ConvertEmpresaToSQL()
 
          end if
 
@@ -839,7 +838,7 @@ METHOD StartAdministratorTask()
 
             ::Reindex()
 
-            ::MigrateEmpresaToSQLite()
+            ::MigrateEmpresaToSQL()
 
             aEmpresa[ 5 ]   := .t.
 
@@ -4747,33 +4746,7 @@ RETURN ( ::ExecuteSqlStatement( cStm, "SatCliArticulos" ) )
 
 //---------------------------------------------------------------------------//
 
-METHOD AlterTableSQLite()
-
-   TiposImpresorasModel();
-      :New();
-      :checkTable()
-
-   TiposNotasModel();
-      :New();
-      :checkTable()
-
-   SituacionesModel();
-      :New();
-      :checkTable()
-
-   HistoricosUsuariosModel();
-      :New();
-      :checkTable()
-
-   EtiquetasModel();
-      :New();
-      :checkTable()
-
-RETURN ( Self )
-
-//---------------------------------------------------------------------------//
-
-METHOD ConvertDatosToSQLite()
+METHOD ConvertDatosToSQL()
 
    TiposImpresorasModel();
       :New();
@@ -4795,7 +4768,7 @@ RETURN ( Self )
 
 //---------------------------------------------------------------------------//
 
-METHOD ConvertEmpresaToSQLite()
+METHOD ConvertEmpresaToSQL()
 
    EtiquetasModel();
       :New();
@@ -4805,9 +4778,9 @@ RETURN ( Self )
 
 //---------------------------------------------------------------------------//
 
-METHOD MigrateEmpresaToSQLite()
+METHOD MigrateEmpresaToSQL()
 
-   PedidosClientesLineasModel() ;
+   TransaccionesComercialesLineasModel() ;
       :TranslateSATClientesLineasCodigoTiposVentaToId() ;
       :TranslatePresupuestoClientesLineasCodigoTiposVentaToId() ;
       :TranslatePedidosClientesLineasCodigoTiposVentaToId() ;

@@ -4774,7 +4774,6 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbf, oBrw, lTotLin, cCodArtEnt, nMode, aTmpP
       REDEFINE GET oGet3 VAR cGet3 ;
          ID       206 ;
 			WHEN 		( .F. ) ;
-			COLOR 	CLR_GET ;
          OF       oFld:aDialogs[1]
 
       /*
@@ -4783,12 +4782,13 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbf, oBrw, lTotLin, cCodArtEnt, nMode, aTmpP
 
       TiposVentasController();
          :Instance();
+         :getDialogView();
          :createEditControl(  {  "idGet"  => 290,;
                                  "idText" => 291,;
                                  "idSay"  => 292,;
-                                 "dialog" => oFld:aDialogs[ 1 ],;
-                                 "when"   => {|| ( nMode != ZOOM_MODE .and. nMode != MULT_MODE .and. !lTotLin ) },;
-                                 "value"  => aTmp[ ( D():SatClientesLineas( nView ) )->( fieldpos( "id_tipo_v" ) ) ] } )
+                                 "dialog" => oFld:aDialogs[1],;
+                                 "when"   => {|| ( nMode != ZOOM_MODE .and. nMode != MULT_MODE .and. !lTotLin ) } },;
+                                 @aTmp[ ( D():PedidosClientesLineas( nView ) )->( fieldpos( "id_tipo_v" ) ) ] )
 
       /*
       Codigo de almacen--------------------------------------------------------
@@ -9386,7 +9386,6 @@ STATIC FUNCTION SaveDeta( aTmp, aTmpPed, aGet, oFld, oDlg2, oBrw, bmpImage, nMod
    aTmp[ _CTIPCTR ]              := cTipoCtrCoste
    aTmp[ _NREQ ]                 := nPReq( D():TiposIva( nView ), aTmp[ _NIVA ] )
    aTmp[ _NPRODUC ]              := oEstadoProduccion:nAt - 1
-   aTmp[ ( D():PedidosClientesLineas( nView ) )->( fieldpos( "id_tipo_v" ) ) ]   := TiposVentasController():Instance():getIdFromEditControl()
 
    aClo                          := aClone( aTmp )
 

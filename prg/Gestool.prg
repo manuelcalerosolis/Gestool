@@ -33,6 +33,8 @@ PROCEDURE RddInit()
    REQUEST DBFFPT
    REQUEST ADS
 
+   REQUEST RDLMYSQL 
+
    REQUEST OrdKeyCount
    REQUEST OrdKeyNo
    REQUEST OrdKeyGoto
@@ -80,36 +82,43 @@ FUNCTION Main( paramsMain, paramsSecond, paramsThird )
    
    appDialogExtend() 
 
-   mainTest()
-
    appLoadAds()
 
-   // Conexión con SQLite------------------------------------------------------
+   // Conexión con MySql------------------------------------------------------
 
-   // if !empty( getSQLDatabase() )
-   //    getSQLDatabase():Connect()
-   //    getSQLDatabase():startForeignKey()
-   //    getSQLDatabase():checkModelsExistence()
-   // end if 
+   if !( "TABLET" $ appParamsMain() ) .and. !empty( getSQLDatabase() )
 
-   // Motor de bases de datos--------------------------------------------------
+      if getSQLDatabase():Connect() 
+         
+         getSQLDatabase():addModels()
 
-   if ( "ADMINISTRADOR" $ appParamsMain() )
+      else 
+         
+         msgStop( "No se ha podido conectar a la base de datos MySQL" + CRLF + getSQLDatabase():sayConexionInfo() )
 
-      msgalert("ADMINISTRADOR")
+         RETURN ( nil )
 
-      TDataCenter():lAdministratorTask()
-      RETURN nil
+      end if 
+
    end if 
 
    // Motor de bases de datos--------------------------------------------------
 
-   if !( appConnectADS() )
+   if ( "ADMINISTRADOR" $ appParamsMain() )
+      TDataCenter():lAdministratorTask()
+      RETURN nil
+   end if
+
+   // Motor de bases de datos--------------------------------------------------
+
+   if !( appConnectADS() ) 
       msgStop( "Imposible conectar con GstApolo ADS data dictionary" )
       RETURN nil
    end if
 
    TDataCenter():BuildData()
+
+   mainTest()
 
    // Icono--------------------------------------------------------------------
 
@@ -215,7 +224,7 @@ FUNCTION Main( paramsMain, paramsSecond, paramsThird )
 
    getSQLDatabase():Disconnect() 
 
-RETURN Nil
+RETURN ( nil )
 
 //----------------------------------------------------------------------------//
 
@@ -342,7 +351,7 @@ FUNCTION AccesTctCode()
    if( !lIsDir( cPatUsr() ), MakeDir( cNamePath( cPatUsr() ) ), )
 
    cPath          := cPatDat()
-   cPcnUsr        := Rtrim( NetName() )
+   cPcnUsr        := rtrim( NetName() )
 
    // Comprobamos q exista al menos un usuario master--------------------------
 
@@ -502,9 +511,9 @@ FUNCTION InitBrw( oDlg, oImgUsr, oLstUsr, dbfUsr )
 
          if !( dbfUsr )->lUseUse .and. !( dbfUsr )->lGrupo
 
-            if !Empty( ( dbfUsr )->cImagen ) .and. File( Rtrim( ( dbfUsr )->cImagen ) )
+            if !Empty( ( dbfUsr )->cImagen ) .and. File( rtrim( ( dbfUsr )->cImagen ) )
 
-               oImgUsr:Add( TBitmap():Define( , Rtrim( ( dbfUsr )->cImagen ) ) )
+               oImgUsr:Add( TBitmap():Define( , rtrim( ( dbfUsr )->cImagen ) ) )
 
                nImg++
 
@@ -823,12 +832,12 @@ RETURN ( nil )
 FUNCTION MainTablet()
 
 	local oDlg
-   local nRow           
-   local oGridTree
-   local cAgente        := GetPvProfString( "Tablet", "Agente", "", cIniAplication() )
+   local nRow           := 0           
    local cTitle         := "GESTOOL TABLET : " + uFieldEmpresa( "CodEmp" ) + "-" + uFieldEmpresa( "cNombre" )
+   local oGridTree
 
-   nRow                 := 0
+   cCodigoAgente( GetPvProfString( "Tablet", "Agente", "", cIniAplication() ) )
+
    oDlg                 := TDialog():New( 1, 5, 40, 100, cTitle,,, .f., nOR( DS_MODALFRAME, WS_POPUP, WS_CAPTION, WS_SYSMENU, WS_MINIMIZEBOX, WS_MAXIMIZEBOX ),, rgb( 255, 255, 255 ),,, .F.,, oGridFont(),,,, .f.,, "oDlg" )  
 
 	/*
@@ -852,9 +861,10 @@ FUNCTION MainTablet()
                            "nWidth"    => 138,;
                            "nHeight"   => 64,;
                            "cResName"  => "Gestool",;
+                           "bLClicked" => {|| runAsistenciaRemota() },;
                            "oWnd"      => oDlg } )
 
-   //----------------Clientes
+   //----------------Clientes--------------------------------------------------
 
    TGridImage():Build(  {  "nTop"      => {|| GridRow( 3 ) },;
                            "nLeft"     => {|| GridWidth( 0.5, oDlg ) },;
@@ -875,7 +885,7 @@ FUNCTION MainTablet()
                            "nClrVisit" => nGridColor(),;
                            "bAction"   => {|| Customer():New():runNavigatorCustomer() } } )
 
-   //----------------Salir
+   //----------------Salir-----------------------------------------------------
 
    TGridImage():Build(  {  "nTop"      => {|| GridRow( 3 ) },;
                            "nLeft"     => {|| GridWidth( 11.5, oDlg ) - 64 },;
@@ -885,7 +895,7 @@ FUNCTION MainTablet()
                            "bLClicked" => {|| oDlg:End() },;
                            "oWnd"      => oDlg } )
    
-   //----------------Pedidos de clientes
+   //----------------Pedidos de clientes---------------------------------------
 
    TGridImage():Build(  {  "nTop"      => {|| GridRow( 6 ) },;
                            "nLeft"     => {|| GridWidth( 0.5, oDlg ) },;
@@ -906,7 +916,7 @@ FUNCTION MainTablet()
                            "nClrVisit" => nGridColor(),;
                            "bAction"   => {|| OrderCustomer():New():Play() } } )
 
-   //----------------Resumen diario
+   //----------------Resumen diario--------------------------------------------
 
    if AccessCode():lSalesView
 
@@ -921,7 +931,7 @@ FUNCTION MainTablet()
    end if 
 
    /*
-   GALERÍA DE INFORMES*********************************************************
+   GALERÍA DE INFORMES---------------------------------------------------------
    */
 
    TGridImage():Build(  {  "nTop"      => {|| GridRow( 9 ) },;
@@ -932,7 +942,7 @@ FUNCTION MainTablet()
                            "bLClicked" => {|| Reporting():New():Resource() },;
                            "oWnd"      => oDlg } )
 
-   //----------------Albaranes de clientes
+   //----------------Albaranes de clientes-------------------------------------
    
    TGridImage():Build(  {  "nTop"      => {|| GridRow( 9 ) },;
                            "nLeft"     => {|| GridWidth( 0.5, oDlg ) },;
@@ -954,7 +964,7 @@ FUNCTION MainTablet()
                            "bAction"   => {|| DeliveryNoteCustomer():New():Play() } } )
 
    /*
-   Copias de Seguridad*********************************************************
+   Copias de Seguridad---------------------------------------------------------
    */
 
    TGridImage():Build(  {  "nTop"      => {|| GridRow( 12 ) },;
@@ -1018,7 +1028,7 @@ FUNCTION MainTablet()
                            "bLClicked" => {|| ReindexaPresenter():New():Play() },;
                            "oWnd"      => oDlg } )
 
-   // Envio y recepcion--------------------------------------------------------
+   //----------------Envio y recepcion
 
    TGridImage():Build(  {  "nTop"      => {|| GridRow( 18 ) },;
                            "nLeft"     => {|| GridWidth( 0.5, oDlg ) },;
@@ -1039,14 +1049,6 @@ FUNCTION MainTablet()
                            "nClrVisit" => nGridColor(),;
                            "bAction"   => {|| TSndRecInf():New():ActivateTablet() } } )
 
-   TGridImage():Build(  {  "nTop"      => {|| GridRow( 18 ) },;
-                           "nLeft"     => {|| GridWidth( 11.5, oDlg ) - 64 },;
-                           "nWidth"    => 64,;
-                           "nHeight"   => 64,;
-                           "cResName"  => "gc_binocular_64",;
-                           "bLClicked" => {|| RunAsistenciaRemota() },;
-                           "oWnd"      => oDlg } )
-
    //----------------Informacion empresa
 
    oGridTree   := TGridTreeView():Build( ;
@@ -1061,11 +1063,11 @@ FUNCTION MainTablet()
 
    oDlg:bResized       := {|| GridResize( oDlg ) }
    oDlg:bStart         := {|| oGridTree:Add( "Empresa : "      + uFieldEmpresa( "CodEmp" ) + "-" + uFieldEmpresa( "cNombre" ) ),;
-                              oGridTree:Add( "Usuario : "      + Rtrim( oUser():cNombre() ) ),;
-                              oGridTree:Add( "Delegación : "   + Rtrim( oUser():cDelegacion() ) ),;
+                              oGridTree:Add( "Usuario : "      + rtrim( oUser():cNombre() ) ),;
+                              oGridTree:Add( "Delegación : "   + rtrim( oUser():cDelegacion() ) ),;
                               oGridTree:Add( "Caja : "         + oUser():cCaja() ),;
-                              oGridTree:Add( "Almacén : "      + Rtrim( oUser():cAlmacen() ) + "-" + RetAlmacen( oUser():cAlmacen() ) ),;
-                              oGridTree:Add( "Agente : "       + Rtrim( cAgente ) + "-" + AllTrim( RetNbrAge( cAgente ) ) ),;
+                              oGridTree:Add( "Almacén : "      + rtrim( oUser():cAlmacen() ) + "-" + RetAlmacen( oUser():cAlmacen() ) ),;
+                              oGridTree:Add( "Agente : "       + rtrim( cCodigoAgente() ) + "-" + AllTrim( RetNbrAge( cCodigoAgente() ) ) ),;
                               oGridTree:Add( "Sesión : "       + Alltrim( Transform( cCurSesion(), "######" ) ) ) } 
 
 	ACTIVATE DIALOG oDlg CENTER ON INIT ( GridMaximize( oDlg ) )
@@ -1083,7 +1085,6 @@ RETURN ( by( nRow ) )
 //---------------------------------------------------------------------------//
 
 Function mainTest()
-
 
 Return ( nil )
 

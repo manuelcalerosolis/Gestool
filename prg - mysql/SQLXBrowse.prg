@@ -38,6 +38,7 @@ CLASS SQLXBrowse FROM TXBrowse
 
    METHOD getColumnByHeaders()
    METHOD selectColumnOrder( oCol )
+   
    METHOD selectColumnOrderByHeader( cHeader )  INLINE ( ::selectColumnOrder( ::getColumnByHeader( cHeader ) ) )
 
    METHOD getColumnByHeader( cHeader )
