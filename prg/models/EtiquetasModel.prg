@@ -41,24 +41,25 @@ METHOD New()
                                                          "text"		=> "Identificador"                                 ,;
                                                          "header"    => "Id"                                            ,;
                                                          "visible"   => .t.                                             ,;
-                                                         "width"     => 40}                                             ,;
+                                                         "width"     => 40 }                                            ,;
                                        "empresa"   => {  "create"    => "CHAR ( 4 )"                                    ,;
                                                          "text"      => "Empresa a la que pertenece la etiqueta"        ,;
                                                          "header"    => "Empresa"                                       ,;
                                                          "visible"   => .f.                                             ,;
                                                          "width"     => 50                                              ,;
                                                          "type"      => "N"                                             ,;
-                                                         "len"       => 4}                                              ,;
+                                                         "len"       => 4                                               ,;
+                                                         "default"   => {|| cCodEmp() } }                               ,;
                                        "nombre"    => {  "create"    => "VARCHAR( 50 ) NOT NULL"                        ,;
                                                          "text"      => "Nombre de la etiqueta"                         ,;
                                                          "header"    => "Nombre"                                        ,;
                                                          "visible"   => .t.                                             ,;
                                                          "width"     => 400                                             ,;
                                                          "type"      => "C"                                             ,;
-                                                         "len"       => 50}                                             ,;
+                                                         "len"       => 50 }                                            ,;
                                        "id_padre"  => {  "create"    => "INTEGER"                                       ,;
                                                          "text"      => "Identificador de la etiqueta padre"            ,;
-                                                         "visible"   => .f.}                                            }
+                                                         "visible"   => .f. }                                           }
 
    ::Super:New()
 /*
@@ -98,10 +99,10 @@ METHOD makeParent( cName )
 
    local cParentInsert
 
-   cParentInsert        := "INSERT INTO " + ::cTableName + " ( "     + ;
-                              "nombre, empresa, id_padre ) "         + ;
-                           "VALUES  ( "                              + ;
-                              toSQLString( cName ) + ", " + toSQLString( cCodEmp() ) + ", null )"
+   cParentInsert     := "INSERT INTO " + ::cTableName + " ( "     + ;
+                           "nombre, empresa, id_padre ) "         + ;
+                        "VALUES  ( "                              + ;
+                           toSQLString( cName ) + ", " + toSQLString( cCodEmp() ) + ", null )"
 
    getSQLDatabase():Query( cParentInsert )
 
