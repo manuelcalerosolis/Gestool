@@ -183,7 +183,8 @@ METHOD TimeStampFields()
 
    hset( ::hColumns, "deleted_at",  {  "create"    => "DATETIME"      ,;
                                        "text"      => "Eliminación fecha y hora"                ,;
-                                       "header"    => "Eliminación" }                           )
+                                       "header"    => "Eliminación"                             ,;
+                                       "default"   => {|| nil } }                            )
 
 RETURN ( ::hColumns )
 
