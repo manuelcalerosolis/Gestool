@@ -4,6 +4,7 @@
 CLASS Customer FROM Editable
 
    DATA oClienteIncidencia
+   DATA oGroupCustomer
 
    DATA oViewIncidencia
 
@@ -50,6 +51,10 @@ CLASS Customer FROM Editable
 
    METHOD visualizaFactura( cNumFac )
 
+   METHOD runGridGroupCustomer()
+
+   METHOD lValidGroupCustomer()
+
 ENDCLASS
 
 //---------------------------------------------------------------------------//
@@ -93,6 +98,8 @@ METHOD Create() CLASS Customer
    ::oViewSales                           := CustomerSalesViewSearchNavigator():New( self )
 
    ::oClienteIncidencia                   := CustomerIncidence():New( self )
+
+   ::oGroupCustomer                       := GroupCustomer():init( self )
 
    ::setEnviroment()
 
@@ -360,5 +367,66 @@ METHOD visualizaFactura( cNumFac ) CLASS Customer
    ( D():FacturasClientes( ::nView ) )->( dbGoTo( nRecAnt ) )
 
 Return ( .t. )
+
+//---------------------------------------------------------------------------//
+
+METHOD runGridGroupCustomer() CLASS Customer
+
+   ::oViewEdit:oCodigoGrupo:Disable()
+
+   if !empty( ::oGroupCustomer:oGridGroupCustomer )
+
+      ::oGroupCustomer:oGridGroupCustomer:showView()
+
+      if ::oGroupCustomer:oGridGroupCustomer:isEndOk()
+         ::oViewEdit:SetGetValue( ( D():GrupoClientes( ::nView ) )->cCodGrp, "CodigoGrupo" )
+      end if
+
+      ::lValidGroupCustomer()
+
+   end if
+
+   ::oViewEdit:oCodigoGrupo:Enable()
+
+RETURN ( self )
+
+//---------------------------------------------------------------------------//
+
+METHOD lValidGroupCustomer() CLASS Customer
+
+   local nRec
+   local nOrdAnt
+   local lValid                  := .f.
+   local codigoGroupCustomer     := hGet( ::hDictionaryMaster, "CodigoGrupo" )
+
+   if empty( codigoGroupCustomer )
+      RETURN .f.
+   end if
+
+   ::oViewEdit:oCodigoGrupo:Disable()
+   ::oViewEdit:oNombreGrupo:cText( "" )
+   
+   nRec                    := ( D():GrupoClientes( ::nView ) )->( Recno() )
+   nOrdAnt                 := ( D():GrupoClientes( ::nView ) )->( ordsetfocus( "cCodGrp" ) )
+
+   if ( D():GrupoClientes( ::nView ) )->( dbSeek( codigoGroupCustomer ) )
+
+      ::oViewEdit:oCodigoGrupo:cText( ( D():GrupoClientes( ::nView ) )->cCodGrp )
+      ::oViewEdit:oNombreGrupo:cText( ( D():GrupoClientes( ::nView ) )->cNomGrp )
+
+      lValid               := .t.
+
+   else
+
+      apoloMsgStop( "Grupo de cliente no encontrado" )
+      
+   end if
+
+   ( D():GrupoClientes( ::nView ) )->( ordsetfocus( nOrdAnt ) )
+   ( D():GrupoClientes( ::nView ) )->( dbgoto( nRec ) )
+
+   ::oViewEdit:oCodigoGrupo:Enable()
+
+RETURN lValid
 
 //---------------------------------------------------------------------------//

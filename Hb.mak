@@ -563,6 +563,8 @@ RelacionesEtiquetasModel.prg 												\
 HistoricosUsuariosModel.prg                           			\
 PedidosClientesLineasModel.prg 											\
 Categoria.prg                                                  \
+GroupCustomer.prg                                              \
+GroupCustomerViewSearchNavigator.prg                           \
 
 C               =       	            					\
 Img2pdf.c               	            					\
@@ -1093,6 +1095,8 @@ HistoricosUsuariosModel.obj                                 \
 PedidosClientesLineasModel.obj 										\
 ColumnasUsuariosModel.obj 												\
 Categoria.obj                                               \
+GroupCustomer.obj                                           \
+GroupCustomerViewSearchNavigator.obj                        \
 
 .PRG.OBJ:
   	$(HB)\Bin\Harbour $? /n /p$(PPO)\$&.ppo /w /es2 /i$(FWINCLUDE) /gc0 /i$(HBINCLUDE) /i$(GTINCLUDE) /o$(OBJ)\$&.c
@@ -1611,6 +1615,8 @@ $(OBJ)\PropiedadesLineasController.obj      					+
 $(OBJ)\RelacionesEtiquetasModel.obj                		+
 $(OBJ)\HistoricosUsuariosModel.obj 								+
 $(OBJ)\Categoria.obj                                     +
+$(OBJ)\GroupCustomer.obj                                 +
+$(OBJ)\GroupCustomerViewSearchNavigator.obj              +
 $(OBJ)\PedidosClientesLineasModel.obj
 $<,$*
 $(FWLIB)\FiveH.lib               								+

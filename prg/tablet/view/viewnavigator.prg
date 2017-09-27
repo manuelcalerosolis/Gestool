@@ -116,7 +116,7 @@ METHOD BotonesMovimientoBrowse() CLASS ViewNavigator
                            "nWidth"    => 64,;
                            "nHeight"   => 64,;
                            "cResName"  => "gc_navigate_up2_64",;
-                           "bLClicked" => {|| ::oBrowse:PageUp(), ::refreshBrowse()  },;
+                           "bLClicked" => {|| ::oBrowse:GoTop(), ::refreshBrowse()  },;
                            "oWnd"      => ::oDlg } )
 
    TGridImage():Build(  {  "nTop"      => 75,;
@@ -124,7 +124,7 @@ METHOD BotonesMovimientoBrowse() CLASS ViewNavigator
                            "nWidth"    => 64,;
                            "nHeight"   => 64,;
                            "cResName"  => "gc_navigate_up_64",;
-                           "bLClicked" => {|| ::oBrowse:GoUp(), ::refreshBrowse()  },;
+                           "bLClicked" => {|| ::oBrowse:PageUp(), ::refreshBrowse()  },;
                            "oWnd"      => ::oDlg } )
 
    TGridImage():Build(  {  "nTop"      => 75,;
@@ -132,7 +132,7 @@ METHOD BotonesMovimientoBrowse() CLASS ViewNavigator
                            "nWidth"    => 64,;
                            "nHeight"   => 64,;
                            "cResName"  => "gc_navigate_down_64",;
-                           "bLClicked" => {|| ::oBrowse:GoDown(), ::refreshBrowse() },;
+                           "bLClicked" => {|| ::oBrowse:PageDown(), ::refreshBrowse() },;
                            "oWnd"      => ::oDlg } )
 
    TGridImage():Build(  {  "nTop"      => 75,;
@@ -140,7 +140,7 @@ METHOD BotonesMovimientoBrowse() CLASS ViewNavigator
                            "nWidth"    => 64,;
                            "nHeight"   => 64,;
                            "cResName"  => "gc_navigate_down2_64",;
-                           "bLClicked" => {|| ::oBrowse:PageDown(), ::refreshBrowse() },;
+                           "bLClicked" => {|| ::oBrowse:GoBottom(), ::refreshBrowse() },;
                            "oWnd"      => ::oDlg } )
 
 Return ( self )
