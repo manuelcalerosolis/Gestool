@@ -1,27 +1,27 @@
 HB                   = 	\harbour_bcc582\
 
 HBINCLUDE            = 	\harbour_bcc582\Include
-FWINCLUDE            = 	\Fwh1701\Include
+FWINCLUDE            = 	\fwh1705\Include
 GTINCLUDE            = 	.\Include
 
 HBLIB                = 	\harbour_bcc582\Lib
-FWLIB                = 	\Fwh1701\lib
+FWLIB                = 	\fwh1705\lib
 
-RESOURCE             = 	.\Resource
+RESOURCE             = 	.\resource
 
-BORLAND              = 	\Bcc582
-BORLANDLIB           = 	\Bcc582\lib
+BORLAND              = 	\bcc582
+BORLANDLIB           = 	\bcc582\lib
 
-IMG2PDFLIB           = 	\Img2Pdf
+IMG2PDFLIB           = 	\img2Pdf
 
-OBJ                  = 	Obj1701
+OBJ                  = 	obj1705
 
-SOURCEPRG            = 	.\Prg;.\Prg\mail;.\Prg\Comercio;.\Prg\Models;.\Prg\Views;.\Prg\Controllers;.\Prg\Services;.\Prg\Tablet;.\Prg\tablet\view;.\Prg\tablet\view\documentos;.\Prg\tablet\view\terceros;.\Prg\tablet\view\documentos\ventas;.\Prg\tablet\view\documentos\terceros;.\Prg\tablet\utils;.\Prg\tablet\presenter;.\Prg\tablet\presenter\terceros;.\Prg\tablet\presenter\documentos;.\Prg\tablet\presenter\documentos\ventas;
+SOURCEPRG            = 	.\Prg;.\Prg\mail;.\Prg\Comercio;.\Prg\Models;.\Prg\Views;.\Prg\Controllers;.\Prg\Validators;.\Prg\Repositories;.\Prg\Services;.\Prg\Tablet;.\Prg\tablet\view;.\Prg\tablet\view\documentos;.\Prg\tablet\view\terceros;.\Prg\tablet\view\documentos\ventas;.\Prg\tablet\view\documentos\terceros;.\Prg\tablet\utils;.\Prg\tablet\presenter;.\Prg\tablet\presenter\terceros;.\Prg\tablet\presenter\documentos;.\Prg\tablet\presenter\documentos\ventas;
 SOURCEC 				   =	C
 
-PPO 					   = 	Ppo1701
+PPO 					   = 	ppo1705
 
-EXE 					   = 	Bin\$(TARGET).exe
+EXE 					   = 	bin\$(TARGET).exe
 
 TARGETPRG 				= $(TARGET).prg
 TARGETOBJ 				= $(TARGET).obj
@@ -162,7 +162,12 @@ Tblconv.prg             										\
 Regalm.prg              										\
 Rhtml.prg               										\
 Tshell.prg              										\
-SQLTshell.prg 														\
+SQLBrowseableView.prg 											\
+SQLNavigatorView.prg 											\
+SQLSelectorView.prg 												\
+SQLShellView.prg 													\
+SQLBrowseView.prg 												\
+MenuTreeView.prg 													\
 Rfile.prg               										\
 TdprnC3.prg             										\
 Animat.prg              										\
@@ -329,7 +334,7 @@ TInfAtp.prg             													\
 ConfVisor.prg           													\
 ConfCajPorta.prg        													\
 ConfImpTiket.prg        													\
-Situaciones.prg         													\
+SituacionesView.prg         												\
 SituacionesModel.prg       												\
 MovimientosAlmacenesLineasModel.prg 									\
 FacturasClientesLineasModel.prg 											\
@@ -412,10 +417,23 @@ SincronizaPreventa.prg  													\
 MsTable.prg             													\
 MsError.prg 																	\
 SQLBaseView.prg 																\
-TiposImpresoras.prg       													\
+TiposImpresorasView.prg       											\
+TiposVentasView.prg    														\
+TiposNotasView.prg    														\
+SQLBaseValidator.prg 														\
+TiposImpresorasValidator.prg 												\
+TiposVentasValidator.prg 													\
+TiposNotasValidator.prg 													\
+EtiquetasValidator.prg 														\
+SituacionesValidator.prg 													\
+SQLBaseRepository.prg 														\
+TiposImpresorasRepository.prg 											\
+TiposVentasRepository.prg 													\
+TiposNotasRepository.prg 													\
+ConfiguracionEmpresasRepository.prg 									\
+EtiquetasRepository.prg 													\
 TiposNotas.prg       														\
-Etiquetas.prg       															\
-TiposVentas.prg       														\
+EtiquetasView.prg   															\
 Propiedades.prg       														\
 PropiedadesLineas.prg       												\
 PageIni.prg             													\
@@ -526,8 +544,6 @@ MaterialesConsumidosLineasModel.prg 									\
 TiposImpresorasController.prg 											\
 TiposNotasModel.prg 															\
 TiposNotasController.prg 													\
-EtiquetasModel.prg 															\
-EtiquetasController.prg 													\
 TiposVentasModel.prg 														\
 TiposVentasController.prg 													\
 PropiedadesModel.obj       								   			\
@@ -694,7 +710,12 @@ Tblconv.obj                                        	\
 Regalm.obj                                         	\
 Rhtml.obj                                          	\
 Tshell.obj                                         	\
-SQLTshell.obj 														\
+SQLBrowseableView.obj 											\
+SQLNavigatorView.obj 											\
+SQLSelectorView.obj 												\
+SQLShellView.obj 													\
+SQLBrowseView.obj 												\
+MenuTreeView.obj 													\
 RpreviewC3.obj 													\
 ReportC3.obj                                       	\
 RocolumnC3.obj                                     	\
@@ -877,7 +898,7 @@ TInfAtp.obj             										\
 ConfImpTiket.obj        										\
 ConfVisor.obj           										\
 ConfCajPorta.obj        										\
-Situaciones.obj         										\
+SituacionesView.obj         									\
 SituacionesModel.obj       									\
 AlmacenesModel.obj 												\
 GruposMovimientosModel.obj 									\
@@ -960,10 +981,23 @@ SincronizaPreventa.obj  									\
 MsTable.obj             									\
 MsError.obj 													\
 SQLBaseView.obj 															\
-TiposImpresoras.obj       												\
+TiposImpresorasView.obj       										\
+SQLBaseValidator.obj 													\
+TiposImpresorasValidator.obj 											\
+TiposVentasValidator.obj 												\
+TiposNotasValidator.obj 												\
+EtiquetasValidator.obj 													\
+SituacionesValidator.obj 												\
+SQLBaseRepository.obj 													\
+TiposImpresorasRepository.obj 										\
+ConfiguracionEmpresasRepository.obj 								\
+TiposVentasRepository.obj 												\
+TiposNotasRepository.obj 												\
+EtiquetasRepository.obj 												\
 TiposNotas.obj       													\
-Etiquetas.obj       														\
-TiposVentas.obj       													\
+EtiquetasView.obj   														\
+TiposVentasView.obj       												\
+TiposNotasView.obj 														\
 Propiedades.obj       													\
 PropiedadesLineas.obj       											\
 PageIni.obj             												\
@@ -1232,7 +1266,12 @@ $(OBJ)\Tblconv.obj               									+
 $(OBJ)\Regalm.obj                									+
 $(OBJ)\Rhtml.obj                 									+
 $(OBJ)\Tshell.obj                									+
-$(OBJ)\SQLTshell.obj              									+
+$(OBJ)\SQLBrowseableView.obj             							+
+$(OBJ)\SQLNavigatorView.obj              							+
+$(OBJ)\SQLSelectorView.obj              							+
+$(OBJ)\SQLShellView.obj            									+
+$(OBJ)\SQLBrowseView.obj             								+
+$(OBJ)\MenuTreeView.obj 												+
 $(OBJ)\RocolumnC3.obj            									+
 $(OBJ)\Rfile.obj                 									+
 $(OBJ)\Tdprnc3.obj               									+
@@ -1393,7 +1432,7 @@ $(OBJ)\TInfAtp.obj              									+
 $(OBJ)\ConfImpTiket.obj         									+
 $(OBJ)\ConfVisor.obj            									+
 $(OBJ)\ConfCajPorta.obj         									+
-$(OBJ)\Situaciones.obj          									+
+$(OBJ)\SituacionesView.obj          							+
 $(OBJ)\SituacionesModel.obj          							+
 $(OBJ)\AlmacenesModel.obj 											+
 $(OBJ)\GruposMovimientosModel.obj 								+
@@ -1478,10 +1517,23 @@ $(OBJ)\SincronizaPreventa.obj   									+
 $(OBJ)\MsTable.obj   												+ 
 $(OBJ)\MsError.obj   												+ 
 $(OBJ)\SQLBaseView.obj 												+
-$(OBJ)\TiposImpresoras.obj      									+
+$(OBJ)\SQLBaseValidator.obj 										+
+$(OBJ)\TiposImpresorasValidator.obj								+
+$(OBJ)\TiposVentasValidator.obj									+
+$(OBJ)\TiposNotasValidator.obj									+
+$(OBJ)\EtiquetasValidator.obj										+
+$(OBJ)\SituacionesValidator.obj									+
+$(OBJ)\SQLBaseRepository.obj 										+
+$(OBJ)\TiposImpresorasRepository.obj							+
+$(OBJ)\ConfiguracionEmpresasRepository.obj					+
+$(OBJ)\TiposNotasRepository.obj									+
+$(OBJ)\TiposVentasRepository.obj									+
+$(OBJ)\EtiquetasRepository.obj									+
+$(OBJ)\TiposImpresorasView.obj      							+
 $(OBJ)\TiposNotas.obj      										+
-$(OBJ)\Etiquetas.obj      											+
-$(OBJ)\TiposVentas.obj      										+
+$(OBJ)\EtiquetasView.obj  											+
+$(OBJ)\TiposVentasView.obj   										+
+$(OBJ)\TiposNotasView.obj   										+
 $(OBJ)\Propiedades.obj      										+
 $(OBJ)\PropiedadesLineas.obj      								+
 $(OBJ)\PageIni.obj              									+
@@ -1615,8 +1667,10 @@ $(OBJ)\PedidosClientesLineasModel.obj
 $<,$*
 $(FWLIB)\FiveH.lib               								+
 $(FWLIB)\FiveHC.lib              								+
+$(HBLIB)\hdo.lib               									+
+$(HBLIB)\rdlmysql.lib 												+
+$(HBLIB)\libmysql.lib            								+
 $(HBLIB)\Eagle1.lib              								+
-$(FWLIB)\libmysql.lib            								+
 $(HBLIB)\hbwin.lib               								+
 $(HBLIB)\gtwin.lib               								+ 
 $(HBLIB)\gtgui.lib               								+ 
@@ -1651,9 +1705,6 @@ $(HBLIB)\hbcplr.lib            									+
 $(IMG2PDFLIB)\Image2pdf.lib      								+
 $(HBLIB)\b32\rddads.lib          								+
 $(HBLIB)\ace32.lib               								+
-$(HBLIB)\sqlite.lib          										+
-$(HBLIB)\hdo.lib               									+
-$(HBLIB)\rdlsqlite.lib 												+
 $(BORLANDLIB)\cw32mt.lib         								+ 
 $(BORLANDLIB)\uuid.lib           								+ 
 $(BORLANDLIB)\import32.lib       								+ 

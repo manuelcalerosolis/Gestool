@@ -6,18 +6,9 @@
 
 CLASS ConfiguracionEmpresasModel FROM SQLBaseModel
 
-   DATA cTableName                     INIT "configuracion_empresas"
-
-   DATA hColumns
+   DATA cTableName            INIT "configuracion_empresas"
 
    METHOD New()
-
-   METHOD getValue()
-   METHOD getChar( name, default )     INLINE ( ::getValue( name, default ) )
-   METHOD getLogic( name, default )    
-   METHOD getVal( name, default )      INLINE ( val( ::getValue( name, default ) ) )
-
-   METHOD setValue()
 
 END CLASS
 
@@ -52,66 +43,3 @@ METHOD New()
 RETURN ( Self )
 
 //---------------------------------------------------------------------------//
-
-METHOD getValue( name, default )
-
-   local aSelect                 
-   local cSentence               
-
-   cSentence   := "SELECT value FROM " + ::cTableName + ;
-                     " WHERE empresa = " + toSQLString( cCodEmp() ) + " AND name = " + toSQLString( name )
-   aSelect     := ::selectFetchHash( cSentence )
-
-   if !empty( aSelect )
-      RETURN ( hget( atail( aSelect ), "value" ) )
-   end if 
-
-RETURN ( default )
-
-//---------------------------------------------------------------------------//
-
-METHOD getLogic( name, default )
-
-   local cValue
-
-   if !hb_islogical( default )
-      default  := .f.
-   end if 
-
-   cValue      := ::getValue( name )
-
-   if !empty( cValue )
-      RETURN ( ".T." $ upper( cValue ) )
-   end if 
-
-RETURN ( default )
-
-//---------------------------------------------------------------------------//
-
-METHOD setValue( name, value )
-
-   local cSelect
-   local cSentence
-
-   value       := cValToStr( value )
-
-   cSelect     := "( SELECT id FROM " + ::cTableName + " "  + ;
-                     " WHERE empresa = " + toSQLString( cCodEmp() ) + " AND name = " + toSQLString( name ) + " )"
-
-   cSentence   := "REPLACE INTO " + ::cTableName            + ;
-                  " ( id ,"                                 + ;          
-                     "empresa, "                            + ;
-                     "name, "                               + ;
-                     "value ) "                             + ;
-                  "VALUES"                                  + ;
-                  " ( " + cSelect + ", "                    + ;
-                     toSQLString( cCodEmp() ) + ", "        + ;
-                     toSQLString( name ) + ", "             + ;
-                     toSQLString( cValToStr( value ) ) + " )"
-
-   ::Query( cSentence )
-
-RETURN ( Self )
-
-//---------------------------------------------------------------------------//
-

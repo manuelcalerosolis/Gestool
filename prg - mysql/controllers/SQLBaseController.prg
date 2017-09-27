@@ -6,15 +6,17 @@
 
 CLASS SQLBaseController
 
-   CLASSDATA   oInstance 
+   CLASSDATA oInstance 
 
    DATA ControllerContainer
 
    DATA oModel
 
-   DATA oDialogView
+   DATA oSelectorView
 
    DATA oNavigatorView
+
+   DATA oDialogView
 
    DATA oValidator
 
@@ -43,19 +45,26 @@ CLASS SQLBaseController
    METHOD getModelColumns()                           INLINE ( if( !empty( ::oModel ) .and. !empty( ::oModel:hColumns ), ( ::oModel:hColumns ), ) )
    METHOD getModelExtraColumns()                      INLINE ( if( !empty( ::oModel ) .and. !empty( ::oModel:hExtraColumns ), ( ::oModel:hExtraColumns ), ) )
    
-   METHOD getModelBuffer( cColumn )                   INLINE ( if( !empty( ::oModel ) .and. !empty( ::oModel:hBuffer ), ( hget( ::oModel:hBuffer, cColumn ) ), ) )
+   METHOD getModelBuffer( cColumn )                   
    METHOD getModelBufferColumnKey()                   INLINE ( ::getModelBuffer( ( ::oModel:cColumnKey ) ) )
-   
+
    METHOD getModelSelectValue( cSentence )            INLINE ( if( !empty( ::oModel ), ::oModel:SelectValue( cSentence ), ) )
 
    METHOD endModel()                                  INLINE ( if( !empty( ::oModel ), ::oModel:end(), ) )
 
-   METHOD validate( cColumn )                         INLINE ( if( !empty( ::oValidator ), ::oValidator:validate( cColumn ), ) )
+   METHOD getDialogView()                             INLINE ( ::oDialogView )
+
+   METHOD getRepository()                             INLINE ( ::oRepository )
+
+   METHOD getContainer( cController )                 INLINE ( ::ControllerContainer:get( cController ) )
+
+   METHOD Validate( cColumn )                         INLINE ( if( !empty( ::oValidator ), ::oValidator:Validate( cColumn ), ) )
+   METHOD Assert( cColumn, uValue )                   INLINE ( if( !empty( ::oValidator ), ::oValidator:Assert( cColumn, uValue ), ) )
 
    // Facades -----------------------------------------------------------------
 
-	METHOD   ActivateNavigatorView()
-	METHOD   ActivateBrowse()
+   METHOD ActivateNavigatorView()
+   METHOD ActivateSelectorView()
 
    METHOD   isUserAccess()                            INLINE ( nAnd( ::nLevel, ACC_ACCE ) == 0 )
    METHOD   notUserAccess()                           INLINE ( !::isUserAccess() )
@@ -76,7 +85,7 @@ CLASS SQLBaseController
    METHOD   setTitle( cTitle )                        INLINE ( ::cTitle := cTitle )
    METHOD   getTitle()                                INLINE ( ::cTitle )
 
-	METHOD   Append()
+   METHOD Append()
       METHOD initAppendMode()                         VIRTUAL
       METHOD endAppendModePreInsert()                 VIRTUAL
       METHOD endAppendModePostInsert()                VIRTUAL
@@ -84,7 +93,7 @@ CLASS SQLBaseController
       METHOD setAppendMode()                          INLINE ( ::setMode( __append_mode__ ) )
       METHOD isAppendMode()                           INLINE ( ::nMode == __append_mode__ )
 
-   METHOD   Duplicate()
+   METHOD Duplicate()
       METHOD initDuplicateMode()                      VIRTUAL
       METHOD endDuplicateModePreInsert()              VIRTUAL
       METHOD endDuplicateModePosInsert()              VIRTUAL
@@ -92,7 +101,7 @@ CLASS SQLBaseController
       METHOD setDuplicateMode()                       INLINE ( ::setMode( __duplicate_mode__ ) )
       METHOD isDuplicateMode()                        INLINE ( ::nMode == __duplicate_mode__ )
 
-   METHOD   Edit()
+   METHOD Edit()
       METHOD initEditMode()                           VIRTUAL
       METHOD endEditModePreUpdate()                   VIRTUAL
       METHOD endEditModePosUpdate()                   VIRTUAL
@@ -100,13 +109,13 @@ CLASS SQLBaseController
       METHOD setEditMode()                            INLINE ( ::setMode( __edit_mode__ ) )
       METHOD isEditMode()                             INLINE ( ::nMode == __edit_mode__ )
 
-   METHOD   Zoom()
+   METHOD Zoom()
       METHOD setZoomMode()                            INLINE ( ::setMode( __zoom_mode__ ) )
       METHOD isZoomMode()                             INLINE ( ::nMode == __zoom_mode__ )
       METHOD isNotZoomMode()                          INLINE ( ::nMode != __zoom_mode__ )
       METHOD initZoomMode()                           VIRTUAL
 
-   METHOD   Delete()
+   METHOD Delete()
       METHOD initDeleteMode()                         VIRTUAL
       METHOD endDeleteModePreDelete()                 VIRTUAL
       METHOD endDeleteModePosDelete()                 VIRTUAL
@@ -118,15 +127,21 @@ CLASS SQLBaseController
    METHOD find( uValue, cColumn )                     INLINE ( ::oModel:find( uValue, cColumn ) )
    METHOD findByIdInRowSet( uValue )                  INLINE ( if( !empty( ::getRowSet() ), ::getRowset():find( uValue, "id", .t. ), ) )
 
-   METHOD 	assignBrowse( oGet, aSelectedItems )
-	METHOD 	startBrowse( oCombobox )
-	METHOD 	restoreBrowseState()
+   METHOD startBrowse( oCombobox )
+   METHOD restoreBrowseState()
 
    METHOD getRowSet()
 
    METHOD setFastReport( oFastReport, cSentence, cColumns )
 
-   METHOD getContainer( cController )                 INLINE ( ::ControllerContainer:get( cController ) )
+   // Fastkeys-----------------------------------------------------------------
+
+   DATA hFastKey                                      INIT {=>}
+
+   METHOD addFastKey( uKey )
+   METHOD onKeyChar( nKey )   
+
+   // Events-------------------------------------------------------------------
 
    METHOD evalOnEvent()
    METHOD evalOnPreAppend()                           INLINE ( ::evalOnEvent( ::bOnPreAppend ) )
@@ -139,6 +154,10 @@ END CLASS
 METHOD New()
 
    ::ControllerContainer                              := ControllerContainer():New()
+
+   ::oNavigatorView                                   := SQLNavigatorView():New( self )
+
+   ::oSelectorView                                    := SQLSelectorView():New( self )
 
 RETURN ( self )
 
@@ -175,21 +194,20 @@ RETURN ( Self )
 
 //---------------------------------------------------------------------------//
 
-METHOD ActivateBrowse( aSelectedItems )
+METHOD ActivateSelectorView()
 
-   local uReturn
+   if empty( ::oSelectorView )
+      RETURN ( nil )
+   end if 
 
-   ::getHistoryBrowse()
-
-   ::oModel:buildRowSetAndFind()
-
-   if ::oDialogView:buildSQLBrowse( ::cTitle, aSelectedItems )
-      uReturn     := ::getFieldFromBrowse()
+   if ::notUserAccess()
+      msgStop( "Acceso no permitido." )
+      RETURN ( nil )
    end if
 
-   ::endModel()
+   ::oModel:buildRowSet()
 
-RETURN ( uReturn )
+RETURN ( ::oSelectorView:Activate() )
 
 //---------------------------------------------------------------------------//
 
@@ -237,26 +255,6 @@ METHOD restoreBrowseState()
 RETURN ( Self )
 
 //----------------------------------------------------------------------------//
-
-METHOD AssignBrowse( oGet, aSelectedItems )
-
-   local uReturn
-
-   if empty( oGet )
-      RETURN ( uReturn )
-   end if
-
-   ::oModel:setIdToFind( oGet:varGet() )
-
-   uReturn           := ::ActivateBrowse( ::cTitle, aSelectedItems )   
-
-   if !empty(uReturn)
-      oGet:cText( uReturn )
-   end if 
-
-RETURN ( uReturn )
-
-//--------------------------------------------------------------------------//
 
 METHOD changeModelOrderAndOrientation( cColumnOrder, cColumnOrientation )
 
@@ -345,7 +343,7 @@ METHOD Duplicate()
 
    nRecno         := ::oModel:getRowSetRecno()
 
-   ::oModel:loadCurrentBuffer()
+   ::oModel:loadDuplicateBuffer()
 
    ::initDuplicateMode()
 
@@ -459,6 +457,24 @@ RETURN ( Self )
 
 //----------------------------------------------------------------------------//
 
+METHOD getModelBuffer( cColumn )
+
+   if empty( ::oModel )
+      RETURN ( nil )
+   end if 
+
+   if empty( ::oModel:hBuffer )
+      RETURN ( nil )
+   end if 
+
+   if !hhaskey( ::oModel:hBuffer, cColumn )
+      RETURN ( nil )
+   end if  
+
+RETURN ( hget( ::oModel:hBuffer, cColumn ) )
+
+//----------------------------------------------------------------------------//
+
 METHOD getRowSet()
 
    if empty( ::oModel:oRowSet )
@@ -468,6 +484,21 @@ METHOD getRowSet()
 Return ( ::oModel:oRowSet )
 
 //---------------------------------------------------------------------------//
+
+METHOD addFastKey( uKey, bAction )
+
+   if hb_ischar( uKey )
+      hset( ::hFastKey, asc( upper( uKey ) ), bAction )
+      hset( ::hFastKey, asc( lower( uKey ) ), bAction )
+   end if
+
+   if hb_isnumeric( uKey )
+      hset( ::hFastKey, uKey, bAction )
+   end if 
+
+RETURN ( Self )
+
+//----------------------------------------------------------------------------//
 
 METHOD setFastReport( oFastReport, cSentence, cColumns )
 
@@ -495,3 +526,8 @@ RETURN ( self )
 
 //---------------------------------------------------------------------------//
 
+METHOD onKeyChar( nKey )
+
+RETURN ( heval( ::hFastKey, {|k,v| if( k == nKey, eval( v ), ) } ) ) 
+   
+//----------------------------------------------------------------------------//

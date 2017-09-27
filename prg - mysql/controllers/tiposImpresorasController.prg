@@ -6,7 +6,7 @@
 
 CLASS TiposImpresorasController FROM SQLBaseController
 
-   METHOD   New()
+   METHOD New()
 
 END CLASS
 
@@ -25,8 +25,6 @@ METHOD New()
    ::oRepository           := TiposImpresorasRepository():New( self )
 
    ::oDialogView           := TiposImpresorasView():New( self )
-
-   ::oNavigatorView        := SQLNavigatorView():New( self )
 
    ::oValidator            := TiposImpresorasValidator():New( self )
 

@@ -4168,12 +4168,18 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbfFacRecL, oBrw, lTotLin, cCodArtEnt, nMode
 
       TiposVentasController();
          :Instance();
+         :getDialogView();
          :createEditControl(  {  "idGet"  => 290,;
                                  "idText" => 291,;
                                  "idSay"  => 292,;
-                                 "dialog" => oFld:aDialogs[ 1 ],;
-                                 "when"   => {|| ( nMode != ZOOM_MODE .and. !lTotLin ) },;
-                                 "value"  => aTmp[ ( D():FacturasRectificativasLineas( nView ) )->( fieldpos( "id_tipo_v" ) ) ] } )
+                                 "dialog" => oFld:aDialogs[1],;
+                                 "when"   => {|| ( nMode != ZOOM_MODE .and. !lTotLin ) } },;
+                                 @aTmp[ ( D():FacturasRectificativasLineas( nView ) )->( fieldpos( "id_tipo_v" ) ) ] )
+
+      /*
+      Almacen
+      -------------------------------------------------------------------------
+      */
 
       REDEFINE GET aGet[ _CALMLIN ] VAR aTmp[ _CALMLIN ] ;
          ID       300 ;
@@ -4861,8 +4867,6 @@ STATIC FUNCTION SaveDeta( aTmp, aTmpFac, aGet, oFld, oBrw, oDlg, oSayPr1, oSayPr
    end if
 
    aTmp[ _NREQ ]  := nPReq( dbfIva, aTmp[ _NIVA ] )
-
-   aTmp[ ( D():FacturasRectificativasLineas( nView ) )->( fieldpos( "id_tipo_v" ) ) ]  := TiposVentasController():Instance():getIdFromEditControl()
 
    if nMode == APPD_MODE
 
@@ -9029,7 +9033,7 @@ STATIC FUNCTION cFacCli( aGet, aTmp, oBrw, oBrwiva, nMode )
                   ( dbfTmpLin )->cPesoKg    := ( dbfFacCliL )->cPesoKg
                   ( dbfTmpLin )->nComAge    := ( dbfFacCliL )->nComAge
                   ( dbfTmpLin )->dFecha     := ( dbfFacCliL )->dFecha
-                  ( dbfTmpLin )->id_tipo_v    := ( dbfFacCliL )->id_tipo_v
+                  ( dbfTmpLin )->id_tipo_v  := ( dbfFacCliL )->id_tipo_v
                   ( dbfTmpLin )->cCodAlb    := ( dbfFacCliL )->cSerie + Str( ( dbfFacCliL )->nNumFac ) + ( dbfFacCliL )->cSufFac
                   ( dbfTmpLin )->lTotLin    := ( dbfFacCliL )->lTotLin
                   ( dbfTmpLin )->nDtoDiv    := ( dbfFacCliL )->nDtoDiv

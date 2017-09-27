@@ -48,15 +48,9 @@ METHOD getHistory( cTable )
 
    try 
 
-      logwrite( cSentence, "cSql" )
-
     	oStmt          := ::Query( cSentence )
 
-      logwrite( "::Query( cSentence )", "cSql" )
-
     	aFetch         := oStmt:fetchAll( FETCH_HASH )
-
-      logwrite( "oStmt:fetchAll( FETCH_HASH )", "cSql" )
 
    catch
 
@@ -64,23 +58,13 @@ METHOD getHistory( cTable )
 
    finally
 
-      logwrite( "finally", "cSql" )
-
       if !empty( oStmt )
-
-         logwrite( "oStmt:free()", "cSql" )
-
          oStmt:free()
       end if    
    
    end
 
-   logwrite( "hb_isarray( aFetch )", "cSql" )
-
    if hb_isarray( aFetch )
-
-      logwrite( "RETURN( aFetch )", "cSql" )
-
     	RETURN ( aFetch )
    end if 
 
@@ -103,11 +87,7 @@ METHOD saveHistory( cTable, cBrowseState, cColumnOrder, cOrientation, idToFind )
                                     "AND "                                                   + ;
                                     "usuario_id = " + toSQLString( oUser():cCodigo() ) 
 
-   logwrite( cUpdateHistory, "cSql" )                                    
-
    id                      := ::selectFetchArray( cInternalSelect )                   
-
-   msgalert( hb_valtoexp( id ) )
 
    if empty(id)
 
@@ -126,8 +106,6 @@ METHOD saveHistory( cTable, cBrowseState, cColumnOrder, cOrientation, idToFind )
                                     toSQLString( cOrientation ) + ", "                       + ;
                                     alltrim( cvaltostr( idToFind ) )                         + ")"
 
-      logwrite( cUpdateHistory, "cSql" )                                    
-
    else                                     
 
       cUpdateHistory       := "UPDATE " + ::cTableName + " "                                 + ;
@@ -137,8 +115,6 @@ METHOD saveHistory( cTable, cBrowseState, cColumnOrder, cOrientation, idToFind )
                                     "id_to_find = " + alltrim( cvaltostr( idToFind ) ) + " " + ;
                                  "WHERE id = " + alltrim( cvaltostr( id ) )  
 
-
-      logwrite( cUpdateHistory, "cSql" )                                    
 
    end if 
 

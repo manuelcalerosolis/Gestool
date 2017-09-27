@@ -164,12 +164,12 @@ END CLASS
 METHOD New( oSender ) CLASS DocumentsSales
 
    if !::openFiles()
-      return ( self )
+      RETURN ( self )
    end if 
 
    ::Build( oSender )
 
-return ( self )
+RETURN ( self )
 
 //---------------------------------------------------------------------------//
 
@@ -201,7 +201,7 @@ METHOD Build( oSender ) CLASS DocumentsSales
 
    ::oTotalDocument        := TotalDocument():New( self )
 
-return ( self )
+RETURN ( self )
 
 //---------------------------------------------------------------------------//
 
@@ -213,7 +213,7 @@ METHOD play() CLASS DocumentsSales
 
    ::closeFiles()
 
-return ( self )
+RETURN ( self )
 
 //---------------------------------------------------------------------------//
 //
@@ -223,23 +223,18 @@ return ( self )
 METHOD onPreRunNavigator() CLASS DocumentsSales
 
    if empty( ::getWorkArea() )
-      Return .t.
+      RETURN .t.
    end if 
 
    ( ::getWorkArea() )->( ordsetfocus( "dFecDes" ) )
    ( ::getWorkArea() )->( dbgotop() ) 
 
    if ( accessCode():lFilterByAgent ) .and. !empty( accessCode():cAgente )
-
       ( ::getWorkArea() )->( adsSetAOF( "cCodAge = " + quoted( accessCode():cAgente ) ) )
       ( ::getWorkArea() )->( dbgotop() )
-
-      ( D():Clientes( ::nView ) )->( adsSetAOF( "cCodAge = " + quoted( accessCode():cAgente ) ) )
-      ( D():Clientes( ::nView ) )->( dbgotop() )
-
    end if 
-
-Return ( .t. )
+      
+RETURN ( .t. )
 
 //---------------------------------------------------------------------------//
 
@@ -249,7 +244,7 @@ METHOD runNavigator() CLASS DocumentsSales
       ::oViewSearchNavigator:Resource()
    end if
 
-return ( self )
+RETURN ( self )
 
 //---------------------------------------------------------------------------//
 
@@ -325,7 +320,7 @@ METHOD OpenFiles() CLASS DocumentsSales
       ::closeFiles()
    end if
 
-Return ( lOpenFiles )
+RETURN ( lOpenFiles )
 
 //---------------------------------------------------------------------------//
 
@@ -339,25 +334,25 @@ METHOD CloseFiles() CLASS DocumentsSales
 
    ::oStock    := nil
 
-Return nil
+RETURN nil
 
 //---------------------------------------------------------------------------//
 
 METHOD isChangeSerieTablet() CLASS DocumentsSales
    
    if GetPvProfString( "Tablet", "BloqueoSerie", ".F.", cIniAplication() ) == ".T."
-      Return ( self )
+      RETURN ( self )
    end if
 
    if ::lZoomMode()
-      Return ( self )
+      RETURN ( self )
    end if 
 
    if hGet( ::hDictionaryMaster, "Envio" )
       ::ChangeSerieTablet( ::oViewEdit:getSerie )
    end if
 
-Return ( self )
+RETURN ( self )
 
 //---------------------------------------------------------------------------//
 
@@ -380,7 +375,7 @@ METHOD ChangeSerieTablet( getSerie ) CLASS DocumentsSales
 
    end case
 
-Return ( self )
+RETURN ( self )
 
 //---------------------------------------------------------------------------//
 
@@ -395,11 +390,11 @@ METHOD lValidDireccion() CLASS DocumentsSales
    local codigoDireccion   := ::oViewEdit:getCodigoDireccion:varGet()
 
    if empty( codigoCliente )
-      return .t.
+      RETURN .t.
    end if
 
    if empty( codigoDireccion )
-      return .t.
+      RETURN .t.
    end if
 
    ::oViewEdit:getCodigoDireccion:Disable()
@@ -429,7 +424,7 @@ METHOD lValidDireccion() CLASS DocumentsSales
 
    ::oViewEdit:getCodigoDireccion:Enable()*/
 
-Return lValid
+RETURN lValid
 
 //---------------------------------------------------------------------------//
 
@@ -441,7 +436,7 @@ METHOD lValidPayment() CLASS DocumentsSales
    local codigoPayment     := hGet( ::hDictionaryMaster, "Pago" )
 
    if empty( codigoPayment )
-      return .f.
+      RETURN .f.
    end if
 
    ::oViewEditResumen:oCodigoFormaPago:Disable()
@@ -468,7 +463,7 @@ METHOD lValidPayment() CLASS DocumentsSales
 
    ::oViewEditResumen:oCodigoFormaPago:Enable()
 
-Return lValid
+RETURN lValid
 
 //---------------------------------------------------------------------------//
 
@@ -478,7 +473,7 @@ METHOD lValidCliente() CLASS DocumentsSales
    local cNewCodCli  := hGet( ::hDictionaryMaster, "Cliente" )
 
    if empty( cNewCodCli )
-      Return .t.
+      RETURN .t.
    else
       cNewCodCli     := Rjust( cNewCodCli, "0", RetNumCodCliEmp() )
    end if
@@ -514,43 +509,49 @@ RETURN lValid
 
 METHOD ChangeRuta() CLASS DocumentsSales
 
+   local nOrdAnt           
+   local cFilter
    local cCliente          := ""
-   local nOrdAnt           := ( D():Clientes( ::nView ) )->( ordsetfocus() )
 
-   if hhaskey( ::hOrdenRutas, alltrim( str( ::oViewEdit:oCbxRuta:nAt ) ) )
+   if !hhaskey( ::hOrdenRutas, alltrim( str( ::oViewEdit:oCbxRuta:nAt ) ) )
+      RETURN ( cCliente )
+   end if 
 
-      nOrdAnt              := ( D():Clientes( ::nView ) )->( ordsetfocus( ::hOrdenRutas[ alltrim( str( ::oViewEdit:oCbxRuta:nAt ) ) ] ) )
+   cFilter                 := hget( ::hOrdenRutas, alltrim( str( ::oViewEdit:oCbxRuta:nAt ) ) )
 
-      if ( D():Clientes( ::nView ) )->( OrdKeyCount() ) != 0 
-         
-         ( D():Clientes( ::nView ) )->( dbgotop() )
+   if ( accessCode():lFilterByAgent ) .and. !empty( accessCode():cAgente )
+      cFilter              += " .and. cAgente = " + quoted( accessCode():cAgente )
+   end if 
 
-         if !( D():Clientes( ::nView ) )->( eof() )
-            cCliente       := ( D():Clientes( ::nView ) )->Cod
-         end if   
+   ( D():Clientes( ::nView ) )->( adsSetAOF( cFilter ) )
+   ( D():Clientes( ::nView ) )->( dbgotop() ) 
 
-         if !empty( ::oViewEdit:getRuta )
-            ::oViewEdit:getRuta:cText( alltrim( Str( ( D():Clientes( ::nView ) )->( OrdKeyNo() ) ) ) + "/" + alltrim( str( ( D():Clientes( ::nView ) )->( OrdKeyCount() ) ) ) )
-            ::oViewEdit:getRuta:Refresh()
-         end if
+   if !( D():Clientes( ::nView ) )->( eof() )
+      cCliente             := ( D():Clientes( ::nView ) )->Cod
+   end if   
 
-      else
-
-         ( D():Clientes( ::nView ) )->( ordsetfocus( "Cod" ) )
-         ( D():Clientes( ::nView ) )->( dbgotop() )
-
-         cCliente          := ( D():Clientes( ::nView ) )->Cod
-
-         if !empty( ::oViewEdit:getRuta )
-            ::oViewEdit:getRuta:cText( "1/1" )
-            ::oViewEdit:getRuta:Refresh()
-         end if
-      
-      end if   
-
-      ( D():Clientes( ::nView ) )->( ordsetfocus( nOrdAnt ) )
-
+   if !empty( ::oViewEdit:getRuta )
+      ::oViewEdit:getRuta:cText( alltrim( Str( ( D():Clientes( ::nView ) )->( ADSKeyNo( , , 1 ) ) ) ) + "/" + alltrim( str( ( D():Clientes( ::nView ) )->( ADSKeyCount( , , 1 ) ) ) ) )
+      ::oViewEdit:getRuta:Refresh()
    end if
+
+   /*
+
+   else
+
+      ( D():Clientes( ::nView ) )->( ordsetfocus( "Cod" ) )
+      ( D():Clientes( ::nView ) )->( dbgotop() )
+
+      cCliente          := ( D():Clientes( ::nView ) )->Cod
+
+      if !empty( ::oViewEdit:getRuta )
+         ::oViewEdit:getRuta:cText( "1/1" )
+         ::oViewEdit:getRuta:Refresh()
+      end if
+   
+   end if   
+
+   */
 
    if !empty( ::oViewEdit:getCodigoCliente )
       ::oViewEdit:getCodigoCliente:cText( cCliente )
@@ -562,61 +563,49 @@ METHOD ChangeRuta() CLASS DocumentsSales
       ::oViewEdit:getCodigoDireccion:lValid()
    end if*/
 
-return cCliente
+RETURN cCliente
 
 //---------------------------------------------------------------------------//
 
 METHOD moveClient( lAnterior ) CLASS DocumentsSales
 
-   local lSet              := .f.
-   local nOrdAnt
+   local lSet           := .f.
 
-   if hhaskey( ::hOrdenRutas, alltrim( Str( ::oViewEdit:oCbxRuta:nAt ) ) )
+   if isTrue( lAnterior )
+      ( D():Clientes( ::nView ) )->( dbSkip( -1 ) )
+      lSet           := .t.
+   end if 
+
+   if isFalse( lAnterior )
+
+      if ( D():Clientes( ::nView ) )->( ADSKeyNo( , , 1 ) ) < ( D():Clientes( ::nView ) )->( ADSKeyCount( , , 1 ) ) 
+         ( D():Clientes( ::nView ) )->( dbSkip() )
+      end if 
       
-      nOrdAnt              := ( D():Clientes( ::nView ) )->( ordsetfocus( ::hOrdenRutas[ alltrim( str( ::oViewEdit:oCbxRuta:nAt ) ) ] ) )
+      lSet           := .t.
 
-      if isTrue( lAnterior )
+   end if   
 
-         if ( D():Clientes( ::nView ) )->( OrdKeyNo() ) != 1
-            ( D():Clientes( ::nView ) )->( dbSkip( -1 ) )
-            lSet           := .t.
-         end if
+   if isNil( lAnterior )
+      lSet           := .t.
+   end if 
 
-      end if 
+   if !empty( ::oViewEdit:getRuta )
+      ::oViewEdit:getRuta:cText( alltrim( str( ( D():Clientes( ::nView ) )->( ADSKeyNo( , , 1 ) ) ) ) + "/" + alltrim( str( ( D():Clientes( ::nView ) )->( ADSKeyCount( , , 1 ) ) ) ) )
+      ::oViewEdit:getRuta:Refresh()
+   end if
 
-      if isFalse( lAnterior )
+   if lSet
 
-         if ( D():Clientes( ::nView ) )->( OrdKeyNo() ) != ( D():Clientes( ::nView ) )->( OrdKeyCount() )
-            ( D():Clientes( ::nView ) )->( dbSkip() )
-            lSet           := .t.
-         end if
+      ::oViewEdit:getCodigoCliente:cText( ( D():Clientes( ::nView ) )->Cod )
+      ::oViewEdit:getCodigoCliente:lValid()
 
-      end if   
-
-      if isNil( lAnterior )
-         lSet              := .t.
-      end if 
-
-      if !empty( ::oViewEdit:getRuta )
-         ::oViewEdit:getRuta:cText( alltrim( str( ( D():Clientes( ::nView ) )->( OrdKeyNo() ) ) ) + "/" + alltrim( str( ( D():Clientes( ::nView ) )->( OrdKeyCount() ) ) ) )
-         ::oViewEdit:getRuta:Refresh()
-      end if
-
-      ( D():Clientes( ::nView ) )->( ordsetfocus( nOrdAnt ) )   
-
-      if lSet
-
-         ::oViewEdit:getCodigoCliente:cText( ( D():Clientes( ::nView ) )->Cod )
-         ::oViewEdit:getCodigoCliente:lValid()
-
-         //::oViewEdit:getCodigoDireccion:cText( Space( 10 ) )
-         //::oViewEdit:getCodigoDireccion:lValid()
-
-      end if
+      //::oViewEdit:getCodigoDireccion:cText( Space( 10 ) )
+      //::oViewEdit:getCodigoDireccion:lValid()
 
    end if
 
-Return ( .t. )
+RETURN ( .t. )
 
 //---------------------------------------------------------------------------//
 
@@ -624,41 +613,35 @@ METHOD loadNextClient() CLASS DocumentsSales
 
    ::gotoUltimoCliente()
 
+   if !hb_isnumeric( ::nUltimoCliente )
+      RETURN ( self )
+   end if 
+
    if ::nUltimoCliente != 0 
       ::nextClient()
    else
       ::moveClient()
    end if
 
-Return ( self )
+RETURN ( self )
 
 //---------------------------------------------------------------------------//
 
 METHOD gotoUltimoCliente() CLASS DocumentsSales
 
-   local nOrdAnt     := ( D():Clientes( ::nView ) )->( ordsetfocus( ::hOrdenRutas[ alltrim( str( ::oViewEdit:oCbxRuta:nAt ) ) ] ) )
-
-   if empty( ::nUltimoCliente )
-      ( D():Clientes( ::nView ) )->( dbgotop() )
-   else
-      ( D():Clientes( ::nView ) )->( OrdKeyGoto( ::nUltimoCliente ) )
+   if !empty( ::nUltimoCliente )
+      ( D():Clientes( ::nView ) )->( dbgoto( ::nUltimoCliente ) )
    end if 
 
-   ( D():Clientes( ::nView ) )->( ordsetfocus( nOrdAnt ) ) 
-         
-Return .t.
+RETURN .t.
 
 //---------------------------------------------------------------------------//
 
 METHOD setUltimoCliente() CLASS DocumentsSales
 
-   local nOrdAnt     := ( D():Clientes( ::nView ) )->( ordsetfocus( ::hOrdenRutas[ alltrim( Str( ::oViewEdit:oCbxRuta:nAt ) ) ] ) )
+   ::nUltimoCliente  := ( D():Clientes( ::nView ) )->( recno() )
 
-   ::nUltimoCliente  := ( D():Clientes( ::nView ) )->( OrdKeyNo() )
-
-   ( D():Clientes( ::nView ) )->( ordsetfocus( nOrdAnt ) ) 
-
-Return nil
+RETURN nil
 
 //---------------------------------------------------------------------------//
 
@@ -670,7 +653,7 @@ METHOD saveAppendDetail() CLASS DocumentsSales
       ::oViewEdit:oBrowse:Refresh()
    end if
 
-Return ( self )
+RETURN ( self )
 
 //---------------------------------------------------------------------------//
 
@@ -682,7 +665,7 @@ METHOD saveEditDetail() CLASS DocumentsSales
       ::oViewEdit:oBrowse:Refresh()
    end if
 
-Return ( self )
+RETURN ( self )
 
 //---------------------------------------------------------------------------//
 
@@ -694,17 +677,17 @@ METHOD lValidResumenVenta() CLASS DocumentsSales
 
    if empty( hGet( ::hDictionaryMaster, "Cliente" ) )
       ApoloMsgStop( "Cliente no puede estar vacío.", "¡Atención!" )
-      return .f.
+      RETURN .f.
    end if
 
    // Comprobamos que el documento tenga líneas----------------------------------
 
    if len( ::oDocumentLines:aLines ) <= 0
       ApoloMsgStop( "No puede almacenar un documento sin lineas.", "¡Atención!" )
-      return .f.
+      RETURN .f.
    end if
 
-Return lReturn
+RETURN lReturn
 
 //---------------------------------------------------------------------------//
 
@@ -714,7 +697,7 @@ METHOD onViewCancel()
       ::oViewEdit:oDlg:end()
    end if
 
-Return ( self )
+RETURN ( self )
 
 //---------------------------------------------------------------------------//  
 
@@ -730,30 +713,30 @@ METHOD onViewSave()
 
    end if 
 
-Return ( self )
+RETURN ( self )
 
 //---------------------------------------------------------------------------//  
 
 METHOD isResumenVenta() CLASS DocumentsSales
 
    if !::lValidResumenVenta()
-      Return .f.
+      RETURN .f.
    end if
 
    if empty( ::oViewEditResumen )
-      Return .f.
+      RETURN .f.
    end if 
 
    ::oViewEditResumen:setTitleDocumento( ::getTextSummaryDocument() )
 
-Return ( ::oViewEditResumen:Resource() )
+RETURN ( ::oViewEditResumen:Resource() )
 
 //---------------------------------------------------------------------------//
 
 METHOD isPrintDocument() CLASS DocumentsSales
 
    if empty( ::cFormatToPrint ) .or. alltrim( ::cFormatToPrint ) == "No imprimir"
-      Return .f.
+      RETURN .f.
    end if
 
    ::cFormatToPrint  := left( ::cFormatToPrint, 3 )
@@ -768,7 +751,7 @@ METHOD isPrintDocument() CLASS DocumentsSales
 
    ::resetFormatToPrint()
 
-Return( self )
+RETURN( self )
 
 //---------------------------------------------------------------------------//
 
@@ -782,7 +765,7 @@ METHOD saveEditDocumento() CLASS DocumentsSales
 
    ::setLinesDocument()
 
-Return ( .t. )
+RETURN ( .t. )
 
 //---------------------------------------------------------------------------//
 
@@ -794,7 +777,7 @@ METHOD saveAppendDocumento() CLASS DocumentsSales
 
    ::setLinesDocument()
 
-Return ( .t. )
+RETURN ( .t. )
 
 //---------------------------------------------------------------------------//
 
@@ -821,7 +804,7 @@ METHOD assignLinesDocument() CLASS DocumentsSales
 
    next
 
-Return( self )
+RETURN( self )
 
 //---------------------------------------------------------------------------//
 
@@ -835,7 +818,7 @@ METHOD setLinesDocument() CLASS DocumentsSales
 
    next
 
-Return ( self ) 
+RETURN ( self ) 
 
 //---------------------------------------------------------------------------//
 
@@ -847,7 +830,7 @@ METHOD onPreEnd() CLASS DocumentsSales
 
    ( ::getDataTable() )->( OrdSetFocus( ::nOrdenAnterior ) )
 
-Return ( .t. )
+RETURN ( .t. )
 
 //---------------------------------------------------------------------------//
 
@@ -859,7 +842,7 @@ METHOD cComboRecargoValue() CLASS DocumentsSales
       cComboRecargoValue    := ::oViewEditResumen:cComboRecargo[1]
    endif
 
-Return ( ::oViewEditResumen:cComboRecargo  := cComboRecargoValue )
+RETURN ( ::oViewEditResumen:cComboRecargo  := cComboRecargoValue )
 
 //---------------------------------------------------------------------------//
 
@@ -871,7 +854,7 @@ METHOD addDocumentLine() CLASS DocumentsSales
       ::oDocumentLines:addLines( oDocumentLine )
    end if
 
-Return ( self )
+RETURN ( self )
 
 //---------------------------------------------------------------------------//
 
@@ -893,7 +876,7 @@ METHOD setDatasInDictionaryMaster( NumeroDocumento ) CLASS DocumentsSales
    hSet( ::hDictionaryMaster, "TotalRecargo", ::oTotalDocument:getImporteRecargo() )
    hSet( ::hDictionaryMaster, "TotalNeto", ::oTotalDocument:getBase() )
 
-Return ( .t. )
+RETURN ( .t. )
 
 //---------------------------------------------------------------------------//
 
@@ -903,7 +886,7 @@ METHOD GetEditDetail() CLASS DocumentsSales
       ::oDocumentLineTemporal   := ::oDocumentLines:getCloneLineDetail( ::nPosDetail )
    end if
 
-Return ( self )
+RETURN ( self )
 
 //---------------------------------------------------------------------------//
 
@@ -926,7 +909,7 @@ METHOD setDocuments() CLASS DocumentsSales
    ::oViewEditResumen:SetImpresoras( aFormatos )
    ::oViewEditResumen:SetImpresoraDefecto( aFormatos[ nFormato ] )
 
-return ( .t. )
+RETURN ( .t. )
 
 //---------------------------------------------------------------------------//
 
@@ -938,7 +921,7 @@ METHOD Resource( nMode ) CLASS DocumentsSales
       lResource      := ::oViewEdit:Resource( nMode )
    end if
 
-Return ( lResource )   
+RETURN ( lResource )   
 
 //---------------------------------------------------------------------------//
 
@@ -949,10 +932,10 @@ METHOD onPreSaveAppend() CLASS DocumentsSales
    numeroDocumento               := nNewDoc( ::getSerie(), ::getWorkArea(), ::getCounterDocuments(), , D():Contadores( ::nView ) )
    
    if empty( numeroDocumento )
-      Return ( .f. )
+      RETURN ( .f. )
    end if 
 
-Return ( ::setDatasInDictionaryMaster( numeroDocumento ) )
+RETURN ( ::setDatasInDictionaryMaster( numeroDocumento ) )
 
 //---------------------------------------------------------------------------//
 
@@ -963,7 +946,7 @@ METHOD onPreSaveAppendDetail() CLASS DocumentsSales
 
    oDocumentLine:setValue( "DescripcionAmpliada", cDescripcionArticulo )
 
-Return ( .t. )
+RETURN ( .t. )
 
 //---------------------------------------------------------------------------//
 
@@ -971,7 +954,7 @@ METHOD onPostSaveAppendDetail() CLASS DocumentsSales
 
    ::oLinesDocumentsSales:onPostSaveAppendDetail()
 
-Return ( .t. )
+RETURN ( .t. )
 
 //---------------------------------------------------------------------------//
 
@@ -983,7 +966,7 @@ METHOD onPreSaveEdit() CLASS DocumentsSales
       ::setDatasInDictionaryMaster() 
    end if 
 
-Return ( .t. )
+RETURN ( .t. )
 
 //---------------------------------------------------------------------------//
 
@@ -991,24 +974,24 @@ METHOD setAgentToDocument()
 
    local tabletAgent         := GetPvProfString( "Tablet", "Agente", "", cIniAplication() )
 
-   if !empty(tabletAgent)
+   if !empty( tabletAgent )
       hSet( ::hDictionaryMaster, "Agente", tabletAgent )
    end if 
 
-Return ( .t. )
+RETURN ( .t. )
 
 //---------------------------------------------------------------------------//
 
 METHOD setClientToDocument( CodigoCliente ) CLASS DocumentsSales
 
-   local lReturn           := .f.
+   local lRETURN           := .f.
 
    D():getStatusClientes( ::nView )
 
    ( D():Clientes( ::nView ) )->( ordsetfocus( 1 ) )
    if ( D():Clientes( ::nView ) )->( dbseek( CodigoCliente ) )
 
-      lReturn              := .t.
+      lRETURN              := .t.
 
       hSet( ::hDictionaryMaster, "Cliente",              ( D():Clientes( ::nView ) )->Cod )
       hSet( ::hDictionaryMaster, "NombreCliente",        ( D():Clientes( ::nView ) )->Titulo )
@@ -1060,14 +1043,14 @@ METHOD setClientToDocument( CodigoCliente ) CLASS DocumentsSales
 
    D():setStatusClientes( ::nView )
 
-Return( lReturn ) 
+RETURN( lRETURN ) 
 
 //---------------------------------------------------------------------------//
 
 METHOD runGridPayment() CLASS DocumentsSales
 
    if ::lZoomMode()
-      Return ( self )
+      RETURN ( self )
    end if 
 
    ::oViewEditResumen:oCodigoFormaPago:Disable()
@@ -1086,14 +1069,14 @@ METHOD runGridPayment() CLASS DocumentsSales
 
    ::oViewEditResumen:oCodigoFormaPago:Enable()
 
-Return ( self )
+RETURN ( self )
 
 //---------------------------------------------------------------------------//
 
 METHOD runGridCustomer() CLASS DocumentsSales
 
    if ::lZoomMode()
-      Return ( self )
+      RETURN ( self )
    end if
 
    ::oViewEdit:getCodigoCliente:Disable()
@@ -1112,7 +1095,7 @@ METHOD runGridCustomer() CLASS DocumentsSales
 
    ::oViewEdit:getCodigoCliente:Enable()
 
-Return ( self )
+RETURN ( self )
 
 //---------------------------------------------------------------------------//
 
@@ -1121,14 +1104,14 @@ METHOD runGridDirections() CLASS DocumentsSales
    /*local codigoCliente     
 
    if ::lZoomMode()
-      Return ( self )
+      RETURN ( self )
    end if
 
    codigoCliente           := hGet( ::hDictionaryMaster, "Cliente" )
 
    if empty( codigoCliente )
       ApoloMsgStop( "No puede seleccionar una dirección con cliente vacío" )
-      Return ( self )
+      RETURN ( self )
    end if
 
    ::oViewEdit:getCodigoDireccion:Disable()
@@ -1153,6 +1136,6 @@ METHOD runGridDirections() CLASS DocumentsSales
 
    ::oViewEdit:getCodigoDireccion:Enable()*/
 
-Return ( self )
+RETURN ( self )
 
 //---------------------------------------------------------------------------//

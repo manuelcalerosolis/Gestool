@@ -1689,7 +1689,7 @@ STATIC FUNCTION OpenFiles()
       oDetCamposExtra:SetTipoDocumento( "Albaranes a clientes" )
       oDetCamposExtra:setbId( {|| D():AlbaranesClientesId( nView ) } )
 
-      oLinDetCamposExtra               := TDetCamposExtra():New()
+      oLinDetCamposExtra   := TDetCamposExtra():New()
       oLinDetCamposExtra:OpenFiles()
       oLinDetCamposExtra:setTipoDocumento( "Lineas de albaranes a clientes" )
       oLinDetCamposExtra:setbId( {|| D():AlbaranesClientesLineasEscandalloId( nView ) } )
@@ -4823,12 +4823,13 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbf, oBrw, lTotLin, cCodArtEnt, nMode, aTmpA
 
       TiposVentasController();
          :Instance();
+         :getDialogView();
          :createEditControl(  {  "idGet"  => 290,;
                                  "idText" => 291,;
                                  "idSay"  => 292,;
-                                 "dialog" => oFld:aDialogs[ 1 ],;
-                                 "when"   => {|| ( nMode != ZOOM_MODE .and. !lTotLin ) },;
-                                 "value"  => aTmp[ ( D():AlbaranesClientesLineas( nView ) )->( fieldpos( "id_tipo_v" ) ) ] } )
+                                 "dialog" => oFld:aDialogs[1],;
+                                 "when"   => {|| ( nMode != ZOOM_MODE .and. !lTotLin ) } },;
+                                 @aTmp[ ( D():AlbaranesClientesLineas( nView ) )->( fieldpos( "id_tipo_v" ) ) ] )
 
       /*
       Tipo de articulo---------------------------------------------------------
@@ -9782,8 +9783,6 @@ STATIC FUNCTION SetDlgMode( aTmp, aTmpAlb, nMode, aGet, oFld, oSayPr1, oSayPr2, 
       oRentLin:Hide()
    end if
 
-   TiposVentasController():Instance():validEditControl()
-
    do case
    case nMode == APPD_MODE
 
@@ -11089,8 +11088,6 @@ STATIC FUNCTION SaveDeta( aTmp, aTmpAlb, oFld, aGet, oBrw, bmpImage, oDlg, nMode
    aTmp[ _CTIPCTR ]  := cTipoCtrCoste
 
    aTmp[ _NREQ ]     := nPReq( D():Get( "TIva", nView ), aTmp[ _NIVA ] )
-
-   aTmp[ D():AlbaranesClientesLineasFieldPos( "id_tipo_v", nView ) ]    := TiposVentasController():Instance():getIdFromEditControl()
 
    aClo              := aClone( aTmp )
 

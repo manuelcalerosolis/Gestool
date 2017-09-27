@@ -1243,10 +1243,10 @@ STATIC FUNCTION EditConfig( aTmp, aGet, dbfEmp, oBrw, nSelFolder, bValid, nMode 
    checkEmpresaTablesExistences()
 
    // Control de errores-------------------------------------------------------
-
+/*
    oBlock                  := ErrorBlock( {| oError | ApoloBreak( oError ) } )
    BEGIN SEQUENCE
-
+*/
    if empty( aTmp[ _CDEFSER ] )
       aTmp[ _CDEFSER ]     := Space( 1 )
    end if
@@ -1306,9 +1306,9 @@ STATIC FUNCTION EditConfig( aTmp, aGet, dbfEmp, oBrw, nSelFolder, bValid, nMode 
 
    cCmbContabilidad        := aCmbContabilidad[ Min( Max( aTmp[ _NEXPCONTBL ], 1 ), len( aCmbContabilidad ) ) ] 
 
-   cMailNotificaciones     := padr( ConfiguracionEmpresasModel():getValue( 'mail_notificaciones', '' ), 200 )
+   cMailNotificaciones     := padr( ConfiguracionEmpresasRepository():getValue( 'mail_notificaciones', '' ), 200 )
    
-   lInformacionInmediata   := ConfiguracionEmpresasModel():getLogic( 'informacion_inmediata', .f. )
+   lInformacionInmediata   := ConfiguracionEmpresasRepository():getLogic( 'informacion_inmediata', .f. )
 
    LoaItmEmp( aTmp )
 
@@ -2559,14 +2559,14 @@ STATIC FUNCTION EditConfig( aTmp, aGet, dbfEmp, oBrw, nSelFolder, bValid, nMode 
       CENTER
 
    // Fin del control de errores--------------------------------------------------
-
+   /*
    RECOVER USING oError
 
       msgStop( "Imposible editar configuración de empresas" + CRLF + ErrorMessage( oError )  )
 
    END SEQUENCE
    ErrorBlock( oBlock ) 
-   
+   */
    // Matamos los objetos con las imágenes----------------------------------------
 
    KillTrans()
@@ -5581,8 +5581,8 @@ STATIC FUNCTION SaveEditConfig( aTmp, oSay, oBrw, oDlg, nMode )
 
    end while
 
-   ConfiguracionEmpresasModel():setValue( 'mail_notificaciones',     alltrim( cMailNotificaciones ) )
-   ConfiguracionEmpresasModel():setValue( 'informacion_inmediata',   lInformacionInmediata )
+   ConfiguracionEmpresasRepository():setValue( 'mail_notificaciones',     alltrim( cMailNotificaciones ) )
+   ConfiguracionEmpresasRepository():setValue( 'informacion_inmediata',   lInformacionInmediata )
 
    // Escribimos en el definitivo----------------------------------------------
 
