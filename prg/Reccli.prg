@@ -21,71 +21,73 @@ Defines para las lineas de Pago
 #define _NNUMFAC                  2      //   N      9     0
 #define _CSUFFAC                  3      //   C      2     0
 #define _NNUMREC                  4      //   N      2     0
-#define _CTIPREC                  5      //   N      2     0
-#define _CCODPGO                  6      //   C      2     0
-#define _CCODCAJ                  7      //   C      6     0
-#define _CTURREC                  8      //   C     12     0
-#define _CCODCLI                  9      //   D      8     0
-#define _CNOMCLI                 10      //   D      8     0
-#define _DENTRADA                11      //   N     10     0
-#define _NIMPORTE                12      //   C    100     0
-#define _CDESCRIP                13      //   C      8     0
-#define _DPRECOB                 14      //   D     50     0
-#define _CPGDOPOR                15      //   D     50     0
-#define _CDOCPGO                 16      //   L      1     0
-#define _LCOBRADO                17      //   C      3     0
-#define _CDIVPGO                 18      //
-#define _NVDVPGO                 19      //   L      1     0
-#define _LCONPGO                 20      //   C     12     0
-#define _CCTAREC                 21      //   N     16     6
-#define _NIMPEUR                 22      //   L      1     0
-#define _LIMPEUR                 23      //   N      9     0 Numero de la remesas
-#define _NNUMREM                 24      //   C      2     0 Sufijo de remesas
-#define _CSUFREM                 25      //   C      3     0 Cuenta de remesa
-#define _CCTAREM                 26      //   L      1     0 Marca para impreso
-#define _LRECIMP                 27      //   L      1     0 Recibo descontado
-#define _LRECDTO                 28      //   D      8     0 Fecha del descuento
-#define _DFECDTO                 29      //   D      8     0 Fecha de vencimiento
-#define _DFECVTO                 30      //   C      3     0 Codigo del agente
-#define _CCODAGE                 31      //   C      3     0 Numero de cobro
-#define _NNUMCOB                 32      //   C      2     0 Sufijo de cobro
-#define _CSUFCOB                 33      //   N     16     6 Importe de cobro
-#define _NIMPCOB                 34      //   N     16     6 Importe de gastos
-#define _NIMPGAS                 35      //   C     12     0 Subcuenta de gastos
-#define _CCTAGAS                 36
-#define _LESPERADOC              37
-#define _LCLOPGO                 38
-#define _DFECIMP                 39      //   D      8     0
-#define _CHORIMP                 40      //   C      5     0
-#define _LNOTARQUEO              41
-#define _CCODBNC                 42
-#define _DFECCRE                 43      //   D      8     0
-#define _CHORCRE                 44      //   C      5     0
-#define _CCODUSR                 45      //   C      3     0
-#define _LDEVUELTO               46      //   L      1     0
-#define _DFECDEV                 47      //   D      8     0
-#define _CMOTDEV                 48      //   C    250     0
-#define _CRECDEV                 49      //   C     14     0
-#define _LSNDDOC                 50      //   L      1     0
-#define _CBNCEMP                 51
-#define _CBNCCLI                 52
-#define _CEPAISIBAN              53
-#define _CECTRLIBAN              54
-#define _CENTEMP                 55
-#define _CSUCEMP                 56
-#define _CDIGEMP                 57
-#define _CCTAEMP                 58
-#define _CPAISIBAN               59
-#define _CCTRLIBAN               60
-#define _CENTCLI                 61
-#define _CSUCCLI                 62
-#define _CDIGCLI                 63
-#define _CCTACLI                 64
-#define _LREMESA                 65
-#define _CNUMMTR                 66
-#define _LPASADO                 67
-#define _CCENTROCOSTE            68
-#define _NIMPREL                 69
+#define _GUID                     5      //   C     40     0
+#define _CTIPREC                  6      //   N      2     0
+#define _CCODPGO                  7      //   C      2     0
+#define _CCODCAJ                  8      //   C      6     0
+#define _CTURREC                  9      //   C     12     0
+#define _CCODCLI                 10      //   D      8     0
+#define _CNOMCLI                 11      //   D      8     0
+#define _DENTRADA                12      //   N     10     0
+#define _NIMPORTE                13      //   C    100     0
+#define _CDESCRIP                14      //   C      8     0
+#define _DPRECOB                 15      //   D     50     0
+#define _CPGDOPOR                16      //   D     50     0
+#define _CDOCPGO                 17      //   L      1     0
+#define _LCOBRADO                18      //   C      3     0
+#define _CDIVPGO                 19      //
+#define _NVDVPGO                 20      //   L      1     0
+#define _LCONPGO                 21      //   C     12     0
+#define _CCONGUID                22
+#define _CCTAREC                 23      //   N     16     6
+#define _NIMPEUR                 24      //   L      1     0
+#define _LIMPEUR                 25      //   N      9     0 Numero de la remesas
+#define _NNUMREM                 26      //   C      2     0 Sufijo de remesas
+#define _CSUFREM                 27      //   C      3     0 Cuenta de remesa
+#define _CCTAREM                 28      //   L      1     0 Marca para impreso
+#define _LRECIMP                 29      //   L      1     0 Recibo descontado
+#define _LRECDTO                 30      //   D      8     0 Fecha del descuento
+#define _DFECDTO                 31      //   D      8     0 Fecha de vencimiento
+#define _DFECVTO                 32      //   C      3     0 Codigo del agente
+#define _CCODAGE                 33      //   C      3     0 Numero de cobro
+#define _NNUMCOB                 34      //   C      2     0 Sufijo de cobro
+#define _CSUFCOB                 35      //   N     16     6 Importe de cobro
+#define _NIMPCOB                 36      //   N     16     6 Importe de gastos
+#define _NIMPGAS                 37      //   C     12     0 Subcuenta de gastos
+#define _CCTAGAS                 38
+#define _LESPERADOC              39
+#define _LCLOPGO                 40
+#define _DFECIMP                 41      //   D      8     0
+#define _CHORIMP                 42      //   C      5     0
+#define _LNOTARQUEO              43
+#define _CCODBNC                 44
+#define _DFECCRE                 45      //   D      8     0
+#define _CHORCRE                 46      //   C      5     0
+#define _CCODUSR                 47      //   C      3     0
+#define _LDEVUELTO               48      //   L      1     0
+#define _DFECDEV                 49      //   D      8     0
+#define _CMOTDEV                 50      //   C    250     0
+#define _CRECDEV                 51      //   C     14     0
+#define _LSNDDOC                 52      //   L      1     0
+#define _CBNCEMP                 53
+#define _CBNCCLI                 54
+#define _CEPAISIBAN              55
+#define _CECTRLIBAN              56
+#define _CENTEMP                 57
+#define _CSUCEMP                 58
+#define _CDIGEMP                 59
+#define _CCTAEMP                 60
+#define _CPAISIBAN               61
+#define _CCTRLIBAN               62
+#define _CENTCLI                 63
+#define _CSUCCLI                 64
+#define _CDIGCLI                 65
+#define _CCTACLI                 66
+#define _LREMESA                 67
+#define _CNUMMTR                 68
+#define _LPASADO                 69
+#define _CCENTROCOSTE            70
+#define _NIMPREL                 71
 
 memvar cDbfRec
 memvar cDbf
@@ -229,6 +231,8 @@ RETURN ( lOpenFiles )
 //----------------------------------------------------------------------------//
 
 STATIC FUNCTION CloseFiles()
+
+   D():DeleteView( nView )
 
    if oCtaRem != nil
       oCtaRem:CloseFiles()
@@ -4661,6 +4665,7 @@ FUNCTION aItmRecCli()
    aAdd( aBasRecCli, {"nNumFac"     ,"N",  9, 0, "Número de factura",                                    "Numero",               "", "( cDbfRec )", nil } )
    aAdd( aBasRecCli, {"cSufFac"     ,"C",  2, 0, "Sufijo de factura",                                    "Sufijo",               "", "( cDbfRec )", {|| RetSufEmp() } } )
    aAdd( aBasRecCli, {"nNumRec"     ,"N",  2, 0, "Número del recibo",                                    "NumeroRecibo",         "", "( cDbfRec )", nil } )
+   aAdd( aBasRecCli, {"cGuid"       ,"C", 40, 0, "Guid de recibo",                                       "GUID",                 "", "( cDbfRec )", {|| win_uuidcreatestring() } } )
    aAdd( aBasRecCli, {"cTipRec"     ,"C",  1, 0, "Tipo de recibo",                                       "TipoRecibo",           "", "( cDbfRec )", nil } )
    aAdd( aBasRecCli, {"cCodPgo"     ,"C",  2, 0, "Código de forma de pago",                              "Pago",                 "", "( cDbfRec )", nil } )
    aAdd( aBasRecCli, {"cCodCaj"     ,"C",  3, 0, "Código de caja",                                       "Caja",                 "", "( cDbfRec )", {|| oUser():cCaja() } } )
@@ -4669,7 +4674,7 @@ FUNCTION aItmRecCli()
    aAdd( aBasRecCli, {"cNomCli"     ,"C", 80, 0, "Nombre de cliente",                                    "NombreCliente",        "", "( cDbfRec )", nil } )
    aAdd( aBasRecCli, {"dEntrada"    ,"D",  8, 0, "Fecha de cobro",                                       "FechaCobro",           "", "( cDbfRec )", {|| Date() } } )
    aAdd( aBasRecCli, {"nImporte"    ,"N", 16, 6, "Importe",                                              "TotalDocumento",       "", "( cDbfRec )", nil } )
-   aAdd( aBasRecCli, {"cDesCriP"    ,"C",100, 0, "Concepto del pago",                                    "Concepto",             "", "( cDbfRec )", nil } )
+   aAdd( aBasRecCli, {"cDescrip"    ,"C",100, 0, "Concepto del pago",                                    "Concepto",             "", "( cDbfRec )", nil } )
    aAdd( aBasRecCli, {"dPreCob"     ,"D",  8, 0, "Fecha de expedición",                                  "FechaExpedicion",      "", "( cDbfRec )", nil } )
    aAdd( aBasRecCli, {"cPgdoPor"    ,"C", 50, 0, "Pagado por",                                           "PagadoPor",            "", "( cDbfRec )", nil } )
    aAdd( aBasRecCli, {"cDocPgo"     ,"C", 50, 0, "Documento de pago",                                    "DocumentoPago",        "", "( cDbfRec )", nil } )
@@ -4677,6 +4682,7 @@ FUNCTION aItmRecCli()
    aAdd( aBasRecCli, {"cDivPgo"     ,"C",  3, 0, "Código de la divisa",                                  "Divisa",               "", "( cDbfRec )", {|| cDivEmp() } } )
    aAdd( aBasRecCli, {"nVdvPgo"     ,"N", 10, 6, "Cambio de la divisa",                                  "ValorDivisa",          "", "( cDbfRec )", {|| nChgDiv() } } )
    aAdd( aBasRecCli, {"lConPgo"     ,"L",  1, 0, "Lógico de contabilizado",                              "Contabilizada",        "", "( cDbfRec )", nil } )
+   aAdd( aBasRecCli, {"cConGuid"    ,"C", 40, 0, "Guid de apunte contable",                              "GuidApunteContable",   "", "( cDbfRec )", nil } )
    aAdd( aBasRecCli, {"cCtaRec"     ,"C", 12, 0, "Cuenta de contabilidad",                               "CuentaContable",       "", "( cDbfRec )", nil } )
    aAdd( aBasRecCli, {"nImpEur"     ,"N", 16, 6, "Importe del pago en Euros",                            "ImporteEuros",         "", "( cDbfRec )", nil } )
    aAdd( aBasRecCli, {"lImpEur"     ,"L",  1, 0, "Lógico cobrar en Euros",                               "",                     "", "( cDbfRec )", nil } )

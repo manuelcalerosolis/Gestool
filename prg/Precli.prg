@@ -3779,12 +3779,13 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbf, oBrw, lTotLin, cCodArtEnt, nMode, aTmpP
 
       TiposVentasController();
          :Instance();
+         :getDialogView();
          :createEditControl(  {  "idGet"  => 290,;
                                  "idText" => 291,;
                                  "idSay"  => 292,;
-                                 "dialog" => oFld:aDialogs[ 1 ],;
-                                 "when"   => {|| ( nMode != ZOOM_MODE .and. !lTotLin ) },;
-                                 "value"  => aTmp[ ( D():PresupuestosClientesLineas( nView ) )->( fieldpos( "id_tipo_v" ) ) ] } )
+                                 "dialog" => oFld:aDialogs[1],;
+                                 "when"   => {|| ( nMode != ZOOM_MODE .and. !lTotLin ) } },;
+                                 @aTmp[ ( D():PresupuestosClientesLineas( nView ) )->( fieldpos( "id_tipo_v" ) ) ] )
 
       /*
       Tipo de articulo---------------------------------------------------------
@@ -4462,7 +4463,6 @@ STATIC FUNCTION SaveDeta( cCodArt, aTmp, aTmpPre, aGet, oDlg2, oBrw, bmpImage, n
 
    aTmp[ _CTIPCTR ]              := cTipoCtrCoste
    aTmp[ _NREQ ]                 := nPReq( dbfIva, aTmp[ _NIVA ] )
-   aTmp[ ( D():PresupuestosClientesLineas( nView ) )->( fieldpos( "id_tipo_v" ) ) ]   := TiposVentasController():Instance():getIdFromEditControl()
 
    aClo                          := aClone( aTmp )
 

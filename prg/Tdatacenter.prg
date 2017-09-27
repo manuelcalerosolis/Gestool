@@ -21,7 +21,7 @@ CLASS TDataCenter
 
    CLASSDATA   aDataTables                INIT {}
    CLASSDATA   aEmpresaTables             INIT {}
-   CLASSDATA   aEmpresaObject             INIT {}
+   CLASSDATA   aEmpresaObject             INIT {} 
 
    CLASSDATA   aDataTmp                   INIT {}
 
@@ -141,6 +141,7 @@ CLASS TDataCenter
    METHOD CreateAllLocksTablesUsers()
    METHOD DeleteAllLocksTablesUsers()
    METHOD GetAllLocksTablesUsers()
+   METHOD GetAllTables()
    METHOD CloseAllLocksTablesUsers()      INLINE ( ::CloseArea( "AllLocks" ) )
 
    METHOD configDatabaseCDXLocal()
@@ -240,11 +241,9 @@ CLASS TDataCenter
 
    	METHOD oCliBnc()
 
-   METHOD AlterTableSQLite()      
-   METHOD ConvertDatosToSQLite()
-   METHOD ConvertEmpresaToSQLite()
-   METHOD MigrateEmpresaToSQLite()
-   METHOD GetAllTables()
+   METHOD ConvertDatosToSQL()
+   METHOD ConvertEmpresaToSQL()
+   METHOD MigrateEmpresaToSQL()
 
 END CLASS
 
@@ -270,13 +269,12 @@ RETURN ( Self )
 
 //---------------------------------------------------------------------------//
 
-
 METHOD oFacCliP() CLASS TDataCenter
 
-      local cFilter
-      local oFacCliP
+   local cFilter
+   local oFacCliP
 
-      DATABASE NEW oFacCliP PATH ( cPatEmp() ) FILE "FacCliP.Dbf" VIA ( cDriver() ) SHARED INDEX "FacCliP.Cdx"
+   DATABASE NEW oFacCliP PATH ( cPatEmp() ) FILE "FacCliP.Dbf" VIA ( cDriver() ) SHARED INDEX "FacCliP.Cdx"
 
 Return ( oFacCliP )   
 
@@ -587,13 +585,11 @@ METHOD lAdministratorTask()
 
    dbcloseall()
 
-   // getSQLDatabase():checkModelsExistence()
-
+   getSQLDatabase():checkModels()
+   
    ::configDatabaseCDXLocal()
 
    ::loadEmpresas()
-
-   msgalert( "loadEmpresas")
 
    ::dialogEmpresas()
 
@@ -750,11 +746,11 @@ METHOD StartAdministratorTask()
 
    // Alteracion de tablas de SQLite------------------------------------------
 
-   ::AlterTableSQLite()
+   // ::AlterTableSQLite()
 
    // Conversion de tablas a SQLite-------------------------------------------
 
-   ::ConvertDatosToSQLite()
+   // ::ConvertDatosToSQL()
    
    // Recorremos el array de las empresas par actualizarlas--------------------
 
@@ -778,7 +774,7 @@ METHOD StartAdministratorTask()
 
             aEmpresa[ 4 ]      := .t.
 
-            ::ConvertEmpresaToSQLite()
+            ::ConvertEmpresaToSQL()
 
          end if
 
@@ -842,7 +838,7 @@ METHOD StartAdministratorTask()
 
             ::Reindex()
 
-            ::MigrateEmpresaToSQLite()
+            ::MigrateEmpresaToSQL()
 
             aEmpresa[ 5 ]   := .t.
 
@@ -859,14 +855,14 @@ METHOD StartAdministratorTask()
 
       // Creamos las tablas de operacioens-------------------------------------
 
-      ::oMsg:SetText( "Creando tablas de operaciones" )
+      // ::oMsg:SetText( "Creando tablas de operaciones" )
 
-      ::CreateOperationLogTable()
+      // ::CreateOperationLogTable()
 
-      ::CreateColumnLogTable()
+      // ::CreateColumnLogTable()
 
-      // ::CreateAllLocksTablesUsers() da error--------------------------------
-
+      // ::CreateAllLocksTablesUsers() 
+      
       if !empty(::oMtrDiccionario)
 	      ::oMtrDiccionario:Set( 3 )
 	   end if
@@ -1587,6 +1583,26 @@ METHOD GetAllLocksTablesUsers()
    cStm           := "EXECUTE PROCEDURE mgGetAllLocksAllTablesAllUsers();"
 
 RETURN ( ::ExecuteSqlStatement( cStm, "AllLocks" ) )
+
+//---------------------------------------------------------------------------//
+
+METHOD GetAllTables( ctext )
+
+  local cStm
+
+  DEFAULT cText := ""
+
+  /*
+  Creamos la instruccion------------------------------------------------------
+  */
+
+  cStm           := "EXECUTE PROCEDURE sp_mgGetAllTables();"
+
+  ::ExecuteSqlStatement( cStm, "GetAllTables" )
+
+  ( "GetAllTables" )->( browse( cText ) )
+
+RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 
@@ -4091,11 +4107,15 @@ METHOD StartResource()
 
    ::BuildData()
 
+   ::BuildEmpresa()
+
    ::Reindex()
 
    ::Syncronize()
     
    CursorWE()
+
+   msgInfo( "Proceso finalizado con exito.")
 
    ::oDlg:bValid  := {|| .t. }
    ::oDlg:Enable()
@@ -4117,7 +4137,7 @@ METHOD Reindex()
    // Bases de datos de directorio datos------------------------------------------
 
    if ::aLgcIndices[ 1 ]
-
+      
       if !Empty( ::aProgress[ 1 ] )
          ::aProgress[ 1 ]:SetTotal( len( ::aDataTables ) )
       end if 
@@ -4220,14 +4240,18 @@ METHOD ReindexTable( oTable )
 
    oBlock         := ErrorBlock( { | oError | ApoloBreak( oError ) } )
    BEGIN SEQUENCE
-
-      dbusearea( .t., ( cDriver() ), ( oTable:cName ), "ADSWork", .f. )
-
-      if !neterr() .and. ( "ADSWork" )->( used() )
-         ( "ADSWork" )->( ordsetfocus( 1 ) )
-         ( "ADSWork" )->( adsReindex() )
-         ( "ADSWork" )->( dbclosearea() )
-      end if 
+/*
+      if !empty( oTable:adsCreateIndex )
+         eval( oTable:adsCreateIndex )
+      else
+*/      
+         dbusearea( .t., ( cDriver() ), ( oTable:cName ), "Table", .f. )
+         if !neterr() .and. ( "Table" )->( used() )
+            ( "Table" )->( ordsetfocus( 1 ) )
+            ( "Table" )->( adsReindex() )
+            ( "Table" )->( dbclosearea() )
+         end if 
+//    end if 
 
    RECOVER USING oError
 
@@ -4450,26 +4474,6 @@ METHOD EnableTriggers()
    cStm           := "EXECUTE PROCEDURE sp_enableTriggers( NULL, NULL, FALSE, 0 );"
 
 RETURN ( ::ExecuteSqlStatement( cStm, "EnableTriggers" ) )
-
-//---------------------------------------------------------------------------//
-
-METHOD GetAllTables( ctext )
-
-   local cStm
-
-   DEFAULT cText := ""
-
-   /*
-   Creamos la instruccion------------------------------------------------------
-   */
-
-   cStm           := "EXECUTE PROCEDURE sp_mgGetAllTables();"
-
-   ::ExecuteSqlStatement( cStm, "GetAllTables" )
-
-   ( "GetAllTables" )->( browse( cText ) )
-
-RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 
@@ -4742,33 +4746,7 @@ RETURN ( ::ExecuteSqlStatement( cStm, "SatCliArticulos" ) )
 
 //---------------------------------------------------------------------------//
 
-METHOD AlterTableSQLite()
-
-   TiposImpresorasModel();
-      :New();
-      :updateTableColumns()
-
-   TiposNotasModel();
-      :New();
-      :updateTableColumns()
-
-   SituacionesModel();
-      :New();
-      :updateTableColumns()
-
-   HistoricosUsuariosModel();
-      :New();
-      :updateTableColumns()
-
-   EtiquetasModel();
-      :New();
-      :updateTableColumns()
-
-RETURN ( Self )
-
-//---------------------------------------------------------------------------//
-
-METHOD ConvertDatosToSQLite()
+METHOD ConvertDatosToSQL()
 
    TiposImpresorasModel();
       :New();
@@ -4790,7 +4768,7 @@ RETURN ( Self )
 
 //---------------------------------------------------------------------------//
 
-METHOD ConvertEmpresaToSQLite()
+METHOD ConvertEmpresaToSQL()
 
    EtiquetasModel();
       :New();
@@ -4800,9 +4778,9 @@ RETURN ( Self )
 
 //---------------------------------------------------------------------------//
 
-METHOD MigrateEmpresaToSQLite()
+METHOD MigrateEmpresaToSQL()
 
-   PedidosClientesLineasModel() ;
+   TransaccionesComercialesLineasModel() ;
       :TranslateSATClientesLineasCodigoTiposVentaToId() ;
       :TranslatePresupuestoClientesLineasCodigoTiposVentaToId() ;
       :TranslatePedidosClientesLineasCodigoTiposVentaToId() ;

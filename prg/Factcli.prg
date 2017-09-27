@@ -5222,18 +5222,24 @@ STATIC FUNCTION EdtDet( aTmp, aGet, cFacCliL, oBrw, lTotLin, cCodArtEnt, nMode, 
          OF       fldGeneral
 
       /*
-      Tipo de moviminto
+      Tipo de movimiento
       -------------------------------------------------------------------------
       */
 
       TiposVentasController();
          :Instance();
+         :getDialogView();
          :createEditControl(  {  "idGet"  => 290,;
                                  "idText" => 291,;
                                  "idSay"  => 292,;
                                  "dialog" => fldGeneral,;
-                                 "when"   => {|| ( nMode != ZOOM_MODE .and. nMode != MULT_MODE .and. !lTotLin ) },;
-                                 "value"  => aTmp[ ( D():FacturasClientesLineas( nView ) )->( fieldpos( "id_tipo_v" ) ) ] } )
+                                 "when"   => {|| ( nMode != ZOOM_MODE .and. nMode != MULT_MODE .and. !lTotLin ) } },;
+                                 @aTmp[ ( D():FacturasClientesLineas( nView ) )->( fieldpos( "id_tipo_v" ) ) ] )
+
+      /*
+      Almacen
+      -------------------------------------------------------------------------
+      */
 
       REDEFINE GET aGet[ _CALMLIN ] VAR aTmp[ _CALMLIN ] ;
          ID       300 ;
@@ -10278,7 +10284,7 @@ Static Function DataReport( oFr )
    oFr:SetWorkArea(     "Impuestos especiales",  oNewImp:Select() )
    oFr:SetFieldAliases( "Impuestos especiales",  cObjectsToReport( oNewImp:oDbf ) )
 
-   // TiposVentasController():Instance():setFastReport( oFr )
+   TiposVentasController():Instance():setFastReport( oFr )
 
    oFr:SetMasterDetail( "Facturas", "Lineas de facturas",                     {|| D():FacturasClientesId( nView ) } )
    oFr:SetMasterDetail( "Facturas", "Incidencias de facturas",                {|| D():FacturasClientesId( nView ) } )
@@ -10297,8 +10303,8 @@ Static Function DataReport( oFr )
    oFr:SetMasterDetail( "Facturas", "Bancos",                                 {|| ( D():FacturasClientes( nView ) )->cCodCli } )
    oFr:SetMasterDetail( "Facturas", "País",                                   {|| retFld( ( D():FacturasClientes( nView ) )->cCodCli, D():Clientes( nView ), "cCodPai" ) } )
 
-   oFr:SetMasterDetail( "Lineas de facturas", "artículos",                    {|| ( D():FacturasClientesLineas( nView ) )->cRef } )
-   //                                                                                 TiposVentasController():Instance():findByIdInRowSet( ( D():FacturasClientesLineas( nView ) )->id_tipo_v ) } )
+   oFr:SetMasterDetail( "Lineas de facturas", "artículos",                    {|| ( D():FacturasClientesLineas( nView ) )->cRef,;
+                                                                                    TiposVentasController():Instance():findByIdInRowSet( ( D():FacturasClientesLineas( nView ) )->id_tipo_v ) } )
    oFr:SetMasterDetail( "Lineas de facturas", "Familia",                      {|| ( D():FacturasClientesLineas( nView ) )->cCodFam } )
    oFr:SetMasterDetail( "Lineas de facturas", "Tipo artículo",                {|| ( D():FacturasClientesLineas( nView ) )->cCodTip } )
    oFr:SetMasterDetail( "Lineas de facturas", "Tipo de venta",                {|| ( D():FacturasClientesLineas( nView ) )->cTipMov } )
@@ -13193,11 +13199,11 @@ STATIC FUNCTION SaveDeta( aTmp, aTmpFac, aGet, oBrw, oDlg, oFld, oSayPr1, oSayPr
 
    aTmp[ _CTIPCTR ]  := cTipoCtrCoste
    
-   aTmp[ ( D():FacturasClientesLineas( nView ) )->( fieldpos( "id_tipo_v" ) ) ]  := TiposVentasController():Instance():getIdFromEditControl()
+   msgalert( aTmp[ ( D():FacturasClientesLineas( nView ) )->( fieldpos( "id_tipo_v" ) ) ] )
 
    // fin de los script--------------------------------------------------------
 
-   aClo        := aClone( aTmp )
+   aClo              := aClone( aTmp )
 
    // Modo de edición multiple los cambios afectan a todos los registros seleccionados
 
