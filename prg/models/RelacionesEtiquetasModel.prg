@@ -123,7 +123,6 @@ RETURN ( self )
 METHOD sentenceForInsertLine( cTableName, nCodLine, etiquetas )
 
    local cInsertSentence
-
    local cInternalSelect   := "( SELECT id FROM " + ::cTableName                       + ;
                               " WHERE id_empresa = " + toSQLString( cCodEmp() )        + ;
                               " AND tabla_documento = " + toSQLString( cTableName )    + ;

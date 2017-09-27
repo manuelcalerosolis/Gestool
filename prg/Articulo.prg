@@ -246,7 +246,6 @@ STATIC FUNCTION OpenFiles( lExt, cPath )
    local oBlock
    local nSeconds
    local nStockArticulo
-   local oTipoImpresorasModel
 
    if lOpenFiles
       MsgStop( 'Imposible abrir ficheros de artículos' )
@@ -481,11 +480,7 @@ STATIC FUNCTION OpenFiles( lExt, cPath )
          TComercioConfig():getInstance():loadJSON()
       end if
 
-      oTipoImpresorasModel := TiposImpresorasModel():New()
-
-      if !Empty( oTipoImpresorasModel )
-         aTiposImpresoras  := oTipoImpresorasModel:arrayTiposImpresoras()
-      end if
+      aTiposImpresoras     := TiposImpresorasRepository():getAll() 
 
       /*
       Cargamos el valor del Euro y de la Peseta-----------------------------------
@@ -1858,9 +1853,10 @@ STATIC FUNCTION EdtRec( aTmp, aGet, cArticulo, oBrw, bWhen, bValid, nMode )
    cSubCtaAntCom     := aTmp[ ( D():Articulos( nView ) )->( fieldpos( "cCtaCom" ) ) ]
    cCodigoFamilia    := aTmp[ ( D():Articulos( nView ) )->( fieldpos( "Familia" ) ) ]
 
-   aIdEtiquetas      := RelacionesEtiquetasModel():getRelationsOfEtiquetas( "EMP" + cCodEmp() + "Articulo", aTmp[ ( D():Articulos( nView ) )->( fieldpos( "Codigo" ) ) ] )
+   // aIdEtiquetas      := RelacionesEtiquetasModel():getRelationsOfEtiquetas( "EMP" + cCodEmp() + "Articulo", aTmp[ ( D():Articulos( nView ) )->( fieldpos( "Codigo" ) ) ] )
+   // aNombreEtiquetas  := EtiquetasModel():translateIdsToNames( aIdEtiquetas )
 
-   aNombreEtiquetas  := EtiquetasModel():translateIdsToNames( aIdEtiquetas )
+   aNombreEtiquetas  := {}
 
    /*
    Filtros para los stocks-----------------------------------------------------
@@ -19309,6 +19305,8 @@ Return ( proveedorPorDefectoArticulo )
 Static Function getEtiquetasBrowse( aSelectedItems )
 
    local aSelected
+
+   RETURN ( nil )
 
    aSelected         := EtiquetasController():New():activateBrowse( aSelectedItems )
 
