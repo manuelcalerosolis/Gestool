@@ -11,6 +11,11 @@ CLASS CustomerView FROM ViewBase
    DATA oCheckVisVie
    DATA oCheckVisSab
    DATA oCheckVisDom
+
+   DATA oCheckRecargo
+
+   DATA oCodigoGrupo
+   DATA oNombreGrupo
   
    METHOD New()
 
@@ -40,7 +45,11 @@ CLASS CustomerView FROM ViewBase
 
    METHOD defineEmail()
 
+   METHOD defineGrupo()
+
    METHOD defineRuta()
+
+   METHOD defineRecargo()
 
    METHOD whenControl()                INLINE ( ::getMode() != ZOOM_MODE )
 
@@ -68,21 +77,25 @@ METHOD insertControls() CLASS CustomerView
 
    ::defineNIF(130)
 
-   ::defineDomicilio(160)
+   ::defineGrupo(160)
 
-   ::definePoblacion(190)
+   ::defineDomicilio(190)
 
-   ::defineCodigoPostal(220)
+   ::definePoblacion(220)
 
-   ::defineProvincia(250)
+   ::defineCodigoPostal(250)
+
+   ::defineProvincia(280)
    
-   ::defineTelefono(280)
+   ::defineTelefono(310)
 
-   ::defineEmail(310)
+   ::defineEmail(340)
 
-   ::defineEstablecimiento(340)
+   ::defineEstablecimiento(370)
 
-   ::defineRuta(370)
+   ::defineRuta(400)
+
+   ::defineRecargo(430)
 
 Return ( self )
 
@@ -110,7 +123,7 @@ METHOD defineCodigo(nRow) CLASS CustomerView
                                     "nWidth"    => {|| GridWidth( 2, ::oDlg ) },;
                                     "bWhen"     => {|| ::getMode() == APPD_MODE },;
                                     "bValid"    => {|| iif( !validKey( oCodigo, ( D():Clientes( ::getView() ) ), .t., "0", 1, RetNumCodCliEmp() ),;
-                                                            ::setErrorValidator( "El código ya existe" ),;
+                                                            ::setErrorValidator( "El cÃ³digo ya existe" ),;
                                                             .t. ) },;
                                     "nHeight"   => 23,;
                                     "cPict"     => Replicate( "X", RetNumCodCliEmp() ),;
@@ -503,3 +516,54 @@ Return( self )
 
 //---------------------------------------------------------------------------//
 
+METHOD defineGrupo( nRow )
+
+   TGridUrllink():Build({  "nTop"      => nRow,;
+                           "nLeft"     => {|| GridWidth( ::columnLabel, ::oDlg ) },;
+                           "cURL"      => "Grupo ",;
+                           "oWnd"      => ::oDlg,;
+                           "oFont"     => oGridFont(),;
+                           "lPixel"    => .t.,;
+                           "nClrInit"  => nGridColor(),;
+                           "nClrOver"  => nGridColor(),;
+                           "nClrVisit" => nGridColor(),;
+                           "bAction"   => {|| ::oSender:runGridGroupCustomer() } } )  //"bAction"   => {|| ::oSender:runGridGroupCustomer() } } )
+
+   ::oCodigoGrupo   := TGridGet():Build( {   "nRow"      => nRow,;
+                                             "nCol"      => {|| GridWidth( 2.5, ::oDlg ) },;
+                                             "bSetGet"   => {|u| ::SetGetValue( u, "CodigoGrupo" ) },;
+                                             "oWnd"      => ::oDlg,;
+                                             "nWidth"    => {|| GridWidth( 2, ::oDlg ) },;
+                                             "nHeight"   => 23,;
+                                             "lPixels"   => .t.,;
+                                             "bValid"    => {|| ::oSender:lValidGroupCustomer() } } )
+
+   ::oNombreGrupo   := TGridGet():Build(  {  "nRow"      => nRow,;
+                                             "nCol"      => {|| GridWidth( 4.5, ::oDlg ) },;
+                                             "oWnd"      => ::oDlg,;
+                                             "nWidth"    => {|| GridWidth( 7, ::oDlg ) },;
+                                             "lPixels"   => .t.,;
+                                             "bWhen"     => {|| .f. },;
+                                             "nHeight"   => 23 } )
+
+Return( self )
+
+//---------------------------------------------------------------------------//
+
+METHOD defineRecargo( nRow )
+
+   ::oCheckRecargo    := TGridCheckBox():Build(  { "nRow"      => nRow,;
+                                                   "nCol"      => {|| GridWidth( 2.5, ::oDlg ) },;
+                                                   "cCaption"  => "Recargo equivalencia",;
+                                                   "bSetGet"   => {|u| ::SetGetValue( u, "Recargo" ) },;
+                                                   "oWnd"      => ::oDlg,;
+                                                   "nWidth"    => {|| GridWidth( 5, ::oDlg ) },;
+                                                   "nHeight"   => 23,;
+                                                   "bWhen"     => {|| ::whenControl() },;
+                                                   "oFont"     => oGridFont(),;
+                                                   "lPixels"   => .t. } )
+
+
+Return( self )
+
+//---------------------------------------------------------------------------//
