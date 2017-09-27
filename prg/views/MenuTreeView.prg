@@ -20,6 +20,16 @@ CLASS MenuTreeView
 
    DATA oButtonMain
 
+   DATA bOnAfterAddSearchButton 
+   DATA bOnAfterAddAppendButton 
+   DATA bOnAfterAddDuplicateButton
+   DATA bOnAfterAddEditButton   
+   DATA bOnAfterAddZoomButton   
+   DATA bOnAfterAddDeleteButton
+   DATA bOnAfterAddRefreshButton
+   DATA bOnAfterAddSelectButton 
+   DATA bOnAfterAddExitButton   
+
    METHOD New( oSender )
 
    METHOD End()
@@ -38,14 +48,22 @@ CLASS MenuTreeView
    METHOD AddButton()
 
    METHOD AddSearchButton()    
+
    METHOD AddAppendButton()    
+   
    METHOD AddDuplicateButton() 
+   
    METHOD AddEditButton()      
+   
    METHOD AddZoomButton()      
+   
    METHOD AddDeleteButton()    
+   
    METHOD AddRefreshButton()
+   
    METHOD AddSelectButton()
-   METHOD AddSalirButton()
+
+   METHOD AddExitButton()
 
    METHOD AddGeneralButton()              INLINE ( ::AddSearchButton(),;
                                                    ::AddRefreshButton(),;
@@ -56,12 +74,12 @@ CLASS MenuTreeView
                                                    ::AddDeleteButton() )
 
    METHOD AddAutoButtons()                INLINE ( ::AddGeneralButton(),;
-                                                   ::AddSalirButton(),;
+                                                   ::AddExitButton(),;
                                                    ::oButtonMain:Expand() )
 
    METHOD AddSelectorButtons()            INLINE ( ::AddGeneralButton(),;
                                                    ::AddSelectButton(),;
-                                                   ::AddSalirButton(),;
+                                                   ::AddExitButton(),;
                                                    ::oButtonMain:Expand() )
 
    METHOD SelectButtonMain()              INLINE ( ::oTreeView:Select( ::oButtonMain ) )
@@ -84,7 +102,7 @@ RETURN ( Self )
 
 METHOD ActivateMDI( nWidth, nHeight )
 
-   ::oTreeView          := TTreeView():New( 0, 0, ::oSender:getWindow(), , , .t., .f., nWidth, nHeight ) 
+   ::oTreeView    := TTreeView():New( 0, 0, ::oSender:getWindow(), , , .t., .f., nWidth, nHeight ) 
    
    ::Default()
 
@@ -94,7 +112,7 @@ RETURN ( Self )
 
 METHOD ActivateDialog( id )
 
-   ::oTreeView          := TTreeView():Redefine( id, ::oSender:getWindow() ) 
+   ::oTreeView    := TTreeView():Redefine( id, ::oSender:getWindow() ) 
 
 RETURN ( Self )
 
@@ -176,39 +194,72 @@ RETURN ( nImageList )
 
 METHOD AddSearchButton()    
 
-RETURN ( ::AddButton( "Buscar", "Bus16", {|| ::oSender:getGetSearch():setFocus() }, "B" ) )
+   ::AddButton( "Buscar", "Bus16", {|| ::oSender:getGetSearch():setFocus() }, "B" ) 
+
+RETURN ( if( hb_isblock( ::bOnAfterAddSearchButton ), eval( ::bOnAfterAddSearchButton ), ) )
+
+//----------------------------------------------------------------------------//
 
 METHOD AddRefreshButton()
 
-RETURN ( ::AddButton( "Refrescar", "Refresh16", {|| ::oSender:RefreshRowSet() }, "R" ) )
+   ::AddButton( "Refrescar", "Refresh16", {|| ::oSender:RefreshRowSet() }, "R" ) 
+
+RETURN ( if( hb_isblock( ::bOnAfterAddRefreshButton ), eval( ::bOnAfterAddRefreshButton ), ) )
+
+//----------------------------------------------------------------------------//
 
 METHOD AddAppendButton()    
 
-RETURN ( ::AddButton( "Añadir", "New16", {|| ::getController():Append(), ::oSender:Refresh() }, "A", ACC_APPD ) )
+   ::AddButton( "Añadir", "New16", {|| ::getController():Append(), ::oSender:Refresh() }, "A", ACC_APPD ) 
+
+RETURN ( if( hb_isblock( ::bOnAfterAddAppendButton ), eval( ::bOnAfterAddAppendButton ), ) )
+
+//----------------------------------------------------------------------------//
 
 METHOD AddDuplicateButton() 
 
-RETURN ( ::AddButton( "Duplicar", "Dup16", {|| ::getController():Duplicate(), ::oSender:Refresh() }, "D", ACC_APPD ) )
+   ::AddButton( "Duplicar", "Dup16", {|| ::getController():Duplicate(), ::oSender:Refresh() }, "D", ACC_APPD ) 
+
+RETURN ( if( hb_isblock( ::bOnAfterAddDuplicateButton ), eval( ::bOnAfterAddDuplicateButton ), ) )
+
+//----------------------------------------------------------------------------//
 
 METHOD AddEditButton()      
 
-RETURN ( ::AddButton( "Modificar", "Edit16", {|| ::getController():Edit(), ::oSender:Refresh() }, "M", ACC_EDIT ) )
+   ::AddButton( "Modificar", "Edit16", {|| ::getController():Edit(), ::oSender:Refresh() }, "M", ACC_EDIT ) 
 
+RETURN ( if( hb_isblock( ::bOnAfterAddEditButton ), eval( ::bOnAfterAddEditButton ), ) )
+
+//----------------------------------------------------------------------------//
 METHOD AddZoomButton()      
 
-RETURN ( ::AddButton( "Zoom", "Zoom16", {|| ::getController():Zoom(), ::oSender:Refresh() }, "Z", ACC_ZOOM ) )
+   ::AddButton( "Zoom", "Zoom16", {|| ::getController():Zoom(), ::oSender:Refresh() }, "Z", ACC_ZOOM ) 
+
+RETURN ( if( hb_isblock( ::bOnAfterAddZoomButton ), eval( ::bOnAfterAddZoomButton ), ) )
+
+//----------------------------------------------------------------------------//
 
 METHOD AddDeleteButton()    
 
-RETURN ( ::AddButton( "Eliminar", "Del16", {|| ::getController():Delete( ::getBrowse():aSelected ), ::oSender:Refresh() }, "E", ACC_DELE ) )
+   ::AddButton( "Eliminar", "Del16", {|| ::getController():Delete( ::getBrowse():aSelected ), ::oSender:Refresh() }, "E", ACC_DELE ) 
+
+RETURN ( if( hb_isblock( ::bOnAfterAddDeleteButton ), eval( ::bOnAfterAddDeleteButton ), ) )
+
+//----------------------------------------------------------------------------//
 
 METHOD AddSelectButton()    
 
-RETURN ( ::AddButton( "Seleccionar [Enter]", "Select16", {|| ::oSender:Select() }, K_ENTER ) )
+   ::AddButton( "Seleccionar [Enter]", "Select16", {|| ::oSender:Select() }, K_ENTER ) 
 
-METHOD AddSalirButton()
+RETURN ( if( hb_isblock( ::bOnAfterAddSelectButton ), eval( ::bOnAfterAddSelectButton ), ) )
 
-RETURN ( ::AddButton( "Salir [ESC]", "End16", {|| ::oSender:End() }, "S" ) )
+//----------------------------------------------------------------------------//
+
+METHOD AddExitButton()
+
+   ::AddButton( "Salir [ESC]", "End16", {|| ::oSender:End() }, "S" ) 
+
+RETURN ( if( hb_isblock( ::bOnAfterAddExitButton ), eval( ::bOnAfterAddExitButton ), ) )
 
 //----------------------------------------------------------------------------//
 

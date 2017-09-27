@@ -7,13 +7,9 @@
 
 CLASS EtiquetasModel FROM SQLBaseModel
 
-   DATA     cTableName                             INIT "etiquetas"
+   DATA cTableName                                 INIT "etiquetas"
 
-   DATA     cDbfTableName
-
-   DATA     hColumns
-
-   METHOD   New()
+   METHOD New()
 
    METHOD   updateAfterDelete()
 
@@ -41,27 +37,11 @@ END CLASS
 
 METHOD New()
 
-   ::cDbfTableName               := ""
-
    ::hColumns                    := {  "id"        => {  "create"    => "INTEGER PRIMARY KEY AUTO_INCREMENT"            ,;
                                                          "text"		=> "Identificador"                                 ,;
                                                          "header"    => "Id"                                            ,;
-                                                         "visible"   => .f.                                             ,;
-                                                         "width"     => 40}                                             ,;
-                                       "codigo"    => {  "create"    => "CHAR ( 10 )"                                   ,;
-                                                         "text"      => "Código DBF de la etiqueta"                     ,;
-                                                         "visible"   => .f.                                             ,;
-                                                         "header"    => "Código"                                        ,;
-                                                         "width"     => 100                                             ,;
-                                                         "type"      => "C"                                             ,;
-                                                         "len"       => 10}                                             ,;
-                                       "nombre"    => {  "create"    => "VARCHAR( 50 ) NOT NULL"                        ,;
-                                                         "text"      => "Nombre de la etiqueta"                         ,;
-                                                         "header"    => "Nombre"                                        ,;
                                                          "visible"   => .t.                                             ,;
-                                                         "width"     => 200                                             ,;
-                                                         "type"      => "C"                                             ,;
-                                                         "len"       => 50}                                             ,;
+                                                         "width"     => 40}                                             ,;
                                        "empresa"   => {  "create"    => "CHAR ( 4 )"                                    ,;
                                                          "text"      => "Empresa a la que pertenece la etiqueta"        ,;
                                                          "header"    => "Empresa"                                       ,;
@@ -69,12 +49,19 @@ METHOD New()
                                                          "width"     => 50                                              ,;
                                                          "type"      => "N"                                             ,;
                                                          "len"       => 4}                                              ,;
+                                       "nombre"    => {  "create"    => "VARCHAR( 50 ) NOT NULL"                        ,;
+                                                         "text"      => "Nombre de la etiqueta"                         ,;
+                                                         "header"    => "Nombre"                                        ,;
+                                                         "visible"   => .t.                                             ,;
+                                                         "width"     => 400                                             ,;
+                                                         "type"      => "C"                                             ,;
+                                                         "len"       => 50}                                             ,;
                                        "id_padre"  => {  "create"    => "INTEGER"                                       ,;
                                                          "text"      => "Identificador de la etiqueta padre"            ,;
                                                          "visible"   => .f.}                                            }
 
    ::Super:New()
-
+/*
    ::cGeneralSelect              := "SELECT id, nombre, empresa, id_padre, nombre_padre"                                +;
                                     " FROM " + ::cTableName + " LEFT JOIN "                                             +;
                                     " ( SELECT id AS id_del_padre, nombre AS nombre_padre FROM " + ::cTableName + " )"  +;
@@ -85,6 +72,7 @@ METHOD New()
                                                             "width"     => 200                           ,;
                                                             "type"      => "C"                           ,;
                                                             "len"       => 50}                           }
+*/
 
 RETURN ( Self )
 

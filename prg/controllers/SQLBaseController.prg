@@ -6,7 +6,7 @@
 
 CLASS SQLBaseController
 
-   CLASSDATA   oInstance 
+   CLASSDATA oInstance 
 
    DATA ControllerContainer
 

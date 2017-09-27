@@ -6,7 +6,7 @@
 
 CLASS TiposImpresorasController FROM SQLBaseController
 
-   METHOD   New()
+   METHOD New()
 
 END CLASS
 

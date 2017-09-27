@@ -19,7 +19,7 @@ CLASS SQLBaseValidator
    DATA cCurrentMethod  
    DATA cCurrentMessage   
 
-   DATA lDebugMode                     INIT .t.
+   DATA lDebugMode                     INIT .f.
   
    METHOD New()
    METHOD End()

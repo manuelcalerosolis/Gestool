@@ -1587,7 +1587,7 @@ FUNCTION CreateAcceso( oWnd )
    oItem:oGroup         := oGrupo
    oItem:cPrompt        := "Situaciones"
    oItem:cMessage       := "Acceso a los tipos de situaciones"
-   oItem:bAction        := {|| SituacionesController():New():activateShell() }
+   oItem:bAction        := {|| SituacionesController():New():ActivateNavigatorView() }
    oItem:cId            := "01096"
    oItem:cBmp           := "gc_document_attachment_16"
    oItem:cBmpBig        := "gc_document_attachment_32"
@@ -1597,7 +1597,7 @@ FUNCTION CreateAcceso( oWnd )
    oItem:oGroup         := oGrupo
    oItem:cPrompt        := 'Etiquetas'
    oItem:cMessage       := 'Etiquetas'
-   oItem:bAction        := {|| EtiquetasController():New():activateShell() }
+   oItem:bAction        := {|| EtiquetasController():New():ActivateNavigatorView() }
    oItem:cId            := "01126"
    oItem:cBmp           := "gc_bookmarks_16"
    oItem:cBmpBig        := "gc_bookmarks_32"

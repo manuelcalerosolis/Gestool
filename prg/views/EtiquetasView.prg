@@ -4,7 +4,7 @@
 
 //---------------------------------------------------------------------------//
 
-CLASS Etiquetas FROM SQLBaseView
+CLASS EtiquetasView FROM SQLBaseView
 
    METHOD   New()
 
@@ -64,7 +64,7 @@ METHOD Dialog()
       VAR         ::oController:oModel:hBuffer[ "nombre" ] ;
       ID          100 ;
       WHEN        ( !::oController:isZoomMode() ) ;
-      VALID       ( ::oController:validNombre( oGetNombre ) ) ;
+      VALID       ( ::oController:validate( "nombre" ) ) ;
       OF          oDlg
 
    oTree                      := TTreeView():Redefine( 110, oDlg )
@@ -142,7 +142,7 @@ METHOD buildSQLBrowse( title, aSelectedItems )
       REDEFINE BUTTON ;
          ID          500 ;
          OF          oDlg ;
-         ACTION      (  ::oController:appendOnBrowse( oTree, aSelectedItems ) )
+         ACTION      ( ::oController:appendOnBrowse( oTree, aSelectedItems ) )
 
       REDEFINE BUTTON ;
          ID          501 ;
