@@ -1689,7 +1689,7 @@ STATIC FUNCTION OpenFiles()
       oDetCamposExtra:SetTipoDocumento( "Albaranes a clientes" )
       oDetCamposExtra:setbId( {|| D():AlbaranesClientesId( nView ) } )
 
-      oLinDetCamposExtra               := TDetCamposExtra():New()
+      oLinDetCamposExtra   := TDetCamposExtra():New()
       oLinDetCamposExtra:OpenFiles()
       oLinDetCamposExtra:setTipoDocumento( "Lineas de albaranes a clientes" )
       oLinDetCamposExtra:setbId( {|| D():AlbaranesClientesLineasEscandalloId( nView ) } )
@@ -4823,12 +4823,13 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbf, oBrw, lTotLin, cCodArtEnt, nMode, aTmpA
 
       TiposVentasController();
          :Instance();
+         :getDialogView();
          :createEditControl(  {  "idGet"  => 290,;
                                  "idText" => 291,;
                                  "idSay"  => 292,;
-                                 "dialog" => oFld:aDialogs[ 1 ],;
-                                 "when"   => {|| ( nMode != ZOOM_MODE .and. !lTotLin ) },;
-                                 "value"  => aTmp[ ( D():AlbaranesClientesLineas( nView ) )->( fieldpos( "id_tipo_v" ) ) ] } )
+                                 "dialog" => oFld:aDialogs[1],;
+                                 "when"   => {|| ( nMode != ZOOM_MODE .and. !lTotLin ) } },;
+                                 @aTmp[ ( D():AlbaranesClientesLineas( nView ) )->( fieldpos( "id_tipo_v" ) ) ] )
 
       /*
       Tipo de articulo---------------------------------------------------------
@@ -8696,7 +8697,7 @@ Static Function DataReport( oFr )
    oFr:SetWorkArea(     "Impuestos especiales",  oNewImp:Select() )
    oFr:SetFieldAliases( "Impuestos especiales",  cObjectsToReport( oNewImp:oDbf ) )
 
-   // TiposVentasController():Instance():setFastReport( oFr )
+   TiposVentasController():Instance():setFastReport( oFr )
 
    oFr:SetMasterDetail( "Albaranes", "Lineas de albaranes",                      {|| ( D():Get( "AlbCliT", nView ) )->cSerAlb + Str( ( D():Get( "AlbCliT", nView ) )->nNumAlb ) + ( D():Get( "AlbCliT", nView ) )->cSufAlb } )
    oFr:SetMasterDetail( "Albaranes", "Incidencias de albaranes",                 {|| ( D():Get( "AlbCliT", nView ) )->cSerAlb + Str( ( D():Get( "AlbCliT", nView ) )->nNumAlb ) + ( D():Get( "AlbCliT", nView ) )->cSufAlb } )
@@ -8712,7 +8713,8 @@ Static Function DataReport( oFr )
    oFr:SetMasterDetail( "Albaranes", "Empresa",                                  {|| cCodigoEmpresaEnUso() } )
    oFr:SetMasterDetail( "Albaranes", "Usuarios",                                 {|| ( D():Get( "AlbCliT", nView ) )->cCodUsr } )
    oFr:SetMasterDetail( "Albaranes", "País",                                     {|| RetFld( ( D():Get( "AlbCliT", nView ) )->cCodCli, D():Clientes( nView ), "cCodPai" ) } )
-   oFr:SetMasterDetail( "Lineas de albaranes", "Artículos",                      {|| ( D():Get( "AlbCliL", nView ) )->cRef } )
+   oFr:SetMasterDetail( "Lineas de albaranes", "Artículos",                      {|| ( D():Get( "AlbCliL", nView ) )->cRef,;
+                                                                                       TiposVentasController():Instance():findByIdInRowSet( ( D():AlbaranesClientesLineas( nView ) )->id_tipo_v ) } )
    oFr:SetMasterDetail( "Lineas de albaranes", "Ofertas",                        {|| ( D():Get( "AlbCliL", nView ) )->cRef } )
    oFr:SetMasterDetail( "Lineas de albaranes", "Unidades de medición",           {|| ( D():Get( "AlbCliL", nView ) )->cUnidad } )
    oFr:SetMasterDetail( "Lineas de albaranes", "Impuestos especiales",           {|| ( D():Get( "AlbCliL", nView ) )->cCodImp } )
@@ -9780,8 +9782,6 @@ STATIC FUNCTION SetDlgMode( aTmp, aTmpAlb, nMode, aGet, oFld, oSayPr1, oSayPr2, 
    if oRentLin != nil .and. oUser():lNotRentabilidad()
       oRentLin:Hide()
    end if
-
-   TiposVentasController():Instance():validEditControl()
 
    do case
    case nMode == APPD_MODE
@@ -11088,8 +11088,6 @@ STATIC FUNCTION SaveDeta( aTmp, aTmpAlb, oFld, aGet, oBrw, bmpImage, oDlg, nMode
    aTmp[ _CTIPCTR ]  := cTipoCtrCoste
 
    aTmp[ _NREQ ]     := nPReq( D():Get( "TIva", nView ), aTmp[ _NIVA ] )
-
-   aTmp[ D():AlbaranesClientesLineasFieldPos( "id_tipo_v", nView ) ]    := TiposVentasController():Instance():getIdFromEditControl()
 
    aClo              := aClone( aTmp )
 

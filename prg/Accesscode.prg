@@ -77,10 +77,6 @@ CLASS AccessCode
    METHOD SelectTactilResource( nOpt, oLstUsr )
    METHOD EndTactilResource( oDlg )
 
-   METHOD LoadIni()
-
-   METHOD SaveIni()
-
    METHOD ShowConnectDialog()
    METHOD ShowLoginDialog()
    METHOD HideLoginDialog()
@@ -113,12 +109,6 @@ METHOD Resource() CLASS AccessCode
    */
 
    if( !lIsDir( cPatUsr() ), MakeDir( cNamePath( cPatUsr() ) ), )
-
-   /*
-   Comprobaciones iniciales----------------------------------------------------
-   */
-
-   ::LoadIni()
 
    /*
    Preparamos el dialogo-------------------------------------------------------
@@ -230,8 +220,6 @@ METHOD Resource() CLASS AccessCode
       ::oSayDatabase:End()
    end if 
 
-   ::SaveIni()
-
 RETURN ( oDlg:nResult == IDOK )
 
 //--------------------------------------------------------------------------//
@@ -248,7 +236,6 @@ METHOD EndResource( oDlg ) CLASS AccessCode
       ::oMessage:Show()
 
       lInitCheck( ::oMessage, ::oProgress )
-
       lSetCaja()
 
       ::oProgress:Hide()
@@ -629,26 +616,6 @@ METHOD SelectTactilResource( nOpt, oDlg, oLstUsr ) CLASS AccessCode
 Return ( .f. )
 
 //---------------------------------------------------------------------------//
-
-METHOD LoadIni() CLASS AccessCode
-
-   ::cGetServer      := GetPvProfString( "Sql", "Servidor", cValToChar( ::cGetServer ),      ::cIniFile )
-   ::cGetUser        := GetPvProfString( "Sql", "Usuario",  cValToChar( ::cGetUser ),        ::cIniFile )
-   ::cGetPasswordSql := GetPvProfString( "Sql", "Password", cValToChar( ::cGetPasswordSql ), ::cIniFile )
-
-Return ( Self )
-
-//--------------------------------------------------------------------------//
-
-METHOD SaveIni() CLASS AccessCode
-
-   WritePProString( "Sql", "Servidor", cValToChar( ::cGetServer ),      ::cIniFile )
-   WritePProString( "Sql", "Usuario",  cValToChar( ::cGetUser ),        ::cIniFile )
-   WritePProString( "Sql", "Password", cValToChar( ::cGetPasswordSql ), ::cIniFile )
-
-Return ( Self )
-
-//--------------------------------------------------------------------------//
 
 METHOD ShowConnectDialog() CLASS AccessCode
 

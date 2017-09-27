@@ -690,9 +690,6 @@ METHOD SelectArticulo( lDefault ) CLASS TSPECIALSEARCHARTICULO
    cSentencia        += ::cGetWhereSentencia( lDefault )
    cSentencia        += ::cGetOrderBy()
 
-   //MsgInfo( cSentencia )
-   LogWrite( cSentencia )
-
    if TDataCenter():ExecuteSqlStatement( cSentencia, "SelectArticulo" )
       SelectArticulo->( dbGoTop() )
    end if

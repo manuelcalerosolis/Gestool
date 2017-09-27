@@ -858,6 +858,8 @@ METHOD lCheckUsuario() CLASS AccessCode
 
    end while
 
+   CLOSE ( dbfUser )
+
 Return ( Self )
 
 //---------------------------------------------------------------------------//

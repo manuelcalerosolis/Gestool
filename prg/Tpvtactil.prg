@@ -7105,7 +7105,7 @@ METHOD GuardaDocumentoAlbaran() CLASS TpvTactil
    BeginTransaction()
 
    /*
-   Creamos la cabecera del albarán--------------------------------------------- 
+   Creamos la cabecera del albarán---------------------------------------------
    */
 
    ::oAlbaranClienteCabecera:Append()
@@ -7356,8 +7356,6 @@ METHOD EliminarDocumento( cNumeroTicket ) CLASS TpvTactil
       ::oTiketCabecera:SetStatus()
 
       ::oTiketLinea:SetStatus()
-
-      logwrite( "Ticket eliminado " + cNumeroTicket, "Eliminados.txt" )
 
       lElimina             := .t.
 
@@ -9728,7 +9726,7 @@ METHOD mailEliminarLinea()
 
    local hMail          := {=>}
    local cMensajeMail   := ""
-   local cDireccionMail := ConfiguracionEmpresasModel():getValue( 'mail_notificaciones' )
+   local cDireccionMail := ConfiguracionEmpresasRepository():getValue( 'mail_notificaciones' )
 
    if empty( cDireccionMail )
       Return ( Self )

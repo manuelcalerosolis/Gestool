@@ -3363,17 +3363,6 @@ RETURN .f.
 
 //----------------------------------------------------------------------------//
 
-FUNCTION closeUsuarios()
-
-   dbUseArea( .t., cDriver(), ( cPatDat() + "Users.Dbf" ), "ADSUsers" , .f. )
-   if ! ( "ADSUsers" )->( neterr() ) .and. ( "ADSUsers" )->( used() )
-      ( "ADSUsers" )->( dbclosearea() )
-   end if 
-
-RETURN ( nil )
-
-//----------------------------------------------------------------------------//
-
 FUNCTION dbDialog( cTitle )
 
    local j
@@ -3393,7 +3382,7 @@ FUNCTION dbDialog( cTitle )
    BEGIN SEQUENCE
 
    if lAis()
-      msgStop( hb_valtoexp( adsMgGetOpenTables() ) )
+      msgStop( TDataCenter():GetAllLocksTablesUsers() )
    end if
 
    for n = 1 to 255
