@@ -28,7 +28,7 @@ METHOD New()
 
    ::oValidator            := TiposImpresorasValidator():New( self )
 
-   ::Super:New()
+   ::Super:New() 
 
 RETURN ( Self )
 
