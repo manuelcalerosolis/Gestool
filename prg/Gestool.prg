@@ -84,36 +84,31 @@ FUNCTION Main( paramsMain, paramsSecond, paramsThird )
 
    appLoadAds()
 
+   // Motor de bases de datos--------------------------------------------------
+
+   if ( "ADMINISTRADOR" $ appParamsMain() )
+      TDataCenter():lAdministratorTask()
+      RETURN ( nil )
+   end if
+
    // Conexión con MySql------------------------------------------------------
 
    if !( "TABLET" $ appParamsMain() ) .and. !empty( getSQLDatabase() )
 
       if getSQLDatabase():Connect() 
-         
          getSQLDatabase():addModels()
-
       else 
-         
          msgStop( "No se ha podido conectar a la base de datos MySQL" + CRLF + getSQLDatabase():sayConexionInfo() )
-
          RETURN ( nil )
-
       end if 
 
    end if 
 
    // Motor de bases de datos--------------------------------------------------
 
-   if ( "ADMINISTRADOR" $ appParamsMain() )
-      TDataCenter():lAdministratorTask()
-      RETURN nil
-   end if
-
-   // Motor de bases de datos--------------------------------------------------
-
    if !( appConnectADS() ) 
       msgStop( "Imposible conectar con GstApolo ADS data dictionary" )
-      RETURN nil
+      RETURN ( nil )
    end if
 
    TDataCenter():BuildData()
@@ -137,7 +132,7 @@ FUNCTION Main( paramsMain, paramsSecond, paramsThird )
             TSndRecInf():Init():AutoExecute()
          end if
 
-         RETURN nil
+         RETURN ( nil )
 
       case ( "REINDEXA" $ appParamsMain() )
 
@@ -151,7 +146,7 @@ FUNCTION Main( paramsMain, paramsSecond, paramsThird )
             oIndex:Resource( .t. )
          end if
 
-         RETURN nil
+         RETURN ( nil )
 
       case ( "EMPRESA" $ appParamsMain() )
 
@@ -167,7 +162,7 @@ FUNCTION Main( paramsMain, paramsSecond, paramsThird )
 
          controllerReportGallery( appParamsThird() )
 
-         RETURN nil
+         RETURN ( nil )
 
    end case
 
@@ -259,7 +254,7 @@ STATIC FUNCTION controllerReportGallery( cInitOptions )
 
    end case
 
-RETURN nil
+RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 
@@ -267,7 +262,7 @@ FUNCTION HelpTopic()
 
    msgStop( "Help wanted!" )
 
-RETURN Nil
+RETURN ( Nil )
 
 //----------------------------------------------------------------------------//
 
@@ -275,7 +270,7 @@ FUNCTION HelpIndex()
 
    goWeb( __GSTHELP__ )
 
-RETURN Nil
+RETURN ( Nil )
 
 //----------------------------------------------------------------------------//
 
@@ -304,13 +299,13 @@ STATIC FUNCTION CreateMainPdaWindow( oIconApp )
 
    lInitCheck()
 
-RETURN nil
+RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 
 STATIC FUNCTION ExecuteMainPdaWindow( oListView, oDlg )
 
-RETURN nil
+RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 
@@ -326,7 +321,7 @@ STATIC FUNCTION InitMainTactilWindow()
 
    TpvTactil():New():Activate( .t. )
 
-RETURN nil
+RETURN ( nil )
 
 //--------------------------------------------------------------------------//
 // Controla los accesos al programa
@@ -1136,7 +1131,7 @@ FUNCTION orderTest()
     oRS:free()
     oStmt:free()
     
-RETURN nil
+RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 // Asigna los codeblock de movimiento a un Browse

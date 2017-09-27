@@ -26,6 +26,7 @@ CLASS SQLDatabase
    
    METHOD Conexion()                      INLINE ( ::oConexion )
    METHOD Connect() 
+   METHOD ConnectAndCreate()
    METHOD Disconnect()                    INLINE ( if( !empty( ::oConexion ), ::oConexion:disconnect(), ) )
         
    METHOD Exec( cSql )             
@@ -120,6 +121,34 @@ METHOD Connect()
 RETURN ( lConnect )    
 
 //----------------------------------------------------------------------------//
+
+METHOD ConnectAndCreate()
+
+   local lConnect    := .t.
+
+   try
+   
+      if !empty( ::oConexion )
+
+         lConnect    := ::oConexion:Connect( nil, ::cIpMySQL, ::cUserMySQL, ::cPasswordMySQL )
+
+         if lConnect
+            ::oConexion:exec( "CREATE DATABASE IF NOT EXISTS " + ::cDatabaseMySQL + ";" )
+            ::oConexion:exec( "USE " + ::cDatabaseMySQL + ";" )
+         end if 
+
+      end if 
+       
+   catch 
+
+      lConnect       := .f.
+   
+   end
+
+RETURN ( lConnect )    
+
+//----------------------------------------------------------------------------//
+
 
 METHOD Exec( cSql )
 
