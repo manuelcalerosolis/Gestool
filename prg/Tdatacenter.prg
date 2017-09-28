@@ -1588,7 +1588,9 @@ METHOD GetAllLocksTablesUsers()
 
    cStm           := "EXECUTE PROCEDURE mgGetAllLocksAllTablesAllUsers();"
 
-RETURN ( ::ExecuteSqlStatement( cStm, "AllLocks" ) )
+   ::ExecuteSqlStatement( cStm, "AllLocks" )
+
+RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 

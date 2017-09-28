@@ -2137,13 +2137,13 @@ Return ( Self )
 
 METHOD aScatter() class TDbf
 
-  local i
-  local aField  := {}
-  local nField  := ::FCount()
+   local i
+   local aField  := {}
+   local nField  := ::FCount()
 
-  for i := 1 to nField
+   for i := 1 to nField
       aAdd( aField, ::FieldGet(i) )
-  next
+   next
 
 Return ( aField )
 

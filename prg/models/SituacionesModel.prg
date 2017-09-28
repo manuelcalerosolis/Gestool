@@ -6,11 +6,9 @@
 
 CLASS SituacionesModel FROM SQLBaseModel
 
-   DATA     cColumnCode                            INIT "nombre"
+   DATA cTableName               INIT "situaciones"
 
-   DATA     cTableName                             INIT "situaciones"
-
-   METHOD   New()
+   METHOD New()
 
 END CLASS
 
@@ -37,4 +35,5 @@ METHOD New()
 RETURN ( Self )
 
 //---------------------------------------------------------------------------//
+
 

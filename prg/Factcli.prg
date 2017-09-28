@@ -10248,8 +10248,8 @@ Static Function DataReport( oFr )
    oFr:SetWorkArea(     "Transportistas", oTrans:Select() )
    oFr:SetFieldAliases( "Transportistas", cObjectsToReport( oTrans:oDbf ) )
 
-   oFr:SetWorkArea(     "artículos", ( D():Articulos( nView ) )->( Select() ) )
-   oFr:SetFieldAliases( "artículos", cItemsToReport( aItmArt() ) )
+   oFr:SetWorkArea(     "Artículos", ( D():Articulos( nView ) )->( Select() ) )
+   oFr:SetFieldAliases( "Artículos", cItemsToReport( aItmArt() ) )
 
    oFr:SetWorkArea(     "Familias", ( dbfFamilia )->( Select() ) )
    oFr:SetFieldAliases( "Familias", cItemsToReport( aItmFam() ) )
@@ -10303,11 +10303,9 @@ Static Function DataReport( oFr )
    oFr:SetMasterDetail( "Facturas", "Bancos",                                 {|| ( D():FacturasClientes( nView ) )->cCodCli } )
    oFr:SetMasterDetail( "Facturas", "País",                                   {|| retFld( ( D():FacturasClientes( nView ) )->cCodCli, D():Clientes( nView ), "cCodPai" ) } )
 
-   oFr:SetMasterDetail( "Lineas de facturas", "artículos",                    {|| ( D():FacturasClientesLineas( nView ) )->cRef,;
-                                                                                    TiposVentasController():Instance():findByIdInRowSet( ( D():FacturasClientesLineas( nView ) )->id_tipo_v ) } )
+   oFr:SetMasterDetail( "Lineas de facturas", "Artículos",                    {|| SynchronizeDetails() } )
    oFr:SetMasterDetail( "Lineas de facturas", "Familia",                      {|| ( D():FacturasClientesLineas( nView ) )->cCodFam } )
    oFr:SetMasterDetail( "Lineas de facturas", "Tipo artículo",                {|| ( D():FacturasClientesLineas( nView ) )->cCodTip } )
-   oFr:SetMasterDetail( "Lineas de facturas", "Tipo de venta",                {|| ( D():FacturasClientesLineas( nView ) )->cTipMov } )
    oFr:SetMasterDetail( "Lineas de facturas", "Ofertas",                      {|| ( D():FacturasClientesLineas( nView ) )->cRef } )
    oFr:SetMasterDetail( "Lineas de facturas", "Unidades de medición",         {|| ( D():FacturasClientesLineas( nView ) )->cUnidad } )
    oFr:SetMasterDetail( "Lineas de facturas", "SAT",                          {|| ( D():FacturasClientesLineas( nView ) )->cNumSat } )
@@ -10331,10 +10329,9 @@ Static Function DataReport( oFr )
    oFr:SetResyncPair(   "Facturas", "Bancos" )
    oFr:SetResyncPair(   "Facturas", "País" )
 
-   oFr:SetResyncPair(   "Lineas de facturas", "artículos" )
+   oFr:SetResyncPair(   "Lineas de facturas", "Artículos" )
    oFr:SetResyncPair(   "Lineas de facturas", "Familia" )
    oFr:SetResyncPair(   "Lineas de facturas", "Tipo artículo" )
-   oFr:SetResyncPair(   "Lineas de facturas", "Tipo de venta" )
    oFr:SetResyncPair(   "Lineas de facturas", "Ofertas" )
    oFr:SetResyncPair(   "Lineas de facturas", "Unidades de medición" )
    oFr:SetResyncPair(   "Lineas de facturas", "SAT" )
@@ -10342,6 +10339,14 @@ Static Function DataReport( oFr )
    oFr:SetResyncPair(   "Lineas de facturas", "Series de lineas de facturas" )
 
 Return nil
+
+//---------------------------------------------------------------------------//
+
+Static Function SynchronizeDetails()
+
+   TiposVentasController():Instance():findByIdInRowSet( ( D():FacturasClientesLineas( nView ) )->id_tipo_v )
+
+Return ( ( D():FacturasClientesLineas( nView ) )->cRef )
 
 //---------------------------------------------------------------------------//
 

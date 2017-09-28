@@ -8,13 +8,13 @@ CLASS TiposImpresorasRepository FROM SQLBaseRepository
 
    METHOD getTableName()         INLINE ( if( !empty( ::getController() ), ::getModelTableName(), TiposImpresorasModel():getTableName() ) )
 
-   METHOD getAll()
+   METHOD getNombres()
 
 END CLASS
 
 //---------------------------------------------------------------------------//
 
-METHOD getAll() 
+METHOD getNombres() 
 
    local cSentence               := "SELECT nombre FROM " + ::getTableName()
    local aNombresImpresoras      := ::getDatabase():selectFetchArrayOneColumn( cSentence )

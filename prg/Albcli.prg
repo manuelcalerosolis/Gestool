@@ -8713,13 +8713,13 @@ Static Function DataReport( oFr )
    oFr:SetMasterDetail( "Albaranes", "Empresa",                                  {|| cCodigoEmpresaEnUso() } )
    oFr:SetMasterDetail( "Albaranes", "Usuarios",                                 {|| ( D():Get( "AlbCliT", nView ) )->cCodUsr } )
    oFr:SetMasterDetail( "Albaranes", "País",                                     {|| RetFld( ( D():Get( "AlbCliT", nView ) )->cCodCli, D():Clientes( nView ), "cCodPai" ) } )
-   oFr:SetMasterDetail( "Lineas de albaranes", "Artículos",                      {|| ( D():Get( "AlbCliL", nView ) )->cRef,;
-                                                                                       TiposVentasController():Instance():findByIdInRowSet( ( D():AlbaranesClientesLineas( nView ) )->id_tipo_v ) } )
-   oFr:SetMasterDetail( "Lineas de albaranes", "Ofertas",                        {|| ( D():Get( "AlbCliL", nView ) )->cRef } )
-   oFr:SetMasterDetail( "Lineas de albaranes", "Unidades de medición",           {|| ( D():Get( "AlbCliL", nView ) )->cUnidad } )
-   oFr:SetMasterDetail( "Lineas de albaranes", "Impuestos especiales",           {|| ( D():Get( "AlbCliL", nView ) )->cCodImp } )
-   oFr:SetMasterDetail( "Lineas de albaranes", "Series de lineas de albaranes",  {|| ( D():Get( "AlbCliL", nView ) )->cSerAlb + Str( ( D():Get( "AlbCliL", nView ) )->nNumAlb ) + ( D():Get( "AlbCliL", nView ) )->cSufAlb + Str( ( D():Get( "AlbCliL", nView ) )->nNumLin ) } )
-   oFr:SetMasterDetail( "Lineas de albaranes", "SAT",                            {|| ( D():Get( "AlbCliL", nView ) )->cNumSat } )
+   
+   oFr:SetMasterDetail( "Lineas de albaranes", "Artículos",                      {|| SynchronizeDetails() } )
+   oFr:SetMasterDetail( "Lineas de albaranes", "Ofertas",                        {|| ( D():AlbaranesClientesLineas( nView ) )->cRef } )
+   oFr:SetMasterDetail( "Lineas de albaranes", "Unidades de medición",           {|| ( D():AlbaranesClientesLineas( nView ) )->cUnidad } )
+   oFr:SetMasterDetail( "Lineas de albaranes", "Impuestos especiales",           {|| ( D():AlbaranesClientesLineas( nView ) )->cCodImp } )
+   oFr:SetMasterDetail( "Lineas de albaranes", "Series de lineas de albaranes",  {|| ( D():AlbaranesClientesLineas( nView ) )->cSerAlb + Str( ( D():AlbaranesClientesLineas( nView ) )->nNumAlb ) + ( D():AlbaranesClientesLineas( nView ) )->cSufAlb + Str( ( D():AlbaranesClientesLineas( nView ) )->nNumLin ) } )
+   oFr:SetMasterDetail( "Lineas de albaranes", "SAT",                            {|| ( D():AlbaranesClientesLineas( nView ) )->cNumSat } )
 
    oFr:SetResyncPair(   "Albaranes", "Lineas de albaranes" )
    oFr:SetResyncPair(   "Albaranes", "Incidencias de albaranes" )
@@ -8747,6 +8747,14 @@ Static Function DataReport( oFr )
    oFr:SetResyncPair(   "Lineas de albaranes", "SAT" )
 
 Return nil
+
+//---------------------------------------------------------------------------//
+
+Static Function SynchronizeDetails()
+
+   TiposVentasController():Instance():findByIdInRowSet( ( D():AlbaranesClientesLineas( nView ) )->id_tipo_v )
+
+Return ( ( D():AlbaranesClientesLineas( nView ) )->cRef )
 
 //---------------------------------------------------------------------------//
 

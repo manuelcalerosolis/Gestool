@@ -906,6 +906,10 @@ METHOD loadArticulo( cCodArt, nMode, lSilenceMode ) CLASS TDetMovimientos
 
          ::oDbfVir:lLote         := ::oParent:oArt:lLote
 
+<<<<<<< HEAD
+         if Empty( cLote )
+            ::oDbfVir:cLote      := ::oParent:oArt:cLote
+=======
          if Empty( ::oDbfVir:cLote )
 
             if Empty( cLote )
@@ -914,6 +918,7 @@ METHOD loadArticulo( cCodArt, nMode, lSilenceMode ) CLASS TDetMovimientos
                ::oDbfVir:cLote         := cLote
             end if
 
+>>>>>>> 8914276e1cd89cd089211629dc7f0f19816b18a3
          end if
 
          if ::oParent:oArt:lLote
