@@ -367,6 +367,7 @@ METHOD Resource( nMode ) CLASS TDetMovimientos
    local cSayLote          := 'Lote'
    local oBtnSer
    local oSayTotal
+   local cCodArt
 
    if nMode == APPD_MODE
       ::oDbfVir:nNumLin    := nLastNum( ::oDbfVir:cAlias )
@@ -377,6 +378,8 @@ METHOD Resource( nMode ) CLASS TDetMovimientos
    ::cOldValPr2            := ::oDbfVir:cValPr2
    ::cOldLote              := ::oDbfVir:cLote
 
+   cCodArt                 := Padr( ::oDbfVir:cRefMov, 128 )
+
    ::cGetDetalle           := oRetFld( ::oDbfVir:cRefMov, ::oParent:oArt, "Nombre" )
 
    ::aStockActual          := { { "", "", "", "", "", 0, 0, 0 } }
@@ -386,13 +389,13 @@ METHOD Resource( nMode ) CLASS TDetMovimientos
 
    DEFINE DIALOG oDlg RESOURCE "LMovAlm" TITLE lblTitle( nMode ) + "lineas de movimientos de almacén"
 
-      REDEFINE GET ::oRefMov VAR ::oDbfVir:cRefMov ;
+      REDEFINE GET ::oRefMov VAR cCodArt ;
          ID       100 ;
          WHEN     ( nMode != ZOOM_MODE ) ;
          BITMAP   "LUPA" ;
          OF       oDlg
 
-      ::oRefMov:bValid     := {|| if( !empty( ::oDbfVir:cRefMov ), ::loadArticulo( nMode ), .t. ) }
+      ::oRefMov:bValid     := {|| if( !empty( cCodArt ), ::loadArticulo( cCodArt, nMode ), .t. ) }
       ::oRefMov:bHelp      := {|| BrwArticulo( ::oRefMov, ::oGetDetalle , , , , ::oGetLote, ::oDbfVir:cCodPr1, ::oDbfVir:cCodPr2, ::oValPr1, ::oValPr2  ) }
 
       REDEFINE GET ::oGetDetalle VAR ::oDbfVir:cNomMov ;
@@ -411,7 +414,7 @@ METHOD Resource( nMode ) CLASS TDetMovimientos
          WHEN     ( nMode != ZOOM_MODE ) ;
          OF       oDlg
 
-      ::oGetLote:bValid          := {|| if( !empty( ::oDbfVir:cLote ), ::loadArticulo( nMode ), .t. ) }
+      ::oGetLote:bValid          := {|| if( !empty( ::oDbfVir:cLote ), ::loadArticulo( cCodArt, nMode ), .t. ) }
 
       // Browse de propiedades-------------------------------------------------
 
@@ -446,7 +449,7 @@ METHOD Resource( nMode ) CLASS TDetMovimientos
          WHEN     ( nMode != ZOOM_MODE ) ;
          OF       oDlg
 
-      ::oValPr1:bValid     := {|| if( lPrpAct( ::oValPr1, ::oSayVp1, ::oDbfVir:cCodPr1, ::oParent:oTblPro:cAlias ), ::loadArticulo( nMode ), .f. ) }
+      ::oValPr1:bValid     := {|| if( lPrpAct( ::oValPr1, ::oSayVp1, ::oDbfVir:cCodPr1, ::oParent:oTblPro:cAlias ), ::loadArticulo( cCodArt, nMode ), .f. ) }
       ::oValPr1:bHelp      := {|| brwPropiedadActual( ::oValPr1, ::oSayVp1, ::oDbfVir:cCodPr1 ) }
 
       REDEFINE GET ::oSayVp1 VAR ::cSayVp1;
@@ -466,7 +469,7 @@ METHOD Resource( nMode ) CLASS TDetMovimientos
          WHEN     ( nMode != ZOOM_MODE ) ;
          OF       oDlg
 
-      ::oValPr2:bValid     := {|| if( lPrpAct( ::oValPr2, ::oSayVp2, ::oDbfVir:cCodPr2, ::oParent:oTblPro:cAlias ), ::loadArticulo( nMode ), .f. ) }
+      ::oValPr2:bValid     := {|| if( lPrpAct( ::oValPr2, ::oSayVp2, ::oDbfVir:cCodPr2, ::oParent:oTblPro:cAlias ), ::loadArticulo( cCodArt, nMode ), .f. ) }
       ::oValPr2:bHelp      := {|| brwPropiedadActual( ::oValPr2, ::oSayVp2, ::oDbfVir:cCodPr2 ) }
 
       REDEFINE GET ::oSayVp2 VAR ::cSayVp2 ;
@@ -761,19 +764,22 @@ Return .t.
 
 //---------------------------------------------------------------------------//
 
-METHOD loadArticulo( nMode, lSilenceMode ) CLASS TDetMovimientos
+METHOD loadArticulo( cCodArt, nMode, lSilenceMode ) CLASS TDetMovimientos
 
    local a
    local nPos
    local nPreMed
    local cValPr1           := ""
    local cValPr2           := ""
-   local cCodArt           := ""
    local lChgCodArt        := .f.
+   local hHas128
+   local cLote
+   local dFechaCaducidad
+   local nUnidades         := 0
 
    DEFAULT lSilenceMode    := .f.
 
-   if empty( ::oDbfVir:cRefMov )
+   if empty( cCodArt )
       if !empty( ::oBrwPrp )
          ::oBrwPrp:Hide()
       end if
@@ -782,11 +788,44 @@ METHOD loadArticulo( nMode, lSilenceMode ) CLASS TDetMovimientos
 
    // Detectamos si hay cambios en los codigos y propiedades-------------------
 
-   lChgCodArt              := ( rtrim( ::cOldCodArt ) != rtrim( ::oDbfVir:cRefMov ) .or. ::cOldLote != ::oDbfVir:cLote .or. ::cOldValPr1 != ::oDbfVir:cValPr1 .or. ::cOldValPr2 != ::oDbfVir:cValPr2 )
+   lChgCodArt              := ( rtrim( ::cOldCodArt ) != rtrim( cCodArt ) .or. ::cOldLote != ::oDbfVir:cLote .or. ::cOldValPr1 != ::oDbfVir:cValPr1 .or. ::cOldValPr2 != ::oDbfVir:cValPr2 )
+
+   /*
+   Buscamos codificacion GS1-128--------------------------------------------
+   */
+
+   //cCodArt                 := "0118411859550506107537L415180315"
+
+   if Len( Alltrim( cCodArt ) ) > 18
+
+      hHas128              := ReadHashCodeGS128( cCodArt )
+
+      if !empty( hHas128 )
+         
+         cCodArt           := uGetCodigo( hHas128, "00" )
+
+         if Empty( cCodArt )
+            cCodArt        := uGetCodigo( hHas128, "01" )
+         end if
+         
+         cLote             := uGetCodigo( hHas128, "10" )
+         
+         dFechaCaducidad   := uGetCodigo( hHas128, "15" )     
+         
+      end if 
+
+   end if
+
+   //cLote := "12345"
+   //dFechaCaducidad := ctod( "15/03/2018" )
+   
+   msginfo( cCodArt, "cCodArt" )
+   msginfo( cLote, "cLote" )
+   msginfo( dFechaCaducidad, "dFechaCaducidad" )
 
    // Conversión a codigo interno-------------------------------------------------
 
-   cCodArt                 := cSeekCodebar( ::oDbfVir:cRefMov, ::oParent:oDbfBar:cAlias, ::oParent:oArt:cAlias )
+   cCodArt                 := cSeekCodebar( cCodArt, ::oParent:oDbfBar:cAlias, ::oParent:oArt:cAlias )
 
    // Articulos con numeros de serie no podemos pasarlo en regularizacion por objetivos
 
@@ -803,11 +842,11 @@ METHOD loadArticulo( nMode, lSilenceMode ) CLASS TDetMovimientos
 
       if ( lChgCodArt )
 
-         if !empty(::oRefMov)
+         if !empty(::oRefMov )
             ::oRefMov:cText( ::oParent:oArt:Codigo )
-         else 
-            ::oDbfVir:cRefMov    := ::oParent:oArt:Codigo
          end if 
+            
+         ::oDbfVir:cRefMov    := ::oParent:oArt:Codigo
          
          if !empty(::oGetDetalle)
             ::oGetDetalle:cText( ::oParent:oArt:Nombre )
@@ -874,7 +913,12 @@ METHOD loadArticulo( nMode, lSilenceMode ) CLASS TDetMovimientos
 
          // Lotes-----------------------------------------------------------------
 
+         ::oDbfVir:cLote         := cLote
          ::oDbfVir:lLote         := ::oParent:oArt:lLote
+
+         if Empty( cLote )
+            ::oDbfVir:cLote         := ::oParent:oArt:cLote
+         end if
 
          if ::oParent:oArt:lLote
             if !empty(::oSayLote)
@@ -966,13 +1010,25 @@ METHOD loadArticulo( nMode, lSilenceMode ) CLASS TDetMovimientos
 
          end if
 
-         // Precios de costo---------------------------------------------------
+         // fecha de caducidad-------------------------------------------------
 
-         if !empty( ::oFechaCaducidad )
-            ::oFechaCaducidad:cText( dFechaCaducidadLote( ::oDbfVir:cRefMov, ::oDbfVir:cValPr1, ::oDbfVir:cValPr2, ::oDbfVir:cLote, ::oParent:oAlbPrvL:cAlias, ::oParent:oFacPrvL:cAlias, ::oParent:oDbfProLin:cAlias ) )
+         if Empty( dFechaCaducidad )
+
+            if !empty( ::oFechaCaducidad )
+               ::oFechaCaducidad:cText( dFechaCaducidadLote( ::oDbfVir:cRefMov, ::oDbfVir:cValPr1, ::oDbfVir:cValPr2, ::oDbfVir:cLote, ::oParent:oAlbPrvL:cAlias, ::oParent:oFacPrvL:cAlias, ::oParent:oDbfProLin:cAlias ) )
+            else
+               ::oDbfVir:dFecCad    := dFechaCaducidadLote( ::oDbfVir:cRefMov, ::oDbfVir:cValPr1, ::oDbfVir:cValPr2, ::oDbfVir:cLote, ::oParent:oAlbPrvL:cAlias, ::oParent:oFacPrvL:cAlias, ::oParent:oDbfProLin:cAlias )
+            end if 
+
          else
-            ::oDbfVir:dFecCad    := dFechaCaducidadLote( ::oDbfVir:cRefMov, ::oDbfVir:cValPr1, ::oDbfVir:cValPr2, ::oDbfVir:cLote, ::oParent:oAlbPrvL:cAlias, ::oParent:oFacPrvL:cAlias, ::oParent:oDbfProLin:cAlias )
-         end if 
+
+            if !empty( ::oFechaCaducidad )
+               ::oFechaCaducidad:cText( dFechaCaducidad )
+            else
+               ::oDbfVir:dFecCad    := dFechaCaducidad
+            end if             
+
+         end if
         
          // Precios de costo---------------------------------------------------
 

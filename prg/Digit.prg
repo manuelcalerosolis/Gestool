@@ -1750,7 +1750,7 @@ Function ReadHashCodeGS128( cCode, hCodeGS128 )
           /*
           Lo metemos en el hash------------------------------------------------
           */
-
+          
           hSet( hCodeGS128, hGet( hStruct, "Codigo" ), cValor )
 
           ReadHashCodeGS128( @cCode, hCodeGS128 )

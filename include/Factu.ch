@@ -444,8 +444,8 @@ Definici¢n de Array para impuestos---------------------------------------------
                                         "Tipo" => "C",;
                                         "Ancho" => 16,;
                                         "Decimales" => 0 },;
-                                  {     "Codigo" => "10",;
-                                        "Descripcion" => "Número de lote",;
+                                  {     "Codigo" => "10 ",;
+                                        "Descripcion" => "Número de lote",; 
                                         "Tipo" => "C",;
                                         "Ancho" => 9,;
                                         "Decimales" => 0 },;
