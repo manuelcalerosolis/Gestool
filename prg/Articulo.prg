@@ -480,7 +480,7 @@ STATIC FUNCTION OpenFiles( lExt, cPath )
          TComercioConfig():getInstance():loadJSON()
       end if
 
-      aTiposImpresoras     := TiposImpresorasRepository():getAll() 
+      aTiposImpresoras     := TiposImpresorasRepository():getNombres() 
 
       /*
       Cargamos el valor del Euro y de la Peseta-----------------------------------

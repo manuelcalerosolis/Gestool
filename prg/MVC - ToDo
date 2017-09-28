@@ -1,5 +1,7 @@
 MVC - ToDo
 
+- No refresca al añadir un nuevo registro en navigator.
+
 - Valor automatico para el campo empresa al agregar.
 
 - Valores automaticos para DELETED.
