@@ -120,12 +120,12 @@ CLASS SQLBaseController
       METHOD endDeleteModePreDelete()                 VIRTUAL
       METHOD endDeleteModePosDelete()                 VIRTUAL
 
-   METHOD getIdFromRowSet()                           INLINE   ( if( !empty( ::getRowSet() ), ( ::getRowSet():fieldGet( ::oModel:cColumnKey ) ), ) )
+   METHOD getIdFromRowSet()                           INLINE ( if( !empty( ::getRowSet() ), ( ::getRowSet():fieldGet( ::oModel:cColumnKey ) ), ) )
 
    METHOD changeModelOrderAndOrientation()
 
    METHOD find( uValue, cColumn )                     INLINE ( ::oModel:find( uValue, cColumn ) )
-   METHOD findByIdInRowSet( uValue )                  INLINE ( if( !empty( ::getRowSet() ), ::getRowset():find( uValue, "id", .t. ), ) )
+   METHOD findByIdInRowSet( uValue )                  INLINE ( if( !empty( ::getRowSet() ), ::getRowSet():find( uValue, "id", .t. ), ) )
 
    METHOD startBrowse( oCombobox )
    METHOD restoreBrowseState()
@@ -522,7 +522,7 @@ METHOD setFastReport( oFastReport, cSentence, cColumns )
                                  {|| ::oModel:oRowSet:eof()    },;
                                  {|nField| ::oModel:oRowSet:fieldGet( nField ) } )
 
-RETURN ( self )
+RETURN ( Self )
 
 //---------------------------------------------------------------------------//
 

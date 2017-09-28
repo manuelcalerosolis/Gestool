@@ -383,7 +383,7 @@ METHOD SaveDetails() CLASS TMasDet
 
    local nOrd
 
-   beginTransaction()
+   // beginTransaction()
 
    do case
       case IsObject( ::oDbfDet )
@@ -415,7 +415,7 @@ METHOD SaveDetails() CLASS TMasDet
 
    dbCommitAll()
 
-   commitTransaction()
+   // commitTransaction()
 
 RETURN ( Self )
 

@@ -2,9 +2,11 @@ MVC - ToDo
 
 - Valor automatico para el campo empresa al agregar.
 
-- Probar la impresion con las bases de datos de mysql.
-
 - Valores automaticos para DELETED.
+
+- Sitauciones en los pedidos.
+
+- Probar la impresion con las bases de datos de mysql. (done)
 
 - No sale del MDI con ESC (done)
 

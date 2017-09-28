@@ -816,13 +816,6 @@ METHOD loadArticulo( cCodArt, nMode, lSilenceMode ) CLASS TDetMovimientos
 
    end if
 
-   //cLote := "12345"
-   //dFechaCaducidad := ctod( "15/03/2018" )
-   
-   msginfo( cCodArt, "cCodArt" )
-   msginfo( cLote, "cLote" )
-   msginfo( dFechaCaducidad, "dFechaCaducidad" )
-
    // Conversión a codigo interno-------------------------------------------------
 
    cCodArt                 := cSeekCodebar( cCodArt, ::oParent:oDbfBar:cAlias, ::oParent:oArt:cAlias )
@@ -917,7 +910,7 @@ METHOD loadArticulo( cCodArt, nMode, lSilenceMode ) CLASS TDetMovimientos
          ::oDbfVir:lLote         := ::oParent:oArt:lLote
 
          if Empty( cLote )
-            ::oDbfVir:cLote         := ::oParent:oArt:cLote
+            ::oDbfVir:cLote      := ::oParent:oArt:cLote
          end if
 
          if ::oParent:oArt:lLote

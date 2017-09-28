@@ -8177,8 +8177,7 @@ Static Function DataReport( oFr )
    oFr:SetMasterDetail( "SAT", "Transportistas",                  {|| ( D():SatClientes( nView ) )->cCodTrn } )
    oFr:SetMasterDetail( "SAT", "Usuarios",                        {|| ( D():SatClientes( nView ) )->cCodUsr } )
 
-   oFr:SetMasterDetail( "Lineas de SAT", "Artículos",             {||   ( D():SatClientesLineas( nView ) )->cRef,;
-                                                                        TiposVentasController():Instance():findByIdInRowSet( ( D():SatClientesLineas( nView ) )->id_tipo_v ) } )
+   oFr:SetMasterDetail( "Lineas de SAT", "Artículos",             {|| SynchronizeDetails() } )
    oFr:SetMasterDetail( "Lineas de SAT", "Ofertas",               {|| ( D():SatClientesLineas( nView ) )->cRef } )
    oFr:SetMasterDetail( "Lineas de SAT", "Unidades de medición",  {|| ( D():SatClientesLineas( nView ) )->cUnidad } )
    oFr:SetMasterDetail( "Lineas de SAT", "Impuestos especiales",  {|| ( D():SatClientesLineas( nView ) )->cCodImp } )
@@ -8203,6 +8202,14 @@ Static Function DataReport( oFr )
    oFr:SetResyncPair(   "Lineas de SAT", "Impuestos especiales" )
 
 Return nil
+
+//---------------------------------------------------------------------------//
+
+Static Function SynchronizeDetails()
+
+   TiposVentasController():Instance():findByIdInRowSet( ( D():SatClientesLineas( nView ) )->id_tipo_v )
+
+Return ( ( D():SatClientesLineas( nView ) )->cRef )
 
 //---------------------------------------------------------------------------//
 

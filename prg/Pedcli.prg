@@ -7325,8 +7325,7 @@ Static Function DataReport( oFr )
    oFr:SetMasterDetail( "Pedidos", "Transportistas",                    {|| ( D():PedidosClientes( nView ) )->cCodTrn } )
    oFr:SetMasterDetail( "Pedidos", "Usuarios",                        	{|| ( D():PedidosClientes( nView ) )->cCodUsr } )
 
-   oFr:SetMasterDetail( "Lineas de pedidos", "Artículos",               {||   ( D():PedidosClientesLineas( nView ) )->cRef,;
-                                                                              TiposVentasController():Instance():findByIdInRowSet( ( D():PedidosClientesLineas( nView ) )->id_tipo_v ) } )
+   oFr:SetMasterDetail( "Lineas de pedidos", "Artículos",               {|| SynchronizeDetails() } )
    oFr:SetMasterDetail( "Lineas de pedidos", "Ofertas",                 {|| ( D():PedidosClientesLineas( nView ) )->cRef } )
    oFr:SetMasterDetail( "Lineas de pedidos", "Unidades de medición",    {|| ( D():PedidosClientesLineas( nView ) )->cUnidad } )
    oFr:SetMasterDetail( "Lineas de pedidos", "Impuestos especiales",    {|| ( D():PedidosClientesLineas( nView ) )->cCodImp } )
@@ -7353,6 +7352,14 @@ Return nil
 
 //---------------------------------------------------------------------------//
 
+Static Function SynchronizeDetails()
+
+   TiposVentasController():Instance():findByIdInRowSet( ( D():PedidosClientesLineas( nView ) )->id_tipo_v )
+
+Return ( ( D():PedidosClientesLineas( nView ) )->cRef )
+
+//---------------------------------------------------------------------------//
+
 Static Function VariableReport( oFr )
 
    oFr:DeleteCategory(  "Pedidos" )
@@ -7370,7 +7377,7 @@ Static Function VariableReport( oFr )
    oFr:AddVariable(     "Pedidos",             "Total neto",                          "GetHbVar('nTotNet')" )
    oFr:AddVariable(     "Pedidos",             "Total primer descuento definible",    "GetHbVar('nTotUno')" )
    oFr:AddVariable(     "Pedidos",             "Total segundo descuento definible",   "GetHbVar('nTotDos')" )
-   oFr:AddVariable(     "Pedidos",             "Total " + cImp(),                           "GetHbVar('nTotIva')" )
+   oFr:AddVariable(     "Pedidos",             "Total " + cImp(),                     "GetHbVar('nTotIva')" )
    oFr:AddVariable(     "Pedidos",             "Total RE",                            "GetHbVar('nTotReq')" )
    oFr:AddVariable(     "Pedidos",             "Total página",                        "GetHbVar('nTotPag')" )
    oFr:AddVariable(     "Pedidos",             "Total peso",                          "GetHbVar('nTotPes')" )

@@ -10093,8 +10093,7 @@ Static Function DataReport( oFr )
    oFr:SetMasterDetail( "Facturas rectificativas", "Transportistas",                               {|| ( D():FacturasRectificativas( nView ) )->cCodTrn } )
    oFr:SetMasterDetail( "Facturas rectificativas", "Bancos",                                       {|| ( D():FacturasRectificativas( nView ) )->cCodCli } )
 
-   oFr:SetMasterDetail( "Lineas de facturas rectificativas", "Artículos",                          {||  ( D():FacturasRectificativasLineas( nView ) )->cRef,;
-                                                                                                        TiposVentasController():Instance():findByIdInRowSet( ( D():FacturasRectificativasLineas( nView ) )->id_tipo_v ) } )
+   oFr:SetMasterDetail( "Lineas de facturas rectificativas", "Artículos",                          {|| SynchronizeDetails() } )
    oFr:SetMasterDetail( "Lineas de facturas rectificativas", "Tipo de artículo",                   {|| ( D():FacturasRectificativasLineas( nView ) )->cCodTip } )
    oFr:SetMasterDetail( "Lineas de facturas rectificativas", "Ofertas",                            {|| ( D():FacturasRectificativasLineas( nView ) )->cRef } )
    oFr:SetMasterDetail( "Lineas de facturas rectificativas", "Unidades de medición",               {|| ( D():FacturasRectificativasLineas( nView ) )->cUnidad } )
@@ -10122,6 +10121,14 @@ Static Function DataReport( oFr )
    oFr:SetResyncPair(   "Lineas de facturas rectificativas", "Series de lineas de facturas rectificativas" )
 
 Return nil
+
+//---------------------------------------------------------------------------//
+
+Static Function SynchronizeDetails()
+
+   TiposVentasController():Instance():findByIdInRowSet( ( D():FacturasRectificativasLineas( nView ) )->id_tipo_v )
+
+Return ( ( D():FacturasRectificativasLineas( nView ) )->cRef )
 
 //---------------------------------------------------------------------------//
 

@@ -5438,7 +5438,7 @@ FUNCTION appConnectADS()
    adsRightsCheck( .f. )
 
    adsLocking( .t. )                   // NON-compatible locking mode
-   adsTestRecLocks( .t. )
+   // adsTestRecLocks( .t. )
 
    adsSetDeleted( .t. )
 
