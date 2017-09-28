@@ -54,6 +54,9 @@ METHOD ExecuteReportingArticulo( hInforme, oDevice ) CLASS Reporting
    oInf:cReportDirectory   := hGet( hInforme, "cReportDirectory" )
    oInf:cReportName        := hGet( hInforme, "cReportName" )
    oInf:cReportFile        := hGet( hInforme, "cReportFile" )
+   oInf:lLoadDivisa()
+   oInf:dIniInf            := GetSysDate()
+   oInf:dFinInf            := GetSysDate()
    oInf:cAlmacenDefecto    := oUser():cAlmacen()
    oInf:BuildReportCorrespondences()
 

@@ -277,7 +277,7 @@ RETURN ( .t. )
 
 FUNCTION Test()
 
-   // msgalert( hb_valtoexp( ReadHashCodeGS128( "0118411859550506107537L415180315", ) ) )
+   // msgalert( hb_valtoexp( ReadHashCodeGS128( "0118411859550506107537L415180315", ) ) ) 
 
 RETURN ( nil )
 
