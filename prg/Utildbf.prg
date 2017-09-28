@@ -2951,7 +2951,7 @@ FUNCTION dbPass( cAliOrigen, cAliDestino, lApp, xField1, xField2, xField3, xFiel
             ( cAliDestino )->( FieldPut( 5, xField5 ) )
          end if
 
-         ( cAliDestino )->( dbUnLock() )
+         dbSafeUnlock( cAliDestino )
 
          lPass       := .t.
 
