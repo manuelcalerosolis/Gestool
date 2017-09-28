@@ -62,9 +62,9 @@ FUNCTION cDgtControl( cEntidad, cSucursal, cDigito, cCuenta )
 	local cC2
 	local cD1
 	local cD2
-	local nPesos	  := { 6, 3, 7, 9, 10, 5, 8, 4, 2, 1 }
-  local nD1       := 0      // primer digito
-	local nD2		    := 0
+	local nPesos	 := { 6, 3, 7, 9, 10, 5, 8, 4, 2, 1 }
+   local nD1       := 0      // primer digito
+	local nD2		 := 0
 
    if Empty( cCuenta )
       Return ( cDigito )
@@ -1609,6 +1609,36 @@ Return ( nil )
 
 //---------------------------------------------------------------------------//
 
+FUNCTION LoadJSONGS128()
+
+   local cFileGS128           
+   local cConfigGS128
+
+   static hConfigGS128
+
+   if !empty( hConfigGS128 )
+      RETURN ( hConfigGS128 )
+   end if 
+
+   cFileGS128                 := cPatConfig() + cCodEmp() + "\gs128.json"
+
+   if !file( cFileGS128 )
+      RETURN ( STRUCT_CODEGS128 )
+   end if 
+
+   cConfigGS128               := memoread( cFileGS128 )
+
+   hb_jsonDecode( cConfigGS128, @hConfigGS128 )      
+
+   if empty( hConfigGS128 )
+      msgStop( "Fichero " + cFileGS128 + " formato no valido" )
+      RETURN ( STRUCT_CODEGS128 )
+   end if
+
+RETURN ( hConfigGS128 )
+
+//----------------------------------------------------------------//
+
 Function ReadCodeGS128( cCode )
 
   local cLote       := ""
@@ -1723,45 +1753,54 @@ Return ( hCodeGS128 )
 
 Function ReadHashCodeGS128( cCode, hCodeGS128 )
 
-  local hStruct
-  local nAncho  := ""
-  local cValor  := 0
+   local hStruct
+   local nAncho   := ""
+   local cValor   := 0
+   local aGS128   := LoadJSONGS128()
 
-  if Empty( hCodeGS128 )
-    hCodeGS128  := {=>}
-  end if
+   if empty( hCodeGS128 )
+      hCodeGS128  := {=>}
+   end if
 
-  if Len( cCode ) != 0
+   if !hb_ischar( cCode ) .or. len( cCode ) == 0
+      Return ( hCodeGS128 )
+   end if 
 
-    if HB_IsArray( STRUCT_CODEGS128 ) .and. len( STRUCT_CODEGS128 ) > 0
+   if !hb_isarray( aGS128 ) .or. empty( aGS128 ) 
+      Return ( hCodeGS128 )
+   end if 
 
-      for each hStruct in STRUCT_CODEGS128
+   for each hStruct in aGS128
 
-        /*
-        Compruebo que sea uno de los valores----------------------------------
-        */
+      /*
+      Compruebo que sea uno de los valores----------------------------------
+      */
 
-        if SubStr( cCode, 1, Len( hGet( hStruct, "Codigo" ) ) ) == hGet( hStruct, "Codigo" )
-
-          nAncho  := hGet( hStruct, "Ancho" ) + hGet( hStruct, "Decimales" )
-          cValor  := formatCodeGS128( SubStr( cCode, Len( hGet( hStruct, "Codigo" ) ) + 1, nAncho ), hGet( hStruct, "Tipo" ), hGet( hStruct, "Ancho" ), hGet( hStruct, "Decimales" ) )
-          cCode   := SubStr( cCode, Len( hGet( hStruct, "Codigo" ) ) + nAncho + 1 )
-
+<<<<<<< HEAD
           /*
           Lo metemos en el hash------------------------------------------------
           */
           
           hSet( hCodeGS128, hGet( hStruct, "Codigo" ), cValor )
+=======
+      if SubStr( cCode, 1, Len( hGet( hStruct, "Codigo" ) ) ) == hGet( hStruct, "Codigo" )
 
-          ReadHashCodeGS128( @cCode, hCodeGS128 )
+         nAncho  := hGet( hStruct, "Ancho" ) + hGet( hStruct, "Decimales" )
+         cValor  := formatCodeGS128( SubStr( cCode, Len( hGet( hStruct, "Codigo" ) ) + 1, nAncho ), hGet( hStruct, "Tipo" ), hGet( hStruct, "Ancho" ), hGet( hStruct, "Decimales" ) )
+         cCode   := SubStr( cCode, Len( hGet( hStruct, "Codigo" ) ) + nAncho + 1 )
+>>>>>>> origin/master
 
-        end if  
+         /*
+         Lo metemos en el hash------------------------------------------------
+         */
 
-      next
+         hSet( hCodeGS128, hGet( hStruct, "Codigo" ), cValor )
 
-    end if
+         ReadHashCodeGS128( @cCode, hCodeGS128 )
 
-  end if
+      end if  
+
+   next
 
 Return ( hCodeGS128 )
 

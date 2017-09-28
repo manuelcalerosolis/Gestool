@@ -68,9 +68,6 @@ CLASS SQLBaseModel
    METHOD getCreateTableSentence()
    METHOD getAlterTableSentences()
 
-   METHOD getImportSentence( cPath )
-   METHOD makeImportDbfSQL( cPath )
-
    METHOD getSelectSentence()
    METHOD getInsertSentence()
    METHOD getUpdateSentence()
@@ -296,87 +293,6 @@ RETURN ( "DROP TABLE " + ::cTableName )
 
 //---------------------------------------------------------------------------//
 
-METHOD getImportSentence( cPath )
-   
-   local dbf
-   local cValues     := ""
-   local cInsert     := ""
-
-   dbUseArea( .t., cLocalDriver(), cPath + "\" + ::getDbfTableName(), cCheckArea( "dbf", @dbf ), .f. )
-   if ( dbf )->( neterr() )
-      RETURN ( cInsert )
-   end if
-
-   cInsert           := "INSERT INTO " + ::cTableName + " ( "
-   hEval( ::hColumns, {| k | if ( k != ::cColumnKey, cInsert += k + ", ", ) } )
-   cInsert           := ChgAtEnd( cInsert, ' ) VALUES ', 2 )
-
-   ( dbf )->( dbgotop() )
-   while ( dbf )->( !eof() )
-
-      cValues        += "( "
-
-      hEval( ::hColumns, {| k, hash | if ( k != ::cColumnKey,;
-                                          if ( k == "empresa",;
-                                                cValues += toSQLString( cCodEmp() ) + ", ",;
-                                                cValues += toSQLString( ( dbf )->( fieldget( fieldpos( hget( hash, "field" ) ) ) ) ) + ", "), ) } )
-      
-      cValues        := chgAtEnd( cValues, ' ), ', 2 )
-
-      ( dbf )->( dbskip() )
-   end while
-
-   ( dbf )->( dbclosearea() )
-
-   if empty( cValues )
-      RETURN ( nil )
-   end if 
-
-   cValues           := chgAtEnd( cValues, '', 2 )
-
-   cInsert           += cValues
-
-RETURN ( cInsert )
-
-//---------------------------------------------------------------------------//
-
-METHOD makeImportDbfSQL( cPath )
-
-   local cImportSentence
-
-   if empty( cPath ) 
-      if ( hb_hhaskey( ::hColumns, "empresa" ) )
-         cPath       := cPatEmp()
-      else
-         cPath       := cPatDat()
-      end if 
-   end if
-
-   if ( file( cPath + "\" + ::getOldTableName() ) )
-      RETURN ( self )
-   end if
-
-   if !( file( cPath + "\" + ::getDbfTableName() ) )
-      msgStop( "El fichero " + cPath + "\" + ::getDbfTableName() + " no se ha localizado", "Atención" )  
-      RETURN ( self )
-   end if 
-
-   cImportSentence   := ::getImportSentence( cPath )
-
-   if !empty( cImportSentence )
-
-      ::getDatabase():Exec( ::getCreateTableSentence() )
-
-      ::getDatabase():Exec( cImportSentence )
-      
-   end if 
-
-   frename( cPath + "\" + ::getDbfTableName(), cPath + "\" + ::getOldTableName() )
-   
-RETURN ( self )
-
-//---------------------------------------------------------------------------//
-
 METHOD buildRowSet( cSentence )
 
    local oError
@@ -538,21 +454,34 @@ RETURN ( ::getRowSet():reccount() > 0 )
 
 METHOD loadBlankBuffer()
 
-   if empty( ::oRowSet )
-      RETURN ( .f. )
-   end if 
+   local hColumn
 
-   ::oRowSet:goTo( 0 )
+   ::hBuffer            := {=>}
 
-   ::loadCurrentBuffer()
+   for each hColumn in ::hColumns
 
-RETURN ( ::defaultCurrentBuffer() )
+      do case
+         case "CHAR" $ hget( hColumn, "create") 
+            hset( ::hBuffer, hColumn:__enumkey(), '' )
+         case "INTEGER" $ hget( hColumn, "create") 
+            hset( ::hBuffer, hColumn:__enumkey(), 0 )
+         case "DATETIME" $ hget( hColumn, "create") 
+            hset( ::hBuffer, hColumn:__enumkey(), nil )
+         otherwise
+            hset( ::hBuffer, hColumn:__enumkey(), '' )
+      end case
+
+   next 
+
+   // msgalert( hb_valtoexp( ::hBuffer ), "hBuffer" )
+
+   ::defaultCurrentBuffer()
+
+RETURN ( ::hBuffer )
 
 //---------------------------------------------------------------------------//
 
 METHOD loadCurrentBuffer()                
-
-   local h
 
    if empty( ::oRowSet )
       RETURN ( .f. )
@@ -567,8 +496,6 @@ RETURN ( ::hBuffer )
 //---------------------------------------------------------------------------//
 
 METHOD loadDuplicateBuffer()                
-
-   local h
 
    if empty( ::oRowSet )
       RETURN ( .f. )

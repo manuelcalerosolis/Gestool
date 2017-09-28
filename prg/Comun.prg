@@ -277,6 +277,8 @@ RETURN ( .t. )
 
 FUNCTION Test()
 
+   // msgalert( hb_valtoexp( ReadHashCodeGS128( "0118411859550506107537L415180315", ) ) )
+
 RETURN ( nil )
 
 //---------------------------------------------------------------------------//
@@ -6187,6 +6189,14 @@ FUNCTION ApoloMsgStop( cText, cTitle )
    ACTIVATE DIALOG oDlg CENTER
 
 RETURN ( oDlg:nResult == IDOK )
+
+//----------------------------------------------------------------------------//
+
+FUNCTION ApoloErrorMsgStop( cText, cTitle )
+
+   ApoloMsgStop( cText, cTitle )
+
+RETURN ( .f. )
 
 //----------------------------------------------------------------------------//
 
