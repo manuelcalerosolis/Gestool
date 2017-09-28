@@ -123,7 +123,7 @@ METHOD defineCodigo(nRow) CLASS CustomerView
                                     "nWidth"    => {|| GridWidth( 2, ::oDlg ) },;
                                     "bWhen"     => {|| ::getMode() == APPD_MODE },;
                                     "bValid"    => {|| iif( !validKey( oCodigo, ( D():Clientes( ::getView() ) ), .t., "0", 1, RetNumCodCliEmp() ),;
-                                                            ::setErrorValidator( "El cÃ³digo ya existe" ),;
+                                                            ApoloErrorMsgStop( "El código ya existe" ),;
                                                             .t. ) },;
                                     "nHeight"   => 23,;
                                     "cPict"     => Replicate( "X", RetNumCodCliEmp() ),;
@@ -156,7 +156,7 @@ METHOD defineNIF(nRow) CLASS CustomerView
                         "nHeight"   => 23,;
                         "cPict"     => "@!",;
                         "bValid"    => {||   iif( empty( hGet( ::oSender:hDictionaryMaster, "NIF" ) ),;
-                                                ::setErrorValidator( "El campo NIF es un dato obligatorio" ),;
+                                                ApoloErrorMsgStop( "El campo NIF es un dato obligatorio" ),;
                                                 .t. ) },;
                         "lPixels"   => .t. } )
 
@@ -185,7 +185,7 @@ METHOD defineNombre(nRow) CLASS CustomerView
                         "nWidth"    => {|| GridWidth( 9.0, ::oDlg ) },;
                         "bWhen"     => {|| ::whenControl() },;
                         "bValid"    => {||   iif( empty( hGet( ::oSender:hDictionaryMaster, "Nombre" ) ),;
-                                                ::setErrorValidator( "El nombre es un dato obligatorio" ),;
+                                                ApoloErrorMsgStop( "El nombre es un dato obligatorio" ),;
                                                 .t. ) },;
                         "nHeight"   => 23,;
                         "cPict"     => "@!",;

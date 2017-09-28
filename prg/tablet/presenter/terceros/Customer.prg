@@ -400,21 +400,21 @@ METHOD lValidGroupCustomer() CLASS Customer
    local codigoGroupCustomer     := hGet( ::hDictionaryMaster, "CodigoGrupo" )
 
    if empty( codigoGroupCustomer )
-      RETURN .f.
+      RETURN ( .t. )
    end if
 
    ::oViewEdit:oCodigoGrupo:Disable()
    ::oViewEdit:oNombreGrupo:cText( "" )
    
-   nRec                    := ( D():GrupoClientes( ::nView ) )->( Recno() )
-   nOrdAnt                 := ( D():GrupoClientes( ::nView ) )->( ordsetfocus( "cCodGrp" ) )
+   nRec                          := ( D():GrupoClientes( ::nView ) )->( recno() )
+   nOrdAnt                       := ( D():GrupoClientes( ::nView ) )->( ordsetfocus( "cCodGrp" ) )
 
    if ( D():GrupoClientes( ::nView ) )->( dbSeek( codigoGroupCustomer ) )
 
       ::oViewEdit:oCodigoGrupo:cText( ( D():GrupoClientes( ::nView ) )->cCodGrp )
       ::oViewEdit:oNombreGrupo:cText( ( D():GrupoClientes( ::nView ) )->cNomGrp )
 
-      lValid               := .t.
+      lValid                     := .t.
 
    else
 
@@ -427,6 +427,6 @@ METHOD lValidGroupCustomer() CLASS Customer
 
    ::oViewEdit:oCodigoGrupo:Enable()
 
-RETURN lValid
+RETURN ( lValid )
 
 //---------------------------------------------------------------------------//

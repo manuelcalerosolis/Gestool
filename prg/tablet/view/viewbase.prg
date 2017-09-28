@@ -74,7 +74,7 @@ CLASS ViewBase
    METHOD setValue( uValue, cFieldName )                 INLINE ( hSet( ::oSender:hDictionaryMaster, cFieldName, uValue ) ) 
 
    METHOD setErrorValidator( cErrorText )
-   METHOD setErrorValidator()                            INLINE ( if( !empty( ::cErrorValidator ), apoloMsgStop( ::cErrorValidator ), ) )
+   METHOD showErrorValidator()                           INLINE ( if( !empty( ::cErrorValidator ), apoloMsgStop( ::cErrorValidator ), ) )
 
    METHOD errorValidator() 
 
