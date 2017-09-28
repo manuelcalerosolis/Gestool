@@ -13199,8 +13199,6 @@ STATIC FUNCTION SaveDeta( aTmp, aTmpFac, aGet, oBrw, oDlg, oFld, oSayPr1, oSayPr
 
    aTmp[ _CTIPCTR ]  := cTipoCtrCoste
    
-   msgalert( aTmp[ ( D():FacturasClientesLineas( nView ) )->( fieldpos( "id_tipo_v" ) ) ] )
-
    // fin de los script--------------------------------------------------------
 
    aClo              := aClone( aTmp )

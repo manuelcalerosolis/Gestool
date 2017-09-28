@@ -794,8 +794,6 @@ METHOD loadArticulo( cCodArt, nMode, lSilenceMode ) CLASS TDetMovimientos
    Buscamos codificacion GS1-128--------------------------------------------
    */
 
-   //cCodArt                 := "0118411859550506107537L415180315"
-
    if Len( Alltrim( cCodArt ) ) > 18
 
       hHas128              := ReadHashCodeGS128( cCodArt )
@@ -815,13 +813,6 @@ METHOD loadArticulo( cCodArt, nMode, lSilenceMode ) CLASS TDetMovimientos
       end if 
 
    end if
-
-   //cLote := "12345"
-   //dFechaCaducidad := ctod( "15/03/2018" )
-   
-   msginfo( cCodArt, "cCodArt" )
-   msginfo( cLote, "cLote" )
-   msginfo( dFechaCaducidad, "dFechaCaducidad" )
 
    // Conversión a codigo interno-------------------------------------------------
 
@@ -913,11 +904,16 @@ METHOD loadArticulo( cCodArt, nMode, lSilenceMode ) CLASS TDetMovimientos
 
          // Lotes-----------------------------------------------------------------
 
-         ::oDbfVir:cLote         := cLote
          ::oDbfVir:lLote         := ::oParent:oArt:lLote
 
-         if Empty( cLote )
-            ::oDbfVir:cLote         := ::oParent:oArt:cLote
+         if Empty( ::oDbfVir:cLote )
+
+            if Empty( cLote )
+               ::oDbfVir:cLote         := ::oParent:oArt:cLote
+            else
+               ::oDbfVir:cLote         := cLote
+            end if
+
          end if
 
          if ::oParent:oArt:lLote
