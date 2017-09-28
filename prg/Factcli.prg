@@ -1474,7 +1474,7 @@ FUNCTION imprimeFacturaCliente( cNumeroFactura, cFormatoDocumento, nViewpasado )
 
    if OpenFiles( nViewpasado )
 
-      if dbSeekInOrd( cNumeroFactura, "nNumFac", D():FacturasClientes( nView ) )
+      if dbSeekInOrd( cNumeroFactura, "nNumFac", D():FacturasClientes( nViewpasado ) )
 
          nTotFacCli()
 
