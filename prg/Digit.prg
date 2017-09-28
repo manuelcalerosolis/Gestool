@@ -1776,11 +1776,19 @@ Function ReadHashCodeGS128( cCode, hCodeGS128 )
       Compruebo que sea uno de los valores----------------------------------
       */
 
+<<<<<<< HEAD
+          /*
+          Lo metemos en el hash------------------------------------------------
+          */
+          
+          hSet( hCodeGS128, hGet( hStruct, "Codigo" ), cValor )
+=======
       if SubStr( cCode, 1, Len( hGet( hStruct, "Codigo" ) ) ) == hGet( hStruct, "Codigo" )
 
          nAncho  := hGet( hStruct, "Ancho" ) + hGet( hStruct, "Decimales" )
          cValor  := formatCodeGS128( SubStr( cCode, Len( hGet( hStruct, "Codigo" ) ) + 1, nAncho ), hGet( hStruct, "Tipo" ), hGet( hStruct, "Ancho" ), hGet( hStruct, "Decimales" ) )
          cCode   := SubStr( cCode, Len( hGet( hStruct, "Codigo" ) ) + nAncho + 1 )
+>>>>>>> origin/master
 
          /*
          Lo metemos en el hash------------------------------------------------
