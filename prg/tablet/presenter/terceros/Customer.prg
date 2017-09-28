@@ -187,6 +187,7 @@ METHOD onPreSaveAppend() CLASS Customer
    end if 
 
    hSet( ::hDictionaryMaster, "TipoCliente", nTipoCliente ) 
+   hSet( ::hDictionaryMaster, "EnviarInternet", .t. ) 
 
 Return ( .t. )   
 
