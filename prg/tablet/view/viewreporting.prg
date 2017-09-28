@@ -238,7 +238,15 @@ METHOD loadHashReportArticulo() CLASS ViewReporting
    ::hInformes    := {  {  "cReportType" => "Stocks",;
                            "cReportDirectory" => cPatReporting() + "Articulos\Existencias\Stocks",;
                            "cReportName" => "Stocks artículos tablet",;
-                           "cReportFile" => cPatReporting() + "Articulos\Existencias\Stocks\Stocks artículos tablet.fr3" } }
+                           "cReportFile" => cPatReporting() + "Articulos\Existencias\Stocks\Stocks artículos tablet.fr3" },;
+                        {  "cReportType" => "Ventas",;
+                           "cReportDirectory" => cPatReporting() + "Articulos\Ventas\Ventas",;
+                           "cReportName" => "Ventas por artículos diarias",;
+                           "cReportFile" => cPatReporting() + "Articulos\Ventas\Ventas\Ventas por articulos tablet.fr3" },;
+                        {  "cReportType" => "Ventas",;
+                           "cReportDirectory" => cPatReporting() + "Articulos\Ventas\Ventas",;
+                           "cReportName" => "Ventas por familias diarias",;
+                           "cReportFile" => cPatReporting() + "Articulos\Ventas\Ventas\Ventas por familias tablet.fr3" } }
 
 Return ( self ) 
 
