@@ -148,10 +148,11 @@ RETURN ( ::oDbf )
 METHOD OpenFiles( lExclusive ) CLASS TDetCamposExtra
 
    local oError
-   local oBlock               := ErrorBlock( {| oError | ApoloBreak( oError ) } )
+   local oBlock               
 
    DEFAULT lExclusive         := .f.
 
+   oBlock                     := ErrorBlock( {| oError | ApoloBreak( oError ) } )
    BEGIN SEQUENCE
 
    if !::lOpenFiles

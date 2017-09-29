@@ -51,8 +51,8 @@ METHOD getColumnWhereId( id, cColumn )
 
    default cColumn               := "nombre"
 
-   cSentence                     := "SELECT " + cColumn + " FROM " + ::getTableName() + space( 1 ) + ;
-                                       "WHERE id = " + quoted( id ) + space( 1 ) + ;
+   cSentence                     := "SELECT " + cColumn + " FROM " + ::getTableName()  + space( 1 ) + ;
+                                       "WHERE id = " + quoted( id )                    + space( 1 ) + ;
                                        "LIMIT 1"
    hResult                       := ::getDatabase():selectFetchHash( cSentence )
 

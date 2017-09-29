@@ -626,6 +626,10 @@ Static Function CloseFiles()
       oCentroCoste:CloseFiles()
    end if
 
+   if !empty(oMailing)
+      oMailing:end()
+   end if 
+
    TComercio:end()
 
    nView       := nil

@@ -93,15 +93,11 @@ FUNCTION Main( paramsMain, paramsSecond, paramsThird )
 
    // Conexión con MySql------------------------------------------------------
 
-   if !( "TABLET" $ appParamsMain() ) .and. !empty( getSQLDatabase() )
-
-      if getSQLDatabase():Connect() 
-         getSQLDatabase():addModels()
-      else 
-         msgStop( "No se ha podido conectar a la base de datos MySQL" + CRLF + getSQLDatabase():sayConexionInfo() )
-         RETURN ( nil )
-      end if 
-
+   if getSQLDatabase():Connect() 
+      getSQLDatabase():addModels()
+   else 
+      msgStop( "No se ha podido conectar a la base de datos MySQL" + CRLF + getSQLDatabase():sayConexionInfo() )
+      RETURN ( nil )
    end if 
 
    // Motor de bases de datos--------------------------------------------------

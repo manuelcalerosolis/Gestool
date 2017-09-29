@@ -71,9 +71,8 @@ METHOD StartDialog() CLASS ViewEdit
 
    //::getCodigoDireccion:lValid()
 
-   ::oSender:ChangeRuta()
-
    if ::oSender:nMode == APPD_MODE
+      ::oSender:ChangeRuta()
       ::oSender:loadNextClient( ::nMode )
    else   
       ::gotopBrowseLineas()

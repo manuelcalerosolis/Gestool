@@ -745,7 +745,6 @@ STATIC FUNCTION OpenFiles( lExt )
       oDetCamposExtra:SetTipoDocumento( "S.A.T" )
       oDetCamposExtra:setbId( {|| D():SatClientesId( nView ) } )
 
-
       oMailing          := TGenmailingDatabaseSATClientes():New( nView )
       oMailing:setBlockRecipients( {|| alltrim( retFld( ( D():SatClientes( nView ) )->cCodCli, D():Clientes( nView ), "cMeiInt" ) ) } )
 
@@ -1072,6 +1071,14 @@ STATIC FUNCTION CloseFiles()
    if !Empty( oCentroCoste )
       oCentroCoste:End()
    end if
+
+   if !empty( oMailing )
+      oMailing:end()
+   end if 
+
+   if !empty( oMailingOperario )
+      oMailingOperario:End()
+   end if 
 
    D():DeleteView( nView )
 

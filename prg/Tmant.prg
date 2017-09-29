@@ -447,6 +447,7 @@ METHOD End() CLASS TMant
       ::oBandera:End()
    end if
 
+
    if ::oWndBrw != nil
       ::oWndBrw:End()
       ::oWndBrw   := nil

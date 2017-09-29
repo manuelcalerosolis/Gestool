@@ -472,7 +472,7 @@ STATIC FUNCTION OpenFiles( lExt )
       end if
 
       oDetCamposExtra      := TDetCamposExtra():New()
-      if !oDetCamposExtra:OpenFiles
+      if !oDetCamposExtra:OpenFiles()
          lOpenFiles        := .f.
       end if
 
@@ -583,6 +583,10 @@ STATIC FUNCTION CloseFiles( lDestroy )
    if !empty( oEntidades )
       oEntidades:End()
    end if
+
+   if !empty(oMailing)
+      oMailing:end()
+   end if 
 
    CodigosPostales():GetInstance():CloseFiles()
 

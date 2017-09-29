@@ -38,7 +38,7 @@ METHOD New()
 
    ::Super:New()
 
-   ::cGeneralSelect 		:= "SELECT * FROM " + ::cTableName + " WHERE " + ::cForeignColumn
+   // ::cGeneralSelect 		:= "SELECT * FROM " + ::cTableName + " WHERE " + ::cForeignColumn
 
 RETURN ( Self )
 

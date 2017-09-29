@@ -162,10 +162,8 @@ METHOD onPostGetDocumento() CLASS Customer
 
    local cTipo          := str( hGet( ::hDictionaryMaster, "TipoCliente" ) )
 
-   if !empty( cTipo )
-      if hHasKey( ::hTipoCliente, cTipo )
-         ::cTipoCliente := hGet( ::hTipoCliente, cTipo )
-      end if 
+   if !empty( cTipo ) .and. hHasKey( ::hTipoCliente, cTipo )
+      ::cTipoCliente    := hGet( ::hTipoCliente, cTipo )
    end if 
 
    if ::lAppendMode()
@@ -274,6 +272,7 @@ return ( .t. )
 METHOD RefreshBrowseCustomerSales( cTextFilter ) CLASS Customer
 
    ::FilterSalesCustomerTable( cTextFilter )
+
    ::oViewSales:oBrowse:Refresh()   
 
 Return ( .t. )

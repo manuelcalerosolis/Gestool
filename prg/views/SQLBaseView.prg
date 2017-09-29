@@ -100,8 +100,6 @@ METHOD buildSQLShell()
 
    disableAcceso()
 
-   msgalert("SQLTShell")
-
    // ::oShell                := SQLTShell():New( 2, 10, 18, 70, ::oController:cTitle, , oWnd(), , , .f., , , ::getModel(), , , , , {}, {|| ::oController:Edit() },, {|| ::oController:Delete() },, nil, ::oController:nLevel, ::cImageName, ( 104 + ( 0 * 256 ) + ( 63 * 65536 ) ),,, .t. )
 
       ::oController:generateColumnsForBrowse( ::oShell:getCombobox() )

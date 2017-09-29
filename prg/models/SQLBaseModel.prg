@@ -21,8 +21,6 @@ CLASS SQLBaseModel
    DATA hColumns                                   INIT {=>}
    DATA hExtraColumns                              INIT {=>}
 
-   DATA cGeneralSelect
-
    DATA cColumnOrientation
 
    DATA cSQLInsert     
@@ -63,23 +61,33 @@ CLASS SQLBaseModel
    METHOD isDeletedAtColumn()                      INLINE ( hb_hhaskey( ::hColumns, "deleted_at" ) )
    METHOD isEmpresaColumn()                        INLINE ( hb_hhaskey( ::hColumns, "empresa" ) )
 
+   METHOD isSoftDelete()                           INLINE ( ::isDeletedAtColumn() )
+
    // Sentences----------------------------------------------------------------
  
    METHOD getCreateTableSentence()
    METHOD getAlterTableSentences()
 
+   METHOD getGeneralSelect()
    METHOD getSelectSentence()
+   
    METHOD getInsertSentence()
    METHOD getUpdateSentence()
    METHOD getDeleteSentence()
+   
    METHOD getDropTableSentence()
 
-   // Data in empresa----------------------------------------------------------
+   // Where for columns---------------------------------------------------------
 
-   METHOD getWhereEmpresa()                           INLINE ( if( ::isEmpresaColumn(), " WHERE empresa = " + toSQLString( cCodEmp() ), "" ) )
-   METHOD getAndEmpresa()                             INLINE ( if( ::isEmpresaColumn(), " AND empresa = " + toSQLString( cCodEmp() ), "" ) )
+   METHOD getWhereOrAnd( cSQLSelect )                 INLINE ( if( hb_at( "WHERE", cSQLSelect ) != 0, " AND", " WHERE" ) )
+
+   METHOD getWhereEmpresa()                           
+   METHOD getWhereDeletedAt()
+
+   // Get edit value for xbrowse-----------------------------------------------
 
    METHOD getEditValue()
+   METHOD getValueField( cColumn, uValue )
 
    METHOD convertRecnoToId( aRecno )
 
@@ -87,6 +95,8 @@ CLASS SQLBaseModel
    METHOD saveIdToFind()                              INLINE ( ::idToFind := ::getRowSet():fieldGet( ::cColumnKey ) ) 
    METHOD setColumnOrder( cColumnOrder )              INLINE ( ::cColumnOrder := cColumnOrder )
    METHOD setColumnOrientation( cColumnOrientation )  INLINE ( ::cColumnOrientation := cColumnOrientation )
+
+   // Rowset-------------------------------------------------------------------
 
    METHOD buildRowSet()
    METHOD buildRowSetAndFind()                        INLINE ( ::buildRowSet(), ::findInRowSet() )
@@ -101,25 +111,23 @@ CLASS SQLBaseModel
    METHOD getRowSetFieldGet( cColumn )                INLINE ( ::getRowSet():fieldget( cColumn ) )
    METHOD getRowSetFieldValueByName( cColumn )        INLINE ( ::getRowSet():getValueByName( cColumn ) )
 
-   METHOD   getSelectByColumn()
-   METHOD   getSelectByOrder()
+   METHOD getSelectByColumn()
+   METHOD getSelectByOrder()
 
-   METHOD   setFind( cFind )                          INLINE ( ::cFind := cFind )
-   METHOD   find( cFind )
+   METHOD setFind( cFind )                            INLINE ( ::cFind := cFind )
+   METHOD find( cFind )
 
-   METHOD   getBuffer( cColumn )                      INLINE ( hget( ::hBuffer, cColumn ) )
-   METHOD   updateCurrentBuffer()                     INLINE ( ::getDatabase():Query( ::getUpdateSentence() ), ::buildRowSetAndFind() )
-   METHOD   insertBuffer()                            INLINE ( ::getDatabase():Query( ::getInsertSentence() ), ::buildRowSet() )
-   METHOD   deleteSelection( aRecno )                 INLINE ( ::getDatabase():Query( ::getdeleteSentence( aRecno ) ), ::buildRowSet() )
+   METHOD getBuffer( cColumn )                        INLINE ( hget( ::hBuffer, cColumn ) )
+   METHOD updateCurrentBuffer()                       INLINE ( ::getDatabase():Query( ::getUpdateSentence() ), ::buildRowSetAndFind() )
+   METHOD insertBuffer()                              INLINE ( ::getDatabase():Query( ::getInsertSentence() ), ::buildRowSet() )
+   METHOD deleteSelection( aRecno )                   INLINE ( ::getDatabase():Query( ::getdeleteSentence( aRecno ) ), ::buildRowSet() )
 
    METHOD loadBlankBuffer()
    METHOD loadDuplicateBuffer() 
    METHOD loadCurrentBuffer()
    METHOD defaultCurrentBuffer()
 
-   METHOD   serializeColumns()
-
-   METHOD   getValueField( cColumn, uValue )
+   METHOD serializeColumns()
 
 END CLASS
 
@@ -146,11 +154,7 @@ METHOD New( oController )
 
    ::cColumnOrientation          := "A"
 
-   ::cGeneralSelect              := "SELECT * FROM " + ::getTableName()
-
    ::cConstraints                := "" 
-
-   ::TimeStampFields()
 
 RETURN ( Self )
 
@@ -187,15 +191,47 @@ RETURN ( ::hColumns )
 
 //---------------------------------------------------------------------------//
 
+METHOD getGeneralSelect()
+
+   local cGeneralSelect    := "SELECT * FROM " + ::getTableName()
+
+   cGeneralSelect          := ::getWhereEmpresa( cGeneralSelect )
+
+RETURN ( cGeneralSelect )
+
+//---------------------------------------------------------------------------//
+
 METHOD getSelectSentence() 
 
-   local cSQLSelect  := ::cGeneralSelect
+   local cSQLSelect        := ::getGeneralSelect()
 
-   cSQLSelect        += ::getWhereEmpresa()
+   cSQLSelect              := ::getSelectByColumn( cSQLSelect )
 
-   cSQLSelect        := ::getSelectByColumn( cSQLSelect )
+   cSQLSelect              := ::getSelectByOrder( cSQLSelect )
 
-   cSQLSelect        := ::getSelectByOrder( cSQLSelect )
+RETURN ( cSQLSelect )
+
+//---------------------------------------------------------------------------//
+
+METHOD getWhereDeletedAt( cSQLSelect )
+
+   if !::isDeletedAtColumn()
+      RETURN ( cSQLSelect )
+   end if 
+
+   cSQLSelect     += ::getWhereOrAnd( cSQLSelect ) + " deleted_at is null" 
+
+RETURN ( cSQLSelect )
+
+//---------------------------------------------------------------------------//
+
+METHOD getWhereEmpresa( cSQLSelect )
+
+   if !::isEmpresaColumn()
+      RETURN ( cSQLSelect )
+   end if 
+
+   cSQLSelect     += ::getWhereOrAnd( cSQLSelect ) + " empresa = " + toSQLString( cCodEmp() )
 
 RETURN ( cSQLSelect )
 
@@ -203,17 +239,11 @@ RETURN ( cSQLSelect )
 
 METHOD getSelectByColumn( cSQLSelect )
 
-   if !empty( ::cColumnOrder ) .and. !empty( ::cFind )
-      
-      if ( hb_at( "WHERE", cSQLSelect) != 0 )
-         cSQLSelect  += " AND"
-      else
-         cSQLSelect  += " WHERE"
-      end if
+   if empty( ::cColumnOrder ) .or. empty( ::cFind )
+      RETURN ( cSQLSelect )
+   end if 
 
-      cSQLSelect     += " UPPER(" + ::cColumnOrder +") LIKE '%" + Upper( ::cFind ) + "%'" 
-
-   end if
+   cSQLSelect     += ::getWhereOrAnd( cSQLSelect ) + " UPPER(" + ::cColumnOrder +") LIKE '%" + Upper( ::cFind ) + "%'" 
 
 RETURN ( cSQLSelect )
 
@@ -357,15 +387,20 @@ RETURN ( cSQLInsert )
 
 METHOD getUpdateSentence()
 
-  local cSQLUpdate  := "UPDATE " + ::cTableName + " SET "
+   local uValue
+   local cSQLUpdate  := "UPDATE " + ::cTableName + " SET "
 
-  hEval( ::hBuffer, {| k, v | if ( k != ::cColumnKey, cSQLUpdate += k + " = " + toSQLString( v ) + ", ", ) } )
+   for each uValue in ::hBuffer
+      if ( uValue:__enumkey() != ::cColumnKey )
+         cSQLUpdate  += uValue:__enumKey() + " = " + toSQLString( uValue ) + ", "
+      end if 
+   next
 
-  cSQLUpdate        := chgAtEnd( cSQLUpdate, '', 2 )
+   cSQLUpdate        := chgAtEnd( cSQLUpdate, '', 2 )
 
-  cSQLUpdate        += " WHERE " + ::cColumnKey + " = " + toSQLString( ::hBuffer[ ::cColumnKey ] )
+   cSQLUpdate        += " WHERE " + ::cColumnKey + " = " + toSQLString( hget( ::hBuffer, ::cColumnKey ) )
 
-  msgalert( cSQLUpdate, "cSQLUpdate" )
+   msgalert( cSQLUpdate, "cSQLUpdate" )
 
 RETURN ( cSQLUpdate )
 
@@ -461,19 +496,13 @@ METHOD loadBlankBuffer()
    for each hColumn in ::hColumns
 
       do case
-         case "CHAR" $ hget( hColumn, "create") 
-            hset( ::hBuffer, hColumn:__enumkey(), '' )
-         case "INTEGER" $ hget( hColumn, "create") 
-            hset( ::hBuffer, hColumn:__enumkey(), 0 )
-         case "DATETIME" $ hget( hColumn, "create") 
-            hset( ::hBuffer, hColumn:__enumkey(), nil )
-         otherwise
-            hset( ::hBuffer, hColumn:__enumkey(), '' )
+         case "CHAR" $ hget( hColumn, "create")          ;  hset( ::hBuffer, hColumn:__enumkey(), '' )
+         case "INTEGER" $ hget( hColumn, "create")       ;  hset( ::hBuffer, hColumn:__enumkey(), 0 )
+         case "DATETIME" $ hget( hColumn, "create")      ;  hset( ::hBuffer, hColumn:__enumkey(), nil )
+         otherwise                                       ;  hset( ::hBuffer, hColumn:__enumkey(), '' )
       end case
 
    next 
-
-   // msgalert( hb_valtoexp( ::hBuffer ), "hBuffer" )
 
    ::defaultCurrentBuffer()
 

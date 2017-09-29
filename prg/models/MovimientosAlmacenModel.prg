@@ -81,8 +81,6 @@ METHOD New()
                                              "type"      => "C"                                       ,;
                                              "field"     => "cCodMov" }                                )
 
-   ::TimeStampFields()
-
    ::Super:New()
 
 RETURN ( Self )

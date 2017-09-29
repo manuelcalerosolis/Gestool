@@ -2301,9 +2301,13 @@ STATIC FUNCTION CloseFiles()
       oEntidades:End()
    end if 
 
-   if empty( oCentroCoste )
+   if !empty( oCentroCoste )
       oCentroCoste:End()
    end if
+
+   if !empty( oMailingFacturasClientes )
+      oMailingFacturasClientes:End()
+   end if 
 
    dbfIva      := nil
    dbfFacCliD  := nil
