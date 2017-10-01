@@ -2429,12 +2429,19 @@ RETURN ( aStatus )
 
 FUNCTION hGetStatus( cAlias, uOrder )
 
-   local hStatus  := { "Alias" => cAlias, "Recno" => ( cAlias )->( Recno() ), "Order" => ( cAlias )->( OrdSetFocus() ) }
+   local hStatus  := {  "Alias" => cAlias,;
+                        "Recno" => ( cAlias )->( Recno() ),;
+                        "Order" => ( cAlias )->( OrdSetFocus() ),;
+                        "Aof" => ( cAlias )->( adsGetAof() ) }
 
    if !isNil( uOrder )
       ( cAlias )->( OrdSetFocus( uOrder ) )
       ( cAlias )->( dbGoTop() )
    end if
+
+   if !empty( hget( hStatus, "Aof" ) )
+      ( cAlias )->( adsClearAof() )
+   end if 
 
 RETURN ( hStatus )
 
@@ -2442,8 +2449,12 @@ RETURN ( hStatus )
 
 FUNCTION hSetStatus( hStatus )
 
-   ( HGet( hStatus, "Alias" ) )->( ordsetfocus( HGet( hStatus, "Order" ) ) )
-   ( HGet( hStatus, "Alias" ) )->( dbgoto(      HGet( hStatus, "Recno" ) ) )
+   ( hget( hStatus, "Alias" ) )->( ordsetfocus( hget( hStatus, "Order" ) ) )
+   ( hget( hStatus, "Alias" ) )->( dbgoto(      hget( hStatus, "Recno" ) ) )
+
+   if !empty( hget( hStatus, "Aof" ) )
+      ( hget( hStatus, "Alias" ) )->( adssetaof( hget( hStatus, "Aof" ) ) )
+   end if 
 
 RETURN nil
 

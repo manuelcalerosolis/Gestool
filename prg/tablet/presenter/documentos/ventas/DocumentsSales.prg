@@ -510,7 +510,7 @@ RETURN lValid
 METHOD ChangeRuta() CLASS DocumentsSales
 
    local cFilter
-   local cCliente          := ""
+   local cCliente          := space( RetNumCodCliEmp() )
 
    if !hhaskey( ::hOrdenRutas, alltrim( str( ::oViewEdit:oCbxRuta:nAt ) ) )
       RETURN ( cCliente )
@@ -534,7 +534,7 @@ METHOD ChangeRuta() CLASS DocumentsSales
       ::oViewEdit:getRuta:Refresh()
    end if
 
-   if !empty( ::oViewEdit:getCodigoCliente )
+   if !empty( ::oViewEdit:getCodigoCliente ) 
       ::oViewEdit:getCodigoCliente:cText( cCliente )
       ::oViewEdit:getCodigoCliente:lValid()
    end if 

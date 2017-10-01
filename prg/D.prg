@@ -358,8 +358,8 @@ CLASS D
       METHOD getClientesField( nView, cField )        INLINE ( ( ::Get( "Client", nView ) )->( fieldget( fieldpos( cField ) ) ) )
       METHOD gotoCliente( id, nView )                 INLINE ( ::SeekInOrd( ::Clientes( nView ), id, "Cod" ) ) 
       METHOD gotoIdClientes( id, nView )              INLINE ( ::SeekInOrd( ::Clientes( nView ), id, "Cod" ) ) 
-      METHOD getStatusClientes( nView )               INLINE ( ::aStatus := aGetStatus( ::Clientes( nView ) ) )
-      METHOD setStatusClientes( nView )               INLINE ( SetStatus( ::Get( "Client", nView ), ::aStatus ) ) 
+      METHOD getStatusClientes( nView )               INLINE ( ::aStatus := hGetStatus( ::Clientes( nView ) ) )
+      METHOD setStatusClientes( nView )               INLINE ( hSetStatus( ::aStatus ) ) 
       METHOD getCurrentHashClientes( nView )          INLINE ( ::getHashRecordById( ::ClientesId( nView ), ::Clientes( nView ), nView ) )
       METHOD getDefaultHashClientes( nView )          INLINE ( ::getHashRecordDefaultValues( ::Clientes( nView ), nView ) )
       METHOD setScopeClientes( id, nView )            INLINE ( iif( empty( id ), id := ::ClientesId( nView ), ),;

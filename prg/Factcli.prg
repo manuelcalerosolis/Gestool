@@ -1463,7 +1463,7 @@ Return ( nil )
 
 //---------------------------------------------------------------------------//
 
-FUNCTION imprimeFacturaCliente( cNumeroFactura, cFormatoDocumento, nViewpasado )
+FUNCTION imprimeFacturaCliente( cNumeroFactura, cFormatoDocumento )
 
    local nLevel         := nLevelUsr( _MENUITEM_ )
 
@@ -1472,9 +1472,9 @@ FUNCTION imprimeFacturaCliente( cNumeroFactura, cFormatoDocumento, nViewpasado )
       return .t.
    end if
 
-   if OpenFiles( nViewpasado )
+   if OpenFiles()
 
-      if dbSeekInOrd( cNumeroFactura, "nNumFac", D():FacturasClientes( nViewpasado ) )
+      if dbSeekInOrd( cNumeroFactura, "nNumFac", D():FacturasClientes( nView ) )
 
          nTotFacCli()
 

@@ -216,6 +216,7 @@ METHOD defineCliente( nRow ) CLASS ViewEdit
                                                 "nWidth"    => {|| GridWidth( 2, ::oDlg ) },;
                                                 "nHeight"   => 23,;
                                                 "lPixels"   => .t.,;
+                                                "cPict"     => Replicate( "X", RetNumCodCliEmp() ),;
                                                 "bWhen"     => {|| ::oSender:lNotZoomMode() },;                           
                                                 "bValid"    => {|| ::oSender:lValidCliente() } } )
    
