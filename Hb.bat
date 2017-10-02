@@ -8,11 +8,11 @@ cd \fw195\gestool\bin\
 
 if "%1"=="" goto NOPASSWORD
 
-   gestool.exe %1 /TABLET
+   gestool.exe %1
    goto EXIT
 
 :NOPASSWORD
-   gestool.exe /TABLET
+   gestool.exe /NOPASSWORD
 
 :EXIT
    cd \fw195\gestool\
