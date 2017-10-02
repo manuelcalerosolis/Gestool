@@ -69,8 +69,8 @@ METHOD Dialog()
       OF          oDlg
 
    oTree                      := TTreeView():Redefine( 110, oDlg )
-   oTree:bItemSelectChanged   := {|| ::oController:changeTree( oTree ) }
-   oTree:bWhen                := {|| !::oController:isSpecialMode()  .and. !::oController:isZoomMode() }
+   // oTree:bItemSelectChanged   := {|| ::oController:changeTree( oTree ) }
+   // oTree:bWhen                := {|| !::oController:isSpecialMode()  .and. !::oController:isZoomMode() }
 
    REDEFINE BUTTON oBtnOk ;
       ID          IDOK ;
@@ -90,7 +90,7 @@ METHOD Dialog()
 
    // evento bstart-----------------------------------------------------------
 
-   oDlg:bStart       := {|| ::oController:startDialog( oTree ), oGetNombre:setFocus() }
+   oDlg:bStart       := {|| oGetNombre:setFocus() }
 
    ACTIVATE DIALOG oDlg CENTER
 

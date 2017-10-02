@@ -3,7 +3,7 @@
 
 //---------------------------------------------------------------------------//
 
-CLASS MovimientosAlmacenesLineas FROM BaseModel
+CLASS MovimientosAlmacenesLineas FROM ADSBaseModel
 
    METHOD getHeaderTableName()                  INLINE ::getEmpresaTableName( "Client" )
 

@@ -3,7 +3,7 @@
 
 //---------------------------------------------------------------------------//
 
-CLASS TransaccionesComercialesLineasModel FROM BaseModel
+CLASS TransaccionesComercialesLineasModel FROM ADSBaseModel
 
    METHOD getTableName()                                                VIRTUAL
 
@@ -165,7 +165,7 @@ METHOD TranslateCodigoTiposVentaToId( cTable )
                                     "cTipMov = ''"                                              + space( 1 ) + ;
                                  "WHERE cTipMov = " + toSqlString( hIdTipoVenta[ "codigo" ] )
       
-      BaseModel():ExecuteSqlStatement( cSentence )
+      ADSBaseModel():ExecuteSqlStatement( cSentence )
 
    next 
 

@@ -65,6 +65,7 @@ METHOD Dialog()
 
       REDEFINE GET   ::oController:oModel:hBuffer[ "usuario" ] ;
          ID          220 ;
+         PICTURE     "XXX"
          WHEN        ( .f. ) ;
          OF          oDlg
 
@@ -129,6 +130,8 @@ METHOD Dialog()
          ID          3 ;
          OF          oDlg ;
          ACTION      ( msgalert( "RecalculaPrecio" ) )
+
+   oDlg:bStart       := {|| ::changeTipoMovimiento( oRadioTipoMovimento, oGetAlmacenOrigen ) }
 
    ACTIVATE DIALOG oDlg CENTER
 

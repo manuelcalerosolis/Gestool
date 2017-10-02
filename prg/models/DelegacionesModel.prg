@@ -3,7 +3,7 @@
 
 //---------------------------------------------------------------------------//
 
-CLASS DelegacionesModel FROM BaseModel
+CLASS DelegacionesModel FROM ADSBaseModel
 
    METHOD getDelegacionTableName()                    INLINE ::getDatosTableName( "Delega" )
 

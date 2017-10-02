@@ -3,7 +3,7 @@
 
 //---------------------------------------------------------------------------//
 
-CLASS RecibosClientesModel FROM BaseModel
+CLASS RecibosClientesModel FROM ADSBaseModel
 
    METHOD getTableName()                     INLINE ::getEmpresaTableName( "FacCliP" )
 

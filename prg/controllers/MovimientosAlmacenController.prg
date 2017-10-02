@@ -1,16 +1,11 @@
 #include "FiveWin.Ch"
 #include "Factu.ch" 
-#include "MesDbf.ch"
 
 //---------------------------------------------------------------------------//
 
-CLASS MovimientosAlmacenController FROM SQLHeaderController
+CLASS MovimientosAlmacenController FROM SQLBaseController
 
    METHOD   New()
-
-   METHOD   buildSQLModel( this )         INLINE ( SQLMovimientosAlmacenModel():New( this ) )
-   
-   METHOD   buildSQLView( this )				INLINE ( MovimientosAlmacenView():New( this ) )
 
 END CLASS
 
@@ -18,13 +13,21 @@ END CLASS
 
 METHOD New()
 
-   ::idUserMap             := "01050"
+   ::cTitle                := "Movimientos de almacen"
 
-   ::setTitle( "Movimientos almacen" )
+   ::cImage                := "gc_document_attachment_16"
+
+   ::nLevel                := nLevelUsr( "01050" )
+
+   ::oModel                := SQLMovimientosAlmacenModel():New( self )
+
+   ::oDialogView           := MovimientosAlmacenView():New( self )
+
+//   ::oValidator            := SituacionesValidator():New( self )
 
    ::Super:New()
 
-Return ( Self )
+RETURN ( Self )
 
 //---------------------------------------------------------------------------//
 

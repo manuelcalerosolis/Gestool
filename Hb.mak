@@ -522,6 +522,7 @@ backupView.prg                                     				\
 ReindexaPresenter.prg                                 			\
 ReindexaView.prg                                      			\
 BaseModel.prg 																	\
+ADSBaseModel.prg 																\
 SQLBaseModel.prg 																\
 SQLBaseEmpresasModel.prg 													\
 SQLBaseController.prg 														\
@@ -1091,6 +1092,7 @@ backupView.obj                                     			\
 ReindexaPresenter.obj                              			\
 ReindexaView.obj                                   			\
 BaseModel.obj 																\
+ADSBaseModel.obj 															\
 SQLBaseModel.Obj 															\
 SQLBaseEmpresasModel.Obj 												\
 SQLBaseController.Obj 													\
@@ -1630,6 +1632,7 @@ $(OBJ)\ReindexaView.obj                      				+
 $(OBJ)\Reporting.obj                         				+
 $(OBJ)\ViewReporting.obj 											+
 $(OBJ)\BaseModel.obj 												+
+$(OBJ)\ADSBaseModel.obj 											+
 $(OBJ)\SQLBaseModel.obj 											+
 $(OBJ)\SQLBaseEmpresasModel.obj 									+
 $(OBJ)\SQLBaseController.obj 										+

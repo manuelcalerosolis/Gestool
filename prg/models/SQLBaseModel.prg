@@ -56,12 +56,7 @@ CLASS SQLBaseModel
 
    // -------------------------------------------------------------------------
 
-   METHOD isCreatedAtColumn()                      INLINE ( hb_hhaskey( ::hColumns, "created_at" ) )
-   METHOD isUpdatedAtColumn()                      INLINE ( hb_hhaskey( ::hColumns, "updated_at" ) )
-   METHOD isDeletedAtColumn()                      INLINE ( hb_hhaskey( ::hColumns, "deleted_at" ) )
    METHOD isEmpresaColumn()                        INLINE ( hb_hhaskey( ::hColumns, "empresa" ) )
-
-   METHOD isSoftDelete()                           INLINE ( ::isDeletedAtColumn() )
 
    // Sentences----------------------------------------------------------------
  
@@ -99,7 +94,7 @@ CLASS SQLBaseModel
    // Rowset-------------------------------------------------------------------
 
    METHOD buildRowSet()
-   METHOD buildRowSetAndFind()                        INLINE ( ::buildRowSet(), ::findInRowSet() )
+   METHOD buildRowSetAndFind( idToFind )              INLINE ( ::buildRowSet(), ::findInRowSet( idToFind ) )
 
    METHOD findInRowSet()          
    METHOD getRowSet()                                 INLINE ( if( empty( ::oRowSet ), ::buildRowSet(), ), ::oRowSet )
@@ -119,7 +114,7 @@ CLASS SQLBaseModel
 
    METHOD getBuffer( cColumn )                        INLINE ( hget( ::hBuffer, cColumn ) )
    METHOD updateCurrentBuffer()                       INLINE ( ::getDatabase():Query( ::getUpdateSentence() ), ::buildRowSetAndFind() )
-   METHOD insertBuffer()                              INLINE ( ::getDatabase():Query( ::getInsertSentence() ), ::buildRowSet() )
+   METHOD insertBuffer()                              
    METHOD deleteSelection( aRecno )                   INLINE ( ::getDatabase():Query( ::getdeleteSentence( aRecno ) ), ::buildRowSet() )
 
    METHOD loadBlankBuffer()
@@ -327,7 +322,7 @@ METHOD buildRowSet( cSentence )
 
    local oError
 
-   default cSentence    := ::getSelectSentence()
+   DEFAULT cSentence    := ::getSelectSentence()
 
    try
 
@@ -349,17 +344,19 @@ RETURN ( self )
 
 //---------------------------------------------------------------------------//
 
-METHOD findInRowSet()
+METHOD findInRowSet( idToFind )
 
    if empty( ::oRowSet )
       RETURN ( self )
    end if 
 
-   if empty( ::idToFind ) .or. empty( ::cColumnKey )
+   DEFAULT idToFind  := ::idToFind
+
+   if empty( idToFind ) .or. empty( ::cColumnKey )
       RETURN ( self )
    end if 
 
-   if ::oRowSet:find( ::idToFind, ::cColumnKey, .t. ) == 0
+   if ::oRowSet:find( idToFind, ::cColumnKey, .t. ) == 0
       ::oRowSet:goTop()
    end if
 
@@ -449,7 +446,7 @@ METHOD getEditValue( cColumn )
    local bValue
    local hColumn
 
-   if !hhaskey( ::hColumns, cColumn )
+   if !hhaskey( ::hColumns, cColumn ) 
       RETURN ( nil )
    end if 
 
@@ -498,7 +495,7 @@ METHOD loadBlankBuffer()
       do case
          case "CHAR" $ hget( hColumn, "create")          ;  hset( ::hBuffer, hColumn:__enumkey(), '' )
          case "INTEGER" $ hget( hColumn, "create")       ;  hset( ::hBuffer, hColumn:__enumkey(), 0 )
-         case "DATETIME" $ hget( hColumn, "create")      ;  hset( ::hBuffer, hColumn:__enumkey(), nil )
+         case "DATETIME" $ hget( hColumn, "create")      ;  hset( ::hBuffer, hColumn:__enumkey(), hb_datetime() )
          otherwise                                       ;  hset( ::hBuffer, hColumn:__enumkey(), '' )
       end case
 
@@ -617,9 +614,13 @@ RETURN ( uValue )
 
 //---------------------------------------------------------------------------//
 
-// METHOD onKeyChar( nKey )
-// 
-// RETURN ( heval( ::oSender:oMenuTreeView:hFastKey, {|k,v| if( nKey == asc( upper( k ) ) .or. nKey == asc( lower( k ) ), eval( v ), ) } ) ) 
+METHOD insertBuffer()
+
+   ::getDatabase():Query( ::getInsertSentence() )
+
+   ::buildRowSetAndFind( ::getDatabase():LastInsertId() )
+
+RETURN ( self )
    
 //----------------------------------------------------------------------------//
 

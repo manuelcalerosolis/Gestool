@@ -1,10 +1,10 @@
 MVC - ToDo
 
-- No refresca al añadir un nuevo registro en navigator.
+- No refresca al añadir un nuevo registro en navigator. (done)
 
-- Al borrar un registro no se posiciona bien, y browse no toma el foco.
+- Al borrar un registro no se posiciona bien, y browse no toma el foco. (done)
 
-- Valor automatico para el campo empresa al agregar.
+- Valor automatico para el campo empresa al agregar.(done)
 
 - Valores automaticos para DELETED. (deprecated)
 

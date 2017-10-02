@@ -22,6 +22,12 @@ END CLASS
 
 METHOD New()
 
+   hset( ::hColumns, "id",                {  "create"    => "INTEGER PRIMARY KEY AUTO_INCREMENT"      ,;
+                                             "text"      => "Identificador"                           ,;
+                                             "header"    => "Id"                                      ,;
+                                             "visible"   => .t.                                       ,;
+                                             "width"     => 40 }                                      )   
+
    ::CommunFields()
 
    hset( ::hColumns, "numero",            {  "create"    => "INT(9)"                                  ,;
@@ -32,15 +38,6 @@ METHOD New()
                                              "field"     => "nNumRem"                                 ,;
                                              "type"      => "N"                                       ,;
                                              "len"       => 40 }                                      )
-
-   hset( ::hColumns, "seleccionado",      {  "create"    => "BOOLEAN"                                 ,;
-                                             "text"      => "Seleccionado"                            ,;
-                                             "header"    => "Sel"                                     ,;
-                                             "visible"   => .f.                                       ,;
-                                             "width"     => 20                                        ,;
-                                             "field"     => "lSelDoc"                                 ,;
-                                             "type"      => "L"                                       ,;
-                                             "len"       => 1 }                                       )
 
    hset( ::hColumns, "tipo_movimiento",   {  "create"    => "INT NOT NULL"                            ,;
                                              "text"      => "Tipo movimiento"                         ,;
@@ -58,7 +55,12 @@ METHOD New()
                                              "field"     => "dFecRem"                                 ,;
                                              "visible"   => .t.                                       ,;
                                              "type"      => "T"                                       ,;
-                                             "width"     => 40 }                                       )
+                                             "picture"   => "@T"                                      ,;
+                                             "default"   => {|| hb_datetime() }                       ,;
+                                             "headAlign" => AL_LEFT                                   ,; 
+                                             "dataAlign" => AL_LEFT                                   ,; 
+                                             "footAlign" => AL_LEFT                                   ,; 
+                                             "width"     => 180 }                                     )
 
    hset( ::hColumns, "almacen_origen",    {  "create"    => "CHAR ( 16 )"                             ,;
                                              "text"      => "Almacén origen"                          ,;
@@ -81,6 +83,8 @@ METHOD New()
                                              "type"      => "C"                                       ,;
                                              "field"     => "cCodMov" }                                )
 
+   ::TimeStampFields()
+
    ::Super:New()
 
 RETURN ( Self )
@@ -97,3 +101,4 @@ METHOD cTextoMovimiento()
 RETURN ( ::aTextoMovimiento[ nPosition ] ) // [ nPosition ] ) 
 
 //---------------------------------------------------------------------------//
+

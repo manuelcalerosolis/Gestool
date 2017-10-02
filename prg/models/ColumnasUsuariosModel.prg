@@ -3,7 +3,7 @@
 
 //---------------------------------------------------------------------------//
 
-CLASS ColumnasUsuariosModel FROM BaseModel
+CLASS ColumnasUsuariosModel FROM ADSBaseModel
 
    DATA cTableName                              INIT "CfgUse"
 

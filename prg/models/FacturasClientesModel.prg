@@ -3,7 +3,7 @@
 
 //---------------------------------------------------------------------------//
 
-CLASS FacturasClientesModel FROM BaseModel
+CLASS FacturasClientesModel FROM ADSBaseModel
 
    METHOD getHeaderTableName()                  INLINE ::getEmpresaTableName( "FacCliT" )
 

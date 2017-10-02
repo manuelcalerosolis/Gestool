@@ -3,7 +3,7 @@
 
 //---------------------------------------------------------------------------//
 
-CLASS PedidosProveedoresModel FROM BaseModel
+CLASS PedidosProveedoresModel FROM ADSBaseModel
 
    CLASSDATA cHeader                            INIT  "Header"
 

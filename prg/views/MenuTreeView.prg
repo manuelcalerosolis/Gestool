@@ -265,9 +265,7 @@ RETURN ( if( hb_isblock( ::bOnAfterAddExitButton ), eval( ::bOnAfterAddExitButto
 
 METHOD onChange()
 
-   local oItem       
-
-   oItem          := ::oTreeView:GetSelected()
+   local oItem    := ::oTreeView:GetSelected()
 
    if empty( oItem )
       RETURN ( nil )

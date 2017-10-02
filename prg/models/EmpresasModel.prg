@@ -3,7 +3,7 @@
 
 //---------------------------------------------------------------------------//
 
-CLASS EmpresasModel FROM BaseModel
+CLASS EmpresasModel FROM ADSBaseModel
 
    METHOD getEmpresaTableName()                       INLINE ::getDatosTableName( "Empresa" )
 

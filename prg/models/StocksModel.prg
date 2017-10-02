@@ -3,7 +3,7 @@
 
 //---------------------------------------------------------------------------//
 
-CLASS StocksModel FROM BaseModel
+CLASS StocksModel FROM ADSBaseModel
 
    METHOD getLineasAgrupadas()
 

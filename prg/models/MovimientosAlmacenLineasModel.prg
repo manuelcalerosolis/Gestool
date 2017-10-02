@@ -3,7 +3,7 @@
 
 //---------------------------------------------------------------------------//
 
-CLASS MovimientosAlmacenLineasModel FROM BaseModel
+CLASS MovimientosAlmacenLineasModel FROM ADSBaseModel
 
    METHOD getTableName()                     INLINE ::getEmpresaTableName( "HisMov" )
 

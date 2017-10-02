@@ -160,11 +160,31 @@ RETURN ( self )
 METHOD addColumn( cColumn, hColumn )
 
    with object ( ::oBrowse:AddCol() )
+
       :cSortOrder          := cColumn
       :cHeader             := hColumn[ "header" ]
       :nWidth              := hColumn[ "width" ]
-      :bLClickHeader       := {| nMRow, nMCol, nFlags, oColumn | ::onClickHeader( oColumn ) }
+
+      if hhaskey( hColumn, "picture" ) 
+         :cEditPicture     := hColumn[ "picture" ]
+      end if 
+
+      if hhaskey( hColumn, "headAlign" ) 
+         :nHeadStrAlign    := hColumn[ "headAlign" ]
+      end if 
+
+      if hhaskey( hColumn, "dataAlign" ) 
+         :nDataStrAlign    := hColumn[ "dataAlign" ]
+      end if 
+
+      if hhaskey( hColumn, "footAlign" ) 
+         :nFootStrAlign    := hColumn[ "footAlign" ]
+      end if 
+
       :bEditValue          := ::getModel():getEditValue( cColumn ) 
+
+      :bLClickHeader       := {| nMRow, nMCol, nFlags, oColumn | ::onClickHeader( oColumn ) }
+
    end with
 
 RETURN ( self )

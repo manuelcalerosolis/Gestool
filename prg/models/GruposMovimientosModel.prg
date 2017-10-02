@@ -3,7 +3,7 @@
 
 //---------------------------------------------------------------------------//
 
-CLASS GruposMovimientosModel FROM BaseModel
+CLASS GruposMovimientosModel FROM ADSBaseModel
 
    METHOD getHeaderTableName()                  INLINE ::getDatosTableName( "TMov" ) 
 

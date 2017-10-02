@@ -83,7 +83,7 @@ METHOD New( oController )
 
 RETURN ( Self )
 
-//----------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
 
 METHOD Activate()
 
@@ -97,7 +97,7 @@ METHOD Activate()
 
    ::oMenuTreeView:AddAutoButtons()
 
-   // Browse view --------------------------------------------------------------
+   // Browse view -------------------------------------------------------------
 
    ::oSQLBrowseView:ActivateMDI( dfnSplitterHeight + dfnSplitterWidth, dfnTreeViewWidth + dfnSplitterWidth, ::oMdiChild:nRight - ::oMdiChild:nLeft, ::oMdiChild:nBottom - ::oMdiChild:nTop )
 

@@ -449,8 +449,6 @@ METHOD Delete( aSelected )
 
       ::oModel:deleteSelection( aSelected )
 
-      ::oModel:updateCurrentBuffer()
-
       ::endDeleteModePosDelete()
    
    end if 

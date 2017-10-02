@@ -3,7 +3,7 @@
 
 //---------------------------------------------------------------------------//
 
-CLASS MaterialesProducidosLineasModel FROM BaseModel
+CLASS MaterialesProducidosLineasModel FROM ADSBaseModel
 
    METHOD getTableName()                     INLINE ::getEmpresaTableName( "ProLin" )
 

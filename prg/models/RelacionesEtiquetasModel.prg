@@ -77,7 +77,7 @@ METHOD getLineasProducccion( cCodigoCategoria )
                               "FROM " + dbfTableName + " "                             + ;
                               "WHERE cCodCat IS NOT NULL"
 
-   if BaseModel():ExecuteSqlStatement( cSentence, @dbfAlias )
+   if ADSBaseModel():ExecuteSqlStatement( cSentence, @dbfAlias )
 
       cInsertSentence   := "INSERT INTO " + ::cTableName + "( id_empresa, tabla_documento, id_documento, etiquetas ) VALUES "
       
@@ -114,7 +114,7 @@ METHOD TranslateCodigoToId()
 
    getSQLDatabase():Query( cSentenceSQLite )
 
-   BaseModel():ExecuteSqlStatement( cSentenceDBF )
+   ADSBaseModel():ExecuteSqlStatement( cSentenceDBF )
 
 RETURN ( self )
 

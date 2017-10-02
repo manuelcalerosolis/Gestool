@@ -334,7 +334,7 @@ METHOD getProductInformation( idArticulo, cWeb )
                         "AND LEFT( cClave, 18 ) = '" + ( idArticulo ) + "' "  + ;
                         "AND cWeb = '" + upper( cWeb ) + "'"
 
-   if BaseModel():ExecuteSqlStatement( cSql, @cStm )
+   if ADSBaseModel():ExecuteSqlStatement( cSql, @cStm )
       while ( !( cStm )->( eof() ) )
          aadd( aInfo, { "Web"       => ( cStm )->cWeb,;
                         "Documento" => ( cStm )->cDocumento,;

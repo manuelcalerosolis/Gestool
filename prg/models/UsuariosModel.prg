@@ -3,7 +3,7 @@
 
 //---------------------------------------------------------------------------//
 
-CLASS UsuariosModel FROM BaseModel
+CLASS UsuariosModel FROM ADSBaseModel
 
    METHOD getTableName()                        INLINE ::getDatosTableName( "Users" )
 

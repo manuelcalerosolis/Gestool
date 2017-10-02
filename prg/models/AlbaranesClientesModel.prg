@@ -3,7 +3,7 @@
 
 //---------------------------------------------------------------------------//
 
-CLASS AlbaranesClientesModel FROM BaseModel
+CLASS AlbaranesClientesModel FROM ADSBaseModel
 
    METHOD getHeaderTableName()                  INLINE ::getEmpresaTableName( "AlbCliT" )
 

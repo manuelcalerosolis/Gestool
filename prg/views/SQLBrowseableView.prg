@@ -35,7 +35,7 @@ CLASS SQLBrowseableView
 
    METHOD getMenuTreeView()               INLINE ( ::oMenuTreeView )
 
-   METHOD Refresh()                       INLINE ( ::getMenuTreeView():SelectButtonMain(), ::getBrowse():SetFocus() )
+   METHOD Refresh()                       INLINE ( ::getMenuTreeView():SelectButtonMain(), ::getBrowse():SetFocus(), ::getBrowse():refreshCurrent() )
    METHOD RefreshRowSet()                 INLINE ( ::getModel():buildRowSet(), ::Refresh() )
 
    //--------------------------------------------------------------------------
