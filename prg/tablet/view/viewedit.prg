@@ -71,9 +71,8 @@ METHOD StartDialog() CLASS ViewEdit
 
    //::getCodigoDireccion:lValid()
 
-   ::oSender:ChangeRuta()
-
    if ::oSender:nMode == APPD_MODE
+      ::oSender:ChangeRuta()
       ::oSender:loadNextClient( ::nMode )
    else   
       ::gotopBrowseLineas()
@@ -217,6 +216,7 @@ METHOD defineCliente( nRow ) CLASS ViewEdit
                                                 "nWidth"    => {|| GridWidth( 2, ::oDlg ) },;
                                                 "nHeight"   => 23,;
                                                 "lPixels"   => .t.,;
+                                                "cPict"     => Replicate( "X", RetNumCodCliEmp() ),;
                                                 "bWhen"     => {|| ::oSender:lNotZoomMode() },;                           
                                                 "bValid"    => {|| ::oSender:lValidCliente() } } )
    

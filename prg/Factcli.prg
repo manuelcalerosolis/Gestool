@@ -1463,7 +1463,7 @@ Return ( nil )
 
 //---------------------------------------------------------------------------//
 
-FUNCTION imprimeFacturaCliente( cNumeroFactura, cFormatoDocumento, nViewpasado )
+FUNCTION imprimeFacturaCliente( cNumeroFactura, cFormatoDocumento )
 
    local nLevel         := nLevelUsr( _MENUITEM_ )
 
@@ -1472,9 +1472,9 @@ FUNCTION imprimeFacturaCliente( cNumeroFactura, cFormatoDocumento, nViewpasado )
       return .t.
    end if
 
-   if OpenFiles( nViewpasado )
+   if OpenFiles()
 
-      if dbSeekInOrd( cNumeroFactura, "nNumFac", D():FacturasClientes( nViewpasado ) )
+      if dbSeekInOrd( cNumeroFactura, "nNumFac", D():FacturasClientes( nView ) )
 
          nTotFacCli()
 
@@ -2301,9 +2301,13 @@ STATIC FUNCTION CloseFiles()
       oEntidades:End()
    end if 
 
-   if empty( oCentroCoste )
+   if !empty( oCentroCoste )
       oCentroCoste:End()
    end if
+
+   if !empty( oMailingFacturasClientes )
+      oMailingFacturasClientes:End()
+   end if 
 
    dbfIva      := nil
    dbfFacCliD  := nil

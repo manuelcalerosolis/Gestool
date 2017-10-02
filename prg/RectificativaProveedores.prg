@@ -572,6 +572,10 @@ Static Function CloseFiles()
       oNewImp:end()
    end if
 
+   if !empty(oMailing)
+      oMailing:end()
+   end if
+   
    D():DeleteView( nView )
 
    CodigosPostales():GetInstance():CloseFiles()

@@ -184,12 +184,15 @@ METHOD CloseFiles()
       ::oEnvases  := nil
    end if
 
-   if !empty( ::nView )
+   if !empty( ::oDetCamposExtra )
+      ::oDetCamposExtra:CloseFiles()
+   end if 
 
+   if !empty( ::nView )
       D():DeleteView( ::nView )
-      ::nView     := nil
-      
    end if   
+
+   ::nView     := nil
 
 RETURN ( .t. )
 

@@ -347,6 +347,8 @@ METHOD OpenFiles( lExclusive, cPath ) CLASS TSndRecInf
 
    DEFAULT lExclusive   := .f.
 
+   dbcloseall()
+
    oBlock               := ErrorBlock( {| oError | ApoloBreak( oError ) } )
    BEGIN SEQUENCE
 

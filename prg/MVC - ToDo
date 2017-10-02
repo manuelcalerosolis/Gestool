@@ -2,11 +2,13 @@ MVC - ToDo
 
 - No refresca al añadir un nuevo registro en navigator.
 
+- Al borrar un registro no se posiciona bien, y browse no toma el foco.
+
 - Valor automatico para el campo empresa al agregar.
 
-- Valores automaticos para DELETED.
+- Valores automaticos para DELETED. (deprecated)
 
-- Sitauciones en los pedidos.
+- Sitauciones en los pedidos (done).
 
 - Probar la impresion con las bases de datos de mysql. (done)
 

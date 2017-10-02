@@ -247,6 +247,10 @@ STATIC FUNCTION CloseFiles()
       ( dbfMatriz )->( dbCloseArea() )
    end if
 
+   if !empty(oMailing)
+      oMailing:end()
+   end if 
+
    oWndBrw     := nil
    dbfMatriz   := nil
 

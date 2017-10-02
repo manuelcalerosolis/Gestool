@@ -6,14 +6,14 @@
 #include "DbInfo.ch"
 #include "Xbrowse.ch"
 
-#define fldDescription						1
-#define fldCondition 						2
-#define fldValue 								3
-#define fldNexo 								4
+#define fldDescription                 1
+#define fldCondition                   2
+#define fldValue                       3
+#define fldNexo                        4
 
-#define posDescription						1
-#define posField 								2
-#define posType 								3
+#define posDescription                 1
+#define posField                       2
+#define posType                        3
 
 //---------------------------------------------------------------------------//
 
@@ -33,8 +33,8 @@ CLASS TFilterCreator
    DATA cExpresionFilter
    DATA bExpresionFilter
 
-	DATA cName 									      INIT "Filtro de pruebas"
-	DATA cType 									      INIT ""
+   DATA cName                                INIT "Filtro de pruebas"
+   DATA cType                                INIT ""
 
    DATA aStructure                           INIT {}
 
@@ -50,8 +50,9 @@ CLASS TFilterCreator
                                                       "Menor igual"  => " <= ",;
                                                       "Contenga"     => " $ " }
 
-	METHOD New()
+   METHOD New()
    METHOD Init( oSender )
+   METHOD End()                              
 
    METHOD AddFilter()                        INLINE ( ::oFilterDialog:Dialog() )
    METHOD EditFilter( cFilterName )          INLINE ( ::oFilterDialog:Dialog( cFilterName ) ) 
@@ -71,24 +72,24 @@ CLASS TFilterCreator
    METHOD BuildFilter( aFilter )
    METHOD BuildExpresion( cExpresionFilter )
 
-	METHOD SetExpresion( bExpresion )	      INLINE ( ::bExpresionFilter := bExpresion )
-	METHOD GetExpresion()	                  INLINE ( ::bExpresionFilter )
+   METHOD SetExpresion( bExpresion )         INLINE ( ::bExpresionFilter := bExpresion )
+   METHOD GetExpresion()                     INLINE ( ::bExpresionFilter )
 
    METHOD SetTextExpresion( cExpresion )     INLINE ( ::cExpresionFilter := cExpresion )
    METHOD GetTextExpresion()                 INLINE ( ::cExpresionFilter )
 
    METHOD QuitExpresion()                    INLINE ( ::cExpresionFilter := "", ::bExpresionFilter := nil )
 
-	METHOD SetFields( aFieldStructure ) 
+   METHOD SetFields( aFieldStructure ) 
    METHOD SetDatabase( oDatabase )           
 
-	METHOD GetStructure() 					      INLINE ( ::aStructure )
+   METHOD GetStructure()                     INLINE ( ::aStructure )
 
    METHOD SetFilter( aFilter )               INLINE ( ::aFilter := aFilter )
 
-	METHOD GetDescriptions() 				      INLINE ( if( Empty( ::aDescriptions ), ( ::aDescriptions := GetSubArray( ::aStructure, posDescription ) ), ), ::aDescriptions ) 
-	METHOD GetFields() 						      INLINE ( if( Empty( ::aFields ), ( ::aFields := GetSubArray( ::aStructure, posField ) ), ), ::aFields )
-	METHOD GetTypes()							      INLINE ( if( Empty( ::aTypes ), ( ::aTypes := GetSubArray( ::aStructure, posType ) ), ), ::aTypes )
+   METHOD GetDescriptions()                  INLINE ( if( Empty( ::aDescriptions ), ( ::aDescriptions := GetSubArray( ::aStructure, posDescription ) ), ), ::aDescriptions ) 
+   METHOD GetFields()                        INLINE ( if( Empty( ::aFields ), ( ::aFields := GetSubArray( ::aStructure, posField ) ), ), ::aFields )
+   METHOD GetTypes()                         INLINE ( if( Empty( ::aTypes ), ( ::aTypes := GetSubArray( ::aStructure, posType ) ), ), ::aTypes )
 
    METHOD ScanStructure( cDescription, nPos )
 
@@ -105,7 +106,6 @@ CLASS TFilterCreator
 
    METHOD KillFilter()                       VIRTUAL
 
-   METHOD End()                              INLINE ( ::oFilterDatabase:CloseFiles() )
 
 END CLASS
 
@@ -135,6 +135,14 @@ METHOD Init( oSender ) CLASS TFilterCreator
    ::oFilterDatabase:OpenFiles()
 
    ::oFilterDialog      := TFilterDialog():New( Self )
+
+RETURN ( Self )
+
+//---------------------------------------------------------------------------//
+
+METHOD End() CLASS TFilterCreator
+
+   ::oFilterDatabase:End() 
 
 RETURN ( Self )
 
@@ -1118,7 +1126,7 @@ CLASS TFilterDatabase FROM TMant
    DATA  lAllUser                      INIT .t.
 
    METHOD New() 
-   METHOD End()                        INLINE ( ::CloseFiles() )
+   METHOD End()
 
    METHOD DefineFiles()
    METHOD OpenFiles( lExclusive )
@@ -1156,6 +1164,18 @@ RETURN ( Self )
 
 //---------------------------------------------------------------------------//
 
+METHOD End() CLASS TFilterDatabase
+
+   if !Empty( ::oDbf ) .and. ::oDbf:Used()
+      ::oDbf:End()
+   end if
+
+   ::oDbf      := nil
+
+RETURN ( Self )   
+
+//---------------------------------------------------------------------------//
+
 METHOD OpenFiles( lExclusive ) CLASS TFilterDatabase
 
    local lOpen          := .t.
@@ -1163,7 +1183,7 @@ METHOD OpenFiles( lExclusive ) CLASS TFilterDatabase
    local oBlock         
 
    DEFAULT lExclusive  := .f.
-   
+
    oBlock               := ErrorBlock( {| oError | ApoloBreak( oError ) } )   
    BEGIN SEQUENCE
 

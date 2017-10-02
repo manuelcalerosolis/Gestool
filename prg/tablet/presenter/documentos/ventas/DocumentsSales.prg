@@ -509,9 +509,8 @@ RETURN lValid
 
 METHOD ChangeRuta() CLASS DocumentsSales
 
-   local nOrdAnt           
    local cFilter
-   local cCliente          := ""
+   local cCliente          := space( RetNumCodCliEmp() )
 
    if !hhaskey( ::hOrdenRutas, alltrim( str( ::oViewEdit:oCbxRuta:nAt ) ) )
       RETURN ( cCliente )
@@ -535,33 +534,10 @@ METHOD ChangeRuta() CLASS DocumentsSales
       ::oViewEdit:getRuta:Refresh()
    end if
 
-   /*
-
-   else
-
-      ( D():Clientes( ::nView ) )->( ordsetfocus( "Cod" ) )
-      ( D():Clientes( ::nView ) )->( dbgotop() )
-
-      cCliente          := ( D():Clientes( ::nView ) )->Cod
-
-      if !empty( ::oViewEdit:getRuta )
-         ::oViewEdit:getRuta:cText( "1/1" )
-         ::oViewEdit:getRuta:Refresh()
-      end if
-   
-   end if   
-
-   */
-
-   if !empty( ::oViewEdit:getCodigoCliente )
+   if !empty( ::oViewEdit:getCodigoCliente ) 
       ::oViewEdit:getCodigoCliente:cText( cCliente )
       ::oViewEdit:getCodigoCliente:lValid()
    end if 
-
-   /*if !empty( ::oViewEdit:getCodigoDireccion )
-      ::oViewEdit:getCodigoDireccion:cText( space( 10 ) )
-      ::oViewEdit:getCodigoDireccion:lValid()
-   end if*/
 
 RETURN cCliente
 
@@ -1075,9 +1051,20 @@ RETURN ( self )
 
 METHOD runGridCustomer() CLASS DocumentsSales
 
+   local nOrdenAnterior
+   local nRecnoAnterior
+   local cFiltroAnterior
+
    if ::lZoomMode()
       RETURN ( self )
    end if
+
+   nRecnoAnterior    := ( D():Clientes( ::nView ) )->( recno() )
+   nOrdenAnterior    := ( D():Clientes( ::nView ) )->( ordsetfocus() )
+   cFiltroAnterior   := ( D():Clientes( ::nView ) )->( adsgetaof() )
+
+   ( D():Clientes( ::nView ) )->( adsclearaof() )
+   ( D():Clientes( ::nView ) )->( dbgotop() )
 
    ::oViewEdit:getCodigoCliente:Disable()
 
@@ -1094,6 +1081,10 @@ METHOD runGridCustomer() CLASS DocumentsSales
    end if
 
    ::oViewEdit:getCodigoCliente:Enable()
+
+   ( D():Clientes( ::nView ) )->( ordsetfocus( nOrdenAnterior ) )
+   ( D():Clientes( ::nView ) )->( adssetaof( cFiltroAnterior ) )
+   ( D():Clientes( ::nView ) )->( dbgoto( nRecnoAnterior ) )
 
 RETURN ( self )
 

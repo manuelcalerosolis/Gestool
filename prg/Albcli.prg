@@ -1935,6 +1935,10 @@ STATIC FUNCTION CloseFiles()
       oLinDetCamposExtra:End()
    end if
 
+   if !empty(oMailing)
+      oMailing:End()
+   end if 
+
    TComercio:end()
 
    D():DeleteView( nView )

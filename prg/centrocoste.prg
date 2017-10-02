@@ -88,22 +88,22 @@ Return ( Self )
 
 METHOD DefineFiles( cPath, cDriver )
 
-   	DEFAULT cPath        := ::cPath
-   	DEFAULT cDriver      := cDriver()
+   DEFAULT cPath        := ::cPath
+   DEFAULT cDriver      := cDriver()
 
-   	DEFINE DATABASE ::oDbf FILE "CCoste.Dbf" CLASS "CENTROCOSTE" PATH ( cPath ) VIA ( cDriver ) COMMENT "Centro de coste"
+   DEFINE DATABASE ::oDbf FILE "CCoste.Dbf" CLASS "CENTROCOSTE" PATH ( cPath ) VIA ( cDriver ) COMMENT "Centro de coste"
 
-      	FIELD NAME "cCodigo"   TYPE "C" LEN  9  DEC 0  COMMENT "Código"  				DEFAULT Space(  9 )  					  				         COLSIZE 80  OF ::oDbf
-      	FIELD NAME "cNombre"   TYPE "C" LEN 50  DEC 0  COMMENT "Nombre"  				DEFAULT Space( 50 )  					  				         COLSIZE 200 OF ::oDbf
-      	FIELD NAME "nVentas"   TYPE "N" LEN 15  DEC 6  COMMENT "Objetivo de Ventas"  						   PICTURE cPorDiv()	  ALIGN RIGHT  	COLSIZE 150 OF ::oDbf
-      	FIELD NAME "nCompras"  TYPE "N" LEN 15  DEC 6  COMMENT "Objetivo de compras"  						PICTURE cPirDiv()	  ALIGN RIGHT	   COLSIZE 150 OF ::oDbf
-         FIELD NAME "nTipoDoc"  TYPE "N" LEN  2  DEC 0  COMMENT "Tipo documento asociado"                HIDE  OF ::oDbf
-         FIELD NAME "cCodDoc"   TYPE "C" LEN 30  DEC 0  COMMENT "Documento asociado"                     HIDE  OF ::oDbf
-   
-      	INDEX TO "CCoste.CDX" TAG "cCodigo" ON "cCodigo" COMMENT "Código" NODELETED OF ::oDbf
-      	INDEX TO "CCoste.CDX" TAG "cNombre" ON "cNombre" COMMENT "Nombre" NODELETED OF ::oDbf
+   	FIELD NAME "cCodigo"   TYPE "C" LEN  9  DEC 0  COMMENT "Código"  				DEFAULT Space(  9 )  					  				         COLSIZE 80  OF ::oDbf
+   	FIELD NAME "cNombre"   TYPE "C" LEN 50  DEC 0  COMMENT "Nombre"  				DEFAULT Space( 50 )  					  				         COLSIZE 200 OF ::oDbf
+   	FIELD NAME "nVentas"   TYPE "N" LEN 15  DEC 6  COMMENT "Objetivo de Ventas"  						   PICTURE cPorDiv()	  ALIGN RIGHT  	COLSIZE 150 OF ::oDbf
+   	FIELD NAME "nCompras"  TYPE "N" LEN 15  DEC 6  COMMENT "Objetivo de compras"  						PICTURE cPirDiv()	  ALIGN RIGHT	   COLSIZE 150 OF ::oDbf
+      FIELD NAME "nTipoDoc"  TYPE "N" LEN  2  DEC 0  COMMENT "Tipo documento asociado"                HIDE  OF ::oDbf
+      FIELD NAME "cCodDoc"   TYPE "C" LEN 30  DEC 0  COMMENT "Documento asociado"                     HIDE  OF ::oDbf
 
-   	END DATABASE ::oDbf
+   	INDEX TO "CCoste.CDX" TAG "cCodigo" ON "cCodigo" COMMENT "Código" NODELETED OF ::oDbf
+   	INDEX TO "CCoste.CDX" TAG "cNombre" ON "cNombre" COMMENT "Nombre" NODELETED OF ::oDbf
+
+   END DATABASE ::oDbf
 
 RETURN ( ::oDbf )
 
@@ -111,72 +111,72 @@ RETURN ( ::oDbf )
 
 METHOD Resource( nMode ) 
 
-   	local oDlg
-   	local oGetCodigo
-      local oBmp
+	local oDlg
+	local oGetCodigo
+   local oBmp
 
-      ::loadValues()
+   ::loadValues()
 
-   	DEFINE DIALOG oDlg RESOURCE "CentroCoste" TITLE LblTitle( nMode ) + "centro de coste"
+	DEFINE DIALOG oDlg RESOURCE "CentroCoste" TITLE LblTitle( nMode ) + "centro de coste"
 
-         REDEFINE BITMAP oBmp ;
-            RESOURCE "gc_folder_money_48" ;
-            ID       800 ;
-            TRANSPARENT ;
-            OF       oDlg ;
+      REDEFINE BITMAP oBmp ;
+         RESOURCE "gc_folder_money_48" ;
+         ID       800 ;
+         TRANSPARENT ;
+         OF       oDlg ;
 
-      	REDEFINE GET oGetCodigo ;
-            VAR      ::oDbf:cCodigo ;
-            ID 		100 ;
-            WHEN     ( nMode == APPD_MODE ) ;
-            PICTURE 	"@!" ;
-            OF 		oDlg
+   	REDEFINE GET oGetCodigo ;
+         VAR      ::oDbf:cCodigo ;
+         ID 		100 ;
+         WHEN     ( nMode == APPD_MODE ) ;
+         PICTURE 	"@!" ;
+         OF 		oDlg
 
-      	REDEFINE GET ::oDbf:cNombre ;
-            ID 		110 ;
-            WHEN     ( nMode != ZOOM_MODE ) ;
-            OF 		oDlg
+   	REDEFINE GET ::oDbf:cNombre ;
+         ID 		110 ;
+         WHEN     ( nMode != ZOOM_MODE ) ;
+         OF 		oDlg
 
-         REDEFINE GET ::oDbf:nVentas ;
-            ID 		120 ;
-            WHEN     ( nMode != ZOOM_MODE ) ;
-            PICTURE  ( cPorDiv() );
-            OF 		oDlg
+      REDEFINE GET ::oDbf:nVentas ;
+         ID 		120 ;
+         WHEN     ( nMode != ZOOM_MODE ) ;
+         PICTURE  ( cPorDiv() );
+         OF 		oDlg
 
-         REDEFINE GET ::oDbf:nCompras ;
-            ID 		130 ;
-            WHEN     ( nMode != ZOOM_MODE ) ; 
-            PICTURE  ( cPirDiv() );
-            OF 		oDlg
+      REDEFINE GET ::oDbf:nCompras ;
+         ID 		130 ;
+         WHEN     ( nMode != ZOOM_MODE ) ; 
+         PICTURE  ( cPirDiv() );
+         OF 		oDlg
 
-         REDEFINE COMBOBOX ::oTipo ;
-            VAR      ::cTipo ;
-            ITEMS    ::aTipo ;
-            ID       140 ;
-            WHEN     ( nMode != ZOOM_MODE ) ; 
-            OF       oDlg
+      REDEFINE COMBOBOX ::oTipo ;
+         VAR      ::cTipo ;
+         ITEMS    ::aTipo ;
+         ID       140 ;
+         WHEN     ( nMode != ZOOM_MODE ) ; 
+         OF       oDlg
 
-            ::oTipo:bChange   := {|| ::clearGet(), ::loadGet() }
+         ::oTipo:bChange   := {|| ::clearGet(), ::loadGet() }
 
-         REDEFINE GET ::oGetDocument ;
-            VAR      ::cGetDocument ;
-            ID       150 ;
-            IDTEXT   160 ;
-            BITMAP   "LUPA" ;
-            WHEN     ( nMode != ZOOM_MODE ) ; 
-            OF       oDlg
+      REDEFINE GET ::oGetDocument ;
+         VAR      ::cGetDocument ;
+         ID       150 ;
+         IDTEXT   160 ;
+         BITMAP   "LUPA" ;
+         WHEN     ( nMode != ZOOM_MODE ) ; 
+         OF       oDlg
 
-      	REDEFINE BUTTON ;
-            ID       IDOK ;
-            OF 		oDlg ;
-         	WHEN     (  nMode != ZOOM_MODE ) ;
-         	ACTION   (  ::lPreSave( oGetCodigo, oDlg, nMode ) )
+   	REDEFINE BUTTON ;
+         ID       IDOK ;
+         OF 		oDlg ;
+      	WHEN     (  nMode != ZOOM_MODE ) ;
+      	ACTION   (  ::lPreSave( oGetCodigo, oDlg, nMode ) )
 
-      	REDEFINE BUTTON ;
-            ID       IDCANCEL ;
-            OF 		oDlg ;
-            CANCEL ;
-            ACTION 	( oDlg:end() )
+   	REDEFINE BUTTON ;
+         ID       IDCANCEL ;
+         OF 		oDlg ;
+         CANCEL ;
+         ACTION 	( oDlg:end() )
 
    	if nMode != ZOOM_MODE
       	oDlg:AddFastKey( VK_F5, {|| ::lPreSave( oGetCodigo, oDlg, nMode ) } )

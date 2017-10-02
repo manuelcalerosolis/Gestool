@@ -226,12 +226,6 @@ METHOD keyDown( nKey, nFlags )
          ::oController:Delete( ::getBrowse():aSelected )
       case nKey == VK_F5
          ::RefreshRowSet()
-      // case nKey == VK_F9
-      //    ::PutOriginal()
-      // case nKey == VK_F2
-      //    ::NextTabOption()
-      // case nKey == VK_F3
-      //    ::PrevTabOption()
    end case
 
 RETURN ( 0 )

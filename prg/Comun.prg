@@ -371,7 +371,7 @@ Static FUNCTION StdKey( nKey )
       case nKey == 40 .and. GetKeyState( VK_CONTROL ) // Ctrl + Up
          PriorEmpresa()
       case nKey == 48 .and. GetKeyState( VK_CONTROL ) // Ctrl + 0
-         dbDialog()
+         TDataCenter():GetAllTables( "Tables" )
    end case
 
 RETURN Nil

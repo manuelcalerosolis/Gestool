@@ -1211,6 +1211,10 @@ STATIC FUNCTION CloseFiles()
       oCentroCoste:End()
    end if
 
+   if !empty(oMailing)
+      oMailing:end()
+   end if 
+
    TComercio:end()
 
    D():DeleteView( nView )

@@ -2233,6 +2233,10 @@ STATIC FUNCTION CloseFiles( lDestroy )
       oDetCamposExtra:End()
    end if
 
+   if !empty(oMailing)
+      oMailing:end()
+   end if 
+
    CodigosPostales():GetInstance():CloseFiles()
 
    dbfProvee         := nil

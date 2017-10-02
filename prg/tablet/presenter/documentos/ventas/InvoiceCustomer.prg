@@ -89,7 +89,9 @@ METHOD Create( nView ) CLASS InvoiceCustomer
    // Areas--------------------------------------------------------------------
 
    ::setSentenceTable( runScript( "FacturasClientes\SQLOpen.prg" ) )
+
    ::setDataTable( "FacCliT" )
+   
    ::setDataTableLine( "FacCliL" )
 
 Return ( self )
@@ -147,7 +149,9 @@ METHOD New() CLASS InvoiceCustomer
    // Areas--------------------------------------------------------------------
 
    ::setSentenceTable( runScript( "FacturasClientes\SQLOpen.prg" )  )
+   
    ::setDataTable( "FacCliT" )
+   
    ::setDataTableLine( "FacCliL" )
 
 Return ( self )
@@ -308,7 +312,6 @@ METHOD recalculateCacheStock() CLASS InvoiceCustomer
 Return ( self )
 
 //---------------------------------------------------------------------------//
-
 
 METHOD onPreEditDocumento() CLASS InvoiceCustomer
 

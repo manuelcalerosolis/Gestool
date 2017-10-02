@@ -13,6 +13,7 @@ CLASS TGenMailingDatabase FROM TGenMailing
    DATA oBntQuitFilter
 
    METHOD New()
+   METHOD End()
 
    METHOD databaseDialog()
 
@@ -23,7 +24,6 @@ CLASS TGenMailingDatabase FROM TGenMailing
    METHOD buildPageDatabase( oDlg )
    METHOD columnPageDatabase( oDlg )   
    METHOD selectColumn( oCombo )
-   METHOD freeResources() 
 
    METHOD SelMailing()
       METHOD SelAllMailing( lValue )
@@ -235,9 +235,7 @@ Return ( ::aMailingList )
 
 //--------------------------------------------------------------------------//
 
-METHOD freeResources() CLASS TGenMailingDatabase
-
-   ::Super:freeResources()
+METHOD End() CLASS TGenMailingDatabase
 
    if !empty(::oBmpDatabase)
       ::oBmpDatabase:end()
