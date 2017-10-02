@@ -806,7 +806,7 @@ METHOD loadArticulo( cCodArt, nMode, lSilenceMode ) CLASS TDetMovimientos
             cCodArt        := uGetCodigo( hHas128, "01" )
          end if
          
-         cLote             := uGetCodigo( hHas128, "10" )
+         cLote             := Upper( uGetCodigo( hHas128, "10" ) )
          
          dFechaCaducidad   := uGetCodigo( hHas128, "15" )     
          
@@ -906,19 +906,12 @@ METHOD loadArticulo( cCodArt, nMode, lSilenceMode ) CLASS TDetMovimientos
 
          ::oDbfVir:lLote         := ::oParent:oArt:lLote
 
-<<<<<<< HEAD
-         if Empty( cLote )
-            ::oDbfVir:cLote      := ::oParent:oArt:cLote
-=======
          if Empty( ::oDbfVir:cLote )
-
             if Empty( cLote )
                ::oDbfVir:cLote         := ::oParent:oArt:cLote
             else
                ::oDbfVir:cLote         := cLote
             end if
-
->>>>>>> 8914276e1cd89cd089211629dc7f0f19816b18a3
          end if
 
          if ::oParent:oArt:lLote
