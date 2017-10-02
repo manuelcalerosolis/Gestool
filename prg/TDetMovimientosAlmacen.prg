@@ -806,7 +806,7 @@ METHOD loadArticulo( cCodArt, nMode, lSilenceMode ) CLASS TDetMovimientos
             cCodArt        := uGetCodigo( hHas128, "01" )
          end if
          
-         cLote             := uGetCodigo( hHas128, "10" )
+         cLote             := Upper( uGetCodigo( hHas128, "10" ) )
          
          dFechaCaducidad   := uGetCodigo( hHas128, "15" )     
          

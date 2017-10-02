@@ -10266,7 +10266,7 @@ STATIC FUNCTION LoaArt( cCodArt, aTmp, aGet, aTmpAlb, oStkAct, oSayPr1, oSayPr2,
                cCodArt        := uGetCodigo( hHas128, "01" )
             end if
 
-            cLote             := uGetCodigo( hHas128, "10" )
+            cLote             := Upper( uGetCodigo( hHas128, "10" ) )
 
             dFechaCaducidad   := uGetCodigo( hHas128, "15" )
 

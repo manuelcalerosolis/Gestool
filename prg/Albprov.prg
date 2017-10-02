@@ -4548,7 +4548,7 @@ Static FUNCTION LoaArt( cCodArt, aGet, aTmp, aTmpAlb, oFld, oSayPr1, oSayPr2, oS
          hHas128              := ReadHashCodeGS128( cCodArt )
          if !Empty( hHas128 )
             cCodArt           := uGetCodigo( hHas128, "01" )
-            cLote             := uGetCodigo( hHas128, "10" )
+            cLote             := Upper( uGetCodigo( hHas128, "10" ) )
             dFechaCaducidad   := uGetCodigo( hHas128, "15" )
          end if 
 
