@@ -5592,7 +5592,7 @@ Static Function EdtEst( aTmp, aGet, dbf, oBrw, bWhen, bValid, nMode, aTmpFac )
             VAR    aTmp[ (D():FacturasClientesSituaciones( nView ))->(fieldpos("cSitua")) ] ;
             ID       200 ;
             WHEN     ( nMode != ZOOM_MODE );
-            ITEMS    ( SituacionesModel():arraySituaciones() ) ;
+            ITEMS    ( SituacionesRepository():getNombres() ) ;
             OF       oDlg
 
         REDEFINE GET aGet[ (D():FacturasClientesSituaciones( nView ))->(fieldpos("dFecSit")) ] ;

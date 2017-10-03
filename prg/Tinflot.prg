@@ -17,8 +17,6 @@ CLASS TInfLot FROM TInfGen
    DATA  oFacCliL    AS OBJECT
    DATA  oAlbCliT    AS OBJECT
    DATA  oAlbCliL    AS OBJECT
-   DATA  oDepAgeT    AS OBJECT
-   DATA  oDepAgeL    AS OBJECT
 
    METHOD Create()
 
@@ -44,11 +42,6 @@ METHOD OpenFiles() CLASS TInfLot
    local oBlock   := ErrorBlock( {| oError | ApoloBreak( oError ) } )
 
    BEGIN SEQUENCE
-
-   DATABASE NEW ::oDepAgeT PATH ( cPatEmp() ) FILE "DEPAGET.DBF" VIA ( cDriver() ) SHARED INDEX "DEPAGET.CDX"
-
-   DATABASE NEW ::oDepAgeL PATH ( cPatEmp() ) FILE "DEPAGEL.DBF" VIA ( cDriver() ) SHARED INDEX "DEPAGEL.CDX"
-   ::oDepAgeL:OrdSetFocus( "CREF" )
 
    ::oFacCliT := TDataCenter():oFacCliT()
 
@@ -76,12 +69,6 @@ RETURN ( lOpen )
 
 METHOD CloseFiles() CLASS TInfLot
 
-   if !Empty( ::oDepAgeT ) .and. ::oDepAgeT:Used()
-      ::oDepAgeT:End()
-   end if
-   if !Empty( ::oDepAgeL ) .and. ::oDepAgeL:Used()
-      ::oDepAgeL:End()
-   end if
    if !Empty( ::oFacCliT ) .and. ::oFacCliT:Used()
       ::oFacCliT:End()
    end if
@@ -95,8 +82,6 @@ METHOD CloseFiles() CLASS TInfLot
       ::oAlbCliL:End()
    end if
 
-   ::oDepAgeT := nil
-   ::oDepAgeL := nil
    ::oFacCliT := nil
    ::oFacCliL := nil
    ::oAlbCliT := nil
