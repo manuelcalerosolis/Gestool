@@ -1475,22 +1475,22 @@ METHOD Save() CLASS TDetMovimientos
 
          ::oParent:TComercio:appendProductsToUpadateStocks( ::oDbfVir:cRefMov, ::oParent:nView )
 
-         if ( ::oParent:lTargetCalculate ) 
-
-            ::Asigna()
-
-            ::oDbfVir:fieldPutByName( "lSelDoc", .f. )
-            ::oDbfVir:fieldPutByName( "nUndMov", ( nTotNMovAlm( ::oDbfVir ) - nTotNMovOld( ::oDbfVir ) ) / NotCero( ::oDbfVir:nCajMov ) )
-
-            ::oDbf:AppendFromObject( ::oDbfVir )
-
-         else
+//         if ( ::oParent:lTargetCalculate ) 
+//
+//            ::Asigna()
+//
+//            ::oDbfVir:fieldPutByName( "lSelDoc", .f. )
+//            ::oDbfVir:fieldPutByName( "nUndMov", ( nTotNMovAlm( ::oDbfVir ) - nTotNMovOld( ::oDbfVir ) ) / NotCero( ::oDbfVir:nCajMov ) )
+//
+//            ::oDbf:AppendFromObject( ::oDbfVir )
+//
+//         else
             
             ::Asigna()
 
             ::oDbf:AppendFromObject( ::oDbfVir )
 
-         end if
+//         end if
 
          ::oDbfVir:Skip()
 

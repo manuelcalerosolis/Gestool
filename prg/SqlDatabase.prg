@@ -364,6 +364,8 @@ METHOD addModels()
 
    aadd( ::aModels, SQLMovimientosAlmacenModel():New() )
 
+   aadd( ::aModels, SQLMovimientosAlmacenLineasModel():New() )
+
 RETURN ( ::aModels )
 
 //----------------------------------------------------------------------------//

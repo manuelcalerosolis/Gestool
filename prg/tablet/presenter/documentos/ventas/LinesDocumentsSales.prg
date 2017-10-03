@@ -566,18 +566,29 @@ RETURN ( self )
 
 METHOD runGridLote() CLASS LinesDocumentsSales
 
+   local aArrayData
+   local nArrayData
+
    if empty( ::oSender:oProductStock:oGridProductStock )
       RETURN ( Self )
    end if
 
    ::oViewEditDetail:oGetLote:Disable()
 
-   ::oSender:oProductStock:setEnviroment( ::oViewEditDetail:oGetArticulo:varGet, ::oViewEditDetail:oGetAlmacen:varGet )
-   ::oSender:oProductStock:oGridProductStock:setSubTitle( ::oViewEditDetail:oGetArticulo:varGet, ::oViewEditDetail:oGetAlmacen:varGet )
+   ::oSender:oProductStock:setEnviroment( ::oViewEditDetail:oGetArticulo:varGet(), ::oViewEditDetail:oGetAlmacen:varGet() )
+   ::oSender:oProductStock:oGridProductStock:setSubTitle( ::oViewEditDetail:oGetArticulo:varGet(), ::oViewEditDetail:oGetAlmacen:varGet() )
    ::oSender:oProductStock:oGridProductStock:showView()
 
-   if ::oSender:oProductStock:oGridProductStock:isEndOk()
-      ::oViewEditDetail:SetGetValue( ::oSender:oProductStock:oGridProductStock:oBrowse:aArrayData[ ::oSender:oProductStock:oGridProductStock:oBrowse:nArrayAt ]:cLote, "Lote" )
+   if ::oSender:oProductStock:oGridProductStock:isEndOk() .and. ;
+      !empty( ::oSender:oProductStock:oGridProductStock:oBrowse )
+
+      aArrayData     := ::oSender:oProductStock:oGridProductStock:oBrowse:aArrayData
+      nArrayData     := ::oSender:oProductStock:oGridProductStock:oBrowse:nArrayAt
+
+      if nArrayData > 0 .and. nArrayData <= len( aArrayData ) 
+         ::oViewEditDetail:SetGetValue( aArrayData[ nArrayData ]:cLote, "Lote" )
+      end if
+
    end if
 
    ::cargaArticulo()
@@ -585,7 +596,7 @@ METHOD runGridLote() CLASS LinesDocumentsSales
    ::recalcularTotal()
 
    ::oViewEditDetail:oGetLote:Enable()
-   ::oViewEditDetail:oGetLote:setFocus()
+   ::oViewEditDetail:oGetLote:SetFocus()
    ::oViewEditDetail:oGetLote:Refresh()
 
 RETURN ( self )

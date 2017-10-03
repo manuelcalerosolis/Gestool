@@ -22,12 +22,6 @@ END CLASS
 
 METHOD New()
 
-   hset( ::hColumns, "id",                {  "create"    => "INTEGER PRIMARY KEY AUTO_INCREMENT"      ,;
-                                             "text"      => "Identificador"                           ,;
-                                             "header"    => "Id"                                      ,;
-                                             "visible"   => .t.                                       ,;
-                                             "width"     => 40 }                                      )   
-
    ::CommunFields()
 
    hset( ::hColumns, "numero",            {  "create"    => "INT(9)"                                  ,;
@@ -55,7 +49,7 @@ METHOD New()
                                              "field"     => "dFecRem"                                 ,;
                                              "visible"   => .t.                                       ,;
                                              "type"      => "T"                                       ,;
-                                             "picture"   => "@T"                                      ,;
+                                             "picture"   => "@DT"                                     ,;
                                              "default"   => {|| hb_datetime() }                       ,;
                                              "headAlign" => AL_LEFT                                   ,; 
                                              "dataAlign" => AL_LEFT                                   ,; 
@@ -98,7 +92,7 @@ METHOD cTextoMovimiento()
    nPosition         := max( nPosition, 1 )
    nPosition         := min( nPosition, len( ::aTextoMovimiento ) )
 
-RETURN ( ::aTextoMovimiento[ nPosition ] ) // [ nPosition ] ) 
+RETURN ( ::aTextoMovimiento[ nPosition ] ) 
 
 //---------------------------------------------------------------------------//
 

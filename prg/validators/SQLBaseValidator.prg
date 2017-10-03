@@ -93,6 +93,8 @@ METHOD Process( uValue )
    local oError
    local lValidate   := .f.
 
+   default uValue    := ::uColumnBuffer  
+
    try 
 
       lValidate      := Self:&( ::cCurrentMethod )( uValue )

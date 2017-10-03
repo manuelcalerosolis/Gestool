@@ -2735,9 +2735,9 @@ RETURN cTemp
 
 FUNCTION CommitTransaction()
 
-   if lAds() .or. lAIS()
-      RETURN ( AdsCommitTransaction() )
-   end if
+   // if lAds() .or. lAIS()
+   //    RETURN ( AdsCommitTransaction() )
+   // end if
 
    dbCommitAll()
 
@@ -2747,9 +2747,9 @@ RETURN ( .t. )
 
 FUNCTION BeginTransaction()
 
-   if lAds() .or. lAIS()
-      RETURN ( AdsBeginTransaction() )
-   end if
+   // if lAds() .or. lAIS()
+   //    RETURN ( AdsBeginTransaction() )
+   // end if
 
 RETURN ( .t. )
 
@@ -2757,9 +2757,9 @@ RETURN ( .t. )
 
 FUNCTION RollBackTransaction()
 
-   if lAds() .or. lAIS()
-      RETURN ( AdsRollback() )
-   end if
+   // if lAds() .or. lAIS()
+   //    RETURN ( AdsRollback() )
+   // end if
 
 RETURN ( .t. )
 

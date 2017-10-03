@@ -5,6 +5,8 @@
 
 CLASS MovimientosAlmacenController FROM SQLBaseController
 
+   DATA oLineasController
+
    METHOD   New()
 
 END CLASS
@@ -23,7 +25,9 @@ METHOD New()
 
    ::oDialogView           := MovimientosAlmacenView():New( self )
 
-//   ::oValidator            := SituacionesValidator():New( self )
+   ::oValidator            := MovimientosAlmacenValidator():New( self )
+
+   ::oLineasController     := MovimientosAlmacenLineasController():New( self )
 
    ::Super:New()
 

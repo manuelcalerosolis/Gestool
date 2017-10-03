@@ -8,6 +8,8 @@ CLASS SQLBaseController
 
    CLASSDATA oInstance 
 
+   DATA oSenderController
+
    DATA ControllerContainer
 
    DATA oModel
@@ -66,18 +68,18 @@ CLASS SQLBaseController
    METHOD ActivateNavigatorView()
    METHOD ActivateSelectorView()
 
-   METHOD   isUserAccess()                            INLINE ( nAnd( ::nLevel, ACC_ACCE ) == 0 )
-   METHOD   notUserAccess()                           INLINE ( !::isUserAccess() )
-   METHOD   isUserAppend()                            INLINE ( nAnd( ::nLevel, ACC_APPD ) != 0 )
-   METHOD   notUserAppend()                           INLINE ( !::isUserAppend() )
-   METHOD   isUserDuplicate()                         INLINE ( nAnd( ::nLevel, ACC_APPD ) != 0 )
-   METHOD   notUserDuplicate()                        INLINE ( !::isUserDuplicate() )
-   METHOD   isUserEdit()                              INLINE ( nAnd( ::nLevel, ACC_EDIT ) != 0 )
-   METHOD   notUserEdit()                             INLINE ( !::isUserEdit() )
-   METHOD   isUserDelete()                            INLINE ( nAnd( ::nLevel, ACC_DELE ) != 0 )
-   METHOD   notUserDelete()                           INLINE ( !::isUserDelete() )
-   METHOD   isUserZoom()                              INLINE ( nAnd( ::nLevel, ACC_ZOOM ) != 0 )
-   METHOD   notUserZoom()                             INLINE ( !::isUserZoom() )
+   METHOD isUserAccess()                              INLINE ( nAnd( ::nLevel, ACC_ACCE ) == 0 )
+   METHOD notUserAccess()                             INLINE ( !::isUserAccess() )
+   METHOD isUserAppend()                              INLINE ( nAnd( ::nLevel, ACC_APPD ) != 0 )
+   METHOD notUserAppend()                             INLINE ( !::isUserAppend() )
+   METHOD isUserDuplicate()                           INLINE ( nAnd( ::nLevel, ACC_APPD ) != 0 )
+   METHOD notUserDuplicate()                          INLINE ( !::isUserDuplicate() )
+   METHOD isUserEdit()                                INLINE ( nAnd( ::nLevel, ACC_EDIT ) != 0 )
+   METHOD notUserEdit()                               INLINE ( !::isUserEdit() )
+   METHOD isUserDelete()                              INLINE ( nAnd( ::nLevel, ACC_DELE ) != 0 )
+   METHOD notUserDelete()                             INLINE ( !::isUserDelete() )
+   METHOD isUserZoom()                                INLINE ( nAnd( ::nLevel, ACC_ZOOM ) != 0 )
+   METHOD notUserZoom()                               INLINE ( !::isUserZoom() )
 
    METHOD   setMode( nMode )                          INLINE ( ::nMode := nMode )
    METHOD   getMode()                                 INLINE ( ::nMode )
@@ -151,7 +153,9 @@ END CLASS
 
 //---------------------------------------------------------------------------//
 
-METHOD New()
+METHOD New( oSenderController )
+
+   ::oSenderController                                := oSenderController
 
    ::ControllerContainer                              := ControllerContainer():New()
 

@@ -65,7 +65,7 @@ METHOD Dialog()
 
       REDEFINE GET   ::oController:oModel:hBuffer[ "usuario" ] ;
          ID          220 ;
-         PICTURE     "XXX"
+         PICTURE     "XXX" ;
          WHEN        ( .f. ) ;
          OF          oDlg
 
@@ -86,7 +86,7 @@ METHOD Dialog()
          BITMAP      "Lupa" ;
          OF          oDlg
 
-      oGetAlmacenOrigen:bValid   := {|| ::stampAlmacenNombre( oGetAlmacenOrigen ) }
+      oGetAlmacenOrigen:bValid   := {|| if( ::oController:validate( "almacen_origen" ), ::stampAlmacenNombre( oGetAlmacenOrigen ), .f. ) }
       oGetAlmacenOrigen:bHelp    := {|| brwAlmacen( oGetAlmacenOrigen, oGetAlmacenOrigen:oHelpText ) }
 
       REDEFINE GET   oGetAlmacenDestino ;
@@ -99,7 +99,7 @@ METHOD Dialog()
          BITMAP      "Lupa" ;
          OF          oDlg
 
-      oGetAlmacenDestino:bValid   := {|| ::stampAlmacenNombre( oGetAlmacenDestino ) }
+      oGetAlmacenDestino:bValid   := {|| if( ::oController:validate( "almacen_destino" ), ::stampAlmacenNombre( oGetAlmacenDestino ), .f. ) }
       oGetAlmacenDestino:bHelp    := {|| brwAlmacen( oGetAlmacenDestino, oGetAlmacenDestino:oHelpText ) }
 
       REDEFINE GET   oGetGrupoMovimiento ;

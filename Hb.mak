@@ -345,7 +345,9 @@ StocksModel.prg 																\
 SituacionesController.prg       											\
 MovimientosAlmacenView.prg													\
 MovimientosAlmacenController.prg 										\
+MovimientosAlmacenLineasController.prg 								\
 SQLMovimientosAlmacenModel.prg 											\
+SQLMovimientosAlmacenLineasModel.prg 									\
 AlmacenesModel.prg 															\
 GruposMovimientosModel.prg 												\
 ControllerContainer.prg 													\
@@ -427,6 +429,7 @@ TiposVentasValidator.prg 													\
 TiposNotasValidator.prg 													\
 EtiquetasValidator.prg 														\
 SituacionesValidator.prg 													\
+MovimientosAlmacenValidator.prg 											\
 SQLBaseRepository.prg 														\
 TiposImpresorasRepository.prg 											\
 TiposVentasRepository.prg 													\
@@ -915,7 +918,9 @@ RectificativasClientesLineasModel.obj 						\
 StocksModel.obj 													\
 MovimientosAlmacenView.obj										\
 MovimientosAlmacenController.obj 							\
+MovimientosAlmacenLineasController.obj 					\
 SQLMovimientosAlmacenModel.obj 								\
+SQLMovimientosAlmacenLineasModel.obj 						\
 ControllerContainer.obj 										\
 GrpPrv.obj              									\
 InfCategoria.obj        									\
@@ -993,6 +998,7 @@ TiposVentasValidator.obj 												\
 TiposNotasValidator.obj 												\
 EtiquetasValidator.obj 													\
 SituacionesValidator.obj 												\
+MovimientosAlmacenValidator.obj 										\
 SQLBaseRepository.obj 													\
 TiposImpresorasRepository.obj 										\
 ConfiguracionEmpresasRepository.obj 								\
@@ -1453,7 +1459,9 @@ $(OBJ)\StocksModel.obj 												+
 $(OBJ)\SituacionesController.obj          					+
 $(OBJ)\MovimientosAlmacenView.obj 								+
 $(OBJ)\MovimientosAlmacenController.obj 						+
+$(OBJ)\MovimientosAlmacenLineasController.obj				+
 $(OBJ)\SQLMovimientosAlmacenModel.obj 							+
+$(OBJ)\SQLMovimientosAlmacenLineasModel.obj 					+
 $(OBJ)\ControllerContainer.obj          						+
 $(OBJ)\GrpPrv.obj               									+
 $(OBJ)\InfCategoria.obj         									+
@@ -1532,6 +1540,7 @@ $(OBJ)\TiposVentasValidator.obj									+
 $(OBJ)\TiposNotasValidator.obj									+
 $(OBJ)\EtiquetasValidator.obj										+
 $(OBJ)\SituacionesValidator.obj									+
+$(OBJ)\MovimientosAlmacenValidator.obj							+
 $(OBJ)\SQLBaseRepository.obj 										+
 $(OBJ)\TiposImpresorasRepository.obj							+
 $(OBJ)\ConfiguracionEmpresasRepository.obj					+
