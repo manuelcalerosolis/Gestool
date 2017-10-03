@@ -54,6 +54,8 @@ CLASS SQLBaseController
 
    METHOD endModel()                                  INLINE ( if( !empty( ::oModel ), ::oModel:end(), ) )
 
+   METHOD getSenderController()                       INLINE ( ::oSenderController )    
+
    METHOD getDialogView()                             INLINE ( ::oDialogView )
 
    METHOD getRepository()                             INLINE ( ::oRepository )

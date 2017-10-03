@@ -6,15 +6,15 @@
 
 CLASS MovimientosAlmacenView FROM SQLBaseView
 
-   METHOD   New()
+   METHOD New()
 
-   METHOD   Dialog()
+   METHOD Dialog()
 
-   METHOD   stampAlmacenNombre( oGetAlmacenOrigen )
+   METHOD stampAlmacenNombre( oGetAlmacenOrigen )
 
-   METHOD   stampGrupoMovimientoNombre( oGetGrupoMovimiento )
+   METHOD stampGrupoMovimientoNombre( oGetGrupoMovimiento )
 
-   METHOD   changeTipoMovimiento( oRadioTipoMovimento, oGetAlmacenOrigen )
+   METHOD changeTipoMovimiento( oRadioTipoMovimento, oGetAlmacenOrigen )
 
 END CLASS
 
@@ -114,11 +114,19 @@ METHOD Dialog()
       oGetGrupoMovimiento:bValid   := {|| ::stampGrupoMovimientoNombre( oGetGrupoMovimiento ) }
       oGetGrupoMovimiento:bHelp    := {|| browseGruposMovimientos( oGetGrupoMovimiento, oGetGrupoMovimiento:oHelpText ) }
 
+
       REDEFINE BUTTON ;
          ID          IDOK ;
          OF          oDlg ;
          WHEN        ( ::oController:isNotZoomMode() ) ;
          ACTION      ( oDlg:end( IDOK ) )
+
+
+      REDEFINE BUTTON ;
+         ID          500 ;
+         OF          oDlg ;
+         WHEN        ( ::oController:isNotZoomMode() ) ;
+         ACTION      ( ::oController:oLineasController:Append() )
 
       REDEFINE BUTTON ;
          ID          IDCANCEL ;

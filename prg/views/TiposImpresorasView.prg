@@ -30,17 +30,17 @@ METHOD Dialog()
    DEFINE DIALOG oDlg RESOURCE "TIPO_GENERAL" TITLE ::lblTitle() + "tipo de impresora"
 
    REDEFINE GET   oGetNombre ;
-      VAR         ::oController:oModel:hBuffer[ "nombre" ] ;
+      VAR         ::oController:oModel:hBuffer[ "nombre" ] ; 
       ID          100 ;
       MEMO ;
-      WHEN        ( !::oController:isZoomMode() ) ;
+      WHEN        ( ::oController:isNotZoomMode() ) ;
       VALID       ( ::oController:validate( "nombre" ) ) ;
       OF          oDlg
 
    REDEFINE BUTTON oBtnOk ;
       ID          IDOK ;
       OF          oDlg ;
-      WHEN        ( !::oController:isZoomMode() ) ;
+      WHEN        ( ::oController:isNotZoomMode() ) ;
       ACTION      ( oDlg:end( IDOK ) )
 
    REDEFINE BUTTON ;
@@ -51,7 +51,9 @@ METHOD Dialog()
 
    // Teclas rpidas-----------------------------------------------------------
 
-   oDlg:AddFastKey( VK_F5, {|| if( validateDialog( oDlg ), oBtnOk:Click(), ) } )
+   if ::oController:isNotZoomMode() 
+      oDlg:AddFastKey( VK_F5, {|| if( validateDialog( oDlg ), oBtnOk:Click(), ) } )
+   end if 
 
    // evento bstart-----------------------------------------------------------
 

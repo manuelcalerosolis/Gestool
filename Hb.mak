@@ -344,6 +344,7 @@ RectificativasClientesLineasModel.prg 									\
 StocksModel.prg 																\
 SituacionesController.prg       											\
 MovimientosAlmacenView.prg													\
+MovimientosAlmacenLineasView.prg											\
 MovimientosAlmacenController.prg 										\
 MovimientosAlmacenLineasController.prg 								\
 SQLMovimientosAlmacenModel.prg 											\
@@ -917,6 +918,7 @@ AlbaranesClientesLineasModel.obj 							\
 RectificativasClientesLineasModel.obj 						\
 StocksModel.obj 													\
 MovimientosAlmacenView.obj										\
+MovimientosAlmacenLineasView.obj								\
 MovimientosAlmacenController.obj 							\
 MovimientosAlmacenLineasController.obj 					\
 SQLMovimientosAlmacenModel.obj 								\
@@ -1458,6 +1460,7 @@ $(OBJ)\RectificativasClientesLineasModel.obj 				+
 $(OBJ)\StocksModel.obj 												+
 $(OBJ)\SituacionesController.obj          					+
 $(OBJ)\MovimientosAlmacenView.obj 								+
+$(OBJ)\MovimientosAlmacenLineasView.obj						+
 $(OBJ)\MovimientosAlmacenController.obj 						+
 $(OBJ)\MovimientosAlmacenLineasController.obj				+
 $(OBJ)\SQLMovimientosAlmacenModel.obj 							+
