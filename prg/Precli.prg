@@ -2709,7 +2709,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, cCodCli, cCodArt, nMode )
       REDEFINE COMBOBOX aGet[ _CSITUAC ] VAR aTmp[ _CSITUAC ] ;
          ID       218 ;
          WHEN     ( nMode != ZOOM_MODE ) ;
-         ITEMS    ( SituacionesModel():arraySituaciones() ) ;
+         ITEMS    ( SituacionesRepository():getNombres() ) ;
          OF       oFld:aDialogs[1]
 
       REDEFINE COMBOBOX oTipPre VAR cTipPre ;
@@ -4725,7 +4725,7 @@ Static Function EdtEst( aTmp, aGet, dbf, oBrw, bWhen, bValid, nMode, aTmpPre )
             VAR    aTmp[ (D():PresupuestosClientesSituaciones( nView ))->(fieldpos("cSitua")) ] ;
             ID       200 ;
             WHEN     ( nMode != ZOOM_MODE );
-            ITEMS    ( SituacionesModel():arraySituaciones() ) ;
+            ITEMS    ( SituacionesRepository():getNombres() ) ;
             OF       oDlg
 
          REDEFINE GET aGet[ (D():PresupuestosClientesSituaciones( nView ))->(fieldpos("dFecSit")) ] ;
