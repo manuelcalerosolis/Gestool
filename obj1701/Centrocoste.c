@@ -1,7 +1,7 @@
 /*
  * Harbour 3.2.0dev (r1307082134)
  * Borland C++ 5.8.2 (32-bit)
- * Generated C source from ".\.\Prg\Centrocoste.prg"
+ * Generated C source from ".\.\Prg\CentroCoste.prg"
  */
 
 #include "hbvmpub.h"
@@ -160,7 +160,7 @@ HB_INIT_SYMBOLS_BEGIN( hb_vm_SymbolInit_CENTROCOSTE )
 { "FW_GT", {HB_FS_PUBLIC}, {HB_FUNCNAME( FW_GT )}, NULL },
 { "ERRORSYS", {HB_FS_PUBLIC}, {HB_FUNCNAME( ERRORSYS )}, NULL },
 { "(_INITSTATICS00002)", {HB_FS_INITEXIT | HB_FS_LOCAL}, {hb_INITSTATICS}, NULL }
-HB_INIT_SYMBOLS_EX_END( hb_vm_SymbolInit_CENTROCOSTE, ".\\.\\Prg\\Centrocoste.prg", 0x0, 0x0003 )
+HB_INIT_SYMBOLS_EX_END( hb_vm_SymbolInit_CENTROCOSTE, ".\\.\\Prg\\CentroCoste.prg", 0x0, 0x0003 )
 
 #if defined( HB_PRAGMA_STARTUP )
    #pragma startup hb_vm_SymbolInit_CENTROCOSTE
