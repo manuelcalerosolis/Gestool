@@ -37,13 +37,9 @@ METHOD initAppendMode()
 
    local uuid              := hget( ::getSenderController():oModel:hBuffer, "uuid" )
 
-   msgalert( uuid, "uuid" )
-
-   msgalert( hb_valtoexp( ::oModel:hBuffer ), "oModel:hBuffer" )
-
-   hset( ::oModel:hBuffer, "parent_uuid", uuid )
-
-   msgalert( hget( ::oModel:hBuffer, "parent_uuid" ) )
+   if !empty( uuid )
+      hset( ::oModel:hBuffer, "parent_uuid", uuid )
+   end if 
 
 RETURN ( Self )
 

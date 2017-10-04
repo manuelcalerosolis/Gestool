@@ -19,9 +19,9 @@ CLASS SQLNavigatorView FROM SQLBrowseableView
 
    METHOD New( oController )
 
-   METHOD Activate()
-
    METHOD End()
+
+   METHOD Activate()
 
    // Facades------------------------------------------------------------------
 
@@ -50,7 +50,7 @@ CLASS SQLNavigatorView FROM SQLBrowseableView
 
    METHOD CreateTopWebBar()
 
-   // Splitters------------------------------------------------------------------
+   // Splitters----------------------------------------------------------------
 
    DATA oVerticalSplitter
    DATA oHorizontalSplitter
