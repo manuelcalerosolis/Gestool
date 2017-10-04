@@ -12,6 +12,7 @@ CLASS SQLBaseModel
    DATA oController
 
    DATA oRowSet
+
    DATA oStatement
 
    DATA cTableName
@@ -23,8 +24,7 @@ CLASS SQLBaseModel
 
    DATA cColumnOrientation
 
-   DATA cSQLSelect                                 
-   DATA cSQLInsert                                 
+   DATA cGeneralSelect                                 
    
    DATA cColumnOrder                  
    DATA cColumnKey                    
@@ -54,6 +54,8 @@ CLASS SQLBaseModel
    METHOD getHeaderFromColumn( cColumn )           INLINE ( ::getValueFromColumn( cColumn, "header" ) )
    METHOD getHeaderFromColumnOrder()               INLINE ( ::getValueFromColumn( ::cColumnOrder, "header" ) )
 
+   METHOD setSQLSelect( cSelect )                  INLINE ( ::cGeneralSelect := cSelect )
+
    // -------------------------------------------------------------------------
 
    METHOD isEmpresaColumn()                        INLINE ( hb_hhaskey( ::hColumns, "empresa" ) )
@@ -77,7 +79,7 @@ CLASS SQLBaseModel
    METHOD getWhereOrAnd( cSQLSelect )                 INLINE ( if( hb_at( "WHERE", cSQLSelect ) != 0, " AND", " WHERE" ) )
 
    METHOD getWhereEmpresa()                           
-   METHOD getWhereDeletedAt()
+   METHOD addWhereSentence()
 
    // Get edit value for xbrowse-----------------------------------------------
 
@@ -147,7 +149,7 @@ METHOD New( oController )
       ::cColumnOrder             := hGetKeyAt( ::hColumns, 1 )
    end if 
 
-   ::cSQLSelect                  := "SELECT * FROM " + ::getTableName()    
+   ::cGeneralSelect              := "SELECT * FROM " + ::getTableName()    
 
    ::cColumnOrientation          := "A"
 
@@ -190,9 +192,19 @@ RETURN ( ::hColumns )
 
 METHOD getGeneralSelect()
 
-   ::cSQLSelect            := ::getWhereEmpresa( ::cSQLSelect )
+   local cSQLSelect        := ::cGeneralSelect
 
-RETURN ( ::cSQLSelect )
+   cSQLSelect              := ::getWhereEmpresa( cSQLSelect )
+
+RETURN ( cSQLSelect )
+
+//---------------------------------------------------------------------------//
+
+METHOD addWhereSentence( cWhereSentence )
+
+   ::cGeneralSelect        += ::getWhereOrAnd( ::cGeneralSelect ) + cWhereSentence
+
+RETURN ( ::cGeneralSelect )
 
 //---------------------------------------------------------------------------//
 
@@ -203,18 +215,6 @@ METHOD getSelectSentence()
    cSQLSelect              := ::getSelectByColumn( cSQLSelect )
 
    cSQLSelect              := ::getSelectByOrder( cSQLSelect )
-
-RETURN ( cSQLSelect )
-
-//---------------------------------------------------------------------------//
-
-METHOD getWhereDeletedAt( cSQLSelect )
-
-   if !::isDeletedAtColumn()
-      RETURN ( cSQLSelect )
-   end if 
-
-   cSQLSelect     += ::getWhereOrAnd( cSQLSelect ) + " deleted_at is null" 
 
 RETURN ( cSQLSelect )
 
@@ -323,6 +323,8 @@ METHOD buildRowSet( cSentence )
    local oError
 
    DEFAULT cSentence    := ::getSelectSentence()
+
+   msgalert( ::getSelectSentence(), "getSelectSentence" )
 
    try
 

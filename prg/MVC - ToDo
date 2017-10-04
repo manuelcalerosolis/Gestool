@@ -35,3 +35,23 @@ MVC - ToDo
 - Meter botones de refresco (done)
 
 - Error SetRowSetRecno (done)
+
+*******************************************************************************
+Hablar con Manu
+*******************************************************************************
+
+- El sistema de montar los recorset de las lineas no me gusta con 
+
+   METHOD initAppendMode()    INLINE ( ::setGeneralSelectToMovimientosAlmacenLineasModel() )     
+   METHOD initDuplicateMode() INLINE ( ::setGeneralSelectToMovimientosAlmacenLineasModel() )     
+   METHOD initEditMode()      INLINE ( ::setGeneralSelectToMovimientosAlmacenLineasModel() )     
+   METHOD initZoomMode()      INLINE ( ::setGeneralSelectToMovimientosAlmacenLineasModel() )     
+
+   METHOD setGeneralSelectToMovimientosAlmacenLineasModel()
+
+- Modo duplicate se complica un poco
+
+
+
+
+

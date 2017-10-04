@@ -83,11 +83,11 @@ CLASS SQLBaseController
    METHOD isUserZoom()                                INLINE ( nAnd( ::nLevel, ACC_ZOOM ) != 0 )
    METHOD notUserZoom()                               INLINE ( !::isUserZoom() )
 
-   METHOD   setMode( nMode )                          INLINE ( ::nMode := nMode )
-   METHOD   getMode()                                 INLINE ( ::nMode )
+   METHOD setMode( nMode )                            INLINE ( ::nMode := nMode )
+   METHOD getMode()                                   INLINE ( ::nMode )
 
-   METHOD   setTitle( cTitle )                        INLINE ( ::cTitle := cTitle )
-   METHOD   getTitle()                                INLINE ( ::cTitle )
+   METHOD setTitle( cTitle )                          INLINE ( ::cTitle := cTitle )
+   METHOD getTitle()                                  INLINE ( ::cTitle )
 
    METHOD Append()
       METHOD initAppendMode()                         VIRTUAL
@@ -96,6 +96,7 @@ CLASS SQLBaseController
       METHOD cancelAppendMode()                       VIRTUAL
       METHOD setAppendMode()                          INLINE ( ::setMode( __append_mode__ ) )
       METHOD isAppendMode()                           INLINE ( ::nMode == __append_mode__ )
+      METHOD endAppendMode()                          VIRTUAL
 
    METHOD Duplicate()
       METHOD initDuplicateMode()                      VIRTUAL
@@ -104,6 +105,7 @@ CLASS SQLBaseController
       METHOD cancelDuplicateMode()                    VIRTUAL
       METHOD setDuplicateMode()                       INLINE ( ::setMode( __duplicate_mode__ ) )
       METHOD isDuplicateMode()                        INLINE ( ::nMode == __duplicate_mode__ )
+      METHOD endDuplicateMode()                       VIRTUAL
 
    METHOD Edit()
       METHOD initEditMode()                           VIRTUAL
@@ -112,17 +114,20 @@ CLASS SQLBaseController
       METHOD cancelEditMode()                         VIRTUAL
       METHOD setEditMode()                            INLINE ( ::setMode( __edit_mode__ ) )
       METHOD isEditMode()                             INLINE ( ::nMode == __edit_mode__ )
+      METHOD endEditMode()                            VIRTUAL
 
    METHOD Zoom()
       METHOD setZoomMode()                            INLINE ( ::setMode( __zoom_mode__ ) )
       METHOD isZoomMode()                             INLINE ( ::nMode == __zoom_mode__ )
       METHOD isNotZoomMode()                          INLINE ( ::nMode != __zoom_mode__ )
       METHOD initZoomMode()                           VIRTUAL
+      METHOD endZoomMode()                            VIRTUAL
 
    METHOD Delete()
       METHOD initDeleteMode()                         VIRTUAL
       METHOD endDeleteModePreDelete()                 VIRTUAL
       METHOD endDeleteModePosDelete()                 VIRTUAL
+      METHOD endDeleteMode()                          VIRTUAL
 
    METHOD getIdFromRowSet()                           INLINE ( if( !empty( ::getRowSet() ), ( ::getRowSet():fieldGet( ::oModel:cColumnKey ) ), ) )
 
@@ -293,7 +298,8 @@ RETURN ( .t. )
 
 METHOD Append()
 
-   local nRecno   
+   local nRecno
+   local lAppend  := .t.   
 
    if ::notUserAppend()
       msgStop( "Acceso no permitido." )
@@ -324,30 +330,33 @@ METHOD Append()
 
    else
       
+      lAppend     := .f.
+
       ::cancelAppendMode()
 
       ::oModel:setRowSetRecno( nRecno )
-      
-      RETURN ( .f. )
 
    end if
 
-RETURN ( .t. )
+   ::endAppendMode()
+
+RETURN ( lAppend )
 
 //----------------------------------------------------------------------------//
 
 METHOD Duplicate()
 
-   local nRecno   
+   local nRecno  
+   local lDuplicate  := .t. 
 
    if ::notUserDuplicate()
       msgStop( "Acceso no permitido." )
-      RETURN ( Self )
+      RETURN ( .f. )
    end if 
 
    ::setDuplicateMode()
 
-   nRecno         := ::oModel:getRowSetRecno()
+   nRecno            := ::oModel:getRowSetRecno()
 
    ::oModel:loadDuplicateBuffer()
 
@@ -363,21 +372,27 @@ METHOD Duplicate()
    
    else 
    
+      lDuplicate     := .f.
+
       ::oModel:setRowSetRecno( nRecno )
    
       ::cancelDuplicateMode()
    
    end if
 
-RETURN ( Self )
+   ::endDuplicateMode()
+
+RETURN ( lDuplicate )
 
 //----------------------------------------------------------------------------//
 
-METHOD Edit()  
+METHOD Edit() 
+
+   local lEdit    := .t. 
 
    if ::notUserEdit()
       msgStop( "Acceso no permitido." )
-      RETURN ( Self )
+      RETURN ( .f. )
    end if 
 
    ::setEditMode()
@@ -395,13 +410,18 @@ METHOD Edit()
       ::oModel:updateCurrentBuffer()
 
       ::endEditModePosUpdate()
+
    else
+
+      lEdit       := .f.
 
       ::cancelEditMode()
 
    end if 
 
-RETURN ( .t. )
+   ::endEditMode()
+
+RETURN ( lEdit )
 
 //----------------------------------------------------------------------------//
 
@@ -420,24 +440,29 @@ METHOD Zoom()
 
    ::oDialogView:Dialog()
 
-RETURN ( Self )
+   ::endZoomMode()
+
+RETURN ( .t. )
 
 //----------------------------------------------------------------------------//
 
 METHOD Delete( aSelected )
 
+   local lDelete
    local nSelected      
    local cNumbersOfDeletes
 
    if ::notUserDelete()
       msgStop( "Acceso no permitido" )
-      RETURN ( Self )
+      RETURN ( .f. )
    end if 
 
    if !hb_isarray( aSelected )
       msgStop( "No se especificaron los registros a eliminar" )
-      RETURN ( Self )
+      RETURN ( .f. )
    end if 
+
+   lDelete              := .f.
 
    ::initDeleteMode()
 
@@ -459,7 +484,9 @@ METHOD Delete( aSelected )
    
    end if 
 
-RETURN ( Self )
+   ::endDeleteMode()
+
+RETURN ( lDelete )
 
 //----------------------------------------------------------------------------//
 
@@ -506,6 +533,12 @@ RETURN ( Self )
 
 //----------------------------------------------------------------------------//
 
+METHOD onKeyChar( nKey )
+
+RETURN ( heval( ::hFastKey, {|k,v| if( k == nKey, eval( v ), ) } ) ) 
+   
+//----------------------------------------------------------------------------//
+
 METHOD setFastReport( oFastReport, cSentence, cColumns )
 
    default cColumns  := ::oModel:serializeColumns() 
@@ -531,9 +564,3 @@ METHOD setFastReport( oFastReport, cSentence, cColumns )
 RETURN ( Self )
 
 //---------------------------------------------------------------------------//
-
-METHOD onKeyChar( nKey )
-
-RETURN ( heval( ::hFastKey, {|k,v| if( k == nKey, eval( v ), ) } ) ) 
-   
-//----------------------------------------------------------------------------//

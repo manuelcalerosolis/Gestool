@@ -3,60 +3,85 @@
  * Fichero: ejXX.prg
  * Autor: Manu Exposito
  * Fecha: 15/01/2017
- * Descripcion: Traspasa test.dbf de los ejemplos de Harbour a SQLite.
- *              Si no existe la bases de datos "demo.db" la crea.
- *              Si no existe la tabla "test" la crea.
+ * Descripcion: Traspasa test.dbf de los ejemplos de Harbour a SQL.
+ *              Si no existe la bases de datos hdodemo la crea.
+ *              Si no existe la tabla test la crea.
  */
-/*
-	Notas:
-	
-	- El gestor de bases de datos SQLite tienes los siguientes tipos de datos:
-    NULL. 	 The value is a NULL value.
-    INTEGER. The value is a signed integer, stored in 1, 2, 3, 4, 6, or 8 bytes depending on the magnitude of the value.
-    REAL.    The value is a floating point value, stored as an 8-byte IEEE floating point number.
-    TEXT.    The value is a text string, stored using the database encoding (UTF-8, UTF-16BE or UTF-16LE).
-    BLOB.    The value is a blob of data, stored exactly as it was input
-*/
-	
+
+//------------------------------------------------------------------------------
+
 #include "hdo.ch"
 
-#xcommand TEXT INTO <v> => #pragma __text|<v>+=%s+hb_eol();<v>:=""
-#xcommand ENDTEXT => #pragma __endtext
+//------------------------------------------------------------------------------
 
-#define ID_CARGA	1000000
+//#define SQLITE
+#define MYSQL
+
+#ifdef SQLITE
+	REQUEST RDLSQLITE  // Importante antes de usar un RDL
+	#define _DBMS	"sqlite"
+	#define _DB 	"hdodemo.db"
+	#define _CONN
+#else
+	#ifdef MYSQL
+		REQUEST RDLMYSQL  // Importante antes de usar un RDL
+		#define _DBMS	"mysql"
+		#define _DB		"hdodemo"
+		#define _CONN 	"127.0.0.1", "root", "root"
+	#endif
+#endif
+
+//------------------------------------------------------------------------------
+
+#define ID_CARGA	500
 
 //------------------------------------------------------------------------------
 // Programa principal
 
 procedure mainxx()
 
-    local oDb, e, cCreaTabla
-
-	TEXT INTO cCreaTabla
-		CREATE TABLE IF NOT EXISTS test (
-			idreg INTEGER PRIMARY KEY,
-			first       VARCHAR( 20 ),
-			last        VARCHAR( 20 ),
-			street      VARCHAR( 30 ),
-			city        VARCHAR( 30 ),
-			state       VARCHAR( 2 ),
-			zip         VARCHAR( 20 ),
-			hiredate	DATE,
-			married     BOOLEAN,
-			age         INTEGER,
-			salary      DECIMAL( 9, 2 ),
-			notes       VARCHAR( 70 ) );
-	ENDTEXT
+    local oDb, e
+#ifdef SQLITE
+	#define AUTO_INCREMENT ""
+#else
+    #define AUTO_INCREMENT "AUTO_INCREMENT"
+#endif
+	local cCreaTabla := "CREATE TABLE IF NOT EXISTS test ( "			+ ;
+									"idreg INTEGER PRIMARY KEY " 		+ ;
+											  AUTO_INCREMENT + ","		+ ;
+									"first    VARCHAR( 20 ),"     		+ ;
+									"last     VARCHAR( 20 ),"     		+ ;
+									"street   VARCHAR( 30 ),"     		+ ;
+									"city     VARCHAR( 30 ),"     		+ ;
+									"state    VARCHAR( 2 ),"      		+ ;
+									"zip      VARCHAR( 20 ),"     		+ ;
+									"hiredate DATE,"          	 	 	+ ;
+									"married  BIT,"       	  		    + ;
+									"age      INTEGER,"       	  		+ ;
+									"salary   DECIMAL( 9, 2 ),"   		+ ;
+									"notes    VARCHAR( 70 ) );"
+									
+////// Sistema embebido ////////////////////////////////////////////////////////
+#ifdef MYSQL                                                                  //
+	local aOptions := { "HDO_DEMO", "--defaults-file=./my.cnf" }              //
+	local aGroup := { "server", "client" }                                    //
+	                                                                          //
+	initMySQLEmdSys( aOptions, aGroup, "client" )                             //
+#endif                                                                        //
+////////////////////////////////////////////////////////////////////////////////
 	
-    oDb := THDO():new( "sqlite" )
-	
-	oDb:setAttribute( ATTR_ERRMODE, .t. )
-	
-    if oDb:connect( "demo.db" )
+	oDb := THDO():new( _DBMS )
 
-        msg( "demo.db abierta" )
-
+#ifdef SQLITE
+    if oDb:connect( _DB, _CONN )
         try
+#else		
+    if oDb:connect( , _CONN )
+        try
+			oDb:exec( "CREATE DATABASE IF NOT EXISTS " + _DB + ";" )
+			oDb:exec( "USE " + _DB + ";" )
+#endif
+			msg( oDb:getDbName() + " abierta" )
             oDb:exec( cCreaTabla )
             msg( "Traspaso de datos..." )
             traspasa( oDb )
@@ -64,11 +89,13 @@ procedure mainxx()
             eval( errorblock(), e )
         end
 
+		oDb:disconnect()
+	else
+		msg( "imposiuble conectarse a la base de datos: " + _DB )
     endif
-
-    oDb:disconnect()
-	msg( "demo.db cerrada" )
-
+	
+	msg( "Se termino..." )
+	
 return
 
 //------------------------------------------------------------------------------
@@ -77,24 +104,12 @@ return
 static procedure traspasa( oDb )
 
     local n := 0
-    local cSentencia, oInsert
+    local oInsert
     local first, last, street, city, state, zip, hiredate, married, age, salary, notes
 
-    TEXT INTO cSentencia
-		INSERT INTO test (
-				first,
-				last,
-				street,
-				city,
-				state,
-				zip,
-				hiredate,
-				married,
-				age,
-				salary,
-				notes )
-			VALUES ( ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ? );
-	ENDTEXT
+    local cSentencia := "INSERT INTO test ( first, last, street, city, state, zip, "  + ;
+									   "hiredate, married, age, salary, notes ) " + ;
+					    "VALUES ( ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ? );"
 	
     if file( "test.dbf" )
 		
@@ -114,36 +129,48 @@ static procedure traspasa( oDb )
         oInsert:bindParam(  9, @age )
         oInsert:bindParam( 10, @salary )
         oInsert:bindParam( 11, @notes )
+		
+		@ 10, 10 say "Registros pasados: "
+		
        oDb:beginTransaction()
 	
-	while n < ID_CARGA	
+		while n < ID_CARGA	
 	
-        while test->( !eof() )
-            first    := test->first
-            last     := test->last
-            street   := test->street
-            city     := test->city
-            state    := test->state
-            zip      := test->zip
-            hiredate := hb_dtoc( test->hiredate, "yyyy-mm-dd" )
-            married  := if( test->married, 1, 0 )
-            age      := test->age
-            salary   := test->salary
-            notes    := test->notes
+			while test->( !eof() )
+				first    := test->first
+				last     := test->last
+				street   := test->street
+				city     := test->city
+				state    := test->state
+				zip      := test->zip
+#ifdef SQLITE
+				hiredate := hb_dtoc( test->hiredate, "yyyy-mm-dd" )
+				married  := if( test->married, 1, 0 )
+#else
+				hiredate := test->hiredate
+				married  := test->married
+#endif
+				age      := test->age
+				salary   := test->salary
+				notes    := test->notes
 		
-            oInsert:execute()
+				oInsert:execute()
 		
-            @ 10, 10 say str( ++n )
+				@ 10, 30 say str( ++n )
 		
-            test->( dbskip( 1 ) )
-        end
+				test->( dbskip( 1 ) )
+			end
 	
-		test->( dBgoTop() )
-	end
-        oDb:commit()
+			test->( dBgoTop() )
+		end
+		
+        oDb:commit()		
         oInsert:free()
+
+		msg( "Base de Datos: " + oDb:getDbName() + " cerrada;;Se han pasado " + ;
+		      hb_ntos( n ) + " registros" )
     else
-        msg( "Fichero no encontrado -> test.dbf" )
+        msg( "Fichero test.dbf no existe" )
     endif
 
 return

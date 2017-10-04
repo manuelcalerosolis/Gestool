@@ -36,9 +36,9 @@ METHOD Dialog()
 
    local oDlg
    local oBmpGeneral
-   local oGetGrupoMovimiento
    local oGetAlmacenOrigen
    local oGetAlmacenDestino
+   local oGetGrupoMovimiento
    local oRadioTipoMovimento
 
    DEFINE DIALOG oDlg RESOURCE "RemMov" TITLE ::lblTitle() + "movimientos de almacén"
@@ -125,6 +125,8 @@ METHOD Dialog()
          ACTION      ( ::oController:oLineasController:Append() )
 
       // Browse lineas---------------------------------------------------------
+
+      msgalert( ::oController:oModel:hBuffer[ "uuid" ], "uuid" )
 
       ::oSQLBrowseView                 := SQLBrowseView():New( Self )
 
