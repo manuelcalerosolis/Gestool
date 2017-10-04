@@ -509,7 +509,7 @@ RETURN lValid
 
 METHOD ChangeRuta() CLASS DocumentsSales
 
-   local cFilter           := ""
+   local cFilter
    local cCliente          := space( RetNumCodCliEmp() )
 
    if !hhaskey( ::hOrdenRutas, alltrim( str( ::oViewEdit:oCbxRuta:nAt ) ) )
@@ -518,20 +518,16 @@ METHOD ChangeRuta() CLASS DocumentsSales
 
    cFilter                 := hget( ::hOrdenRutas, alltrim( str( ::oViewEdit:oCbxRuta:nAt ) ) )
 
-   ( D():Clientes( ::nView ) )->( adsClearAOF() ) //Limpiamos el filtro antes de poner otro
-
-   ( D():Clientes( ::nView ) )->( OrdSetFocus( cFilter ) )  //Ponemos el orden para ordenar los clientes
-
    if ( accessCode():lFilterByAgent ) .and. !empty( accessCode():cAgente )
       cFilter              += " .and. cAgente = " + quoted( accessCode():cAgente )
-   end if
+   end if 
 
    ( D():Clientes( ::nView ) )->( adsSetAOF( cFilter ) )
    ( D():Clientes( ::nView ) )->( dbgotop() ) 
 
    if !( D():Clientes( ::nView ) )->( eof() )
       cCliente             := ( D():Clientes( ::nView ) )->Cod
-   end if
+   end if   
 
    if !empty( ::oViewEdit:getRuta )
       ::oViewEdit:getRuta:cText( alltrim( Str( ( D():Clientes( ::nView ) )->( ADSKeyNo( , , 1 ) ) ) ) + "/" + alltrim( str( ( D():Clientes( ::nView ) )->( ADSKeyCount( , , 1 ) ) ) ) )
