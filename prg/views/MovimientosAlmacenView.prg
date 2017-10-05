@@ -6,6 +6,8 @@
 
 CLASS MovimientosAlmacenView FROM SQLBaseView
 
+   DATA oSQLBrowseView
+
    METHOD New()
 
    METHOD Dialog()
@@ -114,19 +116,29 @@ METHOD Dialog()
       oGetGrupoMovimiento:bValid   := {|| ::stampGrupoMovimientoNombre( oGetGrupoMovimiento ) }
       oGetGrupoMovimiento:bHelp    := {|| browseGruposMovimientos( oGetGrupoMovimiento, oGetGrupoMovimiento:oHelpText ) }
 
-
-      REDEFINE BUTTON ;
-         ID          IDOK ;
-         OF          oDlg ;
-         WHEN        ( ::oController:isNotZoomMode() ) ;
-         ACTION      ( oDlg:end( IDOK ) )
-
+      // Buttons lineas-------------------------------------------------------
 
       REDEFINE BUTTON ;
          ID          500 ;
          OF          oDlg ;
          WHEN        ( ::oController:isNotZoomMode() ) ;
          ACTION      ( ::oController:oLineasController:Append() )
+
+      // Browse lineas---------------------------------------------------------
+
+      ::oSQLBrowseView                 := SQLBrowseView():New( Self )
+
+      ::oSQLBrowseView:setController( ::oController:oLineasController )
+
+      ::oSQLBrowseView:ActivateDialog( 180, oDlg )
+
+      // Buttons---------------------------------------------------------------
+
+      REDEFINE BUTTON ;
+         ID          IDOK ;
+         OF          oDlg ;
+         WHEN        ( ::oController:isNotZoomMode() ) ;
+         ACTION      ( oDlg:end( IDOK ) )
 
       REDEFINE BUTTON ;
          ID          IDCANCEL ;

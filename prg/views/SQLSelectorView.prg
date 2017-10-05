@@ -16,12 +16,11 @@ CLASS SQLSelectorView FROM SQLBrowseableView
    DATA hSelectedBuffer
 
    METHOD New( oController )
+   METHOD End()
 
    METHOD Activate()
 
    METHOD Select()
-
-   METHOD End()
 
    METHOD Start()
 
@@ -60,23 +59,27 @@ METHOD Activate()
          ITEMS             ::getModelHeadersForBrowse() ;
          OF                ::oDialog
 
+      // Menu------------------------------------------------------------------
+
       ::oMenuTreeView      := MenuTreeView():New( Self )
+
+      ::oMenuTreeView:ActivateDialog( 120 )
+
+      // Browse-----------------------------------------------------------------
 
       ::oSQLBrowseView     := SQLBrowseView():New( Self )
 
-   ::oMenuTreeView:ActivateDialog( 120 )
+      ::oSQLBrowseView:ActivateDialog( 130 )
 
-   ::oSQLBrowseView:ActivateDialog( 130 )
+      ::oSQLBrowseView:setLDblClick( {|| ::Select() } ) 
 
-   // Eventos------------------------------------------------------------------
+      // Eventos---------------------------------------------------------------
 
-   ::oSQLBrowseView:setLDblClick( {|| ::Select() } ) 
+      ::oDialog:bStart              := {|| ::Start() }
 
-   ::oDialog:bStart              := {|| ::Start() }
+      ::getComboBoxOrder():bChange  := {|| ::onChangeCombo() } 
 
-   ::getComboBoxOrder():bChange  := {|| ::onChangeCombo() } 
-
-   ::getGetSearch():bChange      := {|| ::onChangeSearch() } 
+      ::getGetSearch():bChange      := {|| ::onChangeSearch() } 
 
    ACTIVATE DIALOG ::oDialog CENTER
 

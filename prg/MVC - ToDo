@@ -1,5 +1,7 @@
 MVC - ToDo
 
+- Crear el browse para lineas de movimientos de almacen.
+
 - No refresca al añadir un nuevo registro en navigator. (done)
 
 - Al borrar un registro no se posiciona bien, y browse no toma el foco. (done)

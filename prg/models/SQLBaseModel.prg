@@ -23,8 +23,8 @@ CLASS SQLBaseModel
 
    DATA cColumnOrientation
 
-   DATA cSQLInsert     
-   DATA cSQLSelect      
+   DATA cSQLSelect                                 
+   DATA cSQLInsert                                 
    
    DATA cColumnOrder                  
    DATA cColumnKey                    
@@ -147,6 +147,8 @@ METHOD New( oController )
       ::cColumnOrder             := hGetKeyAt( ::hColumns, 1 )
    end if 
 
+   ::cSQLSelect                  := "SELECT * FROM " + ::getTableName()    
+
    ::cColumnOrientation          := "A"
 
    ::cConstraints                := "" 
@@ -188,11 +190,9 @@ RETURN ( ::hColumns )
 
 METHOD getGeneralSelect()
 
-   local cGeneralSelect    := "SELECT * FROM " + ::getTableName()
+   ::cSQLSelect            := ::getWhereEmpresa( ::cSQLSelect )
 
-   cGeneralSelect          := ::getWhereEmpresa( cGeneralSelect )
-
-RETURN ( cGeneralSelect )
+RETURN ( ::cSQLSelect )
 
 //---------------------------------------------------------------------------//
 

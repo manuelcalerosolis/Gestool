@@ -12,15 +12,19 @@ CLASS SQLBrowseableView
 
    DATA oController
 
+   DATA oModel 
+
    DATA oMenuTreeView
 
    DATA oSQLBrowseView
 
    // Facades -----------------------------------------------------------------
 
+   METHOD setController( oController )    INLINE ( ::oController := oController )
    METHOD getController()                 INLINE ( ::oController )
 
-   METHOD getModel()                      INLINE ( ::oController:getModel() )
+   METHOD setModel( oModel )              INLINE ( ::oModel := oModel  )
+   METHOD getModel()                      INLINE ( iif( empty( ::oModel ), ::oController:getModel(), ::oModel ) )
 
    METHOD getModelColumns()               INLINE ( ::getModel():hColumns )
    METHOD getModelExtraColumns()          INLINE ( ::getModel():hExtraColumns )

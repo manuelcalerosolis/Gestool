@@ -9,6 +9,10 @@ CLASS SQLBrowseView
 
    DATA oSender
 
+   DATA oController
+
+   DATA oModel
+
    METHOD New( oSender )
 
    METHOD Create()
@@ -22,9 +26,12 @@ CLASS SQLBrowseView
 
    METHOD getBrowse()                     INLINE ( ::oBrowse )
 
-   METHOD getController()                 INLINE ( ::oSender:getController() )
+   METHOD setController( oController )    INLINE ( ::oController := oController )
+   METHOD getController()                 INLINE ( iif( empty( ::oController ), ::oSender:getController(), ::oController ) )
 
-   METHOD getModel()                      INLINE ( ::getController():getModel() )
+   METHOD setModel( oModel )              INLINE ( ::oModel := oModel )
+   METHOD getModel()                      INLINE ( iif( empty( ::oModel ), ::getController():getModel(), ::oModel ) )
+
    METHOD getModelColumnsForBrowse()      INLINE ( ::getModel():getColumnsForBrowse() )
    METHOD getModelHeadersForBrowse()      INLINE ( ::getModel():getHeadersForBrowse() )
 
@@ -79,9 +86,9 @@ RETURN ( Self )
 
 //----------------------------------------------------------------------------//
 
-METHOD ActivateDialog( id )
+METHOD ActivateDialog( id, oWindow )
 
-   ::Create()
+   ::Create( oWindow )
 
    ::GenerateColumns()
 
@@ -99,18 +106,20 @@ METHOD End()
 
 RETURN ( nil )
 
-//----------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
 
-METHOD Create() 
+METHOD Create( oWindow ) 
 
-   ::oBrowse                  := SQLXBrowse():New( ::oSender:getWindow() )
+   default oWindow            := ::oSender:getWindow()
+
+   ::oBrowse                  := SQLXBrowse():New( oWindow )
    ::oBrowse:l2007            := .f.
 
    ::oBrowse:lRecordSelector  := .f.
    ::oBrowse:lAutoSort        := .t.
    ::oBrowse:lSortDescend     := .f.   
 
-   // Propiedades del control -------------------------------------------------
+   // Propiedades del control--------------------------------------------------
 
    ::oBrowse:nMarqueeStyle    := MARQSTYLE_HIGHLROWMS
 
