@@ -11,6 +11,8 @@ CLASS SQLBaseModel
 
    DATA oController
 
+   DATA oEvents
+
    DATA oRowSet
 
    DATA oStatement
@@ -25,6 +27,8 @@ CLASS SQLBaseModel
    DATA cColumnOrientation
 
    DATA cGeneralSelect                                 
+
+   DATA cGeneralWhere
    
    DATA cColumnOrder                  
    DATA cColumnKey                    
@@ -54,8 +58,6 @@ CLASS SQLBaseModel
    METHOD getHeaderFromColumn( cColumn )           INLINE ( ::getValueFromColumn( cColumn, "header" ) )
    METHOD getHeaderFromColumnOrder()               INLINE ( ::getValueFromColumn( ::cColumnOrder, "header" ) )
 
-   METHOD setSQLSelect( cSelect )                  INLINE ( ::cGeneralSelect := cSelect )
-
    // -------------------------------------------------------------------------
 
    METHOD isEmpresaColumn()                        INLINE ( hb_hhaskey( ::hColumns, "empresa" ) )
@@ -74,12 +76,15 @@ CLASS SQLBaseModel
    
    METHOD getDropTableSentence()
 
+   METHOD setGeneralSelect( cSelect )              INLINE ( ::cGeneralSelect  := cSelect )
+   METHOD setGeneralWhere( cWhere )                INLINE ( ::cGeneralWhere   := cWhere )
+
    // Where for columns---------------------------------------------------------
 
-   METHOD getWhereOrAnd( cSQLSelect )                 INLINE ( if( hb_at( "WHERE", cSQLSelect ) != 0, " AND", " WHERE" ) )
+   METHOD getWhereOrAnd( cSQLSelect )              INLINE ( if( hb_at( "WHERE", cSQLSelect ) != 0, " AND ", " WHERE " ) )
 
+   METHOD getWhereGeneral( cSQLSelect )
    METHOD getWhereEmpresa()                           
-   METHOD addWhereSentence()
 
    // Get edit value for xbrowse-----------------------------------------------
 
@@ -126,6 +131,11 @@ CLASS SQLBaseModel
 
    METHOD serializeColumns()
 
+   // Events-------------------------------------------------------------------
+
+   METHOD setEvent( cEvent, bEvent )                  INLINE ( if( !empty( ::oEvents ), ::oEvents:set( cEvent, bEvent ), ) )
+   METHOD fireEvent( cEvent )                         INLINE ( if( !empty( ::oEvents ), ::oEvents:fire( cEvent ), ) )
+
 END CLASS
 
 //---------------------------------------------------------------------------//
@@ -140,6 +150,8 @@ METHOD New( oController )
    ::oController                 := oController
 
    ::oDatabase                   := getSQLDatabase()
+
+   ::oEvents                     := Events():New()
 
    if empty( ::cColumnKey )
       ::cColumnKey               := hGetKeyAt( ::hColumns, 1 )
@@ -160,6 +172,8 @@ RETURN ( Self )
 //---------------------------------------------------------------------------//
 
 METHOD End()
+
+   ::oEvents:End()
    
    ::freeRowSet()
 
@@ -194,17 +208,11 @@ METHOD getGeneralSelect()
 
    local cSQLSelect        := ::cGeneralSelect
 
+   cSQLSelect              := ::getWhereGeneral( cSQLSelect )
+
    cSQLSelect              := ::getWhereEmpresa( cSQLSelect )
 
 RETURN ( cSQLSelect )
-
-//---------------------------------------------------------------------------//
-
-METHOD addWhereSentence( cWhereSentence )
-
-   ::cGeneralSelect        += ::getWhereOrAnd( ::cGeneralSelect ) + cWhereSentence
-
-RETURN ( ::cGeneralSelect )
 
 //---------------------------------------------------------------------------//
 
@@ -226,7 +234,19 @@ METHOD getWhereEmpresa( cSQLSelect )
       RETURN ( cSQLSelect )
    end if 
 
-   cSQLSelect     += ::getWhereOrAnd( cSQLSelect ) + " empresa = " + toSQLString( cCodEmp() )
+   cSQLSelect     += ::getWhereOrAnd( cSQLSelect ) + "empresa = " + toSQLString( cCodEmp() )
+
+RETURN ( cSQLSelect )
+
+//---------------------------------------------------------------------------//
+
+METHOD getWhereGeneral( cSQLSelect )
+
+   if empty( ::cGeneralWhere )
+      RETURN ( cSQLSelect )
+   end if 
+
+   cSQLSelect     += ::getWhereOrAnd( cSQLSelect ) + ::cGeneralWhere 
 
 RETURN ( cSQLSelect )
 
@@ -238,7 +258,7 @@ METHOD getSelectByColumn( cSQLSelect )
       RETURN ( cSQLSelect )
    end if 
 
-   cSQLSelect     += ::getWhereOrAnd( cSQLSelect ) + " UPPER(" + ::cColumnOrder +") LIKE '%" + Upper( ::cFind ) + "%'" 
+   cSQLSelect     += ::getWhereOrAnd( cSQLSelect ) + "UPPER(" + ::cColumnOrder +") LIKE '%" + Upper( ::cFind ) + "%'" 
 
 RETURN ( cSQLSelect )
 
@@ -322,9 +342,11 @@ METHOD buildRowSet( cSentence )
 
    local oError
 
+   ::fireEvent( 'buildingRowSet')
+
    DEFAULT cSentence    := ::getSelectSentence()
 
-   msgalert( ::getSelectSentence(), "getSelectSentence" )
+      msgalert( ::getSelectSentence(), "getSelectSentence" )
 
    try
 
@@ -341,6 +363,8 @@ METHOD buildRowSet( cSentence )
    end
 
    ::oRowSet:goTop()
+
+   ::fireEvent( 'buildedgRowSet')
 
 RETURN ( self )
 
@@ -492,6 +516,8 @@ METHOD loadBlankBuffer()
 
    ::hBuffer            := {=>}
 
+   ::fireEvent( 'loadingBlankBuffer' )
+
    for each hColumn in ::hColumns
 
       do case
@@ -505,6 +531,8 @@ METHOD loadBlankBuffer()
 
    ::defaultCurrentBuffer()
 
+   ::fireEvent( 'loadedBlankBuffer' )
+
 RETURN ( ::hBuffer )
 
 //---------------------------------------------------------------------------//
@@ -515,9 +543,13 @@ METHOD loadCurrentBuffer()
       RETURN ( .f. )
    end if 
 
+   ::fireEvent( 'loadingcurrentbuffer' )
+
    ::hBuffer            := {=>}
 
    hEval( ::hColumns, {|k| hset( ::hBuffer, k, ::oRowSet:fieldget( k ) ) } )
+
+   ::fireEvent( 'loadedcurrentbuffer' )
 
 RETURN ( ::hBuffer )
 
@@ -531,7 +563,11 @@ METHOD loadDuplicateBuffer()
 
    ::hBuffer            := {=>}
 
+   ::fireEvent( 'loadingduplicatebuffer' )
+
    hEval( ::hColumns, {|k| if( k != ::cColumnKey, hset( ::hBuffer, k, ::oRowSet:fieldget( k ) ), ) } )
+
+   ::fireEvent( 'loadedduplicatebuffer' )
 
 RETURN ( ::hBuffer )
 

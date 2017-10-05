@@ -4539,7 +4539,9 @@ RETURN ( lReturn )
 
 Function lContabilizaReciboClienteFactura( aSimula, oTree, dbfFacCliP )
 
-RETURN ( lContabilizaReciboCliente( nil, nil, nil, aSimula, .t., oTree, dbfFacCliP ) )
+   msgAlert( hb_valtoexp( aSimula ), "lContabilizaReciboClienteFactura" )
+
+RETURN ( .t. ) // lContabilizaReciboCliente( nil, nil, nil, aSimula, .t., oTree, dbfFacCliP ) )
 
 //------------------------------------------------------------------------//
 

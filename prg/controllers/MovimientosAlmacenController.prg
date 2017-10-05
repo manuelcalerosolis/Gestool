@@ -13,16 +13,6 @@ CLASS MovimientosAlmacenController FROM SQLBaseController
    
    METHOD freeRowSetMovimientosAlmacenLineasModel()   INLINE ( ::oLineasController:oModel:freeRowSet() )
 
-   METHOD initAppendMode()                            INLINE ( ::setGeneralSelectToMovimientosAlmacenLineasModel() )     
-   METHOD initDuplicateMode()                         INLINE ( ::setGeneralSelectToMovimientosAlmacenLineasModel() )     
-   METHOD initEditMode()                              INLINE ( ::setGeneralSelectToMovimientosAlmacenLineasModel() )     
-   METHOD initZoomMode()                              INLINE ( ::setGeneralSelectToMovimientosAlmacenLineasModel() )     
-
-   METHOD endAppendMode()                             INLINE ( ::freeRowSetMovimientosAlmacenLineasModel() )     
-   METHOD endDuplicateMode()                          INLINE ( ::freeRowSetMovimientosAlmacenLineasModel() )     
-   METHOD endEditMode()                               INLINE ( ::freeRowSetMovimientosAlmacenLineasModel() )     
-   METHOD endZoomMode()                               INLINE ( ::freeRowSetMovimientosAlmacenLineasModel() )     
-
 END CLASS
 
 //---------------------------------------------------------------------------//
@@ -34,6 +24,8 @@ METHOD New()
    ::cImage                := "gc_document_attachment_16"
 
    ::nLevel                := nLevelUsr( "01050" )
+
+   ::lTransactional        := .t.
 
    ::oModel                := SQLMovimientosAlmacenModel():New( self )
 
@@ -57,13 +49,9 @@ METHOD setGeneralSelectToMovimientosAlmacenLineasModel()
       RETURN ( Self )
    end if 
 
-   ::oLineasController:oModel:cGeneralSelect := "SELECT * FROM " + ::oLineasController:oModel:getTableName() + ;
-                                                   " WHERE parent_uuid = " + quoted( uuid )
+   ::oLineasController:oModel:setGeneralWhere( "parent_uuid = " + quoted( uuid ) )
 
 RETURN ( Self )
-
-//---------------------------------------------------------------------------//
-
 
 //---------------------------------------------------------------------------//
 

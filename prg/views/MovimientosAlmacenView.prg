@@ -11,6 +11,8 @@ CLASS MovimientosAlmacenView FROM SQLBaseView
    METHOD New()
 
    METHOD Dialog()
+   METHOD initDialog()
+   METHOD startDialog( oRadioTipoMovimento, oGetAlmacenOrigen )
 
    METHOD stampAlmacenNombre( oGetAlmacenOrigen )
 
@@ -128,7 +130,7 @@ METHOD Dialog()
 
       msgalert( ::oController:oModel:hBuffer[ "uuid" ], "uuid" )
 
-      ::oSQLBrowseView                 := SQLBrowseView():New( Self )
+      ::oSQLBrowseView              := SQLBrowseView():New( Self )
 
       ::oSQLBrowseView:setController( ::oController:oLineasController )
 
@@ -153,13 +155,29 @@ METHOD Dialog()
          OF          oDlg ;
          ACTION      ( msgalert( "RecalculaPrecio" ) )
 
-   oDlg:bStart       := {|| ::changeTipoMovimiento( oRadioTipoMovimento, oGetAlmacenOrigen ) }
+   oDlg:bStart       := {|| ::startDialog( oRadioTipoMovimento, oGetAlmacenOrigen ) }
 
-   ACTIVATE DIALOG oDlg CENTER
+   oDlg:Activate( , , , .t., , , {|| ::initDialog() } )
 
    oBmpGeneral:End()
 
 RETURN ( oDlg:nResult == IDOK )
+
+//---------------------------------------------------------------------------//
+
+METHOD initDialog()
+
+   ::oController:oLineasController:oModel:buildRowSet()
+
+RETURN ( Self )
+
+//---------------------------------------------------------------------------//
+
+METHOD startDialog( oRadioTipoMovimento, oGetAlmacenOrigen )
+   
+   ::changeTipoMovimiento( oRadioTipoMovimento, oGetAlmacenOrigen )
+
+RETURN ( Self )
 
 //---------------------------------------------------------------------------//
 

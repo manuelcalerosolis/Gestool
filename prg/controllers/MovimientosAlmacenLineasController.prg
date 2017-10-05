@@ -7,7 +7,9 @@ CLASS MovimientosAlmacenLineasController FROM SQLBaseController
 
    METHOD New()
 
-   METHOD initAppendMode()
+   METHOD loadedBlankBuffer()
+
+   METHOD buildingRowSet()
 
 END CLASS
 
@@ -23,6 +25,9 @@ METHOD New( oController )
 
    ::oModel                := SQLMovimientosAlmacenLineasModel():New( self )
 
+   ::oModel:setEvent( 'loadedBlankBuffer',   {|| ::loadedBlankBuffer() } ) 
+   ::oModel:setEvent( 'buildingRowSet',      {|| ::buildingRowSet() } ) 
+
    ::oDialogView           := MovimientosAlmacenLineasView():New( self )
 
    // ::oValidator            := MovimientosAlmacenLineasValidator():New( self )
@@ -33,7 +38,7 @@ RETURN ( Self )
 
 //---------------------------------------------------------------------------//
 
-METHOD initAppendMode()
+METHOD loadedBlankBuffer()
 
    local uuid              := hget( ::getSenderController():oModel:hBuffer, "uuid" )
 
@@ -44,6 +49,21 @@ METHOD initAppendMode()
 RETURN ( Self )
 
 //---------------------------------------------------------------------------//
+
+METHOD buildingRowSet()
+
+   local uuid              := hget( ::getSenderController():oModel:hBuffer, "uuid" )
+
+   if empty( uuid )
+      RETURN ( Self )
+   end if 
+
+   ::oModel:setGeneralWhere( "parent_uuid = " + quoted( uuid ) )
+
+RETURN ( Self )
+
+//---------------------------------------------------------------------------//
+
 
 
 

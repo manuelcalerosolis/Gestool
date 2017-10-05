@@ -1,6 +1,5 @@
 #include "FiveWin.Ch"
 #include "Factu.ch" 
-#include "Ads.ch"
 
 //---------------------------------------------------------------------------//
 
@@ -11,6 +10,8 @@ CLASS SQLBaseController
    DATA oSenderController
 
    DATA ControllerContainer
+
+   DATA oEvents                                       
 
    DATA oModel
 
@@ -23,6 +24,8 @@ CLASS SQLBaseController
    DATA oValidator
 
    DATA oRepository
+
+   DATA lTransactional                                INIT .f.
 
    DATA nLevel
 
@@ -90,44 +93,23 @@ CLASS SQLBaseController
    METHOD getTitle()                                  INLINE ( ::cTitle )
 
    METHOD Append()
-      METHOD initAppendMode()                         VIRTUAL
-      METHOD endAppendModePreInsert()                 VIRTUAL
-      METHOD endAppendModePostInsert()                VIRTUAL
-      METHOD cancelAppendMode()                       VIRTUAL
       METHOD setAppendMode()                          INLINE ( ::setMode( __append_mode__ ) )
       METHOD isAppendMode()                           INLINE ( ::nMode == __append_mode__ )
-      METHOD endAppendMode()                          VIRTUAL
 
    METHOD Duplicate()
-      METHOD initDuplicateMode()                      VIRTUAL
-      METHOD endDuplicateModePreInsert()              VIRTUAL
-      METHOD endDuplicateModePosInsert()              VIRTUAL
-      METHOD cancelDuplicateMode()                    VIRTUAL
       METHOD setDuplicateMode()                       INLINE ( ::setMode( __duplicate_mode__ ) )
       METHOD isDuplicateMode()                        INLINE ( ::nMode == __duplicate_mode__ )
-      METHOD endDuplicateMode()                       VIRTUAL
 
    METHOD Edit()
-      METHOD initEditMode()                           VIRTUAL
-      METHOD endEditModePreUpdate()                   VIRTUAL
-      METHOD endEditModePosUpdate()                   VIRTUAL
-      METHOD cancelEditMode()                         VIRTUAL
       METHOD setEditMode()                            INLINE ( ::setMode( __edit_mode__ ) )
       METHOD isEditMode()                             INLINE ( ::nMode == __edit_mode__ )
-      METHOD endEditMode()                            VIRTUAL
 
    METHOD Zoom()
       METHOD setZoomMode()                            INLINE ( ::setMode( __zoom_mode__ ) )
       METHOD isZoomMode()                             INLINE ( ::nMode == __zoom_mode__ )
       METHOD isNotZoomMode()                          INLINE ( ::nMode != __zoom_mode__ )
-      METHOD initZoomMode()                           VIRTUAL
-      METHOD endZoomMode()                            VIRTUAL
 
    METHOD Delete()
-      METHOD initDeleteMode()                         VIRTUAL
-      METHOD endDeleteModePreDelete()                 VIRTUAL
-      METHOD endDeleteModePosDelete()                 VIRTUAL
-      METHOD endDeleteMode()                          VIRTUAL
 
    METHOD getIdFromRowSet()                           INLINE ( if( !empty( ::getRowSet() ), ( ::getRowSet():fieldGet( ::oModel:cColumnKey ) ), ) )
 
@@ -141,6 +123,12 @@ CLASS SQLBaseController
 
    METHOD getRowSet()
 
+   // Transactional system-----------------------------------------------------
+
+   METHOD beginTransactionalMode()                    INLINE ( if( ::lTransactional, getSQLDatabase():BeginTransaction(), ) )
+   METHOD commitTransactionalMode()                   INLINE ( if( ::lTransactional, getSQLDatabase():Commit(), ) )
+   METHOD rollbackTransactionalMode()                 INLINE ( if( ::lTransactional, getSQLDatabase():Rollback(), ) )
+
    METHOD setFastReport( oFastReport, cSentence, cColumns )
 
    // Fastkeys-----------------------------------------------------------------
@@ -152,9 +140,10 @@ CLASS SQLBaseController
 
    // Events-------------------------------------------------------------------
 
-   METHOD evalOnEvent()
-   METHOD evalOnPreAppend()                           INLINE ( ::evalOnEvent( ::bOnPreAppend ) )
-   METHOD evalOnPostAppend()                          INLINE ( ::evalOnEvent( ::bOnPostAppend ) )
+   METHOD setEvent( cEvent, bEvent )                  INLINE ( if( !empty( ::oEvents ), ::oEvents:set( cEvent, bEvent ), ) )
+   METHOD fireEvent( cEvent )                         INLINE ( if( !empty( ::oEvents ), ::oEvents:fire( cEvent ), ) )
+
+
 
 END CLASS
 
@@ -163,6 +152,8 @@ END CLASS
 METHOD New( oSenderController )
 
    ::oSenderController                                := oSenderController
+
+   ::oEvents                                          := Events():New()
 
    ::ControllerContainer                              := ControllerContainer():New()
 
@@ -281,21 +272,6 @@ RETURN ( self )
 
 //---------------------------------------------------------------------------//
 
-METHOD evalOnEvent( bEvent )
-
-   local lTrigger
-
-   if bEvent != nil
-      lTrigger    := eval( bEvent )
-      if Valtype( lTrigger ) == "L" .and. !lTrigger
-         RETURN ( .f. )
-      end if
-   end if
-
-RETURN ( .t. )
-
-//---------------------------------------------------------------------------//
-
 METHOD Append()
 
    local nRecno
@@ -306,39 +282,41 @@ METHOD Append()
       RETURN ( .f. )
    end if 
 
-   if !::evalOnPreAppend()
+   if !( ::fireEvent( 'appending' ) )
       RETURN ( .f. )
    end if
 
    ::setAppendMode()
 
+   ::beginTransactionalMode()
+
    nRecno         := ::oModel:getRowSetRecno()
 
    ::oModel:loadBlankBuffer()
    
-   ::initAppendMode()
+   ::fireEvent( 'openingDialog' )    
 
    if ::oDialogView:Dialog()
 
-      ::endAppendModePreInsert()
-
       ::oModel:insertBuffer()
 
-      ::endAppendModePostInsert()
+      ::fireEvent( 'appended' ) 
 
-      ::evalOnPostAppend()
+      ::commitTransactionalMode()
 
    else
       
       lAppend     := .f.
 
-      ::cancelAppendMode()
+      ::fireEvent( 'cancelAppended' ) 
 
       ::oModel:setRowSetRecno( nRecno )
 
+      ::rollbackTransactionalMode()
+
    end if
 
-   ::endAppendMode()
+   ::fireEvent( 'exitAppended' ) 
 
 RETURN ( lAppend )
 
@@ -354,33 +332,41 @@ METHOD Duplicate()
       RETURN ( .f. )
    end if 
 
+   if !( ::fireEvent( 'duplicating' ) )
+      RETURN ( .f. )
+   end if
+
    ::setDuplicateMode()
+
+   ::beginTransactionalMode()
 
    nRecno            := ::oModel:getRowSetRecno()
 
    ::oModel:loadDuplicateBuffer()
 
-   ::initDuplicateMode()
+   ::fireEvent( 'openingDialog' )
 
    if ::oDialogView:Dialog()
 
-      ::endDuplicateModePreInsert()
-   
       ::oModel:insertBuffer()
    
-      ::endDuplicateModePosInsert()
+      ::fireEvent( 'duplicated' ) 
    
+      ::commitTransactionalMode()
+
    else 
    
       lDuplicate     := .f.
 
       ::oModel:setRowSetRecno( nRecno )
    
-      ::cancelDuplicateMode()
+      ::fireEvent( 'cancelDuplicated' ) 
+
+      ::rollbackTransactionalMode()
    
    end if
 
-   ::endDuplicateMode()
+   ::fireEvent( 'exitDuplicated' ) 
 
 RETURN ( lDuplicate )
 
@@ -395,31 +381,39 @@ METHOD Edit()
       RETURN ( .f. )
    end if 
 
+   if !( ::fireEvent( 'editing' ) )
+      RETURN ( .f. )
+   end if
+
    ::setEditMode()
+
+   ::beginTransactionalMode()
 
    ::oModel:setIdToFind( ::getIdfromRowset() )
 
    ::oModel:loadCurrentBuffer() 
 
-   ::initEditMode()
+   ::fireEvent( 'openingDialog' )
 
    if ::oDialogView:Dialog()
       
-      ::endEditModePreUpdate()
-
       ::oModel:updateCurrentBuffer()
 
-      ::endEditModePosUpdate()
+      ::fireEvent( 'editedted' ) 
+
+      ::commitTransactionalMode()
 
    else
 
       lEdit       := .f.
 
-      ::cancelEditMode()
+      ::fireEvent( 'cancelEdited' ) 
+
+      ::rollbackTransactionalMode()
 
    end if 
 
-   ::endEditMode()
+   ::fireEvent( 'exitEdited' ) 
 
 RETURN ( lEdit )
 
@@ -432,15 +426,19 @@ METHOD Zoom()
       RETURN ( Self )
    end if 
 
+   if !( ::fireEvent( 'zooming' ) )
+      RETURN ( .f. )
+   end if
+
    ::setZoomMode()
 
    ::oModel:loadCurrentBuffer()
 
-   ::initZoomMode()
+   ::fireEvent( 'openingDialog' )
 
    ::oDialogView:Dialog()
 
-   ::endZoomMode()
+   ::fireEvent( 'exitZoomed' ) 
 
 RETURN ( .t. )
 
@@ -462,9 +460,11 @@ METHOD Delete( aSelected )
       RETURN ( .f. )
    end if 
 
-   lDelete              := .f.
+   if !( ::fireEvent( 'deleting' ) )
+      RETURN ( .f. )
+   end if
 
-   ::initDeleteMode()
+   lDelete              := .f.
 
    nSelected            := len( aSelected )
 
@@ -474,17 +474,21 @@ METHOD Delete( aSelected )
       cNumbersOfDeletes := "el registro en curso?"
    end if
 
+   ::fireEvent( 'openingConfirmDelete' )
+
    if oUser():lNotConfirmDelete() .or. msgNoYes( "¿Desea eliminar " + cNumbersOfDeletes, "Confirme eliminación" )
       
-      ::endDeleteModePreDelete()
+      ::fireEvent( 'deleted' ) 
 
       ::oModel:deleteSelection( aSelected )
 
-      ::endDeleteModePosDelete()
+   else 
+
+      ::fireEvent( 'cancelDeleted' ) 
    
    end if 
 
-   ::endDeleteMode()
+   ::fireEvent( 'exitDeleted' ) 
 
 RETURN ( lDelete )
 

@@ -61,6 +61,8 @@ METHOD ProcessAll( cColumn, hProcess, uValue )
    local uColumnBuffer
    local hColumnProcess
 
+   msgalert( cColumn, "cColumn")
+
    if !hhaskey( hProcess, cColumn )
       RETURN ( .t. )
    end if 
@@ -93,7 +95,7 @@ METHOD Process( uValue )
    local oError
    local lValidate   := .f.
 
-   default uValue    := ::uColumnBuffer  
+   
 
    try 
 
