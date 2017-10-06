@@ -45,7 +45,6 @@ CLASS TComercioConfig
 
    METHOD isActive()                   INLINE ( ::getFromCurrentWeb( "Active", .t. ) )
    METHOD isSilenceMode()              INLINE ( ::getFromCurrentWeb( "SilenceMode", .f. ) )
-   METHOD isInvertedNameFormat()       INLINE ( ::getFromCurrentWeb( "InvertedNameFormat", .f. ) )
    METHOD isProcessWithoutStock()      INLINE ( ::getFromCurrentWeb( "ProcessWithoutStock", .t. ) )
    METHOD isDeleteWithoutStock()       INLINE ( ::getFromCurrentWeb( "DeleteWithoutStock", .t. ) )
    METHOD isProcessWithoutImage()      INLINE ( ::getFromCurrentWeb( "ProcessWithoutImage", .t. ) )
@@ -89,6 +88,7 @@ CLASS TComercioConfig
    METHOD isRealTimeConexion()         INLINE ( if( hhaskey( ::hConfig, "RealTimeConexion" ), hget( ::hConfig, "RealTimeConexion" ), .f. ) )
    METHOD getHideExportButton()        INLINE ( if( hhaskey( ::hConfig, "HideExportButton" ), hget( ::hConfig, "HideExportButton" ), .f. ) )
    METHOD getHideHideExportButton()    INLINE ( if( hhaskey( ::hConfig, "HideExportButton" ), hget( ::hConfig, "HideExportButton" ), .f. ) )
+   METHOD isInvertedNameFormat()       INLINE ( if( hhaskey( ::hConfig, "InvertedNameFormat" ), hget( ::hConfig, "InvertedNameFormat" ), .f. ) )
 
    METHOD getFullFileName()            INLINE ( cPatConfig() + ::idEmpresa + "\prestashop.json" )
 
