@@ -4556,6 +4556,44 @@ FUNCTION ContabilizaReciboCliente( oBrw, oTree, lSimula, aSimula, dbfFacCliT, db
 RETURN ( lReturn )
 
 //------------------------------------------------------------------------//
+
+Static Function lContabilizaReciboCliente( nRecibo, cRecibo, nAsiento, aSimula, lFromFactura, oTree, dbfFacCliP )
+
+   local aAsiento := atail( aSimula )
+   local nRecno   := ( dbfFacCliP )->( recno() )
+   local cOrder   := ( dbfFacCliP )->( ordsetfocus() )
+
+   if dbseekinord( nRecibo, "nNumFac", dbfFacCliP )
+
+      if dbDialogLock( dbfFacCliP )
+         
+         ( dbfFacCliP )->lConPgo       := .t.
+
+         if ( getDiarioDatabaseContaplus() )->( fieldpos( "Guid" ) ) != 0
+            ( dbfFacCliP )->cConGuid   := aAsiento[ ( getDiarioDatabaseContaplus() )->( fieldpos( "Guid" ) ) ]
+         end if 
+
+         ( dbfFacCliP )->( dbunlock() )
+
+      end if
+
+      if !lFromFactura
+         oTree:Select( oTree:Add( "Recibo : " + rtrim( cRecibo ) + " asiento generado num. " + alltrim( str( nAsiento ) ), 1 ) )
+      end if
+
+   else 
+
+      msgStop( "Recibo " + nRecibo + " no encontado" )
+
+   end if 
+
+   ( dbfFacCliP )->( ordsetfocus( cOrder ) )
+   ( dbfFacCliP )->( dbgoto( nRecno ) )
+
+RETURN ( .t. )
+
+//------------------------------------------------------------------------//
+
 //------------------------------------------------------------------------//
 //------------------------------------------------------------------------//
 //------------------------------------------------------------------------//
