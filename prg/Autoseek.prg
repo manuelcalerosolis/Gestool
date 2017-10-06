@@ -127,7 +127,7 @@ FUNCTION AutoSeek( nKey, nFlags, oGet, oBrw, xAlias, lUpper, cPreFij, lAllowFilt
 
    end case
 
-   if lBigSeek( cPreFij, xValueToSearch, xAlias, oBrw, lNotUser, lNotFecha, nLen ) .or. empty( xValueToSearch )
+   if lBigSeek( cPreFij, xValueToSearch, xAlias, oBrw, lNotUser, lNotFecha, nLen, lAllowFilter ) .or. empty( xValueToSearch )
 
       oGet:SetColor( Rgb( 0, 0, 0 ), Rgb( 255, 255, 255 ) )
 
@@ -147,18 +147,19 @@ Return ( lReturn )
 
 //--------------------------------------------------------------------------//
 
-FUNCTION lBigSeek( cPreFij, xValueToSearch, xAlias, oBrw, lNotUser, lNotFecha, nLen )
+FUNCTION lBigSeek( cPreFij, xValueToSearch, xAlias, oBrw, lNotUser, lNotFecha, nLen, lAllowFilter )
 
    local oCol
    local xVal
    local nRec
-   local lRet        := .f.
+   local lRet              := .f.
    local cSort
    local nSort
 
-   DEFAULT lNotUser  := .t.
-   DEFAULT lNotFecha := .t.
-   DEFAULT nLen      := 10
+   DEFAULT lNotUser        := .t.
+   DEFAULT lNotFecha       := .t.
+   DEFAULT nLen            := 10
+   DEFAULT lAllowFilter    := .t.
 
    if isObject( xValueToSearch )
       xValueToSearch:Assign()
@@ -173,15 +174,15 @@ FUNCTION lBigSeek( cPreFij, xValueToSearch, xAlias, oBrw, lNotUser, lNotFecha, n
       return .t.
    end if
 
-   if isChar( xValueToSearch )
+   // Uso de filtros-----------------------------------------------------------
+
+   if lAllowFilter .and. isChar( xValueToSearch )
 
       xValueToSearch        := StrTran( xValueToSearch, Chr( 8 ), "" )
       if !empty( cPreFij )
          xValueToSearch     := cPreFij + xValueToSearch
       end if
       xValueToSearch        := Alltrim( xValueToSearch )
-
-      // Filtros desde la cabecera---------------------------------------------------
 
       DestroyFastFilter( xAlias, .f., .f. )
 
@@ -197,9 +198,7 @@ FUNCTION lBigSeek( cPreFij, xValueToSearch, xAlias, oBrw, lNotUser, lNotFecha, n
 
    end if
 
-   /*
-   Comprobaciones antes de buscar----------------------------------------------
-   */
+   // Comprobaciones antes de buscar-------------------------------------------
 
    cSort       := ( xAlias )->( OrdSetFocus() )
 

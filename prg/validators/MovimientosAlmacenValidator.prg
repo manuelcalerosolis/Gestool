@@ -35,6 +35,8 @@ RETURN ( Self )
 
 METHOD requiredAlmacenOrigen( value )
 
+   msgalert(value, "requiredAlmacenOrigen")
+
    if ::oController:getModelBuffer( "tipo_movimiento" ) != __tipo_movimiento_entre_almacenes__ 
       RETURN .t.
    end if 

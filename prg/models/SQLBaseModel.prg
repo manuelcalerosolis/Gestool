@@ -1,7 +1,7 @@
 #include "FiveWin.Ch"
 #include "Factu.ch" 
-#include "Ads.ch"
 #include "Hdo.ch"
+#include "HdoCommon.ch"
 
 //---------------------------------------------------------------------------//
 
@@ -352,7 +352,7 @@ METHOD buildRowSet( cSentence )
 
       ::oStatement      := ::getDatabase():Query( cSentence )
 
-      // ::oStatement:setAttribute( ATTR_STR_PAD, .t. )
+      ::oStatement:setAttribute( ATTR_STR_PAD, .t. )
       
       ::oRowSet         := ::oStatement:fetchRowSet()
 
