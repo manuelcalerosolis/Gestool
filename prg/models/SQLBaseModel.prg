@@ -346,13 +346,13 @@ METHOD buildRowSet( cSentence )
 
    DEFAULT cSentence    := ::getSelectSentence()
 
-      msgalert( ::getSelectSentence(), "getSelectSentence" )
-
    try
 
       ::freeStatement()
 
       ::oStatement      := ::getDatabase():Query( cSentence )
+
+      // ::oStatement:setAttribute( ATTR_STR_PAD, .t. )
       
       ::oRowSet         := ::oStatement:fetchRowSet()
 
@@ -364,7 +364,7 @@ METHOD buildRowSet( cSentence )
 
    ::oRowSet:goTop()
 
-   ::fireEvent( 'buildedgRowSet')
+   ::fireEvent( 'builtRowSet')
 
 RETURN ( self )
 

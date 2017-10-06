@@ -25,6 +25,7 @@ CLASS SQLBrowseView
    // Facades------------------------------------------------------------------
 
    METHOD getBrowse()                     INLINE ( ::oBrowse )
+   METHOD getBrowseSelected()             INLINE ( ::oBrowse:aSelected )
 
    METHOD setController( oController )    INLINE ( ::oController := oController )
    METHOD getController()                 INLINE ( iif( empty( ::oController ), ::oSender:getController(), ::oController ) )

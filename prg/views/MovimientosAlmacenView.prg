@@ -11,7 +11,6 @@ CLASS MovimientosAlmacenView FROM SQLBaseView
    METHOD New()
 
    METHOD Dialog()
-   METHOD initDialog()
    METHOD startDialog( oRadioTipoMovimento, oGetAlmacenOrigen )
 
    METHOD stampAlmacenNombre( oGetAlmacenOrigen )
@@ -124,11 +123,21 @@ METHOD Dialog()
          ID          500 ;
          OF          oDlg ;
          WHEN        ( ::oController:isNotZoomMode() ) ;
-         ACTION      ( ::oController:oLineasController:Append() )
+         ACTION      ( ::oController:oLineasController:Append(), ::oSQLBrowseView:Refresh() )
 
-      // Browse lineas---------------------------------------------------------
+      REDEFINE BUTTON ;
+         ID          501 ;
+         OF          oDlg ;
+         WHEN        ( ::oController:isNotZoomMode() ) ;
+         ACTION      ( ::oController:oLineasController:Edit(), ::oSQLBrowseView:Refresh() )
 
-      msgalert( ::oController:oModel:hBuffer[ "uuid" ], "uuid" )
+      REDEFINE BUTTON ;
+         ID          502 ;
+         OF          oDlg ;
+         WHEN        ( ::oController:isNotZoomMode() ) ;
+         ACTION      ( ::oController:oLineasController:Delete( ::oSQLBrowseView:getBrowseSelected() ), ::oSQLBrowseView:Refresh() )
+
+      // Browse lineas--------------------------------------------------------- 
 
       ::oSQLBrowseView              := SQLBrowseView():New( Self )
 
@@ -157,19 +166,11 @@ METHOD Dialog()
 
    oDlg:bStart       := {|| ::startDialog( oRadioTipoMovimento, oGetAlmacenOrigen ) }
 
-   oDlg:Activate( , , , .t., , , {|| ::initDialog() } )
+   oDlg:Activate( , , , .t. ) // , , , {|| ::initDialog() } )
 
    oBmpGeneral:End()
 
 RETURN ( oDlg:nResult == IDOK )
-
-//---------------------------------------------------------------------------//
-
-METHOD initDialog()
-
-   ::oController:oLineasController:oModel:buildRowSet()
-
-RETURN ( Self )
 
 //---------------------------------------------------------------------------//
 

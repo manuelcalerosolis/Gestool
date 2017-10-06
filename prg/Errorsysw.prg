@@ -212,13 +212,22 @@ Static Function SendErrorMessage( cMessage, aStack )
                               "?Subject=Error"                 + Space( 1 ) +;
                               "&body=" + cMessage )
 
-/*
-#ifdef __HARBOUR__
-   MAPISendMailDialog( 0, cMessage, cText, '', '', 'Gst+ error system', 'SMTP:watchdog@telefonica.net' )
-#endif
-*/
+return nil
+
+Function showProcNameStack()
+
+   local i     := 2
+   local cText := ""
+
+   while !empty( procname( i ) )
+      cText    += "* Llamado desde " + Trim( ProcName( i ) ) + "(" + LTrim( Str( ProcLine( i ) ) ) + ")" ) + CRLF
+      i++
+   enddo
+
+   msgStop( cText, "Procname" )
 
 return nil
+
 
 
 

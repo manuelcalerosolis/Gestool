@@ -5,9 +5,11 @@
 
 CLASS ClientesModel FROM ADSBaseModel
 
-   METHOD getHeaderTableName()                  INLINE ::getEmpresaTableName( "Client" )
+   METHOD getTableName()                     INLINE ::getEmpresaTableName( "Client" )
 
    METHOD Riesgo( idCliente )
+
+   METHOD getClientesPorRuta( cWhere, cOrderBy )
 
 END CLASS
 
@@ -24,5 +26,29 @@ METHOD Riesgo( idCliente )
    nRiesgo        += TicketsClientesModel():Riesgo( idCliente )
 
 Return ( nRiesgo )
+
+//---------------------------------------------------------------------------//
+
+METHOD getClientesPorRuta( cWhere, cOrderBy )
+
+   local cStm  := "ADSClientes"
+   local cSql  := "SELECT "                                                + ;
+                     "Cod, "                                               + ;
+                     "Titulo "                                             + ;
+                  "FROM " + ::getTableName() + " "                         
+
+   if !empty( cWhere )
+         cSql  += "WHERE " + cWhere + " "
+   end if 
+
+   if !empty( cOrderBy )
+         cSql  += "ORDER BY " + cOrderBy 
+   end if 
+
+   if ::ExecuteSqlStatement( cSql, @cStm )
+      RETURN ( cStm )
+   end if 
+
+RETURN ( nil )
 
 //---------------------------------------------------------------------------//
