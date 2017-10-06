@@ -73,9 +73,9 @@ METHOD insertControls() CLASS ReceiptDocumentSalesViewEdit
 
    ::defineImporte()
 
-   ::defineImporteCobro()
+   //::defineImporteCobro()
 
-   ::defineImporteGastos()
+   //::defineImporteGastos()
 
    ::defineCliente()
 
@@ -93,7 +93,7 @@ Return ( self )
 
 METHOD defineCliente( nRow ) CLASS ReceiptDocumentSalesViewEdit
 
-   DEFAULT nRow         := 250
+   DEFAULT nRow         := 200
 
    TGridSay():Build(    {  "nRow"      => nRow,;
                            "nCol"      => {|| GridWidth( 0.5, ::oDlg ) },;
@@ -134,7 +134,7 @@ METHOD defineFormaPago( nRow ) CLASS ReceiptDocumentSalesViewEdit
 
    local cSayTextFPago  := retFld( hGet( ::oSender:hDictionaryMaster, "Pago" ), D():FormasPago( ::oSender:nView ) )
 
-   DEFAULT nRow         := 275
+   DEFAULT nRow         := 225
 
    TGridSay():Build(    {  "nRow"      => nRow,;
                            "nCol"      => {|| GridWidth( 0.5, ::oDlg ) },;
@@ -367,7 +367,7 @@ METHOD defineAgente( nRow ) CLASS ReceiptDocumentSalesViewEdit
 
    local cSayTextAgente    := cNbrAgent( hGet( ::oSender:hDictionaryMaster, "Agente" ) )
 
-   DEFAULT nRow            := 300
+   DEFAULT nRow            := 250
 
 
    TGridSay():Build(    {  "nRow"      => nRow,;
@@ -407,8 +407,7 @@ Return ( self )
 
 METHOD defineConcepto( nRow ) CLASS ReceiptDocumentSalesViewEdit
 
-   DEFAULT nRow            := 325
-
+   DEFAULT nRow            := 275
 
    TGridSay():Build(    {  "nRow"      => nRow,;
                            "nCol"      => {|| GridWidth( 0.5, ::oDlg ) },;
@@ -438,7 +437,7 @@ Return ( self )
 
 METHOD definePagadoPor( nRow ) CLASS ReceiptDocumentSalesViewEdit
 
-   DEFAULT nRow            := 350
+   DEFAULT nRow            := 300
 
    TGridSay():Build(    {  "nRow"      => nRow,;
                            "nCol"      => {|| GridWidth( 0.5, ::oDlg ) },;
@@ -551,7 +550,7 @@ METHOD validTotalDocumento() CLASS ReceiptDocumentSalesViewEdit
 
    end if 
 
-   ::oImporteCobro:refresh()
+//   ::oImporteCobro:refresh()
 
 Return ( .t. )
 
