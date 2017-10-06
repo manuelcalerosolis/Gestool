@@ -7,7 +7,11 @@ CLASS MovimientosAlmacenController FROM SQLBaseController
 
    DATA oLineasController
 
-   METHOD   New()
+   METHOD New()
+
+   METHOD setGeneralSelectToMovimientosAlmacenLineasModel()
+   
+   METHOD freeRowSetMovimientosAlmacenLineasModel()   INLINE ( ::oLineasController:oModel:freeRowSet() )
 
 END CLASS
 
@@ -21,6 +25,8 @@ METHOD New()
 
    ::nLevel                := nLevelUsr( "01050" )
 
+   ::lTransactional        := .t.
+
    ::oModel                := SQLMovimientosAlmacenModel():New( self )
 
    ::oDialogView           := MovimientosAlmacenView():New( self )
@@ -30,6 +36,20 @@ METHOD New()
    ::oLineasController     := MovimientosAlmacenLineasController():New( self )
 
    ::Super:New()
+
+RETURN ( Self )
+
+//---------------------------------------------------------------------------//
+
+METHOD setGeneralSelectToMovimientosAlmacenLineasModel()
+
+   local uuid              := hget( ::oModel:hBuffer, "uuid" )
+
+   if empty( uuid )
+      RETURN ( Self )
+   end if 
+
+   ::oLineasController:oModel:setGeneralWhere( "parent_uuid = " + quoted( uuid ) )
 
 RETURN ( Self )
 
