@@ -42,7 +42,6 @@ METHOD Dialog()
    REDEFINE GET   oGetNombre ;
       VAR         ::getModel():hBuffer[ "nombre" ] ;
       ID          100 ;
-      MEMO ;
       WHEN        ( !::oController:isZoomMode() ) ;
       VALID       ( ::oController:validate( "nombre" ) ) ;
       OF          oDlg

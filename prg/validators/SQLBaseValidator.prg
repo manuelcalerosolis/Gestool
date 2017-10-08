@@ -16,10 +16,7 @@ CLASS SQLBaseValidator
    DATA uColumnValue
    DATA cColumnToProced
 
-   DATA cCurrentMethod  
-   DATA cCurrentMessage   
-
-   DATA lDebugMode                     INIT .t.
+   DATA lDebugMode                     INIT .f.
   
    METHOD New()
    METHOD End()
@@ -76,10 +73,7 @@ METHOD ProcessAll( cColumn, hProcess, uValue )
 
    for each hColumn in hColumnProcess
 
-      ::cCurrentMethod     := hColumn:__enumKey()
-      ::cCurrentMessage    := hColumn:__enumValue()
-
-      if !::Process( uValue )
+      if !::Process( hColumn:__enumKey(), uValue, hColumn:__enumValue() )
          RETURN ( .f. )
       end if 
 
@@ -89,17 +83,17 @@ RETURN ( .t. )
 
 //---------------------------------------------------------------------------//
 
-METHOD Process( uValue )
+METHOD Process( cMethod, uValue, cMessage )
 
    local oError
    local lValidate   := .f.
 
    try 
 
-      lValidate      := Self:&( ::cCurrentMethod )( uValue )
+      lValidate      := Self:&( cMethod )( uValue )
 
       if !lValidate
-         msgstop( ::cCurrentMessage, "Error" )
+         msgstop( cMessage, "Error" )
       end if
 
    catch oError

@@ -526,7 +526,6 @@ backupView.prg                                     				\
 ReindexaPresenter.prg                                 			\
 ReindexaView.prg                                      			\
 BaseModel.prg 																	\
-ADSBaseModel.prg 																\
 SQLBaseModel.prg 																\
 SQLBaseEmpresasModel.prg 													\
 SQLBaseController.prg 														\
@@ -534,6 +533,8 @@ SQLBaseController.prg 														\
 SQLHeaderController.prg 													\
 SQLBaseLineasModel.prg 														\
 ClientesModel.prg 															\
+AgentesModel.prg 																\
+DivisasModel.prg 																\
 AlbaranesClientesModel.prg 												\
 AlbaranesProveedoresLineasModel.prg 									\
 FacturasProveedoresLineasModel.prg 										\
@@ -1101,7 +1102,6 @@ backupView.obj                                     				\
 ReindexaPresenter.obj                              				\
 ReindexaView.obj                                   				\
 BaseModel.obj 																	\
-ADSBaseModel.obj 																\
 SQLBaseModel.Obj 																\
 SQLBaseEmpresasModel.Obj 													\
 SQLBaseController.Obj 														\
@@ -1109,6 +1109,8 @@ SQLHeaderController.obj														\
 SQLBaseLineasModel.Obj 														\
 EmpresasModel.obj 															\
 ClientesModel.obj 															\
+AgentesModel.obj 																\
+DivisasModel.obj 																\
 AlbaranesClientesModel.obj 												\
 TransaccionesComercialesLineasModel.obj 						   	\
 AlbaranesProveedoresLineasModel.obj 									\
@@ -1646,7 +1648,6 @@ $(OBJ)\ReindexaView.obj                      						+
 $(OBJ)\Reporting.obj                         						+
 $(OBJ)\ViewReporting.obj 													+
 $(OBJ)\BaseModel.obj 														+
-$(OBJ)\ADSBaseModel.obj 													+
 $(OBJ)\SQLBaseModel.obj 													+
 $(OBJ)\SQLBaseEmpresasModel.obj 											+
 $(OBJ)\SQLBaseController.obj 												+
@@ -1654,6 +1655,8 @@ $(OBJ)\SQLHeaderController.obj 											+
 $(OBJ)\SQLBaseLineasModel.obj 											+
 $(OBJ)\EmpresasModel.obj 													+
 $(OBJ)\ClientesModel.obj 													+
+$(OBJ)\AgentesModel.obj 													+
+$(OBJ)\DivisasModel.obj 													+
 $(OBJ)\AlbaranesClientesModel.obj 										+
 $(OBJ)\TransaccionesComercialesLineasModel.obj 						+
 $(OBJ)\AlbaranesProveedoresLineasModel.obj 							+
