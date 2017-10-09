@@ -956,7 +956,7 @@ METHOD setAgentToDocument()
 
    if !empty( tabletAgent )
       hSet( ::hDictionaryMaster, "Agente", tabletAgent )
-   end if 
+   end if
 
 RETURN ( .t. )
 
