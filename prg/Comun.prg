@@ -279,8 +279,7 @@ FUNCTION Test()
 
    local cAlias                  := ClientesModel():getClientesPorRuta( 'lVisDom', 'nVisDom' )
 
-
-   ( cAlias )->( dbGoTop() )
+   ( cAlias )->( browse() )
 
    while !( cAlias )->( Eof() )
 

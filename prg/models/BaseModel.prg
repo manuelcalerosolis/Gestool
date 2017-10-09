@@ -22,6 +22,8 @@ CLASS ADSBaseModel
 
    METHOD closeArea( cArea )                    INLINE ( if( select( cArea ) > 0, ( cArea )->( dbclosearea() ), ), dbselectarea( 0 ), .t. )
 
+   METHOD goTop( cArea )                        INLINE ( if( select( cArea ) > 0, ( ( cArea )->( ordsetfocus( 0 ) ), ( cArea )->( dbgotop() ) ), ) )
+
 END CLASS
 
 //---------------------------------------------------------------------------//
@@ -73,8 +75,12 @@ METHOD executeSqlStatement( cSql, cSqlStatement, hStatement )
       end if
    
       if lOk 
+      
          ADSCacheOpenCursors( 0 )
          ADSClrCallBack()
+
+         ::goTop( cSqlStatement )
+
       endif
    
    RECOVER USING oError
