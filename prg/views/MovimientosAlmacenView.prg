@@ -11,7 +11,6 @@ CLASS MovimientosAlmacenView FROM SQLBaseView
    METHOD New()
 
    METHOD Dialog()
-   METHOD initDialog()
    METHOD startDialog( oRadioTipoMovimento, oGetAlmacenOrigen )
 
    METHOD stampAlmacenNombre( oGetAlmacenOrigen )
@@ -19,6 +18,8 @@ CLASS MovimientosAlmacenView FROM SQLBaseView
    METHOD stampGrupoMovimientoNombre( oGetGrupoMovimiento )
 
    METHOD changeTipoMovimiento( oRadioTipoMovimento, oGetAlmacenOrigen )
+
+   METHOD stampAgente( oGetAgente )
 
 END CLASS
 
@@ -37,6 +38,9 @@ Return ( Self )
 METHOD Dialog()
 
    local oDlg
+   local oBtn
+   local oGetDivisa
+   local oGetAgente
    local oBmpGeneral
    local oGetAlmacenOrigen
    local oGetAlmacenDestino
@@ -115,8 +119,37 @@ METHOD Dialog()
          BITMAP      "Lupa" ;
          OF          oDlg
 
-      oGetGrupoMovimiento:bValid   := {|| ::stampGrupoMovimientoNombre( oGetGrupoMovimiento ) }
+      oGetGrupoMovimiento:bValid   := {|| if( ::oController:validate( "grupo_movimiento" ), ::stampGrupoMovimientoNombre( oGetGrupoMovimiento ), .f. ) }
       oGetGrupoMovimiento:bHelp    := {|| browseGruposMovimientos( oGetGrupoMovimiento, oGetGrupoMovimiento:oHelpText ) }
+
+      REDEFINE GET   oGetAgente ;
+         VAR         ::oController:oModel:hBuffer[ "agente" ] ;
+         ID          210 ;
+         IDHELP      211 ;
+         WHEN        ( ::oController:isNotZoomMode() ) ;
+         PICTURE     "@!" ;
+         BITMAP      "Lupa" ;
+         OF          oDlg
+
+      oGetAgente:bValid := {|| if( ::oController:validate( "agente" ), ::stampAgente( oGetAgente ), .f. ) }
+      oGetAgente:bHelp  := {|| BrwAgentes( oGetAgente, oGetAgente:oHelpText ) }
+
+      REDEFINE GET oGetDivisa ;
+         VAR         ::oController:oModel:hBuffer[ "divisa" ] ;
+         WHEN        ( ::oController:isNotZoomMode() ) ;
+         PICTURE     "@!" ;
+         ID          190 ;
+         BITMAP      "Lupa" ;
+         OF          oDlg
+
+      oGetDivisa:bValid := {|| ::oController:validate( "divisa" ) }
+      oGetDivisa:bHelp  := {|| BrwDiv( oGetDivisa ) }
+
+      REDEFINE GET   ::oController:oModel:hBuffer[ "comentarios" ] ;
+         ID          170 ;
+         MEMO ;
+         WHEN        ( ::oController:isNotZoomMode() ) ;
+         OF          oDlg
 
       // Buttons lineas-------------------------------------------------------
 
@@ -124,11 +157,21 @@ METHOD Dialog()
          ID          500 ;
          OF          oDlg ;
          WHEN        ( ::oController:isNotZoomMode() ) ;
-         ACTION      ( ::oController:oLineasController:Append() )
+         ACTION      ( ::oController:oLineasController:Append(), ::oSQLBrowseView:Refresh() )
 
-      // Browse lineas---------------------------------------------------------
+      REDEFINE BUTTON ;
+         ID          501 ;
+         OF          oDlg ;
+         WHEN        ( ::oController:isNotZoomMode() ) ;
+         ACTION      ( ::oController:oLineasController:Edit(), ::oSQLBrowseView:Refresh() )
 
-      msgalert( ::oController:oModel:hBuffer[ "uuid" ], "uuid" )
+      REDEFINE BUTTON ;
+         ID          502 ;
+         OF          oDlg ;
+         WHEN        ( ::oController:isNotZoomMode() ) ;
+         ACTION      ( ::oController:oLineasController:Delete( ::oSQLBrowseView:getBrowseSelected() ), ::oSQLBrowseView:Refresh() )
+
+      // Browse lineas--------------------------------------------------------- 
 
       ::oSQLBrowseView              := SQLBrowseView():New( Self )
 
@@ -138,11 +181,11 @@ METHOD Dialog()
 
       // Buttons---------------------------------------------------------------
 
-      REDEFINE BUTTON ;
+      REDEFINE BUTTON oBtn ;
          ID          IDOK ;
          OF          oDlg ;
          WHEN        ( ::oController:isNotZoomMode() ) ;
-         ACTION      ( oDlg:end( IDOK ) )
+         ACTION      ( if( validateDialog( oDlg ), oDlg:end( IDOK ), ) )
 
       REDEFINE BUTTON ;
          ID          IDCANCEL ;
@@ -155,9 +198,13 @@ METHOD Dialog()
          OF          oDlg ;
          ACTION      ( msgalert( "RecalculaPrecio" ) )
 
-   oDlg:bStart       := {|| ::startDialog( oRadioTipoMovimento, oGetAlmacenOrigen ) }
+      if ::oController:isNotZoomMode()
+         oDlg:AddFastKey( VK_F5, {|| oBtn:Click() } )
+      end if
 
-   oDlg:Activate( , , , .t., , , {|| ::initDialog() } )
+      oDlg:bStart    := {|| ::startDialog( oRadioTipoMovimento, oGetAlmacenOrigen, oGetAlmacenDestino, oGetGrupoMovimiento, oGetAgente ) }
+
+   oDlg:Activate( , , , .t. ) 
 
    oBmpGeneral:End()
 
@@ -165,17 +212,17 @@ RETURN ( oDlg:nResult == IDOK )
 
 //---------------------------------------------------------------------------//
 
-METHOD initDialog()
-
-   ::oController:oLineasController:oModel:buildRowSet()
-
-RETURN ( Self )
-
-//---------------------------------------------------------------------------//
-
-METHOD startDialog( oRadioTipoMovimento, oGetAlmacenOrigen )
+METHOD startDialog( oRadioTipoMovimento, oGetAlmacenOrigen, oGetAlmacenDestino, oGetGrupoMovimiento, oGetAgente )
    
    ::changeTipoMovimiento( oRadioTipoMovimento, oGetAlmacenOrigen )
+
+   ::stampAlmacenNombre( oGetAlmacenOrigen )
+
+   ::stampAlmacenNombre( oGetAlmacenDestino )
+
+   ::stampGrupoMovimientoNombre( oGetGrupoMovimiento )
+
+   ::stampAgente( oGetAgente )
 
 RETURN ( Self )
 
@@ -188,7 +235,7 @@ METHOD stampAlmacenNombre( oGetAlmacenOrigen )
 
    oGetAlmacenOrigen:oHelpText:cText( cNombreAlmacen )
 
-RETURN ( !empty( cNombreAlmacen ) )
+RETURN ( .t. )
 
 //---------------------------------------------------------------------------//
 
@@ -199,7 +246,18 @@ METHOD stampGrupoMovimientoNombre( oGetGrupoMovimiento )
 
    oGetGrupoMovimiento:oHelpText:cText( cNombreGrupo )
 
-RETURN ( !empty( cNombreGrupo ) )
+RETURN ( .t. )
+
+//---------------------------------------------------------------------------//
+
+METHOD stampAgente( oGetAgente )
+
+   local cCodigoAgente     := oGetAgente:varGet()
+   local cNombreAgente     := AgentesModel():getNombre( cCodigoAgente )
+
+   oGetAgente:oHelpText:cText( cNombreAgente )
+
+RETURN ( .t. )
 
 //---------------------------------------------------------------------------//
 

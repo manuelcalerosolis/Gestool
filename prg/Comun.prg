@@ -277,6 +277,8 @@ RETURN ( .t. )
 
 FUNCTION Test()
 
+   // ( ClientesModel():getClientesPorRuta( 'lVisLun', 'nVisLun' ) )->( browse() )
+
    // msgalert( hb_valtoexp( ReadHashCodeGS128( "0118411859550506107537L415180315", ) ) ) 
 
 RETURN ( nil )

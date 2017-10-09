@@ -13,11 +13,8 @@ CLASS SQLBaseValidator
    DATA hValidators
    DATA hAsserts
 
-   DATA uColumnBuffer
+   DATA uColumnValue
    DATA cColumnToProced
-
-   DATA cCurrentMethod  
-   DATA cCurrentMessage   
 
    DATA lDebugMode                     INIT .f.
   
@@ -58,10 +55,7 @@ RETURN ( nil )
 METHOD ProcessAll( cColumn, hProcess, uValue )
 
    local hColumn
-   local uColumnBuffer
    local hColumnProcess
-
-   msgalert( cColumn, "cColumn")
 
    if !hhaskey( hProcess, cColumn )
       RETURN ( .t. )
@@ -72,15 +66,14 @@ METHOD ProcessAll( cColumn, hProcess, uValue )
       RETURN ( .t. )
    end if 
 
+   default uValue          := ::oController:getModelBuffer( cColumn )
+
    ::cColumnToProced       := cColumn
-   ::uColumnBuffer         := ::oController:getModelBuffer( cColumn )
+   ::uColumnValue          := uValue
 
    for each hColumn in hColumnProcess
 
-      ::cCurrentMethod     := hColumn:__enumKey()
-      ::cCurrentMessage    := hColumn:__enumValue()
-
-      if !::Process( uValue )
+      if !::Process( hColumn:__enumKey(), uValue, hColumn:__enumValue() )
          RETURN ( .f. )
       end if 
 
@@ -90,19 +83,17 @@ RETURN ( .t. )
 
 //---------------------------------------------------------------------------//
 
-METHOD Process( uValue )
+METHOD Process( cMethod, uValue, cMessage )
 
    local oError
    local lValidate   := .f.
 
-   
-
    try 
 
-      lValidate      := Self:&( ::cCurrentMethod )( uValue )
+      lValidate      := Self:&( cMethod )( uValue )
 
       if !lValidate
-         msgstop( ::cCurrentMessage, "Error" )
+         msgstop( cMessage, "Error" )
       end if
 
    catch oError
@@ -117,13 +108,13 @@ RETURN ( lValidate )
 
 METHOD Required( uValue )
 
-   default uValue    := ::uColumnBuffer  
+   default uValue    := ::uColumnValue  
 
    if ::lDebugMode
       msgInfo( !empty( uValue ), "Required validator" )
    end if 
 
-RETURN ( !empty( ::uColumnBuffer ) )
+RETURN ( !empty( ::uColumnValue ) )
 
 //---------------------------------------------------------------------------//
 
@@ -133,7 +124,7 @@ METHOD Unique( uValue )
    local nCount
    local cSQLSentence
 
-   default uValue    := ::uColumnBuffer  
+   default uValue    := ::uColumnValue  
 
    cSQLSentence      := "SELECT COUNT(*) FROM " + ::oController:getModelTableName()       + space( 1 )
    cSQLSentence      +=    "WHERE " + ::cColumnToProced + " = " + toSQLString( uValue )   + space( 1 )
@@ -158,7 +149,7 @@ METHOD Exist( uValue )
    local nCount
    local cSQLSentence
 
-   default uValue    := ::uColumnBuffer  
+   default uValue    := ::uColumnValue  
 
    cSQLSentence      := "SELECT COUNT(*) FROM " + ::oController:getModelTableName()       + space( 1 )
    cSQLSentence      +=    "WHERE " + ::cColumnToProced + " = " + toSQLString( uValue )
@@ -178,7 +169,7 @@ METHOD EmptyOrExist( uValue )
    local nCount
    local cSQLSentence
 
-   default uValue    := ::uColumnBuffer  
+   default uValue    := ::uColumnValue  
 
    if empty( uValue )
       RETURN ( .t. )

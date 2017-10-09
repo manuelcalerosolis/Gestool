@@ -27,7 +27,7 @@ CLASS SQLBaseController
 
    DATA lTransactional                                INIT .f.
 
-   DATA nLevel
+   DATA nLevel                                        INIT nOr( ACC_APPD, ACC_EDIT, ACC_ZOOM, ACC_DELE, ACC_IMPR )
 
    DATA nMode                                         AS NUMERIC
 
@@ -142,8 +142,6 @@ CLASS SQLBaseController
 
    METHOD setEvent( cEvent, bEvent )                  INLINE ( if( !empty( ::oEvents ), ::oEvents:set( cEvent, bEvent ), ) )
    METHOD fireEvent( cEvent )                         INLINE ( if( !empty( ::oEvents ), ::oEvents:fire( cEvent ), ) )
-
-
 
 END CLASS
 
@@ -293,10 +291,12 @@ METHOD Append()
    nRecno         := ::oModel:getRowSetRecno()
 
    ::oModel:loadBlankBuffer()
-   
-   ::fireEvent( 'openingDialog' )    
+
+   ::fireEvent( 'openingDialog' )     
 
    if ::oDialogView:Dialog()
+
+      ::fireEvent( 'closedDialog' )    
 
       ::oModel:insertBuffer()
 
@@ -348,6 +348,8 @@ METHOD Duplicate()
 
    if ::oDialogView:Dialog()
 
+      ::fireEvent( 'closedDialog' )    
+
       ::oModel:insertBuffer()
    
       ::fireEvent( 'duplicated' ) 
@@ -397,6 +399,8 @@ METHOD Edit()
 
    if ::oDialogView:Dialog()
       
+      ::fireEvent( 'closedDialog' )    
+
       ::oModel:updateCurrentBuffer()
 
       ::fireEvent( 'editedted' ) 
@@ -437,6 +441,8 @@ METHOD Zoom()
    ::fireEvent( 'openingDialog' )
 
    ::oDialogView:Dialog()
+
+   ::fireEvent( 'closedDialog' )    
 
    ::fireEvent( 'exitZoomed' ) 
 

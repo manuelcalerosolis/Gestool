@@ -735,6 +735,7 @@ FUNCTION BrwDiv( oGet, oBmp, oGetDiv, dbfDiv, oBan, lBigStyle )
 	local oBrw
    local nOrd        := GetBrwOpt( "BrwDiv" )
    local aSta
+   local lCloDiv     := .f.
 	local oCbxOrd
    local aCbxOrd     := { "Código", "Nombre" }
    local cCbxOrd
@@ -745,11 +746,12 @@ FUNCTION BrwDiv( oGet, oBmp, oGetDiv, dbfDiv, oBan, lBigStyle )
 
    DEFAULT lBigStyle := .f.
 
-   if dbfDiv == nil
-      return .f.
+   if empty( dbfDiv )
+      dbUseArea( .t., ( cDriver() ), ( cPatDat() + "Divisas.Dbf" ), ( cCheckArea( "Divisas", @dbfDiv ) ), .t. )
+      lCloDiv        := .t.
+   else
+      aSta           := aGetStatus( dbfDiv, .t. )
    end if
-
-   aSta              := aGetStatus( dbfDiv, .t. )
 
    nOrd              := ( dbfDiv )->( OrdSetFocus( nOrd ) )
 
@@ -759,44 +761,19 @@ FUNCTION BrwDiv( oGet, oBmp, oGetDiv, dbfDiv, oBan, lBigStyle )
       DEFINE DIALOG oDlg RESOURCE "BIGHELPENTRY" TITLE "Seleccione la divisa"
    end if
 
-		REDEFINE GET oGet1 VAR cGet1;
-			ID 		104 ;
-         ON CHANGE( AutoSeek( nKey, nFlags, Self, oBrw, dbfDiv ) );
-         VALID    ( OrdClearScope( oBrw, dbfDiv ) );
-         BITMAP   "FIND" ;
-         OF       oDlg
+		REDEFINE GET    oGet1 VAR cGet1;
+			ID 		    104 ;
+         ON CHANGE   ( AutoSeek( nKey, nFlags, Self, oBrw, dbfDiv ) );
+         VALID       ( OrdClearScope( oBrw, dbfDiv ) );
+         BITMAP      "FIND" ;
+         OF          oDlg
 
 		REDEFINE COMBOBOX oCbxOrd ;
-			VAR 		cCbxOrd ;
-			ID 		102 ;
-         ITEMS    aCbxOrd ;
-			ON CHANGE( ( dbfDiv )->( OrdSetFocus( oCbxOrd:nAt ) ), oBrw:refresh(), oGet1:SetFocus() ) ;
-			OF 		oDlg
-
-      /*
-      REDEFINE IBROWSE oBrw ;
-			FIELDS 	(dbfDiv)->CCODDIV,;
-						(dbfDiv)->CNOMDIV,;
-                  oBan:hBandera( (dbfDiv)->CBNDDIV ),;
-                  Trans( nValChgDiv( dbfDiv ), "@E 999,999.9999"),;
-                  Dtoc( (dbfDiv)->DACTDIV );
-         HEAD     "Código",;
-						"Nombre",;
-                  "Bandera",;
-                  "Valor",;
-                  "U. Cambio";
-			FIELDSIZES;
-						40,;
-						200,;
-                  20,;
-						80,;
-                  60;
-         JUSTIFY  .f., .f., .f., .t., .f. ;
-			ALIAS 	( dbfDiv );
-         ON DBLCLICK ( oDlg:end( IDOK ) );
-			ID 		105 ;
-			OF 		oDlg
-      */
+			VAR 		   cCbxOrd ;
+			ID          102 ;
+         ITEMS       aCbxOrd ;
+			ON CHANGE   ( ( dbfDiv )->( OrdSetFocus( oCbxOrd:nAt ) ), oBrw:refresh(), oGet1:SetFocus() ) ;
+			OF          oDlg
 
       oBrw                 := IXBrowse():New( oDlg )
 
@@ -886,13 +863,13 @@ FUNCTION BrwDiv( oGet, oBmp, oGetDiv, dbfDiv, oBan, lBigStyle )
 
       oGet:cText( ( dbfDiv )->cCodDiv )
 
-      if ValType( oBmp ) == "O"
+      if hb_isobject( oBmp )
          oBmp:Reload( ( dbfDiv )->cBndDiv )
       end if
 
-      if ValType( oGetDiv ) == "O"
+      if hb_isobject( oGetDiv )
          oGetDiv:cText( nValChgDiv( dbfDiv ) )
-      elseif ValType( oGetDiv ) == "N"
+      elseif hb_isnumeric( oGetDiv )
          oGetDiv  := nValChgDiv( dbfDiv )
       end if
 
@@ -904,9 +881,12 @@ FUNCTION BrwDiv( oGet, oBmp, oGetDiv, dbfDiv, oBan, lBigStyle )
 
 	oGet:setFocus()
 
-   ( dbfDiv )->( OrdSetFocus( nOrd ) )
-
-   SetStatus( dbfDiv, aSta )
+   if lCloDiv
+      ( dbfDiv )->( dbclosearea() )
+      dbfDiv      := nil
+   else 
+      setStatus( dbfDiv, aSta )
+   end if
 
 RETURN ( oDlg:nResult == IDOK )
 
@@ -1550,7 +1530,9 @@ Function mkDiv( cPath, lAppend, cPathOld )
 	rxDiv( cPath )
 
    if lAppend .and. lIsDir( cPathOld )
+
       dbUseArea( .t., cDriver(), cPath + "Divisas.Dbf", cCheckArea( "DIVISAS", @dbfDiv ), .t. )
+
       if !( dbfDiv )->( neterr() )
          ( dbfDiv )->( __dbApp( cPathOld + "Divisas.Dbf" ) )
          ( dbfDiv )->( dbCloseArea() )

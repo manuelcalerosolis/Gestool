@@ -77,6 +77,28 @@ METHOD New()
                                              "type"      => "C"                                       ,;
                                              "field"     => "cCodMov" }                                )
 
+   hset( ::hColumns, "agente",            {  "create"    => "CHAR ( 3 )"                              ,;
+                                             "text"      => "Agente movimiento"                       ,;
+                                             "header"    => "Agente"                                  ,;
+                                             "visible"   => .t.                                       ,;
+                                             "type"      => "C"                                       ,;
+                                             "field"     => "cCodAge" }                                )
+
+   hset( ::hColumns, "divisa",            {  "create"    => "CHAR ( 3 )"                              ,;
+                                             "text"      => "Divisa"                                  ,;
+                                             "header"    => "Divisa"                                  ,;
+                                             "visible"   => .t.                                       ,;
+                                             "type"      => "C"                                       ,;
+                                             "default"   => {|| cDivEmp() }                           ,;
+                                             "field"     => "cCodDiv" }                                )
+
+   hset( ::hColumns, "comentarios",       {  "create"    => "VARCHAR ( 250 )"                         ,;
+                                             "text"      => "Comentarios"                             ,;
+                                             "header"    => "Comentarios"                             ,;
+                                             "visible"   => .t.                                       ,;
+                                             "type"      => "C"                                       ,;
+                                             "field"     => "mComent" }                                )
+
    ::TimeStampFields()
 
    ::Super:New()

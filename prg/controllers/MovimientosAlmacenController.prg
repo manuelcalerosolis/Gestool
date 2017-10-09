@@ -9,10 +9,6 @@ CLASS MovimientosAlmacenController FROM SQLBaseController
 
    METHOD New()
 
-   METHOD setGeneralSelectToMovimientosAlmacenLineasModel()
-   
-   METHOD freeRowSetMovimientosAlmacenLineasModel()   INLINE ( ::oLineasController:oModel:freeRowSet() )
-
 END CLASS
 
 //---------------------------------------------------------------------------//
@@ -37,24 +33,10 @@ METHOD New()
 
    ::Super:New()
 
-RETURN ( Self )
-
-//---------------------------------------------------------------------------//
-
-METHOD setGeneralSelectToMovimientosAlmacenLineasModel()
-
-   local uuid              := hget( ::oModel:hBuffer, "uuid" )
-
-   if empty( uuid )
-      RETURN ( Self )
-   end if 
-
-   ::oLineasController:oModel:setGeneralWhere( "parent_uuid = " + quoted( uuid ) )
+   ::setEvent( 'openingDialog',   {|| ::oLineasController:oModel:buildRowSet() } ) 
+   ::setEvent( 'closedDialog',    {|| ::oLineasController:oModel:freeRowSet() } ) 
 
 RETURN ( Self )
 
 //---------------------------------------------------------------------------//
-
-
-
 

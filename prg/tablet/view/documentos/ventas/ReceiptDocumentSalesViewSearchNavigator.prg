@@ -23,6 +23,10 @@ CLASS ReceiptDocumentSalesViewSearchNavigator FROM ViewSearchNavigator
 
    METHOD ChangeFilter()
 
+   METHOD defineBarraBusqueda()
+
+   METHOD validBarraBusqueda()            INLINE ( .t. )   
+
    METHOD defineSalir()
 
 END CLASS
@@ -138,3 +142,34 @@ METHOD defineSalir() CLASS ReceiptDocumentSalesViewSearchNavigator
 Return ( self )
 
 //---------------------------------------------------------------------------//
+
+METHOD defineBarraBusqueda() CLASS ReceiptDocumentSalesViewSearchNavigator
+
+   local cGetSearch
+   local cComboboxOrden
+
+   cGetSearch        := Space( 100 )
+   cComboboxOrden    := ::getInitialComboboxOrden()
+
+   ::getSearch       := TGridGet():Build(       {  "nRow"      => 45,;
+                                                   "nCol"      => {|| GridWidth( 0.5, ::oDlg ) },;
+                                                   "bSetGet"   => {|u| if( PCount() == 0, cGetSearch, cGetSearch := u ) },;
+                                                   "oWnd"      => ::oDlg,;
+                                                   "nWidth"    => {|| GridWidth( 9, ::oDlg ) },;
+                                                   "nHeight"   => 25,;
+                                                   "bValid"    => {|| ::validBarraBusqueda() },;
+                                                   "bChanged"  => {| nKey, nFlags | AutoSeek( nKey, nFlags, ::getSearch, ::oBrowse, ::getWorkArea(), .t., , .f. ) } } )
+
+   ::comboboxSearch  := TGridComboBox():Build(  {  "nRow"      => 45,;
+                                                   "nCol"      => {|| GridWidth( 9.5, ::oDlg ) },;
+                                                   "bSetGet"   => {|u| if( PCount() == 0, cComboboxOrden, cComboboxOrden := u ) },;
+                                                   "oWnd"      => ::oDlg,;
+                                                   "nWidth"    => {|| GridWidth( 2, ::oDlg ) },;
+                                                   "nHeight"   => 25,;
+                                                   "aItems"    => hGetKeys( ::hashItemsSearch ),;
+                                                   "bChange"   => {|| ::changeComboboxSearch() } } )
+
+Return ( self )
+
+//---------------------------------------------------------------------------//
+
