@@ -92,6 +92,14 @@ METHOD New()
                                              "default"   => {|| cDivEmp() }                           ,;
                                              "field"     => "cCodDiv" }                                )
 
+   hset( ::hColumns, "divisa_cambio",     {  "create"    => "DECIMAL(16,6)"                           ,;
+                                             "text"      => "Cambio divisa"                           ,;
+                                             "header"    => "Cambio"                                  ,;
+                                             "visible"   => .f.                                       ,;
+                                             "type"      => "N"                                       ,;
+                                             "default"   => {|| 1 }                                   ,;
+                                             "field"     => "nVdvDiv" }                                )
+
    hset( ::hColumns, "comentarios",       {  "create"    => "VARCHAR ( 250 )"                         ,;
                                              "text"      => "Comentarios"                             ,;
                                              "header"    => "Comentarios"                             ,;

@@ -1334,7 +1334,7 @@ RETURN ( nImp / nVdv  )
 
 FUNCTION nValChgDiv( dbfDiv )
 
-RETURN ( if( lEmpCnv(), (dbfDiv)->NEURDIV, (dbfDiv)->NPTSDIV ) )
+RETURN ( if( lEmpCnv(), ( dbfDiv )->NEURDIV, ( dbfDiv )->NPTSDIV ) )
 
 //---------------------------------------------------------------------------//
 /*

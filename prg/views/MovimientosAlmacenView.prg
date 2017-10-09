@@ -41,7 +41,9 @@ METHOD Dialog()
    local oBtn
    local oGetDivisa
    local oGetAgente
+   local oBmpDivisa
    local oBmpGeneral
+   local oGetDivisaCambio
    local oGetAlmacenOrigen
    local oGetAlmacenDestino
    local oGetGrupoMovimiento
@@ -134,16 +136,13 @@ METHOD Dialog()
       oGetAgente:bValid := {|| if( ::oController:validate( "agente" ), ::stampAgente( oGetAgente ), .f. ) }
       oGetAgente:bHelp  := {|| BrwAgentes( oGetAgente, oGetAgente:oHelpText ) }
 
-      REDEFINE GET oGetDivisa ;
-         VAR         ::oController:oModel:hBuffer[ "divisa" ] ;
-         WHEN        ( ::oController:isNotZoomMode() ) ;
-         PICTURE     "@!" ;
-         ID          190 ;
-         BITMAP      "Lupa" ;
-         OF          oDlg
+      // Divisas-------------------------------------------------------
 
-      oGetDivisa:bValid := {|| ::oController:validate( "divisa" ) }
-      oGetDivisa:bHelp  := {|| BrwDiv( oGetDivisa ) }
+      DivisasView();
+         :New( ::oController );
+         :CreateEditControl( { "idGet" => 190, "idBmp" => 191, "idValue" => 192, "dialog" => oDlg } )
+
+      // Comentarios-------------------------------------------------------
 
       REDEFINE GET   ::oController:oModel:hBuffer[ "comentarios" ] ;
          ID          170 ;
