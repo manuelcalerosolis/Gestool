@@ -51,7 +51,7 @@ METHOD getClientesPorRuta( cWhere, cOrderBy )
 
    if ::ExecuteSqlStatement( cSql, @cStm )
       RETURN ( cStm )
-   end if 
+   end if
 
 RETURN ( nil )
 
