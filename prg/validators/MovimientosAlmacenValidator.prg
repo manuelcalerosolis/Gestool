@@ -97,4 +97,3 @@ METHOD existDivisa( value )
 RETURN ( DivisasModel():exist( value ) )
 
 //---------------------------------------------------------------------------//
-

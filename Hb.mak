@@ -432,6 +432,7 @@ TiposNotasValidator.prg 													\
 EtiquetasValidator.prg 														\
 SituacionesValidator.prg 													\
 MovimientosAlmacenValidator.prg 											\
+MovimientosAlmacenLineasValidator.prg 									\
 SQLBaseRepository.prg 														\
 TiposImpresorasRepository.prg 											\
 TiposVentasRepository.prg 													\
@@ -1005,6 +1006,7 @@ TiposNotasValidator.obj 													\
 EtiquetasValidator.obj 														\
 SituacionesValidator.obj 													\
 MovimientosAlmacenValidator.obj 											\
+MovimientosAlmacenLineasValidator.obj 									\
 SQLBaseRepository.obj 														\
 TiposImpresorasRepository.obj 											\
 ConfiguracionEmpresasRepository.obj 									\
@@ -1551,6 +1553,7 @@ $(OBJ)\TiposNotasValidator.obj											+
 $(OBJ)\EtiquetasValidator.obj												+
 $(OBJ)\SituacionesValidator.obj											+
 $(OBJ)\MovimientosAlmacenValidator.obj									+
+$(OBJ)\MovimientosAlmacenLineasValidator.obj							+
 $(OBJ)\SQLBaseRepository.obj 												+
 $(OBJ)\TiposImpresorasRepository.obj									+
 $(OBJ)\ConfiguracionEmpresasRepository.obj							+
