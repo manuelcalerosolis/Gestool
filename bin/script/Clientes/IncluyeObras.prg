@@ -48,6 +48,7 @@ METHOD Run()
    while !( tmpObras )->( Eof() )
 
       if !( D():ClientesDirecciones( ::nView ) )->( dbSeek( ( tmpObras )->cCodCli + ( tmpObras )->cCodObr ) )
+         MsgWait( ( tmpObras )->cCodObr, "Haciendolo", 0.001 )
          dbPass( tmpObras, D():ClientesDirecciones( ::nView ), .t. )
       end if
 

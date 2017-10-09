@@ -347,7 +347,7 @@ METHOD buildRowSet( cSentence )
    DEFAULT cSentence    := ::getSelectSentence()
 
    try
-
+ 
       ::freeStatement()
 
       ::oStatement      := ::getDatabase():Query( cSentence )

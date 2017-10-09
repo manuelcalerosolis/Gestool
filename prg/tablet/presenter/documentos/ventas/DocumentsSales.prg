@@ -511,12 +511,30 @@ METHOD ChangeRuta() CLASS DocumentsSales
 
    local cFilter           := ""
    local cCliente          := space( RetNumCodCliEmp() )
+   local cAlias
 
    if !hhaskey( ::hOrdenRutas, alltrim( str( ::oViewEdit:oCbxRuta:nAt ) ) )
       RETURN ( cCliente )
    end if 
 
    cFilter                 := hget( ::hOrdenRutas, alltrim( str( ::oViewEdit:oCbxRuta:nAt ) ) )
+
+   cAlias                  := ClientesModel():getClientesPorRuta( 'lVisDom', 'nVisDom' )
+
+
+   while !( cAlias )->( Eof() )
+
+      MsgInfo( ( cAlias )->Cod, ( cAlias )->nVisDom )
+
+      ( cAlias )->( dbSkip() )
+
+   end if
+
+
+
+
+
+
 
    ( D():Clientes( ::nView ) )->( adsClearAOF() ) //Limpiamos el filtro antes de poner otro
 
