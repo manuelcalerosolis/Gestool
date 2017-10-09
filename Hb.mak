@@ -168,6 +168,7 @@ SQLSelectorView.prg 												\
 SQLShellView.prg 													\
 SQLBrowseView.prg 												\
 MenuTreeView.prg 													\
+DivisasView.prg 													\
 Rfile.prg               										\
 TdprnC3.prg             										\
 Animat.prg              										\
@@ -726,6 +727,7 @@ SQLSelectorView.obj 															\
 SQLShellView.obj 																\
 SQLBrowseView.obj 															\
 MenuTreeView.obj 																\
+DivisasView.obj 																\
 RpreviewC3.obj 																\
 ReportC3.obj                                       				\
 RocolumnC3.obj                                     				\
@@ -1292,6 +1294,7 @@ $(OBJ)\SQLSelectorView.obj              								+
 $(OBJ)\SQLShellView.obj            										+
 $(OBJ)\SQLBrowseView.obj             									+
 $(OBJ)\MenuTreeView.obj 													+
+$(OBJ)\DivisasView.obj 														+
 $(OBJ)\RocolumnC3.obj            										+
 $(OBJ)\Rfile.obj                 										+
 $(OBJ)\Tdprnc3.obj               										+

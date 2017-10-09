@@ -8602,27 +8602,6 @@ FUNCTION rxClient( cPath, cDriver )
       ( dbfCli )->( ordCondSet( "!Deleted() .and. !Field->lBlqCli", {|| !Deleted() .and. !Field->lBlqCli }  ) )
       ( dbfCli )->( ordCreate( cPath + "CLIENT.CDX", "lBlqCli", "Field->Cod", {|| Field->Cod } ) )
 
-      ( dbfCli )->( ordCondSet( "!Deleted() .and. Field->lVisLun", {|| !Deleted() .and. Field->lVisLun }  ) )
-      ( dbfCli )->( ordCreate( cPath + "CLIENT.CDX", "lVisLun", "Str( Field->nVisLun )", {|| Str( Field->nVisLun ) } ) )
-
-      ( dbfCli )->( ordCondSet( "!Deleted() .and. Field->lVisMar", {|| !Deleted() .and. Field->lVisMar }  ) )
-      ( dbfCli )->( ordCreate( cPath + "CLIENT.CDX", "lVisMar", "Str( Field->nVisMar )", {|| Str( Field->nVisMar ) } ) )
-
-      ( dbfCli )->( ordCondSet( "!Deleted() .and. Field->lVisMie", {|| !Deleted() .and. Field->lVisMie }  ) )
-      ( dbfCli )->( ordCreate( cPath + "CLIENT.CDX", "lVisMie", "Str( Field->nVisMie )", {|| Str( Field->nVisMie ) } ) )
-
-      ( dbfCli )->( ordCondSet( "!Deleted() .and. Field->lVisJue", {|| !Deleted() .and. Field->lVisJue }  ) )
-      ( dbfCli )->( ordCreate( cPath + "CLIENT.CDX", "lVisJue", "Str( Field->nVisJue )", {|| Str( Field->nVisJue ) } ) )
-
-      ( dbfCli )->( ordCondSet( "!Deleted() .and. Field->lVisVie", {|| !Deleted() .and. Field->lVisVie }  ) )
-      ( dbfCli )->( ordCreate( cPath + "CLIENT.CDX", "lVisVie", "Str( Field->nVisVie )", {|| Str( Field->nVisVie ) } ) )
-
-      ( dbfCli )->( ordCondSet( "!Deleted() .and. Field->lVisSab", {|| !Deleted() .and. Field->lVisSab }  ) )
-      ( dbfCli )->( ordCreate( cPath + "CLIENT.CDX", "lVisSab", "Str( Field->nVisSab )", {|| Str( Field->nVisSab ) } ) )
-
-      ( dbfCli )->( ordCondSet( "!Deleted() .and. Field->lVisDom", {|| !Deleted() .and. Field->lVisDom }  ) )
-      ( dbfCli )->( ordCreate( cPath + "CLIENT.CDX", "lVisDom", "Str( Field->nVisDom )", {|| Str( Field->nVisDom ) } ) )
-
       ( dbfCli )->( ordCondSet("!Deleted()", {||!Deleted()}  ) )
       ( dbfCli )->( ordCreate( cPath + "CLIENT.CDX", "cCodEdi", "Field->cCodEdi + Field->cDeparta", {|| Field->cCodEdi + Field->cDeparta } ) )
 
