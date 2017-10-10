@@ -277,7 +277,7 @@ RETURN ( .t. )
 
 FUNCTION Test()
 
-   local cAlias                  := ClientesModel():getClientesPorRuta( 'lVisDom', 'nVisDom' )
+   /*local cAlias                  := ClientesModel():getClientesPorRuta( 'lVisDom', 'nVisDom' )
 
    ( cAlias )->( browse() )
 
@@ -287,7 +287,7 @@ FUNCTION Test()
 
       ( cAlias )->( dbSkip() )
 
-   end if
+   end if*/
 
    //( ClientesModel():getClientesPorRuta( 'lVisLun', 'nVisLun' ) )->( browse() )
 

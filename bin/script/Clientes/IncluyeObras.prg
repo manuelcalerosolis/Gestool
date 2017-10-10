@@ -43,12 +43,15 @@ METHOD Run()
    local nOrdAnt              := ( D():ClientesDirecciones( ::nView ) )->( OrdSetFocus( "CCODCLI" ) )
 
    USE ( "c:\Ficheros\ObrasT.Dbf" ) NEW VIA ( cLocalDriver() ) SHARED ALIAS ( cCheckArea( "ObrasT", @tmpObras ) )
-   SET ADSINDEX TO ( "c:\Ficheros\ObrasT.CDX" ) ADDITIVE
 
    while !( tmpObras )->( Eof() )
 
+      MsgWait( ( tmpObras )->cCodObr, "Haciendolo", 0.000001 )
+      logwrite( ( tmpObras )->cCodCli + ( tmpObras )->cCodObr )
+      logwrite( ( tmpObras )->( recno() ) )
+
+
       if !( D():ClientesDirecciones( ::nView ) )->( dbSeek( ( tmpObras )->cCodCli + ( tmpObras )->cCodObr ) )
-         MsgWait( ( tmpObras )->cCodObr, "Haciendolo", 0.001 )
          dbPass( tmpObras, D():ClientesDirecciones( ::nView ), .t. )
       end if
 
