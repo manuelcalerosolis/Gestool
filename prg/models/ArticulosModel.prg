@@ -5,7 +5,11 @@
 
 CLASS ArticulosModel FROM ADSBaseModel
 
-   METHOD getHeaderTableName()                  INLINE ::getEmpresaTableName( "Articulo" )
+   METHOD getTableName()                     INLINE ::getEmpresaTableName( "Articulo" )
+
+   METHOD exist()
+
+   METHOD get()
 
    METHOD getValoresPropiedades( cCodPro )
 
@@ -17,9 +21,39 @@ END CLASS
 
 //---------------------------------------------------------------------------//
 
+METHOD exist( cCodigoArticulo )
+
+   local cStm
+   local cSql  := "SELECT Nombre "                                      + ;
+                     "FROM " + ::getTableName() + " "                   + ;
+                     "WHERE Codigo = " + quoted( cCodigoArticulo ) 
+
+   if ::ExecuteSqlStatement( cSql, @cStm )
+      RETURN ( ( cStm )->( lastrec() ) > 0 )
+   end if 
+
+RETURN ( .f. )
+
+//---------------------------------------------------------------------------//
+
+METHOD get( cCodigoArticulo )
+
+   local cStm
+   local cSql  := "SELECT * "                                           + ;
+                     "FROM " + ::getTableName() + " "                   + ;
+                     "WHERE Codigo = " + quoted( cCodigoArticulo ) 
+
+   if ::ExecuteSqlStatement( cSql, @cStm )
+      RETURN ( cStm )
+   end if 
+
+RETURN ( nil )
+
+//---------------------------------------------------------------------------//
+
 METHOD getValoresPropiedades( cCodPro, cArea ) CLASS ArticulosModel
 
-   local cSql  := "SELECT * FROM " + ::getEmpresaTableName( "TblPro" ) + ;
+   local cSql  := "SELECT * FROM " + ::getEmpresaTableName( "TblPro" )     + ;
                      " WHERE cCodPro = " + quoted( cCodPro )
 
 Return ( ::ExecuteSqlStatement( cSql, @cArea ) )
@@ -37,7 +71,7 @@ Return ( ::ExecuteSqlStatement( cSql, @cArea ) )
 
 METHOD getArticulosToPrestaShopInFamilia( idFamilia, cWebShop, cArea )
 
-   local cSql  := "SELECT Codigo, cWebShop FROM " + ::getHeaderTableName() + ;
+   local cSql  := "SELECT Codigo, cWebShop FROM " + ::getTableName()       + ;
                      " WHERE Familia = " + quoted( idFamilia ) + " AND "   + ;
                         "cWebShop = " + quoted( cWebShop ) + " AND "       + ;        
                         "lPubInt"
@@ -45,3 +79,4 @@ METHOD getArticulosToPrestaShopInFamilia( idFamilia, cWebShop, cArea )
 Return ( ::ExecuteSqlStatement( cSql, @cArea ) )
 
 //---------------------------------------------------------------------------//
+

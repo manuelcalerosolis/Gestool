@@ -11,6 +11,8 @@ CLASS DivisasModel FROM ADSBaseModel
 
    METHOD getNombre()
 
+   METHOD getCambio( cCodigoDivisa )
+
 END CLASS
 
 //---------------------------------------------------------------------------//
@@ -45,3 +47,17 @@ RETURN ( "" )
 
 //---------------------------------------------------------------------------//
 
+METHOD getCambio( cCodigoDivisa )
+
+   local cStm
+   local cSql  := "SELECT nEurDiv "                               + ;
+                     "FROM " + ::getTableName() + " "             + ;
+                     "WHERE cCodDiv = " + quoted( cCodigoDivisa ) 
+
+   if ::ExecuteSqlStatement( cSql, @cStm )
+      RETURN ( ( cStm )->nEurDiv )
+   end if 
+
+RETURN ( "" )
+
+//---------------------------------------------------------------------------//

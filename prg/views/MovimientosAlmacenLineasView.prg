@@ -6,9 +6,14 @@
 
 CLASS MovimientosAlmacenLineasView FROM SQLBaseView
 
-   METHOD   New()
+   DATA oGetCodigoArticulo
+   DATA oGetNombreArticulo
 
-   METHOD   Dialog()
+   METHOD New()
+
+   METHOD Dialog()
+
+   METHOD stampArticulo()
 
 END CLASS
 
@@ -28,16 +33,30 @@ METHOD Dialog()
 
    local oDlg
    local oBtn
-   local oGetCodigoArticulo
 
    DEFINE DIALOG oDlg RESOURCE "LMovAlm" TITLE ::lblTitle() + "lineas de movimientos de almacén"
 
-      REDEFINE GET   oGetCodigoArticulo ;
+      REDEFINE GET   ::oGetCodigoArticulo ;
          VAR         ::oController:oModel:hBuffer[ "codigo_articulo" ] ;
          ID          100 ;
          WHEN        ( ::oController:isNotZoomMode() ) ;
          PICTURE     "@!" ;
          BITMAP      "Lupa" ;
+         OF          oDlg
+
+      ::oGetCodigoArticulo:bValid   := {|| if( ::oController:validate( "codigo_articulo" ), ::stampArticulo(), .f. ) }
+      ::oGetCodigoArticulo:bHelp    := {|| brwArticulo( ::oGetCodigoArticulo ) }
+
+      REDEFINE GET   ::oGetNombreArticulo ;
+         VAR         ::oController:oModel:hBuffer[ "nombre_articulo" ] ;
+         ID          110 ;
+         WHEN        ( .f. ) ;
+         OF          oDlg
+
+      REDEFINE GET   ::oGetLote ;
+         VAR         ::oController:oModel:hBuffer[ "lote" ] ;
+         ID          150 ;
+         WHEN        ( ::oController:isNotZoomMode() ) ;
          OF          oDlg
 
       REDEFINE BUTTON oBtn;
@@ -60,4 +79,28 @@ METHOD Dialog()
 RETURN ( oDlg:nResult == IDOK )
 
 //---------------------------------------------------------------------------//
+
+METHOD stampArticulo()
+
+   local cAreaArticulo
+   local cCodigoArticulo
+
+   cCodigoArticulo   := ::oController:oModel:hBuffer[ "codigo_articulo" ]
+
+   if empty( cCodigoArticulo )
+      RETURN ( .t. )
+   end if 
+
+   cAreaArticulo   := ArticulosModel():get( cCodigoArticulo )
+   if empty( cAreaArticulo )
+      RETURN ( .t. )
+   end if 
+
+   ::oGetNombreArticulo:cText( ( cAreaArticulo )->Nombre )
+   ::oGetLoteArticulo:cText( ( cAreaArticulo )->cLote )
+
+RETURN ( .t. )
+
+//---------------------------------------------------------------------------//
+
 

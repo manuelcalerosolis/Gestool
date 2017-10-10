@@ -26,7 +26,7 @@ METHOD New( oController )
 
    ::oDialogView           := MovimientosAlmacenLineasView():New( self )
 
-   // ::oValidator            := MovimientosAlmacenLineasValidator():New( self )
+   ::oValidator            := MovimientosAlmacenLineasValidator():New( self )
 
    ::Super:New( oController )
 

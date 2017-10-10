@@ -10,6 +10,8 @@ CLASS DivisasView FROM SQLBaseView
  
    METHOD createEditControl( hControl )
 
+   METHOD stampCambio()
+
 END CLASS
 
 //---------------------------------------------------------------------------//
@@ -46,8 +48,7 @@ METHOD createEditControl( hControl )
          BITMAP      "Lupa" ;
          OF          ( hGet( hControl, "dialog" ) )
 
-      oGetDivisa:bValid       := {|| ::oController:validate( "divisa" ) }
-      oGetDivisa:bLostFocus   := {|| msgalert( "divisa" ) }
+      oGetDivisa:bValid       := {|| if( ::oController:validate( "divisa" ), ::stampCambio( oGetDivisaCambio ), .f. ) }
       oGetDivisa:bHelp        := {|| BrwDiv( oGetDivisa, oBmpDivisa, oGetDivisaCambio ) }
 
       REDEFINE BITMAP oBmpDivisa ;
@@ -72,3 +73,14 @@ RETURN ( Self )
 
 //---------------------------------------------------------------------------//
 
+METHOD stampCambio( oGetDivisaCambio )
+
+   local nCambio  := DivisasModel():getCambio( ::oController:oModel:hBuffer[ "divisa" ] )
+
+   if !empty( nCambio )
+      oGetDivisaCambio:setText( nCambio )
+   end if 
+
+RETURN ( .t. )
+
+//---------------------------------------------------------------------------//
