@@ -13,7 +13,7 @@ if "%1"=="" goto NOPASSWORD
 goto EXIT
 
 :NOPASSWORD
-   gestool.exe /NOPASSWORD
+   gestool.exe /TABLET
 
 :EXIT
    cd \fw195\gestool\

@@ -65,7 +65,7 @@ METHOD executeSqlStatement( cSql, cSqlStatement, hStatement )
    
       else
 
-         ::closeArea( cSqlStatement )
+         ::closeArea( cSqlStatement ) 
    
          nError            := AdsGetLastError( @cErrorAds )
          msgStop( "Error : " + str( nError) + "[" + cErrorAds + "]" + CRLF + CRLF +    ;

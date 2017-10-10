@@ -277,25 +277,7 @@ RETURN ( .t. )
 
 FUNCTION Test()
 
-<<<<<<< HEAD
-   /*local cAlias                  := ClientesModel():getClientesPorRuta( 'lVisDom', 'nVisDom' )
-
-   ( cAlias )->( browse() )
-
-   while !( cAlias )->( Eof() )
-
-      MsgInfo( ( cAlias )->Cod, ( cAlias )->nVisDom )
-
-      ( cAlias )->( dbSkip() )
-
-   end if*/
-
-   //( ClientesModel():getClientesPorRuta( 'lVisLun', 'nVisLun' ) )->( browse() )
-
-   // msgalert( hb_valtoexp( ReadHashCodeGS128( "0118411859550506107537L415180315", ) ) ) 
-
-=======
->>>>>>> beb854c5c6b8350b63e9193d506601299199db88
+   
 RETURN ( nil )
 
 //---------------------------------------------------------------------------//

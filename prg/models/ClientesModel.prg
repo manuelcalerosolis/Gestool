@@ -29,35 +29,29 @@ Return ( nRiesgo )
 
 //---------------------------------------------------------------------------//
 
-METHOD getClientesPorRuta( cWhere, cOrderBy )
+METHOD getClientesPorRuta( cWhere, cAgente, cOrderBy )
 
    local cStm  := "ADSRutas"
-<<<<<<< HEAD
-   local cSql  := "SELECT "                                              + ;
-                     "nVisDom, "                                         + ;
-                     "Cod, "                                             + ;
-                     "Titulo "                                           + ;
-=======
    local cSql  := "SELECT "                                                + ;
                      "Cod, "                                               + ;
                      "Titulo "                                             + ;
->>>>>>> beb854c5c6b8350b63e9193d506601299199db88
                   "FROM " + ::getTableName() + " "                         
 
    if !empty( cWhere )
-         cSql  += "WHERE " + cWhere + " "
+      cSql     += "WHERE " + cWhere + " "
+      if !empty( cAgente )
+         cSql  += "AND cAgente = " + quoted( cAgente ) + " "
+      end if
+   else 
+      if !empty( cAgente )
+         cSql  += "WHERE cAgente = " + quoted( cAgente ) + " "
+      end if
    end if 
 
    if !empty( cOrderBy )
          cSql  += "ORDER BY " + cOrderBy + " ASC"
    end if 
 
-<<<<<<< HEAD
-   /*MsgInfo( cSql, "cSql" )
-   logwrite( cSql )*/
-
-=======
->>>>>>> beb854c5c6b8350b63e9193d506601299199db88
    if ::ExecuteSqlStatement( cSql, @cStm )
       ::clearFocus( cStm )
       RETURN ( cStm )
