@@ -33,9 +33,8 @@ METHOD getClientesPorRuta( cWhere, cOrderBy )
 
    local cStm  := "ADSRutas"
    local cSql  := "SELECT "                                                + ;
-                     "nVisDom, "                                            + ;
                      "Cod, "                                               + ;
-                     "Titulo "                                            + ;
+                     "Titulo "                                             + ;
                   "FROM " + ::getTableName() + " "                         
 
    if !empty( cWhere )
@@ -46,10 +45,8 @@ METHOD getClientesPorRuta( cWhere, cOrderBy )
          cSql  += "ORDER BY " + cOrderBy + " ASC"
    end if 
 
-   MsgInfo( cSql, "cSql" )
-   logwrite( cSql )
-
    if ::ExecuteSqlStatement( cSql, @cStm )
+      ::clearFocus( cStm )
       RETURN ( cStm )
    end if
 
