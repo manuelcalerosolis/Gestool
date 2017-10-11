@@ -29,7 +29,7 @@ Return ( nRiesgo )
 
 //---------------------------------------------------------------------------//
 
-METHOD getClientesPorRuta( cWhere, cOrderBy )
+METHOD getClientesPorRuta( cWhere, cAgente, cOrderBy )
 
    local cStm  := "ADSRutas"
    local cSql  := "SELECT "                                                + ;
@@ -38,7 +38,14 @@ METHOD getClientesPorRuta( cWhere, cOrderBy )
                   "FROM " + ::getTableName() + " "                         
 
    if !empty( cWhere )
-         cSql  += "WHERE " + cWhere + " "
+      cSql     += "WHERE " + cWhere + " "
+      if !empty( cAgente )
+         cSql  += "AND cAgente = " + quoted( cAgente ) + " "
+      end if
+   else 
+      if !empty( cAgente )
+         cSql  += "WHERE cAgente = " + quoted( cAgente ) + " "
+      end if
    end if 
 
    if !empty( cOrderBy )

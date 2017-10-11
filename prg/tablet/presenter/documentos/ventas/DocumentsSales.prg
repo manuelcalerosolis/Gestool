@@ -11,6 +11,8 @@ CLASS DocumentsSales FROM Documents
    DATA oPayment
    DATA oDirections
 
+   DATA cAliasClientesRuta
+
    DATA oViewEditResumen
 
    DATA oDocumentLines
@@ -25,14 +27,23 @@ CLASS DocumentsSales FROM Documents
                                                    "textSummary"  => "Resumen factura",;
                                                    "textGrid"     => "Grid facturas clientes" }
    
-   DATA hOrdenRutas                       INIT  {  "1" => "lVisDom",;
+   /*DATA hOrdenRutas                       INIT  {  "1" => "lVisDom",;
                                                    "2" => "lVisLun",;
                                                    "3" => "lVisMar",;
                                                    "4" => "lVisMie",;
                                                    "5" => "lVisJue",;
                                                    "6" => "lVisVie",;
                                                    "7" => "lVisSab",;
-                                                   "8" => "Cod" }
+                                                   "8" => "Cod" }*/
+
+   DATA hOrdenRutas                       INIT  {  "1" => { "where"=>"lVisDom", "order"=>"nVisDom" },;
+                                                   "2" => { "where"=>"lVisLun", "order"=>"nVisLun" },;
+                                                   "3" => { "where"=>"lVisMar", "order"=>"nVisMar" },;
+                                                   "4" => { "where"=>"lVisMie", "order"=>"nVisMie" },;
+                                                   "5" => { "where"=>"lVisJue", "order"=>"nVisJue" },;
+                                                   "6" => { "where"=>"lVisVie", "order"=>"nVisVie" },;
+                                                   "7" => { "where"=>"lVisSab", "order"=>"nVisSab" },;
+                                                   "8" => { "where"=>"",        "order"=>"cod" } }
 
    DATA cTextSummaryDocument              INIT ""
    DATA cTypePrintDocuments               INIT ""                                       
@@ -511,48 +522,30 @@ METHOD ChangeRuta() CLASS DocumentsSales
 
    local cFilter           := ""
    local cCliente          := space( RetNumCodCliEmp() )
-   local cAlias
+   local cWhere            := ""
+   local cOrder            := ""
+   local cAgente           := ""
 
    if !hhaskey( ::hOrdenRutas, alltrim( str( ::oViewEdit:oCbxRuta:nAt ) ) )
       RETURN ( cCliente )
    end if 
 
-   cFilter                 := hget( ::hOrdenRutas, alltrim( str( ::oViewEdit:oCbxRuta:nAt ) ) )
-
-   cAlias                  := ClientesModel():getClientesPorRuta( 'lVisDom', 'nVisDom' )
-
-
-   while !( cAlias )->( Eof() )
-
-      MsgInfo( ( cAlias )->Cod, ( cAlias )->nVisDom )
-
-      ( cAlias )->( dbSkip() )
-
-   end if
-
-
-
-
-
-
-
-   ( D():Clientes( ::nView ) )->( adsClearAOF() ) //Limpiamos el filtro antes de poner otro
-
-   ( D():Clientes( ::nView ) )->( OrdSetFocus( cFilter ) )  //Ponemos el orden para ordenar los clientes
+   cWhere                  := hget( hget( ::hOrdenRutas, alltrim( str( ::oViewEdit:oCbxRuta:nAt ) ) ), "where" )
+   cOrder                  := hget( hget( ::hOrdenRutas, alltrim( str( ::oViewEdit:oCbxRuta:nAt ) ) ), "order" )
 
    if ( accessCode():lFilterByAgent ) .and. !empty( accessCode():cAgente )
-      cFilter              += " .and. cAgente = " + quoted( accessCode():cAgente )
+      cAgente              += accessCode():cAgente
    end if
 
-   ( D():Clientes( ::nView ) )->( adsSetAOF( cFilter ) )
-   ( D():Clientes( ::nView ) )->( dbgotop() ) 
+   ::cAliasClientesRuta      := ClientesModel():getClientesPorRuta( cWhere, cAgente, cOrder )
+   
+   ( ::cAliasClientesRuta )->( dbGoTop() )
+   cCliente             := ( ::cAliasClientesRuta )->Cod
 
-   if !( D():Clientes( ::nView ) )->( eof() )
-      cCliente             := ( D():Clientes( ::nView ) )->Cod
-   end if
+   msgDbfInfo( ::cAliasClientesRuta )
 
    if !empty( ::oViewEdit:getRuta )
-      ::oViewEdit:getRuta:cText( alltrim( Str( ( D():Clientes( ::nView ) )->( ADSKeyNo( , , 1 ) ) ) ) + "/" + alltrim( str( ( D():Clientes( ::nView ) )->( ADSKeyCount( , , 1 ) ) ) ) )
+      ::oViewEdit:getRuta:cText( alltrim( Str( ( ::cAliasClientesRuta )->( ADSKeyNo( , , 1 ) ) ) ) + "/" + alltrim( str( ( ::cAliasClientesRuta )->( ADSKeyCount( , , 1 ) ) ) ) )
       ::oViewEdit:getRuta:Refresh()
    end if
 
@@ -570,14 +563,14 @@ METHOD moveClient( lAnterior ) CLASS DocumentsSales
    local lSet           := .f.
 
    if isTrue( lAnterior )
-      ( D():Clientes( ::nView ) )->( dbSkip( -1 ) )
+      ( ::cAliasClientesRuta )->( dbSkip( -1 ) )
       lSet           := .t.
    end if 
 
    if isFalse( lAnterior )
 
-      if ( D():Clientes( ::nView ) )->( ADSKeyNo( , , 1 ) ) < ( D():Clientes( ::nView ) )->( ADSKeyCount( , , 1 ) ) 
-         ( D():Clientes( ::nView ) )->( dbSkip() )
+      if ( ::cAliasClientesRuta )->( ADSKeyNo( , , 1 ) ) < ( ::cAliasClientesRuta )->( ADSKeyCount( , , 1 ) ) 
+         ( ::cAliasClientesRuta )->( dbSkip() )
       end if 
       
       lSet           := .t.
@@ -589,17 +582,14 @@ METHOD moveClient( lAnterior ) CLASS DocumentsSales
    end if 
 
    if !empty( ::oViewEdit:getRuta )
-      ::oViewEdit:getRuta:cText( alltrim( str( ( D():Clientes( ::nView ) )->( ADSKeyNo( , , 1 ) ) ) ) + "/" + alltrim( str( ( D():Clientes( ::nView ) )->( ADSKeyCount( , , 1 ) ) ) ) )
+      ::oViewEdit:getRuta:cText( alltrim( str( ( ::cAliasClientesRuta )->( ADSKeyNo( , , 1 ) ) ) ) + "/" + alltrim( str( ( ::cAliasClientesRuta )->( ADSKeyCount( , , 1 ) ) ) ) )
       ::oViewEdit:getRuta:Refresh()
    end if
 
    if lSet
 
-      ::oViewEdit:getCodigoCliente:cText( ( D():Clientes( ::nView ) )->Cod )
+      ::oViewEdit:getCodigoCliente:cText( ( ::cAliasClientesRuta )->Cod )
       ::oViewEdit:getCodigoCliente:lValid()
-
-      //::oViewEdit:getCodigoDireccion:cText( Space( 10 ) )
-      //::oViewEdit:getCodigoDireccion:lValid()
 
    end if
 
