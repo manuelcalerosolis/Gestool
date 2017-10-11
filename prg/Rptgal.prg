@@ -2420,13 +2420,16 @@ Return nil
 FUNCTION SituacionesRepository()
 Return nil
 
-FUNCTION TiposImpresorasRepository()
-Return nil
-
 FUNCTION TransaccionesComercialesLineasModel()
 Return nil
 
 FUNCTION ConfiguracionEmpresasRepository()
+Return nil
+
+FUNCTION Events()
+Return nil
+
+FUNCTION TiposImpresorasRepository
 Return nil
 
 //------------------------------------------------------------------//
