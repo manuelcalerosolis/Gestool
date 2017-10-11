@@ -219,8 +219,6 @@ METHOD Resource() CLASS TSPECIALSEARCHARTICULO
 
    local oBmp
 
-   ::SelectDefault()
-
    DEFINE DIALOG ::oDlg RESOURCE ::cSelectResource() OF oWnd()
 
       REDEFINE BITMAP oBmp;
