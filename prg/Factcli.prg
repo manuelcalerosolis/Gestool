@@ -2529,7 +2529,10 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, hHash, bValid, nMode )
    Tipo de presupuesto---------------------------------------------------------
    */
 
-   cTipFac                 := aTipFac[ if( aTmp[ _LALQUILER ], 2, 1  ) ]
+   msgalert( hb_islogical( aTmp[ _LALQUILER ] ) )
+   msgalert( aTmp[ _LALQUILER ] )
+
+   cTipFac                 := aTipFac[ if( hb_islogical( aTmp[ _LALQUILER ] ) .and. aTmp[ _LALQUILER ], 2, 1  ) ]
 
    /*
    Comineza la transaccion-----------------------------------------------------
