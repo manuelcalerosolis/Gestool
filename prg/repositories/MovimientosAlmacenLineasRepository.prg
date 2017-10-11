@@ -17,10 +17,6 @@ END CLASS
 METHOD getSQLSentenceFechaCaducidad( cCodigoArticulo, cValorPrimeraPropiedad, cValorSegundaPropiedad, cLote )
 
    local cSql  := "SELECT "                                                      + ;
-                     "codigo_articulo, "                                         + ;
-                     "valor_primera_propiedad, "                                 + ;
-                     "valor_segunda_propiedad, "                                 + ;                     
-                     "lote, "                                                    + ;
                      "fecha_caducidad "                                          + ;
                   "FROM " + ::getTableName() + " "                               + ;
                   "WHERE codigo_articulo = " + quoted( cCodigoArticulo ) + " "   + ;

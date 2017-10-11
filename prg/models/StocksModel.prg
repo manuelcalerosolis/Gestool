@@ -105,10 +105,7 @@ METHOD getFechaCaducidad( cCodigoArticulo, cValorPrimeraPropiedad, cValorSegunda
    local dFechaCaducidadADS   := ::getFechaCaducidadADS( cCodigoArticulo, cValorPrimeraPropiedad, cValorSegundaPropiedad, cLote )
    local dFechaCaducidadSQL   := ::getFechaCaducidadSQL( cCodigoArticulo, cValorPrimeraPropiedad, cValorSegundaPropiedad, cLote )
 
-   msgalert( dFechaCaducidadADS, "dFechaCaducidadADS" )
-   msgalert( dFechaCaducidadSQL, "dFechaCaducidadSQL" )
-
-RETURN ( nil )
+RETURN ( max( dFechaCaducidadADS, dFechaCaducidadSQL ) )
 
 //---------------------------------------------------------------------------//
 
@@ -135,9 +132,12 @@ RETURN ( ctod( "" ) )
 
 METHOD getFechaCaducidadSQL( cCodigoArticulo, cValorPrimeraPropiedad, cValorSegundaPropiedad, cLote )
 
-   local cSql  := MovimientosAlmacenLineasRepository():getSQLSentenceFechaCaducidad( cCodigoArticulo, cValorPrimeraPropiedad, cValorSegundaPropiedad, cLote )
+   local cSql     := MovimientosAlmacenLineasRepository():getSQLSentenceFechaCaducidad( cCodigoArticulo, cValorPrimeraPropiedad, cValorSegundaPropiedad, cLote )
+   local uValue   := getSQLDatabase():selectValue( cSql )
 
-   logwrite( cSql )
+   if !empty( uValue ) .and. hb_isdate( uValue )
+      RETURN ( uValue )
+   end if 
 
 RETURN ( ctod( "" ) )
 
