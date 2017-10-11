@@ -883,7 +883,7 @@ FUNCTION CntFacCli( lSimula, lPago, lExcCnt, lMessage, oTree, nAsiento, aSimula,
 
       while ( ( dbfFacCliP )->cSerie + str( ( dbfFacCliP )->nNumFac ) + ( dbfFacCliP )->cSufFac == nFactura ) .and. !( dbfFacCliP )->( eof() )
 
-         ContabilizaReciboCliente( oBrw, oTree, lSimula, aSimula, dbfFacCliT, dbfFacCliP, dbfFPago, dbfCli, dbfDiv, .t., nAsiento )
+         ContabilizaReciboCliente( oBrw, oTree, .t., aSimula, dbfFacCliT, dbfFacCliP, dbfFPago, dbfCli, dbfDiv, .t., nAsiento )
 
          ( dbfFacCliP )->( dbSkip() )
 
@@ -898,6 +898,7 @@ FUNCTION CntFacCli( lSimula, lPago, lExcCnt, lMessage, oTree, nAsiento, aSimula,
    if lSimula
 
       if lMessage
+
          lReturn  := msgTblCon(  aSimula, cCodDiv, dbfDiv, !lErrorFound, pFactura,;
                                  {||   aWriteAsiento( aSimula, cCodDiv, lMessage, oTree, pFactura, nAsiento ),;
                                        aWriteAsientoSII( aAsientosSII ),;
@@ -4535,9 +4536,11 @@ FUNCTION ContabilizaReciboCliente( oBrw, oTree, lSimula, aSimula, dbfFacCliT, db
       end if
 
       if ( lSimula .and. !lFromFactura )
+
          lReturn     := msgTblCon( aSimula, cCodDiv, dbfDiv, !lErrorFound, cRecibo, ;
                                     {||   aWriteAsiento( aSimula, cCodDiv, .t., oTree, cRecibo, nAsiento ), ;
                                           lContabilizaReciboCliente( nRecibo, cRecibo, nAsiento, aSimula, lFromFactura, oTree, dbfFacCliP ) } )
+      
       end if
 
    end if
@@ -5453,7 +5456,7 @@ FUNCTION CntFacRec( lSimula, lPago, lExcCnt, lMessage, oTree, nAsiento, aSimula,
 
       while ( ( dbfFacCliP )->cSerie + str( ( dbfFacCliP )->nNumFac ) + ( dbfFacCliP )->cSufFac == nFactura ) .and. !( dbfFacCliP )->( eof() )
 
-         ContabilizaReciboCliente( oBrw, oTree, lSimula, aSimula, dbfFacRecT, dbfFacCliP, dbfFPago, dbfCli, dbfDiv, .t., nAsiento )
+         ContabilizaReciboCliente( oBrw, oTree, .t., aSimula, dbfFacRecT, dbfFacCliP, dbfFPago, dbfCli, dbfDiv, .t., nAsiento )
 
          ( dbfFacCliP )->( dbSkip() )
 

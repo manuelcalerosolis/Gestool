@@ -17,6 +17,8 @@ CLASS MaterialesProducidosLineasModel FROM ADSBaseModel
 
    METHOD totalUnidadesStock( cCodigoArticulo, dConsolidacion, tConsolidacion, cCodigoAlmacen, cValorPropiedad1, cValorPropiedad2, cLote )
 
+   METHOD getSQLSentenceFechaCaducidad( cCodigoArticulo, cValorPrimeraPropiedad, cValorSegundaPropiedad, cLote )
+
 END CLASS
 
 //---------------------------------------------------------------------------//
@@ -121,3 +123,35 @@ METHOD totalUnidadesStock( cCodigoArticulo, dConsolidacion, tConsolidacion, cCod
 RETURN ( 0 )
 
 //---------------------------------------------------------------------------//
+
+METHOD getSQLSentenceFechaCaducidad( cCodigoArticulo, cValorPrimeraPropiedad, cValorSegundaPropiedad, cLote )
+
+   local cSql  := "SELECT "                                                      + ;
+                     "cCodArt as cCodigoArticulo, "                              + ;
+                     "cValPr1 as cValorPrimeraPropiedad, "                       + ;
+                     "cValPr2 as cValorSegundaPropiedad, "                       + ;
+                     "cLote as cLote, "                                          + ;
+                     "dFecOrd as dFechaDocumento, "                              + ;
+                     "dFecCad as dFechaCaducidad "                               + ;
+                  "FROM " + ::getTableName() + " "                               + ;
+                  "WHERE cCodArt = " + quoted( cCodigoArticulo ) + " "           + ;
+                     "AND dFecCad IS NOT NULL "       
+
+   if !empty(cValorPrimeraPropiedad)
+      cSql     +=    "AND cValPr1 = " + quoted( cValorPrimeraPropiedad ) + " "   
+   end if 
+
+   if !empty(cValorSegundaPropiedad)
+      cSql     +=    "AND cValPr2 = " + quoted( cValorSegundaPropiedad ) + " "   
+   end if 
+
+   if !empty(cLote)
+      cSql     +=    "AND cLote = " + quoted( cLote ) + " "
+   end if 
+
+RETURN ( cSql )
+
+//---------------------------------------------------------------------------//
+
+
+

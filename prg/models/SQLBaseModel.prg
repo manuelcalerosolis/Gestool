@@ -512,22 +512,19 @@ RETURN ( ::getRowSet():reccount() > 0 )
 
 METHOD loadBlankBuffer()
 
+   local nRecno
    local hColumn
 
    ::hBuffer            := {=>}
 
+   nRecno               := ::oRowset:recno()
+   ::oRowSet:goto( 0 )
+
    ::fireEvent( 'loadingBlankBuffer' )
 
-   for each hColumn in ::hColumns
+   hEval( ::hColumns, {|k| hset( ::hBuffer, k, ::oRowSet:fieldget( k ) ) } )
 
-      do case
-         case "CHAR" $ hget( hColumn, "create")          ;  hset( ::hBuffer, hColumn:__enumkey(), '' )
-         case "INTEGER" $ hget( hColumn, "create")       ;  hset( ::hBuffer, hColumn:__enumkey(), 0 )
-         case "DATETIME" $ hget( hColumn, "create")      ;  hset( ::hBuffer, hColumn:__enumkey(), hb_datetime() )
-         otherwise                                       ;  hset( ::hBuffer, hColumn:__enumkey(), '' )
-      end case
-
-   next 
+   ::oRowSet:goto( nRecno )
 
    ::defaultCurrentBuffer()
 

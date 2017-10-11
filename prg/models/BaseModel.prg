@@ -36,7 +36,7 @@ METHOD executeSqlStatement( cSql, cSqlStatement, hStatement )
    local oBlock
    local cErrorAds
 
-   DEFAULT cSqlStatement   := "ADSArea" //  + trimedSeconds()
+   DEFAULT cSqlStatement   := "ADSArea" // + trimedSeconds()
    DEFAULT hStatement      := ADS_CDX
 
    if !( lAIS() )
@@ -75,10 +75,8 @@ METHOD executeSqlStatement( cSql, cSqlStatement, hStatement )
       end if
    
       if lOk 
-
          ADSCacheOpenCursors( 0 )
          ADSClrCallBack()
-
       endif
    
    RECOVER USING oError

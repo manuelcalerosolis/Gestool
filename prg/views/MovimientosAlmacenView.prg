@@ -8,18 +8,22 @@ CLASS MovimientosAlmacenView FROM SQLBaseView
 
    DATA oSQLBrowseView
 
+   DATA oDlg
+   DATA oGetDivisa
+   DATA oGetAgente
+   DATA oGetAlmacenOrigen
+   DATA oGetAlmacenDestino
+   DATA oGetGrupoMovimiento
+   DATA oRadioTipoMovimento
+
    METHOD New()
 
    METHOD Dialog()
-   METHOD startDialog( oRadioTipoMovimento, oGetAlmacenOrigen )
+   METHOD startDialog()
 
-   METHOD stampAlmacenNombre( oGetAlmacenOrigen )
-
-   METHOD stampGrupoMovimientoNombre( oGetGrupoMovimiento )
-
-   METHOD changeTipoMovimiento( oRadioTipoMovimento, oGetAlmacenOrigen )
-
-   METHOD stampAgente( oGetAgente )
+   METHOD changeTipoMovimiento()    INLINE   (  iif(  ::oRadioTipoMovimento:nOption() == __tipo_movimiento_entre_almacenes__,;
+                                                      ::oGetAlmacenOrigen:Show(),;
+                                                      ::oGetAlmacenOrigen:Hide() ) )
 
 END CLASS
 
@@ -37,56 +41,47 @@ Return ( Self )
 
 METHOD Dialog()
 
-   local oDlg
    local oBtn
-   local oGetDivisa
-   local oGetAgente
-   local oBmpDivisa
    local oBmpGeneral
-   local oGetDivisaCambio
-   local oGetAlmacenOrigen
-   local oGetAlmacenDestino
-   local oGetGrupoMovimiento
-   local oRadioTipoMovimento
 
-   DEFINE DIALOG oDlg RESOURCE "RemMov" TITLE ::lblTitle() + "movimientos de almacén"
+   DEFINE DIALOG ::oDlg RESOURCE "RemMov" TITLE ::lblTitle() + "movimientos de almacén"
 
       REDEFINE BITMAP oBmpGeneral ;
         ID           990 ;
         RESOURCE     "gc_package_pencil_48" ;
         TRANSPARENT ;
-        OF           oDlg
+        OF           ::oDlg
 
       REDEFINE GET   ::oController:oModel:hBuffer[ "numero" ] ;
          ID          100 ;
          WHEN        ( .f. ) ;
-         OF          oDlg
+         OF          ::oDlg
 
       REDEFINE GET   ::oController:oModel:hBuffer[ "delegacion" ] ;
          ID          110 ;
          WHEN        ( .f. ) ;
-         OF          oDlg
+         OF          ::oDlg
 
       REDEFINE GET   ::oController:oModel:hBuffer[ "fecha_hora" ] ;
          ID          120 ;
          PICTURE     "@DT" ;
          WHEN        ( ::oController:isNotZoomMode() ) ;
-         OF          oDlg
+         OF          ::oDlg
 
       REDEFINE GET   ::oController:oModel:hBuffer[ "usuario" ] ;
          ID          220 ;
          PICTURE     "XXX" ;
          WHEN        ( .f. ) ;
-         OF          oDlg
+         OF          ::oDlg
 
-      REDEFINE RADIO oRadioTipoMovimento ;
+      REDEFINE RADIO ::oRadioTipoMovimento ;
          VAR         ::oController:oModel:hBuffer[ "tipo_movimiento" ] ;
          ID          130, 131, 132, 133 ;
          WHEN        ( ::oController:isNotZoomMode() ) ;
-         ON CHANGE   ( ::changeTipoMovimiento( oRadioTipoMovimento, oGetAlmacenOrigen ) ) ;
-         OF          oDlg
+         ON CHANGE   ( ::changeTipoMovimiento() ) ;
+         OF          ::oDlg
 
-      REDEFINE GET   oGetAlmacenOrigen ;
+      REDEFINE GET   ::oGetAlmacenOrigen ;
          VAR         ::oController:oModel:hBuffer[ "almacen_origen" ] ;
          ID          150 ;
          IDHELP      151 ;
@@ -94,12 +89,12 @@ METHOD Dialog()
          WHEN        ( ::oController:isNotZoomMode() ) ;
          PICTURE     "@!" ;
          BITMAP      "Lupa" ;
-         OF          oDlg
+         OF          ::oDlg
 
-      oGetAlmacenOrigen:bValid   := {|| if( ::oController:validate( "almacen_origen" ), ::stampAlmacenNombre( oGetAlmacenOrigen ), .f. ) }
-      oGetAlmacenOrigen:bHelp    := {|| brwAlmacen( oGetAlmacenOrigen, oGetAlmacenOrigen:oHelpText ) }
+      ::oGetAlmacenOrigen:bValid   := {|| ::oController:validateAlmacenOrigen() }
+      ::oGetAlmacenOrigen:bHelp    := {|| brwAlmacen( ::oGetAlmacenOrigen, ::oGetAlmacenOrigen:oHelpText ) }
 
-      REDEFINE GET   oGetAlmacenDestino ;
+      REDEFINE GET   ::oGetAlmacenDestino ;
          VAR         ::oController:oModel:hBuffer[ "almacen_destino" ] ;
          ID          160 ;
          IDHELP      161 ;
@@ -107,40 +102,40 @@ METHOD Dialog()
          WHEN        ( ::oController:isNotZoomMode() ) ;
          PICTURE     "@!" ;
          BITMAP      "Lupa" ;
-         OF          oDlg
+         OF          ::oDlg
 
-      oGetAlmacenDestino:bValid   := {|| if( ::oController:validate( "almacen_destino" ), ::stampAlmacenNombre( oGetAlmacenDestino ), .f. ) }
-      oGetAlmacenDestino:bHelp    := {|| brwAlmacen( oGetAlmacenDestino, oGetAlmacenDestino:oHelpText ) }
+      ::oGetAlmacenDestino:bValid   := {|| ::oController:validateAlmacenDestino() }
+      ::oGetAlmacenDestino:bHelp    := {|| brwAlmacen( ::oGetAlmacenDestino, ::oGetAlmacenDestino:oHelpText ) }
 
-      REDEFINE GET   oGetGrupoMovimiento ;
+      REDEFINE GET   ::oGetGrupoMovimiento ;
          VAR         ::oController:oModel:hBuffer[ "grupo_movimiento" ] ;
          ID          140 ;
          IDHELP      141 ;
          WHEN        ( ::oController:isNotZoomMode() ) ;
          PICTURE     "@!" ;
          BITMAP      "Lupa" ;
-         OF          oDlg
+         OF          ::oDlg
 
-      oGetGrupoMovimiento:bValid   := {|| if( ::oController:validate( "grupo_movimiento" ), ::stampGrupoMovimientoNombre( oGetGrupoMovimiento ), .f. ) }
-      oGetGrupoMovimiento:bHelp    := {|| browseGruposMovimientos( oGetGrupoMovimiento, oGetGrupoMovimiento:oHelpText ) }
+      ::oGetGrupoMovimiento:bValid   := {|| ::oController:validateGrupoMovimiento() }
+      ::oGetGrupoMovimiento:bHelp    := {|| browseGruposMovimientos( ::oGetGrupoMovimiento, ::oGetGrupoMovimiento:oHelpText ) }
 
-      REDEFINE GET   oGetAgente ;
+      REDEFINE GET   ::oGetAgente ;
          VAR         ::oController:oModel:hBuffer[ "agente" ] ;
          ID          210 ;
          IDHELP      211 ;
          WHEN        ( ::oController:isNotZoomMode() ) ;
          PICTURE     "@!" ;
          BITMAP      "Lupa" ;
-         OF          oDlg
+         OF          ::oDlg
 
-      oGetAgente:bValid := {|| if( ::oController:validate( "agente" ), ::stampAgente( oGetAgente ), .f. ) }
-      oGetAgente:bHelp  := {|| BrwAgentes( oGetAgente, oGetAgente:oHelpText ) }
+      ::oGetAgente:bValid := {|| ::oController:validateAgente() }
+      ::oGetAgente:bHelp  := {|| BrwAgentes( ::oGetAgente, ::oGetAgente:oHelpText ) }
 
       // Divisas-------------------------------------------------------
 
       DivisasView();
          :New( ::oController );
-         :CreateEditControl( { "idGet" => 190, "idBmp" => 191, "idValue" => 192, "dialog" => oDlg } )
+         :CreateEditControl( { "idGet" => 190, "idBmp" => 191, "idValue" => 192, "dialog" => ::oDlg } )
 
       // Comentarios-------------------------------------------------------
 
@@ -148,25 +143,25 @@ METHOD Dialog()
          ID          170 ;
          MEMO ;
          WHEN        ( ::oController:isNotZoomMode() ) ;
-         OF          oDlg
+         OF          ::oDlg
 
       // Buttons lineas-------------------------------------------------------
 
       REDEFINE BUTTON ;
          ID          500 ;
-         OF          oDlg ;
+         OF          ::oDlg ;
          WHEN        ( ::oController:isNotZoomMode() ) ;
          ACTION      ( ::oController:oLineasController:Append(), ::oSQLBrowseView:Refresh() )
 
       REDEFINE BUTTON ;
          ID          501 ;
-         OF          oDlg ;
+         OF          ::oDlg ;
          WHEN        ( ::oController:isNotZoomMode() ) ;
          ACTION      ( ::oController:oLineasController:Edit(), ::oSQLBrowseView:Refresh() )
 
       REDEFINE BUTTON ;
          ID          502 ;
-         OF          oDlg ;
+         OF          ::oDlg ;
          WHEN        ( ::oController:isNotZoomMode() ) ;
          ACTION      ( ::oController:oLineasController:Delete( ::oSQLBrowseView:getBrowseSelected() ), ::oSQLBrowseView:Refresh() )
 
@@ -176,98 +171,53 @@ METHOD Dialog()
 
       ::oSQLBrowseView:setController( ::oController:oLineasController )
 
-      ::oSQLBrowseView:ActivateDialog( 180, oDlg )
+      ::oSQLBrowseView:ActivateDialog( 180, ::oDlg )
 
       // Buttons---------------------------------------------------------------
 
       REDEFINE BUTTON oBtn ;
          ID          IDOK ;
-         OF          oDlg ;
+         OF          ::oDlg ;
          WHEN        ( ::oController:isNotZoomMode() ) ;
-         ACTION      ( if( validateDialog( oDlg ), oDlg:end( IDOK ), ) )
+         ACTION      ( if( validateDialog( ::oDlg ), ::oDlg:end( IDOK ), ) )
 
       REDEFINE BUTTON ;
          ID          IDCANCEL ;
-         OF          oDlg ;
+         OF          ::oDlg ;
          CANCEL ;
-         ACTION      ( oDlg:End() )
+         ACTION      ( ::oDlg:End() )
 
       REDEFINE BUTTON ;
          ID          3 ;
-         OF          oDlg ;
+         OF          ::oDlg ;
          ACTION      ( msgalert( "RecalculaPrecio" ) )
 
       if ::oController:isNotZoomMode()
-         oDlg:AddFastKey( VK_F5, {|| oBtn:Click() } )
+         ::oDlg:AddFastKey( VK_F5, {|| oBtn:Click() } )
       end if
 
-      oDlg:bStart    := {|| ::startDialog( oRadioTipoMovimento, oGetAlmacenOrigen, oGetAlmacenDestino, oGetGrupoMovimiento, oGetAgente ) }
+      ::oDlg:bStart    := {|| ::startDialog() }
 
-   oDlg:Activate( , , , .t. ) 
+   ::oDlg:Activate( , , , .t. ) 
 
    oBmpGeneral:End()
 
-RETURN ( oDlg:nResult == IDOK )
+RETURN ( ::oDlg:nResult == IDOK )
 
 //---------------------------------------------------------------------------//
 
-METHOD startDialog( oRadioTipoMovimento, oGetAlmacenOrigen, oGetAlmacenDestino, oGetGrupoMovimiento, oGetAgente )
+METHOD startDialog()
    
-   ::changeTipoMovimiento( oRadioTipoMovimento, oGetAlmacenOrigen )
+   ::changeTipoMovimiento()
 
-   ::stampAlmacenNombre( oGetAlmacenOrigen )
+   ::oController:stampAlmacenNombre( ::oGetAlmacenOrigen )
 
-   ::stampAlmacenNombre( oGetAlmacenDestino )
+   ::oController:stampAlmacenNombre( ::oGetAlmacenDestino )
 
-   ::stampGrupoMovimientoNombre( oGetGrupoMovimiento )
+   ::oController:stampGrupoMovimientoNombre( ::oGetGrupoMovimiento )
 
-   ::stampAgente( oGetAgente )
+   ::oController:stampAgente( ::oGetAgente )
 
 RETURN ( Self )
-
-//---------------------------------------------------------------------------//
-
-METHOD stampAlmacenNombre( oGetAlmacenOrigen )
-
-   local cCodigoAlmacen    := oGetAlmacenOrigen:varGet()
-   local cNombreAlmacen    := AlmacenesModel():getNombre( cCodigoAlmacen )
-
-   oGetAlmacenOrigen:oHelpText:cText( cNombreAlmacen )
-
-RETURN ( .t. )
-
-//---------------------------------------------------------------------------//
-
-METHOD stampGrupoMovimientoNombre( oGetGrupoMovimiento )
-
-   local cCodigoGrupo      := oGetGrupoMovimiento:varGet()
-   local cNombreGrupo      := GruposMovimientosModel():getNombre( cCodigoGrupo )
-
-   oGetGrupoMovimiento:oHelpText:cText( cNombreGrupo )
-
-RETURN ( .t. )
-
-//---------------------------------------------------------------------------//
-
-METHOD stampAgente( oGetAgente )
-
-   local cCodigoAgente     := oGetAgente:varGet()
-   local cNombreAgente     := AgentesModel():getNombre( cCodigoAgente )
-
-   oGetAgente:oHelpText:cText( cNombreAgente )
-
-RETURN ( .t. )
-
-//---------------------------------------------------------------------------//
-
-METHOD changeTipoMovimiento( oRadioTipoMovimento, oGetAlmacenOrigen )
-
-   if oRadioTipoMovimento:nOption() == __tipo_movimiento_entre_almacenes__
-      oGetAlmacenOrigen:Show()
-   else
-      oGetAlmacenOrigen:Hide()
-   end if                                         
-
-RETURN ( .t. )
 
 //---------------------------------------------------------------------------//

@@ -13339,7 +13339,7 @@ FONT 8, "Ms Sans Serif"
 
 LANGUAGE LANG_ENGLISH,SUBLANG_ENGLISH_US
 
-LMOVALM DIALOG DISCARDABLE 80, 40, 536, 304
+LMOVALM DIALOG DISCARDABLE 80, 40, 536, 447
 STYLE WS_POPUP|DS_MODALFRAME|DS_3DLOOK|WS_CAPTION|WS_SYSMENU|WS_VISIBLE
 CAPTION "Lineas de movimientos de almacén"
 FONT 8, "Ms Sans Serif"
@@ -13352,7 +13352,7 @@ FONT 8, "Ms Sans Serif"
   CONTROL "", 121, "Edit", WS_BORDER, 161, 52, 372, 12
   CONTROL "", 130, "Edit", WS_BORDER|WS_TABSTOP, 70, 65, 88, 12
   CONTROL "", 131, "Edit", WS_BORDER, 161, 65, 372, 12
-  CONTROL "", 600, "TXBrowse", 0x00200000, 4, 26, 530, 150
+  CONTROL "", 600, "TXBrowse", NOT WS_VISIBLE|0x00200000, 4, 293, 530, 150
   CONTROL "", 430, "Edit", ES_RIGHT|WS_VSCROLL|WS_BORDER|WS_TABSTOP, 70, 179, 68, 11
   CONTROL "", 140, "Edit", ES_RIGHT|WS_VSCROLL|WS_BORDER|WS_TABSTOP, 70, 192, 68, 11
   CONTROL "", 150, "Edit", ES_RIGHT|WS_VSCROLL|WS_BORDER|WS_TABSTOP, 70, 205, 68, 11
@@ -13372,11 +13372,11 @@ FONT 8, "Ms Sans Serif"
   CONTROL "Total unidades", -1, "Static", WS_GROUP, 4, 221, 60, 8
   CONTROL "Unidades", 152, "Static", WS_GROUP, 4, 208, 43, 8
   CONTROL "Artículo", -1, "Static", WS_GROUP, 4, 16, 36, 8
-  CONTROL "Propiedad 2", 132, "Static", WS_GROUP, 4, 67, 44, 8
-  CONTROL "Propiedad 1", 122, "Static", WS_GROUP, 4, 54, 44, 8
+  CONTROL "Propiedad 2", 132, "Static", WS_GROUP, 4, 67, 43, 8
+  CONTROL "Propiedad 1", 122, "Static", WS_GROUP, 4, 54, 43, 8
   CONTROL "Precio costo", 181, "Static", WS_GROUP, 4, 234, 61, 8
   CONTROL "Total precio", 191, "Static", WS_GROUP, 4, 247, 61, 8
-  CONTROL "Lote", 154, "Static", WS_GROUP, 4, 29, 44, 8
+  CONTROL "Lote", 154, "Static", WS_GROUP, 4, 29, 19, 8
   CONTROL "Peso", -1, "Static", WS_GROUP, 143, 234, 21, 8
   CONTROL "Volumen", -1, "Static", WS_GROUP, 143, 247, 33, 8
   CONTROL "", 400, "Edit", WS_BORDER|WS_TABSTOP, 199, 179, 70, 11
@@ -13391,7 +13391,7 @@ FONT 8, "Ms Sans Serif"
   CONTROL "Almacen destino", -1, "Static", WS_GROUP, 143, 208, 55, 8
   CONTROL "Formato", -1, "Static", WS_GROUP, 143, 260, 33, 8
   CONTROL "Bultos", 431, "Static", WS_GROUP, 4, 182, 48, 8
-  CONTROL "Caducidad", 341, "Static", WS_GROUP, 4, 40, 41, 8
+  CONTROL "Caducidad", 341, "Static", WS_GROUP, 4, 40, 39, 8
 }
 
 LANGUAGE LANG_SPANISH,SUBLANG_SPANISH_MODERN

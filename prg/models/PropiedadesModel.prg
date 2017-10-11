@@ -4,57 +4,77 @@
 
 //---------------------------------------------------------------------------//
 
-CLASS PropiedadesModel FROM SQLBaseModel
+CLASS PropiedadesModel FROM ADSBaseModel
 
-   DATA cTableName               INIT "propiedades"
+   METHOD getTableName()                     INLINE ::getEmpresaTableName( "Pro" )
 
-   DATA cDbfTableName
-
-   DATA hColumns
-
-   METHOD New()
+   METHOD getNombre( cCodigoPropiedad )
 
 END CLASS
 
 //---------------------------------------------------------------------------//
 
-METHOD New()
+METHOD getNombre( cCodigoPropiedad ) CLASS PropiedadesModel
 
-	::cDbfTableName				:=	"Pro"
+   local cStm
+   local cSql  := "SELECT cDesPro "                                     + ;
+                     "FROM " + ::getTableName() + " "                   + ;
+                     "WHERE cCodPro = " + quoted( cCodigoPropiedad ) 
 
-	::hColumns						:=	{	"id"			=>	{	"create"		=>	"INTEGER PRIMARY KEY AUTO_INCREMENT"		,;
-																		"text"		=>	"Identificador"									,;
-																		"header"		=>	"Id"													,;
-																		"visible"	=> .f.}													,;
-												"codigo"		=>	{	"create"		=>	"VARCHAR(20) NOT NULL"							,;
-																		"text"		=>	"Código de la propiedad"						,;
-																		"header"		=>	"Código"												,;
-																		"visible"	=> .t.													,;
-																		"width"		=>	100													,;
-																		"field"		=>	"cCodPro"											,;
-																		"type" 		=> "C" 													,;
-																		"len" 		=> 20	}													,;
-												"nombre"		=>	{	"create"		=>	"VARCHAR(50) NOT NULL"							,;
-																		"text"		=>	"Nombre de la propiedad"						,;
-																		"field"		=>	"cDesPro"											,;
-																		"header"		=>	"Nombre"												,;
-																		"visible"	=> .t.													,;
-																		"width"		=>	200 													,;
-																		"type"		=> "C"													,;
-																		"len"			=> 50	}													,;
-												"is_color"	=>	{	"create"		=>	"INT(1) NOT NULL"									,;
-																		"text"		=>	"Lógico tipo color"								,;
-																		"field"		=>	"lColor"												,;
-																		"header"		=>	"Es un color"										,;
-																		"visible"	=> .f.													,;
-																		"width"		=>	40														,;
-																		"type"		=> "L"}													,;
-												"empresa"	=>	{  "create"    => "CHAR ( 4 ) NOT NULL"	              		,;
-                                                      "text"      => "Empresa"											,;
-																		"visible"	=> .f.}													}
+   if ::ExecuteSqlStatement( cSql, @cStm )
+      RETURN ( ( cStm )->cDesPro )
+   end if 
 
-   ::Super:New()
-
-RETURN ( Self )
+RETURN ( "" )
 
 //---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+
+CLASS PropiedadesLineasModel FROM ADSBaseModel
+
+   METHOD getTableName()                     INLINE ::getEmpresaTableName( "TblPro" )
+
+   METHOD exist()
+
+   METHOD getNombre()
+
+END CLASS
+
+//---------------------------------------------------------------------------//
+
+METHOD exist( cCodigoPropiedad, cValorPropiedad ) CLASS PropiedadesLineasModel
+
+   local cStm
+   local cSql  := "SELECT cDesTbl "                                     		+ ;
+                     "FROM " + ::getTableName() + " "                   		+ ;
+                     "WHERE cCodPro = " + quoted( cCodigoPropiedad ) + " " 	+ ;
+                     	"AND cCodTbl = " + quoted( cValorPropiedad )
+
+   if ::ExecuteSqlStatement( cSql, @cStm )
+      RETURN ( ( cStm )->( lastrec() ) > 0 )
+   end if 
+
+RETURN ( "" )
+
+//---------------------------------------------------------------------------//
+
+METHOD getNombre( cCodigoPropiedad, cValorPropiedad ) CLASS PropiedadesLineasModel
+
+   local cStm
+   local cSql  := "SELECT cDesTbl "                                     		+ ;
+                     "FROM " + ::getTableName() + " "                   		+ ;
+                     "WHERE cCodPro = " + quoted( cCodigoPropiedad ) + " " 	+ ;
+                     	"AND cCodTbl = " + quoted( cValorPropiedad )
+
+   if ::ExecuteSqlStatement( cSql, @cStm )
+      RETURN ( ( cStm )->cDesTbl )
+   end if 
+
+RETURN ( "" )
+
+//---------------------------------------------------------------------------//
+

@@ -277,6 +277,8 @@ RETURN ( .t. )
 
 FUNCTION Test()
 
+   StocksModel():getFechaCaducidad('1')
+
 RETURN ( nil )
 
 //---------------------------------------------------------------------------//

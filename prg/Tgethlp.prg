@@ -57,7 +57,9 @@ CLASS TGetHlp FROM TGet
 
    METHOD Hide()                    INLINE ( if( ::oSay != nil, ::oSay:Hide(), ), if( ::oHelpText != nil, ::oHelpText:Hide(), ), ::Super:Hide() )
 
-   METHOD Show()                    INLINE ( if( ::oSay != nil, ::oSay:Show(), ), if( ::oHelpText != nil, ::oHelpText:Show(), ), ::Super:Show() )
+   METHOD Show()                    INLINE  ( if( ::oSay != nil, ::oSay:Show(), ),;
+                                              if( ::oHelpText != nil, ::oHelpText:Show(), ),;
+                                              ::Super:Show() )
 
    METHOD SetText( cText )          INLINE ( if( ::oSay != nil, ::oSay:SetText( cText ), ::cText( cText ) ) )
 
@@ -119,7 +121,6 @@ METHOD ReDefine( nId, bSetGet, oWnd, nHelpId, cPict, bValid, nClrFore,;
    BEGIN SEQUENCE
 
    DEFAULT cBmp      := ""
-   DEFAULT nIdSay    := 0
 
    ::Super:ReDefine( nId, bSetGet, oWnd, nHelpId, cPict, bValid, nClrFore,;
                      nClrBack, oFont, oCursor, cMsg, lUpdate, bWhen, bChanged,;
@@ -132,11 +133,11 @@ METHOD ReDefine( nId, bSetGet, oWnd, nHelpId, cPict, bValid, nClrFore,;
    ::lNeedGetFocus   := .f.
    ::lGotFocus       := .f.
 
-   if !Empty( nIdSay )
+   if !empty( nIdSay )
       ::oSay         := TSay():ReDefine( nIdSay, nil, oWnd )
    end if
 
-   if !Empty( nIdText )
+   if !empty( nIdText )
       ::oHelpText    := TGet():ReDefine( nIdText, { | u | If( PCount() == 0, ::cHelpText, ::cHelpText := u ) }, oWnd, , , , , , oFont, , , .f., {||.f.} )
    end if
 

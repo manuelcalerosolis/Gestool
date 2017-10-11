@@ -13,6 +13,12 @@ CLASS StocksModel FROM ADSBaseModel
 
    METHOD closeAreaLineasAgrupadas()      INLINE ( ::closeArea( "ADSLineasAgrupadas" ) )
 
+   METHOD getFechaCaducidad()
+
+   METHOD getFechaCaducidadADS()
+
+   METHOD getFechaCaducidadSQL()
+
 END CLASS
 
 //---------------------------------------------------------------------------//
@@ -93,4 +99,48 @@ METHOD getTotalUnidadesStockEntradas( cCodigoArticulo, dConsolidacion, tConsolid
 RETURN ( 0 )
 
 //---------------------------------------------------------------------------//
+
+METHOD getFechaCaducidad( cCodigoArticulo, cValorPrimeraPropiedad, cValorSegundaPropiedad, cLote )
+
+   local dFechaCaducidadADS   := ::getFechaCaducidadADS( cCodigoArticulo, cValorPrimeraPropiedad, cValorSegundaPropiedad, cLote )
+   local dFechaCaducidadSQL   := ::getFechaCaducidadSQL( cCodigoArticulo, cValorPrimeraPropiedad, cValorSegundaPropiedad, cLote )
+
+   msgalert( dFechaCaducidadADS, "dFechaCaducidadADS" )
+   msgalert( dFechaCaducidadSQL, "dFechaCaducidadSQL" )
+
+RETURN ( nil )
+
+//---------------------------------------------------------------------------//
+
+METHOD getFechaCaducidadADS( cCodigoArticulo, cValorPrimeraPropiedad, cValorSegundaPropiedad, cLote )
+
+   local cStm  
+   local cSql  := "SELECT TOP 1 dFechaDocumento, dFechaCaducidad "
+   cSql        += "FROM ( "
+   cSql        += AlbaranesProveedoresLineasModel():getSQLSentenceFechaCaducidad( cCodigoArticulo, cValorPrimeraPropiedad, cValorSegundaPropiedad, cLote )
+   cSql        += "UNION "
+   cSql        += FacturasProveedoresLineasModel():getSQLSentenceFechaCaducidad( cCodigoArticulo, cValorPrimeraPropiedad, cValorSegundaPropiedad, cLote )
+   cSql        += "UNION "
+   cSql        += MaterialesProducidosLineasModel():getSQLSentenceFechaCaducidad( cCodigoArticulo, cValorPrimeraPropiedad, cValorSegundaPropiedad, cLote )
+   cSql        += ") FechaCaducidad "
+   cSql        += "ORDER BY dFechaDocumento DESC"
+
+   if ::ExecuteSqlStatement( cSql, @cStm )
+      RETURN ( ( cStm )->dFechaCaducidad )
+   end if 
+
+RETURN ( ctod( "" ) )
+
+//---------------------------------------------------------------------------//
+
+METHOD getFechaCaducidadSQL( cCodigoArticulo, cValorPrimeraPropiedad, cValorSegundaPropiedad, cLote )
+
+   local cSql  := MovimientosAlmacenLineasRepository():getSQLSentenceFechaCaducidad( cCodigoArticulo, cValorPrimeraPropiedad, cValorSegundaPropiedad, cLote )
+
+   logwrite( cSql )
+
+RETURN ( ctod( "" ) )
+
+//---------------------------------------------------------------------------//
+
 

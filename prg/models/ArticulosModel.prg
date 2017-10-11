@@ -23,7 +23,7 @@ END CLASS
 
 METHOD exist( cCodigoArticulo )
 
-   local cStm
+   local cStm  
    local cSql  := "SELECT Nombre "                                      + ;
                      "FROM " + ::getTableName() + " "                   + ;
                      "WHERE Codigo = " + quoted( cCodigoArticulo ) 
@@ -38,7 +38,7 @@ RETURN ( .f. )
 
 METHOD get( cCodigoArticulo )
 
-   local cStm
+   local cStm  := "ADSArticulo"
    local cSql  := "SELECT * "                                           + ;
                      "FROM " + ::getTableName() + " "                   + ;
                      "WHERE Codigo = " + quoted( cCodigoArticulo ) 

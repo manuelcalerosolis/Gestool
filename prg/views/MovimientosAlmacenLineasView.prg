@@ -6,14 +6,15 @@
 
 CLASS MovimientosAlmacenLineasView FROM SQLBaseView
 
+   DATA oGetLote
    DATA oGetCodigoArticulo
    DATA oGetNombreArticulo
+   DATA oGetValorPrimeraPropiedad
+   DATA oGetValorSegundaPropiedad
 
    METHOD New()
 
    METHOD Dialog()
-
-   METHOD stampArticulo()
 
 END CLASS
 
@@ -44,7 +45,7 @@ METHOD Dialog()
          BITMAP      "Lupa" ;
          OF          oDlg
 
-      ::oGetCodigoArticulo:bValid   := {|| if( ::oController:validate( "codigo_articulo" ), ::stampArticulo(), .f. ) }
+      ::oGetCodigoArticulo:bValid   := {|| ::oController:validateCodigoArticulo() }
       ::oGetCodigoArticulo:bHelp    := {|| brwArticulo( ::oGetCodigoArticulo ) }
 
       REDEFINE GET   ::oGetNombreArticulo ;
@@ -55,15 +56,45 @@ METHOD Dialog()
 
       REDEFINE GET   ::oGetLote ;
          VAR         ::oController:oModel:hBuffer[ "lote" ] ;
-         ID          150 ;
+         ID          155 ;
          WHEN        ( ::oController:isNotZoomMode() ) ;
          OF          oDlg
+
+      // Valor de primera propiedad--------------------------------------------
+
+      REDEFINE GET   ::oGetValorPrimeraPropiedad ; 
+         VAR         ::oController:oModel:hBuffer[ "valor_primera_propiedad" ] ;
+         ID          120 ;
+         IDTEXT      121 ;
+         IDSAY       122 ;
+         PICTURE     "@!" ;
+         BITMAP      "LUPA" ;
+         WHEN        ( ::oController:isNotZoomMode() ) ;
+         OF          oDlg
+
+      ::oGetValorPrimeraPropiedad:bValid  := {|| ::oController:validatePrimeraPropiedad() }
+      ::oGetValorPrimeraPropiedad:bHelp   := {|| brwPropiedadActual( ::oGetValorPrimeraPropiedad, ::oGetValorPrimeraPropiedad:oHelpText, ::oController:oModel:hBuffer[ "codigo_primera_propiedad" ] ) }
+
+      // Valor de segunda propiedad--------------------------------------------
+
+      REDEFINE GET   ::oGetValorSegundaPropiedad ; 
+         VAR         ::oController:oModel:hBuffer[ "valor_segunda_propiedad" ] ;
+         ID          130 ;
+         IDTEXT      131 ;
+         IDSAY       132 ;
+         PICTURE     "@!" ;
+         BITMAP      "LUPA" ;
+         WHEN        ( ::oController:isNotZoomMode() ) ;
+         OF          oDlg
+
+      ::oGetValorSegundaPropiedad:bValid  := {|| ::oController:validateSegundaPropiedad() }
+      ::oGetValorSegundaPropiedad:bHelp   := {|| brwPropiedadActual( ::oGetValorSegundaPropiedad, ::oGetValorSegundaPropiedad:oHelpText, ::oController:oModel:hBuffer[ "codigo_segunda_propiedad" ] ) }
 
       REDEFINE BUTTON oBtn;
          ID          510 ;
          OF          oDlg ;
          WHEN        ( ::oController:isNotZoomMode() ) ;
-         ACTION      ( oDlg:end( IDOK ) )
+         ACTION      ( if( validateDialog( oDlg ), oDlg:end( IDOK ), ) )
 
       REDEFINE BUTTON ;
          ID          520 ;
@@ -79,28 +110,4 @@ METHOD Dialog()
 RETURN ( oDlg:nResult == IDOK )
 
 //---------------------------------------------------------------------------//
-
-METHOD stampArticulo()
-
-   local cAreaArticulo
-   local cCodigoArticulo
-
-   cCodigoArticulo   := ::oController:oModel:hBuffer[ "codigo_articulo" ]
-
-   if empty( cCodigoArticulo )
-      RETURN ( .t. )
-   end if 
-
-   cAreaArticulo   := ArticulosModel():get( cCodigoArticulo )
-   if empty( cAreaArticulo )
-      RETURN ( .t. )
-   end if 
-
-   ::oGetNombreArticulo:cText( ( cAreaArticulo )->Nombre )
-   ::oGetLoteArticulo:cText( ( cAreaArticulo )->cLote )
-
-RETURN ( .t. )
-
-//---------------------------------------------------------------------------//
-
 
