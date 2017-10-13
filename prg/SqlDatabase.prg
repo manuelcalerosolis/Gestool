@@ -349,7 +349,7 @@ METHOD addModels()
 
    aadd( ::aModels, SituacionesModel():New() )
 
-   aadd( ::aModels, HistoricosUsuariosModel():New() )
+   aadd( ::aModels, SQLConfiguracionColumnasUsuariosModel():New() )
 
    aadd( ::aModels, RelacionesEtiquetasModel():New() )
                                       

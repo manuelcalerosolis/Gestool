@@ -35,6 +35,8 @@ CLASS SQLBrowseView
    METHOD getModelColumnsForBrowse()      INLINE ( ::getModel():getColumnsForBrowse() )
    METHOD getModelHeadersForBrowse()      INLINE ( ::getModel():getHeadersForBrowse() )
 
+   METHOD getName()                       INLINE ( ::getController():getName() )
+
    // Columns------------------------------------------------------------------
 
    METHOD GenerateColumns()

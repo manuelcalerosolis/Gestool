@@ -65,6 +65,8 @@ CLASS SQLBaseController
 
    METHOD getContainer( cController )                 INLINE ( ::ControllerContainer:get( cController ) )
 
+   METHOD getName()                                   INLINE ( strtran( lower( ::cTitle ), " ", "_" ) )
+
    METHOD Validate( cColumn )                         INLINE ( if( !empty( ::oValidator ), ::oValidator:Validate( cColumn ), ) )
    METHOD Assert( cColumn, uValue )                   INLINE ( if( !empty( ::oValidator ), ::oValidator:Assert( cColumn, uValue ), ) )
 

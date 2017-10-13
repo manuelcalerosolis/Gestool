@@ -2384,7 +2384,7 @@ Return nil
 Function RELACIONESETIQUETASMODEL()
 Return nil
 
-Function HISTORICOSUSUARIOSMODEL()
+Function SQLConfiguracionColumnasUsuariosModel()
 Return nil
 
 Function TIPOSVENTASMODEL()

@@ -563,7 +563,7 @@ PropiedadesLineasController.obj       									\
 RelacionesEtiquetasModel.prg 												\
 ArticulosModel.prg                                    			\
 ColumnasUsuariosModel.prg 													\
-HistoricosUsuariosModel.prg                           			\
+SQLConfiguracionColumnasUsuariosModel.prg                      \
 PedidosClientesLineasModel.prg 											\
 EmpresasModel.prg 															\
 ClientesModel.prg 															\
@@ -586,7 +586,7 @@ PropiedadesController.obj       											\
 PropiedadesLineasModel.obj       										\
 PropiedadesLineasController.obj       									\
 RelacionesEtiquetasModel.prg 												\
-HistoricosUsuariosModel.prg                           			\
+SQLConfiguracionColumnasUsuariosModel.prg                      \
 PedidosClientesLineasModel.prg 											\
 Categoria.prg                                                  \
 GroupCustomer.prg                                              \
@@ -1146,7 +1146,7 @@ PropiedadesLineasModel.obj       										\
 PropiedadesLineasController.obj       									\
 RelacionesEtiquetasModel.obj 												\
 ArticulosModel.obj                                    			\
-HistoricosUsuariosModel.obj                                 	\
+SQLConfiguracionColumnasUsuariosModel.obj                      \
 PedidosClientesLineasModel.obj 											\
 ColumnasUsuariosModel.obj 													\
 Categoria.obj                                               	\
@@ -1697,7 +1697,7 @@ $(OBJ)\PropiedadesController.obj      									+
 $(OBJ)\PropiedadesLineasModel.obj      								+
 $(OBJ)\PropiedadesLineasController.obj      							+
 $(OBJ)\RelacionesEtiquetasModel.obj                				+
-$(OBJ)\HistoricosUsuariosModel.obj 										+
+$(OBJ)\SQLConfiguracionColumnasUsuariosModel.obj 					+
 $(OBJ)\Categoria.obj                                     		+
 $(OBJ)\GroupCustomer.obj                                 		+
 $(OBJ)\GroupCustomerViewSearchNavigator.obj              		+
