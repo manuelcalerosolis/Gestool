@@ -355,11 +355,7 @@ METHOD addModels()
                                       
    aadd( ::aModels, TiposVentasModel():New() )
 
-   aadd( ::aModels, ConfiguracionEmpresasModel():New() )
-
-   aadd( ::aModels, PropiedadesModel():New() )
-
-   aadd( ::aModels, PropiedadesLineasModel():New() )
+   aadd( ::aModels, SQLConfiguracionEmpresasModel():New() )
 
    aadd( ::aModels, SQLMovimientosAlmacenModel():New() )
 
