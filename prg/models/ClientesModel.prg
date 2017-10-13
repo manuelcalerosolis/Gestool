@@ -33,6 +33,7 @@ METHOD getClientesPorRuta( cWhere, cAgente, cOrderBy )
 
    local cStm  := "ADSRutas"
    local cSql  := "SELECT "                                                + ;
+                     "rownum() AS recno, "                                 + ;
                      "Cod, "                                               + ;
                      "Titulo "                                             + ;
                   "FROM " + ::getTableName() + " "                         
