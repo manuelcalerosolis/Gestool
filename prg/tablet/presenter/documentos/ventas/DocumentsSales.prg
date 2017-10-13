@@ -542,10 +542,8 @@ METHOD ChangeRuta() CLASS DocumentsSales
    ( ::cAliasClientesRuta )->( dbGoTop() )
    cCliente             := ( ::cAliasClientesRuta )->Cod
 
-   msgDbfInfo( ::cAliasClientesRuta )
-
    if !empty( ::oViewEdit:getRuta )
-      ::oViewEdit:getRuta:cText( alltrim( Str( ( ::cAliasClientesRuta )->( ADSKeyNo( , , 1 ) ) ) ) + "/" + alltrim( str( ( ::cAliasClientesRuta )->( ADSKeyCount( , , 1 ) ) ) ) )
+      ::oViewEdit:getRuta:cText( alltrim( Str( ( ::cAliasClientesRuta )->Recno ) ) + "/" + alltrim( str( ( ::cAliasClientesRuta )->( ADSKeyCount( , , 1 ) ) ) ) )
       ::oViewEdit:getRuta:Refresh()
    end if
 
@@ -582,7 +580,7 @@ METHOD moveClient( lAnterior ) CLASS DocumentsSales
    end if 
 
    if !empty( ::oViewEdit:getRuta )
-      ::oViewEdit:getRuta:cText( alltrim( str( ( ::cAliasClientesRuta )->( ADSKeyNo( , , 1 ) ) ) ) + "/" + alltrim( str( ( ::cAliasClientesRuta )->( ADSKeyCount( , , 1 ) ) ) ) )
+      ::oViewEdit:getRuta:cText( alltrim( str( ( ::cAliasClientesRuta )->Recno ) ) + "/" + alltrim( str( ( ::cAliasClientesRuta )->( ADSKeyCount( , , 1 ) ) ) ) )
       ::oViewEdit:getRuta:Refresh()
    end if
 
@@ -618,7 +616,7 @@ RETURN ( self )
 METHOD gotoUltimoCliente() CLASS DocumentsSales
 
    if !empty( ::nUltimoCliente )
-      ( D():Clientes( ::nView ) )->( dbgoto( ::nUltimoCliente ) )
+      ( ::cAliasClientesRuta )->( dbgoto( ::nUltimoCliente ) )
    end if 
 
 RETURN .t.
@@ -627,7 +625,7 @@ RETURN .t.
 
 METHOD setUltimoCliente() CLASS DocumentsSales
 
-   ::nUltimoCliente  := ( D():Clientes( ::nView ) )->( recno() )
+   ::nUltimoCliente  := ( ::cAliasClientesRuta )->recno
 
 RETURN nil
 
