@@ -363,21 +363,7 @@ RETURN ( nil )
 
 METHOD SaveView()
 
-   local oError
-   local oBlock
-
-   // DEFAULT lMessage         := .t.
-
-      msgalert( ::getName(), "getName SaveView" )
-      msgalert( ::SaveState(), "SaveState SaveView" )
-
-      SQLConfiguracionColumnasUsuariosModel():set( ::getName(), ::saveState() )
-
-      // ColumnasUsuariosModel():set( ::cName, ::SaveState(), nBrowseRecno, nBrowseOrder )
-
-      // if lMessage
-      //    msgInfo( "Configuración de columnas guardada", "Información" )
-      // end if
+   SQLConfiguracionColumnasUsuariosModel():set( ::getName(), ::saveState() )
 
 RETURN ( Self )
 
