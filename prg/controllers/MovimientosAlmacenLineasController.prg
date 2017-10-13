@@ -29,6 +29,8 @@ CLASS MovimientosAlmacenLineasController FROM SQLBaseController
 
    METHOD stampSegundaPropiedad()
 
+   METHOD stampFechaCaducidad()
+
 END CLASS
 
 //---------------------------------------------------------------------------//
@@ -121,6 +123,14 @@ METHOD stampArticulo()
 
    end if 
 
+   // Fecha de caducidad-------------------------------------------------------
+
+   ::stampFechaCaducidad()
+
+   // Area de trabajo----------------------------------------------------------
+
+   ArticulosModel():closeArea( cAreaArticulo )
+
 RETURN ( .t. )
 
 //---------------------------------------------------------------------------//
@@ -139,7 +149,7 @@ METHOD stampPrimeraPropiedad()
 
    cNombrePropiedad  := PropiedadesLineasModel():getNombre( hget( ::oModel:hBuffer, "codigo_primera_propiedad" ), hget( ::oModel:hBuffer, "valor_primera_propiedad" ) )
 
-   ::oDialogView:oGetValorPrimeraPropiedad:oHelpText:cText( cNombrePropiedad  )
+   ::oDialogView:oGetValorPrimeraPropiedad:oHelpText:cText( cNombrePropiedad )
 
 RETURN ( .t. )
 
@@ -159,13 +169,22 @@ METHOD stampSegundaPropiedad()
 
    cNombrePropiedad  := PropiedadesLineasModel():getNombre( hget( ::oModel:hBuffer, "codigo_segunda_propiedad" ), hget( ::oModel:hBuffer, "valor_segunda_propiedad" ) )
 
-   ::oDialogView:oGetValorSegundaPropiedad:oHelpText:cText( cNombrePropiedad  )
+   ::oDialogView:oGetValorSegundaPropiedad:oHelpText:cText( cNombrePropiedad )
 
 RETURN ( .t. )
 
 //---------------------------------------------------------------------------//
 
+METHOD stampFechaCaducidad()
 
+   local dFechaCaducidad   := StocksModel():getFechaCaducidad( hget( ::oModel:hBuffer, "codigo_articulo" ), hget( ::oModel:hBuffer, "valor_primera_propiedad" ), hget( ::oModel:hBuffer, "valor_segunda_propiedad" ), , hget( ::oModel:hBuffer, "lote" ) )
 
+   if !empty( dFechaCaducidad )
+      ::oDialogView:oGetFechaCaducidad:cText( dFechaCaducidad )
+   end if 
+
+RETURN ( .t. )
+
+//---------------------------------------------------------------------------//
 
 

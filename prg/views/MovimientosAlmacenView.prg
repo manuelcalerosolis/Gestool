@@ -167,11 +167,11 @@ METHOD Dialog()
 
       // Browse lineas--------------------------------------------------------- 
 
-      ::oSQLBrowseView              := SQLBrowseView():New( Self )
+      ::oSQLBrowseView              := SQLBrowseViewDialog():New( Self )
 
       ::oSQLBrowseView:setController( ::oController:oLineasController )
 
-      ::oSQLBrowseView:ActivateDialog( 180, ::oDlg )
+      ::oSQLBrowseView:Activate( 180, ::oDlg )
 
       // Buttons---------------------------------------------------------------
 

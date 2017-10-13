@@ -67,9 +67,9 @@ METHOD Activate()
 
       // Browse-----------------------------------------------------------------
 
-      ::oSQLBrowseView     := SQLBrowseView():New( Self )
+      ::oSQLBrowseView     := SQLBrowseViewDialog():New( Self )
 
-      ::oSQLBrowseView:ActivateDialog( 130 )
+      ::oSQLBrowseView:Activate( 130 )
 
       ::oSQLBrowseView:setLDblClick( {|| ::Select() } ) 
 

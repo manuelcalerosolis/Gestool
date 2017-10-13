@@ -13348,10 +13348,10 @@ FONT 8, "Ms Sans Serif"
   CONTROL "", 110, "Edit", ES_MULTILINE|ES_AUTOVSCROLL|WS_BORDER|WS_TABSTOP, 161, 13, 372, 11
   CONTROL "", 155, "Edit", ES_AUTOHSCROLL|WS_BORDER|WS_TABSTOP, 70, 26, 88, 11
   CONTROL "", 340, "Edit", ES_AUTOHSCROLL|WS_VSCROLL|WS_BORDER|WS_TABSTOP, 70, 39, 88, 11
-  CONTROL "", 120, "Edit", WS_BORDER|WS_TABSTOP, 70, 52, 88, 12
-  CONTROL "", 121, "Edit", WS_BORDER, 161, 52, 372, 12
-  CONTROL "", 130, "Edit", WS_BORDER|WS_TABSTOP, 70, 65, 88, 12
-  CONTROL "", 131, "Edit", WS_BORDER, 161, 65, 372, 12
+  CONTROL "", 120, "Edit", WS_BORDER|WS_TABSTOP, 70, 51, 88, 12
+  CONTROL "", 121, "Edit", WS_BORDER, 161, 51, 372, 12
+  CONTROL "", 130, "Edit", WS_BORDER|WS_TABSTOP, 70, 64, 88, 12
+  CONTROL "", 131, "Edit", WS_BORDER, 161, 64, 372, 12
   CONTROL "", 600, "TXBrowse", NOT WS_VISIBLE|0x00200000, 4, 293, 530, 150
   CONTROL "", 430, "Edit", ES_RIGHT|WS_VSCROLL|WS_BORDER|WS_TABSTOP, 70, 179, 68, 11
   CONTROL "", 140, "Edit", ES_RIGHT|WS_VSCROLL|WS_BORDER|WS_TABSTOP, 70, 192, 68, 11
@@ -13368,12 +13368,12 @@ FONT 8, "Ms Sans Serif"
   CONTROL "&Aceptar [F5]", 510, "Button", WS_TABSTOP, 374, 274, 50, 14
   CONTROL "&Cancelar", 520, "Button", WS_TABSTOP, 429, 274, 50, 14
   CONTROL "A&yuda", 9, "Button", WS_TABSTOP, 484, 274, 50, 14
-  CONTROL "Cajas ", 142, "Static", WS_GROUP, 4, 195, 48, 8
+  CONTROL "Cajas ", 142, "Static", WS_GROUP, 4, 195, 60, 8
   CONTROL "Total unidades", -1, "Static", WS_GROUP, 4, 221, 60, 8
-  CONTROL "Unidades", 152, "Static", WS_GROUP, 4, 208, 43, 8
+  CONTROL "Unidades", 152, "Static", WS_GROUP, 4, 208, 60, 8
   CONTROL "Artículo", -1, "Static", WS_GROUP, 4, 16, 36, 8
-  CONTROL "Propiedad 2", 132, "Static", WS_GROUP, 4, 67, 43, 8
-  CONTROL "Propiedad 1", 122, "Static", WS_GROUP, 4, 54, 43, 8
+  CONTROL "Propiedad 2", 132, "Static", WS_GROUP, 4, 66, 43, 8
+  CONTROL "Propiedad 1", 122, "Static", WS_GROUP, 4, 53, 43, 8
   CONTROL "Precio costo", 181, "Static", WS_GROUP, 4, 234, 61, 8
   CONTROL "Total precio", 191, "Static", WS_GROUP, 4, 247, 61, 8
   CONTROL "Lote", 154, "Static", WS_GROUP, 4, 29, 19, 8
@@ -13390,7 +13390,7 @@ FONT 8, "Ms Sans Serif"
   CONTROL "Stock origen", 404, "Static", WS_GROUP, 143, 195, 45, 8
   CONTROL "Almacen destino", -1, "Static", WS_GROUP, 143, 208, 55, 8
   CONTROL "Formato", -1, "Static", WS_GROUP, 143, 260, 33, 8
-  CONTROL "Bultos", 431, "Static", WS_GROUP, 4, 182, 48, 8
+  CONTROL "Bultos", 431, "Static", WS_GROUP, 4, 182, 60, 8
   CONTROL "Caducidad", 341, "Static", WS_GROUP, 4, 40, 39, 8
 }
 

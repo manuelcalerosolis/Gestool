@@ -4,7 +4,7 @@
 
 //---------------------------------------------------------------------------//
 
-CLASS ConfiguracionEmpresasModel FROM SQLBaseModel
+CLASS SQLConfiguracionEmpresasModel FROM SQLBaseModel
 
    DATA cTableName            INIT "configuracion_empresas"
 

@@ -6,7 +6,7 @@
 
 CLASS ConfiguracionEmpresasRepository FROM SQLBaseRepository
 
-   METHOD getTableName()               INLINE ( if( !empty( ::getController() ), ::getModelTableName(), ConfiguracionEmpresasModel():getTableName() ) )
+   METHOD getTableName()               INLINE ( if( !empty( ::getController() ), ::getModelTableName(), SQLConfiguracionEmpresasModel():getTableName() ) )
 
    METHOD getValue()
 

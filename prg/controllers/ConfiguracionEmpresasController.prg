@@ -8,7 +8,7 @@ CLASS ConfiguracionEmpresasController FROM SQLBaseController
 
    METHOD   New()
 
-   METHOD   buildSQLModel( this )         	 INLINE ( ConfiguracionEmpresasModel():New( this ) )
+   METHOD   buildSQLModel( this )         	 INLINE ( SQLConfiguracionEmpresasModel():New( this ) )
    
    METHOD   buildSQLView( this )			       VIRUTAL
    

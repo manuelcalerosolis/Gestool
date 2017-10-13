@@ -19,8 +19,7 @@ CLASS SQLBrowseView
 
    METHOD End()
 
-   METHOD ActivateMDI()
-   METHOD ActivateDialog()
+   METHOD Activate()                      VIRTUAL
 
    // Facades------------------------------------------------------------------
 
@@ -36,12 +35,7 @@ CLASS SQLBrowseView
    METHOD getModelColumnsForBrowse()      INLINE ( ::getModel():getColumnsForBrowse() )
    METHOD getModelHeadersForBrowse()      INLINE ( ::getModel():getHeadersForBrowse() )
 
-   METHOD getComboBoxOrder()              INLINE ( ::oSender:getComboBoxOrder() )
-   METHOD getMenuTreeView()               INLINE ( ::oSender:getMenuTreeView() )
-
    // Columns------------------------------------------------------------------
-
-   METHOD setSize( nTop, nLeft, nRight, nBottom )
 
    METHOD GenerateColumns()
 
@@ -59,7 +53,7 @@ CLASS SQLBrowseView
    // Events---------------------------------------------------------------------
 
    METHOD onKeyChar( nKey )
-   METHOD onClickHeader( oColumn )
+   METHOD onClickHeader( oColumn )        VIRTUAL
 
 ENDCLASS
 
@@ -68,32 +62,6 @@ ENDCLASS
 METHOD New( oSender )
 
    ::oSender         := oSender
-
-RETURN ( Self )
-
-//----------------------------------------------------------------------------//
-
-METHOD ActivateMDI( nTop, nLeft, nRight, nBottom )
-
-   ::Create()
-
-   ::setSize( nTop, nLeft, nRight, nBottom )
-
-   ::GenerateColumns()
-
-   ::CreateFromCode()
-
-RETURN ( Self )
-
-//----------------------------------------------------------------------------//
-
-METHOD ActivateDialog( id, oWindow )
-
-   ::Create( oWindow )
-
-   ::GenerateColumns()
-
-   ::CreateFromResource( id )
 
 RETURN ( Self )
 
@@ -137,19 +105,6 @@ METHOD Create( oWindow )
    ::oBrowse:bLDblClick       := {|| ::getController():Edit(), ::Refresh() }
 
 RETURN ( ::oBrowse )
-
-//---------------------------------------------------------------------------//
-
-METHOD setSize( nTop, nLeft, nRight, nBottom )
-
-   ::oBrowse:nStyle           := nOr( WS_CHILD, WS_VISIBLE, WS_TABSTOP )
-
-   ::oBrowse:nTop             := nTop 
-   ::oBrowse:nLeft            := nLeft 
-   ::oBrowse:nRight           := nRight 
-   ::oBrowse:nBottom          := nBottom 
-
-RETURN ( self )
 
 //---------------------------------------------------------------------------//
 
@@ -201,9 +156,94 @@ RETURN ( self )
 
 //---------------------------------------------------------------------------//
 
-METHOD onClickHeader( oColumn )
+METHOD onKeyChar( nKey )
 
-   local oCombobox   := ::getComboBoxOrder()
+RETURN ( heval( ::oSender:oMenuTreeView:hFastKey, {|k,v| msgalert( nKey, "nKey" ), if( k == nKey, eval( v ), ) } ) ) 
+   
+//----------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//
+
+CLASS SQLBrowseViewDialog FROM SQLBrowseView
+
+   METHOD Activate()
+
+   METHOD onClickHeader( oColumn )     VIRTUAL
+
+ENDCLASS
+
+//----------------------------------------------------------------------------//
+
+METHOD Activate( id, oWindow ) CLASS SQLBrowseViewDialog
+
+   ::Create( oWindow )
+
+   ::GenerateColumns()
+
+   ::CreateFromResource( id )
+
+RETURN ( Self )
+
+//----------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//
+
+CLASS SQLBrowseViewMDI FROM SQLBrowseView
+
+   METHOD Activate()
+
+   METHOD setSize( nTop, nLeft, nRight, nBottom )
+
+   METHOD onClickHeader( oColumn )   
+
+   METHOD getComboBoxOrder()              INLINE ( if( !empty( ::oSender ), ::oSender:getComboBoxOrder(), ) )
+   METHOD getMenuTreeView()               INLINE ( if( !empty( ::oSender ), ::oSender:getMenuTreeView(), ) )
+
+ENDCLASS
+
+//----------------------------------------------------------------------------//
+
+METHOD Activate( nTop, nLeft, nRight, nBottom ) CLASS SQLBrowseViewMDI
+
+   ::Create()
+
+   ::setSize( nTop, nLeft, nRight, nBottom )
+
+   ::GenerateColumns()
+
+   ::CreateFromCode()
+
+RETURN ( Self )
+
+//----------------------------------------------------------------------------//
+
+METHOD setSize( nTop, nLeft, nRight, nBottom ) CLASS SQLBrowseViewMDI
+
+   ::oBrowse:nStyle     := nOr( WS_CHILD, WS_VISIBLE, WS_TABSTOP )
+
+   ::oBrowse:nTop       := nTop 
+   ::oBrowse:nLeft      := nLeft 
+   ::oBrowse:nRight     := nRight 
+   ::oBrowse:nBottom    := nBottom 
+
+RETURN ( self )
+
+//---------------------------------------------------------------------------//
+
+METHOD onClickHeader( oColumn ) CLASS SQLBrowseViewMDI
+
+   local oCombobox      := ::getComboBoxOrder()
 
    if empty( oComboBox )
       RETURN ( Self )
@@ -222,10 +262,4 @@ METHOD onClickHeader( oColumn )
 RETURN ( ::oSender:onChangeCombo() )
 
 //---------------------------------------------------------------------------//
-
-METHOD onKeyChar( nKey )
-
-RETURN ( heval( ::oSender:oMenuTreeView:hFastKey, {|k,v| msgalert( nKey, "nKey" ), if( k == nKey, eval( v ), ) } ) ) 
-   
-//----------------------------------------------------------------------------//
 

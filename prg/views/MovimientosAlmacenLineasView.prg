@@ -7,14 +7,27 @@
 CLASS MovimientosAlmacenLineasView FROM SQLBaseView
 
    DATA oGetLote
+   DATA oGetFechaCaducidad
    DATA oGetCodigoArticulo
    DATA oGetNombreArticulo
    DATA oGetValorPrimeraPropiedad
    DATA oGetValorSegundaPropiedad
+   DATA oGetBultosArticulo
+   DATA oGetCajasArticulo
+   DATA oGetUnidadesArticulo
+   DATA oSayTotalUnidades
+   DATA oGetPrecioArticulo
+   DATA oSayTotalImporte
 
    METHOD New()
 
    METHOD Dialog()
+
+   METHOD nTotalUnidadesArticulo()     INLINE ( notCaja( ::oController:oModel:hBuffer[ "cajas_articulo" ] ) * ::oController:oModel:hBuffer[ "unidades_articulo" ] )
+
+   METHOD nTotalImporteArticulo()      INLINE ( ::nTotalUnidadesArticulo() * ::oController:oModel:hBuffer[ "precio_articulo" ] )
+
+   METHOD refreshUnidadesImportes()    INLINE ( ::oSayTotalUnidades():Refresh(), ::oSayTotalImporte():Refresh() )
 
 END CLASS
 
@@ -60,6 +73,14 @@ METHOD Dialog()
          WHEN        ( ::oController:isNotZoomMode() ) ;
          OF          oDlg
 
+      // Fecha de caducidad----------------------------------------------------
+
+      REDEFINE GET   ::oGetFechaCaducidad ;
+         VAR         ::oController:oModel:hBuffer[ "fecha_caducidad" ] ;
+         ID          340 ;
+         WHEN        ( ::oController:isNotZoomMode() ) ;
+         OF          oDlg
+
       // Valor de primera propiedad--------------------------------------------
 
       REDEFINE GET   ::oGetValorPrimeraPropiedad ; 
@@ -90,7 +111,77 @@ METHOD Dialog()
       ::oGetValorSegundaPropiedad:bValid  := {|| ::oController:validateSegundaPropiedad() }
       ::oGetValorSegundaPropiedad:bHelp   := {|| brwPropiedadActual( ::oGetValorSegundaPropiedad, ::oGetValorSegundaPropiedad:oHelpText, ::oController:oModel:hBuffer[ "codigo_segunda_propiedad" ] ) }
 
-      REDEFINE BUTTON oBtn;
+      // Bultos----------------------------------------------------------------
+
+      REDEFINE GET   ::oGetBultosArticulo ;
+         VAR         ::oController:oModel:hBuffer[ "bultos_articulo" ] ;
+         ID          430 ;
+         IDSAY       431 ;
+         SPINNER ;
+         WHEN        ( uFieldEmpresa( "lUseBultos" ) .and. ::oController:isNotZoomMode() ) ;
+         PICTURE     MasUnd() ;
+         OF          oDlg
+
+      ::oGetBultosArticulo:bChange     := {|| ::refreshUnidadesImportes() }
+
+      // Cajas-----------------------------------------------------------------
+
+      REDEFINE GET   ::oGetCajasArticulo ;
+         VAR         ::oController:oModel:hBuffer[ "cajas_articulo" ] ;
+         ID          140 ;
+         IDSAY       142 ;
+         SPINNER ;
+         WHEN        ( uFieldEmpresa( "lUseCaj" ) .and. ::oController:isNotZoomMode() ) ;
+         PICTURE     MasUnd() ;
+         OF          oDlg
+
+      ::oGetCajasArticulo:bChange      := {|| ::refreshUnidadesImportes() }
+
+      // Unidades--------------------------------------------------------------
+
+      REDEFINE GET   ::oGetUnidadesArticulo ;
+         VAR         ::oController:oModel:hBuffer[ "unidades_articulo" ] ;
+         ID          150 ;
+         IDSAY       152 ;
+         SPINNER ;
+         WHEN        ( ::oController:isNotZoomMode() ) ;
+         PICTURE     MasUnd() ;
+         OF          oDlg
+
+      ::oGetUnidadesArticulo:bChange   := {|| ::refreshUnidadesImportes() }
+
+      // Total Unidades--------------------------------------------------------
+
+      REDEFINE SAY   ::oSayTotalUnidades ;
+         PROMPT      ::nTotalUnidadesArticulo() ;
+         ID          160;
+         PICTURE     MasUnd() ;
+         OF          oDlg
+
+      // Importe---------------------------------------------------------------
+
+      REDEFINE GET   ::oGetPrecioArticulo ;
+         VAR         ::oController:oModel:hBuffer[ "precio_articulo" ] ;
+         ID          180 ;
+         IDSAY       181 ;
+         SPINNER ;
+         WHEN        ( ::oController:isNotZoomMode() ) ;
+         PICTURE     cPinDiv() ;
+         OF          oDlg
+
+      ::oGetUnidadesArticulo:bChange   := {|| ::refreshUnidadesImportes() }
+
+      // Total Importe---------------------------------------------------------
+
+      REDEFINE SAY   ::oSayTotalImporte ;
+         PROMPT      ::nTotalImporteArticulo() ;
+         ID          190;
+         PICTURE     cPirDiv() ;
+         OF          oDlg
+
+      // Botones---------------------------------------------------------------
+
+      REDEFINE BUTTON oBtn ;
          ID          510 ;
          OF          oDlg ;
          WHEN        ( ::oController:isNotZoomMode() ) ;
@@ -110,4 +201,5 @@ METHOD Dialog()
 RETURN ( oDlg:nResult == IDOK )
 
 //---------------------------------------------------------------------------//
+
 
