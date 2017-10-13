@@ -277,8 +277,11 @@ RETURN ( .t. )
 
 FUNCTION Test()
 
+<<<<<<< HEAD
+=======
    msgalert( StocksModel():getFechaCaducidad('1') )
 
+>>>>>>> ca0afa808ed0b21b8c741a753461e488c9e1ca4e
 RETURN ( nil )
 
 //---------------------------------------------------------------------------//
