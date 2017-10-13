@@ -15,9 +15,6 @@ CLASS SQLXBrowse FROM TXBrowse
 
    CLASSDATA lRegistered                        AS LOGICAL
 
-   DATA  cOriginal                              AS CHARACTER   INIT ""
-   DATA  cName                                  AS CHARACTER   INIT ""
-
    DATA  aHeaders                               AS ARRAY       INIT {}
 
    DATA  lOnProcess                             AS LOGIC       INIT .f.
@@ -30,9 +27,6 @@ CLASS SQLXBrowse FROM TXBrowse
    METHOD New( oWnd )
 
    METHOD setModel( oModel )  
-
-   METHOD setOriginal()                         INLINE ( ::RestoreState( ::cOriginal ) )
-   METHOD getOriginal()                         INLINE ( ::cOriginal := ::SaveState() )
 
    METHOD refreshCurrent()                      INLINE ( ::Refresh(), ::Select( 0 ), ::Select( 1 ) )
 
@@ -52,6 +46,18 @@ CLASS SQLXBrowse FROM TXBrowse
    METHOD ExportToExcel()
 
    METHOD MakeTotals( aCols )
+
+   // States-------------------------------------------------------------------
+
+   DATA  cName                                  AS CHARACTER   INIT ""
+
+   DATA  cOriginal                              AS CHARACTER   INIT ""
+
+   METHOD setOriginal()                         INLINE ( ::RestoreState( ::cOriginal ) )
+   METHOD getOriginal()                         INLINE ( ::cOriginal := ::SaveState() )
+
+   METHOD SaveView()
+   METHOD OriginalView()
 
 END CLASS
 
@@ -102,6 +108,12 @@ METHOD RButtonDown( nRow, nCol, nFlags )
       MenuAddItem()
 
       MenuAddItem( "Exportar a E&xcel", "Exportar rejilla de datos a Excel", .f., .t., {|| ::ExportToExcel() }, , "gc_spreadsheet_sum_16", oMenu )
+
+      MenuAddItem()
+
+      MenuAddItem( "Guardar vista actual", "Guarda la vista actual de la rejilla de datos", .f., .t., {|| ::SaveView() }, , "gc_table_selection_column_disk_16", oMenu )
+
+      MenuAddItem( "Cargar vista por defecto", "Carga la vista por defecto de la rejilla de datos", .f., .t., {|| ::OriginalView() }, , "gc_table_selection_column_refresh_16", oMenu )
 
    MenuEnd() 
 
@@ -345,4 +357,64 @@ METHOD getFirstVisibleColumn()
 RETURN ( nil )
 
 //----------------------------------------------------------------------------//
+
+METHOD SaveView()
+
+   local oError
+   local oBlock
+
+   // DEFAULT lMessage         := .t.
+
+   oBlock                   := ErrorBlock( {| oError | ApoloBreak( oError ) } )
+   BEGIN SEQUENCE
+
+      msgalert( ::SaveState(), "SaveState" )
+
+      // ColumnasUsuariosModel():set( ::cName, ::SaveState(), nBrowseRecno, nBrowseOrder )
+
+      // if lMessage
+      //    msgInfo( "Configuración de columnas guardada", "Información" )
+      // end if
+
+   RECOVER USING oError
+
+      msgStop( "Imposible salvar las configuraciones de columnas" + CRLF + ErrorMessage( oError ) )
+
+   END SEQUENCE
+
+   ErrorBlock( oBlock )
+
+RETURN ( Self )
+
+//------------------------------------------------------------------------//
+
+METHOD OriginalView()
+
+   local oError
+   local oBlock
+
+   // DEFAULT lMessage         := .t.
+
+   oBlock                   := ErrorBlock( {| oError | ApoloBreak( oError ) } )
+   BEGIN SEQUENCE
+
+      msgalert( ::SaveState(), "SaveState" )
+
+      // ColumnasUsuariosModel():set( ::cName, ::SaveState(), nBrowseRecno, nBrowseOrder )
+
+      // if lMessage
+      //    msgInfo( "Configuración de columnas guardada", "Información" )
+      // end if
+
+   RECOVER USING oError
+
+      msgStop( "Imposible salvar las configuraciones de columnas" + CRLF + ErrorMessage( oError ) )
+
+   END SEQUENCE
+
+   ErrorBlock( oBlock )
+
+RETURN ( Self )
+
+//------------------------------------------------------------------------//
 

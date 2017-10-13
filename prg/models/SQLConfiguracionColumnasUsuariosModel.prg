@@ -4,17 +4,17 @@
 
 //---------------------------------------------------------------------------//
 
-CLASS HistoricosUsuariosModel FROM SQLBaseModel
+CLASS SQLConfiguracionColumnasUsuariosModel FROM SQLBaseModel
 
-   DATA     cTableName           INIT "historicos_usuarios"
+   DATA cTableName           INIT "configuracion_columnas_usuarios"
 
-   METHOD   New()
+   METHOD New()
 
-   METHOD   deleteHistory( cTable )
+   METHOD delete( cViewName )
 
-   METHOD   getHistory( cTable )
+   METHOD get( cViewName )
 
-   METHOD   saveHistory( cTable, cBrowseState, cColumnOrder, cOrientation, idToFind )
+   METHOD set( cViewName, cBrowseState, cColumnOrder, cOrientation, idToFind )
 
 END CLASS
 
@@ -24,8 +24,8 @@ METHOD New()
 
    ::hColumns                    := {  "id"         	=>  { "create" => "INTEGER PRIMARY KEY AUTO_INCREMENT" },;
                                        "usuario_id"   =>  { "create" => "CHARACTER ( 3 ) NOT NULL"           },;
-                                       "table_name"   =>  { "create" => "VARCHAR( 30 ) NOT NULL"             },;
-                                       "browse_state" =>  { "create" => "VARCHAR(250)"                       },;
+                                       "view_name"    =>  { "create" => "VARCHAR( 30 ) NOT NULL"             },;
+                                       "browse_state" =>  { "create" => "VARCHAR( 250 )"                     },;
                                        "column_order" =>  { "create" => "VARCHAR( 30 ) NOT NULL" 		       },;
                                        "orientation"	=>  { "create" => "CHARACTER ( 1 ) NOT NULL"			    },;
                                        "id_to_find"   =>  { "create" => "INT NOT NULL"                       } }
@@ -36,19 +36,19 @@ RETURN ( Self )
 
 //---------------------------------------------------------------------------//
 
-METHOD getHistory( cTable )
+METHOD get( cViewName )
 
    local oStmt
    local aFetch
    local cSentence   := "SELECT browse_state, column_order, orientation, id_to_find "        + ;
                            "FROM " + ::cTableName + " "                                      + ;
-                           "WHERE table_name = " + toSQLString( cTable ) + " "               + ;
+                           "WHERE view_name = " + toSQLString( cViewName ) + " "             + ;
                               "AND usuario_id = " + toSQLString( oUser():cCodigo() ) + " "   + ;
                            "LIMIT 1"
 
    try 
 
-    	oStmt          := ::Query( cSentence )
+    	oStmt          := getSQLDatabase():Query( cSentence )
 
     	aFetch         := oStmt:fetchAll( FETCH_HASH )
 
@@ -72,7 +72,7 @@ RETURN ( nil )
        
 //---------------------------------------------------------------------------//
 
-METHOD saveHistory( cTable, cBrowseState, cColumnOrder, cOrientation, idToFind )
+METHOD set( cViewName, cBrowseState, cColumnOrder, cOrientation, idToFind )
 
    local id
    local cUpdateHistory 
@@ -83,9 +83,8 @@ METHOD saveHistory( cTable, cBrowseState, cColumnOrder, cOrientation, idToFind )
    DEFAULT idToFind        := 0
 
    cInternalSelect         := "SELECT id FROM " + ::cTableName + " "                         + ;
-                                 "WHERE table_name = " + toSQLString( cTable ) + " "         + ;
-                                    "AND "                                                   + ;
-                                    "usuario_id = " + toSQLString( oUser():cCodigo() ) 
+                                 "WHERE view_name = " + toSQLString( cViewName ) + " "       + ;
+                                    "AND usuario_id = " + toSQLString( oUser():cCodigo() ) 
 
    id                      := ::selectFetchArray( cInternalSelect )                   
 
@@ -93,14 +92,14 @@ METHOD saveHistory( cTable, cBrowseState, cColumnOrder, cOrientation, idToFind )
 
       cUpdateHistory       := "INSERT INTO " + ::cTableName + " ( "                          + ;
                                     "usuario_id, "                                           + ;
-                                    "table_name, "                                           + ;
+                                    "view_name, "                                            + ;
                                     "browse_state, "                                         + ;
                                     "column_order, "                                         + ;
                                     "orientation, "                                          + ;
                                     "id_to_find ) "                                          + ;
                                  "VALUES ( "                                                 + ;
                                     toSQLString( oUser():cCodigo() ) + ", "                  + ;
-                                    toSQLString( cTable ) + ","                              + ;
+                                    toSQLString( cViewName ) + ","                           + ;
                                     cBrowseState + ", "                                      + ;
                                     toSQLString( cColumnOrder ) + ", "                       + ;
                                     toSQLString( cOrientation ) + ", "                       + ;
@@ -115,20 +114,20 @@ METHOD saveHistory( cTable, cBrowseState, cColumnOrder, cOrientation, idToFind )
                                     "id_to_find = " + alltrim( cvaltostr( idToFind ) ) + " " + ;
                                  "WHERE id = " + alltrim( cvaltostr( id ) )  
 
-
    end if 
 
-   ::Query( cUpdateHistory )
+   getSQLDatabase():Query( cUpdateHistory )
 
 RETURN ( Self )
 
 //---------------------------------------------------------------------------//
 
-METHOD deleteHistory( cTable )
+METHOD delete( cViewName )
 
    local oStmt
-   local cSentence   := "DELETE FROM " + ::cTableName + " " + ;
-                           "WHERE table_name = " + toSQLString( cTable ) + " AND usuario_id = " + toSQLString( oUser():cCodigo() )
+   local cSentence   := "DELETE FROM " + ::cTableName + " "                            + ;
+                           "WHERE view_name = " + toSQLString( cViewName ) + " "       + ;
+                           "AND usuario_id = " + toSQLString( oUser():cCodigo() )
 
    try 
       oStmt          := getSQLDatabase():Execute( cSentence )
