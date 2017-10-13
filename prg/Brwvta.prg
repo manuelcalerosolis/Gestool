@@ -781,7 +781,7 @@ function BrwVtaComArt( cCodArt, cNomArt )
    oBrwTmp:nMarqueeStyle         := 5
    oBrwTmp:lFooter               := .t.
 
-   oBrwTmp:cName                 := "Documentos en informe de articulos"
+   oBrwTmp:cName                 := "Docs info articulo"
 
    oBrwTmp:CreateFromResource( 300 )
 

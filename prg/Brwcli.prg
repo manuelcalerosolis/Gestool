@@ -370,7 +370,7 @@ function BrwVtaCli( cCodCli, cNomCli, lSatCli )
       oBrwVta:lVScroll           := .f.
       oBrwVta:lHScroll           := .f.
       oBrwVta:nMarqueeStyle      := 5
-      oBrwVta:cName              := "Ventas en informe de clientes"
+      oBrwVta:cName              := "Vta info cliente"
       oBrwVta:CreateFromResource( 400 )
 
       with object ( oBrwVta:AddCol() )
@@ -522,7 +522,7 @@ function BrwVtaCli( cCodCli, cNomCli, lSatCli )
       oBrwTmp:nMarqueeStyle         := 5
       oBrwTmp:lFooter               := .t.
 
-      oBrwTmp:cName                 := "Documentos en informe de cliente"
+      oBrwTmp:cName                 := "Docs info cliente"
 
       oBrwTmp:CreateFromResource( 300 )
 

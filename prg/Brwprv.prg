@@ -229,7 +229,7 @@ function BrwComPrv( cCodPrv, cNomPrv, dbfDiv, dbfIva )
    oBrwCom:lVScroll           := .f.
    oBrwCom:lHScroll           := .f.
    oBrwCom:nMarqueeStyle      := 5
-   oBrwCom:cName              := "Compras en informe de articulos"
+   oBrwCom:cName              := "Cmp info proveedor"
    oBrwCom:CreateFromResource( 400 )
 
    with object ( oBrwCom:AddCol() )
@@ -352,7 +352,7 @@ function BrwComPrv( cCodPrv, cNomPrv, dbfDiv, dbfIva )
 
    oBrwTmp:nMarqueeStyle         := 5
    oBrwTmp:lFooter               := .t.
-   oBrwTmp:cName                 := "Documentos en informe de proveedor"
+   oBrwTmp:cName                 := "Docs info proveedor"
 
    oBrwTmp:CreateFromResource( 300 )
 
