@@ -18,6 +18,7 @@ CLASS SQLDatabase
    DATA cIpMySQL
    DATA cUserMySQL
    DATA cPasswordMySQL
+   DATA lEmbeddedMySQL
 
    DATA aModels                           INIT {}
 
@@ -69,6 +70,9 @@ ENDCLASS
 
 METHOD New() 
 
+   local aOptions             := { "GESTOOL", "--defaults-file=./my.cnf" }             
+   local aGroup               := { "server", "client" }                                 
+
    ::cPathDatabaseMySQL       := fullCurDir() + "Database\" 
 
    if !lIsDir( ::cPathDatabaseMySQL )
@@ -79,6 +83,12 @@ METHOD New()
    ::cIpMySQL                 := GetPvProfString(  "MySQL",    "Ip",       "127.0.0.1",   cIniAplication() )
    ::cUserMySQL               := GetPvProfString(  "MySQL",    "User",     "root",        cIniAplication() )
    ::cPasswordMySQL           := GetPvProfString(  "MySQL",    "Password", "",            cIniAplication() )
+   ::lEmbeddedMySQL           := GetPvProfString(  "MySQL",    "Embedded", ".F.",         cIniAplication() )
+   ::lEmbeddedMySQL           := upper( ::lEmbeddedMySQL ) == ".T."
+
+   if ::lEmbeddedMySQL
+      initMySQLEmdSys( aOptions, aGroup, "client" )                             
+   end if 
 
    ::oConexion                := THDO():new( "mysql" )
 

@@ -51,6 +51,9 @@ CLASS SQLXBrowse FROM TXBrowse
 
    DATA  cName                                  AS CHARACTER   INIT ""
 
+   METHOD setName( cName )                      INLINE ( ::cName := cName )
+   METHOD getName( cName )                      INLINE ( ::cName )
+
    DATA  cOriginal                              AS CHARACTER   INIT ""
 
    METHOD setOriginal()                         INLINE ( ::RestoreState( ::cOriginal ) )
@@ -365,24 +368,16 @@ METHOD SaveView()
 
    // DEFAULT lMessage         := .t.
 
-   oBlock                   := ErrorBlock( {| oError | ApoloBreak( oError ) } )
-   BEGIN SEQUENCE
+      msgalert( ::getName(), "getName SaveView" )
+      msgalert( ::SaveState(), "SaveState SaveView" )
 
-      msgalert( ::SaveState(), "SaveState" )
+      SQLConfiguracionColumnasUsuariosModel():set( ::getName(), ::saveState() )
 
       // ColumnasUsuariosModel():set( ::cName, ::SaveState(), nBrowseRecno, nBrowseOrder )
 
       // if lMessage
       //    msgInfo( "Configuración de columnas guardada", "Información" )
       // end if
-
-   RECOVER USING oError
-
-      msgStop( "Imposible salvar las configuraciones de columnas" + CRLF + ErrorMessage( oError ) )
-
-   END SEQUENCE
-
-   ErrorBlock( oBlock )
 
 RETURN ( Self )
 

@@ -102,6 +102,8 @@ METHOD Create( oWindow )
 
    ::oBrowse:setModel( ::getModel() )
 
+   ::oBrowse:setName( ::getName() )
+
    ::oBrowse:bKeyChar         := {|nKey| ::getController():onKeyChar( nKey ) }
 
    ::oBrowse:bLDblClick       := {|| ::getController():Edit(), ::Refresh() }
