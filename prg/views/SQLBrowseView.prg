@@ -26,6 +26,9 @@ CLASS SQLBrowseView
    METHOD getBrowse()                     INLINE ( ::oBrowse )
    METHOD getBrowseSelected()             INLINE ( ::oBrowse:aSelected )
 
+   METHOD setView()                       INLINE ( ::oBrowse:setView() )
+   METHOD saveView()                      INLINE ( ::oBrowse:saveView() )
+
    METHOD setController( oController )    INLINE ( ::oController := oController )
    METHOD getController()                 INLINE ( iif( empty( ::oController ), ::oSender:getController(), ::oController ) )
 

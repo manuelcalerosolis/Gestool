@@ -60,7 +60,7 @@ CLASS SQLXBrowse FROM TXBrowse
    METHOD getOriginal()                         INLINE ( ::cOriginal := ::SaveState() )
 
    METHOD SaveView()
-   METHOD OriginalView()
+   METHOD SetView()
 
 END CLASS
 
@@ -363,37 +363,34 @@ RETURN ( nil )
 
 METHOD SaveView()
 
-   SQLConfiguracionColumnasUsuariosModel():set( ::getName(), ::saveState() )
+   local oConfiguracionColumnasUsuariosModel
+
+   oConfiguracionColumnasUsuariosModel    := SQLConfiguracionColumnasUsuariosModel()
+
+   if !empty( oConfiguracionColumnasUsuariosModel )
+      oConfiguracionColumnasUsuariosModel:set( ::getName(), ::saveState() )
+   end if
 
 RETURN ( Self )
 
-//------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//
 
-METHOD OriginalView()
+METHOD SetView()
 
-   local oError
-   local oBlock
+   local hBrowseState
+   local oConfiguracionColumnasUsuariosModel
 
-   // DEFAULT lMessage         := .t.
+   ::getOriginal()
 
-   oBlock                   := ErrorBlock( {| oError | ApoloBreak( oError ) } )
-   BEGIN SEQUENCE
+   oConfiguracionColumnasUsuariosModel := SQLConfiguracionColumnasUsuariosModel()
 
-      msgalert( ::SaveState(), "SaveState" )
+   if !Empty( oConfiguracionColumnasUsuariosModel )
+      hBrowseState                     := oConfiguracionColumnasUsuariosModel:get( ::getName() )
+   end if
 
-      // ColumnasUsuariosModel():set( ::cName, ::SaveState(), nBrowseRecno, nBrowseOrder )
-
-      // if lMessage
-      //    msgInfo( "Configuración de columnas guardada", "Información" )
-      // end if
-
-   RECOVER USING oError
-
-      msgStop( "Imposible salvar las configuraciones de columnas" + CRLF + ErrorMessage( oError ) )
-
-   END SEQUENCE
-
-   ErrorBlock( oBlock )
+   if hb_ishash( hBrowseState ) .and. hhaskey( hBrowseState, "browse_state" )
+      ::restoreState( hget( hBrowseState, "browse_state" ) )
+   end if 
 
 RETURN ( Self )
 

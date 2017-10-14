@@ -31,9 +31,6 @@ CLASS SQLBaseController
 
    DATA nMode                                         AS NUMERIC
 
-   DATA bOnPreAppend
-   DATA bOnPostAppend
-
    DATA cTitle                                        INIT ""
 
    DATA cImage                                        INIT ""
@@ -244,7 +241,7 @@ RETURN ( Self )
 
 METHOD restoreBrowseState()
 
-   if empty(::oDialogView:getoBrowse())
+   if empty( ::oDialogView:getoBrowse() )
       RETURN ( Self )
    end if 
 

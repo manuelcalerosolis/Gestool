@@ -65,7 +65,7 @@ METHOD get( cViewName )
    end
 
    if hb_isarray( aFetch )
-    	RETURN ( aFetch )
+    	RETURN ( atail( aFetch ) )
    end if 
 
 RETURN ( nil )
@@ -129,7 +129,7 @@ METHOD delete( cViewName )
    local oStmt
    local cSentence   := "DELETE FROM " + ::cTableName + " "                                  + ;
                            "WHERE view_name = " + quoted( cViewName ) + " "                  + ;
-                           "AND usuario_id = " + quoted( oUser():cCodigo() )
+                              "AND usuario_id = " + quoted( oUser():cCodigo() )
 
    try 
       oStmt          := getSQLDatabase():Execute( cSentence )

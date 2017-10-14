@@ -101,6 +101,8 @@ METHOD Activate()
 
    ::oSQLBrowseView:Activate( dfnSplitterHeight + dfnSplitterWidth, dfnTreeViewWidth + dfnSplitterWidth, ::oMdiChild:nRight - ::oMdiChild:nLeft, ::oMdiChild:nBottom - ::oMdiChild:nTop )
 
+   ::oSQLBrowseView:setView()
+
    // Splitters----------------------------------------------------------------
 
    ::CreateSplitters()
