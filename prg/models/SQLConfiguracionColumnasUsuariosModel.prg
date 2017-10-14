@@ -22,13 +22,13 @@ END CLASS
 
 METHOD New()
 
-   ::hColumns                    := {  "id"         	=>  { "create" => "INTEGER PRIMARY KEY AUTO_INCREMENT" },;
-                                       "usuario_id"   =>  { "create" => "CHARACTER ( 3 ) NOT NULL"           },;
-                                       "view_name"    =>  { "create" => "VARCHAR( 30 ) NOT NULL"             },;
-                                       "browse_state" =>  { "create" => "VARCHAR( 250 )"                     },;
-                                       "column_order" =>  { "create" => "VARCHAR( 30 ) NOT NULL" 		       },;
-                                       "orientation"	=>  { "create" => "CHARACTER ( 1 ) NOT NULL"			    },;
-                                       "id_to_find"   =>  { "create" => "INT NOT NULL"                       } }
+   ::hColumns                    := {  "id"           =>  { "create" => "INTEGER PRIMARY KEY AUTO_INCREMENT"   },;
+                                       "usuario_id"   =>  { "create" => "CHARACTER ( 3 ) NOT NULL"             },;
+                                       "view_name"    =>  { "create" => "VARCHAR( 30 ) NOT NULL"               },;
+                                       "browse_state" =>  { "create" => "TEXT"                                 },;
+                                       "column_order" =>  { "create" => "VARCHAR( 30 ) NOT NULL"               },;
+                                       "orientation"  =>  { "create" => "CHARACTER ( 1 ) NOT NULL"	            },;
+                                       "id_to_find"   =>  { "create" => "INT NOT NULL"                         } }
 
    ::Super:New()
 
@@ -86,7 +86,9 @@ METHOD set( cViewName, cBrowseState, cColumnOrder, cOrientation, idToFind )
                                  "WHERE view_name = " + quoted( cViewName ) + " "            + ;
                                     "AND usuario_id = " + quoted( oUser():cCodigo() ) 
 
-   id                      := getSQLDatabase():selectFetchArray( cInternalSelect )                   
+   id                      := getSQLDatabase():selectFetchArrayOneColumn( cInternalSelect )                   
+
+   msgalert( hb_valtoexp(id), "id")
 
    if empty(id)
 
@@ -116,9 +118,9 @@ METHOD set( cViewName, cBrowseState, cColumnOrder, cOrientation, idToFind )
 
    end if 
 
-   msgalert( cUpdateHistory, "cUpdateHistory" )
+   logwrite( cUpdateHistory )
 
-   getSQLDatabase():Query( cUpdateHistory )
+   getSQLDatabase():Exec( cUpdateHistory )
 
 RETURN ( Self )
 

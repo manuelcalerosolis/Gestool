@@ -173,6 +173,8 @@ METHOD Dialog()
 
       ::oSQLBrowseView:Activate( 180, ::oDlg )
 
+      ::oSQLBrowseView:setView()
+
       // Buttons---------------------------------------------------------------
 
       REDEFINE BUTTON oBtn ;
