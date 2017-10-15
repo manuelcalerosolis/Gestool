@@ -24,11 +24,11 @@ METHOD New()
 
    ::hColumns                    := {  "id"           =>  { "create" => "INTEGER PRIMARY KEY AUTO_INCREMENT"   },;
                                        "usuario_id"   =>  { "create" => "CHARACTER ( 3 ) NOT NULL"             },;
-                                       "view_name"    =>  { "create" => "VARCHAR( 30 ) NOT NULL"               },;
-                                       "browse_state" =>  { "create" => "TEXT"                                 },;
-                                       "column_order" =>  { "create" => "VARCHAR( 30 ) NOT NULL"               },;
-                                       "orientation"  =>  { "create" => "CHARACTER ( 1 ) NOT NULL"	            },;
-                                       "id_to_find"   =>  { "create" => "INT NOT NULL"                         } }
+                                       "view_name"    =>  { "create" => "VARCHAR( 60 ) NOT NULL"               },;
+                                       "browse_state" =>  { "create" => "LONGTEXT"                             },;
+                                       "column_order" =>  { "create" => "VARCHAR( 60 )"               },;
+                                       "orientation"  =>  { "create" => "CHARACTER ( 1 )"	            },;
+                                       "id_to_find"   =>  { "create" => "INT"                         } }
 
    ::Super:New()
 
@@ -88,6 +88,8 @@ METHOD set( cViewName, cBrowseState, cColumnOrder, cOrientation, idToFind )
 
    id                      := getSQLDatabase():selectFetchArrayOneColumn( cInternalSelect )                   
 
+   logwrite( cInternalSelect)
+
    msgalert( hb_valtoexp(id), "id")
 
    if empty(id)
@@ -120,7 +122,7 @@ METHOD set( cViewName, cBrowseState, cColumnOrder, cOrientation, idToFind )
 
    logwrite( cUpdateHistory )
 
-   getSQLDatabase():Exec( cUpdateHistory )
+   msgalert( hb_valtoexp( getSQLDatabase():Exec( cUpdateHistory ) ), "Query" )
 
 RETURN ( Self )
 
@@ -134,7 +136,7 @@ METHOD delete( cViewName )
                               "AND usuario_id = " + quoted( oUser():cCodigo() )
 
    try 
-      oStmt          := getSQLDatabase():Execute( cSentence )
+      oStmt          := getSQLDatabase():Exec( cSentence )
 
    catch
 

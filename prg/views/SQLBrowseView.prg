@@ -153,6 +153,10 @@ METHOD addColumn( cColumn, hColumn )
          :nFootStrAlign    := hColumn[ "footAlign" ]
       end if 
 
+      if hhaskey( hColumn, "hide" ) 
+         :lHide            := hColumn[ "hide" ]
+      end if 
+
       :bEditValue          := ::getModel():getEditValue( cColumn ) 
 
       :bLClickHeader       := {| nMRow, nMCol, nFlags, oColumn | ::onClickHeader( oColumn ) }

@@ -23,6 +23,7 @@ METHOD CommunFields()
                                        "text"      => "uuid"                                    ,;
                                        "header"    => "Uuid"                                    ,;
                                        "visible"   => .t.                                       ,;
+                                       "hide"      => .t.                                       ,;
                                        "width"     => 240                                       ,;
                                        "default"   => {|| win_uuidcreatestring() } }            )
 
@@ -35,6 +36,7 @@ METHOD CommunFields()
                                        "text"      => "Delegación"                              ,;
                                        "header"    => "Dlg."                                    ,;
                                        "visible"   => .t.                                       ,;
+                                       "hide"      => .t.                                       ,;
                                        "width"     => 140                                       ,;
                                        "field"     => "cSufRem"                                 ,;
                                        "type"      => "C"                                       ,;
@@ -45,6 +47,7 @@ METHOD CommunFields()
                                        "text"      => "usuario"                                 ,;
                                        "header"    => "Usuario"                                 ,;
                                        "visible"   => .t.                                       ,;
+                                       "hide"      => .t.                                       ,;
                                        "width"     => 100                                       ,;
                                        "field"     => "cCodUsr"                                 ,;
                                        "type"      => "C"                                       ,;

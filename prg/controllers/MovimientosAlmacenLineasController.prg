@@ -37,7 +37,7 @@ END CLASS
 
 METHOD New( oController )
 
-   ::cTitle                := "Movimientos de almacen lineas"
+   ::cTitle                := "Lineas" // "Movimientos de almacen lineas"
 
    ::oModel                := SQLMovimientosAlmacenLineasModel():New( self )
 

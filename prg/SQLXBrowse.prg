@@ -61,6 +61,7 @@ CLASS SQLXBrowse FROM TXBrowse
 
    METHOD SaveView()
    METHOD SetView()
+   METHOD OriginalView()                        INLINE ( if( !empty( ::cOriginal ), ::restoreState( ::cOriginal ), ) )
 
 END CLASS
 

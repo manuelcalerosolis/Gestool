@@ -46,7 +46,6 @@ METHOD New()
    hset( ::hColumns, "fecha_hora",        {  "create"    => "DATETIME DEFAULT CURRENT_TIMESTAMP"      ,;
                                              "text"      => "Fecha"                                   ,;
                                              "header"    => "Fecha"                                   ,;
-                                             "field"     => "dFecRem"                                 ,;
                                              "visible"   => .t.                                       ,;
                                              "type"      => "T"                                       ,;
                                              "picture"   => "@DT"                                     ,;
@@ -54,35 +53,39 @@ METHOD New()
                                              "headAlign" => AL_LEFT                                   ,; 
                                              "dataAlign" => AL_LEFT                                   ,; 
                                              "footAlign" => AL_LEFT                                   ,; 
-                                             "width"     => 180 }                                     )
+                                             "width"     => 140 }                                     )
 
    hset( ::hColumns, "almacen_origen",    {  "create"    => "CHAR ( 16 )"                             ,;
                                              "text"      => "Almacén origen"                          ,;
                                              "header"    => "Almacén origen"                          ,;
                                              "visible"   => .t.                                       ,;
                                              "type"      => "C"                                       ,;
-                                             "field"     => "cAlmOrg" }                                )
+                                             "field"     => "cAlmOrg"                                 ,;   
+                                             "width"     => 80 }                                      )
 
    hset( ::hColumns, "almacen_destino",   {  "create"    => "CHAR ( 16 )"                             ,;
                                              "text"      => "Almacén destino"                         ,;
                                              "header"    => "Almacén destino"                         ,;
                                              "visible"   => .t.                                       ,;
                                              "type"      => "C"                                       ,;
-                                             "field"     => "cAlmDes" }                                )
+                                             "field"     => "cAlmDes"                                 ,;   
+                                             "width"     => 80 }                                      )
 
    hset( ::hColumns, "grupo_movimiento",  {  "create"    => "CHAR ( 2 )"                              ,;
                                              "text"      => "Grupo movimiento"                        ,;
                                              "header"    => "Grupo movimiento"                        ,;
                                              "visible"   => .t.                                       ,;
                                              "type"      => "C"                                       ,;
-                                             "field"     => "cCodMov" }                                )
+                                             "field"     => "cCodMov"                                 ,;
+                                             "width"     => 80 }                                      )
 
    hset( ::hColumns, "agente",            {  "create"    => "CHAR ( 3 )"                              ,;
                                              "text"      => "Agente movimiento"                       ,;
                                              "header"    => "Agente"                                  ,;
                                              "visible"   => .t.                                       ,;
                                              "type"      => "C"                                       ,;
-                                             "field"     => "cCodAge" }                                )
+                                             "field"     => "cCodAge"                                 ,;
+                                             "width"     => 80 }                                      )
 
    hset( ::hColumns, "divisa",            {  "create"    => "CHAR ( 3 )"                              ,;
                                              "text"      => "Divisa"                                  ,;
@@ -90,7 +93,8 @@ METHOD New()
                                              "visible"   => .t.                                       ,;
                                              "type"      => "C"                                       ,;
                                              "default"   => {|| cDivEmp() }                           ,;
-                                             "field"     => "cCodDiv" }                                )
+                                             "field"     => "cCodDiv"                                 ,;
+                                             "width"     => 80 }                                      )
 
    hset( ::hColumns, "divisa_cambio",     {  "create"    => "DECIMAL(16,6)"                           ,;
                                              "text"      => "Cambio divisa"                           ,;
@@ -105,7 +109,8 @@ METHOD New()
                                              "header"    => "Comentarios"                             ,;
                                              "visible"   => .t.                                       ,;
                                              "type"      => "C"                                       ,;
-                                             "field"     => "mComent" }                                )
+                                             "field"     => "mComent"                                 ,;
+                                             "width"     => 240 }                                     )
 
    ::TimeStampFields()
 
