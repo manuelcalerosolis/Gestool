@@ -69,6 +69,7 @@ CLASS TDataCenter
 
    DATA        lActualizaBaseDatos        INIT .f.
    DATA        lTriggerAuxiliares         INIT .f.
+   DATA        lSeeders                   INIT .f.
 
    DATA        aLgcIndices                INIT { .t., .t., .t. }
    DATA        aChkIndices                INIT Array( 3 )
@@ -585,9 +586,8 @@ METHOD lAdministratorTask()
 
    dbcloseall()
 
-   if getSQLDatabase():ConnectAndCreate() 
-      getSQLDatabase():addModels()
-      getSQLDatabase():checkModels()
+   if getSQLDatabase():Connect()
+      getSQLMigrations():new()
    else 
       msgStop( "No se ha podido conectar a la base de datos MySQL" + CRLF + getSQLDatabase():sayConexionInfo() )
       RETURN ( nil )
@@ -709,7 +709,7 @@ METHOD dialogEmpresas()
       ID                600 ;
       OF                ::oDlg
 
-   REDEFINE CHECKBOX    ::lTriggerAuxiliares ;
+   REDEFINE CHECKBOX    ::lSeeders ;
       ID                610 ;
       OF                ::oDlg
 
@@ -892,6 +892,10 @@ METHOD StartAdministratorTask()
       if !empty(::oMtrDiccionario)
 	      ::oMtrDiccionario:Set( 5 )
 	   end if
+
+      if ::lSeeders
+         Seeders():New()
+      end if
 
    end if
 

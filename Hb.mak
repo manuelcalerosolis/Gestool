@@ -16,7 +16,7 @@ IMG2PDFLIB           = 	\img2Pdf
 
 OBJ                  = 	obj1705
 
-SOURCEPRG            = 	.\Prg;.\Prg\mail;.\Prg\Comercio;.\Prg\Models;.\Prg\Views;.\Prg\Controllers;.\Prg\Validators;.\Prg\Repositories;.\Prg\Services;.\Prg\Tablet;.\Prg\tablet\view;.\Prg\tablet\view\documentos;.\Prg\tablet\view\terceros;.\Prg\tablet\view\documentos\ventas;.\Prg\tablet\view\documentos\terceros;.\Prg\tablet\utils;.\Prg\tablet\presenter;.\Prg\tablet\presenter\terceros;.\Prg\tablet\presenter\documentos;.\Prg\tablet\presenter\documentos\ventas;
+SOURCEPRG            = 	.\Prg;.\Prg\mail;.\Prg\Comercio;.\Prg\Models;.\Prg\Seeders;.\Prg\Views;.\Prg\Controllers;.\Prg\Validators;.\Prg\Repositories;.\Prg\Services;.\Prg\Tablet;.\Prg\tablet\view;.\Prg\tablet\view\documentos;.\Prg\tablet\view\terceros;.\Prg\tablet\view\documentos\ventas;.\Prg\tablet\view\documentos\terceros;.\Prg\tablet\utils;.\Prg\tablet\presenter;.\Prg\tablet\presenter\terceros;.\Prg\tablet\presenter\documentos;.\Prg\tablet\presenter\documentos\ventas;
 SOURCEC 				   =	C
 
 PPO 					   = 	ppo1705
@@ -592,6 +592,8 @@ Categoria.prg                                                  \
 GroupCustomer.prg                                              \
 GroupCustomerViewSearchNavigator.prg                           \
 Events.prg 																		\
+Seeders.prg    																\
+SqlMigrations.prg 															\
 
 C               =       	            								\
 Img2pdf.c               	            								\
@@ -1153,6 +1155,8 @@ Categoria.obj                                               	\
 GroupCustomer.obj                                           	\
 GroupCustomerViewSearchNavigator.obj                        	\
 Events.obj 																		\
+Seeders.obj 																	\
+SqlMigrations.obj 															\
 
 .PRG.OBJ:
   	$(HB)\Bin\Harbour $? /n /p$(PPO)\$&.ppo /w /es2 /i$(FWINCLUDE) /gc0 /i$(HBINCLUDE) /i$(GTINCLUDE) /o$(OBJ)\$&.c
@@ -1702,6 +1706,8 @@ $(OBJ)\Categoria.obj                                     		+
 $(OBJ)\GroupCustomer.obj                                 		+
 $(OBJ)\GroupCustomerViewSearchNavigator.obj              		+
 $(OBJ)\PedidosClientesLineasModel.obj 									+
+$(OBJ)\Seeders.obj 															+
+$(OBJ)\SqlMigrations.obj 													+
 $(OBJ)\Events.obj              		
 $<,$*
 $(FWLIB)\FiveH.lib               										+
