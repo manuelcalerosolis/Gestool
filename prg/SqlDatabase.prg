@@ -132,7 +132,7 @@ RETURN ( lConnect )
 
 //----------------------------------------------------------------------------//
 
-METHOD ConnectAndCreate()
+/*METHOD ConnectAndCreate()
 
    local lConnect    := .t.
 
@@ -155,7 +155,7 @@ METHOD ConnectAndCreate()
    
    end
 
-RETURN ( lConnect )    
+RETURN ( lConnect )    */
 
 //----------------------------------------------------------------------------//
 
