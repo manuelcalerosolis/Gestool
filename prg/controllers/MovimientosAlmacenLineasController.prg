@@ -109,6 +109,8 @@ METHOD stampArticulo()
       
       ::oDialogView:oGetValorPrimeraPropiedad:Show()
 
+      ::oDialogView:oBrowsePropertyView:setPropertyOne( PropiedadesLineasModel():getPropiedadesGeneral( cCodigoArticulo, ( cAreaArticulo )->cCodPrp1 ) )
+
    end if 
 
    // Segunda propiedad--------------------------------------------------------
@@ -121,7 +123,11 @@ METHOD stampArticulo()
       
       ::oDialogView:oGetValorSegundaPropiedad:Show()
 
+      ::oDialogView:oBrowsePropertyView:setPropertyTwo( PropiedadesLineasModel():getPropiedadesGeneral( cCodigoArticulo, ( cAreaArticulo )->cCodPrp2 ) )
+
    end if 
+
+   ::oDialogView:oBrowsePropertyView:build()
 
    // Fecha de caducidad-------------------------------------------------------
 

@@ -19,6 +19,8 @@ CLASS MovimientosAlmacenLineasView FROM SQLBaseView
    DATA oGetPrecioArticulo
    DATA oSayTotalImporte
 
+   DATA oBrowsePropertyView
+
    METHOD New()
 
    METHOD Dialog()
@@ -110,6 +112,10 @@ METHOD Dialog()
 
       ::oGetValorSegundaPropiedad:bValid  := {|| ::oController:validateSegundaPropiedad() }
       ::oGetValorSegundaPropiedad:bHelp   := {|| brwPropiedadActual( ::oGetValorSegundaPropiedad, ::oGetValorSegundaPropiedad:oHelpText, ::oController:oModel:hBuffer[ "codigo_segunda_propiedad" ] ) }
+
+      // Property browse-------------------------------------------------------
+
+      ::oBrowsePropertyView               := SQLPropertyBrowseView():New( 600, oDlg )
 
       // Bultos----------------------------------------------------------------
 

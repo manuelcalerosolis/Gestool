@@ -1399,38 +1399,88 @@ CLASS TPropertiesItems
 
    DATA  Value
 
-   Method New()
+   METHOD New()
+   METHOD buildOne()
+   METHOD buildTwo()
 
-   Method PrecioCompra()
+   METHOD PrecioCompra()
 
-   Method ToString()
+   METHOD ToString()
 
-   Method FromString()
-   Method getHead()     INLINE ( rtrim( ::cHead ) )
+   METHOD FromString()
+   METHOD getHead()     INLINE ( rtrim( ::cHead ) )
 
 END CLASS
 
 //---------------------------------------------------------------------------//
 
-Method New() CLASS TPropertiesItems
+METHOD New() CLASS TPropertiesItems
 
    ::cText              := ""
+   ::nPrecioCompra      := 0
    ::cCodigo            := ""
    ::cHead              := ""
-   ::Value              := nil
    ::cCodigoPropiedad1  := Space( 20 )
    ::cCodigoPropiedad2  := Space( 20 )
    ::cValorPropiedad1   := Space( 40 )
    ::cValorPropiedad2   := Space( 40 )
    ::lColor             := .f.
    ::nRgb               := 0
-   ::nPrecioCompra      := 0
 
 Return ( Self )
 
 //---------------------------------------------------------------------------//
 
-Method PrecioCompra( nPrecioCosto, dbfArtCom ) CLASS TPropertiesItems
+METHOD buildOne( hPropertyOne )
+
+   ::New()
+
+   ::cCodigo            := hPropertyOne[ "CodigoArticulo" ]
+   ::cHead              := hPropertyOne[ "TipoPropiedad" ]
+   ::cText              := hPropertyOne[ "CabeceraPropiedad" ]
+   ::cCodigoPropiedad1  := hPropertyOne[ "CodigoPropiedad" ]
+   ::cValorPropiedad1   := hPropertyOne[ "ValorPropiedad" ]
+   ::lColor             := hPropertyOne[ "ColorPropiedad" ]
+   ::nRgb               := hPropertyOne[ "RgbPropiedad" ]
+
+Return ( Self )
+
+//---------------------------------------------------------------------------//
+
+METHOD buildTwo( hPropertyOne, hPropertyTwo )
+
+   ::New()
+
+   ::Value              := 0
+   ::cCodigo            := hPropertyOne[ "CodigoArticulo" ]
+   ::cText              := hPropertyOne[ "CabeceraPropiedad" ]
+   ::cCodigoPropiedad1  := hPropertyOne[ "CodigoPropiedad" ]
+   ::cValorPropiedad1   := hPropertyOne[ "ValorPropiedad" ]
+   ::lColor             := hPropertyOne[ "ColorPropiedad" ]
+   ::nRgb               := hPropertyOne[ "RgbPropiedad" ]
+
+   ::cHead              := hPropertyTwo[ "CabeceraPropiedad" ]
+   ::cCodigoPropiedad2  := hPropertyTwo[ "CodigoPropiedad" ]
+   ::cValorPropiedad2   := hPropertyTwo[ "ValorPropiedad" ]
+
+   /*
+   aPropertiesTable[ n, nCol ]                     := TPropertiesItems():New()
+   aPropertiesTable[ n, nCol ]:Value               := 0
+   aPropertiesTable[ n, nCol ]:cHead               := hValorPropiedad[ "CabeceraPropiedad" ]
+   aPropertiesTable[ n, nCol ]:cCodigo             := cCodArt
+   aPropertiesTable[ n, nCol ]:cCodigoPropiedad1   := aPropertiesTable[ n, 1 ]:cCodigoPropiedad1
+   aPropertiesTable[ n, nCol ]:cValorPropiedad1    := aPropertiesTable[ n, 1 ]:cValorPropiedad1
+   aPropertiesTable[ n, nCol ]:cCodigoPropiedad2   := hValorPropiedad[ "CodigoPropiedad" ]
+   aPropertiesTable[ n, nCol ]:cValorPropiedad2    := hValorPropiedad[ "ValorPropiedad" ]
+   aPropertiesTable[ n, nCol ]:lColor              := aPropertiesTable[ n, 1 ]:lColor
+   aPropertiesTable[ n, nCol ]:nRgb                := aPropertiesTable[ n, 1 ]:nRgb
+   */
+
+Return ( Self )
+
+//---------------------------------------------------------------------------//
+
+METHOD PrecioCompra( nPrecioCosto, dbfArtCom ) CLASS TPropertiesItems
 
    ::nPrecioCompra      := nComPro( ::cCodigo, ::cCodigoPropiedad1, ::cValorPropiedad1, ::cCodigoPropiedad2, ::cValorPropiedad2, dbfArtCom )
 
@@ -1442,7 +1492,7 @@ Return ( ::nPrecioCompra )
 
 //---------------------------------------------------------------------------//
 
-Method ToString() CLASS TPropertiesItems
+METHOD ToString() CLASS TPropertiesItems
 
    local cString  := ""
 
@@ -1460,7 +1510,7 @@ Return ( cString )
 
 //---------------------------------------------------------------------------//
 
-Method FromString( cString ) CLASS TPropertiesItems
+METHOD FromString( cString ) CLASS TPropertiesItems
 
    local aTokens        := hb_aTokens( cString, "," )
 
@@ -2978,23 +3028,23 @@ RETURN ( cNombrePropiedad )
 
 CLASS TPropiedadesSenderReciver FROM TSenderReciverItem
 
-   Method CreateData()
+   METHOD CreateData()
 
-   Method RestoreData()
+   METHOD RestoreData()
 
-   Method SendData()
+   METHOD SendData()
 
-   Method ReciveData()
+   METHOD ReciveData()
 
-   Method Process()
+   METHOD Process()
 
-   Method CleanRelation( cCodArt )
+   METHOD CleanRelation( cCodArt )
 
 END CLASS
 
 //----------------------------------------------------------------------------//
 
-Method CreateData()
+METHOD CreateData()
 
    local oBlock
    local oError
@@ -3099,7 +3149,7 @@ Return ( Self )
 
 //---------------------------------------------------------------------------//
 
-Method RestoreData()
+METHOD RestoreData()
 
    local oBlock
    local oError
@@ -3146,7 +3196,7 @@ Return ( Self )
 
 //---------------------------------------------------------------------------//
 
-Method SendData()
+METHOD SendData()
 
    local cFileName   := ::getFileNameToSend( "Pro" )
 
@@ -3166,7 +3216,7 @@ Return ( Self )
 
 //---------------------------------------------------------------------------//
 
-Method ReciveData()
+METHOD ReciveData()
 
    local cExt
    local aExt
@@ -3189,7 +3239,7 @@ Return ( Self )
 
 //---------------------------------------------------------------------------//
 
-Method Process()
+METHOD Process()
 
    local cFile
    local aFiles
@@ -3353,7 +3403,7 @@ Return ( Self )
 
 //---------------------------------------------------------------------------//
 
-Method CleanRelation( idPropiedad )
+METHOD CleanRelation( idPropiedad )
 
    while ( dbfProL )->( dbSeek( idPropiedad ) )
       dbDel( dbfProL )
