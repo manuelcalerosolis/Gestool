@@ -12811,8 +12811,6 @@ STATIC FUNCTION LoaArt( cCodArt, aGet, aTmp, aTmpFac, oStkAct, oSayPr1, oSayPr2,
 
          end if
 
-         
-
          sysRefresh()
 
          ValidaMedicion( aTmp, aGet )

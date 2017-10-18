@@ -167,6 +167,7 @@ SQLNavigatorView.prg 											\
 SQLSelectorView.prg 												\
 SQLShellView.prg 													\
 SQLBrowseView.prg 												\
+SQLPropertyBrowseView.prg 										\
 MenuTreeView.prg 													\
 DivisasView.prg 													\
 Rfile.prg               										\
@@ -730,6 +731,7 @@ SQLNavigatorView.obj 														\
 SQLSelectorView.obj 															\
 SQLShellView.obj 																\
 SQLBrowseView.obj 															\
+SQLPropertyBrowseView.obj 													\
 MenuTreeView.obj 																\
 DivisasView.obj 																\
 RpreviewC3.obj 																\
@@ -1301,6 +1303,7 @@ $(OBJ)\SQLNavigatorView.obj              								+
 $(OBJ)\SQLSelectorView.obj              								+
 $(OBJ)\SQLShellView.obj            										+
 $(OBJ)\SQLBrowseView.obj             									+
+$(OBJ)\SQLPropertyBrowseView.obj      									+
 $(OBJ)\MenuTreeView.obj 													+
 $(OBJ)\DivisasView.obj 														+
 $(OBJ)\RocolumnC3.obj            										+

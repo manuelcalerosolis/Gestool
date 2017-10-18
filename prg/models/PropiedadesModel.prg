@@ -42,6 +42,8 @@ CLASS PropiedadesLineasModel FROM ADSBaseModel
 
    METHOD getNombre()
 
+   METHOD getPropiedadesGeneral( cCodigoPropiedad )
+
 END CLASS
 
 //---------------------------------------------------------------------------//
@@ -77,4 +79,36 @@ METHOD getNombre( cCodigoPropiedad, cValorPropiedad ) CLASS PropiedadesLineasMod
 RETURN ( "" )
 
 //---------------------------------------------------------------------------//
+
+METHOD getPropiedadesGeneral( cCodigoArticulo, cCodigoPropiedad )
+
+   local aPropiedades   := {}
+   local cStm
+   local cSql           := "SELECT "                                                            + ;
+                              "header.cDesPro AS TipoPropiedad, "                               + ; 
+                              "header.lColor AS ColorPropiedad, "                               + ; 
+                              "line.cCodTbl AS ValorPropiedad, "                                + ; 
+                              "line.nColor AS RgbPropiedad, "                                   + ; 
+                              "line.cDesTbl AS CabeceraPropiedad "                              + ;
+                           "FROM " + ::getTableName() + " line "                                + ;
+                              "INNER JOIN " + PropiedadesModel():getTableName() + " header "    + ;
+                              "ON header.cCodPro = " + quoted( cCodigoPropiedad ) + " "         + ;
+                              "WHERE line.cCodPro = " + quoted( cCodigoPropiedad )
+
+   if ::ExecuteSqlStatement( cSql, @cStm )
+      ( cStm )->( dbeval( {|| aadd( aPropiedades ,;
+                                       {  "CodigoArticulo"     => rtrim( cCodigoArticulo ),;
+                                          "CodigoPropiedad"    => rtrim( cCodigoPropiedad ),;
+                                          "TipoPropiedad"      => rtrim( Field->TipoPropiedad ),;
+                                          "ValorPropiedad"     => rtrim( Field->ValorPropiedad ),;
+                                          "CabeceraPropiedad"  => rtrim( Field->CabeceraPropiedad ),;
+                                          "ColorPropiedad"     => Field->ColorPropiedad,;
+                                          "RgbPropiedad"       => Field->RgbPropiedad } ) } ) )
+   end if 
+
+RETURN ( aPropiedades )
+
+//---------------------------------------------------------------------------//
+
+
 

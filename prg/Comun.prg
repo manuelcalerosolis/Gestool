@@ -277,6 +277,8 @@ RETURN ( .t. )
 
 FUNCTION Test()
 
+   // PropiedadesLineasModel():getPropiedadesGeneral( '1' )
+
 RETURN ( nil )
 
 //---------------------------------------------------------------------------//
