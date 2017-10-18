@@ -83,6 +83,8 @@ RETURN ( Self )
 METHOD stampArticulo()
 
    local cAreaArticulo
+   local aPropertiesOne
+   local aPropertiesTwo
    local cCodigoArticulo
 
    cCodigoArticulo   := hget( ::oModel:hBuffer, "codigo_articulo" )
@@ -108,6 +110,8 @@ METHOD stampArticulo()
       ::oDialogView:oGetValorPrimeraPropiedad:oSay:setText( PropiedadesModel():getNombre( ( cAreaArticulo )->cCodPrp1 ) )
       
       ::oDialogView:oGetValorPrimeraPropiedad:Show()
+
+      // aPropertiesOne := 
 
       ::oDialogView:oBrowsePropertyView:setPropertyOne( PropiedadesLineasModel():getPropiedadesGeneral( cCodigoArticulo, ( cAreaArticulo )->cCodPrp1 ) )
 

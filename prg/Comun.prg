@@ -277,7 +277,7 @@ RETURN ( .t. )
 
 FUNCTION Test()
 
-   // PropiedadesLineasModel():getPropiedadesGeneral( '1' )
+   ( ArticulosPrecios():getPropertyOne( '1', '1' ) )->( browse() )
 
 RETURN ( nil )
 
