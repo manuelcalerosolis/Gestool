@@ -734,6 +734,7 @@ RETURN ( Self )
 METHOD StartAdministratorTask()
 
    local aEmpresa
+   local oSeeder
 
    ::lValidDlg       := .f.
 
@@ -749,6 +750,10 @@ METHOD StartAdministratorTask()
    if !empty( ::oMtrDiccionario )
 	   ::oMtrDiccionario:SetTotal( 5 )
 	end if 
+
+   if ::lSeeders
+      oSeeder  := Seeders():New( ::oMsg )
+   end if
 
    // Alteracion de tablas de SQLite------------------------------------------
 
@@ -822,6 +827,10 @@ METHOD StartAdministratorTask()
 
       ::CreateDataTable()
 
+      if ::lSeeders .and. !Empty( oSeeder )
+         oSeeder:runSeederDatos()
+      end if
+
       // Recorremos el array de las empresas par actualizarlas--------------------
 
       ::oBrwEmpresas:GoTop()
@@ -843,6 +852,10 @@ METHOD StartAdministratorTask()
             ::addEmpresaTablesToDataDictionary()
 
             ::Reindex()
+
+            if ::lSeeders .and. !Empty( oSeeder )
+               oSeeder:runSeederEmpresa()
+            end if
 
             ::MigrateEmpresaToSQL()
 
@@ -892,10 +905,6 @@ METHOD StartAdministratorTask()
       if !empty(::oMtrDiccionario)
 	      ::oMtrDiccionario:Set( 5 )
 	   end if
-
-      if ::lSeeders
-         Seeders():New()
-      end if
 
    end if
 

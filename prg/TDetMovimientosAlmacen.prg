@@ -208,6 +208,8 @@ METHOD DefineFiles( cPath, cDriver, lUniqueName, cFileName ) CLASS TDetMovimient
       FIELD NAME "lLabel"     TYPE "L" LEN   1 DEC 0 COMMENT "Lógico para imprimir etiqueta"       OF oDbf
       FIELD NAME "nLabel"     TYPE "N" LEN  16 DEC 6 COMMENT "Número de etiquetas a imprimir"      OF oDbf
       FIELD NAME "lWait"      TYPE "L" LEN   1 DEC 0 COMMENT "Lógico para documento no finalizado" OF oDbf
+      FIELD NAME "cGuid"      TYPE "C" LEN  40 DEC 0 COMMENT "cGuid de las lineas"                 OF oDbf
+      FIELD NAME "cGuidPar"   TYPE "C" LEN  40 DEC 0 COMMENT "cGuid de la cabecera"                OF oDbf
 
       INDEX TO ( cFileName ) TAG "nNumRem"      ON "str( nNumRem ) + cSufRem"               NODELETED                     OF oDbf
       INDEX TO ( cFileName ) TAG "dFecMov"      ON "Dtoc( dFecMov ) + cTimMov"              NODELETED                     OF oDbf
