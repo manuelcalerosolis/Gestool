@@ -142,6 +142,22 @@ Return ( aTmp[ ( dbf )->( Fieldpos( "cEntBnc" ) ) ] + aTmp[ ( dbf )->( Fieldpos(
 
 //--------------------------------------------------------------------------//
 
+Function DateTimeToTimestamp( dDate, cTime )
+
+  local cTimestamp  := ""
+
+  cTimestamp        += AllTrim( Str( Year( dDate ) ) ) + "-"
+  cTimestamp        += AllTrim( Str( Month( dDate ) ) ) + "-" 
+  cTimestamp        += AllTrim( Str( Day( dDate ) ) )
+  cTimestamp        += Space( 1 )
+  cTimestamp        += SubStr( cTime, 1, 2 ) + ":"
+  cTimestamp        += SubStr( cTime, 3, 2 ) + ":"
+  cTimestamp        += SubStr( cTime, 5, 2 )
+
+Return ( cTimestamp )
+
+//--------------------------------------------------------------------------//
+
 function Iban( cCountry, cAccount, nLen )
 
   local cIban

@@ -352,6 +352,7 @@ METHOD DefineFiles( cPath, cDriver ) CLASS TRemMovAlm
       FIELD NAME "cComMov"             TYPE "C" LEN 100 DEC 0 PICTURE "@!"                                                                      COMMENT "Comentario"       COLSIZE 240                OF ::oDbf
       FIELD NAME "nTotRem"             TYPE "N" LEN 16  DEC 6 PICTURE "@E 999,999,999,999.99"   ALIGN RIGHT                                     COMMENT "Importe"          COLSIZE 100                OF ::oDbf
       FIELD NAME "lWait"               TYPE "L" LEN  1  DEC 0                                                                                   COMMENT ""                                HIDE        OF ::oDbf
+      FIELD NAME "cGuid"               TYPE "C" LEN 40  DEC 0                                                                                   COMMENT "Guid de la cabecera"             HIDE        OF ::oDbf
 
       INDEX TO "RemMovT.Cdx" TAG "cNumRem"   ON "Str( nNumRem ) + cSufRem"   COMMENT "Número"   NODELETED OF ::oDbf
       INDEX TO "RemMovT.Cdx" TAG "dFecRem"   ON "Dtos( dFecRem ) + cTimRem"  COMMENT "Fecha"    NODELETED OF ::oDbf
@@ -3608,6 +3609,10 @@ Function SynRemMov( cPath )
          ( dbfRemMov )->cSufRem        := "00"
       end if
 
+      if empty( ( dbfRemMov )->cGuid )
+         ( dbfRemMov )->cGuid          := win_uuidcreatestring()
+      end if
+
       ( dbfRemMov )->( dbSkip() )
 
    end while
@@ -3642,6 +3647,10 @@ Function SynRemMov( cPath )
 
       end if
 
+      if empty( ( dbfHisMov )->cGuidPar )
+         ( dbfHisMov )->cGuidPar       := RetFld( Str( ( dbfHisMov )->nNumRem ) + ( dbfHisMov )->cSufRem, dbfRemMov, "cGuid", "cNumRem" )
+      end if 
+
       if empty( ( dbfHisMov )->cTimMov )
          ( dbfHisMov )->cTimMov        := RetFld( Str( ( dbfHisMov )->nNumRem ) + ( dbfHisMov )->cSufRem, dbfRemMov, "cTimRem", "cNumRem" )
       end if
@@ -3656,6 +3665,10 @@ Function SynRemMov( cPath )
 
          ( dbfArticulo )->( OrdSetFocus( nOrdAnt ) )
 
+      end if
+
+      if empty( ( dbfHisMov )->cGuid )
+         ( dbfHisMov )->cGuid          := win_uuidcreatestring()
       end if
 
       ( dbfHisMov )->( dbSkip() )
