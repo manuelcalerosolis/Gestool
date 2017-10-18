@@ -8129,6 +8129,30 @@ Static Function StartEdtVta( aTmp, aGet, nMode, oBrwPrp1, oBrwPrp2, oTodasPrp1, 
 
       end if 
 
+      if !Empty( oPrp1 )
+         oPrp1:Hide()
+      end if 
+
+      if !Empty( oSayPr1 )
+         oSayPr1:Hide()
+      end if 
+
+      if !Empty( oPrp2 )
+         oPrp2:Hide()
+      end if 
+
+      if !Empty( oSayPr2 )
+         oSayPr2:Hide()
+      end if 
+
+      if !Empty( oSayVp1 )
+         oSayVp1:Hide()
+      end if
+
+      if !Empty( oSayVp2 )
+         oSayVp2:Hide()
+      end if
+
    else
 
       if !empty( oBtnOk )

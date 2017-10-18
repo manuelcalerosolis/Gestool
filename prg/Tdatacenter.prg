@@ -586,8 +586,8 @@ METHOD lAdministratorTask()
 
    dbcloseall()
 
-   if getSQLDatabase():Connect()
-      getSQLMigrations():new()
+   if getSQLDatabase():ConnectWithoutDataBase()
+      SQLMigrations():run()
    else 
       msgStop( "No se ha podido conectar a la base de datos MySQL" + CRLF + getSQLDatabase():sayConexionInfo() )
       RETURN ( nil )

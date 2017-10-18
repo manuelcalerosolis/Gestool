@@ -7,7 +7,7 @@ CLASS SQLMigrations
 
    DATA aModels                           INIT {}
 
-   METHOD New()                           CONSTRUCTOR
+   METHOD Run()
    
    METHOD createDatabase()
 
@@ -23,9 +23,9 @@ ENDCLASS
 
 //----------------------------------------------------------------------------//
 
-METHOD New() 
+METHOD Run() 
 
-   ::createDataBase() 
+   ::createDatabase()
    ::addModels()
    ::checkModels()
 
@@ -38,7 +38,7 @@ METHOD createDatabase()
    getSQLDatabase():oConexion:exec( "CREATE DATABASE IF NOT EXISTS " + getSQLDatabase():cDatabaseMySQL + ";" )
    getSQLDatabase():oConexion:exec( "USE " + getSQLDatabase():cDatabaseMySQL + ";" )
        
-RETURN ( lConnect )    
+RETURN ( self )    
 
 //----------------------------------------------------------------------------//
 
@@ -53,9 +53,9 @@ METHOD checkModel( oModel )
    local aSchemaColumns    := ::getSchemaColumns( oModel )
 
    if empty( aSchemaColumns )
-      ::Exec( oModel:getCreateTableSentence() )
+      getSQLDatabase():Exec( oModel:getCreateTableSentence() )
    else
-      ::Execs( oModel:getAlterTableSentences( aSchemaColumns ) )
+      getSQLDatabase():Execs( oModel:getAlterTableSentences( aSchemaColumns ) )
    end if 
   
 RETURN ( Self )
