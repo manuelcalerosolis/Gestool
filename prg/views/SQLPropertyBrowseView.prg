@@ -222,23 +222,23 @@ METHOD addColumnColorProperty( n )
    // Columna del color de la propiedad
 
    if !( ::aPropertiesTable[ ::oBrowse:nArrayAt, n ]:lColor )
-
-      with object ( ::oBrowse:AddCol() )
-         :Adjust()
-         :cHeader       := "Color"
-         :nWidth        := 40
-         :bFooter       := {|| "" }
-         :bStrData      := {|| "" }
-         :nWidth        := 16
-         :bClrStd       := ::bGenRGBValue( n )
-         :bClrSel       := ::bGenRGBValue( n )
-         :bClrSelFocus  := ::bGenRGBValue( n )
-      end with
-      
-      ::oBrowse:nFreeze++
-      ::oBrowse:nColOffset++
-
+      RETURN ( Self )
    end if 
+
+   with object ( ::oBrowse:AddCol() )
+      :Adjust()
+      :cHeader       := "Color"
+      :nWidth        := 40
+      :bFooter       := {|| "" }
+      :bStrData      := {|| "" }
+      :nWidth        := 16
+      :bClrStd       := ::bGenRGBValue( n )
+      :bClrSel       := ::bGenRGBValue( n )
+      :bClrSelFocus  := ::bGenRGBValue( n )
+   end with
+      
+   ::oBrowse:nFreeze++
+   ::oBrowse:nColOffset++
 
 RETURN ( self )
 
