@@ -79,4 +79,37 @@ METHOD getArticulosToPrestaShopInFamilia( idFamilia, cWebShop, cArea )
 Return ( ::ExecuteSqlStatement( cSql, @cArea ) )
 
 //---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+
+CLASS ArticulosPrecios FROM ADSBaseModel
+
+   METHOD getTableName()                     INLINE ::getEmpresaTableName( "ArtDiv" )
+
+   METHOD getPropertyOne()
+
+END CLASS
+
+//---------------------------------------------------------------------------//
+
+METHOD getPropertyOne( cCodigoArticulo, cCodigoPropiedad )
+
+   local cStm  
+   local cSql  := "SELECT header.cDesPro, header.lColor, line.cCodArt, line.cCodPr1 "  + ;
+                     "FROM " + ::getTableName() + " line "                             + ;
+                     "INNER JOIN " + PropiedadesModel():getTableName() + " header "    + ;
+                     "ON header.cCodPro = " + quoted( cCodigoPropiedad ) + " "         + ;
+                     "WHERE line.cCodPro = " + quoted( cCodigoArticulo )
+
+   if ::ExecuteSqlStatement( cSql, @cStm )
+      RETURN ( cStm )
+   end if 
+
+RETURN ( nil )
+
+//---------------------------------------------------------------------------//
 
