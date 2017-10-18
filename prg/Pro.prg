@@ -380,7 +380,7 @@ Static Function StartEdtRec( aGet, cPrp, cKey )
 
    aGet[ ( dbfProT )->( FieldPos( "cCodPro" ) ) ]:SetFocus() 
 
-Return ( .t. )
+RETURN ( .t. )
 
 //---------------------------------------------------------------------------//
 
@@ -440,7 +440,7 @@ STATIC FUNCTION DeleteLinea( oBrw )
 
    DelDet( oBrw )
 
-Return ( nil )
+RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 
@@ -517,7 +517,7 @@ STATIC FUNCTION BeginTrans( aTmp, nMode, cCodPro )
 
    ErrorBlock( oBlock )
 
-Return ( lCreate )
+RETURN ( lCreate )
 
 //---------------------------------------------------------------------------//
 
@@ -646,7 +646,7 @@ Static Function EdtRecMenu( oDlg )
 
    oDlg:SetMenu( oMenu )
 
-Return ( oMenu )
+RETURN ( oMenu )
 
 //---------------------------------------------------------------------------//
 
@@ -670,7 +670,7 @@ static Function menuEdtDet( oDlg, nIdLin )
 
    oDlg:SetMenu( oDetMenu )
 
-Return ( oDetMenu )
+RETURN ( oDetMenu )
 
 //---------------------------------------------------------------------------//
 
@@ -867,7 +867,7 @@ FUNCTION brwProp( oGet, oSay )
    cCbxOrd        := aCbxOrd[ nOrd ]
 
    if !OpenFiles()
-      Return ( .f. )
+      RETURN ( .f. )
    end if
 
    DEFINE DIALOG oDlg RESOURCE "HELPENTRY" TITLE "Seleccionar propiedad"
@@ -1009,7 +1009,7 @@ function lIsProp1( cCodArt, dbfFamilia, dbfArticulo )
       lIsPro      := Empty( ( dbfArticulo )->cCodPrp1 )
    end if
 
-return ( lIsPro )
+RETURN ( lIsPro )
 
 //---------------------------------------------------------------------------//
 
@@ -1021,7 +1021,7 @@ function lIsProp2( cCodArt, dbfFamilia, dbfArticulo )
       lIsPro      := Empty( ( dbfArticulo )->cCodPrp2 )
    end if
 
-return ( lIsPro )
+RETURN ( lIsPro )
 
 //---------------------------------------------------------------------------//
 
@@ -1033,7 +1033,7 @@ Function cBarPrp( cCodPrp, cValPrp, dbfTblPro )
       cBarPro     := alltrim( ( dbfTblPro )->nBarTbl )
    end if
 
-return ( cBarPro )
+RETURN ( cBarPro )
 
 //---------------------------------------------------------------------------//
 
@@ -1045,7 +1045,7 @@ function lEmptyProp( cCodPrp, dbfTblPro )
       lEmptyProp     := .f.
    end if
 
-return ( lEmptyProp )
+RETURN ( lEmptyProp )
 
 //---------------------------------------------------------------------------//
 
@@ -1061,7 +1061,7 @@ Function cCodPrp( cCodPrp, nBarPrp, dbfTblPro )
       end if
    end if
 
-return ( cBarPro )
+RETURN ( cBarPro )
 
 //---------------------------------------------------------------------------//
 
@@ -1073,7 +1073,7 @@ Function aSeekProp( cCodBar, cCodPr1, cCodPr2, dbfArticulo, dbfTblPro )
    if dbSeekInOrd( padr( cCodBar, 18 ), "Codigo", dbfArticulo ) .or. ;
       dbSeekInOrd( upper( padr( cCodBar, 18 ) ), "Codigo", dbfArticulo )
 
-      Return ( .t. )
+      RETURN ( .t. )
 
    else
 
@@ -1101,13 +1101,13 @@ Function aSeekProp( cCodBar, cCodPr1, cCodPr2, dbfArticulo, dbfTblPro )
          cCodPr1     := padr( cCodPr1, 20 )
          cCodPr2     := padr( cCodPr2, 20 )
 
-         Return ( .t. )
+         RETURN ( .t. )
 
       end if
 
    end if
 
-Return ( .f. )
+RETURN ( .f. )
 
 //---------------------------------------------------------------------------//
 //
@@ -1143,25 +1143,25 @@ return .t.
 
 Function LoadPropertiesTable( cCodArt, nPrecioCosto, cCodPr1, cCodPr2, oGetUnidades, oGetPre, oBrw, nView )
 
-Return ( nil )
+RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 
 Static Function bGenEditText( aTblPrp, oBrwPrp, n )
 
-Return ( {|| aTblPrp[ oBrwPrp:nArrayAt, n ]:cText } )
+RETURN ( {|| aTblPrp[ oBrwPrp:nArrayAt, n ]:cText } )
 
 //--------------------------------------------------------------------------//
 
 Static Function bGenEditValue( aTblPrp, oBrwPrp, n )
 
-Return ( {|| aTblPrp[ oBrwPrp:nArrayAt, n ]:Value } )
+RETURN ( {|| aTblPrp[ oBrwPrp:nArrayAt, n ]:Value } )
 
 //--------------------------------------------------------------------------//
 
 Static Function bGenRGBValue( aTblPrp, oBrwPrp, n )
 
-Return ( {|| { nRGB( 0, 0, 0), aTblPrp[ oBrwPrp:nArrayAt, n ]:nRgb } } )
+RETURN ( {|| { nRGB( 0, 0, 0), aTblPrp[ oBrwPrp:nArrayAt, n ]:nRgb } } )
 
 //--------------------------------------------------------------------------//
 
@@ -1174,7 +1174,7 @@ Static Function aPropertiesTable( oBrw, nTotalCol )
    nAt               := oBrw:nAt
 
    if nAt == 0
-      Return ( aRow )
+      RETURN ( aRow )
    end if 
 
    for n := 1 to nTotalCol
@@ -1185,7 +1185,7 @@ Static Function aPropertiesTable( oBrw, nTotalCol )
       end if
    next
 
-Return ( aRow )
+RETURN ( aRow )
 
 //---------------------------------------------------------------------------//
 
@@ -1309,7 +1309,7 @@ Static Function aPropertiesFooter( oBrw, nTotalRow, nTotalCol, oGet )
       oGet:cText( nTot )
    end if
 
-Return ( aRow )
+RETURN ( aRow )
 
 //---------------------------------------------------------------------------//
 
@@ -1319,7 +1319,7 @@ Static Function bPostEditProperties( oCol, xVal, nKey, oBrw, oGetUnidades )
 
    nTotalProperties( oBrw, oGetUnidades )
 
-Return ( .t. )
+RETURN ( .t. )
 
 //---------------------------------------------------------------------------//
 
@@ -1341,7 +1341,7 @@ Static Function nTotalProperties( oBrw, oGet )
       oGet:cText( nTot )
    end if 
 
-Return ( .t. )
+RETURN ( .t. )
 
 //---------------------------------------------------------------------------//
 
@@ -1427,13 +1427,15 @@ METHOD New() CLASS TPropertiesItems
    ::lColor             := .f.
    ::nRgb               := 0
 
-Return ( Self )
+RETURN ( Self )
 
 //---------------------------------------------------------------------------//
 
 METHOD buildOne( hPropertyOne )
 
    ::New()
+
+   msgalert( hb_valtoexp( hPropertyOne ), "buildOne" )
 
    ::cCodigo            := hPropertyOne[ "CodigoArticulo" ]
    ::cHead              := hPropertyOne[ "TipoPropiedad" ]
@@ -1443,7 +1445,7 @@ METHOD buildOne( hPropertyOne )
    ::lColor             := hPropertyOne[ "ColorPropiedad" ]
    ::nRgb               := hPropertyOne[ "RgbPropiedad" ]
 
-Return ( Self )
+RETURN ( Self )
 
 //---------------------------------------------------------------------------//
 
@@ -1476,7 +1478,7 @@ METHOD buildTwo( hPropertyOne, hPropertyTwo )
    aPropertiesTable[ n, nCol ]:nRgb                := aPropertiesTable[ n, 1 ]:nRgb
    */
 
-Return ( Self )
+RETURN ( Self )
 
 //---------------------------------------------------------------------------//
 
@@ -1488,7 +1490,7 @@ METHOD PrecioCompra( nPrecioCosto, dbfArtCom ) CLASS TPropertiesItems
       ::nPrecioCompra   := nPrecioCosto
    end if
 
-Return ( ::nPrecioCompra )
+RETURN ( ::nPrecioCompra )
 
 //---------------------------------------------------------------------------//
 
@@ -1506,7 +1508,7 @@ METHOD ToString() CLASS TPropertiesItems
    cString        += "cValorPropiedad2 : "   + Rtrim( cValToChar( ::cValorPropiedad2 ) )    + ","
    cString        += "nPrecioCompra : "      + Rtrim( cValToChar( ::nPrecioCompra ) )       + ";"
 
-Return ( cString )
+RETURN ( cString )
 
 //---------------------------------------------------------------------------//
 
@@ -1530,7 +1532,7 @@ METHOD FromString( cString ) CLASS TPropertiesItems
    ::cValorPropiedad2   := aTokens[ 8 ]
    ::nPrecioCompra      := Val( aTokens[ 9 ] )
 
-Return ( Self )
+RETURN ( Self )
 
 //---------------------------------------------------------------------------//
 //Funciones comunes del programa y pda
@@ -2013,7 +2015,7 @@ Static Function aItmTmpBrw()
    aAdd( aBase, { "CCODTBL",  "C", 40, 0, "Código de línea de propiedadades"   } )
    aAdd( aBase, { "CDESTBL",  "C", 30, 0, "Nombre de línea de propiedadades"   } )
 
-return ( aBase )
+RETURN ( aBase )
 
 //---------------------------------------------------------------------------//
 
@@ -2071,7 +2073,7 @@ Function IsPro()
       rxPro( cPatArt() )
    end if
 
-Return ( .t. )
+RETURN ( .t. )
 
 //----------------------------------------------------------------------------//
 
@@ -2206,7 +2208,7 @@ Static Function aPro()
    aAdd( aBase, { "cNomInt",   "C", 50, 0, "Nombre de la propiedad en la web"       } )
    aAdd( aBase, { "lColor",    "L",  1, 0, "Lógico tipo color"                      } )
 
-return ( aBase )
+RETURN ( aBase )
 
 //---------------------------------------------------------------------------//
 
@@ -2222,7 +2224,7 @@ Function aItmPro()
    aAdd( aBase, { "cCodWeb",   "N", 11, 0, "Código del producto en la web"          } )
    aAdd( aBase, { "nColor",    "N", 10, 0, "Código de color"                        } )
 
-return ( aBase )
+RETURN ( aBase )
 
 //---------------------------------------------------------------------------//
 
@@ -2234,7 +2236,7 @@ Function nCosPro( cCodArt, cCodPr1, cValPr1, cCodPr2, cValPr2, dbfArtDiv )
       nPrecioCosto           := ( dbfArtDiv )->nPreCom
    end if
 
-Return ( nPrecioCosto )
+RETURN ( nPrecioCosto )
 
 //---------------------------------------------------------------------------//
 
@@ -2261,7 +2263,7 @@ Function nPreAlq( cCodArt, nTarPre, lIvaInc, dbfArtDiv )
 
    end if
 
-Return ( nPreAlq )
+RETURN ( nPreAlq )
 
 //---------------------------------------------------------------------------//
 
@@ -2305,7 +2307,7 @@ Function nPrecioPorPorpiedades( cCodigoArticulo, cCodPr1, cValPr1, cCodPr2, cVal
    ( dbfArtDiv )->( ordsetfocus( nOrden ) )
    ( dbfArtDiv )->( dbgoto( nRecno) )
 
-Return ( nPreVta )
+RETURN ( nPreVta )
 
 //---------------------------------------------------------------------------//
 
@@ -2324,7 +2326,7 @@ Function nPrePro( cCodArt, cCodPr1, cValPr1, cCodPr2, cValPr2, nTarPre, lIvaInc,
       end if
    end if
 
-Return ( nPreVta )
+RETURN ( nPreVta )
 
 //---------------------------------------------------------------------------//
 
@@ -2462,7 +2464,7 @@ Function nComPro( cCodArt, cCodPr1, cValPr1, cCodPr2, cValPr2, dbfArtCom )
       end if
    end if 
 
-Return ( nPreCom ) 
+RETURN ( nPreCom ) 
 
 //---------------------------------------------------------------------------//
 
@@ -2617,7 +2619,7 @@ Static Function SelectPropiedadDblClick( oBrw, aData, lAllSelected )
       oBrw:Refresh()
    end if
 
-Return ( nil )
+RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 
@@ -2627,7 +2629,7 @@ Static Function SelectedPropiedadToMemo( aData )
 
    aEval( aData, {|aItem| if( aItem[ 1 ], cMemo += Rtrim( aItem[ 2 ] ) + ",", ) } )
 
-Return ( cMemo )
+RETURN ( cMemo )
 
 //---------------------------------------------------------------------------//
 
@@ -2672,7 +2674,7 @@ Function hidePropertiesTable( oBrw )
       oBrw:Cargo                 := nil
    end if 
 
-Return ( nil )   
+RETURN ( nil )   
 
 //---------------------------------------------------------------------------//
 
@@ -2875,7 +2877,7 @@ Function setPropertiesTable( cCodArt, cCodPr1, cCodPr2, nPrecioCosto, oGetUnidad
       
    end if
 
-Return ( aPropertiesTable )
+RETURN ( aPropertiesTable )
 
 //---------------------------------------------------------------------------//
 
@@ -2901,19 +2903,19 @@ Function setValuesPropertiesTable( dbfLines, oBrw )
    
    next 
 
-Return ( nil )
+RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 
 Function aPropiedadesArticulo1( cCodigoArticulo, nView )
 
-Return ( aPropiedadesArticulo( cCodigoArticulo, nView, "cCodPr1", "cValPr1" ) )
+RETURN ( aPropiedadesArticulo( cCodigoArticulo, nView, "cCodPr1", "cValPr1" ) )
 
 //---------------------------------------------------------------------------//
 
 Function aPropiedadesArticulo2( cCodigoArticulo, nView )
 
-Return ( aPropiedadesArticulo( cCodigoArticulo, nView, "cCodPr2", "cValPr2" ) )
+RETURN ( aPropiedadesArticulo( cCodigoArticulo, nView, "cCodPr2", "cValPr2" ) )
 
 //---------------------------------------------------------------------------//
 
@@ -2945,13 +2947,13 @@ Function aPropiedadesArticulo( cCodigoArticulo, nView, cFieldCodigo, cValueCodig
 
    D():setStatus( "ArtDiv", nView )
 
-Return ( aValores )
+RETURN ( aValores )
 
 //---------------------------------------------------------------------------//
 
 Static Function isValoresPorpiedad( aValores, nView, cFieldCodigo, cValueCodigo )
 
-Return ( ascan( aValores, {| hash | rtrim( hash[ "CodigoPropiedad" ] ) == rtrim( ( D():ArticuloPrecioPropiedades( nView ) )->( fieldGetByName( cFieldCodigo ) ) ) .and. rtrim( hash[ "ValorPropiedad" ] ) == rtrim( ( D():ArticuloPrecioPropiedades( nView ) )->( fieldGetByName( cValueCodigo ) ) ) } ) != 0 )
+RETURN ( ascan( aValores, {| hash | rtrim( hash[ "CodigoPropiedad" ] ) == rtrim( ( D():ArticuloPrecioPropiedades( nView ) )->( fieldGetByName( cFieldCodigo ) ) ) .and. rtrim( hash[ "ValorPropiedad" ] ) == rtrim( ( D():ArticuloPrecioPropiedades( nView ) )->( fieldGetByName( cValueCodigo ) ) ) } ) != 0 )
 
 //---------------------------------------------------------------------------//
 
@@ -2969,7 +2971,7 @@ Static Function addValoresPorpiedad( aValores, nView, cCodigoArticulo, cFieldCod
                      "RgbPropiedad"       => retFld( cCodigoPropiedad + cValorPropiedad, D():PropiedadesLineas( nView ), "nColor" ),;
                      "OrdenPropiedad"     => retFld( cCodigoPropiedad + cValorPropiedad, D():PropiedadesLineas( nView ), "nOrdTbl" ) }
 
-Return ( aadd( aValores, hPropiedad ) )
+RETURN ( aadd( aValores, hPropiedad ) )
 
 //---------------------------------------------------------------------------//
 
@@ -2994,7 +2996,7 @@ Function aPropiedadesGeneral( cCodigoPropiedad, nView )
 
    D():setStatus( "TblPro", nView )
 
-Return ( aPropiedades )
+RETURN ( aPropiedades )
 
 //---------------------------------------------------------------------------//
 
@@ -3010,7 +3012,7 @@ Static Function addPropiedades( aPropiedades, nView, cCodigoPropiedad )
                      "CabeceraPropiedad"  => rtrim( retFld( cCodigoPropiedad + cValorPropiedad, D():PropiedadesLineas( nView ), "cDesTbl" ) ),;
                      "RgbPropiedad"       => retFld( cCodigoPropiedad + cValorPropiedad, D():PropiedadesLineas( nView ), "nColor" ) }
 
-Return ( aadd( aPropiedades, hPropiedad ) )
+RETURN ( aadd( aPropiedades, hPropiedad ) )
 
 //---------------------------------------------------------------------------//
 
@@ -3145,7 +3147,7 @@ METHOD CreateData()
 
    end if
 
-Return ( Self )
+RETURN ( Self )
 
 //---------------------------------------------------------------------------//
 
@@ -3192,7 +3194,7 @@ METHOD RestoreData()
 
    CloseFiles()
 
-Return ( Self )
+RETURN ( Self )
 
 //---------------------------------------------------------------------------//
 
@@ -3201,7 +3203,7 @@ METHOD SendData()
    local cFileName   := ::getFileNameToSend( "Pro" )
 
    if !file( cPatOut() + cFileName )
-      Return ( Self )
+      RETURN ( Self )
    end if 
 
    if ::oSender:SendFiles( cPatOut() + cFileName, cFileName )
@@ -3212,7 +3214,7 @@ METHOD SendData()
       ::oSender:SetText( "ERROR fichero de propiedades no enviado" )
    end if
 
-Return ( Self )
+RETURN ( Self )
 
 //---------------------------------------------------------------------------//
 
@@ -3235,7 +3237,7 @@ METHOD ReciveData()
 
    ::oSender:SetText( "Propiedades recibidas" )
 
-Return ( Self )
+RETURN ( Self )
 
 //---------------------------------------------------------------------------//
 
@@ -3399,7 +3401,7 @@ METHOD Process()
 
    next
 
-Return ( Self )
+RETURN ( Self )
 
 //---------------------------------------------------------------------------//
 
@@ -3411,6 +3413,6 @@ METHOD CleanRelation( idPropiedad )
 
    SysRefresh()
 
-Return ( Self )
+RETURN ( Self )
 
 //---------------------------------------------------------------------------//
