@@ -269,15 +269,16 @@ FUNCTION lStartCheck()
 
    CursorWe()
 
-   Test()
+   Test() 
 
-RETURN ( .t. )
+RETURN ( .t. ) 
 
 //---------------------------------------------------------------------------//
 
 FUNCTION Test()
 
-   ( ArticulosPrecios():getPropertyOne( '1', '1' ) )->( browse() )
+   // msgalert( hb_valtoexp( ArticulosPrecios():getPrimeraPropiedad( '1', '1' ) ) )
+   // msgalert( hb_valtoexp( ArticulosPrecios():getSegundaPropiedad( '1', '2' ) ) )
 
 RETURN ( nil )
 

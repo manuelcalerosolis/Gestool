@@ -92,18 +92,20 @@ METHOD getPropiedadesGeneral( cCodigoArticulo, cCodigoPropiedad )
                               "line.cDesTbl AS CabeceraPropiedad "                              + ;
                            "FROM " + ::getTableName() + " line "                                + ;
                               "INNER JOIN " + PropiedadesModel():getTableName() + " header "    + ;
-                              "ON header.cCodPro = " + quoted( cCodigoPropiedad ) + " "         + ;
-                              "WHERE line.cCodPro = " + quoted( cCodigoPropiedad )
+                              "ON header.cCodPro = " + quoted( cCodigoPropiedad )         
 
    if ::ExecuteSqlStatement( cSql, @cStm )
-      ( cStm )->( dbeval( {|| aadd( aPropiedades ,;
-                                       {  "CodigoArticulo"     => rtrim( cCodigoArticulo ),;
-                                          "CodigoPropiedad"    => rtrim( cCodigoPropiedad ),;
-                                          "TipoPropiedad"      => rtrim( Field->TipoPropiedad ),;
-                                          "ValorPropiedad"     => rtrim( Field->ValorPropiedad ),;
-                                          "CabeceraPropiedad"  => rtrim( Field->CabeceraPropiedad ),;
-                                          "ColorPropiedad"     => Field->ColorPropiedad,;
-                                          "RgbPropiedad"       => Field->RgbPropiedad } ) } ) )
+
+      ( cStm )->( dbeval( ;
+         {|| aadd( aPropiedades ,;
+            {  "CodigoArticulo"     => rtrim( cCodigoArticulo ),;
+               "CodigoPropiedad"    => rtrim( cCodigoPropiedad ),;
+               "TipoPropiedad"      => rtrim( Field->TipoPropiedad ),;
+               "ValorPropiedad"     => rtrim( Field->ValorPropiedad ),;
+               "CabeceraPropiedad"  => rtrim( Field->CabeceraPropiedad ),;
+               "ColorPropiedad"     => Field->ColorPropiedad,;
+               "RgbPropiedad"       => Field->RgbPropiedad } ) } ) )
+   
    end if 
 
 RETURN ( aPropiedades )

@@ -90,26 +90,89 @@ CLASS ArticulosPrecios FROM ADSBaseModel
 
    METHOD getTableName()                     INLINE ::getEmpresaTableName( "ArtDiv" )
 
-   METHOD getPropertyOne()
+   METHOD getPrimeraPropiedad()
+
+   METHOD getSegundaPropiedad()
+
+   METHOD getProperties( cSql )
 
 END CLASS
 
 //---------------------------------------------------------------------------//
 
-METHOD getPropertyOne( cCodigoArticulo, cCodigoPropiedad )
+METHOD getPrimeraPropiedad( cCodigoArticulo, cCodigoPropiedad )
 
-   local cStm  
-   local cSql  := "SELECT header.cDesPro, header.lColor, line.cCodArt, line.cCodPr1 "  + ;
-                     "FROM " + ::getTableName() + " line "                             + ;
-                     "INNER JOIN " + PropiedadesModel():getTableName() + " header "    + ;
-                     "ON header.cCodPro = " + quoted( cCodigoPropiedad ) + " "         + ;
-                     "WHERE line.cCodPro = " + quoted( cCodigoArticulo )
+   local cSql           := "SELECT "                                                                                                   + ;
+                              "line.cCodPr1 AS CodigoPropiedad, "                                                                      + ; 
+                              "line.cValPr1 AS ValorPropiedad, "                                                                       + ; 
+                              "header.cDesPro AS TipoPropiedad, "                                                                      + ; 
+                              "header.lColor AS ColorPropiedad, "                                                                      + ; 
+                              "property.cDesTbl AS CabeceraPropiedad, "                                                                + ;
+                              "property.nColor AS RgbPropiedad "                                                                       + ;
+                           "FROM " + ::getTableName() + " line "                                                                       + ;
+                              "INNER JOIN " + PropiedadesModel():getTableName() + " header "                                           + ;
+                              "ON header.cCodPro = line.cCodPr1 "                                                                      + ;
+                              "INNER JOIN " + PropiedadesLineasModel():getTableName() + " property "                                   + ;
+                              "ON property.cCodPro = line.cCodPr1  AND property.cCodTbl = line.cValPr1 "                               + ;
+                           "WHERE line.cCodArt = " + quoted( cCodigoArticulo ) + " AND line.cCodPr1 = " + quoted( cCodigoPropiedad )   + ;
+                           "GROUP BY "                                                                                                 + ;
+                              "line.cCodPr1, "                                                                                         + ;
+                              "line.cValPr1, "                                                                                         + ;
+                              "header.cDesPro, "                                                                                       + ;
+                              "header.lColor, "                                                                                        + ;
+                              "property.cDesTbl, "                                                                                     + ;
+                              "property.nColor" 
 
-   if ::ExecuteSqlStatement( cSql, @cStm )
-      RETURN ( cStm )
-   end if 
-
-RETURN ( nil )
+RETURN ( ::getProperties( cCodigoArticulo, cCodigoPropiedad, cSql ) )
 
 //---------------------------------------------------------------------------//
 
+METHOD getSegundaPropiedad( cCodigoArticulo, cCodigoPropiedad )
+
+   local cSql           := "SELECT "                                                                                                   + ;
+                              "line.cCodPr2 AS CodigoPropiedad, "                                                                      + ; 
+                              "line.cValPr2 AS ValorPropiedad, "                                                                       + ; 
+                              "header.cDesPro AS TipoPropiedad, "                                                                      + ; 
+                              "header.lColor AS ColorPropiedad, "                                                                      + ; 
+                              "property.cDesTbl AS CabeceraPropiedad, "                                                                + ;
+                              "property.nColor AS RgbPropiedad "                                                                       + ;
+                           "FROM " + ::getTableName() + " line "                                                                       + ;
+                              "INNER JOIN " + PropiedadesModel():getTableName() + " header "                                           + ;
+                              "ON header.cCodPro = line.cCodPr2 "                                                                      + ;
+                              "INNER JOIN " + PropiedadesLineasModel():getTableName() + " property "                                   + ;
+                              "ON property.cCodPro = line.cCodPr2  AND property.cCodTbl = line.cValPr2 "                               + ;
+                           "WHERE line.cCodArt = " + quoted( cCodigoArticulo ) + " AND line.cCodPr2 = " + quoted( cCodigoPropiedad )   + ;
+                           "GROUP BY "                                                                                                 + ;
+                              "line.cCodPr2, "                                                                                         + ;
+                              "line.cValPr2, "                                                                                         + ;
+                              "header.cDesPro, "                                                                                       + ;
+                              "header.lColor, "                                                                                        + ;
+                              "property.cDesTbl, "                                                                                     + ;
+                              "property.nColor" 
+
+RETURN ( ::getProperties( cCodigoArticulo, cCodigoPropiedad, cSql ) )
+
+//---------------------------------------------------------------------------//
+
+METHOD getProperties( cCodigoArticulo, cCodigoPropiedad, cSql )
+
+   local cStm  
+   local aPropiedades   := {}
+
+   if ::ExecuteSqlStatement( cSql, @cStm )
+
+      ( cStm )->( dbeval( ;
+         {|| aadd( aPropiedades ,;
+            {  "CodigoArticulo"     => rtrim( cCodigoArticulo ),;
+               "CodigoPropiedad"    => rtrim( cCodigoPropiedad ),;
+               "TipoPropiedad"      => rtrim( Field->TipoPropiedad ),;
+               "ValorPropiedad"     => rtrim( Field->ValorPropiedad ),;
+               "CabeceraPropiedad"  => rtrim( Field->CabeceraPropiedad ),;
+               "ColorPropiedad"     => Field->ColorPropiedad,;
+               "RgbPropiedad"       => Field->RgbPropiedad } ) } ) )
+
+   end if 
+
+RETURN ( aPropiedades )
+
+//---------------------------------------------------------------------------//

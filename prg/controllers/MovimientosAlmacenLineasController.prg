@@ -31,6 +31,10 @@ CLASS MovimientosAlmacenLineasController FROM SQLBaseController
 
    METHOD stampFechaCaducidad()
 
+   METHOD getPrimeraPropiedad( cCodigoArticulo, cCodigoPropiedad )
+
+   METHOD getSegundaPropiedad( cCodigoArticulo, cCodigoPropiedad )
+
 END CLASS
 
 //---------------------------------------------------------------------------//
@@ -111,9 +115,7 @@ METHOD stampArticulo()
       
       ::oDialogView:oGetValorPrimeraPropiedad:Show()
 
-      // aPropertiesOne := 
-
-      ::oDialogView:oBrowsePropertyView:setPropertyOne( PropiedadesLineasModel():getPropiedadesGeneral( cCodigoArticulo, ( cAreaArticulo )->cCodPrp1 ) )
+      ::oDialogView:oBrowsePropertyView:setPropertyOne( ::getPrimeraPropiedad( cCodigoArticulo, ( cAreaArticulo )->cCodPrp1 ) )
 
    end if 
 
@@ -127,7 +129,7 @@ METHOD stampArticulo()
       
       ::oDialogView:oGetValorSegundaPropiedad:Show()
 
-      ::oDialogView:oBrowsePropertyView:setPropertyTwo( PropiedadesLineasModel():getPropiedadesGeneral( cCodigoArticulo, ( cAreaArticulo )->cCodPrp2 ) )
+      ::oDialogView:oBrowsePropertyView:setPropertyTwo( ::getSegundaPropiedad( cCodigoArticulo, ( cAreaArticulo )->cCodPrp2 ) )
 
    end if 
 
@@ -197,4 +199,26 @@ RETURN ( .t. )
 
 //---------------------------------------------------------------------------//
 
+METHOD getPrimeraPropiedad( cCodigoArticulo, cCodigoPropiedad )
 
+   local aProperties := ArticulosPrecios():getPrimeraPropiedad( cCodigoArticulo, cCodigoPropiedad )
+
+   if empty( aProperties )
+      aProperties    := PropiedadesLineasModel():getPropiedadesGeneral( cCodigoArticulo, cCodigoPropiedad )
+   end if 
+
+RETURN ( aProperties )
+
+//---------------------------------------------------------------------------//
+
+METHOD getSegundaPropiedad( cCodigoArticulo, cCodigoPropiedad )
+
+   local aProperties := ArticulosPrecios():getSegundaPropiedad( cCodigoArticulo, cCodigoPropiedad )
+
+   if empty( aProperties )
+      aProperties    := PropiedadesLineasModel():getPropiedadesGeneral( cCodigoArticulo, cCodigoPropiedad )
+   end if 
+
+RETURN ( aProperties )
+
+//---------------------------------------------------------------------------//
