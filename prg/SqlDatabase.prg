@@ -1,5 +1,6 @@
 #include "fiveWin.ch"
 #include "hdo.ch"
+#include "hdomysql.ch"
 
 //----------------------------------------------------------------------------//
 
@@ -29,7 +30,9 @@ CLASS SQLDatabase
    METHOD Connect() 
    METHOD ConnectWithoutDataBase()
    METHOD Disconnect()                    INLINE ( if( !empty( ::oConexion ), ::oConexion:disconnect(), ) )
-        
+
+   METHOD Ping()                          INLINE ( if( !empty( ::oConexion ), ::oConexion:Ping(), ) )
+
    METHOD Exec( cSql )             
    METHOD Execs( aSql )             
    METHOD Query( cSql )                   INLINE ( if( !empty( ::oConexion ), ::oConexion:Query( cSql ),  msgstop( "No ha conexiones disponibles" ) ) )
@@ -120,6 +123,8 @@ METHOD Connect()
    
       if !empty( ::oConexion )
          
+         ::oConexion:setAttribute( MYSQL_OPT_RECONNECT, .t. )
+
          lConnect    := ::oConexion:Connect( ::cDatabaseMySQL, ::cIpMySQL, ::cUserMySQL, ::cPasswordMySQL )
 
       end if 
@@ -167,6 +172,8 @@ METHOD Exec( cSql )
    end if 
 
    try
+
+      ::oConexion:Ping()
    
       ::oConexion:Exec( cSql )
        
@@ -182,9 +189,13 @@ RETURN ( lExec )
 
 //----------------------------------------------------------------------------//
 
-METHOD Execs( aSql )
+METHOD Execs( sqlSentence )
 
-RETURN ( aeval( aSql, {|cSql| ::Exec( cSql ) } ) ) 
+   if hb_isarray( sqlSentence )
+      RETURN ( aeval( sqlSentence, {|cSql| ::Exec( cSql ) } ) ) 
+   end if 
+
+RETURN ( ::Exec( sqlSentence ) ) 
 
 //----------------------------------------------------------------------------//
 
@@ -202,6 +213,8 @@ METHOD selectFetch( cSentence, fetchType )
    end if  
 
    try 
+
+      ::oConexion:Ping()
 
       oStatement     := ::oConexion:Query( cSentence )
    
@@ -239,6 +252,8 @@ METHOD selectValue( cSentence )
    end if  
 
    try 
+
+      ::oConexion:Ping()   
 
       oStatement     := ::oConexion:Query( cSentence )
 

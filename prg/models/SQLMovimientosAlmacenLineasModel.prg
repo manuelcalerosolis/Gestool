@@ -9,12 +9,14 @@ CLASS SQLMovimientosAlmacenLineasModel FROM SQLBaseEmpresasModel
    DATA cTableName            INIT "movimientos_almacen_lineas"
 
    METHOD New()
+
+   METHOD getInsertSentence()
    
 END CLASS
 
 //---------------------------------------------------------------------------//
 
-METHOD New()
+METHOD New( oController )
 
    hset( ::hColumns, "id",                {  "create"    => "INTEGER PRIMARY KEY AUTO_INCREMENT"      ,;
                                              "text"      => "Identificador"                           ,;
@@ -107,9 +109,36 @@ METHOD New()
                                              "visible"   => .t.                                    ,;
                                              "width"     => 240 }                                  )
 
-   ::Super:New()
+   ::Super:New( oController )
 
 RETURN ( Self )
 
 //---------------------------------------------------------------------------//
+
+METHOD getInsertSentence()
+
+   local oProperty
+   local aSQLInsert  := {}
+
+   if empty( ::oController:aProperties )
+      RETURN ( ::Super:getInsertSentence() )
+   end if 
+
+   for each oProperty in ::oController:aProperties
+
+      hset( ::hBuffer, "uuid",                     win_uuidcreatestring() )
+      hset( ::hBuffer, "codigo_primera_propiedad", oProperty:cCodigoPropiedad1 )
+      hset( ::hBuffer, "valor_primera_propiedad",  oProperty:cValorPropiedad1 )
+      hset( ::hBuffer, "codigo_segunda_propiedad", oProperty:cCodigoPropiedad2 )
+      hset( ::hBuffer, "valor_segunda_propiedad",  oProperty:cValorPropiedad2 )
+      hset( ::hBuffer, "unidades_articulo",        oProperty:Value )
+
+      aadd( aSQLInsert, ::Super:getInsertSentence() + "; " )
+
+   next 
+
+RETURN ( aSQLInsert )
+
+//---------------------------------------------------------------------------//
+
 

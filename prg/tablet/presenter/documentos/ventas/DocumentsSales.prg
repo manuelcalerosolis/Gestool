@@ -615,7 +615,7 @@ RETURN ( self )
 
 METHOD gotoUltimoCliente() CLASS DocumentsSales
 
-   if !empty( ::nUltimoCliente )
+   if !empty( ::nUltimoCliente ) .and. !empty( ::cAliasClientesRuta ) .and. ( ::cAliasClientesRuta )->( used() )
       ( ::cAliasClientesRuta )->( dbgoto( ::nUltimoCliente ) )
    end if 
 
@@ -625,7 +625,9 @@ RETURN .t.
 
 METHOD setUltimoCliente() CLASS DocumentsSales
 
-   ::nUltimoCliente  := ( ::cAliasClientesRuta )->recno
+   if !empty( ::cAliasClientesRuta ) .and. ( ::cAliasClientesRuta )->( used() )
+      ::nUltimoCliente  := ( ::cAliasClientesRuta )->recno
+   end if 
 
 RETURN nil
 

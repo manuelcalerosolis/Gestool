@@ -159,7 +159,6 @@ METHOD getImportSentence( cPath )
    hEval( ::hColumns, {| k | if ( k != ::cColumnKey, cInsert += k + ", ", ) } )
    cInsert           := ChgAtEnd( cInsert, ' ) VALUES ', 2 )
 
-
    ( dbf )->( dbgotop() )
    while ( dbf )->( !eof() )
 
