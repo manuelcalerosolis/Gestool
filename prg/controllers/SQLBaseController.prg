@@ -94,6 +94,7 @@ CLASS SQLBaseController
    METHOD Append()
       METHOD setAppendMode()                          INLINE ( ::setMode( __append_mode__ ) )
       METHOD isAppendMode()                           INLINE ( ::nMode == __append_mode__ )
+      METHOD isNotAppendMode()                        INLINE ( ::nMode != __append_mode__ )
 
    METHOD Duplicate()
       METHOD setDuplicateMode()                       INLINE ( ::setMode( __duplicate_mode__ ) )
@@ -102,6 +103,7 @@ CLASS SQLBaseController
    METHOD Edit()
       METHOD setEditMode()                            INLINE ( ::setMode( __edit_mode__ ) )
       METHOD isEditMode()                             INLINE ( ::nMode == __edit_mode__ )
+      METHOD isNotEditMode()                          INLINE ( ::nMode != __edit_mode__ )
 
    METHOD Zoom()
       METHOD setZoomMode()                            INLINE ( ::setMode( __zoom_mode__ ) )
@@ -390,7 +392,7 @@ METHOD Edit()
 
    ::beginTransactionalMode()
 
-   ::oModel:setIdToFind( ::getIdfromRowset() )
+   ::oModel:setIdToFind( ::getIdFromRowSet() )
 
    ::oModel:loadCurrentBuffer() 
 
@@ -400,7 +402,7 @@ METHOD Edit()
       
       ::fireEvent( 'closedDialog' )    
 
-      ::oModel:updateCurrentBuffer()
+      ::oModel:updateBuffer()
 
       ::fireEvent( 'editedted' ) 
 

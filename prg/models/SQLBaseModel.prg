@@ -76,12 +76,12 @@ CLASS SQLBaseModel
    
    METHOD getDropTableSentence()
 
-   METHOD setGeneralSelect( cSelect )              INLINE ( ::cGeneralSelect  := cSelect )
-   METHOD setGeneralWhere( cWhere )                INLINE ( ::cGeneralWhere   := cWhere )
+   METHOD setGeneralSelect( cSelect )                 INLINE ( ::cGeneralSelect  := cSelect )
+   METHOD setGeneralWhere( cWhere )                   INLINE ( ::cGeneralWhere   := cWhere )
 
    // Where for columns---------------------------------------------------------
 
-   METHOD getWhereOrAnd( cSQLSelect )              INLINE ( if( hb_at( "WHERE", cSQLSelect ) != 0, " AND ", " WHERE " ) )
+   METHOD getWhereOrAnd( cSQLSelect )                 INLINE ( if( hb_at( "WHERE", cSQLSelect ) != 0, " AND ", " WHERE " ) )
 
    METHOD getWhereGeneral( cSQLSelect )
    METHOD getWhereEmpresa()                           
@@ -120,8 +120,9 @@ CLASS SQLBaseModel
    METHOD find( cFind )
 
    METHOD getBuffer( cColumn )                        INLINE ( hget( ::hBuffer, cColumn ) )
-   METHOD updateCurrentBuffer()                       INLINE ( ::getDatabase():Query( ::getUpdateSentence() ), ::buildRowSetAndFind() )
-   METHOD insertBuffer()                              
+   
+   METHOD insertBuffer()                              INLINE ( ::getDatabase():Execs( ::getInsertSentence() ), ::buildRowSetAndFind( ::getDatabase():LastInsertId() ) )
+   METHOD updateBuffer()                              INLINE ( ::getDatabase():Execs( ::getUpdateSentence() ), ::buildRowSetAndFind() )
    METHOD deleteSelection( aRecno )                   INLINE ( ::getDatabase():Query( ::getdeleteSentence( aRecno ) ), ::buildRowSet() )
 
    METHOD loadBlankBuffer()
@@ -648,14 +649,4 @@ METHOD getValueFromColumn( cColumn, cKey )
 RETURN ( uValue )
 
 //---------------------------------------------------------------------------//
-
-METHOD insertBuffer()
-
-   ::getDatabase():Execs( ::getInsertSentence() )
-
-   ::buildRowSetAndFind( ::getDatabase():LastInsertId() )
-
-RETURN ( self )
-   
-//----------------------------------------------------------------------------//
 

@@ -24,6 +24,7 @@ CLASS MovimientosAlmacenLineasView FROM SQLBaseView
    METHOD New()
 
    METHOD Dialog()
+   METHOD startDialog()
 
    METHOD nTotalUnidadesArticulo()     INLINE ( notCaja( ::oController:oModel:hBuffer[ "cajas_articulo" ] ) * ::oController:oModel:hBuffer[ "unidades_articulo" ] )
 
@@ -55,7 +56,7 @@ METHOD Dialog()
       REDEFINE GET   ::oGetCodigoArticulo ;
          VAR         ::oController:oModel:hBuffer[ "codigo_articulo" ] ;
          ID          100 ;
-         WHEN        ( ::oController:isNotZoomMode() ) ;
+         WHEN        ( ::oController:isAppendMode() ) ;
          PICTURE     "@!" ;
          BITMAP      "Lupa" ;
          OF          oDlg
@@ -202,10 +203,22 @@ METHOD Dialog()
          oDlg:AddFastKey( VK_F5, {|| oBtn:Click() } )
       end if
 
+      oDlg:bStart    := {|| ::startDialog() }
+
    ACTIVATE DIALOG oDlg CENTER
 
 RETURN ( oDlg:nResult == IDOK )
 
 //---------------------------------------------------------------------------//
 
+METHOD startDialog()
 
+   if ::oController:isNotAppendMode()
+      ::oController:validateCodigoArticulo()
+      ::oController:validatePrimeraPropiedad()
+      ::oController:validateSegundaPropiedad()      
+   end if 
+
+RETURN ( .t. )
+
+//---------------------------------------------------------------------------//

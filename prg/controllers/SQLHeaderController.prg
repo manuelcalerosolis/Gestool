@@ -188,7 +188,7 @@ METHOD Edit( oBrowse )
 
    if ::oView:Dialog( ::oModel )
       
-      ::oModel:updateCurrentBuffer()
+      ::oModel:updateBuffer()
 
       ::postEdit()
 

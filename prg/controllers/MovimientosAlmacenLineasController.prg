@@ -39,6 +39,14 @@ CLASS MovimientosAlmacenLineasController FROM SQLBaseController
 
    METHOD onClosedDialog() 
 
+   METHOD showPrimeraPropiedad()       INLINE ( if( !uFieldEmpresa( "lUseTbl" ), ::oDialogView:oGetValorPrimeraPropiedad:Show(), ) )
+   
+   METHOD showSegundaPropiedad()       INLINE ( if( !uFieldEmpresa( "lUseTbl" ), ::oDialogView:oGetValorSegundaPropiedad:Show(), ) )
+   
+   METHOD buildBrowseProperty()        INLINE ( if( uFieldEmpresa( "lUseTbl" ), ::oDialogView:oBrowsePropertyView:build(), ) )
+   
+   METHOD loadValuesBrowseProperty()
+
 END CLASS
 
 //---------------------------------------------------------------------------//
@@ -66,7 +74,7 @@ RETURN ( Self )
 
 METHOD loadedBlankBuffer()
 
-   local uuid              := hget( ::getSenderController():oModel:hBuffer, "uuid" )
+   local uuid        := hget( ::getSenderController():oModel:hBuffer, "uuid" )
 
    if !empty( uuid )
       hset( ::oModel:hBuffer, "parent_uuid", uuid )
@@ -111,7 +119,7 @@ METHOD stampArticulo()
       RETURN ( .t. )
    end if 
 
-   ::oDialogView:oGetCodigoArticulo:Original  := cCodigoArticulo
+   ::oDialogView:oGetCodigoArticulo:setOriginal( cCodigoArticulo )
 
    ::oDialogView:oGetNombreArticulo:cText( ( cAreaArticulo )->Nombre )
 
@@ -133,9 +141,7 @@ METHOD stampArticulo()
 
       ::oDialogView:oGetValorPrimeraPropiedad:oSay:setText( PropiedadesModel():getNombre( ( cAreaArticulo )->cCodPrp1 ) )
 
-      if !uFieldEmpresa( "lUseTbl" )
-         ::oDialogView:oGetValorPrimeraPropiedad:Show()
-      end if 
+      ::showPrimeraPropiedad()
 
       ::oDialogView:oBrowsePropertyView:setPropertyOne( ::getPrimeraPropiedad( cCodigoArticulo, ( cAreaArticulo )->cCodPrp1 ) )
 
@@ -146,26 +152,22 @@ METHOD stampArticulo()
          hset( ::oModel:hBuffer, "codigo_segunda_propiedad", ( cAreaArticulo )->cCodPrp2 )
 
          ::oDialogView:oGetValorSegundaPropiedad:oSay:setText( PropiedadesModel():getNombre( ( cAreaArticulo )->cCodPrp2 ) )
-         
-         if !uFieldEmpresa( "lUseTbl" )
-            ::oDialogView:oGetValorSegundaPropiedad:Show()
-         end if 
 
+         ::showSegundaPropiedad()
+         
          ::oDialogView:oBrowsePropertyView:setPropertyTwo( ::getSegundaPropiedad( cCodigoArticulo, ( cAreaArticulo )->cCodPrp2 ) )
 
       end if 
 
-      if uFieldEmpresa( "lUseTbl" )
-         ::oDialogView:oBrowsePropertyView:build()
-      end if 
+      ::buildBrowseProperty()
+
+      ::loadValuesBrowseProperty( cCodigoArticulo )
 
    end if 
 
    // Fecha de caducidad-------------------------------------------------------
 
    ::stampFechaCaducidad()
-
-   ::oDialogView:oGetCodigoArticulo:setOriginal( cCodigoArticulo )
 
    // Area de trabajo----------------------------------------------------------
 
@@ -255,10 +257,43 @@ METHOD onClosedDialog()
 
    ::aProperties     := {}
 
-   if ::oDialogView:oBrowsePropertyView:lVisible
-      ::aProperties  := ::oDialogView:oBrowsePropertyView:getProperties()
+   if !( ::oDialogView:oBrowsePropertyView:lVisible )
+      RETURN ( .t. )
    end if 
 
+   ::aProperties     := ::oDialogView:oBrowsePropertyView:getProperties()
+
 RETURN ( .t. )
+
+//---------------------------------------------------------------------------//
+
+METHOD loadValuesBrowseProperty( cCodigoArticulo )
+
+   local Uuid
+   local aArticulos
+
+   if !( uFieldEmpresa( 'lUseTbl' ) )
+      RETURN ( Self )
+   end if 
+
+   if ::isNotEditMode()
+      RETURN ( Self )
+   end if 
+
+   Uuid           := hget( ::getSenderController():oModel:hBuffer, "uuid" )
+   if empty( Uuid )
+      RETURN ( Self )
+   end if 
+
+   aArticulos     := MovimientosAlmacenLineasRepository():getHashArticuloUuid( cCodigoArticulo, Uuid ) 
+   if empty( aArticulos )
+      RETURN ( Self )
+   end if 
+
+   aeval( aArticulos, {|elem| ::oDialogView:oBrowsePropertyView:setValueAndUuidToPropertiesTable( elem ) } )
+
+   ::oDialogView:oBrowsePropertyView:Refresh()
+
+RETURN ( Self )
 
 //---------------------------------------------------------------------------//

@@ -11,7 +11,15 @@ CLASS SQLMovimientosAlmacenLineasModel FROM SQLBaseEmpresasModel
    METHOD New()
 
    METHOD getInsertSentence()
+
+   METHOD getUpdateSentence()
+
+   METHOD addInsertSentence()
+
+   METHOD addUpdateSentence()
    
+   METHOD addDeleteSentence()
+
 END CLASS
 
 //---------------------------------------------------------------------------//
@@ -117,28 +125,85 @@ RETURN ( Self )
 
 METHOD getInsertSentence()
 
-   local oProperty
    local aSQLInsert  := {}
 
    if empty( ::oController:aProperties )
       RETURN ( ::Super:getInsertSentence() )
    end if 
 
-   for each oProperty in ::oController:aProperties
-
-      hset( ::hBuffer, "uuid",                     win_uuidcreatestring() )
-      hset( ::hBuffer, "codigo_primera_propiedad", oProperty:cCodigoPropiedad1 )
-      hset( ::hBuffer, "valor_primera_propiedad",  oProperty:cValorPropiedad1 )
-      hset( ::hBuffer, "codigo_segunda_propiedad", oProperty:cCodigoPropiedad2 )
-      hset( ::hBuffer, "valor_segunda_propiedad",  oProperty:cValorPropiedad2 )
-      hset( ::hBuffer, "unidades_articulo",        oProperty:Value )
-
-      aadd( aSQLInsert, ::Super:getInsertSentence() + "; " )
-
-   next 
+   aeval( ::oController:aProperties, {| oProperty | ::addInsertSentence( aSQLInsert, oProperty ) } )
 
 RETURN ( aSQLInsert )
 
 //---------------------------------------------------------------------------//
 
+METHOD getUpdateSentence()
+
+   local oProperty
+   local aSQLUpdate  := {}
+
+   if empty( ::oController:aProperties )
+      RETURN ( ::Super:getUpdateSentence() )
+   end if 
+
+   for each oProperty in ::oController:aProperties
+
+      do case
+         case !empty( oProperty:Uuid ) .and. empty( oProperty:Value )
+
+            ::addDeleteSentence( aSQLUpdate, oProperty )
+
+         case !empty( oProperty:Uuid ) .and. !empty( oProperty:Value )
+
+            ::addUpdateSentence( aSQLUpdate, oProperty )
+       
+         case empty( oProperty:Uuid ) 
+
+            ::addInsertSentence( aSQLUpdate, oProperty )
+
+      end case
+
+   next 
+
+RETURN ( aSQLUpdate )
+
+//---------------------------------------------------------------------------//
+
+METHOD addInsertSentence( aSQLInsert, oProperty )
+
+   if empty( oProperty:Value )
+      RETURN ( nil )
+   end if
+
+   hset( ::hBuffer, "uuid",                     win_uuidcreatestring() )
+   hset( ::hBuffer, "codigo_primera_propiedad", oProperty:cCodigoPropiedad1 )
+   hset( ::hBuffer, "valor_primera_propiedad",  oProperty:cValorPropiedad1 )
+   hset( ::hBuffer, "codigo_segunda_propiedad", oProperty:cCodigoPropiedad2 )
+   hset( ::hBuffer, "valor_segunda_propiedad",  oProperty:cValorPropiedad2 )
+   hset( ::hBuffer, "unidades_articulo",        oProperty:Value )
+
+   aadd( aSQLInsert, ::Super:getInsertSentence() + "; " )
+
+RETURN ( nil )
+
+//---------------------------------------------------------------------------//
+
+METHOD addUpdateSentence( aSQLUpdate, oProperty )
+
+   aadd( aSQLUpdate, "UPDATE " + ::cTableName + " " +                                        ;
+                        "SET unidades_articulo = " + toSqlString( oProperty:Value ) + " " +  ;
+                        "WHERE uuid = " + quoted( oProperty:Uuid ) +  "; " )
+
+RETURN ( nil )
+
+//---------------------------------------------------------------------------//
+
+METHOD addDeleteSentence( aSQLUpdate, oProperty )
+
+   aadd( aSQLUpdate, "DELETE FROM " + ::cTableName + " " +                          ;
+                        "WHERE uuid = " + quoted( oProperty:Uuid ) + "; " )
+
+RETURN ( nil )
+
+//---------------------------------------------------------------------------//
 

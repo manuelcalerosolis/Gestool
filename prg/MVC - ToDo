@@ -1,12 +1,14 @@
 MVC - ToDo
 
+- Dialogo sin rejilla de datos
+
 - Copias de seguridad SQL
 
 - Ver los datos q tenemos q pasar en movimientos de almacen de la divisa monetaria.
 
 - Problemas al existir varias claves duplucadas en la tabla de divisas el modelo debria de corregir esto.
 
-- Crear el browse para lineas de movimientos de almacen.
+- Crear el browse para lineas de movimientos de almacen. (done)
 
 - No refresca al añadir un nuevo registro en navigator. (done)
 
