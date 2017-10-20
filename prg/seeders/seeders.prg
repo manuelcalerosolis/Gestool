@@ -435,7 +435,7 @@ METHOD SeederMovimientosAlmacenSeries()
    while !( dbfMovSer )->( eof() )
       
       cStatement  := "SELECT id "                                                         + ;
-                        "FROM movimientos_almacen_series "                                + ;
+                        "FROM numeros_series "                                            + ;
                         "WHERE uuid = " + quoted( ( dbfMovSer )->cGuid ) + Space( 1 )     + ;
                         "LIMIT 1"
 
@@ -463,9 +463,8 @@ METHOD getStatementSeederMovimientosAlmacenSeries( dbfMovSer )
                               "parent_uuid" => quoted( ( dbfMovSer )->cGuidPar ),;
                               "numero_serie" => quoted( ( dbfMovSer )->cNumSer ) }
 
-RETURN ( ::getInsertStatement( hCampos, "movimientos_almacen_series" ) )
+RETURN ( ::getInsertStatement( hCampos, "numeros_series" ) )
 
 //---------------------------------------------------------------------------//
 
 //TDataCenter():ExecuteSqlStatement( 'SELECT * FROM datosSitua', "resultado" )
-

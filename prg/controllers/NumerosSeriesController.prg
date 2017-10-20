@@ -3,11 +3,22 @@
 
 //---------------------------------------------------------------------------//
 
-CLASS MovimientosAlmacenSeriesController FROM SQLBaseController
+CLASS NumerosSeriesController FROM SQLBaseController
+
+   DATA nTotalUnidades
+   DATA cPreFix
+   DATA oSerIni
+   DATA nSerIni
+   DATA oSerFin
+   DATA nSerFin
+   DATA oNumGen
+   DATA nNumGen
 
    METHOD New()
 
    METHOD Dialog()          INLINE ( ::oDialogView:Dialog() )
+
+   METHOD GenerarSeries()
 
 END CLASS
 
@@ -17,16 +28,24 @@ METHOD New( oController )
 
    ::cTitle                := "Series"
 
-   ::oModel                := SQLMovimientosAlmacenSeriesModel():New( self )
+   ::oModel                := SQLNumerosSeriesModel():New( self )
 
    //::oModel:setEvent( 'loadedBlankBuffer',   {|| ::loadedBlankBuffer() } ) 
    //::oModel:setEvent( 'buildingRowSet',      {|| ::buildingRowSet() } ) 
 
-   ::oDialogView           := MovimientosAlmacenSeriesView():New( self )
+   ::oDialogView           := NumerosSeriesView():New( self )
 
    //::oValidator            := MovimientosAlmacenLineasValidator():New( self )
 
    ::Super:New( oController )
+
+RETURN ( Self )
+
+//---------------------------------------------------------------------------//
+
+METHOD GenerarSeries()
+
+   MsgInfo( "GenerarSeries" )
 
 RETURN ( Self )
 

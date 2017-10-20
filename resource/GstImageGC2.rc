@@ -282,3 +282,5 @@ GC_CUP_48 BITMAP "..\\bmp\\gc_cup_48.bmp"
 GC_SHIELD_64 BITMAP "..\\bmp\\gc_shield_64.bmp"
 
 16_TAGEVER BITMAP "..\\bmp\\16_tagever.bmp"
+
+GC_ODOMETER_48 BITMAP "..\\bmp\\gc_odometer_48.bmp"

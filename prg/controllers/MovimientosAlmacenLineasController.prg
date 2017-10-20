@@ -5,11 +5,8 @@
 
 CLASS MovimientosAlmacenLineasController FROM SQLBaseController
 
-<<<<<<< HEAD
    DATA oSeriesControler
-=======
    DATA aProperties                    INIT {}
->>>>>>> ad7bb381f35c91cbb3ecc016a2e87af4ca6cc574
 
    METHOD New()
 
@@ -41,11 +38,9 @@ CLASS MovimientosAlmacenLineasController FROM SQLBaseController
 
    METHOD getSegundaPropiedad( cCodigoArticulo, cCodigoPropiedad )
 
-<<<<<<< HEAD
    METHOD runDialogSeries()           INLINE ( ::oSeriesControler:Dialog() )
-=======
+
    METHOD onClosedDialog() 
->>>>>>> ad7bb381f35c91cbb3ecc016a2e87af4ca6cc574
 
 END CLASS
 
@@ -64,7 +59,7 @@ METHOD New( oController )
 
    ::oValidator            := MovimientosAlmacenLineasValidator():New( self )
 
-   ::oSeriesControler      := MovimientosAlmacenSeriesController():New( self )
+   ::oSeriesControler      := NumerosSeriesController():New( self )
 
    ::Super:New( oController )
 

@@ -126,7 +126,7 @@ METHOD addModels()
 
    aadd( ::aModels, SQLMovimientosAlmacenLineasModel():New() )
 
-   aadd( ::aModels, SQLMovimientosAlmacenSeriesModel():New() )
+   aadd( ::aModels, SQLNumerosSeriesModel():New() )
 
 RETURN ( ::aModels )
 

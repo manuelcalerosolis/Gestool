@@ -1515,10 +1515,6 @@ CLASS TNumerosSerie
    DATA  nSerFin              INIT 0
    DATA  oNumGen
    DATA  nNumGen              INIT 0
-   DATA  oSaySer
-   DATA  cSaySer              INIT ""
-   DATA  oProSer
-   DATA  nProSer
 
    DATA  uTmpSer
 
@@ -1567,6 +1563,7 @@ END CLASS
 METHOD Resource() CLASS TNumerosSerie
 
    local n
+   local oBmpNumSer
 
    if ::nAbsUnidades() == 0
       MsgStop( "No hay unidades para asignar números de serie." )
@@ -1628,8 +1625,10 @@ METHOD Resource() CLASS TNumerosSerie
 
    DEFINE DIALOG ::oDlg RESOURCE "VtaNumSer"
 
-      REDEFINE CHECKBOX ::lAutoSerializacion ;
-         ID       200 ;
+      REDEFINE BITMAP oBmpNumSer ;
+         ID       800 ;
+         RESOURCE "gc_odometer_48" ;
+         TRANSPARENT ;
          OF       ::oDlg
 
       REDEFINE GET ::nTotalUnidades ;
@@ -1640,14 +1639,14 @@ METHOD Resource() CLASS TNumerosSerie
 
       REDEFINE GET ::cPreFix ;
          ID       110 ;
-         WHEN     ( ::nMode != ZOOM_MODE .and. !::lAutoSerializacion ) ;
+         WHEN     ( ::nMode != ZOOM_MODE ) ;
          OF       ::oDlg
 
       REDEFINE GET ::oSerIni VAR ::nSerIni ;
          ID       120 ;
          PICTURE  "99999999999999999999" ;
          SPINNER ;
-         WHEN     ( ::nMode != ZOOM_MODE .and. !::lAutoSerializacion ) ;
+         WHEN     ( ::nMode != ZOOM_MODE ) ;
          VALID    ( ::oSerFin:cText( ::nSerIni + ::nAbsUnidades() ), .t. ) ;
          OF       ::oDlg
 
@@ -1660,14 +1659,14 @@ METHOD Resource() CLASS TNumerosSerie
       REDEFINE GET ::oNumGen VAR ::nNumGen ;
          ID       140 ;
          SPINNER ;
-         WHEN     ( ::nMode != ZOOM_MODE .and. !::lAutoSerializacion ) ;
+         WHEN     ( ::nMode != ZOOM_MODE ) ;
          PICTURE  "99999999999999999999" ;
          OF       ::oDlg
 
       REDEFINE BUTTON ;
          ID       500 ;
          OF       ::oDlg ;
-         WHEN     ( ::nMode != ZOOM_MODE .and. !::lAutoSerializacion ) ;
+         WHEN     ( ::nMode != ZOOM_MODE ) ;
          ACTION   ( ::GenerarSeries() )
 
       ::oBrwSer                  := IXBrowse():New( ::oDlg )
@@ -1729,12 +1728,6 @@ METHOD Resource() CLASS TNumerosSerie
 
       ::oBrwSer:CreateFromResource( 150 )
 
-      REDEFINE SAY ::oSaySer VAR ::cSaySer ;
-         ID       230 ;
-         OF       ::oDlg
-
-      ::oProSer   := TApoloMeter():ReDefine( 240, { | u | if( pCount() == 0, ::nProSer, ::nProSer := u ) }, 10, ::oDlg, .f., , , .t., rgb( 255,255,255 ), , rgb( 128,255,0 ) )
-
       REDEFINE BUTTON ;
          ID       510 ;
          OF       ::oDlg ;
@@ -1751,6 +1744,10 @@ METHOD Resource() CLASS TNumerosSerie
       ::oDlg:AddFastKey( VK_F5, {|| ::lChequearSalvarSeries() } )
 
    ACTIVATE DIALOG ::oDlg CENTER
+
+   if !Empty( oBmpNumSer )
+      oBmpNumSer:End()
+   end if
 
 Return ( nil )
 
@@ -1803,11 +1800,6 @@ METHOD lChequearSeries() CLASS TNumerosSerie
 
    CursorWait()
 
-   if !Empty( ::oProSer )
-      ::oProSer:Show()
-      ::oProSer:SetTotal( ::nAbsUnidades() )
-   end if
-
    for each l in ::aValSer
 
       if IsFalse( l )
@@ -1815,12 +1807,6 @@ METHOD lChequearSeries() CLASS TNumerosSerie
          lValid            := .f.
          n                 := hb_EnumIndex()
          exit
-
-      else
-
-         if !Empty( ::oProSer ) // .and. ( Mod( n, int( nTotUnd / 10 ) ) == 0 )
-            ::oProSer:Set( hb_EnumIndex() )
-         end if
 
       end if
 
@@ -1845,10 +1831,6 @@ METHOD lChequearSeries() CLASS TNumerosSerie
 
    end if
 
-   if !Empty( ::oProSer )
-      ::oProSer:Hide()
-   end if
-
    CursorWE()
 
 Return ( lValid )
@@ -1866,15 +1848,6 @@ METHOD lValidarSeries() CLASS TNumerosSerie
 
       // ::oDlg:Disable()
 
-      if !Empty( ::oProSer )
-         ::oProSer:Show()
-         ::oProSer:SetTotal( ::nAbsUnidades() )
-      end if
-
-      if !Empty( ::oSaySer )
-         ::oSaySer:SetText( "Calculando disponibilidad del stock..." )
-      end if
-
       for n := 1 to ::nAbsUnidades()
 
          if !Empty( ::aNumSer[ n ] )
@@ -1891,23 +1864,10 @@ METHOD lValidarSeries() CLASS TNumerosSerie
 
          end if
 
-         if !Empty( ::oProSer ) .and. ( Mod( n, int( ::nAbsUnidades() / 100 ) ) == 0 )
-            ::oProSer:Set( n )
-         end if
-
       next
 
       if !Empty( ::oBrwSer )
          ::oBrwSer:Refresh()
-      end if
-
-      if !Empty( ::oProSer )
-         ::oProSer:Set( 0 )
-         ::oProSer:Hide()
-      end if
-
-      if !Empty( ::oSaySer )
-         ::oSaySer:SetText( "" )
       end if
 
       // ::oDlg:Enable()
@@ -1932,10 +1892,6 @@ METHOD SalvarSeries() CLASS TNumerosSerie
    ::oDlg:Disable()
 
    ::EliminarSeries()
-
-   if !Empty( ::oProSer )
-      ::oProSer:SetTotal( nTotUnd )
-   end if
 
    for each cNumSer in ::aNumSer
 
@@ -1964,10 +1920,6 @@ METHOD SalvarSeries() CLASS TNumerosSerie
          ::uTmpSer:Save()
 
       end case
-
-      if !Empty( ::oProSer ) .and. ( Mod( hb_enumindex(), int( nTotUnd / 100 ) ) == 0 )
-         ::oProSer:Set( hb_enumindex() )
-      end if
 
    next
 

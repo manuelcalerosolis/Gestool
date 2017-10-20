@@ -4,9 +4,9 @@
 
 //---------------------------------------------------------------------------//
 
-CLASS SQLMovimientosAlmacenSeriesModel FROM SQLBaseEmpresasModel
+CLASS SQLNumerosSeriesModel FROM SQLBaseEmpresasModel
 
-   DATA cTableName            INIT "movimientos_almacen_series"
+   DATA cTableName            INIT "numeros_series" 
 
    METHOD New()
    
