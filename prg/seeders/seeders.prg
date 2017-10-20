@@ -13,20 +13,28 @@ CLASS Seeders
    METHOD runSeederDatos()
    METHOD runSeederEmpresa()
 
+   METHOD getInsertStatement( hCampos, cDataBaseName )
+
    METHOD SeederSituaciones()
-   METHOD getStatementSituaciones( dbfSitua )      INLINE   ( "INSERT INTO situaciones ( nombre ) VALUES ( " + quoted( ( dbfSitua )->cSitua ) + " )" )
+   METHOD getStatementSituaciones( dbfSitua )
 
    METHOD SeederTiposImpresoras()
-   METHOD getStatementTiposImpresoras( dbfTipImp ) INLINE   ( "INSERT INTO tipos_impresoras ( nombre ) VALUES ( " + quoted( ( dbfTipImp )->cTipImp ) + " )" )
+   METHOD getStatementTiposImpresoras( dbfTipImp )
 
    METHOD SeederTiposNotas()
-   METHOD getStatementTiposNotas( dbfTipNotas )    INLINE   ( "INSERT INTO tipos_notas ( nombre ) VALUES ( " + quoted( ( dbfTipNotas )->cTipo ) + " )" )
+   METHOD getStatementTiposNotas( dbfTipNotas )
 
    METHOD SeederTiposVentas()
-   METHOD getStatementTiposVentas( dbfTipVentas )  INLINE   ( "INSERT INTO tipos_ventas ( codigo, nombre ) VALUES ( " + quoted( ( dbfTipVentas )->cCodMov ) + ", " + quoted( ( dbfTipVentas )->cDesMov ) + " )" )
+   METHOD getStatementTiposVentas( dbfTipVentas )
 
-   METHOD SeederMovimientosAlmacen( cCodEmpresa )
+   METHOD SeederMovimientosAlmacen()
    METHOD getStatementSeederMovimientosAlmacen( dbfRemMov )
+
+   METHOD SeederMovimientosAlmacenLineas()
+   METHOD getStatementSeederMovimientosAlmacenLineas( dbfHisMov )
+
+   METHOD SeederMovimientosAlmacenSeries()
+   METHOD getStatementSeederMovimientosAlmacenSeries( dbfMovSer )
 
 END CLASS
 
@@ -64,8 +72,30 @@ METHOD runSeederEmpresa()
 
    ::oMsg:SetText( cTxtEmpresa + "Ejecutando seeder de cabeceras de movimientos de almacén" )
    ::SeederMovimientosAlmacen()
+   
+   ::oMsg:SetText( cTxtEmpresa + "Ejecutando seeder de lineas de movimientos de almacén" )
+   ::SeederMovimientosAlmacenLineas()
+
+   ::oMsg:SetText( cTxtEmpresa + "Ejecutando seeder de números de serie de lineas de movimientos de almacén" )
+   ::SeederMovimientosAlmacenSeries()
 
 Return ( self )
+
+//---------------------------------------------------------------------------//
+
+METHOD getInsertStatement( hCampos, cDataBaseName )
+
+   local cStatement  := ""
+
+   cStatement     := "INSERT INTO "
+   cStatement     += cDataBaseName + Space( 1 )
+   cStatement     += "( "
+   hEval( hCampos, {| k, v | cStatement += k + ", " } )
+   cStatement     := chgAtEnd( cStatement, " ) VALUES ( ", 2 )
+   hEval( hCampos, {| k, v | cStatement += v + ", " } )
+   cStatement     := chgAtEnd( cStatement, " )", 2 )
+
+Return cStatement
 
 //---------------------------------------------------------------------------//
 
@@ -106,6 +136,14 @@ RETURN ( Self )
 
 //---------------------------------------------------------------------------//
 
+METHOD getStatementSituaciones( dbfSitua )
+   
+   local hCampos        := { "nombre" => quoted( ( dbfSitua )->cSitua ) }
+
+RETURN ( ::getInsertStatement( hCampos, "situaciones" ) )
+
+//---------------------------------------------------------------------------//
+
 METHOD SeederTiposImpresoras() CLASS Seeders
 
    local cPath       := cPatDat( .t. )
@@ -139,6 +177,14 @@ METHOD SeederTiposImpresoras() CLASS Seeders
    frename( cPath + "TipImp.dbf", cPath + "TipImp.old" )
    
 RETURN ( Self )
+
+//---------------------------------------------------------------------------//
+
+METHOD getStatementTiposImpresoras( dbfTipImp )
+
+   local hCampos        := { "nombre" => quoted( ( dbfTipImp )->cTipImp ) }
+
+RETURN ( ::getInsertStatement( hCampos, "tipos_impresoras" ) )
 
 //---------------------------------------------------------------------------//
 
@@ -178,6 +224,14 @@ RETURN ( Self )
 
 //---------------------------------------------------------------------------//
 
+METHOD getStatementTiposNotas( dbfTipNotas )
+
+   local hCampos        := { "nombre" => quoted( ( dbfTipNotas )->cTipo ) }
+
+RETURN ( ::getInsertStatement( hCampos, "tipos_notas" ) )
+
+//---------------------------------------------------------------------------//
+
 METHOD SeederTiposVentas() CLASS Seeders
 
    local cPath       := cPatDat( .t. )
@@ -214,10 +268,20 @@ RETURN ( Self )
 
 //---------------------------------------------------------------------------//
 
+METHOD getStatementTiposVentas( dbfTipVentas )
+
+   local hCampos        := { "codigo" => quoted( ( dbfTipVentas )->cCodMov ),;
+                             "nombre"=> quoted( ( dbfTipVentas )->cDesMov ) }
+
+RETURN ( ::getInsertStatement( hCampos, "tipos_ventas" ) )
+
+//---------------------------------------------------------------------------//
+
 METHOD SeederMovimientosAlmacen()
 
    local cPath       := cPatEmp( , .t. )
    local dbfRemMovT
+   local cStatement
 
    if ( file( cPath + "RemMovT.old" ) )
       Return ( self )
@@ -229,12 +293,21 @@ METHOD SeederMovimientosAlmacen()
    end if 
 
    USE ( cPath + "RemMovT.Dbf" ) NEW VIA ( 'DBFCDX' ) SHARED ALIAS ( cCheckArea( "RemMovT", @dbfRemMovT ) )
+   
    ( dbfRemMovT )->( ordsetfocus(0) )
 
    ( dbfRemMovT )->( dbGoTop() )
-   while !( dbfRemMovT )->( eof() )
 
-      getSQLDatabase():Exec( ::getStatementSeederMovimientosAlmacen( dbfRemMovT ) )
+   while !( dbfRemMovT )->( eof() )
+      
+      cStatement  := "SELECT id "                                                         + ;
+                        "FROM movimientos_almacen "                                       + ;
+                        "WHERE uuid = " + quoted( ( dbfRemMovT )->cGuid ) + Space( 1 )    + ;
+                        "LIMIT 1"
+
+      if Empty( getSQLDatabase():selectFetchArrayOneColumn( cStatement ) )
+         getSQLDatabase():Exec( ::getStatementSeederMovimientosAlmacen( dbfRemMovT ) )
+      end if
 
       ( dbfRemMovT )->( dbSkip() )
 
@@ -252,37 +325,145 @@ RETURN ( Self )
 
 METHOD getStatementSeederMovimientosAlmacen( dbfRemMov )
 
-   local cStatement     := "INSERT INTO movimientos_almacen "
-         cStatement     += "( uuid, "
-         cStatement     += "empresa, "
-         cStatement     += "delegacion, "
-         cStatement     += "usuario, "
-         cStatement     += "numero, "
-         cStatement     += "tipo_movimiento, " 
-         cStatement     += "fecha_hora, "
-         cStatement     += "almacen_origen, "
-         cStatement     += "almacen_destino, "
-         cStatement     += "grupo_movimiento, "
-         cStatement     += "agente, "
-         cStatement     += "divisa, " 
-         cStatement     += "divisa_cambio, "
-         cStatement     += "comentarios ) "
-         cStatement     += "VALUES ( " + quoted( ( dbfRemMov )->cGuid ) + ", "
-         cStatement     += quoted( cCodEmp() ) + ", "
-         cStatement     += quoted( ( dbfRemMov )->cCodDlg ) + ", "
-         cStatement     += quoted( ( dbfRemMov )->cCodUsr ) + ", "
-         cStatement     += quoted( ( dbfRemMov )->nNumRem ) + ", "
-         cStatement     += quoted( ( dbfRemMov )->nTipMov ) + ", "
-         cStatement     += quoted( DateTimeToTimestamp( ( dbfRemMov )->dFecRem, ( dbfRemMov )->cTimRem ) ) + ", "
-         cStatement     += quoted( ( dbfRemMov )->cAlmOrg ) + ", "
-         cStatement     += quoted( ( dbfRemMov )->cAlmDes ) + ", "
-         cStatement     += quoted( ( dbfRemMov )->cCodMov ) + ", "
-         cStatement     += quoted( ( dbfRemMov )->cCodAge ) + ", "
-         cStatement     += quoted( ( dbfRemMov )->cCodDiv ) + ", "
-         cStatement     += quoted( ( dbfRemMov )->nVdvDiv ) + ", "
-         cStatement     += quoted( ( dbfRemMov )->cComMov ) + " )"
+   local hCampos        := {  "uuid" => quoted( ( dbfRemMov )->cGuid ),;
+                              "empresa" => quoted( cCodEmp() ),;
+                              "delegacion" => quoted( ( dbfRemMov )->cCodDlg ),;
+                              "usuario" => quoted( ( dbfRemMov )->cCodUsr ),;
+                              "numero" => quoted( ( dbfRemMov )->nNumRem ),;
+                              "tipo_movimiento" => quoted( ( dbfRemMov )->nTipMov ),;
+                              "fecha_hora" => quoted( DateTimeToTimestamp( ( dbfRemMov )->dFecRem, ( dbfRemMov )->cTimRem ) ),;
+                              "almacen_origen" => quoted( ( dbfRemMov )->cAlmOrg ),;
+                              "almacen_destino" => quoted( ( dbfRemMov )->cAlmDes ),;
+                              "grupo_movimiento" => quoted( ( dbfRemMov )->cCodMov ),;
+                              "agente" => quoted( ( dbfRemMov )->cCodAge ),;
+                              "divisa" => quoted( ( dbfRemMov )->cCodDiv ),;
+                              "divisa_cambio" => quoted( ( dbfRemMov )->nVdvDiv ),;
+                              "comentarios" => quoted( ( dbfRemMov )->cComMov ) }
 
-Return cStatement
+RETURN ( ::getInsertStatement( hCampos, "movimientos_almacen" ) )
+
+//---------------------------------------------------------------------------//
+
+METHOD SeederMovimientosAlmacenLineas()
+
+   local cPath       := cPatEmp( , .t. )
+   local dbfHisMov
+   local cStatement
+
+   if ( file( cPath + "HisMov.old" ) )
+      Return ( self )
+   end if
+
+   if !( file( cPath + "HisMov.Dbf" ) )
+      msgStop( "El fichero " + cPath + "\HisMov.Dbf no se ha localizado", "Atención" )  
+      Return ( self )
+   end if 
+
+   USE ( cPath + "HisMov.Dbf" ) NEW VIA ( 'DBFCDX' ) SHARED ALIAS ( cCheckArea( "HisMov", @dbfHisMov ) )
+   
+   ( dbfHisMov )->( ordsetfocus(0) )
+
+   ( dbfHisMov )->( dbGoTop() )
+
+   while !( dbfHisMov )->( eof() )
+      
+      cStatement  := "SELECT id "                                                         + ;
+                        "FROM movimientos_almacen_lineas "                                + ;
+                        "WHERE uuid = " + quoted( ( dbfHisMov )->cGuid ) + Space( 1 )     + ;
+                        "LIMIT 1"
+
+      if Empty( getSQLDatabase():selectFetchArrayOneColumn( cStatement ) )
+         getSQLDatabase():Exec( ::getStatementSeederMovimientosAlmacenLineas( dbfHisMov ) )
+      end if
+
+      ( dbfHisMov )->( dbSkip() )
+
+   end while
+
+   if dbfHisMov != nil
+      ( dbfHisMov )->( dbCloseArea() )
+   end if
+
+   //frename( cPath + "HisMov.dbf", cPath + "HisMov.old" )
+
+RETURN ( Self )
+
+//---------------------------------------------------------------------------//
+
+METHOD getStatementSeederMovimientosAlmacenLineas( dbfHisMov )
+
+   local hCampos        := {  "uuid" => quoted( ( dbfHisMov )->cGuid ),;
+                              "parent_uuid" => quoted( ( dbfHisMov )->cGuidPar ),;
+                              "codigo_articulo" => quoted( ( dbfHisMov )->cRefMov ),;
+                              "nombre_articulo" => quoted( ( dbfHisMov )->cNomMov ),;
+                              "codigo_primera_propiedad" => quoted( ( dbfHisMov )->cCodPr1 ),;
+                              "valor_primera_propiedad" => quoted( ( dbfHisMov )->cValPr1 ),;
+                              "codigo_segunda_propiedad" => quoted( ( dbfHisMov )->cCodPr2 ),;
+                              "valor_segunda_propiedad" => quoted( ( dbfHisMov )->cValPr2 ),;
+                              "lote" => quoted( ( dbfHisMov )->cLote ),;
+                              "bultos_articulo" => quoted( Str( ( dbfHisMov )->nBultos ) ),;
+                              "cajas_articulo" => quoted( Str( ( dbfHisMov )->nCajMov ) ),;
+                              "unidades_articulo" => quoted( Str( ( dbfHisMov )->nUndAnt ) ),;
+                              "precio_articulo" => quoted( Str( ( dbfHisMov )->nPreDiv ) ) }
+
+
+RETURN ( ::getInsertStatement( hCampos, "movimientos_almacen_lineas" ) )
+
+//---------------------------------------------------------------------------//
+
+METHOD SeederMovimientosAlmacenSeries()
+
+   local cPath       := cPatEmp( , .t. )
+   local dbfMovSer
+   local cStatement
+
+   if ( file( cPath + "MovSer.old" ) )
+      Return ( self )
+   end if
+
+   if !( file( cPath + "MovSer.Dbf" ) )
+      msgStop( "El fichero " + cPath + "\MovSer.Dbf no se ha localizado", "Atención" )  
+      Return ( self )
+   end if 
+
+   USE ( cPath + "MovSer.Dbf" ) NEW VIA ( 'DBFCDX' ) SHARED ALIAS ( cCheckArea( "MovSer", @dbfMovSer ) )
+   
+   ( dbfMovSer )->( ordsetfocus(0) )
+
+   ( dbfMovSer )->( dbGoTop() )
+
+   while !( dbfMovSer )->( eof() )
+      
+      cStatement  := "SELECT id "                                                         + ;
+                        "FROM numeros_series "                                            + ;
+                        "WHERE uuid = " + quoted( ( dbfMovSer )->cGuid ) + Space( 1 )     + ;
+                        "LIMIT 1"
+
+      if Empty( getSQLDatabase():selectFetchArrayOneColumn( cStatement ) )
+         getSQLDatabase():Exec( ::getStatementSeederMovimientosAlmacenSeries( dbfMovSer ) )
+      end if
+
+      ( dbfMovSer )->( dbSkip() )
+
+   end while
+
+   if dbfMovSer != nil
+      ( dbfMovSer )->( dbCloseArea() )
+   end if
+
+   //frename( cPath + "MovSer.dbf", cPath + "MovSer.old" )
+
+RETURN ( Self )
+
+//---------------------------------------------------------------------------//
+
+METHOD getStatementSeederMovimientosAlmacenSeries( dbfMovSer )
+
+   local hCampos        := {  "uuid" => quoted( ( dbfMovSer )->cGuid ),;
+                              "parent_uuid" => quoted( ( dbfMovSer )->cGuidPar ),;
+                              "numero_serie" => quoted( ( dbfMovSer )->cNumSer ) }
+
+RETURN ( ::getInsertStatement( hCampos, "numeros_series" ) )
 
 //---------------------------------------------------------------------------//
 

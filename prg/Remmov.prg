@@ -3578,6 +3578,7 @@ Function SynRemMov( cPath )
    local dFecMov
    local dbfRemMov
    local dbfHisMov
+   local dbfMovSer
    local dbfArticulo
    local nTotRem  := 0
    local nOrdAnt
@@ -3592,6 +3593,9 @@ Function SynRemMov( cPath )
 
    USE ( cPath + "HISMOV.DBF" ) NEW VIA ( cDriver() ) EXCLUSIVE ALIAS ( cCheckArea( "HISMOV", @dbfHisMov ) )
    SET ADSINDEX TO ( cPath + "HISMOV.CDX" ) ADDITIVE
+
+   USE ( cPath + "MOVSER.DBF" ) NEW VIA ( cDriver() ) EXCLUSIVE ALIAS ( cCheckArea( "MOVSER", @dbfMovSer ) )
+   SET ADSINDEX TO ( cPath + "MOVSER.CDX" ) ADDITIVE
 
    USE ( cPatArt() + "ARTICULO.DBF" ) NEW VIA ( cDriver() ) EXCLUSIVE ALIAS ( cCheckArea( "ARTICULO", @dbfArticulo ) )
    SET ADSINDEX TO ( cPatArt() + "ARTICULO.CDX" ) ADDITIVE
@@ -3647,10 +3651,6 @@ Function SynRemMov( cPath )
 
       end if
 
-      if empty( ( dbfHisMov )->cGuidPar )
-         ( dbfHisMov )->cGuidPar       := RetFld( Str( ( dbfHisMov )->nNumRem ) + ( dbfHisMov )->cSufRem, dbfRemMov, "cGuid", "cNumRem" )
-      end if 
-
       if empty( ( dbfHisMov )->cTimMov )
          ( dbfHisMov )->cTimMov        := RetFld( Str( ( dbfHisMov )->nNumRem ) + ( dbfHisMov )->cSufRem, dbfRemMov, "cTimRem", "cNumRem" )
       end if
@@ -3669,6 +3669,10 @@ Function SynRemMov( cPath )
 
       if empty( ( dbfHisMov )->cGuid )
          ( dbfHisMov )->cGuid          := win_uuidcreatestring()
+      end if
+
+      if empty( ( dbfHisMov )->cGuidPar )
+         ( dbfHisMov )->cGuidPar       := RetFld( Str( ( dbfHisMov )->nNumRem ) + ( dbfHisMov )->cSufRem, dbfRemMov, "cGuid", "cNumRem" )
       end if
 
       ( dbfHisMov )->( dbSkip() )
@@ -3708,6 +3712,28 @@ Function SynRemMov( cPath )
 
    end while
 
+   /*
+   Números de serie de los movimientos de almacén------------------------------
+   */
+
+   ( dbfMovSer )->( dbGoTop() )
+
+   while !( dbfMovSer )->( eof() )
+
+      if empty( ( dbfMovSer )->cGuid )
+         ( dbfMovSer )->cGuid          := win_uuidcreatestring()
+      end if
+
+      //Vas por aqui----------------------------------------------------------
+
+      if empty( ( dbfMovSer )->cGuidPar )
+         ( dbfMovSer )->cGuidPar       := RetFld( Str( ( dbfMovSer )->nNumRem ) + ( dbfMovSer )->cSufRem + Str( ( dbfMovSer )->nNumLin, 9 ), dbfHisMov, "cGuid", "cRemLin" )
+      end if
+
+      ( dbfMovSer )->( dbSkip() )
+
+   end while
+
    RECOVER USING oError
 
       msgstop( "Imposible abrir todas las bases de datos de movimientos de almacén" + CRLF + ErrorMessage( oError ) )
@@ -3719,6 +3745,7 @@ Function SynRemMov( cPath )
    CLOSE ( dbfRemMov )
    CLOSE ( dbfHisMov )
    CLOSE ( dbfArticulo )
+   CLOSE ( dbfMovSer )
 
 return nil
 

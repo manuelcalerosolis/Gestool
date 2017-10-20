@@ -5,6 +5,7 @@
 
 CLASS MovimientosAlmacenLineasController FROM SQLBaseController
 
+   DATA oSeriesControler
    DATA aProperties                    INIT {}
 
    METHOD New()
@@ -37,6 +38,8 @@ CLASS MovimientosAlmacenLineasController FROM SQLBaseController
 
    METHOD getSegundaPropiedad( cCodigoArticulo, cCodigoPropiedad )
 
+   METHOD runDialogSeries()           INLINE ( ::oSeriesControler:Dialog() )
+
    METHOD onClosedDialog() 
 
    METHOD showPrimeraPropiedad()       INLINE ( if( !uFieldEmpresa( "lUseTbl" ), ::oDialogView:oGetValorPrimeraPropiedad:Show(), ) )
@@ -63,6 +66,8 @@ METHOD New( oController )
    ::oDialogView           := MovimientosAlmacenLineasView():New( self )
 
    ::oValidator            := MovimientosAlmacenLineasValidator():New( self )
+
+   ::oSeriesControler      := NumerosSeriesController():New( self )
 
    ::Super:New( oController )
 
