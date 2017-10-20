@@ -15,6 +15,8 @@ CLASS SQLPropertyBrowseView
    DATA aPropertyOne
    DATA aPropertyTwo 
 
+   DATA aProperties           INIT {}
+
    DATA aPropertiesTable
 
    DATA nTotalRow
@@ -24,11 +26,19 @@ CLASS SQLPropertyBrowseView
 
    METHOD Hide()              INLINE ( ::oBrowse:Hide() )
    METHOD Show()              INLINE ( ::oBrowse:Show() )
+   METHOD lVisible()          INLINE ( ::oBrowse:lVisible )
 
    METHOD setPropertyOne( aPropiedadesArticulo )
    METHOD setPropertyTwo( aPropiedadesArticulo )
 
    METHOD build()
+   METHOD buildPropertyTable()
+   METHOD setBrowsePropertyTable()
+   METHOD createColumnBrowseProperty()
+   METHOD showBrowseProperty()
+
+   METHOD getProperties()
+   METHOD addProperty()
 
    METHOD addColumnTitleProperty( n )
    METHOD addColumnColorProperty( n )
@@ -91,37 +101,34 @@ METHOD setPropertyTwo( aPropiedadesArticulo )
 
    ::aPropertyTwo    := aPropiedadesArticulo
 
-   msgalert( hb_valtoexp( aPropiedadesArticulo ), "aPropiedadesArticulo" )
-
 RETURN ( self )
 
 //---------------------------------------------------------------------------//
 
 METHOD build()
 
-   local n
-   local nRow 
-   local nCol 
-   local nTotalCol
-   local nTotalRow
-   local oGetUnidades
-   local hValorPropiedad
+   ::buildPropertyTable()
 
-   nRow                 := 1
-   nCol                 := 1
+   ::setBrowsePropertyTable()
+
+   ::createColumnBrowseProperty()
+
+   ::showBrowseProperty()
+
+RETURN ( self )
+
+//---------------------------------------------------------------------------//
+
+METHOD buildPropertyTable()
+
+   local n
+   local nRow           := 1
+   local nCol           := 1
+   local hValorPropiedad
 
    ::aPropertiesTable   := array( ::nTotalRow, ::nTotalColumn )
 
    aeval( ::aPropertyOne, {| h, n | ::aPropertiesTable[ n, nCol ] := TPropertiesItems():buildOne( h ) } ) 
-
-   /*
-   if !empty( ::aPropertyTwo )
-      for nRow := 1 to ::nTotalColumn
-         aeval( ::aPropertyTwo,;
-            {| h, n | aPropertiesTable[ nRow, n ] := TPropertiesItems():buildTwo( ::aPropertyOne[ n ], h ) } ) 
-      next 
-   end if 
-   */
 
    if !empty( ::aPropertyTwo )
 
@@ -130,17 +137,7 @@ METHOD build()
          nCol++
 
          for n := 1 to ::nTotalRow
-
-            ::aPropertiesTable[ n, nCol ]                     := TPropertiesItems():New()
-            ::aPropertiesTable[ n, nCol ]:Value               := 0
-            ::aPropertiesTable[ n, nCol ]:cHead               := hValorPropiedad[ "CabeceraPropiedad" ]
-            ::aPropertiesTable[ n, nCol ]:cCodigo             := hValorPropiedad[ "CodigoArticulo" ]
-            ::aPropertiesTable[ n, nCol ]:cCodigoPropiedad1   := ::aPropertiesTable[ n, 1 ]:cCodigoPropiedad1
-            ::aPropertiesTable[ n, nCol ]:cValorPropiedad1    := ::aPropertiesTable[ n, 1 ]:cValorPropiedad1
-            ::aPropertiesTable[ n, nCol ]:cCodigoPropiedad2   := hValorPropiedad[ "CodigoPropiedad" ]
-            ::aPropertiesTable[ n, nCol ]:cValorPropiedad2    := hValorPropiedad[ "ValorPropiedad" ]
-            ::aPropertiesTable[ n, nCol ]:lColor              := ::aPropertiesTable[ n, 1 ]:lColor
-            ::aPropertiesTable[ n, nCol ]:nRgb                := ::aPropertiesTable[ n, 1 ]:nRgb
+            ::aPropertiesTable[ n, nCol ] := TPropertiesItems():buildTwo( hValorPropiedad, ::aPropertiesTable[ n, 1 ] )
          next
 
       next
@@ -150,27 +147,30 @@ METHOD build()
       nCol++
 
       for n := 1 to ::nTotalRow
-         ::aPropertiesTable[ n, nCol ]                        := TPropertiesItems():New()
-         ::aPropertiesTable[ n, nCol ]:Value                  := 0
-         ::aPropertiesTable[ n, nCol ]:cHead                  := "Unidades"
-         ::aPropertiesTable[ n, nCol ]:cCodigo                := ::aPropertiesTable[ n, 1 ]:cCodigoArticulo
-         ::aPropertiesTable[ n, nCol ]:cCodigoPropiedad1      := ::aPropertiesTable[ n, 1 ]:cCodigoPropiedad1
-         ::aPropertiesTable[ n, nCol ]:cValorPropiedad1       := ::aPropertiesTable[ n, 1 ]:cValorPropiedad1
-         ::aPropertiesTable[ n, nCol ]:cCodigoPropiedad2      := Space( 20 )
-         ::aPropertiesTable[ n, nCol ]:cValorPropiedad2       := Space( 40 )
-         ::aPropertiesTable[ n, nCol ]:lColor                 := ::aPropertiesTable[ n, 1 ]:lColor
-         ::aPropertiesTable[ n, nCol ]:nRgb                   := ::aPropertiesTable[ n, 1 ]:nRgb
+         ::aPropertiesTable[ n, nCol ]    := TPropertiesItems():buildUnits( hValorPropiedad, ::aPropertiesTable[ n, 1 ] )
       next
 
    end if
 
-   // Asignamos la informacion al browse---------------------------------------
+RETURN ( self )
+
+//---------------------------------------------------------------------------//
+
+METHOD setBrowsePropertyTable()
 
    ::oBrowse:aCols            := {}
    ::oBrowse:Cargo            := ::aPropertiesTable   
    ::oBrowse:nFreeze          := 1
    
    ::oBrowse:SetArray( ::aPropertiesTable, .f., 0, .f. )
+
+RETURN ( self )
+
+//---------------------------------------------------------------------------//
+
+METHOD createColumnBrowseProperty()
+
+   local n
 
    for n := 1 to len( ::aPropertiesTable[ 1 ] )
 
@@ -187,8 +187,15 @@ METHOD build()
       end if
 
    next
-      
+
+RETURN ( self )
+
+//---------------------------------------------------------------------------//
+
+METHOD showBrowseProperty()
+
    ::oBrowse:aCols[ 1 ]:Hide()
+
    ::oBrowse:Adjust()
 
    ::oBrowse:nColSel          := ::oBrowse:nFreeze + 1
@@ -198,7 +205,7 @@ METHOD build()
    ::oBrowse:nFooterHeight    := 20
 
    ::oBrowse:Show()
-      
+
 RETURN ( self )
 
 //---------------------------------------------------------------------------//
@@ -207,10 +214,10 @@ METHOD addColumnTitleProperty( n )
 
    with object ( ::oBrowse:AddCol() )
       :Adjust()
-      :cHeader          := ::aPropertiesTable[ ::oBrowse:nArrayAt, n ]:cHead
-      :bEditValue       := ::bGenEditText( n )
-      :nWidth           := 100
-      :bFooter          := {|| "Total" }
+      :cHeader       := ::aPropertiesTable[ ::oBrowse:nArrayAt, n ]:cHead
+      :bEditValue    := ::bGenEditText( n )
+      :nWidth        := 100
+      :bFooter       := {|| "Total" }
    end with
 
 RETURN ( self )
@@ -218,8 +225,6 @@ RETURN ( self )
 //---------------------------------------------------------------------------//
 
 METHOD addColumnColorProperty( n )
-
-   // Columna del color de la propiedad
 
    if !( ::aPropertiesTable[ ::oBrowse:nArrayAt, n ]:lColor )
       RETURN ( Self )
@@ -262,6 +267,28 @@ METHOD addColumnValueProperty( n )
       :nFootStyle       := :defStyle( AL_RIGHT, .t. )               
       :Cargo            := n
    end with
+
+RETURN ( self )
+
+//---------------------------------------------------------------------------//
+
+METHOD getProperties()
+
+   ::aProperties        := {}
+
+   aeval( ::aPropertiesTable,;
+      {| aProperty | aeval( aProperty,;
+         {| oItem | ::addProperty( oItem ) } ) } )
+
+RETURN ( ::aProperties )
+
+//---------------------------------------------------------------------------//
+
+METHOD addProperty( oItem )
+
+   if hb_isnumeric( oItem:Value ) .and. oItem:Value != 0
+      aadd( ::aProperties, oItem )
+   end if 
 
 RETURN ( self )
 

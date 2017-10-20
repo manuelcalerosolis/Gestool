@@ -13,29 +13,31 @@
 
 CLASS TGetHlp FROM TGet
 
-   DATA  bHelp
-   DATA  bMult
-   DATA  cBmp
-   DATA  oBmp
-   DATA  oSay
-   DATA  oHelpText
-   DATA  cHelpText                  INIT  Space( 50 )
+   DATA bHelp
+   DATA bMult
+   DATA cBmp
+   DATA oBmp
+   DATA oSay
+   DATA oHelpText
+   DATA cHelpText                   INIT  Space( 50 )
 
-   DATA  bKeyUp
+   DATA Original
 
-   DATA  lGotFocus
-   DATA  lNeedGetFocus
+   DATA bKeyUp
 
-   DATA  bOldWhen
-   DATA  bOldValid
-   DATA  bOldLostFocus
+   DATA lGotFocus
+   DATA lNeedGetFocus
 
-   DATA  bPreValidate
-   DATA  bPostValidate
+   DATA bOldWhen
+   DATA bOldValid
+   DATA bOldLostFocus
 
-   DATA  nMargin                    INIT 16
+   DATA bPreValidate
+   DATA bPostValidate
 
-   DATA  cError                     INIT ""
+   DATA nMargin                     INIT 16
+
+   DATA cError                      INIT ""
 
    METHOD New()                     CONSTRUCTOR
    METHOD ReDefine()                CONSTRUCTOR
@@ -79,6 +81,10 @@ CLASS TGetHlp FROM TGet
    METHOD lValid()
 
    METHOD setError( cError )
+
+   METHOD getOriginal()                INLINE ( ::Original )
+   METHOD setOriginal( value )         INLINE ( ::Original := value )
+   METHOD isOriginalChanged( value )   INLINE ( ::Original != value )
 
 ENDCLASS
 
@@ -386,10 +392,6 @@ METHOD GotFocus() CLASS TGetHlp
 
     ::lFocused = .t.
 
-    #ifdef __XHARBOUR__
-       ::oGet:VarGet()
-    #endif
-
     if ! Empty( ::cPicture ) .and. ::oGet:type == "N"
        ::oGet:Picture := StrTran( ::cPicture, ",", "" )
     endif
@@ -425,8 +427,6 @@ METHOD GotFocus() CLASS TGetHlp
    else
       ::SelectAll()
    end if
-
-    // Super:GotFocus()
 
 return 0
 
@@ -476,9 +476,7 @@ METHOD LostFocus( hCtlFocus ) CLASS TGetHlp
    else
       ::oGet:Pos        := 1
       ::nPos            := 1
-      #ifdef __HARBOUR__
       ::oGet:TypeOut    := .f.
-      #endif
    endif
 
    if ::lNeedGetFocus

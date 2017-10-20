@@ -5,7 +5,11 @@
 
 CLASS MovimientosAlmacenLineasController FROM SQLBaseController
 
+<<<<<<< HEAD
    DATA oSeriesControler
+=======
+   DATA aProperties                    INIT {}
+>>>>>>> ad7bb381f35c91cbb3ecc016a2e87af4ca6cc574
 
    METHOD New()
 
@@ -37,7 +41,11 @@ CLASS MovimientosAlmacenLineasController FROM SQLBaseController
 
    METHOD getSegundaPropiedad( cCodigoArticulo, cCodigoPropiedad )
 
+<<<<<<< HEAD
    METHOD runDialogSeries()           INLINE ( ::oSeriesControler:Dialog() )
+=======
+   METHOD onClosedDialog() 
+>>>>>>> ad7bb381f35c91cbb3ecc016a2e87af4ca6cc574
 
 END CLASS
 
@@ -60,6 +68,8 @@ METHOD New( oController )
 
    ::Super:New( oController )
 
+   ::setEvent( 'closedDialog', {|| ::onClosedDialog() } )
+
 RETURN ( Self )
 
 //---------------------------------------------------------------------------//
@@ -78,7 +88,7 @@ RETURN ( Self )
 
 METHOD buildingRowSet()
 
-   local uuid              := hget( ::getSenderController():oModel:hBuffer, "uuid" )
+   local uuid        := hget( ::getSenderController():oModel:hBuffer, "uuid" )
 
    if empty( uuid )
       RETURN ( Self )
@@ -102,10 +112,16 @@ METHOD stampArticulo()
       RETURN ( .t. )
    end if 
 
+   if !( ::oDialogView:oGetCodigoArticulo:isOriginalChanged( cCodigoArticulo ) )
+      RETURN ( .t. )
+   end if 
+
    cAreaArticulo     := ArticulosModel():get( cCodigoArticulo )
    if empty( cAreaArticulo )
       RETURN ( .t. )
    end if 
+
+   ::oDialogView:oGetCodigoArticulo:Original  := cCodigoArticulo
 
    ::oDialogView:oGetNombreArticulo:cText( ( cAreaArticulo )->Nombre )
 
@@ -113,37 +129,53 @@ METHOD stampArticulo()
 
    // Primera propiedad--------------------------------------------------------
 
-   if !empty( ( cAreaArticulo )->cCodPrp1 )
+   if empty( ( cAreaArticulo )->cCodPrp1 )
+
+      ::oDialogView:oBrowsePropertyView:hide()
+
+      ::oDialogView:oGetValorPrimeraPropiedad:hide()
+
+      ::oDialogView:oGetValorSegundaPropiedad:hide()
+
+   else 
    
       hset( ::oModel:hBuffer, "codigo_primera_propiedad", ( cAreaArticulo )->cCodPrp1 )
 
       ::oDialogView:oGetValorPrimeraPropiedad:oSay:setText( PropiedadesModel():getNombre( ( cAreaArticulo )->cCodPrp1 ) )
-      
-      ::oDialogView:oGetValorPrimeraPropiedad:Show()
+
+      if !uFieldEmpresa( "lUseTbl" )
+         ::oDialogView:oGetValorPrimeraPropiedad:Show()
+      end if 
 
       ::oDialogView:oBrowsePropertyView:setPropertyOne( ::getPrimeraPropiedad( cCodigoArticulo, ( cAreaArticulo )->cCodPrp1 ) )
 
-   end if 
+      // Segunda propiedad-----------------------------------------------------
 
-   // Segunda propiedad--------------------------------------------------------
-
-   if !empty( ( cAreaArticulo )->cCodPrp2 )
-   
-      hset( ::oModel:hBuffer, "codigo_segunda_propiedad", ( cAreaArticulo )->cCodPrp2 )
-
-      ::oDialogView:oGetValorSegundaPropiedad:oSay:setText( PropiedadesModel():getNombre( ( cAreaArticulo )->cCodPrp2 ) )
+      if !empty( ( cAreaArticulo )->cCodPrp2 )
       
-      ::oDialogView:oGetValorSegundaPropiedad:Show()
+         hset( ::oModel:hBuffer, "codigo_segunda_propiedad", ( cAreaArticulo )->cCodPrp2 )
 
-      ::oDialogView:oBrowsePropertyView:setPropertyTwo( ::getSegundaPropiedad( cCodigoArticulo, ( cAreaArticulo )->cCodPrp2 ) )
+         ::oDialogView:oGetValorSegundaPropiedad:oSay:setText( PropiedadesModel():getNombre( ( cAreaArticulo )->cCodPrp2 ) )
+         
+         if !uFieldEmpresa( "lUseTbl" )
+            ::oDialogView:oGetValorSegundaPropiedad:Show()
+         end if 
+
+         ::oDialogView:oBrowsePropertyView:setPropertyTwo( ::getSegundaPropiedad( cCodigoArticulo, ( cAreaArticulo )->cCodPrp2 ) )
+
+      end if 
+
+      if uFieldEmpresa( "lUseTbl" )
+         ::oDialogView:oBrowsePropertyView:build()
+      end if 
 
    end if 
-
-   ::oDialogView:oBrowsePropertyView:build()
 
    // Fecha de caducidad-------------------------------------------------------
 
    ::stampFechaCaducidad()
+
+   ::oDialogView:oGetCodigoArticulo:setOriginal( cCodigoArticulo )
 
    // Area de trabajo----------------------------------------------------------
 
@@ -226,5 +258,17 @@ METHOD getSegundaPropiedad( cCodigoArticulo, cCodigoPropiedad )
    end if 
 
 RETURN ( aProperties )
+
+//---------------------------------------------------------------------------//
+
+METHOD onClosedDialog()
+
+   ::aProperties     := {}
+
+   if ::oDialogView:oBrowsePropertyView:lVisible
+      ::aProperties  := ::oDialogView:oBrowsePropertyView:getProperties()
+   end if 
+
+RETURN ( .t. )
 
 //---------------------------------------------------------------------------//

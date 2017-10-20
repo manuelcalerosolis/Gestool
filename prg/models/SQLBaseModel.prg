@@ -651,7 +651,7 @@ RETURN ( uValue )
 
 METHOD insertBuffer()
 
-   ::getDatabase():Query( ::getInsertSentence() )
+   ::getDatabase():Execs( ::getInsertSentence() )
 
    ::buildRowSetAndFind( ::getDatabase():LastInsertId() )
 

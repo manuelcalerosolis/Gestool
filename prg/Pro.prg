@@ -1402,6 +1402,7 @@ CLASS TPropertiesItems
    METHOD New()
    METHOD buildOne()
    METHOD buildTwo()
+   METHOD buildUnits()
 
    METHOD PrecioCompra()
 
@@ -1435,8 +1436,6 @@ METHOD buildOne( hPropertyOne )
 
    ::New()
 
-   msgalert( hb_valtoexp( hPropertyOne ), "buildOne" )
-
    ::cCodigo            := hPropertyOne[ "CodigoArticulo" ]
    ::cHead              := hPropertyOne[ "TipoPropiedad" ]
    ::cText              := hPropertyOne[ "CabeceraPropiedad" ]
@@ -1449,38 +1448,43 @@ RETURN ( Self )
 
 //---------------------------------------------------------------------------//
 
-METHOD buildTwo( hPropertyOne, hPropertyTwo )
+METHOD buildTwo( hPropertyOne, aPropertyTable )
 
    ::New()
 
-   ::Value              := 0
-   ::cCodigo            := hPropertyOne[ "CodigoArticulo" ]
-   ::cText              := hPropertyOne[ "CabeceraPropiedad" ]
-   ::cCodigoPropiedad1  := hPropertyOne[ "CodigoPropiedad" ]
-   ::cValorPropiedad1   := hPropertyOne[ "ValorPropiedad" ]
-   ::lColor             := hPropertyOne[ "ColorPropiedad" ]
-   ::nRgb               := hPropertyOne[ "RgbPropiedad" ]
+   ::Value               := 0
+   ::cHead               := hPropertyOne[ "CabeceraPropiedad" ]
+   ::cCodigo             := hPropertyOne[ "CodigoArticulo" ]
+   ::cCodigoPropiedad2   := hPropertyOne[ "CodigoPropiedad" ]
+   ::cValorPropiedad2    := hPropertyOne[ "ValorPropiedad" ]
 
-   ::cHead              := hPropertyTwo[ "CabeceraPropiedad" ]
-   ::cCodigoPropiedad2  := hPropertyTwo[ "CodigoPropiedad" ]
-   ::cValorPropiedad2   := hPropertyTwo[ "ValorPropiedad" ]
-
-   /*
-   aPropertiesTable[ n, nCol ]                     := TPropertiesItems():New()
-   aPropertiesTable[ n, nCol ]:Value               := 0
-   aPropertiesTable[ n, nCol ]:cHead               := hValorPropiedad[ "CabeceraPropiedad" ]
-   aPropertiesTable[ n, nCol ]:cCodigo             := cCodArt
-   aPropertiesTable[ n, nCol ]:cCodigoPropiedad1   := aPropertiesTable[ n, 1 ]:cCodigoPropiedad1
-   aPropertiesTable[ n, nCol ]:cValorPropiedad1    := aPropertiesTable[ n, 1 ]:cValorPropiedad1
-   aPropertiesTable[ n, nCol ]:cCodigoPropiedad2   := hValorPropiedad[ "CodigoPropiedad" ]
-   aPropertiesTable[ n, nCol ]:cValorPropiedad2    := hValorPropiedad[ "ValorPropiedad" ]
-   aPropertiesTable[ n, nCol ]:lColor              := aPropertiesTable[ n, 1 ]:lColor
-   aPropertiesTable[ n, nCol ]:nRgb                := aPropertiesTable[ n, 1 ]:nRgb
-   */
+   ::cCodigoPropiedad1   := aPropertyTable:cCodigoPropiedad1
+   ::cValorPropiedad1    := aPropertyTable:cValorPropiedad1
+   ::lColor              := aPropertyTable:lColor
+   ::nRgb                := aPropertyTable:nRgb
 
 RETURN ( Self )
 
 //---------------------------------------------------------------------------//
+
+METHOD buildUnits( hPropertyOne, aPropertyTable )
+
+   ::New()
+
+   ::Value                  := 0
+   ::cHead                  := "Unidades"
+   ::cCodigoPropiedad2      := Space( 40 )
+   ::cValorPropiedad2       := Space( 40 )
+   ::cCodigo                := aPropertyTable:cCodigoArticulo
+   ::cCodigoPropiedad1      := aPropertyTable:cCodigoPropiedad1
+   ::cValorPropiedad1       := aPropertyTable:cValorPropiedad1
+   ::lColor                 := aPropertyTable:lColor
+   ::nRgb                   := aPropertyTable:nRgb
+
+RETURN ( Self )
+
+//---------------------------------------------------------------------------//
+
 
 METHOD PrecioCompra( nPrecioCosto, dbfArtCom ) CLASS TPropertiesItems
 
