@@ -54,6 +54,8 @@ METHOD DefineFiles( cPath, cDriver, lUniqueName, cFileName ) CLASS TDetSeriesMov
       FIELD NAME "cAlmOrd"    TYPE "C" LEN 16  DEC 0 COMMENT "Almacén"                          COLSIZE  50 OF oDbf
       FIELD NAME "lUndNeg"    TYPE "L" LEN 01  DEC 0 COMMENT "Lógico de unidades en negativo"   HIDE        OF oDbf
       FIELD NAME "cNumSer"    TYPE "C" LEN 30  DEC 0 COMMENT "Número de serie"                  HIDE        OF oDbf
+      FIELD NAME "cGuid"      TYPE "C" LEN  40 DEC 0 COMMENT "cGuid de las lineas"              HIDE        OF oDbf
+      FIELD NAME "cGuidPar"   TYPE "C" LEN  40 DEC 0 COMMENT "cGuid de la cabecera"             HIDE        OF oDbf
 
       INDEX TO ( cFileName ) TAG "cNumOrd" ON "Str( nNumRem ) + cSufRem + Str( nNumLin )"       NODELETED   OF oDbf
       INDEX TO ( cFileName ) TAG "cCodArt" ON "cCodArt + cAlmOrd + cNumSer"                     NODELETED   OF oDbf

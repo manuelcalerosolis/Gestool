@@ -5,6 +5,8 @@
 
 CLASS MovimientosAlmacenLineasController FROM SQLBaseController
 
+   DATA oSeriesControler
+
    METHOD New()
 
    METHOD loadedBlankBuffer()
@@ -35,6 +37,8 @@ CLASS MovimientosAlmacenLineasController FROM SQLBaseController
 
    METHOD getSegundaPropiedad( cCodigoArticulo, cCodigoPropiedad )
 
+   METHOD runDialogSeries()           INLINE ( ::oSeriesControler:Dialog() )
+
 END CLASS
 
 //---------------------------------------------------------------------------//
@@ -51,6 +55,8 @@ METHOD New( oController )
    ::oDialogView           := MovimientosAlmacenLineasView():New( self )
 
    ::oValidator            := MovimientosAlmacenLineasValidator():New( self )
+
+   ::oSeriesControler      := MovimientosAlmacenSeriesController():New( self )
 
    ::Super:New( oController )
 

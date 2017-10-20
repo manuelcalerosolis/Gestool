@@ -228,6 +228,7 @@ METHOD DefineFiles( cPath, cDriver, lUniqueName, cFileName ) CLASS TDetMovimient
       INDEX TO ( cFileName ) TAG "cStkFastOu"   ON "cRefMov + cAloMov + cCodPr1 + cCodPr2 + cValPr1 + cValPr2 + cLote + dtos( dFecMov )"  NODELETED                     OF oDbf
       INDEX TO ( cFileName ) TAG "cRef"         ON "cRefMov"                                NODELETED                     OF oDbf
       INDEX TO ( cFileName ) TAG "cRefFec"      ON "cRefMov + cLote + dTos( dFecMov )"      NODELETED                     OF oDbf
+      INDEX TO ( cFileName ) TAG "cRemLin"      ON "str( nNumRem ) + cSufRem + Str( nNumLin )"      NODELETED             OF oDbf
 
    END DATABASE oDbf
 

@@ -595,6 +595,9 @@ GroupCustomerViewSearchNavigator.prg                           \
 Events.prg 																		\
 Seeders.prg    																\
 SqlMigrations.prg 															\
+SQLMovimientosAlmacenSeriesModel.prg 									\
+MovimientosAlmacenSeriesController.prg 								\
+MovimientosAlmacenSeriesView.prg 										\
 
 C               =       	            								\
 Img2pdf.c               	            								\
@@ -1159,6 +1162,9 @@ GroupCustomerViewSearchNavigator.obj                        	\
 Events.obj 																		\
 Seeders.obj 																	\
 SqlMigrations.obj 															\
+SQLMovimientosAlmacenSeriesModel.obj 									\
+MovimientosAlmacenSeriesController.obj 								\
+MovimientosAlmacenSeriesView.obj 										\
 
 .PRG.OBJ:
   	$(HB)\Bin\Harbour $? /n /p$(PPO)\$&.ppo /w /es2 /i$(FWINCLUDE) /gc0 /i$(HBINCLUDE) /i$(GTINCLUDE) /o$(OBJ)\$&.c
@@ -1711,6 +1717,9 @@ $(OBJ)\GroupCustomerViewSearchNavigator.obj              		+
 $(OBJ)\PedidosClientesLineasModel.obj 									+
 $(OBJ)\Seeders.obj 															+
 $(OBJ)\SqlMigrations.obj 													+
+$(OBJ)\SQLMovimientosAlmacenSeriesModel.obj 							+
+$(OBJ)\MovimientosAlmacenSeriesController.obj 						+
+$(OBJ)\MovimientosAlmacenSeriesView.obj 								+
 $(OBJ)\Events.obj              		
 $<,$*
 $(FWLIB)\FiveH.lib               										+

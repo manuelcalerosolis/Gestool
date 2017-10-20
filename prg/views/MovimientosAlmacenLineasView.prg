@@ -49,6 +49,7 @@ METHOD Dialog()
 
    local oDlg
    local oBtn
+   local oBtnSer
 
    DEFINE DIALOG oDlg RESOURCE "LMovAlm" TITLE ::lblTitle() + "lineas de movimientos de almacén"
 
@@ -187,6 +188,11 @@ METHOD Dialog()
 
       // Botones---------------------------------------------------------------
 
+      REDEFINE BUTTON oBtnSer ;
+         ID          500 ;
+         OF          oDlg ;
+         ACTION      ( ::oController:runDialogSeries() )
+
       REDEFINE BUTTON oBtn ;
          ID          510 ;
          OF          oDlg ;
@@ -201,6 +207,8 @@ METHOD Dialog()
       if ::oController:isNotZoomMode()
          oDlg:AddFastKey( VK_F5, {|| oBtn:Click() } )
       end if
+
+      oDlg:AddFastKey( VK_F6, {|| oBtnSer:Click() } )
 
    ACTIVATE DIALOG oDlg CENTER
 

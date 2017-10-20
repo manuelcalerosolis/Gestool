@@ -2046,6 +2046,7 @@ STATIC FUNCTION GenAlbCli( nDevice, cCaption, cCodigoDocumento, cPrinter, nCopie
 
    local oDevice
    local cAlbaran
+   local nOrdAnt
 
    if ( D():AlbaranesClientes( nView ) )->( lastrec() ) == 0
       return nil
@@ -2055,6 +2056,8 @@ STATIC FUNCTION GenAlbCli( nDevice, cCaption, cCodigoDocumento, cPrinter, nCopie
    DEFAULT cCaption           := "Imprimiendo albaranes a clientes"
    DEFAULT cCodigoDocumento   := cFormatoAlbaranesClientes()
    DEFAULT cPrinter           := cPrinterAlbaran( oUser():cCaja(), dbfCajT )
+
+   nOrdAnt                    := ( D():AlbaranesClientes( nView ) )->( OrdSetFocus() )
 
    // Existe-------------------------------------------------------------------
 
@@ -2093,6 +2096,8 @@ STATIC FUNCTION GenAlbCli( nDevice, cCaption, cCodigoDocumento, cPrinter, nCopie
    */
 
    lChgImpDoc( D():Get( "AlbCliT", nView ) )
+
+   ( D():AlbaranesClientes( nView ) )->( OrdSetFocus( nOrdAnt ) )
 
 Return nil
 
