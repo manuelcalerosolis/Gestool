@@ -19,6 +19,14 @@ CLASS MovimientosAlmacenLineasView FROM SQLBaseView
    DATA oGetPrecioArticulo
    DATA oSayTotalImporte
 
+   DATA oGetAlmacenOrigen
+   DATA oGetStockOrigen
+   DATA nStockOrigen                   INIT 0
+
+   DATA oGetAlmacenDestino
+   DATA oGetStockDestino
+   DATA nStockDestino                  INIT 0
+
    DATA oBrowsePropertyView
 
    METHOD New()
@@ -187,6 +195,40 @@ METHOD Dialog()
          PICTURE     cPirDiv() ;
          OF          oDlg
 
+      // Almacen origen--------------------------------------------------------
+
+      REDEFINE GET   ::oGetAlmacenOrigen ;
+         VAR         ::oController:oSenderController:oModel:hBuffer[ "almacen_origen" ] ;
+         ID          400 ;
+         IDHELP      401 ;
+         IDSAY       403 ;
+         WHEN        ( .f. ) ;
+         OF          oDlg
+
+      REDEFINE GET   ::oGetStockOrigen ;
+         VAR         ::nStockOrigen ;
+         WHEN        ( .f. ) ;
+         PICTURE     MasUnd() ;
+         ID          402 ;
+         OF          oDlg
+
+      // Almacen destino-------------------------------------------------------
+
+      REDEFINE GET   ::oGetAlmacenDestino ;
+         VAR         ::oController:oSenderController:oModel:hBuffer[ "almacen_destino" ] ;
+         ID          410 ;
+         IDHELP      411 ;
+         IDSAY       413 ;
+         WHEN        ( .f. ) ;
+         OF          oDlg
+
+      REDEFINE GET   ::oGetStockDestino ;
+         VAR         ::nStockDestino ;
+         WHEN        ( .f. ) ;
+         PICTURE     MasUnd() ;
+         ID          412 ;
+         OF          oDlg
+
       // Botones---------------------------------------------------------------
 
       REDEFINE BUTTON oBtnSer ;
@@ -209,11 +251,9 @@ METHOD Dialog()
          oDlg:AddFastKey( VK_F5, {|| oBtn:Click() } )
       end if
 
-<<<<<<< HEAD
-      oDlg:bStart    := {|| ::startDialog() }
-=======
       oDlg:AddFastKey( VK_F6, {|| oBtnSer:Click() } )
->>>>>>> 9b1c2874bbd176297e525dc06bba235e2e200afb
+
+      oDlg:bStart    := {|| ::startDialog() }
 
    ACTIVATE DIALOG oDlg CENTER
 

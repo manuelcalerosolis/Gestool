@@ -13386,7 +13386,7 @@ FONT 8, "Ms Sans Serif"
   CONTROL "", 410, "Edit", WS_BORDER|WS_TABSTOP, 199, 217, 70, 11
   CONTROL "", 411, "Edit", WS_BORDER|WS_TABSTOP, 271, 217, 190, 11
   CONTROL "", 412, "Edit", ES_RIGHT|WS_BORDER|WS_TABSTOP, 464, 217, 70, 11
-  CONTROL "Almacen destino", -1, "Static", WS_GROUP, 143, 220, 55, 8
+  CONTROL "Almacen destino", 413, "Static", WS_GROUP, 143, 220, 55, 8
   CONTROL "Formato", -1, "Static", WS_GROUP, 143, 272, 33, 8
   CONTROL "Bultos", 431, "Static", WS_GROUP, 4, 207, 60, 8
   CONTROL "Caducidad", 341, "Static", WS_GROUP, 4, 42, 39, 8

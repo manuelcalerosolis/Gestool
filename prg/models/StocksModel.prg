@@ -69,7 +69,7 @@ METHOD getTotalUnidadesStockSalidas( cCodigoArticulo, dConsolidacion, tConsolida
    cSql        += " ) StockSalidas"
 
    if ::ExecuteSqlStatement( cSql, @cStm )
-      RETURN ( (cStm)->totalUnidadesStock )
+      RETURN ( ( cStm )->totalUnidadesStock )
    end if 
 
 RETURN ( 0 )
@@ -93,7 +93,7 @@ METHOD getTotalUnidadesStockEntradas( cCodigoArticulo, dConsolidacion, tConsolid
    cSql        += " ) StockEntradas"
 
    if ::ExecuteSqlStatement( cSql, @cStm )
-      RETURN ( (cStm)->totalUnidadesStock )
+      RETURN ( ( cStm )->totalUnidadesStock )
    end if 
 
 RETURN ( 0 )

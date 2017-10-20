@@ -34,21 +34,27 @@ CLASS MovimientosAlmacenLineasController FROM SQLBaseController
 
    METHOD stampFechaCaducidad()
 
+   METHOD stampStockAlmacenOrigen()    INLINE ( ::oDialogView:oGetStockOrigen:cText( TStock():nSQLStockActual( ::oModel:hBuffer[ "codigo_articulo" ], ::getSenderController():oModel:hBuffer[ "almacen_origen" ], ::oModel:hBuffer[ "valor_primera_propiedad" ], ::oModel:hBuffer[ "valor_segunda_propiedad" ], ::oModel:hBuffer[ "lote" ] ) ) )
+
+   METHOD stampStockAlmacenDestino()   INLINE ( ::oDialogView:oGetStockOrigen:cText( TStock():nSQLStockActual( ::oModel:hBuffer[ "codigo_articulo" ], ::getSenderController():oModel:hBuffer[ "almacen_destino" ], ::oModel:hBuffer[ "valor_primera_propiedad" ], ::oModel:hBuffer[ "valor_segunda_propiedad" ], ::oModel:hBuffer[ "lote" ] ) ) )
+
    METHOD getPrimeraPropiedad( cCodigoArticulo, cCodigoPropiedad )
 
    METHOD getSegundaPropiedad( cCodigoArticulo, cCodigoPropiedad )
 
-   METHOD runDialogSeries()           INLINE ( ::oSeriesControler:Dialog() )
-
-   METHOD onClosedDialog() 
+   METHOD shopPropiedades()
 
    METHOD showPrimeraPropiedad()       INLINE ( if( !uFieldEmpresa( "lUseTbl" ), ::oDialogView:oGetValorPrimeraPropiedad:Show(), ) )
    
    METHOD showSegundaPropiedad()       INLINE ( if( !uFieldEmpresa( "lUseTbl" ), ::oDialogView:oGetValorSegundaPropiedad:Show(), ) )
-   
+
    METHOD buildBrowseProperty()        INLINE ( if( uFieldEmpresa( "lUseTbl" ), ::oDialogView:oBrowsePropertyView:build(), ) )
    
    METHOD loadValuesBrowseProperty()
+
+   METHOD runDialogSeries()            INLINE ( ::oSeriesControler:Dialog() )
+
+   METHOD onClosedDialog() 
 
 END CLASS
 
@@ -106,8 +112,6 @@ RETURN ( Self )
 METHOD stampArticulo()
 
    local cAreaArticulo
-   local aPropertiesOne
-   local aPropertiesTwo
    local cCodigoArticulo
 
    cCodigoArticulo   := hget( ::oModel:hBuffer, "codigo_articulo" )
@@ -132,6 +136,34 @@ METHOD stampArticulo()
 
    // Primera propiedad--------------------------------------------------------
 
+   ::shopPropiedades( cCodigoArticulo, cAreaArticulo )
+
+   // Fecha de caducidad-------------------------------------------------------
+
+   ::stampFechaCaducidad()
+
+   // Informacion de stock en almacen origen-----------------------------------
+
+   ::stampStockAlmacenOrigen()
+
+   ::stampStockAlmacenDestino()
+
+   // Area de trabajo----------------------------------------------------------
+
+   ArticulosModel():closeArea( cAreaArticulo )
+
+RETURN ( .t. )
+
+//---------------------------------------------------------------------------//
+
+METHOD shopPropiedades( cCodigoArticulo, cAreaArticulo )
+
+   hset( ::oModel:hBuffer, "codigo_primera_propiedad", ( cAreaArticulo )->cCodPrp1 )
+
+   hset( ::oModel:hBuffer, "codigo_segunda_propiedad", ( cAreaArticulo )->cCodPrp2 )
+
+   // Primera propiedad--------------------------------------------------------
+
    if empty( ( cAreaArticulo )->cCodPrp1 )
 
       ::oDialogView:oBrowsePropertyView:hide()
@@ -142,8 +174,6 @@ METHOD stampArticulo()
 
    else 
    
-      hset( ::oModel:hBuffer, "codigo_primera_propiedad", ( cAreaArticulo )->cCodPrp1 )
-
       ::oDialogView:oGetValorPrimeraPropiedad:oSay:setText( PropiedadesModel():getNombre( ( cAreaArticulo )->cCodPrp1 ) )
 
       ::showPrimeraPropiedad()
@@ -154,8 +184,6 @@ METHOD stampArticulo()
 
       if !empty( ( cAreaArticulo )->cCodPrp2 )
       
-         hset( ::oModel:hBuffer, "codigo_segunda_propiedad", ( cAreaArticulo )->cCodPrp2 )
-
          ::oDialogView:oGetValorSegundaPropiedad:oSay:setText( PropiedadesModel():getNombre( ( cAreaArticulo )->cCodPrp2 ) )
 
          ::showSegundaPropiedad()
@@ -169,14 +197,6 @@ METHOD stampArticulo()
       ::loadValuesBrowseProperty( cCodigoArticulo )
 
    end if 
-
-   // Fecha de caducidad-------------------------------------------------------
-
-   ::stampFechaCaducidad()
-
-   // Area de trabajo----------------------------------------------------------
-
-   ArticulosModel():closeArea( cAreaArticulo )
 
 RETURN ( .t. )
 
