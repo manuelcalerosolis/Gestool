@@ -10,6 +10,7 @@ CLASS ArticulosModel FROM ADSBaseModel
    METHOD exist()
 
    METHOD get()
+   METHOD getHash()
 
    METHOD getValoresPropiedades( cCodPro )
 
@@ -48,6 +49,20 @@ METHOD get( cCodigoArticulo )
    end if 
 
 RETURN ( nil )
+
+//---------------------------------------------------------------------------//
+
+METHOD getHash( cCodigoArticulo )
+
+   local cStm 
+   local hRecord  := {=>}
+   
+   cStm           := ::get( cCodigoArticulo )
+   if !empty( cStm )
+      hRecord     := getHashFromWorkArea( cStm )
+   end if 
+
+RETURN ( hRecord )
 
 //---------------------------------------------------------------------------//
 

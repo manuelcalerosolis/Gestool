@@ -11,10 +11,14 @@ CLASS ImportadorMovimientosAlmacenLineasController FROM SQLBaseController
 
    METHOD Activate()    INLINE ( ::oDialogView:Activate() )
 
-   METHOD procesarLineas( cLineas )
-      METHOD procesarLinea( cInventario ) 
+   METHOD getModel()    INLINE ( ::oSenederController:getModel() )
 
-   METHOD showInventarioErrors() 
+   METHOD processLines( cLines )
+      METHOD processLine( hLine ) 
+
+   METHOD insertLineInModel( hLine ) 
+
+   METHOD showErrors() 
 
 END CLASS
 
@@ -32,121 +36,84 @@ RETURN ( Self )
 
 //---------------------------------------------------------------------------//
 
-METHOD procesarLineas( cLineas )
+METHOD processLines( cLines )
 
-   local aInventario    
+   local aLines    
 
-   if empty( cLineas )
+   if empty( cLines )
       RETURN ( Self )
    end if 
 
-   aInventario          := hb_atokens( cLineas, CRLF )
+   aLines               := hb_atokens( cLines, CRLF )
 
-   msgalert( hb_valtoexp( cLineas ), "cLineas" )
-
-   if empty( aInventario ) 
+   if empty( aLines ) 
       RETURN ( Self )
    end if 
 
    ::aErrors            := {}
 
-   aeval( aInventario, {|elem| ::procesarLinea( elem ) } ) 
+   aeval( aLines, {|elem| ::processLine( elem ) } ) 
 
-   ::showInventarioErrors()
+   ::showErrors()
 
 RETURN ( Self )
 
 //---------------------------------------------------------------------------//
 
-METHOD procesarLinea( cInventario ) 
+METHOD processLine( cLine ) 
 
-   local hInventario    := {=>}
-   local aInventario    := hb_atokens( cInventario, "," )
+   local hLine    := {=>}
+   local aLines   := hb_atokens( cLine, "," )
 
-   if !hb_isarray( aInventario ) 
+   if !hb_isarray( aLines ) 
       RETURN ( Self )
    end if 
 
-   if len( aInventario ) < 2
+   if len( aLines ) < 2
       RETURN ( Self )
    end if 
 
-   hset( hInventario, "Codigo"   , alltrim( aInventario[ 1 ] ) )
-   hset( hInventario, "Unidades" , val( strtran( aInventario[ 2 ], ".", "," ) ) )
+   hset( hLine, "Codigo"   , alltrim( aLines[ 1 ] ) )
+   hset( hLine, "Unidades" , val( strtran( aLines[ 2 ], ".", "," ) ) )
 
-   if len( aInventario ) >= 6
-      hset( hInventario, "CodigoPrimeraPropiedad", alltrim( aInventario[ 3 ] ) )
-      hset( hInventario, "ValorPrimeraPropiedad",  alltrim( aInventario[ 4 ] ) )
-      hset( hInventario, "CodigoSegundaPropiedad", alltrim( aInventario[ 5 ] ) )
-      hset( hInventario, "ValorSegundaPropiedad",  alltrim( aInventario[ 6 ] ) )
+   if len( aLines ) >= 6
+      hset( hLine, "CodigoPrimeraPropiedad", alltrim( aLines[ 3 ] ) )
+      hset( hLine, "ValorPrimeraPropiedad",  alltrim( aLines[ 4 ] ) )
+      hset( hLine, "CodigoSegundaPropiedad", alltrim( aLines[ 5 ] ) )
+      hset( hLine, "ValorSegundaPropiedad",  alltrim( aLines[ 6 ] ) )
    end if 
 
-   if !hb_isstring( hget( hInventario, "Codigo" ) ) 
+   if !hb_isstring( hget( hLine, "Codigo" ) ) 
       aadd( ::aErrors, "El código del artículo no es un valor valido." )
       RETURN ( Self )   
    end if 
 
-   if !hb_isnumeric( hget( hInventario, "Unidades" ) )
+   if !hb_isnumeric( hget( hLine, "Unidades" ) )
       aadd( ::aErrors, "Las unidades del artículo no contienen un valor valido." )
       RETURN ( Self )   
    end if 
 
-   // ::insertaArticuloInventario( hInventario )
+   ::insertLineInModel( hLine )
 
 RETURN ( Self ) 
 
 //---------------------------------------------------------------------------//
-/*
-METHOD insertaArticuloRemesaMovimiento( hInventario ) 
 
-   ::oDetMovimientos:oDbfVir:Blank()
+METHOD insertLineInModel( hLine ) 
 
-   ::oDetMovimientos:oDbfVir:cRefMov      := cCodigo
-   ::oDetMovimientos:oDbfVir:nUndMov      := nUnidades
-   ::oDetMovimientos:oDbfVir:nNumLin      := nLastNum( ::oDetMovimientos:oDbfVir:cAlias )
+   local hArticulo
 
-   if hb_isstring( cCodigoPrimeraPropiedad )   
-      ::oDetMovimientos:oDbfVir:cCodPr1   := cCodigoPrimeraPropiedad
-   end if 
+   msgalert( hb_valtoexp( hLine ), "hLine" )
 
-   if hb_isstring( cValorPrimeraPropiedad )   
-      ::oDetMovimientos:oDbfVir:cValPr1   := cValorPrimeraPropiedad
-   end if 
+   hArticulo         := ArticulosModel():getHash( hget( hLine, "Codigo" ) )
 
-   if hb_isstring( cCodigoSegundaPropiedad )   
-      ::oDetMovimientos:oDbfVir:cCodPr2   := cCodigoSegundaPropiedad
-   end if 
+   msgalert( hb_valtoexp( hArticulo ), "hArticulo" )
 
-   if hb_isstring( cValorSegundaPropiedad )   
-      ::oDetMovimientos:oDbfVir:cValPr2   := cValorSegundaPropiedad
-   end if 
-
-   if !( ::oDetMovimientos:loadArticulo( APPD_MODE, .t. ) )
-      aadd( ::aErrors, "El código de artículo " + cCodigo + " no es un valor valido." )
-   end if 
-
-   if ::oDetMovimientos:isNumeroSerieNecesario( APPD_MODE, .f. )
-      aadd( ::aErrors, "El código de artículo " + cCodigo + " necesita proporcinarle el numero de serie." )
-      ::oDetMovimientos:oDbfVir:Cancel()
-   end if 
-
-   if ::oDetMovimientos:accumulatesStoreMovement()
-      
-      ::oDetMovimientos:oDbfVir:Cancel()
-   
-   else
-      
-      ::oDetMovimientos:oDbfVir:Insert()
-
-      ::oDetMovimientos:appendKit()
-
-   end if 
-   
 RETURN ( Self )
-*/
+
 //---------------------------------------------------------------------------//
 
-METHOD showInventarioErrors() 
+METHOD showErrors() 
 
    local cErrorMessage  := ""
 

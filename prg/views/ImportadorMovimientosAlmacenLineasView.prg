@@ -19,21 +19,18 @@ METHOD New( oController )
 
    ::oController           := oController
 
-   msgalert( ::oController:className(), "className" )
-
-RETURN ( Self )
+RETURN ( self )
 
 //----------------------------------------------------------------------------//
 
 METHOD Activate()
 
+   local cLines
    local oDialog
-
-   local cLineas
 
    DEFINE DIALOG oDialog RESOURCE "Importar_Inventario" 
 
-      REDEFINE GET   cLineas ;
+      REDEFINE GET   cLines ;
          MEMO ;
          ID          110 ;
          OF          oDialog
@@ -41,7 +38,7 @@ METHOD Activate()
       REDEFINE BUTTON ;
          ID          IDOK ;
          OF          oDialog ;
-         ACTION      ( ::oController:procesarLineas( cLineas ), oDialog:end( IDOK ) )
+         ACTION      ( ::oController:processLines( cLines ), oDialog:end( IDOK ) )
 
       REDEFINE BUTTON ;
          ID          IDCANCEL ;
@@ -49,7 +46,7 @@ METHOD Activate()
          CANCEL ;
          ACTION      ( oDialog:end() )
 
-      oDialog:AddFastKey( VK_F5, {|| ::oController:procesarLineas( cLineas ), oDialog:end( IDOK ) } )
+      oDialog:AddFastKey( VK_F5, {|| ::oController:processLines( cLines ), oDialog:end( IDOK ) } )
 
    ACTIVATE DIALOG oDialog CENTER
 
