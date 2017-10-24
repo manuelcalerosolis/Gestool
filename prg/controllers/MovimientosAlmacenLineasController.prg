@@ -6,6 +6,9 @@
 CLASS MovimientosAlmacenLineasController FROM SQLBaseController
 
    DATA oSeriesControler
+
+   DATA oSearchView
+
    DATA aProperties                    INIT {}
 
    METHOD New()
@@ -56,13 +59,15 @@ CLASS MovimientosAlmacenLineasController FROM SQLBaseController
 
    METHOD onClosedDialog() 
 
+   METHOD Search()
+
 END CLASS
 
 //---------------------------------------------------------------------------//
 
 METHOD New( oController )
 
-   ::cTitle                := "Lineas" // "Movimientos de almacen lineas"
+   ::cTitle                := "Movimientos de almacen lineas"
 
    ::oModel                := SQLMovimientosAlmacenLineasModel():New( self )
 
@@ -70,6 +75,8 @@ METHOD New( oController )
    ::oModel:setEvent( 'buildingRowSet',      {|| ::buildingRowSet() } ) 
 
    ::oDialogView           := MovimientosAlmacenLineasView():New( self )
+
+   ::oSearchView           := SQLSearchView():New( self )
 
    ::oValidator            := MovimientosAlmacenLineasValidator():New( self )
 
@@ -318,6 +325,14 @@ METHOD loadValuesBrowseProperty( cCodigoArticulo )
    aeval( aArticulos, {|elem| ::oDialogView:oBrowsePropertyView:setValueAndUuidToPropertiesTable( elem ) } )
 
    ::oDialogView:oBrowsePropertyView:Refresh()
+
+RETURN ( Self )
+
+//---------------------------------------------------------------------------//
+
+METHOD Search()
+
+   ::oSearchView:Activate()
 
 RETURN ( Self )
 

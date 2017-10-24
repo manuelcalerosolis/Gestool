@@ -115,8 +115,10 @@ CLASS SQLBaseController
    METHOD getIdFromRowSet()                           INLINE ( if( !empty( ::getRowSet() ), ( ::getRowSet():fieldGet( ::oModel:cColumnKey ) ), ) )
 
    METHOD changeModelOrderAndOrientation()
+   METHOD getModelHeaderFromColumnOrder()             INLINE ( ::oModel:getHeaderFromColumnOrder() )
 
    METHOD find( uValue, cColumn )                     INLINE ( ::oModel:find( uValue, cColumn ) )
+   METHOD findInRowSet( uValue, cColumn )             
    METHOD findByIdInRowSet( uValue )                  INLINE ( if( !empty( ::getRowSet() ), ::getRowSet():find( uValue, "id", .t. ), ) )
 
    METHOD startBrowse( oCombobox )
@@ -498,6 +500,29 @@ METHOD Delete( aSelected )
    ::fireEvent( 'exitDeleted' ) 
 
 RETURN ( lDelete )
+
+//----------------------------------------------------------------------------//
+
+METHOD findInRowSet( uValue, cColumn )
+
+   local nRecno   
+
+   if empty( ::getRowSet() )
+      msgalert( "getRowSet vacio" )
+      RETURN ( .f. )
+   end if 
+
+   nRecno         := ::getModel():getRowSetRecno()
+
+   if empty( cColumn )
+      cColumn     := ::getModel():getColumnOrder()
+   end if 
+
+   if ( ::getRowSet():find( uValue, cColumn, .t. ) == 0 )
+      ::getModel():setRowSetRecno( nRecno )
+   end if 
+
+RETURN ( .t. )
 
 //----------------------------------------------------------------------------//
 

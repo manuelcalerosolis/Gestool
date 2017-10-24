@@ -25,7 +25,7 @@ METHOD New()
    ::hColumns                    := {  "id"           =>  { "create" => "INTEGER PRIMARY KEY AUTO_INCREMENT"   },;
                                        "usuario_id"   =>  { "create" => "CHARACTER ( 3 ) NOT NULL"             },;
                                        "view_name"    =>  { "create" => "VARCHAR( 60 ) NOT NULL"               },;
-                                       "browse_state" =>  { "create" => "LONGTEXT"                             },;
+                                       "browse_state" =>  { "create" => "TEXT"                             },;
                                        "column_order" =>  { "create" => "VARCHAR( 60 )"               },;
                                        "orientation"  =>  { "create" => "CHARACTER ( 1 )"	            },;
                                        "id_to_find"   =>  { "create" => "INT"                         } }
@@ -64,7 +64,7 @@ METHOD get( cViewName )
    
    end
 
-   if hb_isarray( aFetch )
+   if hb_isarray( aFetch ) .and. !empty( aFetch )
     	RETURN ( atail( aFetch ) )
    end if 
 
@@ -82,47 +82,48 @@ METHOD set( cViewName, cBrowseState, cColumnOrder, cOrientation, idToFind )
    DEFAULT cOrientation    := ""
    DEFAULT idToFind        := 0
 
+   cBrowseState            := getSQLDatabase():escapeStr( cBrowseState ) 
+
    cInternalSelect         := "SELECT id FROM " + ::cTableName + " "                         + ;
                                  "WHERE view_name = " + quoted( cViewName ) + " "            + ;
                                     "AND usuario_id = " + quoted( oUser():cCodigo() ) 
 
    id                      := getSQLDatabase():selectFetchArrayOneColumn( cInternalSelect )                   
 
-   logwrite( cInternalSelect)
-
-   msgalert( hb_valtoexp(id), "id")
-
    if empty(id)
 
-      cUpdateHistory       := "INSERT INTO " + ::cTableName + " ( "                          + ;
-                                    "usuario_id, "                                           + ;
-                                    "view_name, "                                            + ;
-                                    "browse_state, "                                         + ;
-                                    "column_order, "                                         + ;
-                                    "orientation, "                                          + ;
-                                    "id_to_find ) "                                          + ;
-                                 "VALUES ( "                                                 + ;
-                                    quoted( oUser():cCodigo() ) + ", "                       + ;
-                                    quoted( cViewName ) + ","                                + ;
-                                    quoted( cBrowseState ) + ", "                            + ;
-                                    quoted( cColumnOrder ) + ", "                            + ;
-                                    quoted( cOrientation ) + ", "                            + ;
-                                    alltrim( cvaltostr( idToFind ) )                         + ")"
+      cUpdateHistory       := "INSERT INTO " + ::cTableName + " ( "        + ;
+                                    "usuario_id, "                         + ;
+                                    "view_name, "                          + ;
+                                    "browse_state, "                       + ;
+                                    "column_order, "                       + ;
+                                    "orientation, "                        + ;
+                                    "id_to_find ) "                        + ;
+                                 "VALUES ( "                               + ;
+                                    quoted( oUser():cCodigo() ) + ", "     + ;
+                                    quoted( cViewName ) + ", "             + ;
+                                    quoted( cBrowseState ) + ", "          + ;
+                                    quoted( cColumnOrder ) + ", "          + ;
+                                    quoted( cOrientation ) + ", "          + ;
+                                    alltrim( cvaltostr( idToFind ) )       + ")"
 
    else                                     
 
-      cUpdateHistory       := "UPDATE " + ::cTableName + " "                                 + ;
-                                 "SET browse_state = " + quoted( cBrowseState ) + ", "       + ;
-                                    "column_order = " + quoted( cColumnOrder ) + ", "        + ;
-                                    "orientation = " + quoted( cOrientation ) + ", "         + ;
-                                    "id_to_find = " + alltrim( cvaltostr( idToFind ) ) + " " + ;
+      cUpdateHistory       := "UPDATE " + ::cTableName + " "                                    + ;
+                                 "SET "                                                         + ;
+                                    "browse_state = " + quoted( cBrowseState ) + ", "           + ;
+                                    "column_order = " + quoted( cColumnOrder ) + ", "           + ;
+                                    "orientation = " + quoted( cOrientation ) + ", "            + ;
+                                    "id_to_find = " + alltrim( cvaltostr( idToFind ) ) + " "    + ;
                                  "WHERE id = " + alltrim( cvaltostr( id ) )  
 
    end if 
 
-   logwrite( cUpdateHistory )
+   getSQLDatabase():BeginTransaction()
 
-   msgalert( hb_valtoexp( getSQLDatabase():Exec( cUpdateHistory ) ), "Query" )
+   getSQLDatabase():Exec( cUpdateHistory )
+
+   getSQLDatabase():Commit()
 
 RETURN ( Self )
 

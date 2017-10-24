@@ -6177,7 +6177,7 @@ METHOD SaveState( aAdditionalData ) CLASS TXBrowse
 
    AEval( aData, { |c| AAdd( aState, { "_" + c, OSend( Self, c ) } ) } )
 
-   //return "XSS:" + HB_StrToHex( ASave( aState ) ) // Upto FWH 11.07
+// return "XSS:" + HB_StrToHex( ASave( aState ) ) // Upto FWH 11.07
 
 return "XS1:" + FW_ValToExp( aState )            // From FWH 11.08
 

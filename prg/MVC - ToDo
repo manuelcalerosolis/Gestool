@@ -1,6 +1,12 @@
 MVC - ToDo
 
-- Dialogo sin rejilla de datos
+- Ordenacion de las columnas en las lineas de movimientos de almcenes
+
+- Guardar la configuracion de columnas en las lineas de movimientos de almcenes
+
+- Busquedas en las lineas
+
+- Dialogo sin rejilla de datos (done)
 
 - Copias de seguridad SQL
 

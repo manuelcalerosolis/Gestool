@@ -10,6 +10,10 @@ CLASS SQLMovimientosAlmacenLineasModel FROM SQLBaseEmpresasModel
 
    METHOD New()
 
+   METHOD totalUnidades()
+
+   METHOD totalPrecio()
+
    METHOD getInsertSentence()
 
    METHOD getUpdateSentence()
@@ -66,7 +70,7 @@ METHOD New( oController )
    hset( ::hColumns, "valor_primera_propiedad",    {  "create"    => "VARCHAR(200)"                         ,;
                                                       "text"      => "Valor primera propiedad artículo"     ,;
                                                       "header"    => "Primera propiedad"                    ,;
-                                                      "visible"   => .t.                                    ,;
+                                                      "visible"   => .f.                                    ,;
                                                       "width"     => 80 }                                  )
 
    hset( ::hColumns, "codigo_segunda_propiedad",   {  "create"    => "VARCHAR(20)"                          ,;
@@ -78,44 +82,61 @@ METHOD New( oController )
    hset( ::hColumns, "valor_segunda_propiedad",    {  "create"    => "VARCHAR(200)"                         ,;
                                                       "text"      => "Valor segunda propiedad artículo"     ,;
                                                       "header"    => "Segunda propiedad"                    ,;
-                                                      "visible"   => .t.                                    ,;
+                                                      "visible"   => .f.                                    ,;
                                                       "width"     => 80 }                                  )
 
    hset( ::hColumns, "fecha_caducidad",   {  "create"    => "DATE"                                 ,;
                                              "text"      => "Fecha caducidad"                      ,;
-                                             "header"    => "Fecha caducidad"                      ,;
+                                             "header"    => "Caducidad"                            ,;
                                              "visible"   => .t.                                    ,;
-                                             "width"     => 80 }                                   )
+                                             "width"     => 74 }                                   )
 
    hset( ::hColumns, "lote",              {  "create"    => "VARCHAR(40)"                          ,;
                                              "text"      => "Lote"                                 ,;
                                              "header"    => "Lote"                                 ,;
-                                             "visible"   => .t.                                    ,;
+                                             "visible"   => .f.                                    ,;
                                              "width"     => 100 }                                  )
 
    hset( ::hColumns, "bultos_articulo",   {  "create"    => "DECIMAL(19,6)"                        ,;
                                              "text"      => "Bultos"                               ,;
                                              "header"    => "Bultos"                               ,;
-                                             "visible"   => .t.                                    ,;
-                                             "width"     => 240 }                                  )
+                                             "visible"   => .f.                                    ,;
+                                             "width"     => 100 }                                  )
 
    hset( ::hColumns, "cajas_articulo",    {  "create"    => "DECIMAL(19,6)"                        ,;
                                              "text"      => "Cajas"                                ,;
                                              "header"    => "Cajas"                                ,;
-                                             "visible"   => .t.                                    ,;
-                                             "width"     => 240 }                                  )
+                                             "picture"   => masUnd()                               ,;
+                                             "visible"   => .f.                                    ,;
+                                             "width"     => 100 }                                  )
 
    hset( ::hColumns, "unidades_articulo", {  "create"    => "DECIMAL(19,6)"                        ,;
                                              "text"      => "Unidades"                             ,;
                                              "header"    => "Unidades"                             ,;
+                                             "picture"   => masUnd()                               ,;
+                                             "visible"   => .f.                                    ,;
+                                             "width"     => 100 }                                  )
+
+   hset( ::hColumns, "total_unidades",    {  "text"      => "Total unidades"                       ,;
+                                             "header"    => "Total unidades"                       ,;
+                                             "method"    => "totalUnidades"                        ,;
+                                             "picture"   => masUnd()                               ,;
                                              "visible"   => .t.                                    ,;
-                                             "width"     => 240 }                                  )
+                                             "width"     => 100 }                                  )
 
    hset( ::hColumns, "precio_articulo",   {  "create"    => "DECIMAL(19,6)"                        ,;
-                                             "text"      => "Precio"                               ,;
-                                             "header"    => "Precio"                               ,;
+                                             "text"      => "Precio costo"                         ,;
+                                             "header"    => "Costo"                                ,;
+                                             "picture"   => cPinDiv()                              ,;
                                              "visible"   => .t.                                    ,;
-                                             "width"     => 240 }                                  )
+                                             "width"     => 100 }                                  )
+
+   hset( ::hColumns, "total_precio",      {  "text"      => "Total costo"                         ,;
+                                             "header"    => "Total costo"                         ,;
+                                             "method"    => "totalPrecio"                          ,;
+                                             "picture"   => masUnd()                               ,;
+                                             "visible"   => .t.                                    ,;
+                                             "width"     => 120 }                                  )
 
    ::Super:New( oController )
 
@@ -204,6 +225,18 @@ METHOD addDeleteSentence( aSQLUpdate, oProperty )
                         "WHERE uuid = " + quoted( oProperty:Uuid ) + "; " )
 
 RETURN ( nil )
+
+//---------------------------------------------------------------------------//
+
+METHOD totalUnidades()
+
+RETURN ( notCaja( ::getRowSet():fieldGet( "cajas_articulo" ) ) * ::getRowSet():fieldGet( "unidades_articulo" ) )
+
+//---------------------------------------------------------------------------//
+
+METHOD totalPrecio()
+
+RETURN ( ::totalUnidades() * ::getRowSet():fieldGet( "precio_articulo" ) )
 
 //---------------------------------------------------------------------------//
 
