@@ -542,6 +542,7 @@ SQLBaseLineasModel.prg 														\
 ClientesModel.prg 															\
 AgentesModel.prg 																\
 DivisasModel.prg 																\
+DocumentosModel.prg															\
 AlbaranesClientesModel.prg 												\
 AlbaranesProveedoresLineasModel.prg 									\
 FacturasProveedoresLineasModel.prg 										\
@@ -1130,6 +1131,7 @@ EmpresasModel.obj 															\
 ClientesModel.obj 															\
 AgentesModel.obj 																\
 DivisasModel.obj 																\
+DocumentosModel.obj															\
 AlbaranesClientesModel.obj 												\
 TransaccionesComercialesLineasModel.obj 						   	\
 AlbaranesProveedoresLineasModel.obj 									\
@@ -1688,6 +1690,7 @@ $(OBJ)\EmpresasModel.obj 													+
 $(OBJ)\ClientesModel.obj 													+
 $(OBJ)\AgentesModel.obj 													+
 $(OBJ)\DivisasModel.obj 													+
+$(OBJ)\DocumentosModel.obj 												+
 $(OBJ)\AlbaranesClientesModel.obj 										+
 $(OBJ)\TransaccionesComercialesLineasModel.obj 						+
 $(OBJ)\AlbaranesProveedoresLineasModel.obj 							+

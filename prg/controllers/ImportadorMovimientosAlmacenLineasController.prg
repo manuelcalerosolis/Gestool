@@ -17,8 +17,6 @@ CLASS ImportadorMovimientosAlmacenLineasController FROM SQLBaseController
    METHOD processLines( cLines )
       METHOD processLine( hLine ) 
 
-   METHOD insertLineInModel( hLine ) 
-
    METHOD showErrors() 
 
 END CLASS
@@ -103,14 +101,6 @@ METHOD processLine( cLine )
    ::getModel():insertBuffer( hBuffer )
 
 RETURN ( Self ) 
-
-//---------------------------------------------------------------------------//
-
-METHOD insertLineInModel( hBuffer ) 
-
-   msgalert( hb_valtoexp( hBuffer ), "hBuffer" )
-
-RETURN ( Self )
 
 //---------------------------------------------------------------------------//
 

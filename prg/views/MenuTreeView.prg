@@ -22,16 +22,6 @@ CLASS MenuTreeView
 
    DATA oEvents
 
-   DATA bOnAfterAddSearchButton 
-   DATA bOnAfterAddAppendButton 
-   DATA bOnAfterAddDuplicateButton
-   DATA bOnAfterAddEditButton   
-   DATA bOnAfterAddZoomButton   
-   DATA bOnAfterAddDeleteButton
-   DATA bOnAfterAddRefreshButton
-   DATA bOnAfterAddSelectButton 
-   DATA bOnAfterAddExitButton   
-
    METHOD New( oSender )
 
    METHOD End()
@@ -204,12 +194,16 @@ METHOD AddImage( cImage )
       RETURN ( nImageList )
    end if 
 
+   ::fireEvent( 'addingImage' )
+
    oImage            := TBitmap():Define( cImage )
    oImage:cResName   := cImage
 
    ::oImageList:addMasked( oImage, Rgb( 255, 0, 255 ) )
    
    nImageList        := len( ::oImageList:aBitmaps ) - 1
+
+   ::fireEvent( 'addedImage' )
 
 RETURN ( nImageList )
 

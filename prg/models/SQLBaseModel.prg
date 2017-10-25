@@ -106,8 +106,10 @@ CLASS SQLBaseModel
 
    // Rowset-------------------------------------------------------------------
 
-   METHOD buildRowSet()
+   METHOD buildRowSet( cSentence )                    INLINE ( ::oRowset := ::newRowSet( cSentence ), ::oRowSet )
+   METHOD newRowSet( cSentence )                      
    METHOD buildRowSetAndFind( idToFind )              INLINE ( ::buildRowSet(), ::findInRowSet( idToFind ) )
+
 
    METHOD findInRowSet()          
    METHOD getRowSet()                                 INLINE ( if( empty( ::oRowSet ), ::buildRowSet(), ), ::oRowSet )
@@ -346,9 +348,10 @@ RETURN ( "DROP TABLE " + ::cTableName )
 
 //---------------------------------------------------------------------------//
 
-METHOD buildRowSet( cSentence )
+METHOD newRowSet( cSentence )
 
    local oError
+   local oRowSet
 
    ::fireEvent( 'buildingRowSet')
 
@@ -362,7 +365,7 @@ METHOD buildRowSet( cSentence )
 
       ::oStatement:setAttribute( ATTR_STR_PAD, .t. )
       
-      ::oRowSet         := ::oStatement:fetchRowSet()
+      oRowSet           := ::oStatement:fetchRowSet()
 
    catch oError
 
@@ -370,11 +373,11 @@ METHOD buildRowSet( cSentence )
 
    end
 
-   ::oRowSet:goTop()
+   oRowSet:goTop()
 
    ::fireEvent( 'builtRowSet')
 
-RETURN ( self )
+RETURN ( oRowSet )
 
 //---------------------------------------------------------------------------//
 
