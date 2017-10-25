@@ -38,7 +38,7 @@ CLASS MovimientosAlmacenLineasController FROM SQLBaseController
 
    METHOD getSegundaPropiedad( cCodigoArticulo, cCodigoPropiedad )
 
-   METHOD runDialogSeries()           INLINE ( ::oSeriesControler:Dialog() )
+   METHOD runDialogSeries()
 
    METHOD onClosedDialog() 
 
@@ -263,6 +263,22 @@ METHOD onClosedDialog()
    if ::oDialogView:oBrowsePropertyView:lVisible
       ::aProperties  := ::oDialogView:oBrowsePropertyView:getProperties()
    end if 
+
+RETURN ( .t. )
+
+//---------------------------------------------------------------------------//
+
+METHOD runDialogSeries()
+
+   ::oSeriesControler:SetTotalUnidades( ::oDialogView:nTotalUnidadesArticulo() )
+
+   ::oSeriesControler:SetParentUUID( hget( ::oModel:hBuffer, "uuid" ) )
+
+   if Empty( ::oDialogView:nTotalUnidadesArticulo() )
+      MsgStop( "El número de unidades no puede ser 0 para editar números de serie" )
+   else
+      ::oSeriesControler:Edit()
+   end if
 
 RETURN ( .t. )
 

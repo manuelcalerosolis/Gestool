@@ -5,20 +5,24 @@
 
 CLASS NumerosSeriesController FROM SQLBaseController
 
-   DATA nTotalUnidades
-   DATA cPreFix
-   DATA oSerIni
-   DATA nSerIni
-   DATA oSerFin
-   DATA nSerFin
-   DATA oNumGen
-   DATA nNumGen
+   DATA cParentUUID
 
    METHOD New()
 
-   METHOD Dialog()          INLINE ( ::oDialogView:Dialog() )
+   METHOD Dialog()                              INLINE ( ::oDialogView:Dialog() )
 
    METHOD GenerarSeries()
+
+   METHOD SetTotalUnidades( nUnidades )         INLINE ( if( !Empty( nUnidades ), ::oDialogView:nTotalUnidades := Abs( nUnidades ), ::oDialogView:nTotalUnidades := 0 ) )
+
+   METHOD SetParentUUID( uUid )                 INLINE ( if( !Empty( uUid ), ::cParentUUID := uUid, ::cParentUUID := "" ) )
+
+   METHOD getaBuffer()                          INLINE ( ::oModel:aBuffer )
+
+   METHOD getValueBuffer( nArrayAt )            INLINE ( hGet( ::oModel:aBuffer[ nArrayAt ], "numero_serie" ) )
+   METHOD setValueBuffer( nArrayAt, value )     INLINE ( hSet( ::oModel:aBuffer[ nArrayAt ], "numero_serie", value ) )
+
+   METHOD endResource( oDlg )
 
 END CLASS
 
@@ -30,12 +34,7 @@ METHOD New( oController )
 
    ::oModel                := SQLNumerosSeriesModel():New( self )
 
-   //::oModel:setEvent( 'loadedBlankBuffer',   {|| ::loadedBlankBuffer() } ) 
-   //::oModel:setEvent( 'buildingRowSet',      {|| ::buildingRowSet() } ) 
-
    ::oDialogView           := NumerosSeriesView():New( self )
-
-   //::oValidator            := MovimientosAlmacenLineasValidator():New( self )
 
    ::Super:New( oController )
 
@@ -46,6 +45,20 @@ RETURN ( Self )
 METHOD GenerarSeries()
 
    MsgInfo( "GenerarSeries" )
+
+RETURN ( Self )
+
+//---------------------------------------------------------------------------//
+
+METHOD endResource( oDlg )
+
+   local aBufferOld
+
+   ::oModel:RollBack()
+
+   if !Empty( oDlg )
+      oDlg:End( IDOK )
+   end if
 
 RETURN ( Self )
 
