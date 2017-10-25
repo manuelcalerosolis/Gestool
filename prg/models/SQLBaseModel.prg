@@ -38,6 +38,8 @@ CLASS SQLBaseModel
    DATA cFind
    DATA idToFind
 
+   DATA aRecordsToDelete
+
    METHOD New()
    METHOD End()
 
@@ -73,7 +75,7 @@ CLASS SQLBaseModel
    
    METHOD getInsertSentence()
    METHOD getUpdateSentence()
-   METHOD getDeleteSentence()
+   METHOD getdeleteSentence()
    
    METHOD getDropTableSentence()
 
@@ -129,7 +131,7 @@ CLASS SQLBaseModel
    
    METHOD insertBuffer( hBuffer )                     INLINE ( ::getDatabase():Execs( ::getInsertSentence( hBuffer ) ), ::buildRowSetAndFind( ::getDatabase():LastInsertId() ) )
    METHOD updateBuffer( hBuffer )                     INLINE ( ::getDatabase():Execs( ::getUpdateSentence( hBuffer ) ), ::buildRowSetAndFind() )
-   METHOD deleteSelection( aRecno )                   INLINE ( ::getDatabase():Query( ::getdeleteSentence( aRecno ) ), ::buildRowSet() )
+   METHOD deleteSelection( aRecno )
 
    METHOD loadBlankBuffer()
    METHOD loadDuplicateBuffer() 
@@ -437,8 +439,6 @@ METHOD getUpdateSentence( hBuffer )
 
    cSQLUpdate        += " WHERE " + ::cColumnKey + " = " + toSQLString( hget( hBuffer, ::cColumnKey ) )
 
-   msgalert( cSQLUpdate, "cSQLUpdate" )
-
 RETURN ( cSQLUpdate )
 
 //---------------------------------------------------------------------------//
@@ -506,14 +506,16 @@ RETURN ( {|| Self:&( cMethod ) } )
 
 //---------------------------------------------------------------------------//
 
-METHOD convertRecnoToId( aRecno )
+METHOD convertRecnoToId( aRecno, cColumnKey )
 
    local nRecno
    local aId         := {}
 
+   DEFAULT cColumnKey   := ::cColumnKey
+
    for each nRecno in ( aRecno )
       ::oRowset:goTo( nRecno )
-      aadd( aId, ::oRowSet:fieldget( ::cColumnKey ) )
+      aadd( aId, ::oRowSet:fieldget( cColumnKey ) )
    next
 
 RETURN ( aId )
@@ -675,3 +677,18 @@ RETURN ( uValue )
 
 //---------------------------------------------------------------------------//
 
+METHOD deleteSelection( aRecno ) 
+
+   ::aRecordsToDelete   := aRecno
+
+   ::fireEvent( 'deletingSelection' )
+
+   ::getDatabase():Query( ::getdeleteSentence( aRecno ) )
+
+   ::buildRowSet()
+
+   ::fireEvent( 'deletedSelection' )
+
+RETURN ( Self )
+
+//---------------------------------------------------------------------------//

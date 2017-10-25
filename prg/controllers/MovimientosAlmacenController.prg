@@ -33,6 +33,8 @@ CLASS MovimientosAlmacenController FROM SQLBaseController
 
    METHOD stampAgente()
 
+   METHOD deleteLines()
+
 END CLASS
 
 //---------------------------------------------------------------------------//
@@ -59,8 +61,10 @@ METHOD New()
 
    ::Super:New()
 
-   ::setEvent( 'openingDialog',   {|| ::oLineasController:oModel:buildRowSet() } ) 
-   ::setEvent( 'closedDialog',    {|| ::oLineasController:oModel:freeRowSet() } ) 
+   ::setEvent( 'openingDialog',     {|| ::oLineasController:oModel:buildRowSet() } ) 
+   ::setEvent( 'closedDialog',      {|| ::oLineasController:oModel:freeRowSet() } ) 
+
+   ::setEvent( 'deletingSelection', {|| ::deleteLines() } )
 
 RETURN ( Self )
 
@@ -96,5 +100,17 @@ METHOD stampAgente( oGetAgente )
    oGetAgente:oHelpText:cText( cNombreAgente )
 
 RETURN ( .t. )
+
+//---------------------------------------------------------------------------//
+
+METHOD deleteLines()
+
+   local aIds
+
+   aIds     := ::oModel:convertRecnoToId( ::aSelected, "uuid" )
+
+   aEval( aIds, {| cId | ::oLineasController:deleteLines( cId ) } )
+
+RETURN ( self ) 
 
 //---------------------------------------------------------------------------//

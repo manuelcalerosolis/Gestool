@@ -34,6 +34,8 @@ CLASS SQLBaseController
    DATA cTitle                                        INIT ""
 
    DATA cImage                                        INIT ""
+
+   DATA aSelected
  
    METHOD New()
    METHOD Instance()                                  INLINE ( if( empty( ::oInstance ), ::oInstance := ::New(), ), ::oInstance ) 
@@ -473,6 +475,8 @@ METHOD Delete( aSelected )
       RETURN ( .f. )
    end if
 
+   ::aSelected          := aSelected
+
    lDelete              := .f.
 
    nSelected            := len( aSelected )
@@ -487,9 +491,11 @@ METHOD Delete( aSelected )
 
    if oUser():lNotConfirmDelete() .or. msgNoYes( "¿Desea eliminar " + cNumbersOfDeletes, "Confirme eliminación" )
       
-      ::fireEvent( 'deleted' ) 
+      ::fireEvent( 'deletingSelection' ) 
 
       ::oModel:deleteSelection( aSelected )
+
+      ::fireEvent( 'deletedSelection' ) 
 
    else 
 

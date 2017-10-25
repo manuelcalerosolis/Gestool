@@ -25,16 +25,11 @@ CLASS SQLNumerosSeriesModel FROM SQLBaseEmpresasModel
 
    METHOD InsertOrUpdate()
 
-   METHOD InsertRow( h )
-   METHOD UpdateRow( h )
-
 END CLASS
 
 //---------------------------------------------------------------------------//
 
 METHOD New( oController )
-
-   ::cColumnKey      := "parent_uuid"
 
    hset( ::hColumns, "id",                {  "create"    => "INTEGER PRIMARY KEY AUTO_INCREMENT"      ,;
                                              "text"      => "Identificador"                           ,;
@@ -59,7 +54,8 @@ METHOD New( oController )
                                              "text"      => "Número serie"                            ,;
                                              "header"    => "Número serie"                            ,;
                                              "visible"   => .t.                                       ,;
-                                             "width"     => 120 }                                     )
+                                             "width"     => 120                                       ,;
+                                             "default"   => Space( 30 ) }                             )
 
    ::Super:New( oController )
 
@@ -124,7 +120,7 @@ METHOD RollBack()
    cIds           := chgAtEnd( cIds, "", 1 )
 
    if !Empty( cIds )
-      ::oDataBase:Exec( "DELETE FROM " + ::cTableName + " WHERE uuid NOT IN (" + cIds + ")" )
+      ::oDataBase:Exec( "DELETE FROM " + ::cTableName + " WHERE uuid NOT IN (" + cIds + ") AND parent_uuid = " + quoted( ::getParentUuid() ) )
    end if
 
 RETURN ( self )
@@ -140,34 +136,10 @@ RETURN ( aEval( ::aBuffer, {|h| ::InsertOrUpdate( h ) } ) )
 METHOD InsertOrUpdate( hRow )
 
    if hb_isnil( ::oDataBase:selectFetchHash( "SELECT * FROM " + ::cTableName + " WHERE uuid = " + quoted( hGet( hRow, "uuid" ) ) ) )
-      ::insertRow( hRow )
+      ::insertBuffer( hRow )
    else
-      ::updateRow( hRow )
+      ::updateBuffer( hRow )
    end if
-
-RETURN ( self )
-
-//---------------------------------------------------------------------------//
-
-METHOD insertRow( hRow )
-
-   local cStatement  := ""
-
-   cStatement        := "INSERT INTO "
-   cStatement        += ::cTableName + Space( 1 )
-   cStatement        += "( "
-   hEval( hRow, {| k, v | if( k != "id", cStatement += k + ", ", ) } )
-   cStatement        := chgAtEnd( cStatement, " ) VALUES ( ", 2 )
-   hEval( hRow, {| k, v | if( k != "id", cStatement += quoted( v ) + ", ", ) } )
-   cStatement        := chgAtEnd( cStatement, " )", 2 )
-
-RETURN ( ::oDataBase:Exec( cStatement ) )
-
-//---------------------------------------------------------------------------//
-
-METHOD updateRow( hRow )
-
-   MsgInfo( hb_valToExp( hRow ), "update" )
 
 RETURN ( self )
 

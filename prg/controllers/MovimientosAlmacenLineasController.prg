@@ -11,6 +11,8 @@ CLASS MovimientosAlmacenLineasController FROM SQLBaseController
 
    DATA aProperties                    INIT {}
 
+   DATA aSelectDelete                  INIT {}
+
    METHOD New()
 
    METHOD loadedBlankBuffer()
@@ -61,6 +63,8 @@ CLASS MovimientosAlmacenLineasController FROM SQLBaseController
 
    METHOD Search()
 
+   METHOD deleteLines( cId )
+
 END CLASS
 
 //---------------------------------------------------------------------------//
@@ -84,7 +88,9 @@ METHOD New( oController )
 
    ::Super:New( oController )
 
-   ::setEvent( 'closedDialog', {|| ::onClosedDialog() } )
+   ::setEvent( 'closedDialog',   {|| ::onClosedDialog() } )
+
+   ::setEvent( 'deletingLines',  {|| MsgInfo( "Voy a Borrar las series" ) } )
 
 RETURN ( Self )
 
@@ -349,6 +355,20 @@ RETURN ( Self )
 METHOD Search()
 
    ::oSearchView:Activate()
+
+RETURN ( Self )
+
+//---------------------------------------------------------------------------//
+
+METHOD deleteLines( uuid )
+
+   //::aSelectDelete      //Vas definiendo por aqui----------------------------
+
+   ::fireEvent( 'deletingLines' )
+
+   ::oModel:deleteWhereUuid( uuid )
+
+   ::fireEvent( 'deletedLines' )
 
 RETURN ( Self )
 
