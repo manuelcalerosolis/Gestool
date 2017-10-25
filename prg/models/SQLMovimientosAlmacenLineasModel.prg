@@ -24,6 +24,8 @@ CLASS SQLMovimientosAlmacenLineasModel FROM SQLBaseEmpresasModel
    
    METHOD addDeleteSentence()
 
+   METHOD deleteWhereUuid( uuid )
+
 END CLASS
 
 //---------------------------------------------------------------------------//
@@ -240,3 +242,13 @@ RETURN ( ::totalUnidades() * ::getRowSet():fieldGet( "precio_articulo" ) )
 
 //---------------------------------------------------------------------------//
 
+METHOD deleteWhereUuid( uuid )
+
+   local cSentence
+
+   cSentence      := "DELETE FROM " + ::cTableName + " " + ;
+                            "WHERE parent_uuid = " + quoted( uuid )
+
+RETURN ( ::getDatabase():Exec( cSentence ) )
+
+//---------------------------------------------------------------------------//

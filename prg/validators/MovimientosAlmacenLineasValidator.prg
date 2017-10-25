@@ -8,7 +8,7 @@ CLASS MovimientosAlmacenLineasValidator FROM SQLBaseValidator
 
    METHOD New( oController )
 
-   METHOD existArticulo( value )                   INLINE ( ArticulosModel():exist( value ) )
+   METHOD existArticulo( value )                   INLINE ( !Empty( value ) .and. ArticulosModel():exist( value ) )
 
    METHOD existPropiedad( value, propiedad )
    METHOD existOrEmptyPrimeraPropiedad( value )    INLINE ( ::existPropiedad( value, "codigo_primera_propiedad" ) )

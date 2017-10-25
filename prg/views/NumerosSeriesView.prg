@@ -118,7 +118,7 @@ METHOD Dialog()
 
       with object ( ::oBrwSer:addCol() )
          :cHeader                := "Serie"
-         :bEditValue             := {|| ::getValueBuffer( ::oBrwSer:nArrayAt ) }
+         :bEditValue             := {|| Padr( ::getValueBuffer( ::oBrwSer:nArrayAt ), 30 ) }
          :nWidth                 :=  240
          :bOnPostEdit            := {|o,x| ::setValueBuffer( ::oBrwSer:nArrayAt, x ) }
          :nEditType              := 1

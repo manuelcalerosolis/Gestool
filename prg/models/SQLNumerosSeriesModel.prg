@@ -13,7 +13,7 @@ CLASS SQLNumerosSeriesModel FROM SQLBaseEmpresasModel
    METHOD New()
 
    METHOD loadCurrentBuffer()
-   METHOD updateCurrentBuffer()     INLINE ( MsgInfo( "Guardo todo" ) ) //::getDatabase():Query( ::getUpdateSentence() ), ::buildRowSetAndFind() )
+   METHOD updateCurrentBuffer()
 
    METHOD getUnidades()             INLINE ( ::oController:oDialogView:nTotalUnidades )
    METHOD getParentUuid()           INLINE ( ::oController:cParentUUID )
@@ -23,13 +23,13 @@ CLASS SQLNumerosSeriesModel FROM SQLBaseEmpresasModel
 
    METHOD RollBack()
 
+   METHOD InsertOrUpdate()
+
 END CLASS
 
 //---------------------------------------------------------------------------//
 
 METHOD New( oController )
-
-   ::cColumnKey      := "parent_uuid"
 
    hset( ::hColumns, "id",                {  "create"    => "INTEGER PRIMARY KEY AUTO_INCREMENT"      ,;
                                              "text"      => "Identificador"                           ,;
@@ -54,7 +54,8 @@ METHOD New( oController )
                                              "text"      => "Número serie"                            ,;
                                              "header"    => "Número serie"                            ,;
                                              "visible"   => .t.                                       ,;
-                                             "width"     => 120 }                                     )
+                                             "width"     => 120                                       ,;
+                                             "default"   => Space( 30 ) }                             )
 
    ::Super:New( oController )
 
@@ -119,7 +120,25 @@ METHOD RollBack()
    cIds           := chgAtEnd( cIds, "", 1 )
 
    if !Empty( cIds )
-      ::oDataBase:Exec( "DELETE FROM " + ::cTableName + " WHERE uuid NOT IN (" + cIds + ")" )
+      ::oDataBase:Exec( "DELETE FROM " + ::cTableName + " WHERE uuid NOT IN (" + cIds + ") AND parent_uuid = " + quoted( ::getParentUuid() ) )
+   end if
+
+RETURN ( self )
+
+//---------------------------------------------------------------------------//
+
+METHOD updateCurrentBuffer()
+
+RETURN ( aEval( ::aBuffer, {|h| ::InsertOrUpdate( h ) } ) )
+
+//---------------------------------------------------------------------------//
+
+METHOD InsertOrUpdate( hRow )
+
+   if hb_isnil( ::oDataBase:selectFetchHash( "SELECT * FROM " + ::cTableName + " WHERE uuid = " + quoted( hGet( hRow, "uuid" ) ) ) )
+      ::insertBuffer( hRow )
+   else
+      ::updateBuffer( hRow )
    end if
 
 RETURN ( self )
