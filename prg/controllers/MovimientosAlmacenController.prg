@@ -36,15 +36,13 @@ CLASS MovimientosAlmacenController FROM SQLBaseController
 
    METHOD stampAgente()
 
-<<<<<<< HEAD
    METHOD printMovimientosAlmacen() INLINE ( msgalert( "¯\_(¨)_/¯" ) ) 
 
    METHOD DesignReport()
 
    METHOD DataReport()   
-=======
+
    METHOD deleteLines()
->>>>>>> 6e51f5a29496c2a4482181a0b8cdb8c76bc4f560
 
 END CLASS
 
@@ -130,7 +128,7 @@ RETURN ( .t. )
 
 //---------------------------------------------------------------------------//
 
-<<<<<<< HEAD
+
 METHOD DesignReport( oFr, cReport ) 
 
    /*
@@ -206,19 +204,12 @@ RETURN NIL
 
 //---------------------------------------------------------------------------//
 
-
-
-
-=======
 METHOD deleteLines()
 
-   local aIds
+   local aUuids   := ::oModel:convertRecnoToId( ::aSelected, "uuid" )
 
-   aIds     := ::oModel:convertRecnoToId( ::aSelected, "uuid" )
-
-   aEval( aIds, {| cId | ::oLineasController:deleteLines( cId ) } )
+   aeval( aUuids, {| uuid | ::oLineasController:deleteLines( uuid ) } )
 
 RETURN ( self ) 
 
 //---------------------------------------------------------------------------//
->>>>>>> 6e51f5a29496c2a4482181a0b8cdb8c76bc4f560
