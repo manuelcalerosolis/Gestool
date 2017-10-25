@@ -4214,7 +4214,7 @@ FUNCTION getHashFromWorkArea( cAlias )
    end if  
 
    for n := 1 to ( cAlias )->( fcount() )
-      hSet( hash, ( cAlias )->( fieldname( n ) ), ( cAlias )->( fieldget( n ) ) )
+      hSet( hash, lower( ( cAlias )->( fieldname( n ) ) ), ( cAlias )->( fieldget( n ) ) )
    next  
 
 RETURN ( hash )

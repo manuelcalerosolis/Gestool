@@ -127,8 +127,8 @@ CLASS SQLBaseModel
 
    METHOD getBuffer( cColumn )                        INLINE ( hget( ::hBuffer, cColumn ) )
    
-   METHOD insertBuffer()                              INLINE ( ::getDatabase():Execs( ::getInsertSentence() ), ::buildRowSetAndFind( ::getDatabase():LastInsertId() ) )
-   METHOD updateBuffer()                              INLINE ( ::getDatabase():Execs( ::getUpdateSentence() ), ::buildRowSetAndFind() )
+   METHOD insertBuffer( hBuffer )                     INLINE ( ::getDatabase():Execs( ::getInsertSentence( hBuffer ) ), ::buildRowSetAndFind( ::getDatabase():LastInsertId() ) )
+   METHOD updateBuffer( hBuffer )                     INLINE ( ::getDatabase():Execs( ::getUpdateSentence( hBuffer ) ), ::buildRowSetAndFind() )
    METHOD deleteSelection( aRecno )                   INLINE ( ::getDatabase():Query( ::getdeleteSentence( aRecno ) ), ::buildRowSet() )
 
    METHOD loadBlankBuffer()
@@ -398,17 +398,19 @@ RETURN ( self )
 
 //---------------------------------------------------------------------------//
 
-METHOD getInsertSentence()
+METHOD getInsertSentence( hBuffer )
 
-   Local cSQLInsert
+   local cSQLInsert
+
+   DEFAULT hBuffer   := ::hBuffer
 
    cSQLInsert        := "INSERT INTO " + ::cTableName + " ( "
 
-   hEval( ::hBuffer, {| k, v | if ( k != ::cColumnKey, cSQLInsert += k + ", ", ) } )
+   hEval( hBuffer, {| k, v | if ( k != ::cColumnKey, cSQLInsert += k + ", ", ) } )
 
    cSQLInsert        := ChgAtEnd( cSQLInsert, ' ) VALUES ( ', 2 )
 
-   hEval( ::hBuffer, {| k, v | if ( k != ::cColumnKey, cSQLInsert += toSQLString( v ) + ", ", ) } )
+   hEval( hBuffer, {| k, v | if ( k != ::cColumnKey, cSQLInsert += toSQLString( v ) + ", ", ) } )
 
    cSQLInsert        := ChgAtEnd( cSQLInsert, ' )', 2 )
 
@@ -416,12 +418,16 @@ RETURN ( cSQLInsert )
 
 //---------------------------------------------------------------------------//
 
-METHOD getUpdateSentence()
+METHOD getUpdateSentence( hBuffer )
 
    local uValue
-   local cSQLUpdate  := "UPDATE " + ::cTableName + " SET "
+   local cSQLUpdate  
 
-   for each uValue in ::hBuffer
+   DEFAULT hBuffer   := ::hBuffer
+
+   cSQLUpdate        := "UPDATE " + ::cTableName + " SET "
+
+   for each uValue in hBuffer
       if ( uValue:__enumkey() != ::cColumnKey )
          cSQLUpdate  += uValue:__enumKey() + " = " + toSQLString( uValue ) + ", "
       end if 
@@ -429,7 +435,7 @@ METHOD getUpdateSentence()
 
    cSQLUpdate        := chgAtEnd( cSQLUpdate, '', 2 )
 
-   cSQLUpdate        += " WHERE " + ::cColumnKey + " = " + toSQLString( hget( ::hBuffer, ::cColumnKey ) )
+   cSQLUpdate        += " WHERE " + ::cColumnKey + " = " + toSQLString( hget( hBuffer, ::cColumnKey ) )
 
    msgalert( cSQLUpdate, "cSQLUpdate" )
 

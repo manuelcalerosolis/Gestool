@@ -20,6 +20,8 @@ CLASS MenuTreeView
 
    DATA oButtonMain
 
+   DATA oEvents
+
    DATA bOnAfterAddSearchButton 
    DATA bOnAfterAddAppendButton 
    DATA bOnAfterAddDuplicateButton
@@ -65,26 +67,37 @@ CLASS MenuTreeView
 
    METHOD AddExitButton()
 
-   METHOD AddGeneralButton()              INLINE ( ::AddSearchButton(),;
+   METHOD AddGeneralButton()              INLINE ( ::fireEvent( 'addingGeneralButton' ),;
+                                                   ::AddSearchButton(),;
                                                    ::AddRefreshButton(),;
                                                    ::AddAppendButton(),;
                                                    ::AddDuplicateButton(),;
                                                    ::AddEditButton(),;
                                                    ::AddZoomButton(),;
-                                                   ::AddDeleteButton() )
+                                                   ::AddDeleteButton(),;
+                                                   ::fireEvent( 'addedGeneralButton' ) )
 
-   METHOD AddAutoButtons()                INLINE ( ::AddGeneralButton(),;
+   METHOD AddAutoButtons()                INLINE ( ::fireEvent( 'addingAutoButton' ),;
+                                                   ::AddGeneralButton(),;
                                                    ::AddExitButton(),;
-                                                   ::oButtonMain:Expand() )
+                                                   ::oButtonMain:Expand(),;
+                                                   ::fireEvent( 'addedAutoButton' ) )
 
-   METHOD AddSelectorButtons()            INLINE ( ::AddGeneralButton(),;
+   METHOD AddSelectorButtons()            INLINE ( ::fireEvent( 'addingSelectorButton' ),;
+                                                   ::AddGeneralButton(),;
                                                    ::AddSelectButton(),;
                                                    ::AddExitButton(),;
-                                                   ::oButtonMain:Expand() )
+                                                   ::oButtonMain:Expand(),;
+                                                   ::fireEvent( 'addedSelectorButton' ) )
 
    METHOD SelectButtonMain()              INLINE ( ::oTreeView:Select( ::oButtonMain ) )
 
    METHOD onChange()
+
+   // Events-------------------------------------------------------------------
+
+   METHOD setEvent( cEvent, bEvent )      INLINE ( if( !empty( ::oEvents ), ::oEvents:set( cEvent, bEvent ), ) )
+   METHOD fireEvent( cEvent )             INLINE ( if( !empty( ::oEvents ), ::oEvents:fire( cEvent ), ) )
 
 ENDCLASS
 
@@ -94,6 +107,8 @@ METHOD New( oSender )
 
    ::oSender      := oSender
 
+   ::oEvents      := Events():New()   
+
    ::oImageList   := TImageList():New( 16, 16 )
 
 RETURN ( Self )
@@ -102,9 +117,13 @@ RETURN ( Self )
 
 METHOD ActivateMDI( nWidth, nHeight )
 
+   ::fireEvent( 'activatingMDI' )
+
    ::oTreeView    := TTreeView():New( 0, 0, ::oSender:getWindow(), , , .t., .f., nWidth, nHeight ) 
    
    ::Default()
+
+   ::fireEvent( 'activatedMDI' )
 
 RETURN ( Self )
 
@@ -112,7 +131,11 @@ RETURN ( Self )
 
 METHOD ActivateDialog( id )
 
+   ::fireEvent( 'activatingDialog' )
+
    ::oTreeView    := TTreeView():Redefine( id, ::oSender:getWindow() ) 
+
+   ::fireEvent( 'activatedDialog' )
 
 RETURN ( Self )
 
@@ -194,72 +217,108 @@ RETURN ( nImageList )
 
 METHOD AddSearchButton()    
 
+   ::fireEvent( 'addingSearchButton' )
+
    ::AddButton( "Buscar", "Bus16", {|| ::oSender:getGetSearch():setFocus() }, "B" ) 
 
-RETURN ( if( hb_isblock( ::bOnAfterAddSearchButton ), eval( ::bOnAfterAddSearchButton ), ) )
+   ::fireEvent( 'addedSearchButton' )
+
+RETURN ( Self )
 
 //----------------------------------------------------------------------------//
 
 METHOD AddRefreshButton()
 
+   ::fireEvent( 'addingRefreshButton' )
+
    ::AddButton( "Refrescar", "Refresh16", {|| ::oSender:RefreshRowSet() }, "R" ) 
 
-RETURN ( if( hb_isblock( ::bOnAfterAddRefreshButton ), eval( ::bOnAfterAddRefreshButton ), ) )
+   ::fireEvent( 'addedRefreshButton' )
+
+RETURN ( Self )
 
 //----------------------------------------------------------------------------//
 
 METHOD AddAppendButton()    
 
-   ::AddButton( "Añadir", "New16", {|| ::getController():Append(), ::oSender:Refresh() }, "A", ACC_APPD ) 
+   ::fireEvent( 'addingAppendButton' )
 
-RETURN ( if( hb_isblock( ::bOnAfterAddAppendButton ), eval( ::bOnAfterAddAppendButton ), ) )
+   ::AddButton( "Añadir", "New16", {|| ::getController():Append(), ::oSender:Refresh() }, "A", ACC_APPD ) 
+   
+   ::fireEvent( 'addedAppendButton' )
+
+RETURN ( Self )
 
 //----------------------------------------------------------------------------//
 
 METHOD AddDuplicateButton() 
 
+   ::fireEvent( 'addingAppendButton' )
+
    ::AddButton( "Duplicar", "Dup16", {|| ::getController():Duplicate(), ::oSender:Refresh() }, "D", ACC_APPD ) 
 
-RETURN ( if( hb_isblock( ::bOnAfterAddDuplicateButton ), eval( ::bOnAfterAddDuplicateButton ), ) )
+   ::fireEvent( 'addedAppendButton' )
+
+RETURN ( Self )
 
 //----------------------------------------------------------------------------//
 
 METHOD AddEditButton()      
 
+   ::fireEvent( 'addingEditButton' )
+
    ::AddButton( "Modificar", "Edit16", {|| ::getController():Edit(), ::oSender:Refresh() }, "M", ACC_EDIT ) 
 
-RETURN ( if( hb_isblock( ::bOnAfterAddEditButton ), eval( ::bOnAfterAddEditButton ), ) )
+   ::fireEvent( 'addedEditButton' )
+
+RETURN ( Self )
 
 //----------------------------------------------------------------------------//
 METHOD AddZoomButton()      
 
+   ::fireEvent( 'addingZoomButton' )
+
    ::AddButton( "Zoom", "Zoom16", {|| ::getController():Zoom(), ::oSender:Refresh() }, "Z", ACC_ZOOM ) 
 
-RETURN ( if( hb_isblock( ::bOnAfterAddZoomButton ), eval( ::bOnAfterAddZoomButton ), ) )
+   ::fireEvent( 'addedZoomButton' )
+
+RETURN ( Self )
 
 //----------------------------------------------------------------------------//
 
 METHOD AddDeleteButton()    
 
+   ::fireEvent( 'addingDeleteButton' )
+
    ::AddButton( "Eliminar", "Del16", {|| ::getController():Delete( ::getBrowse():aSelected ), ::oSender:Refresh() }, "E", ACC_DELE ) 
 
-RETURN ( if( hb_isblock( ::bOnAfterAddDeleteButton ), eval( ::bOnAfterAddDeleteButton ), ) )
+   ::fireEvent( 'addedDeleteButton' )
+
+RETURN ( Self )
 
 //----------------------------------------------------------------------------//
 
 METHOD AddSelectButton()    
 
+   ::fireEvent( 'addingSelectButton' )
+
    ::AddButton( "Seleccionar [Enter]", "Select16", {|| ::oSender:Select() }, K_ENTER ) 
 
-RETURN ( if( hb_isblock( ::bOnAfterAddSelectButton ), eval( ::bOnAfterAddSelectButton ), ) )
+   ::fireEvent( 'addedSelectButton' )
+
+RETURN ( Self )
 
 //----------------------------------------------------------------------------//
 
 METHOD AddExitButton()
 
+   ::fireEvent( 'addingExitButton' )
+
    ::AddButton( "Salir [ESC]", "End16", {|| ::oSender:End() }, "S" ) 
 
-RETURN ( if( hb_isblock( ::bOnAfterAddExitButton ), eval( ::bOnAfterAddExitButton ), ) )
+   ::fireEvent( 'addedExitButton' )
+
+RETURN ( Self )
 
 //----------------------------------------------------------------------------//
 

@@ -55,10 +55,11 @@ RETURN ( nil )
 METHOD getHash( cCodigoArticulo )
 
    local cStm 
-   local hRecord  := {=>}
+   local hRecord  
    
    cStm           := ::get( cCodigoArticulo )
-   if !empty( cStm )
+
+   if !empty( cStm ) .and. ( ( cStm )->( lastrec() ) > 0 )
       hRecord     := getHashFromWorkArea( cStm )
    end if 
 
