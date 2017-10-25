@@ -10,6 +10,8 @@ CLASS MovimientosAlmacenValidator FROM SQLBaseValidator
 
    METHOD requiredAlmacenOrigen()
 
+   METHOD existAlmacenOrigen( value )
+
    METHOD existAlmacen()
 
    METHOD diferentAlmacen()
@@ -27,7 +29,7 @@ END CLASS
 METHOD New( oController )
 
    ::hValidators  := { "almacen_origen"      => {  "requiredAlmacenOrigen"       => "El almacén origen es un dato requerido",;
-                                                   "existAlmacen"                => "El almacén origen no existe",;
+                                                   "existAlmacenOrigen"          => "El almacén origen no existe",;
                                                    "diferentAlmacen"             => "El almacén origen debe ser distinto del almacén destino" },;
                         "almacen_destino"    => {  "required"                    => "El almacén destino es un dato requerido",;
                                                    "existAlmacen"                => "El almacén destino no existe",;
@@ -53,6 +55,16 @@ METHOD requiredAlmacenOrigen( value )
    end if 
 
 RETURN ( .t. )
+
+//---------------------------------------------------------------------------//
+
+METHOD existAlmacenOrigen( value )
+
+   if ::oController:getModelBuffer( "tipo_movimiento" ) != __tipo_movimiento_entre_almacenes__ 
+      RETURN .t.
+   end if 
+
+RETURN ( AlmacenesModel():exist( value ) )
 
 //---------------------------------------------------------------------------//
 

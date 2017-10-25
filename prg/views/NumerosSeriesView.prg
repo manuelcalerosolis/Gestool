@@ -6,7 +6,25 @@
 
 CLASS NumerosSeriesView FROM SQLBaseView
 
+   DATA oTotalUnidades
+   DATA nTotalUnidades
+   DATA cPreFix
+   DATA oSerIni
+   DATA nSerIni
+   DATA oSerFin
+   DATA nSerFin
+   DATA oNumGen
+   DATA nNumGen
+   DATA oBrwSer
+
    METHOD New()
+
+   METHOD getParentControler()                  INLINE ( ::oController:oSenderController )
+   METHOD getParentDialogView()                 INLINE ( ::getParentControler():oDialogView )
+   METHOD getaBuffer()                          INLINE ( ::oController:getaBuffer() )
+
+   METHOD getValueBuffer( nArrayAt )            INLINE ( ::oController:getValueBuffer( nArrayAt ) )
+   METHOD setValueBuffer( nArrayAt, value )     INLINE ( ::oController:setValueBuffer( nArrayAt, value ) )
 
    METHOD Dialog()
 
@@ -16,7 +34,12 @@ END CLASS
 
 METHOD New( oController )
 
-   ::oController     := oController
+   ::nSerIni                  := 0
+   ::nSerFin                  := 0
+   ::nNumGen                  := 0
+   ::cPreFix                  := Space( 150 )
+
+   ::oController              := oController
 
 Return ( Self )
 
@@ -36,31 +59,30 @@ METHOD Dialog()
          TRANSPARENT ;
          OF       oDlg
 
-      REDEFINE GET ::oController:nTotalUnidades ;
+      REDEFINE GET ::oTotalUnidades VAR ::nTotalUnidades ;
          ID       100 ;
          PICTURE  MasUnd() ;
          WHEN     .f. ;
          OF       oDlg
 
-      REDEFINE GET ::oController:cPreFix ;
+      REDEFINE GET ::cPreFix ;
          ID       110 ;
          OF       oDlg
 
-      REDEFINE GET ::oController:oSerIni VAR ::oController:nSerIni ;
+      REDEFINE GET ::oSerIni VAR ::nSerIni ;
          ID       120 ;
          PICTURE  "99999999999999999999" ;
          SPINNER ;
+         VALID    ( ::oSerFin:cText( ::nSerIni + ::nTotalUnidades ), .t. ) ;
          OF       oDlg
 
-//         VALID    ( ::oSerFin:cText( ::nSerIni + ::nAbsUnidades() ), .t. ) ;
-
-      REDEFINE GET ::oController:oSerFin VAR ::oController:nSerFin ;
+      REDEFINE GET ::oSerFin VAR ::nSerFin ;
          ID       130 ;
          PICTURE  "99999999999999999999" ;
          WHEN     .f. ;
          OF       oDlg
 
-      REDEFINE GET ::oController:oNumGen VAR ::oController:nNumGen ;
+      REDEFINE GET ::oNumGen VAR ::nNumGen ;
          ID       140 ;
          SPINNER ;
          PICTURE  "99999999999999999999" ;
@@ -71,7 +93,7 @@ METHOD Dialog()
          OF       oDlg ;
          ACTION   ( ::oController:GenerarSeries() )
 
-      /*::oBrwSer                  := IXBrowse():New( ::oDlg )
+      ::oBrwSer                  := IXBrowse():New( oDlg )
 
       ::oBrwSer:bClrSel          := {|| { CLR_BLACK, Rgb( 229, 229, 229 ) } }
       ::oBrwSer:bClrSelFocus     := {|| { CLR_BLACK, Rgb( 167, 205, 240 ) } }
@@ -82,58 +104,32 @@ METHOD Dialog()
 
       ::oBrwSer:nMarqueeStyle    := MARQSTYLE_HIGHLCELL
 
-      ::oBrwSer:SetArray( ::aNumSer, , , .f. )
+      ::oBrwSer:SetArray( ::getaBuffer(), , , .f. )
 
       ::oBrwSer:nColSel          := 2
 
       with object ( ::oBrwSer:addCol() )
-         :cHeader             := "N."
-         :bStrData            := {|| Trans( ::oBrwSer:nArrayAt, "999999" ) }
-         :nWidth              := 60
-         :nDataStrAlign       := 1
-         :nHeadStrAlign       := 1
+         :cHeader                := "N."
+         :bStrData               := {|| Trans( ::oBrwSer:nArrayAt, "999999" ) }
+         :nWidth                 := 60
+         :nDataStrAlign          := 1
+         :nHeadStrAlign          := 1
       end with
 
       with object ( ::oBrwSer:addCol() )
-         :cHeader             := "Serie"
-         :bEditValue          := {|| ::aNumSer[ ::oBrwSer:nArrayAt ] }
-
-         if ::lStockSeries()
-            :nWidth           :=  220
-            :bOnPostEdit      := {|o,x| ::aNumSer[ ::oBrwSer:nArrayAt ] := x, ::aValSer[ ::oBrwSer:nArrayAt ] := ::oStock:lValidNumeroSerie( ::cCodArt, ::cCodAlm, x ) }
-         else
-            :nWidth           :=  240
-            :bOnPostEdit      := {|o,x| ::aNumSer[ ::oBrwSer:nArrayAt ] := x }
-         end if
-
-         if ::nMode != ZOOM_MODE
-            :nEditType        := 1
-         end if
+         :cHeader                := "Serie"
+         :bEditValue             := {|| ::getValueBuffer( ::oBrwSer:nArrayAt ) }
+         :nWidth                 :=  240
+         :bOnPostEdit            := {|o,x| ::setValueBuffer( ::oBrwSer:nArrayAt, x ) }
+         :nEditType              := 1
       end whit
 
-      if ::lStockSeries()
-
-         with object ( ::oBrwSer:addCol() )
-            :cHeader          := "Es."
-            :nHeadBmpNo       := 4
-            :bStrData         := {|| "" }
-            :bBmpData         := {|| if( ::aValSer[ ::oBrwSer:nArrayAt ], 3, 1 ) }
-            :nWidth           := 20
-            :bLDClickData     := {|| ::InfoSeries( ::aNumSer[ ::oBrwSer:nArrayAt ], ::oStock ) }
-            :AddResource( "gc_delete_12" )
-            :AddResource( "gc_shape_square_12" )
-            :AddResource( "gc_check_12" )
-            :AddResource( "gc_document_information_16" )
-         end with
-
-      end if
-
-      ::oBrwSer:CreateFromResource( 150 )   */
+      ::oBrwSer:CreateFromResource( 150 )
 
       REDEFINE BUTTON ;
          ID       510 ;
          OF       oDlg ;
-         ACTION   ( oDlg:End() )
+         ACTION   ( ::oController:EndResource( oDlg ) )
 
       REDEFINE BUTTON ;
          ID       520 ;
