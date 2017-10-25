@@ -9,6 +9,8 @@ CLASS NumerosSeriesController FROM SQLBaseController
 
    METHOD New()
 
+   METHOD Edit()
+
    METHOD Dialog()                              INLINE ( ::oDialogView:Dialog() )
 
    METHOD GenerarSeries()
@@ -63,3 +65,50 @@ METHOD endResource( oDlg )
 RETURN ( Self )
 
 //---------------------------------------------------------------------------//
+
+METHOD Edit() 
+
+   local lEdit    := .t. 
+
+   if ::notUserEdit()
+      msgStop( "Acceso no permitido." )
+      RETURN ( .f. )
+   end if 
+
+   if !( ::fireEvent( 'editing' ) )
+      RETURN ( .f. )
+   end if
+
+   ::setEditMode()
+
+   ::beginTransactionalMode()
+
+   ::oModel:setIdToFind( ::getIdFromRowSet() )
+
+   ::oModel:loadCurrentBuffer() 
+
+   ::fireEvent( 'openingDialog' )
+
+   if ::oDialogView:Dialog()
+      
+      ::fireEvent( 'closedDialog' )    
+
+      ::oModel:updateCurrentBuffer()
+
+      ::fireEvent( 'editedted' ) 
+
+      ::commitTransactionalMode()
+
+   else
+
+      lEdit       := .f.
+
+      ::fireEvent( 'cancelEdited' ) 
+
+      ::rollbackTransactionalMode()
+
+   end if 
+
+   ::fireEvent( 'exitEdited' ) 
+
+RETURN ( lEdit )

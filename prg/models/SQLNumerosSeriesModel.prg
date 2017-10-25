@@ -13,7 +13,7 @@ CLASS SQLNumerosSeriesModel FROM SQLBaseEmpresasModel
    METHOD New()
 
    METHOD loadCurrentBuffer()
-   METHOD updateCurrentBuffer()     INLINE ( MsgInfo( "Guardo todo" ) ) //::getDatabase():Query( ::getUpdateSentence() ), ::buildRowSetAndFind() )
+   METHOD updateCurrentBuffer()
 
    METHOD getUnidades()             INLINE ( ::oController:oDialogView:nTotalUnidades )
    METHOD getParentUuid()           INLINE ( ::oController:cParentUUID )
@@ -22,6 +22,11 @@ CLASS SQLNumerosSeriesModel FROM SQLBaseEmpresasModel
    METHOD loadBlankBufferFromUnits()
 
    METHOD RollBack()
+
+   METHOD InsertOrUpdate()
+
+   METHOD InsertRow( h )
+   METHOD UpdateRow( h )
 
 END CLASS
 
@@ -121,6 +126,48 @@ METHOD RollBack()
    if !Empty( cIds )
       ::oDataBase:Exec( "DELETE FROM " + ::cTableName + " WHERE uuid NOT IN (" + cIds + ")" )
    end if
+
+RETURN ( self )
+
+//---------------------------------------------------------------------------//
+
+METHOD updateCurrentBuffer()
+
+RETURN ( aEval( ::aBuffer, {|h| ::InsertOrUpdate( h ) } ) )
+
+//---------------------------------------------------------------------------//
+
+METHOD InsertOrUpdate( hRow )
+
+   if hb_isnil( ::oDataBase:selectFetchHash( "SELECT * FROM " + ::cTableName + " WHERE uuid = " + quoted( hGet( hRow, "uuid" ) ) ) )
+      ::insertRow( hRow )
+   else
+      ::updateRow( hRow )
+   end if
+
+RETURN ( self )
+
+//---------------------------------------------------------------------------//
+
+METHOD insertRow( hRow )
+
+   local cStatement  := ""
+
+   cStatement        := "INSERT INTO "
+   cStatement        += ::cTableName + Space( 1 )
+   cStatement        += "( "
+   hEval( hRow, {| k, v | if( k != "id", cStatement += k + ", ", ) } )
+   cStatement        := chgAtEnd( cStatement, " ) VALUES ( ", 2 )
+   hEval( hRow, {| k, v | if( k != "id", cStatement += quoted( v ) + ", ", ) } )
+   cStatement        := chgAtEnd( cStatement, " )", 2 )
+
+RETURN ( ::oDataBase:Exec( cStatement ) )
+
+//---------------------------------------------------------------------------//
+
+METHOD updateRow( hRow )
+
+   MsgInfo( hb_valToExp( hRow ), "update" )
 
 RETURN ( self )
 
