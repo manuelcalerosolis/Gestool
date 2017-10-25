@@ -5,13 +5,14 @@
 
 CLASS ImportadorMovimientosAlmacenLineasController FROM SQLBaseController
 
-   DATA aErrors
+   DATA aErrors         INIT {}
 
    METHOD New( oController )
 
    METHOD Activate()    INLINE ( ::oDialogView:Activate() )
 
-   METHOD getModel()    INLINE ( ::oSenederController:getModel() )
+   METHOD getModel()    INLINE ( ::oSenderController:oLineasController:getModel() )
+   METHOD getBrowse()   INLINE ( ::oSenderController:oDialogView:oSQLBrowseView )
 
    METHOD processLines( cLines )
       METHOD processLine( hLine ) 
@@ -56,58 +57,58 @@ METHOD processLines( cLines )
 
    ::showErrors()
 
+   ::getBrowse():Refresh()
+
 RETURN ( Self )
 
 //---------------------------------------------------------------------------//
 
 METHOD processLine( cLine ) 
 
-   local hLine    := {=>}
-   local aLines   := hb_atokens( cLine, "," )
+   local hBuffer    
+   local hArticulo
+   local aLines      := hb_atokens( cLine, "," )
 
    if !hb_isarray( aLines ) 
+      aadd( ::aErrors, "No hay líneas que procesar." )
       RETURN ( Self )
    end if 
 
    if len( aLines ) < 2
+      aadd( ::aErrors, "La linea no contiene los valores mínimos." )
       RETURN ( Self )
    end if 
 
-   hset( hLine, "Codigo"   , alltrim( aLines[ 1 ] ) )
-   hset( hLine, "Unidades" , val( strtran( aLines[ 2 ], ".", "," ) ) )
+   hBuffer           := ::getModel():loadBlankBuffer()
+
+   hset( hBuffer, "codigo_articulo",     alltrim( aLines[ 1 ] ) )
+   hset( hBuffer, "unidades_articulo",   val( strtran( aLines[ 2 ], ".", "," ) ) )
 
    if len( aLines ) >= 6
-      hset( hLine, "CodigoPrimeraPropiedad", alltrim( aLines[ 3 ] ) )
-      hset( hLine, "ValorPrimeraPropiedad",  alltrim( aLines[ 4 ] ) )
-      hset( hLine, "CodigoSegundaPropiedad", alltrim( aLines[ 5 ] ) )
-      hset( hLine, "ValorSegundaPropiedad",  alltrim( aLines[ 6 ] ) )
+      hset( hBuffer, "codigo_primera_propiedad", alltrim( aLines[ 3 ] ) )
+      hset( hBuffer, "valor_primera_propiedad",  alltrim( aLines[ 4 ] ) )
+      hset( hBuffer, "codigo_segunda_propiedad", alltrim( aLines[ 5 ] ) )
+      hset( hBuffer, "valor_segunda_propiedad",  alltrim( aLines[ 6 ] ) )
    end if 
 
-   if !hb_isstring( hget( hLine, "Codigo" ) ) 
-      aadd( ::aErrors, "El código del artículo no es un valor valido." )
-      RETURN ( Self )   
+   hArticulo         := ArticulosModel():getHash( hget( hBuffer, "codigo_articulo" ) )
+   if empty( hArticulo )
+      aadd( ::aErrors, "El código del artículo no existe." )
+      RETURN ( Self )
    end if 
 
-   if !hb_isnumeric( hget( hLine, "Unidades" ) )
-      aadd( ::aErrors, "Las unidades del artículo no contienen un valor valido." )
-      RETURN ( Self )   
-   end if 
+   hset( hBuffer, "nombre_articulo", hget( hArticulo, "nombre" ) ) 
+   hset( hBuffer, "precio_articulo", hget( hArticulo, "pcosto" ) )
 
-   ::insertLineInModel( hLine )
+   ::getModel():insertBuffer( hBuffer )
 
 RETURN ( Self ) 
 
 //---------------------------------------------------------------------------//
 
-METHOD insertLineInModel( hLine ) 
+METHOD insertLineInModel( hBuffer ) 
 
-   local hArticulo
-
-   msgalert( hb_valtoexp( hLine ), "hLine" )
-
-   hArticulo         := ArticulosModel():getHash( hget( hLine, "Codigo" ) )
-
-   msgalert( hb_valtoexp( hArticulo ), "hArticulo" )
+   msgalert( hb_valtoexp( hBuffer ), "hBuffer" )
 
 RETURN ( Self )
 
