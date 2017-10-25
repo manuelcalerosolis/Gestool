@@ -20,27 +20,33 @@ CLASS SQLBrowseableView
 
    // Facades -----------------------------------------------------------------
 
-   METHOD setController( oController )    INLINE ( ::oController := oController )
-   METHOD getController()                 INLINE ( ::oController )
+   METHOD setController( oController )       INLINE ( ::oController := oController )
+   METHOD getController()                    INLINE ( ::oController )
 
-   METHOD setModel( oModel )              INLINE ( ::oModel := oModel  )
-   METHOD getModel()                      INLINE ( iif( empty( ::oModel ), ::oController:getModel(), ::oModel ) )
+   METHOD setModel( oModel )                 INLINE ( ::oModel := oModel  )
+   METHOD getModel()                         INLINE ( iif( empty( ::oModel ), ::oController:getModel(), ::oModel ) )
 
-   METHOD getModelColumns()               INLINE ( ::getModel():hColumns )
-   METHOD getModelExtraColumns()          INLINE ( ::getModel():hExtraColumns )
+   METHOD getModelColumns()                  INLINE ( ::getModel():hColumns )
+   METHOD getModelExtraColumns()             INLINE ( ::getModel():hExtraColumns )
 
-   METHOD getModelColumnsForBrowse()      INLINE ( ::getModel():getColumnsForBrowse() )
-   METHOD getModelHeadersForBrowse()      INLINE ( ::getModel():getHeadersForBrowse() )
+   METHOD getModelColumnsForBrowse()         INLINE ( ::getModel():getColumnsForBrowse() )
+   METHOD getModelHeadersForBrowse()         INLINE ( ::getModel():getHeadersForBrowse() )
 
-   METHOD getModelHeaderFromColumnOrder() INLINE ( ::getModel():getHeaderFromColumnOrder() )
+   METHOD getModelHeaderFromColumnOrder()    INLINE ( ::getModel():getHeaderFromColumnOrder() )
 
-   METHOD getSQLBrowseView()              INLINE ( ::oSQLBrowseView )
-   METHOD getBrowse()                     INLINE ( ::oSQLBrowseView:oBrowse )
+   METHOD getSQLBrowseView()                 INLINE ( ::oSQLBrowseView )
+   METHOD getBrowse()                        INLINE ( ::oSQLBrowseView:oBrowse )
 
-   METHOD getMenuTreeView()               INLINE ( ::oMenuTreeView )
+   METHOD getColumnByHeader( cHeader )       INLINE ( ::getBrowse():getColumnByHeader( cHeader ) )
+   METHOD getColumnOrder( cSortOrder )       INLINE ( ::getBrowse():getColumnOrder( cSortOrder ) )
+   METHOD getColumnOrderByHeader( cHeader )  INLINE ( ::getBrowse():getColumnOrderByHeader( cHeader ) )
 
-   METHOD Refresh()                       INLINE ( ::getMenuTreeView():SelectButtonMain(), ::getBrowse():SetFocus(), ::getBrowse():refreshCurrent() )
-   METHOD RefreshRowSet()                 INLINE ( ::getModel():buildRowSet(), ::Refresh() )
+   METHOD selectColumnOrder( oCol )          INLINE ( ::getBrowse():selectColumnOrder( oCol ) )
+
+   METHOD getMenuTreeView()                  INLINE ( ::oMenuTreeView )
+
+   METHOD Refresh()                          INLINE ( ::getMenuTreeView():SelectButtonMain(), ::getBrowse():SetFocus(), ::getBrowse():refreshCurrent() )
+   METHOD RefreshRowSet()                    INLINE ( ::getModel():buildRowSet(), ::Refresh() )
 
    //--------------------------------------------------------------------------
 

@@ -56,12 +56,11 @@ CLASS SQLXBrowse FROM TXBrowse
 
    DATA  cOriginal                              AS CHARACTER   INIT ""
 
-   METHOD setOriginal()                         INLINE ( ::RestoreState( ::cOriginal ) )
-   METHOD getOriginal()                         INLINE ( ::cOriginal := ::SaveState() )
+   METHOD getOriginalView()                     INLINE ( ::cOriginal := ::SaveState() )
+   METHOD setOriginalView()                     INLINE ( if( !empty( ::cOriginal ), ::restoreState( ::cOriginal ), ) )
 
-   METHOD SaveView()
-   METHOD SetView()
-   METHOD OriginalView()                        INLINE ( if( !empty( ::cOriginal ), ::restoreState( ::cOriginal ), ) )
+   METHOD saveView()
+   METHOD setView()
 
 END CLASS
 
@@ -115,9 +114,9 @@ METHOD RButtonDown( nRow, nCol, nFlags )
 
       MenuAddItem()
 
-      MenuAddItem( "Guardar vista actual", "Guarda la vista actual de la rejilla de datos", .f., .t., {|| ::SaveView() }, , "gc_table_selection_column_disk_16", oMenu )
+      MenuAddItem( "Guardar vista actual", "Guarda la vista actual de la rejilla de datos", .f., .t., {|| ::saveView() }, , "gc_table_selection_column_disk_16", oMenu )
 
-      MenuAddItem( "Cargar vista por defecto", "Carga la vista por defecto de la rejilla de datos", .f., .t., {|| ::OriginalView() }, , "gc_table_selection_column_refresh_16", oMenu )
+      MenuAddItem( "Cargar vista por defecto", "Carga la vista por defecto de la rejilla de datos", .f., .t., {|| ::setOriginalView() }, , "gc_table_selection_column_refresh_16", oMenu )
 
    MenuEnd() 
 
@@ -381,7 +380,7 @@ METHOD SetView()
    local hBrowseState
    local oConfiguracionColumnasUsuariosModel
 
-   ::getOriginal()
+   ::getOriginalView()
 
    oConfiguracionColumnasUsuariosModel := SQLConfiguracionColumnasUsuariosModel()
 

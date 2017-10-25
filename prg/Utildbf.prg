@@ -4204,35 +4204,22 @@ RETURN ( newGuid32() )
 
 //----------------------------------------------------------------------------//
 
-FUNCTION CreateGuID16( lNoBracket )
+FUNCTION getHashFromWorkArea( cAlias ) 
 
-   local nID            := 0
-   local cID            := ""
-   local nCnt           := 1
-   local cGuID          := ""
+   local n
+   local hash        := {=>}
 
-   DEFAULT lNoBracket   := .f.
+   if empty( cAlias )
+      RETURN ( hash )
+   end if  
 
-   cID                  := newGuid16()
+   for n := 1 to ( cAlias )->( fcount() )
+      hSet( hash, ( cAlias )->( fieldname( n ) ), ( cAlias )->( fieldget( n ) ) )
+   next  
 
-   for nCnt := 1 to len( cID )
-      nID               := substr( cID, nCnt, 1 )
-      cGuID             := cGuID + DecToHex( nID )
-   next
+RETURN ( hash )
 
-   cGuid                := CharRem ( "h", cGuid )
-   cGuid                := PosIns( cGuid, "-", 09 )
-   cGuid                := PosIns( cGuid, "-", 14 )
-   cGuid                := PosIns( cGuid, "-", 19 )
-   cGuid                := PosIns( cGuid, "-", 24 )
-
-   if !lNoBracket
-      cGuid             := "{" + cGuid + "}"
-   end if
-
-RETURN ( cGuID )
-
-//----------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
 
 #pragma BEGINDUMP
 

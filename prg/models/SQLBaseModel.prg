@@ -22,7 +22,6 @@ CLASS SQLBaseModel
    DATA cConstraints
 
    DATA hColumns                                   INIT {=>}
-   DATA hExtraColumns                              INIT {=>}
 
    DATA cColumnOrientation
 
@@ -51,6 +50,8 @@ CLASS SQLBaseModel
 
    METHOD getTableName()                           INLINE ( ::cTableName )
    METHOD getColumns()                             INLINE ( ::hColumns )
+   METHOD getTableColumns()                        
+
    METHOD getColumnsForBrowse()
    METHOD getHeadersForBrowse()
 
@@ -76,12 +77,12 @@ CLASS SQLBaseModel
    
    METHOD getDropTableSentence()
 
-   METHOD setGeneralSelect( cSelect )              INLINE ( ::cGeneralSelect  := cSelect )
-   METHOD setGeneralWhere( cWhere )                INLINE ( ::cGeneralWhere   := cWhere )
+   METHOD setGeneralSelect( cSelect )                 INLINE ( ::cGeneralSelect  := cSelect )
+   METHOD setGeneralWhere( cWhere )                   INLINE ( ::cGeneralWhere   := cWhere )
 
    // Where for columns---------------------------------------------------------
 
-   METHOD getWhereOrAnd( cSQLSelect )              INLINE ( if( hb_at( "WHERE", cSQLSelect ) != 0, " AND ", " WHERE " ) )
+   METHOD getWhereOrAnd( cSQLSelect )                 INLINE ( if( hb_at( "WHERE", cSQLSelect ) != 0, " AND ", " WHERE " ) )
 
    METHOD getWhereGeneral( cSQLSelect )
    METHOD getWhereEmpresa()                           
@@ -91,11 +92,16 @@ CLASS SQLBaseModel
    METHOD getEditValue()
    METHOD getValueField( cColumn, uValue )
 
+   METHOD getMethod( cMethod )
+
    METHOD convertRecnoToId( aRecno )
 
    METHOD setIdToFind( idToFind )                     INLINE ( ::idToFind := idToFind )
    METHOD saveIdToFind()                              INLINE ( ::idToFind := ::getRowSet():fieldGet( ::cColumnKey ) ) 
+
    METHOD setColumnOrder( cColumnOrder )              INLINE ( ::cColumnOrder := cColumnOrder )
+   METHOD getColumnOrder()                            INLINE ( ::cColumnOrder )
+
    METHOD setColumnOrientation( cColumnOrientation )  INLINE ( ::cColumnOrientation := cColumnOrientation )
 
    // Rowset-------------------------------------------------------------------
@@ -120,8 +126,9 @@ CLASS SQLBaseModel
    METHOD find( cFind )
 
    METHOD getBuffer( cColumn )                        INLINE ( hget( ::hBuffer, cColumn ) )
-   METHOD updateCurrentBuffer()                       INLINE ( ::getDatabase():Query( ::getUpdateSentence() ), ::buildRowSetAndFind() )
-   METHOD insertBuffer()                              
+   
+   METHOD insertBuffer()                              INLINE ( ::getDatabase():Execs( ::getInsertSentence() ), ::buildRowSetAndFind( ::getDatabase():LastInsertId() ) )
+   METHOD updateBuffer()                              INLINE ( ::getDatabase():Execs( ::getUpdateSentence() ), ::buildRowSetAndFind() )
    METHOD deleteSelection( aRecno )                   INLINE ( ::getDatabase():Query( ::getdeleteSentence( aRecno ) ), ::buildRowSet() )
 
    METHOD loadBlankBuffer()
@@ -284,7 +291,8 @@ METHOD getCreateTableSentence()
 
    cSQLCreateTable         := "CREATE TABLE " + ::cTableName + " ( "
 
-   hEval( ::hColumns, {| k, hash | cSQLCreateTable += k + " " + hget( hash, "create" ) + ", " } )
+   hEval( ::hColumns,;
+      {| k, hash | if( hhaskey( hash, "create" ), cSQLCreateTable += k + " " + hget( hash, "create" ) + ", ", ) } )
    
    if !empty( ::cConstraints )
 
@@ -486,6 +494,12 @@ RETURN ( {|| ::getRowSet():fieldGet( cColumn ) } )
 
 //---------------------------------------------------------------------------//
 
+METHOD getMethod( cMethod )
+
+RETURN ( {|| Self:&( cMethod ) } )
+
+//---------------------------------------------------------------------------//
+
 METHOD convertRecnoToId( aRecno )
 
    local nRecno
@@ -522,7 +536,7 @@ METHOD loadBlankBuffer()
 
    ::fireEvent( 'loadingBlankBuffer' )
 
-   hEval( ::hColumns, {|k| hset( ::hBuffer, k, ::oRowSet:fieldget( k ) ) } )
+   heval( ::getTableColumns(), {|k| hset( ::hBuffer, k, ::oRowSet:fieldget( k ) ) } )
 
    ::oRowSet:goto( nRecno )
 
@@ -544,7 +558,7 @@ METHOD loadCurrentBuffer()
 
    ::hBuffer            := {=>}
 
-   hEval( ::hColumns, {|k| hset( ::hBuffer, k, ::oRowSet:fieldget( k ) ) } )
+   hEval( ::getTableColumns(), {|k| hset( ::hBuffer, k, ::oRowSet:fieldget( k ) ) } )
 
    ::fireEvent( 'loadedcurrentbuffer' )
 
@@ -562,7 +576,7 @@ METHOD loadDuplicateBuffer()
 
    ::fireEvent( 'loadingduplicatebuffer' )
 
-   hEval( ::hColumns, {|k| if( k != ::cColumnKey, hset( ::hBuffer, k, ::oRowSet:fieldget( k ) ), ) } )
+   hEval( ::getTableColumns(), {|k| if( k != ::cColumnKey, hset( ::hBuffer, k, ::oRowSet:fieldget( k ) ), ) } )
 
    ::fireEvent( 'loadedduplicatebuffer' )
 
@@ -574,7 +588,7 @@ METHOD defaultCurrentBuffer()
 
    local h
 
-   for each h in ::hColumns
+   for each h in ::getTableColumns()
 
       if hhaskey( h, "default" ) .and. hb_isblock( hget( h, "default" ) )
 
@@ -604,14 +618,22 @@ RETURN ( hhaskey( hash, "visible" ) .and. hget( hash, "visible" ) .and. hhaskey(
                                     
 //---------------------------------------------------------------------------//
 
+METHOD getTableColumns()
+
+   local hColumns    := {=>}
+
+   heval( ::hColumns, {|k,v| if( hhaskey( v, "create" ), hset( hColumns, k, v ), ) } )
+
+RETURN ( hColumns )   
+
+//---------------------------------------------------------------------------//
+
 METHOD getColumnsForBrowse()
    
    local hColumns    := {=>}
 
    hEval( ::hColumns, {|k,v| if( validColumnForNavigator( v ), hset( hColumns, k, v ), ) } )
          
-   hEval( ::hExtraColumns, {|k,v| if( validColumnForNavigator( v ), hset( hColumns, k, v ), ) } )
-
 RETURN ( hColumns )
 
 //---------------------------------------------------------------------------//
@@ -622,8 +644,6 @@ METHOD getHeadersForBrowse()
 
    hEval( ::hColumns, {|k,v| if( validColumnForNavigator( v ), aadd( aHeaders, hget( v, "header" ) ), ) } )
          
-   hEval( ::hExtraColumns, {|k,v| if( validColumnForNavigator( v ), aadd( aHeaders, hget( v, "header" ) ), ) } )
-
 RETURN ( aHeaders )
 
 //---------------------------------------------------------------------------//
@@ -648,14 +668,4 @@ METHOD getValueFromColumn( cColumn, cKey )
 RETURN ( uValue )
 
 //---------------------------------------------------------------------------//
-
-METHOD insertBuffer()
-
-   ::getDatabase():Execs( ::getInsertSentence() )
-
-   ::buildRowSetAndFind( ::getDatabase():LastInsertId() )
-
-RETURN ( self )
-   
-//----------------------------------------------------------------------------//
 

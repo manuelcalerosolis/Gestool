@@ -7,6 +7,8 @@ CLASS MovimientosAlmacenController FROM SQLBaseController
 
    DATA oLineasController
 
+   DATA oImportadorController
+
    METHOD New()
 
    METHOD validateAlmacenOrigen()   INLINE ( iif(  ::validate( "almacen_origen" ),;
@@ -37,21 +39,23 @@ END CLASS
 
 METHOD New()
 
-   ::cTitle                := "Movimientos de almacen"
+   ::cTitle                   := "Movimientos de almacen"
 
-   ::cImage                := "gc_document_attachment_16"
+   ::cImage                   := "gc_document_attachment_16"
 
-   ::nLevel                := nLevelUsr( "01050" )
+   ::nLevel                   := nLevelUsr( "01050" )
 
-   ::lTransactional        := .t.
+   ::lTransactional           := .t.
 
-   ::oModel                := SQLMovimientosAlmacenModel():New( self )
+   ::oModel                   := SQLMovimientosAlmacenModel():New( self )
 
-   ::oDialogView           := MovimientosAlmacenView():New( self )
+   ::oDialogView              := MovimientosAlmacenView():New( self )
 
-   ::oValidator            := MovimientosAlmacenValidator():New( self )
+   ::oValidator               := MovimientosAlmacenValidator():New( self )
 
-   ::oLineasController     := MovimientosAlmacenLineasController():New( self )
+   ::oLineasController        := MovimientosAlmacenLineasController():New( self )
+
+   ::oImportadorController    := ImportadorMovimientosAlmacenLineasController():New( self )
 
    ::Super:New()
 
@@ -94,6 +98,3 @@ METHOD stampAgente( oGetAgente )
 RETURN ( .t. )
 
 //---------------------------------------------------------------------------//
-
-
-

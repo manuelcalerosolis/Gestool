@@ -38,6 +38,8 @@ CLASS SQLDatabase
    METHOD Query( cSql )                   INLINE ( if( !empty( ::oConexion ), ::oConexion:Query( cSql ),  msgstop( "No ha conexiones disponibles" ) ) )
    METHOD Prepare( cSql )                 INLINE ( if( !empty( ::oConexion ), ::oConexion:Prepare( cSql ),  msgstop( "No ha conexiones disponibles" ) ) )
 
+   METHOD escapeStr( cEscape )            INLINE ( if( !empty( ::oConexion ), ::oConexion:escapeStr( cEscape ), cEscape ) )
+
    METHOD selectFetch( cSql )
    METHOD selectFetchHash( cSentence )    INLINE ::selectFetch( cSentence, FETCH_HASH )
    METHOD selectFetchArray( cSentence )   INLINE ::selectFetch( cSentence, FETCH_ARRAY )
@@ -55,6 +57,8 @@ CLASS SQLDatabase
    METHOD endForeignKey()                 VIRTUAL // INLINE ( ::Query( "pragma foreign_keys = OFF" ) )
 
    METHOD errorInfo()                     INLINE ( if( !empty( ::oConexion ), ::oConexion:errorInfo(), ) )
+
+
 
    METHOD addModels()
 

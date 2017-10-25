@@ -1386,18 +1386,19 @@ Return nil
 
 CLASS TPropertiesItems
 
-   DATA  cText
-   DATA  cCodigo
-   DATA  cCodigoPropiedad1
-   DATA  cCodigoPropiedad2
-   DATA  cValorPropiedad1
-   DATA  cValorPropiedad2
-   DATA  nPrecioCompra
-   DATA  lColor             
-   DATA  nRgb               
-   DATA  cHead
+   DATA cText
+   DATA cCodigo
+   DATA cCodigoPropiedad1
+   DATA cCodigoPropiedad2
+   DATA cValorPropiedad1
+   DATA cValorPropiedad2
+   DATA nPrecioCompra
+   DATA lColor             
+   DATA nRgb               
+   DATA cHead
 
-   DATA  Value
+   DATA Value
+   DATA Uuid
 
    METHOD New()
    METHOD buildOne()
@@ -1444,6 +1445,10 @@ METHOD buildOne( hPropertyOne )
    ::lColor             := hPropertyOne[ "ColorPropiedad" ]
    ::nRgb               := hPropertyOne[ "RgbPropiedad" ]
 
+   if hhaskey( hPropertyOne, "Uuid" )
+      ::Uuid            := hPropertyOne[ "Uuid" ]
+   end if 
+
 RETURN ( Self )
 
 //---------------------------------------------------------------------------//
@@ -1484,7 +1489,6 @@ METHOD buildUnits( hPropertyOne, aPropertyTable )
 RETURN ( Self )
 
 //---------------------------------------------------------------------------//
-
 
 METHOD PrecioCompra( nPrecioCosto, dbfArtCom ) CLASS TPropertiesItems
 

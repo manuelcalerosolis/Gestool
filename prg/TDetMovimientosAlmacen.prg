@@ -573,7 +573,6 @@ METHOD Resource( nMode ) CLASS TDetMovimientos
          WHEN     ( .f. ) ;
          PICTURE  ::oParent:cPicUnd ;
          ID       402 ;
-         IDSAY    404 ;
          OF       oDlg
 
       /*

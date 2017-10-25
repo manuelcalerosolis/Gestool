@@ -94,6 +94,7 @@ CLASS SQLBaseController
    METHOD Append()
       METHOD setAppendMode()                          INLINE ( ::setMode( __append_mode__ ) )
       METHOD isAppendMode()                           INLINE ( ::nMode == __append_mode__ )
+      METHOD isNotAppendMode()                        INLINE ( ::nMode != __append_mode__ )
 
    METHOD Duplicate()
       METHOD setDuplicateMode()                       INLINE ( ::setMode( __duplicate_mode__ ) )
@@ -102,6 +103,7 @@ CLASS SQLBaseController
    METHOD Edit()
       METHOD setEditMode()                            INLINE ( ::setMode( __edit_mode__ ) )
       METHOD isEditMode()                             INLINE ( ::nMode == __edit_mode__ )
+      METHOD isNotEditMode()                          INLINE ( ::nMode != __edit_mode__ )
 
    METHOD Zoom()
       METHOD setZoomMode()                            INLINE ( ::setMode( __zoom_mode__ ) )
@@ -113,8 +115,10 @@ CLASS SQLBaseController
    METHOD getIdFromRowSet()                           INLINE ( if( !empty( ::getRowSet() ), ( ::getRowSet():fieldGet( ::oModel:cColumnKey ) ), ) )
 
    METHOD changeModelOrderAndOrientation()
+   METHOD getModelHeaderFromColumnOrder()             INLINE ( ::oModel:getHeaderFromColumnOrder() )
 
    METHOD find( uValue, cColumn )                     INLINE ( ::oModel:find( uValue, cColumn ) )
+   METHOD findInRowSet( uValue, cColumn )             
    METHOD findByIdInRowSet( uValue )                  INLINE ( if( !empty( ::getRowSet() ), ::getRowSet():find( uValue, "id", .t. ), ) )
 
    METHOD startBrowse( oCombobox )
@@ -390,7 +394,7 @@ METHOD Edit()
 
    ::beginTransactionalMode()
 
-   ::oModel:setIdToFind( ::getIdfromRowset() )
+   ::oModel:setIdToFind( ::getIdFromRowSet() )
 
    ::oModel:loadCurrentBuffer() 
 
@@ -400,7 +404,7 @@ METHOD Edit()
       
       ::fireEvent( 'closedDialog' )    
 
-      ::oModel:updateCurrentBuffer()
+      ::oModel:updateBuffer()
 
       ::fireEvent( 'editedted' ) 
 
@@ -496,6 +500,29 @@ METHOD Delete( aSelected )
    ::fireEvent( 'exitDeleted' ) 
 
 RETURN ( lDelete )
+
+//----------------------------------------------------------------------------//
+
+METHOD findInRowSet( uValue, cColumn )
+
+   local nRecno   
+
+   if empty( ::getRowSet() )
+      msgalert( "getRowSet vacio" )
+      RETURN ( .f. )
+   end if 
+
+   nRecno         := ::getModel():getRowSetRecno()
+
+   if empty( cColumn )
+      cColumn     := ::getModel():getColumnOrder()
+   end if 
+
+   if ( ::getRowSet():find( uValue, cColumn, .t. ) == 0 )
+      ::getModel():setRowSetRecno( nRecno )
+   end if 
+
+RETURN ( .t. )
 
 //----------------------------------------------------------------------------//
 

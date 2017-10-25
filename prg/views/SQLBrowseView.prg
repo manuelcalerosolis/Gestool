@@ -19,26 +19,40 @@ CLASS SQLBrowseView
 
    METHOD End()
 
-   METHOD Activate()                      VIRTUAL
+   METHOD Activate()                         VIRTUAL
 
    // Facades------------------------------------------------------------------
 
-   METHOD getBrowse()                     INLINE ( ::oBrowse )
-   METHOD getBrowseSelected()             INLINE ( ::oBrowse:aSelected )
+   METHOD getBrowse()                        INLINE ( ::oBrowse )
+   METHOD getBrowseSelected()                INLINE ( ::oBrowse:aSelected )
 
-   METHOD setView()                       INLINE ( ::oBrowse:setView() )
-   METHOD saveView()                      INLINE ( ::oBrowse:saveView() )
+   METHOD getColumnByHeader( cHeader )       INLINE ( ::oBrowse:getColumnByHeader( cHeader ) )
+   METHOD getColumnOrder( cSortOrder )       INLINE ( ::oBrowse:getColumnOrder( cSortOrder ) )
+   METHOD getColumnOrderByHeader( cHeader )  INLINE ( ::oBrowse:getColumnOrderByHeader( cHeader ) )
 
-   METHOD setController( oController )    INLINE ( ::oController := oController )
-   METHOD getController()                 INLINE ( iif( empty( ::oController ), ::oSender:getController(), ::oController ) )
+   METHOD selectColumnOrder( oCol )          INLINE ( ::oBrowse:selectColumnOrder( oCol ) )
+   METHOD refreshCurrent()                   INLINE ( ::oBrowse:refreshCurrent() )
 
-   METHOD setModel( oModel )              INLINE ( ::oModel := oModel )
-   METHOD getModel()                      INLINE ( iif( empty( ::oModel ), ::getController():getModel(), ::oModel ) )
+   METHOD CreateFromCode()                   INLINE ( ::oBrowse:CreateFromCode() )
+   METHOD CreateFromResource( id )           INLINE ( ::oBrowse:CreateFromResource( id ) )
 
-   METHOD getModelColumnsForBrowse()      INLINE ( ::getModel():getColumnsForBrowse() )
-   METHOD getModelHeadersForBrowse()      INLINE ( ::getModel():getHeadersForBrowse() )
+   METHOD setLDblClick( bLDblClick )         INLINE ( ::oBrowse:bLDblClick := bLDblClick )
 
-   METHOD getName()                       INLINE ( ::getController():getName() )
+   METHOD Refresh()                          INLINE ( ::oBrowse:Refresh() )
+
+   METHOD setView()                          INLINE ( ::oBrowse:setView() )
+   METHOD saveView()                         INLINE ( ::oBrowse:saveView() )
+
+   METHOD setController( oController )       INLINE ( ::oController := oController )
+   METHOD getController()                    INLINE ( iif( empty( ::oController ), ::oSender:getController(), ::oController ) )
+   
+   METHOD getName()                          INLINE ( ::getController():getName() )
+
+   METHOD setModel( oModel )                 INLINE ( ::oModel := oModel )
+   METHOD getModel()                         INLINE ( iif( empty( ::oModel ), ::getController():getModel(), ::oModel ) )
+
+   METHOD getModelColumnsForBrowse()         INLINE ( ::getModel():getColumnsForBrowse() )
+   METHOD getModelHeadersForBrowse()         INLINE ( ::getModel():getHeadersForBrowse() )
 
    // Columns------------------------------------------------------------------
 
@@ -46,19 +60,10 @@ CLASS SQLBrowseView
 
    METHOD AddColumn( cColumn, hColumn )
 
-   // Browse methods-----------------------------------------------------------
-
-   METHOD CreateFromCode()                INLINE ( ::oBrowse:CreateFromCode() )
-   METHOD CreateFromResource( id )        INLINE ( ::oBrowse:CreateFromResource( id ) )
-
-   METHOD setLDblClick( bLDblClick )      INLINE ( ::oBrowse:bLDblClick := bLDblClick )
-
-   METHOD Refresh()                       INLINE ( ::oBrowse:Refresh() )
-
    // Events---------------------------------------------------------------------
 
    METHOD onKeyChar( nKey )
-   METHOD onClickHeader( oColumn )        VIRTUAL
+   METHOD onClickHeader( oColumn )           VIRTUAL
 
 ENDCLASS
 
@@ -157,7 +162,11 @@ METHOD addColumn( cColumn, hColumn )
          :lHide            := hColumn[ "hide" ]
       end if 
 
-      :bEditValue          := ::getModel():getEditValue( cColumn ) 
+      if hhaskey( hColumn, "method" ) 
+         :bEditValue       := ::getModel():getMethod( hColumn[ "method" ] )
+      else 
+         :bEditValue       := ::getModel():getEditValue( cColumn ) 
+      end if 
 
       :bLClickHeader       := {| nMRow, nMCol, nFlags, oColumn | ::onClickHeader( oColumn ) }
 
@@ -184,7 +193,7 @@ CLASS SQLBrowseViewDialog FROM SQLBrowseView
 
    METHOD Activate()
 
-   METHOD onClickHeader( oColumn )     VIRTUAL
+   METHOD onClickHeader( oColumn )
 
 ENDCLASS
 
@@ -197,6 +206,18 @@ METHOD Activate( id, oWindow ) CLASS SQLBrowseViewDialog
    ::GenerateColumns()
 
    ::CreateFromResource( id )
+
+RETURN ( Self )
+
+//----------------------------------------------------------------------------//
+
+METHOD onClickHeader( oColumn )
+
+   ::getController():changeModelOrderAndOrientation( oColumn:cSortOrder, oColumn:cOrder )
+
+   ::selectColumnOrder( oColumn )
+
+   ::refreshCurrent()
 
 RETURN ( Self )
 

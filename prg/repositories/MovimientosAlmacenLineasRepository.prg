@@ -10,6 +10,11 @@ CLASS MovimientosAlmacenLineasRepository FROM SQLBaseRepository
 
    METHOD getSQLSentenceFechaCaducidad( cCodigoArticulo, cValorPrimeraPropiedad, cValorSegundaPropiedad, cLote )
 
+   METHOD getSQLSentenceArticuloUuid( cCodigoArticulo, Uuid )
+
+   METHOD getHashArticuloUuid( cCodigoArticulo, Uuid ) ;
+                                 INLINE ( getSQLDataBase():selectFetchHash( ::getSQLSentenceArticuloUuid( cCodigoArticulo, Uuid ) ) )
+
 END CLASS
 
 //---------------------------------------------------------------------------//
@@ -37,3 +42,17 @@ METHOD getSQLSentenceFechaCaducidad( cCodigoArticulo, cValorPrimeraPropiedad, cV
 RETURN ( cSql )
 
 //---------------------------------------------------------------------------//
+
+METHOD getSQLSentenceArticuloUuid( cCodigoArticulo, Uuid )
+
+   local cSql  := "SELECT * "                                                    + ;
+                  "FROM " + ::getTableName() + " "                               + ;
+                  "WHERE codigo_articulo = " + quoted( cCodigoArticulo ) + " "   + ;
+                     "AND parent_uuid = " + quoted( uuid )
+
+RETURN ( cSql )
+
+//---------------------------------------------------------------------------//
+
+
+

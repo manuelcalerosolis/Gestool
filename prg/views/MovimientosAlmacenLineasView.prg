@@ -19,11 +19,20 @@ CLASS MovimientosAlmacenLineasView FROM SQLBaseView
    DATA oGetPrecioArticulo
    DATA oSayTotalImporte
 
+   DATA oGetAlmacenOrigen
+   DATA oGetStockOrigen
+   DATA nStockOrigen                   INIT 0
+
+   DATA oGetAlmacenDestino
+   DATA oGetStockDestino
+   DATA nStockDestino                  INIT 0
+
    DATA oBrowsePropertyView
 
    METHOD New()
 
    METHOD Dialog()
+   METHOD startDialog()
 
    METHOD nTotalUnidadesArticulo()     INLINE ( notCaja( ::oController:oModel:hBuffer[ "cajas_articulo" ] ) * ::oController:oModel:hBuffer[ "unidades_articulo" ] )
 
@@ -56,7 +65,7 @@ METHOD Dialog()
       REDEFINE GET   ::oGetCodigoArticulo ;
          VAR         ::oController:oModel:hBuffer[ "codigo_articulo" ] ;
          ID          100 ;
-         WHEN        ( ::oController:isNotZoomMode() ) ;
+         WHEN        ( ::oController:isAppendMode() ) ;
          PICTURE     "@!" ;
          BITMAP      "Lupa" ;
          OF          oDlg
@@ -186,6 +195,40 @@ METHOD Dialog()
          PICTURE     cPirDiv() ;
          OF          oDlg
 
+      // Almacen origen--------------------------------------------------------
+
+      REDEFINE GET   ::oGetAlmacenOrigen ;
+         VAR         ::oController:oSenderController:oModel:hBuffer[ "almacen_origen" ] ;
+         ID          400 ;
+         IDHELP      401 ;
+         IDSAY       403 ;
+         WHEN        ( .f. ) ;
+         OF          oDlg
+
+      REDEFINE GET   ::oGetStockOrigen ;
+         VAR         ::nStockOrigen ;
+         WHEN        ( .f. ) ;
+         PICTURE     MasUnd() ;
+         ID          402 ;
+         OF          oDlg
+
+      // Almacen destino-------------------------------------------------------
+
+      REDEFINE GET   ::oGetAlmacenDestino ;
+         VAR         ::oController:oSenderController:oModel:hBuffer[ "almacen_destino" ] ;
+         ID          410 ;
+         IDHELP      411 ;
+         IDSAY       413 ;
+         WHEN        ( .f. ) ;
+         OF          oDlg
+
+      REDEFINE GET   ::oGetStockDestino ;
+         VAR         ::nStockDestino ;
+         WHEN        ( .f. ) ;
+         PICTURE     MasUnd() ;
+         ID          412 ;
+         OF          oDlg
+
       // Botones---------------------------------------------------------------
 
       REDEFINE BUTTON oBtnSer ;
@@ -210,10 +253,22 @@ METHOD Dialog()
 
       oDlg:AddFastKey( VK_F6, {|| oBtnSer:Click() } )
 
+      oDlg:bStart    := {|| ::startDialog() }
+
    ACTIVATE DIALOG oDlg CENTER
 
 RETURN ( oDlg:nResult == IDOK )
 
 //---------------------------------------------------------------------------//
 
+METHOD startDialog()
 
+   if ::oController:isNotAppendMode()
+      ::oController:validateCodigoArticulo()
+      ::oController:validatePrimeraPropiedad()
+      ::oController:validateSegundaPropiedad()      
+   end if 
+
+RETURN ( .t. )
+
+//---------------------------------------------------------------------------//

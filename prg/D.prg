@@ -47,6 +47,7 @@ CLASS D
 
    METHOD getHashRecord( cDatabase, nView )
    METHOD getHashFromAlias( cAlias, aDictionary )
+   METHOD getHashFromWorkArea( cAlias )
    METHOD getHashFromBlank( cAlias, aDictionary )
    
    METHOD getFieldDictionary( cField, cDataTable, nView )
@@ -1178,12 +1179,22 @@ METHOD getHashFromAlias( cAlias, aDictionary ) CLASS D
 
    local hash        := {=>}
 
-   if !empty( cAlias ) .and. isHash( aDictionary )
+   if empty( cAlias )
+      RETURN ( hash )
+   end if  
+
+   if isHash( aDictionary )
       hEval( aDictionary, {|key,value| hSet( hash, key, ( cAlias )->( fieldget( ( cAlias )->( fieldPos( value ) ) ) ) ) } )
       hSet( hash, 'lineSelected', .f. )
    end if 
 
 RETURN ( hash )
+
+//---------------------------------------------------------------------------//
+
+METHOD getHashFromWorkArea( cAlias ) CLASS D
+
+RETURN ( getHashFromWorkArea( cAlias ) )
 
 //---------------------------------------------------------------------------//
 

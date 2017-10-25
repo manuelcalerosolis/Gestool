@@ -26,6 +26,7 @@ CLASS SQLPropertyBrowseView
 
    METHOD Hide()              INLINE ( ::oBrowse:Hide() )
    METHOD Show()              INLINE ( ::oBrowse:Show() )
+   METHOD Refresh()           INLINE ( ::oBrowse:MakeTotals(), ::oBrowse:Refresh() )
    METHOD lVisible()          INLINE ( ::oBrowse:lVisible )
 
    METHOD setPropertyOne( aPropiedadesArticulo )
@@ -38,7 +39,10 @@ CLASS SQLPropertyBrowseView
    METHOD showBrowseProperty()
 
    METHOD getProperties()
-   METHOD addProperty()
+      METHOD addProperty()
+
+   METHOD setValueAndUuidToPropertiesTable()
+      METHOD scanProperty( oProperty )
 
    METHOD addColumnTitleProperty( n )
    METHOD addColumnColorProperty( n )
@@ -124,7 +128,7 @@ METHOD buildPropertyTable()
    local n
    local nRow           := 1
    local nCol           := 1
-   local hValorPropiedad
+   local hPropiedad
 
    ::aPropertiesTable   := array( ::nTotalRow, ::nTotalColumn )
 
@@ -132,12 +136,12 @@ METHOD buildPropertyTable()
 
    if !empty( ::aPropertyTwo )
 
-      for each hValorPropiedad in ::aPropertyTwo
+      for each hPropiedad in ::aPropertyTwo
 
          nCol++
 
          for n := 1 to ::nTotalRow
-            ::aPropertiesTable[ n, nCol ] := TPropertiesItems():buildTwo( hValorPropiedad, ::aPropertiesTable[ n, 1 ] )
+            ::aPropertiesTable[ n, nCol ] := TPropertiesItems():buildTwo( hPropiedad, ::aPropertiesTable[ n, 1 ] )
          next
 
       next
@@ -147,7 +151,7 @@ METHOD buildPropertyTable()
       nCol++
 
       for n := 1 to ::nTotalRow
-         ::aPropertiesTable[ n, nCol ]    := TPropertiesItems():buildUnits( hValorPropiedad, ::aPropertiesTable[ n, 1 ] )
+         ::aPropertiesTable[ n, nCol ]    := TPropertiesItems():buildUnits( hPropiedad, ::aPropertiesTable[ n, 1 ] )
       next
 
    end if
@@ -278,19 +282,65 @@ METHOD getProperties()
 
    aeval( ::aPropertiesTable,;
       {| aProperty | aeval( aProperty,;
-         {| oItem | ::addProperty( oItem ) } ) } )
+         {| oProperty | ::addProperty( oProperty ) } ) } )
 
 RETURN ( ::aProperties )
 
 //---------------------------------------------------------------------------//
 
-METHOD addProperty( oItem )
+METHOD addProperty( oProperty )
 
-   if hb_isnumeric( oItem:Value ) .and. oItem:Value != 0
-      aadd( ::aProperties, oItem )
+   if hb_isnumeric( oProperty:Value )
+      aadd( ::aProperties, oProperty )
    end if 
 
 RETURN ( self )
+
+//---------------------------------------------------------------------------//
+
+METHOD setValueAndUuidToPropertiesTable( hLine )
+
+   local oProperty
+
+   // msgalert( hb_valtoexp( hLine ), "hLine" )
+
+   if empty( hget( hLine, "uuid" ) )
+      RETURN ( nil )
+   end if 
+
+   if empty( hget( hLine, "unidades_articulo" ) )
+      RETURN ( nil )
+   end if 
+
+   if empty( hget( hLine, "codigo_primera_propiedad" ) )
+      RETURN ( nil )
+   end if 
+
+   if empty( hget( hLine, "valor_primera_propiedad" ) )
+      RETURN ( nil )
+   end if 
+
+   aeval( ::aPropertiesTable,;
+      {| aProperty | aeval( aProperty,;
+         {| oProperty | ::scanProperty( hLine, oProperty ) } ) } )
+
+RETURN ( nil )
+
+//---------------------------------------------------------------------------//
+
+METHOD scanProperty( hLine, oProperty )
+
+   if hget( hLine, "codigo_primera_propiedad" ) == oProperty:cCodigoPropiedad1   .and. ;
+      hget( hLine, "valor_primera_propiedad" ) == oProperty:cValorPropiedad1     .and. ;
+      hget( hLine, "codigo_segunda_propiedad" ) == oProperty:cCodigoPropiedad2   .and. ;
+      hget( hLine, "valor_segunda_propiedad" ) == oProperty:cValorPropiedad2     
+
+      oProperty:Uuid    := hget( hLine, "uuid" )
+      oProperty:Value   := hget( hLine, "unidades_articulo" )
+
+   end if 
+
+RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 

@@ -168,6 +168,7 @@ SQLSelectorView.prg 												\
 SQLShellView.prg 													\
 SQLBrowseView.prg 												\
 SQLPropertyBrowseView.prg 										\
+SQLSearchView.prg 												\
 MenuTreeView.prg 													\
 DivisasView.prg 													\
 Rfile.prg               										\
@@ -347,6 +348,8 @@ RectificativasClientesLineasModel.prg 									\
 StocksModel.prg 																\
 SituacionesController.prg       											\
 MovimientosAlmacenView.prg													\
+ImportadorMovimientosAlmacenLineasView.prg							\
+ImportadorMovimientosAlmacenLineasController.prg					\
 MovimientosAlmacenLineasView.prg											\
 MovimientosAlmacenController.prg 										\
 MovimientosAlmacenLineasController.prg 								\
@@ -735,6 +738,7 @@ SQLSelectorView.obj 															\
 SQLShellView.obj 																\
 SQLBrowseView.obj 															\
 SQLPropertyBrowseView.obj 													\
+SQLSearchView.obj 															\
 MenuTreeView.obj 																\
 DivisasView.obj 																\
 RpreviewC3.obj 																\
@@ -932,6 +936,8 @@ AlbaranesClientesLineasModel.obj 										\
 RectificativasClientesLineasModel.obj 									\
 StocksModel.obj 																\
 MovimientosAlmacenView.obj													\
+ImportadorMovimientosAlmacenLineasView.obj							\
+ImportadorMovimientosAlmacenLineasController.obj 					\
 MovimientosAlmacenLineasView.obj											\
 MovimientosAlmacenController.obj 										\
 MovimientosAlmacenLineasController.obj 								\
@@ -1310,6 +1316,7 @@ $(OBJ)\SQLSelectorView.obj              								+
 $(OBJ)\SQLShellView.obj            										+
 $(OBJ)\SQLBrowseView.obj             									+
 $(OBJ)\SQLPropertyBrowseView.obj      									+
+$(OBJ)\SQLSearchView.obj      											+
 $(OBJ)\MenuTreeView.obj 													+
 $(OBJ)\DivisasView.obj 														+
 $(OBJ)\RocolumnC3.obj            										+
@@ -1485,6 +1492,8 @@ $(OBJ)\RectificativasClientesLineasModel.obj 						+
 $(OBJ)\StocksModel.obj 														+
 $(OBJ)\SituacionesController.obj          							+
 $(OBJ)\MovimientosAlmacenView.obj 										+
+$(OBJ)\ImportadorMovimientosAlmacenLineasView.obj 					+
+$(OBJ)\ImportadorMovimientosAlmacenLineasController.obj			+
 $(OBJ)\MovimientosAlmacenLineasView.obj								+
 $(OBJ)\MovimientosAlmacenController.obj 								+
 $(OBJ)\MovimientosAlmacenLineasController.obj						+
