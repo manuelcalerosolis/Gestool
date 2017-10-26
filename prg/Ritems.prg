@@ -249,7 +249,7 @@ static aTipDoc     := {  "Artículos [Etiquetas]",;
                          "Tickets clientes",;
                          "Depositos almacén",;
                          "Existencias almacén",;
-                         "Remesas de movimientos de almacén",;
+                         "Movimientos de almacén",;
                          "Entregas a cuenta en pedidos de clientes",;
                          "Entregas a cuenta en albaranes de clientes",;
                          "Parte de producción",;
@@ -4162,10 +4162,18 @@ Static Function VisualEdtDocs( dbfDoc )
          end object
 
       case cTipo == "RM"
-         with object ( TRemMovAlm():New( cPatEmp() ) )
-            :DesignReportRemMov( oFr, dbfDoc )
+
+         msgalert( "RM" )
+      
+         with object ( MovimientosAlmacenController():New() )
+            :DesignReport( oFr )
             :end()
          end object
+
+      //   with object ( TRemMovAlm():New( cPatEmp() ) )
+      //      :DesignReportRemMov( oFr, dbfDoc )
+      //      :end()
+      //   end object
 
       case cTipo == "MP"
 

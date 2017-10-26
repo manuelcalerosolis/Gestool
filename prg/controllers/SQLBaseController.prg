@@ -581,27 +581,29 @@ RETURN ( heval( ::hFastKey, {|k,v| if( k == nKey, eval( v ), ) } ) )
    
 //----------------------------------------------------------------------------//
 
-METHOD setFastReport( oFastReport, cSentence, cColumns )
+METHOD setFastReport( oFastReport, cTitle, cSentence, cColumns )
 
-   default cColumns  := ::oModel:serializeColumns() 
+   local oRowSet
 
    if empty( oFastReport )
       RETURN ( Self )
    end if
 
-   ::oModel:buildRowSet( cSentence )
+   DEFAULT cColumns  := ::oModel:serializeColumns() 
 
-   if empty( ::oModel:oRowSet )
+   oRowSet           := ::oModel:newRowSet( cSentence )
+
+   if empty( oRowSet )
       RETURN ( Self )
    end if 
 
-   oFastReport:SetUserDataSet(   ::getTitle(),;
+   oFastReport:setUserDataSet(   cTitle,;
                                  cColumns,;
-                                 {|| ::oModel:oRowSet:gotop()  },;
-                                 {|| ::oModel:oRowSet:skip(1)  },;
-                                 {|| ::oModel:oRowSet:skip(-1) },;
-                                 {|| ::oModel:oRowSet:eof()    },;
-                                 {|nField| ::oModel:oRowSet:fieldGet( nField ) } )
+                                 {|| oRowSet:gotop()  },;
+                                 {|| oRowSet:skip(1)  },;
+                                 {|| oRowSet:skip(-1) },;
+                                 {|| oRowSet:eof()    },;
+                                 {|nField| oRowSet:fieldGet( nField ) } )
 
 RETURN ( Self )
 
