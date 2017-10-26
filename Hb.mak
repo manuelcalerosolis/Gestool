@@ -16,7 +16,7 @@ IMG2PDFLIB           = 	\img2Pdf
 
 OBJ                  = 	obj1705
 
-SOURCEPRG            = 	.\Prg;.\Prg\mail;.\Prg\Comercio;.\Prg\Models;.\Prg\Seeders;.\Prg\Views;.\Prg\Controllers;.\Prg\Validators;.\Prg\Repositories;.\Prg\Services;.\Prg\Tablet;.\Prg\tablet\view;.\Prg\tablet\view\documentos;.\Prg\tablet\view\terceros;.\Prg\tablet\view\documentos\ventas;.\Prg\tablet\view\documentos\terceros;.\Prg\tablet\utils;.\Prg\tablet\presenter;.\Prg\tablet\presenter\terceros;.\Prg\tablet\presenter\documentos;.\Prg\tablet\presenter\documentos\ventas;
+SOURCEPRG            = 	.\Prg;.\Prg\mail;.\Prg\Comercio;.\Prg\Models;.\Prg\Seeders;.\Prg\Views;.\Prg\Controllers;.\Prg\Validators;.\Prg\Repositories;.\Prg\Services;.\Prg\Reports;.\Prg\Tablet;.\Prg\tablet\view;.\Prg\tablet\view\documentos;.\Prg\tablet\view\terceros;.\Prg\tablet\view\documentos\ventas;.\Prg\tablet\view\documentos\terceros;.\Prg\tablet\utils;.\Prg\tablet\presenter;.\Prg\tablet\presenter\terceros;.\Prg\tablet\presenter\documentos;.\Prg\tablet\presenter\documentos\ventas;
 SOURCEC 				   =	C
 
 PPO 					   = 	ppo1705
@@ -348,6 +348,8 @@ RectificativasClientesLineasModel.prg 									\
 StocksModel.prg 																\
 SituacionesController.prg       											\
 MovimientosAlmacenView.prg													\
+SQLBaseReport.prg 															\
+MovimientosAlmacenReport.prg												\
 ImportadorMovimientosAlmacenLineasView.prg							\
 ImportadorMovimientosAlmacenLineasController.prg					\
 MovimientosAlmacenLineasView.prg											\
@@ -937,6 +939,8 @@ AlbaranesClientesLineasModel.obj 										\
 RectificativasClientesLineasModel.obj 									\
 StocksModel.obj 																\
 MovimientosAlmacenView.obj													\
+SQLBaseReport.obj 															\
+MovimientosAlmacenReport.obj												\
 ImportadorMovimientosAlmacenLineasView.obj							\
 ImportadorMovimientosAlmacenLineasController.obj 					\
 MovimientosAlmacenLineasView.obj											\
@@ -1494,6 +1498,8 @@ $(OBJ)\RectificativasClientesLineasModel.obj 						+
 $(OBJ)\StocksModel.obj 														+
 $(OBJ)\SituacionesController.obj          							+
 $(OBJ)\MovimientosAlmacenView.obj 										+
+$(OBJ)\MovimientosAlmacenReport.obj 									+
+$(OBJ)\SQLBaseReport.obj 													+
 $(OBJ)\ImportadorMovimientosAlmacenLineasView.obj 					+
 $(OBJ)\ImportadorMovimientosAlmacenLineasController.obj			+
 $(OBJ)\MovimientosAlmacenLineasView.obj								+

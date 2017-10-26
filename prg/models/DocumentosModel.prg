@@ -7,8 +7,11 @@ CLASS DocumentosModel FROM ADSBaseModel
 
    METHOD getTableName()                  INLINE ::getEmpresaTableName( "Rdocumen" ) 
 
+
    METHOD getWhereTipo()
    METHOD getWhereMovimientosAlmacen()    INLINE ( ::getWhereTipo( "RM" ) )
+
+   METHOD getReportWhereCodigo()
 
 END CLASS
 
@@ -26,6 +29,21 @@ METHOD getWhereTipo( cTipo )
    end if 
 
 RETURN ( cStm )
+
+//---------------------------------------------------------------------------//
+
+METHOD getReportWhereCodigo( cCodigo )
+
+   local cStm
+   local cSql  := "SELECT mReport "                         + ;
+                     "FROM " + ::getTableName() + " "       + ;
+                     "WHERE Codigo = " + quoted( cCodigo ) 
+
+   if ::ExecuteSqlStatement( cSql, @cStm )
+      RETURN ( ( cStm )->mReport )
+   end if 
+
+RETURN ( "" )
 
 //---------------------------------------------------------------------------//
 

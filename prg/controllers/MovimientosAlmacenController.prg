@@ -12,6 +12,10 @@ CLASS MovimientosAlmacenController FROM SQLBaseController
 
    METHOD New()
 
+   METHOD getUuid()                 INLINE ( iif( !empty( ::oModel ) .and. !empty( ::oModel:hBuffer ),;
+                                                   hget( ::oModel:hBuffer, "uuid" ),;
+                                                   nil ) )
+
    METHOD validateAlmacenOrigen()   INLINE ( iif(  ::validate( "almacen_origen" ),;
                                                    ::stampAlmacenNombre( ::oDialogView:oGetAlmacenOrigen ),;
                                                    .f. ) )
@@ -37,10 +41,6 @@ CLASS MovimientosAlmacenController FROM SQLBaseController
    METHOD stampAgente()
 
    METHOD printMovimientosAlmacen() INLINE ( msgalert( "¯\_(¨)_/¯" ) ) 
-
-   METHOD DesignReport()
-
-   METHOD DataReport()   
 
    METHOD deleteLines()
 
@@ -83,11 +83,20 @@ RETURN ( Self )
 
 METHOD addPrintButtons()
 
-   ::oNavigatorView:oMenuTreeView:AddButton( "Imprimir", "Imp16", {|| ::printMovimientosAlmacen() }, "I", ACC_IMPR )
+   local cWorkArea
+   local oButtonPrint
+   local oButtonLabel
+   local oButtonPreview
 
-   ( DocumentosModel():getWhereMovimientosAlmacen() )->( browse() )
+   cWorkArea               := DocumentosModel():getWhereMovimientosAlmacen()
 
-   ::oNavigatorView:oMenuTreeView:AddButton( "Previsualizar", "Prev116", {|| ::printMovimientosAlmacen() }, "P", ACC_IMPR ) 
+   oButtonPrint            := ::oNavigatorView:oMenuTreeView:AddButton( "Imprimir", "Imp16", {|| ::printMovimientosAlmacen() }, "I", ACC_IMPR )
+
+   ( cWorkArea )->( dbeval( {|| ::oNavigatorView:oMenuTreeView:AddButton( alltrim( ( cWorkArea )->cDescrip ), "Imp16", {|| ::printMovimientosAlmacen() }, , ACC_IMPR, oButtonPrint ) } ) )
+
+   oButtonPreview          := ::oNavigatorView:oMenuTreeView:AddButton( "Previsualizar", "Prev116", {|| ::printMovimientosAlmacen() }, "P", ACC_IMPR ) 
+
+   ( cWorkArea )->( dbeval( {|| ::oNavigatorView:oMenuTreeView:AddButton( alltrim( ( cWorkArea )->cDescrip ), "Prev116", {|| ::printMovimientosAlmacen() }, , ACC_IMPR, oButtonPreview ) } ) )
 
    ::oNavigatorView:oMenuTreeView:AddButton( "Etiquetas", "gc_portable_barcode_scanner_16", {|| ::printMovimientosAlmacen() }, "Q", ACC_IMPR ) 
 
@@ -125,82 +134,6 @@ METHOD stampAgente( oGetAgente )
    oGetAgente:oHelpText:cText( cNombreAgente )
 
 RETURN ( .t. )
-
-//---------------------------------------------------------------------------//
-
-
-METHOD DesignReport( oFr, cReport ) 
-
-   /*
-   Zona de datos------------------------------------------------------------
-   */
-
-   ::DataReport( oFr )
-
-   /*
-   Paginas y bandas---------------------------------------------------------
-   */
-
-   if !empty( cReport )
-
-      oFr:LoadFromString( cReport )
-
-   else
-
-      oFr:SetProperty(     "Report",            "ScriptLanguage", "PascalScript" )
-
-      oFr:AddPage(         "MainPage" )
-
-      oFr:AddBand(         "CabeceraDocumento", "MainPage", frxPageHeader )
-      oFr:SetProperty(     "CabeceraDocumento", "Top", 0 )
-      oFr:SetProperty(     "CabeceraDocumento", "Height", 200 )
-
-      oFr:AddBand(         "MasterData",        "MainPage", frxMasterData )
-      oFr:SetProperty(     "MasterData",        "Top", 200 )
-      oFr:SetProperty(     "MasterData",        "Height", 0 )
-      oFr:SetProperty(     "MasterData",        "StartNewPage", .t. )
-      oFr:SetObjProperty(  "MasterData",        "DataSet", "Movimientos de almacén" )
-
-      oFr:AddBand(         "DetalleColumnas",   "MainPage", frxDetailData  )
-      oFr:SetProperty(     "DetalleColumnas",   "Top", 230 )
-      oFr:SetProperty(     "DetalleColumnas",   "Height", 28 )
-      oFr:SetObjProperty(  "DetalleColumnas",   "DataSet", "Lineas de movimientos" )
-      oFr:SetProperty(     "DetalleColumnas",   "OnMasterDetail", "DetalleOnMasterDetail" )
-
-      oFr:AddBand(         "PieDocumento",      "MainPage", frxPageFooter )
-      oFr:SetProperty(     "PieDocumento",      "Top", 930 )
-      oFr:SetProperty(     "PieDocumento",      "Height", 110 )
-
-   end if
-
-   oFr:DesignReport()
-
-   oFr:DestroyFr()
-
-RETURN .T.
-
-//---------------------------------------------------------------------------//
-
-METHOD DataReport( oFr ) 
-
-   oFr:ClearDataSets()
-
-   ::setFastReport( oFr, "Movimientos de almacén" )
-
-/*   
-   oFr:SetWorkArea(     "Lineas de movimientos", ::oDetMovimientos:oDbf:nArea )
-   oFr:SetFieldAliases( "Lineas de movimientos", cObjectsToReport( ::oDetMovimientos:oDbf ) )
-
-   oFr:SetMasterDetail( "Movimiento",              "Lineas de movimientos",   {|| Str( ::oDbf:nNumRem ) + ::oDbf:cSufRem } )
-   oFr:SetMasterDetail( "Lineas de movimientos",   "Artículos",               {|| ::oDetMovimientos:oDbf:cRefMov } )
-
-   if !empty( ::oDetMovimientos )
-      oFr:SetResyncPair(   "Movimiento",              "Lineas de movimientos" )
-      oFr:SetResyncPair(   "Lineas de movimientos",   "Artículos" )
-   end if
-*/
-
-RETURN NIL
 
 //---------------------------------------------------------------------------//
 

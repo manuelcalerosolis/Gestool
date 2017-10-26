@@ -72,15 +72,15 @@ METHOD New()
                                              "width"     => 80 }                                      )
 
    hset( ::hColumns, "grupo_movimiento",  {  "create"    => "CHAR ( 2 )"                              ,;
-                                             "text"      => "Grupo movimiento"                        ,;
-                                             "header"    => "Grupo movimiento"                        ,;
+                                             "text"      => "Grupo"                                   ,;
+                                             "header"    => "Grupo"                                   ,;
                                              "visible"   => .t.                                       ,;
                                              "type"      => "C"                                       ,;
                                              "field"     => "cCodMov"                                 ,;
                                              "width"     => 80 }                                      )
 
    hset( ::hColumns, "agente",            {  "create"    => "CHAR ( 3 )"                              ,;
-                                             "text"      => "Agente movimiento"                       ,;
+                                             "text"      => "Agente"                                  ,;
                                              "header"    => "Agente"                                  ,;
                                              "visible"   => .t.                                       ,;
                                              "type"      => "C"                                       ,;

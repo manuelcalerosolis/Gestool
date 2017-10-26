@@ -108,7 +108,7 @@ CLASS SQLBaseModel
 
    // Rowset-------------------------------------------------------------------
 
-   METHOD buildRowSet( cSentence )                    INLINE ( ::oRowset := ::newRowSet( cSentence ), ::oRowSet )
+   METHOD buildRowSet( cSentence )                    
    METHOD newRowSet( cSentence )                      
    METHOD buildRowSetAndFind( idToFind )              INLINE ( ::buildRowSet(), ::findInRowSet( idToFind ) )
 
@@ -350,12 +350,22 @@ RETURN ( "DROP TABLE " + ::cTableName )
 
 //---------------------------------------------------------------------------//
 
+METHOD buildRowSet( cSentence )
+
+   ::fireEvent( 'buildingRowSet')
+
+   ::oRowSet   := ::newRowSet( cSentence )
+
+   ::fireEvent( 'builtRowSet')
+
+RETURN ( ::oRowSet )
+
+//---------------------------------------------------------------------------//
+
 METHOD newRowSet( cSentence )
 
    local oError
    local oRowSet
-
-   ::fireEvent( 'buildingRowSet')
 
    DEFAULT cSentence    := ::getSelectSentence()
 
@@ -376,8 +386,6 @@ METHOD newRowSet( cSentence )
    end
 
    oRowSet:goTop()
-
-   ::fireEvent( 'builtRowSet')
 
 RETURN ( oRowSet )
 
@@ -517,7 +525,7 @@ METHOD convertRecnoToId( aRecno, cColumnKey )
    DEFAULT cColumnKey   := ::cColumnKey
 
    for each nRecno in ( aRecno )
-      ::oRowset:goTo( nRecno )
+      ::oRowSet:goTo( nRecno )
       aadd( aId, ::oRowSet:fieldget( cColumnKey ) )
    next
 
@@ -542,7 +550,7 @@ METHOD loadBlankBuffer()
 
    ::hBuffer            := {=>}
 
-   nRecno               := ::oRowset:recno()
+   nRecno               := ::oRowSet:recno()
    ::oRowSet:goto( 0 )
 
    ::fireEvent( 'loadingBlankBuffer' )
@@ -617,7 +625,7 @@ METHOD serializeColumns()
 
    local cColumns       := ""
 
-   heval( ::hColumns, {|k| cColumns += k + ";" } )
+   heval( ::getTableColumns(), {|k| cColumns += k + ";" } )
 
 RETURN ( cColumns )
 
