@@ -50,9 +50,9 @@ END CLASS
 
 METHOD New()
 
-   ::cTitle                   := "Movimientos de almacen"
+   ::cTitle                   := "Movimientos de almacén"
 
-   ::cImage                   := "gc_document_attachment_16"
+   ::cImage                   := "gc_pencil_package_16"
 
    ::nLevel                   := nLevelUsr( "01050" )
 

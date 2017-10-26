@@ -131,7 +131,15 @@ RETURN ( self )
 
 METHOD updateCurrentBuffer()
 
-RETURN ( aEval( ::aBuffer, {|h| ::InsertOrUpdate( h ) } ) )
+   local h
+
+   for each h in ::aBuffer
+      ::InsertOrUpdate( h )
+   next
+
+   //aEval( ::aBuffer, {|h| ::InsertOrUpdate( h ) } )
+
+RETURN ( self )
 
 //---------------------------------------------------------------------------//
 

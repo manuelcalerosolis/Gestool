@@ -27,7 +27,7 @@ METHOD New()
    hset( ::hColumns, "numero",            {  "create"    => "INT(9)"                                  ,;
                                              "text"      => "Número"                                  ,;
                                              "header"    => "Número"                                  ,;
-                                             "visible"   => .t.                                       ,;
+                                             "visible"   => .f.                                       ,;
                                              "width"     => 100                                       ,;
                                              "field"     => "nNumRem"                                 ,;
                                              "type"      => "N"                                       ,;
