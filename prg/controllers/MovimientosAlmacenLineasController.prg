@@ -39,9 +39,9 @@ CLASS MovimientosAlmacenLineasController FROM SQLBaseController
 
    METHOD stampFechaCaducidad()
 
-   METHOD stampStockAlmacenOrigen()    INLINE ( ::oDialogView:oGetStockOrigen:cText( TStock():nSQLStockActual( ::oModel:hBuffer[ "codigo_articulo" ], ::getSenderController():oModel:hBuffer[ "almacen_origen" ], ::oModel:hBuffer[ "valor_primera_propiedad" ], ::oModel:hBuffer[ "valor_segunda_propiedad" ], ::oModel:hBuffer[ "lote" ] ) ) )
+   METHOD stampStockAlmacenOrigen()
 
-   METHOD stampStockAlmacenDestino()   INLINE ( ::oDialogView:oGetStockOrigen:cText( TStock():nSQLStockActual( ::oModel:hBuffer[ "codigo_articulo" ], ::getSenderController():oModel:hBuffer[ "almacen_destino" ], ::oModel:hBuffer[ "valor_primera_propiedad" ], ::oModel:hBuffer[ "valor_segunda_propiedad" ], ::oModel:hBuffer[ "lote" ] ) ) )
+   METHOD stampStockAlmacenDestino()
 
    METHOD getPrimeraPropiedad( cCodigoArticulo, cCodigoPropiedad )
 
@@ -90,7 +90,7 @@ METHOD New( oController )
 
    ::setEvent( 'closedDialog',   {|| ::onClosedDialog() } )
 
-   ::setEvent( 'deletingLines',  {|| MsgInfo( "Voy a Borrar las series" ) } )
+   ::setEvent( 'deletingLines',  {|| ::oSeriesControler:deletedSelected( ::aSelectDelete ) } )
 
 RETURN ( Self )
 
@@ -358,13 +358,33 @@ RETURN ( Self )
 
 METHOD deleteLines( uuid )
 
-   //::aSelectDelete      //Vas definiendo por aqui----------------------------
+   ::aSelectDelete  := ::oModel:aRowsDeleted( uuid )
 
    ::fireEvent( 'deletingLines' )
 
    ::oModel:deleteWhereUuid( uuid )
 
    ::fireEvent( 'deletedLines' )
+
+RETURN ( Self )
+
+//---------------------------------------------------------------------------//
+
+METHOD stampStockAlmacenOrigen()    
+
+   if !Empty( ::getSenderController():oModel:hBuffer[ "almacen_origen" ] )
+      ::oDialogView:oGetStockOrigen:cText( TStock():nSQLStockActual( ::oModel:hBuffer[ "codigo_articulo" ], ::getSenderController():oModel:hBuffer[ "almacen_origen" ], ::oModel:hBuffer[ "valor_primera_propiedad" ], ::oModel:hBuffer[ "valor_segunda_propiedad" ], ::oModel:hBuffer[ "lote" ] ) )
+   end if
+
+RETURN ( Self )
+
+//---------------------------------------------------------------------------//
+
+METHOD stampStockAlmacenDestino()
+
+   if !Empty( ::getSenderController():oModel:hBuffer[ "almacen_destino" ] )
+      ::oDialogView:oGetStockOrigen:cText( TStock():nSQLStockActual( ::oModel:hBuffer[ "codigo_articulo" ], ::getSenderController():oModel:hBuffer[ "almacen_destino" ], ::oModel:hBuffer[ "valor_primera_propiedad" ], ::oModel:hBuffer[ "valor_segunda_propiedad" ], ::oModel:hBuffer[ "lote" ] ) )
+   end if
 
 RETURN ( Self )
 

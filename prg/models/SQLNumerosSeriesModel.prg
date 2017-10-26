@@ -25,6 +25,8 @@ CLASS SQLNumerosSeriesModel FROM SQLBaseEmpresasModel
 
    METHOD InsertOrUpdate()
 
+   METHOD deleteWhereUuid( uuid )
+
 END CLASS
 
 //---------------------------------------------------------------------------//
@@ -129,7 +131,15 @@ RETURN ( self )
 
 METHOD updateCurrentBuffer()
 
-RETURN ( aEval( ::aBuffer, {|h| ::InsertOrUpdate( h ) } ) )
+   local h
+
+   for each h in ::aBuffer
+      ::InsertOrUpdate( h )
+   next
+
+   //aEval( ::aBuffer, {|h| ::InsertOrUpdate( h ) } )
+
+RETURN ( self )
 
 //---------------------------------------------------------------------------//
 
@@ -142,5 +152,14 @@ METHOD InsertOrUpdate( hRow )
    end if
 
 RETURN ( self )
+
+//---------------------------------------------------------------------------//
+
+METHOD deleteWhereUuid( uuid )
+
+   local cSentence := "DELETE FROM " + ::cTableName + " " + ;
+                              "WHERE parent_uuid = " + quoted( uuid )
+
+RETURN ( ::getDatabase():Exec( cSentence ) )
 
 //---------------------------------------------------------------------------//

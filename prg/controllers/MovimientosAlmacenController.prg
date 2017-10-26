@@ -50,9 +50,9 @@ END CLASS
 
 METHOD New()
 
-   ::cTitle                   := "Movimientos de almacen"
+   ::cTitle                   := "Movimientos de almacén"
 
-   ::cImage                   := "gc_document_attachment_16"
+   ::cImage                   := "gc_pencil_package_16"
 
    ::nLevel                   := nLevelUsr( "01050" )
 
@@ -92,11 +92,15 @@ METHOD addPrintButtons()
 
    oButtonPrint            := ::oNavigatorView:oMenuTreeView:AddButton( "Imprimir", "Imp16", {|| ::printMovimientosAlmacen() }, "I", ACC_IMPR )
 
+<<<<<<< HEAD
    ( cWorkArea )->( dbeval( {|| ::oNavigatorView:oMenuTreeView:AddButton( alltrim( ( cWorkArea )->cDescrip ), "Imp16", {|| ::printMovimientosAlmacen() }, , ACC_IMPR, oButtonPrint ) } ) )
 
    oButtonPreview          := ::oNavigatorView:oMenuTreeView:AddButton( "Previsualizar", "Prev116", {|| ::printMovimientosAlmacen() }, "P", ACC_IMPR ) 
 
    ( cWorkArea )->( dbeval( {|| ::oNavigatorView:oMenuTreeView:AddButton( alltrim( ( cWorkArea )->cDescrip ), "Prev116", {|| ::printMovimientosAlmacen() }, , ACC_IMPR, oButtonPreview ) } ) )
+=======
+   ::oNavigatorView:oMenuTreeView:AddButton( "Previsualizar", "Prev116", {|| ::printMovimientosAlmacen() }, "P", ACC_IMPR ) 
+>>>>>>> 36afd585dacc4e9ee8f8f0a6a9453b169964b52f
 
    ::oNavigatorView:oMenuTreeView:AddButton( "Etiquetas", "gc_portable_barcode_scanner_16", {|| ::printMovimientosAlmacen() }, "Q", ACC_IMPR ) 
 
@@ -146,3 +150,17 @@ METHOD deleteLines()
 RETURN ( self ) 
 
 //---------------------------------------------------------------------------//
+
+
+
+
+
+
+
+
+
+
+
+
+
+//ALTER TABLE movimientos_almacen DROP COLUMN numero;

@@ -17,14 +17,16 @@ CLASS NumerosSeriesView FROM SQLBaseView
    DATA nNumGen
    DATA oBrwSer
 
+   DATA oDialog
+
    METHOD New()
 
-   METHOD getParentControler()                  INLINE ( ::oController:oSenderController )
-   METHOD getParentDialogView()                 INLINE ( ::getParentControler():oDialogView )
-   METHOD getaBuffer()                          INLINE ( ::oController:getaBuffer() )
+   METHOD getParentControler()                     INLINE ( ::oController:oSenderController )
+   METHOD getParentDialogView()                    INLINE ( ::getParentControler():oDialogView )
+   METHOD getaBuffer()                             INLINE ( ::oController:getaBuffer() )
 
-   METHOD getValueBuffer( nArrayAt )            INLINE ( ::oController:getValueBuffer( nArrayAt ) )
-   METHOD setValueBuffer( nArrayAt, value )     INLINE ( ::oController:setValueBuffer( nArrayAt, value ) )
+   METHOD getValueBuffer( nArrayAt, key )          INLINE ( ::oController:getValueBuffer( nArrayAt, key ) )
+   METHOD setValueBuffer( nArrayAt, key, value )   INLINE ( ::oController:setValueBuffer( nArrayAt, key, value ) )
 
    METHOD Dialog()
 
@@ -47,53 +49,57 @@ Return ( Self )
 
 METHOD Dialog()
 
-   local oDlg
    local oBtn
    local oBmpGeneral
 
-   DEFINE DIALOG oDlg RESOURCE "VtaNumSer" TITLE ::lblTitle() + "series de movimientos de almacén"
+   ::nSerIni                  := 0
+   ::nSerFin                  := 0
+   ::nNumGen                  := 0
+   ::cPreFix                  := Space( 150 )
+
+   DEFINE DIALOG ::oDialog RESOURCE "VtaNumSer" TITLE ::lblTitle() + "series de movimientos de almacén"
 
       REDEFINE BITMAP oBmpGeneral ;
          ID       800 ;
          RESOURCE "gc_odometer_48" ;
          TRANSPARENT ;
-         OF       oDlg
+         OF       ::oDialog
 
       REDEFINE GET ::oTotalUnidades VAR ::nTotalUnidades ;
          ID       100 ;
          PICTURE  MasUnd() ;
          WHEN     .f. ;
-         OF       oDlg
+         OF       ::oDialog
 
       REDEFINE GET ::cPreFix ;
          ID       110 ;
-         OF       oDlg
+         OF       ::oDialog
 
       REDEFINE GET ::oSerIni VAR ::nSerIni ;
          ID       120 ;
          PICTURE  "99999999999999999999" ;
          SPINNER ;
          VALID    ( ::oSerFin:cText( ::nSerIni + ::nTotalUnidades ), .t. ) ;
-         OF       oDlg
+         OF       ::oDialog
 
       REDEFINE GET ::oSerFin VAR ::nSerFin ;
          ID       130 ;
          PICTURE  "99999999999999999999" ;
          WHEN     .f. ;
-         OF       oDlg
+         OF       ::oDialog
 
       REDEFINE GET ::oNumGen VAR ::nNumGen ;
          ID       140 ;
          SPINNER ;
          PICTURE  "99999999999999999999" ;
-         OF       oDlg
+         OF       ::oDialog
 
       REDEFINE BUTTON ;
          ID       500 ;
-         OF       oDlg ;
+         OF       ::oDialog ;
          ACTION   ( ::oController:GenerarSeries() )
 
-      ::oBrwSer                  := IXBrowse():New( oDlg )
+      ::oBrwSer                  := IXBrowse():New( ::oDialog )
 
       ::oBrwSer:bClrSel          := {|| { CLR_BLACK, Rgb( 229, 229, 229 ) } }
       ::oBrwSer:bClrSelFocus     := {|| { CLR_BLACK, Rgb( 167, 205, 240 ) } }
@@ -118,9 +124,9 @@ METHOD Dialog()
 
       with object ( ::oBrwSer:addCol() )
          :cHeader                := "Serie"
-         :bEditValue             := {|| Padr( ::getValueBuffer( ::oBrwSer:nArrayAt ), 30 ) }
+         :bEditValue             := {|| Padr( ::getValueBuffer( ::oBrwSer:nArrayAt, "numero_serie" ), 30 ) }
          :nWidth                 :=  240
-         :bOnPostEdit            := {|o,x| ::setValueBuffer( ::oBrwSer:nArrayAt, x ) }
+         :bOnPostEdit            := {|o,x| ::setValueBuffer( ::oBrwSer:nArrayAt, "numero_serie", x ) }
          :nEditType              := 1
       end whit
 
@@ -128,20 +134,20 @@ METHOD Dialog()
 
       REDEFINE BUTTON ;
          ID       510 ;
-         OF       oDlg ;
-         ACTION   ( ::oController:EndResource( oDlg ) )
+         OF       ::oDialog ;
+         ACTION   ( ::oController:EndResource( ::oDialog ) )
 
       REDEFINE BUTTON ;
          ID       520 ;
-         OF       oDlg ;
-         ACTION   ( oDlg:End() )
+         OF       ::oDialog ;
+         ACTION   ( ::oDialog:End() )
 
-   ACTIVATE DIALOG oDlg CENTER
+   ACTIVATE DIALOG ::oDialog CENTER
 
    if !Empty( oBmpGeneral )
       oBmpGeneral:End()
    end if
 
-RETURN ( oDlg:nResult == IDOK )
+RETURN ( ::oDialog:nResult == IDOK )
 
 //---------------------------------------------------------------------------//
