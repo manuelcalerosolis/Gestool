@@ -6,7 +6,7 @@
 
 CLASS SQLMovimientosAlmacenLineasModel FROM SQLBaseEmpresasModel
 
-   DATA cTableName            INIT "movimientos_almacen_lineas"
+   DATA  cTableName         INIT "movimientos_almacen_lineas"
 
    METHOD New()
 
@@ -25,6 +25,8 @@ CLASS SQLMovimientosAlmacenLineasModel FROM SQLBaseEmpresasModel
    METHOD addDeleteSentence()
 
    METHOD deleteWhereUuid( uuid )
+
+   METHOD aRowsDeleted( uuid )
 
 END CLASS
 
@@ -244,11 +246,18 @@ RETURN ( ::totalUnidades() * ::getRowSet():fieldGet( "precio_articulo" ) )
 
 METHOD deleteWhereUuid( uuid )
 
-   local cSentence
-
-   cSentence      := "DELETE FROM " + ::cTableName + " " + ;
-                            "WHERE parent_uuid = " + quoted( uuid )
+   local cSentence := "DELETE FROM " + ::cTableName + " " + ;
+                              "WHERE parent_uuid = " + quoted( uuid )
 
 RETURN ( ::getDatabase():Exec( cSentence ) )
+
+//---------------------------------------------------------------------------//
+
+METHOD aRowsDeleted( uuid )
+
+   local cSentence   := "SELECT * FROM " + ::cTableName + " " + ;
+                           "WHERE parent_uuid = " + quoted( uuid )
+
+RETURN ( ::getDatabase():selectFetchHash( cSentence ) )
 
 //---------------------------------------------------------------------------//

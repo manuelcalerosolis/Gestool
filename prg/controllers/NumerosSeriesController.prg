@@ -21,10 +21,12 @@ CLASS NumerosSeriesController FROM SQLBaseController
 
    METHOD getaBuffer()                          INLINE ( ::oModel:aBuffer )
 
-   METHOD getValueBuffer( nArrayAt )            INLINE ( hGet( ::oModel:aBuffer[ nArrayAt ], "numero_serie" ) )
-   METHOD setValueBuffer( nArrayAt, value )     INLINE ( hSet( ::oModel:aBuffer[ nArrayAt ], "numero_serie", value ) )
+   METHOD getValueBuffer( nArrayAt, key )            INLINE ( hGet( ::oModel:aBuffer[ nArrayAt ], key ) )
+   METHOD setValueBuffer( nArrayAt, key, value )     INLINE ( hSet( ::oModel:aBuffer[ nArrayAt ], key, value ) )
 
    METHOD endResource( oDlg )
+
+   METHOD deletedSelected( aRecords )
 
 END CLASS
 
@@ -46,7 +48,30 @@ RETURN ( Self )
 
 METHOD GenerarSeries()
 
-   MsgInfo( "GenerarSeries" )
+   local n
+   local nChg  := 1
+
+   CursorWait()
+
+   ::oDialogView:oDialog:Disable()
+
+   if Empty( ::oDialogView:nNumGen )
+      aEval( ::getaBuffer(), {| a, n | ::setValueBuffer( n, "numero_serie", Padr( Rtrim( ::oDialogView:cPreFix ) + Ltrim( Str( ::oDialogView:nSerIni + n - 1 ) ), 30 ) ) } )
+   else
+      for n := 1 to len( ::getaBuffer() )
+            ::setValueBuffer( n, "numero_serie", Padr( Rtrim( ::oDialogView:cPreFix ) + Ltrim( Str( ::oDialogView:nSerIni + nChg - 1 ) ), 30 ) )
+            nChg++
+         if nChg == ::oDialogView:nNumGen
+            exit
+         end if
+      next
+   end if
+
+   ::oDialogView:oBrwSer:Refresh()
+
+   ::oDialogView:oDialog:Enable()
+
+   CursorWE()
 
 RETURN ( Self )
 
@@ -112,5 +137,15 @@ METHOD Edit()
    ::fireEvent( 'exitEdited' ) 
 
 RETURN ( lEdit )
+
+//---------------------------------------------------------------------------//
+
+METHOD deletedSelected( aRecords )
+
+   if Len( aRecords ) > 0
+      aEval( aRecords, {| h | ::oModel:deleteWhereUuid( hGet( h, "uuid" ) ) } )
+   end if
+
+RETURN ( self )
 
 //---------------------------------------------------------------------------//

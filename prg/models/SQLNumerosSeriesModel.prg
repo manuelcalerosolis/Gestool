@@ -25,6 +25,8 @@ CLASS SQLNumerosSeriesModel FROM SQLBaseEmpresasModel
 
    METHOD InsertOrUpdate()
 
+   METHOD deleteWhereUuid( uuid )
+
 END CLASS
 
 //---------------------------------------------------------------------------//
@@ -142,5 +144,14 @@ METHOD InsertOrUpdate( hRow )
    end if
 
 RETURN ( self )
+
+//---------------------------------------------------------------------------//
+
+METHOD deleteWhereUuid( uuid )
+
+   local cSentence := "DELETE FROM " + ::cTableName + " " + ;
+                              "WHERE parent_uuid = " + quoted( uuid )
+
+RETURN ( ::getDatabase():Exec( cSentence ) )
 
 //---------------------------------------------------------------------------//

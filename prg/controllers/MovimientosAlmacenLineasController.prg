@@ -90,7 +90,7 @@ METHOD New( oController )
 
    ::setEvent( 'closedDialog',   {|| ::onClosedDialog() } )
 
-   ::setEvent( 'deletingLines',  {|| MsgInfo( "Voy a Borrar las series" ) } )
+   ::setEvent( 'deletingLines',  {|| ::oSeriesControler:deletedSelected( ::aSelectDelete ) } )
 
 RETURN ( Self )
 
@@ -362,7 +362,7 @@ RETURN ( Self )
 
 METHOD deleteLines( uuid )
 
-   //::aSelectDelete      //Vas definiendo por aqui----------------------------
+   ::aSelectDelete  := ::oModel:aRowsDeleted( uuid )
 
    ::fireEvent( 'deletingLines' )
 
