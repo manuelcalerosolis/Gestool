@@ -85,8 +85,6 @@ METHOD addPrintButtons()
 
    ::oNavigatorView:oMenuTreeView:AddButton( "Imprimir", "Imp16", {|| ::printMovimientosAlmacen() }, "I", ACC_IMPR )
 
-   ( DocumentosModel():getWhereMovimientosAlmacen() )->( browse() )
-
    ::oNavigatorView:oMenuTreeView:AddButton( "Previsualizar", "Prev116", {|| ::printMovimientosAlmacen() }, "P", ACC_IMPR ) 
 
    ::oNavigatorView:oMenuTreeView:AddButton( "Etiquetas", "gc_portable_barcode_scanner_16", {|| ::printMovimientosAlmacen() }, "Q", ACC_IMPR ) 
@@ -213,3 +211,17 @@ METHOD deleteLines()
 RETURN ( self ) 
 
 //---------------------------------------------------------------------------//
+
+
+
+
+
+
+
+
+
+
+
+
+
+//ALTER TABLE movimientos_almacen DROP COLUMN numero;

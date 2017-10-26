@@ -8,7 +8,7 @@ CLASS SQLMovimientosAlmacenModel FROM SQLBaseEmpresasModel
 
    DATA cTableName            INIT "movimientos_almacen"
 
-   DATA cColumnOrder          INIT "numero"
+   DATA cColumnOrder          INIT "id"
 
    DATA aTextoMovimiento      INIT { "Entre almacenes", "Regularización", "Objetivos", "Consolidación" }
 
@@ -23,15 +23,6 @@ END CLASS
 METHOD New()
 
    ::CommunFields()
-
-   hset( ::hColumns, "numero",            {  "create"    => "INT(9)"                                  ,;
-                                             "text"      => "Número"                                  ,;
-                                             "header"    => "Número"                                  ,;
-                                             "visible"   => .f.                                       ,;
-                                             "width"     => 100                                       ,;
-                                             "field"     => "nNumRem"                                 ,;
-                                             "type"      => "N"                                       ,;
-                                             "len"       => 40 }                                      )
 
    hset( ::hColumns, "tipo_movimiento",   {  "create"    => "INT NOT NULL"                            ,;
                                              "text"      => "Tipo movimiento"                         ,;

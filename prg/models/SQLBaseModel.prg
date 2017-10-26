@@ -324,7 +324,7 @@ METHOD getAlterTableSentences( aSchemaColumns )
    end if 
 
    aAlter         := {}
-   hColumns       := hClone( ::hColumns )
+   hColumns       := ::getTableColumns()
 
    for each hColumn in aSchemaColumns
 
@@ -332,6 +332,8 @@ METHOD getAlterTableSentences( aSchemaColumns )
       
       if nPosition != 0
          hb_hdelat( hColumns, nPosition )
+      else 
+         aadd( aAlter, "ALTER TABLE " + ::cTableName + " DROP COLUMN " + hget( hColumn, "COLUMN_NAME" ) )
       end if
 
    next
