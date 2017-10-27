@@ -91,16 +91,11 @@ METHOD addPrintButtons()
    cWorkArea               := DocumentosModel():getWhereMovimientosAlmacen()
 
    oButtonPrint            := ::oNavigatorView:oMenuTreeView:AddButton( "Imprimir", "Imp16", {|| ::printMovimientosAlmacen() }, "I", ACC_IMPR )
-
-<<<<<<< HEAD
    ( cWorkArea )->( dbeval( {|| ::oNavigatorView:oMenuTreeView:AddButton( alltrim( ( cWorkArea )->cDescrip ), "Imp16", {|| ::printMovimientosAlmacen() }, , ACC_IMPR, oButtonPrint ) } ) )
 
    oButtonPreview          := ::oNavigatorView:oMenuTreeView:AddButton( "Previsualizar", "Prev116", {|| ::printMovimientosAlmacen() }, "P", ACC_IMPR ) 
 
    ( cWorkArea )->( dbeval( {|| ::oNavigatorView:oMenuTreeView:AddButton( alltrim( ( cWorkArea )->cDescrip ), "Prev116", {|| ::printMovimientosAlmacen() }, , ACC_IMPR, oButtonPreview ) } ) )
-=======
-   ::oNavigatorView:oMenuTreeView:AddButton( "Previsualizar", "Prev116", {|| ::printMovimientosAlmacen() }, "P", ACC_IMPR ) 
->>>>>>> 36afd585dacc4e9ee8f8f0a6a9453b169964b52f
 
    ::oNavigatorView:oMenuTreeView:AddButton( "Etiquetas", "gc_portable_barcode_scanner_16", {|| ::printMovimientosAlmacen() }, "Q", ACC_IMPR ) 
 
