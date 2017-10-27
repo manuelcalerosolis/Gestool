@@ -35,6 +35,8 @@ CLASS SQLBaseController
 
    DATA cImage                                        INIT ""
 
+   DATA hDocuments
+
    DATA aSelected
  
    METHOD New()
@@ -133,8 +135,6 @@ CLASS SQLBaseController
    METHOD beginTransactionalMode()                    INLINE ( if( ::lTransactional, getSQLDatabase():BeginTransaction(), ) )
    METHOD commitTransactionalMode()                   INLINE ( if( ::lTransactional, getSQLDatabase():Commit(), ) )
    METHOD rollbackTransactionalMode()                 INLINE ( if( ::lTransactional, getSQLDatabase():Rollback(), ) )
-
-   METHOD setFastReport( oFastReport, cSentence, cColumns )
 
    // Fastkeys-----------------------------------------------------------------
 
@@ -581,30 +581,3 @@ RETURN ( heval( ::hFastKey, {|k,v| if( k == nKey, eval( v ), ) } ) )
    
 //----------------------------------------------------------------------------//
 
-METHOD setFastReport( oFastReport, cTitle, cSentence, cColumns )
-
-   local oRowSet
-
-   if empty( oFastReport )
-      RETURN ( Self )
-   end if
-
-   DEFAULT cColumns  := ::oModel:serializeColumns() 
-
-   oRowSet           := ::oModel:newRowSet( cSentence )
-
-   if empty( oRowSet )
-      RETURN ( Self )
-   end if 
-
-   oFastReport:setUserDataSet(   cTitle,;
-                                 cColumns,;
-                                 {|| oRowSet:gotop()  },;
-                                 {|| oRowSet:skip(1)  },;
-                                 {|| oRowSet:skip(-1) },;
-                                 {|| oRowSet:eof()    },;
-                                 {|nField| oRowSet:fieldGet( nField ) } )
-
-RETURN ( Self )
-
-//---------------------------------------------------------------------------//

@@ -20,12 +20,12 @@ END CLASS
 METHOD getWhereTipo( cTipo )
 
    local cStm
-   local cSql  := "SELECT * "                               + ;
+   local cSql  := "SELECT Codigo, Descrip "                 + ;
                      "FROM " + ::getTableName() + " "       + ;
                      "WHERE cTipo = " + quoted( cTipo ) 
 
    if ::ExecuteSqlStatement( cSql, @cStm )
-      RETURN ( cStm ) 
+      RETURN ( fetchHashFromWorkArea( cStm ) )
    end if 
 
 RETURN ( cStm )

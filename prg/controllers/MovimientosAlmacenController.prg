@@ -16,8 +16,6 @@ CLASS MovimientosAlmacenController FROM SQLBaseController
                                                    hget( ::oModel:hBuffer, "uuid" ),;
                                                    nil ) )
 
-   METHOD getDocumentWorkArea()     INLINE ( DocumentosModel():getWhereMovimientosAlmacen() )
-
    METHOD validateAlmacenOrigen()   INLINE ( iif(  ::validate( "almacen_origen" ),;
                                                    ::stampAlmacenNombre( ::oDialogView:oGetAlmacenOrigen ),;
                                                    .f. ) )
@@ -41,8 +39,6 @@ CLASS MovimientosAlmacenController FROM SQLBaseController
    METHOD stampAgente()
 
    METHOD printDocument()  
-
-   METHOD blockPrintDocument( cFormato )
 
    METHOD deleteLines()
 
@@ -69,6 +65,10 @@ METHOD New()
    ::oLineasController        := MovimientosAlmacenLineasController():New( self )
 
    ::oImportadorController    := ImportadorMovimientosAlmacenLineasController():New( self )
+
+   ::hDocuments               := DocumentosModel():getWhereMovimientosAlmacen() 
+
+   msgalert( hb_valtoexp( ::hDocuments ), "hDocuments" )
 
    ::Super:New()
 

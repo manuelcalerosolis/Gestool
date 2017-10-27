@@ -22,7 +22,7 @@ END CLASS
 METHOD getFormatoDefecto( cSerie, cTipoDocumento )
 
    local cStm
-   local cSql  := "SELECT Doc" + cSerie + " "                        + ;
+   local cSql  := "SELECT Doc" + cSerie + " "                           + ;
                      "FROM " + ::getTableName() + " "                   + ;
                      "WHERE Doc = " + quoted( upper( cTipoDocumento ) )
 

@@ -6,9 +6,9 @@
 
 CLASS MovimientosAlmacenView FROM SQLBaseView
 
-   DATA oSQLBrowseView
-
    DATA oDialog
+
+   DATA oSQLBrowseView
 
    DATA oGetDivisa
    DATA oGetAgente
