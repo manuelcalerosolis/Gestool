@@ -20,6 +20,14 @@ CLASS MenuTreeView
 
    DATA oButtonMain
 
+   DATA oButtonPrint
+
+   DATA oButtonPreview
+
+   DATA oButtonPdf
+
+   DATA oButtonLabel
+
    DATA oEvents
 
    METHOD New( oSender )
@@ -79,6 +87,18 @@ CLASS MenuTreeView
                                                    ::AddExitButton(),;
                                                    ::oButtonMain:Expand(),;
                                                    ::fireEvent( 'addedSelectorButton' ) )
+
+   METHOD addPrintButtons()               
+
+   METHOD addPreviewButtons()
+
+   METHOD addPdfButtons()
+
+   METHOD addLabelButtons()
+
+   METHOD addDocumentsButtons()           
+
+   METHOD blockPrintDocument( nDevice, cFormato )  
 
    METHOD SelectButtonMain()              INLINE ( ::oTreeView:Select( ::oButtonMain ) )
 
@@ -268,6 +288,7 @@ METHOD AddEditButton()
 RETURN ( Self )
 
 //----------------------------------------------------------------------------//
+
 METHOD AddZoomButton()      
 
    ::fireEvent( 'addingZoomButton' )
@@ -316,6 +337,88 @@ RETURN ( Self )
 
 //----------------------------------------------------------------------------//
 
+METHOD addPrintButtons( cWorkArea )
+
+   ::fireEvent( 'addingPrintButton')
+
+   ::oButtonPrint    := ::AddButton( "Imprimir", "Imp16", {|| ::getController():printDocument( IS_PRINTER ) }, "I", ACC_IMPR )
+
+   ( cWorkArea )->( dbeval( {|| ::AddButton( alltrim( ( cWorkArea )->cDescrip ), "Imp16", ::blockPrintDocument( IS_PRINTER, ( cWorkArea )->codigo ), , ACC_IMPR, ::oButtonPrint ) } ) )
+
+   ::fireEvent( 'addedPrintButton') 
+
+RETURN ( Self )
+
+//----------------------------------------------------------------------------//
+
+METHOD addPreviewButtons( cWorkArea )
+
+   ::fireEvent( 'addingPreviewButton')
+
+   ::oButtonPreview  := ::AddButton( "Previsualizar", "Prev116", {|| ::getController():printDocument( IS_SCREEN ) }, "P", ACC_IMPR ) 
+
+   ( cWorkArea )->( dbeval( {|| ::AddButton( alltrim( ( cWorkArea )->cDescrip ), "Prev116", ::blockPrintDocument( IS_SCREEN, ( cWorkArea )->codigo ), , ACC_IMPR, ::oButtonPreview ) } ) )
+
+   ::fireEvent( 'addedPreviewButton') 
+
+RETURN ( Self )
+
+//----------------------------------------------------------------------------//
+
+METHOD addPdfButtons( cWorkArea )
+
+   ::fireEvent( 'addingPdfButton')
+
+   ::oButtonPdf  := ::AddButton( "Pdf", "Doclock16", {|| ::getController():printDocument( IS_PDF ) }, "F", ACC_IMPR ) 
+
+   ( cWorkArea )->( dbeval( {|| ::AddButton( alltrim( ( cWorkArea )->cDescrip ), "Doclock16", ::blockPrintDocument( IS_PDF, ( cWorkArea )->codigo ), , ACC_IMPR, ::oButtonPdf ) } ) )
+
+   ::fireEvent( 'addedPdfButton') 
+
+RETURN ( Self )
+
+//----------------------------------------------------------------------------//
+
+METHOD addLabelButtons()
+
+   ::fireEvent( 'addingLabelButton')
+
+   ::oButtonLabel  := ::AddButton( "Etiquetas", "gc_portable_barcode_scanner_16", {|| ::getController():labelDocument() }, "Q", ACC_IMPR ) 
+
+   ::fireEvent( 'addedLabelButton') 
+
+RETURN ( Self )
+
+//----------------------------------------------------------------------------//
+
+METHOD blockPrintDocument( nDevice, cFormato )
+
+RETURN ( {|| ::getController():printDocument( nDevice, cFormato ) } ) 
+
+//---------------------------------------------------------------------------//
+
+METHOD addDocumentsButtons()
+
+   local cDocumentWorkArea
+
+   ::fireEvent( 'addingPrintAndLabelButton' )
+
+   if !empty( ::oController )
+      cDocumentWorkArea    := ::oController:getDocumentWorkArea()
+   end if 
+
+   ::addPrintButtons( cDocumentWorkArea )
+   
+   ::addPreviewButtons( cDocumentWorkArea )
+   
+   ::addPdfButtons( cDocumentWorkArea )
+   
+   ::fireEvent( 'addedPrintAndLabelButton' ) 
+
+RETURN ( Self )
+
+//----------------------------------------------------------------------------//
+
 METHOD onChange()
 
    local oItem    := ::oTreeView:GetSelected()
@@ -333,6 +436,8 @@ METHOD onChange()
    end if 
 
    eval( oItem:bAction )
+
+   ::selectButtonMain()
 
 RETURN ( Self )
 

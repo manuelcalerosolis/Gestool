@@ -16,6 +16,8 @@ CLASS MovimientosAlmacenController FROM SQLBaseController
                                                    hget( ::oModel:hBuffer, "uuid" ),;
                                                    nil ) )
 
+   METHOD getDocumentWorkArea()     INLINE ( DocumentosModel():getWhereMovimientosAlmacen() )
+
    METHOD validateAlmacenOrigen()   INLINE ( iif(  ::validate( "almacen_origen" ),;
                                                    ::stampAlmacenNombre( ::oDialogView:oGetAlmacenOrigen ),;
                                                    .f. ) )
@@ -32,15 +34,15 @@ CLASS MovimientosAlmacenController FROM SQLBaseController
                                                    ::stampAgente( ::oDialogView:oGetAgente ),;
                                                    .f. ) )
 
-   METHOD addPrintButtons()   
-
    METHOD stampAlmacenNombre()
 
    METHOD stampGrupoMovimientoNombre()
 
    METHOD stampAgente()
 
-   METHOD printMovimientosAlmacen() INLINE ( msgalert( "¯\_(¨)_/¯" ) ) 
+   METHOD printDocument()  
+
+   METHOD blockPrintDocument( cFormato )
 
    METHOD deleteLines()
 
@@ -75,29 +77,7 @@ METHOD New()
 
    ::setEvent( 'deletingSelection', {|| ::deleteLines() } )
 
-   ::oNavigatorView:oMenuTreeView:setEvent( 'addedGeneralButton', {|| ::addPrintButtons() } )
-
-RETURN ( Self )
-
-//---------------------------------------------------------------------------//
-
-METHOD addPrintButtons()
-
-   local cWorkArea
-   local oButtonPrint
-   local oButtonLabel
-   local oButtonPreview
-
-   cWorkArea               := DocumentosModel():getWhereMovimientosAlmacen()
-
-   oButtonPrint            := ::oNavigatorView:oMenuTreeView:AddButton( "Imprimir", "Imp16", {|| ::printMovimientosAlmacen() }, "I", ACC_IMPR )
-   ( cWorkArea )->( dbeval( {|| ::oNavigatorView:oMenuTreeView:AddButton( alltrim( ( cWorkArea )->cDescrip ), "Imp16", {|| ::printMovimientosAlmacen() }, , ACC_IMPR, oButtonPrint ) } ) )
-
-   oButtonPreview          := ::oNavigatorView:oMenuTreeView:AddButton( "Previsualizar", "Prev116", {|| ::printMovimientosAlmacen() }, "P", ACC_IMPR ) 
-
-   ( cWorkArea )->( dbeval( {|| ::oNavigatorView:oMenuTreeView:AddButton( alltrim( ( cWorkArea )->cDescrip ), "Prev116", {|| ::printMovimientosAlmacen() }, , ACC_IMPR, oButtonPreview ) } ) )
-
-   ::oNavigatorView:oMenuTreeView:AddButton( "Etiquetas", "gc_portable_barcode_scanner_16", {|| ::printMovimientosAlmacen() }, "Q", ACC_IMPR ) 
+   ::oNavigatorView:oMenuTreeView:setEvent( 'addedGeneralButton', {|| ::oNavigatorView:oMenuTreeView:addDocumentsButtons() } )
 
 RETURN ( Self )
 
@@ -145,6 +125,45 @@ METHOD deleteLines()
 RETURN ( self ) 
 
 //---------------------------------------------------------------------------//
+
+METHOD printDocument( nDevice, cFormato )
+
+   local cReport
+   local nCopies
+   local oMovimientosAlmacenReport  
+
+   DEFAULT nDevice                  := IS_SCREEN
+
+   nCopies                          := ContadoresModel():getCopiasMovimientosAlmacen()
+
+   if empty( cFormato )
+      cFormato                      := ContadoresModel():getFormatoMovimientosAlmacen()
+   end if 
+
+   if empty( cFormato )
+      msgStop( "No hay formatos por defecto" )
+      RETURN ( self )  
+   end if 
+
+   cReport                          := DocumentosModel():getReportWhereCodigo( cFormato )              
+
+   if empty( cReport )
+      msgStop( "El formato esta vacio" )
+      RETURN ( self )  
+   end if 
+
+   oMovimientosAlmacenReport        := MovimientosAlmacenReport():New( Self )
+
+   oMovimientosAlmacenReport:setDevice( nDevice )
+   oMovimientosAlmacenReport:setCopies( nCopies )
+   oMovimientosAlmacenReport:setReport( cReport )
+
+   oMovimientosAlmacenReport:Print()
+
+RETURN ( self ) 
+
+//---------------------------------------------------------------------------//
+
 
 
 

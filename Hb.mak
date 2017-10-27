@@ -569,6 +569,7 @@ PropiedadesLineasModel.obj       										\
 PropiedadesLineasController.obj       									\
 RelacionesEtiquetasModel.prg 												\
 ArticulosModel.prg                                    			\
+ContadoresModel.prg                                    			\
 ColumnasUsuariosModel.prg 													\
 SQLConfiguracionColumnasUsuariosModel.prg                      \
 PedidosClientesLineasModel.prg 											\
@@ -1165,6 +1166,7 @@ PropiedadesLineasModel.obj       										\
 PropiedadesLineasController.obj       									\
 RelacionesEtiquetasModel.obj 												\
 ArticulosModel.obj                                    			\
+ContadoresModel.obj                                    			\
 SQLConfiguracionColumnasUsuariosModel.obj                      \
 PedidosClientesLineasModel.obj 											\
 ColumnasUsuariosModel.obj 													\
@@ -1705,6 +1707,7 @@ $(OBJ)\RectificativasProveedoresLineasModel.obj 					+
 $(OBJ)\FacturasClientesModel.obj 										+
 $(OBJ)\TicketsClientesLineasModel.obj 									+
 $(OBJ)\ArticulosModel.obj                    						+
+$(OBJ)\ContadoresModel.obj                    						+
 $(OBJ)\ColumnasUsuariosModel.obj               						+
 $(OBJ)\RecibosClientesModel.obj											+
 $(OBJ)\TicketsClientesModel.obj 	 										+							

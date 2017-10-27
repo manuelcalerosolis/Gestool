@@ -276,14 +276,9 @@ RETURN ( .t. )
 //---------------------------------------------------------------------------//
 
 FUNCTION Test()
-/*
-   local oConexion   := getSqlDatabase():oConexion
-   local cSql        := "INSERT INTO configuracion_columnas_usuarios ( usuario_id, view_name, browse_state, column_order, orientation, id_to_find ) VALUES ( '000', 'movimientos_de_almacen_lineas','XS1:{{[_nCreationOrders[,{1,2,3,4,5,6,7,8,9,10,11}},{[_nRowHeight[,17},{[_nWidths[,{40,120,240,80,80,80,100,240,240,240,240}},{[_lHides[,{.F.,.F.,.F.,.F.,.F.,.F.,.F.,.F.,.F.,.F.,.F.}},{[_cGrpHdrs[,{,,,,,,,,,,}},{[_cHeaders[,{[Id[,[Código artículo[,[Nombre artículo[,[Primera propiedad[,[Segunda propiedad[,[Fecha caducidad[,[Lote[,[Bultos[,[Cajas[,[Unidades[,[Precio[}}}', '', '', 0) "
 
-   oConexion:Exec( cSql )
+   msgalert( ContadoresModel():getFormatoDefecto( "A", "nMovAlm" ) )
 
-   msgalert( oConexion:errorcode(), "errorcode" )
-*/
 RETURN ( nil )
 
 //---------------------------------------------------------------------------//
