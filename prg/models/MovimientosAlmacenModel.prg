@@ -12,7 +12,7 @@ CLASS SQLMovimientosAlmacenModel FROM SQLBaseEmpresasModel
 
    DATA aTextoMovimiento      INIT { "Entre almacenes", "Regularización", "Objetivos", "Consolidación" }
 
-   METHOD New()
+   METHOD getColumns()
    
    METHOD cTextoMovimiento()  
 
@@ -20,9 +20,9 @@ END CLASS
 
 //---------------------------------------------------------------------------//
 
-METHOD New()
+METHOD getColumns()
 
-   ::CommunFields()
+   ::Super:getColumns()
 
    hset( ::hColumns, "numero",            {  "create"    => "INT(9)"                                  ,;
                                              "text"      => "Número"                                  ,;
@@ -81,9 +81,7 @@ METHOD New()
                                              "type"      => "C"                                       ,;
                                              "field"     => "cCodMov" }                                )
 
-   ::Super:New()
-
-RETURN ( Self )
+RETURN ( ::hColumns )
 
 //---------------------------------------------------------------------------//
 

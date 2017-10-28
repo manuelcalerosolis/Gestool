@@ -45,6 +45,10 @@ CLASS MenuTreeView
    METHOD getController()                 INLINE ( ::oSender:getController() )
    METHOD getBrowse()                     INLINE ( ::oSender:getBrowse() )
 
+   METHOD isControllerDocuments()         INLINE ( if( !empty( ::getController() ) .and. !empty( ::getController():hDocuments ),;
+                                                   ::getController():lDocuments,;
+                                                   .f. ) )
+
    METHOD getControllerDocuments()        INLINE ( if( !empty( ::getController() ) .and. !empty( ::getController():hDocuments ),;
                                                    ::getController():hDocuments,;
                                                    nil ) )
@@ -407,7 +411,7 @@ RETURN ( {|| ::getController():printDocument( nDevice, cFormato ) } )
 
 METHOD addDocumentsButtons()
 
-   if empty( ::getControllerDocuments() )
+   if !( ::isControllerDocuments() )
       RETURN ( Self )
    end if 
 

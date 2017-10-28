@@ -22,6 +22,8 @@ CLASS SQLBaseReport
 
    DATA cDevice                           INIT IS_SCREEN
 
+   DATA Id
+
    METHOD New()
 
    METHOD End()
@@ -30,6 +32,9 @@ CLASS SQLBaseReport
    METHOD destroyFastReport()             INLINE ( ::oFastReport:destroyFr(), ::oFastReport := nil )
    METHOD setFastReport( oFastReport )    INLINE ( ::oFastReport := oFastReport )
    METHOD getFastReport()                 INLINE ( ::oFastReport )
+
+   METHOD setId( id )                     INLINE ( ::Id := id )
+   METHOD getId()                         INLINE ( '1' ) //  cvaltostr( ::Id ) )
 
    METHOD setReport( cReport )            INLINE ( ::cReport := cReport )
    METHOD getReport()                     INLINE ( ::cReport )
@@ -148,14 +153,14 @@ RETURN ( Self )
 
 METHOD Design() 
 
-   local lDestroyFastReport         := .f.
-
    if empty( ::oFastReport )
-      ::newFastReport()
-      lDestroyFastReport            := .t.
+      msgStop( "El objeto FastReport no se ha definido")
+      RETURN ( Self )
    end if 
 
    ::buildData()
+
+   msgalert("buildData")
 
    if !empty( ::getReport() )
 
@@ -188,10 +193,6 @@ METHOD Design()
    end if
 
    ::oFastReport:DesignReport()
-
-   if lDestroyFastReport
-      ::oFastReport:DestroyFr()
-   end if
 
 RETURN ( Self )
 

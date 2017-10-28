@@ -20,7 +20,7 @@ END CLASS
 METHOD getWhereTipo( cTipo )
 
    local cStm
-   local cSql  := "SELECT Codigo, Descrip "                 + ;
+   local cSql  := "SELECT Codigo, cDescrip "                + ;
                      "FROM " + ::getTableName() + " "       + ;
                      "WHERE cTipo = " + quoted( cTipo ) 
 

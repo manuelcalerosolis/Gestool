@@ -22,12 +22,12 @@ END CLASS
 
 //---------------------------------------------------------------------------//
 
-METHOD buildData( oFastReport ) 
+METHOD buildData() 
 
    local oMovimientosAlmacenSelect        
    local oLineasMovimientosAlmacenSelect  
 
-   oMovimientosAlmacenSelect           := getSqlDataBase():query( "SELECT * FROM " + SQLMovimientosAlmacenModel():getTableName() + " WHERE id = 1" )
+   oMovimientosAlmacenSelect           := getSqlDataBase():query( "SELECT * FROM " + SQLMovimientosAlmacenModel():getTableName() + " WHERE id = " + ::getId() )
    ::oMovimientosAlmacenRowSet         := oMovimientosAlmacenSelect:fetchRowSet()
 
    oLineasMovimientosAlmacenSelect     := getSqlDataBase():query( "SELECT * FROM " + SQLMovimientosAlmacenLineasModel():getTableName() + " WHERE parent_uuid = " + quoted( ::oMovimientosAlmacenRowSet:fieldget( "uuid" ) ) )      
@@ -36,7 +36,7 @@ METHOD buildData( oFastReport )
    ::oFastReport:ClearDataSets()
 
    ::oFastReport:setUserDataSet(    "Movimientos de almacén",;
-                                    SQLMovimientosAlmacenModel():serializeColumns(),;
+                                    SQLMovimientosAlmacenModel():getSerializeColumns(),;
                                     {|| ::oMovimientosAlmacenRowSet:gotop() },;
                                     {|| ::oMovimientosAlmacenRowSet:skip(1) },;
                                     {|| ::oMovimientosAlmacenRowSet:skip(-1) },;
@@ -44,7 +44,7 @@ METHOD buildData( oFastReport )
                                     {|cField| ::oMovimientosAlmacenRowSet:fieldGet( cField ) } )
 
    ::oFastReport:setUserDataSet(   "Lineas de movimientos de almacén",;
-                                    SQLMovimientosAlmacenLineasModel():serializeColumns(),;
+                                    SQLMovimientosAlmacenLineasModel():getSerializeColumns(),;
                                     {|| ::oLineasMovimientosAlmacenRowSet:gotop() },;
                                     {|| ::oLineasMovimientosAlmacenRowSet:skip(1) },;
                                     {|| ::oLineasMovimientosAlmacenRowSet:skip(-1) },;

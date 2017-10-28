@@ -46,13 +46,13 @@ CLASS SQLBaseModel
    METHOD setDatabase( oDb )                       INLINE ( ::oDatabase := oDb )
    METHOD getDatabase()                            INLINE ( if( empty( ::oDatabase ), getSQLDatabase(), ::oDatabase ) )
 
-   METHOD TimeStampFields()
-
    // Facades -----------------------------------------------------------------
 
    METHOD getTableName()                           INLINE ( ::cTableName )
-   METHOD getColumns()                             INLINE ( ::hColumns )
-   METHOD getTableColumns()                        
+   METHOD getColumns()                             VIRTUAL
+   METHOD getTableColumns() 
+
+   METHOD getSerializeColumns()
 
    METHOD getColumnsForBrowse()
    METHOD getHeadersForBrowse()
@@ -61,14 +61,10 @@ CLASS SQLBaseModel
    METHOD getHeaderFromColumn( cColumn )           INLINE ( ::getValueFromColumn( cColumn, "header" ) )
    METHOD getHeaderFromColumnOrder()               INLINE ( ::getValueFromColumn( ::cColumnOrder, "header" ) )
 
-   // -------------------------------------------------------------------------
-
-   METHOD isEmpresaColumn()                        INLINE ( hb_hhaskey( ::hColumns, "empresa" ) )
-
-   // Sentences----------------------------------------------------------------
- 
    METHOD getCreateTableSentence()
    METHOD getAlterTableSentences()
+   
+   METHOD TimeStampFields()
 
    METHOD getGeneralSelect()
    METHOD getSelectSentence()
@@ -84,6 +80,7 @@ CLASS SQLBaseModel
 
    // Where for columns---------------------------------------------------------
 
+   METHOD isEmpresaColumn()                           INLINE ( hb_hhaskey( ::hColumns, "empresa" ) )
    METHOD getWhereOrAnd( cSQLSelect )                 INLINE ( if( hb_at( "WHERE", cSQLSelect ) != 0, " AND ", " WHERE " ) )
 
    METHOD getWhereGeneral( cSQLSelect )
@@ -139,8 +136,6 @@ CLASS SQLBaseModel
    METHOD loadCurrentBuffer()
    METHOD defaultCurrentBuffer()
 
-   METHOD serializeColumns()
-
    // Events-------------------------------------------------------------------
 
    METHOD setEvent( cEvent, bEvent )                  INLINE ( if( !empty( ::oEvents ), ::oEvents:set( cEvent, bEvent ), ) )
@@ -152,7 +147,7 @@ END CLASS
 
 METHOD New( oController )
 
-   if empty( ::hColumns )
+   if empty( ::hColumns ) .and. empty( ::getColumns() )
       msgstop( "La definición de columnas no puede estar vacia" )
       RETURN ( Self )
    end if 
@@ -294,7 +289,7 @@ METHOD getCreateTableSentence()
 
    cSQLCreateTable         := "CREATE TABLE " + ::cTableName + " ( "
 
-   hEval( ::hColumns,;
+   hEval( ::getColumns(),;
       {| k, hash | if( hhaskey( hash, "create" ), cSQLCreateTable += k + " " + hget( hash, "create" ) + ", ", ) } )
    
    if !empty( ::cConstraints )
@@ -622,7 +617,7 @@ RETURN ( ::hBuffer )
 
 //---------------------------------------------------------------------------//
 
-METHOD serializeColumns()
+METHOD getSerializeColumns()
 
    local cColumns       := ""
 
@@ -642,7 +637,7 @@ METHOD getTableColumns()
 
    local hColumns    := {=>}
 
-   heval( ::hColumns, {|k,v| if( hhaskey( v, "create" ), hset( hColumns, k, v ), ) } )
+   heval( ::getColumns(), {|k,v| if( hhaskey( v, "create" ), hset( hColumns, k, v ), ) } )
 
 RETURN ( hColumns )   
 
@@ -652,7 +647,7 @@ METHOD getColumnsForBrowse()
    
    local hColumns    := {=>}
 
-   hEval( ::hColumns, {|k,v| if( validColumnForNavigator( v ), hset( hColumns, k, v ), ) } )
+   hEval( ::getColumns(), {|k,v| if( validColumnForNavigator( v ), hset( hColumns, k, v ), ) } )
          
 RETURN ( hColumns )
 
@@ -662,7 +657,7 @@ METHOD getHeadersForBrowse()
 
    local aHeaders    := {}
 
-   hEval( ::hColumns, {|k,v| if( validColumnForNavigator( v ), aadd( aHeaders, hget( v, "header" ) ), ) } )
+   hEval( ::getColumns(), {|k,v| if( validColumnForNavigator( v ), aadd( aHeaders, hget( v, "header" ) ), ) } )
          
 RETURN ( aHeaders )
 
@@ -674,7 +669,7 @@ METHOD getValueFromColumn( cColumn, cKey )
    local hValue 
    local uValue   := ""
 
-   nScan          := hScan( ::hColumns,  {|k| k == cColumn } )
+   nScan          := hScan( ::hColumns, {|k| k == cColumn } )
    if nScan != 0
 
       hValue      := hGetValueAt( ::hColumns, nScan )

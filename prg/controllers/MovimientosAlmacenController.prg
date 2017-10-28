@@ -56,6 +56,10 @@ METHOD New()
 
    ::lTransactional           := .t.
 
+   ::lDocuments               := .t.
+
+   ::hDocuments               := DocumentosModel():getWhereMovimientosAlmacen() 
+
    ::oModel                   := SQLMovimientosAlmacenModel():New( self )
 
    ::oDialogView              := MovimientosAlmacenView():New( self )
@@ -66,18 +70,12 @@ METHOD New()
 
    ::oImportadorController    := ImportadorMovimientosAlmacenLineasController():New( self )
 
-   ::hDocuments               := DocumentosModel():getWhereMovimientosAlmacen() 
-
-   msgalert( hb_valtoexp( ::hDocuments ), "hDocuments" )
-
    ::Super:New()
 
    ::setEvent( 'openingDialog',     {|| ::oLineasController:oModel:buildRowSet() } ) 
    ::setEvent( 'closedDialog',      {|| ::oLineasController:oModel:freeRowSet() } ) 
 
    ::setEvent( 'deletingSelection', {|| ::deleteLines() } )
-
-   ::oNavigatorView:oMenuTreeView:setEvent( 'addedGeneralButton', {|| ::oNavigatorView:oMenuTreeView:addDocumentsButtons() } )
 
 RETURN ( Self )
 
@@ -154,6 +152,7 @@ METHOD printDocument( nDevice, cFormato )
 
    oMovimientosAlmacenReport        := MovimientosAlmacenReport():New( Self )
 
+   oMovimientosAlmacenReport:setId( ::getRowSet():fieldget( 'id' ) )
    oMovimientosAlmacenReport:setDevice( nDevice )
    oMovimientosAlmacenReport:setCopies( nCopies )
    oMovimientosAlmacenReport:setReport( cReport )

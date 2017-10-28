@@ -5,13 +5,13 @@
 
 CLASS SQLBaseEmpresasModel FROM SQLBaseModel
 
-   METHOD CommunFields()
+   METHOD getColumns() 
 
 END CLASS
 
 //---------------------------------------------------------------------------//
 
-METHOD CommunFields()
+METHOD getColumns()
 
    hset( ::hColumns, "id",          {  "create"    => "INTEGER PRIMARY KEY AUTO_INCREMENT"      ,;
                                        "text"      => "Identificador"                           ,;

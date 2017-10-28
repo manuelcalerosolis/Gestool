@@ -4166,6 +4166,9 @@ Static Function VisualEdtDocs( dbfDoc )
          with object ( MovimientosAlmacenReport():New() )
             :setFastReport( oFr )
             :setReport( ( dbfDoc )->mReport )
+
+            msgalert("desing")
+
             :Design()
             :end()
          end object

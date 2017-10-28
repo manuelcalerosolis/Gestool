@@ -277,7 +277,7 @@ RETURN ( .t. )
 
 FUNCTION Test()
 
-   msgalert( ContadoresModel():getFormatoDefecto( "A", "nMovAlm" ) )
+   // msgalert( ContadoresModel():getFormatoDefecto( "A", "nMovAlm" ) )
 
 RETURN ( nil )
 

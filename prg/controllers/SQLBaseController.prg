@@ -35,6 +35,8 @@ CLASS SQLBaseController
 
    DATA cImage                                        INIT ""
 
+   DATA lDocuments                                    INIT .f.
+
    DATA hDocuments
 
    DATA aSelected
