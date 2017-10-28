@@ -34,7 +34,7 @@ CLASS SQLBaseReport
    METHOD getFastReport()                 INLINE ( ::oFastReport )
 
    METHOD setId( id )                     INLINE ( ::Id := id )
-   METHOD getId()                         INLINE ( '1' ) //  cvaltostr( ::Id ) )
+   METHOD getId()                         INLINE ( if( empty( ::Id ), nil, cvaltostr( ::Id ) ) )
 
    METHOD setReport( cReport )            INLINE ( ::cReport := cReport )
    METHOD getReport()                     INLINE ( ::cReport )
