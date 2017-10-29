@@ -340,6 +340,7 @@ ConfImpTiket.prg        													\
 SituacionesView.prg         												\
 SituacionesModel.prg       												\
 SituacionesRepository.prg 													\
+MovimientosAlmacenRepository.prg											\
 MovimientosAlmacenLineasRepository.prg									\
 MovimientosAlmacenesLineasModel.prg 									\
 FacturasClientesLineasModel.prg 											\
@@ -930,6 +931,7 @@ ConfCajPorta.obj        													\
 SituacionesView.obj         												\
 SituacionesModel.obj       												\
 SituacionesRepository.obj 													\
+MovimientosAlmacenRepository.obj 										\
 MovimientosAlmacenLineasRepository.obj 								\
 AlmacenesModel.obj 															\
 GruposMovimientosModel.obj 												\
@@ -1490,6 +1492,7 @@ $(OBJ)\ConfCajPorta.obj         											+
 $(OBJ)\SituacionesView.obj          									+
 $(OBJ)\SituacionesModel.obj          									+
 $(OBJ)\SituacionesRepository.obj      									+
+$(OBJ)\MovimientosAlmacenRepository.obj 								+
 $(OBJ)\MovimientosAlmacenLineasRepository.obj 						+
 $(OBJ)\AlmacenesModel.obj 													+
 $(OBJ)\GruposMovimientosModel.obj 										+

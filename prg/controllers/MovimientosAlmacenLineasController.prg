@@ -125,12 +125,17 @@ RETURN ( Self )
 METHOD stampArticulo()
 
    local hArticulo
+   local hHashCodeGS128
    local cCodigoArticulo
+
+   msgalert( "stampArticulo" )
 
    cCodigoArticulo   := hget( ::oModel:hBuffer, "codigo_articulo" )
    if empty( cCodigoArticulo )
       RETURN ( .t. )
-   end if 
+   end if  
+
+   msgalert( hb_valtoexp( ReadHashCodeGS128() ), "hHashCodeGS128" )
 
    if !( ::oDialogView:oGetCodigoArticulo:isOriginalChanged( cCodigoArticulo ) )
       RETURN ( .t. )

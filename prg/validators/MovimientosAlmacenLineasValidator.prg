@@ -8,7 +8,8 @@ CLASS MovimientosAlmacenLineasValidator FROM SQLBaseValidator
 
    METHOD New( oController )
 
-   METHOD existArticulo( value )                   INLINE ( Empty( value ) .or. ArticulosModel():exist( value ) )
+   METHOD isCodeGS128( value )
+   METHOD existArticulo( value )                   INLINE ( empty( value ) .or. ArticulosModel():exist( value ) )
 
    METHOD existPropiedad( value, propiedad )
    METHOD existOrEmptyPrimeraPropiedad( value )    INLINE ( ::existPropiedad( value, "codigo_primera_propiedad" ) )
@@ -20,8 +21,9 @@ END CLASS
 
 METHOD New( oController )
 
-   ::hValidators  := {  "codigo_articulo"          => {  "existArticulo"         => "El artículo no existe",;
-                                                         "required"              => "El artículo es un dato requerido" },;
+   ::hValidators  := {  "codigo_articulo"          => {  "required"              => "El artículo es un dato requerido",;
+                                                         "isCodeGS128"           => "",;
+                                                         "existArticulo"         => "El artículo no existe" },;
                         "nombre_articulo"          => {  "required"              => "El nombre del artículo es un dato requerido" },;
                         "valor_primera_propiedad"  => {  "existOrEmptyPrimeraPropiedad" => "La primera propiedad no existe" },;
                         "valor_segunda_propiedad"  => {  "existOrEmptySegundaPropiedad" => "La segunda propiedad no existe" } }
@@ -29,6 +31,27 @@ METHOD New( oController )
    ::Super:New( oController )
 
 RETURN ( Self )
+
+//---------------------------------------------------------------------------//
+
+METHOD isCodeGS128( value )
+
+   local hCodeGS128  := ReadCodeGS128( value )
+   
+   if empty( hCodeGS128 )
+      RETURN ( .t. )
+   end if 
+
+   if hhaskey( hCodeGS128, "01" )
+      ::oController:setModelBuffer( "codigo_articulo", hCodeGS128[ "01" ][ "Codigo" ] )
+      msgalert( ::oController:getModelBuffer( "codigo_articulo" ), "getModelBuffer codigo_articulo" )
+   end if 
+
+   if hhaskey( hCodeGS128, "17" )
+      ::oController:setModelBuffer( "fecha_caducidad", hCodeGS128[ "17" ][ "Codigo" ] )
+   end if 
+
+RETURN ( .t. )
 
 //---------------------------------------------------------------------------//
 

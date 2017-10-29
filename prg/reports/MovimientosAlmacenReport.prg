@@ -24,23 +24,13 @@ END CLASS
 
 METHOD buildData() 
 
-   local cSql
    local oMovimientosAlmacenSelect        
-   local oLineasMovimientosAlmacenSelect  
+   local oLineasMovimientosAlmacenSelect
 
-   cSql     := "SELECT * FROM " + SQLMovimientosAlmacenModel():getTableName() + " "  
-   if empty( ::getId() )
-      cSql  += "ORDER BY id DESC LIMIT 1"
-   else
-      cSql  += "WHERE id = " + ::getId()
-   end if 
-
-   msgalert( cSql, "cSql" )
-
-   oMovimientosAlmacenSelect           := getSqlDataBase():query( cSql )
+   oMovimientosAlmacenSelect           := getSqlDataBase():query( MovimientosAlmacenRepository():getSqlSentenceByIdOrLast( ::getId() ) )
    ::oMovimientosAlmacenRowSet         := oMovimientosAlmacenSelect:fetchRowSet()
 
-   oLineasMovimientosAlmacenSelect     := getSqlDataBase():query( "SELECT * FROM " + SQLMovimientosAlmacenLineasModel():getTableName() + " WHERE parent_uuid = " + quoted( ::oMovimientosAlmacenRowSet:fieldget( "uuid" ) ) )      
+   oLineasMovimientosAlmacenSelect     := getSqlDataBase():query( MovimientosAlmacenLineasRepository():getSqlSentenceWhereParentUuid( ::oMovimientosAlmacenRowSet:fieldget( "uuid" ) ) )      
    ::oLineasMovimientosAlmacenRowSet   := oLineasMovimientosAlmacenSelect:fetchRowSet()
 
    ::oFastReport:ClearDataSets()

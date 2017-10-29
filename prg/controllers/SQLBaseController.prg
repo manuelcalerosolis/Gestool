@@ -53,7 +53,8 @@ CLASS SQLBaseController
    METHOD getModelColumns()                           INLINE ( if( !empty( ::oModel ) .and. !empty( ::oModel:hColumns ), ( ::oModel:hColumns ), ) )
    METHOD getModelExtraColumns()                      INLINE ( if( !empty( ::oModel ) .and. !empty( ::oModel:hExtraColumns ), ( ::oModel:hExtraColumns ), ) )
    
-   METHOD getModelBuffer( cColumn )                   
+   METHOD getModelBuffer( cColumn )
+   METHOD setModelBuffer( cColumn, uValue )                   
    METHOD getModelBufferColumnKey()                   INLINE ( ::getModelBuffer( ( ::oModel:cColumnKey ) ) )
 
    METHOD getModelSelectValue( cSentence )            INLINE ( if( !empty( ::oModel ), ::oModel:SelectValue( cSentence ), ) )
@@ -549,6 +550,24 @@ METHOD getModelBuffer( cColumn )
    end if  
 
 RETURN ( hget( ::oModel:hBuffer, cColumn ) )
+
+//----------------------------------------------------------------------------//
+
+METHOD setModelBuffer( cColumn, uValue )
+
+   if empty( ::oModel )
+      RETURN ( nil )
+   end if 
+
+   if empty( ::oModel:hBuffer )
+      RETURN ( nil )
+   end if 
+
+   if !hhaskey( ::oModel:hBuffer, cColumn )
+      RETURN ( nil )
+   end if  
+
+RETURN ( hset( ::oModel:hBuffer, cColumn, uValue ) )
 
 //----------------------------------------------------------------------------//
 
