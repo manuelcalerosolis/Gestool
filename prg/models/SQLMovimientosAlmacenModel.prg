@@ -51,7 +51,8 @@ METHOD getColumns()
                                              "header"    => "Almacén origen"                          ,;
                                              "visible"   => .t.                                       ,;
                                              "type"      => "C"                                       ,;
-                                             "field"     => "cAlmOrg"                                 ,;   
+                                             "field"     => "cAlmOrg"                                 ,;
+                                             "len"       => 16                                        ,;   
                                              "width"     => 80 }                                      )
 
    hset( ::hColumns, "almacen_destino",   {  "create"    => "CHAR ( 16 )"                             ,;
@@ -59,7 +60,8 @@ METHOD getColumns()
                                              "header"    => "Almacén destino"                         ,;
                                              "visible"   => .t.                                       ,;
                                              "type"      => "C"                                       ,;
-                                             "field"     => "cAlmDes"                                 ,;   
+                                             "field"     => "cAlmDes"                                 ,;
+                                             "len"       => 16                                        ,;   
                                              "width"     => 80 }                                      )
 
    hset( ::hColumns, "grupo_movimiento",  {  "create"    => "CHAR ( 2 )"                              ,;
@@ -67,7 +69,7 @@ METHOD getColumns()
                                              "header"    => "Grupo"                                   ,;
                                              "visible"   => .t.                                       ,;
                                              "type"      => "C"                                       ,;
-                                             "field"     => "cCodMov"                                 ,;
+                                             "len"       => 2                                         ,;   
                                              "width"     => 80 }                                      )
 
    hset( ::hColumns, "agente",            {  "create"    => "CHAR ( 3 )"                              ,;
@@ -75,7 +77,7 @@ METHOD getColumns()
                                              "header"    => "Agente"                                  ,;
                                              "visible"   => .t.                                       ,;
                                              "type"      => "C"                                       ,;
-                                             "field"     => "cCodAge"                                 ,;
+                                             "len"       => 3                                         ,;   
                                              "width"     => 80 }                                      )
 
    hset( ::hColumns, "divisa",            {  "create"    => "CHAR ( 3 )"                              ,;
@@ -84,7 +86,7 @@ METHOD getColumns()
                                              "visible"   => .t.                                       ,;
                                              "type"      => "C"                                       ,;
                                              "default"   => {|| cDivEmp() }                           ,;
-                                             "field"     => "cCodDiv"                                 ,;
+                                             "len"       => 3                                         ,;   
                                              "width"     => 80 }                                      )
 
    hset( ::hColumns, "divisa_cambio",     {  "create"    => "DECIMAL(16,6)"                           ,;
@@ -100,7 +102,7 @@ METHOD getColumns()
                                              "header"    => "Comentarios"                             ,;
                                              "visible"   => .t.                                       ,;
                                              "type"      => "C"                                       ,;
-                                             "field"     => "mComent"                                 ,;
+                                             "len"       => 250                                       ,;   
                                              "width"     => 240 }                                     )
 
 RETURN ( ::hColumns )

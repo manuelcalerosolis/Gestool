@@ -49,15 +49,11 @@ METHOD isCodeGS128( value )
    logwrite( hb_valtoexp( hCodeGS128 ) )
 
    if hhaskey( hCodeGS128, "01" )
-      ::oController:setModelBuffer( "codigo_articulo", hCodeGS128[ "01" ][ "Codigo" ] )
-      msgalert( ::oController:getModelBuffer( "codigo_articulo" ), "getModelBuffer codigo_articulo" )
+      ::oController:setModelBufferPadr( "codigo_articulo", hCodeGS128[ "01" ][ "Codigo" ] )
    end if 
 
    if hhaskey( hCodeGS128, "10" )
-      ::oController:setModelBuffer( "lote", hCodeGS128[ "10" ][ "Codigo" ] )
-
-      msgalert( hCodeGS128[ "10" ][ "Codigo" ], "10" )
-
+      ::oController:setModelBufferPadr( "lote", hCodeGS128[ "10" ][ "Codigo" ] )
    end if 
 
    if hhaskey( hCodeGS128, "17" )

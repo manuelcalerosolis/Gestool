@@ -2,6 +2,8 @@
 #include "Factu.ch" 
 #include "MesDbf.ch"
 
+#define EM_LIMITTEXT             197
+
 //---------------------------------------------------------------------------//
 
 CLASS MovimientosAlmacenLineasView FROM SQLBaseView
@@ -66,7 +68,7 @@ METHOD Dialog()
          VAR         ::oController:oModel:hBuffer[ "codigo_articulo" ] ;
          ID          100 ;
          WHEN        ( ::oController:isAppendMode() ) ;
-         PICTURE     ( Replicate( "X", 200 ) ) ; // "@!" ;
+         PICTURE     "@!" ;
          BITMAP      "Lupa" ;
          OF          oDlg
 
@@ -78,6 +80,8 @@ METHOD Dialog()
          ID          110 ;
          WHEN        ( .f. ) ;
          OF          oDlg
+
+      ::oGetNombreArticulo:LimitText( 200 )
 
       REDEFINE GET   ::oGetLote ;
          VAR         ::oController:oModel:hBuffer[ "lote" ] ;
@@ -255,7 +259,7 @@ METHOD Dialog()
 
       oDlg:bStart    := {|| ::startDialog() }
 
-   ACTIVATE DIALOG oDlg CENTER
+   ACTIVATE DIALOG oDlg CENTER 
 
 RETURN ( oDlg:nResult == IDOK )
 

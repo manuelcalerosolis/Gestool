@@ -298,6 +298,7 @@ msgalert( cVar, "cVar" )
 msgalert( at( chr(16), cVar ), "chr" )
 */
 
+
 RETURN NIL 
 
 STATIC FUNCTION TASTI( nKey, cVar ) 
