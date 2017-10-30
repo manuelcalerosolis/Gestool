@@ -70,6 +70,8 @@ METHOD New()
 
    ::oImportadorController    := ImportadorMovimientosAlmacenLineasController():New( self )
 
+   ::oEtiquetasController     := EtiquetasMovimientosAlmacenController():New( self )
+
    ::Super:New()
 
    ::setEvent( 'openingDialog',     {|| ::oLineasController:oModel:buildRowSet() } ) 

@@ -71,7 +71,7 @@ METHOD getColumns()
                                              "text"      => "Código artículo"                         ,;
                                              "header"    => "Código artículo"                         ,;
                                              "visible"   => .t.                                       ,;
-                                             "len"       => 18                                        ,;   
+                                             "len"       => 200                                       ,;   
                                              "width"     => 120 }                                     )
 
    hset( ::hColumns, "nombre_articulo",   {  "create"    => "VARCHAR(250) NOT NULL"                   ,;
@@ -156,8 +156,8 @@ METHOD getColumns()
                                              "visible"   => .t.                                    ,;
                                              "width"     => 100 }                                  )
 
-   hset( ::hColumns, "total_precio",      {  "text"      => "Total costo"                         ,;
-                                             "header"    => "Total costo"                         ,;
+   hset( ::hColumns, "total_precio",      {  "text"      => "Total costo"                          ,;
+                                             "header"    => "Total costo"                          ,;
                                              "method"    => "totalPrecio"                          ,;
                                              "picture"   => masUnd()                               ,;
                                              "visible"   => .t.                                    ,;

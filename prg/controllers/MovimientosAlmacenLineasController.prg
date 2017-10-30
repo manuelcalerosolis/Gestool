@@ -130,7 +130,7 @@ METHOD stampArticulo()
    local hHashCodeGS128
    local cCodigoArticulo
 
-   cCodigoArticulo   := hget( ::oModel:hBuffer, "codigo_articulo" )
+   cCodigoArticulo   := ::getModelBuffer( "codigo_articulo" )
    if empty( cCodigoArticulo )
       RETURN ( .t. )
    end if  
@@ -258,7 +258,7 @@ RETURN ( .t. )
 
 METHOD stampLote( hArticulo )
 
-   if empty(::oDialogView:oGetLote:varGet() )
+   if empty( ::oDialogView:oGetLote:varGet() )
       ::oDialogView:oGetLote:cText( hget( hArticulo, "clote" ) )
    end if 
 

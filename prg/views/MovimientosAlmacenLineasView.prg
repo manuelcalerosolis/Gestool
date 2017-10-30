@@ -42,6 +42,8 @@ CLASS MovimientosAlmacenLineasView FROM SQLBaseView
 
    METHOD refreshUnidadesImportes()    INLINE ( ::oSayTotalUnidades():Refresh(), ::oSayTotalImporte():Refresh() )
 
+   METHOD searchCodeGS128( nKey, cCodigoArticulo )
+
 END CLASS
 
 //---------------------------------------------------------------------------//
@@ -72,7 +74,10 @@ METHOD Dialog()
          BITMAP      "Lupa" ;
          OF          oDlg
 
-      ::oGetCodigoArticulo:bValid   := {|| if( ::oController:validateCodigoArticulo(), ( ::oGetCodigoArticulo:Refresh(), .t. ), .f. ) }
+      /*
+      ::oGetCodigoArticulo:bKeyDown := {|nKey| ::searchCodeGS128( nKey ) }
+      */
+      ::oGetCodigoArticulo:bValid   := {|| ::oController:validateCodigoArticulo() }
       ::oGetCodigoArticulo:bHelp    := {|| brwArticulo( ::oGetCodigoArticulo ) }
 
       REDEFINE GET   ::oGetNombreArticulo ;
@@ -189,7 +194,7 @@ METHOD Dialog()
          PICTURE     cPinDiv() ;
          OF          oDlg
 
-      ::oGetUnidadesArticulo:bChange   := {|| ::refreshUnidadesImportes() }
+      ::oGetPrecioArticulo:bChange     := {|| ::refreshUnidadesImportes() }
 
       // Total Importe---------------------------------------------------------
 
@@ -281,3 +286,16 @@ METHOD startDialog()
 RETURN ( .t. )
 
 //---------------------------------------------------------------------------//
+
+METHOD searchCodeGS128( nKey )
+
+   if nKey == 16 
+      ::oGetCodigoArticulo:oGet:Insert( '@' )
+   end if 
+
+RETURN ( .t. )
+
+//---------------------------------------------------------------------------//
+
+
+
