@@ -10288,7 +10288,7 @@ Static Function DataReport( oFr )
    oFr:SetWorkArea(     "Impuestos especiales",  oNewImp:Select() )
    oFr:SetFieldAliases( "Impuestos especiales",  cObjectsToReport( oNewImp:oDbf ) )
 
-   TiposVentasController():Instance():setFastReport( oFr )
+   // TiposVentasController():Instance():setFastReport( oFr )
 
    oFr:SetMasterDetail( "Facturas", "Lineas de facturas",                     {|| D():FacturasClientesId( nView ) } )
    oFr:SetMasterDetail( "Facturas", "Incidencias de facturas",                {|| D():FacturasClientesId( nView ) } )
@@ -10348,7 +10348,7 @@ Return nil
 
 Static Function SynchronizeDetails()
 
-   TiposVentasController():Instance():findByIdInRowSet( ( D():FacturasClientesLineas( nView ) )->id_tipo_v )
+   // TiposVentasController():Instance():findByIdInRowSet( ( D():FacturasClientesLineas( nView ) )->id_tipo_v )
 
 Return ( ( D():FacturasClientesLineas( nView ) )->cRef )
 
