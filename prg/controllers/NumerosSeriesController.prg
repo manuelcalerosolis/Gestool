@@ -142,8 +142,10 @@ RETURN ( lEdit )
 
 METHOD deletedSelected( aRecords )
 
-   if Len( aRecords ) > 0
+   if hb_isArray( aRecords ) .and. Len( aRecords ) > 0
+
       aEval( aRecords, {| h | ::oModel:deleteWhereUuid( hGet( h, "uuid" ) ) } )
+
    end if
 
 RETURN ( self )

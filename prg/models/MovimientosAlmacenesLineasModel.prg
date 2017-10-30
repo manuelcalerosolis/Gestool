@@ -49,7 +49,7 @@ METHOD getFechaHoraConsolidacion( cCodigoArticulo, cCodigoAlmacen, cValorPropied
 
    if ::ExecuteSqlStatement( cSql, @cStm )
       if !empty( ( cStm )->dFecMov ) 
-         RETURN ( {"fecha" => ( cStm )->dFecMov, "hora" => ( cStm )->cTimMov } )
+         RETURN ( { "fecha" => ( cStm )->dFecMov, "hora" => ( cStm )->cTimMov } )
       end if 
    end if 
 
