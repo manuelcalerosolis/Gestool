@@ -1440,6 +1440,7 @@ METHOD nSQLStockActual( cCodArt, cCodAlm, cValPr1, cValPr2, cLote ) CLASS TStock
    local tHoraConsolidacion
    local dFechaConsolidacion
    local hFechaHoraConsolidacion
+   local tFechaHoraConsolidacion
 
    if empty( cCodArt )
       RETURN ( nSQLStockActual )
@@ -1455,14 +1456,19 @@ METHOD nSQLStockActual( cCodArt, cCodAlm, cValPr1, cValPr2, cLote ) CLASS TStock
 
       // Obtenermos el dato de la consolidacion--------------------------------
 
-      hFechaHoraConsolidacion    := MovimientosAlmacenesLineasModel():getFechaHoraConsolidacion( cCodArt, cCodAlm, cValPr1, cValPr2, cLote )
+      //hFechaHoraConsolidacion    := MovimientosAlmacenesLineasModel():getFechaHoraConsolidacion( cCodArt, cCodAlm, cValPr1, cValPr2, cLote )
+      hFechaHoraConsolidacion    := SQLMovimientosAlmacenLineasModel():getFechaHoraConsolidacion( cCodArt, cCodAlm, cValPr1, cValPr2, cLote )
+
+      MsgInfo( hb_valtoexp( hFechaHoraConsolidacion ), "hFechaHoraConsolidacion" )
 
       if !empty( hFechaHoraConsolidacion )
          dFechaConsolidacion     := hGet( hFechaHoraConsolidacion, "fecha" )
          tHoraConsolidacion      := hGet( hFechaHoraConsolidacion, "hora" )
+         tFechaHoraConsolidacion := hGet( hFechaHoraConsolidacion, "fecha_hora" )
       else
          dFechaConsolidacion     := nil
          tHoraConsolidacion      := nil
+         tFechaHoraConsolidacion := nil
       end if 
 
       // Entradas--------------------------------------------------------------
@@ -1473,16 +1479,11 @@ METHOD nSQLStockActual( cCodArt, cCodAlm, cValPr1, cValPr2, cLote ) CLASS TStock
 
       nSQLStockActual            -= StocksModel():getTotalUnidadesStockSalidas( cCodArt, dFechaConsolidacion, tHoraConsolidacion, cCodAlm, cValPr1, cValPr2, cLote )
 
+      // Almacen
+
+      nSQLStockActual            += SQLMovimientosAlmacenLineasModel():getTotalUnidadesStock( tFechaHoraConsolidacion, cCodArt, cCodAlm, cValPr1, cValPr2, cLote )
+
    next 
-
-   // Control de erroress-------------------------------------------------------
-
-//   RECOVER USING oError
-//      msgStop( ErrorMessage( oError ), "Calculo de stock" )
-//   END SEQUENCE
-//   ErrorBlock( oBlock )
-
-   // msgalert( seconds() - nSeconds, "seconds()" )
 
 RETURN ( nSQLStockActual )
 

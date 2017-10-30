@@ -284,6 +284,12 @@ FUNCTION Test()
 
    msgalert( oConexion:errorcode(), "errorcode" )
 */
+
+   //MsgInfo( TStock():nSQLStockActual( "ZZZ", "000", "", "", "" ), "Almacen 000" )
+   //MsgInfo( TStock():nSQLStockActual( "ZZZ", "1", "", "", "" ), "Almacen 1" )
+   //MsgInfo( TStock():nSQLStockActual( "ZZZ", "000", "", "", "123" ), "Almacen 000 lote 123" )
+   //MsgInfo( TStock():nSQLStockActual( "ZZZ", "1", "", "", "123" ), "Almacen 1 lote 123" )
+
 RETURN ( nil )
 
 //---------------------------------------------------------------------------//
