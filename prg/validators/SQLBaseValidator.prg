@@ -69,9 +69,7 @@ METHOD ProcessAll( cColumn, hProcess, uValue )
 
    for each hColumn in hColumnProcess
 
-      DEFAULT uValue       := ::oController:getModelBuffer( cColumn )
-   
-      if !::Process( hColumn:__enumKey(), uValue, hColumn:__enumValue() )
+      if !::Process( hColumn:__enumKey(), ::oController:getModelBuffer( cColumn ), hColumn:__enumValue() )
          RETURN ( .f. )
       end if 
 
@@ -91,7 +89,7 @@ METHOD Process( cMethod, uValue, cMessage )
       lValidate      := Self:&( cMethod )( uValue )
 
       if !lValidate
-         msgstop( cMessage, "Error" )
+         msgstop( strtran( cMessage, "{value}", cvaltostr( uValue ) ), "Error" )
       end if
 
    catch oError

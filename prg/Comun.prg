@@ -277,7 +277,34 @@ RETURN ( .t. )
 
 FUNCTION Test()
 
-   // msgalert( ContadoresModel():getFormatoDefecto( "A", "nMovAlm" ) )
+/*
+
+LOCAL oDlg 
+local cVar := ""
+LOCAL oGet, cTxt := "" 
+
+DEFINE DIALOG oDlg; 
+SIZE 800, 200; 
+TITLE "Terminale" 
+
+@ 0, 0 GET oGet VAR cTxt MEMO 
+
+oGet:bKeyDown = { | nKey | Tasti( nKey, @cVar ) } 
+
+ACTIVATE DIALOG oDlg; 
+CENTER 
+
+msgalert( cVar, "cVar" )
+msgalert( at( chr(16), cVar ), "chr" )
+*/
+
+RETURN NIL 
+
+STATIC FUNCTION TASTI( nKey, cVar ) 
+
+   cVar  += CHR( nKey )
+
+   logwrite( chr( nKey ) )
 
 RETURN ( nil )
 
