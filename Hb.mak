@@ -16,7 +16,7 @@ IMG2PDFLIB           = 	\img2Pdf
 
 OBJ                  = 	obj1705
 
-SOURCEPRG            = 	.\Prg;.\Prg\mail;.\Prg\Comercio;.\Prg\Models;.\Prg\Seeders;.\Prg\Views;.\Prg\Controllers;.\Prg\Validators;.\Prg\Repositories;.\Prg\Services;.\Prg\Tablet;.\Prg\tablet\view;.\Prg\tablet\view\documentos;.\Prg\tablet\view\terceros;.\Prg\tablet\view\documentos\ventas;.\Prg\tablet\view\documentos\terceros;.\Prg\tablet\utils;.\Prg\tablet\presenter;.\Prg\tablet\presenter\terceros;.\Prg\tablet\presenter\documentos;.\Prg\tablet\presenter\documentos\ventas;
+SOURCEPRG            = 	.\Prg;.\Prg\mail;.\Prg\Comercio;.\Prg\Models;.\Prg\Seeders;.\Prg\Views;.\Prg\Controllers;.\Prg\Validators;.\Prg\Repositories;.\Prg\Services;.\Prg\Reports;.\Prg\Tablet;.\Prg\tablet\view;.\Prg\tablet\view\documentos;.\Prg\tablet\view\terceros;.\Prg\tablet\view\documentos\ventas;.\Prg\tablet\view\documentos\terceros;.\Prg\tablet\utils;.\Prg\tablet\presenter;.\Prg\tablet\presenter\terceros;.\Prg\tablet\presenter\documentos;.\Prg\tablet\presenter\documentos\ventas;
 SOURCEC 				   =	C
 
 PPO 					   = 	ppo1705
@@ -340,6 +340,7 @@ ConfImpTiket.prg        													\
 SituacionesView.prg         												\
 SituacionesModel.prg       												\
 SituacionesRepository.prg 													\
+MovimientosAlmacenRepository.prg											\
 MovimientosAlmacenLineasRepository.prg									\
 MovimientosAlmacenesLineasModel.prg 									\
 FacturasClientesLineasModel.prg 											\
@@ -348,6 +349,8 @@ RectificativasClientesLineasModel.prg 									\
 StocksModel.prg 																\
 SituacionesController.prg       											\
 MovimientosAlmacenView.prg													\
+SQLBaseReport.prg 															\
+MovimientosAlmacenReport.prg												\
 ImportadorMovimientosAlmacenLineasView.prg							\
 ImportadorMovimientosAlmacenLineasController.prg					\
 MovimientosAlmacenLineasView.prg											\
@@ -567,6 +570,7 @@ PropiedadesLineasModel.obj       										\
 PropiedadesLineasController.obj       									\
 RelacionesEtiquetasModel.prg 												\
 ArticulosModel.prg                                    			\
+ContadoresModel.prg                                    			\
 ColumnasUsuariosModel.prg 													\
 SQLConfiguracionColumnasUsuariosModel.prg                      \
 PedidosClientesLineasModel.prg 											\
@@ -927,6 +931,7 @@ ConfCajPorta.obj        													\
 SituacionesView.obj         												\
 SituacionesModel.obj       												\
 SituacionesRepository.obj 													\
+MovimientosAlmacenRepository.obj 										\
 MovimientosAlmacenLineasRepository.obj 								\
 AlmacenesModel.obj 															\
 GruposMovimientosModel.obj 												\
@@ -937,6 +942,8 @@ AlbaranesClientesLineasModel.obj 										\
 RectificativasClientesLineasModel.obj 									\
 StocksModel.obj 																\
 MovimientosAlmacenView.obj													\
+SQLBaseReport.obj 															\
+MovimientosAlmacenReport.obj												\
 ImportadorMovimientosAlmacenLineasView.obj							\
 ImportadorMovimientosAlmacenLineasController.obj 					\
 MovimientosAlmacenLineasView.obj											\
@@ -1161,6 +1168,7 @@ PropiedadesLineasModel.obj       										\
 PropiedadesLineasController.obj       									\
 RelacionesEtiquetasModel.obj 												\
 ArticulosModel.obj                                    			\
+ContadoresModel.obj                                    			\
 SQLConfiguracionColumnasUsuariosModel.obj                      \
 PedidosClientesLineasModel.obj 											\
 ColumnasUsuariosModel.obj 													\
@@ -1484,6 +1492,7 @@ $(OBJ)\ConfCajPorta.obj         											+
 $(OBJ)\SituacionesView.obj          									+
 $(OBJ)\SituacionesModel.obj          									+
 $(OBJ)\SituacionesRepository.obj      									+
+$(OBJ)\MovimientosAlmacenRepository.obj 								+
 $(OBJ)\MovimientosAlmacenLineasRepository.obj 						+
 $(OBJ)\AlmacenesModel.obj 													+
 $(OBJ)\GruposMovimientosModel.obj 										+
@@ -1494,6 +1503,8 @@ $(OBJ)\RectificativasClientesLineasModel.obj 						+
 $(OBJ)\StocksModel.obj 														+
 $(OBJ)\SituacionesController.obj          							+
 $(OBJ)\MovimientosAlmacenView.obj 										+
+$(OBJ)\MovimientosAlmacenReport.obj 									+
+$(OBJ)\SQLBaseReport.obj 													+
 $(OBJ)\ImportadorMovimientosAlmacenLineasView.obj 					+
 $(OBJ)\ImportadorMovimientosAlmacenLineasController.obj			+
 $(OBJ)\MovimientosAlmacenLineasView.obj								+
@@ -1699,6 +1710,7 @@ $(OBJ)\RectificativasProveedoresLineasModel.obj 					+
 $(OBJ)\FacturasClientesModel.obj 										+
 $(OBJ)\TicketsClientesLineasModel.obj 									+
 $(OBJ)\ArticulosModel.obj                    						+
+$(OBJ)\ContadoresModel.obj                    						+
 $(OBJ)\ColumnasUsuariosModel.obj               						+
 $(OBJ)\RecibosClientesModel.obj											+
 $(OBJ)\TicketsClientesModel.obj 	 										+							

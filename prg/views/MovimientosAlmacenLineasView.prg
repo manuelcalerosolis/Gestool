@@ -70,7 +70,7 @@ METHOD Dialog()
          BITMAP      "Lupa" ;
          OF          oDlg
 
-      ::oGetCodigoArticulo:bValid   := {|| ::oController:validateCodigoArticulo() }
+      ::oGetCodigoArticulo:bValid   := {|| if( ::oController:validateCodigoArticulo(), ( ::oGetCodigoArticulo:Refresh(), .t. ), .f. ) }
       ::oGetCodigoArticulo:bHelp    := {|| brwArticulo( ::oGetCodigoArticulo ) }
 
       REDEFINE GET   ::oGetNombreArticulo ;
@@ -262,6 +262,11 @@ RETURN ( oDlg:nResult == IDOK )
 //---------------------------------------------------------------------------//
 
 METHOD startDialog()
+
+   if ::oController:isAppendMode()
+      ::oController:setModelBuffer( "codigo_articulo", space( 200 ) )
+      ::oGetCodigoArticulo:Refresh()
+   end if 
 
    if ::oController:isNotAppendMode()
       ::oController:validateCodigoArticulo()

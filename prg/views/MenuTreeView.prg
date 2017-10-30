@@ -20,6 +20,16 @@ CLASS MenuTreeView
 
    DATA oButtonMain
 
+   DATA oButtonPrint
+
+   DATA oButtonPreview
+
+   DATA oButtonPdf
+
+   DATA oButtonLabel
+
+   DATA lDocumentButtons                  INIT .f.
+
    DATA oEvents
 
    METHOD New( oSender )
@@ -35,50 +45,72 @@ CLASS MenuTreeView
    METHOD getController()                 INLINE ( ::oSender:getController() )
    METHOD getBrowse()                     INLINE ( ::oSender:getBrowse() )
 
-   METHOD AddImage()
+   METHOD isControllerDocuments()         INLINE ( if( !empty( ::getController() ) .and. !empty( ::getController():hDocuments ),;
+                                                   ::getController():lDocuments,;
+                                                   .f. ) )
 
-   METHOD AddButton()
+   METHOD getControllerDocuments()        INLINE ( if( !empty( ::getController() ) .and. !empty( ::getController():hDocuments ),;
+                                                   ::getController():hDocuments,;
+                                                   nil ) )
 
-   METHOD AddSearchButton()    
+   METHOD addImage()
 
-   METHOD AddAppendButton()    
-   
-   METHOD AddDuplicateButton() 
-   
-   METHOD AddEditButton()      
-   
-   METHOD AddZoomButton()      
-   
-   METHOD AddDeleteButton()    
-   
-   METHOD AddRefreshButton()
-   
-   METHOD AddSelectButton()
+   METHOD addButton()
 
-   METHOD AddExitButton()
+   METHOD addSearchButton()    
 
-   METHOD AddGeneralButton()              INLINE ( ::fireEvent( 'addingGeneralButton' ),;
-                                                   ::AddSearchButton(),;
-                                                   ::AddRefreshButton(),;
-                                                   ::AddAppendButton(),;
-                                                   ::AddDuplicateButton(),;
-                                                   ::AddEditButton(),;
-                                                   ::AddZoomButton(),;
-                                                   ::AddDeleteButton(),;
+   METHOD addAppendButton()    
+   
+   METHOD addDuplicateButton() 
+   
+   METHOD addEditButton()      
+   
+   METHOD addZoomButton()      
+   
+   METHOD addDeleteButton()    
+   
+   METHOD addRefreshButton()
+   
+   METHOD addSelectButton()
+
+   METHOD addExitButton()
+
+   METHOD addGeneralButton()              INLINE ( ::fireEvent( 'addingGeneralButton' ),;
+                                                   ::addSearchButton(),;
+                                                   ::addRefreshButton(),;
+                                                   ::addAppendButton(),;
+                                                   ::addDuplicateButton(),;
+                                                   ::addEditButton(),;
+                                                   ::addZoomButton(),;
+                                                   ::addDeleteButton(),;
                                                    ::fireEvent( 'addedGeneralButton' ) )
 
-   METHOD AddAutoButtons()                INLINE ( ::fireEvent( 'addingAutoButton' ),;
-                                                   ::AddGeneralButton(),;
-                                                   ::AddExitButton(),;
+   METHOD addAutoButtons()                INLINE ( ::fireEvent( 'addingAutoButton' ),;
+                                                   ::addGeneralButton(),;
+                                                   ::addDocumentsButtons(),;
+                                                   ::addExitButton(),;
                                                    ::oButtonMain:Expand(),;
                                                    ::fireEvent( 'addedAutoButton' ) )
 
-   METHOD AddSelectorButtons()            INLINE ( ::fireEvent( 'addingSelectorButton' ),;
-                                                   ::AddGeneralButton(),;
-                                                   ::AddSelectButton(),;
-                                                   ::AddExitButton(),;
+   METHOD addSelectorButtons()            INLINE ( ::fireEvent( 'addingSelectorButton' ),;
+                                                   ::addGeneralButton(),;
+                                                   ::addSelectButton(),;
+                                                   ::addDocumentsButtons(),;
+                                                   ::addExitButton(),;
                                                    ::oButtonMain:Expand(),;
                                                    ::fireEvent( 'addedSelectorButton' ) )
+
+   METHOD addPrintButtons()               
+
+   METHOD addPreviewButtons()
+
+   METHOD addPdfButtons()
+
+   METHOD addLabelButtons()
+
+   METHOD addDocumentsButtons()           
+
+   METHOD blockPrintDocument( nDevice, cFormato )  
 
    METHOD SelectButtonMain()              INLINE ( ::oTreeView:Select( ::oButtonMain ) )
 
@@ -268,6 +300,7 @@ METHOD AddEditButton()
 RETURN ( Self )
 
 //----------------------------------------------------------------------------//
+
 METHOD AddZoomButton()      
 
    ::fireEvent( 'addingZoomButton' )
@@ -316,6 +349,86 @@ RETURN ( Self )
 
 //----------------------------------------------------------------------------//
 
+METHOD addPrintButtons( cWorkArea )
+
+   ::fireEvent( 'addingPrintButton')
+
+   ::oButtonPrint    := ::AddButton( "Imprimir", "Imp16", {|| ::getController():printDocument( IS_PRINTER ) }, "I", ACC_IMPR )
+
+      aeval( ::getControllerDocuments(), {|h| ::AddButton( alltrim( hget( h, "cdescrip" ) ), "Imp16", ::blockPrintDocument( IS_PRINTER, hget( h, "codigo" ) ), , ACC_IMPR, ::oButtonPrint ) } )
+
+   ::fireEvent( 'addedPrintButton') 
+
+RETURN ( Self )
+
+//----------------------------------------------------------------------------//
+
+METHOD addPreviewButtons( cWorkArea )
+
+   ::fireEvent( 'addingPreviewButton')
+
+   ::oButtonPreview  := ::AddButton( "Previsualizar", "Prev116", {|| ::getController():printDocument( IS_SCREEN ) }, "P", ACC_IMPR ) 
+
+      aeval( ::getControllerDocuments(), {|h| ::AddButton( alltrim( hget( h, "cdescrip" ) ), "Prev116", ::blockPrintDocument( IS_SCREEN, hget( h, "codigo" ) ), , ACC_IMPR, ::oButtonPreview ) } )
+
+   ::fireEvent( 'addedPreviewButton') 
+
+RETURN ( Self )
+
+//----------------------------------------------------------------------------//
+
+METHOD addPdfButtons( cWorkArea )
+
+   ::fireEvent( 'addingPdfButton')
+
+   ::oButtonPdf  := ::AddButton( "Pdf", "Doclock16", {|| ::getController():printDocument( IS_PDF ) }, "F", ACC_IMPR ) 
+
+      aeval( ::getControllerDocuments(), {|h| ::AddButton( alltrim( hget( h, "cdescrip" ) ), "Doclock16", ::blockPrintDocument( IS_PDF, hget( h, "codigo" ) ), , ACC_IMPR, ::oButtonPdf ) } ) 
+
+   ::fireEvent( 'addedPdfButton') 
+
+RETURN ( Self )
+
+//----------------------------------------------------------------------------//
+
+METHOD addLabelButtons()
+
+   ::fireEvent( 'addingLabelButton')
+
+   ::oButtonLabel  := ::AddButton( "Etiquetas", "gc_portable_barcode_scanner_16", {|| ::getController():labelDocument() }, "Q", ACC_IMPR ) 
+
+   ::fireEvent( 'addedLabelButton') 
+
+RETURN ( Self )
+
+//----------------------------------------------------------------------------//
+
+METHOD blockPrintDocument( nDevice, cFormato )
+
+RETURN ( {|| ::getController():printDocument( nDevice, cFormato ) } ) 
+
+//---------------------------------------------------------------------------//
+
+METHOD addDocumentsButtons()
+
+   if !( ::isControllerDocuments() )
+      RETURN ( Self )
+   end if 
+
+   ::fireEvent( 'addingPrintAndLabelButton' )
+
+   ::addPrintButtons()
+   
+   ::addPreviewButtons()
+   
+   ::addPdfButtons()
+   
+   ::fireEvent( 'addedPrintAndLabelButton' ) 
+
+RETURN ( Self )
+
+//----------------------------------------------------------------------------//
+
 METHOD onChange()
 
    local oItem    := ::oTreeView:GetSelected()
@@ -333,6 +446,8 @@ METHOD onChange()
    end if 
 
    eval( oItem:bAction )
+
+   ::selectButtonMain()
 
 RETURN ( Self )
 

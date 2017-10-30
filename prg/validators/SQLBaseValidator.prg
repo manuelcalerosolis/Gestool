@@ -13,7 +13,6 @@ CLASS SQLBaseValidator
    DATA hValidators
    DATA hAsserts
 
-   DATA uColumnValue
    DATA cColumnToProced
 
    DATA lDebugMode                     INIT .f.
@@ -66,14 +65,11 @@ METHOD ProcessAll( cColumn, hProcess, uValue )
       RETURN ( .t. )
    end if 
 
-   default uValue          := ::oController:getModelBuffer( cColumn )
-
    ::cColumnToProced       := cColumn
-   ::uColumnValue          := uValue
 
    for each hColumn in hColumnProcess
 
-      if !::Process( hColumn:__enumKey(), uValue, hColumn:__enumValue() )
+      if !::Process( hColumn:__enumKey(), ::oController:getModelBuffer( cColumn ), hColumn:__enumValue() )
          RETURN ( .f. )
       end if 
 
@@ -93,7 +89,7 @@ METHOD Process( cMethod, uValue, cMessage )
       lValidate      := Self:&( cMethod )( uValue )
 
       if !lValidate
-         msgstop( cMessage, "Error" )
+         msgstop( strtran( cMessage, "{value}", cvaltostr( uValue ) ), "Error" )
       end if
 
    catch oError
@@ -108,13 +104,11 @@ RETURN ( lValidate )
 
 METHOD Required( uValue )
 
-   default uValue    := ::uColumnValue  
-
    if ::lDebugMode
       msgInfo( !empty( uValue ), "Required validator" )
    end if 
 
-RETURN ( !empty( ::uColumnValue ) )
+RETURN ( !empty( uValue ) )
 
 //---------------------------------------------------------------------------//
 
@@ -123,8 +117,6 @@ METHOD Unique( uValue )
    local id
    local nCount
    local cSQLSentence
-
-   default uValue    := ::uColumnValue  
 
    cSQLSentence      := "SELECT COUNT(*) FROM " + ::oController:getModelTableName()       + space( 1 )
    cSQLSentence      +=    "WHERE " + ::cColumnToProced + " = " + toSQLString( uValue )   + space( 1 )
@@ -149,8 +141,6 @@ METHOD Exist( uValue )
    local nCount
    local cSQLSentence
 
-   default uValue    := ::uColumnValue  
-
    cSQLSentence      := "SELECT COUNT(*) FROM " + ::oController:getModelTableName()       + space( 1 )
    cSQLSentence      +=    "WHERE " + ::cColumnToProced + " = " + toSQLString( uValue )
 
@@ -169,13 +159,11 @@ METHOD EmptyOrExist( uValue )
    local nCount
    local cSQLSentence
 
-   default uValue    := ::uColumnValue  
-
    if empty( uValue )
       RETURN ( .t. )
    end if 
 
-   cSQLSentence      := "SELECT COUNT(*) FROM " + ::oController:getModelTableName()       + space( 1 )
+   cSQLSentence      := "SELECT COUNT(*) FROM " + ::oController:getModelTableName() + " "
    cSQLSentence      +=    "WHERE " + ::cColumnToProced + " = " + toSQLString( uValue )
 
    if ::lDebugMode

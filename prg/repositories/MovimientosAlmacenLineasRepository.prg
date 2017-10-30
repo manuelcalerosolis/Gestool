@@ -6,7 +6,7 @@
 
 CLASS MovimientosAlmacenLineasRepository FROM SQLBaseRepository
 
-   METHOD getTableName()         INLINE ( if( !empty( ::getController() ), ::getModelTableName(), SQLMovimientosAlmacenLineasModel():getTableName() ) )
+   METHOD getTableName()         INLINE ( SQLMovimientosAlmacenLineasModel():getTableName() ) 
 
    METHOD getSQLSentenceFechaCaducidad( cCodigoArticulo, cValorPrimeraPropiedad, cValorSegundaPropiedad, cLote )
 
@@ -14,6 +14,8 @@ CLASS MovimientosAlmacenLineasRepository FROM SQLBaseRepository
 
    METHOD getHashArticuloUuid( cCodigoArticulo, Uuid ) ;
                                  INLINE ( getSQLDataBase():selectFetchHash( ::getSQLSentenceArticuloUuid( cCodigoArticulo, Uuid ) ) )
+
+   METHOD getSqlSentenceWhereParentUuid( uuid )
 
 END CLASS
 
@@ -54,5 +56,11 @@ RETURN ( cSql )
 
 //---------------------------------------------------------------------------//
 
+METHOD getSqlSentenceWhereParentUuid( uuid )
 
+   local cSql  := "SELECT * FROM " + ::getTableName() + " "                      + ;
+                     "WHERE parent_uuid = " + quoted( uuid )
 
+RETURN ( cSql )
+
+//---------------------------------------------------------------------------//

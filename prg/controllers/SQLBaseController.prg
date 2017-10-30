@@ -35,6 +35,10 @@ CLASS SQLBaseController
 
    DATA cImage                                        INIT ""
 
+   DATA lDocuments                                    INIT .f.
+
+   DATA hDocuments
+
    DATA aSelected
  
    METHOD New()
@@ -49,7 +53,8 @@ CLASS SQLBaseController
    METHOD getModelColumns()                           INLINE ( if( !empty( ::oModel ) .and. !empty( ::oModel:hColumns ), ( ::oModel:hColumns ), ) )
    METHOD getModelExtraColumns()                      INLINE ( if( !empty( ::oModel ) .and. !empty( ::oModel:hExtraColumns ), ( ::oModel:hExtraColumns ), ) )
    
-   METHOD getModelBuffer( cColumn )                   
+   METHOD getModelBuffer( cColumn )
+   METHOD setModelBuffer( cColumn, uValue )                   
    METHOD getModelBufferColumnKey()                   INLINE ( ::getModelBuffer( ( ::oModel:cColumnKey ) ) )
 
    METHOD getModelSelectValue( cSentence )            INLINE ( if( !empty( ::oModel ), ::oModel:SelectValue( cSentence ), ) )
@@ -134,8 +139,6 @@ CLASS SQLBaseController
    METHOD commitTransactionalMode()                   INLINE ( if( ::lTransactional, getSQLDatabase():Commit(), ) )
    METHOD rollbackTransactionalMode()                 INLINE ( if( ::lTransactional, getSQLDatabase():Rollback(), ) )
 
-   METHOD setFastReport( oFastReport, cSentence, cColumns )
-
    // Fastkeys-----------------------------------------------------------------
 
    DATA hFastKey                                      INIT {=>}
@@ -147,6 +150,8 @@ CLASS SQLBaseController
 
    METHOD setEvent( cEvent, bEvent )                  INLINE ( if( !empty( ::oEvents ), ::oEvents:set( cEvent, bEvent ), ) )
    METHOD fireEvent( cEvent )                         INLINE ( if( !empty( ::oEvents ), ::oEvents:fire( cEvent ), ) )
+
+   METHOD setFastReport( oFastReport, cTitle, cSentence, cColumns )
 
 END CLASS
 
@@ -550,6 +555,24 @@ RETURN ( hget( ::oModel:hBuffer, cColumn ) )
 
 //----------------------------------------------------------------------------//
 
+METHOD setModelBuffer( cColumn, uValue )
+
+   if empty( ::oModel )
+      RETURN ( nil )
+   end if 
+
+   if empty( ::oModel:hBuffer )
+      RETURN ( nil )
+   end if 
+
+   if !hhaskey( ::oModel:hBuffer, cColumn )
+      RETURN ( nil )
+   end if  
+
+RETURN ( hset( ::oModel:hBuffer, cColumn, uValue ) )
+
+//----------------------------------------------------------------------------//
+
 METHOD getRowSet()
 
    if empty( ::oModel:oRowSet )
@@ -581,30 +604,30 @@ RETURN ( heval( ::hFastKey, {|k,v| if( k == nKey, eval( v ), ) } ) )
    
 //----------------------------------------------------------------------------//
 
-METHOD setFastReport( oFastReport, cTitle, cSentence, cColumns )
-
-   local oRowSet
-
-   if empty( oFastReport )
-      RETURN ( Self )
-   end if
-
-   DEFAULT cColumns  := ::oModel:serializeColumns() 
-
-   oRowSet           := ::oModel:newRowSet( cSentence )
-
-   if empty( oRowSet )
-      RETURN ( Self )
-   end if 
-
-   oFastReport:setUserDataSet(   cTitle,;
-                                 cColumns,;
-                                 {|| oRowSet:gotop()  },;
-                                 {|| oRowSet:skip(1)  },;
-                                 {|| oRowSet:skip(-1) },;
-                                 {|| oRowSet:eof()    },;
-                                 {|nField| oRowSet:fieldGet( nField ) } )
-
-RETURN ( Self )
-
+METHOD setFastReport( oFastReport, cTitle, cSentence, cColumns )    
+     
+   local oRowSet      
+     
+   if empty( oFastReport )     
+      RETURN ( Self )    
+   end if    
+    
+   DEFAULT cColumns  := ::oModel:serializeColumns()       
+    
+   oRowSet           := ::oModel:newRowSet( cSentence )      
+    
+   if empty( oRowSet )      
+      RETURN ( Self )    
+   end if       
+    
+   oFastReport:setUserDataSet(   cTitle,;     
+                                 cColumns,;      
+                                 {|| oRowSet:gotop()  },;    
+                                 {|| oRowSet:skip(1)  },;    
+                                 {|| oRowSet:skip(-1) },;    
+                                 {|| oRowSet:eof()    },;    
+                                 {|nField| oRowSet:fieldGet( nField ) } )      
+    
+RETURN ( Self )    
+    
 //---------------------------------------------------------------------------//

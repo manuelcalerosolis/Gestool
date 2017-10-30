@@ -276,19 +276,39 @@ RETURN ( .t. )
 //---------------------------------------------------------------------------//
 
 FUNCTION Test()
+
 /*
-   local oConexion   := getSqlDatabase():oConexion
-   local cSql        := "INSERT INTO configuracion_columnas_usuarios ( usuario_id, view_name, browse_state, column_order, orientation, id_to_find ) VALUES ( '000', 'movimientos_de_almacen_lineas','XS1:{{[_nCreationOrders[,{1,2,3,4,5,6,7,8,9,10,11}},{[_nRowHeight[,17},{[_nWidths[,{40,120,240,80,80,80,100,240,240,240,240}},{[_lHides[,{.F.,.F.,.F.,.F.,.F.,.F.,.F.,.F.,.F.,.F.,.F.}},{[_cGrpHdrs[,{,,,,,,,,,,}},{[_cHeaders[,{[Id[,[Código artículo[,[Nombre artículo[,[Primera propiedad[,[Segunda propiedad[,[Fecha caducidad[,[Lote[,[Bultos[,[Cajas[,[Unidades[,[Precio[}}}', '', '', 0) "
 
-   oConexion:Exec( cSql )
+LOCAL oDlg 
+local cVar := ""
+LOCAL oGet, cTxt := "" 
 
-   msgalert( oConexion:errorcode(), "errorcode" )
+DEFINE DIALOG oDlg; 
+SIZE 800, 200; 
+TITLE "Terminale" 
+
+@ 0, 0 GET oGet VAR cTxt MEMO 
+
+oGet:bKeyDown = { | nKey | Tasti( nKey, @cVar ) } 
+
+ACTIVATE DIALOG oDlg; 
+CENTER 
+
+msgalert( cVar, "cVar" )
+msgalert( at( chr(16), cVar ), "chr" )
 */
 
    //MsgInfo( TStock():nSQLStockActual( "ZZZ", "000", "", "", "" ), "Almacen 000" )
    //MsgInfo( TStock():nSQLStockActual( "ZZZ", "1", "", "", "" ), "Almacen 1" )
    //MsgInfo( TStock():nSQLStockActual( "ZZZ", "000", "", "", "123" ), "Almacen 000 lote 123" )
    //MsgInfo( TStock():nSQLStockActual( "ZZZ", "1", "", "", "123" ), "Almacen 1 lote 123" )
+RETURN NIL 
+
+STATIC FUNCTION TASTI( nKey, cVar ) 
+
+   cVar  += CHR( nKey )
+
+   logwrite( chr( nKey ) )
 
 RETURN ( nil )
 

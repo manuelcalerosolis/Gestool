@@ -4189,21 +4189,6 @@ RETURN ( cSerialized )
 
 //----------------------------------------------------------------------------//
 
-FUNCTION CreateGuID32( lNoBracket )
-
-   local cGuID          := newGuid32()
-
-   DEFAULT lNoBracket   := .t.
-
-   if lNoBracket
-      cGuid             := CharRem ("{", cGuid )
-      cGuid             := CharRem ("}", cGuid )
-   end if
-
-RETURN ( newGuid32() )
-
-//----------------------------------------------------------------------------//
-
 FUNCTION getHashFromWorkArea( cAlias ) 
 
    local n
@@ -4218,6 +4203,16 @@ FUNCTION getHashFromWorkArea( cAlias )
    next  
 
 RETURN ( hash )
+
+//---------------------------------------------------------------------------//
+
+FUNCTION fetchHashFromWorkArea( cAlias )
+
+   local aFetch   := {}
+
+   ( cAlias )->( dbeval( {|| aadd( aFetch, getHashFromWorkArea( cAlias ) ) } ) )
+
+RETURN ( aFetch )
 
 //---------------------------------------------------------------------------//
 

@@ -1789,7 +1789,7 @@ Function ReadHashCodeGS128( cCode, hCodeGS128 )
    for each hStruct in aGS128
 
       /*
-      Compruebo que sea uno de los valores----------------------------------
+      Compruebo que sea uno de los valores-------------------------------------
       */
 
       if SubStr( cCode, 1, Len( hGet( hStruct, "Codigo" ) ) ) == hGet( hStruct, "Codigo" )
@@ -1799,7 +1799,7 @@ Function ReadHashCodeGS128( cCode, hCodeGS128 )
          cCode   := SubStr( cCode, Len( hGet( hStruct, "Codigo" ) ) + nAncho + 1 )
 
          /*
-         Lo metemos en el hash------------------------------------------------
+         Lo metemos en el hash-------------------------------------------------
          */
 
          hSet( hCodeGS128, hGet( hStruct, "Codigo" ), cValor )

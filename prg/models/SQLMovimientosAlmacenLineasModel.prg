@@ -8,7 +8,7 @@ CLASS SQLMovimientosAlmacenLineasModel FROM SQLBaseEmpresasModel
 
    DATA  cTableName         INIT "movimientos_almacen_lineas"
 
-   METHOD New()
+   METHOD getColumns()
 
    METHOD totalUnidades()
 
@@ -44,7 +44,7 @@ END CLASS
 
 //---------------------------------------------------------------------------//
 
-METHOD New( oController )
+METHOD getColumns()
 
    hset( ::hColumns, "id",                {  "create"    => "INTEGER PRIMARY KEY AUTO_INCREMENT"      ,;
                                              "text"      => "Identificador"                           ,;
@@ -154,9 +154,7 @@ METHOD New( oController )
                                              "visible"   => .t.                                    ,;
                                              "width"     => 120 }                                  )
 
-   ::Super:New( oController )
-
-RETURN ( Self )
+RETURN ( ::hColumns )
 
 //---------------------------------------------------------------------------//
 

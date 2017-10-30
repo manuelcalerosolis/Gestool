@@ -12,7 +12,7 @@ CLASS SQLMovimientosAlmacenModel FROM SQLBaseEmpresasModel
 
    DATA aTextoMovimiento      INIT { "Entre almacenes", "Regularización", "Objetivos", "Consolidación" }
 
-   METHOD New()
+   METHOD getColumns()
    
    METHOD cTextoMovimiento()  
 
@@ -20,9 +20,9 @@ END CLASS
 
 //---------------------------------------------------------------------------//
 
-METHOD New()
+METHOD getColumns()
 
-   ::CommunFields()
+   ::Super:getColumns()
 
    hset( ::hColumns, "tipo_movimiento",   {  "create"    => "INT NOT NULL"                            ,;
                                              "text"      => "Tipo movimiento"                         ,;
@@ -63,15 +63,15 @@ METHOD New()
                                              "width"     => 80 }                                      )
 
    hset( ::hColumns, "grupo_movimiento",  {  "create"    => "CHAR ( 2 )"                              ,;
-                                             "text"      => "Grupo movimiento"                        ,;
-                                             "header"    => "Grupo movimiento"                        ,;
+                                             "text"      => "Grupo"                                   ,;
+                                             "header"    => "Grupo"                                   ,;
                                              "visible"   => .t.                                       ,;
                                              "type"      => "C"                                       ,;
                                              "field"     => "cCodMov"                                 ,;
                                              "width"     => 80 }                                      )
 
    hset( ::hColumns, "agente",            {  "create"    => "CHAR ( 3 )"                              ,;
-                                             "text"      => "Agente movimiento"                       ,;
+                                             "text"      => "Agente"                                  ,;
                                              "header"    => "Agente"                                  ,;
                                              "visible"   => .t.                                       ,;
                                              "type"      => "C"                                       ,;
@@ -103,11 +103,7 @@ METHOD New()
                                              "field"     => "mComent"                                 ,;
                                              "width"     => 240 }                                     )
 
-   ::TimeStampFields()
-
-   ::Super:New()
-
-RETURN ( Self )
+RETURN ( ::hColumns )
 
 //---------------------------------------------------------------------------//
 

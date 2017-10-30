@@ -449,12 +449,8 @@ FUNCTION cFormatoDocumento( cSerie, cTipDoc, dbfCount )
 
       nPos           := ( dbfCount )->( fieldPos( "Doc" + cSerie ) )
 
-      /*
-      Hasta q no encuentre un numero valido se pone a dar vueltas
-      */
-
       if ( dbfCount )->( dbSeek( Upper( cTipDoc ) ) )
-         cDoc           := ( dbfCount )->( fieldGet( nPos ) )
+         cDoc        := ( dbfCount )->( fieldGet( nPos ) )
       else
          msgStop( "No encuentro el tipo de documento " + cTipDoc )
       end if

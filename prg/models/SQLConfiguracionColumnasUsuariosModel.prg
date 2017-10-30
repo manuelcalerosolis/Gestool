@@ -8,7 +8,7 @@ CLASS SQLConfiguracionColumnasUsuariosModel FROM SQLBaseModel
 
    DATA cTableName           INIT "configuracion_columnas_usuarios"
 
-   METHOD New()
+   METHOD getColumns()
 
    METHOD delete( cViewName )
 
@@ -20,7 +20,7 @@ END CLASS
 
 //---------------------------------------------------------------------------//
 
-METHOD New()
+METHOD getColumns()
 
    ::hColumns                    := {  "id"           =>  { "create" => "INTEGER PRIMARY KEY AUTO_INCREMENT"   },;
                                        "usuario_id"   =>  { "create" => "CHARACTER ( 3 ) NOT NULL"             },;
@@ -30,9 +30,7 @@ METHOD New()
                                        "orientation"  =>  { "create" => "CHARACTER ( 1 )"	            },;
                                        "id_to_find"   =>  { "create" => "INT"                         } }
 
-   ::Super:New()
-
-RETURN ( Self )
+RETURN ( ::hColumns )
 
 //---------------------------------------------------------------------------//
 

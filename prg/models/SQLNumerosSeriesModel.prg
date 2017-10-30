@@ -10,7 +10,7 @@ CLASS SQLNumerosSeriesModel FROM SQLBaseEmpresasModel
 
    DATA aBuffer
 
-   METHOD New()
+   METHOD getColumns()
 
    METHOD loadCurrentBuffer()
    METHOD updateCurrentBuffer()
@@ -31,7 +31,7 @@ END CLASS
 
 //---------------------------------------------------------------------------//
 
-METHOD New( oController )
+METHOD getColumns()
 
    hset( ::hColumns, "id",                {  "create"    => "INTEGER PRIMARY KEY AUTO_INCREMENT"      ,;
                                              "text"      => "Identificador"                           ,;
@@ -59,9 +59,7 @@ METHOD New( oController )
                                              "width"     => 120                                       ,;
                                              "default"   => Space( 30 ) }                             )
 
-   ::Super:New( oController )
-
-RETURN ( Self )
+RETURN ( ::hColumns )
 
 //---------------------------------------------------------------------------//
 

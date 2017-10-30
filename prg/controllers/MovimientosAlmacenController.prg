@@ -12,6 +12,10 @@ CLASS MovimientosAlmacenController FROM SQLBaseController
 
    METHOD New()
 
+   METHOD getUuid()                 INLINE ( iif( !empty( ::oModel ) .and. !empty( ::oModel:hBuffer ),;
+                                                   hget( ::oModel:hBuffer, "uuid" ),;
+                                                   nil ) )
+
    METHOD validateAlmacenOrigen()   INLINE ( iif(  ::validate( "almacen_origen" ),;
                                                    ::stampAlmacenNombre( ::oDialogView:oGetAlmacenOrigen ),;
                                                    .f. ) )
@@ -28,19 +32,13 @@ CLASS MovimientosAlmacenController FROM SQLBaseController
                                                    ::stampAgente( ::oDialogView:oGetAgente ),;
                                                    .f. ) )
 
-   METHOD addPrintButtons()   
-
    METHOD stampAlmacenNombre()
 
    METHOD stampGrupoMovimientoNombre()
 
    METHOD stampAgente()
 
-   METHOD printMovimientosAlmacen() INLINE ( msgalert( "¯\_(¨)_/¯" ) ) 
-
-   METHOD DesignReport()
-
-   METHOD DataReport()   
+   METHOD printDocument()  
 
    METHOD deleteLines()
 
@@ -58,6 +56,10 @@ METHOD New()
 
    ::lTransactional           := .t.
 
+   ::lDocuments               := .t.
+
+   ::hDocuments               := DocumentosModel():getWhereMovimientosAlmacen() 
+
    ::oModel                   := SQLMovimientosAlmacenModel():New( self )
 
    ::oDialogView              := MovimientosAlmacenView():New( self )
@@ -74,20 +76,6 @@ METHOD New()
    ::setEvent( 'closedDialog',      {|| ::oLineasController:oModel:freeRowSet() } ) 
 
    ::setEvent( 'deletingSelection', {|| ::deleteLines() } )
-
-   ::oNavigatorView:oMenuTreeView:setEvent( 'addedGeneralButton', {|| ::addPrintButtons() } )
-
-RETURN ( Self )
-
-//---------------------------------------------------------------------------//
-
-METHOD addPrintButtons()
-
-   ::oNavigatorView:oMenuTreeView:AddButton( "Imprimir", "Imp16", {|| ::printMovimientosAlmacen() }, "I", ACC_IMPR )
-
-   ::oNavigatorView:oMenuTreeView:AddButton( "Previsualizar", "Prev116", {|| ::printMovimientosAlmacen() }, "P", ACC_IMPR ) 
-
-   ::oNavigatorView:oMenuTreeView:AddButton( "Etiquetas", "gc_portable_barcode_scanner_16", {|| ::printMovimientosAlmacen() }, "Q", ACC_IMPR ) 
 
 RETURN ( Self )
 
@@ -126,82 +114,6 @@ RETURN ( .t. )
 
 //---------------------------------------------------------------------------//
 
-
-METHOD DesignReport( oFr, cReport ) 
-
-   /*
-   Zona de datos------------------------------------------------------------
-   */
-
-   ::DataReport( oFr )
-
-   /*
-   Paginas y bandas---------------------------------------------------------
-   */
-
-   if !empty( cReport )
-
-      oFr:LoadFromString( cReport )
-
-   else
-
-      oFr:SetProperty(     "Report",            "ScriptLanguage", "PascalScript" )
-
-      oFr:AddPage(         "MainPage" )
-
-      oFr:AddBand(         "CabeceraDocumento", "MainPage", frxPageHeader )
-      oFr:SetProperty(     "CabeceraDocumento", "Top", 0 )
-      oFr:SetProperty(     "CabeceraDocumento", "Height", 200 )
-
-      oFr:AddBand(         "MasterData",        "MainPage", frxMasterData )
-      oFr:SetProperty(     "MasterData",        "Top", 200 )
-      oFr:SetProperty(     "MasterData",        "Height", 0 )
-      oFr:SetProperty(     "MasterData",        "StartNewPage", .t. )
-      oFr:SetObjProperty(  "MasterData",        "DataSet", "Movimientos de almacén" )
-
-      oFr:AddBand(         "DetalleColumnas",   "MainPage", frxDetailData  )
-      oFr:SetProperty(     "DetalleColumnas",   "Top", 230 )
-      oFr:SetProperty(     "DetalleColumnas",   "Height", 28 )
-      oFr:SetObjProperty(  "DetalleColumnas",   "DataSet", "Lineas de movimientos" )
-      oFr:SetProperty(     "DetalleColumnas",   "OnMasterDetail", "DetalleOnMasterDetail" )
-
-      oFr:AddBand(         "PieDocumento",      "MainPage", frxPageFooter )
-      oFr:SetProperty(     "PieDocumento",      "Top", 930 )
-      oFr:SetProperty(     "PieDocumento",      "Height", 110 )
-
-   end if
-
-   oFr:DesignReport()
-
-   oFr:DestroyFr()
-
-RETURN .T.
-
-//---------------------------------------------------------------------------//
-
-METHOD DataReport( oFr ) 
-
-   oFr:ClearDataSets()
-
-   ::setFastReport( oFr, "Movimientos de almacén" )
-
-/*   
-   oFr:SetWorkArea(     "Lineas de movimientos", ::oDetMovimientos:oDbf:nArea )
-   oFr:SetFieldAliases( "Lineas de movimientos", cObjectsToReport( ::oDetMovimientos:oDbf ) )
-
-   oFr:SetMasterDetail( "Movimiento",              "Lineas de movimientos",   {|| Str( ::oDbf:nNumRem ) + ::oDbf:cSufRem } )
-   oFr:SetMasterDetail( "Lineas de movimientos",   "Artículos",               {|| ::oDetMovimientos:oDbf:cRefMov } )
-
-   if !empty( ::oDetMovimientos )
-      oFr:SetResyncPair(   "Movimiento",              "Lineas de movimientos" )
-      oFr:SetResyncPair(   "Lineas de movimientos",   "Artículos" )
-   end if
-*/
-
-RETURN NIL
-
-//---------------------------------------------------------------------------//
-
 METHOD deleteLines()
 
    local aUuids   := ::oModel:convertRecnoToId( ::aSelected, "uuid" )
@@ -211,6 +123,46 @@ METHOD deleteLines()
 RETURN ( self ) 
 
 //---------------------------------------------------------------------------//
+
+METHOD printDocument( nDevice, cFormato )
+
+   local cReport
+   local nCopies
+   local oMovimientosAlmacenReport  
+
+   DEFAULT nDevice                  := IS_SCREEN
+
+   nCopies                          := ContadoresModel():getCopiasMovimientosAlmacen()
+
+   if empty( cFormato )
+      cFormato                      := ContadoresModel():getFormatoMovimientosAlmacen()
+   end if 
+
+   if empty( cFormato )
+      msgStop( "No hay formatos por defecto" )
+      RETURN ( self )  
+   end if 
+
+   cReport                          := DocumentosModel():getReportWhereCodigo( cFormato )              
+
+   if empty( cReport )
+      msgStop( "El formato esta vacio" )
+      RETURN ( self )  
+   end if 
+
+   oMovimientosAlmacenReport        := MovimientosAlmacenReport():New( Self )
+
+   oMovimientosAlmacenReport:setId( ::getRowSet():fieldget( 'id' ) )
+   oMovimientosAlmacenReport:setDevice( nDevice )
+   oMovimientosAlmacenReport:setCopies( nCopies )
+   oMovimientosAlmacenReport:setReport( cReport )
+
+   oMovimientosAlmacenReport:Print()
+
+RETURN ( self ) 
+
+//---------------------------------------------------------------------------//
+
 
 
 

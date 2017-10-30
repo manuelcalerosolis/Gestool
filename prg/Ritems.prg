@@ -4163,17 +4163,20 @@ Static Function VisualEdtDocs( dbfDoc )
 
       case cTipo == "RM"
 
-         msgalert( "RM" )
-      
-         with object ( MovimientosAlmacenController():New() )
-            :DesignReport( oFr )
+         with object ( MovimientosAlmacenReport():New() )
+            :setFastReport( oFr )
+            :setReport( ( dbfDoc )->mReport )
+
+            msgalert("desing")
+
+            :Design()
             :end()
          end object
 
-      //   with object ( TRemMovAlm():New( cPatEmp() ) )
-      //      :DesignReportRemMov( oFr, dbfDoc )
-      //      :end()
-      //   end object
+      // with object ( TRemMovAlm():New( cPatEmp() ) )
+      //    :DesignReportRemMov( oFr, dbfDoc )
+      //    :end()
+      // end object
 
       case cTipo == "MP"
 

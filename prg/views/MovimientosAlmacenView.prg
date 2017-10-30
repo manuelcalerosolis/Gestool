@@ -6,9 +6,9 @@
 
 CLASS MovimientosAlmacenView FROM SQLBaseView
 
-   DATA oSQLBrowseView
-
    DATA oDialog
+
+   DATA oSQLBrowseView
 
    DATA oGetDivisa
    DATA oGetAgente
@@ -42,7 +42,10 @@ Return ( Self )
 
 METHOD Dialog()
 
-   local oBtn
+   local oBtnOk
+   local oBtnEdit
+   local oBtnAppend
+   local oBtnDelete
    local oBmpGeneral
 
    DEFINE DIALOG ::oDialog RESOURCE "RemMov" TITLE ::lblTitle() + "movimientos de almacén"
@@ -52,11 +55,6 @@ METHOD Dialog()
         RESOURCE     "gc_package_pencil_48" ;
         TRANSPARENT ;
         OF           ::oDialog
-
-      REDEFINE GET   ::oController:oModel:hBuffer[ "numero" ] ;
-         ID          100 ;
-         WHEN        ( .f. ) ;
-         OF          ::oDialog
 
       REDEFINE GET   ::oController:oModel:hBuffer[ "delegacion" ] ;
          ID          110 ;
@@ -148,19 +146,19 @@ METHOD Dialog()
 
       // Buttons lineas-------------------------------------------------------
 
-      REDEFINE BUTTON ;
+      REDEFINE BUTTON oBtnAppend ;
          ID          500 ;
          OF          ::oDialog ;
          WHEN        ( ::oController:isNotZoomMode() ) ;
          ACTION      ( ::oController:oLineasController:Append(), ::oSQLBrowseView:Refresh() )
 
-      REDEFINE BUTTON ;
+      REDEFINE BUTTON oBtnEdit ;
          ID          501 ;
          OF          ::oDialog ;
          WHEN        ( ::oController:isNotZoomMode() ) ;
          ACTION      ( ::oController:oLineasController:Edit(), ::oSQLBrowseView:Refresh() )
 
-      REDEFINE BUTTON ;
+      REDEFINE BUTTON oBtnDelete ;
          ID          502 ;
          OF          ::oDialog ;
          WHEN        ( ::oController:isNotZoomMode() ) ;
@@ -188,7 +186,7 @@ METHOD Dialog()
 
       // Buttons---------------------------------------------------------------
 
-      REDEFINE BUTTON oBtn ;
+      REDEFINE BUTTON oBtnOk ;
          ID          IDOK ;
          OF          ::oDialog ;
          WHEN        ( ::oController:isNotZoomMode() ) ;
@@ -200,13 +198,11 @@ METHOD Dialog()
          CANCEL ;
          ACTION      ( ::oDialog:End() )
 
-      REDEFINE BUTTON ;
-         ID          3 ;
-         OF          ::oDialog ;
-         ACTION      ( msgalert( "RecalculaPrecio" ) )
-
       if ::oController:isNotZoomMode()
-         ::oDialog:AddFastKey( VK_F5, {|| oBtn:Click() } )
+         ::oDialog:AddFastKey( VK_F5, {|| oBtnOk:Click() } )
+         ::oDialog:AddFastKey( VK_F2, {|| oBtnAppend:Click() } )
+         ::oDialog:AddFastKey( VK_F3, {|| oBtnEdit:Click() } )
+         ::oDialog:AddFastKey( VK_F4, {|| oBtnDelete:Click() } )
       end if
 
       ::oDialog:bStart    := {|| ::startDialog() }

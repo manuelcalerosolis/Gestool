@@ -1,5 +1,11 @@
 MVC - ToDo
 
+- Para presentacion : 
+ * incluir en harbour scopes para q los metodos no sean estaticos, como en java
+public static String getNombre () { … }
+
+ * metodos overriders de definicion obligatoria en la herencia
+
 - Ordenacion de las columnas en las lineas de movimientos de almcenes
 
 - Guardar la configuracion de columnas en las lineas de movimientos de almcenes
