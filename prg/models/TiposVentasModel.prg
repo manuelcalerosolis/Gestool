@@ -10,9 +10,7 @@ CLASS TiposVentasModel FROM SQLBaseModel
 
    DATA     cDbfTableName
 
-   DATA     hColumns
-
-   METHOD   New()
+   METHOD   getColumns()
 
    METHOD   getCodigoFromId( id )
    METHOD   getIdFromCodigo( codigo )
@@ -21,9 +19,7 @@ END CLASS
 
 //---------------------------------------------------------------------------//
 
-METHOD New()
-
-   ::cDbfTableName				 	:= "TVta"
+METHOD getColumns()
 
    ::hColumns                   	:= {  "id"     => {  "create"    => "INTEGER PRIMARY KEY AUTO_INCREMENT"   ,;
                                                       "text"		=> "Identificador"                        ,;
@@ -47,9 +43,7 @@ METHOD New()
                                                       "type"      => "C"                                    ,;
                                                       "len"       => 20}                                    }
 
-   ::Super:New()
-
-RETURN ( Self )
+RETURN ( ::hColumns )
 
 //---------------------------------------------------------------------------//
 

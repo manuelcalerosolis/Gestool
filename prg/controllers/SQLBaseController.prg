@@ -612,7 +612,7 @@ METHOD setFastReport( oFastReport, cTitle, cSentence, cColumns )
       RETURN ( Self )    
    end if    
     
-   DEFAULT cColumns  := ::oModel:serializeColumns()       
+   DEFAULT cColumns  := ::oModel:getSerializeColumns()       
     
    oRowSet           := ::oModel:newRowSet( cSentence )      
     
@@ -625,8 +625,9 @@ METHOD setFastReport( oFastReport, cTitle, cSentence, cColumns )
                                  {|| oRowSet:gotop()  },;    
                                  {|| oRowSet:skip(1)  },;    
                                  {|| oRowSet:skip(-1) },;    
-                                 {|| oRowSet:eof()    },;    
-                                 {|nField| oRowSet:fieldGet( nField ) } )      
+                                 {|| oRowSet:eof()    },;
+                                 {|nField| msgalert( nField ), oRowSet:fieldGet( nField ) } )
+                                 //  )      
     
 RETURN ( Self )    
     

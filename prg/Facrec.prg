@@ -10082,7 +10082,7 @@ Static Function DataReport( oFr )
    oFr:SetWorkArea(     "Impuestos especiales",  oNewImp:Select() )
    oFr:SetFieldAliases( "Impuestos especiales",  cObjectsToReport( oNewImp:oDbf ) )
 
-   TiposVentasController():Instance():setFastReport( oFr )
+   // TiposVentasController():Instance():setFastReport( oFr )
 
    oFr:SetMasterDetail( "Facturas rectificativas", "Lineas de facturas rectificativas",            {|| ( D():FacturasRectificativas( nView ) )->cSerie + Str( ( D():FacturasRectificativas( nView ) )->nNumFac ) + ( D():FacturasRectificativas( nView ) )->cSufFac } )
    oFr:SetMasterDetail( "Facturas rectificativas", "Incidencias de facturas rectificativas",       {|| ( D():FacturasRectificativas( nView ) )->cSerie + Str( ( D():FacturasRectificativas( nView ) )->nNumFac ) + ( D():FacturasRectificativas( nView ) )->cSufFac } )
@@ -10130,7 +10130,7 @@ Return nil
 
 Static Function SynchronizeDetails()
 
-   TiposVentasController():Instance():findByIdInRowSet( ( D():FacturasRectificativasLineas( nView ) )->id_tipo_v )
+   // TiposVentasController():Instance():findByIdInRowSet( ( D():FacturasRectificativasLineas( nView ) )->id_tipo_v )
 
 Return ( ( D():FacturasRectificativasLineas( nView ) )->cRef )
 

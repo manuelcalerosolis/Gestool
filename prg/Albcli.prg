@@ -8706,7 +8706,7 @@ Static Function DataReport( oFr )
    oFr:SetWorkArea(     "Impuestos especiales",  oNewImp:Select() )
    oFr:SetFieldAliases( "Impuestos especiales",  cObjectsToReport( oNewImp:oDbf ) )
 
-   TiposVentasController():Instance():setFastReport( oFr )
+   // TiposVentasController():Instance():setFastReport( oFr )
 
    oFr:SetMasterDetail( "Albaranes", "Lineas de albaranes",                      {|| ( D():Get( "AlbCliT", nView ) )->cSerAlb + Str( ( D():Get( "AlbCliT", nView ) )->nNumAlb ) + ( D():Get( "AlbCliT", nView ) )->cSufAlb } )
    oFr:SetMasterDetail( "Albaranes", "Incidencias de albaranes",                 {|| ( D():Get( "AlbCliT", nView ) )->cSerAlb + Str( ( D():Get( "AlbCliT", nView ) )->nNumAlb ) + ( D():Get( "AlbCliT", nView ) )->cSufAlb } )
@@ -8761,7 +8761,7 @@ Return nil
 
 Static Function SynchronizeDetails()
 
-   TiposVentasController():Instance():findByIdInRowSet( ( D():AlbaranesClientesLineas( nView ) )->id_tipo_v )
+   // TiposVentasController():Instance():findByIdInRowSet( ( D():AlbaranesClientesLineas( nView ) )->id_tipo_v )
 
 Return ( ( D():AlbaranesClientesLineas( nView ) )->cRef )
 

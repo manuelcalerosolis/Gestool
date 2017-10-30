@@ -7310,7 +7310,7 @@ Static Function DataReport( oFr )
       oFr:SetFieldAliases( "Impuestos especiales",  cObjectsToReport( oNewImp:oDbf ) )
    end if 
 
-   TiposVentasController():Instance():setFastReport( oFr )
+   // TiposVentasController():Instance():setFastReport( oFr )
 
    oFr:SetMasterDetail( "Pedidos", "Lineas de pedidos",                 {|| ( D():PedidosClientes( nView ) )->cSerPed + Str( ( D():PedidosClientes( nView ) )->nNumPed ) + ( D():PedidosClientes( nView ) )->cSufPed } )
    oFr:SetMasterDetail( "Pedidos", "Incidencias de pedidos",            {|| ( D():PedidosClientes( nView ) )->cSerPed + Str( ( D():PedidosClientes( nView ) )->nNumPed ) + ( D():PedidosClientes( nView ) )->cSufPed } )
@@ -7354,7 +7354,7 @@ Return nil
 
 Static Function SynchronizeDetails()
 
-   TiposVentasController():Instance():findByIdInRowSet( ( D():PedidosClientesLineas( nView ) )->id_tipo_v )
+   // TiposVentasController():Instance():findByIdInRowSet( ( D():PedidosClientesLineas( nView ) )->id_tipo_v )
 
 Return ( ( D():PedidosClientesLineas( nView ) )->cRef )
 

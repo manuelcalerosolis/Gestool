@@ -66,7 +66,7 @@ METHOD Dialog()
          VAR         ::oController:oModel:hBuffer[ "codigo_articulo" ] ;
          ID          100 ;
          WHEN        ( ::oController:isAppendMode() ) ;
-         PICTURE     "@!" ;
+         PICTURE     ( Replicate( "X", 200 ) ) ; // "@!" ;
          BITMAP      "Lupa" ;
          OF          oDlg
 
