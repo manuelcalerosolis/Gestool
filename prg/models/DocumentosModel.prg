@@ -13,6 +13,8 @@ CLASS DocumentosModel FROM ADSBaseModel
 
    METHOD getReportWhereCodigo()
 
+   METHOD exist()
+
 END CLASS
 
 //---------------------------------------------------------------------------//
@@ -46,4 +48,20 @@ METHOD getReportWhereCodigo( cCodigo )
 RETURN ( "" )
 
 //---------------------------------------------------------------------------//
+
+METHOD exist( cCodigo )
+
+   local cStm  
+   local cSql  := "SELECT Codigo "                                      + ;
+                     "FROM " + ::getTableName() + " "                   + ;
+                     "WHERE Codigo = " + quoted( cCodigo ) 
+
+   if ::ExecuteSqlStatement( cSql, @cStm )
+      RETURN ( ( cStm )->( lastrec() ) > 0 )
+   end if 
+
+RETURN ( .f. )
+
+//---------------------------------------------------------------------------//
+
 

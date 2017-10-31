@@ -45,13 +45,9 @@ CLASS MenuTreeView
    METHOD getController()                 INLINE ( ::oSender:getController() )
    METHOD getBrowse()                     INLINE ( ::oSender:getBrowse() )
 
-   METHOD isControllerDocuments()         INLINE ( if( !empty( ::getController() ) .and. !empty( ::getController():hDocuments ),;
-                                                   ::getController():lDocuments,;
-                                                   .f. ) )
-
-   METHOD getControllerDocuments()        INLINE ( if( !empty( ::getController() ) .and. !empty( ::getController():hDocuments ),;
-                                                   ::getController():hDocuments,;
-                                                   nil ) )
+   METHOD isControllerDocuments()         INLINE ( ::getController():lDocuments )
+   METHOD isControllerLabels()            INLINE ( ::getController():lLabels )
+   METHOD getControllerDocuments()        INLINE ( ::getController():hDocuments )
 
    METHOD addImage()
 
@@ -88,6 +84,7 @@ CLASS MenuTreeView
    METHOD addAutoButtons()                INLINE ( ::fireEvent( 'addingAutoButton' ),;
                                                    ::addGeneralButton(),;
                                                    ::addDocumentsButtons(),;
+                                                   ::addLabelButtons(),;
                                                    ::addExitButton(),;
                                                    ::oButtonMain:Expand(),;
                                                    ::fireEvent( 'addedAutoButton' ) )
@@ -95,7 +92,6 @@ CLASS MenuTreeView
    METHOD addSelectorButtons()            INLINE ( ::fireEvent( 'addingSelectorButton' ),;
                                                    ::addGeneralButton(),;
                                                    ::addSelectButton(),;
-                                                   ::addDocumentsButtons(),;
                                                    ::addExitButton(),;
                                                    ::oButtonMain:Expand(),;
                                                    ::fireEvent( 'addedSelectorButton' ) )
@@ -393,6 +389,10 @@ RETURN ( Self )
 
 METHOD addLabelButtons()
 
+   if !( ::isControllerLabels() )
+      RETURN ( Self )
+   end if 
+
    ::fireEvent( 'addingLabelButton')
 
    ::oButtonLabel  := ::AddButton( "Etiquetas", "gc_portable_barcode_scanner_16", {|| ::getController():labelDocument() }, "Q", ACC_IMPR ) 
@@ -415,7 +415,7 @@ METHOD addDocumentsButtons()
       RETURN ( Self )
    end if 
 
-   ::fireEvent( 'addingPrintAndLabelButton' )
+   ::fireEvent( 'addingDocumentButton' )
 
    ::addPrintButtons()
    
@@ -423,7 +423,7 @@ METHOD addDocumentsButtons()
    
    ::addPdfButtons()
    
-   ::fireEvent( 'addedPrintAndLabelButton' ) 
+   ::fireEvent( 'addedDocumentButton' ) 
 
 RETURN ( Self )
 

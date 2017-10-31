@@ -37,6 +37,8 @@ CLASS SQLBaseController
 
    DATA lDocuments                                    INIT .f.
 
+   DATA lLabels                                       INIT .f.
+
    DATA hDocuments
 
    DATA aSelected

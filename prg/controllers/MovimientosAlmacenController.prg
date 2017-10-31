@@ -10,6 +10,8 @@ CLASS MovimientosAlmacenController FROM SQLBaseController
 
    DATA oImportadorController
 
+   DATA oEtiquetasController
+
    METHOD New()
 
    METHOD getUuid()                 INLINE ( iif( !empty( ::oModel ) .and. !empty( ::oModel:hBuffer ),;
@@ -40,6 +42,8 @@ CLASS MovimientosAlmacenController FROM SQLBaseController
 
    METHOD printDocument()  
 
+   METHOD labelDocument()
+
    METHOD deleteLines()
 
 END CLASS
@@ -57,6 +61,8 @@ METHOD New()
    ::lTransactional           := .t.
 
    ::lDocuments               := .t.
+
+   ::lLabels                  := .t.
 
    ::hDocuments               := DocumentosModel():getWhereMovimientosAlmacen() 
 
@@ -160,6 +166,16 @@ METHOD printDocument( nDevice, cFormato )
    oMovimientosAlmacenReport:setReport( cReport )
 
    oMovimientosAlmacenReport:Print()
+
+RETURN ( self ) 
+
+//---------------------------------------------------------------------------//
+
+METHOD labelDocument()
+
+   ::oEtiquetasController:setId( ::getRowSet():fieldget( 'id' ) )
+
+   ::oEtiquetasController:Activate()
 
 RETURN ( self ) 
 

@@ -349,6 +349,7 @@ RectificativasClientesLineasModel.prg 									\
 StocksModel.prg 																\
 SituacionesController.prg       											\
 MovimientosAlmacenView.prg													\
+EtiquetasSelectorView.prg													\
 SQLBaseReport.prg 															\
 MovimientosAlmacenReport.prg												\
 ImportadorMovimientosAlmacenLineasView.prg							\
@@ -356,6 +357,7 @@ ImportadorMovimientosAlmacenLineasController.prg					\
 MovimientosAlmacenLineasView.prg											\
 MovimientosAlmacenController.prg 										\
 MovimientosAlmacenLineasController.prg 								\
+EtiquetasMovimientosAlmacenController.prg								\
 SQLMovimientosAlmacenModel.prg 											\
 SQLMovimientosAlmacenLineasModel.prg 									\
 AlmacenesModel.prg 															\
@@ -942,6 +944,7 @@ AlbaranesClientesLineasModel.obj 										\
 RectificativasClientesLineasModel.obj 									\
 StocksModel.obj 																\
 MovimientosAlmacenView.obj													\
+EtiquetasSelectorView.obj													\
 SQLBaseReport.obj 															\
 MovimientosAlmacenReport.obj												\
 ImportadorMovimientosAlmacenLineasView.obj							\
@@ -949,6 +952,7 @@ ImportadorMovimientosAlmacenLineasController.obj 					\
 MovimientosAlmacenLineasView.obj											\
 MovimientosAlmacenController.obj 										\
 MovimientosAlmacenLineasController.obj 								\
+EtiquetasMovimientosAlmacenController.obj								\
 SQLMovimientosAlmacenModel.obj 											\
 SQLMovimientosAlmacenLineasModel.obj 									\
 ControllerContainer.obj 													\
@@ -1503,6 +1507,7 @@ $(OBJ)\RectificativasClientesLineasModel.obj 						+
 $(OBJ)\StocksModel.obj 														+
 $(OBJ)\SituacionesController.obj          							+
 $(OBJ)\MovimientosAlmacenView.obj 										+
+$(OBJ)\EtiquetasSelectorView.obj											+
 $(OBJ)\MovimientosAlmacenReport.obj 									+
 $(OBJ)\SQLBaseReport.obj 													+
 $(OBJ)\ImportadorMovimientosAlmacenLineasView.obj 					+
@@ -1510,6 +1515,7 @@ $(OBJ)\ImportadorMovimientosAlmacenLineasController.obj			+
 $(OBJ)\MovimientosAlmacenLineasView.obj								+
 $(OBJ)\MovimientosAlmacenController.obj 								+
 $(OBJ)\MovimientosAlmacenLineasController.obj						+
+$(OBJ)\EtiquetasMovimientosAlmacenController.obj					+
 $(OBJ)\SQLMovimientosAlmacenModel.obj 									+
 $(OBJ)\SQLMovimientosAlmacenLineasModel.obj 							+
 $(OBJ)\ControllerContainer.obj          								+
