@@ -31,6 +31,8 @@ CLASS MovimientosAlmacenLineasController FROM SQLBaseController
                                                          ::stampSegundaPropiedad(),;
                                                          .f. ) )
 
+   METHOD validateLote()               
+
    METHOD stampArticulo()
 
    METHOD stampLote()
@@ -308,6 +310,29 @@ RETURN ( aProperties )
 
 //---------------------------------------------------------------------------//
 
+METHOD validateLote()
+
+   local cLote
+
+   cLote       := ::getModelBuffer( "lote" )
+   if empty( cLote )
+      RETURN ( .t. )
+   end if  
+
+   if !( ::oDialogView:oGetLote:isOriginalChanged( cLote ) )
+      RETURN ( .t. )
+   end if 
+
+   ::oDialogView:oGetLote:setOriginal( cLote )
+
+   ::stampStockAlmacenOrigen()
+
+   ::stampStockAlmacenDestino()
+
+RETURN ( .t. )
+
+//---------------------------------------------------------------------------//
+
 METHOD onClosedDialog()
 
    ::aProperties     := {}
@@ -404,7 +429,7 @@ RETURN ( Self )
 METHOD stampStockAlmacenDestino()
 
    if !Empty( ::getSenderController():oModel:hBuffer[ "almacen_destino" ] )
-      ::oDialogView:oGetStockOrigen:cText( TStock():nSQLStockActual( ::oModel:hBuffer[ "codigo_articulo" ], ::getSenderController():oModel:hBuffer[ "almacen_destino" ], ::oModel:hBuffer[ "valor_primera_propiedad" ], ::oModel:hBuffer[ "valor_segunda_propiedad" ], ::oModel:hBuffer[ "lote" ] ) )
+      ::oDialogView:oGetStockDestino:cText( TStock():nSQLStockActual( ::oModel:hBuffer[ "codigo_articulo" ], ::getSenderController():oModel:hBuffer[ "almacen_destino" ], ::oModel:hBuffer[ "valor_primera_propiedad" ], ::oModel:hBuffer[ "valor_segunda_propiedad" ], ::oModel:hBuffer[ "lote" ] ) )
    end if
 
 RETURN ( Self )

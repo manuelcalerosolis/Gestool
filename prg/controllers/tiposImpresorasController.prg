@@ -4,7 +4,7 @@
 
 //---------------------------------------------------------------------------//
 
-CLASS TiposImpresorasController FROM SQLBaseController
+CLASS TiposImpresorasController FROM SQLNavigatorController
 
    METHOD New()
 
@@ -20,7 +20,7 @@ METHOD New()
 
    ::nLevel                := nLevelUsr( "01115" )
 
-   ::oModel                := TiposImpresorasModel():New( self )
+   ::oModel                := SQLTiposImpresorasModel():New( self )
 
    ::oRepository           := TiposImpresorasRepository():New( self )
 

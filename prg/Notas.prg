@@ -96,7 +96,7 @@ METHOD New( cPath, cDriver, oWndParent, oMenuItem ) CLASS TNotas
 
    ::cHtmlHelp          := "Notas"
    ::oBmpAlr            := LoadBitmap( GetResources(), "gc_bell_16" )
-   ::aCmbTipo           := TiposNotasModel():arrayTiposNotas()
+   ::aCmbTipo           := SQLTiposNotasModel():arrayTiposNotas()
 
 RETURN ( Self )
 

@@ -2303,10 +2303,10 @@ Return nil
 Function TiposImpresoras()
 Return nil
 
-Function TiposImpresorasModel()
+Function SQLTiposImpresorasModel()
 Return nil
 
-Function TiposNotasModel()
+Function SQLTiposNotasModel()
 Return nil
 
 Function ArticulosModel()

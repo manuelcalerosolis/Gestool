@@ -6,7 +6,7 @@
 
 CLASS TiposNotasRepository FROM SQLBaseRepository
 
-   METHOD getTableName()         INLINE ( if( !empty( ::getController() ), ::getModelTableName(), TiposNotasModel():getTableName() ) )
+   METHOD getTableName()         INLINE ( if( !empty( ::getController() ), ::getModelTableName(), SQLTiposNotasModel():getTableName() ) )
 
 END CLASS
 

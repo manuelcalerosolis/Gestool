@@ -15,10 +15,6 @@ CLASS SQLBaseController
 
    DATA oModel
 
-   DATA oSelectorView
-
-   DATA oNavigatorView
-
    DATA oDialogView
 
    DATA oValidator
@@ -35,14 +31,6 @@ CLASS SQLBaseController
 
    DATA cImage                                        INIT ""
 
-   DATA lDocuments                                    INIT .f.
-
-   DATA lLabels                                       INIT .f.
-
-   DATA hDocuments
-
-   DATA aSelected
- 
    METHOD New()
    METHOD Instance()                                  INLINE ( if( empty( ::oInstance ), ::oInstance := ::New(), ), ::oInstance ) 
    METHOD End()
@@ -79,9 +67,6 @@ CLASS SQLBaseController
    METHOD Assert( cColumn, uValue )                   INLINE ( if( !empty( ::oValidator ), ::oValidator:Assert( cColumn, uValue ), ) )
 
    // Facades -----------------------------------------------------------------
-
-   METHOD ActivateNavigatorView()
-   METHOD ActivateSelectorView()
 
    METHOD isUserAccess()                              INLINE ( nAnd( ::nLevel, ACC_ACCE ) == 0 )
    METHOD notUserAccess()                             INLINE ( !::isUserAccess() )
@@ -143,13 +128,6 @@ CLASS SQLBaseController
    METHOD commitTransactionalMode()                   INLINE ( if( ::lTransactional, getSQLDatabase():Commit(), ) )
    METHOD rollbackTransactionalMode()                 INLINE ( if( ::lTransactional, getSQLDatabase():Rollback(), ) )
 
-   // Fastkeys-----------------------------------------------------------------
-
-   DATA hFastKey                                      INIT {=>}
-
-   METHOD addFastKey( uKey )
-   METHOD onKeyChar( nKey )   
-
    // Events-------------------------------------------------------------------
 
    METHOD setEvent( cEvent, bEvent )                  INLINE ( if( !empty( ::oEvents ), ::oEvents:set( cEvent, bEvent ), ) )
@@ -169,10 +147,6 @@ METHOD New( oSenderController )
 
    ::ControllerContainer                              := ControllerContainer():New()
 
-   ::oNavigatorView                                   := SQLNavigatorView():New( self )
-
-   ::oSelectorView                                    := SQLSelectorView():New( self )
-
 RETURN ( self )
 
 //---------------------------------------------------------------------------//
@@ -182,46 +156,6 @@ METHOD End()
    ::endModel() 
 
 RETURN ( nil )
-
-//---------------------------------------------------------------------------//
-
-METHOD ActivateNavigatorView()
-
-   if empty( ::oNavigatorView )
-      RETURN ( Self )
-   end if 
-
-   if ::notUserAccess()
-      msgStop( "Acceso no permitido." )
-      RETURN ( Self )
-   end if
-
-   if oWnd() != nil
-      SysRefresh(); oWnd():CloseAll(); SysRefresh()
-   end if
-
-   ::oModel:buildRowSet()
-
-   ::oNavigatorView:Activate()
-
-RETURN ( Self )
-
-//---------------------------------------------------------------------------//
-
-METHOD ActivateSelectorView()
-
-   if empty( ::oSelectorView )
-      RETURN ( nil )
-   end if 
-
-   if ::notUserAccess()
-      msgStop( "Acceso no permitido." )
-      RETURN ( nil )
-   end if
-
-   ::oModel:buildRowSet()
-
-RETURN ( ::oSelectorView:Activate() )
 
 //---------------------------------------------------------------------------//
 
@@ -269,30 +203,6 @@ METHOD restoreBrowseState()
 RETURN ( Self )
 
 //----------------------------------------------------------------------------//
-
-METHOD changeModelOrderAndOrientation( cColumnOrder, cColumnOrientation )
-
-   msgalert( cColumnOrder, "cColumnOrder" )
-
-   ::oModel:saveIdToFind()
-
-   msgalert( "saveIdToFind" )
-
-   ::oModel:setColumnOrder( cColumnOrder )
-
-   msgalert( "setColumnOrder" )
-
-   ::oModel:setColumnOrientation( cColumnOrientation )
-
-   msgalert( "setColumnOrientation")
-
-   ::oModel:buildRowSetAndFind()
-
-   msgalert( "buildRowSetAndFind")
-
-RETURN ( self )
-
-//---------------------------------------------------------------------------//
 
 METHOD Append()
 
@@ -528,12 +438,25 @@ RETURN ( lDelete )
 
 //----------------------------------------------------------------------------//
 
+METHOD changeModelOrderAndOrientation( cColumnOrder, cColumnOrientation )
+
+   ::oModel:saveIdToFind()
+
+   ::oModel:setColumnOrder( cColumnOrder )
+
+   ::oModel:setColumnOrientation( cColumnOrientation )
+
+   ::oModel:buildRowSetAndFind()
+
+RETURN ( self )
+
+//---------------------------------------------------------------------------//
+
 METHOD findInRowSet( uValue, cColumn )
 
    local nRecno   
 
    if empty( ::getRowSet() )
-      msgalert( "getRowSet vacio" )
       RETURN ( .f. )
    end if 
 
@@ -560,27 +483,6 @@ METHOD getRowSet()
 Return ( ::oModel:oRowSet )
 
 //---------------------------------------------------------------------------//
-
-METHOD addFastKey( uKey, bAction )
-
-   if hb_ischar( uKey )
-      hset( ::hFastKey, asc( upper( uKey ) ), bAction )
-      hset( ::hFastKey, asc( lower( uKey ) ), bAction )
-   end if
-
-   if hb_isnumeric( uKey )
-      hset( ::hFastKey, uKey, bAction )
-   end if 
-
-RETURN ( Self )
-
-//----------------------------------------------------------------------------//
-
-METHOD onKeyChar( nKey )
-
-RETURN ( heval( ::hFastKey, {|k,v| if( k == nKey, eval( v ), ) } ) ) 
-   
-//----------------------------------------------------------------------------//
 
 METHOD setFastReport( oFastReport, cTitle, cSentence, cColumns )    
      

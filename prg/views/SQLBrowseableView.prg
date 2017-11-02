@@ -73,19 +73,11 @@ METHOD onChangeCombo( oColumn )
       RETURN ( Self )
    end if 
 
-   msgalert( oColumn:cHeader )
-
    oComboBox:set( oColumn:cHeader )
-
-   msgalert( "changeModelOrderAndOrientation" )
 
    ::getController():changeModelOrderAndOrientation( oColumn:cSortOrder, oColumn:cOrder )
 
-   msgalert( "selectColumnOrder" )
-
    ::getBrowse():selectColumnOrder( oColumn )
-
-   msgalert("refreshCurrent")
 
    ::getBrowse():refreshCurrent()
 

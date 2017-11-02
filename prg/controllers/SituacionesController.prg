@@ -3,7 +3,7 @@
 
 //---------------------------------------------------------------------------//
 
-CLASS SituacionesController FROM SQLBaseController
+CLASS SituacionesController FROM SQLNavigatorController
 
    METHOD   New()
 

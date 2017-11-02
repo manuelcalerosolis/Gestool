@@ -86,13 +86,13 @@ METHOD Dialog()
          WHEN        ( .f. ) ;
          OF          oDlg
 
-      ::oGetNombreArticulo:LimitText( 200 )
-
       REDEFINE GET   ::oGetLote ;
          VAR         ::oController:oModel:hBuffer[ "lote" ] ;
          ID          155 ;
          WHEN        ( ::oController:isNotZoomMode() ) ;
          OF          oDlg
+
+      ::oGetLote:bValid   := {|| ::oController:validateLote() }
 
       // Fecha de caducidad----------------------------------------------------
 
@@ -254,6 +254,7 @@ METHOD Dialog()
       REDEFINE BUTTON ;
          ID          520 ;
          OF          oDlg ;
+         CANCEL ;
          ACTION      ( oDlg:end() )
 
       if ::oController:isNotZoomMode()

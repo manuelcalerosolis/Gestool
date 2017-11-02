@@ -4,7 +4,7 @@
 
 //---------------------------------------------------------------------------//
 
-CLASS TiposVentasController FROM SQLBaseController
+CLASS TiposVentasController FROM SQLNavigatorController
 
    METHOD   New()
 

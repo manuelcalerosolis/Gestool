@@ -4,7 +4,7 @@
 
 //---------------------------------------------------------------------------//
 
-CLASS TiposImpresorasModel FROM SQLBaseModel
+CLASS SQLTiposImpresorasModel FROM SQLBaseModel
 
    DATA cColumnCode              INIT "nombre"
 
@@ -16,7 +16,7 @@ END CLASS
 
 //---------------------------------------------------------------------------//
 
-METHOD getColumns( oController )
+METHOD getColumns()
 
    ::hColumns                   	:= {  "id"     => {  "create"    => "INTEGER PRIMARY KEY AUTO_INCREMENT",;
                                                       "text"		=> "Identificador"                     ,;

@@ -406,9 +406,9 @@ RETURN ( aSchemaColumns )
 
 METHOD addModels()
 
-   aadd( ::aModels, TiposImpresorasModel():New() )
+   aadd( ::aModels, SQLTiposImpresorasModel():New() )
 
-   aadd( ::aModels, TiposNotasModel():New() )
+   aadd( ::aModels, SQLTiposNotasModel():New() )
 
    aadd( ::aModels, EtiquetasModel():New() )
 
