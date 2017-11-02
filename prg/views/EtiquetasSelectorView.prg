@@ -206,66 +206,70 @@ METHOD Activate()
 
       ::oBrowse:setRowSetController( ::oController )
 
-      // ::oBrowse:lAutoSort        := .f.
-      // ::oBrowse:nDataType        := DATATYPE_USER
-      // ::oBrowse:bGoTop           := {|| ::oController:oRowSet:GoTop() }
-      // ::oBrowse:bGoBottom        := {|| ::oController:oRowSet:GoBottom() }
-      // ::oBrowse:bBof             := {|| ::oController:oRowSet:Bof() }
-      // ::oBrowse:bEof             := {|| ::oController:oRowSet:Eof() }
-      // ::oBrowse:bSkip            := {| n | ::oController:oRowSet:Skipper( n ) }
-      // ::oBrowse:bKeyNo           := {| n | ::oController:oRowSet:RecNo() }
-      // ::oBrowse:bBookMark        := {| n | iif( n == nil, ::oController:oRowSet:RecNo(), ::oController:oRowSet:GoTo( n ) ) }
-      // ::oBrowse:bKeyNo           := {| n | iif( n == nil, ::oController:oRowSet:RecNo(), ::oController:oRowSet:GoTo( n ) ) }
-      // ::oBrowse:bKeyCount        := {|| ::oController:oRowSet:RecCount() }
-      
-      // if ::oBrowse:oVScroll() != nil
-      //    ::oBrowse:oVscroll():SetRange( 1, ::oController:oRowSet:RecCount() )
-      // endif
-      
-      // ::oBrowse:lFastEdit        := .t.
-
       ::oBrowse:CreateFromResource( 180 )
 
       with object ( ::oBrowse:AddCol() )
          :cHeader          := "Sl. Seleccionada"
-         :bEditValue       := {|| ::getRowSet():fieldGet( 'selected' ) }
+         :bEditValue       := {|| ::getRowSet():fieldGet( 'selected' ) == 1 }
          :nWidth           := 20
-         // :SetCheck( { "Sel16", "Nil16" } )
+         :cSortOrder       := 'select'
+         :SetCheck( { "Sel16", "Nil16" } )
+         :bLClickHeader    := {| nMRow, nMCol, nFlags, oColumn | ::oController:clickingHeader( oColumn ) }
+      end with
+
+      with object ( ::oBrowse:AddCol() )
+         :cHeader          := "Id"
+         :bEditValue       := {|| ::getRowSet():fieldGet( 'id' ) }
+         :cSortOrder       := 'id'
+         :nWidth           := 40
+         :nDataStrAlign    := 1
+         :nHeadStrAlign    := 1
+         :nEditType        := 1
+         :bLClickHeader    := {| nMRow, nMCol, nFlags, oColumn | ::oController:clickingHeader( oColumn ) }
       end with
 
       with object ( ::oBrowse:AddCol() )
          :cHeader          := "Código"
          :bEditValue       := {|| ::getRowSet():fieldGet( 'codigo_articulo' ) }
+         :cSortOrder       := 'codigo_articulo'
          :nWidth           := 120
+         :bLClickHeader    := {| nMRow, nMCol, nFlags, oColumn | ::oController:clickingHeader( oColumn ) }
       end with
 
       with object ( ::oBrowse:AddCol() )
          :cHeader          := "Nombre"
          :bEditValue       := {|| ::getRowSet():fieldGet( 'nombre_articulo' ) }
+         :cSortOrder       := 'nombre_articulo'
          :nWidth           := 120
+         :bLClickHeader    := {| nMRow, nMCol, nFlags, oColumn | ::oController:clickingHeader( oColumn ) }
       end with
 
       with object ( ::oBrowse:AddCol() )
          :cHeader          := "Primera propiedad"
          :bEditValue       := {|| ::getRowSet():fieldGet( 'valor_primera_propiedad' ) }
+         :cSortOrder       := 'valor_primera_propiedad'
          :nWidth           := 80
+         :bLClickHeader    := {| nMRow, nMCol, nFlags, oColumn | ::oController:clickingHeader( oColumn ) }
       end with
 
       with object ( ::oBrowse:AddCol() )
          :cHeader          := "Segunda propiedad"
          :bEditValue       := {|| ::getRowSet():fieldGet( 'valor_segunda_propiedad' ) }
+         :cSortOrder       := 'valor_segunda_propiedad'
          :nWidth           := 80
+         :bLClickHeader    := {| nMRow, nMCol, nFlags, oColumn | ::oController:clickingHeader( oColumn ) }
       end with
-
 
       with object ( ::oBrowse:AddCol() )
          :cHeader          := "Etiquetas"
          :bEditValue       := {|| ::getRowSet():fieldGet( 'total_unidades' ) }
+         :cSortOrder       := 'total_unidades'
          :cEditPicture     := "@E 99,999"
          :nWidth           := 80
          :nDataStrAlign    := 1
          :nHeadStrAlign    := 1
          :nEditType        := 1
+         :bLClickHeader    := {| nMRow, nMCol, nFlags, oColumn | ::oController:clickingHeader( oColumn ) }
       end with
 
 /*

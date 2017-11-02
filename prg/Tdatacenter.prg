@@ -4773,7 +4773,7 @@ METHOD ConvertDatosToSQL()
       :New();
       :makeImportDbfSQL()
 
-   TiposNotasModel();
+   SQLTiposNotasModel();
       :New();
       :makeImportDbfSQL()
 

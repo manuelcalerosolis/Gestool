@@ -408,7 +408,7 @@ METHOD addModels()
 
    aadd( ::aModels, SQLTiposImpresorasModel():New() )
 
-   aadd( ::aModels, TiposNotasModel():New() )
+   aadd( ::aModels, SQLTiposNotasModel():New() )
 
    aadd( ::aModels, EtiquetasModel():New() )
 

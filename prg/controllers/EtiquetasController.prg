@@ -6,7 +6,7 @@
 
 //---------------------------------------------------------------------------//
 
-CLASS EtiquetasController FROM SQLBaseController
+CLASS EtiquetasController FROM SQLNavigatorController
 
 	DATA     nSelectedNode
 

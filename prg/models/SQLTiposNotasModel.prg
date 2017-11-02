@@ -4,7 +4,7 @@
 
 //---------------------------------------------------------------------------//
 
-CLASS TiposNotasModel FROM SQLBaseModel
+CLASS SQLTiposNotasModel FROM SQLBaseModel
 
    DATA cColumnCode             INIT "nombre"
 

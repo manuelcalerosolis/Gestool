@@ -562,7 +562,7 @@ SQLTiposImpresorasModel.prg 												\
 MaterialesProducidosLineasModel.prg 									\
 MaterialesConsumidosLineasModel.prg 									\
 TiposImpresorasController.prg 											\
-TiposNotasModel.prg 															\
+SQLTiposNotasModel.prg 														\
 TiposNotasController.prg 													\
 TiposVentasModel.prg 														\
 TiposVentasController.prg 													\
@@ -581,11 +581,10 @@ ClientesModel.prg 															\
 RecibosClientesModel.prg 													\
 TicketsClientesModel.prg 													\
 PedidosProveedoresModel.prg												\
-SQLTiposImpresorasModel.prg 													\
+SQLTiposImpresorasModel.prg												\
 UsuariosModel.prg 															\
 DelegacionesModel.prg 														\
 TiposImpresorasController.prg 											\
-TiposNotasModel.prg 															\
 TiposNotasController.prg 													\
 EtiquetasModel.prg 															\
 EtiquetasController.prg 													\
@@ -1160,7 +1159,7 @@ MaterialesConsumidosLineasModel.obj 									\
 UsuariosModel.obj																\
 DelegacionesModel.obj														\
 TiposImpresorasController.obj 											\
-TiposNotasModel.obj 															\
+SQLTiposNotasModel.obj 														\
 TiposNotasController.obj 													\
 EtiquetasModel.obj 															\
 EtiquetasController.obj 													\
@@ -1730,7 +1729,7 @@ $(OBJ)\MaterialesConsumidosLineasModel.obj 							+
 $(OBJ)\UsuariosModel.obj 													+
 $(OBJ)\DelegacionesModel.obj 												+
 $(OBJ)\TiposImpresorasController.obj               				+
-$(OBJ)\TiposNotasModel.obj                 							+
+$(OBJ)\SQLTiposNotasModel.obj                 						+
 $(OBJ)\TiposNotasController.obj                 					+
 $(OBJ)\EtiquetasModel.obj                 							+
 $(OBJ)\EtiquetasController.obj                 						+

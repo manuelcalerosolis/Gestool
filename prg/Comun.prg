@@ -277,11 +277,6 @@ RETURN ( .t. )
 
 FUNCTION Test()
 
-   MsgInfo( TStock():nSQLStockActual( "1", "000", "", "", "OAN0664742" ), "Almacen 000" )
-   MsgInfo( TStock():nSQLStockActual( "1", "1", "", "", "OAN0664742" ), "Almacen 1" )
-   MsgInfo( TStock():nSQLStockActual( "1", "2", "", "", "OAN0664742" ), "Almacen 000 lote 123" )
-   MsgInfo( TStock():nSQLStockActual( "1", "3", "", "", "OAN0664742" ), "Almacen 1 lote 123" )
-
 RETURN NIL 
 
 //---------------------------------------------------------------------------//

@@ -25,6 +25,8 @@ CLASS EtiquetasMovimientosAlmacenController FROM SQLBaseController
 
    METHOD generateRowSet()
 
+   METHOD clickingHeader( oColumn )
+
 END CLASS
 
 //---------------------------------------------------------------------------//
@@ -51,21 +53,36 @@ RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 
-METHOD generateRowSet()
+METHOD generateRowSet( cOrderBy )
 
    local cSql           
+   local nFixLabels     := 0
+
+   if ::oDialogView:nCantidadLabels > 1
+      nFixLabels        := ::oDialogView:nUnidadesLabels
+   end if 
 
    ::freeRowSet()
 
    ::freeStatement()
 
-   cSql                 := MovimientosAlmacenLineasRepository():getSQLSentenceToLabels( ::oDialogView:nDocumentoInicio, ::oDialogView:nDocumentoFin )
+   cSql                 := MovimientosAlmacenLineasRepository():getSQLSentenceToLabels( ::oDialogView:nDocumentoInicio, ::oDialogView:nDocumentoFin, nFixLabels, cOrderBy )
    
    ::oStatement         := getSqlDataBase():query( cSql )      
 
    ::oRowSet            := ::oStatement:fetchRowSet()
 
    ::oRowSet:goTop()
+
+RETURN ( Self )
+
+//---------------------------------------------------------------------------//
+
+METHOD clickingHeader( oColumn )
+
+   msgAlert( oColumn:cSortOrder, "cSortOrder" )
+
+   ::generateRowSet( oColumn:cSortOrder )
 
 RETURN ( Self )
 

@@ -2306,7 +2306,7 @@ Return nil
 Function SQLTiposImpresorasModel()
 Return nil
 
-Function TiposNotasModel()
+Function SQLTiposNotasModel()
 Return nil
 
 Function ArticulosModel()
