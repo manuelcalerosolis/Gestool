@@ -292,6 +292,8 @@ METHOD getCreateTableSentence()
 
    cSQLCreateTable         := "CREATE TABLE " + ::cTableName + " ( "
 
+   MsgInfo( hb_valToExp( ::getColumns() ), "getColumns" )
+
    hEval( ::getColumns(),;
       {| k, hash | if( hhaskey( hash, "create" ), cSQLCreateTable += k + " " + hget( hash, "create" ) + ", ", ) } )
    

@@ -654,6 +654,8 @@ METHOD Edit( oBrw ) CLASS TMasDet
       if ( ::oWndBrw != nil, ::oWndBrw:Minimize(), )
    end if
 
+   ::nMode        := EDIT_MODE
+
    if ::oDbf:RecLock()
 
       if ::bOnPreEdit != nil
@@ -719,6 +721,8 @@ Return ( lEdit )
 //---------------------------------------------------------------------------//
 
 METHOD Zoom( oBrw ) CLASS TMasDet
+
+   ::nMode        := ZOOM_MODE
 
    ::GetFirstKey()
 

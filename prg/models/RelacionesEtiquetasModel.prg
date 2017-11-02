@@ -10,7 +10,7 @@ CLASS RelacionesEtiquetasModel FROM SQLBaseModel
 
    DATA hColumns
 
-   METHOD New()
+   METHOD getColumns()
 
    METHOD TranslateCodigoToId()
 
@@ -28,7 +28,7 @@ END CLASS
 
 //---------------------------------------------------------------------------//
 
-METHOD New()
+METHOD getColumns()
 
    ::hColumns                   	:= {  "id"              	=> {  "create"    => "INTEGER PRIMARY KEY AUTO_INCREMENT"       						,;
                                                                   "text"		=> "Identificador"}                           						,;                        					
@@ -45,9 +45,7 @@ METHOD New()
                                     	"etiquetas"				=> {	"create"		=>	"VARCHAR ( 250 )"															,;
                                     										"text"		=>	"Conjunto de etiquetas"}												}
 
-   ::Super:New()
-
-RETURN ( Self )
+RETURN ( ::hColumns )
 
 //---------------------------------------------------------------------------//
 

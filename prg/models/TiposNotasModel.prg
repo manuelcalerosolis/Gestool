@@ -10,13 +10,13 @@ CLASS TiposNotasModel FROM SQLBaseModel
 
 	DATA cTableName              INIT "tipos_notas"
 
-   METHOD New()
+   METHOD getColumns()
 
 END CLASS
 
 //---------------------------------------------------------------------------//
 
-METHOD New()
+METHOD getColumns()
 
    ::hColumns              := {  "id"        => {  "create"    => "INTEGER PRIMARY KEY AUTO_INCREMENT"   ,;
                                                    "text"      => "Identificador"                        ,;
@@ -32,9 +32,7 @@ METHOD New()
                                                    "type"      => "C"                                    ,;
                                                    "len"       => 30}                                    }
 
-   ::Super:New()
-
-Return ( Self )
+Return ( ::hColumns )
 
 //---------------------------------------------------------------------------//
 
