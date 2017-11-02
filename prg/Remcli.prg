@@ -124,6 +124,8 @@ CLASS TRemesas FROM TMasDet
    Metodos redefinidos---------------------------------------------------------
    */
 
+   METHOD LoadDetails( lAppend )
+
    METHOD AppendDet()
    METHOD EditDet()
    METHOD RollBack()
@@ -333,6 +335,7 @@ METHOD DefineDetails( cPath, cVia, lUniqueName, cFileName )
       FIELD NAME "nNumFac"    TYPE "N" LEN   9 DEC 0 OF oDbf     
       FIELD NAME "cSufFac"    TYPE "C" LEN   2 DEC 0 OF oDbf     
       FIELD NAME "nNumRec"    TYPE "N" LEN   2 DEC 0 OF oDbf     
+      FIELD NAME "cGuid"      TYPE "C" LEN  40 DEC 0 OF oDbf     
       FIELD NAME "cTipRec"    TYPE "C" LEN   1 DEC 0 OF oDbf     
       FIELD NAME "cCodPgo"    TYPE "C" LEN   2 DEC 0 OF oDbf     
       FIELD NAME "cCodCaj"    TYPE "C" LEN   3 DEC 0 OF oDbf     
@@ -349,6 +352,7 @@ METHOD DefineDetails( cPath, cVia, lUniqueName, cFileName )
       FIELD NAME "cDivPgo"    TYPE "C" LEN   3 DEC 0 OF oDbf     
       FIELD NAME "nVdvPgo"    TYPE "N" LEN  10 DEC 6 OF oDbf     
       FIELD NAME "lConPgo"    TYPE "L" LEN   1 DEC 0 OF oDbf     
+      FIELD NAME "cConGuid"   TYPE "C" LEN  40 DEC 0 OF oDbf     
       FIELD NAME "cCtaRec"    TYPE "C" LEN  12 DEC 0 OF oDbf     
       FIELD NAME "nImpEur"    TYPE "N" LEN  16 DEC 6 OF oDbf     
       FIELD NAME "lImpEur"    TYPE "L" LEN   1 DEC 0 OF oDbf     
@@ -419,6 +423,75 @@ METHOD DefineDetails( cPath, cVia, lUniqueName, cFileName )
    END DATABASE oDbf
 
 RETURN ( oDbf )
+
+//---------------------------------------------------------------------------//
+
+METHOD LoadDetails( lAppend )   
+
+   DEFAULT lAppend   := .f.
+
+   CursorWait()
+
+   ::GetFirstKey()
+
+   if ::cFirstKey != nil
+
+      do case
+         case ValType( ::oDbfDet ) == "O"
+
+            ::oDbfVir         := ::DefineDetails( cPatTmp(), cLocalDriver(), .t. )
+
+            if ::oDbfVir != nil
+
+               ::oDbfVir:Activate( .f., .f. )
+
+               if ::nMode != APPD_MODE
+
+                  if !lAppend .and. ::bDefaultValues != nil
+                     Eval( ::bDefaultValues, Self )
+                  end if
+
+                  if ( lAppend ) .and. ::oDbfDet:Seek( ::cFirstKey )
+
+                     while !Empty( ::oDbfDet:OrdKeyVal() ) .and. ( ::oDbfDet:OrdKeyVal() <= ::cFirstKey ) .and. !::oDbfDet:Eof()
+
+                        if ::bOnPreLoad != nil
+                           Eval( ::bOnPreLoad, Self )
+                        end if
+
+                        ::oDbfVir:AppendFromObject( ::oDbfDet )
+
+                        if ::bOnPostLoad != nil
+                           Eval( ::bOnPostLoad, Self )
+                        end if
+
+                        ::oDbfDet:Skip()
+
+                     end while
+
+                     ::oDbfVir:GoTop()
+
+                  end if
+
+               end if
+
+            end if
+
+         case ValType( ::oDbfDet ) == "A"
+
+            if lAppend
+               aSend( ::oDbfDet, "LoadAppend()" )
+            else
+               aSend( ::oDbfDet, "Load()" )
+            end if
+
+      end case
+
+   end if
+
+   CursorWE()
+
+RETURN ( self )
 
 //---------------------------------------------------------------------------//
 

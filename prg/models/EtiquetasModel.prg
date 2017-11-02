@@ -9,7 +9,7 @@ CLASS EtiquetasModel FROM SQLBaseModel
 
    DATA cTableName                                 INIT "etiquetas"
 
-   METHOD New()
+   METHOD getColumns()
 
    METHOD   updateAfterDelete()
 
@@ -35,7 +35,7 @@ END CLASS
 
 //---------------------------------------------------------------------------//
 
-METHOD New()
+METHOD getColumns()
 
    ::hColumns                    := {  "id"        => {  "create"    => "INTEGER PRIMARY KEY AUTO_INCREMENT"            ,;
                                                          "text"		=> "Identificador"                                 ,;
@@ -61,8 +61,7 @@ METHOD New()
                                                          "text"      => "Identificador de la etiqueta padre"            ,;
                                                          "visible"   => .f. }                                           }
 
-   ::Super:New()
-/*
+   /*
    ::cGeneralSelect              := "SELECT id, nombre, empresa, id_padre, nombre_padre"                                +;
                                     " FROM " + ::cTableName + " LEFT JOIN "                                             +;
                                     " ( SELECT id AS id_del_padre, nombre AS nombre_padre FROM " + ::cTableName + " )"  +;
@@ -75,7 +74,7 @@ METHOD New()
                                                             "len"       => 50}                           }
 */
 
-RETURN ( Self )
+RETURN ( ::hColumns )
 
 //---------------------------------------------------------------------------//
 

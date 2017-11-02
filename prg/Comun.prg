@@ -298,10 +298,11 @@ msgalert( cVar, "cVar" )
 msgalert( at( chr(16), cVar ), "chr" )
 */
 
-   //MsgInfo( TStock():nSQLStockActual( "ZZZ", "000", "", "", "" ), "Almacen 000" )
-   //MsgInfo( TStock():nSQLStockActual( "ZZZ", "1", "", "", "" ), "Almacen 1" )
-   //MsgInfo( TStock():nSQLStockActual( "ZZZ", "000", "", "", "123" ), "Almacen 000 lote 123" )
-   //MsgInfo( TStock():nSQLStockActual( "ZZZ", "1", "", "", "123" ), "Almacen 1 lote 123" )
+   MsgInfo( TStock():nSQLStockActual( "1", "000", "", "", "OAN0664742" ), "Almacen 000" )
+   MsgInfo( TStock():nSQLStockActual( "1", "1", "", "", "OAN0664742" ), "Almacen 1" )
+   MsgInfo( TStock():nSQLStockActual( "1", "2", "", "", "OAN0664742" ), "Almacen 000 lote 123" )
+   MsgInfo( TStock():nSQLStockActual( "1", "3", "", "", "OAN0664742" ), "Almacen 1 lote 123" )
+
 RETURN NIL 
 
 STATIC FUNCTION TASTI( nKey, cVar ) 

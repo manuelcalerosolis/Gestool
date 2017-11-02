@@ -8,13 +8,13 @@ CLASS SQLConfiguracionEmpresasModel FROM SQLBaseModel
 
    DATA cTableName            INIT "configuracion_empresas"
 
-   METHOD New()
+   METHOD getColumns()
 
 END CLASS
 
 //---------------------------------------------------------------------------//
 
-METHOD New()
+METHOD getColumns()
 
 	::hColumns						:=	{	"id"			=>	{	"create"		=>	"INTEGER PRIMARY KEY AUTO_INCREMENT"		,;
 																		"text"		=>	"Identificador"									,;
@@ -38,8 +38,6 @@ METHOD New()
 																		"type"		=> "C"													,;
 																		"len"			=> 50	} }				
 
-   ::Super:New()
-
-RETURN ( Self )
+RETURN ( ::hColumns )
 
 //---------------------------------------------------------------------------//

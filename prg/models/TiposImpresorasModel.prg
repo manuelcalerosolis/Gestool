@@ -10,13 +10,13 @@ CLASS TiposImpresorasModel FROM SQLBaseModel
 
    DATA cTableName               INIT "tipos_impresoras"
 
-   METHOD New()
+   METHOD getColumns()
 
 END CLASS
 
 //---------------------------------------------------------------------------//
 
-METHOD New( oController )
+METHOD getColumns( oController )
 
    ::hColumns                   	:= {  "id"     => {  "create"    => "INTEGER PRIMARY KEY AUTO_INCREMENT",;
                                                       "text"		=> "Identificador"                     ,;
@@ -33,8 +33,6 @@ METHOD New( oController )
                                                       "type"      => "C"                                 ,;
                                                       "len"       => 50 }                                 } 
 
-   ::Super:New( oController )
-
-RETURN ( Self )
+RETURN ( ::hColumns )
 
 //---------------------------------------------------------------------------//

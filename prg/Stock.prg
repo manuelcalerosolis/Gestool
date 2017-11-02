@@ -1504,7 +1504,6 @@ METHOD nSQLGlobalStockActual( cCodArt, cCodAlm ) CLASS TStock
    // Almacenes----------------------------------------------------------------
 
    ::setCodigoAlmacen( cCodAlm )   
-
    for each cCodAlm in ::uCodigoAlmacen
 
       cStm                       := StocksModel():getLineasAgrupadas( cCodArt, cCodAlm )

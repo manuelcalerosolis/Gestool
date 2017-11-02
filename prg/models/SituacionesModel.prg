@@ -8,13 +8,13 @@ CLASS SituacionesModel FROM SQLBaseModel
 
    DATA cTableName               INIT "situaciones"
 
-   METHOD New()
+   METHOD getColumns()
 
 END CLASS
 
 //---------------------------------------------------------------------------//
 
-METHOD New()
+METHOD getColumns()
 
    ::hColumns                    := {  "id"              => {  "create"    => "INTEGER PRIMARY KEY AUTO_INCREMENT"   ,;
                                                                "text"		=> "Identificador"                        ,;
@@ -30,9 +30,7 @@ METHOD New()
                                                                "type"      => "C"                                    ,;
                                                                "len"       => 140}                                   }
 
-   ::Super:New()
-
-RETURN ( Self )
+RETURN ( ::hColumns )
 
 //---------------------------------------------------------------------------//
 
