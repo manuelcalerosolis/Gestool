@@ -272,13 +272,23 @@ RETURN ( Self )
 
 METHOD changeModelOrderAndOrientation( cColumnOrder, cColumnOrientation )
 
+   msgalert( cColumnOrder, "cColumnOrder" )
+
    ::oModel:saveIdToFind()
+
+   msgalert( "saveIdToFind" )
 
    ::oModel:setColumnOrder( cColumnOrder )
 
+   msgalert( "setColumnOrder" )
+
    ::oModel:setColumnOrientation( cColumnOrientation )
 
+   msgalert( "setColumnOrientation")
+
    ::oModel:buildRowSetAndFind()
+
+   msgalert( "buildRowSetAndFind")
 
 RETURN ( self )
 

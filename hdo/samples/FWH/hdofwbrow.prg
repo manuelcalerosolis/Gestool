@@ -21,6 +21,23 @@ static oWnd
 
 //----------------------------------------------------------------------------//
 
+PROCEDURE RddInit()
+
+   ANNOUNCE RDDSYS
+
+   REQUEST DBFCDX
+   REQUEST DBFFPT
+
+   REQUEST RDLMYSQL 
+
+   REQUEST OrdKeyCount
+   REQUEST OrdKeyNo
+   REQUEST OrdKeyGoto
+
+RETURN
+
+//---------------------------------------------------------------------------//
+
 function Main()
 
    local oBrush, oBar
@@ -343,17 +360,23 @@ return
 
 static procedure openDataBase()
 
-    oDb := THDO():new( "sqlite" )
+    oDb := THDO():new( "mysql" )
 
     oDb:setAttribute( ATTR_ERRMODE, .t. )
 
-    if oDb:connect( "HDOdemo.db" )
+    if oDb:connect( "HDOdemo", "127.0.0.1", "root", ""  )
+
     	oSel := oDb:prepare( SEL_TABLE ) // Crea el objeto consultar
     	oIns := oDb:prepare( INS_TABLE ) // Crea el objeto para insertar
     	oUpd := oDb:prepare( UPD_TABLE ) // Crea el objeto para actualizar
     	oDel := oDb:prepare( DEL_TABLE ) // Crea el objeto para borrar
 
     	oRS := oSel:fetchRowSet()
+
+    else 
+
+        msgstop( "No conectado" )
+
     endif
 
 return

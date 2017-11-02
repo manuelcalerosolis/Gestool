@@ -204,7 +204,25 @@ METHOD Activate()
 
       ::oBrowse:bRClicked        := {| nRow, nCol, nFlags | ::RButtonDown( nRow, nCol, nFlags ) }
 
-      ::oBrowse:setRowSet( ::getRowSet() )
+      ::oBrowse:setRowSetController( ::oController )
+
+      // ::oBrowse:lAutoSort        := .f.
+      // ::oBrowse:nDataType        := DATATYPE_USER
+      // ::oBrowse:bGoTop           := {|| ::oController:oRowSet:GoTop() }
+      // ::oBrowse:bGoBottom        := {|| ::oController:oRowSet:GoBottom() }
+      // ::oBrowse:bBof             := {|| ::oController:oRowSet:Bof() }
+      // ::oBrowse:bEof             := {|| ::oController:oRowSet:Eof() }
+      // ::oBrowse:bSkip            := {| n | ::oController:oRowSet:Skipper( n ) }
+      // ::oBrowse:bKeyNo           := {| n | ::oController:oRowSet:RecNo() }
+      // ::oBrowse:bBookMark        := {| n | iif( n == nil, ::oController:oRowSet:RecNo(), ::oController:oRowSet:GoTo( n ) ) }
+      // ::oBrowse:bKeyNo           := {| n | iif( n == nil, ::oController:oRowSet:RecNo(), ::oController:oRowSet:GoTo( n ) ) }
+      // ::oBrowse:bKeyCount        := {|| ::oController:oRowSet:RecCount() }
+      
+      // if ::oBrowse:oVScroll() != nil
+      //    ::oBrowse:oVscroll():SetRange( 1, ::oController:oRowSet:RecCount() )
+      // endif
+      
+      // ::oBrowse:lFastEdit        := .t.
 
       ::oBrowse:CreateFromResource( 180 )
 
@@ -410,6 +428,8 @@ METHOD startDialog()
    ::oSufijoInicio:Hide()
    ::oSufijoFin:Hide()
 
+   ::oBrowse:Hide()
+
 RETURN ( self )
 
 //----------------------------------------------------------------------------//
@@ -437,9 +457,11 @@ METHOD Siguiente()
 
          else
 
+            ::oBrowse:Hide()
+
             ::oController:GenerateRowSet()
 
-            ::oBrowse:Refresh()
+            ::oBrowse:Show()
 
             ::oPages:GoNext()
 

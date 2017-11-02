@@ -108,7 +108,7 @@ METHOD Create( oWindow )
 
    ::oBrowse:bRClicked        := {| nRow, nCol, nFlags | ::RButtonDown( nRow, nCol, nFlags ) }
 
-   ::oBrowse:setModel( ::getModel() )
+   ::oBrowse:setRowSetModel( ::getModel() )
 
    ::oBrowse:setName( ::getName() )
 

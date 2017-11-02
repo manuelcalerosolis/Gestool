@@ -351,9 +351,11 @@ RETURN ( "DROP TABLE " + ::cTableName )
 
 METHOD buildRowSet( cSentence )
 
+   DEFAULT cSentence    := ::getSelectSentence()
+
    ::fireEvent( 'buildingRowSet')
 
-   ::oRowSet   := ::newRowSet( cSentence )
+   ::newRowSet()
 
    ::fireEvent( 'builtRowSet')
 
@@ -369,14 +371,16 @@ METHOD newRowSet( cSentence )
    DEFAULT cSentence    := ::getSelectSentence()
 
    try
- 
+
+      ::freeRowSet()
+
       ::freeStatement()
 
       ::oStatement      := ::getDatabase():Query( cSentence )
 
       ::oStatement:setAttribute( ATTR_STR_PAD, .t. )
       
-      oRowSet           := ::oStatement:fetchRowSet()
+      ::oRowSet         := ::oStatement:fetchRowSet()
 
    catch oError
 
@@ -384,9 +388,9 @@ METHOD newRowSet( cSentence )
 
    end
 
-   oRowSet:goTop()
+   ::oRowSet:goTop()
 
-RETURN ( oRowSet )
+RETURN ( ::oRowSet )
 
 //---------------------------------------------------------------------------//
 

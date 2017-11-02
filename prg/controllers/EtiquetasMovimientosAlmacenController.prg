@@ -7,13 +7,21 @@ CLASS EtiquetasMovimientosAlmacenController FROM SQLBaseController
 
    DATA oRowSet
 
+   DATA oStatement
+
    METHOD New( oController )
 
-   METHOD getRowSet()   INLINE ( ::oRowSet )
+   METHOD End()
 
-   METHOD Activate()    INLINE ( ::generateRowSet(), ::oDialogView:Activate() )
+   METHOD freeRowSet()           INLINE ( if( !empty( ::oRowSet ), ( ::oRowSet:free(), ::oRowSet := nil ), ) )
+
+   METHOD freeStatement()        INLINE ( if( !empty( ::oStatement ), ( ::oStatement:free(), ::oStatement := nil ), ) )
+
+   METHOD getRowSet()            INLINE ( ::oRowSet )
+
+   METHOD Activate()             INLINE ( ::generateRowSet(), ::oDialogView:Activate() )
    
-   METHOD setId( id )   INLINE ( ::oDialogView:setId( id ) )
+   METHOD setId( id )            INLINE ( ::oDialogView:setId( id ) )
 
    METHOD generateRowSet()
 
@@ -33,22 +41,31 @@ RETURN ( Self )
 
 //---------------------------------------------------------------------------//
 
+METHOD End()
+
+   ::freeRowSet()
+
+   ::freeStatement()
+
+RETURN ( nil )
+
+//---------------------------------------------------------------------------//
+
 METHOD generateRowSet()
 
    local cSql           
-   local oSelect
 
-   if !empty( ::oRowSet )
-      ::oRowSet:free()
-   end if 
+   ::freeRowSet()
+
+   ::freeStatement()
 
    cSql                 := MovimientosAlmacenLineasRepository():getSQLSentenceToLabels( ::oDialogView:nDocumentoInicio, ::oDialogView:nDocumentoFin )
-   oSelect              := getSqlDataBase():query( cSql )      
+   
+   ::oStatement         := getSqlDataBase():query( cSql )      
 
-   ::oRowSet            := oSelect:fetchRowSet()
+   ::oRowSet            := ::oStatement:fetchRowSet()
+
    ::oRowSet:goTop()
-
-   msgalert( cSql, "Generate")
 
 RETURN ( Self )
 

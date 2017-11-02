@@ -26,7 +26,7 @@ procedure main()
 
     local oDb, e, cCreaTabla
 	
-    oDb := THDO():new( "sqlite" )
+    oDb := THDO():new( "mysql" )
 	
 	oDb:setAttribute( ATTR_ERRMODE, .t. )
 	
@@ -94,7 +94,7 @@ static procedure traspasa( oDb )
 		
         oInsert:free()
     else
-        msg( "Fichero no encontrado -> clientes.dbf" )
+        msgAlert( "Fichero no encontrado -> clientes.dbf" )
     endif
 
 return
