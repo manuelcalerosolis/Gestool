@@ -47,6 +47,8 @@ CLASS SQLDatabase
 
    METHOD selectValue( cSql )
 
+   METHOD fetchRowSet( cSentence )
+
    METHOD lastInsertId()                  INLINE ( if( !empty( ::oConexion ), ::oConexion:lastInsertId(), msgstop( "No ha conexiones disponibles" ) ) )
 
    METHOD beginTransaction()              INLINE ( if( !empty( ::oConexion ), ::oConexion:beginTransaction(),  msgstop( "No ha conexiones disponibles" ) ) )
@@ -278,6 +280,43 @@ METHOD selectValue( cSentence )
    end
 
 RETURN ( nValue )
+
+//---------------------------------------------------------------------------//
+
+METHOD fetchRowSet( cSentence )
+
+   local oError
+   local oRowSet
+   local oStatement
+
+   if empty( ::oConexion )
+      msgstop( "No hay conexiones disponibles" )
+      RETURN ( .f. )  
+   end if  
+
+   try 
+
+      ::oConexion:Ping()   
+
+      oStatement     := ::oConexion:Query( cSentence )
+
+      oStatement:setAttribute( ATTR_STR_PAD, .t. )
+
+      oRowSet        := oStatement:fetchRowSet()
+
+   catch oError
+
+      eval( errorBlock(), oError )
+
+   finally
+
+      // if !empty( oStatement )
+      //    oStatement:Free()
+      // end if 
+
+   end
+
+RETURN ( oRowSet )
 
 //---------------------------------------------------------------------------//
 

@@ -17,6 +17,8 @@ CLASS MovimientosAlmacenLineasRepository FROM SQLBaseRepository
 
    METHOD getSqlSentenceWhereParentUuid( uuid )
 
+   METHOD getSQLSentenceToLabels( initialId, finalId )
+
 END CLASS
 
 //---------------------------------------------------------------------------//
@@ -60,6 +62,23 @@ METHOD getSqlSentenceWhereParentUuid( uuid )
 
    local cSql  := "SELECT * FROM " + ::getTableName() + " "                      + ;
                      "WHERE parent_uuid = " + quoted( uuid )
+
+RETURN ( cSql )
+
+//---------------------------------------------------------------------------//
+
+METHOD getSQLSentenceToLabels( initialId, finalId )
+
+   local cSql  := "SELECT "                                                      + ;
+                     "TRUE AS selected, "                                        + ;
+                     "movimientos_almacen_lineas.codigo_articulo, "              + ;
+                     "movimientos_almacen_lineas.nombre_articulo, "              + ;
+                     "movimientos_almacen_lineas.valor_primera_propiedad, "      + ;
+                     "movimientos_almacen_lineas.valor_segunda_propiedad, "      + ;
+                     "IF ( movimientos_almacen_lineas.cajas_articulo = 0, 1, movimientos_almacen_lineas.cajas_articulo ) * movimientos_almacen_lineas.unidades_articulo AS total_unidades "  + ;
+                  "FROM movimientos_almacen_lineas "                             + ;
+                     "INNER JOIN movimientos_almacen ON movimientos_almacen_lineas.parent_uuid = movimientos_almacen.uuid "   + ;
+                  "WHERE movimientos_almacen.id BETWEEN " + toSqlString( initialId ) + " AND " + toSqlString( finalId )
 
 RETURN ( cSql )
 

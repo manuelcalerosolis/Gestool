@@ -2,6 +2,8 @@
 #include "Factu.ch" 
 #include "MesDbf.ch"
 
+#define EM_LIMITTEXT             197
+
 //---------------------------------------------------------------------------//
 
 CLASS MovimientosAlmacenLineasView FROM SQLBaseView
@@ -40,6 +42,8 @@ CLASS MovimientosAlmacenLineasView FROM SQLBaseView
 
    METHOD refreshUnidadesImportes()    INLINE ( ::oSayTotalUnidades():Refresh(), ::oSayTotalImporte():Refresh() )
 
+   METHOD searchCodeGS128( nKey, cCodigoArticulo )
+
 END CLASS
 
 //---------------------------------------------------------------------------//
@@ -66,11 +70,14 @@ METHOD Dialog()
          VAR         ::oController:oModel:hBuffer[ "codigo_articulo" ] ;
          ID          100 ;
          WHEN        ( ::oController:isAppendMode() ) ;
-         PICTURE     ( Replicate( "X", 200 ) ) ; // "@!" ;
+         PICTURE     "@!" ;
          BITMAP      "Lupa" ;
          OF          oDlg
 
-      ::oGetCodigoArticulo:bValid   := {|| if( ::oController:validateCodigoArticulo(), ( ::oGetCodigoArticulo:Refresh(), .t. ), .f. ) }
+      /*
+      ::oGetCodigoArticulo:bKeyDown := {|nKey| ::searchCodeGS128( nKey ) }
+      */
+      ::oGetCodigoArticulo:bValid   := {|| ::oController:validateCodigoArticulo() }
       ::oGetCodigoArticulo:bHelp    := {|| brwArticulo( ::oGetCodigoArticulo ) }
 
       REDEFINE GET   ::oGetNombreArticulo ;
@@ -78,6 +85,8 @@ METHOD Dialog()
          ID          110 ;
          WHEN        ( .f. ) ;
          OF          oDlg
+
+      ::oGetNombreArticulo:LimitText( 200 )
 
       REDEFINE GET   ::oGetLote ;
          VAR         ::oController:oModel:hBuffer[ "lote" ] ;
@@ -185,7 +194,7 @@ METHOD Dialog()
          PICTURE     cPinDiv() ;
          OF          oDlg
 
-      ::oGetUnidadesArticulo:bChange   := {|| ::refreshUnidadesImportes() }
+      ::oGetPrecioArticulo:bChange     := {|| ::refreshUnidadesImportes() }
 
       // Total Importe---------------------------------------------------------
 
@@ -255,7 +264,7 @@ METHOD Dialog()
 
       oDlg:bStart    := {|| ::startDialog() }
 
-   ACTIVATE DIALOG oDlg CENTER
+   ACTIVATE DIALOG oDlg CENTER 
 
 RETURN ( oDlg:nResult == IDOK )
 
@@ -277,3 +286,16 @@ METHOD startDialog()
 RETURN ( .t. )
 
 //---------------------------------------------------------------------------//
+
+METHOD searchCodeGS128( nKey )
+
+   if nKey == 16 
+      ::oGetCodigoArticulo:oGet:Insert( '@' )
+   end if 
+
+RETURN ( .t. )
+
+//---------------------------------------------------------------------------//
+
+
+

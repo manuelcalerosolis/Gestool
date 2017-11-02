@@ -60,6 +60,7 @@ CLASS SQLBaseModel
    METHOD getValueFromColumn( cColumn, cKey )
    METHOD getHeaderFromColumn( cColumn )           INLINE ( ::getValueFromColumn( cColumn, "header" ) )
    METHOD getHeaderFromColumnOrder()               INLINE ( ::getValueFromColumn( ::cColumnOrder, "header" ) )
+   METHOD getLenFromColumn( cColumn )              INLINE ( ::getValueFromColumn( cColumn, "len" ) )
 
    METHOD getCreateTableSentence()
    METHOD getAlterTableSentences()
@@ -125,7 +126,9 @@ CLASS SQLBaseModel
    METHOD setFind( cFind )                            INLINE ( ::cFind := cFind )
    METHOD find( cFind )
 
-   METHOD getBuffer( cColumn )                        INLINE ( hget( ::hBuffer, cColumn ) )
+   METHOD getBuffer( cColumn )                        
+   METHOD setBuffer( cColumn, uValue )
+   METHOD setBufferPadr( cColumn, uValue )
    
    METHOD insertBuffer( hBuffer )                     INLINE ( ::getDatabase():Execs( ::getInsertSentence( hBuffer ) ), ::buildRowSetAndFind( ::getDatabase():LastInsertId() ) )
    METHOD updateBuffer( hBuffer )                     INLINE ( ::getDatabase():Execs( ::getUpdateSentence( hBuffer ) ), ::buildRowSetAndFind() )
@@ -350,9 +353,11 @@ RETURN ( "DROP TABLE " + ::cTableName )
 
 METHOD buildRowSet( cSentence )
 
+   DEFAULT cSentence    := ::getSelectSentence()
+
    ::fireEvent( 'buildingRowSet')
 
-   ::oRowSet   := ::newRowSet( cSentence )
+   ::newRowSet()
 
    ::fireEvent( 'builtRowSet')
 
@@ -368,14 +373,16 @@ METHOD newRowSet( cSentence )
    DEFAULT cSentence    := ::getSelectSentence()
 
    try
- 
+
+      ::freeRowSet()
+
       ::freeStatement()
 
       ::oStatement      := ::getDatabase():Query( cSentence )
 
       ::oStatement:setAttribute( ATTR_STR_PAD, .t. )
       
-      oRowSet           := ::oStatement:fetchRowSet()
+      ::oRowSet         := ::oStatement:fetchRowSet()
 
    catch oError
 
@@ -383,9 +390,9 @@ METHOD newRowSet( cSentence )
 
    end
 
-   oRowSet:goTop()
+   ::oRowSet:goTop()
 
-RETURN ( oRowSet )
+RETURN ( ::oRowSet )
 
 //---------------------------------------------------------------------------//
 
@@ -701,3 +708,55 @@ METHOD deleteSelection( aRecno )
 RETURN ( Self )
 
 //---------------------------------------------------------------------------//
+
+METHOD getBuffer( cColumn )
+
+   if empty( ::hBuffer )
+      RETURN ( nil )
+   end if 
+
+   if !hhaskey( ::hBuffer, cColumn )
+      RETURN ( nil )
+   end if  
+
+RETURN ( hget( ::hBuffer, cColumn ) )
+
+//----------------------------------------------------------------------------//
+
+METHOD setBuffer( cColumn, uValue )
+
+   if empty( ::hBuffer )
+      RETURN ( nil )
+   end if 
+
+   if !hhaskey( ::hBuffer, cColumn )
+      RETURN ( nil )
+   end if  
+
+RETURN ( hset( ::hBuffer, cColumn, uValue ) )
+
+//----------------------------------------------------------------------------//
+
+METHOD setBufferPadr( cColumn, uValue )
+
+   local nLen
+
+   if empty( ::hBuffer )
+      RETURN ( nil )
+   end if 
+
+   if !hhaskey( ::hBuffer, cColumn )
+      RETURN ( nil )
+   end if  
+
+   nLen           := ::getLenFromColumn( cColumn )
+   if empty( nLen )
+      RETURN ( hset( ::hBuffer, cColumn, uValue ) )
+   end if 
+
+   uValue         := padr( uValue, nLen )
+
+RETURN ( hset( ::hBuffer, cColumn, uValue ) )
+
+//----------------------------------------------------------------------------//
+

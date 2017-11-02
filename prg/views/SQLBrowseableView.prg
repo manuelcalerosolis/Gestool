@@ -73,11 +73,19 @@ METHOD onChangeCombo( oColumn )
       RETURN ( Self )
    end if 
 
+   msgalert( oColumn:cHeader )
+
    oComboBox:set( oColumn:cHeader )
+
+   msgalert( "changeModelOrderAndOrientation" )
 
    ::getController():changeModelOrderAndOrientation( oColumn:cSortOrder, oColumn:cOrder )
 
+   msgalert( "selectColumnOrder" )
+
    ::getBrowse():selectColumnOrder( oColumn )
+
+   msgalert("refreshCurrent")
 
    ::getBrowse():refreshCurrent()
 
@@ -88,9 +96,13 @@ RETURN ( Self )
 METHOD onChangeSearch()
 
    local uValue
-   local oSearch        := ::getGetSearch()
-   local cOrder         := ::getComboBoxOrder():varGet()
-   local cColumnOrder   := ::getBrowse():getColumnOrderByHeader( cOrder )
+   local cOrder         
+   local oSearch
+   local cColumnOrder   
+
+   oSearch              := ::getGetSearch()
+   cOrder               := ::getComboBoxOrder():varGet()
+   cColumnOrder         := ::getBrowse():getColumnOrderByHeader( cOrder )
 
    if empty( oSearch )
       RETURN ( Self )

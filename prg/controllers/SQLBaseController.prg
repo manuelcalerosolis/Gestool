@@ -37,6 +37,8 @@ CLASS SQLBaseController
 
    DATA lDocuments                                    INIT .f.
 
+   DATA lLabels                                       INIT .f.
+
    DATA hDocuments
 
    DATA aSelected
@@ -53,8 +55,10 @@ CLASS SQLBaseController
    METHOD getModelColumns()                           INLINE ( if( !empty( ::oModel ) .and. !empty( ::oModel:hColumns ), ( ::oModel:hColumns ), ) )
    METHOD getModelExtraColumns()                      INLINE ( if( !empty( ::oModel ) .and. !empty( ::oModel:hExtraColumns ), ( ::oModel:hExtraColumns ), ) )
    
-   METHOD getModelBuffer( cColumn )
-   METHOD setModelBuffer( cColumn, uValue )                   
+   METHOD getModelBuffer( cColumn )                   INLINE ( if( !empty( ::oModel ), ::oModel:getBuffer( cColumn ), ) )
+   METHOD setModelBuffer( cColumn, uValue )           INLINE ( if( !empty( ::oModel ), ::oModel:setBuffer( cColumn, uValue ), ) )
+   METHOD setModelBufferPadr( cColumn, uValue )       INLINE ( if( !empty( ::oModel ), ::oModel:setBufferPadr( cColumn, uValue ), ) )
+
    METHOD getModelBufferColumnKey()                   INLINE ( ::getModelBuffer( ( ::oModel:cColumnKey ) ) )
 
    METHOD getModelSelectValue( cSentence )            INLINE ( if( !empty( ::oModel ), ::oModel:SelectValue( cSentence ), ) )
@@ -268,13 +272,23 @@ RETURN ( Self )
 
 METHOD changeModelOrderAndOrientation( cColumnOrder, cColumnOrientation )
 
+   msgalert( cColumnOrder, "cColumnOrder" )
+
    ::oModel:saveIdToFind()
+
+   msgalert( "saveIdToFind" )
 
    ::oModel:setColumnOrder( cColumnOrder )
 
+   msgalert( "setColumnOrder" )
+
    ::oModel:setColumnOrientation( cColumnOrientation )
 
+   msgalert( "setColumnOrientation")
+
    ::oModel:buildRowSetAndFind()
+
+   msgalert( "buildRowSetAndFind")
 
 RETURN ( self )
 
@@ -534,42 +548,6 @@ METHOD findInRowSet( uValue, cColumn )
    end if 
 
 RETURN ( .t. )
-
-//----------------------------------------------------------------------------//
-
-METHOD getModelBuffer( cColumn )
-
-   if empty( ::oModel )
-      RETURN ( nil )
-   end if 
-
-   if empty( ::oModel:hBuffer )
-      RETURN ( nil )
-   end if 
-
-   if !hhaskey( ::oModel:hBuffer, cColumn )
-      RETURN ( nil )
-   end if  
-
-RETURN ( hget( ::oModel:hBuffer, cColumn ) )
-
-//----------------------------------------------------------------------------//
-
-METHOD setModelBuffer( cColumn, uValue )
-
-   if empty( ::oModel )
-      RETURN ( nil )
-   end if 
-
-   if empty( ::oModel:hBuffer )
-      RETURN ( nil )
-   end if 
-
-   if !hhaskey( ::oModel:hBuffer, cColumn )
-      RETURN ( nil )
-   end if  
-
-RETURN ( hset( ::oModel:hBuffer, cColumn, uValue ) )
 
 //----------------------------------------------------------------------------//
 
