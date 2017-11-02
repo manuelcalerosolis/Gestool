@@ -1459,8 +1459,6 @@ METHOD nSQLStockActual( cCodArt, cCodAlm, cValPr1, cValPr2, cLote ) CLASS TStock
       //hFechaHoraConsolidacion    := MovimientosAlmacenesLineasModel():getFechaHoraConsolidacion( cCodArt, cCodAlm, cValPr1, cValPr2, cLote )
       hFechaHoraConsolidacion    := SQLMovimientosAlmacenLineasModel():getFechaHoraConsolidacion( cCodArt, cCodAlm, cValPr1, cValPr2, cLote )
 
-      MsgInfo( hb_valtoexp( hFechaHoraConsolidacion ), "hFechaHoraConsolidacion" )
-
       if !empty( hFechaHoraConsolidacion )
          dFechaConsolidacion     := hGet( hFechaHoraConsolidacion, "fecha" )
          tHoraConsolidacion      := hGet( hFechaHoraConsolidacion, "hora" )

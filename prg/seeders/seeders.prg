@@ -402,7 +402,7 @@ METHOD getStatementSeederMovimientosAlmacenLineas( dbfHisMov )
                               "lote" => quoted( ( dbfHisMov )->cLote ),;
                               "bultos_articulo" => quoted( Str( ( dbfHisMov )->nBultos ) ),;
                               "cajas_articulo" => quoted( Str( ( dbfHisMov )->nCajMov ) ),;
-                              "unidades_articulo" => quoted( Str( ( dbfHisMov )->nUndAnt ) ),;
+                              "unidades_articulo" => quoted( Str( ( dbfHisMov )->nUndMov ) ),;
                               "precio_articulo" => quoted( Str( ( dbfHisMov )->nPreDiv ) ) }
 
 
