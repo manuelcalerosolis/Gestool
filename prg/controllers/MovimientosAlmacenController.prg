@@ -4,7 +4,7 @@
 
 //---------------------------------------------------------------------------//
 
-CLASS MovimientosAlmacenController FROM SQLBaseController
+CLASS MovimientosAlmacenController FROM SQLNavigatorController
 
    DATA oLineasController
 

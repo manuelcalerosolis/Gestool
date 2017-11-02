@@ -3,7 +3,7 @@
 
 //---------------------------------------------------------------------------//
 
-CLASS TiposNotasController FROM SQLBaseController
+CLASS TiposNotasController FROM SQLNavigatorController
 
    METHOD   New()
 

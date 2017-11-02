@@ -4769,7 +4769,7 @@ RETURN ( ::ExecuteSqlStatement( cStm, "SatCliArticulos" ) )
 
 METHOD ConvertDatosToSQL()
 
-   TiposImpresorasModel();
+   SQLTiposImpresorasModel();
       :New();
       :makeImportDbfSQL()
 

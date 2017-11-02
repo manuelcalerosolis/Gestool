@@ -541,7 +541,7 @@ BaseModel.prg 																	\
 SQLBaseModel.prg 																\
 SQLBaseEmpresasModel.prg 													\
 SQLBaseController.prg 														\
-SQLBaseController.prg 														\
+SQLNavigatorController.prg													\
 SQLHeaderController.prg 													\
 SQLBaseLineasModel.prg 														\
 ClientesModel.prg 															\
@@ -558,7 +558,7 @@ TicketsClientesLineasModel.prg 											\
 RecibosClientesModel.prg 													\
 TicketsClientesModel.prg 													\
 PedidosProveedoresModel.prg												\
-TiposImpresorasModel.prg 													\
+SQLTiposImpresorasModel.prg 												\
 MaterialesProducidosLineasModel.prg 									\
 MaterialesConsumidosLineasModel.prg 									\
 TiposImpresorasController.prg 											\
@@ -581,7 +581,7 @@ ClientesModel.prg 															\
 RecibosClientesModel.prg 													\
 TicketsClientesModel.prg 													\
 PedidosProveedoresModel.prg												\
-TiposImpresorasModel.prg 													\
+SQLTiposImpresorasModel.prg 													\
 UsuariosModel.prg 															\
 DelegacionesModel.prg 														\
 TiposImpresorasController.prg 											\
@@ -1136,6 +1136,7 @@ BaseModel.obj 																	\
 SQLBaseModel.Obj 																\
 SQLBaseEmpresasModel.Obj 													\
 SQLBaseController.Obj 														\
+SQLNavigatorController.obj 												\
 SQLHeaderController.obj														\
 SQLBaseLineasModel.Obj 														\
 EmpresasModel.obj 															\
@@ -1153,7 +1154,7 @@ TicketsClientesLineasModel.obj 											\
 TicketsClientesModel.obj 													\
 RecibosClientesModel.obj 													\
 PedidosProveedoresModel.obj 												\
-TiposImpresorasModel.obj 													\
+SQLTiposImpresorasModel.obj 												\
 MaterialesProducidosLineasModel.obj 									\
 MaterialesConsumidosLineasModel.obj 									\
 UsuariosModel.obj																\
@@ -1701,6 +1702,7 @@ $(OBJ)\BaseModel.obj 														+
 $(OBJ)\SQLBaseModel.obj 													+
 $(OBJ)\SQLBaseEmpresasModel.obj 											+
 $(OBJ)\SQLBaseController.obj 												+
+$(OBJ)\SQLNavigatorController.obj										+
 $(OBJ)\SQLHeaderController.obj 											+
 $(OBJ)\SQLBaseLineasModel.obj 											+
 $(OBJ)\EmpresasModel.obj 													+
@@ -1721,7 +1723,7 @@ $(OBJ)\ColumnasUsuariosModel.obj               						+
 $(OBJ)\RecibosClientesModel.obj											+
 $(OBJ)\TicketsClientesModel.obj 	 										+							
 $(OBJ)\PedidosProveedoresModel.obj 										+
-$(OBJ)\TiposImpresorasModel.obj                 					+
+$(OBJ)\SQLTiposImpresorasModel.obj                 				+
 $(OBJ)\SQLMovimientosAlmacenModel.obj               				+
 $(OBJ)\MaterialesProducidosLineasModel.obj 							+
 $(OBJ)\MaterialesConsumidosLineasModel.obj 							+

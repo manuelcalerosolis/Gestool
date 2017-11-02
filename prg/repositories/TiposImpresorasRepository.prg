@@ -6,7 +6,7 @@
 
 CLASS TiposImpresorasRepository FROM SQLBaseRepository
 
-   METHOD getTableName()         INLINE ( if( !empty( ::getController() ), ::getModelTableName(), TiposImpresorasModel():getTableName() ) )
+   METHOD getTableName()         INLINE ( if( !empty( ::getController() ), ::getModelTableName(), SQLTiposImpresorasModel():getTableName() ) )
 
    METHOD getNombres()
 
