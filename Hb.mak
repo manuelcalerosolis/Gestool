@@ -352,6 +352,7 @@ MovimientosAlmacenView.prg													\
 EtiquetasSelectorView.prg													\
 SQLBaseReport.prg 															\
 MovimientosAlmacenReport.prg												\
+MovimientosAlmacenLabel.prg												\
 ImportadorMovimientosAlmacenLineasView.prg							\
 ImportadorMovimientosAlmacenLineasController.prg					\
 MovimientosAlmacenLineasView.prg											\
@@ -946,6 +947,7 @@ MovimientosAlmacenView.obj													\
 EtiquetasSelectorView.obj													\
 SQLBaseReport.obj 															\
 MovimientosAlmacenReport.obj												\
+MovimientosAlmacenLabel.obj 												\
 ImportadorMovimientosAlmacenLineasView.obj							\
 ImportadorMovimientosAlmacenLineasController.obj 					\
 MovimientosAlmacenLineasView.obj											\
@@ -1509,6 +1511,7 @@ $(OBJ)\SituacionesController.obj          							+
 $(OBJ)\MovimientosAlmacenView.obj 										+
 $(OBJ)\EtiquetasSelectorView.obj											+
 $(OBJ)\MovimientosAlmacenReport.obj 									+
+$(OBJ)\MovimientosAlmacenLabel.obj 										+
 $(OBJ)\SQLBaseReport.obj 													+
 $(OBJ)\ImportadorMovimientosAlmacenLineasView.obj 					+
 $(OBJ)\ImportadorMovimientosAlmacenLineasController.obj			+

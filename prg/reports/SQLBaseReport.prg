@@ -160,8 +160,6 @@ METHOD Design()
 
    ::buildData()
 
-   msgalert("buildData")
-
    if !empty( ::getReport() )
 
       ::oFastReport:LoadFromString( ::cReport )

@@ -13,19 +13,21 @@ CLASS EtiquetasMovimientosAlmacenController FROM SQLBaseController
 
    METHOD End()
 
-   METHOD freeRowSet()           INLINE ( if( !empty( ::oRowSet ), ( ::oRowSet:free(), ::oRowSet := nil ), ) )
+   METHOD freeRowSet()                 INLINE ( if( !empty( ::oRowSet ), ( ::oRowSet:free(), ::oRowSet := nil ), ) )
 
-   METHOD freeStatement()        INLINE ( if( !empty( ::oStatement ), ( ::oStatement:free(), ::oStatement := nil ), ) )
+   METHOD freeStatement()              INLINE ( if( !empty( ::oStatement ), ( ::oStatement:free(), ::oStatement := nil ), ) )
 
-   METHOD getRowSet()            INLINE ( ::oRowSet )
+   METHOD getRowSet()                  INLINE ( ::oRowSet )
 
-   METHOD Activate()             INLINE ( ::generateRowSet(), ::oDialogView:Activate() )
+   METHOD Activate()                   INLINE ( ::generateRowSet(), ::oDialogView:Activate() )
    
-   METHOD setId( id )            INLINE ( ::oDialogView:setId( id ) )
+   METHOD setId( id )                  INLINE ( ::oDialogView:setId( id ) )
+
+   METHOD clickingHeader( oColumn )    INLINE ( ::generateRowSet( oColumn:cSortOrder ) )
 
    METHOD generateRowSet()
 
-   METHOD clickingHeader( oColumn )
+   METHOD generateLabels()
 
 END CLASS
 
@@ -62,11 +64,11 @@ METHOD generateRowSet( cOrderBy )
       nFixLabels        := ::oDialogView:nUnidadesLabels
    end if 
 
+   cSql                 := MovimientosAlmacenLineasRepository():getSQLSentenceToLabels( ::oDialogView:nDocumentoInicio, ::oDialogView:nDocumentoFin, nFixLabels, cOrderBy )
+
    ::freeRowSet()
 
    ::freeStatement()
-
-   cSql                 := MovimientosAlmacenLineasRepository():getSQLSentenceToLabels( ::oDialogView:nDocumentoInicio, ::oDialogView:nDocumentoFin, nFixLabels, cOrderBy )
    
    ::oStatement         := getSqlDataBase():query( cSql )      
 
@@ -78,12 +80,35 @@ RETURN ( Self )
 
 //---------------------------------------------------------------------------//
 
-METHOD clickingHeader( oColumn )
+METHOD generateLabels()
 
-   msgAlert( oColumn:cSortOrder, "cSortOrder" )
+   local cReport
+   local cFormato
+   local oMovimientosAlmacenLabel  
 
-   ::generateRowSet( oColumn:cSortOrder )
+   if empty( ::oDialogView:cFormatoLabel )
+      msgStop( "No hay formatos por defecto" )
+      RETURN ( self )  
+   end if 
+
+   cReport                          := DocumentosModel():getReportWhereCodigo( ::oDialogView:cFormatoLabel )              
+
+   if empty( cReport )
+      msgStop( "El formato esta vacio" )
+      RETURN ( self )  
+   end if 
+
+   oMovimientosAlmacenLabel         := MovimientosAlmacenLabel():New( Self )
+
+   oMovimientosAlmacenLabel:setRowSet( ::oRowSet )
+   oMovimientosAlmacenLabel:setDevice( IS_SCREEN )
+   oMovimientosAlmacenLabel:setReport( cReport )
+
+   oMovimientosAlmacenLabel:Print()
+
+   msgalert( "generateLabels" )
 
 RETURN ( Self )
 
 //---------------------------------------------------------------------------//
+
