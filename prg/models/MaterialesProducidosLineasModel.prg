@@ -79,7 +79,7 @@ RETURN ( nil )
 
 METHOD getSQLSentenceTotalUnidadesStock( cCodigoArticulo, dConsolidacion, tConsolidacion, cCodigoAlmacen, cValorPropiedad1, cValorPropiedad2, cLote )
 
-   local cSql  := "SELECT SUM( IIF( nCajOrd = 0, 1, nCajOrd ) * nUndOrd ) as [totalUnidadesStock] "   + ;
+   local cSql  := "SELECT SUM( IIF( nCajOrd = 0, 1, nCajOrd ) * nUndOrd ) as [totalUnidadesStock] , " + quoted( ::getTableName() ) + " AS Document " + ;
                      "FROM " + ::getTableName() + " "                                                 + ;
                      "WHERE cCodArt = " + quoted( cCodigoArticulo ) + " "
    
@@ -115,6 +115,9 @@ METHOD totalUnidadesStock( cCodigoArticulo, dConsolidacion, tConsolidacion, cCod
 
    local cStm
    local cSql  := ::getSQLSentenceTotalUnidadesStock( cCodigoArticulo, dConsolidacion, tConsolidacion, cCodigoAlmacen, cValorPropiedad1, cValorPropiedad2, cLote )
+
+   MsgInfo( cSql )
+   logwrite( cSql )
 
    if ::ExecuteSqlStatement( cSql, @cStm )
       RETURN ( ( cStm )->totalUnidadesStock )

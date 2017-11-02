@@ -29,8 +29,6 @@ METHOD exist( cCodigoArticulo )
                      "FROM " + ::getTableName() + " "                   + ;
                      "WHERE Codigo = " + quoted( cCodigoArticulo ) 
 
-                     msgalert( cSql, "cSql" )
-
    if ::ExecuteSqlStatement( cSql, @cStm )
       RETURN ( ( cStm )->( lastrec() ) > 0 )
    end if 

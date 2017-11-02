@@ -367,8 +367,6 @@ METHOD getTotalUnidades( tConsolidacion, cCodigoArticulo, cCodigoAlmacen, cValor
    cSentence         +=         "movimientos_almacen_lineas.lote = " + quoted( cLote ) + " "
    cSentence         += "LIMIT 1"
 
-   LogWrite( cSentence )
-
    aBuffer           := ::getDatabase():selectFetchHash( cSentence )
 
    if !hb_isnil( aBuffer )

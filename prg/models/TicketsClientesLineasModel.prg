@@ -79,8 +79,8 @@ RETURN ( nil )
 
 METHOD getSQLSentenceTotalUnidadesStock( cCodigoArticulo, dConsolidacion, tConsolidacion, cCodigoAlmacen, cValorPropiedad1, cValorPropiedad2, cLote )
 
-   local cSql  := "SELECT SUM( nUntTil ) as [totalUnidadesStock] "         + ;
-                     "FROM " + ::getTableName() + " "                      + ;
+   local cSql  := "SELECT SUM( nUntTil ) as [totalUnidadesStock] , " + quoted( ::getTableName() ) + " AS Document "  + ;
+                     "FROM " + ::getTableName() + " "                                                                + ;
                      "WHERE cCbaTil = " + quoted( cCodigoArticulo ) + " "
    
    if !empty( dConsolidacion )                     

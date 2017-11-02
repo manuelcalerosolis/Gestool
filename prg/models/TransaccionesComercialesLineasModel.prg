@@ -101,7 +101,7 @@ Return ( nil )
 
 METHOD getSQLSentenceTotalUnidadesStock( cCodigoArticulo, dConsolidacion, tConsolidacion, cCodigoAlmacen, cValorPropiedad1, cValorPropiedad2, cLote )
 
-   local cSql  := "SELECT SUM( IIF( nCanEnt = 0, 1, nCanEnt ) * nUniCaja ) as [totalUnidadesStock] " + ;
+   local cSql  := "SELECT SUM( IIF( nCanEnt = 0, 1, nCanEnt ) * nUniCaja ) as [totalUnidadesStock], " + quoted( ::getTableName() ) + " AS Document " + ;
                      "FROM " + ::getTableName() + " " + ;
                      "WHERE cRef = " + quoted( cCodigoArticulo ) + " "
    
