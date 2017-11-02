@@ -31,6 +31,8 @@ CLASS MovimientosAlmacenLineasController FROM SQLBaseController
                                                          ::stampSegundaPropiedad(),;
                                                          .f. ) )
 
+   METHOD validateLote()               
+
    METHOD stampArticulo()
 
    METHOD stampLote()
@@ -305,6 +307,29 @@ METHOD getSegundaPropiedad( cCodigoArticulo, cCodigoPropiedad )
    end if 
 
 RETURN ( aProperties )
+
+//---------------------------------------------------------------------------//
+
+METHOD validateLote()
+
+   local cLote
+
+   cLote       := ::getModelBuffer( "lote" )
+   if empty( cLote )
+      RETURN ( .t. )
+   end if  
+
+   if !( ::oDialogView:oGetLote:isOriginalChanged( cLote ) )
+      RETURN ( .t. )
+   end if 
+
+   ::oDialogView:oGetLote:setOriginal( cLote )
+
+   ::stampStockAlmacenOrigen()
+
+   ::stampStockAlmacenDestino()
+
+RETURN ( .t. )
 
 //---------------------------------------------------------------------------//
 
