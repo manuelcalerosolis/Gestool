@@ -17,6 +17,8 @@ CLASS MovimientosAlmacenLineasRepository FROM SQLBaseRepository
 
    METHOD getSqlSentenceWhereParentUuid( uuid )
 
+   METHOD getSerializedColumnsSentenceToLabels()
+
    METHOD getSQLSentenceToLabels( initialId, finalId )
 
 END CLASS
@@ -67,15 +69,28 @@ RETURN ( cSql )
 
 //---------------------------------------------------------------------------//
 
+METHOD getSerializedColumnsSentenceToLabels()
+
+   local cSerializedColumns   := "selected; "                     + ;
+                                 "id; "                           + ;
+                                 "codigo_articulo; "              + ;
+                                 "nombre_articulo; "              + ;
+                                 "valor_primera_propiedad; "      + ;
+                                 "valor_segunda_propiedad"      
+
+RETURN ( cSerializedColumns )                                 
+
+//---------------------------------------------------------------------------//
+
 METHOD getSQLSentenceToLabels( initialId, finalId, nFixLabels, cOrderBy )
 
-   local cSql  := "SELECT "                                                      + ;
-                     "TRUE AS selected, "                                        + ;
-                     "movimientos_almacen_lineas.id, "                           + ;
-                     "movimientos_almacen_lineas.codigo_articulo, "              + ;
-                     "movimientos_almacen_lineas.nombre_articulo, "              + ;
-                     "movimientos_almacen_lineas.valor_primera_propiedad, "      + ;
-                     "movimientos_almacen_lineas.valor_segunda_propiedad, "      
+   local cSql  := "SELECT "                                                                              + ;
+                     "TRUE AS selected, "                                                                + ;
+                     "movimientos_almacen_lineas.id AS id, "                                             + ;
+                     "movimientos_almacen_lineas.codigo_articulo AS codigo_articulo, "                   + ;
+                     "movimientos_almacen_lineas.nombre_articulo AS nombre_articulo, "                   + ;
+                     "movimientos_almacen_lineas.valor_primera_propiedad AS valor_primera_propiedad, "   + ;
+                     "movimientos_almacen_lineas.valor_segunda_propiedad AS valor_segunda_propiedad, "      
 
    if empty( nFixLabels )
       cSql     +=    "IF ( movimientos_almacen_lineas.cajas_articulo = 0, 1, movimientos_almacen_lineas.cajas_articulo ) * movimientos_almacen_lineas.unidades_articulo AS total_unidades "  
@@ -85,13 +100,11 @@ METHOD getSQLSentenceToLabels( initialId, finalId, nFixLabels, cOrderBy )
 
    cSql        += "FROM movimientos_almacen_lineas "                             + ;
                      "INNER JOIN movimientos_almacen ON movimientos_almacen_lineas.parent_uuid = movimientos_almacen.uuid "   + ;
-                  "WHERE movimientos_almacen.id BETWEEN " + toSqlString( initialId ) + " AND " + toSqlString( finalId )
+                  "WHERE movimientos_almacen.id BETWEEN " + toSqlString( initialId ) + " AND " + toSqlString( finalId ) + " "
 
    if !empty( cOrderBy )                  
-      cSql     += "ORDER BY " + quoted( cOrderBy ) 
+      cSql     += "ORDER BY " + ( cOrderBy ) 
    end if 
-
-   msgalert( cSql, "cSql" )
 
 RETURN ( cSql )
 

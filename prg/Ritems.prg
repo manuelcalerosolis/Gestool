@@ -4096,7 +4096,15 @@ Static Function VisualEdtDocs( dbfDoc )
          DesignLabelFacturaRectificativaClientes( oFr, dbfDoc )
 
       case cTipo == "MV"
-         DesignLabelRemesasMovimientosAlmacen( oFr, dbfDoc )
+
+         with object ( MovimientosAlmacenLabel():New() )
+            :setFastReport( oFr )
+            :setReport( ( dbfDoc )->mReport )
+            :Design()
+            :end()
+         end object
+
+         // DesignLabelRemesasMovimientosAlmacen( oFr, dbfDoc )
 
       case cTipo == "SA"
          DesignLabelSATClientes( oFr, dbfDoc )
@@ -4166,17 +4174,9 @@ Static Function VisualEdtDocs( dbfDoc )
          with object ( MovimientosAlmacenReport():New() )
             :setFastReport( oFr )
             :setReport( ( dbfDoc )->mReport )
-
-            msgalert("desing")
-
             :Design()
             :end()
          end object
-
-      // with object ( TRemMovAlm():New( cPatEmp() ) )
-      //    :DesignReportRemMov( oFr, dbfDoc )
-      //    :end()
-      // end object
 
       case cTipo == "MP"
 

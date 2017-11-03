@@ -30,7 +30,7 @@ CLASS EtiquetasSelectorView FROM SQLBaseView
    DATA cSufijoFin
 
    DATA oFormatoLabel
-   DATA cFormatoLabel
+   DATA cFormatoLabel               INIT "MVP"
 
    DATA cPrinter
 
@@ -66,7 +66,7 @@ CLASS EtiquetasSelectorView FROM SQLBaseView
 
    METHOD getRowSet()               INLINE ( ::oController:getRowSet() )
 
-   METHOD setId()
+   METHOD setId( id )               INLINE ( ::nDocumentoInicio := id, ::nDocumentoFin := id )
 
    METHOD Anterior() 
 
@@ -220,7 +220,7 @@ METHOD Activate()
       with object ( ::oBrowse:AddCol() )
          :cHeader          := "Id"
          :bEditValue       := {|| ::getRowSet():fieldGet( 'id' ) }
-         :cSortOrder       := 'id'
+         :cSortOrder       := 'movimientos_almacen_lineas.id'
          :nWidth           := 40
          :nDataStrAlign    := 1
          :nHeadStrAlign    := 1
@@ -231,7 +231,7 @@ METHOD Activate()
       with object ( ::oBrowse:AddCol() )
          :cHeader          := "Código"
          :bEditValue       := {|| ::getRowSet():fieldGet( 'codigo_articulo' ) }
-         :cSortOrder       := 'codigo_articulo'
+         :cSortOrder       := 'movimientos_almacen_lineas.codigo_articulo'
          :nWidth           := 120
          :bLClickHeader    := {| nMRow, nMCol, nFlags, oColumn | ::oController:clickingHeader( oColumn ) }
       end with
@@ -239,7 +239,7 @@ METHOD Activate()
       with object ( ::oBrowse:AddCol() )
          :cHeader          := "Nombre"
          :bEditValue       := {|| ::getRowSet():fieldGet( 'nombre_articulo' ) }
-         :cSortOrder       := 'nombre_articulo'
+         :cSortOrder       := 'movimientos_almacen_lineas.nombre_articulo'
          :nWidth           := 120
          :bLClickHeader    := {| nMRow, nMCol, nFlags, oColumn | ::oController:clickingHeader( oColumn ) }
       end with
@@ -247,7 +247,7 @@ METHOD Activate()
       with object ( ::oBrowse:AddCol() )
          :cHeader          := "Primera propiedad"
          :bEditValue       := {|| ::getRowSet():fieldGet( 'valor_primera_propiedad' ) }
-         :cSortOrder       := 'valor_primera_propiedad'
+         :cSortOrder       := 'movimientos_almacen_lineas.valor_primera_propiedad'
          :nWidth           := 80
          :bLClickHeader    := {| nMRow, nMCol, nFlags, oColumn | ::oController:clickingHeader( oColumn ) }
       end with
@@ -255,7 +255,7 @@ METHOD Activate()
       with object ( ::oBrowse:AddCol() )
          :cHeader          := "Segunda propiedad"
          :bEditValue       := {|| ::getRowSet():fieldGet( 'valor_segunda_propiedad' ) }
-         :cSortOrder       := 'valor_segunda_propiedad'
+         :cSortOrder       := 'movimientos_almacen_lineas.valor_segunda_propiedad'
          :nWidth           := 80
          :bLClickHeader    := {| nMRow, nMCol, nFlags, oColumn | ::oController:clickingHeader( oColumn ) }
       end with
@@ -432,8 +432,6 @@ METHOD startDialog()
    ::oSufijoInicio:Hide()
    ::oSufijoFin:Hide()
 
-   ::oBrowse:Hide()
-
 RETURN ( self )
 
 //----------------------------------------------------------------------------//
@@ -461,11 +459,7 @@ METHOD Siguiente()
 
          else
 
-            ::oBrowse:Hide()
-
             ::oController:GenerateRowSet()
-
-            ::oBrowse:Show()
 
             ::oPages:GoNext()
 
@@ -477,11 +471,9 @@ METHOD Siguiente()
 
       case ::oPages:nOption == 2
 
-         if ::lPrintLabels()
+         ::oController:GenerateLabels()
 
-            SetWindowText( ::oBtnCancel:hWnd, "&Cerrar" )
-
-         end if
+         SetWindowText( ::oBtnCancel:hWnd, "&Cerrar" )
 
    end case
 
@@ -489,11 +481,3 @@ Return ( Self )
 
 //---------------------------------------------------------------------------//
 
-METHOD setId( id )
-
-   ::nDocumentoInicio   := id 
-   ::nDocumentoFin      := id 
-
-RETURN ( self )
-
-//----------------------------------------------------------------------------//
