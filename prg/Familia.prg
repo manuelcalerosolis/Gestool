@@ -1164,7 +1164,7 @@ FUNCTION getHashFamilias()
 
    while !( D():Familias( nView ) )->( eof() ) 
 
-      aadd( aFamilias, { ( D():Familias( nView ) )->cCodFam, LoadText( alltrim( upper( ( D():Familias( nView ) )->cNomFam ) ), ( D():Familias( nView ) )->cFamCmb ) } )
+      aadd( aFamilias, { ( D():Familias( nView ) )->cCodFam, ( D():Familias( nView ) )->cNomFam, LoadText( alltrim( upper( ( D():Familias( nView ) )->cNomFam ) ), ( D():Familias( nView ) )->cFamCmb ) } )
 
       ( D():Familias( nView ) )->( dbSkip() )
 

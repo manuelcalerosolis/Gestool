@@ -277,7 +277,12 @@ RETURN ( .t. )
 
 FUNCTION Test()
 
+<<<<<<< HEAD
    // msgalert( ReadCodeGS128() )
+=======
+   //SQLMovimientosAlmacenModel():New():CheckFolders()
+   //SQLMovimientosAlmacenLineasModel():New():CheckFolders()
+>>>>>>> d981e725995dbefb742f52adec0e535ea1654c68
 
 RETURN NIL 
 

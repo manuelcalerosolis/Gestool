@@ -110,6 +110,8 @@ static aCmbContabilidad        := { "Contaplus", "A3 CON" }
 static cMailNotificaciones
 static lInformacionInmediata 
 
+static lEnvioRecepcion
+
 static nView
 
 static TComercio
@@ -1308,6 +1310,8 @@ STATIC FUNCTION EditConfig( aTmp, aGet, dbfEmp, oBrw, nSelFolder, bValid, nMode 
 
    cMailNotificaciones     := padr( ConfiguracionEmpresasRepository():getValue( 'mail_notificaciones', '' ), 200 )
    
+   lEnvioRecepcion         := ConfiguracionEmpresasRepository():getLogic( 'envio_recepcion', .f. )
+
    lInformacionInmediata   := ConfiguracionEmpresasRepository():getLogic( 'informacion_inmediata', .f. )
 
    LoaItmEmp( aTmp )
@@ -2401,6 +2405,10 @@ STATIC FUNCTION EditConfig( aTmp, aGet, dbfEmp, oBrw, nSelFolder, bValid, nMode 
          RESOURCE    "gc_satellite_dish2_48" ;
          TRANSPARENT ;
          OF          fldEnvios
+
+      REDEFINE CHECKBOX lEnvioRecepcion ;
+         ID       165;
+         OF       fldEnvios  
 
       REDEFINE COMBOBOX aGet[ _CENVUSR ] VAR aTmp[ _CENVUSR ] ;
          ITEMS    { "Cliente", "Servidor" } ;
@@ -5583,6 +5591,7 @@ STATIC FUNCTION SaveEditConfig( aTmp, oSay, oBrw, oDlg, nMode )
 
    ConfiguracionEmpresasRepository():setValue( 'mail_notificaciones',     alltrim( cMailNotificaciones ) ) 
    ConfiguracionEmpresasRepository():setValue( 'informacion_inmediata',   lInformacionInmediata )
+   ConfiguracionEmpresasRepository():setValue( 'envio_recepcion',   lEnvioRecepcion )
 
    // Escribimos en el definitivo----------------------------------------------
 
