@@ -17,8 +17,6 @@ CLASS SQLNavigatorController FROM SQLBaseController
 
    DATA hDocuments
 
-   DATA aSelected
-
    DATA hFastKey                                      INIT {=>}
  
    METHOD New()

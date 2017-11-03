@@ -5,13 +5,17 @@
 
 CLASS DocumentosModel FROM ADSBaseModel
 
-   METHOD getTableName()                  INLINE ::getEmpresaTableName( "Rdocumen" ) 
+   METHOD getTableName()                     INLINE ::getEmpresaTableName( "Rdocumen" ) 
 
    METHOD getWhereTipo()
 
-   METHOD getWhereMovimientosAlmacen()    INLINE ( ::getWhereTipo( "RM" ) )
+   METHOD getWhereMovimientosAlmacen()       INLINE ( ::getWhereTipo( "RM" ) )
 
-   METHOD getReportWhereCodigo()
+   METHOD getWhereCodigo( cCodigo, cField )
+
+   METHOD getReportWhereCodigo( cCodigo )    INLINE ( ::getWhereCodigo( cCodigo, 'mReport' ) )
+
+   METHOD getDescripWhereCodigo( cCodigo )   INLINE ( ::getWhereCodigo( cCodigo, 'cDescrip' ) )
 
    METHOD exist()
 
@@ -34,15 +38,15 @@ RETURN ( cStm )
 
 //---------------------------------------------------------------------------//
 
-METHOD getReportWhereCodigo( cCodigo )
+METHOD getWhereCodigo( cCodigo, cField )
 
    local cStm
-   local cSql  := "SELECT mReport "                         + ;
+   local cSql  := "SELECT " + cField + " "                  + ;
                      "FROM " + ::getTableName() + " "       + ;
                      "WHERE Codigo = " + quoted( cCodigo ) 
 
    if ::ExecuteSqlStatement( cSql, @cStm )
-      RETURN ( ( cStm )->mReport )
+      RETURN ( ( cStm )->( fieldget( fieldpos( cField ) ) ) )
    end if 
 
 RETURN ( "" )
@@ -63,5 +67,6 @@ METHOD exist( cCodigo )
 RETURN ( .f. )
 
 //---------------------------------------------------------------------------//
+
 
 

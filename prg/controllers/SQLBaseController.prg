@@ -23,6 +23,8 @@ CLASS SQLBaseController
 
    DATA lTransactional                                INIT .f.
 
+   DATA lContinuousAppend                             INIT .f.
+
    DATA nLevel                                        INIT nOr( ACC_APPD, ACC_EDIT, ACC_ZOOM, ACC_DELE, ACC_IMPR )
 
    DATA nMode                                         AS NUMERIC
@@ -30,6 +32,8 @@ CLASS SQLBaseController
    DATA cTitle                                        INIT ""
 
    DATA cImage                                        INIT ""
+
+   DATA aSelected
 
    METHOD New()
    METHOD Instance()                                  INLINE ( if( empty( ::oInstance ), ::oInstance := ::New(), ), ::oInstance ) 
@@ -207,7 +211,7 @@ RETURN ( Self )
 METHOD Append()
 
    local nRecno
-   local lAppend  := .t.   
+   local lAppend     := .t.   
 
    if ::notUserAppend()
       msgStop( "Acceso no permitido." )
@@ -220,35 +224,47 @@ METHOD Append()
 
    ::setAppendMode()
 
-   ::beginTransactionalMode()
+   while .t.
 
-   nRecno         := ::oModel:getRowSetRecno()
+      ::beginTransactionalMode()
 
-   ::oModel:loadBlankBuffer()
+      nRecno         := ::oModel:getRowSetRecno()
 
-   ::fireEvent( 'openingDialog' )     
+      ::oModel:loadBlankBuffer()
 
-   if ::oDialogView:Dialog()
+      ::fireEvent( 'openingDialog' )     
 
-      ::fireEvent( 'closedDialog' )    
+      if ::oDialogView:Dialog()
 
-      ::oModel:insertBuffer()
+         ::fireEvent( 'closedDialog' )    
 
-      ::fireEvent( 'appended' ) 
+         ::oModel:insertBuffer()
 
-      ::commitTransactionalMode()
+         ::fireEvent( 'appended' ) 
 
-   else
-      
-      lAppend     := .f.
+         ::commitTransactionalMode()
 
-      ::fireEvent( 'cancelAppended' ) 
+         if ::lContinuousAppend
+            loop
+         else 
+            exit
+         end if 
 
-      ::oModel:setRowSetRecno( nRecno )
+      else
+         
+         lAppend     := .f.
 
-      ::rollbackTransactionalMode()
+         ::fireEvent( 'cancelAppended' ) 
 
-   end if
+         ::oModel:setRowSetRecno( nRecno )
+
+         ::rollbackTransactionalMode()
+
+         exit
+
+      end if
+
+   end while
 
    ::fireEvent( 'exitAppended' ) 
 
@@ -337,7 +353,7 @@ METHOD Edit()
 
       ::oModel:updateBuffer()
 
-      ::fireEvent( 'editedted' ) 
+      ::fireEvent( 'edited' ) 
 
       ::commitTransactionalMode()
 

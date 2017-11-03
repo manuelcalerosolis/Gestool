@@ -8,6 +8,8 @@
 
 CLASS SQLBaseReport
   
+   DATA Id
+
    DATA oController
 
    DATA oEvents
@@ -22,13 +24,11 @@ CLASS SQLBaseReport
 
    DATA cDevice                           INIT IS_SCREEN
 
-   DATA Id
-
    METHOD New()
 
    METHOD End()
 
-   METHOD newFastReport()
+   METHOD createFastReport()
    METHOD destroyFastReport()             INLINE ( ::oFastReport:destroyFr(), ::oFastReport := nil )
    METHOD setFastReport( oFastReport )    INLINE ( ::oFastReport := oFastReport )
    METHOD getFastReport()                 INLINE ( ::oFastReport )
@@ -78,7 +78,9 @@ RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 
-METHOD newFastReport()
+METHOD createFastReport()
+
+   ::oEvents:fire( "creatingFastReport" )
 
    ::oFastReport := frReportManager():New()
 
@@ -88,13 +90,17 @@ METHOD newFastReport()
    
    ::oFastReport:SetTitle( "Diseñador de documentos" ) 
 
+   ::oEvents:fire( "createdFastReport" )
+
 RETURN ( Self )
 
 //---------------------------------------------------------------------------//
 
 METHOD Print()  
 
-   ::newFastReport()
+   ::oEvents:fire( "printing" )
+
+   ::createFastReport()
 
    ::buildData()
 
@@ -104,20 +110,36 @@ METHOD Print()
 
    ::destroyFastReport()
 
+   ::oEvents:fire( "printed" )
+
 RETURN ( .t. )
 
 //---------------------------------------------------------------------------//
 
 METHOD Load()
 
-   local oWaitMeter  := TWaitMeter():New( "Generando documento", "Espere por favor..." )
+   local oWaitMeter  
+
+   ::oEvents:fire( "loading" )
+
+   oWaitMeter        := TWaitMeter():New( "Generando documento", "Espere por favor..." )
    oWaitMeter:Run()
 
+   ::oEvents:fire( "loadingFromString" )
+
    ::oFastReport:loadFromString( ::getReport() )
-  
+
+   ::oEvents:fire( "loadedFromString" )
+
+   ::oEvents:fire( "preparingReport" )
+
    ::oFastReport:prepareReport()
 
+   ::oEvents:fire( "preparedReport" )
+
    oWaitMeter:End()
+
+   ::oEvents:fire( "loaded" )
 
 RETURN ( Self )
 

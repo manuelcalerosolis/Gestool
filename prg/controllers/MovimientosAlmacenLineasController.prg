@@ -77,6 +77,8 @@ METHOD New( oController )
 
    ::cTitle                := "Movimientos de almacen lineas"
 
+   ::lContinuousAppend     := lEntCon()
+
    ::oModel                := SQLMovimientosAlmacenLineasModel():New( self )
 
    ::oModel:setEvent( 'loadedBlankBuffer',   {|| ::loadedBlankBuffer() } ) 
@@ -92,9 +94,13 @@ METHOD New( oController )
 
    ::Super:New( oController )
 
-   ::setEvent( 'closedDialog',   {|| ::onClosedDialog() } )
+   ::setEvent( 'closedDialog',      {|| ::onClosedDialog() } )
 
-   ::setEvent( 'deletingLines',  {|| ::oSeriesControler:deletedSelected( ::aSelectDelete ) } )
+   ::setEvent( 'appended',          {|| oController:oDialogView:oSQLBrowseView:Refresh() } )
+   ::setEvent( 'edited',            {|| oController:oDialogView:oSQLBrowseView:Refresh() } )
+   ::setEvent( 'deletedSelection',  {|| oController:oDialogView:oSQLBrowseView:Refresh() } )
+
+   ::setEvent( 'deletingLines',     {|| ::oSeriesControler:deletedSelected( ::aSelectDelete ) } )
 
 RETURN ( Self )
 

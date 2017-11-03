@@ -21,9 +21,15 @@ CLASS EtiquetasMovimientosAlmacenController FROM SQLBaseController
 
    METHOD Activate()                   INLINE ( ::generateRowSet(), ::oDialogView:Activate() )
    
-   METHOD setId( id )                  INLINE ( ::oDialogView:setId( id ) )
-
    METHOD clickingHeader( oColumn )    INLINE ( ::generateRowSet( oColumn:cSortOrder ) )
+
+   METHOD setId( id )                  INLINE ( iif( !empty( ::oDialogView ), ::oDialogView:setId( id ), ) )
+
+   METHOD getFilaInicio()              INLINE ( iif( !empty( ::oDialogView ), ::oDialogView:nFilaInicio, 0 ) )
+   
+   METHOD getColumnaInicio()           INLINE ( iif( !empty( ::oDialogView ), ::oDialogView:nColumnaInicio, 0 ) )
+
+   METHOD validateFormatoDocumento()
 
    METHOD generateRowSet()
 
@@ -52,6 +58,20 @@ METHOD End()
    ::freeStatement()
 
 RETURN ( nil )
+
+//---------------------------------------------------------------------------//
+
+METHOD validateFormatoDocumento()
+
+   if DocumentosModel():exist( ::oDialogView:cFormatoLabel )
+
+      ::oDialogView:oFormatoLabel:oHelpText:cText( DocumentosModel():getDescripWhereCodigo( ::oDialogView:cFormatoLabel ) )
+
+      RETURN ( .t. )
+
+   end if 
+
+RETURN ( .f. )
 
 //---------------------------------------------------------------------------//
 

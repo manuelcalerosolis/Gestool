@@ -74,9 +74,7 @@ METHOD Dialog()
          BITMAP      "Lupa" ;
          OF          oDlg
 
-      /*
       ::oGetCodigoArticulo:bKeyDown := {|nKey| ::searchCodeGS128( nKey ) }
-      */
       ::oGetCodigoArticulo:bValid   := {|| ::oController:validateCodigoArticulo() }
       ::oGetCodigoArticulo:bHelp    := {|| brwArticulo( ::oGetCodigoArticulo ) }
 
@@ -289,6 +287,12 @@ RETURN ( .t. )
 //---------------------------------------------------------------------------//
 
 METHOD searchCodeGS128( nKey )
+
+   static cChar   := ""
+
+   cChar          += chr( nKey )
+
+   logwrite( cChar )
 
    if nKey == 16 
       ::oGetCodigoArticulo:oGet:Insert( '@' )

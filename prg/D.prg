@@ -560,6 +560,11 @@ CLASS D
    METHOD ArticulosIdText( nView )                                INLINE ( alltrim( ( ::Articulos( nView ) )->Codigo ) + Space(1) + alltrim( ( ::Articulos( nView ) )->Nombre ) )
 
    METHOD gotoArticulos( id, nView )                              INLINE ( ::seekInOrd( ::Articulos( nView ), id, "Codigo" ) ) 
+   METHOD setScopeArticulos( id, nView )                          INLINE ( iif( empty( id ), id := ::ArticulosId( nView ), ),;
+                                                                              ( ::Articulos( nView ) )->( ordScope( 0, id ) ),;
+                                                                              ( ::Articulos( nView ) )->( ordScope( 1, id ) ),;
+                                                                              ( ::Articulos( nView ) )->( dbgotop() ) )  
+
    METHOD getArticuloTablaPropiedades( id, nView )  
    METHOD setArticuloTablaPropiedades( id, idCodigoPrimeraPropiedad, idCodigoSegundaPropiedad, idValorPrimeraPropiedad, idValorSegundaPropiedad, nUnidades, aPropertiesTable )
 

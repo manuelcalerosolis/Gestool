@@ -10,6 +10,9 @@ CLASS ArticulosModel FROM ADSBaseModel
    METHOD exist()
 
    METHOD get()
+   
+   METHOD getField()
+
    METHOD getHash()
 
    METHOD getValoresPropiedades( cCodPro )
@@ -39,7 +42,7 @@ RETURN ( .f. )
 
 METHOD get( cCodigoArticulo )
 
-   local cStm  := "ADSArticulo"
+   local cStm  
    local cSql  := "SELECT * "                                           + ;
                      "FROM " + ::getTableName() + " "                   + ;
                      "WHERE Codigo = " + quoted( cCodigoArticulo ) 
@@ -51,6 +54,22 @@ METHOD get( cCodigoArticulo )
 RETURN ( nil )
 
 //---------------------------------------------------------------------------//
+
+METHOD getField( cCodigoArticulo, cField )
+
+   local cStm  
+   local cSql  := "SELECT " + cField + " "                              + ;
+                     "FROM " + ::getTableName() + " "                   + ;
+                     "WHERE Codigo = " + quoted( cCodigoArticulo ) 
+
+   if ::ExecuteSqlStatement( cSql, @cStm )
+      RETURN ( ( cStm )->( fieldget(fieldpos( cField ) ) ) )
+   end if 
+
+RETURN ( nil )
+
+//---------------------------------------------------------------------------//
+
 
 METHOD getHash( cCodigoArticulo )
 

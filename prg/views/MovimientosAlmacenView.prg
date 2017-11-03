@@ -150,19 +150,19 @@ METHOD Dialog()
          ID          500 ;
          OF          ::oDialog ;
          WHEN        ( ::oController:isNotZoomMode() ) ;
-         ACTION      ( ::oController:oLineasController:Append(), ::oSQLBrowseView:Refresh() )
+         ACTION      ( ::oController:oLineasController:Append() )
 
       REDEFINE BUTTON oBtnEdit ;
          ID          501 ;
          OF          ::oDialog ;
          WHEN        ( ::oController:isNotZoomMode() ) ;
-         ACTION      ( ::oController:oLineasController:Edit(), ::oSQLBrowseView:Refresh() )
+         ACTION      ( ::oController:oLineasController:Edit() )
 
       REDEFINE BUTTON oBtnDelete ;
          ID          502 ;
          OF          ::oDialog ;
          WHEN        ( ::oController:isNotZoomMode() ) ;
-         ACTION      ( ::oController:oLineasController:Delete( ::oSQLBrowseView:getBrowseSelected() ), ::oSQLBrowseView:Refresh() )
+         ACTION      ( ::oController:oLineasController:Delete( ::oSQLBrowseView:getBrowseSelected() ) )
 
       REDEFINE BUTTON ;
          ID          503 ;

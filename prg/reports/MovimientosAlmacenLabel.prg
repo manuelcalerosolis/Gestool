@@ -8,15 +8,19 @@
 
 CLASS MovimientosAlmacenLabel FROM SQLBaseReport
 
+   DATA nView
+
    DATA oMovimientosAlmacenRowSet
 
    DATA oLineasMovimientosAlmacenRowSet
 
-   DATA cCurrentCode
-
    DATA nLabelsToPrint
 
    DATA nLabelsPrinted
+
+   DATA nRowsToSkip
+
+   METHOD New( oController )
 
    METHOD setRowSet( oRowSet )         INLINE ( ::oLineasMovimientosAlmacenRowSet := oRowSet )
 
@@ -26,34 +30,39 @@ CLASS MovimientosAlmacenLabel FROM SQLBaseReport
 
    METHOD Synchronize() 
 
-   METHOD getSerializeColumns()
-
    METHOD skipper()
 
-   METHOD gotop()
+   METHOD goTop()
+
+   METHOD fieldGet( cField )
+
+   METHOD calculateRowsToSkip()
+
+   METHOD resetLabelsToPrint()      INLINE ( ::nLabelsPrinted := 1,;
+                                             ::nLabelsToPrint := ::oLineasMovimientosAlmacenRowSet:fieldGet( 'total_unidades' ) )
 
 END CLASS
 
 //---------------------------------------------------------------------------//
 
-METHOD getSerializeColumns()
+METHOD New( oController )
 
-   local nField 
-   local cSerializeColumns    := ""
+   ::Super:New( oController )
 
-   for nField := 1 to ::oLineasMovimientosAlmacenRowSet:fieldCount()
-      cSerializeColumns       += ::oLineasMovimientosAlmacenRowSet:fieldName( nField ) + ", " 
-   next
+   ::oEvents:set( "loadedFromString", {|| ::calculateRowsToSkip() } )
 
-   msgalert( cSerializeColumns, "cSerializeColumns" )
-
-RETURN ( cSerializeColumns )
+RETURN ( Self )
 
 //---------------------------------------------------------------------------//
 
 METHOD buildData() 
 
+   ::nView     := D():CreateView()
+
    ::oFastReport:ClearDataSets()
+
+   ::oFastReport:SetWorkArea(     "Artículos", ( D():Articulos( ::nView ) )->( Select() ) )
+   ::oFastReport:SetFieldAliases( "Artículos", cItemsToReport( aItmArt() ) )
 
    ::oFastReport:setUserDataSet( "Lineas de movimientos de almacén",;
                                  MovimientosAlmacenLineasRepository():getSerializedColumnsSentenceToLabels(),;
@@ -61,7 +70,18 @@ METHOD buildData()
                                  {|| ::skipper() },;
                                  {|| ::oLineasMovimientosAlmacenRowSet:skip(-1) },;
                                  {|| ::oLineasMovimientosAlmacenRowSet:eof() },;
-                                 {|cField| ::oLineasMovimientosAlmacenRowSet:fieldGet( cField ) } )
+                                 {|cField| ::fieldGet( cField ) } )
+
+   ::oFastReport:SetMasterDetail( "Artículos", "Lineas de movimientos de almacén", {|| msgalert( ::fieldget( "codigo_articulo" ) ), ::fieldget( "codigo_articulo" ) } )
+   ::oFastReport:SetResyncPair(   "Artículos", "Lineas de movimientos de almacén" )
+
+RETURN NIL
+
+//---------------------------------------------------------------------------//
+
+METHOD Synchronize() 
+
+   D():setScopeArticulos( ::fieldget( "codigo_articulo" ), ::nView )
 
 RETURN NIL
 
@@ -69,23 +89,23 @@ RETURN NIL
 
 METHOD skipper()
 
-   msgalert( "skipper" )
+   if ::nRowsToSkip > 0
+      
+      ::nRowsToSkip--
+
+      RETURN ( 0 )
+
+   end if 
 
    ::nLabelsPrinted++
-
-   msgalert( ::nLabelsPrinted, "nLabelsPrinted skipper" )
-
-   msgalert( ::nLabelsToPrint, "nLabelsToPrint skipper" )
 
    if ::nLabelsPrinted > ::nLabelsToPrint  
 
       ::oLineasMovimientosAlmacenRowSet:skip( 1 )   
 
-      ::nLabelsPrinted     := 1
+      ::resetLabelsToPrint()
 
-      ::cCurrentCode       := ::oLineasMovimientosAlmacenRowSet:fieldGet( 'codigo_articulo' )
-
-      ::nLabelsToPrint     := ::oLineasMovimientosAlmacenRowSet:fieldGet( 'total_unidades' )
+      ::Synchronize()
 
    end if 
 
@@ -95,34 +115,50 @@ RETURN ( 0 )
 
 METHOD gotop()
 
-   msgalert( "gotop" )
-   
-   ::nLabelsPrinted     := 1
+   ::resetLabelsToPrint()
 
-   ::cCurrentCode       := ::oLineasMovimientosAlmacenRowSet:fieldGet( 'codigo_articulo' )
-
-   ::nLabelsToPrint     := ::oLineasMovimientosAlmacenRowSet:fieldGet( 'total_unidades' )
-
-   msgalert( ::cCurrentCode, "cCurrentCode" )
-
-   msgalert( ::nLabelsToPrint, "nLabelsToPrint" )
+   ::Synchronize()
 
 RETURN ( ::oLineasMovimientosAlmacenRowSet:gotop() )
 
 //---------------------------------------------------------------------------//
 
+METHOD fieldGet( cField )
+
+   if ::nRowsToSkip > 0
+      RETURN ( "" )
+   end if 
+
+RETURN ( ::oLineasMovimientosAlmacenRowSet:fieldGet( cField ) )
+
+//---------------------------------------------------------------------------//
+
 METHOD freeData() 
 
-RETURN NIL
+   D():DeleteView( ::nView )
 
-//---------------------------------------------------------------------------//
-
-METHOD Synchronize() 
-
-   //msgalert( ::oMovimientosAlmacenRowSet:fieldget( "uuid" ), "uuid" )
+   msgalert( "freeData")
 
 RETURN NIL
 
 //---------------------------------------------------------------------------//
 
+METHOD calculateRowsToSkip()
+
+   local nHeight        := ::oFastReport:GetProperty( "MasterData", "Height" )
+   local nColumns       := ::oFastReport:GetProperty( "MainPage", "Columns" )
+   local nPaperHeight   := ::oFastReport:GetProperty( "MainPage", "PaperHeight" ) * fr01cm
+
+   ::nRowsToSkip        := 0
+
+   if !empty( nPaperHeight ) .and. !empty( nHeight ) .and. !empty( nColumns )
+
+      ::nRowsToSkip     := ( ::oController:getColumnaInicio() - 1 ) * int( nPaperHeight / nHeight )
+      ::nRowsToSkip     += ( ::oController:getFilaInicio() - 1 )
+
+   end if 
+
+RETURN NIL
+
+//---------------------------------------------------------------------------//
 

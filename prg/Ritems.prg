@@ -4104,6 +4104,8 @@ Static Function VisualEdtDocs( dbfDoc )
             :end()
          end object
 
+         oFr:DestroyFr()
+
          // DesignLabelRemesasMovimientosAlmacen( oFr, dbfDoc )
 
       case cTipo == "SA"

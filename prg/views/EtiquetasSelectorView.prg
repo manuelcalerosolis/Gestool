@@ -167,7 +167,7 @@ METHOD Activate()
          BITMAP      "LUPA" ;
          OF          ::oPages:aDialogs[ 1 ]
 
-         ::oFormatoLabel:bValid  := {|| DocumentosModel():exist( ::cFormatoLabel ) }
+         ::oFormatoLabel:bValid  := {|| ::oController:validateFormatoDocumento() }
          ::oFormatoLabel:bHelp   := {|| brwDocumento( ::oFormatoLabel, ::oFormatoLabel:oHelpText, ::inicialDoc ) }
 
       TBtnBmp():ReDefine( 220, "gc_document_text_pencil_12",,,,, {|| EdtDocumento( ::cFormatoLabel ) }, ::oPages:aDialogs[ 1 ], .f., , .f., "Modificar formato de etiquetas" )
@@ -431,6 +431,8 @@ METHOD startDialog()
 
    ::oSufijoInicio:Hide()
    ::oSufijoFin:Hide()
+
+   ::oFormatoLabel:lValid()
 
 RETURN ( self )
 
