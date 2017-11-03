@@ -4,7 +4,7 @@
 
 //---------------------------------------------------------------------------//
 
-CLASS SQLNumerosSeriesModel FROM SQLBaseEmpresasModel
+CLASS SQLNumerosSeriesModel FROM SQLBaseModel
 
    DATA cTableName                  INIT "numeros_series"
 

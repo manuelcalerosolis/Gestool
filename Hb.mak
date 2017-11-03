@@ -539,7 +539,6 @@ ReindexaPresenter.prg                                 			\
 ReindexaView.prg                                      			\
 BaseModel.prg 																	\
 SQLBaseModel.prg 																\
-SQLBaseEmpresasModel.prg 													\
 SQLBaseController.prg 														\
 SQLNavigatorController.prg													\
 SQLHeaderController.prg 													\
@@ -607,6 +606,7 @@ SqlMigrations.prg 															\
 SQLNumerosSeriesModel.prg 													\
 NumerosSeriesController.prg 								  				\
 NumerosSeriesView.prg 														\
+SQLExportableModel.prg 														\
 
 C               =       	            								\
 Img2pdf.c               	            								\
@@ -1133,7 +1133,6 @@ ReindexaPresenter.obj                              				\
 ReindexaView.obj                                   				\
 BaseModel.obj 																	\
 SQLBaseModel.Obj 																\
-SQLBaseEmpresasModel.Obj 													\
 SQLBaseController.Obj 														\
 SQLNavigatorController.obj 												\
 SQLHeaderController.obj														\
@@ -1185,6 +1184,7 @@ SqlMigrations.obj 															\
 SQLNumerosSeriesModel.obj 													\
 NumerosSeriesController.obj 												\
 NumerosSeriesView.obj 														\
+SQLExportableModel.obj 														\
 
 .PRG.OBJ:
   	$(HB)\Bin\Harbour $? /n /p$(PPO)\$&.ppo /w /es2 /i$(FWINCLUDE) /gc0 /i$(HBINCLUDE) /i$(GTINCLUDE) /o$(OBJ)\$&.c
@@ -1699,7 +1699,6 @@ $(OBJ)\Reporting.obj                         						+
 $(OBJ)\ViewReporting.obj 													+
 $(OBJ)\BaseModel.obj 														+
 $(OBJ)\SQLBaseModel.obj 													+
-$(OBJ)\SQLBaseEmpresasModel.obj 											+
 $(OBJ)\SQLBaseController.obj 												+
 $(OBJ)\SQLNavigatorController.obj										+
 $(OBJ)\SQLHeaderController.obj 											+
@@ -1751,6 +1750,7 @@ $(OBJ)\SqlMigrations.obj 													+
 $(OBJ)\SQLNumerosSeriesModel.obj 										+
 $(OBJ)\NumerosSeriesController.obj 										+
 $(OBJ)\NumerosSeriesView.obj 												+
+$(OBJ)\SQLExportableModel.obj 											+
 $(OBJ)\Events.obj              		
 $<,$*
 $(FWLIB)\FiveH.lib               										+

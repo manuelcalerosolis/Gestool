@@ -4,7 +4,7 @@
 
 //---------------------------------------------------------------------------//
 
-CLASS SQLMovimientosAlmacenModel FROM SQLBaseEmpresasModel
+CLASS SQLMovimientosAlmacenModel FROM SQLExportableModel
 
    DATA cTableName            INIT "movimientos_almacen"
 
@@ -22,7 +22,7 @@ END CLASS
 
 METHOD getColumns()
 
-   ::Super:getColumns()
+   ::getEmpresaColumns()
 
    hset( ::hColumns, "tipo_movimiento",   {  "create"    => "INT NOT NULL"                            ,;
                                              "text"      => "Tipo movimiento"                         ,;

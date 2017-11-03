@@ -277,14 +277,9 @@ RETURN ( .t. )
 
 FUNCTION Test()
 
-<<<<<<< HEAD
-   //MsgInfo( TStock():nSQLStockActual( "1", "000", "", "", "OAN0664132" ), "Almacen 000 lote OAN0664132" )
-   //MsgInfo( TStock():nSQLStockActual( "1", "1", "", "", "OAN0664132" ), "Almacen 1 lote OAN0664132" )
-   //MsgInfo( TStock():nSQLStockActual( "1", "2", "", "", "OAN0664132" ), "Almacen 2 lote OAN0664132" )
-   //MsgInfo( TStock():nSQLStockActual( "1", "3", "", "", "OAN0664132" ), "Almacen 3 lote OAN0664132" )
+   //SQLMovimientosAlmacenModel():New():CheckFolders()
+   //SQLMovimientosAlmacenLineasModel():New():CheckFolders()
 
-=======
->>>>>>> fd7acfe7d403f42aaf391803bbffe360f9af5895
 RETURN NIL 
 
 //---------------------------------------------------------------------------//

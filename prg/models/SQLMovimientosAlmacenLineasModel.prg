@@ -4,7 +4,7 @@
 
 //---------------------------------------------------------------------------//
 
-CLASS SQLMovimientosAlmacenLineasModel FROM SQLBaseEmpresasModel
+CLASS SQLMovimientosAlmacenLineasModel FROM SQLExportableModel
 
    DATA  cTableName         INIT "movimientos_almacen_lineas"
 
