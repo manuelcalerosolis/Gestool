@@ -24,13 +24,13 @@ CLASS SQLBaseView
    // Facades------------------------------------------------------------------
 
    METHOD getModel()                                  INLINE ( ::oController:oModel )
-   METHOD getModelBuffer()                            INLINE ( ::oController:oModel:hBuffer )  
-   METHOD getController()                             INLINE ( ::oController )    
-   METHOD getSenderController()                       INLINE ( ::oController:oSenderController )    
-
+   METHOD getModelBuffer()                            INLINE ( ::oController:oModel:hBuffer ) 
    METHOD setGetModelBuffer( uValue, cName )          INLINE ( iif(  hb_isnil( uValue ),;
                                                                      hGet( ::oController:oModel:hBuffer, cName ),;
                                                                      hSet( ::oController:oModel:hBuffer, cName, uValue ) ) )
+
+   METHOD getController()                             INLINE ( ::oController )    
+   METHOD getSenderController()                       INLINE ( ::oController:oSenderController )    
 
 END CLASS
 

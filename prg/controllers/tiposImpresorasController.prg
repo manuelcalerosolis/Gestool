@@ -22,8 +22,6 @@ METHOD New()
 
    ::oModel                := SQLTiposImpresorasModel():New( self )
 
-   ::oRepository           := TiposImpresorasRepository():New( self )
-
    ::oDialogView           := TiposImpresorasView():New( self )
 
    ::oValidator            := TiposImpresorasValidator():New( self )

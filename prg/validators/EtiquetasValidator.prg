@@ -6,20 +6,18 @@
 
 CLASS EtiquetasValidator FROM SQLBaseValidator
 
-   METHOD New( oController )
+   METHOD getValidators()  
  
 END CLASS
 
 //---------------------------------------------------------------------------//
 
-METHOD New( oController )
+METHOD getValidators()
 
    ::hValidators  := {  "nombre" => {  "required"     => "El nombre de la etiqueta es un dato requerido",;
                                        "unique"       => "El nombre de la etiqueta ya existe" } } 
 
-   ::Super:New( oController )
-
-RETURN ( Self )
+RETURN ( ::hValidators )
 
 //---------------------------------------------------------------------------//
 

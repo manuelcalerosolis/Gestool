@@ -10,7 +10,7 @@ CLASS EtiquetasView FROM SQLBaseView
 
    METHOD   buildSQLBrowse()
    
-   METHOD   Dialog()
+   METHOD   Activate()
 
    METHOD   insertAfterAppendButton()
 
@@ -44,7 +44,7 @@ Return ( Self )
 
 //----------------------------------------------------------------------------//
 
-METHOD Dialog()
+METHOD Activate()
 
    local oDlg
    local oBtnOk

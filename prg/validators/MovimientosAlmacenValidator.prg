@@ -6,7 +6,7 @@
 
 CLASS MovimientosAlmacenValidator FROM SQLBaseValidator
 
-   METHOD New( oController )
+   METHOD getValidators()
 
    METHOD requiredAlmacenOrigen()
 
@@ -26,7 +26,7 @@ END CLASS
 
 //---------------------------------------------------------------------------//
 
-METHOD New( oController )
+METHOD getValidators()
 
    ::hValidators  := { "almacen_origen"      => {  "requiredAlmacenOrigen"       => "El almacén origen es un dato requerido",;
                                                    "existAlmacenOrigen"          => "El almacén origen no existe",;
@@ -38,9 +38,7 @@ METHOD New( oController )
                         "agente"             => {  "emptyOrExistAgente"          => "El agente no existe" },; 
                         "divisa"             => {  "existDivisa"                 => "La divisa no existe" } } 
 
-   ::Super:New( oController )
-
-RETURN ( Self )
+RETURN ( ::hValidators )
 
 //---------------------------------------------------------------------------//
 

@@ -19,8 +19,6 @@ CLASS NumerosSeriesView FROM SQLBaseView
 
    DATA oDialog
 
-   METHOD New()
-
    METHOD getParentControler()                     INLINE ( ::oController:oSenderController )
    METHOD getParentDialogView()                    INLINE ( ::getParentControler():oDialogView )
    METHOD getaBuffer()                             INLINE ( ::oController:getaBuffer() )
@@ -28,26 +26,13 @@ CLASS NumerosSeriesView FROM SQLBaseView
    METHOD getValueBuffer( nArrayAt, key )          INLINE ( ::oController:getValueBuffer( nArrayAt, key ) )
    METHOD setValueBuffer( nArrayAt, key, value )   INLINE ( ::oController:setValueBuffer( nArrayAt, key, value ) )
 
-   METHOD Dialog()
+   METHOD Activate()
 
 END CLASS
 
 //---------------------------------------------------------------------------//
 
-METHOD New( oController )
-
-   ::nSerIni                  := 0
-   ::nSerFin                  := 0
-   ::nNumGen                  := 0
-   ::cPreFix                  := Space( 150 )
-
-   ::oController              := oController
-
-Return ( Self )
-
-//---------------------------------------------------------------------------//
-
-METHOD Dialog()
+METHOD Activate()
 
    local oBtn
    local oBmpGeneral

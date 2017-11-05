@@ -4,24 +4,14 @@
 //---------------------------------------------------------------------------//
 
 CLASS SituacionesView FROM SQLBaseView
-
-   METHOD   New()
-    
-   METHOD   Dialog()
+  
+   METHOD Activate()
 
 END CLASS
 
 //---------------------------------------------------------------------------//
 
-METHOD New( oController )
-
-   ::oController        := oController
-
-Return ( Self )
-
-//----------------------------------------------------------------------------//
-
-METHOD Dialog()
+METHOD Activate()
 
    local oDlg
    local oBtnOk

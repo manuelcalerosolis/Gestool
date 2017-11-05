@@ -33,8 +33,8 @@ CLASS MovimientosAlmacenLineasView FROM SQLBaseView
 
    METHOD New()
 
-   METHOD Dialog()
-   METHOD startDialog()
+   METHOD Activate()
+   METHOD startActivate()
 
    METHOD nTotalUnidadesArticulo()     INLINE ( notCaja( ::oController:oModel:hBuffer[ "cajas_articulo" ] ) * ::oController:oModel:hBuffer[ "unidades_articulo" ] )
 
@@ -58,7 +58,7 @@ Return ( Self )
 
 //---------------------------------------------------------------------------//
 
-METHOD Dialog()
+METHOD Activate()
 
    local oDlg
    local oBtn
@@ -261,7 +261,7 @@ METHOD Dialog()
 
       oDlg:AddFastKey( VK_F6, {|| oBtnSer:Click() } )
 
-      oDlg:bStart    := {|| ::startDialog() }
+      oDlg:bStart    := {|| ::startActivate() }
 
    ACTIVATE DIALOG oDlg CENTER 
 
@@ -269,7 +269,7 @@ RETURN ( oDlg:nResult == IDOK )
 
 //---------------------------------------------------------------------------//
 
-METHOD startDialog()
+METHOD startActivate()
 
    if ::oController:isAppendMode()
       ::oController:setModelBuffer( "codigo_articulo", space( 200 ) )

@@ -6,7 +6,7 @@
 
 CLASS MovimientosAlmacenLineasValidator FROM SQLBaseValidator
 
-   METHOD New( oController )
+   METHOD getValidators()
 
    METHOD isCodeGS128( value )
    METHOD existArticulo( value )                   INLINE ( empty( value ) .or. ArticulosModel():exist( value ) )
@@ -19,7 +19,7 @@ END CLASS
 
 //---------------------------------------------------------------------------//
 
-METHOD New( oController )
+METHOD getValidators()
 
    ::hValidators  := {  "codigo_articulo"          => {  "required"              => "El artículo es un dato requerido",;
                                                          "isCodeGS128"           => "",;
@@ -28,9 +28,7 @@ METHOD New( oController )
                         "valor_primera_propiedad"  => {  "existOrEmptyPrimeraPropiedad" => "La primera propiedad no existe" },;
                         "valor_segunda_propiedad"  => {  "existOrEmptySegundaPropiedad" => "La segunda propiedad no existe" } }
 
-   ::Super:New( oController )
-
-RETURN ( Self )
+RETURN ( ::hValidators )
 
 //---------------------------------------------------------------------------//
 

@@ -13,9 +13,14 @@ CLASS SQLNavigatorView FROM SQLBrowseableView
 
    DATA aRect
 
-   DATA oMenuTreeView
+   DATA oMdiChild
 
-   DATA oSQLBrowseView
+   DATA oTopWebBar
+
+   DATA oVerticalSplitter
+   DATA oHorizontalSplitter
+   
+   DATA oWindowsBar
 
    METHOD New( oController )
 
@@ -32,8 +37,6 @@ CLASS SQLNavigatorView FROM SQLBrowseableView
 
    // MDI child----------------------------------------------------------------
 
-   DATA oMdiChild
-
    METHOD CreateMDIChild()                INLINE ( ::oMdiChild := TMdiChild():New(  ::aRect[ 1 ], ::aRect[ 2 ], ::aRect[ 3 ], ::aRect[ 4 ], /*cTitle*/, /*nStyle*/, /*oMenu*/, oWnd(),;
                                                                                     /*oIcon*/, /*lVScroll*/, /*nClrText*/, /*nClrBack*/, /*oCursor*/, /*oBrush*/, /*lPixel*/ .t.,;
                                                                                     /*lHScroll*/, /*nHelpId*/, /*cBorder*/ "NONE", /*lSysMenu*/, /*lCaption*/ .f., /*lMin*/, /*lMax*/, /*nMenuInfo*/ ) )
@@ -46,20 +49,13 @@ CLASS SQLNavigatorView FROM SQLBrowseableView
 
    // Top webbar---------------------------------------------------------------
 
-   DATA oTopWebBar
-
    METHOD CreateTopWebBar()
 
    // Splitters----------------------------------------------------------------
 
-   DATA oVerticalSplitter
-   DATA oHorizontalSplitter
-
    METHOD CreateSplitters()
 
    // Aplication windows bar---------------------------------------------------
-
-   DATA oWindowsBar
 
    METHOD EnableWindowsBar()
 

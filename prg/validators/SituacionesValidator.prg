@@ -6,20 +6,18 @@
 
 CLASS SituacionesValidator FROM SQLBaseValidator
 
-   METHOD New( oController )
+   METHOD getValidartors()
  
 END CLASS
 
 //---------------------------------------------------------------------------//
 
-METHOD New( oController )
+METHOD getValidartors()
 
    ::hValidators  := {  "nombre" => {  "required"     => "El nombre de la situación es un dato requerido",;
                                        "unique"       => "El nombre de la situación ya existe" } } 
 
-   ::Super:New( oController )
-
-RETURN ( Self )
+RETURN ( ::hValidators )
 
 //---------------------------------------------------------------------------//
 

@@ -67,10 +67,24 @@ CLASS SQLBaseController
 
    METHOD getName()                                   INLINE ( strtran( lower( ::cTitle ), " ", "_" ) )
 
+   METHOD getIdFromRowSet()                           INLINE ( if( !empty( ::getRowSet() ), ( ::getRowSet():fieldGet( ::oModel:cColumnKey ) ), ) )
+
+   METHOD changeModelOrderAndOrientation()
+   METHOD getModelHeaderFromColumnOrder()             INLINE ( ::oModel:getHeaderFromColumnOrder() )
+
+   METHOD find( uValue, cColumn )                     INLINE ( ::oModel:find( uValue, cColumn ) )
+   METHOD findInRowSet( uValue, cColumn )             
+   METHOD findByIdInRowSet( uValue )                  INLINE ( if( !empty( ::getRowSet() ), ::getRowSet():find( uValue, "id", .t. ), ) )
+
+   METHOD startBrowse( oCombobox )
+   METHOD restoreBrowseState()
+
+   METHOD getRowSet()
+
    METHOD Validate( cColumn )                         INLINE ( if( !empty( ::oValidator ), ::oValidator:Validate( cColumn ), ) )
    METHOD Assert( cColumn, uValue )                   INLINE ( if( !empty( ::oValidator ), ::oValidator:Assert( cColumn, uValue ), ) )
 
-   // Facades -----------------------------------------------------------------
+   // Access -----------------------------------------------------------------
 
    METHOD isUserAccess()                              INLINE ( nAnd( ::nLevel, ACC_ACCE ) == 0 )
    METHOD notUserAccess()                             INLINE ( !::isUserAccess() )
@@ -85,11 +99,15 @@ CLASS SQLBaseController
    METHOD isUserZoom()                                INLINE ( nAnd( ::nLevel, ACC_ZOOM ) != 0 )
    METHOD notUserZoom()                               INLINE ( !::isUserZoom() )
 
-   METHOD setMode( nMode )                            INLINE ( ::nMode := nMode )
-   METHOD getMode()                                   INLINE ( ::nMode )
+   // Title -------------------------------------------------------------------
 
    METHOD setTitle( cTitle )                          INLINE ( ::cTitle := cTitle )
    METHOD getTitle()                                  INLINE ( ::cTitle )
+
+   // Modes--------------------------------------------------------------------
+
+   METHOD setMode( nMode )                            INLINE ( ::nMode := nMode )
+   METHOD getMode()                                   INLINE ( ::nMode )
 
    METHOD Append()
       METHOD setAppendMode()                          INLINE ( ::setMode( __append_mode__ ) )
@@ -111,20 +129,6 @@ CLASS SQLBaseController
       METHOD isNotZoomMode()                          INLINE ( ::nMode != __zoom_mode__ )
 
    METHOD Delete()
-
-   METHOD getIdFromRowSet()                           INLINE ( if( !empty( ::getRowSet() ), ( ::getRowSet():fieldGet( ::oModel:cColumnKey ) ), ) )
-
-   METHOD changeModelOrderAndOrientation()
-   METHOD getModelHeaderFromColumnOrder()             INLINE ( ::oModel:getHeaderFromColumnOrder() )
-
-   METHOD find( uValue, cColumn )                     INLINE ( ::oModel:find( uValue, cColumn ) )
-   METHOD findInRowSet( uValue, cColumn )             
-   METHOD findByIdInRowSet( uValue )                  INLINE ( if( !empty( ::getRowSet() ), ::getRowSet():find( uValue, "id", .t. ), ) )
-
-   METHOD startBrowse( oCombobox )
-   METHOD restoreBrowseState()
-
-   METHOD getRowSet()
 
    // Transactional system-----------------------------------------------------
 
@@ -234,7 +238,7 @@ METHOD Append()
 
       ::fireEvent( 'openingDialog' )     
 
-      if ::oDialogView:Dialog()
+      if ::oDialogView:Activate()
 
          ::fireEvent( 'closedDialog' )    
 
@@ -296,7 +300,7 @@ METHOD Duplicate()
 
    ::fireEvent( 'openingDialog' )
 
-   if ::oDialogView:Dialog()
+   if ::oDialogView:Activate()
 
       ::fireEvent( 'closedDialog' )    
 
@@ -347,7 +351,7 @@ METHOD Edit()
 
    ::fireEvent( 'openingDialog' )
 
-   if ::oDialogView:Dialog()
+   if ::oDialogView:Activate()
       
       ::fireEvent( 'closedDialog' )    
 
@@ -390,7 +394,7 @@ METHOD Zoom()
 
    ::fireEvent( 'openingDialog' )
 
-   ::oDialogView:Dialog()
+   ::oDialogView:Activate()
 
    ::fireEvent( 'closedDialog' )    
 

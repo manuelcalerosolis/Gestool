@@ -10,9 +10,7 @@ CLASS TiposVentasView FROM SQLBaseView
 
    DATA cEditControl 
 
-   METHOD New()
- 
-   METHOD Dialog()
+   METHOD Activate()
    
    METHOD createEditControl( hControl )
       METHOD selectorEditControl()
@@ -22,15 +20,7 @@ END CLASS
 
 //---------------------------------------------------------------------------//
 
-METHOD New( oController )
-
-   ::oController           := oController
-
-Return ( Self )
-
-//---------------------------------------------------------------------------//
-
-METHOD Dialog()
+METHOD Activate()
 
    local oDlg
    local oBtnOk
@@ -98,7 +88,6 @@ METHOD createEditControl( hControl, uValue )
       ::oEditControl:bValid   := {|| ::assertEditControl() }
 
       ::oEditControl:oHelpText:cText( ::getController():getRepository():getColumnWhereId( uValue ) )
-
 
    catch oError
 

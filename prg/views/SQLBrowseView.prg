@@ -33,8 +33,8 @@ CLASS SQLBrowseView
    METHOD selectColumnOrder( oCol )          INLINE ( ::oBrowse:selectColumnOrder( oCol ) )
    METHOD refreshCurrent()                   INLINE ( ::oBrowse:refreshCurrent() )
 
-   METHOD CreateFromCode()                   INLINE ( ::oBrowse:CreateFromCode() )
-   METHOD CreateFromResource( id )           INLINE ( ::oBrowse:CreateFromResource( id ) )
+   METHOD createFromCode()                   INLINE ( ::oBrowse:CreateFromCode() )
+   METHOD createFromResource( id )           INLINE ( ::oBrowse:CreateFromResource( id ) )
 
    METHOD setLDblClick( bLDblClick )         INLINE ( ::oBrowse:bLDblClick := bLDblClick )
 
@@ -54,16 +54,19 @@ CLASS SQLBrowseView
    METHOD getModelColumnsForBrowse()         INLINE ( ::getModel():getColumnsForBrowse() )
    METHOD getModelHeadersForBrowse()         INLINE ( ::getModel():getHeadersForBrowse() )
 
+   METHOD getComboBoxOrder()                 INLINE ( if( !empty( ::oSender ), ::oSender:getComboBoxOrder(), ) )
+   METHOD getMenuTreeView()                  INLINE ( if( !empty( ::oSender ), ::oSender:getMenuTreeView(), ) )
+
    // Columns------------------------------------------------------------------
 
-   METHOD GenerateColumns()
+   METHOD generateColumns()
 
-   METHOD AddColumn( cColumn, hColumn )
+   METHOD addColumn( cColumn, hColumn )
 
    // Events---------------------------------------------------------------------
 
    METHOD onKeyChar( nKey )
-   METHOD onClickHeader( oColumn )           VIRTUAL
+   METHOD onClickHeader( oColumn )          
 
 ENDCLASS
 
@@ -176,6 +179,28 @@ RETURN ( self )
 
 //---------------------------------------------------------------------------//
 
+METHOD onClickHeader( oColumn ) 
+
+   local oCombobox      := ::getComboBoxOrder()
+
+   if empty( oComboBox )
+      RETURN ( Self )
+   end if 
+
+   if empty( oColumn )
+      RETURN ( Self )
+   end if 
+
+   if ascan( oCombobox:aItems, oColumn:cHeader ) == 0
+      RETURN ( Self )
+   end if
+
+   oComboBox:Set( oColumn:cHeader )
+   
+RETURN ( ::oSender:onChangeCombo() )
+
+//---------------------------------------------------------------------------//
+
 METHOD onKeyChar( nKey )
 
 RETURN ( heval( ::oSender:oMenuTreeView:hFastKey, {|k,v| msgalert( nKey, "nKey" ), if( k == nKey, eval( v ), ) } ) ) 
@@ -193,8 +218,6 @@ CLASS SQLBrowseViewDialog FROM SQLBrowseView
 
    METHOD Activate()
 
-   METHOD onClickHeader( oColumn )
-
 ENDCLASS
 
 //----------------------------------------------------------------------------//
@@ -210,17 +233,6 @@ METHOD Activate( id, oWindow ) CLASS SQLBrowseViewDialog
 RETURN ( Self )
 
 //----------------------------------------------------------------------------//
-
-METHOD onClickHeader( oColumn )
-
-   ::getController():changeModelOrderAndOrientation( oColumn:cSortOrder, oColumn:cOrder )
-
-   ::selectColumnOrder( oColumn )
-
-   ::refreshCurrent()
-
-RETURN ( Self )
-
 //----------------------------------------------------------------------------//
 //----------------------------------------------------------------------------//
 //----------------------------------------------------------------------------//
@@ -236,11 +248,6 @@ CLASS SQLBrowseViewMDI FROM SQLBrowseView
    METHOD Activate()
 
    METHOD setSize( nTop, nLeft, nRight, nBottom )
-
-   METHOD onClickHeader( oColumn )   
-
-   METHOD getComboBoxOrder()              INLINE ( if( !empty( ::oSender ), ::oSender:getComboBoxOrder(), ) )
-   METHOD getMenuTreeView()               INLINE ( if( !empty( ::oSender ), ::oSender:getMenuTreeView(), ) )
 
 ENDCLASS
 
@@ -272,26 +279,3 @@ METHOD setSize( nTop, nLeft, nRight, nBottom ) CLASS SQLBrowseViewMDI
 RETURN ( self )
 
 //---------------------------------------------------------------------------//
-
-METHOD onClickHeader( oColumn ) CLASS SQLBrowseViewMDI
-
-   local oCombobox      := ::getComboBoxOrder()
-
-   if empty( oComboBox )
-      RETURN ( Self )
-   end if 
-
-   if empty( oColumn )
-      RETURN ( Self )
-   end if 
-
-   if ascan( oCombobox:aItems, oColumn:cHeader ) == 0
-      RETURN ( Self )
-   end if
-
-   oComboBox:Set( oColumn:cHeader )
-   
-RETURN ( ::oSender:onChangeCombo() )
-
-//---------------------------------------------------------------------------//
-

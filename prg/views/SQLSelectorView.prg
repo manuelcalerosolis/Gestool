@@ -44,7 +44,7 @@ RETURN ( Self )
 
 METHOD Activate()
 
-   DEFINE DIALOG ::oDialog RESOURCE "SELECTOR_VIEW"
+   DEFINE DIALOG ::oDialog RESOURCE "SELECTOR_VIEW" TITLE ( ::oController:getTitle() )
 
       REDEFINE GET         ::oGetSearch;
          VAR               ::cGetSearch;

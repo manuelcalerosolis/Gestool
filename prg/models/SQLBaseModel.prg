@@ -43,12 +43,15 @@ CLASS SQLBaseModel
    METHOD New()
    METHOD End()
 
+   // Facades -----------------------------------------------------------------
+
    METHOD setDatabase( oDb )                       INLINE ( ::oDatabase := oDb )
    METHOD getDatabase()                            INLINE ( if( empty( ::oDatabase ), getSQLDatabase(), ::oDatabase ) )
 
-   // Facades -----------------------------------------------------------------
-
    METHOD getTableName()                           INLINE ( ::cTableName )
+
+   // Columns-------------------------------------------------------------------
+
    METHOD getColumns()                             VIRTUAL
    METHOD getTableColumns() 
 
@@ -57,16 +60,18 @@ CLASS SQLBaseModel
    METHOD getColumnsForBrowse()
    METHOD getHeadersForBrowse()
 
+   METHOD TimeStampColumns()
+
    METHOD getValueFromColumn( cColumn, cKey )
    METHOD getHeaderFromColumn( cColumn )           INLINE ( ::getValueFromColumn( cColumn, "header" ) )
    METHOD getHeaderFromColumnOrder()               INLINE ( ::getValueFromColumn( ::cColumnOrder, "header" ) )
    METHOD getLenFromColumn( cColumn )              INLINE ( ::getValueFromColumn( cColumn, "len" ) )
 
+   // Sentences----------------------------------------------------------------
+
    METHOD getCreateTableSentence()
    METHOD getAlterTableSentences()
    
-   METHOD TimeStampFields()
-
    METHOD getGeneralSelect()
    METHOD getSelectSentence()
    
@@ -78,14 +83,15 @@ CLASS SQLBaseModel
 
    METHOD setGeneralSelect( cSelect )                 INLINE ( ::cGeneralSelect  := cSelect )
    METHOD setGeneralWhere( cWhere )                   INLINE ( ::cGeneralWhere   := cWhere )
+   METHOD getGeneralWhere( cSQLSelect )
+   
+   METHOD getEmpresaWhere()                           
+
+   METHOD getWhereOrAnd( cSQLSelect )                 INLINE ( if( hb_at( "WHERE", cSQLSelect ) != 0, " AND ", " WHERE " ) )
 
    // Where for columns---------------------------------------------------------
 
    METHOD isEmpresaColumn()                           INLINE ( hb_hhaskey( ::hColumns, "empresa" ) )
-   METHOD getWhereOrAnd( cSQLSelect )                 INLINE ( if( hb_at( "WHERE", cSQLSelect ) != 0, " AND ", " WHERE " ) )
-
-   METHOD getWhereGeneral( cSQLSelect )
-   METHOD getWhereEmpresa()                           
 
    // Get edit value for xbrowse-----------------------------------------------
 
@@ -123,8 +129,12 @@ CLASS SQLBaseModel
    METHOD getSelectByColumn()
    METHOD getSelectByOrder()
 
+   // Busquedas----------------------------------------------------------------
+
    METHOD setFind( cFind )                            INLINE ( ::cFind := cFind )
    METHOD find( cFind )
+   
+   // Busquedas----------------------------------------------------------------
 
    METHOD getBuffer( cColumn )                        
    METHOD setBuffer( cColumn, uValue )
@@ -193,7 +203,7 @@ RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 
-METHOD TimeStampFields()
+METHOD TimeStampColumns()
 
    hset( ::hColumns, "created_at",  {  "create"    => "DATETIME DEFAULT CURRENT_TIMESTAMP"      ,;
                                        "text"      => "Creación fecha y hora"                   ,;
@@ -218,9 +228,9 @@ METHOD getGeneralSelect()
 
    local cSQLSelect        := ::cGeneralSelect
 
-   cSQLSelect              := ::getWhereGeneral( cSQLSelect )
+   cSQLSelect              := ::getGeneralWhere( cSQLSelect )
 
-   cSQLSelect              := ::getWhereEmpresa( cSQLSelect )
+   cSQLSelect              := ::getEmpresaWhere( cSQLSelect )
 
 RETURN ( cSQLSelect )
 
@@ -238,7 +248,7 @@ RETURN ( cSQLSelect )
 
 //---------------------------------------------------------------------------//
 
-METHOD getWhereEmpresa( cSQLSelect )
+METHOD getEmpresaWhere( cSQLSelect )
 
    if !::isEmpresaColumn()
       RETURN ( cSQLSelect )
@@ -250,7 +260,7 @@ RETURN ( cSQLSelect )
 
 //---------------------------------------------------------------------------//
 
-METHOD getWhereGeneral( cSQLSelect )
+METHOD getGeneralWhere( cSQLSelect )
 
    if empty( ::cGeneralWhere )
       RETURN ( cSQLSelect )

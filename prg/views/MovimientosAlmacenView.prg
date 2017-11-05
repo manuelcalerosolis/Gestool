@@ -19,8 +19,8 @@ CLASS MovimientosAlmacenView FROM SQLBaseView
 
    METHOD New()
 
-   METHOD Dialog()
-   METHOD startDialog()
+   METHOD Activate()
+   METHOD startActivate()
 
    METHOD changeTipoMovimiento()    INLINE   (  iif(  ::oRadioTipoMovimento:nOption() == __tipo_movimiento_entre_almacenes__,;
                                                       ::oGetAlmacenOrigen:Show(),;
@@ -40,7 +40,7 @@ Return ( Self )
 
 //---------------------------------------------------------------------------//
 
-METHOD Dialog()
+METHOD Activate()
 
    local oBtnOk
    local oBtnEdit
@@ -205,7 +205,7 @@ METHOD Dialog()
          ::oDialog:AddFastKey( VK_F4, {|| oBtnDelete:Click() } )
       end if
 
-      ::oDialog:bStart    := {|| ::startDialog() }
+      ::oDialog:bStart    := {|| ::startActivate() }
 
    ::oDialog:Activate( , , , .t. ) 
 
@@ -215,7 +215,7 @@ RETURN ( ::oDialog:nResult == IDOK )
 
 //---------------------------------------------------------------------------//
 
-METHOD startDialog()
+METHOD startActivate()
    
    ::changeTipoMovimiento()
 

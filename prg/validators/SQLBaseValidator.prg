@@ -20,8 +20,11 @@ CLASS SQLBaseValidator
    METHOD New()
    METHOD End()
 
-   METHOD Validate( cColumn )          INLINE ( ::ProcessAll( cColumn, ::hValidators ) )
-   METHOD Assert( cColumn, uValue )    INLINE ( ::ProcessAll( cColumn, ::hAsserts, uValue ) )
+   METHOD getValidators()              VIRTUAL
+   METHOD getAsserts()                 VIRTUAL
+
+   METHOD Validate( cColumn, value )   INLINE ( ::ProcessAll( cColumn, ::getValidators(), value ) )
+   METHOD Assert( cColumn, uValue )    INLINE ( ::ProcessAll( cColumn, ::getAsserts(), uValue ) )
 
    METHOD ProcessAll()
       METHOD Process()
