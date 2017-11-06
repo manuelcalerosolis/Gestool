@@ -6,9 +6,7 @@
 
 //---------------------------------------------------------------------------//
 
-CLASS MovimientosAlmacenLabel FROM SQLBaseReport
-
-   DATA nView
+CLASS MovimientosAlmacenLabelReport FROM SQLBaseReport
 
    DATA oMovimientosAlmacenRowSet
 
@@ -57,12 +55,7 @@ RETURN ( Self )
 
 METHOD buildData() 
 
-   ::nView     := D():CreateView()
-
    ::oFastReport:ClearDataSets()
-
-   ::oFastReport:SetWorkArea(     "Artículos", ( D():Articulos( ::nView ) )->( Select() ) )
-   ::oFastReport:SetFieldAliases( "Artículos", cItemsToReport( aItmArt() ) )
 
    ::oFastReport:setUserDataSet( "Lineas de movimientos de almacén",;
                                  MovimientosAlmacenLineasRepository():getSerializedColumnsSentenceToLabels(),;
@@ -72,16 +65,11 @@ METHOD buildData()
                                  {|| ::oLineasMovimientosAlmacenRowSet:eof() },;
                                  {|cField| ::fieldGet( cField ) } )
 
-   ::oFastReport:SetMasterDetail( "Artículos", "Lineas de movimientos de almacén", {|| msgalert( ::fieldget( "codigo_articulo" ) ), ::fieldget( "codigo_articulo" ) } )
-   ::oFastReport:SetResyncPair(   "Artículos", "Lineas de movimientos de almacén" )
-
 RETURN NIL
 
 //---------------------------------------------------------------------------//
 
 METHOD Synchronize() 
-
-   D():setScopeArticulos( ::fieldget( "codigo_articulo" ), ::nView )
 
 RETURN NIL
 
@@ -134,8 +122,6 @@ RETURN ( ::oLineasMovimientosAlmacenRowSet:fieldGet( cField ) )
 //---------------------------------------------------------------------------//
 
 METHOD freeData() 
-
-   D():DeleteView( ::nView )
 
    msgalert( "freeData")
 

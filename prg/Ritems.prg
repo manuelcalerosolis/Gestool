@@ -4097,7 +4097,7 @@ Static Function VisualEdtDocs( dbfDoc )
 
       case cTipo == "MV"
 
-         with object ( MovimientosAlmacenLabel():New() )
+         with object ( MovimientosAlmacenLabelReport():New() )
             :setFastReport( oFr )
             :setReport( ( dbfDoc )->mReport )
             :Design()

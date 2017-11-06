@@ -66,6 +66,8 @@ CLASS TDotNetButton
       METHOD Selected()                          INLINE ( ::lSelected := .t. )
       METHOD UnSelected()                        INLINE ( ::lSelected := .f. )
 
+      METHOD Action()                            INLINE ( eval( ::bAction, self ) )
+
 ENDCLASS
 
 *******************************************************************************************************

@@ -1,6 +1,16 @@
 #include "FiveWin.Ch"
 #include "Factu.ch" 
 
+//------------------------------------------------------------------//
+
+FUNCTION externalArticulosModel( cMsg, u1, u2, u3, u4, u5, u6, u7, u8, u9, u10 )
+
+   if !empty( cMsg )
+      RETURN ( apoloSender( ArticulosModel(), cMsg, u1, u2, u3, u4, u5, u6, u7, u8, u9, u10 ) )
+   end if
+
+RETURN ( "" )
+
 //---------------------------------------------------------------------------//
 
 CLASS ArticulosModel FROM ADSBaseModel
@@ -63,13 +73,12 @@ METHOD getField( cCodigoArticulo, cField )
                      "WHERE Codigo = " + quoted( cCodigoArticulo ) 
 
    if ::ExecuteSqlStatement( cSql, @cStm )
-      RETURN ( ( cStm )->( fieldget(fieldpos( cField ) ) ) )
+      RETURN ( ( cStm )->( fieldget( fieldpos( cField ) ) ) )
    end if 
 
 RETURN ( nil )
 
 //---------------------------------------------------------------------------//
-
 
 METHOD getHash( cCodigoArticulo )
 

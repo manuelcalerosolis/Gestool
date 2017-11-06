@@ -3,7 +3,7 @@
 
 //------------------------------------------------------------------------//
 
-CLASS ImportarMovimientosAlmacenLineasView FROM SQLBaseView 
+CLASS ImportadorMovimientosAlmacenLineasView FROM SQLBaseView 
 
    DATA memoInventario
 

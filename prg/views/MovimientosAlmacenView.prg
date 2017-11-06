@@ -8,6 +8,13 @@ CLASS MovimientosAlmacenView FROM SQLBaseView
 
    DATA oDialog
 
+   DATA oOfficeBar
+
+   DATA oBtnOk
+   DATA oBtnEdit
+   DATA oBtnAppend
+   DATA oBtnDelete
+
    DATA oSQLBrowseView
 
    DATA oGetDivisa
@@ -20,7 +27,8 @@ CLASS MovimientosAlmacenView FROM SQLBaseView
    METHOD New()
 
    METHOD Activate()
-   METHOD startActivate()
+      METHOD startActivate()
+      METHOD initActivate()
 
    METHOD changeTipoMovimiento()    INLINE   (  iif(  ::oRadioTipoMovimento:nOption() == __tipo_movimiento_entre_almacenes__,;
                                                       ::oGetAlmacenOrigen:Show(),;
@@ -42,19 +50,7 @@ Return ( Self )
 
 METHOD Activate()
 
-   local oBtnOk
-   local oBtnEdit
-   local oBtnAppend
-   local oBtnDelete
-   local oBmpGeneral
-
-   DEFINE DIALOG ::oDialog RESOURCE "RemMov" TITLE ::lblTitle() + "movimientos de almacén"
-
-      REDEFINE BITMAP oBmpGeneral ;
-        ID           990 ;
-        RESOURCE     "gc_package_pencil_48" ;
-        TRANSPARENT ;
-        OF           ::oDialog
+   DEFINE DIALOG ::oDialog RESOURCE "Movimientos_Almacen" TITLE ::lblTitle() + "movimientos de almacén"
 
       REDEFINE GET   ::oController:oModel:hBuffer[ "delegacion" ] ;
          ID          110 ;
@@ -145,7 +141,7 @@ METHOD Activate()
          OF          ::oDialog
 
       // Buttons lineas-------------------------------------------------------
-
+/*
       REDEFINE BUTTON oBtnAppend ;
          ID          500 ;
          OF          ::oDialog ;
@@ -173,7 +169,7 @@ METHOD Activate()
          ID          509 ;
          OF          ::oDialog ;
          ACTION      ( ::oController:oImportadorController:Activate() )
-
+*/
       // Browse lineas--------------------------------------------------------- 
 
       ::oSQLBrowseView              := SQLBrowseViewDialog():New( Self )
@@ -184,32 +180,11 @@ METHOD Activate()
 
       ::oSQLBrowseView:setView()
 
-      // Buttons---------------------------------------------------------------
-
-      REDEFINE BUTTON oBtnOk ;
-         ID          IDOK ;
-         OF          ::oDialog ;
-         WHEN        ( ::oController:isNotZoomMode() ) ;
-         ACTION      ( if( validateDialog( ::oDialog ), ::oDialog:end( IDOK ), ) )
-
-      REDEFINE BUTTON ;
-         ID          IDCANCEL ;
-         OF          ::oDialog ;
-         CANCEL ;
-         ACTION      ( ::oDialog:End() )
-
-      if ::oController:isNotZoomMode()
-         ::oDialog:AddFastKey( VK_F5, {|| oBtnOk:Click() } )
-         ::oDialog:AddFastKey( VK_F2, {|| oBtnAppend:Click() } )
-         ::oDialog:AddFastKey( VK_F3, {|| oBtnEdit:Click() } )
-         ::oDialog:AddFastKey( VK_F4, {|| oBtnDelete:Click() } )
-      end if
-
       ::oDialog:bStart    := {|| ::startActivate() }
 
-   ::oDialog:Activate( , , , .t. ) 
+   ::oDialog:Activate( , , , .t., , , {|| ::initActivate() } ) 
 
-   oBmpGeneral:End()
+   ::oOfficeBar:End()
 
 RETURN ( ::oDialog:nResult == IDOK )
 
@@ -226,6 +201,52 @@ METHOD startActivate()
    ::oController:stampGrupoMovimientoNombre( ::oGetGrupoMovimiento )
 
    ::oController:stampAgente( ::oGetAgente )
+
+   if ::oController:isNotZoomMode()
+      ::oDialog:AddFastKey( VK_F5, {|| ::oBtnOk:Action() } )
+      ::oDialog:AddFastKey( VK_F2, {|| ::oBtnAppend:Action() } )
+      ::oDialog:AddFastKey( VK_F3, {|| ::oBtnEdit:Action() } )
+      ::oDialog:AddFastKey( VK_F4, {|| ::oBtnDelete:Action() } )
+   end if
+
+RETURN ( Self )
+
+//---------------------------------------------------------------------------//
+
+METHOD initActivate()
+
+   local oGrupo
+   local oCarpeta
+   
+   ::oOfficeBar               := TDotNetBar():New( 0, 0, 2020, 115, ::oDialog, 1 )
+   ::oOfficeBar:Disable()
+
+   ::oOfficeBar:lPaintAll     := .f.
+   ::oOfficeBar:lDisenio      := .f.
+
+   ::oOfficeBar:SetStyle( 1 )
+
+   ::oDialog:oTop             := ::oOfficeBar
+
+   oCarpeta                   := TCarpeta():New( ::oOfficeBar, "Movimientos almacén" )
+
+   oGrupo                     := TDotNetGroup():New( oCarpeta, 66, "", .f. )
+      TDotNetButton():New( 60, oGrupo, "gc_package_pencil_48", "", 1, {|| msgalert("Append") }, , , .f., .f., .f. )
+
+   oGrupo                     := TDotNetGroup():New( oCarpeta, 246, "Líneas", .f. )
+      ::oBtnAppend            := TDotNetButton():New( 60, oGrupo, "new32", "Añadir [F2]", 1, {|| ::oController:oLineasController:Append() }, , {|| ::oController:isNotZoomMode() }, .f., .f., .f. )
+      ::oBtnEdit              := TDotNetButton():New( 60, oGrupo, "gc_pencil__32", "Modificar [F3]", 2, {|| ::oController:oLineasController:Edit() }, , {|| ::oController:isNotZoomMode() }, .f., .f., .f. )
+      ::oBtnDelete            := TDotNetButton():New( 60, oGrupo, "del32", "Eliminar [F4]", 3, {|| ::oController:oLineasController:Delete( ::oSQLBrowseView:getBrowseSelected() ) }, , {|| ::oController:isNotZoomMode() }, .f., .f., .f. )
+                                 TDotNetButton():New( 60, oGrupo, "gc_binocular_32", "Buscar", 4, {|| ::oController:oLineasController:Search() }, , , .f., .f., .f. )
+
+   oGrupo                     := TDotNetGroup():New( oCarpeta, 66, "Acciones", .f. )
+
+   oGrupo                     := TDotNetGroup():New( oCarpeta, 186, "Acciones", .f. )
+      ::oBtnOk                := TDotNetButton():New( 60, oGrupo, "gc_floppy_disk_32", "Aceptar [F5]", 1, {|| if( validateDialog( ::oDialog ), ::oDialog:end( IDOK ), ) }, , , .f., .f., .f. )
+                                 TDotNetButton():New( 60, oGrupo, "gc_floppy_disk_32", "Aceptar y añadir [F6]", 2, {|| if( validateDialog( ::oDialog ), ::oDialog:end( IDOK ), ) }, , , .f., .f., .f. )
+                                 TDotNetButton():New( 60, oGrupo, "End32", "Salir", 3, {|| ::oDialog:End() }, , , .f., .f., .f. )
+
+   ::oOfficeBar:Enable()
 
 RETURN ( Self )
 
