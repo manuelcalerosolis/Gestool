@@ -118,7 +118,7 @@ METHOD generateLabels()
       RETURN ( self )  
    end if 
 
-   oMovimientosAlmacenLabelReport         := MovimientosAlmacenLabelReport():New( Self )
+   oMovimientosAlmacenLabelReport   := MovimientosAlmacenLabelReport():New( Self )
 
    oMovimientosAlmacenLabelReport:setRowSet( ::oRowSet )
    oMovimientosAlmacenLabelReport:setDevice( IS_SCREEN )

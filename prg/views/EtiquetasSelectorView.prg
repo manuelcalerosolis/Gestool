@@ -72,6 +72,12 @@ CLASS EtiquetasSelectorView FROM SQLBaseView
 
    METHOD Siguiente() 
 
+   METHOD sumarUnidades()           INLINE ( ::getRowSet():fieldput( 'total_unidades', ::getRowSet():fieldGet( 'total_unidades' ) + 1 ) ) 
+
+   METHOD restarUnidades()          INLINE ( iif(  ::getRowSet():fieldGet( 'total_unidades' ) > 0,;
+                                                   ::getRowSet():fieldput( 'total_unidades', ::getRowSet():fieldGet( 'total_unidades' ) - 1 ),;
+                                                   ) ) 
+
 ENDCLASS
 
 //----------------------------------------------------------------------------//
@@ -209,22 +215,12 @@ METHOD Activate()
       ::oBrowse:CreateFromResource( 180 )
 
       with object ( ::oBrowse:AddCol() )
-         :cHeader          := "Sl. Seleccionada"
-         :bEditValue       := {|| ::getRowSet():fieldGet( 'selected' ) == 1 }
-         :nWidth           := 20
-         :cSortOrder       := 'select'
-         :SetCheck( { "Sel16", "Nil16" } )
-         :bLClickHeader    := {| nMRow, nMCol, nFlags, oColumn | ::oController:clickingHeader( oColumn ) }
-      end with
-
-      with object ( ::oBrowse:AddCol() )
          :cHeader          := "Id"
          :bEditValue       := {|| ::getRowSet():fieldGet( 'id' ) }
          :cSortOrder       := 'movimientos_almacen_lineas.id'
          :nWidth           := 40
          :nDataStrAlign    := 1
          :nHeadStrAlign    := 1
-         :nEditType        := 1
          :bLClickHeader    := {| nMRow, nMCol, nFlags, oColumn | ::oController:clickingHeader( oColumn ) }
       end with
 
@@ -261,6 +257,32 @@ METHOD Activate()
       end with
 
       with object ( ::oBrowse:AddCol() )
+         :cHeader             := "Sumar unidades"
+         :bStrData            := {|| "" }
+         :bOnPostEdit         := {|| .t. }
+         :bEditBlock          := {|| ::sumarUnidades() }
+         :nEditType           := 5
+         :nWidth              := 20
+         :nHeadBmpNo          := 1
+         :nBtnBmp             := 1
+         :nHeadBmpAlign       := 1
+         :AddResource( "gc_navigate_plus_16" )
+      end with
+
+      with object ( ::oBrowse:AddCol() )
+         :cHeader             := "Restar unidades"
+         :bStrData            := {|| "" }
+         :bOnPostEdit         := {|| .t. }
+         :bEditBlock          := {|| ::restarUnidades() }
+         :nEditType           := 5
+         :nWidth              := 20
+         :nHeadBmpNo          := 1
+         :nBtnBmp             := 1
+         :nHeadBmpAlign       := 1
+         :AddResource( "gc_navigate_minus_16" )
+      end with
+
+      with object ( ::oBrowse:AddCol() )
          :cHeader          := "Etiquetas"
          :bEditValue       := {|| ::getRowSet():fieldGet( 'total_unidades' ) }
          :cSortOrder       := 'total_unidades'
@@ -270,6 +292,7 @@ METHOD Activate()
          :nHeadStrAlign    := 1
          :nEditType        := 1
          :bLClickHeader    := {| nMRow, nMCol, nFlags, oColumn | ::oController:clickingHeader( oColumn ) }
+         :bOnPostEdit      := {|o,x| ::getRowSet():fieldput( 'total_unidades', x ) }
       end with
 
 /*
@@ -446,7 +469,7 @@ METHOD Anterior()
 
    SetWindowText( ::oBtnSiguiente:hWnd, "Siguien&te >" )
 
-Return ( Self )
+RETURN ( Self )
 
 //--------------------------------------------------------------------------//
 
@@ -479,7 +502,7 @@ METHOD Siguiente()
 
    end case
 
-Return ( Self )
+RETURN ( Self )
 
 //---------------------------------------------------------------------------//
 

@@ -167,8 +167,8 @@ METHOD Default()
 
    ::oTreeView:bChanged := {|| ::onChange() }
 
-   if !empty( ::getController():cImage )
-      ::oButtonMain     := ::oTreeView:Add( ::getController():cTitle, ::AddImage( ::getController():cImage ) )
+   if !empty( ::getController():getImage( "16" ) )
+      ::oButtonMain     := ::oTreeView:Add( ::getController():cTitle, ::AddImage( ::getController():getImage( "16" ) ) )
    end if 
 
 RETURN ( Self )

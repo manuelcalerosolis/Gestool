@@ -1,3 +1,5 @@
+#define IDOKANDNEW                      3
+
 /*
 Fichero de Cabecera para la Aplcaci¢n de Facturaci¢n 3.0 para Windows
 */

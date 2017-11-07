@@ -163,8 +163,8 @@ FUNCTION CntFacCli( lSimula, lPago, lExcCnt, lMessage, oTree, nAsiento, aSimula,
       while ( ( dbfFacCliL )->cSerie + str( ( dbfFacCliL )->nNumFac ) + ( dbfFacCliL )->cSufFac == nFactura .and. !( dbfFacCliL )->( eof() ) )
 
          if !( dbfFacCliL )->lTotLin                           .and. ;
-            lValLine( dbfFacCliL )                             .and. ;
-            nTotLFacCli( dbfFacCliL, nDouDiv, nRouDiv, nil, .t., .t., .t. ) != 0
+            lValLine( dbfFacCliL ) //                            .and. ;
+            // nTotLFacCli( dbfFacCliL, nDouDiv, nRouDiv, nil, .t., .t., .t. ) != 0
 
             if ( lExcCnt == nil                                .or.;    // Entran todos
                ( lExcCnt .and. ( dbfFacCliL )->nCtlStk != 2 )  .or.;    // Articulos sin contadores
@@ -288,6 +288,8 @@ FUNCTION CntFacCli( lSimula, lPago, lExcCnt, lMessage, oTree, nAsiento, aSimula,
    Descuentos sobres grupos de Venta
    --------------------------------------------------------------------------
    */
+
+   msgalert( hb_valtoexp( aVentas ), "aVentas" )
 
    for n := 1 to Len( aVentas )
       nRestaDescuentoVenta( @aVentas[ n, 3 ], nDtoEsp )

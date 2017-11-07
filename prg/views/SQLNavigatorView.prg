@@ -95,7 +95,7 @@ METHOD Activate()
 
    // Browse view -------------------------------------------------------------
 
-   ::oSQLBrowseView:Activate( dfnSplitterHeight + dfnSplitterWidth, dfnTreeViewWidth + dfnSplitterWidth, ::oMdiChild:nRight - ::oMdiChild:nLeft, ::oMdiChild:nBottom - ::oMdiChild:nTop )
+   ::oSQLBrowseView:Activate( dfnSplitterHeight + dfnSplitterWidth, dfnTreeViewWidth + dfnSplitterWidth, ::oMdiChild:nRight - ::oMdiChild:nLeft, ::oMdiChild:nBottom - ::oMdiChild:nTop - dfnSplitterHeight - 162 )
 
    ::oSQLBrowseView:setView()
 

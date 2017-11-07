@@ -54,7 +54,8 @@ METHOD New()
 
    ::cTitle                   := "Movimientos de almacén"
 
-   ::cImage                   := "gc_pencil_package_16"
+   ::hImage                   := {  "16"  => "gc_pencil_package_16",;
+                                    "48"  => "gc_pencil_package_48" }
 
    ::nLevel                   := nLevelUsr( "01050" )
 

@@ -8,6 +8,8 @@
 
 CLASS MovimientosAlmacenLineasView FROM SQLBaseView
 
+   DATA oBtnSerie
+
    DATA oGetLote
    DATA oGetFechaCaducidad
    DATA oGetCodigoArticulo
@@ -35,6 +37,7 @@ CLASS MovimientosAlmacenLineasView FROM SQLBaseView
 
    METHOD Activate()
    METHOD startActivate()
+   METHOD initActivate()
 
    METHOD nTotalUnidadesArticulo()     INLINE ( notCaja( ::oController:oModel:hBuffer[ "cajas_articulo" ] ) * ::oController:oModel:hBuffer[ "unidades_articulo" ] )
 
@@ -60,11 +63,7 @@ Return ( Self )
 
 METHOD Activate()
 
-   local oDlg
-   local oBtn
-   local oBtnSer
-
-   DEFINE DIALOG oDlg RESOURCE "LMovAlm" TITLE ::lblTitle() + "lineas de movimientos de almacén"
+   DEFINE DIALOG ::oDialog RESOURCE "MOVIMIENTOS_ALMACEN_LINEAS" TITLE ::lblTitle() + ::oController:getTitle()
 
       REDEFINE GET   ::oGetCodigoArticulo ;
          VAR         ::oController:oModel:hBuffer[ "codigo_articulo" ] ;
@@ -72,7 +71,7 @@ METHOD Activate()
          WHEN        ( ::oController:isAppendMode() ) ;
          PICTURE     "@!" ;
          BITMAP      "Lupa" ;
-         OF          oDlg
+         OF          ::oDialog
 
       ::oGetCodigoArticulo:bKeyDown := {|nKey| ::searchCodeGS128( nKey ) }
       ::oGetCodigoArticulo:bValid   := {|| ::oController:validateCodigoArticulo() }
@@ -82,13 +81,13 @@ METHOD Activate()
          VAR         ::oController:oModel:hBuffer[ "nombre_articulo" ] ;
          ID          110 ;
          WHEN        ( .f. ) ;
-         OF          oDlg
+         OF          ::oDialog
 
       REDEFINE GET   ::oGetLote ;
          VAR         ::oController:oModel:hBuffer[ "lote" ] ;
          ID          155 ;
          WHEN        ( ::oController:isNotZoomMode() ) ;
-         OF          oDlg
+         OF          ::oDialog
 
       ::oGetLote:bValid   := {|| ::oController:validateLote() }
 
@@ -98,7 +97,7 @@ METHOD Activate()
          VAR         ::oController:oModel:hBuffer[ "fecha_caducidad" ] ;
          ID          340 ;
          WHEN        ( ::oController:isNotZoomMode() ) ;
-         OF          oDlg
+         OF          ::oDialog
 
       // Valor de primera propiedad--------------------------------------------
 
@@ -110,7 +109,7 @@ METHOD Activate()
          PICTURE     "@!" ;
          BITMAP      "LUPA" ;
          WHEN        ( ::oController:isNotZoomMode() ) ;
-         OF          oDlg
+         OF          ::oDialog
 
       ::oGetValorPrimeraPropiedad:bValid  := {|| ::oController:validatePrimeraPropiedad() }
       ::oGetValorPrimeraPropiedad:bHelp   := {|| brwPropiedadActual( ::oGetValorPrimeraPropiedad, ::oGetValorPrimeraPropiedad:oHelpText, ::oController:oModel:hBuffer[ "codigo_primera_propiedad" ] ) }
@@ -125,14 +124,14 @@ METHOD Activate()
          PICTURE     "@!" ;
          BITMAP      "LUPA" ;
          WHEN        ( ::oController:isNotZoomMode() ) ;
-         OF          oDlg
+         OF          ::oDialog
 
       ::oGetValorSegundaPropiedad:bValid  := {|| ::oController:validateSegundaPropiedad() }
       ::oGetValorSegundaPropiedad:bHelp   := {|| brwPropiedadActual( ::oGetValorSegundaPropiedad, ::oGetValorSegundaPropiedad:oHelpText, ::oController:oModel:hBuffer[ "codigo_segunda_propiedad" ] ) }
 
       // Property browse-------------------------------------------------------
 
-      ::oBrowsePropertyView               := SQLPropertyBrowseView():New( 600, oDlg )
+      ::oBrowsePropertyView               := SQLPropertyBrowseView():New( 600, ::oDialog )
 
       // Bultos----------------------------------------------------------------
 
@@ -143,9 +142,9 @@ METHOD Activate()
          SPINNER ;
          WHEN        ( uFieldEmpresa( "lUseBultos" ) .and. ::oController:isNotZoomMode() ) ;
          PICTURE     MasUnd() ;
-         OF          oDlg
+         OF          ::oDialog
 
-      ::oGetBultosArticulo:bChange     := {|| ::refreshUnidadesImportes() }
+      ::oGetBultosArticulo:bChange        := {|| ::refreshUnidadesImportes() }
 
       // Cajas-----------------------------------------------------------------
 
@@ -156,7 +155,7 @@ METHOD Activate()
          SPINNER ;
          WHEN        ( uFieldEmpresa( "lUseCaj" ) .and. ::oController:isNotZoomMode() ) ;
          PICTURE     MasUnd() ;
-         OF          oDlg
+         OF          ::oDialog
 
       ::oGetCajasArticulo:bChange      := {|| ::refreshUnidadesImportes() }
 
@@ -169,7 +168,7 @@ METHOD Activate()
          SPINNER ;
          WHEN        ( ::oController:isNotZoomMode() ) ;
          PICTURE     MasUnd() ;
-         OF          oDlg
+         OF          ::oDialog
 
       ::oGetUnidadesArticulo:bChange   := {|| ::refreshUnidadesImportes() }
 
@@ -179,7 +178,7 @@ METHOD Activate()
          PROMPT      ::nTotalUnidadesArticulo() ;
          ID          160;
          PICTURE     MasUnd() ;
-         OF          oDlg
+         OF          ::oDialog
 
       // Importe---------------------------------------------------------------
 
@@ -190,7 +189,7 @@ METHOD Activate()
          SPINNER ;
          WHEN        ( ::oController:isNotZoomMode() ) ;
          PICTURE     cPinDiv() ;
-         OF          oDlg
+         OF          ::oDialog
 
       ::oGetPrecioArticulo:bChange     := {|| ::refreshUnidadesImportes() }
 
@@ -200,7 +199,7 @@ METHOD Activate()
          PROMPT      ::nTotalImporteArticulo() ;
          ID          190;
          PICTURE     cPirDiv() ;
-         OF          oDlg
+         OF          ::oDialog
 
       // Almacen origen--------------------------------------------------------
 
@@ -210,14 +209,14 @@ METHOD Activate()
          IDHELP      401 ;
          IDSAY       403 ;
          WHEN        ( .f. ) ;
-         OF          oDlg
+         OF          ::oDialog
 
       REDEFINE GET   ::oGetStockOrigen ;
          VAR         ::nStockOrigen ;
          WHEN        ( .f. ) ;
          PICTURE     MasUnd() ;
          ID          402 ;
-         OF          oDlg
+         OF          ::oDialog
 
       // Almacen destino-------------------------------------------------------
 
@@ -227,45 +226,29 @@ METHOD Activate()
          IDHELP      411 ;
          IDSAY       413 ;
          WHEN        ( .f. ) ;
-         OF          oDlg
+         OF          ::oDialog
 
       REDEFINE GET   ::oGetStockDestino ;
          VAR         ::nStockDestino ;
          WHEN        ( .f. ) ;
          PICTURE     MasUnd() ;
          ID          412 ;
-         OF          oDlg
+         OF          ::oDialog
 
-      // Botones---------------------------------------------------------------
-
-      REDEFINE BUTTON oBtnSer ;
-         ID          500 ;
-         OF          oDlg ;
-         ACTION      ( ::oController:runDialogSeries() )
-
-      REDEFINE BUTTON oBtn ;
-         ID          510 ;
-         OF          oDlg ;
-         WHEN        ( ::oController:isNotZoomMode() ) ;
-         ACTION      ( if( validateDialog( oDlg ), oDlg:end( IDOK ), ) )
-
-      REDEFINE BUTTON ;
-         ID          520 ;
-         OF          oDlg ;
-         CANCEL ;
-         ACTION      ( oDlg:end() )
+      // FastKeys---------------------------------------------------------------
 
       if ::oController:isNotZoomMode()
-         oDlg:AddFastKey( VK_F5, {|| oBtn:Click() } )
+         ::oDialog:AddFastKey( VK_F5, {|| ::oBtnOk:Action() } )
+         ::oDialog:AddFastKey( VK_F6, {|| ::oBtnOkAndNew:Action() } )
       end if
 
-      oDlg:AddFastKey( VK_F6, {|| oBtnSer:Click() } )
+      ::oDialog:AddFastKey( VK_F7, {|| ::oBtnSerie:Action() } )
 
-      oDlg:bStart    := {|| ::startActivate() }
+      ::oDialog:bStart    := {|| ::startActivate() }
 
-   ACTIVATE DIALOG oDlg CENTER 
+   ::oDialog:Activate( , , , .t., , , {|| ::initActivate() } ) 
 
-RETURN ( oDlg:nResult == IDOK )
+RETURN ( ::oDialog:nResult )
 
 //---------------------------------------------------------------------------//
 
@@ -283,6 +266,19 @@ METHOD startActivate()
    end if 
 
 RETURN ( .t. )
+
+//---------------------------------------------------------------------------//
+
+METHOD initActivate()
+
+   local oGrupo
+   
+   ::createOfficeBar()
+
+   oGrupo                     := TDotNetGroup():New( ::oOfficeBarFolder, 66, "Series", .f. )
+      ::oBtnSerie             := TDotNetButton():New( 60, oGrupo, "gc_floppy_disk_32", "Series [F7]", 1, {|| ::oController:runDialogSeries() }, , , .f., .f., .f. )
+
+RETURN ( Self )
 
 //---------------------------------------------------------------------------//
 

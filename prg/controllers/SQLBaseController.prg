@@ -31,7 +31,7 @@ CLASS SQLBaseController
 
    DATA cTitle                                        INIT ""
 
-   DATA cImage                                        INIT ""
+   DATA hImage                                        INIT {=>}
 
    DATA aSelected
 
@@ -99,6 +99,10 @@ CLASS SQLBaseController
    METHOD isUserZoom()                                INLINE ( nAnd( ::nLevel, ACC_ZOOM ) != 0 )
    METHOD notUserZoom()                               INLINE ( !::isUserZoom() )
 
+   // Image--------------------------------------------------------------------
+
+   METHOD getImage( cResolution )                     INLINE ( if( hhaskey( ::hImage, cResolution ), hget( ::hImage, cResolution ), "" ) )
+
    // Title -------------------------------------------------------------------
 
    METHOD setTitle( cTitle )                          INLINE ( ::cTitle := cTitle )
@@ -113,6 +117,8 @@ CLASS SQLBaseController
       METHOD setAppendMode()                          INLINE ( ::setMode( __append_mode__ ) )
       METHOD isAppendMode()                           INLINE ( ::nMode == __append_mode__ )
       METHOD isNotAppendMode()                        INLINE ( ::nMode != __append_mode__ )
+
+      METHOD DialogViewActivate()                     
 
    METHOD Duplicate()
       METHOD setDuplicateMode()                       INLINE ( ::setMode( __duplicate_mode__ ) )
@@ -142,6 +148,8 @@ CLASS SQLBaseController
    METHOD fireEvent( cEvent )                         INLINE ( if( !empty( ::oEvents ), ::oEvents:fire( cEvent ), ) )
 
    METHOD setFastReport( oFastReport, cTitle, cSentence, cColumns )
+
+   METHOD onKeyChar( nKey )                           VIRTUAL 
 
 END CLASS
 
@@ -215,6 +223,7 @@ RETURN ( Self )
 METHOD Append()
 
    local nRecno
+   local uResult
    local lAppend     := .t.   
 
    if ::notUserAppend()
@@ -238,7 +247,7 @@ METHOD Append()
 
       ::fireEvent( 'openingDialog' )     
 
-      if ::oDialogView:Activate()
+      if ::DialogViewActivate()
 
          ::fireEvent( 'closedDialog' )    
 
@@ -300,7 +309,7 @@ METHOD Duplicate()
 
    ::fireEvent( 'openingDialog' )
 
-   if ::oDialogView:Activate()
+   if ::DialogViewActivate()
 
       ::fireEvent( 'closedDialog' )    
 
@@ -351,7 +360,7 @@ METHOD Edit()
 
    ::fireEvent( 'openingDialog' )
 
-   if ::oDialogView:Activate()
+   if ::DialogViewActivate()
       
       ::fireEvent( 'closedDialog' )    
 
@@ -401,6 +410,28 @@ METHOD Zoom()
    ::fireEvent( 'exitZoomed' ) 
 
 RETURN ( .t. )
+
+//----------------------------------------------------------------------------//
+
+METHOD DialogViewActivate()
+
+   local uResult           := ::oDialogView:Activate()
+
+   if hb_islogical( uResult )
+      RETURN ( uResult )
+   end if 
+
+   if hb_isnumeric( uResult ) .and. ( uResult == IDOK )
+      ::lContinuousAppend  := .f.
+      RETURN ( .t. )
+   end if 
+
+   if hb_isnumeric( uResult ) .and. ( uResult == IDOKANDNEW )
+      ::lContinuousAppend  := .t.
+      RETURN ( .t. )
+   end if 
+
+RETURN ( .f. )
 
 //----------------------------------------------------------------------------//
 

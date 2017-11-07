@@ -77,8 +77,6 @@ METHOD New( oController )
 
    ::cTitle                := "Movimientos de almacen lineas"
 
-   ::lContinuousAppend     := lEntCon()
-
    ::oModel                := SQLMovimientosAlmacenLineasModel():New( self )
 
    ::oModel:setEvent( 'loadedBlankBuffer',   {|| ::loadedBlankBuffer() } ) 
