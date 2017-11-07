@@ -4074,15 +4074,15 @@ METHOD getUnidadesPedidoProveedor( cNumPed, cCodArt ) CLASS TFastVentasArticulos
       Return nUnidades
    end if
 
-   nOrdAnt           := ::oPedPrvL:OrdSetFocus( "nNumPedRef" )
+   nOrdAnt           := ( D():PedidosProveedoresLineas( ::nView ) )->( OrdSetFocus( "nNumPedRef" ) )
 
-   if ::oPedPrvL:Seek( cNumPed + cCodArt )
+   if ( D():PedidosProveedoresLineas( ::nView ) )->( dbSeek( cNumPed + cCodArt ) )
       
-      nUnidades      := nTotNPedPrv( ::oPedPrvL )
+      nUnidades      := nTotNPedPrv( D():PedidosProveedoresLineas( ::nView ) )
 
    end if
 
-   ::oPedPrvL:OrdSetFocus( nOrdAnt )
+   ( D():PedidosProveedoresLineas( ::nView ) )->( OrdSetFocus( nOrdAnt ) )
 
 Return nUnidades
 
