@@ -8,6 +8,8 @@
 
 CLASS MovimientosAlmacenLineasView FROM SQLBaseView
 
+   DATA oOfficeBarView
+
    DATA oBtnSerie
 
    DATA oGetLote
@@ -235,18 +237,11 @@ METHOD Activate()
          ID          412 ;
          OF          ::oDialog
 
-      // FastKeys---------------------------------------------------------------
-
-      if ::oController:isNotZoomMode()
-         ::oDialog:AddFastKey( VK_F5, {|| ::oBtnOk:Action() } )
-         ::oDialog:AddFastKey( VK_F6, {|| ::oBtnOkAndNew:Action() } )
-      end if
-
-      ::oDialog:AddFastKey( VK_F7, {|| ::oBtnSerie:Action() } )
-
       ::oDialog:bStart    := {|| ::startActivate() }
 
    ::oDialog:Activate( , , , .t., , , {|| ::initActivate() } ) 
+
+   ::oOfficeBar:End()
 
 RETURN ( ::oDialog:nResult )
 
@@ -273,10 +268,14 @@ METHOD initActivate()
 
    local oGrupo
    
-   ::createOfficeBar()
+   ::oOfficeBar               := OfficeBarView():New( Self )
 
-   oGrupo                     := TDotNetGroup():New( ::oOfficeBarFolder, 66, "Series", .f. )
+   ::oOfficeBar:createButtonsDialog()
+
+   oGrupo                     := TDotNetGroup():New( ::oOfficeBar:oOfficeBarFolder, 66, "Series", .f. )
       ::oBtnSerie             := TDotNetButton():New( 60, oGrupo, "gc_floppy_disk_32", "Series [F7]", 1, {|| ::oController:runDialogSeries() }, , , .f., .f., .f. )
+
+   ::oDialog:AddFastKey( VK_F7, {|| ::oBtnSerie:Action() } )
 
 RETURN ( Self )
 

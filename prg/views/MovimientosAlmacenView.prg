@@ -6,10 +6,7 @@
 
 CLASS MovimientosAlmacenView FROM SQLBaseView
 
-   DATA oBtnOk
-   DATA oBtnEdit
-   DATA oBtnAppend
-   DATA oBtnDelete
+   DATA oOfficeBar
 
    DATA oSQLBrowseView
 
@@ -162,13 +159,6 @@ METHOD startActivate()
 
    ::oController:stampAgente( ::oGetAgente )
 
-   if ::oController:isNotZoomMode()
-      ::oDialog:AddFastKey( VK_F5, {|| ::oBtnOk:Action() } )
-      ::oDialog:AddFastKey( VK_F2, {|| ::oBtnAppend:Action() } )
-      ::oDialog:AddFastKey( VK_F3, {|| ::oBtnEdit:Action() } )
-      ::oDialog:AddFastKey( VK_F4, {|| ::oBtnDelete:Action() } )
-   end if
-
 RETURN ( Self )
 
 //---------------------------------------------------------------------------//
@@ -176,10 +166,16 @@ RETURN ( Self )
 METHOD initActivate()
 
    local oGrupo
+   
+   ::oOfficeBar               := OfficeBarView():New( Self )
 
-   ::createOfficeBar()
+   ::oOfficeBar:createButtonImage()
 
-   oGrupo                     := TDotNetGroup():New( ::oOfficeBarFolder, 126, "Acciones", .f. )
+   ::oOfficeBar:createButtonsLine( ::oController:oLineasController )
+
+   ::oOfficeBar:createButtonsDialog()
+
+   oGrupo                     := TDotNetGroup():New( ::oOfficeBar:oOfficeBarFolder, 126, "Acciones", .f. )
                                  TDotNetButton():New( 60, oGrupo, "gc_package_pencil_32", "Importar almacén", 1, {|| ::oController:oImportadorController:Activate() }, , , .f., .f., .f. )
                                  TDotNetButton():New( 60, oGrupo, "gc_pda_32", "Importar inventario", 2, {|| ::oController:oImportadorController:Activate() }, , , .f., .f., .f. )
 
