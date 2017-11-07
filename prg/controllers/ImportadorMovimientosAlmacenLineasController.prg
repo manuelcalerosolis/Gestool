@@ -27,7 +27,7 @@ METHOD New( oController )
 
    ::cTitle             := "Importador movimientos almacen lineas"
 
-   ::oDialogView        := ImportarMovimientosAlmacenLineasView():New( self )
+   ::oDialogView        := ImportadorMovimientosAlmacenLineasView():New( self )
 
    ::Super:New( oController )
 

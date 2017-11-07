@@ -104,7 +104,7 @@ METHOD generateLabels()
 
    local cReport
    local cFormato
-   local oMovimientosAlmacenLabel  
+   local oMovimientosAlmacenLabelReport  
 
    if empty( ::oDialogView:cFormatoLabel )
       msgStop( "No hay formatos por defecto" )
@@ -118,13 +118,13 @@ METHOD generateLabels()
       RETURN ( self )  
    end if 
 
-   oMovimientosAlmacenLabel         := MovimientosAlmacenLabel():New( Self )
+   oMovimientosAlmacenLabelReport         := MovimientosAlmacenLabelReport():New( Self )
 
-   oMovimientosAlmacenLabel:setRowSet( ::oRowSet )
-   oMovimientosAlmacenLabel:setDevice( IS_SCREEN )
-   oMovimientosAlmacenLabel:setReport( cReport )
+   oMovimientosAlmacenLabelReport:setRowSet( ::oRowSet )
+   oMovimientosAlmacenLabelReport:setDevice( IS_SCREEN )
+   oMovimientosAlmacenLabelReport:setReport( cReport )
 
-   oMovimientosAlmacenLabel:Print()
+   oMovimientosAlmacenLabelReport:Print()
 
    msgalert( "generateLabels" )
 

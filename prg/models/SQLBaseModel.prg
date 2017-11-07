@@ -640,7 +640,7 @@ METHOD getSerializeColumns()
 
    local cColumns       := ""
 
-   heval( ::getTableColumns(), {|k| cColumns += k + ";" } )
+   heval( ::getTableColumns(), {|cColumn| cColumns += alltrim( cColumn ) + ";" } )
 
 RETURN ( cColumns )
 

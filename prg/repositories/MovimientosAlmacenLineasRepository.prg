@@ -71,11 +71,11 @@ RETURN ( cSql )
 
 METHOD getSerializedColumnsSentenceToLabels()
 
-   local cSerializedColumns   := "selected; "                     + ;
-                                 "id; "                           + ;
-                                 "codigo_articulo; "              + ;
-                                 "nombre_articulo; "              + ;
-                                 "valor_primera_propiedad; "      + ;
+   local cSerializedColumns   := "selected;"                                     + ;
+                                 "id;"                                           + ;
+                                 "codigo_articulo;"                              + ;
+                                 "nombre_articulo;"                              + ;
+                                 "valor_primera_propiedad;"                      + ;
                                  "valor_segunda_propiedad"      
 
 RETURN ( cSerializedColumns )                                 
