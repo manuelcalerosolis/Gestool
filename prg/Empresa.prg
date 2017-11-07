@@ -2413,48 +2413,55 @@ STATIC FUNCTION EditConfig( aTmp, aGet, dbfEmp, oBrw, nSelFolder, bValid, nMode 
       REDEFINE COMBOBOX aGet[ _CENVUSR ] VAR aTmp[ _CENVUSR ] ;
          ITEMS    { "Cliente", "Servidor" } ;
          ID       100 ;
+         WHEN     lEnvioRecepcion;
          OF       fldEnvios
 
       REDEFINE CHECKBOX aGet[ _LEMPFRNQ ] VAR aTmp[ _LEMPFRNQ ] ;
          ID       400 ;
+         WHEN     lEnvioRecepcion;
          OF       fldEnvios      
 
       REDEFINE RADIO aTmp[ _NTIPCON ] ;
          ID       110, 111 ;
+         WHEN     lEnvioRecepcion;
          OF       fldEnvios
 
       REDEFINE GET aGet[ _CRUTCON ] VAR aTmp[ _CRUTCON ] ;
          ID       120;
          PICTURE  "@!" ;
          BITMAP   "FOLDER" ;
+         WHEN     ( aTmp[ _NTIPCON ] < 2 .and. lEnvioRecepcion ) ;
          ON HELP  ( aGet[ _CRUTCON ]:cText( Padr( cGetDir32( "Seleccione directorio", Rtrim( aTmp[ _CRUTCON ] ), .t. ), 100 ) ) );
          OF       fldEnvios
 
       REDEFINE GET aTmp[ _CSITFTP ] ;
          ID       160;
-         WHEN     ( aTmp[ _NTIPCON ] == 2 ) ;
+         WHEN     ( aTmp[ _NTIPCON ] == 2 .and. lEnvioRecepcion ) ;
          OF       fldEnvios
 
       REDEFINE GET aTmp[ _CUSRFTP ] ;
          ID       170 ;
-         WHEN     ( aTmp[_NTIPCON] == 2 ) ;
+         WHEN     ( aTmp[_NTIPCON] == 2 .and. lEnvioRecepcion ) ;
          OF       fldEnvios
 
       REDEFINE GET aTmp[ _CPSWFTP ] ;
          ID       180;
-         WHEN     ( aTmp[ _NTIPCON ] == 2 ) ;
+         WHEN     ( aTmp[ _NTIPCON ] == 2 .and. lEnvioRecepcion ) ;
          OF       fldEnvios
 
       REDEFINE CHECKBOX aGet[ _LPASENVIO ] VAR aTmp[ _LPASENVIO ] ;
          ID       200 ;
+         WHEN     lEnvioRecepcion;
          OF       fldEnvios
 
       REDEFINE CHECKBOX aGet[ _LENVENT ] VAR aTmp[ _LENVENT ] ;
          ID       190 ;
+         WHEN     lEnvioRecepcion;
          OF       fldEnvios
 
       REDEFINE CHECKBOX aGet[ _LRECENT ] VAR aTmp[ _LRECENT ] ;
          ID       191 ;
+         WHEN     lEnvioRecepcion;
          OF       fldEnvios
 
       REDEFINE CHECKBOX aTmp[ _LMAILTRNO ] ;
@@ -2470,11 +2477,13 @@ STATIC FUNCTION EditConfig( aTmp, aGet, dbfEmp, oBrw, nSelFolder, bValid, nMode 
       REDEFINE GET aTmp[ _CCODCLIFRQ ] ;
          ID       320 ;
          PICTURE  ( Replicate( "X", RetNumCodCliEmp() ) ) ;
+         WHEN     lEnvioRecepcion;
          OF       fldEnvios
 
       REDEFINE GET aTmp[ _CCODPRVFRQ ] ;
          ID       330;
          PICTURE  ( Replicate( "X", RetNumCodPrvEmp() ) ) ;
+         WHEN     lEnvioRecepcion;
          OF       fldEnvios
 
       // Page 7 comunicacion------------------------------------------------------
