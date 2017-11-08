@@ -39,7 +39,7 @@ METHOD New( nView ) CLASS TGenMailingDatabaseFacturasClientes
 
    ::setAsunto( "Envio de nuestra factura de cliente {Serie de la factura}/{Número de la factura}" )
 
-   ::setBlockRecipients( {|| alltrim( retFld( ( D():FacturasClientes( ::nView ) )->cCodCli, D():Clientes( ::nView ), "cMeiInt" ) ) } )
+   ::setBlockRecipients( {|| alltrim( retFld( ( D():FacturasClientes( ::nView ) )->cCodCli, D():Clientes( ::nView ), "cMeiInt", "Cod" ) ) } )
 
    ::setPostSend( {|hMail| ::setFacturasClientesSend( hMail ) } )
 
