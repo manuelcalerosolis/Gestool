@@ -185,8 +185,6 @@ METHOD New( oController )
 
    ::cColumnOrientation          := "A"
 
-   ::cConstraints                := "" 
-
 RETURN ( Self )
 
 //---------------------------------------------------------------------------//
@@ -772,7 +770,7 @@ RETURN ( hset( ::hBuffer, cColumn, uValue ) )
 
 METHOD getEmpresaColumns()
 
-   hset( ::hColumns, "id",          {  "create"    => "INTEGER PRIMARY KEY AUTO_INCREMENT"      ,;
+   hset( ::hColumns, "id",          {  "create"    => "INTEGER AUTO_INCREMENT"                  ,;
                                        "text"      => "Identificador"                           ,;
                                        "header"    => "Id"                                      ,;
                                        "visible"   => .t.                                       ,;

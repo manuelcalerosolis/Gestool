@@ -6,7 +6,9 @@
 
 CLASS SQLMovimientosAlmacenLineasModel FROM SQLExportableModel
 
-   DATA  cTableName         INIT "movimientos_almacen_lineas"
+   DATA cTableName            INIT "movimientos_almacen_lineas"
+
+   DATA cConstraints          INIT "PRIMARY KEY (uuid), KEY (id), KEY ( parent_uuid )"
 
    METHOD getColumns()
 
@@ -46,7 +48,7 @@ END CLASS
 
 METHOD getColumns()
 
-   hset( ::hColumns, "id",                {  "create"    => "INTEGER PRIMARY KEY AUTO_INCREMENT"      ,;
+   hset( ::hColumns, "id",                {  "create"    => "INTEGER AUTO_INCREMENT"                  ,;
                                              "text"      => "Identificador"                           ,;
                                              "header"    => "Id"                                      ,;
                                              "visible"   => .t.                                       ,;
@@ -305,6 +307,8 @@ METHOD getFechaHoraConsolidacion( cCodigoArticulo, cCodigoAlmacen, cValorPropied
          cSql        +=                   "movimientos_almacen_lineas.lote = " + quoted( cLote ) + " "
          cSql        +=          "ORDER BY movimientos_almacen.fecha_hora DESC "
          cSql        +=          "LIMIT 1"
+
+   logwrite( cSql )
 
    aBuffer           := ::getDatabase():selectFetchHash( cSql )
 

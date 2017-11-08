@@ -45,6 +45,10 @@ CLASS MovimientosAlmacenLineasView FROM SQLBaseView
 
    METHOD nTotalImporteArticulo()      INLINE ( ::nTotalUnidadesArticulo() * ::oController:oModel:hBuffer[ "precio_articulo" ] )
 
+   METHOD hideCantidadesArticulos()    INLINE ( ::oGetBultosArticulo:hide(), ::oGetCajasArticulo:hide(), ::oGetUnidadesArticulo:hide() )
+   
+   METHOD showCantidadesArticulos()    INLINE ( ::oGetBultosArticulo:show(), ::oGetCajasArticulo:show(), ::oGetUnidadesArticulo:show() )
+
    METHOD refreshUnidadesImportes()    INLINE ( ::oSayTotalUnidades():Refresh(), ::oSayTotalImporte():Refresh() )
 
    METHOD searchCodeGS128( nKey, cCodigoArticulo )
@@ -273,7 +277,7 @@ METHOD initActivate()
    ::oOfficeBar:createButtonsDialog()
 
    oGrupo                     := TDotNetGroup():New( ::oOfficeBar:oOfficeBarFolder, 66, "Series", .f. )
-      ::oBtnSerie             := TDotNetButton():New( 60, oGrupo, "gc_floppy_disk_32", "Series [F7]", 1, {|| ::oController:runDialogSeries() }, , , .f., .f., .f. )
+      ::oBtnSerie             := TDotNetButton():New( 60, oGrupo, "gc_barcode_scanner_32", "Series [F7]", 1, {|| ::oController:runDialogSeries() }, , , .f., .f., .f. )
 
    ::oDialog:AddFastKey( VK_F7, {|| ::oBtnSerie:Action() } )
 

@@ -261,14 +261,16 @@ METHOD addColumnValueProperty( n )
       :Adjust()
       :cHeader          := ::aPropertiesTable[ ::oBrowse:nArrayAt, n ]:cHead
       :bEditValue       := ::bGenEditValue( n )
-      :cEditPicture     := MasUnd()
+      :cEditPicture     := masUnd()
       :nWidth           := 50
       :setAlign( AL_RIGHT )
-      :nFooterType      := AGGR_SUM
-      :nEditType        := EDIT_GET
       :nHeadStrAlign    := AL_RIGHT
+      :nEditType        := EDIT_GET
       :bOnPostEdit      := {| oCol, xVal, nKey | bPostEditProperties( oCol, xVal, nKey, ::oBrowse, oGetUnidades ) }
       :nFootStyle       := :defStyle( AL_RIGHT, .t. )               
+      :nFooterType      := AGGR_SUM
+      :cFooterPicture   := masUnd()
+      :cDataType        := "N"
       :Cargo            := n
    end with
 

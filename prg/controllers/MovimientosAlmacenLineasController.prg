@@ -61,6 +61,9 @@ CLASS MovimientosAlmacenLineasController FROM SQLBaseController
    
    METHOD loadValuesBrowseProperty()
 
+   METHOD isProductProperty()          INLINE ( !empty( hget( ::oModel:hBuffer, "codigo_primera_propiedad" ) ) .or.;
+                                                !empty( hget( ::oModel:hBuffer, "codigo_segunda_propiedad" ) ) )
+
    METHOD runDialogSeries()
 
    METHOD onClosedDialog() 
@@ -150,6 +153,8 @@ METHOD stampArticulo()
       RETURN ( .t. )
    end if 
 
+   cursorwait()
+
    ::oDialogView:oGetCodigoArticulo:setOriginal( cCodigoArticulo )
 
    ::oDialogView:oGetNombreArticulo:cText( hget( hArticulo, "nombre" ) )
@@ -171,6 +176,8 @@ METHOD stampArticulo()
    ::stampStockAlmacenOrigen()
 
    ::stampStockAlmacenDestino()
+
+   cursorwe()
 
 RETURN ( .t. )
 
@@ -214,7 +221,11 @@ METHOD shopPropiedades( cCodigoArticulo, hArticulo )
 
       ::buildBrowseProperty()
 
+      sysrefresh()
+
       ::loadValuesBrowseProperty( cCodigoArticulo )
+
+      ::oDialogView:hideCantidadesArticulos()
 
    end if 
 
@@ -422,6 +433,11 @@ RETURN ( Self )
 
 METHOD stampStockAlmacenOrigen()    
 
+   if ::isProductProperty()
+      ::oDialogView:oGetStockOrigen:Hide()
+      RETURN ( Self )
+   end if 
+
    if !Empty( ::getSenderController():oModel:hBuffer[ "almacen_origen" ] )
       ::oDialogView:oGetStockOrigen:cText( TStock():nSQLStockActual( ::oModel:hBuffer[ "codigo_articulo" ], ::getSenderController():oModel:hBuffer[ "almacen_origen" ], ::oModel:hBuffer[ "valor_primera_propiedad" ], ::oModel:hBuffer[ "valor_segunda_propiedad" ], ::oModel:hBuffer[ "lote" ] ) )
    end if
@@ -431,6 +447,11 @@ RETURN ( Self )
 //---------------------------------------------------------------------------//
 
 METHOD stampStockAlmacenDestino()
+
+   if ::isProductProperty()
+      ::oDialogView:oGetStockDestino:Hide()
+      RETURN ( Self )
+   end if 
 
    if !Empty( ::getSenderController():oModel:hBuffer[ "almacen_destino" ] )
       ::oDialogView:oGetStockDestino:cText( TStock():nSQLStockActual( ::oModel:hBuffer[ "codigo_articulo" ], ::getSenderController():oModel:hBuffer[ "almacen_destino" ], ::oModel:hBuffer[ "valor_primera_propiedad" ], ::oModel:hBuffer[ "valor_segunda_propiedad" ], ::oModel:hBuffer[ "lote" ] ) )

@@ -210,7 +210,7 @@ METHOD Activate()
 
       ::oBrowse:bRClicked        := {| nRow, nCol, nFlags | ::RButtonDown( nRow, nCol, nFlags ) }
 
-      ::oBrowse:setRowSetController( ::oController )
+      ::oBrowse:setRowSet( ::oController )
 
       ::oBrowse:CreateFromResource( 180 )
 

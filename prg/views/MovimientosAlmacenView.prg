@@ -167,7 +167,7 @@ METHOD initActivate()
 
    local oGrupo
    
-   ::oOfficeBar               := OfficeBarView():New( Self )
+   ::oOfficeBar   := OfficeBarView():New( Self )
 
    ::oOfficeBar:createButtonImage()
 
@@ -175,9 +175,9 @@ METHOD initActivate()
 
    ::oOfficeBar:createButtonsDialog()
 
-   oGrupo                     := TDotNetGroup():New( ::oOfficeBar:oOfficeBarFolder, 126, "Acciones", .f. )
-                                 TDotNetButton():New( 60, oGrupo, "gc_package_pencil_32", "Importar almacén", 1, {|| ::oController:oImportadorController:Activate() }, , , .f., .f., .f. )
-                                 TDotNetButton():New( 60, oGrupo, "gc_pda_32", "Importar inventario", 2, {|| ::oController:oImportadorController:Activate() }, , , .f., .f., .f. )
+   oGrupo         := TDotNetGroup():New( ::oOfficeBar:oOfficeBarFolder, 126, "Otros", .f. )
+                     TDotNetButton():New( 60, oGrupo, "gc_hand_truck_box_32", "Importar almacén", 1, {|| msgalert( "Importar alamcen" ) }, , , .f., .f., .f. )
+                     TDotNetButton():New( 60, oGrupo, "gc_pda_32", "Importar inventario", 2, {|| ::oController:oImportadorController:Activate() }, , , .f., .f., .f. )
 
 
 RETURN ( Self )
