@@ -41,7 +41,7 @@ CLASS MovimientosAlmacenLineasView FROM SQLBaseView
    METHOD startActivate()
    METHOD initActivate()
 
-   METHOD nTotalUnidadesArticulo()     INLINE ( notCaja( ::oController:oModel:hBuffer[ "cajas_articulo" ] ) * ::oController:oModel:hBuffer[ "unidades_articulo" ] )
+   METHOD nTotalUnidadesArticulo()     
 
    METHOD nTotalImporteArticulo()      INLINE ( ::nTotalUnidadesArticulo() * ::oController:oModel:hBuffer[ "precio_articulo" ] )
 
@@ -138,6 +138,7 @@ METHOD Activate()
       // Property browse-------------------------------------------------------
 
       ::oBrowsePropertyView               := SQLPropertyBrowseView():New( 600, ::oDialog )
+      ::oBrowsePropertyView:bOnPostEdit   := {|| ::oSayTotalUnidades:Refresh(), ::oSayTotalImporte:Refresh() }
 
       // Bultos----------------------------------------------------------------
 
@@ -264,6 +265,10 @@ METHOD startActivate()
       ::oController:validateSegundaPropiedad()      
    end if 
 
+   ::oSayTotalUnidades:Refresh()
+
+   ::oSayTotalImporte:Refresh()
+
 RETURN ( .t. )
 
 //---------------------------------------------------------------------------//
@@ -282,6 +287,16 @@ METHOD initActivate()
    ::oDialog:AddFastKey( VK_F7, {|| ::oBtnSerie:Action() } )
 
 RETURN ( Self )
+
+//---------------------------------------------------------------------------//
+
+METHOD nTotalUnidadesArticulo()
+
+   if hb_isobject( ::oBrowsePropertyView ) .and. ::oBrowsePropertyView:lVisible
+      RETURN ( ::oBrowsePropertyView:nTotalUnits() )
+   end if
+
+RETURN ( notCaja( ::oController:oModel:hBuffer[ "cajas_articulo" ] ) * ::oController:oModel:hBuffer[ "unidades_articulo" ] )
 
 //---------------------------------------------------------------------------//
 

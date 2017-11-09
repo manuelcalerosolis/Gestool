@@ -81,7 +81,7 @@ METHOD New()
 
    ::cTitle                := "Etiquetas"
 
-   ::cImage                := "gc_bookmarks_16"
+   ::hImage                := { "16" => "gc_bookmarks_16" }
 
    ::nLevel                := nLevelUsr( "01101" )
 

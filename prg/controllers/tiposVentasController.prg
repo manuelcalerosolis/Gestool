@@ -16,7 +16,7 @@ METHOD New()
 
    ::cTitle                := "Tipos de ventas"
 
-   ::cImage                := "gc_wallet_16"
+   ::hImage                := { "16" => "gc_wallet_16" }
 
    ::nLevel                := nLevelUsr( "01043" )
 

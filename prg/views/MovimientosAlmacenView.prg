@@ -29,7 +29,6 @@ END CLASS
 
 //---------------------------------------------------------------------------//
 
-
 METHOD Activate()
 
    DEFINE DIALOG ::oDialog RESOURCE "Movimientos_Almacen" TITLE ::lblTitle() + ::oController:getTitle()
@@ -113,13 +112,13 @@ METHOD Activate()
       ::oGetAgente:bValid := {|| ::oController:validateAgente() }
       ::oGetAgente:bHelp  := {|| BrwAgentes( ::oGetAgente, ::oGetAgente:oHelpText ) }
 
-      // Divisas-------------------------------------------------------
+      // Divisas---------------------------------------------------------------
 
       DivisasView();
          :New( ::oController );
          :CreateEditControl( { "idGet" => 190, "idBmp" => 191, "idValue" => 192, "dialog" => ::oDialog } )
 
-      // Comentarios-------------------------------------------------------
+      // Comentarios-----------------------------------------------------------
 
       REDEFINE GET   ::oController:oModel:hBuffer[ "comentarios" ] ;
          ID          170 ;
@@ -136,6 +135,8 @@ METHOD Activate()
       ::oSQLBrowseView:Activate( 180, ::oDialog )
 
       ::oSQLBrowseView:setView()
+
+      // Dialog activate-------------------------------------------------------
 
       ::oDialog:bStart    := {|| ::startActivate() }
 

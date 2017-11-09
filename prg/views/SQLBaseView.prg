@@ -42,6 +42,8 @@ CLASS SQLBaseView
    METHOD getController()                             INLINE ( ::oController )    
    METHOD getSenderController()                       INLINE ( ::oController:oSenderController )    
 
+   METHOD getComboBoxOrder()                          VIRTUAL
+
    METHOD createOfficeBar()
 
 END CLASS

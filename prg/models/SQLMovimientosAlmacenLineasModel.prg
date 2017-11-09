@@ -93,7 +93,7 @@ METHOD getColumns()
    hset( ::hColumns, "valor_primera_propiedad",    {  "create"    => "VARCHAR(200)"                         ,;
                                                       "text"      => "Valor primera propiedad artículo"     ,;
                                                       "header"    => "Primera propiedad"                    ,;
-                                                      "visible"   => .f.                                    ,;
+                                                      "visible"   => .t.                                    ,;
                                                       "len"       => 200                                    ,;   
                                                       "width"     => 80 }                                  )
 
@@ -107,7 +107,7 @@ METHOD getColumns()
    hset( ::hColumns, "valor_segunda_propiedad",    {  "create"    => "VARCHAR(200)"                         ,;
                                                       "text"      => "Valor segunda propiedad artículo"     ,;
                                                       "header"    => "Segunda propiedad"                    ,;
-                                                      "visible"   => .f.                                    ,;
+                                                      "visible"   => .t.                                    ,;
                                                       "len"       => 200                                    ,;   
                                                       "width"     => 80 }                                  )
 
