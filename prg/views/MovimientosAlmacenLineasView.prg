@@ -25,14 +25,6 @@ CLASS MovimientosAlmacenLineasView FROM SQLBaseView
    DATA oGetPrecioArticulo
    DATA oSayTotalImporte
 
-   DATA oGetAlmacenOrigen
-   DATA oGetStockOrigen
-   DATA nStockOrigen                   INIT 0
-
-   DATA oGetAlmacenDestino
-   DATA oGetStockDestino
-   DATA nStockDestino                  INIT 0
-
    DATA oBrowsePropertyView
 
    METHOD New()
@@ -199,6 +191,7 @@ METHOD Activate()
          OF          ::oDialog
 
       ::oGetPrecioArticulo:bChange     := {|| ::refreshUnidadesImportes() }
+      ::oGetPrecioArticulo:bValid      := {|| ::oGetCodigoArticulo:setFocus(), .t. }
 
       // Total Importe---------------------------------------------------------
 
@@ -206,40 +199,6 @@ METHOD Activate()
          PROMPT      ::nTotalImporteArticulo() ;
          ID          190;
          PICTURE     cPirDiv() ;
-         OF          ::oDialog
-
-      // Almacen origen--------------------------------------------------------
-
-      REDEFINE GET   ::oGetAlmacenOrigen ;
-         VAR         ::oController:oSenderController:oModel:hBuffer[ "almacen_origen" ] ;
-         ID          400 ;
-         IDHELP      401 ;
-         IDSAY       403 ;
-         WHEN        ( .f. ) ;
-         OF          ::oDialog
-
-      REDEFINE GET   ::oGetStockOrigen ;
-         VAR         ::nStockOrigen ;
-         WHEN        ( .f. ) ;
-         PICTURE     MasUnd() ;
-         ID          402 ;
-         OF          ::oDialog
-
-      // Almacen destino-------------------------------------------------------
-
-      REDEFINE GET   ::oGetAlmacenDestino ;
-         VAR         ::oController:oSenderController:oModel:hBuffer[ "almacen_destino" ] ;
-         ID          410 ;
-         IDHELP      411 ;
-         IDSAY       413 ;
-         WHEN        ( .f. ) ;
-         OF          ::oDialog
-
-      REDEFINE GET   ::oGetStockDestino ;
-         VAR         ::nStockDestino ;
-         WHEN        ( .f. ) ;
-         PICTURE     MasUnd() ;
-         ID          412 ;
          OF          ::oDialog
 
       ::oDialog:bStart    := {|| ::startActivate() }

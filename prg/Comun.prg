@@ -277,6 +277,10 @@ RETURN ( .t. )
 
 FUNCTION Test()
 
+   msgalert( externalObjectSender( "SQLMovimientosAlmacenModel():cTextoMovimiento", 1 ), "alert" )
+ 
+   externalObjectSender( "ArticulosModelssssssssssss()" )
+
 RETURN NIL 
 
 //---------------------------------------------------------------------------//

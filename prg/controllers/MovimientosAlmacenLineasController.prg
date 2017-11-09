@@ -43,10 +43,6 @@ CLASS MovimientosAlmacenLineasController FROM SQLBaseController
 
    METHOD stampFechaCaducidad()
 
-   METHOD stampStockAlmacenOrigen()
-
-   METHOD stampStockAlmacenDestino()
-
    METHOD getPrimeraPropiedad( cCodigoArticulo, cCodigoPropiedad )
 
    METHOD getSegundaPropiedad( cCodigoArticulo, cCodigoPropiedad )
@@ -171,12 +167,6 @@ METHOD stampArticulo()
 
    ::stampFechaCaducidad()
 
-   // Informacion de stock en almacen origen-----------------------------------
-
-   ::stampStockAlmacenOrigen()
-
-   ::stampStockAlmacenDestino()
-
    cursorwe()
 
 RETURN ( .t. )
@@ -198,6 +188,8 @@ METHOD shopPropiedades( cCodigoArticulo, hArticulo )
       ::oDialogView:oGetValorPrimeraPropiedad:hide()
 
       ::oDialogView:oGetValorSegundaPropiedad:hide()
+
+      ::oDialogView:showCantidadesArticulos()
 
    else 
    
@@ -340,10 +332,6 @@ METHOD validateLote()
 
    ::oDialogView:oGetLote:setOriginal( cLote )
 
-   ::stampStockAlmacenOrigen()
-
-   ::stampStockAlmacenDestino()
-
 RETURN ( .t. )
 
 //---------------------------------------------------------------------------//
@@ -431,32 +419,3 @@ RETURN ( Self )
 
 //---------------------------------------------------------------------------//
 
-METHOD stampStockAlmacenOrigen()    
-
-   if ::isProductProperty()
-      ::oDialogView:oGetStockOrigen:Hide()
-      RETURN ( Self )
-   end if 
-
-   if !Empty( ::getSenderController():oModel:hBuffer[ "almacen_origen" ] )
-      ::oDialogView:oGetStockOrigen:cText( TStock():nSQLStockActual( ::oModel:hBuffer[ "codigo_articulo" ], ::getSenderController():oModel:hBuffer[ "almacen_origen" ], ::oModel:hBuffer[ "valor_primera_propiedad" ], ::oModel:hBuffer[ "valor_segunda_propiedad" ], ::oModel:hBuffer[ "lote" ] ) )
-   end if
-
-RETURN ( Self )
-
-//---------------------------------------------------------------------------//
-
-METHOD stampStockAlmacenDestino()
-
-   if ::isProductProperty()
-      ::oDialogView:oGetStockDestino:Hide()
-      RETURN ( Self )
-   end if 
-
-   if !Empty( ::getSenderController():oModel:hBuffer[ "almacen_destino" ] )
-      ::oDialogView:oGetStockDestino:cText( TStock():nSQLStockActual( ::oModel:hBuffer[ "codigo_articulo" ], ::getSenderController():oModel:hBuffer[ "almacen_destino" ], ::oModel:hBuffer[ "valor_primera_propiedad" ], ::oModel:hBuffer[ "valor_segunda_propiedad" ], ::oModel:hBuffer[ "lote" ] ) )
-   end if
-
-RETURN ( Self )
-
-//---------------------------------------------------------------------------//

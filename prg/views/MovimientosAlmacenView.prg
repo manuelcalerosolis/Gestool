@@ -129,6 +129,7 @@ METHOD Activate()
       // Buttons lineas-------------------------------------------------------
 
       ::oSQLBrowseView              := SQLBrowseViewDialog():New( Self )
+      ::oSQLBrowseView:setFooter( .t. )
 
       ::oSQLBrowseView:setController( ::oController:oLineasController )
 
@@ -160,6 +161,9 @@ METHOD startActivate()
 
    ::oController:stampAgente( ::oGetAgente )
 
+   ::oSQLBrowseView:getBrowse():makeTotals()
+   ::oSQLBrowseView:getBrowse():goTop()
+
 RETURN ( Self )
 
 //---------------------------------------------------------------------------//
@@ -172,7 +176,7 @@ METHOD initActivate()
 
    ::oOfficeBar:createButtonImage()
 
-   ::oOfficeBar:createButtonsLine( ::oController:oLineasController )
+   ::oOfficeBar:createButtonsLine( ::oController:oLineasController, ::oSQLBrowseView )
 
    ::oOfficeBar:createButtonsDialog()
 

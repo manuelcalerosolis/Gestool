@@ -4104,8 +4104,6 @@ Static Function VisualEdtDocs( dbfDoc )
             :end()
          end object
 
-         oFr:DestroyFr()
-
          // DesignLabelRemesasMovimientosAlmacen( oFr, dbfDoc )
 
       case cTipo == "SA"
@@ -4160,12 +4158,14 @@ Static Function VisualEdtDocs( dbfDoc )
          DesignReportEntAlbCli( oFr, dbfDoc )
 
       case cTipo == "PO"
+
          with object ( TProduccion():Create( cPatEmp() ) )
             :DesignReportProducc( oFr, dbfDoc )
             :end()
          end object
 
       case cTipo == "AQ"
+
          with object ( TTurno():Create( cPatEmp() ) )
             :DesignReport( oFr, dbfDoc )
             :end()
@@ -4199,6 +4199,7 @@ Static Function VisualEdtDocs( dbfDoc )
          end object
 
       case cTipo == "LP"
+
          with object ( TProduccion():Create( cPatEmp() ) )
             :OpenFiles()
             :DesignLabelProducc( oFr, dbfDoc )
@@ -4212,6 +4213,7 @@ Static Function VisualEdtDocs( dbfDoc )
    end case
 
    if !Empty( oFr )
+      oFr:destroyFr()
       oFr               := nil
    end if
 

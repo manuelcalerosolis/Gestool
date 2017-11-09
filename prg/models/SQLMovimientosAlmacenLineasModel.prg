@@ -148,6 +148,7 @@ METHOD getColumns()
                                              "header"    => "Total unidades"                       ,;
                                              "method"    => "totalUnidades"                        ,;
                                              "picture"   => masUnd()                               ,;
+                                             "footer"    => .t.                                    ,;
                                              "visible"   => .t.                                    ,;
                                              "width"     => 100 }                                  )
 
@@ -161,7 +162,8 @@ METHOD getColumns()
    hset( ::hColumns, "total_precio",      {  "text"      => "Total costo"                          ,;
                                              "header"    => "Total costo"                          ,;
                                              "method"    => "totalPrecio"                          ,;
-                                             "picture"   => masUnd()                               ,;
+                                             "footer"    => .t.                                    ,;
+                                             "picture"   => cPirDiv()                              ,;
                                              "visible"   => .t.                                    ,;
                                              "width"     => 120 }                                  )
 
