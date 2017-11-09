@@ -111,7 +111,7 @@ METHOD Create( oWindow )
 
    ::oBrowse:bRClicked        := {| nRow, nCol, nFlags | ::RButtonDown( nRow, nCol, nFlags ) }
 
-   ::oBrowse:setRowSetModel( ::getModel() )
+   ::oBrowse:setRowSet( ::getModel() )
 
    ::oBrowse:setName( ::getName() )
 
@@ -169,9 +169,8 @@ METHOD addColumn( cColumn, hColumn )
          :bEditValue       := ::getModel():getMethod( hColumn[ "method" ] )
       else 
          :bEditValue       := ::getModel():getEditValue( cColumn ) 
+         :bLClickHeader    := {| nMRow, nMCol, nFlags, oColumn | ::onClickHeader( oColumn ) }
       end if 
-
-      :bLClickHeader       := {| nMRow, nMCol, nFlags, oColumn | ::onClickHeader( oColumn ) }
 
    end with
 
@@ -181,7 +180,9 @@ RETURN ( self )
 
 METHOD onClickHeader( oColumn ) 
 
-   local oCombobox      := ::getComboBoxOrder()
+   local oCombobox
+
+   oComboBox      := ::getComboBoxOrder()
 
    if empty( oComboBox )
       RETURN ( Self )
@@ -218,6 +219,8 @@ CLASS SQLBrowseViewDialog FROM SQLBrowseView
 
    METHOD Activate()
 
+   METHOD onClickHeader( oColumn ) 
+
 ENDCLASS
 
 //----------------------------------------------------------------------------//
@@ -230,6 +233,18 @@ METHOD Activate( id, oWindow ) CLASS SQLBrowseViewDialog
 
    ::CreateFromResource( id )
 
+RETURN ( Self )
+
+//----------------------------------------------------------------------------//
+
+METHOD onClickHeader( oColumn ) 
+
+   ::getController():changeModelOrderAndOrientation( oColumn:cSortOrder, oColumn:cOrder )
+
+   ::getBrowse():selectColumnOrder( oColumn )
+
+   ::getBrowse():refreshCurrent()
+   
 RETURN ( Self )
 
 //----------------------------------------------------------------------------//

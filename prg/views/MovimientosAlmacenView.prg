@@ -6,10 +6,7 @@
 
 CLASS MovimientosAlmacenView FROM SQLBaseView
 
-   DATA oBtnOk
-   DATA oBtnEdit
-   DATA oBtnAppend
-   DATA oBtnDelete
+   DATA oOfficeBar
 
    DATA oSQLBrowseView
 
@@ -31,7 +28,6 @@ CLASS MovimientosAlmacenView FROM SQLBaseView
 END CLASS
 
 //---------------------------------------------------------------------------//
-
 
 METHOD Activate()
 
@@ -116,13 +112,13 @@ METHOD Activate()
       ::oGetAgente:bValid := {|| ::oController:validateAgente() }
       ::oGetAgente:bHelp  := {|| BrwAgentes( ::oGetAgente, ::oGetAgente:oHelpText ) }
 
-      // Divisas-------------------------------------------------------
+      // Divisas---------------------------------------------------------------
 
       DivisasView();
          :New( ::oController );
          :CreateEditControl( { "idGet" => 190, "idBmp" => 191, "idValue" => 192, "dialog" => ::oDialog } )
 
-      // Comentarios-------------------------------------------------------
+      // Comentarios-----------------------------------------------------------
 
       REDEFINE GET   ::oController:oModel:hBuffer[ "comentarios" ] ;
          ID          170 ;
@@ -139,6 +135,8 @@ METHOD Activate()
       ::oSQLBrowseView:Activate( 180, ::oDialog )
 
       ::oSQLBrowseView:setView()
+
+      // Dialog activate-------------------------------------------------------
 
       ::oDialog:bStart    := {|| ::startActivate() }
 
@@ -162,13 +160,6 @@ METHOD startActivate()
 
    ::oController:stampAgente( ::oGetAgente )
 
-   if ::oController:isNotZoomMode()
-      ::oDialog:AddFastKey( VK_F5, {|| ::oBtnOk:Action() } )
-      ::oDialog:AddFastKey( VK_F2, {|| ::oBtnAppend:Action() } )
-      ::oDialog:AddFastKey( VK_F3, {|| ::oBtnEdit:Action() } )
-      ::oDialog:AddFastKey( VK_F4, {|| ::oBtnDelete:Action() } )
-   end if
-
 RETURN ( Self )
 
 //---------------------------------------------------------------------------//
@@ -176,12 +167,18 @@ RETURN ( Self )
 METHOD initActivate()
 
    local oGrupo
+   
+   ::oOfficeBar   := OfficeBarView():New( Self )
 
-   ::createOfficeBar()
+   ::oOfficeBar:createButtonImage()
 
-   oGrupo                     := TDotNetGroup():New( ::oOfficeBarFolder, 126, "Acciones", .f. )
-                                 TDotNetButton():New( 60, oGrupo, "gc_package_pencil_32", "Importar almacén", 1, {|| ::oController:oImportadorController:Activate() }, , , .f., .f., .f. )
-                                 TDotNetButton():New( 60, oGrupo, "gc_pda_32", "Importar inventario", 2, {|| ::oController:oImportadorController:Activate() }, , , .f., .f., .f. )
+   ::oOfficeBar:createButtonsLine( ::oController:oLineasController )
+
+   ::oOfficeBar:createButtonsDialog()
+
+   oGrupo         := TDotNetGroup():New( ::oOfficeBar:oOfficeBarFolder, 126, "Otros", .f. )
+                     TDotNetButton():New( 60, oGrupo, "gc_hand_truck_box_32", "Importar almacén", 1, {|| msgalert( "Importar alamcen" ) }, , , .f., .f., .f. )
+                     TDotNetButton():New( 60, oGrupo, "gc_pda_32", "Importar inventario", 2, {|| ::oController:oImportadorController:Activate() }, , , .f., .f., .f. )
 
 
 RETURN ( Self )

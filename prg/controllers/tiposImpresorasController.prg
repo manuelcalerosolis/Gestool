@@ -16,7 +16,7 @@ METHOD New()
 
    ::cTitle                := "Tipos de impresoras"
 
-   ::cImage                := "gc_printer2_16"
+   ::hImage                := {"16" => "gc_printer2_16" }
 
    ::nLevel                := nLevelUsr( "01115" )
 

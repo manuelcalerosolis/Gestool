@@ -15,7 +15,7 @@ METHOD New()
 
    ::cTitle                := "Tipos de notas"
 
-   ::cImage                := "gc_folder2_16"
+   ::hImage                := { "16" => "gc_folder2_16" }
 
    ::nLevel                := nLevelUsr( "01101" )
 

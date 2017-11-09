@@ -6,7 +6,9 @@
 
 CLASS SQLMovimientosAlmacenLineasModel FROM SQLExportableModel
 
-   DATA  cTableName         INIT "movimientos_almacen_lineas"
+   DATA cTableName            INIT "movimientos_almacen_lineas"
+
+   DATA cConstraints          INIT "PRIMARY KEY (uuid), KEY (id), KEY ( parent_uuid )"
 
    METHOD getColumns()
 
@@ -46,7 +48,7 @@ END CLASS
 
 METHOD getColumns()
 
-   hset( ::hColumns, "id",                {  "create"    => "INTEGER PRIMARY KEY AUTO_INCREMENT"      ,;
+   hset( ::hColumns, "id",                {  "create"    => "INTEGER AUTO_INCREMENT"                  ,;
                                              "text"      => "Identificador"                           ,;
                                              "header"    => "Id"                                      ,;
                                              "visible"   => .t.                                       ,;
@@ -91,7 +93,7 @@ METHOD getColumns()
    hset( ::hColumns, "valor_primera_propiedad",    {  "create"    => "VARCHAR(200)"                         ,;
                                                       "text"      => "Valor primera propiedad artículo"     ,;
                                                       "header"    => "Primera propiedad"                    ,;
-                                                      "visible"   => .f.                                    ,;
+                                                      "visible"   => .t.                                    ,;
                                                       "len"       => 200                                    ,;   
                                                       "width"     => 80 }                                  )
 
@@ -105,7 +107,7 @@ METHOD getColumns()
    hset( ::hColumns, "valor_segunda_propiedad",    {  "create"    => "VARCHAR(200)"                         ,;
                                                       "text"      => "Valor segunda propiedad artículo"     ,;
                                                       "header"    => "Segunda propiedad"                    ,;
-                                                      "visible"   => .f.                                    ,;
+                                                      "visible"   => .t.                                    ,;
                                                       "len"       => 200                                    ,;   
                                                       "width"     => 80 }                                  )
 
@@ -305,6 +307,8 @@ METHOD getFechaHoraConsolidacion( cCodigoArticulo, cCodigoAlmacen, cValorPropied
          cSql        +=                   "movimientos_almacen_lineas.lote = " + quoted( cLote ) + " "
          cSql        +=          "ORDER BY movimientos_almacen.fecha_hora DESC "
          cSql        +=          "LIMIT 1"
+
+   logwrite( cSql )
 
    aBuffer           := ::getDatabase():selectFetchHash( cSql )
 

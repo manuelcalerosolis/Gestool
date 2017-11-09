@@ -285,3 +285,8 @@ GC_SHIELD_64 BITMAP "..\\bmp\\gc_shield_64.bmp"
 16_TAGEVER BITMAP "..\\bmp\\16_tagever.bmp"
 
 GC_ODOMETER_48 BITMAP "..\\bmp\\gc_odometer_48.bmp"
+GC_ODOMETER_32 BITMAP "..\\bmp\\gc_odometer_32.bmp"
+
+GC_BARCODE_SCANNER_32 BITMAP "..\\bmp\\gc_barcode_scanner_32.bmp"
+
+GC_HAND_TRUCK_BOX_32 BITMAP "..\\bmp\\gc_hand_truck_box_32.bmp"

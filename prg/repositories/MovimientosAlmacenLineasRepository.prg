@@ -56,6 +56,8 @@ METHOD getSQLSentenceArticuloUuid( cCodigoArticulo, Uuid )
                   "WHERE codigo_articulo = " + quoted( cCodigoArticulo ) + " "   + ;
                      "AND parent_uuid = " + quoted( uuid )
 
+   logwrite( cSql )
+
 RETURN ( cSql )
 
 //---------------------------------------------------------------------------//

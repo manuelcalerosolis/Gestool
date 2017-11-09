@@ -170,6 +170,7 @@ SQLBrowseView.prg 												\
 SQLPropertyBrowseView.prg 										\
 SQLSearchView.prg 												\
 MenuTreeView.prg 													\
+OfficeBarView.prg													\
 DivisasView.prg 													\
 Rfile.prg               										\
 TdprnC3.prg             										\
@@ -747,6 +748,7 @@ SQLBrowseView.obj 															\
 SQLPropertyBrowseView.obj 													\
 SQLSearchView.obj 															\
 MenuTreeView.obj 																\
+OfficeBarView.obj 															\
 DivisasView.obj 																\
 RpreviewC3.obj 																\
 ReportC3.obj                                       				\
@@ -1334,6 +1336,7 @@ $(OBJ)\SQLBrowseView.obj             									+
 $(OBJ)\SQLPropertyBrowseView.obj      									+
 $(OBJ)\SQLSearchView.obj      											+
 $(OBJ)\MenuTreeView.obj 													+
+$(OBJ)\OfficeBarView.obj 													+
 $(OBJ)\DivisasView.obj 														+
 $(OBJ)\RocolumnC3.obj            										+
 $(OBJ)\Rfile.obj                 										+

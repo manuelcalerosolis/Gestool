@@ -44,7 +44,7 @@ METHOD New( oMsg ) CLASS Seeders
 
    ::oMsg            := oMsg
 
-Return ( self )
+RETURN ( self )
 
 //---------------------------------------------------------------------------//
 
@@ -62,7 +62,7 @@ METHOD runSeederDatos()
    ::oMsg:SetText( "Datos: Ejecutando seeder de tipos de ventas" )
    ::SeederTiposVentas()
 
-Return ( self )
+RETURN ( self )
 
 //---------------------------------------------------------------------------//
 
@@ -74,12 +74,13 @@ METHOD runSeederEmpresa()
    ::SeederMovimientosAlmacen()
    
    ::oMsg:SetText( cTxtEmpresa + "Ejecutando seeder de lineas de movimientos de almacén" )
+
    ::SeederMovimientosAlmacenLineas()
 
    ::oMsg:SetText( cTxtEmpresa + "Ejecutando seeder de números de serie de lineas de movimientos de almacén" )
    ::SeederMovimientosAlmacenSeries()
 
-Return ( self )
+RETURN ( self )
 
 //---------------------------------------------------------------------------//
 
@@ -87,7 +88,7 @@ METHOD getInsertStatement( hCampos, cDataBaseName )
 
    local cStatement  := ""
 
-   cStatement     := "INSERT INTO "
+   cStatement     := "INSERT IGNORE INTO "
    cStatement     += cDataBaseName + Space( 1 )
    cStatement     += "( "
    hEval( hCampos, {| k, v | cStatement += k + ", " } )
@@ -95,7 +96,7 @@ METHOD getInsertStatement( hCampos, cDataBaseName )
    hEval( hCampos, {| k, v | cStatement += v + ", " } )
    cStatement     := chgAtEnd( cStatement, " )", 2 )
 
-Return cStatement
+RETURN cStatement
 
 //---------------------------------------------------------------------------//
 
@@ -105,18 +106,18 @@ METHOD SeederSituaciones() CLASS Seeders
    local dbfSitua
 
    if ( file( cPath + "Situa.old" ) )
-      Return ( self )
+      RETURN ( self )
    end if
 
    if !( file( cPath + "Situa.Dbf" ) )
       msgStop( "El fichero " + cPath + "\Situa.Dbf no se ha localizado", "Atención" )  
-      Return ( self )
+      RETURN ( self )
    end if 
 
    USE ( cPath + "SITUA.Dbf" ) NEW VIA ( 'DBFCDX' ) SHARED ALIAS ( cCheckArea( "SITUA", @dbfSitua ) )
    ( dbfSitua )->( ordsetfocus(0) )
 
-   ( dbfSitua )->( dbGoTop() )
+   ( dbfSitua )->( dbgotop() )
 
    while !( dbfSitua )->( eof() )
 
@@ -150,18 +151,18 @@ METHOD SeederTiposImpresoras() CLASS Seeders
    local dbfTipImp
 
    if ( file( cPath + "TipImp.old" ) )
-      Return ( self )
+      RETURN ( self )
    end if
 
    if !( file( cPath + "TipImp.Dbf" ) )
       msgStop( "El fichero " + cPath + "\TipImp.Dbf no se ha localizado", "Atención" )  
-      Return ( self )
+      RETURN ( self )
    end if 
 
    USE ( cPath + "TipImp.Dbf" ) NEW VIA ( 'DBFCDX' ) SHARED ALIAS ( cCheckArea( "TipImp", @dbfTipImp ) )
    ( dbfTipImp )->( ordsetfocus(0) )
    
-   ( dbfTipImp )->( dbGoTop() )
+   ( dbfTipImp )->( dbgotop() )
    while !( dbfTipImp )->( eof() )
 
       getSQLDatabase():Exec( ::getStatementTiposImpresoras( dbfTipImp ) )
@@ -194,18 +195,18 @@ METHOD SeederTiposNotas() CLASS Seeders
    local dbfTipNotas
 
    if ( file( cPath + "TipoNotas.old" ) )
-      Return ( self )
+      RETURN ( self )
    end if
 
    if !( file( cPath + "TipoNotas.Dbf" ) )
       msgStop( "El fichero " + cPath + "\TipoNotas.Dbf no se ha localizado", "Atención" )  
-      Return ( self )
+      RETURN ( self )
    end if 
 
    USE ( cPath + "TipoNotas.Dbf" ) NEW VIA ( 'DBFCDX' ) SHARED ALIAS ( cCheckArea( "TipoNotas", @dbfTipNotas ) )
    ( dbfTipNotas )->( ordsetfocus(0) )
    
-   ( dbfTipNotas )->( dbGoTop() )
+   ( dbfTipNotas )->( dbgotop() )
    while !( dbfTipNotas )->( eof() )
 
       getSQLDatabase():Exec( ::getStatementTiposNotas( dbfTipNotas ) )
@@ -238,18 +239,18 @@ METHOD SeederTiposVentas() CLASS Seeders
    local dbfTipVentas
 
    if ( file( cPath + "TVTA.old" ) )
-      Return ( self )
+      RETURN ( self )
    end if
 
    if !( file( cPath + "TVTA.Dbf" ) )
       msgStop( "El fichero " + cPath + "\TVTA.Dbf no se ha localizado", "Atención" )  
-      Return ( self )
+      RETURN ( self )
    end if 
 
    USE ( cPath + "TVTA.Dbf" ) NEW VIA ( 'DBFCDX' ) SHARED ALIAS ( cCheckArea( "TVTA", @dbfTipVentas ) )
    ( dbfTipVentas )->( ordsetfocus(0) )
    
-   ( dbfTipVentas )->( dbGoTop() )
+   ( dbfTipVentas )->( dbgotop() )
    while !( dbfTipVentas )->( eof() )
 
       getSQLDatabase():Exec( ::getStatementTiposVentas( dbfTipVentas ) )
@@ -279,42 +280,38 @@ RETURN ( ::getInsertStatement( hCampos, "tipos_ventas" ) )
 
 METHOD SeederMovimientosAlmacen()
 
-   local cPath       := cPatEmp( , .t. )
-   local dbfRemMovT
-   local cStatement
+   local dbf
+   local cLastRec
 
-   if ( file( cPath + "RemMovT.old" ) )
-      Return ( self )
+   if ( file( cPatEmp( , .t. ) + "RemMovT.old" ) )
+      RETURN ( self )
    end if
 
-   if !( file( cPath + "RemMovT.Dbf" ) )
-      msgStop( "El fichero " + cPath + "\RemMovT.Dbf no se ha localizado", "Atención" )  
-      Return ( self )
+   if !( file( cPatEmp( , .t. ) + "RemMovT.Dbf" ) )
+      msgStop( "El fichero " + cPatEmp( , .t. ) + "\RemMovT.Dbf no se ha localizado", "Atención" )  
+      RETURN ( self )
    end if 
 
-   USE ( cPath + "RemMovT.Dbf" ) NEW VIA ( 'DBFCDX' ) SHARED ALIAS ( cCheckArea( "RemMovT", @dbfRemMovT ) )
+   USE ( cPatEmp( , .t. ) + "RemMovT.Dbf" ) NEW VIA ( 'DBFCDX' ) SHARED ALIAS ( cCheckArea( "RemMovT", @dbf ) )
    
-   ( dbfRemMovT )->( ordsetfocus(0) )
+   ( dbf )->( ordsetfocus( 0 ) )
 
-   ( dbfRemMovT )->( dbGoTop() )
+   cLastRec       := alltrim( str( ( dbf )->( lastrec() ) ) )
 
-   while !( dbfRemMovT )->( eof() )
+   ( dbf )->( dbgotop() )
+
+   while !( dbf )->( eof() )
+
+      ::oMsg:SetText( "Seeder de movimientos de almacén " + alltrim( str( ( dbf )->( recno() ) ) ) + " de " + cLastRec )
       
-      cStatement  := "SELECT id "                                                         + ;
-                        "FROM movimientos_almacen "                                       + ;
-                        "WHERE uuid = " + quoted( ( dbfRemMovT )->cGuid ) + Space( 1 )    + ;
-                        "LIMIT 1"
+      getSQLDatabase():Exec( ::getStatementSeederMovimientosAlmacen( dbf ) )
 
-      if Empty( getSQLDatabase():selectFetchArrayOneColumn( cStatement ) )
-         getSQLDatabase():Exec( ::getStatementSeederMovimientosAlmacen( dbfRemMovT ) )
-      end if
-
-      ( dbfRemMovT )->( dbSkip() )
+      ( dbf )->( dbSkip() )
 
    end while
 
-   if dbfRemMovT != nil
-      ( dbfRemMovT )->( dbCloseArea() )
+   if dbf != nil
+      ( dbf )->( dbCloseArea() )
    end if
 
    //frename( cPath + "RemMovT.dbf", cPath + "RemMovT.old" )
@@ -345,42 +342,38 @@ RETURN ( ::getInsertStatement( hCampos, "movimientos_almacen" ) )
 
 METHOD SeederMovimientosAlmacenLineas()
 
-   local cPath       := cPatEmp( , .t. )
-   local dbfHisMov
-   local cStatement
+   local dbf
+   local cLastRec
 
-   if ( file( cPath + "HisMov.old" ) )
-      Return ( self )
+   if ( file( cPatEmp( , .t. ) + "HisMov.old" ) )
+      RETURN ( self )
    end if
 
-   if !( file( cPath + "HisMov.Dbf" ) )
-      msgStop( "El fichero " + cPath + "\HisMov.Dbf no se ha localizado", "Atención" )  
-      Return ( self )
+   if !( file( cPatEmp( , .t. ) + "HisMov.Dbf" ) )
+      msgStop( "El fichero " + cPatEmp( , .t. ) + "\HisMov.Dbf no se ha localizado", "Atención" )  
+      RETURN ( self )
    end if 
 
-   USE ( cPath + "HisMov.Dbf" ) NEW VIA ( 'DBFCDX' ) SHARED ALIAS ( cCheckArea( "HisMov", @dbfHisMov ) )
+   USE ( cPatEmp( , .t. ) + "HisMov.Dbf" ) NEW VIA ( 'DBFCDX' ) SHARED ALIAS ( cCheckArea( "HisMov", @dbf ) )
    
-   ( dbfHisMov )->( ordsetfocus(0) )
+   ( dbf )->( ordsetfocus(0) )
 
-   ( dbfHisMov )->( dbGoTop() )
+   cLastRec       := alltrim( str( ( dbf )->( lastrec() ) ) )
 
-   while !( dbfHisMov )->( eof() )
+   ( dbf )->( dbgotop() )
+
+   while !( dbf )->( eof() )
       
-      cStatement  := "SELECT id "                                                         + ;
-                        "FROM movimientos_almacen_lineas "                                + ;
-                        "WHERE uuid = " + quoted( ( dbfHisMov )->cGuid ) + Space( 1 )     + ;
-                        "LIMIT 1"
+      ::oMsg:SetText( "Seeder de líneas de movimientos de almacén " + alltrim( str( ( dbf )->( recno() ) ) ) + " de " + cLastRec )
 
-      if Empty( getSQLDatabase():selectFetchArrayOneColumn( cStatement ) )
-         getSQLDatabase():Exec( ::getStatementSeederMovimientosAlmacenLineas( dbfHisMov ) )
-      end if
+      getSQLDatabase():Exec( ::getStatementSeederMovimientosAlmacenLineas( dbf ) )
 
-      ( dbfHisMov )->( dbSkip() )
+      ( dbf )->( dbSkip() )
 
    end while
 
-   if dbfHisMov != nil
-      ( dbfHisMov )->( dbCloseArea() )
+   if dbf != nil
+      ( dbf )->( dbCloseArea() )
    end if
 
    //frename( cPath + "HisMov.dbf", cPath + "HisMov.old" )
@@ -412,42 +405,33 @@ RETURN ( ::getInsertStatement( hCampos, "movimientos_almacen_lineas" ) )
 
 METHOD SeederMovimientosAlmacenSeries()
 
-   local cPath       := cPatEmp( , .t. )
-   local dbfMovSer
-   local cStatement
+   local dbf
 
-   if ( file( cPath + "MovSer.old" ) )
-      Return ( self )
+   if ( file( cPatEmp( , .t. ) + "MovSer.old" ) )
+      RETURN ( self )
    end if
 
-   if !( file( cPath + "MovSer.Dbf" ) )
-      msgStop( "El fichero " + cPath + "\MovSer.Dbf no se ha localizado", "Atención" )  
-      Return ( self )
+   if !( file( cPatEmp( , .t. ) + "MovSer.Dbf" ) )
+      msgStop( "El fichero " + cPatEmp( , .t. ) + "\MovSer.Dbf no se ha localizado", "Atención" )  
+      RETURN ( self )
    end if 
 
-   USE ( cPath + "MovSer.Dbf" ) NEW VIA ( 'DBFCDX' ) SHARED ALIAS ( cCheckArea( "MovSer", @dbfMovSer ) )
+   USE ( cPatEmp( , .t. ) + "MovSer.Dbf" ) NEW VIA ( 'DBFCDX' ) SHARED ALIAS ( cCheckArea( "MovSer", @dbf ) )
    
-   ( dbfMovSer )->( ordsetfocus(0) )
+   ( dbf )->( ordsetfocus(0) )
 
-   ( dbfMovSer )->( dbGoTop() )
+   ( dbf )->( dbgotop() )
 
-   while !( dbfMovSer )->( eof() )
+   while !( dbf )->( eof() )
       
-      cStatement  := "SELECT id "                                                         + ;
-                        "FROM numeros_series "                                            + ;
-                        "WHERE uuid = " + quoted( ( dbfMovSer )->cGuid ) + Space( 1 )     + ;
-                        "LIMIT 1"
+      getSQLDatabase():Exec( ::getStatementSeederMovimientosAlmacenSeries( dbf ) )
 
-      if Empty( getSQLDatabase():selectFetchArrayOneColumn( cStatement ) )
-         getSQLDatabase():Exec( ::getStatementSeederMovimientosAlmacenSeries( dbfMovSer ) )
-      end if
-
-      ( dbfMovSer )->( dbSkip() )
+      ( dbf )->( dbSkip() )
 
    end while
 
-   if dbfMovSer != nil
-      ( dbfMovSer )->( dbCloseArea() )
+   if dbf != nil
+      ( dbf )->( dbCloseArea() )
    end if
 
    //frename( cPath + "MovSer.dbf", cPath + "MovSer.old" )

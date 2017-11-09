@@ -26,7 +26,9 @@ ENDCLASS
 METHOD Run() 
 
    ::createDatabase()
+
    ::addModels()
+
    ::checkModels()
 
 RETURN ( Self )

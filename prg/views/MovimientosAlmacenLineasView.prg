@@ -8,6 +8,8 @@
 
 CLASS MovimientosAlmacenLineasView FROM SQLBaseView
 
+   DATA oOfficeBarView
+
    DATA oBtnSerie
 
    DATA oGetLote
@@ -39,9 +41,13 @@ CLASS MovimientosAlmacenLineasView FROM SQLBaseView
    METHOD startActivate()
    METHOD initActivate()
 
-   METHOD nTotalUnidadesArticulo()     INLINE ( notCaja( ::oController:oModel:hBuffer[ "cajas_articulo" ] ) * ::oController:oModel:hBuffer[ "unidades_articulo" ] )
+   METHOD nTotalUnidadesArticulo()     
 
    METHOD nTotalImporteArticulo()      INLINE ( ::nTotalUnidadesArticulo() * ::oController:oModel:hBuffer[ "precio_articulo" ] )
+
+   METHOD hideCantidadesArticulos()    INLINE ( ::oGetBultosArticulo:hide(), ::oGetCajasArticulo:hide(), ::oGetUnidadesArticulo:hide() )
+   
+   METHOD showCantidadesArticulos()    INLINE ( ::oGetBultosArticulo:show(), ::oGetCajasArticulo:show(), ::oGetUnidadesArticulo:show() )
 
    METHOD refreshUnidadesImportes()    INLINE ( ::oSayTotalUnidades():Refresh(), ::oSayTotalImporte():Refresh() )
 
@@ -132,6 +138,7 @@ METHOD Activate()
       // Property browse-------------------------------------------------------
 
       ::oBrowsePropertyView               := SQLPropertyBrowseView():New( 600, ::oDialog )
+      ::oBrowsePropertyView:bOnPostEdit   := {|| ::oSayTotalUnidades:Refresh(), ::oSayTotalImporte:Refresh() }
 
       // Bultos----------------------------------------------------------------
 
@@ -235,18 +242,11 @@ METHOD Activate()
          ID          412 ;
          OF          ::oDialog
 
-      // FastKeys---------------------------------------------------------------
-
-      if ::oController:isNotZoomMode()
-         ::oDialog:AddFastKey( VK_F5, {|| ::oBtnOk:Action() } )
-         ::oDialog:AddFastKey( VK_F6, {|| ::oBtnOkAndNew:Action() } )
-      end if
-
-      ::oDialog:AddFastKey( VK_F7, {|| ::oBtnSerie:Action() } )
-
       ::oDialog:bStart    := {|| ::startActivate() }
 
    ::oDialog:Activate( , , , .t., , , {|| ::initActivate() } ) 
+
+   ::oOfficeBar:End()
 
 RETURN ( ::oDialog:nResult )
 
@@ -265,6 +265,10 @@ METHOD startActivate()
       ::oController:validateSegundaPropiedad()      
    end if 
 
+   ::oSayTotalUnidades:Refresh()
+
+   ::oSayTotalImporte:Refresh()
+
 RETURN ( .t. )
 
 //---------------------------------------------------------------------------//
@@ -273,12 +277,26 @@ METHOD initActivate()
 
    local oGrupo
    
-   ::createOfficeBar()
+   ::oOfficeBar               := OfficeBarView():New( Self )
 
-   oGrupo                     := TDotNetGroup():New( ::oOfficeBarFolder, 66, "Series", .f. )
-      ::oBtnSerie             := TDotNetButton():New( 60, oGrupo, "gc_floppy_disk_32", "Series [F7]", 1, {|| ::oController:runDialogSeries() }, , , .f., .f., .f. )
+   ::oOfficeBar:createButtonsDialog()
+
+   oGrupo                     := TDotNetGroup():New( ::oOfficeBar:oOfficeBarFolder, 66, "Series", .f. )
+      ::oBtnSerie             := TDotNetButton():New( 60, oGrupo, "gc_barcode_scanner_32", "Series [F7]", 1, {|| ::oController:runDialogSeries() }, , , .f., .f., .f. )
+
+   ::oDialog:AddFastKey( VK_F7, {|| ::oBtnSerie:Action() } )
 
 RETURN ( Self )
+
+//---------------------------------------------------------------------------//
+
+METHOD nTotalUnidadesArticulo()
+
+   if hb_isobject( ::oBrowsePropertyView ) .and. ::oBrowsePropertyView:lVisible
+      RETURN ( ::oBrowsePropertyView:nTotalUnits() )
+   end if
+
+RETURN ( notCaja( ::oController:oModel:hBuffer[ "cajas_articulo" ] ) * ::oController:oModel:hBuffer[ "unidades_articulo" ] )
 
 //---------------------------------------------------------------------------//
 

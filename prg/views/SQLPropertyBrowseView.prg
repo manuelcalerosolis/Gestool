@@ -20,7 +20,9 @@ CLASS SQLPropertyBrowseView
    DATA aPropertiesTable
 
    DATA nTotalRow
-   DATA nTotalColumn                 
+   DATA nTotalColumn          
+
+   DATA bOnPostEdit           INIT {|| .t. }      
 
    METHOD New()
 
@@ -47,10 +49,13 @@ CLASS SQLPropertyBrowseView
    METHOD addColumnTitleProperty( n )
    METHOD addColumnColorProperty( n )
    METHOD addColumnValueProperty( n )
+   METHOD postEditProperties( oCol, xVal, nKey )
 
    METHOD bGenEditText( n )   
    METHOD bGenEditValue( n )  
    METHOD bGenRGBValue( n )  
+
+   METHOD nTotalUnits()
 
 ENDCLASS
 
@@ -261,18 +266,32 @@ METHOD addColumnValueProperty( n )
       :Adjust()
       :cHeader          := ::aPropertiesTable[ ::oBrowse:nArrayAt, n ]:cHead
       :bEditValue       := ::bGenEditValue( n )
-      :cEditPicture     := MasUnd()
+      :cEditPicture     := masUnd()
       :nWidth           := 50
       :setAlign( AL_RIGHT )
-      :nFooterType      := AGGR_SUM
-      :nEditType        := EDIT_GET
       :nHeadStrAlign    := AL_RIGHT
-      :bOnPostEdit      := {| oCol, xVal, nKey | bPostEditProperties( oCol, xVal, nKey, ::oBrowse, oGetUnidades ) }
+      :nEditType        := EDIT_GET
+      :bOnPostEdit      := {| oCol, xVal, nKey | ::postEditProperties( oCol, xVal, nKey ) }
       :nFootStyle       := :defStyle( AL_RIGHT, .t. )               
+      :nFooterType      := AGGR_SUM
+      :cFooterPicture   := masUnd()
+      :cDataType        := "N"
       :Cargo            := n
    end with
 
 RETURN ( self )
+
+//---------------------------------------------------------------------------//
+
+METHOD postEditProperties( oCol, xVal, nKey )
+
+   ::oBrowse:Cargo[ ::oBrowse:nArrayAt, oCol:Cargo ]:Value := xVal
+
+   if hb_isblock( ::bOnPostEdit )
+      eval( ::bOnPostEdit )
+   end if 
+
+RETURN ( .t. )
 
 //---------------------------------------------------------------------------//
 
@@ -301,8 +320,6 @@ RETURN ( self )
 METHOD setValueAndUuidToPropertiesTable( hLine )
 
    local oProperty
-
-   // msgalert( hb_valtoexp( hLine ), "hLine" )
 
    if empty( hget( hLine, "uuid" ) )
       RETURN ( nil )
@@ -362,182 +379,15 @@ RETURN ( {|| { nRGB( 0, 0, 0), ::aPropertiesTable[ ::oBrowse:nArrayAt, n ]:nRgb 
 
 //---------------------------------------------------------------------------//
 
-STATIC FUNCTION aPropertiesTable( oBrowse, nTotalCol )
+METHOD nTotalUnits()
 
-   local n
-   local nAt         := oBrowse:nAt
-   local aRow        := {}
+   local nTotalUnits    := 0
 
-   if nAt == 0
-      RETURN ( aRow )
-   end if 
+   aeval( ::oBrowse:Cargo,;
+      {| aRow | aeval( aRow,;
+         {| oCol | if( hb_isnumeric( oCol:Value ), nTotalUnits += oCol:Value, ) } ) } )
 
-   for n := 1 to nTotalCol
-      if oBrowse:Cargo[ nAt, n ]:Value == nil
-         aAdd( aRow, oBrowse:Cargo[ nAt, n ]:cText )
-      else
-         aAdd( aRow, Trans( oBrowse:Cargo[ nAt, n ]:Value, MasUnd() ) )
-      end if
-   next
-
-RETURN ( aRow )
+RETURN ( nTotalUnits )
 
 //---------------------------------------------------------------------------//
-
-STATIC FUNCTION EditPropertiesTable( oBrowse )
-
-   local nRow     := oBrowse:nAt
-   local nCol     := oBrowse:nColAct
-   local uVar     := oBrowse:Cargo[ nRow, nCol ]:Value
-
-   if nCol <= 1
-      return .f.
-   end if
-
-   if oBrowse:lEditCol( nCol, @uVar, MasUnd() )
-      oBrowse:Cargo[ nRow, nCol ]:Value   := uVar
-      oBrowse:Refresh()
-   end if
-
-RETURN .t.
-
-//--------------------------------------------------------------------------//
-
-STATIC FUNCTION PutPropertiesTable( oBrowse, oGet )
-
-   local nRow
-   local nCol
-   local uVar
-
-   if !Empty( oBrowse ) .and. !Empty( oBrowse:Cargo )
-
-      nRow        := oBrowse:nAt
-      nCol        := oBrowse:nColAct
-      uVar        := oBrowse:Cargo[ nRow, nCol ]:nPrecioCompra
-
-      if !Empty( oGet )
-         oGet:cText( uVar )
-      end if
-
-   end if
-
-RETURN .t.
-
-//--------------------------------------------------------------------------//
-
-STATIC FUNCTION validPropertiesTable( oBrowse, oGet )
-
-   local nRow
-   local nCol
-   local uVar
-   local oBlock
-
-   oBlock         := ErrorBlock( {| oError | ApoloBreak( oError ) } )
-   BEGIN SEQUENCE
-
-      nRow        := oBrowse:nAt
-      nCol        := oBrowse:nColAct
-      uVar        := oGet:VarGet()
-
-      if IsArray( oBrowse:Cargo )
-         oBrowse:Cargo[ nRow, nCol ]:nPrecioCompra := uVar
-      end if
-
-   RECOVER
-
-      msgStop( "Imposible asignar valor a la celda." )
-
-   END SEQUENCE
-
-   ErrorBlock( oBlock )
-
-RETURN .t.
-
-//--------------------------------------------------------------------------//
-
-STATIC FUNCTION KeyPropertiesTable( nKey, oBrowse )
-
-   local nVar     := 0
-   local nRow     := oBrowse:nAt
-   local nCol     := oBrowse:nColAct
-   local uVar     := Val( Chr( nKey ) )
-
-   if nCol <= 1
-      return .f.
-   end if
-
-   if oBrowse:lEditCol( nCol, @nVar, MasUnd(), , , , , , , , {|oGet| oGet:KeyChar( nKey ) } )
-      oBrowse:Cargo[ nRow, nCol ]:Value   := nVar
-      oBrowse:GoDown()
-      oBrowse:Refresh()
-   end if
-
-Return .t.
-
-//--------------------------------------------------------------------------//
-
-STATIC FUNCTION aPropertiesFooter( oBrowse, nTotalRow, nTotalCol, oGet )
-
-   local n
-   local i
-   local nTot  := 0
-   local aRow  := AFill( Array( nTotalCol ), 0 )
-
-   for n := 1 to nTotalCol
-      for i := 1 to nTotalRow
-         if oBrowse:Cargo[ i, n ]:Value == nil
-            aRow[ n ]   := "Total"
-         else
-            aRow[ n ]   += oBrowse:Cargo[ i, n ]:Value
-         end if
-      next
-   next
-
-   for n := 1 to nTotalCol
-      if ValType( aRow[ n ] ) == "N"
-         nTot           += aRow[ n ]
-         aRow[ n ]      := Trans( aRow[ n ], MasUnd() )
-      end if
-   next
-
-   if oGet != nil
-      oGet:cText( nTot )
-   end if
-
-RETURN ( aRow )
-
-//---------------------------------------------------------------------------//
-
-STATIC FUNCTION bPostEditProperties( oCol, xVal, nKey, oBrowse, oGetUnidades )
-
-   oBrowse:Cargo[ oBrowse:nArrayAt, oCol:Cargo ]:Value := xVal 
-
-   nTotalProperties( oBrowse, oGetUnidades )
-
-RETURN ( .t. )
-
-//---------------------------------------------------------------------------//
-
-STATIC FUNCTION nTotalProperties( oBrowse, oGet )
-
-   local aRow  
-   local aCol
-   local nTot  := 0
-
-   for each aRow in oBrowse:Cargo
-      for each aCol in aRow
-         if isNum( aCol:Value )
-            nTot  += aCol:Value 
-         end if
-      next
-   next 
-
-   if !empty( oGet )
-      oGet:cText( nTot )
-   end if 
-
-RETURN ( .t. )
-
-//---------------------------------------------------------------------------//
-
 
