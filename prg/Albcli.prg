@@ -5117,6 +5117,7 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbf, oBrw, lTotLin, cCodArtEnt, nMode, aTmpA
       ON INIT     ( menuEdtDet( aGet[ _CREF ], oDlg, , if( nMode == APPD_MODE, "", Str( ( dbfTmpLin )->( OrdKeyNo() ) ) ) ) );
       CENTER
 
+
    if !Empty( oDetMenu )
       oDetMenu:End()
    end if
@@ -18805,6 +18806,8 @@ static Function menuEdtDet( oCodArt, oDlg, lOferta, nIdLin )
 
    DEFAULT lOferta      := .f.
 
+   MsgInfo( "M1" )
+
    MENU oDetMenu
 
       MENUITEM    "&1. Rotor  " ;
@@ -18831,7 +18834,11 @@ static Function menuEdtDet( oCodArt, oDlg, lOferta, nIdLin )
 
    ENDMENU
 
+   MsgInfo( "M2" )
+
    oDlg:SetMenu( oDetMenu )
+
+   MsgInfo( "M3" )
 
 Return ( oDetMenu )
 
