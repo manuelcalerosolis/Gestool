@@ -10,23 +10,12 @@ CLASS PropiedadesModel FROM ADSBaseModel
 
    METHOD getNombre( cCodigoPropiedad )
 
+   METHOD getNombre( idPropiedades )         INLINE ( ::getField( "cDesPro", "cCodPro", idPropiedades ) )
+
+
 END CLASS
 
 //---------------------------------------------------------------------------//
-
-METHOD getNombre( cCodigoPropiedad ) CLASS PropiedadesModel
-
-   local cStm
-   local cSql  := "SELECT cDesPro "                                     + ;
-                     "FROM " + ::getTableName() + " "                   + ;
-                     "WHERE cCodPro = " + quoted( cCodigoPropiedad ) 
-
-   if ::ExecuteSqlStatement( cSql, @cStm )
-      RETURN ( ( cStm )->cDesPro )
-   end if 
-
-RETURN ( "" )
-
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//

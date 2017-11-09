@@ -4226,18 +4226,15 @@ FUNCTION externalObjectSender( cMsg, u1, u2, u3, u4, u5, u6, u7, u8, u9, u10 )
       RETURN ( "" )
    end if 
 
-   nPos        := at( "()", cMsg )
+   nPos        := at( ":", cMsg )
    if nPos == 0
       RETURN ( "" )
    end if 
 
-   cObject     := substr( cMsg, 1, nPos + 1 )
+   cObject     := substr( cMsg, 1, nPos - 1 )
 
    cMsg        := strtran( cMsg, cObject, "" )
    cMsg        := strtran( cMsg, ":", "" )
-
-   msgAlert( cObject, "cObject")
-   msgAlert( cMsg, "cMsg")
 
    try 
 

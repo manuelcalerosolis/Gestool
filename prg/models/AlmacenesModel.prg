@@ -9,7 +9,7 @@ CLASS AlmacenesModel FROM ADSBaseModel
 
    METHOD exist()
 
-   METHOD getNombre()
+   METHOD getNombre( idAlamcen )          INLINE ( ::getField( "cNomAlm", "cCodAlm", idAlamcen ) )
 
 END CLASS
 
@@ -29,19 +29,3 @@ METHOD exist( cCodigoAlmacen )
 RETURN ( .f. )
 
 //---------------------------------------------------------------------------//
-
-METHOD getNombre( cCodigoAlmacen )
-
-   local cStm
-   local cSql  := "SELECT cNomAlm "                               + ;
-                     "FROM " + ::getTableName() + " "             + ;
-                     "WHERE cCodAlm = " + quoted( cCodigoAlmacen ) 
-
-   if ::ExecuteSqlStatement( cSql, @cStm )
-      RETURN ( ( cStm )->cNomAlm )
-   end if 
-
-RETURN ( "" )
-
-//---------------------------------------------------------------------------//
-
