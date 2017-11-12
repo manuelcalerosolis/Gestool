@@ -8,10 +8,7 @@ CLASS PropiedadesModel FROM ADSBaseModel
 
    METHOD getTableName()                     INLINE ::getEmpresaTableName( "Pro" )
 
-   METHOD getNombre( cCodigoPropiedad )
-
-   METHOD getNombre( idPropiedades )         INLINE ( ::getField( "cDesPro", "cCodPro", idPropiedades ) )
-
+   MESSAGE getNombre( cCodigoPropiedad )     INLINE ::getField( "cDesPro", "cCodPro", cCodigoPropiedad )
 
 END CLASS
 
