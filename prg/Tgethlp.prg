@@ -57,11 +57,9 @@ CLASS TGetHlp FROM TGet
 
    METHOD EvalMult()                INLINE ( if( ::bMult != nil, eval( ::bMult, Self ), ) )
 
-   METHOD Hide()                    INLINE ( if( ::oSay != nil, ::oSay:Hide(), ), if( ::oHelpText != nil, ::oHelpText:Hide(), ), ::Super:Hide() )
+   METHOD Hide()                    
 
-   METHOD Show()                    INLINE  ( if( ::oSay != nil, ::oSay:Show(), ),;
-                                              if( ::oHelpText != nil, ::oHelpText:Show(), ),;
-                                              ::Super:Show() )
+   METHOD Show()
 
    METHOD SetText( cText )          INLINE ( if( ::oSay != nil, ::oSay:SetText( cText ), ::cText( cText ) ) )
 
@@ -188,6 +186,34 @@ METHOD Destroy() CLASS TGetHlp
    end if
 
 Return ( ::Super:Destroy() )
+
+//---------------------------------------------------------------------------//
+
+METHOD Hide()
+
+   if ::oSay != nil
+      ::oSay:Hide()
+   end if 
+
+   if ::oHelpText != nil
+      ::oHelpText:Hide()
+   end if 
+
+RETURN ( ::Super:Hide() )
+
+//---------------------------------------------------------------------------//
+
+METHOD Show()
+   
+   if ::oSay != nil
+      ::oSay:Show()
+   end if 
+   
+   if ::oHelpText != nil
+      ::oHelpText:Show()
+   end if 
+   
+RETURN ( ::Super:Show() )
 
 //---------------------------------------------------------------------------//
 

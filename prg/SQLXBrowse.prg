@@ -15,16 +15,17 @@ CLASS SQLXBrowse FROM TXBrowse
 
    CLASSDATA lRegistered                        AS LOGICAL
 
-   DATA  aHeaders                               AS ARRAY       INIT {}
+   DATA aHeaders                                AS ARRAY       INIT {}
 
-   DATA  lOnProcess                             AS LOGIC       INIT .f.
+   DATA lOnProcess                              AS LOGIC       INIT .f.
 
-   DATA  nVScrollPos
+   DATA nVScrollPos
+
+   DATA oRowSet
 
    METHOD New( oWnd )
 
    METHOD setRowSet( oModel )
-   METHOD runBookMark(n, oModel )
 
    METHOD refreshCurrent()                      INLINE ( ::Refresh(), ::Select( 0 ), ::Select( 1 ) )
 
@@ -145,31 +146,18 @@ METHOD setRowSet( oModel )
    ::bGoBottom       := {|| oModel:getRowSet():GoBottom() }
    ::bBof            := {|| oModel:getRowSet():Bof() }
    ::bEof            := {|| oModel:getRowSet():Eof() }
+   ::bKeyCount       := {|| oModel:getRowSet():RecCount() }
    ::bSkip           := {| n | oModel:getRowSet():Skipper( n ) }
    ::bKeyNo          := {| n | oModel:getRowSet():RecNo() }
-   ::bKeyCount       := {|| oModel:getRowSet():RecCount() }
    ::bBookMark       := {| n | iif( n == nil,;
                                     oModel:getRowSet():RecNo(),;
-                                    ( oModel:getRowSet():GoTo( n ), logwrite( n ) ) ) }
-   // ::bBookMark       := {| n | ::runBookMark( n, oModel ) } // iif( n == nil, oModel:getRowSet():RecNo(), oModel:getRowSet():GoTo( n ) ) }
+                                    oModel:getRowSet():GoTo( n ) ) }
 
    if ::oVScroll() != nil
       ::oVscroll():SetRange( 1, oModel:getRowSet():RecCount() )
    endif
 
    ::lFastEdit       := .t.
-
-RETURN nil
-
-//----------------------------------------------------------------------------//
-
-METHOD runBookMark(n, oModel )
-
-   if n == nil
-      oModel:getRowSet():RecNo()
-   else
-      oModel:getRowSet():GoTo( n )
-   end if 
 
 RETURN nil
 
@@ -206,14 +194,14 @@ METHOD MakeTotals()
    local uBm
    local aCols    := {}
 
-   aeval( ::aCols, {|oCol| if( !empty( oCol:nFooterType ), aadd( aCols, oCol ), ) } )
+   aeval( ::aCols,;
+      {|oCol| if( !empty( oCol:nFooterType ),;
+         ( oCol:nTotal := 0.0, aadd( aCols, oCol ) ), ) } )
 
    if empty( aCols )
       RETURN ( Self )
    end if 
 
-   aeval( aCols, {|oCol| oCol:nTotal := 0.0 } )
-   
    uBm            := eval( ::bBookMark )
 
    eval( ::bGoTop )

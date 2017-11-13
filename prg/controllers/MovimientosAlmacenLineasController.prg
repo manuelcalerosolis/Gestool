@@ -49,12 +49,14 @@ CLASS MovimientosAlmacenLineasController FROM SQLBaseController
 
    METHOD shopPropiedades()
 
-   METHOD showPrimeraPropiedad()       INLINE ( if( !uFieldEmpresa( "lUseTbl" ), ::oDialogView:oGetValorPrimeraPropiedad:Show(), ) )
+   METHOD showPrimeraPropiedad()       INLINE ( if( !uFieldEmpresa( "lUseTbl" ), ::oDialogView:showValorPrimeraPropiedad(), ) )
    
-   METHOD showSegundaPropiedad()       INLINE ( if( !uFieldEmpresa( "lUseTbl" ), ::oDialogView:oGetValorSegundaPropiedad:Show(), ) )
+   METHOD showSegundaPropiedad()       INLINE ( if( !uFieldEmpresa( "lUseTbl" ), ::oDialogView:showValorSegundaPropiedad, ) )
 
    METHOD buildBrowseProperty()        INLINE ( if( uFieldEmpresa( "lUseTbl" ), ::oDialogView:oBrowsePropertyView:build(), ) )
-   
+
+   METHOD showBrowseProperty()         INLINE ( if( uFieldEmpresa( "lUseTbl" ), ::oDialogView:showBrowsePropertyView(), ) )
+
    METHOD loadValuesBrowseProperty()
 
    METHOD isProductProperty()          INLINE ( !empty( hget( ::oModel:hBuffer, "codigo_primera_propiedad" ) ) .or.;
@@ -183,11 +185,11 @@ METHOD shopPropiedades( cCodigoArticulo, hArticulo )
 
    if empty( hget( hArticulo, "ccodprp1" ) )
 
-      ::oDialogView:oBrowsePropertyView:hide()
+      ::oDialogView:hideValorPrimeraPropiedad()
 
-      ::oDialogView:oGetValorPrimeraPropiedad:hide()
+      ::oDialogView:hideValorSegundaPropiedad()
 
-      ::oDialogView:oGetValorSegundaPropiedad:hide()
+      ::oDialogView:hideBrowsePropertyView()
 
       ::oDialogView:showCantidadesArticulos()
 
@@ -212,6 +214,8 @@ METHOD shopPropiedades( cCodigoArticulo, hArticulo )
       end if 
 
       ::buildBrowseProperty()
+
+      ::showBrowseProperty()
 
       sysrefresh()
 

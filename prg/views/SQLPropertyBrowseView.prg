@@ -26,6 +26,8 @@ CLASS SQLPropertyBrowseView
 
    METHOD New()
 
+   METHOD getBrowse()         INLINE ( ::oBrowse )
+
    METHOD Hide()              INLINE ( ::oBrowse:Hide() )
    METHOD Show()              INLINE ( ::oBrowse:Show() )
    METHOD Refresh()           INLINE ( ::oBrowse:MakeTotals(), ::oBrowse:Refresh() )
@@ -38,7 +40,7 @@ CLASS SQLPropertyBrowseView
    METHOD buildPropertyTable()
    METHOD setBrowsePropertyTable()
    METHOD createColumnBrowseProperty()
-   METHOD showBrowseProperty()
+   METHOD Adjust()
 
    METHOD getProperties()
       METHOD addProperty()
@@ -122,7 +124,7 @@ METHOD build()
 
    ::createColumnBrowseProperty()
 
-   ::showBrowseProperty()
+   ::Adjust()
 
 RETURN ( self )
 
@@ -201,11 +203,9 @@ RETURN ( self )
 
 //---------------------------------------------------------------------------//
 
-METHOD showBrowseProperty()
+METHOD Adjust()
 
    ::oBrowse:aCols[ 1 ]:Hide()
-
-   ::oBrowse:Adjust()
 
    ::oBrowse:nColSel          := ::oBrowse:nFreeze + 1
 
@@ -213,7 +213,7 @@ METHOD showBrowseProperty()
    ::oBrowse:nHeaderHeight    := 20
    ::oBrowse:nFooterHeight    := 20
 
-   ::oBrowse:Show()
+   ::oBrowse:Adjust()
 
 RETURN ( self )
 
