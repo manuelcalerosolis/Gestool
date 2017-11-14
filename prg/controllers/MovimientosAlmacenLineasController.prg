@@ -44,7 +44,6 @@ CLASS MovimientosAlmacenLineasController FROM SQLBaseController
    METHOD stampFechaCaducidad()
 
    METHOD getPrimeraPropiedad( cCodigoArticulo, cCodigoPropiedad )
-
    METHOD getSegundaPropiedad( cCodigoArticulo, cCodigoPropiedad )
 
    METHOD showPropiedades()
@@ -216,7 +215,11 @@ METHOD showPropiedades( cCodigoArticulo, hArticulo )
 
       ::loadValuesBrowseProperty( cCodigoArticulo )
 
+      sysrefresh()
+
       ::oDialogView:hideUnitsControls()
+
+      sysrefresh()
 
    end if 
 

@@ -59,9 +59,9 @@ METHOD createButtonImage()
 
    local oGrupo
 
-   if !empty( ::getController():getImage( "48" ) )
+   if !empty( ::getController():getImage( "64" ) )
       oGrupo                  := TDotNetGroup():New( ::oOfficeBarFolder, 66, "", .f. )
-         TDotNetButton():New( 60, oGrupo, ::getController():getImage( "48" ), "", 1, {|| "" }, , , .f., .f., .f. )
+         TDotNetButton():New( 60, oGrupo, ::getController():getImage( "64" ), "", 1, {|| "" }, , , .f., .f., .f. )
    end if
 
 RETURN ( Self )
@@ -99,7 +99,7 @@ METHOD createButtonsDialog()
    if ::getController():isAppendMode()
       oGrupo                  := TDotNetGroup():New( ::oOfficeBarFolder, 126, "Acciones", .f. )
          ::oBtnOk             := TDotNetButton():New( 60, oGrupo, "gc_floppy_disk_32", "Aceptar y cerrar [F5]", 1, {|| if( validateDialog( ::getDialog() ), ::getDialog():end( IDOK ), ) }, , , .f., .f., .f. )
-         ::oBtnOkAndNew       := TDotNetButton():New( 60, oGrupo, "gc_floppy_disk_32", "Aceptar y nuevo [F6]", 2, {|| if( validateDialog( ::getDialog() ), ::getDialog():end( IDOKANDNEW ), ) }, , , .f., .f., .f. )
+         ::oBtnOkAndNew       := TDotNetButton():New( 60, oGrupo, "gc_floppy_disk_plus_32", "Aceptar y nuevo [F6]", 2, {|| if( validateDialog( ::getDialog() ), ::getDialog():end( IDOKANDNEW ), ) }, , , .f., .f., .f. )
 
          ::getDialog():addFastKey( VK_F5, {|| ::oBtnOk:Action() } )
          ::getDialog():addFastKey( VK_F6, {|| ::oBtnOkAndNew:Action() } )

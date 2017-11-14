@@ -241,7 +241,7 @@ METHOD addColumnColorProperty( n )
 
    with object ( ::oBrowse:AddCol() )
       :Adjust()
-      :cHeader       := "Color"
+      :cHeader       := ""
       :nWidth        := 40
       :bFooter       := {|| "" }
       :bStrData      := {|| "" }
