@@ -218,6 +218,9 @@ METHOD lResource( cFld ) CLASS TFastVentasArticulos
 
    ::cSubTitle       := "Informe de artículos"
 
+   ::cTipoInforme    := "Artículos"
+   ::cBmpInforme     := "gc_object_cube_64"
+
    if !::lTabletVersion .and. !::NewResource()
       return .f.
    end if
@@ -230,10 +233,10 @@ METHOD lResource( cFld ) CLASS TFastVentasArticulos
       return .f.
    end if
 
-   if !::lGrupoGFamilia( .t. )
+   if !::lGrupoGFamilia( .t. )  
       return .f.
    end if
-
+  
    if !::lGrupoFamilia( .t. )
       return .f.
    end if

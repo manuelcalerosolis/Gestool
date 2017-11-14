@@ -442,3 +442,5 @@ GC_DOCUMENT_TEXT_PENCIL_48 BITMAP "..\\bmp\\gc_document_text_pencil_48.bmp"
 
 REFRESH16 BITMAP "..\\bmp\\gc_recycle_16.bmp"
 SELECT16 BITMAP "..\\bmp\\gc_check_16.bmp"
+
+GC_WORKER2_CABINET_OPEN_64 BITMAP "..\\bmp\\gc_worker2_cabinet_open_64.bmp"

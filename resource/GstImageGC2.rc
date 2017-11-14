@@ -290,3 +290,12 @@ GC_ODOMETER_32 BITMAP "..\\bmp\\gc_odometer_32.bmp"
 GC_BARCODE_SCANNER_32 BITMAP "..\\bmp\\gc_barcode_scanner_32.bmp"
 
 GC_HAND_TRUCK_BOX_32 BITMAP "..\\bmp\\gc_hand_truck_box_32.bmp"
+
+
+GC_FLOPPY_DISK_PLUS_32 BITMAP "..\\bmp\\gc_floppy_disk_plus_32.bmp"
+GC_BUSINESSMAN_CABINET_OPEN_64 BITMAP "..\\bmp\\gc_businessman_cabinet_open_64.bmp"
+
+GC_OBJECT_CUBE_64 BITMAP "..\\bmp\\gc_object_cube_64.bmp"
+GC_PACKAGE_64 BITMAP "..\\bmp\\gc_package_64.bmp"
+GC_BUSINESSMAN_64 BITMAP "..\\bmp\\gc_businessman_64.bmp"
+GC_WORKER2_64 BITMAP "..\\bmp\\gc_worker2_64.bmp"

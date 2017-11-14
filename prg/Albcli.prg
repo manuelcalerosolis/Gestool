@@ -18806,8 +18806,6 @@ static Function menuEdtDet( oCodArt, oDlg, lOferta, nIdLin )
 
    DEFAULT lOferta      := .f.
 
-   MsgInfo( "M1" )
-
    MENU oDetMenu
 
       MENUITEM    "&1. Rotor  " ;
@@ -18834,11 +18832,7 @@ static Function menuEdtDet( oCodArt, oDlg, lOferta, nIdLin )
 
    ENDMENU
 
-   MsgInfo( "M2" )
-
    oDlg:SetMenu( oDetMenu )
-
-   MsgInfo( "M3" )
 
 Return ( oDetMenu )
 
