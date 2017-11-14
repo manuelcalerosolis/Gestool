@@ -4216,6 +4216,79 @@ RETURN ( aFetch )
 
 //---------------------------------------------------------------------------//
 
+FUNCTION externalObjectSender( cMsg, u1, u2, u3, u4, u5, u6, u7, u8, u9, u10 )
+
+   local nPos
+   local uReturn
+   local cObject
+
+   if empty( cMsg )
+      RETURN ( "" )
+   end if 
+
+   nPos        := at( ":", cMsg )
+   if nPos == 0
+      RETURN ( "" )
+   end if 
+
+   cObject     := substr( cMsg, 1, nPos - 1 )
+
+   cMsg        := strtran( cMsg, cObject, "" )
+   cMsg        := strtran( cMsg, ":", "" )
+
+   try 
+
+      uReturn  := apoloSender( &( cObject ), cMsg, u1, u2, u3, u4, u5, u6, u7, u8, u9, u10 )
+
+   catch
+
+      msgStop( "Error en la expresión : " + cMsg )
+
+   end
+
+RETURN ( uReturn )
+
+//---------------------------------------------------------------------------//
+
+function ApoloSender( oObject, cMsg, u1, u2, u3, u4, u5, u6, u7, u8, u9, u10 )
+
+   local uResult
+
+   cMsg           := StrTran( cMsg, "()", "" )
+
+   do case
+      case IsNil( u1 )
+         uResult  := oObject:&( cMsg )()
+
+      case IsNil( u2 )
+
+         uResult  := oObject:&( cMsg )( u1 )
+
+      case IsNil( u3 )
+
+         uResult  := oObject:&( cMsg )( u1, u2 )
+
+      case IsNil( u4 )
+
+         uResult  := oObject:&( cMsg )( u1, u2, u3 )
+
+      case IsNil( u5 )
+
+         uResult  := oObject:&( cMsg )( u1, u2, u3, u4 )
+
+      case IsNil( u6 )
+
+         uResult  := oObject:&( cMsg )( u1, u2, u3, u4, u5 )
+
+      otherwise
+         ApoloSender( oObject:&( cMsg ), u1, u2, u3, u4, u5, u6, u7, u8, u9, u10 )
+
+   end case 
+
+Return ( uResult )
+
+//--------------------------------------------------------------------------//
+
 #pragma BEGINDUMP
 
 /*

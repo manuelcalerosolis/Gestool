@@ -111,9 +111,9 @@ RETURN ( ::hColumns )
 
 //---------------------------------------------------------------------------//
 
-METHOD cTextoMovimiento()
+METHOD cTextoMovimiento( nPosition )
 
-   local nPosition   := ::getRowSet():fieldGet( "tipo_movimiento" )
+   DEFAULT nPosition := ::getRowSet():fieldGet( "tipo_movimiento" )
 
    nPosition         := max( nPosition, 1 )
    nPosition         := min( nPosition, len( ::aTextoMovimiento ) )

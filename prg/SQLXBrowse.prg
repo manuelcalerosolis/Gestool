@@ -15,19 +15,17 @@ CLASS SQLXBrowse FROM TXBrowse
 
    CLASSDATA lRegistered                        AS LOGICAL
 
-   DATA  aHeaders                               AS ARRAY       INIT {}
+   DATA aHeaders                                AS ARRAY       INIT {}
 
-   DATA  lOnProcess                             AS LOGIC       INIT .f.
+   DATA lOnProcess                              AS LOGIC       INIT .f.
 
-   DATA  nVScrollPos
+   DATA nVScrollPos
 
-   ACCESS BookMark                              INLINE Eval( ::bBookMark )
-   ASSIGN BookMark(u)                           INLINE Eval( ::bBookMark, u )
+   DATA oRowSet
 
    METHOD New( oWnd )
 
    METHOD setRowSet( oModel )
-   METHOD setRowSetController( oController )                  
 
    METHOD refreshCurrent()                      INLINE ( ::Refresh(), ::Select( 0 ), ::Select( 1 ) )
 
@@ -148,42 +146,18 @@ METHOD setRowSet( oModel )
    ::bGoBottom       := {|| oModel:getRowSet():GoBottom() }
    ::bBof            := {|| oModel:getRowSet():Bof() }
    ::bEof            := {|| oModel:getRowSet():Eof() }
+   ::bKeyCount       := {|| oModel:getRowSet():RecCount() }
    ::bSkip           := {| n | oModel:getRowSet():Skipper( n ) }
    ::bKeyNo          := {| n | oModel:getRowSet():RecNo() }
-   ::bBookMark       := {| n | iif( n == nil, oModel:getRowSet():RecNo(), oModel:getRowSet():GoTo( n ) ) }
-   ::bKeyNo          := {| n | iif( n == nil, oModel:getRowSet():RecNo(), oModel:getRowSet():GoTo( n ) ) }
-   ::bKeyCount       := {|| oModel:getRowSet():RecCount() }
+   ::bBookMark       := {| n | iif( n == nil,;
+                                    oModel:getRowSet():RecNo(),;
+                                    oModel:getRowSet():GoTo( n ) ) }
 
    if ::oVScroll() != nil
       ::oVscroll():SetRange( 1, oModel:getRowSet():RecCount() )
    endif
 
    ::lFastEdit       := .t.
-
-RETURN nil
-
-//----------------------------------------------------------------------------//
-
-METHOD setRowSetController( oController )
-
-   ::lAutoSort       := .f.
-   ::nDataType       := DATATYPE_USER
-   ::nRowHeight      := 20
-   ::bGoTop          := {|| oController:oRowSet:GoTop() }
-   ::bGoBottom       := {|| oController:oRowSet:GoBottom() }
-   ::bBof            := {|| oController:oRowSet:Bof() }
-   ::bEof            := {|| oController:oRowSet:Eof() }
-   ::bSkip           := {| n | oController:oRowSet:Skipper( n ) }
-   ::bKeyNo          := {| n | oController:oRowSet:RecNo() }
-   ::bBookMark       := {| n | iif( n == nil, oController:oRowSet:RecNo(), oController:oRowSet:GoTo( n ) ) }
-   ::bKeyNo          := {| n | iif( n == nil, oController:oRowSet:RecNo(), oController:oRowSet:GoTo( n ) ) }
-   ::bKeyCount       := {|| oController:oRowSet:RecCount() }
-
-   if ::oVScroll() != nil
-      ::oVscroll():SetRange( 1, oController:oRowSet:RecCount() )
-   endif
-
-   ::lFastEdit        := .t.
 
 RETURN nil
 
@@ -215,80 +189,27 @@ RETURN nil
 
 //----------------------------------------------------------------------------//
 
-METHOD MakeTotals( aCols ) 
+METHOD MakeTotals() 
 
-   local uBm, n, nCols, oCol, nValue
-   local bCond    := { |u,o| u != nil }
+   local uBm
+   local aCols    := {}
 
-   if aCols == nil
-      aCols    := {}
-      for each oCol in ::aCols
-         WITH OBJECT oCol
-            if ValType( :nTotal ) == 'N' .or. ! Empty( :nFooterType )
-               AAdd( aCols, oCol )
-            endif
-         END
-      next
-   else
-      if ValType( aCols ) == 'O'
-         aCols := { aCols }
-      endif
-      for n := 1 to Len( aCols )
-         if Empty( aCols[ n ]:nFooterType )
-            ADel( aCols, n )
-            ASize( aCols, Len( aCols ) - 1 )
-         endif
-      next
-   endif
+   aeval( ::aCols,;
+      {|oCol| if( !empty( oCol:nFooterType ),;
+         ( oCol:nTotal := 0.0, aadd( aCols, oCol ) ), ) } )
 
-   if ! Empty( aCols )
+   if empty( aCols )
+      RETURN ( Self )
+   end if 
 
-      for each oCol in aCols
-         WITH OBJECT oCol
-            DEFAULT :nFooterType := AGGR_SUM
-            :nTotal := :nTotalSq := 0.0
-            :nCount := 0
-            if :nFooterType == AGGR_MIN .or. :nFooterType == AGGR_MAX
-               :nTotal := nil
-            endif
-         END
-      next
+   uBm            := eval( ::bBookMark )
 
-      nCols    := Len( aCols )
+   eval( ::bGoTop )
+   do 
+      aeval( aCols, {|oCol| oCol:nTotal  += oCol:Value, oCol:nCount++ } )
+   until ( ::skip( 1 ) < 1 )
 
-      uBm      := (::cAlias)->(Recno()) // ::BookMark()
-
-      Eval( ::bGoTop )
-      do
-         for each oCol in aCols
-            WITH OBJECT oCol
-               nValue   := :Value
-               if Eval( IfNil( :bSumCondition, bCond ), nValue, oCol )
-                  if :nFooterType == AGGR_COUNT
-                     :nCount++
-                  elseif ValType( nValue ) == 'N'
-                     if :nFooterType == AGGR_MIN
-                        :nTotal  := If( :nTotal == nil, nValue, Min( nValue, :nTotal ) )
-                     elseif :nFooterType == AGGR_MAX
-                        :nTotal  := If( :nTotal == nil, nvalue, Max( nValue, :nTotal ) )
-                     else
-                        :nTotal  += nValue
-                        :nCount++
-                        if lAnd( :nFooterType, AGGR_STD )
-                           :nTotalSq   += ( nValue * nValue )
-                        endif
-                     endif
-                  endif
-               endif
-            END
-         next n
-      until ( ::Skip( 1 ) < 1 )
-
-      if !Empty( ::cAlias )
-         (::cAlias)->(dbGoTo( uBm )) // ::BookMark( uBm )
-      end if
-
-   endif
+   eval( ::bBookMark, uBm )
 
 RETURN ( Self )
 
