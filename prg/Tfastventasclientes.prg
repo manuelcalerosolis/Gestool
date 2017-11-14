@@ -106,6 +106,9 @@ METHOD lResource() CLASS TFastVentasClientes
    ::lNewInforme     := .t.
    ::lDefCondiciones := .f.
 
+   ::cTipoInforme    := "Clientes"
+   ::cBmpInforme     := "gc_user_64"
+
    ::cSubTitle       := "Informe de ventas"
 
    if !::lTabletVersion
@@ -425,25 +428,23 @@ METHOD BuildTree( oTree, lLoadFile ) CLASS TFastVentasClientes
    DEFAULT oTree     := ::oTreeReporting
    DEFAULT lLoadFile := .t.
 
-   aReports := {  {  "Title" => "Listado",                              "Image" => 0, "Type" => "Listado",                            "Directory" => "Clientes\Listado",                             "File" => "Listado.fr3"  },;
-                  {  "Title" => "Ventas",                               "Image" => 11, "Subnode" =>;
+   aReports := {  {  "Title" => "Listado",                                                "Image" => 0, "Type" => "Listado",                            "Directory" => "Clientes\Listado",                             "File" => "Listado.fr3"  },;
+                  {  "Title" => "Operaciones de clientes",                                "Image" => 11, "Subnode" =>;
                   { ;
-                     { "Title" => "SAT de clientes",                    "Image" =>20, "Type" => "SAT de clientes",                     "Directory" => "Clientes\Ventas\SAT de clientes",              "File" => "SAT de clientes.fr3" },;
-                     { "Title" => "Presupuestos de clientes",           "Image" => 5, "Type" => "Presupuestos de clientes",            "Directory" => "Clientes\Ventas\Presupuestos de clientes",     "File" => "Presupuestos de clientes.fr3" },;
-                     { "Title" => "Pedidos de clientes",                "Image" => 6, "Type" => "Pedidos de clientes",                 "Directory" => "Clientes\Ventas\Pedidos de clientes",          "File" => "Pedidos de clientes.fr3" },;
-                     { "Title" => "Albaranes de clientes",              "Image" => 7, "Type" => "Albaranes de clientes",               "Directory" => "Clientes\Ventas\Albaranes de clientes",        "File" => "Albaranes de clientes.fr3" },;
-                     { "Title" => "Facturas de clientes",               "Image" => 8, "Type" => "Facturas de clientes",                "Directory" => "Clientes\Ventas\Facturas de clientes",         "File" => "Facturas de clientes.fr3" },;                                        
-                     { "Title" => "Rectificativas de clientes",         "Image" => 9, "Type" => "Rectificativas de clientes",          "Directory" => "Clientes\Ventas\Rectificativas de clientes",   "File" => "Rectificativas de clientes.fr3" },;
-                     { "Title" => "Tickets de clientes",                "Image" =>10, "Type" => "Tickets de clientes",                 "Directory" => "Clientes\Ventas\Tickets de clientes",          "File" => "Tickets de clientes.fr3" },;
-                     { "Title" => "Facturación de clientes",            "Image" => 8, "Type" => "Facturación de clientes",             "Directory" => "Clientes\Ventas\Facturación de clientes",      "File" => "Facturación de clientes.fr3" },;
-                     { "Title" => "Ventas",                             "Image" =>11, "Type" => "Ventas",                              "Directory" => "Clientes\Ventas\Ventas",                       "File" => "Ventas.fr3" },;
-                     { "Title" => "Recibos fecha de emisión",           "Image" =>21, "Type" => "Recibos emisión",                     "Directory" => "Clientes\Ventas\Recibos",                      "File" => "Recibos de clientes.fr3" },;
-                     { "Title" => "Recibos fecha de cobro",             "Image" =>21, "Type" => "Recibos cobro",                       "Directory" => "Clientes\Ventas\RecibosCobro",                 "File" => "Recibos de clientes fecha de cobro.fr3" },;
-                     { "Title" => "Recibos fecha de vencimiento",       "Image" =>21, "Type" => "Recibos vencimiento",                 "Directory" => "Clientes\Ventas\RecibosVencimiento",           "File" => "Recibos de clientes fecha de vencimiento.fr3" },;
-                     { "Title" => "Cobros de tikets",                   "Image" =>10, "Type" => "Cobros tickets",                      "Directory" => "Clientes\Ventas\CobrosTickets",                "File" => "Cobros de tickets.fr3" },;
-                  } ;
-                  },;
-                  {  "Title" => "Tipo de impuesto",                     "Image" =>23, "Type" => "Tipo de impuesto",                    "Directory" => "Clientes\TipoImpuesto",                         "File" => "Ventas por tipo de impuesto.fr3"  } }
+                     { "Title" => "SAT de clientes",                                      "Image" =>20, "Type" => "SAT de clientes",                     "Directory" => "Clientes\Ventas\SAT de clientes",              "File" => "SAT de clientes.fr3" },;
+                     { "Title" => "Presupuestos de clientes",                             "Image" => 5, "Type" => "Presupuestos de clientes",            "Directory" => "Clientes\Ventas\Presupuestos de clientes",     "File" => "Presupuestos de clientes.fr3" },;
+                     { "Title" => "Pedidos de clientes",                                  "Image" => 6, "Type" => "Pedidos de clientes",                 "Directory" => "Clientes\Ventas\Pedidos de clientes",          "File" => "Pedidos de clientes.fr3" },;
+                     { "Title" => "Albaranes de clientes",                                "Image" => 7, "Type" => "Albaranes de clientes",               "Directory" => "Clientes\Ventas\Albaranes de clientes",        "File" => "Albaranes de clientes.fr3" },;
+                     { "Title" => "Facturas de clientes",                                 "Image" => 8, "Type" => "Facturas de clientes",                "Directory" => "Clientes\Ventas\Facturas de clientes",         "File" => "Diario de facturas de clientes.fr3" },;
+                     { "Title" => "Rectificativas de clientes",                           "Image" => 9, "Type" => "Rectificativas de clientes",          "Directory" => "Clientes\Ventas\Rectificativas de clientes",   "File" => "Rectificativas de clientes.fr3" },;
+                     { "Title" => "Facturas simplificadas de clientes",                   "Image" =>10, "Type" => "Facturas simplificadas",              "Directory" => "Clientes\Ventas\Facturas simplificadas",       "File" => "Facturas simplificadas.fr3" },;
+                     { "Title" => "Facturas, rectificativas y simplificadas",             "Image" => 8, "Type" => "Facturación de clientes",             "Directory" => "Clientes\Ventas\Facturación de clientes",      "File" => "Facturación de clientes.fr3" },;
+                     { "Title" => "Albaranes, facturas, rectificativas y simplificadas",  "Image" =>11, "Type" => "Ventas",                              "Directory" => "Clientes\Ventas\Ventas",                       "File" => "Ventas.fr3" },;
+                     { "Title" => "Recibos fecha de emisión",                             "Image" =>21, "Type" => "Recibos emisión",                     "Directory" => "Clientes\Ventas\Recibos",                      "File" => "Recibos de clientes.fr3" },;
+                     { "Title" => "Recibos fecha de cobro",                               "Image" =>21, "Type" => "Recibos cobro",                       "Directory" => "Clientes\Ventas\RecibosCobro",                 "File" => "Recibos de clientes fecha de cobro.fr3" },;
+                     { "Title" => "Recibos fecha de vencimiento",                         "Image" =>21, "Type" => "Recibos vencimiento",                 "Directory" => "Clientes\Ventas\RecibosVencimiento",           "File" => "Recibos de clientes fecha de vencimiento.fr3" },;
+                     { "Title" => "Cobros de simplificadas",                              "Image" =>10, "Type" => "Cobros simplificadas",                "Directory" => "Clientes\Ventas\CobrosSimplificadas",          "File" => "Cobros de simplificadas.fr3" },;
+                  } } }
 
    ::BuildNode( aReports, oTree, lLoadFile ) 
 
@@ -574,7 +575,7 @@ METHOD DataReport() CLASS TFastVentasClientes
 
          ::FastReportFacturaRectificativa()
 
-      case ::cReportType == "Tickets de clientes"
+      case ::cReportType == "Facturas simplificadas"
 
          ::FastReportTicket( .t. )
 
@@ -603,14 +604,6 @@ METHOD DataReport() CLASS TFastVentasClientes
       case ( "Cobros" $ ::cReportType )
 
          ::FastReportCobrosTickets()
-
-      case ::cReportType == "Tipo de impuesto"
-
-         ::FastReportFacturaCliente()
-
-         ::FastReportFacturaRectificativa()
-
-         ::FastReportTicket( .t. )
 
    end case
 
@@ -663,7 +656,7 @@ METHOD AddVariable() CLASS TFastVentasClientes
          
          ::AddVariableLineasRectificativaCliente()
 
-      case ::cReportType == "Tickets de clientes"
+      case ::cReportType == "Facturas simplificadas"
 
          ::AddVariableTicketCliente()
 
@@ -708,14 +701,6 @@ METHOD AddVariable() CLASS TFastVentasClientes
       case ( "Cobros" $ ::cReportType )
 
          ::AddVariableCobrosTickets()
-
-      case ::cReportType == "Tipo de impuesto"
-         
-         ::AddVariableLineasFacturaCliente()
-         
-         ::AddVariableLineasRectificativaCliente()
-
-         ::AddVariableLineasTicketCliente()
 
    end case
 
@@ -763,7 +748,7 @@ METHOD lGenerate() CLASS TFastVentasClientes
 
          ::AddFacturaRectificativa()
 
-      case ::cReportType == "Tickets de clientes"
+      case ::cReportType == "Facturas simplificadas"
 
          ::AddTicket( .t. )
 
@@ -801,15 +786,9 @@ METHOD lGenerate() CLASS TFastVentasClientes
 
          ::AddRecibosClienteVencimiento()   
 
-      case ::cReportType == "Cobros tickets"
+      case ::cReportType == "Cobros simplificadas"
 
          ::AddCobrosTickets()   
-
-      case ::cReportType == "Tipo de impuesto"
-
-         ::insertFacturaCliente()
-         ::insertRectificativa()
-         ::insertTicketCliente()
 
    end case
 

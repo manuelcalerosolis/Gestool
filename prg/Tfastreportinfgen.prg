@@ -64,6 +64,10 @@ CLASS TFastReportInfGen FROM TNewInfGen
    DATA  oBtnEliminar
    DATA  oBtnFiltrar
 
+   DATA  oBtnTipo
+   DATA  cTipoInforme
+   DATA  cBmpInforme
+
    DATA  cInformeFastReport
 
    DATA  oExt
@@ -712,6 +716,9 @@ METHOD InitDialog() CLASS TFastReportInfGen
    ::oOfficeBar:SetStyle( 1 )
 
    oCarpeta                := TCarpeta():New( ::oOfficeBar, "Informe" )
+
+   oGrupo                  := TDotNetGroup():New( oCarpeta, 86, ::cTipoInforme, .f. )
+      ::oBtnTipo           := TDotNetButton():New( 80, oGrupo, ::cBmpInforme, "", 1, , , , .f., .f., .f. )
 
    oGrupo                  := TDotNetGroup():New( oCarpeta, 306, "Impresión", .f. )
       ::oBtnPrevisualizar  := TDotNetButton():New( 60, oGrupo, "gc_monitor_32",              "Visualizar [F5]",   1, {|| ::GenReport( IS_SCREEN ) }, , , .f., .f., .f. )

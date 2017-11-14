@@ -58,6 +58,9 @@ METHOD lResource( cFld ) CLASS TFastComprasProveedores
 
    ::cSubTitle       := "Informe de compras"
 
+   ::cTipoInforme    := "Proveedores"
+   ::cBmpInforme     := "gc_businessman_64"
+
    if !::NewResource()
       return .f.
    end if
