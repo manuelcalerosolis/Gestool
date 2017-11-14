@@ -15,23 +15,23 @@ CLASS SQLPropertyBrowseView
    DATA aPropertyOne
    DATA aPropertyTwo 
 
-   DATA aProperties           INIT {}
+   DATA aProperties              INIT {}
 
    DATA aPropertiesTable
 
    DATA nTotalRow
    DATA nTotalColumn          
 
-   DATA bOnPostEdit           INIT {|| .t. }      
+   DATA bOnPostEdit              INIT {|| .t. }      
 
    METHOD New()
 
-   METHOD getBrowse()         INLINE ( ::oBrowse )
+   METHOD getBrowse()            INLINE ( ::oBrowse )
 
-   METHOD Hide()              INLINE ( ::oBrowse:Hide() )
-   METHOD Show()              INLINE ( ::oBrowse:Show() )
-   METHOD Refresh()           INLINE ( ::oBrowse:MakeTotals(), ::oBrowse:Refresh() )
-   METHOD lVisible()          INLINE ( ::oBrowse:lVisible )
+   METHOD Hide()                 INLINE ( ::oBrowse:Hide() )
+   METHOD Show()                 INLINE ( ::oBrowse:Show() )
+   METHOD Refresh()              INLINE ( ::oBrowse:MakeTotals(), ::oBrowse:Refresh() )
+   METHOD lVisible( lVisible )   INLINE ( if( hb_islogical( lVisible ), ::oBrowse:lVisible := lVisible, ), ::oBrowse:lVisible )
 
    METHOD setPropertyOne( aPropiedadesArticulo )
    METHOD setPropertyTwo( aPropiedadesArticulo )
@@ -382,6 +382,10 @@ RETURN ( {|| { nRGB( 0, 0, 0), ::aPropertiesTable[ ::oBrowse:nArrayAt, n ]:nRgb 
 METHOD nTotalUnits()
 
    local nTotalUnits    := 0
+
+   if empty( ::oBrowse:Cargo )
+      RETURN ( nTotalUnits )
+   end if 
 
    aeval( ::oBrowse:Cargo,;
       {| aRow | aeval( aRow,;

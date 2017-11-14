@@ -47,15 +47,16 @@ CLASS MovimientosAlmacenLineasController FROM SQLBaseController
 
    METHOD getSegundaPropiedad( cCodigoArticulo, cCodigoPropiedad )
 
-   METHOD shopPropiedades()
+   METHOD showPropiedades()
 
    METHOD showPrimeraPropiedad()       INLINE ( if( !uFieldEmpresa( "lUseTbl" ), ::oDialogView:showValorPrimeraPropiedad(), ) )
-   
-   METHOD showSegundaPropiedad()       INLINE ( if( !uFieldEmpresa( "lUseTbl" ), ::oDialogView:showValorSegundaPropiedad, ) )
+   METHOD showSegundaPropiedad()       INLINE ( if( !uFieldEmpresa( "lUseTbl" ), ::oDialogView:showValorSegundaPropiedad(), ) )
 
-   METHOD buildBrowseProperty()        INLINE ( if( uFieldEmpresa( "lUseTbl" ), ::oDialogView:oBrowsePropertyView:build(), ) )
+   METHOD buildPropertyBrowse()        INLINE ( if( uFieldEmpresa( "lUseTbl" ), ::oDialogView:oBrowsePropertyView:build(), ) )
 
-   METHOD showBrowseProperty()         INLINE ( if( uFieldEmpresa( "lUseTbl" ), ::oDialogView:showBrowsePropertyView(), ) )
+   METHOD hideProperty()               INLINE ( ::oDialogView:hidePropertyControls() )     
+   METHOD showPropertyControls()       INLINE ( if( uFieldEmpresa( "lUseTbl" ), ::oDialogView:showPropertyControls( 1 ), ) )
+   METHOD showPropertyBrowse()         INLINE ( if( uFieldEmpresa( "lUseTbl" ), ::oDialogView:showPropertyControls( 2 ), ) )
 
    METHOD loadValuesBrowseProperty()
 
@@ -163,7 +164,7 @@ METHOD stampArticulo()
 
    // Primera propiedad--------------------------------------------------------
 
-   ::shopPropiedades( cCodigoArticulo, hArticulo )
+   ::showPropiedades( cCodigoArticulo, hArticulo )
 
    // Fecha de caducidad-------------------------------------------------------
 
@@ -175,7 +176,7 @@ RETURN ( .t. )
 
 //---------------------------------------------------------------------------//
 
-METHOD shopPropiedades( cCodigoArticulo, hArticulo )
+METHOD showPropiedades( cCodigoArticulo, hArticulo )
 
    hset( ::oModel:hBuffer, "codigo_primera_propiedad", hget( hArticulo, "ccodprp1" ) )
 
@@ -185,19 +186,15 @@ METHOD shopPropiedades( cCodigoArticulo, hArticulo )
 
    if empty( hget( hArticulo, "ccodprp1" ) )
 
-      ::oDialogView:hideValorPrimeraPropiedad()
+      ::oDialogView:hidePropertyControls()
 
-      ::oDialogView:hideValorSegundaPropiedad()
-
-      ::oDialogView:hideBrowsePropertyView()
-
-      ::oDialogView:showCantidadesArticulos()
+      ::oDialogView:showUnitsControls()
 
    else 
    
       ::oDialogView:oGetValorPrimeraPropiedad:oSay:setText( PropiedadesModel():getNombre( hget( hArticulo, "ccodprp1" ) ) )
 
-      ::showPrimeraPropiedad()
+      ::showPropertyControls()
 
       ::oDialogView:oBrowsePropertyView:setPropertyOne( ::getPrimeraPropiedad( cCodigoArticulo, hget( hArticulo, "ccodprp1" ) ) )
 
@@ -207,21 +204,19 @@ METHOD shopPropiedades( cCodigoArticulo, hArticulo )
       
          ::oDialogView:oGetValorSegundaPropiedad:oSay:setText( PropiedadesModel():getNombre( hget( hArticulo, "ccodprp2" ) ) )
 
-         ::showSegundaPropiedad()
-         
          ::oDialogView:oBrowsePropertyView:setPropertyTwo( ::getSegundaPropiedad( cCodigoArticulo, hget( hArticulo, "ccodprp2" ) ) )
 
       end if 
 
-      ::buildBrowseProperty()
+      ::buildPropertyBrowse()
 
-      ::showBrowseProperty()
+      ::showPropertyBrowse()
 
       sysrefresh()
 
       ::loadValuesBrowseProperty( cCodigoArticulo )
 
-      ::oDialogView:hideCantidadesArticulos()
+      ::oDialogView:hideUnitsControls()
 
    end if 
 
