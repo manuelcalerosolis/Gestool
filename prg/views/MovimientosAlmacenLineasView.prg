@@ -32,6 +32,7 @@ CLASS MovimientosAlmacenLineasView FROM SQLBaseView
    DATA oSayBultosArticulo
    DATA oSayCajasArticulo
    DATA oSayUnidadesArticulo
+   DATA oSayPrecioArticulo
 
    DATA oBrowsePropertyView
 
@@ -45,19 +46,15 @@ CLASS MovimientosAlmacenLineasView FROM SQLBaseView
    METHOD initActivate()
 
    METHOD nTotalUnidadesArticulo()     
+   METHOD nTotalImporteArticulo()         
 
-   METHOD nTotalImporteArticulo()      INLINE ( ::nTotalUnidadesArticulo() * ::oController:oModel:hBuffer[ "precio_articulo" ] )
+   METHOD refreshUnidadesImportes()       
 
-   METHOD hidePropertyControls()       INLINE ( ::verticalHide( ::oPagePropertyControls ) )
-   METHOD showPropertyControls()       INLINE ( ::verticalShow( ::oPagePropertyControls ) )
+   METHOD hidePropertyControls()          
+   METHOD showPropertyControls( nPage )   
 
-   METHOD hideUnitsControls()          INLINE ( ::verticalHide( ::oPageUnitsControls ) )
-   METHOD showUnitsControls()          INLINE ( ::verticalShow( ::oPageUnitsControls ) )
-
-   METHOD hideBrowsePropertyView()     INLINE ( ::verticalHide( ::oBrowsePropertyView:getBrowse() ) )
-   METHOD showBrowsePropertyView()     INLINE ( ::verticalShow( ::oBrowsePropertyView:getBrowse() ) )
-
-   METHOD refreshUnidadesImportes()    INLINE ( ::oSayTotalUnidades():Refresh(), ::oSayTotalImporte():Refresh() )
+   METHOD hideUnitsControls()             
+   METHOD showUnitsControls()             
 
    METHOD searchCodeGS128( nKey, cCodigoArticulo )
 
@@ -81,7 +78,8 @@ Return ( Self )
 
 METHOD Activate()
 
-   DEFINE DIALOG ::oDialog RESOURCE "MOVIMIENTOS_ALMACEN_LINEAS" TITLE ::lblTitle() + ::oController:getTitle()
+   DEFINE DIALOG ::oDialog RESOURCE "MOVIMIENTOS_ALMACEN_LINEAS";
+      TITLE ::lblTitle() + ::oController:getTitle()
 
       REDEFINE GET   ::oGetCodigoArticulo ;
          VAR         ::oController:oModel:hBuffer[ "codigo_articulo" ] ;
@@ -103,7 +101,7 @@ METHOD Activate()
 
       REDEFINE GET   ::oGetLote ;
          VAR         ::oController:oModel:hBuffer[ "lote" ] ;
-         ID          155 ;
+         ID          120 ;
          WHEN        ( ::oController:isNotZoomMode() ) ;
          OF          ::oDialog
 
@@ -113,18 +111,13 @@ METHOD Activate()
 
       REDEFINE GET   ::oGetFechaCaducidad ;
          VAR         ::oController:oModel:hBuffer[ "fecha_caducidad" ] ;
-         ID          340 ;
+         ID          130 ;
          WHEN        ( ::oController:isNotZoomMode() ) ;
          OF          ::oDialog
 
       // Page properties-------------------------------------------------------
-
+      
       ::pagePropertyControls()
-
-      // Property browse-------------------------------------------------------
-
-      ::oBrowsePropertyView               := SQLPropertyBrowseView():New( 600, ::oDialog )
-      ::oBrowsePropertyView:bOnPostEdit   := {|| ::oSayTotalUnidades:Refresh(), ::oSayTotalImporte:Refresh() }
 
       // Bultos----------------------------------------------------------------
 
@@ -146,11 +139,14 @@ METHOD Activate()
 
       REDEFINE GET   ::oGetPrecioArticulo ;
          VAR         ::oController:oModel:hBuffer[ "precio_articulo" ] ;
-         ID          180 ;
-         IDSAY       181 ;
+         ID          170 ;
          SPINNER ;
          WHEN        ( ::oController:isNotZoomMode() ) ;
          PICTURE     cPinDiv() ;
+         OF          ::oDialog
+
+      REDEFINE SAY   ::oSayPrecioArticulo ;
+         ID          171 ;
          OF          ::oDialog
 
       ::oGetPrecioArticulo:bChange     := {|| ::refreshUnidadesImportes() }
@@ -160,12 +156,14 @@ METHOD Activate()
 
       REDEFINE SAY   ::oSayTotalImporte ;
          PROMPT      ::nTotalImporteArticulo() ;
-         ID          190 ;
+         ID          180 ;
+         FONT        getBoldFont() ;
          PICTURE     cPirDiv() ;
          OF          ::oDialog
 
       REDEFINE SAY   ::oSayTextImporte ;
-         ID          191 ;
+         ID          181 ;
+         FONT        getBoldFont() ;
          OF          ::oDialog
 
       ::oDialog:bStart    := {|| ::startActivate() }
@@ -181,9 +179,12 @@ RETURN ( ::oDialog:nResult )
 METHOD pagePropertyControls()
 
    REDEFINE PAGES ::oPagePropertyControls ;
-      ID          500 ;
+      ID          140 ;
       OF          ::oDialog ;
-      DIALOGS     "PAGE_PROPERTY_CONTROLS"
+      DIALOGS     "PAGE_PROPERTY_CONTROLS_GET",;
+                  "PAGE_PROPERTY_CONTROLS_BROWSE"
+
+   ::oPagePropertyControls:lVisible    := .t.                  
 
    // Valor de primera propiedad--------------------------------------------
 
@@ -215,7 +216,10 @@ METHOD pagePropertyControls()
    ::oGetValorSegundaPropiedad:bValid  := {|| ::oController:validateSegundaPropiedad() }
    ::oGetValorSegundaPropiedad:bHelp   := {|| brwPropiedadActual( ::oGetValorSegundaPropiedad, ::oGetValorSegundaPropiedad:oHelpText, ::oController:oModel:hBuffer[ "codigo_segunda_propiedad" ] ) }
 
-   ::oPagePropertyControls:lVisible    := .t.
+   // Property browse-------------------------------------------------------
+
+   ::oBrowsePropertyView               := SQLPropertyBrowseView():New( 600, ::oPagePropertyControls:aDialogs[ 2 ] )
+   ::oBrowsePropertyView:bOnPostEdit   := {|| ::oSayTotalUnidades:Refresh(), ::oSayTotalImporte:Refresh() }
 
 RETURN ( Self )
 
@@ -224,9 +228,11 @@ RETURN ( Self )
 METHOD pageUnitsControls()
 
    REDEFINE PAGES ::oPageUnitsControls ;
-      ID          700 ;
+      ID          150 ;
       OF          ::oDialog ;
       DIALOGS     "PAGE_UNITS_CONTROLS"
+
+   ::oPageUnitsControls:lVisible    := .t.
 
    REDEFINE SAY   ::oSayBultosArticulo ;
       ID          431 ;
@@ -240,7 +246,7 @@ METHOD pageUnitsControls()
       PICTURE     MasUnd() ;
       OF          ::oPageUnitsControls:aDialogs[ 1 ]
 
-   ::oGetBultosArticulo:bChange        := {|| ::refreshUnidadesImportes() }
+   ::oGetBultosArticulo:bChange     := {|| ::refreshUnidadesImportes() }
 
    // Cajas-----------------------------------------------------------------
 
@@ -274,8 +280,6 @@ METHOD pageUnitsControls()
 
    ::oGetUnidadesArticulo:bChange   := {|| ::refreshUnidadesImportes() }
 
-   ::oPageUnitsControls:lVisible    := .t.
-
 RETURN ( Self )
 
 //---------------------------------------------------------------------------//
@@ -283,23 +287,36 @@ RETURN ( Self )
 METHOD startActivate()
 
    if ::oController:isAppendMode()
+      
       ::oController:setModelBuffer( "codigo_articulo", space( 200 ) )
+      
       ::oGetCodigoArticulo:Refresh()
+      
+      ::hidePropertyControls()
+   
    end if 
 
    if ::oController:isNotAppendMode()
+   
       ::oController:validateCodigoArticulo()
+   
       ::oController:validatePrimeraPropiedad()
+   
       ::oController:validateSegundaPropiedad()      
+   
+   end if 
+
+   if !( uFieldEmpresa( "lUseBultos" ) )
+
+      ::oSayBultosArticulo:Hide()
+
+      ::oGetBultosArticulo:Hide()
+
    end if 
 
    ::oSayTotalUnidades:Refresh()
 
    ::oSayTotalImporte:Refresh()
-
-   ::hidePropertyControls()
-
-   ::hideBrowsePropertyView()
 
 RETURN ( .t. )
 
@@ -332,6 +349,60 @@ RETURN ( notCaja( ::oController:oModel:hBuffer[ "cajas_articulo" ] ) * ::oContro
 
 //---------------------------------------------------------------------------//
 
+METHOD nTotalImporteArticulo()         
+
+RETURN ( ::nTotalUnidadesArticulo() * ::oController:oModel:hBuffer[ "precio_articulo" ] )
+
+//---------------------------------------------------------------------------//
+
+METHOD hidePropertyControls()
+
+   ::verticalHide( ::oPagePropertyControls )
+   
+   aeval( ::oPagePropertyControls:aDialogs, {| oDialog | aeval( oDialog:aControls, {| oControl | oControl:lVisible := .f. } ) } )
+
+RETURN ( Self )
+
+//---------------------------------------------------------------------------//
+
+METHOD showPropertyControls( nPage )   
+
+   aeval( ::oPagePropertyControls:aDialogs, {|oDialog| aeval( oDialog:aControls, {| oControl | oControl:lVisible := .t. } ) } )
+
+   ::verticalShow( ::oPagePropertyControls )
+
+   ::oPagePropertyControls:setOption( nPage )
+
+RETURN ( Self )
+
+//---------------------------------------------------------------------------//
+
+METHOD hideUnitsControls()
+
+   ::verticalHide( ::oPageUnitsControls )   
+   
+   aeval( ::oPageUnitsControls:aDialogs, {| oDialog | aeval( oDialog:aControls, {| oControl | oControl:lVisible := .f. } ) } )
+
+RETURN ( Self )
+
+//---------------------------------------------------------------------------//
+
+METHOD showUnitsControls()      
+
+   ::verticalShow( ::oPageUnitsControls ) 
+   
+   aeval( ::oPageUnitsControls:aDialogs, {| oDialog | aeval( oDialog:aControls, {| oControl | oControl:lVisible := .t. } ) } )
+
+RETURN ( Self )
+
+//---------------------------------------------------------------------------//
+
+METHOD refreshUnidadesImportes()       
+
+RETURN ( ::oSayTotalUnidades():Refresh(), ::oSayTotalImporte():Refresh() )
+
+//---------------------------------------------------------------------------//
+
 METHOD searchCodeGS128( nKey )
 
    static cChar   := ""
@@ -350,25 +421,25 @@ RETURN ( .t. )
 
 METHOD verticalHide( oControl )
 
-   local nTop     
+   local nId     
    local oRect    
    local nHeight  
 
    if !( oControl:lVisible )
       RETURN ( .f. )
-   end if 
+   end if  
 
    oRect          := ::oDialog:getRect()
-   nTop           := oControl:nTop
+   nId            := oControl:nId
    nHeight        := oControl:nHeight + 2
 
+   oControl:Hide()
+
    aeval( ::oDialog:aControls,;
-      {|oControl| if( oControl:nTop > nTop,;
+      {|oControl| if( oControl:nId > nId,;
          oControl:move( oControl:nTop - nHeight, oControl:nLeft, oControl:nWidth, oControl:nHeight ), ) } )
 
-   ::oDialog:move( oRect:nTop, oRect:nLeft, ::oDialog:nWidth, ::oDialog:nHeight - nHeight, .t. )
-
-   oControl:hide()
+   ::oDialog:move( oRect:nTop, oRect:nLeft, ::oDialog:nWidth, ::oDialog:nHeight - nHeight )
 
 RETURN ( .t. )
 
@@ -376,25 +447,25 @@ RETURN ( .t. )
 
 METHOD verticalShow( oControl )
 
+   local nId     
    local oRect    
-   local nTop     
-   local nHeight  
+   local nHeight 
 
-   if ( oControl:lVisible )
+   if oControl:lVisible
       RETURN ( .f. )
-   end if 
+   end if  
 
    oRect          := ::oDialog:getRect()
-   nTop           := oControl:nTop
+   nId            := oControl:nId
    nHeight        := oControl:nHeight + 2
 
+   oControl:Show()
+
    aeval( ::oDialog:aControls,;
-      {|oControl| if( oControl:nTop > nTop,;
+      {|oControl| if( oControl:nId > nId,;
          oControl:move( oControl:nTop + nHeight, oControl:nLeft, oControl:nWidth, oControl:nHeight ), ) } )
 
    ::oDialog:move( oRect:nTop, oRect:nLeft, ::oDialog:nWidth, ::oDialog:nHeight + nHeight )
-
-   oControl:show()
 
 RETURN ( .t. )
 
