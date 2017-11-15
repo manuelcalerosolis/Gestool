@@ -299,3 +299,9 @@ GC_OBJECT_CUBE_64 BITMAP "..\\bmp\\gc_object_cube_64.bmp"
 GC_PACKAGE_64 BITMAP "..\\bmp\\gc_package_64.bmp"
 GC_BUSINESSMAN_64 BITMAP "..\\bmp\\gc_businessman_64.bmp"
 GC_WORKER2_64 BITMAP "..\\bmp\\gc_worker2_64.bmp"
+
+GC_COPY_32 BITMAP "..\\bmp\\gc_copy_32.bmp" 
+
+TEXT_FIELD_32 BITMAP "..\\bmp\\text_field_32.bmp" 
+DOCUMENT_CHART_PENCIL_32 BITMAP "..\\bmp\\document_chart_pencil_32.bmp" 
+DOCUMENT_CHART_32 BITMAP "..\\bmp\\document_chart_32.bmp" 

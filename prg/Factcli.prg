@@ -18561,7 +18561,7 @@ function SynFacCli( cPath )
 
          aTotFac           := aTotFacCli( ( D():FacturasClientes( nView ) )->cSerie + str( ( D():FacturasClientes( nView ) )->nNumFac ) + ( D():FacturasClientes( nView ) )->cSufFac, D():FacturasClientes( nView ), D():FacturasClientesLineas( nView ), dbfIva, dbfDiv, D():FacturasClientesCobros( nView ), D():AnticiposClientes( nView ), ( D():FacturasClientes( nView ) )->cDivFac )
 
-         if ( D():FacturasClientes( nView ) )->nTotFac == 0
+         //if ( D():FacturasClientes( nView ) )->nTotFac == 0
             if ( D():FacturasClientes( nView ) )->( dbRLock() )
               ( D():FacturasClientes( nView ) )->nTotNet := aTotFac[1]
               ( D():FacturasClientes( nView ) )->nTotIva := aTotFac[2]
@@ -18569,7 +18569,7 @@ function SynFacCli( cPath )
               ( D():FacturasClientes( nView ) )->nTotFac := aTotFac[4]
               ( D():FacturasClientes( nView ) )->( dbUnLock() )
            end if 
-         end if
+         //end if
 
          if ( D():FacturasClientes( nView ) )->nTotLiq == 0
             if ( D():FacturasClientes( nView ) )->( dbRLock() )
