@@ -11788,7 +11788,7 @@ STATIC FUNCTION SetDlgMode( aTmp, aGet, oFld, oSayPr1, oSayPr2, oSayVp1, oSayVp2
    case nMode == APPD_MODE
 
       if empty( aGet[ _CREF ]:varGet() )
-         aGet[ _CREF    ]:cText( Space( 200 ) )
+         aGet[ _CREF ]:cText( Space( 200 ) )
       end if 
 
       aTmp[ _LIVALIN ]  := aTmpFac[ _LIVAINC ]

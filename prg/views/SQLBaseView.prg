@@ -23,8 +23,6 @@ CLASS SQLBaseView
                                                                __zoom_mode__        => "Visualizando ",;
                                                                __duplicate_mode__   => "Duplicando " }
 
-   DATA cImageName
-
    METHOD New()
 
    METHOD lblTitle()                                  INLINE ( iif(  hhaskey( ::hTextMode, ::oController:getMode() ),;
