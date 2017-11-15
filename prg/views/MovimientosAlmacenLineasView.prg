@@ -10,9 +10,11 @@ CLASS MovimientosAlmacenLineasView FROM SQLBaseView
       
    DATA oPagePropertyControls
    DATA oPageUnitsControls
-   DATA oPageLoteCaducidadControls
 
    DATA oPrimeraPropiedadControlView
+   DATA oSegundaPropiedadControlView
+
+   DATA oLoteCaducidadControlView
 
    DATA oOfficeBarView
 
@@ -44,7 +46,6 @@ CLASS MovimientosAlmacenLineasView FROM SQLBaseView
    METHOD New()
 
    METHOD Activate()
-      METHOD pageLoteCaducidadControls()
       METHOD pagePropertyControls()
       METHOD pageUnitsControls()
 
@@ -59,14 +60,17 @@ CLASS MovimientosAlmacenLineasView FROM SQLBaseView
    METHOD hidePropertyControls()          
    METHOD showPropertyControls( nPage )   
 
-   METHOD hideLoteCaducidadControls()          
-   METHOD showLoteCaducidadControls( nPage )   
+   METHOD hideLoteCaducidadControls()  INLINE ( ::verticalHide( ::oLoteCaducidadControlView:getPage() ) )          
+   METHOD showLoteCaducidadControls()  INLINE ( ::verticalShow( ::oLoteCaducidadControlView:getPage() ) )
 
    METHOD hideUnitsControls()             
    METHOD showUnitsControls()             
 
    METHOD hidePrimeraPropiedad()       INLINE ( ::verticalHide( ::oPrimeraPropiedadControlView:getPage() ) )
    METHOD showPrimeraPropiedad()       INLINE ( ::verticalShow( ::oPrimeraPropiedadControlView:getPage() ) )
+
+   METHOD hideSegundaPropiedad()       INLINE ( ::verticalHide( ::oSegundaPropiedadControlView:getPage() ) )
+   METHOD showSegundaPropiedad()       INLINE ( ::verticalShow( ::oSegundaPropiedadControlView:getPage() ) )
 
    METHOD searchCodeGS128( nKey, cCodigoArticulo )
 
@@ -80,11 +84,15 @@ END CLASS
 
 METHOD New( oController )
 
-   ::oController           := oController
+   ::oController                    := oController
 
-   ::oPrimeraPropiedadControlView  := PropertyControlView():New( oController )
+   ::oPrimeraPropiedadControlView   := PropertyControlView():New( oController )
 
-Return ( Self )
+   ::oSegundaPropiedadControlView   := PropertyControlView():New( oController )
+
+   ::oLoteCaducidadControlView      := LoteCaducidadControlView():New( oController )
+
+RETURN ( Self )
 
 //---------------------------------------------------------------------------//
 
@@ -111,9 +119,11 @@ METHOD Activate()
          WHEN        ( .f. ) ;
          OF          ::oDialog
 
+      ::oLoteCaducidadControlView:createControl( 120, ::oDialog )
+
       ::oPrimeraPropiedadControlView:createControl( 121, ::oDialog, "codigo_primera_propiedad", "valor_primera_propiedad" )
 
-      ::pageLoteCaducidadControls()
+      ::oSegundaPropiedadControlView:createControl( 122, ::oDialog, "codigo_segunda_propiedad", "valor_segunda_propiedad" )
 
       ::pagePropertyControls()
 
@@ -169,33 +179,6 @@ METHOD Activate()
    ::oOfficeBar:End()
 
 RETURN ( ::oDialog:nResult )
-
-//---------------------------------------------------------------------------//
-
-METHOD pageLoteCaducidadControls()
-
-   REDEFINE PAGES ::oPageLoteCaducidadControls ;
-      ID          120 ;
-      OF          ::oDialog ;
-      DIALOGS     "PAGE_LOTE_CADUCIDAD_CONTROLS"
-
-   ::oPageLoteCaducidadControls:lVisible    := .t.
-
-   REDEFINE GET   ::oGetLote ;
-      VAR         ::oController:oModel:hBuffer[ "lote" ] ;
-      ID          100 ;
-      WHEN        ( ::oController:isNotZoomMode() ) ;
-      OF          ::oPageLoteCaducidadControls:aDialogs[ 1 ]
-
-   ::oGetLote:bValid   := {|| ::oController:validateLote() }
-
-   REDEFINE GET   ::oGetFechaCaducidad ;
-      VAR         ::oController:oModel:hBuffer[ "fecha_caducidad" ] ;
-      ID          110 ;
-      WHEN        ( ::oController:isNotZoomMode() ) ;
-      OF          ::oPageLoteCaducidadControls:aDialogs[ 1 ]
-
-RETURN ( Self )
 
 //---------------------------------------------------------------------------//
 
@@ -286,6 +269,8 @@ METHOD startActivate()
 
       ::hidePrimeraPropiedad()
 
+      ::hideSegundaPropiedad()
+
    end if 
 
    if ::oController:isNotAppendMode()
@@ -353,26 +338,6 @@ METHOD hidePropertyControls()
    
    aeval( ::oPagePropertyControls:aDialogs, {| oDialog | aeval( oDialog:aControls, {| oControl | oControl:lVisible := .f. } ) } )
 
-RETURN ( Self )
-
-//---------------------------------------------------------------------------//
-
-METHOD hideLoteCaducidadControls()
-
-   ::verticalHide( ::oPageLoteCaducidadControls )
-
-   aeval( ::oPageLoteCaducidadControls:aDialogs, {| oDialog | aeval( oDialog:aControls, {| oControl | oControl:lVisible := .f. } ) } )
-   
-RETURN ( Self )
-
-//---------------------------------------------------------------------------//
-
-METHOD showLoteCaducidadControls()
-
-   aeval( ::oPageLoteCaducidadControls:aDialogs, {| oDialog | aeval( oDialog:aControls, {| oControl | oControl:lVisible := .t. } ) } )
-
-   ::verticalShow( ::oPageLoteCaducidadControls )
-   
 RETURN ( Self )
 
 //---------------------------------------------------------------------------//

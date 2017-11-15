@@ -173,6 +173,7 @@ MenuTreeView.prg 													\
 OfficeBarView.prg													\
 DivisasView.prg 													\
 PropertyControlView.prg											\
+LoteCaducidadControlView.prg									\
 Rfile.prg               										\
 TdprnC3.prg             										\
 Animat.prg              										\
@@ -753,6 +754,7 @@ MenuTreeView.obj 																\
 OfficeBarView.obj 															\
 DivisasView.obj 																\
 PropertyControlView.obj														\
+LoteCaducidadControlView.obj												\
 RpreviewC3.obj 																\
 ReportC3.obj                                       				\
 RocolumnC3.obj                                     				\
@@ -1343,6 +1345,7 @@ $(OBJ)\MenuTreeView.obj 													+
 $(OBJ)\OfficeBarView.obj 													+
 $(OBJ)\DivisasView.obj 														+
 $(OBJ)\PropertyControlView.obj											+
+$(OBJ)\LoteCaducidadControlView.obj										+
 $(OBJ)\RocolumnC3.obj            										+
 $(OBJ)\Rfile.obj                 										+
 $(OBJ)\Tdprnc3.obj               										+

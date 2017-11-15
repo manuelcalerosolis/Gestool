@@ -12,7 +12,11 @@ CLASS PropertyControlView FROM SQLBaseView
 
    METHOD createControl( nId, oDialog, cFieldCodigo, cFieldValor )
 
-   METHOD getPage()     INLINE ( ::oPage )
+   METHOD getPage()              INLINE ( ::oPage )
+
+   METHOD setSayText( cText )    INLINE ( ::oGetValorPropiedad:oSay:setText( cText ) )
+
+   METHOD setHelpText( cText )   INLINE ( ::oGetValorPropiedad:oHelpText:cText( cText ) )
 
 END CLASS
 
@@ -37,7 +41,7 @@ METHOD createControl( nId, oDialog, cFieldCodigo, cFieldValor )
       DIALOGS     "PAGE_PROPERTY_GET"
 
    REDEFINE GET   ::oGetValorPropiedad ; 
-      VAR         ::oController:oModel:hBuffer[ cFieldCodigo ] ;
+      VAR         ::oController:oModel:hBuffer[ cFieldValor ] ;
       ID          120 ;
       IDTEXT      121 ;
       IDSAY       122 ;
@@ -46,7 +50,7 @@ METHOD createControl( nId, oDialog, cFieldCodigo, cFieldValor )
       WHEN        ( ::oController:isNotZoomMode() ) ;
       OF          ::oPage:aDialogs[ 1 ]
 
-   ::oGetValorPropiedad:bValid  := {|| ::oController:validatePropiedad( cFieldCodigo, cFieldValor ) }
+   ::oGetValorPropiedad:bValid  := {|| ::oController:validatePropiedad( cFieldCodigo, cFieldValor, ::oGetValorPropiedad ) }
    ::oGetValorPropiedad:bHelp   := {|| brwPropiedadActual( ::oGetValorPropiedad, ::oGetValorPropiedad:oHelpText, ::oController:oModel:hBuffer[ cFieldCodigo ] ) }
 
    catch oError
