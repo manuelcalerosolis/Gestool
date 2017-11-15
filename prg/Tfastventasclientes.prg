@@ -108,8 +108,8 @@ METHOD lResource() CLASS TFastVentasClientes
 
    ::cTipoInforme    := "Clientes"
    ::cBmpInforme     := "gc_user_64"
-
-   ::cSubTitle       := "Informe de ventas"
+     
+   ::cSubTitle       := "Informe de ventas" 
 
    if !::lTabletVersion
       if !::NewResource()

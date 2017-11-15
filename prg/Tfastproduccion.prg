@@ -76,7 +76,7 @@ METHOD lResource( cFld ) CLASS TFastProduccion
    ::cTipoInforme    := "Producción"
    ::cBmpInforme     := "gc_worker2_64" 
 
-   if !::NewResource()
+   if !::NewResource()  
       return .f.
    end if
 
