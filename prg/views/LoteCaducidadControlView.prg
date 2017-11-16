@@ -4,13 +4,17 @@
 
 //---------------------------------------------------------------------------//
 
-CLASS LoteCaducidadControlView FROM SQLBaseView
+CLASS LoteCaducidadControlView 
+
+   DATA oController
 
    DATA oPage
    
    DATA oGetLote
    
    DATA oGetCaducidad
+
+   METHOD New()
 
    METHOD createControl( nId, oDialog, cFieldCodigo, cFieldValor )
 
@@ -32,6 +36,14 @@ END CLASS
 
 //---------------------------------------------------------------------------//
 
+METHOD New( oController )
+
+   ::oController  := oController
+
+RETURN ( Self )
+
+//---------------------------------------------------------------------------//
+
 METHOD createControl( nId, oDialog )
 
    local oError
@@ -44,7 +56,7 @@ METHOD createControl( nId, oDialog )
 
    REDEFINE PAGES ::oPage ;
       ID          120 ;
-      OF          ::oDialog ;
+      OF          oDialog ;
       DIALOGS     "PAGE_LOTE_CADUCIDAD_CONTROLS"
 
    REDEFINE GET   ::oGetLote ;

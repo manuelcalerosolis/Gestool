@@ -41,12 +41,11 @@ CLASS MovimientosAlmacenLineasView FROM SQLBaseView
    DATA oSayUnidadesArticulo
    DATA oSayPrecioArticulo
 
-   DATA oBrowsePropertyView
+   DATA oPropertyBrowseView
 
    METHOD New()
 
    METHOD Activate()
-      METHOD pagePropertyControls()
       METHOD pageUnitsControls()
 
    METHOD startActivate()
@@ -57,8 +56,8 @@ CLASS MovimientosAlmacenLineasView FROM SQLBaseView
 
    METHOD refreshUnidadesImportes()       
 
-   METHOD hidePropertyControls()          
-   METHOD showPropertyControls( nPage )   
+   METHOD hidePropertyControls()       INLINE ( ::verticalHide( ::oPropertyBrowseView:getPage() ) )         
+   METHOD showPropertyControls()       INLINE ( ::verticalShow( ::oPropertyBrowseView:getPage() ) )
 
    METHOD hideLoteCaducidadControls()  INLINE ( ::verticalHide( ::oLoteCaducidadControlView:getPage() ) )          
    METHOD showLoteCaducidadControls()  INLINE ( ::verticalShow( ::oLoteCaducidadControlView:getPage() ) )
@@ -91,6 +90,8 @@ METHOD New( oController )
    ::oSegundaPropiedadControlView   := PropertyControlView():New( oController )
 
    ::oLoteCaducidadControlView      := LoteCaducidadControlView():New( oController )
+
+   ::oPropertyBrowseView            := SQLPropertyBrowseView():New( oController )
 
 RETURN ( Self )
 
@@ -125,7 +126,7 @@ METHOD Activate()
 
       ::oSegundaPropiedadControlView:createControl( 122, ::oDialog, "codigo_segunda_propiedad", "valor_segunda_propiedad" )
 
-      ::pagePropertyControls()
+      ::oPropertyBrowseView:createControl( 140, ::oDialog )
 
       ::pageUnitsControls()
 
@@ -179,22 +180,6 @@ METHOD Activate()
    ::oOfficeBar:End()
 
 RETURN ( ::oDialog:nResult )
-
-//---------------------------------------------------------------------------//
-
-METHOD pagePropertyControls()
-
-   REDEFINE PAGES ::oPagePropertyControls ;
-      ID          140 ;
-      OF          ::oDialog ;
-      DIALOGS     "PAGE_PROPERTY_CONTROLS_BROWSE"
-
-   ::oPagePropertyControls:lVisible    := .t.                  
-
-   ::oBrowsePropertyView               := SQLPropertyBrowseView():New( 600, ::oPagePropertyControls:aDialogs[ 1 ] )
-   ::oBrowsePropertyView:bOnPostEdit   := {|| ::oSayTotalUnidades:Refresh(), ::oSayTotalImporte:Refresh() }
-
-RETURN ( Self )
 
 //---------------------------------------------------------------------------//
 
@@ -271,6 +256,8 @@ METHOD startActivate()
 
       ::hideSegundaPropiedad()
 
+      ::hidePropertyControls()
+
    end if 
 
    if ::oController:isNotAppendMode()
@@ -318,8 +305,8 @@ RETURN ( Self )
 
 METHOD nTotalUnidadesArticulo()
 
-   if hb_isobject( ::oBrowsePropertyView ) .and. ::oBrowsePropertyView:lVisible
-      RETURN ( ::oBrowsePropertyView:nTotalUnits() )
+   if hb_isobject( ::oPropertyBrowseView ) .and. ::oPropertyBrowseView:isVisible()
+      RETURN ( ::oPropertyBrowseView:nTotalUnits() )
    end if
 
 RETURN ( notCaja( ::oController:oModel:hBuffer[ "cajas_articulo" ] ) * ::oController:oModel:hBuffer[ "unidades_articulo" ] )
@@ -329,28 +316,6 @@ RETURN ( notCaja( ::oController:oModel:hBuffer[ "cajas_articulo" ] ) * ::oContro
 METHOD nTotalImporteArticulo()         
 
 RETURN ( ::nTotalUnidadesArticulo() * ::oController:oModel:hBuffer[ "precio_articulo" ] )
-
-//---------------------------------------------------------------------------//
-
-METHOD hidePropertyControls()
-
-   ::verticalHide( ::oPagePropertyControls )
-   
-   aeval( ::oPagePropertyControls:aDialogs, {| oDialog | aeval( oDialog:aControls, {| oControl | oControl:lVisible := .f. } ) } )
-
-RETURN ( Self )
-
-//---------------------------------------------------------------------------//
-
-METHOD showPropertyControls( nPage )   
-
-   aeval( ::oPagePropertyControls:aDialogs, {|oDialog| aeval( oDialog:aControls, {| oControl | oControl:lVisible := .t. } ) } )
-
-   ::verticalShow( ::oPagePropertyControls )
-
-   ::oPagePropertyControls:setOption( nPage )
-
-RETURN ( Self )
 
 //---------------------------------------------------------------------------//
 

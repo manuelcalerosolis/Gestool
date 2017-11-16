@@ -6,9 +6,9 @@
 
 CLASS SQLPropertyBrowseView 
 
-   DATA oController
+   DATA oPage
 
-   DATA oModel 
+   DATA oController
 
    DATA oBrowse
 
@@ -26,12 +26,13 @@ CLASS SQLPropertyBrowseView
 
    METHOD New()
 
+   METHOD CreateControl()
+
+   METHOD getPage()              INLINE ( ::oPage )
    METHOD getBrowse()            INLINE ( ::oBrowse )
 
-   METHOD Hide()                 INLINE ( ::oBrowse:Hide() )
-   METHOD Show()                 INLINE ( ::oBrowse:Show() )
    METHOD Refresh()              INLINE ( ::oBrowse:MakeTotals(), ::oBrowse:Refresh() )
-   METHOD lVisible( lVisible )   INLINE ( if( hb_islogical( lVisible ), ::oBrowse:lVisible := lVisible, ), ::oBrowse:lVisible )
+   METHOD isVisible()            INLINE ( ::oPage:lVisible )
 
    METHOD setPropertyOne( aPropiedadesArticulo )
    METHOD setPropertyTwo( aPropiedadesArticulo )
@@ -63,9 +64,33 @@ ENDCLASS
 
 //----------------------------------------------------------------------------//
 
-METHOD New( id, oDlg )
+METHOD New( oController )
 
-   ::oBrowse                  := IXBrowse():New( oDlg )
+   ::oController  := oController
+
+RETURN ( Self )
+
+//----------------------------------------------------------------------------//
+
+METHOD CreateControl( nId, oDialog )
+
+   local oError
+
+   if empty( nId ) .or. empty( oDialog )
+      RETURN ( Self )
+   end if 
+
+   try 
+
+   REDEFINE PAGES ::oPage ;
+      ID          nId ;
+      OF          oDialog ;
+      DIALOGS     "PAGE_PROPERTY_CONTROLS_BROWSE"
+
+   //::oBrowsePropertyView               := SQLPropertyBrowseView():New( 600, ::oPagePropertyControls:aDialogs[ 1 ] )
+   // ::oBrowsePropertyView:bOnPostEdit   := {|| ::oSayTotalUnidades:Refresh(), ::oSayTotalImporte:Refresh() }
+
+   ::oBrowse                  := IXBrowse():New( ::oPage:aDialogs[ 1 ] )
 
    ::oBrowse:nDataType        := DATATYPE_ARRAY
 
@@ -86,7 +111,13 @@ METHOD New( id, oDlg )
 
    ::oBrowse:MakeTotals()
 
-   ::oBrowse:CreateFromResource( id )
+   ::oBrowse:CreateFromResource( 100 )
+
+   catch oError
+
+      msgStop( "Imposible crear el control browse de propiedades." + CRLF + ErrorMessage( oError ) )
+
+   end   
 
 RETURN ( Self )
 

@@ -5,10 +5,14 @@
 //---------------------------------------------------------------------------//
 
 CLASS PropertyControlView FROM SQLBaseView
+   
+   DATA oController
 
    DATA oPage
    
    DATA oGetValorPropiedad
+
+   METHOD New()
 
    METHOD createControl( nId, oDialog, cFieldCodigo, cFieldValor )
 
@@ -19,6 +23,14 @@ CLASS PropertyControlView FROM SQLBaseView
    METHOD setHelpText( cText )   INLINE ( ::oGetValorPropiedad:oHelpText:cText( cText ) )
 
 END CLASS
+
+//---------------------------------------------------------------------------//
+
+METHOD New( oController )
+
+   ::oController  := oController
+
+RETURN ( Self )
 
 //---------------------------------------------------------------------------//
 
