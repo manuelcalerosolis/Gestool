@@ -65,7 +65,7 @@ METHOD createEditControl( hControl )
 
    catch oError
 
-      msgStop( "Imposible crear el control de tipos de ventas." + CRLF + ErrorMessage( oError ) )
+      msgStop( "Imposible crear el control de divisas." + CRLF + ErrorMessage( oError ) )
 
    end
 

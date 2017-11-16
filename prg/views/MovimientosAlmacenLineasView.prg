@@ -11,11 +11,18 @@ CLASS MovimientosAlmacenLineasView FROM SQLBaseView
    DATA oPagePropertyControls
    DATA oPageUnitsControls
 
+   DATA oPrimeraPropiedadControlView
+   DATA oSegundaPropiedadControlView
+
+   DATA oLoteCaducidadControlView
+
    DATA oOfficeBarView
 
    DATA oBtnSerie
 
    DATA oGetLote
+   DATA oSayLote
+
    DATA oGetFechaCaducidad
    DATA oGetCodigoArticulo
    DATA oGetNombreArticulo
@@ -53,8 +60,17 @@ CLASS MovimientosAlmacenLineasView FROM SQLBaseView
    METHOD hidePropertyControls()          
    METHOD showPropertyControls( nPage )   
 
+   METHOD hideLoteCaducidadControls()  INLINE ( ::verticalHide( ::oLoteCaducidadControlView:getPage() ) )          
+   METHOD showLoteCaducidadControls()  INLINE ( ::verticalShow( ::oLoteCaducidadControlView:getPage() ) )
+
    METHOD hideUnitsControls()             
    METHOD showUnitsControls()             
+
+   METHOD hidePrimeraPropiedad()       INLINE ( ::verticalHide( ::oPrimeraPropiedadControlView:getPage() ) )
+   METHOD showPrimeraPropiedad()       INLINE ( ::verticalShow( ::oPrimeraPropiedadControlView:getPage() ) )
+
+   METHOD hideSegundaPropiedad()       INLINE ( ::verticalHide( ::oSegundaPropiedadControlView:getPage() ) )
+   METHOD showSegundaPropiedad()       INLINE ( ::verticalShow( ::oSegundaPropiedadControlView:getPage() ) )
 
    METHOD searchCodeGS128( nKey, cCodigoArticulo )
 
@@ -68,11 +84,15 @@ END CLASS
 
 METHOD New( oController )
 
-   ::oController     := oController
+   ::oController                    := oController
 
-   ::cImageName      := "gc_bookmarks_16"
+   ::oPrimeraPropiedadControlView   := PropertyControlView():New( oController )
 
-Return ( Self )
+   ::oSegundaPropiedadControlView   := PropertyControlView():New( oController )
+
+   ::oLoteCaducidadControlView      := LoteCaducidadControlView():New( oController )
+
+RETURN ( Self )
 
 //---------------------------------------------------------------------------//
 
@@ -99,27 +119,13 @@ METHOD Activate()
          WHEN        ( .f. ) ;
          OF          ::oDialog
 
-      REDEFINE GET   ::oGetLote ;
-         VAR         ::oController:oModel:hBuffer[ "lote" ] ;
-         ID          120 ;
-         WHEN        ( ::oController:isNotZoomMode() ) ;
-         OF          ::oDialog
+      ::oLoteCaducidadControlView:createControl( 120, ::oDialog )
 
-      ::oGetLote:bValid   := {|| ::oController:validateLote() }
+      ::oPrimeraPropiedadControlView:createControl( 121, ::oDialog, "codigo_primera_propiedad", "valor_primera_propiedad" )
 
-      // Fecha de caducidad----------------------------------------------------
+      ::oSegundaPropiedadControlView:createControl( 122, ::oDialog, "codigo_segunda_propiedad", "valor_segunda_propiedad" )
 
-      REDEFINE GET   ::oGetFechaCaducidad ;
-         VAR         ::oController:oModel:hBuffer[ "fecha_caducidad" ] ;
-         ID          130 ;
-         WHEN        ( ::oController:isNotZoomMode() ) ;
-         OF          ::oDialog
-
-      // Page properties-------------------------------------------------------
-      
       ::pagePropertyControls()
-
-      // Bultos----------------------------------------------------------------
 
       ::pageUnitsControls()
 
@@ -181,44 +187,11 @@ METHOD pagePropertyControls()
    REDEFINE PAGES ::oPagePropertyControls ;
       ID          140 ;
       OF          ::oDialog ;
-      DIALOGS     "PAGE_PROPERTY_CONTROLS_GET",;
-                  "PAGE_PROPERTY_CONTROLS_BROWSE"
+      DIALOGS     "PAGE_PROPERTY_CONTROLS_BROWSE"
 
    ::oPagePropertyControls:lVisible    := .t.                  
 
-   // Valor de primera propiedad--------------------------------------------
-
-   REDEFINE GET   ::oGetValorPrimeraPropiedad ; 
-      VAR         ::oController:oModel:hBuffer[ "valor_primera_propiedad" ] ;
-      ID          120 ;
-      IDTEXT      121 ;
-      IDSAY       122 ;
-      PICTURE     "@!" ;
-      BITMAP      "LUPA" ;
-      WHEN        ( ::oController:isNotZoomMode() ) ;
-      OF          ::oPagePropertyControls:aDialogs[ 1 ]
-
-   ::oGetValorPrimeraPropiedad:bValid  := {|| ::oController:validatePrimeraPropiedad() }
-   ::oGetValorPrimeraPropiedad:bHelp   := {|| brwPropiedadActual( ::oGetValorPrimeraPropiedad, ::oGetValorPrimeraPropiedad:oHelpText, ::oController:oModel:hBuffer[ "codigo_primera_propiedad" ] ) }
-
-   // Valor de segunda propiedad--------------------------------------------
-
-   REDEFINE GET   ::oGetValorSegundaPropiedad ; 
-      VAR         ::oController:oModel:hBuffer[ "valor_segunda_propiedad" ] ;
-      ID          130 ;
-      IDTEXT      131 ;
-      IDSAY       132 ;
-      PICTURE     "@!" ;
-      BITMAP      "LUPA" ;
-      WHEN        ( ::oController:isNotZoomMode() ) ;
-      OF          ::oPagePropertyControls:aDialogs[ 1 ]
-
-   ::oGetValorSegundaPropiedad:bValid  := {|| ::oController:validateSegundaPropiedad() }
-   ::oGetValorSegundaPropiedad:bHelp   := {|| brwPropiedadActual( ::oGetValorSegundaPropiedad, ::oGetValorSegundaPropiedad:oHelpText, ::oController:oModel:hBuffer[ "codigo_segunda_propiedad" ] ) }
-
-   // Property browse-------------------------------------------------------
-
-   ::oBrowsePropertyView               := SQLPropertyBrowseView():New( 600, ::oPagePropertyControls:aDialogs[ 2 ] )
+   ::oBrowsePropertyView               := SQLPropertyBrowseView():New( 600, ::oPagePropertyControls:aDialogs[ 1 ] )
    ::oBrowsePropertyView:bOnPostEdit   := {|| ::oSayTotalUnidades:Refresh(), ::oSayTotalImporte:Refresh() }
 
 RETURN ( Self )
@@ -292,8 +265,12 @@ METHOD startActivate()
       
       ::oGetCodigoArticulo:Refresh()
       
-      ::hidePropertyControls()
-   
+      ::hideLoteCaducidadControls()
+
+      ::hidePrimeraPropiedad()
+
+      ::hideSegundaPropiedad()
+
    end if 
 
    if ::oController:isNotAppendMode()
