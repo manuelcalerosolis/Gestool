@@ -3683,8 +3683,40 @@ Return ( self )
 
 METHOD Duplicar() CLASS TFastReportInfGen
 
-   MsgInfo( "Duplicar informe" )
+   local cNewDirectory  := ""
+   local cPathOldFile   := ""
+   local cPathNewFile   := ""
 
+   /*
+   Obtenemos los datos necesarios para el informe------------------------------
+   */
+
+   if !::lLoadInfo()
+      msgStop( "No se ha podido cargar el nombre del informe." )
+      Return ( Self )
+   end if
+
+   if !::lLoadReport()
+      MsgStop( "No se ha podido cargar un diseño de informe válido para renombrar." + CRLF + ::cReportFile )
+      Return ( Self )
+   end if
+
+   cNewDirectory  := StrTran( ::cReportDirectory, cPatReporting(), cPatUserReporting() )
+
+   cPathOldFile   := ::cReportDirectory + "/" + ::cReportName + ".fr3"
+   cPathNewFile   := cNewDirectory + "/" + ::cReportName + ".fr3"
+
+   if !File( cPathNewFile )
+
+      recursiveMakeDir( cNewDirectory )
+
+      __CopyFile( cPathOldFile, cPathNewFile )
+
+   end if
+
+   ::LoadInformesPersonalizados()
+   ::selectReportTree( ::cReportName )
+   
 RETURN ( .t. )
 
 //---------------------------------------------------------------------------//
