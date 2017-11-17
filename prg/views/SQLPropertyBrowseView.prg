@@ -15,27 +15,29 @@ CLASS SQLPropertyBrowseView
    DATA aPropertyOne
    DATA aPropertyTwo 
 
-   DATA aProperties              INIT {}
+   DATA aProperties                       INIT {}
 
    DATA aPropertiesTable
 
    DATA nTotalRow
    DATA nTotalColumn          
 
-   DATA bOnPostEdit              INIT {|| .t. }      
+   DATA bOnPostEdit                       INIT {|| .t. }      
 
    METHOD New()
 
    METHOD CreateControl()
 
-   METHOD getPage()              INLINE ( ::oPage )
-   METHOD getBrowse()            INLINE ( ::oBrowse )
+   METHOD getPage()                       INLINE ( ::oPage )
+   METHOD getBrowse()                     INLINE ( ::oBrowse )
 
-   METHOD Refresh()              INLINE ( ::oBrowse:MakeTotals(), ::oBrowse:Refresh() )
-   METHOD isVisible()            INLINE ( ::oPage:lVisible )
+   METHOD Refresh()                       INLINE ( ::oBrowse:MakeTotals(), ::oBrowse:Refresh() )
+   METHOD lVisible()                      INLINE ( ::oPage:lVisible )
 
    METHOD setPropertyOne( aPropiedadesArticulo )
    METHOD setPropertyTwo( aPropiedadesArticulo )
+
+   METHOD setOnPostEdit( bOnPostEdit )    INLINE ( ::oBrowse:bOnPostEdit := bOnPostEdit  )
 
    METHOD build()
    METHOD buildPropertyTable()

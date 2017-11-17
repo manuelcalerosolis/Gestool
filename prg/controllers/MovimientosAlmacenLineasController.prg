@@ -37,8 +37,7 @@ CLASS MovimientosAlmacenLineasController FROM SQLBaseController
    // Lote caducidad-----------------------------------------------------------
 
    METHOD validateLote()               
-   METHOD stampLote()
-   METHOD stampCaducidad()
+   METHOD stampLoteCaducidad()
 
    METHOD getPrimeraPropiedad( cCodigoArticulo, cCodigoPropiedad )
    METHOD getSegundaPropiedad( cCodigoArticulo, cCodigoPropiedad )
@@ -49,7 +48,7 @@ CLASS MovimientosAlmacenLineasController FROM SQLBaseController
 
    METHOD lBrowseProperty()            INLINE ( uFieldEmpresa( "lUseTbl" ) )
 
-   METHOD buildPropertyBrowse()        INLINE ( if( uFieldEmpresa( "lUseTbl" ), ::oDialogView:oBrowsePropertyView:build(), ) )
+   METHOD buildPropertyBrowse()        INLINE ( if( uFieldEmpresa( "lUseTbl" ), ::oDialogView:oPropertyBrowseView:build(), ) )
 
    METHOD hideProperty()               INLINE ( ::oDialogView:hidePropertyControls() )     
    METHOD showPropertyControls()       INLINE ( ::oDialogView:showPropertyControls( 1 ) )
@@ -163,9 +162,7 @@ METHOD stampArticulo()
 
    // Lote caducidad------------------------------------------------
 
-   ::stampLote( hArticulo )
-
-   ::stampCaducidad()
+   ::stampLoteCaducidad( hArticulo )
 
    ::stampCodigoPropiedades( cCodigoArticulo, hArticulo )
 
@@ -193,12 +190,28 @@ METHOD showPropiedades( cCodigoArticulo, hArticulo )
 
       ::oDialogView:hidePrimeraPropiedad()
 
+      ::oDialogView:hidePropertyBrowseView()
+
    else 
 
       if ::lBrowseProperty()
-         // Mostrar el browse
+
+         ::oDialogView:setPropertyOneBrowseView( ::getPrimeraPropiedad( cCodigoArticulo, hget( hArticulo, "ccodprp1" ) ) )
+
+         ::oDialogView:setPropertyTwoBrowseView( ::getSegundaPropiedad( cCodigoArticulo, hget( hArticulo, "ccodprp2" ) ) )
+
+         ::oDialogView:showPropertyBrowseView()
+
+         ::oDialogView:buildPropertyBrowseView()
+
+         ::oDialogView:setOnPostEditBrowseView( {|| ::oDialogView:refreshUnidadesImportes() } )
+
+         ::oDialogView:hideUnitsControls()
+
       else
+         
          ::oDialogView:showPrimeraPropiedad()
+
       end if 
 
    end if 
@@ -215,27 +228,6 @@ METHOD showPropiedades( cCodigoArticulo, hArticulo )
 
    end if 
 
-/*
-   if ::lBrowseProperty() 
-
-      ::oDialogView:oBrowsePropertyView:setPropertyOne( ::getPrimeraPropiedad( cCodigoArticulo, hget( hArticulo, "ccodprp1" ) ) )
-
-      ::oDialogView:oBrowsePropertyView:setPropertyTwo( ::getSegundaPropiedad( cCodigoArticulo, hget( hArticulo, "ccodprp2" ) ) )
-
-      ::showPropertyBrowse()
-
-      ::buildPropertyBrowse()
-
-      ::showPropertyBrowse()
-
-   else
-
-      ::showPropertyControls()
-
-   end if 
-
-   ::oDialogView:hideUnitsControls()
-*/
 RETURN ( .t. )
 
 //---------------------------------------------------------------------------//
@@ -246,7 +238,11 @@ METHOD stampCodigoPropiedades( cCodigoArticulo, hArticulo )
 
    hset( ::oModel:hBuffer, "codigo_segunda_propiedad", hget( hArticulo, "ccodprp2" ) )
 
-   if !( ::lBrowseProperty() )
+   if ::lBrowseProperty()
+
+      ::loadValuesBrowseProperty( cCodigoArticulo )
+
+   else 
 
       if !empty( hget( hArticulo, "ccodprp1" ) )
 
@@ -259,10 +255,6 @@ METHOD stampCodigoPropiedades( cCodigoArticulo, hArticulo )
          ::oDialogView:oSegundaPropiedadControlView:setSayText( PropiedadesModel():getNombre( hget( hArticulo, "ccodprp2" ) ) )
 
       end if 
-
-   else
-
-      ::loadValuesBrowseProperty( cCodigoArticulo )
 
    end if 
 
@@ -294,32 +286,24 @@ RETURN ( .t. )
 
 //---------------------------------------------------------------------------//
 
-METHOD stampLote( hArticulo )
-
-   if empty( ::oDialogView:oLoteCaducidadControlView:getLote() ) .or. !( ::oDialogView:oLoteCaducidadControlView:getLoteVisible() ) 
-      RETURN ( .t. )
-   end if 
-   
-   ::oDialogView:oLoteCaducidadControlView:setLoteValue( hget( hArticulo, "clote" ) )
-
-RETURN ( .t. )
-
-//---------------------------------------------------------------------------//
-
-METHOD stampCaducidad()
+METHOD stampLoteCaducidad( hArticulo )
 
    local dCaducidad
 
-   if empty( ::oDialogView:oLoteCaducidadControlView:getCaducidad() ) .or. !( ::oDialogView:oLoteCaducidadControlView:getCaducidadVisible() )
+   if !( hget( hArticulo, "llote" ) )
       RETURN ( .t. )
    end if 
 
-   if empty( ::oDialogView:oLoteCaducidadControlView:getCaducidadValue() )
+   if !empty( ::oDialogView:oGetLote )
+      ::oDialogView:oGetLote:cText( hget( hArticulo, "clote" ) )
+   end if 
+
+   if !empty( ::oDialogView:oGetCaducidad ) .and. empty( ::oDialogView:oGetCaducidad:varGet() )
 
       dCaducidad   := StocksModel():getFechaCaducidad( hget( ::oModel:hBuffer, "codigo_articulo" ), hget( ::oModel:hBuffer, "valor_primera_propiedad" ), hget( ::oModel:hBuffer, "valor_segunda_propiedad" ), , hget( ::oModel:hBuffer, "lote" ) )
 
       if !empty( dCaducidad )
-         ::oDialogView:oLoteCaducidadControlView:setCaducidadValue( dCaducidad )
+         ::oDialogView:oGetCaducidad:cText( dCaducidad )
       end if 
    
    end if 
@@ -375,11 +359,11 @@ METHOD onClosedDialog()
 
    ::aProperties     := {}
 
-   if !( ::oDialogView:oBrowsePropertyView:lVisible )
+   if !( ::oDialogView:oPropertyBrowseView:lVisible )
       RETURN ( .t. )
    end if 
 
-   ::aProperties     := ::oDialogView:oBrowsePropertyView:getProperties()
+   ::aProperties     := ::oDialogView:oPropertyBrowseView:getProperties()
 
 RETURN ( .t. )
 
@@ -424,9 +408,9 @@ METHOD loadValuesBrowseProperty( cCodigoArticulo )
       RETURN ( Self )
    end if 
 
-   aeval( aArticulos, {|elem| ::oDialogView:oBrowsePropertyView:setValueAndUuidToPropertiesTable( elem ) } )
+   aeval( aArticulos, {|elem| ::oDialogView:oPropertyBrowseView:setValueAndUuidToPropertiesTable( elem ) } )
 
-   ::oDialogView:oBrowsePropertyView:Refresh()
+   ::oDialogView:oPropertyBrowseView:Refresh()
 
 RETURN ( Self )
 

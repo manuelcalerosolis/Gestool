@@ -137,6 +137,8 @@ METHOD ReDefine( nId, bSetGet, oWnd, nHelpId, cPict, bValid, nClrFore,;
    ::lNeedGetFocus   := .f.
    ::lGotFocus       := .f.
 
+   ::lVisible        := .t.
+
    if !empty( nIdSay )
       ::oSay         := TSay():ReDefine( nIdSay, nil, oWnd )
    end if
