@@ -8,24 +8,17 @@
 
 CLASS MovimientosAlmacenLineasView FROM SQLBaseView
       
-   DATA oPagePropertyControls
-   DATA oPageUnitsControls
-
-   DATA oPrimeraPropiedadControlView
-   DATA oSegundaPropiedadControlView
-
-   DATA oLoteCaducidadControlView
-
    DATA oOfficeBarView
 
    DATA oBtnSerie
 
-   DATA oGetLote
-   DATA oSayLote
-
-   DATA oGetCaducidad
    DATA oGetCodigoArticulo
    DATA oGetNombreArticulo
+
+   DATA oGetLote
+
+   DATA oGetCaducidad
+   
    DATA oGetValorPrimeraPropiedad
    DATA oGetValorSegundaPropiedad
    DATA oGetBultosArticulo
@@ -43,19 +36,11 @@ CLASS MovimientosAlmacenLineasView FROM SQLBaseView
 
    DATA oBrowsePropertyView
 
-   DATA oBultosControlView
-
-   DATA oCajasControlView
-
-   DATA oUnidadesControlView
-
    METHOD New()
 
    METHOD Activate()
-      METHOD pageUnitsControls()
-
-   METHOD startActivate()
-   METHOD initActivate()
+      METHOD startActivate()
+      METHOD initActivate()
 
    METHOD nTotalUnidadesArticulo()     
    METHOD nTotalImporteArticulo()         
@@ -64,18 +49,15 @@ CLASS MovimientosAlmacenLineasView FROM SQLBaseView
 
    METHOD hidePropertyBrowseView()                 INLINE ( ::verticalHide( ::oBrowsePropertyView:getBrowse() ) )         
    METHOD showPropertyBrowseView()                 INLINE ( ::verticalShow( ::oBrowsePropertyView:getBrowse() ) )
-   METHOD buildPropertyBrowseView()                INLINE ( ::verticalShow( ::oBrowsePropertyView:Build() ) )
+   METHOD buildPropertyBrowseView()                INLINE ( ::oBrowsePropertyView:Build() )
 
    METHOD setPropertyOneBrowseView( cProperty )    INLINE ( ::oBrowsePropertyView:setPropertyOne( cProperty ) )
    METHOD setPropertyTwoBrowseView( cProperty )    INLINE ( ::oBrowsePropertyView:setPropertyTwo( cProperty ) )
-
-   METHOD setOnPostEditBrowseView( bOnPostEdit )   INLINE ( ::oBrowsePropertyView:setOnPostEdit( bOnPostEdit ) )
 
    METHOD hideLoteCaducidadControls()              INLINE ( ::verticalHide( ::oGetLote ), ::verticalHide( ::oGetCaducidad ) )          
    METHOD showLoteCaducidadControls()              INLINE ( ::verticalShow( ::oGetLote ), ::verticalShow( ::oGetCaducidad ) )
 
    METHOD hideUnitsControls()             
-   METHOD showUnitsControls()             
 
    METHOD hidePrimeraPropiedad()                   INLINE ( ::verticalHide( ::oGetValorPrimeraPropiedad ) )
    METHOD showPrimeraPropiedad()                   INLINE ( ::verticalShow( ::oGetValorPrimeraPropiedad ) )
@@ -175,7 +157,7 @@ METHOD Activate()
       // Property browse-------------------------------------------------------
 
       ::oBrowsePropertyView               := SQLPropertyBrowseView():CreateControl( 150, ::oDialog )
-      ::oBrowsePropertyView:bOnPostEdit   := {|| ::refreshUnidadesImportes() }
+      ::oBrowsePropertyView:setOnPostEdit( {|| ::refreshUnidadesImportes() } )
 
       // Bultos----------------------------------------------------------------
 
@@ -266,12 +248,6 @@ RETURN ( ::oDialog:nResult )
 
 //---------------------------------------------------------------------------//
 
-METHOD pageUnitsControls()
-
-RETURN ( Self )
-
-//---------------------------------------------------------------------------//
-
 METHOD startActivate()
 
    if ::oController:isAppendMode()
@@ -288,12 +264,8 @@ METHOD startActivate()
 
       ::hidePropertyBrowseView()
 
-      ::hideBultos()
-
-      ::hideCajas()
-
    end if 
-/*
+
    if ::oController:isNotAppendMode()
    
       ::oController:validateCodigoArticulo()
@@ -304,18 +276,14 @@ METHOD startActivate()
    
    end if 
 
-   if !( uFieldEmpresa( "lUseBultos" ) )
-      ::verticalHide( ::oBultosControlView:getPage() )
-   end if 
+   ::hideBultos()
 
-   if !( uFieldEmpresa( "lUseCaj" ) )
-      ::verticalHide( ::oCajasControlView:getPage() )
-   end if 
+   ::hideCajas()
 
    ::oSayTotalUnidades:Refresh()
 
    ::oSayTotalImporte:Refresh()
-*/
+
 RETURN ( .t. )
 
 //---------------------------------------------------------------------------//
@@ -360,16 +328,6 @@ METHOD hideUnitsControls()
    ::verticalHide( ::oGetCajasArticulo )   
 
    ::verticalHide( ::oGetUnidadesArticulo )   
-
-RETURN ( Self )
-
-//---------------------------------------------------------------------------//
-
-METHOD showUnitsControls()      
-
-   ::verticalShow( ::oPageUnitsControls ) 
-   
-   aeval( ::oPageUnitsControls:aDialogs, {| oDialog | aeval( oDialog:aControls, {| oControl | oControl:lVisible := .t. } ) } )
 
 RETURN ( Self )
 

@@ -10,6 +10,8 @@ CLASS SQLPropertyBrowseView
 
    DATA oBrowse
 
+   DATA onPostEdit
+
    DATA aPropertyOne
    DATA aPropertyTwo 
 
@@ -19,8 +21,6 @@ CLASS SQLPropertyBrowseView
 
    DATA nTotalRow
    DATA nTotalColumn          
-
-   DATA bOnPostEdit                       INIT {|| .t. }      
 
    METHOD New()
 
@@ -34,7 +34,7 @@ CLASS SQLPropertyBrowseView
    METHOD setPropertyOne( aPropiedadesArticulo )
    METHOD setPropertyTwo( aPropiedadesArticulo )
 
-   METHOD setOnPostEdit( bOnPostEdit )    INLINE ( ::oBrowse:bOnPostEdit := bOnPostEdit  )
+   METHOD setOnPostEdit( onPostEdit )     INLINE ( ::onPostEdit := onPostEdit  )
 
    METHOD build()
    METHOD buildPropertyTable()
@@ -311,8 +311,8 @@ METHOD postEditProperties( oCol, xVal, nKey )
 
    ::oBrowse:Cargo[ ::oBrowse:nArrayAt, oCol:Cargo ]:Value := xVal
 
-   if hb_isblock( ::bOnPostEdit )
-      eval( ::bOnPostEdit )
+   if hb_isblock( ::onPostEdit )
+      eval( ::onPostEdit )
    end if 
 
 RETURN ( .t. )
