@@ -26,11 +26,6 @@ CLASS MovimientosAlmacenLineasController FROM SQLBaseController
 
    // Propiedades--------------------------------------------------------------
 
-   METHOD validatePropiedad( cFieldCodigo, cFieldValor, oControl ) ;
-                                          INLINE   ( if( ::validate( cFieldCodigo ),;
-                                                         ::stampPropiedadNombre( cFieldCodigo, cFieldValor, oControl ),;
-                                                         .f. ) )
-
    METHOD stampCodigoPropiedades()   
    METHOD stampPropiedadNombre( cFieldCodigo, cFieldValor, oControl )
 
@@ -38,6 +33,14 @@ CLASS MovimientosAlmacenLineasController FROM SQLBaseController
 
    METHOD validateLote()               
    METHOD stampLoteCaducidad()
+
+
+   METHOD validatePrimeraPropiedad()   INLINE   ( if( ::validate( "valor_primera_propiedad" ),;
+                                                         ::stampPropiedadNombre( "codigo_primera_propiedad" , "valor_primera_propiedad", ::oDialogView:oGetValorPrimeraPropiedad ),;
+                                                         .f. ) )
+   METHOD validateSegundaPropiedad()   INLINE   ( if( ::validate( "valor_segunda_propiedad" ),;
+                                                         ::stampPropiedadNombre( "codigo_segunda_propiedad" , "valor_segunda_propiedad", ::oDialogView:oGetValorSegundaPropiedad ),;
+                                                         .f. ) )
 
    METHOD getPrimeraPropiedad( cCodigoArticulo, cCodigoPropiedad )
    METHOD getSegundaPropiedad( cCodigoArticulo, cCodigoPropiedad )
@@ -48,11 +51,9 @@ CLASS MovimientosAlmacenLineasController FROM SQLBaseController
 
    METHOD lBrowseProperty()            INLINE ( uFieldEmpresa( "lUseTbl" ) )
 
-   METHOD buildPropertyBrowse()        INLINE ( if( uFieldEmpresa( "lUseTbl" ), ::oDialogView:oPropertyBrowseView:build(), ) )
+   METHOD buildPropertyBrowse()        INLINE ( if( uFieldEmpresa( "lUseTbl" ), ::oDialogView:oBrowsePropertyView:build(), ) )
 
    METHOD hideProperty()               INLINE ( ::oDialogView:hidePropertyControls() )     
-   METHOD showPropertyControls()       INLINE ( ::oDialogView:showPropertyControls( 1 ) )
-   METHOD showPropertyBrowse()         INLINE ( ::oDialogView:showPropertyControls( 2 ) )
 
    METHOD loadValuesBrowseProperty()
 
@@ -190,7 +191,7 @@ METHOD showPropiedades( cCodigoArticulo, hArticulo )
 
       ::oDialogView:hidePrimeraPropiedad()
 
-      ::oDialogView:hidePropertyBrowseView()
+      ::oDialogView:hideBrowsePropertyView()
 
    else 
 
@@ -200,9 +201,9 @@ METHOD showPropiedades( cCodigoArticulo, hArticulo )
 
          ::oDialogView:setPropertyTwoBrowseView( ::getSegundaPropiedad( cCodigoArticulo, hget( hArticulo, "ccodprp2" ) ) )
 
-         ::oDialogView:showPropertyBrowseView()
+         ::oDialogView:showBrowsePropertyView()
 
-         ::oDialogView:buildPropertyBrowseView()
+         ::oDialogView:buildBrowsePropertyView()
 
          ::oDialogView:setOnPostEditBrowseView( {|| ::oDialogView:refreshUnidadesImportes() } )
 
@@ -359,11 +360,11 @@ METHOD onClosedDialog()
 
    ::aProperties     := {}
 
-   if !( ::oDialogView:oPropertyBrowseView:lVisible )
+   if !( ::oDialogView:oBrowsePropertyView:lVisible )
       RETURN ( .t. )
    end if 
 
-   ::aProperties     := ::oDialogView:oPropertyBrowseView:getProperties()
+   ::aProperties     := ::oDialogView:oBrowsePropertyView:getProperties()
 
 RETURN ( .t. )
 
@@ -408,9 +409,9 @@ METHOD loadValuesBrowseProperty( cCodigoArticulo )
       RETURN ( Self )
    end if 
 
-   aeval( aArticulos, {|elem| ::oDialogView:oPropertyBrowseView:setValueAndUuidToPropertiesTable( elem ) } )
+   aeval( aArticulos, {|elem| ::oDialogView:oBrowsePropertyView:setValueAndUuidToPropertiesTable( elem ) } )
 
-   ::oDialogView:oPropertyBrowseView:Refresh()
+   ::oDialogView:oBrowsePropertyView:Refresh()
 
 RETURN ( Self )
 

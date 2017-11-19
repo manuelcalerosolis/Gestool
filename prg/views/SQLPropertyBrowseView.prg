@@ -6,8 +6,6 @@
 
 CLASS SQLPropertyBrowseView 
 
-   DATA oPage
-
    DATA oController
 
    DATA oBrowse
@@ -28,11 +26,10 @@ CLASS SQLPropertyBrowseView
 
    METHOD CreateControl()
 
-   METHOD getPage()                       INLINE ( ::oPage )
    METHOD getBrowse()                     INLINE ( ::oBrowse )
 
    METHOD Refresh()                       INLINE ( ::oBrowse:MakeTotals(), ::oBrowse:Refresh() )
-   METHOD lVisible()                      INLINE ( ::oPage:lVisible )
+   METHOD lVisible()                      INLINE ( ::oBrowse:lVisible )
 
    METHOD setPropertyOne( aPropiedadesArticulo )
    METHOD setPropertyTwo( aPropiedadesArticulo )
@@ -84,20 +81,14 @@ METHOD CreateControl( nId, oDialog )
 
    try 
 
-   REDEFINE PAGES ::oPage ;
-      ID          nId ;
-      OF          oDialog ;
-      DIALOGS     "PAGE_PROPERTY_CONTROLS_BROWSE"
-
-   //::oBrowsePropertyView               := SQLPropertyBrowseView():New( 600, ::oPagePropertyControls:aDialogs[ 1 ] )
-   // ::oBrowsePropertyView:bOnPostEdit   := {|| ::oSayTotalUnidades:Refresh(), ::oSayTotalImporte:Refresh() }
-
-   ::oBrowse                  := IXBrowse():New( ::oPage:aDialogs[ 1 ] )
+   ::oBrowse                  := IXBrowse():New( oDialog )
 
    ::oBrowse:nDataType        := DATATYPE_ARRAY
 
    ::oBrowse:bClrSel          := {|| { CLR_BLACK, Rgb( 229, 229, 229 ) } }
    ::oBrowse:bClrSelFocus     := {|| { CLR_BLACK, Rgb( 167, 205, 240 ) } }
+
+   ::oBrowse:lVisible         := .t.
 
    ::oBrowse:lHScroll         := .t.
    ::oBrowse:lVScroll         := .t.
@@ -113,7 +104,7 @@ METHOD CreateControl( nId, oDialog )
 
    ::oBrowse:MakeTotals()
 
-   ::oBrowse:CreateFromResource( 100 )
+   ::oBrowse:CreateFromResource( nId )
 
    catch oError
 
