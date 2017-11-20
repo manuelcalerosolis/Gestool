@@ -13078,11 +13078,7 @@ Static Function lCompruebaStock( uTmpLin, oStock, nTotalUnidades, nStockActual )
       do case
          case ( nStockActual - nTotalUnidades ) < 0
 
-            msginfo( oUser():lNotAllowSales( lNotVta ), "USERS" )
-            msginfo( lNotVta, "lNotVta" )
-
             if oUser():lNotAllowSales( lNotVta )
-               ?"1"
                msgStop( "No hay stock suficiente, tenemos " + Alltrim( Trans( nStockActual, MasUnd() ) ) + " unidad(es) disponible(s)," + CRLF + "en almacén " + cCodigoAlmacen + "." )
                return .f.
             end if
