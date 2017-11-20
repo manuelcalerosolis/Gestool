@@ -9,7 +9,7 @@ CLASS MovimientosAlmacenLineasValidator FROM SQLBaseValidator
    METHOD getValidators()
 
    METHOD isCodeGS128( value )
-   METHOD existArticulo( value )                   INLINE ( empty( value ) .or. ArticulosModel():exist( value ) )
+   METHOD existArticulo( value )                   
 
    METHOD existPropiedad( value, propiedad )
    METHOD existOrEmptyPrimeraPropiedad( value )    INLINE ( ::existPropiedad( value, "codigo_primera_propiedad" ) )
@@ -76,6 +76,34 @@ METHOD existPropiedad( value, propiedad )
    end if
 
 RETURN ( PropiedadesLineasModel():exist( ::oController:getModelBuffer( propiedad ), value ) )
+
+//---------------------------------------------------------------------------//
+
+METHOD existArticulo( value )
+
+   local cId
+
+   if empty( value )
+      RETURN ( .t. )
+   end if 
+
+   if ArticulosModel():exist( value )
+      RETURN ( .t. )
+   end if 
+
+   msgalert( value )
+
+   cId                     := ArticulosCodigosBarraModel():getCodigo( value )
+
+   msgalert( cId, "cId" )
+
+   if !empty( cId )
+      ::oController:setModelBufferPadr( "codigo_articulo", cId )
+      ::oController:oDialogView:oGetCodigoArticulo:Refresh()
+      RETURN ( .t. )
+   end if 
+
+RETURN ( .f. )
 
 //---------------------------------------------------------------------------//
 

@@ -134,6 +134,8 @@ METHOD getField( cField, cBy, cId )
                      "FROM " + ::getTableName() + " "                   + ;
                      "WHERE " + cBy + " = " + quoted( cId ) 
 
+   // logwrite( cSql )
+
    if ::ExecuteSqlStatement( cSql, @cStm )
       RETURN ( ( cStm )->( fieldget( fieldpos( cField ) ) ) )
    end if 
