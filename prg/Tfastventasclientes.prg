@@ -455,7 +455,6 @@ RETURN ( Self )
 //---------------------------------------------------------------------------//
 
 METHOD DataReport() CLASS TFastVentasClientes
-
    
    /*
    Zona de detalle-------------------------------------------------------------
@@ -1770,6 +1769,8 @@ METHOD AddRecibosCliente( cFieldOrder ) CLASS TFastVentasClientes
          ::oDbf:cNumRec    := Str( ( D():FacturasClientesCobros( ::nView ) )->nNumRec )
          ::oDbf:cIdeDoc    := Upper( ::oDbf:cClsDoc ) + ::oDbf:cSerDoc + ::oDbf:cNumDoc + ::oDbf:cSufDoc
          ::oDbf:cTipRec    := ( D():FacturasClientesCobros( ::nView ) )->cTipRec
+
+         ::oDbf:lCobRec    := ( D():FacturasClientesCobros( ::nView ) )->lCobrado
 
          ::oDbf:nAnoDoc    := Year( ( D():FacturasClientesCobros( ::nView ) )->dPreCob )
          ::oDbf:nMesDoc    := Month( ( D():FacturasClientesCobros( ::nView ) )->dPreCob )
