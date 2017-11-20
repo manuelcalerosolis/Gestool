@@ -124,9 +124,9 @@ CLASS ArticulosPrecios FROM ADSBaseModel
 
    METHOD getTableName()                     INLINE ::getEmpresaTableName( "ArtDiv" )
 
-   METHOD getPrimeraPropiedad()
+   METHOD getFirstProperty()
 
-   METHOD getSegundaPropiedad()
+   METHOD getSecondProperty()
 
    METHOD getProperties( cSql )
 
@@ -134,7 +134,7 @@ END CLASS
 
 //---------------------------------------------------------------------------//
 
-METHOD getPrimeraPropiedad( cCodigoArticulo, cCodigoPropiedad )
+METHOD getFirstProperty( cCodigoArticulo, cCodigoPropiedad )
 
    local cSql           := "SELECT "                                                                                                   + ;
                               "line.cCodPr1 AS CodigoPropiedad, "                                                                      + ; 
@@ -161,7 +161,7 @@ RETURN ( ::getProperties( cCodigoArticulo, cCodigoPropiedad, cSql ) )
 
 //---------------------------------------------------------------------------//
 
-METHOD getSegundaPropiedad( cCodigoArticulo, cCodigoPropiedad )
+METHOD getSecondProperty( cCodigoArticulo, cCodigoPropiedad )
 
    local cSql           := "SELECT "                                                                                                   + ;
                               "line.cCodPr2 AS CodigoPropiedad, "                                                                      + ; 

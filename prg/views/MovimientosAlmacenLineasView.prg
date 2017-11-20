@@ -39,7 +39,6 @@ CLASS MovimientosAlmacenLineasView FROM SQLBaseView
    METHOD New()
 
    METHOD Activate()
-      METHOD startActivate()
       METHOD initActivate()
 
    METHOD nTotalUnidadesArticulo()     
@@ -238,53 +237,13 @@ METHOD Activate()
          FONT        getBoldFont() ;
          OF          ::oDialog
 
-      ::oDialog:bStart    := {|| ::startActivate() }
+      ::oDialog:bStart    := {|| ::oController:onActivateDialog() }
 
    ::oDialog:Activate( , , , .t., , , {|| ::initActivate() } ) 
 
    ::oOfficeBar:End()
 
 RETURN ( ::oDialog:nResult )
-
-//---------------------------------------------------------------------------//
-
-METHOD startActivate()
-
-   if ::oController:isAppendMode()
-      
-      ::oController:setModelBuffer( "codigo_articulo", space( 200 ) )
-      
-      ::oGetCodigoArticulo:Refresh()
-      
-      ::hideLoteCaducidadControls()
-
-      ::hidePrimeraPropiedad()
-
-      ::hideSegundaPropiedad()
-
-      ::hidePropertyBrowseView()
-
-   end if 
-
-   if ::oController:isNotAppendMode()
-   
-      ::oController:validateCodigoArticulo()
-   
-      ::oController:validatePrimeraPropiedad()
-   
-      ::oController:validateSegundaPropiedad()      
-   
-   end if 
-
-   ::hideBultos()
-
-   ::hideCajas()
-
-   ::oSayTotalUnidades:Refresh()
-
-   ::oSayTotalImporte:Refresh()
-
-RETURN ( .t. )
 
 //---------------------------------------------------------------------------//
 
@@ -365,7 +324,7 @@ METHOD verticalHide( oControl )
 
    oRect          := ::oDialog:getRect()
    nId            := oControl:nId
-   nHeight        := oControl:nHeight + 2
+   nHeight        := oControl:nHeight + 1
 
    oControl:Hide()
 
@@ -391,7 +350,7 @@ METHOD verticalShow( oControl )
 
    oRect          := ::oDialog:getRect()
    nId            := oControl:nId
-   nHeight        := oControl:nHeight + 2
+   nHeight        := oControl:nHeight + 1
 
    oControl:Show()
 

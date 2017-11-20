@@ -361,6 +361,10 @@ METHOD setValueAndUuidToPropertiesTable( hLine )
       RETURN ( nil )
    end if 
 
+   if empty( ::aPropertiesTable )
+      RETURN ( nil )
+   end if 
+
    aeval( ::aPropertiesTable,;
       {| aProperty | aeval( aProperty,;
          {| oProperty | ::scanProperty( hLine, oProperty ) } ) } )
