@@ -59,7 +59,7 @@ METHOD getNombre( cCodigoPropiedad, cValorPropiedad ) CLASS PropiedadesLineasMod
                      	"AND cCodTbl = " + quoted( cValorPropiedad )
 
    if ::ExecuteSqlStatement( cSql, @cStm )
-      RETURN ( ( cStm )->cDesTbl )
+      RETURN ( alltrim( ( cStm )->cDesTbl ) )
    end if 
 
 RETURN ( "" )

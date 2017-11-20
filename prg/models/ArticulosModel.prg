@@ -222,7 +222,7 @@ CLASS ArticulosCodigosBarraModel FROM ADSBaseModel
 
    METHOD getTableName()                     INLINE ::getEmpresaTableName( "ArtCodeBar" )
 
-   METHOD getCodigo( cId )                   INLINE ( ::getField( cId, 'cCodArt', 'cCodBar' ) )
+   METHOD getCodigo( cId )                   INLINE ( ::getField( 'cCodArt', 'cCodBar', cId ) )
 
 END CLASS
 

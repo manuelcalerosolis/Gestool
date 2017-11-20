@@ -20,7 +20,7 @@ CLASS MovimientosAlmacenLabelReport FROM SQLBaseReport
 
    METHOD New( oController )
 
-   METHOD setRowSet( oRowSet )         INLINE ( ::oLineasMovimientosAlmacenRowSet := oRowSet )
+   METHOD setRowSet( oRowSet )      INLINE ( ::oLineasMovimientosAlmacenRowSet := oRowSet )
 
    METHOD buildData() 
 
@@ -59,7 +59,7 @@ METHOD buildData()
 
    ::oFastReport:setUserDataSet( "Lineas de movimientos de almacén",;
                                  MovimientosAlmacenLineasRepository():getSerializedColumnsSentenceToLabels(),;
-                                 {|| ::gotop() },;
+                                 {|| ::goTop() },;
                                  {|| ::skipper() },;
                                  {|| ::oLineasMovimientosAlmacenRowSet:skip(-1) },;
                                  {|| ::oLineasMovimientosAlmacenRowSet:eof() },;
@@ -89,7 +89,7 @@ METHOD skipper()
 
    if ::nLabelsPrinted > ::nLabelsToPrint  
 
-      ::oLineasMovimientosAlmacenRowSet:skip( 1 )   
+      ::oLineasMovimientosAlmacenRowSet:Skip( 1 )   
 
       ::resetLabelsToPrint()
 
@@ -101,13 +101,13 @@ RETURN ( 0 )
 
 //---------------------------------------------------------------------------//
 
-METHOD gotop()
+METHOD goTop()
 
    ::resetLabelsToPrint()
 
    ::Synchronize()
 
-RETURN ( ::oLineasMovimientosAlmacenRowSet:gotop() )
+RETURN ( ::oLineasMovimientosAlmacenRowSet:goTop() )
 
 //---------------------------------------------------------------------------//
 

@@ -1042,6 +1042,8 @@ METHOD keysControl( nKey ) CLASS TDialog
 
    else
 
+      logwrite( nKey )
+
       if isArray( ::aFastKeys ) .and. len( ::aFastKeys ) > 0
          aEval( ::aFastKeys, {|aKey| if( nKey == aKey[1] , Eval( aKey[2] ), ) } )
       end if

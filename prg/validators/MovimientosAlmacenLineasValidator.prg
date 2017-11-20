@@ -50,6 +50,9 @@ METHOD isCodeGS128( value )
    if hhaskey( hCodeGS128, "10" )
       ::oController:setModelBufferPadr( "lote", hCodeGS128[ "10" ][ "Codigo" ] )
       ::oController:oDialogView:oGetLote:Refresh()
+
+      msgalert(  hCodeGS128[ "10" ][ "Codigo" ], "lote" )
+
    end if 
 
    if hhaskey( hCodeGS128, "15" )
