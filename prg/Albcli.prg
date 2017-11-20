@@ -8715,7 +8715,7 @@ Static Function DataReport( oFr )
    oFr:SetMasterDetail( "Albaranes", "Entregas de albaranes",                    {|| ( D():Get( "AlbCliT", nView ) )->cSerAlb + Str( ( D():Get( "AlbCliT", nView ) )->nNumAlb ) + ( D():Get( "AlbCliT", nView ) )->cSufAlb } )
    oFr:SetMasterDetail( "Albaranes", "Clientes",                                 {|| ( D():Get( "AlbCliT", nView ) )->cCodCli } )
    oFr:SetMasterDetail( "Albaranes", "Obras",                                    {|| ( D():Get( "AlbCliT", nView ) )->cCodCli + ( D():Get( "AlbCliT", nView ) )->cCodObr } )
-   oFr:SetMasterDetail( "Albaranes", "Almacen",                                  {|| ( D():Get( "AlbCliT", nView ) )->cCodAlm } )
+   oFr:SetMasterDetail( "Albaranes", "Almacenes",                                {|| ( D():Get( "AlbCliT", nView ) )->cCodAlm } )
    oFr:SetMasterDetail( "Albaranes", "Rutas",                                    {|| ( D():Get( "AlbCliT", nView ) )->cCodRut } )
    oFr:SetMasterDetail( "Albaranes", "Agentes",                                  {|| ( D():Get( "AlbCliT", nView ) )->cCodAge } )
    oFr:SetMasterDetail( "Albaranes", "Formas de pago",                           {|| ( D():Get( "AlbCliT", nView ) )->cCodPago} )
@@ -13078,7 +13078,11 @@ Static Function lCompruebaStock( uTmpLin, oStock, nTotalUnidades, nStockActual )
       do case
          case ( nStockActual - nTotalUnidades ) < 0
 
+            msginfo( oUser():lNotAllowSales( lNotVta ), "USERS" )
+            msginfo( lNotVta, "lNotVta" )
+
             if oUser():lNotAllowSales( lNotVta )
+               ?"1"
                msgStop( "No hay stock suficiente, tenemos " + Alltrim( Trans( nStockActual, MasUnd() ) ) + " unidad(es) disponible(s)," + CRLF + "en almacén " + cCodigoAlmacen + "." )
                return .f.
             end if

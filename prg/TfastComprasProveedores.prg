@@ -220,6 +220,7 @@ METHOD AddPedidoProveedor( cCodigoProveedor ) CLASS TFastComprasProveedores
    local sTot
 
    ( D():PedidosProveedores( ::nView ) )->( OrdSetFocus( "dFecPed" ) )
+   ( D():PedidosProveedoresLineas( ::nView ) )->( OrdSetFocus( "nNumPed" ) )
 
    // filtros para la cabecera------------------------------------------------
 
@@ -294,6 +295,7 @@ METHOD AddAlbaranProveedor( lFacturados ) CLASS TFastComprasProveedores
    DEFAULT lFacturados           := .f.
 
    ( D():AlbaranesProveedores( ::nView ) )->( OrdSetFocus( "dFecAlb" ) )
+   ( D():AlbaranesProveedoresLineas( ::nView ) )->( OrdSetFocus( "nNumAlb" ) )
 
    // filtros para la cabecera------------------------------------------------
 
@@ -372,6 +374,7 @@ METHOD AddFacturaProveedor( cCodigoProveedor ) CLASS TFastComprasProveedores
    local aTotIva
 
    ( D():FacturasProveedores( ::nView ) )->( OrdSetFocus( "dFecFac" ) )
+   ( D():FacturasProveedoresLineas( ::nView ) )->( OrdSetFocus( "nNumFac" ) )
 
    // filtros para la cabecera------------------------------------------------
 
@@ -428,8 +431,6 @@ METHOD AddFacturaProveedor( cCodigoProveedor ) CLASS TFastComprasProveedores
       else
          ::oDbf:Cancel()
       end if                
-
-      ::AddFacturasProveedores()
 
       ( D():FacturasProveedores( ::nView ) )->( dbskip() )
 
