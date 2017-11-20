@@ -6,36 +6,35 @@
 
 CLASS SQLPropertyBrowseView 
 
-   DATA oPage
-
    DATA oController
 
    DATA oBrowse
 
+   DATA onPostEdit
+
    DATA aPropertyOne
    DATA aPropertyTwo 
 
-   DATA aProperties              INIT {}
+   DATA aProperties                       INIT {}
 
    DATA aPropertiesTable
 
    DATA nTotalRow
    DATA nTotalColumn          
 
-   DATA bOnPostEdit              INIT {|| .t. }      
-
    METHOD New()
 
    METHOD CreateControl()
 
-   METHOD getPage()              INLINE ( ::oPage )
-   METHOD getBrowse()            INLINE ( ::oBrowse )
+   METHOD getBrowse()                     INLINE ( ::oBrowse )
 
-   METHOD Refresh()              INLINE ( ::oBrowse:MakeTotals(), ::oBrowse:Refresh() )
-   METHOD isVisible()            INLINE ( ::oPage:lVisible )
+   METHOD Refresh()                       INLINE ( ::oBrowse:MakeTotals(), ::oBrowse:Refresh() )
+   METHOD lVisible()                      INLINE ( ::oBrowse:lVisible )
 
    METHOD setPropertyOne( aPropiedadesArticulo )
    METHOD setPropertyTwo( aPropiedadesArticulo )
+
+   METHOD setOnPostEdit( onPostEdit )     INLINE ( ::onPostEdit := onPostEdit  )
 
    METHOD build()
    METHOD buildPropertyTable()
@@ -82,20 +81,14 @@ METHOD CreateControl( nId, oDialog )
 
    try 
 
-   REDEFINE PAGES ::oPage ;
-      ID          nId ;
-      OF          oDialog ;
-      DIALOGS     "PAGE_PROPERTY_CONTROLS_BROWSE"
-
-   //::oBrowsePropertyView               := SQLPropertyBrowseView():New( 600, ::oPagePropertyControls:aDialogs[ 1 ] )
-   // ::oBrowsePropertyView:bOnPostEdit   := {|| ::oSayTotalUnidades:Refresh(), ::oSayTotalImporte:Refresh() }
-
-   ::oBrowse                  := IXBrowse():New( ::oPage:aDialogs[ 1 ] )
+   ::oBrowse                  := IXBrowse():New( oDialog )
 
    ::oBrowse:nDataType        := DATATYPE_ARRAY
 
    ::oBrowse:bClrSel          := {|| { CLR_BLACK, Rgb( 229, 229, 229 ) } }
    ::oBrowse:bClrSelFocus     := {|| { CLR_BLACK, Rgb( 167, 205, 240 ) } }
+
+   ::oBrowse:lVisible         := .t.
 
    ::oBrowse:lHScroll         := .t.
    ::oBrowse:lVScroll         := .t.
@@ -111,7 +104,7 @@ METHOD CreateControl( nId, oDialog )
 
    ::oBrowse:MakeTotals()
 
-   ::oBrowse:CreateFromResource( 100 )
+   ::oBrowse:CreateFromResource( nId )
 
    catch oError
 
@@ -318,8 +311,8 @@ METHOD postEditProperties( oCol, xVal, nKey )
 
    ::oBrowse:Cargo[ ::oBrowse:nArrayAt, oCol:Cargo ]:Value := xVal
 
-   if hb_isblock( ::bOnPostEdit )
-      eval( ::bOnPostEdit )
+   if hb_isblock( ::onPostEdit )
+      eval( ::onPostEdit )
    end if 
 
 RETURN ( .t. )
@@ -365,6 +358,10 @@ METHOD setValueAndUuidToPropertiesTable( hLine )
    end if 
 
    if empty( hget( hLine, "valor_primera_propiedad" ) )
+      RETURN ( nil )
+   end if 
+
+   if empty( ::aPropertiesTable )
       RETURN ( nil )
    end if 
 

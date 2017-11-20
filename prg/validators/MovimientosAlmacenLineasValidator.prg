@@ -54,7 +54,7 @@ METHOD isCodeGS128( value )
 
    if hhaskey( hCodeGS128, "15" )
       ::oController:setModelBuffer( "fecha_caducidad", hCodeGS128[ "15" ][ "Codigo" ] )
-      ::oController:oDialogView:oGetFechaCaducidad:Refresh()
+      ::oController:oDialogView:oGetCaducidad:Refresh()
    end if 
 
 RETURN ( .t. )
