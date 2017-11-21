@@ -221,7 +221,6 @@ METHOD Activate()
          OF          ::oDialog
 
       ::oGetPrecioArticulo:bChange     := {|| ::refreshUnidadesImportes() }
-      ::oGetPrecioArticulo:bValid      := {|| ::oGetCodigoArticulo:setFocus(), .t. }
 
       // Total Importe---------------------------------------------------------
 
@@ -237,7 +236,7 @@ METHOD Activate()
          FONT        getBoldFont() ;
          OF          ::oDialog
 
-      ::oDialog:bStart    := {|| ::oController:onActivateDialog() }
+   ::oDialog:bStart  := {|| ::oController:onActivateDialog() }
 
    ::oDialog:Activate( , , , .t., , , {|| ::initActivate() } ) 
 
