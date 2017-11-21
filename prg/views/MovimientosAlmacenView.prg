@@ -145,7 +145,7 @@ METHOD Activate()
 
    ::oOfficeBar:End()
 
-RETURN ( ::oDialog:nResult == IDOK )
+RETURN ( ::oDialog:nResult )
 
 //---------------------------------------------------------------------------//
 

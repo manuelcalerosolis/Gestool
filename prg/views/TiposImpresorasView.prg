@@ -51,6 +51,6 @@ METHOD Activate()
 
    ACTIVATE DIALOG oDlg CENTER
 
-RETURN ( oDlg:nResult == IDOK )
+RETURN ( oDlg:nResult )
 
 //---------------------------------------------------------------------------//

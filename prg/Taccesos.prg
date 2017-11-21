@@ -1051,9 +1051,9 @@ METHOD EnableComboFilter( aItems )
 
       // Cargamos los filtros-----------------------------------------------
 
-      for each cItem in aItems
-         aAdd( ::aComboFilter, cItem )
-      next
+      if !empty( aItems )
+         aeval( aItems, {|cItem| aadd( ::aComboFilter, cItem ) } )
+      end if 
 
       ::oComboFilter:SetItems( ::aComboFilter )
       

@@ -774,19 +774,22 @@ METHOD getEmpresaColumns()
                                        "text"      => "Identificador"                           ,;
                                        "header"    => "Id"                                      ,;
                                        "visible"   => .t.                                       ,;
+                                       "type"      => "N"                                       ,;
                                        "width"     => 40 }                                      )   
 
    hset( ::hColumns, "uuid",        {  "create"    => "VARCHAR(40) NOT NULL"                    ,;
-                                       "text"      => "uuid"                                    ,;
+                                       "text"      => "Uuid"                                    ,;
                                        "header"    => "Uuid"                                    ,;
                                        "visible"   => .t.                                       ,;
                                        "hide"      => .t.                                       ,;
+                                       "type"      => "C"                                       ,;
                                        "width"     => 240                                       ,;
                                        "default"   => {|| win_uuidcreatestring() } }            )
 
    hset( ::hColumns, "empresa",     {  "create"    => "CHAR ( 4 ) NOT NULL"                     ,;
                                        "text"      => "Empresa"                                 ,;
                                        "visible"   => .f.                                       ,;
+                                       "type"      => "C"                                       ,;
                                        "default"   => {|| cCodEmp() } }                         )
 
    hset( ::hColumns, "delegacion",  {  "create"    => "VARCHAR(2) NOT NULL"                     ,;
@@ -801,7 +804,7 @@ METHOD getEmpresaColumns()
                                        "default"   => {|| retSufEmp() } }                       )
 
    hset( ::hColumns, "usuario",     {  "create"    => "VARCHAR(3) NOT NULL"                     ,;
-                                       "text"      => "usuario"                                 ,;
+                                       "text"      => "Usuario"                                 ,;
                                        "header"    => "Usuario"                                 ,;
                                        "visible"   => .t.                                       ,;
                                        "hide"      => .t.                                       ,;

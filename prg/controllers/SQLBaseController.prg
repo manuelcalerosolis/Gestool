@@ -231,7 +231,7 @@ METHOD Append()
       RETURN ( .f. )
    end if 
 
-   if !( ::fireEvent( 'appending' ) )
+   if isFalse( ::fireEvent( 'appending' ) )
       RETURN ( .f. )
    end if
 

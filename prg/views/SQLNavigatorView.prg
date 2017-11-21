@@ -183,11 +183,15 @@ METHOD EnableWindowsBar()
       RETURN ( Self )
    end if 
 
-   ::oWindowsBar:EnableGet()
+   ::oWindowsBar:enableGet()
 
-   ::oWindowsBar:EnableComboBox( ::getModelHeadersForBrowse() )
+   ::oWindowsBar:enableComboBox( ::getModelHeadersForBrowse() )
 
    ::oWindowsBar:setCombo( ::getModelHeaderFromColumnOrder() )
+
+   ::oWindowsBar:enableComboFilter()
+
+   ::oWindowsBar:showAddButtonFilter()
 
    ::getBrowse():selectColumnOrderByHeader( ::getModelHeaderFromColumnOrder() )
 

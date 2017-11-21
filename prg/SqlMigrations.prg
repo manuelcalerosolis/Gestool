@@ -130,6 +130,8 @@ METHOD addModels()
 
    aadd( ::aModels, SQLNumerosSeriesModel():New() )
 
+   aadd( ::aModels, SQLFiltrosModel():New() )   
+
 RETURN ( ::aModels )
 
 //----------------------------------------------------------------------------//
