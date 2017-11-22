@@ -93,9 +93,7 @@ FUNCTION Main( paramsMain, paramsSecond, paramsThird )
 
    // Conexión con MySql------------------------------------------------------
 
-   if getSQLDatabase():Connect() 
-      getSQLDatabase():addModels()
-   else 
+   if !( getSQLDatabase():Connect() )
       msgStop( "No se ha podido conectar a la base de datos MySQL" + CRLF + getSQLDatabase():sayConexionInfo() )
       RETURN ( nil )
    end if 

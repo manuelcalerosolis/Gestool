@@ -24,7 +24,7 @@ Fichero de Cabecera para la Aplcaci¢n de Facturaci¢n 3.0 para Windows
 
 #define __DAYS__                        5
 
-#define __txtFilters__                  "[Mis filtros]"
+#define __txtFilters__                  ""
 #define __txtAllYearsFilter__           "[Todos]"
 
 #define clrTopArchivos                  Rgb( 104, 0, 63 )

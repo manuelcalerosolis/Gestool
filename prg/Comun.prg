@@ -277,8 +277,6 @@ RETURN ( .t. )
 
 FUNCTION Test()
 
-   SQLFiltrosController():New():Append()
-
 RETURN NIL 
 
 //---------------------------------------------------------------------------//

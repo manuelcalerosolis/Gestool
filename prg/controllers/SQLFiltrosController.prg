@@ -4,47 +4,82 @@
 
 //---------------------------------------------------------------------------//
 
-CLASS SQLFiltrosController FROM SQLBaseController 
+CLASS SQLFiltrosController FROM SQLBaseController
+
+   DATA oSender 
 
    DATA hColumns
 
-   DATA cTable
+   DATA cTableName
 
    METHOD New()
 
-   METHOD Dialog()            INLINE ( ::oDialogView:Dialog() )
+   METHOD Dialog()                     INLINE ( ::oDialogView:Dialog() )
 
-   METHOD setTable( cTable )  INLINE ( ::cTable := cTable )
-   METHOD getTable()          INLINE ( ::cTable )
+   METHOD setTableName( cTableName )   INLINE ( ::cTableName := cTableName )
+   METHOD getTableName()               INLINE ( ::cTableName )
 
    METHOD setColumns()
-   METHOD getColumns()        INLINE ( ::hColumns )
+   METHOD getColumns()                 INLINE ( ::hColumns )
+
+   METHOD getFilters()
+   METHOD getFilterSentence( cFilter ) 
 
 END CLASS
 
 //---------------------------------------------------------------------------//
 
-METHOD New()
+METHOD New( oSender )
 
-   ::oDialogView           := SQLFilterView():New( self )
+   ::oSender                           := oSender
 
-   ::oModel                := SQLFiltrosModel():New( self )
+   ::oDialogView                       := SQLFilterView():New( self )
 
-   ::oValidator            := SQLFiltrosValidator():New( self )
+   ::oModel                            := SQLFiltrosModel():New( self )
+   
+   ::oModel:setEvent( 'insertingBuffer', {|| ::oModel:hBuffer[ "tabla" ] := ::getTableName() } )
 
-Return ( Self )
+   ::oValidator                        := SQLFiltrosValidator():New( self )
+
+RETURN ( Self )
 
 //---------------------------------------------------------------------------//
 
 METHOD setColumns( hColumns )
 
-   DEFAULT hColumns        := SQLMovimientosAlmacenModel():getColumns()
+   DEFAULT hColumns                    := SQLMovimientosAlmacenModel():getColumns()
 
-   ::hColumns              := hColumns
+   ::hColumns                          := hColumns
 
-Return ( Self )
+RETURN ( Self )
 
 //---------------------------------------------------------------------------//
 
+METHOD getFilters()                 
 
+   if empty( ::getTableName() )
+      RETURN ( {} )
+   end if 
+
+RETURN ( ::oModel:getFilters( ::getTableName() ) )
+
+//---------------------------------------------------------------------------//
+
+METHOD getFilterSentence( cFilter )
+
+   local aSentence
+
+   if empty( ::getTableName() )
+      RETURN ( "" )
+   end if 
+
+   aSentence   := ::oModel:getFilterSentence( cFilter, ::getTableName() )
+
+   if empty( aSentence )
+      RETURN ( "" )    
+   end if 
+
+RETURN ( atail( aSentence ) )
+
+//---------------------------------------------------------------------------//
 

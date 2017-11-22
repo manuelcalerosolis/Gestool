@@ -10,6 +10,10 @@ CLASS SQLFiltrosModel FROM SQLBaseModel
 
    METHOD getColumns()
 
+   METHOD getFilters( cTabla )
+
+   METHOD getFilterSentence( cNombre, cTabla )
+
 END CLASS
 
 //---------------------------------------------------------------------------//
@@ -38,5 +42,29 @@ METHOD getColumns()
                                     "len"       => 50 }                                  )
 
 RETURN ( ::hColumns )
+
+//---------------------------------------------------------------------------//
+
+METHOD getFilters( cTabla )
+
+   local aFilters    := {}
+   local cSentence   := "SELECT nombre FROM " + ::getTableName() + " WHERE tabla = " + quoted( cTabla ) 
+
+   aFilters          := ::getDatabase():selectFetchArrayOneColumn( cSentence )
+
+RETURN ( aFilters )   
+
+//---------------------------------------------------------------------------//
+
+METHOD getFilterSentence( cNombre, cTabla )
+
+   local aFilters    := {}
+   local cSentence   := "SELECT filtro FROM " + ::getTableName()  + space( 1 ) + ;
+                           "WHERE tabla = " + quoted( cTabla )    + space( 1 ) + ;
+                              "AND nombre = " + quoted( cNombre ) 
+
+   aFilters          := ::getDatabase():selectFetchArrayOneColumn( cSentence )
+
+RETURN ( aFilters )   
 
 //---------------------------------------------------------------------------//

@@ -11,9 +11,9 @@ CLASS MovimientosAlmacenLineasController FROM SQLBaseController
 
    DATA oSearchView
 
-   DATA aProperties                       INIT {}
+   DATA aProperties                    INIT {}
 
-   DATA aSelectDelete                     INIT {}
+   DATA aSelectDelete                  INIT {}
 
    METHOD New()
 

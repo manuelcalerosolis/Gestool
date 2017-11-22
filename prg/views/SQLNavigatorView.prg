@@ -20,8 +20,6 @@ CLASS SQLNavigatorView FROM SQLBrowseableView
    DATA oVerticalSplitter
    DATA oHorizontalSplitter
    
-   DATA oWindowsBar
-
    METHOD New( oController )
 
    METHOD End()
@@ -30,8 +28,9 @@ CLASS SQLNavigatorView FROM SQLBrowseableView
 
    // Facades------------------------------------------------------------------
 
-   METHOD getComboBoxOrder()              INLINE ( ::oWindowsBar:oComboBox() )
-   METHOD getGetSearch()                  INLINE ( ::oWindowsBar:oGet() )
+   METHOD getComboBoxOrder()              INLINE ( ::oController:oWindowsBar:oComboBox() )
+
+   METHOD getGetSearch()                  INLINE ( ::oController:oWindowsBar:oGet() )
 
    METHOD getWindow()                     INLINE ( ::oMdiChild )
 
@@ -55,12 +54,6 @@ CLASS SQLNavigatorView FROM SQLBrowseableView
 
    METHOD CreateSplitters()
 
-   // Aplication windows bar---------------------------------------------------
-
-   METHOD EnableWindowsBar()
-
-   METHOD DisableWindowsBar()
-
 ENDCLASS
 
 //----------------------------------------------------------------------------//
@@ -74,8 +67,6 @@ METHOD New( oController )
    ::oMenuTreeView         := MenuTreeView():New( Self )
 
    ::oSQLBrowseView        := SQLBrowseViewMDI():New( Self )
-
-   ::oWindowsBar           := oWndBar()
 
 RETURN ( Self )
 
@@ -113,15 +104,13 @@ METHOD Activate()
 
    ::getGetSearch():bChange      := {|| ::onChangeSearch() } 
 
-   ::EnableWindowsBar()
-
 RETURN ( Self )
 
 //----------------------------------------------------------------------------//
 
 METHOD End()
 
-   ::DisableWindowsBar()
+   ::oController:DisableWindowsBar()
 
    ::oController:End()
 
@@ -176,44 +165,6 @@ METHOD CreateSplitters()
 RETURN ( Self )
 
 //---------------------------------------------------------------------------//
-
-METHOD EnableWindowsBar()
-
-   if empty( ::oWindowsBar )
-      RETURN ( Self )
-   end if 
-
-   ::oWindowsBar:enableGet()
-
-   ::oWindowsBar:enableComboBox( ::getModelHeadersForBrowse() )
-
-   ::oWindowsBar:setCombo( ::getModelHeaderFromColumnOrder() )
-
-   ::oWindowsBar:enableComboFilter()
-
-   ::oWindowsBar:showAddButtonFilter()
-
-   ::getBrowse():selectColumnOrderByHeader( ::getModelHeaderFromColumnOrder() )
-
-   ::Refresh()
-
-RETURN ( Self )
-
-//----------------------------------------------------------------------------//
-
-METHOD DisableWindowsBar()
-
-   if empty( ::oWindowsBar )
-      RETURN ( Self )
-   end if 
-
-   ::oWindowsBar:DisableGet()
-
-   ::oWindowsBar:DisableComboBox()
-
-RETURN ( Self )
-
-//----------------------------------------------------------------------------//
 
 METHOD keyDown( nKey, nFlags )
 
