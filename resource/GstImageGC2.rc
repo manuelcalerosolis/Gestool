@@ -313,3 +313,4 @@ DOCUMENT_CHART_32 BITMAP "..\\bmp\\document_chart_32.bmp"
 
 GC_FUNNEL_DELETE_16 BITMAP "..\\bmp\\gc_funnel_delete_16.bmp" 
 GC_FUNNEL_EDIT_16 BITMAP "..\\bmp\\gc_funnel_edit_16.bmp" 
+GC_FUNNEL_BROOM_16 BITMAP "..\\bmp\\gc_funnel_broom_16.bmp" 
