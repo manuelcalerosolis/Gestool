@@ -816,30 +816,6 @@ METHOD BuildReportCorrespondences()
                         {  "Generate" =>  {||   ::AddMovimientoAlmacen() },;
                            "Variable" =>  {||   nil },;
                            "Data" =>      {||   nil } },;
-                     "Compras y ventas" => ;           
-                        {  "Generate" =>  {||   ::SetUnidadesNegativo( .t. ),;
-                                                ::AddAlbaranCliente( .t. ),;
-                                                ::AddFacturaCliente(),;
-                                                ::AddTicket(),;
-                                                ::AddAlbaranProveedor( .t. ),;
-                                                ::AddFacturaProveedor(),;
-                                                ::SetUnidadesNegativo( .f. ) },;
-                           "Variable" =>  {||   ::AddVariableLineasAlbaranCliente(),;
-                                                ::AddVariableFacturaCliente(),;
-                                                ::AddVariableLineasRectificativaCliente(),;
-                                                ::AddVariableLineasTicketCliente(),;
-                                                ::AddVariableLineasAlbaranProveedor(),;
-                                                ::AddVariableLineasFacturaProveedor(),;
-                                                ::AddVariableLineasRectificativaProveedor(),;
-                                                ::AddVariableStock() },;
-                           "Data" =>      {||   ::FastReportAlbaranCliente(),;
-                                                ::FastReportFacturaCliente(),;
-                                                ::FastReportFacturaRectificativa(),;
-                                                ::FastReportTicket( .t. ),;
-                                                ::FastReportPedidoProveedor(),;
-                                                ::FastReportAlbaranProveedor(),;
-                                                ::FastReportFacturaProveedor(),;
-                                                ::FastReportRectificativaProveedor() } },;
                      "Todos los movimientos" => ;      
                         {  "Generate" =>  {||   ::AddAlbaranCliente(),;
                                                 ::AddFacturaCliente(),;
@@ -909,10 +885,6 @@ METHOD BuildReportCorrespondences()
                                                 ::FastReportParteProduccion() } },;   
                      "Stocks" => ;
                         {  "Generate" =>  {||   ::AddArticulo() },;
-                           "Variable" =>  {||   ::AddVariableStock() },;
-                           "Data" =>      {||   ::FastReportStock() } },;
-                     "Stocks almacenes" => ;
-                        {  "Generate" =>  {||   ::AddArticulo( .t. ) },;
                            "Variable" =>  {||   ::AddVariableStock() },;
                            "Data" =>      {||   ::FastReportStock() } } }
 
@@ -1098,11 +1070,7 @@ METHOD BuildTree( oTree, lLoadFile ) CLASS TFastVentasArticulos
                                                                               "Value"     => .f. } } },;
                   } ;
                   },;
-                  {  "Title" => "Producción",                     "Image" => 14, "Subnode" =>;
-                  { ;
-                     { "Title" => "Partes de producción",         "Image" => 14, "Type" => "Partes de producción",         "Directory" => "Articulos\Producción\Partes de producción",    "File" => "Partes de producción.fr3" },;
-                  } ;
-                  },; 
+                  { "Title" => "Producción",                      "Image" => 14, "Type" => "Partes de producción",         "Directory" => "Articulos\Producción",     "File" => "Partes de producción.fr3" },;
                   {  "Title" => "Compras",                        "Image" => 12, "Subnode" =>;
                   { ;
                      { "Title" => "Pedidos de proveedores",       "Image" => 2, "Type" => "Pedidos de proveedores",        "Directory" => "Articulos\Compras\Pedidos de proveedores",        "File" => "Pedidos de proveedores.fr3" },;
@@ -1113,15 +1081,9 @@ METHOD BuildTree( oTree, lLoadFile ) CLASS TFastVentasArticulos
                   } ;
                   },;                  
                   { "Title" => "Movimientos almacén",             "Image" => 25, "Type" => "Movimientosalmacen",           "Directory" => "Articulos\MovimientosAlmacen",                    "File" => "Movimientos.fr3" },;
-                  {  "Title" => "Compras/Ventas",                 "Image" => 12, "Subnode" =>;
-                  { ;
-                     { "Title" => "Compras y ventas",             "Image" => 2, "Type" => "Compras y ventas",              "Directory" => "Articulos\ComprasVentas",                         "File" => "Compras y ventas.fr3" },;
-                  } ;
-                  },; 
                   {  "Title" => "Existencias",                    "Image" => 16, "Subnode" =>;
                   { ;
                      { "Title" => "Stocks",                       "Image" => 16, "Type" => "Stocks",                       "Directory" => "Articulos\Existencias\Stocks",                    "File" => "Existencias por stock.fr3" },;
-                     { "Title" => "Stock de todos los almacenes", "Image" => 16, "Type" => "Stocks almacenes",             "Directory" => "Articulos\Existencias\StocksAlmacenes",           "File" => "Stocks por almacenes.fr3" },;
                   } ;
                   } }
 
