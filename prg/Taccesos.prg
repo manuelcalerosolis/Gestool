@@ -644,7 +644,7 @@ METHOD CreateSearchBar( oWnd )
    ::oButtonAddFilter:lBoxSelect 	:= .f.
 
    @ 125, 658 BTNBMP ::oButtonEditFilter ;
-            RESOURCE "bFilter16" ;
+            RESOURCE "gc_funnel_edit_16" ;
             SIZE     18, 18 ;
             OF       ::oRebar ;
             NOBORDER ;
@@ -654,7 +654,7 @@ METHOD CreateSearchBar( oWnd )
    ::oButtonEditFilter:lBoxSelect 	 := .f.
 
    @ 125, 684 BTNBMP ::oButtonDeleteFilter ;
-            RESOURCE "bNoFilter16" ;
+            RESOURCE "gc_funnel_delete_16" ;
             SIZE     18, 18 ;
             OF       ::oRebar ;
             NOBORDER ;
