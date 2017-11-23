@@ -936,7 +936,7 @@ METHOD AplyFilter()
                ( ::oDbf:cAlias )->( dbSetFilter( c2Block( ::cExpresionFilter + " .and. !Deleted()" ), ::cExpresionFilter + " .and. !Deleted()" ) )
 
                if !empty( ::oWndBrw )
-                  ::oWndBrw:ShowButtonFilter()
+                  ::oWndBrw:ShowDeleteButtonFilter()
                   ::oWndBrw:ShowEditButtonFilter()
                   ::oWndBrw:Refresh()
                end if
@@ -983,7 +983,7 @@ METHOD AplyFilter()
                   ( ::oDbf:cAlias )->( dbGoTop() )
 
                   if !empty( ::oWndBrw )
-                     ::oWndBrw:ShowButtonFilter()
+                     ::oWndBrw:ShowDeleteButtonFilter()
                      ::oWndBrw:ShowEditButtonFilter()
                      ::oWndBrw:Refresh()
                   end if
@@ -1007,7 +1007,7 @@ METHOD AplyFilter()
                ( ::oDbf )->( dbSetFilter( c2Block( ::cExpresionFilter + " .and. !Deleted()" ), ::cExpresionFilter + " .and. !Deleted()" ) )
 
                if !empty( ::oWndBrw )
-                  ::oWndBrw:ShowButtonFilter()
+                  ::oWndBrw:ShowDeleteButtonFilter()
                   ::oWndBrw:ShowEditButtonFilter()
                   ::oWndBrw:Refresh()
                end if
@@ -1054,7 +1054,7 @@ METHOD AplyFilter()
                   ( ::oDbf )->( dbGoTop() )
 
                   if !empty( ::oWndBrw )
-                     ::oWndBrw:ShowButtonFilter()
+                     ::oWndBrw:ShowDeleteButtonFilter()
                      ::oWndBrw:ShowEditButtonFilter()
                      ::oWndBrw:Refresh()
                   end if
@@ -1124,7 +1124,7 @@ METHOD KillFilter( oDlg )
    ::InitExpresion()
 
    if !empty( ::oWndBrw )
-      ::oWndBrw:HideButtonFilter()
+      ::oWndBrw:HideDeleteButtonFilter()
       ::oWndBrw:HideEditButtonFilter()
       ::oWndBrw:Refresh()
    end if

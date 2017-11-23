@@ -41,7 +41,7 @@ CLASS TAcceso
 
    DATA  cYearComboBoxExpression
 
-   DATA  oButtonFilter
+   DATA  oButtonDeleteFilter
    DATA  oButtonAddFilter
    DATA  oButtonEditFilter
 
@@ -101,7 +101,7 @@ CLASS TAcceso
 
    METHOD CreateSearchBar()
    METHOD EndSearchBar()
-   METHOD HideSearchBar()                 INLINE ( ::HideGet(), ::HideComboBox(), ::HideComboFilter(), ::HideButtonFilter(), ::HideAddButtonFilter(), ::HideEditButtonFilter(), ::HideYearComboBox() )
+   METHOD HideSearchBar()                 INLINE ( ::HideGet(), ::HideComboBox(), ::HideComboFilter(), ::HideDeleteButtonFilter(), ::HideAddButtonFilter(), ::HideEditButtonFilter(), ::HideYearComboBox() )
 
    METHOD InsertSearchBand()              INLINE ( ::oReBar:InsertBand( ::oSearchBar, "Buscar " ) )
    METHOD DeleteSearchBand()              INLINE ( ::oReBar:DeleteBand(), ::oSearchBar := nil )
@@ -160,10 +160,6 @@ CLASS TAcceso
    METHOD SetFocusGet()                   INLINE ( if( !empty( ::oGet ), ::oGet:SetFocus(), ) )   
    METHOD HideGet()                       INLINE ( if( !empty( ::oGet ), ::oGet:Hide(), ) )
 
-   METHOD ShowButtonFilter()              INLINE ( if( !empty( ::oButtonFilter ), ::oButtonFilter:Show(), ) )
-   METHOD HideButtonFilter()              INLINE ( if( !empty( ::oButtonFilter ), ::oButtonFilter:Hide(), ), if( !empty( ::oComboFilter ), ::oComboFilter:Select( 1 ), ) )
-   METHOD SetKillFilter( bBlock )         INLINE ( if( !empty( ::oButtonFilter ), ( ::oButtonFilter:bAction := bBlock ), ) )
-
    METHOD ShowAddButtonFilter()           INLINE ( if( !empty( ::oButtonAddFilter ), ::oButtonAddFilter:Show(), ) )
    METHOD HideAddButtonFilter()           INLINE ( if( !empty( ::oButtonAddFilter ), ::oButtonAddFilter:Hide(), ) )
    METHOD SetActionAddButtonFilter( bAction );
@@ -173,6 +169,10 @@ CLASS TAcceso
    METHOD HideEditButtonFilter()          INLINE ( if( !empty( ::oButtonEditFilter ), ::oButtonEditFilter:Hide(), ) )
    METHOD SetActionEditButtonFilter( bAction );
                                           INLINE ( if( !empty( ::oButtonEditFilter ), ( ::oButtonEditFilter:bAction := bAction ), ) )
+
+   METHOD ShowDeleteButtonFilter()        INLINE ( if( !empty( ::oButtonDeleteFilter ), ::oButtonDeleteFilter:Show(), ) )
+   METHOD HideDeleteButtonFilter()        INLINE ( if( !empty( ::oButtonDeleteFilter ), ::oButtonDeleteFilter:Hide(), ), if( !empty( ::oComboFilter ), ::oComboFilter:Select( 1 ), ) )
+   METHOD SetActionDeleteFilter( bBlock ) INLINE ( if( !empty( ::oButtonDeleteFilter ), ( ::oButtonDeleteFilter:bAction := bBlock ), ) )
 
    METHOD ShowYearComboBox()              INLINE ( if( !empty( ::oYearComboBox ), ( ::lYearComboBox := .t., ::oYearComboBox:Show(), ::oYearComboBox:Set( 1 ) ), ) )
    METHOD HideYearComboBox()              INLINE ( if( !empty( ::oYearComboBox ), ( ::lYearComboBox := .f., ::oYearComboBox:bChange := nil, ::oYearComboBox:Hide() ), ) )
@@ -653,15 +653,15 @@ METHOD CreateSearchBar( oWnd )
    ::oButtonEditFilter:lTransparent  := .t.
    ::oButtonEditFilter:lBoxSelect 	 := .f.
 
-   @ 125, 684 BTNBMP ::oButtonFilter ;
+   @ 125, 684 BTNBMP ::oButtonDeleteFilter ;
             RESOURCE "bNoFilter16" ;
             SIZE     18, 18 ;
             OF       ::oRebar ;
             NOBORDER ;
             ACTION   ( msgStop( "Quitar filtro activo" ) )
 
-   ::oButtonFilter:lTransparent      := .t.
-   ::oButtonFilter:lBoxSelect 	     := .f.
+   ::oButtonDeleteFilter:lTransparent      := .t.
+   ::oButtonDeleteFilter:lBoxSelect 	     := .f.
 
    @ 124, 710 COMBOBOX ::oYearComboBox ;
             VAR      ::cYearComboBox ;
@@ -697,8 +697,8 @@ METHOD EndSearchBar( oWnd )
       ::oButtonEditFilter:End()
    end if 
 
-   if !empty( ::oButtonFilter )
-      ::oButtonFilter:End()
+   if !empty( ::oButtonDeleteFilter )
+      ::oButtonDeleteFilter:End()
    end if
 
    if !empty( ::oYearComboBox )
@@ -1092,8 +1092,8 @@ METHOD End()
       ::oButtonEditFilter:End()
    end if 
    
-   if !empty( ::oButtonFilter )
-      ::oButtonFilter:End()
+   if !empty( ::oButtonDeleteFilter )
+      ::oButtonDeleteFilter:End()
    end if 
 
    if !empty( ::oComboBox )
@@ -1109,7 +1109,7 @@ METHOD End()
    ::oBmpLogo           := nil
    ::oButtonAddFilter   := nil 
    ::oButtonEditFilter  := nil 
-   ::oButtonFilter      := nil 
+   ::oButtonDeleteFilter      := nil 
    ::oComboBox          := nil 
    ::oComboFilter       := nil
 

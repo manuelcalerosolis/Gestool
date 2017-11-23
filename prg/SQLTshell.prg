@@ -188,7 +188,7 @@ METHOD End( lForceExit )
       ::oWndBar:DisableComboFilter()
       ::oWndBar:HideYearCombobox()
 
-      ::HideButtonFilter()
+      ::HideDeleteButtonFilter()
       ::HideAddButtonFilter()
       ::HideEditButtonFilter()
    end if

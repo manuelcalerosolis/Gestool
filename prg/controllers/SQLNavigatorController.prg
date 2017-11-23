@@ -57,6 +57,10 @@ CLASS SQLNavigatorController FROM SQLBaseController
 
    METHOD DisableWindowsBar()
 
+   METHOD hideEditAndDeleteButtonFilter()
+
+   METHOD showEditAndDeleteButtonFilter()
+
 END CLASS
 
 //---------------------------------------------------------------------------//
@@ -192,20 +196,20 @@ RETURN ( Self )
 
 METHOD setFilter()         
 
-   local cFilter
-   local aSentence
-   local cSentence
-
-   cFilter        := ::oWindowsBar:GetComboFilter()
+   local cFilter  := ::oWindowsBar:GetComboFilter()
 
    if empty( cFilter )
 
       ::getModel():clearFilterWhere()
-
+   
+      ::hideEditAndDeleteButtonFilter()
+   
    else 
-
+   
       ::getModel():setFilterWhere( ::oFilterController:getFilterSentence( cFilter ) )
-
+   
+      ::showEditAndDeleteButtonFilter()
+   
    end if  
 
    msgalert( ::getModel():getGeneralSelect(), "cSentence" )
@@ -262,3 +266,22 @@ RETURN ( Self )
 
 //----------------------------------------------------------------------------//
 
+METHOD hideEditAndDeleteButtonFilter()
+
+   ::oWindowsBar:HideEditButtonFilter()
+
+   ::oWindowsBar:HideDeleteButtonFilter()
+
+RETURN ( Self )
+
+//----------------------------------------------------------------------------//
+
+METHOD showEditAndDeleteButtonFilter()
+
+   ::oWindowsBar:ShowEditButtonFilter()
+
+   ::oWindowsBar:ShowDeleteButtonFilter()
+
+RETURN ( Self )
+
+//----------------------------------------------------------------------------//

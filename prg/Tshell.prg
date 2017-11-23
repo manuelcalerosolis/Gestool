@@ -276,7 +276,7 @@ CLASS TShell FROM TMdiChild
 
    METHOD getComboFilter()                   
 
-   METHOD setKillFilter( bBlock )            INLINE ( if( !empty( ::oWndBar ), ::oWndBar:setKillFilter( bBlock ), ) )
+   METHOD SetActionDeleteFilter( bBlock )            INLINE ( if( !empty( ::oWndBar ), ::oWndBar:SetActionDeleteFilter( bBlock ), ) )
 
    METHOD addImageList( cImage )
 
@@ -292,8 +292,8 @@ CLASS TShell FROM TMdiChild
    METHOD KillProcess()                      INLINE ( ::lOnProcess := .f., ::BarEnable(), ::BrwEnable() )
    METHOD QuitOnProcess()                    INLINE ( ::lOnProcess := .f., ::BarEnable(), ::BrwEnable() )
 
-   METHOD ShowButtonFilter()                 INLINE ( ::lActiveFilter := .t., ::oWndBar:ShowButtonFilter() )
-   METHOD HideButtonFilter()                 INLINE ( ::lActiveFilter := .f., ::oWndBar:HideButtonFilter() )
+   METHOD ShowDeleteButtonFilter()                 INLINE ( ::lActiveFilter := .t., ::oWndBar:ShowDeleteButtonFilter() )
+   METHOD HideDeleteButtonFilter()                 INLINE ( ::lActiveFilter := .f., ::oWndBar:HideDeleteButtonFilter() )
 
    METHOD ShowAddButtonFilter()              INLINE ( ::oWndBar:ShowAddButtonFilter() )
    METHOD HideAddButtonFilter()              INLINE ( ::oWndBar:HideAddButtonFilter() )
@@ -817,7 +817,7 @@ METHOD End( lForceExit ) CLASS TShell
       ::oWndBar:DisableComboFilter()
       ::oWndBar:HideYearCombobox()
 
-      ::HideButtonFilter()
+      ::HideDeleteButtonFilter()
       ::HideAddButtonFilter()
       ::HideEditButtonFilter()
 
@@ -1844,7 +1844,7 @@ METHOD addSeaBar( cSearchType, nLenSearchType ) CLASS TShell
 
       ::oWndBar:SetActionAddButtonFilter(    {|| ::AddFilter() } )
       ::oWndBar:SetActionEditButtonFilter(   {|| ::EditFilter() } )
-      ::oWndBar:SetKillFilter(               {|| ::KillFilter() } )
+      ::oWndBar:SetActionDeleteFilter(               {|| ::KillFilter() } )
 
       ::oWndBar:SetGetKeyUp(           {|| ::fastSeek( ::oWndBar:oGet, ::oWndBar:oGet:oGet:buffer() ) } ) 
       ::oWndBar:SetGetKeyDown(         {| nKey, nFlags | ::KeySearch( nKey ) } )
@@ -2545,10 +2545,10 @@ METHOD chgFilter() CLASS TShell
 
    if !empty(cFilterCombo)
       cFilter                 := cFilterCombo
-      ::ShowButtonFilter()
+      ::ShowDeleteButtonFilter()
       ::ShowEditButtonFilter()
    else 
-      ::HideButtonFilter()
+      ::HideDeleteButtonFilter()
       ::HideEditButtonFilter()
    end if 
 
@@ -2678,7 +2678,7 @@ METHOD KillFilter()
    end if      
 
    if !empty( ::oWndBar )
-      ::oWndBar:HideButtonFilter()
+      ::oWndBar:HideDeleteButtonFilter()
       ::oWndBar:HideEditButtonFilter()
    end if 
 
