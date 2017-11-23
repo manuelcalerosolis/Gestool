@@ -31,7 +31,7 @@ CLASS TAcceso
    DATA  aComboBox         INIT  {}
 
    DATA  oComboFilter
-   DATA  cComboFilter      INIT  __txtFilters__
+   DATA  cComboFilter      INIT  __txtFilters__ 
    DATA  aComboFilter      INIT  {__txtFilters__}
 
    DATA  oYearComboBox
@@ -166,11 +166,13 @@ CLASS TAcceso
 
    METHOD ShowAddButtonFilter()           INLINE ( if( !empty( ::oButtonAddFilter ), ::oButtonAddFilter:Show(), ) )
    METHOD HideAddButtonFilter()           INLINE ( if( !empty( ::oButtonAddFilter ), ::oButtonAddFilter:Hide(), ) )
-   METHOD SetAddButtonFilter( bAction )   INLINE ( if( !empty( ::oButtonAddFilter ), ( ::oButtonAddFilter:bAction := bAction ), ) )
+   METHOD SetActionAddButtonFilter( bAction );
+                                          INLINE ( if( !empty( ::oButtonAddFilter ), ( ::oButtonAddFilter:bAction := bAction ), ) )
 
    METHOD ShowEditButtonFilter()          INLINE ( if( !empty( ::oButtonEditFilter ), ::oButtonEditFilter:Show(), ) )
    METHOD HideEditButtonFilter()          INLINE ( if( !empty( ::oButtonEditFilter ), ::oButtonEditFilter:Hide(), ) )
-   METHOD SetEditButtonFilter( bAction )  INLINE ( if( !empty( ::oButtonEditFilter ), ( ::oButtonEditFilter:bAction := bAction ), ) )
+   METHOD SetActionEditButtonFilter( bAction );
+                                          INLINE ( if( !empty( ::oButtonEditFilter ), ( ::oButtonEditFilter:bAction := bAction ), ) )
 
    METHOD ShowYearComboBox()              INLINE ( if( !empty( ::oYearComboBox ), ( ::lYearComboBox := .t., ::oYearComboBox:Show(), ::oYearComboBox:Set( 1 ) ), ) )
    METHOD HideYearComboBox()              INLINE ( if( !empty( ::oYearComboBox ), ( ::lYearComboBox := .f., ::oYearComboBox:bChange := nil, ::oYearComboBox:Hide() ), ) )
@@ -1051,9 +1053,9 @@ METHOD EnableComboFilter( aItems )
 
       // Cargamos los filtros-----------------------------------------------
 
-      for each cItem in aItems
-         aAdd( ::aComboFilter, cItem )
-      next
+      if !empty( aItems )
+         aeval( aItems, {|cItem| aadd( ::aComboFilter, cItem ) } )
+      end if 
 
       ::oComboFilter:SetItems( ::aComboFilter )
       

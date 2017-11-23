@@ -62,7 +62,7 @@ RETURN ( cSql )
 
 METHOD getSqlSentenceWhereParentUuid( uuid )
 
-   local cSql  := "SELECT * FROM " + ::getTableName() + " "                      + ;
+   local cSql  := "SELECT * FROM " + ::getTableName() + " "   + ;
                      "WHERE parent_uuid = " + quoted( uuid )
 
 RETURN ( cSql )
@@ -71,11 +71,12 @@ RETURN ( cSql )
 
 METHOD getSerializedColumnsSentenceToLabels()
 
-   local cSerializedColumns   := "selected;"                                     + ;
-                                 "id;"                                           + ;
-                                 "codigo_articulo;"                              + ;
-                                 "nombre_articulo;"                              + ;
-                                 "valor_primera_propiedad;"                      + ;
+   local cSerializedColumns   := "id;"                         + ;
+                                 "codigo_articulo;"            + ;
+                                 "nombre_articulo;"            + ;
+                                 "codigo_primera_propiedad;"   + ;
+                                 "codigo_segunda_propiedad;"   + ;
+                                 "valor_primera_propiedad;"    + ;
                                  "valor_segunda_propiedad"      
 
 RETURN ( cSerializedColumns )                                 
@@ -85,10 +86,11 @@ RETURN ( cSerializedColumns )
 METHOD getSQLSentenceToLabels( initialId, finalId, nFixLabels, cOrderBy )
 
    local cSql  := "SELECT "                                                                              + ;
-                     "TRUE AS selected, "                                                                + ;
                      "movimientos_almacen_lineas.id AS id, "                                             + ;
                      "movimientos_almacen_lineas.codigo_articulo AS codigo_articulo, "                   + ;
                      "movimientos_almacen_lineas.nombre_articulo AS nombre_articulo, "                   + ;
+                     "movimientos_almacen_lineas.codigo_primera_propiedad AS codigo_primera_propiedad, " + ;
+                     "movimientos_almacen_lineas.codigo_segunda_propiedad AS codigo_segunda_propiedad, " + ;     
                      "movimientos_almacen_lineas.valor_primera_propiedad AS valor_primera_propiedad, "   + ;
                      "movimientos_almacen_lineas.valor_segunda_propiedad AS valor_segunda_propiedad, "      
 

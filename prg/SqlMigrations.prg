@@ -26,7 +26,9 @@ ENDCLASS
 METHOD Run() 
 
    ::createDatabase()
+
    ::addModels()
+
    ::checkModels()
 
 RETURN ( Self )
@@ -127,6 +129,8 @@ METHOD addModels()
    aadd( ::aModels, SQLMovimientosAlmacenLineasModel():New() )
 
    aadd( ::aModels, SQLNumerosSeriesModel():New() )
+
+   aadd( ::aModels, SQLFiltrosModel():New() )   
 
 RETURN ( ::aModels )
 

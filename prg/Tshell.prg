@@ -1842,9 +1842,9 @@ METHOD addSeaBar( cSearchType, nLenSearchType ) CLASS TShell
       ::oWndBar:SetComboBoxChange(     {|| ::ChgCombo() } )
       ::oWndBar:SetComboFilterChange(  {|| ::ChgFilter() } )
 
-      ::oWndBar:SetAddButtonFilter(    {|| ::AddFilter() } )
-      ::oWndBar:SetEditButtonFilter(   {|| ::EditFilter() } )
-      ::oWndBar:SetKillFilter(         {|| ::KillFilter() } )
+      ::oWndBar:SetActionAddButtonFilter(    {|| ::AddFilter() } )
+      ::oWndBar:SetActionEditButtonFilter(   {|| ::EditFilter() } )
+      ::oWndBar:SetKillFilter(               {|| ::KillFilter() } )
 
       ::oWndBar:SetGetKeyUp(           {|| ::fastSeek( ::oWndBar:oGet, ::oWndBar:oGet:oGet:buffer() ) } ) 
       ::oWndBar:SetGetKeyDown(         {| nKey, nFlags | ::KeySearch( nKey ) } )

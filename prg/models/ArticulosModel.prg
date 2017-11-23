@@ -3,16 +3,6 @@
 
 //------------------------------------------------------------------//
 
-FUNCTION externalArticulosModel( cMsg, u1, u2, u3, u4, u5, u6, u7, u8, u9, u10 )
-
-   if !empty( cMsg )
-      RETURN ( apoloSender( ArticulosModel(), cMsg, u1, u2, u3, u4, u5, u6, u7, u8, u9, u10 ) )
-   end if
-
-RETURN ( "" )
-
-//---------------------------------------------------------------------------//
-
 CLASS ArticulosModel FROM ADSBaseModel
 
    METHOD getTableName()                     INLINE ::getEmpresaTableName( "Articulo" )
@@ -134,9 +124,9 @@ CLASS ArticulosPrecios FROM ADSBaseModel
 
    METHOD getTableName()                     INLINE ::getEmpresaTableName( "ArtDiv" )
 
-   METHOD getPrimeraPropiedad()
+   METHOD getFirstProperty()
 
-   METHOD getSegundaPropiedad()
+   METHOD getSecondProperty()
 
    METHOD getProperties( cSql )
 
@@ -144,7 +134,7 @@ END CLASS
 
 //---------------------------------------------------------------------------//
 
-METHOD getPrimeraPropiedad( cCodigoArticulo, cCodigoPropiedad )
+METHOD getFirstProperty( cCodigoArticulo, cCodigoPropiedad )
 
    local cSql           := "SELECT "                                                                                                   + ;
                               "line.cCodPr1 AS CodigoPropiedad, "                                                                      + ; 
@@ -171,7 +161,7 @@ RETURN ( ::getProperties( cCodigoArticulo, cCodigoPropiedad, cSql ) )
 
 //---------------------------------------------------------------------------//
 
-METHOD getSegundaPropiedad( cCodigoArticulo, cCodigoPropiedad )
+METHOD getSecondProperty( cCodigoArticulo, cCodigoPropiedad )
 
    local cSql           := "SELECT "                                                                                                   + ;
                               "line.cCodPr2 AS CodigoPropiedad, "                                                                      + ; 
@@ -218,5 +208,22 @@ METHOD getProperties( cCodigoArticulo, cCodigoPropiedad, cSql )
    end if 
 
 RETURN ( aPropiedades )
+
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+
+CLASS ArticulosCodigosBarraModel FROM ADSBaseModel
+
+   METHOD getTableName()                     INLINE ::getEmpresaTableName( "ArtCodeBar" )
+
+   METHOD getCodigo( cId )                   INLINE ( ::getField( 'cCodArt', 'cCodBar', cId ) )
+
+END CLASS
 
 //---------------------------------------------------------------------------//

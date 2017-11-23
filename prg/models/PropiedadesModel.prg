@@ -8,25 +8,11 @@ CLASS PropiedadesModel FROM ADSBaseModel
 
    METHOD getTableName()                     INLINE ::getEmpresaTableName( "Pro" )
 
-   METHOD getNombre( cCodigoPropiedad )
+   MESSAGE getNombre( cCodigoPropiedad )     INLINE ::getField( "cDesPro", "cCodPro", cCodigoPropiedad )
 
 END CLASS
 
 //---------------------------------------------------------------------------//
-
-METHOD getNombre( cCodigoPropiedad ) CLASS PropiedadesModel
-
-   local cStm
-   local cSql  := "SELECT cDesPro "                                     + ;
-                     "FROM " + ::getTableName() + " "                   + ;
-                     "WHERE cCodPro = " + quoted( cCodigoPropiedad ) 
-
-   if ::ExecuteSqlStatement( cSql, @cStm )
-      RETURN ( ( cStm )->cDesPro )
-   end if 
-
-RETURN ( "" )
-
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
@@ -73,7 +59,7 @@ METHOD getNombre( cCodigoPropiedad, cValorPropiedad ) CLASS PropiedadesLineasMod
                      	"AND cCodTbl = " + quoted( cValorPropiedad )
 
    if ::ExecuteSqlStatement( cSql, @cStm )
-      RETURN ( ( cStm )->cDesTbl )
+      RETURN ( alltrim( ( cStm )->cDesTbl ) )
    end if 
 
 RETURN ( "" )

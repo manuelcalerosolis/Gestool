@@ -11,6 +11,8 @@ CLASS SQLNavigatorController FROM SQLBaseController
 
    DATA oDialogView
 
+   DATA oFilterController 
+
    DATA lDocuments                                    INIT .f.
 
    DATA lLabels                                       INIT .f.
@@ -18,6 +20,8 @@ CLASS SQLNavigatorController FROM SQLBaseController
    DATA hDocuments
 
    DATA hFastKey                                      INIT {=>}
+
+   DATA oWindowsBar
  
    METHOD New()
 
@@ -31,8 +35,27 @@ CLASS SQLNavigatorController FROM SQLBaseController
 
    METHOD setFastReport( oFastReport, cTitle, cSentence, cColumns )    
 
-   METHOD addFastKey( uKey )
-   METHOD onKeyChar( nKey )   
+   METHOD addFastKey( uKey, bAction )
+
+   METHOD onKeyChar( nKey )
+
+   METHOD appendFilter()                              INLINE ( iif(  !empty( ::oFilterController ),;
+                                                                     ::oFilterController:Append(), ) )           
+
+   METHOD getFilters()                                INLINE ( iif(  !empty( ::oFilterController ),;
+                                                                     ::oFilterController:getFilters(), ) ) 
+
+   METHOD setFilter()                                                                                                       
+
+   METHOD getModelColumnsForBrowse()                  INLINE ( ::getModel():getColumnsForBrowse() )
+
+   METHOD getModelHeadersForBrowse()                  INLINE ( ::getModel():getHeadersForBrowse() )
+
+   // Aplication windows bar---------------------------------------------------
+
+   METHOD EnableWindowsBar()
+
+   METHOD DisableWindowsBar()
 
 END CLASS
 
@@ -49,6 +72,14 @@ METHOD New( oSenderController )
    ::oNavigatorView                                   := SQLNavigatorView():New( self )
 
    ::oSelectorView                                    := SQLSelectorView():New( self )
+
+   ::oFilterController                                := SQLFiltrosController():New( self ) 
+
+   ::oWindowsBar                                      := oWndBar()
+
+   if !empty( ::oModel )
+      ::oFilterController:setTableName( ::oModel:cTableName )
+   end if 
 
 RETURN ( self )
 
@@ -72,6 +103,8 @@ METHOD ActivateNavigatorView()
    ::oModel:buildRowSet()
 
    ::oNavigatorView:Activate()
+
+   ::EnableWindowsBar()
 
 RETURN ( Self )
 
@@ -152,8 +185,80 @@ METHOD setFastReport( oFastReport, cTitle, cSentence, cColumns )
                                  {|| oRowSet:skip(-1) },;    
                                  {|| oRowSet:eof()    },;
                                  {|nField| msgalert( nField ), oRowSet:fieldGet( nField ) } )
-                                 //  )      
     
 RETURN ( Self )    
     
 //---------------------------------------------------------------------------//
+
+METHOD setFilter()         
+
+   local cFilter
+   local aSentence
+   local cSentence
+
+   cFilter        := ::oWindowsBar:GetComboFilter()
+
+   if empty( cFilter )
+
+      ::getModel():clearFilterWhere()
+
+   else 
+
+      ::getModel():setFilterWhere( ::oFilterController:getFilterSentence( cFilter ) )
+
+   end if  
+
+   msgalert( ::getModel():getGeneralSelect(), "cSentence" )
+
+   ::getModel():buildRowSet()
+
+RETURN ( Self )    
+    
+//---------------------------------------------------------------------------//
+
+METHOD EnableWindowsBar()
+
+   if empty( ::oWindowsBar )
+      RETURN ( Self )
+   end if 
+
+   ::oWindowsBar:enableGet()
+
+   ::oWindowsBar:enableComboBox( ::getModelHeadersForBrowse() )
+
+   ::oWindowsBar:setCombo( ::getModelHeaderFromColumnOrder() )
+
+   ::oWindowsBar:enableComboFilter( ::getFilters() )
+
+   ::oWindowsBar:setComboFilterChange( {|| ::setFilter() } )
+
+   ::oWindowsBar:showAddButtonFilter()
+
+   ::oWindowsBar:setActionAddButtonFilter( {|| ::appendFilter() } )
+
+   ::oNavigatorView:getBrowse():selectColumnOrderByHeader( ::getModelHeaderFromColumnOrder() )
+
+   ::oNavigatorView:Refresh()
+
+RETURN ( Self )
+
+//----------------------------------------------------------------------------//
+
+METHOD DisableWindowsBar()
+
+   if empty( ::oWindowsBar )
+      RETURN ( Self )
+   end if 
+
+   ::oWindowsBar:disableGet()
+
+   ::oWindowsBar:disableComboBox()
+
+   ::oWindowsBar:disableComboFilter()
+
+   ::oWindowsBar:hideAddButtonFilter()
+
+RETURN ( Self )
+
+//----------------------------------------------------------------------------//
+

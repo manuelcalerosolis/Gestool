@@ -170,7 +170,13 @@ SQLBrowseView.prg 												\
 SQLPropertyBrowseView.prg 										\
 SQLSearchView.prg 												\
 MenuTreeView.prg 													\
+OfficeBarView.prg													\
 DivisasView.prg 													\
+PropertyControlView.prg											\
+SQLFiltrosView.prg												\
+SQLFiltrosModel.prg												\
+SQLFiltrosValidator.prg											\
+SQLFiltrosController.prg										\
 Rfile.prg               										\
 TdprnC3.prg             										\
 Animat.prg              										\
@@ -210,6 +216,7 @@ Taccesos.prg            										\
 TItemacceso.prg         										\
 Tdbfserv.prg            										\
 Tpanelex.prg              										\
+TPages.prg 															\
 Pais.prg                										\
 Provincias.prg             									\
 CodigosPostales.prg        									\
@@ -747,7 +754,13 @@ SQLBrowseView.obj 															\
 SQLPropertyBrowseView.obj 													\
 SQLSearchView.obj 															\
 MenuTreeView.obj 																\
+OfficeBarView.obj 															\
 DivisasView.obj 																\
+PropertyControlView.obj														\
+SQLFiltrosView.obj															\
+SQLFiltrosModel.obj															\
+SQLFiltrosValidator.obj 													\
+SQLFiltrosController.obj													\
 RpreviewC3.obj 																\
 ReportC3.obj                                       				\
 RocolumnC3.obj                                     				\
@@ -808,6 +821,7 @@ Taccesos.obj                                       				\
 TItemacceso.obj                                    				\
 Tdbfserv.obj                                       				\
 Tpanelex.obj                                       				\
+TPages.obj 																		\
 Pais.obj                                           				\
 Provincias.obj                                     				\
 CodigosPostales.obj                                				\
@@ -1334,7 +1348,13 @@ $(OBJ)\SQLBrowseView.obj             									+
 $(OBJ)\SQLPropertyBrowseView.obj      									+
 $(OBJ)\SQLSearchView.obj      											+
 $(OBJ)\MenuTreeView.obj 													+
+$(OBJ)\OfficeBarView.obj 													+
 $(OBJ)\DivisasView.obj 														+
+$(OBJ)\PropertyControlView.obj											+
+$(OBJ)\SQLFiltrosView.obj													+
+$(OBJ)\SQLFiltrosModel.obj													+
+$(OBJ)\SQLFiltrosValidator.obj											+
+$(OBJ)\SQLFiltrosController.obj											+
 $(OBJ)\RocolumnC3.obj            										+
 $(OBJ)\Rfile.obj                 										+
 $(OBJ)\Tdprnc3.obj               										+
@@ -1386,6 +1406,7 @@ $(OBJ)\Taccesos.obj             											+
 $(OBJ)\Titemacceso.obj          											+
 $(OBJ)\Tdbfserv.obj             											+
 $(OBJ)\Tpanelex.obj             											+
+$(OBJ)\Tpages.obj             											+
 $(OBJ)\Pais.obj                 											+
 $(OBJ)\Provincias.obj            										+
 $(OBJ)\CodigosPostales.obj       										+

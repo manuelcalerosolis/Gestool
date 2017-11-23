@@ -13,6 +13,8 @@ CLASS SQLBrowseView
 
    DATA oModel
 
+   DATA lFooter                              INIT .f.
+
    METHOD New( oSender )
 
    METHOD Create()
@@ -20,6 +22,8 @@ CLASS SQLBrowseView
    METHOD End()
 
    METHOD Activate()                         VIRTUAL
+
+   METHOD setFooter( lFooter )               INLINE ( ::lFooter := lFooter )
 
    // Facades------------------------------------------------------------------
 
@@ -38,7 +42,7 @@ CLASS SQLBrowseView
 
    METHOD setLDblClick( bLDblClick )         INLINE ( ::oBrowse:bLDblClick := bLDblClick )
 
-   METHOD Refresh()                          INLINE ( ::oBrowse:Refresh() )
+   METHOD Refresh()                          INLINE ( ::oBrowse:MakeTotals(), ::oBrowse:Refresh() )
 
    METHOD setView()                          INLINE ( ::oBrowse:setView() )
    METHOD saveView()                         INLINE ( ::oBrowse:saveView() )
@@ -99,7 +103,9 @@ METHOD Create( oWindow )
 
    ::oBrowse:lRecordSelector  := .f.
    ::oBrowse:lAutoSort        := .t.
-   ::oBrowse:lSortDescend     := .f.   
+   ::oBrowse:lSortDescend     := .f.  
+
+   ::oBrowse:lFooter          := ::lFooter
 
    // Propiedades del control--------------------------------------------------
 
@@ -111,7 +117,7 @@ METHOD Create( oWindow )
 
    ::oBrowse:bRClicked        := {| nRow, nCol, nFlags | ::RButtonDown( nRow, nCol, nFlags ) }
 
-   ::oBrowse:setRowSetModel( ::getModel() )
+   ::oBrowse:setRowSet( ::getModel() )
 
    ::oBrowse:setName( ::getName() )
 
@@ -125,7 +131,7 @@ RETURN ( ::oBrowse )
 
 METHOD GenerateColumns()
 
-   local hColumnstoBrowse  := ::getModelColumnsForBrowse()
+   local hColumnstoBrowse     := ::getModelColumnsForBrowse()
 
    if empty( hColumnstoBrowse )
       RETURN ( self )
@@ -157,10 +163,6 @@ METHOD addColumn( cColumn, hColumn )
          :nDataStrAlign    := hColumn[ "dataAlign" ]
       end if 
 
-      if hhaskey( hColumn, "footAlign" ) 
-         :nFootStrAlign    := hColumn[ "footAlign" ]
-      end if 
-
       if hhaskey( hColumn, "hide" ) 
          :lHide            := hColumn[ "hide" ]
       end if 
@@ -169,9 +171,19 @@ METHOD addColumn( cColumn, hColumn )
          :bEditValue       := ::getModel():getMethod( hColumn[ "method" ] )
       else 
          :bEditValue       := ::getModel():getEditValue( cColumn ) 
+         :bLClickHeader    := {| nMRow, nMCol, nFlags, oColumn | ::onClickHeader( oColumn ) }
       end if 
 
-      :bLClickHeader       := {| nMRow, nMCol, nFlags, oColumn | ::onClickHeader( oColumn ) }
+      if hhaskey( hColumn, "footer" ) 
+         :nFootStyle       := :nDataStrAlign               
+         :nFooterType      := AGGR_SUM
+         :cFooterPicture   := :cEditPicture
+         :cDataType        := "N"
+      end if 
+
+      if hhaskey( hColumn, "footAlign" ) 
+         :nFootStrAlign    := hColumn[ "footAlign" ]
+      end if 
 
    end with
 
@@ -181,7 +193,9 @@ RETURN ( self )
 
 METHOD onClickHeader( oColumn ) 
 
-   local oCombobox      := ::getComboBoxOrder()
+   local oCombobox
+
+   oComboBox      := ::getComboBoxOrder()
 
    if empty( oComboBox )
       RETURN ( Self )
@@ -218,6 +232,8 @@ CLASS SQLBrowseViewDialog FROM SQLBrowseView
 
    METHOD Activate()
 
+   METHOD onClickHeader( oColumn ) 
+
 ENDCLASS
 
 //----------------------------------------------------------------------------//
@@ -230,6 +246,18 @@ METHOD Activate( id, oWindow ) CLASS SQLBrowseViewDialog
 
    ::CreateFromResource( id )
 
+RETURN ( Self )
+
+//----------------------------------------------------------------------------//
+
+METHOD onClickHeader( oColumn ) 
+
+   ::getController():changeModelOrderAndOrientation( oColumn:cSortOrder, oColumn:cOrder )
+
+   ::getBrowse():selectColumnOrder( oColumn )
+
+   ::getBrowse():refreshCurrent()
+   
 RETURN ( Self )
 
 //----------------------------------------------------------------------------//

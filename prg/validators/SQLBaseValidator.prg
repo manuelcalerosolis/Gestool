@@ -147,10 +147,6 @@ METHOD Exist( uValue )
    cSQLSentence      := "SELECT COUNT(*) FROM " + ::oController:getModelTableName()       + space( 1 )
    cSQLSentence      +=    "WHERE " + ::cColumnToProced + " = " + toSQLString( uValue )
 
-   if ::lDebugMode
-      msgInfo( cSQLSentence, "Exist validator" )
-   end if 
-
    nCount            := ::oDatabase:SelectValue( cSQLSentence )
 
 RETURN ( hb_isnumeric( nCount ) .and. nCount != 0 )
@@ -168,10 +164,6 @@ METHOD EmptyOrExist( uValue )
 
    cSQLSentence      := "SELECT COUNT(*) FROM " + ::oController:getModelTableName() + " "
    cSQLSentence      +=    "WHERE " + ::cColumnToProced + " = " + toSQLString( uValue )
-
-   if ::lDebugMode
-      msgInfo( cSQLSentence, "EmptyOrExist validator" )
-   end if 
 
    nCount            := ::oDatabase:SelectValue( cSQLSentence )
 

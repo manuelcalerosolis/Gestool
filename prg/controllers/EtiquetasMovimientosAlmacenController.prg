@@ -126,8 +126,6 @@ METHOD generateLabels()
 
    oMovimientosAlmacenLabelReport:Print()
 
-   msgalert( "generateLabels" )
-
 RETURN ( Self )
 
 //---------------------------------------------------------------------------//

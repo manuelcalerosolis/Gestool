@@ -141,6 +141,7 @@ CLASS GeneraFacturasClientes FROM DialogBuilder
                                                    "lrecargo"     => ( D():AlbaranesClientes( ::nView ) )->lRecargo,;
                                                    "direccion"    => ( D():AlbaranesClientes( ::nView ) )->cCodObr,;
                                                    "fecha"        => ( D():AlbaranesClientes( ::nView ) )->dFecAlb,;
+                                                   "hora"         => ( D():AlbaranesClientes( ::nView ) )->tFecAlb,;
                                                    "total"        => ( D():AlbaranesClientes( ::nView ) )->nTotAlb,;
                                                    "pDto1"        => ( D():AlbaranesClientes( ::nView ) )->nDtoEsp,;
                                                    "pDto2"        => ( D():AlbaranesClientes( ::nView ) )->nDpp,;
@@ -1307,6 +1308,7 @@ METHOD AppendFacturaCabecera( oItem ) CLASS GeneraFacturasClientes
    ( D():FacturasClientes( ::nView ) )->cCodObr       := ::getDireccion( oItem )
    ( D():FacturasClientes( ::nView ) )->cCodPago      := ::getFormaPago( oItem )
    ( D():FacturasClientes( ::nView ) )->dFecFac       := ::getFecha( oItem )
+   ( D():FacturasClientes( ::nView ) )->tFecFac       := GetSysTime()
    ( D():FacturasClientes( ::nView ) )->cDivFac       := cDivEmp()
    ( D():FacturasClientes( ::nView ) )->nVdvFac       := nChgDiv( cDivEmp(), D():Divisas( ::nView ) )
    ( D():FacturasClientes( ::nView ) )->lSndDoc       := .t.

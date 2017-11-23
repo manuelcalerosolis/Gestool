@@ -7,45 +7,71 @@
 //---------------------------------------------------------------------------//
 
 CLASS MovimientosAlmacenLineasView FROM SQLBaseView
+      
+   DATA oOfficeBarView
 
    DATA oBtnSerie
 
-   DATA oGetLote
-   DATA oGetFechaCaducidad
    DATA oGetCodigoArticulo
    DATA oGetNombreArticulo
+
+   DATA oGetLote
+
+   DATA oGetCaducidad
+   
    DATA oGetValorPrimeraPropiedad
    DATA oGetValorSegundaPropiedad
    DATA oGetBultosArticulo
    DATA oGetCajasArticulo
    DATA oGetUnidadesArticulo
    DATA oSayTotalUnidades
+   DATA oSayTextUnidades
    DATA oGetPrecioArticulo
+   DATA oSayTextImporte
    DATA oSayTotalImporte
-
-   DATA oGetAlmacenOrigen
-   DATA oGetStockOrigen
-   DATA nStockOrigen                   INIT 0
-
-   DATA oGetAlmacenDestino
-   DATA oGetStockDestino
-   DATA nStockDestino                  INIT 0
+   DATA oSayBultosArticulo
+   DATA oSayCajasArticulo
+   DATA oSayUnidadesArticulo
+   DATA oSayPrecioArticulo
 
    DATA oBrowsePropertyView
 
    METHOD New()
 
    METHOD Activate()
-   METHOD startActivate()
-   METHOD initActivate()
+      METHOD initActivate()
 
-   METHOD nTotalUnidadesArticulo()     INLINE ( notCaja( ::oController:oModel:hBuffer[ "cajas_articulo" ] ) * ::oController:oModel:hBuffer[ "unidades_articulo" ] )
+   METHOD nTotalUnidadesArticulo()     
+   METHOD nTotalImporteArticulo()         
 
-   METHOD nTotalImporteArticulo()      INLINE ( ::nTotalUnidadesArticulo() * ::oController:oModel:hBuffer[ "precio_articulo" ] )
+   METHOD refreshUnidadesImportes()       
 
-   METHOD refreshUnidadesImportes()    INLINE ( ::oSayTotalUnidades():Refresh(), ::oSayTotalImporte():Refresh() )
+   METHOD hidePropertyBrowseView()                 INLINE ( ::verticalHide( ::oBrowsePropertyView:getBrowse() ) )         
+   METHOD showPropertyBrowseView()                 INLINE ( ::verticalShow( ::oBrowsePropertyView:getBrowse() ) )
+   METHOD buildPropertyBrowseView()                INLINE ( ::oBrowsePropertyView:Build() )
+
+   METHOD setPropertyOneBrowseView( cProperty )    INLINE ( ::oBrowsePropertyView:setPropertyOne( cProperty ) )
+   METHOD setPropertyTwoBrowseView( cProperty )    INLINE ( ::oBrowsePropertyView:setPropertyTwo( cProperty ) )
+
+   METHOD hideLoteCaducidadControls()              INLINE ( ::verticalHide( ::oGetLote ), ::verticalHide( ::oGetCaducidad ) )          
+   METHOD showLoteCaducidadControls()              INLINE ( ::verticalShow( ::oGetLote ), ::verticalShow( ::oGetCaducidad ) )
+
+   METHOD hideUnitsControls()             
+
+   METHOD hidePrimeraPropiedad()                   INLINE ( ::verticalHide( ::oGetValorPrimeraPropiedad ) )
+   METHOD showPrimeraPropiedad()                   INLINE ( ::verticalShow( ::oGetValorPrimeraPropiedad ) )
+
+   METHOD hideSegundaPropiedad()                   INLINE ( ::verticalHide( ::oGetValorSegundaPropiedad ) )
+   METHOD showSegundaPropiedad()                   INLINE ( ::verticalShow( ::oGetValorSegundaPropiedad ) )
+
+   METHOD hideBultos()                             INLINE ( if( !uFieldEmpresa( "lUseBultos" ), ::verticalHide( ::oGetBultosArticulo ), ) )
+   METHOD hideCajas()                              INLINE ( if( !uFieldEmpresa( "lUseCaj" ), ::verticalHide( ::oGetCajasArticulo ), ) )
 
    METHOD searchCodeGS128( nKey, cCodigoArticulo )
+
+   METHOD verticalHide()
+
+   METHOD verticalShow()
 
 END CLASS
 
@@ -53,17 +79,17 @@ END CLASS
 
 METHOD New( oController )
 
-   ::oController     := oController
+   ::oController                    := oController
 
-   ::cImageName      := "gc_bookmarks_16"
-
-Return ( Self )
+RETURN ( Self )
 
 //---------------------------------------------------------------------------//
 
 METHOD Activate()
 
-   DEFINE DIALOG ::oDialog RESOURCE "MOVIMIENTOS_ALMACEN_LINEAS" TITLE ::lblTitle() + ::oController:getTitle()
+   DEFINE DIALOG     ::oDialog ;
+      RESOURCE       "MOVIMIENTOS_ALMACEN_LINEAS";
+      TITLE          ::lblTitle() + ::oController:getTitle()
 
       REDEFINE GET   ::oGetCodigoArticulo ;
          VAR         ::oController:oModel:hBuffer[ "codigo_articulo" ] ;
@@ -79,113 +105,116 @@ METHOD Activate()
 
       REDEFINE GET   ::oGetNombreArticulo ;
          VAR         ::oController:oModel:hBuffer[ "nombre_articulo" ] ;
-         ID          110 ;
+         ID          101 ;
          WHEN        ( .f. ) ;
          OF          ::oDialog
 
       REDEFINE GET   ::oGetLote ;
          VAR         ::oController:oModel:hBuffer[ "lote" ] ;
-         ID          155 ;
+         ID          110 ;
+         IDSAY       111 ;
          WHEN        ( ::oController:isNotZoomMode() ) ;
          OF          ::oDialog
 
       ::oGetLote:bValid   := {|| ::oController:validateLote() }
 
-      // Fecha de caducidad----------------------------------------------------
-
-      REDEFINE GET   ::oGetFechaCaducidad ;
+      REDEFINE GET   ::oGetCaducidad ;
          VAR         ::oController:oModel:hBuffer[ "fecha_caducidad" ] ;
-         ID          340 ;
-         WHEN        ( ::oController:isNotZoomMode() ) ;
-         OF          ::oDialog
-
-      // Valor de primera propiedad--------------------------------------------
-
-      REDEFINE GET   ::oGetValorPrimeraPropiedad ; 
-         VAR         ::oController:oModel:hBuffer[ "valor_primera_propiedad" ] ;
          ID          120 ;
-         IDTEXT      121 ;
-         IDSAY       122 ;
-         PICTURE     "@!" ;
-         BITMAP      "LUPA" ;
+         IDSAY       121 ;
          WHEN        ( ::oController:isNotZoomMode() ) ;
          OF          ::oDialog
 
-      ::oGetValorPrimeraPropiedad:bValid  := {|| ::oController:validatePrimeraPropiedad() }
-      ::oGetValorPrimeraPropiedad:bHelp   := {|| brwPropiedadActual( ::oGetValorPrimeraPropiedad, ::oGetValorPrimeraPropiedad:oHelpText, ::oController:oModel:hBuffer[ "codigo_primera_propiedad" ] ) }
-
-      // Valor de segunda propiedad--------------------------------------------
+      // Valor de primera propiedad--------------------------------------------      
+    
+      REDEFINE GET   ::oGetValorPrimeraPropiedad ;     
+         VAR         ::oController:oModel:hBuffer[ "valor_primera_propiedad" ] ;     
+         ID          130 ;     
+         IDTEXT      131 ;     
+         IDSAY       132 ;     
+         PICTURE     "@!" ;    
+         BITMAP      "LUPA" ;     
+         WHEN        ( ::oController:isNotZoomMode() ) ;     
+         OF          ::oDialog    
+     
+      ::oGetValorPrimeraPropiedad:bValid  := {|| ::oController:validatePrimeraPropiedad() }      
+      ::oGetValorPrimeraPropiedad:bHelp   := {|| brwPropiedadActual( ::oGetValorPrimeraPropiedad, ::oGetValorPrimeraPropiedad:oHelpText, ::oController:oModel:hBuffer[ "codigo_primera_propiedad" ] ) }      
 
       REDEFINE GET   ::oGetValorSegundaPropiedad ; 
-         VAR         ::oController:oModel:hBuffer[ "valor_segunda_propiedad" ] ;
-         ID          130 ;
-         IDTEXT      131 ;
-         IDSAY       132 ;
-         PICTURE     "@!" ;
-         BITMAP      "LUPA" ;
-         WHEN        ( ::oController:isNotZoomMode() ) ;
-         OF          ::oDialog
-
-      ::oGetValorSegundaPropiedad:bValid  := {|| ::oController:validateSegundaPropiedad() }
+         VAR         ::oController:oModel:hBuffer[ "valor_segunda_propiedad" ] ;     
+         ID          140 ;     
+         IDTEXT      141 ;     
+         IDSAY       142 ;     
+         PICTURE     "@!" ;    
+         BITMAP      "LUPA" ;     
+         WHEN        ( ::oController:isNotZoomMode() ) ;     
+         OF          ::oDialog    
+    
+      ::oGetValorSegundaPropiedad:bValid  := {|| ::oController:validateSegundaPropiedad() }      
       ::oGetValorSegundaPropiedad:bHelp   := {|| brwPropiedadActual( ::oGetValorSegundaPropiedad, ::oGetValorSegundaPropiedad:oHelpText, ::oController:oModel:hBuffer[ "codigo_segunda_propiedad" ] ) }
 
       // Property browse-------------------------------------------------------
 
-      ::oBrowsePropertyView               := SQLPropertyBrowseView():New( 600, ::oDialog )
+      ::oBrowsePropertyView               := SQLPropertyBrowseView():CreateControl( 150, ::oDialog )
+      ::oBrowsePropertyView:setOnPostEdit( {|| ::refreshUnidadesImportes() } )
 
       // Bultos----------------------------------------------------------------
 
-      REDEFINE GET   ::oGetBultosArticulo ;
-         VAR         ::oController:oModel:hBuffer[ "bultos_articulo" ] ;
-         ID          430 ;
-         IDSAY       431 ;
-         SPINNER ;
-         WHEN        ( uFieldEmpresa( "lUseBultos" ) .and. ::oController:isNotZoomMode() ) ;
-         PICTURE     MasUnd() ;
-         OF          ::oDialog
-
-      ::oGetBultosArticulo:bChange        := {|| ::refreshUnidadesImportes() }
-
-      // Cajas-----------------------------------------------------------------
-
-      REDEFINE GET   ::oGetCajasArticulo ;
-         VAR         ::oController:oModel:hBuffer[ "cajas_articulo" ] ;
-         ID          140 ;
-         IDSAY       142 ;
-         SPINNER ;
-         WHEN        ( uFieldEmpresa( "lUseCaj" ) .and. ::oController:isNotZoomMode() ) ;
-         PICTURE     MasUnd() ;
-         OF          ::oDialog
-
-      ::oGetCajasArticulo:bChange      := {|| ::refreshUnidadesImportes() }
-
-      // Unidades--------------------------------------------------------------
-
-      REDEFINE GET   ::oGetUnidadesArticulo ;
-         VAR         ::oController:oModel:hBuffer[ "unidades_articulo" ] ;
-         ID          150 ;
-         IDSAY       152 ;
-         SPINNER ;
-         WHEN        ( ::oController:isNotZoomMode() ) ;
-         PICTURE     MasUnd() ;
-         OF          ::oDialog
-
+      REDEFINE GET   ::oGetBultosArticulo ;      
+         VAR         ::oController:oModel:hBuffer[ "bultos_articulo" ] ;    
+         ID          160 ;     
+         IDSAY       161 ;     
+         SPINNER ;    
+         WHEN        ( uFieldEmpresa( "lUseBultos" ) .and. ::oController:isNotZoomMode() ) ;     
+         PICTURE     MasUnd() ;      
+         OF          ::oDialog    
+    
+      ::oGetBultosArticulo:bChange        := {|| ::refreshUnidadesImportes() }    
+    
+      // Cajas-----------------------------------------------------------------      
+    
+      REDEFINE GET   ::oGetCajasArticulo ;    
+         VAR         ::oController:oModel:hBuffer[ "cajas_articulo" ] ;     
+         ID          170 ;     
+         IDSAY       171 ;     
+         SPINNER ;    
+         WHEN        ( uFieldEmpresa( "lUseCaj" ) .and. ::oController:isNotZoomMode() ) ;     
+         PICTURE     MasUnd() ;      
+         OF          ::oDialog    
+    
+      ::oGetCajasArticulo:bChange      := {|| ::refreshUnidadesImportes() }    
+    
+      // Unidades--------------------------------------------------------------      
+    
+      REDEFINE GET   ::oGetUnidadesArticulo ;    
+         VAR         ::oController:oModel:hBuffer[ "unidades_articulo" ] ;     
+         ID          180 ;     
+         IDSAY       181 ;     
+         SPINNER ;    
+         WHEN        ( ::oController:isNotZoomMode() ) ;     
+         PICTURE     MasUnd() ;      
+         OF          ::oDialog    
+    
       ::oGetUnidadesArticulo:bChange   := {|| ::refreshUnidadesImportes() }
 
       // Total Unidades--------------------------------------------------------
 
       REDEFINE SAY   ::oSayTotalUnidades ;
          PROMPT      ::nTotalUnidadesArticulo() ;
-         ID          160;
+         ID          190 ;
          PICTURE     MasUnd() ;
+         OF          ::oDialog
+
+      REDEFINE SAY   ::oSayTextUnidades ;
+         ID          191 ;
          OF          ::oDialog
 
       // Importe---------------------------------------------------------------
 
       REDEFINE GET   ::oGetPrecioArticulo ;
          VAR         ::oController:oModel:hBuffer[ "precio_articulo" ] ;
-         ID          180 ;
-         IDSAY       181 ;
+         ID          200 ;
+         IDSAY       201 ;
          SPINNER ;
          WHEN        ( ::oController:isNotZoomMode() ) ;
          PICTURE     cPinDiv() ;
@@ -197,75 +226,23 @@ METHOD Activate()
 
       REDEFINE SAY   ::oSayTotalImporte ;
          PROMPT      ::nTotalImporteArticulo() ;
-         ID          190;
+         ID          210 ;
+         FONT        getBoldFont() ;
          PICTURE     cPirDiv() ;
          OF          ::oDialog
 
-      // Almacen origen--------------------------------------------------------
-
-      REDEFINE GET   ::oGetAlmacenOrigen ;
-         VAR         ::oController:oSenderController:oModel:hBuffer[ "almacen_origen" ] ;
-         ID          400 ;
-         IDHELP      401 ;
-         IDSAY       403 ;
-         WHEN        ( .f. ) ;
+      REDEFINE SAY   ::oSayTextImporte ;
+         ID          211 ;
+         FONT        getBoldFont() ;
          OF          ::oDialog
 
-      REDEFINE GET   ::oGetStockOrigen ;
-         VAR         ::nStockOrigen ;
-         WHEN        ( .f. ) ;
-         PICTURE     MasUnd() ;
-         ID          402 ;
-         OF          ::oDialog
-
-      // Almacen destino-------------------------------------------------------
-
-      REDEFINE GET   ::oGetAlmacenDestino ;
-         VAR         ::oController:oSenderController:oModel:hBuffer[ "almacen_destino" ] ;
-         ID          410 ;
-         IDHELP      411 ;
-         IDSAY       413 ;
-         WHEN        ( .f. ) ;
-         OF          ::oDialog
-
-      REDEFINE GET   ::oGetStockDestino ;
-         VAR         ::nStockDestino ;
-         WHEN        ( .f. ) ;
-         PICTURE     MasUnd() ;
-         ID          412 ;
-         OF          ::oDialog
-
-      // FastKeys---------------------------------------------------------------
-
-      if ::oController:isNotZoomMode()
-         ::oDialog:AddFastKey( VK_F5, {|| ::oBtnOk:Action() } )
-         ::oDialog:AddFastKey( VK_F6, {|| ::oBtnOkAndNew:Action() } )
-      end if
-
-      ::oDialog:AddFastKey( VK_F7, {|| ::oBtnSerie:Action() } )
-
-      ::oDialog:bStart    := {|| ::startActivate() }
+   ::oDialog:bStart  := {|| ::oController:onActivateDialog() }
 
    ::oDialog:Activate( , , , .t., , , {|| ::initActivate() } ) 
 
+   ::oOfficeBar:End()
+
 RETURN ( ::oDialog:nResult )
-
-//---------------------------------------------------------------------------//
-
-METHOD startActivate()
-
-   if ::oController:isAppendMode()
-      ::oController:setModelBuffer( "codigo_articulo", space( 200 ) )
-      ::oGetCodigoArticulo:Refresh()
-   end if 
-
-   if ::oController:isNotAppendMode()
-      ::oController:validateCodigoArticulo()
-      ::oController:validatePrimeraPropiedad()
-      ::oController:validateSegundaPropiedad()      
-   end if 
-
-RETURN ( .t. )
 
 //---------------------------------------------------------------------------//
 
@@ -273,12 +250,50 @@ METHOD initActivate()
 
    local oGrupo
    
-   ::createOfficeBar()
+   ::oOfficeBar      := OfficeBarView():New( Self )
 
-   oGrupo                     := TDotNetGroup():New( ::oOfficeBarFolder, 66, "Series", .f. )
-      ::oBtnSerie             := TDotNetButton():New( 60, oGrupo, "gc_floppy_disk_32", "Series [F7]", 1, {|| ::oController:runDialogSeries() }, , , .f., .f., .f. )
+   ::oOfficeBar:createButtonsDialog()
+
+   oGrupo            := TDotNetGroup():New( ::oOfficeBar:oOfficeBarFolder, 66, "Series", .f. )
+      ::oBtnSerie    := TDotNetButton():New( 60, oGrupo, "gc_barcode_scanner_32", "Series [F7]", 1, {|| ::oController:runDialogSeries() }, , , .f., .f., .f. )
+
+   ::oDialog:AddFastKey( VK_F7, {|| ::oBtnSerie:Action() } )
 
 RETURN ( Self )
+
+//---------------------------------------------------------------------------//
+
+METHOD nTotalUnidadesArticulo()
+
+   if hb_isobject( ::oBrowsePropertyView ) .and. ::oBrowsePropertyView:lVisible()
+      RETURN ( ::oBrowsePropertyView:nTotalUnits() )
+   end if
+
+RETURN ( notCaja( ::oController:oModel:hBuffer[ "cajas_articulo" ] ) * ::oController:oModel:hBuffer[ "unidades_articulo" ] )
+
+//---------------------------------------------------------------------------//
+
+METHOD nTotalImporteArticulo()         
+
+RETURN ( ::nTotalUnidadesArticulo() * ::oController:oModel:hBuffer[ "precio_articulo" ] )
+
+//---------------------------------------------------------------------------//
+
+METHOD hideUnitsControls()
+
+   ::verticalHide( ::oGetBultosArticulo )   
+   
+   ::verticalHide( ::oGetCajasArticulo )   
+
+   ::verticalHide( ::oGetUnidadesArticulo )   
+
+RETURN ( Self )
+
+//---------------------------------------------------------------------------//
+
+METHOD refreshUnidadesImportes()       
+
+RETURN ( ::oSayTotalUnidades():Refresh(), ::oSayTotalImporte():Refresh() )
 
 //---------------------------------------------------------------------------//
 
@@ -288,11 +303,61 @@ METHOD searchCodeGS128( nKey )
 
    cChar          += chr( nKey )
 
-   logwrite( cChar )
-
    if nKey == 16 
       ::oGetCodigoArticulo:oGet:Insert( '@' )
    end if 
+
+RETURN ( .t. )
+
+//---------------------------------------------------------------------------//
+
+METHOD verticalHide( oControl )
+
+   local nId     
+   local oRect    
+   local nHeight  
+
+   if !( oControl:lVisible )
+      RETURN ( .f. )
+   end if  
+
+   oRect          := ::oDialog:getRect()
+   nId            := oControl:nId
+   nHeight        := oControl:nHeight + 1
+
+   oControl:Hide()
+
+   aeval( ::oDialog:aControls,;
+      {|oControl| if( oControl:nId > nId,;
+         oControl:move( oControl:nTop - nHeight, oControl:nLeft, oControl:nWidth, oControl:nHeight ), ) } )
+
+   ::oDialog:move( oRect:nTop, oRect:nLeft, ::oDialog:nWidth, ::oDialog:nHeight - nHeight )
+
+RETURN ( .t. )
+
+//---------------------------------------------------------------------------//
+
+METHOD verticalShow( oControl )
+
+   local nId     
+   local oRect    
+   local nHeight 
+
+   if oControl:lVisible
+      RETURN ( .f. )
+   end if  
+
+   oRect          := ::oDialog:getRect()
+   nId            := oControl:nId
+   nHeight        := oControl:nHeight + 1
+
+   oControl:Show()
+
+   aeval( ::oDialog:aControls,;
+      {|oControl| if( oControl:nId > nId,;
+         oControl:move( oControl:nTop + nHeight, oControl:nLeft, oControl:nWidth, oControl:nHeight ), ) } )
+
+   ::oDialog:move( oRect:nTop, oRect:nLeft, ::oDialog:nWidth, ::oDialog:nHeight + nHeight )
 
 RETURN ( .t. )
 

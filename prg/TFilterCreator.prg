@@ -96,7 +96,7 @@ CLASS TFilterCreator
    METHOD GetField( cDescription )           INLINE ( ::ScanStructure( cDescription, posField ) )
    METHOD GetFieldAllTrim( cDescription )    INLINE ( "Trim( Field->" + ::GetField( cDescription ) + " ) " )
    METHOD GetType( cDescription )            INLINE ( ::ScanStructure( cDescription, posType ) )
-   METHOD GetCondition( cCondition )         INLINE ( HGet( ::hConditions, cCondition ) )
+   METHOD GetCondition( cCondition )         INLINE ( HGet( ::DescriptionsOnPostEdit, cCondition ) )
    METHOD GetNexo( cNexo )                   INLINE ( HGet( ::hNexo, cNexo ) )
 
    METHOD SetFilterType( cType )             INLINE ( ::cType := cType, if( !Empty( ::oFilterDatabase ) .and. !Empty( cType ), ::oFilterDatabase:SetScope( cType ), ) )
@@ -849,6 +849,7 @@ END CLASS
 METHOD New( oFilterDialog ) CLASS TBrowseFilter
 
    ::oFilterDialog   := oFilterDialog
+   
    ::oEditMemo       := EditMemo()
 
 	::SetDialog( ::oFilterDialog:oFld:aDialogs[ 1 ] )

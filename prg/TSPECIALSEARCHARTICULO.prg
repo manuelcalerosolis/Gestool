@@ -484,7 +484,7 @@ METHOD Resource() CLASS TSPECIALSEARCHARTICULO
       ::oDlg:AddFastKey( VK_F2, {|| AppArticulo(), ::ReiniciaValores(), ::SelectDefault(), ::oBrwArticulo:Refresh() } )   
       ::oDlg:AddFastKey( VK_F3, {|| EdtArticulo( SelectArticulo->Codigo ), ::ReiniciaValores(), ::SelectDefault(), ::oBrwArticulo:Refresh() } )   
       ::oDlg:AddFastKey( VK_F4, {|| ::ReiniciaValores(), ::SelectDefault(), ::oBrwArticulo:Refresh() } )   
-      ::oDlg:AddFastKey( VK_F5, {|| ::SelectArticulo() } )   
+      ::oDlg:AddFastKey( VK_F5, {|| ::SelectArticulo() } )
 
       ::oDlg:bStart  := {|| ::lRecargaFecha() }
 
@@ -671,6 +671,7 @@ METHOD SelectArticulo( lDefault ) CLASS TSPECIALSEARCHARTICULO
    cSentencia        +=        "lineasSat.dFecSat, "
    cSentencia        +=        "lineasSat.nCntAct, "
    cSentencia        +=        "lineasSat.cCodTip, "
+   cSentencia        +=        "lineasSat.ROWID, "
    cSentencia        +=        "cabeceraSat.cNomCli,"
    cSentencia        +=        "cabeceraSat.cCodOpe, "
    cSentencia        +=        "cabeceraSat.cCodRut, "
@@ -687,6 +688,8 @@ METHOD SelectArticulo( lDefault ) CLASS TSPECIALSEARCHARTICULO
    cSentencia        += "LEFT JOIN " + cPatEmp() + "Articulo articulos on lineasSat.cRef = articulos.Codigo "
    cSentencia        += ::cGetWhereSentencia( lDefault )
    cSentencia        += ::cGetOrderBy()
+
+   LogWrite( cSentencia )
 
    if TDataCenter():ExecuteSqlStatement( cSentencia, "SelectArticulo" )
       SelectArticulo->( dbGoTop() )
@@ -724,7 +727,8 @@ METHOD cGetWhereSentencia( lDefault ) CLASS TSPECIALSEARCHARTICULO
    DEFAULT lDefault  := .f.
 
    if lDefault
-      cSentencia     := "WHERE lineasSat.cRef IS NOT NULL AND lineasSat.lControl=false AND lineasSat.lTotLin=false AND EstadoSat.nDisp = 9 "
+      //cSentencia     := "WHERE lineasSat.cRef IS NOT NULL AND lineasSat.lControl=false AND lineasSat.lTotLin=false AND EstadoSat.nDisp = 9 "
+      cSentencia     := "WHERE lineasSat.ROWID = '0' "
       RETURN ( cSentencia )
    END IF
 
@@ -819,7 +823,6 @@ METHOD ReiniciaValores() CLASS TSPECIALSEARCHARTICULO
 
    ::lExcObsoletos   := .t.
    ::oExcObsoletos:Refresh()
-
 
    ::lRecargaFecha()
 

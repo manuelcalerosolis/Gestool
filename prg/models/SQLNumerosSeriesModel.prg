@@ -8,6 +8,8 @@ CLASS SQLNumerosSeriesModel FROM SQLBaseModel
 
    DATA cTableName                  INIT "numeros_series"
 
+   DATA cConstraints                INIT "PRIMARY KEY (uuid), KEY (id)"
+
    DATA aBuffer
 
    METHOD getColumns()
@@ -33,7 +35,7 @@ END CLASS
 
 METHOD getColumns()
 
-   hset( ::hColumns, "id",                {  "create"    => "INTEGER PRIMARY KEY AUTO_INCREMENT"      ,;
+   hset( ::hColumns, "id",                {  "create"    => "INTEGER AUTO_INCREMENT"                  ,;
                                              "text"      => "Identificador"                           ,;
                                              "header"    => "Id"                                      ,;
                                              "visible"   => .t.                                       ,;

@@ -289,8 +289,6 @@ FUNCTION CntFacCli( lSimula, lPago, lExcCnt, lMessage, oTree, nAsiento, aSimula,
    --------------------------------------------------------------------------
    */
 
-   msgalert( hb_valtoexp( aVentas ), "aVentas" )
-
    for n := 1 to Len( aVentas )
       nRestaDescuentoVenta( @aVentas[ n, 3 ], nDtoEsp )
       nRestaDescuentoVenta( @aVentas[ n, 3 ], nDpp )

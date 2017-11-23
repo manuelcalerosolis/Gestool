@@ -11,18 +11,18 @@ CLASS NumerosSeriesController FROM SQLBaseController
 
    METHOD Edit()
 
-   METHOD Dialog()                              INLINE ( ::oDialogView:Dialog() )
+   METHOD Dialog()                                    INLINE ( ::oDialogView:Dialog() )
 
    METHOD GenerarSeries()
 
-   METHOD SetTotalUnidades( nUnidades )         INLINE ( if( !Empty( nUnidades ), ::oDialogView:nTotalUnidades := Abs( nUnidades ), ::oDialogView:nTotalUnidades := 0 ) )
+   METHOD SetTotalUnidades( nUnidades )               INLINE ( if( !Empty( nUnidades ), ::oDialogView:nTotalUnidades := Abs( nUnidades ), ::oDialogView:nTotalUnidades := 0 ) )
 
-   METHOD SetParentUUID( uUid )                 INLINE ( if( !Empty( uUid ), ::cParentUUID := uUid, ::cParentUUID := "" ) )
+   METHOD SetParentUUID( uUid )                       INLINE ( if( !Empty( uUid ), ::cParentUUID := uUid, ::cParentUUID := "" ) )
 
-   METHOD getaBuffer()                          INLINE ( ::oModel:aBuffer )
+   METHOD getaBuffer()                                INLINE ( ::oModel:aBuffer )
 
-   METHOD getValueBuffer( nArrayAt, key )            INLINE ( hGet( ::oModel:aBuffer[ nArrayAt ], key ) )
-   METHOD setValueBuffer( nArrayAt, key, value )     INLINE ( hSet( ::oModel:aBuffer[ nArrayAt ], key, value ) )
+   METHOD getValueBuffer( nArrayAt, key )             INLINE ( hGet( ::oModel:aBuffer[ nArrayAt ], key ) )
+   METHOD setValueBuffer( nArrayAt, key, value )      INLINE ( hSet( ::oModel:aBuffer[ nArrayAt ], key, value ) )
 
    METHOD endResource( oDlg )
 
@@ -59,11 +59,13 @@ METHOD GenerarSeries()
       aEval( ::getaBuffer(), {| a, n | ::setValueBuffer( n, "numero_serie", Padr( Rtrim( ::oDialogView:cPreFix ) + Ltrim( Str( ::oDialogView:nSerIni + n - 1 ) ), 30 ) ) } )
    else
       for n := 1 to len( ::getaBuffer() )
-            ::setValueBuffer( n, "numero_serie", Padr( Rtrim( ::oDialogView:cPreFix ) + Ltrim( Str( ::oDialogView:nSerIni + nChg - 1 ) ), 30 ) )
-            nChg++
-         if nChg == ::oDialogView:nNumGen
+
+         ::setValueBuffer( n, "numero_serie", Padr( Rtrim( ::oDialogView:cPreFix ) + Ltrim( Str( ::oDialogView:nSerIni + nChg - 1 ) ), 30 ) )
+
+         if ++nChg == ::oDialogView:nNumGen
             exit
          end if
+
       next
    end if
 
@@ -114,7 +116,7 @@ METHOD Edit()
 
    ::fireEvent( 'openingDialog' )
 
-   if ::oDialogView:Dialog()
+   if ::oDialogView:Activate()
       
       ::fireEvent( 'closedDialog' )    
 

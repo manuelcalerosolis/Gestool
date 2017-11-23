@@ -28,6 +28,8 @@ CLASS SQLBaseModel
    DATA cGeneralSelect                                 
 
    DATA cGeneralWhere
+
+   DATA cFilterWhere
    
    DATA cColumnOrder                  
    DATA cColumnKey                    
@@ -63,9 +65,9 @@ CLASS SQLBaseModel
    METHOD TimeStampColumns()
 
    METHOD getValueFromColumn( cColumn, cKey )
-   METHOD getHeaderFromColumn( cColumn )           INLINE ( ::getValueFromColumn( cColumn, "header" ) )
-   METHOD getHeaderFromColumnOrder()               INLINE ( ::getValueFromColumn( ::cColumnOrder, "header" ) )
-   METHOD getLenFromColumn( cColumn )              INLINE ( ::getValueFromColumn( cColumn, "len" ) )
+   METHOD getHeaderFromColumn( cColumn )              INLINE ( ::getValueFromColumn( cColumn, "header" ) )
+   METHOD getHeaderFromColumnOrder()                  INLINE ( ::getValueFromColumn( ::cColumnOrder, "header" ) )
+   METHOD getLenFromColumn( cColumn )                 INLINE ( ::getValueFromColumn( cColumn, "len" ) )
 
    // Sentences----------------------------------------------------------------
 
@@ -83,9 +85,13 @@ CLASS SQLBaseModel
 
    METHOD setGeneralSelect( cSelect )                 INLINE ( ::cGeneralSelect  := cSelect )
    METHOD setGeneralWhere( cWhere )                   INLINE ( ::cGeneralWhere   := cWhere )
-   METHOD getGeneralWhere( cSQLSelect )
+   METHOD aadGeneralWhere( cSQLSelect )
    
-   METHOD getEmpresaWhere()                           
+   METHOD addEmpresaWhere()                           
+
+   METHOD setFilterWhere( cWhere )                    INLINE ( ::cFilterWhere   := cWhere )
+   METHOD clearFilterWhere()                          INLINE ( ::cFilterWhere   := nil )
+   METHOD addFilterWhere( cSQLSelect )
 
    METHOD getWhereOrAnd( cSQLSelect )                 INLINE ( if( hb_at( "WHERE", cSQLSelect ) != 0, " AND ", " WHERE " ) )
 
@@ -112,8 +118,8 @@ CLASS SQLBaseModel
 
    // Rowset-------------------------------------------------------------------
 
-   METHOD buildRowSet( cSentence )                    
    METHOD newRowSet( cSentence )                      
+   METHOD buildRowSet( cSentence )                    
    METHOD buildRowSetAndFind( idToFind )              INLINE ( ::buildRowSet(), ::findInRowSet( idToFind ) )
 
    METHOD findInRowSet()          
@@ -140,8 +146,8 @@ CLASS SQLBaseModel
    METHOD setBuffer( cColumn, uValue )
    METHOD setBufferPadr( cColumn, uValue )
    
-   METHOD insertBuffer( hBuffer )                     INLINE ( ::getDatabase():Execs( ::getInsertSentence( hBuffer ) ), ::buildRowSetAndFind( ::getDatabase():LastInsertId() ) )
-   METHOD updateBuffer( hBuffer )                     INLINE ( ::getDatabase():Execs( ::getUpdateSentence( hBuffer ) ), ::buildRowSetAndFind() )
+   METHOD insertBuffer( hBuffer )                     
+   METHOD updateBuffer( hBuffer )
    METHOD deleteSelection( aRecno )
 
    METHOD loadBlankBuffer()
@@ -185,8 +191,6 @@ METHOD New( oController )
 
    ::cColumnOrientation          := "A"
 
-   ::cConstraints                := "" 
-
 RETURN ( Self )
 
 //---------------------------------------------------------------------------//
@@ -228,9 +232,11 @@ METHOD getGeneralSelect()
 
    local cSQLSelect        := ::cGeneralSelect
 
-   cSQLSelect              := ::getGeneralWhere( cSQLSelect )
+   cSQLSelect              := ::aadGeneralWhere( cSQLSelect )
 
-   cSQLSelect              := ::getEmpresaWhere( cSQLSelect )
+   cSQLSelect              := ::addEmpresaWhere( cSQLSelect )
+
+   cSQLSelect              := ::addFilterWhere( cSQLSelect )
 
 RETURN ( cSQLSelect )
 
@@ -248,7 +254,19 @@ RETURN ( cSQLSelect )
 
 //---------------------------------------------------------------------------//
 
-METHOD getEmpresaWhere( cSQLSelect )
+METHOD aadGeneralWhere( cSQLSelect )
+
+   if empty( ::cGeneralWhere )
+      RETURN ( cSQLSelect )
+   end if 
+
+   cSQLSelect     += ::getWhereOrAnd( cSQLSelect ) + ::cGeneralWhere 
+
+RETURN ( cSQLSelect )
+
+//---------------------------------------------------------------------------//
+
+METHOD addEmpresaWhere( cSQLSelect )
 
    if !::isEmpresaColumn()
       RETURN ( cSQLSelect )
@@ -260,13 +278,13 @@ RETURN ( cSQLSelect )
 
 //---------------------------------------------------------------------------//
 
-METHOD getGeneralWhere( cSQLSelect )
+METHOD addFilterWhere( cSQLSelect )
 
-   if empty( ::cGeneralWhere )
+   if empty( ::cFilterWhere )
       RETURN ( cSQLSelect )
    end if 
 
-   cSQLSelect     += ::getWhereOrAnd( cSQLSelect ) + ::cGeneralWhere 
+   cSQLSelect     += ::getWhereOrAnd( cSQLSelect ) + ::cFilterWhere
 
 RETURN ( cSQLSelect )
 
@@ -366,8 +384,8 @@ METHOD buildRowSet( cSentence )
    DEFAULT cSentence    := ::getSelectSentence()
 
    ::fireEvent( 'buildingRowSet')
-
-   ::newRowSet()
+   
+   ::newRowSet( cSentence )
 
    ::fireEvent( 'builtRowSet')
 
@@ -703,6 +721,34 @@ RETURN ( uValue )
 
 //---------------------------------------------------------------------------//
 
+METHOD insertBuffer( hBuffer )
+
+   ::fireEvent( 'insertingBuffer' )
+
+   ::getDatabase():Execs( ::getInsertSentence( hBuffer ) )
+
+   ::fireEvent( 'insertedBuffer' )
+
+   ::buildRowSetAndFind( ::getDatabase():LastInsertId() )
+
+RETURN ( Self )
+
+//---------------------------------------------------------------------------//
+
+METHOD updateBuffer( hBuffer )
+
+   ::fireEvent( 'updatingBuffer' )
+
+   ::getDatabase():Execs( ::getUpdateSentence( hBuffer ) )
+
+   ::fireEvent( 'updatedBuffer' )
+
+   ::buildRowSetAndFind() 
+
+RETURN ( Self )
+
+//---------------------------------------------------------------------------//
+
 METHOD deleteSelection( aRecno ) 
 
    ::aRecordsToDelete   := aRecno
@@ -711,9 +757,9 @@ METHOD deleteSelection( aRecno )
 
    ::getDatabase():Query( ::getdeleteSentence( aRecno ) )
 
-   ::buildRowSet()
-
    ::fireEvent( 'deletedSelection' )
+   
+   ::buildRowSet()
 
 RETURN ( Self )
 
@@ -772,23 +818,26 @@ RETURN ( hset( ::hBuffer, cColumn, uValue ) )
 
 METHOD getEmpresaColumns()
 
-   hset( ::hColumns, "id",          {  "create"    => "INTEGER PRIMARY KEY AUTO_INCREMENT"      ,;
+   hset( ::hColumns, "id",          {  "create"    => "INTEGER AUTO_INCREMENT"                  ,;
                                        "text"      => "Identificador"                           ,;
                                        "header"    => "Id"                                      ,;
                                        "visible"   => .t.                                       ,;
+                                       "type"      => "N"                                       ,;
                                        "width"     => 40 }                                      )   
 
    hset( ::hColumns, "uuid",        {  "create"    => "VARCHAR(40) NOT NULL"                    ,;
-                                       "text"      => "uuid"                                    ,;
+                                       "text"      => "Uuid"                                    ,;
                                        "header"    => "Uuid"                                    ,;
                                        "visible"   => .t.                                       ,;
                                        "hide"      => .t.                                       ,;
+                                       "type"      => "C"                                       ,;
                                        "width"     => 240                                       ,;
                                        "default"   => {|| win_uuidcreatestring() } }            )
 
    hset( ::hColumns, "empresa",     {  "create"    => "CHAR ( 4 ) NOT NULL"                     ,;
                                        "text"      => "Empresa"                                 ,;
                                        "visible"   => .f.                                       ,;
+                                       "type"      => "C"                                       ,;
                                        "default"   => {|| cCodEmp() } }                         )
 
    hset( ::hColumns, "delegacion",  {  "create"    => "VARCHAR(2) NOT NULL"                     ,;
@@ -803,7 +852,7 @@ METHOD getEmpresaColumns()
                                        "default"   => {|| retSufEmp() } }                       )
 
    hset( ::hColumns, "usuario",     {  "create"    => "VARCHAR(3) NOT NULL"                     ,;
-                                       "text"      => "usuario"                                 ,;
+                                       "text"      => "Usuario"                                 ,;
                                        "header"    => "Usuario"                                 ,;
                                        "visible"   => .t.                                       ,;
                                        "hide"      => .t.                                       ,;

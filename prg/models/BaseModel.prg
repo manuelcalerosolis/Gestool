@@ -8,11 +8,15 @@ CLASS ADSBaseModel
 
    DATA cTableName
 
+   METHOD getTableName()                        VIRTUAL
+
    METHOD getEmpresaTableName( cTableName )     INLINE ( cPatEmp() + if( empty(cTableName), ::cTableName, cTableName ) )
 
    METHOD getDatosTableName( cTableName )       INLINE ( cPatDat() + if( empty(cTableName), ::cTableName, cTableName ) )
 
    METHOD getFileName( cPath, cTableName )      INLINE ( cPath + "\" + if( empty(cTableName), ::cTableName, cTableName ) )
+
+   METHOD getField( cId, cField, cBy )
 
    METHOD createFile( cPath )
    
@@ -122,4 +126,20 @@ METHOD createIndex( cPath )
 RETURN ( Self )
 
 //---------------------------------------------------------------------------//
+
+METHOD getField( cField, cBy, cId )
+
+   local cStm  
+   local cSql  := "SELECT " + cField + " "                              + ;
+                     "FROM " + ::getTableName() + " "                   + ;
+                     "WHERE " + cBy + " = " + quoted( cId ) 
+
+   if ::ExecuteSqlStatement( cSql, @cStm )
+      RETURN ( ( cStm )->( fieldget( fieldpos( cField ) ) ) )
+   end if 
+
+RETURN ( nil )
+
+//---------------------------------------------------------------------------//
+
 

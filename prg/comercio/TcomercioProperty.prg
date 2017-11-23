@@ -298,6 +298,7 @@ METHOD processPropertyProduct( idProduct, hProduct )
    local lDefault          := .t.
    local idProperty        := 0
    local priceProperty     := 0
+   local aImagesProperty
 
    // Comprobamos si el artículo tiene propiedades y metemos las propiedades
 
@@ -323,7 +324,11 @@ METHOD processPropertyProduct( idProduct, hProduct )
 
             ::insertProductAttributeShop( idProduct, idProperty, priceProperty, lDefault )
 
-            ::insertProductAttributeImage( hProduct, idProperty )
+            aImagesProperty        := hb_aTokens( ( D():ArticuloPrecioPropiedades( ::getView() ) )->mImgWeb, "," )
+
+            if hb_isArray( aImagesProperty ) .and. len( aImagesProperty ) > 0
+               ::insertProductAttributeImage( hProduct, idProperty, aImagesProperty )
+            end if
 
          end if 
 
@@ -438,9 +443,11 @@ RETURN ( .t. )
 
 //---------------------------------------------------------------------------//
 
-METHOD insertProductAttributeImage( hProduct, idProductAttribute )
+METHOD insertProductAttributeImage( hProduct, idProductAttribute, aImagesProperty )
 
-   local hImage
+   local cImage
+   local idImage
+   local nPos
    local aImages
    local cCommand
    local idProductImage
@@ -451,27 +458,39 @@ METHOD insertProductAttributeImage( hProduct, idProductAttribute )
       RETURN ( self )
    end if 
 
-   for each hImage in aImages
+   for each cImage in aImagesProperty
 
-      idProductImage    := ::TPrestashopId():getValueImage( hGet( hProduct, "id" ) + str( hget( hImage, "id" ), 10 ), ::getCurrentWebName() )
+      if !Empty( cImage )
 
-      cCommand          := "DELETE FROM " +  ::cPrefixtable( "product_attribute_image" ) + " "              + ;
-                              "WHERE id_product_attribute = " + alltrim( str( idProductAttribute ) ) + " "  + ;
-                              "AND id_image = " + alltrim( str( idProductImage ) )
+         nPos     := ascan( aImages, {|a| hGet( a, "name" ) == cImage } )
 
-      if !::commandExecDirect( cCommand ) 
-         ::writeText( "Error al eliminar el artículo " + hGet( hProduct, "name" ) + " en la tabla " + ::cPrefixTable( "product_attribute_image" ), 3 )
-      end if
+         if nPos != 0
 
-      cCommand          := "INSERT IGNORE INTO " + ::cPrefixTable( "product_attribute_image" ) + " ( " + ;
-                              "id_product_attribute, "                                          + ;
-                              "id_image ) "                                                     + ;
-                           "VALUES ( "                                                          + ;
-                              "'" + alltrim( str( idProductAttribute ) ) + "', "                + ;   // id_product_attribute
-                              "'" + alltrim( str( idProductImage ) ) + "' )"                         // id_image
+            idImage  := hGet( aImages[nPos], "id" ) 
 
-      if !::commandExecDirect( cCommand )
-         ::writeText( "Error al insertar el artículo " + hGet( hProduct, "name" ) + " en la tabla " + ::cPrefixTable( "product_attribute_image" ), 3 )
+            idProductImage    := ::TPrestashopId():getValueImage( hGet( hProduct, "id" ) + str( idImage, 10 ), ::getCurrentWebName() )
+
+         end if
+
+         cCommand          := "DELETE FROM " +  ::cPrefixtable( "product_attribute_image" ) + " "              + ;
+                                 "WHERE id_product_attribute = " + alltrim( str( idProductAttribute ) ) + " "  + ;
+                                 "AND id_image = " + alltrim( str( idProductImage ) )
+
+         if !::commandExecDirect( cCommand ) 
+            ::writeText( "Error al eliminar el artículo " + cImage + " en la tabla " + ::cPrefixTable( "product_attribute_image" ), 3 )
+         end if
+
+         cCommand          := "INSERT IGNORE INTO " + ::cPrefixTable( "product_attribute_image" ) + " ( " + ;
+                                 "id_product_attribute, "                                          + ;
+                                 "id_image ) "                                                     + ;
+                              "VALUES ( "                                                          + ;
+                                 "'" + alltrim( str( idProductAttribute ) ) + "', "                + ;   // id_product_attribute
+                                 "'" + alltrim( str( idProductImage ) ) + "' )"                         // id_image
+
+         if !::commandExecDirect( cCommand )
+            ::writeText( "Error al insertar el artículo " + cImage + " en la tabla " + ::cPrefixTable( "product_attribute_image" ), 3 )
+         end if
+
       end if
 
    next   

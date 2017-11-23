@@ -92,13 +92,13 @@ RETURN ( self )
 
 METHOD Activate()
 
-   DEFINE DIALOG ::oDialog RESOURCE "SelectLabels_0"
+   DEFINE DIALOG ::oDialog RESOURCE "ETIQUETAS_SELECTOR_0"
 
       REDEFINE PAGES ::oPages ;
-         ID          10;
+         ID          10 ;
          OF          ::oDialog ;
-         DIALOGS     "SelectLabels_1",;
-                     "SelectLabels_2"
+         DIALOGS     "ETIQUETAS_SELECTOR_1",;
+                     "ETIQUETAS_SELECTOR_2" 
 
       REDEFINE BITMAP ;
          RESOURCE    "gc_portable_barcode_scanner_48" ;
@@ -202,6 +202,11 @@ METHOD Activate()
 
       // Propiedades del control--------------------------------------------------
 
+      REDEFINE BUTTON ;
+         ID          100 ;
+         OF          ::oPages:aDialogs[ 2 ] ;
+         ACTION      ( msgalert( "search" ) )
+
       ::oBrowse:nMarqueeStyle    := MARQSTYLE_HIGHLROWMS
 
       ::oBrowse:bClrStd          := {|| { CLR_BLACK, CLR_WHITE } }
@@ -210,9 +215,9 @@ METHOD Activate()
 
       ::oBrowse:bRClicked        := {| nRow, nCol, nFlags | ::RButtonDown( nRow, nCol, nFlags ) }
 
-      ::oBrowse:setRowSetController( ::oController )
+      ::oBrowse:setRowSet( ::oController )
 
-      ::oBrowse:CreateFromResource( 180 )
+      ::oBrowse:CreateFromResource( 110 )
 
       with object ( ::oBrowse:AddCol() )
          :cHeader          := "Id"
@@ -236,7 +241,7 @@ METHOD Activate()
          :cHeader          := "Nombre"
          :bEditValue       := {|| ::getRowSet():fieldGet( 'nombre_articulo' ) }
          :cSortOrder       := 'movimientos_almacen_lineas.nombre_articulo'
-         :nWidth           := 120
+         :nWidth           := 220
          :bLClickHeader    := {| nMRow, nMCol, nFlags, oColumn | ::oController:clickingHeader( oColumn ) }
       end with
 
@@ -257,28 +262,28 @@ METHOD Activate()
       end with
 
       with object ( ::oBrowse:AddCol() )
-         :cHeader             := "Sumar unidades"
-         :bStrData            := {|| "" }
-         :bOnPostEdit         := {|| .t. }
-         :bEditBlock          := {|| ::sumarUnidades() }
-         :nEditType           := 5
-         :nWidth              := 20
-         :nHeadBmpNo          := 1
-         :nBtnBmp             := 1
-         :nHeadBmpAlign       := 1
+         :cHeader          := "Sumar unidades"
+         :bStrData         := {|| "" }
+         :bOnPostEdit      := {|| .t. }
+         :bEditBlock       := {|| ::sumarUnidades() }
+         :nEditType        := 5
+         :nWidth           := 20
+         :nHeadBmpNo       := 1
+         :nBtnBmp          := 1
+         :nHeadBmpAlign    := 1
          :AddResource( "gc_navigate_plus_16" )
       end with
 
       with object ( ::oBrowse:AddCol() )
-         :cHeader             := "Restar unidades"
-         :bStrData            := {|| "" }
-         :bOnPostEdit         := {|| .t. }
-         :bEditBlock          := {|| ::restarUnidades() }
-         :nEditType           := 5
-         :nWidth              := 20
-         :nHeadBmpNo          := 1
-         :nBtnBmp             := 1
-         :nHeadBmpAlign       := 1
+         :cHeader          := "Restar unidades"
+         :bStrData         := {|| "" }
+         :bOnPostEdit      := {|| .t. }
+         :bEditBlock       := {|| ::restarUnidades() }
+         :nEditType        := 5
+         :nWidth           := 20
+         :nHeadBmpNo       := 1
+         :nBtnBmp          := 1
+         :nHeadBmpAlign    := 1
          :AddResource( "gc_navigate_minus_16" )
       end with
 
@@ -295,129 +300,6 @@ METHOD Activate()
          :bOnPostEdit      := {|o,x| ::getRowSet():fieldput( 'total_unidades', x ) }
       end with
 
-/*
-
-      REDEFINE GET oGetOrd ;
-         VAR      cGetOrd ;
-         ID       200 ;
-         BITMAP   "FIND" ;
-         OF       ::oPages:aDialogs[ 2 ]
-
-      oGetOrd:bChange   := {| nKey, nFlags, oGet | AutoSeek( nKey, nFlags, oGet, ::oBrwLabel, ::tmpLabelEdition ) }
-      oGetOrd:bValid    := {|| ( ::tmpLabelEdition )->( OrdScope( 0, nil ) ), ( ::tmpLabelEdition )->( OrdScope( 1, nil ) ), ::refreshBrowseLabel(), .t. }
-
-      REDEFINE COMBOBOX ::oComboBoxOrden ;
-         VAR      ::cComboBoxOrden ;
-         ID       210 ;
-         ITEMS    ::aComboBoxOrden ;
-         OF       ::oPages:aDialogs[ 2 ]
-
-      ::oComboBoxOrden:bChange   := {|| ::SelectColumn( ::oComboBoxOrden ) }
-
-      REDEFINE BUTTON ;
-         ID       100 ;
-         OF       ::oPages:aDialogs[ 2 ] ;
-         ACTION   ( ::PutLabel() )
-
-      REDEFINE BUTTON ;
-         ID       110 ;
-         OF       ::oPages:aDialogs[ 2 ] ;
-         ACTION   ( ::SelectAllLabels( .t. ) )
-
-      REDEFINE BUTTON ;
-         ID       120 ;
-         OF       ::oPages:aDialogs[ 2 ] ;
-         ACTION   ( ::SelectAllLabels( .f. ) )
-
-      REDEFINE BUTTON ;
-         ID       130 ;
-         OF       ::oPages:aDialogs[ 2 ] ;
-         ACTION   ( ::AddLabel() )
-
-      REDEFINE BUTTON ;
-         ID       140 ;
-         OF       ::oPages:aDialogs[ 2 ] ;
-         ACTION   ( ::DelLabel() )
-
-      REDEFINE BUTTON ;
-         ID       150 ;
-         OF       ::oPages:aDialogs[ 2 ] ;
-         ACTION   ( ::EditLabel() )
-
-      REDEFINE BUTTON ::oBtnPropiedades ;
-         ID       220 ;
-         OF       ::oPages:aDialogs[ 2 ] ;
-         ACTION   ( nil )
-
-      REDEFINE BUTTON ::oBtnModificar;
-         ID       160 ;
-         OF       ::oPages:aDialogs[ 2 ] ;
-         ACTION   ( nil )
-
-      REDEFINE BUTTON ::oBtnZoom;
-         ID       165 ;
-         OF       ::oPages:aDialogs[ 2 ] ;
-         ACTION   ( nil )
-
-      ::oBrwLabel                 := IXBrowse():New( ::oPages:aDialogs[ 2 ] )
-
-      ::oBrwLabel:nMarqueeStyle   := 5
-      ::oBrwLabel:nColSel         := 2
-
-      ::oBrwLabel:lHScroll        := .f.
-      ::oBrwLabel:cAlias          := ::tmpLabelEdition
-
-      ::oBrwLabel:bClrSel         := {|| { CLR_BLACK, Rgb( 229, 229, 229 ) } }
-      ::oBrwLabel:bClrSelFocus    := {|| { CLR_BLACK, Rgb( 167, 205, 240 ) } }
-      ::oBrwLabel:bLDblClick      := {|| ::PutLabel() }
-
-      ::oBrwLabel:CreateFromResource( 180 )
-
-      with object ( ::oBrwLabel:AddCol() )
-         :cHeader          := "Sl. Seleccionada"
-         :bEditValue       := {|| ( ::tmpLabelEdition )->lLabel }
-         :nWidth           := 20
-         :SetCheck( { "Sel16", "Nil16" } )
-      end with
-
-      ::buildCodeColumn()
-
-      ::buildDetailColumn()
-
-      with object ( ::oBrwLabel:AddCol() )
-         :cHeader          := "Prp. 1"
-         :bEditValue       := {|| ( ::tmpLabelEdition )->cValPr1 }
-         :nWidth           := 40
-      end with
-
-      with object ( ::oBrwLabel:AddCol() )
-         :cHeader          := "Prp. 2"
-         :bEditValue       := {|| ( ::tmpLabelEdition )->cValPr2 }
-         :nWidth           := 40
-      end with
-
-      with object ( ::oBrwLabel:AddCol() )
-         :cHeader          := "N. etiquetas"
-         :bEditValue       := {|| ( ::tmpLabelEdition )->nLabel }
-         :cEditPicture     := "@E 99,999"
-         :nWidth           := 80
-         :nDataStrAlign    := 1
-         :nHeadStrAlign    := 1
-         :nEditType        := 1
-         :bOnPostEdit      := {|o,x| if( dbDialogLock( ::tmpLabelEdition ), ( ( ::tmpLabelEdition )->nLabel := x, ( ::tmpLabelEdition )->( dbUnlock() ) ), ) }
-      end with
-
-      REDEFINE APOLOMETER ::oMtrLabel ;
-         VAR      ::nMtrLabel ;
-         PROMPT   "" ;
-         ID       190 ;
-         OF       ::oPages:aDialogs[ 2 ] ;
-         TOTAL    ( ::tmpLabelEdition  )->( lastrec() )
-
-      ::oMtrLabel:nClrText   := rgb( 128,255,0 )
-      ::oMtrLabel:nClrBar    := rgb( 128,255,0 )
-      ::oMtrLabel:nClrBText  := rgb( 128,255,0 )
-*/
       // Botones generales-------------------------------------------------------
 
       REDEFINE BUTTON ::oBtnAnterior ;          // Boton anterior
@@ -438,11 +320,7 @@ METHOD Activate()
    ::oDialog:bStart  := {|| ::startDialog() }
 
    ACTIVATE DIALOG ::oDialog CENTER
-/*
-   ::DestroyTempLabelEdition()
 
-   ::End()
-*/
 RETURN ( self )
 
 //----------------------------------------------------------------------------//

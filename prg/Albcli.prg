@@ -5117,6 +5117,7 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbf, oBrw, lTotLin, cCodArtEnt, nMode, aTmpA
       ON INIT     ( menuEdtDet( aGet[ _CREF ], oDlg, , if( nMode == APPD_MODE, "", Str( ( dbfTmpLin )->( OrdKeyNo() ) ) ) ) );
       CENTER
 
+
    if !Empty( oDetMenu )
       oDetMenu:End()
    end if
@@ -8714,7 +8715,7 @@ Static Function DataReport( oFr )
    oFr:SetMasterDetail( "Albaranes", "Entregas de albaranes",                    {|| ( D():Get( "AlbCliT", nView ) )->cSerAlb + Str( ( D():Get( "AlbCliT", nView ) )->nNumAlb ) + ( D():Get( "AlbCliT", nView ) )->cSufAlb } )
    oFr:SetMasterDetail( "Albaranes", "Clientes",                                 {|| ( D():Get( "AlbCliT", nView ) )->cCodCli } )
    oFr:SetMasterDetail( "Albaranes", "Obras",                                    {|| ( D():Get( "AlbCliT", nView ) )->cCodCli + ( D():Get( "AlbCliT", nView ) )->cCodObr } )
-   oFr:SetMasterDetail( "Albaranes", "Almacen",                                  {|| ( D():Get( "AlbCliT", nView ) )->cCodAlm } )
+   oFr:SetMasterDetail( "Albaranes", "Almacenes",                                {|| ( D():Get( "AlbCliT", nView ) )->cCodAlm } )
    oFr:SetMasterDetail( "Albaranes", "Rutas",                                    {|| ( D():Get( "AlbCliT", nView ) )->cCodRut } )
    oFr:SetMasterDetail( "Albaranes", "Agentes",                                  {|| ( D():Get( "AlbCliT", nView ) )->cCodAge } )
    oFr:SetMasterDetail( "Albaranes", "Formas de pago",                           {|| ( D():Get( "AlbCliT", nView ) )->cCodPago} )

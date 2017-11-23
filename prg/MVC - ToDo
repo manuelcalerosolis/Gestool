@@ -1,6 +1,11 @@
 MVC - ToDo
 
-- Hacer un controller menos cargado, y una primera capa de herencia, para navegacion
+- Filtros
+   * Al quitar el filtro montar la sentencia original
+   * Modificar filtro
+   * Eliminar filtro
+
+- Hacer un controller menos cargado, y una primera capa de herencia, para navegacion (done)
 
 - Para presentacion : 
  * incluir en harbour scopes para q los metodos no sean estaticos, como en java

@@ -1497,59 +1497,11 @@ Static function nCompras( cCodArt, dbfAlbPrvT, dbfAlbPrvL, dbfFacPrvT, dbfFacPrv
 
    aEval( aCom, {|a| Afill( a, 0 ) } )
 
-   if Len( aEmpGrp() ) != 0
+   nTotAlbCom( cCodArt, dbfAlbPrvT, dbfAlbPrvL, nYear )
 
-      for each cCodEmp in aEmpGrp()
+   nTotFacCom( cCodArt, dbfFacPrvT, dbfFacPrvL, nYear )
 
-         if cCodEmp == cCodEmp()
-
-            nTotAlbCom( cCodArt, dbfAlbPrvT, dbfAlbPrvL, nYear )
-
-            nTotFacCom( cCodArt, dbfFacPrvT, dbfFacPrvL, nYear )
-
-            nTotRctCom( cCodArt, dbfRctPrvT, dbfRctPrvL, nYear )
-
-         else
-
-            USE ( cPatStk( cCodEmp ) + "ALBPROVT.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "ALBPROVT", @dbfAlbEmpT ) )
-            SET ADSINDEX TO ( cPatStk( cCodEmp ) + "ALBPROVT.CDX" ) ADDITIVE
-
-            USE ( cPatStk( cCodEmp ) + "ALBPROVL.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "ALBPROVL", @dbfAlbEmpL ) )
-            SET ADSINDEX TO ( cPatStk( cCodEmp ) + "ALBPROVL.CDX" ) ADDITIVE
-            SET TAG TO "CREF"
-
-            USE ( cPatStk( cCodEmp ) + "FACPRVT.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "FACPRVT", @dbfFacEmpT ) )
-            SET ADSINDEX TO ( cPatStk( cCodEmp ) + "FACPRVT.CDX" ) ADDITIVE
-
-            USE ( cPatStk( cCodEmp ) + "FACPRVL.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "FACPRVL", @dbfFacEmpL ) )
-            SET ADSINDEX TO ( cPatStk( cCodEmp ) + "FACPRVL.CDX" ) ADDITIVE
-            SET TAG TO "CREF"
-
-            USE ( cPatStk( cCodEmp ) + "RctPrvT.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "RctPrvL", @dbfRctEmpT ) )
-            SET ADSINDEX TO ( cPatStk( cCodEmp ) + "RctPrvT.CDX" ) ADDITIVE
-
-            USE ( cPatStk( cCodEmp ) + "RctPrvL.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "RctPrvL", @dbfRctEmpL ) )
-            SET ADSINDEX TO ( cPatStk( cCodEmp ) + "RctPrvL.CDX" ) ADDITIVE
-            SET TAG TO "cRef"
-
-            nTotAlbCom( cCodArt, dbfAlbEmpT, dbfAlbEmpL, nYear )
-
-            nTotFacCom( cCodArt, dbfFacEmpT, dbfFacEmpL, nYear )
-
-            nTotRctCom( cCodArt, dbfRctEmpT, dbfRctEmpL, nYear )
-
-            CLOSE( dbfAlbEmpT )
-            CLOSE( dbfAlbEmpL )
-            CLOSE( dbfFacEmpT )
-            CLOSE( dbfFacEmpL )
-            CLOSE( dbfRctEmpT )
-            CLOSE( dbfRctEmpL )
-
-         end if
-
-      next
-
-   end if
+   nTotRctCom( cCodArt, dbfRctPrvT, dbfRctPrvL, nYear )
 
 Return ( nil )
 

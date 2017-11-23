@@ -8,6 +8,8 @@ CLASS SQLMovimientosAlmacenModel FROM SQLExportableModel
 
    DATA cTableName            INIT "movimientos_almacen"
 
+   DATA cConstraints          INIT "PRIMARY KEY (uuid), KEY (id)"
+
    DATA cColumnOrder          INIT "id"
 
    DATA aTextoMovimiento      INIT { "Entre almacenes", "Regularización", "Objetivos", "Consolidación" }
@@ -109,9 +111,9 @@ RETURN ( ::hColumns )
 
 //---------------------------------------------------------------------------//
 
-METHOD cTextoMovimiento()
+METHOD cTextoMovimiento( nPosition )
 
-   local nPosition   := ::getRowSet():fieldGet( "tipo_movimiento" )
+   DEFAULT nPosition := ::getRowSet():fieldGet( "tipo_movimiento" )
 
    nPosition         := max( nPosition, 1 )
    nPosition         := min( nPosition, len( ::aTextoMovimiento ) )
