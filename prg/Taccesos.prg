@@ -638,32 +638,42 @@ METHOD CreateSearchBar( oWnd )
             SIZE     18, 18 ;
             OF       ::oRebar ;
             NOBORDER ;
-            ACTION   ( msgStop( "Quitar filtro activo" ) )
+            ACTION   ( msgStop( "Añadir filtro" ) )
 
    ::oButtonAddFilter:lTransparent 	:= .t.
    ::oButtonAddFilter:lBoxSelect 	:= .f.
 
-   @ 125, 658 BTNBMP ::oButtonEditFilter ;
-            RESOURCE "gc_funnel_edit_16" ;
+   @ 125, 658 BTNBMP ::oButtonCleanFilter ;
+            RESOURCE "gc_funnel_broom_16" ;
             SIZE     18, 18 ;
             OF       ::oRebar ;
             NOBORDER ;
-            ACTION   ( msgStop( "Quitar filtro activo" ) )
+            ACTION   ( msgStop( "Limpiar filtro activo" ) )
 
-   ::oButtonEditFilter:lTransparent  := .t.
-   ::oButtonEditFilter:lBoxSelect 	 := .f.
+   ::oButtonCleanFilter:lTransparent   := .t.
+   ::oButtonCleanFilter:lBoxSelect 	   := .f.
 
-   @ 125, 684 BTNBMP ::oButtonDeleteFilter ;
+   @ 125, 684 BTNBMP ::oButtonEditFilter ;
+            RESOURCE "gc_funnel_delete_16" ;
+            SIZE     18, 18 ;
+            OF       ::oRebar ;
+            NOBORDER ;
+            ACTION   ( msgStop( "Editar filtro activo" ) )
+
+   ::oButtonEditFilter:lTransparent    := .t.
+   ::oButtonEditFilter:lBoxSelect      := .f.
+
+   @ 125, 710 BTNBMP ::oButtonDeleteFilter ;
             RESOURCE "gc_funnel_delete_16" ;
             SIZE     18, 18 ;
             OF       ::oRebar ;
             NOBORDER ;
             ACTION   ( msgStop( "Quitar filtro activo" ) )
 
-   ::oButtonDeleteFilter:lTransparent      := .t.
-   ::oButtonDeleteFilter:lBoxSelect 	     := .f.
+   ::oButtonDeleteFilter:lTransparent  := .t.
+   ::oButtonDeleteFilter:lBoxSelect    := .f.
 
-   @ 124, 710 COMBOBOX ::oYearComboBox ;
+   @ 124, 736 COMBOBOX ::oYearComboBox ;
             VAR      ::cYearComboBox ;
             ITEMS    ::aYearComboBox ;
             STYLE    3 ;
