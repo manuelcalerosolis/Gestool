@@ -285,12 +285,11 @@ GC_SHIELD_64 BITMAP "..\\bmp\\gc_shield_64.bmp"
 16_TAGEVER BITMAP "..\\bmp\\16_tagever.bmp"
 
 GC_ODOMETER_48 BITMAP "..\\bmp\\gc_odometer_48.bmp"
-<<<<<<< HEAD
 
 GC_PACKAGE_IMPORT_48 BITMAP "..\\bmp\\GC_PACKAGE_IMPORT_48.bmp"
 GC_PACKAGE_IMPORT_32 BITMAP "..\\bmp\\GC_PACKAGE_IMPORT_32.bmp"
 GC_PACKAGE_IMPORT_16 BITMAP "..\\bmp\\GC_PACKAGE_IMPORT_16.bmp"
-=======
+
 GC_ODOMETER_32 BITMAP "..\\bmp\\gc_odometer_32.bmp"
 
 GC_BARCODE_SCANNER_32 BITMAP "..\\bmp\\gc_barcode_scanner_32.bmp"
@@ -311,4 +310,3 @@ GC_COPY_32 BITMAP "..\\bmp\\gc_copy_32.bmp"
 TEXT_FIELD_32 BITMAP "..\\bmp\\text_field_32.bmp" 
 DOCUMENT_CHART_PENCIL_32 BITMAP "..\\bmp\\document_chart_pencil_32.bmp" 
 DOCUMENT_CHART_32 BITMAP "..\\bmp\\document_chart_32.bmp" 
->>>>>>> e102413088568cbf064a52db8248a460faaf0715
