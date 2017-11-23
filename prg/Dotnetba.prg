@@ -133,7 +133,7 @@ ENDCLASS
    ::nClrZonaTab  := ::oColor:_GRIS0
 
 
-   ::nStyle      := nOR( WS_CHILD, WS_VISIBLE, WS_TABSTOP, WS_CLIPSIBLINGS, WS_CLIPCHILDREN ) //
+   ::nStyle      := nOR( WS_CHILD, WS_VISIBLE, WS_CLIPSIBLINGS, WS_CLIPCHILDREN ) //WS_TABSTOP,
    ::nId         := ::GetNewId()
 
    ::aControls := {}

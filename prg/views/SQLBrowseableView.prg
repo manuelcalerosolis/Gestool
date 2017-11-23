@@ -45,12 +45,13 @@ CLASS SQLBrowseableView
 
    METHOD getMenuTreeView()                  INLINE ( ::oMenuTreeView )
 
-   METHOD Refresh()                          INLINE ( ::getBrowse():SetFocus(), ::getBrowse():refreshCurrent() )
+   METHOD Refresh()                          INLINE ( ::getBrowse():refreshCurrent(), ::getBrowse():setFocus() )
    METHOD RefreshRowSet()                    INLINE ( ::getModel():buildRowSet(), ::Refresh() )
 
    //--------------------------------------------------------------------------
 
    METHOD onChangeCombo()
+   
    METHOD onChangeSearch()
 
 ENDCLASS

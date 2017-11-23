@@ -11,9 +11,9 @@ CLASS MovimientosAlmacenLineasController FROM SQLBaseController
 
    DATA oSearchView
 
-   DATA aProperties                       INIT {}
+   DATA aProperties                    INIT {}
 
-   DATA aSelectDelete                     INIT {}
+   DATA aSelectDelete                  INIT {}
 
    METHOD New()
 
@@ -27,18 +27,24 @@ CLASS MovimientosAlmacenLineasController FROM SQLBaseController
 
    METHOD validateLote()               
 
-   METHOD validatePrimeraPropiedad()   INLINE   (  iif(  ::validate( "valor_primera_propiedad" ),;
-                                                         ::stampPropertyName( "codigo_primera_propiedad" , "valor_primera_propiedad", ::oDialogView:oGetValorPrimeraPropiedad ),;
-                                                         .f. ) )
+   METHOD validatePrimeraPropiedad()   INLINE ( iif(  ::validate( "valor_primera_propiedad" ),;
+                                                      ::stampPropertyName( "codigo_primera_propiedad" , "valor_primera_propiedad", ::oDialogView:oGetValorPrimeraPropiedad ),;
+                                                      .f. ) )
 
-   METHOD validateSegundaPropiedad()   INLINE   (  iif(  ::validate( "valor_segunda_propiedad" ),;
-                                                         ::stampPropertyName( "codigo_segunda_propiedad" , "valor_segunda_propiedad", ::oDialogView:oGetValorSegundaPropiedad ),;
-                                                         .f. ) )
+   METHOD validateSegundaPropiedad()   INLINE ( iif(  ::validate( "valor_segunda_propiedad" ),;
+                                                      ::stampPropertyName( "codigo_segunda_propiedad" , "valor_segunda_propiedad", ::oDialogView:oGetValorSegundaPropiedad ),;
+                                                      .f. ) )
    
    // Propiedades--------------------------------------------------------------
 
-   METHOD stampArticulo()
-   
+   METHOD stampArticulo()              INLINE ( ::oDialogView:oGetNombreArticulo:cText( hget( ::hArticulo, "nombre" ) ) )
+
+   METHOD stampCajas()                 INLINE ( ::oDialogView:oGetCajasArticulo:cText( hget( ::hArticulo, "ncajent" ) ) )
+
+   METHOD stampUnidades()              INLINE ( ::oDialogView:oGetUnidadesArticulo:cText( hget( ::hArticulo, "nunicaja" ) ) )
+
+   METHOD stampPrecio()                INLINE ( ::oDialogView:oGetPrecioArticulo:cText( hget( ::hArticulo, "pcosto" ) ) )
+
    METHOD stampLoteCaducidad()
 
    METHOD stampProperties()   
@@ -156,6 +162,12 @@ METHOD validateCodigoArticulo()
 
    ::stampArticulo()
 
+   ::stampCajas()
+
+   ::stampUnidades()
+
+   ::stampPrecio()
+
    ::stampLoteCaducidad()
 
    ::stampProperties()
@@ -196,14 +208,6 @@ METHOD getHashArticulo()
    end if 
 
 RETURN ( .t. )
-
-//---------------------------------------------------------------------------//
-
-METHOD stampArticulo()
-
-   ::oDialogView:oGetNombreArticulo:cText( hget( ::hArticulo, "nombre" ) )
-
-RETURN ( Self )
 
 //---------------------------------------------------------------------------//
 
@@ -329,19 +333,26 @@ RETURN ( .t. )
 
 METHOD stampLoteCaducidad()
 
+   local cLote
    local dCaducidad
 
    if !( hget( ::hArticulo, "llote" ) )
       RETURN ( .t. )
    end if 
 
-   if !empty( ::oDialogView:oGetLote )
-      ::oDialogView:oGetLote:cText( hget( ::hArticulo, "clote" ) )
+   if !empty( ::oDialogView:oGetLote ) .and. empty( ::oDialogView:oGetLote:varGet() )
+
+      cLote       := hget( ::hArticulo, "clote" )
+
+      if !empty( cLote )
+         ::oDialogView:oGetLote:cText( cLote )
+      end if 
+
    end if 
 
    if !empty( ::oDialogView:oGetCaducidad ) .and. empty( ::oDialogView:oGetCaducidad:varGet() )
 
-      dCaducidad   := StocksModel():getFechaCaducidad( hget( ::hArticulo, "codigo" ), hget( ::oModel:hBuffer, "valor_primera_propiedad" ), hget( ::oModel:hBuffer, "valor_segunda_propiedad" ), , hget( ::oModel:hBuffer, "lote" ) )
+      dCaducidad  := StocksModel():getFechaCaducidad( hget( ::hArticulo, "codigo" ), hget( ::oModel:hBuffer, "valor_primera_propiedad" ), hget( ::oModel:hBuffer, "valor_segunda_propiedad" ), , hget( ::oModel:hBuffer, "lote" ) )
 
       if !empty( dCaducidad )
          ::oDialogView:oGetCaducidad:cText( dCaducidad )

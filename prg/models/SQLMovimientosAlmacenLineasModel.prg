@@ -310,8 +310,6 @@ METHOD getFechaHoraConsolidacion( cCodigoArticulo, cCodigoAlmacen, cValorPropied
          cSql        +=          "ORDER BY movimientos_almacen.fecha_hora DESC "
          cSql        +=          "LIMIT 1"
 
-   logwrite( cSql )
-
    aBuffer           := ::getDatabase():selectFetchHash( cSql )
 
    if hb_isArray( aBuffer ) .and. len( aBuffer ) > 0

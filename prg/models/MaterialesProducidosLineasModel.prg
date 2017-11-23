@@ -116,9 +116,6 @@ METHOD totalUnidadesStock( cCodigoArticulo, dConsolidacion, tConsolidacion, cCod
    local cStm
    local cSql  := ::getSQLSentenceTotalUnidadesStock( cCodigoArticulo, dConsolidacion, tConsolidacion, cCodigoAlmacen, cValorPropiedad1, cValorPropiedad2, cLote )
 
-   MsgInfo( cSql )
-   logwrite( cSql )
-
    if ::ExecuteSqlStatement( cSql, @cStm )
       RETURN ( ( cStm )->totalUnidadesStock )
    end if 

@@ -60,10 +60,6 @@ CLASS SQLDatabase
 
    METHOD errorInfo()                     INLINE ( if( !empty( ::oConexion ), ::oConexion:errorInfo(), ) )
 
-
-
-   METHOD addModels()
-
    METHOD checkModels()   
    METHOD checkModel( oModel )   
    METHOD getSchemaColumns()
@@ -403,32 +399,6 @@ METHOD getSchemaColumns( oModel )
 RETURN ( aSchemaColumns )
 
 //---------------------------------------------------------------------------//
-
-METHOD addModels()
-
-   aadd( ::aModels, SQLTiposImpresorasModel():New() )
-
-   aadd( ::aModels, SQLTiposNotasModel():New() )
-
-   aadd( ::aModels, EtiquetasModel():New() )
-
-   aadd( ::aModels, SituacionesModel():New() )
-
-   aadd( ::aModels, SQLConfiguracionColumnasUsuariosModel():New() )
-
-   aadd( ::aModels, RelacionesEtiquetasModel():New() )
-                                      
-   aadd( ::aModels, TiposVentasModel():New() )
-
-   aadd( ::aModels, SQLConfiguracionEmpresasModel():New() )
-
-   aadd( ::aModels, SQLMovimientosAlmacenModel():New() )
-
-   aadd( ::aModels, SQLMovimientosAlmacenLineasModel():New() )
-
-RETURN ( ::aModels )
-
-//----------------------------------------------------------------------------//
 
 Function getSQLDatabase()
 

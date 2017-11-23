@@ -285,8 +285,6 @@ STATIC FUNCTION TASTI( nKey, cVar )
 
    cVar  += CHR( nKey )
 
-   logwrite( chr( nKey ) )
-
 RETURN ( nil )
 
 //---------------------------------------------------------------------------//
