@@ -128,12 +128,12 @@ METHOD Activate()
 
       // Buttons lineas-------------------------------------------------------
 
-      ::oSQLBrowseView              := SQLBrowseViewDialog():New( Self )
+      ::oSQLBrowseView              := SQLBrowseView():New( Self )
       ::oSQLBrowseView:setFooter( .t. )
 
       ::oSQLBrowseView:setController( ::oController:oLineasController )
 
-      ::oSQLBrowseView:Activate( 180, ::oDialog )
+      ::oSQLBrowseView:ActivateDialog( 180, ::oDialog )
 
       ::oSQLBrowseView:setView()
 

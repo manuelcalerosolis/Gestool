@@ -66,7 +66,7 @@ METHOD New( oController )
 
    ::oMenuTreeView         := MenuTreeView():New( Self )
 
-   ::oSQLBrowseView        := SQLBrowseViewMDI():New( Self )
+   ::oSQLBrowseView        := SQLBrowseView():New( Self )
 
 RETURN ( Self )
 
@@ -86,7 +86,7 @@ METHOD Activate()
 
    // Browse view -------------------------------------------------------------
 
-   ::oSQLBrowseView:Activate( dfnSplitterHeight + dfnSplitterWidth, dfnTreeViewWidth + dfnSplitterWidth, ::oMdiChild:nRight - ::oMdiChild:nLeft, ::oMdiChild:nBottom - ::oMdiChild:nTop - dfnSplitterHeight - 162 )
+   ::oSQLBrowseView:ActivateMDI( dfnSplitterHeight + dfnSplitterWidth, dfnTreeViewWidth + dfnSplitterWidth, ::oMdiChild:nRight - ::oMdiChild:nLeft, ::oMdiChild:nBottom - ::oMdiChild:nTop - dfnSplitterHeight - 162 )
 
    ::oSQLBrowseView:setView()
 

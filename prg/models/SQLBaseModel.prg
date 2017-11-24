@@ -13,8 +13,6 @@ CLASS SQLBaseModel
 
    DATA oEvents
 
-   DATA oRowSet
-
    DATA oStatement
 
    DATA cTableName
@@ -38,7 +36,6 @@ CLASS SQLBaseModel
    DATA hBuffer 
 
    DATA cFind
-   DATA idToFind
 
    DATA aRecordsToDelete
 
@@ -109,9 +106,6 @@ CLASS SQLBaseModel
 
    METHOD convertRecnoToId( aRecno )
 
-   METHOD setIdToFind( idToFind )                     INLINE ( ::idToFind := idToFind )
-   METHOD saveIdToFind()                              INLINE ( ::idToFind := ::getRowSet():fieldGet( ::cColumnKey ) ) 
-
    METHOD setColumnOrder( cColumnOrder )              INLINE ( ::cColumnOrder := cColumnOrder )
    METHOD getColumnOrder()                            INLINE ( ::cColumnOrder )
 
@@ -121,7 +115,6 @@ CLASS SQLBaseModel
 
    METHOD newRowSet( cSentence )                      
    METHOD buildRowSet( cSentence )                    
-   METHOD buildRowSetAndFind( idToFind )              INLINE ( ::buildRowSet(), ::findInRowSet( idToFind ) )
 
    METHOD getRowSet()                                 INLINE ( if( empty( ::oRowSet ), ::buildRowSet(), ), ::oRowSet )
    METHOD freeRowSet()                                INLINE ( if( !empty( ::oRowSet ), ( ::oRowSet:free(), ::oRowSet := nil ), ) )
@@ -571,7 +564,7 @@ METHOD getEditValue( cColumn )
       RETURN ( hGet( hColumn, "edit" ) )
    end if 
 
-RETURN ( {|| ::getRowSet():fieldGet( cColumn ) } )
+RETURN ( cColumn ) // {|| ::getRowSet():fieldGet( cColumn ) } )
 
 //---------------------------------------------------------------------------//
 

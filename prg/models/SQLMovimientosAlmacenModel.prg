@@ -30,9 +30,8 @@ METHOD getColumns()
                                              "text"      => "Tipo movimiento"                         ,;
                                              "header"    => "Tipo movimiento"                         ,;
                                              "visible"   => .t.                                       ,;
-                                             "edit"      => {|| ::cTextoMovimiento() }                ,;
+                                             "edit"      => {|nTipo| ::cTextoMovimiento( nTipo ) }    ,;
                                              "width"     => 100                                       ,;
-                                             "field"     => "nTipMov"                                 ,;
                                              "type"      => "N"                                       ,;
                                              "len"       => 4 }                                       )
 
@@ -113,7 +112,7 @@ RETURN ( ::hColumns )
 
 METHOD cTextoMovimiento( nPosition )
 
-   DEFAULT nPosition := ::getRowSet():fieldGet( "tipo_movimiento" )
+   DEFAULT nPosition := 1
 
    nPosition         := max( nPosition, 1 )
    nPosition         := min( nPosition, len( ::aTextoMovimiento ) )

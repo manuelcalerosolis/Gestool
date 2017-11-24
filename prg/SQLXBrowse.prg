@@ -25,7 +25,7 @@ CLASS SQLXBrowse FROM TXBrowse
 
    METHOD New( oWnd )
 
-   METHOD setRowSet( oModel )
+   METHOD setRowSet( oRowSet )
 
    METHOD refreshCurrent()                      INLINE ( ::Refresh(), ::Select( 0 ), ::Select( 1 ) )
 
@@ -137,24 +137,22 @@ RETURN {|| iif( oCol:lHide, oCol:Show(), oCol:Hide() ) }
 
 //----------------------------------------------------------------------------//
 
-METHOD setRowSet( oModel )
+METHOD setRowSet( oRowSet )
 
    ::lAutoSort       := .f.
    ::nDataType       := DATATYPE_USER
    ::nRowHeight      := 20
-   ::bGoTop          := {|| oModel:getRowSet():GoTop() }
-   ::bGoBottom       := {|| oModel:getRowSet():GoBottom() }
-   ::bBof            := {|| oModel:getRowSet():Bof() }
-   ::bEof            := {|| oModel:getRowSet():Eof() }
-   ::bKeyCount       := {|| oModel:getRowSet():RecCount() }
-   ::bSkip           := {| n | oModel:getRowSet():Skipper( n ) }
-   ::bKeyNo          := {| n | oModel:getRowSet():RecNo() }
-   ::bBookMark       := {| n | iif( n == nil,;
-                                    oModel:getRowSet():RecNo(),;
-                                    oModel:getRowSet():GoTo( n ) ) }
+   ::bGoTop          := {|| oRowSet:Get():GoTop() }
+   ::bGoBottom       := {|| oRowSet:Get():GoBottom() }
+   ::bBof            := {|| oRowSet:Get():Bof() }
+   ::bEof            := {|| oRowSet:Get():Eof() }
+   ::bKeyCount       := {|| oRowSet:Get():RecCount() }
+   ::bSkip           := {| n | oRowSet:Get():Skipper( n ) }
+   ::bKeyNo          := {| n | oRowSet:Get():RecNo() }
+   ::bBookMark       := {| n | iif( n == nil, oRowSet:Get():RecNo(), oRowSet:Get():GoTo( n ) ) }
 
    if ::oVScroll() != nil
-      ::oVscroll():SetRange( 1, oModel:getRowSet():RecCount() )
+      ::oVscroll():SetRange( 1, oRowSet:Get():RecCount() )
    endif
 
    ::lFastEdit       := .t.

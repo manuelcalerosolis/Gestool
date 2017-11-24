@@ -15,14 +15,24 @@ CLASS SQLRowSet
 
    DATA oController
 
+   DATA nRecno
+
    METHOD New()
    METHOD End()
+
+   METHOD Get()                                       INLINE ( ::oRowSet )
+
+   METHOD fieldget( nField )                          INLINE ( ::oRowSet:fieldget( nField ) )
+
+   METHOD saveRecno()                                 INLINE ( ::nRecno := ::oRowSet:recno() ) 
+   METHOD gotoRecno()                                 INLINE ( ::oRowSet:goto( ::nRecno ) ) 
+
 
    METHOD build( cSentence )                    
 
    METHOD buildRowSetAndFind( idToFind )              INLINE ( ::buildRowSet(), ::findInRowSet( idToFind ) )
 
-   METHOD getRowSet()                                 INLINE ( if( empty( ::oRowSet ), ::buildRowSet(), ), ::oRowSet )
+   METHOD getRowSet()                                 INLINE ( if( empty( ::oRowSet ), ::build(), ), ::oRowSet )
    METHOD freeRowSet()                                INLINE ( if( !empty( ::oRowSet ), ( ::oRowSet:free(), ::oRowSet := nil ), ) )
    METHOD freeStatement()                             INLINE ( if( !empty( ::oStatement ), ( ::oStatement:free(), ::oStatement := nil ), ) )
 
@@ -81,7 +91,7 @@ METHOD build( cSentence )
 
       ::freeStatement()
 
-      ::oStatement      := ::getDatabase():Query( cSentence )
+      ::oStatement      := getSQLDatabase():Query( cSentence )
 
       ::oStatement:setAttribute( ATTR_STR_PAD, .t. )
       

@@ -53,6 +53,10 @@ CLASS SQLNavigatorController FROM SQLBaseController
 
    METHOD getModelHeadersForBrowse()                  INLINE ( ::getModel():getHeadersForBrowse() )
 
+   // Rowset-------------------------------------------------------------------
+
+   METHOD getRowSet()                                 INLINE ( ::oRowSet )
+
    // Aplication windows bar---------------------------------------------------
 
    METHOD EnableWindowsBar()
@@ -137,13 +141,15 @@ RETURN ( ::oSelectorView:Activate() )
 
 METHOD changeModelOrderAndOrientation( cColumnOrder, cColumnOrientation )
 
-   ::oModel:saveIdToFind()
+   ::oRowSet:saveRecno()
 
    ::oModel:setColumnOrder( cColumnOrder )
 
    ::oModel:setColumnOrientation( cColumnOrientation )
 
-   ::oModel:buildRowSetAndFind()
+   ::oRowSet:build( ::oModel:getSelectSentence() )
+
+   ::oRowSet:gotoRecno()
 
 RETURN ( self )
 

@@ -67,7 +67,7 @@ METHOD Activate()
 
       // Browse-----------------------------------------------------------------
 
-      ::oSQLBrowseView     := SQLBrowseViewDialog():New( Self )
+      ::oSQLBrowseView     := SQLBrowseView():New( Self )
 
       ::oSQLBrowseView:Activate( 130 )
 

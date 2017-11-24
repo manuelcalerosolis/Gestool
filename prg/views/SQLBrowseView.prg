@@ -21,7 +21,10 @@ CLASS SQLBrowseView
 
    METHOD End()
 
-   METHOD Activate()                         VIRTUAL
+   METHOD ActivateDialog()
+   METHOD ActivateMDI()
+   
+   METHOD setSize( nTop, nLeft, nRight, nBottom ) 
 
    METHOD setFooter( lFooter )               INLINE ( ::lFooter := lFooter )
 
@@ -52,14 +55,18 @@ CLASS SQLBrowseView
    
    METHOD getName()                          INLINE ( ::getController():getName() )
 
-   METHOD setModel( oModel )                 INLINE ( ::oModel := oModel )
-   METHOD getModel()                         INLINE ( iif( empty( ::oModel ), ::getController():getModel(), ::oModel ) )
+   METHOD getComboBoxOrder()                 INLINE ( if( !empty( ::oSender ), ::oSender:getComboBoxOrder(), ) )
+   METHOD getMenuTreeView()                  INLINE ( if( !empty( ::oSender ), ::oSender:getMenuTreeView(), ) )
 
+   // Models-------------------------------------------------------------------
+
+   METHOD getModel()                         INLINE ( ::getController():getModel() )
    METHOD getModelColumnsForBrowse()         INLINE ( ::getModel():getColumnsForBrowse() )
    METHOD getModelHeadersForBrowse()         INLINE ( ::getModel():getHeadersForBrowse() )
 
-   METHOD getComboBoxOrder()                 INLINE ( if( !empty( ::oSender ), ::oSender:getComboBoxOrder(), ) )
-   METHOD getMenuTreeView()                  INLINE ( if( !empty( ::oSender ), ::oSender:getMenuTreeView(), ) )
+   // RowSet-------------------------------------------------------------------
+
+   METHOD getRowSet()                        INLINE ( ::getController():getRowSet() )
 
    // Columns------------------------------------------------------------------
 
@@ -117,7 +124,7 @@ METHOD Create( oWindow )
 
    ::oBrowse:bRClicked        := {| nRow, nCol, nFlags | ::RButtonDown( nRow, nCol, nFlags ) }
 
-   ::oBrowse:setRowSet( ::getModel() )
+   ::oBrowse:setRowSet( ::getRowSet() )
 
    ::oBrowse:setName( ::getName() )
 
@@ -170,7 +177,7 @@ METHOD addColumn( cColumn, hColumn )
       if hhaskey( hColumn, "method" ) 
          :bEditValue       := ::getModel():getMethod( hColumn[ "method" ] )
       else 
-         :bEditValue       := ::getModel():getEditValue( cColumn ) 
+         :bEditValue       := {|| ::getRowSet():fieldGet( ::getModel():getEditValue( cColumn ) ) }
          :bLClickHeader    := {| nMRow, nMCol, nFlags, oColumn | ::onClickHeader( oColumn ) }
       end if 
 
@@ -198,18 +205,20 @@ METHOD onClickHeader( oColumn )
    oComboBox      := ::getComboBoxOrder()
 
    if empty( oComboBox )
-      RETURN ( Self )
+
+      ::getController():changeModelOrderAndOrientation( oColumn:cSortOrder, oColumn:cOrder )
+
+      ::getBrowse():selectColumnOrder( oColumn )
+
+      ::getBrowse():refreshCurrent()
+
+   else
+
+      if ascan( oCombobox:aItems, oColumn:cHeader ) != 0
+         oComboBox:Set( oColumn:cHeader )
+      end if
+
    end if 
-
-   if empty( oColumn )
-      RETURN ( Self )
-   end if 
-
-   if ascan( oCombobox:aItems, oColumn:cHeader ) == 0
-      RETURN ( Self )
-   end if
-
-   oComboBox:Set( oColumn:cHeader )
    
 RETURN ( ::oSender:onChangeCombo() )
 
@@ -220,27 +229,10 @@ METHOD onKeyChar( nKey )
 RETURN ( heval( ::oSender:oMenuTreeView:hFastKey, {|k,v| msgalert( nKey, "nKey" ), if( k == nKey, eval( v ), ) } ) ) 
    
 //----------------------------------------------------------------------------//
-//----------------------------------------------------------------------------//
-//----------------------------------------------------------------------------//
-//----------------------------------------------------------------------------//
-//----------------------------------------------------------------------------//
-//----------------------------------------------------------------------------//
-//----------------------------------------------------------------------------//
-//----------------------------------------------------------------------------//
 
-CLASS SQLBrowseViewDialog FROM SQLBrowseView
+METHOD ActivateDialog( id, oDialog )
 
-   METHOD Activate()
-
-   METHOD onClickHeader( oColumn ) 
-
-ENDCLASS
-
-//----------------------------------------------------------------------------//
-
-METHOD Activate( id, oWindow ) CLASS SQLBrowseViewDialog
-
-   ::Create( oWindow )
+   ::Create( oDialog )
 
    ::GenerateColumns()
 
@@ -250,38 +242,7 @@ RETURN ( Self )
 
 //----------------------------------------------------------------------------//
 
-METHOD onClickHeader( oColumn ) 
-
-   ::getController():changeModelOrderAndOrientation( oColumn:cSortOrder, oColumn:cOrder )
-
-   ::getBrowse():selectColumnOrder( oColumn )
-
-   ::getBrowse():refreshCurrent()
-   
-RETURN ( Self )
-
-//----------------------------------------------------------------------------//
-//----------------------------------------------------------------------------//
-//----------------------------------------------------------------------------//
-//----------------------------------------------------------------------------//
-//----------------------------------------------------------------------------//
-//----------------------------------------------------------------------------//
-//----------------------------------------------------------------------------//
-//----------------------------------------------------------------------------//
-//----------------------------------------------------------------------------//
-//----------------------------------------------------------------------------//
-
-CLASS SQLBrowseViewMDI FROM SQLBrowseView
-
-   METHOD Activate()
-
-   METHOD setSize( nTop, nLeft, nRight, nBottom )
-
-ENDCLASS
-
-//----------------------------------------------------------------------------//
-
-METHOD Activate( nTop, nLeft, nRight, nBottom ) CLASS SQLBrowseViewMDI
+METHOD ActivateMDI( nTop, nLeft, nRight, nBottom )
 
    ::Create()
 
@@ -295,7 +256,7 @@ RETURN ( Self )
 
 //----------------------------------------------------------------------------//
 
-METHOD setSize( nTop, nLeft, nRight, nBottom ) CLASS SQLBrowseViewMDI
+METHOD setSize( nTop, nLeft, nRight, nBottom ) 
 
    ::oBrowse:nStyle     := nOr( WS_CHILD, WS_VISIBLE, WS_TABSTOP )
 
@@ -307,3 +268,4 @@ METHOD setSize( nTop, nLeft, nRight, nBottom ) CLASS SQLBrowseViewMDI
 RETURN ( self )
 
 //---------------------------------------------------------------------------//
+
