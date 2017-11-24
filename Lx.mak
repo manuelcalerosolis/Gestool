@@ -1,23 +1,23 @@
 HB                   =  \harbour_bcc582\
 
 HBINCLUDE            =  \harbour_bcc582\Include
-FWINCLUDE            =  \Fwh1701\Include
+FWINCLUDE            =  \fwh1705\Include
 GTINCLUDE            =  .\Include
 
 HBLIB                =  \harbour_bcc582\Lib
-FWLIB                =  \Fwh1701\lib
+FWLIB                =  \fwh1705\lib
 
 RESOURCE             =  .\Resource
 
-BORLAND              =  \Bcc582
-BORLANDLIB           =  \Bcc582\lib
+BORLAND              =  \bcc582
+BORLANDLIB           =  \bcc582\lib
 
 IMG2PDFLIB           =  \Img2Pdf
 
-OBJ                  =  Obj1701
-SOURCEPRG            =  .\Prg;.\Prg\mail;.\Prg\Comercio;.\Prg\Repositories;.\Prg\Models;.\Prg\Controllers;.\Prg\Services;.\Prg\Tablet;.\Prg\tablet\view;.\Prg\tablet\view\documentos;.\Prg\tablet\view\terceros;.\Prg\tablet\view\documentos\ventas;.\Prg\tablet\view\documentos\terceros;.\Prg\tablet\utils;.\Prg\tablet\presenter;.\Prg\tablet\presenter\terceros;.\Prg\tablet\presenter\documentos;.\Prg\tablet\presenter\documentos\ventas;
+OBJ                  =  obj1705
+SOURCEPRG            = 	.\Prg;.\Prg\mail;.\Prg\Comercio;.\Prg\Models;.\Prg\Seeders;.\Prg\Views;.\Prg\Controllers;.\Prg\Validators;.\Prg\Repositories;.\Prg\Services;.\Prg\Reports;.\Prg\Tablet;.\Prg\tablet\view;.\Prg\tablet\view\documentos;.\Prg\tablet\view\terceros;.\Prg\tablet\view\documentos\ventas;.\Prg\tablet\view\documentos\terceros;.\Prg\tablet\utils;.\Prg\tablet\presenter;.\Prg\tablet\presenter\terceros;.\Prg\tablet\presenter\documentos;.\Prg\tablet\presenter\documentos\ventas;
 SOURCEC              =  C
-PPO                  =  Ppo1701
+PPO                  =  ppo1705
 
 EXE                  =  Bin\RptApolo.exe
 
@@ -338,7 +338,6 @@ XComGVta.prg            \
 XTotArt.prg             \
 XValAlm.prg             \
 XValAlmG.prg            \
-TInfEsp.prg             \
 SalaVta.prg             \
 TStockMinimoGrupo.prg   \
 TInfRVta.prg            \
@@ -1058,7 +1057,20 @@ UsuariosModel.prg                   \
 ConfiguracionEmpresasModel.prg      \  
 EmpresasModel.prg                   \
 BaseModel.prg                       \
-SqlBaseModel.prg 
+SqlBaseModel.prg  						\
+Seeders.prg    							\
+SqlMigrations.prg 						\
+SQLMovimientosAlmacenModel.prg 			\
+SQLMovimientosAlmacenLineasModel.prg 	\
+SQLNumerosSeriesModel.prg 					\
+SQLFiltrosModel.prg 							\
+SQLExportableModel.prg 						\
+MovimientosAlmacenLabel.prg				\
+MovimientosAlmacenReport.prg 				\
+SQLBaseReport.prg 							\
+MovimientosAlmacenRepository.prg			\
+MovimientosAlmacenLineasRepository.prg	\
+SQLBaseRepository.prg 						\
 
 C               =       \
 Metafi32.c              \
@@ -1385,7 +1397,6 @@ XComGVta.obj            \
 XTotArt.obj             \
 XValAlm.obj             \
 XValAlmG.obj            \
-TInfEsp.obj             \
 SalaVta.obj             \
 TStockMinimoGrupo.obj   \
 TInfRVta.obj            \
@@ -2107,7 +2118,20 @@ UsuariosModel.obj                   \
 ConfiguracionEmpresasModel.obj      \  
 EmpresasModel.obj                   \
 BaseModel.obj                       \
-SqlBaseModel.obj                    \ 
+SqlBaseModel.obj                    \
+Seeders.obj    							\
+SqlMigrations.obj 						\ 
+SQLMovimientosAlmacenModel.obj 			\
+SQLMovimientosAlmacenLineasModel.obj 	\
+SQLNumerosSeriesModel.obj 					\
+SQLFiltrosModel.obj 							\
+SQLExportableModel.obj 						\
+MovimientosAlmacenLabel.obj 				\
+MovimientosAlmacenReport.obj 				\
+SQLBaseReport.obj 							\
+MovimientosAlmacenRepository.obj			\
+MovimientosAlmacenLineasRepository.obj	\
+SQLBaseRepository.obj 						\
 
 .PRG.OBJ:
    $(HB)\Bin\Harbour $< /n /p$(PPO)\$&.ppo /w /es2 /i$(FWINCLUDE) /i$(HBINCLUDE) /i$(GTINCLUDE) /o$(OBJ)\$&.c
@@ -2441,7 +2465,6 @@ $(OBJ)\XComGVta.obj             +
 $(OBJ)\XTotArt.obj              +
 $(OBJ)\XValAlm.obj              +
 $(OBJ)\XValAlmG.obj             +
-$(OBJ)\TInfEsp.obj              +
 $(OBJ)\SalaVta.obj              +
 $(OBJ)\TStockMinimoGrupo.obj    +
 $(OBJ)\TInfRVta.obj             +
@@ -3156,11 +3179,24 @@ $(OBJ)\Categoria.obj                       +
 $(OBJ)\MovimientosAlmacenesLineasModel.obj +
 $(OBJ)\DelegacionesModel.obj               +
 $(OBJ)\UsuariosModel.obj                   +
-$(OBJ)\ConfiguracionEmpresasModel.obj      +  
+$(OBJ)\ConfiguracionEmpresasModel.obj      +
 $(OBJ)\EmpresasModel.obj                   +
 $(OBJ)\BaseModel.obj                       +
 $(OBJ)\SqlBaseModel.obj                    +
-$(OBJ)\EstadoSat.obj             
+$(OBJ)\Seeders.obj    							 +
+$(OBJ)\SqlMigrations.obj 						 +
+$(OBJ)\SQLMovimientosAlmacenModel.obj 		 		+
+$(OBJ)\SQLMovimientosAlmacenLineasModel.obj 		+
+$(OBJ)\SQLNumerosSeriesModel.obj 					+
+$(OBJ)\SQLFiltrosModel.obj 							+
+$(OBJ)\SQLExportableModel.obj 						+
+$(OBJ)\MovimientosAlmacenLabel.obj 					+
+$(OBJ)\MovimientosAlmacenReport.obj 				+
+$(OBJ)\MovimientosAlmacenRepository.obj			+
+$(OBJ)\MovimientosAlmacenLineasRepository.obj 	+
+$(OBJ)\SQLBaseReport.obj 								+
+$(OBJ)\SQLBaseRepository.obj 							+
+$(OBJ)\EstadoSat.obj
 $<,$*
 $(FWLIB)\FiveH.lib               +
 $(FWLIB)\FiveHC.lib              +

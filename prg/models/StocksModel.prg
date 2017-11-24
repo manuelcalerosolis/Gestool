@@ -55,8 +55,8 @@ METHOD getTotalUnidadesStockSalidas( cCodigoArticulo, dConsolidacion, tConsolida
    local cStm  
    local cSql  := "SELECT SUM( totalUnidadesStock ) as [totalUnidadesStock]"
    cSql        += "FROM ( "
-   //cSql        += MovimientosAlmacenesLineasModel():getSQLSentenceTotalUnidadesSalidasStock( cCodigoArticulo, dConsolidacion, tConsolidacion, cCodigoAlmacen, cValorPropiedad1, cValorPropiedad2, cLote )
-   //cSql        += "UNION "
+   cSql        += MovimientosAlmacenesLineasModel():getSQLSentenceTotalUnidadesSalidasStock( cCodigoArticulo, dConsolidacion, tConsolidacion, cCodigoAlmacen, cValorPropiedad1, cValorPropiedad2, cLote )
+   cSql        += "UNION "
    cSql        += AlbaranesClientesLineasModel():getSQLSentenceTotalUnidadesStock( cCodigoArticulo, dConsolidacion, tConsolidacion, cCodigoAlmacen, cValorPropiedad1, cValorPropiedad2, cLote )
    cSql        += "UNION "
    cSql        += FacturasClientesLineasModel():getSQLSentenceTotalUnidadesStock( cCodigoArticulo, dConsolidacion, tConsolidacion, cCodigoAlmacen, cValorPropiedad1, cValorPropiedad2, cLote )
@@ -81,8 +81,8 @@ METHOD getTotalUnidadesStockEntradas( cCodigoArticulo, dConsolidacion, tConsolid
    local cStm  
    local cSql  := "SELECT SUM( totalUnidadesStock ) as [totalUnidadesStock]"
    cSql        += "FROM ( "
-   //cSql        += MovimientosAlmacenesLineasModel():getSQLSentenceTotalUnidadesEntradasStock( cCodigoArticulo, dConsolidacion, tConsolidacion, cCodigoAlmacen, cValorPropiedad1, cValorPropiedad2, cLote )
-   //cSql        += "UNION "
+   cSql        += MovimientosAlmacenesLineasModel():getSQLSentenceTotalUnidadesEntradasStock( cCodigoArticulo, dConsolidacion, tConsolidacion, cCodigoAlmacen, cValorPropiedad1, cValorPropiedad2, cLote )
+   cSql        += "UNION "
    cSql        += MaterialesProducidosLineasModel():getSQLSentenceTotalUnidadesStock( cCodigoArticulo, dConsolidacion, tConsolidacion, cCodigoAlmacen, cValorPropiedad1, cValorPropiedad2, cLote )
    cSql        += "UNION "
    cSql        += AlbaranesProveedoresLineasModel():getSQLSentenceTotalUnidadesStock( cCodigoArticulo, dConsolidacion, tConsolidacion, cCodigoAlmacen, cValorPropiedad1, cValorPropiedad2, cLote )
