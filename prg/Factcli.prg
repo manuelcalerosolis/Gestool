@@ -13252,7 +13252,7 @@ STATIC FUNCTION SaveDeta( aTmp, aTmpFac, aGet, oBrw, oDlg, oFld, oSayPr1, oSayPr
          do case
             case oStkAct:VarGet() - nTotUnd < 0
 
-               if oUser():lNotAllowSales( aTmp[ _LNOTVTA ] )
+               if aTmp[ _LNOTVTA ]
                   MsgStop( "No hay stock suficiente, tenemos " + Alltrim( Trans( oStkAct:VarGet(), MasUnd() ) ) + " unidad(es) disponible(s)," + CRLF + "en Almacén " + aTmp[ _CALMLIN ] + "." )
                   return nil
                end if

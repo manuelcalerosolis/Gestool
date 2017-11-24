@@ -4863,7 +4863,7 @@ STATIC FUNCTION SaveDeta( aTmp, aTmpFac, aGet, oFld, oBrw, oDlg, oSayPr1, oSayPr
 
       nTotUnd     := nTotNFacRec( aTmp ) - nTotNFacRec( dbfTmpLin )
 
-      if oUser():lNotAllowSales( nTotUnd != 0 .and. ( nStkAct - nTotUnd ) < 0 )
+      if ( nTotUnd != 0 .and. ( nStkAct - nTotUnd ) < 0 )
          MsgStop( "No hay stock suficiente." )
          return nil
       end if
