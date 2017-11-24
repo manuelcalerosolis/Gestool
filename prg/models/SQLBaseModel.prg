@@ -25,7 +25,7 @@ CLASS SQLBaseModel
 
    DATA cColumnOrientation
 
-   DATA cGeneralSelect                                 
+   DATA cGeneralSelect                                                              
 
    DATA cGeneralWhere
 
@@ -75,6 +75,7 @@ CLASS SQLBaseModel
    METHOD getAlterTableSentences()
    
    METHOD getGeneralSelect()
+   METHOD getIdSelect( id )
    METHOD getSelectSentence()
    
    METHOD getInsertSentence()
@@ -122,7 +123,6 @@ CLASS SQLBaseModel
    METHOD buildRowSet( cSentence )                    
    METHOD buildRowSetAndFind( idToFind )              INLINE ( ::buildRowSet(), ::findInRowSet( idToFind ) )
 
-   METHOD findInRowSet()          
    METHOD getRowSet()                                 INLINE ( if( empty( ::oRowSet ), ::buildRowSet(), ), ::oRowSet )
    METHOD freeRowSet()                                INLINE ( if( !empty( ::oRowSet ), ( ::oRowSet:free(), ::oRowSet := nil ), ) )
    METHOD freeStatement()                             INLINE ( if( !empty( ::oStatement ), ( ::oStatement:free(), ::oStatement := nil ), ) )
@@ -138,7 +138,9 @@ CLASS SQLBaseModel
    // Busquedas----------------------------------------------------------------
 
    METHOD setFind( cFind )                            INLINE ( ::cFind := cFind )
-   METHOD find( cFind )
+   METHOD findInRowSet()  
+   METHOD findById( nId )
+   METHOD findAndBuildRowSet()        
    
    // Busquedas----------------------------------------------------------------
 
@@ -161,6 +163,8 @@ CLASS SQLBaseModel
    METHOD fireEvent( cEvent )                         INLINE ( if( !empty( ::oEvents ), ::oEvents:fire( cEvent ), ) )
 
    METHOD getEmpresaColumns()
+
+   METHOD getDeleteSentenceByColumnKey( nId )
 
 END CLASS
 
@@ -237,6 +241,16 @@ METHOD getGeneralSelect()
    cSQLSelect              := ::addEmpresaWhere( cSQLSelect )
 
    cSQLSelect              := ::addFilterWhere( cSQLSelect )
+
+RETURN ( cSQLSelect )
+
+//---------------------------------------------------------------------------//
+
+METHOD getIdSelect( id )
+
+   local cSQLSelect        := ::cGeneralSelect + space( 1 )
+
+   cSQLSelect              += "WHERE id = " + toSQLString( id )
 
 RETURN ( cSQLSelect )
 
@@ -379,6 +393,14 @@ RETURN ( "DROP TABLE " + ::cTableName )
 
 //---------------------------------------------------------------------------//
 
+METHOD findById( id )
+
+   local cSentence   := ::getIdSelect( id )
+
+RETURN ( atail( ::getDatabase():selectFetchHash( cSentence ) ) )
+
+//---------------------------------------------------------------------------//
+
 METHOD buildRowSet( cSentence )
 
    DEFAULT cSentence    := ::getSelectSentence()
@@ -500,6 +522,15 @@ RETURN ( cSQLDelete )
 
 //---------------------------------------------------------------------------//
 
+METHOD getDeleteSentenceByColumnKey( nId )
+
+   local cSQLDelete  := "DELETE FROM " + ::cTableName + space( 1 ) + ;
+                           "WHERE " + ::cColumnKey + " = " + toSQLString( nId ) 
+
+RETURN ( cSQLDelete )
+
+//---------------------------------------------------------------------------//
+
 METHOD getValueField( cColumn, uValue )
 
    local bValue
@@ -553,7 +584,7 @@ RETURN ( {|| Self:&( cMethod ) } )
 METHOD convertRecnoToId( aRecno, cColumnKey )
 
    local nRecno
-   local aId         := {}
+   local aId            := {}
 
    DEFAULT cColumnKey   := ::cColumnKey
 
@@ -566,7 +597,7 @@ RETURN ( aId )
 
 //---------------------------------------------------------------------------//
 
-METHOD find( uFind, cColumn )
+METHOD findAndBuildRowSet( uFind, cColumn )
 
    ::setFind( uFind )
 
@@ -600,19 +631,23 @@ RETURN ( ::hBuffer )
 
 //---------------------------------------------------------------------------//
 
-METHOD loadCurrentBuffer()                
-
-   if empty( ::oRowSet )
-      RETURN ( .f. )
-   end if 
-
-   ::fireEvent( 'loadingcurrentbuffer' )
+METHOD loadCurrentBuffer( id )                
 
    ::hBuffer            := {=>}
 
-   hEval( ::getTableColumns(), {|k| hset( ::hBuffer, k, ::oRowSet:fieldget( k ) ) } )
+   ::fireEvent( 'loadingcurrentbuffer' )
+
+   if empty( id )
+      if !empty( ::oRowSet )
+         hEval( ::getTableColumns(), {|k| hset( ::hBuffer, k, ::oRowSet:fieldget( k ) ) } )
+      end if
+   else
+      ::hBuffer         := ::findById( id )
+   end if  
 
    ::fireEvent( 'loadedcurrentbuffer' )
+
+   msgalert( hb_valtoexp( ::hBuffer ) )
 
 RETURN ( ::hBuffer )
 

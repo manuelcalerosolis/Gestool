@@ -277,6 +277,8 @@ RETURN ( .t. )
 
 FUNCTION Test()
 
+   // msgalert( hb_valtoexp( SQLFiltrosModel():New():findById( 18 ) ), "findById" )
+
 RETURN NIL 
 
 //---------------------------------------------------------------------------//

@@ -24,6 +24,7 @@ CLASS SQLFiltrosController FROM SQLBaseController
 
    METHOD getFilters()
    METHOD getFilterSentence( cFilter ) 
+   METHOD getFilterId( cFilter )
 
 END CLASS
 
@@ -67,19 +68,21 @@ RETURN ( ::oModel:getFilters( ::getTableName() ) )
 
 METHOD getFilterSentence( cFilter )
 
-   local aSentence
+   if empty( ::getTableName() )
+      RETURN ( "" )
+   end if 
+
+RETURN ( ::oModel:getFilterSentence( cFilter, ::getTableName() ) )
+
+//---------------------------------------------------------------------------//
+
+METHOD getFilterId( cFilter )
 
    if empty( ::getTableName() )
       RETURN ( "" )
    end if 
 
-   aSentence   := ::oModel:getFilterSentence( cFilter, ::getTableName() )
-
-   if empty( aSentence )
-      RETURN ( "" )    
-   end if 
-
-RETURN ( atail( aSentence ) )
+RETURN ( ::oModel:getFilterId( cFilter, ::getTableName() ) )
 
 //---------------------------------------------------------------------------//
 

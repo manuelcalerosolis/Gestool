@@ -9,8 +9,6 @@ CLASS SQLNavigatorController FROM SQLBaseController
 
    DATA oNavigatorView
 
-   DATA oDialogView
-
    DATA oFilterController 
 
    DATA lDocuments                                    INIT .f.
@@ -22,6 +20,8 @@ CLASS SQLNavigatorController FROM SQLBaseController
    DATA hFastKey                                      INIT {=>}
 
    DATA oWindowsBar
+
+   DATA oRowSet
  
    METHOD New()
 
@@ -39,11 +39,13 @@ CLASS SQLNavigatorController FROM SQLBaseController
 
    METHOD onKeyChar( nKey )
 
-   METHOD appendFilter()                              INLINE ( iif(  !empty( ::oFilterController ),;
-                                                                     ::oFilterController:Append(), ) )           
+   METHOD appendFilter()                              
 
-   METHOD getFilters()                                INLINE ( iif(  !empty( ::oFilterController ),;
-                                                                     ::oFilterController:getFilters(), ) ) 
+   METHOD editFilter()                                
+
+   METHOD deleteFilter()                                
+
+   METHOD getFilters()                                INLINE ( if( !empty( ::oFilterController ), ::oFilterController:getFilters(), ) ) 
 
    METHOD setFilter()                                                                                                       
 
@@ -79,6 +81,8 @@ METHOD New( oSenderController )
 
    ::oFilterController                                := SQLFiltrosController():New( self ) 
 
+   ::oRowSet                                          := SQLRowSet():New( self )
+
    ::oWindowsBar                                      := oWndBar()
 
    if !empty( ::oModel )
@@ -104,7 +108,7 @@ METHOD ActivateNavigatorView()
       SysRefresh(); oWnd():CloseAll(); SysRefresh()
    end if
 
-   ::oModel:buildRowSet()
+   ::oRowSet:build( ::oModel:getSelectSentence() )
 
    ::oNavigatorView:Activate()
 
@@ -194,6 +198,57 @@ RETURN ( Self )
     
 //---------------------------------------------------------------------------//
 
+METHOD appendFilter()
+
+   if empty( ::oFilterController )
+      RETURN ( Self )    
+   end if 
+
+   ::oFilterController:Append()
+
+RETURN ( Self )    
+    
+//---------------------------------------------------------------------------//
+
+METHOD editFilter()  
+
+   local nId 
+   local cFilter 
+
+   if empty( ::oFilterController )
+      RETURN ( Self )    
+   end if 
+
+   cFilter        := ::oWindowsBar:GetComboFilter()
+
+   if empty( cFilter )
+      RETURN ( Self )    
+   end if 
+
+   nId            := ::oFilterController:getFilterId( cFilter )
+
+   msgalert( nId, "nId" )
+
+   ::oFilterController:Edit( nId )
+
+   msgalert( "editFilter")
+
+RETURN ( Self )    
+    
+//---------------------------------------------------------------------------//
+    
+METHOD deleteFilter()                                
+
+   if empty( ::oFilterController )
+      RETURN ( Self )    
+   end if 
+
+   msgalert( "deleteFilter")
+
+RETURN ( Self )    
+    
+//---------------------------------------------------------------------------//
+
 METHOD setFilter()         
 
    local cFilter  := ::oWindowsBar:GetComboFilter()
@@ -240,6 +295,10 @@ METHOD EnableWindowsBar()
 
    ::oWindowsBar:setActionAddButtonFilter( {|| ::appendFilter() } )
 
+   ::oWindowsBar:setActionEditButtonFilter( {|| ::editFilter() } )
+
+   ::oWindowsBar:setActionDeleteButtonFilter( {|| ::deleteFilter() } )
+
    ::oNavigatorView:getBrowse():selectColumnOrderByHeader( ::getModelHeaderFromColumnOrder() )
 
    ::oNavigatorView:Refresh()
@@ -268,6 +327,8 @@ RETURN ( Self )
 
 METHOD hideEditAndDeleteButtonFilter()
 
+   ::oWindowsBar:HideCleanButtonFilter()
+
    ::oWindowsBar:HideEditButtonFilter()
 
    ::oWindowsBar:HideDeleteButtonFilter()
@@ -277,6 +338,8 @@ RETURN ( Self )
 //----------------------------------------------------------------------------//
 
 METHOD showEditAndDeleteButtonFilter()
+
+   ::oWindowsBar:ShowCleanButtonFilter()
 
    ::oWindowsBar:ShowEditButtonFilter()
 

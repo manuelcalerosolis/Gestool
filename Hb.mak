@@ -615,6 +615,7 @@ SQLNumerosSeriesModel.prg 													\
 NumerosSeriesController.prg 								  				\
 NumerosSeriesView.prg 														\
 SQLExportableModel.prg 														\
+SQLRowSet.prg 																	\
 
 C               =       	            								\
 Img2pdf.c               	            								\
@@ -1201,6 +1202,7 @@ SQLNumerosSeriesModel.obj 													\
 NumerosSeriesController.obj 												\
 NumerosSeriesView.obj 														\
 SQLExportableModel.obj 														\
+SQLRowSet.obj 																	\
 
 .PRG.OBJ:
   	$(HB)\Bin\Harbour $? /n /p$(PPO)\$&.ppo /w /es2 /i$(FWINCLUDE) /gc0 /i$(HBINCLUDE) /i$(GTINCLUDE) /o$(OBJ)\$&.c
@@ -1774,6 +1776,7 @@ $(OBJ)\SqlMigrations.obj 													+
 $(OBJ)\SQLNumerosSeriesModel.obj 										+
 $(OBJ)\NumerosSeriesController.obj 										+
 $(OBJ)\NumerosSeriesView.obj 												+
+$(OBJ)\SQLRowSet.obj 														+
 $(OBJ)\SQLExportableModel.obj 											+
 $(OBJ)\Events.obj              		
 $<,$*
