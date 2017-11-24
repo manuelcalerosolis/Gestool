@@ -38,14 +38,18 @@ METHOD Fire( cEvent )
 
    local lEvent   := .t.
 
+   if empty( ::hEvents )
+      RETURN ( .t. )
+   end if 
+
    cEvent         := lower( cEvent )
 
    if !hhaskey( ::hEvents, cEvent )
-      RETURN ( lEvent )
+      RETURN ( .t. )
    end if 
 
    if !hb_isblock( hget( ::hEvents, cEvent ) )
-      RETURN ( lEvent )
+      RETURN ( .t. )
    end if 
 
    lEvent         := eval( hget( ::hEvents, cEvent ) )

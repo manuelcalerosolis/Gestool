@@ -52,7 +52,6 @@ CLASS SQLBaseController
    METHOD setModelBufferPadr( cColumn, uValue )       INLINE ( if( !empty( ::oModel ), ::oModel:setBufferPadr( cColumn, uValue ), ) )
 
    METHOD getModelBufferColumnKey()                   INLINE ( ::getModelBuffer( ( ::oModel:cColumnKey ) ) )
-
    METHOD getModelSelectValue( cSentence )            INLINE ( if( !empty( ::oModel ), ::oModel:SelectValue( cSentence ), ) )
 
    METHOD endModel()                                  INLINE ( if( !empty( ::oModel ), ::oModel:end(), ) )
@@ -295,7 +294,7 @@ METHOD Duplicate()
       RETURN ( .f. )
    end if 
 
-   if !( ::fireEvent( 'duplicating' ) )
+   if isFalse( ::fireEvent( 'duplicating' ) )
       RETURN ( .f. )
    end if
 
@@ -337,7 +336,7 @@ RETURN ( lDuplicate )
 
 //----------------------------------------------------------------------------//
 
-METHOD Edit() 
+METHOD Edit( id ) 
 
    local lEdit    := .t. 
 
@@ -346,7 +345,9 @@ METHOD Edit()
       RETURN ( .f. )
    end if 
 
-   if !( ::fireEvent( 'editing' ) )
+   DEFAULT id     := ::getIdFromRowSet()
+
+   if isFalse( ::fireEvent( 'editing' ) )
       RETURN ( .f. )
    end if
 
@@ -354,9 +355,9 @@ METHOD Edit()
 
    ::beginTransactionalMode()
 
-   ::oModel:setIdToFind( ::getIdFromRowSet() )
+   // ::oModel:setIdToFind( id )
 
-   ::oModel:loadCurrentBuffer() 
+   ::oModel:loadCurrentBuffer( id ) 
 
    ::fireEvent( 'openingDialog' )
 

@@ -276,7 +276,7 @@ CLASS TShell FROM TMdiChild
 
    METHOD getComboFilter()                   
 
-   METHOD SetActionDeleteFilter( bBlock )            INLINE ( if( !empty( ::oWndBar ), ::oWndBar:SetActionDeleteFilter( bBlock ), ) )
+   METHOD SetActionDeleteButtonFilter( bBlock )            INLINE ( if( !empty( ::oWndBar ), ::oWndBar:SetActionDeleteButtonFilter( bBlock ), ) )
 
    METHOD addImageList( cImage )
 
@@ -1844,7 +1844,7 @@ METHOD addSeaBar( cSearchType, nLenSearchType ) CLASS TShell
 
       ::oWndBar:SetActionAddButtonFilter(    {|| ::AddFilter() } )
       ::oWndBar:SetActionEditButtonFilter(   {|| ::EditFilter() } )
-      ::oWndBar:SetActionDeleteFilter(               {|| ::KillFilter() } )
+      ::oWndBar:SetActionDeleteButtonFilter(               {|| ::KillFilter() } )
 
       ::oWndBar:SetGetKeyUp(           {|| ::fastSeek( ::oWndBar:oGet, ::oWndBar:oGet:oGet:buffer() ) } ) 
       ::oWndBar:SetGetKeyDown(         {| nKey, nFlags | ::KeySearch( nKey ) } )
@@ -1923,7 +1923,7 @@ METHOD lPressCol( nCol ) CLASS TShell
       nPos        := aScan( ::aPrompt, cHeader )
       if nPos     != 0
 
-         ::oWndBar:SetComboBoxSet( cHeader )
+         ::oWndBar:SetComboBoxItem( cHeader )
 
          if ( ::xAlias )->( used() )
             ( ::xAlias )->( ordsetfocus( ::oWndBar:GetComboBoxAt() ) )
@@ -1945,7 +1945,7 @@ METHOD ClickOnHeader( oCol ) CLASS TShell
 
    if !empty( oCol )
       if aScan( ::aPrompt, oCol:cHeader ) != 0
-         ::oWndBar:SetComboBoxSet( oCol:cHeader )
+         ::oWndBar:SetComboBoxItem( oCol:cHeader )
       end if
    end if
 
