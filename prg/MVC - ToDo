@@ -1,9 +1,12 @@
 MVC - ToDo
 
 - Filtros
-   * Al quitar el filtro montar la sentencia original
-   * Modificar filtro
+   * Al quitar el filtro montar la sentencia original (done)
+   * Modificar filtro (done)
+   * Al modificar el filtro, establecer el nuevo y aplicar el cambio
    * Eliminar filtro
+
+- Rowset debe de ser manejado por el controller, debe desaparecer del modelo. 
 
 - Hacer un controller menos cargado, y una primera capa de herencia, para navegacion (done)
 

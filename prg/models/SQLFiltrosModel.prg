@@ -12,7 +12,11 @@ CLASS SQLFiltrosModel FROM SQLBaseModel
 
    METHOD getFilters( cTabla )
 
-   METHOD getFilterSentence( cNombre, cTabla )
+   METHOD getFilterField( cField, cNombre, cTabla )   
+
+   METHOD getFilterSentence( cNombre, cTabla )        INLINE ( ::getFilterField( 'filtro', cNombre, cTabla ) )
+
+   METHOD getFilterId( cNombre, cTabla )              INLINE ( ::getFilterField( 'id', cNombre, cTabla ) )
 
 END CLASS
 
@@ -56,15 +60,18 @@ RETURN ( aFilters )
 
 //---------------------------------------------------------------------------//
 
-METHOD getFilterSentence( cNombre, cTabla )
+METHOD getFilterField( cField, cNombre, cTabla )
 
-   local aFilters    := {}
-   local cSentence   := "SELECT filtro FROM " + ::getTableName()  + space( 1 ) + ;
-                           "WHERE tabla = " + quoted( cTabla )    + space( 1 ) + ;
-                              "AND nombre = " + quoted( cNombre ) 
+   local aFields     := {}
+   local cSentence   := "SELECT " + cField + " FROM " + ::getTableName()   + space( 1 ) + ;
+                           "WHERE tabla = " + quoted( cTabla )             + space( 1 ) + ;
+                              "AND nombre = " + quoted( cNombre )          + space( 1 ) + ;
+                           "LIMIT 1"
 
-   aFilters          := ::getDatabase():selectFetchArrayOneColumn( cSentence )
+   aFields           := ::getDatabase():selectFetchArrayOneColumn( cSentence )
 
-RETURN ( aFilters )   
+RETURN ( atail( aFields ) )
 
 //---------------------------------------------------------------------------//
+
+

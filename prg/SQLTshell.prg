@@ -111,7 +111,8 @@ METHOD selectColumnOrder( oCol )
 
    ::oBrw:selectColumnOrder( oCol )
 
-   ::oWndBar:setComboBoxSet( oCol:cHeader )   
+   ::oWndBar:   ::oWindowsBar:HideCleanButtonFilter()
+setComboboxItem( oCol:cHeader )   
 
 Return ( Self )
 
