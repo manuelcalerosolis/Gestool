@@ -1436,7 +1436,6 @@ RETURN self
 
 METHOD nSQLStockActual( cCodArt, cCodAlm, cValPr1, cValPr2, cLote ) CLASS TStock
 
-   local seconds
    local nSQLStockActual         := 0
    local tHoraConsolidacion
    local dFechaConsolidacion
@@ -1457,11 +1456,9 @@ METHOD nSQLStockActual( cCodArt, cCodAlm, cValPr1, cValPr2, cLote ) CLASS TStock
 
       // Obtenermos el dato de la consolidacion--------------------------------
 
-      //hFechaHoraConsolidacion    := MovimientosAlmacenesLineasModel():getFechaHoraConsolidacion( cCodArt, cCodAlm, cValPr1, cValPr2, cLote )
+      hFechaHoraConsolidacion    := MovimientosAlmacenesLineasModel():getFechaHoraConsolidacion( cCodArt, cCodAlm, cValPr1, cValPr2, cLote )
 
-      seconds := seconds()
-
-      hFechaHoraConsolidacion    := SQLMovimientosAlmacenLineasModel():getFechaHoraConsolidacion( cCodArt, cCodAlm, cValPr1, cValPr2, cLote )
+      //hFechaHoraConsolidacion    := SQLMovimientosAlmacenLineasModel():getFechaHoraConsolidacion( cCodArt, cCodAlm, cValPr1, cValPr2, cLote )
 
       if !empty( hFechaHoraConsolidacion )
          dFechaConsolidacion     := hGet( hFechaHoraConsolidacion, "fecha" )
@@ -1473,8 +1470,6 @@ METHOD nSQLStockActual( cCodArt, cCodAlm, cValPr1, cValPr2, cLote ) CLASS TStock
          tFechaHoraConsolidacion := nil
       end if 
 
-      msgalert( seconds() - seconds, "SQLMovimientosAlmacenLineasModel" )
-
       // Entradas--------------------------------------------------------------
 
       nSQLStockActual            += StocksModel():getTotalUnidadesStockEntradas( cCodArt, dFechaConsolidacion, tHoraConsolidacion, cCodAlm, cValPr1, cValPr2, cLote )
@@ -1485,9 +1480,7 @@ METHOD nSQLStockActual( cCodArt, cCodAlm, cValPr1, cValPr2, cLote ) CLASS TStock
 
       // Almacen
 
-      seconds := seconds()
-      nSQLStockActual            += SQLMovimientosAlmacenLineasModel():getTotalUnidadesStock( tFechaHoraConsolidacion, cCodArt, cCodAlm, cValPr1, cValPr2, cLote )
-      msgalert( seconds() - seconds, "SQLMovimientosAlmacenLineasModel():getTotalUnidadesStock" )
+      //nSQLStockActual            += SQLMovimientosAlmacenLineasModel():getTotalUnidadesStock( tFechaHoraConsolidacion, cCodArt, cCodAlm, cValPr1, cValPr2, cLote )
 
    next 
 

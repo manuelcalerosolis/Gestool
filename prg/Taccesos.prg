@@ -53,7 +53,7 @@ CLASS TAcceso
 
    DATA  aStruct           INIT  {  { "cCodUse",   "C",  3,  0, "" },;
                                     { "cOpcion",   "C", 20,  0, "" },;
-                                    { "lShow",     "L",  1,  0, "" } }
+                                    { "lShow",     "L",  1,  0, "" } }   
 
    DATA  nLittleButtons
 

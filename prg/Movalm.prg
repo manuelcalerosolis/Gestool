@@ -146,7 +146,7 @@ STATIC FUNCTION OpenFiles()
       SET ADSINDEX TO ( cPatArt() + "TBLPRO.CDX" ) ADDITIVE
 
       USE ( cPatAlm() + "ALMACEN.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "ALMACEN", @dbfAlmT ) )
-      SET ADSINDEX TO ( cPatAlm() + "ALMACEN.CDX" ) ADDITIVE
+      SET ADSINDEX TO ( cPatAlm() + "ALMACEN.CDX" ) ADDITIVE 
 
       USE ( cPatDat() + "TMOV.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "TMOV", @dbfTMov ) )
       SET ADSINDEX TO ( cPatDat() + "TMOV.CDX" ) ADDITIVE

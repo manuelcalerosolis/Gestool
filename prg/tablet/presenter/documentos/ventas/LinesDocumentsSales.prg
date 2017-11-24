@@ -263,6 +263,8 @@ RETURN ( self )
 
 METHOD setLineFromArticulo() CLASS LinesDocumentsSales
 
+   local nPrecioAnterior
+
    ::setCodigo( ( D():Articulos( ::getView() ) )->Codigo )
    
    ::setDetalle( ( D():Articulos( ::getView() ) )->Nombre )
@@ -322,7 +324,13 @@ METHOD setLineFromArticulo() CLASS LinesDocumentsSales
    ::setPrecioCosto( ( D():Articulos( ::getView() ) )->pCosto ) 
 
    ::setFechaVentaAnterior( dFechaUltimaVenta( ::hGetMaster( "Cliente" ), ( D():Articulos( ::getView() ) )->Codigo, D():AlbaranesClientesLineas( ::getView() ), D():FacturasClientesLineas( ::getView() ) ) ) 
-   ::setPrecioVentaAnterior( nPrecioUltimaVenta( ::hGetMaster( "Cliente" ), ( D():Articulos( ::getView() ) )->Codigo, D():AlbaranesClientesLineas( ::getView() ), D():FacturasClientesLineas( ::getView() ) ) ) 
+   nPrecioAnterior      := nPrecioUltimaVenta( ::hGetMaster( "Cliente" ), ( D():Articulos( ::getView() ) )->Codigo, D():AlbaranesClientesLineas( ::getView() ), D():FacturasClientesLineas( ::getView() ) )
+   ::setPrecioVentaAnterior( nPrecioAnterior ) 
+
+   
+   if ::hGetDetail( "PrecioVenta" ) == 0 .and. nPrecioAnterior != 0
+      ::setPrecioVenta( nPrecioAnterior )
+   end if
 
    if ( D():Articulos( ::getView() ) )->lLote
       

@@ -12,6 +12,7 @@ CLASS TInfEsp FROM TInfGen
    DATA  oDbfKit           AS OBJECT
    DATA  oDbfDiv           AS OBJECT
    DATA  oDbfIva           AS OBJECT
+   DATA  oDbfPrv           AS OBJECT
    DATA  oBrwArticulo      AS OBJECT
    DATA  oBrwFamilia       AS OBJECT
    DATA  oBrwSeleccion     AS OBJECT
@@ -91,6 +92,8 @@ METHOD Create()
    ::AddField( "pVenta6", "N", 15, 6, {|| ::cPicImp },       'Precio 6',       .f., 'Precio 6'              , 15, .f. )
    ::AddField( "pVtaIva6","N", 15, 6, {|| ::cPicImp },       'Precio " + cImp() + " 6',   .f., 'Precio " + cImp() + " 6'          , 15, .f. )
    ::AddField( "nNumArt", "N",  9, 0, {|| "@!" },            'Num.',           .f., 'Posición en el informe', 10, .f. )
+   ::AddField( "cCodPrv", "C", 12, 0, {|| "@!" },            'Prv.',           .f., 'Código proveedor'      , 14, .f. )
+   ::AddField( "cNomPrv", "C", 40, 0, {|| "@!" },            'Nom. Prv.',      .f., 'Nombre Proveedor'      , 20, .f. )
 
    ::AddTmpIndex ( "cCodFam", "cCodFam + cCodArt" )
    ::AddTmpIndex ( "cNomFam", "cNomFam + Str( nNumArt )" )
@@ -118,15 +121,17 @@ METHOD OpenFiles()
 
    BEGIN SEQUENCE
 
-   DATABASE NEW ::oDbfArt  PATH ( cPatArt() ) FILE "ARTICULO.DBF" VIA ( cDriver() ) SHARED INDEX "ARTICULO.CDX"
+   DATABASE NEW ::oDbfArt  PATH ( cPatArt() )   FILE "ARTICULO.DBF" VIA ( cDriver() ) SHARED INDEX "ARTICULO.CDX"
 
-   DATABASE NEW ::oDbfFam  PATH ( cPatArt() ) FILE "FAMILIAS.DBF" VIA ( cDriver() ) SHARED INDEX "FAMILIAS.CDX"
+   DATABASE NEW ::oDbfFam  PATH ( cPatArt() )   FILE "FAMILIAS.DBF" VIA ( cDriver() ) SHARED INDEX "FAMILIAS.CDX"
 
    DATABASE NEW ::oDbfKit  PATH ( cPatArt() )   FILE "ARTKIT.DBF"   VIA ( cDriver() ) SHARED INDEX "ARTKIT.CDX"
 
-   DATABASE NEW ::oDbfDiv PATH ( cPatDat() )  FILE "DIVISAS.DBF"  VIA ( cDriver() ) SHARED INDEX "DIVISAS.CDX"
+   DATABASE NEW ::oDbfDiv  PATH ( cPatDat() )   FILE "DIVISAS.DBF"  VIA ( cDriver() ) SHARED INDEX "DIVISAS.CDX"
 
-   DATABASE NEW ::oDbfIva PATH ( cPatDat() )  FILE "TIVA.DBF"     VIA ( cDriver() ) SHARED INDEX "TIVA.CDX"
+   DATABASE NEW ::oDbfIva  PATH ( cPatDat() )   FILE "TIVA.DBF"     VIA ( cDriver() ) SHARED INDEX "TIVA.CDX"
+
+   DATABASE NEW ::oDbfPrv  PATH ( cPatPrv() )   FILE "PROVEE.DBF"   VIA ( cDriver() ) SHARED INDEX "PROVEE.CDX"
 
    RECOVER
 
@@ -156,14 +161,18 @@ METHOD CloseFiles()
    if !Empty( ::oDbfDiv ) .and. ::oDbfDiv:Used()
       ::oDbfDiv:End()
    end if
-   if ! Empty( ::oDbfIva ) .and. ::oDbfIva:Used()
+   if !Empty( ::oDbfIva ) .and. ::oDbfIva:Used()
       ::oDbfIva:End()
+   end if
+   if !Empty( ::oDbfPrv ) .and. ::oDbfPrv:Used()
+      ::oDbfPrv:End()
    end if
 
    ::oDbfArt := nil
    ::oDbfFam := nil
    ::oDbfKit := nil
    ::oDbfDiv := nil
+   ::oDbfPrv := nil
 
 RETURN ( Self )
 
@@ -185,7 +194,7 @@ METHOD lResource ( cFld )
    ::oDbfArt:OrdSetFocus( "cFamCod" )
    ::oDbfFam:OrdSetFocus( "cNomFam" )
 
-   REDEFINE GET ::oGetFamilia VAR ::cGetFamilia;
+   REDEFINE GET ::oGetFamilia VAR ::cGetFamilia ;
       ID       100 ;
       PICTURE  "@!" ;
       COLOR    CLR_GET ;
@@ -369,61 +378,6 @@ METHOD lResource ( cFld )
       :nDataStrAlign                := 1
       :nHeadStrAlign                := 1
    end with
-
-
-   /*REDEFINE LISTBOX ::oBrwArticulo ;
-      FIELDS ;
-               ::oDbfArt:Codigo,;
-               ::oDbfArt:Nombre,;
-               Trans( ::oDbfArt:pVenta1,  ::cPicImp ),;
-               Trans( ::oDbfArt:pVtaIva1, ::cPicImp ),;
-               Trans( ::oDbfArt:pVenta2,  ::cPicImp ),;
-               Trans( ::oDbfArt:pVtaIva2, ::cPicImp ),;
-               Trans( ::oDbfArt:pVenta3,  ::cPicImp ),;
-               Trans( ::oDbfArt:pVtaIva3, ::cPicImp ),;
-               Trans( ::oDbfArt:pVenta4,  ::cPicImp ),;
-               Trans( ::oDbfArt:pVtaIva4, ::cPicImp ),;
-               Trans( ::oDbfArt:pVenta5,  ::cPicImp ),;
-               Trans( ::oDbfArt:pVtaIva5, ::cPicImp ),;
-               Trans( ::oDbfArt:pVenta6,  ::cPicImp ),;
-               Trans( ::oDbfArt:pVtaIva6, ::cPicImp );
-      HEAD;
-               'Referencia',;
-               'Descripción',;
-               'Precio 1 EUR',;
-               'Precio 1 " + cImp() + " EUR',;
-               'Precio 2 EUR',;
-               'Precio 2 " + cImp() + " EUR',;
-               'Precio 3 EUR',;
-               'Precio 3 " + cImp() + " EUR',;
-               'Precio 4 EUR',;
-               'Precio 4 " + cImp() + " EUR',;
-               'Precio 5 EUR',;
-               'Precio 5 " + cImp() + " EUR',;
-               'Precio 6 EUR',;
-               'Precio 6 " + cImp() + " EUR';
-      FIELDSIZES ;
-               120,;
-               330,;
-               90,;
-               90,;
-               90,;
-               90,;
-               90,;
-               90,;
-               90,;
-               90,;
-               90,;
-               90,;
-               90,;
-               90;
-      ID       130 ;
-      OF       ::oFld:aDialogs[1]
-
-      ::oDbfArt:SetBrowse( ::oBrwArticulo )
-
-      ::oBrwArticulo:blDblClick   := { || ::AgregarArticulo() }
-      ::oBrwArticulo:aJustify     := { .f., .f., .t., .t., .t., .t., .t., .t., .t., .t., .t., .t., .t., .t. }*/
 
    REDEFINE BUTTON ;
          ID       260 ;
@@ -618,77 +572,7 @@ METHOD lResource ( cFld )
       :nHeadStrAlign                := 1
    end with
 
-
-
-
-
-
-      /*REDEFINE LISTBOX ::oBrwSeleccion ;
-         FIELDS ;
-                  Trans( ::oDbf:nNumArt, "999999" ),;
-                  ::oDbf:cCodArt,;
-                  ::oDbf:cCodFam,;
-                  ::oDbf:cNomArt,;
-                  Trans( ::oDbf:pCosto,   cPinDiv() ),;
-                  Trans( ::oDbf:pVenta1,  ::cPicImp ),;
-                  Trans( ::oDbf:pVtaIva1, ::cPicImp ),;
-                  Trans( ::oDbf:pVenta2,  ::cPicImp ),;
-                  Trans( ::oDbf:pVtaIva2, ::cPicImp ),;
-                  Trans( ::oDbf:pVenta3,  ::cPicImp ),;
-                  Trans( ::oDbf:pVtaIva3, ::cPicImp ),;
-                  Trans( ::oDbf:pVenta4,  ::cPicImp ),;
-                  Trans( ::oDbf:pVtaIva4, ::cPicImp ),;
-                  Trans( ::oDbf:pVenta5,  ::cPicImp ),;
-                  Trans( ::oDbf:pVtaIva5, ::cPicImp ),;
-                  Trans( ::oDbf:pVenta6,  ::cPicImp ),;
-                  Trans( ::oDbf:pVtaIva6, ::cPicImp );
-         HEAD;
-                  'Num.',;
-                  'Referencia',;
-                  'Familia',;
-                  'Descripción',;
-                  'Costo',;
-                  'Precio 1 EUR',;
-                  'Precio 1 " + cImp() + " EUR',;
-                  'Precio 2 EUR',;
-                  'Precio 2 " + cImp() + " EUR',;
-                  'Precio 3 EUR',;
-                  'Precio 3 " + cImp() + " EUR',;
-                  'Precio 4 EUR',;
-                  'Precio 4 " + cImp() + " EUR',;
-                  'Precio 5 EUR',;
-                  'Precio 5 " + cImp() + " EUR',;
-                  'Precio 6 EUR',;
-                  'Precio 6 " + cImp() + " EUR';
-         FIELDSIZES ;
-                  40,;
-                  120,;
-                  70,;
-                  330,;
-                  80,;
-                  90,;
-                  90,;
-                  90,;
-                  90,;
-                  90,;
-                  90,;
-                  90,;
-                  90,;
-                  90,;
-                  90,;
-                  90,;
-                  90;
-         ID       170 ;
-         OF       ::oFld:aDialogs[1]
-
-      ::oDbf:SetBrowse( ::oBrwSeleccion )
-
-      ::oBrwSeleccion:blDblClick   := { || ::EditColumn() }
-      ::oBrwSeleccion:aJustify     := { .t., .f., .f., .f., .t., .t., .t., .t., .t., .t., .t., .t., .t., .t., .t., .t., .t. }
-
-      */
-
-      ::CreateFilter( aItmArt(), ::oDbfArt:cAlias )
+   ::CreateFilter( aItmArt(), ::oDbfArt:cAlias )
 
 RETURN .t.
 
@@ -826,6 +710,8 @@ METHOD EscribeArticulo( lAppend )
    ::oDbf:pVenta6    := ::oDbfArt:pVenta6
    ::oDbf:pVtaIva6   := ::oDbfArt:pVtaIva6
    ::oDbf:pCosto     := nCosto( nil, ::oDbfArt:cAlias, ::oDbfKit:cAlias, .f., nil, ::oDbfDiv )
+   ::oDbf:cCodPrv    := ::oDbfArt:cPrvHab
+   ::oDbf:cNomPrv    := RetProvee( ::oDbfArt:cPrvHab, ::oDbfPrv:cAlias )
 
    if lAppend
       ::oDbf:nNumArt := ::oDbf:LastRec()

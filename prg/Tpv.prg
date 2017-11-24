@@ -8177,7 +8177,7 @@ STATIC FUNCTION SavLine( aTmp, aGet, dbfTmpL, oBrw, aTik, oGetTotal, lTwo, nMode
 
       if ( nStockActual - aTmp[ _NUNTTIL ] ) < 0
 
-         if oUser():lNotAllowSales( lNotVta )
+         if lNotVta
 
             SetLostFocusOff()
             MsgStop( "No hay stock suficiente, tenemos " + Alltrim( Trans( nStockActual, MasUnd() ) ) + " unidad(es) disponible(s) en almacén " + AllTrim( aTik[ _CALMTIK ] ) + "." )
