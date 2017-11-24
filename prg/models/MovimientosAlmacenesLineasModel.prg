@@ -71,7 +71,7 @@ RETURN ( nil )
 
 METHOD getSQLSentenceTotalUnidadesEntradasStock( cCodigoArticulo, dConsolidacion, tConsolidacion, cCodigoAlmacen, cValorPropiedad1, cValorPropiedad2, cLote )
 
-   local cSql  := "SELECT SUM( IIF( nCajMov = 0, 1, nCajMov ) * nUndMov ) as [totalUnidadesStock] " + ;
+   local cSql  := "SELECT SUM( IIF( nCajMov = 0, 1, nCajMov ) * nUndMov ) as [totalUnidadesStock], " + quoted( ::getTableName() ) + " AS Document " + ;
                      "FROM " + ::getTableName() + " " + ;
                      "WHERE cRefMov = " + quoted( cCodigoArticulo ) + " " // WHERE nTipMov <> 4 
    
@@ -118,7 +118,7 @@ Return ( 0 )
 
 METHOD getSQLSentenceTotalUnidadesSalidasStock( cCodigoArticulo, dConsolidacion, tConsolidacion, cCodigoAlmacen, cValorPropiedad1, cValorPropiedad2, cLote )
 
-   local cSql  := "SELECT SUM( IIF( nCajMov = 0, 1, nCajMov ) * nUndMov ) as [totalUnidadesStock] " + ;
+   local cSql  := "SELECT SUM( IIF( nCajMov = 0, 1, nCajMov ) * nUndMov ) as [totalUnidadesStock] , " + quoted( ::getTableName() ) + " AS Document " + ;
                      "FROM " + ::getTableName() + " " + ;
                      "WHERE cRefMov = " + quoted( cCodigoArticulo ) + " " // nTipMov <> 4 
    
