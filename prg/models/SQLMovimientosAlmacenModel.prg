@@ -15,6 +15,8 @@ CLASS SQLMovimientosAlmacenModel FROM SQLExportableModel
    DATA aTextoMovimiento      INIT { "Entre almacenes", "Regularización", "Objetivos", "Consolidación" }
 
    METHOD getColumns()
+
+   METHOD getGeneralSelect()
    
    METHOD cTextoMovimiento()  
 
@@ -107,6 +109,29 @@ METHOD getColumns()
                                              "width"     => 240 }                                     )
 
 RETURN ( ::hColumns )
+
+//---------------------------------------------------------------------------//
+
+METHOD getGeneralSelect()
+
+   ::cGeneralSelect  := "SELECT tipo_movimiento, "                               + ;
+                           "CASE "                                               + ;
+                              "WHEN tipo_movimiento = 1 THEN 'Entre almacenes'"  + ;
+                              "WHEN tipo_movimiento = 2 THEN 'Regularización' "  + ;
+                              "WHEN tipo_movimiento = 3 THEN 'Objetivos' "       + ;
+                              "WHEN tipo_movimiento = 4 THEN 'Consolidación' "   + ;
+                           "END as nombre_movimiento, "                          + ;
+                           "fecha_hora, "                                        + ;
+                           "almacen_origen, "                                    + ;
+                           "almacen_destino, "                                   + ;
+                           "grupo_movimiento, "                                  + ;
+                           "agente, "                                            + ;
+                           "divisa, "                                            + ;
+                           "divisa_cambio, "                                     + ;
+                           "comentarios "                                        + ;        
+                        "FROM " + ::getTableName()    
+
+RETURN ( ::cGeneralSelect )
 
 //---------------------------------------------------------------------------//
 
