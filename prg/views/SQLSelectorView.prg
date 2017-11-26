@@ -38,6 +38,10 @@ METHOD New( oController )
 
    ::oController           := oController
 
+   ::oMenuTreeView         := MenuTreeView():New( Self )
+
+   ::oBrowseView           := SQLBrowseView():New( Self )
+
 RETURN ( Self )
 
 //----------------------------------------------------------------------------//
@@ -61,17 +65,13 @@ METHOD Activate()
 
       // Menu------------------------------------------------------------------
 
-      ::oMenuTreeView      := MenuTreeView():New( Self )
-
       ::oMenuTreeView:ActivateDialog( 120 )
 
       // Browse-----------------------------------------------------------------
 
-      ::oSQLBrowseView     := SQLBrowseView():New( Self )
+      ::oBrowseView:Activate( 130 )
 
-      ::oSQLBrowseView:Activate( 130 )
-
-      ::oSQLBrowseView:setLDblClick( {|| ::Select() } ) 
+      ::oBrowseView:setLDblClick( {|| ::Select() } ) 
 
       // Eventos---------------------------------------------------------------
 
@@ -92,6 +92,14 @@ METHOD End()
    ::hSelectedBuffer    := nil      
 
    ::oDialog:End()
+
+   if !empty( ::oMenuTreeView )
+      ::oMenuTreeView:End()
+   end if 
+
+   if !empty( ::oSQLBrowseView )
+      ::oSQLBrowseView:End()
+   end if 
 
 RETURN ( nil )
 

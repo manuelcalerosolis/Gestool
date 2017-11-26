@@ -29,20 +29,9 @@ METHOD getColumns()
    ::getEmpresaColumns()
 
    hset( ::hColumns, "tipo_movimiento",   {  "create"    => "INT NOT NULL"                            ,;
-                                             "text"      => "Tipo movimiento"                         ,;
-                                             "header"    => "Tipo movimiento"                         ,;
-                                             "visible"   => .t.                                       ,;
-                                             "edit"      => {|nTipo| ::cTextoMovimiento( nTipo ) }    ,;
-                                             "width"     => 100                                       ,;
-                                             "type"      => "N"                                       ,;
-                                             "len"       => 4 }                                       )
+                                             "default"   => 1 }                                       )
 
    hset( ::hColumns, "fecha_hora",        {  "create"    => "DATETIME DEFAULT CURRENT_TIMESTAMP"      ,;
-                                             "text"      => "Fecha"                                   ,;
-                                             "header"    => "Fecha"                                   ,;
-                                             "visible"   => .t.                                       ,;
-                                             "type"      => "T"                                       ,;
-                                             "picture"   => "@DT"                                     ,;
                                              "default"   => {|| hb_datetime() }                       ,;
                                              "headAlign" => AL_LEFT                                   ,; 
                                              "dataAlign" => AL_LEFT                                   ,; 
@@ -50,30 +39,13 @@ METHOD getColumns()
                                              "width"     => 140 }                                     )
 
    hset( ::hColumns, "almacen_origen",    {  "create"    => "CHAR ( 16 )"                             ,;
-                                             "text"      => "Almacén origen"                          ,;
-                                             "header"    => "Almacén origen"                          ,;
-                                             "visible"   => .t.                                       ,;
-                                             "type"      => "C"                                       ,;
-                                             "field"     => "cAlmOrg"                                 ,;
-                                             "len"       => 16                                        ,;   
-                                             "width"     => 80 }                                      )
+                                             "default"   => {|| space( 16 ) }                         )
 
    hset( ::hColumns, "almacen_destino",   {  "create"    => "CHAR ( 16 )"                             ,;
-                                             "text"      => "Almacén destino"                         ,;
-                                             "header"    => "Almacén destino"                         ,;
-                                             "visible"   => .t.                                       ,;
-                                             "type"      => "C"                                       ,;
-                                             "field"     => "cAlmDes"                                 ,;
-                                             "len"       => 16                                        ,;   
-                                             "width"     => 80 }                                      )
+                                             "default"   => {|| space( 16 ) }                         )
 
    hset( ::hColumns, "grupo_movimiento",  {  "create"    => "CHAR ( 2 )"                              ,;
-                                             "text"      => "Grupo"                                   ,;
-                                             "header"    => "Grupo"                                   ,;
-                                             "visible"   => .t.                                       ,;
-                                             "type"      => "C"                                       ,;
-                                             "len"       => 2                                         ,;   
-                                             "width"     => 80 }                                      )
+                                             "default"   => {|| space( 2 ) }                          )
 
    hset( ::hColumns, "agente",            {  "create"    => "CHAR ( 3 )"                              ,;
                                              "text"      => "Agente"                                  ,;

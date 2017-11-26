@@ -62,11 +62,11 @@ METHOD New( oController )
 
    ::oController           := oController
 
+   ::oBrowseView           := oController:oBrowseView
+
    ::aRect                 := GetWndRect( GetDeskTopWindow() )
 
    ::oMenuTreeView         := MenuTreeView():New( Self )
-
-   ::oSQLBrowseView        := SQLBrowseView():New( Self )
 
 RETURN ( Self )
 
@@ -86,9 +86,9 @@ METHOD Activate()
 
    // Browse view -------------------------------------------------------------
 
-   ::oSQLBrowseView:ActivateMDI( dfnSplitterHeight + dfnSplitterWidth, dfnTreeViewWidth + dfnSplitterWidth, ::oMdiChild:nRight - ::oMdiChild:nLeft, ::oMdiChild:nBottom - ::oMdiChild:nTop - dfnSplitterHeight - 162 )
+   ::oBrowseView:ActivateMDI( ::getWindow(), dfnSplitterHeight + dfnSplitterWidth, dfnTreeViewWidth + dfnSplitterWidth, ::oMdiChild:nRight - ::oMdiChild:nLeft, ::oMdiChild:nBottom - ::oMdiChild:nTop - dfnSplitterHeight - 162 )
 
-   ::oSQLBrowseView:setView()
+   ::oBrowseView:setView()
 
    // Splitters----------------------------------------------------------------
 

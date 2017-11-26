@@ -21,6 +21,8 @@ CLASS SQLBaseController
 
    DATA oRepository
 
+   DATA oBrowseView
+
    DATA lTransactional                                INIT .f.
 
    DATA lContinuousAppend                             INIT .f.

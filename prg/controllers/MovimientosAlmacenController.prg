@@ -46,6 +46,8 @@ CLASS MovimientosAlmacenController FROM SQLNavigatorController
 
    METHOD deleteLines()
 
+   // METHOD addColumns( oSQLBrowse )
+
 END CLASS
 
 //---------------------------------------------------------------------------//
@@ -69,6 +71,8 @@ METHOD New()
    ::hDocuments               := DocumentosModel():getWhereMovimientosAlmacen() 
 
    ::oModel                   := SQLMovimientosAlmacenModel():New( self )
+
+   ::oBrowseView              := MovimientosAlmacenBrowseView():New( self )
 
    ::oDialogView              := MovimientosAlmacenView():New( self )
 
@@ -182,18 +186,50 @@ METHOD labelDocument()
 RETURN ( self ) 
 
 //---------------------------------------------------------------------------//
+/*
+METHOD addColumns( oSQLBrowse )
 
+   with object ( ::oBrowse:AddCol() )
 
+      :cSortOrder          := cColumn
+      :cHeader             := hColumn[ "header" ]
+      :nWidth              := hColumn[ "width" ]
 
+      if hhaskey( hColumn, "picture" ) 
+         :cEditPicture     := hColumn[ "picture" ]
+      end if 
 
+      if hhaskey( hColumn, "headAlign" ) 
+         :nHeadStrAlign    := hColumn[ "headAlign" ]
+      end if 
 
+      if hhaskey( hColumn, "dataAlign" ) 
+         :nDataStrAlign    := hColumn[ "dataAlign" ]
+      end if 
 
+      if hhaskey( hColumn, "hide" ) 
+         :lHide            := hColumn[ "hide" ]
+      end if 
 
+      if hhaskey( hColumn, "method" ) 
+         :bEditValue       := ::getModel():getMethod( hColumn[ "method" ] )
+      else 
+         :bEditValue       := {|| ::getRowSet():fieldGet( ::getModel():getEditValue( cColumn ) ) }
+         :bLClickHeader    := {| nMRow, nMCol, nFlags, oColumn | ::onClickHeader( oColumn ) }
+      end if 
 
+      if hhaskey( hColumn, "footer" ) 
+         :nFootStyle       := :nDataStrAlign               
+         :nFooterType      := AGGR_SUM
+         :cFooterPicture   := :cEditPicture
+         :cDataType        := "N"
+      end if 
 
+      if hhaskey( hColumn, "footAlign" ) 
+         :nFootStrAlign    := hColumn[ "footAlign" ]
+      end if 
 
-
-
-
+   end with
+*/
 
 //ALTER TABLE movimientos_almacen DROP COLUMN numero;

@@ -16,7 +16,7 @@ IMG2PDFLIB           = 	\img2Pdf
 
 OBJ                  = 	obj1705
 
-SOURCEPRG            = 	.\Prg;.\Prg\mail;.\Prg\Comercio;.\Prg\Models;.\Prg\Seeders;.\Prg\Views;.\Prg\Controllers;.\Prg\Validators;.\Prg\Repositories;.\Prg\Services;.\Prg\Reports;.\Prg\Tablet;.\Prg\tablet\view;.\Prg\tablet\view\documentos;.\Prg\tablet\view\terceros;.\Prg\tablet\view\documentos\ventas;.\Prg\tablet\view\documentos\terceros;.\Prg\tablet\utils;.\Prg\tablet\presenter;.\Prg\tablet\presenter\terceros;.\Prg\tablet\presenter\documentos;.\Prg\tablet\presenter\documentos\ventas;
+SOURCEPRG            = 	.\Prg;.\Prg\mail;.\Prg\Comercio;.\Prg\Models;.\Prg\Seeders;.\Prg\Views;.\Prg\Views\Dialogs;.\Prg\Views\Browsers;.\Prg\Controllers;.\Prg\Validators;.\Prg\Repositories;.\Prg\Services;.\Prg\Reports;.\Prg\Tablet;.\Prg\tablet\view;.\Prg\tablet\view\documentos;.\Prg\tablet\view\terceros;.\Prg\tablet\view\documentos\ventas;.\Prg\tablet\view\documentos\terceros;.\Prg\tablet\utils;.\Prg\tablet\presenter;.\Prg\tablet\presenter\terceros;.\Prg\tablet\presenter\documentos;.\Prg\tablet\presenter\documentos\ventas;
 SOURCEC 				   =	C
 
 PPO 					   = 	ppo1705
@@ -356,6 +356,7 @@ RectificativasClientesLineasModel.prg 									\
 StocksModel.prg 																\
 SituacionesController.prg       											\
 MovimientosAlmacenView.prg													\
+MovimientosAlmacenBrowseView.prg											\
 EtiquetasSelectorView.prg													\
 SQLBaseReport.prg 															\
 MovimientosAlmacenReport.prg												\
@@ -959,6 +960,7 @@ AlbaranesClientesLineasModel.obj 										\
 RectificativasClientesLineasModel.obj 									\
 StocksModel.obj 																\
 MovimientosAlmacenView.obj													\
+MovimientosAlmacenBrowseView.obj											\
 EtiquetasSelectorView.obj													\
 SQLBaseReport.obj 															\
 MovimientosAlmacenReport.obj												\
@@ -1532,6 +1534,7 @@ $(OBJ)\RectificativasClientesLineasModel.obj 						+
 $(OBJ)\StocksModel.obj 														+
 $(OBJ)\SituacionesController.obj          							+
 $(OBJ)\MovimientosAlmacenView.obj 										+
+$(OBJ)\MovimientosAlmacenBrowseView.obj								+
 $(OBJ)\EtiquetasSelectorView.obj											+
 $(OBJ)\MovimientosAlmacenReport.obj 									+
 $(OBJ)\MovimientosAlmacenLabel.obj 										+

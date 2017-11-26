@@ -7,15 +7,13 @@ CLASS SQLBrowseView
 
    DATA oBrowse
 
-   DATA oSender
-
    DATA oController
 
    DATA oModel
 
    DATA lFooter                              INIT .f.
 
-   METHOD New( oSender )
+   METHOD New( oController )
 
    METHOD Create()
 
@@ -51,12 +49,12 @@ CLASS SQLBrowseView
    METHOD saveView()                         INLINE ( ::oBrowse:saveView() )
 
    METHOD setController( oController )       INLINE ( ::oController := oController )
-   METHOD getController()                    INLINE ( iif( empty( ::oController ), ::oSender:getController(), ::oController ) )
+   METHOD getController()                    INLINE ( iif( empty( ::oController ), ::oController:getController(), ::oController ) )
    
    METHOD getName()                          INLINE ( ::getController():getName() )
 
-   METHOD getComboBoxOrder()                 INLINE ( if( !empty( ::oSender ), ::oSender:getComboBoxOrder(), ) )
-   METHOD getMenuTreeView()                  INLINE ( if( !empty( ::oSender ), ::oSender:getMenuTreeView(), ) )
+   METHOD getComboBoxOrder()                 INLINE ( if( !empty( ::oController ), ::oController:getComboBoxOrder(), ) )
+   METHOD getMenuTreeView()                  INLINE ( if( !empty( ::oController ), ::oController:getMenuTreeView(), ) )
 
    // Models-------------------------------------------------------------------
 
@@ -70,9 +68,9 @@ CLASS SQLBrowseView
 
    // Columns------------------------------------------------------------------
 
-   METHOD generateColumns()
+   METHOD addColumns()                       VIRTUAL
 
-   METHOD addColumn( cColumn, hColumn )
+   // METHOD addColumn( cColumn, hColumn )
 
    // Events---------------------------------------------------------------------
 
@@ -83,9 +81,9 @@ ENDCLASS
 
 //----------------------------------------------------------------------------//
 
-METHOD New( oSender )
+METHOD New( oController )
 
-   ::oSender         := oSender
+   ::oController         := oController
 
 RETURN ( Self )
 
@@ -103,7 +101,7 @@ RETURN ( nil )
 
 METHOD Create( oWindow ) 
 
-   default oWindow            := ::oSender:getWindow()
+   default oWindow            := ::oController:getWindow()
 
    ::oBrowse                  := SQLXBrowse():New( oWindow )
    ::oBrowse:l2007            := .f.
@@ -136,17 +134,14 @@ RETURN ( ::oBrowse )
 
 //---------------------------------------------------------------------------//
 
-METHOD GenerateColumns()
+/*
+METHOD addColumns()
 
-   local hColumnstoBrowse     := ::getModelColumnsForBrowse()
-
-   if empty( hColumnstoBrowse )
-      RETURN ( self )
+   if empty( ::oController )
+      ::oController:addColumns( ::oBrowse )
    end if 
 
-   hEval( hColumnstoBrowse, { | cColumn, hColumn | ::addColumn( cColumn, hColumn ) } )
-
-RETURN ( self )
+RETURN ( Self )
 
 //---------------------------------------------------------------------------//
 
@@ -195,7 +190,7 @@ METHOD addColumn( cColumn, hColumn )
    end with
 
 RETURN ( self )
-
+*/
 //---------------------------------------------------------------------------//
 
 METHOD onClickHeader( oColumn ) 
@@ -220,13 +215,13 @@ METHOD onClickHeader( oColumn )
 
    end if 
    
-RETURN ( ::oSender:onChangeCombo() )
+RETURN ( ::oController:onChangeCombo() )
 
 //---------------------------------------------------------------------------//
 
 METHOD onKeyChar( nKey )
 
-RETURN ( heval( ::oSender:oMenuTreeView:hFastKey, {|k,v| msgalert( nKey, "nKey" ), if( k == nKey, eval( v ), ) } ) ) 
+RETURN ( heval( ::oController:oMenuTreeView:hFastKey, {|k,v| msgalert( nKey, "nKey" ), if( k == nKey, eval( v ), ) } ) ) 
    
 //----------------------------------------------------------------------------//
 
@@ -234,7 +229,7 @@ METHOD ActivateDialog( id, oDialog )
 
    ::Create( oDialog )
 
-   ::GenerateColumns()
+   ::addColumns()
 
    ::CreateFromResource( id )
 
@@ -242,13 +237,13 @@ RETURN ( Self )
 
 //----------------------------------------------------------------------------//
 
-METHOD ActivateMDI( nTop, nLeft, nRight, nBottom )
+METHOD ActivateMDI( oWindow, nTop, nLeft, nRight, nBottom )
 
-   ::Create()
+   ::Create( oWindow )
 
    ::setSize( nTop, nLeft, nRight, nBottom )
 
-   ::GenerateColumns()
+   ::addColumns()
 
    ::CreateFromCode()
 
