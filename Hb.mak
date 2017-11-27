@@ -357,6 +357,7 @@ StocksModel.prg 																\
 SituacionesController.prg       											\
 MovimientosAlmacenView.prg													\
 MovimientosAlmacenBrowseView.prg											\
+MovimientosAlmacenLineasBrowseView.prg									\
 EtiquetasSelectorView.prg													\
 SQLBaseReport.prg 															\
 MovimientosAlmacenReport.prg												\
@@ -550,6 +551,7 @@ BaseModel.prg 																	\
 SQLBaseModel.prg 																\
 SQLBaseController.prg 														\
 SQLNavigatorController.prg													\
+SQLBrowseController.prg														\
 SQLHeaderController.prg 													\
 SQLBaseLineasModel.prg 														\
 ClientesModel.prg 															\
@@ -961,6 +963,7 @@ RectificativasClientesLineasModel.obj 									\
 StocksModel.obj 																\
 MovimientosAlmacenView.obj													\
 MovimientosAlmacenBrowseView.obj											\
+MovimientosAlmacenLineasBrowseView.obj									\
 EtiquetasSelectorView.obj													\
 SQLBaseReport.obj 															\
 MovimientosAlmacenReport.obj												\
@@ -1154,6 +1157,7 @@ BaseModel.obj 																	\
 SQLBaseModel.Obj 																\
 SQLBaseController.Obj 														\
 SQLNavigatorController.obj 												\
+SQLBrowseController.obj 													\
 SQLHeaderController.obj														\
 SQLBaseLineasModel.Obj 														\
 EmpresasModel.obj 															\
@@ -1535,6 +1539,7 @@ $(OBJ)\StocksModel.obj 														+
 $(OBJ)\SituacionesController.obj          							+
 $(OBJ)\MovimientosAlmacenView.obj 										+
 $(OBJ)\MovimientosAlmacenBrowseView.obj								+
+$(OBJ)\MovimientosAlmacenLineasBrowseView.obj						+
 $(OBJ)\EtiquetasSelectorView.obj											+
 $(OBJ)\MovimientosAlmacenReport.obj 									+
 $(OBJ)\MovimientosAlmacenLabel.obj 										+
@@ -1730,6 +1735,7 @@ $(OBJ)\BaseModel.obj 														+
 $(OBJ)\SQLBaseModel.obj 													+
 $(OBJ)\SQLBaseController.obj 												+
 $(OBJ)\SQLNavigatorController.obj										+
+$(OBJ)\SQLBrowseController.obj											+
 $(OBJ)\SQLHeaderController.obj 											+
 $(OBJ)\SQLBaseLineasModel.obj 											+
 $(OBJ)\EmpresasModel.obj 													+

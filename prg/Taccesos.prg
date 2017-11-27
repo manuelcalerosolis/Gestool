@@ -135,7 +135,7 @@ CLASS TAcceso
    METHOD GetComboBoxAt()                 INLINE ( if( !empty( ::oComboBox ), ( ::oComboBox:nAt ), 0 ) )
 
    METHOD DisableComboBox()               INLINE ( if( !empty( ::oComboBox ), ( ::SetComboBoxItems( {} ), ::oComboBox:Hide() ), ) )
-   METHOD EnableComboBox( aItems )        INLINE ( if( !empty( ::oComboBox ) .and. IsArray( aItems ), ( ::SetComboBoxItems( aItems ), ::oComboBox:Show(), ::oComboBox:Enable() ), ) )
+   METHOD EnableComboBox( aItems )        INLINE ( if( !empty( ::oComboBox ) .and. IsArray( aItems ), ( ::SetComboBoxItems( aItems ), ::oComboBox:Show(), ::oComboBox:Enable(), ::oComboBox:Select( 1 ) ), ) )
    METHOD HideComboBox()                  INLINE ( if( !empty( ::oComboBox ), ::oComboBox:Hide(), ) )
    METHOD setCombo( cItem )               INLINE ( if( !empty( ::oComboBox ), ::oComboBox:Set( cItem ), ) )
 

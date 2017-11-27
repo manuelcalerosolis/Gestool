@@ -49,7 +49,7 @@ CLASS SQLBrowseView
    METHOD saveView()                         INLINE ( ::oBrowse:saveView() )
 
    METHOD setController( oController )       INLINE ( ::oController := oController )
-   METHOD getController()                    INLINE ( iif( empty( ::oController ), ::oController:getController(), ::oController ) )
+   METHOD getController()                    INLINE ( ::oController )
    
    METHOD getName()                          INLINE ( ::getController():getName() )
 
@@ -59,8 +59,6 @@ CLASS SQLBrowseView
    // Models-------------------------------------------------------------------
 
    METHOD getModel()                         INLINE ( ::getController():getModel() )
-   METHOD getModelColumnsForBrowse()         INLINE ( ::getModel():getColumnsForBrowse() )
-   METHOD getModelHeadersForBrowse()         INLINE ( ::getModel():getHeadersForBrowse() )
 
    // RowSet-------------------------------------------------------------------
 
@@ -70,11 +68,14 @@ CLASS SQLBrowseView
 
    METHOD addColumns()                       VIRTUAL
 
-   // METHOD addColumn( cColumn, hColumn )
+   METHOD getColumnsHeaders()
+
+   METHOD getFirstColumnHeader()
 
    // Events---------------------------------------------------------------------
 
    METHOD onKeyChar( nKey )
+
    METHOD onClickHeader( oColumn )          
 
 ENDCLASS
@@ -134,88 +135,29 @@ RETURN ( ::oBrowse )
 
 //---------------------------------------------------------------------------//
 
-/*
-METHOD addColumns()
+METHOD getColumnsHeaders()
 
-   if empty( ::oController )
-      ::oController:addColumns( ::oBrowse )
-   end if 
+   local aHeaders    := {}
 
-RETURN ( Self )
+   aeval( ::oBrowse:aCols, {|oCol| aadd( aHeaders, oCol:cHeader ) } )
+
+RETURN ( aHeaders )
 
 //---------------------------------------------------------------------------//
 
-METHOD addColumn( cColumn, hColumn )
+METHOD getFirstColumnHeader()
 
-   with object ( ::oBrowse:AddCol() )
+   if hb_isarray( ::oBrowse:aCols )
+      RETURN ( ::oBrowse:aCols[ 1 ]:cHeader )
+   end if 
 
-      :cSortOrder          := cColumn
-      :cHeader             := hColumn[ "header" ]
-      :nWidth              := hColumn[ "width" ]
+RETURN ( "" )
 
-      if hhaskey( hColumn, "picture" ) 
-         :cEditPicture     := hColumn[ "picture" ]
-      end if 
-
-      if hhaskey( hColumn, "headAlign" ) 
-         :nHeadStrAlign    := hColumn[ "headAlign" ]
-      end if 
-
-      if hhaskey( hColumn, "dataAlign" ) 
-         :nDataStrAlign    := hColumn[ "dataAlign" ]
-      end if 
-
-      if hhaskey( hColumn, "hide" ) 
-         :lHide            := hColumn[ "hide" ]
-      end if 
-
-      if hhaskey( hColumn, "method" ) 
-         :bEditValue       := ::getModel():getMethod( hColumn[ "method" ] )
-      else 
-         :bEditValue       := {|| ::getRowSet():fieldGet( ::getModel():getEditValue( cColumn ) ) }
-         :bLClickHeader    := {| nMRow, nMCol, nFlags, oColumn | ::onClickHeader( oColumn ) }
-      end if 
-
-      if hhaskey( hColumn, "footer" ) 
-         :nFootStyle       := :nDataStrAlign               
-         :nFooterType      := AGGR_SUM
-         :cFooterPicture   := :cEditPicture
-         :cDataType        := "N"
-      end if 
-
-      if hhaskey( hColumn, "footAlign" ) 
-         :nFootStrAlign    := hColumn[ "footAlign" ]
-      end if 
-
-   end with
-
-RETURN ( self )
-*/
 //---------------------------------------------------------------------------//
 
 METHOD onClickHeader( oColumn ) 
 
-   local oCombobox
-
-   oComboBox      := ::getComboBoxOrder()
-
-   if empty( oComboBox )
-
-      ::getController():changeModelOrderAndOrientation( oColumn:cSortOrder, oColumn:cOrder )
-
-      ::getBrowse():selectColumnOrder( oColumn )
-
-      ::getBrowse():refreshCurrent()
-
-   else
-
-      if ascan( oCombobox:aItems, oColumn:cHeader ) != 0
-         oComboBox:Set( oColumn:cHeader )
-      end if
-
-   end if 
-   
-RETURN ( ::oController:onChangeCombo() )
+RETURN ( ::getController():onChangeCombo( oColumn ) )
 
 //---------------------------------------------------------------------------//
 
@@ -225,13 +167,13 @@ RETURN ( heval( ::oController:oMenuTreeView:hFastKey, {|k,v| msgalert( nKey, "nK
    
 //----------------------------------------------------------------------------//
 
-METHOD ActivateDialog( id, oDialog )
+METHOD ActivateDialog( oDialog, nId )
 
    ::Create( oDialog )
 
    ::addColumns()
 
-   ::CreateFromResource( id )
+   ::CreateFromResource( nId )
 
 RETURN ( Self )
 

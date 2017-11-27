@@ -16,7 +16,7 @@ CLASS SQLMovimientosAlmacenModel FROM SQLExportableModel
 
    METHOD getColumns()
 
-   METHOD getGeneralSelect()
+   METHOD getInitialSelect()
    
    METHOD cTextoMovimiento()  
 
@@ -29,66 +29,42 @@ METHOD getColumns()
    ::getEmpresaColumns()
 
    hset( ::hColumns, "tipo_movimiento",   {  "create"    => "INT NOT NULL"                            ,;
-                                             "default"   => 1 }                                       )
+                                             "default"   => {|| 1 } }                                 )
 
    hset( ::hColumns, "fecha_hora",        {  "create"    => "DATETIME DEFAULT CURRENT_TIMESTAMP"      ,;
-                                             "default"   => {|| hb_datetime() }                       ,;
-                                             "headAlign" => AL_LEFT                                   ,; 
-                                             "dataAlign" => AL_LEFT                                   ,; 
-                                             "footAlign" => AL_LEFT                                   ,; 
-                                             "width"     => 140 }                                     )
+                                             "default"   => {|| hb_datetime() } }                     )
 
    hset( ::hColumns, "almacen_origen",    {  "create"    => "CHAR ( 16 )"                             ,;
-                                             "default"   => {|| space( 16 ) }                         )
+                                             "default"   => {|| space( 16 ) } }                       )
 
    hset( ::hColumns, "almacen_destino",   {  "create"    => "CHAR ( 16 )"                             ,;
-                                             "default"   => {|| space( 16 ) }                         )
+                                             "default"   => {|| space( 16 ) } }                       )
 
    hset( ::hColumns, "grupo_movimiento",  {  "create"    => "CHAR ( 2 )"                              ,;
-                                             "default"   => {|| space( 2 ) }                          )
+                                             "default"   => {|| space( 2 ) } }                        )
 
    hset( ::hColumns, "agente",            {  "create"    => "CHAR ( 3 )"                              ,;
-                                             "text"      => "Agente"                                  ,;
-                                             "header"    => "Agente"                                  ,;
-                                             "visible"   => .t.                                       ,;
-                                             "type"      => "C"                                       ,;
-                                             "len"       => 3                                         ,;   
-                                             "width"     => 80 }                                      )
+                                             "default"   => {|| space( 3 ) } }                        )
 
    hset( ::hColumns, "divisa",            {  "create"    => "CHAR ( 3 )"                              ,;
-                                             "text"      => "Divisa"                                  ,;
-                                             "header"    => "Divisa"                                  ,;
-                                             "visible"   => .t.                                       ,;
-                                             "type"      => "C"                                       ,;
-                                             "default"   => {|| cDivEmp() }                           ,;
-                                             "len"       => 3                                         ,;   
-                                             "width"     => 80 }                                      )
+                                             "default"   => {|| cDivEmp() } }                         )
 
-   hset( ::hColumns, "divisa_cambio",     {  "create"    => "DECIMAL(16,6)"                           ,;
-                                             "text"      => "Cambio divisa"                           ,;
-                                             "header"    => "Cambio"                                  ,;
-                                             "visible"   => .f.                                       ,;
-                                             "type"      => "N"                                       ,;
-                                             "default"   => {|| 1 }                                   ,;
-                                             "field"     => "nVdvDiv" }                                )
+   hset( ::hColumns, "divisa_cambio",     {  "create"    => "DECIMAL( 16, 6 )"                        ,;
+                                             "default"   => {|| 1 } }                                 )
 
    hset( ::hColumns, "comentarios",       {  "create"    => "VARCHAR ( 250 )"                         ,;
-                                             "text"      => "Comentarios"                             ,;
-                                             "header"    => "Comentarios"                             ,;
-                                             "visible"   => .t.                                       ,;
-                                             "type"      => "C"                                       ,;
-                                             "len"       => 250                                       ,;   
-                                             "width"     => 240 }                                     )
+                                             "default"   => {|| space( 250 ) } }                      )
 
 RETURN ( ::hColumns )
 
 //---------------------------------------------------------------------------//
 
-METHOD getGeneralSelect()
+METHOD getInitialSelect()
 
-   ::cGeneralSelect  := "SELECT tipo_movimiento, "                               + ;
+   local cSelect     := "SELECT id, "                                            + ;
+                           "tipo_movimiento, "                                   + ;
                            "CASE "                                               + ;
-                              "WHEN tipo_movimiento = 1 THEN 'Entre almacenes'"  + ;
+                              "WHEN tipo_movimiento = 1 THEN 'Entre almacenes' " + ;
                               "WHEN tipo_movimiento = 2 THEN 'Regularización' "  + ;
                               "WHEN tipo_movimiento = 3 THEN 'Objetivos' "       + ;
                               "WHEN tipo_movimiento = 4 THEN 'Consolidación' "   + ;
@@ -103,7 +79,9 @@ METHOD getGeneralSelect()
                            "comentarios "                                        + ;        
                         "FROM " + ::getTableName()    
 
-RETURN ( ::cGeneralSelect )
+   msgstop( cSelect, "getInitialSelect" )
+
+RETURN ( cSelect )
 
 //---------------------------------------------------------------------------//
 

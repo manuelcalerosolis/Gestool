@@ -72,6 +72,8 @@ CLASS SQLBaseModel
    METHOD getAlterTableSentences()
    
    METHOD getGeneralSelect()
+   METHOD getInitialSelect()                          VIRTUAL
+
    METHOD getIdSelect( id )
    METHOD getSelectSentence()
    
@@ -227,7 +229,9 @@ RETURN ( ::hColumns )
 
 METHOD getGeneralSelect()
 
-   local cSQLSelect        := ::cGeneralSelect
+   local cSQLSelect        := ::getInitialSelect()
+
+   msgalert( ::classname(), "getInitialSelect" )
 
    cSQLSelect              := ::aadGeneralWhere( cSQLSelect )
 
@@ -607,16 +611,13 @@ METHOD loadBlankBuffer()
 
    ::hBuffer            := {=>}
 
-   nRecno               := ::oRowSet:recno()
-   ::oRowSet:goto( 0 )
-
    ::fireEvent( 'loadingBlankBuffer' )
 
-   heval( ::getTableColumns(), {|k| hset( ::hBuffer, k, ::oRowSet:fieldget( k ) ) } )
-
-   ::oRowSet:goto( nRecno )
+   // heval( ::getTableColumns(), {|k| hset( ::hBuffer, k, ::oRowSet:fieldget( k ) ) } )
 
    ::defaultCurrentBuffer()
+
+   msgalert( hb_valtoexp( ::hBuffer ), "hBuffer" )
 
    ::fireEvent( 'loadedBlankBuffer' )
 
@@ -851,7 +852,8 @@ METHOD getEmpresaColumns()
                                        "header"    => "Id"                                      ,;
                                        "visible"   => .t.                                       ,;
                                        "type"      => "N"                                       ,;
-                                       "width"     => 40 }                                      )   
+                                       "width"     => 40                                        ,;
+                                       "default"   => {|| 0 } }                                 )
 
    hset( ::hColumns, "uuid",        {  "create"    => "VARCHAR(40) NOT NULL"                    ,;
                                        "text"      => "Uuid"                                    ,;

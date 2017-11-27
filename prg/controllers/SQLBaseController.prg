@@ -15,6 +15,8 @@ CLASS SQLBaseController
 
    DATA oModel
 
+   DATA oRowSet
+
    DATA oDialogView
 
    DATA oValidator
@@ -41,7 +43,7 @@ CLASS SQLBaseController
    METHOD Instance()                                  INLINE ( if( empty( ::oInstance ), ::oInstance := ::New(), ), ::oInstance ) 
    METHOD End()
 
-   // Facades -----------------------------------------------------------------
+   // Modelo -----------------------------------------------------------------
 
    METHOD getModel()                                  INLINE ( ::oModel )
    METHOD getModelColumnKey()                         INLINE ( if( !empty( ::oModel ), ::oModel:cColumnKey, ) )
@@ -60,6 +62,13 @@ CLASS SQLBaseController
 
    METHOD getSenderController()                       INLINE ( ::oSenderController )    
 
+   METHOD changeModelOrderAndOrientation()            VIRTUAL
+   METHOD getModelHeaderFromColumnOrder()             INLINE ( ::oModel:getHeaderFromColumnOrder() )
+
+   METHOD find( uValue, cColumn )                     INLINE ( ::oModel:find( uValue, cColumn ) )
+
+   // Dialogo------------------------------------------------------------------
+
    METHOD getDialogView()                             INLINE ( ::oDialogView )
 
    METHOD getRepository()                             INLINE ( ::oRepository )
@@ -68,19 +77,14 @@ CLASS SQLBaseController
 
    METHOD getName()                                   INLINE ( strtran( lower( ::cTitle ), " ", "_" ) )
 
+   METHOD getRowSet()
    METHOD getIdFromRowSet()                           INLINE ( if( !empty( ::getRowSet() ), ( ::getRowSet():fieldGet( ::oModel:cColumnKey ) ), ) )
 
-   METHOD changeModelOrderAndOrientation()
-   METHOD getModelHeaderFromColumnOrder()             INLINE ( ::oModel:getHeaderFromColumnOrder() )
-
-   METHOD find( uValue, cColumn )                     INLINE ( ::oModel:find( uValue, cColumn ) )
    METHOD findInRowSet( uValue, cColumn )             
    METHOD findByIdInRowSet( uValue )                  INLINE ( if( !empty( ::getRowSet() ), ::getRowSet():find( uValue, "id", .t. ), ) )
 
    METHOD startBrowse( oCombobox )
    METHOD restoreBrowseState()
-
-   METHOD getRowSet()
 
    METHOD Validate( cColumn )                         INLINE ( if( !empty( ::oValidator ), ::oValidator:Validate( cColumn ), ) )
    METHOD Assert( cColumn, uValue )                   INLINE ( if( !empty( ::oValidator ), ::oValidator:Assert( cColumn, uValue ), ) )
@@ -151,6 +155,9 @@ CLASS SQLBaseController
    METHOD setFastReport( oFastReport, cTitle, cSentence, cColumns )
 
    METHOD onKeyChar( nKey )                           VIRTUAL 
+
+   METHOD saveRecno()                                 VIRTUAL
+   METHOD setRecno()                                  VIRTUAL
 
 END CLASS
 
@@ -223,7 +230,6 @@ RETURN ( Self )
 
 METHOD Append()
 
-   local nRecno
    local uResult
    local lAppend     := .t.   
 
@@ -242,7 +248,7 @@ METHOD Append()
 
       ::beginTransactionalMode()
 
-      nRecno         := ::oModel:getRowSetRecno()
+      ::saveRecno()
 
       ::oModel:loadBlankBuffer()
 
@@ -270,7 +276,7 @@ METHOD Append()
 
          ::fireEvent( 'cancelAppended' ) 
 
-         ::oModel:setRowSetRecno( nRecno )
+         ::setRecno()
 
          ::rollbackTransactionalMode()
 
@@ -491,7 +497,7 @@ METHOD Delete( aSelected )
 RETURN ( lDelete )
 
 //----------------------------------------------------------------------------//
-
+/*
 METHOD changeModelOrderAndOrientation( cColumnOrder, cColumnOrientation )
 
    ::oModel:saveIdToFind()
@@ -503,7 +509,7 @@ METHOD changeModelOrderAndOrientation( cColumnOrder, cColumnOrientation )
    ::oModel:buildRowSetAndFind()
 
 RETURN ( self )
-
+*/
 //---------------------------------------------------------------------------//
 
 METHOD findInRowSet( uValue, cColumn )

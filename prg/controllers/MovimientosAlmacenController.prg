@@ -46,6 +46,8 @@ CLASS MovimientosAlmacenController FROM SQLNavigatorController
 
    METHOD deleteLines()
 
+   METHOD getBrowse()               INLINE ( ::oBrowseView:getBrowse() )
+
    // METHOD addColumns( oSQLBrowse )
 
 END CLASS
@@ -68,8 +70,6 @@ METHOD New()
 
    ::lLabels                  := .t.
 
-   ::hDocuments               := DocumentosModel():getWhereMovimientosAlmacen() 
-
    ::oModel                   := SQLMovimientosAlmacenModel():New( self )
 
    ::oBrowseView              := MovimientosAlmacenBrowseView():New( self )
@@ -80,14 +80,16 @@ METHOD New()
 
    ::oLineasController        := MovimientosAlmacenLineasController():New( self )
 
+   ::hDocuments               := DocumentosModel():getWhereMovimientosAlmacen() 
+
    ::oImportadorController    := ImportadorMovimientosAlmacenLineasController():New( self )
 
    ::oEtiquetasController     := EtiquetasMovimientosAlmacenController():New( self )
 
    ::Super:New()
 
-   ::setEvent( 'openingDialog',     {|| ::oLineasController:oModel:buildRowSet() } ) 
-   ::setEvent( 'closedDialog',      {|| ::oLineasController:oModel:freeRowSet() } ) 
+   // ::setEvent( 'openingDialog',     {|| ::oLineasController:oModel:buildRowSet() } ) 
+   // ::setEvent( 'closedDialog',      {|| ::oLineasController:oModel:freeRowSet() } ) 
 
    ::setEvent( 'deletingSelection', {|| ::deleteLines() } )
 

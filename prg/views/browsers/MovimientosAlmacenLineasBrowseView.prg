@@ -3,7 +3,7 @@
 
 //------------------------------------------------------------------------//
 
-CLASS MovimientosAlmacenBrowseView FROM SQLBrowseView
+CLASS MovimientosAlmacenLineasBrowseView FROM SQLBrowseView
 
    METHOD addColumns()                       
 

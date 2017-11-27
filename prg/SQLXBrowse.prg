@@ -32,8 +32,6 @@ CLASS SQLXBrowse FROM TXBrowse
    METHOD getColumnByHeaders()
    METHOD selectColumnOrder( oCol )
    
-   METHOD selectColumnOrderByHeader( cHeader )  INLINE ( ::selectColumnOrder( ::getColumnByHeader( cHeader ) ) )
-
    METHOD getColumnByHeader( cHeader )
    METHOD getColumnOrder( cSortOrder )
    METHOD getColumnOrderByHeader( cHeader )  
@@ -223,7 +221,7 @@ RETURN ( ::aHeaders )
 
 //----------------------------------------------------------------------------//
 
-METHOD selectColumnOrder( oCol, cOrder )
+METHOD selectColumnOrder( oCol )
 
    if empty( oCol )
       RETURN ( Self )
@@ -231,15 +229,11 @@ METHOD selectColumnOrder( oCol, cOrder )
 
    aeval( ::aCols, {|o| if( o:cSortOrder != oCol:cSortOrder, o:cOrder := "", ) } )    
 
-   if empty( cOrder )
-      if oCol:cOrder == 'D' .or. empty( oCol:cOrder )
-         oCol:cOrder    := 'A'
-      else
-         oCol:cOrder    := 'D'
-      end if 
+   if oCol:cOrder == 'D' .or. empty( oCol:cOrder )
+      oCol:cOrder := 'A'
    else
-      oCol:cOrder       := cOrder
-   end if
+      oCol:cOrder := 'D'
+   end if 
 
 RETURN ( Self )
 

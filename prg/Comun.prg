@@ -277,7 +277,7 @@ RETURN ( .t. )
 
 FUNCTION Test()
 
-   logwrite( SQLMovimientosAlmacenModel():getGeneralSelect() )
+   // logwrite( SQLMovimientosAlmacenLineasModel():getGeneralSelect() )
 
 RETURN NIL 
 
