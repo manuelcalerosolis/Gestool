@@ -1568,6 +1568,8 @@ METHOD AddFacturaRectificativa( cCodigoCliente ) CLASS TFastVentasClientes
          ::oDbf:nRieCli    := RetFld( ( D():FacturasRectificativas( ::nView ) )->cCodCli, ( D():Clientes( ::nView ) ), "Riesgo", "Cod" )
          ::oDbf:cDniCli    := RetFld( ( D():FacturasRectificativas( ::nView ) )->cCodCli, ( D():Clientes( ::nView ) ), "Nif", "Cod" )
 
+         ::oDbf:cEstado    := cChkPagFacRec( ::oDbf:cSerDoc + ::oDbf:cNumDoc + ::oDbf:cSufDoc, D():FacturasRectificativas( ::nView ), D():FacturasClientesCobros( ::nView ) )
+
          // Añadimos un nuevo registro--------------------------------------------
 
          if ::lValidRegister()
