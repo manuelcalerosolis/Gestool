@@ -36,6 +36,8 @@ CLASS InvoiceCustomer FROM DocumentsSales
    METHOD actualizaUltimoLote()
    METHOD recalculateCacheStock() 
 
+   METHOD runScriptPreSaveAppend()
+
 END CLASS
 
 //---------------------------------------------------------------------------//
@@ -316,6 +318,14 @@ Return ( self )
 METHOD onPreEditDocumento() CLASS InvoiceCustomer
 
    ::nOrdenAnterior     := ( ::getDataTable() )->( OrdSetFocus() )
+
+Return ( .t. )
+
+//---------------------------------------------------------------------------//
+
+METHOD runScriptPreSaveAppend() CLASS InvoiceCustomer
+
+   runScript( "Tablet\FacturasClientes\PreSaveAppend.prg", self )
 
 Return ( .t. )
 

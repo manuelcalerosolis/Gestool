@@ -4147,8 +4147,6 @@ STATIC FUNCTION StartPathEmp( cPath, cPathOld, cCodEmpNew, cNomEmpNew, cCodEmpOl
          oMsg:SetText( "Proceso finalizado" )
       end if
 
-      msgStop( "Proceso finalizado")
-
    end if
 
 RETURN .t.

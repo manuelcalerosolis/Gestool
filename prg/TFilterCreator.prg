@@ -96,7 +96,7 @@ CLASS TFilterCreator
    METHOD GetField( cDescription )           INLINE ( ::ScanStructure( cDescription, posField ) )
    METHOD GetFieldAllTrim( cDescription )    INLINE ( "Trim( Field->" + ::GetField( cDescription ) + " ) " )
    METHOD GetType( cDescription )            INLINE ( ::ScanStructure( cDescription, posType ) )
-   METHOD GetCondition( cCondition )         INLINE ( HGet( ::DescriptionsOnPostEdit, cCondition ) )
+   METHOD GetCondition( cCondition )         INLINE ( HGet( ::hConditions, cCondition ) )
    METHOD GetNexo( cNexo )                   INLINE ( HGet( ::hNexo, cNexo ) )
 
    METHOD SetFilterType( cType )             INLINE ( ::cType := cType, if( !Empty( ::oFilterDatabase ) .and. !Empty( cType ), ::oFilterDatabase:SetScope( cType ), ) )
@@ -224,6 +224,7 @@ METHOD BuildFilter( aFilter ) CLASS TFilterCreator
       for each a in aFilter
 
          cCondition              := ::GetCondition( a[ fldCondition ] )
+
          cType                   := ::GetType( a[ fldDescription ] )
 
          if cCondition == " $ "

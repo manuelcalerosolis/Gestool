@@ -1461,13 +1461,20 @@ METHOD nSQLStockActual( cCodArt, cCodAlm, cValPr1, cValPr2, cLote ) CLASS TStock
       //hFechaHoraConsolidacion    := SQLMovimientosAlmacenLineasModel():getFechaHoraConsolidacion( cCodArt, cCodAlm, cValPr1, cValPr2, cLote )
 
       if !empty( hFechaHoraConsolidacion )
+         
          dFechaConsolidacion     := hGet( hFechaHoraConsolidacion, "fecha" )
          tHoraConsolidacion      := hGet( hFechaHoraConsolidacion, "hora" )
-         tFechaHoraConsolidacion := hGet( hFechaHoraConsolidacion, "fecha_hora" )
+         
+         if hHasKey( hFechaHoraConsolidacion, "fecha_hora" )
+            tFechaHoraConsolidacion := hGet( hFechaHoraConsolidacion, "fecha_hora" )
+         end if
+
       else
+
          dFechaConsolidacion     := nil
          tHoraConsolidacion      := nil
          tFechaHoraConsolidacion := nil
+
       end if 
 
       // Entradas--------------------------------------------------------------
