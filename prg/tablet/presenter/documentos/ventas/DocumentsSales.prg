@@ -168,6 +168,8 @@ CLASS DocumentsSales FROM Documents
    
    METHOD Resource( nMode )
 
+   METHOD runScriptPreSaveAppend()                          VIRTUAL
+
 END CLASS
 
 //---------------------------------------------------------------------------//
@@ -694,6 +696,8 @@ METHOD onViewSave()
    ::oTotalDocument:Calculate()
 
    if ::isResumenVenta()
+
+      ::runScriptPreSaveAppend()
 
       ::setUltimoCliente()
 

@@ -20,6 +20,11 @@ CLASS TCentroCoste FROM TMant
    DATA hValid             INIT {=>}
    DATA hHelp              INIT {=>}
 
+   DATA oCodPrp1
+   DATA oCodPrp2
+   DATA oValPrp1
+   DATA oValPrp2
+
    METHOD New()
    METHOD Create()
 
@@ -99,6 +104,10 @@ METHOD DefineFiles( cPath, cDriver )
    	FIELD NAME "nCompras"  TYPE "N" LEN 15  DEC 6  COMMENT "Objetivo de compras"  						PICTURE cPirDiv()	  ALIGN RIGHT	   COLSIZE 150 OF ::oDbf
       FIELD NAME "nTipoDoc"  TYPE "N" LEN  2  DEC 0  COMMENT "Tipo documento asociado"                HIDE  OF ::oDbf
       FIELD NAME "cCodDoc"   TYPE "C" LEN 30  DEC 0  COMMENT "Documento asociado"                     HIDE  OF ::oDbf
+      FIELD NAME "cCodPr1"   TYPE "C" LEN 20  DEC 0  COMMENT "Código de primera propiedad"            HIDE  OF ::oDbf
+      FIELD NAME "cCodPr2"   TYPE "C" LEN 20  DEC 0  COMMENT "Código de segunda propiedad"            HIDE  OF ::oDbf
+      FIELD NAME "cValPr1"   TYPE "C" LEN 20  DEC 0  COMMENT "Valor de primera propiedad"             HIDE  OF ::oDbf
+      FIELD NAME "cValPr2"   TYPE "C" LEN 20  DEC 0  COMMENT "Valor de segunda propiedad"             HIDE  OF ::oDbf
 
    	INDEX TO "CCoste.CDX" TAG "cCodigo" ON "cCodigo" COMMENT "Código" NODELETED OF ::oDbf
    	INDEX TO "CCoste.CDX" TAG "cNombre" ON "cNombre" COMMENT "Nombre" NODELETED OF ::oDbf
@@ -114,6 +123,10 @@ METHOD Resource( nMode )
 	local oDlg
 	local oGetCodigo
    local oBmp
+   local oSayPrp1
+   local cSayPrp1
+   local oSayPrp2
+   local cSayPrp2
 
    ::loadValues()
 
@@ -136,6 +149,54 @@ METHOD Resource( nMode )
          ID 		110 ;
          WHEN     ( nMode != ZOOM_MODE ) ;
          OF 		oDlg
+
+
+
+
+      REDEFINE GET ::oCodPrp1 VAR ::oDbf:cCodPr1 ;
+         ID       270 ;
+         PICTURE  "@!" ;
+         WHEN     ( nMode != ZOOM_MODE ) ;
+         BITMAP   "LUPA" ;
+         OF       oDlg
+
+         ::oCodPrp1:bValid    := {|| cProp( ::oCodPrp1, oSayPrp1 ) }
+         ::oCodPrp1:bhelp     := {|| brwProp( ::oCodPrp1, oSayPrp1 ) }
+
+      REDEFINE GET oSayPrp1 VAR cSayPrp1 ;
+         ID       271 ;
+         WHEN     ( .f. ) ;
+         OF       oDlg
+
+
+
+
+
+
+         
+
+      REDEFINE GET ::oCodPrp2 VAR ::oDbf:cCodPr2 ;
+         ID       290 ;
+         PICTURE  "@!" ;
+         WHEN     ( nMode != ZOOM_MODE ) ;
+         ON HELP  brwProp( ::oCodPrp2, oSayPrp2 ) ;
+         BITMAP   "LUPA" ;
+         OF       oDlg
+
+         ::oCodPrp2:bValid    := {|| cProp( ::oCodPrp2, oSayPrp2 ) }
+         ::oCodPrp2:bhelp     := {|| brwProp( ::oCodPrp2, oSayPrp2 ) }
+
+      REDEFINE GET oSayPrp2 VAR cSayPrp2 ;
+         ID       291 ;
+         WHEN     ( .f. ) ;
+         OF       oDlg   
+
+
+
+
+
+
+
 
       REDEFINE GET ::oDbf:nVentas ;
          ID 		120 ;
