@@ -20394,12 +20394,12 @@ FONT 8, "Ms Sans Serif"
   CONTROL "Nombre", -1, "Static", WS_GROUP, 9, 32, 27, 8
 }
 
-CENTROCOSTE DIALOG DISCARDABLE 60, 16, 411, 274
+CENTROCOSTE DIALOG DISCARDABLE 60, 16, 411, 313
 STYLE WS_POPUP|DS_MODALFRAME|DS_3DLOOK|WS_CAPTION|WS_SYSMENU|WS_VISIBLE
 CAPTION "Centro de coste"
 FONT 8, "Helv"
 {
-  CONTROL "", 100, "Edit", WS_BORDER|WS_TABSTOP, 122, 39, 60, 11
+  CONTROL "", 100, "Edit", WS_BORDER|WS_TABSTOP, 122, 39, 70, 11
   CONTROL "", 110, "Edit", WS_BORDER|WS_TABSTOP, 122, 52, 276, 11
   CONTROL "", 270, "Edit", WS_BORDER|WS_TABSTOP, 122, 82, 60, 11
   CONTROL "", 271, "Edit", WS_BORDER, 184, 82, 214, 11
@@ -20409,33 +20409,37 @@ FONT 8, "Helv"
   CONTROL "", 291, "Edit", WS_BORDER, 184, 108, 214, 11
   CONTROL "", 300, "Edit", WS_BORDER|WS_TABSTOP, 122, 121, 60, 11
   CONTROL "", 301, "Edit", WS_BORDER, 184, 121, 214, 11
-  CONTROL "", 170, "Edit", WS_VSCROLL|WS_BORDER|WS_TABSTOP, 122, 135, 100, 11
-  CONTROL "", 180, "Edit", WS_VSCROLL|WS_BORDER|WS_TABSTOP, 122, 147, 100, 11
-  CONTROL "", 120, "Edit", ES_RIGHT|WS_BORDER|WS_TABSTOP, 122, 178, 60, 11
-  CONTROL "", 130, "Edit", ES_RIGHT|WS_BORDER|WS_TABSTOP, 122, 191, 60, 12
-  CONTROL "", 140, "ComboBox", WS_BORDER|CBS_DROPDOWNLIST|WS_TABSTOP, 122, 219, 100, 52
-  CONTROL "", 150, "Edit", WS_BORDER|WS_TABSTOP, 122, 235, 100, 11
-  CONTROL "", 160, "Edit", WS_BORDER|WS_TABSTOP, 223, 235, 175, 11
-  CONTROL "&Aceptar [F5]", IDOK, "Button", WS_TABSTOP, 298, 256, 50, 14
-  CONTROL "&Cancelar", IDCANCEL, "Button", WS_TABSTOP, 353, 256, 50, 14
+  CONTROL "", 120, "Edit", ES_RIGHT|WS_BORDER|WS_TABSTOP, 122, 150, 70, 11
+  CONTROL "", 130, "Edit", ES_RIGHT|WS_BORDER|WS_TABSTOP, 122, 163, 70, 12
+  CONTROL "", 170, "Edit", WS_VSCROLL|WS_BORDER|WS_TABSTOP, 299, 150, 70, 11
+  CONTROL "", 180, "Edit", WS_VSCROLL|WS_BORDER|WS_TABSTOP, 299, 164, 70, 11
+  CONTROL "", 140, "ComboBox", WS_BORDER|CBS_DROPDOWNLIST|WS_TABSTOP, 122, 191, 100, 52
+  CONTROL "", 150, "Edit", WS_BORDER|WS_TABSTOP, 122, 207, 100, 11
+  CONTROL "", 160, "Edit", WS_BORDER|WS_TABSTOP, 223, 207, 175, 11
+  CONTROL "&Aceptar [F5]", IDOK, "Button", WS_TABSTOP, 298, 295, 50, 14
+  CONTROL "&Cancelar", IDCANCEL, "Button", WS_TABSTOP, 353, 295, 50, 14
   CONTROL "Identificación", -1, "Button", BS_GROUPBOX, 44, 29, 360, 40
   CONTROL "Código", -1, "Static", WS_GROUP, 52, 43, 60, 8
   CONTROL "Descripción ", -1, "Static", WS_GROUP, 52, 55, 60, 8
-  CONTROL "Objetivo de venta", -1, "Static", WS_GROUP, 52, 181, 60, 8
-  CONTROL "Objetivo de compra", -1, "Static", WS_GROUP, 52, 195, 67, 8
-  CONTROL "Objetivos", -1, "Button", BS_GROUPBOX, 44, 168, 360, 40
-  CONTROL "Asociación", -1, "Button", BS_GROUPBOX, 44, 210, 360, 42
-  CONTROL "Documento", -1, "Static", WS_GROUP, 52, 223, 60, 8
-  CONTROL "Código", -1, "Static", WS_GROUP, 52, 237, 47, 8
+  CONTROL "Objetivo de venta", -1, "Static", WS_GROUP, 52, 153, 60, 8
+  CONTROL "Objetivo de compra", -1, "Static", WS_GROUP, 52, 167, 67, 8
+  CONTROL "Objetivos", -1, "Button", BS_GROUPBOX, 44, 140, 172, 40
+  CONTROL "Asociación", -1, "Button", BS_GROUPBOX, 44, 182, 360, 42
+  CONTROL "Documento", -1, "Static", WS_GROUP, 52, 195, 60, 8
+  CONTROL "Código", -1, "Static", WS_GROUP, 52, 209, 47, 8
   CONTROL "", 800, "Static", SS_BITMAP|SS_CENTERIMAGE, 4, 3, 34, 30, WS_EX_TRANSPARENT
   CONTROL "Centro de coste", -1, "Static", SS_LEFTNOWORDWRAP, 44, 3, 359, 8
   CONTROL "Valor  propiedad 1", -1, "Static", WS_GROUP, 52, 98, 63, 8
   CONTROL "Propiedad 1", -1, "Static", WS_GROUP, 52, 85, 43, 8
-  CONTROL "Fecha salida", -1, "Static", WS_GROUP, 52, 138, 48, 8
-  CONTROL "Fecha entrada", -1, "Static", WS_GROUP, 52, 150, 51, 8
-  CONTROL "Propiedades", -1, "Button", BS_GROUPBOX, 44, 71, 360, 96
+  CONTROL "Fecha salida", -1, "Static", WS_GROUP, 229, 153, 48, 8
+  CONTROL "Fecha entrada", -1, "Static", WS_GROUP, 229, 167, 51, 8
+  CONTROL "Propiedades", -1, "Button", BS_GROUPBOX, 44, 71, 360, 66
   CONTROL "Valor propiedad 2", -1, "Static", WS_GROUP, 52, 124, 62, 8
   CONTROL "Propiedad 2", -1, "Static", WS_GROUP, 52, 111, 43, 8
+  CONTROL "Periodo", -1, "Button", BS_GROUPBOX, 219, 140, 185, 40
+  CONTROL "Comentarios", -1, "Button", BS_GROUPBOX, 44, 225, 360, 66
+  CONTROL "", 310, "Edit", ES_MULTILINE|WS_BORDER|WS_TABSTOP, 122, 235, 275, 50
+  CONTROL "Comentarios", -1, "Static", WS_GROUP, 52, 236, 47, 8
 }
 
 BUSCAR_AVANZADA1024 DIALOG DISCARDABLE 37, 77, 656, 370

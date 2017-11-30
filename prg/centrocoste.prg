@@ -6,7 +6,7 @@
 
 CLASS TCentroCoste FROM TMant
 
-	DATA lOpenFiles
+   DATA nView
    DATA cMru               INIT     "gc_folder_open_money_16"
    DATA cName              INIT     "CentroCoste"
 
@@ -29,6 +29,9 @@ CLASS TCentroCoste FROM TMant
    METHOD Create()
 
    METHOD Default()
+
+   Method OpenFiles( lExclusive )
+   Method CloseFiles()
 
 	METHOD DefineFiles( cPath, cDriver )
 
@@ -98,16 +101,19 @@ METHOD DefineFiles( cPath, cDriver )
 
    DEFINE DATABASE ::oDbf FILE "CCoste.Dbf" CLASS "CENTROCOSTE" PATH ( cPath ) VIA ( cDriver ) COMMENT "Centro de coste"
 
-   	FIELD NAME "cCodigo"   TYPE "C" LEN  9  DEC 0  COMMENT "Código"  				DEFAULT Space(  9 )  					  				         COLSIZE 80  OF ::oDbf
-   	FIELD NAME "cNombre"   TYPE "C" LEN 50  DEC 0  COMMENT "Nombre"  				DEFAULT Space( 50 )  					  				         COLSIZE 200 OF ::oDbf
-   	FIELD NAME "nVentas"   TYPE "N" LEN 15  DEC 6  COMMENT "Objetivo de Ventas"  						   PICTURE cPorDiv()	  ALIGN RIGHT  	COLSIZE 150 OF ::oDbf
-   	FIELD NAME "nCompras"  TYPE "N" LEN 15  DEC 6  COMMENT "Objetivo de compras"  						PICTURE cPirDiv()	  ALIGN RIGHT	   COLSIZE 150 OF ::oDbf
-      FIELD NAME "nTipoDoc"  TYPE "N" LEN  2  DEC 0  COMMENT "Tipo documento asociado"                HIDE  OF ::oDbf
-      FIELD NAME "cCodDoc"   TYPE "C" LEN 30  DEC 0  COMMENT "Documento asociado"                     HIDE  OF ::oDbf
-      FIELD NAME "cCodPr1"   TYPE "C" LEN 20  DEC 0  COMMENT "Código de primera propiedad"            HIDE  OF ::oDbf
-      FIELD NAME "cCodPr2"   TYPE "C" LEN 20  DEC 0  COMMENT "Código de segunda propiedad"            HIDE  OF ::oDbf
-      FIELD NAME "cValPr1"   TYPE "C" LEN 20  DEC 0  COMMENT "Valor de primera propiedad"             HIDE  OF ::oDbf
-      FIELD NAME "cValPr2"   TYPE "C" LEN 20  DEC 0  COMMENT "Valor de segunda propiedad"             HIDE  OF ::oDbf
+   	FIELD NAME "cCodigo"   TYPE "C" LEN   9  DEC 0  COMMENT "Código"  				DEFAULT Space(  9 )  					  				         COLSIZE 80  OF ::oDbf
+   	FIELD NAME "cNombre"   TYPE "C" LEN  50  DEC 0  COMMENT "Nombre"  				DEFAULT Space( 50 )  					  				         COLSIZE 200 OF ::oDbf
+   	FIELD NAME "nVentas"   TYPE "N" LEN  15  DEC 6  COMMENT "Objetivo de Ventas"  						 PICTURE cPorDiv()	  ALIGN RIGHT  	COLSIZE 150 OF ::oDbf
+   	FIELD NAME "nCompras"  TYPE "N" LEN  15  DEC 6  COMMENT "Objetivo de compras"  						 PICTURE cPirDiv()	  ALIGN RIGHT	   COLSIZE 150 OF ::oDbf
+      FIELD NAME "nTipoDoc"  TYPE "N" LEN   2  DEC 0  COMMENT "Tipo documento asociado"                HIDE  OF ::oDbf
+      FIELD NAME "cCodDoc"   TYPE "C" LEN  30  DEC 0  COMMENT "Documento asociado"                     HIDE  OF ::oDbf
+      FIELD NAME "cCodPr1"   TYPE "C" LEN  20  DEC 0  COMMENT "Código de primera propiedad"            HIDE  OF ::oDbf
+      FIELD NAME "cCodPr2"   TYPE "C" LEN  20  DEC 0  COMMENT "Código de segunda propiedad"            HIDE  OF ::oDbf
+      FIELD NAME "cValPr1"   TYPE "C" LEN  20  DEC 0  COMMENT "Valor de primera propiedad"             HIDE  OF ::oDbf
+      FIELD NAME "cValPr2"   TYPE "C" LEN  20  DEC 0  COMMENT "Valor de segunda propiedad"             HIDE  OF ::oDbf
+      FIELD NAME "dFecIni"   TYPE "D" LEN   8  DEC 0  COMMENT "Fecha de inicio"                        HIDE  OF ::oDbf
+      FIELD NAME "dFecFin"   TYPE "D" LEN   8  DEC 0  COMMENT "Fecha de fin"                           HIDE  OF ::oDbf
+      FIELD NAME "cComent"   TYPE "C" LEN 200  DEC 0  COMMENT "Comentario"                             HIDE  OF ::oDbf
 
    	INDEX TO "CCoste.CDX" TAG "cCodigo" ON "cCodigo" COMMENT "Código" NODELETED OF ::oDbf
    	INDEX TO "CCoste.CDX" TAG "cNombre" ON "cNombre" COMMENT "Nombre" NODELETED OF ::oDbf
@@ -115,6 +121,58 @@ METHOD DefineFiles( cPath, cDriver )
    END DATABASE ::oDbf
 
 RETURN ( ::oDbf )
+
+//----------------------------------------------------------------------------//
+
+METHOD OpenFiles( lExclusive, cPath )
+
+   local oError
+   local oBlock         
+
+   DEFAULT lExclusive   := .f.
+   
+   oBlock               := ErrorBlock( {| oError | ApoloBreak( oError ) } )
+   BEGIN SEQUENCE
+
+      ::nView           := D():CreateView()
+
+      if Empty( ::oDbf )
+         ::oDbf         := ::DefineFiles( cPath )
+      end if
+
+      ::oDbf:Activate( .f., !( lExclusive ) )
+
+      ::lOpenFiles      := .t.
+
+   RECOVER USING oError
+
+      msgStop( ErrorMessage( oError ), "Imposible abrir las bases de datos." )
+
+      ::CloseFiles()
+      
+      ::lOpenFiles      := .f.
+
+   END SEQUENCE
+
+   ErrorBlock( oBlock )
+
+RETURN ( ::lOpenFiles )
+
+//----------------------------------------------------------------------------//
+
+METHOD CloseFiles()
+
+   if !Empty( ::nView )
+      D():DeleteView( ::nView )
+   end if
+
+   if !Empty( ::oDbf ) .and. ::oDbf:Used()
+      ::oDbf:End()
+   end if
+
+   ::oDbf      := nil
+
+RETURN .t.
 
 //----------------------------------------------------------------------------//
 
@@ -127,6 +185,10 @@ METHOD Resource( nMode )
    local cSayPrp1
    local oSayPrp2
    local cSayPrp2
+   local oSayVal1
+   local cSayVal1
+   local oSayVal2
+   local cSayVal2
 
    ::loadValues()
 
@@ -150,9 +212,6 @@ METHOD Resource( nMode )
          WHEN     ( nMode != ZOOM_MODE ) ;
          OF 		oDlg
 
-
-
-
       REDEFINE GET ::oCodPrp1 VAR ::oDbf:cCodPr1 ;
          ID       270 ;
          PICTURE  "@!" ;
@@ -161,19 +220,27 @@ METHOD Resource( nMode )
          OF       oDlg
 
          ::oCodPrp1:bValid    := {|| cProp( ::oCodPrp1, oSayPrp1 ) }
-         ::oCodPrp1:bhelp     := {|| brwProp( ::oCodPrp1, oSayPrp1 ) }
+         ::oCodPrp1:bHelp     := {|| brwProp( ::oCodPrp1, oSayPrp1 ) }
 
       REDEFINE GET oSayPrp1 VAR cSayPrp1 ;
          ID       271 ;
          WHEN     ( .f. ) ;
          OF       oDlg
 
+      REDEFINE GET ::oValPrp1 VAR ::oDbf:cValPr1 ;
+         ID       280 ;
+         PICTURE  "@!" ;
+         WHEN     ( !Empty( ::oDbf:cCodPr1 ) .and. nMode != ZOOM_MODE ) ;
+         BITMAP   "LUPA" ;
+         OF       oDlg
 
+         ::oValPrp1:bValid    := {|| lPrpAct( ::oDbf:cValPr1, oSayVal1, ::oDbf:cCodPr1, D():PropiedadesLineas( ::nView ) ) }
+         ::oValPrp1:bhelp     := {|| brwPropiedadActual( ::oValPrp1, oSayVal1, ::oDbf:cCodPr1 ) }
 
-
-
-
-         
+      REDEFINE GET oSayVal1 VAR cSayVal1 ;
+         ID       281 ;
+         WHEN     ( .f. );
+         OF       oDlg
 
       REDEFINE GET ::oCodPrp2 VAR ::oDbf:cCodPr2 ;
          ID       290 ;
@@ -191,12 +258,37 @@ METHOD Resource( nMode )
          WHEN     ( .f. ) ;
          OF       oDlg   
 
+      REDEFINE GET ::oValPrp2 VAR ::oDbf:cValPr2 ;
+         ID       300 ;
+         PICTURE  "@!" ;
+         WHEN     ( !Empty( ::oDbf:cCodPr2 ) .and. nMode != ZOOM_MODE ) ;
+         BITMAP   "LUPA" ;
+         OF       oDlg
 
+         ::oValPrp2:bValid    := {|| lPrpAct( ::oDbf:cValPr2, oSayVal2, ::oDbf:cCodPr2, D():PropiedadesLineas( ::nView ) ) }
+         ::oValPrp2:bhelp     := {|| brwPropiedadActual( ::oValPrp2, oSayVal2, ::oDbf:cCodPr2 ) }
 
+      REDEFINE GET oSayVal2 VAR cSayVal2 ;
+         ID       301 ;
+         WHEN     ( .f. );
+         OF       oDlg
 
+      REDEFINE GET ::oDbf:dFecIni ;
+         ID       170 ;
+         SPINNER ;
+         WHEN     ( nMode != ZOOM_MODE ) ;
+         OF       oDlg   
 
-
-
+      REDEFINE GET ::oDbf:dFecFin ;
+         ID       180 ;
+         SPINNER ;
+         WHEN     ( nMode != ZOOM_MODE ) ;
+         OF       oDlg
+      
+      REDEFINE GET ::oDbf:cComent ;
+         ID       310 ;
+         WHEN     ( nMode != ZOOM_MODE ) ;
+         OF       oDlg
 
       REDEFINE GET ::oDbf:nVentas ;
          ID 		120 ;
@@ -243,7 +335,7 @@ METHOD Resource( nMode )
       	oDlg:AddFastKey( VK_F5, {|| ::lPreSave( oGetCodigo, oDlg, nMode ) } )
    	end if
 
-   	oDlg:bStart    := {|| ::LoadGet(), ::oGetDocument:lValid(), oGetCodigo:SetFocus() }
+   	oDlg:bStart    := {|| ::LoadGet(), ::oGetDocument:lValid(), oGetCodigo:SetFocus(), ::oCodPrp1:lValid(), ::oCodPrp2:lValid(), ::oValPrp1:lValid(), ::oValPrp2:lValid() }
 
 	ACTIVATE DIALOG oDlg	CENTER
 
