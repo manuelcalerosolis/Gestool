@@ -12,6 +12,8 @@ CLASS SQLMovimientosAlmacenLineasModel FROM SQLExportableModel
 
    METHOD getColumns()
 
+   METHOD getInitialSelect()
+
    METHOD totalUnidades()
 
    METHOD totalPrecio()
@@ -49,125 +51,76 @@ END CLASS
 METHOD getColumns()
 
    hset( ::hColumns, "id",                {  "create"    => "INTEGER AUTO_INCREMENT"                  ,;
-                                             "text"      => "Identificador"                           ,;
-                                             "header"    => "Id"                                      ,;
-                                             "visible"   => .t.                                       ,;
-                                             "width"     => 40 }                                      )   
+                                             "default"   => {|| 0 } }                                 )
 
    hset( ::hColumns, "uuid",              {  "create"    => "VARCHAR(40) NOT NULL"                    ,;
-                                             "text"      => "Uuid"                                    ,;
-                                             "header"    => "Uuid"                                    ,;
-                                             "visible"   => .f.                                       ,;
-                                             "width"     => 240                                       ,;
-                                             "len"       => 40                                        ,;   
                                              "default"   => {|| win_uuidcreatestring() } }            )
 
    hset( ::hColumns, "parent_uuid",       {  "create"    => "VARCHAR(40) NOT NULL"                    ,;
-                                             "text"      => "parent_uuid"                             ,;
-                                             "header"    => "Parent uuid"                             ,;
-                                             "visible"   => .f.                                       ,;
-                                             "len"       => 40                                        ,;   
-                                             "width"     => 240 }                                     )
+                                             "default"   => {|| space(40) } }                         )
 
    hset( ::hColumns, "codigo_articulo",   {  "create"    => "VARCHAR(18) NOT NULL"                    ,;
-                                             "text"      => "Código artículo"                         ,;
-                                             "header"    => "Código artículo"                         ,;
-                                             "visible"   => .t.                                       ,;
-                                             "len"       => 200                                       ,;   
-                                             "width"     => 120 }                                     )
+                                             "default"   => {|| space(18) } }                         )
 
    hset( ::hColumns, "nombre_articulo",   {  "create"    => "VARCHAR(250) NOT NULL"                   ,;
-                                             "text"      => "Nombre artículo"                         ,;
-                                             "header"    => "Nombre artículo"                         ,;
-                                             "visible"   => .t.                                       ,;
-                                             "len"       => 250                                       ,;   
-                                             "width"     => 240 }                                     )
+                                             "default"   => {|| space(250) } }                        )
 
-   hset( ::hColumns, "codigo_primera_propiedad",   {  "create"    => "VARCHAR(20)"                          ,;
-                                                      "text"      => "Código primera propiedad artículo"    ,;
-                                                      "header"    => "Código primera propiedad artículo"    ,;
-                                                      "visible"   => .f.                                    ,;
-                                                      "len"       => 20                                     ,;   
-                                                      "width"     => 240 }                                  )
+   hset( ::hColumns, "codigo_primera_propiedad",   {  "create"    => "VARCHAR(20)"                 ,;
+                                                      "default"   => {|| space(20) } }             )
 
-   hset( ::hColumns, "valor_primera_propiedad",    {  "create"    => "VARCHAR(200)"                         ,;
-                                                      "text"      => "Valor primera propiedad artículo"     ,;
-                                                      "header"    => "Primera propiedad"                    ,;
-                                                      "visible"   => .t.                                    ,;
-                                                      "len"       => 200                                    ,;   
-                                                      "width"     => 80 }                                  )
+   hset( ::hColumns, "valor_primera_propiedad",    {  "create"    => "VARCHAR(200)"                ,;
+                                                      "default"   => {|| space(200) } }            )
 
-   hset( ::hColumns, "codigo_segunda_propiedad",   {  "create"    => "VARCHAR(20)"                          ,;
-                                                      "text"      => "Código segunda propiedad artículo"    ,;
-                                                      "header"    => "Código segunda propiedad artículo"    ,;
-                                                      "visible"   => .f.                                    ,;
-                                                      "len"       => 20                                     ,;   
-                                                      "width"     => 240 }                                  )
+   hset( ::hColumns, "codigo_segunda_propiedad",   {  "create"    => "VARCHAR(20)"                 ,;
+                                                      "default"   => {|| space(20) } }             )
 
-   hset( ::hColumns, "valor_segunda_propiedad",    {  "create"    => "VARCHAR(200)"                         ,;
-                                                      "text"      => "Valor segunda propiedad artículo"     ,;
-                                                      "header"    => "Segunda propiedad"                    ,;
-                                                      "visible"   => .t.                                    ,;
-                                                      "len"       => 200                                    ,;   
-                                                      "width"     => 80 }                                  )
+   hset( ::hColumns, "valor_segunda_propiedad",    {  "create"    => "VARCHAR(200)"                ,;
+                                                      "default"   => {|| space(200) } }            )
 
    hset( ::hColumns, "fecha_caducidad",   {  "create"    => "DATE"                                 ,;
-                                             "text"      => "Fecha caducidad"                      ,;
-                                             "header"    => "Caducidad"                            ,;
-                                             "visible"   => .t.                                    ,;
-                                             "width"     => 74 }                                   )
+                                             "default"   => {|| hb_datetime() } }                  )
 
    hset( ::hColumns, "lote",              {  "create"    => "VARCHAR(40)"                          ,;
-                                             "text"      => "Lote"                                 ,;
-                                             "header"    => "Lote"                                 ,;
-                                             "visible"   => .f.                                    ,;
-                                             "len"       => 40                                     ,;   
-                                             "width"     => 100 }                                  )
+                                             "default"   => {|| space(40) } }                      )
 
    hset( ::hColumns, "bultos_articulo",   {  "create"    => "DECIMAL(19,6)"                        ,;
-                                             "text"      => "Bultos"                               ,;
-                                             "header"    => "Bultos"                               ,;
-                                             "visible"   => .f.                                    ,;
-                                             "width"     => 100 }                                  )
+                                             "default"   => {|| 0 } }                              )
 
    hset( ::hColumns, "cajas_articulo",    {  "create"    => "DECIMAL(19,6)"                        ,;
-                                             "text"      => "Cajas"                                ,;
-                                             "header"    => "Cajas"                                ,;
-                                             "picture"   => masUnd()                               ,;
-                                             "visible"   => .f.                                    ,;
-                                             "width"     => 100 }                                  )
+                                             "default"   => {|| 0 } }                              )
 
    hset( ::hColumns, "unidades_articulo", {  "create"    => "DECIMAL(19,6)"                        ,;
-                                             "text"      => "Unidades"                             ,;
-                                             "header"    => "Unidades"                             ,;
-                                             "picture"   => masUnd()                               ,;
-                                             "visible"   => .f.                                    ,;
-                                             "width"     => 100 }                                  )
-
-   hset( ::hColumns, "total_unidades",    {  "text"      => "Total unidades"                       ,;
-                                             "header"    => "Total unidades"                       ,;
-                                             "method"    => "totalUnidades"                        ,;
-                                             "picture"   => masUnd()                               ,;
-                                             "footer"    => .t.                                    ,;
-                                             "visible"   => .t.                                    ,;
-                                             "width"     => 100 }                                  )
+                                             "default"   => {|| 1 } }                              )
 
    hset( ::hColumns, "precio_articulo",   {  "create"    => "DECIMAL(19,6)"                        ,;
-                                             "text"      => "Precio costo"                         ,;
-                                             "header"    => "Costo"                                ,;
-                                             "picture"   => cPinDiv()                              ,;
-                                             "visible"   => .t.                                    ,;
-                                             "width"     => 100 }                                  )
-
-   hset( ::hColumns, "total_precio",      {  "text"      => "Total costo"                          ,;
-                                             "header"    => "Total costo"                          ,;
-                                             "method"    => "totalPrecio"                          ,;
-                                             "footer"    => .t.                                    ,;
-                                             "picture"   => cPirDiv()                              ,;
-                                             "visible"   => .t.                                    ,;
-                                             "width"     => 120 }                                  )
+                                             "default"   => {|| 0 } }                              )
 
 RETURN ( ::hColumns )
+
+//---------------------------------------------------------------------------//
+
+METHOD getInitialSelect()
+
+   local cSelect  := "SELECT id, "                                            + ;
+                        "uuid, "                                              + ;
+                        "parent_uuid, "                                       + ;
+                        "codigo_articulo, "                                   + ;
+                        "nombre_articulo, "                                   + ;
+                        "codigo_primera_propiedad, "                          + ;
+                        "valor_primera_propiedad, "                           + ;
+                        "codigo_segunda_propiedad, "                          + ;
+                        "valor_segunda_propiedad, "                           + ;
+                        "fecha_caducidad, "                                   + ;
+                        "lote, "                                              + ;
+                        "bultos_articulo, "                                   + ;
+                        "cajas_articulo, "                                    + ;
+                        "unidades_articulo, "                                 + ;
+                        "if( cajas_articulo = 0, 1, cajas_articulo * unidades_articulo ) as total_unidades, "  + ;
+                        "precio_articulo, "                                   + ;
+                        "if( cajas_articulo = 0, 1, cajas_articulo * unidades_articulo ) * precio_articulo as total_precio "  + ;
+                     "FROM " + ::getTableName()    
+
+RETURN ( cSelect )
 
 //---------------------------------------------------------------------------//
 

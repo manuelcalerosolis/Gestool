@@ -16,7 +16,7 @@ CLASS SQLBrowseableView
 
    DATA oMenuTreeView
 
-   DATA oSQLBrowseView
+   DATA oBrowseView
 
    // Facades -----------------------------------------------------------------
 
@@ -34,8 +34,8 @@ CLASS SQLBrowseableView
 
    METHOD getModelHeaderFromColumnOrder()    INLINE ( ::getModel():getHeaderFromColumnOrder() )
 
-   METHOD getSQLBrowseView()                 INLINE ( ::oSQLBrowseView )
-   METHOD getBrowse()                        INLINE ( ::oSQLBrowseView:oBrowse )
+   METHOD getSQLBrowseView()                 INLINE ( ::oBrowseView )
+   METHOD getBrowse()                        INLINE ( ::oBrowseView:oBrowse )
 
    METHOD getColumnByHeader( cHeader )       INLINE ( ::getBrowse():getColumnByHeader( cHeader ) )
    METHOD getColumnOrder( cSortOrder )       INLINE ( ::getBrowse():getColumnOrder( cSortOrder ) )

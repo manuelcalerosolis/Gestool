@@ -3,7 +3,7 @@
 
 //---------------------------------------------------------------------------//
 
-CLASS MovimientosAlmacenLineasController FROM SQLBaseController
+CLASS MovimientosAlmacenLineasController FROM SQLBrowseController
 
    DATA hArticulo
 
@@ -95,14 +95,16 @@ METHOD New( oController )
 
    ::oModel                := SQLMovimientosAlmacenLineasModel():New( self )
 
+   ::oBrowseView           := MovimientosAlmacenLineasBrowseView():New( self )
+
    ::oModel:setEvent( 'loadedBlankBuffer',   {|| ::loadedBlankBuffer() } ) 
    ::oModel:setEvent( 'buildingRowSet',      {|| ::buildingRowSet() } ) 
 
    ::oDialogView           := MovimientosAlmacenLineasView():New( self )
 
-   ::oSearchView           := SQLSearchView():New( self )
-
    ::oValidator            := MovimientosAlmacenLineasValidator():New( self )
+
+   ::oSearchView           := SQLSearchView():New( self )
 
    ::oSeriesControler      := NumerosSeriesController():New( self )
 

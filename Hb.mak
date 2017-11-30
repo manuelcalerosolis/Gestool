@@ -16,7 +16,7 @@ IMG2PDFLIB           = 	\img2Pdf
 
 OBJ                  = 	obj1705
 
-SOURCEPRG            = 	.\Prg;.\Prg\mail;.\Prg\Comercio;.\Prg\Models;.\Prg\Seeders;.\Prg\Views;.\Prg\Controllers;.\Prg\Validators;.\Prg\Repositories;.\Prg\Services;.\Prg\Reports;.\Prg\Tablet;.\Prg\tablet\view;.\Prg\tablet\view\documentos;.\Prg\tablet\view\terceros;.\Prg\tablet\view\documentos\ventas;.\Prg\tablet\view\documentos\terceros;.\Prg\tablet\utils;.\Prg\tablet\presenter;.\Prg\tablet\presenter\terceros;.\Prg\tablet\presenter\documentos;.\Prg\tablet\presenter\documentos\ventas;
+SOURCEPRG            = 	.\Prg;.\Prg\mail;.\Prg\Comercio;.\Prg\Models;.\Prg\Seeders;.\Prg\Views;.\Prg\Views\Dialogs;.\Prg\Views\Browsers;.\Prg\Controllers;.\Prg\Validators;.\Prg\Repositories;.\Prg\Services;.\Prg\Reports;.\Prg\Tablet;.\Prg\tablet\view;.\Prg\tablet\view\documentos;.\Prg\tablet\view\terceros;.\Prg\tablet\view\documentos\ventas;.\Prg\tablet\view\documentos\terceros;.\Prg\tablet\utils;.\Prg\tablet\presenter;.\Prg\tablet\presenter\terceros;.\Prg\tablet\presenter\documentos;.\Prg\tablet\presenter\documentos\ventas;
 SOURCEC 				   =	C
 
 PPO 					   = 	ppo1705
@@ -356,6 +356,8 @@ RectificativasClientesLineasModel.prg 									\
 StocksModel.prg 																\
 SituacionesController.prg       											\
 MovimientosAlmacenView.prg													\
+MovimientosAlmacenBrowseView.prg											\
+MovimientosAlmacenLineasBrowseView.prg									\
 EtiquetasSelectorView.prg													\
 SQLBaseReport.prg 															\
 MovimientosAlmacenReport.prg												\
@@ -549,6 +551,7 @@ BaseModel.prg 																	\
 SQLBaseModel.prg 																\
 SQLBaseController.prg 														\
 SQLNavigatorController.prg													\
+SQLBrowseController.prg														\
 SQLHeaderController.prg 													\
 SQLBaseLineasModel.prg 														\
 ClientesModel.prg 															\
@@ -959,6 +962,8 @@ AlbaranesClientesLineasModel.obj 										\
 RectificativasClientesLineasModel.obj 									\
 StocksModel.obj 																\
 MovimientosAlmacenView.obj													\
+MovimientosAlmacenBrowseView.obj											\
+MovimientosAlmacenLineasBrowseView.obj									\
 EtiquetasSelectorView.obj													\
 SQLBaseReport.obj 															\
 MovimientosAlmacenReport.obj												\
@@ -1152,6 +1157,7 @@ BaseModel.obj 																	\
 SQLBaseModel.Obj 																\
 SQLBaseController.Obj 														\
 SQLNavigatorController.obj 												\
+SQLBrowseController.obj 													\
 SQLHeaderController.obj														\
 SQLBaseLineasModel.Obj 														\
 EmpresasModel.obj 															\
@@ -1532,6 +1538,8 @@ $(OBJ)\RectificativasClientesLineasModel.obj 						+
 $(OBJ)\StocksModel.obj 														+
 $(OBJ)\SituacionesController.obj          							+
 $(OBJ)\MovimientosAlmacenView.obj 										+
+$(OBJ)\MovimientosAlmacenBrowseView.obj								+
+$(OBJ)\MovimientosAlmacenLineasBrowseView.obj						+
 $(OBJ)\EtiquetasSelectorView.obj											+
 $(OBJ)\MovimientosAlmacenReport.obj 									+
 $(OBJ)\MovimientosAlmacenLabel.obj 										+
@@ -1727,6 +1735,7 @@ $(OBJ)\BaseModel.obj 														+
 $(OBJ)\SQLBaseModel.obj 													+
 $(OBJ)\SQLBaseController.obj 												+
 $(OBJ)\SQLNavigatorController.obj										+
+$(OBJ)\SQLBrowseController.obj											+
 $(OBJ)\SQLHeaderController.obj 											+
 $(OBJ)\SQLBaseLineasModel.obj 											+
 $(OBJ)\EmpresasModel.obj 													+

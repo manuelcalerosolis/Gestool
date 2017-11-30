@@ -13,8 +13,6 @@ CLASS SQLBaseModel
 
    DATA oEvents
 
-   DATA oRowSet
-
    DATA oStatement
 
    DATA cTableName
@@ -38,7 +36,6 @@ CLASS SQLBaseModel
    DATA hBuffer 
 
    DATA cFind
-   DATA idToFind
 
    DATA aRecordsToDelete
 
@@ -75,6 +72,8 @@ CLASS SQLBaseModel
    METHOD getAlterTableSentences()
    
    METHOD getGeneralSelect()
+   METHOD getInitialSelect()                          VIRTUAL
+
    METHOD getIdSelect( id )
    METHOD getSelectSentence()
    
@@ -109,9 +108,6 @@ CLASS SQLBaseModel
 
    METHOD convertRecnoToId( aRecno )
 
-   METHOD setIdToFind( idToFind )                     INLINE ( ::idToFind := idToFind )
-   METHOD saveIdToFind()                              INLINE ( ::idToFind := ::getRowSet():fieldGet( ::cColumnKey ) ) 
-
    METHOD setColumnOrder( cColumnOrder )              INLINE ( ::cColumnOrder := cColumnOrder )
    METHOD getColumnOrder()                            INLINE ( ::cColumnOrder )
 
@@ -121,7 +117,6 @@ CLASS SQLBaseModel
 
    METHOD newRowSet( cSentence )                      
    METHOD buildRowSet( cSentence )                    
-   METHOD buildRowSetAndFind( idToFind )              INLINE ( ::buildRowSet(), ::findInRowSet( idToFind ) )
 
    METHOD getRowSet()                                 INLINE ( if( empty( ::oRowSet ), ::buildRowSet(), ), ::oRowSet )
    METHOD freeRowSet()                                INLINE ( if( !empty( ::oRowSet ), ( ::oRowSet:free(), ::oRowSet := nil ), ) )
@@ -234,7 +229,9 @@ RETURN ( ::hColumns )
 
 METHOD getGeneralSelect()
 
-   local cSQLSelect        := ::cGeneralSelect
+   local cSQLSelect        := ::getInitialSelect()
+
+   msgalert( ::classname(), "getInitialSelect" )
 
    cSQLSelect              := ::aadGeneralWhere( cSQLSelect )
 
@@ -571,7 +568,7 @@ METHOD getEditValue( cColumn )
       RETURN ( hGet( hColumn, "edit" ) )
    end if 
 
-RETURN ( {|| ::getRowSet():fieldGet( cColumn ) } )
+RETURN ( cColumn ) // {|| ::getRowSet():fieldGet( cColumn ) } )
 
 //---------------------------------------------------------------------------//
 
@@ -614,16 +611,13 @@ METHOD loadBlankBuffer()
 
    ::hBuffer            := {=>}
 
-   nRecno               := ::oRowSet:recno()
-   ::oRowSet:goto( 0 )
-
    ::fireEvent( 'loadingBlankBuffer' )
 
-   heval( ::getTableColumns(), {|k| hset( ::hBuffer, k, ::oRowSet:fieldget( k ) ) } )
-
-   ::oRowSet:goto( nRecno )
+   // heval( ::getTableColumns(), {|k| hset( ::hBuffer, k, ::oRowSet:fieldget( k ) ) } )
 
    ::defaultCurrentBuffer()
+
+   msgalert( hb_valtoexp( ::hBuffer ), "hBuffer" )
 
    ::fireEvent( 'loadedBlankBuffer' )
 
@@ -858,7 +852,8 @@ METHOD getEmpresaColumns()
                                        "header"    => "Id"                                      ,;
                                        "visible"   => .t.                                       ,;
                                        "type"      => "N"                                       ,;
-                                       "width"     => 40 }                                      )   
+                                       "width"     => 40                                        ,;
+                                       "default"   => {|| 0 } }                                 )
 
    hset( ::hColumns, "uuid",        {  "create"    => "VARCHAR(40) NOT NULL"                    ,;
                                        "text"      => "Uuid"                                    ,;

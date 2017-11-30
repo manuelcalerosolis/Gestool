@@ -3,23 +3,9 @@
 
 //---------------------------------------------------------------------------//
 
-CLASS SQLNavigatorController FROM SQLBaseController
+CLASS SQLBrowseController FROM SQLBaseController
 
-   DATA oSelectorView
-
-   DATA oNavigatorView
-
-   DATA oFilterController 
-
-   DATA lDocuments                                    INIT .f.
-
-   DATA lLabels                                       INIT .f.
-
-   DATA hDocuments
-
-   DATA hFastKey                                      INIT {=>}
-
-   DATA oWindowsBar
+   DATA oBrowseView
 
    METHOD New()
 
@@ -31,25 +17,9 @@ CLASS SQLNavigatorController FROM SQLBaseController
 
    METHOD changeModelOrderAndOrientation( cColumnOrder, cColumnOrientation )
 
-   METHOD setFastReport( oFastReport, cTitle, cSentence, cColumns )    
-
    METHOD addFastKey( uKey, bAction )
 
    METHOD onKeyChar( nKey )
-
-   METHOD appendFilter()                              
-
-   METHOD editFilter()                                
-
-   METHOD deleteFilter()                                
-
-   METHOD getFilters()                                INLINE ( if( !empty( ::oFilterController ), ::oFilterController:getFilters(), ) ) 
-
-   METHOD setFilter()                                                                                                       
-
-   METHOD getComboBoxOrder()                          INLINE ( ::oWindowsBar:oComboBox() )
-
-   METHOD onChangeCombo( oColumn )
 
    // Rowset-------------------------------------------------------------------
 
@@ -57,37 +27,17 @@ CLASS SQLNavigatorController FROM SQLBaseController
    METHOD saveRecNo()                                 INLINE ( ::oRowSet:saveRecNo() )
    METHOD setRecNo()                                  INLINE ( ::oRowSet:setRecNo() )
 
-   // Aplication windows bar---------------------------------------------------
-
-   METHOD EnableWindowsBar()
-
-   METHOD DisableWindowsBar()
-
-   METHOD hideEditAndDeleteButtonFilter()
-
-   METHOD showEditAndDeleteButtonFilter()
-
 END CLASS
 
 //---------------------------------------------------------------------------//
 
 METHOD New( oSenderController )
 
-   ::Super:New( oSenderController )
+   ::Super:New()
 
-   ::oNavigatorView                                   := SQLNavigatorView():New( self )
-
-   ::oSelectorView                                    := SQLSelectorView():New( self )
-
-   ::oFilterController                                := SQLFiltrosController():New( self ) 
+   ::oBrowseView                                   := SQLBrowseView():New( self )
 
    ::oRowSet                                          := SQLRowSet():New( self )
-
-   ::oWindowsBar                                      := oWndBar()
-
-   if !empty( ::oModel )
-      ::oFilterController:setTableName( ::oModel:cTableName )
-   end if 
 
 RETURN ( self )
 
@@ -95,7 +45,7 @@ RETURN ( self )
 
 METHOD ActivateNavigatorView()
 
-   if empty( ::oNavigatorView )
+   if empty( ::oBrowseView )
       RETURN ( Self )
    end if 
 
@@ -110,7 +60,7 @@ METHOD ActivateNavigatorView()
 
    ::oRowSet:build( ::oModel:getSelectSentence() )
 
-   ::oNavigatorView:Activate()
+   ::oBrowseView:Activate()
 
    ::EnableWindowsBar()
 
@@ -301,7 +251,7 @@ METHOD EnableWindowsBar()
 
    ::oWindowsBar:setActionDeleteButtonFilter( {|| ::deleteFilter() } )
 
-   ::oNavigatorView:Refresh()
+   ::oBrowseView:Refresh()
 
 RETURN ( Self )
 
