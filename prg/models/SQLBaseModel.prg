@@ -85,7 +85,7 @@ CLASS SQLBaseModel
 
    METHOD setGeneralSelect( cSelect )                 INLINE ( ::cGeneralSelect  := cSelect )
    METHOD setGeneralWhere( cWhere )                   INLINE ( ::cGeneralWhere   := cWhere )
-   METHOD aadGeneralWhere( cSQLSelect )
+   METHOD addGeneralWhere( cSQLSelect )
    
    METHOD addEmpresaWhere()                           
 
@@ -106,26 +106,10 @@ CLASS SQLBaseModel
 
    METHOD getMethod( cMethod )
 
-   METHOD convertRecnoToId( aRecno )
-
    METHOD setColumnOrder( cColumnOrder )              INLINE ( ::cColumnOrder := cColumnOrder )
    METHOD getColumnOrder()                            INLINE ( ::cColumnOrder )
 
    METHOD setColumnOrientation( cColumnOrientation )  INLINE ( ::cColumnOrientation := cColumnOrientation )
-
-   // Rowset-------------------------------------------------------------------
-
-   METHOD newRowSet( cSentence )                      
-   METHOD buildRowSet( cSentence )                    
-
-   METHOD getRowSet()                                 INLINE ( if( empty( ::oRowSet ), ::buildRowSet(), ), ::oRowSet )
-   METHOD freeRowSet()                                INLINE ( if( !empty( ::oRowSet ), ( ::oRowSet:free(), ::oRowSet := nil ), ) )
-   METHOD freeStatement()                             INLINE ( if( !empty( ::oStatement ), ( ::oStatement:free(), ::oStatement := nil ), ) )
-
-   METHOD getRowSetRecno()                            INLINE ( ::getRowSet():recno() )
-   METHOD setRowSetRecno( nRecno )                    INLINE ( ::getRowSet():goto( nRecno ) )
-   METHOD getRowSetFieldGet( cColumn )                INLINE ( ::getRowSet():fieldget( cColumn ) )
-   METHOD getRowSetFieldValueByName( cColumn )        INLINE ( ::getRowSet():getValueByName( cColumn ) )
 
    METHOD getSelectByColumn()
    METHOD getSelectByOrder()
@@ -133,9 +117,7 @@ CLASS SQLBaseModel
    // Busquedas----------------------------------------------------------------
 
    METHOD setFind( cFind )                            INLINE ( ::cFind := cFind )
-   METHOD findInRowSet()  
    METHOD findById( nId )
-   METHOD findAndBuildRowSet()        
    
    // Busquedas----------------------------------------------------------------
 
@@ -198,10 +180,6 @@ METHOD End()
 
    ::oEvents:End()
    
-   ::freeRowSet()
-
-   ::freeStatement()
-
 RETURN ( nil )
 
 //---------------------------------------------------------------------------//
@@ -227,13 +205,68 @@ RETURN ( ::hColumns )
 
 //---------------------------------------------------------------------------//
 
+METHOD getEmpresaColumns()
+
+   hset( ::hColumns, "id",          {  "create"    => "INTEGER AUTO_INCREMENT"                  ,;
+                                       "text"      => "Identificador"                           ,;
+                                       "header"    => "Id"                                      ,;
+                                       "visible"   => .t.                                       ,;
+                                       "type"      => "N"                                       ,;
+                                       "width"     => 40                                        ,;
+                                       "default"   => {|| 0 } }                                 )
+
+   hset( ::hColumns, "uuid",        {  "create"    => "VARCHAR(40) NOT NULL"                    ,;
+                                       "text"      => "Uuid"                                    ,;
+                                       "header"    => "Uuid"                                    ,;
+                                       "visible"   => .t.                                       ,;
+                                       "hide"      => .t.                                       ,;
+                                       "type"      => "C"                                       ,;
+                                       "width"     => 240                                       ,;
+                                       "default"   => {|| win_uuidcreatestring() } }            )
+
+   hset( ::hColumns, "empresa",     {  "create"    => "CHAR ( 4 ) NOT NULL"                     ,;
+                                       "text"      => "Empresa"                                 ,;
+                                       "visible"   => .f.                                       ,;
+                                       "type"      => "C"                                       ,;
+                                       "default"   => {|| cCodEmp() } }                         )
+
+   hset( ::hColumns, "delegacion",  {  "create"    => "VARCHAR(2) NOT NULL"                     ,;
+                                       "text"      => "Delegación"                              ,;
+                                       "header"    => "Dlg."                                    ,;
+                                       "visible"   => .t.                                       ,;
+                                       "hide"      => .t.                                       ,;
+                                       "width"     => 140                                       ,;
+                                       "field"     => "cSufRem"                                 ,;
+                                       "type"      => "C"                                       ,;
+                                       "len"       => 2                                         ,;
+                                       "default"   => {|| retSufEmp() } }                       )
+
+   hset( ::hColumns, "usuario",     {  "create"    => "VARCHAR(3) NOT NULL"                     ,;
+                                       "text"      => "Usuario"                                 ,;
+                                       "header"    => "Usuario"                                 ,;
+                                       "visible"   => .t.                                       ,;
+                                       "hide"      => .t.                                       ,;
+                                       "width"     => 100                                       ,;
+                                       "field"     => "cCodUsr"                                 ,;
+                                       "type"      => "C"                                       ,;
+                                       "len"       => 3                                         ,;
+                                       "default"   => {|| cCurUsr() } }                         )
+
+RETURN ( ::hColumns )
+
+//---------------------------------------------------------------------------//
+
 METHOD getGeneralSelect()
 
-   local cSQLSelect        := ::getInitialSelect()
+   local cSQLSelect        
 
-   msgalert( ::classname(), "getInitialSelect" )
+   ::fireEvent( 'getingInitialSelect' )   
 
-   cSQLSelect              := ::aadGeneralWhere( cSQLSelect )
+   cSQLSelect              := ::getInitialSelect()
+
+   ::fireEvent( 'gotInitialSelect' )   
+
+   cSQLSelect              := ::addGeneralWhere( cSQLSelect )
 
    cSQLSelect              := ::addEmpresaWhere( cSQLSelect )
 
@@ -255,17 +288,23 @@ RETURN ( cSQLSelect )
 
 METHOD getSelectSentence() 
 
-   local cSQLSelect        := ::getGeneralSelect()
+   local cSQLSelect        
+
+   ::fireEvent( 'gettingSelectSentence')
+
+   cSQLSelect              := ::getGeneralSelect()
 
    cSQLSelect              := ::getSelectByColumn( cSQLSelect )
 
    cSQLSelect              := ::getSelectByOrder( cSQLSelect )
 
+   ::fireEvent( 'gotSelectSentence')
+
 RETURN ( cSQLSelect )
 
 //---------------------------------------------------------------------------//
 
-METHOD aadGeneralWhere( cSQLSelect )
+METHOD addGeneralWhere( cSQLSelect )
 
    if empty( ::cGeneralWhere )
       RETURN ( cSQLSelect )
@@ -392,74 +431,7 @@ RETURN ( "DROP TABLE " + ::cTableName )
 
 METHOD findById( id )
 
-   local cSentence   := ::getIdSelect( id )
-
-RETURN ( atail( ::getDatabase():selectFetchHash( cSentence ) ) )
-
-//---------------------------------------------------------------------------//
-
-METHOD buildRowSet( cSentence )
-
-   DEFAULT cSentence    := ::getSelectSentence()
-
-   ::fireEvent( 'buildingRowSet')
-   
-   ::newRowSet( cSentence )
-
-   ::fireEvent( 'builtRowSet')
-
-RETURN ( ::oRowSet )
-
-//---------------------------------------------------------------------------//
-
-METHOD newRowSet( cSentence )
-
-   local oError
-   local oRowSet
-
-   DEFAULT cSentence    := ::getSelectSentence()
-
-   try
-
-      ::freeRowSet()
-
-      ::freeStatement()
-
-      ::oStatement      := ::getDatabase():Query( cSentence )
-
-      ::oStatement:setAttribute( ATTR_STR_PAD, .t. )
-      
-      ::oRowSet         := ::oStatement:fetchRowSet()
-
-   catch oError
-
-      eval( errorBlock(), oError )
-
-   end
-
-   ::oRowSet:goTop()
-
-RETURN ( ::oRowSet )
-
-//---------------------------------------------------------------------------//
-
-METHOD findInRowSet( idToFind )
-
-   if empty( ::oRowSet )
-      RETURN ( self )
-   end if 
-
-   DEFAULT idToFind  := ::idToFind
-
-   if empty( idToFind ) .or. empty( ::cColumnKey )
-      RETURN ( self )
-   end if 
-
-   if ::oRowSet:find( idToFind, ::cColumnKey, .t. ) == 0
-      ::oRowSet:goTop()
-   end if
-
-RETURN ( self )
+RETURN ( atail( ::getDatabase():selectFetchHash( ::getIdSelect( id ) ) ) )
 
 //---------------------------------------------------------------------------//
 
@@ -506,9 +478,8 @@ RETURN ( cSQLUpdate )
 
 //---------------------------------------------------------------------------//
 
-METHOD getDeleteSentence( aRecno )
+METHOD getDeleteSentence( aId )
 
-   local aId            := ::convertRecnoToId( aRecno )
    local cSQLDelete     := "DELETE FROM " + ::cTableName + " WHERE " 
 
    aeval( aId, {| v | cSQLDelete += ::cColumnKey + " = " + toSQLString( v ) + " or " } )
@@ -568,7 +539,7 @@ METHOD getEditValue( cColumn )
       RETURN ( hGet( hColumn, "edit" ) )
    end if 
 
-RETURN ( cColumn ) // {|| ::getRowSet():fieldGet( cColumn ) } )
+RETURN ( cColumn ) 
 
 //---------------------------------------------------------------------------//
 
@@ -578,32 +549,6 @@ RETURN ( {|| Self:&( cMethod ) } )
 
 //---------------------------------------------------------------------------//
 
-METHOD convertRecnoToId( aRecno, cColumnKey )
-
-   local nRecno
-   local aId            := {}
-
-   DEFAULT cColumnKey   := ::cColumnKey
-
-   for each nRecno in ( aRecno )
-      ::oRowSet:goTo( nRecno )
-      aadd( aId, ::oRowSet:fieldget( cColumnKey ) )
-   next
-
-RETURN ( aId )
-
-//---------------------------------------------------------------------------//
-
-METHOD findAndBuildRowSet( uFind, cColumn )
-
-   ::setFind( uFind )
-
-   ::buildRowSet()
-
-RETURN ( ::getRowSet():reccount() > 0 )
-
-//----------------------------------------------------------------------------//
-
 METHOD loadBlankBuffer()
 
    local nRecno
@@ -612,8 +557,6 @@ METHOD loadBlankBuffer()
    ::hBuffer            := {=>}
 
    ::fireEvent( 'loadingBlankBuffer' )
-
-   // heval( ::getTableColumns(), {|k| hset( ::hBuffer, k, ::oRowSet:fieldget( k ) ) } )
 
    ::defaultCurrentBuffer()
 
@@ -631,33 +574,21 @@ METHOD loadCurrentBuffer( id )
 
    ::fireEvent( 'loadingcurrentbuffer' )
 
-   if empty( id )
-      if !empty( ::oRowSet )
-         hEval( ::getTableColumns(), {|k| hset( ::hBuffer, k, ::oRowSet:fieldget( k ) ) } )
-      end if
-   else
-      ::hBuffer         := ::findById( id )
-   end if  
+   ::hBuffer         := ::findById( id )
 
    ::fireEvent( 'loadedcurrentbuffer' )
-
-   msgalert( hb_valtoexp( ::hBuffer ) )
 
 RETURN ( ::hBuffer )
 
 //---------------------------------------------------------------------------//
 
-METHOD loadDuplicateBuffer()                
-
-   if empty( ::oRowSet )
-      RETURN ( .f. )
-   end if 
+METHOD loadDuplicateBuffer( id )                
 
    ::hBuffer            := {=>}
 
    ::fireEvent( 'loadingduplicatebuffer' )
 
-   hEval( ::getTableColumns(), {|k| if( k != ::cColumnKey, hset( ::hBuffer, k, ::oRowSet:fieldget( k ) ), ) } )
+   ::hBuffer         := ::findById( id )
 
    ::fireEvent( 'loadedduplicatebuffer' )
 
@@ -758,9 +689,7 @@ METHOD insertBuffer( hBuffer )
 
    ::fireEvent( 'insertedBuffer' )
 
-   ::buildRowSetAndFind( ::getDatabase():LastInsertId() )
-
-RETURN ( Self )
+RETURN ( ::getDatabase():LastInsertId() )
 
 //---------------------------------------------------------------------------//
 
@@ -771,8 +700,6 @@ METHOD updateBuffer( hBuffer )
    ::getDatabase():Execs( ::getUpdateSentence( hBuffer ) )
 
    ::fireEvent( 'updatedBuffer' )
-
-   ::buildRowSetAndFind() 
 
 RETURN ( Self )
 
@@ -788,8 +715,6 @@ METHOD deleteSelection( aRecno )
 
    ::fireEvent( 'deletedSelection' )
    
-   ::buildRowSet()
-
 RETURN ( Self )
 
 //---------------------------------------------------------------------------//
@@ -845,53 +770,3 @@ RETURN ( hset( ::hBuffer, cColumn, uValue ) )
 
 //----------------------------------------------------------------------------//
 
-METHOD getEmpresaColumns()
-
-   hset( ::hColumns, "id",          {  "create"    => "INTEGER AUTO_INCREMENT"                  ,;
-                                       "text"      => "Identificador"                           ,;
-                                       "header"    => "Id"                                      ,;
-                                       "visible"   => .t.                                       ,;
-                                       "type"      => "N"                                       ,;
-                                       "width"     => 40                                        ,;
-                                       "default"   => {|| 0 } }                                 )
-
-   hset( ::hColumns, "uuid",        {  "create"    => "VARCHAR(40) NOT NULL"                    ,;
-                                       "text"      => "Uuid"                                    ,;
-                                       "header"    => "Uuid"                                    ,;
-                                       "visible"   => .t.                                       ,;
-                                       "hide"      => .t.                                       ,;
-                                       "type"      => "C"                                       ,;
-                                       "width"     => 240                                       ,;
-                                       "default"   => {|| win_uuidcreatestring() } }            )
-
-   hset( ::hColumns, "empresa",     {  "create"    => "CHAR ( 4 ) NOT NULL"                     ,;
-                                       "text"      => "Empresa"                                 ,;
-                                       "visible"   => .f.                                       ,;
-                                       "type"      => "C"                                       ,;
-                                       "default"   => {|| cCodEmp() } }                         )
-
-   hset( ::hColumns, "delegacion",  {  "create"    => "VARCHAR(2) NOT NULL"                     ,;
-                                       "text"      => "Delegación"                              ,;
-                                       "header"    => "Dlg."                                    ,;
-                                       "visible"   => .t.                                       ,;
-                                       "hide"      => .t.                                       ,;
-                                       "width"     => 140                                       ,;
-                                       "field"     => "cSufRem"                                 ,;
-                                       "type"      => "C"                                       ,;
-                                       "len"       => 2                                         ,;
-                                       "default"   => {|| retSufEmp() } }                       )
-
-   hset( ::hColumns, "usuario",     {  "create"    => "VARCHAR(3) NOT NULL"                     ,;
-                                       "text"      => "Usuario"                                 ,;
-                                       "header"    => "Usuario"                                 ,;
-                                       "visible"   => .t.                                       ,;
-                                       "hide"      => .t.                                       ,;
-                                       "width"     => 100                                       ,;
-                                       "field"     => "cCodUsr"                                 ,;
-                                       "type"      => "C"                                       ,;
-                                       "len"       => 3                                         ,;
-                                       "default"   => {|| cCurUsr() } }                         )
-
-RETURN ( ::hColumns )
-
-//---------------------------------------------------------------------------//

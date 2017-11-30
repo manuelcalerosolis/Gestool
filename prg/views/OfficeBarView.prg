@@ -77,7 +77,7 @@ METHOD createButtonsLine( oLineasController, oSQLBrowseView )
       oGrupo                  := TDotNetGroup():New( ::oOfficeBarFolder, 246, "Líneas", .f. )
          ::oBtnAppend         := TDotNetButton():New( 60, oGrupo, "new32", "Añadir [F2]", 1, {|| oLineasController:Append() }, , {|| ::getController():isNotZoomMode() }, .f., .f., .f. )
          ::oBtnEdit           := TDotNetButton():New( 60, oGrupo, "gc_pencil__32", "Modificar [F3]", 2, {|| oLineasController:Edit() }, , {|| ::getController():isNotZoomMode() }, .f., .f., .f. )
-         ::oBtnDelete         := TDotNetButton():New( 60, oGrupo, "del32", "Eliminar [F4]", 3, {|| oLineasController:Delete( oSQLBrowseView:getBrowseSelected() ) }, , {|| ::getController():isNotZoomMode() }, .f., .f., .f. )
+         ::oBtnDelete         := TDotNetButton():New( 60, oGrupo, "del32", "Eliminar [F4]", 3, {|| oLineasController:Delete() }, , {|| ::getController():isNotZoomMode() }, .f., .f., .f. )
                                  TDotNetButton():New( 60, oGrupo, "gc_binocular_32", "Buscar", 4, {|| oLineasController:Search() }, , , .f., .f., .f. )
 
       if ::getController():isNotZoomMode()

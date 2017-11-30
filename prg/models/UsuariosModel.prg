@@ -5,9 +5,11 @@
 
 CLASS UsuariosModel FROM ADSBaseModel
 
-   METHOD getTableName()                        INLINE ::getDatosTableName( "Users" )
+   METHOD getTableName()   INLINE ::getDatosTableName( "Users" )
 
    METHOD UpdateEmpresaEnUso( cCodigoUsuario, cCodigoEmpresa ) 
+
+   METHOD getUsuariosToJson()
 
 END CLASS
 
@@ -16,10 +18,21 @@ END CLASS
 METHOD UpdateEmpresaEnUso( cCodigoUsuario, cCodigoEmpresa ) 
 
    local cStm
-   local cSql  := "UPDATE " + ::getTableName() + " " +                  ;
-                  "SET cEmpUse = " + quoted( cCodigoEmpresa ) + " " +   ;
-                  "WHERE cCodUse = " + quoted( cCodigoUsuario )
+   local cSql  := "UPDATE " + ::getTableName() + " "                    + ;
+                     "SET cEmpUse = " + quoted( cCodigoEmpresa ) + " "  + ;
+                     "WHERE cCodUse = " + quoted( cCodigoUsuario )
 
 RETURN ( ::ExecuteSqlStatement( cSql, @cStm ) )
 
 //------------------------------------------------------------------------//
+
+METHOD getUsuariosToJson( cArea )
+
+   local cSql  := "SELECT cCodUse, cNbrUse "                            + ;
+                     "FROM " + ::getTableName() 
+
+RETURN ( ::ExecuteSqlStatement( cSql, @cArea ) )
+
+//---------------------------------------------------------------------------//
+
+

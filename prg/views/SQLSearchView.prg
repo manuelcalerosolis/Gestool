@@ -22,7 +22,7 @@ CLASS SQLSearchView FROM SQLBaseView
    METHOD onChangeCombo() 
    METHOD onChangeSearch() 
 
-   METHOD getBrowse()                     INLINE ( ::oController:oSenderController:oDialogView:oSQLBrowseView )
+   METHOD getBrowse()                     INLINE ( ::oController:oBrowseView )
    METHOD getGetSearch()                  INLINE ( ::oGetSearch )
    METHOD getComboBoxOrder()              INLINE ( ::oComboBoxOrder )
    METHOD getWindow()                     INLINE ( ::oDialog )
@@ -77,7 +77,17 @@ RETURN ( nil )
 
 METHOD Start()
 
-   ::oComboBoxOrder:Set( ::getModel():getHeaderFromColumnOrder() )
+   local oColumn  
+
+   // msgalert( hb_valtoexp( ::getBrowse():getColumnsHeaders() ), "Start" )
+
+   ::oComboBoxOrder:setItems( ::getBrowse():getVisibleColumnsHeaders() )
+
+   oColumn        := ::getBrowse():getColumnOrder()
+
+   if !empty( oColumn )
+      ::oComboBoxOrder:set( oColumn:cHeader ) 
+   end if 
 
 RETURN ( Self )
 
@@ -103,9 +113,17 @@ RETURN ( Self )
 
 //----------------------------------------------------------------------------//
 
-METHOD onChangeSearch() 
+METHOD onChangeSearch( oColumn ) 
 
-   ::oController:findInRowSet( alltrim( ::cGetSearch ) )                  
+   if empty( oColumn )
+      oColumn        := ::getBrowse():getColumnByHeader( ::oComboBoxOrder:VarGet() )
+   end if 
+
+   if empty( oColumn )
+      RETURN ( Self )
+   end if 
+
+   ::oController:findInRowSet( alltrim( ::cGetSearch ), oColumn:cSortOrder )                  
 
    ::getBrowse():refreshCurrent()
 

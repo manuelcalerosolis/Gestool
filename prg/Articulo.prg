@@ -12210,6 +12210,10 @@ function SynArt( cPath )
 
          end case
 
+         if empty( ( dbfArt )->Uuid )
+            ( dbfArt )->Uuid        := win_uuidcreatestring()
+         end if 
+
          /*
          Si tenemos marcada la opción de "Cambiar precios de costo automáticamente"
          ponemos en la ficha del artículo el precio de la última compra.
@@ -12217,9 +12221,9 @@ function SynArt( cPath )
 
          if uFieldEmpresa( "lActCos" )
 
-            nCosto                     := nCostoUltimaCompra( ( dbfArt )->Codigo, dbfAlbPrvL, dbfFacPrvL )
+            nCosto                  := nCostoUltimaCompra( ( dbfArt )->Codigo, dbfAlbPrvL, dbfFacPrvL )
             if nCosto != 0
-               ( dbfArt )->pCosto := nCosto
+               ( dbfArt )->pCosto   := nCosto
             end if
 
          end if
@@ -15501,6 +15505,7 @@ function aItmArt()
    aAdd( aBase, { "cWebShop",  "C",100, 0, "Tienda web donde se publica el producto",  "",                  "", "( cDbfArt )", nil } )
    aAdd( aBase, { "lIvaWeb",   "L",  1, 0, "Iva incluido para precio web" ,            "",                  "", "( cDbfArt )", nil } )
    aAdd( aBase, { "cEtiqueta", "M", 10, 0, "Relación de etiquetas" ,                   "",                  "", "( cDbfArt )", nil } )
+   aAdd( aBase, { "uuid",      "C", 40, 0, "Uuid" ,                                    "",                  "", "( cDbfArt )", nil } )
 
 return ( aBase )
 

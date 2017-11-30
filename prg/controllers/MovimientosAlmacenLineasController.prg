@@ -19,7 +19,7 @@ CLASS MovimientosAlmacenLineasController FROM SQLBrowseController
 
    METHOD loadedBlankBuffer()
 
-   METHOD buildingRowSet()
+   METHOD gettingSelectSentence()
 
    // Validaciones ------------------------------------------------------------
 
@@ -53,7 +53,7 @@ CLASS MovimientosAlmacenLineasController FROM SQLBrowseController
    // Show/Hide----------------------------------------------------------------
 
    METHOD showLoteCaducidad()
-   METHOD showProperty()
+   METHOD showProperties()
    METHOD hideProperty()               INLINE ( ::oDialogView:hidePropertyControls() )     
 
    // Otros--------------------------------------------------------------------
@@ -91,14 +91,17 @@ END CLASS
 
 METHOD New( oController )
 
+   ::Super:New( oController )
+
    ::cTitle                := "Movimientos de almacen lineas"
 
    ::oModel                := SQLMovimientosAlmacenLineasModel():New( self )
 
-   ::oBrowseView           := MovimientosAlmacenLineasBrowseView():New( self )
+   ::oModel:setEvent( 'loadedBlankBuffer',      {|| ::loadedBlankBuffer() } ) 
+   ::oModel:setEvent( 'gettingSelectSentence',  {|| ::gettingSelectSentence() } ) 
 
-   ::oModel:setEvent( 'loadedBlankBuffer',   {|| ::loadedBlankBuffer() } ) 
-   ::oModel:setEvent( 'buildingRowSet',      {|| ::buildingRowSet() } ) 
+   ::oBrowseView           := MovimientosAlmacenLineasBrowseView():New( self )
+   ::oBrowseView:lFooter   := .t.
 
    ::oDialogView           := MovimientosAlmacenLineasView():New( self )
 
@@ -108,13 +111,11 @@ METHOD New( oController )
 
    ::oSeriesControler      := NumerosSeriesController():New( self )
 
-   ::Super:New( oController )
-
    ::setEvent( 'closedDialog',      {|| ::onClosedDialog() } )
 
-   ::setEvent( 'appended',          {|| oController:oDialogView:oSQLBrowseView:Refresh() } )
-   ::setEvent( 'edited',            {|| oController:oDialogView:oSQLBrowseView:Refresh() } )
-   ::setEvent( 'deletedSelection',  {|| oController:oDialogView:oSQLBrowseView:Refresh() } )
+   ::setEvent( 'appended',          {|| ::oBrowseView:Refresh(), msgalert( "appended" ) } )
+   ::setEvent( 'edited',            {|| ::oBrowseView:Refresh() } )
+   ::setEvent( 'deletedSelection',  {|| ::oBrowseView:Refresh() } )
 
    ::setEvent( 'deletingLines',     {|| ::oSeriesControler:deletedSelected( ::aSelectDelete ) } )
 
@@ -134,7 +135,7 @@ RETURN ( Self )
 
 //---------------------------------------------------------------------------//
 
-METHOD buildingRowSet()
+METHOD gettingSelectSentence()
 
    local uuid        := ::getSenderController():getUuid() 
 
@@ -176,7 +177,7 @@ METHOD validateCodigoArticulo()
 
    ::showLoteCaducidad()
 
-   ::showProperty()
+   ::showProperties()
 
 RETURN ( .t. )
 
@@ -229,47 +230,41 @@ RETURN ( .t. )
 
 //---------------------------------------------------------------------------//
 
-METHOD showProperty()
+METHOD showProperties()
 
    if empty( hget( ::hArticulo, "ccodprp1" ) ) 
 
       ::oDialogView:hidePrimeraPropiedad()
 
+      ::oDialogView:hideSegundaPropiedad()
+
       ::oDialogView:hidePropertyBrowseView()
-
-   else 
-
-      if ::lBrowseProperty()
-
-         ::oDialogView:setPropertyOneBrowseView( ::getFirstProperty( hget( ::hArticulo, "codigo" ), hget( ::hArticulo, "ccodprp1" ) ) )
-
-         ::oDialogView:setPropertyTwoBrowseView( ::getSecondProperty( hget( ::hArticulo, "codigo" ), hget( ::hArticulo, "ccodprp2" ) ) )
-
-         ::oDialogView:buildPropertyBrowseView()
-
-         ::oDialogView:showPropertyBrowseView()
-
-         // ::oDialogView:oBrowsePropertyView:setOnPostEdit( {|| ::oDialogView:refreshUnidadesImportes() } )
-
-         ::oDialogView:hideUnitsControls()
-
-      else
-
-         ::oDialogView:hidePropertyBrowseView()
-         
-         ::oDialogView:showPrimeraPropiedad()
-
-      end if 
 
    end if 
 
-   if empty( hget( ::hArticulo, "ccodprp2" ) ) 
+   if ::lBrowseProperty()
+
+      ::oDialogView:hidePrimeraPropiedad()
 
       ::oDialogView:hideSegundaPropiedad()
 
-   else 
+      ::oDialogView:setPropertyOneBrowseView( ::getFirstProperty( hget( ::hArticulo, "codigo" ), hget( ::hArticulo, "ccodprp1" ) ) )
 
-      if !( ::lBrowseProperty() )
+      ::oDialogView:setPropertyTwoBrowseView( ::getSecondProperty( hget( ::hArticulo, "codigo" ), hget( ::hArticulo, "ccodprp2" ) ) )
+
+      ::oDialogView:buildPropertyBrowseView()
+
+      ::oDialogView:showPropertyBrowseView()
+
+      ::oDialogView:hideUnitsControls()
+
+   else
+
+      ::oDialogView:hidePropertyBrowseView()
+      
+      ::oDialogView:showPrimeraPropiedad()
+
+      if !empty( hget( ::hArticulo, "ccodprp2" ) ) 
          ::oDialogView:showSegundaPropiedad()
       end if 
 
@@ -435,7 +430,7 @@ METHOD onActivateDialog()
 
       ::showLoteCaducidad()
 
-      ::showProperty()
+      ::showProperties()
 
       ::stampProperties()
    

@@ -5704,40 +5704,52 @@ FONT 8, "Ms Sans Serif"
   CONTROL "Cobros clientes", -1, "Static", WS_GROUP, 197, 235, 83, 8
 }
 
-EMPRESA_6 DIALOG DISCARDABLE 154, 80, 434, 353
+LANGUAGE LANG_SPANISH,SUBLANG_SPANISH_MODERN
+
+EMPRESA_ENVIOS DIALOG DISCARDABLE 154, 80, 434, 353
 STYLE WS_CHILD|DS_3DLOOK
 FONT 8, "Ms Sans Serif"
 {
-  CONTROL "Enviar y recibir información", 165, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 47, 42, 124, 11
+  CONTROL "Enviar y recibir información", 165, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 50, 42, 124, 11
   CONTROL "", 100, "ComboBox", WS_BORDER|CBS_DROPDOWNLIST|WS_TABSTOP, 120, 55, 110, 41
-  CONTROL "Empresa franquiciada", 400, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 47, 71, 83, 11
-  CONTROL "Exportación por medio físico", 110, "Button", BS_AUTORADIOBUTTON, 47, 84, 102, 11
+  CONTROL "Empresa franquiciada", 400, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 50, 71, 83, 11
+  CONTROL "Exportación por medio físico", 110, "Button", BS_AUTORADIOBUTTON, 50, 84, 102, 11
   CONTROL "", 120, "Edit", WS_BORDER|WS_TABSTOP, 120, 98, 306, 11
-  CONTROL "Exportación por internet", 111, "Button", BS_AUTORADIOBUTTON, 47, 112, 87, 11
+  CONTROL "Exportación por internet", 111, "Button", BS_AUTORADIOBUTTON, 50, 112, 87, 11
   CONTROL "", 160, "Edit", WS_BORDER|WS_TABSTOP, 120, 126, 306, 11
   CONTROL "", 170, "Edit", WS_BORDER|WS_TABSTOP, 120, 138, 120, 11
   CONTROL "", 180, "Edit", ES_PASSWORD|WS_BORDER|WS_TABSTOP, 120, 150, 120, 11
   CONTROL "Envío pasivo", 200, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 251, 149, 55, 11
-  CONTROL "Enviar solo albaranes entregados", 190, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 47, 170, 124, 11
+  CONTROL "Enviar solo albaranes entregados", 190, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 50, 170, 124, 11
   CONTROL "", 320, "Edit", WS_BORDER|WS_TABSTOP, 121, 192, 120, 11
   CONTROL "", 330, "Edit", WS_BORDER|WS_TABSTOP, 121, 204, 120, 11
-  CONTROL "Enviar cierre de turnos por correo electrónico", 300, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 47, 232, 155, 12
-  CONTROL "", 310, "Edit", WS_BORDER|WS_TABSTOP, 119, 247, 306, 12
+  CONTROL "Enviar cierre de turnos por correo electrónico", 300, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 50, 232, 155, 12
+  CONTROL "", 310, "Edit", WS_BORDER|WS_TABSTOP, 120, 247, 306, 12
+  CONTROL "", 600, "Edit", WS_BORDER|WS_TABSTOP, 120, 277, 306, 11
+  CONTROL "", 610, "Edit", WS_BORDER|WS_TABSTOP, 120, 289, 120, 11
+  CONTROL "", 620, "Edit", ES_PASSWORD|WS_BORDER|WS_TABSTOP, 120, 301, 120, 11
+  CONTROL "Envío pasivo", 630, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 251, 300, 55, 11
   CONTROL "Nombre usuario", -1, "Static", WS_GROUP, 58, 141, 55, 8
   CONTROL "Dirección FTP", -1, "Static", WS_GROUP, 58, 129, 51, 8
   CONTROL "Clave de acceso", -1, "Static", WS_GROUP, 58, 153, 59, 8
-  CONTROL "Tipo de envío", -1, "Static", WS_GROUP, 47, 59, 66, 8
+  CONTROL "Tipo de envío", -1, "Static", WS_GROUP, 50, 59, 50, 8
   CONTROL "Ruta", -1, "Static", WS_GROUP, 58, 100, 21, 8
   CONTROL "", -1, "Static", SS_ETCHEDHORZ, 47, 166, 378, 1
   CONTROL "Envío de información", -1, "Button", BS_GROUPBOX, 44, 29, 386, 190
   CONTROL "", 500, "Static", SS_BITMAP|SS_CENTERIMAGE, 4, 3, 34, 30
   CONTROL "Configuración para el envio de datos entre delegaciones", -1, "Static", SS_LEFTNOWORDWRAP, 44, 3, 384, 8
   CONTROL "Turnos", -1, "Button", BS_GROUPBOX, 44, 221, 386, 43
-  CONTROL "Correo electrónico", -1, "Static", WS_GROUP, 46, 250, 63, 8
-  CONTROL "Código cliente", -1, "Static", WS_GROUP, 47, 195, 55, 8
-  CONTROL "Código proveedor", -1, "Static", WS_GROUP, 47, 207, 59, 8
-  CONTROL "Recibir albaranes como entregados", 191, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 47, 180, 124, 11
+  CONTROL "Correo electrónico", -1, "Static", WS_GROUP, 50, 250, 63, 8
+  CONTROL "Código cliente", -1, "Static", WS_GROUP, 50, 195, 55, 8
+  CONTROL "Código proveedor", -1, "Static", WS_GROUP, 50, 207, 59, 8
+  CONTROL "Recibir albaranes como entregados", 191, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 50, 180, 124, 11
+  CONTROL "Nombre usuario", -1, "Static", WS_GROUP, 50, 292, 55, 8
+  CONTROL "Dirección FTP", -1, "Static", WS_GROUP, 50, 280, 51, 8
+  CONTROL "Clave de acceso", -1, "Static", WS_GROUP, 50, 304, 59, 8
+  CONTROL "PDA", -1, "Button", BS_GROUPBOX, 44, 267, 386, 52
 }
+
+LANGUAGE LANG_ENGLISH,SUBLANG_ENGLISH_US
 
 EMPRESA_7 DIALOG DISCARDABLE 31, 32, 397, 297
 STYLE WS_CHILD|DS_3DLOOK
@@ -21560,5 +21572,14 @@ FONT 8, "Ms Sans Serif"
   CONTROL "Filtro", -1, "Button", BS_GROUPBOX, 44, 29, 455, 132
   CONTROL "Editor de filtros SQL", -1, "Static", SS_LEFTNOWORDWRAP, 44, 3, 446, 8
   CONTROL "Sentencia", -1, "Static", WS_GROUP, 50, 55, 37, 8
+}
+
+PDA_ENVIO_RECEPCION DIALOG DISCARDABLE 80, 40, 305, 99
+STYLE WS_POPUP|DS_MODALFRAME|DS_3DLOOK|WS_CAPTION|WS_SYSMENU|WS_VISIBLE
+CAPTION "PDA - Envio y recepción "
+FONT 8, "Ms Sans Serif"
+{
+  CONTROL "Progreso actual ", -1, "Static", WS_GROUP, 2, 79, 57, 8
+  CONTROL "", 100, "msctls_progress32", 0x00000000, 2, 89, 300, 4
 }
 

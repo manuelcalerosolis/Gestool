@@ -29,8 +29,6 @@ CLASS SQLNavigatorController FROM SQLBaseController
 
    METHOD ActivateSelectorView()
 
-   METHOD changeModelOrderAndOrientation( cColumnOrder, cColumnOrientation )
-
    METHOD setFastReport( oFastReport, cTitle, cSentence, cColumns )    
 
    METHOD addFastKey( uKey, bAction )
@@ -50,12 +48,6 @@ CLASS SQLNavigatorController FROM SQLBaseController
    METHOD getComboBoxOrder()                          INLINE ( ::oWindowsBar:oComboBox() )
 
    METHOD onChangeCombo( oColumn )
-
-   // Rowset-------------------------------------------------------------------
-
-   METHOD getRowSet()                                 INLINE ( ::oRowSet )
-   METHOD saveRecNo()                                 INLINE ( ::oRowSet:saveRecNo() )
-   METHOD setRecNo()                                  INLINE ( ::oRowSet:setRecNo() )
 
    // Aplication windows bar---------------------------------------------------
 
@@ -132,22 +124,6 @@ METHOD ActivateSelectorView()
    ::oRowSet:build( ::oModel:getSelectSentence() )
 
 RETURN ( ::oSelectorView:Activate() )
-
-//---------------------------------------------------------------------------//
-
-METHOD changeModelOrderAndOrientation( cColumnOrder, cColumnOrientation )
-
-   ::oRowSet:saveRecno()
-
-   ::oModel:setColumnOrder( cColumnOrder )
-
-   ::oModel:setColumnOrientation( cColumnOrientation )
-
-   ::oRowSet:build( ::oModel:getSelectSentence() )
-
-   ::oRowSet:gotoRecno()
-
-RETURN ( self )
 
 //---------------------------------------------------------------------------//
 
@@ -270,8 +246,6 @@ METHOD setFilter()
    end if  
 
    msgalert( ::getModel():getGeneralSelect(), "cSentence" )
-
-   ::getModel():buildRowSet()
 
 RETURN ( Self )    
     

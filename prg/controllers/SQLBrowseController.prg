@@ -11,11 +11,9 @@ CLASS SQLBrowseController FROM SQLBaseController
 
    METHOD Activate()
 
-   // Rowset-------------------------------------------------------------------
+   METHOD onChangeCombo( oColumn )
 
-   METHOD getRowSet()                                 INLINE ( ::oRowSet )
-   METHOD saveRecNo()                                 INLINE ( ::oRowSet:saveRecNo() )
-   METHOD setRecNo()                                  INLINE ( ::oRowSet:setRecNo() )
+   METHOD Delete()
 
 END CLASS
 
@@ -24,8 +22,6 @@ END CLASS
 METHOD New( oSenderController )
 
    ::Super:New( oSenderController )
-
-   ::oBrowseView                                      := SQLBrowseView():New( self )
 
    ::oRowSet                                          := SQLRowSet():New( self )
 
@@ -46,4 +42,25 @@ METHOD Activate( oDialog, nId )
 RETURN ( Self )
 
 //---------------------------------------------------------------------------//
+
+METHOD onChangeCombo( oColumn )
+
+   ::changeModelOrderAndOrientation( oColumn:cSortOrder, oColumn:cOrder )
+
+   ::oBrowseView:getBrowse():selectColumnOrder( oColumn )
+
+   ::oBrowseView:getBrowse():refreshCurrent()
+
+RETURN ( Self )
+
+//---------------------------------------------------------------------------//
+
+METHOD Delete()
+
+RETURN ( ::Super:Delete( ::oBrowseView:getBrowseSelected() ) )
+
+//----------------------------------------------------------------------------//
+
+
+
 

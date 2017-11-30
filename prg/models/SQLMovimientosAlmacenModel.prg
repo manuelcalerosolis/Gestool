@@ -79,8 +79,6 @@ METHOD getInitialSelect()
                            "comentarios "                                        + ;        
                         "FROM " + ::getTableName()    
 
-   msgstop( cSelect, "getInitialSelect" )
-
 RETURN ( cSelect )
 
 //---------------------------------------------------------------------------//

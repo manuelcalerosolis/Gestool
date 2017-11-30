@@ -17,17 +17,12 @@ CLASS SQLXBrowse FROM TXBrowse
 
    DATA aHeaders                                AS ARRAY       INIT {}
 
-   DATA lOnProcess                              AS LOGIC       INIT .f.
-
-   DATA nVScrollPos
-
-   DATA oRowSet
-
    METHOD New( oWnd )
 
    METHOD setRowSet( oRowSet )
 
-   METHOD refreshCurrent()                      INLINE ( ::Refresh(), ::Select( 0 ), ::Select( 1 ) )
+   METHOD refreshCurrent()                      INLINE ( ::Refresh() )
+   METHOD Refresh()                             INLINE ( ::Super:Refresh(), ::Select( 0 ), ::Select( 1 ) )
 
    METHOD getColumnByHeaders()
    METHOD selectColumnOrder( oCol )
@@ -261,17 +256,15 @@ METHOD getColumnOrder( cSortOrder )
 
    local nPosition   
 
-   if !hb_ischar( cSortOrder )
-      RETURN ( nil )
+   if !empty( cSortOrder )
+      nPosition   := ascan( ::aCols, {|o| o:cSortOrder == cSortOrder } )
+   else 
+      nPosition   := ascan( ::aCols, {|o| !empty( o:cOrder ) } )
    end if 
 
-   nPosition   := ascan( ::aCols, {|o| o:cSortOrder == cSortOrder } )
+   nPosition      := max( nPosition, 1 )
 
-   if nPosition != 0
-      RETURN ( ::aCols[ nPosition ] )
-   end if 
-
-RETURN ( nil )
+RETURN ( ::aCols[ nPosition ] )
 
 //----------------------------------------------------------------------------//
 

@@ -110,6 +110,11 @@ static aCmbContabilidad        := { "Contaplus", "A3 CON" }
 static cMailNotificaciones
 static lInformacionInmediata 
 
+static pdaFtp
+static pdaUsuario
+static pdaPassword
+static pdaPasivo
+
 static lEnvioRecepcion
 
 static nView
@@ -1314,6 +1319,11 @@ STATIC FUNCTION EditConfig( aTmp, aGet, dbfEmp, oBrw, nSelFolder, bValid, nMode 
 
    lInformacionInmediata   := ConfiguracionEmpresasRepository():getLogic( 'informacion_inmediata', .f. )
 
+   pdaFtp                  := padr( ConfiguracionEmpresasRepository():getValue( 'pda_ftp', '' ), 200 )
+   pdaUsuario              := padr( ConfiguracionEmpresasRepository():getValue( 'pda_user', '' ), 200 )
+   pdaPassword             := padr( ConfiguracionEmpresasRepository():getValue( 'pda_password', '' ), 200 )
+   pdaPasivo               := ConfiguracionEmpresasRepository():getLogic( 'pda_pasivo', .f. )
+
    LoaItmEmp( aTmp )
 
    DEFINE DIALOG  oDlg ;
@@ -1330,7 +1340,7 @@ STATIC FUNCTION EditConfig( aTmp, aGet, dbfEmp, oBrw, nSelFolder, bValid, nMode 
                   "EMPRESA_TPV",;
                   "EMPRESA_10",;
                   "EMPRESA_CONTABILIDAD",;
-                  "EMPRESA_6",;
+                  "EMPRESA_ENVIOS",;
                   "EMPRESA_COMUNICACIONES"
 
       // Page 1 Comportamientos---------------------------------------------------
@@ -2407,8 +2417,8 @@ STATIC FUNCTION EditConfig( aTmp, aGet, dbfEmp, oBrw, nSelFolder, bValid, nMode 
          OF          fldEnvios
 
       REDEFINE CHECKBOX lEnvioRecepcion ;
-         ID       165;
-         OF       fldEnvios  
+         ID          165;
+         OF          fldEnvios  
 
       REDEFINE COMBOBOX aGet[ _CENVUSR ] VAR aTmp[ _CENVUSR ] ;
          ITEMS    { "Cliente", "Servidor" } ;
@@ -2484,6 +2494,22 @@ STATIC FUNCTION EditConfig( aTmp, aGet, dbfEmp, oBrw, nSelFolder, bValid, nMode 
          ID       330;
          PICTURE  ( Replicate( "X", RetNumCodPrvEmp() ) ) ;
          WHEN     lEnvioRecepcion;
+         OF       fldEnvios
+
+      REDEFINE GET pdaFtp ;
+         ID       600 ;
+         OF       fldEnvios
+
+      REDEFINE GET pdaUsuario ;
+         ID       610 ;
+         OF       fldEnvios
+
+      REDEFINE GET pdaPassword ;
+         ID       620 ;
+         OF       fldEnvios
+
+      REDEFINE CHECKBOX pdaPasivo ;
+         ID       630 ;
          OF       fldEnvios
 
       // Page 7 comunicacion------------------------------------------------------
@@ -5598,9 +5624,15 @@ STATIC FUNCTION SaveEditConfig( aTmp, oSay, oBrw, oDlg, nMode )
 
    end while
 
-   ConfiguracionEmpresasRepository():setValue( 'mail_notificaciones',     alltrim( cMailNotificaciones ) ) 
-   ConfiguracionEmpresasRepository():setValue( 'informacion_inmediata',   lInformacionInmediata )
-   ConfiguracionEmpresasRepository():setValue( 'envio_recepcion',   lEnvioRecepcion )
+   ConfiguracionEmpresasRepository():setValue( 'mail_notificaciones',   alltrim( cMailNotificaciones ) ) 
+   ConfiguracionEmpresasRepository():setValue( 'informacion_inmediata', lInformacionInmediata )
+   ConfiguracionEmpresasRepository():setValue( 'envio_recepcion',       lEnvioRecepcion )
+
+   ConfiguracionEmpresasRepository():setValue( 'pda_ftp',               alltrim( pdaFtp ) ) 
+   ConfiguracionEmpresasRepository():setValue( 'pda_user',              alltrim( pdaUsuario ) ) 
+   ConfiguracionEmpresasRepository():setValue( 'pda_password',          alltrim( pdaPassword ) ) 
+
+   ConfiguracionEmpresasRepository():setValue( 'pda_pasivo',            pdaPasivo ) 
 
    // Escribimos en el definitivo----------------------------------------------
 

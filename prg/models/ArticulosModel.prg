@@ -15,6 +15,8 @@ CLASS ArticulosModel FROM ADSBaseModel
 
    METHOD getHash()
 
+   METHOD getArticulosToJson()
+
    METHOD getValoresPropiedades( cCodPro )
 
    METHOD getPrimerValorPropiedad( cCodPro, cArea )
@@ -90,7 +92,7 @@ METHOD getValoresPropiedades( cCodPro, cArea ) CLASS ArticulosModel
    local cSql  := "SELECT * FROM " + ::getEmpresaTableName( "TblPro" )     + ;
                      " WHERE cCodPro = " + quoted( cCodPro )
 
-Return ( ::ExecuteSqlStatement( cSql, @cArea ) )
+RETURN ( ::ExecuteSqlStatement( cSql, @cArea ) )
 
 //---------------------------------------------------------------------------//
 
@@ -99,18 +101,35 @@ METHOD getPrimerValorPropiedad( cCodPro, cArea ) CLASS ArticulosModel
    local cSql  := "SELECT TOP 1 * FROM " + ::getEmpresaTableName( "TblPro" ) + ;
                      " WHERE cCodPro = " + quoted( cCodPro ) + ""
 
-Return ( ::ExecuteSqlStatement( cSql, @cArea ) )
+RETURN ( ::ExecuteSqlStatement( cSql, @cArea ) )
 
 //---------------------------------------------------------------------------//
 
-METHOD getArticulosToPrestaShopInFamilia( idFamilia, cWebShop, cArea )
+METHOD getArticulosToPrestaShopInFamilia( idFamilia, cWebShop, cArea ) CLASS ArticulosModel
 
    local cSql  := "SELECT Codigo, cWebShop FROM " + ::getTableName()       + ;
                      " WHERE Familia = " + quoted( idFamilia ) + " AND "   + ;
                         "cWebShop = " + quoted( cWebShop ) + " AND "       + ;        
                         "lPubInt"
 
-Return ( ::ExecuteSqlStatement( cSql, @cArea ) )
+RETURN ( ::ExecuteSqlStatement( cSql, @cArea ) )
+
+//---------------------------------------------------------------------------//
+
+METHOD getArticulosToJson( cArea ) CLASS ArticulosModel
+
+   local cSql  := "SELECT Articulos.Codigo, "                  + ;
+                     "Articulos.Nombre, "                      + ;
+                     "Articulos.pVenta1, "                     + ;
+                     "Articulos.pVtaIva1, "                    + ;
+                     "Articulos.uuid, "                        + ;
+                     "CodigosBarras.cCodBar, "                 + ;
+                     "TipoIva.TpIva "                          + ;
+                  "FROM " + ::getTableName() + " Articulos "   + ;
+                     "LEFT JOIN " + ArticulosCodigosBarraModel():getTableName() + " CodigosBarras ON Articulos.Codigo = CodigosBarras.cCodArt " + ;
+                     "INNER JOIN DATOSTIva TipoIva ON Articulos.tipoIva = TipoIva.Tipo "
+
+RETURN ( ::ExecuteSqlStatement( cSql, @cArea ) )
 
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//

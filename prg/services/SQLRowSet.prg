@@ -17,6 +17,8 @@ CLASS SQLRowSet
 
    DATA nRecno
 
+   DATA nId
+
    METHOD New()
    METHOD End()
 
@@ -25,26 +27,30 @@ CLASS SQLRowSet
    METHOD fieldget( nField )                          INLINE ( ::oRowSet:fieldget( nField ) )
 
    METHOD saveRecno()                                 INLINE ( ::nRecno := ::oRowSet:recno() ) 
-   METHOD gotoRecno()                                 INLINE ( ::oRowSet:goto( ::nRecno ) ) 
+   METHOD restoreRecno()                              INLINE ( ::oRowSet:goto( ::nRecno ) ) 
+   METHOD gotoRecno( nRecno )                         INLINE ( ::oRowSet:goto( nRecno ) ) 
 
+   METHOD Find( nId )
 
    METHOD build( cSentence )                    
 
-   METHOD buildRowSetAndFind( idToFind )              INLINE ( ::buildRowSet(), ::findInRowSet( idToFind ) )
+   METHOD refreshAndFind( nId )                       INLINE ( ::Refresh(), ::Find( nId ) )
+   METHOD buildAndFind( nId )                         INLINE ( ::build(), ::Find( nId ) )
 
    METHOD getRowSet()                                 INLINE ( if( empty( ::oRowSet ), ::build(), ), ::oRowSet )
    METHOD freeRowSet()                                INLINE ( if( !empty( ::oRowSet ), ( ::oRowSet:free(), ::oRowSet := nil ), ) )
+
+   METHOD getStatement()                              INLINE ( ::oStatement )
    METHOD freeStatement()                             INLINE ( if( !empty( ::oStatement ), ( ::oStatement:free(), ::oStatement := nil ), ) )
 
-   METHOD getRowSetRecno()                            INLINE ( ::getRowSet():recno() )
-   METHOD setRowSetRecno( nRecno )                    INLINE ( ::getRowSet():goto( nRecno ) )
-   METHOD getRowSetFieldGet( cColumn )                INLINE ( ::getRowSet():fieldget( cColumn ) )
-   METHOD getRowSetFieldValueByName( cColumn )        INLINE ( ::getRowSet():getValueByName( cColumn ) )
+   METHOD Refresh()                                   INLINE ( ::oRowSet:Refresh() )
+
+   METHOD Recno( nRecno )                             INLINE ( if( empty( nRecno ), ::getRowSet():Recno(), ::getRowSet():goto( nRecno ) ) )
+   METHOD FieldGet( cColumn )                         INLINE ( ::oRowSet:fieldget( cColumn ) )
+   METHOD FieldValueByName( cColumn )                 INLINE ( ::oRowSet:getValueByName( cColumn ) )
 
    METHOD getSelectByColumn()                         VIRTUAL
    METHOD getSelectByOrder()                          VIRTUAL
-
-   METHOD findInRowSet( idToFind )
    
    METHOD RecnoToId( aRecno, cColumnKey )
 
@@ -111,23 +117,25 @@ RETURN ( ::oRowSet )
 
 //---------------------------------------------------------------------------//
 
-METHOD findInRowSet( idToFind )
+METHOD Find( cFind, cColumnKey )
+
+   DEFAULT cColumnKey   := 'id'
 
    if empty( ::oRowSet )
-      RETURN ( self )
+      RETURN ( .t. )
    end if 
 
-   DEFAULT idToFind  := ::idToFind
-
-   if empty( idToFind ) .or. empty( ::cColumnKey )
-      RETURN ( self )
+   if empty( cFind )
+      RETURN ( .t. )
    end if 
 
-   if ::oRowSet:find( idToFind, ::cColumnKey, .t. ) == 0
-      ::oRowSet:goTop()
+   ::saveRecno()
+
+   if ::oRowSet:find( cFind, cColumnKey, .t. ) == 0
+      ::restoreRecno()
    end if
 
-RETURN ( self )
+RETURN ( .t. )
 
 //---------------------------------------------------------------------------//
 

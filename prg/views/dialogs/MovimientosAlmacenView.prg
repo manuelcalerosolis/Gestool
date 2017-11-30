@@ -31,9 +31,6 @@ END CLASS
 
 METHOD Activate()
 
-
-msgalert( "MovimientosAlmacenView Activate")
-
    DEFINE DIALOG ::oDialog RESOURCE "Movimientos_Almacen" TITLE ::lblTitle() + ::oController:getTitle()
 
       REDEFINE GET   ::oController:oModel:hBuffer[ "id" ] ;
@@ -131,8 +128,6 @@ msgalert( "MovimientosAlmacenView Activate")
 
       // Buttons lineas-------------------------------------------------------
 
-      msgalert( "llamada")
-
       ::oController:oLineasController:Activate( ::oDialog, 180 )
 
       /*
@@ -170,8 +165,8 @@ METHOD startActivate()
 
    ::oController:stampAgente( ::oGetAgente )
 
-   ::oSQLBrowseView:getBrowse():makeTotals()
-   ::oSQLBrowseView:getBrowse():goTop()
+   ::oController:oLineasController:oBrowseView:getBrowse():makeTotals()
+   ::oController:oLineasController:oBrowseView:getBrowse():goTop()
 
 RETURN ( Self )
 
