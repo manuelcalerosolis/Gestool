@@ -316,3 +316,5 @@ GC_FUNNEL_BROOM_16 BITMAP "..\\bmp\\gc_funnel_broom_16.bmp"
 
 INBOX_OUT_32 BITMAP "..\\bmp\\inbox_out_32.bmp" 
 INBOX_INTO_32 BITMAP "..\\bmp\\inbox_into_32.bmp" 
+
+PORTABLE_BARCODE_SCANNER_YELLOW_32 BITMAP "..\\bmp\\portable_barcode_scanner_yellow_32.bmp" 
