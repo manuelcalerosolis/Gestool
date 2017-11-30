@@ -8458,7 +8458,7 @@ Return .t.
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 
-FUNCTION nTotSatCli( cSatsupuesto, cSatCliT, cSatCliL, cIva, cDiv, cFPago, aTmp, cDivRet, lPic )
+FUNCTION nTotSatCli( cNumSat, cSatCliT, cSatCliL, cIva, cDiv, cFPago, aTmp, cDivRet, lPic )
 
    local n
    local nRecno
@@ -8496,7 +8496,7 @@ FUNCTION nTotSatCli( cSatsupuesto, cSatCliT, cSatCliL, cIva, cDiv, cFPago, aTmp,
    DEFAULT cIva            := dbfIva
    DEFAULT cDiv            := dbfDiv
    DEFAULT cFPago          := dbfFPago
-   DEFAULT cSatsupuesto    := ( cSatCliT )->cSerSat + Str( ( cSatCliT )->nNumSat ) + ( cSatCliT )->cSufSat
+   DEFAULT cNumSat    := ( cSatCliT )->cSerSat + Str( ( cSatCliT )->nNumSat ) + ( cSatCliT )->cSufSat
    DEFAULT lPic            := .f.
 
    if Empty( Select( cSatCliT ) )
@@ -8594,8 +8594,8 @@ FUNCTION nTotSatCli( cSatsupuesto, cSatCliT, cSatCliL, cIva, cDiv, cFPago, aTmp,
       nKgsTrn        := ( cSatCliT )->nKgsTrn
       lPntVer        := ( cSatCliT )->lOperPV
       nRegIva        := ( cSatCliT )->nRegIva
-      bCondition     := {|| ( cSatCliL )->cSerSat + Str( ( cSatCliL )->nNumSat ) + ( cSatCliL )->cSufSat == cSatsupuesto .and. !( cSatCliL )->( eof() ) }
-      ( cSatCliL )->( dbSeek( cSatsupuesto ) )
+      bCondition     := {|| ( cSatCliL )->cSerSat + Str( ( cSatCliL )->nNumSat ) + ( cSatCliL )->cSufSat == cNumSat .and. !( cSatCliL )->( eof() ) }
+      ( cSatCliL )->( dbSeek( cNumSat ) )
    end if
 
    /*
@@ -11986,11 +11986,11 @@ Return nil
 
 //---------------------------------------------------------------------------//
 
-Function sTotSatCli( cSat, dbfMaster, dbfLine, dbfIva, dbfDiv, cDivRet, lExcCnt )
+Function sTotSatCli( cSat, dbfMaster, dbfLine, dbfIva, dbfDiv, cDivRet )
 
    local sTotal
 
-   nTotSatCli( cSat, dbfMaster, dbfLine, dbfIva, dbfDiv, nil, nil, cDivRet, .f., lExcCnt )
+   nTotSatCli( cSat, dbfMaster, dbfLine, dbfIva, dbfDiv, nil, nil, cDivRet, .f. )
 
    sTotal                                 := sTotal()
    sTotal:nTotalBruto                     := nTotBrt

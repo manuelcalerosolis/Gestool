@@ -122,8 +122,8 @@ METHOD End()
       ::oMenuTreeView:End()
    end if 
 
-   if !empty( ::oSQLBrowseView )
-      ::oSQLBrowseView:End()
+   if !empty( ::oBrowseView )
+      ::oBrowseView:End()
    end if 
 
    if !empty( ::oTopWebBar )

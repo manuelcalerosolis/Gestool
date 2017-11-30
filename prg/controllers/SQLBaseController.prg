@@ -62,29 +62,44 @@ CLASS SQLBaseController
 
    METHOD getSenderController()                       INLINE ( ::oSenderController )    
 
-   METHOD changeModelOrderAndOrientation()            VIRTUAL
+   METHOD changeModelOrderAndOrientation()            
    METHOD getModelHeaderFromColumnOrder()             INLINE ( ::oModel:getHeaderFromColumnOrder() )
 
-   METHOD find( uValue, cColumn )                     INLINE ( ::oModel:find( uValue, cColumn ) )
+   // Rowset-------------------------------------------------------------------
 
-   // Dialogo------------------------------------------------------------------
+   METHOD getRowSet()                                 INLINE ( ::oRowSet )
+   METHOD saveRowSetRecno()                           INLINE ( if( !empty( ::oRowSet ), ::oRowSet:saveRecno(), ) )
+   METHOD restoreRowSetRecno()                        INLINE ( if( !empty( ::oRowSet ), ::oRowSet:restoreRecno(), ) )
+   METHOD gotoRowSetRecno( nRecno )                   INLINE ( if( !empty( ::oRowSet ), ::oRowSet:gotoRecno( nRecno ), ) )
+   METHOD findRowSet( nId )                           INLINE ( if( !empty( ::oRowSet ), ::oRowSet:find( nId ), ) )
+   METHOD refreshRowSet()                             INLINE ( if( !empty( ::oRowSet ), ::oRowSet:refresh(), ) )
+   METHOD refreshRowSetAndFind( nId )                 INLINE ( if( !empty( ::oRowSet ), ::oRowSet:refreshAndFind( nId ), ) )
 
-   METHOD getDialogView()                             INLINE ( ::oDialogView )
+   METHOD getRecnoToId( aSelected )                   INLINE ( if( !empty( ::oRowSet ), ::oRowSet:RecnoToId( aSelected ), {} ) )
 
-   METHOD getRepository()                             INLINE ( ::oRepository )
-
-   METHOD getContainer( cController )                 INLINE ( ::ControllerContainer:get( cController ) )
-
-   METHOD getName()                                   INLINE ( strtran( lower( ::cTitle ), " ", "_" ) )
-
-   METHOD getRowSet()
    METHOD getIdFromRowSet()                           INLINE ( if( !empty( ::getRowSet() ), ( ::getRowSet():fieldGet( ::oModel:cColumnKey ) ), ) )
 
    METHOD findInRowSet( uValue, cColumn )             
    METHOD findByIdInRowSet( uValue )                  INLINE ( if( !empty( ::getRowSet() ), ::getRowSet():find( uValue, "id", .t. ), ) )
 
+   // Dialogo------------------------------------------------------------------
+
+   METHOD getDialogView()                             INLINE ( ::oDialogView )
+
+   // Repositorio--------------------------------------------------------------
+
+   METHOD getRepository()                             INLINE ( ::oRepository )
+
+   // Container----------------------------------------------------------------
+
+   METHOD getContainer( cController )                 INLINE ( ::ControllerContainer:get( cController ) )
+
+   METHOD getName()                                   INLINE ( strtran( lower( ::cTitle ), " ", "_" ) )
+
    METHOD startBrowse( oCombobox )
    METHOD restoreBrowseState()
+
+   // Validator----------------------------------------------------------------
 
    METHOD Validate( cColumn )                         INLINE ( if( !empty( ::oValidator ), ::oValidator:Validate( cColumn ), ) )
    METHOD Assert( cColumn, uValue )                   INLINE ( if( !empty( ::oValidator ), ::oValidator:Assert( cColumn, uValue ), ) )
@@ -155,9 +170,6 @@ CLASS SQLBaseController
    METHOD setFastReport( oFastReport, cTitle, cSentence, cColumns )
 
    METHOD onKeyChar( nKey )                           VIRTUAL 
-
-   METHOD saveRecno()                                 VIRTUAL
-   METHOD setRecno()                                  VIRTUAL
 
 END CLASS
 
@@ -230,6 +242,7 @@ RETURN ( Self )
 
 METHOD Append()
 
+   local nId
    local uResult
    local lAppend     := .t.   
 
@@ -248,7 +261,7 @@ METHOD Append()
 
       ::beginTransactionalMode()
 
-      ::saveRecno()
+      ::saveRowSetRecno()
 
       ::oModel:loadBlankBuffer()
 
@@ -258,11 +271,15 @@ METHOD Append()
 
          ::fireEvent( 'closedDialog' )    
 
-         ::oModel:insertBuffer()
-
-         ::fireEvent( 'appended' ) 
+         nId            := ::oModel:insertBuffer()
 
          ::commitTransactionalMode()
+
+         if !empty( nId )
+            ::refreshRowSetAndFind( nId )
+         end if 
+
+         ::fireEvent( 'appended' ) 
 
          if ::lContinuousAppend
             loop
@@ -276,7 +293,7 @@ METHOD Append()
 
          ::fireEvent( 'cancelAppended' ) 
 
-         ::setRecno()
+         ::restoreRowSetRecno()
 
          ::rollbackTransactionalMode()
 
@@ -294,7 +311,7 @@ RETURN ( lAppend )
 
 METHOD Duplicate()
 
-   local nRecno  
+   local nId
    local lDuplicate  := .t. 
 
    if ::notUserDuplicate()
@@ -310,7 +327,7 @@ METHOD Duplicate()
 
    ::beginTransactionalMode()
 
-   nRecno            := ::oModel:getRowSetRecno()
+   ::saveRowSetRecno()
 
    ::oModel:loadDuplicateBuffer()
 
@@ -320,17 +337,21 @@ METHOD Duplicate()
 
       ::fireEvent( 'closedDialog' )    
 
-      ::oModel:insertBuffer()
-   
-      ::fireEvent( 'duplicated' ) 
-   
+      nId            := ::oModel:insertBuffer()
+
       ::commitTransactionalMode()
+      
+      if !empty( nId )
+         ::refreshRowSetAndFind( nId )
+      end if 
+      
+      ::fireEvent( 'duplicated' ) 
 
    else 
    
       lDuplicate     := .f.
 
-      ::oModel:setRowSetRecno( nRecno )
+      ::restoreRowSetRecno()
    
       ::fireEvent( 'cancelDuplicated' ) 
 
@@ -363,8 +384,6 @@ METHOD Edit( id )
 
    ::beginTransactionalMode()
 
-   // ::oModel:setIdToFind( id )
-
    ::oModel:loadCurrentBuffer( id ) 
 
    ::fireEvent( 'openingDialog' )
@@ -375,9 +394,11 @@ METHOD Edit( id )
 
       ::oModel:updateBuffer()
 
-      ::fireEvent( 'edited' ) 
-
       ::commitTransactionalMode()
+
+      ::refreshRowSet()
+
+      ::fireEvent( 'edited' ) 
 
    else
 
@@ -402,7 +423,7 @@ METHOD Zoom()
       RETURN ( Self )
    end if 
 
-   if !( ::fireEvent( 'zooming' ) )
+   if isFalse( ::fireEvent( 'zooming' ) )
       RETURN ( .f. )
    end if
 
@@ -415,6 +436,8 @@ METHOD Zoom()
    ::oDialogView:Activate()
 
    ::fireEvent( 'closedDialog' )    
+
+   ::fireEvent( 'zoomed' ) 
 
    ::fireEvent( 'exitZoomed' ) 
 
@@ -446,8 +469,7 @@ RETURN ( .f. )
 
 METHOD Delete( aSelected )
 
-   local lDelete
-   local nSelected      
+   local lDelete        := .f.
    local cNumbersOfDeletes
 
    if ::notUserDelete()
@@ -464,14 +486,14 @@ METHOD Delete( aSelected )
       RETURN ( .f. )
    end if
 
-   ::aSelected          := aSelected
+   aSelected            := ::getRecnoToId( aSelected )
 
-   lDelete              := .f.
+   if empty( aSelected )
+      RETURN ( .f. )
+   end if
 
-   nSelected            := len( aSelected )
-
-   if nSelected > 1
-      cNumbersOfDeletes := alltrim( str( nSelected, 3 ) ) + " registros?"
+   if len( aSelected ) > 1
+      cNumbersOfDeletes := alltrim( str( len( aSelected ), 3 ) ) + " registros?"
    else
       cNumbersOfDeletes := "el registro en curso?"
    end if
@@ -486,6 +508,10 @@ METHOD Delete( aSelected )
 
       ::fireEvent( 'deletedSelection' ) 
 
+      ::refreshRowSet()
+
+      lDelete           := .t.
+
    else 
 
       ::fireEvent( 'cancelDeleted' ) 
@@ -497,52 +523,34 @@ METHOD Delete( aSelected )
 RETURN ( lDelete )
 
 //----------------------------------------------------------------------------//
-/*
+
 METHOD changeModelOrderAndOrientation( cColumnOrder, cColumnOrientation )
 
-   ::oModel:saveIdToFind()
+   local nId 
+
+   nId         := ::oRowSet:fieldGet( ::getModelColumnKey() )
 
    ::oModel:setColumnOrder( cColumnOrder )
 
    ::oModel:setColumnOrientation( cColumnOrientation )
 
-   ::oModel:buildRowSetAndFind()
+   ::oRowSet:build( ::oModel:getSelectSentence() )
+
+   ::oRowSet:find( nId )
 
 RETURN ( self )
-*/
+
 //---------------------------------------------------------------------------//
 
 METHOD findInRowSet( uValue, cColumn )
 
-   local nRecno   
-
-   if empty( ::getRowSet() )
+   if empty( ::oRowSet )
       RETURN ( .f. )
    end if 
 
-   nRecno         := ::getModel():getRowSetRecno()
-
-   if empty( cColumn )
-      cColumn     := ::getModel():getColumnOrder()
-   end if 
-
-   if ( ::getRowSet():find( uValue, cColumn, .t. ) == 0 )
-      ::getModel():setRowSetRecno( nRecno )
-   end if 
-
-RETURN ( .t. )
+RETURN ( ::oRowSet:find( uValue, cColumn ) )
 
 //----------------------------------------------------------------------------//
-
-METHOD getRowSet()
-
-   if empty( ::oModel:oRowSet )
-      ::oModel:buildRowSet()
-   end if
-
-Return ( ::oModel:oRowSet )
-
-//---------------------------------------------------------------------------//
 
 METHOD setFastReport( oFastReport, cTitle, cSentence, cColumns )    
      

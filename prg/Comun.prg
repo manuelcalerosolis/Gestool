@@ -277,17 +277,7 @@ RETURN ( .t. )
 
 FUNCTION Test()
 
-   // logwrite( SQLMovimientosAlmacenLineasModel():getGeneralSelect() )
-
 RETURN NIL 
-
-//---------------------------------------------------------------------------//
-
-STATIC FUNCTION TASTI( nKey, cVar ) 
-
-   cVar  += CHR( nKey )
-
-RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 
@@ -2493,7 +2483,7 @@ FUNCTION CreateAcceso( oWnd )
    if isProfesional()
 
    oGrupo               := TGrupoAcceso()
-   oGrupo:nBigItems     := 2
+   oGrupo:nBigItems     := 3
    oGrupo:nLittleItems  := 1
    oGrupo:cPrompt       := 'Exportaciones e importaciones'
    oGrupo:cLittleBitmap := "gc_satellite_dish2_16"
@@ -2514,6 +2504,16 @@ FUNCTION CreateAcceso( oWnd )
    oItem:cPrompt        := 'Terminales'
    oItem:cMessage       := 'Exportar e importar datos a terminales'
    oItem:bAction        := {|| TEdm():Activate( "01079", oWnd ) }
+   oItem:cId            := "01079"
+   oItem:cBmp           := "gc_pda_16"
+   oItem:cBmpBig        := "gc_pda_32"
+   oItem:lShow          := .f.
+
+   oItem                := oItemHerramientas:Add()
+   oItem:oGroup         := oGrupo
+   oItem:cPrompt        := 'Pda'
+   oItem:cMessage       := 'Exportar e importar datos a terminales'
+   oItem:bAction        := {|| PdaEnvioRecepcionController():New():Activate() }
    oItem:cId            := "01079"
    oItem:cBmp           := "gc_pda_16"
    oItem:cBmpBig        := "gc_pda_32"

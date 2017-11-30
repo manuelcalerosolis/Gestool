@@ -70,6 +70,8 @@ CLASS SQLBrowseView
 
    METHOD getColumnsHeaders()
 
+   METHOD getVisibleColumnsHeaders()   
+
    METHOD getFirstColumnHeader()
 
    // Events---------------------------------------------------------------------
@@ -140,6 +142,16 @@ METHOD getColumnsHeaders()
    local aHeaders    := {}
 
    aeval( ::oBrowse:aCols, {|oCol| aadd( aHeaders, oCol:cHeader ) } )
+
+RETURN ( aHeaders )
+
+//---------------------------------------------------------------------------//
+
+METHOD getVisibleColumnsHeaders()
+
+   local aHeaders    := {}
+
+   aeval( ::oBrowse:aCols, {|oCol| if( oCol:lHide, , aadd( aHeaders, oCol:cHeader ) ) } )
 
 RETURN ( aHeaders )
 

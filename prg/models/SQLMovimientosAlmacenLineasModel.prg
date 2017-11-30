@@ -14,10 +14,6 @@ CLASS SQLMovimientosAlmacenLineasModel FROM SQLExportableModel
 
    METHOD getInitialSelect()
 
-   METHOD totalUnidades()
-
-   METHOD totalPrecio()
-
    METHOD getInsertSentence()
 
    METHOD getUpdateSentence()
@@ -205,18 +201,6 @@ METHOD addDeleteSentence( aSQLUpdate, oProperty )
                         "WHERE uuid = " + quoted( oProperty:Uuid ) + "; " )
 
 RETURN ( nil )
-
-//---------------------------------------------------------------------------//
-
-METHOD totalUnidades()
-
-RETURN ( notCaja( ::getRowSet():fieldGet( "cajas_articulo" ) ) * ::getRowSet():fieldGet( "unidades_articulo" ) )
-
-//---------------------------------------------------------------------------//
-
-METHOD totalPrecio()
-
-RETURN ( ::totalUnidades() * ::getRowSet():fieldGet( "precio_articulo" ) )
 
 //---------------------------------------------------------------------------//
 
