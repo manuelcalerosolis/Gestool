@@ -51,9 +51,9 @@ METHOD initActivate()
 
    oGrupo                     := TDotNetGroup():New( oFolder, 186, "", .f. )
 
-   TDotNetButton():New( 60, oGrupo, "gc_pda_32", "Exportar información", 1, {|| ::oController:ExportJson() }, , , .f., .f., .f. )
+   TDotNetButton():New( 60, oGrupo, "inbox_out_32", "Exportar información", 1, {|| ::oController:ExportJson() }, , , .f., .f., .f. )
 
-   TDotNetButton():New( 60, oGrupo, "gc_pda_32", "Importar información", 2, {|| msgalert( "Importar") }, , , .f., .f., .f. )
+   TDotNetButton():New( 60, oGrupo, "inbox_into_32", "Importar información", 2, {|| msgalert( "Importar") }, , , .f., .f., .f. )
 
    TDotNetButton():New( 60, oGrupo, "end32", "Salir", 3, {|| ::oDialog:End() }, , , .f., .f., .f. )
 

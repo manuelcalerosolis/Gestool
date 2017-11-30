@@ -114,6 +114,7 @@ static pdaFtp
 static pdaUsuario
 static pdaPassword
 static pdaPasivo
+static pdaRuta
 
 static lEnvioRecepcion
 
@@ -1185,6 +1186,7 @@ STATIC FUNCTION EditConfig( aTmp, aGet, dbfEmp, oBrw, nSelFolder, bValid, nMode 
    local cSay                    := AFill( Array( 47 ), "" )
    local oError
    local oBlock
+   local oPdaRuta
 
    local oBrwEmp
    local oBrwCon
@@ -1319,6 +1321,7 @@ STATIC FUNCTION EditConfig( aTmp, aGet, dbfEmp, oBrw, nSelFolder, bValid, nMode 
 
    lInformacionInmediata   := ConfiguracionEmpresasRepository():getLogic( 'informacion_inmediata', .f. )
 
+   pdaRuta                 := padr( ConfiguracionEmpresasRepository():getValue( 'pda_ruta', '' ), 200 )
    pdaFtp                  := padr( ConfiguracionEmpresasRepository():getValue( 'pda_ftp', '' ), 200 )
    pdaUsuario              := padr( ConfiguracionEmpresasRepository():getValue( 'pda_user', '' ), 200 )
    pdaPassword             := padr( ConfiguracionEmpresasRepository():getValue( 'pda_password', '' ), 200 )
@@ -2494,6 +2497,13 @@ STATIC FUNCTION EditConfig( aTmp, aGet, dbfEmp, oBrw, nSelFolder, bValid, nMode 
          ID       330;
          PICTURE  ( Replicate( "X", RetNumCodPrvEmp() ) ) ;
          WHEN     lEnvioRecepcion;
+         OF       fldEnvios
+
+      REDEFINE GET oPdaRuta VAR pdaRuta ;
+         ID       640;
+         PICTURE  "@!" ;
+         BITMAP   "FOLDER" ;
+         ON HELP  ( oPdaRuta:cText( padr( cGetDir32( "Seleccione directorio", rtrim( pdaRuta ), .t. ), 100 ) ) );
          OF       fldEnvios
 
       REDEFINE GET pdaFtp ;
@@ -5625,6 +5635,8 @@ STATIC FUNCTION SaveEditConfig( aTmp, oSay, oBrw, oDlg, nMode )
    ConfiguracionEmpresasRepository():setValue( 'mail_notificaciones',   alltrim( cMailNotificaciones ) ) 
    ConfiguracionEmpresasRepository():setValue( 'informacion_inmediata', lInformacionInmediata )
    ConfiguracionEmpresasRepository():setValue( 'envio_recepcion',       lEnvioRecepcion )
+
+   ConfiguracionEmpresasRepository():setValue( 'pda_ruta',              alltrim( pdaRuta ) ) 
 
    ConfiguracionEmpresasRepository():setValue( 'pda_ftp',               alltrim( pdaFtp ) ) 
    ConfiguracionEmpresasRepository():setValue( 'pda_user',              alltrim( pdaUsuario ) ) 

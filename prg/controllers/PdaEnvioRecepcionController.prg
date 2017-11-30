@@ -9,6 +9,8 @@ CLASS PdaEnvioRecepcionController
 
    DATA aJson
 
+   DATA cPath
+
    METHOD New()
    METHOD End()
 
@@ -17,22 +19,22 @@ CLASS PdaEnvioRecepcionController
    METHOD exportJson()
 
    METHOD exportArticulosJson()
-
-   METHOD exportUsuariosJson()   
-
    METHOD buildArticuloJson()
 
-   METHOD writeArticulosJson()
-
+   METHOD exportUsuariosJson()   
    METHOD buildUsuariosJson()
 
-   METHOD writeUsuariosJson()
+   METHOD writeJsonFile( cFileName )
+   METHOD writeArticulosJson()      INLINE ( ::writeJsonFile( "articulos.json" ) )
+   METHOD writeUsuariosJson()       INLINE ( ::writeJsonFile( "usuarios.json" ) )
 
 END CLASS
 
 //---------------------------------------------------------------------------//
 
 METHOD New()
+
+   ::cPath              := ConfiguracionEmpresasRepository():getValue( 'pda_ruta', '' )
 
    ::oDialogView        := PdaEnvioRecepcionView():New( Self )
 
@@ -99,12 +101,12 @@ METHOD buildArticuloJson( cArea )
    local hJson    := {=>}
    local aCodebar := {}
 
-   hset( hJson, "id", alltrim( ( cArea )->Codigo ) )
-   hset( hJson, "nombre", alltrim( ( cArea )->Nombre ) )
-   hset( hJson, "uuid", alltrim( ( cArea )->uuid ) )
-   hset( hJson, "precio_venta", ( cArea )->pVenta1 )
-   hset( hJson, "porcentaje_iva", ( cArea )->tpIva )
-   hset( hJson, "precio_impuestos_incluidos", ( cArea )->pVtaIva1 )
+   hset( hJson, "id",                           alltrim( ( cArea )->Codigo ) )
+   hset( hJson, "nombre",                       alltrim( ( cArea )->Nombre ) )
+   hset( hJson, "uuid",                         alltrim( ( cArea )->uuid ) )
+   hset( hJson, "precio_venta",                 ( cArea )->pVenta1 )
+   hset( hJson, "porcentaje_iva",               ( cArea )->tpIva )
+   hset( hJson, "precio_impuestos_incluidos",   ( cArea )->pVtaIva1 )
 
    aadd( aCodebar, alltrim( ( cArea )->Codigo ) )
 
@@ -115,14 +117,6 @@ METHOD buildArticuloJson( cArea )
    hset( hJson, "codigos_barras", aCodebar )
 
 RETURN ( hJson )   
-
-//---------------------------------------------------------------------------//
-
-METHOD writeArticulosJson()
-
-   local cJson    := hb_jsonencode( ::aJson, .t. )
-
-RETURN ( memowrit( "articulos.json", cJson ) ) 
 
 //---------------------------------------------------------------------------//
 
@@ -158,18 +152,25 @@ METHOD buildUsuariosJson( cArea )
 
    local hJson    := {=>}
 
-   hset( hJson, "id", alltrim( ( cArea )->cCodUse ) )
-   hset( hJson, "nombre", alltrim( ( cArea )->cNbrUse ) )
+   hset( hJson, "id",      alltrim( ( cArea )->cCodUse ) )
+   hset( hJson, "nombre",  alltrim( ( cArea )->cNbrUse ) )
 
 RETURN ( hJson )   
 
 //---------------------------------------------------------------------------//
 
-METHOD writeUsuariosJson()
+METHOD writeJsonFile( cFileName )
 
+   local cFile
    local cJson    := hb_jsonencode( ::aJson, .t. )
 
-RETURN ( memowrit( "usuarios.json", cJson ) ) 
+   cFile          := cPath( ::cPath ) + cFileName
+
+   if !( memowrit( cFile, cJson ) ) 
+      msgStop( "Error al escribir el fichero " + alltrim( cFile ), "Error" )
+   end if 
+
+RETURN ( Self ) 
 
 //---------------------------------------------------------------------------//
 
