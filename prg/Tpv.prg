@@ -17247,7 +17247,8 @@ function aItmTik()
    aAdd( aItmTik, { "lLiqDev",  "L",      1,     0, "Liquidado por devolución" }                              )
    aAdd( aItmTik, { "nUbiTik",  "N",      1,     0, "Tipo de ubicación" }                                     )
    aAdd( aItmTik, { "nRegIva",  "N",      1,     0, "Régimen de " + cImp() }                                  )
-   aAdd( aItmTik, { "tFecTik",  "c",      6,     0, "Hora del tiket stock" }                                  )
+   aAdd( aItmTik, { "tFecTik",  "C",      6,     0, "Hora del tiket stock" }                                  )
+   aAdd( aItmTik, { "uuid",     "C",     40,     0, "Uuui del tiket" }                                  )
 
 return ( aItmTik )
 
@@ -17342,6 +17343,7 @@ function aColTik()
    aAdd( aColTik, { "lSave",    "L",      1,     0, "",                                   "",                  "", "( cDbfCol )" } )
    aAdd( aColTik, { "lMnuAco",  "L",      1,     0, "Lógico menu acompañamiento",         "",                  "", "( cDbfCol )" } )
    aAdd( aColTik, { "nPosPrint","N",      4,     0, "Posición de impresión",              "",                  "", "( cDbfCol )" } )
+   aAdd( aColTik, { "uuid",     "C",     40,     0, "Uuui de la línea",                   "",                  "", "( cDbfCol )" } )
 
 Return ( aColTik )
 

@@ -18,6 +18,8 @@ CLASS ADSBaseModel
 
    METHOD getField( cId, cField, cBy )
 
+   METHOD getInsertStatement( hFields )
+
    METHOD createFile( cPath )
    
    METHOD createIndex( cPath )
@@ -139,6 +141,22 @@ METHOD getField( cField, cBy, cId )
    end if 
 
 RETURN ( nil )
+
+//---------------------------------------------------------------------------//
+
+METHOD getInsertStatement( hFields )
+
+   local cStatement  
+
+   cStatement           := "INSERT IGNORE INTO " + ::getTableName() + " "  
+   cStatement           += "( " 
+      hEval( hFields,   {| k, v | cStatement += k + ", " } )
+   cStatement           := chgAtEnd( cStatement, " ) VALUES ( ", 2 )
+
+      hEval( hFields,   {| k, v | cStatement += toSqlString( v ) + ", " } )
+   cStatement           := chgAtEnd( cStatement, " )", 2 )
+
+RETURN ( cStatement )
 
 //---------------------------------------------------------------------------//
 

@@ -1,4 +1,5 @@
 #include "FiveWin.Ch"
+#include "Directry.ch"
 #include "Factu.ch" 
 
 //---------------------------------------------------------------------------//
@@ -11,22 +12,29 @@ CLASS PdaEnvioRecepcionController
 
    DATA cPath
 
+   DATA hTicketHeader
+
    METHOD New()
    METHOD End()
 
    METHOD Activate()
 
    METHOD exportJson()
+      METHOD exportArticulosJson()
+      METHOD buildArticuloJson()
 
-   METHOD exportArticulosJson()
-   METHOD buildArticuloJson()
+      METHOD exportUsuariosJson()   
+      METHOD buildUsuariosJson()
 
-   METHOD exportUsuariosJson()   
-   METHOD buildUsuariosJson()
-
-   METHOD writeJsonFile( cFileName )
-   METHOD writeArticulosJson()      INLINE ( ::writeJsonFile( "articulos.json" ) )
-   METHOD writeUsuariosJson()       INLINE ( ::writeJsonFile( "usuarios.json" ) )
+      METHOD writeJsonFile( cFileName )
+      METHOD writeArticulosJson()      INLINE ( ::writeJsonFile( "articulos.json" ) )
+      METHOD writeUsuariosJson()       INLINE ( ::writeJsonFile( "usuarios.json" ) )
+   
+   METHOD importJson()
+      METHOD importJsonFile( cFileName )
+      METHOD processJson( hJson )
+      METHOD buildTicketHeaderHash( hJson )
+      METHOD createTicket( hJson )      
 
 END CLASS
 
@@ -164,7 +172,7 @@ METHOD writeJsonFile( cFileName )
    local cFile
    local cJson    := hb_jsonencode( ::aJson, .t. )
 
-   cFile          := cPath( ::cPath ) + cFileName
+   cFile          := cPath( ::cPath ) + "in\" + cFileName
 
    if !( memowrit( cFile, cJson ) ) 
       msgStop( "Error al escribir el fichero " + alltrim( cFile ), "Error" )
@@ -174,3 +182,88 @@ RETURN ( Self )
 
 //---------------------------------------------------------------------------//
 
+METHOD importJson()
+
+   local aDirectory
+
+   aDirectory              := directory( cPath( ::cPath ) + "out\*.*" )
+
+   if !empty( aDirectory )
+      aeval( aDirectory, {|cFileName| ::importJsonFile( cFileName[ F_NAME ] ) } )
+   end if 
+
+RETURN ( Self )
+
+//---------------------------------------------------------------------------//
+
+METHOD importJsonFile( cFileName )
+
+   local hJson
+   local cFileString
+
+   cFileString    := memoread( cPath( ::cPath ) + "out\" + cFileName )
+
+   hb_jsondecode( cFileString, @hJson )
+
+   ::processJson( hJson )
+
+RETURN ( Self )
+
+//---------------------------------------------------------------------------//
+
+METHOD processJson( hJson )
+
+   if !hb_ishash( hJson )
+      RETURN ( Self )
+   end if 
+
+   if ::buildTicketHeaderHash( hJson )
+      ::createTicket( hJson )
+   end if 
+
+   heval( hJson, {|k,v| msgalert( v, k ) } )
+
+RETURN ( Self )
+
+//---------------------------------------------------------------------------//
+
+METHOD buildTicketHeaderHash( hJson )
+
+   local nNumTik     := 0
+
+   ::hTicketHeader   := {=>}
+
+   nNumTik           := ContadoresModel():getNumeroTicket( "A" )
+   nNumTik           := str( nNumTik, 10 )
+
+   msgalert( ctod( substr( hget( hJson, "fecha_hora" ), 1, 10 ) ), "fecha_hora" ) 
+
+   hset( ::hTicketHeader, "cSerTik", "A" )
+   hset( ::hTicketHeader, "cNumTik", nNumTik )
+   hset( ::hTicketHeader, "cSufTik", retSufEmp() )
+   hset( ::hTicketHeader, "cTikTik", "1" )
+   hset( ::hTicketHeader, "dFecTik", ctod( substr( hget( hJson, "fecha_hora" ), 1, 10 ) ) )
+   hset( ::hTicketHeader, "cHorTik", substr( hget( hJson, "fecha_hora" ), 12, 5 ) )
+   hset( ::hTicketHeader, "cCcjTik", hget( hJson, "usuario" ) )
+   hset( ::hTicketHeader, "cNcjTik", oUser():cCaja() )
+   hset( ::hTicketHeader, "cAlmTik", oUser():cAlmacen() )
+   hset( ::hTicketHeader, "cCliTik", cDefCli() )
+   hset( ::hTicketHeader, "nTarifa", max( uFieldEmpresa( "nPreVta" ), 1 ) )
+   hset( ::hTicketHeader, "cFpgTik", cDefFpg() )
+   hset( ::hTicketHeader, "cDivTik", cDivEmp() )
+   hset( ::hTicketHeader, "nVdvTik", 1 )
+   hset( ::hTicketHeader, "lPgdTik", .t. )
+   hset( ::hTicketHeader, "dFecCre", date() )
+   hset( ::hTicketHeader, "cTimCre", substr( time(), 1, 5 ) )
+
+RETURN ( .t. )
+
+//---------------------------------------------------------------------------//
+
+METHOD createTicket( hJson )
+
+   TicketsClientesModel():createFromHash( ::hTicketHeader )
+
+RETURN ( Self )
+
+//---------------------------------------------------------------------------//

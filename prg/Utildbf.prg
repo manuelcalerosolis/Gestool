@@ -3333,6 +3333,7 @@ FUNCTION toSQLString( value )
       case hb_isnumeric( value ) ;  RETURN ( alltrim(str( value ) ) )
       case hb_ischar( value ) ;     RETURN ( quoted( alltrim( value ) ) ) 
       case hb_islogical( value ) ;  RETURN ( if( value, "1", "0" ) )
+      case hb_isdate( value ) ;     RETURN ( quoted( dtoc( value ) ) )
       case hb_isdatetime( value ) ; RETURN ( quoted( hb_tstostr( value ) ) )
    end case 
 
