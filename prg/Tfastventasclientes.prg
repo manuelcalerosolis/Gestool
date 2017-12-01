@@ -1674,6 +1674,8 @@ METHOD AddTicket() CLASS TFastVentasClientes
          ::oDbf:nTotRnt    := sTot:nTotalRentabilidad
          ::oDbf:nTotCob    := sTot:nTotalCobrado
 
+         ::oDbf:cSrlTot    := sTot:saveToText()
+
          ::oDbf:nRieCli    := RetFld( ( D():TiketsClientes( ::nView ) )->cCliTik, ( D():Clientes( ::nView ) ), "Riesgo", "Cod" )
          ::oDbf:cDniCli    := RetFld( ( D():TiketsClientes( ::nView ) )->cCliTik, ( D():Clientes( ::nView ) ), "Nif", "Cod" )
 

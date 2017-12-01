@@ -6,7 +6,6 @@
 
 CLASS TCentroCoste FROM TMant
 
-   DATA nView
    DATA cMru               INIT     "gc_folder_open_money_16"
    DATA cName              INIT     "CentroCoste"
 
@@ -29,9 +28,6 @@ CLASS TCentroCoste FROM TMant
    METHOD Create()
 
    METHOD Default()
-
-   Method OpenFiles( lExclusive )
-   Method CloseFiles()
 
 	METHOD DefineFiles( cPath, cDriver )
 
@@ -124,58 +120,6 @@ RETURN ( ::oDbf )
 
 //----------------------------------------------------------------------------//
 
-METHOD OpenFiles( lExclusive, cPath )
-
-   local oError
-   local oBlock         
-
-   DEFAULT lExclusive   := .f.
-   
-   oBlock               := ErrorBlock( {| oError | ApoloBreak( oError ) } )
-   BEGIN SEQUENCE
-
-      ::nView           := D():CreateView()
-
-      if Empty( ::oDbf )
-         ::oDbf         := ::DefineFiles( cPath )
-      end if
-
-      ::oDbf:Activate( .f., !( lExclusive ) )
-
-      ::lOpenFiles      := .t.
-
-   RECOVER USING oError
-
-      msgStop( ErrorMessage( oError ), "Imposible abrir las bases de datos." )
-
-      ::CloseFiles()
-      
-      ::lOpenFiles      := .f.
-
-   END SEQUENCE
-
-   ErrorBlock( oBlock )
-
-RETURN ( ::lOpenFiles )
-
-//----------------------------------------------------------------------------//
-
-METHOD CloseFiles()
-
-   if !Empty( ::nView )
-      D():DeleteView( ::nView )
-   end if
-
-   if !Empty( ::oDbf ) .and. ::oDbf:Used()
-      ::oDbf:End()
-   end if
-
-   ::oDbf      := nil
-
-RETURN .t.
-
-//----------------------------------------------------------------------------//
-
 METHOD Resource( nMode ) 
 
 	local oDlg
@@ -219,7 +163,7 @@ METHOD Resource( nMode )
          BITMAP   "LUPA" ;
          OF       oDlg
 
-         ::oCodPrp1:bValid    := {|| cProp( ::oCodPrp1, oSayPrp1 ) }
+         ::oCodPrp1:bValid    := {|| .t. }
          ::oCodPrp1:bHelp     := {|| brwProp( ::oCodPrp1, oSayPrp1 ) }
 
       REDEFINE GET oSayPrp1 VAR cSayPrp1 ;
@@ -234,7 +178,7 @@ METHOD Resource( nMode )
          BITMAP   "LUPA" ;
          OF       oDlg
 
-         ::oValPrp1:bValid    := {|| lPrpAct( ::oDbf:cValPr1, oSayVal1, ::oDbf:cCodPr1, D():PropiedadesLineas( ::nView ) ) }
+         ::oValPrp1:bValid    := {|| .t. }
          ::oValPrp1:bhelp     := {|| brwPropiedadActual( ::oValPrp1, oSayVal1, ::oDbf:cCodPr1 ) }
 
       REDEFINE GET oSayVal1 VAR cSayVal1 ;
@@ -250,7 +194,7 @@ METHOD Resource( nMode )
          BITMAP   "LUPA" ;
          OF       oDlg
 
-         ::oCodPrp2:bValid    := {|| cProp( ::oCodPrp2, oSayPrp2 ) }
+         ::oCodPrp2:bValid    := {|| .t. }
          ::oCodPrp2:bhelp     := {|| brwProp( ::oCodPrp2, oSayPrp2 ) }
 
       REDEFINE GET oSayPrp2 VAR cSayPrp2 ;
@@ -265,7 +209,7 @@ METHOD Resource( nMode )
          BITMAP   "LUPA" ;
          OF       oDlg
 
-         ::oValPrp2:bValid    := {|| lPrpAct( ::oDbf:cValPr2, oSayVal2, ::oDbf:cCodPr2, D():PropiedadesLineas( ::nView ) ) }
+         ::oValPrp2:bValid    := {|| .t. }
          ::oValPrp2:bhelp     := {|| brwPropiedadActual( ::oValPrp2, oSayVal2, ::oDbf:cCodPr2 ) }
 
       REDEFINE GET oSayVal2 VAR cSayVal2 ;

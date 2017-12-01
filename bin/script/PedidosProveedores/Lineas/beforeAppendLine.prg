@@ -20,6 +20,7 @@ Function beforeAppendLine( aTmp, aGet, nView, nMode, lInicializate )
    if lInicializate
       inicializateHashVariables()
    end if
+   
 
    /*
    Comprobamos e informamos la primera propiedad-------------------------------
