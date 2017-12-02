@@ -18,6 +18,9 @@ CLASS ContadoresModel FROM ADSBaseModel
    METHOD getNumero( cSerie, cTipoDocumento )
    METHOD getNumeroTicket( cSerie )          INLINE ( ::getNumero( cSerie, "NTIKCLI" ) )
 
+   METHOD setNumero( cSerie, cTipoDocumento, nNumero )
+   METHOD setNumeroTicket( cSerie, nNumero ) INLINE ( ::setNumero( cSerie, "NTIKCLI", nNumero ) )
+
 END CLASS
 
 //---------------------------------------------------------------------------//
@@ -64,5 +67,20 @@ METHOD getNumero( cSerie, cTipoDocumento )
    end if 
 
 RETURN ( 1 )
+
+//---------------------------------------------------------------------------//
+
+METHOD setNumero( cSerie, cTipoDocumento, nNumero )
+
+   local cStm
+   local cSql  := "UPDATE " + ::getTableName() + " SET "                + ;
+                     cSerie + " = " + quoted( nNumero ) + " "           + ;
+                     "WHERE Doc = " + quoted( upper( cTipoDocumento ) )
+
+   if ::ExecuteSqlStatement( cSql, @cStm )
+      RETURN ( .t. )
+   end if 
+
+RETURN ( .f. )
 
 //---------------------------------------------------------------------------//

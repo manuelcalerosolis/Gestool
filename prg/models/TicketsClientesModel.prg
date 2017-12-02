@@ -9,7 +9,8 @@ CLASS TicketsClientesModel FROM ADSBaseModel
 
    METHOD Riesgo( idCliente )
 
-   METHOD createFromHash( hTicket )
+   METHOD existId() 
+   METHOD existUuid()
 
 END CLASS
 
@@ -29,23 +30,36 @@ METHOD Riesgo( idCliente )
       nRiesgo     += ( cStm )->nRiesgo
    end if 
 
-Return ( nRiesgo )
+RETURN ( nRiesgo )
 
 //---------------------------------------------------------------------------//
 
-METHOD createFromHash( hTicket )
+METHOD existId( cSerie, nNumero, cSufijo )
 
-   local cSql
    local cStm
-
-   cSql        := ::getInsertStatement( hTicket )
-
-   RETURN ( msgalert( cSql, "cSql" ) )
+   local cSql  := "SELECT TOP 1 cNumTik"                                   + " " + ;
+                     "FROM " + ::getTableName()                            + " " + ;
+                  "WHERE cSerTik + LTRIM( cNumTik ) + cSufTik = " + quoted( cSerie + alltrim( str( nNumero ) ) + cSufijo )
 
    if ::ExecuteSqlStatement( cSql, @cStm )
-      msgalert( "ok" )
+      RETURN ( !empty( ( cStm )->( fieldget( 1 ) ) ) )
    end if 
 
-RETURN ( Self )
+RETURN ( .f. )
+
+//---------------------------------------------------------------------------//
+
+METHOD existUuid( uuid )
+
+   local cStm
+   local cSql  := "SELECT TOP 1 cNumTik"                                   + " " + ;
+                     "FROM " + ::getTableName()                            + " " + ;
+                  "WHERE uuid = " + quoted( uuid )
+
+   if ::ExecuteSqlStatement( cSql, @cStm )
+      RETURN ( !empty( ( cStm )->( fieldget( 1 ) ) ) )
+   end if 
+
+RETURN ( .f. )
 
 //---------------------------------------------------------------------------//

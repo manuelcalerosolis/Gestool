@@ -11754,6 +11754,12 @@ Function cCurSesion( cCurSes, lDelega )
 Return ( cSesion )
 
 //---------------------------------------------------------------------------//
+
+Function cShortSesion()
+
+RETURN ( cCurSesion( , .f. ) )
+
+//---------------------------------------------------------------------------//
 //
 // Indica si el turno existe
 //

@@ -99,6 +99,7 @@ Ficheros-----------------------------------------------------------------------
 #define _NUBITIK                   69
 #define _NREGIVA                   70
 #define _TFECTIK                   71     //   C      6      0
+#define _UUID                      72     //   C      40     0
 
 #define _CSERTIL                   1      //   C      1      0
 #define _CNUMTIL                   2      //   C     10      0
@@ -185,6 +186,7 @@ Ficheros-----------------------------------------------------------------------
 #define _LSAVE                    83
 #define _LMNUACO                  84
 #define _NPOSPRINT                85
+#define __UUID                    86     //   C      40     0
 
 #define _NNUMREC                   4
 #define _CCODCAJ                   5
@@ -4151,6 +4153,7 @@ Static Function NewTiket( aGet, aTmp, nMode, nSave, lBig, oBrw, oBrwDet )
 
                aTmp[ _CNUMTIK ]  := Str( nNewDoc( aTmp[ _CSERTIK ], D():Tikets( nView ), "nTikCli", 10, dbfCount ), 10 )
                aTmp[ _CSUFTIK ]  := RetSufEmp()
+               aTmp[ _UUID    ]  := win_uuidcreatestring()
                nNumTik           := aTmp[ _CSERTIK ] + aTmp[ _CNUMTIK ] + aTmp[ _CSUFTIK ]
 
             end if
@@ -7314,6 +7317,7 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbfTmpL, oBrw, bWhen, cCodArt, nMode, aTik )
       aTmp[ _NNUMLIN ]     := nLastNum( dbfTmpL )
       aTmp[ _NPOSPRINT ]   := nLastNum( dbfTmpL, "nPosPrint" )
       aTmp[ _NIVATIL ]     := nIva( dbfIva, cDefIva() )
+      aTmp[ __UUID   ]     := win_uuidcreatestring()
 
       if ( dbfTmpL )->( eof() )
          nTop              := ( ( oBrw:nRowSel - 1 ) * oBrw:nRowHeight ) + oBrw:HeaderHeight() - 1
@@ -15613,8 +15617,12 @@ Function SynTikCli( cPath )
       end if
 
       if empty( ( cTikT )->cNcjTik )
-         ( cTikT )->cNcjTik := "000"
+         ( cTikT )->cNcjTik   := "000"
       end if
+
+      if empty( ( cTikT )->uuid )
+         ( cTikT )->uuid      := win_uuidcreatestring()
+      end if 
 
       ( cTikT )->( dbSkip() )
 
@@ -15695,8 +15703,12 @@ Function SynTikCli( cPath )
       end if
 
       if empty( ( dbfTikL )->nPosPrint ) 
-         ( dbfTikL )->nPosPrint := ( dbfTikL )->nNumLin 
+         ( dbfTikL )->nPosPrint  := ( dbfTikL )->nNumLin 
       end if
+
+      if empty( ( dbfTikL )->uuid )
+         ( dbfTikL )->uuid       := win_uuidcreatestring()
+      end if 
 
       ( dbfTikL )->( dbSkip() )
 
