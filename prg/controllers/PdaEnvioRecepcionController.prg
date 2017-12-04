@@ -13,6 +13,10 @@
 
 CLASS PdaEnvioRecepcionController
 
+   CLASSDATA oInstance
+
+   DATA oTimer
+
    DATA oDialogView
 
    DATA aJson
@@ -21,7 +25,13 @@ CLASS PdaEnvioRecepcionController
 
    DATA hTicketHeader
 
+   DATA cSerieTicket       INIT "A"
+
    DATA cNumeroTicket   
+
+   DATA cSufijoTicket      INIT retSufEmp()
+
+   DATA lPrintTicket       INIT .f.
 
    DATA nTotalTicket
    
@@ -32,7 +42,13 @@ CLASS PdaEnvioRecepcionController
    DATA hTicketPay
 
    METHOD New()
+   METHOD Init()
    METHOD End()
+
+   METHOD getInstance()                INLINE ( if( empty( ::oInstance ), ::oInstance := ::New(), ), ::oInstance ) 
+
+   METHOD stopTimer()
+   METHOD activateTimer()
 
    METHOD Activate()
 
@@ -46,10 +62,14 @@ CLASS PdaEnvioRecepcionController
       METHOD writeJsonFile( cFileName )
       METHOD writeArticulosJson()      INLINE ( ::writeJsonFile( "articulos.json" ) )
       METHOD writeUsuariosJson()       INLINE ( ::writeJsonFile( "usuarios.json" ) )
+
+   METHOD cFileOut( cFileName )        INLINE ( cPath( ::cPath ) + "out\" + cFileName )
+   METHOD cFileProcessed( cFileName )  INLINE ( cPath( ::cPath ) + "processed\" + cFileName )
    
    METHOD importJson()
       METHOD importJsonFile( cFileName )
       METHOD processJson( hJson )
+      METHOD moveFileToProcessed( cFileName )
 
       METHOD getTicketCount()
       METHOD setTicketCount()
@@ -64,16 +84,18 @@ CLASS PdaEnvioRecepcionController
          METHOD createTicketLine( hLine )  
       METHOD createTicketPay()
 
-   METHOD setTotalProgress( nTotal )   INLINE ( iif(  !empty( ::oDialogView ),;
+      METHOD printTicket()
+
+   METHOD setTotalProgress( nTotal )   INLINE ( iif(  !empty( ::oDialogView:oProgress ),;
                                                       ::oDialogView:oProgress:setTotal( nTotal ), ) )
 
-   METHOD autoIncProgress()            INLINE ( iif(  !empty( ::oDialogView ),;
+   METHOD autoIncProgress()            INLINE ( iif(  !empty( ::oDialogView:oProgress ),;
                                                       ::oDialogView:oProgress:autoInc(), ) )
 
-   METHOD deleteTreeLog( cText )       INLINE ( iif(  !empty( ::oDialogView ),;
+   METHOD deleteTreeLog( cText )       INLINE ( iif(  !empty( ::oDialogView:oTreeLog ),;
                                                       ::oDialogView:oTreeLog:deleteAll(), ) )
 
-   METHOD addTreeLog( cText )          INLINE ( iif(  !empty( ::oDialogView ),;
+   METHOD addTreeLog( cText )          INLINE ( iif(  !empty( ::oDialogView:oTreeLog ),;
                                                       ::oDialogView:oTreeLog:Select( ::oDialogView:oTreeLog:Add( cText ) ), ) )
 
 END CLASS
@@ -84,7 +106,16 @@ METHOD New()
 
    ::cPath              := ConfiguracionEmpresasRepository():getValue( 'pda_ruta', '' )
 
+   ::oTimer             := TTimer():New( 9000, {|| msgwait("hola", "mundo", 1 ), ::getInstance():importJson() }, )
+   ::oTimer:hWndOwner   := GetActiveWindow()
+
    ::oDialogView        := PdaEnvioRecepcionView():New( Self )
+
+RETURN ( self )
+
+//---------------------------------------------------------------------------//
+
+METHOD Init()
 
 RETURN ( self )
 
@@ -98,7 +129,11 @@ RETURN ( nil )
 
 METHOD Activate()
 
+   ::stopTimer()
+
    ::oDialogView:Activate()
+
+   ::activateTimer()
 
 RETURN ( Self )
 
@@ -251,19 +286,16 @@ RETURN ( Self )
 METHOD importJsonFile( cFileName )
 
    local hJson
-   local cFileString
-
-   cFileName      := cPath( ::cPath ) + "out\" + cFileName
 
    ::autoIncProgress()
 
    ::addTreeLog( "Procesando : " + cFileName )
 
-   cFileString    := memoread( cFileName )
+   hb_jsondecode( memoread( cPath( ::cPath ) + "out\" + cFileName ), @hJson )
 
-   hb_jsondecode( cFileString, @hJson )
-
-   ::processJson( hJson )
+   if ::processJson( hJson )
+      ::moveFileToProcessed( cFileName )
+   end if 
 
 RETURN ( Self )
 
@@ -297,17 +329,21 @@ METHOD processJson( hJson )
 
       ::createTicketPay()
 
+      ::printTicket()
+
+      RETURN ( .t. )
+
    end if
 
-RETURN ( Self )
+RETURN ( .f. )
 
 //---------------------------------------------------------------------------//
 
 METHOD getTicketCount()
 
-   local nNumTik     := ContadoresModel():getNumeroTicket( "A" )
+   local nNumTik     := ContadoresModel():getNumeroTicket( ::cSerieTicket )
 
-   while TicketsClientesModel():existId( "A", nNumTik, retSufEmp() )
+   while TicketsClientesModel():existId( ::cSerieTicket, nNumTik, ::cSufijoTicket )
       nNumTik++
    end while
 
@@ -317,7 +353,7 @@ RETURN ( str( nNumTik, 10 ) )
 
 METHOD setTicketCount()
 
-RETURN ( ContadoresModel():setNumeroTicket( "A", val( ::cNumeroTicket ) + 1 ) )
+RETURN ( ContadoresModel():setNumeroTicket( ::cSerieTicket, val( ::cNumeroTicket ) + 1 ) )
 
 //---------------------------------------------------------------------------//
 
@@ -325,9 +361,9 @@ METHOD buildTicketHeaderHash( hJson )
 
    ::addTreeLog( "Contruyendo cabecera de ticket" )
 
-   hset( ::hTicketHeader, "cSerTik", "A" )
+   hset( ::hTicketHeader, "cSerTik", ::cSerieTicket )
    hset( ::hTicketHeader, "cNumTik", ::cNumeroTicket )
-   hset( ::hTicketHeader, "cSufTik", retSufEmp() )
+   hset( ::hTicketHeader, "cSufTik", ::cSufijoTicket )
    hset( ::hTicketHeader, "cTurTik", cShortSesion() )
    hset( ::hTicketHeader, "cTipTik", "1" )
    hset( ::hTicketHeader, "dFecTik", ctod( substr( hget( hJson, "fecha_hora" ), 1, 10 ) ) )
@@ -348,6 +384,8 @@ METHOD buildTicketHeaderHash( hJson )
    hset( ::hTicketHeader, "nTotTik", ::nTotalTicket )
    hset( ::hTicketHeader, "nCobTik", ::nTotalTicket )
    hset( ::hTicketHeader, "uuid",    hget( hJson, "uuid" ) )
+
+   ::lPrintTicket       := hget( hJson, "imprimir" )
 
 RETURN ( .t. )
 
@@ -371,9 +409,9 @@ METHOD buildTicketLineHash( hLine )
    idArticulo        := cvaltochar( hget( hLine, "id_articulo" ) ) 
    hArticulo         := ArticulosModel():getHash( idArticulo )
 
-   hset( hTicketLine, "cSerTil", "A" )
+   hset( hTicketLine, "cSerTil", ::cSerieTicket )
    hset( hTicketLine, "cNumTil", ::cNumeroTicket )
-   hset( hTicketLine, "cSufTil", retSufEmp() )
+   hset( hTicketLine, "cSufTil", ::cSufijoTicket )
    hset( hTicketLine, "cTipTil", "1" )
    hset( hTicketLine, "cCbaTil", idArticulo )
    hset( hTicketLine, "nUntTil", hget( hLine, "unidades" ) )
@@ -383,7 +421,7 @@ METHOD buildTicketLineHash( hLine )
    if !empty( hArticulo )
    hset( hTicketLine, "cNomTil", hget( hArticulo, "nombre" ) )
    hset( hTicketLine, "cFamTil", hget( hArticulo, "familia" ) )
-   hset( hTicketLine, "nCosTil", hget( hArticulo, "pCosto" ) )
+   hset( hTicketLine, "nCosTil", hget( hArticulo, "pcosto" ) )
    end if 
 
    aadd( ::aTicketLines, hTicketLine )
@@ -398,9 +436,9 @@ METHOD buildTicketPayHash( hJson )
    
    ::hTicketPay      := {=>}
 
-   hset( ::hTicketPay, "cSerTik", "A" )
+   hset( ::hTicketPay, "cSerTik", ::cSerieTicket )
    hset( ::hTicketPay, "cNumTik", ::cNumeroTicket )
-   hset( ::hTicketPay, "cSufTik", retSufEmp() )
+   hset( ::hTicketPay, "cSufTik", ::cSufijoTicket )
    hset( ::hTicketPay, "cCodCaj", oUser():cCaja() )
    hset( ::hTicketPay, "dPgoTik", ctod( substr( hget( hJson, "fecha_hora" ), 1, 10 ) ) )
    hset( ::hTicketPay, "cTimTik", substr( hget( hJson, "fecha_hora" ), 12, 5 ) )
@@ -420,13 +458,13 @@ METHOD createTicket()
    ::addTreeLog( "Creando ticket" )
 
    if TicketsClientesModel():existUuid( hget( ::hTicketHeader, "uuid" ) )
-      ::oDialogView:oTreeLog:add( "Ticket ya importado : " + hget( ::hTicketHeader, "uuid" ) ) 
+      ::addTreeLog( "Ticket ya importado : " + hget( ::hTicketHeader, "uuid" ) ) 
       RETURN ( .f. )
    end if 
 
    TicketsClientesModel():createFromHash( ::hTicketHeader )
 
-   ::oDialogView:oTreeLog:add( "Ticket creado : " + hget( ::hTicketHeader, "cSerTik" ) + "/" + alltrim( hget( ::hTicketHeader, "cNumTik" ) ) + "/" + hget( ::hTicketHeader, "cSufTik" ) ) 
+   ::addTreeLog( "Ticket creado : " + hget( ::hTicketHeader, "cSerTik" ) + "/" + alltrim( hget( ::hTicketHeader, "cNumTik" ) ) + "/" + hget( ::hTicketHeader, "cSufTik" ) ) 
 
 RETURN ( .t. )
 
@@ -446,7 +484,7 @@ METHOD createTicketLine( hLine )
 
    TicketsClientesLineasModel():createFromHash( hLine ) 
 
-   ::oDialogView:oTreeLog:add( "Línea ticket creado : " + hget( hLine, "cCbaTil" ) + " - " + cvaltochar( hget( hLine, "nUntTil" ) ) + " - " + cvaltochar( hget( hLine, "nPvpTil" ) ) ) 
+   ::addTreeLog( "Línea ticket creado : " + hget( hLine, "cCbaTil" ) + " - " + cvaltochar( hget( hLine, "nUntTil" ) ) + " - " + cvaltochar( hget( hLine, "nPvpTil" ) ) ) 
 
 RETURN ( Self )
 
@@ -456,7 +494,55 @@ METHOD createTicketPay()
 
    TicketsClientesPagosModel():createFromHash( ::hTicketPay ) 
 
-   ::oDialogView:oTreeLog:add( "Pago ticket creado : " + hget( ::hTicketPay, "cSerTik" ) + "/" + alltrim( hget( ::hTicketPay, "cNumTik" ) ) + "/" + hget( ::hTicketPay, "cSufTik" ) ) 
+   ::addTreeLog( "Pago ticket creado : " + hget( ::hTicketPay, "cSerTik" ) + "/" + alltrim( hget( ::hTicketPay, "cNumTik" ) ) + "/" + hget( ::hTicketPay, "cSufTik" ) ) 
+
+RETURN ( Self )
+
+//---------------------------------------------------------------------------//
+
+METHOD moveFileToProcessed( cFileName )
+
+   if copyfile( ::cFileOut( cFileName ), ::cFileProcessed( cFileName ) )
+      ferase( ::cFileOut( cFileName ) )
+   end if 
+
+RETURN ( Self )
+
+//---------------------------------------------------------------------------//
+
+METHOD printTicket()
+
+   if ::lPrintTicket
+      visTikCli( ::cSerieTicket + ::cNumeroTicket + ::cSufijoTicket )
+   end if 
+
+RETURN ( Self )
+
+//---------------------------------------------------------------------------//
+
+METHOD activateTimer()
+
+   ::stopTimer()
+
+   if !empty( ::oTimer )
+
+      msgalert("activateTimer")
+
+      ::oTimer:Activate()
+   end if 
+
+RETURN ( Self )
+
+//---------------------------------------------------------------------------//
+
+METHOD stopTimer()
+
+   if !empty( ::oTimer )
+
+      msgalert("stopTimer")
+
+      ::oTimer:deactivate()
+   endif
 
 RETURN ( Self )
 

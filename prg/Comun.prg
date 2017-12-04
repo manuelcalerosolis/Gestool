@@ -277,6 +277,8 @@ RETURN ( .t. )
 
 FUNCTION Test()
 
+   PdaEnvioRecepcionController():getInstance():activateTimer()
+
 RETURN NIL 
 
 //---------------------------------------------------------------------------//
@@ -2513,7 +2515,7 @@ FUNCTION CreateAcceso( oWnd )
    oItem:oGroup         := oGrupo
    oItem:cPrompt        := 'Pda'
    oItem:cMessage       := 'Exportar e importar datos a terminales'
-   oItem:bAction        := {|| PdaEnvioRecepcionController():New():Activate() }
+   oItem:bAction        := {|| PdaEnvioRecepcionController():getInstance():Activate() }
    oItem:cId            := "01079"
    oItem:cBmp           := "gc_pda_16"
    oItem:cBmpBig        := "portable_barcode_scanner_yellow_32"
