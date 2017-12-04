@@ -565,6 +565,7 @@ RectificativasProveedoresLineasModel.prg 								\
 TransaccionesComercialesLineasModel.prg 								\
 FacturasClientesModel.prg 													\
 TicketsClientesLineasModel.prg 											\
+TicketsClientesPagosModel.prg 											\
 RecibosClientesModel.prg 													\
 TicketsClientesModel.prg 													\
 PedidosProveedoresModel.prg												\
@@ -1174,6 +1175,7 @@ FacturasProveedoresLineasModel.obj 										\
 RectificativasProveedoresLineasModel.obj 								\
 FacturasClientesModel.obj 													\
 TicketsClientesLineasModel.obj 											\
+TicketsClientesPagosModel.obj 											\
 TicketsClientesModel.obj 													\
 RecibosClientesModel.obj 													\
 PedidosProveedoresModel.obj 												\
@@ -1754,6 +1756,7 @@ $(OBJ)\FacturasProveedoresLineasModel.obj 							+
 $(OBJ)\RectificativasProveedoresLineasModel.obj 					+
 $(OBJ)\FacturasClientesModel.obj 										+
 $(OBJ)\TicketsClientesLineasModel.obj 									+
+$(OBJ)\TicketsClientesPagosModel.obj 									+
 $(OBJ)\ArticulosModel.obj                    						+
 $(OBJ)\ContadoresModel.obj                    						+
 $(OBJ)\ColumnasUsuariosModel.obj               						+

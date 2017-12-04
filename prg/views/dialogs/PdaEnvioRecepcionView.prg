@@ -25,7 +25,7 @@ METHOD Activate()
 
    DEFINE DIALOG ::oDialog RESOURCE "PDA_ENVIO_RECEPCION"
 
-      ::oProgress    := TApoloMeter():ReDefine( 100, { | u | if( pCount() == 0, ::nProgress, ::nProgress := u ) }, 10, ::oDialog, .f., , , .t., rgb( 255,255,255 ), , rgb( 128,255,0 ) )
+      ::oProgress    := TApoloMeter():ReDefine( 100, {|u| if( pCount() == 0, ::nProgress, ::nProgress := u ) }, 10, ::oDialog, .f., , , .t., rgb( 255,255,255 ), , rgb( 128,255,0 ) )
 
       ::oTreeLog     := TTreeView():Redefine( 110, ::oDialog )
 

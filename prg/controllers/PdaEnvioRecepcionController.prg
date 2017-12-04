@@ -1,6 +1,6 @@
 // TODO 
 // - Establecer contador al agregar el ticket (done)
-// - Crear el pago
+// - Crear el pago (done)
 // - Controlar que el uuid ya haya sido añadido (done)
 // - Eliminar los ficheros q se vayan integrando
 // - Escribir un log por pantalla (done)
@@ -27,7 +27,9 @@ CLASS PdaEnvioRecepcionController
    
    DATA hTicketHeader  
    
-   DATA aTicketLines    
+   DATA aTicketLines 
+
+   DATA hTicketPay
 
    METHOD New()
    METHOD End()
@@ -285,6 +287,8 @@ METHOD processJson( hJson )
 
    ::buildTicketHeaderHash( hJson )
 
+   ::buildTicketPayHash( hJson )
+
    if ::createTicket()
 
       ::setTicketCount()
@@ -338,9 +342,11 @@ METHOD buildTicketHeaderHash( hJson )
    hset( ::hTicketHeader, "cDivTik", cDivEmp() )
    hset( ::hTicketHeader, "nVdvTik", 1 )
    hset( ::hTicketHeader, "lPgdTik", .t. )
+   hset( ::hTicketHeader, "lSndDoc", .t. )
    hset( ::hTicketHeader, "dFecCre", date() )
    hset( ::hTicketHeader, "cTimCre", substr( time(), 1, 5 ) )
    hset( ::hTicketHeader, "nTotTik", ::nTotalTicket )
+   hset( ::hTicketHeader, "nCobTik", ::nTotalTicket )
    hset( ::hTicketHeader, "uuid",    hget( hJson, "uuid" ) )
 
 RETURN ( .t. )
@@ -396,10 +402,14 @@ METHOD buildTicketPayHash( hJson )
    hset( ::hTicketPay, "cNumTik", ::cNumeroTicket )
    hset( ::hTicketPay, "cSufTik", retSufEmp() )
    hset( ::hTicketPay, "cCodCaj", oUser():cCaja() )
-   hset( ::hTicketPay, "dFecTik", ctod( substr( hget( hJson, "fecha_hora" ), 1, 10 ) ) )
-   hset( ::hTicketPay, "cHorTik", substr( hget( hJson, "fecha_hora" ), 12, 5 ) )
+   hset( ::hTicketPay, "dPgoTik", ctod( substr( hget( hJson, "fecha_hora" ), 1, 10 ) ) )
+   hset( ::hTicketPay, "cTimTik", substr( hget( hJson, "fecha_hora" ), 12, 5 ) )
    hset( ::hTicketPay, "cFpgPgo", cDefFpg() )
-   hset( ::hTicketPay, "nImpTik", ::nTotalTicket() )
+   hset( ::hTicketPay, "nImpTik", ::nTotalTicket )
+   hset( ::hTicketPay, "cDivPgo", cDivEmp() )
+   hset( ::hTicketPay, "nVdvPgo", 1 )
+   hset( ::hTicketPay, "lSndPgo", .t. )
+   hset( ::hTicketPay, "cTurPgo", cShortSesion() )
 
 RETURN ( .t. )
 
@@ -434,15 +444,19 @@ RETURN ( Self )
 
 METHOD createTicketLine( hLine )
 
-   ::oDialogView:oTreeLog:add( "Linea ticket creado : " + hget( hLine, "cCbaTil" ) + " - " + cvaltochar( hget( hLine, "nUntTil" ) ) + " - " + cvaltochar( hget( hLine, "nPvpTil" ) ) ) 
-
    TicketsClientesLineasModel():createFromHash( hLine ) 
+
+   ::oDialogView:oTreeLog:add( "Línea ticket creado : " + hget( hLine, "cCbaTil" ) + " - " + cvaltochar( hget( hLine, "nUntTil" ) ) + " - " + cvaltochar( hget( hLine, "nPvpTil" ) ) ) 
 
 RETURN ( Self )
 
 //---------------------------------------------------------------------------//
 
 METHOD createTicketPay()
+
+   TicketsClientesPagosModel():createFromHash( ::hTicketPay ) 
+
+   ::oDialogView:oTreeLog:add( "Pago ticket creado : " + hget( ::hTicketPay, "cSerTik" ) + "/" + alltrim( hget( ::hTicketPay, "cNumTik" ) ) + "/" + hget( ::hTicketPay, "cSufTik" ) ) 
 
 RETURN ( Self )
 
