@@ -251,6 +251,8 @@ memvar nTotCos
 memvar nTotRnt
 memvar nTotPctRnt
 
+memvar aTotIva
+
 static oWndBrw
 
 static nView
@@ -17402,6 +17404,7 @@ return ( aColTik )
 
 FUNCTION nTotTik( cNumTik, cTikT, cTikL, cDiv, aTmp, cDivRet, lPic, lExcCnt )
 
+   local n
    local bCond
    local nRecLin
    local nDouDiv
@@ -17439,6 +17442,7 @@ FUNCTION nTotTik( cNumTik, cTikT, cTikL, cDiv, aTmp, cDivRet, lPic, lExcCnt )
    public aImpTik       := { 0, 0, 0 }
    public aIvaTik       := { nil, nil, nil }
    public aIvmTik       := { 0, 0, 0 }
+   public aTotIva       := { { 0,0,nil,0,0,0,0,0,0,0,0 }, { 0,0,nil,0,0,0,0,0,0,0,0 }, { 0,0,nil,0,0,0,0,0,0,0,0 } }
    public nTotCos       := 0
    public nTotRnt       := 0
    public nTotPctRnt    := 0
@@ -17584,6 +17588,20 @@ FUNCTION nTotTik( cNumTik, cTikT, cTikL, cDiv, aTmp, cDivRet, lPic, lExcCnt )
    */
 
    nTotTik           := Round( nTotTik, nDorDiv )
+
+   /*
+   Para tener el dato relleno para los informes--------------------------------   
+   */
+
+   for n := 1 to len( aBrtTik )
+
+      aTotIva[ n, 1 ]   := aBrtTik[n]
+      aTotIva[ n, 2 ]   := aBasTik[n]
+      aTotIva[ n, 3 ]   := aIvaTik[n]
+      aTotIva[ n, 6 ]   := aIvmTik[n]
+      aTotIva[ n, 8 ]   := aImpTik[n]
+
+   next
 
    /*
    Reposicionamiento-----------------------------------------------------------
@@ -19863,6 +19881,8 @@ FUNCTION sTotTikCli( cNumTik, cTikT, cTikL, cDiv, cDivRet )
    sTotal:aBasTik                         := aBasTik
    sTotal:aIvmTik                         := aIvmTik
    sTotal:aIvaTik                         := aIvaTik
+
+   sTotal:aTotalIva                       := aTotIva
 
 Return ( sTotal )
 
