@@ -18,6 +18,10 @@ CLASS ADSBaseModel
 
    METHOD getField( cId, cField, cBy )
 
+   METHOD createFromHash( hFields )
+
+   METHOD getInsertStatement( hFields )
+
    METHOD createFile( cPath )
    
    METHOD createIndex( cPath )
@@ -142,4 +146,32 @@ RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 
+METHOD getInsertStatement( hFields )
+
+   local cStatement  
+
+   cStatement           := "INSERT INTO " + ::getTableName() + " "  
+   cStatement           += "( " 
+      hEval( hFields,   {| k, v | cStatement += k + ", " } )
+   cStatement           := chgAtEnd( cStatement, " ) VALUES ( ", 2 )
+
+      hEval( hFields,   {| k, v | cStatement += toSqlString( v ) + ", " } )
+   cStatement           := chgAtEnd( cStatement, " )", 2 )
+
+RETURN ( cStatement )
+
+//---------------------------------------------------------------------------//
+
+METHOD createFromHash( hFields )
+
+   local cStm
+   local cSql  := ::getInsertStatement( hFields )
+
+   if ::ExecuteSqlStatement( cSql, @cStm )
+      RETURN ( .t. )
+   end if 
+
+RETURN ( .f. )
+
+//---------------------------------------------------------------------------//
 

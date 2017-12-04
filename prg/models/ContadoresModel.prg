@@ -15,6 +15,12 @@ CLASS ContadoresModel FROM ADSBaseModel
 
    METHOD getCopiasMovimientosAlmacen()      INLINE ( ::getCopiasDefecto( "A", "nMovAlm" ) )
 
+   METHOD getNumero( cSerie, cTipoDocumento )
+   METHOD getNumeroTicket( cSerie )          INLINE ( ::getNumero( cSerie, "NTIKCLI" ) )
+
+   METHOD setNumero( cSerie, cTipoDocumento, nNumero )
+   METHOD setNumeroTicket( cSerie, nNumero ) INLINE ( ::setNumero( cSerie, "NTIKCLI", nNumero ) )
+
 END CLASS
 
 //---------------------------------------------------------------------------//
@@ -46,5 +52,35 @@ METHOD getCopiasDefecto( cSerie, cTipoDocumento )
    end if 
 
 RETURN ( 1 )
+
+//---------------------------------------------------------------------------//
+
+METHOD getNumero( cSerie, cTipoDocumento )
+
+   local cStm
+   local cSql  := "SELECT " + cSerie + " "                              + ;
+                     "FROM " + ::getTableName() + " "                   + ;
+                     "WHERE Doc = " + quoted( upper( cTipoDocumento ) )
+
+   if ::ExecuteSqlStatement( cSql, @cStm )
+      RETURN ( max( ( cStm )->( fieldget( 1 ) ), 1 ) )
+   end if 
+
+RETURN ( 1 )
+
+//---------------------------------------------------------------------------//
+
+METHOD setNumero( cSerie, cTipoDocumento, nNumero )
+
+   local cStm
+   local cSql  := "UPDATE " + ::getTableName() + " SET "                + ;
+                     cSerie + " = " + quoted( nNumero ) + " "           + ;
+                     "WHERE Doc = " + quoted( upper( cTipoDocumento ) )
+
+   if ::ExecuteSqlStatement( cSql, @cStm )
+      RETURN ( .t. )
+   end if 
+
+RETURN ( .f. )
 
 //---------------------------------------------------------------------------//

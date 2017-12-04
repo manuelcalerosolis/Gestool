@@ -2516,7 +2516,7 @@ FUNCTION CreateAcceso( oWnd )
    oItem:bAction        := {|| PdaEnvioRecepcionController():New():Activate() }
    oItem:cId            := "01079"
    oItem:cBmp           := "gc_pda_16"
-   oItem:cBmpBig        := "gc_pda_32"
+   oItem:cBmpBig        := "portable_barcode_scanner_yellow_32"
    oItem:lShow          := .f.
 
    oItem                := oItemHerramientas:Add()

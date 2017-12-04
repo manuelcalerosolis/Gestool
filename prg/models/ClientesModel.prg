@@ -9,6 +9,8 @@ CLASS ClientesModel FROM ADSBaseModel
 
    METHOD Riesgo( idCliente )
 
+   METHOD getNombre( idCliente )             INLINE ( ::getField( "Titulo", "Cod", idCliente ) )
+
    METHOD getClientesPorRuta( cWhere, cOrderBy )
 
 END CLASS
