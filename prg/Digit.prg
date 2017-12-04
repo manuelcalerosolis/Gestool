@@ -147,7 +147,7 @@ Function DateTimeToTimestamp( dDate, cTime )
   local cTimestamp  := ""
 
   cTimestamp        += AllTrim( Str( Year( dDate ) ) ) + "-"
-  cTimestamp        += AllTrim( Str( Month( dDate ) ) ) + "-" 
+  cTimestamp        += AllTrim( Str( Month( dDate ) ) ) + "-"
   cTimestamp        += AllTrim( Str( Day( dDate ) ) )
   cTimestamp        += Space( 1 )
   cTimestamp        += SubStr( cTime, 1, 2 ) + ":"
