@@ -32,12 +32,12 @@ CLASS SQLRowSet
 
    METHOD Find( nId )
 
-   METHOD build( cSentence )                    
+   METHOD Build( cSentence )                    
 
    METHOD refreshAndFind( nId )                       INLINE ( ::Refresh(), ::Find( nId ) )
-   METHOD buildAndFind( nId )                         INLINE ( ::build(), ::Find( nId ) )
+   METHOD buildAndFind( nId )                         INLINE ( ::Build(), ::Find( nId ) )
 
-   METHOD getRowSet()                                 INLINE ( if( empty( ::oRowSet ), ::build(), ), ::oRowSet )
+   METHOD getRowSet()                                 INLINE ( if( empty( ::oRowSet ), ::Build(), ), ::oRowSet )
    METHOD freeRowSet()                                INLINE ( if( !empty( ::oRowSet ), ( ::oRowSet:free(), ::oRowSet := nil ), ) )
 
    METHOD getStatement()                              INLINE ( ::oStatement )
@@ -49,8 +49,8 @@ CLASS SQLRowSet
    METHOD FieldGet( cColumn )                         INLINE ( ::oRowSet:fieldget( cColumn ) )
    METHOD FieldValueByName( cColumn )                 INLINE ( ::oRowSet:getValueByName( cColumn ) )
 
-   METHOD getSelectByColumn()                         VIRTUAL
-   METHOD getSelectByOrder()                          VIRTUAL
+   // METHOD getSelectByColumn()                         VIRTUAL
+   // METHOD getSelectByOrder()                          VIRTUAL
    
    METHOD RecnoToId( aRecno, cColumnKey )
 
@@ -80,7 +80,7 @@ RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 
-METHOD build( cSentence )
+METHOD Build( cSentence )
 
    local oError
 

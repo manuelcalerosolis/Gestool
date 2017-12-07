@@ -79,7 +79,7 @@ RETURN ( ::oModel:getFilterSentence( cFilter, ::getTableName() ) )
 METHOD getFilterId( cFilter )
 
    if empty( ::getTableName() )
-      RETURN ( "" )
+      RETURN ( 0 )
    end if 
 
 RETURN ( ::oModel:getFilterId( cFilter, ::getTableName() ) )

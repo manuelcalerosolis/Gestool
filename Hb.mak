@@ -17,7 +17,7 @@ IMG2PDFLIB           = 	\img2Pdf
 OBJ                  = 	obj1705
 
 SOURCEPRG            = 	.\Prg;.\Prg\mail;.\Prg\Comercio;.\Prg\Models;.\Prg\Seeders;.\Prg\Views;.\Prg\Views\Dialogs;.\Prg\Views\Browsers;.\Prg\Controllers;.\Prg\Validators;.\Prg\Repositories;.\Prg\Services;.\Prg\Reports;.\Prg\Tablet;.\Prg\tablet\view;.\Prg\tablet\view\documentos;.\Prg\tablet\view\terceros;.\Prg\tablet\view\documentos\ventas;.\Prg\tablet\view\documentos\terceros;.\Prg\tablet\utils;.\Prg\tablet\presenter;.\Prg\tablet\presenter\terceros;.\Prg\tablet\presenter\documentos;.\Prg\tablet\presenter\documentos\ventas;
-SOURCEC 				   =	C
+SOURCEC 				   =	.\C
 
 PPO 					   = 	ppo1705
 
@@ -1838,6 +1838,7 @@ $(HBLIB)\hbcplr.lib            											+
 $(IMG2PDFLIB)\Image2pdf.lib      										+
 $(HBLIB)\b32\rddads.lib          										+
 $(HBLIB)\ace32.lib               										+
+$(HBLIB)\hbzebra.lib               										+
 $(BORLANDLIB)\cw32mt.lib         										+ 
 $(BORLANDLIB)\uuid.lib           										+ 
 $(BORLANDLIB)\import32.lib       										+ 

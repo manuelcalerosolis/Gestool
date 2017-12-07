@@ -115,6 +115,7 @@ static pdaUsuario
 static pdaPassword
 static pdaPasivo
 static pdaRuta
+static pdaRecogerVentas
 
 static lEnvioRecepcion
 
@@ -1326,6 +1327,7 @@ STATIC FUNCTION EditConfig( aTmp, aGet, dbfEmp, oBrw, nSelFolder, bValid, nMode 
    pdaUsuario              := padr( ConfiguracionEmpresasRepository():getValue( 'pda_user', '' ), 200 )
    pdaPassword             := padr( ConfiguracionEmpresasRepository():getValue( 'pda_password', '' ), 200 )
    pdaPasivo               := ConfiguracionEmpresasRepository():getLogic( 'pda_pasivo', .f. )
+   pdaRecogerVentas        := ConfiguracionEmpresasRepository():getNumeric( 'pda_recoger_ventas', 0 )
 
    LoaItmEmp( aTmp )
 
@@ -2522,6 +2524,12 @@ STATIC FUNCTION EditConfig( aTmp, aGet, dbfEmp, oBrw, nSelFolder, bValid, nMode 
          ID       630 ;
          OF       fldEnvios
 
+      REDEFINE GET pdaRecogerVentas ;
+         ID       650;
+         PICTURE  "999" ;
+         SPINNER ;
+         OF       fldEnvios
+
       // Page 7 comunicacion------------------------------------------------------
 
       REDEFINE BITMAP oBmpComunicacion ;
@@ -3299,10 +3307,19 @@ FUNCTION SetEmpresa( cCodEmp, oBrw )
    WritePProString( "main", "Ultima Empresa", cCodEmp, cIniAplication() )
 
    /*
-   Colocamos la empresa actual a usuario actual-------------------------------
+   Colocamos la empresa actual a usuario actual--------------------------------
    */
 
    UsuariosModel():UpdateEmpresaEnUso( cCurUsr(), cCodEmp )
+
+   /*
+   Colocamos los timers para la recepcion de informacion desde la pda----------
+   */
+
+
+   /*
+   Refresh---------------------------------------------------------------------
+   */
 
    if !empty( oBrw )
       oBrw:Refresh()
@@ -5644,6 +5661,8 @@ STATIC FUNCTION SaveEditConfig( aTmp, oSay, oBrw, oDlg, nMode )
 
    ConfiguracionEmpresasRepository():setValue( 'pda_pasivo',            pdaPasivo ) 
 
+   ConfiguracionEmpresasRepository():setValue( 'pda_recoger_ventas',    pdaRecogerVentas ) 
+
    // Escribimos en el definitivo----------------------------------------------
 
    winGather( aTmp, , dbfEmp, oBrw, nMode )
@@ -7522,5 +7541,4 @@ STATIC FUNCTION TestConexionFTP()
 RETURN ( .t. )
 
 //---------------------------------------------------------------------------//
-
 

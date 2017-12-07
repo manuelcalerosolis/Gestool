@@ -15,6 +15,8 @@ CLASS PdaEnvioRecepcionController
 
    CLASSDATA oInstance
 
+   DATA nSeconds
+
    DATA oTimer
 
    DATA oDialogView
@@ -42,10 +44,12 @@ CLASS PdaEnvioRecepcionController
    DATA hTicketPay
 
    METHOD New()
-   METHOD Init()
    METHOD End()
 
-   METHOD getInstance()                INLINE ( if( empty( ::oInstance ), ::oInstance := ::New(), ), ::oInstance ) 
+   METHOD getInstance()                INLINE ( iif( empty( ::oInstance ), ::oInstance := ::New(), ),;
+                                                ::oInstance ) 
+   METHOD rebuildInstance()            INLINE ( iif( !empty( ::oInstance ), ( ::oInstance:end(), ::oInstance := nil ), ),;
+                                                ::getInstance() ) 
 
    METHOD stopTimer()
    METHOD activateTimer()
@@ -104,24 +108,28 @@ END CLASS
 
 METHOD New()
 
-   ::cPath              := ConfiguracionEmpresasRepository():getValue( 'pda_ruta', '' )
+   ::cPath                 := ConfiguracionEmpresasRepository():getValue( 'pda_ruta', '' )
 
-   ::oTimer             := TTimer():New( 9000, {|| msgwait("hola", "mundo", 1 ), ::getInstance():importJson() }, )
-   ::oTimer:hWndOwner   := GetActiveWindow()
+   ::nSeconds              := ConfiguracionEmpresasRepository():getNumeric( 'pda_recoger_ventas', 0 )
 
-   ::oDialogView        := PdaEnvioRecepcionView():New( Self )
+   if !empty( ::nSeconds )
+      ::oTimer             := TTimer():New( ::nSeconds * 1000, {|| ::importJson() }, ) 
+      ::oTimer:hWndOwner   := GetActiveWindow()
+   end if 
 
-RETURN ( self )
-
-//---------------------------------------------------------------------------//
-
-METHOD Init()
+   ::oDialogView           := PdaEnvioRecepcionView():New( Self )
 
 RETURN ( self )
 
 //---------------------------------------------------------------------------//
 
 METHOD End()
+
+   if !empty( ::oTimer )
+      ::oTimer:end()
+   end if 
+
+   ::oTimer                := nil
 
 RETURN ( nil )
 
@@ -525,9 +533,6 @@ METHOD activateTimer()
    ::stopTimer()
 
    if !empty( ::oTimer )
-
-      msgalert("activateTimer")
-
       ::oTimer:Activate()
    end if 
 
@@ -538,9 +543,6 @@ RETURN ( Self )
 METHOD stopTimer()
 
    if !empty( ::oTimer )
-
-      msgalert("stopTimer")
-
       ::oTimer:deactivate()
    endif
 

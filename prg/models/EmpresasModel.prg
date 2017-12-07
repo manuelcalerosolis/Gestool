@@ -100,8 +100,9 @@ RETURN ( "" )
 METHOD getCodigoGrupoCampoLogico( cCodigoEmpresa, cCampoLogico )
 
    local cStm
-   local cSql              := "SELECT cCodGrp FROM " + ::getEmpresaTableName() + " " + ;
-                                 "WHERE CodEmp = " + quoted( cCodigoEmpresa ) + " AND " + cCampoLogico
+   local cSql              := "SELECT cCodGrp FROM " + ::getEmpresaTableName()   + " " + ;
+                                 "WHERE CodEmp = " + quoted( cCodigoEmpresa )    + " " + ;
+                                 "AND " + cCampoLogico + " = TRUE"
 
    if ::ExecuteSqlStatement( cSql, @cStm )
       if !empty( ( cStm )->cCodGrp )

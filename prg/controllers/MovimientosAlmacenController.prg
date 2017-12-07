@@ -88,9 +88,6 @@ METHOD New()
 
    ::Super:New()
 
-   // ::setEvent( 'openingDialog',     {|| ::oLineasController:oModel:buildRowSet() } ) 
-   // ::setEvent( 'closedDialog',      {|| ::oLineasController:oModel:freeRowSet() } ) 
-
    ::setEvent( 'deletingSelection', {|| ::deleteLines() } )
 
 RETURN ( Self )

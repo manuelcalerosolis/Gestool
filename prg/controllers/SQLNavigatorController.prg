@@ -23,8 +23,6 @@ CLASS SQLNavigatorController FROM SQLBaseController
 
    METHOD New()
 
-   METHOD getDialogView()                             INLINE ( ::oDialogView )
-
    METHOD ActivateNavigatorView()
 
    METHOD ActivateSelectorView()
@@ -73,13 +71,7 @@ METHOD New( oSenderController )
 
    ::oFilterController                                := SQLFiltrosController():New( self ) 
 
-   ::oRowSet                                          := SQLRowSet():New( self )
-
    ::oWindowsBar                                      := oWndBar()
-
-   if !empty( ::oModel )
-      ::oFilterController:setTableName( ::oModel:cTableName )
-   end if 
 
 RETURN ( self )
 
@@ -178,10 +170,6 @@ RETURN ( Self )
 
 METHOD appendFilter()
 
-   if empty( ::oFilterController )
-      RETURN ( Self )    
-   end if 
-
    ::oFilterController:Append()
 
 RETURN ( Self )    
@@ -191,13 +179,7 @@ RETURN ( Self )
 METHOD editFilter()  
 
    local nId 
-   local cFilter 
-
-   if empty( ::oFilterController )
-      RETURN ( Self )    
-   end if 
-
-   cFilter        := ::oWindowsBar:GetComboFilter()
+   local cFilter  := ::oWindowsBar:GetComboFilter()
 
    if empty( cFilter )
       RETURN ( Self )    
@@ -205,11 +187,9 @@ METHOD editFilter()
 
    nId            := ::oFilterController:getFilterId( cFilter )
 
-   msgalert( nId, "nId" )
-
-   ::oFilterController:Edit( nId )
-
-   msgalert( "editFilter")
+   if !empty( nId )
+      ::oFilterController:Edit( nId )
+   end if 
 
 RETURN ( Self )    
     
@@ -217,8 +197,17 @@ RETURN ( Self )
     
 METHOD deleteFilter()                                
 
-   if empty( ::oFilterController )
+   local nId 
+   local cFilter  := ::oWindowsBar:GetComboFilter()
+
+   if empty( cFilter )
       RETURN ( Self )    
+   end if 
+
+   nId            := ::oFilterController:getFilterId( cFilter )
+
+   if !empty( nId )
+      ::oFilterController:Delete( nId )
    end if 
 
    msgalert( "deleteFilter")
@@ -229,6 +218,7 @@ RETURN ( Self )
 
 METHOD setFilter()         
 
+   local nId      
    local cFilter  := ::oWindowsBar:GetComboFilter()
 
    if empty( cFilter )
@@ -245,10 +235,16 @@ METHOD setFilter()
    
    end if  
 
-   msgalert( ::getModel():getGeneralSelect(), "cSentence" )
+   nId            := ::oRowSet:fieldGet( ::getModelColumnKey() )
+   
+   ::oRowSet:build( ::oModel:getSelectSentence() )
 
-RETURN ( Self )    
-    
+   ::oRowSet:find( nId )
+      
+   ::getBrowse():Refresh()
+
+RETURN ( self )
+
 //---------------------------------------------------------------------------//
 
 METHOD EnableWindowsBar()
