@@ -277,6 +277,8 @@ RETURN ( .t. )
 
 FUNCTION Test()
 
+   StocksModel():getSqlAdsTotalUnidadesStock( "000               " )
+
 RETURN NIL 
 
 //---------------------------------------------------------------------------//

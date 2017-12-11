@@ -19,6 +19,8 @@ CLASS StocksModel FROM ADSBaseModel
 
    METHOD getFechaCaducidadSQL()
 
+   METHOD getSqlAdsTotalUnidadesStock( cCodigoArticulo )
+   
 END CLASS
 
 //---------------------------------------------------------------------------//
@@ -143,4 +145,34 @@ RETURN ( ctod( "" ) )
 
 //---------------------------------------------------------------------------//
 
+METHOD getSqlAdsTotalUnidadesStock( cCodigoArticulo )
 
+   local cStm  
+   local cSql  := "SELECT SUM( totalUnidadesStock ) as [totalUnidadesStock], Articulo, Lote, Almacen "
+   cSql        += "FROM ( "
+   cSql        += AlbaranesProveedoresLineasModel():getSQLAdsStockEntrada( cCodigoArticulo ) + " "
+   cSql        += "UNION "
+   cSql        += FacturasProveedoresLineasModel():getSQLAdsStockEntrada( cCodigoArticulo ) + " "
+   cSql        += "UNION "
+   cSql        += RectificativasProveedoresLineasModel():getSQLAdsStockEntrada( cCodigoArticulo ) + " "
+   cSql        += "UNION "
+   cSql        += AlbaranesClientesLineasModel():getSQLAdsStockSalida( cCodigoArticulo ) + " "
+   cSql        += "UNION "
+   cSql        += FacturasClientesLineasModel():getSQLAdsStockSalida( cCodigoArticulo ) + " "
+   cSql        += "UNION "
+   cSql        += RectificativasClientesLineasModel():getSQLAdsStockSalida( cCodigoArticulo ) + " "
+   cSql        += "UNION "
+   cSql        += TicketsClientesLineasModel():getSQLAdsStockSalida( cCodigoArticulo )
+   cSql        += " ) StockEntradas "
+   cSql        += "GROUP BY Articulo, Lote, Almacen"
+
+   MsgInfo( cSql, "cSql" )
+   logwrite( cSql )
+
+   if ::ExecuteSqlStatement( cSql, @cStm )
+      browse( cStm )
+   end if 
+
+RETURN ( 0 )
+
+//---------------------------------------------------------------------------//

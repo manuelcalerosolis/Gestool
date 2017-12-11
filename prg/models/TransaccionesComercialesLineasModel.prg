@@ -9,8 +9,14 @@ CLASS TransaccionesComercialesLineasModel FROM ADSBaseModel
 
    METHOD getExtraWhere()                                               INLINE ( "AND nCtlStk < 2" )
 
-   METHOD getFechaFieldName()                                           INLINE ( "dFecAlb" )
-   METHOD getHoraFieldName()                                            INLINE ( "tFecAlb" )
+   METHOD getFechaFieldName()                                           VIRTUAL
+   METHOD getHoraFieldName()                                            VIRTUAL
+
+   METHOD getArticuloFieldName()                                        INLINE ( "cRef" )
+   METHOD getAlmacenFieldName()                                         INLINE ( "cAlmLin" )
+   METHOD getCajasStatement()
+   METHOD getCajasFieldName()                                           INLINE ( "nCanEnt" )
+   METHOD getUnidadesFieldName()                                        INLINE ( "nUniCaja" )
 
    METHOD getLineasAgrupadas()
    
@@ -35,6 +41,12 @@ CLASS TransaccionesComercialesLineasModel FROM ADSBaseModel
    METHOD TranslateFacturasClientesLineasCodigoTiposVentaToId()         INLINE ( ::TranslateCodigoTiposVentaToId( "FacCliL" ) )
 
    METHOD TranslateFacturasRectificativasLineasCodigoTiposVentaToId()   INLINE ( ::TranslateCodigoTiposVentaToId( "FacRecL" ) )
+
+   METHOD getSQLAdsStock( cCodigoArticulo, lSalida )
+
+   METHOD getSQLAdsStockSalida( cCodigoArticulo )                       INLINE ( ::getSQLAdsStock( cCodigoArticulo, .t. ) )
+   
+   METHOD getSQLAdsStockEntrada( cCodigoArticulo )                      INLINE ( ::getSQLAdsStock( cCodigoArticulo, .f. ) )
 
 END CLASS
 
@@ -170,5 +182,53 @@ METHOD TranslateCodigoTiposVentaToId( cTable )
    next 
 
 RETURN ( Self )
+
+//---------------------------------------------------------------------------//
+
+METHOD getCajasStatement()
+
+   if Empty( ::getCajasFieldName() )
+      Return "1"
+   end if
+
+RETURN ( "IIF( " + ::getCajasFieldName() + " = 0, 1, " + ::getCajasFieldName() + " )" )
+
+//---------------------------------------------------------------------------//
+
+METHOD getSQLAdsStock( cCodigoArticulo, lSalida )
+
+   local cStm
+   local cSql        := ""
+
+   DEFAULT lSalida   := .f.
+
+   cSql              := "SELECT "
+   cSql              += "( SUM( " + ::getCajasStatement() + " * " + ::getUnidadesFieldName() + " ) " + if( lSalida, "* - 1", "" ) + " ) as [totalUnidadesStock], "
+   cSql              += quoted( ::getTableName() ) + " AS Document, "
+   cSql              += ::getArticuloFieldName() + " AS Articulo, "
+   cSql              += "cLote AS Lote, "
+   cSql              += ::getAlmacenFieldName() + " AS Almacen  "
+   cSql              += "FROM " + ::getTableName() + " TablaLineas "
+   cSql              += "WHERE " + ::getArticuloFieldName() + " = " + quoted( cCodigoArticulo ) + " " 
+   cSql              += ::getExtraWhere() + " "
+   cSql              += "AND CAST( " + ::getFechaFieldName() + " AS SQL_CHAR ) + " + ::getHoraFieldName() + " >= " 
+   cSql              += "COALESCE( "
+   cSql              += "( SELECT TOP 1 CAST( HisMov.dFecMov AS SQL_CHAR ) + HisMov.cTimMov "
+   cSql              += "FROM " + ::getEmpresaTableName( "HisMov" ) + " HisMov "
+   cSql              += "WHERE HisMov.nTipMov = 4 "
+   cSql              += "AND HisMov.cRefMov = TablaLineas." + ::getArticuloFieldName() + " "
+   cSql              += "AND HisMov.cAliMov = TablaLineas." + ::getAlmacenFieldName() + " "
+   cSql              += "AND HisMov.cLote = TablaLineas.cLote "
+   cSql              += "ORDER BY HisMov.dFecMov DESC, HisMov.cTimMov DESC ), "
+   cSql              += "'' ) "
+   cSql              += "GROUP BY Articulo, Lote, Almacen"
+
+   MsgInfo( ::getTableName(), "::getTableName()" )
+
+   if ::ExecuteSqlStatement( cSql, @cStm )
+      browse( cStm )
+   end if
+
+RETURN ( cSql )
 
 //---------------------------------------------------------------------------//
