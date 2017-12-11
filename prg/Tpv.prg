@@ -13473,7 +13473,7 @@ RETURN NIL
 Imprime Tiktura de clientes desde fuera
 */
 
-FUNCTION PrnTikCli( nNumTik, lOpenBrowse  )
+FUNCTION PrnTikCli( nNumTik, lOpenBrowse )
 
    local nLevel         := nLevelUsr( _MENUITEM_ )
 
@@ -13515,7 +13515,7 @@ RETURN NIL
 Imprime Tiktura de clientes desde fuera
 */
 
-FUNCTION VisTikCli( nNumTik, lOpenBrowse  )
+FUNCTION VisTikCli( nNumTik, lOpenBrowse )
 
    local nLevel         := nLevelUsr( _MENUITEM_ )
 

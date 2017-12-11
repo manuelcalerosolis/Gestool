@@ -23,8 +23,6 @@ METHOD New( oSenderController )
 
    ::Super:New( oSenderController )
 
-   ::oRowSet                                          := SQLRowSet():New( self )
-
 RETURN ( self )
 
 //---------------------------------------------------------------------------//

@@ -9,8 +9,6 @@ CLASS SQLBaseController
 
    DATA oSenderController
 
-   DATA ControllerContainer
-
    DATA oEvents                                       
 
    DATA oModel
@@ -90,10 +88,6 @@ CLASS SQLBaseController
 
    METHOD getRepository()                             INLINE ( ::oRepository )
 
-   // Container----------------------------------------------------------------
-
-   METHOD getContainer( cController )                 INLINE ( ::ControllerContainer:get( cController ) )
-
    METHOD getName()                                   INLINE ( strtran( lower( ::cTitle ), " ", "_" ) )
 
    METHOD startBrowse( oCombobox )
@@ -169,8 +163,6 @@ CLASS SQLBaseController
 
    METHOD setFastReport( oFastReport, cTitle, cSentence, cColumns )
 
-   METHOD onKeyChar( nKey )                           VIRTUAL 
-
 END CLASS
 
 //---------------------------------------------------------------------------//
@@ -181,7 +173,7 @@ METHOD New( oSenderController )
 
    ::oEvents                                          := Events():New()
 
-   ::ControllerContainer                              := ControllerContainer():New()
+   ::oRowSet                                          := SQLRowSet():New( self )
 
 RETURN ( self )
 
@@ -526,9 +518,7 @@ RETURN ( lDelete )
 
 METHOD changeModelOrderAndOrientation( cColumnOrder, cColumnOrientation )
 
-   local nId 
-
-   nId         := ::oRowSet:fieldGet( ::getModelColumnKey() )
+   local nId   := ::oRowSet:fieldGet( ::getModelColumnKey() )
 
    ::oModel:setColumnOrder( cColumnOrder )
 

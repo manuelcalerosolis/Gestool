@@ -5729,6 +5729,7 @@ FONT 8, "Ms Sans Serif"
   CONTROL "", 600, "Edit", WS_BORDER|WS_TABSTOP, 120, 297, 306, 11
   CONTROL "", 610, "Edit", WS_BORDER|WS_TABSTOP, 120, 309, 120, 11
   CONTROL "", 620, "Edit", ES_PASSWORD|WS_BORDER|WS_TABSTOP, 120, 321, 120, 11
+  CONTROL "", 650, "Edit", ES_RIGHT|WS_VSCROLL|WS_BORDER|WS_TABSTOP, 120, 333, 59, 11
   CONTROL "Envío pasivo", 630, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 251, 320, 55, 11
   CONTROL "Nombre usuario", -1, "Static", WS_GROUP, 58, 141, 55, 8
   CONTROL "Dirección FTP", -1, "Static", WS_GROUP, 58, 129, 51, 8
@@ -5747,8 +5748,10 @@ FONT 8, "Ms Sans Serif"
   CONTROL "Nombre usuario", -1, "Static", WS_GROUP, 50, 312, 55, 8
   CONTROL "Dirección FTP", -1, "Static", WS_GROUP, 50, 300, 51, 8
   CONTROL "Clave de acceso", -1, "Static", WS_GROUP, 50, 324, 59, 8
-  CONTROL "PDA", -1, "Button", BS_GROUPBOX, 44, 267, 386, 75
+  CONTROL "PDA", -1, "Button", BS_GROUPBOX, 44, 267, 386, 81
   CONTROL "Ruta", -1, "Static", WS_GROUP, 50, 283, 51, 8
+  CONTROL "Recoger ventas", -1, "Static", WS_GROUP, 50, 336, 56, 8
+  CONTROL "segundos", -1, "Static", WS_GROUP, 181, 335, 36, 8
 }
 
 LANGUAGE LANG_ENGLISH,SUBLANG_ENGLISH_US

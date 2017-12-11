@@ -12,6 +12,8 @@ CLASS ConfiguracionEmpresasRepository FROM SQLBaseRepository
 
    METHOD setValue()
 
+   METHOD getNumeric( name, default )
+
    METHOD getChar( name, default )     INLINE ( ::getValue( name, default ) )
 
    METHOD getLogic()    
@@ -33,6 +35,18 @@ METHOD getValue( name, default )
    end if 
 
 RETURN ( default )
+
+//---------------------------------------------------------------------------//
+
+METHOD getNumeric( name, default )
+
+   local uValue      := ::getValue( name, default )
+
+   if !hb_isnumeric( uValue ) 
+      RETURN ( val( uValue ) )
+   end if 
+
+RETURN ( uValue )
 
 //---------------------------------------------------------------------------//
 

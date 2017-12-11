@@ -3,6 +3,8 @@
 #include "Empresa.ch"
 #include "hbxml.ch"
 #include "Xbrowse.ch"
+#include "hbzebra.ch"
+#include "hbwin.ch"
 
 #define CS_DBLCLKS      8
 
@@ -277,10 +279,141 @@ RETURN ( .t. )
 
 FUNCTION Test()
 
+<<<<<<< HEAD
    StocksModel():getSqlAdsTotalUnidadesStock( "000               " )
+=======
+//   QrCodetoHBMP( 16, 16, "http://www.google.es", , "QRCODE", , , )
+>>>>>>> cfb1da6a2f6859580076bf6d95816ffd05f3346d
 
 RETURN NIL 
 
+//----------------------------------------------------------------------------//
+/*
+Function QrCodetoHBmp( nLineWidth, nLineHeight, cVar, cFileName, cType, cFlags, nColor, nColorB  )
+
+   local oBmp
+   LOCAL hZebra
+   LOCAL nFlags
+   local nWidth
+   local nHeight
+   local hBmp
+   local hGraf
+   local hBrush
+   local hBrush2
+   local hBitmap
+   DEFAULT nColor   := CLR_BLACK
+   DEFAULT nColorB  := CLR_WHITE
+   DEFAULT cType    := "EAN13"
+   DEFAULT cFlags   := ""
+   hBrush   := GdiPlusNewSolidBrush( 255, nRGBRed( nColorB ), nRGBGreen( nColorB ), nRGBBlue( nColorB ) )
+   hBrush2  := GdiPlusNewSolidBrush( 255, nRGBRed( nColor ), nRGBGreen( nColor ), nRGBBlue( nColor ) )
+   
+   oBmp     := GDIBmp():new()
+   SWITCH cType
+      CASE "EAN13"      ; hZebra := hb_zebra_create_ean13( cVar, nFlags )   ; EXIT
+      CASE "EAN8"       ; hZebra := hb_zebra_create_ean8( cVar, nFlags )    ; EXIT
+      CASE "UPCA"       ; hZebra := hb_zebra_create_upca( cVar, nFlags )    ; EXIT
+      CASE "UPCE"       ; hZebra := hb_zebra_create_upce( cVar, nFlags )    ; EXIT
+      CASE "CODE39"     ; hZebra := hb_zebra_create_code39( cVar, nFlags )  ; EXIT
+      CASE "ITF"        ; hZebra := hb_zebra_create_itf( cVar, nFlags )     ; EXIT
+      CASE "MSI"        ; hZebra := hb_zebra_create_msi( cVar, nFlags )     ; EXIT
+      CASE "CODABAR"    ; hZebra := hb_zebra_create_codabar( cVar, nFlags ) ; EXIT
+      CASE "CODE93"     ; hZebra := hb_zebra_create_code93( cVar, nFlags )  ; EXIT
+      CASE "CODE11"     ; hZebra := hb_zebra_create_code11( cVar, nFlags )  ; EXIT
+      CASE "CODE128"    ; hZebra := hb_zebra_create_code128( cVar, nFlags ) ; EXIT
+      CASE "PDF417"     ; hZebra := hb_zebra_create_pdf417( cVar, nFlags ); nLineHeight := nLineWidth * 3 ; EXIT
+      CASE "DATAMATRIX" ; hZebra := hb_zebra_create_datamatrix( cVar, nFlags ); nLineHeight := nLineWidth ; EXIT
+      CASE "QRCODE"     ; hZebra := hb_zebra_create_qrcode( cVar, nFlags ); nLineHeight := nLineWidth ; EXIT
+      ENDSWITCH
+   nWidth  := hb_Zebra_GetWidth ( hZebra, nLineWidth, nLineHeight, nFlags )
+   nHeight := hb_Zebra_GetHeight( hZebra, nLineWidth, nLineHeight, nFlags )
+   hBmp  := GDIPLUSBMPFROMBRUSH( nWidth + 2, nHeight+2, hBrush )
+   hGraf := GDIPLUSHGRAFFROMHBMP( hBmp )
+   
+   hb_zebra_draw_gdip( hZebra, hGraf, hBrush2, 1, 1, nLineWidth, nLineHeight )
+   oBmp:hBmp := hBmp
+   GdiPlusDeleteGraphics( hGraf )
+   GdiPlusDeleteBrush( hBrush )
+   GdiPlusDeleteBrush( hBrush2 )
+   HB_ZEBRA_DESTROY( hZebra )
+   if !Empty( cFileName )
+      oBmp:Save( cFileName )
+   endif
+   
+   hBitmap := oBmp:GetGDIhBitmap()
+   oBmp:END()
+Return hBitmap
+
+//----------------------------------------------------------------------------//
+
+FUNCTION hb_zebra_draw_gdip( hZebra, hGraf, hBrush, ... )
+
+   hb_zebra_draw( hZebra, {| x, y, w, h |  GDIPLUSDRAWRECT( hGraf,,hbrush,x, y, w, h ) }, ... )
+
+RETURN 0
+//----------------------------------------------------------------------------//
+#ifndef HB_ZEBRA_ERROR_INVALIDZEBRA
+#define HB_ZEBRA_ERROR_INVALIDZEBRA         101
+#endif
+
+FUNCTION hb_Zebra_GetWidth ( hZebra, nLineWidth, nLineHeight, iFlags)
+//----------------------------------------------------------------------------//
+LOCAL x1:= 0, y1 := 0, nBarWidth := 0, nBarHeight := 0
+   // always --> nBarHeight = nLineHeight
+   IF hb_zebra_GetError( hZebra ) != 0
+      RETURN HB_ZEBRA_ERROR_INVALIDZEBRA
+   ENDIF
+   hb_zebra_draw ( hZebra, {| x, y, w, h | nBarWidth:=x+w-x1, nBarHeight:=y+h-y1 }, x1, y1, nLineWidth, nLineHeight, iFlags )
+RETURN nBarWidth
+//----------------------------------------------------------------------------//
+FUNCTION hb_Zebra_GetHeight ( hZebra, nLineWidth, nLineHeight, iFlags)
+//----------------------------------------------------------------------------//
+LOCAL x1:= 0, y1 := 0, nBarWidth := 0, nBarHeight := 0
+   // always --> nBarHeight = nLineHeight
+   IF hb_zebra_GetError( hZebra ) != 0
+      RETURN HB_ZEBRA_ERROR_INVALIDZEBRA
+   ENDIF
+   hb_zebra_draw ( hZebra, {| x, y, w, h | nBarWidth:=x+w-x1, nBarHeight:=y+h-y1 }, x1, y1, nLineWidth, nLineHeight, iFlags )
+RETURN nBarHeight
+//----------------------------------------------------------------------------//
+//#include "Fivewin.ch"
+#ifndef HB_ZEBRA_FLAG_DATAMATRIX_RECTANGLE
+#define HB_ZEBRA_FLAG_DATAMATRIX_RECTANGLE    0x0200
+#endif
+FUNCTION PrnCode()
+    LOCAL oPrn
+    PRINT oPrn PREVIEW
+        PAGE
+            DATAMATRIX( oPrn,  500, 500, "12345678901234567890123456789012345678901234567890", 1000, 1000, HB_ZEBRA_FLAG_DATAMATRIX_RECTANGLE )
+            DATAMATRIX( oPrn, 1000, 500, "12345678901234567890123456789012345678901234567890", 1000, 1000, HB_ZEBRA_FLAG_DATAMATRIX_RECTANGLE )
+            DATAMATRIX( oPrn, 1500, 500, "18201106000006117254120000195947121000000010003896", 1000, 1000, HB_ZEBRA_FLAG_DATAMATRIX_RECTANGLE )
+        ENDPAGE
+    ENDPRINT
+    RETURN NIL
+
+FUNCTION DATAMATRIX( oDevice, nRow, nCol, cCode, nWidth, nHeight, nFlags, nCodeWidth, nCodeHeight )
+    LOCAL hDCMem := CREATECOMPATIBLEDC( oDevice:hDC )
+    LOCAL hBBrush := CREATESOLIDBRUSH( CLR_BLACK )
+    LOCAL hWBrush := CREATESOLIDBRUSH( CLR_WHITE )
+    LOCAL hBmp := CREATECOMPATIBLEBITMAP( oDevice:hDC, nWidth, nHeight )
+    LOCAL hBmpOld := SELECTOBJECT( hDCMem, hBmp )   
+    LOCAL hZebra := HB_ZEBRA_CREATE_DATAMATRIX( cCode, nFlags )
+    LOCAL hDib
+    DEFAULT nCodeWidth  := 20
+    DEFAULT nCodeHeight := nCodeWidth
+    FILLRECT( hDCMem, { 0, 0, nHeight, nWidth }, hWBrush )
+    HB_ZEBRA_DRAW( hZebra, { | x, y, w, h | FillRect( hDCMem, { y, x, y +  h, x + w }, hBBrush ) }, 0, 0, nCodeWidth, nCodeHeight )
+    HB_ZEBRA_DESTROY( hZebra )
+    SELECTOBJECT( hDCMem, hBmpOld )
+    hDib = DIBFROMBITMAP( hBmp )
+    DIBDRAW( oDevice:hDCOut, hDib, , nRow, nCol )
+    GLOBALFREE( hDib )
+    DELETEOBJECT( hBmp )
+    DELETEOBJECT( hBBrush )
+    DELETEOBJECT( hWBrush )
+    DELETEDC( hDCMem )
+RETURN NIL
+*/
 //---------------------------------------------------------------------------//
 
 FUNCTION WndResize( oWnd )
@@ -2515,7 +2648,7 @@ FUNCTION CreateAcceso( oWnd )
    oItem:oGroup         := oGrupo
    oItem:cPrompt        := 'Pda'
    oItem:cMessage       := 'Exportar e importar datos a terminales'
-   oItem:bAction        := {|| PdaEnvioRecepcionController():New():Activate() }
+   oItem:bAction        := {|| PdaEnvioRecepcionController():getInstance():Activate() }
    oItem:cId            := "01079"
    oItem:cBmp           := "gc_pda_16"
    oItem:cBmpBig        := "portable_barcode_scanner_yellow_32"
@@ -3195,6 +3328,8 @@ FUNCTION InitServices()
    end if
 
    TScripts():New( cPatEmp() ):StartTimer()
+
+   PdaEnvioRecepcionController():getInstance():activateTimer()   
    
 RETURN ( nil )
 
@@ -3213,6 +3348,8 @@ FUNCTION StopServices()
    end if
 
    TScripts():EndTimer()
+
+   PdaEnvioRecepcionController():getInstance():stopTimer()
 
 RETURN ( nil )
 
@@ -6670,6 +6807,63 @@ FUNCTION nNumeroTarifa( cNombreTarifa )
 
 RETURN ( 1 )
 
+FUNCTION inicializateHashVariables()
+
+   hVariables := {=>}
+
+RETURN ( .t. )
+
+//---------------------------------------------------------------------------//
+
+FUNCTION setVariablesInHash( cClave, uValor )
+
+   hset( hVariables, cClave, uValor )
+
+RETURN ( .t. )
+
+//---------------------------------------------------------------------------//
+
+FUNCTION getVariablesToHash( cClave )
+
+   local uVariable   := ""
+
+   if hhaskey( hVariables, cClave )
+      uVariable      := hGet( hVariables, cClave )
+   end if
+
+RETURN ( uVariable )
+
+//---------------------------------------------------------------------------//
+
+Function cTextRichText( cText )
+
+   local nLen     := 0
+   local nPos     := 1
+   local cFormat  := ""
+   local cTexto   := ""
+
+   nLen           := At( "\rtf", SubStr( cText, nPos ) )
+   nPos           += nLen
+   cFormat        := Upper( SubStr( cText, nPos, 3 ) )
+
+   if cFormat == "RTF"
+      cTexto      := RTFToGTF( cText )
+   end if
+
+Return cTexto
+
+//---------------------------------------------------------------------------//
+
+Function fwBmpAsc()
+
+RETURN ( LoadBitMap( GetResources(), "Up16" ) )
+
+//---------------------------------------------------------------------------//
+
+Function fwBmpDes()
+
+RETURN ( LoadBitMap( GetResources(), "Down16" ) )
+
 //---------------------------------------------------------------------------//
 
 /*
@@ -6750,61 +6944,3 @@ HB_FUNC( HB_MILLISECONDS )
 
 //---------------------------------------------------------------------------//
 
-FUNCTION inicializateHashVariables()
-
-   hVariables := {=>}
-
-RETURN ( .t. )
-
-//---------------------------------------------------------------------------//
-
-FUNCTION setVariablesInHash( cClave, uValor )
-
-   hset( hVariables, cClave, uValor )
-
-RETURN ( .t. )
-
-//---------------------------------------------------------------------------//
-
-FUNCTION getVariablesToHash( cClave )
-
-   local uVariable   := ""
-
-   if hhaskey( hVariables, cClave )
-      uVariable      := hGet( hVariables, cClave )
-   end if
-
-RETURN ( uVariable )
-
-//---------------------------------------------------------------------------//
-
-Function cTextRichText( cText )
-
-   local nLen     := 0
-   local nPos     := 1
-   local cFormat  := ""
-   local cTexto   := ""
-
-   nLen           := At( "\rtf", SubStr( cText, nPos ) )
-   nPos           += nLen
-   cFormat        := Upper( SubStr( cText, nPos, 3 ) )
-
-   if cFormat == "RTF"
-      cTexto      := RTFToGTF( cText )
-   end if
-
-Return cTexto
-
-//---------------------------------------------------------------------------//
-
-Function fwBmpAsc()
-
-RETURN ( LoadBitMap( GetResources(), "Up16" ) )
-
-//---------------------------------------------------------------------------//
-
-Function fwBmpDes()
-
-RETURN ( LoadBitMap( GetResources(), "Down16" ) )
-
-//---------------------------------------------------------------------------//
