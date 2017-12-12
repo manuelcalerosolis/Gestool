@@ -5,6 +5,8 @@
 
 CLASS TransaccionesComercialesLineasModel FROM ADSBaseModel
 
+   DATA cAlmacenFieldName
+
    METHOD getTableName()                                                VIRTUAL
 
    METHOD getExtraWhere()                                               INLINE ( "AND nCtlStk < 2" )
@@ -13,7 +15,8 @@ CLASS TransaccionesComercialesLineasModel FROM ADSBaseModel
    METHOD getHoraFieldName()                                            VIRTUAL
 
    METHOD getArticuloFieldName()                                        INLINE ( "cRef" )
-   METHOD getAlmacenFieldName()                                         INLINE ( "cAlmLin" )
+   METHOD setAlmacenFieldName()                                         INLINE ( ::cAlmacenFieldName  := "cAlmLin" )
+   METHOD getAlmacenFieldName()                                         INLINE ( ::cAlmacenFieldName )
    METHOD getCajasStatement()
    METHOD getCajasFieldName()                                           INLINE ( "nCanEnt" )
    METHOD getUnidadesFieldName()                                        INLINE ( "nUniCaja" )
@@ -202,6 +205,14 @@ METHOD getSQLAdsStock( cCodigoArticulo, lSalida )
 
    DEFAULT lSalida   := .f.
 
+   /*
+   Seleccionamos el almacen, ya que en movimientos de almacen tenemos dos------
+   */
+
+   if Empty( ::cAlmacenFieldName )
+      ::setAlmacenFieldName()
+   end if
+
    cSql              := "SELECT "
    cSql              += "( SUM( " + ::getCajasStatement() + " * " + ::getUnidadesFieldName() + " ) " + if( lSalida, "* - 1", "" ) + " ) as [totalUnidadesStock], "
    cSql              += quoted( ::getTableName() ) + " AS Document, "
@@ -209,8 +220,17 @@ METHOD getSQLAdsStock( cCodigoArticulo, lSalida )
    cSql              += "cLote AS Lote, "
    cSql              += ::getAlmacenFieldName() + " AS Almacen  "
    cSql              += "FROM " + ::getTableName() + " TablaLineas "
-   cSql              += "WHERE " + ::getArticuloFieldName() + " = " + quoted( cCodigoArticulo ) + " " 
-   cSql              += ::getExtraWhere() + " "
+
+   if hb_isarray( cCodigoArticulo )
+      cSql           += "WHERE " + ::getArticuloFieldName() + " >= " + quoted( cCodigoArticulo[ 1 ] ) + " AND " + ::getArticuloFieldName() + " <= " + quoted( cCodigoArticulo[ 2 ] ) 
+   else 
+      cSql           += "WHERE " + ::getArticuloFieldName() + " = " + quoted( cCodigoArticulo ) + " " 
+   end if 
+   
+   if !Empty( ::getExtraWhere() )
+      cSql           += ::getExtraWhere() + " "
+   end if
+   
    cSql              += "AND CAST( " + ::getFechaFieldName() + " AS SQL_CHAR ) + " + ::getHoraFieldName() + " >= " 
    cSql              += "COALESCE( "
    cSql              += "( SELECT TOP 1 CAST( HisMov.dFecMov AS SQL_CHAR ) + HisMov.cTimMov "
@@ -222,12 +242,6 @@ METHOD getSQLAdsStock( cCodigoArticulo, lSalida )
    cSql              += "ORDER BY HisMov.dFecMov DESC, HisMov.cTimMov DESC ), "
    cSql              += "'' ) "
    cSql              += "GROUP BY Articulo, Lote, Almacen"
-
-   MsgInfo( ::getTableName(), "::getTableName()" )
-
-   if ::ExecuteSqlStatement( cSql, @cStm )
-      browse( cStm )
-   end if
 
 RETURN ( cSql )
 

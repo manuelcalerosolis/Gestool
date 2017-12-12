@@ -3,9 +3,17 @@
 
 //---------------------------------------------------------------------------//
 
-CLASS MaterialesProducidosLineasModel FROM ADSBaseModel
+CLASS MaterialesProducidosLineasModel FROM TransaccionesComercialesLineasModel
 
    METHOD getTableName()                     INLINE ::getEmpresaTableName( "ProLin" )
+
+   METHOD getExtraWhere()                    INLINE ( "" )
+   METHOD getFechaFieldName()                INLINE ( "dFecOrd" )
+   METHOD getHoraFieldName()                 INLINE ( "cHorIni" )
+   METHOD getArticuloFieldName()             INLINE ( "cCodArt" )
+   METHOD setAlmacenFieldName()              INLINE ( ::cAlmacenFieldName  := "cAlmOrd" )
+   METHOD getCajasFieldName()                INLINE ( "nCajOrd" )
+   METHOD getUnidadesFieldName()             INLINE ( "nUndOrd" )
 
    METHOD getSQLSentenceLineasAgrupadas( cCodigoArticulo, cCodigoAlmacen, cValorPropiedad1, cValorPropiedad2, cLote )
 

@@ -77,6 +77,8 @@ CLASS TFastVentasArticulos FROM TFastReportInfGen
       METHOD appendBlankArticulo()   
       METHOD existeArticuloInforme()
       METHOD fillFromArticulo()
+
+   METHOD AddArticuloLote()
    
    METHOD listadoArticulo()
 
@@ -886,6 +888,10 @@ METHOD BuildReportCorrespondences()
                      "Stocks" => ;
                         {  "Generate" =>  {||   ::AddArticulo() },;
                            "Variable" =>  {||   ::AddVariableStock() },;
+                           "Data" =>      {||   ::FastReportStock() } },;
+                     "Stocks por lotes" => ;
+                        {  "Generate" =>  {||   ::AddArticuloLote() },;
+                           "Variable" =>  {||   ::AddVariableStock() },;
                            "Data" =>      {||   ::FastReportStock() } } }
 
 Return ( Self )
@@ -1084,6 +1090,7 @@ METHOD BuildTree( oTree, lLoadFile ) CLASS TFastVentasArticulos
                   {  "Title" => "Existencias",                    "Image" => 16, "Subnode" =>;
                   { ;
                      { "Title" => "Stocks",                       "Image" => 16, "Type" => "Stocks",                       "Directory" => "Articulos\Existencias\Stocks",                    "File" => "Existencias por stock.fr3" },;
+                     { "Title" => "Stocks por lotes",             "Image" => 16, "Type" => "Stocks por lotes",             "Directory" => "Articulos\Existencias\StocksLotes",               "File" => "Existencias por stock.fr3" },;
                   } ;
                   } }
 
@@ -2859,6 +2866,93 @@ METHOD appendStockArticulo( aStockArticulo )
       end if 
 
    next 
+
+RETURN ( Self )
+
+//---------------------------------------------------------------------------//
+
+METHOD AddArticuloLote( lAppendBlank ) CLASS TFastVentasArticulos
+
+   local cSelArticulo
+   local nSeconds          := seconds()
+
+   DEFAULT lAppendBlank    := .f.
+
+   ( D():Articulos( ::nView ) )->( ordsetfocus( "Codigo" ) )
+
+   ( D():Articulos( ::nView ) )->( setCustomFilter( ::getFilterArticulo() ) )
+
+   ::setMeterTotal( ( D():Articulos( ::nView ) )->( dbCustomKeyCount() ) )
+
+   ::setMeterText( "Procesando artículos" )
+
+   // Recorremos artículos-----------------------------------------------------
+
+   ( D():Articulos( ::nView ) )->( dbgoTop() ) 
+   while !( D():Articulos( ::nView ) )->( eof() ) .and. !::lBreak
+
+      cSelArticulo   := StocksModel():getSqlAdsStockLote( ( D():Articulos( ::nView ) )->Codigo )
+
+      ( cSelArticulo )->( dbGoTop() )
+
+      while !( cSelArticulo )->( Eof() )
+
+         if ( cSelArticulo )->totalUnidadesStock != 0
+
+            ::oDbf:Blank()
+
+            ::oDbf:cCodArt    := ( cSelArticulo )->Articulo
+            //::oDbf:cLote      := ( cSelArticulo )->Lote
+            ::oDbf:cCodAlm    := ( cSelArticulo )->Almacen
+            ::oDbf:nUniArt    := ( cSelArticulo )->totalUnidadesStock
+
+            /*::oDbf:cSufDoc    := sStock:cDelegacion
+            ::oDbf:dFecDoc    := sStock:dFechaDocumento
+            ::oDbf:cCodPr1    := sStock:cCodigoPropiedad1     
+            ::oDbf:cCodPr2    := sStock:cCodigoPropiedad2     
+            ::oDbf:cValPr1    := sStock:cValorPropiedad1      
+            ::oDbf:cValPr2    := sStock:cValorPropiedad2      
+            ::oDbf:dFecCad    := sStock:dFechaCaducidad       
+            ::oDbf:cNumSer    := sStock:cNumeroSerie  
+            ::oDbf:nBultos    := sStock:nBultos
+            ::oDbf:nCajas     := sStock:nCajas
+            ::oDbf:nPdtRec    := sStock:nPendientesRecibir    
+            ::oDbf:nPdtEnt    := sStock:nPendientesEntregar 
+            ::oDbf:nEntreg    := sStock:nUnidadesEntregadas
+            ::oDbf:nRecibi    := sStock:nUnidadesRecibidas
+            ::oDbf:cNumDoc    := sStock:cNumeroDocumento      
+            ::oDbf:cTipDoc    := sStock:cTipoDocumento*/
+
+            ::fillFromArticulo()
+
+            //::insertIfValid()
+
+            ::oDbf:Insert()
+               
+            //::loadValuesExtraFields()
+
+         end if
+
+         ( cSelArticulo )->( dbskip() )
+
+      end while
+
+
+
+
+
+
+
+
+      ( D():Articulos( ::nView ) )->( dbSkip() )
+
+      ::setMeterAutoIncremental()
+
+  end while
+
+  ::setMeterAutoIncremental()
+
+   msgalert( seconds() - nSeconds, "seconds()" )
 
 RETURN ( Self )
 

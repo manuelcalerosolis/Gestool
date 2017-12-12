@@ -12,7 +12,7 @@ CLASS TicketsClientesLineasModel FROM TransaccionesComercialesLineasModel
    METHOD getFechaFieldName()                                           INLINE ( "dFecTik" )
    METHOD getHoraFieldName()                                            INLINE ( "tFecTik" )
    METHOD getArticuloFieldName()                                        INLINE ( "cCbaTil" )
-   METHOD getAlmacendName()                                             INLINE ( "cAlmLin" )
+   METHOD setAlmacenFieldName()                                         INLINE ( ::cAlmacenFieldName  := "cAlmLin" )
    METHOD getCajasFieldName()                                           INLINE ( "" )
    METHOD getUnidadesFieldName()                                        INLINE ( "nUntTil" )
 

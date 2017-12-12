@@ -3,8 +3,8 @@
 #include "Empresa.ch"
 #include "hbxml.ch"
 #include "Xbrowse.ch"
-#include "hbzebra.ch"
-#include "hbwin.ch"
+//#include "hbzebra.ch"
+//#include "hbwin.ch"
 
 #define CS_DBLCLKS      8
 
@@ -279,11 +279,8 @@ RETURN ( .t. )
 
 FUNCTION Test()
 
-<<<<<<< HEAD
-   StocksModel():getSqlAdsTotalUnidadesStock( "000               " )
-=======
-//   QrCodetoHBMP( 16, 16, "http://www.google.es", , "QRCODE", , , )
->>>>>>> cfb1da6a2f6859580076bf6d95816ffd05f3346d
+   browse( StocksModel():getSqlAdsStockArticulo( "000               " ) )
+   browse( StocksModel():getSqlAdsStockLote( "000               " ) )
 
 RETURN NIL 
 

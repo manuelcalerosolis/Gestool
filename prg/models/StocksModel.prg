@@ -5,6 +5,8 @@
 
 CLASS StocksModel FROM ADSBaseModel
 
+   DATA cGroupByStatement               INIT ""
+
    METHOD getLineasAgrupadas()
 
    METHOD getTotalUnidadesStockSalidas()
@@ -19,7 +21,11 @@ CLASS StocksModel FROM ADSBaseModel
 
    METHOD getFechaCaducidadSQL()
 
-   METHOD getSqlAdsTotalUnidadesStock( cCodigoArticulo )
+   METHOD getSqlAdsStockArticulo( cCodigoArticulo ) INLINE ( ::getSqlAdsStock( cCodigoArticulo ) )
+
+   METHOD getSqlAdsStockLote( cCodigoArticulo )
+
+   METHOD getSqlAdsStock( cCodigoArticulo )
    
 END CLASS
 
@@ -145,10 +151,18 @@ RETURN ( ctod( "" ) )
 
 //---------------------------------------------------------------------------//
 
-METHOD getSqlAdsTotalUnidadesStock( cCodigoArticulo )
+METHOD getSqlAdsStockLote( cCodigoArticulo )
+
+   ::cGroupByStatement   := "Articulo, Almacen"
+
+RETURN ( ::getSqlAdsStock( cCodigoArticulo ) )
+
+//---------------------------------------------------------------------------//
+
+METHOD getSqlAdsStock( cCodigoArticulo )
 
    local cStm  
-   local cSql  := "SELECT SUM( totalUnidadesStock ) as [totalUnidadesStock], Articulo, Lote, Almacen "
+   local cSql  := "SELECT SUM( totalUnidadesStock ) as [totalUnidadesStock]" + if( !Empty( ::cGroupByStatement ), ", ", "" ) + ::cGroupByStatement + " "
    cSql        += "FROM ( "
    cSql        += AlbaranesProveedoresLineasModel():getSQLAdsStockEntrada( cCodigoArticulo ) + " "
    cSql        += "UNION "
@@ -162,16 +176,23 @@ METHOD getSqlAdsTotalUnidadesStock( cCodigoArticulo )
    cSql        += "UNION "
    cSql        += RectificativasClientesLineasModel():getSQLAdsStockSalida( cCodigoArticulo ) + " "
    cSql        += "UNION "
-   cSql        += TicketsClientesLineasModel():getSQLAdsStockSalida( cCodigoArticulo )
+   cSql        += TicketsClientesLineasModel():getSQLAdsStockSalida( cCodigoArticulo ) + " "
+   cSql        += "UNION "
+   cSql        += MaterialesProducidosLineasModel():getSQLAdsStockEntrada( cCodigoArticulo ) + " "
+   cSql        += "UNION "
+   cSql        += MaterialesConsumidosLineasModel():getSQLAdsStockSalida( cCodigoArticulo ) + " "
+   cSql        += "UNION "
+   cSql        += MovimientosAlmacenesLineasModel():getSentenceStockEntrada( cCodigoArticulo ) + " "
+   cSql        += "UNION "
+   cSql        += MovimientosAlmacenesLineasModel():getSentenceStockSalida( cCodigoArticulo )
    cSql        += " ) StockEntradas "
-   cSql        += "GROUP BY Articulo, Lote, Almacen"
-
-   MsgInfo( cSql, "cSql" )
-   logwrite( cSql )
+   if !Empty( ::cGroupByStatement )
+      cSql     += "GROUP BY " + ::cGroupByStatement
+   end if
 
    if ::ExecuteSqlStatement( cSql, @cStm )
-      browse( cStm )
-   end if 
+      Return ( cStm )
+   end if
 
 RETURN ( 0 )
 
