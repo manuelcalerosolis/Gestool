@@ -279,8 +279,7 @@ RETURN ( .t. )
 
 FUNCTION Test()
 
-   browse( StocksModel():getSqlAdsStockArticulo( "000               " ) )
-   browse( StocksModel():getSqlAdsStockLote( "000               " ) )
+   //browse( StocksModel():getSqlAdsStockLote( "4205              " ) )
 
 RETURN NIL 
 

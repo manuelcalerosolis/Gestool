@@ -14,6 +14,7 @@ CLASS TicketsClientesLineasModel FROM TransaccionesComercialesLineasModel
    METHOD getArticuloFieldName()                                        INLINE ( "cCbaTil" )
    METHOD setAlmacenFieldName()                                         INLINE ( ::cAlmacenFieldName  := "cAlmLin" )
    METHOD getCajasFieldName()                                           INLINE ( "" )
+   METHOD getBultosFieldName()                                          INLINE ( "" )
    METHOD getUnidadesFieldName()                                        INLINE ( "nUntTil" )
 
    METHOD getSQLSentenceLineasAgrupadas( cCodigoArticulo, cCodigoAlmacen, cValorPropiedad1, cValorPropiedad2, cLote )

@@ -17,8 +17,12 @@ CLASS TransaccionesComercialesLineasModel FROM ADSBaseModel
    METHOD getArticuloFieldName()                                        INLINE ( "cRef" )
    METHOD setAlmacenFieldName()                                         INLINE ( ::cAlmacenFieldName  := "cAlmLin" )
    METHOD getAlmacenFieldName()                                         INLINE ( ::cAlmacenFieldName )
+
+   METHOD getBultosFieldName()                                          INLINE ( "nBultos" )
+
    METHOD getCajasStatement()
    METHOD getCajasFieldName()                                           INLINE ( "nCanEnt" )
+
    METHOD getUnidadesFieldName()                                        INLINE ( "nUniCaja" )
 
    METHOD getLineasAgrupadas()
@@ -50,6 +54,12 @@ CLASS TransaccionesComercialesLineasModel FROM ADSBaseModel
    METHOD getSQLAdsStockSalida( cCodigoArticulo )                       INLINE ( ::getSQLAdsStock( cCodigoArticulo, .t. ) )
    
    METHOD getSQLAdsStockEntrada( cCodigoArticulo )                      INLINE ( ::getSQLAdsStock( cCodigoArticulo, .f. ) )
+
+   METHOD getTotalUnidadesStatement( lSalida )
+
+   METHOD getTotalBultosStatement( lSalida )
+
+   METHOD getTotalCajasStatement( lSalida )
 
 END CLASS
 
@@ -198,6 +208,40 @@ RETURN ( "IIF( " + ::getCajasFieldName() + " = 0, 1, " + ::getCajasFieldName() +
 
 //---------------------------------------------------------------------------//
 
+METHOD getTotalUnidadesStatement( lSalida )
+
+   local cSql        := ""
+
+   if lCalCaj()
+      cSql           += "( SUM( " + ::getCajasStatement() + " * " + ::getUnidadesFieldName() + " ) " + if( lSalida, "* - 1", "" ) + " ) as [totalUnidadesStock], "
+   else
+      cSql           += "( SUM( " + ::getUnidadesFieldName() + " ) " + if( lSalida, "* - 1", "" ) + " ) as [totalUnidadesStock], "
+   end if
+
+RETURN ( cSql )
+
+//---------------------------------------------------------------------------//
+
+METHOD getTotalBultosStatement( lSalida )
+
+   local cSql        := ""
+
+   cSql              += "( SUM( " + if( !Empty( ::getBultosFieldName() ), ::getBultosFieldName(), "0" ) + " ) " + if( lSalida, "* - 1", "" ) + " ) as [totalBultosStock], "
+
+RETURN ( cSql )
+
+//---------------------------------------------------------------------------//
+
+METHOD getTotalCajasStatement( lSalida )
+
+   local cSql        := ""
+
+   cSql              += "( SUM( " + if( !Empty( ::getCajasFieldName() ), ::getCajasFieldName(), "0" ) + " ) " + if( lSalida, "* - 1", "" ) + " ) as [totalCajasStock], "
+
+RETURN ( cSql )
+
+//---------------------------------------------------------------------------//
+
 METHOD getSQLAdsStock( cCodigoArticulo, lSalida )
 
    local cStm
@@ -214,18 +258,15 @@ METHOD getSQLAdsStock( cCodigoArticulo, lSalida )
    end if
 
    cSql              := "SELECT "
-   cSql              += "( SUM( " + ::getCajasStatement() + " * " + ::getUnidadesFieldName() + " ) " + if( lSalida, "* - 1", "" ) + " ) as [totalUnidadesStock], "
+   cSql              += ::getTotalBultosStatement( lSalida )
+   cSql              += ::getTotalCajasStatement( lSalida )
+   cSql              += ::getTotalUnidadesStatement( lSalida )
    cSql              += quoted( ::getTableName() ) + " AS Document, "
    cSql              += ::getArticuloFieldName() + " AS Articulo, "
    cSql              += "cLote AS Lote, "
    cSql              += ::getAlmacenFieldName() + " AS Almacen  "
    cSql              += "FROM " + ::getTableName() + " TablaLineas "
-
-   if hb_isarray( cCodigoArticulo )
-      cSql           += "WHERE " + ::getArticuloFieldName() + " >= " + quoted( cCodigoArticulo[ 1 ] ) + " AND " + ::getArticuloFieldName() + " <= " + quoted( cCodigoArticulo[ 2 ] ) 
-   else 
-      cSql           += "WHERE " + ::getArticuloFieldName() + " = " + quoted( cCodigoArticulo ) + " " 
-   end if 
+   cSql              += "WHERE " + ::getArticuloFieldName() + " = " + quoted( cCodigoArticulo ) + " " 
    
    if !Empty( ::getExtraWhere() )
       cSql           += ::getExtraWhere() + " "
@@ -242,6 +283,13 @@ METHOD getSQLAdsStock( cCodigoArticulo, lSalida )
    cSql              += "ORDER BY HisMov.dFecMov DESC, HisMov.cTimMov DESC ), "
    cSql              += "'' ) "
    cSql              += "GROUP BY Articulo, Lote, Almacen"
+
+   /*MsgInfo( ::getTableName() )
+   LogWrite( cStm )
+
+   if ::ExecuteSqlStatement( cSql, @cStm )
+      Browse( cStm )
+   end if*/
 
 RETURN ( cSql )
 

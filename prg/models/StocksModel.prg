@@ -21,7 +21,7 @@ CLASS StocksModel FROM ADSBaseModel
 
    METHOD getFechaCaducidadSQL()
 
-   METHOD getSqlAdsStockArticulo( cCodigoArticulo ) INLINE ( ::getSqlAdsStock( cCodigoArticulo ) )
+   METHOD getSqlAdsStockArticulo( cCodigoArticulo )
 
    METHOD getSqlAdsStockLote( cCodigoArticulo )
 
@@ -151,9 +151,17 @@ RETURN ( ctod( "" ) )
 
 //---------------------------------------------------------------------------//
 
-METHOD getSqlAdsStockLote( cCodigoArticulo )
+METHOD getSqlAdsStockArticulo( cCodigoArticulo )
 
    ::cGroupByStatement   := "Articulo, Almacen"
+
+Return ( ::getSqlAdsStock( cCodigoArticulo ) )
+
+//---------------------------------------------------------------------------//
+
+METHOD getSqlAdsStockLote( cCodigoArticulo )
+
+   ::cGroupByStatement   := "Articulo, Lote, Almacen"
 
 RETURN ( ::getSqlAdsStock( cCodigoArticulo ) )
 
@@ -162,7 +170,10 @@ RETURN ( ::getSqlAdsStock( cCodigoArticulo ) )
 METHOD getSqlAdsStock( cCodigoArticulo )
 
    local cStm  
-   local cSql  := "SELECT SUM( totalUnidadesStock ) as [totalUnidadesStock]" + if( !Empty( ::cGroupByStatement ), ", ", "" ) + ::cGroupByStatement + " "
+   local cSql  := "SELECT SUM( totalUnidadesStock ) as [totalUnidadesStock], "
+   cSql        += "SUM( totalCajasStock ) as [totalCajasStock], "
+   cSql        += "SUM( totalBultosStock ) as [totalBultosStock] "
+   cSql        += if( !Empty( ::cGroupByStatement ), ", ", "" ) + ::cGroupByStatement + " "
    cSql        += "FROM ( "
    cSql        += AlbaranesProveedoresLineasModel():getSQLAdsStockEntrada( cCodigoArticulo ) + " "
    cSql        += "UNION "
