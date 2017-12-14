@@ -1,20 +1,24 @@
+#include "Ads.ch"
 #include "FiveWin.Ch"
 #include "Error.ch"
 #include "DbStruct.ch"
 #include "DbInfo.ch"
 #include "Factu.ch" 
-#include "Ads.ch"
 #include "RichEdit.ch" 
-
-#define HB_FF_AUTOINC         0x0008 /* Column is autoincrementing */
+#include "hbzebra.ch"
+#include "hbwin.ch"
 
 //----------------------------------------------------------------------------//
 
-#define NNET_TIME             10
+#define NNET_TIME                            10
 
-#define MODE_FILE             1
-#define MODE_RECORD           2
-#define MODE_APPEND           3
+#define MODE_FILE                            1
+#define MODE_RECORD                          2
+#define MODE_APPEND                          3
+
+#ifndef HB_ZEBRA_ERROR_INVALIDZEBRA
+#define HB_ZEBRA_ERROR_INVALIDZEBRA          101
+#endif
 
 static aResources             := {}
 static aAdsDirectory          := {}
@@ -4289,6 +4293,99 @@ function ApoloSender( oObject, cMsg, u1, u2, u3, u4, u5, u6, u7, u8, u9, u10 )
 Return ( uResult )
 
 //--------------------------------------------------------------------------//
+
+Function QrCodeToHBmp( nLineWidth, nLineHeight, cVar, cFileName, cFlags, nColor, nColorBack  )
+
+   local oBmp
+   local hBmp
+   local hGraf
+   local hBrush
+   LOCAL hZebra
+   LOCAL nFlags
+   local nWidth
+   local nHeight
+   local hBrush2
+   local hBitmap
+
+   DEFAULT cFlags       := ""
+   DEFAULT nColor       := CLR_BLACK
+   DEFAULT nColorBack   := CLR_WHITE
+
+   hBrush               := GdiPlusNewSolidBrush( 255, nRGBRed( nColorBack ), nRGBGreen( nColorBack ), nRGBBlue( nColorBack ) )
+   hBrush2              := GdiPlusNewSolidBrush( 255, nRGBRed( nColor ), nRGBGreen( nColor ), nRGBBlue( nColor ) )
+   
+   oBmp                 := GdiBmp():new()
+   hZebra               := hb_zebra_create_qrcode( cVar, nFlags )
+   nWidth               := hb_Zebra_GetWidth ( hZebra, nLineWidth, nLineHeight, nFlags )
+   nHeight              := hb_Zebra_GetHeight( hZebra, nLineWidth, nLineHeight, nFlags )
+   hBmp                 := GdiPlusBmpFromBrush( nWidth + 2, nHeight+2, hBrush )
+   hGraf                := GdiPlushGrafFromHbmp( hBmp )
+   
+   hb_zebra_draw_gdip( hZebra, hGraf, hBrush2, 1, 1, nLineWidth, nLineHeight )
+   
+   oBmp:hBmp            := hBmp
+
+   GdiPlusDeleteGraphics( hGraf )
+   GdiPlusDeleteBrush( hBrush )
+   GdiPlusDeleteBrush( hBrush2 )
+   
+   hb_zebra_destroy( hZebra )
+   
+   if !empty( cFileName )
+      oBmp:Save( cFileName )
+   endif
+   
+   hBitmap              := oBmp:GetGDIhBitmap()
+
+   oBmp:End()
+
+RETURN ( hBitmap )
+
+//----------------------------------------------------------------------------//
+
+FUNCTION hb_zebra_draw_gdip( hZebra, hGraf, hBrush, ... )
+
+   hb_zebra_draw( hZebra, {| x, y, w, h |  GdiPlusDrawRect( hGraf,,hbrush,x, y, w, h ) }, ... )
+
+RETURN 0
+
+//----------------------------------------------------------------------------//
+
+//----------------------------------------------------------------------------//
+
+FUNCTION hb_Zebra_GetWidth ( hZebra, nLineWidth, nLineHeight, iFlags)
+
+   local x1          := 0
+   local y1          := 0
+   local nBarWidth   := 0
+   local nBarHeight  := 0
+
+   if hb_zebra_GetError( hZebra ) != 0
+      RETURN HB_ZEBRA_ERROR_INVALIDZEBRA
+   endif
+
+   hb_zebra_draw( hZebra, {| x, y, w, h | nBarWidth := x + w - x1, nBarHeight := y + h - y1 }, x1, y1, nLineWidth, nLineHeight, iFlags )
+
+RETURN nBarWidth
+
+//----------------------------------------------------------------------------//
+
+FUNCTION hb_Zebra_GetHeight ( hZebra, nLineWidth, nLineHeight, iFlags)
+
+   local x1          := 0
+   local y1          := 0
+   local nBarWidth   := 0
+   local nBarHeight  := 0
+
+   if hb_zebra_GetError( hZebra ) != 0
+      RETURN HB_ZEBRA_ERROR_INVALIDZEBRA
+   endif
+
+   hb_zebra_draw( hZebra, {| x, y, w, h | nBarWidth := x + w - x1, nBarHeight := y + h - y1 }, x1, y1, nLineWidth, nLineHeight, iFlags )
+
+RETURN nBarHeight
+
+//----------------------------------------------------------------------------//
 
 #pragma BEGINDUMP
 

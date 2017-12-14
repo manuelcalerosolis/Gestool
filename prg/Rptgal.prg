@@ -2429,7 +2429,31 @@ Return nil
 FUNCTION Events()
 Return nil
 
-FUNCTION TiposImpresorasRepository
+FUNCTION tiposimpresorasrepository()
+Return nil
+
+FUNCTION hb_zebra_create_qrcode()
+Return nil
+
+FUNCTION gdiplusbmpfrombrush()
+Return nil
+
+FUNCTION gdiplushgraffromhbmp()
+Return nil
+
+FUNCTION hb_zebra_destroy()
+Return nil
+
+FUNCTION hb_zebra_draw()
+Return nil
+
+FUNCTION hb_zebra_geterroro()
+Return nil
+
+FUNCTION pdaenviorecepcioncontroller()
+Return nil
+
+FUNCTION hb_zebra_geterror()
 Return nil
 
 //------------------------------------------------------------------//

@@ -2872,7 +2872,7 @@ Method lDefault() CLASS TOfertaLabelGenerator
    ::dFechaInicio       := Ctod( "01/" + Str( Month( Date() ), 2 ) + "/" + Str( Year( Date() ), 4 ) )
    ::dFechaFin          := GetSysDate()
 
-   ::cFormatoLabel      := GetPvProfString( "Etiquetas", "Oferta", Space( 3 ), cPatEmp() + "Empresa.Ini" )
+   ::cFormatoLabel      := GetPvProfString( "Etiquetas", "Oferta", Space( 3 ), cIniEmpresa() )
    if len( ::cFormatoLabel ) < 3
       ::cFormatoLabel   := Space( 3 )
    end if
@@ -3216,7 +3216,7 @@ Return ( Self )
 
 Method End() CLASS TOfertaLabelGenerator
 
-   WritePProString( "Etiquetas", "Oferta", ::cFormatoLabel, cPatEmp() + "Empresa.Ini" )
+   WritePProString( "Etiquetas", "Oferta", ::cFormatoLabel, cIniEmpresa() )
 
 Return ( Self )
 

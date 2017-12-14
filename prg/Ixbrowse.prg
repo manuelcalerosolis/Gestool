@@ -446,13 +446,18 @@ METHOD ExportToExcel()
 
    local oError
    local oBlock
+   local oWaitMeter
 
    oBlock            := ErrorBlock( {| oError | ApoloBreak( oError ) } )
    BEGIN SEQUENCE
 
       CursorWait()
 
-      ::ToExcel()
+      oWaitMeter     := TWaitMeter():New( "Exportando a excel", "Espere por favor..." )
+      oWaitMeter:run()
+      oWaitMeter:setTotal( eval( ::bKeyCount ) ) 
+
+      ::ToExcel( {|| oWaitMeter:autoInc() } )
 
       CursorWe()
 
@@ -463,6 +468,8 @@ METHOD ExportToExcel()
    END SEQUENCE
 
    ErrorBlock( oBlock )
+
+   oWaitMeter:end()
 
 RETURN nil
 

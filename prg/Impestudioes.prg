@@ -940,13 +940,13 @@ RETURN ( Self )
 
 //---------------------------------------------------------------------------//
 /*
-Guarga la familia y la categoria en cPatEmp() + "Empresa.Ini"
+Guarga la familia y la categoria en cIniEmpresa()
 */
 
 METHOD GuardarValoresIni()
 
    local oIniApp
-   local cIniApp  := cPatEmp() + "Empresa.Ini"
+   local cIniApp  := cIniEmpresa()
 
    INI oIniApp FILE cIniApp
 
@@ -966,13 +966,13 @@ RETURN ( Self )
 
 //---------------------------------------------------------------------------//
 /*
-Carga la familia y la categoria desde cPatEmp() + "Empresa.Ini"
+Carga la familia y la categoria desde cIniEmpresa()
 */
 
 METHOD CargarValoresIni()
 
    local oIniApp
-   local cIniApp  := cPatEmp() + "Empresa.Ini"
+   local cIniApp  := cIniEmpresa()
 
    INI oIniApp FILE cIniApp
 

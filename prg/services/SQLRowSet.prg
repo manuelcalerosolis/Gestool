@@ -9,7 +9,7 @@ CLASS SQLRowSet
 
    DATA oEvents
 
-   DATA oRowSet
+   DATA oRowSet 
 
    DATA oStatement
 

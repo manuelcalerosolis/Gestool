@@ -14,10 +14,9 @@ CLASS SQLBrowseView
    DATA lFooter                              INIT .f.
 
    METHOD New( oController )
+   METHOD End()
 
    METHOD Create()
-
-   METHOD End()
 
    METHOD ActivateDialog()
    METHOD ActivateMDI()
@@ -104,7 +103,7 @@ RETURN ( nil )
 
 METHOD Create( oWindow ) 
 
-   default oWindow            := ::oController:getWindow()
+   DEFAULT oWindow            := ::oController:getWindow()
 
    ::oBrowse                  := SQLXBrowse():New( oWindow )
    ::oBrowse:l2007            := .f.

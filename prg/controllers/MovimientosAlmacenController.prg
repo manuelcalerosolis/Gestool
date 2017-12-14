@@ -56,6 +56,8 @@ END CLASS
 
 METHOD New()
 
+   ::Super:New()
+
    ::cTitle                   := "Movimientos de almacén"
 
    ::hImage                   := {  "16"  => "gc_pencil_package_16",;
@@ -86,7 +88,7 @@ METHOD New()
 
    ::oEtiquetasController     := EtiquetasMovimientosAlmacenController():New( self )
 
-   ::Super:New()
+   ::oFilterController:setTableName( ::cTitle ) 
 
    ::setEvent( 'deletingSelection', {|| ::deleteLines() } )
 

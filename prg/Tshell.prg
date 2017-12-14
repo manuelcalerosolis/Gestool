@@ -303,7 +303,7 @@ CLASS TShell FROM TMdiChild
 
    METHOD getComboBox()                      INLINE ( ::oWndBar:oCombobox )
 
-   METHOD setFilter( cFilter )               INLINE ( if(   !empty( cFilter ), ( ::xAlias )->( setCustomFilter( cFilter ) ), ( ::xAlias )->( quitCustomFilter() ) ) )
+   METHOD setFilter( cFilter )               
 
    METHOD AddFilter()                        INLINE ( if(   !empty( ::oActiveFilter ),;
                                                             ( ::oActiveFilter:AddFilter(), ::EnableComboFilter( ::oActiveFilter:FiltersName() ) ), ) )
@@ -1842,9 +1842,9 @@ METHOD addSeaBar( cSearchType, nLenSearchType ) CLASS TShell
       ::oWndBar:SetComboBoxChange(     {|| ::ChgCombo() } )
       ::oWndBar:SetComboFilterChange(  {|| ::ChgFilter() } )
 
-      ::oWndBar:SetActionAddButtonFilter(    {|| ::AddFilter() } )
-      ::oWndBar:SetActionEditButtonFilter(   {|| ::EditFilter() } )
-      ::oWndBar:SetActionDeleteButtonFilter(               {|| ::KillFilter() } )
+      ::oWndBar:SetActionAddButtonFilter( {|| ::AddFilter() } )
+      ::oWndBar:SetActionEditButtonFilter( {|| ::EditFilter() } )
+      ::oWndBar:SetActionDeleteButtonFilter( {|| ::KillFilter() } )
 
       ::oWndBar:SetGetKeyUp(           {|| ::fastSeek( ::oWndBar:oGet, ::oWndBar:oGet:oGet:buffer() ) } ) 
       ::oWndBar:SetGetKeyDown(         {| nKey, nFlags | ::KeySearch( nKey ) } )
@@ -2668,6 +2668,22 @@ METHOD getActiveExpresionFilter()
    end if 
 
 Return ( cActiveExpresionFilter )
+
+//----------------------------------------------------------------------------//
+
+METHOD setFilter( cFilter )
+
+   if !( ::xAlias )->( used() )
+      RETURN ( nil )
+   end if 
+
+   if !empty( cFilter )
+      ( ::xAlias )->( setCustomFilter( cFilter ) )
+   else
+      ( ::xAlias )->( quitCustomFilter() )
+   end if 
+
+RETURN ( nil )
 
 //----------------------------------------------------------------------------//
 

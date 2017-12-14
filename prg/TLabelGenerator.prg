@@ -156,7 +156,7 @@ METHOD New( nView ) CLASS TLabelGenerator
       ::nRecno             := ( ::dbfCabecera )->( Recno() )
       ::nOrder             := ( ::dbfCabecera )->( OrdSetFocus( 1 ) )
 
-      ::cFormatoLabel      := GetPvProfString( "Etiquetas", ::cNombreDocumento, Space( 3 ), cPatEmp() + "Empresa.Ini" )
+      ::cFormatoLabel      := GetPvProfString( "Etiquetas", ::cNombreDocumento, Space( 3 ), cIniEmpresa() )
       if len( ::cFormatoLabel ) < 3
          ::cFormatoLabel   := Space( 3 )
       end if
@@ -826,7 +826,7 @@ METHOD End() CLASS TLabelGenerator
 
    ::DestroyTempLabelEdition()
 
-   WritePProString( "Etiquetas", ::cNombreDocumento, ::cFormatoLabel, cPatEmp() + "Empresa.Ini" )
+   WritePProString( "Etiquetas", ::cNombreDocumento, ::cFormatoLabel, cIniEmpresa() )
 
 Return ( Self )
 

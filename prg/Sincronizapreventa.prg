@@ -99,8 +99,8 @@ METHOD Activate( oMenuItem, oWnd )
    Cogemos los datos por defecto-----------------------------------------------
    */
 
-   ::cRuta              :=  Padr( GetPvProfString( "Preventa", "Ruta",     Space( 250 ), cPatEmp() + "Empresa.Ini" ), 250 )
-   ::cCodEmpresa        :=  Padr( GetPvProfString( "Preventa", "Empresa",  Space( 250 ), cPatEmp() + "Empresa.Ini" ), 250 )
+   ::cRuta              :=  Padr( GetPvProfString( "Preventa", "Ruta",     Space( 250 ), cIniEmpresa() ), 250 )
+   ::cCodEmpresa        :=  Padr( GetPvProfString( "Preventa", "Empresa",  Space( 250 ), cIniEmpresa() ), 250 )
 
    DEFINE DIALOG oDlg RESOURCE "SINCRONIZAPC" OF oWnd()
 
@@ -145,8 +145,8 @@ METHOD Activate( oMenuItem, oWnd )
    Guardamos los datos en el fichero ini---------------------------------------
    */
 
-   WritePProString( "Preventa", "Ruta",      ::cRuta,       cPatEmp() + "Empresa.Ini" )
-   WritePProString( "Preventa", "Empresa",   ::cCodEmpresa, cPatEmp() + "Empresa.Ini" )
+   WritePProString( "Preventa", "Ruta",      ::cRuta,       cIniEmpresa() )
+   WritePProString( "Preventa", "Empresa",   ::cCodEmpresa, cIniEmpresa() )
 
 RETURN ( Self )
 

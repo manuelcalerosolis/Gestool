@@ -15,6 +15,8 @@
 #define albParcialmenteFacturado 2
 #define albTotalmenteFacturado   3
 
+#define aTextoEstadoFacturado    {"No facturado", "Parcialmente", "Facturado" }
+
 /*
 Definición de la base de datos de albaranes a CLIENTES-------------------------
 */
@@ -590,7 +592,7 @@ FUNCTION AlbCli( oMenuItem, oWnd, hHash )
       with object ( oWndBrw:AddXCol() )
          :cHeader          := "Facturado"
          :nHeadBmpNo       := 4
-         :bStrData         := {|| "" }
+         :bStrData         := {|| aTextoEstadoFacturado[ max( 1, ( D():Get( "AlbCliT", nView ) )->nFacturado ) ] }
          :bBmpData         := {|| ( D():Get( "AlbCliT", nView ) )->nFacturado }
          :nWidth           := 20
          :AddResource( "gc_delete_12" )
@@ -796,6 +798,13 @@ FUNCTION AlbCli( oMenuItem, oWnd, hHash )
          :lHide            := .t.
       end with
 
+      with object ( oWndBrw:AddXCol() )
+         :cHeader          := "Facturado"
+         :cSortOrder       := "cNumFac"
+         :bEditValue       := {|| ( D():Get( "AlbCliT", nView ) )->cNumFac }
+         :nWidth           := 60
+         :lHide            := .t.
+      end with
 
       with object ( oWndBrw:AddXCol() )
          :cHeader          := "Base"
@@ -3079,7 +3088,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, hHash, bValid, nMode )
          ID       248 ;
          OF       oFld:aDialogs[ 1 ] ;
          WHEN     ( lWhen ) ;
-         ACTION   ( aGet[ _NDTOESP ]:cText( Val( GetPvProfString( "Descuentos", "Descuento especial", 0, cPatEmp() + "Empresa.Ini" ) ) ), RecalculaTotal( aTmp ) )
+         ACTION   ( aGet[ _NDTOESP ]:cText( Val( GetPvProfString( "Descuentos", "Descuento especial", 0, cIniEmpresa() ) ) ), RecalculaTotal( aTmp ) )
 
       REDEFINE GET aGet[ _CDPP ] VAR aTmp[ _CDPP ] ;
          ID       259 ;
@@ -3099,7 +3108,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, hHash, bValid, nMode )
          ID       258 ;
          OF       oFld:aDialogs[ 1 ] ;
          WHEN     ( lWhen ) ;
-         ACTION   ( aGet[ _NDPP ]:cText( Val( GetPvProfString( "Descuentos", "Descuento pronto pago", 0, cPatEmp() + "Empresa.Ini" ) ) ), RecalculaTotal( aTmp ) )
+         ACTION   ( aGet[ _NDPP ]:cText( Val( GetPvProfString( "Descuentos", "Descuento pronto pago", 0, cIniEmpresa() ) ) ), RecalculaTotal( aTmp ) )
 
       REDEFINE GET aGet[ _CDTOUNO ] VAR aTmp[ _CDTOUNO ] ;
          ID       270 ;
@@ -3119,7 +3128,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, hHash, bValid, nMode )
          ID       268 ;
          OF       oFld:aDialogs[ 1 ] ;
          WHEN     ( lWhen ) ;
-         ACTION   ( aGet[ _NDTOUNO ]:cText( Val( GetPvProfString( "Descuentos", "Descuento uno", 0, cPatEmp() + "Empresa.Ini" ) ) ), RecalculaTotal( aTmp ) )
+         ACTION   ( aGet[ _NDTOUNO ]:cText( Val( GetPvProfString( "Descuentos", "Descuento uno", 0, cIniEmpresa() ) ) ), RecalculaTotal( aTmp ) )
 
       REDEFINE GET aGet[ _CDTODOS ] VAR aTmp[ _CDTODOS ] ;
          ID       290 ;
@@ -3139,7 +3148,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, hHash, bValid, nMode )
          ID       288 ;
          OF       oFld:aDialogs[ 1 ] ;
          WHEN     ( lWhen ) ;
-         ACTION   ( aGet[ _NDTODOS ]:cText( Val( GetPvProfString( "Descuentos", "Descuento dos", 0, cPatEmp() + "Empresa.Ini" ) ) ), RecalculaTotal( aTmp ) )
+         ACTION   ( aGet[ _NDTODOS ]:cText( Val( GetPvProfString( "Descuentos", "Descuento dos", 0, cIniEmpresa() ) ) ), RecalculaTotal( aTmp ) )
 
       /*
       Desglose del impuestos---------------------------------------------------------
@@ -15056,7 +15065,7 @@ function SynAlbCli( cPath )
          if empty( ( D():Get( "AlbCliT", nView ) )->cNomCli ) .and. !empty ( ( D():Get( "AlbCliT", nView ) )->cCodCli )
             
             if D():Lock( "AlbCliT", nView )
-               ( D():Get( "AlbCliT", nView ) )->cNomCli    := RetFld( ( D():Get( "AlbCliT", nView ) )->cCodCli, D():Get( "Client", nView ), "Titulo" )
+               ( D():Get( "AlbCliT", nView ) )->cNomCli := RetFld( ( D():Get( "AlbCliT", nView ) )->cCodCli, D():Get( "Client", nView ), "Titulo" )
                D():UnLock( "AlbCliT", nView )
             end if   
          

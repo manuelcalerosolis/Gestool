@@ -24,7 +24,10 @@ CLASS SQLFiltrosController FROM SQLBaseController
 
    METHOD getFilters()
    METHOD getFilterSentence( cFilter ) 
-   METHOD getFilterId( cFilter )
+   METHOD getId( cFilter )
+
+   METHOD editByText( cFilter )        INLINE ( ::Edit( ::getId( cFilter ) ) )
+   METHOD deleteByText( cFilter )      INLINE ( ::Delete( { ::getId( cFilter ) } ) )
 
 END CLASS
 
@@ -38,8 +41,6 @@ METHOD New( oSender )
 
    ::oModel                            := SQLFiltrosModel():New( self )
    
-   ::oModel:setEvent( 'insertingBuffer', {|| ::oModel:hBuffer[ "tabla" ] := ::getTableName() } )
-
    ::oValidator                        := SQLFiltrosValidator():New( self )
 
 RETURN ( Self )
@@ -76,13 +77,13 @@ RETURN ( ::oModel:getFilterSentence( cFilter, ::getTableName() ) )
 
 //---------------------------------------------------------------------------//
 
-METHOD getFilterId( cFilter )
+METHOD getId( cFilter )
 
    if empty( ::getTableName() )
       RETURN ( 0 )
    end if 
 
-RETURN ( ::oModel:getFilterId( cFilter, ::getTableName() ) )
+RETURN ( ::oModel:getId( cFilter, ::getTableName() ) )
 
 //---------------------------------------------------------------------------//
 

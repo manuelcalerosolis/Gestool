@@ -10,7 +10,7 @@ CLASS TSiges
 
    DATA  nLevel
 
-   DATA  cIniFile                   INIT  cPatEmp() + "Empresa.Ini"
+   DATA  cIniFile                   INIT  cIniEmpresa()
 
    DATA  oGetPathFile
    DATA  cPathFile                  INIT  Space( 254 )

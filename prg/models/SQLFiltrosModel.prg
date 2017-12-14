@@ -16,7 +16,7 @@ CLASS SQLFiltrosModel FROM SQLBaseModel
 
    METHOD getFilterSentence( cNombre, cTabla )        INLINE ( ::getFilterField( 'filtro', cNombre, cTabla ) )
 
-   METHOD getFilterId( cNombre, cTabla )              INLINE ( ::getFilterField( 'id', cNombre, cTabla ) )
+   METHOD getId( cNombre, cTabla )                    INLINE ( ::getFilterField( 'id', cNombre, cTabla ) )
 
 END CLASS
 
@@ -24,26 +24,18 @@ END CLASS
 
 METHOD getColumns()
 
-   hset( ::hColumns, "id",       {  "create"    => "INTEGER PRIMARY KEY AUTO_INCREMENT" ,;
-                                    "text"		=> "Identificador"                      ,;
-                                    "header"    => "Id"                                 ,;
-                                    "visible"   => .t.                                  ,;
-                                    "width"     => 40 }                                 )
+   hset( ::hColumns, "id",       {  "create"    => "INTEGER PRIMARY KEY AUTO_INCREMENT" } )
 
-   hset( ::hColumns, "tabla",    {  "create"    => "CHAR( 50 ) NOT NULL"                ,;
-                                    "text"      => "Tabla"                              ,;
-                                    "header"    => "Tabla"                              ,;
-                                    "len"       => 50 }                                 ) 
+   hset( ::hColumns, "tabla",    {  "create"    => "CHAR( 50 ) NOT NULL"                  ,;
+                                    "default"   => {|| iif( !empty( ::oController ),;
+                                                            ::oController:getTableName(),;
+                                                            space( 50 ) ) } }             ) 
 
-   hset( ::hColumns, "nombre",   {  "create"    => "CHAR( 50 ) NOT NULL"                ,;
-                                    "text"      => "Nombre de filtro"                   ,;
-                                    "header"    => "Nombre"                             ,;
-                                    "len"       => 50 }                                  )
+   hset( ::hColumns, "nombre",   {  "create"    => "CHAR( 50 ) NOT NULL"                  ,;
+                                    "default"   => {|| space( 50 ) } }                    ) 
 
-   hset( ::hColumns, "filtro",   {  "create"    => "TEXT"                               ,;
-                                    "text"      => "Sentencia filtro"                   ,;
-                                    "header"    => "Filtro"                             ,;
-                                    "len"       => 50 }                                  )
+   hset( ::hColumns, "filtro",   {  "create"    => "TEXT"                                 ,;
+                                    "default"   => {|| space( 250 ) } }                   )                     
 
 RETURN ( ::hColumns )
 

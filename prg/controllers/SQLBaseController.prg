@@ -41,6 +41,10 @@ CLASS SQLBaseController
    METHOD Instance()                                  INLINE ( if( empty( ::oInstance ), ::oInstance := ::New(), ), ::oInstance ) 
    METHOD End()
 
+   METHOD getName()                                   INLINE ( strtran( lower( ::cTitle ), " ", "_" ) )
+
+   METHOD getSenderController()                       INLINE ( ::oSenderController ) 
+
    // Modelo -----------------------------------------------------------------
 
    METHOD getModel()                                  INLINE ( ::oModel )
@@ -57,8 +61,6 @@ CLASS SQLBaseController
    METHOD getModelSelectValue( cSentence )            INLINE ( if( !empty( ::oModel ), ::oModel:SelectValue( cSentence ), ) )
 
    METHOD endModel()                                  INLINE ( if( !empty( ::oModel ), ::oModel:end(), ) )
-
-   METHOD getSenderController()                       INLINE ( ::oSenderController )    
 
    METHOD changeModelOrderAndOrientation()            
    METHOD getModelHeaderFromColumnOrder()             INLINE ( ::oModel:getHeaderFromColumnOrder() )
@@ -83,20 +85,23 @@ CLASS SQLBaseController
    // Dialogo------------------------------------------------------------------
 
    METHOD getDialogView()                             INLINE ( ::oDialogView )
+   METHOD DialogViewActivate()                     
 
    // Repositorio--------------------------------------------------------------
 
    METHOD getRepository()                             INLINE ( ::oRepository )
 
-   METHOD getName()                                   INLINE ( strtran( lower( ::cTitle ), " ", "_" ) )
-
-   METHOD startBrowse( oCombobox )
-   METHOD restoreBrowseState()
-
    // Validator----------------------------------------------------------------
 
    METHOD Validate( cColumn )                         INLINE ( if( !empty( ::oValidator ), ::oValidator:Validate( cColumn ), ) )
    METHOD Assert( cColumn, uValue )                   INLINE ( if( !empty( ::oValidator ), ::oValidator:Assert( cColumn, uValue ), ) )
+
+   // Browse------------------------------------------------------------------
+
+   METHOD getBrowseView()                             INLINE ( ::oBrowseView )
+
+   METHOD startBrowse( oCombobox )
+   METHOD restoreBrowseState()
 
    // Access -----------------------------------------------------------------
 
@@ -127,12 +132,12 @@ CLASS SQLBaseController
    METHOD setMode( nMode )                            INLINE ( ::nMode := nMode )
    METHOD getMode()                                   INLINE ( ::nMode )
 
+   // Actions------------------------------------------------------------------
+
    METHOD Append()
       METHOD setAppendMode()                          INLINE ( ::setMode( __append_mode__ ) )
       METHOD isAppendMode()                           INLINE ( ::nMode == __append_mode__ )
       METHOD isNotAppendMode()                        INLINE ( ::nMode != __append_mode__ )
-
-      METHOD DialogViewActivate()                     
 
    METHOD Duplicate()
       METHOD setDuplicateMode()                       INLINE ( ::setMode( __duplicate_mode__ ) )
@@ -160,6 +165,8 @@ CLASS SQLBaseController
 
    METHOD setEvent( cEvent, bEvent )                  INLINE ( if( !empty( ::oEvents ), ::oEvents:set( cEvent, bEvent ), ) )
    METHOD fireEvent( cEvent )                         INLINE ( if( !empty( ::oEvents ), ::oEvents:fire( cEvent ), ) )
+
+   // Deprecated---------------------------------------------------------------
 
    METHOD setFastReport( oFastReport, cTitle, cSentence, cColumns )
 
@@ -357,16 +364,22 @@ RETURN ( lDuplicate )
 
 //----------------------------------------------------------------------------//
 
-METHOD Edit( id ) 
+METHOD Edit( nId ) 
 
    local lEdit    := .t. 
+
+   if empty( nId )
+      nId         := ::getIdFromRowSet()
+   end if 
+
+   if hb_isnil( nId )
+      RETURN ( .f. )
+   end if 
 
    if ::notUserEdit()
       msgStop( "Acceso no permitido." )
       RETURN ( .f. )
    end if 
-
-   DEFAULT id     := ::getIdFromRowSet()
 
    if isFalse( ::fireEvent( 'editing' ) )
       RETURN ( .f. )
@@ -376,7 +389,7 @@ METHOD Edit( id )
 
    ::beginTransactionalMode()
 
-   ::oModel:loadCurrentBuffer( id ) 
+   ::oModel:loadCurrentBuffer( nId ) 
 
    ::fireEvent( 'openingDialog' )
 

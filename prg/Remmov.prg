@@ -308,7 +308,7 @@ METHOD Initiate( cText, oSender ) CLASS TRemMovAlm
 
    ::cText              := cText
    ::oSender            := oSender
-   ::cIniFile           := cPatEmp() + "Empresa.Ini"
+   ::cIniFile           := cIniEmpresa()
    ::lSuccesfullSend    := .f.
 
 RETURN ( Self )
@@ -1882,11 +1882,17 @@ METHOD SendData() CLASS TRemMovAlm
    if file( cPatOut() + cFileName )
 
       if ::oSender:SendFiles( cPatOut() + cFileName, cFileName )
+
          ::lSuccesfullSend := .t.
+         
          ::IncNumberToSend()
+         
          ::oSender:SetText( "Fichero enviado " + cFileName )
+
       else
+         
          ::oSender:SetText( "ERROR fichero no enviado" )
+      
       end if
 
    end if

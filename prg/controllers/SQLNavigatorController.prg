@@ -33,10 +33,6 @@ CLASS SQLNavigatorController FROM SQLBaseController
 
    METHOD onKeyChar( nKey )
 
-   METHOD appendFilter()                              
-
-   METHOD editFilter()                                
-
    METHOD deleteFilter()                                
 
    METHOD getFilters()                                INLINE ( if( !empty( ::oFilterController ), ::oFilterController:getFilters(), ) ) 
@@ -91,6 +87,8 @@ METHOD ActivateNavigatorView()
    if oWnd() != nil
       SysRefresh(); oWnd():CloseAll(); SysRefresh()
    end if
+
+   msgalert( ::oModel:getSelectSentence(), "ActivateNavigatorView" )
 
    ::oRowSet:build( ::oModel:getSelectSentence() )
 
@@ -167,33 +165,6 @@ METHOD setFastReport( oFastReport, cTitle, cSentence, cColumns )
 RETURN ( Self )    
     
 //---------------------------------------------------------------------------//
-
-METHOD appendFilter()
-
-   ::oFilterController:Append()
-
-RETURN ( Self )    
-    
-//---------------------------------------------------------------------------//
-
-METHOD editFilter()  
-
-   local nId 
-   local cFilter  := ::oWindowsBar:GetComboFilter()
-
-   if empty( cFilter )
-      RETURN ( Self )    
-   end if 
-
-   nId            := ::oFilterController:getFilterId( cFilter )
-
-   if !empty( nId )
-      ::oFilterController:Edit( nId )
-   end if 
-
-RETURN ( Self )    
-    
-//---------------------------------------------------------------------------//
     
 METHOD deleteFilter()                                
 
@@ -265,11 +236,11 @@ METHOD EnableWindowsBar()
 
    ::oWindowsBar:setComboFilterChange( {|| ::setFilter() } )
 
-   ::oWindowsBar:setActionAddButtonFilter( {|| ::appendFilter() } )
+   ::oWindowsBar:setActionAddButtonFilter( {|| ::oFilterController:Append() } )
 
-   ::oWindowsBar:setActionEditButtonFilter( {|| ::editFilter() } )
+   ::oWindowsBar:setActionEditButtonFilter( {|| ::oFilterController:getFilterId( ::oWindowsBar:GetComboFilter() ) } )
 
-   ::oWindowsBar:setActionDeleteButtonFilter( {|| ::deleteFilter() } )
+   ::oWindowsBar:setActionDeleteButtonFilter( {|| ::oFilterController:Delete( ::oWindowsBar:GetComboFilter() ) } )
 
    ::oNavigatorView:Refresh()
 
