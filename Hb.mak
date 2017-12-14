@@ -1796,7 +1796,6 @@ $(OBJ)\SQLRowSet.obj 														+
 $(OBJ)\SQLExportableModel.obj 											+
 $(OBJ)\PdaEnvioRecepcionController.obj 								+
 $(OBJ)\PdaEnvioRecepcionView.obj 										+
-$(OBJ)\gdiplus.obj 															+
 $(OBJ)\gdipfwh.obj 															+
 $(OBJ)\Events.obj              		
 $<,$*

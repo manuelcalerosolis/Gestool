@@ -116,7 +116,7 @@ METHOD onChangeSearch()
       RETURN ( Self )
    end if 
 
-   if empty( cColumnOrder )
+   if empty( cColumnOrder ) 
       RETURN ( Self )
    end if 
 
@@ -126,7 +126,7 @@ METHOD onChangeSearch()
    
    ::getModel():setFind( uValue )
 
-   ::oRowSet:build( ::oModel:getSelectSentence() )
+   msgalert( ::getModel():getSelectSentence() )
    // mando a refrescar el browse
 
    if .t.
