@@ -20,7 +20,7 @@ static oMsgCaja
 static oMsgSesion
 static oMsgProgress
 
-static cCodigoEmpresaEnUso
+static cCodigoEmpresaEnUso 
 static cCodigoDelegacionEnUso
 
 static aEmpresa
