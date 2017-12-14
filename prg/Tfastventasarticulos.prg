@@ -78,7 +78,7 @@ CLASS TFastVentasArticulos FROM TFastReportInfGen
       METHOD existeArticuloInforme()
       METHOD fillFromArticulo()
 
-   METHOD AddSqlArticuloLote()
+   METHOD AddSqlArticulo()
    
    METHOD listadoArticulo()
 
@@ -889,8 +889,8 @@ METHOD BuildReportCorrespondences()
                         {  "Generate" =>  {||   ::AddArticulo() },;
                            "Variable" =>  {||   ::AddVariableStock() },;
                            "Data" =>      {||   ::FastReportStock() } },;
-                     "Stocks por lotes" => ;
-                        {  "Generate" =>  {||   ::AddSqlArticuloLote() },;
+                     "Stocks por articulo y almacén" => ;
+                        {  "Generate" =>  {||   ::AddSqlArticulo() },;
                            "Variable" =>  {||   ::AddVariableStock() },;
                            "Data" =>      {||   ::FastReportStock() } } }
 
@@ -1090,9 +1090,9 @@ METHOD BuildTree( oTree, lLoadFile ) CLASS TFastVentasArticulos
                   {  "Title" => "Existencias",                    "Image" => 16, "Subnode" =>;
                   { ;
                      { "Title"      => "Stocks",                  "Image" => 16, "Type" => "Stocks",                       "Directory" => "Articulos\Existencias\Stocks",                    "File" => "Existencias por stock.fr3" },;
-                     { "Title"      => "Stocks por lotes",;
+                     { "Title"      => "Stocks por articulo y almacén",;
                        "Image"      => 16,;
-                       "Type"       => "Stocks por lotes",;
+                       "Type"       => "Stocks por articulo y almacén",;
                        "Directory"  => "Articulos\Existencias\StocksLotes",;
                        "File"       => "Existencias por stock.fr3",;
                        "Options"    => { "Excluir unidades a cero" => { "Options"   => .t.,;
@@ -2877,10 +2877,9 @@ RETURN ( Self )
 
 //---------------------------------------------------------------------------//
 
-METHOD AddSqlArticuloLote( lAppendBlank ) CLASS TFastVentasArticulos
+METHOD AddSqlArticulo( lAppendBlank ) CLASS TFastVentasArticulos
 
    local cSelArticulo
-   local nSeconds          := seconds()
 
    DEFAULT lAppendBlank    := .f.
 
@@ -2898,6 +2897,7 @@ METHOD AddSqlArticuloLote( lAppendBlank ) CLASS TFastVentasArticulos
    while !( D():Articulos( ::nView ) )->( eof() ) .and. !::lBreak
 
       cSelArticulo   := StocksModel():getSqlAdsStockArticulo( ( D():Articulos( ::nView ) )->Codigo, ::dIniInf, ::dFinInf )
+      //cSelArticulo   := StocksModel():getSqlAdsStockLote( ( D():Articulos( ::nView ) )->Codigo, ::dIniInf, ::dFinInf )
 
       ( cSelArticulo )->( dbGoTop() )
 
@@ -2938,8 +2938,6 @@ METHOD AddSqlArticuloLote( lAppendBlank ) CLASS TFastVentasArticulos
   end while
 
   ::setMeterAutoIncremental()
-
-   msgalert( seconds() - nSeconds, "seconds()" )
 
 RETURN ( Self )
 
