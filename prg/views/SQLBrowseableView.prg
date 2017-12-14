@@ -16,12 +16,14 @@ CLASS SQLBrowseableView
 
    DATA oMenuTreeView
 
-   DATA oBrowseView
+   METHOD New( oController )
 
    // Facades -----------------------------------------------------------------
 
    METHOD setController( oController )       INLINE ( ::oController := oController )
    METHOD getController()                    INLINE ( ::oController )
+
+   // Models-------------------------------------------------------------------
 
    METHOD setModel( oModel )                 INLINE ( ::oModel := oModel  )
    METHOD getModel()                         INLINE ( iif( empty( ::oModel ), ::oController:getModel(), ::oModel ) )
@@ -34,8 +36,12 @@ CLASS SQLBrowseableView
 
    METHOD getModelHeaderFromColumnOrder()    INLINE ( ::getModel():getHeaderFromColumnOrder() )
 
-   METHOD getSQLBrowseView()                 INLINE ( ::oBrowseView )
-   METHOD getBrowse()                        INLINE ( ::oBrowseView:oBrowse )
+   // Browse-------------------------------------------------------------------
+
+   METHOD getBrowseView()                    INLINE ( ::oController:oBrowseView )
+   METHOD getSQLBrowseView()                 INLINE ( ::oController:oBrowseView )
+
+   METHOD getBrowse()                        INLINE ( ::getBrowseView():oBrowse )
 
    METHOD getColumnByHeader( cHeader )       INLINE ( ::getBrowse():getColumnByHeader( cHeader ) )
    METHOD getColumnOrder( cSortOrder )       INLINE ( ::getBrowse():getColumnOrder( cSortOrder ) )
@@ -43,12 +49,12 @@ CLASS SQLBrowseableView
 
    METHOD selectColumnOrder( oCol )          INLINE ( ::getBrowse():selectColumnOrder( oCol ) )
 
-   METHOD getMenuTreeView()                  INLINE ( ::oMenuTreeView )
-
    METHOD Refresh()                          INLINE ( ::getBrowse():refreshCurrent(), ::getBrowse():setFocus() )
    METHOD RefreshRowSet()                    INLINE ( ::getModel():buildRowSet(), ::Refresh() )
 
    //--------------------------------------------------------------------------
+
+   METHOD getMenuTreeView()                  INLINE ( ::oMenuTreeView )
 
    METHOD onChangeCombo()
    
@@ -58,6 +64,15 @@ ENDCLASS
 
 //----------------------------------------------------------------------------//
 
+METHOD New( oController )
+
+   ::oController           := oController
+
+   ::oMenuTreeView         := MenuTreeView():New( Self )
+
+RETURN ( Self )
+
+//----------------------------------------------------------------------------//
 METHOD onChangeCombo( oColumn )
 
    local oComboBox   := ::getComboBoxOrder()
@@ -109,7 +124,12 @@ METHOD onChangeSearch()
    uValue               := alltrim( upper( cvaltochar( uValue ) ) )
    uValue               := strtran( uValue, chr( 8 ), "" )
    
-   if ::getModel():findAndBuildRowSet( uValue, cColumnOrder )
+   ::getModel():setFind( uValue )
+
+   ::oRowSet:build( ::oModel:getSelectSentence() )
+   // mando a refrescar el browse
+
+   if .t.
       oSearch:SetColor( Rgb( 0, 0, 0 ), Rgb( 255, 255, 255 ) )
    else
       oSearch:SetColor( Rgb( 255, 255, 255 ), Rgb( 255, 102, 102 ) )

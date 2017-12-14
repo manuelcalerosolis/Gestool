@@ -21,7 +21,7 @@ END CLASS
 
 METHOD New( oSenderController )
 
-   ::Super:New( oSenderController )
+   ::Super:New( oSenderController ) 
 
 RETURN ( self )
 
@@ -58,7 +58,3 @@ METHOD Delete()
 RETURN ( ::Super:Delete( ::oBrowseView:getBrowseSelected() ) )
 
 //----------------------------------------------------------------------------//
-
-
-
-

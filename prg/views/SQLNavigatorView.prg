@@ -60,17 +60,35 @@ ENDCLASS
 
 METHOD New( oController )
 
-   ::oController           := oController
-
-   ::oBrowseView           := oController:oBrowseView
+   ::Super():New( oController )
 
    ::aRect                 := GetWndRect( GetDeskTopWindow() )
-
-   ::oMenuTreeView         := MenuTreeView():New( Self )
 
 RETURN ( Self )
 
 //---------------------------------------------------------------------------//
+
+METHOD End()
+
+   ::oController:DisableWindowsBar()
+
+   ::oController:End()
+
+   if !empty( ::oMdiChild )
+      ::oMdiChild:End()
+   end if 
+
+   if !empty( ::oMenuTreeView )
+      ::oMenuTreeView:End()
+   end if 
+
+   if !empty( ::oTopWebBar )
+      ::oTopWebBar:End()
+   end if 
+
+RETURN ( nil )
+
+//----------------------------------------------------------------------------//
 
 METHOD Activate()
 
@@ -86,9 +104,9 @@ METHOD Activate()
 
    // Browse view -------------------------------------------------------------
 
-   ::oBrowseView:ActivateMDI( ::getWindow(), dfnSplitterHeight + dfnSplitterWidth, dfnTreeViewWidth + dfnSplitterWidth, ::oMdiChild:nRight - ::oMdiChild:nLeft, ::oMdiChild:nBottom - ::oMdiChild:nTop - dfnSplitterHeight - 162 )
+   ::getBrowseView():ActivateMDI( ::getWindow(), dfnSplitterHeight + dfnSplitterWidth, dfnTreeViewWidth + dfnSplitterWidth, ::oMdiChild:nRight - ::oMdiChild:nLeft, ::oMdiChild:nBottom - ::oMdiChild:nTop - dfnSplitterHeight - 162 )
 
-   ::oBrowseView:setView()
+   ::getBrowseView():setView()
 
    // Splitters----------------------------------------------------------------
 
@@ -105,32 +123,6 @@ METHOD Activate()
    ::getGetSearch():bChange      := {|| ::onChangeSearch() } 
 
 RETURN ( Self )
-
-//----------------------------------------------------------------------------//
-
-METHOD End()
-
-   ::oController:DisableWindowsBar()
-
-   ::oController:End()
-
-   if !empty( ::oMdiChild )
-      ::oMdiChild:End()
-   end if 
-
-   if !empty( ::oMenuTreeView )
-      ::oMenuTreeView:End()
-   end if 
-
-   if !empty( ::oBrowseView )
-      ::oBrowseView:End()
-   end if 
-
-   if !empty( ::oTopWebBar )
-      ::oTopWebBar:End()
-   end if 
-
-RETURN ( nil )
 
 //----------------------------------------------------------------------------//
 
@@ -174,7 +166,7 @@ METHOD keyDown( nKey, nFlags )
       case nKey == VK_INSERT 
          ::oController:Append() 
       case nKey == VK_RETURN 
-         ::oController:Edit() 
+         ::oController:Edit( ) 
       case nKey == VK_DELETE 
          ::oController:Delete( ::getBrowse():aSelected )
       case nKey == VK_F5

@@ -7178,7 +7178,7 @@ Method lDefault() CLASS TClienteLabelGenerator
       ::dFechaInicio       := Ctod( "01/" + Str( Month( Date() ), 2 ) + "/" + Str( Year( Date() ), 4 ) )
       ::dFechaFin          := GetSysDate()
 
-      ::cFormatoLabel      := GetPvProfString( "Etiquetas", "Cliente", Space( 3 ), cPatEmp() + "Empresa.Ini" )
+      ::cFormatoLabel      := GetPvProfString( "Etiquetas", "Cliente", Space( 3 ), cIniEmpresa() )
       if len( ::cFormatoLabel ) < 3
          ::cFormatoLabel   := Space( 3 )
       end if
@@ -7584,7 +7584,7 @@ Return ( Self )
 
 Method End() CLASS TClienteLabelGenerator
 
-   WritePProString( "Etiquetas", "Cliente", ::cFormatoLabel, cPatEmp() + "Empresa.Ini" )
+   WritePProString( "Etiquetas", "Cliente", ::cFormatoLabel, cIniEmpresa() )
 
 Return ( Self )
 

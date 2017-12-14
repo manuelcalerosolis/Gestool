@@ -3958,7 +3958,7 @@ METHOD InitLabel() CLASS TProduccion
       ::cSufijoInicio      := ::oDbf:cSufOrd
       ::cSufijoFin         := ::oDbf:cSufOrd
 
-      ::cFormatoLabel      := GetPvProfString( "Etiquetas", "Produccion", Space( 3 ), cPatEmp() + "Empresa.Ini" )
+      ::cFormatoLabel      := GetPvProfString( "Etiquetas", "Produccion", Space( 3 ), cIniEmpresa() )
       
       if len( ::cFormatoLabel ) < 3
          ::cFormatoLabel   := Space( 3 )
@@ -4282,7 +4282,7 @@ Method EndAsistenteEtiquetas() CLASS TProduccion
 
    ::DestroyAuxiliar()
 
-   WritePProString( "Etiquetas", "Produccion", ::cFormatoLabel, cPatEmp() + "Empresa.Ini" )
+   WritePProString( "Etiquetas", "Produccion", ::cFormatoLabel, cIniEmpresa() )
 
 Return ( Self )
 

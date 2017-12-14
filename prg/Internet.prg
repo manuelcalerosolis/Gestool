@@ -174,7 +174,7 @@ METHOD Init() CLASS TSndRecInf
    ::aSend              := {}
    ::aFilesProcessed    := {}
    ::lFtpValido         := .f.
-   ::cIniFile           := cPatEmp() + "Empresa.Ini"
+   ::cIniFile           := cIniEmpresa()
    
    // Path de comunicaciones---------------------------------------------------
 
@@ -904,7 +904,7 @@ METHOD Execute( lSend, lRecive, lImprimirEnvio ) CLASS TSndRecInf
       Envios----------------------------------------------------------------------
       */
 
-      ::SetText( 'Seleccionando datos', 1 )
+      ::SetText( 'Seleccionando datos', 1 ) 
 
       if lSend
          aEval( ::aSend, {|o| if( o:lSelectSend, ( ::SetText( o:cText, 2 ), o:CreateData(), EraseFilesInDirectory(cPatSnd(), "*.*" ), Self ), ) } )

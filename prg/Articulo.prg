@@ -13752,7 +13752,7 @@ Method New() CLASS TArticuloLabelGenerator
 
    ::aSearch            := { "Código", "Nombre" }
 
-   ::cFormatoLabel      := GetPvProfString( "Etiquetas", "Articulo", Space( 3 ), cPatEmp() + "Empresa.Ini" )
+   ::cFormatoLabel      := GetPvProfString( "Etiquetas", "Articulo", Space( 3 ), cIniEmpresa() )
    if len( ::cFormatoLabel ) < 3
       ::cFormatoLabel   := Space( 3 )
    end if
@@ -14080,7 +14080,7 @@ Return ( Self )
 
 Method End() CLASS TArticuloLabelGenerator
 
-   WritePProString( "Etiquetas", "Articulo", ::cFormatoLabel, cPatEmp() + "Empresa.Ini" )
+   WritePProString( "Etiquetas", "Articulo", ::cFormatoLabel, cIniEmpresa() )
 
    ( D():Articulos( nView ) )->( dbgoto( ::nRecno ) )
 

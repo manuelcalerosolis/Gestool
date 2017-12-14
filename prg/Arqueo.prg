@@ -814,7 +814,7 @@ RETURN ( oDlg:nResult == IDOK )
 static function SetDlg()
 
    local oIniApp
-   local cIniApp  := cPatEmp() + "Empresa.Ini"
+   local cIniApp  := cIniEmpresa()
 
    INI oIniApp FILE cIniApp
       SET SECTION  "Arqueo" ENTRY "Opcion 1" TO aOpcImp[ 1 ] OF oIniApp
@@ -832,7 +832,7 @@ return nil
 static function GetDlg()
 
    local oIniApp
-   local cIniApp  := cPatEmp() + "Empresa.Ini"
+   local cIniApp  := cIniEmpresa()
 
    INI oIniApp FILE cIniApp
 

@@ -15,7 +15,6 @@ CLASS SQLSelectorView FROM SQLBrowseableView
 
    DATA hSelectedBuffer
 
-   METHOD New( oController )
    METHOD End()
 
    METHOD Activate()
@@ -31,18 +30,6 @@ CLASS SQLSelectorView FROM SQLBrowseableView
    METHOD getSelectedBuffer()             INLINE ( ::hSelectedBuffer )
 
 ENDCLASS
-
-//----------------------------------------------------------------------------//
-
-METHOD New( oController )
-
-   ::oController           := oController
-
-   ::oMenuTreeView         := MenuTreeView():New( Self )
-
-   ::oBrowseView           := SQLBrowseView():New( Self )
-
-RETURN ( Self )
 
 //----------------------------------------------------------------------------//
 
@@ -69,9 +56,9 @@ METHOD Activate()
 
       // Browse-----------------------------------------------------------------
 
-      ::oBrowseView:Activate( 130 )
+      ::getBrowseView():Activate( 130 )
 
-      ::oBrowseView:setLDblClick( {|| ::Select() } ) 
+      ::getBrowseView():setLDblClick( {|| ::Select() } ) 
 
       // Eventos---------------------------------------------------------------
 
@@ -95,10 +82,6 @@ METHOD End()
 
    if !empty( ::oMenuTreeView )
       ::oMenuTreeView:End()
-   end if 
-
-   if !empty( ::oSQLBrowseView )
-      ::oSQLBrowseView:End()
    end if 
 
 RETURN ( nil )

@@ -19,7 +19,7 @@ CLASS SQLBaseModel
 
    DATA cConstraints
 
-   DATA hColumns                                   INIT {=>}
+   DATA hColumns                                      INIT {=>}
 
    DATA cColumnOrientation
 
@@ -31,7 +31,7 @@ CLASS SQLBaseModel
    
    DATA cColumnOrder                  
    DATA cColumnKey                    
-   DATA cColumnCode                                INIT "codigo"
+   DATA cColumnCode                                   INIT "codigo"
 
    DATA hBuffer 
 
@@ -44,22 +44,23 @@ CLASS SQLBaseModel
 
    // Facades -----------------------------------------------------------------
 
-   METHOD setDatabase( oDb )                       INLINE ( ::oDatabase := oDb )
-   METHOD getDatabase()                            INLINE ( if( empty( ::oDatabase ), getSQLDatabase(), ::oDatabase ) )
+   METHOD setDatabase( oDb )                          INLINE ( ::oDatabase := oDb )
+   METHOD getDatabase()                               INLINE ( if( empty( ::oDatabase ), getSQLDatabase(), ::oDatabase ) )
 
-   METHOD getTableName()                           INLINE ( ::cTableName )
+   METHOD getTableName()                              INLINE ( ::cTableName )
 
    // Columns-------------------------------------------------------------------
 
-   METHOD getColumns()                             VIRTUAL
+   METHOD getColumns()                                VIRTUAL
    METHOD getTableColumns() 
+
+   METHOD getEmpresaColumns()
+   METHOD getTimeStampColumns()
 
    METHOD getSerializeColumns()
 
    METHOD getColumnsForBrowse()
    METHOD getHeadersForBrowse()
-
-   METHOD TimeStampColumns()
 
    METHOD getValueFromColumn( cColumn, cKey )
    METHOD getHeaderFromColumn( cColumn )              INLINE ( ::getValueFromColumn( cColumn, "header" ) )
@@ -90,12 +91,13 @@ CLASS SQLBaseModel
    METHOD addEmpresaWhere()                           
 
    METHOD setFilterWhere( cWhere )                    INLINE ( ::cFilterWhere   := cWhere )
-   METHOD clearFilterWhere()                          INLINE ( ::cFilterWhere   := nil )
    METHOD addFilterWhere( cSQLSelect )
+   METHOD clearFilterWhere()                          INLINE ( ::cFilterWhere   := nil )
+   METHOD addFindWhere( cSQLSelect )
 
    METHOD getWhereOrAnd( cSQLSelect )                 INLINE ( if( hb_at( "WHERE", cSQLSelect ) != 0, " AND ", " WHERE " ) )
 
-   // Where for columns---------------------------------------------------------
+   // Where for columns--------------------------------------------------------
 
    METHOD isEmpresaColumn()                           INLINE ( hb_hhaskey( ::hColumns, "empresa" ) )
 
@@ -111,7 +113,8 @@ CLASS SQLBaseModel
 
    METHOD setColumnOrientation( cColumnOrientation )  INLINE ( ::cColumnOrientation := cColumnOrientation )
 
-   METHOD getSelectByColumn()
+   METHOD getDeleteSentenceByColumnKey( nId )
+
    METHOD getSelectByOrder()
 
    // Busquedas----------------------------------------------------------------
@@ -138,10 +141,6 @@ CLASS SQLBaseModel
 
    METHOD setEvent( cEvent, bEvent )                  INLINE ( if( !empty( ::oEvents ), ::oEvents:set( cEvent, bEvent ), ) )
    METHOD fireEvent( cEvent )                         INLINE ( if( !empty( ::oEvents ), ::oEvents:fire( cEvent ), ) )
-
-   METHOD getEmpresaColumns()
-
-   METHOD getDeleteSentenceByColumnKey( nId )
 
 END CLASS
 
@@ -184,7 +183,7 @@ RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 
-METHOD TimeStampColumns()
+METHOD getTimeStampColumns()
 
    hset( ::hColumns, "created_at",  {  "create"    => "DATETIME DEFAULT CURRENT_TIMESTAMP"      ,;
                                        "text"      => "Creación fecha y hora"                   ,;
@@ -272,6 +271,8 @@ METHOD getGeneralSelect()
 
    cSQLSelect              := ::addFilterWhere( cSQLSelect )
 
+   cSQLSelect              := ::addFindWhere( cSQLSelect )
+
 RETURN ( cSQLSelect )
 
 //---------------------------------------------------------------------------//
@@ -294,7 +295,7 @@ METHOD getSelectSentence()
 
    cSQLSelect              := ::getGeneralSelect()
 
-   cSQLSelect              := ::getSelectByColumn( cSQLSelect )
+   cSQLSelect              := ::addFindWhere( cSQLSelect )
 
    cSQLSelect              := ::getSelectByOrder( cSQLSelect )
 
@@ -340,7 +341,7 @@ RETURN ( cSQLSelect )
 
 //---------------------------------------------------------------------------//
 
-METHOD getSelectByColumn( cSQLSelect )
+METHOD addFindWhere( cSQLSelect )
 
    if empty( ::cColumnOrder ) .or. empty( ::cFind )
       RETURN ( cSQLSelect )
@@ -551,16 +552,11 @@ RETURN ( {|| Self:&( cMethod ) } )
 
 METHOD loadBlankBuffer()
 
-   local nRecno
-   local hColumn
-
    ::hBuffer            := {=>}
 
    ::fireEvent( 'loadingBlankBuffer' )
 
    ::defaultCurrentBuffer()
-
-   msgalert( hb_valtoexp( ::hBuffer ), "hBuffer" )
 
    ::fireEvent( 'loadedBlankBuffer' )
 
@@ -574,7 +570,7 @@ METHOD loadCurrentBuffer( id )
 
    ::fireEvent( 'loadingcurrentbuffer' )
 
-   ::hBuffer         := ::findById( id )
+   ::hBuffer            := ::findById( id )
 
    ::fireEvent( 'loadedcurrentbuffer' )
 
@@ -588,7 +584,7 @@ METHOD loadDuplicateBuffer( id )
 
    ::fireEvent( 'loadingduplicatebuffer' )
 
-   ::hBuffer         := ::findById( id )
+   ::hBuffer            := ::findById( id )
 
    ::fireEvent( 'loadedduplicatebuffer' )
 

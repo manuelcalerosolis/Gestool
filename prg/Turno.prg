@@ -752,7 +752,7 @@ METHOD Initiate( cText, oSender )
    ::oSender            := oSender
    ::lSuccesfullSend    := .f.
 
-   ::oIniArqueo         := TIni():New( cPatEmp() + "Empresa.Ini" )
+   ::oIniArqueo         := TIni():New( cIniEmpresa() )
 
 RETURN ( Self )
 

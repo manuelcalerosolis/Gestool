@@ -2716,7 +2716,7 @@ Return ( Self )
 Method CargarPreferencias()
 
    local oIniApp
-   local cIniApp  := cPatEmp() + "Empresa.Ini"
+   local cIniApp  := cIniEmpresa()
 
    INI oIniApp FILE cIniApp
 
@@ -2731,7 +2731,7 @@ return ( Self )
 Method GuardarPreferencias()
 
    local oIniApp
-   local cIniApp  := cPatEmp() + "Empresa.Ini"
+   local cIniApp  := cIniEmpresa()
 
    INI oIniApp FILE cIniApp
       SET SECTION  "Movilges" ENTRY "Destino" TO ::oDirectorio:cText       OF oIniApp

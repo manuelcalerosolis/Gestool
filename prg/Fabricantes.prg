@@ -95,7 +95,7 @@ METHOD Initiate( cText, oSender )
 
    ::cText              := cText
    ::oSender            := oSender
-   ::cIniFile           := cPatEmp() + "Empresa.Ini"
+   ::cIniFile           := cIniEmpresa()
    ::lSuccesfullSend    := .f.
 
 RETURN ( Self )
