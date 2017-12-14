@@ -3,8 +3,8 @@
 #include "Empresa.ch"
 #include "hbxml.ch"
 #include "Xbrowse.ch"
-//#include "hbzebra.ch"
-//#include "hbwin.ch"
+#include "hbzebra.ch"
+#include "hbwin.ch"
 
 #define CS_DBLCLKS      8
 
@@ -279,6 +279,7 @@ RETURN ( .t. )
 
 FUNCTION Test()
 
+   //browse( StocksModel():getSqlAdsStockArticulo( "4205              " ) )
    //browse( StocksModel():getSqlAdsStockLote( "4205              " ) )
 
 RETURN NIL 

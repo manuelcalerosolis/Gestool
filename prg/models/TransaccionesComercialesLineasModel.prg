@@ -37,29 +37,31 @@ CLASS TransaccionesComercialesLineasModel FROM ADSBaseModel
 
    METHOD TranslateCodigoTiposVentaToId( cTable )
 
-   METHOD TranslateSATClientesLineasCodigoTiposVentaToId()              INLINE ( ::TranslateCodigoTiposVentaToId( "SatCliL" ) )
+   METHOD TranslateSATClientesLineasCodigoTiposVentaToId()                       INLINE ( ::TranslateCodigoTiposVentaToId( "SatCliL" ) )
 
-   METHOD TranslatePresupuestoClientesLineasCodigoTiposVentaToId()      INLINE ( ::TranslateCodigoTiposVentaToId( "PreCliL" ) )
+   METHOD TranslatePresupuestoClientesLineasCodigoTiposVentaToId()               INLINE ( ::TranslateCodigoTiposVentaToId( "PreCliL" ) )
 
-   METHOD TranslatePedidosClientesLineasCodigoTiposVentaToId()          INLINE ( ::TranslateCodigoTiposVentaToId( "PedCliL" ) )
+   METHOD TranslatePedidosClientesLineasCodigoTiposVentaToId()                   INLINE ( ::TranslateCodigoTiposVentaToId( "PedCliL" ) )
 
-   METHOD TranslateAlbaranesClientesLineasCodigoTiposVentaToId()        INLINE ( ::TranslateCodigoTiposVentaToId( "AlbCliL" ) )
+   METHOD TranslateAlbaranesClientesLineasCodigoTiposVentaToId()                 INLINE ( ::TranslateCodigoTiposVentaToId( "AlbCliL" ) )
 
-   METHOD TranslateFacturasClientesLineasCodigoTiposVentaToId()         INLINE ( ::TranslateCodigoTiposVentaToId( "FacCliL" ) )
+   METHOD TranslateFacturasClientesLineasCodigoTiposVentaToId()                  INLINE ( ::TranslateCodigoTiposVentaToId( "FacCliL" ) )
 
-   METHOD TranslateFacturasRectificativasLineasCodigoTiposVentaToId()   INLINE ( ::TranslateCodigoTiposVentaToId( "FacRecL" ) )
+   METHOD TranslateFacturasRectificativasLineasCodigoTiposVentaToId()            INLINE ( ::TranslateCodigoTiposVentaToId( "FacRecL" ) )
 
-   METHOD getSQLAdsStock( cCodigoArticulo, lSalida )
+   METHOD getSQLAdsStock( cCodigoArticulo, dFechaInicio, dFechaFin, lSalida )
 
-   METHOD getSQLAdsStockSalida( cCodigoArticulo )                       INLINE ( ::getSQLAdsStock( cCodigoArticulo, .t. ) )
+   METHOD getSQLAdsStockSalida( cCodigoArticulo, dFechaInicio, dFechaFin )   INLINE ( ::getSQLAdsStock( cCodigoArticulo, dFechaInicio, dFechaFin, .t. ) )
    
-   METHOD getSQLAdsStockEntrada( cCodigoArticulo )                      INLINE ( ::getSQLAdsStock( cCodigoArticulo, .f. ) )
+   METHOD getSQLAdsStockEntrada( cCodigoArticulo, dFechaInicio, dFechaFin )  INLINE ( ::getSQLAdsStock( cCodigoArticulo, dFechaInicio, dFechaFin, .f. ) )
 
    METHOD getTotalUnidadesStatement( lSalida )
 
    METHOD getTotalBultosStatement( lSalida )
 
    METHOD getTotalCajasStatement( lSalida )
+
+   METHOD getDateFormatSqlADS( dFecha )
 
 END CLASS
 
@@ -242,7 +244,19 @@ RETURN ( cSql )
 
 //---------------------------------------------------------------------------//
 
-METHOD getSQLAdsStock( cCodigoArticulo, lSalida )
+METHOD getDateFormatSqlADS( dFecha )
+
+   local cFechaSqlAds
+
+   SET DATE FORMAT "mm-dd-yyyy"
+   cFechaSqlAds   := dtoc( dFecha )
+   SET DATE FORMAT "dd/mm/yyyy"
+
+RETURN ( cFechaSqlAds )
+
+//---------------------------------------------------------------------------//
+
+METHOD getSQLAdsStock( cCodigoArticulo, dFechaInicio, dFechaFin, lSalida )
 
    local cStm
    local cSql        := ""
@@ -267,6 +281,7 @@ METHOD getSQLAdsStock( cCodigoArticulo, lSalida )
    cSql              += ::getAlmacenFieldName() + " AS Almacen  "
    cSql              += "FROM " + ::getTableName() + " TablaLineas "
    cSql              += "WHERE " + ::getArticuloFieldName() + " = " + quoted( cCodigoArticulo ) + " " 
+   cSql              += "AND "+ ::getFechaFieldName() + " >= " + ::getDateFormatSqlADS( dFechaInicio ) + " AND " + ::getFechaFieldName() + " <= " + ::getDateFormatSqlADS( dFechaFin ) + " " 
    
    if !Empty( ::getExtraWhere() )
       cSql           += ::getExtraWhere() + " "
@@ -284,12 +299,7 @@ METHOD getSQLAdsStock( cCodigoArticulo, lSalida )
    cSql              += "'' ) "
    cSql              += "GROUP BY Articulo, Lote, Almacen"
 
-   /*MsgInfo( ::getTableName() )
-   LogWrite( cStm )
-
-   if ::ExecuteSqlStatement( cSql, @cStm )
-      Browse( cStm )
-   end if*/
+   logWrite( cSql )
 
 RETURN ( cSql )
 

@@ -78,7 +78,7 @@ CLASS TFastVentasArticulos FROM TFastReportInfGen
       METHOD existeArticuloInforme()
       METHOD fillFromArticulo()
 
-   METHOD AddArticuloLote()
+   METHOD AddSqlArticuloLote()
    
    METHOD listadoArticulo()
 
@@ -890,7 +890,7 @@ METHOD BuildReportCorrespondences()
                            "Variable" =>  {||   ::AddVariableStock() },;
                            "Data" =>      {||   ::FastReportStock() } },;
                      "Stocks por lotes" => ;
-                        {  "Generate" =>  {||   ::AddArticuloLote() },;
+                        {  "Generate" =>  {||   ::AddSqlArticuloLote() },;
                            "Variable" =>  {||   ::AddVariableStock() },;
                            "Data" =>      {||   ::FastReportStock() } } }
 
@@ -2877,7 +2877,7 @@ RETURN ( Self )
 
 //---------------------------------------------------------------------------//
 
-METHOD AddArticuloLote( lAppendBlank ) CLASS TFastVentasArticulos
+METHOD AddSqlArticuloLote( lAppendBlank ) CLASS TFastVentasArticulos
 
    local cSelArticulo
    local nSeconds          := seconds()
@@ -2897,7 +2897,7 @@ METHOD AddArticuloLote( lAppendBlank ) CLASS TFastVentasArticulos
    ( D():Articulos( ::nView ) )->( dbgoTop() ) 
    while !( D():Articulos( ::nView ) )->( eof() ) .and. !::lBreak
 
-      cSelArticulo   := StocksModel():getSqlAdsStockArticulo( ( D():Articulos( ::nView ) )->Codigo )
+      cSelArticulo   := StocksModel():getSqlAdsStockArticulo( ( D():Articulos( ::nView ) )->Codigo, ::dIniInf, ::dFinInf )
 
       ( cSelArticulo )->( dbGoTop() )
 
@@ -2918,10 +2918,6 @@ METHOD AddArticuloLote( lAppendBlank ) CLASS TFastVentasArticulos
             //::oDbf:cValPr1    := ( cSelArticulo )->cValorPropiedad1
             //::oDbf:cValPr2    := ( cSelArticulo )->cValorPropiedad2
             //::oDbf:dFecCad    := ( cSelArticulo )->dFechaCaducidad
-            //::oDbf:nPdtRec    := ( cSelArticulo )->nPendientesRecibir    
-            //::oDbf:nPdtEnt    := ( cSelArticulo )->nPendientesEntregar 
-            //::oDbf:nEntreg    := ( cSelArticulo )->nUnidadesEntregadas
-            //::oDbf:nRecibi    := ( cSelArticulo )->nUnidadesRecibidas
 
             ::fillFromArticulo()
 
