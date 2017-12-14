@@ -61,8 +61,6 @@ CLASS TransaccionesComercialesLineasModel FROM ADSBaseModel
 
    METHOD getTotalCajasStatement( lSalida )
 
-   METHOD getDateFormatSqlADS( dFecha )
-
 END CLASS
 
 //---------------------------------------------------------------------------//
@@ -244,18 +242,6 @@ RETURN ( cSql )
 
 //---------------------------------------------------------------------------//
 
-METHOD getDateFormatSqlADS( dFecha )
-
-   local cFechaSqlAds
-
-   SET DATE FORMAT "mm-dd-yyyy"
-   cFechaSqlAds   := dtoc( dFecha )
-   SET DATE FORMAT "dd/mm/yyyy"
-
-RETURN ( cFechaSqlAds )
-
-//---------------------------------------------------------------------------//
-
 METHOD getSQLAdsStock( cCodigoArticulo, dFechaInicio, dFechaFin, lSalida )
 
    local cStm
@@ -281,7 +267,7 @@ METHOD getSQLAdsStock( cCodigoArticulo, dFechaInicio, dFechaFin, lSalida )
    cSql              += ::getAlmacenFieldName() + " AS Almacen  "
    cSql              += "FROM " + ::getTableName() + " TablaLineas "
    cSql              += "WHERE " + ::getArticuloFieldName() + " = " + quoted( cCodigoArticulo ) + " " 
-   cSql              += "AND "+ ::getFechaFieldName() + " >= " + ::getDateFormatSqlADS( dFechaInicio ) + " AND " + ::getFechaFieldName() + " <= " + ::getDateFormatSqlADS( dFechaFin ) + " " 
+   cSql              += "AND "+ ::getFechaFieldName() + " >= " + quoted( dtoc( dFechaInicio ) ) + " AND " + ::getFechaFieldName() + " <= " + quoted( dtoc( dFechaFin ) ) + " "
    
    if !Empty( ::getExtraWhere() )
       cSql           += ::getExtraWhere() + " "
@@ -292,14 +278,14 @@ METHOD getSQLAdsStock( cCodigoArticulo, dFechaInicio, dFechaFin, lSalida )
    cSql              += "( SELECT TOP 1 CAST( HisMov.dFecMov AS SQL_CHAR ) + HisMov.cTimMov "
    cSql              += "FROM " + ::getEmpresaTableName( "HisMov" ) + " HisMov "
    cSql              += "WHERE HisMov.nTipMov = 4 "
+   cSql              += "AND HisMov.dFecMov >= " + quoted( dtoc( dFechaInicio ) ) + " "
+   cSql              += "AND HisMov.dFecMov <= " + quoted( dtoc( dFechaFin ) ) + " "
    cSql              += "AND HisMov.cRefMov = TablaLineas." + ::getArticuloFieldName() + " "
    cSql              += "AND HisMov.cAliMov = TablaLineas." + ::getAlmacenFieldName() + " "
    cSql              += "AND HisMov.cLote = TablaLineas.cLote "
    cSql              += "ORDER BY HisMov.dFecMov DESC, HisMov.cTimMov DESC ), "
    cSql              += "'' ) "
    cSql              += "GROUP BY Articulo, Lote, Almacen"
-
-   logWrite( cSql )
 
 RETURN ( cSql )
 
