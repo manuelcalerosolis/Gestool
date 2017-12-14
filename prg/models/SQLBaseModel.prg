@@ -271,8 +271,6 @@ METHOD getGeneralSelect()
 
    cSQLSelect              := ::addFilterWhere( cSQLSelect )
 
-   cSQLSelect              := ::addFindWhere( cSQLSelect )
-
 RETURN ( cSQLSelect )
 
 //---------------------------------------------------------------------------//

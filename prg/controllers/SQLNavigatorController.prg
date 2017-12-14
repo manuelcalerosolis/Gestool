@@ -23,6 +23,8 @@ CLASS SQLNavigatorController FROM SQLBaseController
 
    METHOD New()
 
+   METHOD Delete( aSelected )                         INLINE( ::Super:Delete( ::getRecnoToId( aSelected ) ) )
+
    METHOD ActivateNavigatorView()
 
    METHOD ActivateSelectorView()
@@ -238,9 +240,9 @@ METHOD EnableWindowsBar()
 
    ::oWindowsBar:setActionAddButtonFilter( {|| ::oFilterController:Append() } )
 
-   ::oWindowsBar:setActionEditButtonFilter( {|| ::oFilterController:getFilterId( ::oWindowsBar:GetComboFilter() ) } )
+   ::oWindowsBar:setActionEditButtonFilter( {|| ::oFilterController:EditByText( ::oWindowsBar:GetComboFilter() ) } )
 
-   ::oWindowsBar:setActionDeleteButtonFilter( {|| ::oFilterController:Delete( ::oWindowsBar:GetComboFilter() ) } )
+   ::oWindowsBar:setActionDeleteButtonFilter( {|| ::oFilterController:DeleteByText( ::oWindowsBar:GetComboFilter() ) } )
 
    ::oNavigatorView:Refresh()
 

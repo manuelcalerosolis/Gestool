@@ -22,7 +22,7 @@ METHOD addColumns()
    end with
 
    with object ( ::oBrowse:AddCol() )
-      :cSortOrder          := 'nombre_movimiento'
+      // :cSortOrder          := 'nombre_movimiento'
       :cHeader             := 'Tipo movimiento'
       :nWidth              := 100
       :bEditValue          := {|| ::getRowSet():fieldGet( 'nombre_movimiento' ) }
