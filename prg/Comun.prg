@@ -279,12 +279,6 @@ RETURN ( .t. )
 
 FUNCTION Test()
 
-<<<<<<< HEAD
-   //browse( StocksModel():getSqlAdsStockArticulo( "4205              " ) )
-   //browse( StocksModel():getSqlAdsStockLote( "4205              " ) )
-
-=======
->>>>>>> 1ebb938c35681897395d163243d05e046e6cabbf
 RETURN NIL 
 
 //----------------------------------------------------------------------------//
