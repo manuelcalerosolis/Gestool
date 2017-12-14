@@ -3,6 +3,8 @@
 #include "Empresa.ch"
 #include "hbxml.ch"
 #include "Xbrowse.ch"
+#include "hbzebra.ch"
+#include "hbwin.ch"
 
 #define CS_DBLCLKS      8
 
@@ -276,10 +278,6 @@ RETURN ( .t. )
 //---------------------------------------------------------------------------//
 
 FUNCTION Test()
-
-   // local oController := SQLFiltrosController():New()
-   // oController:setTableName( "Test" )
-   // oController:Append() 
 
 RETURN NIL 
 

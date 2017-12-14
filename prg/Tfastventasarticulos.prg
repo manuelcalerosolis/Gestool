@@ -77,6 +77,8 @@ CLASS TFastVentasArticulos FROM TFastReportInfGen
       METHOD appendBlankArticulo()   
       METHOD existeArticuloInforme()
       METHOD fillFromArticulo()
+
+   METHOD AddArticuloLote()
    
    METHOD listadoArticulo()
 
@@ -886,6 +888,10 @@ METHOD BuildReportCorrespondences()
                      "Stocks" => ;
                         {  "Generate" =>  {||   ::AddArticulo() },;
                            "Variable" =>  {||   ::AddVariableStock() },;
+                           "Data" =>      {||   ::FastReportStock() } },;
+                     "Stocks por lotes" => ;
+                        {  "Generate" =>  {||   ::AddArticuloLote() },;
+                           "Variable" =>  {||   ::AddVariableStock() },;
                            "Data" =>      {||   ::FastReportStock() } } }
 
 Return ( Self )
@@ -1083,7 +1089,14 @@ METHOD BuildTree( oTree, lLoadFile ) CLASS TFastVentasArticulos
                   { "Title" => "Movimientos almacén",             "Image" => 25, "Type" => "Movimientosalmacen",           "Directory" => "Articulos\MovimientosAlmacen",                    "File" => "Movimientos.fr3" },;
                   {  "Title" => "Existencias",                    "Image" => 16, "Subnode" =>;
                   { ;
-                     { "Title" => "Stocks",                       "Image" => 16, "Type" => "Stocks",                       "Directory" => "Articulos\Existencias\Stocks",                    "File" => "Existencias por stock.fr3" },;
+                     { "Title"      => "Stocks",                  "Image" => 16, "Type" => "Stocks",                       "Directory" => "Articulos\Existencias\Stocks",                    "File" => "Existencias por stock.fr3" },;
+                     { "Title"      => "Stocks por lotes",;
+                       "Image"      => 16,;
+                       "Type"       => "Stocks por lotes",;
+                       "Directory"  => "Articulos\Existencias\StocksLotes",;
+                       "File"       => "Existencias por stock.fr3",;
+                       "Options"    => { "Excluir unidades a cero" => { "Options"   => .t.,;
+                                                                        "Value"     => .t. } } },;
                   } ;
                   } }
 
@@ -2859,6 +2872,78 @@ METHOD appendStockArticulo( aStockArticulo )
       end if 
 
    next 
+
+RETURN ( Self )
+
+//---------------------------------------------------------------------------//
+
+METHOD AddArticuloLote( lAppendBlank ) CLASS TFastVentasArticulos
+
+   local cSelArticulo
+   local nSeconds          := seconds()
+
+   DEFAULT lAppendBlank    := .f.
+
+   ( D():Articulos( ::nView ) )->( ordsetfocus( "Codigo" ) )
+
+   ( D():Articulos( ::nView ) )->( setCustomFilter( ::getFilterArticulo() ) )
+
+   ::setMeterTotal( ( D():Articulos( ::nView ) )->( dbCustomKeyCount() ) )
+
+   ::setMeterText( "Procesando artículos" )
+
+   // Recorremos artículos-----------------------------------------------------
+
+   ( D():Articulos( ::nView ) )->( dbgoTop() ) 
+   while !( D():Articulos( ::nView ) )->( eof() ) .and. !::lBreak
+
+      cSelArticulo   := StocksModel():getSqlAdsStockArticulo( ( D():Articulos( ::nView ) )->Codigo )
+
+      ( cSelArticulo )->( dbGoTop() )
+
+      while !( cSelArticulo )->( Eof() )
+
+         if !( ::oTFastReportOptions:getOptionValue( "Excluir unidades a cero", .t. ) .AND. ( cSelArticulo )->totalUnidadesStock == 0 )
+
+            ::oDbf:Blank()
+
+            ::oDbf:cCodArt    := ( cSelArticulo )->Articulo
+            //::oDbf:cLote      := ( cSelArticulo )->Lote
+            ::oDbf:cCodAlm    := ( cSelArticulo )->Almacen
+            ::oDbf:nUniArt    := ( cSelArticulo )->totalUnidadesStock
+            ::oDbf:nBultos    := ( cSelArticulo )->totalBultosStock
+            ::oDbf:nCajas     := ( cSelArticulo )->totalCajasStock
+            //::oDbf:cCodPr1    := ( cSelArticulo )->cCodigoPropiedad1
+            //::oDbf:cCodPr2    := ( cSelArticulo )->cCodigoPropiedad2
+            //::oDbf:cValPr1    := ( cSelArticulo )->cValorPropiedad1
+            //::oDbf:cValPr2    := ( cSelArticulo )->cValorPropiedad2
+            //::oDbf:dFecCad    := ( cSelArticulo )->dFechaCaducidad
+            //::oDbf:nPdtRec    := ( cSelArticulo )->nPendientesRecibir    
+            //::oDbf:nPdtEnt    := ( cSelArticulo )->nPendientesEntregar 
+            //::oDbf:nEntreg    := ( cSelArticulo )->nUnidadesEntregadas
+            //::oDbf:nRecibi    := ( cSelArticulo )->nUnidadesRecibidas
+
+            ::fillFromArticulo()
+
+            ::insertIfValid()
+               
+            ::loadValuesExtraFields()
+
+         end if
+
+         ( cSelArticulo )->( dbskip() )
+
+      end while
+
+      ( D():Articulos( ::nView ) )->( dbSkip() )
+
+      ::setMeterAutoIncremental()
+
+  end while
+
+  ::setMeterAutoIncremental()
+
+   msgalert( seconds() - nSeconds, "seconds()" )
 
 RETURN ( Self )
 

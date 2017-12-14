@@ -3,9 +3,16 @@
 
 //---------------------------------------------------------------------------//
 
-CLASS MovimientosAlmacenesLineasModel FROM ADSBaseModel
+CLASS MovimientosAlmacenesLineasModel FROM TransaccionesComercialesLineasModel
 
    METHOD getTableName()                     INLINE ::getEmpresaTableName( "HisMov" )
+
+   METHOD getExtraWhere()                    INLINE ( "AND " + ::cAlmacenFieldName + " <> ''" )
+   METHOD getFechaFieldName()                INLINE ( "dFecMov" )
+   METHOD getHoraFieldName()                 INLINE ( "cTimMov" )
+   METHOD getArticuloFieldName()             INLINE ( "cRefMov" )
+   METHOD getCajasFieldName()                INLINE ( "nCajMov" )
+   METHOD getUnidadesFieldName()             INLINE ( "nUndMov" )
 
    METHOD getFechaHoraConsolidacion()
 
@@ -20,6 +27,10 @@ CLASS MovimientosAlmacenesLineasModel FROM ADSBaseModel
    METHOD getSQLSentenceTotalUnidadesEntradasStock()
 
    METHOD getSQLSentenceTotalUnidadesSalidasStock()
+
+   METHOD getSentenceStockEntrada( cCodigoArticulo )
+   
+   METHOD getSentenceStockSalida( cCodigoArticulo )
 
 END CLASS
 
@@ -180,3 +191,18 @@ Return ( cSql )
 
 //---------------------------------------------------------------------------//
 
+METHOD getSentenceStockEntrada( cCodigoArticulo )
+
+   ::cAlmacenFieldName  := "cAliMov"
+
+Return ( ::getSQLAdsStockEntrada( cCodigoArticulo ) )
+
+//---------------------------------------------------------------------------//
+
+METHOD getSentenceStockSalida( cCodigoArticulo )
+
+   ::cAlmacenFieldName  := "cAloMov"
+
+Return ( ::getSqlAdsStockSalida( cCodigoArticulo ) )
+
+//---------------------------------------------------------------------------//

@@ -32,8 +32,7 @@ CREATE CLASS FacturasClientesRisi
 
    DATA cDelegacion
 
-   
-   DATA aClientesExcluidos  INIT    {} 
+   DATA aClientesExcluidos  INIT    { "0001452", "0001263", "0001071", "0001763" }
 
    CLASSDATA aProductos     INIT  { { "Codigo" => "V001004", "Nombre" => "GUSANITOS 35 g x 30 u",             "Codigo unidades" => "8411859550103",  "Codigo cajas" => "18411859550100", "Codigo interno" => "" },;
                                     { "Codigo" => "V001005", "Nombre" => "GUSANITOS  KETCHUP 35 g x 30 u",    "Codigo unidades" => "8411859550110",  "Codigo cajas" => "18411859550117", "Codigo interno" => "" },;
@@ -145,7 +144,6 @@ CREATE CLASS FacturasClientesRisi
    METHOD validateInvoice()       
 
    METHOD getCantidad()
-   METHOD getUnidadMedicion()
    METHOD getPrecioBase()
 
    METHOD getDelegacion()                       INLINE ( oUser():cDelegacion() )
@@ -169,7 +167,7 @@ ENDCLASS
 
       ::CloseFiles()
 
-      msgInfo( "Proceso finalizado : " + if( !empty(::oUve), ::oUve:cFile, "no se generaron ficheros" ) )
+      msgInfo( "Porceso finalizado : " + ::oUve:cFile )
 
    Return ( Self )
 
@@ -181,7 +179,7 @@ ENDCLASS
 
       ::ProcessFile()
 
-      ::SendFile()
+      // ::SendFile()
 
       ::oDlg:Enable()
       ::oDlg:End()
@@ -278,7 +276,7 @@ METHOD ProcessFile() CLASS FacturasClientesRisi
 
    ( D():FacturasClientes( ::nView ) )->( dbseek( ::dInicio, .t. ) )
    
-   while ( D():FacturasClientes( ::nView ) )->dFecFac <= ::dFin .and. !( D():FacturasClientes( ::nView ) )->( eof() )
+   while ( D():FacturasClientes( ::nView ) )->dFecFac <= ::dFin .and. ( D():FacturasClientes( ::nView ) )->( !eof() )
 
       ::oSayMessage:setText( "Progreso : " + alltrim( str( ( D():FacturasClientes( ::nView ) )->( ordkeyno() ) ) ) + " de " + alltrim( str( ( D():FacturasClientes( ::nView ) )->( ordkeycount() ) ) ) )
 
@@ -290,37 +288,25 @@ METHOD ProcessFile() CLASS FacturasClientesRisi
 
                // Codigo de la familia-----------------------------------------
 
-               cCodigoInterno             := alltrim( ( D():Articulos( ::nView ) )->Codigo )
-
-               if !empty( alltrim( ( D():FacturasClientes( ::nView ) )->cSufFac ) )
-                  cCodigoInterno 			+= "."
-                  cCodigoInterno 			+= alltrim( ( D():FacturasClientes( ::nView ) )->cSufFac )
-               end if 
-
+               cCodigoInterno             := ( D():Articulos( ::nView ) )->Codigo
                cCodigoBarra               := ( D():Articulos( ::nView ) )->CodeBar
+               cUbicacion                 := ( D():Articulos( ::nView ) )->cDesUbi 
                cNombreProducto            := ( D():Articulos( ::nView ) )->Nombre
                lFamiliaRisi               := alltrim( ( D():Articulos( ::nView ) )->Familia ) == "00001" .or. alltrim( ( D():Articulos( ::nView ) )->Familia ) == "00010" 
-               cUbicacion                 := ( D():Articulos( ::nView ) )->cDesUbi 
 
                // Busqueda en productos de Risi--------------------------------
 
                if lFamiliaRisi
-
-                  if empty(cUbicacion)
-                     msgStop( "El artículo : " + alltrim( cNombreProducto ) + ", no contiene ubicación", "Corrija el error" )
-                     Return ( Self )
-                  end if
 
                   ::findMainCodeInHash( cUbicacion )
 
                   // Codigo del grupo-------------------------------------------
 
                   if ( D():Clientes( ::nView ) )->( dbSeek( ( D():FacturasClientes( ::nView ) )->cCodCli ) )
-
                      cCodigoGrupo         := ( D():Clientes( ::nView ) )->cCodGrp
 
                      if !empty(cCodigoGrupo)
-                        cNombreGrupo      := retFld( cCodigoGrupo, D():GrupoClientes( ::nView ), "cNomGrp" )
+                        cNombreGrupo      := oRetFld( cCodigoGrupo, D():GrupoClientes( ::nView ), "cNomGrp" )
                      end if
 
                   end if 
@@ -334,25 +320,20 @@ METHOD ProcessFile() CLASS FacturasClientesRisi
 
                   // Codigo del agente--------------------------------------------
 
-                  cCodigoAgente           := ( D():FacturasClientes( ::nView ) )->cCodAge
+                  cCodigoAgente           := ( ( D():FacturasClientes( ::nView ) )->cCodAge )
                   if empty( cCodigoAgente )
                      cCodigoAgente        := ( D():Clientes( ::nView ) )->cAgente
                   end if 
 
                   // carga de datos-----------------------------------------------
 
-                  if .f. // !empty( ( D():FacturasClientes( ::nView ) )->cSuFac )
-                    ::oUve:NumFactura(    ( D():FacturasClientes( ::nView ) )->cSuFac ) 
-                  else
-                    ::oUve:NumFactura(    D():FacturasClientesLineasId( ::nView ) ) 
-                  end if 
-
+                  ::oUve:NumFactura(      D():FacturasClientesLineasId( ::nView ) ) 
                   ::oUve:NumLinea(        ( D():FacturasClientesLineas( ::nView ) )->nNumLin ) 
-                  ::oUve:CodigoProducto(  cCodigoInterno ) 
+                  ::oUve:CodigoProducto(  alltrim( cCodigoInterno ) ) 
                   ::oUve:DescProducto(    cNombreProducto )
                   ::oUve:Fabricante(      'RISI' )
 
-                  ::oUve:CodigoFababricante( cUbicacion )             // RetFld( , D():Get( "ArtCodebar", ::nView ), "cCodBar", "cDefArt" )
+                  ::oUve:CodigoProdFab( cUbicacion )             // RetFld( , D():Get( "ArtCodebar", ::nView ), "cCodBar", "cDefArt" )
 
                   // el producto no enctrado en tabla de risi---------------------
 
@@ -362,9 +343,9 @@ METHOD ProcessFile() CLASS FacturasClientesRisi
                       ::oUve:EAN13(       ::hProducto[ "Codigo unidades" ] )    // RetFld( ( D():FacturasClientesLineas( ::nView ) )->cRef, D():Get( "ArtCodebar", ::nView ), "cCodBar", "cDefArt" )
                   end if 
 
-                  ::oUve:Cantidad(        ::getCantidad()
+                  ::oUve:Cantidad(        ::getCantidad() )
 
-                  ::oUve:UM(              ::getUnidadMedicion( ( D():FacturasClientes( ::nView ) )->cSufFac ) ) )
+                  ::oUve:UM(              'UN' )
                   ::oUve:PrecioBase(      ::getPrecioBase() )
                   ::oUve:Descuentos(      nDtoLFacCli( D():FacturasClientesLineas( ::nView ) ) / ::getCantidad() )
                   ::oUve:PrecioBrutoTotal(nTotLFacCli( D():FacturasClientesLineas( ::nView ) ) )
@@ -410,7 +391,7 @@ METHOD ProcessFile() CLASS FacturasClientesRisi
 
    CursorWE()
 
-   ::oSayMessage:setText( "Fichero generado : " + ::oUve:cFile )
+   ::oSayMessage:setText( "Fichero generado " + ::oUve:cFile )
 
 Return ( Self )
 
@@ -453,16 +434,11 @@ METHOD SendFile() CLASS FacturasClientesRisi
 
       oFtp:Cwd( "httpdocs" )
       oFtp:Cwd( "uve" )
-      oFtp:Cwd( "manzanares" )
-      oFtp:Cwd( "jesus" )
-      
 
-      /* 
       if !empty( cDelegacion )
          oFtp:MKD( cDelegacion )
          oFtp:Cwd( cDelegacion )
       end if 
-      */
 
       oFtp:UploadFile( cFile ) 
       oFtp:Close()
@@ -530,16 +506,6 @@ RETURN ( nCantidad )
 
 //---------------------------------------------------------------------------//
 
-METHOD getUnidadMedicion( cDelegacion )
-
-   if cDelegacion == "91" .or. cDelegacion == "90"
-      RETURN ( "BOLSAS" )
-   end if  
-
-RETURN ( "UN" )
-
-//---------------------------------------------------------------------------//
-
 METHOD getPrecioBase() CLASS FacturasClientesRisi
 
       local nUnidades   := ( D():Articulos( ::nView ) )->nUniCaja 
@@ -576,7 +542,7 @@ Return .t.
 
 CLASS Uve FROM Cuaderno
 
-   DATA cFile                       INIT FullCurDir() + 'ExptUVE' + dtos( date() ) + timeToString() + '.csv'
+   DATA cFile                       INIT FullCurDir() + 'VentasDistribuidor' + dtos( date() ) + timeToString() + '.csv'
    DATA aLineas                     INIT {}
 
    METHOD New()                     INLINE ( Self )
@@ -595,10 +561,8 @@ CLASS Uve FROM Cuaderno
    METHOD DescProducto(uValue)      INLINE ( if( !isnil(uValue), ::cDescProducto       := uValue, trimpadr( ::cDescProducto, 50 ) ) )
    DATA cFabricante                 INIT ''
    METHOD Fabricante(uValue)        INLINE ( if( !isnil(uValue), ::cFabricante         := uValue, trimpadr( ::cFabricante, 10 ) ) )
-   
-   DATA cCodigoFababricante         INIT ''
-   METHOD CodigoFababricante(uValue)
-   
+   DATA cCodigoProdFab              INIT ''
+   METHOD CodigoProdFab(uValue)     INLINE ( if( !isnil(uValue), ::cCodigoProdFab      := uValue, trimpadr( ::cCodigoProdFab, 18 ) ) )
    DATA cEAN13                      INIT ''
    METHOD EAN13(uValue)             INLINE ( if( !isnil(uValue), ::cEAN13              := uValue, trimpadr( ::cEAN13, 13 ) ) )
    DATA nCantidad                   INIT 0
@@ -659,14 +623,14 @@ ENDCLASS
 
       local cBuffer
 
-      cBuffer         := ::NumFactura()         + ::Separator()   // A
-      cBuffer         += ::NumLinea()           + ::Separator()   // B
-      cBuffer         += ::CodigoFababricante() + ::Separator()   // C
-      cBuffer         += ::DescProducto()       + ::Separator()   // D
-      cBuffer         += ::Fabricante()         + ::Separator()   // E
-      cBuffer         += ::CodigoProducto()     + ::Separator()   // F
-      cBuffer         += ::EAN13()              + ::Separator()
-      cBuffer         += ::Cantidad()           + ::Separator()
+      cBuffer         := ::NumFactura()       + ::Separator()
+      cBuffer         += ::NumLinea()         + ::Separator()
+      cBuffer         += ::CodigoProducto()   + ::Separator()
+      cBuffer         += ::DescProducto()     + ::Separator()
+      cBuffer         += ::Fabricante()       + ::Separator()
+      cBuffer         += ::CodigoProdFab()    + ::Separator()
+      cBuffer         += ::EAN13()            + ::Separator()
+      cBuffer         += ::Cantidad()         + ::Separator()
       cBuffer         += ::UM()               + ::Separator()
       cBuffer         += ::PrecioBase()       + ::Separator()
       cBuffer         += ::Descuentos()       + ::Separator()
@@ -696,22 +660,6 @@ ENDCLASS
       end if
 
    Return ( ::aLineas )
-
-//---------------------------------------------------------------------------//
-
-   METHOD CodigoFababricante(uValue)
-
-      if !isnil(uValue)
-         ::cCodigoFababricante   := uValue
-      else 
-         if !empty( ::cCodigoFababricante )
-            RETURN ( trimpadr( ::cCodigoFababricante, 18 ) )
-         else 
-            RETURN ( ::CodigoProducto() )
-         end if
-      end if 
-
-   Return ( nil )
 
 //---------------------------------------------------------------------------//
 
@@ -749,9 +697,7 @@ ENDCLASS
          Return ( .f. )
       end if
 
-      ::cFile        := FullCurDir() + 'ExptUVE' + dtos( date() ) + timeToString() + '.csv'
-
-      ::hFile        := fCreate( ::cFile )
+      ::hFile  := fCreate( ::cFile )
 
       if !empty( ::hFile )
          for each cLinea in ::aLineas
