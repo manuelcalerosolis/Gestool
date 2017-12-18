@@ -1095,8 +1095,10 @@ METHOD BuildTree( oTree, lLoadFile ) CLASS TFastVentasArticulos
                        "Type"       => "Stocks por articulo y almacén",;
                        "Directory"  => "Articulos\Existencias\StocksLotes",;
                        "File"       => "Existencias por stock.fr3",;
-                       "Options"    => { "Excluir unidades a cero" => { "Options"   => .t.,;
-                                                                        "Value"     => .t. } } },;
+                       "Options"    => {  "Excluir unidades a cero"      => { "Options"   => .t.,;
+                                                                              "Value"     => .t. },;
+                                          "Excluir artículos obsoletos"  => { "Options"   => .t.,;
+                                                                              "Value"     => .t. } } },;
                   } ;
                   } }
 
@@ -2883,6 +2885,11 @@ METHOD AddSqlArticulo( lAppendBlank ) CLASS TFastVentasArticulos
 
    DEFAULT lAppendBlank    := .f.
 
+   //Excluir artículos obsoletos
+
+
+
+
    ( D():Articulos( ::nView ) )->( ordsetfocus( "Codigo" ) )
 
    ( D():Articulos( ::nView ) )->( setCustomFilter( ::getFilterArticulo() ) )
@@ -2896,40 +2903,44 @@ METHOD AddSqlArticulo( lAppendBlank ) CLASS TFastVentasArticulos
    ( D():Articulos( ::nView ) )->( dbgoTop() ) 
    while !( D():Articulos( ::nView ) )->( eof() ) .and. !::lBreak
 
-      cSelArticulo   := StocksModel():getSqlAdsStockArticulo( ( D():Articulos( ::nView ) )->Codigo, ::dIniInf, ::dFinInf )
-      //cSelArticulo   := StocksModel():getSqlAdsStockLote( ( D():Articulos( ::nView ) )->Codigo, ::dIniInf, ::dFinInf )
+      if ( !::oTFastReportOptions:getOptionValue( "Excluir artículos obsoletos", .t. ) .or. !( D():Articulos( ::nView ) )->lObs )
 
-      ( cSelArticulo )->( dbGoTop() )
+         cSelArticulo   := StocksModel():getSqlAdsStockArticulo( ( D():Articulos( ::nView ) )->Codigo, ::dIniInf, ::dFinInf )
+         //cSelArticulo   := StocksModel():getSqlAdsStockLote( ( D():Articulos( ::nView ) )->Codigo, ::dIniInf, ::dFinInf )
 
-      while !( cSelArticulo )->( Eof() )
+         ( cSelArticulo )->( dbGoTop() )
 
-         if !( ::oTFastReportOptions:getOptionValue( "Excluir unidades a cero", .t. ) .AND. ( cSelArticulo )->totalUnidadesStock == 0 )
+         while !( cSelArticulo )->( Eof() )
 
-            ::oDbf:Blank()
+            if !( ::oTFastReportOptions:getOptionValue( "Excluir unidades a cero", .t. ) .AND. ( cSelArticulo )->totalUnidadesStock == 0 )
 
-            ::oDbf:cCodArt    := ( cSelArticulo )->Articulo
-            //::oDbf:cLote      := ( cSelArticulo )->Lote
-            ::oDbf:cCodAlm    := ( cSelArticulo )->Almacen
-            ::oDbf:nUniArt    := ( cSelArticulo )->totalUnidadesStock
-            ::oDbf:nBultos    := ( cSelArticulo )->totalBultosStock
-            ::oDbf:nCajas     := ( cSelArticulo )->totalCajasStock
-            //::oDbf:cCodPr1    := ( cSelArticulo )->cCodigoPropiedad1
-            //::oDbf:cCodPr2    := ( cSelArticulo )->cCodigoPropiedad2
-            //::oDbf:cValPr1    := ( cSelArticulo )->cValorPropiedad1
-            //::oDbf:cValPr2    := ( cSelArticulo )->cValorPropiedad2
-            //::oDbf:dFecCad    := ( cSelArticulo )->dFechaCaducidad
+               ::oDbf:Blank()
 
-            ::fillFromArticulo()
+               ::oDbf:cCodArt    := ( cSelArticulo )->Articulo
+               //::oDbf:cLote      := ( cSelArticulo )->Lote
+               ::oDbf:cCodAlm    := ( cSelArticulo )->Almacen
+               ::oDbf:nUniArt    := ( cSelArticulo )->totalUnidadesStock
+               ::oDbf:nBultos    := ( cSelArticulo )->totalBultosStock
+               ::oDbf:nCajas     := ( cSelArticulo )->totalCajasStock
+               //::oDbf:cCodPr1    := ( cSelArticulo )->cCodigoPropiedad1
+               //::oDbf:cCodPr2    := ( cSelArticulo )->cCodigoPropiedad2
+               //::oDbf:cValPr1    := ( cSelArticulo )->cValorPropiedad1
+               //::oDbf:cValPr2    := ( cSelArticulo )->cValorPropiedad2
+               //::oDbf:dFecCad    := ( cSelArticulo )->dFechaCaducidad
 
-            ::insertIfValid()
-               
-            ::loadValuesExtraFields()
+               ::fillFromArticulo()
 
-         end if
+               ::insertIfValid()
+                  
+               ::loadValuesExtraFields()
 
-         ( cSelArticulo )->( dbskip() )
+            end if
 
-      end while
+            ( cSelArticulo )->( dbskip() )
+
+         end while
+
+      end if
 
       ( D():Articulos( ::nView ) )->( dbSkip() )
 
