@@ -62,6 +62,8 @@ CLASS SQLBaseController
 
    METHOD endModel()                                  INLINE ( if( !empty( ::oModel ), ::oModel:end(), ) )
 
+   METHOD findInModel()
+
    METHOD changeModelOrderAndOrientation()            
    METHOD getModelHeaderFromColumnOrder()             INLINE ( ::oModel:getHeaderFromColumnOrder() )
 
@@ -472,33 +474,33 @@ RETURN ( .f. )
 
 //----------------------------------------------------------------------------//
 
-METHOD Delete( aSelected )
+METHOD Delete( aSelectedIds )
 
    local lDelete        := .f.
    local cNumbersOfDeletes
+
+   msgalert( "SQLBaseController deleted()")
 
    if ::notUserDelete()
       msgStop( "Acceso no permitido" )
       RETURN ( .f. )
    end if 
 
-   if !hb_isarray( aSelected )
+   if !hb_isarray( aSelectedIds )
       msgStop( "No se especificaron los registros a eliminar" )
       RETURN ( .f. )
    end if 
 
-   if !( ::fireEvent( 'deleting' ) )
+   if isFalse( ::fireEvent( 'deleting' ) )
       RETURN ( .f. )
    end if
 
-   aSelected            := ::getRecnoToId( aSelected )
-
-   if empty( aSelected )
+   if empty( aSelectedIds )
       RETURN ( .f. )
    end if
 
-   if len( aSelected ) > 1
-      cNumbersOfDeletes := alltrim( str( len( aSelected ), 3 ) ) + " registros?"
+   if len( aSelectedIds ) > 1
+      cNumbersOfDeletes := alltrim( str( len( aSelectedIds ), 3 ) ) + " registros?"
    else
       cNumbersOfDeletes := "el registro en curso?"
    end if
@@ -509,7 +511,7 @@ METHOD Delete( aSelected )
       
       ::fireEvent( 'deletingSelection' ) 
 
-      ::oModel:deleteSelection( aSelected )
+      ::oModel:deleteSelection( aSelectedIds )
 
       ::fireEvent( 'deletedSelection' ) 
 
@@ -533,6 +535,8 @@ METHOD changeModelOrderAndOrientation( cColumnOrder, cColumnOrientation )
 
    local nId   := ::oRowSet:fieldGet( ::getModelColumnKey() )
 
+   ::oModel:setFind( "" )
+
    ::oModel:setColumnOrder( cColumnOrder )
 
    ::oModel:setColumnOrientation( cColumnOrientation )
@@ -542,6 +546,16 @@ METHOD changeModelOrderAndOrientation( cColumnOrder, cColumnOrientation )
    ::oRowSet:find( nId )
 
 RETURN ( self )
+
+//---------------------------------------------------------------------------//
+
+METHOD findInModel( uValue )
+
+   ::oModel:setFind( uValue )
+
+   ::oRowSet:build( ::oModel:getSelectSentence() )
+
+RETURN ( ::oRowSet:RecCount() )
 
 //---------------------------------------------------------------------------//
 

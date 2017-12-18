@@ -17,18 +17,19 @@ CLASS SQLRowSet
 
    DATA nRecno
 
-   DATA nId
-
    METHOD New()
    METHOD End()
 
    METHOD Get()                                       INLINE ( ::oRowSet )
 
-   METHOD fieldget( nField )                          INLINE ( ::oRowSet:fieldget( nField ) )
+   METHOD fieldGet( uField )                          INLINE ( ::oRowSet:fieldget( uField ) )
+   METHOD recCount()                                  INLINE ( ::oRowSet:reccount() )
+   METHOD fieldValueByName( cColumn )                 INLINE ( ::oRowSet:getValueByName( cColumn ) )
 
    METHOD saveRecno()                                 INLINE ( ::nRecno := ::oRowSet:recno() ) 
    METHOD restoreRecno()                              INLINE ( ::oRowSet:goto( ::nRecno ) ) 
    METHOD gotoRecno( nRecno )                         INLINE ( ::oRowSet:goto( nRecno ) ) 
+   METHOD Recno( nRecno )                             INLINE ( if( empty( nRecno ), ::oRowSet:Recno(), ::oRowSet:goto( nRecno ) ) )
 
    METHOD Find( nId )
 
@@ -37,7 +38,6 @@ CLASS SQLRowSet
    METHOD refreshAndFind( nId )                       INLINE ( ::Refresh(), ::Find( nId ) )
    METHOD buildAndFind( nId )                         INLINE ( ::Build(), ::Find( nId ) )
 
-   METHOD getRowSet()                                 INLINE ( if( empty( ::oRowSet ), ::Build(), ), ::oRowSet )
    METHOD freeRowSet()                                INLINE ( if( !empty( ::oRowSet ), ( ::oRowSet:free(), ::oRowSet := nil ), ) )
 
    METHOD getStatement()                              INLINE ( ::oStatement )
@@ -45,13 +45,6 @@ CLASS SQLRowSet
 
    METHOD Refresh()                                   INLINE ( ::oRowSet:Refresh() )
 
-   METHOD Recno( nRecno )                             INLINE ( if( empty( nRecno ), ::getRowSet():Recno(), ::getRowSet():goto( nRecno ) ) )
-   METHOD FieldGet( cColumn )                         INLINE ( ::oRowSet:fieldget( cColumn ) )
-   METHOD FieldValueByName( cColumn )                 INLINE ( ::oRowSet:getValueByName( cColumn ) )
-
-   // METHOD getSelectByColumn()                         VIRTUAL
-   // METHOD getSelectByOrder()                          VIRTUAL
-   
    METHOD RecnoToId( aRecno, cColumnKey )
 
 END CLASS
@@ -89,6 +82,11 @@ METHOD Build( cSentence )
       RETURN ( nil )
    end if 
 
+   if !getSQLDatabase():parse( cSentence )
+      msgStop( cSentence, "Sentencia no valida" )
+      RETURN ( nil )
+   end if 
+
    ::oEvents:fire( 'buildingRowSet')
 
    try
@@ -119,23 +117,26 @@ RETURN ( ::oRowSet )
 
 METHOD Find( cFind, cColumnKey )
 
+   local nRecno
+
    DEFAULT cColumnKey   := 'id'
 
    if empty( ::oRowSet )
-      RETURN ( .t. )
+      RETURN ( .f. )
    end if 
 
    if empty( cFind )
-      RETURN ( .t. )
+      RETURN ( .f. )
    end if 
 
    ::saveRecno()
 
-   if ::oRowSet:find( cFind, cColumnKey, .t. ) == 0
+   nRecno               := ::oRowSet:find( cFind, cColumnKey, .t. )
+   if nRecno == 0
       ::restoreRecno()
    end if
 
-RETURN ( .t. )
+RETURN ( nRecno != 0 )
 
 //---------------------------------------------------------------------------//
 
@@ -150,3 +151,4 @@ METHOD RecnoToId( aRecno, cColumnKey )
 RETURN ( aId )
 
 //---------------------------------------------------------------------------//
+

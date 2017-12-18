@@ -104,13 +104,10 @@ RETURN ( Self )
 METHOD onChangeSearch()
 
    local uValue
-   local cOrder         
-   local oSearch
-   local cColumnOrder   
-
-   oSearch              := ::getGetSearch()
-   cOrder               := ::getComboBoxOrder():varGet()
-   cColumnOrder         := ::getBrowse():getColumnOrderByHeader( cOrder )
+   local nRecCount
+   local oSearch        := ::getGetSearch()
+   local cOrder         := ::getComboBoxOrder():varGet()
+   local cColumnOrder   := ::getBrowse():getColumnOrderByHeader( cOrder )
 
    if empty( oSearch )
       RETURN ( Self )
@@ -124,12 +121,14 @@ METHOD onChangeSearch()
    uValue               := alltrim( upper( cvaltochar( uValue ) ) )
    uValue               := strtran( uValue, chr( 8 ), "" )
    
-   ::getModel():setFind( uValue )
+   // msgalert( ::oController:findInRowSet( uValue, cColumnOrder ), "findInRowSet" )
+   // mando a refrescar el browse *222*
 
-   msgalert( ::getModel():getSelectSentence() )
-   // mando a refrescar el browse
+   nRecCount            := ::getController():findInModel( uValue )
 
-   if .t.
+   msgalert( nRecCount, "nRecCount" )
+
+   if nRecCount >= 0
       oSearch:SetColor( Rgb( 0, 0, 0 ), Rgb( 255, 255, 255 ) )
    else
       oSearch:SetColor( Rgb( 255, 255, 255 ), Rgb( 255, 102, 102 ) )

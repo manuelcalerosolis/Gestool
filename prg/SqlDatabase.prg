@@ -37,6 +37,7 @@ CLASS SQLDatabase
    METHOD Execs( aSql )             
    METHOD Query( cSql )                   INLINE ( if( !empty( ::oConexion ), ::oConexion:Query( cSql ),  msgstop( "No ha conexiones disponibles" ) ) )
    METHOD Prepare( cSql )                 INLINE ( if( !empty( ::oConexion ), ::oConexion:Prepare( cSql ),  msgstop( "No ha conexiones disponibles" ) ) )
+   METHOD Parse( cSql )                   INLINE ( if( !empty( ::oConexion ), ::oConexion:Parse( cSql ),  msgstop( "No ha conexiones disponibles" ) ) )
 
    METHOD escapeStr( cEscape )            INLINE ( if( !empty( ::oConexion ), ::oConexion:escapeStr( cEscape ), cEscape ) )
 

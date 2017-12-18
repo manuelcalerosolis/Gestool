@@ -68,6 +68,7 @@ METHOD getInitialSelect()
                               "WHEN tipo_movimiento = 2 THEN 'Regularización' "  + ;
                               "WHEN tipo_movimiento = 3 THEN 'Objetivos' "       + ;
                               "WHEN tipo_movimiento = 4 THEN 'Consolidación' "   + ;
+                              "ELSE 'Vacio'"                                     + ;
                            "END as nombre_movimiento, "                          + ;
                            "fecha_hora, "                                        + ;
                            "almacen_origen, "                                    + ;
