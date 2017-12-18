@@ -927,6 +927,7 @@ Function Articulo( oMenuItem, oWnd, bOnInit )
       :lHide            := .t.
       :SetCheck( { "Cnt16", "Nil16" } )
       :AddResource( "DEL16" )
+      :bLDClickData     := {|| lChangeObsoleto() }
    end with
 
    with object ( oWndBrw:AddXCol() )
@@ -19407,5 +19408,18 @@ Static Function dialogInfoWeb( aInfo )
    ACTIVATE DIALOG oDlg CENTER
 
 RETURN ( oDlg:nResult == IDOK )
+
+//---------------------------------------------------------------------------//
+
+static function lChangeObsoleto()
+
+   if dbLock( D():Articulos( nView ) )
+      ( D():Articulos( nView ) )->lObs    := !( D():Articulos( nView ) )->lObs
+      ( D():Articulos( nView ) )->( dbUnlock() )
+   end if
+
+   oWndBrw:oBrw:Refresh()
+
+RETURN ( nil )
 
 //---------------------------------------------------------------------------//
