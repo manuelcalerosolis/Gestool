@@ -209,7 +209,7 @@ FUNCTION Main( paramsMain, paramsSecond, paramsThird )
       oIconApp:end()
    end if
 
-   // Conexión con SQLite------------------------------------------------------
+   // Conexión con SQL---------------------------------------------------------
 
    getSQLDatabase():Disconnect() 
 
@@ -322,15 +322,15 @@ RETURN ( nil )
 
 FUNCTION AccesTctCode()
 
+   local oDlg
+   local cPath
    local oBlock
    local oError
-   local oDlg
    local oBrush
    local dbfUser
    local dbfCajas
    local oImgUsr
    local oLstUsr
-   local cPath
    local cPcnUsr
 
    /*

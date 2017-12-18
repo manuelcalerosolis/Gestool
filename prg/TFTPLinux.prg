@@ -5,7 +5,7 @@
 #include "MesDbf.ch" 
 #include "hbcurl.ch"
 
-#require "hbcurl"
+#require "hbcurl" 
 
 //----------------------------------------------------------------//
 //----------------------------------------------------------------//
@@ -64,7 +64,7 @@ METHOD New( cUser, cPassword, cServer, nPort ) CLASS TFtpLinux
    ::cServer      := cServer
    ::nPort        := nPort
 
-Return ( Self )
+RETURN ( Self )
 
 //----------------------------------------------------------------//
 
@@ -74,7 +74,7 @@ METHOD NewPrestashopConfig( TComercioConfig ) CLASS TFtpLinux
 
    ::New( ::TComercioConfig:getFtpUser(), ::TComercioConfig:getFtpPassword(), ::TComercioConfig:getFtpServer(), ::TComercioConfig:getFtpPort() )
 
-Return ( Self )
+RETURN ( Self )
 
 //----------------------------------------------------------------//
 
@@ -119,7 +119,7 @@ METHOD CreateConexion() CLASS TFtpLinux
 
    end if 
 
-Return ( lOpen )
+RETURN ( lOpen )
 
 //---------------------------------------------------------------------------//
 
@@ -140,7 +140,7 @@ METHOD CreateDirectory( cCarpeta ) CLASS TFtpLinux
       ::oFtp:CWD( cCarpeta )
    end if 
 
-Return ( .t. )
+RETURN ( .t. )
 
 //---------------------------------------------------------------------------//
 
@@ -152,7 +152,7 @@ METHOD CreateDirectoryRecursive( cCarpeta ) CLASS TFtpLinux
       ::CreateDirectory( substr( cCarpeta, n, 1 ) )
    next 
 
-Return ( .t. )
+RETURN ( .t. )
 
 //---------------------------------------------------------------------------//
 
@@ -164,7 +164,7 @@ METHOD CreateFile( cFile ) CLASS TFtpLinux
       lCreate     := ::oFtp:UploadFile( cFile )
    end if 
 
-Return ( lCreate )
+RETURN ( lCreate )
 
 //---------------------------------------------------------------------------//
 
@@ -178,7 +178,7 @@ METHOD ReturnDirectory( cCarpeta ) CLASS TFtpLinux
       next
    end if
 
-Return ( nil )
+RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
@@ -223,7 +223,7 @@ METHOD createConexion() CLASS TFTPWindows
 
    end if 
 
-Return ( lCreate )
+RETURN ( lCreate )
 
 //---------------------------------------------------------------------------//
 
@@ -248,7 +248,7 @@ METHOD CreateDirectory( cCarpeta ) CLASS TFTPWindows
       ::oFtp:SetCurrentDirectory( cCarpeta ) 
    end if 
 
-Return ( .t. )
+RETURN ( .t. )
 
 //---------------------------------------------------------------------------//
 
@@ -264,7 +264,7 @@ METHOD CreateFile( cFile, oMeter ) CLASS TFTPWindows
 
    if !file( cFile )
       msgStop( "No existe el fichero " + alltrim( cFile ) )
-      Return ( .f. )
+      RETURN ( .f. )
    end if 
 
    oFile             := TFtpFile():New( cNoPath( cFile ), ::oFtp )
@@ -291,7 +291,7 @@ METHOD CreateFile( cFile, oMeter ) CLASS TFTPWindows
 
    sysrefresh()
 
-Return ( lPutFile )
+RETURN ( lPutFile )
 
 //---------------------------------------------------------------------------//
 
@@ -303,7 +303,7 @@ METHOD ReturnDirectory( cCarpeta ) CLASS TFTPWindows
       ::oFtp:SetCurrentDirectory( ".." )
    next   
 
-Return ( .t. )
+RETURN ( .t. )
 
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
@@ -324,6 +324,7 @@ CLASS TFTPCurl FROM TFtpLinux
    DATA cInitialDirectory
    DATA cRecursiveDirectory
 
+   METHOD testConexion()
    METHOD createConexion() 
    METHOD endConexion()                            INLINE ( curl_global_cleanup() )
 
@@ -348,7 +349,29 @@ METHOD createConexion() CLASS TFTPCurl
 
    ::idCurl             := curl_easy_init()
 
-Return ( !empty( ::idCurl ) )
+RETURN ( !empty( ::idCurl ) )
+
+//---------------------------------------------------------------------------//
+
+METHOD testConexion() CLASS TFTPCurl
+
+   local cURL 
+   local lConnected        := .f.
+
+   if ::createConexion()
+
+      cURL                 := "ftp://" + ::cUser + ":" + ::cPassword + "@" + ::cServer + "/"
+      
+      curl_easy_setopt( ::idCurl, HB_CURLOPT_URL, cURL )
+      curl_easy_setopt( ::idCurl, HB_CURLOPT_CONNECT_ONLY, 1 )
+      
+      lConnected           := ( curl_easy_perform( ::idCurl ) == HB_CURLE_OK )
+      
+      curl_easy_reset( ::idCurl )
+
+   end if 
+
+RETURN ( lConnected )
 
 //---------------------------------------------------------------------------//
 
@@ -360,19 +383,19 @@ METHOD createFile( cFile, cDirectory ) CLASS TFTPCurl
    DEFAULT cDirectory   := ""
 
    if empty( ::idCurl )
-      Return .f.
+      RETURN .f.
    endif
 
    if !file( cFile )
       msgStop( "El fichero " + cFile + " no se ha encontrado" )
-      Return .f.
+      RETURN .f.
    endif 
 
    if !Empty( cDirectory )
-      cDirectory     := cLeftPath( cDirectory )
+      cDirectory        := cLeftPath( cDirectory )
    end if
 
-   cURL              := "ftp://" + ::cUser + ":" + ::cPassword + "@" + ::cServer + "/" + cDirectory + cNoPath( cFile )
+   cURL                 := "ftp://" + ::cUser + ":" + ::cPassword + "@" + ::cServer + "/" + cDirectory + cNoPath( cFile )
 
    curl_easy_setopt( ::idCurl, HB_CURLOPT_UPLOAD )
    curl_easy_setopt( ::idCurl, HB_CURLOPT_URL, cURL )
@@ -380,14 +403,14 @@ METHOD createFile( cFile, cDirectory ) CLASS TFTPCurl
    curl_easy_setopt( ::idCurl, HB_CURLOPT_INFILESIZE, hb_fsize( cFile ) )
    curl_easy_setopt( ::idCurl, HB_CURLOPT_FTP_CREATE_MISSING_DIRS, .t. )
    
-   createFile        := curl_easy_perform( ::idCurl )
+   createFile           := curl_easy_perform( ::idCurl )
 
    curl_easy_getinfo( ::idCurl, HB_CURLINFO_EFFECTIVE_URL )
    curl_easy_getinfo( ::idCurl, HB_CURLINFO_TOTAL_TIME )
 
    curl_easy_reset( ::idCurl )
 
-Return ( createFile )
+RETURN ( createFile )
 
 //---------------------------------------------------------------------------//
 
@@ -398,10 +421,10 @@ METHOD downloadFile( cRemoteFile, cLocalFile ) CLASS TFTPCurl
    local downloadFile  := .f.
 
    if empty( ::idCurl )
-      Return .f.
+      RETURN .f.
    endif
 
-   cURL              := "ftp://" + ::cServer + "/" + cRemoteFile
+   cURL                 := "ftp://" + ::cServer + "/" + cRemoteFile
 
    curl_easy_setopt( ::idCurl, HB_CURLOPT_DOWNLOAD )
    curl_easy_setopt( ::idCurl, HB_CURLOPT_URL, cURL )
@@ -409,11 +432,11 @@ METHOD downloadFile( cRemoteFile, cLocalFile ) CLASS TFTPCurl
    curl_easy_setopt( ::idCurl, HB_CURLOPT_USERPWD, ::cUser +  ":" + ::cPassword ) 
    curl_easy_setopt( ::idCurl, HB_CURLOPT_VERBOSE, .t. )
 
-   downloadFile        := curl_easy_perform( ::idCurl ) 
+   downloadFile         := curl_easy_perform( ::idCurl ) 
 
    curl_easy_reset( ::idCurl )
 
-Return ( downloadFile )
+RETURN ( downloadFile )
 
 //---------------------------------------------------------------------------//
 
@@ -423,10 +446,10 @@ METHOD listFiles() CLASS TFTPCurl
    local listFiles
 
    if empty( ::idCurl )
-      Return .f.
+      RETURN .f.
    endif
 
-   cURL              := "ftp://" + ::cUser + ":" + ::cPassword + "@" + ::cServer + if( Right( ::cServer, 1 ) != "/", "/", "" )
+   cURL                 := "ftp://" + ::cUser + ":" + ::cPassword + "@" + ::cServer + if( Right( ::cServer, 1 ) != "/", "/", "" )
 
    curl_easy_setopt( ::idCurl, HB_CURLOPT_DOWNLOAD )
    curl_easy_setopt( ::idCurl, HB_CURLOPT_DIRLISTONLY )
@@ -440,7 +463,7 @@ METHOD listFiles() CLASS TFTPCurl
    
    curl_easy_reset( ::idCurl )
 
-Return ( listFiles )
+RETURN ( listFiles )
 
 //---------------------------------------------------------------------------//
 
@@ -451,7 +474,7 @@ METHOD deleteFile( cFile ) CLASS TFTPCurl
    local deleteFile   := .f.
 
    if empty( ::idCurl )
-      Return .f.
+      RETURN .f.
    endif
 
    cURL                 := "ftp://" + ::cUser + ":" + ::cPassword + "@" + ::cServer + if( Right( ::cServer, 1 ) != "/", "/", "" )
@@ -463,6 +486,6 @@ METHOD deleteFile( cFile ) CLASS TFTPCurl
 
    curl_easy_reset( ::idCurl )
 
-Return deleteFile
+RETURN ( deleteFile )
 
 //---------------------------------------------------------------------------//

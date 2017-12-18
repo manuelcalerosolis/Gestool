@@ -115,8 +115,9 @@ CLASS TSndRecInf
 
    METHOD ZoomHistorial()
 
-   METHOD FtpConexion()
-   METHOD CloseConexion()
+   METHOD testFtpConexion()               
+   METHOD ftpConexion()
+   METHOD closeConexion()
 
    METHOD PrintLog( cTextFile )
 
@@ -1100,17 +1101,24 @@ METHOD FtpConexion() CLASS TSndRecInf
    local ftpDir            := cNoPathLeft( Rtrim( cSitFtp() ) )
    local nbrUsr            := Rtrim( cUsrFtp() )
    local accUsr            := Rtrim( cPswFtp() )
-   local nPuerto           := 21
    local pasInt            := uFieldEmpresa( "lPasEnvio" )
+   local nPuerto           := 21
+
+   msgalert( ftpSit, "ftpSit" )
+   msgalert( ftpDir, "ftpDir" )
+   msgalert( nbrUsr, "nbrUsr" )
+   msgalert( accUsr, "accUsr" )
+
+   ::lFtpValido            := .f.
 
    if nTipConInt() == 2
 
-      ::oFtp     := TFtpCurl():New( nbrUsr, accUsr, ftpSit, nPuerto )
+      ::oFtp               := TFtpCurl():New( nbrUsr, accUsr, ftpSit, nPuerto )
       ::oFtp:setPassive( pasInt )
 
       if ::oFtp:CreateConexion()
 
-         ::lFtpValido         := .t.
+         ::lFtpValido      := .t.
 
       else
 
@@ -1120,11 +1128,11 @@ METHOD FtpConexion() CLASS TSndRecInf
 
    else
 
-      ::lFtpValido            := .t.
+      ::lFtpValido         := .t.
 
    end if
 
-Return ( Self )
+Return ( ::lFtpValido )
 
 //---------------------------------------------------------------------------//
 
@@ -1135,6 +1143,26 @@ METHOD CloseConexion() CLASS TSndRecInf
    end if
 
 Return ( Self )
+
+//---------------------------------------------------------------------------//
+
+METHOD testFtpConexion()
+
+   local lConnect
+
+   if ::ftpConexion() .and. !empty( ::oFtp )
+      lConnect      := ::oFtp:testConexion() 
+   end if 
+
+   ::closeConexion()
+
+   if ( lConnect )
+      msgStop( "Conexión con servidor FTP establecida" )
+   else
+      msgStop( "Error al conectar con servidor FTP" )
+   end if 
+
+RETURN ( lConnect )
 
 //---------------------------------------------------------------------------//
 

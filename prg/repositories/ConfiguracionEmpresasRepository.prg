@@ -102,9 +102,9 @@ METHOD setValue( name, value )
          RETURN ( self )
       end if 
 
-      cSentence   := "UPDATE " + ::getTableName()                          + space( 1 )   + ;
-                     "SET"                                                 + space( 1 )   + ;
-                        "value = " + getSQLDataBase():escapestr( value )   + space( 1 )   + ;
+      cSentence   := "UPDATE " + ::getTableName()                       + space( 1 )   + ;
+                     "SET"                                              + space( 1 )   + ;
+                        "value = " + toSQLString( value )               + space( 1 )   + ;
                      "WHERE id = " + alltrim( str( id ) )
 
    end if 

@@ -72,7 +72,7 @@ CLASS PdaEnvioRecepcionController
    
    METHOD importJson()
       METHOD importJsonFile( cFileName )
-      METHOD processJson( hJson )
+      METHOD isJsonProcessed( hJson )
       METHOD moveFileToProcessed( cFileName )
 
       METHOD getTicketCount()
@@ -263,6 +263,8 @@ METHOD writeJsonFile( cFileName )
 
    cFile          := cPath( ::cPath ) + "in\" + cFileName
 
+   ::addTreeLog( "Exportando fichero json " + alltrim( cFile ) )  
+
    if !( memowrit( cFile, cJson ) ) 
       msgStop( "Error al escribir el fichero " + alltrim( cFile ), "Error" )
    end if 
@@ -295,13 +297,15 @@ METHOD importJsonFile( cFileName )
 
    local hJson
 
+   ::addTreeLog( "Directorio de trabajo : " + cPath( ::cPath ) )
+
    ::autoIncProgress()
 
    ::addTreeLog( "Procesando : " + cFileName )
 
    hb_jsondecode( memoread( cPath( ::cPath ) + "out\" + cFileName ), @hJson )
 
-   if ::processJson( hJson )
+   if ::isJsonProcessed( hJson )
       ::moveFileToProcessed( cFileName )
    end if 
 
@@ -309,10 +313,10 @@ RETURN ( Self )
 
 //---------------------------------------------------------------------------//
 
-METHOD processJson( hJson )
+METHOD isJsonProcessed( hJson )
 
    if !hb_ishash( hJson )
-      RETURN ( Self )
+      RETURN ( .f. )
    end if 
    
    ::nTotalTicket    := 0
@@ -521,7 +525,7 @@ RETURN ( Self )
 METHOD printTicket()
 
    if ::lPrintTicket
-      visTikCli( ::cSerieTicket + ::cNumeroTicket + ::cSufijoTicket )
+      prnTikCli( ::cSerieTicket + ::cNumeroTicket + ::cSufijoTicket )
    end if 
 
 RETURN ( Self )

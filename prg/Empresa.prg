@@ -607,12 +607,12 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfEmp, oBrw, bWhen, bValid, nMode )
 
 	local oDlg
    local oFld
-   local oBtnPrv
-   local oBtnOk
-	local oNomEmp
-	local cNomEmp
-	local oCodEmp
 	local bmpEmp
+   local oBtnOk
+   local oBtnPrv
+   local oNomEmp
+   local cNomEmp
+   local oCodEmp
 
    local oBmpEmp
    local oBmpChg
@@ -2440,6 +2440,15 @@ STATIC FUNCTION EditConfig( aTmp, aGet, dbfEmp, oBrw, nSelFolder, bValid, nMode 
          ID       110, 111 ;
          WHEN     lEnvioRecepcion;
          OF       fldEnvios
+
+      REDEFINE BTNBMP ;
+         ID       112 ;
+         OF       fldEnvios ;
+         WHEN     ( aTmp[ _NTIPCON ] == 2 .and. lEnvioRecepcion ) ;
+         RESOURCE "gc_data_16" ;
+         NOBORDER ;
+         TOOLTIP  "Probar conexión FTP" ;
+         ACTION   ( TSndRecInf():testFtpConexion() )
 
       REDEFINE GET aGet[ _CRUTCON ] VAR aTmp[ _CRUTCON ] ;
          ID       120;

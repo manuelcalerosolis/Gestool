@@ -210,7 +210,6 @@ Ficheros-----------------------------------------------------------------------
 #define _DFTIKIMP                 8
 #define _CHTIKIMP                 9
 
-
 #ifndef __PDA__
 
 memvar cDbfTik
@@ -444,8 +443,6 @@ static bEditP              := { |aTmp, aGet, dbfTikP, oBrw, bWhen, bValid, nMode
 static bEditE              := { |aTmp, aGet, dbfTmpE, oBrw, bWhen, bValid, nMode, aTmpTik | EdtEnt( aTmp, aGet, dbfTmpE, oBrw, bWhen, bValid, nMode, aTmpTik ) }
 
 static oUndMedicion
-
-// #else
 
 static bEdtPdaL            := { |aTmp, aGet, dbfTikL, oBrw, bWhen, bValid, nMode | EdtPdaL( aTmp, aGet, dbfTikL, oBrw, bWhen, bValid, nMode ) }
 static nMesa
@@ -13484,7 +13481,8 @@ FUNCTION PrnTikCli( nNumTik, lOpenBrowse )
       return .t.
    end if
 
-   if lOpenBrowse
+   do case
+   case lOpenBrowse
 
       if FrontTpv( , , , , .f. )
          if dbSeekInOrd( nNumTik, "cNumTik", D():Tikets( nView ) )
@@ -13494,19 +13492,31 @@ FUNCTION PrnTikCli( nNumTik, lOpenBrowse )
          end if
       end if
 
-   else
+   case lOpenFiles 
+
+      if dbSeekInOrd( nNumTik, "cNumTik", D():Tikets( nView ) )
+         nTotTik()
+         ImpTiket( IS_PRINTER )
+      else
+         MsgStop( "No se encuentra ticket" )
+      end if
+
+   otherwise 
 
       if OpenFiles( nil, .t. )
+
          if dbSeekInOrd( nNumTik, "cNumTik", D():Tikets( nView ) )
             nTotTik()
             ImpTiket( IS_PRINTER )
          else
             MsgStop( "No se encuentra ticket" )
          end if
+
          CloseFiles()
+
       end if
 
-   end if
+   end case
 
 RETURN NIL
 
