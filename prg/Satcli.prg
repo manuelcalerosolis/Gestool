@@ -2356,6 +2356,28 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, cCodCli, cCodArt, nMode )
       end with
 
       with object ( oBrwLin:AddCol() )
+         :cHeader             := "Bultos"
+         :bEditValue          := {|| ( dbfTmpLin )->nBultos }
+         :cEditPicture        := cPicUnd
+         :nWidth              := 60
+         :nDataStrAlign       := 1
+         :nHeadStrAlign       := 1
+         :lHide               := .t.
+         :nFooterType         := AGGR_SUM
+      end with
+
+      with object ( oBrwLin:AddCol() )
+         :cHeader             := cNombreCajas()
+         :bEditValue          := {|| NotCaja( ( dbfTmpLin )->nCanSat ) }
+         :cEditPicture        := cPicUnd
+         :nWidth              := 60
+         :nDataStrAlign       := 1
+         :nHeadStrAlign       := 1
+         :lHide               := .t.
+         :nFooterType         := AGGR_SUM
+      end with
+
+      with object ( oBrwLin:AddCol() )
          :cHeader             := cNombreUnidades()
          :bEditValue          := {|| nTotNSatCli( dbfTmpLin ) }
          :cEditPicture        := cPicUnd

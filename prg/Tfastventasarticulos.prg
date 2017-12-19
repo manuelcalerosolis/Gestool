@@ -859,7 +859,8 @@ METHOD BuildReportCorrespondences()
                                                 ::AddAlbaranProveedor( .t. ),;
                                                 ::AddFacturaProveedor(),;
                                                 ::AddRectificativaProveedor(),;
-                                                ::AddProducido() },;
+                                                ::AddProducido(),;
+                                                ::AddMovimientoAlmacen() },;
                            "Variable" =>  {||   ::AddVariableLineasSATCliente(),;
                                                 ::AddVariableLineasPresupuestoCliente(),;
                                                 ::AddVariableLineasPedidoCliente(),;
@@ -972,7 +973,7 @@ Method lValidRegister() CLASS TFastVentasArticulos
       Return .f.
    end if
 
-   if !empty( ::oGrupoAlmacen ) .and. !( ::oDbf:cCodAlm        >= ::oGrupoAlmacen:Cargo:getDesde()          .and. ::oDbf:cCodAlm    <= ::oGrupoAlmacen:Cargo:getHasta() )
+   if !empty( ::oGrupoAlmacen ) .and. !( ( ::oDbf:cCodAlm >= ::oGrupoAlmacen:Cargo:getDesde() .and. ::oDbf:cCodAlm <= ::oGrupoAlmacen:Cargo:getHasta() ) .or. ( ::oDbf:cAlmOrg >= ::oGrupoAlmacen:Cargo:getDesde() .and. ::oDbf:cAlmOrg <= ::oGrupoAlmacen:Cargo:getHasta() ) )
       Return .f.
    end if
 
@@ -3190,10 +3191,6 @@ METHOD AddMovimientoAlmacen() CLASS TFastVentasArticulos
       ::cExpresionLine        += ' .and. ( cRefMov >= "' + ::oGrupoArticulo:Cargo:getDesde() + '" .and. cRefMov <= "' + ::oGrupoArticulo:Cargo:getHasta() + '")'
    end if
 
-   if !::lAllAlm
-      ::cExpresionLine        += ' .and. ( cAliMov >= "' + ::oGrupoAlmacen:Cargo:getDesde() + '" .and. cAliMov <= "' + ::oGrupoAlmacen:Cargo:getHasta() + '")'
-   end if
-
    // aplicamos el filtro------------------------------------------------------
 
    ( D():MovimientosAlmacenLineas( ::nView ) )->( setCustomFilter( ::cExpresionLine ) )
@@ -3203,7 +3200,7 @@ METHOD AddMovimientoAlmacen() CLASS TFastVentasArticulos
    ::setMeterTotal( ( D():MovimientosAlmacenLineas( ::nView ) )->( dbCustomKeyCount() ) )
 
    // procesamos los movimientos de almacen------------------------------------
-   
+
    ( D():MovimientosAlmacenLineas( ::nView ) )->( dbgotop() )
 
    while !(::lBreak ) .and. !( D():MovimientosAlmacenLineas( ::nView ) )->( eof() )
@@ -4047,8 +4044,6 @@ METHOD sqlPedidoClientes() CLASS TFastVentasArticulos
    cStm           += "ORDER BY lineasDocumento." + ::getNameFieldLine( "Articulo" )    
 
    TDataCenter():ExecuteSqlStatement( cStm, "lineasDocumento" ) 
-
-   ( "lineasDocumento" )->( browse() )
 
 RETURN ( Self )
 

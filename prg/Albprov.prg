@@ -1611,8 +1611,18 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, cCodPrv, cCodArt, nMode, cCodPed 
          end with
          
          with object ( oBrwLin:AddCol() )
+            :cHeader          := "Bultos"
+            :bEditValue       := {|| ( dbfTmp )->nBultos }
+            :cEditPicture     := cPicUnd
+            :nWidth           := 60
+            :nDataStrAlign    := 1
+            :nHeadStrAlign    := 1
+            :lHide            := .t.
+         end with
+
+         with object ( oBrwLin:AddCol() )
             :cHeader          := cNombreCajas()
-            :bEditValue       := {|| ( dbfTmp )->nCanEnt }
+            :bEditValue       := {|| ( dbfTmp )->nCanPed }
             :cEditPicture     := cPicUnd
             :nWidth           := 60
             :nDataStrAlign    := 1
