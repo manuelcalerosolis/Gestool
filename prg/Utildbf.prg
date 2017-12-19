@@ -3326,6 +3326,8 @@ FUNCTION Quoted( uValue )
       RETURN ( rtrim( str( uValue ) ) )
    end if 
 
+   uValue   := strtran( uValue, "\", "\\" )
+
 RETURN ( "'" + rtrim( uValue ) + "'" )
 
 //---------------------------------------------------------------------------//

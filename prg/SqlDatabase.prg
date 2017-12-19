@@ -174,6 +174,11 @@ METHOD Exec( cSql )
       RETURN ( .f. )  
    end if 
 
+   if !::oConexion:Parse( cSql )
+      msgstop( cSql, "Error en el comando SQL" )
+      RETURN ( .f. )  
+   end if 
+
    try
 
       ::oConexion:Ping()

@@ -2968,7 +2968,7 @@ FUNCTION Ejecutascript()
    dFecha         := cToD( GetPvProfString( "SCRIPT", "Fecha",    "", cIniAplication() ) )
 
    /*
-   Ejecutamos el script-----------------------------------------------
+   Ejecutamos el script--------------------------------------------------------
    */
 
    if dFecha  < GetSysDate()
@@ -2983,7 +2983,7 @@ FUNCTION Ejecutascript()
    end if
 
    /*
-   Anotamos la fecha del último Envío de  script--------------------------------
+   Anotamos la fecha del último Envío de  script-------------------------------
    */
 
    WritePProString( "SCRIPT", "Fecha", Dtoc( GetSysDate() ), cIniAplication() )
