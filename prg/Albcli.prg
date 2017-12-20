@@ -10286,8 +10286,6 @@ STATIC FUNCTION LoaArt( cCodArt, aTmp, aGet, aTmpAlb, oStkAct, oSayPr1, oSayPr2,
          hHas128              := ReadHashCodeGS128( cCodArt )
          if !empty( hHas128 )
 
-            msgalert( hb_valtoexp( hHas128 ), "hHas128" )
-            
             cCodArt           := uGetCodigo( hHas128, "00" )
             
             if Empty( cCodArt )

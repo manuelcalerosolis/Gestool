@@ -137,10 +137,14 @@ RETURN ( ::ExecuteSqlStatement( cSql, @cArea ) )
 
 METHOD getArticulosToImport( cArea, hRange ) CLASS ArticulosModel
 
-   local cSql  := "SELECT * "                   + ;
-                  "FROM " + ::getTableName()    
-
-                  msgalert( hb_valtoexp( hRange ), "hRange" )
+   local cSql  := "SELECT * "                                                          + ;
+                  "FROM " + ::getTableName() + " "                                     + ;
+                     "WHERE Familia >= "  + quoted( hRange[ "FamiliaInicio" ] )        + " " + ;
+                        "AND Familia <= " + quoted( hRange[ "FamiliaFin" ] )           + " " + ;
+                        "AND cCodTip >= " + quoted( hRange[ "TipoArticuloInicio" ] )   + " " + ;
+                        "AND cCodTip <= " + quoted( hRange[ "TipoArticuloFin" ] )      + " " + ;
+                        "AND Codigo >= "  + quoted( hRange[ "ArticuloInicio" ] )       + " " + ;
+                        "AND Codigo <= "  + quoted( hRange[ "ArticuloFin" ] )     
 
 RETURN ( ::ExecuteSqlStatement( cSql, @cArea ) )
 
