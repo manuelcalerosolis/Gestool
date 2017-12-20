@@ -2330,7 +2330,7 @@ METHOD ImportAlmacen( nMode, oDlg ) CLASS TRemMovAlm
    ::cTipoArticuloInicio   := dbFirst( ::oTipArt:oDbf, 1 )
    ::cTipoArticuloFin      := dbLast ( ::oTipArt:oDbf, 1 )
 
-   DEFINE DIALOG ::oDlgImport RESOURCE "ImportAlmacen"
+   DEFINE DIALOG ::oDlgImport RESOURCE "Importar_Almacen"
 
       REDEFINE CHECKBOX ::lFamilia ;
          ID       200 ;
@@ -2470,7 +2470,7 @@ METHOD loadAlmacen( nMode ) CLASS TRemMovAlm
 
             if !( ::alreadyInclude( sStkAlm ) ) 
 
-               if  ::oDetMovimientos:oDbfVir:Append()
+               if ::oDetMovimientos:oDbfVir:Append()
    
                   ::oDetMovimientos:oDbfVir:Blank()
       

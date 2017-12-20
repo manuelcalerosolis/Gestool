@@ -363,7 +363,10 @@ SQLBaseReport.prg 															\
 MovimientosAlmacenReport.prg												\
 MovimientosAlmacenLabel.prg												\
 ImportadorMovimientosAlmacenLineasView.prg							\
+CapturadorMovimientosAlmacenLineasView.prg							\
 ImportadorMovimientosAlmacenLineasController.prg					\
+ImportadorMovimientosAlmacenLineasValidator.prg						\
+CapturadorMovimientosAlmacenLineasController.prg					\
 MovimientosAlmacenLineasView.prg											\
 MovimientosAlmacenController.prg 										\
 MovimientosAlmacenLineasController.prg 								\
@@ -583,6 +586,8 @@ PropiedadesLineasModel.obj       										\
 PropiedadesLineasController.obj       									\
 RelacionesEtiquetasModel.prg 												\
 ArticulosModel.prg                                    			\
+FamiliasModel.prg                                    				\
+TiposArticulosModel.prg                                    		\
 ContadoresModel.prg                                    			\
 ColumnasUsuariosModel.prg 													\
 SQLConfiguracionColumnasUsuariosModel.prg                      \
@@ -972,7 +977,10 @@ SQLBaseReport.obj 															\
 MovimientosAlmacenReport.obj												\
 MovimientosAlmacenLabel.obj 												\
 ImportadorMovimientosAlmacenLineasView.obj							\
+CapturadorMovimientosAlmacenLineasView.obj							\
 ImportadorMovimientosAlmacenLineasController.obj 					\
+ImportadorMovimientosAlmacenLineasValidator.obj 					\
+CapturadorMovimientosAlmacenLineasController.obj 					\
 MovimientosAlmacenLineasView.obj											\
 MovimientosAlmacenController.obj 										\
 MovimientosAlmacenLineasController.obj 								\
@@ -1198,6 +1206,8 @@ PropiedadesLineasModel.obj       										\
 PropiedadesLineasController.obj       									\
 RelacionesEtiquetasModel.obj 												\
 ArticulosModel.obj                                    			\
+FamiliasModel.obj                                    				\
+TiposArticulosModel.obj                                    		\
 ContadoresModel.obj                                    			\
 SQLConfiguracionColumnasUsuariosModel.obj                      \
 PedidosClientesLineasModel.obj 											\
@@ -1551,7 +1561,10 @@ $(OBJ)\MovimientosAlmacenReport.obj 									+
 $(OBJ)\MovimientosAlmacenLabel.obj 										+
 $(OBJ)\SQLBaseReport.obj 													+
 $(OBJ)\ImportadorMovimientosAlmacenLineasView.obj 					+
+$(OBJ)\CapturadorMovimientosAlmacenLineasView.obj 					+
 $(OBJ)\ImportadorMovimientosAlmacenLineasController.obj			+
+$(OBJ)\ImportadorMovimientosAlmacenLineasValidator.obj			+
+$(OBJ)\CapturadorMovimientosAlmacenLineasController.obj			+
 $(OBJ)\MovimientosAlmacenLineasView.obj								+
 $(OBJ)\MovimientosAlmacenController.obj 								+
 $(OBJ)\MovimientosAlmacenLineasController.obj						+
@@ -1758,6 +1771,8 @@ $(OBJ)\FacturasClientesModel.obj 										+
 $(OBJ)\TicketsClientesLineasModel.obj 									+
 $(OBJ)\TicketsClientesPagosModel.obj 									+
 $(OBJ)\ArticulosModel.obj                    						+
+$(OBJ)\FamiliasModel.obj                    							+
+$(OBJ)\TiposArticulosModel.obj              							+
 $(OBJ)\ContadoresModel.obj                    						+
 $(OBJ)\ColumnasUsuariosModel.obj               						+
 $(OBJ)\RecibosClientesModel.obj											+

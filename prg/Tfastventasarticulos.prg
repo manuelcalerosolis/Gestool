@@ -1628,7 +1628,14 @@ METHOD AddPresupuestoClientes() CLASS TFastVentasArticulos
 
          ::oDbf:cCodTip    := ( D():PresupuestosClientesLineas( ::nView ) )->cCodTip
 
+         msgalert( nTotCPreCli( D():PresupuestosClientesLineas( ::nView ), ::nDecOut, ::nDerOut, ::nValDiv ), ::idDocumento() )
+
          ::oDbf:nCosArt    := nTotCPreCli( D():PresupuestosClientesLineas( ::nView ), ::nDecOut, ::nDerOut, ::nValDiv )
+
+         if empty( ::oDbf:nCosArt )
+            ::oDbf:nCosArt := ::oDbf:nUniArt * nCosto( ::oDbf:cCodArt, D():Articulos( ::nView ), D():Kit( ::nView ) )
+         end if 
+
          ::oDbf:nUniArt    := nTotNPreCli( D():PresupuestosClientesLineas( ::nView ) ) 
 
          ::oDbf:cCtrCoste  := ( D():PresupuestosClientesLineas( ::nView ) )->cCtrCoste
@@ -1682,9 +1689,6 @@ METHOD AddPresupuestoClientes() CLASS TFastVentasArticulos
          ::oDbf:nPctAge    := ( D():PresupuestosClientes( ::nView ) )->nPctComAge
          ::oDbf:nComAge    := nComLPreCli( D():PresupuestosClientes( ::nView ), D():PresupuestosClientesLineas( ::nView ), ::nDecOut, ::nDerOut )
 
-         if empty( ::oDbf:nCosArt )
-            ::oDbf:nCosArt := ::oDbf:nUniArt * nCosto( ::oDbf:cCodArt, ( D():Articulos( ::nView ) ), D():Kit( ::nView ) )
-         end if 
 
          if !empty( ( D():PresupuestosClientesLineas( ::nView ) )->cCodPrv ) 
             ::oDbf:cPrvHab := ( D():PresupuestosClientesLineas( ::nView ) )->cCodPrv

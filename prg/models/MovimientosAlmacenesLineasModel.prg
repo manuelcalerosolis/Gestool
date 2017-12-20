@@ -191,18 +191,18 @@ Return ( cSql )
 
 //---------------------------------------------------------------------------//
 
-METHOD getSentenceStockEntrada( cCodigoArticulo, dFechaInicio, dFechaFin )
+METHOD getSentenceStockEntrada( cCodigoArticulo, dFechaInicio, dFechaFin, cCodigoAlmacen )
 
    ::cAlmacenFieldName  := "cAliMov"
 
-Return ( ::getSQLAdsStockEntrada( cCodigoArticulo, dFechaInicio, dFechaFin ) )
+Return ( ::getSQLAdsStockEntrada( cCodigoArticulo, dFechaInicio, dFechaFin, cCodigoAlmacen ) )
 
 //---------------------------------------------------------------------------//
 
-METHOD getSentenceStockSalida( cCodigoArticulo, dFechaInicio, dFechaFin )
+METHOD getSentenceStockSalida( cCodigoArticulo, dFechaInicio, dFechaFin, cCodigoAlmacen )
 
    ::cAlmacenFieldName  := "cAloMov"
 
-Return ( ::getSqlAdsStockSalida( cCodigoArticulo, dFechaInicio, dFechaFin ) )
+Return ( ::getSqlAdsStockSalida( cCodigoArticulo, dFechaInicio, dFechaFin, cCodigoAlmacen ) )
 
 //---------------------------------------------------------------------------//

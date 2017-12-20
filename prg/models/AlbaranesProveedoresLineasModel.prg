@@ -11,8 +11,8 @@ CLASS AlbaranesProveedoresLineasModel FROM TransaccionesComercialesLineasModel
 
    METHOD getSQLSentenceFechaCaducidad()
 
-   METHOD getFechaFieldName()                      INLINE ( "dFecAlb" )
-   METHOD getHoraFieldName()                       INLINE ( "tFecAlb" )
+   METHOD getFechaFieldName()                INLINE ( "dFecAlb" )
+   METHOD getHoraFieldName()                 INLINE ( "tFecAlb" )
 
 END CLASS
 

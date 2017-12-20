@@ -141,8 +141,8 @@ RETURN ( lOpen )
 
 METHOD DefineFiles( cPath, cDriver )
 
-   DEFAULT cPath        := ::cPath
-   DEFAULT cDriver      := ::cDriver
+   DEFAULT cPath        := if( empty( ::cPath ), cPatArt(), ::cPath )
+   DEFAULT cDriver      := if( empty( ::cDriver ), cDriver(), ::cDriver )
 
    DEFINE DATABASE ::oDbf FILE "Tipart.Dbf" CLASS "Tipart" ALIAS "Tipart" PATH ( cPath ) VIA ( cDriver ) COMMENT "Tipos de artículos"
 

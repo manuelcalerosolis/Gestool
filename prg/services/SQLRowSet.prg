@@ -65,10 +65,6 @@ METHOD End()
 
    ::oEvents:End()
    
-   ::freeRowSet()
-
-   ::freeStatement()
-
 RETURN ( nil )
 
 //---------------------------------------------------------------------------//

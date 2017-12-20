@@ -10285,6 +10285,8 @@ STATIC FUNCTION LoaArt( cCodArt, aTmp, aGet, aTmpAlb, oStkAct, oSayPr1, oSayPr2,
 
          hHas128              := ReadHashCodeGS128( cCodArt )
          if !empty( hHas128 )
+
+            msgalert( hb_valtoexp( hHas128 ), "hHas128" )
             
             cCodArt           := uGetCodigo( hHas128, "00" )
             
@@ -10523,16 +10525,26 @@ STATIC FUNCTION LoaArt( cCodArt, aTmp, aGet, aTmpAlb, oStkAct, oSayPr1, oSayPr2,
             // Cajas y unidades------------------------------------------------
 
             if ( D():Articulos( nView ) )->nCajEnt != 0
-               aGet[ _NCANENT ]:cText( ( D():Articulos( nView ) )->nCajEnt  )
+
+               aTmp[ _NCANENT ]  := ( D():Articulos( nView ) )->nCajEnt 
+            
+               if !empty( aGet )
+                  aGet[ _NCANENT ]:Refresh()
+               end if 
+            
             end if
 
             if !Empty( nUnidades )
-               aGet[ _NUNICAJA ]:cText( nUnidades )
+               aTmp[ _NUNICAJA ] := nUnidades
             end if
 
             if Empty( nUnidades ) .and. ( D():Articulos( nView ) )->nUniCaja != 0
-               aGet[ _NUNICAJA ]:cText( ( D():Articulos( nView ) )->nUniCaja  )
+               aTmp[ _NUNICAJA ] := ( D():Articulos( nView ) )->nUniCaja 
             end if
+
+            if !empty( aGet )
+               aGet[ _NUNICAJA ]:Refresh()
+            end if 
 
             // Si la comisi¢n del articulo hacia el agente es distinto de cero----
 
@@ -10551,13 +10563,14 @@ STATIC FUNCTION LoaArt( cCodArt, aTmp, aGet, aTmpAlb, oStkAct, oSayPr1, oSayPr2,
 
             aTmp[ _CCODTIP ]     := ( D():Articulos( nView ) )->cCodTip 
 
-            if !empty(aGet)
+            if !empty( aGet )
                aGet[ _CCODTIP ]:cText( aTmp[ _CCODTIP ] )
             end if
 
             // Imagen del producto------------------------------------------------
 
             aTmp[ _CIMAGEN ]     := ( D():Articulos( nView ) )->cImagen
+
             if !empty(aGet)
                aGet[ _CIMAGEN ]:cText( aTmp[ _CIMAGEN ] )
             end if
@@ -11000,17 +11013,22 @@ STATIC FUNCTION LoaArt( cCodArt, aTmp, aGet, aTmpAlb, oStkAct, oSayPr1, oSayPr2,
          dOldFecCad     := dFechaCaducidad
          cOldLotArt     := aTmp[ _CLOTE ]
 
-         if !Empty( aGet[ _NPREUNIT ] )
-            aGet[ _NPREUNIT ]:Refresh()
-         end if
+         if !empty(aGet)
 
-         if !Empty( aGet[ _NDTO ] )
-            aGet[ _NDTO ]:Refresh()
-         end if
+            if !empty( aGet[ _NPREUNIT ] )
+               aGet[ _NPREUNIT ]:Refresh()
+            end if
+
+            if !empty( aGet[ _NDTO ] )
+               aGet[ _NDTO ]:Refresh()
+            end if
+
+         end if 
 
          // Solo pueden modificar los precios los administradores--------------
 
          if !empty(aGet)
+
             if ( empty( aTmp[ _NPREUNIT ] ) .or. lUsrMaster() .or. oUser():lCambiarPrecio() ) .and. ( nMode != ZOOM_MODE )
                aGet[ _NPREUNIT ]:HardEnable()
                aGet[ _NIMPTRN  ]:HardEnable()
@@ -11220,7 +11238,7 @@ STATIC FUNCTION SaveDeta( aTmp, aTmpAlb, oFld, aGet, oBrw, bmpImage, oDlg, nMode
 
       setDlgMode( aTmp, aTmpAlb, nMode, aGet, oFld, oSayPr1, oSayPr2, oSayVp1, oSayVp2, oStkAct, oTotal )
 
-      if !Empty( aGet[ _CREF ] )
+      if !empty( aGet ) .and. !empty( aGet[ _CREF ] )
          aGet[ _CREF ]:SetFocus()
       end if
 
@@ -11228,7 +11246,7 @@ STATIC FUNCTION SaveDeta( aTmp, aTmpAlb, oFld, aGet, oBrw, bmpImage, oDlg, nMode
 
    else
 
-      if !empty(oDlg)
+      if !empty( oDlg ) 
          oDlg:End( IDOK )
       end if 
 

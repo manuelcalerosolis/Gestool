@@ -1846,7 +1846,7 @@ return cValor
 
 Function uGetCodigo( hHash, cAI )
 
-  local uGetCodigo
+  local uGetCodigo  := ""
 
   /*if hHasKey( hHash, cAI )
     hCodeGS128    := hGet( hHash, cAI )
@@ -1856,7 +1856,7 @@ Function uGetCodigo( hHash, cAI )
   end if*/
 
   if hHasKey( hHash, cAI )
-    uGetCodigo  := hGet( hHash, cAI )
+    uGetCodigo      := hGet( hHash, cAI )
   end if
 
 Return ( uGetCodigo )

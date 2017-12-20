@@ -279,6 +279,8 @@ RETURN ( .t. )
 
 FUNCTION Test()
 
+   // StocksModel():getSqlAdsStock( '00107220', nil, nil, '002' )
+
 RETURN NIL 
 
 //----------------------------------------------------------------------------//

@@ -576,13 +576,13 @@ METHOD Buscar( oGet, cField, oGetField ) CLASS TMant
    local oBrw
    local uVal
    local oField
+   local nOrdAnt
    local cDlgName
    local cCbxIndex
    local oCbxIndex
    local aCbxIndex
    local oGetSearch
    local cGetSearch
-   local nOrdAnt
 
    /*
    Apertura de ficheros si no lo estan-----------------------------------------

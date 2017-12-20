@@ -60,8 +60,6 @@ CLASS SQLBaseController
    METHOD getModelBufferColumnKey()                   INLINE ( ::getModelBuffer( ( ::oModel:cColumnKey ) ) )
    METHOD getModelSelectValue( cSentence )            INLINE ( if( !empty( ::oModel ), ::oModel:SelectValue( cSentence ), ) )
 
-   METHOD endModel()                                  INLINE ( if( !empty( ::oModel ), ::oModel:end(), ) )
-
    METHOD findInModel()
 
    METHOD changeModelOrderAndOrientation()            
@@ -95,7 +93,7 @@ CLASS SQLBaseController
 
    // Validator----------------------------------------------------------------
 
-   METHOD Validate( cColumn )                         INLINE ( if( !empty( ::oValidator ), ::oValidator:Validate( cColumn ), ) )
+   METHOD Validate( cColumn, uValue )                 INLINE ( if( !empty( ::oValidator ), ::oValidator:Validate( cColumn, uValue ), ) )
    METHOD Assert( cColumn, uValue )                   INLINE ( if( !empty( ::oValidator ), ::oValidator:Assert( cColumn, uValue ), ) )
 
    // Browse------------------------------------------------------------------
@@ -190,8 +188,14 @@ RETURN ( self )
 
 METHOD End()
 
-   ::endModel() 
+   ::oEvents:End()
 
+   ::oRowSet:End()
+
+   ::oEvents   := nil
+
+   ::oRowSet   := nil
+   
 RETURN ( nil )
 
 //---------------------------------------------------------------------------//

@@ -17,6 +17,8 @@ CLASS ArticulosModel FROM ADSBaseModel
 
    METHOD getArticulosToJson()
 
+   METHOD getArticulosToImport( cArea, hRange ) 
+
    METHOD getValoresPropiedades( cCodPro )
 
    METHOD getPrimerValorPropiedad( cCodPro, cArea )
@@ -132,6 +134,16 @@ METHOD getArticulosToJson( cArea ) CLASS ArticulosModel
 RETURN ( ::ExecuteSqlStatement( cSql, @cArea ) )
 
 //---------------------------------------------------------------------------//
+
+METHOD getArticulosToImport( cArea, hRange ) CLASS ArticulosModel
+
+   local cSql  := "SELECT * "                   + ;
+                  "FROM " + ::getTableName()    
+
+RETURN ( ::ExecuteSqlStatement( cSql, @cArea ) )
+
+//---------------------------------------------------------------------------//
+
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
