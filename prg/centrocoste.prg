@@ -163,7 +163,7 @@ METHOD Resource( nMode )
          BITMAP   "LUPA" ;
          OF       oDlg
 
-         ::oCodPrp1:bValid    := {|| .t. }
+         ::oCodPrp1:bValid    := {|| cProp( ::oCodPrp1, oSayPrp1 ) }
          ::oCodPrp1:bHelp     := {|| brwProp( ::oCodPrp1, oSayPrp1 ) }
 
       REDEFINE GET oSayPrp1 VAR cSayPrp1 ;
@@ -178,7 +178,7 @@ METHOD Resource( nMode )
          BITMAP   "LUPA" ;
          OF       oDlg
 
-         ::oValPrp1:bValid    := {|| .t. }
+         ::oValPrp1:bValid    := {|| lPrpAct( ::oValPrp1, oSayVal1, ::oDbf:cCodPr1 ) }
          ::oValPrp1:bhelp     := {|| brwPropiedadActual( ::oValPrp1, oSayVal1, ::oDbf:cCodPr1 ) }
 
       REDEFINE GET oSayVal1 VAR cSayVal1 ;
@@ -194,7 +194,7 @@ METHOD Resource( nMode )
          BITMAP   "LUPA" ;
          OF       oDlg
 
-         ::oCodPrp2:bValid    := {|| .t. }
+         ::oCodPrp2:bValid    := {|| cProp( ::oCodPrp2, oSayPrp2 ) }
          ::oCodPrp2:bhelp     := {|| brwProp( ::oCodPrp2, oSayPrp2 ) }
 
       REDEFINE GET oSayPrp2 VAR cSayPrp2 ;
@@ -209,7 +209,7 @@ METHOD Resource( nMode )
          BITMAP   "LUPA" ;
          OF       oDlg
 
-         ::oValPrp2:bValid    := {|| .t. }
+         ::oValPrp2:bValid    := {|| lPrpAct( ::oValPrp2, oSayVal2, ::oDbf:cCodPr2 ) }
          ::oValPrp2:bhelp     := {|| brwPropiedadActual( ::oValPrp2, oSayVal2, ::oDbf:cCodPr2 ) }
 
       REDEFINE GET oSayVal2 VAR cSayVal2 ;

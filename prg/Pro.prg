@@ -1554,6 +1554,16 @@ FUNCTION lPrpAct( cVal, oSay, cPrp, dbfTblPro )
       return .t.
    end if
 
+   if Empty( dbfprol )
+
+      if !OpenFiles()
+         Return .f.
+      end if
+
+      dbfTblPro      := dbfProL
+
+   end if
+
    /*
    Es para cuando no hay valores poder meter valores libres.
    */
@@ -1596,6 +1606,8 @@ FUNCTION lPrpAct( cVal, oSay, cPrp, dbfTblPro )
       end if
 
    end if
+
+   CloseFiles()
 
 RETURN ( lRet )
 

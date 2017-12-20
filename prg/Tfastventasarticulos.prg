@@ -3223,7 +3223,11 @@ METHOD AddMovimientoAlmacen() CLASS TFastVentasArticulos
 
       ::oDbf:nBultos    := ( D():MovimientosAlmacenLineas( ::nView ) )->nBultos
       ::oDbf:nCajas     := ( D():MovimientosAlmacenLineas( ::nView ) )->nCajMov
-      ::oDbf:nUniArt    := ( D():MovimientosAlmacenLineas( ::nView ) )->nUndMov
+      if lCalCaj()
+         ::oDbf:nUniArt := NotCaja( ( D():MovimientosAlmacenLineas( ::nView ) )->nCajMov ) * ( D():MovimientosAlmacenLineas( ::nView ) )->nUndMov
+      else
+         ::oDbf:nUniArt := ( D():MovimientosAlmacenLineas( ::nView ) )->nUndMov
+      end if
       ::oDbf:nPreArt    := ( D():MovimientosAlmacenLineas( ::nView ) )->nPreDiv
 
       ::oDbf:nBrtArt    := 0
