@@ -1628,8 +1628,6 @@ METHOD AddPresupuestoClientes() CLASS TFastVentasArticulos
 
          ::oDbf:cCodTip    := ( D():PresupuestosClientesLineas( ::nView ) )->cCodTip
 
-         msgalert( nTotCPreCli( D():PresupuestosClientesLineas( ::nView ), ::nDecOut, ::nDerOut, ::nValDiv ), ::idDocumento() )
-
          ::oDbf:nCosArt    := nTotCPreCli( D():PresupuestosClientesLineas( ::nView ), ::nDecOut, ::nDerOut, ::nValDiv )
 
          if empty( ::oDbf:nCosArt )

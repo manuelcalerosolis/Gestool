@@ -140,6 +140,8 @@ METHOD getArticulosToImport( cArea, hRange ) CLASS ArticulosModel
    local cSql  := "SELECT * "                   + ;
                   "FROM " + ::getTableName()    
 
+                  msgalert( hb_valtoexp( hRange ), "hRange" )
+
 RETURN ( ::ExecuteSqlStatement( cSql, @cArea ) )
 
 //---------------------------------------------------------------------------//
