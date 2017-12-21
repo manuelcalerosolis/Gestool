@@ -384,6 +384,8 @@ METHOD getCreateTableSentence()
 
    end if 
 
+   msgAlert( cSQLCreateTable, "cSQLCreateTable" )
+
 RETURN ( cSQLCreateTable )
 
 //---------------------------------------------------------------------------//
@@ -705,7 +707,7 @@ METHOD deleteSelection( aRecno )
 
    ::fireEvent( 'deletingSelection' )
 
-   ::getDatabase():Query( ::getdeleteSentence( aRecno ) )
+   ::getDatabase():Query( ::getDeleteSentence( aRecno ) )
 
    ::fireEvent( 'deletedSelection' )
    

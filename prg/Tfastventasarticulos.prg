@@ -754,7 +754,7 @@ METHOD BuildReportCorrespondences()
                            "Variable" =>  {||   ::AddVariableLineasRectificativaCliente(),;
                                                 ::AddVariableStock() },;
                            "Data" =>      {||   ::FastReportFacturaRectificativa() } },;
-                     "Tickets de clientes" => ;
+                     "Facturas simplificadas de clientes" => ;
                         {  "Generate" =>  {||   ::AddTicket( .t. ),;
                                                 ::processAllClients() },;
                            "Variable" =>  {||   ::AddVariableLineasTicketCliente(),;
@@ -2614,7 +2614,7 @@ METHOD AddTicket() CLASS TFastVentasArticulos
                ::oDbf:cLote      := ( D():TiketsLineas( ::nView ) )->cLote
 
                ::oDbf:cClsDoc    := TIK_CLI
-               ::oDbf:cTipDoc    := "Ticket"
+               ::oDbf:cTipDoc    := "Simplificada"
                ::oDbf:cSerDoc    := ( D():Tikets( ::nView ) )->cSerTik
                ::oDbf:cNumDoc    := ( D():Tikets( ::nView ) )->cNumTik
                ::oDbf:cSufDoc    := ( D():Tikets( ::nView ) )->cSufTik
@@ -2702,7 +2702,7 @@ METHOD AddTicket() CLASS TFastVentasArticulos
                ::oDbf:cValPr2    := ( D():TiketsLineas( ::nView ) )->cValPr2
 
                ::oDbf:cClsDoc    := TIK_CLI
-               ::oDbf:cTipDoc    := "Ticket"
+               ::oDbf:cTipDoc    := "Simplificada"
                ::oDbf:cSerDoc    := ( D():Tikets( ::nView ) )->cSerTik
                ::oDbf:cNumDoc    := ( D():Tikets( ::nView ) )->cNumTik
                ::oDbf:cSufDoc    := ( D():Tikets( ::nView ) )->cSufTik

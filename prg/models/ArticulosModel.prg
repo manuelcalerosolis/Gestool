@@ -137,8 +137,8 @@ RETURN ( ::ExecuteSqlStatement( cSql, @cArea ) )
 
 METHOD getArticulosToImport( cArea, hRange ) CLASS ArticulosModel
 
-   local cSql  := "SELECT * "                                                          + ;
-                  "FROM " + ::getTableName() + " "                                     + ;
+   local cSql  := "SELECT Codigo, Nombre, pCosto"                                      + " " + ;
+                  "FROM " + ::getTableName()                                           + " " + ;
                      "WHERE Familia >= "  + quoted( hRange[ "FamiliaInicio" ] )        + " " + ;
                         "AND Familia <= " + quoted( hRange[ "FamiliaFin" ] )           + " " + ;
                         "AND cCodTip >= " + quoted( hRange[ "TipoArticuloInicio" ] )   + " " + ;

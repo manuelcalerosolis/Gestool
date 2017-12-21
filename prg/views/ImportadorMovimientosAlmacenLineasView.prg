@@ -136,14 +136,14 @@ METHOD Activate()
       REDEFINE BUTTON ;
          ID       IDOK ;
          OF       oDialog ;
-         ACTION   ( ::oController:importarAlmacen() )
+         ACTION   ( ::oController:importarAlmacen(), oDialog:end( IDOK ) )
 
       REDEFINE BUTTON ;
          ID       IDCANCEL ;
          OF       oDialog ;
          ACTION   ( oDialog:End() )
 
-      oDialog:AddFastKey( VK_F5, {|| oDialog:end( IDOK ) } )
+      oDialog:AddFastKey( VK_F5, {|| ::oController:importarAlmacen(), oDialog:end( IDOK ) } )
 
    ACTIVATE DIALOG oDialog CENTER
 

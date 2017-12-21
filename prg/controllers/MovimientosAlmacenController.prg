@@ -95,7 +95,7 @@ METHOD New()
 
    ::oFilterController:setTableName( ::cTitle ) 
 
-   ::setEvent( 'deletingSelection', {|| ::deleteLines() } )
+   // ::setEvent( 'deletingSelection', {|| ::deleteLines() } )
 
 RETURN ( Self )
 
@@ -158,7 +158,13 @@ RETURN ( .t. )
 
 METHOD deleteLines()
 
-   local aUuids   := ::oModel:convertRecnoToId( ::aSelected, "uuid" )
+   local aUuids   
+
+   msgalert( hb_valtoexp( ::aSelected ), "aSelected" )
+
+   aUuids         := ::getRowSet():IdFromRecno( ::aSelected, "uuid" )
+
+   msgalert( hb_valtoexp( aUuids ), "aUuids" )
 
    aeval( aUuids, {| uuid | ::oLineasController:deleteLines( uuid ) } )
 

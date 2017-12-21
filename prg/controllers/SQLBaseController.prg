@@ -75,7 +75,7 @@ CLASS SQLBaseController
    METHOD refreshRowSet()                             INLINE ( if( !empty( ::oRowSet ), ::oRowSet:refresh(), ) )
    METHOD refreshRowSetAndFind( nId )                 INLINE ( if( !empty( ::oRowSet ), ::oRowSet:refreshAndFind( nId ), ) )
 
-   METHOD getRecnoToId( aSelected )                   INLINE ( if( !empty( ::oRowSet ), ::oRowSet:RecnoToId( aSelected ), {} ) )
+   METHOD getIdFromRecno( aSelected )                 INLINE ( if( !empty( ::oRowSet ), ::oRowSet:IdFromRecno( aSelected ), {} ) )
 
    METHOD getIdFromRowSet()                           INLINE ( if( !empty( ::getRowSet() ), ( ::getRowSet():fieldGet( ::oModel:cColumnKey ) ), ) )
 
@@ -165,6 +165,8 @@ CLASS SQLBaseController
 
    METHOD setEvent( cEvent, bEvent )                  INLINE ( if( !empty( ::oEvents ), ::oEvents:set( cEvent, bEvent ), ) )
    METHOD fireEvent( cEvent )                         INLINE ( if( !empty( ::oEvents ), ::oEvents:fire( cEvent ), ) )
+
+   METHOD onKeyChar()                                 VIRTUAL
 
    // Deprecated---------------------------------------------------------------
 
@@ -483,7 +485,7 @@ METHOD Delete( aSelectedIds )
    local lDelete        := .f.
    local cNumbersOfDeletes
 
-   msgalert( "SQLBaseController deleted()")
+   msgalert( hb_valtoexp( aSelectedIds ), "SQLBaseController deleted()" )
 
    if ::notUserDelete()
       msgStop( "Acceso no permitido" )

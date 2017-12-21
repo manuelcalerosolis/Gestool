@@ -11,7 +11,7 @@ CLASS ImportadorMovimientosAlmacenLineasController FROM SQLBaseController
 
    METHOD End()
 
-   METHOD Activate()    INLINE ( ::oDialogView:Activate() )
+   METHOD Activate()
 
    METHOD importarAlmacen()
 
@@ -49,6 +49,17 @@ RETURN ( Self )
 
 //---------------------------------------------------------------------------//
 
+METHOD Activate()
+
+   if empty( ::oSenderController:oDialogView:oGetAlmacenDestino:varGet() )
+      msgStop( "Es necesario cumplimentar el almacén destino" )
+      RETURN ( Self )      
+   end if 
+      
+RETURN ( ::oDialogView:Activate() )
+
+//---------------------------------------------------------------------------//
+
 METHOD importarAlmacen()
 
    local cArea          := "ArtToImport"
@@ -77,19 +88,38 @@ METHOD calculaStock( cArea )
 
    local aStockArticulo 
 
-   msgalert( ::oSenderController:oDialogView:oGetAlmacenDestino:varGet(), "oSenderController")
-
    aStockArticulo       := ::oStock:aStockArticulo( ( cArea )->Codigo, ::oSenderController:oDialogView:oGetAlmacenDestino:varGet() )
 
-   aeval( aStockArticulo, {|sStockArticulo| if( sStockArticulo:nUnidades != 0, ::creaRegistro( sStockArticulo ), ) } )
+   aeval( aStockArticulo, {|sStockArticulo| if( sStockArticulo:nUnidades != 0, ::creaRegistro( cArea, sStockArticulo ), ) } )
 
 RETURN ( Self )
 
 //---------------------------------------------------------------------------//
 
-METHOD creaRegistro( sStockArticulo)
+METHOD creaRegistro( cArea, sStockArticulo )
 
-   msgalert( hb_valtoexp( sStockArticulo ), "sStockArticulo" )
+   local nId
+   local hBuffer
+
+   hBuffer                                := ::oSenderController:oLineasController:oModel:loadBlankBuffer()
+
+   hBuffer[ "parent_uuid" ]               := ::getSenderController():getUuid()
+   hBuffer[ "codigo_articulo" ]           := ( cArea )->Codigo
+   hBuffer[ "nombre_articulo" ]           := ( cArea )->Nombre
+   hBuffer[ "precio_articulo" ]           := ( cArea )->pCosto
+   hBuffer[ "codigo_primera_propiedad" ]  := sStockArticulo:cCodigoPropiedad1
+   hBuffer[ "valor_primera_propiedad" ]   := sStockArticulo:cValorPropiedad1
+   hBuffer[ "codigo_segunda_propiedad" ]  := sStockArticulo:cCodigoPropiedad2
+   hBuffer[ "valor_segunda_propiedad" ]   := sStockArticulo:cValorPropiedad2
+   hBuffer[ "lote" ]                      := sStockArticulo:cLote
+   hBuffer[ "unidades_articulo" ]         := sStockArticulo:nUnidades
+
+   nId                                    := ::oSenderController:oLineasController:oModel:insertBuffer( hBuffer )
+
+   if !empty( nId )
+      ::oSenderController:oLineasController:refreshRowSetAndFind( nId )
+      ::oSenderController:oLineasController:oBrowseView:Refresh()
+   end if 
 
 RETURN ( Self )
 

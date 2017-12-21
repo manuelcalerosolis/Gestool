@@ -6,9 +6,15 @@
 
 CLASS SQLMovimientosAlmacenLineasModel FROM SQLExportableModel
 
-   DATA cTableName            INIT "movimientos_almacen_lineas"
+   DATA cTableName            INIT  "movimientos_almacen_lineas"
 
-   DATA cConstraints          INIT "PRIMARY KEY (uuid), KEY (id), KEY ( parent_uuid )"
+   DATA cConstraints          INIT  "PRIMARY KEY ( uuid ), "                     + ; 
+                                       "KEY ( id ), "                            + ;
+                                       "KEY ( parent_uuid ), "                   + ;
+                                       "KEY ( codigo_articulo ), "               + ;
+                                    "FOREIGN KEY ( parent_uuid ) "               + ;
+                                       "REFERENCES movimientos_almacen( uuid ) " + ;
+                                       "ON DELETE CASCADE"
 
    METHOD getColumns()
 
@@ -111,9 +117,9 @@ METHOD getInitialSelect()
                         "bultos_articulo, "                                   + ;
                         "cajas_articulo, "                                    + ;
                         "unidades_articulo, "                                 + ;
-                        "if( cajas_articulo = 0, 1, cajas_articulo * unidades_articulo ) as total_unidades, "  + ;
+                        "if( cajas_articulo = 0, 1, cajas_articulo ) * unidades_articulo as total_unidades, "  + ;
                         "precio_articulo, "                                   + ;
-                        "if( cajas_articulo = 0, 1, cajas_articulo * unidades_articulo ) * precio_articulo as total_precio "  + ;
+                        "if( cajas_articulo = 0, 1, cajas_articulo ) * unidades_articulo * precio_articulo as total_precio "  + ;
                      "FROM " + ::getTableName()    
 
 RETURN ( cSelect )

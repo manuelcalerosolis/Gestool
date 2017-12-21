@@ -45,7 +45,7 @@ CLASS SQLRowSet
 
    METHOD Refresh()                                   INLINE ( ::oRowSet:Refresh() )
 
-   METHOD RecnoToId( aRecno, cColumnKey )
+   METHOD IdFromRecno( aRecno, cColumnKey )
 
 END CLASS
 
@@ -136,7 +136,7 @@ RETURN ( nRecno != 0 )
 
 //---------------------------------------------------------------------------//
 
-METHOD RecnoToId( aRecno, cColumnKey )
+METHOD IdFromRecno( aRecno, cColumnKey )
 
    local aId            := {}
 
