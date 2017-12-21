@@ -1652,7 +1652,7 @@ METHOD AddTicket() CLASS TFastVentasClientes
 
          ::oDbf:cCodGrp    := RetFld( ( D():TiketsClientes( ::nView ) )->cCliTik, ( D():Clientes( ::nView ) ), "cCodGrp", "Cod" )
 
-         ::oDbf:cTipDoc    := "Tickets clientes"
+         ::oDbf:cTipDoc    := "Simplificada"
          ::oDbf:cClsDoc    := TIK_CLI          
          ::oDbf:cSerDoc    := ( D():TiketsClientes( ::nView ) )->cSerTik
          ::oDbf:cNumDoc    := ( D():TiketsClientes( ::nView ) )->cNumTik
@@ -2229,7 +2229,7 @@ METHOD insertTicketCliente()
 
                   ::oDbf:cCodGrp    := RetFld( ( D():TiketsClientes( ::nView ) )->cCliTik, ( D():Clientes( ::nView ) ), "cCodGrp", "Cod" )
 
-                  ::oDbf:cTipDoc    := "Tickets clientes"
+                  ::oDbf:cTipDoc    := "Simplificada"
                   ::oDbf:cClsDoc    := TIK_CLI          
                   ::oDbf:cSerDoc    := ( D():TiketsClientes( ::nView ) )->cSerTik
                   ::oDbf:cNumDoc    := ( D():TiketsClientes( ::nView ) )->cNumTik
