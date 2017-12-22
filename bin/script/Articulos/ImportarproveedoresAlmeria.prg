@@ -47,7 +47,7 @@ METHOD New( nView )
    Cambiar el nombre del fichero-----------------------------------------------
    */
 
-   ::cFicheroExcel            := "C:\ficheros\clientes.xls"
+   ::cFicheroExcel            := "C:\ficheros\proveedores.xls"
 
    /*
    Cambiar la fila de cominezo de la importacion-------------------------------
@@ -59,7 +59,7 @@ METHOD New( nView )
    Columna de campo clave------------------------------------------------------
    */
 
-   ::cColumnaCampoClave       := 'E'
+   ::cColumnaCampoClave       := 'A'
 
 Return ( Self )
 
@@ -104,69 +104,51 @@ Return nil
 
 METHOD importarCampos()
 
-   ( D():Clientes( ::nView ) )->( dbappend() )
+   ( D():Proveedores( ::nView ) )->( dbappend() )
 
-   ( D():Clientes( ::nView ) )->Cod             := RJust( ::getCampoClave(), "0", RetNumCodCliEmp() )
+   ( D():Proveedores( ::nView ) )->Cod             := RJust( ::getCampoClave(), "0", RetNumCodPrvEmp() )
 
    if !empty( ::getExcelString( "B" ) )
-      ( D():Clientes( ::nView ) )->Titulo       := ::getExcelString( "B" ) + ::getExcelString( "C" )
+      ( D():Proveedores( ::nView ) )->Titulo       := ::getExcelString( "B" )
    end if 
 
-   if !empty( ::getExcelString( "A" ) )
-      ( D():Clientes( ::nView ) )->Nif          := ::getExcelString( "A" )
+   if !empty( ::getExcelString( "C" ) )
+      ( D():Proveedores( ::nView ) )->Nif          := ::getExcelString( "C" )
    end if 
 
-   if !empty( ::getExcelString( "D" ) )
-      ( D():Clientes( ::nView ) )->NbrEst       := ::getExcelString( "D" )
+   if !empty( ::getExcelString( "H" ) )
+      ( D():Proveedores( ::nView ) )->cNbrEst      := ::getExcelString( "H" )
    end if
 
-   if !empty( ::getExcelString( "G" ) )
-      ( D():Clientes( ::nView ) )->Domicilio    := ::getExcelString( "G" ) + AllTrim( ::getExcelString( "H" ) )
+   if !empty( ::getExcelString( "D" ) )
+      ( D():Proveedores( ::nView ) )->Domicilio    := ::getExcelString( "D" )
+   end if
+
+   if !empty( ::getExcelString( "F" ) )
+      ( D():Proveedores( ::nView ) )->Poblacion    := ::getExcelString( "F" )
+   end if
+
+   if !empty( ::getExcelString( "E" ) )
+      ( D():Proveedores( ::nView ) )->CodPostal    := RJust( ::getExcelString( "E" ), "0", 5 )
    end if
 
    if !empty( ::getExcelString( "I" ) )
-      ( D():Clientes( ::nView ) )->Poblacion    := ::getExcelString( "I" )
+      ( D():Proveedores( ::nView ) )->Telefono     := ::getExcelString( "I" )
    end if
 
    if !empty( ::getExcelString( "J" ) )
-      ( D():Clientes( ::nView ) )->Provincia    := ::getExcelString( "J" )
+      ( D():Proveedores( ::nView ) )->Fax          := ::getExcelString( "J" )
    end if
 
    if !empty( ::getExcelString( "K" ) )
-      ( D():Clientes( ::nView ) )->CodPostal    := ::getExcelString( "K" )
+      ( D():Proveedores( ::nView ) )->SubCta       := ::getExcelString( "K" )
    end if
 
-   if !empty( ::getExcelString( "L" ) )
-      ( D():Clientes( ::nView ) )->cCodPai      := ::getExcelString( "L" )
-   end if
+   ( D():Proveedores( ::nView ) )->FPAGO           := "00"
 
-   if !empty( ::getExcelString( "M" ) )
-      ( D():Clientes( ::nView ) )->cWebInt      := ::getExcelString( "M" )
-   end if
+   ( D():Proveedores( ::nView ) )->( dbcommit() )
 
-   if !empty( ::getExcelString( "N" ) )
-      ( D():Clientes( ::nView ) )->cMeiInt      := ::getExcelString( "N" )
-   end if
-
-
-   if !empty( ::getExcelString( "O" ) )
-      ( D():Clientes( ::nView ) )->Telefono     := ::getExcelString( "O" )
-   end if
-
-   if !empty( ::getExcelString( "P" ) )
-      ( D():Clientes( ::nView ) )->Movil        := ::getExcelString( "P" )
-   end if
-
-   if !empty( ::getExcelString( "R" ) )
-      ( D():Clientes( ::nView ) )->mComent      := ::getExcelString( "R" )
-   end if
-
-   ( D():Clientes( ::nView ) )->CodPago         := "TR"
-   ( D():Clientes( ::nView ) )->cCodAlm         := "000"
-
-   ( D():Clientes( ::nView ) )->( dbcommit() )
-
-   ( D():Clientes( ::nView ) )->( dbunlock() )
+   ( D():Proveedores( ::nView ) )->( dbunlock() )
 
 Return nil
 

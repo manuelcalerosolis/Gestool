@@ -5,11 +5,16 @@
 
 //---------------------------------------------------------------------------//
 
-Function beforeAppendLine( aTmp, aGet, nView, nMode, lInicializate )
+Function beforeAppendLine( aTmp, aGet, nView, nMode, lInicializate, aTmpPed )
 
    local uValor
 
    if ( nMode != APPD_MODE )
+      return .f.
+   end if
+
+   if Empty( aTmpPed[ ( D():PedidosProveedores( nView ) )->( fieldpos( "cCtrCoste" ) ) ] )
+      MsgStop( "Tiene que seleccionar un centro de coste", "¡¡Atención!!" )
       return .f.
    end if
 
@@ -21,33 +26,57 @@ Function beforeAppendLine( aTmp, aGet, nView, nMode, lInicializate )
       inicializateHashVariables()
    end if
    
-
    /*
    Comprobamos e informamos la primera propiedad-------------------------------
    */
 
-   uValor      := getVariablesToHash( "Barco" )
+   uValor      := getVariablesToHash( "PrimeraPropiedad" )
 
    if Empty( uValor )
-      uValor   := brwPropiedadActual( , , Padr( "0001", 20 ) )
-      setVariablesInHash( "Barco", uValor )
+      uValor   := oRetFld( aTmpPed[ ( D():PedidosProveedores( nView ) )->( fieldpos( "cCtrCoste" ) ) ], D():CentroCoste( nView ):oDbf, "cCodPr1", "cCodigo" )
+      setVariablesInHash( "PrimeraPropiedad", uValor )
    end if
 
-   aTmp[ ( D():PedidosProveedoresLineas( nView ) )->( fieldpos( "cCodPr1" ) ) ]     := Padr( "0001", 20 )
-   aTmp[ ( D():PedidosProveedoresLineas( nView ) )->( fieldpos( "cValPr1" ) ) ]     := Padr( uValor, 40 )
+   aTmp[ ( D():PedidosProveedoresLineas( nView ) )->( fieldpos( "cCodPr1" ) ) ]     := Padr( uValor, 20 )
 
    /*
    Comprobamos e informamos la segunda propiedad-------------------------------
    */
 
-   uValor      := getVariablesToHash( "Marea" )
+   uValor      := getVariablesToHash( "SegundaPropiedad" )
 
    if Empty( uValor )
-      uValor   := brwPropiedadActual( , , Padr( "0002", 20 ) )
-      setVariablesInHash( "Marea", uValor )
+      uValor   := oRetFld( aTmpPed[ ( D():PedidosProveedores( nView ) )->( fieldpos( "cCtrCoste" ) ) ], D():CentroCoste( nView ):oDbf, "cCodPr2", "cCodigo" )
+      setVariablesInHash( "SegundaPropiedad", uValor )
    end if
 
-   aTmp[ ( D():PedidosProveedoresLineas( nView ) )->( fieldpos( "cCodPr2" ) ) ]     := Padr( "0002", 20 )
+   aTmp[ ( D():PedidosProveedoresLineas( nView ) )->( fieldpos( "cCodPr2" ) ) ]     := Padr( uValor, 20 )
+
+
+   /*
+   Comprobamos e informamos valor primera propiedad-------------------------------
+   */
+
+   uValor      := getVariablesToHash( "ValorPrimeraPropiedad" )
+
+   if Empty( uValor )
+      uValor   := oRetFld( aTmpPed[ ( D():PedidosProveedores( nView ) )->( fieldpos( "cCtrCoste" ) ) ], D():CentroCoste( nView ):oDbf, "cValPr1", "cCodigo" )
+      setVariablesInHash( "ValorPrimeraPropiedad", uValor )
+   end if
+
+   aTmp[ ( D():PedidosProveedoresLineas( nView ) )->( fieldpos( "cValPr1" ) ) ]     := Padr( uValor, 40 )
+
+   /*
+   Comprobamos e informamos valor segunda propiedad-------------------------------
+   */
+
+   uValor      := getVariablesToHash( "ValorSegundaPropiedad" )
+
+   if Empty( uValor )
+      uValor   := oRetFld( aTmpPed[ ( D():PedidosProveedores( nView ) )->( fieldpos( "cCtrCoste" ) ) ], D():CentroCoste( nView ):oDbf, "cValPr2", "cCodigo" )
+      setVariablesInHash( "ValorSegundaPropiedad", uValor )
+   end if
+
    aTmp[ ( D():PedidosProveedoresLineas( nView ) )->( fieldpos( "cValPr2" ) ) ]     := Padr( uValor, 40 )
    
 Return ( .t. )

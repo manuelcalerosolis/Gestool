@@ -1856,6 +1856,15 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, cCodPrv, cCodArt, nMode )
          ITEMS    ( SituacionesRepository():getNombres() ) ;
          OF       oFld:aDialogs[1]
 
+      REDEFINE GET aGet[ _CCENTROCOSTE ] VAR aTmp[ _CCENTROCOSTE ] ;
+         ID       510 ;
+         IDTEXT   511 ;
+         BITMAP   "LUPA" ;
+         VALID    ( D():CentroCoste( nView ):Existe( aGet[ _CCENTROCOSTE ], aGet[ _CCENTROCOSTE ]:oHelpText, "cNombre" ) );
+         ON HELP  ( D():CentroCoste( nView ):Buscar( aGet[ _CCENTROCOSTE ] ) ) ;
+         WHEN     ( nMode != ZOOM_MODE ) ;
+         OF       oFld:aDialogs[1]
+
       REDEFINE RADIO aGet[ _NREGIVA ] VAR aTmp[ _NREGIVA ] ;
          ID       270, 271, 272, 273 ;
          WHEN     ( .f. ) ;
@@ -1879,15 +1888,6 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, cCodPrv, cCodArt, nMode )
       REDEFINE GET oSay[ 5 ] VAR cSay[ 5 ] ;
          ID       301 ;
          WHEN     ( .f. ) ;
-         OF       oFld:aDialogs[2]
-
-      REDEFINE GET aGet[ _CCENTROCOSTE ] VAR aTmp[ _CCENTROCOSTE ] ;
-         ID       510 ;
-         IDTEXT   511 ;
-         BITMAP   "LUPA" ;
-         VALID    ( D():CentroCoste( nView ):Existe( aGet[ _CCENTROCOSTE ], aGet[ _CCENTROCOSTE ]:oHelpText, "cNombre" ) );
-         ON HELP  ( D():CentroCoste( nView ):Buscar( aGet[ _CCENTROCOSTE ] ) ) ;
-         WHEN     ( nMode != ZOOM_MODE ) ;
          OF       oFld:aDialogs[2]
 
       REDEFINE GET aGet[_CSUPED] VAR aTmp[_CSUPED] ;
@@ -2512,6 +2512,10 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbf, oBrw, aTmpPed, cCodArt, nMode )
 
    if nMode == APPD_MODE
 
+      if !runScript( "PedidosProveedores\Lineas\validCamposObligatorios.prg", aTmpPed, nView )
+         Return .f.
+      end if
+
       aTmp[_NUNICAJA]   := 1
       aTmp[_CALMLIN ]   := aTmpPed[ _CCODALM ]
 
@@ -2522,8 +2526,6 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbf, oBrw, aTmpPed, cCodArt, nMode )
       cTipoCtrCoste     := "Centro de coste"
 
       D():CamposExtraLine( nView ):setTemporalAppend()
-
-      //runScript( "PedidosProveedores\Lineas\beforeAppendLine.prg", aTmp, aGet, nView, nMode, ( ( dbfTmpLin )->( ordKeyCount() ) == 0 ) )
 
    else
 
@@ -3084,7 +3086,7 @@ STATIC FUNCTION SetDlgMode( aGet, aTmp, aTmpPed, nMode, oSayPr1, oSayPr2, oSayVp
    oSayPr2:SetText( "" )
    oSayVp2:SetText( "" )
    
-   runScript( "PedidosProveedores\Lineas\beforeAppendLine.prg", aTmp, aGet, nView, nMode, ( ( dbfTmpLin )->( ordKeyCount() ) == 0 ) )
+   runScript( "PedidosProveedores\Lineas\beforeAppendLine.prg", aTmp, aGet, nView, nMode, ( ( dbfTmpLin )->( ordKeyCount() ) == 0 ), aTmpPed )
    
    do case
    case nMode == APPD_MODE

@@ -559,6 +559,7 @@ AgentesModel.prg 																\
 DivisasModel.prg 																\
 DocumentosModel.prg															\
 AlbaranesClientesModel.prg 												\
+PedidosProveedoresLineasModel.prg 										\
 AlbaranesProveedoresLineasModel.prg 									\
 FacturasProveedoresLineasModel.prg 										\
 RectificativasProveedoresLineasModel.prg 								\ 
@@ -1215,6 +1216,7 @@ SQLExportableModel.obj 														\
 SQLRowSet.obj 																	\
 PdaEnvioRecepcionController.obj 											\
 PdaEnvioRecepcionView.obj 													\
+PedidosProveedoresLineasModel.obj 										\
 
 .PRG.OBJ:
   	$(HB)\Bin\Harbour $? /n /p$(PPO)\$&.ppo /w /es2 /i$(FWINCLUDE) /gc0 /i$(HBINCLUDE) /i$(GTINCLUDE) /o$(OBJ)\$&.c
@@ -1797,6 +1799,7 @@ $(OBJ)\SQLExportableModel.obj 											+
 $(OBJ)\PdaEnvioRecepcionController.obj 								+
 $(OBJ)\PdaEnvioRecepcionView.obj 										+
 $(OBJ)\gdipfwh.obj 															+
+$(OBJ)\PedidosProveedoresLineasModel.obj 							   +
 $(OBJ)\Events.obj              		
 $<,$*
 $(FWLIB)\FiveH.lib               										+

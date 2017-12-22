@@ -31,6 +31,8 @@ CLASS TCentroCoste FROM TMant
 
 	METHOD DefineFiles( cPath, cDriver )
 
+   METHOD Activate()
+
 	METHOD Resource( nMode )
 
 	METHOD lPreSave( oGet, oDlg, nMode )
@@ -117,6 +119,64 @@ METHOD DefineFiles( cPath, cDriver )
    END DATABASE ::oDbf
 
 RETURN ( ::oDbf )
+
+//----------------------------------------------------------------------------//
+
+METHOD Activate() CLASS TCentroCoste
+
+   local oScript
+
+   if nAnd( ::nLevel, 1 ) != 0
+      msgStop( "Acceso no permitido." )
+      Return ( Self )
+   end if
+
+   /*
+   Cerramos todas las ventanas
+   */
+
+   if ::oWndParent != nil
+      ::oWndParent:CloseAll()
+   end if
+
+   if Empty( ::oDbf ) .or. !::oDbf:Used()
+      ::lOpenFiles      := ::OpenFiles()
+   end if
+
+   /*
+   Creamos el Shell
+   */
+
+   if ::lOpenFiles
+
+      if !::lCreateShell
+         ::CreateShell( ::nLevel )
+      end if
+
+      if ::lAutoButtons
+
+         ::oWndBrw:GralButtons( Self )
+         
+         DEFINE BTNSHELL oScript RESOURCE "gc_folder_document_" GROUP OF ::oWndBrw ;
+            NOBORDER ;
+            ACTION   ( oScript:Expand() ) ;
+            TOOLTIP  "Scripts" ;
+
+            ImportScript( ::oWndBrw, oScript, "CentroCoste", ::oDbf:cCodigo )
+
+         ::oWndBrw:EndButtons( Self )
+
+      end if
+
+      if ::cHtmlHelp != nil
+         ::oWndBrw:cHtmlHelp  := ::cHtmlHelp
+      end if
+
+      ::oWndBrw:Activate( nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, {|| ::CloseFiles() } )
+
+   end if
+
+RETURN ( Self )
 
 //----------------------------------------------------------------------------//
 
