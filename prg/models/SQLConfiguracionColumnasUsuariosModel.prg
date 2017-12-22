@@ -117,11 +117,6 @@ METHOD set( cViewName, cBrowseState, cColumnOrder, cOrientation, idToFind )
 
    end if 
 
-   getSQLDatabase():BeginTransaction()
-
-   getSQLDatabase():Exec( cUpdateHistory )
-
-   getSQLDatabase():Commit()
 
 RETURN ( Self )
 

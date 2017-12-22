@@ -3684,6 +3684,7 @@ Static FUNCTION SetDlgMode( aGet, aTmp, aTmpAlb, nMode, oSayPr1, oSayPr2, oSayVp
       aTmp[ _NREQ    ]  := nReq( D():TiposIva( nView ), cDefIva() )
       aTmp[ _NNUMLIN ]  := nLastNum( dbfTmp )
       aTmp[ _NPOSPRINT ]:= nLastNum( dbfTmp, "nPosPrint" )
+      aTmp[ _CLOTE   ]  := ""
 
       oSayLote:Hide()
 

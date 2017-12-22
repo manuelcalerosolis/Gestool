@@ -66,7 +66,7 @@ METHOD Activate()
          WHEN     ( !::lFamilia ) ;
          OF       oDialog ;
 
-      ::oFamiliaInicio:bValid    := {|| ::oController:validate( "codigo_familia_inicio", ::cFamiliaInicio ) }
+      ::oFamiliaInicio:bValid    := {|| ::oController:validateFamiliaInicio() }
       ::oFamiliaInicio:bHelp     := {|| brwFamilia( ::oFamiliaInicio, ::oFamiliaInicio:oHelpText ) }
 
       REDEFINE GET ::oFamiliaFin VAR ::cFamiliaFin ;

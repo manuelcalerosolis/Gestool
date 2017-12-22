@@ -19,6 +19,14 @@ CLASS ImportadorMovimientosAlmacenLineasController FROM SQLBaseController
 
    METHOD creaRegistro()
 
+   METHOD validateFamiliaInicio()            INLINE ( iif(  ::validate( "codigo_familia_inicio", ::oDialogView:oFamiliaInicio:varGet() ),;
+                                                            ::stampNombreFamilia( ::oDialogView:oFamiliaInicio ),;
+                                                            .f. ) )
+
+   METHOD stampNombreFamilia( oFamilia )     INLINE ( oFamilia:oHelpText:cText( FamiliasModel():getNombre( oFamilia:varGet() ) ), .t. )
+
+   METHOD stampArticuloNombre( oArticulo )   INLINE ( oArticulo:oHelpText:cText( ArticulosModel():getNombre( oArticulo:varGet() ) ), .t. )
+
 END CLASS
 
 //---------------------------------------------------------------------------//

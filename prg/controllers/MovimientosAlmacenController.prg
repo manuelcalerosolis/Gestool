@@ -17,7 +17,7 @@ CLASS MovimientosAlmacenController FROM SQLNavigatorController
    METHOD New()
    METHOD End()
 
-   METHOD getUuid()                 INLINE ( iif( !empty( ::oModel ) .and. !empty( ::oModel:hBuffer ),;
+   METHOD getUuid()                 INLINE ( iif(  !empty( ::oModel ) .and. !empty( ::oModel:hBuffer ),;
                                                    hget( ::oModel:hBuffer, "uuid" ),;
                                                    nil ) )
 

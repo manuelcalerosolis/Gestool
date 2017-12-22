@@ -5,13 +5,15 @@
 
 CLASS ArticulosModel FROM ADSBaseModel
 
-   METHOD getTableName()                     INLINE ::getEmpresaTableName( "Articulo" )
+   METHOD getTableName()                           INLINE ::getEmpresaTableName( "Articulo" )
 
    METHOD exist()
 
    METHOD get()
    
    METHOD getField()
+
+   METHOD getNombre( cCodigoArticulo )             INLINE ( ::getField( cCodigoArticulo, 'Nombre' ) )
 
    METHOD getHash()
 
@@ -149,7 +151,6 @@ METHOD getArticulosToImport( cArea, hRange ) CLASS ArticulosModel
 RETURN ( ::ExecuteSqlStatement( cSql, @cArea ) )
 
 //---------------------------------------------------------------------------//
-
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//

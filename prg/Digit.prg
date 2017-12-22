@@ -67,7 +67,7 @@ FUNCTION cDgtControl( cEntidad, cSucursal, cDigito, cCuenta )
 	local nD2		 := 0
 
    if Empty( cCuenta )
-      Return ( cDigito )
+      RETURN ( cDigito )
    end if
 
    cCuenta        := RJust( RTrim( cCuenta ), '0', 10 )
@@ -76,7 +76,7 @@ FUNCTION cDgtControl( cEntidad, cSucursal, cDigito, cCuenta )
    cC2            := cCuenta
 
    if len( cC1 ) > len( nPesos ) .or. len( cC2 ) > len( nPesos )
-       Return ( cDigito )    
+       RETURN ( cDigito )    
    end if 
 
 	for i	:= 1 to len( cC1 )
@@ -132,29 +132,34 @@ RETURN ( cDc )
 
 Function cCuentaBancaria( dbf )
 
-Return ( ( dbf )->cEntBnc + ( dbf )->cSucBnc + ( dbf )->cDigBnc + ( dbf )->cCtaBnc )
+RETURN ( ( dbf )->cEntBnc + ( dbf )->cSucBnc + ( dbf )->cDigBnc + ( dbf )->cCtaBnc )
 
 //--------------------------------------------------------------------------//
 
 Function aCuentaBancaria( aTmp, dbf )
 
-Return ( aTmp[ ( dbf )->( Fieldpos( "cEntBnc" ) ) ] + aTmp[ ( dbf )->( Fieldpos( "cSucBnc" ) ) ] + aTmp[ ( dbf )->( Fieldpos( "cDigBnc" ) ) ] + aTmp[ ( dbf )->( Fieldpos( "cCtaBnc" ) ) ] )
+RETURN ( aTmp[ ( dbf )->( Fieldpos( "cEntBnc" ) ) ] + aTmp[ ( dbf )->( Fieldpos( "cSucBnc" ) ) ] + aTmp[ ( dbf )->( Fieldpos( "cDigBnc" ) ) ] + aTmp[ ( dbf )->( Fieldpos( "cCtaBnc" ) ) ] )
 
 //--------------------------------------------------------------------------//
 
 Function DateTimeToTimestamp( dDate, cTime )
 
-  local cTimestamp  := ""
+   local cTimestamp  := ""
 
-  cTimestamp        += AllTrim( Str( Year( dDate ) ) ) + "-"
-  cTimestamp        += AllTrim( Str( Month( dDate ) ) ) + "-"
-  cTimestamp        += AllTrim( Str( Day( dDate ) ) )
-  cTimestamp        += Space( 1 )
-  cTimestamp        += SubStr( cTime, 1, 2 ) + ":"
-  cTimestamp        += SubStr( cTime, 3, 2 ) + ":"
-  cTimestamp        += SubStr( cTime, 5, 2 )
+   cTimestamp        += AllTrim( Str( Year( dDate ) ) ) + "-"
+   cTimestamp        += AllTrim( Str( Month( dDate ) ) ) + "-"
+   cTimestamp        += AllTrim( Str( Day( dDate ) ) )
+   cTimestamp        += Space( 1 )
+   
+   if at( cTime, ":" ) == 0
+      cTimestamp     += SubStr( cTime, 1, 2 ) + ":"
+      cTimestamp     += SubStr( cTime, 3, 2 ) + ":"
+      cTimestamp     += SubStr( cTime, 5, 2 )
+   else 
+      cTimestamp     += SubStr( cTime, 1, 8 )
+   end if 
 
-Return ( cTimestamp )
+RETURN ( cTimestamp )
 
 //--------------------------------------------------------------------------//
 
@@ -176,7 +181,7 @@ function lIbanDigit( cCountry, cEntidad, cSucursal, cDigito, cCuenta, oGet )
 
   oGet:cText( IbanDigit( cCountry, cEntidad, cSucursal, cDigito, cCuenta ) )
 
-Return ( .t. )  
+RETURN ( .t. )  
 
 //----------------------------------------------------------------//
 
@@ -229,19 +234,19 @@ return( val(cDC) == 1 )
 
 Function cCuentaIBAN( dbf )
 
-Return ( ( dbf )->cPaisIBAN + ( dbf )->cCrtlIBAN + cCuentaBancaria( dbf ) )
+RETURN ( ( dbf )->cPaisIBAN + ( dbf )->cCrtlIBAN + cCuentaBancaria( dbf ) )
 
 //----------------------------------------------------------------//
 
 Function aCuentaIBAN( aTmp, dbf )
 
-Return ( aTmp[ ( dbf )->( FieldPos( "cPaisIBAN" ) ) ] + aTmp[ ( dbf )->( FieldPos( "cCtrlIBAN" ) ) ] + aCuentaBancaria( aTmp, dbf ) )
+RETURN ( aTmp[ ( dbf )->( FieldPos( "cPaisIBAN" ) ) ] + aTmp[ ( dbf )->( FieldPos( "cCtrlIBAN" ) ) ] + aCuentaBancaria( aTmp, dbf ) )
 
 //----------------------------------------------------------------//
 
 Function PictureCuentaIBAN( dbf )
 
-Return ( ( dbf )->cPaisIBAN + ( dbf )->cCtrlIBAN + "-" + ( dbf )->cEntBnc + "-" + ( dbf )->cSucBnc + "-" + ( dbf )->cDigBnc + "-" + ( dbf )->cCtaBnc )
+RETURN ( ( dbf )->cPaisIBAN + ( dbf )->cCtrlIBAN + "-" + ( dbf )->cEntBnc + "-" + ( dbf )->cSucBnc + "-" + ( dbf )->cDigBnc + "-" + ( dbf )->cCtaBnc )
 
 //----------------------------------------------------------------//
 
@@ -307,7 +312,7 @@ static function nValDec( num )
       cDec := SubStr( cDec, 1, len( cDec ) - 1 )
    end while
 
-return ( Val( cDec ) )
+RETURN ( Val( cDec ) )
 
 //--------------------------------------------------------------------------//
 
@@ -502,7 +507,7 @@ RETURN nil
 
 Function MsgDebug( cText, cTitle )
 
-Return ( msgStop( cText, cTitle ) )
+RETURN ( msgStop( cText, cTitle ) )
 
 //--------------------------------------------------------------------------//
 
@@ -922,7 +927,7 @@ Method Dialog( oGet ) CLASS TVirtualMoney
 
    end if
 
-Return ( Self )
+RETURN ( Self )
 
 //--------------------------------------------------------------------------//
 
@@ -948,7 +953,7 @@ Method Total() CLASS TVirtualMoney
       ::oSayTotal:Refresh()
    end if
 
-Return ( .t. )
+RETURN ( .t. )
 
 //--------------------------------------------------------------------------//
 
@@ -972,7 +977,7 @@ Method Clean() CLASS TVirtualMoney
 
    ::Total()
 
-Return ( .t. )
+RETURN ( .t. )
 
 //--------------------------------------------------------------------------//
 
@@ -1002,7 +1007,7 @@ Method PressKey( cKey ) CLASS TVirtualMoney
 
    end if
 
-Return ( .t. )
+RETURN ( .t. )
 
 //--------------------------------------------------------------------------//
 
@@ -1024,7 +1029,7 @@ Method GetStream() CLASS TVirtualMoney
    ::cStream   += StrZero( ::nGet002Euros, 3 ) + ";"       //"0.02,"  +
    ::cStream   += StrZero( ::nGet001Euro , 3 ) + ";"       //"0.01,"  +
 
-Return ( ::cStream )
+RETURN ( ::cStream )
 
 //--------------------------------------------------------------------------//
 
@@ -1070,7 +1075,7 @@ Method SetStream( cStream ) CLASS TVirtualMoney
 
    ::Total()
 
-Return ( .t. )
+RETURN ( .t. )
 
 //--------------------------------------------------------------------------//
 
@@ -1138,7 +1143,7 @@ Function nVirtualNumKey( cBitmap, cTitle, nVar )
       oBtn:end()
    end if 
 
-Return ( cVar )
+RETURN ( cVar )
 
 //--------------------------------------------------------------------------//
 
@@ -1154,7 +1159,7 @@ Static Function sayNumber( oGet, uNumber )
 
    oGet:setFocus()
 
-Return ( nil )
+RETURN ( nil )
 
 //--------------------------------------------------------------------------//
 //Funciones para el programa y pda
@@ -1301,7 +1306,7 @@ function Num2Text( nNum, lMas, nDec )
 
    end if
 
-return ( Upper( cTxt ) )
+RETURN ( Upper( cTxt ) )
 
 //---------------------------------------------------------------------------//
 
@@ -1470,7 +1475,7 @@ Function Rut( cRut )
       nRut  := "0"
    end if
 
-Return ( nRut )
+RETURN ( nRut )
 
 //--------------------------------------------------------------------------//
 
@@ -1605,11 +1610,11 @@ Function VirtualKey( lPassword, uGetKey, cTitle )
          uGetKey:cText( cVar)
       end if
 
-      Return ( Rtrim( cVar ) )
+      RETURN ( Rtrim( cVar ) )
 
    end if
 
-Return ( "" )
+RETURN ( "" )
 
 //---------------------------------------------------------------------------//
 
@@ -1621,7 +1626,7 @@ Function keybPressed( oGet, cKey )
 
    oGet:KeyChar( ASC( cKey ) )
 
-Return ( nil )
+RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 
@@ -1771,7 +1776,7 @@ Function ReadCodeGS128( cCode )
 
    end if 
 
-Return ( hCodeGS128 )
+RETURN ( hCodeGS128 )
 
 //---------------------------------------------------------------------------//
 
@@ -1787,11 +1792,11 @@ Function ReadHashCodeGS128( cCode, hCodeGS128 )
    end if
 
    if !hb_ischar( cCode ) .or. len( cCode ) == 0
-      Return ( hCodeGS128 )
+      RETURN ( hCodeGS128 )
    end if 
 
    if !hb_isarray( aGS128 ) .or. empty( aGS128 ) 
-      Return ( hCodeGS128 )
+      RETURN ( hCodeGS128 )
    end if 
 
    for each hStruct in aGS128
@@ -1818,7 +1823,7 @@ Function ReadHashCodeGS128( cCode, hCodeGS128 )
 
    next
 
-Return ( hCodeGS128 )
+RETURN ( hCodeGS128 )
 
 //---------------------------------------------------------------------------//
 
@@ -1859,13 +1864,13 @@ Function uGetCodigo( hHash, cAI )
     uGetCodigo      := hGet( hHash, cAI )
   end if
 
-Return ( uGetCodigo )
+RETURN ( uGetCodigo )
 
 //---------------------------------------------------------------------------//
 
 Static Function DateGS128( cDate )
 
-Return ( Stod( "20" + Substr( cDate, 1, 4 ) + if( Substr( cDate, 5, 2 ) == "00", "01", Substr( cDate, 5, 2 ) ) ) )
+RETURN ( Stod( "20" + Substr( cDate, 1, 4 ) + if( Substr( cDate, 5, 2 ) == "00", "01", Substr( cDate, 5, 2 ) ) ) )
 
 //---------------------------------------------------------------------------//
 

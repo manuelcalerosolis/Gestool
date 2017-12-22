@@ -214,7 +214,7 @@ METHOD getEmpresaColumns()
                                        "width"     => 40                                        ,;
                                        "default"   => {|| 0 } }                                 )
 
-   hset( ::hColumns, "uuid",        {  "create"    => "VARCHAR(40) NOT NULL"                    ,;
+   hset( ::hColumns, "uuid",        {  "create"    => "VARCHAR(40) NOT NULL UNIQUE"             ,;
                                        "text"      => "Uuid"                                    ,;
                                        "header"    => "Uuid"                                    ,;
                                        "visible"   => .t.                                       ,;

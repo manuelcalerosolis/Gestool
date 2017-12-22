@@ -9,6 +9,8 @@ CLASS FamiliasModel FROM ADSBaseModel
 
    METHOD exist()
 
+   METHOD getNombre( cCodigoFamilia )        INLINE ( ::getField( 'cCodFam', 'cNomFam', cCodigoFamilia ) )
+
 END CLASS
 
 //---------------------------------------------------------------------------//

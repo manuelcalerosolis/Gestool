@@ -620,7 +620,7 @@ GroupCustomerViewSearchNavigator.prg                           \
 Events.prg 																		\
 Seeders.prg    																\
 SqlMigrations.prg 															\
-SQLNumerosSeriesModel.prg 													\
+SQLMovimientosAlmacenLineasNumerosSeriesModel.prg 					\
 NumerosSeriesController.prg 								  				\
 NumerosSeriesView.prg 														\
 SQLExportableModel.prg 														\
@@ -1218,7 +1218,7 @@ GroupCustomerViewSearchNavigator.obj                        	\
 Events.obj 																		\
 Seeders.obj 																	\
 SqlMigrations.obj 															\
-SQLNumerosSeriesModel.obj 													\
+SQLMovimientosAlmacenLineasNumerosSeriesModel.obj 					\
 NumerosSeriesController.obj 												\
 NumerosSeriesView.obj 														\
 SQLExportableModel.obj 														\
@@ -1804,7 +1804,7 @@ $(OBJ)\GroupCustomerViewSearchNavigator.obj              		+
 $(OBJ)\PedidosClientesLineasModel.obj 									+
 $(OBJ)\Seeders.obj 															+
 $(OBJ)\SqlMigrations.obj 													+
-$(OBJ)\SQLNumerosSeriesModel.obj 										+
+$(OBJ)\SQLMovimientosAlmacenLineasNumerosSeriesModel.obj 		+
 $(OBJ)\NumerosSeriesController.obj 										+
 $(OBJ)\NumerosSeriesView.obj 												+
 $(OBJ)\SQLRowSet.obj 														+
@@ -1817,6 +1817,7 @@ $<,$*
 $(FWLIB)\FiveH.lib               										+
 $(FWLIB)\FiveHC.lib              										+
 $(HBLIB)\hdo.lib               											+
+$(HBLIB)\mylist.lib 															+
 $(HBLIB)\rdlmysql.lib 														+
 $(HBLIB)\libmysql.lib            										+
 $(HBLIB)\Eagle1.lib              										+

@@ -18,7 +18,7 @@ CREATE_CLASS( "THDO", THDO, THDO_IVARCOUNT )
 	METHOD( "NEW",              THDO_NEW )
 	METHOD( "CONNECT",          THDO_CONNECT )
 	METHOD( "DISCONNECT",       THDO_DISCONNECT ) 	// Sinonimo de FREE
-	METHOD( "FREE",          	THDO_DISCONNECT )	// Sinonimo de DISCONNECT
+	METHOD( "FREE",          	 THDO_DISCONNECT )	// Sinonimo de DISCONNECT
 	METHOD( "EXEC",             THDO_EXEC )			// Sinonimo de execDirect
 	METHOD( "EXECDIRECT",       THDO_EXEC )			// Sinonimo de exec
 	METHOD( "PREPARE",          THDO_PREPARE )

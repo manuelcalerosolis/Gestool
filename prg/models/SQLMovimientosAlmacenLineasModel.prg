@@ -52,20 +52,20 @@ END CLASS
 
 METHOD getColumns()
 
-   hset( ::hColumns, "id",                {  "create"    => "INTEGER AUTO_INCREMENT"                  ,;
-                                             "default"   => {|| 0 } }                                 )
+   hset( ::hColumns, "id",                {  "create"    => "INTEGER AUTO_INCREMENT"               ,;
+                                             "default"   => {|| 0 } }                              )
 
-   hset( ::hColumns, "uuid",              {  "create"    => "VARCHAR(40) NOT NULL"                    ,;
-                                             "default"   => {|| win_uuidcreatestring() } }            )
+   hset( ::hColumns, "uuid",              {  "create"    => "VARCHAR(40) NOT NULL UNIQUE"          ,;
+                                             "default"   => {|| win_uuidcreatestring() } }         )
 
-   hset( ::hColumns, "parent_uuid",       {  "create"    => "VARCHAR(40) NOT NULL"                    ,;
-                                             "default"   => {|| space(40) } }                         )
+   hset( ::hColumns, "parent_uuid",       {  "create"    => "VARCHAR(40) NOT NULL"                 ,;
+                                             "default"   => {|| space(40) } }                      )
 
-   hset( ::hColumns, "codigo_articulo",   {  "create"    => "VARCHAR(18) NOT NULL"                    ,;
-                                             "default"   => {|| space(18) } }                         )
+   hset( ::hColumns, "codigo_articulo",   {  "create"    => "VARCHAR(18) NOT NULL"                 ,;
+                                             "default"   => {|| space(18) } }                      )
 
-   hset( ::hColumns, "nombre_articulo",   {  "create"    => "VARCHAR(250) NOT NULL"                   ,;
-                                             "default"   => {|| space(250) } }                        )
+   hset( ::hColumns, "nombre_articulo",   {  "create"    => "VARCHAR(250) NOT NULL"                ,;
+                                             "default"   => {|| space(250) } }                     )
 
    hset( ::hColumns, "codigo_primera_propiedad",   {  "create"    => "VARCHAR(20)"                 ,;
                                                       "default"   => {|| space(20) } }             )
