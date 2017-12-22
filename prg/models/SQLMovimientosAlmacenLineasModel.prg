@@ -6,9 +6,15 @@
 
 CLASS SQLMovimientosAlmacenLineasModel FROM SQLExportableModel
 
-   DATA cTableName            INIT "movimientos_almacen_lineas"
+   DATA cTableName            INIT  "movimientos_almacen_lineas"
 
-   DATA cConstraints          INIT "PRIMARY KEY (uuid), KEY (id), KEY ( parent_uuid )"
+   DATA cConstraints          INIT  "PRIMARY KEY ( uuid ), "                     + ; 
+                                       "KEY ( id ), "                            + ;
+                                       "KEY ( parent_uuid ), "                   + ;
+                                       "KEY ( codigo_articulo ), "               + ;
+                                    "FOREIGN KEY ( parent_uuid ) "               + ;
+                                       "REFERENCES movimientos_almacen( uuid ) " + ;
+                                       "ON DELETE CASCADE"
 
    METHOD getColumns()
 
@@ -46,20 +52,20 @@ END CLASS
 
 METHOD getColumns()
 
-   hset( ::hColumns, "id",                {  "create"    => "INTEGER AUTO_INCREMENT"                  ,;
-                                             "default"   => {|| 0 } }                                 )
+   hset( ::hColumns, "id",                {  "create"    => "INTEGER AUTO_INCREMENT"               ,;
+                                             "default"   => {|| 0 } }                              )
 
-   hset( ::hColumns, "uuid",              {  "create"    => "VARCHAR(40) NOT NULL"                    ,;
-                                             "default"   => {|| win_uuidcreatestring() } }            )
+   hset( ::hColumns, "uuid",              {  "create"    => "VARCHAR(40) NOT NULL UNIQUE"          ,;
+                                             "default"   => {|| win_uuidcreatestring() } }         )
 
-   hset( ::hColumns, "parent_uuid",       {  "create"    => "VARCHAR(40) NOT NULL"                    ,;
-                                             "default"   => {|| space(40) } }                         )
+   hset( ::hColumns, "parent_uuid",       {  "create"    => "VARCHAR(40) NOT NULL"                 ,;
+                                             "default"   => {|| space(40) } }                      )
 
-   hset( ::hColumns, "codigo_articulo",   {  "create"    => "VARCHAR(18) NOT NULL"                    ,;
-                                             "default"   => {|| space(18) } }                         )
+   hset( ::hColumns, "codigo_articulo",   {  "create"    => "VARCHAR(18) NOT NULL"                 ,;
+                                             "default"   => {|| space(18) } }                      )
 
-   hset( ::hColumns, "nombre_articulo",   {  "create"    => "VARCHAR(250) NOT NULL"                   ,;
-                                             "default"   => {|| space(250) } }                        )
+   hset( ::hColumns, "nombre_articulo",   {  "create"    => "VARCHAR(250) NOT NULL"                ,;
+                                             "default"   => {|| space(250) } }                     )
 
    hset( ::hColumns, "codigo_primera_propiedad",   {  "create"    => "VARCHAR(20)"                 ,;
                                                       "default"   => {|| space(20) } }             )
@@ -111,9 +117,9 @@ METHOD getInitialSelect()
                         "bultos_articulo, "                                   + ;
                         "cajas_articulo, "                                    + ;
                         "unidades_articulo, "                                 + ;
-                        "if( cajas_articulo = 0, 1, cajas_articulo * unidades_articulo ) as total_unidades, "  + ;
+                        "if( cajas_articulo = 0, 1, cajas_articulo ) * unidades_articulo as total_unidades, "  + ;
                         "precio_articulo, "                                   + ;
-                        "if( cajas_articulo = 0, 1, cajas_articulo * unidades_articulo ) * precio_articulo as total_precio "  + ;
+                        "if( cajas_articulo = 0, 1, cajas_articulo ) * unidades_articulo * precio_articulo as total_precio "  + ;
                      "FROM " + ::getTableName()    
 
 RETURN ( cSelect )

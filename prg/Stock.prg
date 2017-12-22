@@ -5445,7 +5445,7 @@ METHOD GetConsolidacion( cCodArt, cCodAlm, cCodPrp1, cCodPrp2, cValPrp1, cValPrp
 
    end if
 
-   // Guardamos el criterio de busqueda para la proxima-----------------------
+   // Guardamos el criterio de busqueda para la proxima------------------------
 
    ( ::cHisMovT )->( ordsetfocus( nOrd ) )
    ( ::cHisMovT )->( dbgoto( nRec ) )
@@ -5454,17 +5454,30 @@ RETURN ( ::dConsolidacion )
 
 //---------------------------------------------------------------------------//
 
-METHOD lCheckConsolidacion( cCodArt, cCodAlm, cCodPrp1, cCodPrp2, cValPrp1, cValPrp2, cLote, dFecha, tHora )
+METHOD lCheckConsolidacion( cCodigoArticulo, cCodigoAlmacen, cCodigoPrimeraPropiedad, cCodigoSegundaPropiedad, cValorPrimeraPropiedad, cValorSegundaPropiedad, cLote, dFecha, tHora )
 
-   local dConsolidacion := ::scanConsolidacion( cCodArt, cCodAlm, cValPrp1, cValPrp2, cLote )
+   local cSentence
+   local dConsolidacion 
+
+   // Quitar esta linea si no se quiere usar SQL------------------------------- 
+
+   cSentence            := MovimientosAlmacenLineasRepository():getSQLSentenceFechaHoraConsolidacion( cCodigoArticulo, cCodigoAlmacen, cCodigoPrimeraPropiedad, cCodigoSegundaPropiedad, cValorPrimeraPropiedad, cValorSegundaPropiedad, cLote, dFecha, tHora )
+
+   dConsolidacion       := getSQLDatabase():selectValue( cSentence )
+
+   RETURN ( empty( dConsolidacion ) .or. hb_dtot( dFecha, tHora ) >= dConsolidacion )
+
+   /*
+   Uso de funciones anteriores a MySQL-----------------------------------------
+
+   dConsolidacion       := ::scanConsolidacion( cCodArt, cCodAlm, cValPrp1, cValPrp2, cLote )
 
    if isfalse( dConsolidacion )
-      dConsolidacion    := ::GetConsolidacion( cCodArt, cCodAlm, cCodPrp1, cCodPrp2, cValPrp1, cValPrp2, cLote )
+      dConsolidacion    := ::getConsolidacion( cCodArt, cCodAlm, cCodPrp1, cCodPrp2, cValPrp1, cValPrp2, cLote )
       
-      // dConsolidacion    := MovimientosAlmacenesLineasModel():getTimeStampConsolidacion( cCodArt, cCodAlm, cValPrp1, cValPrp2, cLote )
-
       ::addConsolidacion( cCodArt, cCodAlm, cValPrp1, cValPrp2, cLote, dConsolidacion )
    end if 
+   */
 
 RETURN ( empty( dConsolidacion ) .or. dtos( dFecha ) + tHora >= dConsolidacion )
 

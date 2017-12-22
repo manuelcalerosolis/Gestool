@@ -80,7 +80,7 @@ RETURN ( ::hColumns )
 
 METHOD   updateAfterDelete( aRecno )
 
-   local aId               := ::convertRecnoToId( aRecno )
+   local aId               := ::convertIdFromRecno( aRecno )
 
    local cUpdateOnDelete   := "UPDATE " + ::cTableName +  " SET id_padre = null WHERE "
 

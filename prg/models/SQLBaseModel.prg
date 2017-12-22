@@ -214,7 +214,7 @@ METHOD getEmpresaColumns()
                                        "width"     => 40                                        ,;
                                        "default"   => {|| 0 } }                                 )
 
-   hset( ::hColumns, "uuid",        {  "create"    => "VARCHAR(40) NOT NULL"                    ,;
+   hset( ::hColumns, "uuid",        {  "create"    => "VARCHAR(40) NOT NULL UNIQUE"             ,;
                                        "text"      => "Uuid"                                    ,;
                                        "header"    => "Uuid"                                    ,;
                                        "visible"   => .t.                                       ,;
@@ -383,6 +383,8 @@ METHOD getCreateTableSentence()
       cSQLCreateTable      := ChgAtEnd( cSQLCreateTable, ' )', 2 )
 
    end if 
+
+   msgAlert( cSQLCreateTable, "cSQLCreateTable" )
 
 RETURN ( cSQLCreateTable )
 
@@ -705,7 +707,7 @@ METHOD deleteSelection( aRecno )
 
    ::fireEvent( 'deletingSelection' )
 
-   ::getDatabase():Query( ::getdeleteSentence( aRecno ) )
+   ::getDatabase():Query( ::getDeleteSentence( aRecno ) )
 
    ::fireEvent( 'deletedSelection' )
    

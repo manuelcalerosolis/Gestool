@@ -5,19 +5,27 @@
 
 CLASS ImportadorMovimientosAlmacenLineasController FROM SQLBaseController
 
-   DATA aErrors         INIT {}
+   DATA oStock
 
    METHOD New( oController )
 
-   METHOD Activate()    INLINE ( ::oDialogView:Activate() )
+   METHOD End()
 
-   METHOD getModel()    INLINE ( ::oSenderController:oLineasController:getModel() )
-   METHOD getBrowse()   INLINE ( ::oSenderController:oDialogView:oSQLBrowseView )
+   METHOD Activate()
 
-   METHOD processLines( cLines )
-      METHOD processLine( hLine ) 
+   METHOD importarAlmacen()
 
-   METHOD showErrors() 
+   METHOD calculaStock( cArea )
+
+   METHOD creaRegistro()
+
+   METHOD validateFamiliaInicio()            INLINE ( iif(  ::validate( "codigo_familia_inicio", ::oDialogView:oFamiliaInicio:varGet() ),;
+                                                            ::stampNombreFamilia( ::oDialogView:oFamiliaInicio ),;
+                                                            .f. ) )
+
+   METHOD stampNombreFamilia( oFamilia )     INLINE ( oFamilia:oHelpText:cText( FamiliasModel():getNombre( oFamilia:varGet() ) ), .t. )
+
+   METHOD stampArticuloNombre( oArticulo )   INLINE ( oArticulo:oHelpText:cText( ArticulosModel():getNombre( oArticulo:varGet() ) ), .t. )
 
 END CLASS
 
@@ -25,98 +33,102 @@ END CLASS
 
 METHOD New( oController )
 
+   ::Super:New( oController )
+
+   ::oStock             := TStock():New()
+
    ::cTitle             := "Importador movimientos almacen lineas"
 
    ::oDialogView        := ImportadorMovimientosAlmacenLineasView():New( self )
 
-   ::Super:New( oController )
+   ::oValidator         := ImportadorMovimientosAlmacenLineasValidator():New( self )
 
 RETURN ( Self )
 
 //---------------------------------------------------------------------------//
 
-METHOD processLines( cLines )
+METHOD End()
 
-   local aLines    
+   ::Super:End()
 
-   if empty( cLines )
-      RETURN ( Self )
-   end if 
-
-   aLines               := hb_atokens( cLines, CRLF )
-
-   if empty( aLines ) 
-      RETURN ( Self )
-   end if 
-
-   ::aErrors            := {}
-
-   aeval( aLines, {|elem| ::processLine( elem ) } ) 
-
-   ::showErrors()
-
-   ::getBrowse():Refresh()
+   ::oStock:End()
 
 RETURN ( Self )
 
 //---------------------------------------------------------------------------//
 
-METHOD processLine( cLine ) 
+METHOD Activate()
 
-   local hBuffer    
-   local hArticulo
-   local aLines      := hb_atokens( cLine, "," )
-
-   if !hb_isarray( aLines ) 
-      aadd( ::aErrors, "No hay líneas que procesar." )
-      RETURN ( Self )
+   if empty( ::oSenderController:oDialogView:oGetAlmacenDestino:varGet() )
+      msgStop( "Es necesario cumplimentar el almacén destino" )
+      RETURN ( Self )      
    end if 
-
-   if len( aLines ) < 2
-      aadd( ::aErrors, "La linea no contiene los valores mínimos." )
-      RETURN ( Self )
-   end if 
-
-   hBuffer           := ::getModel():loadBlankBuffer()
-
-   hset( hBuffer, "codigo_articulo",     alltrim( aLines[ 1 ] ) )
-   hset( hBuffer, "unidades_articulo",   val( strtran( aLines[ 2 ], ".", "," ) ) )
-
-   if len( aLines ) >= 6
-      hset( hBuffer, "codigo_primera_propiedad", alltrim( aLines[ 3 ] ) )
-      hset( hBuffer, "valor_primera_propiedad",  alltrim( aLines[ 4 ] ) )
-      hset( hBuffer, "codigo_segunda_propiedad", alltrim( aLines[ 5 ] ) )
-      hset( hBuffer, "valor_segunda_propiedad",  alltrim( aLines[ 6 ] ) )
-   end if 
-
-   hArticulo         := ArticulosModel():getHash( hget( hBuffer, "codigo_articulo" ) )
-   if empty( hArticulo )
-      aadd( ::aErrors, "El código del artículo no existe." )
-      RETURN ( Self )
-   end if 
-
-   hset( hBuffer, "nombre_articulo", hget( hArticulo, "nombre" ) ) 
-   hset( hBuffer, "precio_articulo", hget( hArticulo, "pcosto" ) )
-
-   ::getModel():insertBuffer( hBuffer )
-
-RETURN ( Self ) 
+      
+RETURN ( ::oDialogView:Activate() )
 
 //---------------------------------------------------------------------------//
 
-METHOD showErrors() 
+METHOD importarAlmacen()
 
-   local cErrorMessage  := ""
+   local cArea          := "ArtToImport"
 
-   if !empty( ::aErrors )
-      aeval( ::aErrors, {|cError| cErrorMessage += cError + CRLF } )   
-      msgstop( cErrorMessage, "Errores en la importación" )
-   end if 
+   ArticulosModel():getArticulosToImport( @cArea, ::oDialogView:getRange() )
+
+   ::oDialogView:oMtrStock:setTotal( ( cArea )->( lastrec() ) )
+
+   while !( cArea )->( eof() )
+
+      ::calculaStock( cArea )
+
+      ::oDialogView:oMtrStock:autoInc()
+
+      ( cArea )->( dbskip() )
+
+   end while
+
+   CLOSE ( cArea )
 
 RETURN ( Self )
 
 //---------------------------------------------------------------------------//
 
+METHOD calculaStock( cArea )
 
+   local aStockArticulo 
 
+   aStockArticulo       := ::oStock:aStockArticulo( ( cArea )->Codigo, ::oSenderController:oDialogView:oGetAlmacenDestino:varGet() )
 
+   aeval( aStockArticulo, {|sStockArticulo| if( sStockArticulo:nUnidades != 0, ::creaRegistro( cArea, sStockArticulo ), ) } )
+
+RETURN ( Self )
+
+//---------------------------------------------------------------------------//
+
+METHOD creaRegistro( cArea, sStockArticulo )
+
+   local nId
+   local hBuffer
+
+   hBuffer                                := ::oSenderController:oLineasController:oModel:loadBlankBuffer()
+
+   hBuffer[ "parent_uuid" ]               := ::getSenderController():getUuid()
+   hBuffer[ "codigo_articulo" ]           := ( cArea )->Codigo
+   hBuffer[ "nombre_articulo" ]           := ( cArea )->Nombre
+   hBuffer[ "precio_articulo" ]           := ( cArea )->pCosto
+   hBuffer[ "codigo_primera_propiedad" ]  := sStockArticulo:cCodigoPropiedad1
+   hBuffer[ "valor_primera_propiedad" ]   := sStockArticulo:cValorPropiedad1
+   hBuffer[ "codigo_segunda_propiedad" ]  := sStockArticulo:cCodigoPropiedad2
+   hBuffer[ "valor_segunda_propiedad" ]   := sStockArticulo:cValorPropiedad2
+   hBuffer[ "lote" ]                      := sStockArticulo:cLote
+   hBuffer[ "unidades_articulo" ]         := sStockArticulo:nUnidades
+
+   nId                                    := ::oSenderController:oLineasController:oModel:insertBuffer( hBuffer )
+
+   if !empty( nId )
+      ::oSenderController:oLineasController:refreshRowSetAndFind( nId )
+      ::oSenderController:oLineasController:oBrowseView:Refresh()
+   end if 
+
+RETURN ( Self )
+
+//---------------------------------------------------------------------------//

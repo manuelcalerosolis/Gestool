@@ -781,7 +781,7 @@ METHOD StartAdministratorTask()
 
             selectEmpresa( aEmpresa[ 1 ] )
 
-            lActualiza( aEmpresa[ 1 ], nil, .t., aEmpresa[ 2 ], .f. )
+            lActualiza( aEmpresa[ 1 ], nil, .t., aEmpresa[ 2 ], .f. ) 
 
             aEmpresa[ 4 ]      := .t.
 
@@ -827,7 +827,7 @@ METHOD StartAdministratorTask()
 
       ::CreateDataTable()
 
-      if ::lSeeders .and. !Empty( oSeeder )
+      if ::lSeeders 
          oSeeder:runSeederDatos()
       end if
 
@@ -853,8 +853,12 @@ METHOD StartAdministratorTask()
 
             ::Reindex()
 
-            if ::lSeeders .and. !Empty( oSeeder )
+            if ::lSeeders 
+
+               ::Syncronize()
+
                oSeeder:runSeederEmpresa()
+
             end if
 
             ::MigrateEmpresaToSQL()

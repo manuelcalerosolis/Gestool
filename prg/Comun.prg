@@ -279,6 +279,10 @@ RETURN ( .t. )
 
 FUNCTION Test()
 
+   // msgalert( hb_valtoexp( hb_dtot( ctod( "01/01/2017" ), "15:30:10" ) ) ) 
+
+   // msgalert( hb_valtoexp( TStock():lCheckConsolidacion( '00107220', '002' ) ) )
+
 RETURN NIL 
 
 //----------------------------------------------------------------------------//

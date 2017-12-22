@@ -11,14 +11,6 @@ CLASS EtiquetasMovimientosAlmacenController FROM SQLBaseController
 
    METHOD New( oController )
 
-   METHOD End()
-
-   METHOD freeRowSet()                 INLINE ( if( !empty( ::oRowSet ), ( ::oRowSet:free(), ::oRowSet := nil ), ) )
-
-   METHOD freeStatement()              INLINE ( if( !empty( ::oStatement ), ( ::oStatement:free(), ::oStatement := nil ), ) )
-
-   METHOD getRowSet()                  INLINE ( ::oRowSet )
-
    METHOD Activate()                   INLINE ( ::generateRowSet(), ::oDialogView:Activate() )
    
    METHOD clickingHeader( oColumn )    INLINE ( ::generateRowSet( oColumn:cSortOrder ) )
@@ -41,23 +33,13 @@ END CLASS
 
 METHOD New( oController )
 
+   ::Super:New( oController )
+
    ::cTitle             := "Etiquetas movimientos almacen lineas"
 
    ::oDialogView        := EtiquetasSelectorView():New( self )
 
-   ::Super:New( oController )
-
 RETURN ( Self )
-
-//---------------------------------------------------------------------------//
-
-METHOD End()
-
-   ::freeRowSet()
-
-   ::freeStatement()
-
-RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 
@@ -86,13 +68,9 @@ METHOD generateRowSet( cOrderBy )
 
    cSql                 := MovimientosAlmacenLineasRepository():getSQLSentenceToLabels( ::oDialogView:nDocumentoInicio, ::oDialogView:nDocumentoFin, nFixLabels, cOrderBy )
 
-   ::freeRowSet()
+   msgalert( cSql, "cSql" )
 
-   ::freeStatement()
-   
-   ::oStatement         := getSqlDataBase():query( cSql )      
-
-   ::oRowSet            := ::oStatement:fetchRowSet()
+   ::oRowSet:build( cSql )
 
    ::oRowSet:goTop()
 

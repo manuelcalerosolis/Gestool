@@ -65,6 +65,8 @@ CLASS TReindex
 
    METHOD SetText( cText )
 
+   METHOD Sincroniza()
+
    METHOD Resource()
 
    Method lCreateHandle()
@@ -329,28 +331,7 @@ METHOD GenIndices( oMsg )
    */
 
    if ::aLgcIndices[ 6 ] .and. ::lSincroniza
-
-      ::SetText( "Sincroniza bancos de clientes", ::aProgress[ 6 ] )                      ; SynClient( ::cPathEmp )
-      ::SetText( "Sincroniza bancos de proveedores", ::aProgress[ 6 ] )                   ; SynProvee( ::cPathEmp )
-      ::SetText( "Sincroniza artículos", ::aProgress[ 6 ] )                               ; SynArt(    ::cPathEmp )
-      ::SetText( "Sincroniza líneas de SAT de clientes", ::aProgress[ 6 ]  )              ; SynSatCli( ::cPathEmp )
-      ::SetText( "Sincroniza líneas de presupuestos", ::aProgress[ 6 ]  )                 ; SynPreCli( ::cPathEmp )
-      ::SetText( "Sincroniza líneas de pedidos de clientes", ::aProgress[ 6 ]  )          ; SynPedCli( ::cPathEmp )
-      ::SetText( "Sincroniza líneas de albaranes de clientes", ::aProgress[ 6 ]  )        ; SynAlbCli( ::cPathEmp )
-      ::SetText( "Sincroniza líneas de facturas de clientes", ::aProgress[ 6 ]  )         ; SynFacCli( ::cPathEmp )
-      ::SetText( "Sincroniza líneas de facturas de rectificativas", ::aProgress[ 6 ]  )   ; SynFacRec( ::cPathEmp )
-      ::SetText( "Sincroniza recibos de clientes", ::aProgress[ 6 ] )                     ; SynRecCli( ::cPathEmp )
-      ::SetText( "Sincroniza líneas de tikets de clientes", ::aProgress[ 6 ]  )           ; SynTikCli( ::cPathEmp )
-      ::SetText( "Sincroniza líneas de pedidos a proveedor", ::aProgress[ 6 ]  )          ; SynPedPrv( ::cPathEmp )
-      ::SetText( "Sincroniza líneas de albaranes a proveedor", ::aProgress[ 6 ]  )        ; SynAlbPrv( ::cPathEmp )
-      ::SetText( "Sincroniza líneas de facturas a proveedor", ::aProgress[ 6 ]  )         ; SynFacPrv( ::cPathEmp )
-      ::SetText( "Sincroniza líneas de rectificativas a proveedor", ::aProgress[ 6 ]  )   ; SynRctPrv( ::cPathEmp )
-      ::SetText( "Sincroniza recibos de proveedores", ::aProgress[ 6 ]  )                 ; SynRecPrv( ::cPathEmp )
-      ::SetText( "Sincroniza líneas de ordenes de carga", ::aProgress[ 6 ]  )             ; SynOrdCar( ::cPathEmp )
-      ::SetText( "Sincroniza líneas de movimientos de almacén", ::aProgress[ 6 ]  )       ; SynRemMov( ::cPathEmp )
-      ::SetText( "Sincroniza unidades de medición", ::aProgress[ 6 ]  )                   ; UniMedicion():Create():Syncronize()
-      ::SetText( "Sincroniza Fabricantes", ::aProgress[ 6 ]  )                            ; TFabricantes():Create():Syncronize()
-
+      ::Sincroniza()
    end if
 
    if ::lMessageEnd
@@ -375,6 +356,33 @@ METHOD GenIndices( oMsg )
    StartAutoImp()
 
 RETURN ( nil )
+
+//------------------------------------------------------------------------//
+
+METHOD Sincroniza()
+
+   ::SetText( "Sincroniza bancos de clientes", ::aProgress[ 6 ] )                      ; SynClient( ::cPathEmp )
+   ::SetText( "Sincroniza bancos de proveedores", ::aProgress[ 6 ] )                   ; SynProvee( ::cPathEmp )
+   ::SetText( "Sincroniza artículos", ::aProgress[ 6 ] )                               ; SynArt(    ::cPathEmp )
+   ::SetText( "Sincroniza líneas de SAT de clientes", ::aProgress[ 6 ]  )              ; SynSatCli( ::cPathEmp )
+   ::SetText( "Sincroniza líneas de presupuestos", ::aProgress[ 6 ]  )                 ; SynPreCli( ::cPathEmp )
+   ::SetText( "Sincroniza líneas de pedidos de clientes", ::aProgress[ 6 ]  )          ; SynPedCli( ::cPathEmp )
+   ::SetText( "Sincroniza líneas de albaranes de clientes", ::aProgress[ 6 ]  )        ; SynAlbCli( ::cPathEmp )
+   ::SetText( "Sincroniza líneas de facturas de clientes", ::aProgress[ 6 ]  )         ; SynFacCli( ::cPathEmp )
+   ::SetText( "Sincroniza líneas de facturas de rectificativas", ::aProgress[ 6 ]  )   ; SynFacRec( ::cPathEmp )
+   ::SetText( "Sincroniza recibos de clientes", ::aProgress[ 6 ] )                     ; SynRecCli( ::cPathEmp )
+   ::SetText( "Sincroniza líneas de tikets de clientes", ::aProgress[ 6 ]  )           ; SynTikCli( ::cPathEmp )
+   ::SetText( "Sincroniza líneas de pedidos a proveedor", ::aProgress[ 6 ]  )          ; SynPedPrv( ::cPathEmp )
+   ::SetText( "Sincroniza líneas de albaranes a proveedor", ::aProgress[ 6 ]  )        ; SynAlbPrv( ::cPathEmp )
+   ::SetText( "Sincroniza líneas de facturas a proveedor", ::aProgress[ 6 ]  )         ; SynFacPrv( ::cPathEmp )
+   ::SetText( "Sincroniza líneas de rectificativas a proveedor", ::aProgress[ 6 ]  )   ; SynRctPrv( ::cPathEmp )
+   ::SetText( "Sincroniza recibos de proveedores", ::aProgress[ 6 ]  )                 ; SynRecPrv( ::cPathEmp )
+   ::SetText( "Sincroniza líneas de ordenes de carga", ::aProgress[ 6 ]  )             ; SynOrdCar( ::cPathEmp )
+   ::SetText( "Sincroniza líneas de movimientos de almacén", ::aProgress[ 6 ]  )       ; SynRemMov( ::cPathEmp )
+   ::SetText( "Sincroniza unidades de medición", ::aProgress[ 6 ]  )                   ; UniMedicion():Create():Syncronize()
+   ::SetText( "Sincroniza Fabricantes", ::aProgress[ 6 ]  )                            ; TFabricantes():Create():Syncronize()
+
+RETURN ( Self )
 
 //------------------------------------------------------------------------//
 

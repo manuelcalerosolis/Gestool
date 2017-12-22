@@ -51,9 +51,11 @@ CLASS TransaccionesComercialesLineasModel FROM ADSBaseModel
 
    METHOD getSQLAdsStock( cCodigoArticulo, dFechaInicio, dFechaFin, lSalida )
 
-   METHOD getSQLAdsStockSalida( cCodigoArticulo, dFechaInicio, dFechaFin )   INLINE ( ::getSQLAdsStock( cCodigoArticulo, dFechaInicio, dFechaFin, .t. ) )
+   METHOD getSQLAdsStockSalida( cCodigoArticulo, dFechaInicio, dFechaFin, cCodigoAlmacen );
+                                                                                 INLINE ( ::getSQLAdsStock( cCodigoArticulo, dFechaInicio, dFechaFin, cCodigoAlmacen, .t. ) )
    
-   METHOD getSQLAdsStockEntrada( cCodigoArticulo, dFechaInicio, dFechaFin )  INLINE ( ::getSQLAdsStock( cCodigoArticulo, dFechaInicio, dFechaFin, .f. ) )
+   METHOD getSQLAdsStockEntrada( cCodigoArticulo, dFechaInicio, dFechaFin, cCodigoAlmacen );
+                                                                                 INLINE ( ::getSQLAdsStock( cCodigoArticulo, dFechaInicio, dFechaFin, cCodigoAlmacen, .f. ) )
 
    METHOD getTotalUnidadesStatement( lSalida )
 
@@ -242,7 +244,7 @@ RETURN ( cSql )
 
 //---------------------------------------------------------------------------//
 
-METHOD getSQLAdsStock( cCodigoArticulo, dFechaInicio, dFechaFin, lSalida )
+METHOD getSQLAdsStock( cCodigoArticulo, dFechaInicio, dFechaFin, cCodigoAlmacen, lSalida )
 
    local cStm
    local cSql        := ""
@@ -265,10 +267,23 @@ METHOD getSQLAdsStock( cCodigoArticulo, dFechaInicio, dFechaFin, lSalida )
    cSql              += ::getArticuloFieldName() + " AS Articulo, "
    cSql              += "cLote AS Lote, "
    cSql              += ::getAlmacenFieldName() + " AS Almacen  "
+
    cSql              += "FROM " + ::getTableName() + " TablaLineas "
-   cSql              += "WHERE " + ::getArticuloFieldName() + " = " + quoted( cCodigoArticulo ) + " " 
-   cSql              += "AND "+ ::getFechaFieldName() + " >= " + quoted( dtoc( dFechaInicio ) ) + " AND " + ::getFechaFieldName() + " <= " + quoted( dtoc( dFechaFin ) ) + " "
    
+   cSql              += "WHERE " + ::getArticuloFieldName() + " = " + quoted( cCodigoArticulo ) + " " 
+
+   if !empty( dFechaInicio ) 
+      cSql           += "AND " + ::getFechaFieldName() + " >= " + quoted( dtoc( dFechaInicio ) ) + " "
+   end if 
+
+   if !empty( dFechaFin )
+      cSql           += "AND " + ::getFechaFieldName() + " <= " + quoted( dtoc( dFechaFin ) ) + " "
+   end if 
+
+   if !empty( cCodigoAlmacen )
+      cSql           += "AND "+ ::getAlmacenFieldName() + " = " + quoted( cCodigoAlmacen ) + " "
+   end if
+
    if !Empty( ::getExtraWhere() )
       cSql           += ::getExtraWhere() + " "
    end if
@@ -278,8 +293,15 @@ METHOD getSQLAdsStock( cCodigoArticulo, dFechaInicio, dFechaFin, lSalida )
    cSql              += "( SELECT TOP 1 CAST( HisMov.dFecMov AS SQL_CHAR ) + HisMov.cTimMov "
    cSql              += "FROM " + ::getEmpresaTableName( "HisMov" ) + " HisMov "
    cSql              += "WHERE HisMov.nTipMov = 4 "
-   cSql              += "AND HisMov.dFecMov >= " + quoted( dtoc( dFechaInicio ) ) + " "
-   cSql              += "AND HisMov.dFecMov <= " + quoted( dtoc( dFechaFin ) ) + " "
+
+   if !empty( dFechaInicio ) 
+      cSql           += "AND HisMov.dFecMov >= " + quoted( dtoc( dFechaInicio ) ) + " "
+   end if 
+
+   if !empty( dFechaFin )
+      cSql           += "AND HisMov.dFecMov <= " + quoted( dtoc( dFechaFin ) ) + " "
+   end if 
+
    cSql              += "AND HisMov.cRefMov = TablaLineas." + ::getArticuloFieldName() + " "
    cSql              += "AND HisMov.cAliMov = TablaLineas." + ::getAlmacenFieldName() + " "
    cSql              += "AND HisMov.cLote = TablaLineas.cLote "

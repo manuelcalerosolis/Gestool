@@ -754,7 +754,7 @@ METHOD BuildReportCorrespondences()
                            "Variable" =>  {||   ::AddVariableLineasRectificativaCliente(),;
                                                 ::AddVariableStock() },;
                            "Data" =>      {||   ::FastReportFacturaRectificativa() } },;
-                     "Tickets de clientes" => ;
+                     "Facturas simplificadas de clientes" => ;
                         {  "Generate" =>  {||   ::AddTicket( .t. ),;
                                                 ::processAllClients() },;
                            "Variable" =>  {||   ::AddVariableLineasTicketCliente(),;
@@ -1629,6 +1629,11 @@ METHOD AddPresupuestoClientes() CLASS TFastVentasArticulos
          ::oDbf:cCodTip    := ( D():PresupuestosClientesLineas( ::nView ) )->cCodTip
 
          ::oDbf:nCosArt    := nTotCPreCli( D():PresupuestosClientesLineas( ::nView ), ::nDecOut, ::nDerOut, ::nValDiv )
+
+         if empty( ::oDbf:nCosArt )
+            ::oDbf:nCosArt := ::oDbf:nUniArt * nCosto( ::oDbf:cCodArt, D():Articulos( ::nView ), D():Kit( ::nView ) )
+         end if 
+
          ::oDbf:nUniArt    := nTotNPreCli( D():PresupuestosClientesLineas( ::nView ) ) 
 
          ::oDbf:cCtrCoste  := ( D():PresupuestosClientesLineas( ::nView ) )->cCtrCoste
@@ -1682,9 +1687,6 @@ METHOD AddPresupuestoClientes() CLASS TFastVentasArticulos
          ::oDbf:nPctAge    := ( D():PresupuestosClientes( ::nView ) )->nPctComAge
          ::oDbf:nComAge    := nComLPreCli( D():PresupuestosClientes( ::nView ), D():PresupuestosClientesLineas( ::nView ), ::nDecOut, ::nDerOut )
 
-         if empty( ::oDbf:nCosArt )
-            ::oDbf:nCosArt := ::oDbf:nUniArt * nCosto( ::oDbf:cCodArt, ( D():Articulos( ::nView ) ), D():Kit( ::nView ) )
-         end if 
 
          if !empty( ( D():PresupuestosClientesLineas( ::nView ) )->cCodPrv ) 
             ::oDbf:cPrvHab := ( D():PresupuestosClientesLineas( ::nView ) )->cCodPrv
@@ -2612,7 +2614,7 @@ METHOD AddTicket() CLASS TFastVentasArticulos
                ::oDbf:cLote      := ( D():TiketsLineas( ::nView ) )->cLote
 
                ::oDbf:cClsDoc    := TIK_CLI
-               ::oDbf:cTipDoc    := "Ticket"
+               ::oDbf:cTipDoc    := "Simplificada"
                ::oDbf:cSerDoc    := ( D():Tikets( ::nView ) )->cSerTik
                ::oDbf:cNumDoc    := ( D():Tikets( ::nView ) )->cNumTik
                ::oDbf:cSufDoc    := ( D():Tikets( ::nView ) )->cSufTik
@@ -2700,7 +2702,7 @@ METHOD AddTicket() CLASS TFastVentasArticulos
                ::oDbf:cValPr2    := ( D():TiketsLineas( ::nView ) )->cValPr2
 
                ::oDbf:cClsDoc    := TIK_CLI
-               ::oDbf:cTipDoc    := "Ticket"
+               ::oDbf:cTipDoc    := "Simplificada"
                ::oDbf:cSerDoc    := ( D():Tikets( ::nView ) )->cSerTik
                ::oDbf:cNumDoc    := ( D():Tikets( ::nView ) )->cNumTik
                ::oDbf:cSufDoc    := ( D():Tikets( ::nView ) )->cSufTik

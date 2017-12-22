@@ -363,7 +363,10 @@ SQLBaseReport.prg 															\
 MovimientosAlmacenReport.prg												\
 MovimientosAlmacenLabel.prg												\
 ImportadorMovimientosAlmacenLineasView.prg							\
+CapturadorMovimientosAlmacenLineasView.prg							\
 ImportadorMovimientosAlmacenLineasController.prg					\
+ImportadorMovimientosAlmacenLineasValidator.prg						\
+CapturadorMovimientosAlmacenLineasController.prg					\
 MovimientosAlmacenLineasView.prg											\
 MovimientosAlmacenController.prg 										\
 MovimientosAlmacenLineasController.prg 								\
@@ -584,6 +587,8 @@ PropiedadesLineasModel.obj       										\
 PropiedadesLineasController.obj       									\
 RelacionesEtiquetasModel.prg 												\
 ArticulosModel.prg                                    			\
+FamiliasModel.prg                                    				\
+TiposArticulosModel.prg                                    		\
 ContadoresModel.prg                                    			\
 ColumnasUsuariosModel.prg 													\
 SQLConfiguracionColumnasUsuariosModel.prg                      \
@@ -616,7 +621,7 @@ GroupCustomerViewSearchNavigator.prg                           \
 Events.prg 																		\
 Seeders.prg    																\
 SqlMigrations.prg 															\
-SQLNumerosSeriesModel.prg 													\
+SQLMovimientosAlmacenLineasNumerosSeriesModel.prg 					\
 NumerosSeriesController.prg 								  				\
 NumerosSeriesView.prg 														\
 SQLExportableModel.prg 														\
@@ -973,7 +978,10 @@ SQLBaseReport.obj 															\
 MovimientosAlmacenReport.obj												\
 MovimientosAlmacenLabel.obj 												\
 ImportadorMovimientosAlmacenLineasView.obj							\
+CapturadorMovimientosAlmacenLineasView.obj							\
 ImportadorMovimientosAlmacenLineasController.obj 					\
+ImportadorMovimientosAlmacenLineasValidator.obj 					\
+CapturadorMovimientosAlmacenLineasController.obj 					\
 MovimientosAlmacenLineasView.obj											\
 MovimientosAlmacenController.obj 										\
 MovimientosAlmacenLineasController.obj 								\
@@ -1199,6 +1207,8 @@ PropiedadesLineasModel.obj       										\
 PropiedadesLineasController.obj       									\
 RelacionesEtiquetasModel.obj 												\
 ArticulosModel.obj                                    			\
+FamiliasModel.obj                                    				\
+TiposArticulosModel.obj                                    		\
 ContadoresModel.obj                                    			\
 SQLConfiguracionColumnasUsuariosModel.obj                      \
 PedidosClientesLineasModel.obj 											\
@@ -1209,7 +1219,7 @@ GroupCustomerViewSearchNavigator.obj                        	\
 Events.obj 																		\
 Seeders.obj 																	\
 SqlMigrations.obj 															\
-SQLNumerosSeriesModel.obj 													\
+SQLMovimientosAlmacenLineasNumerosSeriesModel.obj 					\
 NumerosSeriesController.obj 												\
 NumerosSeriesView.obj 														\
 SQLExportableModel.obj 														\
@@ -1553,7 +1563,10 @@ $(OBJ)\MovimientosAlmacenReport.obj 									+
 $(OBJ)\MovimientosAlmacenLabel.obj 										+
 $(OBJ)\SQLBaseReport.obj 													+
 $(OBJ)\ImportadorMovimientosAlmacenLineasView.obj 					+
+$(OBJ)\CapturadorMovimientosAlmacenLineasView.obj 					+
 $(OBJ)\ImportadorMovimientosAlmacenLineasController.obj			+
+$(OBJ)\ImportadorMovimientosAlmacenLineasValidator.obj			+
+$(OBJ)\CapturadorMovimientosAlmacenLineasController.obj			+
 $(OBJ)\MovimientosAlmacenLineasView.obj								+
 $(OBJ)\MovimientosAlmacenController.obj 								+
 $(OBJ)\MovimientosAlmacenLineasController.obj						+
@@ -1760,6 +1773,8 @@ $(OBJ)\FacturasClientesModel.obj 										+
 $(OBJ)\TicketsClientesLineasModel.obj 									+
 $(OBJ)\TicketsClientesPagosModel.obj 									+
 $(OBJ)\ArticulosModel.obj                    						+
+$(OBJ)\FamiliasModel.obj                    							+
+$(OBJ)\TiposArticulosModel.obj              							+
 $(OBJ)\ContadoresModel.obj                    						+
 $(OBJ)\ColumnasUsuariosModel.obj               						+
 $(OBJ)\RecibosClientesModel.obj											+
@@ -1791,7 +1806,7 @@ $(OBJ)\GroupCustomerViewSearchNavigator.obj              		+
 $(OBJ)\PedidosClientesLineasModel.obj 									+
 $(OBJ)\Seeders.obj 															+
 $(OBJ)\SqlMigrations.obj 													+
-$(OBJ)\SQLNumerosSeriesModel.obj 										+
+$(OBJ)\SQLMovimientosAlmacenLineasNumerosSeriesModel.obj 		+
 $(OBJ)\NumerosSeriesController.obj 										+
 $(OBJ)\NumerosSeriesView.obj 												+
 $(OBJ)\SQLRowSet.obj 														+
@@ -1805,6 +1820,7 @@ $<,$*
 $(FWLIB)\FiveH.lib               										+
 $(FWLIB)\FiveHC.lib              										+
 $(HBLIB)\hdo.lib               											+
+$(HBLIB)\mylist.lib 															+
 $(HBLIB)\rdlmysql.lib 														+
 $(HBLIB)\libmysql.lib            										+
 $(HBLIB)\Eagle1.lib              										+

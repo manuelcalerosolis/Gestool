@@ -60,8 +60,6 @@ CLASS SQLBaseController
    METHOD getModelBufferColumnKey()                   INLINE ( ::getModelBuffer( ( ::oModel:cColumnKey ) ) )
    METHOD getModelSelectValue( cSentence )            INLINE ( if( !empty( ::oModel ), ::oModel:SelectValue( cSentence ), ) )
 
-   METHOD endModel()                                  INLINE ( if( !empty( ::oModel ), ::oModel:end(), ) )
-
    METHOD findInModel()
 
    METHOD changeModelOrderAndOrientation()            
@@ -77,7 +75,7 @@ CLASS SQLBaseController
    METHOD refreshRowSet()                             INLINE ( if( !empty( ::oRowSet ), ::oRowSet:refresh(), ) )
    METHOD refreshRowSetAndFind( nId )                 INLINE ( if( !empty( ::oRowSet ), ::oRowSet:refreshAndFind( nId ), ) )
 
-   METHOD getRecnoToId( aSelected )                   INLINE ( if( !empty( ::oRowSet ), ::oRowSet:RecnoToId( aSelected ), {} ) )
+   METHOD getIdFromRecno( aSelected )                 INLINE ( if( !empty( ::oRowSet ), ::oRowSet:IdFromRecno( aSelected ), {} ) )
 
    METHOD getIdFromRowSet()                           INLINE ( if( !empty( ::getRowSet() ), ( ::getRowSet():fieldGet( ::oModel:cColumnKey ) ), ) )
 
@@ -95,7 +93,7 @@ CLASS SQLBaseController
 
    // Validator----------------------------------------------------------------
 
-   METHOD Validate( cColumn )                         INLINE ( if( !empty( ::oValidator ), ::oValidator:Validate( cColumn ), ) )
+   METHOD Validate( cColumn, uValue )                 INLINE ( if( !empty( ::oValidator ), ::oValidator:Validate( cColumn, uValue ), ) )
    METHOD Assert( cColumn, uValue )                   INLINE ( if( !empty( ::oValidator ), ::oValidator:Assert( cColumn, uValue ), ) )
 
    // Browse------------------------------------------------------------------
@@ -168,6 +166,8 @@ CLASS SQLBaseController
    METHOD setEvent( cEvent, bEvent )                  INLINE ( if( !empty( ::oEvents ), ::oEvents:set( cEvent, bEvent ), ) )
    METHOD fireEvent( cEvent )                         INLINE ( if( !empty( ::oEvents ), ::oEvents:fire( cEvent ), ) )
 
+   METHOD onKeyChar()                                 VIRTUAL
+
    // Deprecated---------------------------------------------------------------
 
    METHOD setFastReport( oFastReport, cTitle, cSentence, cColumns )
@@ -190,8 +190,14 @@ RETURN ( self )
 
 METHOD End()
 
-   ::endModel() 
+   ::oEvents:End()
 
+   ::oRowSet:End()
+
+   ::oEvents   := nil
+
+   ::oRowSet   := nil
+   
 RETURN ( nil )
 
 //---------------------------------------------------------------------------//
@@ -479,7 +485,7 @@ METHOD Delete( aSelectedIds )
    local lDelete        := .f.
    local cNumbersOfDeletes
 
-   msgalert( "SQLBaseController deleted()")
+   msgalert( hb_valtoexp( aSelectedIds ), "SQLBaseController deleted()" )
 
    if ::notUserDelete()
       msgStop( "Acceso no permitido" )

@@ -113,7 +113,7 @@ METHOD New( oController )
 
    ::setEvent( 'closedDialog',      {|| ::onClosedDialog() } )
 
-   ::setEvent( 'appended',          {|| ::oBrowseView:Refresh(), msgalert( "appended" ) } )
+   ::setEvent( 'appended',          {|| ::oBrowseView:Refresh() } )
    ::setEvent( 'edited',            {|| ::oBrowseView:Refresh() } )
    ::setEvent( 'deletedSelection',  {|| ::oBrowseView:Refresh() } )
 

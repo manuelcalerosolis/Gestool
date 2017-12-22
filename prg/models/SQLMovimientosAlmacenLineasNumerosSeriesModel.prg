@@ -4,11 +4,15 @@
 
 //---------------------------------------------------------------------------//
 
-CLASS SQLNumerosSeriesModel FROM SQLBaseModel
+CLASS SQLMovimientosAlmacenLineasNumerosSeriesModel FROM SQLBaseModel
 
-   DATA cTableName                  INIT "numeros_series"
+   DATA cTableName                  INIT "movimientos_almacen_lineas_numeros_series"
 
-   DATA cConstraints                INIT "PRIMARY KEY (uuid), KEY (id)"
+   DATA cConstraints                INIT  "PRIMARY KEY (uuid), "                                + ;
+                                             "KEY (id), "                                       + ;
+                                          "FOREIGN KEY ( parent_uuid ) "                        + ;
+                                             "REFERENCES movimientos_almacen_lineas( uuid ) "   + ;
+                                             "ON DELETE CASCADE"
 
    DATA aBuffer
 
@@ -41,7 +45,7 @@ METHOD getColumns()
                                              "visible"   => .t.                                       ,;
                                              "width"     => 40 }                                      )   
 
-   hset( ::hColumns, "uuid",              {  "create"    => "VARCHAR(40) NOT NULL"                    ,;
+   hset( ::hColumns, "uuid",              {  "create"    => "VARCHAR(40) NOT NULL UNIQUE"             ,;
                                              "text"      => "Uuid"                                    ,;
                                              "header"    => "Uuid"                                    ,;
                                              "visible"   => .f.                                       ,;

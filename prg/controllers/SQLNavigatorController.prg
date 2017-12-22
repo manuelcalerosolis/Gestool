@@ -23,7 +23,7 @@ CLASS SQLNavigatorController FROM SQLBaseController
 
    METHOD New()
 
-   METHOD Delete( aSelected )                         INLINE( ::Super:Delete( ::getRecnoToId( aSelected ) ) )
+   METHOD Delete( aSelected )                         INLINE( ::Super:Delete( ::getIdFromRecno( aSelected ) ) )
 
    METHOD ActivateNavigatorView()
 
@@ -89,8 +89,6 @@ METHOD ActivateNavigatorView()
    if oWnd() != nil
       SysRefresh(); oWnd():CloseAll(); SysRefresh()
    end if
-
-   msgalert( ::oModel:getSelectSentence(), "ActivateNavigatorView" )
 
    ::oRowSet:build( ::oModel:getSelectSentence() )
 

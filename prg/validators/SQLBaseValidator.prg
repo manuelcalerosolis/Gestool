@@ -23,16 +23,22 @@ CLASS SQLBaseValidator
    METHOD getValidators()              VIRTUAL
    METHOD getAsserts()                 VIRTUAL
 
-   METHOD Validate( cColumn, value )   INLINE ( ::ProcessAll( cColumn, ::getValidators(), value ) )
-   METHOD Assert( cColumn, uValue )    INLINE ( ::ProcessAll( cColumn, ::getAsserts(), uValue ) )
+   METHOD Validate( cColumn, uValue )  INLINE ( ::ProcessAll( cColumn, uValue, ::getValidators() ) )
+   METHOD Assert( cColumn, uValue )    INLINE ( ::ProcessAll( cColumn, uValue, ::getAsserts() ) )
 
    METHOD ProcessAll()
       METHOD Process()
 
    METHOD Required()
+   METHOD RequiredOrEmpty( uValue )
+
    METHOD Unique()
    METHOD Exist()
    METHOD EmptyOrExist()
+
+   METHOD existArticulo( uValue )
+   METHOD existFamilia( uValue )
+   METHOD existTipoArticulo( uValue )
 
 END CLASS
 
@@ -54,7 +60,7 @@ RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 
-METHOD ProcessAll( cColumn, hProcess, uValue )
+METHOD ProcessAll( cColumn, uValue, hProcess )
 
    local hColumn
    local hColumnProcess
@@ -70,9 +76,13 @@ METHOD ProcessAll( cColumn, hProcess, uValue )
 
    ::cColumnToProced       := cColumn
 
+   if empty( uValue )
+      uValue               := ::oController:getModelBuffer( cColumn )
+   end if 
+
    for each hColumn in hColumnProcess
 
-      if !::Process( hColumn:__enumKey(), ::oController:getModelBuffer( cColumn ), hColumn:__enumValue() )
+      if !::Process( hColumn:__enumKey(), uValue, hColumn:__enumValue() )
          RETURN ( .f. )
       end if 
 
@@ -92,7 +102,7 @@ METHOD Process( cMethod, uValue, cMessage )
       lValidate      := Self:&( cMethod )( uValue )
 
       if !lValidate
-         msgstop( strtran( cMessage, "{value}", cvaltostr( uValue ) ), "Error" )
+         msgstop( strtran( cMessage, "{value}", alltrim( cvaltostr( uValue ) ) ), "Error" )
       end if
 
    catch oError
@@ -107,11 +117,17 @@ RETURN ( lValidate )
 
 METHOD Required( uValue )
 
-   if ::lDebugMode
-      msgInfo( !empty( uValue ), "Required validator" )
+RETURN ( !empty( uValue ) )
+
+//---------------------------------------------------------------------------//
+
+METHOD RequiredOrEmpty( uValue )
+
+   if empty( uValue ) .or. ( uValue == replicate( "Z", len( uValue ) ) )
+      RETURN ( .t. )
    end if 
 
-RETURN ( !empty( uValue ) )
+RETURN ( ::Required( uValue ) )
 
 //---------------------------------------------------------------------------//
 
@@ -144,7 +160,7 @@ METHOD Exist( uValue )
    local nCount
    local cSQLSentence
 
-   cSQLSentence      := "SELECT COUNT(*) FROM " + ::oController:getModelTableName()       + space( 1 )
+   cSQLSentence      := "SELECT COUNT(*) FROM " + ::oController:getModelTableName() + space( 1 )
    cSQLSentence      +=    "WHERE " + ::cColumnToProced + " = " + toSQLString( uValue )
 
    nCount            := ::oDatabase:SelectValue( cSQLSentence )
@@ -162,11 +178,53 @@ METHOD EmptyOrExist( uValue )
       RETURN ( .t. )
    end if 
 
-   cSQLSentence      := "SELECT COUNT(*) FROM " + ::oController:getModelTableName() + " "
+   cSQLSentence      := "SELECT COUNT(*) FROM " + ::oController:getModelTableName() + space( 1 )
    cSQLSentence      +=    "WHERE " + ::cColumnToProced + " = " + toSQLString( uValue )
 
    nCount            := ::oDatabase:SelectValue( cSQLSentence )
 
 RETURN ( hb_isnumeric( nCount ) .and. nCount != 0 )
+
+//---------------------------------------------------------------------------//
+
+METHOD existArticulo( uValue )
+
+   if empty( uValue ) .or. ( uValue == replicate( "Z", len( uValue ) ) )
+      RETURN ( .t. )
+   end if 
+
+   if ArticulosModel():exist( uValue )
+      RETURN ( .t. )
+   end if 
+
+RETURN ( .f. )
+
+//---------------------------------------------------------------------------//
+
+METHOD existFamilia( uValue )
+
+   if empty( uValue ) .or. ( uValue == replicate( "Z", len( uValue ) ) )
+      RETURN ( .t. )
+   end if 
+
+   if FamiliasModel():exist( uValue )
+      RETURN ( .t. )
+   end if 
+
+RETURN ( .f. )
+
+//---------------------------------------------------------------------------//
+
+METHOD existTipoArticulo( uValue )
+
+   if empty( uValue ) .or. ( uValue == replicate( "Z", len( uValue ) ) )
+      RETURN ( .t. )
+   end if 
+
+   if TiposArticulosModel():exist( uValue )
+      RETURN ( .t. )
+   end if 
+
+RETURN ( .f. )
 
 //---------------------------------------------------------------------------//

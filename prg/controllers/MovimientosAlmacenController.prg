@@ -10,11 +10,14 @@ CLASS MovimientosAlmacenController FROM SQLNavigatorController
 
    DATA oImportadorController
 
+   DATA oCapturadorController
+
    DATA oEtiquetasController
 
    METHOD New()
+   METHOD End()
 
-   METHOD getUuid()                 INLINE ( iif( !empty( ::oModel ) .and. !empty( ::oModel:hBuffer ),;
+   METHOD getUuid()                 INLINE ( iif(  !empty( ::oModel ) .and. !empty( ::oModel:hBuffer ),;
                                                    hget( ::oModel:hBuffer, "uuid" ),;
                                                    nil ) )
 
@@ -86,11 +89,35 @@ METHOD New()
 
    ::oImportadorController    := ImportadorMovimientosAlmacenLineasController():New( self )
 
+   ::oCapturadorController    := CapturadorMovimientosAlmacenLineasController():New( self )
+
    ::oEtiquetasController     := EtiquetasMovimientosAlmacenController():New( self )
 
    ::oFilterController:setTableName( ::cTitle ) 
 
-   ::setEvent( 'deletingSelection', {|| ::deleteLines() } )
+   // ::setEvent( 'deletingSelection', {|| ::deleteLines() } )
+
+RETURN ( Self )
+
+//---------------------------------------------------------------------------//
+
+METHOD end()
+
+   ::oModel:End()
+
+   ::oBrowseView:End()
+
+   ::oDialogView:End()
+
+   ::oValidator:End()
+
+   ::oLineasController:End()
+
+   ::oCapturadorController:End()
+
+   ::oImportadorController:End()
+
+   ::oEtiquetasController:End()
 
 RETURN ( Self )
 
@@ -131,7 +158,13 @@ RETURN ( .t. )
 
 METHOD deleteLines()
 
-   local aUuids   := ::oModel:convertRecnoToId( ::aSelected, "uuid" )
+   local aUuids   
+
+   msgalert( hb_valtoexp( ::aSelected ), "aSelected" )
+
+   aUuids         := ::getRowSet():IdFromRecno( ::aSelected, "uuid" )
+
+   msgalert( hb_valtoexp( aUuids ), "aUuids" )
 
    aeval( aUuids, {| uuid | ::oLineasController:deleteLines( uuid ) } )
 

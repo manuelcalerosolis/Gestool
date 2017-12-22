@@ -5,7 +5,7 @@
 
 CLASS ArticulosModel FROM ADSBaseModel
 
-   METHOD getTableName()                     INLINE ::getEmpresaTableName( "Articulo" )
+   METHOD getTableName()                           INLINE ::getEmpresaTableName( "Articulo" )
 
    METHOD exist()
 
@@ -13,9 +13,13 @@ CLASS ArticulosModel FROM ADSBaseModel
    
    METHOD getField()
 
+   METHOD getNombre( cCodigoArticulo )             INLINE ( ::getField( cCodigoArticulo, 'Nombre' ) )
+
    METHOD getHash()
 
    METHOD getArticulosToJson()
+
+   METHOD getArticulosToImport( cArea, hRange ) 
 
    METHOD getValoresPropiedades( cCodPro )
 
@@ -128,6 +132,21 @@ METHOD getArticulosToJson( cArea ) CLASS ArticulosModel
                   "FROM " + ::getTableName() + " Articulos "   + ;
                      "LEFT JOIN " + ArticulosCodigosBarraModel():getTableName() + " CodigosBarras ON Articulos.Codigo = CodigosBarras.cCodArt " + ;
                      "INNER JOIN DATOSTIva TipoIva ON Articulos.tipoIva = TipoIva.Tipo "
+
+RETURN ( ::ExecuteSqlStatement( cSql, @cArea ) )
+
+//---------------------------------------------------------------------------//
+
+METHOD getArticulosToImport( cArea, hRange ) CLASS ArticulosModel
+
+   local cSql  := "SELECT Codigo, Nombre, pCosto"                                      + " " + ;
+                  "FROM " + ::getTableName()                                           + " " + ;
+                     "WHERE Familia >= "  + quoted( hRange[ "FamiliaInicio" ] )        + " " + ;
+                        "AND Familia <= " + quoted( hRange[ "FamiliaFin" ] )           + " " + ;
+                        "AND cCodTip >= " + quoted( hRange[ "TipoArticuloInicio" ] )   + " " + ;
+                        "AND cCodTip <= " + quoted( hRange[ "TipoArticuloFin" ] )      + " " + ;
+                        "AND Codigo >= "  + quoted( hRange[ "ArticuloInicio" ] )       + " " + ;
+                        "AND Codigo <= "  + quoted( hRange[ "ArticuloFin" ] )     
 
 RETURN ( ::ExecuteSqlStatement( cSql, @cArea ) )
 

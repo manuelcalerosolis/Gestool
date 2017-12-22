@@ -527,6 +527,8 @@ static nTotalRecibosPagados
 static aNumAlb             := {}
 static aNumSat             := {}
 
+static oBrwLin
+
 static oGetRnt
 static cGetRnt             := ""
 static oGetEnt
@@ -2407,7 +2409,6 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, hHash, bValid, nMode )
    local n
    local oDlg
    local oFld
-   local oBrwLin
    local oBrwInc
    local oBrwDoc
    local oBrwAnt
@@ -2430,14 +2431,14 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, hHash, bValid, nMode )
    local cTipFac
    local oSayDias
    local hBmp
-   local hBmpGeneral       := {  { "Resource" => "gc_document_text_user2_48",  "Dialog" => 1 },;
-                                 { "Resource" => "gc_folders2_48",            "Dialog" => 2 },;
-                                 { "Resource" => "gc_information_48",      "Dialog" => 3 },;
-                                 { "Resource" => "gc_address_book_48",    "Dialog" => 4 },;
-                                 { "Resource" => "gc_form_earth_48",              "Dialog" => 5 },;
+   local hBmpGeneral       := {  { "Resource" => "gc_document_text_user2_48",    "Dialog" => 1 },;
+                                 { "Resource" => "gc_folders2_48",               "Dialog" => 2 },;
+                                 { "Resource" => "gc_information_48",            "Dialog" => 3 },;
+                                 { "Resource" => "gc_address_book_48",           "Dialog" => 4 },;
+                                 { "Resource" => "gc_form_earth_48",             "Dialog" => 5 },;
                                  { "Resource" => "gc_document_attachment_48",    "Dialog" => 6 },;
-                                 { "Resource" => "gc_money2_48",            "Dialog" => 7 },;
-                                 { "Resource" => "gc_document_text_money2_48", "Dialog" => 8 } }
+                                 { "Resource" => "gc_money2_48",                 "Dialog" => 7 },;
+                                 { "Resource" => "gc_document_text_money2_48",   "Dialog" => 8 } }
    
    /*
    Este valor los guaradamos para detectar los posibles cambios----------------
@@ -3008,7 +3009,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, hHash, bValid, nMode )
 	  REDEFINE BUTTON ;
          ID       528 ;
          OF       oFld:aDialogs[1] ;
-         ACTION   ( importarArticulosScaner() )
+         ACTION   ( TGetDialog():New( {|getDialog| runMasiveAppendLines( getDialog, aTmp ) } ):Run() )
 
       /*
       Detalle------------------------------------------------------------------
@@ -4778,6 +4779,83 @@ Static Function CancelEdtRec( nMode, aGet )
 Return ( nil )
 
 //----------------------------------------------------------------------------//
+
+Static Function runMasiveAppendLines( oDialog, aCabeceraFactura )
+
+   oDialog:cleanErrors()
+
+   if !empty( oDialog:cGet )
+      oneAppendLine( aCabeceraFactura, oDialog:cGet )
+      oDialog:cleanGet()
+   end if 
+
+   if !empty( oDialog:cGetRelacion )
+      masiveAppendLines( aCabeceraFactura, oDialog )
+      oDialog:cleanGet()
+   end if 
+
+RETURN ( nil )
+
+//---------------------------------------------------------------------------//
+
+Static Function masiveAppendLines( aCabeceraFactura, oDialog )
+
+   local aArticulo 
+   local aRelacion
+   local aArticulos
+   local aRelaciones  
+   local cRelaciones       := oDialog:cGetRelacion
+
+   oDialog:cleanErrors()
+
+   aRelaciones             := hb_atokens( cRelaciones, CRLF )
+
+   for each aRelacion in aRelaciones
+
+      aArticulo           := hb_atokens( aRelacion, "," )
+
+      if isArray( aArticulo ) .and. len( aArticulo ) >= 2 .and. !empty( aArticulo[1] ) .and. !empty( aArticulo[2] ) 
+         if !( oneAppendLine( aCabeceraFactura, aArticulo[1], val( aArticulo[2] ) ) )
+            msgStop("- Error al añadir el artículo " + alltrim( aArticulo[1] ) )
+            aadd( oDialog:aErrors, "- Error al añadir el artículo " + alltrim( aArticulo[1] ) )
+         end if 
+      end if
+
+   next 
+
+RETURN ( nil )
+
+//---------------------------------------------------------------------------//
+
+Static Function oneAppendLine( aCabeceraFactura, cCodigoArticulo, nUnidadesArticulos )
+
+   local aLineasFacturas
+
+   DEFAULT nUnidadesArticulos    := 1
+
+   aLineasFacturas               := dbBlankRec( dbfTmpLin )
+
+   setDlgMode( aLineasFacturas, nil, nil, nil, nil, nil, nil, nil, APPD_MODE, nil, aCabeceraFactura )
+
+   aLineasFacturas[ _NUNICAJA ]  := nUnidadesArticulos
+
+   if loaArt( cCodigoArticulo, nil, aLineasFacturas, aCabeceraFactura, nil, nil, nil, nil, nil, nil, APPD_MODE )
+
+      SaveDeta( aLineasFacturas, aCabeceraFactura, nil, nil, nil, nil, nil, nil, nil, nil, nil, APPD_MODE )      
+
+      if !empty( oBrwLin )
+         oBrwLin:Refresh()
+      end if
+
+      recalculaTotal( aCabeceraFactura )
+
+      RETURN ( .t. )
+
+   end if 
+
+RETURN ( .f. )
+
+//---------------------------------------------------------------------------//
 
 /*
 Edita las lineas de Detalle
@@ -10058,11 +10136,11 @@ STATIC FUNCTION ValidaMedicion( aTmp, aGet )
 
    local cNewUndMed
 
-      if !empty( aGet[ _CUNIDAD ] )
+   if !empty( aGet ) .and. !empty( aGet[ _CUNIDAD ] )
       cNewUndMed  := aGet[ _CUNIDAD ]:VarGet
    else
       cNewUndMed  := aTmp[ _CUNIDAD ]
-      end if
+   end if
 
    /*
    Cargamos el codigo de las unidades---------------------------------
@@ -10073,7 +10151,7 @@ STATIC FUNCTION ValidaMedicion( aTmp, aGet )
       if oUndMedicion:oDbf:Seek( aTmp[ _CUNIDAD ] )
 
          if oUndMedicion:oDbf:nDimension >= 1 .and. !empty( oUndMedicion:oDbf:cTextoDim1 )
-            if !empty( aGet[ ( D():FacturasClientesLineas( nView ) )->( fieldpos( "nMedUno" ) ) ] )
+            if !empty( aGet ) .and. !empty( aGet[ ( D():FacturasClientesLineas( nView ) )->( fieldpos( "nMedUno" ) ) ] )
                aGet[ ( D():FacturasClientesLineas( nView ) )->( fieldpos( "nMedUno" ) ) ]:oSay:SetText( oUndMedicion:oDbf:cTextoDim1 )
                aGet[ ( D():FacturasClientesLineas( nView ) )->( fieldpos( "nMedUno" ) ) ]:cText( ( D():Articulos( nView ) )->nLngArt )
                aGet[ ( D():FacturasClientesLineas( nView ) )->( fieldpos( "nMedUno" ) ) ]:Show()
@@ -10081,7 +10159,7 @@ STATIC FUNCTION ValidaMedicion( aTmp, aGet )
                aTmp[ ( D():FacturasClientesLineas( nView ) )->( fieldpos( "nMedUno" ) ) ]  := ( D():Articulos( nView ) )->nLngArt
             end if
          else
-            if !empty( aGet[ ( D():FacturasClientesLineas( nView ) )->( fieldpos( "nMedUno" ) ) ] )
+            if !empty( aGet ) .and. !empty( aGet[ ( D():FacturasClientesLineas( nView ) )->( fieldpos( "nMedUno" ) ) ] )
                aGet[ ( D():FacturasClientesLineas( nView ) )->( fieldpos( "nMedUno" ) ) ]:cText( 0 )
                aGet[ ( D():FacturasClientesLineas( nView ) )->( fieldpos( "nMedUno" ) ) ]:Hide()
             else
@@ -10090,7 +10168,7 @@ STATIC FUNCTION ValidaMedicion( aTmp, aGet )
          end if
 
          if oUndMedicion:oDbf:nDimension >= 2 .and. !empty( oUndMedicion:oDbf:cTextoDim2 )
-            if !empty( aGet[ ( D():FacturasClientesLineas( nView ) )->( fieldpos( "nMedDos" ) ) ] )
+            if !empty( aGet ) .and. !empty( aGet[ ( D():FacturasClientesLineas( nView ) )->( fieldpos( "nMedDos" ) ) ] )
                aGet[ ( D():FacturasClientesLineas( nView ) )->( fieldpos( "nMedDos" ) ) ]:oSay:SetText( oUndMedicion:oDbf:cTextoDim2 )
                aGet[ ( D():FacturasClientesLineas( nView ) )->( fieldpos( "nMedDos" ) ) ]:cText( ( D():Articulos( nView ) )->nAltArt )
                aGet[ ( D():FacturasClientesLineas( nView ) )->( fieldpos( "nMedDos" ) ) ]:Show()
@@ -10098,7 +10176,7 @@ STATIC FUNCTION ValidaMedicion( aTmp, aGet )
                aTmp[ ( D():FacturasClientesLineas( nView ) )->( fieldpos( "nMedDos" ) ) ]  := ( D():Articulos( nView ) )->nAltArt
             end if
          else
-            if !empty( aGet[ ( D():FacturasClientesLineas( nView ) )->( fieldpos( "nMedDos" ) ) ] )
+            if !empty( aGet ) .and. !empty( aGet[ ( D():FacturasClientesLineas( nView ) )->( fieldpos( "nMedDos" ) ) ] )
                aGet[ ( D():FacturasClientesLineas( nView ) )->( fieldpos( "nMedDos" ) ) ]:cText( 0 )
                aGet[ ( D():FacturasClientesLineas( nView ) )->( fieldpos( "nMedDos" ) ) ]:Hide()
             else
@@ -10107,7 +10185,7 @@ STATIC FUNCTION ValidaMedicion( aTmp, aGet )
          end if
 
          if oUndMedicion:oDbf:nDimension >= 3 .and. !empty( oUndMedicion:oDbf:cTextoDim3 )
-            if !empty( aGet[ ( D():FacturasClientesLineas( nView ) )->( fieldpos( "nMedTre" ) ) ] )
+            if !empty( aGet ) .and. !empty( aGet[ ( D():FacturasClientesLineas( nView ) )->( fieldpos( "nMedTre" ) ) ] )
                aGet[ ( D():FacturasClientesLineas( nView ) )->( fieldpos( "nMedTre" ) ) ]:oSay:SetText( oUndMedicion:oDbf:cTextoDim3 )
                aGet[ ( D():FacturasClientesLineas( nView ) )->( fieldpos( "nMedTre" ) ) ]:cText( ( D():Articulos( nView ) )->nAncArt )
                aGet[ ( D():FacturasClientesLineas( nView ) )->( fieldpos( "nMedTre" ) ) ]:Show()
@@ -10115,7 +10193,7 @@ STATIC FUNCTION ValidaMedicion( aTmp, aGet )
                aTmp[ ( D():FacturasClientesLineas( nView ) )->( fieldpos( "nMedTre" ) ) ]  := ( D():Articulos( nView ) )->nAncArt
             end if
          else
-            if !empty( aGet[ ( D():FacturasClientesLineas( nView ) )->( fieldpos( "nMedTre" ) ) ] )
+            if !empty( aGet ) .and. !empty( aGet[ ( D():FacturasClientesLineas( nView ) )->( fieldpos( "nMedTre" ) ) ] )
                aGet[ ( D():FacturasClientesLineas( nView ) )->( fieldpos( "nMedTre" ) ) ]:cText( 0 )
                aGet[ ( D():FacturasClientesLineas( nView ) )->( fieldpos( "nMedTre" ) ) ]:Hide()
             else
@@ -10125,17 +10203,17 @@ STATIC FUNCTION ValidaMedicion( aTmp, aGet )
 
       else
 
-         if !empty( aGet[ ( D():FacturasClientesLineas( nView ) )->( fieldpos( "nMedUno" ) ) ] )
+         if !empty( aGet ) .and. !empty( aGet[ ( D():FacturasClientesLineas( nView ) )->( fieldpos( "nMedUno" ) ) ] )
             aGet[ ( D():FacturasClientesLineas( nView ) )->( fieldpos( "nMedUno" ) ) ]:Hide()
             aGet[ ( D():FacturasClientesLineas( nView ) )->( fieldpos( "nMedUno" ) ) ]:cText( 0 )
          end if
 
-         if !empty( aGet[ ( D():FacturasClientesLineas( nView ) )->( fieldpos( "nMedDos" ) ) ] )
+         if !empty( aGet ) .and. !empty( aGet[ ( D():FacturasClientesLineas( nView ) )->( fieldpos( "nMedDos" ) ) ] )
             aGet[ ( D():FacturasClientesLineas( nView ) )->( fieldpos( "nMedDos" ) ) ]:Hide()
             aGet[ ( D():FacturasClientesLineas( nView ) )->( fieldpos( "nMedDos" ) ) ]:cText( 0 )
          end if
 
-         if !empty( aGet[ ( D():FacturasClientesLineas( nView ) )->( fieldpos( "nMedTre" ) ) ] )
+         if !empty( aGet ) .and. !empty( aGet[ ( D():FacturasClientesLineas( nView ) )->( fieldpos( "nMedTre" ) ) ] )
             aGet[ ( D():FacturasClientesLineas( nView ) )->( fieldpos( "nMedTre" ) ) ]:Hide()
             aGet[ ( D():FacturasClientesLineas( nView ) )->( fieldpos( "nMedTre" ) ) ]:cText( 0 )
          end if
@@ -10177,7 +10255,7 @@ static function loadComisionAgente( aTmp, aGet, aTmpFac )
       nComisionAgenteTarifa      := aTmpFac[ _NPCTCOMAGE ]
    end if 
 
-   if !empty( aGet[ _NCOMAGE ] )
+   if !empty( aGet ) .and. !empty( aGet[ _NCOMAGE ] )
       aGet[ _NCOMAGE ]:cText( nComisionAgenteTarifa )
    end if
 
@@ -11692,146 +11770,156 @@ Comprtamiento de la caja de dialogo
 
 STATIC FUNCTION SetDlgMode( aTmp, aGet, oFld, oSayPr1, oSayPr2, oSayVp1, oSayVp2, oStkAct, nMode, oTotal, aTmpFac, oRentLin, oSayLote )
 
-   local cCodArt        := Left( aGet[ _CREF ]:VarGet(), 18 )
+   local cCodArt        := left( aTmp[ _CREF ], 18 )
 
-   if !uFieldEmpresa( "lUseBultos" )
-      if !empty( aGet[ __NBULTOS ] )
-         aGet[ __NBULTOS ]:Hide()
-      end if   
-   else
-      if !empty( aGet[ __NBULTOS ] )
-         aGet[ __NBULTOS ]:SetText( uFieldempresa( "cNbrBultos" ) )
-      end if 
-   end if
+   if !empty( aGet )
 
-   if !lUseCaj()
-      
-      if !( "TABLET" $ appParamsMain() )
+      if !uFieldEmpresa( "lUseBultos" )
+         if !empty( aGet[ __NBULTOS ] )
+            aGet[ __NBULTOS ]:Hide()
+         end if   
+      else
+         if !empty( aGet[ __NBULTOS ] )
+            aGet[ __NBULTOS ]:SetText( uFieldempresa( "cNbrBultos" ) )
+         end if 
+      end if
 
+      if !lUseCaj() .and. !( "TABLET" $ appParamsMain() )
          if !empty( aGet[ _NCANENT ] )
             aGet[ _NCANENT ]:Hide()
          end if
-
       end if
 
-   end if
+      if !empty( aGet[ _LGASSUP ] )
+         aGet[ _LGASSUP ]:Show()
+      end if
 
-   if !empty( aGet[ _LGASSUP ] )
-      aGet[ _LGASSUP ]:Show()
-   end if
+      if aGet[ _NVALIMP ] != nil
 
-   if aGet[ _NVALIMP ] != nil
+         if !uFieldEmpresa( "lUseImp" )
 
-      if !uFieldEmpresa( "lUseImp" )
+            aGet[ _NVALIMP ]:Hide()
+            aGet[ _LVOLIMP ]:Hide()
 
-         aGet[ _NVALIMP ]:Hide()
-         aGet[ _LVOLIMP ]:Hide()
+         else
 
-      else
+            if !uFieldEmpresa( "lModImp" )
+               aGet[ _NVALIMP ]:Disable()
+            end if
 
-         if !uFieldEmpresa( "lModImp" )
-            aGet[ _NVALIMP ]:Disable()
+            if !uFieldEmpresa( "lIvaImpEsp" )
+               if !empty( aGet[ _LVOLIMP ] )
+                  aGet[ _LVOLIMP ]:Disable()
+               end if   
+            end if
+
          end if
 
-         if !uFieldEmpresa( "lIvaImpEsp" )
-            if !empty( aGet[ _LVOLIMP ] )
-               aGet[ _LVOLIMP ]:Disable()
-            end if   
+      end if
+
+      if aGet[ _NIMPTRN ] != nil
+         if !uFieldEmpresa( "lUsePor", .f. )
+            aGet[ _NIMPTRN ]:Hide()
          end if
-
       end if
 
-   end if
-
-   if aGet[ _NIMPTRN ] != nil
-      if !uFieldEmpresa( "lUsePor", .f. )
-         aGet[ _NIMPTRN ]:Hide()
+      if aGet[ _NPNTVER ] != nil
+         if !uFieldEmpresa( "lUsePnt", .f. ) .or. !aTmpFac[ _LOPERPV ]
+            aGet[ _NPNTVER ]:Hide()
+         end if
       end if
-   end if
 
-   if aGet[ _NPNTVER ] != nil
-      if !uFieldEmpresa( "lUsePnt", .f. ) .or. !aTmpFac[ _LOPERPV ]
-         aGet[ _NPNTVER ]:Hide()
+      if aGet[ _NDTODIV ] != nil
+         if !( "TABLET" $ appParamsMain() ) .and. !uFieldEmpresa( "lDtoLin", .f. )
+            aGet[ _NDTODIV ]:Hide()
+         end if
       end if
-   end if
 
-   if aGet[ _NDTODIV ] != nil
-      if !( "TABLET" $ appParamsMain() ) .and. !uFieldEmpresa( "lDtoLin", .f. )
-         aGet[ _NDTODIV ]:Hide()
-      end if
-   end if
+   end if 
 
    if oRentLin != nil .and. oUser():lNotRentabilidad()
       oRentLin:Hide()
    end if
 
-   if aTmp[ _LLOTE ]
+   if !empty(aGet)
 
-      if !empty( aGet[ _CLOTE ] )
-         aGet[ _CLOTE ]:Show()
+      if aTmp[ _LLOTE ]
+
+         if !empty( aGet[ _CLOTE ] )
+            aGet[ _CLOTE ]:Show()
+         end if
+
+         if !empty( aGet[ _DFECCAD ] )
+            aGet[ _DFECCAD ]:Show()
+         end if
+
+         if !empty( oSayLote )
+            oSayLote:Show()
+         end if
+
+      else
+
+         if !empty( aGet[ _CLOTE ] )
+            aGet[ _CLOTE ]:Hide()
+         end if
+
+         if !empty( aGet[ _DFECCAD ] )
+            aGet[ _DFECCAD ]:Hide()
+         end if
+
+         if !empty( oSayLote )
+            oSayLote:Hide()
+         end if
+
       end if
 
-      if !empty( aGet[ _DFECCAD ] )
-         aGet[ _DFECCAD ]:Show()
-      end if
-
-      if !empty( oSayLote )
-         oSayLote:Show()
-      end if
-
-   else
-
-      if !empty( aGet[ _CLOTE ] )
-         aGet[ _CLOTE ]:Hide()
-      end if
-
-      if !empty( aGet[ _DFECCAD ] )
-         aGet[ _DFECCAD ]:Hide()
-      end if
-
-      if !empty( oSayLote )
-         oSayLote:Hide()
-      end if
-
-   end if
+   end if 
 
    do case
    case nMode == APPD_MODE
 
-      if empty( aGet[ _CREF ]:varGet() )
+      if !empty( aGet ) .and. empty( aGet[ _CREF ]:varGet() )
          aGet[ _CREF ]:cText( Space( 200 ) )
       end if 
 
       aTmp[ _LIVALIN ]  := aTmpFac[ _LIVAINC ]
       aTmp[ _DFECCAD ]  := Ctod( "" )
 
-      aGet[ _NCANENT ]:cText( 1 )
-      aGet[ _NUNICAJA]:cText( 1 )
+      aTmp[ _NCANENT ]  := 1 
+      aTmp[ _NUNICAJA]  := 1 
+
+      if !empty( aGet ) .and. !empty( aGet[ _NCANENT ] )
+         aGet[ _NCANENT ]:refresh()
+      end if 
+
+      if !empty( aGet ) .and. !empty( aGet[ _NUNICAJA ] )
+         aGet[ _NUNICAJA]:refresh()
+      end if 
 
       aTmp[ _NNUMLIN ]  := nLastNum( dbfTmpLin )
 
-      if !empty( aGet[ _NPOSPRINT  ] )
+      if !empty( aGet ) .and. !empty( aGet[ _NPOSPRINT  ] )
          aGet[ _NPOSPRINT  ]:cText( nLastNum( dbfTmpLin, "nPosPrint" ) )
       else
          aTmp[ _NPOSPRINT  ] := nLastNum( dbfTmpLin, "nPosPrint" )
       end if
 
-      if !empty( aGet[ _CALMLIN ] )
+      if !empty( aGet ) .and. !empty( aGet[ _CALMLIN ] )
          aGet[ _CALMLIN ]:cText( aTmpFac[ _CCODALM ] )
       else
          aTmp[ _CALMLIN ]  := aTmpFac[ _CCODALM ]
       end if   
 
-      if !empty( aGet[ _CDETALLE] )
+      if !empty( aGet ) .and. !empty( aGet[ _CDETALLE] )
          aGet[ _CDETALLE]:Show()
       end if
 
-      if !empty( aGet[ _MLNGDES ] )
+      if !empty( aGet ) .and. !empty( aGet[ _MLNGDES ] )
          aGet[ _MLNGDES ]:Hide()
       end if   
 
       if aTmpFac[ _NREGIVA ] <= 2
-         if !empty( aGet[ _NIVA ] )
+         if !empty( aGet ) .and. !empty( aGet[ _NIVA ] )
             aGet[ _NIVA ]:cText( nIva( dbfIva, cDefIva() ) )
          else
             aTmp[ _NIVA ]  := nIva( dbfIva, cDefIva() )
@@ -11849,46 +11937,52 @@ STATIC FUNCTION SetDlgMode( aTmp, aGet, oFld, oSayPr1, oSayPr2, oSayVp1, oSayVp2
          end if
       end if
 
-      if !empty( aGet[ __CCENTROCOSTE ] )
+      if !empty( aGet ) .and. !empty( aGet[ __CCENTROCOSTE ] )
          aGet[ __CCENTROCOSTE ]:cText( aTmpFac[ _CCENTROCOSTE ] )
          aGet[ __CCENTROCOSTE ]:lValid()
       endif
 
       cTipoCtrCoste        := "Centro de coste"
-      oTipoCtrCoste:Refresh()
-      clearGet( aGet[ _CTERCTR ] )
+      
+      if !empty( oTipoCtrCoste )
+         oTipoCtrCoste:Refresh()
+      end if 
+
+      if !empty( aGet )
+         clearGet( aGet[ _CTERCTR ] )
+      end if
 
    case ( nMode == EDIT_MODE .OR. nMode == ZOOM_MODE )
 
       if !empty( cCodArt )
        
-         if !empty( aGet[_CDETALLE] )
-            aGet[_CDETALLE]:show()
+         if !empty( aGet ) .and. !empty( aGet[ _CDETALLE ] )
+            aGet[ _CDETALLE ]:show()
          end if
 
-         if !empty( aGet[_MLNGDES ] )
-            aGet[_MLNGDES ]:hide()
+         if !empty( aGet ) .and. !empty( aGet[ _MLNGDES ] )
+            aGet[ _MLNGDES ]:hide()
          end if   
 
       else
        
          if !aTmp[ _LCONTROL ]
 
-            if !empty( aGet[_CDETALLE] )
+            if !empty( aGet ) .and. !empty( aGet[_CDETALLE] )
                aGet[_CDETALLE]:hide()
             end if
 
-            if !empty( aGet[_MLNGDES ] )
+            if !empty( aGet ) .and. !empty( aGet[_MLNGDES ] )
                aGet[_MLNGDES ]:show()
             end if
 
          else
 
-            if !empty( aGet[_CDETALLE] )
+            if !empty( aGet ) .and. !empty( aGet[_CDETALLE] )
                aGet[_CDETALLE]:show()
             end if
 
-            if !empty( aGet[_MLNGDES ] )
+            if !empty( aGet ) .and. !empty( aGet[_MLNGDES ] )
                aGet[_MLNGDES ]:hide()
             end if
 
@@ -11906,7 +12000,7 @@ STATIC FUNCTION SetDlgMode( aTmp, aGet, oFld, oSayPr1, oSayPr2, oSayVp1, oSayVp2
 
       end if
 
-      if !empty( aGet[ __CCENTROCOSTE ] )
+      if !empty( aGet ) .and. !empty( aGet[ __CCENTROCOSTE ] )
          aGet[ __CCENTROCOSTE ]:lValid()
       endif
 
@@ -11914,7 +12008,7 @@ STATIC FUNCTION SetDlgMode( aTmp, aGet, oFld, oSayPr1, oSayPr2, oSayVp1, oSayVp2
 
    if !empty( aTmp[ _CCODPR1 ] )
 
-      if !empty( aGet[ _CVALPR1 ] )
+      if !empty( aGet ) .and. !empty( aGet[ _CVALPR1 ] )
          aGet[ _CVALPR1 ]:Show()
          aGet[ _CVALPR1 ]:lValid()
       end if
@@ -11930,7 +12024,7 @@ STATIC FUNCTION SetDlgMode( aTmp, aGet, oFld, oSayPr1, oSayPr2, oSayVp1, oSayVp2
 
    else
 
-      if !empty( aGet[ _CVALPR1 ] )
+      if !empty( aGet ) .and. !empty( aGet[ _CVALPR1 ] )
          aGet[ _CVALPR1 ]:hide()
       end if
       
@@ -11946,26 +12040,30 @@ STATIC FUNCTION SetDlgMode( aTmp, aGet, oFld, oSayPr1, oSayPr2, oSayVp1, oSayVp2
 
    if !empty( aTmp[_CCODPR2 ] )
 
-      if !empty( aGet[ _CVALPR2 ] )
+      if !empty( aGet ) .and. !empty( aGet[ _CVALPR2 ] )
          aGet[ _CVALPR2 ]:Show()
          aGet[ _CVALPR2 ]:lValid()
       end if
+
       if !empty( oSayPr2 )
          oSayPr2:Show()
          oSayPr2:SetText( retProp( aTmp[ _CCODPR2 ], D():Propiedades( nView ) ) )
       end if
+
       if !empty( oSayVp2 )
          oSayVp2:Show()
       end if
 
    else
 
-      if !empty( aGet[ _CVALPR2 ] )
+      if !empty( aGet ) .and.!empty( aGet[ _CVALPR2 ] )
          aGet[_CVALPR2 ]:hide()
       end if
+      
       if !empty( oSayPr2 )
          oSayPr2:hide()
       end if
+      
       if !empty( oSayVp2 )
          oSayVp2:hide()
       end if
@@ -11980,31 +12078,31 @@ STATIC FUNCTION SetDlgMode( aTmp, aGet, oFld, oSayPr1, oSayPr2, oSayVp1, oSayVp2
       Ocultamos las tres unidades de medicion-------------------------------------
       */
 
-      if !empty( aGet[ ( D():FacturasClientesLineas( nView ) )->( fieldpos( "nMedUno" ) ) ] )
+      if !empty( aGet ) .and. !empty( aGet[ ( D():FacturasClientesLineas( nView ) )->( fieldpos( "nMedUno" ) ) ] )
          aGet[ ( D():FacturasClientesLineas( nView ) )->( fieldpos( "nMedUno" ) ) ]:Hide()
       end if
 
-      if !empty( aGet[ ( D():FacturasClientesLineas( nView ) )->( fieldpos( "nMedDos" ) ) ] )
+      if !empty( aGet ) .and. !empty( aGet[ ( D():FacturasClientesLineas( nView ) )->( fieldpos( "nMedDos" ) ) ] )
          aGet[ ( D():FacturasClientesLineas( nView ) )->( fieldpos( "nMedDos" ) ) ]:Hide()
       end if
 
-      if !empty( aGet[ ( D():FacturasClientesLineas( nView ) )->( fieldpos( "nMedTre" ) ) ] )
+      if !empty( aGet ) .and. !empty( aGet[ ( D():FacturasClientesLineas( nView ) )->( fieldpos( "nMedTre" ) ) ] )
          aGet[ ( D():FacturasClientesLineas( nView ) )->( fieldpos( "nMedTre" ) ) ]:Hide()
      end if
 
       if oUndMedicion:oDbf:Seek( aTmp[ _CUNIDAD ] )
 
-         if !empty( aGet[ ( D():FacturasClientesLineas( nView ) )->( fieldpos( "nMedUno" ) ) ] ) .and. oUndMedicion:oDbf:nDimension >= 1 .and. !empty( oUndMedicion:oDbf:cTextoDim1 )
+         if !empty( aGet ) .and. !empty( aGet[ ( D():FacturasClientesLineas( nView ) )->( fieldpos( "nMedUno" ) ) ] ) .and. oUndMedicion:oDbf:nDimension >= 1 .and. !empty( oUndMedicion:oDbf:cTextoDim1 )
             aGet[ ( D():FacturasClientesLineas( nView ) )->( fieldpos( "nMedUno" ) ) ]:oSay:SetText( oUndMedicion:oDbf:cTextoDim1 )
             aGet[ ( D():FacturasClientesLineas( nView ) )->( fieldpos( "nMedUno" ) ) ]:Show()
          end if
 
-         if !empty( aGet[ ( D():FacturasClientesLineas( nView ) )->( fieldpos( "nMedDos" ) ) ] ) .and. oUndMedicion:oDbf:nDimension >= 2 .and. !empty( oUndMedicion:oDbf:cTextoDim2 )
+         if !empty( aGet ) .and. !empty( aGet[ ( D():FacturasClientesLineas( nView ) )->( fieldpos( "nMedDos" ) ) ] ) .and. oUndMedicion:oDbf:nDimension >= 2 .and. !empty( oUndMedicion:oDbf:cTextoDim2 )
             aGet[ ( D():FacturasClientesLineas( nView ) )->( fieldpos( "nMedDos" ) ) ]:oSay:SetText( oUndMedicion:oDbf:cTextoDim2 )
             aGet[ ( D():FacturasClientesLineas( nView ) )->( fieldpos( "nMedDos" ) ) ]:Show()
          end if
 
-         if !empty( aGet[ ( D():FacturasClientesLineas( nView ) )->( fieldpos( "nMedTre" ) ) ] ) .and. oUndMedicion:oDbf:nDimension >= 3 .and. !empty( oUndMedicion:oDbf:cTextoDim3 )
+         if !empty( aGet ) .and. !empty( aGet[ ( D():FacturasClientesLineas( nView ) )->( fieldpos( "nMedTre" ) ) ] ) .and. oUndMedicion:oDbf:nDimension >= 3 .and. !empty( oUndMedicion:oDbf:cTextoDim3 )
             aGet[ ( D():FacturasClientesLineas( nView ) )->( fieldpos( "nMedTre" ) ) ]:oSay:SetText( oUndMedicion:oDbf:cTextoDim3 )
             aGet[ ( D():FacturasClientesLineas( nView ) )->( fieldpos( "nMedTre" ) ) ]:Show()
          end if
@@ -12016,7 +12114,7 @@ STATIC FUNCTION SetDlgMode( aTmp, aGet, oFld, oSayPr1, oSayPr2, oSayVp1, oSayVp2
       */
 
       if empty( aTmp[ _NTARLIN ] )
-         if !empty( aGet[ _NTARLIN ] )
+         if !empty( aGet ) .and. !empty( aGet[ _NTARLIN ] )
             if !empty( oGetTarifa )
                aGet[ _NTARLIN ]:cText( oGetTarifa:getTarifa() )
             else
@@ -12031,7 +12129,7 @@ STATIC FUNCTION SetDlgMode( aTmp, aGet, oFld, oSayPr1, oSayPr2, oSayVp1, oSayVp2
          end if
       end if
 
-      if !empty( aGet[ _NTARLIN ] )
+      if !empty( aGet ) .and. !empty( aGet[ _NTARLIN ] )
          if !uFieldEmpresa( "lPreLin" )
             aGet[ _NTARLIN ]:Hide()
          else
@@ -12043,21 +12141,21 @@ STATIC FUNCTION SetDlgMode( aTmp, aGet, oFld, oSayPr1, oSayPr2, oSayVp1, oSayVp2
       Focus y validación----------------------------------------------------------
       */
 
-      if !empty( aGet[ _CTIPMOV ] )
+      if !empty( aGet ) .and. !empty( aGet[ _CTIPMOV ] )
          aGet[ _CTIPMOV ]:lValid()
       end if
 
-      if !empty( aGet[ _CCODTIP ] )
+      if !empty( aGet ) .and. !empty( aGet[ _CCODTIP ] )
          aGet[ _CCODTIP ]:lValid()
       end if
 
-      if !empty( aGet[ _CALMLIN ] )
+      if !empty( aGet ) .and. !empty( aGet[ _CALMLIN ] )
          aGet[ _CALMLIN ]:lValid()
       end if   
 
       if !lAccArticulo() .or. oUser():lNotCostos()
 
-      if !empty( aGet[ _NCOSDIV ] )
+      if !empty( aGet ) .and. !empty( aGet[ _NCOSDIV ] )
          aGet[ _NCOSDIV ]:Hide()
       end if
 
@@ -12069,53 +12167,53 @@ STATIC FUNCTION SetDlgMode( aTmp, aGet, oFld, oSayPr1, oSayPr2, oSayVp1, oSayVp2
 
    if ( empty( aTmp[ _NPREUNIT ] ) .or. lUsrMaster() .or. oUser():lCambiarPrecio() ) .and. nMode != ZOOM_MODE
 
-      if !empty( aGet[ _NPREUNIT ] )
+      if !empty( aGet ) .and. !empty( aGet[ _NPREUNIT ] )
          aGet[ _NPREUNIT ]:HardEnable()
       end if
 
-      if !empty( aGet[ _NIMPTRN  ] )
+      if !empty( aGet ) .and. !empty( aGet[ _NIMPTRN  ] )
          aGet[ _NIMPTRN  ]:HardEnable()
       end if            
 
-      if !empty( aGet[ _NPNTVER ] )
+      if !empty( aGet ) .and. !empty( aGet[ _NPNTVER ] )
          aGet[ _NPNTVER ]:HardEnable()
       end if
 
-      if !empty( aGet[ _NDTO     ] )
+      if !empty( aGet ) .and. !empty( aGet[ _NDTO     ] )
          aGet[ _NDTO     ]:HardEnable()
       end if
 
-      if !empty( aGet[ _NDTOPRM  ] )
+      if !empty( aGet ) .and. !empty( aGet[ _NDTOPRM  ] )
          aGet[ _NDTOPRM  ]:HardEnable()
       end if   
 
-      if !empty( aGet[ _NDTODIV ] )
+      if !empty( aGet ) .and. !empty( aGet[ _NDTODIV ] )
       aGet[ _NDTODIV  ]:HardEnable()
       end if
 
    else
 
-      if !empty( aGet[ _NPREUNIT ] )
+      if !empty( aGet ) .and. !empty( aGet[ _NPREUNIT ] )
          aGet[ _NPREUNIT ]:HardDisable()
       end if            
 
-      if !empty( aGet[ _NIMPTRN  ] )
+      if !empty( aGet ) .and. !empty( aGet[ _NIMPTRN  ] )
          aGet[ _NIMPTRN  ]:HardDisable()
       end if            
 
-      if !empty( aGet[ _NPNTVER ] )
+      if !empty( aGet ) .and. !empty( aGet[ _NPNTVER ] )
          aGet[ _NPNTVER  ]:HardDisable()
       end if
 
-      if !empty( aGet[ _NDTO     ] )
+      if !empty( aGet ) .and. !empty( aGet[ _NDTO     ] )
          aGet[ _NDTO     ]:HardDisable()
       end if
 
-      if !empty( aGet[ _NDTOPRM  ] )
+      if !empty( aGet ) .and. !empty( aGet[ _NDTOPRM  ] )
          aGet[ _NDTOPRM  ]:HardDisable()
       end if
 
-      if !empty(  aGet[ _NDTODIV  ] )
+      if !empty( aGet ) .and. !empty(  aGet[ _NDTODIV  ] )
          aGet[ _NDTODIV  ]:HardDisable()
       end if
 
@@ -12135,7 +12233,9 @@ STATIC FUNCTION SetDlgMode( aTmp, aGet, oFld, oSayPr1, oSayPr2, oSayVp1, oSayVp2
 
    // Focus al codigo-------------------------------------------------------------
 
-   aGet[ _CREF ]:SetFocus()
+   if !empty( aGet )
+      aGet[ _CREF ]:SetFocus()
+   end if 
 
 Return nil
 
@@ -12179,26 +12279,28 @@ STATIC FUNCTION LoaArt( cCodArt, aGet, aTmp, aTmpFac, oStkAct, oSayPr1, oSayPr2,
       end if
 
       if empty( aTmp[ _NIVA ] ) .and. !aTmp[ _LGASSUP ]
-         if !empty( aGet[ _NIVA ] )
+         if !empty( aGet ) .and. !empty( aGet[ _NIVA ] )
             aGet[ _NIVA ]:bWhen  := {|| .t. }
          end if   
       end if
 
-      aGet[ _CDETALLE ]:cText( Space( 50 ) )
-      aGet[ _CDETALLE ]:bWhen   := {|| .t. }
+      if !empty( aGet )
+         aGet[ _CDETALLE ]:cText( Space( 50 ) )
+         aGet[ _CDETALLE ]:bWhen   := {|| .t. }
+      end if 
 
       if !( "TABLET" $ appParamsMain() )
          aGet[ _CDETALLE ]:Hide()
       end if
 
-      if !empty( aGet[ _MLNGDES ] )
+      if !empty( aGet ) .and. !empty( aGet[ _MLNGDES ] )
          aGet[ _MLNGDES ]:Show()
          if lFocused
             aGet[ _MLNGDES ]:SetFocus()
          end if
       end if
 
-      if !empty( aGet[ _CVALPR1 ] )
+      if !empty( aGet ) .and. !empty( aGet[ _CVALPR1 ] )
          aGet[ _CVALPR1 ]:Hide()
       end if
 
@@ -12210,7 +12312,7 @@ STATIC FUNCTION LoaArt( cCodArt, aGet, aTmp, aTmpFac, oStkAct, oSayPr1, oSayPr2,
          oSayVp1:Hide()
       end if
 
-      if !empty( aGet[ _CVALPR2 ] )
+      if !empty( aGet ) .and. !empty( aGet[ _CVALPR2 ] )
          aGet[ _CVALPR1 ]:Hide()
       end if
 
@@ -12230,7 +12332,7 @@ STATIC FUNCTION LoaArt( cCodArt, aGet, aTmp, aTmpFac, oStkAct, oSayPr1, oSayPr2,
 
    end if
 
-   if !empty( aGet[ _NIVA ] ) .and. !aTmp[ _LGASSUP ]
+   if !empty( aGet ) .and. !empty( aGet[ _NIVA ] ) .and. !aTmp[ _LGASSUP ]
       aGet[ _NIVA ]:bWhen  := {|| lModIva() }
    end if
 
@@ -12294,7 +12396,10 @@ STATIC FUNCTION LoaArt( cCodArt, aGet, aTmp, aTmpFac, oStkAct, oSayPr1, oSayPr2,
 
          cCodArt                 := ( D():Articulos( nView ) )->Codigo
 
-         aGet[ _CREF ]:cText( Padr( cCodArt, 200 ) )
+         if !empty( aGet )
+            aGet[ _CREF ]:cText( Padr( cCodArt, 200 ) )
+         end if 
+
          aTmp[ _CREF ]           := cCodArt
 
          //Pasamos las referencias adicionales------------------------------
@@ -12309,7 +12414,7 @@ STATIC FUNCTION LoaArt( cCodArt, aGet, aTmp, aTmpFac, oStkAct, oSayPr1, oSayPr2,
          aTmp[ _CCODPR1 ]        := ( D():Articulos( nView ) )->cCodPrp1
          aTmp[ _CCODPR2 ]        := ( D():Articulos( nView ) )->cCodPrp2
 
-         if !empty( aTmp[ _CCODPR1 ] ) .and. !empty( aGet[ _CVALPR1 ] )
+         if !empty( aTmp[ _CCODPR1 ] ) .and. !empty( aGet ) .and. !empty( aGet[ _CVALPR1 ] )
 
             if !empty( cValPr1 )
                aGet[ _CVALPR1 ]:cText( cCodPrp( aTmp[ _CCODPR1 ], cValPr1, D():PropiedadesLineas( nView ) ) )
@@ -12317,7 +12422,7 @@ STATIC FUNCTION LoaArt( cCodArt, aGet, aTmp, aTmpFac, oStkAct, oSayPr1, oSayPr2,
 
          end if
 
-         if !empty( aTmp[ _CCODPR2 ] ) .and. !empty( aGet[ _CVALPR2 ] )
+         if !empty( aTmp[ _CCODPR2 ] ) .and. !empty( aGet ) .and. !empty( aGet[ _CVALPR2 ] )
 
             if !empty( cValPr2 )
                aGet[ _CVALPR2 ]:cText( cCodPrp( aTmp[ _CCODPR2 ], cValPr2, D():PropiedadesLineas( nView ) ) )
@@ -12329,7 +12434,7 @@ STATIC FUNCTION LoaArt( cCodArt, aGet, aTmp, aTmpFac, oStkAct, oSayPr1, oSayPr2,
          Imagen del producto---------------------------------------------------
          */
 
-         if !empty( aGet[ _CIMAGEN ] )
+         if !empty( aGet ) .and. !empty( aGet[ _CIMAGEN ] )
             aGet[ _CIMAGEN ]:cText( ( D():Articulos( nView ) )->cImagen )
          else
             aTmp[ _CIMAGEN ]     := ( D():Articulos( nView ) )->cImagen
@@ -12350,7 +12455,7 @@ STATIC FUNCTION LoaArt( cCodArt, aGet, aTmp, aTmpFac, oStkAct, oSayPr1, oSayPr2,
 
          // Metemos el proveedor por defecto---------------------------------------
 
-         if !empty( aGet[ _CCODPRV ] )
+         if !empty( aGet ) .and. !empty( aGet[ _CCODPRV ] )
             aGet[ _CCODPRV ]:cText( ( D():Articulos( nView ) )->cPrvHab )
             aGet[ _CCODPRV ]:lValid()
          else
@@ -12359,62 +12464,67 @@ STATIC FUNCTION LoaArt( cCodArt, aGet, aTmp, aTmpFac, oStkAct, oSayPr1, oSayPr2,
 
          aTmp[ _CREFPRV ]  := Padr( cRefPrvArt( aTmp[ _CREF ], ( D():Articulos( nView ) )->cPrvHab , dbfArtPrv ), 18 )
 
-         if !empty( aGet[ _CDETALLE ] )
+         if !empty( aGet ) .and. !empty( aGet[ _CDETALLE ] )
             aGet[ _CDETALLE ]:show()
             aGet[ _CDETALLE ]:cText( ( D():Articulos( nView ) )->Nombre )
+         else 
+            aTmp[ _CDETALLE ] := ( D():Articulos( nView ) )->Nombre
          end if   
 
-         if !empty( aGet[ _MLNGDES ] )
+         if !empty( aGet ) .and. !empty( aGet[ _MLNGDES ] )
             
-            aGet[ _MLNGDES  ]:hide()
-            aGet[ _MLNGDES  ]:cText( ( D():Articulos( nView ) )->Nombre )
+            aGet[ _MLNGDES ]:hide()
 
             if !empty( ( D():Articulos( nView ) )->Descrip )
+               aGet[ _MLNGDES ]:cText( ( D():Articulos( nView ) )->Descrip )
+            else
+               aGet[ _MLNGDES ]:cText( ( D():Articulos( nView ) )->Nombre )
+            end if 
 
-               if aGet[ _MLNGDES ] != nil
-                     aGet[ _MLNGDES ]:cText( ( D():Articulos( nView ) )->Descrip )
-               else
-                     aTmp[ _MLNGDES ]  := ( D():Articulos( nView ) )->Descrip
-               end if
+         else 
 
-            end if
+            if !empty( ( D():Articulos( nView ) )->Descrip )
+               aTmp[ _MLNGDES ]  := ( D():Articulos( nView ) )->Descrip 
+            else
+               aTmp[ _MLNGDES ]  := ( D():Articulos( nView ) )->Nombre 
+            end if 
 
         end if    
 
          // Peso y volumen------------------------------------------------------
 
-         if !empty( aGet[ _NPESOKG ] )
+         if !empty( aGet ) .and. !empty( aGet[ _NPESOKG ] )
             aGet[ _NPESOKG  ]:cText( ( D():Articulos( nView ) )->nPesoKg )
          else
             aTmp[ _NPESOKG  ] := ( D():Articulos( nView ) )->nPesoKg
          end if
 
-         if !empty( aGet[ _CPESOKG ] )
+         if !empty( aGet ) .and. !empty( aGet[ _CPESOKG ] )
             aGet[ _CPESOKG ]:cText( ( D():Articulos( nView ) )->cUndDim )
          else
             aTmp[ _CPESOKG ] := ( D():Articulos( nView ) )->cUndDim
          end if
 
-         if !empty( aGet[ _NVOLUMEN ] )
+         if !empty( aGet ) .and. !empty( aGet[ _NVOLUMEN ] )
             aGet[ _NVOLUMEN ]:cText( ( D():Articulos( nView ) )->nVolumen )
          else
-            aGet[ _NVOLUMEN ] := ( D():Articulos( nView ) )->nVolumen
+            aTmp[ _NVOLUMEN ] := ( D():Articulos( nView ) )->nVolumen
          end if
 
-         if !empty( aGet[ _CUNIDAD ] )
+         if !empty( aGet ) .and. !empty( aGet[ _CUNIDAD ] )
             aGet[ _CUNIDAD ]:cText( ( D():Articulos( nView ) )->cUnidad )
             aGet[ _CUNIDAD ]:lValid()
          else
             aTmp[ _CUNIDAD ] := ( D():Articulos( nView ) )->cUnidad
          end if
          
-         if !empty( aGet[ _CVOLUMEN ] )
+         if !empty( aGet ) .and. !empty( aGet[ _CVOLUMEN ] )
             aGet[ _CVOLUMEN ]:cText( ( D():Articulos( nView ) )->cVolumen )
          else
             aTmp[ _CVOLUMEN ]:= ( D():Articulos( nView ) )->cVolumen
          end if
          
-         if !empty( aGet[_CCODTIP ] )
+         if !empty( aGet ) .and. !empty( aGet[_CCODTIP ] )
             aGet[ _CCODTIP ]:cText( ( D():Articulos( nView ) )->cCodTip )
          else
             aTmp[ _CCODTIP ]  := ( D():Articulos( nView ) )->cCodTip
@@ -12432,21 +12542,21 @@ STATIC FUNCTION LoaArt( cCodArt, aGet, aTmp, aTmpFac, oStkAct, oSayPr1, oSayPr2,
 
          if !empty( cCodFam )
 
-            if aGet[ _CCODFAM ] != nil
+            if !empty( aGet ) .and. aGet[ _CCODFAM ] != nil
                aGet[ _CCODFAM ]:cText( cCodFam )
                aGet[ _CCODFAM ]:lValid()
             else
                aTmp[ _CCODFAM ]  := cCodFam
             end if
 
-            if aGet[ _CGRPFAM ] != nil
+            if !empty( aGet ) .and. aGet[ _CGRPFAM ] != nil
                aGet[ _CGRPFAM ]:cText( cGruFam( cCodFam, dbfFamilia ) )
                aGet[ _CGRPFAM ]:lValid()
             else
                aTmp[ _CGRPFAM ]  := cGruFam( cCodFam, dbfFamilia )
             end if
 
-            if aGet[ __CCODPRY ] != nil
+            if !empty( aGet ) .and. aGet[ __CCODPRY ] != nil
                aGet[ __CCODPRY ]:cText( aTmpFac[ _CCODPRY ] )
                aGet[ __CCODPRY ]:lValid()
             else
@@ -12455,17 +12565,17 @@ STATIC FUNCTION LoaArt( cCodArt, aGet, aTmp, aTmpFac, oStkAct, oSayPr1, oSayPr2,
 
          else
 
-            if aGet[ _CCODFAM ] != nil
+            if !empty( aGet ) .and. aGet[ _CCODFAM ] != nil
                aGet[ _CCODFAM ]:cText( Space( 8 ) )
                aGet[ _CCODFAM ]:lValid()
             end if
 
-            if aGet[ _CGRPFAM ] != nil
+            if !empty( aGet ) .and. aGet[ _CGRPFAM ] != nil
                aGet[ _CGRPFAM ]:cText( Space( 3 ) )
                aGet[ _CGRPFAM ]:lValid()
             end if
 
-            if aGet[ __CCODPRY ] != nil
+            if !empty( aGet ) .and. aGet[ __CCODPRY ] != nil
                aGet[ __CCODPRY ]:cText( Space( 3 ) )
                aGet[ __CCODPRY ]:lValid()
             end if
@@ -12484,7 +12594,7 @@ STATIC FUNCTION LoaArt( cCodArt, aGet, aTmp, aTmpFac, oStkAct, oSayPr1, oSayPr2,
 
             if lStockCompuestos( ( D():Articulos( nView ) )->Codigo, D():Articulos( nView ) )
 
-               if aGet[ _NCTLSTK ] != nil
+               if !empty( aGet ) .and. aGet[ _NCTLSTK ] != nil
                   aGet[ _NCTLSTK ]:SetOption( ( D():Articulos( nView ) )->nCtlStock )
                else
                   aTmp[ _NCTLSTK ]  := ( D():Articulos( nView ) )->nCtlStock
@@ -12492,7 +12602,7 @@ STATIC FUNCTION LoaArt( cCodArt, aGet, aTmp, aTmpFac, oStkAct, oSayPr1, oSayPr2,
 
             else
 
-               if aGet[ _NCTLSTK ] != nil
+               if !empty( aGet ) .and. aGet[ _NCTLSTK ] != nil
                   aGet[ _NCTLSTK ]:SetOption( STOCK_NO_CONTROLAR )
                else
                   aTmp[ _NCTLSTK ]  := STOCK_NO_CONTROLAR
@@ -12504,7 +12614,7 @@ STATIC FUNCTION LoaArt( cCodArt, aGet, aTmp, aTmpFac, oStkAct, oSayPr1, oSayPr2,
 
             aTmp[ _LIMPLIN ]     := .f.
 
-            if aGet[ _NCTLSTK ] != nil
+            if !empty( aGet ) .and. aGet[ _NCTLSTK ] != nil
                aGet[ _NCTLSTK ]:SetOption( ( D():Articulos( nView ) )->nCtlStock )
             else
                aTmp[ _NCTLSTK ]  := ( D():Articulos( nView ) )->nCtlStock
@@ -12517,7 +12627,7 @@ STATIC FUNCTION LoaArt( cCodArt, aGet, aTmp, aTmpFac, oStkAct, oSayPr1, oSayPr2,
          */
 
          if aTmpFac[ _NREGIVA ] <= 2
-            if !empty( aGet[ _NIVA ] )
+            if !empty( aGet ) .and. !empty( aGet[ _NIVA ] )
                aGet[ _NIVA ]:cText( nIva( dbfIva, ( D():Articulos( nView ) )->TipoIva ) )
             else
                aTmp[ _NIVA ]     := nIva( dbfIva, ( D():Articulos( nView ) )->TipoIva )
@@ -12530,22 +12640,37 @@ STATIC FUNCTION LoaArt( cCodArt, aGet, aTmp, aTmpFac, oStkAct, oSayPr1, oSayPr2,
          */
 
          aTmp[ _CCODIMP ]     := ( D():Articulos( nView ) )->cCodImp
-         oNewImp:setCodeAndValue( aTmp[ _CCODIMP ], aGet[ _NVALIMP ] )
+         
+         if !empty( aGet )
+            oNewImp:setCodeAndValue( aTmp[ _CCODIMP ], aGet[ _NVALIMP ] )
+         end if 
 
          if !empty( ( D():Articulos( nView ) )->cCodImp )
             aTmp[ _LVOLIMP ]     := RetFld( ( D():Articulos( nView ) )->cCodImp, oNewImp:oDbf:cAlias, "lIvaVol" )
          end if
 
          if ( D():Articulos( nView ) )->nCajEnt != 0
-            aGet[ _NCANENT ]:cText(  (D():Articulos( nView ) )->nCajEnt )
-         end if
+            if !empty( aGet ) 
+               aGet[ _NCANENT ]:cText( ( D():Articulos( nView ) )->nCajEnt )
+            else 
+               aTmp[ _NCANENT ]  := ( D():Articulos( nView ) )->nCajEnt 
+            end if
+         end if 
 
-         if !Empty( nUnidades )
-            aGet[ _NUNICAJA ]:cText( nUnidades )
-         end if
+         if !empty( nUnidades )
+            if !empty( aGet ) 
+               aGet[ _NUNICAJA ]:cText( nUnidades )
+            else
+               aTmp[ _NUNICAJA ] := nUnidades
+            end if
+         end if 
 
-         if Empty( nUnidades ) .and. ( D():Articulos( nView ) )->nUniCaja != 0
-            aGet[ _NUNICAJA ]:cText( ( D():Articulos( nView ) )->nUniCaja )
+         if empty( nUnidades ) .and. ( D():Articulos( nView ) )->nUniCaja != 0
+            if !empty( aGet )
+               aGet[ _NUNICAJA ]:cText( ( D():Articulos( nView ) )->nUniCaja )
+            else 
+               aTmp[ _NUNICAJA ]    := ( D():Articulos( nView ) )->nUniCaja
+            end if 
          end if
 
          // Si la Comisión del articulo hacia el agente es distinto de cero-------
@@ -12558,7 +12683,7 @@ STATIC FUNCTION LoaArt( cCodArt, aGet, aTmp, aTmpFac, oStkAct, oSayPr1, oSayPr2,
 
          if !empty( ( D():Articulos( nView ) )->cCodFra )
 
-            if aGet[ __CCODPRY ] != nil
+            if !empty( aGet ) .and. aGet[ __CCODPRY ] != nil
                aGet[ __CCODPRY ]:cText( aTmpFac[ _CCODPRY ] )
                aGet[ __CCODPRY ]:lValid()
             else
@@ -12571,7 +12696,7 @@ STATIC FUNCTION LoaArt( cCodArt, aGet, aTmp, aTmpFac, oStkAct, oSayPr1, oSayPr2,
          Descripciones largas--------------------------------------------------
          */
 
-         if !empty( aGet[ _DESCRIP ] )
+         if !empty( aGet ) .and. !empty( aGet[ _DESCRIP ] )
             aGet[ _DESCRIP ]:cText( ( D():Articulos( nView ) )->Descrip )
          else
             aTmp[ _DESCRIP ]     := ( D():Articulos( nView ) )->Descrip
@@ -12586,8 +12711,10 @@ STATIC FUNCTION LoaArt( cCodArt, aGet, aTmp, aTmpFac, oStkAct, oSayPr1, oSayPr2,
 
          if ( !empty( aTmp[ _CCODPR1 ] ) .or. !empty( aTmp[ _CCODPR2 ] ) ) .and. ( uFieldEmpresa( "lUseTbl" ) .and. ( nMode == APPD_MODE ) )
 
-            aGet[ _NCANENT  ]:cText( 0 )
-            aGet[ _NUNICAJA ]:cText( 0 )
+            if !empty( aGet )
+               aGet[ _NCANENT  ]:cText( 0 )
+               aGet[ _NUNICAJA ]:cText( 0 )
+            end if 
 
             BrowseProperties():getInstance():buildPropertiesTable( cCodArt, aTmp[ _CCODPR1 ], aTmp[ _CCODPR2 ] )
 
@@ -12597,7 +12724,7 @@ STATIC FUNCTION LoaArt( cCodArt, aGet, aTmp, aTmpFac, oStkAct, oSayPr1, oSayPr2,
 
             if !empty( aTmp[ _CCODPR1 ] )
 
-               if aGet[ _CVALPR1 ] != nil
+               if !empty( aGet ) .and. aGet[ _CVALPR1 ] != nil
                   aGet[ _CVALPR1 ]:show()
                   if lFocused
                      aGet[ _CVALPR1 ]:SetFocus()
@@ -12616,7 +12743,7 @@ STATIC FUNCTION LoaArt( cCodArt, aGet, aTmp, aTmpFac, oStkAct, oSayPr1, oSayPr2,
 
             else
 
-               if !empty( aGet[ _CVALPR1 ] )
+               if !empty( aGet ) .and. !empty( aGet[ _CVALPR1 ] )
                   aGet[ _CVALPR1 ]:hide()
                end if
 
@@ -12632,7 +12759,7 @@ STATIC FUNCTION LoaArt( cCodArt, aGet, aTmp, aTmpFac, oStkAct, oSayPr1, oSayPr2,
 
             if !empty( aTmp[ _CCODPR2 ] )
 
-               if aGet[ _CVALPR2 ] != nil
+               if !empty( aGet ) .and. aGet[ _CVALPR2 ] != nil
                   aGet[ _CVALPR2 ]:show()
                end if
 
@@ -12648,7 +12775,7 @@ STATIC FUNCTION LoaArt( cCodArt, aGet, aTmp, aTmpFac, oStkAct, oSayPr1, oSayPr2,
 
             else
 
-               if !empty( aGet[ _CVALPR2 ] )
+               if !empty( aGet ) .and. !empty( aGet[ _CVALPR2 ] )
                   aGet[ _CVALPR2 ]:hide()
                end if
 
@@ -12686,19 +12813,19 @@ STATIC FUNCTION LoaArt( cCodArt, aGet, aTmp, aTmpFac, oStkAct, oSayPr1, oSayPr2,
 
          // Inicializamos el descuento y el logico de oferta
 
-            if !empty( aGet[ _NDTO ] )
+            if !empty( aGet ) .and. !empty( aGet[ _NDTO ] )
                aGet[ _NDTO ]:cText( 0 )
             else
                aTmp[ _NDTO ] := 0
             end if
 
-            if !empty( aGet[ _NDTODIV ] )
+            if !empty( aGet ) .and. !empty( aGet[ _NDTODIV ] )
                aGet[ _NDTODIV ]:cText( 0 )
             else 
                aTmp[ _NDTODIV ] := 0
             end if 
 
-            if !empty( aGet[ _NDTOPRM ] )
+            if !empty( aGet ) .and. !empty( aGet[ _NDTOPRM ] )
                aGet[ _NDTOPRM ]:cText( 0 )
             else 
                aTmp[ _NDTOPRM ]:= 0
@@ -12710,7 +12837,7 @@ STATIC FUNCTION LoaArt( cCodArt, aGet, aTmp, aTmpFac, oStkAct, oSayPr1, oSayPr2,
          Cargamos el precio recomendado ,el precio de costo y el punto verde
          */
 
-         if !empty( aGet[ _NPNTVER ] )
+         if !empty( aGet ) .and. !empty( aGet[ _NPNTVER ] )
              aGet[ _NPNTVER ]:cText( ( D():Articulos( nView ) )->NPNTVER1 )
          else
              aTmp [ _NPNTVER ]   :=  ( D():Articulos( nView ) )->NPNTVER1
@@ -12729,7 +12856,7 @@ STATIC FUNCTION LoaArt( cCodArt, aGet, aTmp, aTmpFac, oStkAct, oSayPr1, oSayPr2,
             do case
                case nNumDto == 1
 
-                  if !empty( aGet[ _NDTO ] )
+                  if !empty( aGet ) .and. !empty( aGet[ _NDTO ] )
                      aGet[ _NDTO ]:cText( ( D():Articulos( nView ) )->nDtoArt1 )
                      aTmp[ _NDTO ]     := ( D():Articulos( nView ) )->nDtoArt1
                   else
@@ -12738,7 +12865,7 @@ STATIC FUNCTION LoaArt( cCodArt, aGet, aTmp, aTmpFac, oStkAct, oSayPr1, oSayPr2,
 
                case nNumDto == 2
 
-                  if !empty( aGet[ _NDTO ] )
+                  if !empty( aGet ) .and. !empty( aGet[ _NDTO ] )
                      aGet[ _NDTO ]:cText( ( D():Articulos( nView ) )->nDtoArt2 )
                      aTmp[ _NDTO ]     := ( D():Articulos( nView ) )->nDtoArt2
                   else
@@ -12747,7 +12874,7 @@ STATIC FUNCTION LoaArt( cCodArt, aGet, aTmp, aTmpFac, oStkAct, oSayPr1, oSayPr2,
 
                case nNumDto == 3
 
-                  if !empty( aGet[ _NDTO ] )
+                  if !empty( aGet ) .and. !empty( aGet[ _NDTO ] )
                      aGet[ _NDTO]:cText( ( D():Articulos( nView ) )->nDtoArt3 )
                      aTmp[ _NDTO ]     := ( D():Articulos( nView ) )->nDtoArt3
                   else
@@ -12756,7 +12883,7 @@ STATIC FUNCTION LoaArt( cCodArt, aGet, aTmp, aTmpFac, oStkAct, oSayPr1, oSayPr2,
 
                case nNumDto == 4
 
-                  if !empty( aGet[ _NDTO ] )
+                  if !empty( aGet ) .and. !empty( aGet[ _NDTO ] )
                      aGet[ _NDTO ]:cText( ( D():Articulos( nView ) )->nDtoArt4 )
                      aTmp[ _NDTO ]     := ( D():Articulos( nView ) )->nDtoArt4
                   else
@@ -12765,7 +12892,7 @@ STATIC FUNCTION LoaArt( cCodArt, aGet, aTmp, aTmpFac, oStkAct, oSayPr1, oSayPr2,
 
                case nNumDto == 5
 
-                  if !empty( aGet[ _NDTO ] )
+                  if !empty( aGet ) .and. !empty( aGet[ _NDTO ] )
                      aGet[ _NDTO ]:cText( ( D():Articulos( nView ) )->nDtoArt5 )
                      aTmp[ _NDTO ]     := ( D():Articulos( nView ) )->nDtoArt5
                   else
@@ -12774,7 +12901,7 @@ STATIC FUNCTION LoaArt( cCodArt, aGet, aTmp, aTmpFac, oStkAct, oSayPr1, oSayPr2,
 
                case nNumDto == 6
 
-                  if !empty( aGet[ _NDTO ] )
+                  if !empty( aGet ) .and. !empty( aGet[ _NDTO ] )
                      aGet[ _NDTO]:cText( ( D():Articulos( nView ) )->nDtoArt6 )
                      aTmp[ _NDTO ]     := ( D():Articulos( nView ) )->nDtoArt6
                   else
@@ -12790,7 +12917,7 @@ STATIC FUNCTION LoaArt( cCodArt, aGet, aTmp, aTmpFac, oStkAct, oSayPr1, oSayPr2,
          */
 
          if aTmp[ _NDTO ] == 0
-            if !empty( aGet[ _NDTO ] )
+            if !empty( aGet ) .and. !empty( aGet[ _NDTO ] )
                aGet[ _NDTO ]:cText( nDescuentoFamilia( cCodFam, dbfFamilia ) )
             else
                aTmp[ _NDTO ]     := nDescuentoFamilia( cCodFam, dbfFamilia )
@@ -12801,7 +12928,7 @@ STATIC FUNCTION LoaArt( cCodArt, aGet, aTmp, aTmpFac, oStkAct, oSayPr1, oSayPr2,
          Cargamos el codigo de las unidades---------------------------------
          */
 
-         if !empty( aGet[ _CUNIDAD ] )
+         if !empty( aGet ) .and. !empty( aGet[ _CUNIDAD ] )
             aGet[ _CUNIDAD ]:cText( ( D():Articulos( nView ) )->cUnidad )
          else
             aTmp[ _CUNIDAD ]  := ( D():Articulos( nView ) )->cUnidad
@@ -12811,15 +12938,15 @@ STATIC FUNCTION LoaArt( cCodArt, aGet, aTmp, aTmpFac, oStkAct, oSayPr1, oSayPr2,
          Guardamos el precio del artículo dependiendo de las propiedades--//
          */
 
-         if !empty( aGet[ _NPREUNIT ] ) // .and. empty( aTmp[ _NPREUNIT ] )
+         nPrePro           := nPrePro( aTmp[ _CREF ], aTmp[ _CCODPR1 ], aTmp[ _CVALPR1 ], aTmp[ _CCODPR2 ], aTmp[ _CVALPR2 ], aTmp[ _NTARLIN ], aTmpFac[ _LIVAINC ], dbfArtDiv, dbfTarPreL, aTmpFac[_CCODTAR] )
+         if nPrePro != 0
+            aTmp[ _NPREUNIT ]:cText( nPrePro )
+         else
+            aTmp[ _NPREUNIT ]:cText( nRetPreArt( aTmp[ _NTARLIN ], aTmpFac[ _CDIVFAC ], aTmpFac[ _LIVAINC ], D():Articulos( nView ), dbfDiv, dbfKit, dbfIva, , aGet[ _NTARLIN ], oNewImp ) )
+         end if
 
-            nPrePro           := nPrePro( aTmp[ _CREF ], aTmp[ _CCODPR1 ], aTmp[ _CVALPR1 ], aTmp[ _CCODPR2 ], aTmp[ _CVALPR2 ], aTmp[ _NTARLIN ], aTmpFac[ _LIVAINC ], dbfArtDiv, dbfTarPreL, aTmpFac[_CCODTAR] )
-            if nPrePro != 0
-               aGet[ _NPREUNIT ]:cText( nPrePro )
-            else
-               aGet[ _NPREUNIT ]:cText( nRetPreArt( aTmp[ _NTARLIN ], aTmpFac[ _CDIVFAC ], aTmpFac[ _LIVAINC ], D():Articulos( nView ), dbfDiv, dbfKit, dbfIva, , aGet[ _NTARLIN ], oNewImp ) )
-            end if
-
+         if !empty( aGet ) .and. !empty( aGet[ _NPREUNIT ] ) // .and. empty( aTmp[ _NPREUNIT ] )
+            aGet[ _NPREUNIT ]:Refresh()
          end if
 
          sysRefresh()
@@ -12836,8 +12963,10 @@ STATIC FUNCTION LoaArt( cCodArt, aGet, aTmp, aTmpFac, oStkAct, oSayPr1, oSayPr2,
 
          nImpOfe  := RetPrcTar( aTmp[ _CREF ], aTmpFac[ _CCODTAR ], aTmp[ _CCODPR1 ], aTmp[ _CCODPR2 ], aTmp[ _CVALPR1 ], aTmp[ _CVALPR2 ], dbfTarPreL, aTmp[ _NTARLIN ] )
          if nImpOfe != 0
-            if !empty( aGet[ _NPREUNIT ] )
-               aGet[ _NPREUNIT ]:cText( nImpOfe )
+            aTmp[ _NPREUNIT ]    := nImpOfe
+
+            if !empty( aGet ) .and. !empty( aGet[ _NPREUNIT ] )
+               aGet[ _NPREUNIT ]:Refresh()
             end if
          end if
 
@@ -12845,8 +12974,10 @@ STATIC FUNCTION LoaArt( cCodArt, aGet, aTmp, aTmpFac, oStkAct, oSayPr1, oSayPr2,
 
          nImpOfe  := RetPctTar( aTmp[ _CREF ], aTmp[ _CCODFAM ], aTmpFac[ _CCODTAR ], aTmp[ _CCODPR1 ], aTmp[ _CCODPR2 ], aTmp[ _CVALPR1 ], aTmp[ _CVALPR2 ], dbfTarPreL )
          if nImpOfe != 0
-            if !empty( aGet[_NDTO ] )
-               aGet[_NDTO   ]:cText( nImpOfe )
+            aTmp[ _NDTO ]  := nImpOfe
+
+            if !empty( aGet ) .and. !empty( aGet[_NDTO ] )
+               aGet[ _NDTO ]:Refresh()
             end if   
          end if
 
@@ -12854,8 +12985,10 @@ STATIC FUNCTION LoaArt( cCodArt, aGet, aTmp, aTmpFac, oStkAct, oSayPr1, oSayPr2,
 
          nImpOfe  := RetLinTar( aTmp[ _CREF ], aTmp[ _CCODFAM ], aTmpFac[_CCODTAR], aTmp[_CCODPR1], aTmp[_CCODPR2], aTmp[_CVALPR1], aTmp[_CVALPR2], dbfTarPreL )
          if nImpOfe != 0
-            if !empty( aGet[ _NDTODIV ] )
-               aGet[ _NDTODIV ]:cText( nImpOfe )
+            aTmp[ _NDTODIV ]  := nImpOfe
+
+            if !empty( aGet ) .and. !empty( aGet[ _NDTODIV ] )
+               aGet[ _NDTODIV ]:Refresh()
             end if   
          end if
 
@@ -12897,50 +13030,46 @@ STATIC FUNCTION LoaArt( cCodArt, aGet, aTmp, aTmpFac, oStkAct, oSayPr1, oSayPr2,
       if !empty( hAtipica )
 
          if hhaskey( hAtipica, "nImporte" ) .and. hAtipica[ "nImporte" ] != 0
-            if !empty( aGet[ _NPREUNIT ] )
-               aGet[ _NPREUNIT ]:cText( hAtipica[ "nImporte" ] )
-            else 
-               aTmp[ _NPREUNIT ] := hAtipica[ "nImporte" ] 
+            aTmp[ _NPREUNIT ] := hAtipica[ "nImporte" ] 
+
+            if !empty( aGet ) .and. !empty( aGet[ _NPREUNIT ] )
+               aGet[ _NPREUNIT ]:Refresh()
             end if
          end if
 
          if hhaskey( hAtipica, "nDescuentoPorcentual" ) .and. hAtipica[ "nDescuentoPorcentual"] != 0 .and. aTmp[ _NDTO ] == 0
-            if !empty( aGet[ _NDTO ] )
-               aGet[ _NDTO ]:cText( hAtipica[ "nDescuentoPorcentual"] )   
-            else 
-               aTmp[ _NDTO ]  := hAtipica[ "nDescuentoPorcentual"]
+            aTmp[ _NDTO ]  := hAtipica[ "nDescuentoPorcentual"]
+            if !empty( aGet ) .and. !empty( aGet[ _NDTO ] )
+               aGet[ _NDTO ]:Refresh()   
             end if   
          end if
 
          if hhaskey( hAtipica, "nDescuentoPromocional" ) .and. hAtipica[ "nDescuentoPromocional" ] != 0 .and. aTmp[ _NDTOPRM ] == 0
-            if !empty( aGet[ _NDTOPRM ] )
-               aGet[ _NDTOPRM ]:cText( hAtipica[ "nDescuentoPromocional" ] )
-            else 
-               aTmp[ _NDTOPRM ]  := hAtipica[ "nDescuentoPromocional" ] 
+            aTmp[ _NDTOPRM ]  := hAtipica[ "nDescuentoPromocional" ] 
+            if !empty( aGet ) .and. !empty( aGet[ _NDTOPRM ] )
+               aGet[ _NDTOPRM ]:Refresh()
             end if
          end if
 
          if hhaskey( hAtipica, "nComisionAgente" ) .and. hAtipica[ "nComisionAgente" ] != 0 .and. aTmp[ _NCOMAGE ] == 0
-            if !empty( aGet[ _NCOMAGE ] )
-               aGet[ _NCOMAGE ]:cText( hAtipica[ "nComisionAgente" ] )
-            else 
-               atmp[ _NCOMAGE ]  := hAtipica[ "nComisionAgente" ] 
+            atmp[ _NCOMAGE ]  := hAtipica[ "nComisionAgente" ] 
+            
+            if !empty( aGet ) .and. !empty( aGet[ _NCOMAGE ] )
+               aGet[ _NCOMAGE ]:Refresh()
             end if   
          end if
 
          if hhaskey( hAtipica, "nDescuentoLineal" ) .and. hAtipica[ "nDescuentoLineal" ] != 0 .and. aTmp[ _NDTODIV ] == 0
-            if !empty( aGet[ _NDTODIV ] )
-               aGet[ _NDTODIV ]:cText( hAtipica[ "nDescuentoLineal" ] )
-            else 
-               aTmp[ _NDTODIV ]  := hAtipica[ "nDescuentoLineal" ]
+            aTmp[ _NDTODIV ]  := hAtipica[ "nDescuentoLineal" ]
+            if !empty( aGet ) .and. !empty( aGet[ _NDTODIV ] )
+               aGet[ _NDTODIV ]:Refresh()
             end if
          end if
 
          if hhaskey( hAtipica, "nTarifaPrecio" ) .and. hAtipica[ "nTarifaPrecio" ] != 0 .and. aTmp[ _NDTODIV ] == 0
-            if !empty( aGet[ _NTARLIN ] )
-               aGet[ _NTARLIN ]:cText( hAtipica[ "nTarifaPrecio" ] )
-            else 
-               aTmp[ _NTARLIN ]  := hAtipica[ "nTarifaPrecio" ] 
+            aTmp[ _NTARLIN ]  := hAtipica[ "nTarifaPrecio" ] 
+            if !empty( aGet ) .and. !empty( aGet[ _NTARLIN ] )
+               aGet[ _NTARLIN ]:Refresh()
             end if 
          end if 
 
@@ -12964,7 +13093,7 @@ STATIC FUNCTION LoaArt( cCodArt, aGet, aTmp, aTmpFac, oStkAct, oSayPr1, oSayPr2,
                cLote          := ( D():Articulos( nView ) )->cLote
             end if
 
-            if !empty( aGet[ _CLOTE ] )
+            if !empty( aGet ) .and. !empty( aGet[ _CLOTE ] )
 
                aGet[ _CLOTE ]:Show()
 
@@ -12988,7 +13117,7 @@ STATIC FUNCTION LoaArt( cCodArt, aGet, aTmp, aTmpFac, oStkAct, oSayPr1, oSayPr2,
                dFechaCaducidad      := dFechaCaducidadLote( aTmp[ _CREF ], aTmp[ _CVALPR1 ], aTmp[ _CVALPR2 ], aTmp[ _CLOTE ], dbfAlbPrvL, dbfFacPrvL, dbfProLin )
             end if 
             
-            if !empty( aGet[ _DFECCAD ] )
+            if !empty( aGet ) .and. !empty( aGet[ _DFECCAD ] )
 
                aGet[ _DFECCAD ]:Show()
 
@@ -13006,11 +13135,11 @@ STATIC FUNCTION LoaArt( cCodArt, aGet, aTmp, aTmpFac, oStkAct, oSayPr1, oSayPr2,
 
          else
 
-            if !empty( aGet[ _CLOTE ] )
+            if !empty( aGet ) .and. !empty( aGet[ _CLOTE ] )
                aGet[ _CLOTE ]:Hide()
             end if
 
-            if !empty( aGet[ _DFECCAD ] )
+            if !empty( aGet ) .and. !empty( aGet[ _DFECCAD ] )
                aGet[ _DFECCAD ]:Hide()
             end if
 
@@ -13032,7 +13161,7 @@ STATIC FUNCTION LoaArt( cCodArt, aGet, aTmp, aTmpFac, oStkAct, oSayPr1, oSayPr2,
             nCosPro              := nCosto( aTmp[ _CREF ], D():Articulos( nView ), dbfKit, .f., , dbfDiv )
          end if
 
-         if aGet[ _NCOSDIV ] != nil
+         if !empty( aGet ) .and. aGet[ _NCOSDIV ] != nil
             aGet[ _NCOSDIV ]:cText( nCosPro )
          else
             aTmp[ _NCOSDIV ]  := nCosPro
@@ -13074,53 +13203,53 @@ STATIC FUNCTION LoaArt( cCodArt, aGet, aTmp, aTmpFac, oStkAct, oSayPr1, oSayPr2,
 
       if empty( aTmp[ _NPREUNIT ] ) .or. lUsrMaster() .or. oUser():lCambiarPrecio()
 
-         if !empty( aGet[ _NPREUNIT ] )
+         if !empty( aGet ) .and. !empty( aGet[ _NPREUNIT ] )
             aGet[ _NPREUNIT ]:HardEnable()
          end if   
          
-         if !empty( aGet[ _NIMPTRN  ] )
+         if !empty( aGet ) .and. !empty( aGet[ _NIMPTRN  ] )
             aGet[ _NIMPTRN  ]:HardEnable()
          end if   
 
-         if !empty( aGet[ _NPNTVER ] )
+         if !empty( aGet ) .and. !empty( aGet[ _NPNTVER ] )
              aGet[ _NPNTVER ]:HardEnable()
          end if
 
-         if !empty( aGet[ _NDTO ] )
+         if !empty( aGet ) .and. !empty( aGet[ _NDTO ] )
             aGet[ _NDTO    ]:HardEnable()
          end if   
          
-         if !empty( aGet[ _NDTOPRM ] )
+         if !empty( aGet ) .and. !empty( aGet[ _NDTOPRM ] )
             aGet[ _NDTOPRM ]:HardEnable()
          end if   
 
-         if !empty( aGet[ _NDTODIV ] )
+         if !empty( aGet ) .and. !empty( aGet[ _NDTODIV ] )
              aGet[ _NDTODIV ]:HardEnable()
          end if
 
       else
 
-         if !empty( aGet[ _NPREUNIT ] )
+         if !empty( aGet ) .and. !empty( aGet[ _NPREUNIT ] )
             aGet[ _NPREUNIT ]:HardDisable()
          end if   
          
-       if !empty( aGet[ _NIMPTRN  ] ) 
+         if !empty( aGet ) .and. !empty( aGet[ _NIMPTRN  ] ) 
             aGet[ _NIMPTRN  ]:HardDisable() 
          end if   
 
-         if !empty( aGet[ _NPNTVER ] )
+         if !empty( aGet ) .and. !empty( aGet[ _NPNTVER ] )
              aGet[ _NPNTVER ]:HardEnable() 
          end if
          
-         if !empty( aGet[ _NDTO ] )
+         if !empty( aGet ) .and. !empty( aGet[ _NDTO ] )
             aGet[ _NDTO ]:HardDisable()
          end if   
          
-         if !empty( aGet[ _NDTOPRM ] )
+         if !empty( aGet ) .and. !empty( aGet[ _NDTOPRM ] )
             aGet[ _NDTOPRM ]:HardDisable()
          end if   
 
-         if !empty( aGet[ _NDTODIV ] )
+         if !empty( aGet ) .and. !empty( aGet[ _NDTODIV ] )
              aGet[ _NDTODIV ]:HardEnable()
          end if
 
@@ -13178,13 +13307,13 @@ STATIC FUNCTION SaveDeta( aTmp, aTmpFac, aGet, oBrw, oDlg, oFld, oSayPr1, oSayPr
 
    aTmp[ _LIVALIN ]  := aTmpFac[ _LIVAINC ]
 
-   if empty( aTmp[ _CALMLIN ] ) .and. !empty( aGet[ _CALMLIN ] )
+   if empty( aTmp[ _CALMLIN ] ) .and. !empty( aGet ) .and. !empty( aGet[ _CALMLIN ] )
       MsgStop( "Código de almacen no puede estar vacio" )
       aGet[ _CALMLIN ]:SetFocus()
       return .f.
    end if
 
-   if !empty( aGet[ _CALMLIN ] ) .and. !cAlmacen( aGet[ _CALMLIN ], dbfAlm )
+   if !empty( aGet ) .and. !empty( aGet[ _CALMLIN ] ) .and. !cAlmacen( aGet[ _CALMLIN ], dbfAlm )
       return .f.
    end if   
 
@@ -13204,14 +13333,14 @@ STATIC FUNCTION SaveDeta( aTmp, aTmpFac, aGet, oBrw, oDlg, oFld, oSayPr1, oSayPr
       if !empty( oBtnSer )
          oBtnSer:Click()
       end if 
-      return .f.
+      RETURN .f.
    end if
 
    // lanzamos los scripts-----------------------------------------------------
 
    if isAppendOrDuplicateMode( nMode )
       if isfalse( runEventScript( "FacturasClientes\Lineas\beforeAppend", aTmp, aTmpFac, nView, dbfTmpLin ) )
-         return .f.
+         RETURN .f.
       end if
    end if
 
@@ -13244,7 +13373,7 @@ STATIC FUNCTION SaveDeta( aTmp, aTmpFac, aGet, oBrw, oDlg, oFld, oSayPr1, oSayPr
 
       oDlg:end( IDOK )
 
-      return nil
+      RETURN nil
 
    end if
 
@@ -13265,12 +13394,12 @@ STATIC FUNCTION SaveDeta( aTmp, aTmpFac, aGet, oBrw, oDlg, oFld, oSayPr1, oSayPr
 
                if aTmp[ _LNOTVTA ]
                   MsgStop( "No hay stock suficiente, tenemos " + Alltrim( Trans( oStkAct:VarGet(), MasUnd() ) ) + " unidad(es) disponible(s)," + CRLF + "en Almacén " + aTmp[ _CALMLIN ] + "." )
-                  return nil
+                  RETURN nil
                end if
 
                if aTmp[ _LMSGVTA ]
                   if !ApoloMsgNoYes( "No hay stock suficiente, tenemos " + Alltrim( Trans( oStkAct:VarGet(), MasUnd() ) ) + " unidad(es) disponible(s)," + CRLF + " en Almacén " + aTmp[ _CALMLIN ] + ".", "¿Desea continuar?" )
-                     return nil
+                     RETURN nil
                   end if
                end if
 
@@ -13278,7 +13407,7 @@ STATIC FUNCTION SaveDeta( aTmp, aTmpFac, aGet, oBrw, oDlg, oFld, oSayPr1, oSayPr
 
                if aTmp[ _LMSGVTA ]
                   if !ApoloMsgNoYes( "El stock está por debajo del minimo.", "¿Desea continuar?" )
-                     return nil
+                     RETURN nil
                   end if
                end if
 
@@ -13384,23 +13513,28 @@ STATIC FUNCTION SaveDeta( aTmp, aTmpFac, aGet, oBrw, oDlg, oFld, oSayPr1, oSayPr
       recalculaTotal( aTmpFac )
 
       aCopy( dbBlankRec( dbfTmpLin ), aTmp )
-      aEval( aGet, {| o, i | if( "GET" $ o:ClassName(), o:cText( aTmp[ i ] ), ) } )
+
+      if !empty( aGet )
+         aeval( aGet, {| o, i | if( "GET" $ o:ClassName(), o:cText( aTmp[ i ] ), ) } )
+      end if 
 
       setDlgMode( aTmp, aGet, oFld, oSayPr1, oSayPr2, oSayVp1, oSayVp2, oStkAct, nMode, oTotal, aTmpFac, , oSayLote )
 
       sysRefresh()
 
-      if !empty( aGet[ _CREF ] )
+      if !empty( aGet ) .and. !empty( aGet[ _CREF ] )
          aGet[ _CREF ]:SetFocus()
       end if
 
    else
 
-      oDlg:end( IDOK )
+      if !empty( oDlg )
+         oDlg:end( IDOK )
+      end if 
 
    end if
 
-Return nil
+RETURN nil
 
 //--------------------------------------------------------------------------//
 

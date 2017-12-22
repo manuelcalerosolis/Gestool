@@ -15,11 +15,13 @@ CLASS MovimientosAlmacenLineasRepository FROM SQLBaseRepository
    METHOD getHashArticuloUuid( cCodigoArticulo, Uuid ) ;
                                  INLINE ( getSQLDataBase():selectFetchHash( ::getSQLSentenceArticuloUuid( cCodigoArticulo, Uuid ) ) )
 
-   METHOD getSqlSentenceWhereParentUuid( uuid )
+   METHOD getSQLSentenceWhereParentUuid( uuid )
 
    METHOD getSerializedColumnsSentenceToLabels()
 
    METHOD getSQLSentenceToLabels( initialId, finalId )
+
+   METHOD getSQLSentenceFechaHoraConsolidacion( cCodigoArticulo, cCodigoAlmacen, cCodigoPrimeraPropiedad, cCodigoSegundaPropiedad, cValorPrimeraPropiedad, cValorSegundaPropiedad, cLote, dFecha, tHora )
 
 END CLASS
 
@@ -107,6 +109,46 @@ METHOD getSQLSentenceToLabels( initialId, finalId, nFixLabels, cOrderBy )
    if !empty( cOrderBy )                  
       cSql     += "ORDER BY " + ( cOrderBy ) 
    end if 
+
+RETURN ( cSql )
+
+//---------------------------------------------------------------------------//
+
+METHOD getSQLSentenceFechaHoraConsolidacion( cCodigoArticulo, cCodigoAlmacen, cCodigoPrimeraPropiedad, cCodigoSegundaPropiedad, cValorPrimeraPropiedad, cValorSegundaPropiedad, cLote, dFecha, tHora )
+
+   local cSql  := "SELECT "                                                                              + ;
+                     "cabecera.fecha_hora "                                                              + ;
+                  "FROM movimientos_almacen_lineas lineas "                                              + ;
+                     "INNER JOIN movimientos_almacen cabecera ON lineas.parent_uuid = cabecera.uuid "    + ;
+                  "WHERE lineas.codigo_articulo = " + quoted( cCodigoArticulo ) + " "                    + ;
+                     "AND cabecera.tipo_movimiento = 4 "                                                 
+
+   if !empty(cCodigoAlmacen)
+      cSql     +=    "AND cabecera.almacen_destino = " + quoted( cCodigoAlmacen ) + " "                   
+   end if 
+
+   if !empty(cCodigoPrimeraPropiedad)
+      cSql     +=    "AND lineas.codigo_primera_propiedad = " + quoted( cCodigoPrimeraPropiedad ) + " "   
+   end if 
+
+   if !empty(cCodigoSegundaPropiedad)
+      cSql     +=    "AND lineas.codigo_segunda_propiedad = " + quoted( cCodigoSegundaPropiedad ) + " "   
+   end if 
+
+   if !empty(cValorPrimeraPropiedad)
+      cSql     +=    "AND lineas.valor_primera_propiedad = " + quoted( cValorPrimeraPropiedad ) + " "   
+   end if 
+
+   if !empty(cValorSegundaPropiedad)
+      cSql     +=    "AND lineas.valor_segunda_propiedad = " + quoted( cValorSegundaPropiedad ) + " "   
+   end if 
+
+   if !empty(cLote)
+      cSql     +=    "AND lineas.lote = " + quoted( cLote ) + " "
+   end if 
+
+   cSql        += "ORDER BY cabecera.fecha_hora "                                                        + ;
+                     "LIMIT 1"
 
 RETURN ( cSql )
 

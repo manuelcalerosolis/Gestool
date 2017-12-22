@@ -19,12 +19,11 @@ CLASS SQLDatabase
    DATA cIpMySQL
    DATA cUserMySQL
    DATA cPasswordMySQL
-   DATA lEmbeddedMySQL
+   DATA cPortMySQL
 
    DATA aModels                           INIT {}
 
    METHOD New()                           CONSTRUCTOR
-   METHOD NewEmbedded()                   CONSTRUCTOR
    
    METHOD Conexion()                      INLINE ( ::oConexion )
    METHOD Connect() 
@@ -89,28 +88,9 @@ METHOD New()
    ::cIpMySQL                 := GetPvProfString(  "MySQL",    "Ip",       "127.0.0.1",   cIniAplication() )
    ::cUserMySQL               := GetPvProfString(  "MySQL",    "User",     "root",        cIniAplication() )
    ::cPasswordMySQL           := GetPvProfString(  "MySQL",    "Password", "",            cIniAplication() )
-   ::lEmbeddedMySQL           := GetPvProfString(  "MySQL",    "Embedded", ".F.",         cIniAplication() )
-   ::lEmbeddedMySQL           := upper( ::lEmbeddedMySQL ) == ".T."
-
-   if ::lEmbeddedMySQL
-      initMySQLEmdSys( aOptions, aGroup, "client" )                             
-   end if 
+   ::cPortMySQL               := GetPvProfString(  "MySQL",    "Port",     "3306",        cIniAplication() )
 
    ::oConexion                := THDO():new( "mysql" )
-
-   ::oConexion:setAttribute( ATTR_ERRMODE, .t. )
-
-RETURN ( Self )
-
-//----------------------------------------------------------------------------//
-
-METHOD NewEmbedded()
-
-   local aOptions := { 'GESTOOL', '--defaults-file=./mysql.cnf' }
-   // local aOptions := { 'GESTOOL', '--datadir=./data/' } 
-   local aGroup   := { "server", "embedded" }
-   
-   // ::oConexion    := MySQLEmbNew( aOptions, aGroup, "embedded" ) 
 
    ::oConexion:setAttribute( ATTR_ERRMODE, .t. )
 
@@ -176,6 +156,7 @@ METHOD Exec( cSql )
 
    if !::oConexion:Parse( cSql )
       msgstop( cSql, "Error en el comando SQL" )
+      logwrite( cSql )
       RETURN ( .f. )  
    end if 
 
@@ -309,12 +290,6 @@ METHOD fetchRowSet( cSentence )
    catch oError
 
       eval( errorBlock(), oError )
-
-   finally
-
-      // if !empty( oStatement )
-      //    oStatement:Free()
-      // end if 
 
    end
 
