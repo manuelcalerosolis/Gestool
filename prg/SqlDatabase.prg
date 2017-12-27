@@ -19,7 +19,7 @@ CLASS SQLDatabase
    DATA cIpMySQL
    DATA cUserMySQL
    DATA cPasswordMySQL
-   DATA cPortMySQL
+   DATA nPortMySQL
 
    DATA aModels                           INIT {}
 
@@ -67,7 +67,8 @@ CLASS SQLDatabase
    METHOD sayConexionInfo()               INLINE ( "Database : " + ::cDatabaseMySQL + CRLF + ;
                                                    "IP : " + ::cIpMySQL             + CRLF + ;
                                                    "User : " + ::cUserMySQL         + CRLF + ;
-                                                   "Password : " + ::cPasswordMySQL )
+                                                   "Password : " + ::cPasswordMySQL + CRLF + ;
+                                                   "Port : " + alltrim( str( ::nPortMySQL ) ) )
 
 ENDCLASS
 
@@ -88,7 +89,7 @@ METHOD New()
    ::cIpMySQL                 := GetPvProfString(  "MySQL",    "Ip",       "127.0.0.1",   cIniAplication() )
    ::cUserMySQL               := GetPvProfString(  "MySQL",    "User",     "root",        cIniAplication() )
    ::cPasswordMySQL           := GetPvProfString(  "MySQL",    "Password", "",            cIniAplication() )
-   ::cPortMySQL               := GetPvProfString(  "MySQL",    "Port",     "3306",        cIniAplication() )
+   ::nPortMySQL               := GetPvProfInt(     "MySQL",    "Port",     3306,          cIniAplication() )
 
    ::oConexion                := THDO():new( "mysql" )
 
@@ -108,7 +109,7 @@ METHOD Connect()
          
          ::oConexion:setAttribute( MYSQL_OPT_RECONNECT, .t. )
 
-         lConnect    := ::oConexion:Connect( ::cDatabaseMySQL, ::cIpMySQL, ::cUserMySQL, ::cPasswordMySQL )
+         lConnect    := ::oConexion:Connect( ::cDatabaseMySQL, ::cIpMySQL, ::cUserMySQL, ::cPasswordMySQL, ::nPortMySQL )
 
       end if 
        
@@ -130,7 +131,7 @@ METHOD ConnectWithoutDataBase()
    
       if !empty( ::oConexion )
          
-         lConnect    := ::oConexion:Connect( nil, ::cIpMySQL, ::cUserMySQL, ::cPasswordMySQL )
+         lConnect    := ::oConexion:Connect( nil, ::cIpMySQL, ::cUserMySQL, ::cPasswordMySQL, ::nPortMySQL )
 
       end if 
        
