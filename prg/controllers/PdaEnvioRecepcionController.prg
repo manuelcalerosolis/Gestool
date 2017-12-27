@@ -173,6 +173,8 @@ METHOD exportArticulosJson()
 
    ::setTotalProgress( ( cArea )->( lastrec() ) )
 
+   ( cArea )->( dbgotop() )
+
    while !( cArea )->( eof() )
 
       aadd( ::aJson, ::buildArticuloJson( cArea ) )
@@ -197,7 +199,7 @@ METHOD buildArticuloJson( cArea )
    local aCodebar := {}
 
    hset( hJson, "id",                           alltrim( ( cArea )->Codigo ) )
-   hset( hJson, "nombre",                       alltrim( ( cArea )->Nombre ) )
+   hset( hJson, "nombre",                       alltrim( hb_oemtoansi( ( cArea )->Nombre ) ) )
    hset( hJson, "uuid",                         alltrim( ( cArea )->uuid ) )
    hset( hJson, "precio_venta",                 ( cArea )->pVenta1 )
    hset( hJson, "porcentaje_iva",               ( cArea )->tpIva )

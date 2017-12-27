@@ -1,5 +1,15 @@
 MVC - ToDo
 
+- Criterio de exportación de articulos a la pda.(done)
+
+- Marca para etiqueta en articulo desde el exterior
+
+- Impresion de etiquetas rapidas desde el exterior 
+
+- Mensajes en la conexion del ftp.
+
+- Exportacion automaticas de datos al ftp.
+
 - Stamps en dialogos de seleccion de importacion de almacen
 
 - Error al borrar las lineas de los movimientos de almacen
