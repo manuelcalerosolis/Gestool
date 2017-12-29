@@ -790,6 +790,7 @@ Function Articulo( oMenuItem, oWnd, bOnInit )
    local oRpl
    local oTct
    local oDel
+   local oLbl
    local nLevel
    local oBtnEur
    local oRotor
@@ -1429,12 +1430,20 @@ Function Articulo( oMenuItem, oWnd, bOnInit )
       HOTKEY   "O" ;
       LEVEL    ACC_IMPR
 
-   DEFINE BTNSHELL RESOURCE "gc_portable_barcode_scanner_" OF oWndBrw ;
+   DEFINE BTNSHELL oLbl RESOURCE "gc_portable_barcode_scanner_" OF oWndBrw ;
       NOBORDER ;
       ACTION   ( TArticuloLabelGenerator():New():Dialog() ) ;
       TOOLTIP  "Eti(q)uetas" ;
       HOTKEY   "Q";
       LEVEL    ACC_IMPR
+
+      DEFINE BTNSHELL RESOURCE "gc_portable_barcode_scanner_" OF oWndBrw ;
+         NOBORDER ;
+         ACTION   ( TArticuloLabelGenerator():New( oWndBrw:aSelected ):Dialog() ) ;
+         TOOLTIP  "Etiquetas rápidas" ;
+         FROM     oLbl ;
+         CLOSED ;
+         LEVEL    ACC_IMPR
 
    if oUser():lAdministrador()
 
@@ -13685,6 +13694,8 @@ CLASS TArticuloLabelGenerator
 
    Data nRecno
 
+   Data aSelected
+
    Method New()
    Method Dialog()
       Method StartSelectPropertiesLabels()
@@ -13731,7 +13742,9 @@ END CLASS
 
 //----------------------------------------------------------------------------//
 
-Method New() CLASS TArticuloLabelGenerator
+Method New( aSelected ) CLASS TArticuloLabelGenerator
+
+   ::aSelected          := aSelected
 
    ::cCriterio          := "Ningún criterio"
    ::aCriterio          := { "Ningún criterio", "Todos los registros", "Familia", "Fecha modificación" }
@@ -13854,6 +13867,7 @@ Method Dialog() CLASS TArticuloLabelGenerator
 
       REDEFINE RADIO ::nCantidadLabels ;
          ID       200, 201 ;
+         WHEN     ( empty( ::aSelected ) ) ;
          OF       ::fldGeneral
 
       REDEFINE GET ::nUnidadesLabels ;
@@ -14054,16 +14068,25 @@ Method BotonSiguiente() CLASS TArticuloLabelGenerator
 
             MsgStop( "Debe cumplimentar un formato de etiquetas" )
 
-         else
+            Return ( Self )
 
-            ::oFld:GoNext()
-            ::oBtnAnterior:Show()
+         endif
 
-            ::SelectCriterioLabels()
+         if !empty( ::aSelected )
 
-            SetWindowText( ::oBtnSiguiente:hWnd, "&Terminar" )
+            ::lPrintLabels()
 
-         end if
+            RETURN ( Self )
+
+         end if 
+
+         ::oFld:GoNext()
+
+         ::oBtnAnterior:Show()
+
+         ::SelectCriterioLabels()
+
+         SetWindowText( ::oBtnSiguiente:hWnd, "&Terminar" )
 
       case ::oFld:nOption == 2
 
@@ -14537,6 +14560,7 @@ Method lCreateTemporal() CLASS TArticuloLabelGenerator
 
    local n
    local nRec
+   local nRecno
    local oBlock
    local oError
    local nBlancos
@@ -14575,43 +14599,59 @@ Method lCreateTemporal() CLASS TArticuloLabelGenerator
 
       nRec                 := ( dbfArt )->( Recno() )
 
-      ( dbfArt )->( dbGoTop() )
-      while !( dbfArt )->( eof() )
+      if empty( ::aSelected )
 
-         if ( dbfArt )->lLabel
+         ( dbfArt )->( dbGoTop() )
+         while !( dbfArt )->( eof() )
 
-            if ( dbfArtLbl )->( dbSeek( ( dbfArt )->Codigo ) )
+            if ( dbfArt )->lLabel
 
-               while ( dbfArtLbl )->cCodArt == ( dbfArt )->Codigo .and. !( dbfArtLbl )->( eof() )
+               if ( dbfArtLbl )->( dbSeek( ( dbfArt )->Codigo ) )
 
-                  for n := 1 to ( ( dbfArtLbl )->nUndLbl )
+                  while ( dbfArtLbl )->cCodArt == ( dbfArt )->Codigo .and. !( dbfArtLbl )->( eof() )
 
+                     for n := 1 to ( ( dbfArtLbl )->nUndLbl )
+
+                        dbPass( dbfArt, tmpArticulo, .t. )
+
+                        ( tmpArticulo )->cCodPrp1  := ( dbfArtLbl )->cCodPr1
+                        ( tmpArticulo )->cCodPrp2  := ( dbfArtLbl )->cCodPr2
+                        ( tmpArticulo )->cValPrp1  := ( dbfArtLbl )->cValPr1
+                        ( tmpArticulo )->cValPrp2  := ( dbfArtLbl )->cValPr2
+
+                     next
+
+                     ( dbfArtLbl )->( dbSkip() )
+
+                  end while
+
+               else
+
+                  for n := 1 to ( dbfArt )->nLabel
                      dbPass( dbfArt, tmpArticulo, .t. )
-
-                     ( tmpArticulo )->cCodPrp1  := ( dbfArtLbl )->cCodPr1
-                     ( tmpArticulo )->cCodPrp2  := ( dbfArtLbl )->cCodPr2
-                     ( tmpArticulo )->cValPrp1  := ( dbfArtLbl )->cValPr1
-                     ( tmpArticulo )->cValPrp2  := ( dbfArtLbl )->cValPr2
-
                   next
 
-                  ( dbfArtLbl )->( dbSkip() )
-
-               end while
-
-            else
-
-               for n := 1 to ( dbfArt )->nLabel
-                  dbPass( dbfArt, tmpArticulo, .t. )
-               next
+               end if
 
             end if
 
-         end if
+            ( dbfArt )->( dbSkip() )
 
-         ( dbfArt )->( dbSkip() )
+         end while
 
-      end while
+      else 
+
+         for each nRecno in ::aSelected
+
+            ( dbfArt )->( dbgoto( nRecno ) )
+
+            for n := 1 to ::nUnidadesLabels
+               dbPass( dbfArt, tmpArticulo, .t. )
+            next
+
+         next
+
+      end if 
 
       ( dbfArt )->( dbGoTo( nRec ) )
 
@@ -14729,7 +14769,6 @@ Method lPrintLabels() CLASS TArticuloLabelGenerator
       */
 
       oFr:PrepareReport()
-
 
       /*
       Imprimir el informe------------------------------------------------------

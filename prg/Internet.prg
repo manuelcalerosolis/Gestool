@@ -44,6 +44,7 @@ CLASS TSndRecInf
    DATA  lGetFueraSecuencia   INIT  .f.
    DATA  lGetEliminarFicheros INIT  .f.
    DATA  lImprimirEnvio       INIT  .f.
+   DATA  lExportarPda         INIT  .f.
 
    DATA  nTipoEnvio           INIT  1
 
@@ -241,6 +242,9 @@ METHOD LoadFromIni() CLASS TSndRecInf
    ::lImprimirEnvio        := GetPvProfString( "Envioyrecepcion", "lImprimirEnvio", cValToChar( ::lImprimirEnvio ), ::cIniFile )
    ::lImprimirEnvio        := Upper( ::lImprimirEnvio ) == ".T."
 
+   ::lExportarPda          := GetPvProfString( "Envioyrecepcion", "lExportarPda", cValToChar( ::lExportarPda ), ::cIniFile )
+   ::lExportarPda          := Upper( ::lExportarPda ) == ".T."
+
 RETURN ( Self )
 
 //----------------------------------------------------------------------------//
@@ -261,6 +265,7 @@ METHOD SaveToIni( lMessage ) CLASS TSndRecInf
    WritePProString( "Envioyrecepcion", "lAceptarProcesados",      cValToChar( ::lGetProcesados ),        ::cIniFile )
    WritePProString( "Envioyrecepcion", "lEliminarFicheros",       cValToChar( ::lGetEliminarFicheros ),  ::cIniFile )
    WritePProString( "Envioyrecepcion", "lImprimirEnvio",          cValToChar( ::lImprimirEnvio ),        ::cIniFile )
+   WritePProString( "Envioyrecepcion", "lExportarPda",            cValToChar( ::lExportarPda ),          ::cIniFile )
 
    if lMessage
       MsgInfo( "Configuración de envio guardada" )
@@ -504,7 +509,11 @@ METHOD Activate( lAuto ) CLASS TSndRecInf
          OF       ::oFld:aDialogs[1]
 
       REDEFINE CHECKBOX ::lImprimirEnvio ;
-         ID       710 ;
+         ID       200 ;
+         OF       ::oFld:aDialogs[1]
+
+      REDEFINE CHECKBOX ::lExportarPda ;
+         ID       210 ;
          OF       ::oFld:aDialogs[1]
 
       /*
@@ -1071,6 +1080,14 @@ METHOD Execute( lSend, lRecive, lImprimirEnvio ) CLASS TSndRecInf
    EraseFilesInDirectory(cPatSnd(), "*.*" )
 
    /*
+   Exportamos los datos a la pda-----------------------------------------------
+   */
+
+   if ::lExportarPda
+      PdaEnvioRecepcionController():getInstance():exportJson()
+   end if 
+
+   /*
    Cerrando--------------------------------------------------------------------
    */
 
@@ -1103,11 +1120,6 @@ METHOD FtpConexion() CLASS TSndRecInf
    local accUsr            := Rtrim( cPswFtp() )
    local pasInt            := uFieldEmpresa( "lPasEnvio" )
    local nPuerto           := 21
-
-   msgalert( ftpSit, "ftpSit" )
-   msgalert( ftpDir, "ftpDir" )
-   msgalert( nbrUsr, "nbrUsr" )
-   msgalert( accUsr, "accUsr" )
 
    ::lFtpValido            := .f.
 
