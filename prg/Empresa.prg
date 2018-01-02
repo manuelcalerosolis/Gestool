@@ -109,6 +109,7 @@ static aCmbContabilidad        := { "Contaplus", "A3 CON" }
 
 static cMailNotificaciones
 static lInformacionInmediata 
+static lSincronizarVencimientos
 
 static pdaFtp
 static pdaUsuario
@@ -1312,15 +1313,17 @@ STATIC FUNCTION EditConfig( aTmp, aGet, dbfEmp, oBrw, nSelFolder, bValid, nMode 
 
    cSay[ 47 ]              := RetFld( aTmp[ _CSUFDOC ], dbfDlg, "cNomDlg" )
  
-   cTiempoPed              := cTiempoToCadena( aTmp[ _NTIEMPOPED ] ) 
+   cTiempoPed                 := cTiempoToCadena( aTmp[ _NTIEMPOPED ] ) 
 
-   cCmbContabilidad        := aCmbContabilidad[ Min( Max( aTmp[ _NEXPCONTBL ], 1 ), len( aCmbContabilidad ) ) ] 
+   cCmbContabilidad           := aCmbContabilidad[ Min( Max( aTmp[ _NEXPCONTBL ], 1 ), len( aCmbContabilidad ) ) ] 
 
-   cMailNotificaciones     := padr( ConfiguracionEmpresasRepository():getValue( 'mail_notificaciones', '' ), 200 )
+   cMailNotificaciones        := padr( ConfiguracionEmpresasRepository():getValue( 'mail_notificaciones', '' ), 200 )
    
-   lEnvioRecepcion         := ConfiguracionEmpresasRepository():getLogic( 'envio_recepcion', .f. )
+   lEnvioRecepcion            := ConfiguracionEmpresasRepository():getLogic( 'envio_recepcion', .f. )
 
-   lInformacionInmediata   := ConfiguracionEmpresasRepository():getLogic( 'informacion_inmediata', .f. )
+   lInformacionInmediata      := ConfiguracionEmpresasRepository():getLogic( 'informacion_inmediata', .f. )
+
+   lSincronizarVencimientos   := ConfiguracionEmpresasRepository():getLogic( 'sincronizar_vencimientos', .f. )
 
    pdaRuta                 := padr( ConfiguracionEmpresasRepository():getValue( 'pda_ruta', '' ), 200 )
    pdaFtp                  := padr( ConfiguracionEmpresasRepository():getValue( 'pda_ftp', '' ), 200 )
@@ -1962,8 +1965,8 @@ STATIC FUNCTION EditConfig( aTmp, aGet, dbfEmp, oBrw, nSelFolder, bValid, nMode 
          OF       fldArticulos
 
       REDEFINE CHECKBOX aGet[ _LSHWTAR6 ] VAR aTmp[ _LSHWTAR6 ] ;
-         ID          600 ;
-         OF          fldArticulos
+         ID       600 ;
+         OF       fldArticulos
 
       REDEFINE GET aGet[ _CTXTTAR6 ] VAR aTmp[ _CTXTTAR6 ] ;
          ID       610;
@@ -2411,6 +2414,10 @@ STATIC FUNCTION EditConfig( aTmp, aGet, dbfEmp, oBrw, nSelFolder, bValid, nMode 
 
       REDEFINE CHECKBOX lInformacionInmediata ;
          ID       240;
+         OF       fldContabilidad  
+
+      REDEFINE CHECKBOX lSincronizarVencimientos ;
+         ID       250;
          OF       fldContabilidad  
 
       // Page 6 Envios------------------------------------------------------------
@@ -5658,19 +5665,20 @@ STATIC FUNCTION SaveEditConfig( aTmp, oSay, oBrw, oDlg, nMode )
 
    end while
 
-   ConfiguracionEmpresasRepository():setValue( 'mail_notificaciones',   alltrim( cMailNotificaciones ) ) 
-   ConfiguracionEmpresasRepository():setValue( 'informacion_inmediata', lInformacionInmediata )
-   ConfiguracionEmpresasRepository():setValue( 'envio_recepcion',       lEnvioRecepcion )
+   ConfiguracionEmpresasRepository():setValue( 'mail_notificaciones',      alltrim( cMailNotificaciones ) ) 
+   ConfiguracionEmpresasRepository():setValue( 'informacion_inmediata',    lInformacionInmediata )
+   ConfiguracionEmpresasRepository():setValue( 'sincronizar_vencimientos', lSincronizarVencimientos )
+   ConfiguracionEmpresasRepository():setValue( 'envio_recepcion',          lEnvioRecepcion )
 
-   ConfiguracionEmpresasRepository():setValue( 'pda_ruta',              alltrim( pdaRuta ) ) 
+   ConfiguracionEmpresasRepository():setValue( 'pda_ruta',                 alltrim( pdaRuta ) ) 
 
-   ConfiguracionEmpresasRepository():setValue( 'pda_ftp',               alltrim( pdaFtp ) ) 
-   ConfiguracionEmpresasRepository():setValue( 'pda_user',              alltrim( pdaUsuario ) ) 
-   ConfiguracionEmpresasRepository():setValue( 'pda_password',          alltrim( pdaPassword ) ) 
+   ConfiguracionEmpresasRepository():setValue( 'pda_ftp',                  alltrim( pdaFtp ) ) 
+   ConfiguracionEmpresasRepository():setValue( 'pda_user',                 alltrim( pdaUsuario ) ) 
+   ConfiguracionEmpresasRepository():setValue( 'pda_password',             alltrim( pdaPassword ) ) 
 
-   ConfiguracionEmpresasRepository():setValue( 'pda_pasivo',            pdaPasivo ) 
+   ConfiguracionEmpresasRepository():setValue( 'pda_pasivo',               pdaPasivo ) 
 
-   ConfiguracionEmpresasRepository():setValue( 'pda_recoger_ventas',    pdaRecogerVentas ) 
+   ConfiguracionEmpresasRepository():setValue( 'pda_recoger_ventas',       pdaRecogerVentas ) 
 
    // Escribimos en el definitivo----------------------------------------------
 

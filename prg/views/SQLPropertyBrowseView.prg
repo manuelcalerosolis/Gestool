@@ -207,6 +207,10 @@ METHOD createColumnBrowseProperty()
 
    local n
 
+   if !hb_isarray( ::aPropertiesTable ) .or. len( ::aPropertiesTable ) == 0
+      RETURN ( self )
+   end if 
+
    for n := 1 to len( ::aPropertiesTable[ 1 ] )
 
       if hb_isnil( ::aPropertiesTable[ ::oBrowse:nArrayAt, n ]:Value )

@@ -8,9 +8,9 @@
 
 CLASS MovimientosAlmacenLineasView FROM SQLBaseView
       
-   DATA oOfficeBarView
-
    DATA oBtnSerie
+   DATA oBntOk
+   DATA oBntOkAndNew
 
    DATA oGetCodigoArticulo
    DATA oGetNombreArticulo
@@ -236,11 +236,32 @@ METHOD Activate()
          FONT        getBoldFont() ;
          OF          ::oDialog
 
+      REDEFINE BUTTON ::oBtnSerie ;
+         ID          4 ;
+         OF          ::oDialog ;
+         WHEN        ( ::getController():isNotZoomMode() ) ;
+         ACTION      ( ::oController:runDialogSeries() )
+
+      REDEFINE BUTTON ::oBntOk;
+         ID          IDOK ;
+         OF          ::oDialog ;
+         WHEN        ( ::getController():isNotZoomMode() ) ;
+         ACTION      ( if( validateDialog( ::oDialog ), ::oDialog:end( IDOK ), ) )
+
+      REDEFINE BUTTON ::oBntOkAndNew ;
+         ID          3 ;
+         OF          ::oDialog ;
+         WHEN        ( ::getController():isAppendMode() ) ;
+         ACTION      ( if( validateDialog( ::oDialog ), ::oDialog:end( IDOKANDNEW ), ) )
+
+      REDEFINE BUTTON ;
+         ID          IDCANCEL ;
+         OF          ::oDialog ;
+         ACTION      ( ::oDialog:end() )
+
    ::oDialog:bStart  := {|| ::oController:onActivateDialog() }
 
    ::oDialog:Activate( , , , .t., , , {|| ::initActivate() } ) 
-
-   ::oOfficeBar:End()
 
 RETURN ( ::oDialog:nResult )
 
@@ -248,14 +269,9 @@ RETURN ( ::oDialog:nResult )
 
 METHOD initActivate()
 
-   local oGrupo
-   
-   ::oOfficeBar      := OfficeBarView():New( Self )
+   ::oDialog:AddFastKey( VK_F5, {|| ::oBntOk:Action() } )
 
-   ::oOfficeBar:createButtonsDialog()
-
-   oGrupo            := TDotNetGroup():New( ::oOfficeBar:oOfficeBarFolder, 66, "Series", .f. )
-      ::oBtnSerie    := TDotNetButton():New( 60, oGrupo, "gc_barcode_scanner_32", "Series [F7]", 1, {|| ::oController:runDialogSeries() }, , , .f., .f., .f. )
+   ::oDialog:AddFastKey( VK_F6, {|| ::oBntOkAndNew:Action() } )
 
    ::oDialog:AddFastKey( VK_F7, {|| ::oBtnSerie:Action() } )
 
@@ -314,24 +330,20 @@ RETURN ( .t. )
 METHOD verticalHide( oControl )
 
    local nId     
-   local oRect    
    local nHeight  
 
    if !( oControl:lVisible )
       RETURN ( .f. )
    end if  
 
-   oRect          := ::oDialog:getRect()
    nId            := oControl:nId
    nHeight        := oControl:nHeight + 1
 
    oControl:Hide()
 
    aeval( ::oDialog:aControls,;
-      {|oControl| if( oControl:nId > nId,;
+      {|oControl| if( oControl:nId >= 100 .and. oControl:nId > nId,;
          oControl:move( oControl:nTop - nHeight, oControl:nLeft, oControl:nWidth, oControl:nHeight ), ) } )
-
-   ::oDialog:move( oRect:nTop, oRect:nLeft, ::oDialog:nWidth, ::oDialog:nHeight - nHeight )
 
 RETURN ( .t. )
 
@@ -340,24 +352,20 @@ RETURN ( .t. )
 METHOD verticalShow( oControl )
 
    local nId     
-   local oRect    
    local nHeight 
 
    if oControl:lVisible
       RETURN ( .f. )
    end if  
 
-   oRect          := ::oDialog:getRect()
    nId            := oControl:nId
    nHeight        := oControl:nHeight + 1
 
    oControl:Show()
 
    aeval( ::oDialog:aControls,;
-      {|oControl| if( oControl:nId > nId,;
+      {|oControl| if( oControl:nId >= 100 .and. oControl:nId > nId,;
          oControl:move( oControl:nTop + nHeight, oControl:nLeft, oControl:nWidth, oControl:nHeight ), ) } )
-
-   ::oDialog:move( oRect:nTop, oRect:nLeft, ::oDialog:nWidth, ::oDialog:nHeight + nHeight )
 
 RETURN ( .t. )
 

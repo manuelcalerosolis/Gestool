@@ -4988,7 +4988,9 @@ FUNCTION genPgoFacCli( cNumFac, cFacCliT, cFacCliL, cFacCliP, cAntCliT, cClient,
 
             // Insertar vencimiento en contaplus-------------------------------
 
-            insertVencimientoContaplus( cFacCliP, cClient )
+            if ConfiguracionEmpresasRepository():getLogic( 'sincronizar_vencimientos', .f. )
+               insertVencimientoContaplus( cFacCliP, cClient )
+            end if 
 
          next
 
