@@ -1,6 +1,12 @@
 MVC - ToDo
 
-- No desaparece el browse de las propiedades.
+- Creacion de nuevas estructuras
+
+- Seeders
+
+- Creacion de tablas de contadores.
+
+- No desaparece el browse de las propiedades.(done)
 
 - Criterio de exportación de articulos a la pda.(done)
 

@@ -3326,9 +3326,11 @@ FUNCTION Quoted( uValue )
       RETURN ( rtrim( str( uValue ) ) )
    end if 
 
-   uValue   := strtran( uValue, "\", "\\" )
-
-RETURN ( "'" + rtrim( uValue ) + "'" )
+   if( hb_ischar( uValue ) )
+      RETURN ( "'" + rtrim( getSqlDatabase():escapeStr( uValue ) ) + "'" )
+   end if 
+      
+RETURN ( "''" )
 
 //---------------------------------------------------------------------------//
 

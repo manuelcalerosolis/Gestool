@@ -8,7 +8,7 @@ CLASS SQLMovimientosAlmacenModel FROM SQLExportableModel
 
    DATA cTableName            INIT "movimientos_almacen"
 
-   DATA cConstraints          INIT "PRIMARY KEY (uuid), KEY (id)"
+   DATA cConstraints          INIT "PRIMARY KEY (id), KEY (uuid)"
 
    DATA cColumnOrder          INIT "id"
 
@@ -28,7 +28,10 @@ METHOD getColumns()
 
    ::getEmpresaColumns()
 
-   hset( ::hColumns, "tipo_movimiento",   {  "create"    => "INT NOT NULL"                            ,;
+   hset( ::hColumns, "numero",            {  "create"    => "INT UNSIGNED NOT NULL"                   ,;
+                                             "default"   => {|| 0 } }                                 )
+
+   hset( ::hColumns, "tipo_movimiento",   {  "create"    => "TINYINT UNSIGNED NOT NULL"               ,;
                                              "default"   => {|| 1 } }                                 )
 
    hset( ::hColumns, "fecha_hora",        {  "create"    => "DATETIME DEFAULT CURRENT_TIMESTAMP"      ,;
@@ -62,6 +65,8 @@ RETURN ( ::hColumns )
 METHOD getInitialSelect()
 
    local cSelect     := "SELECT id, "                                            + ;
+                           "numero, "                                            + ;
+                           "uuid, "                                              + ;
                            "tipo_movimiento, "                                   + ;
                            "CASE "                                               + ;
                               "WHEN tipo_movimiento = 1 THEN 'Entre almacenes' " + ;

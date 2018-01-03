@@ -114,6 +114,8 @@ METHOD buildAllProductInformation() CLASS TComercioProduct
 
          ::buildProductInformation( ( D():Articulos( ::getView() ) )->Codigo )
 
+         ::writeText( "Procesando artículo " + alltrim( ( D():Articulos( ::getView() ) )->Codigo ) + " - " + alltrim( ( D():Articulos( ::getView() ) )->Nombre ) )
+
          ( D():Articulos( ::getView() ) )->( dbskip() )
 
       end while
@@ -134,9 +136,10 @@ METHOD buildProductInformation( idProduct ) CLASS TComercioProduct
       RETURN ( .f. )
    end if 
 
-   if !( ::isProductInIncremental( idProduct ) )
-      RETURN ( .f. )
-   end if 
+   // if !( ::isProductInIncremental( idProduct ) )
+   //    msgalert( "salida de productos incremental")
+   //    RETURN ( .f. )
+   // end if 
 
    ::TComercioTax():buildTaxRuleGroup( ( D():Articulos( ::getView() ) )->TipoIva )
 

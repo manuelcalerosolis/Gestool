@@ -77,7 +77,7 @@ CLASS SQLBaseController
 
    METHOD getIdFromRecno( aSelected )                 INLINE ( if( !empty( ::oRowSet ), ::oRowSet:IdFromRecno( aSelected ), {} ) )
 
-   METHOD getIdFromRowSet()                           INLINE ( if( !empty( ::getRowSet() ), ( ::getRowSet():fieldGet( ::oModel:cColumnKey ) ), ) )
+   METHOD getIdFromRowSet()                           INLINE ( if( !empty( ::getRowSet() ), ::getRowSet():fieldGet( ::oModel:cColumnKey ), ) )
 
    METHOD findInRowSet( uValue, cColumn )             
    METHOD findByIdInRowSet( uValue )                  INLINE ( if( !empty( ::getRowSet() ), ::getRowSet():find( uValue, "id", .t. ), ) )
@@ -272,13 +272,17 @@ METHOD Append()
 
       ::oModel:loadBlankBuffer()
 
+      nId            := ::oModel:insertBuffer()    // Nuevo
+
       ::fireEvent( 'openingDialog' )     
 
       if ::DialogViewActivate()
 
          ::fireEvent( 'closedDialog' )    
 
-         nId            := ::oModel:insertBuffer()
+         // nId            := ::oModel:insertBuffer()    // Antes
+         
+         ::oModel:updateBuffer()
 
          ::commitTransactionalMode()
 
@@ -297,6 +301,8 @@ METHOD Append()
       else
          
          lAppend     := .f.
+
+         ::oModel:deleteById( nId )
 
          ::fireEvent( 'cancelAppended' ) 
 
@@ -379,6 +385,8 @@ METHOD Edit( nId )
    if empty( nId )
       nId         := ::getIdFromRowSet()
    end if 
+
+   msgalert( nId, "identificador en Edit" )
 
    if hb_isnil( nId )
       RETURN ( .f. )

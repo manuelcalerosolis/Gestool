@@ -1111,14 +1111,14 @@ METHOD InsertImageProductPrestashopLang( hProduct, hImage, idImagenPrestashop )
 
    local cCommand
 
-   cCommand := "INSERT INTO " + ::cPrefixTable( "image_lang" ) + " ( " +;
-                  "id_image, " + ;
-                  "id_lang, " + ;
-                  "legend ) " + ;
-               "VALUES (" + ;
-                  "'" + alltrim( str( idImagenPrestashop ) ) + "', " + ;
-                  "'" + alltrim( ::nLanguage ) + "', " + ;
-                  "'" + ::oCon:Escapestr( hGet( hProduct, "name" ) ) + "' )"
+   cCommand             := "INSERT INTO " + ::cPrefixTable( "image_lang" ) + " ( " +;
+                              "id_image, " + ;
+                              "id_lang, " + ;
+                              "legend ) " + ;
+                           "VALUES (" + ;
+                              "'" + alltrim( str( idImagenPrestashop ) ) + "', " + ;
+                              "'" + alltrim( ::nLanguage ) + "', " + ;
+                              "'" + ::oCon:Escapestr( hGet( hProduct, "name" ) ) + "' )"
 
    if TMSCommand():New( ::oCon ):ExecDirect( cCommand )
       ::writeText( "Imagen insertada " + hGet( hProduct, "name" ) + " correctamente en la tabla " + ::cPrefixTable( "image_lang" ), 3 )
@@ -1195,6 +1195,7 @@ METHOD DelIdArticuloPrestashop( hProduct ) Class TComercio
       ::writeText( 'Eliminando código web en el artículo ' + alltrim( ::oArt:Nombre ), 3  )
 
       SysRefresh()
+      
       ::oArt:Skip()
 
    end while

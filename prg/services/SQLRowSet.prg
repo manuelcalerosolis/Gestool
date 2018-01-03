@@ -22,13 +22,13 @@ CLASS SQLRowSet
 
    METHOD Get()                                       INLINE ( ::oRowSet )
 
-   METHOD fieldGet( uField )                          INLINE ( ::oRowSet:fieldget( uField ) )
-   METHOD recCount()                                  INLINE ( ::oRowSet:reccount() )
-   METHOD fieldValueByName( cColumn )                 INLINE ( ::oRowSet:getValueByName( cColumn ) )
+   METHOD fieldGet( uField )                          INLINE ( if( !empty( ::oRowSet ), ::oRowSet:fieldget( uField ), ) )
+   METHOD recCount()                                  INLINE ( if( !empty( ::oRowSet ), ::oRowSet:reccount(), ) )
+   METHOD fieldValueByName( cColumn )                 INLINE ( if( !empty( ::oRowSet ), ::oRowSet:getValueByName( cColumn ), ) )
 
    METHOD saveRecno()                                 INLINE ( ::nRecno := ::oRowSet:recno() ) 
-   METHOD restoreRecno()                              INLINE ( ::oRowSet:goto( ::nRecno ) ) 
-   METHOD gotoRecno( nRecno )                         INLINE ( ::oRowSet:goto( nRecno ) ) 
+   METHOD restoreRecno()                              INLINE ( if( !empty( ::oRowSet ), ::oRowSet:goto( ::nRecno ), ) ) 
+   METHOD gotoRecno( nRecno )                         INLINE ( if( !empty( ::oRowSet ), ::oRowSet:goto( nRecno ), ) ) 
    METHOD Recno( nRecno )                             INLINE ( if( empty( nRecno ), ::oRowSet:Recno(), ::oRowSet:goto( nRecno ) ) )
 
    METHOD Find( nId )
@@ -43,7 +43,7 @@ CLASS SQLRowSet
    METHOD getStatement()                              INLINE ( ::oStatement )
    METHOD freeStatement()                             INLINE ( if( !empty( ::oStatement ), ( ::oStatement:free(), ::oStatement := nil ), ) )
 
-   METHOD Refresh()                                   INLINE ( ::oRowSet:Refresh() )
+   METHOD Refresh()                                   INLINE ( if( !empty( ::oRowSet ), ::oRowSet:Refresh(), ) )
 
    METHOD IdFromRecno( aRecno, cColumnKey )
 

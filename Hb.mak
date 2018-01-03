@@ -373,6 +373,7 @@ MovimientosAlmacenLineasController.prg 								\
 EtiquetasMovimientosAlmacenController.prg								\
 SQLMovimientosAlmacenModel.prg 											\
 SQLMovimientosAlmacenLineasModel.prg 									\
+SQLContadoresModel.prg 														\
 AlmacenesModel.prg 															\
 GruposMovimientosModel.prg 												\
 ControllerContainer.prg 													\
@@ -987,6 +988,7 @@ MovimientosAlmacenController.obj 										\
 MovimientosAlmacenLineasController.obj 								\
 EtiquetasMovimientosAlmacenController.obj								\
 SQLMovimientosAlmacenModel.obj 											\
+SQLContadoresModel.obj 														\
 SQLMovimientosAlmacenLineasModel.obj 									\
 ControllerContainer.obj 													\
 GrpPrv.obj              													\
@@ -1572,6 +1574,7 @@ $(OBJ)\MovimientosAlmacenController.obj 								+
 $(OBJ)\MovimientosAlmacenLineasController.obj						+
 $(OBJ)\EtiquetasMovimientosAlmacenController.obj					+
 $(OBJ)\SQLMovimientosAlmacenModel.obj 									+
+$(OBJ)\SQLContadoresModel.obj 											+
 $(OBJ)\SQLMovimientosAlmacenLineasModel.obj 							+
 $(OBJ)\ControllerContainer.obj          								+
 $(OBJ)\GrpPrv.obj               											+

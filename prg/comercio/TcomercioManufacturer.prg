@@ -11,9 +11,9 @@
 
 CLASS TComercioManufacturer FROM TComercioConector
 
-   DATA  idManufacturer    
+   DATA idManufacturer    
 
-   DATA  aManufacturersProduct                              INIT {}
+   DATA aManufacturersProduct                               INIT {}
 
    METHOD getOrBuildManufacturerProduct( id )
       METHOD buildManufacturerProduct( id )

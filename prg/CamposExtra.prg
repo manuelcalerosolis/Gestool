@@ -686,18 +686,18 @@ Return ( cExtraField )
 
 Function getCustomExtraField( cFieldName, cDocumentType, Id )
 
-   local cExtraField       := ""
-   local cTipoDocumento    := ""
+   local cExtraField          := ""
+   local cTipoDocumento       := ""
    local oDetCamposExtra
 
    if Empty( Id )
       Return cExtraField
    end if
 
-   oDetCamposExtra         := TDetCamposExtra():New()
+   oDetCamposExtra            := TDetCamposExtra():New()
    oDetCamposExtra:OpenFiles()
 
-   cTipoDocumento          := hGet( DOCUMENTOS_ITEMS, cDocumentType )
+   cTipoDocumento             := hGet( DOCUMENTOS_ITEMS, cDocumentType )
 
    oDetCamposExtra:oCamposExtra:oDbf:ordsetfocus( "cCodigo" )
    oDetCamposExtra:oDbf:ordsetfocus( "cTotClave" )
@@ -708,13 +708,13 @@ Function getCustomExtraField( cFieldName, cDocumentType, Id )
 
          do case
             case oDetCamposExtra:oCamposExtra:oDbf:nTipo == 2
-               cExtraField          := val( oDetCamposExtra:oDbf:cValor )
+               cExtraField    := val( oDetCamposExtra:oDbf:cValor )
 
             case oDetCamposExtra:oCamposExtra:oDbf:nTipo == 3
-               cExtraField          := ctod( oDetCamposExtra:oDbf:cValor )   
+               cExtraField    := ctod( oDetCamposExtra:oDbf:cValor )   
 
             otherwise
-               cExtraField          := oDetCamposExtra:oDbf:cValor   
+               cExtraField    := oDetCamposExtra:oDbf:cValor   
 
          end case
          
