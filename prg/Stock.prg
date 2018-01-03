@@ -5460,24 +5460,24 @@ METHOD lCheckConsolidacion( cCodigoArticulo, cCodigoAlmacen, cCodigoPrimeraPropi
    local dConsolidacion 
 
    // Quitar esta linea si no se quiere usar SQL------------------------------- 
-
+   /*
    cSentence            := MovimientosAlmacenLineasRepository():getSQLSentenceFechaHoraConsolidacion( cCodigoArticulo, cCodigoAlmacen, cCodigoPrimeraPropiedad, cCodigoSegundaPropiedad, cValorPrimeraPropiedad, cValorSegundaPropiedad, cLote, dFecha, tHora )
 
    dConsolidacion       := getSQLDatabase():selectValue( cSentence )
 
    RETURN ( empty( dConsolidacion ) .or. hb_dtot( dFecha, tHora ) >= dConsolidacion )
-
+   */
    /*
    Uso de funciones anteriores a MySQL-----------------------------------------
+   */
 
-   dConsolidacion       := ::scanConsolidacion( cCodArt, cCodAlm, cValPrp1, cValPrp2, cLote )
+   dConsolidacion       := ::scanConsolidacion( cCodigoArticulo, cCodigoAlmacen, cValorPrimeraPropiedad, cValorSegundaPropiedad, cLote )
 
    if isfalse( dConsolidacion )
-      dConsolidacion    := ::getConsolidacion( cCodArt, cCodAlm, cCodPrp1, cCodPrp2, cValPrp1, cValPrp2, cLote )
+      dConsolidacion    := ::getConsolidacion( cCodigoArticulo, cCodigoAlmacen, cCodigoPrimeraPropiedad, cCodigoSegundaPropiedad, cValorPrimeraPropiedad, cValorSegundaPropiedad, cLote )
       
-      ::addConsolidacion( cCodArt, cCodAlm, cValPrp1, cValPrp2, cLote, dConsolidacion )
+      ::addConsolidacion( cCodigoArticulo, cCodigoAlmacen, cValorPrimeraPropiedad, cValorSegundaPropiedad, cLote, dConsolidacion )
    end if 
-   */
 
 RETURN ( empty( dConsolidacion ) .or. dtos( dFecha ) + tHora >= dConsolidacion )
 
