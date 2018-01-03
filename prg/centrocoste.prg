@@ -109,9 +109,9 @@ METHOD DefineFiles( cPath, cDriver )
       FIELD NAME "cCodPr2"   TYPE "C" LEN  20  DEC 0  COMMENT "Código de segunda propiedad"            HIDE  OF ::oDbf
       FIELD NAME "cValPr1"   TYPE "C" LEN  20  DEC 0  COMMENT "Valor de primera propiedad"             HIDE  OF ::oDbf
       FIELD NAME "cValPr2"   TYPE "C" LEN  20  DEC 0  COMMENT "Valor de segunda propiedad"             HIDE  OF ::oDbf
-      FIELD NAME "dFecIni"   TYPE "D" LEN   8  DEC 0  COMMENT "Fecha de inicio"                        HIDE  OF ::oDbf
-      FIELD NAME "dFecFin"   TYPE "D" LEN   8  DEC 0  COMMENT "Fecha de fin"                           HIDE  OF ::oDbf
-      FIELD NAME "cComent"   TYPE "C" LEN 200  DEC 0  COMMENT "Comentario"                             HIDE  OF ::oDbf
+      FIELD NAME "dFecIni"   TYPE "D" LEN   8  DEC 0  COMMENT "Fecha de inicio"                              OF ::oDbf
+      FIELD NAME "dFecFin"   TYPE "D" LEN   8  DEC 0  COMMENT "Fecha de fin"                                 OF ::oDbf
+      FIELD NAME "cComent"   TYPE "C" LEN 200  DEC 0  COMMENT "Comentario"                                   OF ::oDbf
 
    	INDEX TO "CCoste.CDX" TAG "cCodigo" ON "cCodigo" COMMENT "Código" NODELETED OF ::oDbf
    	INDEX TO "CCoste.CDX" TAG "cNombre" ON "cNombre" COMMENT "Nombre" NODELETED OF ::oDbf
