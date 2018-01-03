@@ -20,7 +20,7 @@ CLASS TInfCentroCoste
 
    METHOD New()
 
-   METHOD SetResources()      INLINE ( SetResources( fullcurdir() + "Script\CentroCoste\InfoCentroCoste.dll" ) )
+   METHOD SetResources()      INLINE ( SetResources( fullcurdir() + "Script\CentroCoste\InfoCapturas.dll" ) )
 
    METHOD FreeResources()     INLINE ( FreeResources() )
 
