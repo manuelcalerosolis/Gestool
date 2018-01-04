@@ -392,17 +392,10 @@ RETURN ( Self )
 
 METHOD getStatementSeederMovimientosAlmacenLineas( dbfHisMov )
 
-   local nId
    local hCampos  
 
-   nId            := MovimientosAlmacenRepository():getIdByUuid( ( dbfHisMov )->cGuidPar )
-
-   if empty( nId )
-      RETURN ( nil )
-   end if 
-
    hCampos        := {  "uuid" =>                     quoted( ( dbfHisMov )->cGuid ),;
-                        "parent_id" =>                quoted( nId ),;
+                        "parent_uuid" =>              quoted( ( dbfHisMov )->cGuidPar ),;
                         "codigo_articulo" =>          quoted( ( dbfHisMov )->cRefMov ),;
                         "nombre_articulo" =>          quoted( ( dbfHisMov )->cNomMov ),;
                         "codigo_primera_propiedad" => quoted( ( dbfHisMov )->cCodPr1 ),;
@@ -463,17 +456,10 @@ RETURN ( Self )
 
 METHOD getStatementSeederMovimientosAlmacenLineasNumerosSeries( dbfMovSer )
 
-   local nId
    local hCampos        
 
-   nId            := MovimientosAlmacenLineasRepository():getIdByUuid( ( dbfMovSer )->cGuidPar )
-
-   if empty( nId )
-      RETURN ( nil )
-   end if 
-
    hCampos        := {  "uuid"            => quoted( ( dbfMovSer )->cGuid ),;
-                        "parent_id"       => quoted( nId ),;
+                        "parent_uuid"     => quoted( ( dbfMovSer )->cGuidPar ),;
                         "numero_serie"    => quoted( ( dbfMovSer )->cNumSer ) }
 
 RETURN ( ::getInsertStatement( hCampos, SQLMovimientosAlmacenLineasNumerosSeriesModel():getTableName() ) )

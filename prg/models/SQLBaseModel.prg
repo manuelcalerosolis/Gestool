@@ -484,7 +484,7 @@ METHOD getDeleteSentence( aId )
 
    local cSQLDelete     := "DELETE FROM " + ::cTableName + " WHERE " 
 
-   aeval( aId, {| v | cSQLDelete += ::cColumnKey + " = " + toSQLString( v ) + " or " } )
+   aeval( aId, {| v | cSQLDelete += ::cColumnKey + " = " + toSQLString( v ) + " OR " } )
 
    cSQLDelete           := ChgAtEnd( cSQLDelete, '', 4 )
 

@@ -1458,7 +1458,7 @@ METHOD nSQLStockActual( cCodArt, cCodAlm, cValPr1, cValPr2, cLote ) CLASS TStock
 
       hFechaHoraConsolidacion    := MovimientosAlmacenesLineasModel():getFechaHoraConsolidacion( cCodArt, cCodAlm, cValPr1, cValPr2, cLote )
 
-      //hFechaHoraConsolidacion    := SQLMovimientosAlmacenLineasModel():getFechaHoraConsolidacion( cCodArt, cCodAlm, cValPr1, cValPr2, cLote )
+      //hFechaHoraConsolidacion    := MovimientosAlmacenLineasRepository():getFechaHoraConsolidacion( cCodArt, cCodAlm, cValPr1, cValPr2, cLote )
 
       if !empty( hFechaHoraConsolidacion )
          
@@ -1487,7 +1487,7 @@ METHOD nSQLStockActual( cCodArt, cCodAlm, cValPr1, cValPr2, cLote ) CLASS TStock
 
       // Almacen
 
-      //nSQLStockActual            += SQLMovimientosAlmacenLineasModel():getTotalUnidadesStock( tFechaHoraConsolidacion, cCodArt, cCodAlm, cValPr1, cValPr2, cLote )
+      //nSQLStockActual            += MovimientosAlmacenLineasRepository():getTotalUnidadesStock( tFechaHoraConsolidacion, cCodArt, cCodAlm, cValPr1, cValPr2, cLote )
 
    next 
 

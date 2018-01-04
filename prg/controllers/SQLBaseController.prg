@@ -272,18 +272,14 @@ METHOD Append()
 
       ::oModel:loadBlankBuffer()
 
-      nId            := ::oModel:insertBuffer()    // Nuevo
-
       ::fireEvent( 'openingDialog' )     
 
       if ::DialogViewActivate()
 
          ::fireEvent( 'closedDialog' )    
 
-         // nId            := ::oModel:insertBuffer()    // Antes
+         nId         := ::oModel:insertBuffer()    
          
-         ::oModel:updateBuffer()
-
          ::commitTransactionalMode()
 
          if !empty( nId )
@@ -301,8 +297,6 @@ METHOD Append()
       else
          
          lAppend     := .f.
-
-         ::oModel:deleteById( nId )
 
          ::fireEvent( 'cancelAppended' ) 
 
@@ -405,7 +399,7 @@ METHOD Edit( nId )
 
    ::beginTransactionalMode()
 
-   ::oModel:loadCurrentBuffer( nId ) 
+   ::oModel:loadCurrentBuffer( nId )
 
    ::fireEvent( 'openingDialog' )
 
@@ -488,19 +482,17 @@ RETURN ( .f. )
 
 //----------------------------------------------------------------------------//
 
-METHOD Delete( aSelectedIds )
+METHOD Delete( aSelectedRecno )
 
    local lDelete        := .f.
    local cNumbersOfDeletes
-
-   msgalert( hb_valtoexp( aSelectedIds ), "SQLBaseController deleted()" )
 
    if ::notUserDelete()
       msgStop( "Acceso no permitido" )
       RETURN ( .f. )
    end if 
 
-   if !hb_isarray( aSelectedIds )
+   if !hb_isarray( aSelectedRecno ) .or. len( aSelectedRecno ) == 0
       msgStop( "No se especificaron los registros a eliminar" )
       RETURN ( .f. )
    end if 
@@ -509,12 +501,8 @@ METHOD Delete( aSelectedIds )
       RETURN ( .f. )
    end if
 
-   if empty( aSelectedIds )
-      RETURN ( .f. )
-   end if
-
-   if len( aSelectedIds ) > 1
-      cNumbersOfDeletes := alltrim( str( len( aSelectedIds ), 3 ) ) + " registros?"
+   if len( aSelectedRecno ) > 1
+      cNumbersOfDeletes := alltrim( str( len( aSelectedRecno ), 3 ) ) + " registros?"
    else
       cNumbersOfDeletes := "el registro en curso?"
    end if
@@ -525,7 +513,7 @@ METHOD Delete( aSelectedIds )
       
       ::fireEvent( 'deletingSelection' ) 
 
-      ::oModel:deleteSelection( aSelectedIds )
+      ::oModel:deleteSelection( ::getIdFromRecno( aSelectedRecno ) )
 
       ::fireEvent( 'deletedSelection' ) 
 

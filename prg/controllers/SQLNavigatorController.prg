@@ -23,7 +23,7 @@ CLASS SQLNavigatorController FROM SQLBaseController
 
    METHOD New()
 
-   METHOD Delete( aSelected )                         INLINE( ::Super:Delete( ::getIdFromRecno( aSelected ) ) )
+   METHOD Delete( aSelected )                         INLINE ( ::Super:Delete( aSelected ) ) 
 
    METHOD ActivateNavigatorView()
 

@@ -10,11 +10,8 @@ CLASS SQLMovimientosAlmacenLineasModel FROM SQLExportableModel
 
    DATA cConstraints          INIT  "PRIMARY KEY ( id ), "                       + ; 
                                        "KEY ( uuid ), "                          + ;
-                                       "KEY ( parent_id ), "                     + ;
-                                       "KEY ( codigo_articulo ), "               + ;
-                                    "FOREIGN KEY ( parent_id ) "                 + ;
-                                       "REFERENCES movimientos_almacen( id ) "   + ;
-                                       "ON DELETE CASCADE"
+                                       "KEY ( parent_uuid ), "                   + ;
+                                       "KEY ( codigo_articulo ) "               
 
    METHOD getColumns()
 
@@ -36,18 +33,6 @@ CLASS SQLMovimientosAlmacenLineasModel FROM SQLExportableModel
 
    METHOD aRowsDeleted( uuid )
 
-   METHOD getFechaHoraConsolidacion( cCodigoArticulo, cCodigoAlmacen, cValorPropiedad1, cValorPropiedad2, cLote )
-
-   METHOD getTotalUnidadesStock( tConsolidacion, cCodigoArticulo, cCodigoAlmacen, cValorPropiedad1, cValorPropiedad2, cLote )
-
-   METHOD getTotalUnidadesEntrada( tConsolidacion, cCodigoArticulo, cCodigoAlmacen, cValorPropiedad1, cValorPropiedad2, cLote ) ; 
-      INLINE ( ::getTotalUnidades( tConsolidacion, cCodigoArticulo, cCodigoAlmacen, cValorPropiedad1, cValorPropiedad2, cLote, .t. ) )
-
-   METHOD getTotalUnidadesSalida( tConsolidacion, cCodigoArticulo, cCodigoAlmacen, cValorPropiedad1, cValorPropiedad2, cLote ) ;
-      INLINE ( ::getTotalUnidades( tConsolidacion, cCodigoArticulo, cCodigoAlmacen, cValorPropiedad1, cValorPropiedad2, cLote, .f. ) )
-
-   METHOD getTotalUnidades( tConsolidacion, cCodigoArticulo, cCodigoAlmacen, cValorPropiedad1, cValorPropiedad2, cLote, lEntrada )
-
 END CLASS
 
 //---------------------------------------------------------------------------//
@@ -60,8 +45,8 @@ METHOD getColumns()
    hset( ::hColumns, "uuid",              {  "create"    => "VARCHAR(40) NOT NULL UNIQUE"          ,;
                                              "default"   => {|| win_uuidcreatestring() } }         )
 
-   hset( ::hColumns, "parent_id",         {  "create"    => "INTEGER NOT NULL"                     ,;
-                                             "default"   => {|| 0 } }                              )
+   hset( ::hColumns, "parent_uuid",       {  "create"    => "VARCHAR(40) NOT NULL"                 ,;
+                                             "default"   => {|| space(40) } }         )
 
    hset( ::hColumns, "codigo_articulo",   {  "create"    => "VARCHAR(18) NOT NULL"                 ,;
                                              "default"   => {|| space(18) } }                      )
@@ -107,7 +92,7 @@ METHOD getInitialSelect()
 
    local cSelect  := "SELECT id, "                                            + ;
                         "uuid, "                                              + ;
-                        "parent_id, "                                         + ;
+                        "parent_uuid, "                                       + ;
                         "codigo_articulo, "                                   + ;
                         "nombre_articulo, "                                   + ;
                         "codigo_primera_propiedad, "                          + ;
@@ -149,12 +134,6 @@ METHOD getUpdateSentence()
 
    if empty( ::oController:aProperties )
       RETURN ( ::Super:getUpdateSentence() )
-   end if 
-
-   msgalert( hb_valtoexp( ::hBuffer ), "getUpdateSentence" )
-
-   if ::oController:isAppendMode()
-      ::addDeleteSentenceById( aSQLUpdate, hget( ::hBuffer, "id" ) )
    end if 
 
    for each oProperty in ::oController:aProperties
@@ -247,98 +226,3 @@ RETURN ( ::getDatabase():selectFetchHash( cSentence ) )
 
 //---------------------------------------------------------------------------//
 
-METHOD getFechaHoraConsolidacion( cCodigoArticulo, cCodigoAlmacen, cValorPropiedad1, cValorPropiedad2, cLote )
-
-   local aBuffer
-   local hResult     := { => }
-   local cSql        := "SELECT   movimientos_almacen.id, "
-         cSql        +=                   "movimientos_almacen.fecha_hora, "
-         cSql        +=                   "movimientos_almacen.almacen_destino, "
-         cSql        +=                   "movimientos_almacen.tipo_movimiento, "
-         cSql        +=                   "movimientos_almacen_lineas.parent_id, "
-         cSql        +=                   "movimientos_almacen_lineas.codigo_articulo, "
-         cSql        +=                   "movimientos_almacen_lineas.valor_primera_propiedad, "
-         cSql        +=                   "movimientos_almacen_lineas.valor_segunda_propiedad, "
-         cSql        +=                   "movimientos_almacen_lineas.lote "
-         cSql        +=          "FROM     movimientos_almacen "
-         cSql        +=          "INNER JOIN movimientos_almacen_lineas "
-         cSql        +=                   "ON movimientos_almacen_lineas.parent_id = movimientos_almacen.id " 
-         cSql        +=          "WHERE    movimientos_almacen.almacen_destino = " + quoted( cCodigoAlmacen ) + " AND "
-         cSql        +=                   "movimientos_almacen.tipo_movimiento = '4' AND "
-         cSql        +=                   "movimientos_almacen_lineas.codigo_articulo = " + quoted( cCodigoArticulo ) + " AND "
-         cSql        +=                   "movimientos_almacen_lineas.valor_primera_propiedad = " + quoted( cValorPropiedad1 ) + " AND "
-         cSql        +=                   "movimientos_almacen_lineas.valor_segunda_propiedad = " + quoted( cValorPropiedad2 ) + " AND "
-         cSql        +=                   "movimientos_almacen_lineas.lote = " + quoted( cLote ) + " "
-         cSql        +=          "ORDER BY movimientos_almacen.fecha_hora DESC "
-         cSql        +=          "LIMIT 1"
-
-   aBuffer           := ::getDatabase():selectFetchHash( cSql )
-
-   if hb_isArray( aBuffer ) .and. len( aBuffer ) > 0
-
-      hResult        := { "fecha" => hb_TtoD( hGet( aBuffer[1], "fecha_hora" ) ),;
-                          "hora" => SubStr( hb_TSToStr( hGet( aBuffer[1], "fecha_hora" ) ), 12, 8 ),;
-                          "fecha_hora" => hGet( aBuffer[1], "fecha_hora" ) }
-
-   end if
-
-RETURN ( hResult )
-
-//---------------------------------------------------------------------------//
-
-METHOD getTotalUnidadesStock( tConsolidacion, cCodigoArticulo, cCodigoAlmacen, cValorPropiedad1, cValorPropiedad2, cLote )
-   
-   local nEntrada    := ::getTotalUnidadesEntrada( tConsolidacion, cCodigoArticulo, cCodigoAlmacen, cValorPropiedad1, cValorPropiedad2, cLote )
-   local nSalida     := ::getTotalUnidadesSalida( tConsolidacion, cCodigoArticulo, cCodigoAlmacen, cValorPropiedad1, cValorPropiedad2, cLote )
-
-RETURN ( nEntrada - nSalida )
-
-//---------------------------------------------------------------------------//
-
-METHOD getTotalUnidades( tConsolidacion, cCodigoArticulo, cCodigoAlmacen, cValorPropiedad1, cValorPropiedad2, cLote, lEntrada )
-
-   local nTotal      := 0
-   local aBuffer
-   local cSentence
-
-   cSentence         := "SELECT   movimientos_almacen.id, "
-   cSentence         +=          "movimientos_almacen.fecha_hora, "
-   cSentence         +=          "movimientos_almacen.almacen_destino, "
-   cSentence         +=          "movimientos_almacen.almacen_origen, "
-   cSentence         +=          "movimientos_almacen_lineas.parent_uuid, "
-   cSentence         +=          "movimientos_almacen_lineas.codigo_articulo, "
-   cSentence         +=          "movimientos_almacen_lineas.valor_primera_propiedad, "
-   cSentence         +=          "movimientos_almacen_lineas.valor_segunda_propiedad, "
-   cSentence         +=          "movimientos_almacen_lineas.lote, "
-   cSentence         +=          "movimientos_almacen_lineas.cajas_articulo, "
-   cSentence         +=          "movimientos_almacen_lineas.unidades_articulo, "
-   cSentence         +=          "SUM( IF( movimientos_almacen_lineas.cajas_articulo = 0, 1, movimientos_almacen_lineas.cajas_articulo ) * movimientos_almacen_lineas.unidades_articulo ) as totalUnidadesStock "
-   cSentence         += "FROM    movimientos_almacen "
-   cSentence         += "INNER JOIN movimientos_almacen_lineas "
-   cSentence         += "ON      movimientos_almacen_lineas.parent_id = movimientos_almacen.id "
-   
-   if lEntrada
-      cSentence      += "WHERE   movimientos_almacen.almacen_destino = " + quoted( cCodigoAlmacen ) + " AND "
-   else
-      cSentence      += "WHERE   movimientos_almacen.almacen_origen = " + quoted( cCodigoAlmacen ) + " AND "
-   end if
-   
-   if !Empty( tConsolidacion )
-      cSentence      +=         "movimientos_almacen.fecha_hora >= " + quoted( hb_TSToStr( tConsolidacion ) ) + " AND "
-   end if
-
-   cSentence         +=         "movimientos_almacen_lineas.codigo_articulo = " + quoted( cCodigoArticulo ) + " AND "
-   cSentence         +=         "movimientos_almacen_lineas.valor_primera_propiedad = " + quoted( cValorPropiedad1 ) + " AND "
-   cSentence         +=         "movimientos_almacen_lineas.valor_segunda_propiedad = " + quoted( cValorPropiedad2 ) + " AND "
-   cSentence         +=         "movimientos_almacen_lineas.lote = " + quoted( cLote ) + " "
-   cSentence         += "LIMIT 1"
-
-   aBuffer           := ::getDatabase():selectFetchHash( cSentence )
-
-   if !hb_isnil( aBuffer )
-      nTotal         := hGet( aBuffer[1], "totalUnidadesStock" )
-   end if
-
-RETURN ( nTotal )
-
-//---------------------------------------------------------------------------//

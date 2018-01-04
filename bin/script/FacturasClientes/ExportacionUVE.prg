@@ -421,7 +421,6 @@ METHOD SendFile() CLASS FacturasClientesRisi
 
       local oInt
       local oFtp
-      local cUrl
       local oFile
       local lOpen
       local cDelegacion 
@@ -429,8 +428,8 @@ METHOD SendFile() CLASS FacturasClientesRisi
       local cUserFtp    := "manolo"
       local cPasswdFtp  := "123Ab456"
       local cHostFtp    := "ftp.gestool.es"
+      local nPortFtp    := 21
 
-      cUrl              := "ftp://" + cUserFtp + ":" + cPasswdFtp + "@" + cHostFtp
       cDelegacion       := ::getDelegacion()
       cFile             := ::oUve:cFile
 
@@ -440,14 +439,12 @@ METHOD SendFile() CLASS FacturasClientesRisi
 
       ::oSayMessage:setText( "Subiendo fichero " + cFile )
 
-      oInt              := TUrl():New( cUrl )
-      oFtp              := TIPClientFTP():New( oInt, .t. )
-      oFtp:nConnTimeout := 20000
-      oFtp:bUsePasv     := .f.
+      oFtp              := TFtpCurl():New( cUserFtp, cPasswdFtp, cHostFtp, nPortFtp )
+      oFtp:setPassive( .f. )
 
-      lOpen             := oFTP:Open( oInt )
+      lOpen             := oFtp:CreateConexion()
 
-      if empty( oFtp ) .or. !( oFtp:Open( oInt ) )
+      if !lOpen
          msgStop( "Imposible crear la conexión con servidor ftp.", "Error" )
          return ( Self )
       end if   
@@ -456,17 +453,10 @@ METHOD SendFile() CLASS FacturasClientesRisi
       oFtp:Cwd( "uve" )
       oFtp:Cwd( "lavado" )
       oFtp:Cwd( "morisca" )
+
+      oFtp:CreateFile( cFile ) 
       
-
-      /* 
-      if !empty( cDelegacion )
-         oFtp:MKD( cDelegacion )
-         oFtp:Cwd( cDelegacion )
-      end if 
-      */
-
-      oFtp:UploadFile( cFile ) 
-      oFtp:Close()
+      oFtp:endConexion()
 
       ::oSayMessage:setText( "Fichero " + cFile + " subido." )
 

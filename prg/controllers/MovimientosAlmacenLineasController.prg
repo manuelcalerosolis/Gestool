@@ -113,7 +113,7 @@ METHOD New( oController )
 
    ::setEvent( 'closedDialog',      {|| ::onClosedDialog() } )
 
-   ::setEvent( 'appended',          {|| msgalert( "appended" ), ::oBrowseView:Refresh() } )
+   ::setEvent( 'appended',          {|| ::oBrowseView:Refresh() } )
    ::setEvent( 'edited',            {|| ::oBrowseView:Refresh() } )
    ::setEvent( 'deletedSelection',  {|| ::oBrowseView:Refresh() } )
 
@@ -125,10 +125,10 @@ RETURN ( Self )
 
 METHOD loadedBlankBuffer()
 
-   local nId        := ::getSenderController():getId() 
+   local uuid        := ::getSenderController():getUuid() 
 
-   if !empty( nId )
-      hset( ::oModel:hBuffer, "parent_id", nId )
+   if !empty( uuid )
+      hset( ::oModel:hBuffer, "parent_uuid", uuid )
    end if 
 
 RETURN ( Self )
@@ -137,13 +137,11 @@ RETURN ( Self )
 
 METHOD gettingSelectSentence()
 
-   local nId        := ::getSenderController():getId() 
+   local uuid        := ::getSenderController():getUuid() 
 
-   if empty( nId )
-      RETURN ( Self )
+   if !empty( uuid )
+      ::oModel:setGeneralWhere( "parent_uuid = " + quoted( uuid ) )
    end if 
-
-   ::oModel:setGeneralWhere( "parent_id = " + quoted( nId ) )
 
 RETURN ( Self )
 
@@ -483,7 +481,7 @@ RETURN ( .t. )
 
 METHOD loadValuesBrowseProperty( cCodigoArticulo )
 
-   local nId
+   local uuid
    local aArticulos
 
    if !( uFieldEmpresa( 'lUseTbl' ) )
@@ -494,12 +492,12 @@ METHOD loadValuesBrowseProperty( cCodigoArticulo )
       RETURN ( Self )
    end if 
 
-   nId            := ::getSenderController():getId() 
-   if empty( nId )
+   uuid           := ::getSenderController():getUuid() 
+   if empty( uuid )
       RETURN ( Self )
    end if 
 
-   aArticulos     := MovimientosAlmacenLineasRepository():getHashArticuloId( cCodigoArticulo, nId ) 
+   aArticulos     := MovimientosAlmacenLineasRepository():getHashArticuloUuid( cCodigoArticulo, uuid ) 
    if empty( aArticulos )
       RETURN ( Self )
    end if 

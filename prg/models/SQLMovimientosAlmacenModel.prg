@@ -20,6 +20,8 @@ CLASS SQLMovimientosAlmacenModel FROM SQLExportableModel
    
    METHOD cTextoMovimiento()  
 
+   METHOD getDeleteSentence( aId )
+
 END CLASS
 
 //---------------------------------------------------------------------------//
@@ -31,7 +33,7 @@ METHOD getColumns()
    hset( ::hColumns, "numero",            {  "create"    => "INT UNSIGNED NOT NULL"                   ,;
                                              "default"   => {|| 0 } }                                 )
 
-   hset( ::hColumns, "tipo_movimiento",   {  "create"    => "TINYINT UNSIGNED NOT NULL"               ,;
+   hset( ::hColumns, "tipo_movimiento",   {  "create"    => "INT UNSIGNED NOT NULL"                   ,;
                                              "default"   => {|| 1 } }                                 )
 
    hset( ::hColumns, "fecha_hora",        {  "create"    => "DATETIME DEFAULT CURRENT_TIMESTAMP"      ,;
@@ -97,5 +99,19 @@ METHOD cTextoMovimiento( nPosition )
    nPosition         := min( nPosition, len( ::aTextoMovimiento ) )
 
 RETURN ( ::aTextoMovimiento[ nPosition ] ) 
+
+//---------------------------------------------------------------------------//
+
+METHOD getDeleteSentence( aId )
+
+   local cSQLDelete     := "DELETE FROM " + ::cTableName + " WHERE " 
+
+   aeval( aId, {| v | cSQLDelete += ::cColumnKey + " = " + toSQLString( v ) + " OR " } )
+
+   cSQLDelete           := ChgAtEnd( cSQLDelete, '', 4 )
+
+   msgalert( "Tenemos q borrar todas las lineas y numoeros de serie")
+
+RETURN ( cSQLDelete )
 
 //---------------------------------------------------------------------------//

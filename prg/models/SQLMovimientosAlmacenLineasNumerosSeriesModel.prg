@@ -8,11 +8,7 @@ CLASS SQLMovimientosAlmacenLineasNumerosSeriesModel FROM SQLBaseModel
 
    DATA cTableName                  INIT "movimientos_almacen_lineas_numeros_series"
 
-   DATA cConstraints                INIT  "PRIMARY KEY (id), "                                  + ;
-                                             "KEY (uuid), "                                     + ;
-                                          "FOREIGN KEY ( parent_id ) "                          + ;
-                                             "REFERENCES movimientos_almacen_lineas( id ) "     + ;
-                                             "ON DELETE CASCADE"
+   DATA cConstraints                INIT  "PRIMARY KEY (id), KEY (uuid)"                                      
 
    DATA aBuffer
 
@@ -42,13 +38,13 @@ METHOD getColumns()
    hset( ::hColumns, "id",                {  "create"    => "INTEGER AUTO_INCREMENT"                  ,;
                                              "default"   => {|| 0 } }                                 )   
 
-   hset( ::hColumns, "uuid",              {  "create"    => "VARCHAR(40) NOT NULL UNIQUE"             ,;
+   hset( ::hColumns, "uuid",              {  "create"    => "VARCHAR( 40 ) NOT NULL UNIQUE"           ,;
                                              "default"   => {|| win_uuidcreatestring() } }            )
 
-   hset( ::hColumns, "parent_id",         {  "create"    => "INTEGER NOT NULL"                        ,;
-                                             "default"   => {|| 0 } }            )
+   hset( ::hColumns, "parent_uuid",       {  "create"    => "VARCHAR( 40 ) NOT NULL "                 ,;
+                                             "default"   => {|| space( 40 ) } }                       )
 
-   hset( ::hColumns, "numero_serie",      {  "create"    => "VARCHAR(30) NOT NULL"                    ,;
+   hset( ::hColumns, "numero_serie",      {  "create"    => "VARCHAR( 30 ) NOT NULL"                  ,;
                                              "default"   => {|| space( 30 ) } }                       )
 
 RETURN ( ::hColumns )
@@ -57,7 +53,8 @@ RETURN ( ::hColumns )
 
 METHOD loadCurrentBuffer()  
 
-   ::aBuffer            := ::oDatabase:selectFetchHash( "SELECT * FROM " + ::cTableName + " WHERE parent_id = " + quoted( ::getParentId() ) )
+   ::aBuffer            := ::oDatabase:selectFetchHash(  "SELECT * FROM " + ::cTableName + " " +       ;
+                                                            "WHERE parent_uuid = " + quoted( ::getParentUuid() ) )
 
    ::loadBlankBufferFromUnits()
 
@@ -96,7 +93,7 @@ METHOD loadBlankBuffer()
 
    ::super:loadBlankBuffer()
 
-   hset( ::hBuffer, "parent_id", ::getParentId() )
+   hset( ::hBuffer, "parent_uuid", ::getParentUuid() )
 
 Return ( ::hBuffer )
 
@@ -107,12 +104,12 @@ METHOD RollBack()
    local hBuffer
    local cIds     := ""
 
-   aEval( ::aBuffer, {|h| cIds += quoted( hGet( h, "id" ) ) + "," } )
+   aEval( ::aBuffer, {|h| cIds += quoted( hGet( h, "uuid" ) ) + "," } )
 
    cIds           := chgAtEnd( cIds, "", 1 )
 
    if !Empty( cIds )
-      ::oDataBase:Exec( "DELETE FROM " + ::cTableName + " WHERE uuid NOT IN (" + cIds + ") AND parent_id = " + quoted( ::getParentId() ) )
+      ::oDataBase:Exec( "DELETE FROM " + ::cTableName + " WHERE uuid NOT IN (" + cIds + ") AND parent_uuid = " + quoted( ::getParentUuid() ) )
    end if
 
 RETURN ( self )

@@ -1,10 +1,16 @@
 MVC - ToDo
 
-- Creacion de nuevas estructuras
-
-- Seeders
-
 - Creacion de tablas de contadores.
+
+- Asignación de numeros de series en las lineas.
+
+- Eliminación en cascada 
+
+- Asignacion de contadores.
+
+- Creacion de nuevas estructuras (done)
+
+- Seeders (done)
 
 - No desaparece el browse de las propiedades.(done)
 
