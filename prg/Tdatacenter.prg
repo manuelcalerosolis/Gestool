@@ -812,23 +812,23 @@ METHOD StartAdministratorTask()
    ::oMsg:SetText( "Intentando conectar con la base de datos" )
 
    if ::ConnectDataDictionary()
-      
-      // Eliminamos todas las tablas del diccionario de datos------------------
-
-      ::oMsg:SetText( "Eliminando tablas anteriores de diccionario de datos" )
-      
-      ::deleteAllTableFromDataDictionary()
-      
-      // Construimos la base de datos de estructura----------------------------
-
-      ::oMsg:SetText( "Creando árbol de tablas de datos generales" )
-
-      ::BuildData()
-
-      ::CreateDataTable()
 
       if ::lSeeders 
+
          oSeeder:runSeederDatos()
+
+      else 
+     
+         ::oMsg:SetText( "Eliminando tablas anteriores de diccionario de datos" )
+         
+         ::deleteAllTableFromDataDictionary()
+         
+         ::oMsg:SetText( "Creando árbol de tablas de datos generales" )
+
+         ::BuildData()
+
+         ::CreateDataTable()
+
       end if
 
       // Recorremos el array de las empresas par actualizarlas--------------------
@@ -839,29 +839,33 @@ METHOD StartAdministratorTask()
 
          if aEmpresa[ 6 ]
 
-            ::oMsg:SetText( "Creando diccionario de empresa " + Rtrim( aEmpresa[ 1 ] ) + " - " + Rtrim( aEmpresa[ 2 ] ) )
-
-            if !empty( ::oMtrActualiza )
-            	::oMtrActualiza:set( hb_enumindex() )
-            end if 
-
-            setEmpresa( aEmpresa[ 1 ] )
-
-            ::BuildEmpresa()  
-               
-            ::addEmpresaTablesToDataDictionary()
-
-            ::Reindex()
-
             if ::lSeeders 
+
+               setEmpresa( aEmpresa[ 1 ] )
+
+               oSeeder:runSeederEmpresa()
+            
+            else 
 
                ::Syncronize()
 
-               oSeeder:runSeederEmpresa()
+               ::oMsg:SetText( "Creando diccionario de empresa " + Rtrim( aEmpresa[ 1 ] ) + " - " + Rtrim( aEmpresa[ 2 ] ) )
+
+               if !empty( ::oMtrActualiza )
+               	::oMtrActualiza:set( hb_enumindex() )
+               end if 
+
+               setEmpresa( aEmpresa[ 1 ] )
+
+               ::BuildEmpresa()  
+                  
+               ::addEmpresaTablesToDataDictionary()
+
+               ::Reindex()
+
+               ::MigrateEmpresaToSQL()
 
             end if
-
-            ::MigrateEmpresaToSQL()
 
             aEmpresa[ 5 ]   := .t.
 

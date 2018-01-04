@@ -8,12 +8,12 @@ CLASS SQLMovimientosAlmacenLineasModel FROM SQLExportableModel
 
    DATA cTableName            INIT  "movimientos_almacen_lineas"
 
-   DATA cConstraints          INIT  "PRIMARY KEY ( uuid ), "                     + ; 
-                                       "KEY ( id ), "                            + ;
-                                       "KEY ( parent_uuid ), "                   + ;
+   DATA cConstraints          INIT  "PRIMARY KEY ( id ), "                       + ; 
+                                       "KEY ( uuid ), "                          + ;
+                                       "KEY ( parent_id ), "                     + ;
                                        "KEY ( codigo_articulo ), "               + ;
-                                    "FOREIGN KEY ( parent_uuid ) "               + ;
-                                       "REFERENCES movimientos_almacen( uuid ) " + ;
+                                    "FOREIGN KEY ( parent_id ) "                 + ;
+                                       "REFERENCES movimientos_almacen( id ) "   + ;
                                        "ON DELETE CASCADE"
 
    METHOD getColumns()
@@ -29,6 +29,8 @@ CLASS SQLMovimientosAlmacenLineasModel FROM SQLExportableModel
    METHOD addUpdateSentence()
    
    METHOD addDeleteSentence()
+
+   METHOD addDeleteSentenceById()
 
    METHOD deleteWhereUuid( uuid )
 
@@ -58,8 +60,8 @@ METHOD getColumns()
    hset( ::hColumns, "uuid",              {  "create"    => "VARCHAR(40) NOT NULL UNIQUE"          ,;
                                              "default"   => {|| win_uuidcreatestring() } }         )
 
-   hset( ::hColumns, "parent_uuid",       {  "create"    => "VARCHAR(40) NOT NULL"                 ,;
-                                             "default"   => {|| space(40) } }                      )
+   hset( ::hColumns, "parent_id",         {  "create"    => "INTEGER NOT NULL"                     ,;
+                                             "default"   => {|| 0 } }                              )
 
    hset( ::hColumns, "codigo_articulo",   {  "create"    => "VARCHAR(18) NOT NULL"                 ,;
                                              "default"   => {|| space(18) } }                      )
@@ -105,7 +107,7 @@ METHOD getInitialSelect()
 
    local cSelect  := "SELECT id, "                                            + ;
                         "uuid, "                                              + ;
-                        "parent_uuid, "                                       + ;
+                        "parent_id, "                                         + ;
                         "codigo_articulo, "                                   + ;
                         "nombre_articulo, "                                   + ;
                         "codigo_primera_propiedad, "                          + ;
@@ -149,6 +151,12 @@ METHOD getUpdateSentence()
       RETURN ( ::Super:getUpdateSentence() )
    end if 
 
+   msgalert( hb_valtoexp( ::hBuffer ), "getUpdateSentence" )
+
+   if ::oController:isAppendMode()
+      ::addDeleteSentenceById( aSQLUpdate, hget( ::hBuffer, "id" ) )
+   end if 
+
    for each oProperty in ::oController:aProperties
 
       do case
@@ -167,6 +175,8 @@ METHOD getUpdateSentence()
       end case
 
    next 
+
+   msgalert( hb_valtoexp( aSQLUpdate ), "aSQLUpdate" )
 
 RETURN ( aSQLUpdate )
 
@@ -210,10 +220,19 @@ RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 
+METHOD addDeleteSentenceById( aSQLUpdate, nId )
+
+   aadd( aSQLUpdate, "DELETE FROM " + ::cTableName + " " +                          ;
+                        "WHERE id = " + quoted( nId ) + "; " )
+
+RETURN ( nil )
+
+//---------------------------------------------------------------------------//
+
 METHOD deleteWhereUuid( uuid )
 
-   local cSentence := "DELETE FROM " + ::cTableName + " " + ;
-                              "WHERE parent_uuid = " + quoted( uuid )
+   local cSentence   := "DELETE FROM " + ::cTableName + " " + ;
+                           "WHERE parent_uuid = " + quoted( uuid )
 
 RETURN ( ::getDatabase():Exec( cSentence ) )
 
@@ -232,18 +251,18 @@ METHOD getFechaHoraConsolidacion( cCodigoArticulo, cCodigoAlmacen, cValorPropied
 
    local aBuffer
    local hResult     := { => }
-   local cSql        := "SELECT   movimientos_almacen.uuid, "
+   local cSql        := "SELECT   movimientos_almacen.id, "
          cSql        +=                   "movimientos_almacen.fecha_hora, "
          cSql        +=                   "movimientos_almacen.almacen_destino, "
          cSql        +=                   "movimientos_almacen.tipo_movimiento, "
-         cSql        +=                   "movimientos_almacen_lineas.parent_uuid, "
+         cSql        +=                   "movimientos_almacen_lineas.parent_id, "
          cSql        +=                   "movimientos_almacen_lineas.codigo_articulo, "
          cSql        +=                   "movimientos_almacen_lineas.valor_primera_propiedad, "
          cSql        +=                   "movimientos_almacen_lineas.valor_segunda_propiedad, "
          cSql        +=                   "movimientos_almacen_lineas.lote "
          cSql        +=          "FROM     movimientos_almacen "
          cSql        +=          "INNER JOIN movimientos_almacen_lineas "
-         cSql        +=                   "ON movimientos_almacen_lineas.parent_uuid = movimientos_almacen.uuid " 
+         cSql        +=                   "ON movimientos_almacen_lineas.parent_id = movimientos_almacen.id " 
          cSql        +=          "WHERE    movimientos_almacen.almacen_destino = " + quoted( cCodigoAlmacen ) + " AND "
          cSql        +=                   "movimientos_almacen.tipo_movimiento = '4' AND "
          cSql        +=                   "movimientos_almacen_lineas.codigo_articulo = " + quoted( cCodigoArticulo ) + " AND "
@@ -282,7 +301,7 @@ METHOD getTotalUnidades( tConsolidacion, cCodigoArticulo, cCodigoAlmacen, cValor
    local aBuffer
    local cSentence
 
-   cSentence         := "SELECT   movimientos_almacen.uuid, "
+   cSentence         := "SELECT   movimientos_almacen.id, "
    cSentence         +=          "movimientos_almacen.fecha_hora, "
    cSentence         +=          "movimientos_almacen.almacen_destino, "
    cSentence         +=          "movimientos_almacen.almacen_origen, "
@@ -296,7 +315,7 @@ METHOD getTotalUnidades( tConsolidacion, cCodigoArticulo, cCodigoAlmacen, cValor
    cSentence         +=          "SUM( IF( movimientos_almacen_lineas.cajas_articulo = 0, 1, movimientos_almacen_lineas.cajas_articulo ) * movimientos_almacen_lineas.unidades_articulo ) as totalUnidadesStock "
    cSentence         += "FROM    movimientos_almacen "
    cSentence         += "INNER JOIN movimientos_almacen_lineas "
-   cSentence         += "ON      movimientos_almacen_lineas.parent_uuid = movimientos_almacen.uuid "
+   cSentence         += "ON      movimientos_almacen_lineas.parent_id = movimientos_almacen.id "
    
    if lEntrada
       cSentence      += "WHERE   movimientos_almacen.almacen_destino = " + quoted( cCodigoAlmacen ) + " AND "

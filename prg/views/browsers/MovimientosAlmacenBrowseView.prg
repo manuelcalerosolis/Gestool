@@ -19,10 +19,27 @@ METHOD addColumns()
       :nWidth              := 80
       :bEditValue          := {|| ::getRowSet():fieldGet( 'id' ) }
       :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
+      :lHide               := .t.
    end with
 
    with object ( ::oBrowse:AddCol() )
-      // :cSortOrder          := 'nombre_movimiento'
+      :cSortOrder          := 'uuid'
+      :cHeader             := 'Uuid'
+      :nWidth              := 180
+      :bEditValue          := {|| ::getRowSet():fieldGet( 'uuid' ) }
+      :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
+      :lHide               := .t.
+   end with
+
+   with object ( ::oBrowse:AddCol() )
+      :cSortOrder          := 'numero'
+      :cHeader             := 'Número'
+      :nWidth              := 80
+      :bEditValue          := {|| ::getRowSet():fieldGet( 'numero' ) }
+      :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
+   end with
+
+   with object ( ::oBrowse:AddCol() )
       :cHeader             := 'Tipo movimiento'
       :nWidth              := 100
       :bEditValue          := {|| ::getRowSet():fieldGet( 'nombre_movimiento' ) }

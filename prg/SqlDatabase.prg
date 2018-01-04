@@ -155,6 +155,10 @@ METHOD Exec( cSql )
       RETURN ( .f. )  
    end if 
 
+   if empty( cSql )
+      RETURN ( .f. )  
+   end if 
+
    if !::oConexion:Parse( cSql )
       msgstop( cSql, "Error en el comando SQL" )
       logwrite( cSql )

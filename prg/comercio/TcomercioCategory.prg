@@ -63,6 +63,8 @@ METHOD buildCategory( id, rootCategory ) CLASS TComercioCategory
       rootCategory         := 2
    end if 
 
+   ::writeText( "Construyendo categoría : " + cvaltostr( id ) )
+
    if ascan( ::aCategoriesProduct, {|h| hGet( h, "id" ) == id } ) != 0
       RETURN .f.
    end if
@@ -192,6 +194,8 @@ METHOD insertCategories() CLASS TComercioCategory
 
    local idCategory
    local hCategoryProduct
+
+   msgalert( hb_valtoexp( ::aCategoriesProduct ), "insertCategory" )
 
    for each hCategoryProduct in ::aCategoriesProduct
 

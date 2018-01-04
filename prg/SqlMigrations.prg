@@ -124,6 +124,8 @@ METHOD addModels()
 
    aadd( ::aModels, SQLConfiguracionEmpresasModel():New() )
 
+   aadd( ::aModels, SQLContadoresModel():New() )
+
    aadd( ::aModels, SQLMovimientosAlmacenModel():New() )
 
    aadd( ::aModels, SQLMovimientosAlmacenLineasModel():New() )

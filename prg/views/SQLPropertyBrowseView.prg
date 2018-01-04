@@ -327,6 +327,10 @@ METHOD getProperties()
 
    ::aProperties        := {}
 
+   if empty( ::aPropertiesTable )
+      RETURN ( ::aProperties )
+   end if 
+
    aeval( ::aPropertiesTable,;
       {| aProperty | aeval( aProperty,;
          {| oProperty | ::addProperty( oProperty ) } ) } )

@@ -10,18 +10,22 @@ CLASS MovimientosAlmacenLineasRepository FROM SQLBaseRepository
 
    METHOD getSQLSentenceFechaCaducidad( cCodigoArticulo, cValorPrimeraPropiedad, cValorSegundaPropiedad, cLote )
 
-   METHOD getSQLSentenceArticuloUuid( cCodigoArticulo, Uuid )
+   METHOD getSQLSentenceArticuloId( cCodigoArticulo, nId )
 
-   METHOD getHashArticuloUuid( cCodigoArticulo, Uuid ) ;
-                                 INLINE ( getSQLDataBase():selectFetchHash( ::getSQLSentenceArticuloUuid( cCodigoArticulo, Uuid ) ) )
+   METHOD getHashArticuloId( cCodigoArticulo, nId ) ;
+                                 INLINE ( getSQLDataBase():selectFetchHash( ::getSQLSentenceArticuloId( cCodigoArticulo, nId ) ) )
 
-   METHOD getSQLSentenceWhereParentUuid( uuid )
+   METHOD getSQLSentenceWhereParentId( nId )
 
    METHOD getSerializedColumnsSentenceToLabels()
 
    METHOD getSQLSentenceToLabels( initialId, finalId )
 
    METHOD getSQLSentenceFechaHoraConsolidacion( cCodigoArticulo, cCodigoAlmacen, cCodigoPrimeraPropiedad, cCodigoSegundaPropiedad, cValorPrimeraPropiedad, cValorSegundaPropiedad, cLote, dFecha, tHora )
+
+   METHOD getSqlSentenceIdByUuid( uuid ) 
+
+   METHOD getIdByUuid( nNumber )  INLINE ( getSQLDataBase():selectValue( ::getSqlSentenceIdByUuid( nNumber ) ) )
 
 END CLASS
 
@@ -51,18 +55,18 @@ RETURN ( cSql )
 
 //---------------------------------------------------------------------------//
 
-METHOD getSQLSentenceArticuloUuid( cCodigoArticulo, Uuid )
+METHOD getSQLSentenceArticuloId( cCodigoArticulo, nId )
 
    local cSql  := "SELECT * "                                                    + ;
                   "FROM " + ::getTableName() + " "                               + ;
                   "WHERE codigo_articulo = " + quoted( cCodigoArticulo ) + " "   + ;
-                     "AND parent_uuid = " + quoted( uuid )
+                     "AND parent_id = " + quoted( nId )
 
 RETURN ( cSql )
 
 //---------------------------------------------------------------------------//
 
-METHOD getSqlSentenceWhereParentUuid( uuid )
+METHOD getSqlSentenceWhereParentId( uuid )
 
    local cSql  := "SELECT * FROM " + ::getTableName() + " "   + ;
                      "WHERE parent_uuid = " + quoted( uuid )
@@ -153,3 +157,14 @@ METHOD getSQLSentenceFechaHoraConsolidacion( cCodigoArticulo, cCodigoAlmacen, cC
 RETURN ( cSql )
 
 //---------------------------------------------------------------------------//
+
+METHOD getSqlSentenceIdByUuid( uuid ) 
+
+   local cSql  := "SELECT id FROM " + ::getTableName() + " " 
+
+   cSql        +=    "WHERE uuid = " + quoted( uuid ) 
+
+RETURN ( cSql )
+
+//---------------------------------------------------------------------------//
+

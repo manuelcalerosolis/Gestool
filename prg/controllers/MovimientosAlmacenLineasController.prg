@@ -113,7 +113,7 @@ METHOD New( oController )
 
    ::setEvent( 'closedDialog',      {|| ::onClosedDialog() } )
 
-   ::setEvent( 'appended',          {|| ::oBrowseView:Refresh() } )
+   ::setEvent( 'appended',          {|| msgalert( "appended" ), ::oBrowseView:Refresh() } )
    ::setEvent( 'edited',            {|| ::oBrowseView:Refresh() } )
    ::setEvent( 'deletedSelection',  {|| ::oBrowseView:Refresh() } )
 
@@ -125,10 +125,10 @@ RETURN ( Self )
 
 METHOD loadedBlankBuffer()
 
-   local uuid        := ::getSenderController():getUuid() 
+   local nId        := ::getSenderController():getId() 
 
-   if !empty( uuid )
-      hset( ::oModel:hBuffer, "parent_uuid", uuid )
+   if !empty( nId )
+      hset( ::oModel:hBuffer, "parent_id", nId )
    end if 
 
 RETURN ( Self )
@@ -137,13 +137,13 @@ RETURN ( Self )
 
 METHOD gettingSelectSentence()
 
-   local uuid        := ::getSenderController():getUuid() 
+   local nId        := ::getSenderController():getId() 
 
-   if empty( uuid )
+   if empty( nId )
       RETURN ( Self )
    end if 
 
-   ::oModel:setGeneralWhere( "parent_uuid = " + quoted( uuid ) )
+   ::oModel:setGeneralWhere( "parent_id = " + quoted( nId ) )
 
 RETURN ( Self )
 
@@ -239,6 +239,8 @@ METHOD showProperties()
       ::oDialogView:hideSegundaPropiedad()
 
       ::oDialogView:hidePropertyBrowseView()
+
+      RETURN ( .t. )
 
    end if 
 
@@ -363,25 +365,25 @@ RETURN ( .t. )
 
 METHOD getFirstProperty( cCodigoArticulo, cCodigoPropiedad )
 
-   local aProperties := ArticulosPrecios():getFirstProperty( cCodigoArticulo, cCodigoPropiedad )
+   local aProperty   := ArticulosPrecios():getFirstProperty( cCodigoArticulo, cCodigoPropiedad )
 
-   if empty( aProperties )
-      aProperties    := PropiedadesLineasModel():getPropiedadesGeneral( cCodigoArticulo, cCodigoPropiedad )
+   if empty( aProperty )
+      aProperty      := PropiedadesLineasModel():getPropiedadesGeneral( cCodigoArticulo, cCodigoPropiedad )
    end if 
 
-RETURN ( aProperties )
+RETURN ( aProperty )
 
 //---------------------------------------------------------------------------//
 
 METHOD getSecondProperty( cCodigoArticulo, cCodigoPropiedad )
 
-   local aProperties := ArticulosPrecios():getSecondProperty( cCodigoArticulo, cCodigoPropiedad )
+   local aProperty   := ArticulosPrecios():getSecondProperty( cCodigoArticulo, cCodigoPropiedad )
 
-   if empty( aProperties )
-      aProperties    := PropiedadesLineasModel():getPropiedadesGeneral( cCodigoArticulo, cCodigoPropiedad )
+   if empty( aProperty )
+      aProperty      := PropiedadesLineasModel():getPropiedadesGeneral( cCodigoArticulo, cCodigoPropiedad )
    end if 
 
-RETURN ( aProperties )
+RETURN ( aProperty )
 
 //---------------------------------------------------------------------------//
 
@@ -464,15 +466,16 @@ RETURN ( .t. )
 
 METHOD runDialogSeries()
 
+   if Empty( ::oDialogView:nTotalUnidadesArticulo() )
+      msgStop( "El número de unidades no puede ser 0 para editar números de serie" )
+      RETURN ( .f. )
+   end if
+
    ::oSeriesControler:SetTotalUnidades( ::oDialogView:nTotalUnidadesArticulo() )
 
    ::oSeriesControler:SetParentUUID( hget( ::oModel:hBuffer, "uuid" ) )
 
-   if Empty( ::oDialogView:nTotalUnidadesArticulo() )
-      MsgStop( "El número de unidades no puede ser 0 para editar números de serie" )
-   else
-      ::oSeriesControler:Edit()
-   end if
+   ::oSeriesControler:Edit( hget( ::oModel:hBuffer, "id" ) )
 
 RETURN ( .t. )
 
@@ -480,7 +483,7 @@ RETURN ( .t. )
 
 METHOD loadValuesBrowseProperty( cCodigoArticulo )
 
-   local Uuid
+   local nId
    local aArticulos
 
    if !( uFieldEmpresa( 'lUseTbl' ) )
@@ -491,12 +494,12 @@ METHOD loadValuesBrowseProperty( cCodigoArticulo )
       RETURN ( Self )
    end if 
 
-   Uuid           := hget( ::getSenderController():oModel:hBuffer, "uuid" )
-   if empty( Uuid )
+   nId            := ::getSenderController():getId() 
+   if empty( nId )
       RETURN ( Self )
    end if 
 
-   aArticulos     := MovimientosAlmacenLineasRepository():getHashArticuloUuid( cCodigoArticulo, Uuid ) 
+   aArticulos     := MovimientosAlmacenLineasRepository():getHashArticuloId( cCodigoArticulo, nId ) 
    if empty( aArticulos )
       RETURN ( Self )
    end if 

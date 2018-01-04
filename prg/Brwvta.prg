@@ -1252,10 +1252,10 @@ Static Function LoadDatos( cCodArt, nYear, oDlg, oBrwStk, oBrwTmp, oGraph, oBrwC
    oDlg:Disable()
 
    CursorWait()
-   
+/*   
    oBlock               := ErrorBlock( {| oError | ApoloBreak( oError ) } )
    BEGIN SEQUENCE
-
+*/
    oMeter:Show()
    oMeter:SetTotal( 18 )
 
@@ -1466,14 +1466,12 @@ Static Function LoadDatos( cCodArt, nYear, oDlg, oBrwStk, oBrwTmp, oGraph, oBrwC
    oText:SetText()
 
    oMeter:Hide()
-
+/*
    RECOVER USING oError
-
       msgStop( "Imposible cargar datos" + CRLF + ErrorMessage( oError ) )
-
    END SEQUENCE
    ErrorBlock( oBlock )
-
+*/
    CursorWE()
 
    oDlg:Enable()

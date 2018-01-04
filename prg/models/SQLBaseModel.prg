@@ -113,7 +113,7 @@ CLASS SQLBaseModel
 
    METHOD setColumnOrientation( cColumnOrientation )  INLINE ( ::cColumnOrientation := cColumnOrientation )
 
-   METHOD getDeleteSentenceByColumnKey( nId )
+   METHOD getDeleteSentenceById( nId )
 
    METHOD getSelectByOrder()
 
@@ -131,6 +131,7 @@ CLASS SQLBaseModel
    METHOD insertBuffer( hBuffer )                     
    METHOD updateBuffer( hBuffer )
    METHOD deleteSelection( aRecno )
+   METHOD deleteById( nId )
 
    METHOD loadBlankBuffer()
    METHOD loadDuplicateBuffer() 
@@ -450,7 +451,7 @@ METHOD getInsertSentence( hBuffer )
 
    hEval( hBuffer, {| k, v | if ( k != ::cColumnKey, cSQLInsert += toSQLString( v ) + ", ", ) } )
 
-   cSQLInsert        := ChgAtEnd( cSQLInsert, ' )', 2 )
+   cSQLInsert        := chgAtEnd( cSQLInsert, ' )', 2 )
 
 RETURN ( cSQLInsert )
 
@@ -491,7 +492,7 @@ RETURN ( cSQLDelete )
 
 //---------------------------------------------------------------------------//
 
-METHOD getDeleteSentenceByColumnKey( nId )
+METHOD getDeleteSentenceById( nId )
 
    local cSQLDelete  := "DELETE FROM " + ::cTableName + space( 1 ) + ;
                            "WHERE " + ::cColumnKey + " = " + toSQLString( nId ) 
@@ -668,7 +669,7 @@ METHOD getValueFromColumn( cColumn, cKey )
       hValue      := hGetValueAt( ::hColumns, nScan )
    
       if hb_ishash( hValue ) .and. hhaskey( hValue, cKey )
-         uValue  := hGet( hValue, cKey )
+         uValue   := hGet( hValue, cKey )
       end if 
 
    end if 
@@ -679,19 +680,31 @@ RETURN ( uValue )
 
 METHOD insertBuffer( hBuffer )
 
+   local nId
+
    ::fireEvent( 'insertingBuffer' )
+
+   msgalert( ::getInsertSentence( hBuffer ), "insertBuffer" )
 
    ::getDatabase():Execs( ::getInsertSentence( hBuffer ) )
 
+   nId         := ::getDatabase():LastInsertId()
+
+   if !empty( ::cColumnKey )
+      hset( ::hBuffer, ::cColumnKey, nId )
+   end if 
+
    ::fireEvent( 'insertedBuffer' )
 
-RETURN ( ::getDatabase():LastInsertId() )
+RETURN ( nId )
 
 //---------------------------------------------------------------------------//
 
 METHOD updateBuffer( hBuffer )
 
    ::fireEvent( 'updatingBuffer' )
+
+   msgalert( ::getUpdateSentence( hBuffer ), "updateBuffer" )
 
    ::getDatabase():Execs( ::getUpdateSentence( hBuffer ) )
 
@@ -707,9 +720,25 @@ METHOD deleteSelection( aRecno )
 
    ::fireEvent( 'deletingSelection' )
 
+   msgalert( ::getDeleteSentence( aRecno ), "deletingSelection" )
+
    ::getDatabase():Query( ::getDeleteSentence( aRecno ) )
 
    ::fireEvent( 'deletedSelection' )
+   
+RETURN ( Self )
+
+//---------------------------------------------------------------------------//
+
+METHOD deleteById( nId )
+
+   ::fireEvent( 'deletingById' )
+
+   msgAlert( ::getDeleteSentenceById( nId ), "deletedById" )
+
+   ::getDatabase():Execs( ::getDeleteSentenceById( nId ) )
+
+   ::fireEvent( 'deletedById' )
    
 RETURN ( Self )
 

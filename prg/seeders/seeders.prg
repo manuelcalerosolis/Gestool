@@ -71,7 +71,7 @@ METHOD runSeederEmpresa()
    ::oMsg:SetText( "Ejecutando seeder de cabeceras de movimientos de almacén" )
    ::SeederMovimientosAlmacen()
    
-   ::oMsg:SetText( "Ejecutando seeder de lineas de movimientos de almacén" )
+   ::oMsg:SetText( "Ejecutando seeder de líneas de movimientos de almacén" )
    ::SeederMovimientosAlmacenLineas()
 
    ::oMsg:SetText( "Ejecutando seeder de números de serie de lineas de movimientos de almacén" )
@@ -83,17 +83,19 @@ RETURN ( self )
 
 //---------------------------------------------------------------------------//
 
-METHOD getInsertStatement( hCampos, cDataBaseName )
+METHOD getInsertStatement( hCampos, cTableName )
 
-   local cStatement  := ""
+   local cStatement  
 
-   cStatement     := "INSERT IGNORE INTO "
-   cStatement     += cDataBaseName + Space( 1 )
-   cStatement     += "( "
+   cStatement        := "INSERT IGNORE INTO " + cTableName + " ( "
+
    hEval( hCampos, {| k, v | cStatement += k + ", " } )
-   cStatement     := chgAtEnd( cStatement, " ) VALUES ( ", 2 )
+
+   cStatement        := chgAtEnd( cStatement, " ) VALUES ( ", 2 )
+
    hEval( hCampos, {| k, v | cStatement += v + ", " } )
-   cStatement     := chgAtEnd( cStatement, " )", 2 )
+
+   cStatement        := chgAtEnd( cStatement, " )", 2 )
 
 RETURN cStatement
 
@@ -307,6 +309,8 @@ METHOD SeederMovimientosAlmacen()
 
       ( dbf )->( dbSkip() )
 
+      sysrefresh()
+
    end while
 
    if dbf != nil
@@ -321,19 +325,22 @@ RETURN ( Self )
 
 METHOD getStatementSeederMovimientosAlmacen( dbfRemMov )
 
-   local hCampos        := {  "uuid" =>               quoted( ( dbfRemMov )->cGuid ),;
-                              "empresa" =>            quoted( cCodEmp() ),;
-                              "delegacion" =>         quoted( ( dbfRemMov )->cCodDlg ),;
-                              "usuario" =>            quoted( ( dbfRemMov )->cCodUsr ),;
-                              "tipo_movimiento" =>    quoted( ( dbfRemMov )->nTipMov ),;
-                              "fecha_hora" =>         quoted( DateTimeToTimestamp( ( dbfRemMov )->dFecRem, ( dbfRemMov )->cTimRem ) ),;
-                              "almacen_origen" =>     quoted( ( dbfRemMov )->cAlmOrg ),;
-                              "almacen_destino" =>    quoted( ( dbfRemMov )->cAlmDes ),;
-                              "grupo_movimiento" =>   quoted( ( dbfRemMov )->cCodMov ),;
-                              "agente" =>             quoted( ( dbfRemMov )->cCodAge ),;
-                              "divisa" =>             quoted( ( dbfRemMov )->cCodDiv ),;
-                              "divisa_cambio" =>      quoted( ( dbfRemMov )->nVdvDiv ),;
-                              "comentarios" =>        quoted( ( dbfRemMov )->cComMov ) }
+   local hCampos
+
+   hCampos        := {  "empresa" =>            quoted( cCodEmp() ),;
+                        "delegacion" =>         quoted( ( dbfRemMov )->cCodDlg ),;
+                        "usuario" =>            quoted( ( dbfRemMov )->cCodUsr ),;
+                        "uuid" =>               quoted( ( dbfRemMov )->cGuid ),;
+                        "numero" =>             quoted( ( dbfRemMov )->nNumRem ),;
+                        "tipo_movimiento" =>    quoted( ( dbfRemMov )->nTipMov ),;
+                        "fecha_hora" =>         quoted( dateTimeToTimeStamp( ( dbfRemMov )->dFecRem, ( dbfRemMov )->cTimRem ) ),;
+                        "almacen_origen" =>     quoted( ( dbfRemMov )->cAlmOrg ),;
+                        "almacen_destino" =>    quoted( ( dbfRemMov )->cAlmDes ),;
+                        "grupo_movimiento" =>   quoted( ( dbfRemMov )->cCodMov ),;
+                        "agente" =>             quoted( ( dbfRemMov )->cCodAge ),;
+                        "divisa" =>             quoted( ( dbfRemMov )->cCodDiv ),;
+                        "divisa_cambio" =>      quoted( ( dbfRemMov )->nVdvDiv ),;
+                        "comentarios" =>        quoted( ( dbfRemMov )->cComMov ) }
 
 RETURN ( ::getInsertStatement( hCampos, "movimientos_almacen" ) )
 
@@ -369,6 +376,8 @@ METHOD SeederMovimientosAlmacenLineas()
 
       ( dbf )->( dbSkip() )
 
+      sysrefresh()
+
    end while
 
    if dbf != nil
@@ -383,8 +392,17 @@ RETURN ( Self )
 
 METHOD getStatementSeederMovimientosAlmacenLineas( dbfHisMov )
 
-   local hCampos  := {  "uuid" =>                     quoted( ( dbfHisMov )->cGuid ),;
-                        "parent_uuid" =>              quoted( ( dbfHisMov )->cGuidPar ),;
+   local nId
+   local hCampos  
+
+   nId            := MovimientosAlmacenRepository():getIdByUuid( ( dbfHisMov )->cGuidPar )
+
+   if empty( nId )
+      RETURN ( nil )
+   end if 
+
+   hCampos        := {  "uuid" =>                     quoted( ( dbfHisMov )->cGuid ),;
+                        "parent_id" =>                quoted( nId ),;
                         "codigo_articulo" =>          quoted( ( dbfHisMov )->cRefMov ),;
                         "nombre_articulo" =>          quoted( ( dbfHisMov )->cNomMov ),;
                         "codigo_primera_propiedad" => quoted( ( dbfHisMov )->cCodPr1 ),;
@@ -392,11 +410,10 @@ METHOD getStatementSeederMovimientosAlmacenLineas( dbfHisMov )
                         "codigo_segunda_propiedad" => quoted( ( dbfHisMov )->cCodPr2 ),;
                         "valor_segunda_propiedad" =>  quoted( ( dbfHisMov )->cValPr2 ),;
                         "lote" =>                     quoted( ( dbfHisMov )->cLote ),;
-                        "bultos_articulo" =>          quoted( Str( ( dbfHisMov )->nBultos ) ),;
-                        "cajas_articulo" =>           quoted( Str( ( dbfHisMov )->nCajMov ) ),;
-                        "unidades_articulo" =>        quoted( Str( ( dbfHisMov )->nUndMov ) ),;
-                        "precio_articulo" =>          quoted( Str( ( dbfHisMov )->nPreDiv ) ) }
-
+                        "bultos_articulo" =>          quoted( str( ( dbfHisMov )->nBultos ) ),;
+                        "cajas_articulo" =>           quoted( str( ( dbfHisMov )->nCajMov ) ),;
+                        "unidades_articulo" =>        quoted( str( ( dbfHisMov )->nUndMov ) ),;
+                        "precio_articulo" =>          quoted( str( ( dbfHisMov )->nPreDiv ) ) }
 
 RETURN ( ::getInsertStatement( hCampos, "movimientos_almacen_lineas" ) )
 
@@ -405,6 +422,7 @@ RETURN ( ::getInsertStatement( hCampos, "movimientos_almacen_lineas" ) )
 METHOD SeederMovimientosAlmacenSeries()
 
    local dbf
+   local cLastRec
 
    if ( file( cPatEmp( , .t. ) + "MovSer.Old" ) )
       RETURN ( self )
@@ -418,14 +436,20 @@ METHOD SeederMovimientosAlmacenSeries()
    USE ( cPatEmp( , .t. ) + "MovSer.Dbf" ) NEW VIA ( 'DBFCDX' ) SHARED ALIAS ( cCheckArea( "MovSer", @dbf ) )
    
    ( dbf )->( ordsetfocus(0) )
+   
+   cLastRec       := alltrim( str( ( dbf )->( lastrec() ) ) )
 
    ( dbf )->( dbgotop() )
 
    while !( dbf )->( eof() )
       
+      ::oMsg:SetText( "Seeder de líneas de movimientos de almacén " + alltrim( str( ( dbf )->( recno() ) ) ) + " de " + cLastRec )
+
       getSQLDatabase():Exec( ::getStatementSeederMovimientosAlmacenLineasNumerosSeries( dbf ) )
 
       ( dbf )->( dbSkip() )
+
+      sysrefresh()
 
    end while
 
@@ -439,9 +463,18 @@ RETURN ( Self )
 
 METHOD getStatementSeederMovimientosAlmacenLineasNumerosSeries( dbfMovSer )
 
-   local hCampos        := {  "uuid"            => quoted( ( dbfMovSer )->cGuid ),;
-                              "parent_uuid"     => quoted( ( dbfMovSer )->cGuidPar ),;
-                              "numero_serie"    => quoted( ( dbfMovSer )->cNumSer ) }
+   local nId
+   local hCampos        
+
+   nId            := MovimientosAlmacenLineasRepository():getIdByUuid( ( dbfMovSer )->cGuidPar )
+
+   if empty( nId )
+      RETURN ( nil )
+   end if 
+
+   hCampos        := {  "uuid"            => quoted( ( dbfMovSer )->cGuid ),;
+                        "parent_id"       => quoted( nId ),;
+                        "numero_serie"    => quoted( ( dbfMovSer )->cNumSer ) }
 
 RETURN ( ::getInsertStatement( hCampos, SQLMovimientosAlmacenLineasNumerosSeriesModel():getTableName() ) )
 

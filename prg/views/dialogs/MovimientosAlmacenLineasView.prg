@@ -9,8 +9,8 @@
 CLASS MovimientosAlmacenLineasView FROM SQLBaseView
       
    DATA oBtnSerie
-   DATA oBntOk
-   DATA oBntOkAndNew
+   DATA oBtnOk
+   DATA oBtnOkAndNew
 
    DATA oGetCodigoArticulo
    DATA oGetNombreArticulo
@@ -79,7 +79,7 @@ END CLASS
 
 METHOD New( oController )
 
-   ::oController                    := oController
+   ::oController     := oController
 
 RETURN ( Self )
 
@@ -239,16 +239,16 @@ METHOD Activate()
       REDEFINE BUTTON ::oBtnSerie ;
          ID          4 ;
          OF          ::oDialog ;
-         WHEN        ( ::getController():isNotZoomMode() ) ;
+         WHEN        ( ::getController():isEditMode() ) ;
          ACTION      ( ::oController:runDialogSeries() )
 
-      REDEFINE BUTTON ::oBntOk;
+      REDEFINE BUTTON ::oBtnOk ;
          ID          IDOK ;
          OF          ::oDialog ;
          WHEN        ( ::getController():isNotZoomMode() ) ;
          ACTION      ( if( validateDialog( ::oDialog ), ::oDialog:end( IDOK ), ) )
 
-      REDEFINE BUTTON ::oBntOkAndNew ;
+      REDEFINE BUTTON ::oBtnOkAndNew ;
          ID          3 ;
          OF          ::oDialog ;
          WHEN        ( ::getController():isAppendMode() ) ;
@@ -269,11 +269,11 @@ RETURN ( ::oDialog:nResult )
 
 METHOD initActivate()
 
-   ::oDialog:AddFastKey( VK_F5, {|| ::oBntOk:Action() } )
+   ::oDialog:AddFastKey( VK_F5, {|| eval( ::oBtnOk:bAction ) } )
 
-   ::oDialog:AddFastKey( VK_F6, {|| ::oBntOkAndNew:Action() } )
+   ::oDialog:AddFastKey( VK_F6, {|| eval( ::oBtnOkAndNew:bAction ) } )
 
-   ::oDialog:AddFastKey( VK_F7, {|| ::oBtnSerie:Action() } )
+   ::oDialog:AddFastKey( VK_F7, {|| eval( ::oBtnSerie:bAction ) } )
 
 RETURN ( Self )
 

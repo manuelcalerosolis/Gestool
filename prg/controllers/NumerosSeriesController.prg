@@ -8,9 +8,9 @@ CLASS NumerosSeriesController FROM SQLBaseController
    DATA cParentUUID
 
    METHOD New()
-
+/*
    METHOD Edit()
-
+*/
    METHOD Dialog()                                    INLINE ( ::oDialogView:Dialog() )
 
    METHOD GenerarSeries()
@@ -56,8 +56,11 @@ METHOD GenerarSeries()
    ::oDialogView:oDialog:Disable()
 
    if Empty( ::oDialogView:nNumGen )
+
       aEval( ::getaBuffer(), {| a, n | ::setValueBuffer( n, "numero_serie", Padr( Rtrim( ::oDialogView:cPreFix ) + Ltrim( Str( ::oDialogView:nSerIni + n - 1 ) ), 30 ) ) } )
+   
    else
+   
       for n := 1 to len( ::getaBuffer() )
 
          ::setValueBuffer( n, "numero_serie", Padr( Rtrim( ::oDialogView:cPreFix ) + Ltrim( Str( ::oDialogView:nSerIni + nChg - 1 ) ), 30 ) )
@@ -67,6 +70,7 @@ METHOD GenerarSeries()
          end if
 
       next
+   
    end if
 
    ::oDialogView:oBrwSer:Refresh()
@@ -92,7 +96,7 @@ METHOD endResource( oDlg )
 RETURN ( Self )
 
 //---------------------------------------------------------------------------//
-
+/*
 METHOD Edit() 
 
    local lEdit    := .t. 
@@ -139,7 +143,7 @@ METHOD Edit()
    ::fireEvent( 'exitEdited' ) 
 
 RETURN ( lEdit )
-
+*/
 //---------------------------------------------------------------------------//
 
 METHOD deletedSelected( aRecords )
