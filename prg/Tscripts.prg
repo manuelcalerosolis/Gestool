@@ -642,7 +642,7 @@ Function RunScript( cFichero, uParam1, uParam2, uParam3, uParam4, uParam5, uPara
       RETURN ( TScripts():CompilarEjecutarFicheroScript( cPatScript() + cFichero, uParam1, uParam2, uParam3, uParam4, uParam5, uParam6, uParam7, uParam8, uParam9, uParam10 ) )
    end if 
 
-RETURN ( nil )
+RETURN ( .f. )
 
 //---------------------------------------------------------------------------//
 
