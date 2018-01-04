@@ -76,6 +76,7 @@ CLASS SQLBaseController
    METHOD refreshRowSetAndFind( nId )                 INLINE ( if( !empty( ::oRowSet ), ::oRowSet:refreshAndFind( nId ), ) )
 
    METHOD getIdFromRecno( aSelected )                 INLINE ( if( !empty( ::oRowSet ), ::oRowSet:IdFromRecno( aSelected ), {} ) )
+   METHOD getUuidFromRecno( aSelected )               INLINE ( if( !empty( ::oRowSet ), ::oRowSet:UuidFromRecno( aSelected ), {} ) )
 
    METHOD getIdFromRowSet()                           INLINE ( if( !empty( ::getRowSet() ), ::getRowSet():fieldGet( ::oModel:cColumnKey ), ) )
 
@@ -513,7 +514,7 @@ METHOD Delete( aSelectedRecno )
       
       ::fireEvent( 'deletingSelection' ) 
 
-      ::oModel:deleteSelection( ::getIdFromRecno( aSelectedRecno ) )
+      ::oModel:deleteSelection( ::getUuidFromRecno( aSelectedRecno ) )
 
       ::fireEvent( 'deletedSelection' ) 
 

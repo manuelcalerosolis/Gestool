@@ -31,7 +31,9 @@ CLASS SQLMovimientosAlmacenLineasModel FROM SQLExportableModel
 
    METHOD deleteWhereUuid( uuid )
 
-   METHOD aRowsDeleted( uuid )
+   METHOD aUuidToDelete( uuid )
+
+   METHOD getDeleteSentenceFromParentsUuid()
 
 END CLASS
 
@@ -217,12 +219,29 @@ RETURN ( ::getDatabase():Exec( cSentence ) )
 
 //---------------------------------------------------------------------------//
 
-METHOD aRowsDeleted( uuid )
+METHOD aUuidToDelete( aParentsUuid )
 
-   local cSentence   := "SELECT * FROM " + ::cTableName + " " + ;
-                           "WHERE parent_uuid = " + quoted( uuid )
+   local cSentence   
 
-RETURN ( ::getDatabase():selectFetchHash( cSentence ) )
+   cSentence            := "SELECT uuid FROM " + ::cTableName + " "
+   cSentence            +=    "WHERE parent_uuid IN ( " 
+
+   aeval( aParentsUuid, {| v | cSentence += toSQLString( v ) + ", " } )
+
+   cSentence            := chgAtEnd( cSentence, ' )', 2 )
+
+RETURN ( ::getDatabase():selectFetchArray( cSentence ) )
 
 //---------------------------------------------------------------------------//
 
+METHOD getDeleteSentenceFromParentsUuid( aParentsUuid )
+
+   local aUuid       := ::aUuidToDelete( aParentsUuid )
+
+   if !empty( aUuid )
+      RETURN ::getDeleteSentence( aUuid )
+   end if 
+
+RETURN ( "" )
+
+//---------------------------------------------------------------------------//

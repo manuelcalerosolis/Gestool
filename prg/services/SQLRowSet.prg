@@ -46,6 +46,7 @@ CLASS SQLRowSet
    METHOD Refresh()                                   INLINE ( if( !empty( ::oRowSet ), ::oRowSet:Refresh(), ) )
 
    METHOD IdFromRecno( aRecno, cColumnKey )
+   METHOD UuidFromRecno( aRecno )                     INLINE ( ::IdFromRecno( aRecno, "uuid" ) )
 
 END CLASS
 

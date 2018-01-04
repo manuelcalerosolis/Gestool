@@ -480,13 +480,15 @@ RETURN ( cSQLUpdate )
 
 //---------------------------------------------------------------------------//
 
-METHOD getDeleteSentence( aId )
+METHOD getDeleteSentence( aUuid )
 
-   local cSQLDelete     := "DELETE FROM " + ::cTableName + " WHERE " 
+   local cSQLDelete     := "DELETE FROM " + ::cTableName + " " 
 
-   aeval( aId, {| v | cSQLDelete += ::cColumnKey + " = " + toSQLString( v ) + " OR " } )
+   cSQLDelete           +=    "WHERE uuid IN ( " 
 
-   cSQLDelete           := ChgAtEnd( cSQLDelete, '', 4 )
+   aeval( aUuid, {| v | cSQLDelete += if( hb_isarray( v ), toSQLString( atail( v ) ), toSQLString( v ) ) + ", " } )
+
+   cSQLDelete           := chgAtEnd( cSQLDelete, ' )', 2 )
 
 RETURN ( cSQLDelete )
 

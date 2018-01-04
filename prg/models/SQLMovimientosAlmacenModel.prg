@@ -102,15 +102,23 @@ RETURN ( ::aTextoMovimiento[ nPosition ] )
 
 //---------------------------------------------------------------------------//
 
-METHOD getDeleteSentence( aId )
+METHOD getDeleteSentence( aUuid )
 
-   local cSQLDelete     := "DELETE FROM " + ::cTableName + " WHERE " 
+   local cSQLDelete
+   local aUuidLineasToDelete
 
-   aeval( aId, {| v | cSQLDelete += ::cColumnKey + " = " + toSQLString( v ) + " OR " } )
+   aUuidLineasToDelete  := SQLMovimientosAlmacenLineasModel():aUuidToDelete( aUuid )
 
-   cSQLDelete           := ChgAtEnd( cSQLDelete, '', 4 )
+   msgalert( hb_valtoexp( aUuidLineasToDelete ), "aUuidLineasToDelete" )
 
-   msgalert( "Tenemos q borrar todas las lineas y numoeros de serie")
+   cSQLDelete           := ::Super:getDeleteSentence( aUuid )
+   cSQLDelete           += "; "
+
+   cSQLDelete           += SQLMovimientosAlmacenLineasModel():getDeleteSentence( aUuidLineasToDelete )
+   
+   msgalert( cSQLDelete, "Tenemos q borrar todas las lineas y numoeros de serie")
+   
+   cSQLDelete           := nil
 
 RETURN ( cSQLDelete )
 
