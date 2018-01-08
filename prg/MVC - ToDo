@@ -1,12 +1,16 @@
 MVC - ToDo
 
+- Botones de salida y grabacion en dialogos de movimientos de almacen
+
 - Creacion de tablas de contadores.
 
-- Asignación de numeros de series en las lineas.
-
-- Eliminación en cascada 
-
 - Asignacion de contadores.
+
+- Validacion de contadores.
+
+- Asignación de numeros de series en las lineas. ( done)
+
+- Eliminación en cascada (done)
 
 - Creacion de nuevas estructuras (done)
 

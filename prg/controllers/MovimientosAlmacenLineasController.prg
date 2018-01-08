@@ -85,6 +85,10 @@ CLASS MovimientosAlmacenLineasController FROM SQLBrowseController
 
    METHOD deleteLines( cId )
 
+   METHOD getUuid()                                   INLINE ( if(   !empty( ::oModel ) .and. !empty( ::oModel:hBuffer ),;
+                                                                     ( msgalert( hget( ::oModel:hBuffer, "uuid" ) ), hget( ::oModel:hBuffer, "uuid" ) ),;
+                                                                     ( msgalert( "nil" ), nil ) ) )
+
 END CLASS
 
 //---------------------------------------------------------------------------//
@@ -92,6 +96,8 @@ END CLASS
 METHOD New( oController )
 
    ::Super:New( oController )
+
+   ::lTransactional        := .t.
 
    ::cTitle                := "Movimientos de almacen lineas"
 
@@ -470,8 +476,6 @@ METHOD runDialogSeries()
    end if
 
    ::oSeriesControler:SetTotalUnidades( ::oDialogView:nTotalUnidadesArticulo() )
-
-   ::oSeriesControler:SetParentUUID( hget( ::oModel:hBuffer, "uuid" ) )
 
    ::oSeriesControler:Edit( hget( ::oModel:hBuffer, "id" ) )
 

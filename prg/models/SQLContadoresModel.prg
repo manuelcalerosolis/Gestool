@@ -22,13 +22,23 @@ END CLASS
 
 METHOD getColumns()
 
-   ::getEmpresaColumns()
+   hset( ::hColumns, "id",          {  "create"    => "INTEGER AUTO_INCREMENT"                  ,;
+                                       "default"   => {|| 0 } }                                 )
 
-   hset( ::hColumns, "tabla",             {  "create"    => "VARCHAR ( 250 )"                         ,;
-                                             "default"   => {|| space( 250 ) } }                      )
+   hset( ::hColumns, "empresa",     {  "create"    => "CHAR ( 4 ) NOT NULL"                     ,;
+                                       "default"   => {|| cCodEmp() } }                         )
 
-   hset( ::hColumns, "contador",          {  "create"    => "INT UNSIGNED NOT NULL"                   ,;
-                                             "default"   => {|| 0 } }                                 )
+   hset( ::hColumns, "delegacion",  {  "create"    => "VARCHAR(2) NOT NULL"                     ,;
+                                       "default"   => {|| retSufEmp() } }                       )
+
+   hset( ::hColumns, "tabla",       {  "create"    => "VARCHAR ( 250 )"                         ,;
+                                       "default"   => {|| space( 250 ) } }                      )
+
+   hset( ::hColumns, "serie",       {  "create"    => "VARCHAR ( 1 )"                           ,;
+                                       "default"   => {|| space( 1 ) } }                        )
+
+   hset( ::hColumns, "value",       {  "create"    => "INT UNSIGNED NOT NULL"                   ,;
+                                       "default"   => {|| 0 } }                                 )
 
 RETURN ( ::hColumns )
 

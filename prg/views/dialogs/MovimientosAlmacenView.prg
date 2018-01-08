@@ -184,12 +184,12 @@ METHOD initActivate()
 
    ::oOfficeBar:createButtonsLine( ::oController:oLineasController, ::oSQLBrowseView )
 
-   ::oOfficeBar:createButtonsDialog()
-
    oGrupo         := TDotNetGroup():New( ::oOfficeBar:oOfficeBarFolder, 126, "Otros", .f. )
    
    TDotNetButton():New( 60, oGrupo, "gc_hand_truck_box_32", "Importar almacén",     1, {|| ::oController:oImportadorController:Activate() }, , , .f., .f., .f. )
    TDotNetButton():New( 60, oGrupo, "gc_pda_32",            "Importar inventario",  2, {|| ::oController:oCapturadorController:Activate() }, , , .f., .f., .f. )
+
+   ::oOfficeBar:createButtonsDialog()
 
 RETURN ( Self )
 

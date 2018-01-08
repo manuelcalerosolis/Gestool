@@ -28,6 +28,8 @@ CLASS MenuTreeView
 
    DATA oButtonLabel
 
+   DATA oButtonCounter
+
    DATA lDocumentButtons                  INIT .f.
 
    DATA oEvents
@@ -47,6 +49,7 @@ CLASS MenuTreeView
 
    METHOD isControllerDocuments()         INLINE ( ::getController():lDocuments )
    METHOD isControllerLabels()            INLINE ( ::getController():lLabels )
+   METHOD isControllerCounter()           INLINE ( ::getController():lCounter )
    METHOD getControllerDocuments()        INLINE ( ::getController():hDocuments )
 
    METHOD addImage()
@@ -83,8 +86,9 @@ CLASS MenuTreeView
 
    METHOD addAutoButtons()                INLINE ( ::fireEvent( 'addingAutoButton' ),;
                                                    ::addGeneralButton(),;
-                                                   ::addDocumentsButtons(),;
-                                                   ::addLabelButtons(),;
+                                                   ::addDocumentsButton(),;
+                                                   ::addLabelButton(),;
+                                                   ::addCounterButton(),;
                                                    ::addExitButton(),;
                                                    ::oButtonMain:Expand(),;
                                                    ::fireEvent( 'addedAutoButton' ) )
@@ -102,9 +106,11 @@ CLASS MenuTreeView
 
    METHOD addPdfButtons()
 
-   METHOD addLabelButtons()
+   METHOD addLabelButton()
 
-   METHOD addDocumentsButtons()           
+   METHOD addCounterButton()
+
+   METHOD addDocumentsButton()           
 
    METHOD blockPrintDocument( nDevice, cFormato )  
 
@@ -387,7 +393,7 @@ RETURN ( Self )
 
 //----------------------------------------------------------------------------//
 
-METHOD addLabelButtons()
+METHOD addLabelButton()
 
    if !( ::isControllerLabels() )
       RETURN ( Self )
@@ -403,13 +409,29 @@ RETURN ( Self )
 
 //----------------------------------------------------------------------------//
 
+METHOD addCounterButton()
+
+   if !( ::isControllerCounter() )
+      RETURN ( Self )
+   end if 
+
+   ::fireEvent( 'addingCounterButton')
+
+   ::oButtonCounter     := ::AddButton( "Contadores", "gc_document_text_pencil_16", {|| ::getController():setCounter() }, "T", ACC_IMPR ) 
+
+   ::fireEvent( 'addedCounterButton') 
+
+RETURN ( Self )
+
+//----------------------------------------------------------------------------//
+
 METHOD blockPrintDocument( nDevice, cFormato )
 
 RETURN ( {|| ::getController():printDocument( nDevice, cFormato ) } ) 
 
 //---------------------------------------------------------------------------//
 
-METHOD addDocumentsButtons()
+METHOD addDocumentsButton()
 
    if !( ::isControllerDocuments() )
       RETURN ( Self )

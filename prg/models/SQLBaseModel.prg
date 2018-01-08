@@ -115,6 +115,8 @@ CLASS SQLBaseModel
 
    METHOD getDeleteSentenceById( nId )
 
+   METHOD aUuidToDelete()
+
    METHOD getSelectByOrder()
 
    // Busquedas----------------------------------------------------------------
@@ -482,24 +484,36 @@ RETURN ( cSQLUpdate )
 
 METHOD getDeleteSentence( aUuid )
 
-   local cSQLDelete     := "DELETE FROM " + ::cTableName + " " 
+   local cSentence   := "DELETE FROM " + ::cTableName + space( 1 ) + ;
+                           "WHERE uuid IN ( " 
 
-   cSQLDelete           +=    "WHERE uuid IN ( " 
+   aeval( aUuid, {| v | cSentence += if( hb_isarray( v ), toSQLString( atail( v ) ), toSQLString( v ) ) + ", " } )
 
-   aeval( aUuid, {| v | cSQLDelete += if( hb_isarray( v ), toSQLString( atail( v ) ), toSQLString( v ) ) + ", " } )
+   cSentence         := chgAtEnd( cSentence, ' )', 2 )
 
-   cSQLDelete           := chgAtEnd( cSQLDelete, ' )', 2 )
-
-RETURN ( cSQLDelete )
+RETURN ( cSentence )
 
 //---------------------------------------------------------------------------//
 
 METHOD getDeleteSentenceById( nId )
 
-   local cSQLDelete  := "DELETE FROM " + ::cTableName + space( 1 ) + ;
+   local cSentence   := "DELETE FROM " + ::cTableName + space( 1 ) + ;
                            "WHERE " + ::cColumnKey + " = " + toSQLString( nId ) 
 
-RETURN ( cSQLDelete )
+RETURN ( cSentence )
+
+//---------------------------------------------------------------------------//
+
+METHOD aUuidToDelete( aParentsUuid )
+
+   local cSentence   := "SELECT uuid FROM " + ::cTableName + space( 1 ) + ;
+                           "WHERE parent_uuid IN ( " 
+
+   aeval( aParentsUuid, {| v | cSentence += if( hb_isarray( v ), toSQLString( atail( v ) ), toSQLString( v ) ) + ", " } )
+
+   cSentence         := chgAtEnd( cSentence, ' )', 2 )
+
+RETURN ( ::getDatabase():selectFetchArray( cSentence ) )
 
 //---------------------------------------------------------------------------//
 
@@ -560,6 +574,8 @@ METHOD loadBlankBuffer()
    ::fireEvent( 'loadingBlankBuffer' )
 
    ::defaultCurrentBuffer()
+
+   msgAlert( "loadBlankBuffer" )
 
    ::fireEvent( 'loadedBlankBuffer' )
 
@@ -705,8 +721,6 @@ RETURN ( nId )
 METHOD updateBuffer( hBuffer )
 
    ::fireEvent( 'updatingBuffer' )
-
-   msgalert( ::getUpdateSentence( hBuffer ), "updateBuffer" )
 
    ::getDatabase():Execs( ::getUpdateSentence( hBuffer ) )
 

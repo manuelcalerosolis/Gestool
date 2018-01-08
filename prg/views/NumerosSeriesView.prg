@@ -9,10 +9,10 @@ CLASS NumerosSeriesView FROM SQLBaseView
    DATA oTotalUnidades
    DATA nTotalUnidades
    DATA cPreFix
-   DATA oSerIni
-   DATA nSerIni
-   DATA oSerFin
-   DATA nSerFin
+   DATA oSerieInicial
+   DATA nSerieInicial
+   DATA oSerieFinal
+   DATA nSerieFinal
    DATA oNumGen
    DATA nNumGen
    DATA oBrwSer
@@ -21,7 +21,7 @@ CLASS NumerosSeriesView FROM SQLBaseView
 
    METHOD getParentControler()                     INLINE ( ::oController:oSenderController )
    METHOD getParentDialogView()                    INLINE ( ::getParentControler():oDialogView )
-   METHOD getaBuffer()                             INLINE ( ::oController:getaBuffer() )
+   METHOD getBuffer()                              INLINE ( ::oController:oModel:aBuffer )
 
    METHOD getValueBuffer( nArrayAt, key )          INLINE ( ::oController:getValueBuffer( nArrayAt, key ) )
    METHOD setValueBuffer( nArrayAt, key, value )   INLINE ( ::oController:setValueBuffer( nArrayAt, key, value ) )
@@ -37,8 +37,8 @@ METHOD Activate()
    local oBtn
    local oBmpGeneral
 
-   ::nSerIni                  := 0
-   ::nSerFin                  := 0
+   ::nSerieInicial            := 0
+   ::nSerieFinal              := 0
    ::nNumGen                  := 0
    ::cPreFix                  := Space( 150 )
 
@@ -60,14 +60,14 @@ METHOD Activate()
          ID       110 ;
          OF       ::oDialog
 
-      REDEFINE GET ::oSerIni VAR ::nSerIni ;
+      REDEFINE GET ::oSerieInicial VAR ::nSerieInicial ;
          ID       120 ;
          PICTURE  "99999999999999999999" ;
          SPINNER ;
-         VALID    ( ::oSerFin:cText( ::nSerIni + ::nTotalUnidades ), .t. ) ;
+         VALID    ( ::oSerieFinal:cText( ::nSerieInicial + ::nTotalUnidades ), .t. ) ;
          OF       ::oDialog
 
-      REDEFINE GET ::oSerFin VAR ::nSerFin ;
+      REDEFINE GET ::oSerieFinal VAR ::nSerieFinal ;
          ID       130 ;
          PICTURE  "99999999999999999999" ;
          WHEN     .f. ;
@@ -95,7 +95,7 @@ METHOD Activate()
 
       ::oBrwSer:nMarqueeStyle    := MARQSTYLE_HIGHLCELL
 
-      ::oBrwSer:SetArray( ::getaBuffer(), , , .f. )
+      ::oBrwSer:SetArray( ::getBuffer(), , , .f. )
 
       ::oBrwSer:nColSel          := 2
 

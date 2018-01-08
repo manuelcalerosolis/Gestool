@@ -15,6 +15,8 @@ CLASS SQLNavigatorController FROM SQLBaseController
 
    DATA lLabels                                       INIT .f.
 
+   DATA lCounter                                      INIT .f.
+
    DATA hDocuments
 
    DATA hFastKey                                      INIT {=>}
@@ -317,3 +319,6 @@ METHOD onChangeCombo( oColumn )
 RETURN ( Self )
 
 //---------------------------------------------------------------------------//
+
+
+   

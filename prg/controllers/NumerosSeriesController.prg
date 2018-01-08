@@ -8,18 +8,10 @@ CLASS NumerosSeriesController FROM SQLBaseController
    DATA cParentUUID
 
    METHOD New()
-/*
-   METHOD Edit()
-*/
-   METHOD Dialog()                                    INLINE ( ::oDialogView:Dialog() )
 
    METHOD GenerarSeries()
 
-   METHOD SetTotalUnidades( nUnidades )               INLINE ( if( !Empty( nUnidades ), ::oDialogView:nTotalUnidades := Abs( nUnidades ), ::oDialogView:nTotalUnidades := 0 ) )
-
-   METHOD SetParentUUID( uUid )                       INLINE ( if( !Empty( uUid ), ::cParentUUID := uUid, ::cParentUUID := "" ) )
-
-   METHOD getaBuffer()                                INLINE ( ::oModel:aBuffer )
+   METHOD SetTotalUnidades( nUnidades )               INLINE ( if( !empty( nUnidades ), ::oDialogView:nTotalUnidades := Abs( nUnidades ), ::oDialogView:nTotalUnidades := 0 ) )
 
    METHOD getValueBuffer( nArrayAt, key )             INLINE ( hGet( ::oModel:aBuffer[ nArrayAt ], key ) )
    METHOD setValueBuffer( nArrayAt, key, value )      INLINE ( hSet( ::oModel:aBuffer[ nArrayAt ], key, value ) )
@@ -28,11 +20,15 @@ CLASS NumerosSeriesController FROM SQLBaseController
 
    METHOD deletedSelected( aRecords )
 
+   METHOD loadedBlankBuffer()
+
 END CLASS
 
 //---------------------------------------------------------------------------//
 
 METHOD New( oController )
+
+   ::Super:New( oController )
 
    ::cTitle                := "Series"
 
@@ -40,7 +36,7 @@ METHOD New( oController )
 
    ::oDialogView           := NumerosSeriesView():New( self )
 
-   ::Super:New( oController )
+   ::oModel:setEvent( 'loadedBlankBuffer', {|| ::loadedBlankBuffer() } ) 
 
 RETURN ( Self )
 
@@ -55,13 +51,13 @@ METHOD GenerarSeries()
 
    ::oDialogView:oDialog:Disable()
 
-   if Empty( ::oDialogView:nNumGen )
+   if empty( ::oDialogView:nNumGen )
 
-      aEval( ::getaBuffer(), {| a, n | ::setValueBuffer( n, "numero_serie", Padr( Rtrim( ::oDialogView:cPreFix ) + Ltrim( Str( ::oDialogView:nSerIni + n - 1 ) ), 30 ) ) } )
+      aeval( ::oModel:aBuffer, {| a, n | ::setValueBuffer( n, "numero_serie", Padr( Rtrim( ::oDialogView:cPreFix ) + Ltrim( Str( ::oDialogView:nSerIni + n - 1 ) ), 30 ) ) } )
    
    else
    
-      for n := 1 to len( ::getaBuffer() )
+      for n := 1 to len( ::oModel:aBuffer )
 
          ::setValueBuffer( n, "numero_serie", Padr( Rtrim( ::oDialogView:cPreFix ) + Ltrim( Str( ::oDialogView:nSerIni + nChg - 1 ) ), 30 ) )
 
@@ -85,73 +81,32 @@ RETURN ( Self )
 
 METHOD endResource( oDlg )
 
-   local aBufferOld
-
    ::oModel:RollBack()
 
-   if !Empty( oDlg )
+   if !empty( oDlg )
       oDlg:End( IDOK )
    end if
 
 RETURN ( Self )
 
 //---------------------------------------------------------------------------//
-/*
-METHOD Edit() 
 
-   local lEdit    := .t. 
+METHOD loadedBlankBuffer()
 
-   if ::notUserEdit()
-      msgStop( "Acceso no permitido." )
-      RETURN ( .f. )
+   local uuid        := ::getSenderController():getUuid() 
+
+   if !empty( uuid )
+      hset( ::oModel:hBuffer, "parent_uuid", uuid )
    end if 
 
-   if !( ::fireEvent( 'editing' ) )
-      RETURN ( .f. )
-   end if
+RETURN ( Self )
 
-   ::setEditMode()
-
-   ::beginTransactionalMode()
-
-   ::oModel:setIdToFind( ::getIdFromRowSet() )
-
-   ::oModel:loadCurrentBuffer() 
-
-   ::fireEvent( 'openingDialog' )
-
-   if ::oDialogView:Activate()
-      
-      ::fireEvent( 'closedDialog' )    
-
-      ::oModel:updateCurrentBuffer()
-
-      ::fireEvent( 'editedted' ) 
-
-      ::commitTransactionalMode()
-
-   else
-
-      lEdit       := .f.
-
-      ::fireEvent( 'cancelEdited' ) 
-
-      ::rollbackTransactionalMode()
-
-   end if 
-
-   ::fireEvent( 'exitEdited' ) 
-
-RETURN ( lEdit )
-*/
 //---------------------------------------------------------------------------//
 
 METHOD deletedSelected( aRecords )
 
-   if hb_isArray( aRecords ) .and. Len( aRecords ) > 0
-
-      aEval( aRecords, {| h | ::oModel:deleteWhereUuid( hGet( h, "uuid" ) ) } )
-
+   if hb_isArray( aRecords ) .and. len( aRecords ) > 0
+      aeval( aRecords, {| h | ::oModel:deleteWhereUuid( hGet( h, "uuid" ) ) } )
    end if
 
 RETURN ( self )

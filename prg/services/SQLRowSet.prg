@@ -26,10 +26,10 @@ CLASS SQLRowSet
    METHOD recCount()                                  INLINE ( if( !empty( ::oRowSet ), ::oRowSet:reccount(), ) )
    METHOD fieldValueByName( cColumn )                 INLINE ( if( !empty( ::oRowSet ), ::oRowSet:getValueByName( cColumn ), ) )
 
-   METHOD saveRecno()                                 INLINE ( ::nRecno := ::oRowSet:recno() ) 
+   METHOD saveRecno()                                 INLINE ( if( !empty( ::oRowSet ), ::nRecno := ::oRowSet:recno(), ) ) 
    METHOD restoreRecno()                              INLINE ( if( !empty( ::oRowSet ), ::oRowSet:goto( ::nRecno ), ) ) 
    METHOD gotoRecno( nRecno )                         INLINE ( if( !empty( ::oRowSet ), ::oRowSet:goto( nRecno ), ) ) 
-   METHOD Recno( nRecno )                             INLINE ( if( empty( nRecno ), ::oRowSet:Recno(), ::oRowSet:goto( nRecno ) ) )
+   METHOD Recno( nRecno )                             INLINE ( if( !empty( ::oRowSet ) .and. empty( nRecno ), ::oRowSet:Recno(), ::oRowSet:goto( nRecno ) ) )
 
    METHOD Find( nId )
 

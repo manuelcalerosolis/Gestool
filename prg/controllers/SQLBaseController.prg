@@ -65,6 +65,14 @@ CLASS SQLBaseController
    METHOD changeModelOrderAndOrientation()            
    METHOD getModelHeaderFromColumnOrder()             INLINE ( ::oModel:getHeaderFromColumnOrder() )
 
+   METHOD getId()                                     INLINE ( if(   !empty( ::oModel ) .and. !empty( ::oModel:hBuffer ),;
+                                                                     hget( ::oModel:hBuffer, "id" ),;
+                                                                     nil ) )
+                  
+   METHOD getUuid()                                   INLINE ( if(   !empty( ::oModel ) .and. !empty( ::oModel:hBuffer ),;
+                                                                     hget( ::oModel:hBuffer, "uuid" ),;
+                                                                     nil ) )
+
    // Rowset-------------------------------------------------------------------
 
    METHOD getRowSet()                                 INLINE ( ::oRowSet )
@@ -381,8 +389,6 @@ METHOD Edit( nId )
       nId         := ::getIdFromRowSet()
    end if 
 
-   msgalert( nId, "identificador en Edit" )
-
    if hb_isnil( nId )
       RETURN ( .f. )
    end if 
@@ -406,11 +412,17 @@ METHOD Edit( nId )
 
    if ::DialogViewActivate()
       
-      ::fireEvent( 'closedDialog' )    
+      ::fireEvent( 'closedDialog' )  
+
+      msgalert( "antes de updateBuffer")  
 
       ::oModel:updateBuffer()
 
+      msgalert( "antes de commitTransactionalMode")
+
       ::commitTransactionalMode()
+
+      msgalert( "antes de refreshRowSet")
 
       ::refreshRowSet()
 

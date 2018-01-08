@@ -106,15 +106,28 @@ METHOD getDeleteSentence( aUuid )
 
    local cSQLDelete
    local aUuidLineasToDelete
+   local aUuidSeriesToDelete
 
-   aUuidLineasToDelete  := SQLMovimientosAlmacenLineasModel():aUuidToDelete( aUuid )
+   aUuidLineasToDelete     := SQLMovimientosAlmacenLineasModel():aUuidToDelete( aUuid )
 
    msgalert( hb_valtoexp( aUuidLineasToDelete ), "aUuidLineasToDelete" )
 
-   cSQLDelete           := ::Super:getDeleteSentence( aUuid )
-   cSQLDelete           += "; "
+   cSQLDelete              := ::Super:getDeleteSentence( aUuid )
+   cSQLDelete              += "; "
 
-   cSQLDelete           += SQLMovimientosAlmacenLineasModel():getDeleteSentence( aUuidLineasToDelete )
+   if !empty( aUuidLineasToDelete )
+   
+      cSQLDelete           += SQLMovimientosAlmacenLineasModel():getDeleteSentence( aUuidLineasToDelete )
+      cSQLDelete           += "; "
+
+      aUuidSeriesToDelete  := SQLMovimientosAlmacenLineasNumerosSeriesModel():aUuidToDelete( aUuidLineasToDelete )
+
+      if !empty( aUuidSeriesToDelete )
+         cSQLDelete        += SQLMovimientosAlmacenLineasNumerosSeriesModel():getDeleteSentence( aUuidSeriesToDelete )
+         cSQLDelete        += "; "
+      end if 
+
+   end if 
    
    msgalert( cSQLDelete, "Tenemos q borrar todas las lineas y numoeros de serie")
    
