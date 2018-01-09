@@ -30,10 +30,10 @@ METHOD getColumns()
 
    ::getEmpresaColumns()
 
-   hset( ::hColumns, "numero",            {  "create"    => "INT UNSIGNED NOT NULL"                   ,;
+   hset( ::hColumns, "numero",            {  "create"    => "INT UNSIGNED"                            ,;
                                              "default"   => {|| 0 } }                                 )
 
-   hset( ::hColumns, "tipo_movimiento",   {  "create"    => "INT UNSIGNED NOT NULL"                   ,;
+   hset( ::hColumns, "tipo_movimiento",   {  "create"    => "TINYINT UNSIGNED NOT NULL"               ,;
                                              "default"   => {|| 1 } }                                 )
 
    hset( ::hColumns, "fecha_hora",        {  "create"    => "DATETIME DEFAULT CURRENT_TIMESTAMP"      ,;

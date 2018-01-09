@@ -41,50 +41,50 @@ END CLASS
 
 METHOD getColumns()
 
-   hset( ::hColumns, "id",                {  "create"    => "INTEGER AUTO_INCREMENT"               ,;
-                                             "default"   => {|| 0 } }                              )
+   hset( ::hColumns, "id",                         {  "create"    => "INTEGER AUTO_INCREMENT"         ,;
+                                                      "default"   => {|| 0 } }                        )
 
-   hset( ::hColumns, "uuid",              {  "create"    => "VARCHAR(40) NOT NULL UNIQUE"          ,;
-                                             "default"   => {|| win_uuidcreatestring() } }         )
+   hset( ::hColumns, "uuid",                       {  "create"    => "VARCHAR(40) NOT NULL UNIQUE"    ,;
+                                                      "default"   => {|| win_uuidcreatestring() } }   )
 
-   hset( ::hColumns, "parent_uuid",       {  "create"    => "VARCHAR(40) NOT NULL"                 ,;
-                                             "default"   => {|| space(40) } }         )
+   hset( ::hColumns, "parent_uuid",                {  "create"    => "VARCHAR(40) NOT NULL"           ,;
+                                                      "default"   => {|| space(40) } }                )
 
-   hset( ::hColumns, "codigo_articulo",   {  "create"    => "VARCHAR(18) NOT NULL"                 ,;
-                                             "default"   => {|| space(18) } }                      )
+   hset( ::hColumns, "codigo_articulo",            {  "create"    => "VARCHAR(18) NOT NULL"           ,;
+                                                      "default"   => {|| space(18) } }                )
 
-   hset( ::hColumns, "nombre_articulo",   {  "create"    => "VARCHAR(250) NOT NULL"                ,;
-                                             "default"   => {|| space(250) } }                     )
+   hset( ::hColumns, "nombre_articulo",            {  "create"    => "VARCHAR(250) NOT NULL"          ,;
+                                                      "default"   => {|| space(250) } }               )
 
-   hset( ::hColumns, "codigo_primera_propiedad",   {  "create"    => "VARCHAR(20)"                 ,;
-                                                      "default"   => {|| space(20) } }             )
+   hset( ::hColumns, "codigo_primera_propiedad",   {  "create"    => "VARCHAR(20)"                    ,;
+                                                      "default"   => {|| space(20) } }                )
 
-   hset( ::hColumns, "valor_primera_propiedad",    {  "create"    => "VARCHAR(200)"                ,;
-                                                      "default"   => {|| space(200) } }            )
+   hset( ::hColumns, "valor_primera_propiedad",    {  "create"    => "VARCHAR(200)"                   ,;
+                                                      "default"   => {|| space(200) } }               )
 
-   hset( ::hColumns, "codigo_segunda_propiedad",   {  "create"    => "VARCHAR(20)"                 ,;
-                                                      "default"   => {|| space(20) } }             )
+   hset( ::hColumns, "codigo_segunda_propiedad",   {  "create"    => "VARCHAR(20)"                    ,;
+                                                      "default"   => {|| space(20) } }                )
 
-   hset( ::hColumns, "valor_segunda_propiedad",    {  "create"    => "VARCHAR(200)"                ,;
-                                                      "default"   => {|| space(200) } }            )
+   hset( ::hColumns, "valor_segunda_propiedad",    {  "create"    => "VARCHAR(200)"                   ,;
+                                                      "default"   => {|| space(200) } }               )
 
-   hset( ::hColumns, "fecha_caducidad",   {  "create"    => "DATE"                                 ,;
-                                             "default"   => {|| hb_datetime() } }                  )
+   hset( ::hColumns, "fecha_caducidad",            {  "create"    => "DATE"                           ,;
+                                                      "default"   => {|| ctod('') } }                 )
 
-   hset( ::hColumns, "lote",              {  "create"    => "VARCHAR(40)"                          ,;
-                                             "default"   => {|| space(40) } }                      )
+   hset( ::hColumns, "lote",                       {  "create"    => "VARCHAR(40)"                    ,;
+                                                      "default"   => {|| space(40) } }                )
 
-   hset( ::hColumns, "bultos_articulo",   {  "create"    => "DECIMAL(19,6)"                        ,;
-                                             "default"   => {|| 0 } }                              )
+   hset( ::hColumns, "bultos_articulo",            {  "create"    => "DECIMAL(19,6)"                  ,;
+                                                      "default"   => {|| 0 } }                        )
 
-   hset( ::hColumns, "cajas_articulo",    {  "create"    => "DECIMAL(19,6)"                        ,;
-                                             "default"   => {|| 0 } }                              )
+   hset( ::hColumns, "cajas_articulo",             {  "create"    => "DECIMAL(19,6)"                  ,;
+                                                      "default"   => {|| 0 } }                        )
 
-   hset( ::hColumns, "unidades_articulo", {  "create"    => "DECIMAL(19,6)"                        ,;
-                                             "default"   => {|| 1 } }                              )
+   hset( ::hColumns, "unidades_articulo",          {  "create"    => "DECIMAL(19,6)"                  ,;
+                                                      "default"   => {|| 1 } }                        )
 
-   hset( ::hColumns, "precio_articulo",   {  "create"    => "DECIMAL(19,6)"                        ,;
-                                             "default"   => {|| 0 } }                              )
+   hset( ::hColumns, "precio_articulo",            {  "create"    => "DECIMAL(19,6)"                  ,;
+                                                      "default"   => {|| 0 } }                        )
 
 RETURN ( ::hColumns )
 
@@ -156,8 +156,6 @@ METHOD getUpdateSentence()
       end case
 
    next 
-
-   msgalert( hb_valtoexp( aSQLUpdate ), "aSQLUpdate" )
 
 RETURN ( aSQLUpdate )
 

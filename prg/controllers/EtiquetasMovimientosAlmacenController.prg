@@ -5,7 +5,7 @@
 
 CLASS EtiquetasMovimientosAlmacenController FROM SQLBaseController
 
-   DATA oRowSet
+   DATA oHashList
 
    DATA oStatement
 
@@ -59,20 +59,22 @@ RETURN ( .f. )
 
 METHOD generateRowSet( cOrderBy )
 
-   local cSql           
+   local cSentence           
    local nFixLabels     := 0
 
    if ::oDialogView:nCantidadLabels > 1
       nFixLabels        := ::oDialogView:nUnidadesLabels
    end if 
 
-   cSql                 := MovimientosAlmacenLineasRepository():getSQLSentenceToLabels( ::oDialogView:nDocumentoInicio, ::oDialogView:nDocumentoFin, nFixLabels, cOrderBy )
+   cSentence            := MovimientosAlmacenLineasRepository():getSQLSentenceToLabels( ::oDialogView:nDocumentoInicio, ::oDialogView:nDocumentoFin, nFixLabels, cOrderBy )
 
-   msgalert( cSql, "cSql" )
+   msgalert( cSentence, "cSentence" )
 
-   ::oRowSet:build( cSql )
+   ::oHashList          := getSQLDatabase():selectHashList( cSentence ) 
 
-   ::oRowSet:goTop()
+   msgalert( ::oHashList:classname(), "classname" )
+
+   ::oHashList:goTop()
 
 RETURN ( Self )
 
@@ -98,7 +100,7 @@ METHOD generateLabels()
 
    oMovimientosAlmacenLabelReport   := MovimientosAlmacenLabelReport():New( Self )
 
-   oMovimientosAlmacenLabelReport:setRowSet( ::oRowSet )
+   oMovimientosAlmacenLabelReport:setRowSet( ::oHashList )
    oMovimientosAlmacenLabelReport:setDevice( IS_SCREEN )
    oMovimientosAlmacenLabelReport:setReport( cReport )
 

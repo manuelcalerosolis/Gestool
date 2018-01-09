@@ -12,11 +12,15 @@ CLASS ContadoresRepository FROM SQLBaseRepository
 
    METHOD setMovimientoAlmacen( nValue )  INLINE ( ::setValue( "movimientos_almacen", "", nValue ) )
 
+   METHOD getAndIncMovimientoAlmacen()    INLINE ( ::getAndIncValue( "movimientos_almacen", "" ) )
+
    METHOD getId( tabla, serie )
 
    METHOD getValue( tabla, serie, default )
 
    METHOD setValue( tabla, serie, nValue )
+
+   METHOD getAndIncValue( tabla, serie )
 
 END CLASS
 
@@ -62,15 +66,13 @@ METHOD setValue( tabla, serie, value )
    local aSelect
    local cSentence
 
-   value             := cValToStr( value )
-
    cSentence         := "SELECT id FROM " + ::getTableName()               + space( 1 ) + ;
                            "WHERE empresa = " + toSQLString( cCodEmp() )   + space( 1 ) + ;
                               "AND tabla = " + toSQLString( tabla )        + space( 1 ) + ;
                               "AND serie = " + toSQLString( serie )        + space( 1 ) + ;
                            "LIMIT 1"                                         
    
-   aSelect           := getSQLDataBase():selectFetchArray( cSentence )
+   aSelect           := getSQLDataBase():selectFetchHash( cSentence )
 
    if empty( aSelect )
 
@@ -87,7 +89,7 @@ METHOD setValue( tabla, serie, value )
 
    else 
 
-      id             := atail( aSelect )
+      id             := hget( atail( aSelect ), "id" )
 
       if empty( id )
          RETURN ( self )
@@ -95,8 +97,6 @@ METHOD setValue( tabla, serie, value )
 
       cSentence      := "UPDATE " + ::getTableName()                       + space( 1 )   + ;
                         "SET"                                              + space( 1 )   + ;
-                           "tabla = " + toSQLString( tabla )               + space( 1 )   + ;
-                           "serie = " + toSQLString( serie )               + space( 1 )   + ;
                            "value = " + toSQLString( value )               + space( 1 )   + ;
                         "WHERE id = " + alltrim( str( id ) )
 
@@ -108,3 +108,14 @@ RETURN ( Self )
 
 //---------------------------------------------------------------------------//
 
+METHOD getAndIncValue( tabla, serie )
+
+   local value    := ::getValue( tabla, serie )
+
+   if !empty( value )
+      ::setValue( tabla, serie, value + 1 )
+   end if
+
+RETURN ( value )
+
+//---------------------------------------------------------------------------//

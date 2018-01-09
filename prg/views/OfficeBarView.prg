@@ -101,17 +101,18 @@ METHOD createButtonsDialog()
       oGrupo                  := TDotNetGroup():New( ::oOfficeBarFolder, 186, "Acciones", .f. )
          ::oBtnOk             := TDotNetButton():New( 60, oGrupo, "gc_floppy_disk_32", "Aceptar y cerrar [F5]", 1, {|| if( validateDialog( ::getDialog() ), ::getDialog():end( IDOK ), ) }, , , .f., .f., .f. )
          ::oBtnOkAndNew       := TDotNetButton():New( 60, oGrupo, "gc_floppy_disk_plus_32", "Aceptar y nuevo [F6]", 2, {|| if( validateDialog( ::getDialog() ), ::getDialog():end( IDOKANDNEW ), ) }, , , .f., .f., .f. )
+         ::oBtnCancel         := TDotNetButton():New( 60, oGrupo, "gc_door_open2_32", "Salir", 3, {|| ::getDialog():end() }, , , .f., .f., .f. )
 
          ::getDialog():addFastKey( VK_F5, {|| ::oBtnOk:Action() } )
          ::getDialog():addFastKey( VK_F6, {|| ::oBtnOkAndNew:Action() } )
    else
       oGrupo                  := TDotNetGroup():New( ::oOfficeBarFolder, 126, "Acciones", .f. )
          ::oBtnOk             := TDotNetButton():New( 60, oGrupo, "gc_floppy_disk_32", "Aceptar y cerrar [F5]", 1, {|| if( validateDialog( ::getDialog() ), ::getDialog():end( IDOK ), ) }, , , .f., .f., .f. )
+         ::oBtnCancel         := TDotNetButton():New( 60, oGrupo, "gc_door_open2_32",  "Salir", 2, {|| ::getDialog():end() }, , , .f., .f., .f. )
 
          ::getDialog():addFastKey( VK_F5, {|| ::oBtnOk:Action() } )
    end if 
 
-   ::oBtnCancel               := TDotNetButton():New( 60, oGrupo, "gc_door_open2_32",  "Salir", 2, {|| ::getDialog():end() }, , , .f., .f., .f. )
 
 RETURN ( Self )
 

@@ -575,8 +575,6 @@ METHOD loadBlankBuffer()
 
    ::defaultCurrentBuffer()
 
-   msgAlert( "loadBlankBuffer" )
-
    ::fireEvent( 'loadedBlankBuffer' )
 
 RETURN ( ::hBuffer )
@@ -701,8 +699,6 @@ METHOD insertBuffer( hBuffer )
    local nId
 
    ::fireEvent( 'insertingBuffer' )
-
-   msgalert( ::getInsertSentence( hBuffer ), "insertBuffer" )
 
    ::getDatabase():Execs( ::getInsertSentence( hBuffer ) )
 

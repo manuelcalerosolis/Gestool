@@ -31,11 +31,9 @@ END CLASS
 
 METHOD Activate()
 
-   msgalert( hb_valtoexp( ::oController:oModel:hBuffer ), "::oController:oModel:hBuffer" )
-
    DEFINE DIALOG ::oDialog RESOURCE "Movimientos_Almacen" TITLE ::lblTitle() + ::oController:getTitle()
 
-      REDEFINE GET   ::oController:oModel:hBuffer[ "id" ] ;
+      REDEFINE GET   ::oController:oModel:hBuffer[ "numero" ] ;
          ID          100 ;
          WHEN        ( .f. ) ;
          OF          ::oDialog

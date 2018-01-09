@@ -15,16 +15,24 @@ CLASS SQLBaseValidator
 
    DATA cColumnToProced
 
-   DATA lDebugMode                     INIT .f.
+   DATA lDebugMode                        INIT .f.
+
+   DATA uValue
   
    METHOD New()
    METHOD End()
 
-   METHOD getValidators()              VIRTUAL
-   METHOD getAsserts()                 VIRTUAL
+   METHOD setValue( uValue )              INLINE   ( ::uValue := uValue )
 
-   METHOD Validate( cColumn, uValue )  INLINE ( ::ProcessAll( cColumn, uValue, ::getValidators() ) )
-   METHOD Assert( cColumn, uValue )    INLINE ( ::ProcessAll( cColumn, uValue, ::getAsserts() ) )
+   METHOD assignValue( cColumn, uValue )  INLINE   (  iif( empty( uValue ),;
+                                                      ::setValue( ::oController:getModelBuffer( cColumn ) ),;
+                                                      ::setValue( uValue ) ) )
+
+   METHOD getValidators()                 VIRTUAL
+   METHOD getAsserts()                    VIRTUAL
+
+   METHOD Validate( cColumn, uValue )     INLINE   ( ::assignValue( cColumn, uValue ), ::ProcessAll( cColumn, ::getValidators() ) )
+   METHOD Assert( cColumn, uValue )       INLINE   ( ::assignValue( cColumn, uValue ), ::ProcessAll( cColumn, ::getAsserts() ) )
 
    METHOD ProcessAll()
       METHOD Process()
@@ -60,7 +68,7 @@ RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 
-METHOD ProcessAll( cColumn, uValue, hProcess )
+METHOD ProcessAll( cColumn, hProcess )
 
    local hColumn
    local hColumnProcess
@@ -76,13 +84,9 @@ METHOD ProcessAll( cColumn, uValue, hProcess )
 
    ::cColumnToProced       := cColumn
 
-   if empty( uValue )
-      uValue               := ::oController:getModelBuffer( cColumn )
-   end if 
-
    for each hColumn in hColumnProcess
 
-      if !::Process( hColumn:__enumKey(), uValue, hColumn:__enumValue() )
+      if !::Process( hColumn:__enumKey(), hColumn:__enumValue() )
          RETURN ( .f. )
       end if 
 
@@ -92,17 +96,17 @@ RETURN ( .t. )
 
 //---------------------------------------------------------------------------//
 
-METHOD Process( cMethod, uValue, cMessage )
+METHOD Process( cMethod, cMessage )
 
    local oError
    local lValidate   := .f.
 
    try 
 
-      lValidate      := Self:&( cMethod )( uValue )
+      lValidate      := Self:&( cMethod )( ::uValue ) 
 
-      if !lValidate
-         msgstop( strtran( cMessage, "{value}", alltrim( cvaltostr( uValue ) ) ), "Error" )
+      if !lValidate .and. !empty( cMessage )
+         msgstop( strtran( cMessage, "{value}", alltrim( cvaltostr( ::uValue ) ) ), "Error" )
       end if
 
    catch oError

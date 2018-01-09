@@ -51,7 +51,7 @@ CLASS MovimientosAlmacenController FROM SQLNavigatorController
 
    METHOD getBrowse()               INLINE ( ::oBrowseView:getBrowse() )
 
-   METHOD loadedBlankBuffer()
+   METHOD insertingBuffer()
 
 END CLASS
 
@@ -101,7 +101,7 @@ METHOD New()
 
    ::oFilterController:setTableName( ::cTitle ) 
 
-   ::oModel:setEvent( 'loadedBlankBuffer', {|| ::loadedBlankBuffer() } )
+   ::oModel:setEvent( 'insertingBuffer', {|| ::insertingBuffer() } )
 
 RETURN ( Self )
 
@@ -237,11 +237,9 @@ RETURN ( self )
 
 //---------------------------------------------------------------------------//
 
-METHOD loadedBlankBuffer()
+METHOD insertingBuffer()
 
-   msgalert( ContadoresRepository():getMovimientoAlmacen(), "loadedBlankBuffer movimientos_almacen" )
-
-   hset( ::oModel:hBuffer, "numero", ContadoresRepository():getMovimientoAlmacen() )
+   hset( ::oModel:hBuffer, "numero", ContadoresRepository():getAndIncMovimientoAlmacen() )
 
 RETURN ( self ) 
 

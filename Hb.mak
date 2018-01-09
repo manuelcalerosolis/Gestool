@@ -367,6 +367,8 @@ CapturadorMovimientosAlmacenLineasView.prg							\
 ImportadorMovimientosAlmacenLineasController.prg					\
 ImportadorMovimientosAlmacenLineasValidator.prg						\
 CapturadorMovimientosAlmacenLineasController.prg					\
+ImprimirSeriesController.prg 												\
+ImprimirSeriesView.prg 														\
 MovimientosAlmacenLineasView.prg											\
 MovimientosAlmacenController.prg 										\
 MovimientosAlmacenLineasController.prg 								\
@@ -985,7 +987,8 @@ ImportadorMovimientosAlmacenLineasView.obj							\
 CapturadorMovimientosAlmacenLineasView.obj							\
 ImportadorMovimientosAlmacenLineasController.obj 					\
 ImportadorMovimientosAlmacenLineasValidator.obj 					\
-CapturadorMovimientosAlmacenLineasController.obj 					\
+ImprimirSeriesView.obj 														\
+ImprimirSeriesController.obj 												\
 MovimientosAlmacenLineasView.obj											\
 MovimientosAlmacenController.obj 										\
 MovimientosAlmacenLineasController.obj 								\
@@ -1574,6 +1577,8 @@ $(OBJ)\ImportadorMovimientosAlmacenLineasView.obj 					+
 $(OBJ)\CapturadorMovimientosAlmacenLineasView.obj 					+
 $(OBJ)\ImportadorMovimientosAlmacenLineasController.obj			+
 $(OBJ)\ImportadorMovimientosAlmacenLineasValidator.obj			+
+$(OBJ)\ImprimirSeriesView.obj												+
+$(OBJ)\ImprimirSeriesController.obj										+
 $(OBJ)\CapturadorMovimientosAlmacenLineasController.obj			+
 $(OBJ)\MovimientosAlmacenLineasView.obj								+
 $(OBJ)\MovimientosAlmacenController.obj 								+

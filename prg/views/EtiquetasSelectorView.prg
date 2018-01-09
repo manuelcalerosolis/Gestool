@@ -64,7 +64,7 @@ CLASS EtiquetasSelectorView FROM SQLBaseView
 
    METHOD startDialog()
 
-   METHOD getRowSet()               INLINE ( ::oController:getRowSet() )
+   METHOD getHashList()             INLINE ( ::oController:oHashList )
 
    METHOD setId( id )               INLINE ( ::nDocumentoInicio := id, ::nDocumentoFin := id )
 
@@ -72,10 +72,10 @@ CLASS EtiquetasSelectorView FROM SQLBaseView
 
    METHOD Siguiente() 
 
-   METHOD sumarUnidades()           INLINE ( ::getRowSet():fieldput( 'total_unidades', ::getRowSet():fieldGet( 'total_unidades' ) + 1 ) ) 
+   METHOD sumarUnidades()           INLINE ( ::getHashList():fieldput( 'total_unidades', ::getHashList():fieldGet( 'total_unidades' ) + 1 ) ) 
 
-   METHOD restarUnidades()          INLINE ( iif(  ::getRowSet():fieldGet( 'total_unidades' ) > 0,;
-                                                   ::getRowSet():fieldput( 'total_unidades', ::getRowSet():fieldGet( 'total_unidades' ) - 1 ),;
+   METHOD restarUnidades()          INLINE ( iif(  ::getHashList():fieldGet( 'total_unidades' ) > 0,;
+                                                   ::getHashList():fieldput( 'total_unidades', ::getHashList():fieldGet( 'total_unidades' ) - 1 ),;
                                                    ) ) 
 
 ENDCLASS
@@ -215,14 +215,16 @@ METHOD Activate()
 
       ::oBrowse:bRClicked        := {| nRow, nCol, nFlags | ::RButtonDown( nRow, nCol, nFlags ) }
 
-      ::oBrowse:setRowSet( ::oController )
+      ::oBrowse:setHashList( ::getHashList() )
+
+      msgalert( ::getHashList():reccount(), "reccount()" )
 
       ::oBrowse:CreateFromResource( 110 )
 
       with object ( ::oBrowse:AddCol() )
          :cHeader          := "Id"
-         :bEditValue       := {|| ::getRowSet():fieldGet( 'id' ) }
-         :cSortOrder       := 'movimientos_almacen_lineas.id'
+         :bEditValue       := {|| ::getHashList():fieldGet( 'id' ) }
+         //:cSortOrder       := 'movimientos_almacen_lineas.id'
          :nWidth           := 40
          :nDataStrAlign    := 1
          :nHeadStrAlign    := 1
@@ -231,7 +233,7 @@ METHOD Activate()
 
       with object ( ::oBrowse:AddCol() )
          :cHeader          := "Código"
-         :bEditValue       := {|| ::getRowSet():fieldGet( 'codigo_articulo' ) }
+         :bEditValue       := {|| ::getHashList():fieldGet( 'codigo_articulo' ) }
          :cSortOrder       := 'movimientos_almacen_lineas.codigo_articulo'
          :nWidth           := 120
          :bLClickHeader    := {| nMRow, nMCol, nFlags, oColumn | ::oController:clickingHeader( oColumn ) }
@@ -239,7 +241,7 @@ METHOD Activate()
 
       with object ( ::oBrowse:AddCol() )
          :cHeader          := "Nombre"
-         :bEditValue       := {|| ::getRowSet():fieldGet( 'nombre_articulo' ) }
+         :bEditValue       := {|| ::getHashList():fieldGet( 'nombre_articulo' ) }
          :cSortOrder       := 'movimientos_almacen_lineas.nombre_articulo'
          :nWidth           := 220
          :bLClickHeader    := {| nMRow, nMCol, nFlags, oColumn | ::oController:clickingHeader( oColumn ) }
@@ -247,7 +249,7 @@ METHOD Activate()
 
       with object ( ::oBrowse:AddCol() )
          :cHeader          := "Primera propiedad"
-         :bEditValue       := {|| ::getRowSet():fieldGet( 'valor_primera_propiedad' ) }
+         :bEditValue       := {|| ::getHashList():fieldGet( 'valor_primera_propiedad' ) }
          :cSortOrder       := 'movimientos_almacen_lineas.valor_primera_propiedad'
          :nWidth           := 80
          :bLClickHeader    := {| nMRow, nMCol, nFlags, oColumn | ::oController:clickingHeader( oColumn ) }
@@ -255,12 +257,13 @@ METHOD Activate()
 
       with object ( ::oBrowse:AddCol() )
          :cHeader          := "Segunda propiedad"
-         :bEditValue       := {|| ::getRowSet():fieldGet( 'valor_segunda_propiedad' ) }
+         :bEditValue       := {|| ::getHashList():fieldGet( 'valor_segunda_propiedad' ) }
          :cSortOrder       := 'movimientos_almacen_lineas.valor_segunda_propiedad'
          :nWidth           := 80
          :bLClickHeader    := {| nMRow, nMCol, nFlags, oColumn | ::oController:clickingHeader( oColumn ) }
       end with
 
+/*
       with object ( ::oBrowse:AddCol() )
          :cHeader          := "Sumar unidades"
          :bStrData         := {|| "" }
@@ -286,10 +289,11 @@ METHOD Activate()
          :nHeadBmpAlign    := 1
          :AddResource( "gc_navigate_minus_16" )
       end with
-
+*/
+      
       with object ( ::oBrowse:AddCol() )
          :cHeader          := "Etiquetas"
-         :bEditValue       := {|| ::getRowSet():fieldGet( 'total_unidades' ) }
+         :bEditValue       := {|| ::getHashList():fieldGet( 'total_unidades' ) }
          :cSortOrder       := 'total_unidades'
          :cEditPicture     := "@E 99,999"
          :nWidth           := 80
@@ -297,9 +301,8 @@ METHOD Activate()
          :nHeadStrAlign    := 1
          :nEditType        := 1
          :bLClickHeader    := {| nMRow, nMCol, nFlags, oColumn | ::oController:clickingHeader( oColumn ) }
-         :bOnPostEdit      := {|o,x| ::getRowSet():fieldput( 'total_unidades', x ) }
+         :bOnPostEdit      := {|o,x| ::getHashList():fieldput( 'total_unidades', x ) }
       end with
-
       // Botones generales-------------------------------------------------------
 
       REDEFINE BUTTON ::oBtnAnterior ;          // Boton anterior

@@ -33,7 +33,7 @@ METHOD New( oController )
 
    ::oDialogView           := ContadoresView():New( self )
 
-   ::oModel:setEvent( 'loadedBlankBuffer', {|| ::loadedBlankBuffer() } )
+   ::oModel:setEvent( 'loadedBlankBuffer', {|| ::loadedBlankBuffer() } ) 
 
 RETURN ( Self )
 

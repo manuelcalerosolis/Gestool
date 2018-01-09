@@ -414,15 +414,9 @@ METHOD Edit( nId )
       
       ::fireEvent( 'closedDialog' )  
 
-      msgalert( "antes de updateBuffer")  
-
       ::oModel:updateBuffer()
 
-      msgalert( "antes de commitTransactionalMode")
-
       ::commitTransactionalMode()
-
-      msgalert( "antes de refreshRowSet")
 
       ::refreshRowSet()
 

@@ -20,9 +20,10 @@ CLASS SQLXBrowse FROM TXBrowse
    METHOD New( oWnd )
 
    METHOD setRowSet( oRowSet )
+   METHOD setHashList( oHashList )
 
-   METHOD refreshCurrent()                      INLINE ( ::Refresh() )
-   METHOD Refresh()                             INLINE ( ::Super:Refresh(), ::Select( 0 ), ::Select( 1 ) )
+   // METHOD refreshCurrent()                      INLINE ( ::Super:::RefreshCurrent() )
+   // METHOD Refresh()                             INLINE ( ::Super:Refresh(), ::Select( 0 ), ::Select( 1 ) )
 
    METHOD getColumnByHeaders()
    METHOD selectColumnOrder( oCol )
@@ -146,6 +147,30 @@ METHOD setRowSet( oRowSet )
 
    if ::oVScroll() != nil
       ::oVscroll():SetRange( 1, oRowSet:Get():RecCount() )
+   endif
+
+   ::lFastEdit       := .t.
+
+RETURN nil
+
+//----------------------------------------------------------------------------//
+
+METHOD setHashList( oHashList )
+
+   ::lAutoSort       := .f.
+   ::nDataType       := DATATYPE_USER
+   ::nRowHeight      := 20
+   ::bGoTop          := {|| oHashList:GoTop() }
+   ::bGoBottom       := {|| oHashList:GoBottom() }
+   ::bBof            := {|| oHashList:Bof() }
+   ::bEof            := {|| oHashList:Eof() }
+   ::bKeyCount       := {|| oHashList:RecCount() }
+   ::bSkip           := {| n | oHashList:Skipper( n ) }
+   ::bKeyNo          := {| n | oHashList:RecNo() }
+   ::bBookMark       := {| n | iif( n == nil, oHashList:RecNo(), oHashList:GoTo( n ) ) }
+
+   if ::oVScroll() != nil
+      ::oVscroll():SetRange( 1, oHashList:RecCount() )
    endif
 
    ::lFastEdit       := .t.

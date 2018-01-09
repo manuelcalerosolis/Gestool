@@ -5460,17 +5460,17 @@ METHOD lCheckConsolidacion( cCodigoArticulo, cCodigoAlmacen, cCodigoPrimeraPropi
    local dConsolidacion 
 
    // Quitar esta linea si no se quiere usar SQL------------------------------- 
-   /*
+   
    cSentence            := MovimientosAlmacenLineasRepository():getSQLSentenceFechaHoraConsolidacion( cCodigoArticulo, cCodigoAlmacen, cCodigoPrimeraPropiedad, cCodigoSegundaPropiedad, cValorPrimeraPropiedad, cValorSegundaPropiedad, cLote, dFecha, tHora )
 
    dConsolidacion       := getSQLDatabase():selectValue( cSentence )
 
-   RETURN ( empty( dConsolidacion ) .or. hb_dtot( dFecha, tHora ) >= dConsolidacion )
-   */
+RETURN ( empty( dConsolidacion ) .or. hb_dtot( dFecha, tHora ) >= dConsolidacion )
+   
    /*
    Uso de funciones anteriores a MySQL-----------------------------------------
    */
-
+/*
    dConsolidacion       := ::scanConsolidacion( cCodigoArticulo, cCodigoAlmacen, cValorPrimeraPropiedad, cValorSegundaPropiedad, cLote )
 
    if isfalse( dConsolidacion )
@@ -5478,8 +5478,9 @@ METHOD lCheckConsolidacion( cCodigoArticulo, cCodigoAlmacen, cCodigoPrimeraPropi
       
       ::addConsolidacion( cCodigoArticulo, cCodigoAlmacen, cValorPrimeraPropiedad, cValorSegundaPropiedad, cLote, dConsolidacion )
    end if 
-
+   
 RETURN ( empty( dConsolidacion ) .or. dtos( dFecha ) + tHora >= dConsolidacion )
+*/
 
 //---------------------------------------------------------------------------//
 
