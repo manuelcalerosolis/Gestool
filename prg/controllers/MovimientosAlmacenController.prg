@@ -221,7 +221,13 @@ RETURN ( self )
 
 METHOD labelDocument()
 
-   ::oEtiquetasController:setId( ::getRowSet():fieldget( 'id' ) )
+   local aIds
+
+   aIds              := ::oBrowseView:getRowSet():idFromRecno( ::oBrowseView:oBrowse:aSelected )
+
+   msgalert( hb_valtoexp( aIds ), "aIds" )
+
+   ::oEtiquetasController:setIds( aIds )
 
    ::oEtiquetasController:Activate()
 

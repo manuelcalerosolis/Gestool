@@ -11,9 +11,7 @@ CLASS ArticulosModel FROM ADSBaseModel
 
    METHOD get()
    
-   METHOD getField()
-
-   METHOD getNombre( cCodigoArticulo )             INLINE ( ::getField( cCodigoArticulo, 'Nombre' ) )
+   METHOD getNombre( cCodigoArticulo )             INLINE ( ::getField( 'Nombre', 'Codigo', cCodigoArticulo ) )
 
    METHOD getHash()
 
@@ -55,21 +53,6 @@ METHOD get( cCodigoArticulo )
 
    if ::ExecuteSqlStatement( cSql, @cStm )
       RETURN ( cStm )
-   end if 
-
-RETURN ( nil )
-
-//---------------------------------------------------------------------------//
-
-METHOD getField( cCodigoArticulo, cField )
-
-   local cStm  
-   local cSql  := "SELECT " + cField + " "                              + ;
-                     "FROM " + ::getTableName() + " "                   + ;
-                     "WHERE Codigo = " + quoted( cCodigoArticulo ) 
-
-   if ::ExecuteSqlStatement( cSql, @cStm )
-      RETURN ( ( cStm )->( fieldget( fieldpos( cField ) ) ) )
    end if 
 
 RETURN ( nil )

@@ -1,14 +1,22 @@
 MVC - ToDo
 
+- Refrescar errror en movimientos de almacen
+
 - Copias de seguridad
+
+- Validacion de contadores.
+
+- Busquedas en etiquetas. ( done )
+
+- Ordenaciones de columnas de etiquetas. (done)
+
+- Botnon para modificar unidades de etiquetas. (done)
 
 - Botones de salida y grabacion en dialogos de movimientos de almacen ( done )
 
 - Creacion de tablas de contadores. (done)
 
 - Asignacion de contadores. ( done )
-
-- Validacion de contadores. 
 
 - Asignación de numeros de series en las lineas. ( done)
 

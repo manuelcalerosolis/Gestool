@@ -101,7 +101,7 @@ RETURN ( cSerializedColumns )
 
 //---------------------------------------------------------------------------//
 
-METHOD getSQLSentenceToLabels( initialId, finalId, nFixLabels, cOrderBy )
+METHOD getSQLSentenceToLabels( aIds, nFixLabels, cOrderBy )
 
    local cSql  := "SELECT "                                                                              + ;
                      "movimientos_almacen_lineas.id AS id, "                                             + ;
@@ -120,7 +120,11 @@ METHOD getSQLSentenceToLabels( initialId, finalId, nFixLabels, cOrderBy )
 
    cSql        += "FROM movimientos_almacen_lineas "                             + ;
                      "INNER JOIN movimientos_almacen ON movimientos_almacen_lineas.parent_uuid = movimientos_almacen.uuid "   + ;
-                  "WHERE movimientos_almacen.id BETWEEN " + toSqlString( initialId ) + " AND " + toSqlString( finalId ) + " "
+                  "WHERE movimientos_almacen.id IN ( "  
+
+   aEval( aIds, {|nId| cSql += quoted( nId ) + "," } )
+
+   cSql        := chgAtEnd( cSql, " ) ", 1 )
 
    if !empty( cOrderBy )                  
       cSql     += "ORDER BY " + ( cOrderBy ) 

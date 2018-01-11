@@ -253,9 +253,9 @@ METHOD selectHashList( cSentence )
       ::oConexion:Ping()
 
       oStatement     := ::oConexion:Query( cSentence )
-   
-      oHashList      := THashList():new( oStatement:fetchAllHash() ) 
 
+      oHashList      := TMemList():new( oStatement:fetchAllArray(), oStatement:listColNames( AS_ARRAY_TYPE ) )
+   
    catch oError
 
       eval( errorBlock(), oError )

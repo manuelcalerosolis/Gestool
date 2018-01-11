@@ -279,7 +279,7 @@ RETURN ( .t. )
 
 FUNCTION Test()
 
-   ImprimirSeriesController():New():Activate()
+   // ImprimirSeriesController():New():Activate()
 
    // msgalert( hb_valtoexp( TStock():lCheckConsolidacion( '00107220', '002' ) ) )
 

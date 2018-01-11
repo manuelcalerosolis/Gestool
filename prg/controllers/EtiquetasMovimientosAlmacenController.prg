@@ -15,7 +15,7 @@ CLASS EtiquetasMovimientosAlmacenController FROM SQLBaseController
    
    METHOD clickingHeader( oColumn )    INLINE ( ::generateRowSet( oColumn:cSortOrder ) )
 
-   METHOD setId( id )                  INLINE ( iif( !empty( ::oDialogView ), ::oDialogView:setId( id ), ) )
+   METHOD setIds( aIds )               INLINE ( iif( !empty( ::oDialogView ), ::oDialogView:setIds( aIds ), ) )
 
    METHOD getFilaInicio()              INLINE ( iif( !empty( ::oDialogView ), ::oDialogView:nFilaInicio, 0 ) )
    
@@ -26,6 +26,8 @@ CLASS EtiquetasMovimientosAlmacenController FROM SQLBaseController
    METHOD generateRowSet()
 
    METHOD generateLabels()
+
+   METHOD editLabels()
 
 END CLASS
 
@@ -66,13 +68,9 @@ METHOD generateRowSet( cOrderBy )
       nFixLabels        := ::oDialogView:nUnidadesLabels
    end if 
 
-   cSentence            := MovimientosAlmacenLineasRepository():getSQLSentenceToLabels( ::oDialogView:nDocumentoInicio, ::oDialogView:nDocumentoFin, nFixLabels, cOrderBy )
-
-   msgalert( cSentence, "cSentence" )
+   cSentence            := MovimientosAlmacenLineasRepository():getSQLSentenceToLabels( ::oDialogView:aIds, nFixLabels, cOrderBy )
 
    ::oHashList          := getSQLDatabase():selectHashList( cSentence ) 
-
-   msgalert( ::oHashList:classname(), "classname" )
 
    ::oHashList:goTop()
 
@@ -82,6 +80,7 @@ RETURN ( Self )
 
 METHOD generateLabels()
 
+   local nRecno
    local cReport
    local cFormato
    local oMovimientosAlmacenLabelReport  
@@ -100,13 +99,26 @@ METHOD generateLabels()
 
    oMovimientosAlmacenLabelReport   := MovimientosAlmacenLabelReport():New( Self )
 
+   nRecno                           := ::oHashList:Recno()
+
    oMovimientosAlmacenLabelReport:setRowSet( ::oHashList )
    oMovimientosAlmacenLabelReport:setDevice( IS_SCREEN )
    oMovimientosAlmacenLabelReport:setReport( cReport )
 
    oMovimientosAlmacenLabelReport:Print()
 
+   ::oHashList:goTo( nRecno )
+
 RETURN ( Self )
 
 //---------------------------------------------------------------------------//
+
+METHOD editLabels()
+
+   msgalert( ::oDialogView:cFormatoLabel )
+
+RETURN ( Self )
+
+//---------------------------------------------------------------------------//
+
 

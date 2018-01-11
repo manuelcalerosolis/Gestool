@@ -4261,40 +4261,45 @@ RETURN ( uReturn )
 
 function ApoloSender( oObject, cMsg, u1, u2, u3, u4, u5, u6, u7, u8, u9, u10 )
 
-   local uResult
-
    cMsg           := StrTran( cMsg, "()", "" )
 
    do case
       case IsNil( u1 )
-         uResult  := oObject:&( cMsg )()
+         RETURN ( oObject:&( cMsg )() )
 
       case IsNil( u2 )
-
-         uResult  := oObject:&( cMsg )( u1 )
+         RETURN ( oObject:&( cMsg )( u1 ) )
 
       case IsNil( u3 )
-
-         uResult  := oObject:&( cMsg )( u1, u2 )
+         RETURN ( oObject:&( cMsg )( u1, u2 ) )
 
       case IsNil( u4 )
-
-         uResult  := oObject:&( cMsg )( u1, u2, u3 )
+         RETURN ( oObject:&( cMsg )( u1, u2, u3 ) )
 
       case IsNil( u5 )
-
-         uResult  := oObject:&( cMsg )( u1, u2, u3, u4 )
+         RETURN ( oObject:&( cMsg )( u1, u2, u3, u4 ) )
 
       case IsNil( u6 )
+         RETURN ( oObject:&( cMsg )( u1, u2, u3, u4, u5 ) )
 
-         uResult  := oObject:&( cMsg )( u1, u2, u3, u4, u5 )
+      case IsNil( u7 )
+         RETURN ( oObject:&( cMsg )( u1, u2, u3, u4, u5, u6 ) )
+
+      case IsNil( u8 )
+         RETURN ( oObject:&( cMsg )( u1, u2, u3, u4, u5, u6, u7 ) )
+
+      case IsNil( u9 )
+         RETURN ( oObject:&( cMsg )( u1, u2, u3, u4, u5, u6, u7, u8 ) )
+
+      case IsNil( u10 )
+         RETURN ( oObject:&( cMsg )( u1, u2, u3, u4, u5, u6, u7, u8, u9 ) )
 
       otherwise
-         ApoloSender( oObject:&( cMsg ), u1, u2, u3, u4, u5, u6, u7, u8, u9, u10 )
+         RETURN ( oObject:&( cMsg )( u1, u2, u3, u4, u5, u6, u7, u8, u9, u10 ) )
 
    end case 
 
-Return ( uResult )
+RETURN ( nil )
 
 //--------------------------------------------------------------------------//
 

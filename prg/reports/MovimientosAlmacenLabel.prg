@@ -10,7 +10,7 @@ CLASS MovimientosAlmacenLabelReport FROM SQLBaseReport
 
    DATA oMovimientosAlmacenRowSet
 
-   DATA oLineasMovimientosAlmacenRowSet
+   DATA oLineasMovimientosAlmacenMemList
 
    DATA nLabelsToPrint
 
@@ -20,13 +20,9 @@ CLASS MovimientosAlmacenLabelReport FROM SQLBaseReport
 
    METHOD New( oController )
 
-   METHOD setRowSet( oRowSet )      INLINE ( ::oLineasMovimientosAlmacenRowSet := oRowSet )
+   METHOD setRowSet( oRowSet )      INLINE ( ::oLineasMovimientosAlmacenMemList := oRowSet )
 
    METHOD buildData() 
-
-   METHOD freeData()
-
-   METHOD Synchronize() 
 
    METHOD skipper()
 
@@ -37,7 +33,7 @@ CLASS MovimientosAlmacenLabelReport FROM SQLBaseReport
    METHOD calculateRowsToSkip()
 
    METHOD resetLabelsToPrint()      INLINE ( ::nLabelsPrinted := 1,;
-                                             ::nLabelsToPrint := ::oLineasMovimientosAlmacenRowSet:fieldGet( 'total_unidades' ) )
+                                             ::nLabelsToPrint := ::oLineasMovimientosAlmacenMemList:fieldGet( 'total_unidades' ) )
 
 END CLASS
 
@@ -61,15 +57,9 @@ METHOD buildData()
                                  MovimientosAlmacenLineasRepository():getSerializedColumnsSentenceToLabels(),;
                                  {|| ::goTop() },;
                                  {|| ::skipper() },;
-                                 {|| ::oLineasMovimientosAlmacenRowSet:skip(-1) },;
-                                 {|| ::oLineasMovimientosAlmacenRowSet:eof() },;
+                                 {|| ::oLineasMovimientosAlmacenMemList:skip(-1) },;
+                                 {|| ::oLineasMovimientosAlmacenMemList:eof() },;
                                  {|cField| ::fieldGet( cField ) } )
-
-RETURN NIL
-
-//---------------------------------------------------------------------------//
-
-METHOD Synchronize() 
 
 RETURN NIL
 
@@ -89,11 +79,9 @@ METHOD skipper()
 
    if ::nLabelsPrinted > ::nLabelsToPrint  
 
-      ::oLineasMovimientosAlmacenRowSet:Skip( 1 )   
+      ::oLineasMovimientosAlmacenMemList:Skip( 1 )   
 
       ::resetLabelsToPrint()
-
-      ::Synchronize()
 
    end if 
 
@@ -105,9 +93,7 @@ METHOD goTop()
 
    ::resetLabelsToPrint()
 
-   ::Synchronize()
-
-RETURN ( ::oLineasMovimientosAlmacenRowSet:goTop() )
+RETURN ( ::oLineasMovimientosAlmacenMemList:goTop() )
 
 //---------------------------------------------------------------------------//
 
@@ -117,15 +103,7 @@ METHOD fieldGet( cField )
       RETURN ( "" )
    end if 
 
-RETURN ( ::oLineasMovimientosAlmacenRowSet:fieldGet( cField ) )
-
-//---------------------------------------------------------------------------//
-
-METHOD freeData() 
-
-   msgalert( "freeData")
-
-RETURN NIL
+RETURN ( ::oLineasMovimientosAlmacenMemList:fieldGet( cField ) )
 
 //---------------------------------------------------------------------------//
 

@@ -11,23 +11,10 @@ CLASS EtiquetasSelectorView FROM SQLBaseView
 
    DATA oBrowse
 
-   DATA oSerieInicio
-   DATA cSerieInicio                INIT "A"
+   DATA aIds
 
-   DATA oSerieFin
-   DATA cSerieFin                   INIT "Z"
-
-   DATA oDocumentoInicio
-   DATA nDocumentoInicio
-
-   DATA oDocumentoFin
-   DATA nDocumentoFin
-
-   DATA oSufijoInicio
-   DATA cSufijoInicio
-
-   DATA oSufijoFin
-   DATA cSufijoFin
+   DATA oSayRegistrosSeleccionados
+   DATA cSayRegistrosSeleccionados  INIT "Registros seleccionados"
 
    DATA oFormatoLabel
    DATA cFormatoLabel               INIT "MVP"
@@ -42,6 +29,9 @@ CLASS EtiquetasSelectorView FROM SQLBaseView
 
    DATA oMtrLabel
    DATA nMtrLabel
+
+   DATA oGetSearch
+   DATA cGetSearch                  INIT space( 200 )
 
    DATA lClose
 
@@ -58,6 +48,8 @@ CLASS EtiquetasSelectorView FROM SQLBaseView
 
    DATA inicialDoc                  INIT "MV"
 
+   DATA oColumnUnidades
+
    METHOD New( oController )
 
    METHOD Activate()
@@ -66,17 +58,27 @@ CLASS EtiquetasSelectorView FROM SQLBaseView
 
    METHOD getHashList()             INLINE ( ::oController:oHashList )
 
-   METHOD setId( id )               INLINE ( ::nDocumentoInicio := id, ::nDocumentoFin := id )
+   METHOD hashListFind()
+
+   METHOD getColumnOrder()          INLINE ( ::oBrowse:getColumnOrder():cOrder )
+
+   METHOD setIds( aIds )            INLINE ( ::aIds := aIds )
 
    METHOD Anterior() 
 
    METHOD Siguiente() 
 
-   METHOD sumarUnidades()           INLINE ( ::getHashList():fieldput( 'total_unidades', ::getHashList():fieldGet( 'total_unidades' ) + 1 ) ) 
+   METHOD sortColumn( oColumn, nColumn )
+
+   METHOD sumarUnidades()           INLINE ( ::getHashList():fieldput( 'total_unidades', ::getHashList():fieldGet( 'total_unidades' ) + 1 ),;
+                                             ::oBrowse:Refresh() ) 
 
    METHOD restarUnidades()          INLINE ( iif(  ::getHashList():fieldGet( 'total_unidades' ) > 0,;
                                                    ::getHashList():fieldput( 'total_unidades', ::getHashList():fieldGet( 'total_unidades' ) - 1 ),;
-                                                   ) ) 
+                                                   ),;
+                                             ::oBrowse:Refresh() ) 
+
+   METHOD limpiarUnidades()
 
 ENDCLASS
 
@@ -84,7 +86,7 @@ ENDCLASS
 
 METHOD New( oController )
 
-   ::oController           := oController
+   ::oController     := oController
 
 RETURN ( self )
 
@@ -106,52 +108,9 @@ METHOD Activate()
          TRANSPARENT ;
          OF          ::oDialog ;
 
-      REDEFINE GET   ::oSerieInicio ;
-         VAR         ::cSerieInicio ;
+      REDEFINE SAY   ::oSayRegistrosSeleccionados ;
+         VAR         "( " + alltrim( str( len( ::aIds ) ) ) + ") registro(s) seleccionado(s)" ;
          ID          100 ;
-         PICTURE     "@!" ;
-         SPINNER ;
-         ON UP       ( UpSerie( ::oSerieInicio ) );
-         ON DOWN     ( DwSerie( ::oSerieInicio ) );
-         VALID       ( ( ::cSerieInicio >= "A" .and. ::cSerieInicio <= "Z" ) .or. ( ::lHideSerie ) );
-         UPDATE ;
-         OF          ::oPages:aDialogs[ 1 ]
-
-      REDEFINE GET   ::oSerieFin ;
-         VAR         ::cSerieFin ;
-         ID          110 ;
-         PICTURE     "@!" ;
-         SPINNER ;
-         ON UP       ( UpSerie( ::oSerieFin ) );
-         ON DOWN     ( DwSerie( ::oSerieFin ) );
-         VALID       ( ( ::cSerieInicio >= "A" .and. ::cSerieInicio <= "Z" ) .or. ( ::lHideSerie ) );
-         UPDATE ;
-         OF          ::oPages:aDialogs[ 1 ]
-
-      REDEFINE GET   ::oDocumentoInicio ;
-         VAR         ::nDocumentoInicio ;
-         ID          120 ;
-         PICTURE     "999999999" ;
-         SPINNER ;
-         OF          ::oPages:aDialogs[ 1 ]
-
-      REDEFINE GET   ::oDocumentoFin ;
-         VAR         ::nDocumentoFin ;
-         ID          130 ;
-         PICTURE     "999999999" ;
-         SPINNER ;
-         OF          ::oPages:aDialogs[ 1 ]
-
-      REDEFINE GET   ::oSufijoInicio ;
-         VAR         ::cSufijoInicio ;
-         ID          140 ;
-         PICTURE     "##" ;
-         OF          ::oPages:aDialogs[ 1 ]
-
-      REDEFINE GET   ::oSufijoFin ;
-         VAR         ::cSufijoFin ;
-         ID          150 ;
-         PICTURE     "##" ;
          OF          ::oPages:aDialogs[ 1 ]
 
       REDEFINE GET   ::nFilaInicio ;
@@ -176,7 +135,7 @@ METHOD Activate()
          ::oFormatoLabel:bValid  := {|| ::oController:validateFormatoDocumento() }
          ::oFormatoLabel:bHelp   := {|| brwDocumento( ::oFormatoLabel, ::oFormatoLabel:oHelpText, ::inicialDoc ) }
 
-      TBtnBmp():ReDefine( 220, "gc_document_text_pencil_12",,,,, {|| EdtDocumento( ::cFormatoLabel ) }, ::oPages:aDialogs[ 1 ], .f., , .f., "Modificar formato de etiquetas" )
+      TBtnBmp():ReDefine( 220, "gc_document_text_pencil_12",,,,, {|| ::oController:EditLabels( ::cFormatoLabel ) }, ::oPages:aDialogs[ 1 ], .f., , .f., "Modificar formato de etiquetas" )
 
       REDEFINE RADIO ::nCantidadLabels ;
          ID          200, 201 ;
@@ -193,19 +152,42 @@ METHOD Activate()
 
       // Segunda caja de dialogo--------------------------------------------------
 
+      REDEFINE GET   ::oGetSearch ;
+         VAR         ::cGetSearch ;
+         ID          100 ;
+         BITMAP      "gc_binocular2_16" ;
+         OF          ::oPages:aDialogs[ 2 ]
+
+         ::oGetSearch:bChange    := {|| ::hashListFind() }
+
+      REDEFINE BUTTON ; 
+         ID          110 ; 
+         OF          ::oPages:aDialogs[ 2 ] ;
+         ACTION      ( ::sumarUnidades() )
+
+      REDEFINE BUTTON ; 
+         ID          120 ; 
+         OF          ::oPages:aDialogs[ 2 ] ;
+         ACTION      ( ::restarUnidades() )
+
+      REDEFINE BUTTON ; 
+         ID          130 ; 
+         OF          ::oPages:aDialogs[ 2 ] ;
+         ACTION      ( ::oColumnUnidades:Edit() )
+
+      REDEFINE BUTTON ; 
+         ID          140 ; 
+         OF          ::oPages:aDialogs[ 2 ] ;
+         ACTION      ( ::limpiarUnidades() )
+
+      // Propiedades del control--------------------------------------------------
+
       ::oBrowse                  := SQLXBrowse():New( ::oPages:aDialogs[ 2 ] )
       ::oBrowse:l2007            := .f.
 
       ::oBrowse:lRecordSelector  := .f.
       ::oBrowse:lAutoSort        := .t.
       ::oBrowse:lSortDescend     := .f.   
-
-      // Propiedades del control--------------------------------------------------
-
-      REDEFINE BUTTON ;
-         ID          100 ;
-         OF          ::oPages:aDialogs[ 2 ] ;
-         ACTION      ( msgalert( "search" ) )
 
       ::oBrowse:nMarqueeStyle    := MARQSTYLE_HIGHLROWMS
 
@@ -215,94 +197,84 @@ METHOD Activate()
 
       ::oBrowse:bRClicked        := {| nRow, nCol, nFlags | ::RButtonDown( nRow, nCol, nFlags ) }
 
-      ::oBrowse:setHashList( ::getHashList() )
+      ::oBrowse:setHashList( ::oController ) 
 
-      msgalert( ::getHashList():reccount(), "reccount()" )
-
-      ::oBrowse:CreateFromResource( 110 )
+      ::oBrowse:CreateFromResource( 200 )
 
       with object ( ::oBrowse:AddCol() )
          :cHeader          := "Id"
-         :bEditValue       := {|| ::getHashList():fieldGet( 'id' ) }
-         //:cSortOrder       := 'movimientos_almacen_lineas.id'
+         :cSortOrder       := 'id'
+         :cOrder           := 'D'
+         :bEditValue       := {|| ::getHashList():fieldget( 'id' ) }
          :nWidth           := 40
          :nDataStrAlign    := 1
          :nHeadStrAlign    := 1
-         :bLClickHeader    := {| nMRow, nMCol, nFlags, oColumn | ::oController:clickingHeader( oColumn ) }
+         :bLClickHeader    := {| nMRow, nMCol, nFlags, oColumn | ::sortColumn( oColumn ) }
       end with
 
       with object ( ::oBrowse:AddCol() )
          :cHeader          := "Código"
+         :cSortOrder       := 'codigo_articulo'
          :bEditValue       := {|| ::getHashList():fieldGet( 'codigo_articulo' ) }
-         :cSortOrder       := 'movimientos_almacen_lineas.codigo_articulo'
          :nWidth           := 120
-         :bLClickHeader    := {| nMRow, nMCol, nFlags, oColumn | ::oController:clickingHeader( oColumn ) }
+         :bLClickHeader    := {| nMRow, nMCol, nFlags, oColumn | ::sortColumn( oColumn ) }
       end with
 
       with object ( ::oBrowse:AddCol() )
          :cHeader          := "Nombre"
+         :cSortOrder       := 'nombre_articulo'
          :bEditValue       := {|| ::getHashList():fieldGet( 'nombre_articulo' ) }
-         :cSortOrder       := 'movimientos_almacen_lineas.nombre_articulo'
          :nWidth           := 220
-         :bLClickHeader    := {| nMRow, nMCol, nFlags, oColumn | ::oController:clickingHeader( oColumn ) }
+         :bLClickHeader    := {| nMRow, nMCol, nFlags, oColumn | ::sortColumn( oColumn ) }
+      end with
+
+      with object ( ::oBrowse:AddCol() )
+         :cHeader          := "Código primera propiedad"
+         :cSortOrder       := 'codigo_primera_propiedad'
+         :bEditValue       := {|| ::getHashList():fieldGet( 'codigo_primera_propiedad' ) }
+         :nWidth           := 80
+         :lHide            := .t.
+         :bLClickHeader    := {| nMRow, nMCol, nFlags, oColumn | ::sortColumn( oColumn ) }
+      end with
+
+      with object ( ::oBrowse:AddCol() )
+         :cHeader          := "Código segunda propiedad"
+         :cSortOrder       := 'codigo_segunda_propiedad'
+         :bEditValue       := {|| ::getHashList():fieldGet( 'codigo_segunda_propiedad' ) }
+         :nWidth           := 80
+         :lHide            := .t.
+         :bLClickHeader    := {| nMRow, nMCol, nFlags, oColumn | ::sortColumn( oColumn ) }
       end with
 
       with object ( ::oBrowse:AddCol() )
          :cHeader          := "Primera propiedad"
+         :cSortOrder       := 'valor_primera_propiedad'
          :bEditValue       := {|| ::getHashList():fieldGet( 'valor_primera_propiedad' ) }
-         :cSortOrder       := 'movimientos_almacen_lineas.valor_primera_propiedad'
          :nWidth           := 80
-         :bLClickHeader    := {| nMRow, nMCol, nFlags, oColumn | ::oController:clickingHeader( oColumn ) }
+         :bLClickHeader    := {| nMRow, nMCol, nFlags, oColumn | ::sortColumn( oColumn ) }
       end with
 
       with object ( ::oBrowse:AddCol() )
          :cHeader          := "Segunda propiedad"
+         :cSortOrder       := 'valor_segunda_propiedad'
          :bEditValue       := {|| ::getHashList():fieldGet( 'valor_segunda_propiedad' ) }
-         :cSortOrder       := 'movimientos_almacen_lineas.valor_segunda_propiedad'
          :nWidth           := 80
-         :bLClickHeader    := {| nMRow, nMCol, nFlags, oColumn | ::oController:clickingHeader( oColumn ) }
+         :bLClickHeader    := {| nMRow, nMCol, nFlags, oColumn | ::sortColumn( oColumn ) }
       end with
-
-/*
-      with object ( ::oBrowse:AddCol() )
-         :cHeader          := "Sumar unidades"
-         :bStrData         := {|| "" }
-         :bOnPostEdit      := {|| .t. }
-         :bEditBlock       := {|| ::sumarUnidades() }
-         :nEditType        := 5
-         :nWidth           := 20
-         :nHeadBmpNo       := 1
-         :nBtnBmp          := 1
-         :nHeadBmpAlign    := 1
-         :AddResource( "gc_navigate_plus_16" )
-      end with
-
-      with object ( ::oBrowse:AddCol() )
-         :cHeader          := "Restar unidades"
-         :bStrData         := {|| "" }
-         :bOnPostEdit      := {|| .t. }
-         :bEditBlock       := {|| ::restarUnidades() }
-         :nEditType        := 5
-         :nWidth           := 20
-         :nHeadBmpNo       := 1
-         :nBtnBmp          := 1
-         :nHeadBmpAlign    := 1
-         :AddResource( "gc_navigate_minus_16" )
-      end with
-*/
-      
-      with object ( ::oBrowse:AddCol() )
+    
+      with object ( ::oColumnUnidades := ::oBrowse:AddCol() )
          :cHeader          := "Etiquetas"
-         :bEditValue       := {|| ::getHashList():fieldGet( 'total_unidades' ) }
          :cSortOrder       := 'total_unidades'
+         :bEditValue       := {|| ::getHashList():fieldGet( 'total_unidades' ) }
          :cEditPicture     := "@E 99,999"
          :nWidth           := 80
          :nDataStrAlign    := 1
          :nHeadStrAlign    := 1
          :nEditType        := 1
-         :bLClickHeader    := {| nMRow, nMCol, nFlags, oColumn | ::oController:clickingHeader( oColumn ) }
+         :bLClickHeader    := {| nMRow, nMCol, nFlags, oColumn | ::sortColumn( oColumn ) }
          :bOnPostEdit      := {|o,x| ::getHashList():fieldput( 'total_unidades', x ) }
       end with
+
       // Botones generales-------------------------------------------------------
 
       REDEFINE BUTTON ::oBtnAnterior ;          // Boton anterior
@@ -328,13 +300,23 @@ RETURN ( self )
 
 //----------------------------------------------------------------------------//
 
+METHOD sortColumn( oColumn )
+
+   ::oBrowse:selectColumnOrder( oColumn )
+
+   if ( oColumn:cOrder == 'A' )
+      ::getHashList():sort( { | x, y | x[ oColumn:nCreationOrder ] > y[ oColumn:nCreationOrder ] } )
+   else 
+      ::getHashList():sort( { | x, y | x[ oColumn:nCreationOrder ] < y[ oColumn:nCreationOrder ] } )
+   end if 
+
+   ::oBrowse:refresh()   
+
+RETURN ( self )
+
+//----------------------------------------------------------------------------//
+
 METHOD startDialog()
-
-   ::oSerieInicio:Hide()
-   ::oSerieFin:Hide()
-
-   ::oSufijoInicio:Hide()
-   ::oSufijoFin:Hide()
 
    ::oFormatoLabel:lValid()
 
@@ -387,3 +369,51 @@ RETURN ( Self )
 
 //---------------------------------------------------------------------------//
 
+METHOD hashListFind()
+
+   local cColumnOrder
+   local uPatternSearch
+   local oColumnOrder   := ::oBrowse:getColumnOrder()
+
+   if empty( oColumnOrder )
+      RETURN ( nil )
+   end if 
+
+   cColumnOrder         := oColumnOrder:cSortOrder 
+
+   if empty( cColumnOrder )
+      RETURN ( nil )
+   end if 
+
+   uPatternSearch       := alltrim( ::cGetSearch )
+
+   if empty( uPatternSearch )
+      RETURN ( nil )
+   end if 
+
+   do case
+      case ( ::getHashList():fieldtype( cColumnOrder ) ) == "N"
+         uPatternSearch := val( uPatternSearch )
+      case ( ::getHashList():fieldtype( cColumnOrder ) ) == "C" .and. right( uPatternSearch, 1 ) != "*"
+         uPatternSearch += "*"
+   end case 
+
+   ::getHashList():find( uPatternSearch, cColumnOrder, .t. )
+
+   ::oBrowse:Refresh()
+
+RETURN ( nil )
+
+//---------------------------------------------------------------------------//
+
+METHOD limpiarUnidades()
+
+   aeval( ::oBrowse:aSelected,;
+      {| nRecno | ::getHashList():goto( nRecno ),;
+                  ::getHashList():fieldput( 'total_unidades', 0 ) } )
+
+   ::oBrowse:Refresh()
+
+RETURN ( nil )
+
+//---------------------------------------------------------------------------//
