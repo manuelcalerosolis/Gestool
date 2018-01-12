@@ -1014,10 +1014,24 @@ METHOD BuildTree( oTree, lLoadFile ) CLASS TFastVentasArticulos
    DEFAULT oTree           := ::oTreeReporting
    DEFAULT lLoadFile       := .t. 
 
-   aReports := {  {  "Title" => "Listado",                        "Image" => 0,  "Type" => "Listado",                      "Directory" => "Articulos\Listado",                            "File" => "Listado.fr3"  },;
-                  {  "Title" => "General",                        "Image" => 24, "Type" => "General",                      "Directory" => "Articulos\General",                            "File" => "Movimientos generales.fr3"  },;
-                  {  "Title" => "Compras/Ventas/Producción",      "Image" => 24, "Type" => "Todos los movimientos",        "Directory" => "Articulos\Movimientos",                        "File" => "Todos los movimientos.fr3"  },;
-                  {  "Title" => "Ventas",                         "Image" => 11, "Subnode" =>;
+   aReports := {  {  "Title"     => "Listado",;                        
+                     "Image"     => 0,;
+                     "Type"      => "Listado",;
+                     "Directory" => "Articulos\Listado",;
+                     "File"      => "Listado.fr3"  },;
+                  {  "Title"     => "General",;  
+                     "Image"     => 24,;
+                     "Type"      => "General",;
+                     "Directory" => "Articulos\General",;
+                     "File"      => "Movimientos generales.fr3"  },;
+                  {  "Title"     => "Compras/Ventas/Producción",;
+                     "Image"     => 24,;
+                     "Type"      => "Todos los movimientos",; 
+                     "Directory" => "Articulos\Movimientos",;                        
+                     "File"      => "Todos los movimientos.fr3"  },;
+                  {  "Title"     => "Ventas",;
+                     "Image"     => 11,;
+                     "Subnode" =>;
                   { ;
                      { "Title"      => "SAT de clientes",;
                        "Image"      => 20,;

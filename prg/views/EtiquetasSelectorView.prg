@@ -135,7 +135,7 @@ METHOD Activate()
          ::oFormatoLabel:bValid  := {|| ::oController:validateFormatoDocumento() }
          ::oFormatoLabel:bHelp   := {|| brwDocumento( ::oFormatoLabel, ::oFormatoLabel:oHelpText, ::inicialDoc ) }
 
-      TBtnBmp():ReDefine( 220, "gc_document_text_pencil_12",,,,, {|| ::oController:EditLabels( ::cFormatoLabel ) }, ::oPages:aDialogs[ 1 ], .f., , .f., "Modificar formato de etiquetas" )
+      TBtnBmp():ReDefine( 220, "gc_document_text_pencil_12",,,,, {|| ::oController:editLabelDocument( ::cFormatoLabel ) }, ::oPages:aDialogs[ 1 ], .f., , .f., "Modificar formato de etiquetas" )
 
       REDEFINE RADIO ::nCantidadLabels ;
          ID          200, 201 ;
@@ -277,17 +277,17 @@ METHOD Activate()
 
       // Botones generales-------------------------------------------------------
 
-      REDEFINE BUTTON ::oBtnAnterior ;          // Boton anterior
+      REDEFINE BUTTON ::oBtnAnterior ;          
          ID          20 ;
          OF          ::oDialog ;
          ACTION      ( ::Anterior() )
 
-      REDEFINE BUTTON ::oBtnSiguiente ;         // Boton de Siguiente
+      REDEFINE BUTTON ::oBtnSiguiente ;         
          ID          30 ;
          OF          ::oDialog ;
          ACTION      ( ::Siguiente() )
 
-      REDEFINE BUTTON ::oBtnCancel ;            // Boton de Cancelar
+      REDEFINE BUTTON ::oBtnCancel ;            
          ID          IDCANCEL ;
          OF          ::oDialog ;
          ACTION      ( ::oDialog:End() )
@@ -295,22 +295,6 @@ METHOD Activate()
    ::oDialog:bStart  := {|| ::startDialog() }
 
    ACTIVATE DIALOG ::oDialog CENTER
-
-RETURN ( self )
-
-//----------------------------------------------------------------------------//
-
-METHOD sortColumn( oColumn )
-
-   ::oBrowse:selectColumnOrder( oColumn )
-
-   if ( oColumn:cOrder == 'A' )
-      ::getHashList():sort( { | x, y | x[ oColumn:nCreationOrder ] > y[ oColumn:nCreationOrder ] } )
-   else 
-      ::getHashList():sort( { | x, y | x[ oColumn:nCreationOrder ] < y[ oColumn:nCreationOrder ] } )
-   end if 
-
-   ::oBrowse:refresh()   
 
 RETURN ( self )
 
@@ -368,6 +352,22 @@ METHOD Siguiente()
 RETURN ( Self )
 
 //---------------------------------------------------------------------------//
+
+METHOD sortColumn( oColumn )
+
+   ::oBrowse:selectColumnOrder( oColumn )
+
+   if ( oColumn:cOrder == 'A' )
+      ::getHashList():sort( { | x, y | x[ oColumn:nCreationOrder ] > y[ oColumn:nCreationOrder ] } )
+   else 
+      ::getHashList():sort( { | x, y | x[ oColumn:nCreationOrder ] < y[ oColumn:nCreationOrder ] } )
+   end if 
+
+   ::oBrowse:refresh()   
+
+RETURN ( self )
+
+//----------------------------------------------------------------------------//
 
 METHOD hashListFind()
 

@@ -39,16 +39,21 @@ CLASS MovimientosAlmacenLineasRepository FROM SQLBaseRepository
 
    METHOD getTotalUnidades( tConsolidacion, cCodigoArticulo, cCodigoAlmacen, cValorPropiedad1, cValorPropiedad2, cLote, lEntrada )
 
+   METHOD getSqlSentenceMovimientosAlmacenForReport( oReporting )
+
+   METHOD getRowSetMovimientosAlmacenForReport( oReporting )
+
 END CLASS
 
 //---------------------------------------------------------------------------//
 
 METHOD getSQLSentenceFechaCaducidad( cCodigoArticulo, cValorPrimeraPropiedad, cValorSegundaPropiedad, cLote )
 
-   local cSql  := "SELECT "                                                      + ;
-                     "fecha_caducidad "                                          + ;
-                  "FROM " + ::getTableName() + " "                               + ;
-                  "WHERE codigo_articulo = " + quoted( cCodigoArticulo ) + " "   + ;
+   local cSql  := "SELECT "                                                         + ;
+                     "fecha_caducidad "                                             + ;
+                  "FROM " + ::getTableName() + " "                                  + ;
+                  "WHERE empresa = " + quoted( cCodEmp() ) + " "                    + ;
+                     "AND codigo_articulo = " + quoted( cCodigoArticulo ) + " "     + ;
                      "AND fecha_caducidad IS NOT NULL "       
 
    if !empty(cValorPrimeraPropiedad)
@@ -140,7 +145,8 @@ METHOD getSQLSentenceFechaHoraConsolidacion( cCodigoArticulo, cCodigoAlmacen, cC
                      "cabecera.fecha_hora "                                                              + ;
                   "FROM movimientos_almacen_lineas lineas "                                              + ;
                      "INNER JOIN movimientos_almacen cabecera ON lineas.parent_uuid = cabecera.uuid "    + ;
-                  "WHERE lineas.codigo_articulo = " + quoted( cCodigoArticulo ) + " "                    + ;
+                  "WHERE empresa = " + quoted( cCodEmp() ) + " "                                         + ;
+                     "AND lineas.codigo_articulo = " + quoted( cCodigoArticulo ) + " "                   + ;
                      "AND cabecera.tipo_movimiento = 4 "                                                 
 
    if !empty(cCodigoAlmacen)
@@ -188,26 +194,27 @@ METHOD getFechaHoraConsolidacion( cCodigoArticulo, cCodigoAlmacen, cValorPropied
 
    local aBuffer
    local hResult     := { => }
-   local cSql        := "SELECT   movimientos_almacen.id, "
-         cSql        +=                   "movimientos_almacen.fecha_hora, "
-         cSql        +=                   "movimientos_almacen.almacen_destino, "
-         cSql        +=                   "movimientos_almacen.tipo_movimiento, "
-         cSql        +=                   "movimientos_almacen_lineas.parent_uuid, "
-         cSql        +=                   "movimientos_almacen_lineas.codigo_articulo, "
-         cSql        +=                   "movimientos_almacen_lineas.valor_primera_propiedad, "
-         cSql        +=                   "movimientos_almacen_lineas.valor_segunda_propiedad, "
-         cSql        +=                   "movimientos_almacen_lineas.lote "
-         cSql        +=          "FROM     movimientos_almacen "
-         cSql        +=          "INNER JOIN movimientos_almacen_lineas "
-         cSql        +=                   "ON movimientos_almacen_lineas.parent_uuid = movimientos_almacen.uuid " 
-         cSql        +=          "WHERE    movimientos_almacen.almacen_destino = " + quoted( cCodigoAlmacen ) + " AND "
-         cSql        +=                   "movimientos_almacen.tipo_movimiento = '4' AND "
-         cSql        +=                   "movimientos_almacen_lineas.codigo_articulo = " + quoted( cCodigoArticulo ) + " AND "
-         cSql        +=                   "movimientos_almacen_lineas.valor_primera_propiedad = " + quoted( cValorPropiedad1 ) + " AND "
-         cSql        +=                   "movimientos_almacen_lineas.valor_segunda_propiedad = " + quoted( cValorPropiedad2 ) + " AND "
-         cSql        +=                   "movimientos_almacen_lineas.lote = " + quoted( cLote ) + " "
-         cSql        +=          "ORDER BY movimientos_almacen.fecha_hora DESC "
-         cSql        +=          "LIMIT 1"
+   local cSql        := "SELECT movimientos_almacen.id, "
+         cSql        +=    "movimientos_almacen.fecha_hora, "
+         cSql        +=    "movimientos_almacen.almacen_destino, "
+         cSql        +=    "movimientos_almacen.tipo_movimiento, "
+         cSql        +=    "movimientos_almacen_lineas.parent_uuid, "
+         cSql        +=    "movimientos_almacen_lineas.codigo_articulo, "
+         cSql        +=    "movimientos_almacen_lineas.valor_primera_propiedad, "
+         cSql        +=    "movimientos_almacen_lineas.valor_segunda_propiedad, "
+         cSql        +=    "movimientos_almacen_lineas.lote "
+         cSql        += "FROM movimientos_almacen "
+         cSql        += "INNER JOIN movimientos_almacen_lineas "
+         cSql        +=    "ON movimientos_almacen_lineas.parent_uuid = movimientos_almacen.uuid " 
+         cSql        += "WHERE empresa = " + quoted( cCodEmp() ) + " "                                     
+         cSql        +=    "AND  movimientos_almacen.almacen_destino = " + quoted( cCodigoAlmacen ) + " "
+         cSql        +=    "AND  movimientos_almacen.tipo_movimiento = '4' "
+         cSql        +=    "AND  movimientos_almacen_lineas.codigo_articulo = " + quoted( cCodigoArticulo ) + " "
+         cSql        +=    "AND  movimientos_almacen_lineas.valor_primera_propiedad = " + quoted( cValorPropiedad1 ) + " "
+         cSql        +=    "AND  movimientos_almacen_lineas.valor_segunda_propiedad = " + quoted( cValorPropiedad2 ) + " "
+         cSql        +=    "AND  movimientos_almacen_lineas.lote = " + quoted( cLote ) + " "
+         cSql        += "ORDER BY movimientos_almacen.fecha_hora DESC "
+         cSql        += "LIMIT 1"
 
    aBuffer           := ::getDatabase():selectFetchHash( cSql )
 
@@ -238,36 +245,38 @@ METHOD getTotalUnidades( tConsolidacion, cCodigoArticulo, cCodigoAlmacen, cValor
    local aBuffer
    local cSentence
 
-   cSentence         := "SELECT   movimientos_almacen.id, "
-   cSentence         +=          "movimientos_almacen.fecha_hora, "
-   cSentence         +=          "movimientos_almacen.almacen_destino, "
-   cSentence         +=          "movimientos_almacen.almacen_origen, "
-   cSentence         +=          "movimientos_almacen_lineas.parent_uuid, "
-   cSentence         +=          "movimientos_almacen_lineas.codigo_articulo, "
-   cSentence         +=          "movimientos_almacen_lineas.valor_primera_propiedad, "
-   cSentence         +=          "movimientos_almacen_lineas.valor_segunda_propiedad, "
-   cSentence         +=          "movimientos_almacen_lineas.lote, "
-   cSentence         +=          "movimientos_almacen_lineas.cajas_articulo, "
-   cSentence         +=          "movimientos_almacen_lineas.unidades_articulo, "
-   cSentence         +=          "SUM( IF( movimientos_almacen_lineas.cajas_articulo = 0, 1, movimientos_almacen_lineas.cajas_articulo ) * movimientos_almacen_lineas.unidades_articulo ) as totalUnidadesStock "
-   cSentence         += "FROM    movimientos_almacen "
+   cSentence         := "SELECT movimientos_almacen.id, "
+   cSentence         +=    "movimientos_almacen.fecha_hora, "
+   cSentence         +=    "movimientos_almacen.almacen_destino, "
+   cSentence         +=    "movimientos_almacen.almacen_origen, "
+   cSentence         +=    "movimientos_almacen_lineas.parent_uuid, "
+   cSentence         +=    "movimientos_almacen_lineas.codigo_articulo, "
+   cSentence         +=    "movimientos_almacen_lineas.valor_primera_propiedad, "
+   cSentence         +=    "movimientos_almacen_lineas.valor_segunda_propiedad, "
+   cSentence         +=    "movimientos_almacen_lineas.lote, "
+   cSentence         +=    "movimientos_almacen_lineas.cajas_articulo, "
+   cSentence         +=    "movimientos_almacen_lineas.unidades_articulo, "
+   cSentence         +=    "SUM( IF( movimientos_almacen_lineas.cajas_articulo = 0, 1, movimientos_almacen_lineas.cajas_articulo ) * movimientos_almacen_lineas.unidades_articulo ) as totalUnidadesStock "
+   cSentence         += "FROM movimientos_almacen "
    cSentence         += "INNER JOIN movimientos_almacen_lineas "
-   cSentence         += "ON      movimientos_almacen_lineas.parent_uuid = movimientos_almacen.uuid "
+   cSentence         +=    "ON movimientos_almacen_lineas.parent_uuid = movimientos_almacen.uuid "
+
+   cSentence         += "WHERE empresa = " + quoted( cCodEmp() ) + " "                                     
    
    if lEntrada
-      cSentence      += "WHERE   movimientos_almacen.almacen_destino = " + quoted( cCodigoAlmacen ) + " AND "
+      cSentence      +=    "AND movimientos_almacen.almacen_destino = " + quoted( cCodigoAlmacen ) + " "
    else
-      cSentence      += "WHERE   movimientos_almacen.almacen_origen = " + quoted( cCodigoAlmacen ) + " AND "
+      cSentence      +=    "AND movimientos_almacen.almacen_origen = " + quoted( cCodigoAlmacen ) + " "
    end if
    
    if !Empty( tConsolidacion )
-      cSentence      +=         "movimientos_almacen.fecha_hora >= " + quoted( hb_TSToStr( tConsolidacion ) ) + " AND "
+      cSentence      +=    "AND movimientos_almacen.fecha_hora >= " + quoted( hb_tstostr( tConsolidacion ) ) + " "
    end if
 
-   cSentence         +=         "movimientos_almacen_lineas.codigo_articulo = " + quoted( cCodigoArticulo ) + " AND "
-   cSentence         +=         "movimientos_almacen_lineas.valor_primera_propiedad = " + quoted( cValorPropiedad1 ) + " AND "
-   cSentence         +=         "movimientos_almacen_lineas.valor_segunda_propiedad = " + quoted( cValorPropiedad2 ) + " AND "
-   cSentence         +=         "movimientos_almacen_lineas.lote = " + quoted( cLote ) + " "
+   cSentence         +=    "AND movimientos_almacen_lineas.codigo_articulo = " + quoted( cCodigoArticulo ) + " "
+   cSentence         +=    "AND movimientos_almacen_lineas.valor_primera_propiedad = " + quoted( cValorPropiedad1 ) + " "
+   cSentence         +=    "AND movimientos_almacen_lineas.valor_segunda_propiedad = " + quoted( cValorPropiedad2 ) + " "
+   cSentence         +=    "AND movimientos_almacen_lineas.lote = " + quoted( cLote ) + " "
    cSentence         += "LIMIT 1"
 
    aBuffer           := ::getDatabase():selectFetchHash( cSentence )
@@ -277,5 +286,43 @@ METHOD getTotalUnidades( tConsolidacion, cCodigoArticulo, cCodigoAlmacen, cValor
    end if
 
 RETURN ( nTotal )
+
+//---------------------------------------------------------------------------//
+
+METHOD getSqlSentenceMovimientosAlmacenForReport( oReporting )
+
+   local cSentence   
+
+   cSentence         := "SELECT movimientos_almacen.id, "
+   cSentence         +=    "movimientos_almacen.fecha_hora, "
+   cSentence         +=    "movimientos_almacen.almacen_destino, "
+   cSentence         +=    "movimientos_almacen.almacen_origen, "
+   cSentence         +=    "movimientos_almacen_lineas.parent_uuid, "
+   cSentence         +=    "movimientos_almacen_lineas.codigo_articulo, "
+   cSentence         +=    "movimientos_almacen_lineas.valor_primera_propiedad, "
+   cSentence         +=    "movimientos_almacen_lineas.valor_segunda_propiedad, "
+   cSentence         +=    "movimientos_almacen_lineas.lote, "
+   cSentence         +=    "movimientos_almacen_lineas.cajas_articulo, "
+   cSentence         +=    "movimientos_almacen_lineas.unidades_articulo, "
+   cSentence         +=    "( IF( movimientos_almacen_lineas.cajas_articulo = 0, 1, movimientos_almacen_lineas.cajas_articulo ) * movimientos_almacen_lineas.unidades_articulo ) as totalUnidadesStock "
+   cSentence         += "FROM movimientos_almacen_lineas "
+   cSentence         += "INNER JOIN movimientos_almacen "
+   cSentence         +=    "ON movimientos_almacen.uuid = movimientos_almacen_lineas.parent_uuid "
+   cSentence         += "WHERE movimientos_almacen.empresa = " + quoted( cCodEmp() ) + " "                                     
+   
+   if !empty( oReporting )
+      cSentence      +=    "AND movimientos_almacen_lineas.codigo_articulo >= " + quoted( oReporting:oGrupoArticulo:Cargo:getDesde() ) + " "
+      cSentence      +=    "AND movimientos_almacen_lineas.codigo_articulo <= " + quoted( oReporting:oGrupoArticulo:Cargo:getHasta() ) 
+   end if 
+
+RETURN ( cSentence )
+
+//---------------------------------------------------------------------------//
+
+METHOD getRowSetMovimientosAlmacenForReport( oReporting )
+
+   local cSentence   := ::getSqlSentenceMovimientosAlmacenForReport( oReporting )
+
+RETURN ( ::getDatabase():fetchRowSet( cSentence ) )
 
 //---------------------------------------------------------------------------//

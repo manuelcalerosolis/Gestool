@@ -13,11 +13,17 @@ CLASS DocumentosModel FROM ADSBaseModel
 
    METHOD getWhereCodigo( cCodigo, cField )
 
-   METHOD getReportWhereCodigo( cCodigo )    INLINE ( ::getWhereCodigo( cCodigo, 'mReport' ) )
-
    METHOD getDescripWhereCodigo( cCodigo )   INLINE ( ::getWhereCodigo( cCodigo, 'cDescrip' ) )
 
+   METHOD setReportWhereCodigo( cCodigo, cReport )
+
+   METHOD getReportWhereCodigo( cCodigo )    
+
    METHOD exist()
+
+   METHOD encodeSemicolons( cText )          INLINE ( SQLDatabase():escapeStr( cText ) )
+
+   METHOD decodeSemicolons( cText )          INLINE ( strtran( cText, "&quot;", "'" ) )
 
 END CLASS
 
@@ -68,5 +74,32 @@ RETURN ( .f. )
 
 //---------------------------------------------------------------------------//
 
+METHOD setReportWhereCodigo( cCodigo, cReport )
 
+   local cStm  
+   local cSql  := "UPDATE " + ::getTableName() + " "                                         + ;
+                     "SET mReport = " + quoted( SQLDatabase():escapeStr( cReport ) )  + " "    + ;   
+                     "WHERE Codigo = " + quoted( cCodigo ) 
+   
+   logwrite( cSql )
+   msgalert( cSql, "cSql" )
+
+RETURN ( ::ExecuteSqlStatement( cSql, @cStm ) )
+
+//---------------------------------------------------------------------------//
+
+METHOD getReportWhereCodigo( cCodigo )
+
+   local cStm
+   local cSql  := "SELECT mReport "                         + ;
+                     "FROM " + ::getTableName() + " "       + ;
+                     "WHERE Codigo = " + quoted( cCodigo ) 
+
+   if ::ExecuteSqlStatement( cSql, @cStm )
+      RETURN ( ( cStm )->( fieldget( fieldpos( 'mReport' ) ) ) ) 
+   end if 
+
+RETURN ( "" )
+
+//---------------------------------------------------------------------------//
 

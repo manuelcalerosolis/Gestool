@@ -8,19 +8,17 @@
 
 CLASS MovimientosAlmacenLabelReport FROM SQLBaseReport
 
-   DATA oMovimientosAlmacenRowSet
+   DATA oMemList
 
-   DATA oLineasMovimientosAlmacenMemList
+   DATA nRowsToSkip
 
    DATA nLabelsToPrint
 
    DATA nLabelsPrinted
 
-   DATA nRowsToSkip
-
    METHOD New( oController )
 
-   METHOD setRowSet( oRowSet )      INLINE ( ::oLineasMovimientosAlmacenMemList := oRowSet )
+   METHOD setRowSet( oRowSet )      INLINE ( ::oMemList := oRowSet )
 
    METHOD buildData() 
 
@@ -33,7 +31,7 @@ CLASS MovimientosAlmacenLabelReport FROM SQLBaseReport
    METHOD calculateRowsToSkip()
 
    METHOD resetLabelsToPrint()      INLINE ( ::nLabelsPrinted := 1,;
-                                             ::nLabelsToPrint := ::oLineasMovimientosAlmacenMemList:fieldGet( 'total_unidades' ) )
+                                             ::nLabelsToPrint := ::oMemList:fieldGet( 'total_unidades' ) )
 
 END CLASS
 
@@ -57,8 +55,8 @@ METHOD buildData()
                                  MovimientosAlmacenLineasRepository():getSerializedColumnsSentenceToLabels(),;
                                  {|| ::goTop() },;
                                  {|| ::skipper() },;
-                                 {|| ::oLineasMovimientosAlmacenMemList:skip(-1) },;
-                                 {|| ::oLineasMovimientosAlmacenMemList:eof() },;
+                                 {|| ::oMemList:skip(-1) },;
+                                 {|| ::oMemList:eof() },;
                                  {|cField| ::fieldGet( cField ) } )
 
 RETURN NIL
@@ -79,7 +77,7 @@ METHOD skipper()
 
    if ::nLabelsPrinted > ::nLabelsToPrint  
 
-      ::oLineasMovimientosAlmacenMemList:Skip( 1 )   
+      ::oMemList:Skip( 1 )   
 
       ::resetLabelsToPrint()
 
@@ -93,7 +91,7 @@ METHOD goTop()
 
    ::resetLabelsToPrint()
 
-RETURN ( ::oLineasMovimientosAlmacenMemList:goTop() )
+RETURN ( ::oMemList:goTop() )
 
 //---------------------------------------------------------------------------//
 
@@ -103,7 +101,7 @@ METHOD fieldGet( cField )
       RETURN ( "" )
    end if 
 
-RETURN ( ::oLineasMovimientosAlmacenMemList:fieldGet( cField ) )
+RETURN ( ::oMemList:fieldGet( cField ) )
 
 //---------------------------------------------------------------------------//
 

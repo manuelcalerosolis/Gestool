@@ -27,7 +27,7 @@ CLASS EtiquetasMovimientosAlmacenController FROM SQLBaseController
 
    METHOD generateLabels()
 
-   METHOD editLabels()
+   METHOD editLabelDocument()
 
 END CLASS
 
@@ -113,9 +113,39 @@ RETURN ( Self )
 
 //---------------------------------------------------------------------------//
 
-METHOD editLabels()
+METHOD editLabelDocument()
 
-   msgalert( ::oDialogView:cFormatoLabel )
+   local nRecno
+   local oReport  
+
+   if empty( ::oDialogView:cFormatoLabel )
+      msgStop( "No hay formatos por defecto" )
+      RETURN ( self )  
+   end if 
+
+   nRecno                           := ::oHashList:Recno()
+
+   oReport                          := MovimientosAlmacenLabelReport():New( Self )
+
+   oReport:CreateFastReport()
+
+   oReport:setDevice( IS_SCREEN )
+
+   oReport:setRowSet( ::oHashList )
+   
+   oReport:setId( ::oDialogView:cFormatoLabel )
+
+   oReport:buildData()
+
+   if oReport:isLoad()
+
+      oReport:Design()
+
+      oReport:DestroyFastReport()
+   
+   end if 
+
+   ::oHashList:goTo( nRecno )
 
 RETURN ( Self )
 
