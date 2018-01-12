@@ -41,6 +41,14 @@ CLASS MovimientosAlmacenLineasRepository FROM SQLBaseRepository
 
    METHOD getSqlSentenceMovimientosAlmacenForReport( oReporting )
 
+   METHOD getColumnMovimiento()  INLINE   (  "CASE "                                               + ;
+                                                "WHEN movimientos_almacen.tipo_movimiento = 1 THEN 'Entre almacenes' " + ;
+                                                "WHEN movimientos_almacen.tipo_movimiento = 2 THEN 'Regularización' "  + ;
+                                                "WHEN movimientos_almacen.tipo_movimiento = 3 THEN 'Objetivos' "       + ;
+                                                "WHEN movimientos_almacen.tipo_movimiento = 4 THEN 'Consolidación' "   + ;
+                                                "ELSE 'Vacio'"                                     + ;
+                                             "END as movimientos_almacen.nombre_movimiento, " )
+
    METHOD getRowSetMovimientosAlmacenForReport( oReporting )
 
 END CLASS
@@ -294,26 +302,41 @@ METHOD getSqlSentenceMovimientosAlmacenForReport( oReporting )
    local cSentence   
 
    cSentence         := "SELECT movimientos_almacen.id, "
-   cSentence         +=    "movimientos_almacen.fecha_hora, "
+   cSentence         +=    "movimientos_almacen.numero, "
+   cSentence         +=    "movimientos_almacen.delegacion, "
+   cSentence         +=    "CAST(movimientos_almacen.fecha_hora AS date) AS fecha, "
+   cSentence         +=    SQLMovimientosAlmacenModel():getColumnMovimiento( 'movimientos_almacen' )
    cSentence         +=    "movimientos_almacen.almacen_destino, "
    cSentence         +=    "movimientos_almacen.almacen_origen, "
    cSentence         +=    "movimientos_almacen_lineas.parent_uuid, "
    cSentence         +=    "movimientos_almacen_lineas.codigo_articulo, "
+   cSentence         +=    "movimientos_almacen_lineas.codigo_primera_propiedad, "
+   cSentence         +=    "movimientos_almacen_lineas.codigo_segunda_propiedad, "
    cSentence         +=    "movimientos_almacen_lineas.valor_primera_propiedad, "
    cSentence         +=    "movimientos_almacen_lineas.valor_segunda_propiedad, "
    cSentence         +=    "movimientos_almacen_lineas.lote, "
+   cSentence         +=    "movimientos_almacen_lineas.bultos_articulo, "
    cSentence         +=    "movimientos_almacen_lineas.cajas_articulo, "
    cSentence         +=    "movimientos_almacen_lineas.unidades_articulo, "
-   cSentence         +=    "( IF( movimientos_almacen_lineas.cajas_articulo = 0, 1, movimientos_almacen_lineas.cajas_articulo ) * movimientos_almacen_lineas.unidades_articulo ) as totalUnidadesStock "
+   cSentence         +=    "( IF( movimientos_almacen_lineas.cajas_articulo = 0, 1, movimientos_almacen_lineas.cajas_articulo ) * movimientos_almacen_lineas.unidades_articulo ) as total_unidades, "
+   cSentence         +=    "movimientos_almacen_lineas.precio_articulo "
    cSentence         += "FROM movimientos_almacen_lineas "
    cSentence         += "INNER JOIN movimientos_almacen "
    cSentence         +=    "ON movimientos_almacen.uuid = movimientos_almacen_lineas.parent_uuid "
    cSentence         += "WHERE movimientos_almacen.empresa = " + quoted( cCodEmp() ) + " "                                     
    
    if !empty( oReporting )
-      cSentence      +=    "AND movimientos_almacen_lineas.codigo_articulo >= " + quoted( oReporting:oGrupoArticulo:Cargo:getDesde() ) + " "
-      cSentence      +=    "AND movimientos_almacen_lineas.codigo_articulo <= " + quoted( oReporting:oGrupoArticulo:Cargo:getHasta() ) 
+
+      msgalert( oReporting:getDesdeFecha(), "oReporting:getDesdeFecha() " )
+
+      cSentence      +=    "AND CAST(movimientos_almacen.fecha_hora AS date) >= " + toSqlString( oReporting:getDesdeFecha() ) + " "
+      cSentence      +=    "AND CAST(movimientos_almacen.fecha_hora AS date) <= " + toSqlString( oReporting:getHastaFecha() ) + " "
+
+      cSentence      +=    "AND movimientos_almacen_lineas.codigo_articulo >= " + toSqlString( oReporting:getDesdeArticulo() ) + " "
+      cSentence      +=    "AND movimientos_almacen_lineas.codigo_articulo <= " + toSqlString( oReporting:getHastaArticulo() ) + " "
    end if 
+
+   logwrite( cSentence )
 
 RETURN ( cSentence )
 

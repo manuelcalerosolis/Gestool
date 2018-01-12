@@ -279,7 +279,7 @@ RETURN ( .t. )
 
 FUNCTION Test()
 
-   logwrite( MovimientosAlmacenLineasRepository():getSqlSentenceMovimientosAlmacenForReport() )
+   // logwrite( MovimientosAlmacenLineasRepository():getSqlSentenceMovimientosAlmacenForReport() )
 
    // msgalert( hb_valtoexp( TStock():lCheckConsolidacion( '00107220', '002' ) ) )
 

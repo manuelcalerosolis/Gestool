@@ -6,15 +6,17 @@
 
 CLASS SQLMovimientosAlmacenModel FROM SQLExportableModel
 
-   DATA cTableName            INIT "movimientos_almacen"
+   DATA cTableName               INIT "movimientos_almacen"
 
-   DATA cConstraints          INIT "PRIMARY KEY (id), KEY (uuid)"
+   DATA cConstraints             INIT "PRIMARY KEY (id), KEY (uuid)"
 
-   DATA cColumnOrder          INIT "id"
+   DATA cColumnOrder             INIT "id"
 
-   DATA aTextoMovimiento      INIT { "Entre almacenes", "Regularización", "Objetivos", "Consolidación" }
+   DATA aTextoMovimiento         INIT { "Entre almacenes", "Regularización", "Objetivos", "Consolidación" }
 
    METHOD getColumns()
+
+   METHOD getColumnMovimiento()  
 
    METHOD getInitialSelect()
    
@@ -70,13 +72,7 @@ METHOD getInitialSelect()
                            "numero, "                                            + ;
                            "uuid, "                                              + ;
                            "tipo_movimiento, "                                   + ;
-                           "CASE "                                               + ;
-                              "WHEN tipo_movimiento = 1 THEN 'Entre almacenes' " + ;
-                              "WHEN tipo_movimiento = 2 THEN 'Regularización' "  + ;
-                              "WHEN tipo_movimiento = 3 THEN 'Objetivos' "       + ;
-                              "WHEN tipo_movimiento = 4 THEN 'Consolidación' "   + ;
-                              "ELSE 'Vacio'"                                     + ;
-                           "END as nombre_movimiento, "                          + ;
+                           ::getColumnMovimiento()                               + ;
                            "fecha_hora, "                                        + ;
                            "almacen_origen, "                                    + ;
                            "almacen_destino, "                                   + ;
@@ -86,6 +82,8 @@ METHOD getInitialSelect()
                            "divisa_cambio, "                                     + ;
                            "comentarios "                                        + ;        
                         "FROM " + ::getTableName()    
+
+   logwrite( cSelect )
 
 RETURN ( cSelect )
 
@@ -134,5 +132,27 @@ METHOD getDeleteSentence( aUuid )
    cSQLDelete           := nil
 
 RETURN ( cSQLDelete )
+
+//---------------------------------------------------------------------------//
+
+METHOD getColumnMovimiento( cTable )  
+
+   local cSql  
+
+   DEFAULT cTable := ""
+
+   if !empty( cTable )
+      cTable      += "."
+   end if
+
+   cSql           := "CASE "                                                                                                  
+   cSql           +=    "WHEN " + cTable + "tipo_movimiento = 1 THEN 'Entre almacenes' " 
+   cSql           +=    "WHEN " + cTable + "tipo_movimiento = 2 THEN 'Regularización' " 
+   cSql           +=    "WHEN " + cTable + "tipo_movimiento = 3 THEN 'Objetivos' " 
+   cSql           +=    "WHEN " + cTable + "tipo_movimiento = 4 THEN 'Consolidación' " 
+   cSql           +=    "ELSE 'Vacio' "
+   cSql           += "END as nombre_movimiento, "
+
+RETURN ( cSql )
 
 //---------------------------------------------------------------------------//
