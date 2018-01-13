@@ -5564,7 +5564,11 @@ RETURN ( fullCurDir() + "Reporting\" )
 
 //----------------------------------------------------------------------------//
 
-FUNCTION cPatDocuments()
+FUNCTION cPatDocuments( cSubDirectory )
+
+   if !empty( cSubDirectory )
+      RETURN ( fullCurDir() + "Documents\" + cSubDirectory + "\" )
+   end if 
 
 RETURN ( fullCurDir() + "Documents\" )
 

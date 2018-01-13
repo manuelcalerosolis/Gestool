@@ -16,8 +16,11 @@ CLASS EtiquetasSelectorView FROM SQLBaseView
    DATA oSayRegistrosSeleccionados
    DATA cSayRegistrosSeleccionados  INIT "Registros seleccionados"
 
-   DATA oFormatoLabel
-   DATA cFormatoLabel               INIT "MVP"
+   DATA cSubDirectory               INIT "Movimientos almacen"
+
+   DATA oListboxLabel
+   DATA aListboxLabel               INIT {}
+   DATA cListboxLabel               INIT ""
 
    DATA cPrinter
 
@@ -45,8 +48,6 @@ CLASS EtiquetasSelectorView FROM SQLBaseView
    DATA oBtnPropiedades
    DATA oBtnModificar
    DATA oBtnZoom
-
-   DATA inicialDoc                  INIT "MV"
 
    DATA oColumnUnidades
 
@@ -113,6 +114,30 @@ METHOD Activate()
          ID          100 ;
          OF          ::oPages:aDialogs[ 1 ]
 
+      TBtnBmp():ReDefine( 110, "new16",,,,, {|| ::oController:editLabelDocument( ::cFormatoLabel ) }, ::oPages:aDialogs[ 1 ], .f., , .f., "Modificar formato de etiquetas" )
+
+      TBtnBmp():ReDefine( 120, "edit16",,,,, {|| ::oController:editLabelDocument( ::cFormatoLabel ) }, ::oPages:aDialogs[ 1 ], .f., , .f., "Modificar formato de etiquetas" )
+
+      TBtnBmp():ReDefine( 130, "del16",,,,, {|| ::oController:editLabelDocument( ::cFormatoLabel ) }, ::oPages:aDialogs[ 1 ], .f., , .f., "Modificar formato de etiquetas" )
+
+      REDEFINE LISTBOX ::oListboxLabel ;
+         VAR         ::cListboxLabel ;
+         ITEMS       ::aListboxLabel ;
+         ID          140 ;
+         OF          ::oPages:aDialogs[ 1 ]
+
+/*
+      REDEFINE GET   ::oListboxLabel ;
+         VAR         ::cFormatoLabel ;
+         ID          160 ;
+         IDTEXT      161 ;
+         BITMAP      "LUPA" ;
+         OF          ::oPages:aDialogs[ 1 ]
+
+         ::oListboxLabel:bValid  := {|| ::oController:validateFormatoDocumento() }
+         ::oListboxLabel:bHelp   := {|| brwDocumento( ::oListboxLabel, ::oListboxLabel:oHelpText, ::inicialDoc ) }
+*/
+
       REDEFINE GET   ::nFilaInicio ;
          ID          180 ;
          PICTURE     "999" ;
@@ -124,18 +149,6 @@ METHOD Activate()
          PICTURE     "999" ;
          SPINNER ;
          OF          ::oPages:aDialogs[ 1 ]
-
-      REDEFINE GET   ::oFormatoLabel ;
-         VAR         ::cFormatoLabel ;
-         ID          160 ;
-         IDTEXT      161 ;
-         BITMAP      "LUPA" ;
-         OF          ::oPages:aDialogs[ 1 ]
-
-         ::oFormatoLabel:bValid  := {|| ::oController:validateFormatoDocumento() }
-         ::oFormatoLabel:bHelp   := {|| brwDocumento( ::oFormatoLabel, ::oFormatoLabel:oHelpText, ::inicialDoc ) }
-
-      TBtnBmp():ReDefine( 220, "gc_document_text_pencil_12",,,,, {|| ::oController:editLabelDocument( ::cFormatoLabel ) }, ::oPages:aDialogs[ 1 ], .f., , .f., "Modificar formato de etiquetas" )
 
       REDEFINE RADIO ::nCantidadLabels ;
          ID          200, 201 ;
@@ -302,7 +315,13 @@ RETURN ( self )
 
 METHOD startDialog()
 
-   ::oFormatoLabel:lValid()
+   local aFiles   := directory( cPatDocuments( ::cSubDirectory ) + "*.fr3" )
+
+   if empty( aFiles )
+      RETURN ( self )
+   end if 
+
+   aeval( aFiles, {|aFile| ::oListboxLabel:add( aFile[ 1 ] ) } )
 
 RETURN ( self )
 
