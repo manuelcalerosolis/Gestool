@@ -1456,9 +1456,9 @@ METHOD nSQLStockActual( cCodArt, cCodAlm, cValPr1, cValPr2, cLote ) CLASS TStock
 
       // Obtenermos el dato de la consolidacion--------------------------------
 
-      hFechaHoraConsolidacion    := MovimientosAlmacenesLineasModel():getFechaHoraConsolidacion( cCodArt, cCodAlm, cValPr1, cValPr2, cLote )
+      // hFechaHoraConsolidacion    := MovimientosAlmacenesLineasModel():getFechaHoraConsolidacion( cCodArt, cCodAlm, cValPr1, cValPr2, cLote )
 
-      //hFechaHoraConsolidacion    := MovimientosAlmacenLineasRepository():getFechaHoraConsolidacion( cCodArt, cCodAlm, cValPr1, cValPr2, cLote )
+      hFechaHoraConsolidacion    := MovimientosAlmacenLineasRepository():getHashFechaHoraConsolidacion( cCodArt, cCodAlm, cValPr1, cValPr2, cLote )
 
       if !empty( hFechaHoraConsolidacion )
          
@@ -5456,21 +5456,18 @@ RETURN ( ::dConsolidacion )
 
 METHOD lCheckConsolidacion( cCodigoArticulo, cCodigoAlmacen, cCodigoPrimeraPropiedad, cCodigoSegundaPropiedad, cValorPrimeraPropiedad, cValorSegundaPropiedad, cLote, dFecha, tHora )
 
-   local cSentence
    local dConsolidacion 
 
    // Quitar esta linea si no se quiere usar SQL------------------------------- 
    
-   cSentence            := MovimientosAlmacenLineasRepository():getSQLSentenceFechaHoraConsolidacion( cCodigoArticulo, cCodigoAlmacen, cCodigoPrimeraPropiedad, cCodigoSegundaPropiedad, cValorPrimeraPropiedad, cValorSegundaPropiedad, cLote, dFecha, tHora )
-
-   dConsolidacion       := getSQLDatabase():selectValue( cSentence )
+   dConsolidacion       := MovimientosAlmacenLineasRepository():getFechaHoraConsolidacion( cCodigoArticulo, cCodigoAlmacen, cCodigoPrimeraPropiedad, cCodigoSegundaPropiedad, cValorPrimeraPropiedad, cValorSegundaPropiedad, cLote, dFecha, tHora )
 
 RETURN ( empty( dConsolidacion ) .or. hb_dtot( dFecha, tHora ) >= dConsolidacion )
    
    /*
    Uso de funciones anteriores a MySQL-----------------------------------------
    */
-/*
+   /*
    dConsolidacion       := ::scanConsolidacion( cCodigoArticulo, cCodigoAlmacen, cValorPrimeraPropiedad, cValorSegundaPropiedad, cLote )
 
    if isfalse( dConsolidacion )
@@ -5480,7 +5477,7 @@ RETURN ( empty( dConsolidacion ) .or. hb_dtot( dFecha, tHora ) >= dConsolidacion
    end if 
    
 RETURN ( empty( dConsolidacion ) .or. dtos( dFecha ) + tHora >= dConsolidacion )
-*/
+   */
 
 //---------------------------------------------------------------------------//
 

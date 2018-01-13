@@ -21,33 +21,29 @@ CLASS MovimientosAlmacenLineasRepository FROM SQLBaseRepository
 
    METHOD getSQLSentenceToLabels( initialId, finalId )
 
-   METHOD getSQLSentenceFechaHoraConsolidacion( cCodigoArticulo, cCodigoAlmacen, cCodigoPrimeraPropiedad, cCodigoSegundaPropiedad, cValorPrimeraPropiedad, cValorSegundaPropiedad, cLote, dFecha, tHora )
-
    METHOD getSqlSentenceIdByUuid( uuid ) 
 
    METHOD getIdByUuid( nNumber )  INLINE ( getSQLDataBase():selectValue( ::getSqlSentenceIdByUuid( nNumber ) ) )
 
-   METHOD getFechaHoraConsolidacion( cCodigoArticulo, cCodigoAlmacen, cValorPropiedad1, cValorPropiedad2, cLote )
+   METHOD getSqlSentenceTotalUnidades()
+
+   METHOD getSQLSentenceFechaHoraConsolidacion()
+   METHOD getFechaHoraConsolidacion()
+   METHOD getHashFechaHoraConsolidacion()
+
+   METHOD getSqlSentenceConsolidacion()
 
    METHOD getTotalUnidadesStock( tConsolidacion, cCodigoArticulo, cCodigoAlmacen, cValorPropiedad1, cValorPropiedad2, cLote )
 
    METHOD getTotalUnidadesEntrada( tConsolidacion, cCodigoArticulo, cCodigoAlmacen, cValorPropiedad1, cValorPropiedad2, cLote ) ; 
-      INLINE ( ::getTotalUnidades( tConsolidacion, cCodigoArticulo, cCodigoAlmacen, cValorPropiedad1, cValorPropiedad2, cLote, .t. ) )
+                                 INLINE ( ::getTotalUnidades( tConsolidacion, cCodigoArticulo, cCodigoAlmacen, cValorPropiedad1, cValorPropiedad2, cLote, .t. ) )
 
    METHOD getTotalUnidadesSalida( tConsolidacion, cCodigoArticulo, cCodigoAlmacen, cValorPropiedad1, cValorPropiedad2, cLote ) ;
-      INLINE ( ::getTotalUnidades( tConsolidacion, cCodigoArticulo, cCodigoAlmacen, cValorPropiedad1, cValorPropiedad2, cLote, .f. ) )
+                                 INLINE ( ::getTotalUnidades( tConsolidacion, cCodigoArticulo, cCodigoAlmacen, cValorPropiedad1, cValorPropiedad2, cLote, .f. ) )
 
    METHOD getTotalUnidades( tConsolidacion, cCodigoArticulo, cCodigoAlmacen, cValorPropiedad1, cValorPropiedad2, cLote, lEntrada )
 
    METHOD getSqlSentenceMovimientosAlmacenForReport( oReporting )
-
-   METHOD getColumnMovimiento()  INLINE   (  "CASE "                                               + ;
-                                                "WHEN movimientos_almacen.tipo_movimiento = 1 THEN 'Entre almacenes' " + ;
-                                                "WHEN movimientos_almacen.tipo_movimiento = 2 THEN 'Regularización' "  + ;
-                                                "WHEN movimientos_almacen.tipo_movimiento = 3 THEN 'Objetivos' "       + ;
-                                                "WHEN movimientos_almacen.tipo_movimiento = 4 THEN 'Consolidación' "   + ;
-                                                "ELSE 'Vacio'"                                     + ;
-                                             "END as movimientos_almacen.nombre_movimiento, " )
 
    METHOD getRowSetMovimientosAlmacenForReport( oReporting )
 
@@ -190,48 +186,64 @@ RETURN ( cSql )
 
 METHOD getSqlSentenceIdByUuid( uuid ) 
 
-   local cSql  := "SELECT id FROM " + ::getTableName() + " " 
-
+   local cSql  := "SELECT id "
+   cSql        +=    "FROM " + ::getTableName() + " " 
    cSql        +=    "WHERE uuid = " + quoted( uuid ) 
 
 RETURN ( cSql )
 
 //---------------------------------------------------------------------------//
 
+METHOD getSqlSentenceConsolidacion( cCodigoArticulo, cCodigoAlmacen, cValorPropiedad1, cValorPropiedad2, cLote )
+
+   local cSentence        
+
+   cSentence         := "SELECT movimientos_almacen.id, "
+   cSentence         +=    "movimientos_almacen.fecha_hora, "
+   cSentence         +=    "movimientos_almacen.almacen_destino, "
+   cSentence         +=    "movimientos_almacen.tipo_movimiento, "
+   cSentence         +=    "movimientos_almacen_lineas.parent_uuid, "
+   cSentence         +=    "movimientos_almacen_lineas.codigo_articulo, "
+   cSentence         +=    "movimientos_almacen_lineas.valor_primera_propiedad, "
+   cSentence         +=    "movimientos_almacen_lineas.valor_segunda_propiedad, "
+   cSentence         +=    "movimientos_almacen_lineas.lote "
+   cSentence         += "FROM movimientos_almacen "
+   cSentence         += "INNER JOIN movimientos_almacen_lineas "
+   cSentence         +=    "ON movimientos_almacen_lineas.parent_uuid = movimientos_almacen.uuid " 
+   cSentence         += "WHERE empresa = " + quoted( cCodEmp() ) + " "                                     
+   cSentence         +=    "AND  movimientos_almacen.almacen_destino = " + quoted( cCodigoAlmacen ) + " "
+   cSentence         +=    "AND  movimientos_almacen.tipo_movimiento = '4' "
+   cSentence         +=    "AND  movimientos_almacen_lineas.codigo_articulo = " + quoted( cCodigoArticulo ) + " "
+   cSentence         +=    "AND  movimientos_almacen_lineas.valor_primera_propiedad = " + quoted( cValorPropiedad1 ) + " "
+   cSentence         +=    "AND  movimientos_almacen_lineas.valor_segunda_propiedad = " + quoted( cValorPropiedad2 ) + " "
+   cSentence         +=    "AND  movimientos_almacen_lineas.lote = " + quoted( cLote ) + " "
+   cSentence         += "ORDER BY movimientos_almacen.fecha_hora DESC "
+   cSentence         += "LIMIT 1"
+
+RETURN ( cSentence )
+
+//---------------------------------------------------------------------------//
+
 METHOD getFechaHoraConsolidacion( cCodigoArticulo, cCodigoAlmacen, cValorPropiedad1, cValorPropiedad2, cLote )
 
+   local cSentence   := ::getSqlSentenceFechaHoraConsolidacion( cCodigoArticulo, cCodigoAlmacen, cValorPropiedad1, cValorPropiedad2, cLote )
+
+RETURN ( ::getDatabase():selectValue( cSentence ) )
+
+//---------------------------------------------------------------------------//
+
+METHOD getHashFechaHoraConsolidacion( cCodigoArticulo, cCodigoAlmacen, cValorPropiedad1, cValorPropiedad2, cLote )
+
    local aBuffer
-   local hResult     := { => }
-   local cSql        := "SELECT movimientos_almacen.id, "
-         cSql        +=    "movimientos_almacen.fecha_hora, "
-         cSql        +=    "movimientos_almacen.almacen_destino, "
-         cSql        +=    "movimientos_almacen.tipo_movimiento, "
-         cSql        +=    "movimientos_almacen_lineas.parent_uuid, "
-         cSql        +=    "movimientos_almacen_lineas.codigo_articulo, "
-         cSql        +=    "movimientos_almacen_lineas.valor_primera_propiedad, "
-         cSql        +=    "movimientos_almacen_lineas.valor_segunda_propiedad, "
-         cSql        +=    "movimientos_almacen_lineas.lote "
-         cSql        += "FROM movimientos_almacen "
-         cSql        += "INNER JOIN movimientos_almacen_lineas "
-         cSql        +=    "ON movimientos_almacen_lineas.parent_uuid = movimientos_almacen.uuid " 
-         cSql        += "WHERE empresa = " + quoted( cCodEmp() ) + " "                                     
-         cSql        +=    "AND  movimientos_almacen.almacen_destino = " + quoted( cCodigoAlmacen ) + " "
-         cSql        +=    "AND  movimientos_almacen.tipo_movimiento = '4' "
-         cSql        +=    "AND  movimientos_almacen_lineas.codigo_articulo = " + quoted( cCodigoArticulo ) + " "
-         cSql        +=    "AND  movimientos_almacen_lineas.valor_primera_propiedad = " + quoted( cValorPropiedad1 ) + " "
-         cSql        +=    "AND  movimientos_almacen_lineas.valor_segunda_propiedad = " + quoted( cValorPropiedad2 ) + " "
-         cSql        +=    "AND  movimientos_almacen_lineas.lote = " + quoted( cLote ) + " "
-         cSql        += "ORDER BY movimientos_almacen.fecha_hora DESC "
-         cSql        += "LIMIT 1"
+   local hResult     := {=>}
+   local cSentence   := ::getSqlSentenceFechaHoraConsolidacion( cCodigoArticulo, cCodigoAlmacen, cValorPropiedad1, cValorPropiedad2, cLote )
 
-   aBuffer           := ::getDatabase():selectFetchHash( cSql )
+   aBuffer           := ::getDatabase():selectFetchHash( cSentence )
 
-   if hb_isArray( aBuffer ) .and. len( aBuffer ) > 0
-
-      hResult        := { "fecha" => hb_TtoD( hGet( aBuffer[1], "fecha_hora" ) ),;
-                          "hora" => SubStr( hb_TSToStr( hGet( aBuffer[1], "fecha_hora" ) ), 12, 8 ),;
-                          "fecha_hora" => hGet( aBuffer[1], "fecha_hora" ) }
-
+   if hb_isarray( aBuffer ) .and. len( aBuffer ) > 0
+      hResult        := { "fecha"      => hb_ttod( hGet( atail( aBuffer ), "fecha_hora" ) ),;
+                          "hora"       => substr( hb_tstostr( hGet( atail( aBuffer ), "fecha_hora" ) ), 12, 8 ),;
+                          "fecha_hora" => hGet( atail( aBuffer ), "fecha_hora" ) }
    end if
 
 RETURN ( hResult )
@@ -247,10 +259,8 @@ RETURN ( nEntrada - nSalida )
 
 //---------------------------------------------------------------------------//
 
-METHOD getTotalUnidades( tConsolidacion, cCodigoArticulo, cCodigoAlmacen, cValorPropiedad1, cValorPropiedad2, cLote, lEntrada )
+METHOD getSqlSentenceTotalUnidades( tConsolidacion, cCodigoArticulo, cCodigoAlmacen, cValorPropiedad1, cValorPropiedad2, cLote, lEntrada )
 
-   local nTotal      := 0
-   local aBuffer
    local cSentence
 
    cSentence         := "SELECT movimientos_almacen.id, "
@@ -287,10 +297,21 @@ METHOD getTotalUnidades( tConsolidacion, cCodigoArticulo, cCodigoAlmacen, cValor
    cSentence         +=    "AND movimientos_almacen_lineas.lote = " + quoted( cLote ) + " "
    cSentence         += "LIMIT 1"
 
-   aBuffer           := ::getDatabase():selectFetchHash( cSentence )
+RETURN ( cSentence )
 
+//---------------------------------------------------------------------------//
+
+METHOD getTotalUnidades( tConsolidacion, cCodigoArticulo, cCodigoAlmacen, cValorPropiedad1, cValorPropiedad2, cLote, lEntrada )
+
+   local aBuffer
+   local cSentence    
+   local nTotal      := 0
+
+   cSentence         := ::getSqlSentenceTotalUnidades( tConsolidacion, cCodigoArticulo, cCodigoAlmacen, cValorPropiedad1, cValorPropiedad2, cLote, lEntrada )
+
+   aBuffer           := ::getDatabase():selectFetchHash( cSentence ) 
    if !hb_isnil( aBuffer )
-      nTotal         := hGet( aBuffer[1], "totalUnidadesStock" )
+      nTotal         := hGet( atail( aBuffer ), "totalUnidadesStock" )
    end if
 
 RETURN ( nTotal )
@@ -335,8 +356,6 @@ METHOD getSqlSentenceMovimientosAlmacenForReport( oReporting )
       cSentence      +=    "AND movimientos_almacen_lineas.codigo_articulo >= " + toSqlString( oReporting:getDesdeArticulo() ) + " "
       cSentence      +=    "AND movimientos_almacen_lineas.codigo_articulo <= " + toSqlString( oReporting:getHastaArticulo() ) + " "
    end if 
-
-   logwrite( cSentence )
 
 RETURN ( cSentence )
 

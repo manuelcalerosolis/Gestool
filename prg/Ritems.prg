@@ -684,30 +684,33 @@ FUNCTION CfgDocs( oMenuItem, oWnd )
             CLOSED ;
             LEVEL    ACC_EDIT
 
-            DEFINE BTNSHELL RESOURCE "GC_DOCUMENT_TEXT_WORKER_" OF oWndBrw ;
+         DEFINE BTNSHELL RESOURCE "GC_DOCUMENT_TEXT_WORKER_" OF oWndBrw ;
             ACTION   ( ( dbfDoc )->( dbSetFilter( {|| Field->cTipo == 'EP' }, "Field->cTipo == 'EP'" ) ), ( dbfDoc )->( dbGoTop() ), oWndBrw:Refresh() ) ;
             TOOLTIP  "Etiquetas producción" ;
             FROM     oFlt ;
             CLOSED ;
             LEVEL    ACC_EDIT
 
-#ifndef __SQLLIB__
+      DEFINE BTNSHELL RESOURCE "gc_export2_" OF oWndBrw ;
+         NOBORDER ;
+         ACTION   ( ControllerExportDocument( oWndBrw, ".fr3" ) );
+         TOOLTIP  "Exportar fr3";
+         HOTKEY   "3" ;
+         LEVEL    ACC_EDIT
 
       DEFINE BTNSHELL RESOURCE "gc_export2_" OF oWndBrw ;
-			NOBORDER ;
-         ACTION   ( DlgExportDocument( oWndBrw ) );
-         TOOLTIP  "E(x)portar";
+         NOBORDER ;
+         ACTION   ( ControllerExportDocument( oWndBrw, ".zip" ) );
+         TOOLTIP  "E(x)portar zip";
          HOTKEY   "X" ;
          LEVEL    ACC_EDIT
 
       DEFINE BTNSHELL RESOURCE "gc_import_" OF oWndBrw ;
 			NOBORDER ;
          ACTION   ( DlgImportDocument( oWndBrw ) );
-         TOOLTIP  "Im(p)ortar";
+         TOOLTIP  "Im(p)ortar zip";
          HOTKEY   "P" ;
          LEVEL    ACC_EDIT
-
-#endif
 
       DEFINE BTNSHELL RESOURCE "END" GROUP OF oWndBrw ;
 			NOBORDER ;
@@ -2690,11 +2693,33 @@ RETURN ( nil )*/
 
 //---------------------------------------------------------------------------//
 
-Static Function DlgExportDocument( oWndBrw )
+STATIC Function ControllerExportDocument( oWndBrw, cExtension )
+
+   local cFileToExport  := DlgExportDocument( oWndBrw, cExtension )
+
+   if empty( cFileToExport )
+      RETURN ( nil )
+   end if 
+
+   if cExtension == ".zip"
+      ZipExportDocument( cFileToExport )
+   else 
+      Fr3ExportDocument( cFileToExport )
+   end if 
+
+RETURN ( nil )
+
+//---------------------------------------------------------------------------//
+
+Static Function DlgExportDocument( oWndBrw, cExtension )
 
    local oDlg
    local oGetFile
-   local cGetFile    := Padr( FullCurDir() + "Docs.Zip", 100 )
+   local cGetFile    
+
+   DEFAULT cExtension   := ".zip"
+
+   cGetFile             := padr( cPatDocuments() + alltrim( ( dbfDoc )->cDescrip ) + cExtension, 300 )
 
    DEFINE DIALOG oDlg RESOURCE "EXPDOCS"
 
@@ -2705,28 +2730,48 @@ Static Function DlgExportDocument( oWndBrw )
       REDEFINE GET oGetFile VAR cGetFile ;
          ID       110 ;
          BITMAP   "FOLDER" ;
-         ON HELP  ( oGetFile:cText( Padr( cGetFile( "*.zip", "Seleccion de fichero" ), 100 ) ) ) ;
+         ON HELP  ( oGetFile:cText( Padr( cGetFile( "*" + cExtension, "Seleccion de fichero" ), 100 ) ) ) ;
 			OF 		oDlg
 
       REDEFINE BUTTON ;
          ID       IDOK ;
-         OF 	oDlg ;
-         ACTION   ( oDlg:Disable(), ExportDocument( cGetFile ), oDlg:Enable() )
+         OF       oDlg ;
+         ACTION   ( oDlg:end( IDOK ) )
 
-	REDEFINE BUTTON ;
+      REDEFINE BUTTON ;
          ID       IDCANCEL ;
-         OF 	oDlg ;
-	   ACTION 	( oDlg:end() )
+         OF       oDlg ;
+         ACTION   ( oDlg:end() )
 
-   oDlg:AddFastKey( VK_F5, {|| oDlg:Disable(), ExportDocument( cGetFile ), oDlg:Enable() } )
+   oDlg:AddFastKey( VK_F5, {|| oDlg:End( IDOK ) } )
 
    ACTIVATE DIALOG oDlg CENTER
 
-Return ( nil )
+   if ( oDlg:nResult == IDOK )
+      RETURN ( alltrim( cGetFile ) )
+   end if 
+
+RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 
-Static Function ExportDocument( cGetFile )
+STATIC FUNCTION fr3ExportDocument( cGetFile )
+
+   if file( cGetFile ) .and. !msgYesNo( "El fichero " + ( cGetFile ) + " ya existe.", "¿ Desea sobrescribir el fichero?" )
+      RETURN ( nil )
+   end if 
+
+   if memowrit( cGetFile, ( dbfDoc )->mReport )
+      msgInfo( "Fichero " + ( cGetFile ) + " exportado con éxito." )
+   else
+      msgStop( "El fichero " + ( cGetFile ) + " no ha sido exportado con éxito." )
+   end if 
+
+RETURN ( nil )
+
+//---------------------------------------------------------------------------//
+
+Static Function zipExportDocument( cGetFile )
 
    local aDir
    local nZip
@@ -2744,7 +2789,7 @@ Static Function ExportDocument( cGetFile )
 
    cGetFile          := Rtrim( cGetFile )
 
-   EraseFilesInDirectory(cPatIn(), "*.*" )
+   EraseFilesInDirectory( cPatIn(), "*.*" )
 
    if !mkDocs( cPatIn(), , , , .f., cLocalDriver() )
       Return .f.
@@ -2858,7 +2903,7 @@ Static Function ExportDocument( cGetFile )
             aEval( aDir, { | cName, nIndex | hb_ZipFile( cGetFile, cPatIn() + cName[ 1 ], 9 ) } )
             hb_gcAll()
 
-            EraseFilesInDirectory(cPatIn(), "*.*" )
+            EraseFilesInDirectory( cPatIn(), "*.*" )
 
             msgInfo( "Documento exportado satisfactoriamente" )
 

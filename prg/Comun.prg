@@ -2939,6 +2939,7 @@ FUNCTION appCheckDirectory()
    if( !lIsDir( cPatEmpTmp() ),        makedir( cNamePath( cPatEmpTmp() ) ), )
    if( !lIsDir( cPatScript() ),        makedir( cNamePath( cPatScript() ) ), )
    if( !lIsDir( cPatReporting() ),     makedir( cNamePath( cPatReporting() ) ), )
+   if( !lIsDir( cPatDocuments() ),     makedir( cNamePath( cPatDocuments() ) ), )
    if( !lIsDir( cPatUserReporting() ), makedir( cNamePath( cPatUserReporting() ) ), )
    if( !lIsDir( cPatConfig() ),        makedir( cNamePath( cPatConfig() ) ), )
    if( !lIsDir( cPatDat() ),           makedir( cNamePath( cPatDat() ) ), )
@@ -5560,6 +5561,12 @@ RETURN ( fullCurDir() + "Help\" )
 FUNCTION cPatReporting()
 
 RETURN ( fullCurDir() + "Reporting\" )
+
+//----------------------------------------------------------------------------//
+
+FUNCTION cPatDocuments()
+
+RETURN ( fullCurDir() + "Documents\" )
 
 //----------------------------------------------------------------------------//
 
