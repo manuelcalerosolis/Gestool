@@ -122,8 +122,6 @@ METHOD getDeleteSentence( aUuid )
 
    end if 
    
-   msgalert( hb_valtoexp( aSQLDelete ), "aSQLDelete" )
-
 RETURN ( aSQLDelete )
 
 //---------------------------------------------------------------------------//
