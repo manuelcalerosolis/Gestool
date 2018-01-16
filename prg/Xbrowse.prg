@@ -6169,15 +6169,13 @@ METHOD SaveState( aAdditionalData ) CLASS TXBrowse
    local aData    := { "nCreationOrders", "nRowHeight", "nWidths", "lHides", "cGrpHdrs", "cHeaders" }
    local aState   := {}
 
-   if ValType( aAdditionalData ) == 'A'
-      AEval( aAdditionalData, { |c| AAdd( aData, c ) } )
+   if hb_isarray( aAdditionalData )
+      aeval( aAdditionalData, { |c| aadd( aData, c ) } )
    endif
 
-   AEval( aData, { |c| AAdd( aState, { "_" + c, OSend( Self, c ) } ) } )
+   aeval( aData, { |c| aadd( aState, { "_" + c, oSend( Self, c ) } ) } )
 
-// return "XSS:" + HB_StrToHex( ASave( aState ) ) // Upto FWH 11.07
-
-return "XS1:" + FW_ValToExp( aState )            // From FWH 11.08
+RETURN "XS1:" + fw_valtoexp( aState )            // From FWH 11.08
 
 //----------------------------------------------------------------------------//
 
@@ -6185,24 +6183,20 @@ METHOD RestoreState( cState ) CLASS TXBrowse
 
    local aState
 
-   if ! Empty( cState )
-      if Left( cState, 2 ) == "XS"
-         if Left( cState, 4 ) == 'XS1:'
-            cState      := SubStr( cState, 5 )
-            aState      := &( cState )
-         elseif Left( cState, 4 ) == 'XSS:'
-            aState      := ARead( HB_HexToStr( SubStr( cState, 5 ) ) )
-         else
-            return nil
-         endif
-         ::ReArrangeCols( aState[ 1, 2 ], .t. , .f. )
-         AEval( aState, { |a| OSend( Self, a[ 1 ], a[ 2 ] ) }, 2 )
-      else
-         return ::OldRestoreState( cState )
-      endif
+   if !empty( cState ) .and. left( cState, 4 ) == 'XS1:'
+
+      cState      := SubStr( cState, 5 )
+
+      aState      := &( cState )
+
+      ::reArrangeCols( aState[ 1, 2 ], .t. , .f. )
+
+      aeval( aState, { |a| oSend( Self, a[ 1 ], a[ 2 ] ) }, 2 )
 
       ::GetDisplayCols()
+
       ::Refresh()
+
    endif
 
 return nil

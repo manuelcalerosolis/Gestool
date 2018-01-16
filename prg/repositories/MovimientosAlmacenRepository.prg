@@ -29,7 +29,7 @@ METHOD getSqlSentenceByIdOrLast( id )
    if empty( id )
       cSql     +=    "ORDER BY id DESC LIMIT 1"
    else 
-      cSql     +=    "WHERE id = " + id 
+      cSql     +=    "WHERE id = " + alltrim( str( id ) ) 
    end if 
 
 RETURN ( cSql )

@@ -444,10 +444,10 @@ Return ( bExp )
 
 function GetFileNoExt( cFullFile )
 
-   local cNameFile := AllTrim( GetFileName( cFullFile ) )
-   local n         := AT( ".", cNameFile )
+   local cNameFile := alltrim( GetFileName( cFullFile ) )
+   local n         := at( ".", cNameFile )
 
-return AllTrim( if( n > 0, left( cNameFile, n - 1 ), cNameFile ) )
+return alltrim( if( n > 0, left( cNameFile, n - 1 ), cNameFile ) )
 
 //---------------------------------------------------------------------------//
 // Extrae el Path de un fichero

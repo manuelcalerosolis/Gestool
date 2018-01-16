@@ -6,6 +6,8 @@
 
 CLASS MovimientosAlmacenController FROM SQLNavigatorController
 
+   DATA cFileName
+
    DATA oLineasController
 
    DATA oImportadorController
@@ -15,6 +17,8 @@ CLASS MovimientosAlmacenController FROM SQLNavigatorController
    DATA oEtiquetasController
 
    DATA oContadoresController
+
+   DATA oReport
 
    METHOD New()
    METHOD End()
@@ -34,6 +38,9 @@ CLASS MovimientosAlmacenController FROM SQLNavigatorController
    METHOD validateAgente()          INLINE ( iif(  ::validate( "agente" ),;
                                                    ::stampAgente( ::oDialogView:oGetAgente ),;
                                                    .f. ) )
+
+   METHOD setFileName( cFileName )  INLINE ( ::cFileName := cFileName )
+   METHOD getFileName()             INLINE ( ::cFileName )
 
    METHOD stampAlmacenNombre()
 
@@ -69,6 +76,8 @@ METHOD New()
 
    ::nLevel                   := nLevelUsr( "01050" )
 
+   ::cDirectory               := cPatDocuments( "Movimientos almacen" ) 
+
    ::lTransactional           := .t.
 
    ::lDocuments               := .t.
@@ -87,7 +96,7 @@ METHOD New()
 
    ::oLineasController        := MovimientosAlmacenLineasController():New( self )
 
-   ::hDocuments               := DocumentosModel():getWhereMovimientosAlmacen() 
+   ::loadDocuments()
 
    ::oImportadorController    := ImportadorMovimientosAlmacenLineasController():New( self )
 
@@ -96,6 +105,8 @@ METHOD New()
    ::oEtiquetasController     := EtiquetasMovimientosAlmacenController():New( self )
 
    ::oContadoresController    := ContadoresController():New( self )
+
+   ::oReport                  := MovimientosAlmacenReport():New( Self )
 
    ::oContadoresController:setTabla( 'movimientos_almacen' )
 
@@ -126,6 +137,8 @@ METHOD end()
    ::oEtiquetasController:End()
 
    ::oContadoresController:End()
+
+   ::oReport:End()
 
 RETURN ( Self )
 
@@ -168,11 +181,7 @@ METHOD deleteLines()
 
    local aUuids   
 
-   msgalert( hb_valtoexp( ::aSelected ), "aSelected" )
-
    aUuids         := ::getRowSet():IdFromRecno( ::aSelected, "uuid" )
-
-   msgalert( hb_valtoexp( aUuids ), "aUuids" )
 
    aeval( aUuids, {| uuid | ::oLineasController:deleteLines( uuid ) } )
 
@@ -180,40 +189,59 @@ RETURN ( self )
 
 //---------------------------------------------------------------------------//
 
-METHOD printDocument( nDevice, cFormato )
+METHOD printDocument( nDevice, cFileName )
 
-   local cReport
    local nCopies
-   local oMovimientosAlmacenReport  
 
-   DEFAULT nDevice                  := IS_SCREEN
+   DEFAULT nDevice   := IS_SCREEN
 
-   nCopies                          := ContadoresModel():getCopiasMovimientosAlmacen()
-
-   if empty( cFormato )
-      cFormato                      := ContadoresModel():getFormatoMovimientosAlmacen()
+   if empty( ::aDocuments )
+      msgStop( "No hay formatos para impresión" )
+      RETURN ( self )  
    end if 
 
-   if empty( cFormato )
+   if empty( cFileName )
+      cFileName      := ::aDocuments[ 1 ]
+   end if 
+
+   if empty( cFileName )
       msgStop( "No hay formatos por defecto" )
       RETURN ( self )  
    end if 
 
-   cReport                          := DocumentosModel():getReportWhereCodigo( cFormato )              
+   ::setFileName( cFileName )
+   
+   nCopies           := ContadoresModel():getCopiasMovimientosAlmacen()
 
-   if empty( cReport )
-      msgStop( "El formato esta vacio" )
-      RETURN ( self )  
+   if empty( nCopies )
+      nCopies        := 1
    end if 
 
-   oMovimientosAlmacenReport        := MovimientosAlmacenReport():New( Self )
+   ::oReport:setIds( ::oRowSet:fieldGet( ::getModelColumnKey() ) )
 
-   oMovimientosAlmacenReport:setId( ::getRowSet():fieldget( 'id' ) )
-   oMovimientosAlmacenReport:setDevice( nDevice )
-   oMovimientosAlmacenReport:setCopies( nCopies )
-   oMovimientosAlmacenReport:setReport( cReport )
+   ::oReport:createFastReport()
 
-   oMovimientosAlmacenReport:Print()
+   ::oReport:setDevice( nDevice )
+   
+   ::oReport:setCopies( nCopies )
+   
+   ::oReport:setDirectory( ::getDirectory() )
+
+   ::oReport:setFileName( ::getFileName() )
+
+   ::oReport:buildRowSet()
+
+   ::oReport:setUserDataSet()
+
+   if ::oReport:isLoad()
+
+      ::oReport:show()
+
+   end if 
+   
+   ::oReport:DestroyFastReport()
+
+   ::oReport:freeRowSet()
 
 RETURN ( self ) 
 
@@ -224,8 +252,6 @@ METHOD labelDocument()
    local aIds
 
    aIds              := ::oBrowseView:getRowSet():idFromRecno( ::oBrowseView:oBrowse:aSelected )
-
-   msgalert( hb_valtoexp( aIds ), "aIds" )
 
    ::oEtiquetasController:setIds( aIds )
 
@@ -250,3 +276,4 @@ METHOD insertingBuffer()
 RETURN ( self ) 
 
 //---------------------------------------------------------------------------//
+

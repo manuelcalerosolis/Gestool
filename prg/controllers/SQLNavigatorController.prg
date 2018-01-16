@@ -17,8 +17,6 @@ CLASS SQLNavigatorController FROM SQLBaseController
 
    DATA lCounter                                      INIT .f.
 
-   DATA hDocuments
-
    DATA hFastKey                                      INIT {=>}
 
    DATA oWindowsBar

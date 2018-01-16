@@ -2190,7 +2190,7 @@ METHOD LoadData()
       RETURN ( Self )
    end if 
 
-   ::oBrw:LoadRecnoAndOrder()
+   ::oBrw:Load()
 
 Return ( Self )
 
@@ -2409,7 +2409,6 @@ METHOD CreateXFromCode()
    // Enterprise---------------------------------------------------------------
 
    ::oBrw:Load()
-   ::oBrw:LoadRecnoAndOrder()
 
    ::oBrw:SetFocus()
 

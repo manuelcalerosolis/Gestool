@@ -2923,31 +2923,34 @@ RETURN lStandard
 
 FUNCTION appCheckDirectory()
 
-   if( !lIsDir( cPatDat() ),           makedir( cNamePath( cPatDat() ) ), )
-   if( !lIsDir( cPatADS() ),           makedir( cNamePath( cPatADS() ) ), )
-   if( !lIsDir( cPatIn()  ),           makedir( cNamePath( cPatIn()  ) ), )
-   if( !lIsDir( cPatTmp() ),           makedir( cNamePath( cPatTmp() ) ), )   
-   if( !lIsDir( cPatInFrq() ),         makedir( cNamePath( cPatInFrq() ) ), )
-   if( !lIsDir( cPatOut() ),           makedir( cNamePath( cPatOut() ) ), )
-   if( !lIsDir( cPatSnd() ),           makedir( cNamePath( cPatSnd() ) ), )
-   if( !lIsDir( cPatLog() ),           makedir( cNamePath( cPatLog() ) ), )
-   if( !lIsDir( cPatBmp() ),           makedir( cNamePath( cPatBmp() ) ), )
-   if( !lIsDir( cPatHtml() ),          makedir( cNamePath( cPatHtml() ) ), )
-   if( !lIsDir( cPatXml() ),           makedir( cNamePath( cPatXml() ) ), )
-   if( !lIsDir( cPatSafe() ),          makedir( cNamePath( cPatSafe() ) ), )
-   if( !lIsDir( cPatPsion() ),         makedir( cNamePath( cPatPsion() ) ), )
-   if( !lIsDir( cPatEmpTmp() ),        makedir( cNamePath( cPatEmpTmp() ) ), )
-   if( !lIsDir( cPatScript() ),        makedir( cNamePath( cPatScript() ) ), )
-   if( !lIsDir( cPatReporting() ),     makedir( cNamePath( cPatReporting() ) ), )
-   if( !lIsDir( cPatDocuments() ),     makedir( cNamePath( cPatDocuments() ) ), )
-   if( !lIsDir( cPatUserReporting() ), makedir( cNamePath( cPatUserReporting() ) ), )
-   if( !lIsDir( cPatConfig() ),        makedir( cNamePath( cPatConfig() ) ), )
-   if( !lIsDir( cPatDat() ),           makedir( cNamePath( cPatDat() ) ), )
+   local hDirectory
+
+   for each hDirectory in getScafolding()
+      checkDirectory( hDirectory )
+   next 
 
    // Elimina los temporales de la aplicación----------------------------------
 
    eraseFilesInDirectory( cPatTmp(), "*.*" )
    eraseFilesInDirectory( cPatLog(), "*.*" )
+
+RETURN ( nil )
+
+//---------------------------------------------------------------------------//
+
+STATIC FUNCTION checkDirectory( hDirectory )
+
+   if empty( hget( hDirectory, "Directory" ) )
+      RETURN ( nil )
+   end if 
+
+   if !lIsDir( hget( hDirectory, "Directory" ) )      
+      makedir( cNamePath( hget( hDirectory, "Directory" ) ) )
+   end if 
+
+   if hhaskey( hDirectory, "Subdirectory" )
+      checkDirectory( hget( hDirectory, "Subdirectory" ) )
+   end if 
 
 RETURN ( nil )
 
@@ -2978,7 +2981,7 @@ FUNCTION Ejecutascript()
 
    if dFecha  < GetSysDate()
 
-      aScripts    := Directory( cPatScript() + "*.hrb" )
+      aScripts    := directory( cPatScript() + "*.hrb" )
       if len( aScripts ) > 0
          for each cScript in aScripts
             TScripts():RunScript( cPatScript() + cScript[1] )
@@ -5574,6 +5577,16 @@ RETURN ( fullCurDir() + "Documents\" )
 
 //----------------------------------------------------------------------------//
 
+FUNCTION cPatLabels( cSubDirectory )
+
+   if !empty( cSubDirectory )
+      RETURN ( fullCurDir() + "Labels\" + cSubDirectory + "\" )
+   end if 
+
+RETURN ( fullCurDir() + "Labels\" )
+
+//----------------------------------------------------------------------------//
+
 FUNCTION cPatUserReporting()
 
 RETURN ( fullCurDir() + "UserReporting\" )
@@ -6747,6 +6760,51 @@ Function fwBmpDes()
 RETURN ( LoadBitMap( GetResources(), "Down16" ) )
 
 //---------------------------------------------------------------------------//
+
+static Function getScafolding()
+
+   local hScafolding    := {  {  "Directory"    => cPatDat(),;
+                                 "Backup"       => .t. },;
+                              {  "Directory"    => cPatADS(),;   
+                                 "Backup"       => .t. },;
+                              {  "Directory"    => cPatScript(),;   
+                                 "Backup"       => .t. },;
+                              {  "Directory"    => cPatConfig(),;   
+                                 "Backup"       => .t. },;
+                              {  "Directory"    => cPatDocuments(),;   
+                                 "Backup"       => .t.,;
+                                 "Subdirectory" => ;
+                                 { "Directory"  => cPatDocuments() + "Movimientos almacen\" } },;
+                              {  "Directory"    => cPatLabels(),;   
+                                 "Backup"       => .t.,;
+                                 "Subdirectory" => ;
+                                 { "Directory"  => cPatLabels() + "Movimientos almacen\" } },;
+                              {  "Directory"    => cPatReporting(),;  
+                                 "Backup"       => .t. },;
+                              {  "Directory"    => cPatUserReporting(),;   
+                                 "Backup"       => .t. },;
+                              {  "Directory"    => cPatIn(),;   
+                                 "Backup"       => .f. },;
+                              {  "Directory"    => cPatOut(),;   
+                                 "Backup"       => .f. },;
+                              {  "Directory"    => cPatTmp(),;   
+                                 "Backup"       => .f. },;
+                              {  "Directory"    => cPatSnd(),;   
+                                 "Backup"       => .f. },;
+                              {  "Directory"    => cPatLog(),;   
+                                 "Backup"       => .f. },;
+                              {  "Directory"    => cPatBmp(),;   
+                                 "Backup"       => .f. },;
+                              {  "Directory"    => cPatHtml(),;   
+                                 "Backup"       => .f. },;
+                              {  "Directory"    => cPatXml(),;   
+                                 "Backup"       => .f. },;
+                              {  "Directory"    => cPatSafe(),;   
+                                 "Backup"       => .f. },;
+                              {  "Directory"    => cPatEmpTmp(),;   
+                                 "Backup"       => .f. } }
+
+RETURN ( hScafolding )
 
 /*
 SHOWTASKBAR() // Habilita

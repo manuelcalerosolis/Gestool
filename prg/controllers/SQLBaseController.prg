@@ -37,6 +37,13 @@ CLASS SQLBaseController
 
    DATA aSelected
 
+   DATA aDocuments                                    INIT {}
+
+   DATA cDirectory                     
+
+   METHOD setDirectory( cDirectory )   INLINE ( ::cDirectory := cDirectory )
+   METHOD getDirectory()               INLINE ( ::cDirectory )
+
    METHOD New()
    METHOD Instance()                                  INLINE ( if( empty( ::oInstance ), ::oInstance := ::New(), ), ::oInstance ) 
    METHOD End()
@@ -180,6 +187,13 @@ CLASS SQLBaseController
    // Deprecated---------------------------------------------------------------
 
    METHOD setFastReport( oFastReport, cTitle, cSentence, cColumns )
+
+   // Directorio para documentos y etiquetas-----------------------------------
+
+   METHOD setDirectory( cDirectory )   INLINE ( ::cDirectory := cDirectory )
+   METHOD getDirectory()               INLINE ( ::cDirectory )
+
+   METHOD loadDocuments()
 
 END CLASS
 
@@ -606,3 +620,20 @@ METHOD setFastReport( oFastReport, cTitle, cSentence, cColumns )
 RETURN ( Self )    
     
 //---------------------------------------------------------------------------//
+
+METHOD loadDocuments()
+
+   local aFiles   := directory( ::getDirectory() + "*.fr3" )
+
+   if empty( aFiles )
+      RETURN ( self )
+   end if 
+
+   ::aDocuments   := {}
+
+   aeval( aFiles, {|aFile| aadd( ::aDocuments, aFile[ 1 ] ) } )
+
+RETURN ( self )
+
+//---------------------------------------------------------------------------//
+

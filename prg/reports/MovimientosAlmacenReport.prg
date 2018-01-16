@@ -12,9 +12,11 @@ CLASS MovimientosAlmacenReport FROM SQLBaseReport
 
    DATA oLineasMovimientosAlmacenRowSet
 
-   METHOD buildData() 
+   METHOD buildRowSet() 
 
-   METHOD freeData()
+   METHOD freeRowSet()
+
+   METHOD setUserDataSet()
 
    METHOD Synchronize() 
 
@@ -22,16 +24,32 @@ END CLASS
 
 //---------------------------------------------------------------------------//
 
-METHOD buildData() 
+METHOD buildRowSet()
 
    local oMovimientosAlmacenSelect        
    local oLineasMovimientosAlmacenSelect
 
-   oMovimientosAlmacenSelect           := getSqlDataBase():query( MovimientosAlmacenRepository():getSqlSentenceByIdOrLast( ::getId() ) )
+   oMovimientosAlmacenSelect           := getSqlDataBase():query( MovimientosAlmacenRepository():getSqlSentenceByIdOrLast( ::getIds() ) )
    ::oMovimientosAlmacenRowSet         := oMovimientosAlmacenSelect:fetchRowSet()
 
    oLineasMovimientosAlmacenSelect     := getSqlDataBase():query( MovimientosAlmacenLineasRepository():getSqlSentenceWhereParentUuid( ::oMovimientosAlmacenRowSet:fieldget( "uuid" ) ) )      
    ::oLineasMovimientosAlmacenRowSet   := oLineasMovimientosAlmacenSelect:fetchRowSet()
+
+RETURN NIL
+
+//---------------------------------------------------------------------------//
+
+METHOD freeRowSet() 
+
+   ::oMovimientosAlmacenRowSet:free()
+   
+   ::oLineasMovimientosAlmacenRowSet:free()
+
+RETURN NIL
+
+//---------------------------------------------------------------------------//
+
+METHOD setUserDataSet() 
 
    ::oFastReport:ClearDataSets()
 
@@ -56,16 +74,6 @@ METHOD buildData()
                                     {|| ::synchronize() } )
 
    ::oFastReport:SetResyncPair(    "Movimientos de almacén", "Lineas de movimientos de almacén" )
-
-RETURN NIL
-
-//---------------------------------------------------------------------------//
-
-METHOD freeData() 
-
-   ::oMovimientosAlmacenRowSet:free()
-   
-   ::oLineasMovimientosAlmacenRowSet:free()
 
 RETURN NIL
 

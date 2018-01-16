@@ -7,9 +7,17 @@ CLASS EtiquetasMovimientosAlmacenController FROM SQLBaseController
 
    DATA oHashList
 
-   DATA oStatement
+   DATA cFileName
 
    METHOD New( oController )
+
+   METHOD setDirectory( cDirectory )   INLINE ( ::cDirectory := cDirectory )
+   METHOD getDirectory()               INLINE ( ::cDirectory )
+
+   METHOD setFileName( cFileName )     INLINE ( ::cFileName := cFileName )
+   METHOD getFileName()                INLINE ( ::cFileName )
+
+   METHOD getFullPathFileName()        INLINE ( ::cDirectory + ::cFileName )
 
    METHOD Activate()                   INLINE ( ::generateRowSet(), ::oDialogView:Activate() )
    
@@ -21,13 +29,17 @@ CLASS EtiquetasMovimientosAlmacenController FROM SQLBaseController
    
    METHOD getColumnaInicio()           INLINE ( iif( !empty( ::oDialogView ), ::oDialogView:nColumnaInicio, 0 ) )
 
-   METHOD validateFormatoDocumento()
-
    METHOD generateRowSet()
+
+   METHOD loadLabels()
 
    METHOD generateLabels()
 
-   METHOD editLabelDocument()
+   METHOD editLabel()
+
+   METHOD createLabel()
+
+   METHOD deleteLabel()
 
 END CLASS
 
@@ -37,25 +49,31 @@ METHOD New( oController )
 
    ::Super:New( oController )
 
-   ::cTitle             := "Etiquetas movimientos almacen lineas"
+   ::cTitle       := "Etiquetas movimientos almacen lineas"
 
-   ::oDialogView        := EtiquetasSelectorView():New( self )
+   ::cDirectory   := cPatLabels( "Movimientos almacen" ) 
 
-RETURN ( Self )
+   ::oDialogView  := EtiquetasSelectorView():New( self )
+
+RETURN ( self )
 
 //---------------------------------------------------------------------------//
 
-METHOD validateFormatoDocumento()
+METHOD loadLabels()
 
-   if DocumentosModel():exist( ::oDialogView:cFormatoLabel )
+   local aFiles   := directory( ::getDirectory() + "*.fr3" )
 
-      ::oDialogView:oFormatoLabel:oHelpText:cText( DocumentosModel():getDescripWhereCodigo( ::oDialogView:cFormatoLabel ) )
-
-      RETURN ( .t. )
-
+   if empty( aFiles )
+      RETURN ( self )
    end if 
 
-RETURN ( .f. )
+   ::oDialogView:oListboxFile:aItems   := {}
+
+   aeval( aFiles, {|aFile| ::oDialogView:oListboxFile:add( aFile[ 1 ] ) } )
+
+   ::oDialogView:oListboxFile:goTop()
+
+RETURN ( self )
 
 //---------------------------------------------------------------------------//
 
@@ -74,66 +92,77 @@ METHOD generateRowSet( cOrderBy )
 
    ::oHashList:goTop()
 
-RETURN ( Self )
+RETURN ( self )
 
 //---------------------------------------------------------------------------//
 
 METHOD generateLabels()
 
    local nRecno
-   local cReport
-   local cFormato
-   local oMovimientosAlmacenLabelReport  
+   local oReport  
 
-   if empty( ::oDialogView:cFormatoLabel )
-      msgStop( "No hay formatos por defecto" )
+   ::setFileName( ::oDialogView:cListboxFile )
+
+   if empty( ::getFileName() )
+      msgStop( "No hay formato definido" )
       RETURN ( self )  
    end if 
 
-   cReport                          := DocumentosModel():getReportWhereCodigo( ::oDialogView:cFormatoLabel )              
+   nRecno   := ::oHashList:Recno()
 
-   if empty( cReport )
-      msgStop( "El formato esta vacio" )
-      RETURN ( self )  
+   oReport  := MovimientosAlmacenLabelReport():New( self )
+
+   oReport:createFastReport()
+
+   oReport:setRowSet( ::oHashList )
+
+   oReport:setDevice( IS_SCREEN )
+   
+   oReport:setDirectory( ::getDirectory() )
+
+   oReport:setFileName( ::getFileName() )
+
+   oReport:buildData()
+
+   if oReport:isLoad()
+
+      oReport:show()
+
+      oReport:DestroyFastReport()
+   
    end if 
-
-   oMovimientosAlmacenLabelReport   := MovimientosAlmacenLabelReport():New( Self )
-
-   nRecno                           := ::oHashList:Recno()
-
-   oMovimientosAlmacenLabelReport:setRowSet( ::oHashList )
-   oMovimientosAlmacenLabelReport:setDevice( IS_SCREEN )
-   oMovimientosAlmacenLabelReport:setReport( cReport )
-
-   oMovimientosAlmacenLabelReport:Print()
 
    ::oHashList:goTo( nRecno )
 
-RETURN ( Self )
+RETURN ( self )
 
 //---------------------------------------------------------------------------//
 
-METHOD editLabelDocument()
+METHOD editLabel()
 
    local nRecno
    local oReport  
 
-   if empty( ::oDialogView:cFormatoLabel )
-      msgStop( "No hay formatos por defecto" )
+   ::setFileName( ::oDialogView:cListboxFile )
+
+   if empty( ::getFileName() )
+      msgStop( "No hay formato definido" )
       RETURN ( self )  
    end if 
 
-   nRecno                           := ::oHashList:Recno()
+   nRecno   := ::oHashList:Recno()
 
-   oReport                          := MovimientosAlmacenLabelReport():New( Self )
+   oReport  := MovimientosAlmacenLabelReport():New( self )
 
-   oReport:CreateFastReport()
+   oReport:createFastReport()
 
    oReport:setDevice( IS_SCREEN )
 
    oReport:setRowSet( ::oHashList )
    
-   oReport:setId( ::oDialogView:cFormatoLabel )
+   oReport:setDirectory( ::getDirectory() )
+
+   oReport:setFileName( ::getFileName() )
 
    oReport:buildData()
 
@@ -147,8 +176,27 @@ METHOD editLabelDocument()
 
    ::oHashList:goTo( nRecno )
 
-RETURN ( Self )
+RETURN ( self )
 
 //---------------------------------------------------------------------------//
+
+METHOD createLabel()
+
+   msgalert( "new label" )
+
+RETURN ( self )
+
+//---------------------------------------------------------------------------//
+
+METHOD deleteLabel()
+
+   msgalert( "new label" )
+
+RETURN ( self )
+
+//---------------------------------------------------------------------------//
+
+
+
 
 

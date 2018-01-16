@@ -8,9 +8,11 @@
 
 CLASS SQLBaseReport
   
-   DATA cId
-
    DATA oController
+
+   DATA cDirectory
+
+   DATA cFileName
 
    DATA oEvents
 
@@ -24,6 +26,8 @@ CLASS SQLBaseReport
 
    DATA cDevice                           INIT IS_SCREEN
 
+   DATA uIds                              INIT {}
+
    METHOD New()
 
    METHOD End()
@@ -33,8 +37,13 @@ CLASS SQLBaseReport
    METHOD setFastReport( oFastReport )    INLINE ( ::oFastReport := oFastReport )
    METHOD getFastReport()                 INLINE ( ::oFastReport )
 
-   METHOD setId( cId )                    INLINE ( ::cId := cId )
-   METHOD getId()                         INLINE ( ::cId )
+   METHOD setDirectory( cDirectory )      INLINE ( ::cDirectory := cDirectory )
+   METHOD getDirectory( )                 INLINE ( ::cDirectory )
+
+   METHOD setFileName( cFileName )        INLINE ( ::cFileName := cFileName )
+   METHOD getFileName()                   INLINE ( ::cFileName )
+
+   METHOD getFullPathFileName()           INLINE ( ::cDirectory + ::cFileName + if( !( ".fr3" $ lower( ::cFileName ) ), ".fr3", "" ) )
 
    METHOD setReport( cReport )            INLINE ( ::cReport := cReport )
    METHOD getReport()                     INLINE ( ::cReport )
@@ -48,15 +57,20 @@ CLASS SQLBaseReport
    METHOD setDevice( cDevice )            INLINE ( ::cDevice := cDevice )
    METHOD getDevice()                     INLINE ( ::cDevice )
 
-   METHOD Print()  
+   METHOD setIds( uIds )                  INLINE ( ::uIds := uIds )
+   METHOD getIds()                        INLINE ( ::uIds )
+
+   METHOD Show()  
 
    METHOD Design() 
 
    METHOD isLoad()
 
+   METHOD Create()
+
    METHOD Save()
 
-   METHOD buildData()                     VIRTUAL
+   METHOD buildRowSet()                   VIRTUAL
    
    METHOD Show()
 
@@ -108,78 +122,35 @@ RETURN ( Self )
 
 //---------------------------------------------------------------------------//
 
-METHOD Print()  
-
-   ::oEvents:fire( "printing" )
-
-   ::createFastReport()
-
-   ::buildData()
-
-   if ::isLoad()
-
-      ::show()
-
-   end if 
-
-   ::destroyFastReport()
-
-   ::oEvents:fire( "printed" )
-
-RETURN ( .t. )
-
-//---------------------------------------------------------------------------//
-
 METHOD isLoad()
 
-   local cReport
    local oWaitMeter  
 
-   if empty( ::cId )
-      msgStop( "El identificador del documento a cargar esta vacío")
+   if empty( ::cDirectory )
+      msgStop( "El directorio " + ::cDirectory + " está vacío." )
+      RETURN ( .f. )
+   end if 
+
+   if empty( ::cFileName )
+      msgStop( "El fichero " + ::cFileName + " está vacío." )
+      RETURN ( .f. )
+   end if 
+
+   if !file( ::getFullPathFileName() )
+      msgStop( "El fichero " + ::getFullPathFileName() + " no existe." )
       RETURN ( .f. )
    end if 
 
    ::oEvents:fire( "loading" )
 
-   oWaitMeter        := TWaitMeter():New( "Generando documento", "Espere por favor..." )
+   oWaitMeter        := TWaitMeter():New( "Cargando documento", "Espere por favor..." )
    oWaitMeter:Run()
 
-   cReport           := DocumentosModel():getReportWhereCodigo( ::cId )
+   ::oEvents:fire( "loadingFromFile" )
 
-   if !empty( cReport )
+   ::oFastReport:loadFromFile( ::getFullPathFileName() )
 
-      ::oEvents:fire( "loadingFromString" )
-
-      ::oFastReport:loadFromString( cReport )
-
-      ::oEvents:fire( "loadedFromString" )
-
-   else 
-
-      ::oFastReport:SetProperty(     "Report",            "ScriptLanguage", "PascalScript" )
-
-      ::oFastReport:AddPage(         "MainPage" )
-
-      ::oFastReport:AddBand(         "CabeceraDocumento", "MainPage", frxPageHeader )
-      ::oFastReport:SetProperty(     "CabeceraDocumento", "Top", 0 )
-      ::oFastReport:SetProperty(     "CabeceraDocumento", "Height", 100 )
-
-      ::oFastReport:AddBand(         "MasterData",        "MainPage", frxMasterData )
-      ::oFastReport:SetProperty(     "MasterData",        "Top", 100 )
-      ::oFastReport:SetProperty(     "MasterData",        "Height", 100 )
-      ::oFastReport:SetProperty(     "MasterData",        "StartNewPage", .t. )
-
-      ::oFastReport:AddBand(         "DetalleColumnas",   "MainPage", frxDetailData  )
-      ::oFastReport:SetProperty(     "DetalleColumnas",   "Top", 230 )
-      ::oFastReport:SetProperty(     "DetalleColumnas",   "Height", 28 )
-      ::oFastReport:SetProperty(     "DetalleColumnas",   "OnMasterDetail", "DetalleOnMasterDetail" )
-
-      ::oFastReport:AddBand(         "PieDocumento",      "MainPage", frxPageFooter )
-      ::oFastReport:SetProperty(     "PieDocumento",      "Top", 930 )
-      ::oFastReport:SetProperty(     "PieDocumento",      "Height", 100 )
-
-   end if 
+   ::oEvents:fire( "loadedFromFile" )
 
    oWaitMeter:End()
 
@@ -189,14 +160,37 @@ RETURN ( .t. )
 
 //---------------------------------------------------------------------------//
 
+METHOD Create()
+
+   ::oFastReport:SetProperty(     "Report",            "ScriptLanguage", "PascalScript" )
+
+   ::oFastReport:AddPage(         "MainPage" )
+
+   ::oFastReport:AddBand(         "CabeceraDocumento", "MainPage", frxPageHeader )
+   ::oFastReport:SetProperty(     "CabeceraDocumento", "Top", 0 )
+   ::oFastReport:SetProperty(     "CabeceraDocumento", "Height", 100 )
+
+   ::oFastReport:AddBand(         "MasterData",        "MainPage", frxMasterData )
+   ::oFastReport:SetProperty(     "MasterData",        "Top", 100 )
+   ::oFastReport:SetProperty(     "MasterData",        "Height", 100 )
+   ::oFastReport:SetProperty(     "MasterData",        "StartNewPage", .t. )
+
+   ::oFastReport:AddBand(         "DetalleColumnas",   "MainPage", frxDetailData  )
+   ::oFastReport:SetProperty(     "DetalleColumnas",   "Top", 230 )
+   ::oFastReport:SetProperty(     "DetalleColumnas",   "Height", 28 )
+   ::oFastReport:SetProperty(     "DetalleColumnas",   "OnMasterDetail", "DetalleOnMasterDetail" )
+
+   ::oFastReport:AddBand(         "PieDocumento",      "MainPage", frxPageFooter )
+   ::oFastReport:SetProperty(     "PieDocumento",      "Top", 930 )
+   ::oFastReport:SetProperty(     "PieDocumento",      "Height", 100 )
+
+RETURN ( .t. )
+
+//---------------------------------------------------------------------------//
+
 METHOD Save()
 
-   local cReport  := ::oFastReport:SaveToString()
-
-   if !empty( cReport )
-      DocumentosModel():setReportWhereCodigo( ::cId, cReport )
-      msgalert( cReport, "save" )
-   end if 
+   ::oFastReport:SaveToFile( ::getFullPathFileName() )
 
 RETURN ( .t. )
 
@@ -204,17 +198,32 @@ RETURN ( .t. )
 
 METHOD Show()
 
+   ::oFastReport:PrepareReport()
+
    do case
       case ::getDevice() == IS_SCREEN
+
+         ::oEvents:fire( "showing" )
+
          ::oFastReport:showPreparedReport()
 
+         ::oEvents:fire( "showed" )
+
       case ::getDevice() == IS_PRINTER
+
+         ::oEvents:fire( "printing" )
+
          ::oFastReport:PrintOptions:SetPrinter( ::getPrinter() )
          ::oFastReport:PrintOptions:SetCopies( ::getCopies() )
          ::oFastReport:PrintOptions:SetShowDialog( .f. )
          ::oFastReport:Print()
 
+         ::oEvents:fire( "printed" )
+
       case ::getDevice() == IS_PDF
+
+         ::oEvents:fire( "generatingPdf" )
+
          ::oFastReport:SetProperty(  "PDFExport", "ShowDialog",       .f. )
          ::oFastReport:SetProperty(  "PDFExport", "DefaultPath",      cPatTmp() )
          ::oFastReport:SetProperty(  "PDFExport", "FileName",         'Doc' + trimedSeconds() + '.pdf' )
@@ -223,6 +232,8 @@ METHOD Show()
          ::oFastReport:SetProperty(  "PDFExport", "Outline",          .t. )
          ::oFastReport:SetProperty(  "PDFExport", "OpenAfterExport",  .t. )
          ::oFastReport:DoExport(     "PDFExport" )
+
+         ::oEvents:fire( "generatedPdf" )
 
    end case
 

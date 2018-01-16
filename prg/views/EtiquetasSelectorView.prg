@@ -16,11 +16,9 @@ CLASS EtiquetasSelectorView FROM SQLBaseView
    DATA oSayRegistrosSeleccionados
    DATA cSayRegistrosSeleccionados  INIT "Registros seleccionados"
 
-   DATA cSubDirectory               INIT "Movimientos almacen"
-
-   DATA oListboxLabel
-   DATA aListboxLabel               INIT {}
-   DATA cListboxLabel               INIT ""
+   DATA oListboxFile
+   DATA aListboxFile                INIT {}
+   DATA cListboxFile                INIT ""
 
    DATA cPrinter
 
@@ -114,29 +112,17 @@ METHOD Activate()
          ID          100 ;
          OF          ::oPages:aDialogs[ 1 ]
 
-      TBtnBmp():ReDefine( 110, "new16",,,,, {|| ::oController:editLabelDocument( ::cFormatoLabel ) }, ::oPages:aDialogs[ 1 ], .f., , .f., "Modificar formato de etiquetas" )
+      TBtnBmp():ReDefine( 110, "new16",,,,, {|| ::oController:createLabel() }, ::oPages:aDialogs[ 1 ], .f., , .f., "Añadir formato de etiquetas" )
 
-      TBtnBmp():ReDefine( 120, "edit16",,,,, {|| ::oController:editLabelDocument( ::cFormatoLabel ) }, ::oPages:aDialogs[ 1 ], .f., , .f., "Modificar formato de etiquetas" )
+      TBtnBmp():ReDefine( 120, "edit16",,,,, {|| ::oController:editLabel() }, ::oPages:aDialogs[ 1 ], .f., , .f., "Modificar formato de etiquetas" )
 
-      TBtnBmp():ReDefine( 130, "del16",,,,, {|| ::oController:editLabelDocument( ::cFormatoLabel ) }, ::oPages:aDialogs[ 1 ], .f., , .f., "Modificar formato de etiquetas" )
+      TBtnBmp():ReDefine( 130, "del16",,,,, {|| ::oController:deleteLabel() }, ::oPages:aDialogs[ 1 ], .f., , .f., "Eliminar formato de etiquetas" )
 
-      REDEFINE LISTBOX ::oListboxLabel ;
-         VAR         ::cListboxLabel ;
-         ITEMS       ::aListboxLabel ;
+      REDEFINE LISTBOX ::oListboxFile ;
+         VAR         ::cListboxFile ;
+         ITEMS       ::aListboxFile ;
          ID          140 ;
          OF          ::oPages:aDialogs[ 1 ]
-
-/*
-      REDEFINE GET   ::oListboxLabel ;
-         VAR         ::cFormatoLabel ;
-         ID          160 ;
-         IDTEXT      161 ;
-         BITMAP      "LUPA" ;
-         OF          ::oPages:aDialogs[ 1 ]
-
-         ::oListboxLabel:bValid  := {|| ::oController:validateFormatoDocumento() }
-         ::oListboxLabel:bHelp   := {|| brwDocumento( ::oListboxLabel, ::oListboxLabel:oHelpText, ::inicialDoc ) }
-*/
 
       REDEFINE GET   ::nFilaInicio ;
          ID          180 ;
@@ -315,13 +301,7 @@ RETURN ( self )
 
 METHOD startDialog()
 
-   local aFiles   := directory( cPatDocuments( ::cSubDirectory ) + "*.fr3" )
-
-   if empty( aFiles )
-      RETURN ( self )
-   end if 
-
-   aeval( aFiles, {|aFile| ::oListboxLabel:add( aFile[ 1 ] ) } )
+   ::oController:loadLabels()
 
 RETURN ( self )
 
@@ -344,7 +324,7 @@ METHOD Siguiente()
    do case
       case ::oPages:nOption == 1
 
-         if empty( ::cFormatoLabel )
+         if empty( ::cListboxFile )
 
             msgStop( "Debe cumplimentar un formato de etiquetas" )
 

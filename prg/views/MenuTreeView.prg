@@ -50,7 +50,7 @@ CLASS MenuTreeView
    METHOD isControllerDocuments()         INLINE ( ::getController():lDocuments )
    METHOD isControllerLabels()            INLINE ( ::getController():lLabels )
    METHOD isControllerCounter()           INLINE ( ::getController():lCounter )
-   METHOD getControllerDocuments()        INLINE ( ::getController():hDocuments )
+   METHOD getControllerDocuments()        INLINE ( ::getController():aDocuments )
 
    METHOD addImage()
 
@@ -357,7 +357,7 @@ METHOD addPrintButtons( cWorkArea )
 
    ::oButtonPrint    := ::AddButton( "Imprimir", "Imp16", {|| ::getController():printDocument( IS_PRINTER ) }, "I", ACC_IMPR )
 
-      aeval( ::getControllerDocuments(), {|h| ::AddButton( alltrim( hget( h, "cdescrip" ) ), "Imp16", ::blockPrintDocument( IS_PRINTER, hget( h, "codigo" ) ), , ACC_IMPR, ::oButtonPrint ) } )
+   aeval( ::getControllerDocuments(), {|cFile| ::AddButton( getFileNoExt( cFile ), "Imp16", ::blockPrintDocument( IS_PRINTER, getFileNoExt( cFile ) ), , ACC_IMPR, ::oButtonPrint ) } )
 
    ::fireEvent( 'addedPrintButton') 
 
@@ -371,7 +371,7 @@ METHOD addPreviewButtons( cWorkArea )
 
    ::oButtonPreview  := ::AddButton( "Previsualizar", "Prev116", {|| ::getController():printDocument( IS_SCREEN ) }, "P", ACC_IMPR ) 
 
-      aeval( ::getControllerDocuments(), {|h| ::AddButton( alltrim( hget( h, "cdescrip" ) ), "Prev116", ::blockPrintDocument( IS_SCREEN, hget( h, "codigo" ) ), , ACC_IMPR, ::oButtonPreview ) } )
+      aeval( ::getControllerDocuments(), {|cFile| ::AddButton( getFileNoExt( cFile ), "Prev116", ::blockPrintDocument( IS_SCREEN, getFileNoExt( cFile ) ), , ACC_IMPR, ::oButtonPreview ) } )
 
    ::fireEvent( 'addedPreviewButton') 
 
@@ -385,7 +385,7 @@ METHOD addPdfButtons( cWorkArea )
 
    ::oButtonPdf  := ::AddButton( "Pdf", "Doclock16", {|| ::getController():printDocument( IS_PDF ) }, "F", ACC_IMPR ) 
 
-      aeval( ::getControllerDocuments(), {|h| ::AddButton( alltrim( hget( h, "cdescrip" ) ), "Doclock16", ::blockPrintDocument( IS_PDF, hget( h, "codigo" ) ), , ACC_IMPR, ::oButtonPdf ) } ) 
+      aeval( ::getControllerDocuments(), {|cFile| ::AddButton( getFileNoExt( cFile ), "Doclock16", ::blockPrintDocument( IS_PDF, getFileNoExt( cFile ) ), , ACC_IMPR, ::oButtonPdf ) } ) 
 
    ::fireEvent( 'addedPdfButton') 
 

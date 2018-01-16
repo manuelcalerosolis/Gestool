@@ -6,13 +6,15 @@
 
 CLASS SQLConfiguracionColumnasUsuariosModel FROM SQLBaseModel
 
-   DATA cTableName           INIT "configuracion_columnas_usuarios"
+   DATA cTableName                  INIT "configuracion_columnas_usuarios"
 
    METHOD getColumns()
 
    METHOD delete( cViewName )
 
    METHOD get( cViewName )
+
+   METHOD getState( cViewName )
 
    METHOD set( cViewName, cBrowseState, cColumnOrder, cOrientation, idToFind )
 
@@ -70,6 +72,21 @@ RETURN ( nil )
        
 //---------------------------------------------------------------------------//
 
+METHOD getState( cViewName )
+
+   local cState
+   local hFetch   := ::get( cViewName )
+
+   if !empty( hFetch )
+      cState      := hget( hFetch, "browse_state" )
+      cState      := strtran( cState, '\"', '"' )
+      RETURN ( cState )
+   end if 
+
+RETURN ( nil )
+       
+//---------------------------------------------------------------------------//
+
 METHOD set( cViewName, cBrowseState, cColumnOrder, cOrientation, idToFind )
 
    local id
@@ -117,6 +134,7 @@ METHOD set( cViewName, cBrowseState, cColumnOrder, cOrientation, idToFind )
 
    end if 
 
+   getSQLDatabase():Exec( cUpdateHistory )
 
 RETURN ( Self )
 
