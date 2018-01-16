@@ -6,6 +6,8 @@
 
 CLASS MovimientosAlmacenController FROM SQLNavigatorController
 
+   DATA aIds
+
    DATA cFileName
 
    DATA oLineasController
@@ -59,6 +61,9 @@ CLASS MovimientosAlmacenController FROM SQLNavigatorController
    METHOD getBrowse()               INLINE ( ::oBrowseView:getBrowse() )
 
    METHOD insertingBuffer()
+
+   METHOD getIds()                  INLINE ( ::aIds )
+   METHOD setIds( aIds )            INLINE ( ::aIds := aIds )
 
 END CLASS
 
@@ -249,11 +254,7 @@ RETURN ( self )
 
 METHOD labelDocument()
 
-   local aIds
-
-   aIds              := ::oBrowseView:getRowSet():idFromRecno( ::oBrowseView:oBrowse:aSelected )
-
-   ::oEtiquetasController:setIds( aIds )
+   ::setIds( ::oBrowseView:getRowSet():idFromRecno( ::oBrowseView:oBrowse:aSelected ) )
 
    ::oEtiquetasController:Activate()
 

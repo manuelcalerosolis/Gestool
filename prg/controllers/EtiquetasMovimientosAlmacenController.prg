@@ -86,7 +86,7 @@ METHOD generateRowSet( cOrderBy )
       nFixLabels        := ::oDialogView:nUnidadesLabels
    end if 
 
-   cSentence            := MovimientosAlmacenLineasRepository():getSQLSentenceToLabels( ::oDialogView:aIds, nFixLabels, cOrderBy )
+   cSentence            := MovimientosAlmacenLineasRepository():getSQLSentenceToLabels( ::oSenderController:getIds(), nFixLabels, cOrderBy )
 
    ::oHashList          := getSQLDatabase():selectHashList( cSentence ) 
 

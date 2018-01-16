@@ -279,7 +279,7 @@ RETURN ( .t. )
 
 FUNCTION Test()
 
-   // logwrite( MovimientosAlmacenLineasRepository():getSqlSentenceMovimientosAlmacenForReport() )
+   ImprimirSeriesController():New():Activate()
 
    // msgalert( hb_valtoexp( TStock():lCheckConsolidacion( '00107220', '002' ) ) )
 
@@ -292,18 +292,18 @@ FUNCTION WndResize( oWnd )
    local oBlock
    local oError
 
+   if empty( oWnd )
+      RETURN ( nil )
+   end if 
+
    oBlock         := ErrorBlock( {| oError | ApoloBreak( oError ) } )
    BEGIN SEQUENCE
 
-   if !empty( oWnd )
-
-      aEval( oWnd:oWndClient:aWnd, {|o| oWnd:oWndClient:ChildMaximize( o ) } )
+      aeval( oWnd:oWndClient:aWnd, {|o| oWnd:oWndClient:ChildMaximize( o ) } )
 
       if !empty( oWndBar )
          oWndBar:CreateLogo()
       end if
-
-   end if
 
    RECOVER
 
