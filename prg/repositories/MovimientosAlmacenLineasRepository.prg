@@ -348,8 +348,6 @@ METHOD getSqlSentenceMovimientosAlmacenForReport( oReporting )
    
    if !empty( oReporting )
 
-      msgalert( oReporting:getDesdeFecha(), "oReporting:getDesdeFecha() " )
-
       cSentence      +=    "AND CAST(movimientos_almacen.fecha_hora AS date) >= " + toSqlString( oReporting:getDesdeFecha() ) + " "
       cSentence      +=    "AND CAST(movimientos_almacen.fecha_hora AS date) <= " + toSqlString( oReporting:getHastaFecha() ) + " "
 
