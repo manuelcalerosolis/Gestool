@@ -162,7 +162,7 @@ METHOD Activate() CLASS TCentroCoste
             ACTION   ( oScript:Expand() ) ;
             TOOLTIP  "Scripts" ;
 
-            ImportScript( ::oWndBrw, oScript, "CentroCoste", ::oDbf:cCodigo )
+            ImportScript( ::oWndBrw, oScript, "CentroCoste", Self )
 
          ::oWndBrw:EndButtons( Self )
 
