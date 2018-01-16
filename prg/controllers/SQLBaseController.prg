@@ -65,6 +65,14 @@ CLASS SQLBaseController
    METHOD changeModelOrderAndOrientation()            
    METHOD getModelHeaderFromColumnOrder()             INLINE ( ::oModel:getHeaderFromColumnOrder() )
 
+   METHOD getId()                                     INLINE ( if(   !empty( ::oModel ) .and. !empty( ::oModel:hBuffer ),;
+                                                                     hget( ::oModel:hBuffer, "id" ),;
+                                                                     nil ) )
+                  
+   METHOD getUuid()                                   INLINE ( if(   !empty( ::oModel ) .and. !empty( ::oModel:hBuffer ),;
+                                                                     hget( ::oModel:hBuffer, "uuid" ),;
+                                                                     nil ) )
+
    // Rowset-------------------------------------------------------------------
 
    METHOD getRowSet()                                 INLINE ( ::oRowSet )
@@ -76,6 +84,7 @@ CLASS SQLBaseController
    METHOD refreshRowSetAndFind( nId )                 INLINE ( if( !empty( ::oRowSet ), ::oRowSet:refreshAndFind( nId ), ) )
 
    METHOD getIdFromRecno( aSelected )                 INLINE ( if( !empty( ::oRowSet ), ::oRowSet:IdFromRecno( aSelected ), {} ) )
+   METHOD getUuidFromRecno( aSelected )               INLINE ( if( !empty( ::oRowSet ), ::oRowSet:UuidFromRecno( aSelected ), {} ) )
 
    METHOD getIdFromRowSet()                           INLINE ( if( !empty( ::getRowSet() ), ::getRowSet():fieldGet( ::oModel:cColumnKey ), ) )
 
@@ -272,18 +281,14 @@ METHOD Append()
 
       ::oModel:loadBlankBuffer()
 
-      nId            := ::oModel:insertBuffer()    // Nuevo
-
       ::fireEvent( 'openingDialog' )     
 
       if ::DialogViewActivate()
 
          ::fireEvent( 'closedDialog' )    
 
-         // nId            := ::oModel:insertBuffer()    // Antes
+         nId         := ::oModel:insertBuffer()    
          
-         ::oModel:updateBuffer()
-
          ::commitTransactionalMode()
 
          if !empty( nId )
@@ -301,8 +306,6 @@ METHOD Append()
       else
          
          lAppend     := .f.
-
-         ::oModel:deleteById( nId )
 
          ::fireEvent( 'cancelAppended' ) 
 
@@ -386,8 +389,6 @@ METHOD Edit( nId )
       nId         := ::getIdFromRowSet()
    end if 
 
-   msgalert( nId, "identificador en Edit" )
-
    if hb_isnil( nId )
       RETURN ( .f. )
    end if 
@@ -405,13 +406,13 @@ METHOD Edit( nId )
 
    ::beginTransactionalMode()
 
-   ::oModel:loadCurrentBuffer( nId ) 
+   ::oModel:loadCurrentBuffer( nId )
 
    ::fireEvent( 'openingDialog' )
 
    if ::DialogViewActivate()
       
-      ::fireEvent( 'closedDialog' )    
+      ::fireEvent( 'closedDialog' )  
 
       ::oModel:updateBuffer()
 
@@ -488,19 +489,17 @@ RETURN ( .f. )
 
 //----------------------------------------------------------------------------//
 
-METHOD Delete( aSelectedIds )
+METHOD Delete( aSelectedRecno )
 
    local lDelete        := .f.
    local cNumbersOfDeletes
-
-   msgalert( hb_valtoexp( aSelectedIds ), "SQLBaseController deleted()" )
 
    if ::notUserDelete()
       msgStop( "Acceso no permitido" )
       RETURN ( .f. )
    end if 
 
-   if !hb_isarray( aSelectedIds )
+   if !hb_isarray( aSelectedRecno ) .or. len( aSelectedRecno ) == 0
       msgStop( "No se especificaron los registros a eliminar" )
       RETURN ( .f. )
    end if 
@@ -509,12 +508,8 @@ METHOD Delete( aSelectedIds )
       RETURN ( .f. )
    end if
 
-   if empty( aSelectedIds )
-      RETURN ( .f. )
-   end if
-
-   if len( aSelectedIds ) > 1
-      cNumbersOfDeletes := alltrim( str( len( aSelectedIds ), 3 ) ) + " registros?"
+   if len( aSelectedRecno ) > 1
+      cNumbersOfDeletes := alltrim( str( len( aSelectedRecno ), 3 ) ) + " registros?"
    else
       cNumbersOfDeletes := "el registro en curso?"
    end if
@@ -525,7 +520,7 @@ METHOD Delete( aSelectedIds )
       
       ::fireEvent( 'deletingSelection' ) 
 
-      ::oModel:deleteSelection( aSelectedIds )
+      ::oModel:deleteSelection( ::getUuidFromRecno( aSelectedRecno ) )
 
       ::fireEvent( 'deletedSelection' ) 
 

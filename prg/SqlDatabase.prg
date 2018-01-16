@@ -43,7 +43,10 @@ CLASS SQLDatabase
    METHOD selectFetch( cSql )
    METHOD selectFetchHash( cSentence )    INLINE ::selectFetch( cSentence, FETCH_HASH )
    METHOD selectFetchArray( cSentence )   INLINE ::selectFetch( cSentence, FETCH_ARRAY )
+   
    METHOD selectFetchArrayOneColumn( cSentence )
+
+   METHOD selectHashList( cSentence )
 
    METHOD selectValue( cSql )
 
@@ -199,7 +202,7 @@ METHOD selectFetch( cSentence, fetchType )
    local aFetch
    local oStatement
 
-   default fetchType := FETCH_ARRAY
+   DEFAULT fetchType := FETCH_ARRAY
 
    if empty( ::oConexion )
       msgstop( "No hay conexiones disponibles" )
@@ -228,6 +231,45 @@ METHOD selectFetch( cSentence, fetchType )
 
    if !empty( aFetch ) .and. hb_isarray( aFetch )
       RETURN ( aFetch )
+   end if
+
+RETURN ( nil )
+
+//---------------------------------------------------------------------------//
+
+METHOD selectHashList( cSentence )
+
+   local oError
+   local oHashList
+   local oStatement
+
+   if empty( ::oConexion )
+      msgstop( "No hay conexiones disponibles" )
+      RETURN ( nil )  
+   end if  
+
+   try 
+
+      ::oConexion:Ping()
+
+      oStatement     := ::oConexion:Query( cSentence )
+
+      oHashList      := TMemList():new( oStatement:fetchAllArray(), oStatement:listColNames( AS_ARRAY_TYPE ) )
+   
+   catch oError
+
+      eval( errorBlock(), oError )
+
+   finally
+
+      if !empty( oStatement )
+         oStatement:Free()
+      end if
+
+   end
+
+   if !empty( oHashList )
+      RETURN ( oHashList )
    end if
 
 RETURN ( nil )

@@ -21,8 +21,8 @@ END CLASS
 
 METHOD getValidators()
 
-   ::hValidators  := {  "codigo_articulo"          => {  "required"              => "El artículo es un dato requerido",;
-                                                         "isCodeGS128"           => "",;
+   ::hValidators  := {  "codigo_articulo"          => {  "isCodeGS128"           => "",;
+                                                         "required"              => "El artículo es un dato requerido",;
                                                          "existArticulo"         => "El artículo {value}, no existe" },;
                         "nombre_articulo"          => {  "required"              => "El nombre del artículo es un dato requerido" },;
                         "valor_primera_propiedad"  => {  "existOrEmptyPrimeraPropiedad" => "La primera propiedad no existe" },;
@@ -34,15 +34,14 @@ RETURN ( ::hValidators )
 
 METHOD isCodeGS128( value )
 
-   local hCodeGS128
-
-   hCodeGS128  := ReadCodeGS128( value )
+   local hCodeGS128  := ReadCodeGS128( value )
 
    if empty( hCodeGS128 )
       RETURN ( .t. )
    end if 
 
    if hhaskey( hCodeGS128, "01" )
+      ::setValue( hCodeGS128[ "01" ][ "Codigo" ] )
       ::oController:setModelBufferPadr( "codigo_articulo", hCodeGS128[ "01" ][ "Codigo" ] )
       ::oController:oDialogView:oGetCodigoArticulo:Refresh()
    end if 
@@ -50,9 +49,6 @@ METHOD isCodeGS128( value )
    if hhaskey( hCodeGS128, "10" )
       ::oController:setModelBufferPadr( "lote", hCodeGS128[ "10" ][ "Codigo" ] )
       ::oController:oDialogView:oGetLote:Refresh()
-
-      msgalert(  hCodeGS128[ "10" ][ "Codigo" ], "lote" )
-
    end if 
 
    if hhaskey( hCodeGS128, "15" )

@@ -5,7 +5,7 @@
 
 CLASS EtiquetasMovimientosAlmacenController FROM SQLBaseController
 
-   DATA oRowSet
+   DATA oHashList
 
    DATA oStatement
 
@@ -15,7 +15,7 @@ CLASS EtiquetasMovimientosAlmacenController FROM SQLBaseController
    
    METHOD clickingHeader( oColumn )    INLINE ( ::generateRowSet( oColumn:cSortOrder ) )
 
-   METHOD setId( id )                  INLINE ( iif( !empty( ::oDialogView ), ::oDialogView:setId( id ), ) )
+   METHOD setIds( aIds )               INLINE ( iif( !empty( ::oDialogView ), ::oDialogView:setIds( aIds ), ) )
 
    METHOD getFilaInicio()              INLINE ( iif( !empty( ::oDialogView ), ::oDialogView:nFilaInicio, 0 ) )
    
@@ -26,6 +26,8 @@ CLASS EtiquetasMovimientosAlmacenController FROM SQLBaseController
    METHOD generateRowSet()
 
    METHOD generateLabels()
+
+   METHOD editLabelDocument()
 
 END CLASS
 
@@ -59,20 +61,18 @@ RETURN ( .f. )
 
 METHOD generateRowSet( cOrderBy )
 
-   local cSql           
+   local cSentence           
    local nFixLabels     := 0
 
    if ::oDialogView:nCantidadLabels > 1
       nFixLabels        := ::oDialogView:nUnidadesLabels
    end if 
 
-   cSql                 := MovimientosAlmacenLineasRepository():getSQLSentenceToLabels( ::oDialogView:nDocumentoInicio, ::oDialogView:nDocumentoFin, nFixLabels, cOrderBy )
+   cSentence            := MovimientosAlmacenLineasRepository():getSQLSentenceToLabels( ::oDialogView:aIds, nFixLabels, cOrderBy )
 
-   msgalert( cSql, "cSql" )
+   ::oHashList          := getSQLDatabase():selectHashList( cSentence ) 
 
-   ::oRowSet:build( cSql )
-
-   ::oRowSet:goTop()
+   ::oHashList:goTop()
 
 RETURN ( Self )
 
@@ -80,6 +80,7 @@ RETURN ( Self )
 
 METHOD generateLabels()
 
+   local nRecno
    local cReport
    local cFormato
    local oMovimientosAlmacenLabelReport  
@@ -98,13 +99,56 @@ METHOD generateLabels()
 
    oMovimientosAlmacenLabelReport   := MovimientosAlmacenLabelReport():New( Self )
 
-   oMovimientosAlmacenLabelReport:setRowSet( ::oRowSet )
+   nRecno                           := ::oHashList:Recno()
+
+   oMovimientosAlmacenLabelReport:setRowSet( ::oHashList )
    oMovimientosAlmacenLabelReport:setDevice( IS_SCREEN )
    oMovimientosAlmacenLabelReport:setReport( cReport )
 
    oMovimientosAlmacenLabelReport:Print()
 
+   ::oHashList:goTo( nRecno )
+
 RETURN ( Self )
 
 //---------------------------------------------------------------------------//
+
+METHOD editLabelDocument()
+
+   local nRecno
+   local oReport  
+
+   if empty( ::oDialogView:cFormatoLabel )
+      msgStop( "No hay formatos por defecto" )
+      RETURN ( self )  
+   end if 
+
+   nRecno                           := ::oHashList:Recno()
+
+   oReport                          := MovimientosAlmacenLabelReport():New( Self )
+
+   oReport:CreateFastReport()
+
+   oReport:setDevice( IS_SCREEN )
+
+   oReport:setRowSet( ::oHashList )
+   
+   oReport:setId( ::oDialogView:cFormatoLabel )
+
+   oReport:buildData()
+
+   if oReport:isLoad()
+
+      oReport:Design()
+
+      oReport:DestroyFastReport()
+   
+   end if 
+
+   ::oHashList:goTo( nRecno )
+
+RETURN ( Self )
+
+//---------------------------------------------------------------------------//
+
 

@@ -6,19 +6,23 @@
 
 CLASS SQLMovimientosAlmacenModel FROM SQLExportableModel
 
-   DATA cTableName            INIT "movimientos_almacen"
+   DATA cTableName               INIT "movimientos_almacen"
 
-   DATA cConstraints          INIT "PRIMARY KEY (id), KEY (uuid)"
+   DATA cConstraints             INIT "PRIMARY KEY (id), KEY (uuid)"
 
-   DATA cColumnOrder          INIT "id"
+   DATA cColumnOrder             INIT "id"
 
-   DATA aTextoMovimiento      INIT { "Entre almacenes", "Regularización", "Objetivos", "Consolidación" }
+   DATA aTextoMovimiento         INIT { "Entre almacenes", "Regularización", "Objetivos", "Consolidación" }
 
    METHOD getColumns()
+
+   METHOD getColumnMovimiento()  
 
    METHOD getInitialSelect()
    
    METHOD cTextoMovimiento()  
+
+   METHOD getDeleteSentence( aId )
 
 END CLASS
 
@@ -28,7 +32,7 @@ METHOD getColumns()
 
    ::getEmpresaColumns()
 
-   hset( ::hColumns, "numero",            {  "create"    => "INT UNSIGNED NOT NULL"                   ,;
+   hset( ::hColumns, "numero",            {  "create"    => "INT UNSIGNED"                            ,;
                                              "default"   => {|| 0 } }                                 )
 
    hset( ::hColumns, "tipo_movimiento",   {  "create"    => "TINYINT UNSIGNED NOT NULL"               ,;
@@ -68,13 +72,7 @@ METHOD getInitialSelect()
                            "numero, "                                            + ;
                            "uuid, "                                              + ;
                            "tipo_movimiento, "                                   + ;
-                           "CASE "                                               + ;
-                              "WHEN tipo_movimiento = 1 THEN 'Entre almacenes' " + ;
-                              "WHEN tipo_movimiento = 2 THEN 'Regularización' "  + ;
-                              "WHEN tipo_movimiento = 3 THEN 'Objetivos' "       + ;
-                              "WHEN tipo_movimiento = 4 THEN 'Consolidación' "   + ;
-                              "ELSE 'Vacio'"                                     + ;
-                           "END as nombre_movimiento, "                          + ;
+                           ::getColumnMovimiento()                               + ;
                            "fecha_hora, "                                        + ;
                            "almacen_origen, "                                    + ;
                            "almacen_destino, "                                   + ;
@@ -84,6 +82,8 @@ METHOD getInitialSelect()
                            "divisa_cambio, "                                     + ;
                            "comentarios "                                        + ;        
                         "FROM " + ::getTableName()    
+
+   logwrite( cSelect )
 
 RETURN ( cSelect )
 
@@ -97,5 +97,62 @@ METHOD cTextoMovimiento( nPosition )
    nPosition         := min( nPosition, len( ::aTextoMovimiento ) )
 
 RETURN ( ::aTextoMovimiento[ nPosition ] ) 
+
+//---------------------------------------------------------------------------//
+
+METHOD getDeleteSentence( aUuid )
+
+   local cSQLDelete
+   local aUuidLineasToDelete
+   local aUuidSeriesToDelete
+
+   aUuidLineasToDelete     := SQLMovimientosAlmacenLineasModel():aUuidToDelete( aUuid )
+
+   msgalert( hb_valtoexp( aUuidLineasToDelete ), "aUuidLineasToDelete" )
+
+   cSQLDelete              := ::Super:getDeleteSentence( aUuid )
+   cSQLDelete              += "; "
+
+   if !empty( aUuidLineasToDelete )
+   
+      cSQLDelete           += SQLMovimientosAlmacenLineasModel():getDeleteSentence( aUuidLineasToDelete )
+      cSQLDelete           += "; "
+
+      aUuidSeriesToDelete  := SQLMovimientosAlmacenLineasNumerosSeriesModel():aUuidToDelete( aUuidLineasToDelete )
+
+      if !empty( aUuidSeriesToDelete )
+         cSQLDelete        += SQLMovimientosAlmacenLineasNumerosSeriesModel():getDeleteSentence( aUuidSeriesToDelete )
+         cSQLDelete        += "; "
+      end if 
+
+   end if 
+   
+   msgalert( cSQLDelete, "Tenemos q borrar todas las lineas y numoeros de serie")
+   
+   cSQLDelete           := nil
+
+RETURN ( cSQLDelete )
+
+//---------------------------------------------------------------------------//
+
+METHOD getColumnMovimiento( cTable )  
+
+   local cSql  
+
+   DEFAULT cTable := ""
+
+   if !empty( cTable )
+      cTable      += "."
+   end if
+
+   cSql           := "CASE "                                                                                                  
+   cSql           +=    "WHEN " + cTable + "tipo_movimiento = 1 THEN 'Entre almacenes' " 
+   cSql           +=    "WHEN " + cTable + "tipo_movimiento = 2 THEN 'Regularización' " 
+   cSql           +=    "WHEN " + cTable + "tipo_movimiento = 3 THEN 'Objetivos' " 
+   cSql           +=    "WHEN " + cTable + "tipo_movimiento = 4 THEN 'Consolidación' " 
+   cSql           +=    "ELSE 'Vacio' "
+   cSql           += "END as nombre_movimiento, "
+
+RETURN ( cSql )
 
 //---------------------------------------------------------------------------//

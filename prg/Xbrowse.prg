@@ -5846,13 +5846,11 @@ return cFile
 
 METHOD AddCol() CLASS TXBrowse
 
-   local oCol
-
-   oCol  := Eval( ::bColClass ):New( Self )
+   local oCol          := eval( ::bColClass ):New( Self )
 
    Aadd( ::aCols, oCol )
 
-   oCol:nCreationOrder := Len( ::aCols )
+   oCol:nCreationOrder := len( ::aCols )
 
 return oCol
 

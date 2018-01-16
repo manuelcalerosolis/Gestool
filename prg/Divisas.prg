@@ -1841,7 +1841,7 @@ Static Function aDivBuf( cCodDiv, dbfDiv )
    end case
 
    RECOVER USING oError
-      msgStop( "Imposible abrir todas las bases de datos de divisas" + CRLF + ErrorMessage( oError ) )
+      // msgStop( "Imposible abrir todas las bases de datos de divisas" + CRLF + ErrorMessage( oError ) )
    END SEQUENCE
    ErrorBlock( oBlock )
 

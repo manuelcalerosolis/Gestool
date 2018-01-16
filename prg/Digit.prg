@@ -1666,7 +1666,11 @@ Function ReadCodeGS128( cCode )
    local cLote       := ""
    local hCodeGS128  := {=>}
 
-   DEFAULT cCode     := "0118411859552753103439@L315140600"
+   // DEFAULT cCode     := "0118411859552753103439@L315140600"
+
+   if ( len( alltrim( cCode ) ) <= 18 )
+      RETURN ( hCodeGS128 )
+   end if
 
    // Chapuza pq fw no lee bien los codigos de barras------------------------
 

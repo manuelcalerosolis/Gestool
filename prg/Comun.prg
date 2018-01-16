@@ -279,7 +279,7 @@ RETURN ( .t. )
 
 FUNCTION Test()
 
-   // msgalert( hb_valtoexp( hb_dtot( ctod( "01/01/2017" ), "15:30:10" ) ) ) 
+   // logwrite( MovimientosAlmacenLineasRepository():getSqlSentenceMovimientosAlmacenForReport() )
 
    // msgalert( hb_valtoexp( TStock():lCheckConsolidacion( '00107220', '002' ) ) )
 
@@ -1781,7 +1781,7 @@ FUNCTION CreateAcceso( oWnd )
    oItem:oGroup         := oGrupo
    oItem:cPrompt        := 'Movimientos almacén'
    oItem:cMessage       := 'Acceso a los movimientos de almacén'
-   oItem:bAction        := {|| RemMovAlm( "01050", oWnd ) }
+   oItem:bAction        := {|| MovimientosAlmacenController():New():ActivateNavigatorView() } // RemMovAlm( "01050", oWnd ) }
    oItem:cId            := "01050"
    oItem:cBmp           := "gc_pencil_package_16"
    oItem:cBmpBig        := "gc_pencil_package_32"
@@ -2761,7 +2761,7 @@ FUNCTION CreateAcceso( oWnd )
    oItem:oGroup         := oGrupo
    oItem:cPrompt        := 'Test navigator'
    oItem:cMessage       := 'Test navigator'
-   oItem:bAction        := {||MovimientosAlmacenController():New():ActivateNavigatorView() }
+   oItem:bAction        := {|| MovimientosAlmacenController():New():ActivateNavigatorView() }
    oItem:cId            := "99999"
    oItem:cBmp           := "gc_user_headset_16"
    oItem:cBmpBig        := "gc_user_headset_32"
@@ -2939,6 +2939,7 @@ FUNCTION appCheckDirectory()
    if( !lIsDir( cPatEmpTmp() ),        makedir( cNamePath( cPatEmpTmp() ) ), )
    if( !lIsDir( cPatScript() ),        makedir( cNamePath( cPatScript() ) ), )
    if( !lIsDir( cPatReporting() ),     makedir( cNamePath( cPatReporting() ) ), )
+   if( !lIsDir( cPatDocuments() ),     makedir( cNamePath( cPatDocuments() ) ), )
    if( !lIsDir( cPatUserReporting() ), makedir( cNamePath( cPatUserReporting() ) ), )
    if( !lIsDir( cPatConfig() ),        makedir( cNamePath( cPatConfig() ) ), )
    if( !lIsDir( cPatDat() ),           makedir( cNamePath( cPatDat() ) ), )
@@ -5560,6 +5561,16 @@ RETURN ( fullCurDir() + "Help\" )
 FUNCTION cPatReporting()
 
 RETURN ( fullCurDir() + "Reporting\" )
+
+//----------------------------------------------------------------------------//
+
+FUNCTION cPatDocuments( cSubDirectory )
+
+   if !empty( cSubDirectory )
+      RETURN ( fullCurDir() + "Documents\" + cSubDirectory + "\" )
+   end if 
+
+RETURN ( fullCurDir() + "Documents\" )
 
 //----------------------------------------------------------------------------//
 

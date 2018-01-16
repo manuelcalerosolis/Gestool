@@ -8,7 +8,7 @@
 
 CLASS SQLBaseReport
   
-   DATA Id
+   DATA cId
 
    DATA oController
 
@@ -33,8 +33,8 @@ CLASS SQLBaseReport
    METHOD setFastReport( oFastReport )    INLINE ( ::oFastReport := oFastReport )
    METHOD getFastReport()                 INLINE ( ::oFastReport )
 
-   METHOD setId( id )                     INLINE ( ::Id := id )
-   METHOD getId()                         INLINE ( if( empty( ::Id ), nil, cvaltostr( ::Id ) ) )
+   METHOD setId( cId )                    INLINE ( ::cId := cId )
+   METHOD getId()                         INLINE ( ::cId )
 
    METHOD setReport( cReport )            INLINE ( ::cReport := cReport )
    METHOD getReport()                     INLINE ( ::cReport )
@@ -52,7 +52,11 @@ CLASS SQLBaseReport
 
    METHOD Design() 
 
-   METHOD Load()
+   METHOD isLoad()
+
+   METHOD Save()
+
+   METHOD buildData()                     VIRTUAL
    
    METHOD Show()
 
@@ -83,12 +87,20 @@ METHOD createFastReport()
    ::oEvents:fire( "creatingFastReport" )
 
    ::oFastReport := frReportManager():New()
-
+   
+   ::oFastReport:ClearDataSets()
+   
    ::oFastReport:LoadLangRes( "Spanish.Xml" )
+   
+   ::oFastReport:SetProperty( "Designer.DefaultFont", "Name", "Verdana")
+
+   ::oFastReport:SetProperty( "Designer.DefaultFont", "Size", 10)
    
    ::oFastReport:SetIcon( 1 )
    
    ::oFastReport:SetTitle( "Diseñador de documentos" ) 
+
+   ::oFastReport:SetEventHandler( "Designer", "OnSaveReport", {|| ::Save() } )
 
    ::oEvents:fire( "createdFastReport" )
 
@@ -104,9 +116,11 @@ METHOD Print()
 
    ::buildData()
 
-   ::load()
+   if ::isLoad()
 
-   ::show()
+      ::show()
+
+   end if 
 
    ::destroyFastReport()
 
@@ -116,32 +130,75 @@ RETURN ( .t. )
 
 //---------------------------------------------------------------------------//
 
-METHOD Load()
+METHOD isLoad()
 
+   local cReport
    local oWaitMeter  
+
+   if empty( ::cId )
+      msgStop( "El identificador del documento a cargar esta vacío")
+      RETURN ( .f. )
+   end if 
 
    ::oEvents:fire( "loading" )
 
    oWaitMeter        := TWaitMeter():New( "Generando documento", "Espere por favor..." )
    oWaitMeter:Run()
 
-   ::oEvents:fire( "loadingFromString" )
+   cReport           := DocumentosModel():getReportWhereCodigo( ::cId )
 
-   ::oFastReport:loadFromString( ::getReport() )
+   if !empty( cReport )
 
-   ::oEvents:fire( "loadedFromString" )
+      ::oEvents:fire( "loadingFromString" )
 
-   ::oEvents:fire( "preparingReport" )
+      ::oFastReport:loadFromString( cReport )
 
-   ::oFastReport:prepareReport()
+      ::oEvents:fire( "loadedFromString" )
 
-   ::oEvents:fire( "preparedReport" )
+   else 
+
+      ::oFastReport:SetProperty(     "Report",            "ScriptLanguage", "PascalScript" )
+
+      ::oFastReport:AddPage(         "MainPage" )
+
+      ::oFastReport:AddBand(         "CabeceraDocumento", "MainPage", frxPageHeader )
+      ::oFastReport:SetProperty(     "CabeceraDocumento", "Top", 0 )
+      ::oFastReport:SetProperty(     "CabeceraDocumento", "Height", 100 )
+
+      ::oFastReport:AddBand(         "MasterData",        "MainPage", frxMasterData )
+      ::oFastReport:SetProperty(     "MasterData",        "Top", 100 )
+      ::oFastReport:SetProperty(     "MasterData",        "Height", 100 )
+      ::oFastReport:SetProperty(     "MasterData",        "StartNewPage", .t. )
+
+      ::oFastReport:AddBand(         "DetalleColumnas",   "MainPage", frxDetailData  )
+      ::oFastReport:SetProperty(     "DetalleColumnas",   "Top", 230 )
+      ::oFastReport:SetProperty(     "DetalleColumnas",   "Height", 28 )
+      ::oFastReport:SetProperty(     "DetalleColumnas",   "OnMasterDetail", "DetalleOnMasterDetail" )
+
+      ::oFastReport:AddBand(         "PieDocumento",      "MainPage", frxPageFooter )
+      ::oFastReport:SetProperty(     "PieDocumento",      "Top", 930 )
+      ::oFastReport:SetProperty(     "PieDocumento",      "Height", 100 )
+
+   end if 
 
    oWaitMeter:End()
 
    ::oEvents:fire( "loaded" )
 
-RETURN ( Self )
+RETURN ( .t. )
+
+//---------------------------------------------------------------------------//
+
+METHOD Save()
+
+   local cReport  := ::oFastReport:SaveToString()
+
+   if !empty( cReport )
+      DocumentosModel():setReportWhereCodigo( ::cId, cReport )
+      msgalert( cReport, "save" )
+   end if 
+
+RETURN ( .t. )
 
 //---------------------------------------------------------------------------//
 
@@ -175,44 +232,11 @@ RETURN ( Self )
 
 METHOD Design() 
 
-   if empty( ::oFastReport )
-      msgStop( "El objeto FastReport no se ha definido")
-      RETURN ( Self )
-   end if 
-
-   ::buildData()
-
-   if !empty( ::getReport() )
-
-      ::oFastReport:LoadFromString( ::cReport )
-
-   else
-
-      ::oFastReport:SetProperty(     "Report",            "ScriptLanguage", "PascalScript" )
-
-      ::oFastReport:AddPage(         "MainPage" )
-
-      ::oFastReport:AddBand(         "CabeceraDocumento", "MainPage", frxPageHeader )
-      ::oFastReport:SetProperty(     "CabeceraDocumento", "Top", 0 )
-      ::oFastReport:SetProperty(     "CabeceraDocumento", "Height", 100 )
-
-      ::oFastReport:AddBand(         "MasterData",        "MainPage", frxMasterData )
-      ::oFastReport:SetProperty(     "MasterData",        "Top", 100 )
-      ::oFastReport:SetProperty(     "MasterData",        "Height", 100 )
-      ::oFastReport:SetProperty(     "MasterData",        "StartNewPage", .t. )
-
-      ::oFastReport:AddBand(         "DetalleColumnas",   "MainPage", frxDetailData  )
-      ::oFastReport:SetProperty(     "DetalleColumnas",   "Top", 230 )
-      ::oFastReport:SetProperty(     "DetalleColumnas",   "Height", 28 )
-      ::oFastReport:SetProperty(     "DetalleColumnas",   "OnMasterDetail", "DetalleOnMasterDetail" )
-
-      ::oFastReport:AddBand(         "PieDocumento",      "MainPage", frxPageFooter )
-      ::oFastReport:SetProperty(     "PieDocumento",      "Top", 930 )
-      ::oFastReport:SetProperty(     "PieDocumento",      "Height", 100 )
-
-   end if
+   ::oEvents:fire( "designing" )
 
    ::oFastReport:DesignReport()
+
+   ::oEvents:fire( "designed" )
 
 RETURN ( Self )
 

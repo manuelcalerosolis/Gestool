@@ -20,9 +20,10 @@ CLASS SQLXBrowse FROM TXBrowse
    METHOD New( oWnd )
 
    METHOD setRowSet( oRowSet )
+   METHOD setHashList( oHashList )
 
-   METHOD refreshCurrent()                      INLINE ( ::Refresh() )
-   METHOD Refresh()                             INLINE ( ::Super:Refresh(), ::Select( 0 ), ::Select( 1 ) )
+   // METHOD refreshCurrent()                      INLINE ( ::Super:::RefreshCurrent() )
+   // METHOD Refresh()                             INLINE ( ::Super:Refresh(), ::Select( 0 ), ::Select( 1 ) )
 
    METHOD getColumnByHeaders()
    METHOD selectColumnOrder( oCol )
@@ -154,6 +155,30 @@ RETURN nil
 
 //----------------------------------------------------------------------------//
 
+METHOD setHashList( oContainer )
+
+   ::lAutoSort       := .f.
+   ::nDataType       := DATATYPE_USER
+   ::nRowHeight      := 20
+   ::bGoTop          := {|| oContainer:oHashList:GoTop() }
+   ::bGoBottom       := {|| oContainer:oHashList:GoBottom() }
+   ::bBof            := {|| oContainer:oHashList:Bof() }
+   ::bEof            := {|| oContainer:oHashList:Eof() }
+   ::bKeyCount       := {|| oContainer:oHashList:RecCount() }
+   ::bSkip           := {| n | oContainer:oHashList:Skipper( n ) }
+   ::bKeyNo          := {| n | oContainer:oHashList:RecNo() }
+   ::bBookMark       := {| n | iif( n == nil, oContainer:oHashList:RecNo(), oContainer:oHashList:GoTo( n ) ) }
+
+   if ::oVScroll() != nil 
+      ::oVscroll():SetRange( 1, oContainer:oHashList:RecCount() )
+   endif
+
+   ::lFastEdit       := .t.
+
+RETURN nil
+
+//----------------------------------------------------------------------------//
+
 METHOD ExportToExcel()
 
    local oError
@@ -224,10 +249,10 @@ METHOD selectColumnOrder( oCol )
 
    aeval( ::aCols, {|o| if( o:cSortOrder != oCol:cSortOrder, o:cOrder := "", ) } )    
 
-   if oCol:cOrder == 'D' .or. empty( oCol:cOrder )
-      oCol:cOrder := 'A'
-   else
+   if empty( oCol:cOrder ) .or. oCol:cOrder == 'A'
       oCol:cOrder := 'D'
+   else
+      oCol:cOrder := 'A'
    end if 
 
 RETURN ( Self )
@@ -270,7 +295,7 @@ RETURN ( ::aCols[ nPosition ] )
 
 METHOD getColumnOrderByHeader( cHeader )
 
-   local oCol        := ::getColumnByHeader( cHeader )
+   local oCol     := ::getColumnByHeader( cHeader )
 
    if !empty( oCol )
       RETURN ( oCol:cSortOrder )

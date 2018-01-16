@@ -14,16 +14,10 @@ CLASS MovimientosAlmacenController FROM SQLNavigatorController
 
    DATA oEtiquetasController
 
+   DATA oContadoresController
+
    METHOD New()
    METHOD End()
-
-   METHOD getId()                   INLINE ( iif(  !empty( ::oModel ) .and. !empty( ::oModel:hBuffer ),;
-                                                   hget( ::oModel:hBuffer, "id" ),;
-                                                   nil ) )
-
-   METHOD getUuid()                 INLINE ( iif(  !empty( ::oModel ) .and. !empty( ::oModel:hBuffer ),;
-                                                   hget( ::oModel:hBuffer, "uuid" ),;
-                                                   nil ) )
 
    METHOD validateAlmacenOrigen()   INLINE ( iif(  ::validate( "almacen_origen" ),;
                                                    ::stampAlmacenNombre( ::oDialogView:oGetAlmacenOrigen ),;
@@ -51,11 +45,13 @@ CLASS MovimientosAlmacenController FROM SQLNavigatorController
 
    METHOD labelDocument()
 
+   METHOD setCounter()              
+
    METHOD deleteLines()
 
    METHOD getBrowse()               INLINE ( ::oBrowseView:getBrowse() )
 
-   // METHOD addColumns( oSQLBrowse )
+   METHOD insertingBuffer()
 
 END CLASS
 
@@ -79,6 +75,8 @@ METHOD New()
 
    ::lLabels                  := .t.
 
+   ::lCounter                 := .t.
+
    ::oModel                   := SQLMovimientosAlmacenModel():New( self )
 
    ::oBrowseView              := MovimientosAlmacenBrowseView():New( self )
@@ -97,9 +95,13 @@ METHOD New()
 
    ::oEtiquetasController     := EtiquetasMovimientosAlmacenController():New( self )
 
+   ::oContadoresController    := ContadoresController():New( self )
+
+   ::oContadoresController:setTabla( 'movimientos_almacen' )
+
    ::oFilterController:setTableName( ::cTitle ) 
 
-   // ::setEvent( 'deletingSelection', {|| ::deleteLines() } )
+   ::oModel:setEvent( 'insertingBuffer', {|| ::insertingBuffer() } )
 
 RETURN ( Self )
 
@@ -122,6 +124,8 @@ METHOD end()
    ::oImportadorController:End()
 
    ::oEtiquetasController:End()
+
+   ::oContadoresController:End()
 
 RETURN ( Self )
 
@@ -217,9 +221,31 @@ RETURN ( self )
 
 METHOD labelDocument()
 
-   ::oEtiquetasController:setId( ::getRowSet():fieldget( 'id' ) )
+   local aIds
+
+   aIds              := ::oBrowseView:getRowSet():idFromRecno( ::oBrowseView:oBrowse:aSelected )
+
+   msgalert( hb_valtoexp( aIds ), "aIds" )
+
+   ::oEtiquetasController:setIds( aIds )
 
    ::oEtiquetasController:Activate()
+
+RETURN ( self ) 
+
+//---------------------------------------------------------------------------//
+
+METHOD setCounter()
+
+   ::oContadoresController:Edit()
+
+RETURN ( self ) 
+
+//---------------------------------------------------------------------------//
+
+METHOD insertingBuffer()
+
+   hset( ::oModel:hBuffer, "numero", ContadoresRepository():getAndIncMovimientoAlmacen() )
 
 RETURN ( self ) 
 

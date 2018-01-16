@@ -115,6 +115,8 @@ CLASS SQLBaseModel
 
    METHOD getDeleteSentenceById( nId )
 
+   METHOD aUuidToDelete()
+
    METHOD getSelectByOrder()
 
    // Busquedas----------------------------------------------------------------
@@ -480,24 +482,38 @@ RETURN ( cSQLUpdate )
 
 //---------------------------------------------------------------------------//
 
-METHOD getDeleteSentence( aId )
+METHOD getDeleteSentence( aUuid )
 
-   local cSQLDelete     := "DELETE FROM " + ::cTableName + " WHERE " 
+   local cSentence   := "DELETE FROM " + ::cTableName + space( 1 ) + ;
+                           "WHERE uuid IN ( " 
 
-   aeval( aId, {| v | cSQLDelete += ::cColumnKey + " = " + toSQLString( v ) + " or " } )
+   aeval( aUuid, {| v | cSentence += if( hb_isarray( v ), toSQLString( atail( v ) ), toSQLString( v ) ) + ", " } )
 
-   cSQLDelete           := ChgAtEnd( cSQLDelete, '', 4 )
+   cSentence         := chgAtEnd( cSentence, ' )', 2 )
 
-RETURN ( cSQLDelete )
+RETURN ( cSentence )
 
 //---------------------------------------------------------------------------//
 
 METHOD getDeleteSentenceById( nId )
 
-   local cSQLDelete  := "DELETE FROM " + ::cTableName + space( 1 ) + ;
+   local cSentence   := "DELETE FROM " + ::cTableName + space( 1 ) + ;
                            "WHERE " + ::cColumnKey + " = " + toSQLString( nId ) 
 
-RETURN ( cSQLDelete )
+RETURN ( cSentence )
+
+//---------------------------------------------------------------------------//
+
+METHOD aUuidToDelete( aParentsUuid )
+
+   local cSentence   := "SELECT uuid FROM " + ::cTableName + space( 1 ) + ;
+                           "WHERE parent_uuid IN ( " 
+
+   aeval( aParentsUuid, {| v | cSentence += if( hb_isarray( v ), toSQLString( atail( v ) ), toSQLString( v ) ) + ", " } )
+
+   cSentence         := chgAtEnd( cSentence, ' )', 2 )
+
+RETURN ( ::getDatabase():selectFetchArray( cSentence ) )
 
 //---------------------------------------------------------------------------//
 
@@ -684,8 +700,6 @@ METHOD insertBuffer( hBuffer )
 
    ::fireEvent( 'insertingBuffer' )
 
-   msgalert( ::getInsertSentence( hBuffer ), "insertBuffer" )
-
    ::getDatabase():Execs( ::getInsertSentence( hBuffer ) )
 
    nId         := ::getDatabase():LastInsertId()
@@ -703,8 +717,6 @@ RETURN ( nId )
 METHOD updateBuffer( hBuffer )
 
    ::fireEvent( 'updatingBuffer' )
-
-   msgalert( ::getUpdateSentence( hBuffer ), "updateBuffer" )
 
    ::getDatabase():Execs( ::getUpdateSentence( hBuffer ) )
 

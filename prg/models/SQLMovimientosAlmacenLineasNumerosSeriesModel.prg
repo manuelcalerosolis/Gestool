@@ -8,30 +8,23 @@ CLASS SQLMovimientosAlmacenLineasNumerosSeriesModel FROM SQLBaseModel
 
    DATA cTableName                  INIT "movimientos_almacen_lineas_numeros_series"
 
-   DATA cConstraints                INIT  "PRIMARY KEY (id), "                                  + ;
-                                             "KEY (uuid), "                                     + ;
-                                          "FOREIGN KEY ( parent_id ) "                          + ;
-                                             "REFERENCES movimientos_almacen_lineas( id ) "     + ;
-                                             "ON DELETE CASCADE"
+   DATA cConstraints                INIT  "PRIMARY KEY (id), KEY (uuid)"                                      
 
    DATA aBuffer
 
    METHOD getColumns()
 
    METHOD loadCurrentBuffer()
-   METHOD updateBuffer()
+
+   METHOD getUpdateSentence()
 
    METHOD getUnidades()             INLINE ( ::oController:oDialogView:nTotalUnidades )
-   METHOD getParentId()             INLINE ( ::oController:cParentId )
 
-   METHOD loadBlankBuffer()
    METHOD loadBlankBufferFromUnits()
 
    METHOD RollBack()
 
    METHOD InsertOrUpdate()
-
-   METHOD deleteWhereId( uuid )
 
 END CLASS
 
@@ -42,13 +35,13 @@ METHOD getColumns()
    hset( ::hColumns, "id",                {  "create"    => "INTEGER AUTO_INCREMENT"                  ,;
                                              "default"   => {|| 0 } }                                 )   
 
-   hset( ::hColumns, "uuid",              {  "create"    => "VARCHAR(40) NOT NULL UNIQUE"             ,;
+   hset( ::hColumns, "uuid",              {  "create"    => "VARCHAR( 40 ) NOT NULL UNIQUE"           ,;
                                              "default"   => {|| win_uuidcreatestring() } }            )
 
-   hset( ::hColumns, "parent_id",         {  "create"    => "INTEGER NOT NULL"                        ,;
-                                             "default"   => {|| 0 } }            )
+   hset( ::hColumns, "parent_uuid",       {  "create"    => "VARCHAR( 40 ) NOT NULL "                 ,;
+                                             "default"   => {|| space( 40 ) } }                       )
 
-   hset( ::hColumns, "numero_serie",      {  "create"    => "VARCHAR(30) NOT NULL"                    ,;
+   hset( ::hColumns, "numero_serie",      {  "create"    => "VARCHAR( 30 ) NOT NULL"                  ,;
                                              "default"   => {|| space( 30 ) } }                       )
 
 RETURN ( ::hColumns )
@@ -57,7 +50,10 @@ RETURN ( ::hColumns )
 
 METHOD loadCurrentBuffer()  
 
-   ::aBuffer            := ::oDatabase:selectFetchHash( "SELECT * FROM " + ::cTableName + " WHERE parent_id = " + quoted( ::getParentId() ) )
+   local cSentence   := "SELECT * FROM " + ::cTableName + " " + ;
+                          "WHERE parent_uuid = " + quoted( ::oController:getSenderController():getUuid() ) 
+
+   ::aBuffer         := ::oDatabase:selectFetchHash( cSentence )
 
    ::loadBlankBufferFromUnits()
 
@@ -79,83 +75,61 @@ METHOD loadBlankBufferFromUnits()
       nTo         := ::getUnidades() - len( ::aBuffer )
 
       for n := 1 to nTo
-         aAdd( ::aBuffer, ::loadBlankBuffer() )
+         aadd( ::aBuffer, ::loadBlankBuffer() )
       next
 
    else
 
-      aSize( ::aBuffer, ::getUnidades() )
+      asize( ::aBuffer, ::getUnidades() )
 
    end if
 
 RETURN ( self )
-
-//---------------------------------------------------------------------------//
-
-METHOD loadBlankBuffer()
-
-   ::super:loadBlankBuffer()
-
-   hset( ::hBuffer, "parent_id", ::getParentId() )
-
-Return ( ::hBuffer )
 
 //---------------------------------------------------------------------------//
 
 METHOD RollBack()
 
    local hBuffer
-   local cIds     := ""
+   local cSentence 
 
-   aEval( ::aBuffer, {|h| cIds += quoted( hGet( h, "id" ) ) + "," } )
+   if empty( ::aBuffer )
+      RETURN ( self )
+   end if 
 
-   cIds           := chgAtEnd( cIds, "", 1 )
+   cSentence         := "DELETE FROM " + ::cTableName + " " + ;
+                           "WHERE uuid NOT IN ("
+   
+   aEval( ::aBuffer, {|h| cSentence += quoted( hGet( h, "uuid" ) ) + "," } )
 
-   if !Empty( cIds )
-      ::oDataBase:Exec( "DELETE FROM " + ::cTableName + " WHERE uuid NOT IN (" + cIds + ") AND parent_id = " + quoted( ::getParentId() ) )
-   end if
+   cSentence         := chgAtEnd( cSentence, " ) ", 1 )
+
+   cSentence         +=       "AND parent_uuid = " + quoted( ::oController:getSenderController():getUuid() )
+
+   ::oDatabase:Exec( cSentence )
 
 RETURN ( self )
 
 //---------------------------------------------------------------------------//
 
-METHOD updateBuffer()
+METHOD getUpdateSentence()
 
    local hBuffer
+   local aSentence   := {}
 
-   msgalert( hb_valtoexp( ::aBuffer ), "::aBuffer en ::updateBuffer" )
+   aeval( ::aBuffer, {|hBuffer| aadd( aSentence, ::InsertOrUpdate( hBuffer ) ) } )
 
-   for each hBuffer in ::aBuffer
-      ::InsertOrUpdate( hBuffer )
-   next
-
-RETURN ( self )
+RETURN ( aSentence )
 
 //---------------------------------------------------------------------------//
 
 METHOD InsertOrUpdate( hBuffer )
 
-   local cSentence   := "SELECT * FROM " + ::cTableName + " WHERE id = " + quoted( hGet( hBuffer, "id" ) )
-   local hResult     := ::oDataBase:selectFetchHash( cSentence )
-
-   msgalert( cSentence, "InsertOrUpdate" )
-
-   msgalert( hResult, "InsertOrUpdate" )
-
-   if hb_isnil( hResult )
-      ::super:insertBuffer( hBuffer )
-   else
-      ::super:updateBuffer( hBuffer )
+   if empty( hGet( hBuffer, "id" ) )
+      RETURN ( ::super:getInsertSentence( hBuffer ) )
    end if
 
-RETURN ( self )
+RETURN ( ::super:getUpdateSentence( hBuffer ) )
 
 //---------------------------------------------------------------------------//
 
-METHOD deleteWhereId( id )
-
-   local cSentence := "DELETE FROM " + ::cTableName + " WHERE parent_id = " + quoted( id )
-
-RETURN ( ::getDatabase():Exec( cSentence ) )
-
-//---------------------------------------------------------------------------//

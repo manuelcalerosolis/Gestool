@@ -591,12 +591,12 @@ Return ( cUrl )
 
 Function cNamePath( cFile )
 
-    local nPos    := 0
-    local cPath   := ""
+   local nPos     := 0
+   local cPath    := ""
 
-    if ( nPos := Rat( "\", cFile ) ) != 0
-        cPath     := Upper( SubStr( cFile, 1, nPos - 1 ) )
-    endif
+   if ( nPos := rat( "\", cFile ) ) != 0
+      cPath       := ( substr( cFile, 1, nPos - 1 ) )
+   endif
 
 Return( cPath )
 

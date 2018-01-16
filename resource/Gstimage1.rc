@@ -4,234 +4,431 @@
 #include <commctrl.h>
 #include <richedit.h>
 
-#ifdef __FLAT__
-   1 24 "WindowsXP.Manifest"
-#endif
-
 LANGUAGE LANG_ENGLISH,SUBLANG_ENGLISH_US
+
 OFERTA BITMAP "..\\bmp\\res32.bmp"
+
 COLOR_01 BITMAP "..\\bmp\\res222.bmp"
+
 COLOR_02 BITMAP "..\\bmp\\res223.bmp"
+
 COLOR_03 BITMAP "..\\bmp\\res224.bmp"
+
 COLOR_00 BITMAP "..\\bmp\\res225.bmp"
 
 IMG500EUROS BITMAP "..\\bmp\\res249.bmp"
+
 IMG200EUROS BITMAP "..\\bmp\\res250.bmp"
+
 IMG50EUROS BITMAP "..\\bmp\\res251.bmp"
+
 IMG20EUROS BITMAP "..\\bmp\\res252.bmp"
+
 IMG10EUROS BITMAP "..\\bmp\\res253.bmp"
+
 IMG5EUROS BITMAP "..\\bmp\\res254.bmp"
+
 IMG100EUROS BITMAP "..\\bmp\\res255.bmp"
+
 IMG2EUROS BITMAP "..\\bmp\\res256.bmp"
+
 IMG1EURO BITMAP "..\\bmp\\res257.bmp"
+
 IMG50CENT BITMAP "..\\bmp\\res258.bmp"
+
 IMG20CENT BITMAP "..\\bmp\\res259.bmp"
+
 IMG10CENT BITMAP "..\\bmp\\res260.bmp"
+
 IMG5CENT BITMAP "..\\bmp\\res261.bmp"
+
 IMG1CENT BITMAP "..\\bmp\\res262.bmp"
+
 IMG2CENT BITMAP "..\\bmp\\res263.bmp"
+
 IMG0EUROS BITMAP "..\\bmp\\res264.bmp"
 
 COL_00 BITMAP "..\\bmp\\res230.bmp"
+
 COL_01 BITMAP "..\\bmp\\res231.bmp"
+
 COL_02 BITMAP "..\\bmp\\res232.bmp"
+
 COL_03 BITMAP "..\\bmp\\res233.bmp"
+
 COL_04 BITMAP "..\\bmp\\res234.bmp"
+
 COL_05 BITMAP "..\\bmp\\res235.bmp"
+
 COL_06 BITMAP "..\\bmp\\res236.bmp"
+
 COL_07 BITMAP "..\\bmp\\res237.bmp"
+
 COL_08 BITMAP "..\\bmp\\res238.bmp"
+
 COL_09 BITMAP "..\\bmp\\res239.bmp"
+
 COL_10 BITMAP "..\\bmp\\res240.bmp"
+
 COL_11 BITMAP "..\\bmp\\res241.bmp"
+
 COL_12 BITMAP "..\\bmp\\res242.bmp"
+
 COL_13 BITMAP "..\\bmp\\res243.bmp"
+
 COL_14 BITMAP "..\\bmp\\res244.bmp"
+
 COL_15 BITMAP "..\\bmp\\res245.bmp"
 
 BAN_ALB BITMAP "..\\bmp\\res53.bmp"
+
 BAN_ALEM BITMAP "..\\bmp\\res54.bmp"
+
 BAN_AND BITMAP "..\\bmp\\res55.bmp"
+
 BAN_ANGO BITMAP "..\\bmp\\res56.bmp"
+
 BAN_ARGE BITMAP "..\\bmp\\res57.bmp"
+
 BAN_ARM BITMAP "..\\bmp\\res58.bmp"
+
 BAN_AUST BITMAP "..\\bmp\\res59.bmp"
+
 BAN_AUT BITMAP "..\\bmp\\res60.bmp"
+
 BAN_AZB BITMAP "..\\bmp\\res61.bmp"
+
 BAN_BELG BITMAP "..\\bmp\\res62.bmp"
+
 BAN_BLA BITMAP "..\\bmp\\res63.bmp"
+
 BAN_BOLI BITMAP "..\\bmp\\res64.bmp"
+
 BAN_BOS BITMAP "..\\bmp\\res65.bmp"
+
 BAN_BRAS BITMAP "..\\bmp\\res66.bmp"
+
 BAN_BULG BITMAP "..\\bmp\\res67.bmp"
+
 BAN_CABO BITMAP "..\\bmp\\res68.bmp"
+
 BAN_CANA BITMAP "..\\bmp\\res69.bmp"
+
 BAN_CAT BITMAP "..\\bmp\\res70.bmp"
+
 BAN_CHIL BITMAP "..\\bmp\\res71.bmp"
+
 BAN_CHIN BITMAP "..\\bmp\\res72.bmp"
+
 BAN_CHIP BITMAP "..\\bmp\\res73.bmp"
+
 BAN_COLO BITMAP "..\\bmp\\res74.bmp"
+
 BAN_CRO BITMAP "..\\bmp\\res75.bmp"
+
 BAN_CUBA BITMAP "..\\bmp\\res76.bmp"
+
 BAN_DINA BITMAP "..\\bmp\\res77.bmp"
+
 BAN_ECUA BITMAP "..\\bmp\\res78.bmp"
+
 BAN_EEUU BITMAP "..\\bmp\\res79.bmp"
+
 BAN_EMIR BITMAP "..\\bmp\\res80.bmp"
+
 BAN_ESPA BITMAP "..\\bmp\\res81.bmp"
+
 BAN_EST BITMAP "..\\bmp\\res82.bmp"
+
 BAN_EURO BITMAP "..\\bmp\\res83.bmp"
+
 BAN_FINL BITMAP "..\\bmp\\res84.bmp"
+
 BAN_FRAN BITMAP "..\\bmp\\res85.bmp"
+
 BAN_GAL BITMAP "..\\bmp\\res86.bmp"
+
 BAN_GEOR BITMAP "..\\bmp\\res87.bmp"
+
 BAN_GRBR BITMAP "..\\bmp\\res88.bmp"
+
 BAN_GREC BITMAP "..\\bmp\\res89.bmp"
+
 BAN_GUAT BITMAP "..\\bmp\\res90.bmp"
+
 BAN_GUIN BITMAP "..\\bmp\\res91.bmp"
+
 BAN_HOLA BITMAP "..\\bmp\\res92.bmp"
+
 BAN_HOND BITMAP "..\\bmp\\res93.bmp"
+
 BAN_HUNG BITMAP "..\\bmp\\res94.bmp"
+
 BAN_INDI BITMAP "..\\bmp\\res95.bmp"
+
 BAN_INGL BITMAP "..\\bmp\\res96.bmp"
+
 BAN_IRLA BITMAP "..\\bmp\\res97.bmp"
+
 BAN_ISLA BITMAP "..\\bmp\\res98.bmp"
+
 BAN_ISRA BITMAP "..\\bmp\\res99.bmp"
+
 BAN_ITAL BITMAP "..\\bmp\\res100.bmp"
+
 BAN_JAPO BITMAP "..\\bmp\\res101.bmp"
+
 BAN_LIEC BITMAP "..\\bmp\\res102.bmp"
+
 BAN_LIT BITMAP "..\\bmp\\res103.bmp"
+
 BAN_LUXE BITMAP "..\\bmp\\res104.bmp"
+
 BAN_MALT BITMAP "..\\bmp\\res105.bmp"
+
 BAN_MARR BITMAP "..\\bmp\\res106.bmp"
+
 BAN_MEJI BITMAP "..\\bmp\\res107.bmp"
+
 BAN_MOLD BITMAP "..\\bmp\\res108.bmp"
+
 BAN_MONC BITMAP "..\\bmp\\res109.bmp"
+
 BAN_MONG BITMAP "..\\bmp\\res110.bmp"
+
 BAN_MOZA BITMAP "..\\bmp\\res111.bmp"
+
 BAN_NIC BITMAP "..\\bmp\\res112.bmp"
+
 BAN_NORM BITMAP "..\\bmp\\res113.bmp"
+
 BAN_NORU BITMAP "..\\bmp\\res114.bmp"
+
 BAN_PANA BITMAP "..\\bmp\\res115.bmp"
+
 BAN_PARG BITMAP "..\\bmp\\res116.bmp"
+
 BAN_PERU BITMAP "..\\bmp\\res117.bmp"
+
 BAN_POLO BITMAP "..\\bmp\\res118.bmp"
+
 BAN_PORT BITMAP "..\\bmp\\res119.bmp"
+
 BAN_REST BITMAP "..\\bmp\\res120.bmp"
+
 BAN_RICA BITMAP "..\\bmp\\res121.bmp"
+
 BAN_RPDO BITMAP "..\\bmp\\res122.bmp"
+
 BAN_RUM BITMAP "..\\bmp\\res123.bmp"
+
 BAN_RUS BITMAP "..\\bmp\\res124.bmp"
+
 BAN_SALV BITMAP "..\\bmp\\res125.bmp"
+
 BAN_SING BITMAP "..\\bmp\\res126.bmp"
+
 BAN_SLK BITMAP "..\\bmp\\res127.bmp"
+
 BAN_SLN BITMAP "..\\bmp\\res128.bmp"
+
 BAN_SMAR BITMAP "..\\bmp\\res129.bmp"
+
 BAN_SUEC BITMAP "..\\bmp\\res130.bmp"
+
 BAN_SUIZ BITMAP "..\\bmp\\res131.bmp"
+
 BAN_SURA BITMAP "..\\bmp\\res132.bmp"
+
 BAN_TURK BITMAP "..\\bmp\\res133.bmp"
+
 BAN_TURQ BITMAP "..\\bmp\\res134.bmp"
+
 BAN_URUG BITMAP "..\\bmp\\res135.bmp"
+
 BAN_USA BITMAP "..\\bmp\\res136.bmp"
+
 BAN_UZB BITMAP "..\\bmp\\res137.bmp"
+
 BAN_VAL BITMAP "..\\bmp\\res138.bmp"
+
 BAN_VAS BITMAP "..\\bmp\\res139.bmp"
+
 BAN_VAT BITMAP "..\\bmp\\res140.bmp"
+
 BAN_VENE BITMAP "..\\bmp\\res141.bmp"
+
 BAN_YUG BITMAP "..\\bmp\\res142.bmp"
 
 LED_RED_16 BITMAP "..\\bmp\\Led_Red_16.bmp"
 
 PDF BITMAP "..\\bmp\\gc_document_pdf_16.bmp"
+
 PDF_16 BITMAP "..\\bmp\\gc_document_pdf_16.bmp"
+
 EXIT BITMAP "..\\bmp\\gc_door_exit_16.bmp"
+
 TOP BITMAP "..\\bmp\\Navigate_Beginning_16.bmp"
+
 PREVIOUS BITMAP "..\\bmp\\Navigate_Left_16.bmp"
+
 NEXT BITMAP "..\\bmp\\Navigate_Right_16.bmp"
+
 BOTTOM BITMAP "..\\bmp\\Navigate_End_16.bmp"
+
 CLI BITMAP "..\\bmp\\gc_id_card_16.bmp"
+
 CLIPOT BITMAP "..\\bmp\\gc_id_card_hint_16.bmp"
+
 FIND BITMAP "..\\bmp\\gc_binocular2_16.bmp"
+
 PAGINATOR_32 BITMAP "..\\bmp\\Paginator_32.bmp"
+
 NIL16 BITMAP "..\\bmp\\Nil_16.bmp"
 
 SEND16 BITMAP "..\\bmp\\gc_satellite_dish2_16.bmp"
+
 BSEL BITMAP "..\\bmp\\Check2_16.bmp"
+
 SEND BITMAP "..\\bmp\\Check2_16.bmp"
+
 BSTOP BITMAP "..\\bmp\\gc_sign_forbidden_16.bmp"
+
 INFO BITMAP "..\\bmp\\gc_information_16.bmp"
+
 CODEBAR BITMAP "..\\bmp\\Code_bar_16.bmp"
 
 BGREEN BITMAP "..\\bmp\\Bullet_Square_Green_16.bmp"
+
 BYELOW BITMAP "..\\bmp\\Bullet_Ball_Yellow_16.bmp"
+
 BRED BITMAP "..\\bmp\\Bullet_Square_Red_16.bmp"
+
 BCONTA BITMAP "..\\bmp\\Nav_Plain_Red_16.bmp"
 
 BAR_01 BITMAP "..\\bmp\\Bar_01.bmp"
 
 BULLET_BALL_GLASS_BLUE_16 BITMAP "..\\bmp\\Bullet_Ball_Glass_Blue_16.bmp"
+
 BULLET_BALL_GLASS_GREEN_16 BITMAP "..\\bmp\\Bullet_Ball_Glass_Green_16.bmp"
+
 BULLET_BALL_GLASS_RED_16 BITMAP "..\\bmp\\Bullet_Ball_Glass_Red_16.bmp"
+
 BULLET_BALL_GLASS_YELLOW_16 BITMAP "..\\bmp\\Bullet_Ball_Glass_Yellow_16.bmp"
+
 BULLET_SQUARE_BLUE_16 BITMAP "..\\bmp\\Bullet_Square_Blue_16.bmp"
+
 BULLET_SQUARE_GREEN_16 BITMAP "..\\bmp\\Bullet_Square_Green_16.bmp"
+
 BULLET_SQUARE_RED_16 BITMAP "..\\bmp\\Bullet_Square_Red_16.bmp"
+
 BULLET_SQUARE_YELLOW_16 BITMAP "..\\bmp\\Bullet_Square_Yellow_16.bmp"
+
 BULLET_TRIANGLE_BLUE_16 BITMAP "..\\bmp\\Bullet_Triangle_Blue_16.bmp"
+
 BULLET_TRIANGLE_GREEN_16 BITMAP "..\\bmp\\Bullet_Triangle_Green_16.bmp"
+
 BULLET_TRIANGLE_RED_16 BITMAP "..\\bmp\\Bullet_Triangle_Red_16.bmp"
+
 BULLET_TRIANGLE_YELLOW_16 BITMAP "..\\bmp\\Bullet_Triangle_Yellow_16.bmp"
 
 CONVERTIRDBFTOSQL BITMAP "..\\bmp\\ConvertirDBFtoSQL.bmp"
 
-Shape_circle_32 BITMAP "..\\bmp\\Shape_circle_32.bmp"
-Shape_ellipse_32 BITMAP "..\\bmp\\Shape_ellipse_32.bmp"
-Shape_square_32 BITMAP "..\\bmp\\Shape_square_32.bmp"
-Shape_rectangle_32 BITMAP "..\\bmp\\Shape_rectangle_32.bmp"
-Bar_center_32 BITMAP "..\\bmp\\Bar_center_32.bmp"
-Bar_center_64 BITMAP "..\\bmp\\Bar_center_64.bmp"
-Bar_left_32 BITMAP "..\\bmp\\Bar_left_32.bmp"
-Bar_left_64 BITMAP "..\\bmp\\Bar_left_64.bmp"
-Bar_corner_left_32 BITMAP "..\\bmp\\Bar_corner_left_32.bmp"
-Bar_corner_left_64 BITMAP "..\\bmp\\Bar_corner_left_64.bmp"
-Bar_corner_right_32 BITMAP "..\\bmp\\Bar_corner_right_32.bmp"
-Bar_corner_right_64 BITMAP "..\\bmp\\Bar_corner_right_64.bmp"
-Bar_corner_top_left_32 BITMAP "..\\bmp\\Bar_corner_top_left_32.bmp"
-Bar_corner_top_left_64 BITMAP "..\\bmp\\Bar_corner_top_left_64.bmp"
-Bar_corner_top_right_32 BITMAP "..\\bmp\\Bar_corner_top_right_32.bmp"
-Bar_corner_top_right_64 BITMAP "..\\bmp\\Bar_corner_top_right_64.bmp"
-Flower_white_32 BITMAP "..\\bmp\\Flower_white_32.bmp"
-Flower_blue_32 BITMAP "..\\bmp\\Flower_blue_32.bmp"
-Flower_red_32 BITMAP "..\\bmp\\Flower_red_32.bmp"
-Flower_yellow_32 BITMAP "..\\bmp\\Flower_yellow_32.bmp"
+SHAPE_CIRCLE_32 BITMAP "..\\bmp\\Shape_circle_32.bmp"
 
-Navigate2_minus_32 BITMAP "..\\bmp\\Navigate2_minus_32.bmp"
-Navigate2_minus_48 BITMAP "..\\bmp\\Navigate2_minus_48.bmp"
-Navigate2_minus_64 BITMAP "..\\bmp\\Navigate2_minus_64.bmp"
-Navigate2_plus_32 BITMAP "..\\bmp\\Navigate2_plus_32.bmp"
-Navigate2_plus_48 BITMAP "..\\bmp\\Navigate2_plus_48.bmp"
-Navigate2_plus_64 BITMAP "..\\bmp\\Navigate2_plus_64.bmp"
-Navigate_panel_32 BITMAP "..\\bmp\\Navigate_panel_32.bmp"
-Navigate_panel_64 BITMAP "..\\bmp\\Navigate_panel_64.bmp"
-Navigate_connection_down_32 BITMAP "..\\bmp\\Navigate_connection_down_32.bmp"
-Navigate_connection_down_64 BITMAP "..\\bmp\\Navigate_connection_down_64.bmp"
-Navigate_corner_left_32 BITMAP "..\\bmp\\Navigate_corner_left_32.bmp"
-Navigate_corner_left_64 BITMAP "..\\bmp\\Navigate_corner_left_64.bmp"
-Navigate_connection_up_32 BITMAP "..\\bmp\\Navigate_connection_up_32.bmp"
-Navigate_connection_up_64 BITMAP "..\\bmp\\Navigate_connection_up_64.bmp"
-Navigate_corner_right_32 BITMAP "..\\bmp\\Navigate_corner_right_32.bmp"
-Navigate_corner_right_64 BITMAP "..\\bmp\\Navigate_corner_right_64.bmp"
-Navigate_corner_right_down_32 BITMAP "..\\bmp\\Navigate_corner_right_down_32.bmp"
-Navigate_corner_right_down_64 BITMAP "..\\bmp\\Navigate_corner_right_down_64.bmp"
-Navigate_corner_right_top_32 BITMAP "..\\bmp\\Navigate_corner_right_top_32.bmp"
-Navigate_corner_right_top_64 BITMAP "..\\bmp\\Navigate_corner_right_top_64.bmp"
-Navigate_left_32 BITMAP "..\\bmp\\Navigate_left_32.bmp"
-Navigate_left_64 BITMAP "..\\bmp\\Navigate_left_64.bmp"
-Navigate_right_32 BITMAP "..\\bmp\\Navigate_right_32.bmp"
-Navigate_right_64 BITMAP "..\\bmp\\Navigate_right_64.bmp"
-Shape_circle_80 BITMAP "..\\bmp\\Shape_circle_80.bmp"
-Shape_ellipse_80 BITMAP "..\\bmp\\Shape_ellipse_80.bmp"
-Shape_square_80 BITMAP "..\\bmp\\Shape_square_80.bmp"
-Shape_rectangle_80 BITMAP "..\\bmp\\Shape_rectangle_80.bmp"
+SHAPE_ELLIPSE_32 BITMAP "..\\bmp\\Shape_ellipse_32.bmp"
 
-Money2_32_Pressed BITMAP "..\\bmp\\Money2_32_Pressed.bmp"
+SHAPE_SQUARE_32 BITMAP "..\\bmp\\Shape_square_32.bmp"
+
+SHAPE_RECTANGLE_32 BITMAP "..\\bmp\\Shape_rectangle_32.bmp"
+
+BAR_CENTER_32 BITMAP "..\\bmp\\Bar_center_32.bmp"
+
+BAR_CENTER_64 BITMAP "..\\bmp\\Bar_center_64.bmp"
+
+BAR_LEFT_32 BITMAP "..\\bmp\\Bar_left_32.bmp"
+
+BAR_LEFT_64 BITMAP "..\\bmp\\Bar_left_64.bmp"
+
+BAR_CORNER_LEFT_32 BITMAP "..\\bmp\\Bar_corner_left_32.bmp"
+
+BAR_CORNER_LEFT_64 BITMAP "..\\bmp\\Bar_corner_left_64.bmp"
+
+BAR_CORNER_RIGHT_32 BITMAP "..\\bmp\\Bar_corner_right_32.bmp"
+
+BAR_CORNER_RIGHT_64 BITMAP "..\\bmp\\Bar_corner_right_64.bmp"
+
+BAR_CORNER_TOP_LEFT_32 BITMAP "..\\bmp\\Bar_corner_top_left_32.bmp"
+
+BAR_CORNER_TOP_LEFT_64 BITMAP "..\\bmp\\Bar_corner_top_left_64.bmp"
+
+BAR_CORNER_TOP_RIGHT_32 BITMAP "..\\bmp\\Bar_corner_top_right_32.bmp"
+
+BAR_CORNER_TOP_RIGHT_64 BITMAP "..\\bmp\\Bar_corner_top_right_64.bmp"
+
+FLOWER_WHITE_32 BITMAP "..\\bmp\\Flower_white_32.bmp"
+
+FLOWER_BLUE_32 BITMAP "..\\bmp\\Flower_blue_32.bmp"
+
+FLOWER_RED_32 BITMAP "..\\bmp\\Flower_red_32.bmp"
+
+FLOWER_YELLOW_32 BITMAP "..\\bmp\\Flower_yellow_32.bmp"
+
+NAVIGATE2_MINUS_32 BITMAP "..\\bmp\\Navigate2_minus_32.bmp"
+
+NAVIGATE2_MINUS_48 BITMAP "..\\bmp\\Navigate2_minus_48.bmp"
+
+NAVIGATE2_MINUS_64 BITMAP "..\\bmp\\Navigate2_minus_64.bmp"
+
+NAVIGATE2_PLUS_32 BITMAP "..\\bmp\\Navigate2_plus_32.bmp"
+
+NAVIGATE2_PLUS_48 BITMAP "..\\bmp\\Navigate2_plus_48.bmp"
+
+NAVIGATE2_PLUS_64 BITMAP "..\\bmp\\Navigate2_plus_64.bmp"
+
+NAVIGATE_PANEL_32 BITMAP "..\\bmp\\Navigate_panel_32.bmp"
+
+NAVIGATE_PANEL_64 BITMAP "..\\bmp\\Navigate_panel_64.bmp"
+
+NAVIGATE_CONNECTION_DOWN_32 BITMAP "..\\bmp\\Navigate_connection_down_32.bmp"
+
+NAVIGATE_CONNECTION_DOWN_64 BITMAP "..\\bmp\\Navigate_connection_down_64.bmp"
+
+NAVIGATE_CORNER_LEFT_32 BITMAP "..\\bmp\\Navigate_corner_left_32.bmp"
+
+NAVIGATE_CORNER_LEFT_64 BITMAP "..\\bmp\\Navigate_corner_left_64.bmp"
+
+NAVIGATE_CONNECTION_UP_32 BITMAP "..\\bmp\\Navigate_connection_up_32.bmp"
+
+NAVIGATE_CONNECTION_UP_64 BITMAP "..\\bmp\\Navigate_connection_up_64.bmp"
+
+NAVIGATE_CORNER_RIGHT_32 BITMAP "..\\bmp\\Navigate_corner_right_32.bmp"
+
+NAVIGATE_CORNER_RIGHT_64 BITMAP "..\\bmp\\Navigate_corner_right_64.bmp"
+
+NAVIGATE_CORNER_RIGHT_DOWN_32 BITMAP "..\\bmp\\Navigate_corner_right_down_32.bmp"
+
+NAVIGATE_CORNER_RIGHT_DOWN_64 BITMAP "..\\bmp\\Navigate_corner_right_down_64.bmp"
+
+NAVIGATE_CORNER_RIGHT_TOP_32 BITMAP "..\\bmp\\Navigate_corner_right_top_32.bmp"
+
+NAVIGATE_CORNER_RIGHT_TOP_64 BITMAP "..\\bmp\\Navigate_corner_right_top_64.bmp"
+
+NAVIGATE_LEFT_32 BITMAP "..\\bmp\\Navigate_left_32.bmp"
+
+NAVIGATE_LEFT_64 BITMAP "..\\bmp\\Navigate_left_64.bmp"
+
+NAVIGATE_RIGHT_32 BITMAP "..\\bmp\\Navigate_right_32.bmp"
+
+NAVIGATE_RIGHT_64 BITMAP "..\\bmp\\Navigate_right_64.bmp"
+
+SHAPE_CIRCLE_80 BITMAP "..\\bmp\\Shape_circle_80.bmp"
+
+SHAPE_ELLIPSE_80 BITMAP "..\\bmp\\Shape_ellipse_80.bmp"
+
+SHAPE_SQUARE_80 BITMAP "..\\bmp\\Shape_square_80.bmp"
+
+SHAPE_RECTANGLE_80 BITMAP "..\\bmp\\Shape_rectangle_80.bmp"
+
+MONEY2_32_PRESSED BITMAP "..\\bmp\\Money2_32_Pressed.bmp"
+

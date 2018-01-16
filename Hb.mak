@@ -367,6 +367,8 @@ CapturadorMovimientosAlmacenLineasView.prg							\
 ImportadorMovimientosAlmacenLineasController.prg					\
 ImportadorMovimientosAlmacenLineasValidator.prg						\
 CapturadorMovimientosAlmacenLineasController.prg					\
+ImprimirSeriesController.prg 												\
+ImprimirSeriesView.prg 														\
 MovimientosAlmacenLineasView.prg											\
 MovimientosAlmacenController.prg 										\
 MovimientosAlmacenLineasController.prg 								\
@@ -374,6 +376,9 @@ EtiquetasMovimientosAlmacenController.prg								\
 SQLMovimientosAlmacenModel.prg 											\
 SQLMovimientosAlmacenLineasModel.prg 									\
 SQLContadoresModel.prg 														\
+ContadoresController.prg													\
+ContadoresRepository.prg													\
+ContadoresView.prg 															\
 AlmacenesModel.prg 															\
 GruposMovimientosModel.prg 												\
 ControllerContainer.prg 													\
@@ -982,13 +987,17 @@ ImportadorMovimientosAlmacenLineasView.obj							\
 CapturadorMovimientosAlmacenLineasView.obj							\
 ImportadorMovimientosAlmacenLineasController.obj 					\
 ImportadorMovimientosAlmacenLineasValidator.obj 					\
-CapturadorMovimientosAlmacenLineasController.obj 					\
+ImprimirSeriesView.obj 														\
+ImprimirSeriesController.obj 												\
 MovimientosAlmacenLineasView.obj											\
 MovimientosAlmacenController.obj 										\
 MovimientosAlmacenLineasController.obj 								\
 EtiquetasMovimientosAlmacenController.obj								\
 SQLMovimientosAlmacenModel.obj 											\
 SQLContadoresModel.obj 														\
+ContadoresController.obj													\
+ContadoresRepository.obj 													\
+ContadoresView.obj 															\
 SQLMovimientosAlmacenLineasModel.obj 									\
 ControllerContainer.obj 													\
 GrpPrv.obj              													\
@@ -1568,6 +1577,8 @@ $(OBJ)\ImportadorMovimientosAlmacenLineasView.obj 					+
 $(OBJ)\CapturadorMovimientosAlmacenLineasView.obj 					+
 $(OBJ)\ImportadorMovimientosAlmacenLineasController.obj			+
 $(OBJ)\ImportadorMovimientosAlmacenLineasValidator.obj			+
+$(OBJ)\ImprimirSeriesView.obj												+
+$(OBJ)\ImprimirSeriesController.obj										+
 $(OBJ)\CapturadorMovimientosAlmacenLineasController.obj			+
 $(OBJ)\MovimientosAlmacenLineasView.obj								+
 $(OBJ)\MovimientosAlmacenController.obj 								+
@@ -1575,6 +1586,9 @@ $(OBJ)\MovimientosAlmacenLineasController.obj						+
 $(OBJ)\EtiquetasMovimientosAlmacenController.obj					+
 $(OBJ)\SQLMovimientosAlmacenModel.obj 									+
 $(OBJ)\SQLContadoresModel.obj 											+
+$(OBJ)\ContadoresController.obj 											+
+$(OBJ)\ContadoresRepository.obj 											+
+$(OBJ)\ContadoresView.obj 													+
 $(OBJ)\SQLMovimientosAlmacenLineasModel.obj 							+
 $(OBJ)\ControllerContainer.obj          								+
 $(OBJ)\GrpPrv.obj               											+

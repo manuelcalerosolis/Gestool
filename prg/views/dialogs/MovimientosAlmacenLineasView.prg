@@ -97,9 +97,9 @@ METHOD Activate()
          WHEN        ( ::oController:isAppendMode() ) ;
          PICTURE     "@!" ;
          BITMAP      "Lupa" ;
-         OF          ::oDialog
+         OF          ::oDialog  
 
-      ::oGetCodigoArticulo:bKeyDown := {|nKey| ::searchCodeGS128( nKey ) }
+      ::oGetCodigoArticulo:bKeyDown := {|nKey| ::searchCodeGS128( nKey ) } 
       ::oGetCodigoArticulo:bValid   := {|| ::oController:validateCodigoArticulo() }
       ::oGetCodigoArticulo:bHelp    := {|| brwArticulo( ::oGetCodigoArticulo ) }
 
@@ -242,8 +242,8 @@ METHOD Activate()
          WHEN        ( ::getController():isEditMode() ) ;
          ACTION      ( ::oController:runDialogSeries() )
 
-      REDEFINE BUTTON ::oBtnOk ;
-         ID          IDOK ;
+      REDEFINE BUTTON ::oBtnOk ; 
+         ID          9 ; 
          OF          ::oDialog ;
          WHEN        ( ::getController():isNotZoomMode() ) ;
          ACTION      ( if( validateDialog( ::oDialog ), ::oDialog:end( IDOK ), ) )
@@ -313,11 +313,11 @@ RETURN ( ::oSayTotalUnidades():Refresh(), ::oSayTotalImporte():Refresh() )
 
 //---------------------------------------------------------------------------//
 
-METHOD searchCodeGS128( nKey )
+METHOD searchCodeGS128( nKey ) 
 
    static cChar   := ""
 
-   cChar          += chr( nKey )
+   cChar          += chr( nKey ) 
 
    if nKey == 16 
       ::oGetCodigoArticulo:oGet:Insert( '@' )

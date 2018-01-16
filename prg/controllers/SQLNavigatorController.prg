@@ -15,6 +15,8 @@ CLASS SQLNavigatorController FROM SQLBaseController
 
    DATA lLabels                                       INIT .f.
 
+   DATA lCounter                                      INIT .f.
+
    DATA hDocuments
 
    DATA hFastKey                                      INIT {=>}
@@ -23,7 +25,7 @@ CLASS SQLNavigatorController FROM SQLBaseController
 
    METHOD New()
 
-   METHOD Delete( aSelected )                         INLINE( ::Super:Delete( ::getIdFromRecno( aSelected ) ) )
+   METHOD Delete( aSelected )                         INLINE ( ::Super:Delete( aSelected ) ) 
 
    METHOD ActivateNavigatorView()
 
@@ -317,3 +319,6 @@ METHOD onChangeCombo( oColumn )
 RETURN ( Self )
 
 //---------------------------------------------------------------------------//
+
+
+   

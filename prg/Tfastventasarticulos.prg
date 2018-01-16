@@ -116,11 +116,8 @@ CLASS TFastVentasArticulos FROM TFastReportInfGen
 
    METHOD AddVariableStock() 
 
-   METHOD GetInformacionEntrada( cCodArt, cCodAlm, cLote, cDatoRequerido )
-      //METHOD isEntradaAlbaranProveedor( cCodArt, cCodAlm, cLote )
-      METHOD GetDatoAlbaranProveedor( cCodArt, cCodAlm, cLote, cDatoRequerido )
+   METHOD GetDatoAlbaranProveedor( cCodArt, cCodAlm, cLote, cDatoRequerido )
       //METHOD isEntradaMovimientoAlmacen( cCodArt, cCodAlm, cLote )
-      METHOD GetDatoMovimientosAlamcen( cCodArt, cCodAlm, cLote, cDatoRequerido )
 
       METHOD getNameFieldLine( cFieldName )     INLINE ( getFieldNameFromDictionary( cFieldName, ::dictionaryLine ) )
       METHOD getNameFieldHeader( cFieldName )   INLINE ( getFieldNameFromDictionary( cFieldName, ::dictionaryHeader ) )
@@ -142,7 +139,7 @@ CLASS TFastVentasArticulos FROM TFastReportInfGen
                                                          ::cExpresionHeader   += ' .and. ( Field->cCodCli >= "' + ::oGrupoCliente:Cargo:getDesde() + '" .and. Field->cCodCli <= "' + ::oGrupoCliente:Cargo:getHasta() + '" )', ) )
 
    METHOD setFilterProductIdLine()              INLINE ( if( ::lApplyFilters,;
-                                                         ::cExpresionLine  += ' .and. ( alltrim( Field->cRef ) >= "' + alltrim(::oGrupoArticulo:Cargo:getDesde()) + '" .and. alltrim(Field->cRef) <= "' + alltrim(::oGrupoArticulo:Cargo:getHasta()) + '" )', ) )
+                                                         ::cExpresionLine  += ' .and. ( alltrim( Field->cRef ) >= "' + alltrim( ::oGrupoArticulo:Cargo:getDesde() ) + '" .and. alltrim( Field->cRef ) <= "' + alltrim( ::oGrupoArticulo:Cargo:getHasta() ) + '" )', ) )
 
    METHOD setFilterTypeLine()                   INLINE ( if( ::lApplyFilters,;
                                                          ::cExpresionLine  += ' .and. ( Field->cCodTip >= "' + ::oGrupoTArticulo:Cargo:getDesde() + '" .and. Field->cCodTip <= "' + ::oGrupoTArticulo:Cargo:getHasta() + '" )', ) )               
@@ -208,6 +205,12 @@ CLASS TFastVentasArticulos FROM TFastReportInfGen
    METHOD getTotalUnidadesVendidas( cCodArt )
 
    METHOD getCampoExtraAlbaranCliente( cField )
+
+   METHOD getDesdeArticulo()                          INLINE ( alltrim( ::oGrupoArticulo:Cargo:getDesde() ) )
+   METHOD getHastaArticulo()                          INLINE ( alltrim( ::oGrupoArticulo:Cargo:getHasta() ) )
+
+   METHOD getDesdeFecha()                             INLINE ( ::dIniInf ) 
+   METHOD getHastaFecha()                             INLINE ( ::dFinInf ) 
 
 END CLASS
 
@@ -383,8 +386,6 @@ METHOD OpenFiles() CLASS TFastVentasArticulos
       D():PartesProduccionMaterial( ::nView )
 
       D():PartesProduccionMateriaPrima( ::nView )
-
-      D():MovimientosAlmacenLineas( ::nView )
 
       D():PedidosProveedores( ::nView )
 
@@ -1014,10 +1015,24 @@ METHOD BuildTree( oTree, lLoadFile ) CLASS TFastVentasArticulos
    DEFAULT oTree           := ::oTreeReporting
    DEFAULT lLoadFile       := .t. 
 
-   aReports := {  {  "Title" => "Listado",                        "Image" => 0,  "Type" => "Listado",                      "Directory" => "Articulos\Listado",                            "File" => "Listado.fr3"  },;
-                  {  "Title" => "General",                        "Image" => 24, "Type" => "General",                      "Directory" => "Articulos\General",                            "File" => "Movimientos generales.fr3"  },;
-                  {  "Title" => "Compras/Ventas/Producción",      "Image" => 24, "Type" => "Todos los movimientos",        "Directory" => "Articulos\Movimientos",                        "File" => "Todos los movimientos.fr3"  },;
-                  {  "Title" => "Ventas",                         "Image" => 11, "Subnode" =>;
+   aReports := {  {  "Title"     => "Listado",;                        
+                     "Image"     => 0,;
+                     "Type"      => "Listado",;
+                     "Directory" => "Articulos\Listado",;
+                     "File"      => "Listado.fr3"  },;
+                  {  "Title"     => "General",;  
+                     "Image"     => 24,;
+                     "Type"      => "General",;
+                     "Directory" => "Articulos\General",;
+                     "File"      => "Movimientos generales.fr3"  },;
+                  {  "Title"     => "Compras/Ventas/Producción",;
+                     "Image"     => 24,;
+                     "Type"      => "Todos los movimientos",; 
+                     "Directory" => "Articulos\Movimientos",;                        
+                     "File"      => "Todos los movimientos.fr3"  },;
+                  {  "Title"     => "Ventas",;
+                     "Image"     => 11,;
+                     "Subnode" =>;
                   { ;
                      { "Title"      => "SAT de clientes",;
                        "Image"      => 20,;
@@ -3183,25 +3198,88 @@ RETURN ( Self )
 
 METHOD AddMovimientoAlmacen() CLASS TFastVentasArticulos
 
+   local oRowSet
+   local cCodigoArticulo
+
    ::setMeterText( "Procesando movimientos de almacén" )
 
-   // creamos la expresion del filtro------------------------------------------
-   
+   oRowSet              := MovimientosAlmacenLineasRepository():getRowSetMovimientosAlmacenForReport( Self )   
+
+   ::setMeterTotal( oRowSet:reccount() )
+
+   oRowSet:goTop()
+
+   while !(::lBreak ) .and. !( oRowSet:Eof() )
+
+      cCodigoArticulo   := oRowSet:fieldget('codigo_articulo' )
+
+      ::oDbf:Blank()
+
+      ::oDbf:cCodArt    := cCodigoArticulo
+      ::oDbf:cNomArt    := retFld( cCodigoArticulo, D():Articulos( ::nView ), "Nombre", "Codigo" )
+
+      ::oDbf:cCodFam    := RetFld( cCodigoArticulo, D():Articulos( ::nView ), "Familia", "Codigo" )
+      ::oDbf:cNomFam    := RetFld( ::oDbf:cCodFam, D():Familias( ::nView ) )
+     
+      ::oDbf:cCodTip    := RetFld( cCodigoArticulo, ( D():Articulos( ::nView ) ), "cCodTip", "Codigo" )
+      ::oDbf:cCodTemp   := RetFld( cCodigoArticulo, ( D():Articulos( ::nView ) ), "cCodTemp", "Codigo" )
+      ::oDbf:cCodFab    := RetFld( cCodigoArticulo, ( D():Articulos( ::nView ) ), "cCodFab", "Codigo" )
+      ::oDbf:cCodCate   := RetFld( cCodigoArticulo, ( D():Articulos( ::nView ) ), "cCodCate", "Codigo" )
+      ::oDbf:cDesUbi    := RetFld( cCodigoArticulo, ( D():Articulos( ::nView ) ), "cDesUbi", "Codigo" )
+      ::oDbf:cCodEnv    := RetFld( cCodigoArticulo, ( D():Articulos( ::nView ) ), "cCodFra", "Codigo" )                    
+
+      ::oDbf:cCodAlm    := oRowSet:fieldget( 'almacen_destino' )
+      ::oDbf:cAlmOrg    := oRowSet:fieldget( 'almacen_origen' )
+
+      ::oDbf:nBultos    := oRowSet:fieldget( 'bultos_articulo' )
+      ::oDbf:nCajas     := oRowSet:fieldget( 'cajas_articulo' )
+      if lCalCaj()
+         ::oDbf:nUniArt := notCaja( oRowSet:fieldget( 'cajas_articulo' ) ) * oRowSet:fieldget( 'unidades_articulo' )
+      else
+         ::oDbf:nUniArt := oRowSet:fieldget( 'unidades_articulo' )
+      end if
+      ::oDbf:nPreArt    := oRowSet:fieldget( 'precio_articulo' )
+
+      ::oDbf:nBrtArt    := 0
+      ::oDbf:nTotArt    := 0
+
+      ::oDbf:cCodPr1    := oRowSet:fieldget( 'codigo_primera_propiedad' )
+      ::oDbf:cCodPr2    := oRowSet:fieldget( 'codigo_segunda_propiedad' )
+      ::oDbf:cValPr1    := oRowSet:fieldget( 'valor_primera_propiedad' )
+      ::oDbf:cValPr2    := oRowSet:fieldget( 'valor_segunda_propiedad' )
+
+      ::oDbf:cClsDoc    := MOV_ALM
+      
+      ::oDbf:cTipDoc    := oRowSet:fieldget( 'nombre_movimiento' )
+
+      ::oDbf:cSerDoc    := ""
+      ::oDbf:cNumDoc    := alltrim( str( oRowSet:fieldget( 'numero' ) ) )
+      ::oDbf:cSufDoc    := oRowSet:fieldget( 'delegacion' )
+
+      ::oDbf:cIdeDoc    := str( oRowSet:fieldget( 'numero' ) ) + oRowSet:fieldget( 'delegacion' )
+      ::oDbf:nNumLin    := oRowSet:fieldget( 'id' )
+
+      ::oDbf:dFecDoc    := oRowSet:fieldget( 'fecha' )
+      ::oDbf:nMesDoc    := month( oRowSet:fieldget( 'fecha' ) )
+      ::oDbf:nAnoDoc    := year( oRowSet:fieldget( 'fecha' ) )
+
+      ::oDbf:Insert()
+
+      ::setMeterAutoIncremental()
+
+      oRowSet:skip()
+
+   end while
+
+
+/*
    ::cExpresionLine           := '( dFecMov >= Ctod( "' + Dtoc( ::dIniInf ) + '" ) .and. dFecMov <= Ctod( "' + Dtoc( ::dFinInf ) + '" ) )'
 
    if !::lAllArt
       ::cExpresionLine        += ' .and. ( cRefMov >= "' + ::oGrupoArticulo:Cargo:getDesde() + '" .and. cRefMov <= "' + ::oGrupoArticulo:Cargo:getHasta() + '")'
    end if
 
-   // aplicamos el filtro------------------------------------------------------
-
    ( D():MovimientosAlmacenLineas( ::nView ) )->( setCustomFilter( ::cExpresionLine ) )
-   
-   // inicializamos el meter---------------------------------------------------
-
-   ::setMeterTotal( ( D():MovimientosAlmacenLineas( ::nView ) )->( dbCustomKeyCount() ) )
-
-   // procesamos los movimientos de almacen------------------------------------
 
    ( D():MovimientosAlmacenLineas( ::nView ) )->( dbgotop() )
 
@@ -3275,6 +3353,12 @@ METHOD AddMovimientoAlmacen() CLASS TFastVentasArticulos
       ::setMeterAutoIncremental()
 
    end while
+
+
+*/   
+
+   // procesamos los movimientos de almacen------------------------------------
+
 
 RETURN ( Self )
 
@@ -3799,14 +3883,6 @@ RETURN ( Self )
 
 //---------------------------------------------------------------------------//
 
-METHOD GetInformacionEntrada( cCodArt, cLote, cDatoRequerido ) 
-
-   local cDato := ::GetDatoMovimientosAlamcen( cCodArt, cLote, cDatoRequerido )
-
-RETURN if ( !empty( cDato ), cDato, ::GetDatoAlbaranProveedor( cCodArt, cLote, cDatoRequerido ) )
-
-//---------------------------------------------------------------------------//
-
 METHOD GetDatoAlbaranProveedor( idArticulo, cLote, cCampoRequerido )
 
    local Resultado
@@ -3833,33 +3909,6 @@ METHOD GetDatoAlbaranProveedor( idArticulo, cLote, cCampoRequerido )
 RETURN ( Resultado )
 
 //---------------------------------------------------------------------------//
-
-METHOD GetDatoMovimientosAlamcen( cCodArt, cLote, cCampoRequerido )
-
-   local nFieldPosition
-   local Resultado            := ""
-
-   DEFAULT cCampoRequerido    := "dFecMov"
-
-   D():getStatusMovimientosAlmacenLineas( ::nView )
-
-   ( D():MovimientosAlmacenLineas( ::nView ) )->( ordsetfocus( "cRefFec" ) )
-
-   if ( D():MovimientosAlmacenLineas( ::nView ) )->( dbseek( Padr( cCodArt, 18 ) + Padr( cLote, 12 ) ) )
-
-      nFieldPosition          := ( D():MovimientosAlmacenLineas( ::nView ) )->( fieldpos( cCampoRequerido ) )
-
-      if ( nFieldPosition != 0 )
-         Resultado            := ( D():MovimientosAlmacenLineas( ::nView ) )->( fieldget( nFieldPosition ) )
-      end if
-                
-   end if
-
-   D():setStatusMovimientosAlmacenLineas( ::nView )
-
-RETURN ( Resultado )
-
-//--------------------------------------------------------------------------//
 
 METHOD getNumeroAlbaranProveedor() CLASS TFastVentasArticulos
 

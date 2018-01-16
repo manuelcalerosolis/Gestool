@@ -1,10 +1,30 @@
 MVC - ToDo
 
-- Creacion de nuevas estructuras
+- Refrescar errror en movimientos de almacen
 
-- Seeders
+- Copias de seguridad
 
-- Creacion de tablas de contadores.
+- Validacion de contadores.
+
+- Busquedas en etiquetas. ( done )
+
+- Ordenaciones de columnas de etiquetas. (done)
+
+- Botnon para modificar unidades de etiquetas. (done)
+
+- Botones de salida y grabacion en dialogos de movimientos de almacen ( done )
+
+- Creacion de tablas de contadores. (done)
+
+- Asignacion de contadores. ( done )
+
+- Asignación de numeros de series en las lineas. ( done)
+
+- Eliminación en cascada (done)
+
+- Creacion de nuevas estructuras (done)
+
+- Seeders (done)
 
 - No desaparece el browse de las propiedades.(done)
 
