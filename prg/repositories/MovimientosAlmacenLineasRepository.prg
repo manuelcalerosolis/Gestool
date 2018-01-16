@@ -53,23 +53,24 @@ END CLASS
 
 METHOD getSQLSentenceFechaCaducidad( cCodigoArticulo, cValorPrimeraPropiedad, cValorSegundaPropiedad, cLote )
 
-   local cSql  := "SELECT "                                                         + ;
-                     "fecha_caducidad "                                             + ;
-                  "FROM " + ::getTableName() + " "                                  + ;
-                  "WHERE empresa = " + quoted( cCodEmp() ) + " "                    + ;
-                     "AND codigo_articulo = " + quoted( cCodigoArticulo ) + " "     + ;
-                     "AND fecha_caducidad IS NOT NULL "       
+   local cSql  := "SELECT "                                       
+      cSql     +=    "movimientos_almacen_lineas.fecha_caducidad "
+      cSql     += "FROM " + ::getTableName() + " "
+      cSql     +=    "INNER JOIN movimientos_almacen ON movimientos_almacen_lineas.parent_uuid = movimientos_almacen.uuid " 
+      cSql     += "WHERE movimientos_almacen.empresa = " + quoted( cCodEmp() ) + " "                    
+      cSql     +=    "AND movimientos_almacen_lineas.codigo_articulo = " + quoted( cCodigoArticulo ) + " " 
+      cSql     +=    "AND movimientos_almacen_lineas.fecha_caducidad IS NOT NULL "       
 
    if !empty(cValorPrimeraPropiedad)
-      cSql     +=    "AND valor_primera_propiedad = " + quoted( cValorPrimeraPropiedad ) + " "   
+      cSql     +=    "AND movimientos_almacen_lineas.valor_primera_propiedad = " + quoted( cValorPrimeraPropiedad ) + " "   
    end if 
 
    if !empty(cValorSegundaPropiedad)
-      cSql     +=    "AND valor_segunda_propiedad = " + quoted( cValorSegundaPropiedad ) + " "   
+      cSql     +=    "AND movimientos_almacen_lineas.valor_segunda_propiedad = " + quoted( cValorSegundaPropiedad ) + " "   
    end if 
 
    if !empty(cLote)
-      cSql     +=    "AND lote = " + quoted( cLote ) + " "
+      cSql     +=    "AND movimientos_almacen_lineas.lote = " + quoted( cLote ) + " "
    end if 
 
 RETURN ( cSql )
@@ -127,11 +128,11 @@ METHOD getSQLSentenceToLabels( aIds, nFixLabels, cOrderBy )
       cSql     +=    toSqlString( nFixLabels ) + " AS total_unidades "  
    end if 
 
-   cSql        += "FROM movimientos_almacen_lineas "                             + ;
-                     "INNER JOIN movimientos_almacen ON movimientos_almacen_lineas.parent_uuid = movimientos_almacen.uuid "   + ;
+   cSql        += "FROM movimientos_almacen_lineas "                                                     + ;
+                     "INNER JOIN movimientos_almacen ON movimientos_almacen_lineas.parent_uuid = movimientos_almacen.uuid " + ;
                   "WHERE movimientos_almacen.id IN ( "  
 
-   aEval( aIds, {|nId| cSql += quoted( nId ) + "," } )
+   aeval( aIds, {|nId| cSql += quoted( nId ) + "," } )
 
    cSql        := chgAtEnd( cSql, " ) ", 1 )
 

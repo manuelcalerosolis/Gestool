@@ -102,36 +102,29 @@ RETURN ( ::aTextoMovimiento[ nPosition ] )
 
 METHOD getDeleteSentence( aUuid )
 
-   local cSQLDelete
+   local aSQLDelete        := {}
    local aUuidLineasToDelete
    local aUuidSeriesToDelete
 
    aUuidLineasToDelete     := SQLMovimientosAlmacenLineasModel():aUuidToDelete( aUuid )
 
-   msgalert( hb_valtoexp( aUuidLineasToDelete ), "aUuidLineasToDelete" )
-
-   cSQLDelete              := ::Super:getDeleteSentence( aUuid )
-   cSQLDelete              += "; "
+   aadd( aSQLDelete, ::Super:getDeleteSentence( aUuid ) )
 
    if !empty( aUuidLineasToDelete )
    
-      cSQLDelete           += SQLMovimientosAlmacenLineasModel():getDeleteSentence( aUuidLineasToDelete )
-      cSQLDelete           += "; "
+      aadd( aSQLDelete, SQLMovimientosAlmacenLineasModel():getDeleteSentence( aUuidLineasToDelete ) )
 
       aUuidSeriesToDelete  := SQLMovimientosAlmacenLineasNumerosSeriesModel():aUuidToDelete( aUuidLineasToDelete )
 
       if !empty( aUuidSeriesToDelete )
-         cSQLDelete        += SQLMovimientosAlmacenLineasNumerosSeriesModel():getDeleteSentence( aUuidSeriesToDelete )
-         cSQLDelete        += "; "
+         aadd( aSQLDelete, SQLMovimientosAlmacenLineasNumerosSeriesModel():getDeleteSentence( aUuidSeriesToDelete ) )
       end if 
 
    end if 
    
-   msgalert( cSQLDelete, "Tenemos q borrar todas las lineas y numoeros de serie")
-   
-   cSQLDelete           := nil
+   msgalert( hb_valtoexp( aSQLDelete ), "aSQLDelete" )
 
-RETURN ( cSQLDelete )
+RETURN ( aSQLDelete )
 
 //---------------------------------------------------------------------------//
 

@@ -732,9 +732,7 @@ METHOD deleteSelection( aRecno )
 
    ::fireEvent( 'deletingSelection' )
 
-   msgalert( ::getDeleteSentence( aRecno ), "deletingSelection" )
-
-   ::getDatabase():Query( ::getDeleteSentence( aRecno ) )
+   ::getDatabase():Execs( ::getDeleteSentence( aRecno ) )
 
    ::fireEvent( 'deletedSelection' )
    
@@ -745,8 +743,6 @@ RETURN ( Self )
 METHOD deleteById( nId )
 
    ::fireEvent( 'deletingById' )
-
-   msgAlert( ::getDeleteSentenceById( nId ), "deletedById" )
 
    ::getDatabase():Execs( ::getDeleteSentenceById( nId ) )
 

@@ -13,7 +13,7 @@ CLASS EtiquetasModel FROM SQLBaseModel
 
    METHOD   updateAfterDelete()
 
-   METHOD   deleteSelection( aRecno )              INLINE   ( getSQLDatabase():Query( ::getdeleteSentence( aRecno ) ), ::updateAfterDelete( aRecno ), ::buildRowSet() )
+   METHOD   deleteSelection( aRecno )              INLINE   ( getSQLDatabase():Execs( ::getdeleteSentence( aRecno ) ), ::updateAfterDelete( aRecno ), ::buildRowSet() )
 
    METHOD   insertChildBuffer()                    INLINE   ( getSQLDatabase():Query( ::getInsertSentence() ), ::buildRowSetAndFind() )
 
