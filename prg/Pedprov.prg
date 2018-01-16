@@ -2512,8 +2512,10 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbf, oBrw, aTmpPed, cCodArt, nMode )
 
    if nMode == APPD_MODE
 
-      if !runScript( "PedidosProveedores\Lineas\validCamposObligatorios.prg", aTmpPed, nView )
-         Return .f.
+      if file( cPatScriptEmp() + "PedidosProveedores\Lineas\validCamposObligatorios.prg" )
+         if !runScript( "PedidosProveedores\Lineas\validCamposObligatorios.prg", aTmpPed, nView )
+            Return .f.
+         end if
       end if
 
       aTmp[_NUNICAJA]   := 1

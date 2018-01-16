@@ -443,12 +443,12 @@ FUNCTION Empresa( oMenuItem, oWnd )
          HOTKEY   "F" ;
          LEVEL    ACC_EDIT
 
-      DEFINE BTNSHELL RESOURCE "CAL" GROUP OF oWndBrw ;
+      /*DEFINE BTNSHELL RESOURCE "CAL" GROUP OF oWndBrw ;
 			NOBORDER ;
          ACTION   ( ActualizaEstructuras( dbfEmp, dbfDlg, dbfUser, oWndBrw, oWnd ) );
          TOOLTIP  "Ac(t)ualizar ficheros";
          HOTKEY   "T" ;
-         LEVEL    ACC_EDIT
+         LEVEL    ACC_EDIT*/
 
    end if         
 

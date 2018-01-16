@@ -397,7 +397,7 @@ METHOD selectPedidosProveedoresPendientes( idProveedor )
                               "cCodPrv = " + quoted( idProveedor )  + " AND " + ;
                               "nEstado = 1"
 
-Return ( BaseModel():ExecuteSqlStatement( cSql, ::cSelectHead ) )
+Return ( ADSBaseModel():ExecuteSqlStatement( cSql, ::cSelectHead ) )
 
 //---------------------------------------------------------------------------//
 
@@ -429,7 +429,7 @@ METHOD AddLineasAlbaran() CLASS TImportarPedidosProveedor
 
    cSql     += " GROUP BY cRef, cAlmLin, cCodPr1, cCodPr2, cValPr1, cValPr2"
 
-   BaseModel():ExecuteSqlStatement( cSql, ::cSelectLines )
+   ADSBaseModel():ExecuteSqlStatement( cSql, ::cSelectLines )
 
    ::AddRegLine()
 

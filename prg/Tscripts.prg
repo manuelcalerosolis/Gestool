@@ -570,7 +570,7 @@ Function ImportScript( oMainWindow, oBoton, cDirectory, uParam1, uParam2, uParam
 
    local aFile
    local aDirectory  
-   
+
    aDirectory  := aDirectoryEventScript( cDirectory )
 
    if !Empty( aDirectory )
