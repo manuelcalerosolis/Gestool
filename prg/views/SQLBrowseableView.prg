@@ -50,7 +50,9 @@ CLASS SQLBrowseableView
    METHOD selectColumnOrder( oCol )          INLINE ( ::getBrowse():selectColumnOrder( oCol ) )
 
    METHOD Refresh()                          INLINE ( ::getBrowse():refreshCurrent(), ::getBrowse():setFocus() )
-   METHOD RefreshRowSet()                    INLINE ( ::getModel():buildRowSet(), ::Refresh() )
+   METHOD RefreshRowSet()                    INLINE ( iif(  !empty( ::oController ) .and. !empty( ::oController:oRowSet ),;
+                                                            ::oController:oRowSet:Refresh(),;
+                                                            ::Refresh() ) )
 
    //--------------------------------------------------------------------------
 

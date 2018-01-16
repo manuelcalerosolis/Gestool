@@ -255,6 +255,7 @@ METHOD Activate()
          ACTION      ( if( validateDialog( ::oDialog ), ::oDialog:end( IDOKANDNEW ), ) )
 
       REDEFINE BUTTON ;
+         CANCEL ;
          ID          IDCANCEL ;
          OF          ::oDialog ;
          ACTION      ( ::oDialog:end() )
