@@ -6,7 +6,7 @@
     name="FiveTech Software.FiveWin.32bits"
     type="win32"
 />
-<description>Your application description here.</description>
+<description>Gestool</description>
 <dependency>
     <dependentAssembly>
         <assemblyIdentity

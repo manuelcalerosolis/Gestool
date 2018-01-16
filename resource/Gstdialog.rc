@@ -5,6 +5,8 @@
 #include <richedit.h>
 #include "resource.h"
 
+1 24 "Windowsxp.Manifest" 
+
 LANGUAGE LANG_SPANISH,SUBLANG_SPANISH_MODERN
 
 ACTEMPRESA DIALOG DISCARDABLE 31, 110, 364, 107

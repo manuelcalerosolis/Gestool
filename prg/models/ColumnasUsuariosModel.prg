@@ -77,8 +77,6 @@ METHOD get( cBrowseName )
 
    if ::ExecuteSqlStatement( cSql, @cStm )
 
-      msgalert( ( cStm )->cBrwCfg, "cBrwCfg" )
-
       RETURN ( {  "State"  => ( cStm )->cBrwCfg,;
                   "Recno"  => ( cStm )->nRecCfg,;
                   "Order"  => ( cStm )->nTabCfg } )

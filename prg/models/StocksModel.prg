@@ -19,7 +19,7 @@ CLASS StocksModel FROM ADSBaseModel
 
    METHOD getFechaCaducidadADS()
 
-   METHOD getFechaCaducidadSQL()
+   METHOD getSQLFechaCaducidad()
 
    METHOD getSqlAdsStockArticulo( cCodigoArticulo, dFechaInicio, dFechaFin )
 
@@ -111,7 +111,7 @@ RETURN ( 0 )
 METHOD getFechaCaducidad( cCodigoArticulo, cValorPrimeraPropiedad, cValorSegundaPropiedad, cLote )
 
    local dFechaCaducidadADS   := ::getFechaCaducidadADS( cCodigoArticulo, cValorPrimeraPropiedad, cValorSegundaPropiedad, cLote )
-   local dFechaCaducidadSQL   := ::getFechaCaducidadSQL( cCodigoArticulo, cValorPrimeraPropiedad, cValorSegundaPropiedad, cLote )
+   local dFechaCaducidadSQL   := ::getSQLFechaCaducidad( cCodigoArticulo, cValorPrimeraPropiedad, cValorSegundaPropiedad, cLote )
 
 RETURN ( max( dFechaCaducidadADS, dFechaCaducidadSQL ) )
 
@@ -138,7 +138,7 @@ RETURN ( ctod( "" ) )
 
 //---------------------------------------------------------------------------//
 
-METHOD getFechaCaducidadSQL( cCodigoArticulo, cValorPrimeraPropiedad, cValorSegundaPropiedad, cLote )
+METHOD getSQLFechaCaducidad( cCodigoArticulo, cValorPrimeraPropiedad, cValorSegundaPropiedad, cLote )
 
    local cSql     := MovimientosAlmacenLineasRepository():getSQLSentenceFechaCaducidad( cCodigoArticulo, cValorPrimeraPropiedad, cValorSegundaPropiedad, cLote )
    local uValue   := getSQLDatabase():selectValue( cSql )
