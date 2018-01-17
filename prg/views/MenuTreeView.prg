@@ -100,6 +100,8 @@ CLASS MenuTreeView
                                                    ::oButtonMain:Expand(),;
                                                    ::fireEvent( 'addedSelectorButton' ) )
 
+   METHOD addPrintSerialButton()
+
    METHOD addPrintButtons()               
 
    METHOD addPreviewButtons()
@@ -351,6 +353,18 @@ RETURN ( Self )
 
 //----------------------------------------------------------------------------//
 
+METHOD addPrintSerialButton( cWorkArea )
+
+   ::fireEvent( 'addingPrintSerialButton')
+
+   ::oButtonPrint    := ::AddButton( "Imprimir series", "Imp16", {|| ::getController():printSerialDocument() }, nil, ACC_IMPR )
+
+   ::fireEvent( 'addedPrintSerialButton') 
+
+RETURN ( Self )
+
+//----------------------------------------------------------------------------//
+
 METHOD addPrintButtons( cWorkArea )
 
    ::fireEvent( 'addingPrintButton')
@@ -438,6 +452,8 @@ METHOD addDocumentsButton()
    end if 
 
    ::fireEvent( 'addingDocumentButton' )
+
+   ::addPrintSerialButton()
 
    ::addPrintButtons()
    

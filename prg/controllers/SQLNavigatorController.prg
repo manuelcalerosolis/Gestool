@@ -55,6 +55,8 @@ CLASS SQLNavigatorController FROM SQLBaseController
 
    METHOD showEditAndDeleteButtonFilter()
 
+   METHOD getIds()                                    INLINE ( ::oBrowseView:getRowSet():idFromRecno( ::oBrowseView:oBrowse:aSelected ) )
+
 END CLASS
 
 //---------------------------------------------------------------------------//

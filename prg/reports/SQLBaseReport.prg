@@ -26,8 +26,6 @@ CLASS SQLBaseReport
 
    DATA cDevice                           INIT IS_SCREEN
 
-   DATA uIds                              INIT {}
-
    METHOD New()
 
    METHOD End()
@@ -57,8 +55,7 @@ CLASS SQLBaseReport
    METHOD setDevice( cDevice )            INLINE ( ::cDevice := cDevice )
    METHOD getDevice()                     INLINE ( ::cDevice )
 
-   METHOD setIds( uIds )                  INLINE ( ::uIds := uIds )
-   METHOD getIds()                        INLINE ( ::uIds )
+   METHOD getIds()                        INLINE ( iif( !empty( ::oController ), ::oController:getIds(), {} ) )
 
    METHOD Show()  
 

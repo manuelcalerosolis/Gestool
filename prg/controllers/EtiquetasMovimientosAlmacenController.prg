@@ -23,7 +23,7 @@ CLASS EtiquetasMovimientosAlmacenController FROM SQLBaseController
    
    METHOD clickingHeader( oColumn )    INLINE ( ::generateRowSet( oColumn:cSortOrder ) )
 
-   METHOD setIds( aIds )               INLINE ( iif( !empty( ::oDialogView ), ::oDialogView:setIds( aIds ), ) )
+   METHOD getIds()                     INLINE ( iif( !empty( ::oSenderController ), ::oSenderController:getIds(), {} ) )
 
    METHOD getFilaInicio()              INLINE ( iif( !empty( ::oDialogView ), ::oDialogView:nFilaInicio, 0 ) )
    
@@ -31,15 +31,15 @@ CLASS EtiquetasMovimientosAlmacenController FROM SQLBaseController
 
    METHOD generateRowSet()
 
-   METHOD loadLabels()
+   METHOD loadDocuments()
 
-   METHOD generateLabels()
+   METHOD generateDocument()
 
-   METHOD editLabel()
+   METHOD editDocument()
 
-   METHOD createLabel()
+   METHOD createDocument()
 
-   METHOD deleteLabel()
+   METHOD deleteDocument()
 
 END CLASS
 
@@ -59,7 +59,7 @@ RETURN ( self )
 
 //---------------------------------------------------------------------------//
 
-METHOD loadLabels()
+METHOD loadDocuments()
 
    local aFiles   := directory( ::getDirectory() + "*.fr3" )
 
@@ -96,7 +96,7 @@ RETURN ( self )
 
 //---------------------------------------------------------------------------//
 
-METHOD generateLabels()
+METHOD generateDocument()
 
    local nRecno
    local oReport  
@@ -138,7 +138,7 @@ RETURN ( self )
 
 //---------------------------------------------------------------------------//
 
-METHOD editLabel()
+METHOD editDocument()
 
    local nRecno
    local oReport  
@@ -180,7 +180,7 @@ RETURN ( self )
 
 //---------------------------------------------------------------------------//
 
-METHOD createLabel()
+METHOD createDocument()
 
    msgalert( "new label" )
 
@@ -188,7 +188,7 @@ RETURN ( self )
 
 //---------------------------------------------------------------------------//
 
-METHOD deleteLabel()
+METHOD deleteDocument()
 
    msgalert( "new label" )
 

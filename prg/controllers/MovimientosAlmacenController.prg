@@ -6,8 +6,6 @@
 
 CLASS MovimientosAlmacenController FROM SQLNavigatorController
 
-   DATA aIds
-
    DATA cFileName
 
    DATA oLineasController
@@ -19,6 +17,8 @@ CLASS MovimientosAlmacenController FROM SQLNavigatorController
    DATA oEtiquetasController
 
    DATA oContadoresController
+
+   DATA oImprimirSeriesController
 
    DATA oReport
 
@@ -62,8 +62,7 @@ CLASS MovimientosAlmacenController FROM SQLNavigatorController
 
    METHOD insertingBuffer()
 
-   METHOD getIds()                  INLINE ( ::aIds )
-   METHOD setIds( aIds )            INLINE ( ::aIds := aIds )
+   METHOD printSerialDocument()     INLINE ( ::oImprimirSeriesController:Activate() )       
 
 END CLASS
 
@@ -101,8 +100,6 @@ METHOD New()
 
    ::oLineasController        := MovimientosAlmacenLineasController():New( self )
 
-   ::loadDocuments()
-
    ::oImportadorController    := ImportadorMovimientosAlmacenLineasController():New( self )
 
    ::oCapturadorController    := CapturadorMovimientosAlmacenLineasController():New( self )
@@ -110,6 +107,10 @@ METHOD New()
    ::oEtiquetasController     := EtiquetasMovimientosAlmacenController():New( self )
 
    ::oContadoresController    := ContadoresController():New( self )
+
+   ::oImprimirSeriesController   := ImprimirSeriesController():New( self )
+
+   ::loadDocuments()
 
    ::oReport                  := MovimientosAlmacenReport():New( Self )
 
@@ -184,11 +185,7 @@ RETURN ( .t. )
 
 METHOD deleteLines()
 
-   local aUuids   
-
-   aUuids         := ::getRowSet():IdFromRecno( ::aSelected, "uuid" )
-
-   aeval( aUuids, {| uuid | ::oLineasController:deleteLines( uuid ) } )
+   aeval( ::getRowSet():IdFromRecno( ::aSelected, "uuid" ), {| uuid | ::oLineasController:deleteLines( uuid ) } )
 
 RETURN ( self ) 
 
@@ -254,9 +251,7 @@ RETURN ( self )
 
 METHOD labelDocument()
 
-   ::setIds( ::oBrowseView:getRowSet():idFromRecno( ::oBrowseView:oBrowse:aSelected ) )
-
-   ::oEtiquetasController:Activate()
+  ::oEtiquetasController:Activate()
 
 RETURN ( self ) 
 
