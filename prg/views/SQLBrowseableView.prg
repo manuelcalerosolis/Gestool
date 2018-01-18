@@ -128,8 +128,6 @@ METHOD onChangeSearch()
 
    nRecCount            := ::getController():findInModel( uValue )
 
-   msgalert( nRecCount, "nRecCount" )
-
    if nRecCount >= 0
       oSearch:SetColor( Rgb( 0, 0, 0 ), Rgb( 255, 255, 255 ) )
    else
