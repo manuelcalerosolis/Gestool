@@ -15,7 +15,7 @@ CLASS ImprimirSeriesController FROM SQLBaseController
    METHOD setFileName( cFileName )     INLINE ( ::cFileName := cFileName )
    METHOD getFileName()                INLINE ( ::cFileName )
 
-   METHOD getFullPathFileName()        INLINE ( ::cDirectory + ::cFileName )
+   METHOD getFullPathFileName()        INLINE ( ::cDirectory + ::cFileName + if( !( ".fr3" $ lower( ::cFileName ) ), ".fr3", "" ) )
 
    METHOD getIds()                     INLINE ( iif( !empty( ::oSenderController ), ::oSenderController:getIds(), {} ) )
 
@@ -25,7 +25,11 @@ CLASS ImprimirSeriesController FROM SQLBaseController
 
    METHOD loadDocuments()
 
+   METHOD newDocument()
+
    METHOD editDocument()
+
+   METHOD deleteDocument()
 
 END CLASS
 
@@ -67,7 +71,7 @@ METHOD loadDocuments()
       RETURN ( self )
    end if 
 
-   ::oDialogView:oListboxFile:aItems   := {}
+   ::oDialogView:oListboxFile:setItems( {} )
 
    aeval( aFiles, {|aFile| ::oDialogView:oListboxFile:add( getFileNoExt( aFile[ 1 ] ) ) } )
 
@@ -79,7 +83,6 @@ RETURN ( self )
 
 METHOD editDocument()
 
-   local nRecno
    local oReport  
 
    ::setFileName( ::oDialogView:cListboxFile )
@@ -115,4 +118,56 @@ RETURN ( self )
 
 //---------------------------------------------------------------------------//
 
+METHOD newDocument()
 
+   local oReport  
+
+   oReport  := MovimientosAlmacenReport():New( self )
+
+   oReport:createFastReport()
+
+   oReport:setDevice( IS_SCREEN )
+
+   oReport:setDirectory( ::getDirectory() )
+   
+   oReport:buildRowSet()
+
+   oReport:setUserDataSet()
+
+   oReport:Design()
+
+   oReport:DestroyFastReport()
+   
+RETURN ( self )
+
+//---------------------------------------------------------------------------//
+
+METHOD deleteDocument()
+
+   local oReport  
+
+   ::setFileName( ::oDialogView:cListboxFile )
+
+   if empty( ::getFileName() )
+      msgStop( "No hay formato definido" )
+      RETURN ( self )  
+   end if 
+
+   if !file( ::getFullPathFileName() )
+      msgStop( "No existe el formato " + ::getFullPathFileName() )
+      RETURN ( self )  
+   end if 
+
+   if !msgNoYes( "¿ Desea eliminar el formato " + ::getFullPathFileName() + " ?" )
+      RETURN ( self )  
+   end if 
+      
+   if ferase( ::getFullPathFileName() ) != 0      
+      msgStop( "Error al eliminar el formato " + ::getFullPathFileName() )      
+   end if 
+
+   ::loadDocuments()
+
+RETURN ( self )
+
+//---------------------------------------------------------------------------//

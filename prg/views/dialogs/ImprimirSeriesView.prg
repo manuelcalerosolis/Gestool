@@ -50,13 +50,11 @@ METHOD Activate()
          ID          100 ;
          OF          ::oDialog
 
-      TBtnBmp():ReDefine( 110, "new16",,,,, {|| msgalert( "::oController:createLabel()" ) }, ::oDialog, .f., , .f., "Añadir formato" )
+      TBtnBmp():ReDefine( 110, "new16",,,,, {|| ::oController:newDocument() }, ::oDialog, .f., , .f., "Añadir formato" )
 
-      TBtnBmp():ReDefine( 120, "dup16",,,,, {|| msgalert( "::oController:editDocument()" ) }, ::oDialog, .f., , .f., "Duplicar formato" )
+      TBtnBmp():ReDefine( 120, "edit16",,,,, {|| ::oController:editDocument() }, ::oDialog, .f., , .f., "Modificar formato" )
 
-      TBtnBmp():ReDefine( 130, "edit16",,,,, {|| ::oController:editDocument() }, ::oDialog, .f., , .f., "Modificar formato" )
-
-      TBtnBmp():ReDefine( 140, "del16",,,,, {|| msgalert( "::oController:deleteLabel()" ) }, ::oDialog, .f., , .f., "Eliminar formato" )
+      TBtnBmp():ReDefine( 130, "del16",,,,, {|| ::oController:deleteDocument() }, ::oDialog, .f., , .f., "Eliminar formato" )
 
       REDEFINE LISTBOX ::oListboxFile ;
          VAR         ::cListboxFile ;

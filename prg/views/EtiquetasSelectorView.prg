@@ -115,7 +115,7 @@ METHOD Activate()
 
       TBtnBmp():ReDefine( 120, "edit16",,,,, {|| ::oController:editDocument() }, ::oPages:aDialogs[ 1 ], .f., , .f., "Modificar formato" )
 
-      TBtnBmp():ReDefine( 130, "del16",,,,, {|| ::oController:deleteLabel() }, ::oPages:aDialogs[ 1 ], .f., , .f., "Eliminar formato" )
+      TBtnBmp():ReDefine( 130, "del16",,,,, {|| ::oController:deleteDocument() }, ::oPages:aDialogs[ 1 ], .f., , .f., "Eliminar formato" )
 
       REDEFINE LISTBOX ::oListboxFile ;
          VAR         ::cListboxFile ;

@@ -187,6 +187,8 @@ RETURN ( .t. )
 
 METHOD Save()
 
+   msgalert( ::getFullPathFileName(), "::getFullPathFileName()" )
+
    ::oFastReport:SaveToFile( ::getFullPathFileName() )
 
 RETURN ( .t. )

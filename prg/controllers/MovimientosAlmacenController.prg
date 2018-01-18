@@ -219,8 +219,6 @@ METHOD printDocument( nDevice, cFileName )
       nCopies        := 1
    end if 
 
-   ::oReport:setIds( ::oRowSet:fieldGet( ::getModelColumnKey() ) )
-
    ::oReport:createFastReport()
 
    ::oReport:setDevice( nDevice )
