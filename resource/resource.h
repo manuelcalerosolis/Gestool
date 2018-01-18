@@ -4,3 +4,5 @@
 
 #define IDOKNOTFOCUS    9
 #define IDSERIES        4
+
+#define MANIFEST       24
