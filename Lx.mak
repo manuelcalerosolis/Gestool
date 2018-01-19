@@ -1062,7 +1062,6 @@ Seeders.prg    							\
 SqlMigrations.prg 						\
 SQLMovimientosAlmacenModel.prg 			\
 SQLMovimientosAlmacenLineasModel.prg 	\
-SQLNumerosSeriesModel.prg 					\
 SQLFiltrosModel.prg 							\
 SQLExportableModel.prg 						\
 MovimientosAlmacenLabel.prg				\
@@ -2123,7 +2122,6 @@ Seeders.obj    							\
 SqlMigrations.obj 						\ 
 SQLMovimientosAlmacenModel.obj 			\
 SQLMovimientosAlmacenLineasModel.obj 	\
-SQLNumerosSeriesModel.obj 					\
 SQLFiltrosModel.obj 							\
 SQLExportableModel.obj 						\
 MovimientosAlmacenLabel.obj 				\
@@ -3187,7 +3185,6 @@ $(OBJ)\Seeders.obj    							 +
 $(OBJ)\SqlMigrations.obj 						 +
 $(OBJ)\SQLMovimientosAlmacenModel.obj 		 		+
 $(OBJ)\SQLMovimientosAlmacenLineasModel.obj 		+
-$(OBJ)\SQLNumerosSeriesModel.obj 					+
 $(OBJ)\SQLFiltrosModel.obj 							+
 $(OBJ)\SQLExportableModel.obj 						+
 $(OBJ)\MovimientosAlmacenLabel.obj 					+

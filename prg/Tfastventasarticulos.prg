@@ -206,11 +206,15 @@ CLASS TFastVentasArticulos FROM TFastReportInfGen
 
    METHOD getCampoExtraAlbaranCliente( cField )
 
-   METHOD getDesdeArticulo()                          INLINE ( alltrim( ::oGrupoArticulo:Cargo:getDesde() ) )
-   METHOD getHastaArticulo()                          INLINE ( alltrim( ::oGrupoArticulo:Cargo:getHasta() ) )
+   METHOD getDesdeArticulo()                             INLINE   ( alltrim( ::oGrupoArticulo:Cargo:getDesde() ) )
+   METHOD getHastaArticulo()                             INLINE   ( alltrim( ::oGrupoArticulo:Cargo:getHasta() ) )
 
-   METHOD getDesdeFecha()                             INLINE ( ::dIniInf ) 
-   METHOD getHastaFecha()                             INLINE ( ::dFinInf ) 
+   METHOD getDesdeFecha()                                INLINE   ( ::dIniInf ) 
+   METHOD getHastaFecha()                                INLINE   ( ::dFinInf ) 
+
+   METHOD getFechaHoraConsolidacion( cCodArt, cCodAlm )  INLINE   ( MovimientosAlmacenLineasRepository():getFechaHoraConsolidacion( cCodArt, cCodAlm ) )
+
+//---------------------------------------------------------------------------//
 
 END CLASS
 
@@ -3272,6 +3276,12 @@ METHOD AddMovimientoAlmacen() CLASS TFastVentasArticulos
       ::oDbf:dFecDoc    := oRowSet:fieldget( 'fecha' )
       ::oDbf:nMesDoc    := month( oRowSet:fieldget( 'fecha' ) )
       ::oDbf:nAnoDoc    := year( oRowSet:fieldget( 'fecha' ) )
+
+      
+      MsgInfo( oRowSet:fieldget( 'Hora' ), Valtype( oRowSet:fieldget( 'Hora' ) ) )
+
+      //::oDbf:cHorDoc    := oRowSet:fieldget( 'fecha' )
+      //::oDbf:cMinDoc    := month( oRowSet:fieldget( 'fecha' ) )
 
       ::oDbf:Insert()
 
