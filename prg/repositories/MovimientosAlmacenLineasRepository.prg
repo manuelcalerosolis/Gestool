@@ -11,27 +11,27 @@ CLASS MovimientosAlmacenLineasRepository FROM SQLBaseRepository
    METHOD getSQLSentenceFechaCaducidad( cCodigoArticulo, cValorPrimeraPropiedad, cValorSegundaPropiedad, cLote )
 
    METHOD getSQLSentenceArticuloUuid( cCodigoArticulo, uuid )
+   
+   METHOD getSQLSentenceWhereParentUuid( uuid )
 
    METHOD getHashArticuloUuid( cCodigoArticulo, uuid ) ;
                                  INLINE ( getSQLDataBase():selectFetchHash( ::getSQLSentenceArticuloUuid( cCodigoArticulo, uuid ) ) )
-
-   METHOD getSQLSentenceWhereParentUuid( uuid )
 
    METHOD getSerializedColumnsSentenceToLabels()
 
    METHOD getSQLSentenceToLabels( initialId, finalId )
 
-   METHOD getSqlSentenceIdByUuid( uuid ) 
+   METHOD getSQLSentenceIdByUuid( uuid ) 
 
    METHOD getIdByUuid( nNumber )  INLINE ( getSQLDataBase():selectValue( ::getSqlSentenceIdByUuid( nNumber ) ) )
 
-   METHOD getSqlSentenceTotalUnidades()
+   METHOD getSQLSentenceTotalUnidades()
 
    METHOD getSQLSentenceFechaHoraConsolidacion()
    METHOD getFechaHoraConsolidacion()
    METHOD getHashFechaHoraConsolidacion()
 
-   METHOD getSqlSentenceConsolidacion()
+   METHOD getSQLSentenceConsolidacion()
 
    METHOD getTotalUnidadesStock( tConsolidacion, cCodigoArticulo, cCodigoAlmacen, cValorPropiedad1, cValorPropiedad2, cLote )
 
@@ -43,7 +43,7 @@ CLASS MovimientosAlmacenLineasRepository FROM SQLBaseRepository
 
    METHOD getTotalUnidades( tConsolidacion, cCodigoArticulo, cCodigoAlmacen, cValorPropiedad1, cValorPropiedad2, cLote, lEntrada )
 
-   METHOD getSqlSentenceMovimientosAlmacenForReport( oReporting )
+   METHOD getSQLSentenceMovimientosAlmacenForReport( oReporting )
 
    METHOD getRowSetMovimientosAlmacenForReport( oReporting )
 
@@ -88,7 +88,7 @@ RETURN ( cSql )
 
 //---------------------------------------------------------------------------//
 
-METHOD getSqlSentenceWhereParentUuid( uuid )
+METHOD getSQLSentenceWhereParentUuid( uuid )
 
    local cSql  := "SELECT * FROM " + ::getTableName() + " "   + ;
                      "WHERE parent_uuid = " + quoted( uuid )
@@ -123,7 +123,7 @@ METHOD getSQLSentenceToLabels( aIds, nFixLabels, cOrderBy )
                      "movimientos_almacen_lineas.valor_segunda_propiedad AS valor_segunda_propiedad, "      
 
    if empty( nFixLabels )
-      cSql     +=    "IF ( movimientos_almacen_lineas.cajas_articulo = 0, 1, movimientos_almacen_lineas.cajas_articulo ) * movimientos_almacen_lineas.unidades_articulo AS total_unidades "  
+      cSql     +=    SQLMovimientosAlmacenLineasModel():getSQLSubSentenceTotalUnidadesLinea()
    else
       cSql     +=    toSqlString( nFixLabels ) + " AS total_unidades "  
    end if 
@@ -185,17 +185,17 @@ RETURN ( cSql )
 
 //---------------------------------------------------------------------------//
 
-METHOD getSqlSentenceIdByUuid( uuid ) 
+METHOD getSQLSentenceIdByUuid( uuid ) 
 
-   local cSql  := "SELECT id "
-   cSql        +=    "FROM " + ::getTableName() + " " 
-   cSql        +=    "WHERE uuid = " + quoted( uuid ) 
+   local cSql        := "SELECT id "
+   cSql              +=    "FROM " + ::getTableName() + " " 
+   cSql              +=    "WHERE uuid = " + quoted( uuid ) 
 
 RETURN ( cSql )
 
 //---------------------------------------------------------------------------//
 
-METHOD getSqlSentenceConsolidacion( cCodigoArticulo, cCodigoAlmacen, cValorPropiedad1, cValorPropiedad2, cLote )
+METHOD getSQLSentenceConsolidacion( cCodigoArticulo, cCodigoAlmacen, cValorPropiedad1, cValorPropiedad2, cLote )
 
    local cSentence        
 
@@ -260,7 +260,7 @@ RETURN ( nEntrada - nSalida )
 
 //---------------------------------------------------------------------------//
 
-METHOD getSqlSentenceTotalUnidades( tConsolidacion, cCodigoArticulo, cCodigoAlmacen, cValorPropiedad1, cValorPropiedad2, cLote, lEntrada )
+METHOD getSQLSentenceTotalUnidades( tConsolidacion, cCodigoArticulo, cCodigoAlmacen, cValorPropiedad1, cValorPropiedad2, cLote, lEntrada )
 
    local cSentence
 
@@ -275,8 +275,9 @@ METHOD getSqlSentenceTotalUnidades( tConsolidacion, cCodigoArticulo, cCodigoAlma
    cSentence         +=    "movimientos_almacen_lineas.lote, "
    cSentence         +=    "movimientos_almacen_lineas.cajas_articulo, "
    cSentence         +=    "movimientos_almacen_lineas.unidades_articulo, "
-   cSentence         +=    "SUM( IF( movimientos_almacen_lineas.cajas_articulo = 0, 1, movimientos_almacen_lineas.cajas_articulo ) * movimientos_almacen_lineas.unidades_articulo ) as totalUnidadesStock "
+   cSentence         +=    SQLMovimientosAlmacenLineasModel():getSQLSubSentenceSumatorioUnidadesLinea() 
    cSentence         += "FROM movimientos_almacen "
+
    cSentence         += "INNER JOIN movimientos_almacen_lineas "
    cSentence         +=    "ON movimientos_almacen_lineas.parent_uuid = movimientos_almacen.uuid "
 
@@ -319,15 +320,16 @@ RETURN ( nTotal )
 
 //---------------------------------------------------------------------------//
 
-METHOD getSqlSentenceMovimientosAlmacenForReport( oReporting )
+METHOD getSQLSentenceMovimientosAlmacenForReport( oReporting )
 
    local cSentence   
 
    cSentence         := "SELECT movimientos_almacen.id, "
    cSentence         +=    "movimientos_almacen.numero, "
    cSentence         +=    "movimientos_almacen.delegacion, "
-   cSentence         +=    "CAST(movimientos_almacen.fecha_hora AS date) AS fecha, "
-   cSentence         +=    SQLMovimientosAlmacenModel():getColumnMovimiento( 'movimientos_almacen' )
+   cSentence         +=    "CAST( movimientos_almacen.fecha_hora AS date ) AS fecha, "
+   cSentence         +=    "CAST( movimientos_almacen.fecha_hora AS time ) AS hora, "
+   cSentence         +=    SQLMovimientosAlmacenModel():getColumnMovimiento( 'movimientos_almacen' ) 
    cSentence         +=    "movimientos_almacen.almacen_destino, "
    cSentence         +=    "movimientos_almacen.almacen_origen, "
    cSentence         +=    "movimientos_almacen_lineas.parent_uuid, "
@@ -340,7 +342,7 @@ METHOD getSqlSentenceMovimientosAlmacenForReport( oReporting )
    cSentence         +=    "movimientos_almacen_lineas.bultos_articulo, "
    cSentence         +=    "movimientos_almacen_lineas.cajas_articulo, "
    cSentence         +=    "movimientos_almacen_lineas.unidades_articulo, "
-   cSentence         +=    "( IF( movimientos_almacen_lineas.cajas_articulo = 0, 1, movimientos_almacen_lineas.cajas_articulo ) * movimientos_almacen_lineas.unidades_articulo ) as total_unidades, "
+   cSentence         +=    SQLMovimientosAlmacenLineasModel():getSQLSubSentenceTotalUnidadesLinea( "movimientos_almacen_lineas", "total_unidades" ) + ", "
    cSentence         +=    "movimientos_almacen_lineas.precio_articulo "
    cSentence         += "FROM movimientos_almacen_lineas "
    cSentence         += "INNER JOIN movimientos_almacen "
@@ -367,3 +369,4 @@ METHOD getRowSetMovimientosAlmacenForReport( oReporting )
 RETURN ( ::getDatabase():fetchRowSet( cSentence ) )
 
 //---------------------------------------------------------------------------//
+

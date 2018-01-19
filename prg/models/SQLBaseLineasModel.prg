@@ -38,8 +38,6 @@ METHOD New()
 
    ::Super:New()
 
-   // ::cGeneralSelect 		:= "SELECT * FROM " + ::cTableName + " WHERE " + ::cForeignColumn
-
 RETURN ( Self )
 
 //---------------------------------------------------------------------------//
@@ -56,7 +54,7 @@ METHOD getSelectSentence()
 
 		aeval( ::aTmpIdsToConfirm, { | nID | cSQLSelect += toSQLString( nID ) + ", " } )
 
-		cSQLSelect        := ChgAtEnd( cSQLSelect, ' )', 2 )
+		cSQLSelect      := ChgAtEnd( cSQLSelect, ' )', 2 )
 
 	endif
 
@@ -150,3 +148,4 @@ METHOD checksForValid( cColumnToValid )
 RETURN ( nIDToValid )
 
 //---------------------------------------------------------------------------//
+
