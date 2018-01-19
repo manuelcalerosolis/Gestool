@@ -20,7 +20,7 @@ CLASS MovimientosAlmacenLabelReport FROM SQLBaseReport
 
    METHOD setRowSet( oRowSet )      INLINE ( ::oMemList := oRowSet )
 
-   METHOD buildData() 
+   METHOD setUserDataSet() 
 
    METHOD skipper()
 
@@ -47,7 +47,7 @@ RETURN ( Self )
 
 //---------------------------------------------------------------------------//
 
-METHOD buildData() 
+METHOD setUserDataSet() 
 
    ::oFastReport:ClearDataSets()
 
@@ -109,13 +109,13 @@ METHOD calculateRowsToSkip()
 
    local nHeight        := ::oFastReport:GetProperty( "MasterData", "Height" )
    local nColumns       := ::oFastReport:GetProperty( "MainPage", "Columns" )
-   local nPaperHeight   := ::oFastReport:GetProperty( "MainPage", "PaperHeight" ) * fr01cm
+   local nPaperHeight   := ::oFastReport:GetProperty( "MainPage", "PaperHeight" ) 
 
    ::nRowsToSkip        := 0
 
    if !empty( nPaperHeight ) .and. !empty( nHeight ) .and. !empty( nColumns )
 
-      ::nRowsToSkip     := ( ::oController:getColumnaInicio() - 1 ) * int( nPaperHeight / nHeight )
+      ::nRowsToSkip     := ( ::oController:getColumnaInicio() - 1 ) * int( nPaperHeight / nHeight * fr01cm )
       ::nRowsToSkip     += ( ::oController:getFilaInicio() - 1 )
 
    end if 

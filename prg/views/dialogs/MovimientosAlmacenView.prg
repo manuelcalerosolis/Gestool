@@ -31,7 +31,7 @@ END CLASS
 
 METHOD Activate()
 
-   DEFINE DIALOG ::oDialog RESOURCE "Movimientos_Almacen" TITLE ::lblTitle() + ::oController:getTitle()
+   DEFINE DIALOG ::oDialog RESOURCE "MOVIMIENTOS_ALMACEN" TITLE ::lblTitle() + ::oController:getTitle()
 
       REDEFINE GET   ::oController:oModel:hBuffer[ "numero" ] ;
          ID          100 ;

@@ -35,6 +35,12 @@ CLASS SQLMovimientosAlmacenLineasModel FROM SQLExportableModel
 
    METHOD getDeleteSentenceFromParentsUuid()
 
+   METHOD getSQLSubSentenceTotalUnidadesLinea( cTable, cAs )
+
+   METHOD getSQLSubSentenceTotalPrecioLinea( cTable, cAs )
+
+   METHOD getSQLSubSentenceSumatorioUnidadesLinea( cTable, cAs )
+
 END CLASS
 
 //---------------------------------------------------------------------------//
@@ -106,9 +112,9 @@ METHOD getInitialSelect()
                         "bultos_articulo, "                                   + ;
                         "cajas_articulo, "                                    + ;
                         "unidades_articulo, "                                 + ;
-                        "if( cajas_articulo = 0, 1, cajas_articulo ) * unidades_articulo as total_unidades, "  + ;
+                        ::getSQLSubSentenceTotalUnidadesLinea() + ", "        + ;
                         "precio_articulo, "                                   + ;
-                        "if( cajas_articulo = 0, 1, cajas_articulo ) * unidades_articulo * precio_articulo as total_precio "  + ;
+                        ::getSQLSubSentenceTotalPrecioLinea()                 + ;
                      "FROM " + ::getTableName()    
 
 RETURN ( cSelect )
@@ -241,5 +247,57 @@ METHOD getDeleteSentenceFromParentsUuid( aParentsUuid )
    end if 
 
 RETURN ( "" )
+
+//---------------------------------------------------------------------------//
+
+METHOD getSQLSubSentenceTotalUnidadesLinea( cTable, cAs )
+
+   DEFAULT cTable    := ""
+   DEFAULT cAs       := "total_unidades"
+   
+   if !empty( cTable )
+      cTable         += "."
+   end if 
+
+   if lCalCaj()   
+      RETURN ( "( IF( " + cTable + "cajas_articulo = 0, 1, " + cTable + "cajas_articulo ) * " + cTable + "unidades_articulo ) AS " + cAs + " " )
+   end if 
+
+RETURN ( cTable + "unidades_articulo AS " + cAs + " " )
+
+//---------------------------------------------------------------------------//
+
+METHOD getSQLSubSentenceTotalPrecioLinea( cTable, cAs )
+
+   DEFAULT cTable    := ""
+   DEFAULT cAs       := "total_precio"
+
+   if !empty( cTable )
+      cTable         += "."
+   end if 
+
+   if lCalCaj()   
+      RETURN ( "( IF( " + cTable + "cajas_articulo = 0, 1, " + cTable + "cajas_articulo ) * " + cTable + "unidades_articulo * " + cTable + "precio_articulo ) AS " + cAs + " " )
+   end if 
+
+RETURN ( cTable + "unidades_articulo * " + cTable + "precio_articulo AS " + cAs + " " )
+
+//---------------------------------------------------------------------------//
+
+METHOD getSQLSubSentenceSumatorioUnidadesLinea( cTable, cAs )
+
+   DEFAULT cAs       := "total_unidades"
+
+   if empty( cTable )
+      cTable         := ""
+   else
+      cTable         += "."
+   end if
+
+   if lCalCaj()   
+      RETURN ( "SUM( IF( " + cTable + "cajas_articulo = 0, 1, " + cTable + "cajas_articulo ) * " + cTable + "unidades_articulo ) AS " + cAs + " " )
+   end if 
+
+RETURN ( "SUM( " + cTable + "unidades_articulo ) AS " + cAs + " " )
 
 //---------------------------------------------------------------------------//

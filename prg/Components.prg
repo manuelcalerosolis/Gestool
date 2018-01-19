@@ -1093,7 +1093,7 @@ Return ( Self )
 
 //--------------------------------------------------------------------------//
 
-METHOD Resource(oDlg) CLASS GetPrinter
+METHOD Resource( oDlg ) CLASS GetPrinter
 
    REDEFINE COMBOBOX ::oGetControl ;
       VAR      ::uGetValue ;

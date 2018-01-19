@@ -28,8 +28,17 @@ METHOD getSqlSentenceByIdOrLast( id )
 
    if empty( id )
       cSql     +=    "ORDER BY id DESC LIMIT 1"
-   else 
+      RETURN ( cSql )
+   end if 
+
+   if hb_isstring( id )
       cSql     +=    "WHERE id = " + alltrim( str( id ) ) 
+   end if 
+
+   if hb_isarray( id ) 
+      cSql     +=    "WHERE id IN ( " 
+      aeval( id, {| v | cSql += if( hb_isarray( v ), toSQLString( atail( v ) ), toSQLString( v ) ) + ", " } )
+      cSql     := chgAtEnd( cSql, ' )', 2 )
    end if 
 
 RETURN ( cSql )

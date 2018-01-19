@@ -14,7 +14,6 @@ CLASS EtiquetasSelectorView FROM SQLBaseView
    DATA aIds
 
    DATA oSayRegistrosSeleccionados
-   DATA cSayRegistrosSeleccionados  INIT "Registros seleccionados"
 
    DATA oListboxFile
    DATA aListboxFile                INIT {}
@@ -55,13 +54,13 @@ CLASS EtiquetasSelectorView FROM SQLBaseView
 
    METHOD startDialog()
 
-   METHOD getHashList()             INLINE ( ::oController:oHashList )
+   METHOD getHashList()                INLINE ( ::oController:oHashList )
 
    METHOD hashListFind()
 
-   METHOD getColumnOrder()          INLINE ( ::oBrowse:getColumnOrder():cOrder )
+   METHOD getColumnOrder()             INLINE ( ::oBrowse:getColumnOrder():cOrder )
 
-   METHOD setIds( aIds )            INLINE ( ::aIds := aIds )
+   METHOD getRegistrosSeleccionados()  INLINE ( "( " + alltrim( str( len( ::oController:getIds() ) ) ) + ") registro(s) seleccionado(s)" )
 
    METHOD Anterior() 
 
@@ -69,13 +68,13 @@ CLASS EtiquetasSelectorView FROM SQLBaseView
 
    METHOD sortColumn( oColumn, nColumn )
 
-   METHOD sumarUnidades()           INLINE ( ::getHashList():fieldput( 'total_unidades', ::getHashList():fieldGet( 'total_unidades' ) + 1 ),;
-                                             ::oBrowse:Refresh() ) 
+   METHOD sumarUnidades()              INLINE ( ::getHashList():fieldput( 'total_unidades', ::getHashList():fieldGet( 'total_unidades' ) + 1 ),;
+                                                ::oBrowse:Refresh() ) 
 
-   METHOD restarUnidades()          INLINE ( iif(  ::getHashList():fieldGet( 'total_unidades' ) > 0,;
-                                                   ::getHashList():fieldput( 'total_unidades', ::getHashList():fieldGet( 'total_unidades' ) - 1 ),;
-                                                   ),;
-                                             ::oBrowse:Refresh() ) 
+   METHOD restarUnidades()             INLINE ( iif(  ::getHashList():fieldGet( 'total_unidades' ) > 0,;
+                                                      ::getHashList():fieldput( 'total_unidades', ::getHashList():fieldGet( 'total_unidades' ) - 1 ),;
+                                                      ),;
+                                                ::oBrowse:Refresh() ) 
 
    METHOD limpiarUnidades()
 
@@ -108,15 +107,15 @@ METHOD Activate()
          OF          ::oDialog ;
 
       REDEFINE SAY   ::oSayRegistrosSeleccionados ;
-         VAR         "( " + alltrim( str( len( ::aIds ) ) ) + ") registro(s) seleccionado(s)" ;
+         VAR         ::getRegistrosSeleccionados() ;
          ID          100 ;
          OF          ::oPages:aDialogs[ 1 ]
 
-      TBtnBmp():ReDefine( 110, "new16",,,,, {|| ::oController:createLabel() }, ::oPages:aDialogs[ 1 ], .f., , .f., "Añadir formato de etiquetas" )
+      TBtnBmp():ReDefine( 110, "new16",,,,, {|| ::oController:createLabel() }, ::oPages:aDialogs[ 1 ], .f., , .f., "Añadir formato" )
 
-      TBtnBmp():ReDefine( 120, "edit16",,,,, {|| ::oController:editLabel() }, ::oPages:aDialogs[ 1 ], .f., , .f., "Modificar formato de etiquetas" )
+      TBtnBmp():ReDefine( 120, "edit16",,,,, {|| ::oController:editDocument() }, ::oPages:aDialogs[ 1 ], .f., , .f., "Modificar formato" )
 
-      TBtnBmp():ReDefine( 130, "del16",,,,, {|| ::oController:deleteLabel() }, ::oPages:aDialogs[ 1 ], .f., , .f., "Eliminar formato de etiquetas" )
+      TBtnBmp():ReDefine( 130, "del16",,,,, {|| ::oController:deleteDocument() }, ::oPages:aDialogs[ 1 ], .f., , .f., "Eliminar formato" )
 
       REDEFINE LISTBOX ::oListboxFile ;
          VAR         ::cListboxFile ;
@@ -301,7 +300,7 @@ RETURN ( self )
 
 METHOD startDialog()
 
-   ::oController:loadLabels()
+   ::oController:loadDocuments()
 
 RETURN ( self )
 

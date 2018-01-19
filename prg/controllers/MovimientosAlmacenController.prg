@@ -18,6 +18,8 @@ CLASS MovimientosAlmacenController FROM SQLNavigatorController
 
    DATA oContadoresController
 
+   DATA oImprimirSeriesController
+
    DATA oReport
 
    METHOD New()
@@ -60,6 +62,8 @@ CLASS MovimientosAlmacenController FROM SQLNavigatorController
 
    METHOD insertingBuffer()
 
+   METHOD printSerialDocument()     INLINE ( ::oImprimirSeriesController:Activate() )       
+
 END CLASS
 
 //---------------------------------------------------------------------------//
@@ -96,8 +100,6 @@ METHOD New()
 
    ::oLineasController        := MovimientosAlmacenLineasController():New( self )
 
-   ::loadDocuments()
-
    ::oImportadorController    := ImportadorMovimientosAlmacenLineasController():New( self )
 
    ::oCapturadorController    := CapturadorMovimientosAlmacenLineasController():New( self )
@@ -105,6 +107,10 @@ METHOD New()
    ::oEtiquetasController     := EtiquetasMovimientosAlmacenController():New( self )
 
    ::oContadoresController    := ContadoresController():New( self )
+
+   ::oImprimirSeriesController   := ImprimirSeriesController():New( self )
+
+   ::loadDocuments()
 
    ::oReport                  := MovimientosAlmacenReport():New( Self )
 
@@ -179,11 +185,7 @@ RETURN ( .t. )
 
 METHOD deleteLines()
 
-   local aUuids   
-
-   aUuids         := ::getRowSet():IdFromRecno( ::aSelected, "uuid" )
-
-   aeval( aUuids, {| uuid | ::oLineasController:deleteLines( uuid ) } )
+   aeval( ::getRowSet():IdFromRecno( ::aSelected, "uuid" ), {| uuid | ::oLineasController:deleteLines( uuid ) } )
 
 RETURN ( self ) 
 
@@ -217,8 +219,6 @@ METHOD printDocument( nDevice, cFileName )
       nCopies        := 1
    end if 
 
-   ::oReport:setIds( ::oRowSet:fieldGet( ::getModelColumnKey() ) )
-
    ::oReport:createFastReport()
 
    ::oReport:setDevice( nDevice )
@@ -249,13 +249,7 @@ RETURN ( self )
 
 METHOD labelDocument()
 
-   local aIds
-
-   aIds              := ::oBrowseView:getRowSet():idFromRecno( ::oBrowseView:oBrowse:aSelected )
-
-   ::oEtiquetasController:setIds( aIds )
-
-   ::oEtiquetasController:Activate()
+  ::oEtiquetasController:Activate()
 
 RETURN ( self ) 
 

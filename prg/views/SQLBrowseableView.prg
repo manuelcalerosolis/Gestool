@@ -123,12 +123,7 @@ METHOD onChangeSearch()
    uValue               := alltrim( upper( cvaltochar( uValue ) ) )
    uValue               := strtran( uValue, chr( 8 ), "" )
    
-   // msgalert( ::oController:findInRowSet( uValue, cColumnOrder ), "findInRowSet" )
-   // mando a refrescar el browse *222*
-
    nRecCount            := ::getController():findInModel( uValue )
-
-   msgalert( nRecCount, "nRecCount" )
 
    if nRecCount >= 0
       oSearch:SetColor( Rgb( 0, 0, 0 ), Rgb( 255, 255, 255 ) )
