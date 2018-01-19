@@ -2456,6 +2456,12 @@ Return nil
 FUNCTION hb_zebra_geterror()
 Return nil
 
+FUNCTION SqlContadoresModel()
+Return nil
+
+FUNCTION SqlMovimientosAlmacenLineasNumerosSeriesModel()
+Return nil
+
 //------------------------------------------------------------------//
 
 #pragma BEGINDUMP
