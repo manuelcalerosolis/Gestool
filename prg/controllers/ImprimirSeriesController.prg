@@ -31,6 +31,8 @@ CLASS ImprimirSeriesController FROM SQLBaseController
 
    METHOD deleteDocument()
 
+   METHOD getSortedIds()
+
 END CLASS
 
 //---------------------------------------------------------------------------//
@@ -55,9 +57,75 @@ RETURN ( Self )
 
 //---------------------------------------------------------------------------//
 
+METHOD getSortedIds()
+
+   if empty(::oDialogView)
+      RETURN ( ::getIds() )
+   end if 
+
+   if ::oDialogView:lInvertirOrden
+      RETURN ( asort( ::getIds(), , , {|x,y| x > y} ) )
+   end if 
+   
+RETURN ( asort( ::getIds(), , , {|x,y| x < y} ) )
+
+//---------------------------------------------------------------------------//
+
 METHOD Print() 
 
-   msgalert( "Print") 
+   local nId
+   local aIds
+   local oReport  
+   local oWaitMeter
+
+   ::setFileName( ::oDialogView:cListboxFile )
+
+   if empty( ::getFileName() )
+      msgStop( "No hay formato definido" )
+      RETURN ( self )  
+   end if 
+
+   aIds        := ::getSortedIds()
+
+   oWaitMeter  := TWaitMeter():New( "Imprimiendo documento(s)", "Espere por favor..." )
+   oWaitMeter:setTotal( len( aIds ) )
+   oWaitMeter:Run()
+
+   oReport     := MovimientosAlmacenReport():New( self )
+
+   oReport:createFastReport()
+
+   oReport:setDevice( IS_PRINTER )
+
+   oReport:setCopies( ::oDialogView:nCopies )
+
+   oReport:setPrinter( ::oDialogView:cPrinter )
+
+   oReport:setDirectory( ::getDirectory() )
+   
+   oReport:setFileName( ::getFileName() )
+
+   for each nId in aIds 
+
+      oWaitMeter:setMessage( "Imprimiendo documento " + alltrim( str( hb_enumindex() ) ) + " de " + alltrim( str( len( aIds ) ) ) )
+
+      oReport:buildRowSet( nId )
+
+      oReport:setUserDataSet()
+
+      if oReport:isLoad()
+
+         oReport:Show()
+     
+      end if 
+
+      oWaitMeter:autoInc()
+
+   next
+
+   oReport:DestroyFastReport()
+
+   oWaitMeter:End()
 
 RETURN ( Self )
 

@@ -14,8 +14,8 @@ CLASS ImprimirSeriesView FROM SQLBaseView
    DATA aListboxFile                   INIT {}
    DATA cListboxFile                   INIT ""
 
-   DATA lNumeroCopias                  INIT .t.
-   DATA nNumeroCopias                  INIT 1
+   DATA lCopies                        INIT .t.
+   DATA nCopies                        INIT 1
 
    DATA lInvertirOrden                 INIT .f.
 
@@ -24,6 +24,8 @@ CLASS ImprimirSeriesView FROM SQLBaseView
    METHOD Activate()
 
    METHOD StartActivate()
+
+   METHOD Print()
 
    METHOD getRegistrosSeleccionados()  INLINE  ( iif( !empty( ::oController ),;
                                                       "( " + alltrim( str( len( ::oController:getIds() ) ) ) + ") registro(s) seleccionado(s)",;
@@ -62,17 +64,17 @@ METHOD Activate()
          ID          150 ;
          OF          ::oDialog 
 
-      REDEFINE CHECKBOX ::lNumeroCopias ;
+      REDEFINE CHECKBOX ::lCopies ;
          ID          160 ;
          OF          ::oDialog
 
-      REDEFINE GET   ::nNumeroCopias ;
+      REDEFINE GET   ::nCopies ;
          ID          170 ;
          PICTURE     "99999" ;
          SPINNER ;
          MIN         1 ;
          MAX         99999 ;
-         WHEN        ( !::lNumeroCopias ) ;
+         WHEN        ( !::lCopies ) ;
          OF          ::oDialog
 
       REDEFINE CHECKBOX ::lInvertirOrden ;
@@ -87,14 +89,14 @@ METHOD Activate()
       REDEFINE BUTTON ;
          ID          IDOK ;
          OF          ::oDialog ;
-         ACTION      ( ::oController:Print() )
+         ACTION      ( ::Print() )
 
       REDEFINE BUTTON ;
          ID          IDCANCEL ;
          OF          ::oDialog ;
          ACTION      ( ::oDialog:end() )
 
-      ::oDialog:AddFastKey( VK_F5, {|| ::oController:Print() } )
+      ::oDialog:AddFastKey( VK_F5, {|| ::Print() } )
 
       ::oDialog:bStart  := {|| ::StartActivate() }
 
@@ -109,6 +111,18 @@ RETURN ( ::oDialog:nResult )
 METHOD StartActivate()
 
    ::oController:loadDocuments()
+
+RETURN ( self )
+
+//--------------------------------------------------------------------------//
+
+METHOD Print()
+
+   ::oDialog:disable()
+
+   ::oController:Print()
+
+   ::oDialog:enable()
 
 RETURN ( self )
 

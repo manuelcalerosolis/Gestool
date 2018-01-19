@@ -69,17 +69,15 @@ CLASS SQLBaseReport
 
    METHOD buildRowSet()                   VIRTUAL
    
-   METHOD Show()
-
 END CLASS
 
 //---------------------------------------------------------------------------//
 
 METHOD New( oController )
 
-   ::oController                 := oController
+   ::oController                          := oController
 
-   ::oEvents                     := Events():New()
+   ::oEvents                              := Events():New()
 
 RETURN ( Self )
 
@@ -121,8 +119,6 @@ RETURN ( Self )
 
 METHOD isLoad()
 
-   local oWaitMeter  
-
    if empty( ::cDirectory )
       msgStop( "El directorio " + ::cDirectory + " está vacío." )
       RETURN ( .f. )
@@ -138,20 +134,11 @@ METHOD isLoad()
       RETURN ( .f. )
    end if 
 
-   ::oEvents:fire( "loading" )
-
-   oWaitMeter        := TWaitMeter():New( "Cargando documento", "Espere por favor..." )
-   oWaitMeter:Run()
-
    ::oEvents:fire( "loadingFromFile" )
 
    ::oFastReport:loadFromFile( ::getFullPathFileName() )
 
    ::oEvents:fire( "loadedFromFile" )
-
-   oWaitMeter:End()
-
-   ::oEvents:fire( "loaded" )
 
 RETURN ( .t. )
 
@@ -212,8 +199,8 @@ METHOD Show()
 
          ::oEvents:fire( "printing" )
 
-         ::oFastReport:PrintOptions:SetPrinter( ::getPrinter() )
-         ::oFastReport:PrintOptions:SetCopies( ::getCopies() )
+         ::oFastReport:PrintOptions:SetPrinter(    ::getPrinter() )
+         ::oFastReport:PrintOptions:SetCopies(     ::getCopies() )
          ::oFastReport:PrintOptions:SetShowDialog( .f. )
          ::oFastReport:Print()
 

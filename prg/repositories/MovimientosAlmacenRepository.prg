@@ -8,44 +8,44 @@ CLASS MovimientosAlmacenRepository FROM SQLBaseRepository
 
    METHOD getTableName()            INLINE ( SQLMovimientosAlmacenModel():getTableName() )
 
-   METHOD getSqlSentenceByIdOrLast( id ) 
+   METHOD getSQLSentenceByIdOrLast( id ) 
 
-   METHOD getSqlSentenceIdByNumber( nNumber ) 
+   METHOD getSQLSentenceIdByNumber( nNumber ) 
 
-   METHOD getIdByNumber( nNumber )  INLINE ( getSQLDataBase():selectValue( ::getSqlSentenceIdByNumber( nNumber ) ) )
+   METHOD getIdByNumber( nNumber )  INLINE ( getSQLDataBase():selectValue( ::getSQLSentenceIdByNumber( nNumber ) ) )
 
-   METHOD getSqlSentenceIdByUuid( uuid ) 
+   METHOD getSQLSentenceIdByUuid( uuid ) 
 
-   METHOD getIdByUuid( uuid )       INLINE ( getSQLDataBase():selectValue( ::getSqlSentenceIdByUuid( uuid ) ) )
+   METHOD getIdByUuid( uuid )       INLINE ( getSQLDataBase():selectValue( ::getSQLSentenceIdByUuid( uuid ) ) )
 
 END CLASS
 
 //---------------------------------------------------------------------------//
 
-METHOD getSqlSentenceByIdOrLast( id ) 
+METHOD getSQLSentenceByIdOrLast( uId ) 
 
    local cSql  := "SELECT * FROM " + ::getTableName() + " " 
 
-   if empty( id )
+   if empty( uId )
       cSql     +=    "ORDER BY id DESC LIMIT 1"
       RETURN ( cSql )
    end if 
 
-   if hb_isstring( id )
-      cSql     +=    "WHERE id = " + alltrim( str( id ) ) 
+   if hb_isnumeric( uId )
+      cSql     +=    "WHERE id = " + alltrim( str( uId ) ) 
    end if 
 
-   if hb_isarray( id ) 
+   if hb_isarray( uId ) 
       cSql     +=    "WHERE id IN ( " 
-      aeval( id, {| v | cSql += if( hb_isarray( v ), toSQLString( atail( v ) ), toSQLString( v ) ) + ", " } )
+      aeval( uId, {| v | cSql += if( hb_isarray( v ), toSQLString( atail( v ) ), toSQLString( v ) ) + ", " } )
       cSql     := chgAtEnd( cSql, ' )', 2 )
-   end if 
+   end if
 
 RETURN ( cSql )
 
 //---------------------------------------------------------------------------//
 
-METHOD getSqlSentenceIdByNumber( nNumber ) 
+METHOD getSQLSentenceIdByNumber( nNumber ) 
 
    local cSql  := "SELECT id FROM " + ::getTableName()         + " " 
 
@@ -56,7 +56,7 @@ RETURN ( cSql )
 
 //---------------------------------------------------------------------------//
 
-METHOD getSqlSentenceIdByUuid( uuid ) 
+METHOD getSQLSentenceIdByUuid( uuid ) 
 
    local cSql  := "SELECT id FROM " + ::getTableName()         + " " 
 
