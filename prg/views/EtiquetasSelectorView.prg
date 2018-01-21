@@ -329,7 +329,7 @@ METHOD Siguiente()
 
          else
 
-            ::oController:GenerateRowSet()
+            ::oController:buildRowSet()
 
             ::oPages:GoNext()
 
@@ -341,7 +341,7 @@ METHOD Siguiente()
 
       case ::oPages:nOption == 2
 
-         ::oController:GenerateLabels()
+         ::oController:GenerateDocument()
 
          SetWindowText( ::oBtnCancel:hWnd, "&Cerrar" )
 

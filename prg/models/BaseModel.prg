@@ -16,7 +16,7 @@ CLASS ADSBaseModel
 
    METHOD getFileName( cPath, cTableName )      INLINE ( cPath + "\" + if( empty(cTableName), ::cTableName, cTableName ) )
 
-   METHOD getField( cId, cField, cBy )
+   METHOD getField( cField, cBy, cId )
 
    METHOD createFromHash( hFields )
 

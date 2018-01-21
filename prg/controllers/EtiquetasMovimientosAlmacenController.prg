@@ -19,9 +19,9 @@ CLASS EtiquetasMovimientosAlmacenController FROM SQLBaseController
 
    METHOD getFullPathFileName()        INLINE ( ::cDirectory + ::cFileName )
 
-   METHOD Activate()                   INLINE ( ::generateRowSet(), ::oDialogView:Activate() )
+   METHOD Activate()                   INLINE ( ::buildRowSet(), ::oDialogView:Activate() )
    
-   METHOD clickingHeader( oColumn )    INLINE ( ::generateRowSet( oColumn:cSortOrder ) )
+   METHOD clickingHeader( oColumn )    INLINE ( ::buildRowSet( oColumn:cSortOrder ) )
 
    METHOD getIds()                     INLINE ( iif( !empty( ::oSenderController ), ::oSenderController:getIds(), {} ) )
 
@@ -29,7 +29,7 @@ CLASS EtiquetasMovimientosAlmacenController FROM SQLBaseController
    
    METHOD getColumnaInicio()           INLINE ( iif( !empty( ::oDialogView ), ::oDialogView:nColumnaInicio, 0 ) )
 
-   METHOD generateRowSet()
+   METHOD buildRowSet()
 
    METHOD loadDocuments()
 
@@ -77,7 +77,7 @@ RETURN ( self )
 
 //---------------------------------------------------------------------------//
 
-METHOD generateRowSet( cOrderBy )
+METHOD buildRowSet( cOrderBy )
 
    local cSentence           
    local nFixLabels     := 0
@@ -114,15 +114,15 @@ METHOD generateDocument()
 
    oReport:createFastReport()
 
-   oReport:setRowSet( ::oHashList )
-
    oReport:setDevice( IS_SCREEN )
    
    oReport:setDirectory( ::getDirectory() )
 
    oReport:setFileName( ::getFileName() )
 
-   oReport:buildData()
+   oReport:setRowSet( ::oHashList )
+
+   oReport:setUserDataSet()
 
    if oReport:isLoad()
 
@@ -158,13 +158,13 @@ METHOD editDocument()
 
    oReport:setDevice( IS_SCREEN )
 
-   oReport:setRowSet( ::oHashList )
-   
    oReport:setDirectory( ::getDirectory() )
 
    oReport:setFileName( ::getFileName() )
 
-   oReport:buildData()
+   oReport:setRowSet( ::oHashList )
+
+   oReport:setUserDataSet()
 
    if oReport:isLoad()
 
