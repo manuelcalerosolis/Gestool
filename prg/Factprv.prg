@@ -9482,8 +9482,8 @@ FUNCTION rxFacPrv( cPath, cDriver )
    DEFAULT cPath     := cPatEmp()
    DEFAULT cDriver   := cDriver()
 
-   if !lExistTable( cPath + "FacPrvT.DBF", cDriver ) .OR. ;
-      !lExistTable( cPath + "FacPrvL.DBF", cDriver ) .OR. ;
+   if !lExistTable( cPath + "FacPrvT.Dbf", cDriver ) .OR. ;
+      !lExistTable( cPath + "FacPrvL.Dbf", cDriver ) .OR. ;
       !lExistTable( cPath + "FacPrvI.Dbf", cDriver ) .OR. ;
       !lExistTable( cPath + "FacPrvD.Dbf", cDriver ) .or. ;
       !lExistTable( cPath + "FacPrvS.Dbf", cDriver )
@@ -9494,11 +9494,11 @@ FUNCTION rxFacPrv( cPath, cDriver )
    Eliminamos los indices
    */
 
-   fEraseIndex( cPath + "FacPrvT.CDX", cDriver )
-   fEraseIndex( cPath + "FacPrvL.CDX", cDriver )
-   fEraseIndex( cPath + "FacPrvI.CDX", cDriver )
-   fEraseIndex( cPath + "FacPrvD.CDX", cDriver )
-   fEraseIndex( cPath + "FacPrvS.CDX", cDriver )
+   fEraseIndex( cPath + "FacPrvT.Cdx", cDriver )
+   fEraseIndex( cPath + "FacPrvL.Cdx", cDriver )
+   fEraseIndex( cPath + "FacPrvI.Cdx", cDriver )
+   fEraseIndex( cPath + "FacPrvD.Cdx", cDriver )
+   fEraseIndex( cPath + "FacPrvS.Cdx", cDriver )
 
    dbUseArea( .t., cDriver, cPath + "FACPRVT.DBF", cCheckArea( "FACPRVT", @cFacPrvT ), .f. )
 

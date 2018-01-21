@@ -195,8 +195,6 @@ METHOD insertCategories() CLASS TComercioCategory
    local idCategory
    local hCategoryProduct
 
-   msgalert( hb_valtoexp( ::aCategoriesProduct ), "insertCategory" )
-
    for each hCategoryProduct in ::aCategoriesProduct
 
       idCategory     := ::insertCategory( hCategoryProduct )
