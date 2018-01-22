@@ -23,9 +23,9 @@ CLASS ImprimirSeriesView FROM SQLBaseView
 
    METHOD Activate()
 
-   METHOD StartActivate()
+   METHOD startActivate()
 
-   METHOD Print()
+   METHOD showDocument()
 
    METHOD getRegistrosSeleccionados()  INLINE  ( iif( !empty( ::oController ),;
                                                       "( " + alltrim( str( len( ::oController:getIds() ) ) ) + ") registro(s) seleccionado(s)",;
@@ -39,7 +39,7 @@ METHOD Activate()
 
    local oBmp
 
-   DEFINE DIALOG ::oDialog RESOURCE "IMPRIMIR_SERIES" TITLE "Imprimir series de documentos"
+   DEFINE DIALOG ::oDialog RESOURCE "IMPRIMIR_SERIES" 
 
       REDEFINE BITMAP oBmp ;
          ID          500 ;
@@ -57,6 +57,8 @@ METHOD Activate()
       TBtnBmp():ReDefine( 120, "edit16",,,,, {|| ::oController:editDocument() }, ::oDialog, .f., , .f., "Modificar formato" )
 
       TBtnBmp():ReDefine( 130, "del16",,,,, {|| ::oController:deleteDocument() }, ::oDialog, .f., , .f., "Eliminar formato" )
+
+      TBtnBmp():ReDefine( 140, "refresh16",,,,, {|| ::oController:loadDocuments() }, ::oDialog, .f., , .f., "Recargar formato" )
 
       REDEFINE LISTBOX ::oListboxFile ;
          VAR         ::cListboxFile ;
@@ -89,16 +91,16 @@ METHOD Activate()
       REDEFINE BUTTON ;
          ID          IDOK ;
          OF          ::oDialog ;
-         ACTION      ( ::Print() )
+         ACTION      ( ::showDocument() )
 
       REDEFINE BUTTON ;
          ID          IDCANCEL ;
          OF          ::oDialog ;
          ACTION      ( ::oDialog:end() )
 
-      ::oDialog:AddFastKey( VK_F5, {|| ::Print() } )
+      ::oDialog:AddFastKey( VK_F5, {|| ::showDocument() } )
 
-      ::oDialog:bStart  := {|| ::StartActivate() }
+      ::oDialog:bStart  := {|| ::startActivate() }
 
    ACTIVATE DIALOG ::oDialog CENTER
 
@@ -108,7 +110,7 @@ RETURN ( ::oDialog:nResult )
 
 //--------------------------------------------------------------------------//
 
-METHOD StartActivate()
+METHOD startActivate()
 
    ::oController:loadDocuments()
 
@@ -116,11 +118,11 @@ RETURN ( self )
 
 //--------------------------------------------------------------------------//
 
-METHOD Print()
+METHOD showDocument()
 
    ::oDialog:disable()
 
-   ::oController:Print()
+   ::oController:showDocument() 
 
    ::oDialog:enable()
 

@@ -111,36 +111,38 @@ METHOD Activate()
          ID          100 ;
          OF          ::oPages:aDialogs[ 1 ]
 
-      TBtnBmp():ReDefine( 110, "new16",,,,, {|| ::oController:createLabel() }, ::oPages:aDialogs[ 1 ], .f., , .f., "Añadir formato" )
+      TBtnBmp():ReDefine( 110, "new16",,,,, {|| ::oController:newDocument() }, ::oPages:aDialogs[ 1 ], .f., , .f., "Añadir formato" )
 
       TBtnBmp():ReDefine( 120, "edit16",,,,, {|| ::oController:editDocument() }, ::oPages:aDialogs[ 1 ], .f., , .f., "Modificar formato" )
 
       TBtnBmp():ReDefine( 130, "del16",,,,, {|| ::oController:deleteDocument() }, ::oPages:aDialogs[ 1 ], .f., , .f., "Eliminar formato" )
 
+      TBtnBmp():ReDefine( 140, "refresh16",,,,, {|| ::oController:loadDocuments() }, ::oPages:aDialogs[ 1 ], .f., , .f., "Recargar formato" )
+
       REDEFINE LISTBOX ::oListboxFile ;
          VAR         ::cListboxFile ;
          ITEMS       ::aListboxFile ;
-         ID          140 ;
+         ID          150 ;
          OF          ::oPages:aDialogs[ 1 ]
 
       REDEFINE GET   ::nFilaInicio ;
-         ID          180 ;
+         ID          160 ;
          PICTURE     "999" ;
          SPINNER ;
          OF          ::oPages:aDialogs[ 1 ]
 
       REDEFINE GET   ::nColumnaInicio ;
-         ID          190 ;
+         ID          170 ;
          PICTURE     "999" ;
          SPINNER ;
          OF          ::oPages:aDialogs[ 1 ]
 
       REDEFINE RADIO ::nCantidadLabels ;
-         ID          200, 201 ;
+         ID          180, 181 ;
          OF          ::oPages:aDialogs[ 1 ]
 
       REDEFINE GET   ::nUnidadesLabels ;
-         ID          210 ;
+         ID          190 ;
          PICTURE     "99999" ;
          SPINNER ;
          MIN         1 ;
@@ -341,7 +343,11 @@ METHOD Siguiente()
 
       case ::oPages:nOption == 2
 
-         ::oController:GenerateDocument()
+         ::oDialog:Disable()
+
+         ::oController:showDocument()
+
+         ::oDialog:Enable()
 
          SetWindowText( ::oBtnCancel:hWnd, "&Cerrar" )
 

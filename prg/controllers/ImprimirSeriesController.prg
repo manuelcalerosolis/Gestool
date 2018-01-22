@@ -3,33 +3,17 @@
 
 //---------------------------------------------------------------------------//
 
-CLASS ImprimirSeriesController FROM SQLBaseController
-
-   DATA cFileName
+CLASS ImprimirSeriesController FROM SQLPrintController
 
    METHOD New()
 
-   METHOD setDirectory( cDirectory )   INLINE ( ::cDirectory := cDirectory )
-   METHOD getDirectory()               INLINE ( ::cDirectory )
-
-   METHOD setFileName( cFileName )     INLINE ( ::cFileName := cFileName )
-   METHOD getFileName()                INLINE ( ::cFileName )
-
-   METHOD getFullPathFileName()        INLINE ( ::cDirectory + ::cFileName + if( !( ".fr3" $ lower( ::cFileName ) ), ".fr3", "" ) )
-
-   METHOD getIds()                     INLINE ( iif( !empty( ::oSenderController ), ::oSenderController:getIds(), {} ) )
-
    METHOD Activate()
 
-   METHOD Print()
-
-   METHOD loadDocuments()
+   METHOD showDocument()
 
    METHOD newDocument()
 
    METHOD editDocument()
-
-   METHOD deleteDocument()
 
    METHOD getSortedIds()
 
@@ -71,7 +55,7 @@ RETURN ( asort( ::getIds(), , , {|x,y| x < y} ) )
 
 //---------------------------------------------------------------------------//
 
-METHOD Print() 
+METHOD showDocument() 
 
    local nId
    local aIds
@@ -130,24 +114,6 @@ METHOD Print()
 RETURN ( Self )
 
 //----------------------------------------------------------------------------//
-
-METHOD loadDocuments()
-
-   local aFiles   := directory( ::getDirectory() + "*.fr3" )
-
-   if empty( aFiles )
-      RETURN ( self )
-   end if 
-
-   ::oDialogView:oListboxFile:setItems( {} )
-
-   aeval( aFiles, {|aFile| ::oDialogView:oListboxFile:add( getFileNoExt( aFile[ 1 ] ) ) } )
-
-   ::oDialogView:oListboxFile:goTop()
-
-RETURN ( self )
-
-//---------------------------------------------------------------------------//
 
 METHOD editDocument()
 
@@ -210,32 +176,3 @@ RETURN ( self )
 
 //---------------------------------------------------------------------------//
 
-METHOD deleteDocument()
-
-   local oReport  
-
-   ::setFileName( ::oDialogView:cListboxFile )
-
-   if empty( ::getFileName() )
-      msgStop( "No hay formato definido" )
-      RETURN ( self )  
-   end if 
-
-   if !file( ::getFullPathFileName() )
-      msgStop( "No existe el formato " + ::getFullPathFileName() )
-      RETURN ( self )  
-   end if 
-
-   if !msgNoYes( "¿ Desea eliminar el formato " + ::getFullPathFileName() + " ?" )
-      RETURN ( self )  
-   end if 
-      
-   if ferase( ::getFullPathFileName() ) != 0      
-      msgStop( "Error al eliminar el formato " + ::getFullPathFileName() )      
-   end if 
-
-   ::loadDocuments()
-
-RETURN ( self )
-
-//---------------------------------------------------------------------------//
