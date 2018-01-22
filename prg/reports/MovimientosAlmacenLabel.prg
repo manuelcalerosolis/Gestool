@@ -10,11 +10,11 @@ CLASS MovimientosAlmacenLabelReport FROM SQLBaseReport
 
    DATA oMemList
 
-   DATA nRowsToSkip
+   DATA nRowsToSkip                 INIT 0
 
-   DATA nLabelsToPrint
+   DATA nLabelsToPrint              INIT 0
 
-   DATA nLabelsPrinted
+   DATA nLabelsPrinted              INIT 0
 
    METHOD New( oController )
 
@@ -107,9 +107,9 @@ RETURN ( ::oMemList:fieldGet( cField ) )
 
 METHOD calculateRowsToSkip()
 
-   local nHeight        := ::oFastReport:GetProperty( "MasterData", "Height" )
-   local nColumns       := ::oFastReport:GetProperty( "MainPage", "Columns" )
-   local nPaperHeight   := ::oFastReport:GetProperty( "MainPage", "PaperHeight" ) 
+   local nHeight        := ::oFastReport:GetProperty( "MasterData",  "Height" )
+   local nColumns       := ::oFastReport:GetProperty( "MainPage",    "Columns" )
+   local nPaperHeight   := ::oFastReport:GetProperty( "MainPage",    "PaperHeight" ) 
 
    ::nRowsToSkip        := 0
 

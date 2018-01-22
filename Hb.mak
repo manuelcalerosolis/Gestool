@@ -368,6 +368,7 @@ ImportadorMovimientosAlmacenLineasController.prg					\
 ImportadorMovimientosAlmacenLineasValidator.prg						\
 CapturadorMovimientosAlmacenLineasController.prg					\
 ImprimirSeriesController.prg 												\
+SQLPrintController.prg 														\
 ImprimirSeriesView.prg 														\
 MovimientosAlmacenLineasView.prg											\
 MovimientosAlmacenController.prg 										\
@@ -989,6 +990,7 @@ ImportadorMovimientosAlmacenLineasController.obj 					\
 ImportadorMovimientosAlmacenLineasValidator.obj 					\
 ImprimirSeriesView.obj 														\
 ImprimirSeriesController.obj 												\
+SQLPrintController.obj 														\
 MovimientosAlmacenLineasView.obj											\
 MovimientosAlmacenController.obj 										\
 MovimientosAlmacenLineasController.obj 								\
@@ -1579,6 +1581,7 @@ $(OBJ)\ImportadorMovimientosAlmacenLineasController.obj			+
 $(OBJ)\ImportadorMovimientosAlmacenLineasValidator.obj			+
 $(OBJ)\ImprimirSeriesView.obj												+
 $(OBJ)\ImprimirSeriesController.obj										+
+$(OBJ)\SQLPrintController.obj												+
 $(OBJ)\CapturadorMovimientosAlmacenLineasController.obj			+
 $(OBJ)\MovimientosAlmacenLineasView.obj								+
 $(OBJ)\MovimientosAlmacenController.obj 								+

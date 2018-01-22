@@ -1,10 +1,22 @@
 MVC - ToDo
 
-- Refrescar errror en movimientos de almacen
+- Terminar etiquetas.
 
-- Copias de seguridad
+- Recargar documentos de etiquetas.
+
+- Duplicar movimientos de almacen.
+
+- Configuración de documentos por defecto.
+
+- Mas configuraciones.
+
+- Reposiconamiento si borro el ultimo registro.
+
+- Copias de seguridad.
 
 - Validacion de contadores.
+
+- Refrescar errror en movimientos de almacen (done)
 
 - Busquedas en etiquetas. ( done )
 

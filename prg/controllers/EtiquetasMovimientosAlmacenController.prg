@@ -3,43 +3,23 @@
 
 //---------------------------------------------------------------------------//
 
-CLASS EtiquetasMovimientosAlmacenController FROM SQLBaseController
+CLASS EtiquetasMovimientosAlmacenController FROM SQLPrintController
 
    DATA oHashList
 
-   DATA cFileName
-
    METHOD New( oController )
-
-   METHOD setDirectory( cDirectory )   INLINE ( ::cDirectory := cDirectory )
-   METHOD getDirectory()               INLINE ( ::cDirectory )
-
-   METHOD setFileName( cFileName )     INLINE ( ::cFileName := cFileName )
-   METHOD getFileName()                INLINE ( ::cFileName )
-
-   METHOD getFullPathFileName()        INLINE ( ::cDirectory + ::cFileName )
-
-   METHOD Activate()                   INLINE ( ::generateRowSet(), ::oDialogView:Activate() )
-   
-   METHOD clickingHeader( oColumn )    INLINE ( ::generateRowSet( oColumn:cSortOrder ) )
-
-   METHOD getIds()                     INLINE ( iif( !empty( ::oSenderController ), ::oSenderController:getIds(), {} ) )
 
    METHOD getFilaInicio()              INLINE ( iif( !empty( ::oDialogView ), ::oDialogView:nFilaInicio, 0 ) )
    
    METHOD getColumnaInicio()           INLINE ( iif( !empty( ::oDialogView ), ::oDialogView:nColumnaInicio, 0 ) )
 
-   METHOD generateRowSet()
+   METHOD buildRowSet()
 
-   METHOD loadDocuments()
-
-   METHOD generateDocument()
+   METHOD showDocument()
 
    METHOD editDocument()
 
-   METHOD createDocument()
-
-   METHOD deleteDocument()
+   METHOD newDocument()
 
 END CLASS
 
@@ -49,35 +29,15 @@ METHOD New( oController )
 
    ::Super:New( oController )
 
-   ::cTitle       := "Etiquetas movimientos almacen lineas"
+   ::cDirectory         := cPatLabels( "Movimientos almacen" ) 
 
-   ::cDirectory   := cPatLabels( "Movimientos almacen" ) 
-
-   ::oDialogView  := EtiquetasSelectorView():New( self )
+   ::oDialogView        := EtiquetasSelectorView():New( self )
 
 RETURN ( self )
 
 //---------------------------------------------------------------------------//
 
-METHOD loadDocuments()
-
-   local aFiles   := directory( ::getDirectory() + "*.fr3" )
-
-   if empty( aFiles )
-      RETURN ( self )
-   end if 
-
-   ::oDialogView:oListboxFile:aItems   := {}
-
-   aeval( aFiles, {|aFile| ::oDialogView:oListboxFile:add( aFile[ 1 ] ) } )
-
-   ::oDialogView:oListboxFile:goTop()
-
-RETURN ( self )
-
-//---------------------------------------------------------------------------//
-
-METHOD generateRowSet( cOrderBy )
+METHOD buildRowSet( cOrderBy )
 
    local cSentence           
    local nFixLabels     := 0
@@ -96,10 +56,11 @@ RETURN ( self )
 
 //---------------------------------------------------------------------------//
 
-METHOD generateDocument()
+METHOD showDocument()
 
    local nRecno
    local oReport  
+   local oWaitMeter
 
    ::setFileName( ::oDialogView:cListboxFile )
 
@@ -108,13 +69,14 @@ METHOD generateDocument()
       RETURN ( self )  
    end if 
 
-   nRecno   := ::oHashList:Recno()
+   oWaitMeter  := TWaitMeter():New( "Imprimiendo documento(s)", "Espere por favor..." )
+   oWaitMeter:Run()
 
-   oReport  := MovimientosAlmacenLabelReport():New( self )
+   nRecno      := ::oHashList:Recno()
+
+   oReport     := MovimientosAlmacenLabelReport():New( self )
 
    oReport:createFastReport()
-
-   oReport:setRowSet( ::oHashList )
 
    oReport:setDevice( IS_SCREEN )
    
@@ -122,7 +84,9 @@ METHOD generateDocument()
 
    oReport:setFileName( ::getFileName() )
 
-   oReport:buildData()
+   oReport:setRowSet( ::oHashList )
+
+   oReport:setUserDataSet()
 
    if oReport:isLoad()
 
@@ -133,6 +97,8 @@ METHOD generateDocument()
    end if 
 
    ::oHashList:goTo( nRecno )
+
+   oWaitMeter:End()
 
 RETURN ( self )
 
@@ -158,13 +124,13 @@ METHOD editDocument()
 
    oReport:setDevice( IS_SCREEN )
 
-   oReport:setRowSet( ::oHashList )
-   
    oReport:setDirectory( ::getDirectory() )
 
    oReport:setFileName( ::getFileName() )
 
-   oReport:buildData()
+   oReport:setRowSet( ::oHashList )
+
+   oReport:setUserDataSet()
 
    if oReport:isLoad()
 
@@ -180,23 +146,27 @@ RETURN ( self )
 
 //---------------------------------------------------------------------------//
 
-METHOD createDocument()
+METHOD newDocument()
 
-   msgalert( "new label" )
+   local oReport  
 
+   oReport  := MovimientosAlmacenLabelReport():New( self )
+
+   oReport:createFastReport()
+
+   oReport:setDevice( IS_SCREEN )
+
+   oReport:setDirectory( ::getDirectory() )
+   
+   oReport:setRowSet( ::oHashList )
+
+   oReport:setUserDataSet()
+
+   oReport:Design()
+
+   oReport:DestroyFastReport()
+   
 RETURN ( self )
 
 //---------------------------------------------------------------------------//
-
-METHOD deleteDocument()
-
-   msgalert( "new label" )
-
-RETURN ( self )
-
-//---------------------------------------------------------------------------//
-
-
-
-
 

@@ -242,11 +242,11 @@ CLASS TWaitMeter
    METHOD setBitmap( cBitmap )         INLINE   ( ::cBitmap := cBitmap )
 
    METHOD setTotalMeter( nTotal )      INLINE   ( ::oProgress:SetTotal( nTotal ) )
+   METHOD setTotal( nTotal )           INLINE   ( ::oProgress:SetTotal( nTotal ) )
    METHOD incMeter()                   INLINE   ( ::refreshMeter( ++::nCurrent ) )
    METHOD autoInc()                    INLINE   ( ::incMeter() )
    METHOD setMeter( nPosition )        INLINE   ( ::oProgress:set( nPosition ) )
    METHOD refreshMeter( nPosition )    INLINE   ( ::oProgress:set( nPosition ) )
-   METHOD setTotal( nTotal )           INLINE   ( ::oProgress:SetTotal( nTotal ) )
 
    METHOD Run()
    METHOD End()
@@ -266,14 +266,6 @@ METHOD New( cTitle, cMessage, nTotal ) CLASS TWaitMeter
    ::nTotal             := nTotal
    ::nCurrent           := 0
 
-RETURN ( Self )
-
-//--------------------------------------------------------------------------//
-
-METHOD Run() CLASS TWaitMeter
-
-   CursorWait()
-
    ::oDlgWait           := TDialog():New( , , , , ::cTitle, "Wait_Meter", , .f., , , , , , .f. )
  
    ::oBitmap            := TBitmap():ReDefine( 600, ::cBitmap, , ::oDlgWait, , , .f., .f., , , .f., , , .t. )
@@ -282,9 +274,15 @@ METHOD Run() CLASS TWaitMeter
 
    ::oProgress          := TApoloMeter():ReDefine( 120, { | u | If( pCount() == 0, nPrgWat, nPrgWat := u ) }, ::nTotal, ::oDlgWait, .f., , , .t. )
 
-   ::oDlgWait:bValid    := {|| .f. }
+RETURN ( Self )
 
-   ::oDlgWait:Activate( , , , .t., ,.f. )
+//--------------------------------------------------------------------------//
+
+METHOD Run() CLASS TWaitMeter
+
+   CursorWait()
+
+   ::oDlgWait:Activate( , , , .t., {|| .f. }, .f. )
 
    SysRefresh()
 

@@ -14,8 +14,8 @@ CLASS ImprimirSeriesView FROM SQLBaseView
    DATA aListboxFile                   INIT {}
    DATA cListboxFile                   INIT ""
 
-   DATA lNumeroCopias                  INIT .t.
-   DATA nNumeroCopias                  INIT 1
+   DATA lCopies                        INIT .t.
+   DATA nCopies                        INIT 1
 
    DATA lInvertirOrden                 INIT .f.
 
@@ -23,7 +23,9 @@ CLASS ImprimirSeriesView FROM SQLBaseView
 
    METHOD Activate()
 
-   METHOD StartActivate()
+   METHOD startActivate()
+
+   METHOD showDocument()
 
    METHOD getRegistrosSeleccionados()  INLINE  ( iif( !empty( ::oController ),;
                                                       "( " + alltrim( str( len( ::oController:getIds() ) ) ) + ") registro(s) seleccionado(s)",;
@@ -37,7 +39,7 @@ METHOD Activate()
 
    local oBmp
 
-   DEFINE DIALOG ::oDialog RESOURCE "IMPRIMIR_SERIES" TITLE "Imprimir series de documentos"
+   DEFINE DIALOG ::oDialog RESOURCE "IMPRIMIR_SERIES" 
 
       REDEFINE BITMAP oBmp ;
          ID          500 ;
@@ -56,23 +58,25 @@ METHOD Activate()
 
       TBtnBmp():ReDefine( 130, "del16",,,,, {|| ::oController:deleteDocument() }, ::oDialog, .f., , .f., "Eliminar formato" )
 
+      TBtnBmp():ReDefine( 140, "refresh16",,,,, {|| ::oController:loadDocuments() }, ::oDialog, .f., , .f., "Recargar formato" )
+
       REDEFINE LISTBOX ::oListboxFile ;
          VAR         ::cListboxFile ;
          ITEMS       ::aListboxFile ;
          ID          150 ;
          OF          ::oDialog 
 
-      REDEFINE CHECKBOX ::lNumeroCopias ;
+      REDEFINE CHECKBOX ::lCopies ;
          ID          160 ;
          OF          ::oDialog
 
-      REDEFINE GET   ::nNumeroCopias ;
+      REDEFINE GET   ::nCopies ;
          ID          170 ;
          PICTURE     "99999" ;
          SPINNER ;
          MIN         1 ;
          MAX         99999 ;
-         WHEN        ( !::lNumeroCopias ) ;
+         WHEN        ( !::lCopies ) ;
          OF          ::oDialog
 
       REDEFINE CHECKBOX ::lInvertirOrden ;
@@ -87,16 +91,16 @@ METHOD Activate()
       REDEFINE BUTTON ;
          ID          IDOK ;
          OF          ::oDialog ;
-         ACTION      ( ::oController:Print() )
+         ACTION      ( ::showDocument() )
 
       REDEFINE BUTTON ;
          ID          IDCANCEL ;
          OF          ::oDialog ;
          ACTION      ( ::oDialog:end() )
 
-      ::oDialog:AddFastKey( VK_F5, {|| ::oController:Print() } )
+      ::oDialog:AddFastKey( VK_F5, {|| ::showDocument() } )
 
-      ::oDialog:bStart  := {|| ::StartActivate() }
+      ::oDialog:bStart  := {|| ::startActivate() }
 
    ACTIVATE DIALOG ::oDialog CENTER
 
@@ -106,9 +110,21 @@ RETURN ( ::oDialog:nResult )
 
 //--------------------------------------------------------------------------//
 
-METHOD StartActivate()
+METHOD startActivate()
 
    ::oController:loadDocuments()
+
+RETURN ( self )
+
+//--------------------------------------------------------------------------//
+
+METHOD showDocument()
+
+   ::oDialog:disable()
+
+   ::oController:showDocument() 
+
+   ::oDialog:enable()
 
 RETURN ( self )
 

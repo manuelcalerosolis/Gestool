@@ -57,6 +57,8 @@ CLASS SQLBaseReport
 
    METHOD getIds()                        INLINE ( iif( !empty( ::oController ), ::oController:getIds(), {} ) )
 
+   METHOD loadDocuments()
+
    METHOD Show()  
 
    METHOD Design() 
@@ -69,17 +71,15 @@ CLASS SQLBaseReport
 
    METHOD buildRowSet()                   VIRTUAL
    
-   METHOD Show()
-
 END CLASS
 
 //---------------------------------------------------------------------------//
 
 METHOD New( oController )
 
-   ::oController                 := oController
+   ::oController                          := oController
 
-   ::oEvents                     := Events():New()
+   ::oEvents                              := Events():New()
 
 RETURN ( Self )
 
@@ -111,7 +111,7 @@ METHOD createFastReport()
    
    ::oFastReport:SetTitle( "Diseñador de documentos" ) 
 
-   ::oFastReport:SetEventHandler( "Designer", "OnSaveReport", {|| ::Save() } )
+   // ::oFastReport:SetEventHandler( "Designer", "OnSaveReport", {|| ::Save() } )
 
    ::oEvents:fire( "createdFastReport" )
 
@@ -120,8 +120,6 @@ RETURN ( Self )
 //---------------------------------------------------------------------------//
 
 METHOD isLoad()
-
-   local oWaitMeter  
 
    if empty( ::cDirectory )
       msgStop( "El directorio " + ::cDirectory + " está vacío." )
@@ -138,20 +136,11 @@ METHOD isLoad()
       RETURN ( .f. )
    end if 
 
-   ::oEvents:fire( "loading" )
-
-   oWaitMeter        := TWaitMeter():New( "Cargando documento", "Espere por favor..." )
-   oWaitMeter:Run()
-
    ::oEvents:fire( "loadingFromFile" )
 
    ::oFastReport:loadFromFile( ::getFullPathFileName() )
 
    ::oEvents:fire( "loadedFromFile" )
-
-   oWaitMeter:End()
-
-   ::oEvents:fire( "loaded" )
 
 RETURN ( .t. )
 
@@ -159,35 +148,33 @@ RETURN ( .t. )
 
 METHOD Create()
 
-   ::oFastReport:SetProperty(     "Report",            "ScriptLanguage", "PascalScript" )
+   ::oFastReport:SetProperty(     "Report",            "ScriptLanguage",   "PascalScript" )
 
    ::oFastReport:AddPage(         "MainPage" )
 
-   ::oFastReport:AddBand(         "CabeceraDocumento", "MainPage", frxPageHeader )
-   ::oFastReport:SetProperty(     "CabeceraDocumento", "Top", 0 )
-   ::oFastReport:SetProperty(     "CabeceraDocumento", "Height", 100 )
+   ::oFastReport:AddBand(         "CabeceraDocumento", "MainPage",         frxPageHeader )
+   ::oFastReport:SetProperty(     "CabeceraDocumento", "Top",              0 )
+   ::oFastReport:SetProperty(     "CabeceraDocumento", "Height",           100 )
 
-   ::oFastReport:AddBand(         "MasterData",        "MainPage", frxMasterData )
-   ::oFastReport:SetProperty(     "MasterData",        "Top", 100 )
-   ::oFastReport:SetProperty(     "MasterData",        "Height", 100 )
-   ::oFastReport:SetProperty(     "MasterData",        "StartNewPage", .t. )
+   ::oFastReport:AddBand(         "MasterData",        "MainPage",         frxMasterData )
+   ::oFastReport:SetProperty(     "MasterData",        "Top",              100 )
+   ::oFastReport:SetProperty(     "MasterData",        "Height",           100 )
+   ::oFastReport:SetProperty(     "MasterData",        "StartNewPage",     .t. )
 
-   ::oFastReport:AddBand(         "DetalleColumnas",   "MainPage", frxDetailData  )
-   ::oFastReport:SetProperty(     "DetalleColumnas",   "Top", 230 )
-   ::oFastReport:SetProperty(     "DetalleColumnas",   "Height", 28 )
-   ::oFastReport:SetProperty(     "DetalleColumnas",   "OnMasterDetail", "DetalleOnMasterDetail" )
+   ::oFastReport:AddBand(         "DetalleColumnas",   "MainPage",         frxDetailData  )
+   ::oFastReport:SetProperty(     "DetalleColumnas",   "Top",              230 )
+   ::oFastReport:SetProperty(     "DetalleColumnas",   "Height",           28 )
+   ::oFastReport:SetProperty(     "DetalleColumnas",   "OnMasterDetail",   "DetalleOnMasterDetail" )
 
-   ::oFastReport:AddBand(         "PieDocumento",      "MainPage", frxPageFooter )
-   ::oFastReport:SetProperty(     "PieDocumento",      "Top", 930 )
-   ::oFastReport:SetProperty(     "PieDocumento",      "Height", 100 )
+   ::oFastReport:AddBand(         "PieDocumento",      "MainPage",         frxPageFooter )
+   ::oFastReport:SetProperty(     "PieDocumento",      "Top",              930 )
+   ::oFastReport:SetProperty(     "PieDocumento",      "Height",           100 )
 
 RETURN ( .t. )
 
 //---------------------------------------------------------------------------//
 
 METHOD Save()
-
-   msgalert( ::getFullPathFileName(), "::getFullPathFileName()" )
 
    ::oFastReport:SaveToFile( ::getFullPathFileName() )
 
@@ -212,8 +199,8 @@ METHOD Show()
 
          ::oEvents:fire( "printing" )
 
-         ::oFastReport:PrintOptions:SetPrinter( ::getPrinter() )
-         ::oFastReport:PrintOptions:SetCopies( ::getCopies() )
+         ::oFastReport:PrintOptions:SetPrinter(    ::getPrinter() )
+         ::oFastReport:PrintOptions:SetCopies(     ::getCopies() )
          ::oFastReport:PrintOptions:SetShowDialog( .f. )
          ::oFastReport:Print()
 
@@ -249,5 +236,23 @@ METHOD Design()
    ::oEvents:fire( "designed" )
 
 RETURN ( Self )
+
+//---------------------------------------------------------------------------//
+
+METHOD loadDocuments()
+
+   local aFiles   := directory( ::getDirectory() + "*.fr3" )
+
+   if empty( aFiles )
+      RETURN ( self )
+   end if 
+
+   ::oDialogView:oListboxFile:setItems( {} )
+
+   aeval( aFiles, {|aFile| ::oDialogView:oListboxFile:add( getFileNoExt( aFile[ 1 ] ) ) } )
+
+   ::oDialogView:oListboxFile:goTop()
+
+RETURN ( self )
 
 //---------------------------------------------------------------------------//

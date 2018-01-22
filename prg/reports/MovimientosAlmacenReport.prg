@@ -24,12 +24,14 @@ END CLASS
 
 //---------------------------------------------------------------------------//
 
-METHOD buildRowSet()
+METHOD buildRowSet( uIds )
 
    local oMovimientosAlmacenSelect        
    local oLineasMovimientosAlmacenSelect
 
-   oMovimientosAlmacenSelect           := getSqlDataBase():query( MovimientosAlmacenRepository():getSqlSentenceByIdOrLast( ::getIds() ) )
+   DEFAULT uIds                        := ::getIds()
+
+   oMovimientosAlmacenSelect           := getSqlDataBase():query( MovimientosAlmacenRepository():getSqlSentenceByIdOrLast( uIds ) )
    ::oMovimientosAlmacenRowSet         := oMovimientosAlmacenSelect:fetchRowSet()
 
    oLineasMovimientosAlmacenSelect     := getSqlDataBase():query( MovimientosAlmacenLineasRepository():getSqlSentenceWhereParentUuid( ::oMovimientosAlmacenRowSet:fieldget( "uuid" ) ) )      
