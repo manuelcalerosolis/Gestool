@@ -339,10 +339,17 @@ RETURN ( lAppend )
 
 //----------------------------------------------------------------------------//
 
-METHOD Duplicate()
+METHOD Duplicate( nId )
 
-   local nId
    local lDuplicate  := .t. 
+
+   if empty( nId )
+      nId            := ::getIdFromRowSet()
+   end if 
+
+   if hb_isnil( nId )
+      RETURN ( .f. )
+   end if 
 
    if ::notUserDuplicate()
       msgStop( "Acceso no permitido." )
@@ -359,7 +366,7 @@ METHOD Duplicate()
 
    ::saveRowSetRecno()
 
-   ::oModel:loadDuplicateBuffer()
+   ::oModel:loadDuplicateBuffer( nId )
 
    ::fireEvent( 'openingDialog' )
 
@@ -452,7 +459,15 @@ RETURN ( lEdit )
 
 //----------------------------------------------------------------------------//
 
-METHOD Zoom()
+METHOD Zoom( nId )
+
+   if empty( nId )
+      nId         := ::getIdFromRowSet()
+   end if 
+
+   if hb_isnil( nId )
+      RETURN ( .f. )
+   end if 
 
    if ::notUserZoom()
       msgStop( "Acceso no permitido." )
@@ -465,7 +480,7 @@ METHOD Zoom()
 
    ::setZoomMode()
 
-   ::oModel:loadCurrentBuffer()
+   ::oModel:loadCurrentBuffer( nId )
 
    ::fireEvent( 'openingDialog' )
 

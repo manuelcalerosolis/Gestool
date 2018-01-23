@@ -72,47 +72,47 @@ METHOD New()
 
    ::Super:New()
 
-   ::cTitle                   := "Movimientos de almacén"
+   ::cTitle                      := "Movimientos de almacén"
 
-   ::hImage                   := {  "16"  => "gc_pencil_package_16",;
-                                    "48"  => "gc_package_48",;
-                                    "64"  => "gc_package_64" }
+   ::hImage                      := {  "16"  => "gc_pencil_package_16",;
+                                       "48"  => "gc_package_48",;
+                                       "64"  => "gc_package_64" }
 
-   ::nLevel                   := nLevelUsr( "01050" )
+   ::nLevel                      := nLevelUsr( "01050" )
 
-   ::cDirectory               := cPatDocuments( "Movimientos almacen" ) 
+   ::cDirectory                  := cPatDocuments( "Movimientos almacen" ) 
 
-   ::lTransactional           := .t.
+   ::lTransactional              := .t.
 
-   ::lDocuments               := .t.
+   ::lDocuments                  := .t.
 
-   ::lLabels                  := .t.
+   ::lLabels                     := .t.
 
-   ::lCounter                 := .t.
+   ::lCounter                    := .t.
 
-   ::oModel                   := SQLMovimientosAlmacenModel():New( self )
+   ::oModel                      := SQLMovimientosAlmacenModel():New( self )
 
-   ::oBrowseView              := MovimientosAlmacenBrowseView():New( self )
+   ::oBrowseView                 := MovimientosAlmacenBrowseView():New( self )
 
-   ::oDialogView              := MovimientosAlmacenView():New( self )
+   ::oDialogView                 := MovimientosAlmacenView():New( self )
 
-   ::oValidator               := MovimientosAlmacenValidator():New( self )
+   ::oValidator                  := MovimientosAlmacenValidator():New( self )
 
-   ::oLineasController        := MovimientosAlmacenLineasController():New( self )
+   ::oLineasController           := MovimientosAlmacenLineasController():New( self )
 
-   ::oImportadorController    := ImportadorMovimientosAlmacenLineasController():New( self )
+   ::oImportadorController       := ImportadorMovimientosAlmacenLineasController():New( self )
 
-   ::oCapturadorController    := CapturadorMovimientosAlmacenLineasController():New( self )
+   ::oCapturadorController       := CapturadorMovimientosAlmacenLineasController():New( self )
 
-   ::oEtiquetasController     := EtiquetasMovimientosAlmacenController():New( self )
+   ::oEtiquetasController        := EtiquetasMovimientosAlmacenController():New( self )
 
-   ::oContadoresController    := ContadoresController():New( self )
+   ::oContadoresController       := ContadoresController():New( self )
 
    ::oImprimirSeriesController   := ImprimirSeriesController():New( self )
 
    ::loadDocuments()
 
-   ::oReport                  := MovimientosAlmacenReport():New( Self )
+   ::oReport                     := MovimientosAlmacenReport():New( Self )
 
    ::oContadoresController:setTabla( 'movimientos_almacen' )
 
@@ -193,8 +193,6 @@ RETURN ( self )
 
 METHOD printDocument( nDevice, cFileName )
 
-   local nCopies
-
    DEFAULT nDevice   := IS_SCREEN
 
    if empty( ::aDocuments )
@@ -211,37 +209,7 @@ METHOD printDocument( nDevice, cFileName )
       RETURN ( self )  
    end if 
 
-   ::setFileName( cFileName )
-   
-   nCopies           := ContadoresModel():getCopiasMovimientosAlmacen()
-
-   if empty( nCopies )
-      nCopies        := 1
-   end if 
-
-   ::oReport:createFastReport()
-
-   ::oReport:setDevice( nDevice )
-   
-   ::oReport:setCopies( nCopies )
-   
-   ::oReport:setDirectory( ::getDirectory() )
-
-   ::oReport:setFileName( ::getFileName() )
-
-   ::oReport:buildRowSet()
-
-   ::oReport:setUserDataSet()
-
-   if ::oReport:isLoad()
-
-      ::oReport:show()
-
-   end if 
-   
-   ::oReport:DestroyFastReport()
-
-   ::oReport:freeRowSet()
+   ::oImprimirSeriesController:showDocument( nDevice, cFileName )
 
 RETURN ( self ) 
 

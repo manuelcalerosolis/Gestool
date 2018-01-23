@@ -24,6 +24,8 @@ CLASS SQLMovimientosAlmacenModel FROM SQLExportableModel
 
    METHOD getDeleteSentence( aId )
 
+   METHOD loadDuplicateBuffer( id )                
+
 END CLASS
 
 //---------------------------------------------------------------------------//
@@ -35,11 +37,11 @@ METHOD getColumns()
    hset( ::hColumns, "numero",            {  "create"    => "INT UNSIGNED"                            ,;
                                              "default"   => {|| 0 } }                                 )
 
-   hset( ::hColumns, "tipo_movimiento",   {  "create"    => "TINYINT UNSIGNED NOT NULL"               ,;
-                                             "default"   => {|| 1 } }                                 )
-
    hset( ::hColumns, "fecha_hora",        {  "create"    => "DATETIME DEFAULT CURRENT_TIMESTAMP"      ,;
                                              "default"   => {|| hb_datetime() } }                     )
+
+   hset( ::hColumns, "tipo_movimiento",   {  "create"    => "TINYINT UNSIGNED NOT NULL"               ,;
+                                             "default"   => {|| 1 } }                                 )
 
    hset( ::hColumns, "almacen_origen",    {  "create"    => "CHAR ( 16 )"                             ,;
                                              "default"   => {|| space( 16 ) } }                       )
@@ -145,5 +147,17 @@ METHOD getColumnMovimiento( cTable )
    cSql           += "END as nombre_movimiento, "
 
 RETURN ( cSql )
+
+//---------------------------------------------------------------------------//
+
+METHOD loadDuplicateBuffer( id )                
+
+   ::Super:loadDuplicateBuffer( id )
+
+   if hhaskey( ::hBuffer, "fecha_hora" )
+      hset( ::hBuffer, "fecha_hora", hb_datetime() )
+   end if 
+
+RETURN ( ::hBuffer )
 
 //---------------------------------------------------------------------------//

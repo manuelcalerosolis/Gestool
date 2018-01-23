@@ -47,6 +47,8 @@ CLASS SQLPrintController
 
    METHOD editDocument()               VIRTUAL
 
+   METHOD end()                        VIRTUAL
+
 END CLASS
 
 //---------------------------------------------------------------------------//

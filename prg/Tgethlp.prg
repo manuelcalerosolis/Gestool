@@ -109,7 +109,7 @@ METHOD New( nRow, nCol, bSetGet, oWnd, nWidth, nHeight, cPict, bValid,;
    ::lNeedGetFocus   := .f.
    ::lGotFocus       := .f.
 
-return Self
+RETURN Self
 
 //----------------------------------------------------------------------------//
 
@@ -154,7 +154,7 @@ METHOD ReDefine( nId, bSetGet, oWnd, nHelpId, cPict, bValid, nClrFore,;
    END SEQUENCE
    ErrorBlock( oBlock )
 
-Return Self
+RETURN Self
 
 //----------------------------------------------------------------------------//
 
@@ -169,7 +169,7 @@ METHOD Display() CLASS TGetHlp
 
    end if
 
-Return ::Super:display()
+RETURN ::Super:display()
 
 //----------------------------------------------------------------------------//
 
@@ -187,7 +187,7 @@ METHOD Destroy() CLASS TGetHlp
       ::oHelpText:End()
    end if
 
-Return ( ::Super:Destroy() )
+RETURN ( ::Super:Destroy() )
 
 //---------------------------------------------------------------------------//
 
@@ -227,7 +227,7 @@ METHOD KeyChar( nKey, nFlags ) CLASS TGetHlp
 
    if nKey == VK_ESCAPE  // avoids a beep!
       ::oWnd:KeyChar( nKey, nFlags )
-      return 1
+      RETURN 1
    endif
 
    if ! Empty( ::cPicture ) .and. '@!' $ ::cPicture
@@ -236,14 +236,14 @@ METHOD KeyChar( nKey, nFlags ) CLASS TGetHlp
 
    if bKeyAction != nil .and. lAnd( nFlags, 16777216 ) // function Key
       Eval( bKeyAction, ProcName( 4 ), ProcLine( 4 ), Self )
-      return 0         // Already processed, API do nothing
+      RETURN 0         // Already processed, API do nothing
    endif
 
    if ::lReadOnly
       if nKey == VK_ESCAPE
          ::oWnd:End()
       endif
-      return 0
+      RETURN 0
    endif
 
    do case
@@ -254,12 +254,12 @@ METHOD KeyChar( nKey, nFlags ) CLASS TGetHlp
          ::EvalMult()
 
       case nKey == VK_BACK       // Already processed at KeyDown
-           return 0
+           RETURN 0
 
       case nKey == VK_TAB .and. GetKeyState( VK_SHIFT )
            if ::bChange != nil
               lAccept = Eval( ::bChange, nKey, nFlags, Self )
-              if ValType( lAccept ) == "L" .and. lAccept
+              if hb_islogical( lAccept ) .and. lAccept
                  if Upper( ::oWnd:ClassName() ) == "TCOMBOBOX"
                     ::oWnd:oWnd:GoPrevCtrl( ::hWnd )
                  else
@@ -273,12 +273,12 @@ METHOD KeyChar( nKey, nFlags ) CLASS TGetHlp
                  ::oWnd:GoPrevCtrl( ::hWnd )
               endif
            endif
-           return 0
+           RETURN 0
 
       case nKey == VK_TAB .or. nKey == VK_RETURN
            if ::bChange != nil .and. ( ::oGet:Changed .or. ( ::oGet:buffer != nil .and. ::oGet:UnTransform() != ::oGet:Original ) )
               lAccept = Eval( ::bChange, nKey, nFlags, Self )
-              if ValType( lAccept ) == "L" .and. lAccept
+              if hb_islogical( lAccept ) .and. lAccept
                  ::oWnd:GoNextCtrl( ::hWnd )
               endif
            else
@@ -291,14 +291,14 @@ METHOD KeyChar( nKey, nFlags ) CLASS TGetHlp
                endif
            #endif
 
-           return 0
+           RETURN 0
 
       case nKey >= 32 .and. nKey < 256
 
            #ifdef __HARBOUR__
            // <lk> deadkey+tab [or enter] previously pressed will cause a r/t error
               if ::oGet:buffer == nil
-                 return 0
+                 RETURN 0
               endif
            #endif
 
@@ -345,53 +345,53 @@ METHOD KeyChar( nKey, nFlags ) CLASS TGetHlp
 
            if ::bChange != nil
               lAccept = Eval( ::bChange, nKey, nFlags, Self )
-              if ValType( lAccept ) == "L" .and. ! lAccept
-                 return 0
+              if hb_islogical( lAccept ) .and. ! lAccept
+                 RETURN 0
               endif
            endif
 
            Eval( ::bPostKey, Self, ::oGet:Buffer )
 
       otherwise
-           return ::Super:KeyChar( nKey, nFlags )
+           RETURN ::Super:KeyChar( nKey, nFlags )
 
    endcase
 
-return ( 0 )
+RETURN ( 0 )
 
 //---------------------------------------------------------------------------//
 
 METHOD EvalHelp()
 
-   if ValType( ::bLostFocus ) == "B"
+   if hb_isblock( ::bLostFocus )
       ::bOldLostFocus   := ::bLostFocus
       ::bLostFocus      := nil
    endif
 
-   if ValType( ::bValid ) == "B"
+   if hb_isblock( ::bValid )
       ::bOldValid       := ::bValid
       ::bValid          := nil
    endif
 
-   if ValType( ::bHelp ) == "B"
+   if hb_isblock( ::bHelp )
       Eval( ::bHelp, Self )
    end if
 
-   if ValType( ::bOldLostFocus ) == "B"
+   if hb_isblock( ::bOldLostFocus )
       ::bLostFocus      := ::bOldLostFocus
       ::bOldLostFocus   := nil
    endif
 
-   if ValType( ::bOldValid ) == "B"
+   if hb_isblock( ::bOldValid )
       ::bValid          := ::bOldValid
       ::bOldValid       := nil
    endif
 
-   if ValType( ::bLostFocus ) == "B"
+   if hb_isblock( ::bLostFocus )
       Eval( ::bLostFocus )
    endif
 
-   if ValType( ::bValid ) == "B"
+   if hb_isblock( ::bValid )
       Eval( ::bValid )
    endif
 
@@ -403,7 +403,7 @@ METHOD HardEnable() CLASS TGetHlp
 
    ::bWhen     := ::bOldWhen
 
-Return ( ::Enable() )
+RETURN ( ::Enable() )
 
 //---------------------------------------------------------------------------//
 
@@ -412,7 +412,7 @@ METHOD HardDisable() CLASS TGetHlp
    ::bOldWhen  := ::bWhen
    ::bWhen     := {|| .f. }
 
-return ( ::Disable() )
+RETURN ( ::Disable() )
 
 //---------------------------------------------------------------------------//
 
@@ -456,19 +456,19 @@ METHOD GotFocus() CLASS TGetHlp
       ::SelectAll()
    end if
 
-return 0
+RETURN 0
 
 //----------------------------------------------------------------------------//
 
 METHOD GetDlgCode( nLastKey ) CLASS TGetHlp
 
    if Len( ::oWnd:aControls ) == 1
-      return DLGC_WANTALLKEYS
+      RETURN DLGC_WANTALLKEYS
    endif
 
    ::oWnd:nLastKey = nLastKey
 
-return DLGC_WANTALLKEYS
+RETURN DLGC_WANTALLKEYS
 
 //----------------------------------------------------------------------------//
 
@@ -494,7 +494,6 @@ METHOD LostFocus( hCtlFocus ) CLASS TGetHlp
 
    if !::oGet:BadDate .and. !::lReadOnly .and. ( ::oGet:changed .or. ::oGet:unTransform() != ::oGet:original )
       ::oGet:Assign()      // for adjust numbers
-      ::oGet:UpdateBuffer()
    endif
 
    ::DispText()
@@ -504,14 +503,13 @@ METHOD LostFocus( hCtlFocus ) CLASS TGetHlp
    else
       ::oGet:Pos        := 1
       ::nPos            := 1
-      ::oGet:TypeOut    := .f.
    endif
 
    if ::lNeedGetFocus
       ::lGotFocus       := .t.
    end if
 
-return nil
+RETURN nil
 
 //----------------------------------------------------------------------------//
 
@@ -525,7 +523,7 @@ METHOD lValid() CLASS TGetHlp
       ::oGet:KillFocus()
       ::oGet:SetFocus()
       msgBeep()
-      return .f.
+      RETURN .f.
    end if  
 
    ::oGet:Assign()
@@ -543,7 +541,7 @@ METHOD lValid() CLASS TGetHlp
 
    ::evalPostValidate()
 
-return lRet
+RETURN lRet
 
 //---------------------------------------------------------------------------//
 
@@ -557,6 +555,6 @@ METHOD setError( cError )
       ::setColor( Rgb( 0, 0, 0 ), Rgb( 255, 255, 255 ) )
    end if 
 
-Return ( Self )
+RETURN ( Self )
 
 //---------------------------------------------------------------------------//
