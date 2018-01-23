@@ -104,17 +104,17 @@ METHOD New()
 
    ::oCapturadorController       := CapturadorMovimientosAlmacenLineasController():New( self )
 
+   ::oImprimirSeriesController   := ImprimirSeriesController():New( self )
+
    ::oEtiquetasController        := EtiquetasMovimientosAlmacenController():New( self )
 
    ::oContadoresController       := ContadoresController():New( self )
-
-   ::oImprimirSeriesController   := ImprimirSeriesController():New( self )
+   
+   ::oContadoresController:setTabla( 'movimientos_almacen' )
 
    ::loadDocuments()
 
    ::oReport                     := MovimientosAlmacenReport():New( Self )
-
-   ::oContadoresController:setTabla( 'movimientos_almacen' )
 
    ::oFilterController:setTableName( ::cTitle ) 
 

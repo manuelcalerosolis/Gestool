@@ -115,7 +115,8 @@ METHOD onChangeSearch()
       RETURN ( Self )
    end if 
 
-   if empty( cColumnOrder ) 
+   if empty( cColumnOrder )
+      msgInfo( "La columna seleccionada no permite busquedas" ) 
       RETURN ( Self )
    end if 
 
@@ -123,15 +124,19 @@ METHOD onChangeSearch()
    uValue               := alltrim( upper( cvaltochar( uValue ) ) )
    uValue               := strtran( uValue, chr( 8 ), "" )
    
-   nRecCount            := ::getController():findInModel( uValue )
+   // nRecCount            := ::getController():findInModel( uValue )
 
-   if nRecCount >= 0
-      oSearch:SetColor( Rgb( 0, 0, 0 ), Rgb( 255, 255, 255 ) )
-   else
-      oSearch:SetColor( Rgb( 255, 255, 255 ), Rgb( 255, 102, 102 ) )
-   end if
-   
-   ::getBrowse():refreshCurrent()
+   nRecCount            := ::getController():findInRowSet( uValue, cColumnOrder )
+
+   if hb_isnumeric( nRecCount )
+      if nRecCount >= 0
+         oSearch:SetColor( Rgb( 0, 0, 0 ), Rgb( 255, 255, 255 ) )
+      else
+         oSearch:SetColor( Rgb( 255, 255, 255 ), Rgb( 255, 102, 102 ) )
+      end if
+   end if 
+
+   ::getBrowse():Refresh()
 
 RETURN ( nil )
 

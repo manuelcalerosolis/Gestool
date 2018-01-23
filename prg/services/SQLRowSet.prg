@@ -48,6 +48,8 @@ CLASS SQLRowSet
    METHOD IdFromRecno( aRecno, cColumnKey )
    METHOD UuidFromRecno( aRecno )                     INLINE ( ::IdFromRecno( aRecno, "uuid" ) )
 
+   METHOD getFindValue()
+
 END CLASS
 
 //---------------------------------------------------------------------------//
@@ -112,11 +114,12 @@ RETURN ( ::oRowSet )
 
 //---------------------------------------------------------------------------//
 
-METHOD Find( cFind, cColumnKey )
+METHOD Find( cFind, cColumn )
 
    local nRecno
+   local cType
 
-   DEFAULT cColumnKey   := 'id'
+   DEFAULT cColumn      := 'id'
 
    if empty( ::oRowSet )
       RETURN ( .f. )
@@ -128,7 +131,10 @@ METHOD Find( cFind, cColumnKey )
 
    ::saveRecno()
 
-   nRecno               := ::oRowSet:find( cFind, cColumnKey, .t. )
+   cFind                := ::getFindValue( cFind, cColumn )
+
+   nRecno               := ::oRowSet:find( cFind, cColumn, .t. )
+
    if nRecno == 0
       ::restoreRecno()
    end if
@@ -149,3 +155,23 @@ RETURN ( aId )
 
 //---------------------------------------------------------------------------//
 
+METHOD getFindValue( uFind, cColumn )
+
+   local cType
+
+   if empty( ::oRowSet )
+      RETURN ( uFind )
+   end if 
+
+   cType                := ::oRowSet:fieldType( ::oRowSet:fieldpos( cColumn ) )
+
+   do case
+      case ( cType ) == "N" .and. hb_ischar( uFind )
+         uFind          := val( alltrim( uFind ) )
+      case ( cType ) == "C" .and. hb_ischar( uFind ) .and. right( uFind, 1 ) != "*"
+         uFind          += "*"
+   end case 
+
+RETURN ( uFind )
+
+//---------------------------------------------------------------------------//

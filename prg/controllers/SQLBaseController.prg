@@ -553,6 +553,8 @@ METHOD Delete( aSelectedRecno )
 
       ::fireEvent( 'deletedSelection' ) 
 
+      // ::gotoRowSet( ::priorRecnoToDelete( aSelectedRecno ) )
+
       ::refreshRowSet()
 
       lDelete           := .t.
@@ -590,6 +592,8 @@ RETURN ( self )
 METHOD findInModel( uValue )
 
    ::oModel:setFind( uValue )
+
+   msgalert( ::oModel:getSelectSentence(), "::oModel:getSelectSentence()" )
 
    ::oRowSet:build( ::oModel:getSelectSentence() )
 
