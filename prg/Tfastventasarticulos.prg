@@ -212,7 +212,7 @@ CLASS TFastVentasArticulos FROM TFastReportInfGen
    METHOD getDesdeFecha()                                INLINE   ( ::dIniInf ) 
    METHOD getHastaFecha()                                INLINE   ( ::dFinInf ) 
 
-   METHOD getFechaHoraConsolidacion( cCodArt, cCodAlm )  INLINE   ( MovimientosAlmacenLineasRepository():getFechaHoraConsolidacion( cCodArt, cCodAlm ) )
+   METHOD isFechaHoraConsolidacion( cCodArt, cCodAlm )
 
 //---------------------------------------------------------------------------//
 
@@ -654,6 +654,8 @@ METHOD Create( uParam ) CLASS TFastVentasArticulos
    ::AddField( "dFecDoc",     "D",  8, 0, {|| "" },   "Fecha del documento"                     )
    ::AddField( "cHorDoc",     "C",  2, 0, {|| "" },   "Hora del documento"                      )
    ::AddField( "cMinDoc",     "C",  2, 0, {|| "" },   "Minutos del documento"                   )
+   ::AddField( "cSecDoc",     "C",  2, 0, {|| "" },   "Segundos del documento"                  )
+   ::AddField( "cTimDoc",     "C",  8, 0, {|| "" },   "Hora, minutos, segundos del documento"   )
 
    ::AddField( "cCodPrv",     "C", 12, 0, {|| "@!" }, "Código proveedor lineas"                 )
    ::AddField( "cNomPrv",     "C", 80, 0, {|| "@!" }, "Nombre proveedor lineas"                 )
@@ -1483,6 +1485,8 @@ METHOD AddSATClientes() CLASS TFastVentasArticulos
          
          ::oDbf:cHorDoc    := SubStr( ( D():SATClientes( ::nView ) )->cTimCre, 1, 2 )
          ::oDbf:cMinDoc    := SubStr( ( D():SATClientes( ::nView ) )->cTimCre, 4, 2 )
+         ::oDbf:cSecDoc    := SubStr( ( D():SATClientes( ::nView ) )->cTimCre, 7, 2 )
+         ::oDbf:cTimDoc    := ( D():SATClientes( ::nView ) )->cTimCre
 
          ::oDbf:cCodGrp    := RetFld( ( D():SATClientes( ::nView ) )->cCodCli, ( D():Clientes( ::nView ) ), "cCodGrp", "Cod" ) 
 
@@ -1677,6 +1681,8 @@ METHOD AddPresupuestoClientes() CLASS TFastVentasArticulos
          ::oDbf:dFecDoc    := ( D():PresupuestosClientes( ::nView ) )->dFecPre
          ::oDbf:cHorDoc    := SubStr( ( D():PresupuestosClientes( ::nView ) )->cTimCre, 1, 2 )
          ::oDbf:cMinDoc    := SubStr( ( D():PresupuestosClientes( ::nView ) )->cTimCre, 4, 2 )
+         ::oDbf:cSecDoc    := SubStr( ( D():PresupuestosClientes( ::nView ) )->cTimCre, 7, 2 )
+         ::oDbf:cTimDoc    := ( D():PresupuestosClientes( ::nView ) )->cTimCre
 
          ::oDbf:cCodGrp    := RetFld( ( D():PresupuestosClientes( ::nView ) )->cCodCli, ( D():Clientes( ::nView ) ), "cCodGrp", "Cod" )
 
@@ -1871,6 +1877,8 @@ METHOD AddPedidoClientes() CLASS TFastVentasArticulos
          ::oDbf:dFecDoc    := ( D():PedidosClientes( ::nView ) )->dFecPed
          ::oDbf:cHorDoc    := SubStr( ( D():PedidosClientes( ::nView ) )->cTimCre, 1, 2 )
          ::oDbf:cMinDoc    := SubStr( ( D():PedidosClientes( ::nView ) )->cTimCre, 4, 2 )
+         ::oDbf:cSecDoc    := SubStr( ( D():PedidosClientes( ::nView ) )->cTimCre, 7, 2 )
+         ::oDbf:cTimDoc    := ( D():PedidosClientes( ::nView ) )->cTimCre
 
          ::oDbf:cFormato   := ( D():PedidosClientesLineas( ::nView )  )->cFormato
 
@@ -2123,6 +2131,8 @@ METHOD AddAlbaranCliente( lFacturados ) CLASS TFastVentasArticulos
          ::oDbf:dFecDoc    := ( D():AlbaranesClientes( ::nView ) )->dFecAlb
          ::oDbf:cHorDoc    := SubStr( ( D():AlbaranesClientes( ::nView ) )->cTimCre, 1, 2 )
          ::oDbf:cMinDoc    := SubStr( ( D():AlbaranesClientes( ::nView ) )->cTimCre, 4, 2 )
+         ::oDbf:cSecDoc    := SubStr( ( D():AlbaranesClientes( ::nView ) )->cTimCre, 7, 2 )
+         ::oDbf:cTimDoc    := ( D():AlbaranesClientes( ::nView ) )->cTimCre
 
          do case
             case ( D():AlbaranesClientes( ::nView ) )->nFacturado <= 1
@@ -2314,6 +2324,8 @@ METHOD AddFacturaCliente() CLASS TFastVentasArticulos
          ::oDbf:dFecDoc    := ( D():FacturasClientes( ::nView ) )->dFecFac
          ::oDbf:cHorDoc    := SubStr( ( D():FacturasClientes( ::nView ) )->cTimCre, 1, 2 )
          ::oDbf:cMinDoc    := SubStr( ( D():FacturasClientes( ::nView ) )->cTimCre, 4, 2 )
+         ::oDbf:cSecDoc    := SubStr( ( D():FacturasClientes( ::nView ) )->cTimCre, 7, 2 )
+         ::oDbf:cTimDoc    := ( D():FacturasClientes( ::nView ) )->cTimCre
 
          ::oDbf:cEstado    := cChkPagFacCli( ::oDbf:cSerDoc + ::oDbf:cNumDoc + ::oDbf:cSufDoc, ( D():FacturasClientes( ::nView ) ), D():FacturasClientesCobros( ::nView ) )
 
@@ -2502,6 +2514,8 @@ METHOD AddFacturaRectificativa() CLASS TFastVentasArticulos
          ::oDbf:dFecDoc    := ( D():FacturasRectificativas( ::nView ) )->dFecFac
          ::oDbf:cHorDoc    := SubStr( ( D():FacturasRectificativas( ::nView ) )->cTimCre, 1, 2 )
          ::oDbf:cMinDoc    := SubStr( ( D():FacturasRectificativas( ::nView ) )->cTimCre, 4, 2 )
+         ::oDbf:cSecDoc    := SubStr( ( D():FacturasRectificativas( ::nView ) )->cTimCre, 7, 2 )
+         ::oDbf:cTimDoc    := ( D():FacturasRectificativas( ::nView ) )->cTimCre
 
          ::oDbf:cEstado    := cChkPagFacRec( ::oDbf:cSerDoc + ::oDbf:cNumDoc + ::oDbf:cSufDoc, ( D():FacturasRectificativas( ::nView ) ), D():FacturasClientesCobros( ::nView ) )
 
@@ -2656,6 +2670,8 @@ METHOD AddTicket() CLASS TFastVentasArticulos
                ::oDbf:dFecDoc    := ( D():Tikets( ::nView ) )->dFecTik
                ::oDbf:cHorDoc    := SubStr( ( D():Tikets( ::nView ) )->cHorTik, 1, 2 )
                ::oDbf:cMinDoc    := SubStr( ( D():Tikets( ::nView ) )->cHorTik, 4, 2 )
+               ::oDbf:cSecDoc    := SubStr( ( D():Tikets( ::nView ) )->cHorTik, 7, 2 )
+               ::oDbf:cTimDoc    := ( D():Tikets( ::nView ) )->cHorTik
 
                ::oDbf:lKitArt    := ( D():TiketsLineas( ::nView ) )->lKitArt
                ::oDbf:lKitChl    := ( D():TiketsLineas( ::nView ) )->lKitChl
@@ -2744,6 +2760,8 @@ METHOD AddTicket() CLASS TFastVentasArticulos
                ::oDbf:dFecDoc    := ( D():Tikets( ::nView ) )->dFecTik
                ::oDbf:cHorDoc    := SubStr( ( D():Tikets( ::nView ) )->cHorTik, 1, 2 )
                ::oDbf:cMinDoc    := SubStr( ( D():Tikets( ::nView ) )->cHorTik, 4, 2 )
+               ::oDbf:cSecDoc    := SubStr( ( D():Tikets( ::nView ) )->cHorTik, 7, 2 )
+               ::oDbf:cTimDoc    := ( D():Tikets( ::nView ) )->cHorTik
 
                ::oDbf:cPrvHab    := getProveedorPorDefectoArticulo( ::oDbf:cCodArt, D():ProveedorArticulo( ::nView ) )
 
@@ -3277,11 +3295,10 @@ METHOD AddMovimientoAlmacen() CLASS TFastVentasArticulos
       ::oDbf:nMesDoc    := month( oRowSet:fieldget( 'fecha' ) )
       ::oDbf:nAnoDoc    := year( oRowSet:fieldget( 'fecha' ) )
 
-      
-      MsgInfo( oRowSet:fieldget( 'Hora' ), Valtype( oRowSet:fieldget( 'Hora' ) ) )
-
-      //::oDbf:cHorDoc    := oRowSet:fieldget( 'fecha' )
-      //::oDbf:cMinDoc    := month( oRowSet:fieldget( 'fecha' ) )
+      ::oDbf:cHorDoc    := SubStr( oRowSet:fieldget( 'hora' ), 1, 2 )
+      ::oDbf:cMinDoc    := SubStr( oRowSet:fieldget( 'hora' ), 4, 2 )
+      ::oDbf:cSecDoc    := SubStr( oRowSet:fieldget( 'hora' ), 7, 2 )
+      ::oDbf:cTimDoc    := oRowSet:fieldget( 'hora' )
 
       ::oDbf:Insert()
 
@@ -3488,6 +3505,8 @@ METHOD AddPedidoProveedor() CLASS TFastVentasArticulos
          ::oDbf:dFecDoc    := ( D():PedidosProveedores( ::nView ) )->dFecPed
          ::oDbf:cHorDoc    := SubStr( ( D():PedidosProveedores( ::nView ) )->cTimChg, 1, 2 )
          ::oDbf:cMinDoc    := SubStr( ( D():PedidosProveedores( ::nView ) )->cTimChg, 4, 2 )
+         ::oDbf:cSecDoc    := SubStr( ( D():PedidosProveedores( ::nView ) )->cTimChg, 7, 2 )
+         ::oDbf:cTimDoc    := ( D():PedidosProveedores( ::nView ) )->cTimChg
 
          ::oDbf:cCodCli    := ( D():PedidosProveedores( ::nView ) )->cCodPrv
          ::oDbf:cNomCli    := ( D():PedidosProveedores( ::nView ) )->cNomPrv
@@ -3619,6 +3638,8 @@ METHOD AddAlbaranProveedor( lFacturados ) CLASS TFastVentasArticulos
          ::oDbf:dFecDoc    := ( D():AlbaranesProveedores( ::nView ) )->dFecAlb
          ::oDbf:cHorDoc    := SubStr( ( D():AlbaranesProveedores( ::nView ) )->cTimChg, 1, 2 )
          ::oDbf:cMinDoc    := SubStr( ( D():AlbaranesProveedores( ::nView ) )->cTimChg, 4, 2 )
+         ::oDbf:cSecDoc    := SubStr( ( D():AlbaranesProveedores( ::nView ) )->cTimChg, 7, 2 )
+         ::oDbf:cTimDoc    := ( D():AlbaranesProveedores( ::nView ) )->cTimChg
 
          ::oDbf:cCodCli    := ( D():AlbaranesProveedores( ::nView ) )->cCodPrv
          ::oDbf:cNomCli    := ( D():AlbaranesProveedores( ::nView ) )->cNomPrv
@@ -3748,6 +3769,8 @@ METHOD AddFacturaProveedor( cCodigoArticulo ) CLASS TFastVentasArticulos
          ::oDbf:dFecDoc    := ( D():FacturasProveedores( ::nView ) )->dFecFac
          ::oDbf:cHorDoc    := SubStr( ( D():FacturasProveedores( ::nView ) )->cTimChg, 1, 2 )
          ::oDbf:cMinDoc    := SubStr( ( D():FacturasProveedores( ::nView ) )->cTimChg, 4, 2 )
+         ::oDbf:cSecDoc    := SubStr( ( D():FacturasProveedores( ::nView ) )->cTimChg, 7, 2 )
+         ::oDbf:cTimDoc    := ( D():FacturasProveedores( ::nView ) )->cTimChg
 
          ::oDbf:cCodCli    := ( D():FacturasProveedores( ::nView ) )->cCodPrv
          ::oDbf:cNomCli    := ( D():FacturasProveedores( ::nView ) )->cNomPrv
@@ -3876,6 +3899,8 @@ METHOD AddRectificativaProveedor( cCodigoArticulo ) CLASS TFastVentasArticulos
          ::oDbf:dFecDoc    := ( D():FacturasRectificativasProveedores( ::nView ) )->dFecFac
          ::oDbf:cHorDoc    := SubStr( ( D():FacturasRectificativasProveedores( ::nView ) )->cTimChg, 1, 2 )
          ::oDbf:cMinDoc    := SubStr( ( D():FacturasRectificativasProveedores( ::nView ) )->cTimChg, 4, 2 )
+         ::oDbf:cSecDoc    := SubStr( ( D():FacturasRectificativasProveedores( ::nView ) )->cTimChg, 7, 2 )
+         ::oDbf:cTimDoc    := ( D():FacturasRectificativasProveedores( ::nView ) )->cTimChg
 
          ::oDbf:cCodCli    := ( D():FacturasRectificativasProveedores( ::nView ) )->cCodPrv
          ::oDbf:cNomCli    := ( D():FacturasRectificativasProveedores( ::nView ) )->cNomPrv
@@ -4599,6 +4624,15 @@ Return ( cClave )
 METHOD getCampoExtraAlbaranCliente( cField ) CLASS TFastVentasArticulos
 
 Return ( getCustomExtraField( cField, "Albaranes a clientes", D():AlbaranesClientesId( ::nView ) ) )
+
+//---------------------------------------------------------------------------//
+
+METHOD isFechaHoraConsolidacion( cCodArt, cCodAlm )
+
+   local cTimestamp           := MovimientosAlmacenLineasRepository():getFechaHoraConsolidacion( ::oDbf:cCodArt, ::oDbf:cCodAlm )
+   local fechaConsolidacion   := dtoc( hb_ttod( cTimestamp ) ) + substr( hb_tstostr( cTimestamp ), 12, 8 )
+
+RETURN ( dtoc( ::oDbf:dFecDoc ) + ::oDbf:cTimDoc >= fechaConsolidacion )
 
 //---------------------------------------------------------------------------//
 
