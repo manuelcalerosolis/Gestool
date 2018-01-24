@@ -328,7 +328,7 @@ METHOD getStatementSeederMovimientosAlmacen( dbfRemMov )
    local hCampos
 
    hCampos        := {  "empresa" =>            quoted( cCodEmp() ),;
-                        "delegacion" =>         quoted( ( dbfRemMov )->cCodDlg ),;
+                        "delegacion" =>         if( !Empty( ( dbfRemMov )->cCodDlg ), quoted( ( dbfRemMov )->cCodDlg ), '00' ),;
                         "usuario" =>            quoted( ( dbfRemMov )->cCodUsr ),;
                         "uuid" =>               quoted( ( dbfRemMov )->cGuid ),;
                         "numero" =>             quoted( ( dbfRemMov )->nNumRem ),;

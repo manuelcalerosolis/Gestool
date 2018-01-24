@@ -47,6 +47,10 @@ CLASS MovimientosAlmacenLineasRepository FROM SQLBaseRepository
 
    METHOD getRowSetMovimientosAlmacenForReport( oReporting )
 
+   METHOD getRowSetMovimientosForArticulo()
+
+   METHOD getSqlSentenceMovimientosForArticulo()
+
 END CLASS
 
 //---------------------------------------------------------------------------//
@@ -370,3 +374,48 @@ RETURN ( ::getDatabase():fetchRowSet( cSentence ) )
 
 //---------------------------------------------------------------------------//
 
+METHOD getSQLSentenceMovimientosForArticulo( cCodArt, nYear ) CLASS MovimientosAlmacenLineasRepository
+
+   local cSentence   
+
+   cSentence         := "SELECT movimientos_almacen.id, "
+   cSentence         +=    "movimientos_almacen.numero, "
+   cSentence         +=    "movimientos_almacen.delegacion, "
+   cSentence         +=    "CAST( movimientos_almacen.fecha_hora AS date ) AS fecha, "
+   cSentence         +=    "CAST( movimientos_almacen.fecha_hora AS time ) AS hora, "
+   cSentence         +=    SQLMovimientosAlmacenModel():getColumnMovimiento( 'movimientos_almacen' ) 
+   cSentence         +=    "movimientos_almacen.almacen_destino, "
+   cSentence         +=    "movimientos_almacen.almacen_origen, "
+   cSentence         +=    "movimientos_almacen_lineas.parent_uuid, "
+   cSentence         +=    "movimientos_almacen_lineas.codigo_articulo, "
+   cSentence         +=    "movimientos_almacen_lineas.codigo_primera_propiedad, "
+   cSentence         +=    "movimientos_almacen_lineas.codigo_segunda_propiedad, "
+   cSentence         +=    "movimientos_almacen_lineas.valor_primera_propiedad, "
+   cSentence         +=    "movimientos_almacen_lineas.valor_segunda_propiedad, "
+   cSentence         +=    "movimientos_almacen_lineas.lote, "
+   cSentence         +=    "movimientos_almacen_lineas.bultos_articulo, "
+   cSentence         +=    "movimientos_almacen_lineas.cajas_articulo, "
+   cSentence         +=    "movimientos_almacen_lineas.unidades_articulo, "
+   cSentence         +=    SQLMovimientosAlmacenLineasModel():getSQLSubSentenceTotalUnidadesLinea( "movimientos_almacen_lineas", "total_unidades" ) + ", "
+   cSentence         +=    "movimientos_almacen_lineas.precio_articulo "
+   cSentence         += "FROM movimientos_almacen_lineas "
+   cSentence         += "INNER JOIN movimientos_almacen "
+   cSentence         +=    "ON movimientos_almacen.uuid = movimientos_almacen_lineas.parent_uuid "
+   cSentence         += "WHERE movimientos_almacen.empresa = " + quoted( cCodEmp() ) + " "
+   cSentence         +=    "AND movimientos_almacen_lineas.codigo_articulo = " + quoted( cCodArt ) + " "
+   
+   if !Empty( nYear )
+      cSentence      +=    "AND Date_Format( CAST( movimientos_almacen.fecha_hora AS date ), '%Y' ) = " + Str( nYear )
+   end if
+
+RETURN ( cSentence )
+
+//---------------------------------------------------------------------------//
+
+METHOD getRowSetMovimientosForArticulo( cCodArt, nYear ) CLASS MovimientosAlmacenLineasRepository
+
+   local cSentence   := ::getSqlSentenceMovimientosForArticulo( cCodArt, nYear )
+
+RETURN ( ::getDatabase():fetchRowSet( cSentence ) )
+
+//---------------------------------------------------------------------------//

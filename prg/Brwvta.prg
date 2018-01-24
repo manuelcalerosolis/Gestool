@@ -8,7 +8,7 @@
 
 #define IDC_CHART1               111
 
-#define fldDocumentos            oFld:aDialogs[ 1 ]  
+#define fldDocumentos            oFld:aDialogs[ 1 ]
 #define fldStocks                oFld:aDialogs[ 2 ]
 #define fldEstadisticas          oFld:aDialogs[ 3 ]
 #define fldGraficos              oFld:aDialogs[ 4 ]
@@ -837,7 +837,7 @@ function BrwVtaComArt( cCodArt, cNomArt )
       :bEditValue    := {|| oDbfTmp:tFecDoc }
       :cEditPicture  := "@R 99:99:99"
       :cSortOrder    := "tFecDoc"
-      :nWidth        := 40
+      :nWidth        := 60
    end with
 
    with object ( oBrwTmp:addCol() )
@@ -851,7 +851,7 @@ function BrwVtaComArt( cCodArt, cNomArt )
       :cHeader       := "Nombre"
       :bEditValue    := {|| oDbfTmp:cNomDoc }
       :cSortOrder    := "cNomDoc"
-      :nWidth        := 175
+      :nWidth        := 155
    end with
 
    with object ( oBrwTmp:addCol() )
@@ -2614,7 +2614,70 @@ Cargamos los movimientos de almacén a la temporal
 
 Static Function LoadMovimientosAlmacen( cCodArt, nYear )
 
-   if ( dbfMovAlm )->( dbSeek( cCodArt ) )
+   local oRowSet  := MovimientosAlmacenLineasRepository():getRowSetMovimientosForArticulo( cCodArt, nYear )
+
+   oRowSet:goTop()
+
+   while !( oRowSet:Eof() )
+
+      if !Empty( oRowSet:fieldget( 'almacen_destino' ) )
+         oDbfTmp:Append()
+         oDbfTmp:nTypDoc   := MOV_ALM
+         oDbfTmp:cNumDoc   := AllTrim( Str( oRowSet:fieldget( 'numero' ) ) )
+         oDbfTmp:cSufDoc   := oRowSet:fieldget( 'delegacion' )
+         oDbfTmp:cEstDoc   := "Movimiento"
+         oDbfTmp:dFecDoc   := oRowSet:fieldget( 'fecha' )
+         oDbfTmp:tFecDoc   := StrTran( oRowSet:fieldget( 'hora' ), ":", "" )
+         oDbfTmp:cNomDoc   := oRowSet:fieldget( 'nombre_movimiento' )
+         oDbfTmp:cRef      := oRowSet:fieldget( 'codigo_articulo' )
+         oDbfTmp:cCodPr1   := oRowSet:fieldget( 'codigo_primera_propiedad' )
+         oDbfTmp:cCodPr2   := oRowSet:fieldget( 'codigo_segunda_propiedad' )
+         oDbfTmp:cValPr1   := oRowSet:fieldget( 'valor_primera_propiedad' )
+         oDbfTmp:cValPr2   := oRowSet:fieldget( 'valor_segunda_propiedad' )
+         oDbfTmp:cLote     := oRowSet:fieldget( 'lote' )
+         oDbfTmp:cAlmDoc   := oRowSet:fieldget( 'almacen_destino' )
+         oDbfTmp:nUndDoc   := oRowSet:fieldget( 'total_unidades' )
+         oDbfTmp:nImpDoc   := oRowSet:fieldget( 'precio_articulo' )
+         oDbfTmp:nTotDoc   := oDbfTmp:nUndDoc * oDbfTmp:nImpDoc
+         oDbfTmp:nDtoDoc   := 0
+         oDbfTmp:nIdSql    := oRowSet:fieldget( 'id' )
+         oDbfTmp:Save()
+      end if
+
+      if !Empty( oRowSet:fieldget( 'almacen_origen' ) )
+         oDbfTmp:Append()
+         oDbfTmp:nTypDoc   := MOV_ALM
+         oDbfTmp:cNumDoc   := AllTrim( Str( oRowSet:fieldget( 'numero' ) ) )
+         oDbfTmp:cSufDoc   := oRowSet:fieldget( 'delegacion' )
+         oDbfTmp:cEstDoc   := "Movimiento"
+         oDbfTmp:dFecDoc   := oRowSet:fieldget( 'fecha' )
+         oDbfTmp:tFecDoc   := StrTran( oRowSet:fieldget( 'hora' ), ":", "" )
+         oDbfTmp:cNomDoc   := oRowSet:fieldget( 'nombre_movimiento' )
+         oDbfTmp:cRef      := oRowSet:fieldget( 'codigo_articulo' )
+         oDbfTmp:cCodPr1   := oRowSet:fieldget( 'codigo_primera_propiedad' )
+         oDbfTmp:cCodPr2   := oRowSet:fieldget( 'codigo_segunda_propiedad' )
+         oDbfTmp:cValPr1   := oRowSet:fieldget( 'valor_primera_propiedad' )
+         oDbfTmp:cValPr2   := oRowSet:fieldget( 'valor_segunda_propiedad' )
+         oDbfTmp:cLote     := oRowSet:fieldget( 'lote' )
+         oDbfTmp:cAlmDoc   := oRowSet:fieldget( 'almacen_origen' )
+         oDbfTmp:nUndDoc   := oRowSet:fieldget( 'total_unidades' )
+         oDbfTmp:nImpDoc   := oRowSet:fieldget( 'precio_articulo' )
+         oDbfTmp:nTotDoc   := oDbfTmp:nUndDoc * oDbfTmp:nImpDoc
+         oDbfTmp:nDtoDoc   := 0
+         oDbfTmp:nIdSql    := oRowSet:fieldget( 'id' )
+         oDbfTmp:Save()
+      end if
+
+      oRowSet:skip()
+
+   end while
+
+
+
+   //************Antes de Mysql***************//
+
+
+   /*if ( dbfMovAlm )->( dbSeek( cCodArt ) )
 
       while ( dbfMovAlm )->cRefMov == cCodArt .and. !( dbfMovAlm )->( eof() )
 
@@ -2674,7 +2737,7 @@ Static Function LoadMovimientosAlmacen( cCodArt, nYear )
 
       end while
 
-   end if
+   end if*/
 
 Return nil
 
@@ -3185,7 +3248,7 @@ Static Function EditDocument( oBrwTmp )
 
       case oDbfTmp:nTypDoc == MOV_ALM
 
-         EditMovimientosAlmacen( oDbfTmp:cNumDoc, oBrwTmp )
+         //EditMovimientosAlmacen( oDbfTmp:cNumDoc, oBrwTmp )
 
       case oDbfTmp:nTypDoc == PRO_LIN .or.;
            oDbfTmp:nTypDoc == PRO_MAT
@@ -3237,7 +3300,11 @@ Static Function ZoomDocument( oBrwTmp )
 
       case oDbfTmp:nTypDoc == MOV_ALM
 
-         ZoomMovimientosAlmacen( oDbfTmp:cNumDoc, oBrwTmp )
+         MsgInfo( oDbfTmp:nIdSql, Valtype( oDbfTmp:nIdSql ) )
+
+         //ZoomMovimientosAlmacen( oDbfTmp:cNumDoc, oBrwTmp )
+
+         MovimientosAlmacenController():New():Zoom( oDbfTmp:nIdSql )
 
       case oDbfTmp:nTypDoc == PRO_LIN .or.;
            oDbfTmp:nTypDoc == PRO_MAT
@@ -3289,7 +3356,7 @@ Static Function DeleteDocument( oBrwTmp )
 
       case oDbfTmp:nTypDoc == MOV_ALM
 
-         DelMovimientosAlmacen( oDbfTmp:cNumDoc, oBrwTmp )
+         //DelMovimientosAlmacen( oDbfTmp:cNumDoc, oBrwTmp )
 
       case oDbfTmp:nTypDoc == PRO_LIN .or.;
            oDbfTmp:nTypDoc == PRO_MAT
@@ -3344,7 +3411,7 @@ Static Function VisualizaDocument( oBrwTmp )
 
       case oDbfTmp:nTypDoc == MOV_ALM
 
-         VisMovimientosAlmacen( oDbfTmp:cNumDoc, oBrwTmp )
+         //VisMovimientosAlmacen( oDbfTmp:cNumDoc, oBrwTmp )
 
       case oDbfTmp:nTypDoc == PRO_LIN .or.;
            oDbfTmp:nTypDoc == PRO_MAT
@@ -3451,6 +3518,7 @@ Static Function DefineTemporal( cPath, lUniqueName, cFileName )
       FIELD NAME "nImpDoc"    TYPE "N" LEN 16 DEC 6 COMMENT "Importe unidad"                 OF oDbf
       FIELD NAME "nTotDoc"    TYPE "N" LEN 16 DEC 6 COMMENT "Total documento"                OF oDbf
       FIELD NAME "tFecDoc"    TYPE "C" LEN  6 DEC 0 COMMENT "Hora del documento"             OF oDbf
+      FIELD NAME "nidSql"     TYPE "N" LEN 16 DEC 0 COMMENT "id de mysql"                    OF oDbf
 
       INDEX TO ( cFileName ) TAG "nTypDoc" ON "nTypDoc + Dtos( dFecDoc )"                    OF oDbf
       INDEX TO ( cFileName ) TAG "cEstDoc" ON "cEstDoc + Dtos( dFecDoc )"                    OF oDbf
