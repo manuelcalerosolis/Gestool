@@ -277,8 +277,6 @@ METHOD getSelectSentence()
 
    ::fireEvent( 'gotSelectSentence')
 
-   msgAlert( cSQLSelect, "getSelectSentence" )
-
 RETURN ( cSQLSelect )
 
 //---------------------------------------------------------------------------//
@@ -313,7 +311,7 @@ METHOD addFilterWhere( cSQLSelect )
       RETURN ( cSQLSelect )
    end if 
 
-   cSQLSelect     += ::getWhereOrAnd( cSQLSelect ) + ::cFilterWhere
+   cSQLSelect        += ::getWhereOrAnd( cSQLSelect ) + ::cFilterWhere
 
 RETURN ( cSQLSelect )
 
@@ -321,14 +319,11 @@ RETURN ( cSQLSelect )
 
 METHOD addFindWhere( cSQLSelect )
 
-   msgalert( ::cColumnOrder, "cColumnOrder" )
-   msgalert( ::cFind, "cFind" )
-
    if empty( ::cColumnOrder ) .or. empty( ::cFind )
       RETURN ( cSQLSelect )
    end if 
 
-   cSQLSelect     += ::getWhereOrAnd( cSQLSelect ) + "UPPER(" + ::cColumnOrder +") LIKE '%" + Upper( ::cFind ) + "%'" 
+   cSQLSelect        += ::getWhereOrAnd( cSQLSelect ) + "UPPER(" + ::cColumnOrder +") LIKE '%" + Upper( ::cFind ) + "%'" 
 
 RETURN ( cSQLSelect )
 
