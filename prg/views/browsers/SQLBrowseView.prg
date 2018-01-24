@@ -49,6 +49,10 @@ CLASS SQLBrowseView
 
    METHOD setController( oController )       INLINE ( ::oController := oController )
    METHOD getController()                    INLINE ( ::oController )
+
+   METHOD getSenderController()              INLINE ( ::oController:oSenderController )
+
+   METHOD isNotSenderControllerZoomMode()    INLINE ( empty( ::getSenderController() ) .or. ::getSenderController():isNotZoomMode() )
    
    METHOD getName()                          INLINE ( ::getController():getName() )
 
@@ -130,7 +134,9 @@ METHOD Create( oWindow )
 
    ::oBrowse:bKeyChar         := {|nKey| ::getController():onKeyChar( nKey ) }
 
-   ::oBrowse:bLDblClick       := {|| ::getController():Edit(), ::Refresh() }
+   if ::isNotSenderControllerZoomMode() 
+      ::oBrowse:bLDblClick    := {|| ::getController():Edit(), ::Refresh() }
+   end if 
 
 RETURN ( ::oBrowse )
 

@@ -93,7 +93,7 @@ CLASS SQLBaseController
    METHOD getIdFromRecno( aSelected )                 INLINE ( if( !empty( ::oRowSet ), ::oRowSet:IdFromRecno( aSelected ), {} ) )
    METHOD getUuidFromRecno( aSelected )               INLINE ( if( !empty( ::oRowSet ), ::oRowSet:UuidFromRecno( aSelected ), {} ) )
 
-   METHOD getIdFromRowSet()                           INLINE ( if( !empty( ::getRowSet() ), ::getRowSet():fieldGet( ::oModel:cColumnKey ), ) )
+   METHOD getIdFromRowSet()                           INLINE ( if( !empty( ::getRowSet() ), ::getRowSet():fieldGet( ::oModel:cColumnKey ), nil ) )
 
    METHOD findInRowSet( uValue, cColumn )             
    METHOD findByIdInRowSet( uValue )                  INLINE ( if( !empty( ::getRowSet() ), ::getRowSet():find( uValue, "id", .t. ), ) )
@@ -339,10 +339,17 @@ RETURN ( lAppend )
 
 //----------------------------------------------------------------------------//
 
-METHOD Duplicate()
+METHOD Duplicate( nId )
 
-   local nId
    local lDuplicate  := .t. 
+
+   if empty( nId )
+      nId            := ::getIdFromRowSet()
+   end if 
+
+   if hb_isnil( nId )
+      RETURN ( .f. )
+   end if 
 
    if ::notUserDuplicate()
       msgStop( "Acceso no permitido." )
@@ -359,7 +366,7 @@ METHOD Duplicate()
 
    ::saveRowSetRecno()
 
-   ::oModel:loadDuplicateBuffer()
+   ::oModel:loadDuplicateBuffer( nId )
 
    ::fireEvent( 'openingDialog' )
 
@@ -452,7 +459,15 @@ RETURN ( lEdit )
 
 //----------------------------------------------------------------------------//
 
-METHOD Zoom()
+METHOD Zoom( nId )
+
+   if empty( nId )
+      nId         := ::getIdFromRowSet()
+   end if 
+
+   if hb_isnil( nId )
+      RETURN ( .f. )
+   end if 
 
    if ::notUserZoom()
       msgStop( "Acceso no permitido." )
@@ -465,7 +480,7 @@ METHOD Zoom()
 
    ::setZoomMode()
 
-   ::oModel:loadCurrentBuffer()
+   ::oModel:loadCurrentBuffer( nId )
 
    ::fireEvent( 'openingDialog' )
 
@@ -538,6 +553,8 @@ METHOD Delete( aSelectedRecno )
 
       ::fireEvent( 'deletedSelection' ) 
 
+      // ::gotoRowSet( ::priorRecnoToDelete( aSelectedRecno ) )
+
       ::refreshRowSet()
 
       lDelete           := .t.
@@ -575,6 +592,8 @@ RETURN ( self )
 METHOD findInModel( uValue )
 
    ::oModel:setFind( uValue )
+
+   msgalert( ::oModel:getSelectSentence(), "::oModel:getSelectSentence()" )
 
    ::oRowSet:build( ::oModel:getSelectSentence() )
 

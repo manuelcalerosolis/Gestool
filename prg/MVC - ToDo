@@ -1,10 +1,6 @@
 MVC - ToDo
 
-- Terminar etiquetas.
-
-- Recargar documentos de etiquetas.
-
-- Duplicar movimientos de almacen.
+- Duplicar movimientos de almacen.(done)
 
 - Configuración de documentos por defecto.
 
@@ -16,7 +12,11 @@ MVC - ToDo
 
 - Validacion de contadores.
 
-- Refrescar errror en movimientos de almacen (done)
+- Terminar etiquetas.(done)
+
+- Recargar documentos de etiquetas.(done)
+
+- Refrescar errror en movimientos de almacen. (done)
 
 - Busquedas en etiquetas. ( done )
 

@@ -55,35 +55,42 @@ RETURN ( asort( ::getIds(), , , {|x,y| x < y} ) )
 
 //---------------------------------------------------------------------------//
 
-METHOD showDocument() 
+METHOD showDocument( nDevice, cFileName, nCopies, cPrinter ) 
 
    local nId
    local aIds
    local oReport  
    local oWaitMeter
 
-   ::setFileName( ::oDialogView:cListboxFile )
+   if empty( nDevice ) 
+      msgStop( "No hay dispositivo de salida definido" )
+      RETURN ( self )  
+   end if 
 
-   if empty( ::getFileName() )
+   if empty( cFileName ) 
       msgStop( "No hay formato definido" )
       RETURN ( self )  
    end if 
 
-   aIds        := ::getSortedIds()
+   ::setFileName( cFileName )
 
-   oWaitMeter  := TWaitMeter():New( "Imprimiendo documento(s)", "Espere por favor..." )
+   aIds              := ::getSortedIds()
+
+   oWaitMeter        := TWaitMeter():New( "Imprimiendo documento(s)", "Espere por favor..." )
    oWaitMeter:setTotal( len( aIds ) )
    oWaitMeter:Run()
 
-   oReport     := MovimientosAlmacenReport():New( self )
+   oReport           := MovimientosAlmacenReport():New( self )
 
    oReport:createFastReport()
 
-   oReport:setDevice( IS_PRINTER )
+   oReport:setDevice( nDevice )
 
-   oReport:setCopies( ::oDialogView:nCopies )
+   oReport:setCopies( nCopies )
 
-   oReport:setPrinter( ::oDialogView:cPrinter )
+   if !empty( cPrinter )
+      oReport:setPrinter( cPrinter )
+   end if 
 
    oReport:setDirectory( ::getDirectory() )
    
@@ -102,6 +109,8 @@ METHOD showDocument()
          oReport:Show()
      
       end if 
+
+      oReport:freeRowSet()
 
       oWaitMeter:autoInc()
 

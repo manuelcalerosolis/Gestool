@@ -66,7 +66,10 @@ CLASS TDotNetButton
       METHOD Selected()                          INLINE ( ::lSelected := .t. )
       METHOD UnSelected()                        INLINE ( ::lSelected := .f. )
 
-      METHOD Action()                            INLINE ( eval( ::bAction, self ) )
+      METHOD Action()                            INLINE ( if( ::isEnabled(), eval( ::bAction, self ), ) )
+      METHOD When()                              INLINE ( if( hb_isblock( ::bWhen ), eval( ::bWhen, self ), .t. ) )
+
+      METHOD isEnabled()                         INLINE ( ::lEnabled .and. ::When() )
 
 ENDCLASS
 
@@ -288,7 +291,7 @@ endif
 
 rc := { ::aCoors[1], ::aCoors[2],::aCoors[3],::aCoors[4]}
 
-if lIsOver .and. ::lEnabled .or. ::lSelected
+if lIsOver .and. ::isEnabled() .or. ::lSelected
 
    if lCaptured
       VerticalGradient( hDC, {rc[1]             ,rc[2]+1,rc[1]+n2H5         ,rc[4]  }, ::oParent:oColor:GRADBTN10, ::oParent:oColor:GRADBTN11 )
@@ -319,7 +322,7 @@ if ::lGrouping
    nRight  := rc[4]
 
   //RGB( 129,164,209)
-   if !lCaptured .and. !lIsOver .and. ::lEnabled .and. !::lSelected
+   if !lCaptured .and. !lIsOver .and. ::isEnabled() .and. !::lSelected
       FillSolidRect(hDC, {nTop                     , nLeft, nTop + (nBottom-nTop)*0.4, nRight}, ::oParent:oColor:PANE_BTN_GRP1 )
       FillSolidRect(hDC, {nTop + (nBottom-nTop)*0.4, nLeft,                   nBottom, nRight}, ::oParent:oColor:PANE_BTN_GRP2 )
    endif
@@ -399,7 +402,7 @@ if ::lGrouping
 endif
 
 if hBmp != 0
-   if !::lEnabled
+   if !::isEnabled()
       hBmp2 := BmpToGray( hBmp, 20 )
       DeleteObject( hBmp )
       hBmp := hBmp2
@@ -454,7 +457,7 @@ if lCaptured
 endif
 
 hOldFont := SelectObject( hDC, hFont )
-nColor   := SetTextColor( hDC, if( ::lEnabled, ::oParent:oColor:_CLRTEXTBACK, CLR_HGRAY ) )
+nColor   := SetTextColor( hDC, if( ::isEnabled(), ::oParent:oColor:_CLRTEXTBACK, CLR_HGRAY ) )
 nMode    := SetBkMode( hDC, 1 )
 
 do case
