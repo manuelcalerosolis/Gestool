@@ -16,13 +16,14 @@ CLASS MovimientosAlmacenController FROM SQLNavigatorController
 
    DATA oEtiquetasController
 
-   DATA oContadoresController
+   DATA oConfiguracionesController
 
    DATA oImprimirSeriesController
 
    DATA oReport
 
    METHOD New()
+
    METHOD End()
 
    METHOD validateAlmacenOrigen()   INLINE ( iif(  ::validate( "almacen_origen" ),;
@@ -74,13 +75,15 @@ METHOD New()
 
    ::cTitle                      := "Movimientos de almacén"
 
+   ::cName                       := "movimientos_almacen"
+
+   ::cDirectory                  := cPatDocuments( "Movimientos almacen" ) 
+
    ::hImage                      := {  "16"  => "gc_pencil_package_16",;
                                        "48"  => "gc_package_48",;
                                        "64"  => "gc_package_64" }
 
    ::nLevel                      := nLevelUsr( "01050" )
-
-   ::cDirectory                  := cPatDocuments( "Movimientos almacen" ) 
 
    ::lTransactional              := .t.
 
@@ -108,15 +111,11 @@ METHOD New()
 
    ::oEtiquetasController        := EtiquetasMovimientosAlmacenController():New( self )
 
-   ::oContadoresController       := ContadoresController():New( self )
+   ::oConfiguracionesController  := ConfiguracionesController():New( self )
    
-   ::oContadoresController:setTabla( 'movimientos_almacen' )
-
    ::loadDocuments()
 
    ::oReport                     := MovimientosAlmacenReport():New( Self )
-
-   ::oFilterController:setTableName( ::cTitle ) 
 
    ::oModel:setEvent( 'insertingBuffer', {|| ::insertingBuffer() } )
 
@@ -124,7 +123,7 @@ RETURN ( Self )
 
 //---------------------------------------------------------------------------//
 
-METHOD end()
+METHOD End()
 
    ::oModel:End()
 
@@ -142,7 +141,7 @@ METHOD end()
 
    ::oEtiquetasController:End()
 
-   ::oContadoresController:End()
+   ::oConfiguracionesController:End()
 
    ::oReport:End()
 
@@ -225,7 +224,7 @@ RETURN ( self )
 
 METHOD setCounter()
 
-   ::oContadoresController:Edit()
+   ::oConfiguracionesController:Edit()
 
 RETURN ( self ) 
 
@@ -233,7 +232,7 @@ RETURN ( self )
 
 METHOD insertingBuffer()
 
-   hset( ::oModel:hBuffer, "numero", ContadoresRepository():getAndIncMovimientoAlmacen() )
+   hset( ::oModel:hBuffer, "numero", ConfiguracionesRepository():getAndIncMovimientoAlmacen() )
 
 RETURN ( self ) 
 

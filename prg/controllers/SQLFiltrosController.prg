@@ -10,14 +10,14 @@ CLASS SQLFiltrosController FROM SQLBaseController
 
    DATA hColumns
 
-   DATA cTableName
+   DATA cName
 
    METHOD New()
 
    METHOD Dialog()                     INLINE ( ::oDialogView:Dialog() )
 
-   METHOD setTableName( cTableName )   INLINE ( ::cTableName := cTableName )
-   METHOD getTableName()               INLINE ( ::cTableName )
+   METHOD setName( cName )             INLINE ( ::cName := cName )
+   METHOD getName()                    INLINE ( if( empty( ::cName ), ::oSender:cName, ::cName ) )
 
    METHOD setColumns()
    METHOD getColumns()                 INLINE ( ::hColumns )
@@ -60,31 +60,31 @@ RETURN ( Self )
 
 METHOD getFilters()                 
 
-   if empty( ::getTableName() )
+   if empty( ::getName() )
       RETURN ( {} )
    end if 
 
-RETURN ( ::oModel:getFilters( ::getTableName() ) )
+RETURN ( ::oModel:getFilters( ::getName() ) )
 
 //---------------------------------------------------------------------------//
 
 METHOD getFilterSentence( cFilter )
 
-   if empty( ::getTableName() )
+   if empty( ::getName() )
       RETURN ( "" )
    end if 
 
-RETURN ( ::oModel:getFilterSentence( cFilter, ::getTableName() ) )
+RETURN ( ::oModel:getFilterSentence( cFilter, ::getName() ) )
 
 //---------------------------------------------------------------------------//
 
 METHOD getId( cFilter )
 
-   if empty( ::getTableName() )
+   if empty( ::getName() )
       RETURN ( 0 )
    end if 
 
-RETURN ( ::oModel:getId( cFilter, ::getTableName() ) )
+RETURN ( ::oModel:getId( cFilter, ::getName() ) )
 
 //---------------------------------------------------------------------------//
 

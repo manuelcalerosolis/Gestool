@@ -2456,7 +2456,7 @@ Return nil
 FUNCTION hb_zebra_geterror()
 Return nil
 
-FUNCTION SqlContadoresModel()
+FUNCTION SQLConfiguracionesModel()
 Return nil
 
 FUNCTION SqlMovimientosAlmacenLineasNumerosSeriesModel()

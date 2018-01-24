@@ -73,7 +73,7 @@ CLASS SQLBaseModel
    METHOD getAlterTableSentences()
    
    METHOD getGeneralSelect()
-   METHOD getInitialSelect()                          VIRTUAL
+   METHOD getInitialSelect()                          INLINE ( "SELECT * FROM " + ::getTableName() )
 
    METHOD getIdSelect( id )
    METHOD getSelectSentence()

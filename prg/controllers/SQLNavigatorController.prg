@@ -23,6 +23,8 @@ CLASS SQLNavigatorController FROM SQLBaseController
 
    METHOD New()
 
+   METHOD End()
+
    METHOD Delete( aSelected )                         INLINE ( ::Super:Delete( aSelected ) ) 
 
    METHOD ActivateNavigatorView()
@@ -74,6 +76,24 @@ METHOD New( oSenderController )
    ::oWindowsBar                                      := oWndBar()
 
 RETURN ( self )
+
+//---------------------------------------------------------------------------//
+
+METHOD End( oSenderController )
+
+   if !empty( ::oNavigatorView )
+      ::oNavigatorView:End()
+   end if 
+
+   if !empty( ::oSelectorView )
+      ::oSelectorView:End()
+   end if 
+
+   if !empty( ::oFilterController )
+      ::oFilterController:End() 
+   end if 
+
+RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 
@@ -183,8 +203,6 @@ METHOD deleteFilter()
       ::oFilterController:Delete( nId )
    end if 
 
-   msgalert( "deleteFilter")
-
 RETURN ( Self )    
     
 //---------------------------------------------------------------------------//
@@ -229,8 +247,6 @@ METHOD EnableWindowsBar()
    ::oWindowsBar:enableGet()
 
    ::oWindowsBar:enableComboBox( ::oBrowseView:getColumnsHeaders() )
-
-   // ::oBrowseView:selectColumnOrder( ::oBrowseView:getFirstColumnHeader() )
 
    ::oWindowsBar:enableComboFilter( ::getFilters() )
 

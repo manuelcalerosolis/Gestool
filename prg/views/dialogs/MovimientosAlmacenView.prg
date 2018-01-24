@@ -35,7 +35,7 @@ METHOD Activate()
 
       REDEFINE GET   ::oController:oModel:hBuffer[ "numero" ] ;
          ID          100 ;
-         WHEN        ( .f. ) ;
+         WHEN        ( ::oController:isNotZoomMode() ) ;
          OF          ::oDialog
 
       REDEFINE GET   ::oController:oModel:hBuffer[ "delegacion" ] ;

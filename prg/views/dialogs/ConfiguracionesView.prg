@@ -4,7 +4,7 @@
 
 //---------------------------------------------------------------------------//
 
-CLASS ContadoresView FROM SQLBaseView
+CLASS ConfiguracionesView FROM SQLBaseView
 
    DATA oDialog
 

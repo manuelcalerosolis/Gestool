@@ -1,16 +1,18 @@
 MVC - ToDo
 
-- Duplicar movimientos de almacen.(done)
-
-- Configuración de documentos por defecto.
+- Configuracion de columnas no se guarda
 
 - Mas configuraciones.
-
-- Reposiconamiento si borro el ultimo registro.
 
 - Copias de seguridad.
 
 - Validacion de contadores.
+
+- Configuración de documentos por defecto.
+
+- Reposiconamiento si borro el ultimo registro. (done)
+
+- Duplicar movimientos de almacen.(done)
 
 - Terminar etiquetas.(done)
 
