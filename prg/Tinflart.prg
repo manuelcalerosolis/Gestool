@@ -131,15 +131,14 @@ METHOD lGenerate()
    ::oDlg:Disable()
    ::oDbf:Zap()
 
-   ::aHeader      := {  {|| "Fecha    : " + Dtoc( Date() ) },;
-                        {|| "Artículo : " + AllTrim( ::xOthers[1]:Cargo ) + " - " + retArticulo( ::xOthers[1]:Cargo, ::oDbfArt ) } }
+   ::aHeader      := {  {|| "Fecha    : " + Dtoc( Date() ) } }
 
    ::xOthers[1]:GoTop()
 
    WHILE !::xOthers[1]:Eof()
 
-      if ::xOthers[1]:dFecDoc >= ::dIniInf                                                               .AND.;
-         ::xOthers[1]:dFecDoc <= ::dFinInf                                                               .AND.;
+      if ::xOthers[1]:dFecDoc >= ::dIniInf                                                                  .AND.;
+         ::xOthers[1]:dFecDoc <= ::dFinInf                                                                  .AND.;
          ( ::lAllCli .or. ( ::xOthers[1]:cCodDoc >= ::cCliOrg .AND. ::xOthers[1]:cCodDoc <= ::cCliDes ) )   .AND.;
          ( ::lAllPrv .or. ( ::xOthers[1]:cCodDoc >= ::cPrvOrg .AND. ::xOthers[1]:cCodDoc <= ::cPrvDes ) )   .AND.;
          lChkSer( left( ::xOthers[1]:cNumDoc, 1 ) , ::aSer )

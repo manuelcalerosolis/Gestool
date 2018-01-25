@@ -480,7 +480,7 @@ function BrwComPrv( cCodPrv, cNomPrv, dbfDiv, dbfIva )
    REDEFINE BTNBMP ;
       ID       106 ;
       OF       oFld:aDialogs[ 3 ] ;
-      RESOURCE "Text3d16" ;
+      RESOURCE "gc_3d_glasses_16" ;
       NOBORDER ;
       TOOLTIP  "Gráficos en tres dimensiones" ;
       ACTION   ( oGraph:l3D :=!oGraph:l3D, oGraph:Refresh() )

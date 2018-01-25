@@ -296,6 +296,8 @@ CLASS TStock
 
    METHOD InsertStockMovimientosAlmacen( lNumeroSerie, lDestino )
 
+   METHOD InsertStockMovimientosAlmacenRowset( oRowSet, lDestino )
+
    METHOD InsertStockAlbaranProveedores( lNumeroSerie )
    METHOD DeleteStockAlbaranProveedores( lNumeroSerie )
 
@@ -1747,6 +1749,48 @@ METHOD InsertStockMovimientosAlmacen( lNumeroSerie, lDestino )
             :nBultos       := -( ::cHisMovT )->nBultos
             :nCajas        := -( ::cHisMovT )->nCajMov
          end if 
+
+      end if
+
+      ::Integra( hb_QWith() )
+
+   end with
+
+RETURN nil
+
+//---------------------------------------------------------------------------//
+
+METHOD InsertStockMovimientosAlmacenRowset( oRowSet, lDestino )
+
+   with object ( SStock():New() )
+
+      :cTipoDocumento      := MOV_ALM
+
+      :cNumeroDocumento    := Str( oRowSet:fieldget( 'numero' ) )
+      :cDelegacion         := oRowSet:fieldget( 'delegacion' )
+      :dFechaDocumento     := oRowSet:fieldget( 'fecha' )
+      :tFechaDocumento     := StrTran( oRowSet:fieldget( 'hora' ), ":", "" )
+      :cCodigo             := oRowSet:fieldget( 'codigo_articulo' )
+      :cCodigoPropiedad1   := oRowSet:fieldget( 'codigo_primera_propiedad' )
+      :cCodigoPropiedad2   := oRowSet:fieldget( 'codigo_segunda_propiedad' )
+      :cValorPropiedad1    := oRowSet:fieldget( 'valor_segunda_propiedad' )
+      :cValorPropiedad2    := oRowSet:fieldget( 'valor_segunda_propiedad' )
+      :cLote               := oRowSet:fieldget( 'lote' )
+      :dConsolidacion      := if( !empty( ::dConsolidacion ), ::dConsolidacion, Ctod( "" ) )
+
+      if IsTrue( lDestino )
+
+         :cCodigoAlmacen   := oRowSet:fieldget( 'almacen_destino' )
+         :nUnidades        := oRowSet:fieldget( 'total_unidades' )
+         :nBultos          := oRowSet:fieldget( 'bultos_articulo' )
+         :nCajas           := oRowSet:fieldget( 'cajas_articulo' )
+         
+      else 
+
+         :cCodigoAlmacen   := oRowSet:fieldget( 'almacen_origen' )
+         :nUnidades        := -oRowSet:fieldget( 'total_unidades' )
+         :nBultos          := -oRowSet:fieldget( 'bultos_articulo' )
+         :nCajas           := -oRowSet:fieldget( 'cajas_articulo' )
 
       end if
 
@@ -4040,8 +4084,8 @@ METHOD aStockArticulo( cCodArt, cCodAlm, oBrw, lLote, lNumeroSerie, dFecIni, dFe
 
    // Proceso------------------------------------------------------------------
 
-   // oBlock               := ErrorBlock( {| oError | ApoloBreak( oError ) } )
-   // BEGIN SEQUENCE
+   oBlock               := ErrorBlock( {| oError | ApoloBreak( oError ) } )
+   BEGIN SEQUENCE
 
    for each cCodAlm in aAlmacenes
 
@@ -4157,10 +4201,10 @@ METHOD aStockArticulo( cCodArt, cCodAlm, oBrw, lLote, lNumeroSerie, dFecIni, dFe
 
    // Control de erroress-------------------------------------------------------
 
-//   RECOVER USING oError
-//      msgStop( ErrorMessage( oError ), "Calculo de stock" )
-//   END SEQUENCE
-//   ErrorBlock( oBlock )
+   RECOVER USING oError
+      msgStop( ErrorMessage( oError ), "Calculo de stock" )
+   END SEQUENCE
+   ErrorBlock( oBlock )
 
 RETURN ( ::aStocks )
 
@@ -5534,10 +5578,65 @@ RETURN ( aScan( ::uCodigoAlmacen, cCodigoAlmacen ) != 0 )
 METHOD aStockMovimientosAlmacen( cCodArt, cCodAlm, lLote, lNumeroSerie )
 
    local nOrdHisMov  := ( ::cHisMovT )->( ordsetfocus( "cStkFastIn" ) )
+   local oRowSet     := MovimientosAlmacenLineasRepository():getRowSetMovimientosForArticulo( cCodArt, cCodAlm )
 
    SysRefresh()
 
-   if ( ::cHisMovT )->( dbSeek( cCodArt + cCodAlm ) )
+   oRowSet:goTop()
+
+   while !( oRowSet:Eof() )
+
+      if oRowSet:fieldget( 'almacen_destino' ) == cCodAlm
+
+         if ::validateDateTime( oRowSet:fieldget( 'fecha' ), oRowSet:fieldget( 'hora' ) )
+
+            if ::lCheckConsolidacion( oRowSet:fieldget( 'codigo_articulo' ),;
+                                      oRowSet:fieldget( 'almacen_destino' ),;
+                                      oRowSet:fieldget( 'codigo_primera_propiedad' ),;
+                                      oRowSet:fieldget( 'codigo_segunda_propiedad' ),;
+                                      oRowSet:fieldget( 'valor_primera_propiedad' ),;
+                                      oRowSet:fieldget( 'valor_segunda_propiedad' ),;
+                                      oRowSet:fieldget( 'lote' ),;
+                                      oRowSet:fieldget( 'fecha' ),;
+                                      oRowSet:fieldget( 'hora' ) )
+
+               ::InsertStockMovimientosAlmacenRowset( oRowSet , .t. )
+
+            end if
+
+         end if
+
+      end if
+
+      if oRowSet:fieldget( 'almacen_origen' ) == cCodAlm
+
+         if ::validateDateTime( oRowSet:fieldget( 'fecha' ), oRowSet:fieldget( 'hora' ) )
+
+            if ::lCheckConsolidacion( oRowSet:fieldget( 'codigo_articulo' ),;
+                                      oRowSet:fieldget( 'almacen_origen' ),;
+                                      oRowSet:fieldget( 'codigo_primera_propiedad' ),;
+                                      oRowSet:fieldget( 'codigo_segunda_propiedad' ),;
+                                      oRowSet:fieldget( 'valor_primera_propiedad' ),;
+                                      oRowSet:fieldget( 'valor_segunda_propiedad' ),;
+                                      oRowSet:fieldget( 'lote' ),;
+                                      oRowSet:fieldget( 'fecha' ),;
+                                      oRowSet:fieldget( 'hora' ) )
+
+               ::InsertStockMovimientosAlmacenRowset( oRowSet , .f. )
+
+            end if
+
+         end if
+
+      end if
+
+      oRowSet:skip()
+
+   end while
+
+
+
+   /*if ( ::cHisMovT )->( dbSeek( cCodArt + cCodAlm ) )
 
       while ( ::cHisMovT )->cRefMov == cCodArt .and. ( ::cHisMovT )->cAliMov == cCodAlm .and. !( ::cHisMovT )->( Eof() )
 
@@ -5611,7 +5710,7 @@ METHOD aStockMovimientosAlmacen( cCodArt, cCodAlm, lLote, lNumeroSerie )
 
    end if
 
-   ( ::cHisMovT )->( ordsetfocus( nOrdHisMov ) )
+   ( ::cHisMovT )->( ordsetfocus( nOrdHisMov ) )*/
 
 RETURN ( nil )
 
