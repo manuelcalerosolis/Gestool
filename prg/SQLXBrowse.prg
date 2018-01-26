@@ -335,19 +335,14 @@ RETURN ( Self )
 
 METHOD SetView()
 
-   local hBrowseState
-   local oConfiguracionColumnasUsuariosModel
+   local cBrowseState
 
    ::getOriginalView()
 
-   oConfiguracionColumnasUsuariosModel := SQLConfiguracionColumnasUsuariosModel()
+   cBrowseState         := SQLConfiguracionColumnasUsuariosModel():getState( ::getName )
 
-   if !Empty( oConfiguracionColumnasUsuariosModel )
-      hBrowseState                     := oConfiguracionColumnasUsuariosModel:get( ::getName() )
-   end if
-
-   if hb_ishash( hBrowseState ) .and. hhaskey( hBrowseState, "browse_state" )
-      ::restoreState( hget( hBrowseState, "browse_state" ) )
+   if !empty( cBrowseState )
+      ::restoreState( cBrowseState )
    end if 
 
 RETURN ( Self )
