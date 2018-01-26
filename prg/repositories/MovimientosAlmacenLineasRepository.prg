@@ -374,9 +374,9 @@ RETURN ( ::getDatabase():fetchRowSet( cSentence ) )
 
 //---------------------------------------------------------------------------//
 
-METHOD getSQLSentenceMovimientosForArticulo( cCodArt, nYear ) CLASS MovimientosAlmacenLineasRepository
+METHOD getSQLSentenceMovimientosForArticulo( cCodArt, cCodAlm, nYear ) CLASS MovimientosAlmacenLineasRepository
 
-   local cSentence   
+   local cSentence
 
    cSentence         := "SELECT movimientos_almacen.id, "
    cSentence         +=    "movimientos_almacen.numero, "
@@ -403,18 +403,22 @@ METHOD getSQLSentenceMovimientosForArticulo( cCodArt, nYear ) CLASS MovimientosA
    cSentence         +=    "ON movimientos_almacen.uuid = movimientos_almacen_lineas.parent_uuid "
    cSentence         += "WHERE movimientos_almacen.empresa = " + quoted( cCodEmp() ) + " "
    cSentence         +=    "AND movimientos_almacen_lineas.codigo_articulo = " + quoted( cCodArt ) + " "
-   
+
    if !Empty( nYear )
-      cSentence      +=    "AND Date_Format( CAST( movimientos_almacen.fecha_hora AS date ), '%Y' ) = " + Str( nYear )
+      cSentence      +=    "AND Date_Format( CAST( movimientos_almacen.fecha_hora AS date ), '%Y' ) = " + Str( nYear ) + " "
+   end if
+
+   if !Empty( cCodAlm )
+      cSentence      +=    "AND ( movimientos_almacen.almacen_destino = " + quoted( cCodAlm ) + " OR movimientos_almacen.almacen_origen = " + quoted( cCodAlm ) + " ) "
    end if
 
 RETURN ( cSentence )
 
 //---------------------------------------------------------------------------//
 
-METHOD getRowSetMovimientosForArticulo( cCodArt, nYear ) CLASS MovimientosAlmacenLineasRepository
+METHOD getRowSetMovimientosForArticulo( cCodArt, cCodAlm, nYear ) CLASS MovimientosAlmacenLineasRepository
 
-   local cSentence   := ::getSqlSentenceMovimientosForArticulo( cCodArt, nYear )
+   local cSentence   := ::getSqlSentenceMovimientosForArticulo( cCodArt, cCodAlm, nYear )
 
 RETURN ( ::getDatabase():fetchRowSet( cSentence ) )
 

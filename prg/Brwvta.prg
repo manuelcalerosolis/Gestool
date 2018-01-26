@@ -21,7 +21,6 @@ static dbfIva
 static dbfAlm
 static dbfArticulo
 
-static dbfMovAlm 
 static dbfArtKit
 
 static dbfPedPrvT
@@ -88,12 +87,10 @@ static nTotResStk    := 0
 static nTotEntStk    := 0
 static nTotActStk    := 0
 static nStkCom       := 0
-static nStkAlm       := 0
 static nStkVta       := 0
 static nStkPro       := 0
 static nStkCon       := 0
 static oStkCom
-static oStkAlm
 static oStkVta
 static oStkPro
 static oStkCon
@@ -257,10 +254,6 @@ Static Function OpenFiles( cCodArt )
    USE ( cPatEmp() + "TIKEP.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "TIKEP", @dbfTikCliP ) )
    SET ADSINDEX TO ( cPatEmp() + "TIKEP.CDX" ) ADDITIVE
 
-   USE ( cPatEmp() + "HISMOV.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "HISMOV", @dbfMovAlm ) )
-   SET ADSINDEX TO ( cPatEmp() + "HISMOV.CDX" ) ADDITIVE
-   SET TAG TO "CREFMOV"
-
    USE ( cPatArt() + "ARTKIT.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "ARTTIK", @dbfArtKit ) )
    SET ADSINDEX TO ( cPatArt() + "ARTKIT.CDX" ) ADDITIVE
 
@@ -364,7 +357,6 @@ Static Function CloseFiles()
    ( dbfTikCliT )->( dbCloseArea() )
    ( dbfTikCliL )->( dbCloseArea() )
    ( dbfTikCliP )->( dbCloseArea() )
-   ( dbfMovAlm  )->( dbCloseArea() )
    ( dbfArtKit  )->( dbCloseArea() )
    ( dbfProducT )->( dbCloseArea() )
    ( dbfProducL )->( dbCloseArea() )
@@ -675,7 +667,7 @@ function BrwVtaComArt( cCodArt, cNomArt )
 
    with object ( oBrwStk:AddCol() )
       :cHeader                   := "Unidades"
-      :nWidth                    := 110
+      :nWidth                    := 70
       :bEditValue                := {|| getTreeValue( oBrwStk, "nUnidades" ) }
       :bFooter                   := {|| nFooterTree( oBrwStk, "nUnidades" ) }
       :cEditPicture              := MasUnd()
@@ -683,7 +675,7 @@ function BrwVtaComArt( cCodArt, cNomArt )
 
    with object ( oBrwStk:AddCol() )
       :cHeader                   := "Pdt. recibir"
-      :nWidth                    := 110
+      :nWidth                    := 70
       :bEditValue                := {|| getTreeValue( oBrwStk, "nPendientesRecibir" ) }
       :bFooter                   := {|| nFooterTree( oBrwStk, "nPendientesRecibir" ) }
       :cEditPicture              := MasUnd()
@@ -691,7 +683,7 @@ function BrwVtaComArt( cCodArt, cNomArt )
 
    with object ( oBrwStk:AddCol() )
       :cHeader                   := "Pdt. entregar"
-      :nWidth                    := 110
+      :nWidth                    := 70
       :bEditValue                := {|| getTreeValue( oBrwStk, "nPendientesEntregar" ) }
       :bFooter                   := {|| nFooterTree( oBrwStk, "nPendientesEntregar" ) }
       :cEditPicture              := MasUnd()
@@ -699,7 +691,7 @@ function BrwVtaComArt( cCodArt, cNomArt )
 
    with object ( oBrwStk:AddCol() )
       :cHeader                   := "Peso stock"
-      :nWidth                    := 110
+      :nWidth                    := 70
       :bEditValue                := {|| getTreeValue( oBrwStk, "nUnidades" ) * nPesUnd }
       :bFooter                   := {|| nFooterTree( oBrwStk, "nUnidades" ) * nPesUnd }
       :cEditPicture              := MasUnd()
@@ -707,7 +699,7 @@ function BrwVtaComArt( cCodArt, cNomArt )
 
    with object ( oBrwStk:AddCol() )
       :cHeader                   := "Volumen stock"
-      :nWidth                    := 110
+      :nWidth                    := 80
       :bEditValue                := {|| getTreeValue( oBrwStk, "nUnidades" ) * nVolUnd }
       :bFooter                   := {|| nFooterTree( oBrwStk, "nUnidades" ) * nVolUnd }
       :cEditPicture              := MasUnd()
@@ -715,9 +707,8 @@ function BrwVtaComArt( cCodArt, cNomArt )
 
    with object ( oBrwStk:AddCol() )
       :cHeader                   := "Consolidación"
-      :nWidth                    := 110
+      :nWidth                    := 70
       :bStrData                  := {|| getTreeValue( oBrwStk, "dConsolidacion" ) }
-      // :bStrData                  := {|| if( !Empty( oBrwStk:oTreeItem ) .and. !Empty( oBrwStk:oTreeItem:Cargo ), oBrwStk:oTreeItem:Cargo:dConsolidacion, "" ) }
       :lHide                     := .t.
    end with
 
@@ -1015,7 +1006,7 @@ function BrwVtaComArt( cCodArt, cNomArt )
    REDEFINE BTNBMP ;
       ID       106 ;
       OF       fldGraficos ;
-      RESOURCE "Text3d16" ;
+      RESOURCE "gc_3d_glasses_16" ;
       NOBORDER ;
       TOOLTIP  "Gráficos en tres dimensiones" ;
       ACTION   ( oGraph:l3D :=!oGraph:l3D, oGraph:Refresh() )
@@ -1247,15 +1238,13 @@ Static Function LoadDatos( cCodArt, nYear, oDlg, oBrwStk, oBrwTmp, oGraph, oBrwC
    local nTotStkPro     := 0
    local nTotStkCon     := 0
 
-   nStkAlm              := 0
-
    oDlg:Disable()
 
    CursorWait()
-/*   
+   
    oBlock               := ErrorBlock( {| oError | ApoloBreak( oError ) } )
    BEGIN SEQUENCE
-*/
+
    oMeter:Show()
    oMeter:SetTotal( 18 )
 
@@ -1271,6 +1260,10 @@ Static Function LoadDatos( cCodArt, nYear, oDlg, oBrwStk, oBrwTmp, oGraph, oBrwC
       oBrwStk:oTree     := oStock:oTree
       oBrwStk:oTreeItem := oStock:oTree:oFirst
    end if 
+
+   if Len( oBrwStk:aCols() ) > 0
+      oBrwStk:aCols[1]:nWidth    := 500
+   end if
 
    /*
    Calculos de compras---------------------------------------------------------
@@ -1466,12 +1459,12 @@ Static Function LoadDatos( cCodArt, nYear, oDlg, oBrwStk, oBrwTmp, oGraph, oBrwC
    oText:SetText()
 
    oMeter:Hide()
-/*
+
    RECOVER USING oError
       msgStop( "Imposible cargar datos" + CRLF + ErrorMessage( oError ) )
    END SEQUENCE
    ErrorBlock( oBlock )
-*/
+
    CursorWE()
 
    oDlg:Enable()
@@ -1957,50 +1950,6 @@ static function nTotTikVta( cCodArt, dbfTikCliT, dbfTikCliL, nYear )
    ( dbfTikCliL )->( ordSetFocus( "cCbaTil" ) )
 
 Return ( nil )
-
-//---------------------------------------------------------------------------//
-/*
-Total unidades del movimiento de almacén
-*/
-
-static function nStkAlm( cCodArt, dbfMovAlm, nYear )
-
-   local nPos
-   local nUndAlm  := 0
-
-   /*
-   Movimientos de almacén
-   */
-
-   if ( dbfMovAlm )->( dbSeek( cCodArt ) )
-
-      while ( dbfMovAlm )->cRefMov == cCodArt .and. !( dbfMovAlm )->( eof() )
-
-         if nYear == nil .or. Year( ( dbfMovAlm )->dFecMov ) == nYear
-
-            if !Empty( ( dbfMovAlm )->cAliMov ) .and. !( dbfMovAlm )->lNoStk
-
-               nUndAlm   += nTotNMovAlm( dbfMovAlm )
-
-            end if
-
-            if !Empty( ( dbfMovAlm )->cAloMov ) .and. !( dbfMovAlm )->lNoStk
-
-               nUndAlm   -= nTotNMovAlm( dbfMovAlm )
-
-            end if
-
-         end if
-
-         SysRefresh()
-
-         ( dbfMovAlm )->( dbSkip() )
-
-      end while
-
-   end if
-
-return nUndAlm
 
 //---------------------------------------------------------------------------//
 /*Carga los pedidos a proveedor*/
@@ -2614,7 +2563,7 @@ Cargamos los movimientos de almacén a la temporal
 
 Static Function LoadMovimientosAlmacen( cCodArt, nYear )
 
-   local oRowSet  := MovimientosAlmacenLineasRepository():getRowSetMovimientosForArticulo( cCodArt, nYear )
+   local oRowSet  := MovimientosAlmacenLineasRepository():getRowSetMovimientosForArticulo( cCodArt, , nYear )
 
    oRowSet:goTop()
 
@@ -2671,73 +2620,6 @@ Static Function LoadMovimientosAlmacen( cCodArt, nYear )
       oRowSet:skip()
 
    end while
-
-
-
-   //************Antes de Mysql***************//
-
-
-   /*if ( dbfMovAlm )->( dbSeek( cCodArt ) )
-
-      while ( dbfMovAlm )->cRefMov == cCodArt .and. !( dbfMovAlm )->( eof() )
-
-         if nYear == nil .or. Year( ( dbfMovAlm )->dFecMov ) == nYear
-
-            if !Empty( ( dbfMovAlm )->cAliMov )
-               oDbfTmp:Append()
-               oDbfTmp:nTypDoc   := MOV_ALM
-               oDbfTmp:cNumDoc   := Str( ( dbfMovAlm )->nNumRem ) + ( dbfMovAlm )->cSufRem
-               oDbfTmp:cSufDoc   := ( dbfMovAlm )->cSufRem
-               oDbfTmp:cEstDoc   := "Movimiento"
-               oDbfTmp:dFecDoc   := ( dbfMovAlm )->dFecMov
-               oDbfTmp:tFecDoc   := ( dbfMovAlm )->cTimMov
-               oDbfTmp:cNomDoc   := cTextoMovimiento( dbfMovAlm )
-               oDbfTmp:cRef      := ( dbfMovAlm )->cRefMov
-               oDbfTmp:cCodPr1   := ( dbfMovAlm )->cCodPr1
-               oDbfTmp:cCodPr2   := ( dbfMovAlm )->cCodPr2
-               oDbfTmp:cValPr1   := ( dbfMovAlm )->cValPr1
-               oDbfTmp:cValPr2   := ( dbfMovAlm )->cValPr2
-               oDbfTmp:cLote     := ( dbfMovAlm )->cLote
-               oDbfTmp:cAlmDoc   := ( dbfMovAlm )->cAliMov
-               oDbfTmp:nUndDoc   := nTotNMovAlm( dbfMovAlm )
-               oDbfTmp:nImpDoc   := ( dbfMovAlm )->nPreDiv
-               oDbfTmp:nTotDoc   := oDbfTmp:nUndDoc * oDbfTmp:nImpDoc
-               oDbfTmp:nDtoDoc   := 0 //( dbfMovAlm )->( Recno() )    // Lo usamos como referencia al registro
-               oDbfTmp:Save()
-            end if
-
-            if !Empty( ( dbfMovAlm )->cAloMov )
-               oDbfTmp:Append()
-               oDbfTmp:nTypDoc   := MOV_ALM
-               oDbfTmp:cEstDoc   := "Movimiento"
-               oDbfTmp:cNumDoc   := Str( ( dbfMovAlm )->nNumRem ) + ( dbfMovAlm )->cSufRem
-               oDbfTmp:cSufDoc   := ( dbfMovAlm )->cSufRem
-               oDbfTmp:dFecDoc   := ( dbfMovAlm )->dFecMov
-               oDbfTmp:tFecDoc   := ( dbfMovAlm )->cTimMov
-               oDbfTmp:cNomDoc   := cTextoMovimiento( dbfMovAlm )
-               oDbfTmp:cRef      := ( dbfMovAlm )->cRefMov
-               oDbfTmp:cCodPr1   := ( dbfMovAlm )->cCodPr1
-               oDbfTmp:cCodPr2   := ( dbfMovAlm )->cCodPr2
-               oDbfTmp:cValPr1   := ( dbfMovAlm )->cValPr1
-               oDbfTmp:cValPr2   := ( dbfMovAlm )->cValPr2
-               oDbfTmp:cLote     := ( dbfMovAlm )->cLote
-               oDbfTmp:cAlmDoc   := ( dbfMovAlm )->cAloMov
-               oDbfTmp:nUndDoc   := nTotNMovAlm( dbfMovAlm )
-               oDbfTmp:nImpDoc   := ( dbfMovAlm )->nPreDiv
-               oDbfTmp:nTotDoc   := oDbfTmp:nUndDoc * oDbfTmp:nImpDoc
-               oDbfTmp:nDtoDoc   := 0 //( dbfMovAlm )->( Recno() )       // Lo usamos como referencia al registro
-               oDbfTmp:Save()
-            end if
-
-         end if
-
-         SysRefresh()
-
-         ( dbfMovAlm )->( dbSkip() )
-
-      end while
-
-   end if*/
 
 Return nil
 
@@ -3299,10 +3181,6 @@ Static Function ZoomDocument( oBrwTmp )
          ZooTikCli( oDbfTmp:cNumDoc )
 
       case oDbfTmp:nTypDoc == MOV_ALM
-
-         MsgInfo( oDbfTmp:nIdSql, Valtype( oDbfTmp:nIdSql ) )
-
-         //ZoomMovimientosAlmacen( oDbfTmp:cNumDoc, oBrwTmp )
 
          MovimientosAlmacenController():New():Zoom( oDbfTmp:nIdSql )
 

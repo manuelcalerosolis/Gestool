@@ -128,7 +128,6 @@ static lChangeImage        := .f.
 static cImageOld           := ""
 
 static bEdit               := { |aTmp, aGet, dbf, oBrw, bWhen, bValid, nMode          | EdtRec( aTmp, aGet, dbf, oBrw, bWhen, bValid, nMode ) }
-static bEdit2              := { |aTmp, aGet, dbf, oBrw, bWhen, bValid, nMode          | EdtRec2( aTmp, aGet, dbf, oBrw, bWhen, bValid, nMode ) }
 static bEdtDet             := { |aTmp, aGet, dbf, oBrw, bWhen, bValid, nMode, cCodArt | EdtDet( aTmp, aGet, dbf, oBrw, bWhen, bValid, nMode, cCodArt ) }
 static bEdtAlm             := { |aTmp, aGet, dbf, oBrw, bWhen, bValid, nMode, cCodArt | EdtAlm( aTmp, aGet, dbf, oBrw, bWhen, bValid, nMode, cCodArt ) }
 static bEdtVta             := { |aTmp, aGet, dbf, oBrw, bWhen, bValid, nMode, cCodArt | EdtVta( aTmp, aGet, dbf, oBrw, bWhen, bValid, nMode, cCodArt ) }
@@ -197,49 +196,6 @@ static hStockArticulo   := {=>}
 
 //---------------------------------------------------------------------------//
 
-#ifndef __PDA__
-
-/*
-Cargamos los stocks bajo demanda-----------------------------------------------
-*/
-
-Function SetStockArticulos()
-
-   local nStock   := 0
-
-   if OpenFiles()
-
-      ( D():Articulos( nView ) )->( dbGoTop() )
-
-      while ( D():Articulos( nView ) )->( !Eof() )
-
-         if !( D():Articulos( nView ) )->lObs
-            nStock   := oStock:nStockArticulo( ( D():Articulos( nView ) )->Codigo )
-         else
-            nStock   := 0
-         end if
-
-         if ( D():Articulos( nView ) )->nStkCal != nStock
-
-            if dbLock( D():Articulos( nView ) )
-               ( D():Articulos( nView ) )->nStkCal    := nStock
-               ( D():Articulos( nView ) )->( dbUnlock() )
-            end if
-
-         end if
-
-         ( D():Articulos( nView ) )->( dbSkip() )
-
-      end while
-
-      CloseFiles()
-
-   end if
-
-Return ( .t. )
-
-//---------------------------------------------------------------------------//
-
 STATIC FUNCTION OpenFiles( lExt, cPath )
 
    local oError
@@ -279,9 +235,6 @@ STATIC FUNCTION OpenFiles( lExt, cPath )
       D():Familias( nView )
 
       D():ArticuloImagenes( nView )
-
-      D():MovimientosAlmacenLineas( nView )
-      ( D():MovimientosAlmacenLineas( nView ) )->( OrdSetFocus( "cRefMov" ) )
 
       D():TiposIva( nView )
 
@@ -1425,7 +1378,7 @@ Function Articulo( oMenuItem, oWnd, bOnInit )
 
    DEFINE BTNSHELL RESOURCE "gc_document_empty_chart_" OF oWndBrw ;
       NOBORDER ;
-      ACTION   ( runFastGallery( "Articulos" ) ) ; //  TFastVentasArticulos():New():Play() ) ;
+      ACTION   ( runFastGallery( "Articulos" ) ) ;
       TOOLTIP  "Rep(o)rting";
       HOTKEY   "O" ;
       LEVEL    ACC_IMPR
@@ -4725,16 +4678,6 @@ Return ( oDlg:nResult == IDOK )
 
 //--------------------------------------------------------------------------//
 
-static function actualizaTarifaWeb( aGet, aTmp, nMode )
-
-   if !empty( oGetTarWeb )
-      aTmp[ ( D():Articulos( nView ) )->( fieldpos( "nTarWeb" ) ) ]  := oGetTarWeb:getTarifa()
-   endif
-
-Return ( .t. )
-
-//--------------------------------------------------------------------------//
-
 static function CodificacionProveedor( aTmp, aGet, nMode )
 
    local oDlg
@@ -4981,173 +4924,6 @@ static function ImportaImagenes( aTmp, oBrwImg )
 Return .t.
 
 //---------------------------------------------------------------------------//
-
-STATIC FUNCTION EdtRec2( aTmp, aGet, cArticulo, oBrw, bWhen, bValid, nMode )
-
-	local oDlg
-   local oBtn
-   local oSay  := Array( 4 )
-   local cSay  := Array( 4 )
-   local oValorPunto
-   local oValorDto
-   local oValorTot
-
-   do case
-      case nMode == APPD_MODE
-         aTmp[ ( D():Articulos( nView ) )->( fieldpos( "Codigo"    ) ) ]  := Space( 18 )
-         aTmp[ ( D():Articulos( nView ) )->( fieldpos( "nLabel"    ) ) ]  := 1
-         aTmp[ ( D():Articulos( nView ) )->( fieldpos( "nCtlStock" ) ) ]  := 1
-         aTmp[ ( D():Articulos( nView ) )->( fieldpos( "lLote"     ) ) ]  := .f.
-         aTmp[ ( D():Articulos( nView ) )->( fieldpos( "TipoIva"   ) ) ]  := cDefIva()
-         aTmp[ ( D():Articulos( nView ) )->( fieldpos( "lBnf1"     ) ) ]  := .t.
-         aTmp[ ( D():Articulos( nView ) )->( fieldpos( "lBnf2"     ) ) ]  := .t.
-         aTmp[ ( D():Articulos( nView ) )->( fieldpos( "lBnf3"     ) ) ]  := .t.
-         aTmp[ ( D():Articulos( nView ) )->( fieldpos( "lBnf4"     ) ) ]  := .t.
-         aTmp[ ( D():Articulos( nView ) )->( fieldpos( "lBnf5"     ) ) ]  := .t.
-         aTmp[ ( D():Articulos( nView ) )->( fieldpos( "lBnf6"     ) ) ]  := .t.
-
-      case nMode == DUPL_MODE
-         aTmp[ ( D():Articulos( nView ) )->( fieldpos( "Codigo"    ) ) ]  := NextKey( aTmp[ ( D():Articulos( nView ) )->( fieldpos( "Codigo" ) ) ], D():Articulos( nView ) )
-
-   end case
-
-   cCatOld     := aTmp[ ( D():Articulos( nView ) )->( fieldpos( "cCodCat" ) ) ]
-   cPrvOld     := aTmp[ ( D():Articulos( nView ) )->( fieldpos( "cPrvHab" ) ) ]
-
-   //Definicion del diálogo
-
-   DEFINE DIALOG oDlg RESOURCE "FASTART" TITLE LblTitle( nMode ) + "artículo : " + Rtrim( aTmp[( D():Articulos( nView ) )->( fieldpos( "NOMBRE" ) ) ] )
-
-   //Definición del código y nombre del nuevo artículo
-
-   REDEFINE GET aGet[ ( D():Articulos( nView ) )->( fieldpos( "Codigo" ) ) ];
-      VAR      aTmp[ ( D():Articulos( nView ) )->( fieldpos( "Codigo" ) ) ];
-      ID       100 ;
-      PICTURE  "@!" ;
-      WHEN     ( nMode == APPD_MODE .or. nMode == DUPL_MODE ) ;
-      VALID    ( CheckValid( aGet[ ( D():Articulos( nView ) )->( fieldpos( "Codigo" ) ) ], D():Articulos( nView ), 1, nMode ) ) ;
-      BITMAP   "Bot" ;
-      ON HELP  ( aGet[ ( D():Articulos( nView ) )->( fieldpos( "Codigo" ) ) ]:cText( NextKey( aTmp[ ( D():Articulos( nView ) )->( fieldpos( "Codigo" ) ) ], D():Articulos( nView ) ) ) );
-      OF       oDlg
-
-   REDEFINE GET   aGet[( D():Articulos( nView ) )->( fieldpos( "Nombre" ) ) ];
-      VAR         aTmp[( D():Articulos( nView ) )->( fieldpos( "Nombre" ) ) ];
-      ID          110 ;
-      ON CHANGE   ( ActTitle( nKey, nFlags, Self, nMode, oDlg ) );
-      OF          oDlg
-
-   // Definición de la familia del nuevo artículo------------------------------
-
-   REDEFINE GET aGet[( D():Articulos( nView ) )->( fieldpos( "Familia" ) ) ] ;
-      VAR      aTmp[( D():Articulos( nView ) )->( fieldpos( "Familia" ) ) ] ;
-      ID       120 ;
-      VALID    ( cFamilia( aGet[( D():Articulos( nView ) )->( fieldpos( "Familia" ) ) ], D():Familias( nView ), oSay[1] ) );
-      BITMAP   "LUPA" ;
-      ON HELP  ( BrwFamilia( aGet[( D():Articulos( nView ) )->( fieldpos( "Familia" ) ) ], oSay[1] ) );
-      OF       oDlg
-
-   REDEFINE GET oSay[1] VAR cSay[1] ;
-      WHEN     ( .F. );
-      ID       121 ;
-      OF       oDlg
-
-   // Definición del catálogo del artículo-------------------------------------
-
-   REDEFINE GET aGet[ ( D():Articulos( nView ) )->( fieldpos( "cCodCat" ) ) ] ;
-      VAR      aTmp[ ( D():Articulos( nView ) )->( fieldpos( "cCodCat" ) ) ] ;
-      ID       130 ;
-      VALID    ( CargaValorCat( aTmp, aGet, oSay, oValorPunto, oValorDto, oValorTot, nMode, .t. ),;
-                 oCatalogo:lValid( aGet[ ( D():Articulos( nView ) )->( fieldpos( "CCODCAT" ) ) ], oSay[2] ) );
-      ON HELP  ( oCatalogo:Buscar( aGet[ ( D():Articulos( nView ) )->( fieldpos( "CCODCAT" ) ) ], oSay[2], "cCodCata" ) ) ;
-      ON CHANGE( CargaValorCat( aTmp, aGet, oSay, oValorPunto, oValorDto, oValorTot, nMode, .t. ) );
-      BITMAP   "LUPA" ;
-      OF       oDlg
-
-   REDEFINE GET oSay[2] VAR cSay[2] ;
-      ID       131 ;
-      WHEN     ( .f. ) ;
-      OF       oDlg
-
-   //Definición del proveedor del artículo
-
-   REDEFINE GET aGet[ ( D():Articulos( nView ) )->( fieldpos( "CPRVHAB" ) ) ] ;
-      VAR      aTmp[ ( D():Articulos( nView ) )->( fieldpos( "CPRVHAB" ) ) ] ;
-      ID       140 ;
-      PICTURE  ( RetPicCodPrvEmp() ) ;
-      WHEN     ( empty( aTmp[( D():Articulos( nView ) )->( fieldpos( "CCODCAT" ) ) ] ) );
-      VALID    ( CargaProveedor( aGet[ ( D():Articulos( nView ) )->( fieldpos( "CPRVHAB" ) ) ], oSay[ 4 ], oValorPunto, dbfProv ) );
-      ON HELP  ( BrwProvee( aGet[ ( D():Articulos( nView ) )->( fieldpos( "CPRVHAB" ) ) ] ) ) ;
-      BITMAP   "LUPA" ;
-      OF       oDlg
-
-   REDEFINE GET oSay[4] VAR cSay[4] ;
-      ID       141 ;
-      WHEN     ( .f. ) ;
-      OF       oDlg
-
-   REDEFINE GET oSay[3] VAR cSay[3] ;
-      ID       150 ;
-      OF       oDlg
-
-   //Define la cantidad de puntos que cuesta un artículo
-
-   REDEFINE GET aGet[ ( D():Articulos( nView ) )->( fieldpos( "pCosto" ) ) ] ;
-      VAR      aTmp[ ( D():Articulos( nView ) )->( fieldpos( "pCosto" ) ) ] ;
-      ID       160 ;
-      VALID    ( oValorTot:Refresh(), .t. );
-      PICTURE  cPinDiv ;
-      OF       oDlg
-
-   //Carga el valor del punto
-
-   REDEFINE GET oValorPunto VAR aTmp[ ( D():Articulos( nView ) )->( fieldpos( "NPUNTOS" ) ) ] ;
-      ID       170 ;
-      ON CHANGE( oValorTot:Refresh() );
-      PICTURE  cPinDiv ;
-      OF       oDlg
-
-   //Carga el descuento del punto
-
-   REDEFINE GET oValorDto ;
-      VAR      aTmp[ ( D():Articulos( nView ) )->( fieldpos( "NDTOPNT" ) ) ] ;
-      ID       180 ;
-      SPINNER ;
-      ON CHANGE( oValorTot:Refresh() );
-      PICTURE  "@E 999.99" ;
-      OF       oDlg
-
-   //Define el total de la divisa el descuento del punto
-
-   REDEFINE SAY oValorTot ;
-      PROMPT   nPunt2Euro( aTmp, D():Articulos( nView ) ) ;
-      ID       190 ;
-      PICTURE  cPinDiv ;
-      OF       oDlg
-
-   //Definición de los botones de la caja de diálogo
-
-   REDEFINE BUTTON oBtn ;
-      ID       IDOK ;
-      OF       oDlg ;
-      ACTION   ( EndTrans2( aTmp, aGet, oSay, oDlg, nMode ) )
-
-	REDEFINE BUTTON ;
-      ID       IDCANCEL ;
-      OF       oDlg ;
-      CANCEL ;
-      ACTION   ( oDlg:end() )
-
-   oDlg:AddFastKey( VK_F5, {|| EndTrans2( aTmp, aGet, oSay, oDlg, nMode ) } )
-
-   oDlg:bStart := {|| aGet[ ( D():Articulos( nView ) )->( fieldpos( "Codigo" ) ) ]:SetFocus() }
-
-   ACTIVATE DIALOG oDlg ;
-      ON INIT  ( aGet[( D():Articulos( nView ) )->( fieldpos( "FAMILIA" ) ) ]:lValid(), aGet[ ( D():Articulos( nView ) )->( fieldpos( "CCODCAT" ) ) ]:lValid(), aGet[ ( D():Articulos( nView ) )->( fieldpos( "CPRVHAB" ) ) ]:lValid() );
-      CENTER
-
-Return ( oDlg:nResult == IDOK )
-
-//--------------------------------------------------------------------------//
 
 Static function lValidaSubcuenta( getCuenta, getArticulo, getNombreCuenta, getSaldo )
 
@@ -9107,14 +8883,6 @@ FUNCTION BrwFamiliaArticulo( oGet, oGet2, lCodeBar, lAppend )
          :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | oCbxOrd:Set( oCol:cHeader ) }
       end with
 
-      /*with object ( oBrw:AddCol() )
-         :cHeader          := "Stocks"
-         :bStrData         := {|| Trans( oStock:nTotStockAct( ( D():Articulos( nView ) )->Codigo, , , , , lEscandallo( D():Articulos( nView ) ), ( D():Articulos( nView ) )->nKitStk, ( D():Articulos( nView ) )->nCtlStock ), cPicUnd ) }
-         :nWidth           := 80
-         :nDataStrAlign    := AL_RIGHT
-         :nHeadStrAlign    := AL_RIGHT
-      end with*/
-
       with object ( oBrw:AddCol() )
          :cHeader          := uFieldEmpresa( "cTxtTar1", "Precio 1" )
          :bStrData         := {|| TransPrecio( nRetPreArt( 1, nil, .f., D():Articulos( nView ), dbfDiv, dbfArtKit, D():TiposIva( nView ) ), lEuro ) }
@@ -12495,188 +12263,6 @@ Return nil
 
 //---------------------------------------------------------------------------//
 
-Static Function EndTrans2( aTmp, aGet, oSay, oDlg, nMode )
-
-   local cCod     := aTmp[ ( D():Articulos( nView ) )->( fieldpos( "Codigo" ) ) ]
-
-   /*
-   Valores que tienen que estar rellenos---------------------------------------
-   */
-
-   if empty( cCod )
-      MsgStop( "Código no puede estar vacío" )
-      return nil
-   end if
-
-   if empty( aTmp[( D():Articulos( nView ) )->( fieldpos( "Nombre" ) ) ] )
-      MsgStop( "Descripción no puede estar vacío" )
-      return nil
-   end if
-
-   if empty( oSay[3]:varGet() )
-      MsgStop( "Referencia artículo-proveedor no puede estar vacía" )
-      return nil
-   end if
-
-   if ( D():Articulos( nView ) )->( dbSeek( cCod ) )
-      msgStop( "Código ya existe" )
-      return nil
-   end if
-
-   /*
-   Tomamos valores por defecto-------------------------------------------------
-   */
-
-   aTmp[ ( D():Articulos( nView ) )->( fieldpos( "Codebar" ) ) ] := cCod
-   aTmp[ ( D():Articulos( nView ) )->( fieldpos( "lSndDoc" ) ) ] := .t.
-   aTmp[ ( D():Articulos( nView ) )->( fieldpos( "dFecChg" ) ) ] := GetSysDate()
-   aTmp[ ( D():Articulos( nView ) )->( fieldpos( "LastChg" ) ) ] := GetSysDate()
-   aTmp[ ( D():Articulos( nView ) )->( fieldpos( "TipoIva" ) ) ] := cDefIva()
-   aTmp[ ( D():Articulos( nView ) )->( fieldpos( "lIvaInc" ) ) ] := .f.
-
-   /*
-   Calculamos e informamos los 6 precios de venta
-   */
-
-   aTmp[ ( D():Articulos( nView ) )->( fieldpos( "pVenta1" ) ) ] := aCalPrePnt( aTmp[ ( D():Articulos( nView ) )->( fieldpos( "nBnfSbr1" ) ) ] <= 1,;
-                                                                     nPunt2Euro( aTmp, D():Articulos( nView ) ),;
-                                                                     aTmp[ ( D():Articulos( nView ) )->( fieldpos( "lBnf1" ) ) ],;
-                                                                     aTmp[ ( D():Articulos( nView ) )->( fieldpos( "Benef1" ) ) ],;
-                                                                     aTmp[ ( D():Articulos( nView ) )->( fieldpos( "TipoIva" ) ) ],;
-                                                                     nDecDiv,;
-                                                                     aTmp[ ( D():Articulos( nView ) )->( fieldpos( "cCodImp" ) ) ],;
-                                                                     oNewImp,;
-                                                                     D():TiposIva( nView ) )[1]
-
-   aTmp[ ( D():Articulos( nView ) )->( fieldpos( "pVtaIva1") ) ] := aCalPrePnt( aTmp[ ( D():Articulos( nView ) )->( fieldpos( "nBnfSbr1" ) ) ] <= 1,;
-                                                                     nPunt2Euro( aTmp, D():Articulos( nView ) ),;
-                                                                     aTmp[ ( D():Articulos( nView ) )->( fieldpos( "lBnf1" ) ) ],;
-                                                                     aTmp[ ( D():Articulos( nView ) )->( fieldpos( "Benef1" ) ) ],;
-                                                                     aTmp[ ( D():Articulos( nView ) )->( fieldpos( "TipoIva" ) ) ],;
-                                                                     nDecDiv,;
-                                                                     aTmp[ ( D():Articulos( nView ) )->( fieldpos( "cCodImp" ) ) ],;
-                                                                     oNewImp,;
-                                                                     D():TiposIva( nView ) )[2]
-
-   aTmp[ ( D():Articulos( nView ) )->( fieldpos( "pVenta2" ) ) ] := aCalPrePnt( aTmp[ ( D():Articulos( nView ) )->( fieldpos( "nBnfSbr2" ) ) ] <= 1,;
-                                                                     nPunt2Euro( aTmp, D():Articulos( nView ) ),;
-                                                                     aTmp[ ( D():Articulos( nView ) )->( fieldpos( "lBnf2" ) ) ],;
-                                                                     aTmp[ ( D():Articulos( nView ) )->( fieldpos( "Benef2" ) ) ],;
-                                                                     aTmp[ ( D():Articulos( nView ) )->( fieldpos( "TipoIva" ) ) ],;
-                                                                     nDecDiv,;
-                                                                     aTmp[ ( D():Articulos( nView ) )->( fieldpos( "cCodImp" ) ) ],;
-                                                                     oNewImp,;
-                                                                     D():TiposIva( nView ) )[1]
-
-   aTmp[ ( D():Articulos( nView ) )->( fieldpos( "pVtaIva2") ) ] := aCalPrePnt( aTmp[ ( D():Articulos( nView ) )->( fieldpos( "nBnfSbr2" ) ) ] <= 1,;
-                                                                     nPunt2Euro( aTmp, D():Articulos( nView ) ),;
-                                                                     aTmp[ ( D():Articulos( nView ) )->( fieldpos( "lBnf2" ) ) ],;
-                                                                     aTmp[ ( D():Articulos( nView ) )->( fieldpos( "Benef2" ) ) ],;
-                                                                     aTmp[ ( D():Articulos( nView ) )->( fieldpos( "TipoIva" ) ) ],;
-                                                                     nDecDiv,;
-                                                                     aTmp[ ( D():Articulos( nView ) )->( fieldpos( "cCodImp" ) ) ],;
-                                                                     oNewImp,;
-                                                                     D():TiposIva( nView ) )[2]
-
-   aTmp[ ( D():Articulos( nView ) )->( fieldpos( "pVenta3" ) ) ] := aCalPrePnt( aTmp[ ( D():Articulos( nView ) )->( fieldpos( "nBnfSbr3" ) ) ] <= 1,;
-                                                                     nPunt2Euro( aTmp, D():Articulos( nView ) ),;
-                                                                     aTmp[ ( D():Articulos( nView ) )->( fieldpos( "lBnf3" ) ) ],;
-                                                                     aTmp[ ( D():Articulos( nView ) )->( fieldpos( "Benef3" ) ) ],;
-                                                                     aTmp[ ( D():Articulos( nView ) )->( fieldpos( "TipoIva" ) ) ],;
-                                                                     nDecDiv,;
-                                                                     aTmp[ ( D():Articulos( nView ) )->( fieldpos( "cCodImp" ) ) ],;
-                                                                     oNewImp,;
-                                                                     D():TiposIva( nView ) )[1]
-
-   aTmp[ ( D():Articulos( nView ) )->( fieldpos( "pVtaIva3") ) ] := aCalPrePnt( aTmp[ ( D():Articulos( nView ) )->( fieldpos( "nBnfSbr3" ) ) ] <= 1,;
-                                                                     nPunt2Euro( aTmp, D():Articulos( nView ) ),;
-                                                                     aTmp[ ( D():Articulos( nView ) )->( fieldpos( "lBnf3" ) ) ],;
-                                                                     aTmp[ ( D():Articulos( nView ) )->( fieldpos( "Benef3" ) ) ],;
-                                                                     aTmp[ ( D():Articulos( nView ) )->( fieldpos( "TipoIva" ) ) ],;
-                                                                     nDecDiv,;
-                                                                     aTmp[ ( D():Articulos( nView ) )->( fieldpos( "cCodImp" ) ) ],;
-                                                                     oNewImp,;
-                                                                     D():TiposIva( nView ) )[2]
-
-   aTmp[ ( D():Articulos( nView ) )->( fieldpos( "pVenta4" ) ) ] := aCalPrePnt( aTmp[ ( D():Articulos( nView ) )->( fieldpos( "nBnfSbr4" ) ) ] <= 1,;
-                                                                     nPunt2Euro( aTmp, D():Articulos( nView ) ),;
-                                                                     aTmp[ ( D():Articulos( nView ) )->( fieldpos( "lBnf4" ) ) ],;
-                                                                     aTmp[ ( D():Articulos( nView ) )->( fieldpos( "Benef4" ) ) ],;
-                                                                     aTmp[ ( D():Articulos( nView ) )->( fieldpos( "TipoIva" ) ) ],;
-                                                                     nDecDiv,;
-                                                                     aTmp[ ( D():Articulos( nView ) )->( fieldpos( "cCodImp" ) ) ],;
-                                                                     oNewImp,;
-                                                                     D():TiposIva( nView ) )[1]
-
-   aTmp[ ( D():Articulos( nView ) )->( fieldpos( "pVtaIva4") ) ] := aCalPrePnt( aTmp[ ( D():Articulos( nView ) )->( fieldpos( "nBnfSbr4" ) ) ] <= 1,;
-                                                                     nPunt2Euro( aTmp, D():Articulos( nView ) ),;
-                                                                     aTmp[ ( D():Articulos( nView ) )->( fieldpos( "lBnf4" ) ) ],;
-                                                                     aTmp[ ( D():Articulos( nView ) )->( fieldpos( "Benef4" ) ) ],;
-                                                                     aTmp[ ( D():Articulos( nView ) )->( fieldpos( "TipoIva" ) ) ],;
-                                                                     nDecDiv,;
-                                                                     aTmp[ ( D():Articulos( nView ) )->( fieldpos( "cCodImp" ) ) ],;
-                                                                     oNewImp,;
-                                                                     D():TiposIva( nView ) )[2]
-
-   aTmp[ ( D():Articulos( nView ) )->( fieldpos( "pVenta5" ) ) ] := aCalPrePnt( aTmp[ ( D():Articulos( nView ) )->( fieldpos( "nBnfSbr5" ) ) ] <= 1,;
-                                                                     nPunt2Euro( aTmp, D():Articulos( nView ) ),;
-                                                                     aTmp[ ( D():Articulos( nView ) )->( fieldpos( "lBnf5" ) ) ],;
-                                                                     aTmp[ ( D():Articulos( nView ) )->( fieldpos( "Benef5" ) ) ],;
-                                                                     aTmp[ ( D():Articulos( nView ) )->( fieldpos( "TipoIva" ) ) ],;
-                                                                     nDecDiv,;
-                                                                     aTmp[ ( D():Articulos( nView ) )->( fieldpos( "cCodImp" ) ) ],;
-                                                                     oNewImp,;
-                                                                     D():TiposIva( nView ) )[1]
-
-   aTmp[ ( D():Articulos( nView ) )->( fieldpos( "pVtaIva5") ) ] := aCalPrePnt( aTmp[ ( D():Articulos( nView ) )->( fieldpos( "nBnfSbr5" ) ) ] <= 1,;
-                                                                     nPunt2Euro( aTmp, D():Articulos( nView ) ),;
-                                                                     aTmp[ ( D():Articulos( nView ) )->( fieldpos( "lBnf5" ) ) ],;
-                                                                     aTmp[ ( D():Articulos( nView ) )->( fieldpos( "Benef5" ) ) ],;
-                                                                     aTmp[ ( D():Articulos( nView ) )->( fieldpos( "TipoIva" ) ) ],;
-                                                                     nDecDiv,;
-                                                                     aTmp[ ( D():Articulos( nView ) )->( fieldpos( "cCodImp" ) ) ],;
-                                                                     oNewImp,;
-                                                                     D():TiposIva( nView ) )[2]
-
-   aTmp[ ( D():Articulos( nView ) )->( fieldpos( "pVenta6" ) ) ] := aCalPrePnt( aTmp[ ( D():Articulos( nView ) )->( fieldpos( "nBnfSbr6" ) ) ] <= 1,;
-                                                                     nPunt2Euro( aTmp, D():Articulos( nView ) ),;
-                                                                     aTmp[ ( D():Articulos( nView ) )->( fieldpos( "lBnf6" ) ) ],;
-                                                                     aTmp[ ( D():Articulos( nView ) )->( fieldpos( "Benef6" ) ) ],;
-                                                                     aTmp[ ( D():Articulos( nView ) )->( fieldpos( "TipoIva" ) ) ],;
-                                                                     nDecDiv,;
-                                                                     aTmp[ ( D():Articulos( nView ) )->( fieldpos( "cCodImp" ) ) ],;
-                                                                     oNewImp,;
-                                                                     D():TiposIva( nView ) )[1]
-
-   aTmp[ ( D():Articulos( nView ) )->( fieldpos( "pVtaIva6") ) ] := aCalPrePnt( aTmp[ ( D():Articulos( nView ) )->( fieldpos( "nBnfSbr6" ) ) ] <= 1,;
-                                                                     nPunt2Euro( aTmp, D():Articulos( nView ) ),;
-                                                                     aTmp[ ( D():Articulos( nView ) )->( fieldpos( "lBnf6" ) ) ],;
-                                                                     aTmp[ ( D():Articulos( nView ) )->( fieldpos( "Benef6" ) ) ],;
-                                                                     aTmp[ ( D():Articulos( nView ) )->( fieldpos( "TipoIva" ) ) ],;
-                                                                     nDecDiv,;
-                                                                     aTmp[ ( D():Articulos( nView ) )->( fieldpos( "cCodImp" ) ) ],;
-                                                                     oNewImp,;
-                                                                     D():TiposIva( nView ) )[2]
-
-   if !empty( aTmp[ ( D():Articulos( nView ) )->( fieldpos( "cPrvHab" ) ) ] )
-
-      ( D():ProveedorArticulo( nView ) )->( dbAppend() )
-      ( D():ProveedorArticulo( nView ) )->cCodArt        := cCod
-      ( D():ProveedorArticulo( nView ) )->cCodPrv        := aTmp[ ( D():Articulos( nView ) )->( fieldpos( "cPrvHab" ) ) ]
-      ( D():ProveedorArticulo( nView ) )->cRefPrv        := oSay[3]:varGet()
-      ( D():ProveedorArticulo( nView ) )->lDefPrv        := .t.
-      ( D():ProveedorArticulo( nView ) )->( dbUnlock() )
-
-   end if
-
-   //guarda el artículo
-
-   WinGather( aTmp, aGet, D():Articulos( nView ), nil, nMode )
-
-Return ( oDlg:end( IDOK ) )
-
-//---------------------------------------------------------------------------//
-
 Static Function EndDetalle( aTmp, aGet, dbfTmpPrv, oBrw, nMode, oDlg, lOldPrvDef, aTmpArt, lOldRefPrv )
 
    if empty( aTmp[ ( dbfTmpPrv )->( fieldPos( "CCODPRV" ) ) ] )
@@ -14853,10 +14439,6 @@ Return ( ( dbfTmpLbl )->lLabel )
 
 //---------------------------------------------------------------------------//
 
-#endif
-
-//---------------------------------------------------------------------------//
-
 Function IsArticulo( cPath )
 
    DEFAULT cPath  := cPatArt()
@@ -16870,9 +16452,6 @@ RETURN ( cReturn )
 
 //---------------------------------------------------------------------------//
 
-
-#ifndef __PDA__
-
 Static Function ChangeBrwArt( oBrwStock, oBmpImage, oBrw, cCodAlm )
 
    if !empty( oTimerBrw )
@@ -16931,8 +16510,6 @@ Static Function LoadBrwArt( oBrwStock, oBmpImage, cCodAlm )
    CursorWE()
 
 Return .t.
-
-#endif
 
 //---------------------------------------------------------------------------//
 
@@ -17264,10 +16841,6 @@ RETURN ( cTemp )
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 
-#ifndef __PDA__
-
-//---------------------------------------------------------------------------//
-
 #include "FastRepH.ch"
 
 Static Function DataReport( oFr, lTemporal )
@@ -17550,8 +17123,6 @@ Function PrintReportArticulo( nDevice, nCopies, cPrinter, dbfDoc )
 Return .t.
 
 //---------------------------------------------------------------------------//
-
-#ifndef __PDA__
 
 Static Function dlgToolTip( cCodArt, oBrw )
 
@@ -18065,8 +17636,6 @@ Function ChangelSndDoc( aTmp )
 Return nil
 
 //---------------------------------------------------------------------------//
-
-#endif
 
 function dFechaCaducidad( dFechaDocumento, nDiasCaducidad, nTipoPeriodo )
 
