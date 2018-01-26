@@ -157,7 +157,6 @@ Ruta.prg                \
 Seccion.prg             \
 Situaciones.prg         \
 Stock.prg               \
-TArtStkMinGrp.prg       \
 TAuditor.prg            \
 TCaptura.prg            \
 TConFacCli.prg          \
@@ -177,8 +176,6 @@ TOleExcel.prg           \
 TOleWord.prg            \
 TPrvPgo.prg             \
 TRnkGFRVta.prg          \
-TStkMinArt.prg          \
-TStockMinimoFamilia.prg \
 Talbtip.prg             \
 Tarifa.prg              \
 Tarray.prg              \
@@ -284,9 +281,6 @@ Tshell.prg              \
 Tsysdata.prg            \
 Ttarage.prg             \
 Ttarcli.prg             \
-Ttikstk.prg             \
-TTikStkA.prg            \
-TTikStkG.prg            \
 Ttipfam.prg             \
 Ttotturno.prg           \
 Ttrans.prg              \
@@ -322,14 +316,9 @@ TAnuUndVta.prg          \
 TInfCVta.prg            \
 TInfCli.prg             \
 InfGrpArt.prg           \
-TArtStkMinGrp.prg       \
 TConFacCli.prg          \
 XInfMov.prg             \
-XComVta.prg             \
-XComFVta.prg            \
-XComGVta.prg            \
 SalaVta.prg             \
-TStockMinimoGrupo.prg   \
 TInfRVta.prg            \
 TIvaVta.prg             \
 TInfATVta.prg           \
@@ -357,7 +346,6 @@ Actuaciones.prg         \
 TRnkFacPdt.prg          \
 TInfAlm.prg             \
 TArtPrv.prg             \
-TValStk.prg             \
 TDiaCaducidad.prg       \
 TtVitem.prg             \
 TPrvFam.prg             \
@@ -377,9 +365,6 @@ TPrvArt.prg             \
 TPrvFam.prg             \
 TPrvTip.prg             \
 TPrvGrpPrv.prg          \
-TStockMinimoGrupo.prg   \
-TTikStkA.prg            \
-TTikStkG.prg            \
 TInfAge.prg             \
 Tinfapre.prg            \
 TAcuAPre.prg            \
@@ -912,12 +897,7 @@ tdprvfac.prg            \
 TDiaPRec.prg            \
 TDiarioRecibos.prg      \
 TdPrvCom.prg            \
-XComVta.prg             \
-TStkMinArt.prg          \
-tvalstk.prg             \
-ttikstk.prg             \
 TIvaVta.prg             \
-TStockMinimoFamilia.prg \
 PInfDiaMateriales.prg   \
 PAcuDiaMateriales.prg   \
 PInfDiaMPrimas.prg      \
@@ -926,7 +906,6 @@ PInfDiaOperarios.prg    \
 PAcuDiaOperarios.prg    \
 PInfDiaMaquinaria.prg   \
 PAcuDiaMaquinaria.prg   \
-XComFVta.prg            \
 Xinfmov.prg             \
 oAnuXCom.prg            \
 TInfListInci.prg        \
@@ -955,8 +934,6 @@ TRenAlb.prg             \
 TInfPrv.prg             \
 TInfATVta.prg           \
 TAcuATVta.prg           \
-XComGVta.prg            \
-TArtStkMinGrp.prg       \
 PInfDiaParte.prg        \
 PAcuDiaParte.prg        \
 TCliObr.prg             \
@@ -990,8 +967,6 @@ TInfCTikPob.prg         \
 TDiaRentArticulo.prg    \
 TComandas.prg           \
 THisFacAutomatica.prg   \
-TTikStkA.prg            \
-TTikStkG.prg            \
 Carpeta.prg             \
 Dotnetba.prg            \
 Dotnetbu.prg            \
@@ -1195,7 +1170,6 @@ Seccion.obj             \
 Situaciones.obj         \
 Stock.obj               \
 Stretchblt.obj          \
-TArtStkMinGrp.obj       \
 TAuditor.obj            \
 TCaptura.obj            \
 TConFacCli.obj          \
@@ -1215,8 +1189,6 @@ TOleExcel.obj           \
 TOleWord.obj            \
 TPrvPgo.obj             \
 TRnkGFRVta.obj          \
-TStkMinArt.obj          \
-TStockMinimoFamilia.obj \
 Talbtip.obj             \
 Tarifa.obj              \
 Tarray.obj              \
@@ -1323,9 +1295,6 @@ Tshell.obj              \
 Tsysdata.obj            \
 Ttarage.obj             \
 Ttarcli.obj             \
-Ttikstk.obj             \
-TTikStkA.obj            \
-TTikStkG.obj            \
 Ttipfam.obj             \
 Ttotturno.obj           \
 Ttrans.obj              \
@@ -1361,14 +1330,9 @@ TAnuUndVta.obj          \
 TInfCVta.obj            \
 TInfCli.obj             \
 InfGrpArt.obj           \
-TArtStkMinGrp.obj       \
 TConFacCli.obj          \
 XInfMov.obj             \
-XComVta.obj             \
-XComFVta.obj            \
-XComGVta.obj            \
 SalaVta.obj             \
-TStockMinimoGrupo.obj   \
 TInfRVta.obj            \
 TIvaVta.obj             \
 TInfATVta.obj           \
@@ -1396,7 +1360,6 @@ Actuaciones.obj         \
 TRnkFacPdt.obj          \
 TInfAlm.obj             \
 TArtPrv.obj             \
-TValStk.obj             \
 TDiaCaducidad.obj       \
 Treeview.obj            \
 TtVitem.obj             \
@@ -1417,9 +1380,6 @@ TPrvArt.obj             \
 TPrvFam.obj             \
 TPrvTip.obj             \
 TPrvGrpPrv.obj          \
-TStockMinimoGrupo.obj   \
-TTikStkA.obj            \
-TTikStkG.obj            \
 TInfAge.obj             \
 Tinfapre.obj            \
 TAcuAPre.obj            \
@@ -1952,12 +1912,7 @@ tdprvfac.obj            \
 TDiaPRec.obj            \
 TDiarioRecibos.obj      \
 TdPrvCom.obj            \
-XComVta.obj             \
-TStkMinArt.obj          \
-tvalstk.obj             \
-ttikstk.obj             \
 TIvaVta.obj             \
-TStockMinimoFamilia.obj \
 PInfDiaMateriales.obj   \
 PAcuDiaMateriales.obj   \
 PInfDiaMPrimas.obj      \
@@ -1966,7 +1921,6 @@ PInfDiaOperarios.obj    \
 PAcuDiaOperarios.obj    \
 PInfDiaMaquinaria.obj   \
 PAcuDiaMaquinaria.obj   \
-XComFVta.obj            \
 Xinfmov.obj             \
 oAnuXCom.obj            \
 TInfListInci.obj        \
@@ -1995,8 +1949,6 @@ TRenAlb.obj             \
 TInfPrv.obj             \
 TInfATVta.obj           \
 TAcuATVta.obj           \
-XComGVta.obj            \
-TArtStkMinGrp.obj       \
 PInfDiaParte.obj        \
 PAcuDiaParte.obj        \
 TCliObr.obj             \
@@ -2030,8 +1982,6 @@ TInfCTikPob.obj         \
 TDiaRentArticulo.obj    \
 TComandas.obj           \
 THisFacAutomatica.obj   \
-TTikStkA.obj            \
-TTikStkG.obj            \
 Carpeta.obj             \
 Dotnetba.obj            \
 Dotnetbu.obj            \
@@ -2243,7 +2193,6 @@ $(OBJ)\Seccion.obj              +
 $(OBJ)\Situaciones.obj          +
 $(OBJ)\Stock.obj                +
 $(OBJ)\Stretchblt.obj           +
-$(OBJ)\TArtStkMinGrp.obj        +
 $(OBJ)\TAuditor.obj             +
 $(OBJ)\TCaptura.obj             +
 $(OBJ)\TConFacCli.obj           +
@@ -2263,8 +2212,6 @@ $(OBJ)\TOleExcel.obj            +
 $(OBJ)\TOleWord.obj             +
 $(OBJ)\TPrvPgo.obj              +
 $(OBJ)\TRnkGFRVta.obj           +
-$(OBJ)\TStkMinArt.obj           +
-$(OBJ)\TStockMinimoFamilia.obj  +
 $(OBJ)\Talbtip.obj              +
 $(OBJ)\Tarifa.obj               +
 $(OBJ)\Tarray.obj               +
@@ -2371,9 +2318,6 @@ $(OBJ)\Tshell.obj               +
 $(OBJ)\Tsysdata.obj             +
 $(OBJ)\Ttarage.obj              +
 $(OBJ)\Ttarcli.obj              +
-$(OBJ)\Ttikstk.obj              +
-$(OBJ)\TTikStkA.obj             +
-$(OBJ)\TTikStkG.obj             +
 $(OBJ)\Ttipfam.obj              +
 $(OBJ)\Ttotturno.obj            +
 $(OBJ)\Ttrans.obj               +
@@ -2409,14 +2353,9 @@ $(OBJ)\TAnuUndVta.obj           +
 $(OBJ)\TInfCVta.obj             +
 $(OBJ)\TInfCli.obj              +
 $(OBJ)\InfGrpArt.obj            +
-$(OBJ)\TArtStkMinGrp.obj        +
 $(OBJ)\TConFacCli.obj           +
 $(OBJ)\XInfMov.obj              +
-$(OBJ)\XComVta.obj              +
-$(OBJ)\XComFVta.obj             +
-$(OBJ)\XComGVta.obj             +
 $(OBJ)\SalaVta.obj              +
-$(OBJ)\TStockMinimoGrupo.obj    +
 $(OBJ)\TInfRVta.obj             +
 $(OBJ)\TIvaVta.obj              +
 $(OBJ)\TInfATVta.obj            +
@@ -2444,7 +2383,6 @@ $(OBJ)\Actuaciones.obj          +
 $(OBJ)\TRnkFacPdt.obj           +
 $(OBJ)\TInfAlm.obj              +
 $(OBJ)\TArtPrv.obj              +
-$(OBJ)\TValStk.obj              +
 $(OBJ)\TDiaCaducidad.obj        +
 $(OBJ)\Treeview.obj             +
 $(OBJ)\TtVitem.obj              +
@@ -2465,9 +2403,6 @@ $(OBJ)\TPrvArt.obj              +
 $(OBJ)\TPrvFam.obj              +
 $(OBJ)\TPrvTip.obj              +
 $(OBJ)\TPrvGrpPrv.obj           +
-$(OBJ)\TStockMinimoGrupo.obj    +
-$(OBJ)\TTikStkA.obj             +
-$(OBJ)\TTikStkG.obj             +
 $(OBJ)\TInfAge.obj              +
 $(OBJ)\Tinfapre.obj             +
 $(OBJ)\TAcuAPre.obj             +
@@ -3000,12 +2935,7 @@ $(OBJ)\tdprvfac.obj             	+
 $(OBJ)\TDiaPRec.obj             	+
 $(OBJ)\TDiarioRecibos.obj       	+
 $(OBJ)\TdPrvCom.obj             	+
-$(OBJ)\XComVta.obj              	+
-$(OBJ)\TStkMinArt.obj           	+
-$(OBJ)\tvalstk.obj              	+
-$(OBJ)\ttikstk.obj              	+
 $(OBJ)\TIvaVta.obj              	+
-$(OBJ)\TStockMinimoFamilia.obj  	+
 $(OBJ)\PInfDiaMateriales.obj    	+
 $(OBJ)\PAcuDiaMateriales.obj    	+
 $(OBJ)\PInfDiaMPrimas.obj       	+
@@ -3014,7 +2944,6 @@ $(OBJ)\PInfDiaOperarios.obj     	+
 $(OBJ)\PAcuDiaOperarios.obj     	+
 $(OBJ)\PInfDiaMaquinaria.obj    	+
 $(OBJ)\PAcuDiaMaquinaria.obj    	+
-$(OBJ)\XComFVta.obj             	+
 $(OBJ)\Xinfmov.obj              	+
 $(OBJ)\oAnuXCom.obj             	+
 $(OBJ)\TInfListInci.obj         	+
@@ -3043,8 +2972,6 @@ $(OBJ)\TRenAlb.obj              	+
 $(OBJ)\TInfPrv.obj              	+
 $(OBJ)\TInfATVta.obj            	+
 $(OBJ)\TAcuATVta.obj            	+
-$(OBJ)\XComGVta.obj             	+
-$(OBJ)\TArtStkMinGrp.obj        	+
 $(OBJ)\PInfDiaParte.obj         	+
 $(OBJ)\PAcuDiaParte.obj         	+
 $(OBJ)\TCliObr.obj              	+
@@ -3078,8 +3005,6 @@ $(OBJ)\TInfCTikPob.obj          	+
 $(OBJ)\TDiaRentArticulo.obj     	+
 $(OBJ)\TComandas.obj            	+
 $(OBJ)\THisFacAutomatica.obj    	+
-$(OBJ)\TTikStkA.obj             	+
-$(OBJ)\TTikStkG.obj             	+
 $(OBJ)\Carpeta.obj              	+
 $(OBJ)\Dotnetba.obj             	+
 $(OBJ)\Dotnetbu.obj             	+

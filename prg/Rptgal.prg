@@ -37,7 +37,6 @@ static dbfFavorito
 
 static oBtnVentas
 static oBtnCompras
-static oBtnExistencias
 static oBtnProduccion
 static oBtnFavoritos
 static oBtnAddFavorito 
@@ -130,9 +129,8 @@ Static Function OnInitReportGalery( oLstTipoGaleria, oImgTipoGaleria, oImgArbolG
 
    oLstTipoGaleria:InsertItem( 0, "Ventas" )
    oLstTipoGaleria:InsertItem( 1, "Compras" )
-   oLstTipoGaleria:InsertItem( 2, "Existencias" )
-   oLstTipoGaleria:InsertItem( 3, "Producción" )
-   oLstTipoGaleria:InsertItem( 4, "Favoritos" )
+   oLstTipoGaleria:InsertItem( 2, "Producción" )
+   oLstTipoGaleria:InsertItem( 3, "Favoritos" )
 
    oLstTipoGaleria:nOption       := 1
 
@@ -168,16 +166,9 @@ Static Function SelectReportGalery( nOption, oTrvArbolGaleria )
          oBtnEditFavorito:Disable()
          oBtnDelFavorito:Disable()
          oTrvArbolGaleria:DeleteAll()
-         CreateExistenciasReportGalery( oTrvArbolGaleria, .f. )
-
-      case nOption == 4
-         oBtnAddFavorito:Enable()
-         oBtnEditFavorito:Disable()
-         oBtnDelFavorito:Disable()
-         oTrvArbolGaleria:DeleteAll()
          CreateProduccionReportGalery( oTrvArbolGaleria, .f. )
 
-      case nOption == 5
+      case nOption == 4
          oBtnAddFavorito:Disable()
          oBtnEditFavorito:Enable()
          oBtnDelFavorito:Enable()
@@ -1189,43 +1180,6 @@ Return nil
 
 //---------------------------------------------------------------------------//
 
-Static Function CreateExistenciasReportGalery( oTrvArbolGaleria, lArray )
-
-   local oTrvTipo
-   local oTrvDocumento
-
-   DEFAULT lArray       := .f.
-
-   oTrvTipo             := AddInforme( lArray, oTrvArbolGaleria, "Artículos" )
-
-      oTrvDocumento     := AddInforme( lArray, oTrvTipo, "Situación" )
-         AddInforme( lArray, oTrvDocumento, "Stocks de artículos", {|| TTikStkA():New( "Informe resumido del stock de artículos", , , , , , .f. ):Play() } )
-         AddInforme( lArray, oTrvDocumento, "Stocks de artículos ( formato tiket )", {|| TTikStkA():New( "Informe resumido del stock de artículos", , , , , , .t. ):Play() } )
-         AddInforme( lArray, oTrvDocumento, "Compras, ventas y stocks de artículos", {|| XComVta():New( "Informe resumido de compras, ventas y stocks de artículos"):Play() } )
-         AddInforme( lArray, oTrvDocumento, "Artículos con stocks bajo mínimo", {|| TStkMinArt():New( "Informe resumido de los artículos con stockaje bajo mínimo"):Play() } )
-         AddInforme( lArray, oTrvDocumento, "Artículos con stocks bajo mínimo agrupados por proveedor", {|| TInfValStk():New( "Informe resumido de los artículos con stockaje bajo mínimo por proveedor"):Play() } )
-
-   oTrvTipo             := AddInforme( lArray, oTrvArbolGaleria, "Familias" )
-
-      oTrvDocumento     := AddInforme( lArray, oTrvTipo, "Situación" )
-         AddInforme( lArray, oTrvDocumento, "Stocks de artículos por familias", {|| TInfTikStk():New( "Informe resumido del stock de artículos agrupados por familias", , , , , , .f. ):Play() } )
-         AddInforme( lArray, oTrvDocumento, "Stocks de artículos por familias ( formato tiket )", {|| TInfTikStk():New( "Informe resumido del stock de artículos agrupados por familias", , , , , , .t. ):Play() } )
-         AddInforme( lArray, oTrvDocumento, "Compras, ventas y stocks de artículos por familias", {|| XComFVta():New( "Informe resumido de compras, ventas y stocks de artículos por familias"):Play() } )
-         AddInforme( lArray, oTrvDocumento, "Artículos con stocks bajo mínimo agrupados por familias", {|| TInfStockMinimoFamilia():New( "Informe resumido de los artículos con stockaje bajo mínimo por familias"):Play() }  )
-
-   oTrvTipo             := AddInforme( lArray, oTrvArbolGaleria, "Grupos de familias" )
-
-      oTrvDocumento     := AddInforme( lArray, oTrvTipo, "Situación" )
-         AddInforme( lArray, oTrvDocumento, "Stocks de artículos por grupos de familias", {|| TInfTikStkG():New( "Informe resumido del stock de artículos agrupados por grupos de familias", , , , , , .f. ):Play() } )
-         AddInforme( lArray, oTrvDocumento, "Stocks de artículos por grupos de familias ( formato tiket )", {|| TInfTikStkG():New( "Informe resumido del stock de artículos agrupados por grupos de familias", , , , , , .t. ):Play() } )
-         AddInforme( lArray, oTrvDocumento, "Compras, ventas y stocks de artículos por grupos de familias", {|| XComGVta():New( "Informe resumido de compras, ventas y stocks de artículos por grupos de familias"):Play() } )
-         AddInforme( lArray, oTrvDocumento, "Artículos con stocks bajo mínimo por proveedor", {|| TArtStkMinGrp():New( "Artículos con stocks bajo mínimo por proveedor" ):Play() }  )
-         AddInforme( lArray, oTrvDocumento, "Artículos con stocks bajo mínimo agrupados por grupos de familias", {|| TInfStockMinimoGrupo():New( "Informe resumido de los artículos con stockaje bajo mínimo por grupos de familias"):Play() }  )
-
-Return nil
-
-//---------------------------------------------------------------------------//
-
 Static Function CreateProduccionReportGalery( oTrvArbolGaleria, lArray )
 
    local oTrvTipo
@@ -1843,7 +1797,6 @@ function ReportBar()
 
    CreateVentasReportGalery( , .t. )
    CreateComprasReportGalery( , .t. )
-   CreateExistenciasReportGalery( , .t. )
    CreateProduccionReportGalery( , .t. )
 
    // Creamos por defecto la carpeta favoritos---------------------------------
@@ -1869,15 +1822,14 @@ function ReportBar()
 
          oCarpeta0   := TCarpeta():New( oBar, "General" )
 
-            oGrp1                := TDotNetGroup():New( oCarpeta0, 308, "Informes", .f., , "" )
+            oGrp1                := TDotNetGroup():New( oCarpeta0, 248, "Informes", .f., , "" )
 
                oBtnVentas        := TDotNetButton():New( 60, oGrp1, "gc_money2_32",             "Ventas",      1, {|| SelectReportBar( 1, oBtnVentas ) }, , , .f., .f., .f. )
                oBtnVentas:lSelected := .t.
 
                oBtnCompras       := TDotNetButton():New( 60, oGrp1, "gc_small_truck_32",                "Compras",     2, {|| SelectReportBar( 2, oBtnCompras ) }, , , .f., .f., .f. )
-               oBtnExistencias   := TDotNetButton():New( 60, oGrp1, "gc_package_32",                  "Existencias", 3, {|| SelectReportBar( 3, oBtnExistencias ) }, , , .f., .f., .f. )
-               oBtnProduccion    := TDotNetButton():New( 60, oGrp1, "gc_worker2_32",                   "Producción",  4, {|| SelectReportBar( 4, oBtnProduccion ) }, , , .f., .f., .f. )
-               oBtnFavoritos     := TDotNetButton():New( 60, oGrp1, "gc_star2_32",              "Favoritos",   5, {|| SelectReportBar( 5, oBtnFavoritos ) }, , , .f., .f., .f. )
+               oBtnProduccion    := TDotNetButton():New( 60, oGrp1, "gc_worker2_32",                   "Producción",  3, {|| SelectReportBar( 3, oBtnProduccion ) }, , , .f., .f., .f. )
+               oBtnFavoritos     := TDotNetButton():New( 60, oGrp1, "gc_star2_32",              "Favoritos",   4, {|| SelectReportBar( 3, oBtnFavoritos ) }, , , .f., .f., .f. )
 
             oGrp2                := TDotNetGroup():New( oCarpeta0, 186, "Favoritos", .f., , "" )
 
@@ -1916,7 +1868,6 @@ Static Function SelectReportBar( nOption, oSender )
 
    oBtnVentas:lSelected       := .f.
    oBtnCompras:lSelected      := .f.
-   oBtnExistencias:lSelected  := .f.
    oBtnProduccion:lSelected   := .f.
    oBtnFavoritos:lSelected    := .f.
 
@@ -1941,15 +1892,9 @@ Static Function SelectReportBar( nOption, oSender )
          oBtnAddFavorito:lEnabled   := .t.
          oBtnEditFavorito:lEnabled  := .f.
          oBtnDelFavorito:lEnabled   := .f.
-         CreateExistenciasReportGalery( oTrvGaleria, .f. )
-
-      case nOption == 4
-         oBtnAddFavorito:lEnabled   := .t.
-         oBtnEditFavorito:lEnabled  := .f.
-         oBtnDelFavorito:lEnabled   := .f.
          CreateProduccionReportGalery( oTrvGaleria, .f. )
 
-      case nOption == 5
+      case nOption == 4
          oBtnAddFavorito:lEnabled   := .f.
          oBtnEditFavorito:lEnabled  := .t.
          oBtnDelFavorito:lEnabled   := .t.
