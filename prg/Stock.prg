@@ -1766,17 +1766,17 @@ METHOD InsertStockMovimientosAlmacenRowset( oRowSet, lDestino )
 
       :cTipoDocumento      := MOV_ALM
 
-      :cNumeroDocumento    := Str( oRowSet:fieldget( 'numero' ) )
+      :cNumeroDocumento    := oRowSet:fieldget( 'numero' ) 
       :cDelegacion         := oRowSet:fieldget( 'delegacion' )
       :dFechaDocumento     := oRowSet:fieldget( 'fecha' )
-      :tFechaDocumento     := StrTran( oRowSet:fieldget( 'hora' ), ":", "" )
+      :tFechaDocumento     := strtran( oRowSet:fieldget( 'hora' ), ":", "" )
       :cCodigo             := oRowSet:fieldget( 'codigo_articulo' )
       :cCodigoPropiedad1   := oRowSet:fieldget( 'codigo_primera_propiedad' )
       :cCodigoPropiedad2   := oRowSet:fieldget( 'codigo_segunda_propiedad' )
       :cValorPropiedad1    := oRowSet:fieldget( 'valor_segunda_propiedad' )
       :cValorPropiedad2    := oRowSet:fieldget( 'valor_segunda_propiedad' )
       :cLote               := oRowSet:fieldget( 'lote' )
-      :dConsolidacion      := if( !empty( ::dConsolidacion ), ::dConsolidacion, Ctod( "" ) )
+      :dConsolidacion      := if( !empty( ::dConsolidacion ), ::dConsolidacion, ctod( "" ) )
 
       if IsTrue( lDestino )
 

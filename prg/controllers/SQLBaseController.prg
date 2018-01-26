@@ -33,6 +33,8 @@ CLASS SQLBaseController
 
    DATA cTitle                                        INIT ""
 
+   DATA cName                                         INIT ""
+
    DATA hImage                                        INIT {=>}
 
    DATA aSelected
@@ -83,20 +85,22 @@ CLASS SQLBaseController
    // Rowset-------------------------------------------------------------------
 
    METHOD getRowSet()                                 INLINE ( ::oRowSet )
-   METHOD saveRowSetRecno()                           INLINE ( if( !empty( ::oRowSet ), ::oRowSet:saveRecno(), ) )
-   METHOD restoreRowSetRecno()                        INLINE ( if( !empty( ::oRowSet ), ::oRowSet:restoreRecno(), ) )
-   METHOD gotoRowSetRecno( nRecno )                   INLINE ( if( !empty( ::oRowSet ), ::oRowSet:gotoRecno( nRecno ), ) )
-   METHOD findRowSet( nId )                           INLINE ( if( !empty( ::oRowSet ), ::oRowSet:find( nId ), ) )
-   METHOD refreshRowSet()                             INLINE ( if( !empty( ::oRowSet ), ::oRowSet:refresh(), ) )
-   METHOD refreshRowSetAndFind( nId )                 INLINE ( if( !empty( ::oRowSet ), ::oRowSet:refreshAndFind( nId ), ) )
+   METHOD saveRowSetRecno()                           INLINE ( iif(  !empty( ::oRowSet ), ::oRowSet:saveRecno(), ) )
+   METHOD restoreRowSetRecno()                        INLINE ( iif(  !empty( ::oRowSet ), ::oRowSet:restoreRecno(), ) )
+   METHOD gotoRowSetRecno( nRecno )                   INLINE ( iif(  !empty( ::oRowSet ) .and. hb_isnumeric( nRecno ),;
+                                                                     ::oRowSet:gotoRecno( nRecno ), ) )
+   METHOD findRowSet( nId )                           INLINE ( iif(  !empty( ::oRowSet ), ::oRowSet:find( nId ), ) )
+   METHOD refreshRowSet()                             INLINE ( iif(  !empty( ::oRowSet ), ::oRowSet:refresh(), ) )
+   METHOD refreshRowSetAndFind( nId )                 INLINE ( iif(  !empty( ::oRowSet ), ::oRowSet:refreshAndFind( nId ), ) )
 
-   METHOD getIdFromRecno( aSelected )                 INLINE ( if( !empty( ::oRowSet ), ::oRowSet:IdFromRecno( aSelected ), {} ) )
-   METHOD getUuidFromRecno( aSelected )               INLINE ( if( !empty( ::oRowSet ), ::oRowSet:UuidFromRecno( aSelected ), {} ) )
+   METHOD getIdFromRecno( aSelected )                 INLINE ( iif(  !empty( ::oRowSet ), ::oRowSet:IdFromRecno( aSelected ), {} ) )
+   METHOD getUuidFromRecno( aSelected )               INLINE ( iif(  !empty( ::oRowSet ), ::oRowSet:UuidFromRecno( aSelected ), {} ) )
 
-   METHOD getIdFromRowSet()                           INLINE ( if( !empty( ::getRowSet() ), ::getRowSet():fieldGet( ::oModel:cColumnKey ), nil ) )
+   METHOD getIdFromRowSet()                           INLINE ( iif(  !empty( ::getRowSet() ),;
+                                                                     ::getRowSet():fieldGet( ::oModel:cColumnKey ), nil ) )
 
    METHOD findInRowSet( uValue, cColumn )             
-   METHOD findByIdInRowSet( uValue )                  INLINE ( if( !empty( ::getRowSet() ), ::getRowSet():find( uValue, "id", .t. ), ) )
+   METHOD findByIdInRowSet( uValue )                  INLINE ( iif(  !empty( ::getRowSet() ), ::getRowSet():find( uValue, "id", .t. ), ) )
 
    // Dialogo------------------------------------------------------------------
 
@@ -170,6 +174,7 @@ CLASS SQLBaseController
       METHOD isNotZoomMode()                          INLINE ( ::nMode != __zoom_mode__ )
 
    METHOD Delete()
+      METHOD priorRecnoToDelete( aSelectedRecno )
 
    // Transactional system-----------------------------------------------------
 
@@ -213,9 +218,13 @@ RETURN ( self )
 
 METHOD End()
 
-   ::oEvents:End()
+   if !empty( ::oEvents )
+      ::oEvents:End()
+   end if 
 
-   ::oRowSet:End()
+   if !empty( ::oRowSet )
+      ::oRowSet:End()
+   end if 
 
    ::oEvents   := nil
 
@@ -347,7 +356,7 @@ METHOD Duplicate( nId )
       nId            := ::getIdFromRowSet()
    end if 
 
-   if hb_isnil( nId )
+   if empty( nId )
       RETURN ( .f. )
    end if 
 
@@ -410,7 +419,7 @@ METHOD Edit( nId )
       nId         := ::getIdFromRowSet()
    end if 
 
-   if hb_isnil( nId )
+   if empty( nId )
       RETURN ( .f. )
    end if 
 
@@ -465,7 +474,7 @@ METHOD Zoom( nId )
       nId         := ::getIdFromRowSet()
    end if 
 
-   if hb_isnil( nId )
+   if empty( nId )
       RETURN ( .f. )
    end if 
 
@@ -528,8 +537,15 @@ METHOD Delete( aSelectedRecno )
       RETURN ( .f. )
    end if 
 
-   if !hb_isarray( aSelectedRecno ) .or. len( aSelectedRecno ) == 0
-      msgStop( "No se especificaron los registros a eliminar" )
+   if !hb_isarray( aSelectedRecno )
+      RETURN ( .f. )
+   end if 
+
+   if len( aSelectedRecno ) == 0
+      RETURN ( .f. )
+   end if 
+
+   if len( aSelectedRecno ) == 1 .and. atail( aSelectedRecno ) == 0
       RETURN ( .f. )
    end if 
 
@@ -553,7 +569,7 @@ METHOD Delete( aSelectedRecno )
 
       ::fireEvent( 'deletedSelection' ) 
 
-      // ::gotoRowSet( ::priorRecnoToDelete( aSelectedRecno ) )
+      ::gotoRowSetRecno( ::priorRecnoToDelete( aSelectedRecno ) )
 
       ::refreshRowSet()
 
@@ -568,6 +584,14 @@ METHOD Delete( aSelectedRecno )
    ::fireEvent( 'exitDeleted' ) 
 
 RETURN ( lDelete )
+
+//----------------------------------------------------------------------------//
+
+METHOD priorRecnoToDelete( aSelectedRecno )
+
+   aSelectedRecno       := asort( aSelectedRecno, , , {|x,y| x > y } )
+
+RETURN ( atail( aSelectedRecno ) - 1 )
 
 //----------------------------------------------------------------------------//
 
@@ -592,8 +616,6 @@ RETURN ( self )
 METHOD findInModel( uValue )
 
    ::oModel:setFind( uValue )
-
-   msgalert( ::oModel:getSelectSentence(), "::oModel:getSelectSentence()" )
 
    ::oRowSet:build( ::oModel:getSelectSentence() )
 

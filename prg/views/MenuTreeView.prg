@@ -88,7 +88,7 @@ CLASS MenuTreeView
                                                    ::addGeneralButton(),;
                                                    ::addDocumentsButton(),;
                                                    ::addLabelButton(),;
-                                                   ::addCounterButton(),;
+                                                   ::addConfigButton(),;
                                                    ::addExitButton(),;
                                                    ::oButtonMain:Expand(),;
                                                    ::fireEvent( 'addedAutoButton' ) )
@@ -110,7 +110,7 @@ CLASS MenuTreeView
 
    METHOD addLabelButton()
 
-   METHOD addCounterButton()
+   METHOD addConfigButton()
 
    METHOD addDocumentsButton()           
 
@@ -423,17 +423,17 @@ RETURN ( Self )
 
 //----------------------------------------------------------------------------//
 
-METHOD addCounterButton()
+METHOD addConfigButton()
 
    if !( ::isControllerCounter() )
       RETURN ( Self )
    end if 
 
-   ::fireEvent( 'addingCounterButton')
+   ::fireEvent( 'addingConfigButton')
 
-   ::oButtonCounter     := ::AddButton( "Contadores", "gc_document_text_pencil_16", {|| ::getController():setCounter() }, "T", ACC_IMPR ) 
+   ::oButtonCounter     := ::AddButton( "Configuraciones", "gc_wrench_16", {|| ::getController():setConfig() }, "N", ACC_IMPR ) 
 
-   ::fireEvent( 'addedCounterButton') 
+   ::fireEvent( 'addedConfigButton') 
 
 RETURN ( Self )
 

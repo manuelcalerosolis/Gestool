@@ -16,14 +16,17 @@ CLASS MovimientosAlmacenController FROM SQLNavigatorController
 
    DATA oEtiquetasController
 
-   DATA oContadoresController
+   DATA oConfiguracionesController
 
    DATA oImprimirSeriesController
 
    DATA oReport
 
    METHOD New()
+
    METHOD End()
+
+   METHOD validateNumero()          
 
    METHOD validateAlmacenOrigen()   INLINE ( iif(  ::validate( "almacen_origen" ),;
                                                    ::stampAlmacenNombre( ::oDialogView:oGetAlmacenOrigen ),;
@@ -44,6 +47,10 @@ CLASS MovimientosAlmacenController FROM SQLNavigatorController
    METHOD setFileName( cFileName )  INLINE ( ::cFileName := cFileName )
    METHOD getFileName()             INLINE ( ::cFileName )
 
+   METHOD stampNumero()
+
+   METHOD checkSerie( oGetNumero )
+
    METHOD stampAlmacenNombre()
 
    METHOD stampGrupoMovimientoNombre()
@@ -54,13 +61,13 @@ CLASS MovimientosAlmacenController FROM SQLNavigatorController
 
    METHOD labelDocument()
 
-   METHOD setCounter()              
+   METHOD setConfig()              
 
    METHOD deleteLines()
 
    METHOD getBrowse()               INLINE ( ::oBrowseView:getBrowse() )
 
-   METHOD insertingBuffer()
+   METHOD loadedBlankBuffer()
 
    METHOD printSerialDocument()     INLINE ( ::oImprimirSeriesController:Activate() )       
 
@@ -74,13 +81,15 @@ METHOD New()
 
    ::cTitle                      := "Movimientos de almacén"
 
+   ::cName                       := "movimientos_almacen"
+
+   ::cDirectory                  := cPatDocuments( "Movimientos almacen" ) 
+
    ::hImage                      := {  "16"  => "gc_pencil_package_16",;
                                        "48"  => "gc_package_48",;
                                        "64"  => "gc_package_64" }
 
    ::nLevel                      := nLevelUsr( "01050" )
-
-   ::cDirectory                  := cPatDocuments( "Movimientos almacen" ) 
 
    ::lTransactional              := .t.
 
@@ -108,23 +117,20 @@ METHOD New()
 
    ::oEtiquetasController        := EtiquetasMovimientosAlmacenController():New( self )
 
-   ::oContadoresController       := ContadoresController():New( self )
+   ::oConfiguracionesController  := ConfiguracionesController():New( self )
    
-   ::oContadoresController:setTabla( 'movimientos_almacen' )
-
    ::loadDocuments()
 
    ::oReport                     := MovimientosAlmacenReport():New( Self )
 
-   ::oFilterController:setTableName( ::cTitle ) 
-
-   ::oModel:setEvent( 'insertingBuffer', {|| ::insertingBuffer() } )
+   ::oModel:setEvent( 'loadedBlankBuffer',      {|| ::loadedBlankBuffer() } )
+   ::oModel:setEvent( 'loadedDuplicateBuffer',  {|| ::loadedBlankBuffer() } )
 
 RETURN ( Self )
 
 //---------------------------------------------------------------------------//
 
-METHOD end()
+METHOD End()
 
    ::oModel:End()
 
@@ -142,11 +148,72 @@ METHOD end()
 
    ::oEtiquetasController:End()
 
-   ::oContadoresController:End()
+   ::oConfiguracionesController:End()
 
    ::oReport:End()
 
 RETURN ( Self )
+
+//---------------------------------------------------------------------------//
+   
+METHOD validateNumero()
+
+   if !::validate( "numero" )
+      RETURN ( .f. )
+   end if 
+      
+   ::stampNumero( ::oDialogView:oGetNumero )
+      
+RETURN ( ::checkSerie( ::oDialogView:oGetNumero ) )
+
+//---------------------------------------------------------------------------//
+
+METHOD stampNumero( oGetNumero )
+
+   local nAt
+   local cSerie   := ""
+   local nNumero
+   local cNumero  := alltrim( oGetNumero:varGet() )
+
+   nAt            := rat( "/", cNumero )
+   if nAt == 0
+      cNumero     := padr( rjust( cNumero, "0", 6 ), 50 )
+   else 
+      cSerie      := upper( substr( cNumero, 1, nAt - 1 ) )
+      nNumero     := substr( cNumero, nAt + 1 )
+      cNumero     := padr( cSerie + "/" + rjust( nNumero, "0", 6 ), 50 )
+   end if 
+      
+   oGetNumero:cText( cNumero )
+
+RETURN ( .t. )
+
+//---------------------------------------------------------------------------//
+
+METHOD checkSerie( oGetNumero )
+
+   local nAt
+   local cSerie
+   local cNumero  := alltrim( oGetNumero:varGet() )
+
+   nAt            := rat( "/", cNumero )
+   if nAt == 0
+      RETURN ( .t. )
+   end if 
+
+   cSerie         := upper( substr( cNumero, 1, nAt - 1 ) )
+
+   if SQLConfiguracionesModel():isSerie( ::cName, cSerie )
+      RETURN ( .t. )
+   end if
+
+   if msgYesNo( "La serie " + cSerie + ", no existe.", "¿ Desea crear una nueva serie ?" )
+      SQLConfiguracionesModel():setSerie( ::cName, cSerie ) 
+   else 
+      RETURN ( .f. )
+   end if 
+
+RETURN ( .t. )
 
 //---------------------------------------------------------------------------//
 
@@ -223,17 +290,17 @@ RETURN ( self )
 
 //---------------------------------------------------------------------------//
 
-METHOD setCounter()
+METHOD setConfig()
 
-   ::oContadoresController:Edit()
+   ::oConfiguracionesController:Edit()
 
 RETURN ( self ) 
 
 //---------------------------------------------------------------------------//
 
-METHOD insertingBuffer()
+METHOD loadedBlankBuffer()
 
-   hset( ::oModel:hBuffer, "numero", ContadoresRepository():getAndIncMovimientoAlmacen() )
+   hset( ::oModel:hBuffer, "numero", MovimientosAlmacenRepository():getLastNumber() )
 
 RETURN ( self ) 
 

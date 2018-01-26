@@ -668,6 +668,30 @@ RETURN PadL( AllTrim( cCadena ), nLen, cChar )
 
 //--------------------------------------------------------------------------//
 
+FUNCTION nextDocumentNumber( cNumero, nLen )
+
+   local nAt
+   local cSerie     := ""
+   local nNumero
+
+   DEFAULT cNumero  := "0"
+   DEFAULT nLen     := 50
+
+   cNumero          := alltrim( cNumero )
+
+   nAt              := rat( "/", cNumero )
+   if nAt == 0
+      nNumero       := val( cNumero ) + 1
+      RETURN ( padr( rjust( nNumero, "0", 6 ), nLen ) )
+   end if 
+   
+   cSerie           := substr( cNumero, 1, nAt  )
+   nNumero          := val( substr( cNumero, nAt + 1 ) ) + 1
+
+RETURN ( padr( cSerie + rjust( nNumero, "0", 6 ), nLen ) )
+
+//--------------------------------------------------------------------------//
+
 Function GetSubArray( aArray, nPos )
 
    local a

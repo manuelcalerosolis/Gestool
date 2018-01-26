@@ -3,7 +3,7 @@
 
 //---------------------------------------------------------------------------//
 
-CLASS ContadoresController FROM SQLBaseController
+CLASS ConfiguracionesController FROM SQLBaseController
 
    DATA cSerie                   INIT space( 1 )
 
@@ -27,13 +27,11 @@ METHOD New( oController )
 
    ::Super:New( oController )
 
-   ::cTitle                := "Contadores"
+   ::oModel                := SQLConfiguracionesModel():New( self )
 
-   ::oModel                := SQLContadoresModel():New( self )
+   ::oDialogView           := ConfiguracionesView():New( self )
 
-   ::oDialogView           := ContadoresView():New( self )
-
-   ::oModel:setEvent( 'loadedBlankBuffer', {|| ::loadedBlankBuffer() } ) 
+   ::oRepository           := ConfiguracionesRepository():New( self )
 
 RETURN ( Self )
 
@@ -41,13 +39,21 @@ RETURN ( Self )
 
 METHOD Edit() 
 
-   local nId               := ContadoresRepository():getId( ::cTabla, ::cSerie )
+   local lResult
 
-   if !empty( nId )
-      RETURN ( ::Super:Edit( nId ) )
+   ::oModel:getItemsMovimientosAlmacen()
+
+   if ::oDialogView:Activate()
+      ::oModel:setItemsMovimientosAlmacen()
    end if 
 
-RETURN ( ::Super:Append() )
+   // if !empty( nId )
+   //    RETURN ( ::Super:Edit( nId ) )
+   // end if 
+
+// RETURN ( ::Super:Append() )
+
+RETURN ( nil )
 
 //----------------------------------------------------------------------------//
 

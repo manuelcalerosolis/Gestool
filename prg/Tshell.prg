@@ -1016,9 +1016,11 @@ METHOD FastSeek() CLASS TShell
       oGet:SetColor( Rgb( 255, 255, 255 ), Rgb( 255, 102, 102 ) )
    end if
 
-   ::oBrw:Refresh()
-   ::oBrw:Select( 0 )
-   ::oBrw:Select( 1 )
+   if !empty( ::oBrw )
+      ::oBrw:Refresh()
+      ::oBrw:Select( 0 )
+      ::oBrw:Select( 1 )
+   end if 
 
    CursorWE()
 

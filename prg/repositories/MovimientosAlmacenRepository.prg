@@ -18,6 +18,10 @@ CLASS MovimientosAlmacenRepository FROM SQLBaseRepository
 
    METHOD getIdByUuid( uuid )       INLINE ( getSQLDataBase():selectValue( ::getSQLSentenceIdByUuid( uuid ) ) )
 
+   METHOD getLastNumber( cUser )
+
+   METHOD getLastNumberByUser( cUser )
+
 END CLASS
 
 //---------------------------------------------------------------------------//
@@ -49,8 +53,9 @@ METHOD getSQLSentenceIdByNumber( nNumber )
 
    local cSql  := "SELECT id FROM " + ::getTableName()         + " " 
 
-   cSql        +=    "WHERE empresa = " + quoted( cCodEmp() )  + " AND "  
-   cSql        +=       "numero = " + quoted( nNumber ) 
+   cSql        +=    "WHERE empresa = " + quoted( cCodEmp() )  + " "  
+   
+   cSql        +=       "AND numero = " + quoted( nNumber ) 
 
 RETURN ( cSql )
 
@@ -63,5 +68,38 @@ METHOD getSQLSentenceIdByUuid( uuid )
    cSql        +=    "WHERE uuid = " + quoted( uuid ) 
 
 RETURN ( cSql )
+
+//---------------------------------------------------------------------------//
+
+METHOD getLastNumberByUser( cUser )
+
+   local cSql  := "SELECT numero FROM " + ::getTableName()        + " " 
+
+   cSql        +=    "WHERE empresa = " + quoted( cCodEmp() )     + " "  
+
+   if empty( cUser )
+      cSql     +=       "AND usuario = " + quoted( cUser )        + " " 
+   end if 
+
+   cSql        +=    "ORDER BY creado DESC, numero DESC"          + " "
+   cSql        +=       "LIMIT 1"
+      
+RETURN ( cSql )
+
+//---------------------------------------------------------------------------//
+   
+METHOD getLastNumber( cUser )
+
+   local cNumero  
+
+   DEFAULT cUser  := cCurUsr()
+
+   cNumero        := getSqlDataBase():selectValue( ::getLastNumberByUser( cUser ) )
+
+   if empty( cNumero )
+      cNumero     := getSqlDataBase():selectValue( ::getLastNumberByUser() )
+   end if 
+
+RETURN ( nextDocumentNumber( cNumero ) )
 
 //---------------------------------------------------------------------------//

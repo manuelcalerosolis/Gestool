@@ -279,9 +279,7 @@ RETURN ( .t. )
 
 FUNCTION Test()
 
-   // ImprimirSeriesController():New():Activate()
-
-   // msgalert( hb_valtoexp( TStock():lCheckConsolidacion( '00107220', '002' ) ) )
+   // MovimientosAlmacenController():New():ActivateNavigatorView()
 
 RETURN NIL 
 

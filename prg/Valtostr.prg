@@ -75,16 +75,6 @@ function cValToStr( uVal, cPic, cInternational, lDispZeros )
       cPic     := Eval( cPic, uVal )
    endif
 
-#ifdef __XHARBOUR__
-      // new valtype 'T'
-      // fails with picture clause '@D' and '@E'
-      // cmonth and cdow fail too
-
-      if ValType( uVal ) == 'T' .and. ! Empty( cPic )
-         uVal  := CToD( DToC( uVal ) )
-      endif
-#endif
-
    if uVal == nil
       cVal = "nil"
 
@@ -95,14 +85,8 @@ function cValToStr( uVal, cPic, cInternational, lDispZeros )
          cVal     := cValToChar( uVal )
       endif
 
-#ifdef __HARBOUR__
    elseif cPic == '@T'
-#ifdef __XHARBOUR__
-      cVal     := If( Year( uVal ) == 0, TTOC( uVal, 2 ), TTOC( uVal ) )
-#else
       cVal     := If( Year( uVal ) == 0, HB_TToC( uVal, '', Set( _SET_TIMEFORMAT ) ), HB_TToC( uVal ) )
-#endif
-#endif
 
    elseif ValType( uVal ) $ 'DT' .and. Left( cPic, 1 ) != "@"
       if Empty( uVal )
@@ -123,19 +107,15 @@ function cValToStr( uVal, cPic, cInternational, lDispZeros )
             cVal    := StrTran( cVal, 'yy',   StrZero( Year( uVal ) % 100, 2 ) )
          endif
 
-#ifdef __HARBOUR__
          if 'hh' $ cVal
-   #ifdef __XHARBOUR__
-            cVal     := Left( cVal, At( 'hh', cVal ) - 1 ) + TToC( uVal, 2 )
-   #else
             cVal     := Left( cVal, At( 'hh', cVal ) - 1 ) + HB_TToC( uVal, '', Set( _SET_TIMEFORMAT ) )
-   #endif
          endif
       endif
-#endif
+
    else
       cVal     := Transform( uVal, cPic )
    endif
+   
    if Empty( uVal ) .and. lDispZeros != nil .and. ValType( uVal ) $ "DNT"    // date, number, datetime
       if lDispZeros
          if Empty( cVal ) .and. ValType( uVal ) == 'N'

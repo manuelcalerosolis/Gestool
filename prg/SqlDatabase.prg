@@ -33,7 +33,8 @@ CLASS SQLDatabase
    METHOD Ping()                          INLINE ( if( !empty( ::oConexion ), ::oConexion:Ping(), ) )
 
    METHOD Exec( cSql )             
-   METHOD Execs( aSql )             
+   METHOD Execs( aSql ) 
+   METHOD TransactionalExec( cSql )       INLINE ( ::BeginTransaction(), ::Exec( cSql ), ::Commit() )            
    METHOD Query( cSql )                   INLINE ( if( !empty( ::oConexion ), ::oConexion:Query( cSql ),  msgstop( "No ha conexiones disponibles" ) ) )
    METHOD Prepare( cSql )                 INLINE ( if( !empty( ::oConexion ), ::oConexion:Prepare( cSql ),  msgstop( "No ha conexiones disponibles" ) ) )
    METHOD Parse( cSql )                   INLINE ( if( !empty( ::oConexion ), ::oConexion:Parse( cSql ),  msgstop( "No ha conexiones disponibles" ) ) )
@@ -55,8 +56,8 @@ CLASS SQLDatabase
    METHOD lastInsertId()                  INLINE ( if( !empty( ::oConexion ), ::oConexion:lastInsertId(), msgstop( "No ha conexiones disponibles" ) ) )
 
    METHOD beginTransaction()              INLINE ( if( !empty( ::oConexion ), ::oConexion:beginTransaction(),  msgstop( "No ha conexiones disponibles" ) ) )
-   METHOD commit()                        INLINE ( if( !empty( ::oConexion ), ::oConexion:commit(), msgstop( "No ha conexiones disponibles" ) ) )
-   METHOD rollback()                      INLINE ( if( !empty( ::oConexion ), ::oConexion:rollback(),  msgstop( "No ha conexiones disponibles" ) ) )
+   METHOD Commit()                        INLINE ( if( !empty( ::oConexion ), ::oConexion:commit(), msgstop( "No ha conexiones disponibles" ) ) )
+   METHOD rollBack()                      INLINE ( if( !empty( ::oConexion ), ::oConexion:rollback(),  msgstop( "No ha conexiones disponibles" ) ) )
 
    METHOD startForeignKey()               VIRTUAL // INLINE ( ::Query( "pragma foreign_keys = ON" ) )
    METHOD endForeignKey()                 VIRTUAL // INLINE ( ::Query( "pragma foreign_keys = OFF" ) )
@@ -214,6 +215,8 @@ METHOD selectFetch( cSentence, fetchType )
       ::oConexion:Ping()
 
       oStatement     := ::oConexion:Query( cSentence )
+
+      oStatement:setAttribute( ATTR_STR_PAD, .t. )
    
       aFetch         := oStatement:fetchAll( fetchType )
 
@@ -330,7 +333,7 @@ METHOD fetchRowSet( cSentence )
 
       oStatement     := ::oConexion:Query( cSentence )
 
-      oStatement:setAttribute( ATTR_STR_PAD, .t. )
+      // oStatement:setAttribute( ATTR_STR_PAD, .t. )
 
       oRowSet        := oStatement:fetchRowSet()
 
