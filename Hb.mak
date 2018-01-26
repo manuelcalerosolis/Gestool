@@ -195,9 +195,6 @@ TFastComprasProveedores.prg 									\
 TFastProduccion.prg 												\
 TFastreportOptions.prg 											\
 Titemgroup.prg          										\
-Ttikstka.prg            										\
-TStockMinimoFamilia.prg 										\
-Xvalalmg.prg            										\
 Tcobage.prg             										\
 Remcli.prg              										\
 Label.prg               										\
@@ -788,9 +785,6 @@ Tdprnc3.obj                                        				\
 Animat.obj                                         				\
 Tdelobs.obj                                        				\
 Tdeltarifasclientes.obj                            				\
-Ttikstka.obj                                       				\
-TStockMinimoFamilia.obj                            				\
-Xvalalmg.obj                                       				\
 Printer.obj                                        				\
 Grpcli.obj                                         				\
 Atipicas.obj 				                           				\
@@ -1419,9 +1413,6 @@ $(OBJ)\TFastComprasProveedores.obj 										+
 $(OBJ)\TFastProduccion.obj    											+
 $(OBJ)\TFastreportOptions.obj    										+
 $(OBJ)\Titemgroup.obj           											+
-$(OBJ)\Ttikstka.obj             											+
-$(OBJ)\TStockMinimoFamilia.obj  											+
-$(OBJ)\Xvalalmg.obj             											+
 $(OBJ)\Tartalb.obj              											+
 $(OBJ)\Tfamtik.obj              											+
 $(OBJ)\Remcli.obj               											+
