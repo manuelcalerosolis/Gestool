@@ -225,7 +225,7 @@ METHOD End()
    if !empty( ::oRowSet )
       ::oRowSet:End()
    end if 
-   
+
    ::oEvents   := nil
 
    ::oRowSet   := nil
@@ -356,7 +356,7 @@ METHOD Duplicate( nId )
       nId            := ::getIdFromRowSet()
    end if 
 
-   if hb_isnil( nId )
+   if empty( nId )
       RETURN ( .f. )
    end if 
 
@@ -419,7 +419,7 @@ METHOD Edit( nId )
       nId         := ::getIdFromRowSet()
    end if 
 
-   if hb_isnil( nId )
+   if empty( nId )
       RETURN ( .f. )
    end if 
 
@@ -474,7 +474,7 @@ METHOD Zoom( nId )
       nId         := ::getIdFromRowSet()
    end if 
 
-   if hb_isnil( nId )
+   if empty( nId )
       RETURN ( .f. )
    end if 
 
@@ -537,8 +537,15 @@ METHOD Delete( aSelectedRecno )
       RETURN ( .f. )
    end if 
 
-   if !hb_isarray( aSelectedRecno ) .or. len( aSelectedRecno ) == 0
-      msgStop( "No se especificaron los registros a eliminar" )
+   if !hb_isarray( aSelectedRecno )
+      RETURN ( .f. )
+   end if 
+
+   if len( aSelectedRecno ) == 0
+      RETURN ( .f. )
+   end if 
+
+   if len( aSelectedRecno ) == 1 .and. atail( aSelectedRecno ) == 0
       RETURN ( .f. )
    end if 
 

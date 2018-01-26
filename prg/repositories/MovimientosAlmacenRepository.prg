@@ -81,7 +81,8 @@ METHOD getLastNumberByUser( cUser )
       cSql     +=       "AND usuario = " + quoted( cUser )        + " " 
    end if 
 
-   cSql        +=    "ORDER BY creado, numero DESC LIMIT 1"
+   cSql        +=    "ORDER BY creado DESC, numero DESC"          + " "
+   cSql        +=       "LIMIT 1"
       
 RETURN ( cSql )
 
@@ -89,10 +90,14 @@ RETURN ( cSql )
    
 METHOD getLastNumber( cUser )
 
-   local cNumero  := getSqlDataBase():selectValue( ::getLastNumberByUser( cUser ) )
+   local cNumero  
+
+   DEFAULT cUser  := cCurUsr()
+
+   cNumero        := getSqlDataBase():selectValue( ::getLastNumberByUser( cUser ) )
 
    if empty( cNumero )
-      cNumero     := getSqlDataBase():selectValue( ::getLastNumberByUser( cUser ) )
+      cNumero     := getSqlDataBase():selectValue( ::getLastNumberByUser() )
    end if 
 
 RETURN ( nextDocumentNumber( cNumero ) )

@@ -95,8 +95,6 @@ METHOD getValue( cDocumento, cClave, cValue, uDefault )
 
    local aSelect     := getSQLDataBase():selectFetchHash( cSentence )
 
-   msgalert( cSentence, "getValue")
-
    if !empty( aSelect )
       RETURN ( hget( atail( aSelect ), "valor" ) )
    end if 

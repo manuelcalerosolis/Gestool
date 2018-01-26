@@ -67,7 +67,7 @@ CLASS MovimientosAlmacenController FROM SQLNavigatorController
 
    METHOD getBrowse()               INLINE ( ::oBrowseView:getBrowse() )
 
-   METHOD insertingBuffer()
+   METHOD loadedBlankBuffer()
 
    METHOD printSerialDocument()     INLINE ( ::oImprimirSeriesController:Activate() )       
 
@@ -123,7 +123,8 @@ METHOD New()
 
    ::oReport                     := MovimientosAlmacenReport():New( Self )
 
-   ::oModel:setEvent( 'insertingBuffer', {|| ::insertingBuffer() } )
+   ::oModel:setEvent( 'loadedBlankBuffer',      {|| ::loadedBlankBuffer() } )
+   ::oModel:setEvent( 'loadedDuplicateBuffer',  {|| ::loadedBlankBuffer() } )
 
 RETURN ( Self )
 
@@ -297,9 +298,9 @@ RETURN ( self )
 
 //---------------------------------------------------------------------------//
 
-METHOD insertingBuffer()
+METHOD loadedBlankBuffer()
 
-   hset( ::oModel:hBuffer, "numero", SQLConfiguracionesModel():getAndIncContadorMovimientoAlmacen() )
+   hset( ::oModel:hBuffer, "numero", MovimientosAlmacenRepository():getLastNumber() )
 
 RETURN ( self ) 
 

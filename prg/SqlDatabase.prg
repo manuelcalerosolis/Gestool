@@ -215,6 +215,8 @@ METHOD selectFetch( cSentence, fetchType )
       ::oConexion:Ping()
 
       oStatement     := ::oConexion:Query( cSentence )
+
+      oStatement:setAttribute( ATTR_STR_PAD, .t. )
    
       aFetch         := oStatement:fetchAll( fetchType )
 
@@ -331,7 +333,7 @@ METHOD fetchRowSet( cSentence )
 
       oStatement     := ::oConexion:Query( cSentence )
 
-      oStatement:setAttribute( ATTR_STR_PAD, .t. )
+      // oStatement:setAttribute( ATTR_STR_PAD, .t. )
 
       oRowSet        := oStatement:fetchRowSet()
 

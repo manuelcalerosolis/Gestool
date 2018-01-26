@@ -163,7 +163,7 @@ METHOD getFindValue( uFind, cColumn )
       RETURN ( uFind )
    end if 
 
-   cType                := ::oRowSet:fieldType( ::oRowSet:fieldpos( cColumn ) )
+   cType                := ::oRowSet:fieldType( cColumn )
 
    do case
       case ( cType ) == "N" .and. hb_ischar( uFind )

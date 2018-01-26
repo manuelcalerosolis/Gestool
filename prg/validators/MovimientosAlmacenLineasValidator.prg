@@ -90,11 +90,7 @@ METHOD existArticulo( value )
       RETURN ( .t. )
    end if 
 
-   msgalert( value )
-
    cId                     := ArticulosCodigosBarraModel():getCodigo( value )
-
-   msgalert( cId, "cId" )
 
    if !empty( cId )
       ::oController:setModelBufferPadr( "codigo_articulo", cId )
