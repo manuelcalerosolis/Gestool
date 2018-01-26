@@ -6,11 +6,13 @@
 
 CLASS SQLConfiguracionesModel FROM SQLExportableModel
 
-   DATA cTableName            INIT "configuraciones"
+   DATA aItems                                     INIT {}
 
-   DATA cConstraints          INIT "PRIMARY KEY (id)"
+   DATA cTableName                                 INIT "configuraciones"
 
-   DATA cColumnOrder          INIT "id"
+   DATA cConstraints                               INIT "PRIMARY KEY (id)"
+
+   DATA cColumnOrder                               INIT "id"
 
    METHOD getColumns()
 
@@ -18,13 +20,22 @@ CLASS SQLConfiguracionesModel FROM SQLExportableModel
 
    METHOD getValue( cDocumento, cClave, uDefault )
 
-   METHOD setSQLSentenceValue( cDocumento, cClave, uValue )
+   METHOD getNumeric( cDocumento, cClave, uDefault );
+
+   METHOD getSQLSentenceInsertValue( cDocumento, cClave, uValue )
+
+   METHOD getSQLSentenceUpdateValue( nId, uValue )
 
    METHOD setValue( cDocumento, cClave, uValue )
 
-   // Fachadas ---------------------------------------------------------------
+   METHOD getAndIncValue( cDocumento, cClave, uDefault )
 
-   METHOD getContadoresMovimientosAlmacen( 'movimientos_almacen', 'contador', 1 )
+   METHOD getItemsMovimientosAlmacen()           
+   METHOD setItemsMovimientosAlmacen()     
+   METHOD getAndIncContadorMovimientoAlmacen()     INLINE ( ::getAndIncValue( 'movimientos_almacen', 'contador', 1 ) )
+
+   METHOD isSerie( cName, cSerie )                 INLINE ( !empty( ::getValue( cName, 'serie', cSerie ) ) )
+   METHOD setSerie( cName, cSerie )                INLINE ( ::setValue( cName, 'serie', cSerie ) )
    
 END CLASS
 
@@ -54,30 +65,56 @@ RETURN ( ::hColumns )
 
 //---------------------------------------------------------------------------//
 
-METHOD getSQLSentenceValue( cDocumento, cClave )
+METHOD getSQLSentenceValue( cDocumento, cClave, cValue )
 
-   local cSentence   := "SELECT value FROM " + ::getTableName()               + space( 1 ) + ;
-                           "WHERE empresa = " + toSQLString( cCodEmp() )      + space( 1 ) + ;
-                              "AND documento = " + toSQLString( cDocumento )  + space( 1 ) + ;
-                              "AND clave = " + toSQLString( cClave )          + space( 1 ) + ;
-                           "LIMIT 1"                                         
+   local cSentence   := "SELECT id, valor FROM " + ::getTableName()           + space( 1 ) 
+
+   cSentence         +=    "WHERE empresa = " + toSQLString( cCodEmp() )      + space( 1 )
+
+   if !empty( cDocumento )
+      cSentence      +=       "AND documento = " + toSQLString( cDocumento )  + space( 1 ) 
+   end if 
+
+   if !empty( cClave )
+      cSentence      +=       "AND clave = " + toSQLString( cClave )          + space( 1 ) 
+   end if 
+
+   if !empty( cValue )
+      cSentence      +=       "AND valor = " + toSQLString( cValue )          + space( 1 ) 
+   end if 
+
+   cSentence         +=    "LIMIT 1"                                         
 
 RETURN ( cSentence )
 
 //---------------------------------------------------------------------------//
 
-METHOD getValue( cDocumento, cClave, uDefault )
+METHOD getValue( cDocumento, cClave, cValue, uDefault )
 
-   local cSentence   := ::getSQLSentenceValue( cDocumento, cClave )
+   local cSentence   := ::getSQLSentenceValue( cDocumento, cClave, cValue )
 
    local aSelect     := getSQLDataBase():selectFetchHash( cSentence )
 
+   msgalert( cSentence, "getValue")
+
    if !empty( aSelect )
-      RETURN ( hget( atail( aSelect ), "value" ) )
+      RETURN ( hget( atail( aSelect ), "valor" ) )
    end if 
 
 RETURN ( uDefault )
 
+//---------------------------------------------------------------------------//
+
+METHOD getNumeric( cDocumento, cClave, uDefault )
+
+   local uValue      := ::getValue( cDocumento, cClave, uDefault ) 
+
+   if hb_isstring( uValue )
+      RETURN ( val( uValue ) )
+   end if
+
+RETURN ( uValue )
+       
 //---------------------------------------------------------------------------//
 
 METHOD getSQLSentenceInsertValue( cDocumento, cClave, uValue )
@@ -86,7 +123,7 @@ METHOD getSQLSentenceInsertValue( cDocumento, cClave, uValue )
                         "( empresa,"                                       + space( 1 )   + ;
                            "documento,"                                    + space( 1 )   + ;
                            "clave,"                                        + space( 1 )   + ;
-                           "value )"                                       + space( 1 )   + ;
+                           "valor )"                                       + space( 1 )   + ;
                         "VALUES"                                           + space( 1 )   + ;
                         "( " + toSQLString( cCodEmp() ) + ","              + space( 1 )   + ;
                            toSQLString( cDocumento ) + ","                 + space( 1 )   + ;
@@ -101,7 +138,7 @@ METHOD getSQLSentenceUpdateValue( nId, uValue )
 
    local cSentence   := "UPDATE " + ::getTableName()                       + space( 1 )   + ;
                         "SET"                                              + space( 1 )   + ;
-                           "value = " + toSQLString( uValue )              + space( 1 )   + ;
+                           "valor = " + toSQLString( uValue )              + space( 1 )   + ;
                         "WHERE id = " + alltrim( str( nId ) )
 
 RETURN ( cSentence )
@@ -111,29 +148,71 @@ RETURN ( cSentence )
 METHOD setValue( cDocumento, cClave, uValue )
 
    local nId
-   local cSentence
-   local aSelect     := getSQLDataBase():selectFetchHash( ::getSQLSentenceValue( cDocumento, cClave ) )
+   local aSelect     
+   local cSentence   
+
+   uValue            := cvaltostr( uValue )
+
+   cSentence         := ::getSQLSentenceValue( cDocumento, cClave, uValue )
+
+   aSelect           := getSQLDataBase():selectFetchHash( cSentence )
 
    if empty( aSelect )
 
-      cSentence      := ::getSQLSentenceInsertValue()
+      cSentence      := ::getSQLSentenceInsertValue( cDocumento, cClave, uValue )
 
    else 
 
       nId            := hget( atail( aSelect ), "id" )
 
-      if empty( id )
+      if empty( nId )
          RETURN ( self )
       end if 
 
-      cSentence      := ::getSQLSentenceUpdateValue( uValue )
+      cSentence      := ::getSQLSentenceUpdateValue( nId, uValue )
 
    end if 
 
-   getSQLDataBase():Exec( cSentence )
+   getSQLDataBase():TransactionalExec( cSentence )
 
 RETURN ( self )
 
 //---------------------------------------------------------------------------//
 
+METHOD getItemsMovimientosAlmacen()           
+
+   ::aItems    := {}
+
+   aadd( ::aItems, { 'clave'  => 'contador',;
+                     'valor'  => ::getNumeric( 'movimientos_almacen', 'contador', 1 ),;
+                     'tipo'   => "N" } )
+
+RETURN ( ::aItems )
    
+//---------------------------------------------------------------------------//
+
+METHOD setItemsMovimientosAlmacen()           
+
+   local hItem
+
+   for each hItem in ::aItems
+      ::setValue( 'movimientos_almacen', hget( hItem, 'clave' ), hget( hItem, 'valor' ) )
+   next
+
+RETURN ( nil )
+   
+//---------------------------------------------------------------------------//
+
+METHOD getAndIncValue( cDocumento, cClave, uDefault )
+
+   local nValue   := ::getNumeric( cDocumento, cClave, uDefault )
+
+   if !empty( nValue )
+      ::setValue( cDocumento, cClave, nValue + 1 )
+   end if
+
+RETURN ( nValue )
+
+//---------------------------------------------------------------------------//
+
+

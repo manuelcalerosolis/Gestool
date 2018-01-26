@@ -34,8 +34,8 @@ METHOD getColumns()
 
    ::getEmpresaColumns()
 
-   hset( ::hColumns, "numero",            {  "create"    => "INT UNSIGNED"                            ,;
-                                             "default"   => {|| 0 } }                                 )
+   hset( ::hColumns, "numero",            {  "create"    => "CHAR ( 50 )"                             ,;
+                                             "default"   => {|| space( 50 ) } }                       )
 
    hset( ::hColumns, "fecha_hora",        {  "create"    => "DATETIME DEFAULT CURRENT_TIMESTAMP"      ,;
                                              "default"   => {|| hb_datetime() } }                     )
@@ -63,6 +63,8 @@ METHOD getColumns()
 
    hset( ::hColumns, "comentarios",       {  "create"    => "VARCHAR ( 250 )"                         ,;
                                              "default"   => {|| space( 250 ) } }                      )
+
+   ::getTimeStampColumns()   
 
 RETURN ( ::hColumns )
 

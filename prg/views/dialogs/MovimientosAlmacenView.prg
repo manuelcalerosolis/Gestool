@@ -10,6 +10,7 @@ CLASS MovimientosAlmacenView FROM SQLBaseView
 
    DATA oSQLBrowseView
 
+   DATA oGetNumero
    DATA oGetDivisa
    DATA oGetAgente
    DATA oGetAlmacenOrigen
@@ -33,10 +34,13 @@ METHOD Activate()
 
    DEFINE DIALOG ::oDialog RESOURCE "MOVIMIENTOS_ALMACEN" TITLE ::lblTitle() + ::oController:getTitle()
 
-      REDEFINE GET   ::oController:oModel:hBuffer[ "numero" ] ;
+      REDEFINE GET   ::oGetNumero ;
+         VAR         ::oController:oModel:hBuffer[ "numero" ] ;
          ID          100 ;
          WHEN        ( ::oController:isNotZoomMode() ) ;
          OF          ::oDialog
+
+      ::oGetNumero:bValid   := {|| ::oController:validateNumero() }
 
       REDEFINE GET   ::oController:oModel:hBuffer[ "delegacion" ] ;
          ID          110 ;

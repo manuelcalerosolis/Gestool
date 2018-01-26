@@ -279,7 +279,11 @@ RETURN ( .t. )
 
 FUNCTION Test()
 
-   // ImprimirSeriesController():New():Activate()
+   msgalert( MovimientosAlmacenRepository():getLastNumber( '000' ) )
+
+   msgalert( nextDocumentNumber() )
+   msgalert( nextDocumentNumber( "00025" ) )
+   msgalert( nextDocumentNumber( "ABD/00025" ) )
 
    // msgalert( hb_valtoexp( TStock():lCheckConsolidacion( '00107220', '002' ) ) )
 

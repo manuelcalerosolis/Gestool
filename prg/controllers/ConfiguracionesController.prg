@@ -27,8 +27,6 @@ METHOD New( oController )
 
    ::Super:New( oController )
 
-   msgalert( oController:cName, "cName" )
-
    ::oModel                := SQLConfiguracionesModel():New( self )
 
    ::oDialogView           := ConfiguracionesView():New( self )
@@ -41,13 +39,21 @@ RETURN ( Self )
 
 METHOD Edit() 
 
-   local nId               := ConfiguracionesRepository():getId( ::cTabla, ::cSerie )
+   local lResult
 
-   if !empty( nId )
-      RETURN ( ::Super:Edit( nId ) )
+   ::oModel:getItemsMovimientosAlmacen()
+
+   if ::oDialogView:Activate()
+      ::oModel:setItemsMovimientosAlmacen()
    end if 
 
-RETURN ( ::Super:Append() )
+   // if !empty( nId )
+   //    RETURN ( ::Super:Edit( nId ) )
+   // end if 
+
+// RETURN ( ::Super:Append() )
+
+RETURN ( nil )
 
 //----------------------------------------------------------------------------//
 

@@ -78,6 +78,9 @@ CLASS SQLBaseModel
    METHOD getIdSelect( id )
    METHOD getSelectSentence()
    
+   METHOD setCreatedTimeStamp( hBuffer )
+   METHOD setUpdatedTimeStamp( hBuffer )
+
    METHOD getInsertSentence()
    METHOD getUpdateSentence()
    METHOD getdeleteSentence()
@@ -188,20 +191,13 @@ RETURN ( nil )
 
 METHOD getTimeStampColumns()
 
-   hset( ::hColumns, "created_at",  {  "create"    => "DATETIME DEFAULT CURRENT_TIMESTAMP"      ,;
+   hset( ::hColumns, "creado",      {  "create"    => "DATETIME DEFAULT CURRENT_TIMESTAMP"      ,;
                                        "text"      => "Creación fecha y hora"                   ,;
-                                       "header"    => "Creación"                                ,;
                                        "default"   => {|| hb_datetime() } }                     )
 
-   hset( ::hColumns, "updated_at",  {  "create"    => "DATETIME DEFAULT CURRENT_TIMESTAMP"      ,;
+   hset( ::hColumns, "modificado",  {  "create"    => "DATETIME DEFAULT CURRENT_TIMESTAMP"      ,;
                                        "text"      => "Modificación fecha y hora"               ,;
-                                       "header"    => "Modificación"                            ,;
                                        "default"   => {|| hb_datetime() } }                     )
-
-   hset( ::hColumns, "deleted_at",  {  "create"    => "DATETIME"      ,;
-                                       "text"      => "Eliminación fecha y hora"                ,;
-                                       "header"    => "Eliminación"                             ,;
-                                       "default"   => {|| nil } }                            )
 
 RETURN ( ::hColumns )
 
@@ -398,6 +394,8 @@ METHOD getAlterTableSentences( aSchemaColumns )
       heval( hColumns, {| k, hash | aadd( aAlter, "ALTER TABLE " + ::cTableName + " ADD COLUMN " + k + " " + hget( hash, "create" ) ) } )
    end if 
 
+   msgAlert( hb_valtoexp( hColumns ), "getAlterTableSentences" )
+
 RETURN ( aAlter )
 
 //---------------------------------------------------------------------------//
@@ -414,11 +412,33 @@ RETURN ( atail( ::getDatabase():selectFetchHash( ::getIdSelect( id ) ) ) )
 
 //---------------------------------------------------------------------------//
 
+METHOD setCreatedTimeStamp( hBuffer )
+   
+   if ( hhaskey( hBuffer, "creado" ) )
+      hset( hBuffer, "creado", hb_datetime() )
+   end if 
+
+RETURN ( hBuffer )
+
+//---------------------------------------------------------------------------//
+
+METHOD setUpdatedTimeStamp( hBuffer )
+   
+   if ( hhaskey( hBuffer, "modificado" ) )
+      hset( hBuffer, "modificado", hb_datetime() )
+   end if 
+
+RETURN ( hBuffer )
+
+//---------------------------------------------------------------------------//
+
 METHOD getInsertSentence( hBuffer )
 
    local cSQLInsert
 
    DEFAULT hBuffer   := ::hBuffer
+
+   hBuffer           := ::setCreatedTimeStamp( hBuffer )
 
    cSQLInsert        := "INSERT INTO " + ::cTableName + " ( "
 
@@ -440,6 +460,8 @@ METHOD getUpdateSentence( hBuffer )
    local cSQLUpdate  
 
    DEFAULT hBuffer   := ::hBuffer
+
+   hBuffer           := ::setUpdatedTimeStamp( hBuffer )
 
    cSQLUpdate        := "UPDATE " + ::cTableName + " SET "
 

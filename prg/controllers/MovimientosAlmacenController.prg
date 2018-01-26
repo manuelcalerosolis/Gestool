@@ -26,6 +26,8 @@ CLASS MovimientosAlmacenController FROM SQLNavigatorController
 
    METHOD End()
 
+   METHOD validateNumero()          
+
    METHOD validateAlmacenOrigen()   INLINE ( iif(  ::validate( "almacen_origen" ),;
                                                    ::stampAlmacenNombre( ::oDialogView:oGetAlmacenOrigen ),;
                                                    .f. ) )
@@ -45,6 +47,10 @@ CLASS MovimientosAlmacenController FROM SQLNavigatorController
    METHOD setFileName( cFileName )  INLINE ( ::cFileName := cFileName )
    METHOD getFileName()             INLINE ( ::cFileName )
 
+   METHOD stampNumero()
+
+   METHOD checkSerie( oGetNumero )
+
    METHOD stampAlmacenNombre()
 
    METHOD stampGrupoMovimientoNombre()
@@ -55,7 +61,7 @@ CLASS MovimientosAlmacenController FROM SQLNavigatorController
 
    METHOD labelDocument()
 
-   METHOD setCounter()              
+   METHOD setConfig()              
 
    METHOD deleteLines()
 
@@ -148,6 +154,67 @@ METHOD End()
 RETURN ( Self )
 
 //---------------------------------------------------------------------------//
+   
+METHOD validateNumero()
+
+   if !::validate( "numero" )
+      RETURN ( .f. )
+   end if 
+      
+   ::stampNumero( ::oDialogView:oGetNumero )
+      
+RETURN ( ::checkSerie( ::oDialogView:oGetNumero ) )
+
+//---------------------------------------------------------------------------//
+
+METHOD stampNumero( oGetNumero )
+
+   local nAt
+   local cSerie   := ""
+   local nNumero
+   local cNumero  := alltrim( oGetNumero:varGet() )
+
+   nAt            := rat( "/", cNumero )
+   if nAt == 0
+      cNumero     := padr( rjust( cNumero, "0", 6 ), 50 )
+   else 
+      cSerie      := upper( substr( cNumero, 1, nAt - 1 ) )
+      nNumero     := substr( cNumero, nAt + 1 )
+      cNumero     := padr( cSerie + "/" + rjust( nNumero, "0", 6 ), 50 )
+   end if 
+      
+   oGetNumero:cText( cNumero )
+
+RETURN ( .t. )
+
+//---------------------------------------------------------------------------//
+
+METHOD checkSerie( oGetNumero )
+
+   local nAt
+   local cSerie
+   local cNumero  := alltrim( oGetNumero:varGet() )
+
+   nAt            := rat( "/", cNumero )
+   if nAt == 0
+      RETURN ( .t. )
+   end if 
+
+   cSerie         := upper( substr( cNumero, 1, nAt - 1 ) )
+
+   if SQLConfiguracionesModel():isSerie( ::cName, cSerie )
+      RETURN ( .t. )
+   end if
+
+   if msgYesNo( "La serie " + cSerie + ", no existe.", "¿ Desea crear una nueva serie ?" )
+      SQLConfiguracionesModel():setSerie( ::cName, cSerie ) 
+   else 
+      RETURN ( .f. )
+   end if 
+
+RETURN ( .t. )
+
+//---------------------------------------------------------------------------//
 
 METHOD stampAlmacenNombre( oGetAlmacen )
 
@@ -222,7 +289,7 @@ RETURN ( self )
 
 //---------------------------------------------------------------------------//
 
-METHOD setCounter()
+METHOD setConfig()
 
    ::oConfiguracionesController:Edit()
 
@@ -232,7 +299,7 @@ RETURN ( self )
 
 METHOD insertingBuffer()
 
-   hset( ::oModel:hBuffer, "numero", ConfiguracionesRepository():getAndIncMovimientoAlmacen() )
+   hset( ::oModel:hBuffer, "numero", SQLConfiguracionesModel():getAndIncContadorMovimientoAlmacen() )
 
 RETURN ( self ) 
 
