@@ -2056,15 +2056,6 @@ METHOD BuildEmpresa()
    oDataTable:bCreateIndex := {| cPath | rxGrpVenta( cPath ) }
    ::AddEmpresaTable( oDataTable )
 
-   oDataTable              := TDataTable():New( "RemMovT" )
-   oDataTable:cDataFile    := cPatEmp( , .t. ) + "RemMovT.Dbf"
-   oDataTable:cIndexFile   := cPatEmp( , .t. ) + "RemMovT.Cdx"
-   oDataTable:cDescription := "Remesas de movimientos"
-   oDataTable:bCreateFile  := {| cPath | TRemMovAlm():BuildFiles( cPath ) }
-   oDataTable:bCreateIndex := {| cPath | TRemMovAlm():Reindexa( cPath ) }
-   oDataTable:bSyncFile    := {|| SynRemMov( cPatEmp() ) }
-   ::AddEmpresaTable( oDataTable )
-
    oDataTable              := TDataTable():New( "HisMov" )
    oDataTable:cDataFile    := cPatEmp( , .t. ) + "HisMov.Dbf"
    oDataTable:cIndexFile   := cPatEmp( , .t. ) + "HisMov.Cdx"

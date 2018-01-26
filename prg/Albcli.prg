@@ -396,8 +396,6 @@ static dbfRctPrvL
 static dbfRctPrvS
 static dbfProLin
 static dbfProMat
-static dbfHisMov
-static dbfHisMovS
 static dbfEmp
 static oMenu
 static oDetMenu
@@ -1557,13 +1555,6 @@ STATIC FUNCTION OpenFiles()
       SET ADSINDEX TO ( cPatEmp() + "PROMAT.CDX" ) ADDITIVE
       SET TAG TO "cCodArt"
 
-      USE ( cPatEmp() + "HISMOV.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "HISMOV", @dbfHisMov ) )
-      SET ADSINDEX TO ( cPatEmp() + "HISMOV.CDX" ) ADDITIVE
-      SET TAG TO "cRefMov"
-
-      USE ( cPatEmp() + "MOVSER.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "MOVSER", @dbfHisMovS ) )
-      SET ADSINDEX TO ( cPatEmp() + "MOVSER.CDX" ) ADDITIVE
-
       USE ( cPatEmp() + "PEDPROVL.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "PedPrvL", @dbfPedPrvL ) )
       SET ADSINDEX TO ( cPatEmp() + "PEDPROVL.CDX" ) ADDITIVE
       SET TAG TO "cRef"
@@ -1875,12 +1866,6 @@ STATIC FUNCTION CloseFiles()
    if dbfMatSer != nil
       ( dbfMatSer )->( dbCloseArea() )
    end if
-   if dbfHisMov != nil
-      ( dbfHisMov )->( dbCloseArea() )
-   end if
-   if dbfHisMovS != nil
-      ( dbfHisMovS )->( dbCloseArea() )
-   end if
    if dbfAlbPrvL != nil
       ( dbfAlbPrvL )->( dbCloseArea() )
    end if
@@ -1989,8 +1974,6 @@ STATIC FUNCTION CloseFiles()
    dbfEmp         := nil
    dbfProLin      := nil
    dbfProMat      := nil
-   dbfHisMov      := nil
-   dbfHisMovS     := nil
    dbfAlbPrvL     := nil
    dbfPedPrvL     := nil
    dbfCliBnc      := nil

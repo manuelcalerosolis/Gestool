@@ -246,7 +246,7 @@ CLASS TRemMovAlm FROM TMasDet
 
    METHOD cMostrarSerie() 
 
-   METHOD Report()                                       INLINE TInfRemMov():New( "Remesas de movimientos", , , , , , { ::oDbf, ::oDetMovimientos:oDbf, ::oArt } ):Play()
+   METHOD Report()                                       INLINE ( MsgInfo( "Informe" ) )
 
    METHOD GenerarEtiquetas()
 

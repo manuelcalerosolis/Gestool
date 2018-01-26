@@ -10967,14 +10967,13 @@ return ( nPre )
 
 //---------------------------------------------------------------------------//
 
-FUNCTION nPreMedCom( cCodArt, cCodAlm, dbfAlbPrvT, dbfAlbPrvL, dbfFacPrvT, dbfFacPrvL, nDiv, nDecOut, nDerOut, cHisMov )
+FUNCTION nPreMedCom( cCodArt, cCodAlm, dbfAlbPrvT, dbfAlbPrvL, dbfFacPrvT, dbfFacPrvL, nDiv, nDecOut, nDerOut )
 
    local nPreMed  := 0
    local nTotUni  := 0
    local nTotPre  := 0
    local nOrdAlb  := ( dbfAlbPrvL )->( ordSetFocus( "cRef" ) )
    local nOrdFac  := ( dbfFacPrvL )->( ordSetFocus( "cRef" ) )
-   local nOrdMov  := ( cHisMov )->( ordSetFocus( "cRefMov" ) )
 
    if nDiv == 0
       nDiv        := 1
@@ -11015,30 +11014,12 @@ FUNCTION nPreMedCom( cCodArt, cCodAlm, dbfAlbPrvT, dbfAlbPrvL, dbfFacPrvT, dbfFa
 
    end if
 
-   if ( cHisMov )->( dbSeek( cCodArt ) )
-
-      while ( cHisMov )->cRefMov == cCodArt .AND. !( cHisMov )->( Eof() )
-
-         if ( cHisMov )->cAliMov == cCodAlm .or. empty( cCodAlm )
-
-            nTotUni += nTotNMovAlm( cHisMov )
-            nTotPre += ( cHisMov )->nPreDiv
-
-         end if
-
-         ( cHisMov )->( dbSkip() )
-
-      end while
-
-   end if
-
    if nTotUni != 0
       nPreMed     := Round( Div( Div( nTotPre, nTotUni ), nDiv ), nDecOut )
    end if
 
    ( dbfAlbPrvL )->( ordSetFocus( nOrdAlb ) )
    ( dbfFacPrvL )->( ordSetFocus( nOrdFac ) )
-   ( cHisMov )->( ordSetFocus( nOrdMov ) )
 
 return ( nPreMed )
 

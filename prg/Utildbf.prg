@@ -3327,7 +3327,11 @@ FUNCTION Quoted( uValue )
    end if 
 
    if( hb_ischar( uValue ) )
-      RETURN ( "'" + rtrim( getSqlDatabase():escapeStr( uValue ) ) + "'" )
+      if empty( getSqlDatabase() )
+         RETURN ( "'" + rtrim( uValue ) + "'" )
+      else 
+         RETURN ( "'" + rtrim( getSqlDatabase():escapeStr( uValue ) ) + "'" )
+      end if 
    end if 
       
 RETURN ( "''" )

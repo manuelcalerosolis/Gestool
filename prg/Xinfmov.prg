@@ -22,7 +22,6 @@ CLASS XInfMov FROM TInfGen
    DATA  oFacRecL    AS OBJECT
    DATA  oTikCliT    AS OBJECT
    DATA  oTikCliL    AS OBJECT
-   DATA  oHisMov     AS OBJECT
    DATA  oProCab     AS OBJECT
    DATA  oProLin     AS OBJECT
    DATA  oProMat     AS OBJECT
@@ -153,9 +152,6 @@ METHOD OpenFiles()
 
    DATABASE NEW ::oTikCliL PATH ( cPatEmp() ) FILE "TIKEL.DBF"       VIA ( cDriver() ) SHARED INDEX "TIKEL.CDX"
 
-   DATABASE NEW ::oHisMov  PATH ( cPatEmp() ) FILE "HISMOV.DBF"      VIA ( cDriver() ) SHARED INDEX "HISMOV.CDX"
-   ::oHisMov:OrdSetFocus( "dFecMov" )
-
    DATABASE NEW ::oDbfFam  PATH ( cPatArt() ) FILE "FAMILIAS.DBF"    VIA ( cDriver() ) SHARED INDEX "FAMILIAS.CDX"
 
    DATABASE NEW ::oProCab  PATH ( cPatEmp() ) FILE "PROCAB.DBF"      VIA ( cDriver() ) SHARED INDEX "PROCAB.CDX"
@@ -221,9 +217,6 @@ METHOD CloseFiles()
    if !Empty( ::oTikCliL ) .and. ::oTikCliL:Used()
       ::oTikCliL:End()
    end if
-   if !Empty( ::oHisMov ) .and. ::oHisMov:Used()
-      ::oHisMov:End()
-   end if
    if !Empty( ::oDbfFam ) .and. ::oDbfFam:Used()
       ::oDbfFam:End()
    end if
@@ -255,7 +248,6 @@ METHOD CloseFiles()
    ::oFacRecL := nil
    ::oTikCliT := nil
    ::oTikCliL := nil
-   ::oHisMov  := nil
    ::oDbfFam  := nil
    ::oProCab  := nil
    ::oProLin  := nil

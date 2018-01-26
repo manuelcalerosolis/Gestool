@@ -83,10 +83,6 @@ CLASS TImpFactu
    DATA oDbfAlmFac
    DATA oDbfTikPGst
    DATA oDbfRecFac
-   DATA oDbfMovTGst
-   DATA oDbfMovTFac
-   DATA oDbfMovLGst
-   DATA oDbfMovLFac
    DATA oDbfAtpGst
    DATA oDbfAtpFac
    DATA oDbfPepTGst
@@ -320,15 +316,6 @@ METHOD OpenFiles()
       DATABASE NEW ::oDbfTikLFac PATH ( ::cPathFac ) FILE "TICKETL.DBF"   VIA ( cLocalDriver() ) CLASS "TIKLFAC"
       DATABASE NEW ::oDbfHisLFac PATH ( ::cPathFac ) FILE "HTICKETL.DBF"  VIA ( cLocalDriver() ) CLASS "HTIKLFAC"
       DATABASE NEW ::oDbfTikPGst PATH ( cPatEmp() )  FILE "TIKEP.DBF"     VIA ( cDriver() ) CLASS "TIKPGST"  SHARED INDEX "TIKEP.CDX"
-   end if
-
-   if !File( ::cPathFac + "Stocks.Dbf" )
-      ::aChkIndices[ 13 ]:Click( .f. ):Refresh()
-      msgStop( "No existen ficheros de movimientos de almacen", ::cPathFac + "Stocks.Dbf" )
-   else
-      DATABASE NEW ::oDbfMovTGst PATH ( cPatEmp() )  FILE "REMMOVT.DBF" VIA ( cDriver() ) CLASS "MOVTGST"  SHARED INDEX "REMMOVT.CDX"
-      DATABASE NEW ::oDbfMovLGst PATH ( cPatEmp() )  FILE "HISMOV.DBF"  VIA ( cDriver() ) CLASS "MOVLGST"  SHARED INDEX "HISMOV.CDX"
-      DATABASE NEW ::oDbfMovLFac PATH ( ::cPathFac ) FILE "Stocks.Dbf"  VIA ( cLocalDriver() ) CLASS "Stocks"
    end if
 
    if !File( ::cPathFac + "Transpor.Dbf" )
@@ -735,30 +722,6 @@ METHOD CloseFiles()
       ::oDbfAlmFac:End()
    else
       ::oDbfAlmFac := nil
-   end if
-
-   if !Empty( ::oDbfMovTGst )
-      ::oDbfMovTGst:End()
-   else
-      ::oDbfMovTGst := nil
-   end if
-
-   if !Empty( ::oDbfMovTFac )
-      ::oDbfMovTFac:End()
-   else
-      ::oDbfMovTFac := nil
-   end if
-
-   if !Empty( ::oDbfMovLGst )
-      ::oDbfMovLGst:End()
-   else
-      ::oDbfMovLGst := nil
-   end if
-
-   if !Empty( ::oDbfMovLFac )
-      ::oDbfMovLFac:End()
-   else
-      ::oDbfMovLFac := nil
    end if
 
    if !Empty( ::oDbfAtpGst )
@@ -2909,52 +2872,6 @@ METHOD Importar()
             ::oDbfTrnFac:Skip()
 
             ::aMtrIndices[ 14 ]:Set( ::oDbfTrnFac:OrdKeyNo() )
-
-         end while
-
-      end if
-
-      // Transpaso de cabeceras y lineas de movimientos de almacenes solo para Allgüelles
-
-      if ::aLgcIndices[ 13 ] .and. ::oDbfMovTGst != nil .and. ::oDbfMovLFac != nil
-
-         ::oDbfMovLFac:OrdSetFocus( "cStocks" )
-
-         ::oDbfMovLFac:GoTop()
-         while !::oDbfMovLFac:Eof()
-
-            if isNil( cCodAlm ) .or. ( cCodAlm != ::oDbfMovLFac:cCodAlm )
-
-               cCodAlm                 := RJust( ::oDbfMovLFac:cCodAlm, "0", 3 )
-               nLinea                  := 0
-               nCounter++
-
-               ::oDbfMovTGst:Append()
-               ::oDbfMovTGst:nNumRem   := nCounter
-               ::oDbfMovTGst:dFecRem   := GetSysDate()
-               ::oDbfMovTGst:cCodUsr   := cCurUsr()
-               ::oDbfMovTGst:nTipMov   := 4
-               ::oDbfMovTGst:cAlmDes   := RJust( ::oDbfMovLFac:cCodAlm, "0", 3 )
-               ::oDbfMovTGst:Save()
-
-            end if
-
-            nLinea++
-
-            ::oDbfMovLGst:Append()
-            ::oDbfMovLGst:nNumRem      := nCounter
-            ::oDbfMovLGst:nNumLin      := nLinea
-            ::oDbfMovLGst:dFecMov      := GetSysDate()
-            ::oDbfMovLGst:nTipMov      := 4
-            ::oDbfMovLGst:cAliMov      := RJust( ::oDbfMovLFac:cCodAlm, "0", 3 )
-            ::oDbfMovLGst:cRefMov      := ::oDbfMovLFac:cRef
-            ::oDbfMovLGst:cValPr1      := ::oDbfMovLFac:cProp1
-            ::oDbfMovLGst:cValPr2      := ::oDbfMovLFac:cProp2
-            ::oDbfMovLGst:nUndMov      := ::oDbfMovLFac:nStock
-            ::oDbfMovLGst:cCodUsr      := cCurUsr()
-            ::oDbfMovLGst:Save()
-
-            ::oDbfMovLFac:Skip()
 
          end while
 

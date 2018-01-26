@@ -411,11 +411,6 @@ CLASS D
 
    METHOD GrupoClientes( nView )                      INLINE ( ::Get( "GrpCli", nView ) )
 
-   METHOD MovimientosAlmacen( nView )                          INLINE ( ::Get( "RemMovT", nView ) )
-   METHOD MovimientosAlmacenLineas( nView )                    INLINE ( ::Get( "HisMov", nView ) )
-      METHOD getStatusMovimientosAlmacenLineas( nView )        INLINE ( ::aStatus := aGetStatus( ::MovimientosAlmacenLineas( nView ) ) )
-      METHOD setStatusMovimientosAlmacenLineas( nView )        INLINE ( SetStatus( ::MovimientosAlmacenLineas( nView ), ::aStatus ) ) 
-
    // Pedidos de proveedores---------------------------------------------------
 
    METHOD PedidosProveedoresTableName()                        INLINE ( "PedProvT" )
