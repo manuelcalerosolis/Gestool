@@ -222,7 +222,6 @@ Tgfrped.prg             \
 Tgfrpre.prg             \
 Tgraph.prg              \
 Tgrpfam.prg             \
-TiRemMov.prg            \
 Tidxutil.prg            \
 Timaglst.prg            \
 Timptik.prg             \
@@ -1280,7 +1279,6 @@ Tgfrped.obj             \
 Tgfrpre.obj             \
 Tgraph.obj              \
 Tgrpfam.obj             \
-TiRemMov.obj            \
 Tidxutil.obj            \
 Timaglst.obj            \
 Timptik.obj             \
@@ -2347,7 +2345,6 @@ $(OBJ)\Tgfrped.obj              +
 $(OBJ)\Tgfrpre.obj              +
 $(OBJ)\Tgraph.obj               +
 $(OBJ)\Tgrpfam.obj              +
-$(OBJ)\TiRemMov.obj             +
 $(OBJ)\Tidxutil.obj             +
 $(OBJ)\Timaglst.obj             +
 $(OBJ)\Timptik.obj              +

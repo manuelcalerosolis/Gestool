@@ -194,8 +194,6 @@ CLASS TFastVentasArticulos FROM TFastReportInfGen
    METHOD StockActualArticulo( cCodArt )              INLINE ( ::oStock:nStockAlmacen( Padr( cCodArt, 18 ) ) )
    METHOD StockAlmacenArticulo( cCodArt, cCodAlm )    INLINE ( ::oStock:nStockAlmacen( Padr( cCodArt, 18 ), Padr( cCodAlm, 16 ) ) )
 
-   METHOD getFieldMovimientoAlmacen( cField )
-
    METHOD getClave()
 
    METHOD getSerialiceValoresPropiedades( cCodigoPropiedad )
@@ -3308,95 +3306,6 @@ METHOD AddMovimientoAlmacen() CLASS TFastVentasArticulos
 
    end while
 
-
-/*
-   ::cExpresionLine           := '( dFecMov >= Ctod( "' + Dtoc( ::dIniInf ) + '" ) .and. dFecMov <= Ctod( "' + Dtoc( ::dFinInf ) + '" ) )'
-
-   if !::lAllArt
-      ::cExpresionLine        += ' .and. ( cRefMov >= "' + ::oGrupoArticulo:Cargo:getDesde() + '" .and. cRefMov <= "' + ::oGrupoArticulo:Cargo:getHasta() + '")'
-   end if
-
-   ( D():MovimientosAlmacenLineas( ::nView ) )->( setCustomFilter( ::cExpresionLine ) )
-
-   ( D():MovimientosAlmacenLineas( ::nView ) )->( dbgotop() )
-
-   while !(::lBreak ) .and. !( D():MovimientosAlmacenLineas( ::nView ) )->( eof() )
-
-      ::oDbf:Blank()
-
-      ::oDbf:cCodArt    := ( D():MovimientosAlmacenLineas( ::nView ) )->cRefMov
-      ::oDbf:cNomArt    := ( D():MovimientosAlmacenLineas( ::nView ) )->cNomMov
-
-      ::oDbf:cCodFam    := RetFld( ( D():MovimientosAlmacenLineas( ::nView ) )->cRefMov, ( D():Articulos( ::nView ) ), "Familia", "Codigo" )
-      ::oDbf:cNomFam    := RetFld( ::oDbf:cCodFam, D():Familias( ::nView ) )
-      ::oDbf:cCodTip    := RetFld( ( D():MovimientosAlmacenLineas( ::nView ) )->cRefMov, ( D():Articulos( ::nView ) ), "cCodTip", "Codigo" )
-      ::oDbf:cCodTemp   := RetFld( ( D():MovimientosAlmacenLineas( ::nView ) )->cRefMov, ( D():Articulos( ::nView ) ), "cCodTemp", "Codigo" )
-      ::oDbf:cCodFab    := RetFld( ( D():MovimientosAlmacenLineas( ::nView ) )->cRefMov, ( D():Articulos( ::nView ) ), "cCodFab", "Codigo" )
-      ::oDbf:cCodCate   := RetFld( ( D():MovimientosAlmacenLineas( ::nView ) )->cRefMov, ( D():Articulos( ::nView ) ), "cCodCate", "Codigo" )
-      ::oDbf:cCodAlm    := ( D():MovimientosAlmacenLineas( ::nView ) )->cAliMov
-      ::oDbf:cAlmOrg    := ( D():MovimientosAlmacenLineas( ::nView ) )->cAloMov
-      ::oDbf:cDesUbi    := RetFld( ( D():MovimientosAlmacenLineas( ::nView ) )->cRefMov, ( D():Articulos( ::nView ) ), "cDesUbi", "Codigo" )
-      ::oDbf:cCodEnv    := RetFld( ( D():MovimientosAlmacenLineas( ::nView ) )->cRefMov, ( D():Articulos( ::nView ) ), "cCodFra", "Codigo" )                    
-
-      ::oDbf:nBultos    := ( D():MovimientosAlmacenLineas( ::nView ) )->nBultos
-      ::oDbf:nCajas     := ( D():MovimientosAlmacenLineas( ::nView ) )->nCajMov
-      if lCalCaj()
-         ::oDbf:nUniArt := NotCaja( ( D():MovimientosAlmacenLineas( ::nView ) )->nCajMov ) * ( D():MovimientosAlmacenLineas( ::nView ) )->nUndMov
-      else
-         ::oDbf:nUniArt := ( D():MovimientosAlmacenLineas( ::nView ) )->nUndMov
-      end if
-      ::oDbf:nPreArt    := ( D():MovimientosAlmacenLineas( ::nView ) )->nPreDiv
-
-      ::oDbf:nBrtArt    := 0
-      ::oDbf:nTotArt    := 0
-
-      ::oDbf:cCodPr1    := ( D():MovimientosAlmacenLineas( ::nView ) )->cCodPr1
-      ::oDbf:cCodPr2    := ( D():MovimientosAlmacenLineas( ::nView ) )->cCodPr2
-      ::oDbf:cValPr1    := ( D():MovimientosAlmacenLineas( ::nView ) )->cValPr1
-      ::oDbf:cValPr2    := ( D():MovimientosAlmacenLineas( ::nView ) )->cValPr2
-
-      ::oDbf:cClsDoc    := MOV_ALM
-      
-      do case
-         case ( D():MovimientosAlmacenLineas( ::nView ) )->nTipMov <= 1
-            ::oDbf:cTipDoc    := "Movimiento entre almacenes"
-
-         case ( D():MovimientosAlmacenLineas( ::nView ) )->nTipMov == 2
-            ::oDbf:cTipDoc    := "Movimiento regularización"
-
-         case ( D():MovimientosAlmacenLineas( ::nView ) )->nTipMov == 3
-            ::oDbf:cTipDoc    := "Movimiento por objetivo"
-
-         case ( D():MovimientosAlmacenLineas( ::nView ) )->nTipMov == 4
-            ::oDbf:cTipDoc    := "Movimiento consolidación"
-
-      end case
-
-      ::oDbf:cSerDoc    := ""
-      ::oDbf:cNumDoc    := Str( ( D():MovimientosAlmacenLineas( ::nView ) )->nNumRem )
-      ::oDbf:cSufDoc    := ( D():MovimientosAlmacenLineas( ::nView ) )->cSufRem
-
-      ::oDbf:cIdeDoc    := Str( ( D():MovimientosAlmacenLineas( ::nView ) )->nNumRem ) + ( D():MovimientosAlmacenLineas( ::nView ) )->cSufRem
-      ::oDbf:nNumLin    := ( D():MovimientosAlmacenLineas( ::nView ) )->nNumLin
-
-      ::oDbf:nAnoDoc    := Year( ( D():MovimientosAlmacenLineas( ::nView ) )->dFecMov )
-      ::oDbf:nMesDoc    := Month( ( D():MovimientosAlmacenLineas( ::nView ) )->dFecMov )
-      ::oDbf:dFecDoc    := ( D():MovimientosAlmacenLineas( ::nView ) )->dFecMov
-
-      ::oDbf:Insert()
-
-      ( D():MovimientosAlmacenLineas( ::nView ) )->( dbskip() )
-      
-      ::setMeterAutoIncremental()
-
-   end while
-
-
-*/   
-
-   // procesamos los movimientos de almacen------------------------------------
-
-
 RETURN ( Self )
 
 //---------------------------------------------------------------------------//
@@ -4566,16 +4475,6 @@ METHOD ValidGrupoCliente( cCodGrp ) CLASS TFastVentasArticulos
    end if
 
 Return lValid 
-
-//---------------------------------------------------------------------------//
-
-METHOD getFieldMovimientoAlmacen( cField )
-
-   local cResultField   := ""
-
-   cResultField         := RetFld( Padr( ::oDbf:cNumDoc, 9 ) + Padr( ::oDbf:cSufDoc, 2 ), D():MovimientosAlmacen( ::nView ), cField )
-
-Return cResultField
 
 //---------------------------------------------------------------------------//
 

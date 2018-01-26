@@ -243,7 +243,6 @@ TCaptura.prg            										\
 TDetCaptura.prg         										\
 Tiordcar.prg            													\
 TICobAge.prg            													\
-TiRemMov.prg            													\
 Tchgtar.prg             													\
 Tchgdia.prg             													\
 Tdbf.prg                													\
@@ -872,7 +871,6 @@ TCaptura.obj            													\
 TDetCaptura.obj         													\
 Tiordcar.obj            													\
 TICobAge.obj            													\
-TiRemMov.obj            													\
 Tchgtar.obj             													\
 Tchgdia.obj             													\
 Tdbf.obj                													\
@@ -1473,7 +1471,6 @@ $(OBJ)\TCaptura.obj             											+
 $(OBJ)\TDetCaptura.obj          											+
 $(OBJ)\Tiordcar.obj             											+
 $(OBJ)\TICobAge.obj             											+
-$(OBJ)\TiRemMov.obj             											+
 $(OBJ)\Tchgtar.obj              											+
 $(OBJ)\Tchgdia.obj              											+
 $(OBJ)\Tdbf.obj                 											+

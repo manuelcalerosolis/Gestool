@@ -425,7 +425,6 @@ METHOD nRetPrecio( cCodArt )
    do case
    case ::cEstado == "Precios de costo medio"
          nPreMed := ::oStock:nCostoMedio( cCodArt )
-         //nPreMedCom( cCodArt, nil, ::oAlbPrvT:cAlias, ::oAlbPrvL:cAlias, ::oFacPrvT:cAlias, ::oFacPrvL:cAlias, ::nValDiv, ::nDecOut, ::nDerOut, ::oHisMov:cAlias )
    case ::cEstado == "Último precio costo"
       if ::oDbfArt:Seek( cCodArt )
          nPreMed := Round( ::oDbfArt:pCosto  / ::nValDiv, ::nDerOut )
@@ -467,7 +466,6 @@ METHOD nRetPrecioPropiedades( cCodArt, cCodPrp1, cCodPrp2, cValPrp1, cValPrp2 )
    do case
    case ::cEstado == "Precios de costo medio"
          nPreMed := ::oStock:nCostoMedio( cCodArt, , cCodPrp1, cCodPrp2, cValPrp1, cValPrp2 )
-         //nPreMedCom( cCodArt, nil, ::oAlbPrvT:cAlias, ::oAlbPrvL:cAlias, ::oFacPrvT:cAlias, ::oFacPrvL:cAlias, ::nValDiv, ::nDecOut, ::nDerOut, ::oHisMov:cAlias )
    case ::cEstado == "Último precio costo"
       if ::oArtDiv:Seek( cCodArt + cValPrp1 + cValPrp2 )
          nPreMed := Round( ::oArtDiv:nPreCom / ::nValDiv, ::nDerOut )
