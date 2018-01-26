@@ -1,6 +1,6 @@
 MVC - ToDo
 
-- Configuracion de columnas no se guarda.
+- Configuración de documentos por defecto.
 
 - Mas configuraciones.
 
@@ -8,7 +8,7 @@ MVC - ToDo
 
 - Validacion de contadores.
 
-- Configuración de documentos por defecto.
+- Configuracion de columnas no se guarda. (done)
 
 - Reposiconamiento si borro el ultimo registro. (done)
 

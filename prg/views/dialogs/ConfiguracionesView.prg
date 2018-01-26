@@ -53,6 +53,9 @@ METHOD New( oController )
                                              ::setColPicture( "999999999" ) } ,;
                               "L"   => {||   ::setColType( EDIT_LISTBOX ),;
                                              ::setColListTxt( { "si", "no" } ),;
+                                             ::setColPicture( "" ) },;
+                              "B"   => {||   ::setColType( EDIT_LISTBOX ),;
+                                             ::setColListTxt( hGet( ::oBrw:aArrayData[ ::oBrw:nArrayAt ], "lista" ) ),;
                                              ::setColPicture( "" ) } }
 
 RETURN ( Self )

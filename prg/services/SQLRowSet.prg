@@ -170,6 +170,8 @@ METHOD getFindValue( uFind, cColumn )
          uFind          := val( alltrim( uFind ) )
       case ( cType ) == "C" .and. hb_ischar( uFind ) .and. right( uFind, 1 ) != "*"
          uFind          += "*"
+      case ( cType ) == "T" .and. hb_ischar( uFind ) .and. right( uFind, 1 ) != "*"
+         uFind          += "*"
    end case 
 
 RETURN ( uFind )

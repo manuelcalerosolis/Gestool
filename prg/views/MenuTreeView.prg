@@ -49,7 +49,7 @@ CLASS MenuTreeView
 
    METHOD isControllerDocuments()         INLINE ( ::getController():lDocuments )
    METHOD isControllerLabels()            INLINE ( ::getController():lLabels )
-   METHOD isControllerCounter()           INLINE ( ::getController():lCounter )
+   METHOD isControllerConfig()            INLINE ( ::getController():lConfig )
    METHOD getControllerDocuments()        INLINE ( ::getController():aDocuments )
 
    METHOD addImage()
@@ -425,7 +425,7 @@ RETURN ( Self )
 
 METHOD addConfigButton()
 
-   if !( ::isControllerCounter() )
+   if !( ::isControllerConfig() )
       RETURN ( Self )
    end if 
 

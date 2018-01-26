@@ -97,7 +97,7 @@ METHOD New()
 
    ::lLabels                     := .t.
 
-   ::lCounter                    := .t.
+   ::lConfig                     := .t.
 
    ::oModel                      := SQLMovimientosAlmacenModel():New( self )
 

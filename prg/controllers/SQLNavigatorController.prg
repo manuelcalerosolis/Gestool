@@ -15,7 +15,7 @@ CLASS SQLNavigatorController FROM SQLBaseController
 
    DATA lLabels                                       INIT .f.
 
-   DATA lCounter                                      INIT .f.
+   DATA lConfig                                       INIT .f.
 
    DATA hFastKey                                      INIT {=>}
 

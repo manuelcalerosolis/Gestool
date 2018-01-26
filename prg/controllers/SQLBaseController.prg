@@ -665,16 +665,16 @@ RETURN ( Self )
 METHOD loadDocuments()
 
    local aFiles   := directory( ::getDirectory() + "*.fr3" )
+   
+   ::aDocuments   := {}
 
    if empty( aFiles )
-      RETURN ( self )
+      RETURN ( ::aDocuments )
    end if 
-
-   ::aDocuments   := {}
 
    aeval( aFiles, {|aFile| aadd( ::aDocuments, aFile[ 1 ] ) } )
 
-RETURN ( self )
+RETURN ( ::aDocuments )
 
 //---------------------------------------------------------------------------//
 

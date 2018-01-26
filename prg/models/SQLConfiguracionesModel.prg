@@ -65,7 +65,7 @@ RETURN ( ::hColumns )
 
 //---------------------------------------------------------------------------//
 
-METHOD getSQLSentenceValue( cDocumento, cClave, cValue )
+METHOD getSQLSentenceValue( cDocumento, cClave )
 
    local cSentence   := "SELECT id, valor FROM " + ::getTableName()           + space( 1 ) 
 
@@ -79,19 +79,15 @@ METHOD getSQLSentenceValue( cDocumento, cClave, cValue )
       cSentence      +=       "AND clave = " + toSQLString( cClave )          + space( 1 ) 
    end if 
 
-   if !empty( cValue )
-      cSentence      +=       "AND valor = " + toSQLString( cValue )          + space( 1 ) 
-   end if 
-
    cSentence         +=    "LIMIT 1"                                         
 
 RETURN ( cSentence )
 
 //---------------------------------------------------------------------------//
 
-METHOD getValue( cDocumento, cClave, cValue, uDefault )
+METHOD getValue( cDocumento, cClave, uDefault )
 
-   local cSentence   := ::getSQLSentenceValue( cDocumento, cClave, cValue )
+   local cSentence   := ::getSQLSentenceValue( cDocumento, cClave )
 
    local aSelect     := getSQLDataBase():selectFetchHash( cSentence )
 
@@ -151,7 +147,7 @@ METHOD setValue( cDocumento, cClave, uValue )
 
    uValue            := cvaltostr( uValue )
 
-   cSentence         := ::getSQLSentenceValue( cDocumento, cClave, uValue )
+   cSentence         := ::getSQLSentenceValue( cDocumento, cClave )
 
    aSelect           := getSQLDataBase():selectFetchHash( cSentence )
 
@@ -181,8 +177,13 @@ METHOD getItemsMovimientosAlmacen()
 
    ::aItems    := {}
 
-   aadd( ::aItems, { 'clave'  => 'contador',;
-                     'valor'  => ::getNumeric( 'movimientos_almacen', 'contador', 1 ),;
+   aadd( ::aItems, { 'clave'  => 'documento',;
+                     'valor'  => ::getValue( 'movimientos_almacen', 'documento', '' ),;
+                     'tipo'   => "B",;
+                     'lista'  => ::oController:oSenderController:aDocuments } )
+
+   aadd( ::aItems, { 'clave'  => 'copias',;
+                     'valor'  => ::getValue( 'movimientos_almacen', 'copias', 1 ),;
                      'tipo'   => "N" } )
 
 RETURN ( ::aItems )
