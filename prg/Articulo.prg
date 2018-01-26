@@ -10967,64 +10967,6 @@ return ( nPre )
 
 //---------------------------------------------------------------------------//
 
-FUNCTION nPreMedCom( cCodArt, cCodAlm, dbfAlbPrvT, dbfAlbPrvL, dbfFacPrvT, dbfFacPrvL, nDiv, nDecOut, nDerOut )
-
-   local nPreMed  := 0
-   local nTotUni  := 0
-   local nTotPre  := 0
-   local nOrdAlb  := ( dbfAlbPrvL )->( ordSetFocus( "cRef" ) )
-   local nOrdFac  := ( dbfFacPrvL )->( ordSetFocus( "cRef" ) )
-
-   if nDiv == 0
-      nDiv        := 1
-   end if
-
-   if ( dbfAlbPrvL )->( dbSeek( cCodArt ) )
-
-      while ( dbfAlbPrvL )->cRef == cCodArt .and. !( dbfAlbPrvL )->( Eof() )
-
-         if !lFacAlbPrv( ( dbfAlbPrvL )->cSerAlb + Str( ( dbfAlbPrvL )->nNumAlb ) + ( dbfAlbPrvL )->cSufAlb, dbfAlbPrvT ) .and. ;
-            ( dbfAlbPrvL )->cAlmLin == cCodAlm .or. empty( cCodAlm )
-
-            nTotUni += nTotNAlbPrv( dbfAlbPrvL )
-            nTotPre += nImpLAlbPrv( dbfAlbPrvT, dbfAlbPrvL, nDecOut, nDerOut, nDiv )
-
-         end if
-
-         ( dbfAlbPrvL )->( dbSkip() )
-
-      end while
-
-   end if
-
-   if ( dbfFacPrvL )->( dbSeek( cCodArt ) )
-
-      while ( dbfFacPrvL )->cRef == cCodArt .AND. !( dbfFacPrvL )->( Eof() )
-
-         if ( dbfFacPrvL )->cAlmLin == cCodAlm .or. empty( cCodAlm )
-
-            nTotUni += nTotNFacPrv( dbfFacPrvL )
-            nTotPre += nImpLFacPrv( dbfFacPrvT, dbfFacPrvL, nDecOut, nDerOut, nDiv )
-
-         end if
-
-         ( dbfFacPrvL )->( dbSkip() )
-
-      end while
-
-   end if
-
-   if nTotUni != 0
-      nPreMed     := Round( Div( Div( nTotPre, nTotUni ), nDiv ), nDecOut )
-   end if
-
-   ( dbfAlbPrvL )->( ordSetFocus( nOrdAlb ) )
-   ( dbfFacPrvL )->( ordSetFocus( nOrdFac ) )
-
-return ( nPreMed )
-
-//---------------------------------------------------------------------------//
-
 Function nCostoEscandallo( aTmp, dbfTmpKit, cArticulo, dbfArtKit, lPic, cDivRet, dbfDiv )
 
    local nCosto   := 0

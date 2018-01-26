@@ -1196,17 +1196,7 @@ Static Function CreateExistenciasReportGalery( oTrvArbolGaleria, lArray )
 
    DEFAULT lArray       := .f.
 
-   oTrvTipo             := AddInforme( lArray, oTrvArbolGaleria, "Almacenes" )
-
-      oTrvDocumento     := AddInforme( lArray, oTrvTipo, "Inventario" )
-         AddInforme( lArray, oTrvDocumento, "Informe de valoración de almacenes", {|| XTotAlm():New( "Informe de valoración de almacenes"):Play() } )
-
    oTrvTipo             := AddInforme( lArray, oTrvArbolGaleria, "Artículos" )
-
-      oTrvDocumento     := AddInforme( lArray, oTrvTipo, "Movimientos" )
-         AddInforme( lArray, oTrvDocumento, "Detalle de todos los movimientos de los artículos", {|| XMovArt():New( "Informe detallado de todos los movimientos de los artículos"):Play() } )
-         AddInforme( lArray, oTrvDocumento, "Detalle de valoración de almacenes por precio medio", {|| XValRStkDet():New( "Informe detallado de valoración de almacenes por precio medio" ):Play() } )
-         AddInforme( lArray, oTrvDocumento, "Valoración de almacenes por precio medio", {|| XValRStk():New( "Informe de valoración de almacenes por precio medio" ):Play() } )
 
       oTrvDocumento     := AddInforme( lArray, oTrvTipo, "Situación" )
          AddInforme( lArray, oTrvDocumento, "Stocks de artículos", {|| TTikStkA():New( "Informe resumido del stock de artículos", , , , , , .f. ):Play() } )
@@ -1215,13 +1205,7 @@ Static Function CreateExistenciasReportGalery( oTrvArbolGaleria, lArray )
          AddInforme( lArray, oTrvDocumento, "Artículos con stocks bajo mínimo", {|| TStkMinArt():New( "Informe resumido de los artículos con stockaje bajo mínimo"):Play() } )
          AddInforme( lArray, oTrvDocumento, "Artículos con stocks bajo mínimo agrupados por proveedor", {|| TInfValStk():New( "Informe resumido de los artículos con stockaje bajo mínimo por proveedor"):Play() } )
 
-      oTrvDocumento     := AddInforme( lArray, oTrvTipo, "Inventario" )
-         AddInforme( lArray, oTrvDocumento, "Informe de valoración de artículos", {|| XTotArt():New( "Informe de valoración de artículos"):Play() } )
-
    oTrvTipo             := AddInforme( lArray, oTrvArbolGaleria, "Familias" )
-
-      oTrvDocumento     := AddInforme( lArray, oTrvTipo, "Movimientos" )
-         AddInforme( lArray, oTrvDocumento, "Detalle de todos los movimientos de las familias", {|| XMovFam():New( "Informe detallado de todos los movimientos de las familias" ):Play() } )
 
       oTrvDocumento     := AddInforme( lArray, oTrvTipo, "Situación" )
          AddInforme( lArray, oTrvDocumento, "Stocks de artículos por familias", {|| TInfTikStk():New( "Informe resumido del stock de artículos agrupados por familias", , , , , , .f. ):Play() } )
@@ -1229,13 +1213,7 @@ Static Function CreateExistenciasReportGalery( oTrvArbolGaleria, lArray )
          AddInforme( lArray, oTrvDocumento, "Compras, ventas y stocks de artículos por familias", {|| XComFVta():New( "Informe resumido de compras, ventas y stocks de artículos por familias"):Play() } )
          AddInforme( lArray, oTrvDocumento, "Artículos con stocks bajo mínimo agrupados por familias", {|| TInfStockMinimoFamilia():New( "Informe resumido de los artículos con stockaje bajo mínimo por familias"):Play() }  )
 
-      oTrvDocumento     := AddInforme( lArray, oTrvTipo, "Inventario" )
-         AddInforme( lArray, oTrvDocumento, "Informe de valoración de almacenes por familias", {|| XInfValAlm():New( "Informe de valoración de almacenes por familias" ):Play() } )
-
    oTrvTipo             := AddInforme( lArray, oTrvArbolGaleria, "Grupos de familias" )
-
-      oTrvDocumento     := AddInforme( lArray, oTrvTipo, "Movimientos" )
-         AddInforme( lArray, oTrvDocumento, "Detalle de todos los movimientos de los grupos de familias", {|| XMovGrp():New( "Informe detallado de todos los movimientos de los grupos de familias" ):Play() } )
 
       oTrvDocumento     := AddInforme( lArray, oTrvTipo, "Situación" )
          AddInforme( lArray, oTrvDocumento, "Stocks de artículos por grupos de familias", {|| TInfTikStkG():New( "Informe resumido del stock de artículos agrupados por grupos de familias", , , , , , .f. ):Play() } )
@@ -1243,14 +1221,6 @@ Static Function CreateExistenciasReportGalery( oTrvArbolGaleria, lArray )
          AddInforme( lArray, oTrvDocumento, "Compras, ventas y stocks de artículos por grupos de familias", {|| XComGVta():New( "Informe resumido de compras, ventas y stocks de artículos por grupos de familias"):Play() } )
          AddInforme( lArray, oTrvDocumento, "Artículos con stocks bajo mínimo por proveedor", {|| TArtStkMinGrp():New( "Artículos con stocks bajo mínimo por proveedor" ):Play() }  )
          AddInforme( lArray, oTrvDocumento, "Artículos con stocks bajo mínimo agrupados por grupos de familias", {|| TInfStockMinimoGrupo():New( "Informe resumido de los artículos con stockaje bajo mínimo por grupos de familias"):Play() }  )
-
-      oTrvDocumento     := AddInforme( lArray, oTrvTipo, "Inventario" )
-         AddInforme( lArray, oTrvDocumento, "Informe de valoración de almacenes por grupos de familias", {|| XValAlmGrp():New( "Informe de valoración de almacenes por grupos de familias" ):Play() } )
-
-   oTrvTipo             := AddInforme( lArray, oTrvArbolGaleria, "Informes nuevos" )
-
-      oTrvDocumento     := AddInforme( lArray, oTrvTipo, "Valoración de almacén" )
-         AddInforme( lArray, oTrvDocumento, "Valoración de almacén", {|| TFastValoracionAlmacen():New( "Valoración de almacén" ):Play() } )
 
 Return nil
 

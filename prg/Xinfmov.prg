@@ -335,11 +335,6 @@ METHOD nRetPrecio( cCodArt, cCodAlm )
 
    do case
    case ::cEstado == "Precios de costo medio"
-      if ::lUniAlm
-         nPreMed := nPreMedCom( cCodArt, nil, ::oAlbPrvT:cAlias, ::oAlbPrvL:cAlias, ::oFacPrvT:cAlias, ::oFacPrvL:cAlias, ::nValDiv, ::nDecOut, ::nDerOut )
-      else
-         nPreMed := nPreMedCom( cCodArt, cCodAlm, ::oAlbPrvT:cAlias, ::oAlbPrvL:cAlias, ::oFacPrvT:cAlias, ::oFacPrvL:cAlias, ::nValDiv, ::nDecOut, ::nDerOut )
-      end if
    case ::cEstado == "Ultimo precio costo"
       if ::oDbfArt:Seek( cCodArt )
          nPreMed := Round( ::oDbfArt:pCosto  / ::nValDiv, ::nDerOut )
