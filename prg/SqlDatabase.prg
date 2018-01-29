@@ -42,8 +42,10 @@ CLASS SQLDatabase
    METHOD escapeStr( cEscape )            INLINE ( if( !empty( ::oConexion ), ::oConexion:escapeStr( cEscape ), cEscape ) )
 
    METHOD selectFetch( cSql )
-   METHOD selectFetchHash( cSentence )    INLINE ::selectFetch( cSentence, FETCH_HASH )
-   METHOD selectFetchArray( cSentence )   INLINE ::selectFetch( cSentence, FETCH_ARRAY )
+   METHOD selectFetchHash( cSentence, attributePad )     INLINE ::selectFetch( cSentence, FETCH_HASH, attributePad )
+   METHOD selectFetchArray( cSentence, attributePad )    INLINE ::selectFetch( cSentence, FETCH_ARRAY, attributePad )
+
+   METHOD selectFetchToJson( cSentence )
    
    METHOD selectFetchArrayOneColumn( cSentence )
 
@@ -197,13 +199,14 @@ RETURN ( ::Exec( sqlSentence ) )
 
 //----------------------------------------------------------------------------//
 
-METHOD selectFetch( cSentence, fetchType )
+METHOD selectFetch( cSentence, fetchType, attributePad )
 
    local oError
    local aFetch
    local oStatement
 
-   DEFAULT fetchType := FETCH_ARRAY
+   DEFAULT fetchType    := FETCH_ARRAY
+   DEFAULT attributePad := .t.
 
    if empty( ::oConexion )
       msgstop( "No hay conexiones disponibles" )
@@ -216,7 +219,7 @@ METHOD selectFetch( cSentence, fetchType )
 
       oStatement     := ::oConexion:Query( cSentence )
 
-      oStatement:setAttribute( ATTR_STR_PAD, .t. )
+      oStatement:setAttribute( ATTR_STR_PAD, attributePad )
    
       aFetch         := oStatement:fetchAll( fetchType )
 
@@ -235,6 +238,22 @@ METHOD selectFetch( cSentence, fetchType )
    if !empty( aFetch ) .and. hb_isarray( aFetch )
       RETURN ( aFetch )
    end if
+
+RETURN ( nil )
+
+//---------------------------------------------------------------------------//
+
+METHOD selectFetchToJson( cSentence, attributePad )
+
+   local aFetch
+
+   DEFAULT attributePad := .f.
+
+   aFetch               := ::selectFetchHash( cSentence, attributePad )
+
+   if hb_isarray( aFetch )
+      RETURN ( hb_jsonencode( aFetch, .t. ) )
+   end if 
 
 RETURN ( nil )
 

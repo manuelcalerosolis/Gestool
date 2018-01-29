@@ -2,7 +2,7 @@
  * Proyecto: HDO_GENERAL
  * Fichero: ejXX.prg
  * Autor: Manu Exposito
- * Fecha: 15/01/2017
+ * Fecha: 20/01/2018
  * Descripcion: Traspasa test.dbf de los ejemplos de Harbour a SQL.
  *              Si no existe la bases de datos hdodemo la crea.
  *              Si no existe la tabla test la crea.
@@ -21,7 +21,6 @@
 	REQUEST RDLSQLITE  // Importante antes de usar un RDL
 	#define _DBMS	"sqlite"
 	#define _DB 	"hdodemo.db"
-	#define _CONN
 #else
 	#ifdef MYSQL
 		REQUEST RDLMYSQL  // Importante antes de usar un RDL
@@ -33,7 +32,7 @@
 
 //------------------------------------------------------------------------------
 
-#define ID_CARGA	500
+#define ID_CARGA	1000
 
 //------------------------------------------------------------------------------
 // Programa principal
@@ -73,7 +72,7 @@ procedure mainxx()
 	oDb := THDO():new( _DBMS )
 
 #ifdef SQLITE
-    if oDb:connect( _DB, _CONN )
+    if oDb:connect( _DB )
         try
 #else		
     if oDb:connect( , _CONN )

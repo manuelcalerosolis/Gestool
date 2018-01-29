@@ -2,26 +2,45 @@
  * Proyecto: hdo
  * Fichero: ej07.prg
  * Descripción: Uso de sentencias compiladas con parametros. Consultas. Cursores
- * Autor: Manu Exposito 2015-17
- * Fecha: 15/01/2017
+ * Autor: Manu Exposito 2015-18
+ * Fecha: 20/01/2018
  */
 
+//------------------------------------------------------------------------------
+
+#define SQLITE
+//#define MYSQL
+
+//------------------------------------------------------------------------------
+
 #include "hdo.ch"
+
+#ifdef SQLITE
+	REQUEST RDLSQLITE
+	#define _DBMS "sqlite"
+	#define _DB  "hdodemo.db"
+	#define _CONN
+#else
+	#ifdef MYSQL
+		REQUEST RDLMYSQL
+		#define _DBMS "mysql"
+		#define _DB  "hdodemo"
+		#define _CONN  "127.0.0.1", "root", "root"
+	#endif
+#endif
 
 //------------------------------------------------------------------------------
 
 procedure main07()
 
     local oDb, oStmt, oCur, e, n1 := 0, n2 := 999999, getlist := {}, a, n
-    local cDb := "demo.db"
-    local cTabla := "test"
-    local cSql := "SELECT * FROM " + cTabla + " WHERE idreg BETWEEN ? AND ? ;"
+    local cSql := "SELECT * FROM test WHERE idreg BETWEEN ? AND ? ;"
 
     cls
 
-    oDb := THDO():new( "sqlite" )
+	oDb := THDO():new( _DBMS )
 
-    if oDb:connect( cDb )
+    if oDb:connect( _DB, _CONN )
         TRY
             oStmt := oDb:prepare( cSql )  // Prepara la sentencia y crea el objeto oStmt
 
@@ -36,17 +55,14 @@ procedure main07()
                 @ 05, 02 say "Entre rango final..:" GET n2 picture "@K" valid validaRango( n1, n2 )
                 read
 
-                // Enlaza valores
-                oStmt:putInt( 1, n1 ) // Primer  ?
-                oStmt:putInt( 2, n2 ) // Segundo ?
                 // o se puede usar la generica
-                // oStmt:bindValue( 1, n1 ) // Primer  ?
-                // oStmt:bindValue( 2, n2 ) // Segundo ?
+                oStmt:bindValue( 1, n1 ) // Primer  ?
+                oStmt:bindValue( 2, n2 ) // Segundo ?
 
                 oStmt:execute() // Ejecuta la sentencia
 
                 // Creamos un cursor local (navigator) como un hash table
-                oCur := THashCursor():new( oStmt:fetchAll( FETCH_HASH ) )
+                oCur := THashList():new( oStmt:fetchAll( FETCH_HASH ) )
 
                 cls
                 @ 00, 00 say "Resultado de la consulta -> " + hb_ntos( oStmt:rowCount() ) + " registros:" color "W+/R"
@@ -65,7 +81,6 @@ procedure main07()
             end
         CATCH e
             msg( "Se ha producido un error" )
-            muestra( oDb:errorInfo() )
             muestra( e:SubSystem + ";" + padl( e:SubCode, 4 ) + ";" + ;
                e:Operation + ";" + e:Description, "CATCH 2 - Error desde Harbour" )
         FINALLY

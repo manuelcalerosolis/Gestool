@@ -3,12 +3,13 @@
  * Fichero: ej17.prg
  * Descripcion:
  * Autor: Manu Exposito
- * Fecha: 15/01/2017
+ * Fecha: 20/01/2018
  */
 
 //------------------------------------------------------------------------------
 
 #include "hdo.ch"
+#include "hdomysql.ch"
 #include "inkey.ch"
 
 //------------------------------------------------------------------------------
@@ -46,7 +47,7 @@
 // Variables estaticas que se van a usar en varias funciones
 
 static oDb  								// Conexion con base de datos
-static oRS                                  // Cursor local basado en un RowSet
+static oRS                                  // Objeto RowSet
 static oSelect								// Select de datos
 static idreg, first, last, street, city, ;
        state, zip, hiredate, married, ;
@@ -57,35 +58,49 @@ static nRecIni := 1, nRecEnd := 1
 //------------------------------------------------------------------------------
 // Procedimiento principal
 
-procedure main()
+procedure main17()
 
     local e, getlist := {}
-	
-///////// Esto es por si se usa el sistema embebido ////////////////////////////
+	local tmp1 := hb_DateTime()
+
+
+////////////////////////////////////////////////////////////////////////////////
+// Esto no tiene efectos si no se usa el sistema embebido                     //
+////////////////////////////////////////////////////////////////////////////////
 #ifdef MYSQL                                                                  //
 	local aOptions := { "HDO_DEMO", "--defaults-file=./my.cnf" }              //
 	local aGroup := { "server", "client" }                                    //
-	                                                                          //
+//----------------------------------------------------------------------------//
 	initMySQLEmdSys( aOptions, aGroup, "client" )                             //
 #endif                                                                        //
 ////////////////////////////////////////////////////////////////////////////////
 
 	set date format to "dd-mm-yyyy"
 
-	oDb := THDO():new( _DBMS )
+	msg( tmp1, ValType( tmp1 ) )
 	
+	oDb := THDO():new( _DBMS )
+
+#ifdef MYSQL
+		oDb:setAttribute( MYSQL_OPT_RECONNECT, .t. ) // Necesario para que ping() funcione tradicionalmente
+		// oDb:setAttribute( MYSQL_INIT_COMMAND, "CREATE TABLE lolo LIKE test;" ) //
+#endif	
+
 	if oDb:connect( _DB, _CONN )
+
+		//oDb:exec( "set session wait_timeout = 10" )
+	
         try
 			preparaStmt()
 			
             // Creamos un RowSet que automaticamente hace un oSelect:execute()
             oRS := oSelect:fetchRowSet()
-			
+
 			// Asignamos las sentencias del mantenimiento de tablas
 			oRS:setInsertStmt( STMT_INS )
 			oRS:setUpdateStmt( STMT_UPD )
 			oRS:setDeleteStmt( STMT_DEL )
-			
+		
 			nRecIni := 0
             nRecEnd := 9999999
 
@@ -100,7 +115,7 @@ procedure main()
                 @ 05, 02 SAY "Entre rango final....................:" GET nRecEnd PICTURE "@K 99999999" VALID validaRango( nRecIni, nRecEnd )
 
 				READ
-				
+					
                 oRS:refresh()
                 oRS:goTop()
 				
@@ -108,18 +123,24 @@ procedure main()
 				Pie()
                 miBrw()
                 menu()
+					
             end
         catch e
             eval( errorBlock(), e )
         finally
-            oRS:free()
-			oSelect:free()
-            msg( "--- < FIN > ---" )
+			if ValType( oRS ) == 'O'
+				oRS:free()
+			end
+			if ValType( oSelect ) == 'O'
+				oSelect:free()
+			end
         end
 
     endif
 
     oDb:disconnect()
+	
+	msg( "--- < FIN > ---" )
 
 return
 
@@ -243,7 +264,7 @@ static procedure frontControl( oBrw )
             consultar()
             exit
 
-        case K_F8
+        case K_F6
             Buscar()
             exit
 
@@ -304,7 +325,7 @@ static procedure ayuda()
 	     "---------------------;;" + ;
 	     "F1 ...... Ayuda      ;" + ;
          "F2 ...... Consultar  ;" + ;
-         "F8 ...... Buscar     ;" + ;
+         "F6 ...... Buscar     ;" + ;
          "F9 ...... Listar RS  ;" + ;
          "F10 ..... Listar Stmt;" + ;
          "Intro ... Modificar  ;" + ;
@@ -333,12 +354,7 @@ static procedure modificar()
 	read	
 	
 	if lastkey() != K_ESC .and. updated()	
-#ifdef SQLITE		
-		married := if( married $ 'Ss', 1, 0 )
-		hiredate := HB_DToC( hiredate, "yyyy-mm-dd" )
-#else
-		married := if( married $ 'Ss', .t., .f. )
-#endif
+		married := if( married $ 'Ss', .t., .f. )		
 		msgEspera()
 		oRS:update( { first, last, street, city, state, zip, hiredate, married, age, salary, notes, idreg }, .t. )
     endif
@@ -367,12 +383,7 @@ static procedure Insertar( oBrw )
 	read	
 	
 	if lastkey() != K_ESC .and. updated()
-#ifdef SQLITE		
-		married := if( married $ 'Ss', 1, 0 )
-		hiredate := HB_DToC( hiredate, "yyyy-mm-dd" )
-#else
-		married := if( married $ 'Ss', .t., .f. )
-#endif
+		married := if( married $ 'Ss', .t., .f. )		
 		msgEspera()
 		oRS:insert( { first, last, street, city, state, zip, hiredate, married, age, salary, notes }, .t. )
     endif
@@ -404,7 +415,7 @@ static procedure consultaInterna()
 #endif
     @ 14, 03 SAY "Age......: " + HB_NToS( oRS:fieldGet( 10 ) )
     @ 15, 03 SAY "Salary...: " + HB_NToS( oRS:fieldGet( 11 ) )
-    @ 16, 03 SAY "Notes:"
+    @ 16, 03 SAY "Notes: "
     @ 17, 03 SAY  oRS:fieldGet( 12 )
 
 return
@@ -487,7 +498,7 @@ static procedure Buscar()
 		
 		while s > 0
 			n++
-			? "Registro numero:", oRS:recNo()
+			? "Registro numero:", oRS:recNo(), oRS:fieldGet( nCol )
 			s := oRS:findNext()  // Busca siguiente
 		end
 		

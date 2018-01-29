@@ -2,12 +2,33 @@
  * Proyecto: hdo
  * Fichero: ej08.prg
  * Descripción: Uso de sentencias compiladas con variables vinculadas. Consultas
- * Autor: Manu Exposito 2015-17
- * Fecha: 15/01/2017
+ * Autor: Manu Exposito 2015-18
+ * Fecha: 20/01/2018
  */
 
+//------------------------------------------------------------------------------
+
+#define SQLITE
+//#define MYSQL
+
+//------------------------------------------------------------------------------
+
 #include "hdo.ch"
-#include "InKey.ch"
+#include "inkey.ch"
+
+#ifdef SQLITE
+	REQUEST RDLSQLITE
+	#define _DBMS "sqlite"
+	#define _DB  "hdodemo.db"
+	#define _CONN
+#else
+	#ifdef MYSQL
+		REQUEST RDLMYSQL
+		#define _DBMS "mysql"
+		#define _DB  "hdodemo"
+		#define _CONN  "127.0.0.1", "root", "root"
+	#endif
+#endif
 
 //------------------------------------------------------------------------------
 
@@ -15,18 +36,15 @@ procedure main08()
 
 	static nSocIni := 0, nSocFin := 9999
     local oDb, oStmt, oCur, e
-    local cDb := "demo.db"
     local cTabla := "test"
     local cSql := "SELECT * FROM " + cTabla + " WHERE idreg BETWEEN ? AND ? ;"
     local getlist := {}
 
     cls
 
-    oDb := THDO():new( "sqlite" )
+	oDb := THDO():new( _DBMS )
 
-    oDb:setAttribute( ATTR_ERRMODE, .t. )
-
-    if oDb:connect( cDb )
+    if oDb:connect( _DB, _CONN )
         TRY
             oStmt := oDb:prepare( cSql )  // Prepara la sentencia y crea el objeto oStmt
 
@@ -49,7 +67,7 @@ procedure main08()
 					oStmt:execute() // Ejecuta la sentencia
 
                     // Creamos un cursor local (navigator) como un hash table
-                    oCur := THashCursor():new( oStmt:fetchAll( FETCH_HASH ) )
+                    oCur := THashList():new( oStmt:fetchAll( FETCH_HASH ) )
 
                     cls
 

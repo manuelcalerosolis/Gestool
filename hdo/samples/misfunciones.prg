@@ -2,8 +2,8 @@
 // Proyecto: Miscelania
 // Fichero: misFunciones.prg
 // Descripcion: Funciones utiles de apoyo para modo texto
-// Autor: Manu Exposito 2015-17
-// Fecha: 15/01/2017
+// Autor: Manu Exposito 2015-18
+// Fecha: 20/01/2018
 //------------------------------------------------------------------------------
 
 //------------------------------------------------------------------------------
@@ -104,7 +104,7 @@ procedure espera( nSec, cTxt )
 return
 
 //------------------------------------------------------------------------------
-// Browse para el objeto Cursor local (hashCursor y memCursor)
+// Browse para el objeto Cursor local (hashList y memList)
 
 procedure miBrwCursor( oCur, x, y, h, w )
 

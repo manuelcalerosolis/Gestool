@@ -1,22 +1,37 @@
 /*
  * Proyecto: HDO_GENERAL
  * Fichero: ej12.prg
- * Descripción:  Mantenimiento simple. Demo de sentencias preparadas.
+ * Descripción:  Mantenimiento. Demo de sentencias preparadas y TRowSet
  * Autor: Manu Exposito
- * Fecha: 15/01/2017
+ * Fecha: 20/01/2018
  */
 
 //------------------------------------------------------------------------------
-// Includes
-// Para el usos de HDO
-#include "hdo.ch"
-#include "InKey.ch"
 
-// Nombre de la base de datos:
-#define DB_NAME  "demo.db"
+#define SQLITE
+//#define MYSQL
 
 //------------------------------------------------------------------------------
-// Defines
+
+#include "hdo.ch"
+#include "inkey.ch"
+
+#ifdef SQLITE
+	REQUEST RDLSQLITE
+	#define _DBMS "sqlite"
+	#define _DB  "hdodemo.db"
+	#define _CONN
+#else
+	#ifdef MYSQL
+		REQUEST RDLMYSQL
+		#define _DBMS "mysql"
+		#define _DB  "hdodemo"
+		#define _CONN  "127.0.0.1", "root", "root"
+	#endif
+#endif
+
+//------------------------------------------------------------------------------
+
 // Sentencias para compilar:
 #define STMT_SEL "SELECT * FROM test WHERE idreg BETWEEN ? AND ?;"
 #define STMT_INS "INSERT INTO test ( first, last, street, city, state, zip, hiredate, married, age, salary, notes ) VALUES ( ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ? );"
@@ -58,10 +73,9 @@ static function dbInit
 
     local lRet
 
-    oDb := THDO():new( "sqlite" )
-    oDb:setAttribute( ATTR_ERRMODE, .t. )
+	oDb := THDO():new( _DBMS )
 	
-    lRet := oDb:connect( DB_NAME )
+    lRet := oDb:connect( _DB, _CONN )
 	
     if lRet
         preparaStmt()
@@ -196,31 +210,21 @@ return
 static procedure modificaciones()
 
     local getList
-	local lSigue := .f.
+	local lSigue := pideClave()
 	
-    if pideClave()
-		
-        nRegFin := nRegIni  // Selecciona un unico registro
-	
-        if oSelect:execute() .and. oSelect:rowCount() > 0
-			oSelect:fetchBound()
-			lSigue := .t.
+    if lSigue
 
-			cls
+		cls
 
-			hiredate := HB_CToD( hiredate, "yyyy-mm-dd" )
-			married  := if( married == 1, 'S', 'N' )
+		@ 04, 03 SAY "Modificacion de socio"
+		getList := muestraGet()
 	
-			@ 04, 03 SAY "Modificacion de socio"
-			getList := muestraGet()
-	
-			read	
-		endif
+		read	
+	else
+		msg( "Error en clave..." )
 	endif
 	
 	if lSigue .and. lastkey() != K_ESC .and. updated()
-		married := if( married $ 'Ss', 1, 0 )
-		hiredate := HB_DToC( hiredate, "yyyy-mm-dd" )
 		if oUpdate:execute()
 			msg( "Registro modificado" )
 		else
@@ -238,38 +242,30 @@ return
 static procedure bajas()
 
     local getlist := {}
-	local lSigue := .f.
+	local diSN := "N"
+	local lSigue := pideClave()
 	
-    if pideClave()
-		
-        nRegFin := nRegIni  // Selecciona un unico registro
-		
-        if oSelect:execute() .and. oSelect:rowCount() > 0
-			lSigue := .t.
-            oSelect:fetchBound()
-			
+    if lSigue
             cls
-            @ 04, 01 SAY "Modificacion de registros  -> clave usuario: " + HB_NToS( nRegFin )
-
+            @ 04, 03 SAY "Eliminacion del registro  -> clave usuario: " + HB_NToS( idreg )
 			@ 06, 03 SAY "First....: " + first
 			@ 07, 03 SAY "Last.....: " + last
 			@ 08, 03 SAY "Street...: " + street
 			@ 09, 03 SAY "City.....: " + city
 			@ 10, 03 SAY "State....: " + state
 			@ 11, 03 SAY "Zip......: " + zip
-			@ 12, 03 SAY "Hiredate.: " + HB_DToC( HB_CToD( hiredate, "yyyy-mm-dd" ), "dd-mm-yyyy" )
-			@ 13, 03 SAY "Married..: " + if( married == 1, 'S', 'N' )
+			@ 12, 03 SAY "Hiredate.: " + HB_DToC( hiredate, "dd-mm-yyyy" )
+			@ 13, 03 SAY "Married..: " + if( married, 'S', 'N' )
 			@ 14, 03 SAY "Age......: " + HB_NToS( age )
 			@ 15, 03 SAY "Salary...: " + HB_NToS( salary )
 			@ 16, 03 SAY "Notes:"
-			@ 17, 03 SAY  notes
-		else			
-			msg( "No hay ningun usuario con esa clave" )
-        endif
-		
+			@ 17, 03 SAY  notes	
+			@ 19, 03 SAY  Replicate( "-", 60 )	
+			@ 21, 03 SAY "Realmente quiere borrar este registro?" GET diSN PICTURE "@!K" VALID diSN $ "SsNn"
+			read
     endif
 
-    if lSigue .and. msgSN( "Estas seguro de querer borrar este registor?" )
+    if lSigue .and. diSN $ "Ss"
         if oDelete:execute()
             msg( "Registro borrado" )
         else
@@ -286,7 +282,7 @@ return
 static procedure consultaTodo()
 	
 	nRegIni := 0            	// Desde la clave mas pequeÃ±a posible
-	nRegFin := 99999999999		// Hasya la mas alta para usar en el BETWEEN
+	nRegFin := 99999999999		// Hasta la mas alta para usar en el BETWEEN
 	
 	oSelect:execute()
 	
@@ -348,23 +344,23 @@ return lRet
 
 static procedure consultaCursor()
 
-	local oCur                                 // Cursor local
+	local oRS                                 // Cursor local
 
 	if eligeRango()
 		// Creamos un cursor local (navigator) como un hash table
-		oCur := THashCursor():new( oSelect:fetchAll( FETCH_HASH ) )
+		oRS := oSelect:fetchRowSet()
 
 		cls
 		@ 00, 00 SAY "Resultado de la consulta -> " + hb_ntos( oSelect:rowCount() ) + " registros:" color "W+/R"
 		@ maxrow(), 00 SAY "<ESC> para volver al menu..." color "W+/R"
 
-		if oCur:reccount() > 0
-			miBrwCursor( oCur, 1, 0, maxrow() - 1, maxcol() )
+		if oRS:reccount() > 0
+			miBrwCursor( oRS, 1, 0, maxrow() - 1, maxcol() )
 		else
 			msg( "No hay registros en ese rango" )
 		endif
 
-		oCur:free()
+		oRS:free()
 	endif
 
 return
@@ -415,6 +411,7 @@ return getList
 static function pideClave()
 
     local getlist := {}
+	local lRet
 	
 	cls
 	
@@ -427,7 +424,13 @@ static function pideClave()
 	
     read
 	
-return( lastkey() != K_ESC .and. updated() )
+	lRet := lastkey() != K_ESC .and. updated()
+	
+	if lRet
+		lRet := dameReg( nRegIni )
+	endif
+	
+return( lRet )
 
 //------------------------------------------------------------------------------
 // Valida rango >
@@ -504,6 +507,31 @@ static procedure preparaStmt()
 
 return
 
+static function dameReg( reg )
+
+	local o := oDb:prepare( "SELECT * FROM test WHERE idreg = ?;" )
+	local lRet := .f.
+	
+	o:bindColumn(  1, @idreg )
+    o:bindColumn(  2, @first )
+    o:bindColumn(  3, @last )
+    o:bindColumn(  4, @street )
+    o:bindColumn(  5, @city )
+    o:bindColumn(  6, @state )
+	o:bindColumn(  7, @zip )
+    o:bindColumn(  8, @hiredate )
+    o:bindColumn(  9, @married )
+    o:bindColumn( 10, @age )
+    o:bindColumn( 11, @salary )
+    o:bindColumn( 12, @notes )
+
+	o:bindValue( 1, reg )
+	o:execute()
+	lRet := o:fetchBound()
+
+	o:free()
+	
+return lRet
 
 //------------------------------------------------------------------------------
 // Finaliza

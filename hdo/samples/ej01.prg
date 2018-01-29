@@ -2,14 +2,14 @@
  * Proyecto: hdo
  * Fichero: ej01.prg
  * Descripción: Ejemplo para abrir una base de datos y crearla si no existe
- * Autor: Manu Exposito 2015-17
- * Fecha: 15/01/2017
+ * Autor: Manu Exposito 2015-18
+ * Fecha: 20/01/2018
  */
 
 //------------------------------------------------------------------------------
 
-//#define SQLITE
-#define MYSQL
+#define SQLITE
+//#define MYSQL
 
 //------------------------------------------------------------------------------
 
@@ -31,7 +31,7 @@
 
 //------------------------------------------------------------------------------
 
-procedure main()
+procedure main01()
 
     local oDb := THDO():new( _DBMS )
 	
@@ -40,7 +40,6 @@ procedure main()
     endif
 	
     muestra( oDb:rdlInfo() )
-	muestra( oDb:errorInfo() )
 	
 	cls
 	
@@ -58,7 +57,7 @@ procedure main()
     ? "ATTR_CLIENT_INFO -------->", oDb:getAttribute( ATTR_CLIENT_INFO )
     ? "------------------------------------------------------------------------"
     espera()
-	
+
 	// Objerva que hay caractere que hay que escapar como comollas simples barra derecha e izquierda
 	// y comillas dobles por ejemplo HDO sabe como hacrlo para cada RDL:
 	msg( oDb:escapeStr( [Manuel's kely \todo mi\o /\/\ y mira las comillas dobles "j2j2"] ), "Ejemplo de escapeStr" )

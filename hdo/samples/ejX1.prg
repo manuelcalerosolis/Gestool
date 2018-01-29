@@ -2,9 +2,9 @@
  * Proyecto: HDO_GENERAL
  * Fichero: ejX1.prg
  * Autor: Manu Exposito
- * Fecha: 15/01/2017
+ * Fecha: 20/01/2018
  * Descripcion: Traspasa test.dbf de los ejemplos de Harbour a SQLite.
- *              Si no existe la bases de datos "demo.db" la crea.
+ *              Si no existe la bases de datos "hdodemo.db" la crea.
  *              Si no existe la tabla "test" la crea.
  */
 /*
@@ -20,6 +20,8 @@
 	
 #include "hdo.ch"
 
+REQUEST RDLSQLITE // Obliga al compilador a enlazar el modulo del RDL
+
 // Definiciones locales
 
 #define INSERT_SQL  "INSERT INTO test ( first, last, street, city, state, zip, "  + ;
@@ -27,7 +29,7 @@
 					"VALUES ( ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ? );"
 
 #define CREA_TABLE  "CREATE TABLE IF NOT EXISTS test ( "	+ ;
-						"idreg INTEGER PRIMARY KEY,"  		+ ;
+						"idreg INTEGER AUTO_INCREMENT  PRIMARY KEY,"  		+ ;
 						"first    VARCHAR( 20 ),"     		+ ;
 						"last     VARCHAR( 20 ),"     		+ ;
 						"street   VARCHAR( 30 ),"     		+ ;
@@ -51,7 +53,7 @@ procedure mainx1()
 	
     oDb := THDO():new( "sqlite" )
 
-    if oDb:connect( "demo.db" )
+    if oDb:connect( "hdodemo.db" )
 
         msg( "demo.db abierta" )
 
