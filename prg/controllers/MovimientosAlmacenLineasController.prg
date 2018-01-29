@@ -89,6 +89,8 @@ CLASS MovimientosAlmacenLineasController FROM SQLBrowseController
                                                       ( msgalert( hget( ::oModel:hBuffer, "uuid" ) ), hget( ::oModel:hBuffer, "uuid" ) ),;
                                                       ( msgalert( "nil" ), nil ) ) )
 
+   METHOD refreshBrowse()              INLINE ( iif(  !empty( ::oBrowseView ), ::oBrowseView:Refresh(), ) )
+
 END CLASS
 
 //---------------------------------------------------------------------------//

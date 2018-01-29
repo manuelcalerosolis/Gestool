@@ -721,10 +721,6 @@ METHOD insertBuffer( hBuffer )
 
    nId         := ::getDatabase():LastInsertId()
 
-   if !empty( ::cColumnKey )
-      hset( hBuffer, ::cColumnKey, nId )
-   end if 
-
    ::fireEvent( 'insertedBuffer' )
 
 RETURN ( nId )

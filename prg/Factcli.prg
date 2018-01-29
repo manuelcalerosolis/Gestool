@@ -12940,11 +12940,11 @@ STATIC FUNCTION LoaArt( cCodArt, aGet, aTmp, aTmpFac, oStkAct, oSayPr1, oSayPr2,
 
          nPrePro           := nPrePro( aTmp[ _CREF ], aTmp[ _CCODPR1 ], aTmp[ _CVALPR1 ], aTmp[ _CCODPR2 ], aTmp[ _CVALPR2 ], aTmp[ _NTARLIN ], aTmpFac[ _LIVAINC ], dbfArtDiv, dbfTarPreL, aTmpFac[_CCODTAR] )
 
-         if nPrePro != 0
-            aGet[ _NPREUNIT ]:cText( nPrePro )
-         else
-            aGet[ _NPREUNIT ]:cText( nRetPreArt( aTmp[ _NTARLIN ], aTmpFac[ _CDIVFAC ], aTmpFac[ _LIVAINC ], D():Articulos( nView ), dbfDiv, dbfKit, dbfIva, , aGet[ _NTARLIN ], oNewImp ) )
-         end if
+         if nPrePro == 0
+            nPrePro        := nRetPreArt( aTmp[ _NTARLIN ], aTmpFac[ _CDIVFAC ], aTmpFac[ _LIVAINC ], D():Articulos( nView ), dbfDiv, dbfKit, dbfIva, , if( !empty( aGet ), aGet[ _NTARLIN ], nil ), oNewImp )
+         end if 
+
+         aTmp[ _NPREUNIT ] := nPrePro
 
          if !empty( aGet ) .and. !empty( aGet[ _NPREUNIT ] ) // .and. empty( aTmp[ _NPREUNIT ] )
             aGet[ _NPREUNIT ]:Refresh()
@@ -12986,6 +12986,7 @@ STATIC FUNCTION LoaArt( cCodArt, aGet, aTmp, aTmpFac, oStkAct, oSayPr1, oSayPr2,
 
          nImpOfe  := RetLinTar( aTmp[ _CREF ], aTmp[ _CCODFAM ], aTmpFac[_CCODTAR], aTmp[_CCODPR1], aTmp[_CCODPR2], aTmp[_CVALPR1], aTmp[_CVALPR2], dbfTarPreL )
          if nImpOfe != 0
+            
             aTmp[ _NDTODIV ]  := nImpOfe
 
             if !empty( aGet ) .and. !empty( aGet[ _NDTODIV ] )
@@ -12997,7 +12998,10 @@ STATIC FUNCTION LoaArt( cCodArt, aGet, aTmp, aTmpFac, oStkAct, oSayPr1, oSayPr2,
 
          nImpOfe  := retComTar( aTmp[ _CREF ], aTmp[ _CCODFAM ], aTmpFac[ _CCODTAR ], aTmp[ _CCODPR1 ], aTmp[ _CCODPR2 ], aTmp[ _CVALPR1 ], aTmp[ _CVALPR2 ], aTmpFac[ _CCODAGE ], dbfTarPreL, dbfTarPreS )
          if nImpOfe != 0
-            if !empty( aGet[ _NCOMAGE ] )
+            
+            aTmp[ _NCOMAGE ]  := nImpOfe
+
+            if !empty( aGet ) .and. !empty( aGet[ _NCOMAGE ] )
                aGet[ _NCOMAGE ]:cText( nImpOfe )
             end if   
          end if
@@ -13006,7 +13010,10 @@ STATIC FUNCTION LoaArt( cCodArt, aGet, aTmp, aTmpFac, oStkAct, oSayPr1, oSayPr2,
 
          nImpOfe  := RetDtoPrm( aTmp[ _CREF ], aTmp[ _CCODFAM ], aTmpFac[_CCODTAR], aTmp[_CCODPR1], aTmp[_CCODPR2], aTmp[_CVALPR1], aTmp[_CVALPR2], aTmpFac[_DFECFAC], dbfTarPreL )
          if nImpOfe  != 0
-            if !empty( aGet[ _NDTOPRM ] )
+            
+            aTmp[ _NDTOPRM ]  := nImpOfe
+
+            if !empty( aGet ) .and. !empty( aGet[ _NDTOPRM ] )
                aGet[ _NDTOPRM ]:cText( nImpOfe )
             end if   
          end if
@@ -13015,7 +13022,10 @@ STATIC FUNCTION LoaArt( cCodArt, aGet, aTmp, aTmpFac, oStkAct, oSayPr1, oSayPr2,
 
          nDtoAge  := RetDtoAge( aTmp[ _CREF ], aTmp[ _CCODFAM ], aTmpFac[ _CCODTAR ], aTmp[_CCODPR1], aTmp[_CCODPR2], aTmp[_CVALPR1], aTmp[_CVALPR2], aTmpFac[_DFECFAC], aTmpFac[_CCODAGE], dbfTarPreL, dbfTarPreS )
          if nDtoAge  != 0
-            if !empty( aGet[ _NCOMAGE] )
+
+            aTmp[ _NCOMAGE ]  := nDtoAge
+
+            if !empty( aGet ) .and. !empty( aGet[ _NCOMAGE] )
                aGet[ _NCOMAGE ]:cText( nDtoAge )
             end if   
          end if
@@ -13031,6 +13041,7 @@ STATIC FUNCTION LoaArt( cCodArt, aGet, aTmp, aTmpFac, oStkAct, oSayPr1, oSayPr2,
       if !empty( hAtipica )
 
          if hhaskey( hAtipica, "nImporte" ) .and. hAtipica[ "nImporte" ] != 0
+
             aTmp[ _NPREUNIT ] := hAtipica[ "nImporte" ] 
 
             if !empty( aGet ) .and. !empty( aGet[ _NPREUNIT ] )
@@ -13039,20 +13050,25 @@ STATIC FUNCTION LoaArt( cCodArt, aGet, aTmp, aTmpFac, oStkAct, oSayPr1, oSayPr2,
          end if
 
          if hhaskey( hAtipica, "nDescuentoPorcentual" ) .and. hAtipica[ "nDescuentoPorcentual"] != 0 .and. aTmp[ _NDTO ] == 0
+
             aTmp[ _NDTO ]  := hAtipica[ "nDescuentoPorcentual"]
+
             if !empty( aGet ) .and. !empty( aGet[ _NDTO ] )
                aGet[ _NDTO ]:Refresh()   
             end if   
          end if
 
          if hhaskey( hAtipica, "nDescuentoPromocional" ) .and. hAtipica[ "nDescuentoPromocional" ] != 0 .and. aTmp[ _NDTOPRM ] == 0
+
             aTmp[ _NDTOPRM ]  := hAtipica[ "nDescuentoPromocional" ] 
+
             if !empty( aGet ) .and. !empty( aGet[ _NDTOPRM ] )
                aGet[ _NDTOPRM ]:Refresh()
             end if
          end if
 
          if hhaskey( hAtipica, "nComisionAgente" ) .and. hAtipica[ "nComisionAgente" ] != 0 .and. aTmp[ _NCOMAGE ] == 0
+
             atmp[ _NCOMAGE ]  := hAtipica[ "nComisionAgente" ] 
             
             if !empty( aGet ) .and. !empty( aGet[ _NCOMAGE ] )
@@ -13061,14 +13077,18 @@ STATIC FUNCTION LoaArt( cCodArt, aGet, aTmp, aTmpFac, oStkAct, oSayPr1, oSayPr2,
          end if
 
          if hhaskey( hAtipica, "nDescuentoLineal" ) .and. hAtipica[ "nDescuentoLineal" ] != 0 .and. aTmp[ _NDTODIV ] == 0
+
             aTmp[ _NDTODIV ]  := hAtipica[ "nDescuentoLineal" ]
+
             if !empty( aGet ) .and. !empty( aGet[ _NDTODIV ] )
                aGet[ _NDTODIV ]:Refresh()
             end if
          end if
 
          if hhaskey( hAtipica, "nTarifaPrecio" ) .and. hAtipica[ "nTarifaPrecio" ] != 0 .and. aTmp[ _NDTODIV ] == 0
+
             aTmp[ _NTARLIN ]  := hAtipica[ "nTarifaPrecio" ] 
+
             if !empty( aGet ) .and. !empty( aGet[ _NTARLIN ] )
                aGet[ _NTARLIN ]:Refresh()
             end if 
@@ -13162,10 +13182,10 @@ STATIC FUNCTION LoaArt( cCodArt, aGet, aTmp, aTmpFac, oStkAct, oSayPr1, oSayPr2,
             nCosPro              := nCosto( aTmp[ _CREF ], D():Articulos( nView ), dbfKit, .f., , dbfDiv )
          end if
 
+         aTmp[ _NCOSDIV ]  := nCosPro
+
          if !empty( aGet ) .and. aGet[ _NCOSDIV ] != nil
-            aGet[ _NCOSDIV ]:cText( nCosPro )
-         else
-            aTmp[ _NCOSDIV ]  := nCosPro
+            aGet[ _NCOSDIV ]:Refresh()
          end if
 
       end if

@@ -66,6 +66,7 @@ CLASS MovimientosAlmacenController FROM SQLNavigatorController
    METHOD deleteLines()
 
    METHOD getBrowse()               INLINE ( ::oBrowseView:getBrowse() )
+   METHOD refreshLineasBrowse()     INLINE ( iif( !empty( ::oLineasController ), ::getBrowse():Refresh(), ) )
 
    METHOD loadedBlankBuffer()
 
