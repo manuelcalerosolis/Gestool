@@ -10,8 +10,6 @@ CLASS SQLMovimientosAlmacenModel FROM SQLExportableModel
 
    DATA cConstraints             INIT "PRIMARY KEY (id), KEY (uuid)"
 
-   DATA cColumnOrder             INIT "id"
-
    DATA aTextoMovimiento         INIT { "Entre almacenes", "Regularización", "Objetivos", "Consolidación" }
 
    METHOD getColumns()
@@ -65,6 +63,8 @@ METHOD getColumns()
                                              "default"   => {|| space( 250 ) } }                      )
 
    ::getTimeStampColumns()   
+
+   ::getTimeStampSentColumns()
 
 RETURN ( ::hColumns )
 

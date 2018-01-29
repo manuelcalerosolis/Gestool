@@ -75,6 +75,7 @@ METHOD New( oController )
 RETURN ( Self )
 
 //----------------------------------------------------------------------------//
+
 METHOD onChangeCombo( oColumn )
 
    local oComboBox   := ::getComboBoxOrder()

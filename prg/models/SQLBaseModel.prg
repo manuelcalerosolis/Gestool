@@ -56,6 +56,7 @@ CLASS SQLBaseModel
 
    METHOD getEmpresaColumns()
    METHOD getTimeStampColumns()
+   METHOD getTimeStampSentColumns()
 
    METHOD getSerializeColumns()
 
@@ -191,13 +192,22 @@ RETURN ( nil )
 
 METHOD getTimeStampColumns()
 
-   hset( ::hColumns, "creado",      {  "create"    => "DATETIME DEFAULT CURRENT_TIMESTAMP"      ,;
-                                       "text"      => "Creación fecha y hora"                   ,;
-                                       "default"   => {|| hb_datetime() } }                     )
+   hset( ::hColumns, "creado",      {  "create"    => "DATETIME DEFAULT NULL"       ,;
+                                       "text"      => "Creación fecha y hora"       ,;
+                                       "default"   => {|| hb_datetime() } }         )
 
-   hset( ::hColumns, "modificado",  {  "create"    => "DATETIME DEFAULT CURRENT_TIMESTAMP"      ,;
-                                       "text"      => "Modificación fecha y hora"               ,;
-                                       "default"   => {|| hb_datetime() } }                     )
+   hset( ::hColumns, "modificado",  {  "create"    => "DATETIME DEFAULT NULL"       ,;
+                                       "text"      => "Modificación fecha y hora"   ,;
+                                       "default"   => {|| hb_datetime() } }         )
+
+RETURN ( ::hColumns )
+
+//---------------------------------------------------------------------------//
+
+METHOD getTimeStampSentColumns()
+
+   hset( ::hColumns, "enviado",     {  "create"    => "DATETIME DEFAULT NULL"       ,;
+                                       "text"      => "Enviado fecha y hora" }      )
 
 RETURN ( ::hColumns )
 
@@ -394,7 +404,9 @@ METHOD getAlterTableSentences( aSchemaColumns )
       heval( hColumns, {| k, hash | aadd( aAlter, "ALTER TABLE " + ::cTableName + " ADD COLUMN " + k + " " + hget( hash, "create" ) ) } )
    end if 
 
-   msgAlert( hb_valtoexp( hColumns ), "getAlterTableSentences" )
+   if !empty( hColumns )
+      msgAlert( hb_valtoexp( hColumns ), "getAlterTableSentences" )
+   end if 
 
 RETURN ( aAlter )
 
@@ -710,7 +722,7 @@ METHOD insertBuffer( hBuffer )
    nId         := ::getDatabase():LastInsertId()
 
    if !empty( ::cColumnKey )
-      hset( ::hBuffer, ::cColumnKey, nId )
+      hset( hBuffer, ::cColumnKey, nId )
    end if 
 
    ::fireEvent( 'insertedBuffer' )

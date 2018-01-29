@@ -3,11 +3,33 @@
  * Fichero: ej05.prg
  * Descripción: Uso de sentencias preparaadas con parametros y variables
  *                vinculadas Insert.
- * Autor: Manu Exposito 2015-17
- * Fecha: 15/01/2017
+ * Autor: Manu Exposito 2015-18
+ * Fecha: 20/01/2018
  */
 
+//------------------------------------------------------------------------------
+
 #include "hdo.ch"
+#include "inkey.ch"
+
+//------------------------------------------------------------------------------
+
+#define SQLITE
+//#define MYSQL
+
+#ifdef SQLITE
+	REQUEST RDLSQLITE
+	#define _DBMS	"sqlite"
+	#define _DB 	"hdodemo.db"
+	#define _CONN
+#else
+	#ifdef MYSQL
+		REQUEST RDLMYSQL
+		#define _DBMS	"mysql"
+		#define _DB		"hdodemo"
+		#define _CONN 	"127.0.0.1", "root", "root"
+	#endif
+#endif
 
 //------------------------------------------------------------------------------
 //
@@ -15,7 +37,6 @@
 procedure main05()
 
     local oDb, oStmt, e
-    local cDb := "demo.db"
     local cTabla := "test"
 
     //    1      2     3       4     5      6    7         8        9    10      11
@@ -24,14 +45,16 @@ procedure main05()
        " ( first, last, street, city, state, zip, hiredate, married, age, salary, notes ) "  + ;
        "VALUES ( ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ? );"
 
-    oDb := THDO():new( "sqlite" )
+	oDb := THDO():new( _DBMS )
 
-    if oDb:connect( cDb )
+    if oDb:connect( _DB, _CONN )
 
         TRY
 			oDb:beginTransaction()
             oStmt := oDb:prepare( cSql ) // Prepara la sentencia
 
+            // ----------------------------------------------------------------
+	
             // Enlaza los valores con los parametros de sustitucion
             oStmt:bindValue( 1, 'Maria' )
             oStmt:bindValue( 2, 'Gimenez' )
@@ -39,8 +62,8 @@ procedure main05()
             oStmt:bindValue( 4, 'Dos Hermanas' )
             oStmt:bindValue( 5, 'ES' )
             oStmt:bindValue( 6, '41700' )
-            oStmt:bindValue( 7,  dtos( date() ) )
-            oStmt:bindValue( 8,  1 )
+            oStmt:bindValue( 7,  date() )
+            oStmt:bindValue( 8,  .t. )
             oStmt:bindValue( 9,  33 )
             oStmt:bindValue( 10, 5670.50 )
             oStmt:bindValue( 11, 'Esta es la nota de Maria...' )
@@ -54,8 +77,8 @@ procedure main05()
             oStmt:bindValue( 4, 'Dos Hermanas' )
             oStmt:bindValue( 5, 'ES' )
             oStmt:bindValue( 6, '41700' )
-            oStmt:bindValue( 7,  dtos( Date() ) )
-            oStmt:bindValue( 8,  0 )
+            oStmt:bindValue( 7,  Date() )
+            oStmt:bindValue( 8,  .f. )
             oStmt:bindValue( 9,  34 )
             oStmt:bindValue( 10, 8560.50 )
             oStmt:bindValue( 11, 'Esta es la nota de Jose...' )
@@ -69,15 +92,13 @@ procedure main05()
             oStmt:bindValue( 4, 'Dos Hermanas' )
             oStmt:bindValue( 5, 'ES' )
             oStmt:bindValue( 6, '41700' )
-            oStmt:bindValue( 7,  dtos( Date() ) )
-            oStmt:bindValue( 8,  1 )
+            oStmt:bindValue( 7,  Date() )
+            oStmt:bindValue( 8,  .t. )
             oStmt:bindValue( 9,  33 )
             oStmt:bindValue( 10, 10000.50 )
             oStmt:bindValue( 11, 'Esta es la nota de Adrian...' )
 
             oStmt:execute()
-
-            // ----------------------------------------------------------------
 
             // Cracion de binds con variables de harbour.
             // Note que la variable se pasa por REFERENCIA.
@@ -85,18 +106,18 @@ procedure main05()
 			// normal de harbour y se envia el metodo execute para insertar el
 			// valor en la base de datos. Es el metodo mas facil y rapido de
 			// hacerlo.
-			
-            oStmt:bindParam(  1, @first  )
-            oStmt:bindParam(  2, @last  )
-            oStmt:bindParam(  3, @street )
-            oStmt:bindParam(  4, @city )
-            oStmt:bindParam(  5, @state )
-            oStmt:bindParam(  6, @zip )
-            oStmt:bindParam(  7, @hiredate )
-            oStmt:bindParam(  8, @married )
-            oStmt:bindParam(  9, @age )
-            oStmt:bindParam( 10, @salary )
-            oStmt:bindParam( 11, @notes )
+		
+			oStmt:bindParam(  1, @first  )
+			oStmt:bindParam(  2, @last  )
+			oStmt:bindParam(  3, @street )
+			oStmt:bindParam(  4, @city )
+			oStmt:bindParam(  5, @state )
+			oStmt:bindParam(  6, @zip )
+			oStmt:bindParam(  7, @hiredate )
+			oStmt:bindParam(  8, @married )
+			oStmt:bindParam(  9, @age )
+			oStmt:bindParam( 10, @salary )
+			oStmt:bindParam( 11, @notes )
 
             // Uso de binds
 
@@ -107,8 +128,8 @@ procedure main05()
             city 	 := "city......1"
             state 	 := "s1"
             zip 	 := "41701"
-            hiredate := dtoc( Date() + 1 )
-            married  := 0
+            hiredate := Date() + 1
+            married  := .f.
             age      := 51
             salary   := 5100.01
             notes    := "Nota......1"
@@ -122,8 +143,8 @@ procedure main05()
             city 	 := "city......2"
             state 	 := "s2"
             zip 	 := "41072"
-            hiredate := dtoc( Date() + 2 )
-            married  := 1
+            hiredate := Date() + 2
+            married  := .t.
             age      := 52
             salary   := 5200.02
             notes    := "Nota......2"
@@ -137,19 +158,19 @@ procedure main05()
             city 	 := "city......3"
             state 	 := "s3"
             zip 	 := "41073"
-            hiredate := dtoc( Date() + 3 )
-            married  := 0
+            hiredate := Date() + 3
+            married  := .f.
             age      := 53
             salary   := 5300.03
             notes    := "Nota......3"
 
             oStmt:execute()
+
 			oDb:commit()
 			
             msg( "Se han insertado los registros" )
 
         CATCH e
-            muestra( oDb:errorInfo(), "Error desde rdl:errorInfo()" )
             eval( errorblock(), e )
 			oDb:rollBack()
         FINALLY
@@ -158,6 +179,8 @@ procedure main05()
     endif
 
     oDb:disconnect()
+	
+	msg( "Fin de la ejecion" )
 
 return
 

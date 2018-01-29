@@ -6,36 +6,57 @@
  *                - Consultas.
  *                - Cursores locales.
  *                - Atributos
- * Autor: Manu Exposito 2015-17
- * Fecha: 15/01/2017
+ * Autor: Manu Exposito 2015-18
+ * Fecha: 20/01/2018
 */
 
+//------------------------------------------------------------------------------
+
+#define SQLITE
+//#define MYSQL
+
+//------------------------------------------------------------------------------
+
 #include "hdo.ch"
+
+#ifdef SQLITE
+	REQUEST RDLSQLITE
+	#define _DBMS "sqlite"
+	#define _DB  "hdodemo.db"
+	#define _CONN
+#else
+	#ifdef MYSQL
+		REQUEST RDLMYSQL
+		#define _DBMS "mysql"
+		#define _DB  "hdodemo"
+		#define _CONN  "127.0.0.1", "root", "root"
+	#endif
+#endif
 
 //------------------------------------------------------------------------------
 
 // Marcar o desmascar si se quiere usar cursor con array tradicional o una hash
 // table:
 
-#define _ARRAY_
+//#define _ARRAY_
 
 #ifdef _ARRAY_
-#define id_TIPO "ARRAY"
+	#define id_TIPO "ARRAY"
 #else
-#define id_TIPO "HASH"
+	#define id_TIPO "HASH"
 #endif
 
 procedure main06()
 
     local oDb, oStmt, oCur
 	local aVer, n, e, cFld, h, xVal
-    local cDb := "demo.db"
     local cTabla := "test"
     local cSql := "SELECT * FROM " + cTabla + " WHERE idreg BETWEEN ? AND ?;"
 
     cls
 
-    oDb := THDO():new( "sqlite" )
+    oDb := THDO():new( _DBMS )
+	oDb:setAttribute( ATTR_ERRMODE, ERRMODE_SILENT )
     aVer := oDb:rdlInfo()
 	AAdd( aVer, ";---oOo---;" )
 	AAdd( aVer, HB_version() )
@@ -45,6 +66,7 @@ procedure main06()
 
     ? "Estado actual de los atributos de HDO:"
     ? "------------------------------------------------------------------------"
+    ? "ATTR_RDL_NAME ----------->", oDb:getAttribute( ATTR_RDL_NAME )
     ? "ATTR_AUTOCOMMIT --------->", oDb:getAttribute( ATTR_AUTOCOMMIT )
     ? "ATTR_CASE --------------->", oDb:getAttribute( ATTR_CASE )
     ? "ATTR_TIMEOUT ------------>", oDb:getAttribute( ATTR_TIMEOUT )
@@ -52,27 +74,27 @@ procedure main06()
     ? "ATTR_ERRMODE ------------>", oDb:getAttribute( ATTR_ERRMODE )
     ? "ATTR_SERVER_VERSION ----->", oDb:getAttribute( ATTR_SERVER_VERSION )
     ? "ATTR_CLIENT_VERSION ----->", oDb:getAttribute( ATTR_CLIENT_VERSION )
-    ? "ATTR_RDL_NAME ----------->", oDb:getAttribute( ATTR_RDL_NAME )
     ? "ATTR_SERVER_INFO -------->", oDb:getAttribute( ATTR_SERVER_INFO )
+    ? "ATTR_CLIENT_INFO -------->", oDb:getAttribute( ATTR_CLIENT_INFO )
     ? "------------------------------------------------------------------------"
     espera()
 
     cls
 
-    oDb:setAttribute( ATTR_ERRMODE, .t. )
-
     ? "Prueba con cursores basados en: " + id_TIPO
     ? "------------------------------------------------------------------------"
     ?
 
-    if oDb:connect( cDb )
+    if oDb:connect( _DB, _CONN )
 
         TRY
             // Prepara la sentencia
             oStmt := oDb:prepare( cSql )
-            // Enlaza valores
+
+			// Enlaza valores
             oStmt:bindValue( 1, 1 )     	// Primer  ?
-            oStmt:bindValue( 2, 1000000 )	// Segundo ?
+            oStmt:bindValue( 2, 100000 )	// Segundo ?
+
             // Ejecuta la sentencia
             oStmt:execute()
 			
@@ -80,13 +102,15 @@ procedure main06()
             for n := 1 to oStmt:columnCount()
                 ? padr( oStmt:getColName( n ), 20, " " ), oStmt:getColType( n ), ;
                    oStmt:getColLen( n ), oStmt:getColDec( n ), oStmt:getColPos( oStmt:getColName( n ) )
-                muestra( oStmt:getColumnMeta( n ), "METADATOS->" + hb_ntos( n ) )
+                //muestra( oStmt:getColumnMeta( n ), "METADATOS->" + hb_ntos( n ) )
             next
+			muestra( oStmt:getColumnMeta(  2 ), "METADATOS->" + hb_ntos(  2 ) )
+			muestra( oStmt:getColumnMeta( 12 ), "METADATOS->" + hb_ntos( 12 ) )
             espera()
             //----------------------------------------------------------------------------------------------------------------------
             // Prueba con hash
             cls
-            h := oStmt:listColNames( AS_HASH )  // Con AS_HASH
+            h := oStmt:listColNames( AS_HASH_TYPE )  // Con AS_HASH_TYPE
 
             ? "Tabla hash:"
             ? "------------------------------------------------------------------------"
@@ -94,7 +118,7 @@ procedure main06()
                 ? "Key...:", padr( hb_hpairat( h, n )[ 1 ], 15, " " ), "Valor...:", hb_ntos( hb_hpairat( h, n )[ 2 ] )
             next
             ?
-            h := oStmt:listColNames( AS_ARRAY ) // Con AS_ARRAY
+            h := oStmt:listColNames() // Con AS_ARRAY_TYPE por defecto
             ? "Tabla array:"
             ? "------------------------------------------------------------------------"
             for n := 1 to oStmt:columnCount()
@@ -102,20 +126,19 @@ procedure main06()
             next
             espera()
 
-			muestra( oStmt:listColNames( AS_ARRAY ) )
-		
+			muestra( oStmt:listColNames() )
+
             //----------------------------------------------------------------------------------------------------------------------
             // Creamos un cursor local (navigator) como un array o hash table
 #ifdef _ARRAY_
-            //oCur := TMemCursor():new( oStmt:fetchAllArray(), oStmt:listColNames( AS_ARRAY ) )
-            oCur := TMemCursor():new( oStmt:fetchAll( FETCH_ARRAY ), oStmt:listColNames( AS_ARRAY ) )
+            //oCur := TMemList():new( oStmt:fetchAllArray(), oStmt:listColNames() )
+            oCur := TMemList():new( oStmt:fetchAll( FETCH_ARRAY ), oStmt:listColNames() )
 #else
-            //oCur := THashCursor():new( oStmt:fetchAllHash() )
-            oCur := THashCursor():new( oStmt:fetchAll( FETCH_HASH ) )
+            //oCur := THashList():new( oStmt:fetchAllHash() )
+            oCur := THashList():new( oStmt:fetchAll( FETCH_HASH ) )
 #endif
-            // Cierra el objeto sentencia para liberar memoria
+			// Cierra el objeto sentencia para liberar memoria, el resultado ya esta en el cursor local
             oStmt:free()
-
 
             cFld := "street"  // first, last, street, city, state, zip, hiredate, married, age, salary, notes
 
@@ -126,7 +149,7 @@ procedure main06()
             ? "Posicion............: ", oCur:fieldpos( cFld )
             ? "Ancho...............: ", oCur:fieldlen( cFld )
             ? "Valor por fieldGet..: ", oCur:fieldget( cFld )
-            ? "Valor por nombre....: ", oCur:valueByName( cFld )
+            ? "Valor por nombre....: ", oCur:getValueByName( cFld )
             ? "Valor por posicion..: ", oCur:getValueByPos( oCur:fieldpos( cFld ) )
 			? "-------------------------------------------------------------------------------"
             espera()
@@ -150,10 +173,9 @@ procedure main06()
             espera( 15 )
 
         CATCH e
-            muestra( oDb:errorInfo(), "Error desde rdl:errorInfo()" )
             eval( errorblock(), e )
         FINALLY
-            if "CURSOR" $ oCur:className()  // Es un cursor local?
+            if "LIST" $ oCur:className()  // Es un cursor local?
                 msg( "Se va la liberar el cursor local", oCur:className() )
                 oCur:free()
                 msg( "Se ha liberado el cursor local" )

@@ -3,11 +3,32 @@
  * Fichero: ej16.prg
  * Descripci󮺠Manteniento simple de una tabla
  * Autor: Manu Exposito
- * Fecha: 15/01/2017
+ * Fecha: 20/01/2018
  */
 
+//------------------------------------------------------------------------------
+
 #include "hdo.ch"
-#include "InKey.ch"
+#include "inkey.ch"
+
+//------------------------------------------------------------------------------
+
+#define SQLITE
+//#define MYSQL
+
+#ifdef SQLITE
+	REQUEST RDLSQLITE
+	#define _DBMS	"sqlite"
+	#define _DB 	"hdodemo.db"
+	#define _CONN
+#else
+	#ifdef MYSQL
+		REQUEST RDLMYSQL
+		#define _DBMS	"mysql"
+		#define _DB		"hdodemo"
+		#define _CONN 	"127.0.0.1", "root", "root"
+	#endif
+#endif
 
 //------------------------------------------------------------------------------
 // Definiciones
@@ -16,10 +37,10 @@
                 CHR( 217 ) + CHR( 196 ) + CHR( 192 ) + CHR( 179 ) + " " )
 
 // Nombre de la base de datos:
-#define DB_NAME  "demo.db"
+#define DB_NAME  "hdodemo.db"
 
 // Sentencias precompiladas:
-#define STMT_SEL "SELECT * FROM test WHERE idreg BETWEEN :inicio AND :final;"
+#define STMT_SEL "SELECT * FROM test WHERE idreg BETWEEN ? AND ?;"
 #define STMT_INS "INSERT INTO test ( first, last, street, city, state, zip, hiredate, married, age, salary, notes ) VALUES ( ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ? );"
 #define STMT_UPD "UPDATE test set first = ?, last = ?, street = ?, city = ?, state = ?, zip = ?, hiredate = ?, married = ?, age = ?, salary = ?, notes = ? WHERE idreg = ?;"
 #define STMT_DEL "DELETE FROM test WHERE idreg = ?;"
@@ -28,34 +49,36 @@
 // Variables estaticas que se van a usar en varias funciones
 
 static oDb  								// Conexion con base de datos
-static oRS                                 // Cursor local
+static oRS                                  // Cursor local basado en un RowSet
 static oSelect, oInsert, oUpdate, oDelete	// Objetos sentencias (statemet)
 static idreg, first, last, street, city, ;
        state, zip, hiredate, married, ;
 	   age, salary, notes 					// Variables de campos
 
-static nRecIni := 0, nRecEnd := 99999999
+static nRecIni := 1, nRecEnd := 100000
 
 //------------------------------------------------------------------------------
 // Procedimiento principal
 
-procedure main()
+procedure main16()
 
     local e, getlist := {}
 
 	set date format to "dd-mm-yyyy"
-	
-    cls
 
-    oDb := THDO():new( "sqlite" )
+	oDb := THDO():new( _DBMS )
 
-    oDb:setAttribute( ATTR_ERRMODE, .t. )
-
-    if oDb:connect( DB_NAME )
+    if oDb:connect( _DB, _CONN )
         try
             preparaStmt()
-	
-            @ maxrow(), 00 SAY "Presiona <INTRO> para selecionar rangos o <ESC> para salir..."
+
+            // Creamos un RowSet que automaticamente hace un oSelect:execute()
+            oRS := oSelect:fetchRowSet()
+
+	        nRecIni := 0
+            nRecEnd := 9999999
+
+            menu()
 
             while inkey( 0 ) != 27
 
@@ -66,27 +89,19 @@ procedure main()
                 @ 05, 02 SAY "Entre rango final....................:" GET nRecEnd PICTURE "@K 99999999" VALID validaRango( nRecIni, nRecEnd )
 
 				READ
-
-				oSelect:execute() // Ejecuta la sentencia
 				
-				// Creamos un cursor local (navigator) como un hash table
-				oRS := oSelect:fetchRowSet()
-				
-                cls
+                oRS:refresh()
 
                 cabecera()
+				
 				Pie()
-				
                 miBrw()
-				
-                oRS:free()
-
-                cls
-                @ maxrow(), 00 SAY "Presiona <INTRO> para selecionar rangos o <ESC> para salir..."
-            end
+                menu()
+           end
         catch e
             eval( errorBlock(), e )
         finally
+            oRS:free()
 			liberaStmt()
             msg( "--- < FIN > ---" )
         end
@@ -105,8 +120,6 @@ static procedure miBrw()
     local i, oBrw := tbrowsenew( 2, 1, maxrow() -1 , maxcol() - 1 )
 
     hb_dispbox( 1, 0, maxrow() - 1, maxcol(), hb_utf8tostrbox( "┌─┐│┘─└│ " ), "W+/B, N/BG" )
-
-    oRS:goTop()
 
     oBrw:colorSpec     := "W+/B, N/BG"
     oBrw:ColSep        := hb_utf8tostrbox( "│" )
@@ -219,8 +232,8 @@ static procedure frontControl( oBrw )
             consultar()
             exit
 
-        case K_F10
-            Listar( oSelect )
+        case K_F9
+            ListarRS()
             exit
 
         end switch
@@ -243,8 +256,12 @@ static procedure genColumn( oBrw )
 	oBrw:AddColumn( tbcolumnnew( "City",     { || oRS:fieldget( 5 ) } ) )
 	oBrw:AddColumn( tbcolumnnew( "State",    { || oRS:fieldget( 6 ) } ) )
 	oBrw:AddColumn( tbcolumnnew( "Zip",      { || oRS:fieldget( 7 ) } ) )
-	oBrw:AddColumn( tbcolumnnew( "Hiredate", { || HB_CToD( oRS:fieldget( 8 ), "yyyy-mm-dd" ) } ) )
+	oBrw:AddColumn( tbcolumnnew( "Hiredate", { || oRS:fieldget( 8 ) } ) )
+#ifdef SQLITE
 	oBrw:AddColumn( tbcolumnnew( "Married",  { || if( oRS:fieldGet( 9 ) == 1, 'S', 'N' ) } ) )
+#else
+	oBrw:AddColumn( tbcolumnnew( "Married",  { || if( oRS:fieldGet( 9 ), 'S', 'N' ) } ) )
+#endif
 	oBrw:AddColumn( tbcolumnnew( "Age",      { || oRS:fieldget( 10 ) } ) )
 	oBrw:AddColumn( tbcolumnnew( "Salary",   { || oRS:fieldget( 11 ) } ) )
 	oBrw:AddColumn( tbcolumnnew( "Notes",    { || oRS:fieldget( 12 ) } ) )
@@ -257,11 +274,11 @@ return
 static procedure ayuda()
 
     msg( "F1 ...... Ayuda      ;" + ;
-         "F2 ...... Consultar  ;" + ;
-         "F10 ..... Listar     ;" + ;
-         "Intro ... Modificar  ;" + ;
-         "Insert .. Insertar   ;" + ;
-         "Supr .... Borrar     "  ,  "AYUDA" )
+         "F2 ...... Consulta   ;" + ;
+         "F9 ...... Listar     ;" + ;
+         "Intro ... Modifica   ;" + ;
+         "Insert .. Inserta    ;" + ;
+         "Supr .... Borra      "  ,  "AYUDA" )
 
 return
 
@@ -279,14 +296,13 @@ static procedure modificar()
 
 	cargaReg()
 	
-	@ 04, 03 SAY "Modificacion del socio: " + hb_ntos( oRS:fieldGet(  1 ) )
+	@ 04, 03 SAY "Modificacion del socio: " + hb_ntos( idreg )
 	getList := muestraGet()
 	
 	read	
 	
-	if lastkey() != K_ESC .and. updated()
-		married := if( married $ 'Ss', 1, 0 )
-		hiredate := HB_DToC( hiredate, "yyyy-mm-dd" )
+	if lastkey() != K_ESC .and. Updated()
+		married := if( married $ 'Ss', .t., .f. )
 		msgEspera()
 		oUpdate:execute()
 		oRS:refresh()
@@ -318,7 +334,6 @@ static procedure Insertar( oBrw )
 	
 	if lastkey() != K_ESC .and. updated()
 		married := if( married $ 'Ss', 1, 0 )
-		hiredate := HB_DToC( hiredate, "yyyy-mm-dd" )
 		msgEspera()
 		oInsert:execute()
         oRS:refresh()
@@ -348,26 +363,44 @@ return
 //------------------------------------------------------------------------------
 // Consulta directamente a la tabla con variables xbase vinculadas
 
-static procedure Listar( oSelect )
+static procedure ListarRS()
 	
     local i := 1
     local cSs := savescreen( 0, 0, maxrow(), maxcol() )
-		
+	local nRec := oRS:recNo()
+	
+	oRS:goTop()
+	
     cls
-    ? "Registros desde la tabla:"
+
+	? "Registros desde la tabla:"
 	
-    while oSelect:fetchBound()
+    while !oRS:eof()
 	
-        ? HB_NToS( idreg ), first, last, street //, city, state, zip, hiredate, married, age, salary, notes
-	
-        if( i > 20, ( espera(), Scroll(), SetPos( 0, 0 ), i := 1 ), i++ )
+        ? HB_NToS( oRS:fieldGet( 1 ) ), oRS:fieldGet( 2 ), oRS:fieldGet( 3 ), oRS:fieldGet( 4 )
+		
+	    oRS:next()
+
+		if( i > 20, ( espera(), Scroll(), SetPos( 0, 0 ), i := 1 ), i++ )
 	
     end while
+	
+	oRS:goTo( nRec )
 	
     msg( "Se termino..." )
 	
     restscreen( 0, 0, maxrow(), maxcol(), cSs )
 	
+return
+
+//------------------------------------------------------------------------------
+
+static procedure menu()
+	
+    cls
+
+    @ maxrow(), 00 SAY "Presiona <INTRO> para selecionar rangos o <ESC> para salir..."
+
 return
 
 //------------------------------------------------------------------------------
@@ -409,15 +442,20 @@ static procedure consultar()
 	
     DispBox( 3, 2, 18, 74, B_BOX )
 	
-	@ 04, 03 SAY "Consulta del socio [" + hb_ntos( oRS:fieldGet(  1 ) ) + "]"
-    @ 06, 03 SAY "First....: " + oRS:fieldGet(  2 )
-    @ 07, 03 SAY "Last.....: " + oRS:fieldGet(  3 )
-    @ 08, 03 SAY "Street...: " + oRS:fieldGet(  4 )
-    @ 09, 03 SAY "City.....: " + oRS:fieldGet(  5 )
-    @ 10, 03 SAY "State....: " + oRS:fieldGet(  6 )
-    @ 11, 03 SAY "Zip......: " + oRS:fieldGet(  7 )
-    @ 12, 03 SAY "Hiredate.: " + HB_DToC( HB_CToD( oRS:fieldGet(  8 ), "yyyy-mm-dd" ), "dd-mm-yyyy" )
+	@ 04, 03 SAY "Consulta del socio [" + hb_ntos( oRS:fieldGet( 1 ) ) + "]"
+    @ 06, 03 SAY "First....: " + oRS:fieldGet( 2 )
+    @ 07, 03 SAY "Last.....: " + oRS:fieldGet( 3 )
+    @ 08, 03 SAY "Street...: " + oRS:fieldGet( 4 )
+    @ 09, 03 SAY "City.....: " + oRS:fieldGet( 5 )
+    @ 10, 03 SAY "State....: " + oRS:fieldGet( 6 )
+    @ 11, 03 SAY "Zip......: " + oRS:fieldGet( 7 )
+#ifdef SQLITE
+    @ 12, 03 SAY "Hiredate.: " + HB_DToC( HB_CToD( oRS:fieldGet( 8 ), "yyyy-mm-dd" ), "dd-mm-yyyy" )
     @ 13, 03 SAY "Married..: " + if( oRS:fieldGet( 9 ) == 1, 'S', 'N' )
+#else
+    @ 12, 03 SAY "Hiredate.: " + DToC( oRS:fieldGet( 8 ) )
+    @ 13, 03 SAY "Married..: " + if( oRS:fieldGet( 9 ), 'S', 'N' )
+#endif
     @ 14, 03 SAY "Age......: " + HB_NToS( oRS:fieldGet( 10 ) )
     @ 15, 03 SAY "Salary...: " + HB_NToS( oRS:fieldGet( 11 ) )
     @ 16, 03 SAY "Notes:"
@@ -455,10 +493,9 @@ static procedure preparaStmt()
     oSelect:bindColumn( 11, @salary )
     oSelect:bindColumn( 12, @notes )
 	// Variables de entrada		
+	oSelect:bindParam( 1, @nRecIni )
+	oSelect:bindParam( 2, @nRecEnd )
 
-	oSelect:bindParam( ":inicio", @nRecIni )
-	oSelect:bindParam( ":final",  @nRecEnd )
-	
 	// Prepara la sentencia y crea el objeto oInsert y vincula variables
     oInsert := oDb:prepare( STMT_INS )
     oInsert:bindParam(  1, @first  )
@@ -551,8 +588,13 @@ static procedure cargaReg()
 	city 	 := oRS:fieldGet( "city" )
 	state 	 := oRS:fieldGet( "state" )
 	zip 	 := oRS:fieldGet( "zip" )
-	hiredate := HB_CToD( oRS:fieldGet( "hiredate" ), "yyyy-mm-dd" )
+#ifdef SQLITE
+	hiredate := oRS:fieldGet( "hiredate" )
 	married  := if( oRS:fieldGet( "married" ) == 1, 'S', 'N' )
+#else
+	hiredate := HB_CToD( oRS:fieldGet( "hiredate" ), "yyyy-mm-dd" )
+	married  := if( oRS:fieldGet( "married" ), 'S', 'N' )
+#endif
 	age 	 := oRS:fieldGet( "age" )
 	salary 	 := oRS:fieldGet( "salary" )
 	notes 	 := oRS:fieldGet( "notes" )

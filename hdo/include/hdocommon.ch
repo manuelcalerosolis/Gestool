@@ -10,13 +10,13 @@
 #define HDOCOMMON_CH_
 
 /* Definicion de Constantes */
-#define HDO_VERSION             "2017.06"
+#define HDO_VERSION             "2018.01"
 
 #define HDO_MSG_CONNECTED       "Connected"
 #define HDO_MSG_NOTCONNECTED    "Not connected"
 #define HDO_MSG_DEF_SERVER      "SQLDefault Server"
-#define HDO_MSG_SERVER_VER      "SQLDefault Server 2017.06"
-#define HDO_MSG_CLIENT_VER      "SQLDefault Client 2017.06"
+#define HDO_MSG_SERVER_VER      "SQLDefault Server 2018.01"
+#define HDO_MSG_CLIENT_VER      "SQLDefault Client 2018.01"
 
 /* Para el metodo rdlInfo */
 #define RDL_NAME                1   /* Nombre */
@@ -47,8 +47,8 @@
 #define META_COL_SIZE           9	/* Numero de elementos del array de MetaDatos */
 
 /* Tipo array de nombres de campo */
-#define AS_ARRAY_TYPE                1	/* Basado en array */
-#define AS_HASH_TYPE                 2  /* Basado en tabla hash (por defecto) */
+#define AS_ARRAY_TYPE                0	/* Basado en array */
+#define AS_HASH_TYPE                 1  /* Basado en tabla hash (por defecto) */
 
 /* Para los atributos HDO */
 #define ATTR_AUTOCOMMIT         100001  /* Establece el autocommit */
@@ -79,7 +79,7 @@
 #define ATTR_FETCHTYPE          100001	/* Tipo de relleno por defecto de los fetch */
 #define ATTR_NEEDFETCH          100002	/* Es necesario hacer el fetch? */
 #define ATTR_NEDCOLINFO			100003	/* Se recarga tabla de estructura columna? */
-#define ATTR_STR_PAD			100004	/* En MySQL hace que se rellene el resto de la columna con ' '
+#define ATTR_STR_PAD			100004	/* En MySQL hace que se rellene el resto de la columna con ' ' */
 
 /* Menor numero atributo para HDO y STMT */
 #define ATTR_HDO_RDL			100001
@@ -92,13 +92,14 @@
 /* Tipos de datos basicos solo para traspaso SQL <--> Harbour */
 #define HDO_TYPE_UNDEF			0
 #define HDO_TYPE_NULL			1
-#define HDO_TYPE_BIT			2		
-#define HDO_TYPE_SHORT			3
-#define HDO_TYPE_INTEGER		4
-#define HDO_TYPE_LONG			6
-#define HDO_TYPE_LONGLONG		7
-#define HDO_TYPE_FLOAT			8
-#define HDO_TYPE_DOUBLE			9
+#define HDO_TYPE_BIT			2	/* 4 */
+#define HDO_TYPE_TINY		    3	/* 1 */
+#define HDO_TYPE_SHORT			4	/* 2 */
+#define HDO_TYPE_INTEGER		5	/* 4 */
+#define HDO_TYPE_LONG			6	/* 4 */
+#define HDO_TYPE_LONGLONG		7	/* 8 */
+#define HDO_TYPE_FLOAT			8	/* 4 */
+#define HDO_TYPE_DOUBLE			9	/* 8 */
 #define HDO_TYPE_DECIMAL		10
 #define HDO_TYPE_STRING			11
 #define HDO_TYPE_BLOB			12

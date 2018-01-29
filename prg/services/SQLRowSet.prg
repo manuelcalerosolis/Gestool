@@ -116,8 +116,8 @@ RETURN ( ::oRowSet )
 
 METHOD Find( cFind, cColumn )
 
-   local nRecno
    local cType
+   local nRecno         := 0
 
    DEFAULT cColumn      := 'id'
 
@@ -129,9 +129,19 @@ METHOD Find( cFind, cColumn )
       RETURN ( .f. )
    end if 
 
-   ::saveRecno()
-
    cFind                := ::getFindValue( cFind, cColumn )
+
+   // msgalert( hb_valtoexp( cFind ), "cFind" )
+
+   if empty( cFind )
+      RETURN ( .f. )
+   end if 
+      
+   // msgalert( valtype( cFind ), "valtype" )
+   // msgalert( cFind, "uFind" )
+   // msgalert( cColumn, "cColumn" )
+
+   ::saveRecno()
 
    nRecno               := ::oRowSet:find( cFind, cColumn, .t. )
 
@@ -159,6 +169,10 @@ METHOD getFindValue( uFind, cColumn )
 
    local cType
 
+   if !( hb_ischar( uFind ) )
+      RETURN ( uFind )
+   end if 
+
    if empty( ::oRowSet )
       RETURN ( uFind )
    end if 
@@ -166,12 +180,16 @@ METHOD getFindValue( uFind, cColumn )
    cType                := ::oRowSet:fieldType( cColumn )
 
    do case
-      case ( cType ) == "N" .and. hb_ischar( uFind )
+      case ( cType ) == "N"
          uFind          := val( alltrim( uFind ) )
-      case ( cType ) == "C" .and. hb_ischar( uFind ) .and. right( uFind, 1 ) != "*"
+      case ( cType ) == "C" .and. right( uFind, 1 ) != "*"
          uFind          += "*"
-      case ( cType ) == "T" .and. hb_ischar( uFind ) .and. right( uFind, 1 ) != "*"
-         uFind          += "*"
+      case ( cType ) == "T" 
+         if !empty( ctot( uFind ) )
+            uFind       := ctot( uFind )
+         else
+            uFind       := nil
+         end if 
    end case 
 
 RETURN ( uFind )

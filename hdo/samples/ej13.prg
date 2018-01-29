@@ -1,13 +1,34 @@
 /*
  * Proyecto: HDO_GENERAL
  * Fichero: ej13.prg
- * Descripción: Manteniento simple de una tabla
+ * Descripción: Manteniento simple de una tabla con hashList
  * Autor: Manu Exposito
- * Fecha: 15/01/2017
+ * Fecha: 20/01/2018
  */
 
+//------------------------------------------------------------------------------
+
+#define SQLITE
+//#define MYSQL
+
+//------------------------------------------------------------------------------
+
 #include "hdo.ch"
-#include "InKey.ch"
+#include "inkey.ch"
+
+#ifdef SQLITE
+	REQUEST RDLSQLITE
+	#define _DBMS "sqlite"
+	#define _DB  "hdodemo.db"
+	#define _CONN
+#else
+	#ifdef MYSQL
+		REQUEST RDLMYSQL
+		#define _DBMS "mysql"
+		#define _DB  "hdodemo"
+		#define _CONN  "127.0.0.1", "root", "root"
+	#endif
+#endif
 
 //------------------------------------------------------------------------------
 // Definiciones
@@ -16,10 +37,10 @@
                 CHR( 217 ) + CHR( 196 ) + CHR( 192 ) + CHR( 179 ) + " " )
 
 // Nombre de la base de datos:
-#define DB_NAME  "demo.db"
+#define DB_NAME  "hdodemo.db"
 
 // Sentencias para compilar:
-#define STMT_SEL "SELECT * FROM test WHERE idreg BETWEEN :inicio AND :final;"
+#define STMT_SEL "SELECT * FROM test WHERE idreg BETWEEN ? AND ?;"
 #define STMT_INS "INSERT INTO test ( first, last, street, city, state, zip, hiredate, married, age, salary, notes ) VALUES ( ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ? );"
 #define STMT_UPD "UPDATE test set first = ?, last = ?, street = ?, city = ?, state = ?, zip = ?, hiredate = ?, married = ?, age = ?, salary = ?, notes = ? WHERE idreg = ?;"
 #define STMT_DEL "DELETE FROM test WHERE idreg = ?;"
@@ -47,11 +68,9 @@ procedure main13()
 	
     cls
 
-    oDb := THDO():new( "sqlite" )
+	oDb := THDO():new( _DBMS )
 
-    oDb:setAttribute( ATTR_ERRMODE, .t. )
-
-    if oDb:connect( DB_NAME )
+    if oDb:connect( _DB, _CONN )
         try
             preparaStmt()
 	
@@ -70,7 +89,7 @@ procedure main13()
 				oSelect:execute() // Ejecuta la sentencia
 				
 				// Creamos un cursor local (navigator) como un hash table
-				oCur := THashCursor():new( oSelect:fetchAll( FETCH_HASH ) )
+				oCur := THashList():new( oSelect:fetchAll( FETCH_HASH ) )
 				
                 cls
 
@@ -95,7 +114,7 @@ procedure main13()
 return
 
 //------------------------------------------------------------------------------
-// Controlador - Browse para el objeto Cursor local (hashCursor y memCursor)
+// Controlador - Browse para el objeto Cursor local (hashList y memList)
 
 static procedure miBrw()
 
@@ -227,8 +246,12 @@ static procedure genColumn( oBrw )
 	oBrw:AddColumn( tbcolumnnew( "City",     { || oCur:fieldget( 5 ) } ) )
 	oBrw:AddColumn( tbcolumnnew( "State",    { || oCur:fieldget( 6 ) } ) )
 	oBrw:AddColumn( tbcolumnnew( "Zip",      { || oCur:fieldget( 7 ) } ) )
-	oBrw:AddColumn( tbcolumnnew( "Hiredate", { || HB_CToD( oCur:fieldget( 8 ), "yyyy-mm-dd" ) } ) )
+	oBrw:AddColumn( tbcolumnnew( "Hiredate", { || oCur:fieldget( 8 ) } ) )
+#ifdef SQLITE
 	oBrw:AddColumn( tbcolumnnew( "Married",  { || if( oCur:fieldGet( 9 ) == 1, 'S', 'N' ) } ) )
+#else
+	oBrw:AddColumn( tbcolumnnew( "Married",  { || if( oCur:fieldGet( 9 ), 'S', 'N' ) } ) )
+#endif
 	oBrw:AddColumn( tbcolumnnew( "Age",      { || oCur:fieldget( 10 ) } ) )
 	oBrw:AddColumn( tbcolumnnew( "Salary",   { || oCur:fieldget( 11 ) } ) )
 	oBrw:AddColumn( tbcolumnnew( "Notes",    { || oCur:fieldget( 12 ) } ) )
@@ -270,8 +293,7 @@ static function modificar( oBrw )
 	read	
 	
 	if lastkey() != K_ESC .and. updated()
-		married := if( married $ 'Ss', 1, 0 )
-		hiredate := HB_DToC( hiredate, "yyyy-mm-dd" )
+		married := if( married $ 'Ss', .T., .F. )
 		oUpdate:execute()
         lContinue := refrescar( oBrw )
     endif
@@ -301,8 +323,8 @@ static function Insertar( oBrw )
 	read	
 	
 	if lastkey() != K_ESC .and. updated()
-		married := if( married $ 'Ss', 1, 0 )
-		hiredate := HB_DToC( hiredate, "yyyy-mm-dd" )
+		married := if( married $ 'Ss', .T., .F. )
+		//hiredate := HB_DToC( hiredate, "yyyy-mm-dd" )
 		oInsert:execute()
         lContinue := refrescar( oBrw )
     endif
@@ -389,8 +411,8 @@ static procedure consultar()
     @ 09, 03 SAY "City.....: " + oCur:fieldGet(  5 )
     @ 10, 03 SAY "State....: " + oCur:fieldGet(  6 )
     @ 11, 03 SAY "Zip......: " + oCur:fieldGet(  7 )
-    @ 12, 03 SAY "Hiredate.: " + HB_DToC( HB_CToD( oCur:fieldGet(  8 ), "yyyy-mm-dd" ), "dd-mm-yyyy" )
-    @ 13, 03 SAY "Married..: " + if( oCur:fieldGet( 9 ) == 1, 'S', 'N' )
+    @ 12, 03 SAY "Hiredate.: " + HB_DToC( oCur:fieldGet( 8 ) )
+    @ 13, 03 SAY "Married..: " + if( oCur:fieldGet( 9 ), 'S', 'N' )
     @ 14, 03 SAY "Age......: " + HB_NToS( oCur:fieldGet( 10 ) )
     @ 15, 03 SAY "Salary...: " + HB_NToS( oCur:fieldGet( 11 ) )
     @ 16, 03 SAY "Notes:"
@@ -417,7 +439,7 @@ static function refrescar( oBrw )
 		// implicito,  si se pone no pasa nada
 		oSelect:execute()
 		
-		oCur := THashCursor():new( oSelect:fetchAll( FETCH_HASH ) )
+		oCur := THashList():new( oSelect:fetchAll( FETCH_HASH ) )
 		
 		oBrw := nil
         showMain()
@@ -453,8 +475,8 @@ static procedure preparaStmt()
     oSelect:bindColumn( 12, @notes )
 	// Variables de entrada		
 
-	oSelect:bindParam( ":inicio", @nRecIni )
-	oSelect:bindParam( ":final",  @nRecEnd )
+	oSelect:bindParam( 1, @nRecIni )
+	oSelect:bindParam( 2,  @nRecEnd )
 	
 	// Prepara la sentencia y crea el objeto oInsert y vincula variables
     oInsert := oDb:prepare( STMT_INS )
@@ -548,8 +570,8 @@ static procedure cargaReg()
 	city 	 := oCur:fieldGet(  5 )
 	state 	 := oCur:fieldGet(  6 )
 	zip 	 := oCur:fieldGet(  7 )
-	hiredate := HB_CToD( oCur:fieldGet( 8 ), "yyyy-mm-dd" )
-	married  := if( oCur:fieldGet( 9 ) == 1, 'S', 'N' )
+	hiredate := oCur:fieldGet( 8 )
+	married  := if( oCur:fieldGet( 9 ) == .T., 'S', 'N' )
 	age 	 := oCur:fieldGet( 10 )
 	salary 	 := oCur:fieldGet( 11 )
 	notes 	 := oCur:fieldGet( 12 )

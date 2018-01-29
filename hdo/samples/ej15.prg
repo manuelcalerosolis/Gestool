@@ -3,88 +3,132 @@
  * Fichero: ej15.prg
  * Descripción: Ejemplo de la clase RowSet
  * Autor: Manu Exposito
- * Fecha: 15/01/2017
+ * Fecha: 20/01/2018
  */
 
+//------------------------------------------------------------------------------
+
 #include "hdo.ch"
-#include "InKey.ch"
+#include "inkey.ch"
+
+//------------------------------------------------------------------------------
+
+#define SQLITE
+//#define MYSQL
+
+#ifdef SQLITE
+	REQUEST RDLSQLITE
+	#define _DBMS	"sqlite"
+	#define _DB 	"hdodemo.db"
+	#define _CONN
+#else
+	#ifdef MYSQL
+		REQUEST RDLMYSQL
+		#define _DBMS	"mysql"
+		#define _DB		"hdodemo"
+		#define _CONN 	"127.0.0.1", "root", "root"
+	#endif
+#endif
 
 //------------------------------------------------------------------------------
 // Definiciones locales
 
-//#define _ARRAY_
+#define _ARRAY_
 
 #ifdef _ARRAY_
-//	#define _HASH_
+	#define _HASH_
 #endif
 
-#define DB_NAME  "demo.db"
 #define STMT_SEL "SELECT * FROM test WHERE idreg BETWEEN ? AND ?;"
 
 //------------------------------------------------------------------------------
 // Procedimiento principal
 
-procedure main15()
+procedure main()
 
-    local oDb, oSelect, oRS, oBrw, s, x
-    local nRegIni := 0
-    local nRegFin := 100000000
+    local oDb, oSelect, oCur, oBrw, s, bOrder, xOrder, x,y
+    local nRegIni := 1
+    local nRegFin := 1000000000
+
+////////////////////////////////////////////////////////////////////////////////
+// Esto no tiene efectos si no se usa el sistema embebido                     //
+////////////////////////////////////////////////////////////////////////////////
+#ifdef MYSQL                                                                  //
+	local aOptions := { "HDO_DEMO", "--defaults-file=./my.cnf" }              //
+	local aGroup := { "server", "client" }                                    //
+//----------------------------------------------------------------------------//
+	initMySQLEmdSys( aOptions, aGroup, "client" )                             //
+#endif                                                                        //
+////////////////////////////////////////////////////////////////////////////////
 
 	cls
 	
 	@ 00, 00 SAY "Cargando..."
 	
-    oDb := THDO():new( "sqlite" )
+	oDb := THDO():new( _DBMS )
 
-    oDb:setAttribute( ATTR_ERRMODE, .t. )
-
-    if oDb:connect( DB_NAME )
+    if oDb:connect( _DB, _CONN )
         oSelect := oDb:prepare( STMT_SEL )
-		
-        oSelect:bindParam( 1, @nRegIni )
-        oSelect:bindParam( 2, @nRegFin )
-		
+
+		oSelect:bindParam( 1, @nRegIni, HDO_TYPE_INTEGER )
+		oSelect:bindParam( 2, @nRegFin, HDO_TYPE_INTEGER )
 		s := Seconds()
-		
+
 #ifdef _ARRAY_
 		oSelect:execute()
 	#ifdef _HASH_
-		oRS := THashCursor():new( oSelect:fetchAllHash() )
+		oCur := THashList():new( oSelect:fetchAllHash() )
 	#else		
-		oRS := TMemCursor():new( oSelect:fetchAllArray(), oSelect:listColNames( AS_ARRAY ) )
+		oCur := TMemList():new( oSelect:fetchAllArray(), oSelect:listColNames() )
+		// Se podria hacer esto tambien:
+		// oCur := TMemList():new()
+		// oCur:setSource( oSelect:fetchAllArray(), oSelect:listColNames() )
 	#endif		
 #else		
 		// Hace un ::execute() automaticamente
-        oRS := oSelect:fetchRowSet()
+        oCur := oSelect:fetchRowSet()
 #endif		
-		s := Seconds() - s
+        msg( Seconds() - s, "Cargado en:" )
 		
-		@ 00, 00 SAY "Fin de la carga de los " + LTrim( Str( oRS:recCount() ) ) + " registros..."
-        msg( s, "Cargado en:" )
+		@ 00, 00 SAY "Uso de la clase " + oCur:className() + ": Source con " + ;
+			LTrim( Str( oCur:fieldCount() ) ) + " columnas y " + ;
+			LTrim( Str( oCur:recCount() ) ) + " registros" COLOR "R+/N+"
 		
-///////////////////////////////////////////////////////////////////////////////////
-// Demo de refresh
-/**/
-s := Seconds()
-oRS:refresh()
-s := Seconds() - s
-		
-@ 00, 00 SAY "Fin de la re-carga de los " + LTrim( Str( oRS:recCount() ) ) + " registros..."
-msg( s, "Cargado en:" )
-/**/
-///////////////////////////////////////////////////////////////////////////////////		
-		
-		@ 00, 00 SAY "-> Uso de objetos de la clase " + oRS:className() + " - con " + ;
-			LTrim( str( oRS:RecCount() ) ) + " registros tratados" COLOR "R+/N+"
-			
-		oBrw := miBrwCursor( oRS, 1 )
+		// Ejemplo de edicion:
+		oCur:goTo( 1 )
+		oCur:fieldPut( 2, "Esto                 " )
+		oCur:fieldPut( 3, "es                   " )
+		oCur:fieldPut( 4, "una                  " )
+		oCur:fieldPut( 5, "prueba               " )
 
-		ejemploDeBusqueda( oRS )
+		oCur:next()
+		oCur:fieldPut( 12, "Esto es una prueba " + Str( Seconds( ) ) )
+		oCur:next()
+		oCur:fieldPut( 12, "Esto es una prueba " + Str( Seconds( ) ) )
 		
-        oRS:free()
-
+#ifdef _ARRAY_
+		// Ejemplo de ordenacion
+		//----------------------
+	#ifdef _HASH_	
+		// Por la columna "last" y ascendente "<"
+		xOrder := "last"
+	#else
+		// Por la columna 3 y ascendente "<"
+		xOrder := 3
+	#endif				
+		bOrder := { | x, y | x[ xOrder ] < y[ xOrder ] }
+		oCur:sort( bOrder ) 	
+#endif		
+		oBrw := miBrwCursor( oCur, 1 )
+		
+		ejemploDeBusqueda( oCur )
+		
+		msg( oCur:find( "Bruce", 1 ), "Con un error o no lo encuentra" )  // Este debe devolver 0, los tipos no coinciden
+		msg( oCur:find( "Bruce", 3 ), "Por posicion" )
+		msg( oCur:find( "Bruce", "last" ), "Por nombre" )
+		
+        oCur:free()
         oSelect:free()
-		
     endif
 
     oDb:disconnect()
@@ -96,7 +140,7 @@ return
 //------------------------------------------------------------------------------
 // Ejemplo de busqueda
 
-static procedure ejemploDeBusqueda( oRS )
+static procedure ejemploDeBusqueda( oCur )
 
     local s, n
 	local nCol := 1, xVal
@@ -107,19 +151,26 @@ static procedure ejemploDeBusqueda( oRS )
 	@ 02, 02 SAY "Introduce la columna por la que buscar...:" GET nCol PICTURE "@K 99"
 	READ
 
-	xVal := oRS:fieldGet( nCol )
+	xVal := oCur:fieldGet( nCol )
 	@ 03, 02 SAY "Valor que quiere buscar..................:" GET xVal PICTURE "@K"
 	READ
+
+	cls
+		
+	? "Tipo:", oCur:fieldType( nCol ), "decimales:", oCur:fieldDec( nCol )
 	
 	n := 0 // Reutilizo variable
-			
-	if ( s := oRS:find( xVal, nCol, .t. ) ) > 0
-		while s > 0
-			n++
-			? "Hallado el valor:", oRS:fieldName( nCol ), oRS:fieldGet( nCol ), "en el recno:", oRS:recNo()
-			s := oRS:findNext( xVal, nCol )  // Busca siguiente
-		end
+
+	if ( s := oCur:find( xVal, nCol, .t. ) ) > 0
+		? Replicate( "-", MaxCol() )
+		? "Hallado el valor [", oCur:fieldGet( nCol ), "] de la columna:", oCur:fieldName( nCol )
+		? Replicate( "-", MaxCol() )
 		
+		while s > 0
+			?  ++n, "RecNo:", oCur:recNo(), "->", oCur:fieldGet( nCol )
+			s := oCur:findNext()  // Busca siguiente
+		end
+
 		? Replicate( "-", MaxCol() )
 		? "Hay", AllTrim( Str( n ) ), "ocurrencias de", xVal, "en la columna", AllTrim( Str( nCol ) )
 		? Replicate( "-", MaxCol() )

@@ -1,19 +1,39 @@
 /*
  * Proyecto: HDO_GENERAL
  * Fichero: ej14.prg
- * Descripci󮺠Ejemplo de la clase RowSet
+ * Descripcion: Ejemplo de la clase RowSet
  * Autor: Manu Expsito
- * Fecha: 15/01/2017
+ * Fecha: 20/01/2018
  */
 
+//------------------------------------------------------------------------------
+
+#define SQLITE
+//#define MYSQL
+
+//------------------------------------------------------------------------------
+
 #include "hdo.ch"
-#include "InKey.ch"
+#include "inkey.ch"
+
+#ifdef SQLITE
+	REQUEST RDLSQLITE
+	#define _DBMS	"sqlite"
+	#define _DB 	"hdodemo.db"
+	#define _CONN
+#else
+	#ifdef MYSQL
+		REQUEST RDLMYSQL
+		#define _DBMS	"mysql"
+		#define _DB		"hdodemo"
+		#define _CONN 	"127.0.0.1", "root", "root"
+	#endif
+#endif
 
 //------------------------------------------------------------------------------
 // Definiciones
 
-#define DB_NAME  "demo.db"
-#define STMT_SEL "SELECT * FROM test WHERE idreg BETWEEN ? AND ?;"
+#define STMT_SEL "SELECT * FROM test;"
 
 //------------------------------------------------------------------------------
 // Procedimiento principal
@@ -22,23 +42,14 @@ procedure main14()
 
     local n  // Varios usos
     local oDb, oSelect, oRS, oBrw
-    local nRegIni := 0
-    local nRegFin := 1000
 	
     cls
+     oDb := THDO():new( _DBMS )
 
-    oDb := THDO():new( "sqlite" )
-
-    oDb:setAttribute( ATTR_ERRMODE, .t. )
-
-    if oDb:connect( DB_NAME )
+    if oDb:connect( _DB, _CONN )
         oSelect := oDb:prepare( STMT_SEL )
-		
-        oSelect:bindParam( 1, @nRegIni )
-        oSelect:bindParam( 2, @nRegFin )
-		
 		oSelect:execute()
-		
+		muestra( oDb:rdlInfo() )
 		n := Seconds()
 		
         // Con este metodo se deberia ejecutar siempre el metodo ::execute
@@ -46,8 +57,9 @@ procedure main14()
 		
         muestra( Seconds() - n, "Tiempo de carga de registros en segundos" )
 		
-        oRS:goBottom()
-        oRS:skip()
+        //oRS:goBottom()
+        //oRS:skip()
+		oRS:GoTo( 0 )
 		
         ? "-------------------------------------------------------------------------------"
 		? "Registro fantasma:"
