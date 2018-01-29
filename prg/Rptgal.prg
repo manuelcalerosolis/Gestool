@@ -37,7 +37,6 @@ static dbfFavorito
 
 static oBtnVentas
 static oBtnCompras
-static oBtnProduccion
 static oBtnFavoritos
 static oBtnAddFavorito 
 static oBtnEditFavorito
@@ -162,13 +161,6 @@ Static Function SelectReportGalery( nOption, oTrvArbolGaleria )
          CreateComprasReportGalery( oTrvArbolGaleria, .f. )
 
       case nOption == 3
-         oBtnAddFavorito:Enable()
-         oBtnEditFavorito:Disable()
-         oBtnDelFavorito:Disable()
-         oTrvArbolGaleria:DeleteAll()
-         CreateProduccionReportGalery( oTrvArbolGaleria, .f. )
-
-      case nOption == 4
          oBtnAddFavorito:Disable()
          oBtnEditFavorito:Enable()
          oBtnDelFavorito:Enable()
@@ -1180,43 +1172,6 @@ Return nil
 
 //---------------------------------------------------------------------------//
 
-Static Function CreateProduccionReportGalery( oTrvArbolGaleria, lArray )
-
-   local oTrvTipo
-   local oTrvProduccion
-
-   DEFAULT lArray       := .f.
-
-      oTrvTipo          := AddInforme( lArray, oTrvArbolGaleria, "Diarios" )
-
-      oTrvProduccion    := AddInforme( lArray, oTrvTipo, "Partes de producción" )
-         AddInforme( lArray, oTrvProduccion, "Detalle de partes de producción", {|| PInfDiaParte():New( "Diario detallado de partes de producción" ):Play() } )
-         AddInforme( lArray, oTrvProduccion, "Acumulado de partes de producción", {|| PAcuDiaParte():New( "Diario acumulado de partes de producción" ):Play() } )
-
-      oTrvProduccion    := AddInforme( lArray, oTrvTipo, "Materiales producidos" )
-         AddInforme( lArray, oTrvProduccion, "Detalle de materiales producidos", {|| PInfDiaMateriales():New( "Diario detallado de materiales producidos" ):Play() } )
-         AddInforme( lArray, oTrvProduccion, "Acumulado de materiales producidos", {|| PAcuDiaMateriales():New( "Diario acumulado de materiales producidos" ):Play() } )
-         AddInforme( lArray, oTrvProduccion, "Resumen anual de materiales producidos", {|| PAnuDiaMateriales():New( "Diario anual de materiales producidos" ):Play() } )
-
-      oTrvProduccion    := AddInforme( lArray, oTrvTipo, "Materias primas" )
-         AddInforme( lArray, oTrvProduccion, "Detalle de materias primas", {|| PInfDiaMPrimas():New( "Diario detallado de materias primas" ):Play() } )
-         AddInforme( lArray, oTrvProduccion, "Acumulado de materias primas", {|| PAcuDiaMPrimas():New( "Diario acumulado de materias primas" ):Play() } )
-         AddInforme( lArray, oTrvProduccion, "Resumen anual de materias primas", {|| PAnuDiaMPrimas():New( "Diario anual de materias primas" ):Play() } )
-
-      oTrvProduccion    := AddInforme( lArray, oTrvTipo, "Operarios" )
-         AddInforme( lArray, oTrvProduccion, "Detalle de operarios", {|| PInfDiaOperarios():New( "Diario detallado de operarios" ):Play() } )
-         AddInforme( lArray, oTrvProduccion, "Acumulado de operarios", {|| PAcuDiaOperarios():New( "Diario acumulado de operarios" ):Play() } )
-         AddInforme( lArray, oTrvProduccion, "Resumen anual de operarios", {|| PAnuDiaOperarios():New( "Diario anual de operarios" ):Play() } )
-
-      oTrvProduccion    := AddInforme( lArray, oTrvTipo, "Maquinaria" )
-         AddInforme( lArray, oTrvProduccion, "Detalle de maquinaria", {|| PInfDiaMaquinaria():New( "Diario detallado de maquinaria" ):Play() } )
-         AddInforme( lArray, oTrvProduccion, "Acumulado de maquinaria", {|| PAcuDiaMaquinaria():New( "Diario acumulado de maquinaria" ):Play() } )
-         AddInforme( lArray, oTrvProduccion, "Resumen anual de maquinaria", {|| PAnuDiaMaquinaria():New( "Diario anual de maquinaria" ):Play() } )
-
-Return nil
-
-//---------------------------------------------------------------------------//
-
 Function lHideBmp()
 
 Return nil
@@ -1797,7 +1752,6 @@ function ReportBar()
 
    CreateVentasReportGalery( , .t. )
    CreateComprasReportGalery( , .t. )
-   CreateProduccionReportGalery( , .t. )
 
    // Creamos por defecto la carpeta favoritos---------------------------------
 
@@ -1822,24 +1776,23 @@ function ReportBar()
 
          oCarpeta0   := TCarpeta():New( oBar, "General" )
 
-            oGrp1                := TDotNetGroup():New( oCarpeta0, 248, "Informes", .f., , "" )
+            oGrp1                := TDotNetGroup():New( oCarpeta0, 186, "Informes", .f., , "" )
 
-               oBtnVentas        := TDotNetButton():New( 60, oGrp1, "gc_money2_32",             "Ventas",      1, {|| SelectReportBar( 1, oBtnVentas ) }, , , .f., .f., .f. )
+               oBtnVentas        := TDotNetButton():New( 60, oGrp1, "gc_money2_32",                   "Ventas",      1, {|| SelectReportBar( 1, oBtnVentas ) }, , , .f., .f., .f. )
                oBtnVentas:lSelected := .t.
 
-               oBtnCompras       := TDotNetButton():New( 60, oGrp1, "gc_small_truck_32",                "Compras",     2, {|| SelectReportBar( 2, oBtnCompras ) }, , , .f., .f., .f. )
-               oBtnProduccion    := TDotNetButton():New( 60, oGrp1, "gc_worker2_32",                   "Producción",  3, {|| SelectReportBar( 3, oBtnProduccion ) }, , , .f., .f., .f. )
-               oBtnFavoritos     := TDotNetButton():New( 60, oGrp1, "gc_star2_32",              "Favoritos",   4, {|| SelectReportBar( 3, oBtnFavoritos ) }, , , .f., .f., .f. )
+               oBtnCompras       := TDotNetButton():New( 60, oGrp1, "gc_small_truck_32",              "Compras",     2, {|| SelectReportBar( 2, oBtnCompras ) }, , , .f., .f., .f. )
+               oBtnFavoritos     := TDotNetButton():New( 60, oGrp1, "gc_star2_32",                    "Favoritos",   3, {|| SelectReportBar( 3, oBtnFavoritos ) }, , , .f., .f., .f. )
 
             oGrp2                := TDotNetGroup():New( oCarpeta0, 186, "Favoritos", .f., , "" )
 
-               oBtnAddFavorito   := TDotNetButton():New( 60, oGrp2, "gc_star2_add_32",       "Añadir",      1, {|| AddFavorito( oTrvGaleria ) }, , , .f., .f., .f. )
-               oBtnEditFavorito  := TDotNetButton():New( 60, oGrp2, "gc_star2_edit_32",      "Modificar",   2, {|| EditFavorito( oTrvGaleria ) }, , , .f., .f., .f. )
-               oBtnDelFavorito   := TDotNetButton():New( 60, oGrp2, "gc_star2_delete_32",    "Eliminar",    3, {|| DelFavorito( oTrvGaleria ) }, , , .f., .f., .f. )
+               oBtnAddFavorito   := TDotNetButton():New( 60, oGrp2, "gc_star2_add_32",                "Añadir",      1, {|| AddFavorito( oTrvGaleria ) }, , , .f., .f., .f. )
+               oBtnEditFavorito  := TDotNetButton():New( 60, oGrp2, "gc_star2_edit_32",               "Modificar",   2, {|| EditFavorito( oTrvGaleria ) }, , , .f., .f., .f. )
+               oBtnDelFavorito   := TDotNetButton():New( 60, oGrp2, "gc_star2_delete_32",             "Eliminar",    3, {|| DelFavorito( oTrvGaleria ) }, , , .f., .f., .f. )
 
             oGrp3                := TDotNetGroup():New( oCarpeta0, 124, "Acciones", .f., , "" )
                oBtnEjecutar      := TDotNetButton():New( 60, oGrp3, "gc_flash_32",                    "Ejecutar",    1, {|| ExecuteReportGalery( oTrvGaleria ) }, , , .f., .f., .f. )
-               oBtnSalir         := TDotNetButton():New( 60, oGrp3, "gc_door_open2_32",                     "Salir",       2, {|| oWnd:End() }, , , .f., .f., .f. )
+               oBtnSalir         := TDotNetButton():New( 60, oGrp3, "gc_door_open2_32",               "Salir",       2, {|| oWnd:End() }, , , .f., .f., .f. )
 
       oBtnEditFavorito:lEnabled  := .f.
       oBtnDelFavorito:lEnabled   := .f.
@@ -1868,7 +1821,6 @@ Static Function SelectReportBar( nOption, oSender )
 
    oBtnVentas:lSelected       := .f.
    oBtnCompras:lSelected      := .f.
-   oBtnProduccion:lSelected   := .f.
    oBtnFavoritos:lSelected    := .f.
 
    oSender:lSelected          := .t.
@@ -1889,12 +1841,6 @@ Static Function SelectReportBar( nOption, oSender )
          CreateComprasReportGalery( oTrvGaleria, .f. )
 
       case nOption == 3
-         oBtnAddFavorito:lEnabled   := .t.
-         oBtnEditFavorito:lEnabled  := .f.
-         oBtnDelFavorito:lEnabled   := .f.
-         CreateProduccionReportGalery( oTrvGaleria, .f. )
-
-      case nOption == 4
          oBtnAddFavorito:lEnabled   := .f.
          oBtnEditFavorito:lEnabled  := .t.
          oBtnDelFavorito:lEnabled   := .t.
