@@ -31,7 +31,10 @@ CLASS SQLConfiguracionesModel FROM SQLExportableModel
    METHOD getAndIncValue( cDocumento, cClave, uDefault )
 
    METHOD getItemsMovimientosAlmacen()           
-   METHOD setItemsMovimientosAlmacen()     
+   METHOD setItemsMovimientosAlmacen()
+   METHOD getDocumentoMovimientosAlmacen()         INLINE ( alltrim( ::getValue( 'movimientos_almacen', 'documento', '' ) ) )
+   METHOD getCopiasMovimientosAlmacen()            INLINE ( ::getNumeric( 'movimientos_almacen', 'copias', 1 ) )
+
    METHOD getAndIncContadorMovimientoAlmacen()     INLINE ( ::getAndIncValue( 'movimientos_almacen', 'contador', 1 ) )
 
    METHOD isSerie( cName, cSerie )                 INLINE ( !empty( ::getValue( cName, 'serie', cSerie ) ) )

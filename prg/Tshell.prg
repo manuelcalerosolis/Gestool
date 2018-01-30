@@ -276,7 +276,7 @@ CLASS TShell FROM TMdiChild
 
    METHOD getComboFilter()                   
 
-   METHOD SetActionDeleteButtonFilter( bBlock )            INLINE ( if( !empty( ::oWndBar ), ::oWndBar:SetActionDeleteButtonFilter( bBlock ), ) )
+   METHOD setActionDeleteButtonFilter( bBlock )            INLINE ( if( !empty( ::oWndBar ), ::oWndBar:SetActionDeleteButtonFilter( bBlock ), ) )
 
    METHOD addImageList( cImage )
 
@@ -1841,15 +1841,17 @@ METHOD addSeaBar( cSearchType, nLenSearchType ) CLASS TShell
 
    if !empty( ::oWndBar )
 
-      ::oWndBar:SetComboBoxChange(     {|| ::ChgCombo() } )
-      ::oWndBar:SetComboFilterChange(  {|| ::ChgFilter() } )
+      ::oWndBar:SetComboBoxChange(              {|| ::ChgCombo() } )
+      ::oWndBar:SetComboFilterChange(           {|| ::ChgFilter() } )
 
-      ::oWndBar:SetActionAddButtonFilter( {|| ::AddFilter() } )
-      ::oWndBar:SetActionEditButtonFilter( {|| ::EditFilter() } )
-      ::oWndBar:SetActionDeleteButtonFilter( {|| ::KillFilter() } )
+      ::oWndBar:SetActionAddButtonFilter(       {|| ::AddFilter() } )
+      ::oWndBar:SetActionEditButtonFilter(      {|| ::EditFilter() } )
+      ::oWndBar:SetActionDeleteButtonFilter(    {|| ::KillFilter() } )
 
-      ::oWndBar:SetGetKeyUp(           {|| ::fastSeek( ::oWndBar:oGet, ::oWndBar:oGet:oGet:buffer() ) } ) 
-      ::oWndBar:SetGetKeyDown(         {| nKey, nFlags | ::KeySearch( nKey ) } )
+      ::oWndBar:SetGetChange( nil )
+
+      ::oWndBar:SetGetKeyUp(                    {|| ::fastSeek( ::oWndBar:oGet, ::oWndBar:oGet:oGet:buffer() ) } ) 
+      ::oWndBar:SetGetKeyDown(                  {| nKey, nFlags | ::KeySearch( nKey ) } )
 
    end if
 

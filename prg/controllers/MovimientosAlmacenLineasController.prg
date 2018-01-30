@@ -99,33 +99,33 @@ METHOD New( oController )
 
    ::Super:New( oController )
 
-   ::lTransactional        := .t.
+   ::lTransactional                    := .t.
 
-   ::cTitle                := "Movimientos de almacen lineas"
+   ::cTitle                            := "Movimientos de almacen lineas"
 
-   ::oModel                := SQLMovimientosAlmacenLineasModel():New( self )
+   ::oModel                            := SQLMovimientosAlmacenLineasModel():New( self )
 
    ::oModel:setEvent( 'loadedBlankBuffer',      {|| ::loadedBlankBuffer() } ) 
    ::oModel:setEvent( 'gettingSelectSentence',  {|| ::gettingSelectSentence() } ) 
 
-   ::oBrowseView           := MovimientosAlmacenLineasBrowseView():New( self )
-   ::oBrowseView:lFooter   := .t.
+   ::oBrowseView                       := MovimientosAlmacenLineasBrowseView():New( self )
+   ::oBrowseView:lFooter               := .t.
 
-   ::oDialogView           := MovimientosAlmacenLineasView():New( self )
+   ::oDialogView                       := MovimientosAlmacenLineasView():New( self )
 
-   ::oValidator            := MovimientosAlmacenLineasValidator():New( self )
+   ::oValidator                        := MovimientosAlmacenLineasValidator():New( self )
 
-   ::oSearchView           := SQLSearchView():New( self )
+   ::oSearchView                       := SQLSearchView():New( self )
 
-   ::oSeriesControler      := NumerosSeriesController():New( self )
+   ::oSeriesControler                  := NumerosSeriesController():New( self )
 
-   ::setEvent( 'closedDialog',      {|| ::onClosedDialog() } )
+   ::setEvent( 'closedDialog',         {|| ::onClosedDialog() } )
 
-   ::setEvent( 'appended',          {|| ::oBrowseView:Refresh() } )
-   ::setEvent( 'edited',            {|| ::oBrowseView:Refresh() } )
-   ::setEvent( 'deletedSelection',  {|| ::oBrowseView:Refresh() } )
+   ::setEvent( 'appended',             {|| ::oBrowseView:Refresh() } )
+   ::setEvent( 'edited',               {|| ::oBrowseView:Refresh() } )
+   ::setEvent( 'deletedSelection',     {|| ::oBrowseView:Refresh() } )
 
-   ::setEvent( 'deletingLines',     {|| ::oSeriesControler:deletedSelected( ::aSelectDelete ) } )
+   ::setEvent( 'deletingLines',        {|| ::oSeriesControler:deletedSelected( ::aSelectDelete ) } )
 
 RETURN ( Self )
 
@@ -138,6 +138,8 @@ METHOD loadedBlankBuffer()
    if !empty( uuid )
       hset( ::oModel:hBuffer, "parent_uuid", uuid )
    end if 
+
+   hset( ::oModel:hBuffer, "codigo_articulo", space( 200 ) )
 
 RETURN ( Self )
 

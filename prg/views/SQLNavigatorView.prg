@@ -120,7 +120,9 @@ METHOD Activate()
 
    ::getComboBoxOrder():bChange  := {|| ::onChangeCombo() } 
 
-   ::getGetSearch():bChange      := {|| ::onChangeSearch() } 
+   ::oController:oWindowsBar:setGetChange( {|| ::onChangeSearch() } )
+
+   // ::getGetSearch():bChange      := {|| ::onChangeSearch() } 
 
 RETURN ( Self )
 
