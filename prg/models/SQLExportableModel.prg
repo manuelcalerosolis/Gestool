@@ -17,6 +17,10 @@ CLASS SQLExportableModel FROM SQLBaseModel
 
    METHOD selectNotSentToJson( cFile )
 
+   METHOD selectFetchToHash( cSentence )
+
+   METHOD saveJson( cFile )
+
    METHOD selectFetchToJson( cSentence, cFile )
 
    METHOD insertFromJson( cFile )
@@ -83,17 +87,37 @@ RETURN ( ::selectFetchToJson( cSentence, cFile ) )
 
 //---------------------------------------------------------------------------//
 
-METHOD selectFetchToJson( cSentence, cFile )
+METHOD selectFetchToHash( cSentence )
+
+   ::fireEvent( 'selectingFetchToHash' )   
 
    ::aFetch          := ::getDatabase():selectFetchHash( cSentence, .f. )
+
+   ::fireEvent( 'selectedFetchToHash' )   
+
+RETURN ( ::aFetch )
+
+//---------------------------------------------------------------------------//
+
+METHOD saveJson( cFile )
+
+   if hb_memowrit( cFile, hb_jsonencode( ::aFetch, .t. ) )
+      RETURN ( .t. )
+   end if 
+
+RETURN ( .f. )
+
+//---------------------------------------------------------------------------//
+
+METHOD selectFetchToJson( cSentence, cFile )
+
+   ::selectFetchHash( cSentence, .f. )
 
    if !hb_isarray( ::aFetch ) 
       RETURN ( .f. )
    end if
 
-   if hb_memowrit( cFile, hb_jsonencode( ::aFetch, .t. ) )
-      RETURN ( .t. )
-   end if 
+   ::saveJson( cFile )
 
 RETURN ( .f. )
 
