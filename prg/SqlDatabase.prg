@@ -32,6 +32,8 @@ CLASS SQLDatabase
 
    METHOD Ping()                          INLINE ( if( !empty( ::oConexion ), ::oConexion:Ping(), ) )
 
+   METHOD isParseError()
+
    METHOD Exec( cSql )             
    METHOD Execs( aSql ) 
    METHOD TransactionalExec( cSql )       INLINE ( ::BeginTransaction(), ::Exec( cSql ), ::Commit() )            
@@ -151,29 +153,39 @@ RETURN ( lConnect )
 
 //----------------------------------------------------------------------------//
 
+METHOD isParseError( cSentence )
+
+   if empty( cSentence )
+      msgstop( "La sentencia esta vacia" )
+      RETURN ( .t. )  
+   end if  
+
+   if empty( ::oConexion )
+      msgstop( "No hay conexiones disponibles" )
+      RETURN ( .t. )  
+   end if  
+
+   ::oConexion:Ping()
+
+   if !::oConexion:Parse( cSentence )
+      msgstop( cSentence, "Error en el comando SQL" )
+      RETURN ( .t. )  
+   end if 
+
+RETURN ( .f. )
+
+//----------------------------------------------------------------------------//
+
 METHOD Exec( cSql )
 
    local lExec    := .t.
    local oError
 
-   if empty( ::oConexion )
-      msgstop( "No hay conexiones disponibles" )
-      RETURN ( .f. )  
-   end if 
-
-   if empty( cSql )
-      RETURN ( .f. )  
-   end if 
-
-   if !::oConexion:Parse( cSql )
-      msgstop( cSql, "Error en el comando SQL" )
-      logwrite( cSql )
+   if ::isParseError( cSql )
       RETURN ( .f. )  
    end if 
 
    try
-
-      ::oConexion:Ping()
    
       ::oConexion:Exec( cSql )
        
@@ -208,20 +220,17 @@ METHOD selectFetch( cSentence, fetchType, attributePad )
    DEFAULT fetchType    := FETCH_ARRAY
    DEFAULT attributePad := .t.
 
-   if empty( ::oConexion )
-      msgstop( "No hay conexiones disponibles" )
+   if ::isParseError( cSentence )
       RETURN ( nil )  
-   end if  
+   end if 
 
    try 
 
-      ::oConexion:Ping()
-
-      oStatement     := ::oConexion:Query( cSentence )
+      oStatement        := ::oConexion:Query( cSentence )
 
       oStatement:setAttribute( ATTR_STR_PAD, attributePad )
    
-      aFetch         := oStatement:fetchAll( fetchType )
+      aFetch            := oStatement:fetchAll( fetchType )
 
    catch oError
 
@@ -265,14 +274,11 @@ METHOD selectHashList( cSentence )
    local oHashList
    local oStatement
 
-   if empty( ::oConexion )
-      msgstop( "No hay conexiones disponibles" )
+   if ::isParseError( cSentence )
       RETURN ( nil )  
    end if  
 
    try 
-
-      ::oConexion:Ping()
 
       oStatement     := ::oConexion:Query( cSentence )
 
@@ -304,14 +310,11 @@ METHOD selectValue( cSentence )
    local nValue
    local oStatement
 
-   if empty( ::oConexion )
-      msgstop( "No hay conexiones disponibles" )
-      RETURN ( .f. )  
+   if ::isParseError( cSentence )
+      RETURN ( nil )  
    end if  
 
    try 
-
-      ::oConexion:Ping()   
 
       oStatement     := ::oConexion:Query( cSentence )
 
@@ -341,18 +344,13 @@ METHOD fetchRowSet( cSentence )
    local oRowSet
    local oStatement
 
-   if empty( ::oConexion )
-      msgstop( "No hay conexiones disponibles" )
-      RETURN ( .f. )  
+   if ::isParseError( cSentence )
+      RETURN ( nil )  
    end if  
 
    try 
 
-      ::oConexion:Ping()   
-
       oStatement     := ::oConexion:Query( cSentence )
-
-      // oStatement:setAttribute( ATTR_STR_PAD, .t. )
 
       oRowSet        := oStatement:fetchRowSet()
 
@@ -415,14 +413,13 @@ METHOD getSchemaColumns( oModel )
    local oStatement
    local aSchemaColumns
 
-   if empty( ::oConexion )
-      msgstop( "No hay conexiones disponibles" )
-      RETURN ( nil )  
-   end if  
-
    cSentence               := "SELECT COLUMN_NAME "                              +;
                                  "FROM INFORMATION_SCHEMA.COLUMNS "              +;
                                  "WHERE table_name = " + quoted( oModel:cTableName )
+
+   if ::isParseError( cSentence )
+      RETURN ( nil )  
+   end if  
 
    try
 

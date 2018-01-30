@@ -4,6 +4,8 @@ MVC - ToDo
 
 - Navegacion entre movimientos de almacen
 
+- No carga los valores de las lineas sobre el grid de las propiedades.
+
 - Configuración de documentos por defecto. (done)
 
 - Mas configuraciones.

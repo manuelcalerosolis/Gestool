@@ -24,6 +24,10 @@ CLASS SQLMovimientosAlmacenModel FROM SQLExportableModel
 
    METHOD loadDuplicateBuffer( id )                
 
+   METHOD selectNotSentToJson()
+
+   METHOD sendData()             INLINE ( ::selectNotSentToJson() )
+
 END CLASS
 
 //---------------------------------------------------------------------------//
@@ -161,5 +165,32 @@ METHOD loadDuplicateBuffer( id )
    end if 
 
 RETURN ( ::hBuffer )
+
+//---------------------------------------------------------------------------//
+
+METHOD selectNotSentToJson()
+
+   local oSQLLineasModel
+   local oSQLLineasNumerosSeriesModel
+
+   ::Super:selectNotSentToJson()
+
+   if empty( ::aFetch )
+      RETURN ( nil )
+   end if 
+
+   oSQLLineasModel               := SQLMovimientosAlmacenLineasModel():New()
+   
+   oSQLLineasModel:selectFetchToJson( oSQLLineasModel:getSentenceNotSent( ::aFetch ) )
+
+   oSQLLineasNumerosSeriesModel  := SQLMovimientosAlmacenLineasNumerosSeriesModel():New()
+
+   if empty( oSQLLineasModel:aFetch )
+      RETURN ( nil )
+   end if 
+
+   oSQLLineasNumerosSeriesModel:selectFetchToJson( oSQLLineasNumerosSeriesModel:getSentenceNotSent( oSQLLineasModel:aFetch ) )
+
+RETURN ( self )
 
 //---------------------------------------------------------------------------//

@@ -84,6 +84,7 @@ CLASS SQLBaseModel
 
    METHOD getInsertSentence()
    METHOD getUpdateSentence()
+   METHOD getInsertOnDuplicateSentence( hBuffer )   
    METHOD getdeleteSentence()
    
    METHOD getDropTableSentence()
@@ -136,6 +137,7 @@ CLASS SQLBaseModel
    
    METHOD insertBuffer( hBuffer )                     
    METHOD updateBuffer( hBuffer )
+   METHOD insertOnDuplicate( hBuffer )
    METHOD deleteSelection( aRecno )
    METHOD deleteById( nId )
 
@@ -456,7 +458,7 @@ METHOD getInsertSentence( hBuffer )
 
    hEval( hBuffer, {| k, v | if ( k != ::cColumnKey, cSQLInsert += k + ", ", ) } )
 
-   cSQLInsert        := ChgAtEnd( cSQLInsert, ' ) VALUES ( ', 2 )
+   cSQLInsert        := chgAtEnd( cSQLInsert, ' ) VALUES ( ', 2 )
 
    hEval( hBuffer, {| k, v | if ( k != ::cColumnKey, cSQLInsert += toSQLString( v ) + ", ", ) } )
 
@@ -483,9 +485,38 @@ METHOD getUpdateSentence( hBuffer )
       end if 
    next
 
-   cSQLUpdate        := chgAtEnd( cSQLUpdate, '', 2 )
+   cSQLUpdate        := chgAtEnd( cSQLUpdate, '', 2 ) + " "
 
-   cSQLUpdate        += " WHERE " + ::cColumnKey + " = " + toSQLString( hget( hBuffer, ::cColumnKey ) )
+   cSQLUpdate        += "WHERE " + ::cColumnKey + " = " + toSQLString( hget( hBuffer, ::cColumnKey ) )
+
+RETURN ( cSQLUpdate )
+
+//---------------------------------------------------------------------------//
+
+METHOD getInsertOnDuplicateSentence( hBuffer )
+
+   local uValue
+   local cSQLUpdate  
+
+   DEFAULT hBuffer   := ::hBuffer
+
+   hBuffer           := ::setUpdatedTimeStamp( hBuffer )
+   
+   cSQLUpdate        := ::getInsertSentence( hBuffer ) + " "
+
+   cSQLUpdate        +=    "ON DUPLICATE KEY "
+
+   cSQLUpdate        +=    "UPDATE "
+
+   hBuffer           := ::setUpdatedTimeStamp( hBuffer )
+
+   for each uValue in hBuffer
+      if ( uValue:__enumkey() != ::cColumnKey )
+         cSQLUpdate  += uValue:__enumKey() + " = " + toSQLString( uValue ) + ", "
+      end if 
+   next
+
+   cSQLUpdate        := chgAtEnd( cSQLUpdate, '', 2 )
 
 RETURN ( cSQLUpdate )
 
@@ -734,6 +765,18 @@ METHOD updateBuffer( hBuffer )
    ::getDatabase():Execs( ::getUpdateSentence( hBuffer ) )
 
    ::fireEvent( 'updatedBuffer' )
+
+RETURN ( Self )
+
+//---------------------------------------------------------------------------//
+
+METHOD insertOnDuplicate( hBuffer )
+
+   ::fireEvent( 'insertingOnDuplicatingBuffer' )
+
+   ::getDatabase():Execs( ::getInsertOnDuplicateSentence( hBuffer ) )
+
+   ::fireEvent( 'insertedOnDuplicatedBuffer' )
 
 RETURN ( Self )
 
