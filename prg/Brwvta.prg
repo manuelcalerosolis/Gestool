@@ -2574,7 +2574,7 @@ Static Function LoadMovimientosAlmacen( cCodArt, nYear )
       if !Empty( oRowSet:fieldget( 'almacen_destino' ) )
          oDbfTmp:Append()
          oDbfTmp:nTypDoc   := MOV_ALM
-         oDbfTmp:cNumDoc   := AllTrim( Str( oRowSet:fieldget( 'numero' ) ) )
+         oDbfTmp:cNumDoc   := AllTrim( oRowSet:fieldget( 'numero' ) )
          oDbfTmp:cSufDoc   := oRowSet:fieldget( 'delegacion' )
          oDbfTmp:cEstDoc   := "Movimiento"
          oDbfTmp:dFecDoc   := oRowSet:fieldget( 'fecha' )
@@ -2598,7 +2598,7 @@ Static Function LoadMovimientosAlmacen( cCodArt, nYear )
       if !Empty( oRowSet:fieldget( 'almacen_origen' ) )
          oDbfTmp:Append()
          oDbfTmp:nTypDoc   := MOV_ALM
-         oDbfTmp:cNumDoc   := AllTrim( Str( oRowSet:fieldget( 'numero' ) ) )
+         oDbfTmp:cNumDoc   := AllTrim( oRowSet:fieldget( 'numero' ) )
          oDbfTmp:cSufDoc   := oRowSet:fieldget( 'delegacion' )
          oDbfTmp:cEstDoc   := "Movimiento"
          oDbfTmp:dFecDoc   := oRowSet:fieldget( 'fecha' )
