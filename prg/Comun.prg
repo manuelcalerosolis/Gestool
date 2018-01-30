@@ -278,7 +278,20 @@ RETURN ( .t. )
 //---------------------------------------------------------------------------//
 
 FUNCTION Test()
+/*
+   with object SQLMovimientosAlmacenModel():New()
 
+<<<<<<< HEAD
+=======
+      :setEvent( 'selectedFetchToHash',      {|| msgalert( hb_valtoexp( :aFetch ) ) } )
+   
+      :selectNotSentToJson()
+
+   end with
+
+   MovimientosAlmacenController():New():ActivateNavigatorView()
+*/
+>>>>>>> e23cb65572d51ca676b6c25daa0d8d7ec208e8ad
 RETURN NIL 
 
 //----------------------------------------------------------------------------//
