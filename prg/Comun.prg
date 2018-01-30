@@ -279,10 +279,6 @@ RETURN ( .t. )
 
 FUNCTION Test()
 
-   SQLMovimientosAlmacenModel();
-      :New();
-      :selectNotSentToJson()
-
    MovimientosAlmacenController():New():ActivateNavigatorView()
 
 RETURN NIL 

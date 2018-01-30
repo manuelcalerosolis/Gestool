@@ -2755,7 +2755,6 @@ METHOD nCostoMedio( cCodArt, cCodAlm, cCodPr1, cCodPr2, cValPr1, cValPr2, cLote 
                                                                "valor_segunda_propiedad" => cValPr2,;
                                                                "lote" => cLote } )
 
-
    /*
    Recorremos movimientos de almacén-------------------------------------------
    */
@@ -2763,8 +2762,6 @@ METHOD nCostoMedio( cCodArt, cCodAlm, cCodPr1, cCodPr2, cValPr1, cValPr2, cLote 
    oRowSet:goTop()
 
    while !( oRowSet:Eof() )
-
-      MsgInfo( oRowSet:fieldget( 'total_unidades' ) )
 
       nUnidades   += oRowSet:fieldget( 'total_unidades' )
       nImporte    += oRowSet:fieldget( 'precio_articulo' )
@@ -2785,12 +2782,8 @@ METHOD nCostoMedio( cCodArt, cCodAlm, cCodPr1, cCodPr2, cValPr1, cValPr2, cLote 
          ( empty( cLote )   .or. ( ::cAlbPrvL )->cLote == cLote )       .and.;
          !( ::cAlbPrvL )->( eof() )
 
-         if ::lCheckConsolidacion( ( ::cAlbPrvL )->cRef, ( ::cAlbPrvL )->cAlmLin, ( ::cAlbPrvL )->cCodPr1, ( ::cAlbPrvL )->cCodPr2, ( ::cAlbPrvL )->cValPr1, ( ::cAlbPrvL )->cValPr2, ( ::cAlbPrvL )->cLote, ( ::cAlbPrvL )->dFecAlb, ( ::cAlbPrvL )->tFecAlb )
-
-            nUnidades   += nTotNAlbPrv( ::cAlbPrvL )
-            nImporte    += nTotLAlbPrv( ::cAlbPrvL, ::nDecIn, ::nDerIn )
-
-         end if
+         nUnidades   += nTotNAlbPrv( ::cAlbPrvL )
+         nImporte    += nTotLAlbPrv( ::cAlbPrvL, ::nDecIn, ::nDerIn )
 
          ( ::cAlbPrvL )->( dbSkip() )
 
@@ -2810,12 +2803,8 @@ METHOD nCostoMedio( cCodArt, cCodAlm, cCodPr1, cCodPr2, cValPr1, cValPr2, cLote 
       ( empty( cLote )   .or. ( ::cFacPrvL )->cLote == cLote )      .and.;
       !( ::cFacPrvL )->( eof() )
 
-         if ::lCheckConsolidacion( ( ::cFacPrvL )->cRef, ( ::cFacPrvL )->cAlmLin, ( ::cFacPrvL )->cCodPr1, ( ::cFacPrvL )->cCodPr2, ( ::cFacPrvL )->cValPr1, ( ::cFacPrvL )->cValPr2, ( ::cFacPrvL )->cLote, ( ::cFacPrvL )->dFecFac, ( ::cFacPrvL )->tFecFac )
-
-            nUnidades   += nTotNFacPrv( ::cFacPrvL )
-            nImporte    += nTotLFacPrv( ::cFacPrvL, ::nDecIn, ::nDerIn )
-
-         end if
+         nUnidades   += nTotNFacPrv( ::cFacPrvL )
+         nImporte    += nTotLFacPrv( ::cFacPrvL, ::nDecIn, ::nDerIn )
 
          ( ::cFacPrvL )->( dbSkip() )
 
@@ -2837,12 +2826,8 @@ METHOD nCostoMedio( cCodArt, cCodAlm, cCodPr1, cCodPr2, cValPr1, cValPr2, cLote 
       ( empty( cLote )    .or. ( ::cRctPrvL )->cLote == cLote )      .and.;
       !( ::cRctPrvL )->( eof() )
 
-         if ::lCheckConsolidacion( ( ::cRctPrvL )->cRef, ( ::cRctPrvL )->cAlmLin, ( ::cRctPrvL )->cCodPr1, ( ::cRctPrvL )->cCodPr2, ( ::cRctPrvL )->cValPr1, ( ::cRctPrvL )->cValPr2, ( ::cRctPrvL )->cLote, ( ::cRctPrvL )->dFecFac, ( ::cRctPrvL )->tFecFac )
-
-            nUnidades   += nTotNRctPrv( ::cRctPrvL )
-            nImporte    += nTotLRctPrv( ::cRctPrvL, ::nDecIn, ::nDerIn )
-
-         end if
+         nUnidades   += nTotNRctPrv( ::cRctPrvL )
+         nImporte    += nTotLRctPrv( ::cRctPrvL, ::nDecIn, ::nDerIn )
 
          ( ::cRctPrvL )->( dbSkip() )
 
@@ -2862,12 +2847,8 @@ METHOD nCostoMedio( cCodArt, cCodAlm, cCodPr1, cCodPr2, cValPr1, cValPr2, cLote 
          ( empty( cLote )    .or. ( ::cProducL )->cLote == cLote )      .and.;
          !( ::cProducL )->( eof() )
       
-         if ::lCheckConsolidacion( ( ::cProducL )->cCodArt, ( ::cProducL )->cAlmOrd, ( ::cProducL )->cCodPr1, ( ::cProducL )->cCodPr2, ( ::cProducL )->cValPr1, ( ::cProducL )->cValPr2, ( ::cProducL )->cLote, ( ::cProducL )->dFecOrd, ( ::cProducL )->cHorIni ) 
-
-            nUnidades   += ( NotCaja( ( ::cProducL )->nCajOrd ) * ( ::cProducL )->nUndOrd )
-            nImporte    += ( NotCaja( ( ::cProducL )->nCajOrd ) * ( ::cProducL )->nUndOrd ) * ( ( ::cProducL )->nImpOrd )
-           
-         end if
+         nUnidades   += ( NotCaja( ( ::cProducL )->nCajOrd ) * ( ::cProducL )->nUndOrd )
+         nImporte    += ( NotCaja( ( ::cProducL )->nCajOrd ) * ( ::cProducL )->nUndOrd ) * ( ( ::cProducL )->nImpOrd )
 
          ( ::cProducL )->( dbSkip() )
 
