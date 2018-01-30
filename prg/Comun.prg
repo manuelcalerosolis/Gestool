@@ -279,11 +279,11 @@ RETURN ( .t. )
 
 FUNCTION Test()
 
-   local o  := SQLMovimientosAlmacenModel():New()
+   /*local o  := SQLMovimientosAlmacenModel():New()
          o:selectNotSentToJson( "test.json" )
          o:getSentenceSentFromFetch()
 
-   MovimientosAlmacenController():New():ActivateNavigatorView()
+   MovimientosAlmacenController():New():ActivateNavigatorView()*/
 
 RETURN NIL 
 
@@ -3061,7 +3061,6 @@ FUNCTION InitClasses()
    TLenguaje()
    TReindex()
    TRemesas()
-   TRemMovAlm()
    TCamposExtra()
    TStock()
    TDeleleteObsoletos()

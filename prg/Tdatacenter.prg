@@ -2056,12 +2056,6 @@ METHOD BuildEmpresa()
    oDataTable:bCreateIndex := {| cPath | rxGrpVenta( cPath ) }
    ::AddEmpresaTable( oDataTable )
 
-   oDataTable              := TDataTable():New( "HisMov" )
-   oDataTable:cDataFile    := cPatEmp( , .t. ) + "HisMov.Dbf"
-   oDataTable:cIndexFile   := cPatEmp( , .t. ) + "HisMov.Cdx"
-   oDataTable:cDescription := "Movimientos de almacén"
-   ::AddEmpresaTable( oDataTable )
-
    /*
    Articulos-------------------------------------------------------------------
    */

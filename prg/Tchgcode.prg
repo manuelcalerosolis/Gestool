@@ -19,7 +19,6 @@ CLASS TChgCode
    DATA  oDbfPedPrv
    DATA  oDbfAlbPrv
    DATA  oDbfFacPrv
-   DATA  oDbfHis
    DATA  oDbfPro
    DATA  oDbfDepAge
    DATA  oDbfExtAge
@@ -240,8 +239,6 @@ METHOD OpenFiles()
 
    DATABASE NEW ::oDbfFacPrv  PATH ( cPatEmp() ) FILE "FACPRVL.DBF"  VIA ( cDriver() ) SHARED INDEX "FACPRVL.CDX"
 
-   DATABASE NEW ::oDbfHis     PATH ( cPatEmp() ) FILE "HISMOV.DBF"   VIA ( cDriver() ) SHARED INDEX "HISMOV.CDX"
-
    DATABASE NEW ::oDbfDepAge  PATH ( cPatEmp() ) FILE "DEPAGEL.DBF"  VIA ( cDriver() ) SHARED INDEX "DEPAGEL.CDX"
 
    DATABASE NEW ::oDbfExtAge  PATH ( cPatEmp() ) FILE "EXTAGEL.DBF"  VIA ( cDriver() ) SHARED INDEX "EXTAGEL.CDX"
@@ -353,10 +350,6 @@ METHOD CloseFiles()
 
    if !Empty( ::oDbfFacPrv ) .and. ::oDbfFacPrv:Used()
       ::oDbfFacPrv:End()
-   end if
-
-   if !Empty( ::oDbfHis ) .and. ::oDbfHis:Used()
-      ::oDbfHis:End()
    end if
 
    if !Empty( ::oDbfDepAge ) .and. ::oDbfDepAge:Used()
@@ -1124,33 +1117,6 @@ METHOD ChgCode()
             
             ::oDbfFacPrv:Skip()
             ::oMtrInf:AutoInc( ::oDbfFacPrv:Recno() )
-
-         end while
-
-         ::oMtrInf:nTotal           := ::oDbfHis:Lastrec()
-
-         ::oDbfHis:OrdSetFocus( 0 )
-
-         ::oDbfHis:GoTop()
-         while !::oDbfHis:Eof()
-
-            if Trim( ::oDbfHis:cRefMov ) == Trim( ::cGetArtOld )
-
-               ::oDbfHis:Load()
-               ::oDbfHis:cRefMov    := ::cGetArtNew
-               ::oDbfHis:cCodPr1    := ::cCodPr1New
-               ::oDbfHis:cValPr1    := ::cGetPr1New
-               ::oDbfHis:cCodPr2    := ::cCodPr2New
-               ::oDbfHis:cValPr2    := ::cGetPr2New
-               ::oDbfHis:Save()
-               ::nRecChanged++
-            end if
-
-            ::changeSecondPropertie( ::oDbfHis )
-
-            ::oDbfHis:Skip()
-
-            ::oMtrInf:AutoInc( ::oDbfHis:Recno() )
 
          end while
 

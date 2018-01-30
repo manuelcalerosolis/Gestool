@@ -85,7 +85,6 @@ Grpvent.prg             \
 Horas.prg               \
 IEntSal.prg             \
 IGrpVen.prg             \
-IMovAlm.prg             \
 Impditer.prg            \
 Impfactu.prg            \
 InfAge.prg              \
@@ -146,7 +145,6 @@ Recprv.prg              \
 Regalm.prg              \
 Reindexa.prg            \
 Remcli.prg              \
-Remmov.prg              \
 ReportC3.prg            \
 Rfile.prg               \
 Rhtml.prg               \
@@ -185,7 +183,6 @@ Tbuscar.prg             \
 Tcajon.prg              \
 Tchgcode.prg            \
 Tchgtar.prg             \
-Tcomvta.prg             \
 TdAgeAlb.prg            \
 Tdbarray.prg            \
 Tdbaux.prg              \
@@ -194,7 +191,6 @@ Tdbfserv.prg            \
 Tdelobs.prg             \
 Tdeltarifasclientes.prg \
 Tdet.prg                \
-Tdiacli.prg             \
 Tdiprvfa.prg            \
 Tdprnc3.prg             \
 Tfamalb.prg             \
@@ -311,7 +307,6 @@ TInfCVta.prg            \
 TInfCli.prg             \
 InfGrpArt.prg           \
 TConFacCli.prg          \
-XInfMov.prg             \
 SalaVta.prg             \
 TInfRVta.prg            \
 TIvaVta.prg             \
@@ -888,7 +883,6 @@ TDiaPRec.prg            \
 TDiarioRecibos.prg      \
 TdPrvCom.prg            \
 TIvaVta.prg             \
-Xinfmov.prg             \
 oAnuXCom.prg            \
 TInfListInci.prg        \
 TInfChgCbr.prg          \
@@ -976,13 +970,9 @@ CamposExtra.prg         \
 DetCamposExtra.prg      \
 TScripts.prg            \
 TGenMailDatabaseRecibosClientes.prg \
-TDetMovimientosAlmacen.prg 			\
-TDetSeriesMovimientos.prg 				\
 TTraslations.prg        				\
 CentroCoste.prg                     \
 TgenmailDatabaseRecibosClientes.prg \
-TDetMovimientosAlmacen.prg          \
-Tdetseriesmovimientos.prg           \
 Categoria.prg                       \
 MovimientosAlmacenesLineasModel.prg \
 DelegacionesModel.prg               \
@@ -1072,7 +1062,6 @@ Grpvent.obj             \
 Horas.obj               \
 IEntSal.obj             \
 IGrpVen.obj             \
-IMovAlm.obj             \
 Img2pdf.obj             \
 Impditer.obj            \
 Impfactu.obj            \
@@ -1135,7 +1124,6 @@ Recprv.obj              \
 Regalm.obj              \
 Reindexa.obj            \
 Remcli.obj              \
-Remmov.obj              \
 ReportC3.obj            \
 Rfile.obj               \
 Rhtml.obj               \
@@ -1175,7 +1163,6 @@ Tbuscar.obj             \
 Tcajon.obj              \
 Tchgcode.obj            \
 Tchgtar.obj             \
-Tcomvta.obj             \
 TdAgeAlb.obj            \
 Tdbarray.obj            \
 Tdbaux.obj              \
@@ -1184,7 +1171,6 @@ Tdbfserv.obj            \
 Tdelobs.obj             \
 Tdeltarifasclientes.obj \
 Tdet.obj                \
-Tdiacli.obj             \
 Tdiprvfa.obj            \
 TFilterCreator.obj      \
 Tdprnc3.obj             \
@@ -1302,7 +1288,6 @@ TInfCVta.obj            \
 TInfCli.obj             \
 InfGrpArt.obj           \
 TConFacCli.obj          \
-XInfMov.obj             \
 SalaVta.obj             \
 TInfRVta.obj            \
 TIvaVta.obj             \
@@ -1880,7 +1865,6 @@ TDiaPRec.obj            \
 TDiarioRecibos.obj      \
 TdPrvCom.obj            \
 TIvaVta.obj             \
-Xinfmov.obj             \
 oAnuXCom.obj            \
 TInfListInci.obj        \
 TInfChgCbr.obj          \
@@ -1969,13 +1953,9 @@ CamposExtra.obj         \
 DetCamposExtra.obj      \
 TScripts.obj            \
 TGenMailDatabaseRecibosClientes.obj \
-TDetMovimientosAlmacen.obj \
-TDetSeriesMovimientos.obj \
 TTraslations.obj        \
 CentroCoste.obj         \
 TgenmailDatabaseRecibosClientes.obj \
-TDetMovimientosAlmacen.obj          \
-Tdetseriesmovimientos.obj           \
 Categoria.obj                       \
 MovimientosAlmacenesLineasModel.obj \
 DelegacionesModel.obj               \
@@ -2072,7 +2052,6 @@ $(OBJ)\Grpvent.obj              +
 $(OBJ)\Horas.obj                +
 $(OBJ)\IEntSal.obj              +
 $(OBJ)\IGrpVen.obj              +
-$(OBJ)\IMovAlm.obj              +
 $(OBJ)\Img2pdf.obj              +
 $(OBJ)\Impditer.obj             +
 $(OBJ)\Impfactu.obj             +
@@ -2135,7 +2114,6 @@ $(OBJ)\Recprv.obj               +
 $(OBJ)\Regalm.obj               +
 $(OBJ)\Reindexa.obj             +
 $(OBJ)\Remcli.obj               +
-$(OBJ)\Remmov.obj               +
 $(OBJ)\ReportC3.obj             +
 $(OBJ)\Rfile.obj                +
 $(OBJ)\Rhtml.obj                +
@@ -2175,7 +2153,6 @@ $(OBJ)\Tbuscar.obj              +
 $(OBJ)\Tcajon.obj               +
 $(OBJ)\Tchgcode.obj             +
 $(OBJ)\Tchgtar.obj              +
-$(OBJ)\Tcomvta.obj              +
 $(OBJ)\TdAgeAlb.obj             +
 $(OBJ)\Tdbarray.obj             +
 $(OBJ)\Tdbaux.obj               +
@@ -2184,7 +2161,6 @@ $(OBJ)\Tdbfserv.obj             +
 $(OBJ)\Tdelobs.obj              +
 $(OBJ)\Tdeltarifasclientes.obj  +
 $(OBJ)\Tdet.obj                 +
-$(OBJ)\Tdiacli.obj              +
 $(OBJ)\Tdiprvfa.obj             +
 $(OBJ)\TFilterCreator.obj       +
 $(OBJ)\Tdprnc3.obj              +
@@ -2302,7 +2278,6 @@ $(OBJ)\TInfCVta.obj             +
 $(OBJ)\TInfCli.obj              +
 $(OBJ)\InfGrpArt.obj            +
 $(OBJ)\TConFacCli.obj           +
-$(OBJ)\XInfMov.obj              +
 $(OBJ)\SalaVta.obj              +
 $(OBJ)\TInfRVta.obj             +
 $(OBJ)\TIvaVta.obj              +
@@ -2880,7 +2855,6 @@ $(OBJ)\TDiaPRec.obj             	+
 $(OBJ)\TDiarioRecibos.obj       	+
 $(OBJ)\TdPrvCom.obj             	+
 $(OBJ)\TIvaVta.obj              	+
-$(OBJ)\Xinfmov.obj              	+
 $(OBJ)\oAnuXCom.obj             	+
 $(OBJ)\TInfListInci.obj         	+
 $(OBJ)\TInfChgCbr.obj           	+
@@ -2970,8 +2944,6 @@ $(OBJ)\TScripts.obj              +
 $(OBJ)\CentroCoste.obj           +
 $(OBJ)\TTraslations.obj          +
 $(OBJ)\TgenmailDatabaseRecibosClientes.obj +
-$(OBJ)\TDetMovimientosAlmacen.obj          +
-$(OBJ)\Tdetseriesmovimientos.obj           +
 $(OBJ)\Categoria.obj                       +
 $(OBJ)\MovimientosAlmacenesLineasModel.obj +
 $(OBJ)\DelegacionesModel.obj               +

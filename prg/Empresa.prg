@@ -3651,16 +3651,6 @@ STATIC FUNCTION StartPathEmp( cPath, cPathOld, cCodEmpNew, cNomEmpNew, cCodEmpOl
       end if
 
       if oMsg != nil
-         oMsg:SetText( "Creando movimientos de almacén" )
-      end if
-      TRemMovAlm():Create( cPath ):CheckFiles()                                     ; sysrefresh()
-
-      if oMsg != nil
-         oMsg:SetText( "Creando lineas de movimientos de almacén" )
-      end if
-      TDetMovimientos():Create( cPath ):CheckFiles()                                ; sysrefresh()
-
-      if oMsg != nil
          oMsg:SetText( "Creando campos extras" )
       end if
       TCamposExtra():Create( cPath ):CheckFiles()                                     ; sysrefresh()
@@ -4448,8 +4438,6 @@ STATIC FUNCTION ActDbfEmp( cCodEmp, aMsg, oAni, oDlg, oMsg, oMet, lActEmp, lSinc
          ActDbf( cEmpOld, cEmpTmp, "ProvArt",   "artículos por proveedor", oMet, oMsg, aMsg )
          ActDbf( cEmpOld, cEmpTmp, "ArtAlm",    "stock por almacenes", oMet, oMsg, aMsg )
 
-         ActDbf( cEmpOld, cEmpTmp, "HisMov",    "historicos de movimientos", oMet, oMsg, aMsg )
-
          ActDbf( cEmpOld, cEmpTmp, "Client",    "clientes", oMet, oMsg, aMsg )
          ActDbf( cEmpOld, cEmpTmp, "ClientD",   "documentos de clientes", oMet, oMsg, aMsg )
          ActDbf( cEmpOld, cEmpTmp, "CliAtp",    "atipicas de clientes", oMet, oMsg, aMsg )
@@ -4593,9 +4581,6 @@ STATIC FUNCTION ActDbfEmp( cCodEmp, aMsg, oAni, oDlg, oMsg, oMet, lActEmp, lSinc
          oMsg:SetText( "Añadiendo tipos de comandas" )
          TComandas():Create():SyncAllDbf()
 
-         oMsg:SetText( "Añadiendo movimientos de almacén" )
-         TRemMovAlm():Create():SyncAllDbf()
-
          oMsg:SetText( "Añadiendo campos extra" )
          TCamposExtra():Create():SyncAllDbf()
 
@@ -4709,12 +4694,6 @@ STATIC FUNCTION ActDbfEmp( cCodEmp, aMsg, oAni, oDlg, oMsg, oMet, lActEmp, lSinc
 
          oMsg:SetText( "Añadiendo series de materiales de producción" )
          TDetSeriesMaterial():New():SyncAllDbf()
-
-         oMsg:SetText( "Añadiendo lineas de movimientos de almacén" )
-         TDetMovimientos():New():SyncAllDbf()
-
-         oMsg:SetText( "Añadiendo series de movimientos de almacén" )
-         TDetSeriesMovimientos():New():SyncAllDbf()
 
          oMsg:SetText( "Añadiendo líneas de maquinaria" )
          TDetMaquina():New():SyncAllDbf()

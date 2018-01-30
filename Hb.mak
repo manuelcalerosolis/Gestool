@@ -152,7 +152,6 @@ Intitem.prg             										\
 Backup.prg              										\
 Divisas.prg             										\
 Tips.prg                										\
-Movalm.prg              										\
 Edm.prg                 										\
 Pro.prg                 										\
 Reccli.prg              										\
@@ -220,9 +219,7 @@ CodigosPostales.prg        									\
 Bandera.prg             										\
 Tvisor.prg              										\
 Tgrpfam.prg             										\
-Tdiacli.prg             										\
 Tdiprvfa.prg            										\
-Tcomvta.prg             										\
 Ctarem.prg              										\
 Tmasdet.prg             										\
 TMasterDetailGuid.prg 											\
@@ -260,9 +257,6 @@ Dlgtools.prg            													\
 Toolbar.prg             													\
 Medicon.prg             													\
 Utildbf.prg             													\
-Remmov.prg              													\
-TDetMovimientosAlmacen.prg								   				\
-TDetSeriesMovimientos.prg 													\
 Dummy.prg               													\
 Rccs.prg                													\
 Ttarage.prg             													\
@@ -330,7 +324,6 @@ InfFpg.prg              													\
 InfCaj.prg              													\
 TInfChgCBr.prg          													\
 InfPrePrv.prg           													\
-IMovAlm.prg             													\
 ListUsr.prg             													\
 IEntSal.prg             													\
 ListRem.prg             													\
@@ -752,7 +745,6 @@ Intitem.obj                                        				\
 Backup.obj                                         				\
 Divisas.obj                                        				\
 Tips.obj                                           				\
-Movalm.obj                                         				\
 Edm.obj                                            				\
 Pro.obj                                            				\
 Reccli.obj                                         				\
@@ -841,10 +833,8 @@ CodigosPostales.obj                                				\
 Bandera.obj                                        				\
 Tvisor.obj                                         				\
 Tgrpfam.obj                                        				\
-Tdiacli.obj             													\
 Tdiprvfa.obj            													\
 Tinftik.obj             													\
-Tcomvta.obj             													\
 Ctarem.obj              													\
 Tmasdet.obj             													\
 TMasterDetailGuid.obj 														\
@@ -885,9 +875,6 @@ Dlgtools.obj            													\
 Toolbar.obj             													\
 Medicon.obj             													\
 Utildbf.obj             													\
-Remmov.obj              													\
-TDetMovimientosAlmacen.obj 												\
-TDetSeriesMovimientos.obj 													\
 Dummy.obj               													\
 Rccs.obj                													\
 Ttarage.obj             													\
@@ -946,7 +933,6 @@ InfFpg.obj              													\
 InfCaj.obj              													\
 TInfChgCBr.obj          													\
 InfPrePrv.obj           													\
-IMovAlm.obj             													\
 ListUsr.obj             													\
 IEntSal.obj             													\
 ListRem.obj             													\
@@ -1442,7 +1428,6 @@ $(OBJ)\Bandera.obj              											+
 $(OBJ)\Tvisor.obj               											+
 $(OBJ)\Tgrpfam.obj              											+
 $(OBJ)\Tinftik.obj              											+
-$(OBJ)\Tcomvta.obj              											+
 $(OBJ)\Ctarem.obj               											+
 $(OBJ)\Tmasdet.obj              											+
 $(OBJ)\TMasterDetailGuid.obj    											+
@@ -1482,9 +1467,6 @@ $(OBJ)\Dlgtools.obj             											+
 $(OBJ)\Toolbar.obj              											+
 $(OBJ)\Medicon.obj              											+
 $(OBJ)\Utildbf.obj              											+
-$(OBJ)\Remmov.obj               											+
-$(OBJ)\TDetMovimientosAlmacen.obj										+	 
-$(OBJ)\TDetSeriesMovimientos.obj 										+		
 $(OBJ)\Dummy.obj                											+
 $(OBJ)\Rccs.obj                 											+
 $(OBJ)\Ttarage.obj              											+
@@ -1533,7 +1515,6 @@ $(OBJ)\InfFpg.obj               											+
 $(OBJ)\InfCaj.obj               											+
 $(OBJ)\TInfChgCBr.obj           											+
 $(OBJ)\InfPrePrv.obj            											+
-$(OBJ)\IMovAlm.obj              											+
 $(OBJ)\ListUsr.obj              											+
 $(OBJ)\IEntSal.obj              											+
 $(OBJ)\ListRem.obj              											+

@@ -333,7 +333,6 @@ static dbfAntCliT
 static dbfTikCliT
 static dbfProLin
 static dbfProMat
-static dbfHisMov
 static oOperario
 static cTmpLin
 static cTmpInc
@@ -670,10 +669,6 @@ STATIC FUNCTION OpenFiles( lExt )
       SET ADSINDEX TO ( cPatEmp() + "PROMAT.CDX" ) ADDITIVE
       SET TAG TO "cCodArt"
 
-      USE ( cPatEmp() + "HISMOV.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "HISMOV", @dbfHisMov ) )
-      SET ADSINDEX TO ( cPatEmp() + "HISMOV.CDX" ) ADDITIVE
-      SET TAG TO "cRefMov"
-
       USE ( cPatEmp() + "AntCliT.Dbf" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "AntCliT", @dbfAntCliT ) )
       SET ADSINDEX TO ( cPatEmp() + "AntCliT.Cdx" ) ADDITIVE
 
@@ -682,11 +677,7 @@ STATIC FUNCTION OpenFiles( lExt )
 
       USE ( cPatEmp() + "ESTADOSAT.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "ESTADOSAT", @dbfEstado ) )
       SET ADSINDEX TO ( cPatEmp() + "ESTADOSAT.CDX" ) ADDITIVE
-/*
-      if !TDataCenter():OpenSatCliT( @D():SatClientes( nView ) )
-         lOpenFiles     := .f.
-      end if
-*/
+
       if !TDataCenter():OpenFacCliP( @dbfFacCliP )
          lOpenFiles     := .f.
       end if
@@ -1016,10 +1007,6 @@ STATIC FUNCTION CloseFiles()
       ( dbfProMat )->( dbCloseArea() )
    end if
 
-   if dbfHisMov != nil
-      ( dbfHisMov )->( dbCloseArea() )
-   end if
-
    if dbfFacCliP != nil
       ( dbfFacCliP )->( dbCloseArea() )
    end if
@@ -1134,7 +1121,6 @@ STATIC FUNCTION CloseFiles()
 
    dbfProLin      := nil
    dbfProMat      := nil
-   dbfHisMov      := nil
 
    oCentroCoste   := nil
 

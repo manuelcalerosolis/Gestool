@@ -373,7 +373,6 @@ static dbfTikCliT
 static dbfTikCliL
 static dbfProLin
 static dbfProMat
-static dbfHisMov
 static dbfsitua
 static cOrdAnt
 static oBandera
@@ -757,10 +756,6 @@ STATIC FUNCTION OpenFiles( lExt )
       USE ( cPatEmp() + "PROMAT.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "PROMAT", @dbfProMat ) )
       SET ADSINDEX TO ( cPatEmp() + "PROMAT.CDX" ) ADDITIVE
       SET TAG TO "cCodArt"
-
-      USE ( cPatEmp() + "HISMOV.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "HISMOV", @dbfHisMov ) )
-      SET ADSINDEX TO ( cPatEmp() + "HISMOV.CDX" ) ADDITIVE
-      SET TAG TO "cRefMov"
 
       USE ( cPatCli() + "CliBnc.Dbf" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "CLIBNC", @dbfCliBnc ) )
       SET ADSINDEX TO ( cPatCli() + "CliBnc.Cdx" ) ADDITIVE
@@ -7683,7 +7678,6 @@ STATIC FUNCTION CloseFiles()
    if( !Empty( dbfTikCliL ), ( dbfTikCliL )->( dbCloseArea() ), )
    if( !Empty( dbfProLin  ), ( dbfProLin  )->( dbCloseArea() ), )
    if( !Empty( dbfProMat  ), ( dbfProMat  )->( dbCloseArea() ), )
-   if( !Empty( dbfHisMov  ), ( dbfHisMov  )->( dbCloseArea() ), )
    if( !Empty( dbfCliBnc  ), ( dbfCliBnc  )->( dbCloseArea() ), )
 
 
@@ -7754,7 +7748,6 @@ STATIC FUNCTION CloseFiles()
    dbfTikCliL     := nil
    dbfProLin      := nil
    dbfProMat      := nil
-   dbfHisMov      := nil
    dbfCliBnc      := nil
    nView		      := nil
 

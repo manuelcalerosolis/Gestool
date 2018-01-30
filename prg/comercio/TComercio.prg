@@ -124,7 +124,6 @@ CLASS TComercio
    DATA  oTikCliL
    DATA  oProLin
    DATA  oProMat
-   DATA  oHisMov
    DATA  oPedPrvL
    DATA  oAlbPrvT
    DATA  oAlbPrvL

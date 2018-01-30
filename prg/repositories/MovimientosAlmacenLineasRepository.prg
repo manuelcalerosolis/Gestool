@@ -373,10 +373,34 @@ METHOD getRowSetMovimientosAlmacenForReport( oReporting )
 RETURN ( ::getDatabase():fetchRowSet( cSentence ) )
 
 //---------------------------------------------------------------------------//
+/*
+   Valores permitidos de hParams
+   - codigo_articulo ( obligatorio )
+   - almacen 
+   - codigo_primera_propiedad
+   - codigo_segunda_propiedad
+   - valor_primera_propiedad
+   - valor_segunda_propiedad
+   - lote
+   - year 
+   - empresa
+*/
 
-METHOD getSQLSentenceMovimientosForArticulo( cCodArt, cCodAlm, nYear ) CLASS MovimientosAlmacenLineasRepository
+METHOD getSQLSentenceMovimientosForArticulo( hParams ) CLASS MovimientosAlmacenLineasRepository
 
+   local idEmpresa
    local cSentence
+
+   if !hhaskey( hParams, "codigo_articulo" )
+      msgStop( "El código de artículo es un parametro obligatorio", "getSQLSentenceMovimientosForArticulo" )
+      RETURN ( "" )
+   end if 
+
+   if hhaskey( hParams, "empresa" )
+      idEmpresa      := hget( hParams, "empresa" )
+   else 
+      idEmpresa      := cCodEmp()
+   end if 
 
    cSentence         := "SELECT movimientos_almacen.id, "
    cSentence         +=    "movimientos_almacen.numero, "
@@ -398,27 +422,51 @@ METHOD getSQLSentenceMovimientosForArticulo( cCodArt, cCodAlm, nYear ) CLASS Mov
    cSentence         +=    "movimientos_almacen_lineas.unidades_articulo, "
    cSentence         +=    SQLMovimientosAlmacenLineasModel():getSQLSubSentenceTotalUnidadesLinea( "movimientos_almacen_lineas", "total_unidades" ) + ", "
    cSentence         +=    "movimientos_almacen_lineas.precio_articulo "
+   
    cSentence         += "FROM movimientos_almacen_lineas "
+   
    cSentence         += "INNER JOIN movimientos_almacen "
    cSentence         +=    "ON movimientos_almacen.uuid = movimientos_almacen_lineas.parent_uuid "
-   cSentence         += "WHERE movimientos_almacen.empresa = " + quoted( cCodEmp() ) + " "
-   cSentence         +=    "AND movimientos_almacen_lineas.codigo_articulo = " + quoted( cCodArt ) + " "
 
-   if !Empty( nYear )
-      cSentence      +=    "AND Date_Format( CAST( movimientos_almacen.fecha_hora AS date ), '%Y' ) = " + Str( nYear ) + " "
+   cSentence         += "WHERE movimientos_almacen.empresa = " + quoted( idEmpresa ) + " "
+   
+   cSentence         +=    "AND movimientos_almacen_lineas.codigo_articulo = " + quoted( hget( hParams, "codigo_articulo" ) ) + " "
+
+   if hhaskey( hParams, "year" ) .and. !Empty( hget( hParams, "year" ) )
+      cSentence      +=    "AND Date_Format( CAST( movimientos_almacen.fecha_hora AS date ), '%Y' ) = " + Str( hget( hParams, "year" ) ) + " "
    end if
 
-   if !Empty( cCodAlm )
-      cSentence      +=    "AND ( movimientos_almacen.almacen_destino = " + quoted( cCodAlm ) + " OR movimientos_almacen.almacen_origen = " + quoted( cCodAlm ) + " ) "
+   if hhaskey( hParams, "almacen" )
+      cSentence      +=    "AND ( movimientos_almacen.almacen_destino = " + quoted( hget( hParams, "almacen" ) ) + " OR movimientos_almacen.almacen_origen = " + quoted( hget( hParams, "almacen" ) ) + " ) "
+   end if
+
+   if hhaskey( hParams, "codigo_primera_propiedad" )
+      cSentence      +=    "AND ( movimientos_almacen.codigo_primera_propiedad = " + quoted( hget( hParams, "codigo_primera_propiedad" ) )  + " "
+   end if
+
+   if hhaskey( hParams, "codigo_segunda_propiedad" )
+      cSentence      +=    "AND ( movimientos_almacen.codigo_segunda_propiedad = " + quoted( hget( hParams, "codigo_segunda_propiedad" ) )  + " "
+   end if
+
+   if hhaskey( hParams, "valor_primera_propiedad" )
+      cSentence      +=    "AND ( movimientos_almacen.valor_primera_propiedad = " + quoted( hget( hParams, "valor_primera_propiedad" ) )  + " "
+   end if
+
+   if hhaskey( hParams, "valor_segunda_propiedad" )
+      cSentence      +=    "AND ( movimientos_almacen.valor_segunda_propiedad = " + quoted( hget( hParams, "valor_segunda_propiedad" ) )  + " "
+   end if
+
+   if hhaskey( hParams, "lote" )
+      cSentence      +=    "AND ( movimientos_almacen.lote = " + quoted( hget( hParams, "lote" ) )
    end if
 
 RETURN ( cSentence )
 
 //---------------------------------------------------------------------------//
 
-METHOD getRowSetMovimientosForArticulo( cCodArt, cCodAlm, nYear ) CLASS MovimientosAlmacenLineasRepository
+METHOD getRowSetMovimientosForArticulo( hParams ) CLASS MovimientosAlmacenLineasRepository
 
-   local cSentence   := ::getSqlSentenceMovimientosForArticulo( cCodArt, cCodAlm, nYear )
+   local cSentence   := ::getSqlSentenceMovimientosForArticulo( hParams )
 
 RETURN ( ::getDatabase():fetchRowSet( cSentence ) )
 

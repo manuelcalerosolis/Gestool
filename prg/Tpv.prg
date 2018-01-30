@@ -297,8 +297,6 @@ static dbfCajPorta
 static dbfAgeCom
 static dbfEmp
 static dbfArtDiv
-static dbfHisMov
-static dbfHisMovS
 static dbfTemporada
 static oRestaurante
 
@@ -770,12 +768,6 @@ STATIC FUNCTION OpenFiles( cPatEmp, lExt, lTactil )
       USE ( cPatEmp() + "RctPrvS.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "RctPrvS", @dbfRctPrvS ) )
       SET ADSINDEX TO ( cPatEmp() + "RctPrvS.CDX" ) ADDITIVE
 
-      USE ( cPatEmp() + "HISMOV.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "HISMOV", @dbfHisMov ) )
-      SET ADSINDEX TO ( cPatEmp() + "HISMOV.CDX" ) ADDITIVE
-
-      USE ( cPatEmp() + "MOVSER.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "MOVSER", @dbfHisMovS ) )
-      SET ADSINDEX TO ( cPatEmp() + "MOVSER.CDX" ) ADDITIVE
-
       USE ( cPatArt() + "COMENTARIOST.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "COMENTT", @dbfComentariosT ) )
       SET ADSINDEX TO ( cPatArt() + "COMENTARIOST.CDX" ) ADDITIVE
 
@@ -1021,9 +1013,6 @@ STATIC FUNCTION CloseFiles()
    CLOSE ( dbfRctPrvL  )
    CLOSE ( dbfRctPrvS  )
 
-   CLOSE ( dbfHisMov   )
-   CLOSE ( dbfHisMovS  )
-
    CLOSE ( dbfComentariosT )
    CLOSE ( dbfComentariosL )
 
@@ -1131,9 +1120,6 @@ STATIC FUNCTION CloseFiles()
    dbfFacPrvL        := nil
    dbfRctPrvT        := nil
    dbfRctPrvL        := nil
-
-   dbfHisMov         := nil
-   dbfHisMovS        := nil
 
    oStock            := nil
    oCaptura          := nil

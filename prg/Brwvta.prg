@@ -2563,7 +2563,9 @@ Cargamos los movimientos de almacén a la temporal
 
 Static Function LoadMovimientosAlmacen( cCodArt, nYear )
 
-   local oRowSet  := MovimientosAlmacenLineasRepository():getRowSetMovimientosForArticulo( cCodArt, , nYear )
+   local oRowSet  := MovimientosAlmacenLineasRepository();
+                        :getRowSetMovimientosForArticulo( { "codigo_articulo" => cCodArt,;
+                                                            "year" => nYear } )
 
    oRowSet:goTop()
 

@@ -19,7 +19,6 @@ CLASS TArtPrv FROM TInfGen
    DATA oTikCliL  AS OBJECT
    DATA oProLin   AS OBJECT
    DATA oProMat   AS OBJECT
-   DATA oHisMov   AS OBJECT
 
    METHOD create()
 
@@ -91,8 +90,6 @@ METHOD OpenFiles()
 
    DATABASE NEW ::oProMat  PATH ( cPatEmp() )   FILE "PROMAT.DBF"     VIA ( cDriver() ) SHARED INDEX "PROMAT.CDX"
 
-   DATABASE NEW ::oHisMov  PATH ( cPatEmp() )   FILE "HISMOV.DBF"     VIA ( cDriver() ) SHARED INDEX "HISMOV.CDX"
-
    ::oStock   := TStock():Create( cPatEmp() )
 
    if !::oStock:lOpenFiles()
@@ -149,10 +146,6 @@ METHOD CloseFiles()
       ::oProMat:End()
    end if
 
-   if !Empty( ::oHisMov ) .and. ::oHisMov:Used()
-      ::oHisMov:End()
-   end if
-
    if !Empty( ::oStock )
       ::oStock:End()
    end if
@@ -168,7 +161,6 @@ METHOD CloseFiles()
    ::oTikCliL := nil
    ::oProLin  := nil
    ::oProMat  := nil
-   ::oHisMov  := nil
 
 RETURN ( Self )
 

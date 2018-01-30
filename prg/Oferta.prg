@@ -72,7 +72,6 @@ static dbfFacPrvL
 static dbfRctPrvL
 static dbfProLin
 static dbfProMat
-static dbfHisMov
 
 static aTipoOferta   := { "Artículos", "Familias", "Tipo de artículo", "Temporadas", "Fabricantes" }
 static aBmpOferta    := { "gc_object_cube_16", "gc_cubes_16", "gc_objects_16", "gc_photographic_filters_16", "gc_cloud_sun_16", "gc_bolt_16" }
@@ -204,10 +203,6 @@ STATIC FUNCTION OpenFiles()
    SET ADSINDEX TO ( cPatEmp() + "PROMAT.CDX" ) ADDITIVE
    SET TAG TO "cCodArt"
 
-   USE ( cPatEmp() + "HISMOV.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "HISMOV", @dbfHisMov ) )
-   SET ADSINDEX TO ( cPatEmp() + "HISMOV.CDX" ) ADDITIVE
-   SET TAG TO "cRefMov"
-
    oBandera             := TBandera():New
 
    oStock            := TStock():Create( cPatEmp() )
@@ -315,10 +310,6 @@ Static Function CloseFiles()
       ( dbfProMat )->( dbCloseArea() )
    end if
 
-   if !Empty( dbfHisMov ) .and. ( dbfHisMov )->( Used() )
-      ( dbfHisMov )->( dbCloseArea() )
-   end if
-
    if !Empty( dbfTemporada ) .and. ( dbfTemporada )->( Used() )
       ( dbfTemporada )->( dbCloseArea() )
    end if
@@ -398,7 +389,6 @@ Static Function CloseFiles()
    dbfRctPrvL     := nil
    dbfProLin      := nil
    dbfProMat      := nil
-   dbfHisMov      := nil
 
    lOpenFiles     := .f.
 
