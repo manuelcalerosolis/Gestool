@@ -278,8 +278,6 @@ RETURN ( .t. )
 //---------------------------------------------------------------------------//
 
 FUNCTION Test()
-
-<<<<<<< HEAD
 /*
    with object SQLMovimientosAlmacenModel():New()
 
@@ -291,18 +289,6 @@ FUNCTION Test()
 
    MovimientosAlmacenController():New():ActivateNavigatorView()
 */
-=======
-<<<<<<< HEAD
-   /*local o  := SQLMovimientosAlmacenModel():New()
-         o:selectNotSentToJson( "test.json" )
-         o:getSentenceSentFromFetch()
-
-   MovimientosAlmacenController():New():ActivateNavigatorView()*/
-=======
-   MovimientosAlmacenController():New():ActivateNavigatorView()
->>>>>>> 7148f801e2bd7ff745035e52b722304681ce4223
->>>>>>> 100455f723680d4d49e7bcf132c6ea369b54e107
-
 RETURN NIL 
 
 //----------------------------------------------------------------------------//
