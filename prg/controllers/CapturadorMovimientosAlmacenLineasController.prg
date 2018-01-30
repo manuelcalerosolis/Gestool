@@ -5,14 +5,17 @@
 
 CLASS CapturadorMovimientosAlmacenLineasController FROM SQLBaseController
 
-   DATA aErrors         INIT {}
+   DATA aErrors               INIT {}
 
    METHOD New( oController )
 
-   METHOD Activate()    INLINE ( ::oDialogView:Activate() )
+   METHOD Activate()          INLINE ( ::oDialogView:Activate() )
 
-   METHOD getModel()    INLINE ( ::oSenderController:oLineasController:getModel() )
-   METHOD getBrowse()   INLINE ( ::oSenderController:oDialogView:oSQLBrowseView )
+   METHOD getModel()          INLINE ( ::oSenderController:oLineasController:getModel() )
+
+   METHOD getRowSet()         INLINE ( ::oSenderController:oLineasController:getRowSet() )
+
+   METHOD refreshBrowse()     INLINE ( ::oSenderController:oLineasController:refreshBrowse() )
 
    METHOD processLines( cLines )
       METHOD processLine( hLine ) 
@@ -25,11 +28,11 @@ END CLASS
 
 METHOD New( oController )
 
-   ::cTitle             := "Capturador movimientos almacen lineas"
-
-   ::oDialogView        := CapturadorMovimientosAlmacenLineasView():New( self )
-
    ::Super:New( oController )
+
+   ::cTitle                   := "Capturador movimientos almacen lineas"
+
+   ::oDialogView              := CapturadorMovimientosAlmacenLineasView():New( self ) 
 
 RETURN ( Self )
 
@@ -43,19 +46,19 @@ METHOD processLines( cLines )
       RETURN ( Self )
    end if 
 
-   aLines               := hb_atokens( cLines, CRLF )
+   aLines                     := hb_atokens( cLines, CRLF )
 
    if empty( aLines ) 
       RETURN ( Self )
    end if 
 
-   ::aErrors            := {}
+   ::aErrors                  := {}
 
    aeval( aLines, {|elem| ::processLine( elem ) } ) 
 
    ::showErrors()
 
-   ::getBrowse():Refresh()
+   ::refreshBrowse()
 
 RETURN ( Self )
 
@@ -63,9 +66,16 @@ RETURN ( Self )
 
 METHOD processLine( cLine ) 
 
+   local nId
+   local aLines               
    local hBuffer    
    local hArticulo
-   local aLines      := hb_atokens( cLine, "," )
+
+   if empty( cLine ) 
+      RETURN ( Self )
+   end if 
+
+   aLines                     := hb_atokens( cLine, "," ) 
 
    if !hb_isarray( aLines ) 
       aadd( ::aErrors, "No hay líneas que procesar." )
@@ -77,9 +87,9 @@ METHOD processLine( cLine )
       RETURN ( Self )
    end if 
 
-   hBuffer           := ::getModel():loadBlankBuffer()
+   hBuffer                    := ::getModel():loadBlankBuffer()
 
-   hset( hBuffer, "codigo_articulo",     alltrim( aLines[ 1 ] ) )
+   hset( hBuffer, "codigo_articulo",     alltrim( aLines[ 1 ] ) ) 
    hset( hBuffer, "unidades_articulo",   val( strtran( aLines[ 2 ], ".", "," ) ) )
 
    if len( aLines ) >= 6
@@ -89,7 +99,7 @@ METHOD processLine( cLine )
       hset( hBuffer, "valor_segunda_propiedad",  alltrim( aLines[ 6 ] ) )
    end if 
 
-   hArticulo         := ArticulosModel():getHash( hget( hBuffer, "codigo_articulo" ) )
+   hArticulo                  := ArticulosModel():getHash( hget( hBuffer, "codigo_articulo" ) )
    if empty( hArticulo )
       aadd( ::aErrors, "El código del artículo no existe." )
       RETURN ( Self )
@@ -98,7 +108,12 @@ METHOD processLine( cLine )
    hset( hBuffer, "nombre_articulo", hget( hArticulo, "nombre" ) ) 
    hset( hBuffer, "precio_articulo", hget( hArticulo, "pcosto" ) )
 
-   ::getModel():insertBuffer( hBuffer )
+   nId   := ::getModel():insertBuffer( hBuffer )
+
+   if !empty( nId )
+      ::oSenderController:oLineasController:refreshRowSetAndFind( nId )
+      ::oSenderController:oLineasController:refreshBrowse()
+   end if 
 
 RETURN ( Self ) 
 
@@ -106,7 +121,7 @@ RETURN ( Self )
 
 METHOD showErrors() 
 
-   local cErrorMessage  := ""
+   local cErrorMessage        := ""
 
    if !empty( ::aErrors )
       aeval( ::aErrors, {|cError| cErrorMessage += cError + CRLF } )   

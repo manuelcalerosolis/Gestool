@@ -4194,11 +4194,21 @@ FUNCTION serializeArray( aArray )
       RETURN ( cSerialized )
    end if 
 
-   aeval( aArray, {|elem| cSerialized   += alltrim( elem ) + "," } )
+   aeval( aArray, {|elem| cSerialized += alltrim( elem ) + "," } )
 
    cSerialized          := left( cSerialized, len( cSerialized ) - 1 )
 
 RETURN ( cSerialized )
+
+//----------------------------------------------------------------------------//
+
+FUNCTION aFirst( aArray )
+
+   if !hb_isarray( aArray ) .or. len( aArray ) = 0
+      RETURN ( nil )
+   end if 
+
+RETURN ( aArray[ 1 ] )
 
 //----------------------------------------------------------------------------//
 

@@ -279,11 +279,15 @@ RETURN ( .t. )
 
 FUNCTION Test()
 
+<<<<<<< HEAD
    /*local o  := SQLMovimientosAlmacenModel():New()
          o:selectNotSentToJson( "test.json" )
          o:getSentenceSentFromFetch()
 
    MovimientosAlmacenController():New():ActivateNavigatorView()*/
+=======
+   MovimientosAlmacenController():New():ActivateNavigatorView()
+>>>>>>> 7148f801e2bd7ff745035e52b722304681ce4223
 
 RETURN NIL 
 

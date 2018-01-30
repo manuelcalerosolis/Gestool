@@ -969,6 +969,7 @@ ImportadorMovimientosAlmacenLineasValidator.obj 					\
 ImprimirSeriesView.obj 														\
 ImprimirSeriesController.obj 												\
 SQLPrintController.obj 														\
+CapturadorMovimientosAlmacenLineasController.obj 					\
 MovimientosAlmacenLineasView.obj											\
 MovimientosAlmacenController.obj 										\
 MovimientosAlmacenLineasController.obj 								\

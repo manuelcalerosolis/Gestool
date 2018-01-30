@@ -66,6 +66,7 @@ CLASS MovimientosAlmacenController FROM SQLNavigatorController
    METHOD deleteLines()
 
    METHOD getBrowse()               INLINE ( ::oBrowseView:getBrowse() )
+   METHOD refreshLineasBrowse()     INLINE ( iif( !empty( ::oLineasController ), ::getBrowse():Refresh(), ) )
 
    METHOD loadedBlankBuffer()
 
@@ -119,9 +120,9 @@ METHOD New()
 
    ::oConfiguracionesController  := ConfiguracionesController():New( self )
    
-   ::loadDocuments()
-
    ::oReport                     := MovimientosAlmacenReport():New( Self )
+
+   ::loadDocuments()
 
    ::oModel:setEvent( 'loadedBlankBuffer',      {|| ::loadedBlankBuffer() } )
    ::oModel:setEvent( 'loadedDuplicateBuffer',  {|| ::loadedBlankBuffer() } )
@@ -148,9 +149,9 @@ METHOD End()
 
    ::oEtiquetasController:End()
 
-   ::oConfiguracionesController:End()
-
    ::oReport:End()
+
+   ::oConfiguracionesController:End()
 
 RETURN ( Self )
 
@@ -258,7 +259,7 @@ RETURN ( self )
 
 //---------------------------------------------------------------------------//
 
-METHOD printDocument( nDevice, cFileName )
+METHOD printDocument( nDevice, cFile, nCopies, cPrinter )
 
    DEFAULT nDevice   := IS_SCREEN
 
@@ -267,16 +268,24 @@ METHOD printDocument( nDevice, cFileName )
       RETURN ( self )  
    end if 
 
-   if empty( cFileName )
-      cFileName      := ::aDocuments[ 1 ]
+   if empty( cFile )
+      cFile          := ::oConfiguracionesController:oModel:getDocumentoMovimientosAlmacen()
    end if 
 
-   if empty( cFileName )
+   if empty( cFile ) 
+      cFile          := afirst( ::aDocuments )
+   end if 
+
+   if empty( cFile )
       msgStop( "No hay formatos por defecto" )
       RETURN ( self )  
    end if 
 
-   ::oImprimirSeriesController:showDocument( nDevice, cFileName )
+   if empty( nCopies )
+      nCopies        := ::oConfiguracionesController:oModel:getCopiasMovimientosAlmacen()
+   end if 
+
+   ::oImprimirSeriesController:showDocument( nDevice, cFile, nCopies, cPrinter )
 
 RETURN ( self ) 
 
