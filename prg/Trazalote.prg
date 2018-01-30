@@ -30,7 +30,6 @@ CLASS TTrazarLote
    DATA oPedCliL
    DATA oTikCliT
    DATA oTikCliL
-   DATA oHisMov
    DATA oProducT
    DATA oProducL
    DATA oProducM 
@@ -77,8 +76,6 @@ CLASS TTrazarLote
    METHOD AddFacRec()
 
    METHOD AddTikCli()
-
-   METHOD AddHisMov()
 
    METHOD Zoom()
 
@@ -158,9 +155,6 @@ METHOD OpenFiles()
 
       DATABASE NEW ::oFacRecL PATH ( cPatEmp() ) FILE "FacRecL.Dbf" VIA ( cDriver() ) SHARED INDEX "FacRecL.Cdx"
       ::oFacRecL:OrdSetFocus( "cRef" )
-
-      DATABASE NEW ::oHisMov PATH ( cPatEmp() )  FILE "HisMov.Dbf" VIA ( cDriver() ) SHARED INDEX "HisMov.CDX"
-      ::oHisMov:OrdSetFocus( "cRefMov" )
 
       DATABASE NEW ::oProducT PATH ( cPatEmp() ) FILE "ProCab.Dbf" VIA ( cDriver() ) SHARED INDEX "ProCab.Cdx"
 
@@ -301,10 +295,6 @@ METHOD CloseFiles()
       ::oFacRecL:End()
    end if
 
-   if !Empty( ::oHisMov )  .and.::oHisMov:Used()
-      ::oHisMov:End()
-   end if
-
    if !Empty( ::oProducT ) .and.::oProducT:Used()
       ::oProducT:End()
    end if
@@ -378,7 +368,7 @@ METHOD Activate( oMenuItem, oWnd )
    // Inicializa variables-----------------------------------------------------
 
    cSayArt              := ""
-   aBuscar              := {  "Compras", "Almacén", "Ventas", "Producción", "Todos" }
+   aBuscar              := {  "Compras", "Ventas", "Producción", "Todos" }
    aFiltro              := {  "Todos",;
                               Space( 3 ) + "Compras",;
                               Space( 6 ) + "Pedidos a proveedores",;
@@ -391,7 +381,6 @@ METHOD Activate( oMenuItem, oWnd )
                               Space( 6 ) + "Facturas de clientes",;
                               Space( 6 ) + "Facturas rectificativas de clientes",;
                               Space( 6 ) + "Tickets de clientes",;
-                              Space( 3 ) + "Movimiento de almacén",;
                               Space( 3 ) + "Partes de producción",;
                               Space( 6 ) + "Material producido",;
                               Space( 6 ) + "Material consumido" }
@@ -821,32 +810,6 @@ METHOD Search( oLote, oBtnCancel, oBtnBuscar )
 
    end if
 
-   //Buscamos por movimientos de almacen---------------------------------------
-
-   if ::cBuscar == "Almacén" .or. ::cBuscar == "Todos"
-
-      ::oMetMsg:cText   := "Movimientos de almacén"
-
-      ::oMetMsg:SetTotal( ::oHisMov:OrdKeyCount() )
-
-      if ::oHisMov:Seek( ::cCodigo )
-
-         while ( ::cCodigo == ::oHisMov:cRefMov ) .and. !( ::oHisMov:Eof() )
-
-            if ( ::cLote == ::oHisMov:cLote .or. Empty( ::cLote ) )
-               ::AddHisMov()
-            end if 
-
-            ::oHisMov:Skip()
-
-            ::oMetMsg:Set( ::oHisMov:OrdKeyNo() )
-
-         end while
-
-      end if
-
-   end if
-
    if ::cBuscar == "Producción" .or. ::cBuscar == "Todos"
 
       //Materiales producidos-----------------------------------------------------
@@ -1111,28 +1074,6 @@ RETURN ( Self )
 
 //----------------------------------------------------------------------------//
 
-METHOD AddHisMov()
-
-
-   ::oDbfTmp:Append()
-   ::oDbfTmp:cTipDoc    := "Movimiento de almacén"
-   ::oDbfTmp:cNumDoc    := Str( ::oHisMov:nNumRem ) + "/" + ::oHisMov:cSufRem
-   ::oDbfTmp:cDoc       := Str( ::oHisMov:Recno() ) //Guardamos el recno
-   ::oDbfTmp:cCodigo    := ::oHisMov:cRefMov
-   ::oDbfTmp:cNomArt    := oRetFld( ::oHisMov:cRefMov, ::oDbfArt )
-   ::oDbfTmp:cLote      := ::oHisMov:cLote
-   ::oDbfTmp:nUnidades  := nTotNMovAlm( ::oHisMov:cAlias )
-   ::oDbfTmp:dFecDoc    := ::oHisMov:dFecMov
-   ::oDbfTmp:cCodCli    := Space(12)
-   ::oDbfTmp:cNomCli    := Space(50)
-   ::oDbfTmp:cCodObr    := Space(10)
-   ::oDbfTmp:dFecCad    := ctod("")
-   ::oDbfTmp:Save()
-
-RETURN ( Self )
-
-//---------------------------------------------------------------------------//
-
 METHOD AddProducido()
 
    ::oDbfTmp:Append()
@@ -1202,9 +1143,6 @@ METHOD Zoom()
 
       case AllTrim( ::oDbfTmp:cTipDoc ) == "Factura rectificativa de cliente"
          ZooFacRec( ::oDbfTmp:cDoc )
-
-      case AllTrim( ::oDbfTmp:cTipDoc ) == "Movimiento de almacén"
-         ZooMovAlm( Val( ::oDbfTmp:cDoc ) )  // El parametro es el recno
 
       case Alltrim( ::oDbfTmp:cTipDoc ) == "Material producido"
          ZoomProduccion( ::oDbfTmp:cDoc, ::oBrw )
@@ -1292,12 +1230,6 @@ METHOD Filtrar()
          ::oDbfTmp:GoTop()
          ::oBrw:Refresh()
 
-      case Alltrim( ::cFiltro ) == "Movimiento de almacén"
-         ::oDbfTmp:OrdSetFocus( "cTipDoc" )
-         ::oDbfTmp:OrdScope( "Movimiento de almacén" )
-         ::oDbfTmp:GoTop()
-         ::oBrw:Refresh()
-
       case Alltrim( ::cFiltro ) == "Partes de producción"
          ::oDbfTmp:OrdSetFocus( "dFecDoc" )
          ::oDbfTmp:SetFilter( "'Material' $ cTipDoc" )
@@ -1356,9 +1288,6 @@ METHOD Visualizar()
       case Alltrim( ::oDbfTmp:cTipDoc ) == "Factura rectificativa de cliente"
          VisFacRec( ::oDbfTmp:cDoc )
 
-      case Alltrim( ::oDbfTmp:cTipDoc ) == "Movimiento de almacén"
-         msgStop( "El documento no se puede visualizar","Información" )
-
       case Alltrim( ::oDbfTmp:cTipDoc ) == "Material producido"
          VisProduccion( ::oDbfTmp:cDoc )
 
@@ -1367,7 +1296,6 @@ METHOD Visualizar()
 
       case Alltrim( ::oDbfTmp:cTipDoc ) == "Ticket de cliente"
          msgStop( "El documento no se puede visualizar","Información" )
-         //VisTikCli( ::oDbfTmp:cDoc )
 
    endcase
 
@@ -1403,9 +1331,6 @@ METHOD Imprimir()
       case Alltrim( ::oDbfTmp:cTipDoc ) == "Factura rectificativa de cliente"
          PrnFacRec( ::oDbfTmp:cDoc )
 
-      case Alltrim( ::oDbfTmp:cTipDoc ) == "Movimiento de almacén"
-         msgStop( "El documento no se puede imprimir","Información" )
-
       case Alltrim( ::oDbfTmp:cTipDoc ) == "Material producido"
          PrnProduccion( ::oDbfTmp:cDoc )
 
@@ -1414,7 +1339,6 @@ METHOD Imprimir()
 
       case Alltrim( ::oDbfTmp:cTipDoc ) == "Ticket de cliente"
          msgStop( "El documento no se puede imprimir","Información" )
-         //PrnTikCli( ::oDbfTmp:cDoc )   
 
    endcase
 
@@ -1449,9 +1373,6 @@ Method nTreeImagen()
 
       case Alltrim( ::oDbfTmp:cTipDoc ) == "Factura rectificativa de cliente"
          Return ( 8 )
-
-      case Alltrim( ::oDbfTmp:cTipDoc ) == "Movimiento de almacén"
-         Return ( 9 )
 
       case Alltrim( ::oDbfTmp:cTipDoc ) == "Material producido"
          Return ( 10 )

@@ -23,7 +23,6 @@ CLASS TInfArtPre FROM TInfGen
    DATA  oFacRecL    AS OBJECT
    DATA  oTikCliT    AS OBJECT
    DATA  oTikCliL    AS OBJECT
-   DATA  oHisMov     AS OBJECT
    DATA  nTotUndCom  INIT 0
    DATA  nTotImpCom  INIT 0
    DATA  nTotUndVta  INIT 0
@@ -127,8 +126,6 @@ METHOD OpenFiles() CLASS TInfArtPre
 
    DATABASE NEW ::oTikCliL    PATH ( cPatEmp() ) FILE "TIKEL.DBF"    VIA ( cDriver() ) SHARED INDEX "TIKEL.CDX"
 
-   DATABASE NEW ::oHisMov     PATH ( cPatEmp() ) FILE "HISMOV.DBF"   VIA ( cDriver() ) SHARED INDEX "HISMOV.CDX"
-
    RECOVER
 
       msgStop( 'Imposible abrir todas las bases de datos' )
@@ -191,9 +188,6 @@ METHOD CloseFiles() CLASS TInfArtPre
    if !Empty( ::oTikCliL ) .and. ::oTikCliL:Used()
       ::oTikCliL:End()
    end if
-   if !Empty( ::oHisMov ) .and. ::oHisMov:Used()
-      ::oHisMov:End()
-   end if
 
    ::oFamilia := nil
    ::oIva     := nil
@@ -210,7 +204,6 @@ METHOD CloseFiles() CLASS TInfArtPre
    ::oFacRecL := nil
    ::oTikCliT := nil
    ::oTikCliL := nil
-   ::oHisMov  := nil
 
 RETURN ( Self )
 
@@ -378,34 +371,6 @@ METHOD nTotCom( cCodArt )
       ::nTotImpCom  += nImpLFacPrv( ::oFacPrvT:cAlias, ::oFacPrvL:cAlias, ::nDecOut, ::nDerOut, ::nValDiv )
 
       ::oFacPrvL:Skip()
-
-   end while
-
-   /*Recorremos los historicos de movimiento para sumar o restar los totales*/
-
-   ::oHisMov:OrdSetFocus( "cRefMov" )
-   ::oHisMov:GoTop()
-   ::oHisMov:Seek( cCodArt )
-
-   while ::oHisMov:cRefMov == cCodArt .and. !::oHisMov:Eof()
-
-      if !Empty( ::oHisMov:cAliMov ) .and.;
-         !::oHisMov:lNoStk
-
-         ::nTotUndCom  += nTotNMovAlm( ::oHisMov:cAlias )
-         ::nTotImpCom  += nTotLMovAlm( ::oHisMov:cAlias )
-
-      end if
-
-      if !Empty( ::oHisMov:cAloMov ) .and.;
-         !::oHisMov:lNoStk
-
-         ::nTotUndCom  -= nTotNMovAlm( ::oHisMov:cAlias )
-         ::nTotImpCom  -= nTotLMovAlm( ::oHisMov:cAlias )
-
-      end if
-
-      ::oHisMov:Skip()
 
    end while
 

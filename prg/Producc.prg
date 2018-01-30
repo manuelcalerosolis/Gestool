@@ -75,8 +75,6 @@ CLASS TProduccion FROM TMasDet
    DATA oTikCliL
    DATA oTikCliS
 
-   DATA oHisMov
-
    DATA oGrupoFamilia
    DATA oTipoArticulo
 
@@ -688,8 +686,6 @@ METHOD OpenFiles( lExclusive )
 
    DATABASE NEW ::oDbfEmp     PATH ( cPatDat() )   FILE "EMPRESA.DBF"   VIA ( cDriver() ) SHARED INDEX "EMPRESA.CDX"
 
-   DATABASE NEW ::oHisMov     PATH ( cPatEmp() )   FILE "HISMOV.DBF"    VIA ( cDriver() ) SHARED INDEX "HISMOV.CDX"
-
    DATABASE NEW ::oTemporada  PATH ( cPatEmp() )   FILE "Temporadas.Dbf" VIA ( cDriver() ) SHARED INDEX "Temporadas.Cdx"
 
    DATABASE NEW ::oCategoria  PATH ( cPatEmp() )   FILE "Categorias.Dbf" VIA ( cDriver() ) SHARED INDEX "Categorias.Cdx"
@@ -923,10 +919,6 @@ METHOD CloseFiles()
       ::oDbfEmp:End()
    end if
 
-   if ::oHisMov != nil .and. ::oHisMov:Used()
-      ::oHisMov:End()
-   end if
-
    if ::oTemporada != nil .and. ::oTemporada:Used()
       ::oTemporada:End()
    end if
@@ -997,7 +989,6 @@ METHOD CloseFiles()
    ::oDbfDoc   := nil
    ::oDbfCount := nil
    ::oDbfEmp   := nil
-   ::oHisMov   := nil
 
 RETURN ( .t. )
 

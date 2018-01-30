@@ -24,7 +24,6 @@ CLASS TInfGesPed FROM TInfGen
    DATA  oFacCliL    AS OBJECT
    DATA  oTikCliT    AS OBJECT
    DATA  oTikCliL    AS OBJECT
-   DATA  oHisMov     AS OBJECT
    DATA  oAlbPrvL    AS OBJECT
    DATA  oFacRecL    AS OBJECT
    DATA  oProducL    AS OBJECT
@@ -122,8 +121,6 @@ METHOD OpenFiles()
 
    DATABASE NEW ::oObras    PATH ( cPatCli() )   FILE "OBRAST.DBF"    VIA ( cDriver() ) SHARED INDEX "OBRAST.CDX"
 
-   DATABASE NEW ::oHisMov   PATH ( cPatEmp() )   FILE "HISMOV.DBF"    VIA ( cDriver() ) SHARED INDEX "HISMOV.CDX"
-
    DATABASE NEW ::oAlbPrvL  PATH ( cPatEmp() )   FILE "ALBPROVL.DBF"  VIA ( cDriver() ) SHARED INDEX "ALBPROVL.CDX"
 
    DATABASE NEW ::oFacRecL  PATH ( cPatEmp() )   FILE "FACRECL.DBF"   VIA ( cDriver() ) SHARED INDEX "FACRECL.CDX"
@@ -219,10 +216,6 @@ METHOD CloseFiles()
       ::oTikCliL:End()
    end if
 
-   if !Empty( ::oHisMov ) .and. ::oHisMov:Used()
-      ::oHisMov:End()
-   end if
-
    if !Empty( ::oAlbPrvL ) .and. ::oAlbPrvL:Used()
       ::oAlbPrvL:End()
    end if
@@ -248,7 +241,6 @@ METHOD CloseFiles()
    end if
 
    ::oPedPrvL := nil
-   ::oHisMov  := nil
    ::oAlbPrvT := nil
    ::oAlbPrvL := nil
    ::oFacPrvT := nil

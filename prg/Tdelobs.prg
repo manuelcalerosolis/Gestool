@@ -56,7 +56,6 @@ CLASS TDeleleteObsoletos
    DATA oFacRecL
    DATA oTikCliT
    DATA oTikCliL
-   DATA oHisMov
    DATA oDbfFam
    DATA oDbfArt
    DATA oPrvArt
@@ -148,9 +147,6 @@ METHOD OpenFiles()
    DATABASE NEW ::oTikCliL PATH ( cPatEmp() ) FILE "TIKEL.DBF"       VIA ( cDriver() )  SHARED INDEX "TIKEL.CDX"
    ::oTikCliL:OrdSetFocus( "cCbaTil" )
 
-   DATABASE NEW ::oHisMov  PATH ( cPatEmp() ) FILE "HISMOV.DBF"      VIA ( cDriver() )  SHARED INDEX "HISMOV.CDX"
-   ::oHisMov:OrdSetFocus( "cRefMov" )
-
    DATABASE NEW ::oDbfFam  PATH ( cPatArt() ) FILE "FAMILIAS.DBF"    VIA ( cDriver() )  SHARED INDEX "FAMILIAS.CDX"
 
    DATABASE NEW ::oDbfArt  PATH ( cPatArt() ) FILE "ARTICULO.DBF"    VIA ( cDriver() )  SHARED INDEX "ARTICULO.CDX"
@@ -201,7 +197,6 @@ METHOD CloseFiles()
    ::oFacRecL:End()
    ::oTikCliT:End()
    ::oTikCliL:End()
-   ::oHisMov:End()
    ::oDbfFam:End()
    ::oDbfArt:End()
    ::oPrvArt:End()
@@ -715,26 +710,6 @@ METHOD lNoHayMovimientos()
             end if
 
             ::oTikCliL:Skip()
-
-         end while
-
-      end if
-
-   end if
-
-   if ::lNoMov
-
-      if ::oHisMov:Seek( cCodArt )
-
-         while ::oHisMov:cRefMov == cCodArt .and. !::oHisMov:Eof()
-
-            if ::oHisMov:dFecMov >= ::dFechaInicial .and. ::oHisMov:dFecMov <= ::dFechaFinal
-
-               Return .f.
-
-            end if
-
-            ::oHisMov:Skip()
 
          end while
 

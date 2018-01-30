@@ -24,7 +24,6 @@ CLASS TRenVta FROM TInfPArt
    DATA  oAlbPrvL       AS OBJECT
    DATA  oFacPrvL       AS OBJECT
    DATA  oRctPrvL       AS OBJECT
-   DATA  oHisMov        AS OBJECT
    DATA  oIva           AS OBJECT
    DATA  oDivisas       AS OBJECT
 
@@ -126,8 +125,6 @@ METHOD OpenFiles()
 
    DATABASE NEW ::oRctPrvL PATH ( cPatEmp() ) FILE "RctPrvL.DBF"  VIA ( cDriver() ) SHARED INDEX "RctPrvL.CDX"
 
-   DATABASE NEW ::oHisMov  PATH ( cPatEmp() ) FILE "HISMOV.DBF"   VIA ( cDriver() ) SHARED INDEX "HISMOV.CDX"
-
    DATABASE NEW ::oIva     PATH ( cPatDat() ) FILE "TIVA.DBF"     VIA ( cDriver() ) SHARED INDEX "TIVA.CDX"
 
    DATABASE NEW ::oDivisas PATH ( cPatDat() ) FILE "DIVISAS.DBF"  VIA ( cDriver() ) SHARED INDEX "DIVISAS.CDX"
@@ -225,7 +222,6 @@ METHOD CloseFiles()
    ::oAlbPrvL  := nil
    ::oFacPrvL  := nil
    ::oRctPrvL  := nil
-   ::oHisMov   := nil
    ::oIva      := nil
    ::oDivisas  := nil
    ::oStock    := nil

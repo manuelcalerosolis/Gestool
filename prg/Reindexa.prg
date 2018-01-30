@@ -212,7 +212,6 @@ METHOD GenIndices( oMsg )
       ::SetText( "Generando índices : Promociones", ::aProgress[ 2 ] )           ; rxPromo(    ::cPatArt )
       ::SetText( "Generando índices : Grupos de venta", ::aProgress[ 2 ] )       ; rxGrpVenta( ::cPathEmp )
       ::SetText( "Generando índices : Ubicaciones", ::aProgress[ 2 ] )           ; rxUbi(      ::cPatAlm )
-      // ::SetText( "Generando índices : Movimientos", ::aProgress[ 2 ] )           ; rxHisMov(   ::cPathEmp )
 
    end if
 
@@ -241,7 +240,6 @@ METHOD GenIndices( oMsg )
       ::SetText( "Generando índices : Histórico de plantillas de ventas automáticas", ::aProgress[ 3 ] );  THisFacAutomatica():New( ::cPathEmp ):Reindexa()
 
       ::SetText( "Generando índices : Remesas bancarias", ::aProgress[ 3 ] );          TRemesas():Create( ::cPathEmp ):Reindexa()
-      ::SetText( "Generando índices : Remesas de movimientos", ::aProgress[ 3 ] );     TRemMovAlm():New( ::cPathEmp ):Reindexa()
       ::SetText( "Generando índices : Envios y recepciones", ::aProgress[ 3 ] );       TSndRecInf():Reindexa( ::cPathEmp )
 
       ::SetText( "Generando índices : Campos extra", ::aProgress[ 3 ] );               TCamposExtra():New( ::cPathEmp ):Reindexa()
@@ -264,9 +262,6 @@ METHOD GenIndices( oMsg )
       ::SetText( "Generando índices : Líneas de materias primas", ::aProgress[ 3 ] );        TDetMaterial():New( ::cPathEmp ):Reindexa()
       ::SetText( "Generando índices : Series de materias primas", ::aProgress[ 3 ] );        TDetSeriesMaterial():New( ::cPathEmp ):Reindexa()
       ::SetText( "Generando índices : Líneas de maquinaria", ::aProgress[ 3 ] );             TDetMaquina():New( ::cPathEmp ):Reindexa()
-
-      ::SetText( "Generando índices : Movimientos de almacén", ::aProgress[ 3 ] );           TDetMovimientos():New( ::cPathEmp ):Reindexa()
-      ::SetText( "Generando índices : Series de movimientos de almacen", ::aProgress[ 3 ] ); TDetSeriesMovimientos():New( ::cPathEmp ):Reindexa()
 
       ::SetText( "Generando índices : Expediente", ::aProgress[ 3 ] );                       TExpediente():Create( ::cPathEmp ):Reindexa()
       ::SetText( "Generando índices : Tipos de expedientes", ::aProgress[ 3 ] );             TTipoExpediente():Create( ::cPathEmp ):Reindexa()
@@ -378,7 +373,6 @@ METHOD Sincroniza()
    ::SetText( "Sincroniza líneas de rectificativas a proveedor", ::aProgress[ 6 ]  )   ; SynRctPrv( ::cPathEmp )
    ::SetText( "Sincroniza recibos de proveedores", ::aProgress[ 6 ]  )                 ; SynRecPrv( ::cPathEmp )
    ::SetText( "Sincroniza líneas de ordenes de carga", ::aProgress[ 6 ]  )             ; SynOrdCar( ::cPathEmp )
-   ::SetText( "Sincroniza líneas de movimientos de almacén", ::aProgress[ 6 ]  )       ; SynRemMov( ::cPathEmp )
    ::SetText( "Sincroniza unidades de medición", ::aProgress[ 6 ]  )                   ; UniMedicion():Create():Syncronize()
    ::SetText( "Sincroniza Fabricantes", ::aProgress[ 6 ]  )                            ; TFabricantes():Create():Syncronize()
 

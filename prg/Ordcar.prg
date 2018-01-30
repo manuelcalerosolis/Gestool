@@ -10,7 +10,6 @@ static dbfFacCliT
 static dbfFacCliL
 static dbfOrdCarT
 static dbfOrdCarL
-static dbfHisMov
 static dbfTransport
 static dbfArticulo
 static dbfTmpEstado

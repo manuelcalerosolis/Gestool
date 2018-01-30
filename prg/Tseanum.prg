@@ -14,9 +14,6 @@ CLASS TSeaNumSer
    DATA oDbfAlm
    DATA oDbfTmp
 
-   DATA oHisMovT
-   DATA oMovSerS
-
    DATA oAlbPrvT
    DATA oAlbPrvL
    DATA oAlbPrvS
@@ -92,8 +89,6 @@ CLASS TSeaNumSer
 
    METHOD Search( oNumSer )
 
-   METHOD AddMovAlm()
-
    METHOD AddAlbPrv()
    METHOD AddFacPrv()
    METHOD AddRctPrv()
@@ -115,8 +110,6 @@ CLASS TSeaNumSer
 
    Method nTreeImagen()
 
-   Method cTextoMovimiento()
-
 END CLASS
 
 //----------------------------------------------------------------------------//
@@ -137,11 +130,6 @@ METHOD OpenFiles()
       DATABASE NEW ::oDbfCli PATH ( cPatCli() )  FILE "Client.Dbf" VIA ( cDriver() ) SHARED INDEX "Client.Cdx"
 
       DATABASE NEW ::oDbfPrv PATH ( cPatPrv() )  FILE "Provee.Dbf" VIA ( cDriver() ) SHARED INDEX "Provee.Cdx"
-
-      DATABASE NEW ::oHisMovT PATH ( cPatEmp() ) FILE "HisMov.Dbf" VIA ( cDriver() ) SHARED INDEX "HisMov.Cdx"
-
-      DATABASE NEW ::oMovSerS PATH ( cPatEmp() ) FILE "MovSer.Dbf" VIA ( cDriver() ) SHARED INDEX "MovSer.Cdx"
-      ::oMovSerS:OrdSetFocus( "cNumSer" )
 
       DATABASE NEW ::oAlbPrvT PATH ( cPatEmp() ) FILE "AlbProvT.Dbf" VIA ( cDriver() ) SHARED INDEX "AlbProvT.Cdx"
 
@@ -273,14 +261,6 @@ METHOD CloseFiles()
 
    if !Empty( ::oDbfPrv )
       ::oDbfPrv:End()
-   end if
-
-   if !Empty( ::oHisMovT )
-      ::oHisMovT:End()
-   end if
-
-   if !Empty( ::oMovSerS )
-      ::oMovSerS:End()
    end if
 
    if !Empty( ::oAlbPrvT )
@@ -697,28 +677,6 @@ METHOD Search( oNumSer, oBtnCancel, oBtnBuscar )
       ::dConsolidacion  := ::oStock:GetConsolidacion( ::cCodArt )
    end if
 
-   // Movimientos de almacen---------------------------------------------------
-
-   ::oMetMsg:cText   := "Movimientos de almacen"
-
-   ::oMetMsg:SetTotal( ::oMovSerS:LastRec() )
-
-   if ::oMovSerS:Seek( ::cNumSer )
-
-      while ( Rtrim( ::oMovSerS:cNumSer ) == Rtrim( ::cNumSer ) ) .and. !::oMovSerS:Eof()
-
-         ::AddMovAlm()
-
-         ::oMovSerS:Skip()
-
-         ::oMetMsg:Set( ::oMovSerS:OrdKeyNo() )
-
-      end while
-
-   end if
-
-   ::oMetMsg:Set( ::oMovSerS:LastRec() )
-
    // Albaranes de proveedor---------------------------------------------------
 
    ::oMetMsg:cText   := "Albaranes proveedor"
@@ -967,36 +925,6 @@ METHOD Search( oNumSer, oBtnCancel, oBtnBuscar )
    end if
 
 RETURN ( .t. )
-
-//----------------------------------------------------------------------------//
-
-METHOD AddMovAlm()
-
-   if ( Empty( ::cCodArt ) .or. ( Rtrim( ::cCodArt ) == Rtrim( ::oMovSerS:cCodArt ) ) )   .and.;
-      ( Empty( ::cCodAlm ) .or. ( Rtrim( ::cCodAlm ) == Rtrim( ::oMovSerS:cAlmOrd ) ) )   .and.;
-      ( Empty( ::dConsolidacion ) .or. ( ::oMovSerS:dFecRem >= ::dConsolidacion ) )
-
-      ::oDbfTmp:Append()
-      ::oDbfTmp:cTipDoc := ::cTextoMovimiento()
-      ::oDbfTmp:cNumDoc := Str( ::oMovSerS:nNumRem,9 ) + "/" + ::oMovSerS:cSufRem
-      ::oDbfTmp:cDoc    := Str( ::oMovSerS:nNumRem,9 ) + "/" + ::oMovSerS:cSufRem
-      ::oDbfTmp:cCodArt := ::oMovSerS:cCodArt
-      ::oDbfTmp:nNumLin := ::oMovSerS:nNumLin
-      ::oDbfTmp:cCodAlm := ::oMovSerS:cAlmOrd
-      ::oDbfTmp:dFecDoc := ::oMovSerS:dFecRem
-      ::oDbfTmp:cCodCli := ""
-      ::oDbfTmp:cCliPrv := ""
-      ::oDbfTmp:Save()
-
-      if ::oMovSerS:lUndNeg
-         ::nSayCompras--
-      else
-         ::nSayCompras++
-      end if
-
-   end if
-
-RETURN ( Self )
 
 //----------------------------------------------------------------------------//
 
@@ -1478,17 +1406,6 @@ Method nTreeImagen()
 Return ( 1 )
 
 //---------------------------------------------------------------------------//
-
-METHOD cTextoMovimiento()
-
-   local cTexto   := ""
-
-   if ::oHisMovT:Seek( Str( ::oMovSerS:nNumRem,9 ) + ::oMovSerS:cSufRem )
-      cTexto      := ::aMovimiento[ Min( Max( ::oHisMovT:nTipMov, 1 ), 4 ) ]
-   end if
-
-Return ( cTexto )
-
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//

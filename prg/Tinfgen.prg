@@ -5838,8 +5838,6 @@ METHOD nStkTotal( cCodArt )
    nStkTotal         -= ::nTotFacCli( cCodArt )
    nStkTotal         -= ::nTotTikCli( cCodArt )
 
-   nStkTotal         += nTotVMovAlm( cCodArt, ::oHisMov:cAlias )
-
 RETURN ( nStkTotal )
 
 //---------------------------------------------------------------------------//

@@ -19,7 +19,6 @@ CLASS TFastVentasArticulos FROM TFastReportInfGen
    DATA  oProCab
    DATA  oProLin
    DATA  oProMat
-   DATA  oHisMov
    DATA  oCtrCoste
    DATA  oOperario
    DATA  oFraPub

@@ -148,8 +148,6 @@ CLASS TpvTactil
    DATA oRectificativaProveedorCabecera
    DATA oRectificativaProveedorLinea
    DATA oRectificativaProveedorNumeroSerie
-   DATA oMovimientosAlmacen
-   DATA oMovimientosAlmacenNumeroSerie
    DATA oComentariosCabecera
    DATA oComentariosLinea
    DATA oTemporadas
@@ -1397,10 +1395,6 @@ METHOD OpenFiles() CLASS TpvTactil
 
    DATABASE NEW ::oRectificativaProveedorNumeroSerie        PATH ( cPatEmp() )   FILE "RctPrvS.DBF"         VIA ( cDriver() ) SHARED INDEX "RctPrvS.CDX"
 
-   DATABASE NEW ::oMovimientosAlmacen                       PATH ( cPatEmp() )   FILE "HISMOV.DBF"          VIA ( cDriver() ) SHARED INDEX "HISMOV.CDX"
-
-   DATABASE NEW ::oMovimientosAlmacenNumeroSerie            PATH ( cPatEmp() )   FILE "MOVSER.DBF"          VIA ( cDriver() ) SHARED INDEX "MOVSER.CDX"
-
    DATABASE NEW ::oComentariosCabecera                      PATH ( cPatArt() )   FILE "COMENTARIOST.DBF"    VIA ( cDriver() ) SHARED INDEX "COMENTARIOST.CDX"
 
    DATABASE NEW ::oComentariosLinea                         PATH ( cPatArt() )   FILE "COMENTARIOSL.DBF"    VIA ( cDriver() ) SHARED INDEX "COMENTARIOSL.CDX"
@@ -1805,14 +1799,6 @@ METHOD CloseFiles() CLASS TpvTactil
       ::oRectificativaProveedorNumeroSerie:End()
    end if
 
-   if ::oMovimientosAlmacen != nil .and. ::oMovimientosAlmacen:Used()
-      ::oMovimientosAlmacen:End()
-   end if
-
-   if ::oMovimientosAlmacenNumeroSerie != nil .and. ::oMovimientosAlmacenNumeroSerie:Used()
-      ::oMovimientosAlmacenNumeroSerie:End()
-   end if
-
    if ::oComentariosCabecera != nil .and. ::oComentariosCabecera:Used()
       ::oComentariosCabecera:End()
    end if
@@ -1971,8 +1957,6 @@ METHOD CloseFiles() CLASS TpvTactil
    ::oRectificativaProveedorCabecera         := nil
    ::oRectificativaProveedorLinea            := nil
    ::oRectificativaProveedorNumeroSerie      := nil
-   ::oMovimientosAlmacen                     := nil
-   ::oMovimientosAlmacenNumeroSerie          := nil
    ::oComentariosCabecera                    := nil
    ::oComentariosLinea                       := nil
    ::oTemporadas                             := nil
