@@ -103,3 +103,4 @@ METHOD getLastNumber( cUser )
 RETURN ( nextDocumentNumber( cNumero ) )
 
 //---------------------------------------------------------------------------//
+

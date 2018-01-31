@@ -57,6 +57,7 @@ CLASS MovimientosAlmacenLineasView FROM SQLBaseView
    METHOD showLoteCaducidadControls()              INLINE ( ::verticalShow( ::oGetLote ), ::verticalShow( ::oGetCaducidad ) )
 
    METHOD hideUnitsControls()             
+   METHOD showUnitsControls()
 
    METHOD hidePrimeraPropiedad()                   INLINE ( ::verticalHide( ::oGetValorPrimeraPropiedad ) )
    METHOD showPrimeraPropiedad()                   INLINE ( ::verticalShow( ::oGetValorPrimeraPropiedad ) )
@@ -312,6 +313,19 @@ METHOD hideUnitsControls()
 RETURN ( Self )
 
 //---------------------------------------------------------------------------//
+
+METHOD showUnitsControls()
+
+   ::verticalShow( ::oGetBultosArticulo )   
+   
+   ::verticalShow( ::oGetCajasArticulo )   
+
+   ::verticalShow( ::oGetUnidadesArticulo )   
+
+RETURN ( Self )
+
+//---------------------------------------------------------------------------//
+
 
 METHOD refreshUnidadesImportes()       
 

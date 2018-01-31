@@ -254,6 +254,8 @@ METHOD showProperties()
 
       ::oDialogView:hidePropertyBrowseView()
 
+      ::oDialogView:showUnitsControls()
+
       RETURN ( .t. )
 
    end if 

@@ -63,8 +63,8 @@ METHOD getColumns()
    hset( ::hColumns, "divisa_cambio",     {  "create"    => "DECIMAL( 16, 6 )"                        ,;
                                              "default"   => {|| 1 } }                                 )
 
-   hset( ::hColumns, "comentarios",       {  "create"    => "VARCHAR ( 250 )"                         ,;
-                                             "default"   => {|| space( 250 ) } }                      )
+   hset( ::hColumns, "comentarios",       {  "create"    => "TEXT"                                    ,;
+                                             "default"   => {|| "" } }                                )
 
    ::getTimeStampColumns()   
 
