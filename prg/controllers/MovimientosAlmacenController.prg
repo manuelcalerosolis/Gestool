@@ -70,7 +70,11 @@ CLASS MovimientosAlmacenController FROM SQLNavigatorController
 
    METHOD loadedBlankBuffer()
 
-   METHOD printSerialDocument()     INLINE ( ::oImprimirSeriesController:Activate() )       
+   METHOD printSerialDocument()     INLINE ( ::oImprimirSeriesController:Activate() ) 
+
+   METHOD buildNotSentJson()
+
+   METHOD zipNotSentJson()
 
 END CLASS
 
@@ -124,8 +128,8 @@ METHOD New()
 
    ::loadDocuments()
 
-   ::oModel:setEvent( 'loadedBlankBuffer',      {|| ::loadedBlankBuffer() } )
-   ::oModel:setEvent( 'loadedDuplicateBuffer',  {|| ::loadedBlankBuffer() } )
+   // ::oModel:setEvent( 'loadedBlankBuffer',      {|| ::loadedBlankBuffer() } )
+   // ::oModel:setEvent( 'loadedDuplicateBuffer',  {|| ::loadedBlankBuffer() } )
 
 RETURN ( Self )
 
@@ -309,9 +313,48 @@ RETURN ( self )
 
 METHOD loadedBlankBuffer()
 
-   hset( ::oModel:hBuffer, "numero", MovimientosAlmacenRepository():getLastNumber() )
+   // hset( ::oModel:hBuffer, "numero", MovimientosAlmacenRepository():getLastNumber() )
 
 RETURN ( self ) 
 
 //---------------------------------------------------------------------------//
 
+METHOD buildNotSentJson()
+
+   ::oModel:selectNotSentToJson()
+
+   if empty( ::oModel:aFetch )
+      RETURN ( nil )
+   end if 
+
+   ::oLineasController:oModel:selectFetchToJson( ;
+      ::oLineasController:oModel:getSentenceNotSent( ::oModel:aFetch ) )  
+
+   if empty( ::oLineasController:oModel:aFetch )
+      RETURN ( nil )
+   end if 
+
+   ::oLineasController:oSeriesControler:oModel:selectFetchToJson(;
+      ::oLineasController:oSeriesControler:oModel:getSentenceNotSent( ::oLineasController:oModel:aFetch ) )
+
+RETURN ( self )
+
+//---------------------------------------------------------------------------//
+
+METHOD zipNotSentJson()
+
+   local cZipFile    := cpatout() + ::cName + dtos( hb_datetime() ) + ".zip"
+
+   hb_setdiskzip( {|| nil } )
+
+   msgalert( cZipFile, "zipNotSentJson" )
+
+   hb_zipfile( cZipFile, cpatout() + ::oModel:getFileToExport(), 9 )
+   hb_zipfile( cZipFile, cpatout() + ::oLineasController:oModel:getFileToExport(), 9 ) 
+   hb_zipfile( cZipFile, cpatout() + ::oLineasController:oSeriesControler:oModel:getFileToExport(), 9 ) 
+
+   hb_gcall()
+
+RETURN ( self )
+
+//---------------------------------------------------------------------------//
