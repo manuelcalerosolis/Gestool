@@ -2269,7 +2269,7 @@ RETURN ( nStockArticulo )
 
 //---------------------------------------------------------------------------//
 
-METHOD StockInit( cPath, cPathOld, oMsg, nCalcCosto, cCodEmpOld ) CLASS TStock
+METHOD StockInit( cPath, cPathOld, oMsg, nCalcCosto, cCodEmpOld, cCodEmpNew ) CLASS TStock
 
    local aAlm
    local sStk
@@ -2383,16 +2383,22 @@ METHOD StockInit( cPath, cPathOld, oMsg, nCalcCosto, cCodEmpOld ) CLASS TStock
 
             aAdd( aAlm, ( dbfAlm )->cCodAlm )
 
-
-
+            /*
+            Creo la cabecera de los movimientos de traspaso--------------------
+            */
 
             hCampos  := SQLMovimientosAlmacenModel():loadBlankBuffer()
 
-            hset( hCampos, "almacen_destino", quoted( ( dbfAlm )->cCodAlm ) )
+            hset( hCampos, "almacen_destino", ( dbfAlm )->cCodAlm )
             hset( hCampos, "tipo_movimiento", 4 )
             hset( hCampos, "numero", 1 )
+            hset( hCampos, "empresa", cCodEmpNew )
 
             SQLMovimientosAlmacenModel():Insertbuffer( hCampos )
+
+
+
+
 
 
 

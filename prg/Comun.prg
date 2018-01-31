@@ -278,12 +278,7 @@ RETURN ( .t. )
 //---------------------------------------------------------------------------//
 
 FUNCTION Test()
-<<<<<<< HEAD
-=======
 
-   MovimientosAlmacenController():New():ActivateNavigatorView()
-
->>>>>>> fa3eab2e99e332fc313c96cb6879de78b78cecb8
 RETURN NIL 
 
 //----------------------------------------------------------------------------//
