@@ -81,9 +81,6 @@ METHOD setReportWhereCodigo( cCodigo, cReport )
                      "SET mReport = " + quoted( SQLDatabase():escapeStr( cReport ) )  + " "    + ;   
                      "WHERE Codigo = " + quoted( cCodigo ) 
    
-   logwrite( cSql )
-   msgalert( cSql, "cSql" )
-
 RETURN ( ::ExecuteSqlStatement( cSql, @cStm ) )
 
 //---------------------------------------------------------------------------//

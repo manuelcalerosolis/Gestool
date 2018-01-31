@@ -343,15 +343,13 @@ RETURN ( self )
 
 METHOD zipNotSentJson()
 
-   local cZipFile    := cpatout() + ::cName + dtos( hb_datetime() ) + ".zip"
+   local cZipFile    := cpatout() + ::cName + "_" + hb_ttos( hb_datetime() ) + ".zip"
 
    hb_setdiskzip( {|| nil } )
 
-   msgalert( cZipFile, "zipNotSentJson" )
-
-   hb_zipfile( cZipFile, cpatout() + ::oModel:getFileToExport(), 9 )
-   hb_zipfile( cZipFile, cpatout() + ::oLineasController:oModel:getFileToExport(), 9 ) 
-   hb_zipfile( cZipFile, cpatout() + ::oLineasController:oSeriesControler:oModel:getFileToExport(), 9 ) 
+   hb_zipfile( cZipFile, ::oModel:getFileToExport(), 9 )
+   hb_zipfile( cZipFile, ::oLineasController:oModel:getFileToExport(), 9 ) 
+   hb_zipfile( cZipFile, ::oLineasController:oSeriesControler:oModel:getFileToExport(), 9 ) 
 
    hb_gcall()
 

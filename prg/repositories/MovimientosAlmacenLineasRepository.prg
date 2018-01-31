@@ -293,7 +293,7 @@ METHOD getSQLSentenceTotalUnidades( tConsolidacion, cCodigoArticulo, cCodigoAlma
       cSentence      +=    "AND movimientos_almacen.almacen_origen = " + quoted( cCodigoAlmacen ) + " "
    end if
    
-   if !Empty( tConsolidacion )
+   if !empty( tConsolidacion )
       cSentence      +=    "AND movimientos_almacen.fecha_hora >= " + quoted( hb_tstostr( tConsolidacion ) ) + " "
    end if
 
@@ -397,7 +397,7 @@ METHOD getSQLSentenceMovimientosForArticulo( hParams ) CLASS MovimientosAlmacenL
       RETURN ( "" )
    end if 
 
-   if hhaskey( hParams, "empresa" ) .and. !Empty( hget( hParams, "empresa" ) )
+   if hhaskey( hParams, "empresa" ) .and. !empty( hget( hParams, "empresa" ) )
       idEmpresa      := hget( hParams, "empresa" )
    else 
       idEmpresa      := cCodEmp()
@@ -433,35 +433,33 @@ METHOD getSQLSentenceMovimientosForArticulo( hParams ) CLASS MovimientosAlmacenL
    
    cSentence         +=    "AND movimientos_almacen_lineas.codigo_articulo = " + quoted( hget( hParams, "codigo_articulo" ) ) + " "
 
-   if hhaskey( hParams, "year" ) .and. !Empty( hget( hParams, "year" ) )
+   if hhaskey( hParams, "year" ) .and. !empty( hget( hParams, "year" ) )
       cSentence      +=    "AND Date_Format( CAST( movimientos_almacen.fecha_hora AS date ), '%Y' ) = " + Str( hget( hParams, "year" ) ) + " "
    end if
 
-   if hhaskey( hParams, "almacen" ) .and. !Empty( hget( hParams, "almacen" ) )
+   if hhaskey( hParams, "almacen" ) .and. !empty( hget( hParams, "almacen" ) )
       cSentence      +=    "AND ( movimientos_almacen.almacen_destino = " + quoted( hget( hParams, "almacen" ) ) + " OR movimientos_almacen.almacen_origen = " + quoted( hget( hParams, "almacen" ) ) + " ) "
    end if
 
-   if hhaskey( hParams, "codigo_primera_propiedad" ) .and. !Empty( hget( hParams, "codigo_primera_propiedad" ) )
+   if hhaskey( hParams, "codigo_primera_propiedad" ) .and. !empty( hget( hParams, "codigo_primera_propiedad" ) )
       cSentence      +=    "AND movimientos_almacen_lineas.codigo_primera_propiedad = " + quoted( hget( hParams, "codigo_primera_propiedad" ) )  + " "
    end if
 
-   if hhaskey( hParams, "codigo_segunda_propiedad" ) .and. !Empty( hget( hParams, "codigo_segunda_propiedad" ) )
+   if hhaskey( hParams, "codigo_segunda_propiedad" ) .and. !empty( hget( hParams, "codigo_segunda_propiedad" ) )
       cSentence      +=    "AND movimientos_almacen_lineas.codigo_segunda_propiedad = " + quoted( hget( hParams, "codigo_segunda_propiedad" ) )  + " "
    end if
 
-   if hhaskey( hParams, "valor_primera_propiedad" ) .and. !Empty( hget( hParams, "valor_primera_propiedad" ) )
+   if hhaskey( hParams, "valor_primera_propiedad" ) .and. !empty( hget( hParams, "valor_primera_propiedad" ) )
       cSentence      +=    "AND movimientos_almacen_lineas.valor_primera_propiedad = " + quoted( hget( hParams, "valor_primera_propiedad" ) )  + " "
    end if
 
-   if hhaskey( hParams, "valor_segunda_propiedad" ) .and. !Empty( hget( hParams, "valor_segunda_propiedad" ) )
+   if hhaskey( hParams, "valor_segunda_propiedad" ) .and. !empty( hget( hParams, "valor_segunda_propiedad" ) )
       cSentence      +=    "AND movimientos_almacen_lineas.valor_segunda_propiedad = " + quoted( hget( hParams, "valor_segunda_propiedad" ) )  + " "
    end if
 
-   if hhaskey( hParams, "lote" ) .and. !Empty( hget( hParams, "lote" ) )
+   if hhaskey( hParams, "lote" ) .and. !empty( hget( hParams, "lote" ) )
       cSentence      +=    "AND movimientos_almacen_lineas.lote = " + quoted( hget( hParams, "lote" ) )
    end if
-
-   LogWrite( cSentence )
 
 RETURN ( cSentence )
 
