@@ -278,11 +278,6 @@ RETURN ( .t. )
 //---------------------------------------------------------------------------//
 
 FUNCTION Test()
-
-   // MovimientosAlmacenController():New():buildNotSentJson():zipNotSentJson():End()
-
-   MovimientosAlmacenController():New():ActivateNavigatorView()
-
 RETURN NIL 
 
 //----------------------------------------------------------------------------//
