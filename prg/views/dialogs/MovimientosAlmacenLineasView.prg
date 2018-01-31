@@ -4,6 +4,12 @@
 
 #define EM_LIMITTEXT             197
 
+#define LWA_COLORKEY             1 
+
+#define GWL_EXSTYLE              -20 
+
+#define WS_EX_LAYERED            524288 
+
 //---------------------------------------------------------------------------//
 
 CLASS MovimientosAlmacenLineasView FROM SQLBaseView
@@ -90,7 +96,7 @@ RETURN ( Self )
 METHOD Activate()
 
    DEFINE DIALOG     ::oDialog ;
-      RESOURCE       "MOVIMIENTOS_ALMACEN_LINEAS";
+      RESOURCE       "MOVIMIENTOS_ALMACEN_LINEAS" ;
       TITLE          ::lblTitle() + ::oController:getTitle()
 
       REDEFINE GET   ::oGetCodigoArticulo ;
