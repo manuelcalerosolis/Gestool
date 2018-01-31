@@ -7,19 +7,20 @@ CLASS SQLExportableModel FROM SQLBaseModel
 
    DATA aFetch
 
-   METHOD lCheckEnvioRecepcion()             INLINE ( ConfiguracionEmpresasRepository():getLogic( 'envio_recepcion', .f. ) )
+   DATA cFileToExport
 
-   METHOD CheckFolders()
+   METHOD New( oController )
 
-   METHOD getInsertIgnoreSentence( hBuffer )
+   METHOD setFileToExport( cFileToExport )   INLINE ( ::cFileToExport := cFileToExport )
+   METHOD getFileToExport()                  INLINE ( ::cFileToExport )
 
-   METHOD insertIgnoreBuffer( hBuffer )
+   METHOD getSentenceNotSent()
 
    METHOD selectNotSentToJson( cFile )
 
    METHOD selectFetchToHash( cSentence )
 
-   METHOD saveJson( cFile )
+   METHOD saveToJson( cFile )
 
    METHOD selectFetchToJson( cSentence, cFile )
 
@@ -31,63 +32,39 @@ END CLASS
 
 //---------------------------------------------------------------------------//
 
-METHOD CheckFolders()
+METHOD New( oController )
 
-   MsgInfo( ::cTableName, "cTableName" )
+   ::Super:New( oController )
 
-   MsgInfo( ::lCheckEnvioRecepcion() )
+   ::cFileToExport                           := cPatOut() + ::cTableName + ".json" 
 
-RETURN ( self )
-
-//---------------------------------------------------------------------------//
-
-METHOD getInsertIgnoreSentence( hBuffer )
-
-   local cSQLInsert
-
-   DEFAULT hBuffer   := ::hBuffer
-
-   cSQLInsert        := "INSERT IGNORE INTO " + ::cTableName + " ( "
-
-   hEval( hBuffer, {| k, v | if ( k != ::cColumnKey, cSQLInsert += k + ", ", ) } )
-
-   cSQLInsert        := chgAtEnd( cSQLInsert, " ) VALUES ( ", 2 )
-
-   hEval( hBuffer, {| k, v | if ( k != ::cColumnKey, cSQLInsert += toSQLString( v ) + ", ", ) } )
-
-   cSQLInsert        := chgAtEnd( cSQLInsert, " )", 2 )
-
-RETURN ( cSQLInsert )
+RETURN ( Self )
 
 //---------------------------------------------------------------------------//
 
-METHOD insertIgnoreBuffer( hBuffer )
+METHOD getSentenceNotSent()
 
-   local nId
+   local cSentence   := "SELECT * FROM " + ::cTableName + " "
 
-   ::fireEvent( 'insertingIgnoreBuffer' )
+   cSentence         +=    "WHERE empresa = " + quoted( cCodEmp() ) + " "
 
-   ::getDatabase():Execs( ::getInsertIgnoreSentence( hBuffer ) )
+   cSentence         +=       "AND enviado IS NULL"
 
-   nId         := ::getDatabase():LastInsertId()
-
-   ::fireEvent( 'insertedIgnoreBuffer' )
-
-RETURN ( nId )
+RETURN ( cSentence )
 
 //---------------------------------------------------------------------------//
 
 METHOD selectNotSentToJson( cFile )
 
-   local cSentence   := "SELECT * FROM " + ::cTableName + " "
-
-   cSentence         +=    "WHERE enviado IS NULL"
+   local cSentence   := ::getSentenceNotSent()
 
 RETURN ( ::selectFetchToJson( cSentence, cFile ) )
 
 //---------------------------------------------------------------------------//
 
 METHOD selectFetchToHash( cSentence )
+
+   logwrite( cSentence )
 
    ::fireEvent( 'selectingFetchToHash' )   
 
@@ -99,11 +76,17 @@ RETURN ( ::aFetch )
 
 //---------------------------------------------------------------------------//
 
-METHOD saveJson( cFile )
+METHOD saveToJson( cFile )
+
+   DEFAULT cFile     := ::getFileToExport()
+
+   ::fireEvent( 'savingToJson' )   
 
    if hb_memowrit( cFile, hb_jsonencode( ::aFetch, .t. ) )
       RETURN ( .t. )
    end if 
+
+   ::fireEvent( 'savedToJson' )   
 
 RETURN ( .f. )
 
@@ -111,13 +94,13 @@ RETURN ( .f. )
 
 METHOD selectFetchToJson( cSentence, cFile )
 
-   ::selectFetchHash( cSentence, .f. )
+   ::selectFetchToHash( cSentence, .f. )
 
    if !hb_isarray( ::aFetch ) 
       RETURN ( .f. )
    end if
 
-   ::saveJson( cFile )
+   ::saveToJson( cFile )
 
 RETURN ( .f. )
 
@@ -146,7 +129,7 @@ METHOD insertFromJson( cFile )
    end if 
 
    for each hBuffer in aJson
-      ::insertIgnoreBuffer( hBuffer )
+      ::insertOnDuplicate( hBuffer )
    next
 
 RETURN ( .t. )

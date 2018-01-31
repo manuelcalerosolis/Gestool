@@ -4,11 +4,11 @@
 
 //---------------------------------------------------------------------------//
 
-CLASS SQLMovimientosAlmacenLineasNumerosSeriesModel FROM SQLBaseModel
+CLASS SQLMovimientosAlmacenLineasNumerosSeriesModel FROM SQLExportableModel
 
    DATA cTableName                  INIT "movimientos_almacen_lineas_numeros_series"
 
-   DATA cConstraints                INIT  "PRIMARY KEY (id), KEY (uuid)"                                      
+   DATA cConstraints                INIT  "PRIMARY KEY (id), KEY (uuid), KEY( parent_uuid )"                                      
 
    DATA aBuffer
 
@@ -25,6 +25,8 @@ CLASS SQLMovimientosAlmacenLineasNumerosSeriesModel FROM SQLBaseModel
    METHOD RollBack()
 
    METHOD InsertOrUpdate()
+
+   METHOD getSentenceNotSent( hFetch )
 
 END CLASS
 
@@ -133,3 +135,16 @@ RETURN ( ::super:getUpdateSentence( hBuffer ) )
 
 //---------------------------------------------------------------------------//
 
+METHOD getSentenceNotSent( aFetch )
+
+   local cSentence   := "SELECT * FROM " + ::cTableName + " "
+
+   cSentence         +=    "WHERE parent_uuid IN ( " 
+
+   aeval( aFetch, {|h| cSentence += toSQLString( hget( h, "uuid" ) ) + ", " } )
+
+   cSentence         := chgAtEnd( cSentence, ' )', 2 )
+
+RETURN ( cSentence )
+
+//---------------------------------------------------------------------------//

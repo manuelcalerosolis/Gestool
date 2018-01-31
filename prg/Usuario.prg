@@ -1794,21 +1794,21 @@ RETURN ( nil )
 
 CLASS TUsuarioSenderReciver FROM TSenderReciverItem
 
-   Method CreateData()
+   METHOD CreateData()
 
-   Method RestoreData()
+   METHOD RestoreData()
 
-   Method SendData()
+   METHOD SendData()
 
-   Method ReciveData()
+   METHOD ReciveData()
 
-   Method Process()
+   METHOD Process()
 
 END CLASS
 
 //----------------------------------------------------------------------------//
 
-Method CreateData()
+METHOD CreateData()
 
    local oBlock
    local oError
@@ -1918,7 +1918,7 @@ Return ( Self )
 
 //---------------------------------------------------------------------------//
 
-Method RestoreData()
+METHOD RestoreData()
 
    local oBlock
    local oError
@@ -1960,7 +1960,7 @@ Return ( Self )
 
 //---------------------------------------------------------------------------//
 
-Method SendData()
+METHOD SendData()
 
    local cFileName
 
@@ -1986,7 +1986,7 @@ Return ( Self )
 
 //---------------------------------------------------------------------------//
 
-Method ReciveData()
+METHOD ReciveData()
 
    local n
    local aExt
@@ -2009,7 +2009,7 @@ Return ( Self )
 
 //---------------------------------------------------------------------------//
 
-Method Process()
+METHOD Process()
 
    local m
    local aFiles

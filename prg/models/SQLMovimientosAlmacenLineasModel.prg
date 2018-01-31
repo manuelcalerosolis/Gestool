@@ -41,6 +41,8 @@ CLASS SQLMovimientosAlmacenLineasModel FROM SQLExportableModel
 
    METHOD getSQLSubSentenceSumatorioUnidadesLinea( cTable, cAs )
 
+   METHOD getSentenceNotSent( aFetch )
+
 END CLASS
 
 //---------------------------------------------------------------------------//
@@ -301,3 +303,18 @@ METHOD getSQLSubSentenceSumatorioUnidadesLinea( cTable, cAs )
 RETURN ( "SUM( " + cTable + "unidades_articulo ) AS " + cAs + " " )
 
 //---------------------------------------------------------------------------//
+
+METHOD getSentenceNotSent( aFetch )
+
+   local cSentence   := "SELECT * FROM " + ::cTableName + " "
+
+   cSentence         +=    "WHERE parent_uuid IN ( " 
+
+   aeval( aFetch, {|h| cSentence += toSQLString( hget( h, "uuid" ) ) + ", " } )
+
+   cSentence         := chgAtEnd( cSentence, ' )', 2 )
+
+RETURN ( cSentence )
+
+//---------------------------------------------------------------------------//
+

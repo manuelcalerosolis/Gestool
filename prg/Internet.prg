@@ -202,6 +202,7 @@ METHOD Init() CLASS TSndRecInf
    aAdd( ::aSend, TEntradasSalidasSenderReciver():New(         "Entradas y salidas",         Self ) )
    aAdd( ::aSend, TTurno():Initiate(                           "Sesiones",                   Self ) )
    aAdd( ::aSend, TUsuarioSenderReciver():New(                 "Usuarios",                   Self ) )
+   aAdd( ::aSend, SQLMovimientosAlmacenLineasModel():New() )
 
    ::DefineFiles()
 
