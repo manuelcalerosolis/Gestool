@@ -91,7 +91,9 @@ CLASS MovimientosAlmacenLineasController FROM SQLBrowseController
 
    METHOD refreshBrowse()              INLINE ( iif(  !empty( ::oBrowseView ), ::oBrowseView:Refresh(), ) )
 
-   METHOD gotInsertSentence()
+   METHOD insertingBuffer()
+   
+   METHOD updatingBuffer()
 
 END CLASS
 
@@ -109,7 +111,8 @@ METHOD New( oController )
 
    ::oModel:setEvent( 'loadedBlankBuffer',      {|| ::loadedBlankBuffer() } ) 
    ::oModel:setEvent( 'gettingSelectSentence',  {|| ::gettingSelectSentence() } ) 
-   ::oModel:setEvent( 'gotInsertSentence',      {|| ::gotInsertSentence() } ) 
+   ::oModel:setEvent( 'insertingBuffer',        {|| ::insertingBuffer() } ) 
+   ::oModel:setEvent( 'updatingBuffer',         {|| ::updatingBuffer() } ) 
 
    ::oBrowseView                       := MovimientosAlmacenLineasBrowseView():New( self )
    ::oBrowseView:lFooter               := .t.
@@ -543,21 +546,55 @@ RETURN ( Self )
 
 //---------------------------------------------------------------------------//
 
-METHOD gotInsertSentence()
+METHOD insertingBuffer()
 
-    local aSQLInsert  := {}
+    local aSQLInsert    := {}
 
-   if empty( ::oController:aProperties )
+   if empty( ::aProperties )
       RETURN ( nil )
    end if 
 
-   aeval( ::oController:aProperties, {| oProperty | ::oModel:addInsertSentence( aSQLInsert, oProperty ) } )
+   aeval( ::aProperties, {| oProperty | ::oModel:addInsertSentence( aSQLInsert, oProperty ) } )
 
    if empty( aSQLInsert )
       RETURN ( nil )
    end if 
 
    ::oModel:cSQLInsert  := aSQLInsert
+
+RETURN ( self )
+
+//---------------------------------------------------------------------------//
+
+METHOD updatingBuffer()
+
+   local oProperty
+   local aSQLUpdate     := {}
+
+   if empty( ::aProperties )
+      RETURN ( nil )
+   end if 
+
+   for each oProperty in ::aProperties
+
+      do case
+         case !empty( oProperty:Uuid ) .and. empty( oProperty:Value )
+
+            ::oModel:addDeleteSentence( aSQLUpdate, oProperty )
+
+         case !empty( oProperty:Uuid ) .and. !empty( oProperty:Value )
+
+            ::oModel:addUpdateSentence( aSQLUpdate, oProperty )
+       
+         case empty( oProperty:Uuid ) 
+
+            ::oModel:addInsertSentence( aSQLUpdate, oProperty )
+
+      end case
+
+   next 
+
+   ::oModel:cSQLUpdate  := aSQLUpdate
 
 RETURN ( self )
 
