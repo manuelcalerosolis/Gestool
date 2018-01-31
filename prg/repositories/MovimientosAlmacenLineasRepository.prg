@@ -442,23 +442,23 @@ METHOD getSQLSentenceMovimientosForArticulo( hParams ) CLASS MovimientosAlmacenL
    end if
 
    if hhaskey( hParams, "codigo_primera_propiedad" ) .and. !Empty( hget( hParams, "codigo_primera_propiedad" ) )
-      cSentence      +=    "AND ( movimientos_almacen_lineas.codigo_primera_propiedad = " + quoted( hget( hParams, "codigo_primera_propiedad" ) )  + " "
+      cSentence      +=    "AND movimientos_almacen_lineas.codigo_primera_propiedad = " + quoted( hget( hParams, "codigo_primera_propiedad" ) )  + " "
    end if
 
    if hhaskey( hParams, "codigo_segunda_propiedad" ) .and. !Empty( hget( hParams, "codigo_segunda_propiedad" ) )
-      cSentence      +=    "AND ( movimientos_almacen_lineas.codigo_segunda_propiedad = " + quoted( hget( hParams, "codigo_segunda_propiedad" ) )  + " "
+      cSentence      +=    "AND movimientos_almacen_lineas.codigo_segunda_propiedad = " + quoted( hget( hParams, "codigo_segunda_propiedad" ) )  + " "
    end if
 
    if hhaskey( hParams, "valor_primera_propiedad" ) .and. !Empty( hget( hParams, "valor_primera_propiedad" ) )
-      cSentence      +=    "AND ( movimientos_almacen_lineas.valor_primera_propiedad = " + quoted( hget( hParams, "valor_primera_propiedad" ) )  + " "
+      cSentence      +=    "AND movimientos_almacen_lineas.valor_primera_propiedad = " + quoted( hget( hParams, "valor_primera_propiedad" ) )  + " "
    end if
 
    if hhaskey( hParams, "valor_segunda_propiedad" ) .and. !Empty( hget( hParams, "valor_segunda_propiedad" ) )
-      cSentence      +=    "AND ( movimientos_almacen_lineas.valor_segunda_propiedad = " + quoted( hget( hParams, "valor_segunda_propiedad" ) )  + " "
+      cSentence      +=    "AND movimientos_almacen_lineas.valor_segunda_propiedad = " + quoted( hget( hParams, "valor_segunda_propiedad" ) )  + " "
    end if
 
    if hhaskey( hParams, "lote" ) .and. !Empty( hget( hParams, "lote" ) )
-      cSentence      +=    "AND ( movimientos_almacen_lineas.lote = " + quoted( hget( hParams, "lote" ) )
+      cSentence      +=    "AND movimientos_almacen_lineas.lote = " + quoted( hget( hParams, "lote" ) )
    end if
 
 RETURN ( cSentence )

@@ -176,18 +176,18 @@ RETURN ( .f. )
 
 //----------------------------------------------------------------------------//
 
-METHOD Exec( cSql )
+METHOD Exec( cSentence )
 
    local lExec    := .t.
    local oError
 
-   if ::isParseError( cSql )
+   if ::isParseError( cSentence )
       RETURN ( .f. )  
    end if 
 
    try
    
-      ::oConexion:Exec( cSql )
+      ::oConexion:Exec( cSentence )
        
    catch oError
 
@@ -201,13 +201,13 @@ RETURN ( lExec )
 
 //----------------------------------------------------------------------------//
 
-METHOD Execs( sqlSentence )
+METHOD Execs( cSentence )
 
-   if hb_isarray( sqlSentence )
-      RETURN ( aeval( sqlSentence, {|cSql| ::Exec( cSql ) } ) ) 
+   if hb_isarray( cSentence )
+      RETURN ( aeval( cSentence, {|cSql| ::Exec( cSql ) } ) ) 
    end if 
 
-RETURN ( ::Exec( sqlSentence ) ) 
+RETURN ( ::Exec( cSentence ) ) 
 
 //----------------------------------------------------------------------------//
 

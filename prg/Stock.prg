@@ -2747,28 +2747,31 @@ METHOD nCostoMedio( cCodArt, cCodAlm, cCodPr1, cCodPr2, cValPr1, cValPr2, cLote 
 
    
    oRowSet              := MovimientosAlmacenLineasRepository();
-                           :getRowSetMovimientosForArticulo( { "codigo_articulo" => cCodArt,;
-                                                               "almacen" => cCodAlm,;
-                                                               "codigo_primera_propiedad" => cCodPr1,;
-                                                               "codigo_segunda_propiedad" => cCodPr2,;
-                                                               "valor_primera_propiedad" => cValPr1,;
-                                                               "valor_segunda_propiedad" => cValPr2,;
-                                                               "lote" => cLote } )
+                              :getRowSetMovimientosForArticulo( { "codigo_articulo"          => cCodArt,;
+                                                                  "almacen"                  => cCodAlm,;
+                                                                  "codigo_primera_propiedad" => cCodPr1,;
+                                                                  "codigo_segunda_propiedad" => cCodPr2,;
+                                                                  "valor_primera_propiedad"  => cValPr1,;
+                                                                  "valor_segunda_propiedad"  => cValPr2,;
+                                                                  "lote"                     => cLote } )
 
    /*
    Recorremos movimientos de almacén-------------------------------------------
    */
 
-   oRowSet:goTop()
+   if !empty( oRowSet )
 
-   while !( oRowSet:Eof() )
+      oRowSet:goTop()
+      while !( oRowSet:Eof() )
 
-      nUnidades   += oRowSet:fieldget( 'total_unidades' )
-      nImporte    += oRowSet:fieldget( 'precio_articulo' )
+         nUnidades   += oRowSet:fieldget( 'total_unidades' )
+         nImporte    += oRowSet:fieldget( 'precio_articulo' )
 
-      oRowSet:skip()
+         oRowSet:skip()
 
-   end while
+      end while
+
+   end if 
 
    /*
    Recorremos Albaranes de proveedores-----------------------------------------
