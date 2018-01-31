@@ -17,8 +17,6 @@ CLASS SQLMovimientosAlmacenLineasModel FROM SQLExportableModel
 
    METHOD getInitialSelect()
 
-   METHOD getInsertSentence()
-
    METHOD getUpdateSentence()
 
    METHOD addInsertSentence()
@@ -120,20 +118,6 @@ METHOD getInitialSelect()
                      "FROM " + ::getTableName()    
 
 RETURN ( cSelect )
-
-//---------------------------------------------------------------------------//
-
-METHOD getInsertSentence()
-
-   local aSQLInsert  := {}
-
-   if empty( ::oController:aProperties )
-      RETURN ( ::Super:getInsertSentence() )
-   end if 
-
-   aeval( ::oController:aProperties, {| oProperty | ::addInsertSentence( aSQLInsert, oProperty ) } )
-
-RETURN ( aSQLInsert )
 
 //---------------------------------------------------------------------------//
 

@@ -16905,7 +16905,6 @@ function aItmAlbPgo()
    aAdd( aBasRecCli, {"cDigCli"     ,"C",  2, 0, "Dígito de control de la cuenta del cliente", "",          "", "( cDbfEnt )", nil } )
    aAdd( aBasRecCli, {"cCtaCli"     ,"C", 10, 0, "Cuenta bancaria del cliente",        "",                  "", "( cDbfEnt )", nil } )
 
-
 return ( aBasRecCli )
 
 //---------------------------------------------------------------------------//

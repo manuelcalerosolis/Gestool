@@ -91,6 +91,8 @@ CLASS MovimientosAlmacenLineasController FROM SQLBrowseController
 
    METHOD refreshBrowse()              INLINE ( iif(  !empty( ::oBrowseView ), ::oBrowseView:Refresh(), ) )
 
+   METHOD gotInsertSentence()
+
 END CLASS
 
 //---------------------------------------------------------------------------//
@@ -107,6 +109,7 @@ METHOD New( oController )
 
    ::oModel:setEvent( 'loadedBlankBuffer',      {|| ::loadedBlankBuffer() } ) 
    ::oModel:setEvent( 'gettingSelectSentence',  {|| ::gettingSelectSentence() } ) 
+   ::oModel:setEvent( 'gotInsertSentence',      {|| ::gotInsertSentence() } ) 
 
    ::oBrowseView                       := MovimientosAlmacenLineasBrowseView():New( self )
    ::oBrowseView:lFooter               := .t.
@@ -540,3 +543,22 @@ RETURN ( Self )
 
 //---------------------------------------------------------------------------//
 
+METHOD gotInsertSentence()
+
+    local aSQLInsert  := {}
+
+   if empty( ::oController:aProperties )
+      RETURN ( nil )
+   end if 
+
+   aeval( ::oController:aProperties, {| oProperty | ::oModel:addInsertSentence( aSQLInsert, oProperty ) } )
+
+   if empty( aSQLInsert )
+      RETURN ( nil )
+   end if 
+
+   ::oModel:cSQLInsert  := aSQLInsert
+
+RETURN ( self )
+
+//---------------------------------------------------------------------------//

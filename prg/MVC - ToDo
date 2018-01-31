@@ -2,17 +2,19 @@ MVC - ToDo
 
 - Comando para poner todos los registros como enviados.
 
-- Navegacion entre movimientos de almacen
+- Navegacion entre movimientos de almacen.
 
 - No carga los valores de las lineas sobre el grid de las propiedades.
 
 - Numero de movimiento de almacen no avanza.
 
-- Configuración de documentos por defecto. (done)
+- Eliminar una empresa, eliminar de SQL
 
 - Mas configuraciones.
 
 - Copias de seguridad.
+
+- Configuración de documentos por defecto. (done)
 
 - Configuracion de columnas no se guarda. (done)
 
