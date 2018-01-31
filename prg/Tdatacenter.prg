@@ -2512,12 +2512,6 @@ METHOD BuildEmpresa()
    oDataTable:cDescription := "Configuración"
    ::AddEmpresaTable( oDataTable )
 
-   oDataTable              := TDataTable():New( "MovSer" )
-   oDataTable:cDataFile    := cPatEmp( , .t. ) + "MovSer.Dbf"
-   oDataTable:cIndexFile   := cPatEmp( , .t. ) + "MovSer.Cdx"
-   oDataTable:cDescription := "Movimientos"
-   ::AddEmpresaTable( oDataTable )
-
    oDataTable              := TDataTable():New( "RDocumen" )
    oDataTable:cDataFile    := cPatEmp( , .t. ) + "RDocumen.Dbf"
    oDataTable:cIndexFile   := cPatEmp( , .t. ) + "RDocumen.Cdx"

@@ -309,6 +309,8 @@ CLASS TStock
 
    METHOD nFacturacionCliente( idCliente )
 
+   METHOD aStockArticuloEmpresa( cCodArt, cCodEmp ) INLINE ( ::aStockArticulo( cCodArt,,,,,,,,, cCodEmp ) )
+
 END CLASS
 
 //---------------------------------------------------------------------------//
@@ -1677,24 +1679,24 @@ METHOD InsertStockMovimientosAlmacenRowset( oRowSet, lDestino )
       :cDelegacion         := oRowSet:fieldget( 'delegacion' )
       :dFechaDocumento     := oRowSet:fieldget( 'fecha' )
       :tFechaDocumento     := strtran( oRowSet:fieldget( 'hora' ), ":", "" )
-      :cCodigo             := oRowSet:fieldget( 'codigo_articulo' )
-      :cCodigoPropiedad1   := oRowSet:fieldget( 'codigo_primera_propiedad' )
-      :cCodigoPropiedad2   := oRowSet:fieldget( 'codigo_segunda_propiedad' )
-      :cValorPropiedad1    := oRowSet:fieldget( 'valor_segunda_propiedad' )
-      :cValorPropiedad2    := oRowSet:fieldget( 'valor_segunda_propiedad' )
-      :cLote               := oRowSet:fieldget( 'lote' )
+      :cCodigo             := Padr( oRowSet:fieldget( 'codigo_articulo' ), 18 )
+      :cCodigoPropiedad1   := Padr( oRowSet:fieldget( 'codigo_primera_propiedad' ), 20 )
+      :cCodigoPropiedad2   := Padr( oRowSet:fieldget( 'codigo_segunda_propiedad' ), 20 )
+      :cValorPropiedad1    := Padr( oRowSet:fieldget( 'valor_segunda_propiedad' ), 20 )
+      :cValorPropiedad2    := Padr( oRowSet:fieldget( 'valor_segunda_propiedad' ), 20 )
+      :cLote               := Padr( oRowSet:fieldget( 'lote' ), 14 )
       :dConsolidacion      := if( !empty( ::dConsolidacion ), ::dConsolidacion, ctod( "" ) )
 
       if IsTrue( lDestino )
 
-         :cCodigoAlmacen   := oRowSet:fieldget( 'almacen_destino' )
+         :cCodigoAlmacen   := Padr( oRowSet:fieldget( 'almacen_destino' ), 16 )
          :nUnidades        := oRowSet:fieldget( 'total_unidades' )
          :nBultos          := oRowSet:fieldget( 'bultos_articulo' )
          :nCajas           := oRowSet:fieldget( 'cajas_articulo' )
          
       else 
 
-         :cCodigoAlmacen   := oRowSet:fieldget( 'almacen_origen' )
+         :cCodigoAlmacen   := Padr( oRowSet:fieldget( 'almacen_origen' ), 16 )
          :nUnidades        := -oRowSet:fieldget( 'total_unidades' )
          :nBultos          := -oRowSet:fieldget( 'bultos_articulo' )
          :nCajas           := -oRowSet:fieldget( 'cajas_articulo' )
@@ -2267,7 +2269,7 @@ RETURN ( nStockArticulo )
 
 //---------------------------------------------------------------------------//
 
-METHOD StockInit( cPath, cPathOld, oMsg, nCalcCosto ) CLASS TStock
+METHOD StockInit( cPath, cPathOld, oMsg, nCalcCosto, cCodEmpOld ) CLASS TStock
 
    local aAlm
    local sStk
@@ -2277,7 +2279,6 @@ METHOD StockInit( cPath, cPathOld, oMsg, nCalcCosto ) CLASS TStock
    local oldArt
    local oldTikL
    local nNumDoc
-   local dbfRemMov
    local oldProLin
    local oldProMat
    local oldPedPrvL
@@ -2288,9 +2289,9 @@ METHOD StockInit( cPath, cPathOld, oMsg, nCalcCosto ) CLASS TStock
    local oldAlbCliL
    local oldFacCliL
    local oldFacRecL
+   local hCampos
 
-   MsgInfo( "Hay que hacer el paso de los stocks de un añoo a otro" )
-   RETURN nil
+   MsgInfo( cCodEmpOld )
 
    if empty( cPathOld )
       RETURN nil
@@ -2305,9 +2306,6 @@ METHOD StockInit( cPath, cPathOld, oMsg, nCalcCosto ) CLASS TStock
 
       ::lAlbPrv      := .t.
       ::lAlbCli      := .t.
-
-      USE ( cPath + "RemMovT.Dbf" ) NEW VIA ( ::cDriver ) SHARED ALIAS ( cCheckArea( "REMMOVT", @dbfRemMov ) )
-      SET ADSINDEX TO ( cPath + "RemMovT.Cdx" ) ADDITIVE
 
       USE ( cPath + "NCount.Dbf" ) NEW VIA ( ::cDriver ) SHARED ALIAS ( cCheckArea( "NCount", @dbfCnt ) )
       SET ADSINDEX TO ( cPath + "NCount.Cdx" ) ADDITIVE
@@ -2369,7 +2367,7 @@ METHOD StockInit( cPath, cPathOld, oMsg, nCalcCosto ) CLASS TStock
 
       ( oldArt )->( dbGoTop() )
       while !( oldArt )->( eof() )
-         aEval( ::aStockArticulo( ( oldArt )->Codigo ), {|s| aAdd( aStk, s ) } ) //, ( dbfAlm )->cCodAlm )
+         aEval( ::aStockArticuloEmpresa( ( oldArt )->Codigo, cCodEmpOld ), {|s| aAdd( aStk, s ) } ) //, ( dbfAlm )->cCodAlm )
          sysrefresh()
          ( oldArt )->( dbSkip() )
       end while
@@ -2384,6 +2382,20 @@ METHOD StockInit( cPath, cPathOld, oMsg, nCalcCosto ) CLASS TStock
          if aScan( aAlm, ( dbfAlm )->cCodAlm ) == 0
 
             aAdd( aAlm, ( dbfAlm )->cCodAlm )
+
+
+
+
+            hCampos  := SQLMovimientosAlmacenModel():loadBlankBuffer()
+
+            hset( hCampos, "almacen_destino", quoted( ( dbfAlm )->cCodAlm ) )
+            hset( hCampos, "tipo_movimiento", 4 )
+            hset( hCampos, "numero", 1 )
+
+            SQLMovimientosAlmacenModel():Insertbuffer( hCampos )
+
+
+
 
             /*if dbAppe( dbfRemMov )
 
@@ -2445,7 +2457,6 @@ METHOD StockInit( cPath, cPathOld, oMsg, nCalcCosto ) CLASS TStock
 
       end while
 
-      CLOSE ( dbfRemMov  )
       CLOSE ( dbfAlm     )
       CLOSE ( dbfCnt     )
 
@@ -2912,7 +2923,7 @@ RETURN ( ::aAlmacenes )
 
 //---------------------------------------------------------------------------//
 
-METHOD aStockArticulo( cCodArt, cCodAlm, oBrw, lLote, lNumeroSerie, dFecIni, dFecFin, tHorIni, tHorFin ) CLASS TStock
+METHOD aStockArticulo( cCodArt, cCodAlm, oBrw, lLote, lNumeroSerie, dFecIni, dFecFin, tHorIni, tHorFin, cCodEmp ) CLASS TStock
 
    local nRec
    local oBlock
@@ -2980,7 +2991,7 @@ METHOD aStockArticulo( cCodArt, cCodAlm, oBrw, lLote, lNumeroSerie, dFecIni, dFe
 
       // Movimientos de almacén------------------------------------------------" )
 
-      ::aStockMovimientosAlmacen( cCodArt, cCodAlm, lLote, lNumeroSerie )
+      ::aStockMovimientosAlmacen( cCodArt, cCodAlm, cCodEmp )
       SysRefresh()
 
       // Albaranes de proveedor------------------------------------------------------" )
@@ -3183,7 +3194,7 @@ METHOD oTreeStocks( cCodArt, cCodAlm )
 
    if empty( ::aStocks )
       ::aStocks   := { sStock():New() }
-   end if 
+   end if
 
    aSort( ::aStocks, , , {|x,y| x:cCodigo + x:cCodigoAlmacen + x:cValorPropiedad1 + x:cValorPropiedad2 + x:cLote + dtos( x:dFechaDocumento ) + x:tFechaDocumento < y:cCodigo + y:cCodigoAlmacen + y:cValorPropiedad1 + y:cValorPropiedad2 + y:cLote + dtos( y:dFechaDocumento ) + y:tFechaDocumento } )
 
@@ -3605,11 +3616,12 @@ RETURN ( aScan( ::uCodigoAlmacen, cCodigoAlmacen ) != 0 )
 // Movimientos de almacén------------------------------------------------------
 //
 
-METHOD aStockMovimientosAlmacen( cCodArt, cCodAlm, lLote, lNumeroSerie )
+METHOD aStockMovimientosAlmacen( cCodArt, cCodAlm, cCodEmp )
 
    local oRowSet     := MovimientosAlmacenLineasRepository();
                            :getRowSetMovimientosForArticulo( { "codigo_articulo" => cCodArt,;
-                                                               "almacen" => cCodAlm } )
+                                                               "almacen" => cCodAlm,;
+                                                               "empresa" => cCodEmp } )
 
    SysRefresh()
 
@@ -3617,7 +3629,7 @@ METHOD aStockMovimientosAlmacen( cCodArt, cCodAlm, lLote, lNumeroSerie )
 
    while !( oRowSet:Eof() )
 
-      if oRowSet:fieldget( 'almacen_destino' ) == cCodAlm
+      if Padr( oRowSet:fieldget( 'almacen_destino' ), 16 ) == Padr( cCodAlm, 16 )
 
          if ::validateDateTime( oRowSet:fieldget( 'fecha' ), oRowSet:fieldget( 'hora' ) )
 
@@ -3639,7 +3651,7 @@ METHOD aStockMovimientosAlmacen( cCodArt, cCodAlm, lLote, lNumeroSerie )
 
       end if
 
-      if oRowSet:fieldget( 'almacen_origen' ) == cCodAlm
+      if Padr( oRowSet:fieldget( 'almacen_origen' ), 16 ) == Padr( cCodAlm, 16 )
 
          if ::validateDateTime( oRowSet:fieldget( 'fecha' ), oRowSet:fieldget( 'hora' ) )
 
@@ -4716,11 +4728,7 @@ RETURN ( self )
 
 METHOD calculateStock( cCodArt ) CLASS TSqlStock
 
-   MsgInfo( "Calculate Stock" )
-
    ::consolidationDateTime( cCodArt )
-   MsgInfo( ::consolidationDate, valType( ::consolidationDate ) )
-   MsgInfo( ::consolidationTime, valType( ::consolidationTime ) )
 
 RETURN ( nil )
 

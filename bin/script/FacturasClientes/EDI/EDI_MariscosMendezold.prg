@@ -1,4 +1,4 @@
-﻿#include "Factu.ch" 
+#include "Factu.ch" 
 #include "FiveWin.ch"
 
 #define __localDirectory__       "c:\eDiversa\send\Planos\"
@@ -414,10 +414,9 @@ METHOD writeDatosComprador()
       cLine       += AllTrim( ( D():Clientes( ::nView ) )->cDomEnt ) + __separator__                                                      //Domicilio
       cLine       += AllTrim( ( D():Clientes( ::nView ) )->cPobEnt ) + __separator__                                                      //Poblacion
       cLine       += Padr( ( D():Clientes( ::nView ) )->cCPEnt, 10 ) + __separator__                                                      //Codigo Postal
-      cLine       += AllTrim( ( D():FacturasClientes( ::nView ) )->cDniCli ) + __separator__                                              //NIF
-      cLine       += AllTrim( ( D():Clientes( ::nView ) )->cDeparta ) + __separator__   					                                    //Departamento 
    end if
-   cLine 	      += "ES"
+
+   cLine          += AllTrim( ( D():FacturasClientes( ::nView ) )->cDniCli ) + __separator__                                              //NIF
 
    ::oFileEDI:add( cLine )
 
@@ -440,11 +439,11 @@ METHOD writeDatosCompradorLegal()
 
    cLine          += AllTrim( ( D():FacturasClientes( ::nView ) )->cNomCli ) + __separator__                                              //Nombre
 
-   /*if ( D():Clientes( ::nView ) )->( dbSeek( ( D():FacturasClientes( ::nView ) )->cCodCli ) )
+   if ( D():Clientes( ::nView ) )->( dbSeek( ( D():FacturasClientes( ::nView ) )->cCodCli ) )
       cLine       += AllTrim( ( D():Clientes( ::nView ) )->cDomEnt ) + __separator__                                                      //Domicilio
       cLine       += AllTrim( ( D():Clientes( ::nView ) )->cPobEnt ) + __separator__                                                      //Poblacion
       cLine       += Padr( ( D():Clientes( ::nView ) )->cCPEnt, 10 ) + __separator__                                                      //Codigo Postal
-   end if*/
+   end if
 
    cLine          += AllTrim( ( D():FacturasClientes( ::nView ) )->cDniCli ) + __separator__                                              //NIF
 
