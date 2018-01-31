@@ -158,6 +158,10 @@ METHOD loadDuplicateBuffer( id )
 
    ::Super:loadDuplicateBuffer( id )
 
+   if hhaskey( ::hBuffer, "numero" )
+      hset( ::hBuffer, "numero", MovimientosAlmacenRepository():getLastNumber() )
+   end if 
+
    if hhaskey( ::hBuffer, "fecha_hora" )
       hset( ::hBuffer, "fecha_hora", hb_datetime() )
    end if 
