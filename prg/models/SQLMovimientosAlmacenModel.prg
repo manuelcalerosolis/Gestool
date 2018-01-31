@@ -24,9 +24,9 @@ CLASS SQLMovimientosAlmacenModel FROM SQLExportableModel
 
    METHOD loadDuplicateBuffer( id )                
 
-   METHOD selectNotSentToJson()
+   // METHOD selectNotSentToJson()
 
-   METHOD sendData()             INLINE ( ::selectNotSentToJson() )
+   // METHOD sendData()             INLINE ( ::selectNotSentToJson() )
 
 END CLASS
 
@@ -37,7 +37,7 @@ METHOD getColumns()
    ::getEmpresaColumns()
 
    hset( ::hColumns, "numero",            {  "create"    => "CHAR ( 50 )"                             ,;
-                                             "default"   => {|| space( 50 ) } }                       )
+                                             "default"   => {|| MovimientosAlmacenRepository():getLastNumber() } }                       )
 
    hset( ::hColumns, "fecha_hora",        {  "create"    => "DATETIME DEFAULT CURRENT_TIMESTAMP"      ,;
                                              "default"   => {|| hb_datetime() } }                     )
@@ -167,7 +167,7 @@ METHOD loadDuplicateBuffer( id )
 RETURN ( ::hBuffer )
 
 //---------------------------------------------------------------------------//
-
+/*
 METHOD selectNotSentToJson()
 
    local oSQLLineasModel
@@ -192,5 +192,5 @@ METHOD selectNotSentToJson()
    oSQLLineasNumerosSeriesModel:selectFetchToJson( oSQLLineasNumerosSeriesModel:getSentenceNotSent( oSQLLineasModel:aFetch ) )
 
 RETURN ( self )
-
+*/
 //---------------------------------------------------------------------------//

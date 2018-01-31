@@ -64,8 +64,6 @@ RETURN ( ::selectFetchToJson( cSentence, cFile ) )
 
 METHOD selectFetchToHash( cSentence )
 
-   logwrite( cSentence )
-
    ::fireEvent( 'selectingFetchToHash' )   
 
    ::aFetch          := ::getDatabase():selectFetchHash( cSentence, .f. )
