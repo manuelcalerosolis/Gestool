@@ -2411,7 +2411,7 @@ METHOD StockInit( cPath, cPathOld, oMsg, nCalcCosto, cCodEmpOld, cCodEmpNew ) CL
 
                   hset( hLines, "parent_uuid", parentId )
                   hset( hLines, "codigo_articulo", sStk:cCodigo )
-                  /*hset( hLines, "nombre_articulo", RetFld( sStk:cCodigo, oldArt, "Nombre", "Codigo" ) )
+                  hset( hLines, "nombre_articulo", RetFld( sStk:cCodigo, oldArt, "Nombre", "Codigo" ) )
                   hset( hLines, "codigo_primera_propiedad", sStk:cCodigoPropiedad1 )
                   hset( hLines, "valor_primera_propiedad", sStk:cValorPropiedad1 )
                   hset( hLines, "codigo_segunda_propiedad", sStk:cCodigoPropiedad2 )
@@ -2421,7 +2421,7 @@ METHOD StockInit( cPath, cPathOld, oMsg, nCalcCosto, cCodEmpOld, cCodEmpNew ) CL
                   hset( hLines, "bultos_articulo", sStk:nBultos )
                   hset( hLines, "cajas_articulo", sStk:nCajas )
                   hset( hLines, "unidades_articulo", sStk:nUnidades )
-                  hset( hLines, "precio_articulo", RetFld( sStk:cCodigo, oldArt, "pCosto", "Codigo" ) )*/
+                  hset( hLines, "precio_articulo", RetFld( sStk:cCodigo, oldArt, "pCosto", "Codigo" ) )
 
                   SQLMovimientosAlmacenLineasModel():Insertbuffer( hLines )
 
@@ -2430,65 +2430,6 @@ METHOD StockInit( cPath, cPathOld, oMsg, nCalcCosto, cCodEmpOld, cCodEmpNew ) CL
                sysrefresh()
 
             next
-
-
-
-
-
-
-            /*if dbAppe( dbfRemMov )
-
-               nNumDoc                       := nNewDoc( nil, dbfHisMov, "nMovAlm", nil, dbfCnt )
-               ( dbfRemMov )->nNumRem        := nNumDoc
-               ( dbfRemMov )->cSufRem        := RetSufEmp()
-               ( dbfRemMov )->nTipMov        := 4 // Consolidación
-               ( dbfRemMov )->cCodUsr        := cCurUsr()
-               ( dbfRemMov )->cCodDlg        := ""
-               ( dbfRemMov )->cCodAge        := ""
-               ( dbfRemMov )->cCodMov        := "EI"
-               ( dbfRemMov )->dFecRem        := Date()
-               ( dbfRemMov )->cTimRem        := Time()
-               ( dbfRemMov )->cAlmOrg        := ( dbfAlm )->cCodAlm
-               ( dbfRemMov )->cAlmDes        := ( dbfAlm )->cCodAlm
-               ( dbfRemMov )->cCodDiv        := cDivEmp()
-               ( dbfRemMov )->nVdvDiv        := nChgDiv()
-               ( dbfRemMov )->nTotRem        := 0
-               ( dbfRemMov )->( dbUnLock() )
-
-               for each sStk in aStk
-
-                  if !empty( sStk:cCodigo )                          .and. ;
-                     !empty( sStk:nUnidades )                        .and. ;
-                     ( sStk:cCodigoAlmacen == ( dbfAlm )->cCodAlm )  .and. ;
-                     dbAppe( dbfHisMov )
-
-                     ( dbfHisMov )->nNumRem  := nNumDoc
-                     ( dbfHisMov )->cSufRem  := RetSufEmp()
-                     ( dbfHisMov )->nNumLin  := nLastNum( dbfHisMov )
-                     ( dbfHisMov )->dFecMov  := Date()
-                     ( dbfHisMov )->nTipMov  := 4
-                     ( dbfHisMov )->cCodMov  := "EI"
-                     ( dbfHisMov )->cRefMov  := sStk:cCodigo
-                     ( dbfHisMov )->cAliMov  := sStk:cCodigoAlmacen
-                     ( dbfHisMov )->cValPr1  := sStk:cValorPropiedad1
-                     ( dbfHisMov )->cValPr2  := sStk:cValorPropiedad2
-                     ( dbfHisMov )->cLote    := sStk:cLote
-                     ( dbfHisMov )->nUndMov  := sStk:nUnidades
-                     if nCalcCosto <= 1
-                        ( dbfHisMov )->nPreDiv  := RetFld( sStk:cCodigo, oldArt, "pCosto", "Codigo" )
-                     else
-                        ( dbfHisMov )->nPreDiv  := 
-                     end if
-
-                     ( dbfHisMov )->( dbUnLock() )
-
-                  end if
-
-                  sysrefresh()
-
-               next
-
-            end if*/
 
          end if
 
