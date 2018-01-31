@@ -169,6 +169,7 @@ METHOD isParseError( cSentence )
 
    if !::oConexion:Parse( cSentence )
       msgstop( cSentence, "Error en el comando SQL" )
+      logwrite( cSentence )
       RETURN ( .t. )  
    end if 
 
