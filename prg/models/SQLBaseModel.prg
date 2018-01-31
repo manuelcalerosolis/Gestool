@@ -347,8 +347,10 @@ METHOD getSelectByOrder( cSQLSelect )
       cSQLSelect     += " ORDER BY " + ::cColumnOrder 
    end if 
 
-   if !empty( ::cColumnOrientation ) .and. ::cColumnOrientation == "D"
+   if !empty( ::cColumnOrientation ) .and. ::cColumnOrientation == "A"
       cSQLSelect     += " DESC"
+   else
+      cSQLSelect     += " ASC"
    end if
 
 RETURN ( cSQLSelect )
@@ -755,9 +757,13 @@ METHOD insertBuffer( hBuffer )
 
    local nId
 
+   ::getInsertSentence( hBuffer )
+
    ::fireEvent( 'insertingBuffer' )
 
-   ::getDatabase():Execs( ::getInsertSentence( hBuffer ) )
+   if !empty( ::cSQLInsert )
+      ::getDatabase():Execs( ::cSQLInsert )
+   end if 
 
    nId         := ::getDatabase():LastInsertId()
 
@@ -769,9 +775,13 @@ RETURN ( nId )
 
 METHOD updateBuffer( hBuffer )
 
+   ::getUpdateSentence( hBuffer )
+
    ::fireEvent( 'updatingBuffer' )
 
-   ::getDatabase():Execs( ::getUpdateSentence( hBuffer ) )
+   if !empty( ::cSQLUpdate )
+      ::getDatabase():Execs( ::cSQLUpdate )
+   end if
 
    ::fireEvent( 'updatedBuffer' )
 

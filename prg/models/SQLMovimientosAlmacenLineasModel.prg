@@ -17,7 +17,7 @@ CLASS SQLMovimientosAlmacenLineasModel FROM SQLExportableModel
 
    METHOD getInitialSelect()
 
-   METHOD getUpdateSentence()
+   // METHOD getUpdateSentence()
 
    METHOD addInsertSentence()
 
@@ -120,7 +120,7 @@ METHOD getInitialSelect()
 RETURN ( cSelect )
 
 //---------------------------------------------------------------------------//
-
+/*
 METHOD getUpdateSentence()
 
    local oProperty
@@ -150,7 +150,7 @@ METHOD getUpdateSentence()
    next 
 
 RETURN ( aSQLUpdate )
-
+*/
 //---------------------------------------------------------------------------//
 
 METHOD addInsertSentence( aSQLInsert, oProperty )

@@ -89,9 +89,7 @@ METHOD getInitialSelect()
                            "divisa, "                                            + ;
                            "divisa_cambio, "                                     + ;
                            "comentarios "                                        + ;        
-                        "FROM " + ::getTableName()    
-
-   logwrite( cSelect )
+                        "FROM " + ::getTableName()                          
 
 RETURN ( cSelect )
 

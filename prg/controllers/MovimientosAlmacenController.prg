@@ -128,9 +128,6 @@ METHOD New()
 
    ::loadDocuments()
 
-   // ::oModel:setEvent( 'loadedBlankBuffer',      {|| ::loadedBlankBuffer() } )
-   // ::oModel:setEvent( 'loadedDuplicateBuffer',  {|| ::loadedBlankBuffer() } )
-
 RETURN ( Self )
 
 //---------------------------------------------------------------------------//
