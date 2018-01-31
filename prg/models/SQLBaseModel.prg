@@ -35,6 +35,10 @@ CLASS SQLBaseModel
 
    DATA hBuffer 
 
+   DATA cSQLInsert
+
+   DATA cSQLUpdate
+
    DATA cFind
 
    DATA aRecordsToDelete
@@ -448,48 +452,53 @@ RETURN ( hBuffer )
 
 METHOD getInsertSentence( hBuffer )
 
-   local cSQLInsert
-
    DEFAULT hBuffer   := ::hBuffer
+
+   ::fireEvent( 'getingInsertSentence' )   
 
    hBuffer           := ::setCreatedTimeStamp( hBuffer )
 
-   cSQLInsert        := "INSERT INTO " + ::cTableName + " ( "
+   ::cSQLInsert      := "INSERT INTO " + ::cTableName + " ( "
 
-   hEval( hBuffer, {| k, v | if ( k != ::cColumnKey, cSQLInsert += k + ", ", ) } )
+   hEval( hBuffer, {| k, v | if ( k != ::cColumnKey, ::cSQLInsert += k + ", ", ) } )
 
-   cSQLInsert        := chgAtEnd( cSQLInsert, ' ) VALUES ( ', 2 )
+   ::cSQLInsert      := chgAtEnd( ::cSQLInsert, ' ) VALUES ( ', 2 )
 
-   hEval( hBuffer, {| k, v | if ( k != ::cColumnKey, cSQLInsert += toSQLString( v ) + ", ", ) } )
+   hEval( hBuffer, {| k, v | if ( k != ::cColumnKey, ::cSQLInsert += toSQLString( v ) + ", ", ) } )
 
-   cSQLInsert        := chgAtEnd( cSQLInsert, ' )', 2 )
+   ::cSQLInsert      := chgAtEnd( ::cSQLInsert, ' )', 2 )
 
-RETURN ( cSQLInsert )
+   ::fireEvent( 'gotInsertSentence' )   
+
+RETURN ( ::cSQLInsert )
 
 //---------------------------------------------------------------------------//
 
 METHOD getUpdateSentence( hBuffer )
 
    local uValue
-   local cSQLUpdate  
 
-   DEFAULT hBuffer   := ::hBuffer
+   DEFAULT hBuffer      := ::hBuffer
 
-   hBuffer           := ::setUpdatedTimeStamp( hBuffer )
+   ::fireEvent( 'getingUpdateSentence' )   
 
-   cSQLUpdate        := "UPDATE " + ::cTableName + " SET "
+   hBuffer              := ::setUpdatedTimeStamp( hBuffer )
+
+   ::cSQLUpdate         := "UPDATE " + ::cTableName + " SET "
 
    for each uValue in hBuffer
       if ( uValue:__enumkey() != ::cColumnKey )
-         cSQLUpdate  += uValue:__enumKey() + " = " + toSQLString( uValue ) + ", "
+         ::cSQLUpdate  += uValue:__enumKey() + " = " + toSQLString( uValue ) + ", "
       end if 
    next
 
-   cSQLUpdate        := chgAtEnd( cSQLUpdate, '', 2 ) + " "
+   ::cSQLUpdate         := chgAtEnd( ::cSQLUpdate, '', 2 ) + " "
 
-   cSQLUpdate        += "WHERE " + ::cColumnKey + " = " + toSQLString( hget( hBuffer, ::cColumnKey ) )
+   ::cSQLUpdate         += "WHERE " + ::cColumnKey + " = " + toSQLString( hget( hBuffer, ::cColumnKey ) )
 
-RETURN ( cSQLUpdate )
+   ::fireEvent( 'gotUpdateSentence' )   
+
+RETURN ( ::cSQLUpdate )
 
 //---------------------------------------------------------------------------//
 

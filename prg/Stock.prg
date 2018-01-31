@@ -2290,8 +2290,8 @@ METHOD StockInit( cPath, cPathOld, oMsg, nCalcCosto, cCodEmpOld, cCodEmpNew ) CL
    local oldFacCliL
    local oldFacRecL
    local hCampos
-
-   MsgInfo( cCodEmpOld )
+   local hLines
+   local parentId
 
    if empty( cPathOld )
       RETURN nil
@@ -2387,16 +2387,49 @@ METHOD StockInit( cPath, cPathOld, oMsg, nCalcCosto, cCodEmpOld, cCodEmpNew ) CL
             Creo la cabecera de los movimientos de traspaso--------------------
             */
 
-            hCampos  := SQLMovimientosAlmacenModel():loadBlankBuffer()
+            hCampos        := SQLMovimientosAlmacenModel():loadBlankBuffer()
 
             hset( hCampos, "almacen_destino", ( dbfAlm )->cCodAlm )
             hset( hCampos, "tipo_movimiento", 4 )
-            hset( hCampos, "numero", 1 )
             hset( hCampos, "empresa", cCodEmpNew )
+
+            parentId       := hGet( hCampos, "uuid" )
 
             SQLMovimientosAlmacenModel():Insertbuffer( hCampos )
 
+            /*
+            Creo las líneas de los movimientos de traspaso---------------------
+            */            
 
+            for each sStk in aStk
+
+               if !empty( sStk:cCodigo )                          .and. ;
+                  !empty( sStk:nUnidades )                        .and. ;
+                  ( sStk:cCodigoAlmacen == ( dbfAlm )->cCodAlm )
+
+                  hLines   := SQLMovimientosAlmacenLineasModel():loadBlankBuffer()
+
+                  hset( hLines, "parent_uuid", parentId )
+                  hset( hLines, "codigo_articulo", sStk:cCodigo )
+                  /*hset( hLines, "nombre_articulo", RetFld( sStk:cCodigo, oldArt, "Nombre", "Codigo" ) )
+                  hset( hLines, "codigo_primera_propiedad", sStk:cCodigoPropiedad1 )
+                  hset( hLines, "valor_primera_propiedad", sStk:cValorPropiedad1 )
+                  hset( hLines, "codigo_segunda_propiedad", sStk:cCodigoPropiedad2 )
+                  hset( hLines, "valor_segunda_propiedad", sStk:cValorPropiedad2 )
+                  hset( hLines, "fecha_caducidad", sStk:dFechaCaducidad )
+                  hset( hLines, "lote", sStk:cLote )
+                  hset( hLines, "bultos_articulo", sStk:nBultos )
+                  hset( hLines, "cajas_articulo", sStk:nCajas )
+                  hset( hLines, "unidades_articulo", sStk:nUnidades )
+                  hset( hLines, "precio_articulo", RetFld( sStk:cCodigo, oldArt, "pCosto", "Codigo" ) )*/
+
+                  SQLMovimientosAlmacenLineasModel():Insertbuffer( hLines )
+
+               end if
+
+               sysrefresh()
+
+            next
 
 
 

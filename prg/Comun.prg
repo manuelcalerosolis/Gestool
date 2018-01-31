@@ -279,14 +279,6 @@ RETURN ( .t. )
 
 FUNCTION Test()
 
-<<<<<<< HEAD
-=======
-   MovimientosAlmacenController():New():buildNotSentJson():zipNotSentJson():End()
-
-   MovimientosAlmacenController():New():ActivateNavigatorView()
-
->>>>>>> fa3eab2e99e332fc313c96cb6879de78b78cecb8
->>>>>>> c4da09d0fa34ee55dbb043d33526f25d1a5700ce
 RETURN NIL 
 
 //----------------------------------------------------------------------------//
