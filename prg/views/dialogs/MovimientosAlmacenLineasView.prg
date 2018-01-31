@@ -64,8 +64,9 @@ CLASS MovimientosAlmacenLineasView FROM SQLBaseView
    METHOD hideSegundaPropiedad()                   INLINE ( ::verticalHide( ::oGetValorSegundaPropiedad ) )
    METHOD showSegundaPropiedad()                   INLINE ( ::verticalShow( ::oGetValorSegundaPropiedad ) )
 
-   METHOD hideBultos()                             INLINE ( if( !uFieldEmpresa( "lUseBultos" ), ::verticalHide( ::oGetBultosArticulo ), ) )
-   METHOD hideCajas()                              INLINE ( if( !uFieldEmpresa( "lUseCaj" ), ::verticalHide( ::oGetCajasArticulo ), ) )
+   METHOD hideBultos()                             INLINE ( iif( !uFieldEmpresa( "lUseBultos" ), ::verticalHide( ::oGetBultosArticulo ), ) )
+   METHOD hideCajas()                              INLINE ( iif( !uFieldEmpresa( "lUseCaj" ),    ::verticalHide( ::oGetCajasArticulo ), ) )
+   METHOD hidePrecios()
 
    METHOD searchCodeGS128( nKey, cCodigoArticulo )
 
@@ -231,10 +232,14 @@ METHOD Activate()
          PICTURE     cPirDiv() ;
          OF          ::oDialog
 
+      ::oSayTotalImporte:lVisible      := .t.
+
       REDEFINE SAY   ::oSayTextImporte ;
          ID          211 ;
          FONT        getBoldFont() ;
          OF          ::oDialog
+
+      ::oSayTextImporte:lVisible       := .t.
 
       REDEFINE BUTTON ::oBtnSerie ;
          ID          4 ;
@@ -322,6 +327,22 @@ METHOD searchCodeGS128( nKey )
 
    if nKey == 16 
       ::oGetCodigoArticulo:oGet:Insert( '@' )
+   end if 
+
+RETURN ( .t. )
+
+//---------------------------------------------------------------------------//
+
+METHOD hidePrecios()
+   
+   if oUser():lNotCostos()
+
+      ::verticalHide( ::oGetPrecioArticulo )
+      
+      ::verticalHide( ::oSayTotalImporte )
+      
+      ::verticalHide( ::oSayTextImporte )
+
    end if 
 
 RETURN ( .t. )

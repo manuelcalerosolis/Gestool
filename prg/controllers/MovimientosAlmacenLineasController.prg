@@ -456,6 +456,8 @@ METHOD onActivateDialog()
 
    ::oDialogView:hideCajas()
 
+   ::oDialogView:hidePrecios()
+
    ::oDialogView:oSayTotalUnidades:Refresh()
 
    ::oDialogView:oSayTotalImporte:Refresh()
