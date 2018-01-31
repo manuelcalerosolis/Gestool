@@ -397,7 +397,7 @@ METHOD getSQLSentenceMovimientosForArticulo( hParams ) CLASS MovimientosAlmacenL
       RETURN ( "" )
    end if 
 
-   if hhaskey( hParams, "empresa" )
+   if hhaskey( hParams, "empresa" ) .and. !Empty( hget( hParams, "empresa" ) )
       idEmpresa      := hget( hParams, "empresa" )
    else 
       idEmpresa      := cCodEmp()
@@ -460,6 +460,8 @@ METHOD getSQLSentenceMovimientosForArticulo( hParams ) CLASS MovimientosAlmacenL
    if hhaskey( hParams, "lote" ) .and. !Empty( hget( hParams, "lote" ) )
       cSentence      +=    "AND ( movimientos_almacen_lineas.lote = " + quoted( hget( hParams, "lote" ) )
    end if
+
+   LogWrite( cSentence )
 
 RETURN ( cSentence )
 

@@ -4135,7 +4135,7 @@ STATIC FUNCTION StartPathEmp( cPath, cPathOld, cCodEmpNew, cNomEmpNew, cCodEmpOl
          oMsg:SetText( "Creando stocks" )
       end if
       if aImportacion:lStockIni .and. cPathOld != nil
-         TStock():StockInit( cPath, cPathOld, oMsg, aImportacion:nCosto )
+         TStock():StockInit( cPath, cPathOld, oMsg, aImportacion:nCosto, cCodEmpOld )
       end if
 
       /*
