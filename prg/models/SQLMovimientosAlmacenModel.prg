@@ -63,8 +63,8 @@ METHOD getColumns()
    hset( ::hColumns, "divisa_cambio",     {  "create"    => "DECIMAL( 16, 6 )"                        ,;
                                              "default"   => {|| 1 } }                                 )
 
-   hset( ::hColumns, "comentarios",       {  "create"    => "VARCHAR ( 250 )"                         ,;
-                                             "default"   => {|| space( 250 ) } }                      )
+   hset( ::hColumns, "comentarios",       {  "create"    => "TEXT"                                    ,;
+                                             "default"   => {|| "" } }                                )
 
    ::getTimeStampColumns()   
 
@@ -157,6 +157,10 @@ RETURN ( cSql )
 METHOD loadDuplicateBuffer( id )                
 
    ::Super:loadDuplicateBuffer( id )
+
+   if hhaskey( ::hBuffer, "numero" )
+      hset( ::hBuffer, "numero", MovimientosAlmacenRepository():getLastNumber() )
+   end if 
 
    if hhaskey( ::hBuffer, "fecha_hora" )
       hset( ::hBuffer, "fecha_hora", hb_datetime() )

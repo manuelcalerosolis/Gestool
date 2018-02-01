@@ -4,15 +4,15 @@ MVC - ToDo
 
 - Navegacion entre movimientos de almacen.
 
-- No carga los valores de las lineas sobre el grid de las propiedades.
-
-- Numero de movimiento de almacen no avanza.
-
 - Eliminar una empresa, eliminar de SQL
 
 - Mas configuraciones.
 
 - Copias de seguridad.
+
+- No carga los valores de las lineas sobre el grid de las propiedades. (done)
+
+- Numero de movimiento de almacen no avanza. (done)
 
 - Configuración de documentos por defecto. (done)
 

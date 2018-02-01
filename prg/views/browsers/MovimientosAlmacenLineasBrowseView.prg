@@ -165,28 +165,32 @@ METHOD addColumns()
       :cDataType           := "N"
    end with
 
-   with object ( ::oBrowse:AddCol() )
-      :cSortOrder          := 'precio_articulo'
-      :cHeader             := 'Precio costo'
-      :nWidth              := 80
-      :cEditPicture        := cPinDiv()
-      :bEditValue          := {|| ::getRowSet():fieldGet( 'precio_articulo' ) }
-      :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
-   end with
+   if ( oUser():lCostos() )
 
-   with object ( ::oBrowse:AddCol() )
-      :cSortOrder          := 'total_precio'
-      :cHeader             := 'Total costo'
-      :nWidth              := 100
-      :cEditPicture        := cPinDiv()
-      :bEditValue          := {|| ::getRowSet():fieldGet( 'total_precio' ) }
-      :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
-      :nFootStyle          := :nDataStrAlign               
-      :nFooterType         := AGGR_SUM
-      :cFooterPicture      := :cEditPicture
-      :oFooterFont         := getBoldFont()
-      :cDataType           := "N"
-   end with
+      with object ( ::oBrowse:AddCol() )
+         :cSortOrder       := 'precio_articulo'
+         :cHeader          := 'Precio costo'
+         :nWidth           := 80
+         :cEditPicture     := cPinDiv()
+         :bEditValue       := {|| ::getRowSet():fieldGet( 'precio_articulo' ) }
+         :bLClickHeader    := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
+      end with
+
+      with object ( ::oBrowse:AddCol() )
+         :cSortOrder       := 'total_precio'
+         :cHeader          := 'Total costo'
+         :nWidth           := 100
+         :cEditPicture     := cPinDiv()
+         :bEditValue       := {|| ::getRowSet():fieldGet( 'total_precio' ) }
+         :bLClickHeader    := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
+         :nFootStyle       := :nDataStrAlign               
+         :nFooterType      := AGGR_SUM
+         :cFooterPicture   := :cEditPicture
+         :oFooterFont      := getBoldFont()
+         :cDataType        := "N"
+      end with
+
+   end if 
 
 RETURN ( self )
 

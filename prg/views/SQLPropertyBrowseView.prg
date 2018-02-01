@@ -383,10 +383,10 @@ RETURN ( nil )
 
 METHOD scanProperty( hLine, oProperty )
 
-   if hget( hLine, "codigo_primera_propiedad" ) == oProperty:cCodigoPropiedad1   .and. ;
-      hget( hLine, "valor_primera_propiedad" ) == oProperty:cValorPropiedad1     .and. ;
-      hget( hLine, "codigo_segunda_propiedad" ) == oProperty:cCodigoPropiedad2   .and. ;
-      hget( hLine, "valor_segunda_propiedad" ) == oProperty:cValorPropiedad2     
+   if alltrim( hget( hLine, "codigo_primera_propiedad" ) )  == alltrim( oProperty:cCodigoPropiedad1 ) .and. ;
+      alltrim( hget( hLine, "valor_primera_propiedad" ) )   == alltrim( oProperty:cValorPropiedad1 )  .and. ;
+      alltrim( hget( hLine, "codigo_segunda_propiedad" ) )  == alltrim( oProperty:cCodigoPropiedad2 ) .and. ;
+      alltrim( hget( hLine, "valor_segunda_propiedad" ) )   == alltrim( oProperty:cValorPropiedad2 )    
 
       oProperty:Uuid    := hget( hLine, "uuid" )
       oProperty:Value   := hget( hLine, "unidades_articulo" )

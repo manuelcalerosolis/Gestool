@@ -3347,6 +3347,7 @@ FUNCTION toSQLString( value )
       case hb_islogical( value ) ;  RETURN ( if( value, "1", "0" ) )
       case hb_isdate( value ) ;     RETURN ( if( empty( value ), 'null', quoted( hb_dtoc( value, 'yyyy-mm-dd' ) ) ) )
       case hb_isdatetime( value ) ; RETURN ( quoted( hb_tstostr( value ) ) )
+      case hb_ismemo( value ) ;     RETURN ( quoted( rtrim( value ) ) ) 
    end case 
 
 RETURN ( value )

@@ -4,6 +4,12 @@
 
 #define EM_LIMITTEXT             197
 
+#define LWA_COLORKEY             1 
+
+#define GWL_EXSTYLE              -20 
+
+#define WS_EX_LAYERED            524288 
+
 //---------------------------------------------------------------------------//
 
 CLASS MovimientosAlmacenLineasView FROM SQLBaseView
@@ -57,6 +63,7 @@ CLASS MovimientosAlmacenLineasView FROM SQLBaseView
    METHOD showLoteCaducidadControls()              INLINE ( ::verticalShow( ::oGetLote ), ::verticalShow( ::oGetCaducidad ) )
 
    METHOD hideUnitsControls()             
+   METHOD showUnitsControls()
 
    METHOD hidePrimeraPropiedad()                   INLINE ( ::verticalHide( ::oGetValorPrimeraPropiedad ) )
    METHOD showPrimeraPropiedad()                   INLINE ( ::verticalShow( ::oGetValorPrimeraPropiedad ) )
@@ -64,8 +71,9 @@ CLASS MovimientosAlmacenLineasView FROM SQLBaseView
    METHOD hideSegundaPropiedad()                   INLINE ( ::verticalHide( ::oGetValorSegundaPropiedad ) )
    METHOD showSegundaPropiedad()                   INLINE ( ::verticalShow( ::oGetValorSegundaPropiedad ) )
 
-   METHOD hideBultos()                             INLINE ( if( !uFieldEmpresa( "lUseBultos" ), ::verticalHide( ::oGetBultosArticulo ), ) )
-   METHOD hideCajas()                              INLINE ( if( !uFieldEmpresa( "lUseCaj" ), ::verticalHide( ::oGetCajasArticulo ), ) )
+   METHOD hideBultos()                             INLINE ( iif( !uFieldEmpresa( "lUseBultos" ), ::verticalHide( ::oGetBultosArticulo ), ) )
+   METHOD hideCajas()                              INLINE ( iif( !uFieldEmpresa( "lUseCaj" ),    ::verticalHide( ::oGetCajasArticulo ), ) )
+   METHOD hidePrecios()
 
    METHOD searchCodeGS128( nKey, cCodigoArticulo )
 
@@ -88,7 +96,7 @@ RETURN ( Self )
 METHOD Activate()
 
    DEFINE DIALOG     ::oDialog ;
-      RESOURCE       "MOVIMIENTOS_ALMACEN_LINEAS";
+      RESOURCE       "MOVIMIENTOS_ALMACEN_LINEAS" ;
       TITLE          ::lblTitle() + ::oController:getTitle()
 
       REDEFINE GET   ::oGetCodigoArticulo ;
@@ -231,10 +239,14 @@ METHOD Activate()
          PICTURE     cPirDiv() ;
          OF          ::oDialog
 
+      ::oSayTotalImporte:lVisible      := .t.
+
       REDEFINE SAY   ::oSayTextImporte ;
          ID          211 ;
          FONT        getBoldFont() ;
          OF          ::oDialog
+
+      ::oSayTextImporte:lVisible       := .t.
 
       REDEFINE BUTTON ::oBtnSerie ;
          ID          4 ;
@@ -308,6 +320,19 @@ RETURN ( Self )
 
 //---------------------------------------------------------------------------//
 
+METHOD showUnitsControls()
+
+   ::verticalShow( ::oGetBultosArticulo )   
+   
+   ::verticalShow( ::oGetCajasArticulo )   
+
+   ::verticalShow( ::oGetUnidadesArticulo )   
+
+RETURN ( Self )
+
+//---------------------------------------------------------------------------//
+
+
 METHOD refreshUnidadesImportes()       
 
 RETURN ( ::oSayTotalUnidades():Refresh(), ::oSayTotalImporte():Refresh() )
@@ -322,6 +347,22 @@ METHOD searchCodeGS128( nKey )
 
    if nKey == 16 
       ::oGetCodigoArticulo:oGet:Insert( '@' )
+   end if 
+
+RETURN ( .t. )
+
+//---------------------------------------------------------------------------//
+
+METHOD hidePrecios()
+   
+   if oUser():lNotCostos()
+
+      ::verticalHide( ::oGetPrecioArticulo )
+      
+      ::verticalHide( ::oSayTotalImporte )
+      
+      ::verticalHide( ::oSayTextImporte )
+
    end if 
 
 RETURN ( .t. )

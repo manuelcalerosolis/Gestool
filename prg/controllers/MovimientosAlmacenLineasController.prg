@@ -254,6 +254,8 @@ METHOD showProperties()
 
       ::oDialogView:hidePropertyBrowseView()
 
+      ::oDialogView:showUnitsControls()
+
       RETURN ( .t. )
 
    end if 
@@ -455,6 +457,8 @@ METHOD onActivateDialog()
    ::oDialogView:hideBultos()
 
    ::oDialogView:hideCajas()
+
+   ::oDialogView:hidePrecios()
 
    ::oDialogView:oSayTotalUnidades:Refresh()
 

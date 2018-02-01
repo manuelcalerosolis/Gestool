@@ -677,16 +677,21 @@ FUNCTION nextDocumentNumber( cNumero, nLen )
    DEFAULT cNumero  := "0"
    DEFAULT nLen     := 50
 
+   // msgalert( cNumero, "nextDocumentNumber inicio")
+
    cNumero          := alltrim( cNumero )
 
    nAt              := rat( "/", cNumero )
    if nAt == 0
       nNumero       := val( cNumero ) + 1
+      // msgalert( padr( rjust( nNumero, "0", 6 ), nLen ), "salida por falta de espacios" )
       RETURN ( padr( rjust( nNumero, "0", 6 ), nLen ) )
    end if 
    
    cSerie           := substr( cNumero, 1, nAt  )
    nNumero          := val( substr( cNumero, nAt + 1 ) ) + 1
+
+   // msgalert( padr( cSerie + rjust( nNumero, "0", 6 ), nLen ), "nextDocumentNumber salida")
 
 RETURN ( padr( cSerie + rjust( nNumero, "0", 6 ), nLen ) )
 
