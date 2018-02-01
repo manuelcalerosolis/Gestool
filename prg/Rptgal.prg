@@ -2323,6 +2323,9 @@ Return nil
 FUNCTION SqlMovimientosAlmacenLineasNumerosSeriesModel()
 Return nil
 
+FUNCTION AlbaranesClientesLineasModel()
+Return nil
+
 //------------------------------------------------------------------//
 
 #pragma BEGINDUMP
