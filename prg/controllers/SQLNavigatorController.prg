@@ -198,10 +198,16 @@ METHOD deleteFilter()
       RETURN ( Self )    
    end if 
 
-   nId            := ::oFilterController:getFilterId( cFilter )
+   nId            := ::oFilterController:oModel:getId( cFilter )
 
-   if !empty( nId )
-      ::oFilterController:Delete( nId )
+   if empty( nId )
+      RETURN ( Self )    
+   end if 
+      
+   if oUser():lNotConfirmDelete() .or. msgNoYes( "¿Desea eliminar el registro en curso?", "Confirme eliminación" )
+      ::oWindowsBar:setComboFilterItem( "" )
+      ::oWindowsBar:evalComboFilterChange()
+      ::oFilterController:oModel:deleteById( { nId } )
    end if 
 
 RETURN ( Self )    
@@ -259,7 +265,9 @@ METHOD EnableWindowsBar()
 
    ::oWindowsBar:setActionEditButtonFilter( {|| ::oFilterController:EditByText( ::oWindowsBar:GetComboFilter() ) } )
 
-   ::oWindowsBar:setActionDeleteButtonFilter( {|| ::oFilterController:DeleteByText( ::oWindowsBar:GetComboFilter() ) } )
+   //::oWindowsBar:setActionDeleteButtonFilter( {|| ::oFilterController:DeleteByText( ::oWindowsBar:GetComboFilter() ) } )
+
+   ::oWindowsBar:setActionDeleteButtonFilter( {|| ::deleteFilter() } )
 
    ::oNavigatorView:Refresh()
 
