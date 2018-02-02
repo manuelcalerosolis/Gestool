@@ -89,9 +89,7 @@ RETURN ( Self )
 
 METHOD DeleteByText( cNameFilter, cTableToFilter )
 
-   ::getId( cNameFilter, cTableToFilter )
-   
-   msgalert( ::getId( cNameFilter, cTableToFilter ), "delete")
+      ::oModel:deleteById( { ::getId( cNameFilter, cTableToFilter ) } )
 
 RETURN ( Self )   
 
