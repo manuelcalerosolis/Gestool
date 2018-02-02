@@ -945,7 +945,7 @@ METHOD Execute( lSend, lRecive, lImprimirEnvio ) CLASS TSndRecInf
          ::SetText( 'Recibiendo datos', 1 )
 
          if lRecive
-            aEval( ::aSend, {|o| if ( o:lSelectRecive, ( ::SetText( o:getTitle(), 2 ), o:ReciveData(), Self ), ) } )
+            aEval( ::aSend, {|o| if ( o:getSelectRecive(), ( ::SetText( o:getTitle(), 2 ), o:ReciveData(), Self ), ) } )
          end if
 
          /*
@@ -955,7 +955,7 @@ METHOD Execute( lSend, lRecive, lImprimirEnvio ) CLASS TSndRecInf
          ::SetText( 'Procesando datos', 1 )
 
          if lRecive
-            aEval( ::aSend, {|o| if ( o:lSelectRecive, ( ::SetText( o:getTitle(), 2 ), o:Process(), Self ), ) } )
+            aEval( ::aSend, {|o| if ( o:getSelectRecive(), ( ::SetText( o:getTitle(), 2 ), o:Process(), Self ), ) } )
          end if
 
          /*
