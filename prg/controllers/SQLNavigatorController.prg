@@ -25,6 +25,8 @@ CLASS SQLNavigatorController FROM SQLBaseController
 
    METHOD End()
 
+   METHOD setName( cName )                            INLINE ( ::Super:setName( cName ), if( !empty( ::oFilterController ), ::oFilterController:setTableToFilter( cName ), ) ) 
+
    METHOD Delete( aSelected )                         INLINE ( ::Super:Delete( aSelected ) ) 
 
    METHOD ActivateNavigatorView()
@@ -79,11 +81,7 @@ RETURN ( self )
 
 //---------------------------------------------------------------------------//
 
-METHOD End( oSenderController )
-
-   if !empty( ::oNavigatorView )
-      ::oNavigatorView:End()
-   end if 
+METHOD End()
 
    if !empty( ::oSelectorView )
       ::oSelectorView:End()
@@ -92,6 +90,9 @@ METHOD End( oSenderController )
    if !empty( ::oFilterController )
       ::oFilterController:End() 
    end if 
+
+   ::oSelectorView         := nil
+   ::oFilterController     := nil
 
 RETURN ( nil )
 

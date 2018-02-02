@@ -279,9 +279,7 @@ RETURN ( .t. )
 
 FUNCTION Test()
 
-//   MovimientosAlmacenController():New():jsonToSQL():End()
-//
-//   MovimientosAlmacenController():New():ActivateNavigatorView()
+   TiposImpresorasController():New():ActivateNavigatorView()
 
 RETURN NIL 
 

@@ -28,9 +28,9 @@ METHOD uniqueFilter( uValue )
    local nCount
    local cSQLSentence
 
-   cSQLSentence      := "SELECT COUNT(*) FROM " + ::oController:getModelTableName()          + space( 1 )
-   cSQLSentence      +=    "WHERE nombre = " + toSQLString( uValue )                         + space( 1 )
-   cSQLSentence      +=       "AND tabla = " + toSQLString( ::oController:getTableName() )   + space( 1 )
+   cSQLSentence      := "SELECT COUNT(*) FROM " + ::oController:getModelTableName()             + space( 1 )
+   cSQLSentence      +=    "WHERE nombre = " + toSQLString( uValue )                            + space( 1 )
+   cSQLSentence      +=       "AND tabla = " + toSQLString( ::oController:getTableToFilter() )  + space( 1 )
 
    id                := ::oController:getModelBufferColumnKey()
    if !empty(id)

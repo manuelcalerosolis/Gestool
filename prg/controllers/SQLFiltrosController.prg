@@ -14,21 +14,21 @@ CLASS SQLFiltrosController FROM SQLBaseController
 
    METHOD New()
 
-   METHOD Dialog()                     INLINE ( ::oDialogView:Dialog() )
-
-   METHOD setName( cName )             INLINE ( ::cName := cName )
-   METHOD getName()                    INLINE ( if( empty( ::cName ), ::oSender:cName, ::cName ) )
+   METHOD Dialog()                           INLINE ( ::oDialogView:Dialog() )
 
    METHOD setColumns()
-   METHOD getColumns()                 INLINE ( ::hColumns )
+   METHOD getColumns()                       INLINE ( ::hColumns )
 
    METHOD getFilters()
    METHOD getFilterSentence( cFilter ) 
    METHOD getId( cFilter )
 
    METHOD Append()
-   METHOD EditByText( cFilter )        INLINE ( ::Edit( ::getId( cFilter ) ) )
+   METHOD EditByText( cFilter )              INLINE ( ::Edit( ::getId( cFilter ) ) )
    METHOD DeleteByText( cFilter )      
+
+   METHOD setTableToFilter( cTableToFilter ) INLINE ( ::oModel:setTableToFilter( cTableToFilter ) )
+   METHOD getTableToFilter()                 INLINE ( ::oModel:getTableToFilter() )
 
 END CLASS
 
@@ -58,33 +58,21 @@ RETURN ( Self )
 
 //---------------------------------------------------------------------------//
 
-METHOD getFilters()                 
+METHOD getFilters( cTableToFilter )                 
 
-   if empty( ::getName() )
-      RETURN ( {} )
-   end if 
-
-RETURN ( ::oModel:getFilters( ::getName() ) )
+RETURN ( ::oModel:getFilters( cTableToFilter ) )
 
 //---------------------------------------------------------------------------//
 
-METHOD getFilterSentence( cFilter )
+METHOD getFilterSentence( cNameFilter, cTableToFilter )
 
-   if empty( ::getName() )
-      RETURN ( "" )
-   end if 
-
-RETURN ( ::oModel:getFilterSentence( cFilter, ::getName() ) )
+RETURN ( ::oModel:getFilterSentence( cNameFilter, cTableToFilter ) )
 
 //---------------------------------------------------------------------------//
 
-METHOD getId( cFilter )
+METHOD getId( cNameFilter, cTableToFilter )
 
-   if empty( ::getName() )
-      RETURN ( 0 )
-   end if 
-
-RETURN ( ::oModel:getId( cFilter, ::getName() ) )
+RETURN ( ::oModel:getId( cNameFilter, cTableToFilter ) )
 
 //---------------------------------------------------------------------------//
 
@@ -99,11 +87,11 @@ RETURN ( Self )
 
 //---------------------------------------------------------------------------//
 
-METHOD DeleteByText( cFilter )
+METHOD DeleteByText( cNameFilter, cTableToFilter )
 
-   if ::Delete( { ::getId( cFilter ) } ) 
-      msgalert( "delete")
-   end if 
+   ::getId( cNameFilter, cTableToFilter )
+   
+   msgalert( ::getId( cNameFilter, cTableToFilter ), "delete")
 
 RETURN ( Self )   
 

@@ -70,9 +70,10 @@ RETURN ( Self )
 
 METHOD End()
 
-   ::oController:DisableWindowsBar()
-
-   ::oController:End()
+   if !empty( ::oController )
+      ::oController:DisableWindowsBar()
+      ::oController:End()
+   end if 
 
    if !empty( ::oMdiChild )
       ::oMdiChild:End()
@@ -85,6 +86,12 @@ METHOD End()
    if !empty( ::oTopWebBar )
       ::oTopWebBar:End()
    end if 
+
+   ::oController     := nil
+   ::oMdiChild       := nil
+   ::oMenuTreeView   := nil
+   ::oTopWebBar      := nil
+
 
 RETURN ( nil )
 

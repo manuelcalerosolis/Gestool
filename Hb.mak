@@ -441,11 +441,9 @@ SincronizaPreventa.prg  													\
 MsTable.prg             													\
 MsError.prg 																	\
 SQLBaseView.prg 																\
-TiposImpresorasView.prg       											\
 TiposVentasView.prg    														\
 TiposNotasView.prg    														\
 SQLBaseValidator.prg 														\
-TiposImpresorasValidator.prg 												\
 TiposVentasValidator.prg 													\
 TiposNotasValidator.prg 													\
 EtiquetasValidator.prg 														\
@@ -453,7 +451,6 @@ SituacionesValidator.prg 													\
 MovimientosAlmacenValidator.prg 											\
 MovimientosAlmacenLineasValidator.prg 									\
 SQLBaseRepository.prg 														\
-TiposImpresorasRepository.prg 											\
 TiposVentasRepository.prg 													\
 TiposNotasRepository.prg 													\
 ConfiguracionEmpresasRepository.prg 									\
@@ -569,7 +566,6 @@ TicketsClientesPagosModel.prg 											\
 RecibosClientesModel.prg 													\
 TicketsClientesModel.prg 													\
 PedidosProveedoresModel.prg												\
-SQLTiposImpresorasModel.prg 												\
 MaterialesProducidosLineasModel.prg 									\
 MaterialesConsumidosLineasModel.prg 									\
 TiposImpresorasController.prg 											\
@@ -594,7 +590,6 @@ ClientesModel.prg 															\
 RecibosClientesModel.prg 													\
 TicketsClientesModel.prg 													\
 PedidosProveedoresModel.prg												\
-SQLTiposImpresorasModel.prg												\
 UsuariosModel.prg 															\
 DelegacionesModel.prg 														\
 TiposImpresorasController.prg 											\
@@ -1051,9 +1046,7 @@ SincronizaPreventa.obj  													\
 MsTable.obj             													\
 MsError.obj 																	\
 SQLBaseView.obj 																\
-TiposImpresorasView.obj       											\
 SQLBaseValidator.obj 														\
-TiposImpresorasValidator.obj 												\
 TiposVentasValidator.obj 													\
 TiposNotasValidator.obj 													\
 EtiquetasValidator.obj 														\
@@ -1061,7 +1054,6 @@ SituacionesValidator.obj 													\
 MovimientosAlmacenValidator.obj 											\
 MovimientosAlmacenLineasValidator.obj 									\
 SQLBaseRepository.obj 														\
-TiposImpresorasRepository.obj 											\
 ConfiguracionEmpresasRepository.obj 									\
 TiposVentasRepository.obj 													\
 TiposNotasRepository.obj 													\
@@ -1181,7 +1173,6 @@ TicketsClientesPagosModel.obj 											\
 TicketsClientesModel.obj 													\
 RecibosClientesModel.obj 													\
 PedidosProveedoresModel.obj 												\
-SQLTiposImpresorasModel.obj 												\
 MaterialesProducidosLineasModel.obj 									\
 MaterialesConsumidosLineasModel.obj 									\
 UsuariosModel.obj																\
@@ -1638,7 +1629,6 @@ $(OBJ)\MsTable.obj   														+
 $(OBJ)\MsError.obj   														+ 
 $(OBJ)\SQLBaseView.obj 														+
 $(OBJ)\SQLBaseValidator.obj 												+
-$(OBJ)\TiposImpresorasValidator.obj										+
 $(OBJ)\TiposVentasValidator.obj											+
 $(OBJ)\TiposNotasValidator.obj											+
 $(OBJ)\EtiquetasValidator.obj												+
@@ -1646,12 +1636,10 @@ $(OBJ)\SituacionesValidator.obj											+
 $(OBJ)\MovimientosAlmacenValidator.obj									+
 $(OBJ)\MovimientosAlmacenLineasValidator.obj							+
 $(OBJ)\SQLBaseRepository.obj 												+
-$(OBJ)\TiposImpresorasRepository.obj									+
 $(OBJ)\ConfiguracionEmpresasRepository.obj							+
 $(OBJ)\TiposNotasRepository.obj											+
 $(OBJ)\TiposVentasRepository.obj											+
 $(OBJ)\EtiquetasRepository.obj											+
-$(OBJ)\TiposImpresorasView.obj      									+
 $(OBJ)\TiposNotas.obj      												+
 $(OBJ)\EtiquetasView.obj  													+
 $(OBJ)\TiposVentasView.obj   												+
@@ -1772,7 +1760,6 @@ $(OBJ)\ColumnasUsuariosModel.obj               						+
 $(OBJ)\RecibosClientesModel.obj											+
 $(OBJ)\TicketsClientesModel.obj 	 										+							
 $(OBJ)\PedidosProveedoresModel.obj 										+
-$(OBJ)\SQLTiposImpresorasModel.obj                 				+
 $(OBJ)\SQLMovimientosAlmacenModel.obj               				+
 $(OBJ)\MaterialesProducidosLineasModel.obj 							+
 $(OBJ)\MaterialesConsumidosLineasModel.obj 							+
