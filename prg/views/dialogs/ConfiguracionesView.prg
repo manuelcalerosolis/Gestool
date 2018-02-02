@@ -54,6 +54,8 @@ METHOD New( oController )
                                              ::setColPicture( "" ) } ,;
                               "N"   => {||   ::setColType( EDIT_GET ) ,;
                                              ::setColPicture( "999999999" ) } ,;
+                              "D"   => {||   ::setColType( EDIT_GET ) ,;
+                                             ::setColPicture( "@DT" ) } ,;
                               "L"   => {||   ::setColType( EDIT_LISTBOX ),;
                                              ::setColListTxt( { "si", "no" } ),;
                                              ::setColPicture( "" ) },;
@@ -64,6 +66,7 @@ METHOD New( oController )
 RETURN ( Self )
 
 //---------------------------------------------------------------------------//
+
 METHOD Activate()
 
    local oBmp
