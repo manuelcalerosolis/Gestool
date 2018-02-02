@@ -363,6 +363,8 @@ METHOD setSentFromFetch()
 
    local cSentence   := ::oModel:getSentenceSentFromFetch()
       
+   msgalert( cSentence, "setSentFromFetch" )
+
    if !empty( cSentence )
       getSQLDatabase():Exec( cSentence )
    end if 
@@ -374,6 +376,7 @@ RETURN ( self )
 METHOD isUnzipToJson( cZipFile )
 
    local aFiles
+   local lUnZiped    := .t.
 
    if !file( cZipFile )
       RETURN ( .f. )
@@ -383,12 +386,12 @@ METHOD isUnzipToJson( cZipFile )
 
    if !hb_unzipfile( cZipFile, , , , cpatin(), aFiles )
       MsgStop( "No se ha descomprimido el fichero " + cZipFile, "Error" )
-      RETURN ( .f. )
+      lUnZiped       :=  .f. 
    end if
 
    hb_gcall()
 
-RETURN ( .t. )
+RETURN ( lUnZiped )
 
 //---------------------------------------------------------------------------//
 

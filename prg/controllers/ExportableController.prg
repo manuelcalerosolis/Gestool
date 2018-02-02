@@ -9,9 +9,18 @@ CLASS ExportableController
 
    DATA lSelectSend
 
+   METHOD setSelectSend( lSelect )     INLINE ( ::lSelectSend := lSelect )
+   METHOD getSelectSend()              INLINE ( ::lSelectSend )
+
    DATA lSelectRecive
 
+   METHOD setSelectRecive( lSelect )   INLINE ( ::lSelectRecive := lSelect )
+   METHOD getSelectRecive()            INLINE ( ::lSelectRecive )
+
    DATA cZipFile
+
+   METHOD setZipFile( cZipFile )       INLINE ( ::cZipFile := cZipFile )
+   METHOD getZipFile()                 INLINE ( ::cZipFile )
 
    METHOD New( oController )
 
@@ -19,14 +28,10 @@ CLASS ExportableController
 
    METHOD Save()
 
+   METHOD isSendData( oInternet )
+
    METHOD getTitle()                   INLINE ( ::oController:getTitle() )
    METHOD cText()                      INLINE ( ::getTitle() )
-
-   METHOD setSelectSend( lSelect )     INLINE ( ::lSelectSend := lSelect )
-   METHOD getSelectSend()              INLINE ( ::lSelectSend )
-
-   METHOD setSelectRecive( lSelect )   INLINE ( ::lSelectRecive := lSelect )
-   METHOD getSelectRecive()            INLINE ( ::lSelectRecive )
 
 END CLASS
 
@@ -57,5 +62,22 @@ METHOD Load()
    ::lSelectRecive   := ( Upper( GetPvProfString( "Recepcion", ::getTitle(), cValToChar( ::lSelectRecive ), cIniEmpresa() ) ) == ".T." )
 
 RETURN ( Self )
+
+//----------------------------------------------------------------------------//
+
+METHOD isSendData( oInternet )
+
+   if !file( ::getZipFile() )
+      RETURN ( .f. )
+   end if 
+
+   if oInternet:SendFiles( ::getZipFile() )
+      oInternet:SetText( "Ficheros de artículos enviados " + ::getZipFile() )
+      RETURN ( .t. )
+   end if
+
+   oInternet:SetText( "ERROR fichero de artículos no enviado" )
+
+RETURN ( .f. )
 
 //----------------------------------------------------------------------------//

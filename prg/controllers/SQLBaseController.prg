@@ -216,7 +216,9 @@ CLASS SQLBaseController
    METHOD getSelectRecive()                           INLINE ( ::oExportableController:getSelectRecive() )
 
    METHOD createData()                                INLINE ( ::buildNotSentJson(), ::zipNotSentJson() )
-   METHOD sendData( oInternet )                       INLINE ( ::buildNotSentJson(), ::zipNotSentJson() )
+   METHOD restoreData( oInternet )                    INLINE ( ::setSentFromFetch() )
+   
+   METHOD sendData( oInternet )                       INLINE ( ::oExportableController:isSendData( oInternet ) )
 
 END CLASS
 
