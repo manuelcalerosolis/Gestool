@@ -43,11 +43,19 @@ CLASS TSenderReciverItem
 
    Method nGetNumberToSend()
 
-   Method SetNumberToSend()   INLINE   WritePProString( "Numero", ::cText, cValToChar( ::nNumberSend ), ::cIniFile )
+   Method SetNumberToSend()            INLINE   WritePProString( "Numero", ::cText, cValToChar( ::nNumberSend ), ::cIniFile )
 
-   Method IncNumberToSend()   INLINE   WritePProString( "Numero", ::cText, cValToChar( ++::nNumberSend ), ::cIniFile )
+   Method IncNumberToSend()            INLINE   WritePProString( "Numero", ::cText, cValToChar( ++::nNumberSend ), ::cIniFile )
 
    METHOD GetFileNameToSend( cPrefixFile )
+
+   METHOD getTitle()                   INLINE ( ::cText )
+
+   METHOD setSelectSend( lSelect )     INLINE ( ::lSelectSend := lSelect )
+   METHOD getSelectSend( lSelect )     INLINE ( ::lSelectSend )
+
+   METHOD setSelectRecive( lSelect )   INLINE ( ::lSelectRecive := lSelect )
+   METHOD getSelectRecive( lSelect )   INLINE ( ::lSelectRecive )
 
 END CLASS
 

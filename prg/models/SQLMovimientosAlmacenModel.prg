@@ -20,7 +20,7 @@ CLASS SQLMovimientosAlmacenModel FROM SQLExportableModel
    
    METHOD cTextoMovimiento()  
 
-   METHOD getDeleteSentence( aId )
+   METHOD getDeleteSentenceById( aId )
 
    METHOD loadDuplicateBuffer( id )                
 
@@ -106,28 +106,30 @@ RETURN ( ::aTextoMovimiento[ nPosition ] )
 
 //---------------------------------------------------------------------------//
 
-METHOD getDeleteSentence( aUuid )
+METHOD getDeleteSentenceById( aIds, aUuids )
 
    local aSQLDelete        := {}
    local aUuidLineasToDelete
    local aUuidSeriesToDelete
 
-   aUuidLineasToDelete     := SQLMovimientosAlmacenLineasModel():aUuidToDelete( aUuid )
+   aadd( aSQLDelete, ::Super:getDeleteSentenceById( aIds ) )
 
-   aadd( aSQLDelete, ::Super:getDeleteSentence( aUuid ) )
+   aUuidLineasToDelete     := SQLMovimientosAlmacenLineasModel():aUuidToDelete( aUuids )
 
-   if !empty( aUuidLineasToDelete )
-   
-      aadd( aSQLDelete, SQLMovimientosAlmacenLineasModel():getDeleteSentence( aUuidLineasToDelete ) )
-
-      aUuidSeriesToDelete  := SQLMovimientosAlmacenLineasNumerosSeriesModel():aUuidToDelete( aUuidLineasToDelete )
-
-      if !empty( aUuidSeriesToDelete )
-         aadd( aSQLDelete, SQLMovimientosAlmacenLineasNumerosSeriesModel():getDeleteSentence( aUuidSeriesToDelete ) )
-      end if 
-
+   if empty( aUuidLineasToDelete )
+      RETURN ( aSQLDelete )
    end if 
    
+   aadd( aSQLDelete, SQLMovimientosAlmacenLineasModel():getDeleteSentenceByUuid( aUuidLineasToDelete ) )
+
+   aUuidSeriesToDelete     := SQLMovimientosAlmacenLineasNumerosSeriesModel():aUuidToDelete( aUuidLineasToDelete )
+
+   if empty( aUuidSeriesToDelete )
+      RETURN ( aSQLDelete )
+   end if 
+
+   aadd( aSQLDelete, SQLMovimientosAlmacenLineasNumerosSeriesModel():getDeleteSentenceByUuid( aUuidSeriesToDelete ) )
+
 RETURN ( aSQLDelete )
 
 //---------------------------------------------------------------------------//

@@ -192,6 +192,7 @@ METHOD Init() CLASS TSndRecInf
    aAdd( ::aSend, TAlbaranesProveedorSenderReciver():New(      "Albaranes de proveedor",     Self ) )
    aAdd( ::aSend, TFacturasProveedorSenderReciver():New(       "Facturas de proveedor",      Self ) )
    aAdd( ::aSend, TRectificativasProveedorSenderReciver():New( "Rectificativas proveedor",   Self ) )
+   aAdd( ::aSend, MovimientosAlmacenController():New() )
    aAdd( ::aSend, TSATClientesSenderReciver():New(             "SAT de clientes",            Self ) )
    aAdd( ::aSend, TPresupuestosClientesSenderReciver():New(    "Presupuestos clientes",      Self ) )
    aAdd( ::aSend, TPedidosClientesSenderReciver():New(         "Pedidos clientes",           Self ) )
@@ -533,33 +534,33 @@ METHOD Activate( lAuto ) CLASS TSndRecInf
 
       with object ( oBrwSnd:addCol() )
          :cHeader       := "Se. Seleccionada"
-         :bEditValue    := {|| ::aSend[ oBrwSnd:nArrayAt ]:lSelectSend }
+         :bEditValue    := {|| ::aSend[ oBrwSnd:nArrayAt ]:getSelectSend() }
          :nWidth        := 20
          :SetCheck( { "Sel16", "Nil16" } )
       end with
 
       with object ( oBrwSnd:addCol() )
          :cHeader       := "Documento"
-         :bEditValue    := {|| ::aSend[ oBrwSnd:nArrayAt ]:cText + " envio" }
+         :bEditValue    := {|| ::aSend[ oBrwSnd:nArrayAt ]:getTitle() + " envio" }
          :nWidth        := 300
       end with
 
-      oBrwSnd:bLDblClick   := {|| ::aSend[ oBrwSnd:nArrayAt ]:lSelectSend := !::aSend[ oBrwSnd:nArrayAt ]:lSelectSend, oBrwSnd:Refresh() }
+      oBrwSnd:bLDblClick   := {|| ::aSend[ oBrwSnd:nArrayAt ]:setSelectSend( !::aSend[ oBrwSnd:nArrayAt ]:getSelectSend() ), oBrwSnd:Refresh() }
 
       REDEFINE BUTTON ;
          ID       501 ;
          OF       ::oFld:aDialogs[ 2 ] ;
-         ACTION   ( ::aSend[ oBrwSnd:nArrayAt ]:lSelectSend := !::aSend[ oBrwSnd:nArrayAt ]:lSelectSend, oBrwSnd:Refresh() )
+         ACTION   ( ::aSend[ oBrwSnd:nArrayAt ]:setSelectSend( !::aSend[ oBrwSnd:nArrayAt ]:getSelectSend() ), oBrwSnd:Refresh() )
 
       REDEFINE BUTTON ;
          ID       502 ;
          OF       ::oFld:aDialogs[ 2 ] ;
-         ACTION   ( aEval( ::aSend, {|o| o:lSelectSend := .t. }, oBrwSnd:Refresh() ) )
+         ACTION   ( aEval( ::aSend, {|o| o:setSelectSend( .t. ) }, oBrwSnd:Refresh() ) )
 
       REDEFINE BUTTON ;
          ID       503 ;
          OF       ::oFld:aDialogs[ 2 ] ;
-         ACTION   ( aEval( ::aSend, {|o| o:lSelectSend := .f. }, oBrwSnd:Refresh() ) )
+         ACTION   ( aEval( ::aSend, {|o| o:setSelectSend( .f. ) }, oBrwSnd:Refresh() ) )
 
       /*
       Segunda caja de dialogo--------------------------------------------------
@@ -579,33 +580,33 @@ METHOD Activate( lAuto ) CLASS TSndRecInf
 
       with object ( oBrwRec:addCol() )
          :cHeader       := "Se. Seleccionada"
-         :bEditValue    := {|| ::aSend[ oBrwRec:nArrayAt ]:lSelectRecive }
+         :bEditValue    := {|| ::aSend[ oBrwRec:nArrayAt ]:getSelectRecive() }
          :nWidth        := 20
          :SetCheck( { "Sel16", "Nil16" } )
       end with
 
       with object ( oBrwRec:addCol() )
          :cHeader       := "Documento"
-         :bEditValue    := {|| ::aSend[ oBrwRec:nArrayAt ]:cText + " recepción" }
+         :bEditValue    := {|| ::aSend[ oBrwRec:nArrayAt ]:getTitle() + " recepción" }
          :nWidth        := 300
       end with
 
-      oBrwRec:bLDblClick   := {|| ::aSend[ oBrwRec:nArrayAt ]:lSelectRecive := !::aSend[ oBrwRec:nArrayAt ]:lSelectRecive, oBrwRec:Refresh() }
+      oBrwRec:bLDblClick   := {|| ::aSend[ oBrwRec:nArrayAt ]:setSelectRecive( !::aSend[ oBrwRec:nArrayAt ]:getSelectRecive() ), oBrwRec:Refresh() }
 
       REDEFINE BUTTON ;
          ID       501 ;
          OF       ::oFld:aDialogs[ 3 ] ;
-         ACTION   ( ::aSend[ oBrwRec:nArrayAt ]:lSelectRecive := !::aSend[ oBrwRec:nArrayAt ]:lSelectRecive, oBrwRec:Refresh() )
+         ACTION   ( ::aSend[ oBrwRec:nArrayAt ]:setSelectRecive( !::aSend[ oBrwRec:nArrayAt ]:getSelectRecive() ), oBrwRec:Refresh() )
 
       REDEFINE BUTTON ;
          ID       502 ;
          OF       ::oFld:aDialogs[ 3 ] ;
-         ACTION   ( aEval( ::aSend, {|o| o:lSelectRecive := .t. }, oBrwRec:Refresh() ) )
+         ACTION   ( aEval( ::aSend, {|o| o:setSelectRecive( .t. ) }, oBrwRec:Refresh() ) )
 
       REDEFINE BUTTON ;
          ID       503 ;
          OF       ::oFld:aDialogs[ 3 ] ;
-         ACTION   ( aEval( ::aSend, {|o| o:lSelectRecive := .f. }, oBrwRec:Refresh() ) )
+         ACTION   ( aEval( ::aSend, {|o| o:setSelectRecive( .f. ) }, oBrwRec:Refresh() ) )
 
       /*
       Tercera caja de dialogo--------------------------------------------------
@@ -916,7 +917,7 @@ METHOD Execute( lSend, lRecive, lImprimirEnvio ) CLASS TSndRecInf
       ::SetText( 'Seleccionando datos', 1 ) 
 
       if lSend
-         aEval( ::aSend, {|o| if( o:lSelectSend, ( ::SetText( o:cText, 2 ), o:CreateData(), EraseFilesInDirectory(cPatSnd(), "*.*" ), Self ), ) } )
+         aEval( ::aSend, {|o| if( o:getSelectSend(), ( ::SetText( o:getTitle(), 2 ), o:CreateData(), EraseFilesInDirectory(cPatSnd(), "*.*" ), Self ), ) } )
       end if
 
       /*
@@ -934,7 +935,7 @@ METHOD Execute( lSend, lRecive, lImprimirEnvio ) CLASS TSndRecInf
          ::SetText( 'Enviando datos', 1 )
 
          if lSend
-            aEval( ::aSend, {|o| if( o:lSelectSend, ( ::SetText( o:cText, 2 ), o:SendData(), Self ), ) } )
+            aEval( ::aSend, {|o| if( o:getSelectSend(), ( ::SetText( o:getTitle(), 2 ), o:SendData( self ), Self ), ) } )
          end if
 
          /*
@@ -944,7 +945,7 @@ METHOD Execute( lSend, lRecive, lImprimirEnvio ) CLASS TSndRecInf
          ::SetText( 'Recibiendo datos', 1 )
 
          if lRecive
-            aEval( ::aSend, {|o| if ( o:lSelectRecive, ( ::SetText( o:cText, 2 ), o:ReciveData(), Self ), ) } )
+            aEval( ::aSend, {|o| if ( o:lSelectRecive, ( ::SetText( o:getTitle(), 2 ), o:ReciveData(), Self ), ) } )
          end if
 
          /*
@@ -954,7 +955,7 @@ METHOD Execute( lSend, lRecive, lImprimirEnvio ) CLASS TSndRecInf
          ::SetText( 'Procesando datos', 1 )
 
          if lRecive
-            aEval( ::aSend, {|o| if ( o:lSelectRecive, ( ::SetText( o:cText, 2 ), o:Process(), Self ), ) } )
+            aEval( ::aSend, {|o| if ( o:lSelectRecive, ( ::SetText( o:getTitle(), 2 ), o:Process(), Self ), ) } )
          end if
 
          /*
@@ -980,7 +981,7 @@ METHOD Execute( lSend, lRecive, lImprimirEnvio ) CLASS TSndRecInf
          ::SetText( 'Restaurando datos', 1 )
 
          if lSend
-            aEval( ::aSend, {|o| if( o:lSelectSend, ( ::SetText( o:cText, 2 ), o:RestoreData(), Self ), ) } )
+            aEval( ::aSend, {|o| if( o:getSelectSend(), ( ::SetText( o:getTitle(), 2 ), o:RestoreData(), Self ), ) } )
          end if
 
          /*

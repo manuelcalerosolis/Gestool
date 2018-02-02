@@ -89,7 +89,7 @@ CLASS SQLBaseModel
    METHOD getInsertSentence()
    METHOD getUpdateSentence()
    METHOD getInsertOnDuplicateSentence( hBuffer )   
-   METHOD getdeleteSentence()
+   METHOD getdeleteSentenceByUuid()
    
    METHOD getDropTableSentence()
 
@@ -142,7 +142,7 @@ CLASS SQLBaseModel
    METHOD insertBuffer( hBuffer )                     
    METHOD updateBuffer( hBuffer )
    METHOD insertOnDuplicate( hBuffer )
-   METHOD deleteSelection( aRecno )
+   METHOD deleteSelection( aIds )
    METHOD deleteById( nId )
 
    METHOD loadBlankBuffer()
@@ -533,7 +533,7 @@ RETURN ( cSQLUpdate )
 
 //---------------------------------------------------------------------------//
 
-METHOD getDeleteSentence( aUuid )
+METHOD getDeleteSentenceByUuid( aUuid )
 
    local cSentence   := "DELETE FROM " + ::cTableName + space( 1 ) + ;
                            "WHERE uuid IN ( " 
@@ -546,10 +546,14 @@ RETURN ( cSentence )
 
 //---------------------------------------------------------------------------//
 
-METHOD getDeleteSentenceById( nId )
+METHOD getDeleteSentenceById( aIds )
 
    local cSentence   := "DELETE FROM " + ::cTableName + space( 1 ) + ;
-                           "WHERE " + ::cColumnKey + " = " + toSQLString( nId ) 
+                           "WHERE " + ::cColumnKey + " IN ( "
+   
+   aeval( aIds, {| v | cSentence += if( hb_isarray( v ), toSQLString( atail( v ) ), toSQLString( v ) ) + ", " } )
+
+   cSentence         := chgAtEnd( cSentence, ' )', 2 )
 
 RETURN ( cSentence )
 
@@ -580,13 +584,13 @@ METHOD getValueField( cColumn, uValue )
    hColumn        := hGet( ::hColumns, cColumn )
 
    if hhaskey( hColumn, "default" )
+      RETURN ( uValue )
+   end if 
 
-      bValue      := hGet( hColumn, "default" )
-      
-      if !empty( bValue ) .and. hb_isblock( bValue )
-         uValue   := eval( bValue )
-      end if
-
+   bValue         := hGet( hColumn, "default" )
+   
+   if !empty( bValue ) .and. hb_isblock( bValue )
+      uValue      := eval( bValue )
    end if
 
 RETURN ( uValue )
@@ -801,13 +805,13 @@ RETURN ( Self )
 
 //---------------------------------------------------------------------------//
 
-METHOD deleteSelection( aRecno ) 
+METHOD deleteSelection( aIds, aUuids ) 
 
-   ::aRecordsToDelete   := aRecno
+   ::aRecordsToDelete   := aIds
 
    ::fireEvent( 'deletingSelection' )
 
-   ::getDatabase():Execs( ::getDeleteSentence( aRecno ) )
+   ::getDatabase():Execs( ::getDeleteSentenceById( aIds, aUuids ) )
 
    ::fireEvent( 'deletedSelection' )
    

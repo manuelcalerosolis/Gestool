@@ -9,6 +9,8 @@ CLASS SQLBaseController
 
    DATA oSenderController
 
+   DATA oExportableController                            
+
    DATA oEvents                                       
 
    DATA oModel
@@ -113,8 +115,8 @@ CLASS SQLBaseController
 
    // Validator----------------------------------------------------------------
 
-   METHOD Validate( cColumn, uValue )                 INLINE ( if( !empty( ::oValidator ), ::oValidator:Validate( cColumn, uValue ), ) )
-   METHOD Assert( cColumn, uValue )                   INLINE ( if( !empty( ::oValidator ), ::oValidator:Assert( cColumn, uValue ), ) )
+   METHOD Validate( cColumn, uValue )                 INLINE ( iif( !empty( ::oValidator ), ::oValidator:Validate( cColumn, uValue ), ) )
+   METHOD Assert( cColumn, uValue )                   INLINE ( iif( !empty( ::oValidator ), ::oValidator:Assert( cColumn, uValue ), ) )
 
    // Browse------------------------------------------------------------------
 
@@ -200,6 +202,20 @@ CLASS SQLBaseController
 
    METHOD loadDocuments()
 
+   // Fachadas para q responda ExportableController----------------------------
+
+   METHOD load()                                      INLINE ( ::oExportableController:load() )
+   METHOD save()                                      INLINE ( ::oExportableController:save() )
+
+   METHOD setSelectSend( lSelect )                    INLINE ( ::oExportableController:setSelectSend( lSelect ) )
+   METHOD getSelectSend()                             INLINE ( ::oExportableController:getSelectSend() )
+
+   METHOD setSelectRecive( lSelect )                  INLINE ( ::oExportableController:setSelectRecive( lSelect ) )
+   METHOD getSelectRecive()                           INLINE ( ::oExportableController:getSelectRecive() )
+
+   METHOD createData()                                INLINE ( ::buildNotSentJson(), ::zipNotSentJson() )
+   METHOD sendData( oInternet )                       INLINE ( ::buildNotSentJson(), ::zipNotSentJson() )
+
 END CLASS
 
 //---------------------------------------------------------------------------//
@@ -211,6 +227,8 @@ METHOD New( oSenderController )
    ::oEvents                                          := Events():New()
 
    ::oRowSet                                          := SQLRowSet():New( self )
+
+   ::oExportableController                            := ExportableController():New( self )
 
 RETURN ( self )
 
@@ -565,7 +583,7 @@ METHOD Delete( aSelectedRecno )
       
       ::fireEvent( 'deletingSelection' ) 
 
-      ::oModel:deleteSelection( ::getUuidFromRecno( aSelectedRecno ) )
+      ::oModel:deleteSelection( ::getIdFromRecno( aSelectedRecno ), ::getUuidFromRecno( aSelectedRecno ) )
 
       ::fireEvent( 'deletedSelection' ) 
 

@@ -68,13 +68,17 @@ CLASS MovimientosAlmacenController FROM SQLNavigatorController
    METHOD getBrowse()               INLINE ( ::oBrowseView:getBrowse() )
    METHOD refreshLineasBrowse()     INLINE ( iif( !empty( ::oLineasController ), ::getBrowse():Refresh(), ) )
 
-   METHOD appended()
-
    METHOD printSerialDocument()     INLINE ( ::oImprimirSeriesController:Activate() ) 
 
    METHOD buildNotSentJson()
 
    METHOD zipNotSentJson()
+
+   METHOD setSentFromFetch()   
+
+   METHOD isUnzipToJson( cZipFile )
+
+   METHOD jsonToSQL()
 
 END CLASS
 
@@ -127,8 +131,6 @@ METHOD New()
    ::oReport                     := MovimientosAlmacenReport():New( Self )
 
    ::loadDocuments()
-
-   ::setEvent( 'appended',       {|| ::appended() } ) 
 
 RETURN ( Self )
 
@@ -310,14 +312,6 @@ RETURN ( self )
 
 //---------------------------------------------------------------------------//
 
-METHOD appended()
-
-   // hset( ::oModel:hBuffer, "numero", MovimientosAlmacenRepository():getLastNumber() )
-
-RETURN ( self ) 
-
-//---------------------------------------------------------------------------//
-
 METHOD buildNotSentJson()
 
    ::oModel:selectNotSentToJson()
@@ -342,16 +336,83 @@ RETURN ( self )
 
 METHOD zipNotSentJson()
 
-   local cZipFile    := cpatout() + ::cName + "_" + hb_ttos( hb_datetime() ) + ".zip"
+   local cZipFile
+
+   if !file( ::oModel:getJsonFileToExport() )                                    .and. ;
+      !file( ::oLineasController:oModel:getJsonFileToExport() )                  .and. ;
+      !file( ::oLineasController:oSeriesControler:oModel:getJsonFileToExport() )
+      RETURN ( self )
+   end if 
+
+   cZipFile       := cpatout() + ::cName + "_" + hb_ttos( hb_datetime() ) + ".zip"
 
    hb_setdiskzip( {|| nil } )
 
-   hb_zipfile( cZipFile, ::oModel:getFileToExport(), 9 )
-   hb_zipfile( cZipFile, ::oLineasController:oModel:getFileToExport(), 9 ) 
-   hb_zipfile( cZipFile, ::oLineasController:oSeriesControler:oModel:getFileToExport(), 9 ) 
+   hb_zipfile( cZipFile, ::oModel:getJsonFileToExport(), 9 )
+   hb_zipfile( cZipFile, ::oLineasController:oModel:getJsonFileToExport(), 9 ) 
+   hb_zipfile( cZipFile, ::oLineasController:oSeriesControler:oModel:getJsonFileToExport(), 9 ) 
 
    hb_gcall()
+
+   ::oExportableController:setZipFile( cZipFile )
 
 RETURN ( self )
 
 //---------------------------------------------------------------------------//
+
+METHOD setSentFromFetch()
+
+   local cSentence   := ::oModel:getSentenceSentFromFetch()
+      
+   if !empty( cSentence )
+      getSQLDatabase():Exec( cSentence )
+   end if 
+
+RETURN ( self )
+
+//---------------------------------------------------------------------------//
+
+METHOD isUnzipToJson( cZipFile )
+
+   local aFiles
+
+   if !file( cZipFile )
+      RETURN ( .f. )
+   end if 
+
+   aFiles            := hb_getfilesinzip( cZipFile )
+
+   if !hb_unzipfile( cZipFile, , , , cpatin(), aFiles )
+      MsgStop( "No se ha descomprimido el fichero " + cZipFile, "Error" )
+      RETURN ( .f. )
+   end if
+
+   hb_gcall()
+
+RETURN ( .t. )
+
+//---------------------------------------------------------------------------//
+
+METHOD jsonToSQL()
+
+   if !::oModel:isInsertOrUpdateFromJson( ::oModel:getJsonFileToImport() )
+      msgStop( "No se ha incorporado el fichero " + ::oModel:getJsonFileToImport(), "Error" )
+      RETURN ( .f. )
+   end if 
+
+   if !::oLineasController:oModel:isInsertOrUpdateFromJson()
+      msgStop( "No se ha incorporado el fichero " + ::oLineasController:oModel:getJsonFileToImport(), "Error" )
+      RETURN ( .f. )
+   end if 
+
+   if !::oLineasController:oSeriesControler:oModel:isInsertOrUpdateFromJson()
+      msgStop( "No se ha incorporado el fichero " + ::oLineasController:oSeriesControler:oModel:getJsonFileToImport(), "Error" )
+      RETURN ( .f. )
+   end if 
+
+RETURN ( .t. )
+
+//---------------------------------------------------------------------------//
+
+
+

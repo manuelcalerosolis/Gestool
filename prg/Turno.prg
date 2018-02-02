@@ -677,6 +677,14 @@ CLASS TTurno FROM TMasDet
    METHOD setTpvRestaurante( oTpvRestaurante )  INLINE ( ::oTpvRestaurante := oTpvRestaurante )
    METHOD getTpvRestaurante()                   INLINE ( ::oTpvRestaurante )
 
+   METHOD getTitle()                            INLINE ( ::cText )
+
+   METHOD setSelectSend( lSelect )              INLINE ( ::lSelectSend := lSelect )
+   METHOD getSelectSend()                       INLINE ( ::lSelectSend )
+
+   METHOD setSelectRecive( lSelect )            INLINE ( ::lSelectRecive := lSelect )
+   METHOD getSelectRecive()                     INLINE ( ::lSelectRecive )
+
 END CLASS
 
 //----------------------------------------------------------------------------//

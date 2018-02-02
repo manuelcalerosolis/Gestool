@@ -7,12 +7,20 @@ CLASS SQLExportableModel FROM SQLBaseModel
 
    DATA aFetch
 
-   DATA cFileToExport
+   DATA cJsonFileToExport
 
-   METHOD New( oController )
+   DATA cJsonFileToImport
 
-   METHOD setFileToExport( cFileToExport )   INLINE ( ::cFileToExport := cFileToExport )
-   METHOD getFileToExport()                  INLINE ( ::cFileToExport )
+   METHOD setJsonFileToExport( cFile )       INLINE ( ::cJsonFileToExport := cFile )
+   METHOD getJsonFileToExport()              INLINE ( iif(  empty( ::cJsonFileToExport ),;
+                                                            cpatout() + ::cTableName + ".json",;
+                                                            ::cJsonFileToExport ) )
+
+   METHOD setJsonFileToImport( cFile )       INLINE ( ::cJsonFileToImport := cFile )
+   METHOD getJsonFileToImport()              INLINE ( iif(  empty( ::cJsonFileToImport ),;
+                                                            cpatin() + ::cTableName + ".json",;
+                                                            ::cJsonFileToImport ) )
+
 
    METHOD getSentenceNotSent()
 
@@ -24,21 +32,11 @@ CLASS SQLExportableModel FROM SQLBaseModel
 
    METHOD selectFetchToJson( cSentence, cFile )
 
-   METHOD insertFromJson( cFile )
+   METHOD isInsertOrUpdateFromJson( cFile )
 
    METHOD getSentenceSentFromFetch()
 
 END CLASS
-
-//---------------------------------------------------------------------------//
-
-METHOD New( oController )
-
-   ::Super:New( oController )
-
-   ::cFileToExport                           := cPatOut() + ::cTableName + ".json" 
-
-RETURN ( Self )
 
 //---------------------------------------------------------------------------//
 
@@ -76,7 +74,7 @@ RETURN ( ::aFetch )
 
 METHOD saveToJson( cFile )
 
-   DEFAULT cFile     := ::getFileToExport()
+   DEFAULT cFile     := ::getJsonFileToExport()
 
    ::fireEvent( 'savingToJson' )   
 
@@ -104,11 +102,13 @@ RETURN ( .f. )
 
 //---------------------------------------------------------------------------//
 
-METHOD insertFromJson( cFile )
+METHOD isInsertOrUpdateFromJson( cFile )
 
    local cJson
    local aJson
    local hBuffer
+
+   DEFAULT cFile     := ::getJsonFileToImport()
 
    if !file( cFile )
       RETURN ( .f. )
@@ -148,11 +148,9 @@ METHOD getSentenceSentFromFetch()
 
    cSentence         += "WHERE uuid IN ( " 
 
-   aeval( ::aFetch, {| h | cSentence += hget( h, "uuid" ) + ", " } )
+   aeval( ::aFetch, {| h | cSentence += quoted( hget( h, "uuid" ) ) + ", " } )
 
    cSentence         := chgAtEnd( cSentence, " )", 2 )
-
-   msgalert( cSentence, "cSentence" )
 
 RETURN ( cSentence )
 

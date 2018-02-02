@@ -46,6 +46,14 @@ CLASS TTipArt FROM TMant
 
    // Envios-------------------------------------------------------------------
 
+   METHOD getTitle()                            INLINE ( ::cText )
+
+   METHOD setSelectSend( lSelect )              INLINE ( ::lSelectSend := lSelect )
+   METHOD getSelectSend()                       INLINE ( ::lSelectSend )
+
+   METHOD setSelectRecive( lSelect )            INLINE ( ::lSelectRecive := lSelect )
+   METHOD getSelectRecive()                     INLINE ( ::lSelectRecive )
+
    METHOD CreateData()
    METHOD RestoreData()
    METHOD SendData()
