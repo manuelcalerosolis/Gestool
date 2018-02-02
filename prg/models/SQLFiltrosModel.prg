@@ -6,7 +6,12 @@
 
 CLASS SQLFiltrosModel FROM SQLBaseModel
 
-   DATA cTableName               INIT "filtros"
+   DATA cTableToFilter
+
+   METHOD setTableToFilter( cTableToFilter )          INLINE ( ::cTableToFilter := cTableToFilter )
+   METHOD getTableToFilter()                          INLINE ( ::cTableToFilter )
+
+   DATA cTableName                                    INIT "filtros"
 
    METHOD getColumns()
 
@@ -27,9 +32,7 @@ METHOD getColumns()
    hset( ::hColumns, "id",       {  "create"    => "INTEGER PRIMARY KEY AUTO_INCREMENT" } )
 
    hset( ::hColumns, "tabla",    {  "create"    => "CHAR( 50 ) NOT NULL"                  ,;
-                                    "default"   => {|| iif( !empty( ::oController ),;
-                                                            ::oController:getTableName(),;
-                                                            space( 50 ) ) } }             ) 
+                                    "default"   => {|| if( empty( ::cTableToFilter ), space( 50 ), ::cTableToFilter ) } } ) 
 
    hset( ::hColumns, "nombre",   {  "create"    => "CHAR( 50 ) NOT NULL"                  ,;
                                     "default"   => {|| space( 50 ) } }                    ) 
@@ -44,7 +47,15 @@ RETURN ( ::hColumns )
 METHOD getFilters( cTabla )
 
    local aFilters    := {}
-   local cSentence   := "SELECT nombre FROM " + ::getTableName() + " WHERE tabla = " + quoted( cTabla ) 
+   local cSentence   
+
+   DEFAULT cTabla    := ::getTableToFilter()
+
+   if empty( cTabla )
+      RETURN ( aFilters )   
+   end if 
+
+   cSentence         := "SELECT nombre FROM " + ::getTableName() + " WHERE tabla = " + quoted( cTabla ) 
 
    aFilters          := ::getDatabase():selectFetchArrayOneColumn( cSentence )
 
@@ -55,7 +66,15 @@ RETURN ( aFilters )
 METHOD getFilterField( cField, cNombre, cTabla )
 
    local aFields     := {}
-   local cSentence   := "SELECT " + cField + " FROM " + ::getTableName()   + space( 1 ) + ;
+   local cSentence   
+
+   DEFAULT cTabla    := ::getTableToFilter()
+
+   if empty( cTabla )
+      RETURN ( aFields )   
+   end if 
+
+   cSentence         := "SELECT " + cField + " FROM " + ::getTableName()   + space( 1 ) + ;
                            "WHERE tabla = " + quoted( cTabla )             + space( 1 ) + ;
                               "AND nombre = " + quoted( cNombre )          + space( 1 ) + ;
                            "LIMIT 1"

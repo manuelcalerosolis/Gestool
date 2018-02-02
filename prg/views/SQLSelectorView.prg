@@ -78,7 +78,9 @@ METHOD End()
 
    ::hSelectedBuffer    := nil      
 
-   ::oDialog:End()
+   if !empty( ::oDialog )
+      ::oDialog:End()
+   end if 
 
    if !empty( ::oMenuTreeView )
       ::oMenuTreeView:End()

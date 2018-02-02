@@ -45,14 +45,15 @@ CLASS SQLBaseController
 
    DATA cDirectory                     
 
-   METHOD setDirectory( cDirectory )                  INLINE ( ::cDirectory := cDirectory )
-   METHOD getDirectory()                              INLINE ( ::cDirectory )
-
    METHOD New()
    METHOD Instance()                                  INLINE ( if( empty( ::oInstance ), ::oInstance := ::New(), ), ::oInstance ) 
    METHOD End()
 
-   METHOD getName()                                   INLINE ( strtran( lower( ::cTitle ), " ", "_" ) )
+   METHOD setDirectory( cDirectory )                  INLINE ( ::cDirectory := cDirectory )
+   METHOD getDirectory()                              INLINE ( ::cDirectory )
+
+   METHOD setName( cName )                            INLINE ( ::cName := cName )
+   METHOD getName()                                   INLINE ( ::cName )
 
    METHOD getSenderController()                       INLINE ( ::oSenderController ) 
 
@@ -121,6 +122,7 @@ CLASS SQLBaseController
    // Browse------------------------------------------------------------------
 
    METHOD getBrowseView()                             INLINE ( ::oBrowseView )
+   METHOD getBrowse()                                 INLINE ( ::oBrowseView:getBrowse() )
 
    METHOD startBrowse( oCombobox )
    METHOD restoreBrowseState()

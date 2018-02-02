@@ -64,8 +64,7 @@ CLASS MovimientosAlmacenController FROM SQLNavigatorController
    METHOD setConfig()              
 
    METHOD deleteLines()
-
-   METHOD getBrowse()               INLINE ( ::oBrowseView:getBrowse() )
+   
    METHOD refreshLineasBrowse()     INLINE ( iif( !empty( ::oLineasController ), ::getBrowse():Refresh(), ) )
 
    METHOD printSerialDocument()     INLINE ( ::oImprimirSeriesController:Activate() ) 
@@ -90,7 +89,7 @@ METHOD New()
 
    ::cTitle                      := "Movimientos de almacén"
 
-   ::cName                       := "movimientos_almacen"
+   ::setName( "movimientos_almacen" )
 
    ::cDirectory                  := cPatDocuments( "Movimientos almacen" ) 
 
