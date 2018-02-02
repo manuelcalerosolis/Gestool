@@ -39,7 +39,7 @@ END CLASS
 
 METHOD New( oController )
 
-   ::oController  := oController
+   ::oController     := oController
 
 RETURN ( Self )
 

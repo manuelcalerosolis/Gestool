@@ -39,19 +39,11 @@ RETURN ( Self )
 
 METHOD Edit() 
 
-   local lResult
-
-   ::oModel:getItemsMovimientosAlmacen()
+   ::oDialogView:setItems( ::oModel:getItemsMovimientosAlmacen() )
 
    if ::oDialogView:Activate()
       ::oModel:setItemsMovimientosAlmacen()
    end if 
-
-   // if !empty( nId )
-   //    RETURN ( ::Super:Edit( nId ) )
-   // end if 
-
-// RETURN ( ::Super:Append() )
 
 RETURN ( nil )
 

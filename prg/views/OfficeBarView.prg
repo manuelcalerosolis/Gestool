@@ -56,13 +56,15 @@ RETURN ( Self )
 
 //----------------------------------------------------------------------------//
 
-METHOD createButtonImage()
+METHOD createButtonImage( bAction )
 
    local oGrupo
 
+   DEFAULT bAction            := {|| msgInfo( "Información del registro, no disponible" ) }
+
    if !empty( ::getController():getImage( "64" ) )
       oGrupo                  := TDotNetGroup():New( ::oOfficeBarFolder, 66, "", .f. )
-         TDotNetButton():New( 60, oGrupo, ::getController():getImage( "64" ), "", 1, {|| "" }, , , .f., .f., .f. )
+         TDotNetButton():New( 60, oGrupo, ::getController():getImage( "64" ), "", 1, bAction, , , .f., .f., .f. )
    end if
 
 RETURN ( Self )

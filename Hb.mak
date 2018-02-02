@@ -367,6 +367,7 @@ SQLMovimientosAlmacenModel.prg 											\
 SQLMovimientosAlmacenLineasModel.prg 									\
 SQLConfiguracionesModel.prg 												\
 ConfiguracionesController.prg												\
+RecordController.prg															\
 ConfiguracionesRepository.prg												\
 ConfiguracionesView.prg 													\
 AlmacenesModel.prg 															\
@@ -973,6 +974,7 @@ EtiquetasMovimientosAlmacenController.obj								\
 SQLMovimientosAlmacenModel.obj 											\
 SQLConfiguracionesModel.obj 												\
 ConfiguracionesController.obj												\
+RecordController.obj															\
 ConfiguracionesRepository.obj 											\
 ConfiguracionesView.obj 													\
 SQLMovimientosAlmacenLineasModel.obj 									\
@@ -1553,6 +1555,7 @@ $(OBJ)\EtiquetasMovimientosAlmacenController.obj					+
 $(OBJ)\SQLMovimientosAlmacenModel.obj 									+
 $(OBJ)\SQLConfiguracionesModel.obj 										+
 $(OBJ)\ConfiguracionesController.obj 									+
+$(OBJ)\RecordController.obj 												+
 $(OBJ)\ConfiguracionesRepository.obj 									+
 $(OBJ)\ConfiguracionesView.obj 											+
 $(OBJ)\SQLMovimientosAlmacenLineasModel.obj 							+

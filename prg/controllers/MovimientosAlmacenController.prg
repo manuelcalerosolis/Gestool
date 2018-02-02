@@ -22,6 +22,8 @@ CLASS MovimientosAlmacenController FROM SQLNavigatorController
 
    DATA oReport
 
+   DATA oRecordController
+
    METHOD New()
 
    METHOD End()
@@ -126,6 +128,8 @@ METHOD New()
    ::oEtiquetasController        := EtiquetasMovimientosAlmacenController():New( self )
 
    ::oConfiguracionesController  := ConfiguracionesController():New( self )
+
+   ::oRecordController           := RecordController():New( self )
    
    ::oReport                     := MovimientosAlmacenReport():New( Self )
 
@@ -156,6 +160,8 @@ METHOD End()
    ::oReport:End()
 
    ::oConfiguracionesController:End()
+
+   ::oRecordController:End()
 
 RETURN ( Self )
 
