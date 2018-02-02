@@ -1682,7 +1682,7 @@ METHOD InsertStockMovimientosAlmacenRowset( oRowSet, lDestino )
       :cCodigo             := Padr( oRowSet:fieldget( 'codigo_articulo' ), 18 )
       :cCodigoPropiedad1   := Padr( oRowSet:fieldget( 'codigo_primera_propiedad' ), 20 )
       :cCodigoPropiedad2   := Padr( oRowSet:fieldget( 'codigo_segunda_propiedad' ), 20 )
-      :cValorPropiedad1    := Padr( oRowSet:fieldget( 'valor_segunda_propiedad' ), 20 )
+      :cValorPropiedad1    := Padr( oRowSet:fieldget( 'valor_primera_propiedad' ), 20 )
       :cValorPropiedad2    := Padr( oRowSet:fieldget( 'valor_segunda_propiedad' ), 20 )
       :cLote               := Padr( oRowSet:fieldget( 'lote' ), 14 )
       :dConsolidacion      := if( !empty( ::dConsolidacion ), ::dConsolidacion, ctod( "" ) )
@@ -2976,10 +2976,8 @@ METHOD aStockArticulo( cCodArt, cCodAlm, oBrw, lLote, lNumeroSerie, dFecIni, dFe
 
       // Albaranes de proveedor------------------------------------------------------" )
 
-      if IsTrue( ::lAlbPrv ) 
-         ::aStockAlbaranProveedor( cCodArt, cCodAlm, lLote, lNumeroSerie )
-         SysRefresh()
-      end if 
+      ::aStockAlbaranProveedor( cCodArt, cCodAlm, lLote, lNumeroSerie )
+      SysRefresh()
 
       // Facturas proveedor----------------------------------------------------" )
 
@@ -3562,7 +3560,7 @@ METHOD lCheckConsolidacion( cCodigoArticulo, cCodigoAlmacen, cCodigoPrimeraPropi
 
    dConsolidacion       := MovimientosAlmacenLineasRepository():getFechaHoraConsolidacion( cCodigoArticulo, cCodigoAlmacen, cCodigoPrimeraPropiedad, cCodigoSegundaPropiedad, cValorPrimeraPropiedad, cValorSegundaPropiedad, cLote, dFecha, tHora )
 
-RETURN ( empty( dConsolidacion ) .or. hb_dtot( dFecha, tHora ) >= dConsolidacion )
+RETURN ( empty( dConsolidacion ) .or. dateTimeToTimeStamp( dFecha, tHora ) >= dConsolidacion )
    
 //---------------------------------------------------------------------------//
 
@@ -3609,7 +3607,7 @@ METHOD aStockMovimientosAlmacen( cCodArt, cCodAlm, cCodEmp )
 
    while !( oRowSet:Eof() )
 
-      if Padr( oRowSet:fieldget( 'almacen_destino' ), 16 ) == Padr( cCodAlm, 16 )
+      if AllTrim( oRowSet:fieldget( 'almacen_destino' ) ) == AllTrim( cCodAlm )
 
          if ::validateDateTime( oRowSet:fieldget( 'fecha' ), oRowSet:fieldget( 'hora' ) )
 
@@ -3631,7 +3629,7 @@ METHOD aStockMovimientosAlmacen( cCodArt, cCodAlm, cCodEmp )
 
       end if
 
-      if Padr( oRowSet:fieldget( 'almacen_origen' ), 16 ) == Padr( cCodAlm, 16 )
+      if AllTrim( oRowSet:fieldget( 'almacen_origen' ) ) == AllTrim( cCodAlm )
 
          if ::validateDateTime( oRowSet:fieldget( 'fecha' ), oRowSet:fieldget( 'hora' ) )
 
@@ -4022,7 +4020,7 @@ METHOD aStockAlbaranCliente( cCodArt, cCodAlm, lLote, lNumeroSerie )
 
    local cCodigoArticulo      := ""
    local nOrdAlbCliL          := ( ::cAlbCliL )->( ordsetfocus( "cStkFast" ) )
-   local nOrdAlbCliS          := ( ::cAlbCliS )->( ordsetfocus( "nNumAlb"  ) )
+   local cSentence            := AlbaranesClientesLineasModel():getSQLAdsStockSalida( cCodArt, , , cCodAlm )
 
    if ( ::cAlbCliL )->( dbSeek( cCodArt + cCodAlm ) )
 
@@ -4034,21 +4032,7 @@ METHOD aStockAlbaranCliente( cCodArt, cCodAlm, lLote, lNumeroSerie )
 
                if ::validateDateTime( ( ::cAlbCliL )->dFecAlb, ( ::cAlbCliL )->tFecAlb )
 
-                  if lNumeroSerie .and. ( ::cAlbCliS )->( dbSeek( ( ::cAlbCliL )->cSerAlb + Str( ( ::cAlbCliL )->nNumAlb ) + ( ::cAlbCliL )->cSufAlb + Str( ( ::cAlbCliL )->nNumLin ) ) )
-
-                     while ( ::cAlbCliS )->cSeralb + Str( ( ::cAlbCliS )->nNumAlb ) + ( ::cAlbCliS )->cSufAlb + Str( ( ::cAlbCliS )->nNumLin ) == ( ::cAlbCliL )->cSerAlb + Str( ( ::cAlbCliL )->nNumAlb ) + ( ::cAlbCliL )->cSufAlb + Str( ( ::cAlbCliL )->nNumLin ) .and. !( ::cAlbCliS )->( eof() )
-
-                        ::InsertStockAlbaranClientes( .t. )
-
-                        ( ::cAlbCliS )->( dbSkip() )
-
-                     end while
-
-                  else 
-
-                     ::InsertStockAlbaranClientes()
-
-                  end if 
+                  ::InsertStockAlbaranClientes()
 
                end if 
 
@@ -4067,7 +4051,6 @@ METHOD aStockAlbaranCliente( cCodArt, cCodAlm, lLote, lNumeroSerie )
    end if
 
    ( ::cAlbCliL )->( ordsetfocus( nOrdAlbCliL ) )
-   ( ::cAlbCliS )->( ordsetfocus( nOrdAlbCliS ) )
 
 RETURN ( nil )
 

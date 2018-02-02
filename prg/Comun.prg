@@ -6524,6 +6524,16 @@ RETURN ( dtoc( dDate ) + space( 1 ) + trans( cTime, "@R 99:99:99" ) )
 
 //---------------------------------------------------------------------------//
 
+FUNCTION dateTimeToTimeStamp( dDate, cTime )
+
+   if At( ":", cTime ) == 0
+      cTime    := trans( cTime, "@R 99:99:99" )
+   end if
+
+RETURN ( hb_dtot( dDate, cTime ) )
+
+//---------------------------------------------------------------------------//
+
 FUNCTION validTime( uTime )
 
    local cTime

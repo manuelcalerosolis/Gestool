@@ -1273,6 +1273,7 @@ METHOD AddAlbaranCliente( lNoFacturados ) CLASS TFastVentasClientes
          ::oDbf:cCodRut    := ( D():AlbaranesClientes( ::nView ) )->cCodRut
          ::oDbf:cCodObr    := ( D():AlbaranesClientes( ::nView ) )->cCodObr
          ::oDbf:cCodAlm    := ( D():AlbaranesClientes( ::nView ) )->cCodAlm
+         ::oDbf:cCodUsr    := ( D():AlbaranesClientes( ::nView ) )->cCodUsr
 
          ::oDbf:nComAge    := ( D():AlbaranesClientes( ::nView ) )->nPctComAge
 

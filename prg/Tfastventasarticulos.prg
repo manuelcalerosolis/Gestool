@@ -893,11 +893,15 @@ METHOD BuildReportCorrespondences()
                      "Stocks" => ;
                         {  "Generate" =>  {||   ::AddArticulo() },;
                            "Variable" =>  {||   ::AddVariableStock() },;
-                           "Data" =>      {||   ::FastReportStock() } },;
+                           "Data" =>      {||   ::FastReportStock() } } }
+/*
+                           ,;
                      "Stocks por articulo y almacén" => ;
                         {  "Generate" =>  {||   ::AddSqlArticulo() },;
                            "Variable" =>  {||   ::AddVariableStock() },;
                            "Data" =>      {||   ::FastReportStock() } } }
+
+*/
 
 Return ( Self )
 
@@ -1114,8 +1118,8 @@ METHOD BuildTree( oTree, lLoadFile ) CLASS TFastVentasArticulos
                      "Image"     => 16,;
                      "Subnode"   =>;
                   { ;
-                     { "Title"      => "Stocks",;                  
-                        "Image"     => 16,; 
+                     { "Title"      => "Stocks",;
+                        "Image"     => 16,;
                         "Type"      => "Stocks",;
                         "Directory" => "Articulos\Existencias\Stocks",;
                         "File"      => "Existencias por stock.fr3" },;
@@ -2933,9 +2937,6 @@ METHOD AddSqlArticulo( lAppendBlank ) CLASS TFastVentasArticulos
    DEFAULT lAppendBlank    := .f.
 
    //Excluir artículos obsoletos
-
-
-
 
    ( D():Articulos( ::nView ) )->( ordsetfocus( "Codigo" ) )
 

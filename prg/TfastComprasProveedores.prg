@@ -569,14 +569,14 @@ METHOD BuildTree( oTree, lLoadFile ) CLASS TFastComprasProveedores
    DEFAULT oTree     := ::oTreeReporting
    DEFAULT lLoadFile := .t.
 
-   aReports := {  {  "Title" => "Listado",                           "Image" => 0, "Type" => "Listado",                       "Directory" => "Proveedores\Listado",                                "File" => "Listado.fr3"  },;
-                  {  "Title" => "Compras",                           "Image" => 12, "Subnode" =>;
+   aReports := {  {  "Title" => "Listado",                                 "Image" => 0, "Type" => "Listado",                       "Directory" => "Proveedores\Listado",                                "File" => "Listado.fr3"  },;
+                  {  "Title" => "Compras",                                 "Image" => 12, "Subnode" =>;
                   { ;
-                     { "Title" => "Pedidos de proveedores",          "Image" => 2, "Type" => "Pedidos de proveedores",        "Directory" => "Proveedores\Compras\Pedidos de proveedores",         "File" => "Pedidos de proveedores.fr3" },;
-                     { "Title" => "Albaranes de proveedores",        "Image" => 3, "Type" => "Albaranes de proveedores",      "Directory" => "Proveedores\Compras\Albaranes de proveedores",       "File" => "Albaranes de proveedores.fr3" },;
-                     { "Title" => "Facturas de proveedores",         "Image" => 4, "Type" => "Facturas de proveedores",       "Directory" => "Proveedores\Compras\Facturas de proveedores",        "File" => "Facturas de proveedores.fr3" },;
-                     { "Title" => "Rectificativas de proveedores",   "Image" =>15, "Type" => "Rectificativas de proveedores", "Directory" => "Proveedores\Compras\Rectificativas de proveedores",  "File" => "Rectificativas de proveedores.fr3" },;
-                     { "Title" => "Compras",                         "Image" =>12, "Type" => "Compras",                       "Directory" => "Proveedores\Compras\Compras",                        "File" => "Compras.fr3" },;                 
+                     { "Title" => "Pedidos de proveedores",                "Image" => 2, "Type" => "Pedidos de proveedores",        "Directory" => "Proveedores\Compras\Pedidos de proveedores",         "File" => "Pedidos de proveedores.fr3" },;
+                     { "Title" => "Albaranes de proveedores",              "Image" => 3, "Type" => "Albaranes de proveedores",      "Directory" => "Proveedores\Compras\Albaranes de proveedores",       "File" => "Albaranes de proveedores.fr3" },;
+                     { "Title" => "Facturas de proveedores",               "Image" => 4, "Type" => "Facturas de proveedores",       "Directory" => "Proveedores\Compras\Facturas de proveedores",        "File" => "Facturas de proveedores.fr3" },;
+                     { "Title" => "Rectificativas de proveedores",         "Image" =>15, "Type" => "Rectificativas de proveedores", "Directory" => "Proveedores\Compras\Rectificativas de proveedores",  "File" => "Rectificativas de proveedores.fr3" },;
+                     { "Title" => "Albaranes, facturas y rectificativas",  "Image" =>12, "Type" => "Compras",                       "Directory" => "Proveedores\Compras\Compras",                        "File" => "Compras.fr3" },;                 
                   } ;
                   } }
 

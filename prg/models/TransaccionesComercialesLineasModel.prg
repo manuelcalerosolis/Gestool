@@ -294,7 +294,7 @@ METHOD getSQLAdsStock( cCodigoArticulo, dFechaInicio, dFechaFin, cCodigoAlmacen,
    cSql              += "FROM " + ::getEmpresaTableName( "HisMov" ) + " HisMov "
    cSql              += "WHERE HisMov.nTipMov = 4 "
 
-   if !empty( dFechaInicio ) 
+   /*if !empty( dFechaInicio ) 
       cSql           += "AND HisMov.dFecMov >= " + quoted( dtoc( dFechaInicio ) ) + " "
    end if 
 
@@ -304,7 +304,7 @@ METHOD getSQLAdsStock( cCodigoArticulo, dFechaInicio, dFechaFin, cCodigoAlmacen,
 
    cSql              += "AND HisMov.cRefMov = TablaLineas." + ::getArticuloFieldName() + " "
    cSql              += "AND HisMov.cAliMov = TablaLineas." + ::getAlmacenFieldName() + " "
-   cSql              += "AND HisMov.cLote = TablaLineas.cLote "
+   cSql              += "AND HisMov.cLote = TablaLineas.cLote "*/
    cSql              += "ORDER BY HisMov.dFecMov DESC, HisMov.cTimMov DESC ), "
    cSql              += "'' ) "
    cSql              += "GROUP BY Articulo, Lote, Almacen"

@@ -191,17 +191,15 @@ METHOD getSqlAdsStock( cCodigoArticulo, dFechaInicio, dFechaFin, cCodigoAlmacen 
    cSql        += "UNION "
    cSql        += MaterialesProducidosLineasModel():getSQLAdsStockEntrada( cCodigoArticulo, dFechaInicio, dFechaFin, cCodigoAlmacen ) + " "
    cSql        += "UNION "
-   cSql        += MaterialesConsumidosLineasModel():getSQLAdsStockSalida( cCodigoArticulo, dFechaInicio, dFechaFin, cCodigoAlmacen ) + " "
-   cSql        += "UNION "
+   cSql        += MaterialesConsumidosLineasModel():getSQLAdsStockSalida( cCodigoArticulo, dFechaInicio, dFechaFin, cCodigoAlmacen )
+   /*cSql        += "UNION "
    cSql        += MovimientosAlmacenesLineasModel():getSentenceStockEntrada( cCodigoArticulo, dFechaInicio, dFechaFin, cCodigoAlmacen ) + " "
    cSql        += "UNION "
-   cSql        += MovimientosAlmacenesLineasModel():getSentenceStockSalida( cCodigoArticulo, dFechaInicio, dFechaFin, cCodigoAlmacen )
+   cSql        += MovimientosAlmacenesLineasModel():getSentenceStockSalida( cCodigoArticulo, dFechaInicio, dFechaFin, cCodigoAlmacen )*/
    cSql        += " ) StockEntradas "
    if !empty( ::cGroupByStatement )
       cSql     += "GROUP BY " + ::cGroupByStatement
    end if
-
-   logWrite( cSql )
 
    if ::ExecuteSqlStatement( cSql, @cStm )
       RETURN ( cStm )
