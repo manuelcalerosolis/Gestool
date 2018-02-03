@@ -78,37 +78,34 @@ ENDCLASS
               bWhen, lGrouping, lHead, lEnd ) CLASS TDotNetButton
 *******************************************************************************************************
 
- local n, nLen, oCol
+   local n, nLen, oCol
 
- if cCaption  == nil; cCaption  :=  ""; endif
- if cBmp      == nil; cBmp      :=  ""; endif
- if lGrouping == nil; lGrouping := .f.; endif
- if lHead     == nil; lHead     := .f.; endif
- if lEnd      == nil; lEnd      := .f.; endif
+   if cCaption  == nil; cCaption  :=  ""; endif
+   if cBmp      == nil; cBmp      :=  ""; endif
+   if lGrouping == nil; lGrouping := .f.; endif
+   if lHead     == nil; lHead     := .f.; endif
+   if lEnd      == nil; lEnd      := .f.; endif
 
- ::cBmp      := cBmp
- ::cPrompt   := cCaption
- ::lGrouping := lGrouping
- ::lHead     := lHead
- ::lEnd      := lEnd
- ::bAction   := bAction
+   ::cBmp         := cBmp
+   ::cPrompt      := cCaption
+   ::lGrouping    := lGrouping
+   ::lHead        := lHead
+   ::lEnd         := lEnd
+   ::bAction      := bAction
 
- ::aCoors[1] := 0
- ::aCoors[2] := 0
- ::aCoors[3] := 0  + 0
- ::aCoors[4] := 0 + nWidth
+   ::aCoors[1]    := 0
+   ::aCoors[2]    := 0
+   ::aCoors[3]    := 0 
+   ::aCoors[4]    := 0 + nWidth
 
- ::oPopup    := oMenu          //revisión 09.12.06 V1.01
- ::bWhen     := bWhen
+   ::oPopup       := oMenu          //revisión 09.12.06 V1.01
+   ::bWhen        := bWhen
 
- ::nId       := ::GetNewId()
+   ::nId          := ::GetNewId()
 
- ::oGrupo := oGroup
+   ::oGrupo       := oGroup
 
-
-//  if ::oGrupo != nil
- ::oGrupo:AddButton( self, nColumna, lGrouping, lHead, lEnd )
-// endif
+   ::oGrupo:AddButton( self, nColumna, lGrouping, lHead, lEnd )
 
 return self
 

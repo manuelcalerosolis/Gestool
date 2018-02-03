@@ -18,9 +18,13 @@ CLASS MovimientosAlmacenView FROM SQLBaseView
    DATA oGetGrupoMovimiento
    DATA oRadioTipoMovimento
 
+   DATA oBtnEnviado
+
    METHOD Activate()
       METHOD startActivate()
       METHOD initActivate()
+
+   METHOD setTextEnviado()
 
    METHOD changeTipoMovimiento()    INLINE   (  iif(  ::oRadioTipoMovimento:nOption() == __tipo_movimiento_entre_almacenes__,;
                                                       ::oGetAlmacenOrigen:Show(),;
@@ -161,6 +165,8 @@ METHOD startActivate()
    ::oController:oLineasController:oBrowseView:getBrowse():makeTotals()
    ::oController:oLineasController:oBrowseView:getBrowse():goTop()
 
+   ::setTextEnviado()
+
 RETURN ( Self )
 
 //---------------------------------------------------------------------------//
@@ -181,7 +187,31 @@ METHOD initActivate()
                      TDotNetButton():New( 60, oGrupo, "gc_pda_32",            "Importar inventario",  2, {|| ::oController:oCapturadorController:Activate() }, , , .f., .f., .f. )
    end if 
 
+   oGrupo         := TDotNetGroup():New( ::oOfficeBar:oOfficeBarFolder, 226, "Fechas", .f., , "gc_user_32" )
+                     TDotNetButton():New( 220, oGrupo, "gc_user_16",          "Creación : " + hb_ttoc( ::oController:oModel:hBuffer[ "creado" ] ),          1, {|| nil }, , , .f., .f., .f. )
+                     TDotNetButton():New( 220, oGrupo, "gc_home_16",          "Modificación : " + hb_ttoc( ::oController:oModel:hBuffer[ "modificado" ] ),  1, {|| nil }, , , .f., .f., .f. )
+   ::oBtnEnviado  := TDotNetButton():New( 220, oGrupo, "gc_mobile_phone_16",  "",            1, {|| ::oController:setSenderDateToNull() }, , , .f., .f., .f. )
+
    ::oOfficeBar:createButtonsDialog()
+
+   oGrupo         := TDotNetGroup():New( ::oOfficeBar:oOfficeBarFolder, 126, "Navegación", .f., , "gc_user_32" )
+                     TDotNetButton():New( 120, oGrupo, "gc_user_16",          "Ir a" ,       1, {|| nil }, , , .f., .f., .f. )
+                     TDotNetButton():New( 120, oGrupo, "gc_home_16",          "Siguiente",   1, {|| nil }, , , .f., .f., .f. )
+                     TDotNetButton():New( 120, oGrupo, "gc_mobile_phone_16",  "Anterior",    1, {|| nil }, , , .f., .f., .f. )
+
+RETURN ( Self )
+
+//---------------------------------------------------------------------------//
+
+METHOD setTextEnviado()
+
+   local cCaption := "Enviado : "
+
+   if !empty( ::oController:oModel:hBuffer[ "enviado" ] )
+      cCaption    += hb_ttoc( ::oController:oModel:hBuffer[ "enviado" ] )
+   end if 
+
+   ::oBtnEnviado:cCaption( cCaption )
 
 RETURN ( Self )
 
