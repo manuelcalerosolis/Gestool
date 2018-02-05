@@ -31,6 +31,9 @@ CLASS SQLRowSet
    METHOD gotoRecno( nRecno )                         INLINE ( if( !empty( ::oRowSet ), ::oRowSet:goto( nRecno ), ) ) 
    METHOD Recno( nRecno )                             INLINE ( if( !empty( ::oRowSet ) .and. empty( nRecno ), ::oRowSet:Recno(), ::oRowSet:goto( nRecno ) ) )
 
+   METHOD goDown()                                    INLINE ( if( !empty( ::oRowSet ), ::oRowSet:skip(1), ) ) 
+   METHOD goUp()                                      INLINE ( if( !empty( ::oRowSet ), ::oRowSet:skip(-1), ) ) 
+
    METHOD Find( nId )
 
    METHOD Build( cSentence )                    
@@ -131,16 +134,10 @@ METHOD Find( cFind, cColumn )
 
    cFind                := ::getFindValue( cFind, cColumn )
 
-   // msgalert( hb_valtoexp( cFind ), "cFind" )
-
    if empty( cFind )
       RETURN ( .f. )
    end if 
       
-   // msgalert( valtype( cFind ), "valtype" )
-   // msgalert( cFind, "uFind" )
-   // msgalert( cColumn, "cColumn" )
-
    ::saveRecno()
 
    nRecno               := ::oRowSet:find( cFind, cColumn, .t. )

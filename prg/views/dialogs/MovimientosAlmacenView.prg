@@ -198,8 +198,8 @@ METHOD initActivate()
 
    oGrupo         := TDotNetGroup():New( ::oOfficeBar:oOfficeBarFolder, 126,     "Navegación", .f., , "gc_user_32" )
                      TDotNetButton():New( 120, oGrupo, "gc_map_location_16",     "Ir a" ,       1, {|| nil }, , , .f., .f., .f. )
-                     TDotNetButton():New( 120, oGrupo, "gc_navigate_right_16",   "Siguiente",   1, {|| nil }, , , .f., .f., .f. )
-                     TDotNetButton():New( 120, oGrupo, "gc_navigate_left_16",    "Anterior",    1, {|| nil }, , , .f., .f., .f. )
+                     TDotNetButton():New( 120, oGrupo, "gc_navigate_right_16",   "Siguiente",   1, {|| if( validateDialog( ::oDialog ), ::oDialog:end( IDOKANDDOWN ), ) }, , , .f., .f., .f. )
+                     TDotNetButton():New( 120, oGrupo, "gc_navigate_left_16",    "Anterior",    1, {|| if( validateDialog( ::oDialog ), ::oDialog:end( IDOKANDUP ), ) }, , , .f., .f., .f. )
 
 RETURN ( Self )
 
@@ -218,3 +218,5 @@ METHOD setTextEnviado()
 RETURN ( Self )
 
 //---------------------------------------------------------------------------//
+
+

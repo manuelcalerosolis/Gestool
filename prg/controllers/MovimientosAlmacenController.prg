@@ -389,8 +389,6 @@ METHOD setSentFromFetch()
 
    local cSentence   := ::oModel:getSentenceSentFromFetch()
       
-   msgalert( cSentence, "setSentFromFetch" )
-
    if !empty( cSentence )
       getSQLDatabase():Exec( cSentence )
    end if 

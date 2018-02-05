@@ -19,6 +19,8 @@ CLASS SQLBaseController
 
    DATA oDialogView
 
+   DATA uDialogResult
+
    DATA oValidator
 
    DATA oRepository
@@ -26,8 +28,6 @@ CLASS SQLBaseController
    DATA oBrowseView
 
    DATA lTransactional                                INIT .f.
-
-   DATA lContinuousAppend                             INIT .f.
 
    DATA nLevel                                        INIT nOr( ACC_APPD, ACC_EDIT, ACC_ZOOM, ACC_DELE, ACC_IMPR )
 
@@ -56,6 +56,7 @@ CLASS SQLBaseController
    METHOD getName()                                   INLINE ( ::cName )
 
    METHOD getSenderController()                       INLINE ( ::oSenderController ) 
+
 
    // Modelo -----------------------------------------------------------------
 
@@ -109,6 +110,8 @@ CLASS SQLBaseController
 
    METHOD getDialogView()                             INLINE ( ::oDialogView )
    METHOD DialogViewActivate()                     
+
+   METHOD isContinuousAppend()                        INLINE ( hb_isnumeric( ::uDialogResult ) .and. ::uDialogResult == IDOKANDNEW )
 
    // Repositorio--------------------------------------------------------------
 
@@ -179,6 +182,8 @@ CLASS SQLBaseController
 
    METHOD Delete()
       METHOD priorRecnoToDelete( aSelectedRecno )
+
+   METHOD Next( nId ) 
 
    // Transactional system-----------------------------------------------------
 
@@ -344,7 +349,7 @@ METHOD Append()
 
          ::fireEvent( 'appended' ) 
 
-         if ::lContinuousAppend
+         if ::isContinuousAppend()
             loop
          else 
             exit
@@ -492,6 +497,39 @@ RETURN ( lEdit )
 
 //----------------------------------------------------------------------------//
 
+METHOD Next( nId ) 
+
+   ::oModel:updateBuffer()
+
+   ::commitTransactionalMode()
+
+   ::refreshRowSet()
+
+   ::fireEvent( 'edited' ) 
+
+   if empty( nId )
+      ::oRowSet:goDown()
+      nId         := ::getIdFromRowSet() 
+   end if 
+
+   if empty( nId )
+      RETURN ( .f. )
+   end if 
+
+   if isFalse( ::fireEvent( 'editing' ) )
+      RETURN ( .f. )
+   end if
+
+   ::beginTransactionalMode()
+
+   ::oModel:loadCurrentBuffer( nId )
+
+   ::oDialogView:Refresh()
+
+RETURN ( .t. )
+
+//----------------------------------------------------------------------------//
+
 METHOD Zoom( nId )
 
    if empty( nId )
@@ -531,19 +569,13 @@ RETURN ( .t. )
 
 METHOD DialogViewActivate()
 
-   local uResult           := ::oDialogView:Activate()
+   ::uDialogResult         := ::oDialogView:Activate()
 
-   if hb_islogical( uResult )
-      RETURN ( uResult )
+   if hb_islogical( ::uDialogResult )
+      RETURN ( ::uDialogResult )
    end if 
 
-   if hb_isnumeric( uResult ) .and. ( uResult == IDOK )
-      ::lContinuousAppend  := .f.
-      RETURN ( .t. )
-   end if 
-
-   if hb_isnumeric( uResult ) .and. ( uResult == IDOKANDNEW )
-      ::lContinuousAppend  := .t.
+   if hb_isnumeric( ::uDialogResult ) .and. ( ::uDialogResult != IDCANCEL )
       RETURN ( .t. )
    end if 
 
