@@ -1796,7 +1796,6 @@ $(OBJ)\SQLExportableModel.obj 											+
 $(OBJ)\ExportableController.obj											+
 $(OBJ)\PdaEnvioRecepcionController.obj 								+
 $(OBJ)\PdaEnvioRecepcionView.obj 										+
-$(OBJ)\gdipfwh.obj 															+
 $(OBJ)\PedidosProveedoresLineasModel.obj 							   +
 $(OBJ)\Events.obj              		
 $<,$*
@@ -1841,7 +1840,6 @@ $(HBLIB)\hbcplr.lib            											+
 $(IMG2PDFLIB)\Image2pdf.lib      										+
 $(HBLIB)\b32\rddads.lib          										+
 $(HBLIB)\ace32.lib               										+
-$(HBLIB)\hbzebra.lib               										+
 $(BORLANDLIB)\cw32mt.lib         										+ 
 $(BORLANDLIB)\uuid.lib           										+ 
 $(BORLANDLIB)\import32.lib       										+ 

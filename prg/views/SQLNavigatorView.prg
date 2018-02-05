@@ -175,7 +175,7 @@ METHOD keyDown( nKey, nFlags )
       case nKey == VK_INSERT 
          ::oController:Append() 
       case nKey == VK_RETURN 
-         ::oController:Edit( ) 
+         ::oController:Edit() 
       case nKey == VK_DELETE 
          ::oController:Delete( ::getBrowse():aSelected )
       case nKey == VK_F5

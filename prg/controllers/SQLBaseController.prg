@@ -96,6 +96,8 @@ CLASS SQLBaseController
    METHOD findRowSet( nId )                           INLINE ( iif(  !empty( ::oRowSet ), ::oRowSet:find( nId ), ) )
    METHOD refreshRowSet()                             INLINE ( iif(  !empty( ::oRowSet ), ::oRowSet:refresh(), ) )
    METHOD refreshRowSetAndFind( nId )                 INLINE ( iif(  !empty( ::oRowSet ), ::oRowSet:refreshAndFind( nId ), ) )
+   METHOD goDownRowSet()                              INLINE ( iif(  !empty( ::oRowSet ), ::oRowSet:goDown(), ) )
+   METHOD goUpRowSet()                                INLINE ( iif(  !empty( ::oRowSet ), ::oRowSet:goUp(), ) )
 
    METHOD getIdFromRecno( aSelected )                 INLINE ( iif(  !empty( ::oRowSet ), ::oRowSet:IdFromRecno( aSelected ), {} ) )
    METHOD getUuidFromRecno( aSelected )               INLINE ( iif(  !empty( ::oRowSet ), ::oRowSet:UuidFromRecno( aSelected ), {} ) )
@@ -183,7 +185,10 @@ CLASS SQLBaseController
    METHOD Delete()
       METHOD priorRecnoToDelete( aSelectedRecno )
 
-   METHOD Next( nId ) 
+   METHOD dialgOkAndDown()                            INLINE ( ::uDialogResult == IDOKANDDOWN )
+   METHOD dialgOkAndUp()                              INLINE ( ::uDialogResult == IDOKANDUP )
+
+   METHOD postEdit( nId ) 
 
    // Transactional system-----------------------------------------------------
 
@@ -493,40 +498,25 @@ METHOD Edit( nId )
 
    ::fireEvent( 'exitEdited' ) 
 
+   ::postEdit()
+
 RETURN ( lEdit )
 
 //----------------------------------------------------------------------------//
 
-METHOD Next( nId ) 
+METHOD postEdit() 
 
-   ::oModel:updateBuffer()
-
-   ::commitTransactionalMode()
-
-   ::refreshRowSet()
-
-   ::fireEvent( 'edited' ) 
-
-   if empty( nId )
-      ::oRowSet:goDown()
-      nId         := ::getIdFromRowSet() 
+   if ::dialgOkAndDown()
+      ::goDownRowSet()
+      ::Edit()
    end if 
 
-   if empty( nId )
-      RETURN ( .f. )
+   if ::dialgOkAndUp()
+      ::goUpRowSet()
+      ::Edit()
    end if 
 
-   if isFalse( ::fireEvent( 'editing' ) )
-      RETURN ( .f. )
-   end if
-
-   ::beginTransactionalMode()
-
-   ::oModel:loadCurrentBuffer( nId )
-
-   ::oDialogView:Refresh()
-
-RETURN ( .t. )
+RETURN ( self )
 
 //----------------------------------------------------------------------------//
 
