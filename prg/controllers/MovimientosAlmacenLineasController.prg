@@ -552,19 +552,18 @@ RETURN ( Self )
 
 METHOD insertingBuffer()
 
-    local aSQLInsert    := {}
+   local aSQLInsert    := {}
 
-   if empty( ::aProperties )
-      RETURN ( nil )
+   if !empty( ::aProperties )
+      RETURN ( self )
    end if 
 
    aeval( ::aProperties, {| oProperty | ::oModel:addInsertSentence( aSQLInsert, oProperty ) } )
 
-   if empty( aSQLInsert )
-      RETURN ( nil )
+   if !empty( aSQLInsert )
+      ::oModel:setSQLInsert( aSQLInsert )
+      RETURN ( self )
    end if 
-
-   ::oModel:cSQLInsert  := aSQLInsert
 
 RETURN ( self )
 

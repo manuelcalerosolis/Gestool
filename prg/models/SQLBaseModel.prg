@@ -46,6 +46,12 @@ CLASS SQLBaseModel
    METHOD New()
    METHOD End()
 
+   METHOD setSQLInsert( cSQLInsert )                  INLINE ( ::cSQLInsert := cSQLInsert )
+   METHOD getSQLInsert()                              INLINE ( ::cSQLInsert )
+
+   METHOD setSQLUpdate( cSQLUpdate )                  INLINE ( ::cSQLUpdate := cSQLUpdate )
+   METHOD getSQLUpdate()                              INLINE ( ::cSQLUpdate )
+
    // Facades -----------------------------------------------------------------
 
    METHOD setDatabase( oDb )                          INLINE ( ::oDatabase := oDb )

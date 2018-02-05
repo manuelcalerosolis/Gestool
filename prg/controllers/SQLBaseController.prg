@@ -338,6 +338,8 @@ METHOD Append()
 
          if !empty( nId )
             ::refreshRowSetAndFind( nId )
+         else 
+            ::refreshRowSet()
          end if 
 
          ::fireEvent( 'appended' ) 

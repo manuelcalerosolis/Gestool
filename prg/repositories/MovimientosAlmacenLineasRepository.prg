@@ -51,6 +51,11 @@ CLASS MovimientosAlmacenLineasRepository FROM SQLBaseRepository
 
    METHOD getSqlSentenceMovimientosForArticulo()
 
+   METHOD getIdFromBuffer( hBuffer ) ;
+                                 INLINE ( getSQLDataBase():selectFetchHash( ::getSQLSentenceIdFromBuffer( hBuffer ) ) )
+
+   METHOD getSQLSentenceIdFromBuffer( hBuffer )
+
 END CLASS
 
 //---------------------------------------------------------------------------//
@@ -81,21 +86,37 @@ RETURN ( cSql )
 
 //---------------------------------------------------------------------------//
 
-METHOD getSQLSentenceArticuloUuid( cCodigoArticulo, uuid )
+METHOD getSQLSentenceArticuloUuid( cCodigoArticulo, cParentUuid )
 
    local cSql  := "SELECT * "                                                    + ;
                   "FROM " + ::getTableName() + " "                               + ;
                   "WHERE codigo_articulo = " + quoted( cCodigoArticulo ) + " "   + ;
-                     "AND parent_uuid = " + quoted( uuid )
+                     "AND parent_uuid = " + quoted( cParentUuid )
 
 RETURN ( cSql )
 
 //---------------------------------------------------------------------------//
 
-METHOD getSQLSentenceWhereParentUuid( uuid )
+METHOD getSQLSentenceWhereParentUuid( cParentUuid )
 
    local cSql  := "SELECT * FROM " + ::getTableName() + " "   + ;
-                     "WHERE parent_uuid = " + quoted( uuid )
+                     "WHERE parent_uuid = " + quoted( cParentUuid )
+
+RETURN ( cSql )
+
+//---------------------------------------------------------------------------//
+
+METHOD getSQLSentenceIdFromBuffer( hBuffer )
+
+   local cSql  := "SELECT id FROM " + ::getTableName()                                                            + " " + ;
+                  "WHERE codigo_articulo = "             + quoted( hget( hBuffer, "codigo_articulo" ) )           + " " + ;
+                     "AND parent_uuid = "                + quoted( hget( hBuffer, "parent_uuid" ) )               + " " + ;
+                     "AND codigo_primera_propiedad = "   + quoted( hget( hBuffer, "codigo_primera_propiedad" ) )  + " " + ;
+                     "AND codigo_segunda_propiedad = "   + quoted( hget( hBuffer, "codigo_segunda_propiedad" ) )  + " " + ;
+                     "AND valor_primera_propiedad = "    + quoted( hget( hBuffer, "valor_primera_propiedad" ) )   + " " + ;
+                     "AND valor_segunda_propiedad = "    + quoted( hget( hBuffer, "valor_segunda_propiedad" ) )   + " " + ;
+                     "AND lote = "                       + quoted( hget( hBuffer, "lote" ) )                      + " " + ;
+                     "LIMIT 1"
 
 RETURN ( cSql )
 

@@ -320,3 +320,7 @@ INBOX_INTO_32 BITMAP "..\\bmp\\inbox_into_32.bmp"
 GC_3D_GLASSES_16 BITMAP "..\\bmp\\gc_3d_glasses_16.bmp" 
 
 PORTABLE_BARCODE_SCANNER_YELLOW_32 BITMAP "..\\bmp\\portable_barcode_scanner_yellow_32.bmp" 
+
+GC_MAP_LOCATION_16 BITMAP "..\\bmp\\gc_map_location_16.bmp" 
+GC_NAVIGATE_RIGHT_16 BITMAP "..\\bmp\\gc_navigate_right_16.bmp" 
+GC_NAVIGATE_LEFT_16 BITMAP "..\\bmp\\gc_navigate_left_16.bmp" 

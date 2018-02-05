@@ -5,7 +5,9 @@
 
 CLASS UsuariosModel FROM ADSBaseModel
 
-   METHOD getTableName()   INLINE ::getDatosTableName( "Users" )
+   METHOD getTableName()            INLINE ::getDatosTableName( "Users" )
+
+   METHOD getNombre( idUsuario )    INLINE ( ::getField( "cNbrUse", "cCodUse", idUsuario ) )
 
    METHOD UpdateEmpresaEnUso( cCodigoUsuario, cCodigoEmpresa ) 
 

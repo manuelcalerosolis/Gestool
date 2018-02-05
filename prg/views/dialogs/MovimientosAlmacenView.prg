@@ -30,6 +30,9 @@ CLASS MovimientosAlmacenView FROM SQLBaseView
                                                       ::oGetAlmacenOrigen:Show(),;
                                                       ::oGetAlmacenOrigen:Hide() ) )
 
+   METHOD getUsuario()              INLINE   (  alltrim( ::oController:oModel:hBuffer[ "usuario" ] ) + space( 1 ) + ;
+                                                UsuariosModel():getNombre( ::oController:oModel:hBuffer[ "usuario" ] ) )
+
 END CLASS
 
 //---------------------------------------------------------------------------//
@@ -57,10 +60,9 @@ METHOD Activate()
          WHEN        ( ::oController:isNotZoomMode() ) ;
          OF          ::oDialog
 
-      REDEFINE GET   ::oController:oModel:hBuffer[ "usuario" ] ;
+      REDEFINE SAY   ;
+         PROMPT      ::getUsuario() ;
          ID          220 ;
-         PICTURE     "XXX" ;
-         WHEN        ( .f. ) ;
          OF          ::oDialog
 
       REDEFINE RADIO ::oRadioTipoMovimento ;
@@ -182,22 +184,22 @@ METHOD initActivate()
    ::oOfficeBar:createButtonsLine( ::oController:oLineasController, ::oSQLBrowseView )
 
    if ::oController:isNotZoomMode()
-      oGrupo      := TDotNetGroup():New( ::oOfficeBar:oOfficeBarFolder, 126, "Otros", .f. )
+      oGrupo      := TDotNetGroup():New( ::oOfficeBar:oOfficeBarFolder, 126,  "Otros", .f. )
                      TDotNetButton():New( 60, oGrupo, "gc_hand_truck_box_32", "Importar almacén",     1, {|| ::oController:oImportadorController:Activate() }, , , .f., .f., .f. )
                      TDotNetButton():New( 60, oGrupo, "gc_pda_32",            "Importar inventario",  2, {|| ::oController:oCapturadorController:Activate() }, , , .f., .f., .f. )
    end if 
 
-   oGrupo         := TDotNetGroup():New( ::oOfficeBar:oOfficeBarFolder, 226, "Fechas", .f., , "gc_user_32" )
-                     TDotNetButton():New( 220, oGrupo, "gc_user_16",          "Creación : " + hb_ttoc( ::oController:oModel:hBuffer[ "creado" ] ),          1, {|| nil }, , , .f., .f., .f. )
-                     TDotNetButton():New( 220, oGrupo, "gc_home_16",          "Modificación : " + hb_ttoc( ::oController:oModel:hBuffer[ "modificado" ] ),  1, {|| nil }, , , .f., .f., .f. )
-   ::oBtnEnviado  := TDotNetButton():New( 220, oGrupo, "gc_mobile_phone_16",  "",            1, {|| ::oController:setSenderDateToNull() }, , , .f., .f., .f. )
+   oGrupo         := TDotNetGroup():New( ::oOfficeBar:oOfficeBarFolder, 226,  "Fechas", .f., , "gc_user_32" )
+                     TDotNetButton():New( 220, oGrupo, "gc_calendar_16",      "Creación : " + hb_ttoc( ::oController:oModel:hBuffer[ "creado" ] ),          1, {|| nil }, , , .f., .f., .f. )
+                     TDotNetButton():New( 220, oGrupo, "gc_calendar_16",      "Modificación : " + hb_ttoc( ::oController:oModel:hBuffer[ "modificado" ] ),  1, {|| nil }, , , .f., .f., .f. )
+   ::oBtnEnviado  := TDotNetButton():New( 220, oGrupo, "gc_calendar_16",      "",                                                                           1, {|| ::oController:setSenderDateToNull() }, , , .f., .f., .f. )
 
    ::oOfficeBar:createButtonsDialog()
 
-   oGrupo         := TDotNetGroup():New( ::oOfficeBar:oOfficeBarFolder, 126, "Navegación", .f., , "gc_user_32" )
-                     TDotNetButton():New( 120, oGrupo, "gc_user_16",          "Ir a" ,       1, {|| nil }, , , .f., .f., .f. )
-                     TDotNetButton():New( 120, oGrupo, "gc_home_16",          "Siguiente",   1, {|| nil }, , , .f., .f., .f. )
-                     TDotNetButton():New( 120, oGrupo, "gc_mobile_phone_16",  "Anterior",    1, {|| nil }, , , .f., .f., .f. )
+   oGrupo         := TDotNetGroup():New( ::oOfficeBar:oOfficeBarFolder, 126,     "Navegación", .f., , "gc_user_32" )
+                     TDotNetButton():New( 120, oGrupo, "gc_map_location_16",     "Ir a" ,       1, {|| nil }, , , .f., .f., .f. )
+                     TDotNetButton():New( 120, oGrupo, "gc_navigate_right_16",   "Siguiente",   1, {|| nil }, , , .f., .f., .f. )
+                     TDotNetButton():New( 120, oGrupo, "gc_navigate_left_16",    "Anterior",    1, {|| nil }, , , .f., .f., .f. )
 
 RETURN ( Self )
 
@@ -207,7 +209,7 @@ METHOD setTextEnviado()
 
    local cCaption := "Enviado : "
 
-   if !empty( ::oController:oModel:hBuffer[ "enviado" ] )
+   if hhaskey( ::oController:oModel:hBuffer, "enviado" ) .and. !empty( ::oController:oModel:hBuffer[ "enviado" ] )
       cCaption    += hb_ttoc( ::oController:oModel:hBuffer[ "enviado" ] )
    end if 
 

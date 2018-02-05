@@ -269,7 +269,7 @@ METHOD setSenderDateToNull()
       RETURN ( nil )
    end if    
 
-   if msgYesNo( "¿ Desea eliminar la fecha de envìo ?", "Confirme selección" ) 
+   if msgYesNo( "¿ Desea eliminar la fecha de envío ?", "Confirme selección" ) 
 
       ::oModel:setBuffer( "enviado", nil )
 

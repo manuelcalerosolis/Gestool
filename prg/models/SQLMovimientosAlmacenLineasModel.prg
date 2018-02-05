@@ -17,7 +17,7 @@ CLASS SQLMovimientosAlmacenLineasModel FROM SQLExportableModel
 
    METHOD getInitialSelect()
 
-   // METHOD getUpdateSentence()
+   METHOD getInsertSentence()
 
    METHOD addInsertSentence()
 
@@ -40,6 +40,10 @@ CLASS SQLMovimientosAlmacenLineasModel FROM SQLExportableModel
    METHOD getSQLSubSentenceSumatorioUnidadesLinea( cTable, cAs )
 
    METHOD getSentenceNotSent( aFetch )
+
+   METHOD getIdProductAdded()
+
+   METHOD getUpdateUnitsSentece()
 
 END CLASS
 
@@ -120,37 +124,20 @@ METHOD getInitialSelect()
 RETURN ( cSelect )
 
 //---------------------------------------------------------------------------//
-/*
-METHOD getUpdateSentence()
 
-   local oProperty
-   local aSQLUpdate  := {}
+METHOD getInsertSentence()
 
-   if empty( ::oController:aProperties )
-      RETURN ( ::Super:getUpdateSentence() )
+   local nId
+
+   nId            := ::getIdProductAdded()
+   if empty( nId )
+      RETURN ( ::Super:getInsertSentence() )
    end if 
 
-   for each oProperty in ::oController:aProperties
+   ::setSQLInsert( ::getUpdateUnitsSentece( nId ) )
 
-      do case
-         case !empty( oProperty:Uuid ) .and. empty( oProperty:Value )
+RETURN ( self )
 
-            ::addDeleteSentence( aSQLUpdate, oProperty )
-
-         case !empty( oProperty:Uuid ) .and. !empty( oProperty:Value )
-
-            ::addUpdateSentence( aSQLUpdate, oProperty )
-       
-         case empty( oProperty:Uuid ) 
-
-            ::addInsertSentence( aSQLUpdate, oProperty )
-
-      end case
-
-   next 
-
-RETURN ( aSQLUpdate )
-*/
 //---------------------------------------------------------------------------//
 
 METHOD addInsertSentence( aSQLInsert, oProperty )
@@ -302,3 +289,24 @@ RETURN ( cSentence )
 
 //---------------------------------------------------------------------------//
 
+METHOD getIdProductAdded()
+
+   local aId         := MovimientosAlmacenLineasRepository():getIdFromBuffer( ::hBuffer )
+
+   if !empty( aId )
+      RETURN( hget( atail( aId ), "id" ) )
+   end if 
+
+RETURN ( nil )
+
+//---------------------------------------------------------------------------//
+
+METHOD getUpdateUnitsSentece( id )
+   
+   local cSentence   := "UPDATE " + ::cTableName                                                                                    + " " +  ;
+                           "SET unidades_articulo = unidades_articulo + " + toSQLString( hget( ::hBuffer, "unidades_articulo" ) )   + " " +  ;
+                        "WHERE id = " + quoted( id ) 
+
+RETURN ( cSentence )
+
+//---------------------------------------------------------------------------//
