@@ -334,7 +334,7 @@ METHOD getStatementSeederMovimientosAlmacen( dbfRemMov )
                         "delegacion" =>         if( !empty( ( dbfRemMov )->cCodDlg ), quoted( ( dbfRemMov )->cCodDlg ), '00' ),;
                         "usuario" =>            quoted( ( dbfRemMov )->cCodUsr ),;
                         "uuid" =>               quoted( ( dbfRemMov )->cGuid ),;
-                        "numero" =>             quoted( ( dbfRemMov )->nNumRem ),;
+                        "numero" =>             quoted( rjust( ( dbfRemMov )->nNumRem, "0", 6 ) ),;
                         "tipo_movimiento" =>    quoted( ( dbfRemMov )->nTipMov ),;
                         "fecha_hora" =>         quoted( DateTimeFormatTimestamp( ( dbfRemMov )->dFecRem, ( dbfRemMov )->cTimRem ) ),;
                         "almacen_origen" =>     quoted( ( dbfRemMov )->cAlmOrg ),;

@@ -1465,7 +1465,6 @@ RETURN ( nSQLStockActual )
 
 METHOD nSQLGlobalStockActual( cCodArt, cCodAlm ) CLASS TStock
 
-   local nSeconds                := seconds()
    local cStm
    local nSQLStockActual         := 0
 
@@ -2915,10 +2914,11 @@ METHOD aStockArticulo( cCodArt, cCodAlm, oBrw, lLote, lNumeroSerie, dFecIni, dFe
    local nOrdAnt
    local oStocks
    local aAlmacenes
-   local nSeconds       := seconds()
 
    DEFAULT lLote        := !uFieldEmpresa( "lCalLot" )
    DEFAULT lNumeroSerie := !uFieldEmpresa( "lCalSer" )
+
+   lLote                := .t.
 
    cCodArt              := padr( cCodArt, 18 )
    cCodAlm              := padr( cCodAlm, 16 )
@@ -3556,9 +3556,7 @@ RETURN ( nRiesgo )
 
 METHOD lCheckConsolidacion( cCodigoArticulo, cCodigoAlmacen, cCodigoPrimeraPropiedad, cCodigoSegundaPropiedad, cValorPrimeraPropiedad, cValorSegundaPropiedad, cLote, dFecha, tHora )
 
-   local dConsolidacion 
-
-   dConsolidacion       := MovimientosAlmacenLineasRepository():getFechaHoraConsolidacion( cCodigoArticulo, cCodigoAlmacen, cCodigoPrimeraPropiedad, cCodigoSegundaPropiedad, cValorPrimeraPropiedad, cValorSegundaPropiedad, cLote, dFecha, tHora )
+   local dConsolidacion := MovimientosAlmacenLineasRepository():getFechaHoraConsolidacion( cCodigoArticulo, cCodigoAlmacen, cCodigoPrimeraPropiedad, cCodigoSegundaPropiedad, cValorPrimeraPropiedad, cValorSegundaPropiedad, cLote, dFecha, tHora )
 
 RETURN ( empty( dConsolidacion ) .or. dateTimeToTimeStamp( dFecha, tHora ) >= dConsolidacion )
    
@@ -4056,7 +4054,7 @@ RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 
-METHOD aStockFacturaCliente( cCodArt, cCodAlm, lLote, lNumeroSerie )
+METHOD aStockFacturaCliente( cCodArt, cCodAlm )
 
    local cCodigoArticulo      := ""
    local nOrdFacCliL          := ( ::cFacCliL )->( ordsetfocus( "cStkFast" ) )
@@ -4067,26 +4065,12 @@ METHOD aStockFacturaCliente( cCodArt, cCodAlm, lLote, lNumeroSerie )
       while ( ::cFacCliL )->cRef == cCodArt .and. ( ::cFacCliL )->cAlmLin == cCodAlm .and. !( ::cFacCliL )->( Eof() )
 
          if cCodigoArticulo != ( ::cFacCliL )->cRef + ( ::cFacCliL )->cAlmLin + ( ::cFacCliL )->cCodPr1 + ( ::cFacCliL )->cCodPr2 + ( ::cFacCliL )->cValPr1 + ( ::cFacCliL )->cValPr2 + ( ::cFacCliL )->cLote
-
+         
             if ::lCheckConsolidacion( ( ::cFacCliL )->cRef, ( ::cFacCliL )->cAlmLin, ( ::cFacCliL )->cCodPr1, ( ::cFacCliL )->cCodPr2, ( ::cFacCliL )->cValPr1, ( ::cFacCliL )->cValPr2, ( ::cFacCliL )->cLote, ( ::cFacCliL )->dFecFac, ( ::cFacCliL )->tFecFac ) 
          
                if ::validateDateTime( ( ::cFacCliL )->dFecFac, ( ::cFacCliL )->tFecFac )
 
-                  if lNumeroSerie .and. ( ::cFacCliS )->( dbSeek( ( ::cFacCliL )->cSerie + Str( ( ::cFacCliL )->nNumFac ) + ( ::cFacCliL )->cSufFac + Str( ( ::cFacCliL )->nNumLin ) ) )
-
-                     while ( ::cFacCliS )->cSerFac + Str( ( ::cFacCliS )->nNumFac ) + ( ::cFacCliS )->cSufFac + Str( ( ::cFacCliS )->nNumLin ) == ( ::cFacCliL )->cSerie + Str( ( ::cFacCliL )->nNumFac ) + ( ::cFacCliL )->cSufFac + Str( ( ::cFacCliL )->nNumLin ) .and. !( ::cFacCliS )->( eof() )
-
-                        ::InsertStockFacturaClientes( .t. )
-
-                        ( ::cFacCliS )->( dbSkip() )
-
-                     end while
-
-                  else 
-
-                     ::InsertStockFacturaClientes()
-
-                  end if
+                  ::InsertStockFacturaClientes()
 
                end if 
 
