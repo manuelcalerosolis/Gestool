@@ -409,7 +409,7 @@ METHOD isUnzipToJson( cZipFile )
    aFiles            := hb_getfilesinzip( cZipFile )
 
    if !hb_unzipfile( cZipFile, , , , cpatin(), aFiles )
-      MsgStop( "No se ha descomprimido el fichero " + cZipFile, "Error" )
+      msgStop( "No se ha descomprimido el fichero " + cZipFile, "Error" )
       lUnZiped       :=  .f. 
    end if
 

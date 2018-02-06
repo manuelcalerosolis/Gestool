@@ -910,7 +910,7 @@ BrwCli.obj              													\
 TInfLCli.obj            													\
 BrwPrv.obj              													\
 TInfLPrv.obj            													\
-Movilges.obj            													\
+IdentificadorRegistroView.obj 											\
 Tinfofr.obj             													\
 Catalogo.obj            													\
 Ubicacion.obj           													\
@@ -1191,6 +1191,7 @@ PropiedadesModel.obj       												\
 PropiedadesController.obj       											\
 PropiedadesLineasModel.obj       										\
 PropiedadesLineasController.obj       									\
+IdentificadorRegistroView.obj             							\
 RelacionesEtiquetasModel.obj 												\
 ArticulosModel.obj                                    			\
 FamiliasModel.obj                                    				\
@@ -1491,7 +1492,7 @@ $(OBJ)\BrwCli.obj               											+
 $(OBJ)\TInfLCli.obj             											+
 $(OBJ)\BrwPrv.obj               											+
 $(OBJ)\TInfLPrv.obj             											+
-$(OBJ)\Movilges.obj             											+
+$(OBJ)\IdentificadorRegistroView.obj             					+
 $(OBJ)\Tinfofr.obj              											+
 $(OBJ)\Catalogo.obj             											+
 $(OBJ)\Ubicacion.obj            											+

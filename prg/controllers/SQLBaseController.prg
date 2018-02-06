@@ -61,28 +61,28 @@ CLASS SQLBaseController
    // Modelo -----------------------------------------------------------------
 
    METHOD getModel()                                  INLINE ( ::oModel )
-   METHOD getModelColumnKey()                         INLINE ( if( !empty( ::oModel ), ::oModel:cColumnKey, ) )
-   METHOD getModelTableName()                         INLINE ( if( !empty( ::oModel ), ::oModel:cTableName, ) )
-   METHOD getModelColumns()                           INLINE ( if( !empty( ::oModel ) .and. !empty( ::oModel:hColumns ), ( ::oModel:hColumns ), ) )
-   METHOD getModelExtraColumns()                      INLINE ( if( !empty( ::oModel ) .and. !empty( ::oModel:hExtraColumns ), ( ::oModel:hExtraColumns ), ) )
+   METHOD getModelColumnKey()                         INLINE ( iif( !empty( ::oModel ), ::oModel:cColumnKey, ) )
+   METHOD getModelTableName()                         INLINE ( iif( !empty( ::oModel ), ::oModel:cTableName, ) )
+   METHOD getModelColumns()                           INLINE ( iif( !empty( ::oModel ) .and. !empty( ::oModel:hColumns ), ( ::oModel:hColumns ), ) )
+   METHOD getModelExtraColumns()                      INLINE ( iif( !empty( ::oModel ) .and. !empty( ::oModel:hExtraColumns ), ( ::oModel:hExtraColumns ), ) )
    
-   METHOD getModelBuffer( cColumn )                   INLINE ( if( !empty( ::oModel ), ::oModel:getBuffer( cColumn ), ) )
-   METHOD setModelBuffer( cColumn, uValue )           INLINE ( if( !empty( ::oModel ), ::oModel:setBuffer( cColumn, uValue ), ) )
-   METHOD setModelBufferPadr( cColumn, uValue )       INLINE ( if( !empty( ::oModel ), ::oModel:setBufferPadr( cColumn, uValue ), ) )
+   METHOD getModelBuffer( cColumn )                   INLINE ( iif( !empty( ::oModel ), ::oModel:getBuffer( cColumn ), ) )
+   METHOD setModelBuffer( cColumn, uValue )           INLINE ( iif( !empty( ::oModel ), ::oModel:setBuffer( cColumn, uValue ), ) )
+   METHOD setModelBufferPadr( cColumn, uValue )       INLINE ( iif( !empty( ::oModel ), ::oModel:setBufferPadr( cColumn, uValue ), ) )
 
    METHOD getModelBufferColumnKey()                   INLINE ( ::getModelBuffer( ( ::oModel:cColumnKey ) ) )
-   METHOD getModelSelectValue( cSentence )            INLINE ( if( !empty( ::oModel ), ::oModel:SelectValue( cSentence ), ) )
+   METHOD getModelSelectValue( cSentence )            INLINE ( iif( !empty( ::oModel ), ::oModel:SelectValue( cSentence ), ) )
 
    METHOD findInModel()
 
    METHOD changeModelOrderAndOrientation()            
    METHOD getModelHeaderFromColumnOrder()             INLINE ( ::oModel:getHeaderFromColumnOrder() )
 
-   METHOD getId()                                     INLINE ( if(   !empty( ::oModel ) .and. !empty( ::oModel:hBuffer ),;
+   METHOD getId()                                     INLINE ( iif(  !empty( ::oModel ) .and. !empty( ::oModel:hBuffer ),;
                                                                      hget( ::oModel:hBuffer, "id" ),;
                                                                      nil ) )
                   
-   METHOD getUuid()                                   INLINE ( if(   !empty( ::oModel ) .and. !empty( ::oModel:hBuffer ),;
+   METHOD getUuid()                                   INLINE ( iif(  !empty( ::oModel ) .and. !empty( ::oModel:hBuffer ),;
                                                                      hget( ::oModel:hBuffer, "uuid" ),;
                                                                      nil ) )
 
@@ -185,6 +185,7 @@ CLASS SQLBaseController
    METHOD Delete()
       METHOD priorRecnoToDelete( aSelectedRecno )
 
+   METHOD dialgOkAndGoTo()                            INLINE ( ::uDialogResult == IDOKANDGOTO )
    METHOD dialgOkAndDown()                            INLINE ( ::uDialogResult == IDOKANDDOWN )
    METHOD dialgOkAndUp()                              INLINE ( ::uDialogResult == IDOKANDUP )
 
@@ -506,15 +507,22 @@ RETURN ( lEdit )
 
 METHOD postEdit() 
 
-   if ::dialgOkAndDown()
-      ::goDownRowSet()
-      ::Edit()
-   end if 
+   do case
+      case ::dialgOkAndGoTo()
+         if ::refreshRowSetAndFind( ::oDialogView:idGoTo )
+            ::Edit()
+         else 
+            msgStop( "El identificador " + alltrim( str( ::oDialogView:idGoTo ) ) + " no puede ser localizado" )
+         end if 
 
-   if ::dialgOkAndUp()
-      ::goUpRowSet()
-      ::Edit()
-   end if 
+      case ::dialgOkAndDown()
+         ::goDownRowSet()
+         ::Edit()
+
+      case ::dialgOkAndUp()
+         ::goUpRowSet()
+         ::Edit()
+   end case 
 
 RETURN ( self )
 

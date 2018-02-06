@@ -20,6 +20,8 @@ CLASS MovimientosAlmacenView FROM SQLBaseView
 
    DATA oBtnEnviado
 
+   DATA idGoTo                      INIT     0
+
    METHOD Activate()
       METHOD startActivate()
       METHOD initActivate()
@@ -32,6 +34,10 @@ CLASS MovimientosAlmacenView FROM SQLBaseView
 
    METHOD getUsuario()              INLINE   (  alltrim( ::oController:oModel:hBuffer[ "usuario" ] ) + space( 1 ) + ;
                                                 UsuariosModel():getNombre( ::oController:oModel:hBuffer[ "usuario" ] ) )
+
+   METHOD validateAndGoTo()         
+   METHOD validateAndGoDown()       INLINE   (  iif( validateDialog( ::oDialog ), ::oDialog:end( IDOKANDDOWN ), ) )
+   METHOD validateAndGoUp()         INLINE   (  iif( validateDialog( ::oDialog ), ::oDialog:end( IDOKANDUP ), ) )
 
 END CLASS
 
@@ -196,10 +202,12 @@ METHOD initActivate()
 
    ::oOfficeBar:createButtonsDialog()
 
-   oGrupo         := TDotNetGroup():New( ::oOfficeBar:oOfficeBarFolder, 126,     "Navegación", .f., , "gc_user_32" )
-                     TDotNetButton():New( 120, oGrupo, "gc_map_location_16",     "Ir a" ,       1, {|| nil }, , , .f., .f., .f. )
-                     TDotNetButton():New( 120, oGrupo, "gc_navigate_right_16",   "Siguiente",   1, {|| if( validateDialog( ::oDialog ), ::oDialog:end( IDOKANDDOWN ), ) }, , , .f., .f., .f. )
-                     TDotNetButton():New( 120, oGrupo, "gc_navigate_left_16",    "Anterior",    1, {|| if( validateDialog( ::oDialog ), ::oDialog:end( IDOKANDUP ), ) }, , , .f., .f., .f. )
+   if ::oController:isEditMode()
+      oGrupo      := TDotNetGroup():New( ::oOfficeBar:oOfficeBarFolder, 126,     "Navegación", .f., , "gc_user_32" )
+                     TDotNetButton():New( 120, oGrupo, "gc_map_location_16",     "Ir a" ,       1, {|| ::validateAndGoTo() }, , , .f., .f., .f. )
+                     TDotNetButton():New( 120, oGrupo, "gc_navigate_right_16",   "Siguiente",   1, {|| ::validateAndGoDown() }, , , .f., .f., .f. )
+                     TDotNetButton():New( 120, oGrupo, "gc_navigate_left_16",    "Anterior",    1, {|| ::validateAndGoUp() }, , , .f., .f., .f. )
+   end if 
 
 RETURN ( Self )
 
@@ -216,6 +224,22 @@ METHOD setTextEnviado()
    ::oBtnEnviado:cCaption( cCaption )
 
 RETURN ( Self )
+
+//---------------------------------------------------------------------------//
+
+METHOD validateAndGoTo()
+
+   if !( validateDialog( ::oDialog ) )
+      RETURN .f.
+   end if 
+
+   ::idGoTo       := IdentificadorRegistroView():Activate( ::oController:oModel:hBuffer[ "id" ] )
+
+   if !empty( ::idGoTo )
+      ::oDialog:end( IDOKANDGOTO )
+   end if 
+
+RETURN ( .t. )
 
 //---------------------------------------------------------------------------//
 

@@ -1,6 +1,7 @@
 #define IDOKANDNEW                      3
 #define IDOKANDDOWN                     4
 #define IDOKANDUP                       5
+#define IDOKANDGOTO                     6
 
 /*
 Fichero de Cabecera para la Aplcaci¢n de Facturaci¢n 3.0 para Windows

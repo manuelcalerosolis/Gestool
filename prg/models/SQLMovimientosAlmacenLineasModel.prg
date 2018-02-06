@@ -307,8 +307,6 @@ METHOD getUpdateUnitsSentece( id )
                            "SET unidades_articulo = unidades_articulo + " + toSQLString( hget( ::hBuffer, "unidades_articulo" ) )   + " " +  ;
                         "WHERE id = " + quoted( id ) 
 
-   msgalert( cSentence, "getUpdateUnitsSentece" )
-
 RETURN ( cSentence )
 
 //---------------------------------------------------------------------------//

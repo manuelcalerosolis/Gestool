@@ -14532,16 +14532,18 @@ FONT 8, "Ms Sans Serif"
   CONTROL "Tipo de sequencia", -1, "Static", WS_GROUP, 49, 83, 64, 10
 }
 
-MOVILGES DIALOG DISCARDABLE 278, 96, 290, 265
+IDENTIFICADOR_REGISTRO DIALOG DISCARDABLE 278, 96, 200, 69
 STYLE WS_POPUP|DS_MODALFRAME|DS_3DLOOK|WS_CAPTION|WS_SYSMENU
-CAPTION "Exportar e importar datos a Movilges"
+CAPTION "Ir a registro"
 FONT 8, "Ms Sans Serif"
 {
-  CONTROL "", 500, "SysTabControl32", 0x00000000, 4, 3, 284, 237
-  CONTROL "&Aceptar", 510, "Button", WS_TABSTOP, 128, 247, 50, 14
-  CONTROL "&Imprimir", 540, "Button", WS_TABSTOP, 3, 247, 50, 14
-  CONTROL "&Cancelar", 520, "Button", WS_TABSTOP, 183, 247, 50, 14
-  CONTROL "A&yuda", 530, "Button", WS_TABSTOP, 238, 247, 50, 14
+  CONTROL "", 100, "Edit", ES_RIGHT|WS_VSCROLL|WS_BORDER|WS_TABSTOP, 116, 26, 80, 12
+  CONTROL "&Aceptar", IDOK, "Button", WS_TABSTOP, 91, 50, 50, 14
+  CONTROL "&Cancelar", IDCANCEL, "Button", WS_TABSTOP, 146, 50, 50, 14
+  CONTROL "", 500, "Static", SS_BITMAP|SS_CENTERIMAGE, 4, 3, 34, 30
+  CONTROL "Introduzca el identificador del registro", -1, "Static", WS_GROUP, 44, 3, 120, 8
+  CONTROL "Identificador :", -1, "Static", WS_GROUP, 44, 30, 44, 8
+  CONTROL "", -1, "Static", SS_ETCHEDHORZ, 0, 44, 200, 1
 }
 
 MOVILGES_1 DIALOG DISCARDABLE 35, -50, 284, 222

@@ -478,8 +478,6 @@ METHOD getInsertSentence( hBuffer )
 
    ::fireEvent( 'gotInsertSentence' )  
 
-   msgalert( ::cSQLInsert, "getInsertSentence" ) 
-
 RETURN ( ::cSQLInsert )
 
 //---------------------------------------------------------------------------//
