@@ -467,27 +467,26 @@ RETURN ( ::getInsertStatement( hCampos, SQLMovimientosAlmacenLineasNumerosSeries
 
 //---------------------------------------------------------------------------//
 
-STATIC FUNCTION SincronizaRemesasMovimientosAlmacen( cPath )
+STATIC FUNCTION SincronizaRemesasMovimientosAlmacen()
 
    local oBlock
    local oError
    local dbfRemMov
    local dbfHisMov
    local dbfMovSer
-
-   DEFAULT cPath  := cPatEmp()
+   local cPath    := ( fullCurDir() + cPatEmp() + "\" )
 
    oBlock         := ErrorBlock( {| oError | ApoloBreak( oError ) } )
    BEGIN SEQUENCE
 
-   USE ( cPath + "REMMOVT.DBF" ) NEW VIA ( cDriver() ) EXCLUSIVE ALIAS ( cCheckArea( "REMMOV", @dbfRemMov ) )
-   SET ADSINDEX TO ( cPath + "REMMOVT.CDX" ) ADDITIVE
+   dbUseArea( .t., cLocalDriver(), ( cPath + "RemMovT.Dbf" ), cCheckArea( "RemMovT", @dbfRemMov ), .f. ) 
+   ordListAdd( cPath + "RemMovT.Cdx"  )  
 
-   USE ( cPath + "HISMOV.DBF" ) NEW VIA ( cDriver() ) EXCLUSIVE ALIAS ( cCheckArea( "HISMOV", @dbfHisMov ) )
-   SET ADSINDEX TO ( cPath + "HISMOV.CDX" ) ADDITIVE
+   dbUseArea( .t., cLocalDriver(), ( cPath + "HisMov.Dbf" ), cCheckArea( "HisMov", @dbfHisMov ), .f. ) 
+   ordListAdd( cPath + "HisMov.Cdx"  )  
 
-   USE ( cPath + "MOVSER.DBF" ) NEW VIA ( cDriver() ) EXCLUSIVE ALIAS ( cCheckArea( "MOVSER", @dbfMovSer ) )
-   SET ADSINDEX TO ( cPath + "MOVSER.CDX" ) ADDITIVE
+   dbUseArea( .t., cLocalDriver(), ( cPath + "MovSer.Dbf" ), cCheckArea( "MovSer", @dbfMovSer ), .f. )  
+   ordListAdd( cPath + "MovSer.Cdx"  )  
 
    // Cabeceras-------------------------------------------------------------------
 
