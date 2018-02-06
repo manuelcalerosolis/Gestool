@@ -142,7 +142,7 @@ RETURN ( aTmp[ ( dbf )->( Fieldpos( "cEntBnc" ) ) ] + aTmp[ ( dbf )->( Fieldpos(
 
 //--------------------------------------------------------------------------//
 
-Function DateTimeToTimestamp( dDate, cTime )
+Function DateTimeFormatTimestamp( dDate, cTime )
 
    local cTimestamp  := ""
 

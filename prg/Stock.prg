@@ -4698,7 +4698,7 @@ METHOD CreateTemporalFiles( cPath ) CLASS TStock
 
    END DATABASE ::oDbfStock
 
-   ::oDbfStock:Activate( .f., .f. )
+   ::oDbfStock:Activate( .f., .f. )  
 
 RETURN ( Self )
 
