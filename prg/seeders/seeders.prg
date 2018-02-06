@@ -465,3 +465,101 @@ METHOD getStatementSeederMovimientosAlmacenLineasNumerosSeries( dbfMovSer )
 RETURN ( ::getInsertStatement( hCampos, SQLMovimientosAlmacenLineasNumerosSeriesModel():getTableName() ) )
 
 //---------------------------------------------------------------------------//
+<<<<<<< HEAD
+=======
+
+STATIC FUNCTION SincronizaRemesasMovimientosAlmacen()
+
+   local oBlock
+   local oError
+   local dbfRemMov
+   local dbfHisMov
+   local dbfMovSer
+   local cPath    := ( fullCurDir() + cPatEmp() + "\" )
+
+   oBlock         := ErrorBlock( {| oError | ApoloBreak( oError ) } )
+   BEGIN SEQUENCE
+
+   dbUseArea( .t., cLocalDriver(), ( cPath + "RemMovT.Dbf" ), cCheckArea( "RemMovT", @dbfRemMov ), .f. ) 
+   ordListAdd( cPath + "RemMovT.Cdx"  )  
+
+   dbUseArea( .t., cLocalDriver(), ( cPath + "HisMov.Dbf" ), cCheckArea( "HisMov", @dbfHisMov ), .f. ) 
+   ordListAdd( cPath + "HisMov.Cdx"  )  
+
+   dbUseArea( .t., cLocalDriver(), ( cPath + "MovSer.Dbf" ), cCheckArea( "MovSer", @dbfMovSer ), .f. )  
+   ordListAdd( cPath + "MovSer.Cdx"  )  
+
+   // Cabeceras-------------------------------------------------------------------
+
+   ( dbfRemMov )->( ordSetFocus( 0 ) )
+
+   ( dbfRemMov )->( dbGoTop() )
+   while !( dbfRemMov )->( eof() )
+
+      if empty( ( dbfRemMov )->cGuid )
+         ( dbfRemMov )->cGuid          := win_uuidcreatestring()
+      end if
+
+      ( dbfRemMov )->( dbSkip() )
+
+   end while
+
+   ( dbfRemMov )->( ordSetFocus( 1 ) )
+
+   // Lineas----------------------------------------------------------------------
+
+   ( dbfHisMov )->( ordSetFocus( 0 ) )
+
+   ( dbfHisMov )->( dbGoTop() )
+   while !( dbfHisMov )->( eof() )
+
+      if empty( ( dbfHisMov )->cGuid )
+         ( dbfHisMov )->cGuid          := win_uuidcreatestring()
+      end if
+
+      if empty( ( dbfHisMov )->cGuidPar )
+         ( dbfHisMov )->cGuidPar       := retfld( str( ( dbfHisMov )->nNumRem ) + ( dbfHisMov )->cSufRem, dbfRemMov, "cGuid", "cNumRem" )
+      end if
+
+      ( dbfHisMov )->( dbSkip() )
+
+   end while
+
+   ( dbfHisMov )->( ordSetFocus( 1 ) )
+
+   // Series----------------------------------------------------------------------
+   
+   ( dbfMovSer )->( dbGoTop() )
+
+   while !( dbfMovSer )->( eof() )
+
+      if empty( ( dbfMovSer )->cGuid )
+         ( dbfMovSer )->cGuid          := win_uuidcreatestring()
+      end if
+
+      //Vas por aqui----------------------------------------------------------
+
+      if empty( ( dbfMovSer )->cGuidPar )
+         ( dbfMovSer )->cGuidPar       := RetFld( Str( ( dbfMovSer )->nNumRem ) + ( dbfMovSer )->cSufRem + Str( ( dbfMovSer )->nNumLin, 9 ), dbfHisMov, "cGuid", "cRemLin" )
+      end if
+
+      ( dbfMovSer )->( dbSkip() )
+
+   end while
+
+   RECOVER USING oError
+
+      msgstop( "Imposible abrir todas las bases de datos de movimientos de almacén" + CRLF + ErrorMessage( oError ) )
+
+   END SEQUENCE
+
+   ErrorBlock( oBlock )
+
+   CLOSE ( dbfRemMov )
+   CLOSE ( dbfHisMov )
+   CLOSE ( dbfMovSer )
+
+RETURN NIL
+
+//---------------------------------------------------------------------------//
+>>>>>>> 79d7cccfd748529620ba7df3ba44e4c970579c58
