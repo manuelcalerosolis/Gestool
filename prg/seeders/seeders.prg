@@ -87,7 +87,7 @@ METHOD getInsertStatement( hCampos, cTableName )
 
    local cStatement  
 
-   cStatement        := "INSERT INTO " + cTableName + " ( "
+   cStatement        := "INSERT IGNORE INTO " + cTableName + " ( "
 
    hEval( hCampos, {| k, v | cStatement += k + ", " } )
 
@@ -96,8 +96,6 @@ METHOD getInsertStatement( hCampos, cTableName )
    hEval( hCampos, {| k, v | cStatement += v + ", " } )
 
    cStatement        := chgAtEnd( cStatement, " )", 2 )
-
-   msgalert( cStatement, "getInsertStatement" )
 
 RETURN cStatement
 
