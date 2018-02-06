@@ -333,7 +333,7 @@ METHOD getStatementSeederMovimientosAlmacen( dbfRemMov )
                         "uuid" =>               quoted( ( dbfRemMov )->cGuid ),;
                         "numero" =>             quoted( ( dbfRemMov )->nNumRem ),;
                         "tipo_movimiento" =>    quoted( ( dbfRemMov )->nTipMov ),;
-                        "fecha_hora" =>         quoted( dateTimeToTimeStamp( ( dbfRemMov )->dFecRem, ( dbfRemMov )->cTimRem ) ),;
+                        "fecha_hora" =>         quoted( DateTimeFormatTimestamp( ( dbfRemMov )->dFecRem, ( dbfRemMov )->cTimRem ) ),;
                         "almacen_origen" =>     quoted( ( dbfRemMov )->cAlmOrg ),;
                         "almacen_destino" =>    quoted( ( dbfRemMov )->cAlmDes ),;
                         "grupo_movimiento" =>   quoted( ( dbfRemMov )->cCodMov ),;
