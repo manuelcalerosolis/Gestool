@@ -68,9 +68,6 @@ RETURN ( self )
 
 METHOD runSeederEmpresa()
 
-   ::oMsg:SetText( "Sincronizando movimientos de almacén" )
-   SincronizaRemesasMovimientosAlmacen()
-
    ::oMsg:SetText( "Ejecutando seeder de cabeceras de movimientos de almacén" )
    ::SeederMovimientosAlmacen()
    
@@ -459,13 +456,17 @@ RETURN ( Self )
 
 METHOD getStatementSeederMovimientosAlmacenLineasNumerosSeries( dbfMovSer )
 
-   local hCampos  := {  "uuid"            => quoted( ( dbfMovSer )->cGuid ),;
+   local hCampos        
+
+   hCampos        := {  "uuid"            => quoted( ( dbfMovSer )->cGuid ),;
                         "parent_uuid"     => quoted( ( dbfMovSer )->cGuidPar ),;
                         "numero_serie"    => quoted( ( dbfMovSer )->cNumSer ) }
 
 RETURN ( ::getInsertStatement( hCampos, SQLMovimientosAlmacenLineasNumerosSeriesModel():getTableName() ) )
 
 //---------------------------------------------------------------------------//
+<<<<<<< HEAD
+=======
 
 STATIC FUNCTION SincronizaRemesasMovimientosAlmacen()
 
@@ -561,3 +562,4 @@ STATIC FUNCTION SincronizaRemesasMovimientosAlmacen()
 RETURN NIL
 
 //---------------------------------------------------------------------------//
+>>>>>>> 79d7cccfd748529620ba7df3ba44e4c970579c58
