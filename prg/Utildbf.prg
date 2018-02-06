@@ -4317,7 +4317,7 @@ function ApoloSender( oObject, cMsg, u1, u2, u3, u4, u5, u6, u7, u8, u9, u10 )
 RETURN ( nil )
 
 //--------------------------------------------------------------------------//
-
+/*
 Function QrCodeToHBmp( nLineWidth, nLineHeight, cVar, cFileName, cFlags, nColor, nColorBack  )
 
    local oBmp
@@ -4375,8 +4375,6 @@ RETURN 0
 
 //----------------------------------------------------------------------------//
 
-//----------------------------------------------------------------------------//
-
 FUNCTION hb_Zebra_GetWidth ( hZebra, nLineWidth, nLineHeight, iFlags)
 
    local x1          := 0
@@ -4410,12 +4408,9 @@ FUNCTION hb_Zebra_GetHeight ( hZebra, nLineWidth, nLineHeight, iFlags)
 RETURN nBarHeight
 
 //----------------------------------------------------------------------------//
-
-#pragma BEGINDUMP
-
-/*
-llamada a encabezados de api de xharbour y windows SDK
 */
+/*
+#pragma BEGINDUMP
 
 #include "hbapi.h"
 #include "hbapiitm.h"
@@ -4425,9 +4420,9 @@ llamada a encabezados de api de xharbour y windows SDK
 #include "windows.h"
 
 //----------------------------------------------------------------------------//
-/*
-funcion wrapper para obtener una cadena GUID de 16 bits
-*/
+//
+// funcion wrapper para obtener una cadena GUID de 16 bits
+//
 
 HB_FUNC( NEWGUID16 )
 {
@@ -4442,9 +4437,9 @@ HB_FUNC( NEWGUID16 )
 }
 
 //----------------------------------------------------------------------------//
-/*
-funcion wrapper para obtener una cadena GUID de 32 bits
-*/
+// 
+// funcion wrapper para obtener una cadena GUID de 32 bits
+// 
 
 HB_FUNC( NEWGUID32 )
 {
@@ -4464,7 +4459,7 @@ HB_FUNC( NEWGUID32 )
 }
 
 #pragma ENDDUMP
-
+*/
 //----------------------------------------------------------------------------//
 
 

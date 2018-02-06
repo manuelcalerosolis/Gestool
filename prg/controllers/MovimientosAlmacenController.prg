@@ -22,6 +22,8 @@ CLASS MovimientosAlmacenController FROM SQLNavigatorController
 
    DATA oReport
 
+   DATA oRecordController
+
    METHOD New()
 
    METHOD End()
@@ -56,6 +58,8 @@ CLASS MovimientosAlmacenController FROM SQLNavigatorController
    METHOD stampGrupoMovimientoNombre()
 
    METHOD stampAgente()
+
+   METHOD setSenderDateToNull()     
 
    METHOD printDocument()  
 
@@ -126,6 +130,8 @@ METHOD New()
    ::oEtiquetasController        := EtiquetasMovimientosAlmacenController():New( self )
 
    ::oConfiguracionesController  := ConfiguracionesController():New( self )
+
+   ::oRecordController           := RecordController():New( self )
    
    ::oReport                     := MovimientosAlmacenReport():New( Self )
 
@@ -156,6 +162,8 @@ METHOD End()
    ::oReport:End()
 
    ::oConfiguracionesController:End()
+
+   ::oRecordController:End()
 
 RETURN ( Self )
 
@@ -252,6 +260,24 @@ METHOD stampAgente( oGetAgente )
    oGetAgente:oHelpText:cText( cNombreAgente )
 
 RETURN ( .t. )
+
+//---------------------------------------------------------------------------//
+   
+METHOD setSenderDateToNull()
+
+   if empty( ::oModel:getBuffer( "enviado" ) ) 
+      RETURN ( nil )
+   end if    
+
+   if msgYesNo( "¿ Desea eliminar la fecha de envío ?", "Confirme selección" ) 
+
+      ::oModel:setBuffer( "enviado", nil )
+
+      ::oDialogView:setTextEnviado()
+
+   end if 
+
+RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 
@@ -363,8 +389,6 @@ METHOD setSentFromFetch()
 
    local cSentence   := ::oModel:getSentenceSentFromFetch()
       
-   msgalert( cSentence, "setSentFromFetch" )
-
    if !empty( cSentence )
       getSQLDatabase():Exec( cSentence )
    end if 
@@ -385,7 +409,7 @@ METHOD isUnzipToJson( cZipFile )
    aFiles            := hb_getfilesinzip( cZipFile )
 
    if !hb_unzipfile( cZipFile, , , , cpatin(), aFiles )
-      MsgStop( "No se ha descomprimido el fichero " + cZipFile, "Error" )
+      msgStop( "No se ha descomprimido el fichero " + cZipFile, "Error" )
       lUnZiped       :=  .f. 
    end if
 

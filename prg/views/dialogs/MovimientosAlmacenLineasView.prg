@@ -270,7 +270,7 @@ METHOD Activate()
          CANCEL ;
          ID          IDCANCEL ;
          OF          ::oDialog ;
-         ACTION      ( ::oDialog:end() )
+         ACTION      ( ::oDialog:end() ) 
 
    ::oDialog:bStart  := {|| ::oController:onActivateDialog() }
 

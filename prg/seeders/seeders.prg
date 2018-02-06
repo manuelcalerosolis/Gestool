@@ -87,7 +87,7 @@ METHOD getInsertStatement( hCampos, cTableName )
 
    local cStatement  
 
-   cStatement        := "INSERT IGNORE INTO " + cTableName + " ( "
+   cStatement        := "INSERT INTO " + cTableName + " ( "
 
    hEval( hCampos, {| k, v | cStatement += k + ", " } )
 
@@ -96,6 +96,8 @@ METHOD getInsertStatement( hCampos, cTableName )
    hEval( hCampos, {| k, v | cStatement += v + ", " } )
 
    cStatement        := chgAtEnd( cStatement, " )", 2 )
+
+   msgalert( cStatement, "getInsertStatement" )
 
 RETURN cStatement
 
@@ -328,7 +330,7 @@ METHOD getStatementSeederMovimientosAlmacen( dbfRemMov )
    local hCampos
 
    hCampos        := {  "empresa" =>            quoted( cCodEmp() ),;
-                        "delegacion" =>         if( !Empty( ( dbfRemMov )->cCodDlg ), quoted( ( dbfRemMov )->cCodDlg ), '00' ),;
+                        "delegacion" =>         if( !empty( ( dbfRemMov )->cCodDlg ), quoted( ( dbfRemMov )->cCodDlg ), '00' ),;
                         "usuario" =>            quoted( ( dbfRemMov )->cCodUsr ),;
                         "uuid" =>               quoted( ( dbfRemMov )->cGuid ),;
                         "numero" =>             quoted( ( dbfRemMov )->nNumRem ),;

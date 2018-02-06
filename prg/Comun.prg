@@ -279,7 +279,7 @@ RETURN ( .t. )
 
 FUNCTION Test()
 
-   TiposImpresorasController():New():ActivateNavigatorView()
+   // MovimientosAlmacenController():New():ActivateNavigatorView()
 
 RETURN NIL 
 

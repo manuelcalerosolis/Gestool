@@ -19,6 +19,8 @@ CLASS SQLBaseController
 
    DATA oDialogView
 
+   DATA uDialogResult
+
    DATA oValidator
 
    DATA oRepository
@@ -26,8 +28,6 @@ CLASS SQLBaseController
    DATA oBrowseView
 
    DATA lTransactional                                INIT .f.
-
-   DATA lContinuousAppend                             INIT .f.
 
    DATA nLevel                                        INIT nOr( ACC_APPD, ACC_EDIT, ACC_ZOOM, ACC_DELE, ACC_IMPR )
 
@@ -57,31 +57,32 @@ CLASS SQLBaseController
 
    METHOD getSenderController()                       INLINE ( ::oSenderController ) 
 
+
    // Modelo -----------------------------------------------------------------
 
    METHOD getModel()                                  INLINE ( ::oModel )
-   METHOD getModelColumnKey()                         INLINE ( if( !empty( ::oModel ), ::oModel:cColumnKey, ) )
-   METHOD getModelTableName()                         INLINE ( if( !empty( ::oModel ), ::oModel:cTableName, ) )
-   METHOD getModelColumns()                           INLINE ( if( !empty( ::oModel ) .and. !empty( ::oModel:hColumns ), ( ::oModel:hColumns ), ) )
-   METHOD getModelExtraColumns()                      INLINE ( if( !empty( ::oModel ) .and. !empty( ::oModel:hExtraColumns ), ( ::oModel:hExtraColumns ), ) )
+   METHOD getModelColumnKey()                         INLINE ( iif( !empty( ::oModel ), ::oModel:cColumnKey, ) )
+   METHOD getModelTableName()                         INLINE ( iif( !empty( ::oModel ), ::oModel:cTableName, ) )
+   METHOD getModelColumns()                           INLINE ( iif( !empty( ::oModel ) .and. !empty( ::oModel:hColumns ), ( ::oModel:hColumns ), ) )
+   METHOD getModelExtraColumns()                      INLINE ( iif( !empty( ::oModel ) .and. !empty( ::oModel:hExtraColumns ), ( ::oModel:hExtraColumns ), ) )
    
-   METHOD getModelBuffer( cColumn )                   INLINE ( if( !empty( ::oModel ), ::oModel:getBuffer( cColumn ), ) )
-   METHOD setModelBuffer( cColumn, uValue )           INLINE ( if( !empty( ::oModel ), ::oModel:setBuffer( cColumn, uValue ), ) )
-   METHOD setModelBufferPadr( cColumn, uValue )       INLINE ( if( !empty( ::oModel ), ::oModel:setBufferPadr( cColumn, uValue ), ) )
+   METHOD getModelBuffer( cColumn )                   INLINE ( iif( !empty( ::oModel ), ::oModel:getBuffer( cColumn ), ) )
+   METHOD setModelBuffer( cColumn, uValue )           INLINE ( iif( !empty( ::oModel ), ::oModel:setBuffer( cColumn, uValue ), ) )
+   METHOD setModelBufferPadr( cColumn, uValue )       INLINE ( iif( !empty( ::oModel ), ::oModel:setBufferPadr( cColumn, uValue ), ) )
 
    METHOD getModelBufferColumnKey()                   INLINE ( ::getModelBuffer( ( ::oModel:cColumnKey ) ) )
-   METHOD getModelSelectValue( cSentence )            INLINE ( if( !empty( ::oModel ), ::oModel:SelectValue( cSentence ), ) )
+   METHOD getModelSelectValue( cSentence )            INLINE ( iif( !empty( ::oModel ), ::oModel:SelectValue( cSentence ), ) )
 
    METHOD findInModel()
 
    METHOD changeModelOrderAndOrientation()            
    METHOD getModelHeaderFromColumnOrder()             INLINE ( ::oModel:getHeaderFromColumnOrder() )
 
-   METHOD getId()                                     INLINE ( if(   !empty( ::oModel ) .and. !empty( ::oModel:hBuffer ),;
+   METHOD getId()                                     INLINE ( iif(  !empty( ::oModel ) .and. !empty( ::oModel:hBuffer ),;
                                                                      hget( ::oModel:hBuffer, "id" ),;
                                                                      nil ) )
                   
-   METHOD getUuid()                                   INLINE ( if(   !empty( ::oModel ) .and. !empty( ::oModel:hBuffer ),;
+   METHOD getUuid()                                   INLINE ( iif(  !empty( ::oModel ) .and. !empty( ::oModel:hBuffer ),;
                                                                      hget( ::oModel:hBuffer, "uuid" ),;
                                                                      nil ) )
 
@@ -95,6 +96,8 @@ CLASS SQLBaseController
    METHOD findRowSet( nId )                           INLINE ( iif(  !empty( ::oRowSet ), ::oRowSet:find( nId ), ) )
    METHOD refreshRowSet()                             INLINE ( iif(  !empty( ::oRowSet ), ::oRowSet:refresh(), ) )
    METHOD refreshRowSetAndFind( nId )                 INLINE ( iif(  !empty( ::oRowSet ), ::oRowSet:refreshAndFind( nId ), ) )
+   METHOD goDownRowSet()                              INLINE ( iif(  !empty( ::oRowSet ), ::oRowSet:goDown(), ) )
+   METHOD goUpRowSet()                                INLINE ( iif(  !empty( ::oRowSet ), ::oRowSet:goUp(), ) )
 
    METHOD getIdFromRecno( aSelected )                 INLINE ( iif(  !empty( ::oRowSet ), ::oRowSet:IdFromRecno( aSelected ), {} ) )
    METHOD getUuidFromRecno( aSelected )               INLINE ( iif(  !empty( ::oRowSet ), ::oRowSet:UuidFromRecno( aSelected ), {} ) )
@@ -109,6 +112,8 @@ CLASS SQLBaseController
 
    METHOD getDialogView()                             INLINE ( ::oDialogView )
    METHOD DialogViewActivate()                     
+
+   METHOD isContinuousAppend()                        INLINE ( hb_isnumeric( ::uDialogResult ) .and. ::uDialogResult == IDOKANDNEW )
 
    // Repositorio--------------------------------------------------------------
 
@@ -179,6 +184,12 @@ CLASS SQLBaseController
 
    METHOD Delete()
       METHOD priorRecnoToDelete( aSelectedRecno )
+
+   METHOD dialgOkAndGoTo()                            INLINE ( ::uDialogResult == IDOKANDGOTO )
+   METHOD dialgOkAndDown()                            INLINE ( ::uDialogResult == IDOKANDDOWN )
+   METHOD dialgOkAndUp()                              INLINE ( ::uDialogResult == IDOKANDUP )
+
+   METHOD postEdit( nId ) 
 
    // Transactional system-----------------------------------------------------
 
@@ -338,11 +349,13 @@ METHOD Append()
 
          if !empty( nId )
             ::refreshRowSetAndFind( nId )
+         else 
+            ::refreshRowSet()
          end if 
 
          ::fireEvent( 'appended' ) 
 
-         if ::lContinuousAppend
+         if ::isContinuousAppend()
             loop
          else 
             exit
@@ -486,7 +499,32 @@ METHOD Edit( nId )
 
    ::fireEvent( 'exitEdited' ) 
 
+   ::postEdit()
+
 RETURN ( lEdit )
+
+//----------------------------------------------------------------------------//
+
+METHOD postEdit() 
+
+   do case
+      case ::dialgOkAndGoTo()
+         if ::refreshRowSetAndFind( ::oDialogView:idGoTo )
+            ::Edit()
+         else 
+            msgStop( "El identificador " + alltrim( str( ::oDialogView:idGoTo ) ) + " no puede ser localizado" )
+         end if 
+
+      case ::dialgOkAndDown()
+         ::goDownRowSet()
+         ::Edit()
+
+      case ::dialgOkAndUp()
+         ::goUpRowSet()
+         ::Edit()
+   end case 
+
+RETURN ( self )
 
 //----------------------------------------------------------------------------//
 
@@ -529,19 +567,13 @@ RETURN ( .t. )
 
 METHOD DialogViewActivate()
 
-   local uResult           := ::oDialogView:Activate()
+   ::uDialogResult         := ::oDialogView:Activate()
 
-   if hb_islogical( uResult )
-      RETURN ( uResult )
+   if hb_islogical( ::uDialogResult )
+      RETURN ( ::uDialogResult )
    end if 
 
-   if hb_isnumeric( uResult ) .and. ( uResult == IDOK )
-      ::lContinuousAppend  := .f.
-      RETURN ( .t. )
-   end if 
-
-   if hb_isnumeric( uResult ) .and. ( uResult == IDOKANDNEW )
-      ::lContinuousAppend  := .t.
+   if hb_isnumeric( ::uDialogResult ) .and. ( ::uDialogResult != IDCANCEL )
       RETURN ( .t. )
    end if 
 

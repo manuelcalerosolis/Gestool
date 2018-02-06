@@ -367,6 +367,7 @@ SQLMovimientosAlmacenModel.prg 											\
 SQLMovimientosAlmacenLineasModel.prg 									\
 SQLConfiguracionesModel.prg 												\
 ConfiguracionesController.prg												\
+RecordController.prg															\
 ConfiguracionesRepository.prg												\
 ConfiguracionesView.prg 													\
 AlmacenesModel.prg 															\
@@ -909,7 +910,7 @@ BrwCli.obj              													\
 TInfLCli.obj            													\
 BrwPrv.obj              													\
 TInfLPrv.obj            													\
-Movilges.obj            													\
+IdentificadorRegistroView.obj 											\
 Tinfofr.obj             													\
 Catalogo.obj            													\
 Ubicacion.obj           													\
@@ -973,6 +974,7 @@ EtiquetasMovimientosAlmacenController.obj								\
 SQLMovimientosAlmacenModel.obj 											\
 SQLConfiguracionesModel.obj 												\
 ConfiguracionesController.obj												\
+RecordController.obj															\
 ConfiguracionesRepository.obj 											\
 ConfiguracionesView.obj 													\
 SQLMovimientosAlmacenLineasModel.obj 									\
@@ -1189,6 +1191,7 @@ PropiedadesModel.obj       												\
 PropiedadesController.obj       											\
 PropiedadesLineasModel.obj       										\
 PropiedadesLineasController.obj       									\
+IdentificadorRegistroView.obj             							\
 RelacionesEtiquetasModel.obj 												\
 ArticulosModel.obj                                    			\
 FamiliasModel.obj                                    				\
@@ -1489,7 +1492,7 @@ $(OBJ)\BrwCli.obj               											+
 $(OBJ)\TInfLCli.obj             											+
 $(OBJ)\BrwPrv.obj               											+
 $(OBJ)\TInfLPrv.obj             											+
-$(OBJ)\Movilges.obj             											+
+$(OBJ)\IdentificadorRegistroView.obj             					+
 $(OBJ)\Tinfofr.obj              											+
 $(OBJ)\Catalogo.obj             											+
 $(OBJ)\Ubicacion.obj            											+
@@ -1553,6 +1556,7 @@ $(OBJ)\EtiquetasMovimientosAlmacenController.obj					+
 $(OBJ)\SQLMovimientosAlmacenModel.obj 									+
 $(OBJ)\SQLConfiguracionesModel.obj 										+
 $(OBJ)\ConfiguracionesController.obj 									+
+$(OBJ)\RecordController.obj 												+
 $(OBJ)\ConfiguracionesRepository.obj 									+
 $(OBJ)\ConfiguracionesView.obj 											+
 $(OBJ)\SQLMovimientosAlmacenLineasModel.obj 							+
@@ -1793,7 +1797,6 @@ $(OBJ)\SQLExportableModel.obj 											+
 $(OBJ)\ExportableController.obj											+
 $(OBJ)\PdaEnvioRecepcionController.obj 								+
 $(OBJ)\PdaEnvioRecepcionView.obj 										+
-$(OBJ)\gdipfwh.obj 															+
 $(OBJ)\PedidosProveedoresLineasModel.obj 							   +
 $(OBJ)\Events.obj              		
 $<,$*
@@ -1838,7 +1841,6 @@ $(HBLIB)\hbcplr.lib            											+
 $(IMG2PDFLIB)\Image2pdf.lib      										+
 $(HBLIB)\b32\rddads.lib          										+
 $(HBLIB)\ace32.lib               										+
-$(HBLIB)\hbzebra.lib               										+
 $(BORLANDLIB)\cw32mt.lib         										+ 
 $(BORLANDLIB)\uuid.lib           										+ 
 $(BORLANDLIB)\import32.lib       										+ 

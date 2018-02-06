@@ -46,6 +46,12 @@ CLASS SQLBaseModel
    METHOD New()
    METHOD End()
 
+   METHOD setSQLInsert( cSQLInsert )                  INLINE ( ::cSQLInsert := cSQLInsert )
+   METHOD getSQLInsert()                              INLINE ( ::cSQLInsert )
+
+   METHOD setSQLUpdate( cSQLUpdate )                  INLINE ( ::cSQLUpdate := cSQLUpdate )
+   METHOD getSQLUpdate()                              INLINE ( ::cSQLUpdate )
+
    // Facades -----------------------------------------------------------------
 
    METHOD setDatabase( oDb )                          INLINE ( ::oDatabase := oDb )
@@ -470,7 +476,7 @@ METHOD getInsertSentence( hBuffer )
 
    ::cSQLInsert      := chgAtEnd( ::cSQLInsert, ' )', 2 )
 
-   ::fireEvent( 'gotInsertSentence' )   
+   ::fireEvent( 'gotInsertSentence' )  
 
 RETURN ( ::cSQLInsert )
 

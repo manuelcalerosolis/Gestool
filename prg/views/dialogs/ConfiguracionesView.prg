@@ -21,6 +21,8 @@ CLASS ConfiguracionesView FROM SQLBaseView
 
    DATA hFormatoColumnas
 
+   DATA aItems                                  INIT {}
+
    METHOD New( oController )
 
    METHOD changeDocumentCounter()               INLINE ( .t. )
@@ -31,7 +33,8 @@ CLASS ConfiguracionesView FROM SQLBaseView
 
    METHOD ChangeBrowse()
 
-   METHOD getModelItems()                       INLINE ( ::getModel():aItems )
+   METHOD setItems( aItems )                    INLINE ( ::aItems := aItems )
+   METHOD getItems()                            INLINE ( ::aItems )
 
    METHOD setColType( uValue )                  INLINE ( ::oCol:nEditType := uValue )
 
@@ -51,6 +54,8 @@ METHOD New( oController )
                                              ::setColPicture( "" ) } ,;
                               "N"   => {||   ::setColType( EDIT_GET ) ,;
                                              ::setColPicture( "999999999" ) } ,;
+                              "D"   => {||   ::setColType( EDIT_GET ) ,;
+                                             ::setColPicture( "@DT" ) } ,;
                               "L"   => {||   ::setColType( EDIT_LISTBOX ),;
                                              ::setColListTxt( { "si", "no" } ),;
                                              ::setColPicture( "" ) },;
@@ -61,6 +66,7 @@ METHOD New( oController )
 RETURN ( Self )
 
 //---------------------------------------------------------------------------//
+
 METHOD Activate()
 
    local oBmp
@@ -81,7 +87,7 @@ METHOD Activate()
       ::oBrw:bClrSel          := {|| { CLR_BLACK, Rgb( 229, 229, 229 ) } }
       ::oBrw:bClrSelFocus     := {|| { CLR_BLACK, Rgb( 167, 205, 240 ) } }
 
-      ::oBrw:SetArray( ::getModelItems(), , , .f. )
+      ::oBrw:SetArray( ::getItems(), , , .f. )
 
       ::oBrw:nMarqueeStyle    := MARQSTYLE_HIGHLCELL
       ::oBrw:lRecordSelector  := .f.
