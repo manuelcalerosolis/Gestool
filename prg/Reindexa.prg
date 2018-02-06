@@ -374,7 +374,8 @@ METHOD Sincroniza()
    ::SetText( "Sincroniza recibos de proveedores", ::aProgress[ 6 ]  )                 ; SynRecPrv( ::cPathEmp )
    ::SetText( "Sincroniza líneas de ordenes de carga", ::aProgress[ 6 ]  )             ; SynOrdCar( ::cPathEmp )
    ::SetText( "Sincroniza unidades de medición", ::aProgress[ 6 ]  )                   ; UniMedicion():Create():Syncronize()
-   ::SetText( "Sincroniza Fabricantes", ::aProgress[ 6 ]  )                            ; TFabricantes():Create():Syncronize()
+   ::SetText( "Sincroniza fabricantes", ::aProgress[ 6 ]  )                            ; TFabricantes():Create():Syncronize()
+   ::SetText( "Sincroniza movimientos de almacén", ::aProgress[ 6 ]  )                 ; SynRemMov( ::cPathEmp )
 
 RETURN ( Self )
 
@@ -577,5 +578,104 @@ Method lFreeHandle()
    end if
 
 RETURN ( .f. )
+
+//---------------------------------------------------------------------------//
+
+Function SynRemMov( cPath )
+
+   local oBlock
+   local oError
+   local dFecMov
+   local dbfRemMov
+   local dbfHisMov
+   local dbfMovSer
+   local nOrdAnt
+
+   DEFAULT cPath  := cPatEmp()
+
+   oBlock         := ErrorBlock( {| oError | ApoloBreak( oError ) } )
+   BEGIN SEQUENCE
+
+   USE ( cPath + "REMMOVT.DBF" ) NEW VIA ( cDriver() ) EXCLUSIVE ALIAS ( cCheckArea( "REMMOV", @dbfRemMov ) )
+   SET ADSINDEX TO ( cPath + "REMMOVT.CDX" ) ADDITIVE
+
+   USE ( cPath + "HISMOV.DBF" ) NEW VIA ( cDriver() ) EXCLUSIVE ALIAS ( cCheckArea( "HISMOV", @dbfHisMov ) )
+   SET ADSINDEX TO ( cPath + "HISMOV.CDX" ) ADDITIVE
+
+   USE ( cPath + "MOVSER.DBF" ) NEW VIA ( cDriver() ) EXCLUSIVE ALIAS ( cCheckArea( "MOVSER", @dbfMovSer ) )
+   SET ADSINDEX TO ( cPath + "MOVSER.CDX" ) ADDITIVE
+
+   /*
+   Cabeceras-------------------------------------------------------------------
+   */
+
+   ( dbfRemMov )->( ordSetFocus( 0 ) )
+
+   ( dbfRemMov )->( dbGoTop() )
+   while !( dbfRemMov )->( eof() )
+
+      if empty( ( dbfRemMov )->cGuid )
+         ( dbfRemMov )->cGuid          := win_uuidcreatestring()
+      end if
+
+      ( dbfRemMov )->( dbSkip() )
+
+   end while
+   ( dbfRemMov )->( ordSetFocus( 1 ) )
+
+   /*
+   Lineas----------------------------------------------------------------------
+   */
+
+   ( dbfHisMov )->( ordSetFocus( 0 ) )
+
+   ( dbfHisMov )->( dbGoTop() )
+   while !( dbfHisMov )->( eof() )
+
+      if empty( ( dbfHisMov )->cGuid )
+         ( dbfHisMov )->cGuid          := win_uuidcreatestring()
+      end if
+
+      if empty( ( dbfHisMov )->cGuidPar )
+         ( dbfHisMov )->cGuidPar       := RetFld( Str( ( dbfHisMov )->nNumRem ) + ( dbfHisMov )->cSufRem, dbfRemMov, "cGuid", "cNumRem" )
+      end if
+
+      ( dbfHisMov )->( dbSkip() )
+
+   end while
+
+   ( dbfHisMov )->( ordSetFocus( 1 ) )
+
+   ( dbfMovSer )->( dbGoTop() )
+
+   while !( dbfMovSer )->( eof() )
+
+      if empty( ( dbfMovSer )->cGuid )
+         ( dbfMovSer )->cGuid          := win_uuidcreatestring()
+      end if
+
+      //Vas por aqui----------------------------------------------------------
+
+      if empty( ( dbfMovSer )->cGuidPar )
+         ( dbfMovSer )->cGuidPar       := RetFld( Str( ( dbfMovSer )->nNumRem ) + ( dbfMovSer )->cSufRem + Str( ( dbfMovSer )->nNumLin, 9 ), dbfHisMov, "cGuid", "cRemLin" )
+      end if
+
+      ( dbfMovSer )->( dbSkip() )
+
+   end while
+
+   RECOVER USING oError
+
+      msgstop( "Imposible abrir todas las bases de datos de movimientos de almacén" + CRLF + ErrorMessage( oError ) )
+
+   END SEQUENCE
+
+   ErrorBlock( oBlock )
+
+   CLOSE ( dbfRemMov )
+   CLOSE ( dbfHisMov )
+   CLOSE ( dbfMovSer )
+
+return nil
 
 //---------------------------------------------------------------------------//

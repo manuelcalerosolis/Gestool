@@ -174,11 +174,17 @@ METHOD LoadArticulo()
 
    local cCodigoArticulo   := ::oCodigoArticulo:VarGet()
 
+   if Empty( ::oDbfArtCode ) .or. Empty( ::oDbfArticulo )
+      Return .t.
+   end if
+
    /*
    Primero buscamos por codigos de barra
    */
 
    cCodigoArticulo         := cSeekCodebar( cCodigoArticulo, ::oDbfArtCode:cAlias, ::oDbfArticulo:cAlias )
+
+
 
    /*
    Ahora buscamos por el codigo interno

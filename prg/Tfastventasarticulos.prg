@@ -949,7 +949,7 @@ Method lValidRegister() CLASS TFastVentasArticulos
       Return .f.
    end if
 
-   if !empty( ::oGrupoFabricante ) .and. !( ::oDbf:cCodFab     >= ::oGrupoFabricante:Cargo:getDesde()       .and. ::oDbf:cCodFab    <= ::oGrupoFabricante:Cargo:getHasta() )
+   if !empty( ::oGrupoFabricante ) .and. !( ::oDbf:cCodFab     >= ::oGrupoFabricante:Cargo:getDesde()   .and. ::oDbf:cCodFab    <= ::oGrupoFabricante:Cargo:getHasta() )
       Return .f.
    end if
 
@@ -1406,7 +1406,7 @@ METHOD AddSATClientes() CLASS TFastVentasArticulos
 
    ::setFilterFamily() 
 
-   ::setFilterGroupFamily() 
+   ::setFilterGroupFamily()
 
    // procesamos los SAT ---------------------------------------------
 
@@ -1984,7 +1984,7 @@ METHOD AddAlbaranCliente( lFacturados ) CLASS TFastVentasArticulos
    ::setFilterUserId()
 
    ::setFilterAgent()
-   
+
    // filtros para las líneas-------------------------------------------------
 
    ::cExpresionLine        := '!Field->lTotLin .and. !Field->lControl'
@@ -3298,7 +3298,7 @@ METHOD AddMovimientoAlmacen() CLASS TFastVentasArticulos
       ::oDbf:cSecDoc    := SubStr( oRowSet:fieldget( 'hora' ), 7, 2 )
       ::oDbf:cTimDoc    := oRowSet:fieldget( 'hora' )
 
-      ::oDbf:Insert()
+      ::insertIfValid()
 
       ::setMeterAutoIncremental()
 
