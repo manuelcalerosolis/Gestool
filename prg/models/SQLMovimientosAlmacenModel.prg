@@ -88,7 +88,10 @@ METHOD getInitialSelect()
                            "agente, "                                            + ;
                            "divisa, "                                            + ;
                            "divisa_cambio, "                                     + ;
-                           "comentarios "                                        + ;        
+                           "comentarios,"                                        + ;        
+                           "creado, "                                            + ;
+                           "modificado, "                                        + ;
+                           "enviado "                                            + ;        
                         "FROM " + ::getTableName()                          
 
 RETURN ( cSelect )

@@ -45,7 +45,14 @@ END CLASS
 
 METHOD Activate()
 
-   DEFINE DIALOG ::oDialog RESOURCE "MOVIMIENTOS_ALMACEN" TITLE ::lblTitle() + ::oController:getTitle()
+   DEFINE DIALOG     ::oDialog ;
+      RESOURCE       "MOVIMIENTOS_ALMACEN" ;
+      TITLE          ::lblTitle() + ::oController:getTitle() 
+
+      REDEFINE GET   alltrim( str( ::oController:oModel:hBuffer[ "id" ] ) );
+         ID          200 ;
+         WHEN        ( .f. ) ;
+         OF          ::oDialog
 
       REDEFINE GET   ::oGetNumero ;
          VAR         ::oController:oModel:hBuffer[ "numero" ] ;

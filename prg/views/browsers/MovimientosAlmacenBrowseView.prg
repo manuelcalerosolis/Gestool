@@ -105,6 +105,42 @@ METHOD addColumns()
       :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
    end with
 
+   with object ( ::oBrowse:AddCol() )
+      :cSortOrder          := 'creado'
+      :cHeader             := 'Creado'
+      :cEditPicture        := '@DT'
+      :nWidth              := 140
+      :nHeadStrAlign       := AL_LEFT
+      :nDataStrAlign       := AL_LEFT
+      :lHide               := .t.
+      :bEditValue          := {|| ::getRowSet():fieldGet( 'creado' ) }
+      :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
+   end with
+
+   with object ( ::oBrowse:AddCol() )
+      :cSortOrder          := 'modificado'
+      :cHeader             := 'Modificado'
+      :cEditPicture        := '@DT'
+      :nWidth              := 140
+      :nHeadStrAlign       := AL_LEFT
+      :nDataStrAlign       := AL_LEFT
+      :lHide               := .t.
+      :bEditValue          := {|| ::getRowSet():fieldGet( 'modificado' ) }
+      :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
+   end with
+
+   with object ( ::oBrowse:AddCol() )
+      :cSortOrder          := 'enviado'
+      :cHeader             := 'Enviado'
+      :cEditPicture        := '@DT'
+      :nWidth              := 140
+      :nHeadStrAlign       := AL_LEFT
+      :nDataStrAlign       := AL_LEFT
+      :lHide               := .t.
+      :bEditValue          := {|| ::getRowSet():fieldGet( 'enviado' ) }
+      :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
+   end with
+
 RETURN ( self )
 
 //---------------------------------------------------------------------------//
