@@ -3320,20 +3320,20 @@ RETURN ( if( oError:GenCode == EG_ZERODIV, 0, Break( oError ) ) )
 
 //---------------------------------------------------------------------------//
 
-FUNCTION Quoted( uValue )
+FUNCTION Quoted( uValue, lAlert )
 
-   if( hb_isnumeric( uValue ) )
+   if ( hb_isnumeric( uValue ) )
       RETURN ( rtrim( str( uValue ) ) )
    end if 
 
-   if( hb_ischar( uValue ) )
+   if ( hb_ischar( uValue ) .or. hb_ismemo( uValue ) )
       if empty( getSqlDatabase() )
          RETURN ( "'" + rtrim( uValue ) + "'" )
       else 
          RETURN ( "'" + rtrim( getSqlDatabase():escapeStr( uValue ) ) + "'" )
       end if 
    end if 
-      
+
 RETURN ( "''" )
 
 //---------------------------------------------------------------------------//

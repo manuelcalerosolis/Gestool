@@ -279,7 +279,6 @@ RETURN ( .t. )
 
 FUNCTION Test()
 
-   // msgalert( hb_valtoexp( TStock():lCheckConsolidacion( '587', '000', '', '', '', '', '183817 12/17' ) ) )
                                  //lCheckConsolidacion( cCodigoArticulo, cCodigoAlmacen, cCodigoPrimeraPropiedad, cCodigoSegundaPropiedad, cValorPrimeraPropiedad, cValorSegundaPropiedad, cLote, dFecha, tHora )
 
    // MovimientosAlmacenController():New():ActivateNavigatorView()
