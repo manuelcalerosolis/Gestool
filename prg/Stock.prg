@@ -3556,7 +3556,7 @@ RETURN ( nRiesgo )
 
 METHOD lCheckConsolidacion( cCodigoArticulo, cCodigoAlmacen, cCodigoPrimeraPropiedad, cCodigoSegundaPropiedad, cValorPrimeraPropiedad, cValorSegundaPropiedad, cLote, dFecha, tHora )
 
-   local dConsolidacion := MovimientosAlmacenLineasRepository():getFechaHoraConsolidacion( cCodigoArticulo, cCodigoAlmacen, cCodigoPrimeraPropiedad, cCodigoSegundaPropiedad, cValorPrimeraPropiedad, cValorSegundaPropiedad, cLote, dFecha, tHora )
+   local dConsolidacion := MovimientosAlmacenLineasRepository():getFechaHoraConsolidacion( cCodigoArticulo, cCodigoAlmacen, cCodigoPrimeraPropiedad, cCodigoSegundaPropiedad, cValorPrimeraPropiedad, cValorSegundaPropiedad, cLote )
 
 RETURN ( empty( dConsolidacion ) .or. dateTimeToTimeStamp( dFecha, tHora ) >= dConsolidacion )
    

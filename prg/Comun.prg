@@ -283,9 +283,13 @@ RETURN ( .t. )
 
 FUNCTION Test()
 
+<<<<<<< HEAD
    name := 'Manuel Calero'
    
    splitIntoFirstAndLastName()
+=======
+                                 //lCheckConsolidacion( cCodigoArticulo, cCodigoAlmacen, cCodigoPrimeraPropiedad, cCodigoSegundaPropiedad, cValorPrimeraPropiedad, cValorSegundaPropiedad, cLote, dFecha, tHora )
+>>>>>>> d1588eb887fdb1825af8ab5316d9d74c428a953a
 
    ? (hb_valtoexp( name ) ) // {'Manuel', 'Calero'};
 
