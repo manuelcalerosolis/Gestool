@@ -10,6 +10,8 @@
 
 #define NUMERO_TARIFAS  6
 
+memvar name
+
 static oWnd
 static oWndBar
 static oDlgProgress
@@ -277,14 +279,23 @@ RETURN ( .t. )
 
 //---------------------------------------------------------------------------//
 
+
+
 FUNCTION Test()
 
-   // msgalert( hb_valtoexp( TStock():lCheckConsolidacion( '587', '000', '', '', '', '', '183817 12/17' ) ) )
-                                 //lCheckConsolidacion( cCodigoArticulo, cCodigoAlmacen, cCodigoPrimeraPropiedad, cCodigoSegundaPropiedad, cValorPrimeraPropiedad, cValorSegundaPropiedad, cLote, dFecha, tHora )
+   name := 'Manuel Calero'
+   
+   splitIntoFirstAndLastName()
 
-   // MovimientosAlmacenController():New():ActivateNavigatorView()
+   ? (hb_valtoexp( name ) ) // {'Manuel', 'Calero'};
 
 RETURN NIL 
+
+function splitIntoFirstAndLastName()
+
+   name = hb_atokens( name, ' ' )
+
+return nil
 
 //----------------------------------------------------------------------------//
 

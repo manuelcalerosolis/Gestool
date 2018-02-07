@@ -645,7 +645,11 @@ METHOD priorRecnoToDelete( aSelectedRecno )
 
    aSelectedRecno       := asort( aSelectedRecno, , , {|x,y| x > y } )
 
-RETURN ( atail( aSelectedRecno ) - 1 )
+   if ( atail( aSelectedRecno ) > 1 )
+      RETURN ( atail( aSelectedRecno ) - 1 )
+   end if
+
+RETURN ( atail( aSelectedRecno ) )
 
 //----------------------------------------------------------------------------//
 

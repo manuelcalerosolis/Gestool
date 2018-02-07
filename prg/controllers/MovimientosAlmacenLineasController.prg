@@ -86,8 +86,8 @@ CLASS MovimientosAlmacenLineasController FROM SQLBrowseController
    METHOD deleteLines( cId )
 
    METHOD getUuid()                    INLINE ( iif(  !empty( ::oModel ) .and. !empty( ::oModel:hBuffer ),;
-                                                      ( msgalert( hget( ::oModel:hBuffer, "uuid" ) ), hget( ::oModel:hBuffer, "uuid" ) ),;
-                                                      ( msgalert( "nil" ), nil ) ) )
+                                                      hget( ::oModel:hBuffer, "uuid" ),;
+                                                      nil ) )
 
    METHOD refreshBrowse()              INLINE ( iif(  !empty( ::oBrowseView ), ::oBrowseView:Refresh(), ) )
 

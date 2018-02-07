@@ -4,10 +4,6 @@ MVC - ToDo
 
 - Validar q el numero no exista ya en el programa.
 
-- Refresco feo al emliminar el primer registro.
-
-- Asignación de los numeros en los seeders.
-
 - Comando para poner todos los registros como enviados.
 
 - Eliminar una empresa, eliminar de SQL.
@@ -15,6 +11,10 @@ MVC - ToDo
 - Mas configuraciones.
 
 - Copias de seguridad.
+
+- Asignación de los numeros en los seeders. (done)
+
+- Refresco feo al emliminar el primer registro. (done)
 
 - Navegacion entre movimientos de almacen.(done)
 
