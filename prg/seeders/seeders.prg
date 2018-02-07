@@ -465,8 +465,6 @@ METHOD getStatementSeederMovimientosAlmacenLineasNumerosSeries( dbfMovSer )
 RETURN ( ::getInsertStatement( hCampos, SQLMovimientosAlmacenLineasNumerosSeriesModel():getTableName() ) )
 
 //---------------------------------------------------------------------------//
-<<<<<<< HEAD
-=======
 
 STATIC FUNCTION SincronizaRemesasMovimientosAlmacen()
 
@@ -562,4 +560,3 @@ STATIC FUNCTION SincronizaRemesasMovimientosAlmacen()
 RETURN NIL
 
 //---------------------------------------------------------------------------//
->>>>>>> 79d7cccfd748529620ba7df3ba44e4c970579c58
