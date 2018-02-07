@@ -250,19 +250,19 @@ RETURN ( cSentence )
 
 //---------------------------------------------------------------------------//
 
-METHOD getFechaHoraConsolidacion( cCodigoArticulo, cCodigoAlmacen, cValorPropiedad1, cValorPropiedad2, cLote )
+METHOD getFechaHoraConsolidacion( cCodigoArticulo, cCodigoAlmacen, cCodigoPropiedad1, cCodigoPropiedad2, cValorPropiedad1, cValorPropiedad2, cLote )
 
-   local cSentence   := ::getSqlSentenceFechaHoraConsolidacion( cCodigoArticulo, cCodigoAlmacen, cValorPropiedad1, cValorPropiedad2, cLote )
+   local cSentence   := ::getSqlSentenceFechaHoraConsolidacion( cCodigoArticulo, cCodigoAlmacen, cCodigoPropiedad1, cCodigoPropiedad2, cValorPropiedad1, cValorPropiedad2, cLote )
 
 RETURN ( ::getDatabase():selectValue( cSentence ) )
 
 //---------------------------------------------------------------------------//
 
-METHOD getHashFechaHoraConsolidacion( cCodigoArticulo, cCodigoAlmacen, cValorPropiedad1, cValorPropiedad2, cLote )
+METHOD getHashFechaHoraConsolidacion( cCodigoArticulo, cCodigoAlmacen, cCodigoPropiedad1, cCodigoPropiedad2, cValorPropiedad1, cValorPropiedad2, cLote )
 
    local aBuffer
    local hResult     := {=>}
-   local cSentence   := ::getSqlSentenceFechaHoraConsolidacion( cCodigoArticulo, cCodigoAlmacen, cValorPropiedad1, cValorPropiedad2, cLote )
+   local cSentence   := ::getSqlSentenceFechaHoraConsolidacion( cCodigoArticulo, cCodigoAlmacen, cCodigoPropiedad1, cCodigoPropiedad2, cValorPropiedad1, cValorPropiedad2, cLote )
 
    aBuffer           := ::getDatabase():selectFetchHash( cSentence )
 

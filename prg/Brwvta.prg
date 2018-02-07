@@ -448,7 +448,7 @@ function BrwVtaComArt( cCodArt, cNomArt )
 
    DEFINE DIALOG oDlg RESOURCE "ArtInfo" TITLE "Información del artículo : " + Rtrim( cCodArt ) + " - " + Rtrim( cNomArt )
 
-      oFld                 := TFolder():ReDefine( 300, aPrompts, aDialogs, oDlg,,,,, .f. )
+      oFld           := TFolder():ReDefine( 300, aPrompts, aDialogs, oDlg,,,,, .f. )
 
       /*
       Compras---------------------------------------------------------------------
