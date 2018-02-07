@@ -183,28 +183,30 @@ METHOD getSQLSentenceFechaHoraConsolidacion( cCodigoArticulo, cCodigoAlmacen, cC
       cSql     +=    "AND cabecera.almacen_destino = " + quoted( cCodigoAlmacen ) + " "                   
    end if 
 
-   if !empty(cCodigoPrimeraPropiedad)
+   //if !empty(cCodigoPrimeraPropiedad)
       cSql     +=    "AND lineas.codigo_primera_propiedad = " + quoted( cCodigoPrimeraPropiedad ) + " "   
-   end if 
+   //end if 
 
-   if !empty(cCodigoSegundaPropiedad)
+   //if !empty(cCodigoSegundaPropiedad)
       cSql     +=    "AND lineas.codigo_segunda_propiedad = " + quoted( cCodigoSegundaPropiedad ) + " "   
-   end if 
+   //end if 
 
-   if !empty(cValorPrimeraPropiedad)
+   //if !empty(cValorPrimeraPropiedad)
       cSql     +=    "AND lineas.valor_primera_propiedad = " + quoted( cValorPrimeraPropiedad ) + " "   
-   end if 
+   //end if 
 
-   if !empty(cValorSegundaPropiedad)
+   //if !empty(cValorSegundaPropiedad)
       cSql     +=    "AND lineas.valor_segunda_propiedad = " + quoted( cValorSegundaPropiedad ) + " "   
-   end if 
+   //end if 
 
-   if !empty(cLote)
+   //if !empty(cLote)
       cSql     +=    "AND lineas.lote = " + quoted( cLote ) + " "
-   end if 
+   //end if 
 
    cSql        += "ORDER BY cabecera.fecha_hora "                                                        + ;
                      "LIMIT 1"
+
+   logwrite( cSql )                     
 
 RETURN ( cSql )
 
