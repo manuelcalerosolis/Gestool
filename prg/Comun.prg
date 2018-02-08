@@ -6524,7 +6524,7 @@ RETURN ( dtoc( dDate ) + space( 1 ) + trans( cTime, "@R 99:99:99" ) )
 
 FUNCTION dateTimeToTimeStamp( dDate, cTime )
 
-   if At( ":", cTime ) == 0
+   if at( ":", cTime ) == 0
       cTime    := trans( cTime, "@R 99:99:99" )
    end if
 

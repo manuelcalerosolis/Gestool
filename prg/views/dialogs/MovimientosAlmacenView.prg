@@ -49,9 +49,9 @@ METHOD Activate()
       RESOURCE       "MOVIMIENTOS_ALMACEN" ;
       TITLE          ::lblTitle() + ::oController:getTitle() 
 
-      REDEFINE GET   alltrim( str( ::oController:oModel:hBuffer[ "id" ] ) );
+      REDEFINE SAY   ;
+         PROMPT      alltrim( str( ::oController:oModel:hBuffer[ "id" ] ) );
          ID          200 ;
-         WHEN        ( .f. ) ;
          OF          ::oDialog
 
       REDEFINE GET   ::oGetNumero ;
@@ -62,15 +62,15 @@ METHOD Activate()
 
       ::oGetNumero:bValid   := {|| ::oController:validateNumero() }
 
-      REDEFINE GET   ::oController:oModel:hBuffer[ "delegacion" ] ;
-         ID          110 ;
-         WHEN        ( .f. ) ;
-         OF          ::oDialog
-
       REDEFINE GET   ::oController:oModel:hBuffer[ "fecha_hora" ] ;
          ID          120 ;
          PICTURE     "@DT" ;
          WHEN        ( ::oController:isNotZoomMode() ) ;
+         OF          ::oDialog
+
+      REDEFINE SAY   ;
+         PROMPT      ::oController:oModel:hBuffer[ "delegacion" ] ;
+         ID          110 ;
          OF          ::oDialog
 
       REDEFINE SAY   ;

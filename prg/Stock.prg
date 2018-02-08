@@ -1846,15 +1846,9 @@ METHOD InsertStockFacturaProveedores( lNumeroSerie )
       :dFechaCaducidad     := ( ::cFacPrvL )->dFecCad
       :nBultos             := ( ::cFacPrvL )->nBultos
       :nCajas              := ( ::cFacPrvL )->nCanEnt
-
-      if IsTrue( lNumeroSerie )
-         :nUnidades        := if( nUnidades > 0, 1, -1 )
-         :cNumeroSerie     := ( ::cFacPrvS )->cNumSer
-      else
-         :nUnidades        := nUnidades
-      end if
+      :nUnidades           := nUnidades
       
-      ::Integra( hb_QWith() )
+      ::Integra( hb_qwith() )
 
    end with
 
@@ -2907,7 +2901,7 @@ METHOD aStockArticulo( cCodArt, cCodAlm, oBrw, lLote, lNumeroSerie, dFecIni, dFe
    local nRec
    local oBlock
    local oError 
-   local dFecha         := Ctod( "" )
+   local dFecha         
    local cSerie
    local nTotal
    local dFecDoc
@@ -2915,11 +2909,14 @@ METHOD aStockArticulo( cCodArt, cCodAlm, oBrw, lLote, lNumeroSerie, dFecIni, dFe
    local oStocks
    local aAlmacenes
 
+   cursorWait()
+
    DEFAULT lLote        := !uFieldEmpresa( "lCalLot" )
    DEFAULT lNumeroSerie := !uFieldEmpresa( "lCalSer" )
 
    lLote                := .t.
 
+   dFecha               := Ctod( "" )
    cCodArt              := padr( cCodArt, 18 )
    cCodAlm              := padr( cCodAlm, 16 )
 
@@ -3072,12 +3069,18 @@ METHOD aStockArticulo( cCodArt, cCodAlm, oBrw, lLote, lNumeroSerie, dFecIni, dFe
 
    end if
 
+   // for each oStocks in ::aStocks
+   //    logwrite( oStocks:Say() )
+   // next
+
    // Control de erroress-------------------------------------------------------
 
    RECOVER USING oError
       msgStop( ErrorMessage( oError ), "Calculo de stock" )
    END SEQUENCE
    ErrorBlock( oBlock )
+
+   cursorWE()
 
 RETURN ( ::aStocks )
 
@@ -3135,12 +3138,12 @@ Method Integra( sStocks ) CLASS TStock
 
    if ::lIntegra
 
-      nPos              := aScan( ::aStocks, {|o|  rtrim( o:cCodigo ) == rtrim( sStocks:cCodigo )                    .and.;
-                                                   rtrim( o:cCodigoAlmacen ) == rtrim( sStocks:cCodigoAlmacen )      .and.;
-                                                   rtrim( o:cValorPropiedad1 ) == rtrim( sStocks:cValorPropiedad1 )  .and.;
-                                                   rtrim( o:cValorPropiedad2 ) == rtrim( sStocks:cValorPropiedad2 )  .and.;
-                                                   if( ::lLote, rtrim( o:cLote ) == rtrim( sStocks:cLote ), .t. )    .and.;
-                                                   if( ::lNumeroSerie, rtrim( o:cNumeroSerie ) == rtrim( sStocks:cNumeroSerie ), .t. ) } )
+      nPos              := aScan( ::aStocks, {|o|  alltrim( o:cCodigo ) == alltrim( sStocks:cCodigo )                    .and.;
+                                                   alltrim( o:cCodigoAlmacen ) == alltrim( sStocks:cCodigoAlmacen )      .and.;
+                                                   alltrim( o:cValorPropiedad1 ) == alltrim( sStocks:cValorPropiedad1 )  .and.;
+                                                   alltrim( o:cValorPropiedad2 ) == alltrim( sStocks:cValorPropiedad2 )  .and.;
+                                                   if( ::lLote, alltrim( o:cLote ) == alltrim( sStocks:cLote ), .t. )    .and.;
+                                                   if( ::lNumeroSerie, alltrim( o:cNumeroSerie ) == alltrim( sStocks:cNumeroSerie ), .t. ) } )
       if nPos != 0
          ::aStocks[ nPos ]:nUnidades               += sStocks:nUnidades
          ::aStocks[ nPos ]:nBultos                 += sStocks:nBultos
@@ -3557,7 +3560,7 @@ RETURN ( nRiesgo )
 METHOD lCheckConsolidacion( cCodigoArticulo, cCodigoAlmacen, cCodigoPrimeraPropiedad, cCodigoSegundaPropiedad, cValorPrimeraPropiedad, cValorSegundaPropiedad, cLote, dFecha, tHora )
 
    local dConsolidacion := MovimientosAlmacenLineasRepository():getFechaHoraConsolidacion( cCodigoArticulo, cCodigoAlmacen, cCodigoPrimeraPropiedad, cCodigoSegundaPropiedad, cValorPrimeraPropiedad, cValorSegundaPropiedad, cLote )
-
+ 
 RETURN ( empty( dConsolidacion ) .or. dateTimeToTimeStamp( dFecha, tHora ) >= dConsolidacion )
    
 //---------------------------------------------------------------------------//
@@ -3777,39 +3780,23 @@ METHOD aStockFacturaProveedor( cCodArt, cCodAlm, lLote, lNumeroSerie )
 
       while ( ::cFacPrvL )->cRef == cCodArt .and. ( ::cFacPrvL )->cAlmLin == cCodAlm .and. !( ::cFacPrvL )->( Eof() )
 
-         if cCodigoArticulo != ( ::cFacPrvL )->cRef + ( ::cFacPrvL )->cAlmLin + ( ::cFacPrvL )->cCodPr1 + ( ::cFacPrvL )->cCodPr2 + ( ::cFacPrvL )->cValPr1 + ( ::cFacPrvL )->cValPr2 + ( ::cFacPrvL )->cLote
+         // if cCodigoArticulo != ( ::cFacPrvL )->cRef + ( ::cFacPrvL )->cAlmLin + ( ::cFacPrvL )->cCodPr1 + ( ::cFacPrvL )->cCodPr2 + ( ::cFacPrvL )->cValPr1 + ( ::cFacPrvL )->cValPr2 + ( ::cFacPrvL )->cLote
 
             if ( ::lCheckConsolidacion( ( ::cFacPrvL )->cRef, ( ::cFacPrvL )->cAlmLin, ( ::cFacPrvL )->cCodPr1, ( ::cFacPrvL )->cCodPr2, ( ::cFacPrvL )->cValPr1, ( ::cFacPrvL )->cValPr2, ( ::cFacPrvL )->cLote, ( ::cFacPrvL )->dFecFac, ( ::cFacPrvL )->tFecFac ) )
 
                if ::validateDateTime( ( ::cFacPrvL )->dFecFac, ( ::cFacPrvL )->tFecFac )
                   
-                  // Buscamos el numero de serie----------------------------------
-
-                  if lNumeroSerie .and. ( ::cFacPrvS )->( dbSeek( ( ::cFacPrvL )->cSerFac + Str( ( ::cFacPrvL )->nNumFac ) + ( ::cFacPrvL )->cSufFac + Str( ( ::cFacPrvL )->nNumLin ) ) )
-
-                     while ( ::cFacPrvS )->cSerFac + Str( ( ::cFacPrvS )->nNumFac ) + ( ::cFacPrvS )->cSufFac + Str( ( ::cFacPrvS )->nNumLin ) == ( ::cFacPrvL )->cSerFac + Str( ( ::cFacPrvL )->nNumFac ) + ( ::cFacPrvL )->cSufFac + Str( ( ::cFacPrvL )->nNumLin ) .and. !( ::cFacPrvS )->( eof() )
-
-                        ::InsertStockFacturaProveedores( .t. )
-
-                        ( ::cFacPrvS )->( dbSkip() )
-
-                     end while
-
-                  else 
-
-                     ::InsertStockFacturaProveedores()
-
-                  end if 
+                  ::InsertStockFacturaProveedores()
 
                end if 
 
-            else 
+            // else 
 
-               cCodigoArticulo := ( ::cFacPrvL )->cRef + ( ::cFacPrvL )->cAlmLin + ( ::cFacPrvL )->cCodPr1 + ( ::cFacPrvL )->cCodPr2 + ( ::cFacPrvL )->cValPr1 + ( ::cFacPrvL )->cValPr2 + ( ::cFacPrvL )->cLote
+            //    cCodigoArticulo := ( ::cFacPrvL )->cRef + ( ::cFacPrvL )->cAlmLin + ( ::cFacPrvL )->cCodPr1 + ( ::cFacPrvL )->cCodPr2 + ( ::cFacPrvL )->cValPr1 + ( ::cFacPrvL )->cValPr2 + ( ::cFacPrvL )->cLote
 
             end if
 
-         end if 
+         // end if 
 
          ( ::cFacPrvL )->( dbSkip() )
 
@@ -3833,23 +3820,7 @@ METHOD aStockFacturaProveedor( cCodArt, cCodAlm, lLote, lNumeroSerie )
 
                if ::validateDateTime( ( ::cFacPrvL )->dFecFac, ( ::cFacPrvL )->tFecFac )
                   
-                  // Buscamos el numero de serie----------------------------------
-
-                  if lNumeroSerie .and. ( ::cFacPrvS )->( dbSeek( ( ::cFacPrvL )->cSerFac + Str( ( ::cFacPrvL )->nNumFac ) + ( ::cFacPrvL )->cSufFac + Str( ( ::cFacPrvL )->nNumLin ) ) )
-
-                     while ( ::cFacPrvS )->cSerFac + Str( ( ::cFacPrvS )->nNumFac ) + ( ::cFacPrvS )->cSufFac + Str( ( ::cFacPrvS )->nNumLin ) == ( ::cFacPrvL )->cSerFac + Str( ( ::cFacPrvL )->nNumFac ) + ( ::cFacPrvL )->cSufFac + Str( ( ::cFacPrvL )->nNumLin ) .and. !( ::cFacPrvS )->( eof() )
-
-                        ::DeleteStockFacturaProveedores( .t. )
-
-                        ( ::cFacPrvS )->( dbSkip() )
-
-                     end while
-
-                  else 
-
-                     ::DeleteStockFacturaProveedores()
-
-                  end if 
+                  ::DeleteStockFacturaProveedores()
 
                end if 
 
@@ -4064,7 +4035,7 @@ METHOD aStockFacturaCliente( cCodArt, cCodAlm )
 
       while ( ::cFacCliL )->cRef == cCodArt .and. ( ::cFacCliL )->cAlmLin == cCodAlm .and. !( ::cFacCliL )->( Eof() )
 
-         if cCodigoArticulo != ( ::cFacCliL )->cRef + ( ::cFacCliL )->cAlmLin + ( ::cFacCliL )->cCodPr1 + ( ::cFacCliL )->cCodPr2 + ( ::cFacCliL )->cValPr1 + ( ::cFacCliL )->cValPr2 + ( ::cFacCliL )->cLote
+         // if cCodigoArticulo != ( ::cFacCliL )->cRef + ( ::cFacCliL )->cAlmLin + ( ::cFacCliL )->cCodPr1 + ( ::cFacCliL )->cCodPr2 + ( ::cFacCliL )->cValPr1 + ( ::cFacCliL )->cValPr2 + ( ::cFacCliL )->cLote
          
             if ::lCheckConsolidacion( ( ::cFacCliL )->cRef, ( ::cFacCliL )->cAlmLin, ( ::cFacCliL )->cCodPr1, ( ::cFacCliL )->cCodPr2, ( ::cFacCliL )->cValPr1, ( ::cFacCliL )->cValPr2, ( ::cFacCliL )->cLote, ( ::cFacCliL )->dFecFac, ( ::cFacCliL )->tFecFac ) 
          
@@ -4074,13 +4045,13 @@ METHOD aStockFacturaCliente( cCodArt, cCodAlm )
 
                end if 
 
-            else  
+            // else  
 
-               cCodigoArticulo   := ( ::cFacCliL )->cRef + ( ::cFacCliL )->cAlmLin + ( ::cFacCliL )->cCodPr1 + ( ::cFacCliL )->cCodPr2 + ( ::cFacCliL )->cValPr1 + ( ::cFacCliL )->cValPr2 + ( ::cFacCliL )->cLote
+            //    cCodigoArticulo   := ( ::cFacCliL )->cRef + ( ::cFacCliL )->cAlmLin + ( ::cFacCliL )->cCodPr1 + ( ::cFacCliL )->cCodPr2 + ( ::cFacCliL )->cValPr1 + ( ::cFacCliL )->cValPr2 + ( ::cFacCliL )->cLote
 
             end if
 
-         end if
+         // end if
 
          ( ::cFacCliL )->( dbSkip() )
 
@@ -4591,21 +4562,21 @@ RETURN ( Self )
 
 METHOD Say() CLASS SStock
 
-   RETURN ( "Alias"                    + ::cAlias                                + "," + ;
-            "Codigo"                   + ::cCodigo                               + "," + ;
-            "CodigoAlmacen"            + ::cCodigoAlmacen                        + "," + ;
-            "CodigoPropiedad1"         + ::cCodigoPropiedad1                     + "," + ;
-            "CodigoPropiedad2"         + ::cCodigoPropiedad2                     + "," + ;
-            "ValorPropiedad1"          + ::cValorPropiedad1                      + "," + ;
-            "ValorPropiedad2"          + ::cValorPropiedad2                      + "," + ;
-            "Lote"                     + ::cLote                                 + "," + ;
-            "NumeroSerie"              + ::cNumeroSerie                          + "," + ;
-            "Unidades"                 + Str( ::nUnidades )                      + "," + ;
-            "PendientesRecibir"        + Str( ::nPendientesRecibir )             + "," + ;
-            "PendientesEntregar"       + Str( ::nPendientesEntregar )            + "," + ;
-            "Unidades != 0"            + cValToChar( ::nUnidades != 0 )          + "," + ;
-            "PendientesRecibir != 0"   + cValToChar( ::nPendientesRecibir != 0 ) + "," + ;
-            "PendientesEntregar != 0"  + cValToChar( ::nPendientesEntregar != 0 ) )
+   RETURN ( "Alias"                    + " : " +  ::cAlias                                + "," + CRLF + ;
+            "Codigo"                   + " : " +  ::cCodigo                               + "," + CRLF + ;
+            "CodigoAlmacen"            + " : " +  ::cCodigoAlmacen                        + "," + CRLF + ;
+            "CodigoPropiedad1"         + " : " +  ::cCodigoPropiedad1                     + "," + CRLF + ;
+            "CodigoPropiedad2"         + " : " +  ::cCodigoPropiedad2                     + "," + CRLF + ;
+            "ValorPropiedad1"          + " : " +  ::cValorPropiedad1                      + "," + CRLF + ;
+            "ValorPropiedad2"          + " : " +  ::cValorPropiedad2                      + "," + CRLF + ;
+            "Lote"                     + " : " +  ::cLote                                 + "," + CRLF + ;
+            "NumeroSerie"              + " : " +  ::cNumeroSerie                          + "," + CRLF + ;
+            "Unidades"                 + " : " +  Str( ::nUnidades )                      + "," + CRLF + ;
+            "PendientesRecibir"        + " : " +  Str( ::nPendientesRecibir )             + "," + CRLF + ;
+            "PendientesEntregar"       + " : " +  Str( ::nPendientesEntregar )            + "," + CRLF + ;
+            "Unidades != 0"            + " : " +  cValToChar( ::nUnidades != 0 )          + "," + CRLF + ;
+            "PendientesRecibir != 0"   + " : " +  cValToChar( ::nPendientesRecibir != 0 ) + "," + CRLF + ;
+            "PendientesEntregar != 0"  + " : " +  cValToChar( ::nPendientesEntregar != 0 ) )
 
 //------------------------------------------------------------------------//
 

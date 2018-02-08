@@ -177,7 +177,7 @@ METHOD getSQLSentenceFechaHoraConsolidacion( cCodigoArticulo, cCodigoAlmacen, cC
                      "AND lineas.codigo_articulo = " + quoted( cCodigoArticulo ) + " "                   + ;
                      "AND cabecera.tipo_movimiento = 4 "                                                 
 
-   if !empty(cCodigoAlmacen)
+   if !empty( cCodigoAlmacen )
       cSql     +=    "AND cabecera.almacen_destino = " + quoted( cCodigoAlmacen ) + " "                   
    end if 
 
