@@ -4346,7 +4346,7 @@ Static Function lEscandalloEdtRec( lSet, oBrwLin )
    else
       SetWindowText( oBtnKit:hWnd, "Mostrar Esc&ll." )
       if ( dbfTmpLin )->( Used() )
-         ( dbfTmpLin )->( dbSetFilter( {|| ! Field->lKitChl }, "!lKitChl" ) )
+         ( dbfTmpLin )->( dbSetFilter( {|| ! Field->lKitChl }, "! lKitChl" ) )
       end if
    end if
 

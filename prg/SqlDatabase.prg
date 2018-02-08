@@ -308,24 +308,30 @@ RETURN ( nil )
 METHOD selectValue( cSentence )
 
    local oError
-   local aFetch
    local uValue
    local oStatement
 
-   if ::isParseError( cSentence )
-      RETURN ( nil )  
-   end if  
+   // if ::isParseError( cSentence )
+   //    RETURN ( nil )  
+   // end if  
 
    try 
 
       oStatement     := ::oConexion:Query( cSentence )
-      oStatement:fetchDirect()
       
+      if oStatement:fetchDirect()
+         uValue      := oStatement:getValue( 1 ) 
+      end if
+      
+      /*
+      oStatement:fetchDirect()
+
       aFetch         := oStatement:fetchAll( FETCH_ARRAY )
 
       if !empty( aFetch )
          uValue      := atail( aFetch )[ 1 ]
       end if 
+      */
 
    catch oError
 

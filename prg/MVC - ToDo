@@ -1,5 +1,7 @@
 MVC - ToDo
 
+- Posicinarse en el ultimo registro usado.
+
 - Error al eliminar los movimientos de almacen.
 
 - Validar q el numero no exista ya en el programa.

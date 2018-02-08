@@ -7043,7 +7043,8 @@ Static function BeginTrans( aTmp, aGet, nMode, lNewFile )
       msgStop( ErrorMessage( oError ), "Imposible crear tablas temporales." )
 
       KillTrans()
-      lErrors     := .t.
+
+      lErrors           := .t.
 
    END SEQUENCE
 
@@ -7283,15 +7284,17 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbfTmpL, oBrw, bWhen, cCodArt, nMode, aTik )
    local oGetNombrePropiedad1
    local oGetNombrePropiedad2
 
+   if empty( oBrw )
+      RETURN ( .f. )
+   end if 
+
    /*
    Posiones donde colocar el dialogo y valores por defecto---------------------
    */
 
    if nMode == APPD_MODE
 
-      if !empty( oBrw )
-         oBrw:GoBottom()
-      end if
+      oBrw:GoBottom()
 
       aTmp[ _NUNTTIL ]     := 1
       aTmp[ _NMEDUNO ]     := 0
