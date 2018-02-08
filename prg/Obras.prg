@@ -566,7 +566,7 @@ RETURN ( aItmObr )
 
 //---------------------------------------------------------------------------//
 
-FUNCTION BrwObras( oGet, oGet2, cCodCli, dbfObrasT )
+FUNCTION BrwObras( oGet, oGet2, cCodigoCliente, dbfObrasT )
 
 	local oDlg
 	local oBrw
@@ -577,6 +577,7 @@ FUNCTION BrwObras( oGet, oGet2, cCodCli, dbfObrasT )
    local nOrd        := GetBrwOpt( "BrwObras" )
 	local oCbxOrd
    local aCbxOrd     := { "Código", "Nombre" }
+   local aIndOrd     := { "cCodCli", "cNomObr" }
    local cCbxOrd     := "Código"
    local nLevel      := nLevelUsr( "01032" )
    local lClose      := .f.
@@ -586,7 +587,7 @@ FUNCTION BrwObras( oGet, oGet2, cCodCli, dbfObrasT )
    nOrd              := Min( Max( nOrd, 1 ), len( aCbxOrd ) )
    cCbxOrd           := aCbxOrd[ nOrd ]
 
-   if Empty( cCodCli )
+   if Empty( cCodigoCliente )
 		MsgStop( "Es necesario codificar un cliente" )
       return .t.
    end if
@@ -599,13 +600,11 @@ FUNCTION BrwObras( oGet, oGet2, cCodCli, dbfObrasT )
    if Empty( dbfObrasT )
       USE ( cPatCli() + "ObrasT.Dbf" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "OBRAST", @dbfObrasT ) )
       SET ADSINDEX TO ( cPatCli() + "ObrasT.Cdx" ) ADDITIVE
-      lClose      := .t.
+      lClose         := .t.
    END IF
 
    ( dbfObrasT )->( ordSetFocus( nOrd ) )
-
-   ( dbfObrasT )->( OrdScope( 0, cCodCli ) )
-   ( dbfObrasT )->( OrdScope( 1, cCodCli ) )
+   ( dbfObrasT )->( dbSetFilter( {|| alltrim( Field->cCodCli ) = alltrim( cCodigoCliente ) }, "Field->cCodigoCliente = 'cCodCli'" ) )
    ( dbfObrasT )->( dbGoTop() )
 
    DEFINE DIALOG     oDlg ;
@@ -614,7 +613,7 @@ FUNCTION BrwObras( oGet, oGet2, cCodCli, dbfObrasT )
 
       REDEFINE GET oGet1 VAR cGet1;
          ID          104 ;
-         ON CHANGE   ( AutoSeek( nKey, nFlags, Self, oBrw, dbfObrasT, nil, cCodCli ) );
+         ON CHANGE   ( AutoSeek( nKey, nFlags, Self, oBrw, dbfObrasT, nil, cCodigoCliente ) );
          BITMAP      "FIND" ;
          OF          oDlg
 
@@ -622,9 +621,7 @@ FUNCTION BrwObras( oGet, oGet2, cCodCli, dbfObrasT )
 			VAR 		   cCbxOrd ;
 			ID 		   102 ;
          ITEMS       aCbxOrd ;
-         ON CHANGE   (  ( dbfObrasT )->( OrdSetFocus( oCbxOrd:nAt ) ),;
-                     ( dbfObrasT )->( OrdScope( 0, cCodCli ) ),;
-                     ( dbfObrasT )->( OrdScope( 1, cCodCli ) ),;
+         ON CHANGE   ( ( dbfObrasT )->( ordsetfocus( oCbxOrd:nAt ) ),;
                      oBrw:Refresh(),;
                      oGet1:SetFocus() );
 			OF 		   oDlg
@@ -642,7 +639,7 @@ FUNCTION BrwObras( oGet, oGet2, cCodCli, dbfObrasT )
          :cSortOrder       := "Codigo"
          :bEditValue       := {|| ( dbfObrasT )->cCodObr }
          :nWidth           := 80
-         :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | oCbxOrd:Set( oCol:cHeader ) }
+         :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | oCbxOrd:Set( oCol:cHeader ), eval( oCbxOrd:bChange ) }
       end with
 
       with object ( oBrw:AddCol() )
@@ -650,7 +647,7 @@ FUNCTION BrwObras( oGet, oGet2, cCodCli, dbfObrasT )
          :cSortOrder       := "Nombre"
          :bEditValue       := {|| ( dbfObrasT )->cNomObr }
          :nWidth           := 360
-         :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | oCbxOrd:Set( oCol:cHeader ) }
+         :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | oCbxOrd:Set( oCol:cHeader ), eval( oCbxOrd:bChange ) }
       end with
 
       oBrw:bLDblClick      := {|| oDlg:end( IDOK ) }
@@ -661,17 +658,17 @@ FUNCTION BrwObras( oGet, oGet2, cCodCli, dbfObrasT )
          ID       500 ;
          OF       oDlg ;
          WHEN     ( nAnd( nLevel, ACC_APPD ) != 0 .and. !IsReport() );
-         ACTION   ( WinAppRec( oBrw, bEdit, dbfObrasT, nil, nil, cCodCli ) )
+         ACTION   ( WinAppRec( oBrw, bEdit, dbfObrasT, nil, nil, cCodigoCliente ) )
 
 		REDEFINE BUTTON ;
          ID       501 ;
          OF       oDlg ;
          WHEN     ( nAnd( nLevel, ACC_EDIT ) != 0 .and. !IsReport() );
-         ACTION   ( WinEdtRec( oBrw, bEdit, dbfObrasT, nil, nil, cCodCli ) )
+         ACTION   ( WinEdtRec( oBrw, bEdit, dbfObrasT, nil, nil, cCodigoCliente ) )
 
       if !IsReport()
-         oDlg:AddFastKey( VK_F2, {|| if( nAnd( nLevel, ACC_APPD ) != 0, WinAppRec( oBrw, bEdit, dbfObrasT, nil, nil, cCodCli ), ) } )
-         oDlg:AddFastKey( VK_F3, {|| if( nAnd( nLevel, ACC_EDIT ) != 0, WinEdtRec( oBrw, bEdit, dbfObrasT, nil, nil, cCodCli ), ) } )
+         oDlg:AddFastKey( VK_F2, {|| if( nAnd( nLevel, ACC_APPD ) != 0, WinAppRec( oBrw, bEdit, dbfObrasT, nil, nil, cCodigoCliente ), ) } )
+         oDlg:AddFastKey( VK_F3, {|| if( nAnd( nLevel, ACC_EDIT ) != 0, WinEdtRec( oBrw, bEdit, dbfObrasT, nil, nil, cCodigoCliente ), ) } )
       end if
 
    oDlg:AddFastKey( VK_F5,       {|| oDlg:end( IDOK ) } )
@@ -696,9 +693,7 @@ FUNCTION BrwObras( oGet, oGet2, cCodCli, dbfObrasT )
    if lClose
       ( dbfObrasT )->( dbCloseArea() )
    else
-      ( dbfObrasT )->( OrdSetFocus( nOrd ) )
-      ( dbfObrasT )->( OrdScope( 0, nil ) )
-      ( dbfObrasT )->( OrdScope( 1, nil ) )
+      ( dbfObrasT )->( dbSetFilter() )
    end if
 
 	oGet:setFocus()
@@ -707,7 +702,7 @@ RETURN ( oDlg:nResult == IDOK )
 
 //---------------------------------------------------------------------------//
 
-FUNCTION cObras( oGet, oGet2, cCodCli, dbfObrasT )
+FUNCTION cObras( oGet, oGet2, cCodigoCliente, dbfObrasT )
 
 	local lValid 	:= .f.
 	local lClose 	:= .f.
@@ -720,7 +715,7 @@ FUNCTION cObras( oGet, oGet2, cCodCli, dbfObrasT )
       return .t.
    end if
 
-   if Empty( cCodCli )
+   if Empty( cCodigoCliente )
 		MsgStop( "Es necesario codificar un cliente" )
 		return .t.
 	end if
@@ -733,7 +728,7 @@ FUNCTION cObras( oGet, oGet2, cCodCli, dbfObrasT )
       ( dbfObrasT )->( OrdSetFocus( "cCodCli" ) )
    end if
 
-   xValor         := cCodCli + xValor
+   xValor         := cCodigoCliente + xValor
 
    if ( dbfObrasT )->( dbSeek( xValor ) )
 
