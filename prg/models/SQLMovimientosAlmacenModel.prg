@@ -10,23 +10,19 @@ CLASS SQLMovimientosAlmacenModel FROM SQLExportableModel
 
    DATA cConstraints             INIT "PRIMARY KEY (id), KEY (uuid)"
 
-   DATA aTextoMovimiento         INIT { "Entre almacenes", "Regularización", "Objetivos", "Consolidación" }
-
    METHOD getColumns()
 
    METHOD getColumnMovimiento()  
 
    METHOD getInitialSelect()
    
-   METHOD cTextoMovimiento()  
-
    METHOD getDeleteSentenceById( aId )
 
    METHOD loadDuplicateBuffer( id )                
 
-   // METHOD selectNotSentToJson()
+   METHOD getInsertSentence( hBuffer )
 
-   // METHOD sendData()             INLINE ( ::selectNotSentToJson() )
+   METHOD assingNumber()
 
 END CLASS
 
@@ -37,7 +33,7 @@ METHOD getColumns()
    ::getEmpresaColumns()
 
    hset( ::hColumns, "numero",            {  "create"    => "CHAR ( 50 )"                             ,;
-                                             "default"   => {|| MovimientosAlmacenRepository():getLastNumber() } }                       )
+                                             "default"   => {|| MovimientosAlmacenRepository():getNextNumber() } }                       )
 
    hset( ::hColumns, "fecha_hora",        {  "create"    => "DATETIME DEFAULT CURRENT_TIMESTAMP"      ,;
                                              "default"   => {|| hb_datetime() } }                     )
@@ -76,36 +72,51 @@ RETURN ( ::hColumns )
 
 METHOD getInitialSelect()
 
-   local cSelect     := "SELECT id, "                                            + ;
-                           "numero, "                                            + ;
-                           "uuid, "                                              + ;
-                           "tipo_movimiento, "                                   + ;
-                           ::getColumnMovimiento()                               + ;
-                           "fecha_hora, "                                        + ;
-                           "almacen_origen, "                                    + ;
-                           "almacen_destino, "                                   + ;
-                           "grupo_movimiento, "                                  + ;
-                           "agente, "                                            + ;
-                           "divisa, "                                            + ;
-                           "divisa_cambio, "                                     + ;
-                           "comentarios,"                                        + ;        
-                           "creado, "                                            + ;
-                           "modificado, "                                        + ;
-                           "enviado "                                            + ;        
-                        "FROM " + ::getTableName()                          
+   local cSelect     := "SELECT "                                                         + ;
+                           "movimientos_almacen.id                         AS id, "       + ;
+                           "movimientos_almacen.numero                     AS numero, "   + ;
+                           "movimientos_almacen.uuid, "                       + ;
+                           "movimientos_almacen.tipo_movimiento, "            + ;
+                           ::getColumnMovimiento( "movimientos_almacen" )     + ;
+                           "movimientos_almacen.fecha_hora, "                 + ;
+                           "movimientos_almacen.almacen_origen, "             + ;
+                           "movimientos_almacen.almacen_destino, "            + ;
+                           "movimientos_almacen.grupo_movimiento, "           + ;
+                           "movimientos_almacen.agente, "                     + ;
+                           "movimientos_almacen.divisa, "                     + ;
+                           "movimientos_almacen.divisa_cambio, "              + ;
+                           "movimientos_almacen.comentarios,"                 + ;        
+                           "movimientos_almacen.creado, "                     + ;
+                           "movimientos_almacen.modificado, "                 + ;
+                           "movimientos_almacen.enviado "                     + ;  
+                        "FROM " + ::getTableName() + " "                      + ;
+                           "INNER JOIN movimientos_almacen_lineas "           + ;
+                           "ON movimientos_almacen.uuid = movimientos_almacen_lineas.parent_uuid "
+
 
 RETURN ( cSelect )
 
 //---------------------------------------------------------------------------//
 
-METHOD cTextoMovimiento( nPosition )
+METHOD getColumnMovimiento( cTable )  
 
-   DEFAULT nPosition := 1
+   local cSql  
 
-   nPosition         := max( nPosition, 1 )
-   nPosition         := min( nPosition, len( ::aTextoMovimiento ) )
+   DEFAULT cTable := ""
 
-RETURN ( ::aTextoMovimiento[ nPosition ] ) 
+   if !empty( cTable )
+      cTable      += "."
+   end if
+
+   cSql           := "CASE "                                                                                                  
+   cSql           +=    "WHEN " + cTable + "tipo_movimiento = 1 THEN 'Entre almacenes' " 
+   cSql           +=    "WHEN " + cTable + "tipo_movimiento = 2 THEN 'Regularización' " 
+   cSql           +=    "WHEN " + cTable + "tipo_movimiento = 3 THEN 'Objetivos' " 
+   cSql           +=    "WHEN " + cTable + "tipo_movimiento = 4 THEN 'Consolidación' " 
+   cSql           +=    "ELSE 'Vacio' "
+   cSql           += "END as nombre_movimiento, "
+
+RETURN ( cSql )
 
 //---------------------------------------------------------------------------//
 
@@ -137,67 +148,44 @@ RETURN ( aSQLDelete )
 
 //---------------------------------------------------------------------------//
 
-METHOD getColumnMovimiento( cTable )  
-
-   local cSql  
-
-   DEFAULT cTable := ""
-
-   if !empty( cTable )
-      cTable      += "."
-   end if
-
-   cSql           := "CASE "                                                                                                  
-   cSql           +=    "WHEN " + cTable + "tipo_movimiento = 1 THEN 'Entre almacenes' " 
-   cSql           +=    "WHEN " + cTable + "tipo_movimiento = 2 THEN 'Regularización' " 
-   cSql           +=    "WHEN " + cTable + "tipo_movimiento = 3 THEN 'Objetivos' " 
-   cSql           +=    "WHEN " + cTable + "tipo_movimiento = 4 THEN 'Consolidación' " 
-   cSql           +=    "ELSE 'Vacio' "
-   cSql           += "END as nombre_movimiento, "
-
-RETURN ( cSql )
-
-//---------------------------------------------------------------------------//
-
 METHOD loadDuplicateBuffer( id )                
 
    ::Super:loadDuplicateBuffer( id )
 
-   if hhaskey( ::hBuffer, "numero" )
-      hset( ::hBuffer, "numero", MovimientosAlmacenRepository():getLastNumber() )
-   end if 
+   hset( ::hBuffer, "numero", MovimientosAlmacenRepository():getNextNumber() )
 
-   if hhaskey( ::hBuffer, "fecha_hora" )
-      hset( ::hBuffer, "fecha_hora", hb_datetime() )
-   end if 
+   hset( ::hBuffer, "fecha_hora", hb_datetime() )
 
 RETURN ( ::hBuffer )
 
 //---------------------------------------------------------------------------//
-/*
-METHOD selectNotSentToJson()
 
-   local oSQLLineasModel
-   local oSQLLineasNumerosSeriesModel
+METHOD getInsertSentence( hBuffer )
 
-   ::Super:selectNotSentToJson()
+   DEFAULT hBuffer   := ::hBuffer
 
-   if empty( ::aFetch )
-      RETURN ( nil )
+   ::assingNumber( hBuffer )
+
+   ::Super:getInsertSentence( hBuffer )
+
+RETURN ( .t. )
+
+//---------------------------------------------------------------------------//
+
+METHOD assingNumber( hBuffer )
+
+   local cNumero  := hget( hBuffer, "numero" )
+
+   if empty( cNumero )
+      RETURN ( .f. )
    end if 
 
-   oSQLLineasModel               := SQLMovimientosAlmacenLineasModel():New()
-   
-   oSQLLineasModel:selectFetchToJson( oSQLLineasModel:getSentenceNotSent( ::aFetch ) )
+   while !empty( MovimientosAlmacenRepository():getIdByNumber( cNumero ) )
+      cNumero     := nextDocumentNumber( cNumero )
+   end while
 
-   oSQLLineasNumerosSeriesModel  := SQLMovimientosAlmacenLineasNumerosSeriesModel():New()
+   hset( hBuffer, "numero", cNumero )
 
-   if empty( oSQLLineasModel:aFetch )
-      RETURN ( nil )
-   end if 
+RETURN ( .t. )
 
-   oSQLLineasNumerosSeriesModel:selectFetchToJson( oSQLLineasNumerosSeriesModel:getSentenceNotSent( oSQLLineasModel:aFetch ) )
-
-RETURN ( self )
-*/
 //---------------------------------------------------------------------------//

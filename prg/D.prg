@@ -1347,6 +1347,7 @@ METHOD appendHashRecordInWorkarea( hTable, cDataTable, workArea ) CLASS D
 
       lAppend        := .t.
 
+      ( workArea )->( dbcommit() )
       ( workArea )->( dbunlock() )
 
    end if 
@@ -1376,9 +1377,14 @@ METHOD editHashRecord( hTable, cDataTable, nView ) CLASS D
    end if
 
    if ( workArea )->( dbrlock() )
+
       ::setHashRecord( hTable, workArea, hDictionary )
+
       lEdit          := .t.
+
+      ( workArea )->( dbcommit() )
       ( workArea )->( dbUnLock() )
+
    end if 
 
 RETURN ( lEdit )

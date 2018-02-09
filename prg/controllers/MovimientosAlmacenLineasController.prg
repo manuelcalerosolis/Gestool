@@ -41,7 +41,7 @@ CLASS MovimientosAlmacenLineasController FROM SQLBrowseController
 
    METHOD stampCajas()                 INLINE ( ::oDialogView:oGetCajasArticulo:cText( hget( ::hArticulo, "ncajent" ) ) )
 
-   METHOD stampUnidades()              INLINE ( ::oDialogView:oGetUnidadesArticulo:cText( hget( ::hArticulo, "nunicaja" ) ) )
+   METHOD stampUnidades()              INLINE ( ::oDialogView:oGetUnidadesArticulo:cText( max( hget( ::hArticulo, "nunicaja" ), 1 ) ) )
 
    METHOD stampPrecio()                INLINE ( ::oDialogView:oGetPrecioArticulo:cText( hget( ::hArticulo, "pcosto" ) ) )
 

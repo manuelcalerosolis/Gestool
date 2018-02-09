@@ -24,6 +24,8 @@ CLASS MovimientosAlmacenValidator FROM SQLBaseValidator
 
    METHOD existDivisa( value )
  
+   METHOD existNumber( value )
+
 END CLASS
 
 //---------------------------------------------------------------------------//
@@ -135,3 +137,12 @@ METHOD existDivisa( value )
 RETURN ( DivisasModel():exist( value ) )
 
 //---------------------------------------------------------------------------//
+
+METHOD existNumber( value )
+
+   msgalert( value, "existNumber" )
+
+RETURN ( .t. )
+
+//---------------------------------------------------------------------------//
+

@@ -4,8 +4,6 @@ MVC - ToDo
 
 - Error al eliminar los movimientos de almacen.
 
-- Validar q el numero no exista ya en el programa.
-
 - Comando para poner todos los registros como enviados.
 
 - Eliminar una empresa, eliminar de SQL.
@@ -13,6 +11,8 @@ MVC - ToDo
 - Mas configuraciones.
 
 - Copias de seguridad.
+
+- Validar q el numero no exista ya en el programa. (done)
 
 - Asignación de los numeros en los seeders. (done)
 

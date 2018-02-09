@@ -18,6 +18,8 @@ CLASS MovimientosAlmacenRepository FROM SQLBaseRepository
 
    METHOD getIdByUuid( uuid )       INLINE ( getSQLDataBase():selectValue( ::getSQLSentenceIdByUuid( uuid ) ) )
 
+   METHOD getNextNumber( cUser )
+
    METHOD getLastNumber( cUser )
 
    METHOD getLastNumberByUser( cUser )
@@ -100,7 +102,14 @@ METHOD getLastNumber( cUser )
       cNumero     := getSqlDataBase():selectValue( ::getLastNumberByUser() )
    end if 
 
-RETURN ( nextDocumentNumber( cNumero ) )
+RETURN ( cNumero )
 
 //---------------------------------------------------------------------------//
 
+METHOD getNextNumber( cUser )
+
+   local cNumero  := ::getLastNumber( cUser ) 
+
+RETURN ( nextDocumentNumber( cNumero ) )
+
+//---------------------------------------------------------------------------//

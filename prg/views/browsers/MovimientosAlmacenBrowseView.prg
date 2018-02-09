@@ -22,10 +22,10 @@ METHOD addColumns()
    end with
 
    with object ( ::oBrowse:AddCol() )
-      :cSortOrder          := 'uuid'
+      :cSortOrder          := 'movimientos_almacen.uuid'
       :cHeader             := 'Uuid'
       :nWidth              := 180
-      :bEditValue          := {|| ::getRowSet():fieldGet( 'uuid' ) }
+      :bEditValue          := {|| ::getRowSet():fieldGet( 'movimientos_almacen.uuid' ) }
       :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
       :lHide               := .t.
    end with
@@ -47,97 +47,97 @@ METHOD addColumns()
    end with
 
    with object ( ::oBrowse:AddCol() )
-      :cSortOrder          := 'fecha_hora'
+      :cSortOrder          := 'movimientos_almacen.fecha_hora'
       :cHeader             := 'Fecha'
       :cEditPicture        := '@DT'
       :nWidth              := 140
       :nHeadStrAlign       := AL_LEFT
       :nDataStrAlign       := AL_LEFT
-      :bEditValue          := {|| ::getRowSet():fieldGet( 'fecha_hora' ) }
+      :bEditValue          := {|| ::getRowSet():fieldGet( 'movimientos_almacen.fecha_hora' ) }
       :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
    end with
 
    with object ( ::oBrowse:AddCol() )
-      :cSortOrder          := 'almacen_origen'
+      :cSortOrder          := 'movimientos_almacen.almacen_origen'
       :cHeader             := 'Almacén origen'
       :nWidth              := 80
-      :bEditValue          := {|| ::getRowSet():fieldGet( 'almacen_origen' ) }
+      :bEditValue          := {|| ::getRowSet():fieldGet( 'movimientos_almacen.almacen_origen' ) }
       :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
    end with
 
    with object ( ::oBrowse:AddCol() )
-      :cSortOrder          := 'almacen_destino'
+      :cSortOrder          := 'movimientos_almacen.almacen_destino'
       :cHeader             := 'Almacén destino'
       :nWidth              := 80
-      :bEditValue          := {|| ::getRowSet():fieldGet( 'almacen_destino' ) }
+      :bEditValue          := {|| ::getRowSet():fieldGet( 'movimientos_almacen.almacen_destino' ) }
       :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
    end with
 
    with object ( ::oBrowse:AddCol() )
-      :cSortOrder          := 'grupo_movimiento'
+      :cSortOrder          := 'movimientos_almacen.grupo_movimiento'
       :cHeader             := 'Grupo'
       :nWidth              := 80
-      :bEditValue          := {|| ::getRowSet():fieldGet( 'grupo_movimiento' ) }
+      :bEditValue          := {|| ::getRowSet():fieldGet( 'movimientos_almacen.grupo_movimiento' ) }
       :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
    end with
 
    with object ( ::oBrowse:AddCol() )
-      :cSortOrder          := 'agente'
+      :cSortOrder          := 'movimientos_almacen.agente'
       :cHeader             := 'Agente'
       :nWidth              := 80
-      :bEditValue          := {|| ::getRowSet():fieldGet( 'agente' ) }
+      :bEditValue          := {|| ::getRowSet():fieldGet( 'movimientos_almacen.agente' ) }
       :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
    end with
 
    with object ( ::oBrowse:AddCol() )
-      :cSortOrder          := 'divisa'
+      :cSortOrder          := 'movimientos_almacen.divisa'
       :cHeader             := 'Divisa'
       :nWidth              := 80
-      :bEditValue          := {|| ::getRowSet():fieldGet( 'divisa' ) }
+      :bEditValue          := {|| ::getRowSet():fieldGet( 'movimientos_almacen.divisa' ) }
       :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
    end with
 
    with object ( ::oBrowse:AddCol() )
-      :cSortOrder          := 'comentarios'
+      :cSortOrder          := 'movimientos_almacen.comentarios'
       :cHeader             := 'Comentarios'
       :nWidth              := 240
-      :bEditValue          := {|| ::getRowSet():fieldGet( 'comentarios' ) }
+      :bEditValue          := {|| ::getRowSet():fieldGet( 'movimientos_almacen.comentarios' ) }
       :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
    end with
 
    with object ( ::oBrowse:AddCol() )
-      :cSortOrder          := 'creado'
+      :cSortOrder          := 'movimientos_almacen.creado'
       :cHeader             := 'Creado'
       :cEditPicture        := '@DT'
       :nWidth              := 140
       :nHeadStrAlign       := AL_LEFT
       :nDataStrAlign       := AL_LEFT
       :lHide               := .t.
-      :bEditValue          := {|| ::getRowSet():fieldGet( 'creado' ) }
+      :bEditValue          := {|| ::getRowSet():fieldGet( 'movimientos_almacen.creado' ) }
       :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
    end with
 
    with object ( ::oBrowse:AddCol() )
-      :cSortOrder          := 'modificado'
+      :cSortOrder          := 'movimientos_almacen.modificado'
       :cHeader             := 'Modificado'
       :cEditPicture        := '@DT'
       :nWidth              := 140
       :nHeadStrAlign       := AL_LEFT
       :nDataStrAlign       := AL_LEFT
       :lHide               := .t.
-      :bEditValue          := {|| ::getRowSet():fieldGet( 'modificado' ) }
+      :bEditValue          := {|| ::getRowSet():fieldGet( 'movimientos_almacen.modificado' ) }
       :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
    end with
 
    with object ( ::oBrowse:AddCol() )
-      :cSortOrder          := 'enviado'
+      :cSortOrder          := 'movimientos_almacen.enviado'
       :cHeader             := 'Enviado'
       :cEditPicture        := '@DT'
       :nWidth              := 140
       :nHeadStrAlign       := AL_LEFT
       :nDataStrAlign       := AL_LEFT
       :lHide               := .t.
-      :bEditValue          := {|| ::getRowSet():fieldGet( 'enviado' ) }
+      :bEditValue          := {|| ::getRowSet():fieldGet( 'movimientos_almacen.enviado' ) }
       :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
    end with
 
