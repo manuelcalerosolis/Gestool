@@ -384,7 +384,7 @@ METHOD getCreateTableSentence()
    
    local cSQLCreateTable 
 
-   cSQLCreateTable         := "CREATE TABLE " + ::cTableName + " ( "
+   cSQLCreateTable         := "CREATE TABLE " + ::oDatabase:cDatabaseMySQL + "." + ::cTableName + " ( "
 
    hEval( ::getColumns(),;
       {| k, hash | if( hhaskey( hash, "create" ), cSQLCreateTable += k + " " + hget( hash, "create" ) + ", ", ) } )
@@ -426,7 +426,7 @@ METHOD getAlterTableSentences( aSchemaColumns )
       if nPosition != 0
          hb_hdelat( hColumns, nPosition )
       else 
-         aadd( aAlter, "ALTER TABLE " + ::cTableName + " DROP COLUMN " + hget( hColumn, "COLUMN_NAME" ) )
+         aadd( aAlter, "ALTER TABLE " + ::oDatabase:cDatabaseMySQL + "." + ::cTableName + " DROP COLUMN " + hget( hColumn, "COLUMN_NAME" ) )
       end if
 
    next

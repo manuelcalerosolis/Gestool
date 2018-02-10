@@ -78,7 +78,8 @@ METHOD getSchemaColumns( oModel )
 
    cSentence               := "SELECT COLUMN_NAME "                              +;
                                  "FROM INFORMATION_SCHEMA.COLUMNS "              +;
-                                 "WHERE table_name = " + quoted( oModel:cTableName )
+                                 "WHERE table_name = " + quoted( oModel:cTableName ) + " " +;
+                                    "AND table_schema = " + quoted( getSQLDatabase():cDatabaseMySQL ) 
 
    try
 
