@@ -39,6 +39,8 @@ CLASS SQLMovimientosAlmacenLineasModel FROM SQLExportableModel
 
    METHOD getSQLSubSentenceSumatorioUnidadesLinea( cTable, cAs )
 
+   METHOD getSQLSubSentenceSumatorioTotalPrecioLinea( cTable, cAs )
+
    METHOD getSentenceNotSent( aFetch )
 
    METHOD getIdProductAdded()
@@ -272,6 +274,24 @@ METHOD getSQLSubSentenceSumatorioUnidadesLinea( cTable, cAs )
    end if 
 
 RETURN ( "SUM( " + cTable + "unidades_articulo ) AS " + cAs + " " )
+
+//---------------------------------------------------------------------------//
+
+METHOD getSQLSubSentenceSumatorioTotalPrecioLinea( cTable, cAs )
+
+   DEFAULT cAs       := "total_precio"
+
+   if empty( cTable )
+      cTable         := ""
+   else
+      cTable         += "."
+   end if
+
+   if lCalCaj()   
+      RETURN ( "SUM( IF( " + cTable + "cajas_articulo = 0, 1, " + cTable + "cajas_articulo ) * " + cTable + "unidades_articulo * " + cTable + "precio_articulo ) AS " + cAs + " " )
+   end if 
+
+RETURN ( "SUM( " + cTable + "unidades_articulo * " + cTable + "precio_articulo ) AS " + cAs + " " )
 
 //---------------------------------------------------------------------------//
 

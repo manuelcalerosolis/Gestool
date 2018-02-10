@@ -15,6 +15,8 @@ CLASS SQLMovimientosAlmacenModel FROM SQLExportableModel
    METHOD getColumnMovimiento()  
 
    METHOD getInitialSelect()
+
+   METHOD getGroupBy()           INLINE ( "GROUP BY movimientos_almacen.id " )
    
    METHOD getDeleteSentenceById( aId )
 
@@ -71,28 +73,30 @@ RETURN ( ::hColumns )
 //---------------------------------------------------------------------------//
 
 METHOD getInitialSelect()
+   
+   local cSelect  
 
-   local cSelect     := "SELECT "                                                         + ;
-                           "movimientos_almacen.id                         AS id, "       + ;
-                           "movimientos_almacen.numero                     AS numero, "   + ;
-                           "movimientos_almacen.uuid, "                       + ;
-                           "movimientos_almacen.tipo_movimiento, "            + ;
-                           ::getColumnMovimiento( "movimientos_almacen" )     + ;
-                           "movimientos_almacen.fecha_hora, "                 + ;
-                           "movimientos_almacen.almacen_origen, "             + ;
-                           "movimientos_almacen.almacen_destino, "            + ;
-                           "movimientos_almacen.grupo_movimiento, "           + ;
-                           "movimientos_almacen.agente, "                     + ;
-                           "movimientos_almacen.divisa, "                     + ;
-                           "movimientos_almacen.divisa_cambio, "              + ;
-                           "movimientos_almacen.comentarios,"                 + ;        
-                           "movimientos_almacen.creado, "                     + ;
-                           "movimientos_almacen.modificado, "                 + ;
-                           "movimientos_almacen.enviado "                     + ;  
-                        "FROM " + ::getTableName() + " "                      + ;
-                           "INNER JOIN movimientos_almacen_lineas "           + ;
-                           "ON movimientos_almacen.uuid = movimientos_almacen_lineas.parent_uuid "
-
+   cSelect  := "SELECT "                                                                  + ;
+                  "movimientos_almacen.id                         AS id, "                + ;
+                  "movimientos_almacen.numero                     AS numero, "            + ;
+                  "movimientos_almacen.uuid                       AS uuid, "              + ;
+                  "movimientos_almacen.tipo_movimiento            AS tipo_movimiento, "   + ;
+                  ::getColumnMovimiento( "movimientos_almacen" )                          + ;
+                  "movimientos_almacen.fecha_hora                 AS fecha_hora, "        + ;
+                  "movimientos_almacen.almacen_origen             AS almacen_origen, "    + ;
+                  "movimientos_almacen.almacen_destino            AS almacen_destino, "   + ;
+                  "movimientos_almacen.grupo_movimiento           AS grupo_movimiento, "  + ;
+                  "movimientos_almacen.agente                     AS agente, "            + ;
+                  SQLMovimientosAlmacenLineasModel():getSQLSubSentenceSumatorioTotalPrecioLinea( "movimientos_almacen_lineas" ) + ", " +;
+                  "movimientos_almacen.divisa                     AS divisa, "            + ;
+                  "movimientos_almacen.divisa_cambio              AS divisa_cambio, "     + ;
+                  "movimientos_almacen.comentarios                AS comentarios, "       + ;        
+                  "movimientos_almacen.creado                     AS creado, "            + ;
+                  "movimientos_almacen.modificado                 AS modificado, "        + ;
+                  "movimientos_almacen.enviado                    AS enviado "            + ;  
+               "FROM " + ::getTableName() + " "                                           + ;
+                  "INNER JOIN movimientos_almacen_lineas "                                + ;
+                  "ON movimientos_almacen.uuid = movimientos_almacen_lineas.parent_uuid " 
 
 RETURN ( cSelect )
 
