@@ -279,10 +279,7 @@ RETURN ( .t. )
 
 FUNCTION Test()
 
-   msgalert( SQLMovimientosAlmacenModel():getInitialSelect() )
-   logwrite( SQLMovimientosAlmacenModel():getInitialSelect() )
-
-return nil
+RETURN nil
 
 //----------------------------------------------------------------------------//
 
