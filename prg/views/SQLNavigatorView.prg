@@ -79,19 +79,15 @@ METHOD End()
       ::oMdiChild:End()
    end if 
 
-   if !empty( ::oMenuTreeView )
-      ::oMenuTreeView:End()
-   end if 
-
    if !empty( ::oTopWebBar )
       ::oTopWebBar:End()
    end if 
 
+   ::Super():End()
+
    ::oController     := nil
    ::oMdiChild       := nil
-   ::oMenuTreeView   := nil
    ::oTopWebBar      := nil
-
 
 RETURN ( nil )
 

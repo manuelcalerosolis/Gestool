@@ -57,7 +57,6 @@ CLASS SQLBaseController
 
    METHOD getSenderController()                       INLINE ( ::oSenderController ) 
 
-
    // Modelo -----------------------------------------------------------------
 
    METHOD getModel()                                  INLINE ( ::oModel )

@@ -327,6 +327,6 @@ GC_NAVIGATE_LEFT_16 BITMAP "..\\bmp\\gc_navigate_left_16.bmp"
 
 GC_MAP_LOCATION_48 BITMAP "..\\bmp\\gc_map_location_48.bmp" 
 
-GC_MORE16 BITMAP "..\\bmp\\gc_more16.bmp" 
+GC_MORE_16 BITMAP "..\\bmp\\gc_more_16.bmp" 
 GC_MAIL2_DELETE_16 BITMAP "..\\bmp\\gc_mail2_delete_16.bmp" 
 GC_MAIL2_CHECK_16 BITMAP "..\\bmp\\gc_mail2_check_16.bmp"

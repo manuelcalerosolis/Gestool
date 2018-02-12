@@ -13,6 +13,8 @@ CLASS SQLNavigatorController FROM SQLBaseController
 
    DATA lDocuments                                    INIT .f.
 
+   DATA lOthers                                       INIT .f.
+
    DATA lLabels                                       INIT .f.
 
    DATA lConfig                                       INIT .f.
@@ -49,6 +51,8 @@ CLASS SQLNavigatorController FROM SQLBaseController
 
    METHOD onChangeCombo( oColumn )
 
+   METHOD getNavigatorView()                          INLINE ( ::oNavigatorView )
+
    // Aplication windows bar---------------------------------------------------
 
    METHOD EnableWindowsBar()
@@ -83,6 +87,10 @@ RETURN ( self )
 
 METHOD End()
 
+   if !empty( ::oNavigatorView )
+      ::oNavigatorView:End()
+   end if 
+
    if !empty( ::oSelectorView )
       ::oSelectorView:End()
    end if 
@@ -91,6 +99,7 @@ METHOD End()
       ::oFilterController:End() 
    end if 
 
+   ::oNavigatorView        := nil
    ::oSelectorView         := nil
    ::oFilterController     := nil
 
