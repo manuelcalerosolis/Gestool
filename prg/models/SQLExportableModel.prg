@@ -34,7 +34,12 @@ CLASS SQLExportableModel FROM SQLBaseModel
 
    METHOD isInsertOrUpdateFromJson( cFile )
 
-   METHOD getSentenceSentFromFetch()
+   METHOD getSentenceSentFromFetch()      
+
+   METHOD getSentenceSentFromIds( aIds )     INLINE ( ::getSentenceSenderFromIds( aIds, toSQLString( hb_datetime() ) ) )
+   METHOD getSentenceNotSentFromIds( aIds )  INLINE ( ::getSentenceSenderFromIds( aIds, "null" ) )
+   
+   METHOD getSentenceSenderFromIds( aIds, uValue )
 
 END CLASS
 
@@ -134,11 +139,13 @@ RETURN ( .t. )
 
 //---------------------------------------------------------------------------//
 
-METHOD getSentenceSentFromFetch()
+METHOD getSentenceSentFromFetch( aFetch )
 
    local cSentence 
 
-   if empty( ::aFetch )
+   DEFAULT aFetch    := ::aFetch
+
+   if empty( aFetch )
       RETURN ( nil )
    end if  
 
@@ -148,7 +155,7 @@ METHOD getSentenceSentFromFetch()
 
    cSentence         += "WHERE uuid IN ( " 
 
-   aeval( ::aFetch, {| h | cSentence += quoted( hget( h, "uuid" ) ) + ", " } )
+   aeval( aFetch, {| h | cSentence += quoted( hget( h, "uuid" ) ) + ", " } )
 
    cSentence         := chgAtEnd( cSentence, " )", 2 )
 
@@ -156,4 +163,25 @@ RETURN ( cSentence )
 
 //---------------------------------------------------------------------------//
 
+METHOD getSentenceSenderFromIds( aIds, uValue )
+
+   local cSentence 
+
+   if empty( aIds )
+      RETURN ( nil )
+   end if  
+
+   cSentence         := "UPDATE " + ::cTableName + " SET "
+
+   cSentence         +=    "enviado = " + ( uValue ) + " "
+
+   cSentence         += "WHERE id IN ( " 
+
+   aeval( aIds, {| id | cSentence += quoted( id ) + ", " } )
+
+   cSentence         := chgAtEnd( cSentence, " )", 2 )
+
+RETURN ( cSentence )
+
+//---------------------------------------------------------------------------//
 

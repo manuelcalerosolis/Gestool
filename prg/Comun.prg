@@ -942,7 +942,7 @@ Static FUNCTION FinishAplication() //  Static FUNCTION
 
    checkRes()
 
-   // winExec( "notepad checkres.txt" )
+   /* winExec( "notepad checkres.txt" ) */
 
 RETURN nil
 

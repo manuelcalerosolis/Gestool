@@ -2943,6 +2943,18 @@ Return ( oFontLittelTitle )
 
 //----------------------------------------------------------------------------//
 
+Function oFontLittelTitleEnd()
+
+   if !empty( oFontLittelTitle )
+      oFontLittelTitle:end()
+   end if
+
+   oFontLittelTitle     := nil
+
+Return ( nil )
+
+//----------------------------------------------------------------------------//
+
 Function oFontBigTitle()
 
    if empty( oFontBigTitle )

@@ -83,6 +83,10 @@ CLASS MovimientosAlmacenController FROM SQLNavigatorController
 
    METHOD jsonToSQL()
 
+   METHOD setSent()                 INLINE ( ::setSender( ::oModel:getSentenceSentFromIds( ::getIdFromRecno( ::getBrowse():aSelected ) ) ) )
+   METHOD setNotSent()              INLINE ( ::setSender( ::oModel:getSentenceNotSentFromIds( ::getIdFromRecno( ::getBrowse():aSelected ) ) ) )
+   METHOD setSender( cSentence )
+
 END CLASS
 
 //---------------------------------------------------------------------------//
@@ -140,10 +144,10 @@ METHOD New()
    ::loadDocuments()
 
    ::oNavigatorView:oMenuTreeView:setEvent( 'addedConfigButton',;
-      {|| ::oNavigatorView:oMenuTreeView:AddButton( "Marcar para envio", "Imp16", {|| alert( 'hi' ) }, , ACC_EDIT, ::oNavigatorView:oMenuTreeView:oButtonOthers ) } )
+      {|| ::oNavigatorView:oMenuTreeView:AddButton( "Marcar para envio", "gc_mail2_delete_16", {|| ::setNotSent() }, , ACC_EDIT, ::oNavigatorView:oMenuTreeView:oButtonOthers ) } )
  
    ::oNavigatorView:oMenuTreeView:setEvent( 'addedConfigButton',;
-      {|| ::oNavigatorView:oMenuTreeView:AddButton( "Marcar como enviado", "Imp16", {|| alert( 'hi 2' ) }, , ACC_EDIT, ::oNavigatorView:oMenuTreeView:oButtonOthers ) } )
+      {|| ::oNavigatorView:oMenuTreeView:AddButton( "Marcar como enviado", "gc_mail2_check_16", {|| ::setSent() }, , ACC_EDIT, ::oNavigatorView:oMenuTreeView:oButtonOthers ) } )
 
 RETURN ( Self )
 
@@ -360,7 +364,7 @@ METHOD buildNotSentJson()
       RETURN ( nil )
    end if 
 
-   ::oLineasController:oSeriesControler:oModel:selectFetchToJson(;
+   ::oLineasController:oSeriesControler:oModel:selectFetchToJson( ;
       ::oLineasController:oSeriesControler:oModel:getSentenceNotSent( ::oLineasController:oModel:aFetch ) )
 
 RETURN ( self )
@@ -445,6 +449,24 @@ METHOD jsonToSQL()
    end if 
 
 RETURN ( .t. )
+
+//---------------------------------------------------------------------------//
+
+METHOD setSender( cSentence )
+
+   msgalert( cSentence, "cSentence")
+
+   if empty( cSentence )
+      RETURN ( self )
+   end if 
+      
+   getSQLDatabase():Exec( cSentence )
+
+   ::getRowSet():Refresh()
+
+   ::getBrowse():Refresh()
+
+RETURN ( self )
 
 //---------------------------------------------------------------------------//
 
