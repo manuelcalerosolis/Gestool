@@ -2056,20 +2056,33 @@ METHOD BuildEmpresa()
    oDataTable:bCreateIndex := {| cPath | rxGrpVenta( cPath ) }
    ::AddEmpresaTable( oDataTable )
 
-   /*oDataTable              := TDataTable():New( "RemMovT" )
+   /*
+   Movimientos de almacén ( Al final es para quitarlo )------------------------
+   */
+
+   oDataTable              := TDataTable():New( "RemMovT" )
    oDataTable:cDataFile    := cPatEmp( , .t. ) + "RemMovT.Dbf"
    oDataTable:cIndexFile   := cPatEmp( , .t. ) + "RemMovT.Cdx"
    oDataTable:cDescription := "Remesas de movimientos"
    oDataTable:bCreateFile  := {| cPath | TRemMovAlm():BuildFiles( cPath ) }
    oDataTable:bCreateIndex := {| cPath | TRemMovAlm():Reindexa( cPath ) }
-   oDataTable:bSyncFile    := {|| SynRemMov( cPatEmp() ) }
    ::AddEmpresaTable( oDataTable )
 
    oDataTable              := TDataTable():New( "HisMov" )
    oDataTable:cDataFile    := cPatEmp( , .t. ) + "HisMov.Dbf"
    oDataTable:cIndexFile   := cPatEmp( , .t. ) + "HisMov.Cdx"
    oDataTable:cDescription := "Movimientos de almacén"
-   ::AddEmpresaTable( oDataTable )*/
+   oDataTable:bCreateFile  := {| cPath | TDetMovimientos():BuildFiles( cPath ) }
+   oDataTable:bCreateIndex := {| cPath | TDetMovimientos():Reindexa( cPath ) }
+   ::AddEmpresaTable( oDataTable )
+
+   oDataTable              := TDataTable():New( "MovSer" )
+   oDataTable:cDataFile    := cPatEmp( , .t. ) + "MovSer.Dbf"
+   oDataTable:cIndexFile   := cPatEmp( , .t. ) + "MovSer.Cdx"
+   oDataTable:cDescription := "Movimientos"
+   oDataTable:bCreateFile  := {| cPath | TDetSeriesMovimientos():BuildFiles( cPath ) }
+   oDataTable:bCreateIndex := {| cPath | TDetSeriesMovimientos():Reindexa( cPath ) }
+   ::AddEmpresaTable( oDataTable )
 
    /*
    Articulos-------------------------------------------------------------------
@@ -2526,12 +2539,6 @@ METHOD BuildEmpresa()
    oDataTable:cIndexFile   := cPatEmp( , .t. ) + "CfgGrp.Cdx"
    oDataTable:cDescription := "Configuración"
    ::AddEmpresaTable( oDataTable )
-
-   /*oDataTable              := TDataTable():New( "MovSer" )
-   oDataTable:cDataFile    := cPatEmp( , .t. ) + "MovSer.Dbf"
-   oDataTable:cIndexFile   := cPatEmp( , .t. ) + "MovSer.Cdx"
-   oDataTable:cDescription := "Movimientos"
-   ::AddEmpresaTable( oDataTable )*/
 
    oDataTable              := TDataTable():New( "RDocumen" )
    oDataTable:cDataFile    := cPatEmp( , .t. ) + "RDocumen.Dbf"
@@ -5151,3 +5158,171 @@ HB_FUNC( ADSREINDEX61 )
 #pragma ENDDUMP
 */
 
+
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+//---Clases de prg que vamos quitando pero que todavia hace falta------------//
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+
+CLASS TRemMovAlm FROM TMasDet
+
+   METHOD DefineFiles()
+
+END CLASS
+
+//---------------------------------------------------------------------------//
+
+METHOD DefineFiles( cPath ) CLASS TRemMovAlm
+
+   local oDbf
+
+   MsgInfo( "definefiles de TRemMovAlm" )  
+   MsgInfo( cPath, "cPath" )
+
+   DEFINE DATABASE oDbf FILE "REMMOVT.DBF" CLASS "TRemMovT" ALIAS "RemMovT" PATH ( cPath ) VIA ( cDriver() ) COMMENT "Movimientos de almacén"
+
+      FIELD NAME "lSelDoc"  TYPE "L" LEN  1  DEC 0                                  COMMENT ""                             OF oDbf
+      FIELD NAME "nNumRem"  TYPE "N" LEN  9  DEC 0 PICTURE "999999999"              COMMENT "Número"           COLSIZE 80  OF oDbf
+      FIELD NAME "cSufRem"  TYPE "C" LEN  2  DEC 0 PICTURE "@!"                     COMMENT "Delegación"       COLSIZE 40  OF oDbf
+      FIELD NAME "nTipMov"  TYPE "N" LEN  1  DEC 0                                  COMMENT "Tipo del movimiento"          OF oDbf
+      FIELD NAME "cCodUsr"  TYPE "C" LEN  3  DEC 0                                  COMMENT "Código usuario"               OF oDbf
+      FIELD NAME "cCodDlg"  TYPE "C" LEN  2  DEC 0                                  COMMENT ""                             OF oDbf
+      FIELD NAME "cCodAge"  TYPE "C" LEN  3  DEC 0                                  COMMENT "Código agente"                OF oDbf
+      FIELD NAME "cCodMov"  TYPE "C" LEN  2  DEC 0                                  COMMENT "Tipo de movimiento"           OF oDbf
+      FIELD NAME "dFecRem"  TYPE "D" LEN  8  DEC 0                                  COMMENT "Fecha"            COLSIZE 80  OF oDbf
+      FIELD NAME "cTimRem"  TYPE "C" LEN  6  DEC 0 PICTURE "@R 99:99:99"            COMMENT "Hora"             COLSIZE 60  OF oDbf
+      FIELD NAME "cAlmOrg"  TYPE "C" LEN 16  DEC 0 PICTURE "@!"                     COMMENT "Alm. org."        COLSIZE 60  OF oDbf
+      FIELD NAME "cAlmDes"  TYPE "C" LEN 16  DEC 0 PICTURE "@!"                     COMMENT "Alm. des."        COLSIZE 60  OF oDbf
+      FIELD NAME "cCodDiv"  TYPE "C" LEN  3  DEC 0 PICTURE "@!"                     COMMENT "Div."                         OF oDbf
+      FIELD NAME "nVdvDiv"  TYPE "N" LEN 13  DEC 6 PICTURE "@E 999,999.999999"      COMMENT "Cambio de la divisa"          OF oDbf
+      FIELD NAME "cComMov"  TYPE "C" LEN 100 DEC 0 PICTURE "@!"                     COMMENT "Comentario"       COLSIZE 240 OF oDbf
+      FIELD NAME "nTotRem"  TYPE "N" LEN 16  DEC 6 PICTURE "@E 999,999,999,999.99"  COMMENT "Importe"          COLSIZE 100 OF oDbf
+      FIELD NAME "lWait"    TYPE "L" LEN  1  DEC 0                                  COMMENT ""                             OF oDbf
+      FIELD NAME "cGuid"    TYPE "C" LEN 40  DEC 0                                  COMMENT "Guid de la cabecera"          OF oDbf
+
+      INDEX TO "RemMovT.Cdx" TAG "cNumRem"   ON "Str( nNumRem ) + cSufRem"          COMMENT "Número"           NODELETED   OF oDbf
+
+   END DATABASE oDbf
+
+RETURN ( oDbf )
+
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+
+CLASS TDetMovimientos FROM TDet
+
+   METHOD DefineFiles()
+
+END CLASS
+
+//---------------------------------------------------------------------------//
+
+
+METHOD DefineFiles( cPath ) CLASS TDetMovimientos
+
+   local oDbf
+
+   MsgInfo( "definefiles de TDetMovimientos" )
+   MsgInfo( cPath, "cPath" )  
+
+   DEFINE TABLE oDbf FILE "HisMov.dbf" CLASS "HisMov" ALIAS "HisMov" PATH ( cPath ) VIA ( cDriver() )
+
+      FIELD NAME "dFecMov"    TYPE "D" LEN   8 DEC 0 COMMENT "Fecha movimiento"                    OF oDbf
+      FIELD NAME "cTimMov"    TYPE "C" LEN   6 DEC 0 COMMENT "Hora movimiento"                     OF oDbf
+      FIELD NAME "nTipMov"    TYPE "N" LEN   1 DEC 0 COMMENT "Tipo movimiento"                     OF oDbf
+      FIELD NAME "cAliMov"    TYPE "C" LEN  16 DEC 0 COMMENT "Alm. ent."                           OF oDbf
+      FIELD NAME "cAloMov"    TYPE "C" LEN  16 DEC 0 COMMENT "Alm. sal."                           OF oDbf
+      FIELD NAME "cRefMov"    TYPE "C" LEN  18 DEC 0 COMMENT "Código"                              OF oDbf
+      FIELD NAME "cNomMov"    TYPE "C" LEN  50 DEC 0 COMMENT "Nombre"                              OF oDbf
+      FIELD NAME "cCodMov"    TYPE "C" LEN   2 DEC 0 COMMENT "TM"                                  OF oDbf
+      FIELD NAME "cCodPr1"    TYPE "C" LEN  20 DEC 0 COMMENT "Código propiedad 1"                  OF oDbf
+      FIELD NAME "cCodPr2"    TYPE "C" LEN  20 DEC 0 COMMENT "Código propiedad 2"                  OF oDbf
+      FIELD NAME "cValPr1"    TYPE "C" LEN  20 DEC 0 COMMENT "Valor propiedad 1"                   OF oDbf
+      FIELD NAME "cValPr2"    TYPE "C" LEN  20 DEC 0 COMMENT "Valor propiedad 2"                   OF oDbf
+      FIELD NAME "dFecCad"    TYPE "D" LEN   8 DEC 0 COMMENT "Fecha caducidad"                     OF oDbf
+      FIELD NAME "cCodUsr"    TYPE "C" LEN   3 DEC 0 COMMENT "Código usuario"                      OF oDbf
+      FIELD NAME "cCodDlg"    TYPE "C" LEN   2 DEC 0 COMMENT "Código delegación"                   OF oDbf
+      FIELD NAME "lLote"      TYPE "L" LEN   1 DEC 0 COMMENT "Lógico lote"                         OF oDbf
+      FIELD NAME "nLote"      TYPE "N" LEN   9 DEC 0 COMMENT "Número de lote"                      OF oDbf
+      FIELD NAME "cLote"      TYPE "C" LEN  14 DEC 0 COMMENT "Lote"                                OF oDbf
+      FIELD NAME "nCajMov"    TYPE "N" LEN  19 DEC 6 COMMENT "Caj."                                OF oDbf
+      FIELD NAME "nUndMov"    TYPE "N" LEN  19 DEC 6 COMMENT "Und."                                OF oDbf
+      FIELD NAME "nCajAnt"    TYPE "N" LEN  19 DEC 6 COMMENT "Caj. ant."                           OF oDbf
+      FIELD NAME "nUndAnt"    TYPE "N" LEN  19 DEC 6 COMMENT "Und. ant."                           OF oDbf
+      FIELD NAME "nPreDiv"    TYPE "N" LEN  19 DEC 6 COMMENT "Precio"                              OF oDbf
+      FIELD NAME "lSndDoc"    TYPE "L" LEN   1 DEC 0 COMMENT "Lógico enviar"                       OF oDbf
+      FIELD NAME "nNumRem"    TYPE "N" LEN   9 DEC 0 COMMENT "Número remesa"                       OF oDbf
+      FIELD NAME "cSufRem"    TYPE "C" LEN   2 DEC 0 COMMENT "Sufijo remesa"                       OF oDbf
+      FIELD NAME "lSelDoc"    TYPE "L" LEN   1 DEC 0 COMMENT "Lógico selecionar"                   OF oDbf
+      FIELD NAME "lNoStk"     TYPE "L" LEN   1 DEC 0 COMMENT "Lógico no stock"                     OF oDbf
+      FIELD NAME "lKitArt"    TYPE "L" LEN   1 DEC 0 COMMENT "Línea con escandallo"                OF oDbf
+      FIELD NAME "lKitEsc"    TYPE "L" LEN   1 DEC 0 COMMENT "Línea perteneciente a escandallo"    OF oDbf
+      FIELD NAME "lImpLin"    TYPE "L" LEN   1 DEC 0 COMMENT "Lógico imprimir linea"               OF oDbf
+      FIELD NAME "lKitPrc"    TYPE "L" LEN   1 DEC 0 COMMENT "Lógico precio escandallo"            OF oDbf
+      FIELD NAME "nNumLin"    TYPE "N" LEN   9 DEC 0 COMMENT "Número de linea"                     OF oDbf
+      FIELD NAME "mNumSer"    TYPE "M" LEN  10 DEC 0 COMMENT "Numeros de serie"                    OF oDbf
+      FIELD NAME "nVolumen"   TYPE "N" LEN  16 DEC 6 COMMENT "Volumen del producto"                OF oDbf
+      FIELD NAME "cVolumen"   TYPE "C" LEN   2 DEC 0 COMMENT "Unidad del volumen"                  OF oDbf
+      FIELD NAME "nPesoKg"    TYPE "N" LEN  16 DEC 6 COMMENT "Peso del producto"                   OF oDbf
+      FIELD NAME "cPesoKg"    TYPE "C" LEN   2 DEC 0 COMMENT "Unidad de peso del producto"         OF oDbf
+      FIELD NAME "nBultos"    TYPE "N" LEN  16 DEC 0 COMMENT "Número de bultos en líneas"          OF oDbf
+      FIELD NAME "cFormato"   TYPE "C" LEN 100 DEC 0 COMMENT "Formato de compra/venta"             OF oDbf
+      FIELD NAME "lLabel"     TYPE "L" LEN   1 DEC 0 COMMENT "Lógico para imprimir etiqueta"       OF oDbf
+      FIELD NAME "nLabel"     TYPE "N" LEN  16 DEC 6 COMMENT "Número de etiquetas a imprimir"      OF oDbf
+      FIELD NAME "lWait"      TYPE "L" LEN   1 DEC 0 COMMENT "Lógico para documento no finalizado" OF oDbf
+      FIELD NAME "cGuid"      TYPE "C" LEN  40 DEC 0 COMMENT "cGuid de las lineas"                 OF oDbf
+      FIELD NAME "cGuidPar"   TYPE "C" LEN  40 DEC 0 COMMENT "cGuid de la cabecera"                OF oDbf
+
+      INDEX TO "HisMov.Cdx"   TAG "nNumRem"    ON "str( nNumRem ) + cSufRem" NODELETED             OF oDbf
+
+   END DATABASE oDbf
+
+RETURN ( oDbf )
+
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+
+CLASS TDetSeriesMovimientos FROM TDet
+
+   METHOD DefineFiles()
+
+END CLASS
+
+//---------------------------------------------------------------------------//
+
+METHOD DefineFiles( cPath ) CLASS TDetSeriesMovimientos
+
+   local oDbf
+
+   MsgInfo( "definefiles de TDetSeriesMovimientos" )
+   MsgInfo( cPath, "cPath" )
+
+   DEFINE TABLE oDbf FILE "MovSer.dbf" CLASS ( "MovSer" ) ALIAS ( "MovSer" ) PATH ( cPath ) VIA ( cDriver() ) COMMENT "Números de serie de movimientos de almacen"
+
+      FIELD NAME "nNumRem"    TYPE "N" LEN  9  DEC 0                                                     OF oDbf
+      FIELD NAME "cSufRem"    TYPE "C" LEN  2  DEC 0                                                     OF oDbf
+      FIELD NAME "dFecRem"    TYPE "D" LEN  8  DEC 0                                                     OF oDbf
+      FIELD NAME "nNumLin"    TYPE "N" LEN 04  DEC 0 COMMENT "Número de línea"                           OF oDbf
+      FIELD NAME "cCodArt"    TYPE "C" LEN 18  DEC 0 COMMENT "Artículo"                                  OF oDbf
+      FIELD NAME "cAlmOrd"    TYPE "C" LEN 16  DEC 0 COMMENT "Almacén"                                   OF oDbf
+      FIELD NAME "lUndNeg"    TYPE "L" LEN 01  DEC 0 COMMENT "Lógico de unidades en negativo"            OF oDbf
+      FIELD NAME "cNumSer"    TYPE "C" LEN 30  DEC 0 COMMENT "Número de serie"                           OF oDbf
+      FIELD NAME "cGuid"      TYPE "C" LEN  40 DEC 0 COMMENT "cGuid de las lineas"                       OF oDbf
+      FIELD NAME "cGuidPar"   TYPE "C" LEN  40 DEC 0 COMMENT "cGuid de la cabecera"                      OF oDbf
+
+      INDEX TO ( "MovSer.cdx" ) TAG "cNumOrd" ON "Str( nNumRem ) + cSufRem + Str( nNumLin )"   NODELETED OF oDbf
+
+   END DATABASE oDbf
+
+RETURN ( oDbf )
+
+//--------------------------------------------------------------------------//
