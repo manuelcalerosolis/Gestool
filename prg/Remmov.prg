@@ -3603,9 +3603,6 @@ Function SynRemMov( cPath )
    USE ( cPath + "MOVSER.DBF" ) NEW VIA ( cDriver() ) EXCLUSIVE ALIAS ( cCheckArea( "MOVSER", @dbfMovSer ) )
    SET ADSINDEX TO ( cPath + "MOVSER.CDX" ) ADDITIVE
 
-   USE ( cPatArt() + "ARTICULO.DBF" ) NEW VIA ( cDriver() ) EXCLUSIVE ALIAS ( cCheckArea( "ARTICULO", @dbfArticulo ) )
-   SET ADSINDEX TO ( cPatArt() + "ARTICULO.CDX" ) ADDITIVE
-
    /*
    Cabeceras-------------------------------------------------------------------
    */
@@ -3636,42 +3633,6 @@ Function SynRemMov( cPath )
 
    ( dbfHisMov )->( dbGoTop() )
    while !( dbfHisMov )->( eof() )
-
-      if empty( ( dbfHisMov )->cSufRem )
-         ( dbfHisMov )->cSufRem        := "00"
-      end if
-
-      if empty( ( dbfHisMov )->cNomMov )
-         ( dbfHisMov )->cNomMov        := RetArticulo( ( dbfHisMov )->cRefMov, dbfArticulo )
-      end if 
-
-      if empty( ( dbfHisMov )->dFecMov )
-
-         dFecMov                       := RetFld( Str( ( dbfHisMov )->nNumRem ) + ( dbfHisMov )->cSufRem, dbfRemMov, "dFecRem", "cNumRem" )
-
-         if empty( dFecMov )
-            dFecMov                    := CtoD( "01/01/" + Str( Year( Date() ) ) )
-         end if
-
-         ( dbfHisMov )->dFecMov        := dFecMov
-
-      end if
-
-      if empty( ( dbfHisMov )->cTimMov )
-         ( dbfHisMov )->cTimMov        := RetFld( Str( ( dbfHisMov )->nNumRem ) + ( dbfHisMov )->cSufRem, dbfRemMov, "cTimRem", "cNumRem" )
-      end if
-
-      if empty( ( dbfHisMov )->cRefMov )
-
-         nOrdAnt                       := ( dbfArticulo )->( OrdSetFocus( "Nombre" ) )
-
-         if ( dbfArticulo )->( dbSeek( Padr( ( dbfHisMov )->cNomMov, 100 ) ) )
-            ( dbfHisMov )->cRefMov     := ( dbfArticulo )->Codigo
-         end if
-
-         ( dbfArticulo )->( OrdSetFocus( nOrdAnt ) )
-
-      end if
 
       if empty( ( dbfHisMov )->cGuid )
          ( dbfHisMov )->cGuid          := win_uuidcreatestring()
@@ -3750,7 +3711,6 @@ Function SynRemMov( cPath )
 
    CLOSE ( dbfRemMov )
    CLOSE ( dbfHisMov )
-   CLOSE ( dbfArticulo )
    CLOSE ( dbfMovSer )
 
 return nil

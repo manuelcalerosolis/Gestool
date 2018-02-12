@@ -280,6 +280,10 @@ METHOD GenIndices( oMsg )
 
       ::SetText( "Generando índices : Scripts", ::aProgress[ 3 ] );                             TScripts():Create( ::cPathEmp ):Reindexa()
 
+      ::SetText( "Generando índices TRemMovAlm: ", ::aProgress[ 3 ] );                          TRemMovAlm():Create( ::cPathEmp ):Reindexa()
+      ::SetText( "Generando índices TDetMovimientos: ", ::aProgress[ 3 ] );                     TDetMovimientos():Create( ::cPathEmp ):Reindexa()
+      ::SetText( "Generando índices TDetSeriesMovimientos: ", ::aProgress[ 3 ] );               TDetSeriesMovimientos():Create( ::cPathEmp ):Reindexa()
+
    end if
 
    /*
@@ -579,4 +583,10 @@ Method lFreeHandle()
 RETURN ( .f. )
 
 //---------------------------------------------------------------------------//
-
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//

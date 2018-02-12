@@ -4138,6 +4138,36 @@ STATIC FUNCTION StartPathEmp( cPath, cPathOld, cCodEmpNew, cNomEmpNew, cCodEmpOl
          TStock():StockInit( cPath, cPathOld, oMsg, aImportacion:nCosto, cCodEmpOld, cCodEmpNew )
       end if
 
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+      /*
+      Lo tenemos que seguir manteniendo pero lo quitaremos---------------------
+      */
+
+      if oMsg != nil
+         oMsg:SetText( "Creando movimientos de almacén" )
+      end if
+      TRemMovAlm():Create( cPath ):CheckFiles()                                     ; sysrefresh()
+
+      if oMsg != nil
+         oMsg:SetText( "Creando lineas de movimientos de almacén" )
+      end if
+      TDetMovimientos():Create( cPath ):CheckFiles()                                ; sysrefresh()
+
+      if oMsg != nil
+         oMsg:SetText( "Creando lineas de movimientos de almacén" )
+      end if
+      TDetSeriesMovimientos():Create( cPath ):CheckFiles()                          ; sysrefresh()
+
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+
       /*
       Si hay nueva empresa calculamos stocks y regeneramos indices-------------
       */
@@ -4772,6 +4802,11 @@ STATIC FUNCTION ActDbfEmp( cCodEmp, aMsg, oAni, oDlg, oMsg, oMet, lActEmp, lSinc
 
          oMsg:SetText( "Identificadores de prestashop" )
          TPrestaShopId():Create():SyncAllDbf()
+
+         oMsg:SetText( "Añadiendo movimientos de almacén" )
+         TRemMovAlm():Create():SyncAllDbf()
+         TDetMovimientos():Create():SyncAllDbf()
+         TDetSeriesMovimientos():Create():SyncAllDbf()
 
       RECOVER USING oError
 
