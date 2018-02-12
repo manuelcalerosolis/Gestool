@@ -10,8 +10,6 @@
 
 #define NUMERO_TARIFAS  6
 
-memvar name
-
 static oWnd
 static oWndBar
 static oDlgProgress
@@ -281,7 +279,7 @@ RETURN ( .t. )
 
 FUNCTION Test()
 
-return nil
+RETURN nil
 
 //----------------------------------------------------------------------------//
 

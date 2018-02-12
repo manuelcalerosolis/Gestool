@@ -39,6 +39,8 @@ CLASS SQLBaseModel
 
    DATA cSQLUpdate
 
+   DATA cGroupBy                                      INIT ""
+
    DATA cFind
 
    DATA aRecordsToDelete
@@ -105,10 +107,15 @@ CLASS SQLBaseModel
    
    METHOD addEmpresaWhere()                           
 
-   METHOD setFilterWhere( cWhere )                    INLINE ( ::cFilterWhere   := cWhere )
+   METHOD setFilterWhere( cWhere )                    INLINE ( ::cFilterWhere    := cWhere )
    METHOD addFilterWhere( cSQLSelect )
-   METHOD clearFilterWhere()                          INLINE ( ::cFilterWhere   := nil )
+   METHOD clearFilterWhere()                          INLINE ( ::cFilterWhere    := nil )
+
    METHOD addFindWhere( cSQLSelect )
+
+   METHOD setGroupBy( cGroupBy )                      INLINE ( ::cGroupBy        := cGroupBy )
+   METHOD getGroupBy( cGroupBy )                      INLINE ( ::cGroupBy )
+   METHOD addGroupBy( cSQLSelect )
 
    METHOD getWhereOrAnd( cSQLSelect )                 INLINE ( if( hb_at( "WHERE", cSQLSelect ) != 0, " AND ", " WHERE " ) )
 
@@ -267,6 +274,8 @@ METHOD getGeneralSelect()
 
    cSQLSelect              := ::addFilterWhere( cSQLSelect )
 
+   cSQLSelect              := ::addGroupBy( cSQLSelect )
+
 RETURN ( cSQLSelect )
 
 //---------------------------------------------------------------------------//
@@ -330,6 +339,14 @@ METHOD addFilterWhere( cSQLSelect )
    end if 
 
    cSQLSelect        += ::getWhereOrAnd( cSQLSelect ) + ::cFilterWhere
+
+RETURN ( cSQLSelect )
+
+//---------------------------------------------------------------------------//
+
+METHOD addGroupBy( cSQLSelect )
+
+   cSQLSelect        += ::getGroupBy()
 
 RETURN ( cSQLSelect )
 
