@@ -4150,17 +4150,17 @@ STATIC FUNCTION StartPathEmp( cPath, cPathOld, cCodEmpNew, cNomEmpNew, cCodEmpOl
       if oMsg != nil
          oMsg:SetText( "Creando movimientos de almacén" )
       end if
-      TRemMovAlm():Create( cPath ):CheckFiles()                                     ; sysrefresh()
+      TRemMovAlm():BuildFiles( cPath )                                     ; sysrefresh()
 
       if oMsg != nil
          oMsg:SetText( "Creando lineas de movimientos de almacén" )
       end if
-      TDetMovimientos():Create( cPath ):CheckFiles()                                ; sysrefresh()
+      TDetMovimientos():BuildFiles( cPath )                                ; sysrefresh()
 
       if oMsg != nil
          oMsg:SetText( "Creando lineas de movimientos de almacén" )
       end if
-      TDetSeriesMovimientos():Create( cPath ):CheckFiles()                          ; sysrefresh()
+      TDetSeriesMovimientos():BuildFiles( cPath )                          ; sysrefresh()
 
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
@@ -4804,9 +4804,9 @@ STATIC FUNCTION ActDbfEmp( cCodEmp, aMsg, oAni, oDlg, oMsg, oMet, lActEmp, lSinc
          TPrestaShopId():Create():SyncAllDbf()
 
          oMsg:SetText( "Añadiendo movimientos de almacén" )
-         TRemMovAlm():Create():SyncAllDbf()
-         TDetMovimientos():Create():SyncAllDbf()
-         TDetSeriesMovimientos():Create():SyncAllDbf()
+         ActDbf( cEmpOld, cEmpTmp, "RemMovT",   "Movimientos de almacén", oMet, oMsg, aMsg )
+         ActDbf( cEmpOld, cEmpTmp, "HisMov",    "Lineas movimientos de almacén", oMet, oMsg, aMsg )
+         ActDbf( cEmpOld, cEmpTmp, "MovSer",    "Series movimientos de almacén", oMet, oMsg, aMsg )
 
       RECOVER USING oError
 

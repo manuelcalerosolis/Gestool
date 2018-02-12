@@ -2065,7 +2065,7 @@ METHOD BuildEmpresa()
    oDataTable:cIndexFile   := cPatEmp( , .t. ) + "RemMovT.Cdx"
    oDataTable:cDescription := "Remesas de movimientos"
    oDataTable:bCreateFile  := {| cPath | TRemMovAlm():BuildFiles( cPath ) }
-   oDataTable:bCreateIndex := {| cPath | TRemMovAlm():Reindexa( cPath ) }
+   oDataTable:bCreateIndex := {| cPath | TRemMovAlm():Create( cPath ):Reindexa() }
    ::AddEmpresaTable( oDataTable )
 
    oDataTable              := TDataTable():New( "HisMov" )
@@ -2073,7 +2073,7 @@ METHOD BuildEmpresa()
    oDataTable:cIndexFile   := cPatEmp( , .t. ) + "HisMov.Cdx"
    oDataTable:cDescription := "Movimientos de almacén"
    oDataTable:bCreateFile  := {| cPath | TDetMovimientos():BuildFiles( cPath ) }
-   oDataTable:bCreateIndex := {| cPath | TDetMovimientos():Reindexa( cPath ) }
+   oDataTable:bCreateIndex := {| cPath | TDetMovimientos():Create( cPath ):Reindexa() }
    ::AddEmpresaTable( oDataTable )
 
    oDataTable              := TDataTable():New( "MovSer" )
@@ -2081,7 +2081,7 @@ METHOD BuildEmpresa()
    oDataTable:cIndexFile   := cPatEmp( , .t. ) + "MovSer.Cdx"
    oDataTable:cDescription := "Movimientos"
    oDataTable:bCreateFile  := {| cPath | TDetSeriesMovimientos():BuildFiles( cPath ) }
-   oDataTable:bCreateIndex := {| cPath | TDetSeriesMovimientos():Reindexa( cPath ) }
+   oDataTable:bCreateIndex := {| cPath | TDetSeriesMovimientos():Create( cPath ):Reindexa() }
    ::AddEmpresaTable( oDataTable )
 
    /*
@@ -5177,8 +5177,7 @@ METHOD DefineFiles( cPath ) CLASS TRemMovAlm
 
    local oDbf
 
-   MsgInfo( "definefiles de TRemMovAlm" )  
-   MsgInfo( cPath, "cPath" )
+   DEFAULT cPath  := ::cPath
 
    DEFINE DATABASE oDbf FILE "REMMOVT.DBF" CLASS "TRemMovT" ALIAS "RemMovT" PATH ( cPath ) VIA ( cDriver() ) COMMENT "Movimientos de almacén"
 
@@ -5227,8 +5226,7 @@ METHOD DefineFiles( cPath ) CLASS TDetMovimientos
 
    local oDbf
 
-   MsgInfo( "definefiles de TDetMovimientos" )
-   MsgInfo( cPath, "cPath" )  
+   DEFAULT cPath  := ::cPath
 
    DEFINE TABLE oDbf FILE "HisMov.dbf" CLASS "HisMov" ALIAS "HisMov" PATH ( cPath ) VIA ( cDriver() )
 
@@ -5303,8 +5301,7 @@ METHOD DefineFiles( cPath ) CLASS TDetSeriesMovimientos
 
    local oDbf
 
-   MsgInfo( "definefiles de TDetSeriesMovimientos" )
-   MsgInfo( cPath, "cPath" )
+   DEFAULT cPath  := ::cPath
 
    DEFINE TABLE oDbf FILE "MovSer.dbf" CLASS ( "MovSer" ) ALIAS ( "MovSer" ) PATH ( cPath ) VIA ( cDriver() ) COMMENT "Números de serie de movimientos de almacen"
 
