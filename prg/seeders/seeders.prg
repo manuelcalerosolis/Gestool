@@ -68,6 +68,8 @@ RETURN ( self )
 
 METHOD runSeederEmpresa()
 
+   SincronizaRemesasMovimientosAlmacen()
+
    ::oMsg:SetText( "Ejecutando seeder de cabeceras de movimientos de almacén" )
    ::SeederMovimientosAlmacen()
    
