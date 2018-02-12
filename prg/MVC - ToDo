@@ -2,9 +2,9 @@ MVC - ToDo
 
 - Posicinarse en el ultimo registro usado.
 
-- Error al eliminar los movimientos de almacen.
-
 - Comando para poner todos los registros como enviados.
+
+- Error al eliminar los movimientos de almacen.
 
 - Eliminar una empresa, eliminar de SQL.
 

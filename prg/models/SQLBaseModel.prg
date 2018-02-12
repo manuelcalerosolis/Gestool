@@ -346,7 +346,9 @@ RETURN ( cSQLSelect )
 
 METHOD addGroupBy( cSQLSelect )
 
-   cSQLSelect        += ::getGroupBy()
+   if !empty( ::getGroupBy() )
+      cSQLSelect     += ::getGroupBy()
+   end if 
 
 RETURN ( cSQLSelect )
 

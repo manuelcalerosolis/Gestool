@@ -17,6 +17,7 @@ CLASS SQLBrowseableView
    DATA oMenuTreeView
 
    METHOD New( oController )
+   METHOD End()
 
    // Facades -----------------------------------------------------------------
 
@@ -71,6 +72,18 @@ METHOD New( oController )
    ::oController           := oController
 
    ::oMenuTreeView         := MenuTreeView():New( Self )
+
+RETURN ( Self )
+
+//----------------------------------------------------------------------------//
+
+METHOD End()
+
+   if !empty( ::oMenuTreeView )
+      ::oMenuTreeView:end()
+   end if 
+
+   ::oMenuTreeView         := nil
 
 RETURN ( Self )
 

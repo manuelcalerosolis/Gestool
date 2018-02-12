@@ -10,7 +10,7 @@ CLASS Events
    METHOD New()
    METHOD End()
 
-   METHOD Set( cEvent, bEvent )     INLINE ( hset( ::hEvents, lower( cEvent ), bEvent ) )
+   METHOD Set( cEvent, bEvent )
 
    METHOD Fire( cEvent )
 
@@ -34,8 +34,23 @@ RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 
+METHOD Set( cEvent, bEvent )
+
+   cEvent   := lower( cEvent )
+
+   if hhaskey( ::hEvents, cEvent )
+      aadd( hget( ::hEvents, cEvent ), bEvent )
+   else
+      hset( ::hEvents, cEvent, { bEvent } )
+   end if 
+
+RETURN ( nil )
+
+//---------------------------------------------------------------------------//
+
 METHOD Fire( cEvent )
 
+   local bEvent
    local lEvent   := .t.
 
    if empty( ::hEvents )
@@ -48,14 +63,19 @@ METHOD Fire( cEvent )
       RETURN ( .t. )
    end if 
 
-   if !hb_isblock( hget( ::hEvents, cEvent ) )
+   if !hb_isarray( hget( ::hEvents, cEvent ) )
       RETURN ( .t. )
    end if 
 
-   lEvent         := eval( hget( ::hEvents, cEvent ) )
-   if hb_islogical( lEvent ) .and. !lEvent
-      RETURN ( .f. )
-   end if
+   for each bEvent in hget( ::hEvents, cEvent )
+      
+      lEvent      := eval( bEvent )
+
+      if hb_islogical( lEvent ) .and. !lEvent
+         RETURN ( .f. )
+      end if
+
+   next 
 
 RETURN ( lEvent )
 

@@ -111,6 +111,8 @@ METHOD New()
 
    ::lConfig                     := .t.
 
+   ::lOthers                     := .t.
+
    ::oModel                      := SQLMovimientosAlmacenModel():New( self )
 
    ::oBrowseView                 := MovimientosAlmacenBrowseView():New( self )
@@ -136,6 +138,12 @@ METHOD New()
    ::oReport                     := MovimientosAlmacenReport():New( Self )
 
    ::loadDocuments()
+
+   ::oNavigatorView:oMenuTreeView:setEvent( 'addedConfigButton',;
+      {|| ::oNavigatorView:oMenuTreeView:AddButton( "Marcar para envio", "Imp16", {|| alert( 'hi' ) }, , ACC_EDIT, ::oNavigatorView:oMenuTreeView:oButtonOthers ) } )
+ 
+   ::oNavigatorView:oMenuTreeView:setEvent( 'addedConfigButton',;
+      {|| ::oNavigatorView:oMenuTreeView:AddButton( "Marcar como enviado", "Imp16", {|| alert( 'hi 2' ) }, , ACC_EDIT, ::oNavigatorView:oMenuTreeView:oButtonOthers ) } )
 
 RETURN ( Self )
 

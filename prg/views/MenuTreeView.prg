@@ -28,7 +28,9 @@ CLASS MenuTreeView
 
    DATA oButtonLabel
 
-   DATA oButtonCounter
+   DATA oButtonConfig
+
+   DATA oButtonOthers
 
    DATA lDocumentButtons                  INIT .f.
 
@@ -50,6 +52,7 @@ CLASS MenuTreeView
    METHOD isControllerDocuments()         INLINE ( ::getController():lDocuments )
    METHOD isControllerLabels()            INLINE ( ::getController():lLabels )
    METHOD isControllerConfig()            INLINE ( ::getController():lConfig )
+   METHOD isControllerOthers()            INLINE ( ::getController():lOthers )
    METHOD getControllerDocuments()        INLINE ( ::getController():aDocuments )
 
    METHOD addImage()
@@ -88,6 +91,7 @@ CLASS MenuTreeView
                                                    ::addGeneralButton(),;
                                                    ::addDocumentsButton(),;
                                                    ::addLabelButton(),;
+                                                   ::addOthersButton(),;
                                                    ::addConfigButton(),;
                                                    ::addExitButton(),;
                                                    ::oButtonMain:Expand(),;
@@ -111,6 +115,8 @@ CLASS MenuTreeView
    METHOD addLabelButton()
 
    METHOD addConfigButton()
+
+   METHOD addOthersButton()
 
    METHOD addDocumentsButton()           
 
@@ -431,13 +437,30 @@ METHOD addConfigButton()
 
    ::fireEvent( 'addingConfigButton')
 
-   ::oButtonCounter     := ::AddButton( "Configuraciones", "gc_wrench_16", {|| ::getController():setConfig() }, "N", ACC_IMPR ) 
+   ::oButtonConfig   := ::AddButton( "Configuraciones", "gc_wrench_16", {|| ::getController():setConfig() }, "N", ACC_IMPR ) 
 
    ::fireEvent( 'addedConfigButton') 
 
 RETURN ( Self )
 
 //----------------------------------------------------------------------------//
+
+METHOD addOthersButton()
+
+   if !( ::isControllerOthers() )
+      RETURN ( Self )
+   end if 
+
+   ::fireEvent( 'addingOthersButton')
+
+   ::oButtonOthers   := ::AddButton( "Otros", "gc_more_16", {|| ::oButtonOthers:Toggle() }, "O", ACC_IMPR ) 
+
+   ::fireEvent( 'addedOthersButton') 
+
+RETURN ( Self )
+
+//----------------------------------------------------------------------------//
+
 
 METHOD blockPrintDocument( nDevice, cFormato )
 
