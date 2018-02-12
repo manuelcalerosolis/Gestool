@@ -59,8 +59,6 @@ CLASS MovimientosAlmacenController FROM SQLNavigatorController
 
    METHOD stampAgente()
 
-   METHOD setSenderDateToNull()     
-
    METHOD printDocument()  
 
    METHOD labelDocument()
@@ -275,24 +273,6 @@ RETURN ( .t. )
 
 //---------------------------------------------------------------------------//
    
-METHOD setSenderDateToNull()
-
-   if empty( ::oModel:getBuffer( "enviado" ) ) 
-      RETURN ( nil )
-   end if    
-
-   if msgYesNo( "¿ Desea eliminar la fecha de envío ?", "Confirme selección" ) 
-
-      ::oModel:setBuffer( "enviado", nil )
-
-      ::oDialogView:setTextEnviado()
-
-   end if 
-
-RETURN ( nil )
-
-//---------------------------------------------------------------------------//
-
 METHOD deleteLines()
 
    aeval( ::getRowSet():IdFromRecno( ::aSelected, "uuid" ), {| uuid | ::oLineasController:deleteLines( uuid ) } )
