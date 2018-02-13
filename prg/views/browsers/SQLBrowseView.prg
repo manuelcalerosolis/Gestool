@@ -84,8 +84,9 @@ CLASS SQLBrowseView
    // State--------------------------------------------------------------------
 
    METHOD saveIdToModel()
-
    METHOD gotoIdFromModel()
+   
+   METHOD saveColumnOrderToModel( cSortOrder )
 
 ENDCLASS
 
@@ -102,6 +103,8 @@ RETURN ( Self )
 METHOD End()
 
    ::saveIdToModel()
+
+   ::saveColumnOrderToModel()
 
    if !empty( ::oBrowse )
       ::oBrowse:End()
@@ -252,6 +255,20 @@ METHOD gotoIdFromModel()
    ::getRowSet():find( nId )
 
    ::oBrowse:SelectCurrent()
+
+RETURN ( Self )
+
+//------------------------------------------------------------------------//
+
+METHOD saveColumnOrderToModel( cSortOrder )
+
+   local cColumnOrder   
+
+   aeval( ::oBrowse:aCols, {|o| if( !empty( o:cOrder ), cColumnOrder := o:cSortOrder, ) } )
+
+   if !empty( cColumnOrder )
+      SQLConfiguracionVistasUsuariosModel():setColumnOrder( ::getName(), cColumnOrder )
+   end if 
 
 RETURN ( Self )
 

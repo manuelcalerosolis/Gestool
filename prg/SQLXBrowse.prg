@@ -48,8 +48,8 @@ CLASS SQLXBrowse FROM TXBrowse
 
    DATA  cOriginal                              AS CHARACTER   INIT ""
 
-   METHOD getOriginalState()                     INLINE ( ::cOriginal := ::saveState() )
-   METHOD setOriginalState()                     INLINE ( if( !empty( ::cOriginal ), ::restoreState( ::cOriginal ), ) )
+   METHOD getOriginalState()                    INLINE ( ::cOriginal := ::saveState() )
+   METHOD setOriginalState()                    INLINE ( if( !empty( ::cOriginal ), ::restoreState( ::cOriginal ), ) )
 
    METHOD saveStateToModel()
    METHOD restoreStateFromModel()
