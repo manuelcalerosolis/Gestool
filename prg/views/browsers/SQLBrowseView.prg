@@ -29,6 +29,7 @@ CLASS SQLBrowseView
 
    METHOD getBrowse()                        INLINE ( ::oBrowse )
    METHOD getBrowseSelected()                INLINE ( ::oBrowse:aSelected )
+   METHOD restoreStateFromModel()            INLINE ( ::oBrowse:restoreStateFromModel() )
 
    METHOD getColumnByHeader( cHeader )       INLINE ( ::oBrowse:getColumnByHeader( cHeader ) )
    METHOD getColumnOrder( cSortOrder )       INLINE ( ::oBrowse:getColumnOrder( cSortOrder ) )
@@ -43,9 +44,6 @@ CLASS SQLBrowseView
    METHOD setLDblClick( bLDblClick )         INLINE ( ::oBrowse:bLDblClick := bLDblClick )
 
    METHOD Refresh()                          INLINE ( ::oBrowse:MakeTotals(), ::oBrowse:Refresh() )
-
-   METHOD setView()                          INLINE ( ::oBrowse:setView() )
-   METHOD saveView()                         INLINE ( ::oBrowse:saveView() )
 
    METHOD setController( oController )       INLINE ( ::oController := oController )
    METHOD getController()                    INLINE ( ::oController )
@@ -83,6 +81,12 @@ CLASS SQLBrowseView
 
    METHOD onClickHeader( oColumn )          
 
+   // State--------------------------------------------------------------------
+
+   METHOD saveIdToModel()
+
+   METHOD gotoIdFromModel()
+
 ENDCLASS
 
 //----------------------------------------------------------------------------//
@@ -96,6 +100,8 @@ RETURN ( Self )
 //----------------------------------------------------------------------------//
 
 METHOD End()
+
+   ::saveIdToModel()
 
    if !empty( ::oBrowse )
       ::oBrowse:End()
@@ -222,4 +228,32 @@ METHOD setSize( nTop, nLeft, nRight, nBottom )
 RETURN ( self )
 
 //---------------------------------------------------------------------------//
+
+METHOD saveIdToModel()
+
+   local nId   := ::getRowSet():fieldGet( ::getModel():cColumnKey )
+
+   if !empty( nId )
+      SQLConfiguracionVistasUsuariosModel():setId( ::getName(), nId )
+   end if 
+
+RETURN ( self )
+
+//---------------------------------------------------------------------------//
+
+METHOD gotoIdFromModel()
+
+   local nId   := SQLConfiguracionVistasUsuariosModel():getId( ::getName() )
+
+   if empty( nId )
+      RETURN ( Self )
+   end if 
+
+   ::getRowSet():find( nId )
+
+   ::oBrowse:SelectCurrent()
+
+RETURN ( Self )
+
+//------------------------------------------------------------------------//
 
