@@ -22,12 +22,16 @@ CLASS SQLConfiguracionVistasUsuariosModel FROM SQLBaseModel
    METHOD getFieldName( cViewName )
    METHOD getState( cViewName )
 
-   METHOD getId( cViewName )                 INLINE ( ::getFieldName( cViewName, "id_to_find" ) )
-   METHOD setId( cViewName, nId )            INLINE ( ::set( cViewName, nil, nil, nil, nId ) ) 
-
    METHOD getColumnOrder( cViewName )        INLINE ( ::getFieldName( cViewName, "column_order" ) )
    METHOD setColumnOrder( cViewName, cColumnOrder ) ;
                                              INLINE ( ::set( cViewName, nil, cColumnOrder ) ) 
+
+   METHOD getColumnOrientation( cViewName )  INLINE ( ::getFieldName( cViewName, "column_orientation" ) )
+   METHOD setColumnOrientation( cViewName, cColumnOrientation ) ;
+                                             INLINE ( ::set( cViewName, nil, nil, cColumnOrientation ) ) 
+
+   METHOD getId( cViewName )                 INLINE ( ::getFieldName( cViewName, "id_to_find" ) )
+   METHOD setId( cViewName, nId )            INLINE ( ::set( cViewName, nil, nil, nil, nId ) ) 
 
 END CLASS
 
