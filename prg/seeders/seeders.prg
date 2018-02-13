@@ -481,13 +481,13 @@ STATIC FUNCTION SincronizaRemesasMovimientosAlmacen()
    BEGIN SEQUENCE
 
    dbUseArea( .t., cLocalDriver(), ( cPath + "RemMovT.Dbf" ), cCheckArea( "RemMovT", @dbfRemMov ), .f. ) 
-   ordListAdd( cPath + "RemMovT.Cdx"  )  
+   ( dbfRemMov )->( ordListAdd( cPath + "RemMovT.Cdx"  ) )
 
    dbUseArea( .t., cLocalDriver(), ( cPath + "HisMov.Dbf" ), cCheckArea( "HisMov", @dbfHisMov ), .f. ) 
-   ordListAdd( cPath + "HisMov.Cdx"  )  
+   ( dbfHisMov )->( ordListAdd( cPath + "HisMov.Cdx"  ) )
 
    dbUseArea( .t., cLocalDriver(), ( cPath + "MovSer.Dbf" ), cCheckArea( "MovSer", @dbfMovSer ), .f. )  
-   ordListAdd( cPath + "MovSer.Cdx"  )  
+   ( dbfMovSer )->( ordListAdd( cPath + "MovSer.Cdx"  ) )
 
    // Cabeceras-------------------------------------------------------------------
 
@@ -548,11 +548,8 @@ STATIC FUNCTION SincronizaRemesasMovimientosAlmacen()
    end while
 
    RECOVER USING oError
-
       msgstop( "Imposible abrir todas las bases de datos de movimientos de almacén" + CRLF + ErrorMessage( oError ) )
-
    END SEQUENCE
-
    ErrorBlock( oBlock )
 
    CLOSE ( dbfRemMov )
