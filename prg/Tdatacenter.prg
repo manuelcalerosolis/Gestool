@@ -5276,7 +5276,7 @@ METHOD DefineFiles( cPath ) CLASS TDetMovimientos
       FIELD NAME "cGuid"      TYPE "C" LEN  40 DEC 0 COMMENT "cGuid de las lineas"                 OF oDbf
       FIELD NAME "cGuidPar"   TYPE "C" LEN  40 DEC 0 COMMENT "cGuid de la cabecera"                OF oDbf
 
-      INDEX TO "HisMov.Cdx"   TAG "nNumRem"    ON "str( nNumRem ) + cSufRem" NODELETED             OF oDbf
+      INDEX TO "HisMov.Cdx"   TAG "cNumRem"    ON "str( nNumRem ) + cSufRem + Str( nNumLin )" NODELETED OF oDbf
 
    END DATABASE oDbf
 
@@ -5316,7 +5316,7 @@ METHOD DefineFiles( cPath ) CLASS TDetSeriesMovimientos
       FIELD NAME "cGuid"      TYPE "C" LEN  40 DEC 0 COMMENT "cGuid de las lineas"                       OF oDbf
       FIELD NAME "cGuidPar"   TYPE "C" LEN  40 DEC 0 COMMENT "cGuid de la cabecera"                      OF oDbf
 
-      INDEX TO ( "MovSer.cdx" ) TAG "cNumOrd" ON "Str( nNumRem ) + cSufRem + Str( nNumLin )"   NODELETED OF oDbf
+      INDEX TO ( "MovSer.cdx" ) TAG "cNumRem" ON "Str( nNumRem ) + cSufRem + Str( nNumLin )"   NODELETED OF oDbf
 
    END DATABASE oDbf
 
