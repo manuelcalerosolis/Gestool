@@ -584,7 +584,7 @@ FamiliasModel.prg                                    				\
 TiposArticulosModel.prg                                    		\
 ContadoresModel.prg                                   			\
 ColumnasUsuariosModel.prg 													\
-SQLConfiguracionColumnasUsuariosModel.prg                      \
+SQLConfiguracionVistasUsuariosModel.prg                      	\
 PedidosClientesLineasModel.prg 											\
 EmpresasModel.prg 															\
 ClientesModel.prg 															\
@@ -605,7 +605,6 @@ PropiedadesController.obj       											\
 PropiedadesLineasModel.obj       										\
 PropiedadesLineasController.obj       									\
 RelacionesEtiquetasModel.prg 												\
-SQLConfiguracionColumnasUsuariosModel.prg                      \
 PedidosClientesLineasModel.prg 											\
 Categoria.prg                                                  \
 GroupCustomer.prg                                              \
@@ -617,7 +616,7 @@ SQLMovimientosAlmacenLineasNumerosSeriesModel.prg 					\
 NumerosSeriesController.prg 								  				\
 NumerosSeriesView.prg 														\
 SQLExportableModel.prg 														\
-ExportableController.prg												\
+ExportableController.prg													\
 SQLRowSet.prg 																	\
 PdaEnvioRecepcionController.prg 											\
 PdaEnvioRecepcionView.prg 													\
@@ -1197,7 +1196,7 @@ ArticulosModel.obj                                    			\
 FamiliasModel.obj                                    				\
 TiposArticulosModel.obj                                    		\
 ContadoresModel.obj                                    			\
-SQLConfiguracionColumnasUsuariosModel.obj                      \
+SQLConfiguracionVistasUsuariosModel.obj                      	\
 PedidosClientesLineasModel.obj 											\
 ColumnasUsuariosModel.obj 													\
 Categoria.obj                                               	\
@@ -1210,7 +1209,7 @@ SQLMovimientosAlmacenLineasNumerosSeriesModel.obj 					\
 NumerosSeriesController.obj 												\
 NumerosSeriesView.obj 														\
 SQLExportableModel.obj 														\
-ExportableController.obj 												\
+ExportableController.obj 													\
 SQLRowSet.obj 																	\
 PdaEnvioRecepcionController.obj 											\
 PdaEnvioRecepcionView.obj 													\
@@ -1782,7 +1781,7 @@ $(OBJ)\PropiedadesController.obj      									+
 $(OBJ)\PropiedadesLineasModel.obj      								+
 $(OBJ)\PropiedadesLineasController.obj      							+
 $(OBJ)\RelacionesEtiquetasModel.obj                				+
-$(OBJ)\SQLConfiguracionColumnasUsuariosModel.obj 					+
+$(OBJ)\SQLConfiguracionVistasUsuariosModel.obj 						+
 $(OBJ)\Categoria.obj                                     		+
 $(OBJ)\GroupCustomer.obj                                 		+
 $(OBJ)\GroupCustomerViewSearchNavigator.obj              		+

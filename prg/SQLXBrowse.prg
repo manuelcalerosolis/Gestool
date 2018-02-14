@@ -22,8 +22,7 @@ CLASS SQLXBrowse FROM TXBrowse
    METHOD setRowSet( oRowSet )
    METHOD setHashList( oHashList )
 
-   // METHOD refreshCurrent()                      INLINE ( ::Super:::RefreshCurrent() )
-   // METHOD Refresh()                             INLINE ( ::Super:Refresh(), ::Select( 0 ), ::Select( 1 ) )
+   METHOD selectCurrent()                       INLINE ( ::Select( 0 ), ::Select( 1 ) )
 
    METHOD getColumnByHeaders()
    METHOD selectColumnOrder( oCol )
@@ -49,11 +48,11 @@ CLASS SQLXBrowse FROM TXBrowse
 
    DATA  cOriginal                              AS CHARACTER   INIT ""
 
-   METHOD getOriginalView()                     INLINE ( ::cOriginal := ::SaveState() )
-   METHOD setOriginalView()                     INLINE ( if( !empty( ::cOriginal ), ::restoreState( ::cOriginal ), ) )
+   METHOD getOriginalState()                    INLINE ( ::cOriginal := ::saveState() )
+   METHOD setOriginalState()                    INLINE ( if( !empty( ::cOriginal ), ::restoreState( ::cOriginal ), ) )
 
-   METHOD saveView()
-   METHOD setView()
+   METHOD saveStateToModel()
+   METHOD restoreStateFromModel()
 
 END CLASS
 
@@ -107,9 +106,9 @@ METHOD RButtonDown( nRow, nCol, nFlags )
 
       MenuAddItem()
 
-      MenuAddItem( "Guardar vista actual", "Guarda la vista actual de la rejilla de datos", .f., .t., {|| ::saveView() }, , "gc_table_selection_column_disk_16", oMenu )
+      MenuAddItem( "Guardar vista actual", "Guarda la vista actual de la rejilla de datos", .f., .t., {|| ::saveStateToModel() }, , "gc_table_selection_column_disk_16", oMenu )
 
-      MenuAddItem( "Cargar vista por defecto", "Carga la vista por defecto de la rejilla de datos", .f., .t., {|| ::setOriginalView() }, , "gc_table_selection_column_refresh_16", oMenu )
+      MenuAddItem( "Cargar vista por defecto", "Carga la vista por defecto de la rejilla de datos", .f., .t., {|| ::setOriginalState() }, , "gc_table_selection_column_refresh_16", oMenu )
 
    MenuEnd() 
 
@@ -211,8 +210,7 @@ METHOD MakeTotals()
    local aCols    := {}
 
    aeval( ::aCols,;
-      {|oCol| if( !empty( oCol:nFooterType ),;
-         ( oCol:nTotal := 0.0, aadd( aCols, oCol ) ), ) } )
+      {|oCol| if( !empty( oCol:nFooterType ), ( oCol:nTotal := 0.0, aadd( aCols, oCol ) ), ) } )
 
    if empty( aCols )
       RETURN ( Self )
@@ -221,6 +219,7 @@ METHOD MakeTotals()
    uBm            := eval( ::bBookMark )
 
    eval( ::bGoTop )
+
    do 
       aeval( aCols, {|oCol| oCol:nTotal  += oCol:Value, oCol:nCount++ } )
    until ( ::skip( 1 ) < 1 )
@@ -319,27 +318,21 @@ RETURN ( nil )
 
 //----------------------------------------------------------------------------//
 
-METHOD SaveView()
+METHOD saveStateToModel()
 
-   local oConfiguracionColumnasUsuariosModel
-
-   oConfiguracionColumnasUsuariosModel    := SQLConfiguracionColumnasUsuariosModel()
-
-   if !empty( oConfiguracionColumnasUsuariosModel )
-      oConfiguracionColumnasUsuariosModel:set( ::getName(), ::saveState() )
-   end if
+   SQLConfiguracionVistasUsuariosModel():set( ::getName(), ::saveState() )
 
 RETURN ( Self )
 
 //----------------------------------------------------------------------------//
 
-METHOD SetView()
+METHOD restoreStateFromModel()
 
    local cBrowseState
 
-   ::getOriginalView()
+   ::getOriginalState()
 
-   cBrowseState         := SQLConfiguracionColumnasUsuariosModel():getState( ::getName )
+   cBrowseState         := SQLConfiguracionVistasUsuariosModel():getState( ::getName() )
 
    if !empty( cBrowseState )
       ::restoreState( cBrowseState )

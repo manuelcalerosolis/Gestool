@@ -109,7 +109,9 @@ METHOD Activate()
 
    ::getBrowseView():ActivateMDI( ::getWindow(), dfnSplitterHeight + dfnSplitterWidth, dfnTreeViewWidth + dfnSplitterWidth, ::oMdiChild:nRight - ::oMdiChild:nLeft, ::oMdiChild:nBottom - ::oMdiChild:nTop - dfnSplitterHeight - 162 )
 
-   ::getBrowseView():setView()
+   ::getBrowseView():restoreStateFromModel() 
+
+   ::getBrowseView():gotoIdFromModel()
 
    // Splitters----------------------------------------------------------------
 

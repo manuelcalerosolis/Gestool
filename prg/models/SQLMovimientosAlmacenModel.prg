@@ -10,6 +10,8 @@ CLASS SQLMovimientosAlmacenModel FROM SQLExportableModel
 
    DATA cConstraints             INIT "PRIMARY KEY (id), KEY (uuid)"
 
+   DATA aTextoMovimiento         INIT { 'Entre almacenes', 'Regularización', 'Objetivos', 'Consolidación', 'Vacio' }
+ 
    METHOD getColumns()
 
    METHOD getColumnMovimiento()  
@@ -25,6 +27,9 @@ CLASS SQLMovimientosAlmacenModel FROM SQLExportableModel
    METHOD getInsertSentence( hBuffer )
 
    METHOD assingNumber()
+
+   METHOD cTextoMovimiento( nTipoMovimiento ) ;
+                                 INLINE ( ::aTextoMovimiento[ minmax( nTipoMovimiento, 1, len( ::aTextoMovimiento ) ) ] )
 
 END CLASS
 
@@ -113,11 +118,11 @@ METHOD getColumnMovimiento( cTable )
    end if
 
    cSql           := "CASE "                                                                                                  
-   cSql           +=    "WHEN " + cTable + "tipo_movimiento = 1 THEN 'Entre almacenes' " 
-   cSql           +=    "WHEN " + cTable + "tipo_movimiento = 2 THEN 'Regularización' " 
-   cSql           +=    "WHEN " + cTable + "tipo_movimiento = 3 THEN 'Objetivos' " 
-   cSql           +=    "WHEN " + cTable + "tipo_movimiento = 4 THEN 'Consolidación' " 
-   cSql           +=    "ELSE 'Vacio' "
+   cSql           +=    "WHEN " + cTable + "tipo_movimiento = 1 THEN '" + ::aTextoMovimiento[ 1 ] + "'" 
+   cSql           +=    "WHEN " + cTable + "tipo_movimiento = 2 THEN '" + ::aTextoMovimiento[ 2 ] + "'" 
+   cSql           +=    "WHEN " + cTable + "tipo_movimiento = 3 THEN '" + ::aTextoMovimiento[ 3 ] + "'" 
+   cSql           +=    "WHEN " + cTable + "tipo_movimiento = 4 THEN '" + ::aTextoMovimiento[ 4 ] + "'" 
+   cSql           +=    "ELSE '"                                        + ::aTextoMovimiento[ 5 ] + "'" 
    cSql           += "END as nombre_movimiento, "
 
 RETURN ( cSql )
@@ -193,3 +198,4 @@ METHOD assingNumber( hBuffer )
 RETURN ( .t. )
 
 //---------------------------------------------------------------------------//
+
