@@ -778,6 +778,8 @@ METHOD getValueFromColumn( cColumn, cKey )
 
    end if 
 
+   MsgInfo( uValue, "getValueFromColumn" )
+
 RETURN ( uValue )
 
 //---------------------------------------------------------------------------//

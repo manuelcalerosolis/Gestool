@@ -279,6 +279,8 @@ RETURN ( .t. )
 
 FUNCTION Test()
 
+   //msgalert( hb_valtoexp( TiposImpresorasController():New():ActivateSelectorView() ) )
+
 RETURN nil
 
 //----------------------------------------------------------------------------//

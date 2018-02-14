@@ -2357,7 +2357,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, cTikT, oBrw, cCodCli, cCodArt, nMode, hDocum
 		REDEFINE GET aGet[_CCODOBR] VAR aTmp[_CCODOBR] ;
          ID       230 ;
          WHEN     ( nMode != ZOOM_MODE ) ;
-         VALID    ( cObras( aGet[ _CCODOBR ], oGetTxt[ 5 ], aTmp[ _CCLITIK ], dbfObrasT ) );
+         VALID    ( cObras( aGet[ _CCODOBR ], oGetTxt[ 5 ], aTmp[ _CCLITIK ] ) );
          BITMAP   "LUPA" ;
          ON HELP  ( brwObras( aGet[ _CCODOBR ], oGetTxt[ 5 ], aTmp[ _CCLITIK ], dbfObrasT ) ) ;
          OF       oDlgTpv

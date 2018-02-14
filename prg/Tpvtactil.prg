@@ -3496,12 +3496,18 @@ Return ( oDlg:nResult == IDOK )
 
 STATIC FUNCTION browseTipoImpresora( oGet )
 
-   local cTipoImpresora
+   /*local cTipoImpresora
 
    cTipoImpresora    := TiposImpresorasController():New():activateBrowse() 
 
    if !empty( cTipoImpresora )
       oGet:cText( padr( cTipoImpresora, 50 ) )
+   end if */
+
+   local hTipoImpresora    := TiposImpresorasController():New():ActivateSelectorView() 
+
+   if !empty( hTipoImpresora )
+      oGet:cText( padr( if( hhaskey( hTipoImpresora, "nombre" ), hget( hTipoImpresora, "nombre" ), "" ), 50 ) )
    end if 
 
 RETURN ( .t. )

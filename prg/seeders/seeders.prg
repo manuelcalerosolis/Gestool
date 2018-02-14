@@ -540,7 +540,7 @@ STATIC FUNCTION SincronizaRemesasMovimientosAlmacen()
       //Vas por aqui----------------------------------------------------------
 
       if empty( ( dbfMovSer )->cGuidPar )
-         ( dbfMovSer )->cGuidPar       := RetFld( Str( ( dbfMovSer )->nNumRem ) + ( dbfMovSer )->cSufRem + Str( ( dbfMovSer )->nNumLin, 9 ), dbfHisMov, "cGuid", "cRemLin" )
+         ( dbfMovSer )->cGuidPar       := RetFld( Str( ( dbfMovSer )->nNumRem ) + ( dbfMovSer )->cSufRem + Str( ( dbfMovSer )->nNumLin, 9 ), dbfHisMov, "cGuid", "cNumRem" )
       end if
 
       ( dbfMovSer )->( dbSkip() )
