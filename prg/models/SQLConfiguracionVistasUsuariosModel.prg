@@ -9,8 +9,7 @@ CLASS SQLConfiguracionVistasUsuariosModel FROM SQLBaseModel
    DATA cTableName                           INIT "configuracion_vistas_usuarios"
 
    DATA cConstraints                         INIT  "PRIMARY KEY ( id ), "                       + ; 
-                                                      "UNIQUE KEY ( usuario_id ), "             + ;
-                                                      "UNIQUE KEY ( view_name )"                    
+                                                      "UNIQUE KEY ( empresa, usuario, view_name )"
 
    METHOD getColumns()
 
@@ -40,7 +39,8 @@ END CLASS
 METHOD getColumns()
 
    ::hColumns        := {  "id"                 =>  { "create" => "INTEGER AUTO_INCREMENT"      },;
-                           "usuario_id"         =>  { "create" => "CHARACTER ( 3 ) NOT NULL"    },;
+                           "empresa"            =>  { "create" => "CHAR ( 4 ) NOT NULL"         },;
+                           "usuario"            =>  { "create" => "CHARACTER ( 3 ) NOT NULL"    },;
                            "view_name"          =>  { "create" => "VARCHAR( 60 ) NOT NULL"      },;
                            "browse_state"       =>  { "create" => "TEXT"                        },;
                            "column_order"       =>  { "create" => "VARCHAR( 60 )"               },;
@@ -54,10 +54,12 @@ RETURN ( ::hColumns )
 METHOD get( cViewName )
 
    local aFetch
-   local cSentence   := "SELECT browse_state, column_order, column_orientation, id_to_find "        + ;
-                           "FROM " + ::cTableName + " "                                      + ;
-                           "WHERE view_name = " + quoted( cViewName ) + " "                  + ;
-                              "AND usuario_id = " + quoted( oUser():cCodigo() ) + " "        + ;
+   local cSentence   := "SELECT browse_state, column_order, column_orientation, id_to_find "       + ;
+                           "FROM " + ::cTableName + " "                                            + ;
+                           "WHERE "                                                                + ;
+                              "empresa = " + cCodEmp() + " AND "                                   + ; 
+                              "usuario = " + quoted( cCurUsr() ) + " AND "                         + ;
+                              "view_name = " + quoted( cViewName ) + " "                           + ;
                            "LIMIT 1"
 
    aFetch            := getSQLDatabase():selectFetchHash( cSentence, .f. )
@@ -104,72 +106,74 @@ RETURN ( cState )
 
 METHOD set( cViewName, cBrowseState, cColumnOrder, cOrientation, idToFind )
 
-   local cSentence     := "INSERT INTO " + ::cTableName + " "                               
-   cSentence           +=    "( usuario_id, "                                               
-   cSentence           +=       "view_name, "     
+   local cSentence      := "INSERT INTO " + ::cTableName + " ( "                               
+   cSentence            +=       "empresa, "                                               
+   cSentence            +=       "usuario, "                                               
+   cSentence            +=       "view_name, "     
 
    if !empty( cBrowseState )                                          
-      cBrowseState         := getSQLDatabase():escapeStr( cBrowseState ) 
-      cSentence        +=       "browse_state, "                                            
+      cBrowseState      := getSQLDatabase():escapeStr( cBrowseState ) 
+      cSentence         +=       "browse_state, "                                            
    end if 
 
    if !empty( cColumnOrder )
-      cSentence        +=       "column_order, "                                          
+      cSentence         +=       "column_order, "                                          
    end if 
    
    if !empty( cOrientation )
-      cSentence        +=       "column_orientation, "                                           
+      cSentence         +=       "column_orientation, "                                           
    end if 
    
    if !empty( idToFind )
-      cSentence        +=       "id_to_find, "                                               
+      cSentence         +=       "id_to_find, "                                               
    end if 
 
-   cSentence           := chgAtEnd( cSentence, ' ) ', 2 )
+   cSentence            := chgAtEnd( cSentence, ' ) ', 2 )
 
-   cSentence           += "VALUES ( "                                                    
-   cSentence           +=       quoted( oUser():cCodigo() ) + ", "                          
-   cSentence           +=       quoted( cViewName ) + ", "                                  
+   cSentence            += "VALUES ( "                                                    
+   cSentence            +=       quoted( cCodEmp() ) + ", "                          
+   cSentence            +=       quoted( cCurUsr() ) + ", "                          
+   cSentence            +=       quoted( cViewName ) + ", "                                  
 
    if !empty( cBrowseState )                                          
-      cSentence        +=       quoted( cBrowseState ) + ", "                               
+      cSentence         +=       quoted( cBrowseState ) + ", "                               
    end if 
 
    if !empty( cColumnOrder )
-      cSentence        +=       quoted( cColumnOrder ) + ", "                           
+      cSentence         +=       quoted( cColumnOrder ) + ", "                           
    end if 
 
    if !empty( cOrientation )
-      cSentence        +=       quoted( cOrientation ) + ", "                           
+      cSentence         +=       quoted( cOrientation ) + ", "                           
    end if 
 
    if !empty( idToFind )
-      cSentence        +=       alltrim( cvaltostr( idToFind ) ) + ", "
+      cSentence         +=       alltrim( cvaltostr( idToFind ) ) + ", "
    end if
 
-   cSentence           := chgAtEnd( cSentence, ' ) ', 2 )
+   cSentence            := chgAtEnd( cSentence, ' ) ', 2 )
 
-   cSentence           += "ON DUPLICATE KEY "
+   cSentence            += "ON DUPLICATE KEY "
 
-   cSentence           += "UPDATE "                                                      
+   cSentence            += "UPDATE "                                                      
    
    if !empty( cBrowseState )                                          
-      cSentence        +=    "browse_state = " + quoted( cBrowseState ) + ", "           
+      cSentence         +=    "browse_state = " + quoted( cBrowseState ) + ", "           
    end if
 
    if !empty( cColumnOrder )
-      cSentence        +=    "column_order = " + quoted( cColumnOrder ) + ", "           
+      cSentence         +=    "column_order = " + quoted( cColumnOrder ) + ", "           
    end if
 
    if !empty( cOrientation )
-      cSentence        +=    "column_orientation = " + quoted( cOrientation ) + ", "            
+      cSentence         +=    "column_orientation = " + quoted( cOrientation ) + ", "            
    end if
 
    if !empty( idToFind )
-      cSentence        +=    "id_to_find = " + alltrim( cvaltostr( idToFind ) ) + ", "
+      cSentence         +=    "id_to_find = " + alltrim( cvaltostr( idToFind ) ) + ", "
    end if
 
-   cSentence           := chgAtEnd( cSentence, '', 2 )
+   cSentence            := chgAtEnd( cSentence, '', 2 )
 
    getSQLDatabase():Exec( cSentence  )
 
@@ -181,7 +185,7 @@ METHOD delete( cViewName )
 
    local cSentence   := "DELETE FROM " + ::cTableName + " "                                  + ;
                            "WHERE view_name = " + quoted( cViewName ) + " "                  + ;
-                              "AND usuario_id = " + quoted( oUser():cCodigo() )
+                              "AND usuario = " + quoted( oUser():cCodigo() )
 
    getSQLDatabase():Exec( cSentence  )
 

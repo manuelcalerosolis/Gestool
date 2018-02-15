@@ -25,7 +25,6 @@ CLASS MovimientosAlmacenController FROM SQLNavigatorController
    DATA oRecordController
 
    METHOD New()
-
    METHOD End()
 
    METHOD validateNumero()          
@@ -116,6 +115,8 @@ METHOD New()
    ::lOthers                     := .t.
 
    ::oModel                      := SQLMovimientosAlmacenModel():New( self )
+   ::oModel:setColumnOrderFromModel( ::getName() )
+   ::oModel:setColumnOrientationFromModel( ::getName() )
 
    ::oBrowseView                 := MovimientosAlmacenBrowseView():New( self )
 
@@ -433,8 +434,6 @@ RETURN ( .t. )
 //---------------------------------------------------------------------------//
 
 METHOD setSender( cSentence )
-
-   msgalert( cSentence, "cSentence")
 
    if empty( cSentence )
       RETURN ( self )

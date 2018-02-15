@@ -105,7 +105,9 @@ METHOD New( oController )
 
    ::lTransactional                    := .t.
 
-   ::cTitle                            := "Movimientos de almacen lineas"
+   ::cTitle                            := "Movimientos de almacén líneas"
+
+   ::setName( "lineas_movimientos_almacen" )
 
    ::oModel                            := SQLMovimientosAlmacenLineasModel():New( self )
 

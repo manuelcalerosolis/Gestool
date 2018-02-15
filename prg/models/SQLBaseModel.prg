@@ -132,8 +132,12 @@ CLASS SQLBaseModel
 
    METHOD setColumnOrder( cColumnOrder )              INLINE ( ::cColumnOrder := cColumnOrder )
    METHOD getColumnOrder()                            INLINE ( ::cColumnOrder )
+   
+   METHOD setColumnOrderFromModel( cName )
 
    METHOD setColumnOrientation( cColumnOrientation )  INLINE ( ::cColumnOrientation := cColumnOrientation )
+   METHOD getColumnOrientation()                      INLINE ( ::cColumnOrientation )
+   METHOD setColumnOrientationFromModel( cName )
 
    METHOD getDeleteSentenceById( nId )
 
@@ -194,8 +198,6 @@ METHOD New( oController )
    end if 
 
    ::cGeneralSelect              := "SELECT * FROM " + ::getTableName()    
-
-   ::cColumnOrientation          := "A"
 
 RETURN ( Self )
 
@@ -282,8 +284,9 @@ RETURN ( cSQLSelect )
 
 METHOD getIdSelect( id )
 
-   local cSQLSelect        := ::cGeneralSelect + space( 1 )
+   local cSQLSelect        := ::cGeneralSelect 
 
+   cSQLSelect              += space( 1 )
    cSQLSelect              += "WHERE id = " + toSQLString( id )
 
 RETURN ( cSQLSelect )
@@ -303,6 +306,8 @@ METHOD getSelectSentence()
    cSQLSelect              := ::getSelectByOrder( cSQLSelect )
 
    ::fireEvent( 'gotSelectSentence')
+
+   MSGALERT( cSQLSelect, "getSelectSentence" )
 
 RETURN ( cSQLSelect )
 
@@ -338,7 +343,7 @@ METHOD addFilterWhere( cSQLSelect )
       RETURN ( cSQLSelect )
    end if 
 
-   cSQLSelect        += ::getWhereOrAnd( cSQLSelect ) + ::cFilterWhere
+   cSQLSelect     += ::getWhereOrAnd( cSQLSelect ) + ::cFilterWhere
 
 RETURN ( cSQLSelect )
 
@@ -346,9 +351,12 @@ RETURN ( cSQLSelect )
 
 METHOD addGroupBy( cSQLSelect )
 
-   if !empty( ::getGroupBy() )
-      cSQLSelect     += ::getGroupBy()
+   if empty( ::getGroupBy() )
+      RETURN ( cSQLSelect )
    end if 
+
+   cSQLSelect     += space( 1 ) 
+   cSQLSelect     += ::getGroupBy()
 
 RETURN ( cSQLSelect )
 
@@ -360,7 +368,8 @@ METHOD addFindWhere( cSQLSelect )
       RETURN ( cSQLSelect )
    end if 
 
-   cSQLSelect        += ::getWhereOrAnd( cSQLSelect ) + "UPPER(" + ::cColumnOrder +") LIKE '%" + Upper( ::cFind ) + "%'" 
+   cSQLSelect     += space( 1 )
+   cSQLSelect     += ::getWhereOrAnd( cSQLSelect ) + "UPPER(" + ::cColumnOrder +") LIKE '%" + Upper( ::cFind ) + "%'" 
 
 RETURN ( cSQLSelect )
 
@@ -369,13 +378,13 @@ RETURN ( cSQLSelect )
 METHOD getSelectByOrder( cSQLSelect )
 
    if !empty( ::cColumnOrder )
-      cSQLSelect     += " ORDER BY " + ::cColumnOrder 
+      cSQLSelect  += " ORDER BY " + ::cColumnOrder 
    end if 
 
    if !empty( ::cColumnOrientation ) .and. ::cColumnOrientation == "A"
-      cSQLSelect     += " DESC"
+      cSQLSelect  += " DESC"
    else
-      cSQLSelect     += " ASC"
+      cSQLSelect  += " ASC"
    end if
 
 RETURN ( cSQLSelect )
@@ -400,8 +409,6 @@ METHOD getCreateTableSentence()
       cSQLCreateTable      := ChgAtEnd( cSQLCreateTable, ' )', 2 )
 
    end if 
-
-   msgAlert( cSQLCreateTable, "cSQLCreateTable" )
 
 RETURN ( cSQLCreateTable )
 
@@ -907,3 +914,26 @@ RETURN ( hset( ::hBuffer, cColumn, uValue ) )
 
 //----------------------------------------------------------------------------//
 
+METHOD setColumnOrderFromModel( cName )
+   
+   local cColumnOrder   := SQLConfiguracionVistasUsuariosModel():getColumnOrder( cName )
+
+   if !empty( cColumnOrder )
+      ::setColumnOrder( cColumnOrder )
+   end if 
+
+RETURN ( self )
+
+//----------------------------------------------------------------------------//
+
+METHOD setColumnOrientationFromModel( cName )
+
+   local cColumnOrientation   := SQLConfiguracionVistasUsuariosModel():getColumnOrientation( cName )
+
+   if !empty( cColumnOrientation )
+      ::setColumnOrientation( cColumnOrientation )
+   end if 
+
+RETURN ( self )
+
+//----------------------------------------------------------------------------//

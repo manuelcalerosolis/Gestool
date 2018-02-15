@@ -13,6 +13,10 @@ CLASS SQLMovimientosAlmacenLineasModel FROM SQLExportableModel
                                        "KEY ( parent_uuid ), "                   + ;
                                        "KEY ( codigo_articulo ) "               
 
+   DATA cColumnOrder          INIT  "id"
+
+   DATA cColumnOrientation    INIT  "D"
+
    METHOD getColumns()
 
    METHOD getInitialSelect()

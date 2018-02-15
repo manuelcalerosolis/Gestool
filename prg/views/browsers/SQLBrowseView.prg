@@ -33,7 +33,11 @@ CLASS SQLBrowseView
 
    METHOD getColumnByHeader( cHeader )       INLINE ( ::oBrowse:getColumnByHeader( cHeader ) )
    METHOD getColumnOrder( cSortOrder )       INLINE ( ::oBrowse:getColumnOrder( cSortOrder ) )
-   METHOD getColumnOrderByHeader( cHeader )  INLINE ( ::oBrowse:getColumnOrderByHeader( cHeader ) )
+
+   METHOD setColumnOrder( cSortOrder )
+
+   METHOD getColumnHeaderByOrder( cSortOrder )  
+   METHOD getColumnOrderByHeader( cHeader )     INLINE ( ::oBrowse:getColumnOrderByHeader( cHeader ) )
 
    METHOD selectColumnOrder( oCol )          INLINE ( ::oBrowse:selectColumnOrder( oCol ) )
    METHOD refreshCurrent()                   INLINE ( ::oBrowse:refreshCurrent() )
@@ -83,10 +87,14 @@ CLASS SQLBrowseView
 
    // State--------------------------------------------------------------------
 
-   METHOD saveIdToModel()
+   METHOD saveIdToModel( nId )
    METHOD gotoIdFromModel()
    
    METHOD saveColumnOrderToModel( cSortOrder )
+   METHOD getColumnOrderFromModel()
+
+   METHOD saveColumnOrientationToModel( cSortOrientation )
+   METHOD getColumnOrientationFromModel()
 
 ENDCLASS
 
@@ -102,9 +110,13 @@ RETURN ( Self )
 
 METHOD End()
 
+   msgalert( "end", "SQLBrowseView" )
+
    ::saveIdToModel()
 
    ::saveColumnOrderToModel()
+
+   ::saveColumnOrientationToModel()
 
    if !empty( ::oBrowse )
       ::oBrowse:End()
@@ -201,6 +213,8 @@ METHOD ActivateDialog( oDialog, nId )
 
    ::CreateFromResource( nId )
 
+   // ::getBrowseView():restoreStateFromModel()
+
 RETURN ( Self )
 
 //----------------------------------------------------------------------------//
@@ -274,3 +288,66 @@ RETURN ( Self )
 
 //------------------------------------------------------------------------//
 
+METHOD getColumnOrderFromModel()
+
+   local cColumnOrder   := SQLConfiguracionVistasUsuariosModel():getColumnOrder( ::getName() )
+
+RETURN ( Self )
+
+//------------------------------------------------------------------------//
+
+METHOD saveColumnOrientationToModel( cSortOrientation )
+
+   local cColumnOrientation   
+
+   aeval( ::oBrowse:aCols, {|o| if( !empty( o:cOrder ), cColumnOrientation := o:cOrder, ) } )
+
+   if !empty( cColumnOrientation )
+      SQLConfiguracionVistasUsuariosModel():setColumnOrientation( ::getName(), cColumnOrientation )
+   end if 
+
+RETURN ( Self )
+
+//------------------------------------------------------------------------//
+
+METHOD getColumnOrientationFromModel()
+
+   local cColumnOrientation   := SQLConfiguracionVistasUsuariosModel():getColumnOrientation( ::getName() )
+
+RETURN ( Self )
+
+//------------------------------------------------------------------------//
+
+METHOD setColumnOrder( cSortOrder, cSortOrientation )
+
+   local oColumn
+
+   oColumn           := ::getColumnOrder( cSortOrder )
+
+   if empty( oColumn )
+      RETURN ( Self )
+   end if 
+
+   if !empty( cSortOrientation )
+      oColumn:cOrder := cSortOrientation
+   end if 
+
+   ::oBrowse:selectColumnOrder( oColumn )
+
+RETURN ( Self )
+
+//------------------------------------------------------------------------//
+
+METHOD getColumnHeaderByOrder( cSortOrder )
+
+   local oColumn
+
+   oColumn           := ::getColumnOrder( cSortOrder )
+
+   if empty( oColumn )
+      RETURN ( "" )
+   end if 
+
+RETURN ( oColumn:cHeader )
+
+//------------------------------------------------------------------------//

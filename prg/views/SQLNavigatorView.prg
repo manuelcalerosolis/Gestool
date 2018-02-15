@@ -21,28 +21,29 @@ CLASS SQLNavigatorView FROM SQLBrowseableView
    DATA oHorizontalSplitter
    
    METHOD New( oController )
-
    METHOD End()
 
    METHOD Activate()
 
    // Facades------------------------------------------------------------------
 
-   METHOD getComboBoxOrder()              INLINE ( ::oController:oWindowsBar:oComboBox() )
+   METHOD getComboBoxOrder()                 INLINE ( ::oController:oWindowsBar:oComboBox() )
+   METHOD setItemComboBoxOrder( cItem )      INLINE ( ::oController:oWindowsBar:setComboBoxItem( cItem ) )
+   METHOD setChangeComboBoxOrder( bChange )  INLINE ( ::oController:oWindowsBar:oComboBox:bChange := bChange )   
 
-   METHOD getGetSearch()                  INLINE ( ::oController:oWindowsBar:oGet() )
+   METHOD getGetSearch()                     INLINE ( ::oController:oWindowsBar:oGet() )
 
-   METHOD getWindow()                     INLINE ( ::oMdiChild )
+   METHOD getWindow()                        INLINE ( ::oMdiChild )
 
    // MDI child----------------------------------------------------------------
 
-   METHOD CreateMDIChild()                INLINE ( ::oMdiChild := TMdiChild():New(  ::aRect[ 1 ], ::aRect[ 2 ], ::aRect[ 3 ], ::aRect[ 4 ], /*cTitle*/, /*nStyle*/, /*oMenu*/, oWnd(),;
+   METHOD CreateMDIChild()                   INLINE ( ::oMdiChild := TMdiChild():New( ::aRect[ 1 ], ::aRect[ 2 ], ::aRect[ 3 ], ::aRect[ 4 ], /*cTitle*/, /*nStyle*/, /*oMenu*/, oWnd(),;
                                                                                     /*oIcon*/, /*lVScroll*/, /*nClrText*/, /*nClrBack*/, /*oCursor*/, /*oBrush*/, /*lPixel*/ .t.,;
                                                                                     /*lHScroll*/, /*nHelpId*/, /*cBorder*/ "NONE", /*lSysMenu*/, /*lCaption*/ .f., /*lMin*/, /*lMax*/, /*nMenuInfo*/ ) )
 
-   METHOD ActivateMDIChild()              INLINE ( ::oMdiChild:Activate(   /*cShow*/, /*bLClicked*/, /*bRClicked*/, /*bMoved*/, /*bResized*/, /*bPainted*/,;
-                                                                           /*bKeyDown*/, /*bInit*/, /*bUp*/, /*bDown*/, /*bPgUp*/, /*bPgDn*/,;
-                                                                           /*bLeft*/, /*bRight*/, /*bPgLeft*/, /*bPgRight*/, /*bValid*/ ) ) 
+   METHOD ActivateMDIChild()                 INLINE ( ::oMdiChild:Activate(   /*cShow*/, /*bLClicked*/, /*bRClicked*/, /*bMoved*/, /*bResized*/, /*bPainted*/,;
+                                                                              /*bKeyDown*/, /*bInit*/, /*bUp*/, /*bDown*/, /*bPgUp*/, /*bPgDn*/,;
+                                                                              /*bLeft*/, /*bRight*/, /*bPgLeft*/, /*bPgRight*/, /*bValid*/ ) ) 
 
    METHOD keyDown( nKey )
 
@@ -113,6 +114,8 @@ METHOD Activate()
 
    ::getBrowseView():gotoIdFromModel()
 
+   ::getBrowseView():setColumnOrder( ::getModel():getColumnOrder(), ::getModel():getColumnOrientation() ) 
+
    // Splitters----------------------------------------------------------------
 
    ::CreateSplitters()
@@ -122,12 +125,6 @@ METHOD Activate()
    // Eventos------------------------------------------------------------------
 
    ::oMdiChild:bKeyDown          := {|nKey, nFlags| ::keyDown( nKey, nFlags ) }
-
-   ::getComboBoxOrder():bChange  := {|| ::onChangeCombo() } 
-
-   ::oController:oWindowsBar:setGetChange( {|| ::onChangeSearch() } )
-
-   // ::getGetSearch():bChange      := {|| ::onChangeSearch() } 
 
 RETURN ( Self )
 

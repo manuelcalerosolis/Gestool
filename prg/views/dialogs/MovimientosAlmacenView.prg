@@ -184,7 +184,6 @@ RETURN ( Self )
 
 METHOD initActivate()
 
-
    local oGrupo
    
    ::oOfficeBar   := OfficeBarView():New( Self )

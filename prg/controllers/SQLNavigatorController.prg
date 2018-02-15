@@ -35,6 +35,8 @@ CLASS SQLNavigatorController FROM SQLBaseController
 
    METHOD ActivateSelectorView()
 
+   METHOD closeAllWindows()                           INLINE ( if( !empty( oWnd() ), ( SysRefresh(), oWnd():CloseAll(), SysRefresh() ), ) )
+
    METHOD setFastReport( oFastReport, cTitle, cSentence, cColumns )    
 
    METHOD addFastKey( uKey, bAction )
@@ -118,15 +120,17 @@ METHOD ActivateNavigatorView()
       RETURN ( Self )
    end if
 
-   if oWnd() != nil
-      SysRefresh(); oWnd():CloseAll(); SysRefresh()
-   end if
+   cursorWait()
 
+   ::closeAllWindows()
+   
    ::oRowSet:build( ::oModel:getSelectSentence() )
 
    ::oNavigatorView:Activate()
-
+   
    ::EnableWindowsBar()
+
+   cursorWE()
 
 RETURN ( Self )
 
@@ -264,6 +268,10 @@ METHOD EnableWindowsBar()
 
    ::oWindowsBar:enableComboBox( ::oBrowseView:getColumnsHeaders() )
 
+   ::oWindowsBar:setComboBoxChange( {|| ::onChangeCombo() } )
+
+   ::oWindowsBar:setComboBoxItem( ::oBrowseView:getColumnHeaderByOrder( ::getModel():getColumnOrder() ) )
+
    ::oWindowsBar:enableComboFilter( ::getFilters() )
 
    ::oWindowsBar:showAddButtonFilter()
@@ -274,9 +282,9 @@ METHOD EnableWindowsBar()
 
    ::oWindowsBar:setActionEditButtonFilter( {|| ::oFilterController:EditByText( ::oWindowsBar:GetComboFilter() ) } )
 
-   //::oWindowsBar:setActionDeleteButtonFilter( {|| ::oFilterController:DeleteByText( ::oWindowsBar:GetComboFilter() ) } )
-
    ::oWindowsBar:setActionDeleteButtonFilter( {|| ::deleteFilter() } )
+
+   ::oWindowsBar:setGetChange( {|| ::onChangeSearch() } )
 
    ::oNavigatorView:Refresh()
 
