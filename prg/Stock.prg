@@ -1670,6 +1670,17 @@ RETURN ( Self )
 
 METHOD InsertStockMovimientosAlmacenRowset( oRowSet, lDestino )
 
+   local cFechaDocumento   := oRowSet:fieldget( 'hora' )
+
+   if hb_istimestamp( cFechaDocumento )
+      cFechaDocumento      := hb_ttos( cFechaDocumento )
+      cFechaDocumento      := strtran( cFechaDocumento, "00000000", "" )
+   end if 
+
+   if hb_ischar( cFechaDocumento )
+      cFechaDocumento      := strtran( cFechaDocumento, ":", "" )
+   end if 
+
    with object ( SStock():New() )
 
       :cTipoDocumento      := MOV_ALM
@@ -1677,7 +1688,7 @@ METHOD InsertStockMovimientosAlmacenRowset( oRowSet, lDestino )
       :cNumeroDocumento    := oRowSet:fieldget( 'numero' ) 
       :cDelegacion         := oRowSet:fieldget( 'delegacion' )
       :dFechaDocumento     := oRowSet:fieldget( 'fecha' )
-      :tFechaDocumento     := strtran( oRowSet:fieldget( 'hora' ), ":", "" )
+      :tFechaDocumento     := cFechaDocumento // strtran( oRowSet:fieldget( 'hora' ), ":", "" )
       :cCodigo             := padr( oRowSet:fieldget( 'codigo_articulo' ), 18 )
       :cCodigoPropiedad1   := padr( oRowSet:fieldget( 'codigo_primera_propiedad' ), 20 )
       :cCodigoPropiedad2   := padr( oRowSet:fieldget( 'codigo_segunda_propiedad' ), 20 )
