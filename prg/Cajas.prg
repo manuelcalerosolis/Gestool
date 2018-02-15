@@ -1281,8 +1281,8 @@ STATIC FUNCTION browseTipoImpresora( oGet )
 
    local hTipoImpresora    := TiposImpresorasController():New():ActivateSelectorView() 
 
-   if !empty( hTipoImpresora )
-      oGet:cText( padr( hget( hTipoImpresora, "nombre" ), 50 ) )
+   if !empty( hTipoImpresora ) .and. hhaskey( hTipoImpresora, "nombre" )
+      oGet:cText( hget( hTipoImpresora, "nombre" ) )
    end if 
 
 RETURN ( .t. )

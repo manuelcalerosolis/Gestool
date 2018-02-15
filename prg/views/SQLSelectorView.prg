@@ -52,11 +52,11 @@ METHOD Activate()
 
       // Menu------------------------------------------------------------------
 
-      ::oMenuTreeView:ActivateDialog( 120 )
+      ::oMenuTreeView:ActivateDialog( ::oDialog, 120 )
 
       // Browse-----------------------------------------------------------------
 
-      ::getBrowseView():Activate( 130 )
+      ::getBrowseView():ActivateDialog( ::oDialog, 130 )
 
       ::getBrowseView():setLDblClick( {|| ::Select() } ) 
 
@@ -92,7 +92,7 @@ RETURN ( nil )
 
 METHOD Select()
 
-   ::hSelectedBuffer    := ::getModel():loadCurrentBuffer()
+   ::hSelectedBuffer    := ::getModel():loadCurrentBuffer( ::getBrowseView():getRowSet():fieldGet( 'id' ) )
 
    ::oDialog:end( IDOK )
 
@@ -108,7 +108,7 @@ METHOD Start()
 
    ::getComboBoxOrder():Set( ::getModelHeaderFromColumnOrder() )
 
-   ::getBrowse():selectColumnOrderByHeader( ::getModelHeaderFromColumnOrder() )
+   // ::getBrowse():selectColumnOrderByHeader( ::getModelHeaderFromColumnOrder() )
 
 RETURN ( Self )
 

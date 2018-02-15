@@ -161,11 +161,11 @@ RETURN ( Self )
 
 //----------------------------------------------------------------------------//
 
-METHOD ActivateDialog( id )
+METHOD ActivateDialog( oDialog, id )
 
    ::fireEvent( 'activatingDialog' )
 
-   ::oTreeView    := TTreeView():Redefine( id, ::oSender:getWindow() ) 
+   ::oTreeView    := TTreeView():Redefine( id, oDialog ) 
 
    ::fireEvent( 'activatedDialog' )
 

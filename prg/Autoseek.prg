@@ -140,7 +140,7 @@ FUNCTION AutoSeek( nKey, nFlags, oGet, oBrw, xAlias, lUpper, cPreFij, lAllowFilt
    end if
 
    if oBrw != nil
-      oBrw:Refresh( .t. )
+      oBrw:Refresh()
    end if
 
 Return ( lReturn )

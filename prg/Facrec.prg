@@ -2336,7 +2336,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, cCodCli, cCodArt, nMode, aNumDoc 
 		REDEFINE GET aGet[ _CCODOBR] VAR aTmp[_CCODOBR] ;
       	ID       220 ;
 			WHEN 		( nMode != ZOOM_MODE ) ;
-      	VALID    ( cObras( aGet[ _CCODOBR], oSay[ 7 ], aTmp[_CCODCLI], dbfObrasT ) ) ;
+      	VALID    ( cObras( aGet[ _CCODOBR], oSay[ 7 ], aTmp[_CCODCLI] ) ) ;
       	BITMAP   "LUPA" ;
       	ON HELP  ( brwObras( aGet[ _CCODOBR], oSay[ 7 ], aTmp[_CCODCLI], dbfObrasT ) ) ;
 			OF 		oFld:aDialogs[1]
@@ -4205,7 +4205,7 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbfFacRecL, oBrw, lTotLin, cCodArtEnt, nMode
          ID       330 ;
          IDTEXT   331 ;
          WHEN     ( nMode != ZOOM_MODE ) ;
-         VALID    ( cObras( aGet[ _COBRLIN ], aGet[ _COBRLIN ]:oHelpText, aTmpFac[ _CCODCLI ], dbfObrasT ) ) ;
+         VALID    ( cObras( aGet[ _COBRLIN ], aGet[ _COBRLIN ]:oHelpText, aTmpFac[ _CCODCLI ] ) ) ;
          BITMAP   "LUPA" ;
          ON HELP  ( BrwObras( aGet[ _COBRLIN ], aGet[ _COBRLIN ]:oHelpText, aTmpFac[ _CCODCLI ], dbfObrasT ) ) ;
          OF       oFld:aDialogs[1]

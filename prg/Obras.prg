@@ -577,7 +577,7 @@ FUNCTION BrwObras( oGet, oGet2, cCodigoCliente, dbfObrasT )
    local nOrd        := GetBrwOpt( "BrwObras" )
 	local oCbxOrd
    local aCbxOrd     := { "Código", "Nombre" }
-   local aIndOrd     := { "cCodCli", "cNomObr" }
+   local aIndOrd     := { "cCodigo", "cNombre" }
    local cCbxOrd     := "Código"
    local nLevel      := nLevelUsr( "01032" )
    local lClose      := .f.
@@ -604,6 +604,7 @@ FUNCTION BrwObras( oGet, oGet2, cCodigoCliente, dbfObrasT )
    END IF
 
    ( dbfObrasT )->( ordSetFocus( nOrd ) )
+
    ( dbfObrasT )->( dbSetFilter( {|| alltrim( Field->cCodCli ) = alltrim( cCodigoCliente ) }, "Field->cCodigoCliente = 'cCodCli'" ) )
    ( dbfObrasT )->( dbGoTop() )
 
@@ -693,7 +694,7 @@ FUNCTION BrwObras( oGet, oGet2, cCodigoCliente, dbfObrasT )
    if lClose
       ( dbfObrasT )->( dbCloseArea() )
    else
-      ( dbfObrasT )->( dbSetFilter() )
+      ( dbfObrasT )->( dbsetfilter() )
    end if
 
 	oGet:setFocus()
