@@ -170,6 +170,8 @@ METHOD End()
 
    ::oConfiguracionesController:End()
 
+   ::Super:End()
+
 RETURN ( Self )
 
 //---------------------------------------------------------------------------//

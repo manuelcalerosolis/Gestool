@@ -351,7 +351,7 @@ METHOD AddExitButton()
 
    ::fireEvent( 'addingExitButton' )
 
-   ::AddButton( "Salir [ESC]", "End16", {|| ::oSender:End() }, "S" ) 
+   ::AddButton( "Salir [ESC]", "End16", {|| ::getController():End() }, "S" ) 
 
    ::fireEvent( 'addedExitButton' )
 
@@ -460,7 +460,6 @@ METHOD addOthersButton()
 RETURN ( Self )
 
 //----------------------------------------------------------------------------//
-
 
 METHOD blockPrintDocument( nDevice, cFormato )
 
