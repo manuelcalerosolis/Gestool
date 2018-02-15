@@ -725,9 +725,9 @@ FUNCTION cObras( oGet, oGet2, cCodigoCliente, dbfObrasT )
       USE ( cPatEmp() + "OBRAST.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "OBRAST", @dbfObrasT ) )
       SET ADSINDEX TO ( cPatEmp() + "OBRAST.CDX" ) ADDITIVE
       lClose      := .t.
-   else
-      ( dbfObrasT )->( OrdSetFocus( "cCodCli" ) )
    end if
+
+   ( dbfObrasT )->( OrdSetFocus( "cCodCli" ) )
 
    xValor         := cCodigoCliente + xValor
 
