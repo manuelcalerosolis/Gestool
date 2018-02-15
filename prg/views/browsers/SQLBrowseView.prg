@@ -110,8 +110,6 @@ RETURN ( Self )
 
 METHOD End()
 
-   msgalert( "end", "SQLBrowseView" )
-
    ::saveIdToModel()
 
    ::saveColumnOrderToModel()

@@ -1670,6 +1670,12 @@ RETURN ( Self )
 
 METHOD InsertStockMovimientosAlmacenRowset( oRowSet, lDestino )
 
+   msgalert( valtype( oRowSet:fieldget( 'fecha' ) ), "valtype( oRowSet:fieldget( 'fecha' ) )" )
+   msgalert( oRowSet:fieldget( 'fecha' ), "oRowSet:fieldget( 'fecha' )" )
+   
+   msgalert( valtype( oRowSet:fieldget( 'hora' ) ), "valtype( oRowSet:fieldget( 'hora' ) )" )
+   msgalert( oRowSet:fieldget( 'hora' ), "oRowSet:fieldget( 'hora' )" )
+
    with object ( SStock():New() )
 
       :cTipoDocumento      := MOV_ALM
@@ -1678,24 +1684,24 @@ METHOD InsertStockMovimientosAlmacenRowset( oRowSet, lDestino )
       :cDelegacion         := oRowSet:fieldget( 'delegacion' )
       :dFechaDocumento     := oRowSet:fieldget( 'fecha' )
       :tFechaDocumento     := strtran( oRowSet:fieldget( 'hora' ), ":", "" )
-      :cCodigo             := Padr( oRowSet:fieldget( 'codigo_articulo' ), 18 )
-      :cCodigoPropiedad1   := Padr( oRowSet:fieldget( 'codigo_primera_propiedad' ), 20 )
-      :cCodigoPropiedad2   := Padr( oRowSet:fieldget( 'codigo_segunda_propiedad' ), 20 )
-      :cValorPropiedad1    := Padr( oRowSet:fieldget( 'valor_primera_propiedad' ), 20 )
-      :cValorPropiedad2    := Padr( oRowSet:fieldget( 'valor_segunda_propiedad' ), 20 )
-      :cLote               := Padr( oRowSet:fieldget( 'lote' ), 14 )
+      :cCodigo             := padr( oRowSet:fieldget( 'codigo_articulo' ), 18 )
+      :cCodigoPropiedad1   := padr( oRowSet:fieldget( 'codigo_primera_propiedad' ), 20 )
+      :cCodigoPropiedad2   := padr( oRowSet:fieldget( 'codigo_segunda_propiedad' ), 20 )
+      :cValorPropiedad1    := padr( oRowSet:fieldget( 'valor_primera_propiedad' ), 20 )
+      :cValorPropiedad2    := padr( oRowSet:fieldget( 'valor_segunda_propiedad' ), 20 )
+      :cLote               := padr( oRowSet:fieldget( 'lote' ), 14 )
       :dConsolidacion      := if( !empty( ::dConsolidacion ), ::dConsolidacion, ctod( "" ) )
 
-      if IsTrue( lDestino )
+      if isTrue( lDestino )
 
-         :cCodigoAlmacen   := Padr( oRowSet:fieldget( 'almacen_destino' ), 16 )
+         :cCodigoAlmacen   := padr( oRowSet:fieldget( 'almacen_destino' ), 16 )
          :nUnidades        := oRowSet:fieldget( 'total_unidades' )
          :nBultos          := oRowSet:fieldget( 'bultos_articulo' )
          :nCajas           := oRowSet:fieldget( 'cajas_articulo' )
          
       else 
 
-         :cCodigoAlmacen   := Padr( oRowSet:fieldget( 'almacen_origen' ), 16 )
+         :cCodigoAlmacen   := padr( oRowSet:fieldget( 'almacen_origen' ), 16 )
          :nUnidades        := -oRowSet:fieldget( 'total_unidades' )
          :nBultos          := -oRowSet:fieldget( 'bultos_articulo' )
          :nCajas           := -oRowSet:fieldget( 'cajas_articulo' )
@@ -2956,8 +2962,8 @@ METHOD aStockArticulo( cCodArt, cCodAlm, oBrw, lLote, lNumeroSerie, dFecIni, dFe
 
    // Proceso------------------------------------------------------------------
 
-   oBlock               := ErrorBlock( {| oError | ApoloBreak( oError ) } )
-   BEGIN SEQUENCE
+   // oBlock               := ErrorBlock( {| oError | ApoloBreak( oError ) } )
+   // BEGIN SEQUENCE
 
    for each cCodAlm in aAlmacenes
 
@@ -3069,16 +3075,12 @@ METHOD aStockArticulo( cCodArt, cCodAlm, oBrw, lLote, lNumeroSerie, dFecIni, dFe
 
    end if
 
-   // for each oStocks in ::aStocks
-   //    logwrite( oStocks:Say() )
-   // next
-
    // Control de erroress-------------------------------------------------------
 
-   RECOVER USING oError
-      msgStop( ErrorMessage( oError ), "Calculo de stock" )
-   END SEQUENCE
-   ErrorBlock( oBlock )
+   // RECOVER USING oError
+   //    msgStop( ErrorMessage( oError ), "Calculo de stock" )
+   // END SEQUENCE
+   // ErrorBlock( oBlock )
 
    cursorWE()
 
@@ -3608,7 +3610,7 @@ METHOD aStockMovimientosAlmacen( cCodArt, cCodAlm, cCodEmp )
 
    while !( oRowSet:Eof() )
 
-      if AllTrim( oRowSet:fieldget( 'almacen_destino' ) ) == AllTrim( cCodAlm )
+      if alltrim( oRowSet:fieldget( 'almacen_destino' ) ) == alltrim( cCodAlm )
 
          if ::validateDateTime( oRowSet:fieldget( 'fecha' ), oRowSet:fieldget( 'hora' ) )
 

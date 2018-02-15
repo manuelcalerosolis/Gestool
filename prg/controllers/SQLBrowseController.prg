@@ -33,7 +33,11 @@ METHOD Activate( oDialog, nId )
       RETURN ( Self )
    end if 
 
+   ::fireEvent( 'activating' )     
+
    ::oRowSet:build( ::oModel:getSelectSentence() )
+
+   ::fireEvent( 'activated' )     
 
    ::oBrowseView:ActivateDialog( oDialog, nId )
 

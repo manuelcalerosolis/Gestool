@@ -127,6 +127,8 @@ METHOD New( oController )
 
    ::oSeriesControler                  := NumerosSeriesController():New( self )
 
+   ::setEvent( 'activating',           {|| ::oModel:setColumnOrder( "id" ), ::oModel:setColumnOrientation( "D" ) } )
+
    ::setEvent( 'closedDialog',         {|| ::onClosedDialog() } )
 
    ::setEvent( 'appended',             {|| ::oBrowseView:Refresh() } )
@@ -156,6 +158,8 @@ RETURN ( Self )
 METHOD gettingSelectSentence()
 
    local uuid        := ::getSenderController():getUuid() 
+
+
 
    if !empty( uuid )
       ::oModel:setGeneralWhere( "parent_uuid = " + quoted( uuid ) )

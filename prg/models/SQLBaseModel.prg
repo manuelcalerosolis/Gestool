@@ -193,8 +193,8 @@ METHOD New( oController )
       ::cColumnKey               := hGetKeyAt( ::hColumns, 1 )
    end if 
 
-   if empty( ::cColumnOrder )
-      ::cColumnOrder             := hGetKeyAt( ::hColumns, 1 )
+   if empty( ::getColumnOrder() )
+      ::setColumnOrder( hGetKeyAt( ::hColumns, 1 ) )
    end if 
 
    ::cGeneralSelect              := "SELECT * FROM " + ::getTableName()    
@@ -307,8 +307,6 @@ METHOD getSelectSentence()
 
    ::fireEvent( 'gotSelectSentence')
 
-   MSGALERT( cSQLSelect, "getSelectSentence" )
-
 RETURN ( cSQLSelect )
 
 //---------------------------------------------------------------------------//
@@ -364,12 +362,12 @@ RETURN ( cSQLSelect )
 
 METHOD addFindWhere( cSQLSelect )
 
-   if empty( ::cColumnOrder ) .or. empty( ::cFind )
+   if empty( ::getColumnOrder() ) .or. empty( ::cFind )
       RETURN ( cSQLSelect )
    end if 
 
    cSQLSelect     += space( 1 )
-   cSQLSelect     += ::getWhereOrAnd( cSQLSelect ) + "UPPER(" + ::cColumnOrder +") LIKE '%" + Upper( ::cFind ) + "%'" 
+   cSQLSelect     += ::getWhereOrAnd( cSQLSelect ) + "UPPER(" + ::getColumnOrder() +") LIKE '%" + Upper( ::cFind ) + "%'" 
 
 RETURN ( cSQLSelect )
 
@@ -377,11 +375,11 @@ RETURN ( cSQLSelect )
 
 METHOD getSelectByOrder( cSQLSelect )
 
-   if !empty( ::cColumnOrder )
-      cSQLSelect  += " ORDER BY " + ::cColumnOrder 
+   if !empty( ::getColumnOrder() )
+      cSQLSelect  += " ORDER BY " + ::getColumnOrder() 
    end if 
 
-   if !empty( ::cColumnOrientation ) .and. ::cColumnOrientation == "A"
+   if !empty( ::getColumnOrientation() ) .and. ::getColumnOrientation() == "A"
       cSQLSelect  += " DESC"
    else
       cSQLSelect  += " ASC"

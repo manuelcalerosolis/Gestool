@@ -4771,7 +4771,7 @@ static function CodificacionProveedor( aTmp, aGet, nMode )
       end if
 
       if nMode != ZOOM_MODE
-         oBrwPrv:bLDblClick   := {|| if( !oUser():lNotCostos(), WinEdtRec( oBrwPrv, bEdtDet, dbfTmpPrv, aTmp ), ) }
+         oBrwPrv:bLDblClick   := {|| WinEdtRec( oBrwPrv, bEdtDet, dbfTmpPrv, aTmp ) }
       end if
 
       oBrwPrv:CreateFromResource( 100 )
@@ -4780,18 +4780,18 @@ static function CodificacionProveedor( aTmp, aGet, nMode )
 			ID 		500 ;
          OF       oDlg;
 			WHEN 		( nMode != ZOOM_MODE ) ;
-         ACTION   ( if( !oUser():lNotCostos(), WinAppRec( oBrwPrv, bEdtDet, dbfTmpPrv, aTmp ), ) )
+         ACTION   ( WinAppRec( oBrwPrv, bEdtDet, dbfTmpPrv, aTmp ) )
 
       REDEFINE BUTTON ;
 			ID 		501 ;
          OF       oDlg;
 			WHEN 		( nMode != ZOOM_MODE ) ;
-         ACTION   ( if( !oUser():lNotCostos(), WinEdtRec( oBrwPrv, bEdtDet, dbfTmpPrv, aTmp ), ) )
+         ACTION   ( WinEdtRec( oBrwPrv, bEdtDet, dbfTmpPrv, aTmp ) )
 
       REDEFINE BUTTON ;
          ID       503 ;
          OF       oDlg;
-         ACTION   ( if( !oUser():lNotCostos(), WinZooRec( oBrwPrv, bEdtDet, dbfTmpPrv, aTmp ), ) )
+         ACTION   ( WinZooRec( oBrwPrv, bEdtDet, dbfTmpPrv, aTmp ) )
 
       REDEFINE BUTTON ;
 			ID 		502 ;
@@ -4818,8 +4818,8 @@ static function CodificacionProveedor( aTmp, aGet, nMode )
          ACTION   ( oDlg:end() )
 
    if nMode != ZOOM_MODE
-      oDlg:AddFastKey( VK_F2, {|| if( !oUser():lNotCostos(), WinAppRec( oBrwPrv, bEdtDet, dbfTmpPrv, aTmp ), ) } )
-      oDlg:AddFastKey( VK_F3, {|| if( !oUser():lNotCostos(), WinEdtRec( oBrwPrv, bEdtDet, dbfTmpPrv, aTmp ), ) } )
+      oDlg:AddFastKey( VK_F2, {|| WinAppRec( oBrwPrv, bEdtDet, dbfTmpPrv, aTmp ) } )
+      oDlg:AddFastKey( VK_F3, {|| WinEdtRec( oBrwPrv, bEdtDet, dbfTmpPrv, aTmp ) } )
       oDlg:AddFastKey( VK_F4, {|| DelPrv( aTmp, oBrwPrv, dbfTmpPrv ) } )
 
       oDlg:AddFastKey(  VK_F5, {|| oDlg:End( IDOK ) } )
@@ -6166,11 +6166,31 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbfArtPrv, oBrw, bWhen, bValid, nMode )
 
    oDlg:AddFastKey( VK_F5, {|| EndDetalle( aTmp, aGet, dbfTmpPrv, oBrw, nMode, oDlg, lOldPrvDef, bWhen, lOldRefPrv ) } )
 
-   oDlg:bStart := {|| if( aTmp[ ( dbfTmpPrv )->( fieldPos( "lDefPrv" ) ) ], aGet[ ( dbfTmpPrv )->( fieldPos( "lDefPrv" ) ) ]:Disable(), aGet[ ( dbfTmpPrv )->( fieldPos( "lDefPrv" ) ) ]:Enable() ) }
+   oDlg:bStart := {|| StartEdtDet( aTmp, aGet, oTotal, oBmpDiv ) }
 
    ACTIVATE DIALOG oDlg ON PAINT ( EvalGet( aGet ) ) CENTER
 
 RETURN ( oDlg:nResult == IDOK )
+
+//--------------------------------------------------------------------------//
+
+Static Function StartEdtDet( aTmp, aGet, oTotal, oBmpDiv )
+
+   if aTmp[ ( dbfTmpPrv )->( fieldPos( "lDefPrv" ) ) ]
+      aGet[ ( dbfTmpPrv )->( fieldPos( "lDefPrv" ) ) ]:Disable()
+      aGet[ ( dbfTmpPrv )->( fieldPos( "lDefPrv" ) ) ]:Enable()
+   end if 
+
+   if !oUser():lCostos()
+      oTotal:hide()
+      oBmpDiv:hide()
+      aGet[ ( dbfTmpPrv )->( fieldPos( "NDTOPRV" ) ) ]:hide()
+      aGet[ ( dbfTmpPrv )->( fieldPos( "NDTOPRM" ) ) ]:hide()
+      aGet[ ( dbfTmpPrv )->( fieldPos( "CDIVPRV" ) ) ]:hide()
+      aGet[ ( dbfTmpPrv )->( fieldPos( "NIMPPRV" ) ) ]:hide()
+   end if 
+
+RETURN ( .t. )
 
 //--------------------------------------------------------------------------//
 
