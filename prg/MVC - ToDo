@@ -1,16 +1,16 @@
 MVC - ToDo
 
-- Posicinarse en el ultimo registro usado.
-
-- Comando para poner todos los registros como enviados.
-
-- Error al eliminar los movimientos de almacen.
-
 - Eliminar una empresa, eliminar de SQL.
 
 - Mas configuraciones.
 
-- Copias de seguridad.
+- Copias de seguridad SQL.
+
+- Posicinarse en el ultimo registro usado. (done)
+
+- Comando para poner todos los registros como enviados.(done)
+
+- Error al eliminar los movimientos de almacen.(done)
 
 - Validar q el numero no exista ya en el programa. (done)
 

@@ -57,7 +57,7 @@ METHOD get( cViewName )
    local cSentence   := "SELECT browse_state, column_order, column_orientation, id_to_find "       + ;
                            "FROM " + ::cTableName + " "                                            + ;
                            "WHERE "                                                                + ;
-                              "empresa = " + cCodEmp() + " AND "                                   + ; 
+                              "empresa = " + quoted( cCodEmp() ) + " AND "                         + ; 
                               "usuario = " + quoted( cCurUsr() ) + " AND "                         + ;
                               "view_name = " + quoted( cViewName ) + " "                           + ;
                            "LIMIT 1"

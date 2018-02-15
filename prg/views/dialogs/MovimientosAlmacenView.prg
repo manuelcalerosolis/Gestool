@@ -188,7 +188,7 @@ METHOD initActivate()
    
    ::oOfficeBar   := OfficeBarView():New( Self )
 
-   ::oOfficeBar:createButtonImage( {|| ::oController:oRecordController:Edit() } )
+   ::oOfficeBar:createButtonImage()
 
    ::oOfficeBar:createButtonsLine( ::oController:oLineasController, ::oSQLBrowseView )
 

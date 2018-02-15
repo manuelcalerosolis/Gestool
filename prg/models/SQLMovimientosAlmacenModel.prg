@@ -157,13 +157,24 @@ RETURN ( aSQLDelete )
 
 //---------------------------------------------------------------------------//
 
-METHOD loadDuplicateBuffer( id )                
+METHOD loadDuplicateBuffer( id )         
 
+   local originalUuid   
+   local duplicatedUuid 
+   
    ::Super:loadDuplicateBuffer( id )
+
+   originalUuid         := hget( ::hBuffer, "uuid" )       
+
+   hset( ::hBuffer, "uuid", win_uuidcreatestring() )
 
    hset( ::hBuffer, "numero", MovimientosAlmacenRepository():getNextNumber() )
 
    hset( ::hBuffer, "fecha_hora", hb_datetime() )
+
+   duplicatedUuid       := hget( ::hBuffer, "uuid" )       
+
+   SQLMovimientosAlmacenLineasModel():duplicateByUuid( originalUuid, duplicatedUuid )
 
 RETURN ( ::hBuffer )
 

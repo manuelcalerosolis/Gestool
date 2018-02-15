@@ -159,8 +159,6 @@ METHOD gettingSelectSentence()
 
    local uuid        := ::getSenderController():getUuid() 
 
-
-
    if !empty( uuid )
       ::oModel:setGeneralWhere( "parent_uuid = " + quoted( uuid ) )
    end if 
