@@ -1670,12 +1670,6 @@ RETURN ( Self )
 
 METHOD InsertStockMovimientosAlmacenRowset( oRowSet, lDestino )
 
-   msgalert( valtype( oRowSet:fieldget( 'fecha' ) ), "valtype( oRowSet:fieldget( 'fecha' ) )" )
-   msgalert( oRowSet:fieldget( 'fecha' ), "oRowSet:fieldget( 'fecha' )" )
-   
-   msgalert( valtype( oRowSet:fieldget( 'hora' ) ), "valtype( oRowSet:fieldget( 'hora' ) )" )
-   msgalert( oRowSet:fieldget( 'hora' ), "oRowSet:fieldget( 'hora' )" )
-
    with object ( SStock():New() )
 
       :cTipoDocumento      := MOV_ALM
