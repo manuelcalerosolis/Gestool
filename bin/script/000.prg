@@ -1,558 +1,368 @@
-#include "HbXml.ch"
-#include "TDbfDbf.ch"
-#include "fivewin.ch"
+//#include "\\Servidor1\wdges32\Include\Factu.ch"
+#include "Factu.ch"
+
+#define __len__   173
+
+static dbfArticulo
+static dbfFPago
+static dbfCount
+static dbfDiv
+static dbfIva
+static dbfClient
+static dbfAlbCliT
+static dbfAlbCliL
+static dbfAlbCliP
+static lOpenFiles       := .f.
 
 //---------------------------------------------------------------------------//
 
-static dbfArticulo     
-static dbfProv        
-static dbfIva         
-static dbfFam         
-static dbfFamPrv      
-static dbfArtPrv      
-static oStock         
-static dbfTMov        
-static dbfTarPreT     
-static dbfTarPreL     
-static dbfTarPreS     
-static dbfOfe         
-static dbfImg         
-static dbfDiv         
-static dbfArtVta      
-static oBandera       
-static dbfAlmT        
-static dbfArtKit      
-static dbfArtLbl      
-static dbfTblPro      
-static dbfPro         
-static dbfCodebar     
-static oTankes        
-static oTipArt        
-static oCatalogo      
-static oNewImp        
-static oFraPub        
-static dbfDoc         
-static dbfFlt         
-static dbfCategoria   
-static dbfTemporada   
-static dbfAlbPrvL     
-static dbfFacPrvL     
-static dbfAlbCliL     
-static dbfFacCliL     
-static dbfFacRecL     
-static dbfTikCliL     
-static dbfProLin      
-static dbfProMat      
-static dbfHisMov      
-static dbfAlbPrvT     
-static dbfAlbCliT     
-static dbfPedPrvL     
-static dbfPedCliL     
-static dbfUbicaT      
-static dbfUbicaL      
-static dbfRctPrvL   
+function InicioHRB()
 
-static hFile
-static cFile      
+   local cDirOrigen
+   local aDirectorio
+   local cFichero
+
+   /*
+   Abrimos los ficheros necesarios---------------------------------------------
+   */
+
+   if !OpenFiles( .f. )
+      return .f.
+   end if
+
+   CursorWait()
+   
+   ImportaAlbaran()
+
+   Msginfo( "Importación realizada con éxito" )
+
+   CursorWe()
+
+   /*
+   Cerramos los ficheros abiertos anteriormente--------------------------------
+   */
+
+   CloseFiles()
+
+   SysRefresh()
+
+return .t.
 
 //---------------------------------------------------------------------------//
 
-Function Luncher()
-
-   local oDlg, oMeter, oText, oBtn, oFont
-   local nVal     := 0
-   local cMsg     := "Proceso de exportacion a fichero"
-   local cTitle   := "Espere por favor..."
-
-   cFile          := "c:\" + Dtos( date() ) + Strtran( Time(), ":", "" ) + ".txt"
-
-   DEFINE FONT oFont NAME GetSysFont() SIZE 0, -8
-
-   DEFINE DIALOG oDlg FROM 5, 5 TO 13, 45 TITLE cTitle FONT oFont
-
-   @ 0.2, 0.5  SAY oText VAR cMsg SIZE 130, 20 OF oDlg
-
-   @ 2.2,   0.5  METER oMeter VAR nVal TOTAL 10 SIZE 150, 2 OF oDlg
-
-   oDlg:bStart = { || ExportaStock( oMeter, oText, oDlg ) }
-
-   ACTIVATE DIALOG oDlg CENTERED
-
-   oFont:End()
-
-   ferase( cFile )
-
-Return nil
-
-//---------------------------------------------------------------------------//
-
-Function ExportaStock( oMeter, oText, oDlg )
-
-   local oInt
-   local oFtp
-   local nTotStockAct   
-
-   if lOpenFiles()
-
-      if File( cFile )
-         fErase( cFile )
-      end if 
-
-      hFile       := fCreate( cFile )
-
-      ( dbfArticulo )->( ordsetfocus( "lPubInt" ) )
-      ( dbfArticulo )->( dbGoTop() )
-
-      if !empty(oMeter)
-         oMeter:setTotal( ( dbfArticulo )->( ordkeyCount() ) )
-      end if
-
-      while !( dbfArticulo )->( eof() )
-
-         if ( dbfArticulo )->lPubInt
-
-            nTotStockAct   := oStock:nTotStockAct( ( dbfArticulo )->Codigo, "006             " )
-
-            if !empty( oText )
-               oText:setText( alltrim( ( dbfArticulo )->Codigo ) + space(1) + alltrim( ( dbfArticulo )->Nombre ) )
-            end if
-
-            fWrite( hFile, AllTrim( ( dbfArticulo )->Codigo ) + ";" + ;
-                           AllTrim( Trans( nTotStockAct, "@E 999,999,999" ) ) + ";" + ;
-                           AllTrim( Trans( ( dbfArticulo )->pVenta5, "@E 999,999,999.999" ) ) + ";" + ;
-                           AllTrim( Trans( ( dbfArticulo )->pCosto, "@E 999,999,999.999" ) ) + ;
-                           Chr( 13 ) + Chr( 10 ) )
-
-         end if
-
-         ( dbfArticulo )->( dbSkip() )
-
-         if !empty(oMeter)
-            oMeter:set( ( dbfArticulo )->( ordkeyno() ) )
-         end if
-
-      end while
-
-      fClose( hFile )
-
-      CloseFiles()
-
-      // Subimos el fichero al ftp---------------------------------------------
-
-      if !empty( oText )
-         oText:setText( "Subimos el fichero resultante al Ftp" )
-      end if
-
-      oFtp         := TFtpCurl():New( 'demonio', 'passdemon1', 'ftp.ayives.com', 21 )
-      oFtp:setPassive( .f. )
-
-      if !oFtp:CreateConexion()
-         msgWait( "Imposible crear la conexión", "Error", 1 )
-         return .f.
-      end if   
-
-      if File( cFile )
-         oFtp:createFile( cFile )
-      end if
-
-      if !empty( oFTP )
-         oFTP:endConexion()
-      end if
-
-      if !empty( oText )
-         oText:setText( "Fichero subido" )
-      end if
-
-   end if 
-
-   oDlg:End()
-
-Return ( nil )
-
-//---------------------------------------------------------------------------//
-
-STATIC FUNCTION lOpenFiles( lExt, cPath )
+static function OpenFiles()
 
    local oError
    local oBlock
+
+   /*if lOpenFiles
+      MsgStop( 'Imposible abrir ficheros' )
+      Return ( .f. )
+   end if*/
 
    CursorWait()
 
    oBlock         := ErrorBlock( { | oError | ApoloBreak( oError ) } )
    BEGIN SEQUENCE
 
-      oMsgText( "Abriendo ficheros artículos" )
-
       lOpenFiles  := .t.
 
-      dbUseArea( .T., ( cDriver() ), ( cPatArt() + "ARTICULO.DBF" ), ( cCheckArea( "ARTICULO", @dbfArticulo ) ), if(.T. .OR. .F., !.F., NIL), .F.,, )
-      if !lAIS() ; ordListAdd( ( cPatArt() + "ARTICULO.CDX" ) ) ; else ; ordSetFocus( 1 ) ; end
+      USE ( cPatEmp() + "CLIENT.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "CLIENT", @dbfClient ) )
+      SET ADSINDEX TO ( cPatEmp() + "CLIENT.CDX" ) ADDITIVE
 
-      dbUseArea( .T., ( cDriver() ), ( cPatArt() + "ArtCodebar.Dbf" ), ( cCheckArea( "CODEBAR", @dbfCodebar ) ), if(.T. .OR. .F., !.F., NIL), .F.,, )
-      if !lAIS() ; ordListAdd( ( cPatArt() + "ArtCodebar.Cdx" ) ) ; else ; ordSetFocus( 1 ) ; end
+      USE ( cPatArt() + "ARTICULO.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "ARTICULO", @dbfArticulo ) )
+      SET ADSINDEX TO ( cPatArt() + "ARTICULO.CDX" ) ADDITIVE
 
-      dbUseArea( .T., ( cDriver() ), ( cPatArt() + "PROVART.DBF" ), ( cCheckArea( "PROVART", @dbfArtPrv ) ), if(.T. .OR. .F., !.F., NIL), .F.,, )
-      if !lAIS() ; ordListAdd( ( cPatArt() + "PROVART.CDX" ) ) ; else ; ordSetFocus( 1 ) ; end
+      USE ( cPatEmp() + "NCOUNT.DBF" ) NEW VIA ( cDriver() )    SHARED ALIAS ( cCheckArea( "NCOUNT", @dbfCount ) )
+      SET ADSINDEX TO ( cPatEmp() + "NCOUNT.CDX" )   ADDITIVE
 
-      dbUseArea( .T., ( cDriver() ), ( cPatPrv() + "PROVEE.DBF" ), ( cCheckArea( "PROVEE", @dbfProv ) ), if(.T. .OR. .F., !.F., NIL), .F.,, )
-      if !lAIS() ; ordListAdd( ( cPatPrv() + "PROVEE.CDX" ) ) ; else ; ordSetFocus( 1 ) ; end
+      USE ( cPatDat() + "DIVISAS.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "DIVISAS", @dbfDiv ) )
+      SET ADSINDEX TO ( cPatDat() + "DIVISAS.CDX" ) ADDITIVE
 
-      dbUseArea( .T., ( cDriver() ), ( cPatArt() + "CATEGORIAS.DBF" ), ( cCheckArea( "CATEGORIA", @dbfCategoria ) ), if(.T. .OR. .F., !.F., NIL), .F.,, )
-      if !lAIS() ; ordListAdd( ( cPatArt() + "CATEGORIAS.CDX" ) ) ; else ; ordSetFocus( 1 ) ; end
+      USE ( cPatEmp() + "FPAGO.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "FPAGO", @dbfFPago ) )
+      SET ADSINDEX TO ( cPatEmp() + "FPAGO.CDX" ) ADDITIVE
 
-      dbUseArea( .T., ( cDriver() ), ( cPatArt() + "Temporadas.Dbf" ), ( cCheckArea( "TEMPORADA", @dbfTemporada ) ), if(.T. .OR. .F., !.F., NIL), .F.,, )
-      if !lAIS() ; ordListAdd( ( cPatArt() + "Temporadas.Cdx" ) ) ; else ; ordSetFocus( 1 ) ; end
+      USE ( cPatDat() + "TIVA.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "TIVA", @dbfIva ) )
+      SET ADSINDEX TO ( cPatDat() + "TIVA.CDX" ) ADDITIVE
 
-      dbUseArea( .T., ( cDriver() ), ( cPatDat() + "TIVA.DBF" ), ( cCheckArea( "TIVA", @dbfIva ) ), if(.T. .OR. .F., !.F., NIL), .F.,, )
-      if !lAIS() ; ordListAdd( ( cPatDat() + "TIVA.CDX" ) ) ; else ; ordSetFocus( 1 ) ; end
+      USE ( cPatEmp() + "ALBCLIT.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "ALBCLIL", @dbfAlbCliT ) )
+      SET ADSINDEX TO ( cPatEmp() + "ALBCLIT.CDX" ) ADDITIVE
 
-      dbUseArea( .T., ( cDriver() ), ( cPatArt() + "FAMILIAS.DBF" ), ( cCheckArea( "FAMILIAS", @dbfFam ) ), if(.T. .OR. .F., !.F., NIL), .F.,, )
-      if !lAIS() ; ordListAdd( ( cPatArt() + "FAMILIAS.CDX" ) ) ; else ; ordSetFocus( 1 ) ; end
+      USE ( cPatEmp() + "ALBCLIL.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "ALBCLIL", @dbfAlbCliL ) )
+      SET ADSINDEX TO ( cPatEmp() + "ALBCLIL.CDX" ) ADDITIVE
 
-      dbUseArea( .T., ( cDriver() ), ( cPatArt() + "FamPrv.Dbf" ), ( cCheckArea( "FAMPRV", @dbfFamPrv ) ), if(.T. .OR. .F., !.F., NIL), .F.,, )
-      if !lAIS() ; ordListAdd( ( cPatArt() + "FamPrv.Cdx" ) ) ; else ; ordSetFocus( 1 ) ; end
-
-      dbUseArea( .T., ( cDriver() ), ( cPatDat() + "TMOV.DBF" ), ( cCheckArea( "TMOV", @dbfTMov ) ), if(.T. .OR. .F., !.F., NIL), .F.,, )
-      if !lAIS() ; ordListAdd( ( cPatDat() + "TMOV.CDX" ) ) ; else ; ordSetFocus( 1 ) ; end
-
-      dbUseArea( .T., ( cDriver() ), ( cPatArt() + "TARPRET.DBF" ), ( cCheckArea( "TARPRET", @dbfTarPreT ) ), if(.T. .OR. .F., !.F., NIL), .F.,, )
-      if !lAIS() ; ordListAdd( ( cPatArt() + "TARPRET.CDX" ) ) ; else ; ordSetFocus( 1 ) ; end
-
-      dbUseArea( .T., ( cDriver() ), ( cPatArt() + "TARPREL.DBF" ), ( cCheckArea( "TARPREL", @dbfTarPreL ) ), if(.T. .OR. .F., !.F., NIL), .F.,, )
-      if !lAIS() ; ordListAdd( ( cPatArt() + "TARPREL.CDX" ) ) ; else ; ordSetFocus( 1 ) ; end
-      ordSetFocus( "CCODART" )
-
-      dbUseArea( .T., ( cDriver() ), ( cPatArt() + "TARPRES.DBF" ), ( cCheckArea( "TARPRES", @dbfTarPreS ) ), if(.T. .OR. .F., !.F., NIL), .F.,, )
-      if !lAIS() ; ordListAdd( ( cPatArt() + "TARPRES.CDX" ) ) ; else ; ordSetFocus( 1 ) ; end
-
-      dbUseArea( .T., ( cDriver() ), ( cPatArt() + "OFERTA.DBF" ), ( cCheckArea( "OFERTA", @dbfOfe ) ), if(.T. .OR. .F., !.F., NIL), .F.,, )
-      if !lAIS() ; ordListAdd( ( cPatArt() + "OFERTA.CDX" ) ) ; else ; ordSetFocus( 1 ) ; end
-
-      dbUseArea( .T., ( cDriver() ), ( cPatArt() + "ARTDIV.DBF" ), ( cCheckArea( "ARTDIV", @dbfArtVta ) ), if(.T. .OR. .F., !.F., NIL), .F.,, )
-      if !lAIS() ; ordListAdd( ( cPatArt() + "ARTDIV.CDX" ) ) ; else ; ordSetFocus( 1 ) ; end
-
-      dbUseArea( .T., ( cDriver() ), ( cPatArt() + "ArtLbl.Dbf" ), ( cCheckArea( "ArtLbl", @dbfArtLbl ) ), if(.T. .OR. .F., !.F., NIL), .F.,, )
-      if !lAIS() ; ordListAdd( ( cPatArt() + "ArtLbl.Cdx" ) ) ; else ; ordSetFocus( 1 ) ; end
-
-      dbUseArea( .T., ( cDriver() ), ( cPatArt() + "ArtImg.Dbf" ), ( cCheckArea( "ArtImg", @dbfImg ) ), if(.T. .OR. .F., !.F., NIL), .F.,, )
-      if !lAIS() ; ordListAdd( ( cPatArt() + "ArtImg.Cdx" ) ) ; else ; ordSetFocus( 1 ) ; end
-
-      dbUseArea( .T., ( cDriver() ), ( cPatDat() + "DIVISAS.DBF" ), ( cCheckArea( "DIVISAS", @dbfDiv ) ), if(.T. .OR. .F., !.F., NIL), .F.,, )
-      if !lAIS() ; ordListAdd( ( cPatDat() + "DIVISAS.CDX" ) ) ; else ; ordSetFocus( 1 ) ; end
-
-      dbUseArea( .T., ( cDriver() ), ( cPatAlm() + "ALMACEN.DBF" ), ( cCheckArea( "ALMACEN", @dbfAlmT ) ), if(.T. .OR. .F., !.F., NIL), .F.,, )
-      if !lAIS() ; ordListAdd( ( cPatAlm() + "ALMACEN.CDX" ) ) ; else ; ordSetFocus( 1 ) ; end
-
-      dbUseArea( .T., ( cDriver() ), ( cPatArt() + "ARTKIT.DBF" ), ( cCheckArea( "ARTTIK", @dbfArtKit ) ), if(.T. .OR. .F., !.F., NIL), .F.,, )
-      if !lAIS() ; ordListAdd( ( cPatArt() + "ARTKIT.CDX" ) ) ; else ; ordSetFocus( 1 ) ; end
-
-      dbUseArea( .T., ( cDriver() ), ( cPatArt() + "PRO.DBF" ), ( cCheckArea( "PRO", @dbfPro ) ), if(.T. .OR. .F., !.F., NIL), .F.,, )
-      if !lAIS() ; ordListAdd( ( cPatArt() + "PRO.CDX" ) ) ; else ; ordSetFocus( 1 ) ; end
-
-      dbUseArea( .T., ( cDriver() ), ( cPatArt() + "TBLPRO.DBF" ), ( cCheckArea( "TBLPRO", @dbfTblPro ) ), if(.T. .OR. .F., !.F., NIL), .F.,, )
-      if !lAIS() ; ordListAdd( ( cPatArt() + "TBLPRO.CDX" ) ) ; else ; ordSetFocus( 1 ) ; end
-
-      dbUseArea( .T., ( cDriver() ), ( cPatEmp() + "RDOCUMEN.DBF" ), ( cCheckArea( "RDOCUMEN", @dbfDoc ) ), if(.T. .OR. .F., !.F., NIL), .F.,, )
-      if !lAIS() ; ordListAdd( ( cPatEmp() + "RDOCUMEN.CDX" ) ) ; else ; ordSetFocus( 1 ) ; end
-      ordSetFocus( "CTIPO" )
-
-      dbUseArea( .T., ( cDriver() ), ( cPatDat() + "CNFFLT.DBF" ), ( cCheckArea( "CNFFLT", @dbfFlt ) ), if(.T. .OR. .F., !.F., NIL), .F.,, )
-      if !lAIS() ; ordListAdd( ( cPatDat() + "CNFFLT.CDX" ) ) ; else ; ordSetFocus( 1 ) ; end
-
-      dbUseArea( .T., ( cDriver() ), ( cPatEmp() + "ALBPROVL.DBF" ), ( cCheckArea( "ALBPROVL", @dbfAlbPrvL ) ), if(.T. .OR. .F., !.F., NIL), .F.,, )
-     if !lAIS() ; ordListAdd( ( cPatEmp() + "ALBPROVL.CDX" ) ) ; else ; ordSetFocus( 1 ) ; end
-      ordSetFocus( "cStkFast" )
-
-      dbUseArea( .T., ( cDriver() ), ( cPatEmp() + "FACPRVL.DBF" ), ( cCheckArea( "FACPRVL", @dbfFacPrvL ) ), if(.T. .OR. .F., !.F., NIL), .F.,, )
-      if !lAIS() ; ordListAdd( ( cPatEmp() + "FACPRVL.CDX" ) ) ; else ; ordSetFocus( 1 ) ; end
-      ordSetFocus( "cRef" )
-
-      dbUseArea( .T., ( cDriver() ), ( cPatEmp() + "RctPrvL.DBF" ), ( cCheckArea( "RctPrvL", @dbfRctPrvL ) ), if(.T. .OR. .F., !.F., NIL), .F.,, )
-      if !lAIS() ; ordListAdd( ( cPatEmp() + "RctPrvL.CDX" ) ) ; else ; ordSetFocus( 1 ) ; end
-      ordSetFocus( "cRef" )
-
-      dbUseArea( .T., ( cDriver() ), ( cPatEmp() + "ALBCLIL.DBF" ), ( cCheckArea( "ALBCLIL", @dbfAlbCliL ) ), if(.T. .OR. .F., !.F., NIL), .F.,, )
-      if !lAIS() ; ordListAdd( ( cPatEmp() + "ALBCLIL.CDX" ) ) ; else ; ordSetFocus( 1 ) ; end
-      ordSetFocus( "cStkFast" )
-
-      dbUseArea( .T., ( cDriver() ), ( cPatEmp() + "FACCLIL.DBF" ), ( cCheckArea( "FACCLIL", @dbfFacCliL ) ), if(.T. .OR. .F., !.F., NIL), .F.,, )
-      if !lAIS() ; ordListAdd( ( cPatEmp() + "FACCLIL.CDX" ) ) ; else ; ordSetFocus( 1 ) ; end
-      ordSetFocus( "cRef" )
-
-      dbUseArea( .T., ( cDriver() ), ( cPatEmp() + "FacRecL.DBF" ), ( cCheckArea( "FacRecL", @dbfFacRecL ) ), if(.T. .OR. .F., !.F., NIL), .F.,, )
-      if !lAIS() ; ordListAdd( ( cPatEmp() + "FacRecL.CDX" ) ) ; else ; ordSetFocus( 1 ) ; end
-      ordSetFocus( "cRef" )
-
-      dbUseArea( .T., ( cDriver() ), ( cPatEmp() + "TIKEL.DBF" ), ( cCheckArea( "TIKEL", @dbfTikCliL ) ), if(.T. .OR. .F., !.F., NIL), .F.,, )
-      if !lAIS() ; ordListAdd( ( cPatEmp() + "TIKEL.CDX" ) ) ; else ; ordSetFocus( 1 ) ; end
-      ordSetFocus( "CSTKFAST" )
-
-      dbUseArea( .T., ( cDriver() ), ( cPatEmp() + "PROLIN.DBF" ), ( cCheckArea( "PROLIN", @dbfProLin ) ), if(.T. .OR. .F., !.F., NIL), .F.,, )
-      if !lAIS() ; ordListAdd( ( cPatEmp() + "PROLIN.CDX" ) ) ; else ; ordSetFocus( 1 ) ; end
-      ordSetFocus( "cCodArt" )
-
-      dbUseArea( .T., ( cDriver() ), ( cPatEmp() + "PROMAT.DBF" ), ( cCheckArea( "PROMAT", @dbfProMat ) ), if(.T. .OR. .F., !.F., NIL), .F.,, )
-      if !lAIS() ; ordListAdd( ( cPatEmp() + "PROMAT.CDX" ) ) ; else ; ordSetFocus( 1 ) ; end
-      ordSetFocus( "cCodArt" )
-
-      dbUseArea( .T., ( cDriver() ), ( cPatEmp() + "HISMOV.DBF" ), ( cCheckArea( "HISMOV", @dbfHisMov ) ), if(.T. .OR. .F., !.F., NIL), .F.,, )
-      if !lAIS() ; ordListAdd( ( cPatEmp() + "HISMOV.CDX" ) ) ; else ; ordSetFocus( 1 ) ; end
-      ordSetFocus( "cRefMov" )
-
-      dbUseArea( .T., ( cDriver() ), ( cPatEmp() + "ALBPROVT.DBF" ), ( cCheckArea( "AlbPrvT", @dbfAlbPrvT ) ), if(.T. .OR. .F., !.F., NIL), .F.,, )
-      if !lAIS() ; ordListAdd( ( cPatEmp() + "ALBPROVT.CDX" ) ) ; else ; ordSetFocus( 1 ) ; end
-
-      dbUseArea( .T., ( cDriver() ), ( cPatEmp() + "ALBCLIT.DBF" ), ( cCheckArea( "AlbCliT", @dbfAlbCliT ) ), if(.T. .OR. .F., !.F., NIL), .F.,, )
-      if !lAIS() ; ordListAdd( ( cPatEmp() + "ALBCLIT.CDX" ) ) ; else ; ordSetFocus( 1 ) ; end
-
-      dbUseArea( .T., ( cDriver() ), ( cPatEmp() + "PEDPROVL.DBF" ), ( cCheckArea( "PedPrvL", @dbfPedPrvL ) ), if(.T. .OR. .F., !.F., NIL), .F.,, )
-      if !lAIS() ; ordListAdd( ( cPatEmp() + "PEDPROVL.CDX" ) ) ; else ; ordSetFocus( 1 ) ; end
-      ordSetFocus( "cRef" )
-
-      dbUseArea( .T., ( cDriver() ), ( cPatEmp() + "PEDCLIL.DBF" ), ( cCheckArea( "PedCliL", @dbfPedCliL ) ), if(.T. .OR. .F., !.F., NIL), .F.,, )
-      if !lAIS() ; ordListAdd( ( cPatEmp() + "PEDCLIL.CDX" ) ) ; else ; ordSetFocus( 1 ) ; end
-      ordSetFocus( "cRef" )
-
-      dbUseArea( .T., ( cDriver() ), ( cPatAlm() + "UBICAT.DBF" ), ( cCheckArea( "UBICAT", @dbfUbicaT ) ), if(.T. .OR. .F., !.F., NIL), .F.,, )
-      if !lAIS() ; ordListAdd( ( cPatAlm() + "UBICAT.CDX" ) ) ; else ; ordSetFocus( 1 ) ; end
-
-      dbUseArea( .T., ( cDriver() ), ( cPatAlm() + "UBICAL.DBF" ), ( cCheckArea( "UBICAL", @dbfUbicaL ) ), if(.T. .OR. .F., !.F., NIL), .F.,, )
-      if !lAIS() ; ordListAdd( ( cPatAlm() + "UBICAL.CDX" ) ) ; else ; ordSetFocus( 1 ) ; end
-
-      oStock               := TStock():Create( cPatGrp() )
-
-      if !oStock:lOpenFiles()
-         lOpenFiles        := .F.
-      end if 
+      USE ( cPatEmp() + "ALBCLIP.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "ALBCLIP", @dbfAlbCliP ) )
+      SET ADSINDEX TO ( cPatEmp() + "ALBCLIP.CDX" ) ADDITIVE
 
    RECOVER USING oError
 
       lOpenFiles           := .f.
 
-      msgStop( ErrorMessage( oError ), "Imposible abrir las bases de datos de artículos" )
+      msgStop( ErrorMessage( oError ), 'Imposible abrir las bases de datos' )
 
-   end
+   END SEQUENCE
 
    ErrorBlock( oBlock )
 
    if !lOpenFiles
       CloseFiles()
-   end
+   end if
 
    CursorWE()
 
-RETURN ( lOpenFiles )
+return ( lOpenFiles )
 
-//---------------------------------------------------------------------------//
+//--------------------------------------------------------------------------//
 
-STATIC FUNCTION CloseFiles( )
+static function CloseFiles()
 
-   if dbfArticulo <> nil
+   if dbfClient != nil
+      ( dbfClient )->( dbCloseArea() )
+   end if
+
+   if dbfArticulo != nil
       ( dbfArticulo )->( dbCloseArea() )
-   end
+   end if
 
-   if dbfProv <> nil
-      ( dbfProv )->( dbCloseArea() )
-   end
+   if dbfCount != nil
+      ( dbfCount )->( dbCloseArea() )
+   end if
 
-   if dbfCategoria <> nil
-      ( dbfCategoria )->( dbCloseArea() )
-   end
-
-   if dbfTemporada <> nil
-      ( dbfTemporada )->( dbCloseArea() )
-   end
-
-   if dbfIva <> nil
-      ( dbfIva )->( dbCloseArea() )
-   end
-
-   if dbfFam <> nil
-      ( dbfFam )->( dbCloseArea() )
-   end
-
-   if dbfFamPrv <> nil
-      ( dbfFamPrv )->( dbCloseArea() )
-   end
-
-   if dbfTMov <> nil
-      ( dbfTMov )->( dbCloseArea() )
-   end
-
-   if dbfArtPrv <> nil
-      ( dbfArtPrv )->( dbCloseArea() )
-   end
-
-   if dbfArtLbl <> nil
-      ( dbfArtLbl )->( dbCloseArea() )
-   end
-
-   if dbfTarPreT <> nil
-      ( dbfTarPreT )->( dbCloseArea() )
-   end
-
-   if dbfTarPreL <> nil
-      ( dbfTarPreL )->( dbCloseArea() )
-   end
-
-   if dbfTarPreS <> nil
-      ( dbfTarPreS )->( dbCloseArea() )
-   end
-
-   if dbfOfe <> nil
-      ( dbfOfe )->( dbCloseArea() )
-   end
-
-   if dbfImg <> nil
-      ( dbfImg )->( dbCloseArea() )
-   end
-
-   if dbfDiv <> nil
+   if dbfDiv != nil
       ( dbfDiv )->( dbCloseArea() )
-   end
+   end if
 
-   if dbfArtVta <> nil
-      ( dbfArtVta )->( dbCloseArea() )
-   end
+   if dbfFPago != nil
+      ( dbfFPago )->( dbCloseArea() )
+   end if
 
-   if dbfAlmT <> nil
-      ( dbfAlmT )->( dbCloseArea() )
-   end
+   if dbfIva != nil
+      ( dbfIva )->( dbCloseArea() )
+   end if
 
-   if dbfArtKit <> nil
-      ( dbfArtKit )->( dbCloseArea() )
-   end
-
-   if dbfTblPro <> nil
-      ( dbfTblPro )->( dbCloseArea() )
-   end
-
-   if dbfPro <> nil
-      ( dbfPro )->( dbCloseArea() )
-   end
-
-   if dbfCodebar <> nil
-      ( dbfCodebar )->( dbCloseArea() )
-   end
-
-   if dbfAlbPrvL <> nil
-      ( dbfAlbPrvL )->( dbCloseArea() )
-   end
-
-   if dbfFacPrvL <> nil
-      ( dbfFacPrvL )->( dbCloseArea() )
-   end
-
-   if dbfRctPrvL <> nil
-      ( dbfRctPrvL )->( dbCloseArea() )
-   end
-
-   if dbfAlbCliL <> nil
-      ( dbfAlbCliL )->( dbCloseArea() )
-   end
-
-   if dbfFacCliL <> nil
-      ( dbfFacCliL )->( dbCloseArea() )
-   end
-
-   if dbfFacRecL <> nil
-      ( dbfFacRecL )->( dbCloseArea() )
-   end
-
-   if dbfTikCliL <> nil
-      ( dbfTikCliL )->( dbCloseArea() )
-   end
-
-   if dbfProLin <> nil
-      ( dbfProLin )->( dbCloseArea() )
-   end
-
-   if dbfProMat <> nil
-      ( dbfProMat )->( dbCloseArea() )
-   end
-
-   if dbfHisMov <> nil
-      ( dbfHisMov )->( dbCloseArea() )
-   end
-
-   if dbfAlbPrvT <> nil
-      ( dbfAlbPrvT )->( dbCloseArea() )
-   end
-
-   if dbfAlbCliT <> nil
+   if dbfAlbCliT != nil
       ( dbfAlbCliT )->( dbCloseArea() )
-   end
+   end if 
 
-   if dbfPedPrvL <> nil
-      ( dbfPedPrvL )->( dbCloseArea() )
-   end
+   if dbfAlbCliL != nil
+      ( dbfAlbCliL )->( dbCloseArea() )
+   end if 
 
-   if dbfPedCliL <> nil
-      ( dbfPedCliL )->( dbCloseArea() )
-   end
-
-   if dbfUbicaT <> nil
-      ( dbfUbicaT )->( dbCloseArea() )
-   end
-
-   if dbfUbicaL <> nil
-      ( dbfUbicaL )->( dbCloseArea() )
-   end
-
-   if !Empty( oStock )
-      oStock:end()
-   end
+   if dbfAlbCliP != nil
+      ( dbfAlbCliP )->( dbCloseArea() )
+   end if    
 
    dbfArticulo    := nil
-   dbfProv        := nil
-   dbfCatalogo    := nil
-   dbfIva         := nil
-   dbfFam         := nil
-   dbfFamPrv      := nil
-   dbfArtPrv      := nil
-   oStock         := nil
-   dbfTMov        := nil
-   dbfTarPreT     := nil
-   dbfTarPreL     := nil
-   dbfTarPreS     := nil
-   dbfOfe         := nil
-   dbfImg         := nil
    dbfDiv         := nil
-   dbfArtVta      := nil
-   oBandera       := nil
-   dbfAlmT        := nil
-   dbfArtKit      := nil
-   dbfArtLbl      := nil
-   dbfTblPro      := nil
-   dbfPro         := nil
-   dbfCodebar     := nil
-   oTankes        := nil
-   oTipArt        := nil
-   oCatalogo      := nil
-   oNewImp        := nil
-   oFraPub        := nil
-   dbfDoc         := nil
-   dbfFlt         := nil
-   dbfCategoria   := nil
-   dbfTemporada   := nil
-   dbfAlbPrvL     := nil
-   dbfFacPrvL     := nil
-   dbfAlbCliL     := nil
-   dbfFacCliL     := nil
-   dbfFacRecL     := nil
-   dbfTikCliL     := nil
-   dbfProLin      := nil
-   dbfProMat      := nil
-   dbfHisMov      := nil
-   dbfAlbPrvT     := nil
+   dbfCount       := nil
+   dbfFPago       := nil
+   dbfIva         := nil
    dbfAlbCliT     := nil
-   dbfPedPrvL     := nil
-   dbfPedCliL     := nil
-   dbfUbicaT      := nil
-   dbfUbicaL      := nil
+   dbfAlbCliL     := nil
+   dbfAlbCliP     := nil
 
-   lOpenFiles     := .F.
+   lOpenFiles     := .f.
 
-RETURN ( .T. )
+RETURN ( .t. )
 
-//---------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//
+
+static function ImportaAlbaran()
+
+   local oBlock
+   local oError
+   local cFile
+   local hFile
+   local cBufer
+   local nBytes
+   local cFilEdm
+   local oFilEdm
+   local hAlbaran := {=>}
+                                 
+   CursorWait()
+
+   cFilEdm                               := cGetFile( "All | *.*", "Seleccione los ficheros a importar", "*.*" , , .f.)
+
+   if !Empty( cFilEdm )
+
+      oFilEdm                            := TTxtFile():New( cFilEdm )
+
+      while ! oFilEdm:lEoF()
+
+         hAlbaran                        := {=>}
+         hAlbaran[ "Fecha" ]             := ctod( substr( oFilEdm:cLine, 7, 10 ) )
+         hAlbaran[ "Hora" ]              := subStr( oFilEdm:cLine, 18, 8)
+         hAlbaran[ "CodArt" ]            := Alltrim( subStr( oFilEdm:cLine, 26, 10) )
+         if hAlbaran[ "CodArt" ]    == "1"
+            hAlbaran[ "CodArt" ]    = "G.A."
+            halbaran[ "Almacen"]    = "GSA"
+         else
+            hAlbaran[ "CodArt" ]    = "G.B." 
+            hAlbaran[ "Almacen" ]   = "GSB"
+         end if
+         hAlbaran[ "Litros" ]            := Val( subStr( oFilEdm:cLine, 42, 13) )/1000
+         hAlbaran[ "Precio" ]            := Val( subStr( oFilEdm:cLine, 55, 8) )/1000 
+         hAlbaran[ "Descuento" ]         := Val( subStr( oFilEdm:cLine, 63, 6) )/100
+         hAlbaran[ "TotalImpIvaIncl" ]   := Val( subStr( oFilEdm:cLine, 70, 9) )/100
+         hAlbaran[ "Cobrado" ]           := Val( subStr( oFilEdm:cLine, 79, 9) )/100
+         hAlbaran[ "FPago" ]             := subStr( oFilEdm:cLine, 88, 18)
+         hAlbaran[ "NumeroVale" ]        := subStr( oFilEdm:cLine, 116, 10)
+         hAlbaran[ "CodCliente" ]        := Alltrim( subStr( oFilEdm:cLine, 126, 6) )
+
+         EditarAlbaran( hAlbaran)
+
+         oFilEdm:Skip()
+
+      end while
+
+   oFilEdm:Close()
+
+   end if
+
+   CursorWe()
+
+Return .t.
+
+//-----------------------------------------------------------------------------
+
+static function EditarAlbaran( hAlbaran )
+
+local nRecNoCli
+local nRecNoPago
+local nRecNoArt
+local nOrdAntCli
+local nOrdantPago
+local nOrdAntArt
+local nRecNoIva
+local nOrdAntIva
+local nTarifa
+local cCodCliente
+local nNumAlb
+
+nRecNoCli      := ( dbfClient )->( RecNo( ) )
+nOrdAnt        := ( dbfClient )->( OrdSetFocus( "cUsrDef01" ) )
+nRecNoPago     := ( dbfFPago )->( RecNo( ) )
+nOrdAntPago    := ( dbfFPago )->( OrdSetFocus( "cDesPago" ) )
+nRecNoArt      := ( dbfArticulo )->( RecNo() )
+nOrdAntArt     := ( dbfArticulo )->( OrdSetFocus( "Codigo" ) )
+nRecNoIva      := ( dbfIva )->( RecNo() )
+nOrdantIva     := ( dbfIva )->( OrdSetFocus( "Tipo" ) )
+
+   if !Empty( hAlbaran )
+
+//Importamos primero la cabecera del albaran-----------------------------------
+
+      ( dbfAlbCliT )->( dbAppend( ) )
+
+      ( dbfAlbCliT )->cSerAlb       := 'T'
+      nNumAlb                       := nNewDoc( 'T', dbfAlbCliT, "NALBCLI", , dbfCount )
+      ( dbfAlbCliT )->nNumAlb       := nNumAlb
+      ( dbfAlbCliT )->cSufAlb       := '00'
+      ( dbfAlbCliT )->cTurAlb       := cCurSesion()
+      ( dbfAlbCliT )->dFecAlb       := hAlbaran[ "Fecha" ]
+      ( dbfAlbCliT )->cSuPed        := hAlbaran[ "NumeroVale" ]
+      ( dbfAlbCliT )->lFacturado    := .f.
+      ( dbfAlbCliT )->lEntregado    := .f. 
+
+      if ( dbfClient )->( dbSeek( hAlbaran[ "CodCliente" ] ) )
+
+         cCodCliente                := ( dbfClient )->Cod
+         ( dbfAlbCliT )->cCodCli    := cCodCliente
+         ( dbfAlbCliT )->cNomCli    := ( dbfClient )->Titulo
+         ( dbfAlbCliT )->cDirCli    := ( dbfClient )->Domicilio
+         ( dbfAlbCliT )->cPobCli    := ( dbfClient )->Poblacion
+         ( dbfAlbCliT )->cPrvCli    := ( dbfClient )->Provincia
+         ( dbfAlbCliT )->cPosCli    := ( dbfClient )->CodPostal
+         ( dbfAlbCliT )->cDniCli    := ( dbfClient )->Nif
+         ( dbfAlbCliT )->nRegIva    := ( dbfClient )->nRegIva
+         ( dbfAlbCliT )->cCodPago   := ( dbfClient )->CodPago
+         ( dbfAlbCliT )->cCodGrp    := ( dbfClient )->cCodGrp
+         ( dbfAlbCliT )->cTlfCli    := ( dbfClient )->Telefono
+
+      end if 
+
+      ( dbfAlbCliT )->cCodAlm       := hAlbaran[ "Almacen" ]
+      ( dbfAlbCliT )->cCodCaj       := cDefCaj()
+      ( dbfAlbCliT )->lIvaInc       := .t.
+      ( dbfAlbCliT )->cDivAlb       := cDivEmp()
+      ( dbfAlbCliT )->cCodUsr       := cCurUsr()
+      ( dbfAlbCliT )->cCodDlg       := "00"
+
+      ( dbfAlbCliT )->( dbUnlock( ) )
+
+//Importamos las líneas del albaran--------------------------------------------
+
+      ( dbfAlbCliL )->( dbAppend( ) )
+
+         ( dbfAlbCliL )->cSerAlb       := 'T' 
+         ( dbfAlbCliL )->nNumAlb       := nNumAlb
+         ( dbfAlbCliL )->cSufAlb       := '00' 
+
+         if ( dbfArticulo )->( dbSeek( hAlbaran[ "CodArt" ] ) )
+            ( dbfAlbCliL )->cRef       := ( dbfArticulo )->Codigo
+            ( dbfAlbCliL )->cDetalle   := ( dbfArticulo )->Nombre
+            ( dbfAlbCliL )->nCtlStk    := ( dbfArticulo )->nCtlStock
+
+            if ( dbfIva )->( dbSeek( (dbfArticulo )->TipoIva ) ) 
+               ( dbfAlbCliL )->nIva    := ( dbfIva )->TpIva
+            end if 
+
+            ( dbfAlbCliL )->nCosDiv    := ( dbfArticulo )->pCosto
+            ( dbfAlbCliL )->cCodTip    := ( dbfArticulo )->cCodTip
+            ( dbfAlbCliL )->cCodFam    := ( dbfArticulo )->Familia
+
+         end if 
+
+         ( dbfAlbCliL )->nPreUnit      := hAlbaran[ "Precio" ]
+         ( dbfAlbCliL )->nDto          := hAlbaran[ "Descuento" ]
+         ( dbfAlbCliL )->nCanEnt       := 1
+         ( dbfAlbCliL )->nUniCaja      := hAlbaran[ "Litros" ]
+         ( dbfAlbCliL )->dFecha        := hAlbaran[ "Fecha" ]
+         ( dbfAlbCliL )->nNumLin       := 1
+         ( dbfAlbCliL )->cAlmLin       := hAlbaran[ "Almacen" ]
+         ( dbfAlbCliL )->lIvaLin       := .t.         
+         ( dbfAlbCliL )->dFecAlb       := hAlbaran[ "Fecha" ]
+         
+         MsgInfo( cCodCliente, "cCodCliente" )
+
+         ( dbfAlbCliL )->cCodCli       := cCodCliente
+
+      ( dbfAlbCliL )->( dbUnlock( ) )
+
+      ( dbfClient )->( ordSetFocus( nOrdAntCli ) )
+      ( dbfClient )->( dbGoTo( nRecNoCli ) )
+      ( dbfFPago )->( ordSetFocus( nOrdAntPago ) )
+      ( dbfFPago )->( dbGoTo( nRecNoPago ) )
+      ( dbfArticulo )->( ordSetFocus( nOrdAntArt ) )
+      ( dbfArticulo )->( dbGoTo( nRecNoArt ) )
+      ( dbfIva )->( ordSetFocus( nOrdantIva ) )
+      ( dbfIva )->( dbGoTo( nRecNoIva ) )   
+
+   end if
+
+Return .t.
+
+//-----------------------------------------------------------------------------
+
+static function nGetNumeric( uVal )
+
+   local nVal     := 0
+
+   do case
+      case Valtype( uVal ) == "C"
+         nVal     := Val( StrTran( uVal, ",", "." ) )
+      case Valtype( uVal ) == "N"
+         nVal     := uVal
+   end case 
+
+Return ( nVal )
+ 
+//------------------------------------------------------------------------
+
+static function cGetChar( uVal )
+
+   if Valtype( uVal ) == "N"
+      uVal := Int( uVal )
+   end if
+
+Return ( cValToChar( uVal ) )
