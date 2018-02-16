@@ -32,7 +32,7 @@ METHOD New() CLASS TiposImpresorasController
 
    ::oValidator            := TiposImpresorasValidator():New( self )
 
-   ::oFilterController:setTableToFilter( ::oModel:getTableName() )
+   ::oFilterController:setTableToFilter( ::oModel:cTableName )
 
 RETURN ( Self )
 
@@ -122,7 +122,9 @@ METHOD Activate() CLASS TiposImpresorasView
    local oBtnOk
    local oGetNombre
 
-   DEFINE DIALOG oDlg RESOURCE "TIPO_GENERAL" TITLE ::lblTitle() + "tipo de impresora"
+   DEFINE DIALOG  oDlg ;
+      RESOURCE    "TIPO_GENERAL" ;
+      TITLE       ::lblTitle() + "tipo de impresora"
 
    REDEFINE GET   oGetNombre ;
       VAR         ::oController:oModel:hBuffer[ "nombre" ] ; 
@@ -144,7 +146,7 @@ METHOD Activate() CLASS TiposImpresorasView
       CANCEL ;
       ACTION      ( oDlg:end() )
 
-   // Teclas rpidas-----------------------------------------------------------
+   // Teclas rapidas----------------------------------------------------------
 
    if ::oController:isNotZoomMode() 
       oDlg:AddFastKey( VK_F5, {|| if( validateDialog( oDlg ), oBtnOk:Click(), ) } )

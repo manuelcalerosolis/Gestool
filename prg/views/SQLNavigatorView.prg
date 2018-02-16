@@ -71,11 +71,6 @@ RETURN ( Self )
 
 METHOD End()
 
-   if !empty( ::oController )
-      ::oController:DisableWindowsBar()
-      ::oController:End()
-   end if 
-
    if !empty( ::oMdiChild )
       ::oMdiChild:End()
    end if 
@@ -166,7 +161,7 @@ METHOD keyDown( nKey, nFlags )
 
    do case
       case nKey == VK_ESCAPE
-         ::End()
+         ::oController:End()
       case nKey == VK_INSERT 
          ::oController:Append() 
       case nKey == VK_RETURN 

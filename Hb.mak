@@ -443,10 +443,8 @@ MsTable.prg             													\
 MsError.prg 																	\
 SQLBaseView.prg 																\
 TiposVentasView.prg    														\
-TiposNotasView.prg    														\
 SQLBaseValidator.prg 														\
 TiposVentasValidator.prg 													\
-TiposNotasValidator.prg 													\
 EtiquetasValidator.prg 														\
 SituacionesValidator.prg 													\
 MovimientosAlmacenValidator.prg 											\
@@ -570,7 +568,6 @@ PedidosProveedoresModel.prg												\
 MaterialesProducidosLineasModel.prg 									\
 MaterialesConsumidosLineasModel.prg 									\
 TiposImpresorasController.prg 											\
-SQLTiposNotasModel.prg 														\
 TiposNotasController.prg 													\
 TiposVentasModel.prg 														\
 TiposVentasController.prg 													\
@@ -1049,7 +1046,6 @@ MsError.obj 																	\
 SQLBaseView.obj 																\
 SQLBaseValidator.obj 														\
 TiposVentasValidator.obj 													\
-TiposNotasValidator.obj 													\
 EtiquetasValidator.obj 														\
 SituacionesValidator.obj 													\
 MovimientosAlmacenValidator.obj 											\
@@ -1062,7 +1058,6 @@ EtiquetasRepository.obj 													\
 TiposNotas.obj       														\
 EtiquetasView.obj   															\
 TiposVentasView.obj       													\
-TiposNotasView.obj 															\
 Propiedades.obj       														\
 PropiedadesLineas.obj       												\
 PageIni.obj             													\
@@ -1179,7 +1174,6 @@ MaterialesConsumidosLineasModel.obj 									\
 UsuariosModel.obj																\
 DelegacionesModel.obj														\
 TiposImpresorasController.obj 											\
-SQLTiposNotasModel.obj 														\
 TiposNotasController.obj 													\
 EtiquetasModel.obj 															\
 EtiquetasController.obj 													\
@@ -1633,7 +1627,6 @@ $(OBJ)\MsError.obj   														+
 $(OBJ)\SQLBaseView.obj 														+
 $(OBJ)\SQLBaseValidator.obj 												+
 $(OBJ)\TiposVentasValidator.obj											+
-$(OBJ)\TiposNotasValidator.obj											+
 $(OBJ)\EtiquetasValidator.obj												+
 $(OBJ)\SituacionesValidator.obj											+
 $(OBJ)\MovimientosAlmacenValidator.obj									+
@@ -1646,7 +1639,6 @@ $(OBJ)\EtiquetasRepository.obj											+
 $(OBJ)\TiposNotas.obj      												+
 $(OBJ)\EtiquetasView.obj  													+
 $(OBJ)\TiposVentasView.obj   												+
-$(OBJ)\TiposNotasView.obj   												+
 $(OBJ)\Propiedades.obj      												+
 $(OBJ)\PropiedadesLineas.obj      										+
 $(OBJ)\PageIni.obj              											+
@@ -1769,7 +1761,6 @@ $(OBJ)\MaterialesConsumidosLineasModel.obj 							+
 $(OBJ)\UsuariosModel.obj 													+
 $(OBJ)\DelegacionesModel.obj 												+
 $(OBJ)\TiposImpresorasController.obj               				+
-$(OBJ)\SQLTiposNotasModel.obj                 						+
 $(OBJ)\TiposNotasController.obj                 					+
 $(OBJ)\EtiquetasModel.obj                 							+
 $(OBJ)\EtiquetasController.obj                 						+

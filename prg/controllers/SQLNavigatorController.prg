@@ -88,6 +88,8 @@ RETURN ( self )
 //---------------------------------------------------------------------------//
 
 METHOD End()
+   
+   ::DisableWindowsBar()
 
    if !empty( ::oNavigatorView )
       ::oNavigatorView:End()

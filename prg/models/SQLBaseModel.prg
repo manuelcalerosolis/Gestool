@@ -692,10 +692,6 @@ METHOD loadDuplicateBuffer( id )
       hset( ::hBuffer, "id", 0 )
    end if 
 
-   if hhaskey( ::hBuffer, "uuid" )
-      hset( ::hBuffer, "uuid", win_uuidcreatestring() )
-   end if 
-
    ::fireEvent( 'loadedduplicatebuffer' )
 
 RETURN ( ::hBuffer )

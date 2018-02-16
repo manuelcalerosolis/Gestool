@@ -8,6 +8,8 @@ CLASS SQLMovimientosAlmacenLineasModel FROM SQLExportableModel
 
    DATA cTableName            INIT  "movimientos_almacen_lineas"
 
+   DATA cTableTemporal        
+
    DATA cConstraints          INIT  "PRIMARY KEY ( id ), "                       + ; 
                                        "KEY ( uuid ), "                          + ;
                                        "KEY ( parent_uuid ), "                   + ;
@@ -46,6 +48,18 @@ CLASS SQLMovimientosAlmacenLineasModel FROM SQLExportableModel
    METHOD getIdProductAdded()
 
    METHOD getUpdateUnitsSentece()
+
+   METHOD createTemporalTableWhereUuid( originalUuid )
+
+   METHOD alterTemporalTableWhereUuid()
+
+   METHOD replaceUuidInTemporalTable( duplicatedUuid )
+
+   METHOD insertTemporalTable()
+
+   METHOD dropTemporalTable()
+
+   METHOD duplicateByUuid( originalUuid, duplicatedUuid )
 
 END CLASS
 
@@ -328,5 +342,85 @@ METHOD getUpdateUnitsSentece( id )
                         "WHERE id = " + quoted( id ) 
 
 RETURN ( cSentence )
+
+//---------------------------------------------------------------------------//
+
+METHOD createTemporalTableWhereUuid( originalUuid )
+
+   local cSentence
+
+   ::cTableTemporal  := ::cTableName + hb_ttos( hb_datetime() )
+
+   cSentence         := "CREATE TEMPORARY TABLE " + ::cTableTemporal          + " "
+   cSentence         +=    "SELECT * from " + ::cTableName                    + " " 
+   cSentence         +=       "WHERE parent_uuid = " + quoted( originalUuid ) + "; "
+
+RETURN ( ::getDatabase():Exec( cSentence ) )
+
+//---------------------------------------------------------------------------//
+
+METHOD alterTemporalTableWhereUuid()
+
+   local cSentence
+
+   cSentence         := "ALTER TABLE " + ::cTableTemporal + " DROP id"
+
+RETURN ( ::getDatabase():Exec( cSentence ) )
+
+//---------------------------------------------------------------------------//
+
+METHOD replaceUuidInTemporalTable( duplicatedUuid )
+
+   local cSentence
+
+   cSentence         := "UPDATE " + ::cTableTemporal                          + " "
+   cSentence         +=    "SET id = 0"                                       + ", "
+   cSentence         +=       "uuid = UUID()"                                 + ", "
+   cSentence         +=       "parent_uuid = " + quoted( duplicatedUuid )    
+
+RETURN ( ::getDatabase():Exec( cSentence ) )
+
+//---------------------------------------------------------------------------//
+
+METHOD insertTemporalTable()
+
+   local cSentence
+
+   cSentence         := "INSERT INTO " + ::cTableName                         + " "
+   cSentence         +=    "SELECT * FROM " + ::cTableTemporal
+
+RETURN ( ::getDatabase():Exec( cSentence ) )
+
+//---------------------------------------------------------------------------//
+
+METHOD dropTemporalTable()
+
+   local cSentence
+
+   cSentence         := "DROP TABLE " + ::cTableTemporal           
+
+RETURN ( ::getDatabase():Exec( cSentence ) )
+
+//---------------------------------------------------------------------------//
+
+METHOD duplicateByUuid( originalUuid, duplicatedUuid )
+
+   if !( ::createTemporalTableWhereUuid( originalUuid ) )
+      RETURN ( nil )
+   end if 
+
+   if !( ::replaceUuidInTemporalTable( duplicatedUuid ) )
+      RETURN ( nil )
+   end if 
+
+   if !( ::insertTemporalTable() )
+      RETURN ( nil )
+   end if 
+
+   if !( ::dropTemporalTable() )
+      RETURN ( nil )
+   end if 
+
+RETURN ( nil )
 
 //---------------------------------------------------------------------------//
