@@ -24,8 +24,6 @@ METHOD New( oController )
 
    ::oController     := oController
 
-   ::cImageName      := "gc_bookmarks_16"
-
 Return ( Self )
 
 //---------------------------------------------------------------------------//

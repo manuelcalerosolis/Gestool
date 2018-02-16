@@ -5186,9 +5186,9 @@ Static Function oneAppendLine( aCabeceraAlbaran, cCodigoArticulo, nUnidadesArtic
 
    setDlgMode( aLineasAlbaranes, aCabeceraAlbaran, APPD_MODE )
 
-   aLineasAlbaranes[ _NUNICAJA ] := nUnidadesArticulos
-
    if loaArt( cCodigoArticulo, aLineasAlbaranes, nil, aCabeceraAlbaran )
+
+      aLineasAlbaranes[ _NUNICAJA ] := nUnidadesArticulos
 
       saveDeta( aLineasAlbaranes, aCabeceraAlbaran, , , , , , APPD_MODE )
 

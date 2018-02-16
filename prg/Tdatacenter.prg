@@ -4788,10 +4788,6 @@ METHOD ConvertDatosToSQL()
       :New();
       :makeImportDbfSQL()
 
-   SQLTiposNotasModel();
-      :New();
-      :makeImportDbfSQL()
-
    SituacionesModel();
       :New();
       :makeImportDbfSQL()
@@ -4806,7 +4802,7 @@ RETURN ( Self )
 
 METHOD ConvertEmpresaToSQL()
 
-   EtiquetasModel();
+   SQLEtiquetasModel();
       :New();
       :makeImportDbfSQL()
 

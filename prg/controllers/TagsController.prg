@@ -3,7 +3,7 @@
 
 //---------------------------------------------------------------------------//
 
-CLASS TiposNotasController FROM SQLNavigatorController
+CLASS TagsController FROM SQLNavigatorController
 
    METHOD New()
 
@@ -11,27 +11,27 @@ END CLASS
 
 //---------------------------------------------------------------------------//
 
-METHOD New() CLASS TiposNotasController
+METHOD New() CLASS TagsController
 
    ::Super:New()
 
-   ::cTitle                := "Tipos de notas"
+   ::cTitle                := "Marcadores"
 
-   ::cName                 := "tipos_impresoras"
+   ::cName                 := "tags"
 
    ::hImage                := { "16" => "gc_folder2_16" }
 
    ::nLevel                := nLevelUsr( "01101" )
 
-   ::oModel                := SQLTiposNotasModel():New( self )
+   ::oModel                := SQLTagsModel():New( self )
 
-   ::oRepository           := TiposNotasRepository():New( self )
+   ::oRepository           := TagsRepository():New( self )
 
-   ::oBrowseView           := TiposNotasBrowseView():New( self )
+   ::oBrowseView           := TagsBrowseView():New( self )
 
-   ::oDialogView           := TiposNotasView():New( self )
+   ::oDialogView           := TagsView():New( self )
 
-   ::oValidator            := TiposNotasValidator():New( self )
+   ::oValidator            := TagsValidator():New( self )
 
    ::oFilterController:setTableToFilter( ::oModel:cTableName )
 
@@ -43,7 +43,7 @@ RETURN ( Self )
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 
-CLASS TiposNotasBrowseView FROM SQLBrowseView
+CLASS TagsBrowseView FROM SQLBrowseView
 
    METHOD addColumns()                       
 
@@ -51,7 +51,7 @@ ENDCLASS
 
 //----------------------------------------------------------------------------//
 
-METHOD addColumns() CLASS TiposNotasBrowseView
+METHOD addColumns() CLASS TagsBrowseView
 
    with object ( ::oBrowse:AddCol() )
       :cSortOrder          := 'id'
@@ -59,6 +59,15 @@ METHOD addColumns() CLASS TiposNotasBrowseView
       :nWidth              := 80
       :bEditValue          := {|| ::getRowSet():fieldGet( 'id' ) }
       :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
+   end with
+
+   with object ( ::oBrowse:AddCol() )
+      :cSortOrder          := 'uuid'
+      :cHeader             := 'Uuid'
+      :nWidth              := 180
+      :bEditValue          := {|| ::getRowSet():fieldGet( 'uuid' ) }
+      :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
+      :lHide               := .t.
    end with
 
    with object ( ::oBrowse:AddCol() )
@@ -77,11 +86,11 @@ RETURN ( self )
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 
-CLASS SQLTiposNotasModel FROM SQLBaseModel
+CLASS SQLTagsModel FROM SQLBaseModel
 
-   DATA cColumnCode             INIT "nombre"
+   DATA cTableName               INIT "Tags"
 
-   DATA cTableName              INIT "tipos_notas"
+   DATA cConstraints             INIT "PRIMARY KEY (id), KEY (uuid)"
 
    METHOD getColumns()
 
@@ -89,14 +98,19 @@ END CLASS
 
 //---------------------------------------------------------------------------//
 
-METHOD getColumns() CLASS SQLTiposNotasModel
+METHOD getColumns() CLASS SQLTagsModel
 
-   hset( ::hColumns, "id",          {  "create"    => "INTEGER AUTO_INCREMENT UNIQUE"          ,;
-                                       "text"      => "Identificador"                          ,;
-                                       "default"   => {|| 0 } }                                 )
+   hset( ::hColumns, "id",       {  "create"    => "INTEGER AUTO_INCREMENT"                  ,;
+                                    "default"   => {|| 0 } }                                 )
 
-   hset( ::hColumns, "nombre",      {  "create"    => "VARCHAR( 50 )"                          ,;
-                                       "default"   => {|| space( 50 ) } }                       )
+   hset( ::hColumns, "uuid",     {  "create"    => "VARCHAR( 40 ) NOT NULL UNIQUE"           ,;
+                                    "default"   => {|| win_uuidcreatestring() } }            )
+
+   hset( ::hColumns, "empresa",  {  "create"    => "CHAR ( 4 ) NOT NULL"                     ,;
+                                    "default"   => {|| cCodEmp() } }                         )
+
+   hset( ::hColumns, "nombre",   {  "create"    => "VARCHAR( 50 )"                          ,;
+                                    "default"   => {|| space( 50 ) } }                       )
 
 RETURN ( ::hColumns )
 
@@ -107,11 +121,11 @@ RETURN ( ::hColumns )
 //---------------------------------------------------------------------------//
 
 
-CLASS TiposNotasRepository FROM SQLBaseRepository
+CLASS TagsRepository FROM SQLBaseRepository
 
    METHOD getTableName()         INLINE ( iif(  !empty( ::getController() ),;
                                                 ::getModelTableName(),;
-                                                SQLTiposNotasModel():getTableName() ) )
+                                                SQLTagsModel():getTableName() ) )
 
 END CLASS
 
@@ -121,7 +135,7 @@ END CLASS
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 
-CLASS TiposNotasView FROM SQLBaseView
+CLASS TagsView FROM SQLBaseView
 
    DATA oEditControl
 
@@ -137,14 +151,13 @@ END CLASS
 
 //---------------------------------------------------------------------------//
 
-METHOD Activate() CLASS TiposNotasView
+METHOD Activate() CLASS TagsView
 
    local oDlg
    local oBtnOk
-   local oGetCodigo
    local oGetNombre
 
-   DEFINE DIALOG oDlg RESOURCE "TIPO_GENERAL" TITLE ::lblTitle() + "tipo de nota"
+   DEFINE DIALOG oDlg RESOURCE "MARCADOR" TITLE ::lblTitle() + "marcador"
 
    REDEFINE GET   oGetNombre ;
       VAR         ::getModel():hBuffer[ "nombre" ] ;
@@ -169,11 +182,11 @@ METHOD Activate() CLASS TiposNotasView
 
    ACTIVATE DIALOG oDlg CENTER
 
-RETURN ( oDlg:nResult == IDOK )
+RETURN ( oDlg:nResult )
 
 //---------------------------------------------------------------------------//
 
-METHOD createEditControl( hControl, uValue ) CLASS TiposNotasView
+METHOD createEditControl( hControl, uValue ) CLASS TagsView
 
    local oError
 
@@ -207,7 +220,7 @@ METHOD createEditControl( hControl, uValue ) CLASS TiposNotasView
 
    catch oError
 
-      msgStop( "Imposible crear el control de tipos de ventas." + CRLF + ErrorMessage( oError ) )
+      msgStop( "Imposible crear el control de marcadores." + CRLF + ErrorMessage( oError ) )
 
    end
 
@@ -215,7 +228,7 @@ RETURN ( Self )
 
 //---------------------------------------------------------------------------//
 
-METHOD selectorEditControl() CLASS TiposNotasView
+METHOD selectorEditControl() CLASS TagsView
 
    local hBuffer     := ::oController:activateSelectorView()
 
@@ -228,7 +241,7 @@ RETURN ( Self )
 
 //---------------------------------------------------------------------------//
 
-METHOD assertEditControl() CLASS TiposNotasView
+METHOD assertEditControl() CLASS TagsView
 
    local uValue      := ::oEditControl:VarGet()
    local lAssert     := ::oController:assert( "id", uValue )
@@ -245,7 +258,7 @@ RETURN ( lAssert )
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 
-CLASS TiposNotasValidator FROM SQLBaseValidator
+CLASS TagsValidator FROM SQLBaseValidator
 
    METHOD getValidators()
 
@@ -255,19 +268,19 @@ END CLASS
 
 //---------------------------------------------------------------------------//
 
-METHOD getValidators() CLASS TiposNotasValidator
+METHOD getValidators() CLASS TagsValidator
 
-   ::hValidators  := {  "nombre" => {  "required"     => "El nombre de la nota es un dato requerido",;
-                                       "unique"       => "El nombre de la nota ya existe" } } 
+   ::hValidators  := {  "nombre" => {  "required"     => "El nombre es un dato requerido",;
+                                       "unique"       => "El nombre ya existe" } } 
 
 RETURN ( ::hValidators )
 
 //---------------------------------------------------------------------------//
 
-METHOD getAsserts() CLASS TiposNotasValidator
+METHOD getAsserts() CLASS TagsValidator
 
-   ::hAsserts     := {  "id"     => {  "emptyOrExist" => "El identificador de la nota no existe" },;
-                        "nombre" => {  "emptyOrExist" => "El nombre de la nota no existe" } } 
+   ::hAsserts     := {  "id"     => {  "emptyOrExist" => "El identificador no existe" },;
+                        "nombre" => {  "emptyOrExist" => "El nombre no existe" } } 
 
 RETURN ( ::hAsserts )
 

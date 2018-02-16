@@ -1490,7 +1490,7 @@ FUNCTION CreateAcceso( oWnd )
    // Otros--------------------------------------------------------------------
 
    oGrupo               := TGrupoAcceso() 
-   oGrupo:nBigItems     := 13
+   oGrupo:nBigItems     := 12
    oGrupo:cPrompt       := 'Global'
    oGrupo:cLittleBitmap := "gc_folder2_16"
    oGrupo:cBigBitmap    := "gc_folder2_32"
@@ -1597,22 +1597,12 @@ FUNCTION CreateAcceso( oWnd )
 
    oItem                := oItemArchivo:Add()
    oItem:oGroup         := oGrupo
-   oItem:cPrompt        := 'Etiquetas'
-   oItem:cMessage       := 'Etiquetas'
-   oItem:bAction        := {|| EtiquetasController():New():ActivateNavigatorView() }
+   oItem:cPrompt        := 'Marcadores'
+   oItem:cMessage       := 'Marcadores'
+   oItem:bAction        := {|| TagsController():New():ActivateNavigatorView() }
    oItem:cId            := "01126"
    oItem:cBmp           := "gc_bookmarks_16"
    oItem:cBmpBig        := "gc_bookmarks_32"
-   oItem:lShow          := .f.
-
-   oItem                := oItemArchivo:Add()
-   oItem:oGroup         := oGrupo
-   oItem:cPrompt        := "Tipos de notas"
-   oItem:cMessage       := "Acceso a los tipos de notas"
-   oItem:bAction        := {|| TiposNotasController():New():ActivateNavigatorView() }
-   oItem:cId            := "01101"
-   oItem:cBmp           := "gc_folder2_16"
-   oItem:cBmpBig        := "gc_folder2_32"
    oItem:lShow          := .f.
 
    oItem                := oItemArchivo:Add()

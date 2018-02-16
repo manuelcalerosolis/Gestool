@@ -2167,9 +2167,6 @@ Return nil
 Function SQLTiposImpresorasModel()
 Return nil
 
-Function SQLTiposNotasModel()
-Return nil
-
 Function ArticulosModel()
 Return nil
 
@@ -2233,16 +2230,16 @@ Return nil
 Function TIPOSIMPRESORASCONTROLLER()
 Return nil
 
-Function ETIQUETASMODEL()
+Function SQLEtiquetasModel()
 Return nil
 
 Function TTAGEVER()
 Return nil
 
-Function ETIQUETASCONTROLLER()
+Function TagsController()
 Return nil
 
-Function RELACIONESETIQUETASMODEL()
+Function RelacionesEtiquetasModel()
 Return nil
 
 Function SQLConfiguracionVistasUsuariosModel()

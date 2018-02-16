@@ -4797,10 +4797,13 @@ Static Function masiveAppendLines( aCabeceraFactura, oDialog )
       aArticulo           := hb_atokens( aRelacion, "," )
 
       if isArray( aArticulo ) .and. len( aArticulo ) >= 2 .and. !empty( aArticulo[1] ) .and. !empty( aArticulo[2] ) 
+
          if !( oneAppendLine( aCabeceraFactura, aArticulo[1], val( aArticulo[2] ) ) )
-            msgStop("- Error al añadir el artículo " + alltrim( aArticulo[1] ) )
+
             aadd( oDialog:aErrors, "- Error al añadir el artículo " + alltrim( aArticulo[1] ) )
+
          end if 
+
       end if
 
    next 
@@ -4819,9 +4822,9 @@ Static Function oneAppendLine( aCabeceraFactura, cCodigoArticulo, nUnidadesArtic
 
    setDlgMode( aLineasFacturas, nil, nil, nil, nil, nil, nil, nil, APPD_MODE, nil, aCabeceraFactura )
 
-   aLineasFacturas[ _NUNICAJA ]  := nUnidadesArticulos
-
    if loaArt( cCodigoArticulo, nil, aLineasFacturas, aCabeceraFactura, nil, nil, nil, nil, nil, nil, APPD_MODE )
+
+      aLineasFacturas[ _NUNICAJA ]  := nUnidadesArticulos
 
       SaveDeta( aLineasFacturas, aCabeceraFactura, nil, nil, nil, nil, nil, nil, nil, nil, nil, APPD_MODE )      
 

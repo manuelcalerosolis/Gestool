@@ -97,19 +97,19 @@ METHOD Activate()
 
    DEFINE DIALOG     ::oDialog ;
       RESOURCE       "MOVIMIENTOS_ALMACEN_LINEAS" ;
-      TITLE          ::lblTitle() + ::oController:getTitle()
+      TITLE          ::lblTitle() + ::oController:getTitle() 
 
       REDEFINE GET   ::oGetCodigoArticulo ;
          VAR         ::oController:oModel:hBuffer[ "codigo_articulo" ] ;
          ID          100 ;
-         WHEN        ( ::oController:isAppendMode() ) ;
+         WHEN        ( ::oController:isAppendMode() ) ; 
          PICTURE     "@!" ;
          BITMAP      "Lupa" ;
          OF          ::oDialog  
 
       ::oGetCodigoArticulo:bKeyDown := {|nKey| ::searchCodeGS128( nKey ) } 
       ::oGetCodigoArticulo:bValid   := {|| ::oController:validateCodigoArticulo() }
-      ::oGetCodigoArticulo:bHelp    := {|| brwArticulo( ::oGetCodigoArticulo ) }
+      ::oGetCodigoArticulo:bHelp    := {|| brwArticulo( ::oGetCodigoArticulo, ::oGetNombreArticulo, nil, nil, nil, ::oGetLote ) }
 
       REDEFINE GET   ::oGetNombreArticulo ;
          VAR         ::oController:oModel:hBuffer[ "nombre_articulo" ] ;

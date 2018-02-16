@@ -14,7 +14,7 @@ CLASS EtiquetasController FROM SQLNavigatorController
 
    METHOD   New()
 
-   METHOD   buildSQLModel( this )         						INLINE ( EtiquetasModel():New( this ) )
+   METHOD   buildSQLModel( this )         						INLINE ( SQLEtiquetasModel():New( this ) )
    
    METHOD   buildSQLView( this )										INLINE ( EtiquetasView():New( this ) )
 
@@ -61,21 +61,6 @@ CLASS EtiquetasController FROM SQLNavigatorController
 END CLASS
 
 //---------------------------------------------------------------------------// 
-/*
-METHOD New()
-
-   ::idUserMap            	:= "01101"
-
-   ::setTitle( "Etiquetas" )
-
-   ::nSelectedNode         := nil
-
-   ::Super:New()
-
-RETURN ( self )
-
-*/
-//---------------------------------------------------------------------------//
 
 METHOD New()
 
@@ -85,7 +70,7 @@ METHOD New()
 
    ::nLevel                := nLevelUsr( "01101" )
 
-   ::oModel                := EtiquetasModel():New( self )
+   ::oModel                := SQLEtiquetasModel():New( self )
 
    ::oRepository           := EtiquetasRepository():New( self )
 
@@ -471,4 +456,45 @@ METHOD editOnBrowse( oTree, aSelectedItems )
 
 RETURN ( Self )
 
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+
+CLASS EtiquetasBrowseView FROM SQLBrowseView
+
+   METHOD addColumns()                       
+
+ENDCLASS
+
+//----------------------------------------------------------------------------//
+
+METHOD addColumns() CLASS EtiquetasBrowseView
+
+   with object ( ::oBrowse:AddCol() )
+      :cSortOrder          := 'id'
+      :cHeader             := 'Id'
+      :nWidth              := 80
+      :bEditValue          := {|| ::getRowSet():fieldGet( 'id' ) }
+      :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
+   end with
+
+   with object ( ::oBrowse:AddCol() )
+      :cSortOrder          := 'nombre'
+      :cHeader             := 'Nombre'
+      :nWidth              := 300
+      :bEditValue          := {|| ::getRowSet():fieldGet( 'nombre' ) }
+      :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
+   end with
+
+RETURN ( self )
+
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//

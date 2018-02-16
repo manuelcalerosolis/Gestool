@@ -451,7 +451,6 @@ MovimientosAlmacenValidator.prg 											\
 MovimientosAlmacenLineasValidator.prg 									\
 SQLBaseRepository.prg 														\
 TiposVentasRepository.prg 													\
-TiposNotasRepository.prg 													\
 ConfiguracionEmpresasRepository.prg 									\
 EtiquetasRepository.prg 													\
 TiposNotas.prg       														\
@@ -568,14 +567,13 @@ PedidosProveedoresModel.prg												\
 MaterialesProducidosLineasModel.prg 									\
 MaterialesConsumidosLineasModel.prg 									\
 TiposImpresorasController.prg 											\
-TiposNotasController.prg 													\
+TagsController.prg 															\
 TiposVentasModel.prg 														\
 TiposVentasController.prg 													\
 PropiedadesModel.obj       								   			\
 PropiedadesController.obj       											\
 PropiedadesLineasModel.obj       										\
 PropiedadesLineasController.obj       									\
-RelacionesEtiquetasModel.prg 												\
 ArticulosModel.prg                                    			\
 FamiliasModel.prg                                    				\
 TiposArticulosModel.prg                                    		\
@@ -591,9 +589,7 @@ PedidosProveedoresModel.prg												\
 UsuariosModel.prg 															\
 DelegacionesModel.prg 														\
 TiposImpresorasController.prg 											\
-TiposNotasController.prg 													\
-EtiquetasModel.prg 															\
-EtiquetasController.prg 													\
+SQLEtiquetasModel.prg 														\
 ConfiguracionEmpresasModel.prg 											\
 TiposVentasModel.prg 														\
 TiposVentasController.prg 													\
@@ -601,7 +597,7 @@ PropiedadesModel.obj       								   			\
 PropiedadesController.obj       											\
 PropiedadesLineasModel.obj       										\
 PropiedadesLineasController.obj       									\
-RelacionesEtiquetasModel.prg 												\
+SQLTageableModel.prg 														\
 PedidosClientesLineasModel.prg 											\
 Categoria.prg                                                  \
 GroupCustomer.prg                                              \
@@ -1053,9 +1049,7 @@ MovimientosAlmacenLineasValidator.obj 									\
 SQLBaseRepository.obj 														\
 ConfiguracionEmpresasRepository.obj 									\
 TiposVentasRepository.obj 													\
-TiposNotasRepository.obj 													\
 EtiquetasRepository.obj 													\
-TiposNotas.obj       														\
 EtiquetasView.obj   															\
 TiposVentasView.obj       													\
 Propiedades.obj       														\
@@ -1174,9 +1168,8 @@ MaterialesConsumidosLineasModel.obj 									\
 UsuariosModel.obj																\
 DelegacionesModel.obj														\
 TiposImpresorasController.obj 											\
-TiposNotasController.obj 													\
-EtiquetasModel.obj 															\
-EtiquetasController.obj 													\
+TagsController.obj 															\
+SQLEtiquetasModel.obj 														\
 ConfiguracionEmpresasModel.obj 											\
 TiposVentasModel.obj 														\
 TiposVentasController.obj 													\
@@ -1185,7 +1178,7 @@ PropiedadesController.obj       											\
 PropiedadesLineasModel.obj       										\
 PropiedadesLineasController.obj       									\
 IdentificadorRegistroView.obj             							\
-RelacionesEtiquetasModel.obj 												\
+SQLTageableModel.obj 														\
 ArticulosModel.obj                                    			\
 FamiliasModel.obj                                    				\
 TiposArticulosModel.obj                                    		\
@@ -1534,6 +1527,7 @@ $(OBJ)\EtiquetasSelectorView.obj											+
 $(OBJ)\MovimientosAlmacenReport.obj 									+
 $(OBJ)\MovimientosAlmacenLabel.obj 										+
 $(OBJ)\SQLBaseReport.obj 													+
+$(OBJ)\SQLTageableModel.obj 												+
 $(OBJ)\ImportadorMovimientosAlmacenLineasView.obj 					+
 $(OBJ)\CapturadorMovimientosAlmacenLineasView.obj 					+
 $(OBJ)\ImportadorMovimientosAlmacenLineasController.obj			+
@@ -1633,7 +1627,6 @@ $(OBJ)\MovimientosAlmacenValidator.obj									+
 $(OBJ)\MovimientosAlmacenLineasValidator.obj							+
 $(OBJ)\SQLBaseRepository.obj 												+
 $(OBJ)\ConfiguracionEmpresasRepository.obj							+
-$(OBJ)\TiposNotasRepository.obj											+
 $(OBJ)\TiposVentasRepository.obj											+
 $(OBJ)\EtiquetasRepository.obj											+
 $(OBJ)\TiposNotas.obj      												+
@@ -1761,9 +1754,8 @@ $(OBJ)\MaterialesConsumidosLineasModel.obj 							+
 $(OBJ)\UsuariosModel.obj 													+
 $(OBJ)\DelegacionesModel.obj 												+
 $(OBJ)\TiposImpresorasController.obj               				+
-$(OBJ)\TiposNotasController.obj                 					+
-$(OBJ)\EtiquetasModel.obj                 							+
-$(OBJ)\EtiquetasController.obj                 						+
+$(OBJ)\TagsController.obj                 							+
+$(OBJ)\SQLEtiquetasModel.obj                 						+
 $(OBJ)\ConfiguracionEmpresasModel.obj 									+
 $(OBJ)\TiposVentasModel.obj                 							+
 $(OBJ)\TiposVentasController.obj                 					+
@@ -1771,7 +1763,6 @@ $(OBJ)\PropiedadesModel.obj      										+
 $(OBJ)\PropiedadesController.obj      									+
 $(OBJ)\PropiedadesLineasModel.obj      								+
 $(OBJ)\PropiedadesLineasController.obj      							+
-$(OBJ)\RelacionesEtiquetasModel.obj                				+
 $(OBJ)\SQLConfiguracionVistasUsuariosModel.obj 						+
 $(OBJ)\Categoria.obj                                     		+
 $(OBJ)\GroupCustomer.obj                                 		+

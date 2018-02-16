@@ -105,7 +105,7 @@ METHOD New( oController )
 
    ::lTransactional                    := .t.
 
-   ::cTitle                            := "Movimientos de almacÃ©n lÃ­neas"
+   ::cTitle                            := "Movimientos de almacén líneas"
 
    ::setName( "lineas_movimientos_almacen" )
 
@@ -489,7 +489,7 @@ RETURN ( .t. )
 METHOD runDialogSeries()
 
    if Empty( ::oDialogView:nTotalUnidadesArticulo() )
-      msgStop( "El nÃºmero de unidades no puede ser 0 para editar nÃºmeros de serie" )
+      msgStop( "El número de unidades no puede ser 0 para editar números de serie" )
       RETURN ( .f. )
    end if
 

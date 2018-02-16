@@ -276,7 +276,7 @@ METHOD Resource( nMode ) CLASS TDetProduccion
 
    aIdEtiquetas         := hb_deserialize( ::oDbfVir:cEtiqueta )
 
-   aNombreEtiquetas     := EtiquetasModel():translateIdsToNames( aIdEtiquetas )
+   aNombreEtiquetas     := SQLEtiquetasModel():translateIdsToNames( aIdEtiquetas )
 
    DEFINE DIALOG  ::oDlg ;
       RESOURCE    "LProducido" ;
@@ -1127,7 +1127,7 @@ METHOD getEtiquetasBrowse() CLASS TDetProduccion
 
    local aSelected
 
-   aSelected         := EtiquetasController():New():activateBrowse( ::oTagsEver:getItems() )
+   aSelected         := TagsController():New():activateBrowse( ::oTagsEver:getItems() )
 
    if !empty( aSelected )
       ::oTagsEver:setItems( aSelected )
@@ -1152,7 +1152,7 @@ METHOD migrateToEtiquetas() CLASS TDetProduccion
 
       if !empty(::oDbf:cCodCat)
          
-         idCategory  := EtiquetasModel():getEtiquetaId( ::oDbf:cCodCat )
+         idCategory  := SQLEtiquetasModel():getEtiquetaId( ::oDbf:cCodCat )
 
          if !empty(idCategory)
             ::oDbf:fieldPutByName( "cEtiqueta", idCategory )

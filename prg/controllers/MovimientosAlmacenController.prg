@@ -90,7 +90,7 @@ METHOD New()
 
    ::Super:New()
 
-   ::cTitle                      := "Movimientos de almacén"
+   ::cTitle                      := "Movimientos de almacén" 
 
    ::setName( "movimientos_almacen" )
 

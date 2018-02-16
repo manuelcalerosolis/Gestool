@@ -21,9 +21,6 @@ CLASS Seeders
    METHOD SeederTiposImpresoras()
    METHOD getStatementTiposImpresoras( dbfTipImp )
 
-   METHOD SeederTiposNotas()
-   METHOD getStatementTiposNotas( dbfTipNotas )
-
    METHOD SeederTiposVentas()
    METHOD getStatementTiposVentas( dbfTipVentas )
 
@@ -55,9 +52,6 @@ METHOD runSeederDatos()
 
    ::oMsg:SetText( "Datos: Ejecutando seeder de tipos de impresoras" )
    ::SeederTiposImpresoras()
-
-   ::oMsg:SetText( "Datos: Ejecutando seeder de tipos de notas" )
-   ::SeederTiposNotas()
 
    ::oMsg:SetText( "Datos: Ejecutando seeder de tipos de ventas" )
    ::SeederTiposVentas()
@@ -189,50 +183,6 @@ METHOD getStatementTiposImpresoras( dbfTipImp )
    local hCampos        := { "nombre" => quoted( ( dbfTipImp )->cTipImp ) }
 
 RETURN ( ::getInsertStatement( hCampos, "tipos_impresoras" ) )
-
-//---------------------------------------------------------------------------//
-
-METHOD SeederTiposNotas() CLASS Seeders
-
-   local cPath       := cPatDat( .t. )
-   local dbfTipNotas
-
-   if ( file( cPath + "TipoNotas.old" ) )
-      RETURN ( self )
-   end if
-
-   if !( file( cPath + "TipoNotas.Dbf" ) )
-      msgStop( "El fichero " + cPath + "\TipoNotas.Dbf no se ha localizado", "Atención" )  
-      RETURN ( self )
-   end if 
-
-   USE ( cPath + "TipoNotas.Dbf" ) NEW VIA ( 'DBFCDX' ) SHARED ALIAS ( cCheckArea( "TipoNotas", @dbfTipNotas ) )
-   ( dbfTipNotas )->( ordsetfocus(0) )
-   
-   ( dbfTipNotas )->( dbgotop() )
-   while !( dbfTipNotas )->( eof() )
-
-      getSQLDatabase():Exec( ::getStatementTiposNotas( dbfTipNotas ) )
-
-      ( dbfTipNotas )->( dbSkip() )
-
-   end while
-
-   if dbfTipNotas != nil
-      ( dbfTipNotas )->( dbCloseArea() )
-   end if
-
-   frename( cPath + "TipoNotas.dbf", cPath + "TipoNotas.old" )
-   
-RETURN ( Self )
-
-//---------------------------------------------------------------------------//
-
-METHOD getStatementTiposNotas( dbfTipNotas )
-
-   local hCampos        := { "nombre" => quoted( ( dbfTipNotas )->cTipo ) }
-
-RETURN ( ::getInsertStatement( hCampos, "tipos_notas" ) )
 
 //---------------------------------------------------------------------------//
 

@@ -111,15 +111,13 @@ METHOD addModels()
 
    aadd( ::aModels, SQLTiposImpresorasModel():New() )
 
-   aadd( ::aModels, SQLTiposNotasModel():New() )
-
-   aadd( ::aModels, EtiquetasModel():New() )
+   aadd( ::aModels, SQLTagsModel():New() )
 
    aadd( ::aModels, SituacionesModel():New() )
 
    aadd( ::aModels, SQLConfiguracionVistasUsuariosModel():New() )
 
-   aadd( ::aModels, RelacionesEtiquetasModel():New() )
+   aadd( ::aModels, SQLTageableModel():New() )
                                       
    aadd( ::aModels, TiposVentasModel():New() )
 

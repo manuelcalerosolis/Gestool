@@ -5,9 +5,11 @@
 
 //---------------------------------------------------------------------------//
 
-CLASS EtiquetasModel FROM SQLBaseModel
+CLASS SQLEtiquetasModel FROM SQLBaseModel
 
    DATA cTableName                                 INIT "etiquetas"
+
+   DATA cConstraints                               INIT "PRIMARY KEY (id), KEY (uuid)"
 
    METHOD getColumns()
 
@@ -38,23 +40,16 @@ END CLASS
 METHOD getColumns()
 
    hset( ::hColumns, "id",          {  "create"    => "INTEGER AUTO_INCREMENT"                  ,;
-                                       "text"      => "Identificador"                           ,;
                                        "default"   => {|| 0 } }                                 )
 
-   hset( ::hColumns, "uuid",        {  "create"    => "VARCHAR(40) NOT NULL UNIQUE"             ,;
-                                       "text"      => "Uuid"                                    ,;
+   hset( ::hColumns, "uuid",        {  "create"    => "VARCHAR( 40 ) NOT NULL UNIQUE"           ,;
                                        "default"   => {|| win_uuidcreatestring() } }            )
 
    hset( ::hColumns, "empresa",     {  "create"    => "CHAR ( 4 ) NOT NULL"                     ,;
-                                       "text"      => "Empresa"                                 ,;
                                        "default"   => {|| cCodEmp() } }                         )
 
    hset( ::hColumns, "nombre",      {  "create"    => "VARCHAR( 50 )"                          ,;
                                        "default"   => {|| space( 50 ) } }                       )
-
-   hset( ::hColumns, "parent_id",   {  "create"    => "INTEGER"                                 ,;
-                                       "default"   => {|| 0 } }                                 )
-
 
 RETURN ( ::hColumns )
 

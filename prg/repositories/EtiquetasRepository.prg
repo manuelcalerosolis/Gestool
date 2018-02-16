@@ -6,7 +6,7 @@
 
 CLASS EtiquetasRepository FROM SQLBaseRepository
 
-   METHOD getTableName()         INLINE ( if( !empty( ::getController() ), ::getModelTableName(), EtiquetasModel():getTableName() ) )
+   METHOD getTableName()         INLINE ( if( !empty( ::getController() ), ::getModelTableName(), SQLEtiquetasModel():getTableName() ) )
 
 END CLASS
 
