@@ -10971,6 +10971,24 @@ Function SynSatCli( cPath )
 
    ( dbfSatCliS )->( ordSetFocus( 1 ) )
 
+   // Purgamos los datos----------------------------------------------------
+      
+   ( cSatCliL )->( dbGoTop() )
+   while !( cSatCliL )->( eof() )
+
+      if !( cSatCliT )->( dbSeek( ( cSatCliL )->cSerSat + str( ( cSatCliL )->nNumSat ) + ( cSatCliL )->cSufSat ) )
+         
+         if ( cSatCliL )->( dbRLock() )
+            ( cSatCliL )->( dbDelete() )
+            ( cSatCliL )->( dbRUnLock() )
+         end if 
+
+      end if
+
+      ( cSatCliL )->( dbSkip() )
+
+   end while 
+
    RECOVER USING oError
 
       msgStop( "Imposible abrir todas las bases de datos" + CRLF + ErrorMessage( oError ) )
