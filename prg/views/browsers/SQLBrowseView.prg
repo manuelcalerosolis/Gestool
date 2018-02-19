@@ -29,6 +29,7 @@ CLASS SQLBrowseView
 
    METHOD getBrowse()                        INLINE ( ::oBrowse )
    METHOD getBrowseSelected()                INLINE ( ::oBrowse:aSelected )
+
    METHOD restoreStateFromModel()            INLINE ( ::oBrowse:restoreStateFromModel() )
 
    METHOD getColumnByHeader( cHeader )       INLINE ( ::oBrowse:getColumnByHeader( cHeader ) )
@@ -37,7 +38,7 @@ CLASS SQLBrowseView
    METHOD setColumnOrder( cSortOrder )
 
    METHOD getColumnHeaderByOrder( cSortOrder )  
-   METHOD getColumnOrderByHeader( cHeader )     INLINE ( ::oBrowse:getColumnOrderByHeader( cHeader ) )
+   METHOD getColumnOrderByHeader( cHeader )  INLINE ( ::oBrowse:getColumnOrderByHeader( cHeader ) )
 
    METHOD selectColumnOrder( oCol )          INLINE ( ::oBrowse:selectColumnOrder( oCol ) )
    METHOD refreshCurrent()                   INLINE ( ::oBrowse:refreshCurrent() )
@@ -48,6 +49,10 @@ CLASS SQLBrowseView
    METHOD setLDblClick( bLDblClick )         INLINE ( ::oBrowse:bLDblClick := bLDblClick )
 
    METHOD Refresh()                          INLINE ( ::oBrowse:MakeTotals(), ::oBrowse:Refresh() )
+
+   METHOD setViewTypeToNavigator()           INLINE ( ::oBrowse:setViewType( "navigator" ) )
+   METHOD setViewTypeToSelector()            INLINE ( ::oBrowse:setViewType( "selector" ) )
+   METHOD getViewType()                      INLINE ( ::oBrowse:getViewType() )
 
    METHOD setController( oController )       INLINE ( ::oController := oController )
    METHOD getController()                    INLINE ( ::oController )
@@ -88,7 +93,10 @@ CLASS SQLBrowseView
    // State--------------------------------------------------------------------
 
    METHOD saveIdToModel( nId )
+
    METHOD gotoIdFromModel()
+   METHOD gotoNavigatorIdFromModel()         INLINE ( ::gotoIdFromModel( "navigator" ) )
+   METHOD gotoSelectorIdFromModel()          INLINE ( ::gotoIdFromModel( "selector" ) )
    
    METHOD saveColumnOrderToModel( cSortOrder )
    METHOD getColumnOrderFromModel()
@@ -207,11 +215,11 @@ METHOD ActivateDialog( oDialog, nId )
 
    ::Create( oDialog )
 
+   ::setViewTypeToSelector()
+
    ::addColumns()
 
    ::CreateFromResource( nId )
-
-   // ::getBrowseView():restoreStateFromModel()
 
 RETURN ( Self )
 
@@ -220,6 +228,8 @@ RETURN ( Self )
 METHOD ActivateMDI( oWindow, nTop, nLeft, nRight, nBottom )
 
    ::Create( oWindow )
+
+   ::setViewTypeToNavigator()
 
    ::setSize( nTop, nLeft, nRight, nBottom )
 
@@ -244,21 +254,34 @@ RETURN ( self )
 
 //---------------------------------------------------------------------------//
 
-METHOD saveIdToModel()
+METHOD saveIdToModel( cViewType )
 
-   local nId   := ::getRowSet():fieldGet( ::getModel():cColumnKey )
+   local nId   
+
+   msgalert( "saveIdToModel" )
+
+   DEFAULT cViewType := ::getViewType()
+
+   nId               := ::getRowSet():fieldGet( ::getModel():cColumnKey )
 
    if !empty( nId )
-      SQLConfiguracionVistasUsuariosModel():setId( ::getName(), nId )
+
+      msgalert( nId, "nId" )
+
+      SQLConfiguracionVistasModel():setId( cViewType, ::getName(), nId )
    end if 
 
 RETURN ( self )
 
 //---------------------------------------------------------------------------//
 
-METHOD gotoIdFromModel()
+METHOD gotoIdFromModel( cViewType )
 
-   local nId   := SQLConfiguracionVistasUsuariosModel():getId( ::getName() )
+   local nId   
+
+   DEFAULT cViewType := ::getViewType()
+
+   nId               := SQLConfiguracionVistasModel():getId( cViewType, ::getName() )
 
    if empty( nId )
       RETURN ( Self )
@@ -279,7 +302,7 @@ METHOD saveColumnOrderToModel( cSortOrder )
    aeval( ::oBrowse:aCols, {|o| if( !empty( o:cOrder ), cColumnOrder := o:cSortOrder, ) } )
 
    if !empty( cColumnOrder )
-      SQLConfiguracionVistasUsuariosModel():setColumnOrder( ::getName(), cColumnOrder )
+      SQLConfiguracionVistasModel():setColumnOrder( ::getName(), cColumnOrder )
    end if 
 
 RETURN ( Self )
@@ -288,7 +311,7 @@ RETURN ( Self )
 
 METHOD getColumnOrderFromModel()
 
-   local cColumnOrder   := SQLConfiguracionVistasUsuariosModel():getColumnOrder( ::getName() )
+   local cColumnOrder   := SQLConfiguracionVistasModel():getColumnOrder( ::getName() )
 
 RETURN ( Self )
 
@@ -301,7 +324,7 @@ METHOD saveColumnOrientationToModel( cSortOrientation )
    aeval( ::oBrowse:aCols, {|o| if( !empty( o:cOrder ), cColumnOrientation := o:cOrder, ) } )
 
    if !empty( cColumnOrientation )
-      SQLConfiguracionVistasUsuariosModel():setColumnOrientation( ::getName(), cColumnOrientation )
+      SQLConfiguracionVistasModel():setColumnOrientation( ::getName(), cColumnOrientation )
    end if 
 
 RETURN ( Self )
@@ -310,7 +333,7 @@ RETURN ( Self )
 
 METHOD getColumnOrientationFromModel()
 
-   local cColumnOrientation   := SQLConfiguracionVistasUsuariosModel():getColumnOrientation( ::getName() )
+   local cColumnOrientation   := SQLConfiguracionVistasModel():getColumnOrientation( ::getName() )
 
 RETURN ( Self )
 

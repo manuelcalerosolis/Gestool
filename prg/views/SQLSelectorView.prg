@@ -19,6 +19,8 @@ CLASS SQLSelectorView FROM SQLBrowseableView
 
    METHOD Activate()
 
+   METHOD isActive()                      INLINE ( ::oDialog != nil )
+
    METHOD Select()
 
    METHOD Start()
@@ -35,7 +37,9 @@ ENDCLASS
 
 METHOD Activate()
 
-   DEFINE DIALOG ::oDialog RESOURCE "SELECTOR_VIEW" TITLE ( ::oController:getTitle() )
+   DEFINE DIALOG           ::oDialog ;
+      RESOURCE             "SELECTOR_VIEW" ;
+      TITLE                ( ::oController:getTitle() )
 
       REDEFINE GET         ::oGetSearch;
          VAR               ::cGetSearch;
@@ -47,8 +51,9 @@ METHOD Activate()
       REDEFINE COMBOBOX    ::oComboBoxOrder ;
          VAR               ::cComboBoxOrder ;
          ID                110 ;
-         ITEMS             ::getModelHeadersForBrowse() ;
          OF                ::oDialog
+
+      ::oComboBoxOrder:bChange      := {|| ::onChangeCombo() } 
 
       // Menu------------------------------------------------------------------
 
@@ -60,11 +65,15 @@ METHOD Activate()
 
       ::getBrowseView():setLDblClick( {|| ::Select() } ) 
 
+      ::getBrowseView():restoreStateFromModel() 
+
+      ::getBrowseView():gotoSelectorIdFromModel()
+
+      ::getBrowseView():setColumnOrder( ::getModel():getColumnOrder(), ::getModel():getColumnOrientation() ) 
+
       // Eventos---------------------------------------------------------------
 
       ::oDialog:bStart              := {|| ::Start() }
-
-      ::getComboBoxOrder():bChange  := {|| ::onChangeCombo() } 
 
       ::getGetSearch():bChange      := {|| ::onChangeSearch() } 
 
@@ -76,15 +85,11 @@ RETURN ( ::getSelectedBuffer() )
 
 METHOD End()
 
-   ::hSelectedBuffer    := nil      
-
    if !empty( ::oDialog )
       ::oDialog:End()
    end if 
 
-   if !empty( ::oMenuTreeView )
-      ::oMenuTreeView:End()
-   end if 
+   ::oDialog                        := nil
 
 RETURN ( nil )
 
@@ -94,7 +99,7 @@ METHOD Select()
 
    ::hSelectedBuffer    := ::getModel():loadCurrentBuffer( ::getBrowseView():getRowSet():fieldGet( 'id' ) )
 
-   ::oDialog:end( IDOK )
+   ::oDialog:End( IDOK )
 
 RETURN ( nil )
 
@@ -102,11 +107,13 @@ RETURN ( nil )
 
 METHOD Start()
 
+   ::hSelectedBuffer    := nil      
+
    ::oMenuTreeView:Default()
 
    ::oMenuTreeView:AddSelectorButtons()
 
-   ::getComboBoxOrder():Set( ::getModelHeaderFromColumnOrder() )
+   ::oComboBoxOrder:SetItems( ::getBrowseView():getColumnsHeaders() )
 
    // ::getBrowse():selectColumnOrderByHeader( ::getModelHeaderFromColumnOrder() )
 

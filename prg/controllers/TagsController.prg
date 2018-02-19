@@ -19,7 +19,7 @@ METHOD New() CLASS TagsController
 
    ::cName                 := "tags"
 
-   ::hImage                := { "16" => "gc_folder2_16" }
+   ::hImage                := { "16" => "gc_bookmarks_16" }
 
    ::nLevel                := nLevelUsr( "01101" )
 

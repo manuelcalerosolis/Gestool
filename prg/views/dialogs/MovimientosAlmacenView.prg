@@ -21,9 +21,9 @@ CLASS MovimientosAlmacenView FROM SQLBaseView
 
    DATA oTagsEver
    
+   DATA oBtnTags
+   
    DATA oRadioTipoMovimento
-
-   DATA oBtnEnviado
 
    DATA idGoTo                      INIT     0
 
@@ -43,6 +43,8 @@ CLASS MovimientosAlmacenView FROM SQLBaseView
    METHOD validateAndGoUp()         INLINE   (  iif( validateDialog( ::oDialog ), ::oDialog:end( IDOKANDUP ), ) )
 
    METHOD validateAndAddMarcador()
+
+   METHOD selectorAndAddMarcador()
 
 END CLASS
 
@@ -127,8 +129,15 @@ METHOD Activate()
       ::oGetMarcador:bValid   := {|| .t. }
       ::oGetMarcador:bHelp    := {|| ::validateAndAddMarcador() }
 
-      ::oTagsEver             := TTagEver():Redefine( 141, ::oDialog )
-      ::oTagsEver:lOverClose  := .t.
+      REDEFINE BTNBMP ::oBtnTags ;
+         ID          141 ;
+         OF          ::oDialog ;
+         RESOURCE    "lupa" ;
+         WHEN        ( ::oController:isNotZoomMode() ) ;
+
+      ::oBtnTags:bAction      := {|| ::selectorAndAddMarcador() }
+
+      ::oTagsEver    := TTagEver():Redefine( 142, ::oDialog )
 
       REDEFINE GET   ::oGetAgente ;
          VAR         ::oController:oModel:hBuffer[ "agente" ] ;
@@ -256,3 +265,12 @@ RETURN ( .t. )
 
 //---------------------------------------------------------------------------//
 
+METHOD selectorAndAddMarcador()
+
+   local hMarcador   := ::oController:oTagsController:ActivateSelectorView()
+
+   msgalert( hb_valtoexp( hMarcador ) )
+
+RETURN ( .t. )
+
+//---------------------------------------------------------------------------//

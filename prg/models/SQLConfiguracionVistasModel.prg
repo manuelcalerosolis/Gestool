@@ -13,24 +13,49 @@ CLASS SQLConfiguracionVistasModel FROM SQLBaseModel
 
    METHOD getColumns()
 
-   METHOD delete( cViewName )
-
    METHOD get( cViewType, cViewName )
-   METHOD set( cViewType, cViewName, cBrowseState, cColumnOrder, cOrientation, idToFind )
+
+   METHOD getNavigator( cViewName )                      INLINE ::get( "navigator", cViewName )
+   METHOD getSelector( cViewName )                       INLINE ::get( "selector", cViewName )
 
    METHOD getFieldName( cViewName )
-   METHOD getState( cViewName )
+   
+   METHOD getNavigatorFieldName( cViewName, cFieldName ) INLINE ::getFieldName( "navigator", cViewName, cFieldName )
+   METHOD getSelectorFieldName( cViewName, cFieldName )  INLINE ::getFieldName( "selector", cViewName, cFieldName )
 
-   METHOD getColumnOrder( cViewName )        INLINE ( ::getFieldName( cViewName, "column_order" ) )
-   METHOD setColumnOrder( cViewName, cColumnOrder ) ;
-                                             INLINE ( ::set( cViewName, nil, cColumnOrder ) ) 
+   METHOD getState( cViewType, cViewName )
+   METHOD getNavigatorState( cViewName )                 INLINE ::getState( "navigator", cViewName )
+   METHOD getSelectorState( cViewName )                  INLINE ::getState( "selector", cViewName )
 
-   METHOD getColumnOrientation( cViewName )  INLINE ( ::getFieldName( cViewName, "column_orientation" ) )
-   METHOD setColumnOrientation( cViewName, cColumnOrientation ) ;
-                                             INLINE ( ::set( cViewName, nil, nil, cColumnOrientation ) ) 
+   METHOD getColumnOrder( cViewType, cViewName )         INLINE ( ::getFieldName( cViewType, cViewName, "column_order" ) )
+   
+   METHOD getNavigatorColumnOrder( cViewName )           INLINE ( ::getColumnOrder( "navigator", cViewName ) )
+   METHOD getSelectorColumnOrder( cViewName )            INLINE ( ::getColumnOrder( "selector", cViewName ) )
 
-   METHOD getId( cViewName )                 INLINE ( ::getFieldName( cViewName, "id_to_find" ) )
-   METHOD setId( cViewName, nId )            INLINE ( ::set( cViewName, nil, nil, nil, nId ) ) 
+   METHOD getColumnOrientation( cViewType, cViewName )   INLINE ( ::getFieldName( cViewType, cViewName, "column_orientation" ) )
+
+   METHOD getNavigatorColumnOrientation( cViewName )     INLINE ( ::getColumnOrientation( "navigator", cViewName ) )
+   METHOD getSelectorColumnOrientation( cViewName )      INLINE ( ::getColumnOrientation( "selector", cViewName ) )
+
+   METHOD getId( cViewType, cViewName )                  INLINE ( ::getFieldName( cViewType, cViewName, "id_to_find" ) )
+   METHOD getNavigatorId( cViewName )                    INLINE ( ::getId( "navigator", cViewName ) )
+   METHOD getSelectorId( cViewName )                     INLINE ( ::getId( "selector", cViewName ) )
+
+   METHOD set( cViewType, cViewName, cBrowseState, cColumnOrder, cOrientation, idToFind )
+   
+   METHOD setId( cViewType, cViewName, nId )             INLINE ( ::set( cViewType, cViewName, nil, nil, nil, nId ) ) 
+   
+   METHOD setColumnOrder( cViewType, cViewName, cColumnOrder )    INLINE ( ::set( cViewType, cViewName, nil, cColumnOrder ) ) 
+
+   METHOD setNavigatorColumnOrder( cViewName, cColumnOrder )      INLINE ( ::set( "navigator", cViewName, nil, cColumnOrder ) ) 
+   METHOD setSelectorColumnOrder( cViewName, cColumnOrder )       INLINE ( ::set( "selector", cViewName, nil, cColumnOrder ) ) 
+
+   METHOD setColumnOrientation( cViewType, cViewName, cColumnOrientation ) INLINE ( ::set( cViewType, cViewName, nil, nil, cColumnOrientation ) ) 
+
+   METHOD setNavigatorColumnOrientation( cViewName, cColumnOrientation )   INLINE ( ::set( "navigator", cViewName, nil, nil, cColumnOrientation ) ) 
+   METHOD setSelectorColumnOrientation( cViewName, cColumnOrientation )    INLINE ( ::set( "selector", cViewName, nil, nil, cColumnOrientation ) ) 
+
+   METHOD delete( cViewType, cViewName )
 
 END CLASS
 
@@ -76,7 +101,7 @@ RETURN ( nil )
 
 METHOD getFieldName( cViewType, cViewName, cFieldName )
 
-   local aFetch      := ::get( cViewType, cViewName )
+   local aFetch   := ::get( cViewType, cViewName )
 
    if empty( aFetch )
       RETURN ( nil )
@@ -95,12 +120,12 @@ METHOD getState( cViewType, cViewName )
       RETURN ( nil )
    end if 
    
-   cState      := hget( hFetch, "browse_state" )
+   cState         := hget( hFetch, "browse_state" )
    if empty( cState )
       RETURN ( nil )
    end if 
 
-   cState      := strtran( cState, '\"', '"' )
+   cState         := strtran( cState, '\"', '"' )
 
 RETURN ( cState )
        
@@ -126,10 +151,6 @@ METHOD set( cViewType, cViewName, cBrowseState, cColumnOrder, cOrientation, idTo
       RETURN ( Self )
    end if 
    
-   if empty( cBrowseState )
-      RETURN ( Self )
-   end if 
-
    cSentence            := "INSERT INTO " + ::cTableName + " ( "                               
    cSentence            +=       "empresa, "                                               
    cSentence            +=       "usuario, "                                               

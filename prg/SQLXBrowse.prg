@@ -17,6 +17,12 @@ CLASS SQLXBrowse FROM TXBrowse
 
    DATA aHeaders                                AS ARRAY       INIT {}
 
+   DATA cName                                   AS CHARACTER   INIT ""
+
+   DATA cOriginal                               AS CHARACTER   INIT ""
+
+   DATA cViewType                               AS CHARACTER   INIT "navigator"
+
    METHOD New( oWnd )
 
    METHOD setRowSet( oRowSet )
@@ -41,18 +47,18 @@ CLASS SQLXBrowse FROM TXBrowse
 
    // States-------------------------------------------------------------------
 
-   DATA  cName                                  AS CHARACTER   INIT ""
-
    METHOD setName( cName )                      INLINE ( ::cName := cName )
-   METHOD getName( cName )                      INLINE ( ::cName )
-
-   DATA  cOriginal                              AS CHARACTER   INIT ""
+   METHOD getName()                             INLINE ( ::cName )
 
    METHOD getOriginalState()                    INLINE ( ::cOriginal := ::saveState() )
    METHOD setOriginalState()                    INLINE ( if( !empty( ::cOriginal ), ::restoreState( ::cOriginal ), ) )
 
-   METHOD saveStateToModel()
-   METHOD restoreStateFromModel()
+   METHOD setViewType( cViewType )              INLINE ( ::cViewType := cViewType )
+   METHOD getViewType( )                        INLINE ( ::cViewType )
+
+   METHOD saveStateToModel( cViewType )
+   
+   METHOD restoreStateFromModel( cViewType )
 
 END CLASS
 
@@ -318,24 +324,25 @@ RETURN ( nil )
 
 //----------------------------------------------------------------------------//
 
-METHOD saveStateToModel()
+METHOD saveStateToModel( cViewType )
 
-   msgalert( ::getName(), "getName" )
-   msgalert( ::saveState(), "saveState" )
+   DEFAULT cViewType    := ::getViewType()
 
-   SQLConfiguracionVistasUsuariosModel():set( ::getName(), ::saveState() )
+   SQLConfiguracionVistasModel():set( cViewType, ::getName(), ::saveState() )
 
 RETURN ( Self )
 
 //----------------------------------------------------------------------------//
 
-METHOD restoreStateFromModel()
+METHOD restoreStateFromModel( cViewType )
 
    local cBrowseState
+   
+   DEFAULT cViewType    := ::getViewType()
 
    ::getOriginalState()
 
-   cBrowseState         := SQLConfiguracionVistasUsuariosModel():getState( ::getName() )
+   cBrowseState         := SQLConfiguracionVistasModel():getState( cViewType, ::getName() )
 
    if !empty( cBrowseState )
       ::restoreState( cBrowseState )

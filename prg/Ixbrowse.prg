@@ -121,7 +121,7 @@ METHOD Load()
 
    ::getOriginal()
 
-   cBrowseState         := SQLConfiguracionVistasUsuariosModel():getState( ::cName )
+   cBrowseState         := SQLConfiguracionVistasModel():getState( ::cName )
 
    if !empty( cBrowseState )
       ::restoreState( cBrowseState )
@@ -137,7 +137,7 @@ METHOD LoadRecnoAndOrder()
    local nOrder
    local hBrowseInformation
 
-   hBrowseInformation   := SQLConfiguracionVistasUsuariosModel():get( ::cName )
+   hBrowseInformation   := SQLConfiguracionVistasModel():get( ::cName )
 
    if empty( hBrowseInformation )
       RETURN ( Self )
@@ -172,7 +172,7 @@ METHOD Save( lMessage, nBrowseRecno, nBrowseOrder )
    oBlock                   := ErrorBlock( {| oError | ApoloBreak( oError ) } )
    BEGIN SEQUENCE
 
-      SQLConfiguracionVistasUsuariosModel():set( ::cName, ::saveState() ) //, nBrowseRecno, nBrowseOrder )
+      SQLConfiguracionVistasModel():set( ::cName, ::saveState() ) //, nBrowseRecno, nBrowseOrder )
 
       if lMessage
          msgInfo( "Configuración de columnas guardada", "Información" )
@@ -194,7 +194,7 @@ METHOD CleanData( lMessage )
 
    DEFAULT lMessage     := .t.
 
-   SQLConfiguracionVistasUsuariosModel():delete( ::cName )
+   SQLConfiguracionVistasModel():delete( ::cName )
 
    if lMessage
       msgInfo( "Configuración de columnas eliminada", "Información" )

@@ -279,6 +279,8 @@ RETURN ( .t. )
 
 FUNCTION Test()
 
+   TagsController():New():ActivateSelectorView() 
+
 RETURN nil
 
 //----------------------------------------------------------------------------//

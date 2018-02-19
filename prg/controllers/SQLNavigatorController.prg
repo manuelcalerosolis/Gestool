@@ -49,7 +49,7 @@ CLASS SQLNavigatorController FROM SQLBaseController
 
    METHOD setFilter()                                                                                                       
 
-   METHOD getComboBoxOrder()                          INLINE ( ::oWindowsBar:oComboBox() )
+   METHOD getComboBoxOrder()                          INLINE ( if( !empty( ::oSelectorView ) .and. ::oSelectorView:isActive(), ::oSelectorView:getComboBoxOrder(), ::oWindowsBar:oComboBox() ) )
 
    METHOD onChangeCombo( oColumn )
 
@@ -354,7 +354,7 @@ METHOD onChangeCombo( oColumn )
       RETURN ( Self )
    end if 
 
-   oComboBox:set( oColumn:cHeader )
+   oComboBox:Set( oColumn:cHeader )
 
    ::changeModelOrderAndOrientation( oColumn:cSortOrder, oColumn:cOrder )
 

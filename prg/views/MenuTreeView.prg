@@ -77,6 +77,8 @@ CLASS MenuTreeView
 
    METHOD addExitButton()
 
+   METHOD addCloseButton()
+
    METHOD addGeneralButton()              INLINE ( ::fireEvent( 'addingGeneralButton' ),;
                                                    ::addSearchButton(),;
                                                    ::addRefreshButton(),;
@@ -100,7 +102,7 @@ CLASS MenuTreeView
    METHOD addSelectorButtons()            INLINE ( ::fireEvent( 'addingSelectorButton' ),;
                                                    ::addGeneralButton(),;
                                                    ::addSelectButton(),;
-                                                   ::addExitButton(),;
+                                                   ::addCloseButton(),;
                                                    ::oButtonMain:Expand(),;
                                                    ::fireEvent( 'addedSelectorButton' ) )
 
@@ -358,6 +360,19 @@ METHOD AddExitButton()
 RETURN ( Self )
 
 //----------------------------------------------------------------------------//
+
+METHOD AddCloseButton()
+
+   ::fireEvent( 'addingCloseButton' )
+
+   ::AddButton( "Salir [ESC]", "End16", {|| ::oSender:End() }, "S" ) 
+
+   ::fireEvent( 'addedCloseButton' )
+
+RETURN ( Self )
+
+//----------------------------------------------------------------------------//
+
 
 METHOD addPrintSerialButton( cWorkArea )
 

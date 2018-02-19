@@ -115,7 +115,7 @@ METHOD addModels()
 
    aadd( ::aModels, SituacionesModel():New() )
 
-   aadd( ::aModels, SQLConfiguracionVistasUsuariosModel():New() )
+   aadd( ::aModels, SQLConfiguracionVistasModel():New() )
 
    aadd( ::aModels, SQLTageableModel():New() )
                                       
