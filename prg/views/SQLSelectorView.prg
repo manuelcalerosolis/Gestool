@@ -67,7 +67,7 @@ METHOD Activate()
 
       ::getBrowseView():restoreStateFromModel() 
 
-      ::getBrowseView():gotoSelectorIdFromModel()
+      ::getBrowseView():gotoIdFromModel()
 
       ::getBrowseView():setColumnOrder( ::getModel():getColumnOrder(), ::getModel():getColumnOrientation() ) 
 

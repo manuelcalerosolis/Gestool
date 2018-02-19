@@ -42,7 +42,7 @@ CLASS SQLConfiguracionVistasModel FROM SQLBaseModel
    METHOD getSelectorId( cViewName )                     INLINE ( ::getId( "selector", cViewName ) )
 
    METHOD set( cViewType, cViewName, cBrowseState, cColumnOrder, cOrientation, idToFind )
-   
+
    METHOD setId( cViewType, cViewName, nId )             INLINE ( ::set( cViewType, cViewName, nil, nil, nil, nId ) ) 
    
    METHOD setColumnOrder( cViewType, cViewName, cColumnOrder )    INLINE ( ::set( cViewType, cViewName, nil, cColumnOrder ) ) 
@@ -217,7 +217,7 @@ METHOD set( cViewType, cViewName, cBrowseState, cColumnOrder, cOrientation, idTo
    end if
 
    if !empty( idToFind )
-      cSentence         +=    "id_to_find = " + alltrim( cvaltostr( idToFind ) ) + ", "
+      cSentence         +=    "id_to_find = " + toSqlString( idToFind ) + ", "
    end if
 
    cSentence            := chgAtEnd( cSentence, '', 2 )
