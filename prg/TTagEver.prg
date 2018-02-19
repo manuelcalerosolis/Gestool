@@ -4,31 +4,33 @@
 
 CLASS TTagEver FROM TControl
 
-    CLASSDATA lRegistered AS LOGICAL
+   CLASSDATA lRegistered AS LOGICAL
 
-    DATA aItems
-    DATA aFonts
-    DATA nClrTextOver
-    DATA nClrPaneOver
-    DATA nHLine AS NUMERIC INIT 25
-    DATA aCoors
-    DATA nMaxDescend
-    DATA nOver
-    DATA nClrBorder
-    DATA nClrBackTag
-    DATA bAction
-    DATA lOverClose
-    DATA nOption
+   DATA aItems                      AS ARRAY    INIT {} 
+   DATA aCoors                      AS ARRAY    INIT {} 
 
-    METHOD New( nTop, nLeft, nWidth, nHeight, oWnd, oFont, nClrBorder, nClrBackTag, aItems, nClrPane, nClrPaneOver ) CONSTRUCTOR
-    METHOD Redefine( nId, oWnd, oFont, aItems ) CONSTRUCTOR
-	 // METHOD Initiate( hDlg )
+   DATA nHeightLine                 AS NUMERIC  INIT 22
+   
+   DATA nOver                       AS NUMERIC  INIT -1
+   DATA nOption                     AS NUMERIC  INIT -1
+
+   DATA nClrTextOver                AS NUMERIC  INIT 0
+   DATA nClrPaneOver                AS NUMERIC  INIT Rgb( 221, 221, 221 )
+   DATA nClrBorder                  AS NUMERIC  INIT Rgb( 204, 214, 197 )
+   DATA nClrBackTag                 AS NUMERIC  INIT Rgb( 235, 245, 226 )       
+   
+   DATA lOverClose                  AS LOGIC    INIT .f.
+   
+   DATA bAction
+   
+   METHOD New( nTop, nLeft, nWidth, nHeight, oWnd, oFont, nClrBorder, nClrBackTag, aItems, nClrPane, nClrPaneOver ) CONSTRUCTOR
+   METHOD Redefine( nId, oWnd, oFont, aItems ) CONSTRUCTOR
 
     METHOD SetItems( aItems )
-    METHOD AddItem( cText, nPeso )
+    METHOD AddItem( cText )
 
     METHOD Paint()
-    METHOD Display()                        INLINE ::BeginPaint(),::Paint(),::EndPaint(), 0
+    METHOD Display()                        INLINE ( ::BeginPaint(), ::Paint(), ::EndPaint(), 0 )
     METHOD GetItems()
 
     METHOD LButtonDown( nRow, nCol, nFlags )
@@ -38,6 +40,8 @@ CLASS TTagEver FROM TControl
     METHOD EraseBkGnd( hDC )                INLINE 1
 
     METHOD HideItems()                      INLINE ( aeval(::aItems, {|aItem| aItem[2]  := .t. } ), ::Refresh() )
+
+    METHOD isOver( n )                       INLINE ( .t. ) // ::isOver() )
 
 ENDCLASS
 
@@ -106,9 +110,6 @@ RETURN Self
 
    ::oWnd         := oWnd
    ::nId          := nId
-   // ::nLeft        := nLeft
-   // ::nBottom      := nTop + nHeight
-   // ::nRight       := nLeft + nWidth
    ::nId          := nId
    ::lCaptured    := .f.
    ::nClrPane     := nClrPane
@@ -130,7 +131,6 @@ RETURN Self
 
    oWnd:DefControl( Self )
 
-
 RETURN Self
 
 ***************************************************************************************************************
@@ -139,12 +139,13 @@ RETURN Self
 
    local aSelectedItems := {}
 
-   if !empty( ::aItems )
-      aeval( ::aItems, {|aItem| if( !aItem[ 2 ], aadd( aSelectedItems, aItem[ 1 ] ), ) } )
+   if empty( ::aItems )
+      RETURN aSelectedItems
    end if 
+   
+   aeval( ::aItems, {|aItem| if( !aItem[ 2 ], aadd( aSelectedItems, aItem[ 1 ] ), ) } )
 
 RETURN aSelectedItems
-
 
 ***************************************************************************************************************
     METHOD SetItems( aItems ) CLASS TTagEver
@@ -166,14 +167,7 @@ RETURN nil
    METHOD AddItem( cText ) CLASS TTagEver
 ***************************************************************************************************************
 
-  // local oItem
-  // local nLen := len(::aItems)+1
-
-   if ::aItems == nil
-      ::aItems := {}
-   endif
-
-   AAdd( ::aItems, {cText,.f.,{0,0,0,0}} )
+   aadd( ::aItems, {cText,.f.,{0,0,0,0}} )
 
 RETURN nil //oItem
 
@@ -182,12 +176,12 @@ RETURN nil //oItem
 ***************************************************************************************************************
 local aInfo := ::DispBegin()
 local n
-local nTop  := 3
+local nTop  := 2
 local nT    := 0
 local nL    := 0
-local nLeft := 14
+local nLeft := 2
 local nSep  := 11
-local nH    := ::nHLine
+local nH    := ::nHeightLine
 local nLen
 local nFont
 local nW := 0
@@ -202,11 +196,11 @@ local nT0, nL0, nB0, nR0
 local hPen, hOldPen
 local hBrush, hOldBrush
 local hBrush1, hOldBrush1
-local lFirst := .t.
+local lFirst := .f.
 
 //local nBkColor := SetBkColor(::hDC, CLR_GREEN )
 
-hBmp := LoadBitmap(GetResources(), "GC_DELETE_12" )
+hBmp := LoadBitmap( GetResources(), "GC_DELETE_12" )
 
 if hBmp != 0
    nWBmp := nBmpWidth( hBmp )
@@ -243,7 +237,7 @@ if !empty(::aItems)
 
        //if n == ::nOver
        SetTextColor(::hDC, nColor )
-       nColor := SetTextColor(::hDC, if( n == ::nOver .or. n == ::nOption, ::nClrTextOver, ::nClrText) )
+       nColor := SetTextColor(::hDC, if( ::isOver(), ::nClrTextOver, ::nClrText) )
        //endif
 
        if !lFirst
@@ -252,14 +246,14 @@ if !empty(::aItems)
 
        lFirst := .f.
 
-       nW := 5 + GetTextWidth(::hDC, ::aItems[n,1], ::oFont:hFont ) //+ if( nWBmp != 0 .and. ( n == ::nOver .or. n == ::nOption), 5 + nWBmp + 5, 0)
+       nW := 5 + GetTextWidth(::hDC, ::aItems[n,1], ::oFont:hFont ) //+ if( nWBmp != 0 .and. ( ::isOver()), 5 + nWBmp + 5, 0)
 
        if nL + nW + 5 + nWBmp + 5 > ::nWidth
-          nTop += ( ::nHLine  ) +2
-          nL := nLeft
+          nTop += ( ::nHeightLine  ) + 2
+          nL := nLeft + 8
        endif
 
-       nW := 5 + GetTextWidth(::hDC, ::aItems[n,1], ::oFont:hFont ) + if( nWBmp != 0 .and. ( n == ::nOver .or. n == ::nOption), 5 + nWBmp + 5, 0)
+       nW := 5 + GetTextWidth(::hDC, ::aItems[n,1], ::oFont:hFont ) + if( nWBmp != 0 .and. ( ::isOver()), 5 + nWBmp + 5, 0)
 
        nT := nTop
 
@@ -269,10 +263,8 @@ if !empty(::aItems)
        ::aCoors[n,2] := rc[2]
        ::aCoors[n,3] := rc[3]
        ::aCoors[n,4] := rc[4]
-       //FillSolidRect(::hDC, {nTop+::nHLine-::nMaxDescend,0,nTop+::nHLine-::nMaxDescend+1,::nWidth}, CLR_HBLUE )
-       //wqout( rc )
 
-       hOldBrush := SelectObject( ::hDC, if( n == ::nOver .or. n == ::nOption, hBrush1, hBrush ) )
+       hOldBrush := SelectObject( ::hDC, hBrush1 )
 
        RoundRect( ::hDC, rc[2]-4, rc[1], rc[4], rc[3]-1, 6, 6 )
 
@@ -282,7 +274,7 @@ if !empty(::aItems)
 
        SelectObject( ::hDC, hOldFont )
 
-       if hBmp != 0 .and. ( n == ::nOver .or. n == ::nOption)
+       if hBmp != 0 
 
           nT0 := rc[1]+((rc[3]-rc[1])/2)-nHBmp/2
           nL0 := rc[4]-5-nWBmp
@@ -323,75 +315,68 @@ DeleteObject( hBrush1 )
 
 RETURN 0
 
-***************************************************************************************************************
-    METHOD LButtonDown( nRow, nCol, nFlags ) CLASS TTagEver
-***************************************************************************************************************
+//---------------------------------------------------------------------------//
+
+METHOD LButtonDown( nRow, nCol, nFlags ) CLASS TTagEver
 
 RETURN 0
 
-***************************************************************************************************************
-    METHOD MouseMove  ( nRow, nCol, nFlags ) CLASS TTagEver
-***************************************************************************************************************
-local nOver := ::nOver
-local n
-local nLen := len(::aCoors)
-local lFind := .f.
+//---------------------------------------------------------------------------//
 
+METHOD MouseMove( nRow, nCol, nFlags ) CLASS TTagEver
 
-for n := 1 to nLen
-    if PtInRect( nRow, nCol, ::aCoors[n] )
-       lFind := .t.
-       ::nOver := n
-       if nOver != n
-          //::Refresh(.f.)
-       endif
-       exit
-    endif
-next
+   local n
+   local nOver := ::nOver
+   local lFind := .f.
+   local nLen  := len( ::aCoors )
 
-::lOverClose := ::nOver > 0 .and. PtInRect( nRow, nCol, ::aItems[::nOver,3] )
+   for n := 1 to nLen
+      if PtInRect( nRow, nCol, ::aCoors[n] )
+         lFind    := .t.
+         ::nOver  := n
+         exit
+      endif
+   next
 
-//::oWnd:cTitle := cValToChar(::lOverClose)+ " " + str(nRow)+str(nCol)+str(::aOverClose[1])+str(::aOverClose[2])+str(::aOverClose[3])+str(::aOverClose[4])
+   ::lOverClose := ::nOver > 0 .and. PtInRect( nRow, nCol, ::aItems[ ::nOver, 3 ] )
 
+   if lFind
 
-if lFind
-   if ::lOverClose
-      CursorHand()
+      if ::lOverClose
+         CursorHand()
+      else
+         CursorArrow()
+      endif
+   
    else
+   
+      ::nOver := -1
+   
       CursorArrow()
-   endif
-   if ::oWnd:oMsgBar != nil
-      if ::nOver > 0
-         ::oWnd:oMsgBar:SetMsg( 'Nube de tags "' + ::aItems[::nOver,1] + '" ' + str(::aItems[::nOver,1]) )
-      endif
-   endif
-else
-   ::nOver := -1
-   CursorArrow()
-endif
 
-if nOver != ::nOver
-   ::Refresh(.f.)
-endif
+   endif
 
+   if nOver != ::nOver
+      ::Refresh(.f.)
+   endif
 
 RETURN 0
 
-***************************************************************************************************************
-    METHOD LButtonUp  ( nRow, nCol, nFlags ) CLASS TTagEver
-***************************************************************************************************************
+//---------------------------------------------------------------------------//
 
-if ::nOver > 0
-   if ::lOverClose
-      ::aItems[::nOver,2] := .t.
-   else
-      ::nOption := ::nOver
-      if ::bAction != nil
-         eval(::bAction, ::nOption, ::aItems[::nOption,1])
+METHOD LButtonUp( nRow, nCol, nFlags ) CLASS TTagEver
+
+   if ::nOver > 0
+      if ::lOverClose
+         ::aItems[ ::nOver, 2 ] := .t.
+      else
+         ::nOption := ::nOver
+         if ::bAction != nil
+            eval( ::bAction, ::nOption, ::aItems[ ::nOption, 1 ])
+         endif
       endif
+      ::Refresh()
    endif
-   ::Refresh()
-endif
 
 RETURN 0
 

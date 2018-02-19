@@ -138,8 +138,6 @@ METHOD onChangeSearch()
    uValue               := alltrim( upper( cvaltochar( uValue ) ) )
    uValue               := strtran( uValue, chr( 8 ), "" )
    
-   // nRecCount            := ::getController():findInModel( uValue )
-
    nRecCount            := ::getController():findInRowSet( uValue, cColumnOrder )
 
    if hb_isnumeric( nRecCount )

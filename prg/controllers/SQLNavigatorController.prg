@@ -61,6 +61,8 @@ CLASS SQLNavigatorController FROM SQLBaseController
 
    METHOD DisableWindowsBar()
 
+   METHOD onChangeSearch()                            INLINE ( if( !empty( ::oNavigatorView ), ::oNavigatorView:onChangeSearch(), ) )
+
    METHOD hideEditAndDeleteButtonFilter()
 
    METHOD showEditAndDeleteButtonFilter()

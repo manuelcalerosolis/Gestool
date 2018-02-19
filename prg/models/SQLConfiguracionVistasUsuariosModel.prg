@@ -106,7 +106,25 @@ RETURN ( cState )
 
 METHOD set( cViewName, cBrowseState, cColumnOrder, cOrientation, idToFind )
 
-   local cSentence      := "INSERT INTO " + ::cTableName + " ( "                               
+   local cSentence      
+
+   if empty( cCodEmp() )
+      RETURN ( Self )
+   end if 
+
+   if empty( cCurUsr() )
+      RETURN ( Self )
+   end if 
+
+   if empty( cViewName )
+      RETURN ( Self )
+   end if 
+   
+   if empty( cBrowseState )
+      RETURN ( Self )
+   end if 
+
+   cSentence            := "INSERT INTO " + ::cTableName + " ( "                               
    cSentence            +=       "empresa, "                                               
    cSentence            +=       "usuario, "                                               
    cSentence            +=       "view_name, "     

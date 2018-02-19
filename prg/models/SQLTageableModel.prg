@@ -6,6 +6,8 @@ CLASS SQLTageableModel FROM SQLBaseModel
 
    DATA cTableName                     INIT "Tageables"
 
+   DATA cConstraints                   INIT "PRIMARY KEY (id), KEY (uuid)"
+
    METHOD getColumns()
 
 END CLASS

@@ -1996,6 +1996,9 @@ STATIC FUNCTION EdtRec( aTmp, aGet, cArticulo, oBrw, bWhen, bValid, nMode )
 
    oTagsEver            := TTagEver():Redefine( 100, fldGeneral, nil, aNombreEtiquetas ) 
    oTagsEver:lOverClose := .t.
+   oTagsEver:AddItem( "uno" )
+   oTagsEver:AddItem( "dos" )
+   oTagsEver:AddItem( "tres" )
 
    TBtnBmp():ReDefine( 101, "Lupa",,,,,{|| getEtiquetasBrowse( oTagsEver:getItems() ) }, fldGeneral, .f., , .f.,  )
 

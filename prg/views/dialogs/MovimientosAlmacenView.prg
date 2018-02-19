@@ -15,7 +15,12 @@ CLASS MovimientosAlmacenView FROM SQLBaseView
    DATA oGetAgente
    DATA oGetAlmacenOrigen
    DATA oGetAlmacenDestino
-   DATA oGetGrupoMovimiento
+
+   DATA oGetMarcador
+   DATA cGetMarcador                INIT     space( 100 )
+
+   DATA oTagsEver
+   
    DATA oRadioTipoMovimento
 
    DATA oBtnEnviado
@@ -36,6 +41,8 @@ CLASS MovimientosAlmacenView FROM SQLBaseView
    METHOD validateAndGoTo()         
    METHOD validateAndGoDown()       INLINE   (  iif( validateDialog( ::oDialog ), ::oDialog:end( IDOKANDDOWN ), ) )
    METHOD validateAndGoUp()         INLINE   (  iif( validateDialog( ::oDialog ), ::oDialog:end( IDOKANDUP ), ) )
+
+   METHOD validateAndAddMarcador()
 
 END CLASS
 
@@ -109,17 +116,19 @@ METHOD Activate()
       ::oGetAlmacenDestino:bValid   := {|| ::oController:validateAlmacenDestino() }
       ::oGetAlmacenDestino:bHelp    := {|| brwAlmacen( ::oGetAlmacenDestino, ::oGetAlmacenDestino:oHelpText ) }
 
-      REDEFINE GET   ::oGetGrupoMovimiento ;
-         VAR         ::oController:oModel:hBuffer[ "grupo_movimiento" ] ;
+      REDEFINE GET   ::oGetMarcador ;
+         VAR         ::cGetMarcador ;
          ID          140 ;
-         IDHELP      141 ;
          WHEN        ( ::oController:isNotZoomMode() ) ;
          PICTURE     "@!" ;
-         BITMAP      "Lupa" ;
+         BITMAP      "gc_navigate_plus_16" ;
          OF          ::oDialog
 
-      ::oGetGrupoMovimiento:bValid   := {|| ::oController:validateGrupoMovimiento() }
-      ::oGetGrupoMovimiento:bHelp    := {|| browseGruposMovimientos( ::oGetGrupoMovimiento, ::oGetGrupoMovimiento:oHelpText ) }
+      ::oGetMarcador:bValid   := {|| .t. }
+      ::oGetMarcador:bHelp    := {|| ::validateAndAddMarcador() }
+
+      ::oTagsEver             := TTagEver():Redefine( 141, ::oDialog )
+      ::oTagsEver:lOverClose  := .t.
 
       REDEFINE GET   ::oGetAgente ;
          VAR         ::oController:oModel:hBuffer[ "agente" ] ;
@@ -170,8 +179,6 @@ METHOD startActivate()
    ::oController:stampAlmacenNombre( ::oGetAlmacenOrigen )
 
    ::oController:stampAlmacenNombre( ::oGetAlmacenDestino )
-
-   ::oController:stampGrupoMovimientoNombre( ::oGetGrupoMovimiento )
 
    ::oController:stampAgente( ::oGetAgente )
 
@@ -227,4 +234,25 @@ RETURN ( .t. )
 
 //---------------------------------------------------------------------------//
 
+METHOD validateAndAddMarcador()
+
+   local cMarcador   := alltrim( ::cGetMarcador )
+
+   if empty( cMarcador )
+      RETURN ( .t. )
+   end if 
+
+   if ascan( ::oTagsEver:aItems, {|item| upper( item[ 1 ] ) == upper( cMarcador ) } ) != 0
+      msgStop( "Este marcador ya está incluido" )
+      RETURN ( .t. )
+   end if 
+
+   ::oTagsEver:addItem( cMarcador )
+   ::oTagsEver:Refresh()
+
+   ::oGetMarcador:cText( space( 100 ) )
+
+RETURN ( .t. )
+
+//---------------------------------------------------------------------------//
 

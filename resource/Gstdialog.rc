@@ -984,7 +984,7 @@ FONT 8, "Ms Sans Serif"
   CONTROL "", 330, "TXBrowse", 0x00200000, 388, 91, 98, 188
   CONTROL "Matriz", -1, "Static", WS_GROUP, 388, 42, 24, 8
   CONTROL "Relación de codigos barras", -1, "Button", BS_GROUPBOX, 382, 67, 108, 216
-  CONTROL "", 100, "TTagEver", WS_GROUP, 46, 184, 316, 96
+  CONTROL "", 100, "TTagEver", WS_GROUP|0x00800000, 46, 184, 316, 96
   CONTROL "", 101, "TBtnBmp", 0x00000000, 363, 184, 12, 11
   CONTROL "Etiquetas", -1, "Button", BS_GROUPBOX, 44, 174, 336, 109
   CONTROL "Categoría", -1, "Static", WS_GROUP, 49, 107, 47, 8
@@ -21412,26 +21412,27 @@ FONT 8, "Ms Sans Serif"
   CONTROL "", 151, "Edit", WS_BORDER|WS_TABSTOP, 358, 83, 304, 12
   CONTROL "", 160, "Edit", WS_BORDER|WS_TABSTOP, 274, 96, 82, 12
   CONTROL "", 161, "Edit", WS_BORDER|WS_TABSTOP, 358, 96, 304, 12
-  CONTROL "", 140, "Edit", WS_BORDER|WS_TABSTOP, 274, 109, 82, 12
-  CONTROL "", 141, "Edit", WS_BORDER|WS_TABSTOP, 358, 109, 304, 12
-  CONTROL "", 210, "Edit", WS_BORDER|WS_TABSTOP, 274, 122, 82, 12
-  CONTROL "", 211, "Edit", WS_BORDER|WS_TABSTOP, 358, 122, 304, 12
-  CONTROL "", 190, "Edit", WS_BORDER|WS_TABSTOP, 274, 135, 82, 12
-  CONTROL "", 192, "Edit", ES_RIGHT|ES_MULTILINE|WS_BORDER|WS_TABSTOP, 561, 135, 101, 12
-  CONTROL "", 170, "Edit", ES_MULTILINE|WS_BORDER|WS_TABSTOP, 274, 148, 388, 54
+  CONTROL "", 210, "Edit", WS_BORDER|WS_TABSTOP, 274, 109, 82, 12
+  CONTROL "", 211, "Edit", WS_BORDER|WS_TABSTOP, 358, 109, 304, 12
+  CONTROL "", 190, "Edit", WS_BORDER|WS_TABSTOP, 274, 122, 82, 12
+  CONTROL "", 140, "Edit", WS_BORDER|WS_TABSTOP, 274, 135, 374, 12
+  CONTROL "", 101, "TBtnBmp", 0x00000000, 650, 135, 12, 12
+  CONTROL "", 141, "TTagEver", WS_TABSTOP|0x00800000, 274, 148, 388, 32
+  CONTROL "", 170, "Edit", ES_MULTILINE|WS_BORDER|WS_TABSTOP, 274, 181, 388, 22
+  CONTROL "", 192, "Edit", ES_RIGHT|ES_MULTILINE|WS_BORDER|WS_TABSTOP, 561, 122, 101, 12
   CONTROL "", 180, "TXBrowse", WS_TABSTOP|0x00300000, 55, 220, 608, 218
-  CONTROL "", 191, "TBitMap", 0x00800000, 358, 135, 19, 12
+  CONTROL "", 191, "TBitmap", 0x00800000, 358, 122, 19, 12
   CONTROL "Artículos", -1, "Button", BS_GROUPBOX|WS_TABSTOP, 48, 209, 617, 234
   CONTROL "Almacén origen", 152, "Static", WS_GROUP, 202, 87, 54, 8
   CONTROL "Almacén destino", 162, "Static", WS_GROUP, 202, 100, 57, 8
   CONTROL "Número", -1, "Static", WS_GROUP, 54, 99, 30, 8
   CONTROL "Fecha", -1, "Static", WS_GROUP, 54, 112, 25, 8
-  CONTROL "Comentarios", -1, "Static", WS_GROUP, 202, 151, 44, 8
+  CONTROL "Comentarios", -1, "Static", WS_GROUP, 202, 182, 44, 8
   CONTROL "Movimiento", -1, "Button", BS_GROUPBOX|WS_TABSTOP, 48, 74, 146, 77
-  CONTROL "Grupo movimiento", -1, "Static", WS_GROUP, 202, 113, 62, 8
-  CONTROL "Divisa", -1, "Static", WS_GROUP, 202, 139, 25, 8
-  CONTROL "Cambio divisa", -1, "Static", WS_GROUP, 508, 138, 49, 8
-  CONTROL "Agente", -1, "Static", WS_GROUP, 202, 126, 28, 8
+  CONTROL "Marcadores", -1, "Static", WS_GROUP, 202, 139, 62, 8
+  CONTROL "Divisa", -1, "Static", WS_GROUP, 202, 126, 25, 8
+  CONTROL "Cambio divisa", -1, "Static", WS_GROUP, 508, 125, 49, 8
+  CONTROL "Agente", -1, "Static", WS_GROUP, 202, 113, 28, 8
   CONTROL "Usuario", -1, "Static", WS_GROUP, 54, 125, 29, 8
   CONTROL "Delegación", -1, "Static", WS_GROUP, 54, 138, 41, 8
   CONTROL "General", -1, "Button", BS_GROUPBOX|WS_TABSTOP, 196, 74, 469, 132
