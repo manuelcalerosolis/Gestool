@@ -8630,6 +8630,8 @@ Return .t.
 
 Static Function DataReport( oFr )
 
+   ( dbfObrasT )->( OrdSetFocus( "cCodCli" ) )
+
    oFr:DeleteCategory(  "Albaranes" )
    oFr:DeleteCategory(  "Lineas de albaranes" )
    oFr:DeleteCategory(  "Clientes" )

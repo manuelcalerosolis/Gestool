@@ -4688,6 +4688,8 @@ Return ( nEstado )
 
 Static Function DataReport( oFr )
 
+   ( dbfObrasT )->( OrdSetFocus( "cCodCli" ) )
+
    /*
    Zona de datos------------------------------------------------------------
    */

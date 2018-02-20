@@ -2323,6 +2323,12 @@ Return nil
 FUNCTION AlbaranesClientesLineasModel()
 Return nil
 
+FUNCTION SQLTagsModel() 
+Return nil
+
+FUNCTION SQLTageableModel() 
+Return nil
+
 //------------------------------------------------------------------//
 
 #pragma BEGINDUMP

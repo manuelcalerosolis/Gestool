@@ -328,9 +328,13 @@ RETURN ( nil )
 
 METHOD saveStateToModel( cViewType )
 
+<<<<<<< HEAD
+   SQLConfiguracionVistasUsuariosModel():set( ::getName(), ::saveState() )
+=======
    DEFAULT cViewType    := ::getViewType()
 
    SQLConfiguracionVistasModel():set( cViewType, ::getName(), ::saveState() )
+>>>>>>> d6f8c5f2b07bb1ae4f1bba4dfcba3fb77b8efabf
 
 RETURN ( Self )
 
