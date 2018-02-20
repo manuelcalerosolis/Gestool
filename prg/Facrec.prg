@@ -10022,6 +10022,8 @@ Return .t.
 
 Static Function DataReport( oFr )
 
+   ( dbfObrasT )->( OrdSetFocus( "cCodCli" ) )
+
    /*
    Zona de datos------------------------------------------------------------
    */

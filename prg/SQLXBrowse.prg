@@ -320,9 +320,6 @@ RETURN ( nil )
 
 METHOD saveStateToModel()
 
-   msgalert( ::getName(), "getName" )
-   msgalert( ::saveState(), "saveState" )
-
    SQLConfiguracionVistasUsuariosModel():set( ::getName(), ::saveState() )
 
 RETURN ( Self )
