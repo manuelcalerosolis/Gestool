@@ -395,9 +395,9 @@ METHOD prepare( cSentence )
    local oRowSet
    local oStatement
 
-   if ::isParseError( cSentence )
-      RETURN ( nil )  
-   end if  
+   // if ::isParseError( cSentence )
+   //    RETURN ( nil )  
+   // end if  
 
    try 
 
@@ -408,6 +408,14 @@ METHOD prepare( cSentence )
    catch oError
 
       eval( errorBlock(), oError )
+   
+   finally
+
+      logwrite( "antes de liberar oStatement" )
+
+      if !empty( oStatement )
+         oStatement:Free()
+      end if 
 
    end
 

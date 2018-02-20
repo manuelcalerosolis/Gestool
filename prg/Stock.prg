@@ -2742,7 +2742,6 @@ METHOD nCostoMedio( cCodArt, cCodAlm, cCodPr1, cCodPr2, cValPr1, cValPr2, cLote 
    DEFAULT cValPr2      := Space( 40 )
    DEFAULT cLote        := Space( 12 )
 
-   
    oRowSet              := MovimientosAlmacenLineasRepository();
                               :getRowSetMovimientosForArticulo( { "codigo_articulo"          => cCodArt,;
                                                                   "almacen"                  => cCodAlm,;
@@ -3613,6 +3612,10 @@ METHOD aStockMovimientosAlmacen( cCodArt, cCodAlm, cCodEmp )
 
    SysRefresh()
 
+   if empty( oRowSet )
+      RETURN ( nil )
+   end if 
+
    oRowSet:goTop()
 
    while !( oRowSet:Eof() )
@@ -3665,8 +3668,17 @@ METHOD aStockMovimientosAlmacen( cCodArt, cCodAlm, cCodEmp )
 
    end while
 
-   oRowSet:free()
+<<<<<<< HEAD
+   // oRowSet:Free()
 
+=======
+   oRowSet:free()
+<<<<<<< HEAD
+
+=======
+ 
+>>>>>>> 7f6b5d703c6d60c1569cf56e56e3775b1e327060
+>>>>>>> 797ce986da15378cb9e05ff3c9cda9cea09206df
 RETURN ( nil )
 
 //---------------------------------------------------------------------------//
