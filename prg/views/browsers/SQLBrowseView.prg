@@ -258,9 +258,6 @@ METHOD saveIdToModel()
    nId               := ::getRowSet():fieldGet( ::getModel():cColumnKey )
 
    if !empty( nId )
-
-      msgalert( nId, "nId" )
-
       SQLConfiguracionVistasModel():setId( ::getViewType(), ::getName(), nId )
    end if 
 
