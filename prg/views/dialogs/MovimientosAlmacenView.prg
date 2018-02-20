@@ -127,7 +127,7 @@ METHOD Activate()
          OF          ::oDialog
 
       ::oGetMarcador:bValid   := {|| .t. }
-      ::oGetMarcador:bHelp    := {|| ::validateAndAddMarcador() }
+      ::oGetMarcador:bHelp    := {|| ::validateAndAddMarcador( ::cGetMarcador ) }
 
       REDEFINE BTNBMP ::oBtnTags ;
          ID          141 ;
@@ -243,17 +243,22 @@ RETURN ( .t. )
 
 //---------------------------------------------------------------------------//
 
-METHOD validateAndAddMarcador()
+METHOD validateAndAddMarcador( cMarcador )
 
-   local cMarcador   := alltrim( ::cGetMarcador )
+   cMarcador      := alltrim( ::cGetMarcador )
 
    if empty( cMarcador )
-      RETURN ( .t. )
+      RETURN ( .f. )
    end if 
 
    if ascan( ::oTagsEver:aItems, {|item| upper( item[ 1 ] ) == upper( cMarcador ) } ) != 0
       msgStop( "Este marcador ya está incluido" )
-      RETURN ( .t. )
+      RETURN ( .f. )
+   end if 
+
+   if !( ::oController:isAddedTag( cMarcador ) )
+      msgStop( "Este marcador : " + cMarcador + " , no existe" )
+      RETURN ( .f. )
    end if 
 
    ::oTagsEver:addItem( cMarcador )
@@ -269,7 +274,9 @@ METHOD selectorAndAddMarcador()
 
    local hMarcador   := ::oController:oTagsController:ActivateSelectorView()
 
-   msgalert( hb_valtoexp( hMarcador ) )
+   if !empty( hMarcador ) .and. !empty( hget( hMarcador, "nombre" ) )
+      ::validateAndAddMarcador( hget( hMarcador, "nombre" ) )
+   end if 
 
 RETURN ( .t. )
 

@@ -84,6 +84,9 @@ CLASS MovimientosAlmacenController FROM SQLNavigatorController
    METHOD setNotSent()              INLINE ( ::setSender( ::oModel:getSentenceNotSentFromIds( ::getIdFromRecno( ::getBrowse():aSelected ) ) ) )
    METHOD setSender( cSentence )
 
+   METHOD isAddedTag( cMarcador )
+      METHOD addTag( uuidTag )
+
 END CLASS
 
 //---------------------------------------------------------------------------//
@@ -451,5 +454,33 @@ RETURN ( self )
 
 //---------------------------------------------------------------------------//
 
+METHOD isAddedTag( cMarcador )
 
+   local uuidTag
+
+   uuidTag                    := TagsRepository():getUuidWhereName( cMarcador ) 
+
+   if empty( uuidTag )
+      RETURN ( .f. )
+   end if 
+
+   ::addTag( uuidTag )
+
+RETURN ( .t. )
+
+//---------------------------------------------------------------------------//
+
+METHOD addTag( uuidTag )
+
+   local hBuffer
+
+   hBuffer                    := SQLTageableModel():loadBlankBuffer()
+   hBuffer[ "tag_uuid"]       := uuidTag
+   hBuffer[ "tageable_type" ] := ::getName()
+   hBuffer[ "tageable_uuid" ] := ::oModel:getBuffer( "uuid" )
+   SQLTageableModel():insertBuffer( hBuffer )
+
+RETURN ( .t. )
+
+//---------------------------------------------------------------------------//
 

@@ -97,8 +97,9 @@ RETURN ( cSql )
 
 METHOD getSQLSentenceWhereParentUuid( cParentUuid )
 
-   local cSql  := "SELECT * FROM " + ::getTableName() + " "   + ;
-                     "WHERE parent_uuid = " + quoted( cParentUuid )
+   local cSql  := "SELECT * FROM " + ::getTableName()                            + " " +  ;
+                     "WHERE parent_uuid = " + quoted( cParentUuid )              + " " +  ;
+                     "ORDER BY id"
 
 RETURN ( cSql )
 
@@ -114,6 +115,7 @@ METHOD getSQLSentenceIdFromBuffer( hBuffer )
                      "AND valor_primera_propiedad = "    + quoted( hget( hBuffer, "valor_primera_propiedad" ) )   + " " + ;
                      "AND valor_segunda_propiedad = "    + quoted( hget( hBuffer, "valor_segunda_propiedad" ) )   + " " + ;
                      "AND lote = "                       + quoted( hget( hBuffer, "lote" ) )                      + " " + ;
+                     "AND precio_articulo = "            + toSqlString( hget( hBuffer, "precio_articulo" ) )      + " " + ;
                      "LIMIT 1"
 
 RETURN ( cSql )
@@ -412,8 +414,13 @@ METHOD getSQLSentenceMovimientosForArticulo( hParams ) CLASS MovimientosAlmacenL
    cSentence         +=    "AND movimientos_almacen_lineas.codigo_articulo = " + quoted( hget( hParams, "codigo_articulo" ) ) + " "
 
    if hhaskey( hParams, "year" ) .and. !empty( hget( hParams, "year" ) )
-      cSentence      +=    "AND Date_Format( CAST( movimientos_almacen.fecha_hora AS date ), '%Y' ) = " + Str( hget( hParams, "year" ) ) + " "
+      cSentence      +=    "AND DATE_FORMAT( CAST( movimientos_almacen.fecha_hora AS date ), '%Y' ) = " + Str( hget( hParams, "year" ) ) + " "
    end if
+   
+   /*
+   cSentence      +=    "AND Date_Format( CAST( movimientos_almacen.fecha_hora AS date ), '%Y' ) LIKE ?  "
+   "%"anio := "2018" 
+   */
 
    if hhaskey( hParams, "almacen" ) .and. !empty( hget( hParams, "almacen" ) )
       cSentence      +=    "AND ( movimientos_almacen.almacen_destino = " + quoted( hget( hParams, "almacen" ) ) + " OR movimientos_almacen.almacen_origen = " + quoted( hget( hParams, "almacen" ) ) + " ) "
@@ -446,8 +453,6 @@ RETURN ( cSentence )
 METHOD getRowSetMovimientosForArticulo( hParams ) CLASS MovimientosAlmacenLineasRepository
 
    local cSentence   := ::getSqlSentenceMovimientosForArticulo( hParams )
-
-   logwrite( cSentence )
 
 RETURN ( ::getDatabase():fetchRowSet( cSentence ) )
 

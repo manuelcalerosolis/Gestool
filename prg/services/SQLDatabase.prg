@@ -12,6 +12,8 @@ CLASS SQLDatabase
 
    DATA oConexion
 
+   DATA oStatement
+
    DATA cPathDatabaseMySQL    
    
    DATA cDatabaseMySQL    
@@ -22,6 +24,8 @@ CLASS SQLDatabase
    DATA nPortMySQL
 
    DATA aModels                           INIT {}
+
+
 
    METHOD New()                           CONSTRUCTOR
    
@@ -329,13 +333,63 @@ METHOD selectValue( cSentence )
          oStatement:Free()
       end if 
 
+      oStatement  := nil
+
    end
 
 RETURN ( uValue )
 
 //---------------------------------------------------------------------------//
+/*
+METHOD fetchDirect( cSentence )
+
+   local oError
+   local oStatement
+
+   try 
+
+      oStatement     := ::oConexion:Query( cSentence )
+      
+   catch oError
+
+      eval( errorBlock(), oError )
+
+   end
+
+RETURN ( if( hb_isobject( oStatement ), oStatement, nil ) )
+*/
+//---------------------------------------------------------------------------//
 
 METHOD fetchRowSet( cSentence )
+
+   local oError
+   local oRowSet
+   
+   if ::isParseError( cSentence )
+      RETURN ( nil )  
+   end if  
+
+   try 
+
+      if !empty( ::oStatement )
+         ::oStatement:Free()
+      end if 
+
+      ::oStatement   := ::oConexion:Query( cSentence )
+
+      oRowSet        := ::oStatement:fetchRowSet()
+
+   catch oError
+
+      eval( errorBlock(), oError )
+
+   end
+
+RETURN ( oRowSet )
+
+//---------------------------------------------------------------------------//
+/*
+METHOD prepare( cSentence )
 
    local oError
    local oRowSet
@@ -358,7 +412,7 @@ METHOD fetchRowSet( cSentence )
    end
 
 RETURN ( oRowSet )
-
+*/
 //---------------------------------------------------------------------------//
 
 METHOD selectFetchArrayOneColumn( cSentence )

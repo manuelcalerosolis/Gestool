@@ -35,6 +35,8 @@ CLASS SQLXBrowse FROM TXBrowse
    
    METHOD getColumnByHeader( cHeader )
    METHOD getColumnOrder( cSortOrder )
+   METHOD getColumnOrderHeader( cSortOrder )    INLINE ( if( !empty( ::getColumnOrder( cSortOrder ) ), ::getColumnOrder( cSortOrder ):cHeader, "" ) )
+
    METHOD getColumnOrderByHeader( cHeader )  
 
    METHOD getFirstVisibleColumn()
@@ -337,7 +339,7 @@ RETURN ( Self )
 METHOD restoreStateFromModel( cViewType )
 
    local cBrowseState
-   
+
    DEFAULT cViewType    := ::getViewType()
 
    ::getOriginalState()
