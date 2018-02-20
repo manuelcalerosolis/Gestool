@@ -2831,25 +2831,29 @@ FUNCTION CntFacPrv( lSimula, lPago, lMessage, oTree, nAsiento, aSimula, dbfFacPr
       aAdd( aVentas, { ( dbfFacPrvT )->SubCta, aTotFac[ 1 ] } )
 
       /*
-      Construimos las bases de los impuestosS
+      Construimos las bases de los impuestos
       */
 
       for n := 1 to Len( aTotIva )
 
-         if isIVAComunidadEconomicaEuropea( dbfFacPrvT )
-            cSubCtaIva  := cCuentaCompraIVASoportadoUE()
-            cSubCtaReq  := cCuentaCompraIVARepercutidoUE()
-         else
-            cSubCtaIva  := cSubCuentaIva(       aTotIva[ n, 3 ], ( dbfFacPrvT )->lRecargo, cRuta, cCodEmp, dbfIva, .f. )
-            cSubCtaReq  := cSubCuentaRecargo(   aTotIva[ n, 3 ], ( dbfFacPrvT )->lRecargo, cRuta, cCodEmp, dbfIva )
-         end if
+         if aTotIva[ n, 1 ] != 0
 
-         nPosIva        := aScan( aIva, {|x| x[ 1 ] == aTotIva[ n, 3 ] } )
-         if nPosIva == 0
-            aAdd( aIva, { aTotIva[ n, 3 ], cSubCtaIva, cSubCtaReq, aTotIva[ n, 1 ] } )
-         else
-            aIva[ nPosIva, 4 ]   += aTotIva[ n, 1 ]
-         end if
+            if isIVAComunidadEconomicaEuropea( dbfFacPrvT )
+               cSubCtaIva  := cCuentaCompraIVASoportadoUE()
+               cSubCtaReq  := cCuentaCompraIVARepercutidoUE()
+            else
+               cSubCtaIva  := cSubCuentaIva( aTotIva[ n, 3 ], ( dbfFacPrvT )->lRecargo, cRuta, cCodEmp, dbfIva, .f. )
+               cSubCtaReq  := cSubCuentaRecargo( aTotIva[ n, 3 ], ( dbfFacPrvT )->lRecargo, cRuta, cCodEmp, dbfIva )
+            end if
+
+            nPosIva        := aScan( aIva, {|x| x[ 1 ] == aTotIva[ n, 3 ] } )
+            if nPosIva == 0
+               aadd( aIva, { aTotIva[ n, 3 ], cSubCtaIva, cSubCtaReq, aTotIva[ n, 1 ] } )
+            else
+               aIva[ nPosIva, 4 ]   += aTotIva[ n, 1 ]
+            end if
+
+         end if 
 
       next
 
@@ -2919,7 +2923,7 @@ FUNCTION CntFacPrv( lSimula, lPago, lMessage, oTree, nAsiento, aSimula, dbfFacPr
    Descuentos sobres grupos de Venta-------------------------------------------
    */
 
-   for n := 1 TO Len( aVentas )
+   for n := 1 to Len( aVentas )
 
       if ( dbfFacPrvT )->nDtoEsp != 0
          aVentas[ n, 2 ] -= Round( aVentas[ n, 2 ] * ( dbfFacPrvT )->nDtoEsp / 100, nRinDiv )
@@ -2967,7 +2971,7 @@ FUNCTION CntFacPrv( lSimula, lPago, lMessage, oTree, nAsiento, aSimula, dbfFacPr
    Chequeo de Cuentas de Ventas------------------------------------------------
    */
 
-   for n := 1 TO len( aVentas )
+   for n := 1 to len( aVentas )
       if !ChkSubcuenta( cRutCnt(), cCodEmp, aVentas[ n, 1 ], , .f., .f. )
          oTree:Select( oTree:Add( "Factura proveedor : " + rtrim( cFactura ) + " subcuenta de ventas " + aVentas[ n, 1 ] + " no encontada.", 0 ) )
          lErrorFound    := .t.
@@ -3005,7 +3009,7 @@ FUNCTION CntFacPrv( lSimula, lPago, lMessage, oTree, nAsiento, aSimula, dbfFacPr
    Comprobamos fechas----------------------------------------------------------
    */
 
-   if !ChkFecha( cRuta, cCodEmp, ( dbfFacPrvT )->dFecFac, .f. )
+   if !chkFecha( cRuta, cCodEmp, ( dbfFacPrvT )->dFecFac, .f. )
       oTree:Select( oTree:Add(  "Factura proveedor : " + rtrim( cFactura ) + " asiento fuera de fechas.", 0 ) )
       lErrorFound    := .t.
    end if
@@ -3143,31 +3147,7 @@ FUNCTION CntFacPrv( lSimula, lPago, lMessage, oTree, nAsiento, aSimula, dbfFacPr
 
          for n := 1 to len( aIva )
 
-            if aIva[ n, 1 ] != 0 .or. uFieldEmpresa( "lConIva" )
-
-/*
-               aadd( aSimula, MkAsiento(  nAsiento, ;
-                                          cCodDiv,;
-                                          dFecha, ;
-                                          aIva[ n, 3 ],;                                        // Cuenta de impuestos
-                                          aIva[ n, 2 ],;                                        // Contrapartida
-                                          Round( aIva[ n, 1 ] * aIva[ n, 4 ] / 100, nRinDiv ),; // Ptas. Debe
-                                          cConCompr,;
-                                          Round( aIva[ n, 1 ] * aIva[ n, 4 ] / 100, nRinDiv ),; // Ptas. Haber
-                                          nNumFac,;
-                                          aIva[ n, 4 ],;
-                                          aIva[ n, 1 ],;
-                                          If( ( dbfFacPrvT )->lRecargo, nPReq( dbfIva, aIva[ n, 1 ] ), 0 ),;
-                                          ( dbfFacPrvT )->cNumDoc,;
-                                          cCodPro,;
-                                          cClave,;
-                                          ,;
-                                          ,;
-                                          ,;
-                                          lSimula,;
-                                          cTerNif,;
-                                          cTerNom ) )
-*/
+            if ( aIva[ n, 1 ] != 0 .or. uFieldEmpresa( "lConIva" ) )
                
                aadd( aSimula, MkAsiento(  nAsiento, ;
                                           cCodDiv,;
@@ -3225,7 +3205,7 @@ FUNCTION CntFacPrv( lSimula, lPago, lMessage, oTree, nAsiento, aSimula, dbfFacPr
 
          for n := 1 to len( aIva )
 
-            if aIva[ n, 1 ] != 0 .or. uFieldEmpresa( "lConIva" )
+            if ( aIva[ n, 1 ] != 0 .or. uFieldEmpresa( "lConIva" ) ) .and. ( !empty( aIva[ n, 3 ] ) )
 
                aadd( aSimula, MkAsiento(  nAsiento,;
                                           cCodDiv,;

@@ -626,7 +626,7 @@ static procedure preparaStmt()
 	oSelect := oDb:prepare( STMT_SEL )
 
 	// Variables de salida
-	oSelect:bindColumn(  1, @idreg )
+	oSelect:bindColumn(  1, "150" )
     oSelect:bindColumn(  2, @first )
     oSelect:bindColumn(  3, @last )
     oSelect:bindColumn(  4, @street )

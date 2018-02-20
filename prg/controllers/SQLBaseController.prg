@@ -148,7 +148,7 @@ CLASS SQLBaseController
 
    // Image--------------------------------------------------------------------
 
-   METHOD getImage( cResolution )                     INLINE ( if( hhaskey( ::hImage, cResolution ), hget( ::hImage, cResolution ), "" ) )
+   METHOD getImage( cResolution )                     INLINE ( iif( hhaskey( ::hImage, cResolution ), hget( ::hImage, cResolution ), "" ) )
 
    // Title -------------------------------------------------------------------
 

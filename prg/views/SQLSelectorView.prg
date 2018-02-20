@@ -89,7 +89,7 @@ METHOD End()
       ::oDialog:End()
    end if 
 
-   ::oDialog                        := nil
+   ::oDialog            := nil
 
 RETURN ( nil )
 
@@ -115,7 +115,7 @@ METHOD Start()
 
    ::oComboBoxOrder:SetItems( ::getBrowseView():getColumnsHeaders() )
 
-   // ::getBrowse():selectColumnOrderByHeader( ::getModelHeaderFromColumnOrder() )
+   ::oComboBoxOrder:Set( ::getBrowseView():getColumnOrderHeader() )
 
 RETURN ( Self )
 

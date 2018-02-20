@@ -146,6 +146,7 @@ METHOD getInsertSentence()
    local nId
 
    nId            := ::getIdProductAdded()
+
    if empty( nId )
       RETURN ( ::Super:getInsertSentence() )
    end if 
@@ -339,7 +340,7 @@ METHOD getUpdateUnitsSentece( id )
    
    local cSentence   := "UPDATE " + ::cTableName                                                                                    + " " +  ;
                            "SET unidades_articulo = unidades_articulo + " + toSQLString( hget( ::hBuffer, "unidades_articulo" ) )   + " " +  ;
-                        "WHERE id = " + quoted( id ) 
+                        "WHERE id = " + quoted( id )
 
 RETURN ( cSentence )
 
@@ -353,7 +354,7 @@ METHOD createTemporalTableWhereUuid( originalUuid )
 
    cSentence         := "CREATE TEMPORARY TABLE " + ::cTableTemporal          + " "
    cSentence         +=    "SELECT * from " + ::cTableName                    + " " 
-   cSentence         +=       "WHERE parent_uuid = " + quoted( originalUuid ) + "; "
+   cSentence         += "WHERE parent_uuid = " + quoted( originalUuid )       + "; "
 
 RETURN ( ::getDatabase():Exec( cSentence ) )
 
