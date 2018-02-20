@@ -2242,7 +2242,7 @@ Return nil
 Function RelacionesEtiquetasModel()
 Return nil
 
-Function SQLConfiguracionVistasUsuariosModel()
+Function SQLConfiguracionVistasModel()
 Return nil
 
 Function TIPOSVENTASMODEL()

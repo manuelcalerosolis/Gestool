@@ -781,8 +781,6 @@ METHOD getValueFromColumn( cColumn, cKey )
 
    end if 
 
-   MsgInfo( uValue, "getValueFromColumn" )
-
 RETURN ( uValue )
 
 //---------------------------------------------------------------------------//
@@ -914,7 +912,7 @@ RETURN ( hset( ::hBuffer, cColumn, uValue ) )
 
 METHOD setColumnOrderFromModel( cName )
    
-   local cColumnOrder   := SQLConfiguracionVistasUsuariosModel():getColumnOrder( cName )
+   local cColumnOrder   := SQLConfiguracionVistasModel():getColumnOrder( cName )
 
    if !empty( cColumnOrder )
       ::setColumnOrder( cColumnOrder )
@@ -926,7 +924,7 @@ RETURN ( self )
 
 METHOD setColumnOrientationFromModel( cName )
 
-   local cColumnOrientation   := SQLConfiguracionVistasUsuariosModel():getColumnOrientation( cName )
+   local cColumnOrientation   := SQLConfiguracionVistasModel():getColumnOrientation( cName )
 
    if !empty( cColumnOrientation )
       ::setColumnOrientation( cColumnOrientation )

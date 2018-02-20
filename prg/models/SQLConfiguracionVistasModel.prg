@@ -13,24 +13,28 @@ CLASS SQLConfiguracionVistasModel FROM SQLBaseModel
 
    METHOD getColumns()
 
-   METHOD delete( cViewName )
-
    METHOD get( cViewType, cViewName )
-   METHOD set( cViewType, cViewName, cBrowseState, cColumnOrder, cOrientation, idToFind )
 
    METHOD getFieldName( cViewName )
-   METHOD getState( cViewName )
+   
+   METHOD getState( cViewType, cViewName )
 
-   METHOD getColumnOrder( cViewName )        INLINE ( ::getFieldName( cViewName, "column_order" ) )
-   METHOD setColumnOrder( cViewName, cColumnOrder ) ;
-                                             INLINE ( ::set( cViewName, nil, cColumnOrder ) ) 
+   METHOD getColumnOrder( cViewType, cViewName )         INLINE ( ::getFieldName( cViewType, cViewName, "column_order" ) )
+   
+   METHOD getColumnOrientation( cViewType, cViewName )   INLINE ( ::getFieldName( cViewType, cViewName, "column_orientation" ) )
 
-   METHOD getColumnOrientation( cViewName )  INLINE ( ::getFieldName( cViewName, "column_orientation" ) )
-   METHOD setColumnOrientation( cViewName, cColumnOrientation ) ;
-                                             INLINE ( ::set( cViewName, nil, nil, cColumnOrientation ) ) 
+   METHOD getId( cViewType, cViewName )                  INLINE ( ::getFieldName( cViewType, cViewName, "id_to_find" ) )
+   METHOD setId( cViewType, cViewName, nId )             INLINE ( ::set( cViewType, cViewName, nil, nil, nil, nId ) ) 
 
-   METHOD getId( cViewName )                 INLINE ( ::getFieldName( cViewName, "id_to_find" ) )
-   METHOD setId( cViewName, nId )            INLINE ( ::set( cViewName, nil, nil, nil, nId ) ) 
+   METHOD set( cViewType, cViewName, cBrowseState, cColumnOrder, cOrientation, idToFind )
+   
+   METHOD setColumnOrder( cViewType, cViewName, cColumnOrder ) ;
+                                                         INLINE ( ::set( cViewType, cViewName, nil, cColumnOrder ) ) 
+
+   METHOD setColumnOrientation( cViewType, cViewName, cColumnOrientation ) ;
+                                                         INLINE ( ::set( cViewType, cViewName, nil, nil, cColumnOrientation ) ) 
+
+   METHOD delete( cViewType, cViewName )
 
 END CLASS
 
@@ -58,10 +62,10 @@ METHOD get( cViewType, cViewName )
    local cSentence   := "SELECT browse_state, column_order, column_orientation, id_to_find "       + ;
                            "FROM " + ::cTableName + " "                                            + ;
                            "WHERE "                                                                + ;
-                              "empresa = " + quoted( cCodEmp() ) + " AND "                         + ; 
-                              "usuario = " + quoted( cCurUsr() ) + " AND "                         + ;
-                              "view_type = " + quoted( cViewType ) + " AND "                       + ;
-                              "view_name = " + quoted( cViewName ) + " "                           + ;
+                              "empresa = " + quoted( cCodEmp() )     + " AND "                     + ; 
+                              "usuario = " + quoted( cCurUsr() )     + " AND "                     + ;
+                              "view_type = " + quoted( cViewType )   + " AND "                     + ;
+                              "view_name = " + quoted( cViewName )   + " "                         + ;
                            "LIMIT 1"
 
    aFetch            := getSQLDatabase():selectFetchHash( cSentence, .f. )
@@ -76,7 +80,7 @@ RETURN ( nil )
 
 METHOD getFieldName( cViewType, cViewName, cFieldName )
 
-   local aFetch      := ::get( cViewType, cViewName )
+   local aFetch   := ::get( cViewType, cViewName )
 
    if empty( aFetch )
       RETURN ( nil )
@@ -95,12 +99,12 @@ METHOD getState( cViewType, cViewName )
       RETURN ( nil )
    end if 
    
-   cState      := hget( hFetch, "browse_state" )
+   cState         := hget( hFetch, "browse_state" )
    if empty( cState )
       RETURN ( nil )
    end if 
 
-   cState      := strtran( cState, '\"', '"' )
+   cState         := strtran( cState, '\"', '"' )
 
 RETURN ( cState )
        
@@ -126,10 +130,6 @@ METHOD set( cViewType, cViewName, cBrowseState, cColumnOrder, cOrientation, idTo
       RETURN ( Self )
    end if 
    
-   if empty( cBrowseState )
-      RETURN ( Self )
-   end if 
-
    cSentence            := "INSERT INTO " + ::cTableName + " ( "                               
    cSentence            +=       "empresa, "                                               
    cSentence            +=       "usuario, "                                               
@@ -196,7 +196,7 @@ METHOD set( cViewType, cViewName, cBrowseState, cColumnOrder, cOrientation, idTo
    end if
 
    if !empty( idToFind )
-      cSentence         +=    "id_to_find = " + alltrim( cvaltostr( idToFind ) ) + ", "
+      cSentence         +=    "id_to_find = " + toSqlString( idToFind ) + ", "
    end if
 
    cSentence            := chgAtEnd( cSentence, '', 2 )

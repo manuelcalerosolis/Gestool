@@ -63,7 +63,7 @@ METHOD New( oController )
 
    ::Super():New( oController )
 
-   ::aRect                 := GetWndRect( GetDeskTopWindow() )
+   ::aRect           := GetWndRect( GetDeskTopWindow() )
 
 RETURN ( Self )
 

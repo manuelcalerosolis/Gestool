@@ -105,13 +105,13 @@ METHOD onChangeCombo( oColumn )
       RETURN ( Self )
    end if 
 
-   oComboBox:set( oColumn:cHeader )
-
    ::getController():changeModelOrderAndOrientation( oColumn:cSortOrder, oColumn:cOrder )
 
    ::getBrowse():selectColumnOrder( oColumn )
 
-   ::getBrowse():refreshCurrent()
+   ::getBrowse():Refresh()
+
+   ::getBrowse():setFocus()
 
 RETURN ( Self )
 

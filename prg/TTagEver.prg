@@ -1,10 +1,8 @@
 #include "FiveWin.ch"
 
-************************************************************************************************************************************
-
 CLASS TTagEver FROM TControl
 
-   CLASSDATA lRegistered AS LOGICAL
+   CLASSDATA lRegistered            AS LOGICAL
 
    DATA aItems                      AS ARRAY    INIT {} 
    DATA aCoors                      AS ARRAY    INIT {} 
@@ -26,22 +24,22 @@ CLASS TTagEver FROM TControl
    METHOD New( nTop, nLeft, nWidth, nHeight, oWnd, oFont, nClrBorder, nClrBackTag, aItems, nClrPane, nClrPaneOver ) CONSTRUCTOR
    METHOD Redefine( nId, oWnd, oFont, aItems ) CONSTRUCTOR
 
-    METHOD SetItems( aItems )
-    METHOD AddItem( cText )
+   METHOD SetItems( aItems )
+   METHOD AddItem( cText )
 
-    METHOD Paint()
-    METHOD Display()                        INLINE ( ::BeginPaint(), ::Paint(), ::EndPaint(), 0 )
-    METHOD GetItems()
+   METHOD Paint()
+   METHOD Display()                        INLINE ( ::BeginPaint(), ::Paint(), ::EndPaint(), 0 )
+   METHOD GetItems()
 
-    METHOD LButtonDown( nRow, nCol, nFlags )
-    METHOD MouseMove  ( nRow, nCol, nFlags )
-    METHOD LButtonUp  ( nRow, nCol, nFlags )
+   METHOD LButtonDown( nRow, nCol, nFlags )
+   METHOD MouseMove  ( nRow, nCol, nFlags )
+   METHOD LButtonUp  ( nRow, nCol, nFlags )
 
-    METHOD EraseBkGnd( hDC )                INLINE 1
+   METHOD EraseBkGnd( hDC )                INLINE ( 1 )
 
-    METHOD HideItems()                      INLINE ( aeval(::aItems, {|aItem| aItem[2]  := .t. } ), ::Refresh() )
+   METHOD HideItems()                      INLINE ( aeval(::aItems, {|aItem| aItem[2]  := .t. } ), ::Refresh() )
 
-    METHOD isOver( n )                       INLINE ( .t. ) // ::isOver() )
+   METHOD isOver( n )                      INLINE ( .t. ) // ::isOver() )
 
 ENDCLASS
 
@@ -59,7 +57,6 @@ ENDCLASS
    DEFAULT nHeight      := 0
    DEFAULT nClrBorder   := rgb(204,214,197)
    DEFAULT nClrBackTag  := rgb(235,245,226)
-
 
    ::nStyle       := nOR( WS_CHILD, WS_VISIBLE )
    ::SetItems( aItems )
@@ -133,9 +130,9 @@ RETURN Self
 
 RETURN Self
 
-***************************************************************************************************************
-    METHOD GetItems() CLASS TTagEver
-***************************************************************************************************************
+//---------------------------------------------------------------------------//
+
+METHOD GetItems() CLASS TTagEver
 
    local aSelectedItems := {}
 
@@ -147,33 +144,32 @@ RETURN Self
 
 RETURN aSelectedItems
 
-***************************************************************************************************************
-    METHOD SetItems( aItems ) CLASS TTagEver
-***************************************************************************************************************
+//---------------------------------------------------------------------------//
 
-   ::aItems := {}
+METHOD SetItems( aItems ) CLASS TTagEver
 
-   if empty( aItems )
+   ::aItems    := {}
+
+   if empty( aItems ) .or. len( aItems ) == 0
       RETURN nil
    end if
 
-   if len(aItems) != 0
-      aeval( aItems, {|aItem| aadd( ::aItems, { aItem, .f., {0,0,0,0} } ) } ) 
-   endif
+   aeval( aItems, {|aItem| aadd( ::aItems, { aItem, .f., {0,0,0,0} } ) } ) 
 
 RETURN nil
 
-***************************************************************************************************************
-   METHOD AddItem( cText ) CLASS TTagEver
-***************************************************************************************************************
+//---------------------------------------------------------------------------//
 
-   aadd( ::aItems, {cText,.f.,{0,0,0,0}} )
+METHOD AddItem( cText ) CLASS TTagEver
+
+   aadd( ::aItems, { cText, .f., { 0, 0, 0, 0 } } )
 
 RETURN nil //oItem
 
-***************************************************************************************************************
-    METHOD Paint() CLASS TTagEver
-***************************************************************************************************************
+//---------------------------------------------------------------------------//
+
+METHOD Paint() CLASS TTagEver
+
 local aInfo := ::DispBegin()
 local n
 local nTop  := 2
@@ -197,8 +193,6 @@ local hPen, hOldPen
 local hBrush, hOldBrush
 local hBrush1, hOldBrush1
 local lFirst := .f.
-
-//local nBkColor := SetBkColor(::hDC, CLR_GREEN )
 
 hBmp := LoadBitmap( GetResources(), "GC_DELETE_12" )
 
@@ -253,7 +247,7 @@ if !empty(::aItems)
           nL := nLeft + 8
        endif
 
-       nW := 5 + GetTextWidth(::hDC, ::aItems[n,1], ::oFont:hFont ) + if( nWBmp != 0 .and. ( ::isOver()), 5 + nWBmp + 5, 0)
+       nW := 5 + GetTextWidth( ::hDC, ::aItems[n,1], ::oFont:hFont ) + if( nWBmp != 0, 5 + nWBmp + 5, 0)
 
        nT := nTop
 
@@ -266,7 +260,7 @@ if !empty(::aItems)
 
        hOldBrush := SelectObject( ::hDC, hBrush1 )
 
-       RoundRect( ::hDC, rc[2]-4, rc[1], rc[4], rc[3]-1, 6, 6 )
+       RoundRect( ::hDC, rc[2] - 4, rc[1], rc[4], rc[3] - 1, 6, 6 )
 
        hOldFont := SelectObject( ::hDC, ::oFont:hFont )
 
