@@ -1,7 +1,5 @@
 #include "FiveWin.ch"
 
-************************************************************************************************************************************
-
 CLASS TTagEver FROM TControl
 
    CLASSDATA lRegistered            AS LOGICAL
@@ -196,8 +194,6 @@ local hBrush, hOldBrush
 local hBrush1, hOldBrush1
 local lFirst := .f.
 
-//local nBkColor := SetBkColor(::hDC, CLR_GREEN )
-
 hBmp := LoadBitmap( GetResources(), "GC_DELETE_12" )
 
 if hBmp != 0
@@ -251,7 +247,7 @@ if !empty(::aItems)
           nL := nLeft + 8
        endif
 
-       nW := 5 + GetTextWidth(::hDC, ::aItems[n,1], ::oFont:hFont ) + if( nWBmp != 0 .and. ( ::isOver()), 5 + nWBmp + 5, 0)
+       nW := 5 + GetTextWidth( ::hDC, ::aItems[n,1], ::oFont:hFont ) + if( nWBmp != 0, 5 + nWBmp + 5, 0)
 
        nT := nTop
 
@@ -264,7 +260,7 @@ if !empty(::aItems)
 
        hOldBrush := SelectObject( ::hDC, hBrush1 )
 
-       RoundRect( ::hDC, rc[2]-4, rc[1], rc[4], rc[3]-1, 6, 6 )
+       RoundRect( ::hDC, rc[2] - 4, rc[1], rc[4], rc[3] - 1, 6, 6 )
 
        hOldFont := SelectObject( ::hDC, ::oFont:hFont )
 

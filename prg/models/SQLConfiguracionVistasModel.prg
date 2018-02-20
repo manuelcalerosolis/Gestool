@@ -15,45 +15,24 @@ CLASS SQLConfiguracionVistasModel FROM SQLBaseModel
 
    METHOD get( cViewType, cViewName )
 
-   METHOD getNavigator( cViewName )                      INLINE ::get( "navigator", cViewName )
-   METHOD getSelector( cViewName )                       INLINE ::get( "selector", cViewName )
-
    METHOD getFieldName( cViewName )
    
-   METHOD getNavigatorFieldName( cViewName, cFieldName ) INLINE ::getFieldName( "navigator", cViewName, cFieldName )
-   METHOD getSelectorFieldName( cViewName, cFieldName )  INLINE ::getFieldName( "selector", cViewName, cFieldName )
-
    METHOD getState( cViewType, cViewName )
-   METHOD getNavigatorState( cViewName )                 INLINE ::getState( "navigator", cViewName )
-   METHOD getSelectorState( cViewName )                  INLINE ::getState( "selector", cViewName )
 
    METHOD getColumnOrder( cViewType, cViewName )         INLINE ( ::getFieldName( cViewType, cViewName, "column_order" ) )
    
-   METHOD getNavigatorColumnOrder( cViewName )           INLINE ( ::getColumnOrder( "navigator", cViewName ) )
-   METHOD getSelectorColumnOrder( cViewName )            INLINE ( ::getColumnOrder( "selector", cViewName ) )
-
    METHOD getColumnOrientation( cViewType, cViewName )   INLINE ( ::getFieldName( cViewType, cViewName, "column_orientation" ) )
 
-   METHOD getNavigatorColumnOrientation( cViewName )     INLINE ( ::getColumnOrientation( "navigator", cViewName ) )
-   METHOD getSelectorColumnOrientation( cViewName )      INLINE ( ::getColumnOrientation( "selector", cViewName ) )
-
    METHOD getId( cViewType, cViewName )                  INLINE ( ::getFieldName( cViewType, cViewName, "id_to_find" ) )
-   METHOD getNavigatorId( cViewName )                    INLINE ( ::getId( "navigator", cViewName ) )
-   METHOD getSelectorId( cViewName )                     INLINE ( ::getId( "selector", cViewName ) )
+   METHOD setId( cViewType, cViewName, nId )             INLINE ( ::set( cViewType, cViewName, nil, nil, nil, nId ) ) 
 
    METHOD set( cViewType, cViewName, cBrowseState, cColumnOrder, cOrientation, idToFind )
-
-   METHOD setId( cViewType, cViewName, nId )             INLINE ( ::set( cViewType, cViewName, nil, nil, nil, nId ) ) 
    
-   METHOD setColumnOrder( cViewType, cViewName, cColumnOrder )    INLINE ( ::set( cViewType, cViewName, nil, cColumnOrder ) ) 
+   METHOD setColumnOrder( cViewType, cViewName, cColumnOrder ) ;
+                                                         INLINE ( ::set( cViewType, cViewName, nil, cColumnOrder ) ) 
 
-   METHOD setNavigatorColumnOrder( cViewName, cColumnOrder )      INLINE ( ::set( "navigator", cViewName, nil, cColumnOrder ) ) 
-   METHOD setSelectorColumnOrder( cViewName, cColumnOrder )       INLINE ( ::set( "selector", cViewName, nil, cColumnOrder ) ) 
-
-   METHOD setColumnOrientation( cViewType, cViewName, cColumnOrientation ) INLINE ( ::set( cViewType, cViewName, nil, nil, cColumnOrientation ) ) 
-
-   METHOD setNavigatorColumnOrientation( cViewName, cColumnOrientation )   INLINE ( ::set( "navigator", cViewName, nil, nil, cColumnOrientation ) ) 
-   METHOD setSelectorColumnOrientation( cViewName, cColumnOrientation )    INLINE ( ::set( "selector", cViewName, nil, nil, cColumnOrientation ) ) 
+   METHOD setColumnOrientation( cViewType, cViewName, cColumnOrientation ) ;
+                                                         INLINE ( ::set( cViewType, cViewName, nil, nil, cColumnOrientation ) ) 
 
    METHOD delete( cViewType, cViewName )
 
@@ -83,10 +62,10 @@ METHOD get( cViewType, cViewName )
    local cSentence   := "SELECT browse_state, column_order, column_orientation, id_to_find "       + ;
                            "FROM " + ::cTableName + " "                                            + ;
                            "WHERE "                                                                + ;
-                              "empresa = " + quoted( cCodEmp() ) + " AND "                         + ; 
-                              "usuario = " + quoted( cCurUsr() ) + " AND "                         + ;
-                              "view_type = " + quoted( cViewType ) + " AND "                       + ;
-                              "view_name = " + quoted( cViewName ) + " "                           + ;
+                              "empresa = " + quoted( cCodEmp() )     + " AND "                     + ; 
+                              "usuario = " + quoted( cCurUsr() )     + " AND "                     + ;
+                              "view_type = " + quoted( cViewType )   + " AND "                     + ;
+                              "view_name = " + quoted( cViewName )   + " "                         + ;
                            "LIMIT 1"
 
    aFetch            := getSQLDatabase():selectFetchHash( cSentence, .f. )
