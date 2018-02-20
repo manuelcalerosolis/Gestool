@@ -414,7 +414,7 @@ METHOD getSQLSentenceMovimientosForArticulo( hParams ) CLASS MovimientosAlmacenL
    cSentence         +=    "AND movimientos_almacen_lineas.codigo_articulo = " + quoted( hget( hParams, "codigo_articulo" ) ) + " "
 
    if hhaskey( hParams, "year" ) .and. !empty( hget( hParams, "year" ) )
-      cSentence      +=    "AND DATE_FORMAT( CAST( movimientos_almacen.fecha_hora AS date ), '%Y' ) = " + Str( hget( hParams, "year" ) ) + " "
+      cSentence      +=    "AND DATE_FORMAT( CAST( movimientos_almacen.fecha_hora AS date ), '%Y' ) = :year" + Str( hget( hParams, "year" ) ) + " "
    end if
    
    /*
