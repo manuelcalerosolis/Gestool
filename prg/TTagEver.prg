@@ -3,6 +3,7 @@
 #define MARGIN_TOP                  2
 #define MARGIN_LEFT                 2
 #define MARGIN_ITEM                 5
+#define MARGIN_NEXT                 8
 
 //---------------------------------------------------------------------------//
 
@@ -11,7 +12,9 @@ CLASS TTagEver FROM TControl
    CLASSDATA lRegistered            AS LOGICAL
 
    DATA aItems                      AS ARRAY    INIT {} 
+
    DATA aCoors                      AS ARRAY    INIT {} 
+   DATA aOvers                      AS ARRAY    INIT {} 
 
    DATA nHeightLine                 AS NUMERIC  INIT 22
    
@@ -43,7 +46,9 @@ CLASS TTagEver FROM TControl
 
    METHOD Paint()
    METHOD Display()                 INLINE ( ::BeginPaint(), ::Paint(), ::EndPaint(), 0 )
-   METHOD DrawBitmap( rc, n )
+
+   METHOD DrawText( cItem, rc )
+   METHOD DrawBitmap( rc )
 
    METHOD LButtonDown( nRow, nCol, nFlags )
    METHOD MouseMove( nRow, nCol, nFlags )
@@ -63,7 +68,7 @@ ENDCLASS
 
 METHOD New( nTop, nLeft, nWidth, nHeight, oWnd, oFont, nClrBorder, nClrBackTag, aItems, nClrPane, nClrPaneOver ) CLASS TTagEver
 
-   local nClrText       := rgb(  0,102,227)
+   local nClrText       := rgb( 0, 102, 227 )
    local nClrTextOver   := 0 //rgb(255,102,  0)
 
    DEFAULT nClrPane     := CLR_WHITE
@@ -185,7 +190,7 @@ METHOD SetItems( aItems ) CLASS TTagEver
       RETURN ( self )
    end if
 
-   aeval( aItems, {|aItem| aadd( ::aItems, { aItem, { 0, 0, 0, 0 } } ) } ) 
+   aeval( aItems, {|aItem| aadd( ::aItems, aItem ) } ) 
 
 RETURN ( self )
 
@@ -193,7 +198,7 @@ RETURN ( self )
 
 METHOD AddItem( cText ) CLASS TTagEver
 
-   aadd( ::aItems, { cText, .f., { 0, 0, 0, 0 } } )
+   aadd( ::aItems, cText )
 
 RETURN nil //oItem
 
@@ -201,106 +206,84 @@ RETURN nil //oItem
 
 METHOD Paint() CLASS TTagEver
 
-   local n
-   local nLen
-   local nTop        := MARGIN_TOP
-   local nLeft       := MARGIN_LEFT
-   local aInfo       := ::DispBegin()
-   local nTopItem    := 0
-   local nLeftItem   := 0
-   local nWidthItem  := 0
    local rc
-   local nMode       := SetBkMode( ::hDC, 1 )
-   local nColor      := SetTextColor(::hDC, ::nClrText )
    local hPen
+   local nTop        := MARGIN_TOP
+   local cItem
+   local nLeft       := MARGIN_LEFT
+   local aInfo       
+   local hBrush
    local hOldPen
    local hOldFont
+   local nOldMode       
+   local nTopItem    := 0
+   local nOldColor      
    local hOldBrush
-   local hBrushOver
+   local nLeftItem   := 0
+   local nWidthItem  := 0
 
-   hPen           := CreatePen( PS_SOLID, 1, ::nClrBorder )
-   hOldPen        := SelectObject( ::hDC, hPen )
+   aInfo             := ::DispBegin()
+
+   nOldMode          := SetBkMode( ::hDC, 1 )
+   nOldColor         := SetTextColor( ::hDC, ::nClrText )
+
+   hPen              := CreatePen( PS_SOLID, 1, ::nClrBorder )
+   hOldPen           := SelectObject( ::hDC, hPen )
       
-   hBrushOver     := CreateSolidBrush( ::nClrPaneOver )
+   hBrush            := CreateSolidBrush( ::nClrPaneOver )
+   hOldBrush         := SelectObject( ::hDC, hBrush )
+   
+   hOldFont          := SelectObject( ::hDC, ::oFont:hFont )
 
    fillSolidRect( ::hDC, GetClientRect( ::hWnd ), ::nClrPane )
 
    if !empty( ::aItems )
 
-      nLen              := len( ::aItems )
-
-      ::aCoors          := array( nLen )
-      for n := 1 to nLen
-         ::aCoors[ n ]  := {0,0,0,0}
-      next
+      ::aCoors          := {} 
+      ::aOvers          := {}
 
       sysrefresh()
 
-      nLeftItem                := MARGIN_LEFT
+      nLeftItem         := MARGIN_LEFT
 
-      for n := 1 to nLen
+      for each cItem in ::aItems
 
-         setTextColor( ::hDC, nColor )
-          
-         nColor         := SetTextColor( ::hDC, ::nClrTextOver ) 
+         nLeftItem      := nLeftItem + nWidthItem + MARGIN_NEXT
 
-         nLeftItem      := nLeftItem + nWidthItem + 8
-
-         nWidthItem     := MARGIN_ITEM + GetTextWidth( ::hDC, ::aItems[ n, 1 ], ::oFont:hFont ) 
+         nWidthItem     := MARGIN_ITEM + GetTextWidth( ::hDC, cItem, ::oFont:hFont ) 
 
          if nLeftItem + nWidthItem + MARGIN_ITEM + ::nWidthBmp + MARGIN_ITEM > ::nWidth
             nTop        += ( ::nHeightLine  ) + MARGIN_TOP
-            nLeftItem   := MARGIN_LEFT + 8
+            nLeftItem   := MARGIN_LEFT + MARGIN_NEXT
          endif
 
-         nWidthItem     := MARGIN_ITEM + GetTextWidth( ::hDC, ::aItems[n,1], ::oFont:hFont ) + if( ::nWidthBmp != 0, 5 + ::nWidthBmp + 5, 0)
+         if ::nWidthBmp != 0
+            nWidthItem  += MARGIN_ITEM + ::nWidthBmp + MARGIN_ITEM
+         endif
 
          nTopItem       := nTop
 
          rc             := { nTopItem, nLeftItem, nTopItem + ::nHeightLine, nLeftItem + nWidthItem }
 
-         ::aCoors[n,1]  := rc[1]
-         ::aCoors[n,2]  := rc[2]
-         ::aCoors[n,3]  := rc[3]
-         ::aCoors[n,4]  := rc[4]
+         ::DrawText( cItem, rc )
 
-         hOldBrush      := SelectObject( ::hDC, hBrushOver )
+         ::DrawBitmap( rc )
 
-         RoundRect( ::hDC, rc[2] - 4, rc[1], rc[4], rc[3] - 1, 6, 6 )
-
-         hOldFont       := SelectObject( ::hDC, ::oFont:hFont )
-
-         DrawText( ::hDC, ::aItems[n,1], { rc[1], rc[2], rc[3] - 2, rc[4] }, 32 + 4 )
-
-         SelectObject( ::hDC, hOldFont )
-
-         ::DrawBitmap( rc, n )
-         /*
-         if ::hBmp != 0 
-             nT0 := rc[1] + ( ( rc[3] - rc[1] ) / 2 ) - ::nHeightBmp / 2
-             nL0 := rc[4] - MARGIN_ITEM - ::nWidthBmp
-             nB0 := nT0 + ::nHeightBmp
-             nR0 := nL0 + ::nWidthBmp
-             DrawMasked( ::hDC, ::hBmp, nT0, nL0 )
-             ::aItems[n,2] := {nT0,nL0,nB0,nR0}
-         else
-            ::aItems[n,2] := {0,0,0,0}
-         endif
-         */
          sysrefresh()
 
-      next n
+      next 
 
    end if 
 
-   SetBkMode( ::hDC, nMode )
-   SetTextColor(::hDC, nColor )
+   SetBkMode( ::hDC, nOldMode )
+   SetTextColor( ::hDC, nOldColor )
 
    SelectObject( ::hDC, hOldPen )
    SelectObject( ::hDC, hOldBrush )
+   SelectObject( ::hDC, hOldFont )
 
    DeleteObject( hPen )
-   DeleteObject( hBrushOver )
+   DeleteObject( hBrush )
 
    ::DispEnd( aInfo )
 
@@ -308,22 +291,34 @@ RETURN 0
 
 //---------------------------------------------------------------------------//
 
-METHOD DrawBitmap( rc, n )
+METHOD DrawText( cItem, rc )
+
+   RoundRect( ::hDC, rc[2] - 4, rc[1], rc[4], rc[3] - 1, 6, 6 )
+
+   DrawText( ::hDC, cItem, { rc[1], rc[2], rc[3] - 2, rc[4] }, 32 + 4 )
+
+   aadd( ::aCoors, { rc[1], rc[2], rc[3], rc[4] } )
+
+RETURN 0
+
+//---------------------------------------------------------------------------//
+
+METHOD DrawBitmap( rc )
 
    local nTopBitmap
    local nLeftBitmap
 
-   if ::hBmp = 0
-      ::aItems[ n, 2 ]  := { 0, 0, 0, 0}   
+   if ::hBmp == 0
+      aadd( ::aOvers, { 0, 0, 0, 0 } )   
       RETURN ( self )
    end if  
    
-   nTopBitmap           := rc[1] + ( ( rc[3] - rc[1] ) / 2 ) - ::nHeightBmp / 2
-   nLeftBitmap          := rc[4] - MARGIN_ITEM - ::nWidthBmp
+   nTopBitmap        := rc[1] + ( ( rc[3] - rc[1] ) / 2 ) - ( ::nHeightBmp / 2 )
+   nLeftBitmap       := rc[4] - MARGIN_ITEM - ::nWidthBmp
 
    drawMasked( ::hDC, ::hBmp, nTopBitmap, nLeftBitmap )
 
-   ::aItems[ n, 2 ]     := { nTopBitmap, nLeftBitmap, nTopBitmap + ::nHeightBmp, nLeftBitmap + ::nWidthBmp }
+   aadd( ::aOvers, { nTopBitmap, nLeftBitmap, nTopBitmap + ::nHeightBmp, nLeftBitmap + ::nWidthBmp } )   
    
 RETURN ( self )
 
@@ -343,7 +338,7 @@ METHOD MouseMove( nRow, nCol, nFlags ) CLASS TTagEver
    local nLen  := len( ::aCoors )
 
    for n := 1 to nLen
-      if PtInRect( nRow, nCol, ::aCoors[n] )
+      if PtInRect( nRow, nCol, ::aCoors[ n ] )
          lFind    := .t.
          ::nOver  := n
          exit
@@ -408,8 +403,8 @@ METHOD setOverClose( nRow, nCol )
 
    ::lOverClose      := .f.
 
-   if ::nOver > 0 .and. ::nOver <= len( ::aItems )
-      ::lOverClose   := ptInRect( nRow, nCol, ::aItems[ ::nOver, 2 ] )
+   if ::nOver > 0 .and. ::nOver <= len( ::aOvers )
+      ::lOverClose   := ptInRect( nRow, nCol, ::aOvers[ ::nOver ] )
    end if 
 
 RETURN ( ::lOverClose )

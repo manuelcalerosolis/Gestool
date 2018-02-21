@@ -137,7 +137,7 @@ METHOD Activate()
 
       ::oBtnTags:bAction      := {|| ::selectorAndAddMarcador() }
 
-      ::oTagsEver    := TTagEver():Redefine( 142, ::oDialog ) // , nil, {"uno", "dos", "tres", "cuatro", "cinco", "seis", "siete", "ocho", "nueve", "diez", "once" } )
+      ::oTagsEver    := TTagEver():Redefine( 142, ::oDialog , nil, {"uno", "dos", "tres", "cuatro", "cinco", "seis", "siete", "ocho", "nueve", "diez", "once" } )
 
       REDEFINE GET   ::oGetAgente ;
          VAR         ::oController:oModel:hBuffer[ "agente" ] ;
@@ -252,7 +252,7 @@ METHOD validateAndAddMarcador( cMarcador )
       RETURN ( .f. )
    end if 
 
-   if ascan( ::oTagsEver:aItems, {|item| upper( item[ 1 ] ) == upper( cMarcador ) } ) != 0
+   if ascan( ::oTagsEver:aItems, {|item| upper( item ) == upper( cMarcador ) } ) != 0
       msgStop( "Este marcador ya está incluido" )
       RETURN ( .f. )
    end if 
