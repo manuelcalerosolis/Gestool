@@ -1,5 +1,11 @@
 #include "FiveWin.ch"
 
+#define MARGIN_TOP                  2
+#define MARGIN_LEFT                 2
+#define MARGIN_ITEM                 5
+
+//---------------------------------------------------------------------------//
+
 CLASS TTagEver FROM TControl
 
    CLASSDATA lRegistered            AS LOGICAL
@@ -20,35 +26,46 @@ CLASS TTagEver FROM TControl
    DATA lOverClose                  AS LOGIC    INIT .f.
    
    DATA bAction
+
+   DATA hBmp                        AS NUMERIC  INIT 0
+   DATA nWidthBmp                   AS NUMERIC  INIT 0
+   DATA nHeightBmp                  AS NUMERIC  INIT 0
    
    METHOD New( nTop, nLeft, nWidth, nHeight, oWnd, oFont, nClrBorder, nClrBackTag, aItems, nClrPane, nClrPaneOver ) CONSTRUCTOR
    METHOD Redefine( nId, oWnd, oFont, aItems ) CONSTRUCTOR
+   METHOD End()
 
-   METHOD SetItems( aItems )
-   METHOD AddItem( cText )
+   METHOD Default()
+
+   METHOD setItems( aItems )
+   METHOD getItems()                INLINE ( ::aItems )
+   METHOD addItem( cText )
 
    METHOD Paint()
-   METHOD Display()                        INLINE ( ::BeginPaint(), ::Paint(), ::EndPaint(), 0 )
-   METHOD GetItems()
+   METHOD Display()                 INLINE ( ::BeginPaint(), ::Paint(), ::EndPaint(), 0 )
+   METHOD DrawBitmap( rc, n )
 
    METHOD LButtonDown( nRow, nCol, nFlags )
-   METHOD MouseMove  ( nRow, nCol, nFlags )
-   METHOD LButtonUp  ( nRow, nCol, nFlags )
+   METHOD MouseMove( nRow, nCol, nFlags )
+   METHOD LButtonUp( nRow, nCol, nFlags )
 
-   METHOD EraseBkGnd( hDC )                INLINE ( 1 )
+   METHOD EraseBkGnd( hDC )         INLINE ( 1 )
 
-   METHOD HideItems()                      INLINE ( aeval(::aItems, {|aItem| aItem[2]  := .t. } ), ::Refresh() )
+   METHOD loadBitmap()
+   METHOD deleteBitmap()            INLINE ( iif( ::hBmp != 0, deleteObject( ::hBmp ), ) )
 
-   METHOD isOver( n )                      INLINE ( .t. ) // ::isOver() )
+   METHOD setOverClose()                  
+   METHOD getOverClose()            INLINE ( ::lOverClose )
 
 ENDCLASS
 
-************************************************************************************************************************************
-  METHOD New( nTop, nLeft, nWidth, nHeight, oWnd, oFont, nClrBorder, nClrBackTag, aItems, nClrPane, nClrPaneOver ) CLASS TTagEver
-************************************************************************************************************************************
+//---------------------------------------------------------------------------//
+
+METHOD New( nTop, nLeft, nWidth, nHeight, oWnd, oFont, nClrBorder, nClrBackTag, aItems, nClrPane, nClrPaneOver ) CLASS TTagEver
 
    local nClrText       := rgb(  0,102,227)
    local nClrTextOver   := 0 //rgb(255,102,  0)
+
    DEFAULT nClrPane     := CLR_WHITE
    DEFAULT nClrPaneOver := rgb(221,221,221)
    DEFAULT nTop         := 0
@@ -59,9 +76,8 @@ ENDCLASS
    DEFAULT nClrBackTag  := rgb(235,245,226)
 
    ::nStyle       := nOR( WS_CHILD, WS_VISIBLE )
-   ::SetItems( aItems )
 
-   ::aCoors       := {}
+   ::SetItems( aItems )
 
    ::oWnd         := oWnd
    ::nTop         := nTop
@@ -78,21 +94,20 @@ ENDCLASS
    ::nOver        := -1
    ::nClrBorder   := nClrBorder
    ::nClrBackTag  := nClrBackTag
-   ::lOverClose   := .f.
    ::nOption      := 1
 
-   ::SetColor( nClrText, nClrPane )
-
-   ::lVisible    := .t.
+   ::Default()
 
    ::Register( nOR( CS_VREDRAW, CS_HREDRAW ) )
+
    ::Create()
 
 RETURN Self
 
-************************************************************************************************************************************
-  METHOD Redefine( nId, oWnd, oFont, aItems, nClrBorder, nClrBackTag, nClrPane, nClrPaneOver ) CLASS TTagEver
-************************************************************************************************************************************
+//---------------------------------------------------------------------------//
+
+METHOD Redefine( nId, oWnd, oFont, aItems, nClrBorder, nClrBackTag, nClrPane, nClrPaneOver ) CLASS TTagEver
+
 
    local nClrText       := 0 // rgb(  0,102,227)
    local nClrTextOver   := 0 // rgb(255,102,  0)
@@ -102,8 +117,6 @@ RETURN Self
    DEFAULT nClrBackTag  := CLR_WHITE //rgb(235,245,226)
 
    ::SetItems( aItems )
-
-   ::aCoors       := {}
 
    ::oWnd         := oWnd
    ::nId          := nId
@@ -117,12 +130,9 @@ RETURN Self
    ::nOver        := -1
    ::nClrBorder   := nClrBorder
    ::nClrBackTag  := nClrBackTag
-   ::lOverClose   := .f.
    ::nOption      := 1
 
-   ::SetColor( nClrText, nClrPane )
-
-   ::lVisible    := .t.
+   ::Default()
 
    ::Register()
 
@@ -132,17 +142,38 @@ RETURN Self
 
 //---------------------------------------------------------------------------//
 
-METHOD GetItems() CLASS TTagEver
+METHOD End()
 
-   local aSelectedItems := {}
+   ::deleteBitmap()
 
-   if empty( ::aItems )
-      RETURN aSelectedItems
-   end if 
+RETURN Self
+
+//---------------------------------------------------------------------------//
+
+METHOD Default()
+
+   ::setColor( ::nClrText, ::nClrPane )
+
+   ::loadBitmap()
+
+   ::lVisible    := .t.
+
+RETURN Self
+
+//---------------------------------------------------------------------------//
+
+METHOD loadBitmap()
+
+   ::hBmp         := loadBitmap( getResources(), "GC_DELETE_12" )
+
+   if ::hBmp == 0
+      RETURN ( self )
+   endif
    
-   aeval( ::aItems, {|aItem| if( !aItem[ 2 ], aadd( aSelectedItems, aItem[ 1 ] ), ) } )
+   ::nWidthBmp    := nBmpWidth( ::hBmp )
+   ::nHeightBmp   := nBmpHeight( ::hBmp )
 
-RETURN aSelectedItems
+RETURN ( self )
 
 //---------------------------------------------------------------------------//
 
@@ -150,13 +181,13 @@ METHOD SetItems( aItems ) CLASS TTagEver
 
    ::aItems    := {}
 
-   if empty( aItems ) .or. len( aItems ) == 0
-      RETURN nil
+   if empty( aItems ) 
+      RETURN ( self )
    end if
 
-   aeval( aItems, {|aItem| aadd( ::aItems, { aItem, .f., {0,0,0,0} } ) } ) 
+   aeval( aItems, {|aItem| aadd( ::aItems, { aItem, { 0, 0, 0, 0 } } ) } ) 
 
-RETURN nil
+RETURN ( self )
 
 //---------------------------------------------------------------------------//
 
@@ -170,144 +201,131 @@ RETURN nil //oItem
 
 METHOD Paint() CLASS TTagEver
 
-local aInfo := ::DispBegin()
-local n
-local nTop  := 2
-local nT    := 0
-local nL    := 0
-local nLeft := 2
-local nSep  := 11
-local nH    := ::nHeightLine
-local nLen
-local nFont
-local nW := 0
-local hOldFont
-local rc
-local nMode := SetBkMode( ::hDC, 1 )
-local nColor := SetTextColor(::hDC, ::nClrText )
-local hBmp := 0
-local nWBmp := 0
-local nHBmp := 0
-local nT0, nL0, nB0, nR0
-local hPen, hOldPen
-local hBrush, hOldBrush
-local hBrush1, hOldBrush1
-local lFirst := .f.
+   local n
+   local nLen
+   local nTop        := MARGIN_TOP
+   local nLeft       := MARGIN_LEFT
+   local aInfo       := ::DispBegin()
+   local nTopItem    := 0
+   local nLeftItem   := 0
+   local nWidthItem  := 0
+   local rc
+   local nMode       := SetBkMode( ::hDC, 1 )
+   local nColor      := SetTextColor(::hDC, ::nClrText )
+   local hPen
+   local hOldPen
+   local hOldFont
+   local hOldBrush
+   local hBrushOver
 
-hBmp := LoadBitmap( GetResources(), "GC_DELETE_12" )
+   hPen           := CreatePen( PS_SOLID, 1, ::nClrBorder )
+   hOldPen        := SelectObject( ::hDC, hPen )
+      
+   hBrushOver     := CreateSolidBrush( ::nClrPaneOver )
 
-if hBmp != 0
-   nWBmp := nBmpWidth( hBmp )
-   nHBmp := nBmpHeight( hBmp )
-endif
+   fillSolidRect( ::hDC, GetClientRect( ::hWnd ), ::nClrPane )
 
-hPen        := CreatePen( PS_SOLID, 1, ::nClrBorder )
-hOldPen     := SelectObject(::hDC, hPen )
-   
-hBrush      := CreateSolidBrush( ::nClrBackTag )
+   if !empty( ::aItems )
 
-hBrush1     := CreateSolidBrush( ::nClrPaneOver )
+      nLen              := len( ::aItems )
 
-FillSolidRect(::hDC, GetClientRect(::hWnd), ::nClrPane )
+      ::aCoors          := array( nLen )
+      for n := 1 to nLen
+         ::aCoors[ n ]  := {0,0,0,0}
+      next
 
-if !empty(::aItems)
+      sysrefresh()
 
-   nLen := len( ::aItems )
+      nLeftItem                := MARGIN_LEFT
 
-   ::aCoors := array(nLen)
-   for n := 1 to nLen
-       ::aCoors[n] :={0,0,0,0}
-   next
+      for n := 1 to nLen
 
-   sysrefresh()
+         setTextColor( ::hDC, nColor )
+          
+         nColor         := SetTextColor( ::hDC, ::nClrTextOver ) 
 
-   nL := nLeft
+         nLeftItem      := nLeftItem + nWidthItem + 8
 
-   for n := 1 to nLen
+         nWidthItem     := MARGIN_ITEM + GetTextWidth( ::hDC, ::aItems[ n, 1 ], ::oFont:hFont ) 
 
-       if ::aItems[n,2] // oculto
-          loop
-       endif
+         if nLeftItem + nWidthItem + MARGIN_ITEM + ::nWidthBmp + MARGIN_ITEM > ::nWidth
+            nTop        += ( ::nHeightLine  ) + MARGIN_TOP
+            nLeftItem   := MARGIN_LEFT + 8
+         endif
 
-       //if n == ::nOver
-       SetTextColor(::hDC, nColor )
-       nColor := SetTextColor(::hDC, if( ::isOver(), ::nClrTextOver, ::nClrText) )
-       //endif
+         nWidthItem     := MARGIN_ITEM + GetTextWidth( ::hDC, ::aItems[n,1], ::oFont:hFont ) + if( ::nWidthBmp != 0, 5 + ::nWidthBmp + 5, 0)
 
-       if !lFirst
-          nL := nL + nW + 8
-       endif
+         nTopItem       := nTop
 
-       lFirst := .f.
+         rc             := { nTopItem, nLeftItem, nTopItem + ::nHeightLine, nLeftItem + nWidthItem }
 
-       nW := 5 + GetTextWidth(::hDC, ::aItems[n,1], ::oFont:hFont ) //+ if( nWBmp != 0 .and. ( ::isOver()), 5 + nWBmp + 5, 0)
+         ::aCoors[n,1]  := rc[1]
+         ::aCoors[n,2]  := rc[2]
+         ::aCoors[n,3]  := rc[3]
+         ::aCoors[n,4]  := rc[4]
 
-       if nL + nW + 5 + nWBmp + 5 > ::nWidth
-          nTop += ( ::nHeightLine  ) + 2
-          nL := nLeft + 8
-       endif
+         hOldBrush      := SelectObject( ::hDC, hBrushOver )
 
-       nW := 5 + GetTextWidth( ::hDC, ::aItems[n,1], ::oFont:hFont ) + if( nWBmp != 0, 5 + nWBmp + 5, 0)
+         RoundRect( ::hDC, rc[2] - 4, rc[1], rc[4], rc[3] - 1, 6, 6 )
 
-       nT := nTop
+         hOldFont       := SelectObject( ::hDC, ::oFont:hFont )
 
-       rc := { nT, nL, nT + nH, nL + nW }
+         DrawText( ::hDC, ::aItems[n,1], { rc[1], rc[2], rc[3] - 2, rc[4] }, 32 + 4 )
 
-       ::aCoors[n,1] := rc[1]
-       ::aCoors[n,2] := rc[2]
-       ::aCoors[n,3] := rc[3]
-       ::aCoors[n,4] := rc[4]
+         SelectObject( ::hDC, hOldFont )
 
-       hOldBrush := SelectObject( ::hDC, hBrush1 )
+         ::DrawBitmap( rc, n )
+         /*
+         if ::hBmp != 0 
+             nT0 := rc[1] + ( ( rc[3] - rc[1] ) / 2 ) - ::nHeightBmp / 2
+             nL0 := rc[4] - MARGIN_ITEM - ::nWidthBmp
+             nB0 := nT0 + ::nHeightBmp
+             nR0 := nL0 + ::nWidthBmp
+             DrawMasked( ::hDC, ::hBmp, nT0, nL0 )
+             ::aItems[n,2] := {nT0,nL0,nB0,nR0}
+         else
+            ::aItems[n,2] := {0,0,0,0}
+         endif
+         */
+         sysrefresh()
 
-       RoundRect( ::hDC, rc[2] - 4, rc[1], rc[4], rc[3] - 1, 6, 6 )
+      next n
 
-       hOldFont := SelectObject( ::hDC, ::oFont:hFont )
+   end if 
 
-       DrawText(::hDC, ::aItems[n,1], {rc[1],rc[2],rc[3]-2,rc[4]}, 32+4 )
+   SetBkMode( ::hDC, nMode )
+   SetTextColor(::hDC, nColor )
 
-       SelectObject( ::hDC, hOldFont )
+   SelectObject( ::hDC, hOldPen )
+   SelectObject( ::hDC, hOldBrush )
 
-       if hBmp != 0 
+   DeleteObject( hPen )
+   DeleteObject( hBrushOver )
 
-          nT0 := rc[1]+((rc[3]-rc[1])/2)-nHBmp/2
-          nL0 := rc[4]-5-nWBmp
-          nB0 := nT0 + nHBmp
-          nR0 := nL0 + nWBmp
-          DrawMasked( ::hDC, hBmp, nT0, nL0 )
-          ::aItems[n,3] := {nT0,nL0,nB0,nR0}
-       else
-          ::aItems[n,3] := {0,0,0,0}
-       endif
-
-       if n == ::nOver
-          SetTextColor(::hDC, nColor )
-          nColor := SetTextColor(::hDC, ::nClrText )
-       endif
-
-       sysrefresh()
-
-   next n
-
-end if 
-
-SetBkMode( ::hDC, nMode )
-SetTextColor(::hDC, nColor )
-
-if hBmp != 0
-   DeleteObject( hBmp )
-endif
-
-SelectObject( ::hDC, hOldPen )
-SelectObject( ::hDC, hOldBrush )
-
-DeleteObject( hPen )
-DeleteObject( hBrush )
-DeleteObject( hBrush1 )
-
-::DispEnd( aInfo )
+   ::DispEnd( aInfo )
 
 RETURN 0
+
+//---------------------------------------------------------------------------//
+
+METHOD DrawBitmap( rc, n )
+
+   local nTopBitmap
+   local nLeftBitmap
+
+   if ::hBmp = 0
+      ::aItems[ n, 2 ]  := { 0, 0, 0, 0}   
+      RETURN ( self )
+   end if  
+   
+   nTopBitmap           := rc[1] + ( ( rc[3] - rc[1] ) / 2 ) - ::nHeightBmp / 2
+   nLeftBitmap          := rc[4] - MARGIN_ITEM - ::nWidthBmp
+
+   drawMasked( ::hDC, ::hBmp, nTopBitmap, nLeftBitmap )
+
+   ::aItems[ n, 2 ]     := { nTopBitmap, nLeftBitmap, nTopBitmap + ::nHeightBmp, nLeftBitmap + ::nWidthBmp }
+   
+RETURN ( self )
 
 //---------------------------------------------------------------------------//
 
@@ -332,11 +350,11 @@ METHOD MouseMove( nRow, nCol, nFlags ) CLASS TTagEver
       endif
    next
 
-   ::lOverClose := ::nOver > 0 .and. PtInRect( nRow, nCol, ::aItems[ ::nOver, 3 ] )
+   ::setOverClose( nRow, nCol )
 
    if lFind
 
-      if ::lOverClose
+      if ::getOverClose()
          CursorHand()
       else
          CursorArrow()
@@ -351,7 +369,7 @@ METHOD MouseMove( nRow, nCol, nFlags ) CLASS TTagEver
    endif
 
    if nOver != ::nOver
-      ::Refresh(.f.)
+      ::Refresh( .f. )
    endif
 
 RETURN 0
@@ -360,18 +378,40 @@ RETURN 0
 
 METHOD LButtonUp( nRow, nCol, nFlags ) CLASS TTagEver
 
-   if ::nOver > 0
-      if ::lOverClose
-         ::aItems[ ::nOver, 2 ] := .t.
-      else
-         ::nOption := ::nOver
-         if ::bAction != nil
-            eval( ::bAction, ::nOption, ::aItems[ ::nOption, 1 ])
-         endif
+   if ::nOver == 0
+      RETURN 0
+   end if 
+
+   if ::getOverClose()
+
+      adel( ::aItems, ::nOver, .t. )
+   
+      ::nOver     := 0
+
+   else
+      
+      ::nOption   := ::nOver
+
+      if hb_isblock( ::bAction )
+         eval( ::bAction, Self )
       endif
-      ::Refresh()
+
    endif
+
+   ::Refresh()
 
 RETURN 0
 
-***************************************************************************************************************
+//---------------------------------------------------------------------------//
+
+METHOD setOverClose( nRow, nCol )
+
+   ::lOverClose      := .f.
+
+   if ::nOver > 0 .and. ::nOver <= len( ::aItems )
+      ::lOverClose   := ptInRect( nRow, nCol, ::aItems[ ::nOver, 2 ] )
+   end if 
+
+RETURN ( ::lOverClose )
+
+//---------------------------------------------------------------------------//

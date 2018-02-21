@@ -127,7 +127,7 @@ METHOD Activate()
          OF          ::oDialog
 
       ::oGetMarcador:bValid   := {|| .t. }
-      ::oGetMarcador:bHelp    := {|| ::validateAndAddMarcador( ::cGetMarcador ) }
+      ::oGetMarcador:bHelp    := {|| iif( ::validateAndAddMarcador( ::cGetMarcador ), ::oGetMarcador:cText( space( 100 ) ), ) }
 
       REDEFINE BTNBMP ::oBtnTags ;
          ID          141 ;
@@ -137,7 +137,7 @@ METHOD Activate()
 
       ::oBtnTags:bAction      := {|| ::selectorAndAddMarcador() }
 
-      ::oTagsEver    := TTagEver():Redefine( 142, ::oDialog )
+      ::oTagsEver    := TTagEver():Redefine( 142, ::oDialog ) // , nil, {"uno", "dos", "tres", "cuatro", "cinco", "seis", "siete", "ocho", "nueve", "diez", "once" } )
 
       REDEFINE GET   ::oGetAgente ;
          VAR         ::oController:oModel:hBuffer[ "agente" ] ;
@@ -175,6 +175,7 @@ METHOD Activate()
 
    ::oDialog:Activate( , , , .t., , , {|| ::initActivate() } ) 
 
+   ::oTagsEver:End()
    ::oOfficeBar:End()
 
 RETURN ( ::oDialog:nResult )
@@ -245,7 +246,7 @@ RETURN ( .t. )
 
 METHOD validateAndAddMarcador( cMarcador )
 
-   cMarcador      := alltrim( ::cGetMarcador )
+   cMarcador      := alltrim( cMarcador )
 
    if empty( cMarcador )
       RETURN ( .f. )
@@ -263,8 +264,6 @@ METHOD validateAndAddMarcador( cMarcador )
 
    ::oTagsEver:addItem( cMarcador )
    ::oTagsEver:Refresh()
-
-   ::oGetMarcador:cText( space( 100 ) )
 
 RETURN ( .t. )
 

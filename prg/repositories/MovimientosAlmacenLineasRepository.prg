@@ -454,11 +454,6 @@ METHOD getRowSetMovimientosForArticulo( hParams ) CLASS MovimientosAlmacenLineas
 
    local cSentence   := ::getSqlSentenceMovimientosForArticulo( hParams )
 
-<<<<<<< HEAD
-   // logwrite( cSentence )
-
-=======
->>>>>>> 7f6b5d703c6d60c1569cf56e56e3775b1e327060
 RETURN ( ::getDatabase():fetchRowSet( cSentence ) )
 
 //---------------------------------------------------------------------------//

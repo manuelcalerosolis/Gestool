@@ -3668,17 +3668,6 @@ METHOD aStockMovimientosAlmacen( cCodArt, cCodAlm, cCodEmp )
 
    end while
 
-<<<<<<< HEAD
-   // oRowSet:Free()
-
-=======
-   oRowSet:free()
-<<<<<<< HEAD
-
-=======
- 
->>>>>>> 7f6b5d703c6d60c1569cf56e56e3775b1e327060
->>>>>>> 797ce986da15378cb9e05ff3c9cda9cea09206df
 RETURN ( nil )
 
 //---------------------------------------------------------------------------//
