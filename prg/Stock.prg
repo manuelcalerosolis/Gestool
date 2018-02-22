@@ -3624,7 +3624,7 @@ METHOD aStockMovimientosAlmacen( cCodArt, cCodAlm, cCodEmp )
 
          if ::validateDateTime( oRowSet:fieldget( 'fecha' ), oRowSet:fieldget( 'hora' ) )
 
-            if ::lCheckConsolidacion( oRowSet:fieldget('codigo_articulo' ),;
+            if ::lCheckConsolidacion( oRowSet:fieldget( 'codigo_articulo' ),;
                                       oRowSet:fieldget( 'almacen_destino' ),;
                                       oRowSet:fieldget( 'codigo_primera_propiedad' ),;
                                       oRowSet:fieldget( 'codigo_segunda_propiedad' ),;

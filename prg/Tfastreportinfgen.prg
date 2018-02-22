@@ -269,6 +269,7 @@ CLASS TFastReportInfGen FROM TNewInfGen
    METHOD FastReportAlbaranProveedor()
    METHOD FastReportFacturaProveedor()
    METHOD FastReportRectificativaProveedor()
+   METHOD FastReportRecibosProveedor()
 
    METHOD FastReportStock()
 
@@ -330,6 +331,7 @@ CLASS TFastReportInfGen FROM TNewInfGen
    METHOD AddVariableFacturaCliente()
    METHOD AddVariableLineasFacturaCliente()
    METHOD AddVariableRecibosCliente()
+   METHOD AddVariableRecibosProveedor()
 
    METHOD cDetalleFacturasClientes()                              INLINE ( cDesFacCli  ( D():FacturasClientesLineas( ::nView ) ) ) 
    METHOD nTotalUnidadesFacturasClientes()                        INLINE ( nTotNFacCli ( D():FacturasClientesLineas( ::nView ) ) )
@@ -2561,6 +2563,20 @@ RETURN ( Self )
 
 //---------------------------------------------------------------------------//
 
+METHOD FastReportRecibosProveedor()
+
+   ( D():FacturasProveedoresPagos( ::nView ) )->( ordsetfocus( "iNumFac" ) )
+   
+   ::oFastReport:SetWorkArea(       "Recibos de proveedor", ( D():FacturasProveedoresPagos( ::nView ) )->( select() ) )
+   ::oFastReport:SetFieldAliases(   "Recibos de proveedor", cItemsToReport( aItmRecPrv() ) )
+
+   ::oFastReport:SetMasterDetail(   "Informe", "Recibos de proveedor",   {|| ::idDocumento() + ::oDbf:cNumRec } )
+   ::oFastReport:SetResyncPair(     "Informe", "Recibos de proveedor" )
+
+RETURN ( Self )
+
+//---------------------------------------------------------------------------//
+
 /*
 Produccion--------------------------------------------------------------------------
 */
@@ -2828,6 +2844,12 @@ RETURN ( Self )
 //---------------------------------------------------------------------------//
 
 METHOD AddVariableRecibosCliente()
+
+RETURN ( Self )
+
+//---------------------------------------------------------------------------//
+
+METHOD AddVariableRecibosProveedor()
 
 RETURN ( Self )
 
@@ -3558,6 +3580,7 @@ METHOD CreateTreeImageList()
    ::oTreeImageList:AddMasked( TBitmap():Define( "gc_moneybag_16" ),                   Rgb( 255, 0, 255 ) ) // 23 Iva
    ::oTreeImageList:AddMasked( TBitmap():Define( "gc_object_cube_16"),                 Rgb( 255, 0, 255 ) ) // 24 Articulo
    ::oTreeImageList:AddMasked( TBitmap():Define( "gc_pencil_package_16"),              Rgb( 255, 0, 255 ) ) // 25 Movimiento de almacén
+   ::oTreeImageList:AddMasked( TBitmap():Define( "gc_briefcase2_businessman_16"),      Rgb( 255, 0, 255 ) ) // 26 Recibos de proveedor
 
    if !Empty( ::oTreeReporting )
       ::oTreeReporting:SetImageList( ::oTreeImageList )
