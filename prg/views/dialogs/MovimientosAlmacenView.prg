@@ -137,7 +137,8 @@ METHOD Activate()
 
       ::oBtnTags:bAction      := {|| ::selectorAndAddMarcador() }
 
-      ::oTagsEver    := TTagEver():Redefine( 142, ::oDialog , nil, {"uno", "dos", "tres", "cuatro", "cinco", "seis", "siete", "ocho", "nueve", "diez", "once" } )
+      ::oTagsEver             := TTagEver():Redefine( 142, ::oDialog , nil, {"uno", "dos", "tres", "cuatro", "cinco", "seis", "siete", "ocho", "nueve", "diez", "once" } )
+      ::oTagsEver:bOnDelete   := {| oTag, cItem | msgalert( cItem ) }
 
       REDEFINE GET   ::oGetAgente ;
          VAR         ::oController:oModel:hBuffer[ "agente" ] ;
