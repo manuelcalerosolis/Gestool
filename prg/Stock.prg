@@ -3624,11 +3624,7 @@ METHOD aStockMovimientosAlmacen( cCodArt, cCodAlm, cCodEmp )
 
          if ::validateDateTime( oRowSet:fieldget( 'fecha' ), oRowSet:fieldget( 'hora' ) )
 
-<<<<<<< HEAD
             if ::lCheckConsolidacion( oRowSet:fieldget( 'codigo_articulo' ),;
-=======
-            if ::lCheckConsolidacion( oRowSet:fieldget('codigo_articulo' ),;
->>>>>>> d896ae2c7c789172b1e8c683d150ce8de6b046aa
                                       oRowSet:fieldget( 'almacen_destino' ),;
                                       oRowSet:fieldget( 'codigo_primera_propiedad' ),;
                                       oRowSet:fieldget( 'codigo_segunda_propiedad' ),;
@@ -3672,11 +3668,6 @@ METHOD aStockMovimientosAlmacen( cCodArt, cCodAlm, cCodEmp )
 
    end while
 
-<<<<<<< HEAD
-   oRowSet:free()
-
-=======
->>>>>>> d896ae2c7c789172b1e8c683d150ce8de6b046aa
 RETURN ( nil )
 
 //---------------------------------------------------------------------------//
