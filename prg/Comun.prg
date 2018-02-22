@@ -279,7 +279,7 @@ RETURN ( .t. )
 
 FUNCTION Test()
 
-   // TagsController():New():ActivateSelectorView() 
+   MovimientosAlmacenController():New():ActivateNavigatorView() 
 
 RETURN nil
 
