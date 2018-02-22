@@ -109,7 +109,7 @@ METHOD Activate()
 
    ::getBrowseView():gotoIdFromModel()
 
-   ::getBrowseView():setColumnOrder( ::getModel():getColumnOrder(), ::getModel():getColumnOrientation() ) 
+   ::getBrowseView():setColumnOrder() 
 
    // Splitters----------------------------------------------------------------
 
@@ -119,7 +119,7 @@ METHOD Activate()
 
    // Eventos------------------------------------------------------------------
 
-   ::oMdiChild:bKeyDown          := {|nKey, nFlags| ::keyDown( nKey, nFlags ) }
+   ::oMdiChild:bKeyDown    := {|nKey, nFlags| ::keyDown( nKey, nFlags ) }
 
 RETURN ( Self )
 
@@ -127,7 +127,7 @@ RETURN ( Self )
 
 METHOD CreateTopWebBar()
 
-   ::oTopWebBar   := TWebBar():New( 0, dfnTreeViewWidth, ::aRect[ 4 ] - dfnTreeViewWidth, dfnSplitterHeight,,,, dfnTextColorTop, dfnBackColorTop, , , , , , ::oMdiChild )
+   ::oTopWebBar            := TWebBar():New( 0, dfnTreeViewWidth, ::aRect[ 4 ] - dfnTreeViewWidth, dfnSplitterHeight,,,, dfnTextColorTop, dfnBackColorTop, , , , , , ::oMdiChild )
    
    ::oTopWebBar:Say( 0, dfnSplitterWidth + 10, ::oController:cTitle ) 
 

@@ -22,6 +22,8 @@ CLASS ReindexaView FROM ViewBase
 
    METHOD getTitleTipoDocumento()   INLINE ( ::getTextoTipoDocumento() )
 
+   METHOD startDialog()
+
 END CLASS
 
 //---------------------------------------------------------------------------//
@@ -47,7 +49,6 @@ Return ( Self )
 //---------------------------------------------------------------------------//
 
 METHOD defineMeter() CLASS ReindexaView
-
 
    TGridSay():Build(    {  "nRow"      => 55,;
                            "nCol"      => {|| GridWidth( 0.5, ::oDlg ) },;
@@ -156,6 +157,16 @@ METHOD defineAceptarCancelar() CLASS ReindexaView
                            "cResName"  => "gc_ok_64",;
                            "bLClicked" => {|| ::oSender:runReindexa(), ::oDlg:End() },;
                            "oWnd"      => ::oDlg } )
+
+Return ( self )
+
+//---------------------------------------------------------------------------//
+
+METHOD startDialog()
+
+   ::oSender:runReindexa()
+
+   ::oDlg:End()
 
 Return ( self )
 

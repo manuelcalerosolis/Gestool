@@ -174,15 +174,15 @@ METHOD SetItems( aItems ) CLASS TTagEver
       RETURN ( self )
    end if
 
-   aeval( aItems, {|aItem| aadd( ::aItems, aItem ) } ) 
+   aeval( aItems, {|cItem| ::addItem( cItem ) } ) 
 
 RETURN ( self )
 
 //---------------------------------------------------------------------------//
 
-METHOD addItem( cText ) CLASS TTagEver
+METHOD addItem( cText, uCargo ) CLASS TTagEver
 
-   aadd( ::aItems, cText )
+   aadd( ::aItems, TTagItem():New( cText, uCargo ) )
 
 RETURN nil //oItem
 
@@ -191,7 +191,7 @@ RETURN nil //oItem
 METHOD Paint() CLASS TTagEver
 
    local hPen
-   local cItem
+   local oItem
    local nLeft       := MARGIN_LEFT
    local aInfo       
    local hOldPen
@@ -223,11 +223,11 @@ METHOD Paint() CLASS TTagEver
 
       nLeftItem         := MARGIN_LEFT
 
-      for each cItem in ::aItems
+      for each oItem in ::aItems
 
          nLeftItem      := nLeftItem + nWidthItem + MARGIN_NEXT
 
-         nWidthItem     := MARGIN_ITEM + GetTextWidth( ::hDC, cItem, ::oFont:hFont ) 
+         nWidthItem     := MARGIN_ITEM + GetTextWidth( ::hDC, oItem:cText, ::oFont:hFont ) 
 
          if nLeftItem + nWidthItem + MARGIN_ITEM + ::nWidthBmp + MARGIN_ITEM > ::nWidth
             nTopItem    += ( ::nHeightLine  ) + MARGIN_TOP
@@ -240,7 +240,7 @@ METHOD Paint() CLASS TTagEver
 
          ::aRect           := { nTopItem, nLeftItem, nTopItem + ::nHeightLine, nLeftItem + nWidthItem }
 
-         ::DrawItem( cItem )
+         ::DrawItem( oItem:cText )
 
       next 
 
@@ -377,5 +377,33 @@ METHOD setOverClose( nRow, nCol )
    end if 
 
 RETURN ( ::lOverClose )
+
+//---------------------------------------------------------------------------//
+
+CLASS TTagItem
+
+   DATA cText
+   DATA aCoors
+   DATA aOvers
+   DATA uCargo
+
+   METHOD New( cText, uCargo )
+
+   METHOD setCoors( aCoors )     INLINE ( ::aCoors := aCoors )
+   METHOD getCoors()             INLINE ( ::aCoors )
+
+   METHOD setOvers( aOvers )     INLINE ( ::aOvers := aOvers )
+   METHOD getOvers()             INLINE ( ::aOvers )
+
+ENDCLASS
+
+//---------------------------------------------------------------------------//
+
+METHOD New( cText, uCargo ) CLASS TTagItem
+
+   ::cText  := cText
+   ::uCargo := uCargo
+
+RETURN ( self )
 
 //---------------------------------------------------------------------------//

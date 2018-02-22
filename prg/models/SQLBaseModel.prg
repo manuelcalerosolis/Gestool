@@ -30,7 +30,9 @@ CLASS SQLBaseModel
    DATA cFilterWhere
    
    DATA cColumnOrder                  
-   DATA cColumnKey                    
+
+   DATA cColumnKey                                    INIT "id"
+   
    DATA cColumnCode                                   INIT "codigo"
 
    DATA hBuffer 
@@ -133,11 +135,16 @@ CLASS SQLBaseModel
    METHOD setColumnOrder( cColumnOrder )              INLINE ( ::cColumnOrder := cColumnOrder )
    METHOD getColumnOrder()                            INLINE ( ::cColumnOrder )
    
-   METHOD setColumnOrderFromModel( cName )
+   METHOD setColumnOrderFromModel( cType, cName )
+   METHOD setNavigatorColumnOrderFromModel( cName )   INLINE ( ::setColumnOrderFromModel( "navigator", cName ) )
+   METHOD setSelectorColumnOrderFromModel( cName )    INLINE ( ::setColumnOrderFromModel( "selector", cName ) )
 
    METHOD setColumnOrientation( cColumnOrientation )  INLINE ( ::cColumnOrientation := cColumnOrientation )
    METHOD getColumnOrientation()                      INLINE ( ::cColumnOrientation )
-   METHOD setColumnOrientationFromModel( cName )
+   
+   METHOD setColumnOrientationFromModel( cType, cName )
+   METHOD setNavigatorColumnOrientationFromModel( cName )   INLINE ( ::setColumnOrientationFromModel( "navigator", cName ) )
+   METHOD setSelectorColumnOrientationFromModel( cName )    INLINE ( ::setColumnOrientationFromModel( "selector", cName ) )
 
    METHOD getDeleteSentenceById( nId )
 
@@ -580,12 +587,18 @@ RETURN ( cSentence )
 
 METHOD getDeleteSentenceById( aIds )
 
-   local cSentence   := "DELETE FROM " + ::cTableName + space( 1 ) + ;
-                           "WHERE " + ::cColumnKey + " IN ( "
+   local cSentence   
+
+   if hb_isnumeric( aIds )
+      aIds     := { aIds }
+   end if 
+
+   cSentence   := "DELETE FROM " + ::cTableName + space( 1 ) + ;
+                     "WHERE " + ::cColumnKey + " IN ( "
    
    aeval( aIds, {| v | cSentence += if( hb_isarray( v ), toSQLString( atail( v ) ), toSQLString( v ) ) + ", " } )
 
-   cSentence         := chgAtEnd( cSentence, ' )', 2 )
+   cSentence   := chgAtEnd( cSentence, ' )', 2 )
 
 RETURN ( cSentence )
 
@@ -910,9 +923,9 @@ RETURN ( hset( ::hBuffer, cColumn, uValue ) )
 
 //----------------------------------------------------------------------------//
 
-METHOD setColumnOrderFromModel( cName )
+METHOD setColumnOrderFromModel( cType, cName )
    
-   local cColumnOrder   := SQLConfiguracionVistasModel():getColumnOrder( cName )
+   local cColumnOrder   := SQLConfiguracionVistasModel():getColumnOrder( cType, cName )
 
    if !empty( cColumnOrder )
       ::setColumnOrder( cColumnOrder )

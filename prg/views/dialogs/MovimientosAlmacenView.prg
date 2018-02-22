@@ -137,8 +137,9 @@ METHOD Activate()
 
       ::oBtnTags:bAction      := {|| ::selectorAndAddMarcador() }
 
-      ::oTagsEver             := TTagEver():Redefine( 142, ::oDialog , nil, {"uno", "dos", "tres", "cuatro", "cinco", "seis", "siete", "ocho", "nueve", "diez", "once" } )
-      ::oTagsEver:bOnDelete   := {| oTag, cItem | msgalert( cItem ) }
+      ::oTagsEver    := TTagEver():Redefine( 142, ::oDialog )
+
+      ::oTagsEver:bOnDelete   := {| oTag, oTagItem | ::oController:deleteTag( oTagItem:uCargo ) }
 
       REDEFINE GET   ::oGetAgente ;
          VAR         ::oController:oModel:hBuffer[ "agente" ] ;
@@ -192,6 +193,8 @@ METHOD startActivate()
    ::oController:stampAlmacenNombre( ::oGetAlmacenDestino )
 
    ::oController:stampAgente( ::oGetAgente )
+
+   ::oController:stampMarcadores( ::oTagsEver )
 
    ::oController:oLineasController:oBrowseView:getBrowse():makeTotals()
    ::oController:oLineasController:oBrowseView:getBrowse():goTop()
@@ -253,7 +256,7 @@ METHOD validateAndAddMarcador( cMarcador )
       RETURN ( .f. )
    end if 
 
-   if ascan( ::oTagsEver:aItems, {|item| upper( item ) == upper( cMarcador ) } ) != 0
+   if ascan( ::oTagsEver:aItems, {|oItem| upper( oItem:cText ) == upper( cMarcador ) } ) != 0
       msgStop( "Este marcador ya está incluido" )
       RETURN ( .f. )
    end if 
