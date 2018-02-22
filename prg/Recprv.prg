@@ -2632,6 +2632,9 @@ FUNCTION rxRecPrv( cPath, cDriver )
       ( dbfFacPrvP )->( ordCondSet( "!Deleted()", {|| !Deleted() } ) )
       ( dbfFacPrvP )->( ordCreate( cPath + "FacPrvP.CDX", "cCtrCoste", "cCtrCoste", {|| Field->cCtrCoste } ) )
 
+      ( dbfFacPrvP )->( ordCondSet( "!Deleted()", {|| !Deleted() }  ) )
+      ( dbfFacPrvP )->( ordCreate( cPath + "FacPrvP.Cdx", "iNumFac", "'19' + cSerFac + str( nNumFac ) + space( 1 ) + cSufFac + str( nNumRec )", {|| '19' + Field->cSerFac + str( Field->nNumFac ) + space( 1 ) + Field->cSufFac + str( Field->nNumRec ) } ) )
+
       ( dbfFacPrvP )->( dbCloseArea() )
 
    else
