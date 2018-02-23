@@ -2785,7 +2785,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, hHash, bValid, nMode )
          WHEN     ( lWhen ) ;
          VALID    ( cObras( aGet[ _CCODOBR ], oSay[ 7 ], aTmp[ _CCODCLI ] ) ) ;
          BITMAP   "LUPA" ;
-         ON HELP  ( brwObras( aGet[ _CCODOBR ], oSay[ 7 ], aTmp[ _CCODCLI ], dbfObrasT ) ) ;
+         ON HELP  ( BrwObrasNuevo( aGet[ _CCODOBR ], oSay[ 7 ], aTmp[ _CCODCLI ], dbfObrasT ) ) ;
          OF       fldGeneral
 
       REDEFINE GET oSay[ 7 ] VAR cSay[ 7 ] ;
@@ -10277,8 +10277,6 @@ Return .t.
 //---------------------------------------------------------------------------//
 
 Static Function DataReport( oFr )
-
-   ( dbfObrasT )->( OrdSetFocus( "cCodCli" ) )
 
    /*
    Zona de datos------------------------------------------------------------

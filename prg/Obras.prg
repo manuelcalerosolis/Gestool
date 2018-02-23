@@ -754,3 +754,178 @@ FUNCTION cObras( oGet, oGet2, cCodigoCliente, dbfObrasT )
 Return lValid
 
 //---------------------------------------------------------------------------//
+
+FUNCTION BrwObrasNuevo( oGet, oGet2, cCodigoCliente )
+
+   local oDlg
+   local oBrw
+   local oFont
+   local oBtn
+   local oGet1
+   local cGet1
+   local nOrd        := GetBrwOpt( "BrwObras" )
+   local oCbxOrd
+   local aCbxOrd     := { "Código", "Nombre" }
+   local aIndOrd     := { "cCodigo", "cNombre" }
+   local cCbxOrd     := "Código"
+   local nLevel      := nLevelUsr( "01032" )
+   local lClose      := .f.
+   local oSayText
+   local cSayText    := "Listado de obras"
+   local dbfSql      := "BrowseObras"
+   local nOrdAnt
+   local nRecAnt
+
+   nOrd              := Min( Max( nOrd, 1 ), len( aCbxOrd ) )
+   cCbxOrd           := aCbxOrd[ nOrd ]
+
+   if Empty( cCodigoCliente )
+      MsgStop( "Es necesario codificar un cliente" )
+      return .t.
+   end if
+
+   if !lExistTable( cPatCli() + "ObrasT.Dbf" )
+      MsgStop( 'No existe el fichero de obras' )
+      Return .f.
+   end if
+
+   ClientesModel():getObrasPorCliente( @dbfSql, cCodigoCliente )
+
+   ( dbfSql )->( OrdSetFocus( aIndOrd[ nOrd ] ) )
+   ( dbfSql )->( dbGoTop() )  
+
+   if Empty( dbfObrasT )
+      USE ( cPatCli() + "ObrasT.Dbf" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "OBRAST", @dbfObrasT ) )
+      SET ADSINDEX TO ( cPatCli() + "ObrasT.Cdx" ) ADDITIVE
+      lClose         := .t.
+   end if
+
+   DEFINE DIALOG     oDlg ;
+      RESOURCE       "HELPENTRY";
+      TITLE          "Seleccionar direcciones"
+
+      REDEFINE GET oGet1 VAR cGet1;
+         ID          104 ;
+         ON CHANGE   ( AutoSeek( nKey, nFlags, Self, oBrw, dbfSql ) );
+         BITMAP      "FIND" ;
+         OF          oDlg
+
+      REDEFINE COMBOBOX oCbxOrd ;
+         VAR         cCbxOrd ;
+         ID          102 ;
+         ITEMS       aCbxOrd ;
+         ON CHANGE   ( ( dbfSql )->( ordsetfocus( aIndOrd[ oCbxOrd:nAt ] ) ),;
+                     oBrw:Refresh(),;
+                     oGet1:SetFocus() );
+         OF          oDlg
+
+      oBrw                 := IXBrowse():New( oDlg )
+
+      oBrw:bClrSel         := {|| { CLR_BLACK, Rgb( 229, 229, 229 ) } }
+      oBrw:bClrSelFocus    := {|| { CLR_BLACK, Rgb( 167, 205, 240 ) } }
+
+      oBrw:cAlias          := dbfSql
+      oBrw:nMarqueeStyle   := 5
+
+      with object ( oBrw:AddCol() )
+         :cHeader          := "Código"
+         :cSortOrder       := "Codigo"
+         :bEditValue       := {|| ( dbfSql )->cCodObr }
+         :nWidth           := 80
+         :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | oCbxOrd:Set( oCol:cHeader ), eval( oCbxOrd:bChange ) }
+      end with
+
+      with object ( oBrw:AddCol() )
+         :cHeader          := "Nombre"
+         :cSortOrder       := "Nombre"
+         :bEditValue       := {|| ( dbfSql )->cNomObr }
+         :nWidth           := 360
+         :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | oCbxOrd:Set( oCol:cHeader ), eval( oCbxOrd:bChange ) }
+      end with
+
+      oBrw:bLDblClick      := {|| oDlg:end( IDOK ) }
+
+      oBrw:CreateFromResource( 105 )
+
+      REDEFINE BUTTON ;
+         ID       500 ;
+         OF       oDlg ;
+         WHEN     ( nAnd( nLevel, ACC_APPD ) != 0 .and. !IsReport() );
+         ACTION   ( WinAppRecFromBrowse( oBrw, bEdit, dbfObrasT, cCodigoCliente, dbfSql, nOrd ) )
+
+      REDEFINE BUTTON ;
+         ID       501 ;
+         OF       oDlg ;
+         WHEN     ( nAnd( nLevel, ACC_EDIT ) != 0 .and. !IsReport() );
+         ACTION   ( WinEdtRecFromBrowse( oBrw, bEdit, dbfObrasT, cCodigoCliente, ( dbfSql )->cCodObr, dbfSql, nOrd ) )
+
+      if !IsReport()
+         oDlg:AddFastKey( VK_F2, {|| if( nAnd( nLevel, ACC_APPD ) != 0, WinAppRecFromBrowse( oBrw, bEdit, dbfObrasT, cCodigoCliente, dbfSql, nOrd ), ) } )
+         oDlg:AddFastKey( VK_F3, {|| if( nAnd( nLevel, ACC_EDIT ) != 0, WinEdtRecFromBrowse( oBrw, bEdit, dbfObrasT, cCodigoCliente, ( dbfSql )->cCodObr, dbfSql, nOrd ), ) } )
+      end if
+
+   oDlg:AddFastKey( VK_F5,       {|| oDlg:end( IDOK ) } )
+   oDlg:AddFastKey( VK_RETURN,   {|| oDlg:end( IDOK ) } )
+
+   ACTIVATE DIALOG oDlg CENTER
+
+   if oDlg:nResult == IDOK
+
+      oGet:cText( ( dbfSql )->cCodObr )
+
+      if !Empty( oGet2 )
+         oGet2:cText( ( dbfSql )->cNomObr )
+      end if
+
+   end if
+
+   SetBrwOpt( "BrwObras", ( dbfSql )->( OrdNumber() ) )
+
+   if lClose
+      ( dbfObrasT )->( dbCloseArea() )
+   end if
+
+   oGet:setFocus()
+
+RETURN ( oDlg:nResult == IDOK )
+
+//---------------------------------------------------------------------------//
+
+Function WinAppRecFromBrowse( oBrw, bEdit, dbfObrasT, cCodigoCliente, dbfSql, nOrd )
+
+   WinAppRec( oBrw, bEdit, dbfObrasT, nil, nil, cCodigoCliente )
+
+   ClientesModel():getObrasPorCliente( @dbfSql, cCodigoCliente )
+
+   ( dbfSql )->( ordSetFocus( nOrd ) )
+   ( dbfSql )->( dbGoTop() )
+
+   if !Empty( oBrw )
+      oBrw:Refresh()
+   end if
+
+RETURN ( nil )
+
+//---------------------------------------------------------------------------//
+
+Function WinEdtRecFromBrowse( oBrw, bEdit, dbfObrasT, cCodigoCliente, cCodObr, dbfSql, nOrd )
+
+   if ( dbfObrasT )->( dbSeek( cCodigoCliente + cCodObr ) )
+      WinEdtRec( oBrw, bEdit, dbfObrasT, nil, nil, cCodigoCliente )
+   end if
+
+   ClientesModel():getObrasPorCliente( @dbfSql, cCodigoCliente )
+
+   ( dbfSql )->( ordSetFocus( "cCodCli" ) )   
+
+   ( dbfSql )->( dbSeek( cCodigoCliente + cCodObr ) )
+
+   ( dbfSql )->( ordSetFocus( nOrd ) )
+
+   if !Empty( oBrw )
+      oBrw:Refresh()
+   end if
+
+RETURN ( nil )
+
+//---------------------------------------------------------------------------//

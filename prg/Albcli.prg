@@ -8630,8 +8630,6 @@ Return .t.
 
 Static Function DataReport( oFr )
 
-   ( dbfObrasT )->( OrdSetFocus( "cCodCli" ) )
-
    oFr:DeleteCategory(  "Albaranes" )
    oFr:DeleteCategory(  "Lineas de albaranes" )
    oFr:DeleteCategory(  "Clientes" )
@@ -15354,7 +15352,7 @@ function SynAlbCli( cPath )
 
       // Lineas huerfanas------------------------------------------------------
 
-      ( D():Get( "AlbCliT", nView ) )->( ordsetfocus( 1 ) )
+      /*( D():Get( "AlbCliT", nView ) )->( ordsetfocus( 1 ) )
       ( D():Get( "AlbCliL", nView ) )->( ordsetfocus( 1 ) )
 
       ( D():Get( "AlbCliL", nView ) )->( dbgotop() )
@@ -15370,7 +15368,7 @@ function SynAlbCli( cPath )
          
          SysRefresh()
 
-      end while
+      end while*/
 
       CloseFiles()
 

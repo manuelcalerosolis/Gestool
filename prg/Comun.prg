@@ -279,7 +279,7 @@ RETURN ( .t. )
 
 FUNCTION Test()
 
-   MovimientosAlmacenController():New():ActivateNavigatorView() 
+   //MovimientosAlmacenController():New():ActivateNavigatorView() 
 
 RETURN nil
 

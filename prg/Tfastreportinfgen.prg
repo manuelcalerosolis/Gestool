@@ -2570,8 +2570,14 @@ METHOD FastReportRecibosProveedor()
    ::oFastReport:SetWorkArea(       "Recibos de proveedor", ( D():FacturasProveedoresPagos( ::nView ) )->( select() ) )
    ::oFastReport:SetFieldAliases(   "Recibos de proveedor", cItemsToReport( aItmRecPrv() ) )
 
+   ::oFastReport:SetWorkArea(       "Facturas de proveedor", ( D():FacturasProveedores( ::nView ) )->( select() ) )
+   ::oFastReport:SetFieldAliases(   "Facturas de proveedor", cItemsToReport( aItmFacPrv() ) )
+
    ::oFastReport:SetMasterDetail(   "Informe", "Recibos de proveedor",   {|| ::idDocumento() + ::oDbf:cNumRec } )
+   ::oFastReport:SetMasterDetail(   "Informe", "Facturas de proveedor",  {|| ::oDbf:cSerDoc + ::oDbf:cNumDoc + ::oDbf:cSufDoc } )
+
    ::oFastReport:SetResyncPair(     "Informe", "Recibos de proveedor" )
+   ::oFastReport:SetResyncPair(     "Informe", "Facturas de proveedor" )
 
 RETURN ( Self )
 
