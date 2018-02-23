@@ -8619,20 +8619,20 @@ FUNCTION rxClient( cPath, cDriver )
    if !( dbfCli )->( neterr() )
       ( dbfCli )->( __dbPack() )
 
-      ( dbfCli )->( ordCondSet("!Deleted()", {||!Deleted()}  ) )
-      ( dbfCli )->( ordCreate( cPath + "OBRAST.CDX", "CCODIGO", "cCodObr", {|| Field->cCodObr } ) )
-
       ( dbfCli )->( ordCondSet( "!Deleted()", {||!Deleted()}  ) )
-      ( dbfCli )->( ordCreate( cPath + "ObrasT.Cdx", "CNOMBRE", "cNomObr", {|| Field->cNomObr } ) )
-
-      ( dbfCli )->( ordCondSet("!Deleted()", {||!Deleted()}  ) )
       ( dbfCli )->( ordCreate( cPath + "ObrasT.CDX", "CCODCLI", "cCodCli + cCodObr", {|| Field->cCodCli + Field->cCodObr } ) )
 
       ( dbfCli )->( ordCondSet( "!Deleted()", {||!Deleted()}  ) )
       ( dbfCli )->( ordCreate( cPath + "ObrasT.Cdx", "CNOMOBR", "cCodCli + cNomObr", {|| Field->cCodCli + Field->cNomObr } ) )
 
-      ( dbfCli )->( ordCondSet("lDefObr .and. !Deleted()", {|| Field->lDefObr .and. !Deleted()}  ) )
+      ( dbfCli )->( ordCondSet( "lDefObr .and. !Deleted()", {|| Field->lDefObr .and. !Deleted()}  ) )
       ( dbfCli )->( ordCreate( cPath + "OBRAST.CDX", "lDefObr", "cCodCli", {|| Field->cCodCli } ) )
+
+      ( dbfCli )->( ordCondSet( "!Deleted()", {||!Deleted()}  ) )
+      ( dbfCli )->( ordCreate( cPath + "OBRAST.CDX", "CCODIGO", "cCodObr", {|| Field->cCodObr } ) )
+
+      ( dbfCli )->( ordCondSet( "!Deleted()", {||!Deleted()}  ) )
+      ( dbfCli )->( ordCreate( cPath + "ObrasT.Cdx", "CNOMBRE", "cNomObr", {|| Field->cNomObr } ) )
 
       ( dbfCli )->( ordCondSet( "!Deleted()", {||!Deleted()}  ) )
       ( dbfCli )->( ordCreate( cPath + "ObrasT.Cdx", "CCODWEB", "Str( cCodWeb, 11 )", {|| Str( Field->cCodWeb, 11 ) } ) )
@@ -8640,10 +8640,10 @@ FUNCTION rxClient( cPath, cDriver )
       ( dbfCli )->( ordCondSet( "!Deleted()", {||!Deleted()}  ) )
       ( dbfCli )->( ordCreate( cPath + "ObrasT.Cdx", "CDIROBR", "Upper( cDirObr )", {|| Upper( Field->cDirObr ) } ) )
 
-      ( dbfCli )->( ordCondSet("!Deleted()", {||!Deleted()}  ) )
+      ( dbfCli )->( ordCondSet( "!Deleted()", {||!Deleted()}  ) )
       ( dbfCli )->( ordCreate( cPath + "OBRAST.CDX", "cCodPos", "cCodPos", {|| Field->cCodPos } ) )
 
-      ( dbfCli )->( ordCondSet("!Deleted()", {||!Deleted()}  ) )
+      ( dbfCli )->( ordCondSet( "!Deleted()", {||!Deleted()}  ) )
       ( dbfCli )->( ordCreate( cPath + "OBRAST.CDX", "cCodEdi", "Field->cCodEdi + Field->cDeparta", {|| Field->cCodEdi + Field->cDeparta } ) )
 
       ( dbfCli )->( dbCloseArea() )

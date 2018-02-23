@@ -196,6 +196,11 @@ METHOD Create( uParam ) CLASS TFastComprasProveedores
    ::AddField( "nTotRet",     "N", 16, 6, {|| "" },   "Total retenciones"                       )
    ::AddField( "nTotPag",     "N", 16, 6, {|| "" },   "Total pagos"                             )
 
+   ::AddField( "dEntrada",    "D",  8, 0, {|| "" },   "Fecha previsión cobro"                   )
+   ::AddField( "dFecVto",     "D",  8, 0, {|| "" },   "Fecha vencimiento"                       )
+
+   ::AddField( "lFacGas",     "L",  1, 0, {|| "" },   "Lógico factura gastos"                   )
+
    ::AddField( "cSrlTot",     "M", 10, 0, {|| "" },   "Total serializado"                       )
 
    ::AddField( "uCargo",      "C", 20, 0, {|| "" },   "Cargo"                                   )
@@ -443,6 +448,91 @@ METHOD AddFacturaProveedor( cCodigoProveedor ) CLASS TFastComprasProveedores
 
    end while
 
+RETURN ( Self )
+
+//---------------------------------------------------------------------------//
+
+
+METHOD AddRecibosProveedor( cFieldOrder ) CLASS TFastComprasProveedores
+
+   local sTot
+   local oError
+   local oBlock
+
+   DEFAULT cFieldOrder  := 'dPreCob'
+
+   oBlock               := ErrorBlock( {| oError | ApoloBreak( oError ) } )
+   BEGIN SEQUENCE
+
+      ( D():FacturasProveedoresPagos( ::nView ) )->( OrdSetFocus( cFieldOrder ) )
+
+      // filtros para la cabecera------------------------------------------------
+
+      ::cExpresionHeader          := 'Field->' + cFieldOrder + ' >= Ctod( "' + Dtoc( ::dIniInf ) + '" ) .and. Field->' + cFieldOrder + ' <= Ctod( "' + Dtoc( ::dFinInf ) + '" )'
+      
+      ::setFilterPaymentId()
+
+      ::setFilterProviderId()
+
+      // Procesando recibos------------------------------------------------------
+
+      ::setMeterText( "Procesando recibos" )
+
+      ( D():FacturasProveedoresPagos( ::nView ) )->( setCustomFilter( ::cExpresionHeader ) )
+
+      ::setMeterTotal( ( D():FacturasProveedoresPagos( ::nView ) )->( dbCustomkeyCount() ) )
+
+      ( D():FacturasProveedoresPagos( ::nView ) )->( dbgotop() )
+
+      while !::lBreak .and. !( D():FacturasProveedoresPagos( ::nView ) )->( eof() )
+
+         ::oDbf:Blank()
+
+         ::oDbf:cCodPrv    := ( D():FacturasProveedoresPagos( ::nView ) )->cCodPrv
+         ::oDbf:cNomPrv    := ( D():FacturasProveedoresPagos( ::nView ) )->cNomPrv
+         ::oDbf:cCodGrp    := RetFld( ( D():FacturasProveedoresPagos( ::nView ) )->cCodPrv, D():Proveedores( ::nView ), "cCodGrp" )
+         ::oDbf:cCodPgo    := ( D():FacturasProveedoresPagos( ::nView ) )->cCodPgo
+
+         ::oDbf:cTipDoc    := "Recibo proveedor"
+         ::oDbf:cClsDoc    := REC_PRV
+
+         ::oDbf:cSerDoc    := ( D():FacturasProveedoresPagos( ::nView ) )->cSerFac
+         ::oDbf:cNumDoc    := Str( ( D():FacturasProveedoresPagos( ::nView ) )->nNumFac )
+         ::oDbf:cSufDoc    := ( D():FacturasProveedoresPagos( ::nView ) )->cSufFac
+         ::oDbf:cNumRec    := Str( ( D():FacturasProveedoresPagos( ::nView ) )->nNumRec )
+
+         ::oDbf:cIdeDoc    := ::idDocumento()
+
+         ::oDbf:dFecDoc    := ( D():FacturasProveedoresPagos( ::nView ) )->dPreCob
+         ::oDbf:dEntrada   := ( D():FacturasProveedoresPagos( ::nView ) )->dEntrada
+         ::oDbf:dFecVto    := ( D():FacturasProveedoresPagos( ::nView ) )->dFecVto
+
+         ::oDbf:nTotNet    := ( D():FacturasProveedoresPagos( ::nView ) )->nImporte
+
+         ::oDbf:lFacGas    := RetFld( ( D():FacturasProveedoresPagos( ::nView ) )->cSerFac + Str( ( D():FacturasProveedoresPagos( ::nView ) )->nNumFac ) + ( D():FacturasProveedoresPagos( ::nView ) )->cSufFac, D():FacturasProveedores( ::nView ), "lFacGas" )
+
+         // Añadimos un nuevo registro--------------------------------------------
+
+         if ::lValidRegister()
+            ::oDbf:Insert()
+         else
+            ::oDbf:Cancel()
+         end if
+
+         ( D():FacturasProveedoresPagos( ::nView ) )->( dbskip() )
+
+         ::setMeterAutoIncremental()
+
+      end while
+
+   RECOVER USING oError
+
+      msgStop( ErrorMessage( oError ), "Imposible añadir recibos de clientes" )
+
+   END SEQUENCE
+
+   ErrorBlock( oBlock )
+   
 RETURN ( Self )
 
 //---------------------------------------------------------------------------//
@@ -777,119 +867,5 @@ METHOD lGenerate() CLASS TFastComprasProveedores
    ::oDbf:GoTop()
 
 RETURN ( ::oDbf:LastRec() > 0 )
-
-//---------------------------------------------------------------------------//
-
-METHOD AddRecibosProveedor( cFieldOrder ) CLASS TFastComprasProveedores
-
-   MsgInfo( "Entramos en AddRecibosProveedor" )
-
-   /*local sTot
-   local oError
-   local oBlock
-   
-   DEFAULT cFieldOrder  := 'dPreCob'
-
-   oBlock               := ErrorBlock( {| oError | ApoloBreak( oError ) } )
-   BEGIN SEQUENCE
-   
-      ( D():FacturasClientesCobros( ::nView ) )->( OrdSetFocus( cFieldOrder ) )
-
-      // filtros para la cabecera------------------------------------------------
-
-      ::cExpresionHeader          := 'Field->' + cFieldOrder + ' >= Ctod( "' + Dtoc( ::dIniInf ) + '" ) .and. Field->' + cFieldOrder + ' <= Ctod( "' + Dtoc( ::dFinInf ) + '" )'
-      
-      if !Empty( ::oGrupoSerie )
-         ::cExpresionHeader       += ' .and. Field->cSerie >= "' + Rtrim( ::oGrupoSerie:Cargo:Desde ) + '" .and. Field->cSerie <= "' + Rtrim( ::oGrupoSerie:Cargo:Hasta ) + '"'
-      end if
-
-      if !Empty( ::oGrupoSufijo )
-         ::cExpresionHeader       += ' .and. ( Field->cSufFac >= "' + Rtrim( ::oGrupoSufijo:Cargo:Desde ) + '" .and. Field->cSufFac <= "' + Rtrim( ::oGrupoSufijo:Cargo:Hasta ) + '" )'
-      end if
-
-      ::setFilterClientIdHeader()
-
-      ::setFilterPaymentId()
-
-      ::setFilterAgentId()
-      
-      ::setFilterUserId()
-
-      // Procesando recibos------------------------------------------------------
-
-      ::setMeterText( "Procesando recibos" )
-
-      ( D():FacturasClientesCobros( ::nView ) )->( setCustomFilter( ::cExpresionHeader ))
-
-      ::setMeterTotal( ( D():FacturasClientesCobros( ::nView ) )->( dbcustomkeycount() ) )
-
-      ( D():FacturasClientesCobros( ::nView ) )->( dbgotop() )
-      while !::lBreak .and. !( D():FacturasClientesCobros( ::nView ) )->( eof() )
-
-         ::oDbf:Blank()
-
-         ::oDbf:cCodCli    := ( D():FacturasClientesCobros( ::nView ) )->cCodCli
-         ::oDbf:cNomCli    := ( D():FacturasClientesCobros( ::nView ) )->cNomCli
-         ::oDbf:cCodAge    := ( D():FacturasClientesCobros( ::nView ) )->cCodAge
-         ::oDbf:cCodPgo    := ( D():FacturasClientesCobros( ::nView ) )->cCodPgo
-         ::oDbf:cCodUsr    := ( D():FacturasClientesCobros( ::nView ) )->cCodUsr
-
-         ::oDbf:cCodRut    := RetFld( ( D():FacturasClientesCobros( ::nView ) )->cCodCli, ( D():Clientes( ::nView ) ), 'cCodRut' )
-         ::oDbf:cCodPos    := RetFld( ( D():FacturasClientesCobros( ::nView ) )->cCodCli, ( D():Clientes( ::nView ) ), 'cCodPos' )
-         ::oDbf:cCodGrp    := RetFld( ( D():FacturasClientesCobros( ::nView ) )->cCodCli, ( D():Clientes( ::nView ) ), "cCodGrp", "Cod")
-
-         ::oDbf:cTipDoc    := "Recibos clientes"
-         ::oDbf:cClsDoc    := REC_CLI          
-         ::oDbf:cSerDoc    := ( D():FacturasClientesCobros( ::nView ) )->cSerie
-         ::oDbf:cNumDoc    := Str( ( D():FacturasClientesCobros( ::nView ) )->nNumFac )
-         ::oDbf:cSufDoc    := ( D():FacturasClientesCobros( ::nView ) )->cSufFac
-         ::oDbf:cNumRec    := Str( ( D():FacturasClientesCobros( ::nView ) )->nNumRec )
-         ::oDbf:cIdeDoc    := Upper( ::oDbf:cClsDoc ) + ::oDbf:cSerDoc + ::oDbf:cNumDoc + ::oDbf:cSufDoc
-         ::oDbf:cTipRec    := ( D():FacturasClientesCobros( ::nView ) )->cTipRec
-
-         ::oDbf:lCobRec    := ( D():FacturasClientesCobros( ::nView ) )->lCobrado
-
-         ::oDbf:nAnoDoc    := Year( ( D():FacturasClientesCobros( ::nView ) )->dPreCob )
-         ::oDbf:nMesDoc    := Month( ( D():FacturasClientesCobros( ::nView ) )->dPreCob )
-         ::oDbf:dFecDoc    := ( D():FacturasClientesCobros( ::nView ) )->dPreCob
-         ::oDbf:cHorDoc    := SubStr( ( D():FacturasClientesCobros( ::nView ) )->cHorCre, 1, 2 )
-         ::oDbf:cMinDoc    := SubStr( ( D():FacturasClientesCobros( ::nView ) )->cHorCre, 4, 2 )
-
-         ::oDbf:nTotNet    := nTotRecCli( D():FacturasClientesCobros( ::nView ) )
-         ::oDbf:nTotCob    := nTotCobCli( D():FacturasClientesCobros( ::nView ) )
-
-         ::oDbf:nNumRem    := ( D():FacturasClientesCobros( ::nView ) )->nNumRem
-         ::oDbf:cSufRem    := ( D():FacturasClientesCobros( ::nView ) )->cSufRem
-
-         ::oDbf:dFecVto    := ( D():FacturasClientesCobros( ::nView ) )->dFecVto
-
-         ::oDbf:cEstado    := cEstadoRecibo( D():FacturasClientesCobros( ::nView ) )
-
-         ::oDbf:nRieCli    := RetFld( ( D():FacturasClientesCobros( ::nView ) )->cCodCli, ( D():Clientes( ::nView ) ), "Riesgo", "Cod" )
-         ::oDbf:cDniCli    := RetFld( ( D():FacturasClientesCobros( ::nView ) )->cCodCli, ( D():Clientes( ::nView ) ), "Nif", "Cod" )
-
-         // Añadimos un nuevo registro--------------------------------------------
-
-         if ::lValidRegister()
-            ::oDbf:Insert()
-         else
-            ::oDbf:Cancel()
-         end if
-
-         ( D():FacturasClientesCobros( ::nView ) )->( dbskip() )
-
-         ::setMeterAutoIncremental()
-
-      end while
-   
-   RECOVER USING oError
-
-      msgStop( ErrorMessage( oError ), "Imposible añadir recibos de clientes" )
-
-   END SEQUENCE
-
-   ErrorBlock( oBlock )*/
-   
-RETURN ( Self )
 
 //---------------------------------------------------------------------------//

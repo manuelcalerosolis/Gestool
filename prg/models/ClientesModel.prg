@@ -13,6 +13,8 @@ CLASS ClientesModel FROM ADSBaseModel
 
    METHOD getClientesPorRuta( cWhere, cOrderBy )
 
+   METHOD getObrasPorCliente( dbfSql, cCodigoCliente )
+
 END CLASS
 
 //---------------------------------------------------------------------------//
@@ -61,5 +63,16 @@ METHOD getClientesPorRuta( cWhere, cAgente, cOrderBy )
    end if
 
 RETURN ( nil )
+
+//---------------------------------------------------------------------------//
+
+METHOD getObrasPorCliente( dbfSql, cCodigoCliente )
+
+   local cSql  := "SELECT * FROM " + ADSBaseModel():getEmpresaTableName( "ObrasT" )     + ;
+                        " WHERE cCodCli = " + quoted( cCodigoCliente )
+
+   ADSBaseModel():ExecuteSqlStatement( cSql, @dbfSql )
+
+return ( dbfSql )
 
 //---------------------------------------------------------------------------//
