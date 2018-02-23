@@ -128,6 +128,9 @@ METHOD ActivateNavigatorView()
 
    ::closeAllWindows()
    
+   ::oModel:setNavigatorColumnOrderFromModel( ::getName() )
+   ::oModel:setNavigatorColumnOrientationFromModel( ::getName() )
+
    ::oRowSet:build( ::oModel:getSelectSentence() )
 
    ::oNavigatorView:Activate()
@@ -150,6 +153,9 @@ METHOD ActivateSelectorView()
       msgStop( "Acceso no permitido." )
       RETURN ( nil )
    end if
+
+   ::oModel:setSelectorColumnOrderFromModel( ::getName() )
+   ::oModel:setSelectorColumnOrientationFromModel( ::getName() )
 
    ::oRowSet:build( ::oModel:getSelectSentence() )
 
@@ -356,9 +362,9 @@ METHOD onChangeCombo( oColumn )
 
    oComboBox:Set( oColumn:cHeader )
 
-   ::changeModelOrderAndOrientation( oColumn:cSortOrder, oColumn:cOrder )
+   ::getBrowse():changeColumnOrder( oColumn )
 
-   ::getBrowse():selectColumnOrder( oColumn )
+   ::changeModelOrderAndOrientation( oColumn:cSortOrder, oColumn:cOrder )
 
    ::getBrowse():refreshCurrent()
 

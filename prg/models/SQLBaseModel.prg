@@ -30,7 +30,9 @@ CLASS SQLBaseModel
    DATA cFilterWhere
    
    DATA cColumnOrder                  
-   DATA cColumnKey                    
+
+   DATA cColumnKey                                    INIT "id"
+   
    DATA cColumnCode                                   INIT "codigo"
 
    DATA hBuffer 
@@ -67,6 +69,7 @@ CLASS SQLBaseModel
    METHOD getTableColumns() 
 
    METHOD getEmpresaColumns()
+   METHOD getDateTimeColumns()
    METHOD getTimeStampColumns()
    METHOD getTimeStampSentColumns()
 
@@ -133,11 +136,16 @@ CLASS SQLBaseModel
    METHOD setColumnOrder( cColumnOrder )              INLINE ( ::cColumnOrder := cColumnOrder )
    METHOD getColumnOrder()                            INLINE ( ::cColumnOrder )
    
-   METHOD setColumnOrderFromModel( cName )
+   METHOD setColumnOrderFromModel( cType, cName )
+   METHOD setNavigatorColumnOrderFromModel( cName )   INLINE ( ::setColumnOrderFromModel( "navigator", cName ) )
+   METHOD setSelectorColumnOrderFromModel( cName )    INLINE ( ::setColumnOrderFromModel( "selector", cName ) )
 
    METHOD setColumnOrientation( cColumnOrientation )  INLINE ( ::cColumnOrientation := cColumnOrientation )
    METHOD getColumnOrientation()                      INLINE ( ::cColumnOrientation )
-   METHOD setColumnOrientationFromModel( cName )
+   
+   METHOD setColumnOrientationFromModel( cType, cName )
+   METHOD setNavigatorColumnOrientationFromModel( cName )   INLINE ( ::setColumnOrientationFromModel( "navigator", cName ) )
+   METHOD setSelectorColumnOrientationFromModel( cName )    INLINE ( ::setColumnOrientationFromModel( "selector", cName ) )
 
    METHOD getDeleteSentenceById( nId )
 
@@ -211,7 +219,7 @@ RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 
-METHOD getTimeStampColumns()
+METHOD getDateTimeColumns()
 
    hset( ::hColumns, "creado",      {  "create"    => "DATETIME DEFAULT NULL"       ,;
                                        "text"      => "Creación fecha y hora"       ,;
@@ -229,6 +237,20 @@ METHOD getTimeStampSentColumns()
 
    hset( ::hColumns, "enviado",     {  "create"    => "DATETIME DEFAULT NULL"       ,;
                                        "text"      => "Enviado fecha y hora" }      )
+
+RETURN ( ::hColumns )
+
+//---------------------------------------------------------------------------//
+
+METHOD getTimeStampColumns()
+
+   hset( ::hColumns, "created_at",  {  "create"    => "TIMESTAMP NULL DEFAULT NULL" ,;
+                                       "text"      => "Creación fecha y hora"       ,;
+                                       "default"   => {|| hb_datetime() } }         )
+
+   hset( ::hColumns, "updated_at",  {  "create"    => "TIMESTAMP NULL DEFAULT NULL" ,;
+                                       "text"      => "Modificación fecha y hora"   ,;
+                                       "default"   => {|| hb_datetime() } }         )
 
 RETURN ( ::hColumns )
 
@@ -580,12 +602,18 @@ RETURN ( cSentence )
 
 METHOD getDeleteSentenceById( aIds )
 
-   local cSentence   := "DELETE FROM " + ::cTableName + space( 1 ) + ;
-                           "WHERE " + ::cColumnKey + " IN ( "
+   local cSentence   
+
+   if hb_isnumeric( aIds )
+      aIds     := { aIds }
+   end if 
+
+   cSentence   := "DELETE FROM " + ::cTableName + space( 1 ) + ;
+                     "WHERE " + ::cColumnKey + " IN ( "
    
    aeval( aIds, {| v | cSentence += if( hb_isarray( v ), toSQLString( atail( v ) ), toSQLString( v ) ) + ", " } )
 
-   cSentence         := chgAtEnd( cSentence, ' )', 2 )
+   cSentence   := chgAtEnd( cSentence, ' )', 2 )
 
 RETURN ( cSentence )
 
@@ -692,6 +720,10 @@ METHOD loadDuplicateBuffer( id )
 
    if hhaskey( ::hBuffer, "id" )
       hset( ::hBuffer, "id", 0 )
+   end if 
+
+   if hhaskey( ::hBuffer, "uuid" )   
+      hset( ::hBuffer, "uuid", win_uuidcreatestring() )
    end if 
 
    ::fireEvent( 'loadedduplicatebuffer' )
@@ -910,9 +942,9 @@ RETURN ( hset( ::hBuffer, cColumn, uValue ) )
 
 //----------------------------------------------------------------------------//
 
-METHOD setColumnOrderFromModel( cName )
+METHOD setColumnOrderFromModel( cType, cName )
    
-   local cColumnOrder   := SQLConfiguracionVistasModel():getColumnOrder( cName )
+   local cColumnOrder   := SQLConfiguracionVistasModel():getColumnOrder( cType, cName )
 
    if !empty( cColumnOrder )
       ::setColumnOrder( cColumnOrder )

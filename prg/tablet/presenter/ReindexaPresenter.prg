@@ -5,15 +5,22 @@ CLASS ReindexaPresenter FROM DocumentsSales
 
    DATA oReindexaView
 
+   DATA lSyncronize                    AS LOGIC INIT .t.
+
    METHOD New()
 
    METHOD runNavigator()
 
-   METHOD onPreRunNavigator()    INLINE ( .t. )
+   METHOD onPreRunNavigator()          INLINE ( .t. )
 
    METHOD play()
 
    METHOD runReindexa()
+
+   METHOD setSyncronize( lSyncronize ) INLINE ( ::lSyncronize := lSyncronize )
+   METHOD getSyncronize()              INLINE ( ::lSyncronize )
+
+   METHOD setLastReindex()             INLINE ( writePProString( "Tablet", "LastReindex", dtos( date() ), cIniAplication() ) )
 
 END CLASS
 
@@ -22,6 +29,7 @@ END CLASS
 METHOD New() CLASS ReindexaPresenter
 
    ::oReindexaView    := ReindexaView():New( self )
+
    ::oReindexaView:setTitleDocumento( "Regeneración de indices" )
 
 Return( self )
@@ -83,9 +91,11 @@ METHOD runReindexa() CLASS ReindexaPresenter
       oClassReindexa:BuildEmpresa()
       oClassReindexa:Reindex()
       
-      oClassReindexa:Syncronize()
+      if ::lSyncronize
+         oClassReindexa:Syncronize()
+      end if 
 
-      ApoloMsgStop( "Proceso finalizado con éxito." )
+      ::setLastReindex()
 
    end if
 

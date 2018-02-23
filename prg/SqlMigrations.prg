@@ -113,6 +113,8 @@ METHOD addModels()
 
    aadd( ::aModels, SQLTagsModel():New() )
 
+   aadd( ::aModels, SQLUsuariosModel():New() )
+
    aadd( ::aModels, SituacionesModel():New() )
 
    aadd( ::aModels, SQLConfiguracionVistasModel():New() )

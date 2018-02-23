@@ -48,8 +48,12 @@ CLASS SQLDatabase
    METHOD escapeStr( cEscape )            INLINE ( if( !empty( ::oConexion ), ::oConexion:escapeStr( cEscape ), cEscape ) )
 
    METHOD selectFetch( cSql )
-   METHOD selectFetchHash( cSentence, attributePad )     INLINE ::selectFetch( cSentence, FETCH_HASH, attributePad )
-   METHOD selectFetchArray( cSentence, attributePad )    INLINE ::selectFetch( cSentence, FETCH_ARRAY, attributePad )
+
+   METHOD selectFetchHash( cSentence, attributePad )  INLINE ::selectFetch( cSentence, FETCH_HASH, attributePad )
+   METHOD selectTrimedFetchHash( cSentence )          INLINE ::selectFetchHash( cSentence, .f. )
+
+   METHOD selectFetchArray( cSentence, attributePad ) INLINE ::selectFetch( cSentence, FETCH_ARRAY, attributePad )
+   METHOD selectTrimedFetchArray( cSentence )         INLINE ::selectFetchArray( cSentence, .f. )
 
    METHOD selectFetchToJson( cSentence )
    

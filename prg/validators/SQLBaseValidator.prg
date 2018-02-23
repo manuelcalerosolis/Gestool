@@ -24,7 +24,7 @@ CLASS SQLBaseValidator
 
    METHOD setValue( uValue )              INLINE   ( ::uValue := uValue )
 
-   METHOD assignValue( cColumn, uValue )  INLINE   (  iif( empty( uValue ),;
+   METHOD assignValue( cColumn, uValue )  INLINE   (  iif( hb_isnil( uValue ),;
                                                       ::setValue( ::oController:getModelBuffer( cColumn ) ),;
                                                       ::setValue( uValue ) ) )
 
@@ -43,6 +43,9 @@ CLASS SQLBaseValidator
    METHOD Unique()
    METHOD Exist()
    METHOD EmptyOrExist()
+
+   METHOD Password( uValue )
+   METHOD Mail( uValue )
 
    METHOD existArticulo( uValue )
    METHOD existFamilia( uValue )
@@ -188,6 +191,18 @@ METHOD EmptyOrExist( uValue )
    nCount            := ::oDatabase:SelectValue( cSQLSentence )
 
 RETURN ( hb_isnumeric( nCount ) .and. nCount != 0 )
+
+//---------------------------------------------------------------------------//
+
+METHOD Mail( uValue )
+
+RETURN ( hb_regexmatch( "[A-Z0-9._%-]+@[A-Z0-9.-]+\.[A-Z]{2,4}", uValue, .f. ) )
+
+//---------------------------------------------------------------------------//
+
+METHOD Password( uValue )
+
+RETURN ( hb_regexmatch( "[a-z0-9_-]{8,18}", uValue, .f. ) )
 
 //---------------------------------------------------------------------------//
 

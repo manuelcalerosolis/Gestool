@@ -302,7 +302,7 @@ METHOD getColumnOrderFromModel()
 
    local cColumnOrder   := SQLConfiguracionVistasModel():getColumnOrder( ::getViewType(), ::getName() )
 
-RETURN ( Self )
+RETURN ( cColumnOrder )
 
 //------------------------------------------------------------------------//
 
@@ -322,9 +322,9 @@ RETURN ( Self )
 
 METHOD getColumnOrientationFromModel()
 
-   local cColumnOrientation   := SQLConfiguracionVistasModel():getColumnOrientation( ::getName() )
+   local cColumnOrientation   := SQLConfiguracionVistasModel():getColumnOrientation( ::getViewType(), ::getName() )
 
-RETURN ( Self )
+RETURN ( cColumnOrientation )
 
 //------------------------------------------------------------------------//
 
@@ -332,17 +332,18 @@ METHOD setColumnOrder( cSortOrder, cSortOrientation )
 
    local oColumn
 
-   oColumn           := ::getColumnOrder( cSortOrder )
+   DEFAULT cSortOrder         := ::getColumnOrderFromModel()
+   DEFAULT cSortOrientation   := ::getColumnOrientationFromModel()
+
+   oColumn                    := ::getColumnOrder( cSortOrder )
 
    if empty( oColumn )
       RETURN ( Self )
    end if 
 
    if !empty( cSortOrientation )
-      oColumn:cOrder := cSortOrientation
+      oColumn:cOrder          := cSortOrientation
    end if 
-
-   ::oBrowse:selectColumnOrder( oColumn )
 
 RETURN ( Self )
 

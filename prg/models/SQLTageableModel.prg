@@ -34,4 +34,39 @@ METHOD getColumns()
 RETURN ( ::hColumns )
 
 //---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+
+CLASS TageableRepository FROM SQLBaseRepository
+
+   METHOD getTableName()      INLINE ( SQLTageableModel():getTableName() ) 
+
+   METHOD getHashTageableTagsNameAndId( tageableUuid ) ;
+                              INLINE ( ::getDatabase():selectTrimedFetchHash( ::getSQLTageableTagsNameAndId( tageableUuid ) ) )
+   METHOD getSQLTageableTagsNameAndId( tageableUuid )
+
+END CLASS
+
+//---------------------------------------------------------------------------//
+
+METHOD getSQLTageableTagsNameAndId( tageableUuid ) CLASS TageableRepository 
+
+   local cSql
+
+   cSql  := "SELECT " + SQLTagsModel():getTableName() + ".nombre, "           + ;
+                  SQLTageableModel():getTableName() + ".id "                  + ; 
+               "FROM " + SQLTageableModel():getTableName()              + " " + ;
+               "INNER JOIN " + SQLTagsModel():getTableName()            + " " + ;
+                  "ON " + SQLTagsModel():getTableName() + ".uuid = " + SQLTageableModel():getTableName() + ".tag_uuid " + ;
+               "WHERE " + SQLTageableModel():getTableName() + ".tageable_uuid = " + quoted( tageableUuid )
+
+RETURN ( cSql ) 
+
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
 

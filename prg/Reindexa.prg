@@ -360,6 +360,7 @@ RETURN ( nil )
 
 METHOD Sincroniza()
 
+   ::SetText( "Sincroniza usuarios", ::aProgress[ 6 ] )                                ; SynUsuario()
    ::SetText( "Sincroniza bancos de clientes", ::aProgress[ 6 ] )                      ; SynClient( ::cPathEmp )
    ::SetText( "Sincroniza bancos de proveedores", ::aProgress[ 6 ] )                   ; SynProvee( ::cPathEmp )
    ::SetText( "Sincroniza artículos", ::aProgress[ 6 ] )                               ; SynArt(    ::cPathEmp )

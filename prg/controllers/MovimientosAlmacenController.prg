@@ -58,6 +58,8 @@ CLASS MovimientosAlmacenController FROM SQLNavigatorController
 
    METHOD stampAgente()
 
+   METHOD stampMarcadores()
+
    METHOD printDocument()  
 
    METHOD labelDocument()
@@ -86,6 +88,7 @@ CLASS MovimientosAlmacenController FROM SQLNavigatorController
 
    METHOD isAddedTag( cMarcador )
       METHOD addTag( uuidTag )
+      METHOD deleteTag( idTageable )
 
 END CLASS
 
@@ -118,8 +121,6 @@ METHOD New()
    ::lOthers                     := .t.
 
    ::oModel                      := SQLMovimientosAlmacenModel():New( self )
-   ::oModel:setColumnOrderFromModel( ::getName() )
-   ::oModel:setColumnOrientationFromModel( ::getName() )
 
    ::oBrowseView                 := MovimientosAlmacenBrowseView():New( self )
 
@@ -274,6 +275,22 @@ METHOD stampAgente( oGetAgente )
    local cNombreAgente     := AgentesModel():getNombre( cCodigoAgente )
 
    oGetAgente:oHelpText:cText( cNombreAgente )
+
+RETURN ( .t. )
+
+//---------------------------------------------------------------------------//
+   
+METHOD stampMarcadores( oTagsEver )
+   
+   local aMarcadores    := TageableRepository():getHashTageableTagsNameAndId( ::oModel:getBuffer( "uuid" ) ) 
+
+   if empty( aMarcadores )
+      RETURN ( .t. )
+   end if 
+   
+   aeval( aMarcadores, {|h| oTagsEver:addItem( hget( h, "nombre" ), hget( h, "id" ) ) } )
+
+   oTagsEver:Refresh()
 
 RETURN ( .t. )
 
@@ -479,6 +496,14 @@ METHOD addTag( uuidTag )
    hBuffer[ "tageable_type" ] := ::getName()
    hBuffer[ "tageable_uuid" ] := ::oModel:getBuffer( "uuid" )
    SQLTageableModel():insertBuffer( hBuffer )
+
+RETURN ( .t. )
+
+//---------------------------------------------------------------------------//
+
+METHOD deleteTag( idTageable )
+
+   SQLTageableModel():deleteById( idTageable )
 
 RETURN ( .t. )
 

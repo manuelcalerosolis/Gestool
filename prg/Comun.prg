@@ -279,7 +279,11 @@ RETURN ( .t. )
 
 FUNCTION Test()
 
+<<<<<<< HEAD
    //MovimientosAlmacenController():New():ActivateNavigatorView() 
+=======
+   // MovimientosAlmacenController():New():ActivateNavigatorView() 
+>>>>>>> 8e2de2e3022d9321a3d7b68e78681f662a29495e
 
 RETURN nil
 
@@ -2749,7 +2753,7 @@ FUNCTION CreateAcceso( oWnd )
    oItem:oGroup         := oGrupo
    oItem:cPrompt        := 'Test navigator'
    oItem:cMessage       := 'Test navigator'
-   oItem:bAction        := {|| MovimientosAlmacenController():New():ActivateNavigatorView() }
+   oItem:bAction        := {|| UsuariosController():New():ActivateNavigatorView() }
    oItem:cId            := "99999"
    oItem:cBmp           := "gc_user_headset_16"
    oItem:cBmpBig        := "gc_user_headset_32"

@@ -374,21 +374,18 @@ METHOD setStockArticulo()
    Stock por lote------------------------------------------------------------//
    */
 
-   ::oViewEditDetail:nGetStock   := ::oSender:oStock:nSQLStockActual(   ::hGetDetail( "Articulo" ),;
-                                                                        ::hGetDetail( "Almacen" ),;
-                                                                        ::hGetDetail( "ValorPropiedad1" ),;
-                                                                        ::hGetDetail( "ValorPropiedad2" ),;
-                                                                        ::hGetDetail( "Lote" ),;
-                                                                        ::hGetDetail( "LineaEscandallo" ),;
-                                                                        nil ,;
-                                                                        ::hGetDetail( "TipoStock" ) )
+   ::oViewEditDetail:nGetStock   := ::oSender:oStock:nStockAlmacen(  ::hGetDetail( "Articulo" ),;
+                                                                     ::hGetDetail( "Almacen" ),;
+                                                                     ::hGetDetail( "ValorPropiedad1" ),;
+                                                                     ::hGetDetail( "ValorPropiedad2" ),;
+                                                                     ::hGetDetail( "Lote" ) )
 
    if !empty( ::oViewEditDetail:oGetStock )
       ::oViewEditDetail:oGetStock:Refresh()
    end if
 
-   ::oViewEditDetail:nGetStockAlmacen  := ::oSender:oStock:nSQLGlobalStockActual(   ::hGetDetail( "Articulo" ),;
-                                                                                    ::hGetDetail( "Almacen" ) )
+   ::oViewEditDetail:nGetStockAlmacen  := ::oSender:oStock:nStockAlmacen(  ::hGetDetail( "Articulo" ),;
+                                                                           ::hGetDetail( "Almacen" ) )
 
    if !empty( ::oViewEditDetail:oGetStockAlmacen )
       ::oViewEditDetail:oGetStockAlmacen:Refresh()

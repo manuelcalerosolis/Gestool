@@ -682,7 +682,7 @@ FUNCTION lCheckSaasMode()
 
    if oCon:Connect( "gestool.serveftp.com", "root", "nidorino", "gestool_saas", "3306" )
 
-      oQuery               := TMSQuery():New( oCon, "SELECT * FROM numerosserie WHERE serial='" + AllTrim( Str( Abs( nSerialHD() ) ) ) + "'" )
+      oQuery               := TMSQuery():New( oCon, "SELECT * FROM numerosserie WHERE serial='" + alltrim( Str( Abs( nSerialHD() ) ) ) + "'" )
 
       if oQuery:Open() 
 
@@ -696,7 +696,7 @@ FUNCTION lCheckSaasMode()
 
                nIdClient      := oQuery:FieldGetByName( "id_client" )
 
-               oQuery2        := TMSQuery():New( oCon, "SELECT * FROM clientes WHERE id='" + AllTrim( Str( nIdClient ) ) + "' AND activo" )
+               oQuery2        := TMSQuery():New( oCon, "SELECT * FROM clientes WHERE id='" + alltrim( Str( nIdClient ) ) + "' AND activo" )
 
                if oQuery2:Open() .and. oQuery2:RecCount() > 0
 
@@ -714,9 +714,9 @@ FUNCTION lCheckSaasMode()
                      
                      lCheck   := .t.
 
-                     cTypeVersion( "[Saas dias: " + Alltrim( Str( nDaySaas ) ) +" ]")
+                     cTypeVersion( "[Saas dias: " + alltrim( Str( nDaySaas ) ) +" ]")
                      
-                     msgStop( "Le quedan " + Alltrim( Str( nDaySaas ) ) + " dias para activar su licencia", "Cliente inactivo." )
+                     msgStop( "Le quedan " + alltrim( Str( nDaySaas ) ) + " dias para activar su licencia", "Cliente inactivo." )
 
                   else 
 
@@ -737,9 +737,9 @@ FUNCTION lCheckSaasMode()
                   
                   lCheck      := .t.
 
-                  cTypeVersion( "[Saas dias: " + Alltrim( Str( nDaySaas ) ) +" ]")
+                  cTypeVersion( "[Saas dias: " + alltrim( Str( nDaySaas ) ) +" ]")
                   
-                  msgStop( "Le quedan " + Alltrim( Str( nDaySaas ) ) + " dias para activar su licencia", "Licencia inactiva." )
+                  msgStop( "Le quedan " + alltrim( Str( nDaySaas ) ) + " dias para activar su licencia", "Licencia inactiva." )
 
                else 
 
@@ -860,7 +860,7 @@ FUNCTION MainTablet()
                            "nWidth"    => 64,;
                            "nHeight"   => 64,;
                            "cResName"  => "gc_user_64",;
-                           "bLClicked" => {|| Customer():New():runNavigatorCustomer() },;
+                           "bLClicked" => {|| NeedReindex(), Customer():New():runNavigatorCustomer() },;
                            "oWnd"      => oDlg } )
 
    TGridUrllink():Build({  "nTop"      => {|| GridRow( 3 ) },;
@@ -872,7 +872,7 @@ FUNCTION MainTablet()
                            "nClrInit"  => nGridColor(),;
                            "nClrOver"  => nGridColor(),;
                            "nClrVisit" => nGridColor(),;
-                           "bAction"   => {|| Customer():New():runNavigatorCustomer() } } )
+                           "bAction"   => {|| NeedReindex(), Customer():New():runNavigatorCustomer() } } )
 
    //----------------Salir-----------------------------------------------------
 
@@ -891,7 +891,7 @@ FUNCTION MainTablet()
                            "nWidth"    => 64,;
                            "nHeight"   => 64,;
                            "cResName"  => "gc_clipboard_empty_user_64",;
-                           "bLClicked" => {|| OrderCustomer():New():Play() },;
+                           "bLClicked" => {|| NeedReindex(), OrderCustomer():New():Play() },;
                            "oWnd"      => oDlg } )
 
    TGridUrllink():Build({  "nTop"      => {|| GridRow( 6 ) },;
@@ -903,7 +903,7 @@ FUNCTION MainTablet()
                            "nClrInit"  => nGridColor(),;
                            "nClrOver"  => nGridColor(),;
                            "nClrVisit" => nGridColor(),;
-                           "bAction"   => {|| OrderCustomer():New():Play() } } )
+                           "bAction"   => {|| NeedReindex(), OrderCustomer():New():Play() } } )
 
    //----------------Resumen diario--------------------------------------------
 
@@ -928,7 +928,7 @@ FUNCTION MainTablet()
                            "nWidth"    => 64,;
                            "nHeight"   => 64,;
                            "cResName"  => "gc_cabinet_open_64",;
-                           "bLClicked" => {|| Reporting():New():Resource() },;
+                           "bLClicked" => {|| NeedReindex(), Reporting():New():Resource() },;
                            "oWnd"      => oDlg } )
 
    //----------------Albaranes de clientes-------------------------------------
@@ -938,7 +938,7 @@ FUNCTION MainTablet()
                            "nWidth"    => 64,;
                            "nHeight"   => 64,;
                            "cResName"  => "gc_document_empty_user_64",;
-                           "bLClicked" => {|| DeliveryNoteCustomer():New():Play() },;
+                           "bLClicked" => {|| NeedReindex(), DeliveryNoteCustomer():New():Play() },;
                            "oWnd"      => oDlg } )
 
    TGridUrllink():Build({  "nTop"      => {|| GridRow( 9 ) },;
@@ -950,7 +950,7 @@ FUNCTION MainTablet()
                            "nClrInit"  => nGridColor(),;
                            "nClrOver"  => nGridColor(),;
                            "nClrVisit" => nGridColor(),;
-                           "bAction"   => {|| DeliveryNoteCustomer():New():Play() } } )
+                           "bAction"   => {|| NeedReindex(), DeliveryNoteCustomer():New():Play() } } )
 
    /*
    Copias de Seguridad---------------------------------------------------------
@@ -965,14 +965,14 @@ FUNCTION MainTablet()
                            "oWnd"      => oDlg } )
 
 
-   //----------------Facturas
+   //----------------Facturas--------------------------------------------------
    
    TGridImage():Build(  {  "nTop"      => {|| GridRow( 12 ) },;
                      		"nLeft"     => {|| GridWidth( 0.5, oDlg ) },;
                      		"nWidth"    => 64,;
                      		"nHeight"   => 64,;
                      		"cResName"  => "gc_document_text_user_64",;
-                     		"bLClicked" => {|| InvoiceCustomer():New():play() },;
+                     		"bLClicked" => {|| NeedReindex(), InvoiceCustomer():New():play() },;
                      		"oWnd"      => oDlg } )
 
    TGridUrllink():Build({  "nTop"      => {|| GridRow( 12 ) },;
@@ -984,7 +984,7 @@ FUNCTION MainTablet()
                            "nClrInit"  => nGridColor(),;
                            "nClrOver"  => nGridColor(),;
                            "nClrVisit" => nGridColor(),;
-                           "bAction"   => {|| InvoiceCustomer():New():play() } } )
+                           "bAction"   => {|| NeedReindex(), InvoiceCustomer():New():play() } } )
 
    //----------------Recibos---------------------------------------------------
    
@@ -993,7 +993,7 @@ FUNCTION MainTablet()
                            "nWidth"    => 64,;
                            "nHeight"   => 64,;
                            "cResName"  => "gc_briefcase2_user_64",;
-                           "bLClicked" => {|| ReceiptInvoiceCustomer():New():play() },;
+                           "bLClicked" => {|| NeedReindex(), ReceiptInvoiceCustomer():New():play() },;
                            "oWnd"      => oDlg } )
 
    TGridUrllink():Build({  "nTop"      => {|| GridRow( 15 ) },;
@@ -1005,7 +1005,7 @@ FUNCTION MainTablet()
                            "nClrInit"  => nGridColor(),;
                            "nClrOver"  => nGridColor(),;
                            "nClrVisit" => nGridColor(),;
-                           "bAction"   => {|| ReceiptInvoiceCustomer():New():play() } } )
+                           "bAction"   => {|| NeedReindex(), ReceiptInvoiceCustomer():New():play() } } )
 
    //Reindexa------------------------------------------------------------------
 
@@ -1017,14 +1017,14 @@ FUNCTION MainTablet()
                            "bLClicked" => {|| ReindexaPresenter():New():Play() },;
                            "oWnd"      => oDlg } )
 
-   //----------------Envio y recepcion
+   //----------------Envio y recepcion-----------------------------------------
 
    TGridImage():Build(  {  "nTop"      => {|| GridRow( 18 ) },;
                            "nLeft"     => {|| GridWidth( 0.5, oDlg ) },;
                            "nWidth"    => 64,;
                            "nHeight"   => 64,;
                            "cResName"  => "gc_satellite_dish_64",;
-                           "bLClicked" => {|| TSndRecInf():New():ActivateTablet() },;
+                           "bLClicked" => {|| NeedReindex(), TSndRecInf():New():ActivateTablet() },;
                            "oWnd"      => oDlg } )
 
    TGridUrllink():Build({  "nTop"      => {|| GridRow( 18 ) },;
@@ -1036,9 +1036,9 @@ FUNCTION MainTablet()
                            "nClrInit"  => nGridColor(),;
                            "nClrOver"  => nGridColor(),;
                            "nClrVisit" => nGridColor(),;
-                           "bAction"   => {|| TSndRecInf():New():ActivateTablet() } } )
+                           "bAction"   => {|| NeedReindex(), TSndRecInf():New():ActivateTablet() } } )
 
-   //----------------Informacion empresa
+   //----------------Informacion empresa---------------------------------------
 
    oGridTree   := TGridTreeView():Build( ;
                         {  "nTop"      => {|| GridRow( 10 ) },;
@@ -1050,16 +1050,43 @@ FUNCTION MainTablet()
 
 	// Redimensionamos y activamos el diálogo----------------------------------- 
 
-   oDlg:bResized       := {|| GridResize( oDlg ) }
-   oDlg:bStart         := {|| oGridTree:Add( "Empresa : "      + uFieldEmpresa( "CodEmp" ) + "-" + uFieldEmpresa( "cNombre" ) ),;
-                              oGridTree:Add( "Usuario : "      + rtrim( oUser():cNombre() ) ),;
-                              oGridTree:Add( "Delegación : "   + rtrim( oUser():cDelegacion() ) ),;
-                              oGridTree:Add( "Caja : "         + oUser():cCaja() ),;
-                              oGridTree:Add( "Almacén : "      + rtrim( oUser():cAlmacen() ) + "-" + RetAlmacen( oUser():cAlmacen() ) ),;
-                              oGridTree:Add( "Agente : "       + rtrim( cCodigoAgente() ) + "-" + AllTrim( RetNbrAge( cCodigoAgente() ) ) ),;
-                              oGridTree:Add( "Sesión : "       + Alltrim( Transform( cCurSesion(), "######" ) ) ) } 
+   oDlg:bResized        := {|| GridResize( oDlg ) }
+   oDlg:bStart          := {|| StartMainTablet( oGridTree ) } 
 
 	ACTIVATE DIALOG oDlg CENTER ON INIT ( GridMaximize( oDlg ) )
+
+RETURN ( .t. )
+
+//---------------------------------------------------------------------------//
+
+FUNCTION StartMainTablet( oGridTree )
+
+   oGridTree:Add( "Empresa : "      + uFieldEmpresa( "CodEmp" ) + "-" + uFieldEmpresa( "cNombre" ) )
+   oGridTree:Add( "Usuario : "      + rtrim( oUser():cNombre() ) )
+   oGridTree:Add( "Delegación : "   + rtrim( oUser():cDelegacion() ) )
+   oGridTree:Add( "Caja : "         + oUser():cCaja() )
+   oGridTree:Add( "Almacén : "      + rtrim( oUser():cAlmacen() ) + "-" + RetAlmacen( oUser():cAlmacen() ) )
+   oGridTree:Add( "Agente : "       + rtrim( cCodigoAgente() ) + "-" + alltrim( RetNbrAge( cCodigoAgente() ) ) )
+   oGridTree:Add( "Sesión : "       + alltrim( Transform( cCurSesion(), "######" ) ) )
+
+   NeedReindex()
+
+RETURN ( .t. )
+
+//---------------------------------------------------------------------------//
+
+FUNCTION NeedReindex()
+
+   local dLastReindex   
+   local oReindexPresenter
+   
+   dLastReindex            := stod( getPvProfString( "Tablet", "LastReindex", "", cIniAplication() ) )
+
+   if empty( dLastReindex ) .or. ( date() > dLastReindex )
+      oReindexPresenter    := ReindexaPresenter():New()
+      oReindexPresenter:setSyncronize( .f. )
+      oReindexPresenter:Play()
+   end if 
 
 RETURN ( .t. )
 
