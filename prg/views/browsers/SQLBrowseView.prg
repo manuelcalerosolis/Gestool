@@ -310,9 +310,7 @@ METHOD saveColumnOrientationToModel()
 
    local cColumnOrientation   
 
-   aeval( ::oBrowse:aCols, {|o| if( !empty( o:cOrder ), ( msgalert( o:cSortOrder ), cColumnOrientation := o:cOrder ), ) } )
-
-   msgalert( cColumnOrientation, "save cColumnOrientation" )
+   aeval( ::oBrowse:aCols, {|o| if( !empty( o:cOrder ), cColumnOrientation := o:cOrder, ) } )
 
    if !empty( cColumnOrientation )
       SQLConfiguracionVistasModel():setColumnOrientation( ::getViewType(), ::getName(), cColumnOrientation )
@@ -337,9 +335,6 @@ METHOD setColumnOrder( cSortOrder, cSortOrientation )
    DEFAULT cSortOrder         := ::getColumnOrderFromModel()
    DEFAULT cSortOrientation   := ::getColumnOrientationFromModel()
 
-   msgalert( cSortOrder      , "cSortOrder" )
-   msgalert( cSortOrientation, "cSortOrientation" )
-
    oColumn                    := ::getColumnOrder( cSortOrder )
 
    if empty( oColumn )
@@ -349,8 +344,6 @@ METHOD setColumnOrder( cSortOrder, cSortOrientation )
    if !empty( cSortOrientation )
       oColumn:cOrder          := cSortOrientation
    end if 
-
-   ::oBrowse:selectColumnOrder( oColumn )
 
 RETURN ( Self )
 

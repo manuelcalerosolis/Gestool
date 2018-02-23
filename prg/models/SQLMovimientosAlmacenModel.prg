@@ -69,7 +69,7 @@ METHOD getColumns()
    hset( ::hColumns, "comentarios",       {  "create"    => "TEXT"                                    ,;
                                              "default"   => {|| "" } }                                )
 
-   ::getTimeStampColumns()   
+   ::getDateTimeColumns()   
 
    ::getTimeStampSentColumns()
 
@@ -165,8 +165,6 @@ METHOD loadDuplicateBuffer( id )
    ::Super:loadDuplicateBuffer( id )
 
    originalUuid         := hget( ::hBuffer, "uuid" )       
-
-   hset( ::hBuffer, "uuid", win_uuidcreatestring() )
 
    hset( ::hBuffer, "numero", MovimientosAlmacenRepository():getNextNumber() )
 

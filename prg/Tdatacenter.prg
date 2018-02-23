@@ -1722,6 +1722,7 @@ METHOD BuildData()
    oDataTable:aStruct      := aItmUsuario()
    oDataTable:bCreateFile  := {| cPath | mkUsuario( cPath ) }
    oDataTable:bCreateIndex := {| cPath | rxUsuario( cPath ) }
+   oDataTable:bSyncFile    := {| cPath | synUsuario( cPath ) }
    ::AddDataTable( oDataTable )
 
    oDataTable              := TDataTable():New( "Mapas", cPathDatos() )
@@ -4242,8 +4243,24 @@ METHOD Syncronize()
    if ::aLgcIndices[ 3 ]
 
       if !Empty( ::aProgress[ 3 ] )
-         ::aProgress[ 3 ]:SetTotal( len( ::aEmpresaTables ) )
+         ::aProgress[ 3 ]:SetTotal( len( ::aEmpresaTables ) + len( ::aDataTables ) )
       end if 
+
+      for each oTable in ::aDataTables
+
+         if !Empty( ::oMsg )
+            ::oMsg:SetText( "Sincronizando : " + oTable:cDescription )
+         end if
+
+         if !Empty( oTable:bSyncFile )
+            eval( oTable:bSyncFile )
+         end if
+
+         if !Empty( ::aProgress[ 3 ] )
+            ::aProgress[ 3 ]:Set( hb_EnumIndex() )
+         end if 
+
+      next
 
       for each oTable in ::aEmpresaTables
 

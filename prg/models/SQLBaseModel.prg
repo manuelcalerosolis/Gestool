@@ -69,6 +69,7 @@ CLASS SQLBaseModel
    METHOD getTableColumns() 
 
    METHOD getEmpresaColumns()
+   METHOD getDateTimeColumns()
    METHOD getTimeStampColumns()
    METHOD getTimeStampSentColumns()
 
@@ -218,7 +219,7 @@ RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 
-METHOD getTimeStampColumns()
+METHOD getDateTimeColumns()
 
    hset( ::hColumns, "creado",      {  "create"    => "DATETIME DEFAULT NULL"       ,;
                                        "text"      => "Creación fecha y hora"       ,;
@@ -236,6 +237,20 @@ METHOD getTimeStampSentColumns()
 
    hset( ::hColumns, "enviado",     {  "create"    => "DATETIME DEFAULT NULL"       ,;
                                        "text"      => "Enviado fecha y hora" }      )
+
+RETURN ( ::hColumns )
+
+//---------------------------------------------------------------------------//
+
+METHOD getTimeStampColumns()
+
+   hset( ::hColumns, "created_at",  {  "create"    => "TIMESTAMP NULL DEFAULT NULL" ,;
+                                       "text"      => "Creación fecha y hora"       ,;
+                                       "default"   => {|| hb_datetime() } }         )
+
+   hset( ::hColumns, "updated_at",  {  "create"    => "TIMESTAMP NULL DEFAULT NULL" ,;
+                                       "text"      => "Modificación fecha y hora"   ,;
+                                       "default"   => {|| hb_datetime() } }         )
 
 RETURN ( ::hColumns )
 
@@ -705,6 +720,10 @@ METHOD loadDuplicateBuffer( id )
 
    if hhaskey( ::hBuffer, "id" )
       hset( ::hBuffer, "id", 0 )
+   end if 
+
+   if hhaskey( ::hBuffer, "uuid" )   
+      hset( ::hBuffer, "uuid", win_uuidcreatestring() )
    end if 
 
    ::fireEvent( 'loadedduplicatebuffer' )

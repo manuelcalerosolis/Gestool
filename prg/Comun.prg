@@ -2749,7 +2749,7 @@ FUNCTION CreateAcceso( oWnd )
    oItem:oGroup         := oGrupo
    oItem:cPrompt        := 'Test navigator'
    oItem:cMessage       := 'Test navigator'
-   oItem:bAction        := {|| MovimientosAlmacenController():New():ActivateNavigatorView() }
+   oItem:bAction        := {|| UsuariosController():New():ActivateNavigatorView() }
    oItem:cId            := "99999"
    oItem:cBmp           := "gc_user_headset_16"
    oItem:cBmpBig        := "gc_user_headset_32"

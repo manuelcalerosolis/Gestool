@@ -49,7 +49,7 @@ METHOD onChangeCombo( oColumn )
 
    ::changeModelOrderAndOrientation( oColumn:cSortOrder, oColumn:cOrder )
 
-   ::oBrowseView:getBrowse():selectColumnOrder( oColumn )
+   ::oBrowseView:getBrowse():changeColumnOrder( oColumn )
 
    ::oBrowseView:getBrowse():refreshCurrent()
 

@@ -89,6 +89,8 @@ METHOD Build( cSentence )
       RETURN ( nil )
    end if 
 
+   cursorWait()
+
    ::oEvents:fire( 'buildingRowSet')
 
    try
@@ -113,6 +115,8 @@ METHOD Build( cSentence )
 
    ::oEvents:fire( 'builtRowSet')
 
+   cursorWE()
+   
 RETURN ( ::oRowSet )
 
 //---------------------------------------------------------------------------//

@@ -362,9 +362,9 @@ METHOD onChangeCombo( oColumn )
 
    oComboBox:Set( oColumn:cHeader )
 
-   ::changeModelOrderAndOrientation( oColumn:cSortOrder, oColumn:cOrder )
+   ::getBrowse():changeColumnOrder( oColumn )
 
-   ::getBrowse():selectColumnOrder( oColumn )
+   ::changeModelOrderAndOrientation( oColumn:cSortOrder, oColumn:cOrder )
 
    ::getBrowse():refreshCurrent()
 

@@ -49,6 +49,7 @@ REQUEST DBFCDX
 #define _LNOTCOB                 ( dbfUser )->( fieldpos( "lNotCob"  ) )       //   L      1      0
 #define _LNOTNOT                 ( dbfUser )->( fieldpos( "lNotNot"  ) )       //   L      1      0
 #define _LNOTCOM                 ( dbfUser )->( fieldpos( "lNotCom"  ) )       //   L      1      0
+#define _UUID                    ( dbfUser )->( fieldpos( "Uuid"     ) )       //   C     40      0
 
 //----------------------------------------------------------------------------//
 //Comenzamos la parte de código que se compila para el ejecutable normal
@@ -2779,7 +2780,8 @@ Function aItmUsuario()
                      { "lNotUni",   "L",  1,  0, "Lógico para no modificar las unidades" },;
                      { "lNotCob",   "L",  1,  0, "Lógico no permitir cobros" },;
                      { "lNotNot",   "L",  1,  0, "Lógico no permitir entregar notas" },;
-                     { "lNotCom",   "L",  1,  0, "Lógico no permitir imprimir comandas" } }
+                     { "lNotCom",   "L",  1,  0, "Lógico no permitir imprimir comandas" },;
+                     { "Uuid",      "C", 40,  0, "Uuid" } }
 
 Return ( aBase )
 
@@ -3169,4 +3171,43 @@ Return ( nil )
 
 //---------------------------------------------------------------------------//
 
+FUNCTION SynUsuario()
 
+   local oBlock
+   local oError
+   local dbfUser
+
+   oBlock               := ErrorBlock( {| oError | ApoloBreak( oError ) } )
+   BEGIN SEQUENCE
+
+   USE ( cPatDat() + "Users.Dbf" ) NEW VIA ( cDriver() ) EXCLUSIVE ALIAS ( cCheckArea( "USERS", @dbfUser ) )
+   SET ADSINDEX TO ( cPatDat() + "Users.Cdx" ) ADDITIVE
+
+   ( dbfUser )->( dbgotop() )
+
+   while !( dbfUser )->( eof() )
+
+      if empty( ( dbfUser )->Uuid )
+         ( dbfUser )->Uuid        := win_uuidcreatestring()
+      end if 
+
+      ( dbfUser )->( dbSkip() )
+
+      SysRefresh()
+
+   end while
+
+
+   RECOVER USING oError
+
+      msgStop( ErrorMessage( oError ), "Imposible abrir todas las bases de datos de articulos." )
+
+   END SEQUENCE
+
+   ErrorBlock( oBlock )
+
+   CLOSE ( dbfUser )
+
+RETURN NIL
+
+//---------------------------------------------------------------------------//

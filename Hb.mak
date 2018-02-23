@@ -568,6 +568,7 @@ MaterialesProducidosLineasModel.prg 									\
 MaterialesConsumidosLineasModel.prg 									\
 TiposImpresorasController.prg 											\
 TagsController.prg 															\
+UsuariosController.prg														\
 TiposVentasModel.prg 														\
 TiposVentasController.prg 													\
 PropiedadesModel.obj       								   			\
@@ -1169,6 +1170,7 @@ UsuariosModel.obj																\
 DelegacionesModel.obj														\
 TiposImpresorasController.obj 											\
 TagsController.obj 															\
+UsuariosController.obj														\
 SQLEtiquetasModel.obj 														\
 ConfiguracionEmpresasModel.obj 											\
 TiposVentasModel.obj 														\
@@ -1755,6 +1757,7 @@ $(OBJ)\UsuariosModel.obj 													+
 $(OBJ)\DelegacionesModel.obj 												+
 $(OBJ)\TiposImpresorasController.obj               				+
 $(OBJ)\TagsController.obj                 							+
+$(OBJ)\UsuariosController.obj               							+
 $(OBJ)\SQLEtiquetasModel.obj                 						+
 $(OBJ)\ConfiguracionEmpresasModel.obj 									+
 $(OBJ)\TiposVentasModel.obj                 							+
