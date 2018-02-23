@@ -7,6 +7,8 @@ CLASS UsuariosController FROM SQLNavigatorController
 
    METHOD New()
 
+   METHOD End()
+
 END CLASS
 
 //---------------------------------------------------------------------------//
@@ -17,7 +19,7 @@ METHOD New() CLASS UsuariosController
 
    ::cTitle                := "Usuarios"
 
-   ::cName                 := "usuarios"
+   ::setName( "usuarios" )
 
    ::lTransactional        := .t.
 
@@ -35,9 +37,33 @@ METHOD New() CLASS UsuariosController
 
    ::oValidator            := UsuariosValidator():New( self )
 
-   ::oFilterController:setTableToFilter( ::oModel:cTableName )
+   ::oFilterController:setTableToFilter( ::getName() )
 
 RETURN ( Self )
+
+//---------------------------------------------------------------------------//
+
+METHOD End()
+
+   if !empty(::oModel)
+      ::oModel:End()
+   endif
+
+   if !empty(::oBrowseView)
+      ::oBrowseView:End()
+   endif
+
+   if !empty(::oDialogView)
+      ::oDialogView:End()
+   endif
+
+   if !empty(::oValidator)
+      ::oValidator:End()
+   endif
+
+   ::Super:End()
+
+RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//

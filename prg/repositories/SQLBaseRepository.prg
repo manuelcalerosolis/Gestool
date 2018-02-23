@@ -11,6 +11,7 @@ CLASS SQLBaseRepository
    DATA oController
 
    METHOD New()
+   METHOD End()                  VIRTUAL
 
    METHOD getController()        INLINE ( ::oController )
 
