@@ -190,11 +190,13 @@ METHOD Activate() CLASS UsuariosView
    local oDlg
    local oBtnOk
    local oBmpGeneral
-   
+
    ::cGetPassword          := space( 100 )
    ::cGetRepeatPassword    := space( 100 )
 
-   DEFINE DIALOG oDlg RESOURCE "USUARIO" TITLE ::lblTitle() + "usuario"
+   DEFINE DIALOG oDlg ;
+      RESOURCE    "USUARIO" ;
+      TITLE       ::lblTitle() + "usuario" 
 
    REDEFINE BITMAP oBmpGeneral ;
       ID          900 ;
