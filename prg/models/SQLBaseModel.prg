@@ -98,6 +98,7 @@ CLASS SQLBaseModel
    METHOD setUpdatedTimeStamp( hBuffer )
 
    METHOD getInsertSentence()
+   METHOD getInsertIgnoreSentence( hBuffer )          INLINE ( ::getInsertSentence( hBuffer, .t. ) )
    METHOD getUpdateSentence()
    METHOD getInsertOnDuplicateSentence( hBuffer )   
    METHOD getdeleteSentenceByUuid()
@@ -492,6 +493,10 @@ METHOD setCreatedTimeStamp( hBuffer )
       hset( hBuffer, "creado", hb_datetime() )
    end if 
 
+   if ( hhaskey( hBuffer, "created_at" ) )
+      hset( hBuffer, "created_at", hb_datetime() )
+   end if 
+
 RETURN ( hBuffer )
 
 //---------------------------------------------------------------------------//
@@ -502,25 +507,30 @@ METHOD setUpdatedTimeStamp( hBuffer )
       hset( hBuffer, "modificado", hb_datetime() )
    end if 
 
+   if ( hhaskey( hBuffer, "updated_at" ) )
+      hset( hBuffer, "updated_at", hb_datetime() )
+   end if 
+
 RETURN ( hBuffer )
 
 //---------------------------------------------------------------------------//
 
-METHOD getInsertSentence( hBuffer )
+METHOD getInsertSentence( hBuffer, lIgnore )
 
    DEFAULT hBuffer   := ::hBuffer
+   DEFAULT lIgnore   := .f.
 
    ::fireEvent( 'getingInsertSentence' )   
 
    hBuffer           := ::setCreatedTimeStamp( hBuffer )
 
-   ::cSQLInsert      := "INSERT INTO " + ::cTableName + " ( "
+   ::cSQLInsert      := "INSERT" + if( lIgnore, "IGNORE", " " ) + "INTO " + ::cTableName + " ( "
 
-   hEval( hBuffer, {| k, v | if ( k != ::cColumnKey, ::cSQLInsert += k + ", ", ) } )
+   hEval( hBuffer, {| k, v | if( k != ::cColumnKey, ::cSQLInsert += k + ", ", ) } )
 
    ::cSQLInsert      := chgAtEnd( ::cSQLInsert, ' ) VALUES ( ', 2 )
 
-   hEval( hBuffer, {| k, v | if ( k != ::cColumnKey, ::cSQLInsert += toSQLString( v ) + ", ", ) } )
+   hEval( hBuffer, {| k, v | if( k != ::cColumnKey, ::cSQLInsert += toSQLString( v ) + ", ", ) } )
 
    ::cSQLInsert      := chgAtEnd( ::cSQLInsert, ' )', 2 )
 
