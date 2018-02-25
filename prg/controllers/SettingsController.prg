@@ -75,7 +75,7 @@ CLASS SQLSettingsModel FROM SQLBaseModel
 
    DATA cTableName               INIT "Settings"
 
-   DATA cConstraints             INIT "PRIMARY KEY (id), KEY (description)"
+   DATA cConstraints             INIT "PRIMARY KEY (id), KEY (setting)"
 
    METHOD getColumns()
 
@@ -93,7 +93,10 @@ METHOD getColumns() CLASS SQLSettingsModel
    hset( ::hColumns, "uuid",           {  "create"    => "VARCHAR(40) NOT NULL UNIQUE"             ,;
                                           "default"   => {|| win_uuidcreatestring() } }            )
 
-   hset( ::hColumns, "description",    {  "create"    => "VARCHAR ( 100 ) NOT NULL UNIQUE"                         ,;
+   hset( ::hColumns, "setting",        {  "create"    => "VARCHAR ( 100 ) NOT NULL UNIQUE"         ,;
+                                          "default"   => {|| space( 100 ) } }                      )
+
+   hset( ::hColumns, "caption",        {  "create"    => "VARCHAR ( 100 ) NOT NULL"                ,;
                                           "default"   => {|| space( 100 ) } }                      )
 
    hset( ::hColumns, "constrained",    {  "create"    => "TINYINT"                                 ,;
@@ -117,16 +120,16 @@ METHOD getInsertSettingsSentence()
    local cStatement 
 
    cStatement  := "INSERT IGNORE INTO " + ::cTableName + " "
-   cStatement  +=    "( uuid, description, constrained, data_type, min_value, max_value ) "
+   cStatement  +=    "( uuid, setting, caption, constrained, data_type, min_value, max_value ) "
    cStatement  += "VALUES "
-   cStatement  +=    "( UUID(), 'Empresa en uso',              1, 'alphanumeric', NULL, NULL ), "
-   cStatement  +=    "( UUID(), 'Caja en uso',                 1, 'alphanumeric', NULL, NULL ), "
-   cStatement  +=    "( UUID(), 'Almacén en uso',              1, 'alphanumeric', NULL, NULL ), "
-   cStatement  +=    "( UUID(), 'Mostrar rentabilidad',        1, 'boolean',      NULL, NULL ), "
-   cStatement  +=    "( UUID(), 'Cambiar precios',             1, 'boolean',      NULL, NULL ), "
-   cStatement  +=    "( UUID(), 'Ver precios costo',           1, 'boolean',      NULL, NULL ), "
-   cStatement  +=    "( UUID(), 'Confirmación eliminación',    1, 'boolean',      NULL, NULL ), "
-   cStatement  +=    "( UUID(), 'Fitrar ventas por usuario',   1, 'boolean',      NULL, NULL )"
+   cStatement  +=    "( UUID(), 'empresa_en_uso',              'Empresa en uso',              1, 'alphanumeric', NULL, NULL ), "
+   cStatement  +=    "( UUID(), 'caja_en_uso',                 'Caja en uso',                 1, 'alphanumeric', NULL, NULL ), "
+   cStatement  +=    "( UUID(), 'almacen_en_uso',              'Almacén en uso',              1, 'alphanumeric', NULL, NULL ), "
+   cStatement  +=    "( UUID(), 'mostrar_rentabilidad',        'Mostrar rentabilidad',        1, 'boolean',      NULL, NULL ), "
+   cStatement  +=    "( UUID(), 'cambiar_precios',             'Cambiar precios',             1, 'boolean',      NULL, NULL ), "
+   cStatement  +=    "( UUID(), 'ver_precios_costo',           'Ver precios costo',           1, 'boolean',      NULL, NULL ), "
+   cStatement  +=    "( UUID(), 'confirmacion_eliminacion',    'Confirmación eliminación',    1, 'boolean',      NULL, NULL ), "
+   cStatement  +=    "( UUID(), 'fitrar_ventas_por_usuario',   'Fitrar ventas por usuario',   1, 'boolean',      NULL, NULL )"
 
 RETURN ( cStatement )
 

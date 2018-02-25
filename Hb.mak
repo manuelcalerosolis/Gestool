@@ -600,6 +600,7 @@ PropiedadesController.obj       											\
 PropiedadesLineasModel.obj       										\
 PropiedadesLineasController.obj       									\
 SQLTageableModel.prg 														\
+SQLSeteableModel.prg 														\
 PedidosClientesLineasModel.prg 											\
 Categoria.prg                                                  \
 GroupCustomer.prg                                              \
@@ -1183,6 +1184,7 @@ PropiedadesLineasModel.obj       										\
 PropiedadesLineasController.obj       									\
 IdentificadorRegistroView.obj             							\
 SQLTageableModel.obj 														\
+SQLSeteableModel.obj 														\
 ArticulosModel.obj                                    			\
 FamiliasModel.obj                                    				\
 TiposArticulosModel.obj                                    		\
@@ -1532,6 +1534,7 @@ $(OBJ)\MovimientosAlmacenReport.obj 									+
 $(OBJ)\MovimientosAlmacenLabel.obj 										+
 $(OBJ)\SQLBaseReport.obj 													+
 $(OBJ)\SQLTageableModel.obj 												+
+$(OBJ)\SQLSeteableModel.obj 												+
 $(OBJ)\ImportadorMovimientosAlmacenLineasView.obj 					+
 $(OBJ)\CapturadorMovimientosAlmacenLineasView.obj 					+
 $(OBJ)\ImportadorMovimientosAlmacenLineasController.obj			+

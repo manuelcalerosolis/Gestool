@@ -70,6 +70,8 @@ RETURN ( Self )
 
 METHOD checkValues()
 
+   getSQLDatabase():Exec( SQLUsuariosModel():getInsertUsuariosSentence() )
+
    getSQLDatabase():Exec( SQLSettingsModel():getInsertSettingsSentence() )
 
 RETURN ( Self )
@@ -134,6 +136,8 @@ METHOD addModels()
    aadd( ::aModels, SQLConfiguracionVistasModel():New() )
 
    aadd( ::aModels, SQLTageableModel():New() )
+
+   aadd( ::aModels, SQLSeteableModel():New() )
                                       
    aadd( ::aModels, TiposVentasModel():New() )
 

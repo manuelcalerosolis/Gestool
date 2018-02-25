@@ -1,6 +1,8 @@
 #include "FiveWin.Ch"
 #include "Factu.ch" 
 
+#define  __encryption_key__ "snorlax"
+
 //---------------------------------------------------------------------------//
 
 CLASS UsuariosController FROM SQLNavigatorController
@@ -79,6 +81,11 @@ CLASS SQLUsuariosModel FROM SQLBaseModel
 
    METHOD getColumns()
 
+   METHOD getInsertUsuariosSentence()
+
+   METHOD Crypt( cPassword )     INLINE ( hb_crypt( alltrim( cPassword ), __encryption_key__ ) )
+   METHOD Decrypt( cPassword )   INLINE ( hb_decrypt( alltrim( cPassword ), __encryption_key__ ) )
+
 END CLASS
 
 //---------------------------------------------------------------------------//
@@ -91,10 +98,10 @@ METHOD getColumns() CLASS SQLUsuariosModel
    hset( ::hColumns, "uuid",           {  "create"    => "VARCHAR(40) NOT NULL UNIQUE"             ,;
                                           "default"   => {|| win_uuidcreatestring() } }            )
 
-   hset( ::hColumns, "name",           {  "create"    => "VARCHAR ( 100 )"                         ,;
+   hset( ::hColumns, "name",           {  "create"    => "VARCHAR ( 100 ) NOT NULL UNIQUE"                         ,;
                                           "default"   => {|| space( 100 ) } }                      )
 
-   hset( ::hColumns, "email",          {  "create"    => "VARCHAR ( 100 )"                         ,;
+   hset( ::hColumns, "email",          {  "create"    => "VARCHAR ( 100 ) NOT NULL"                         ,;
                                           "default"   => {|| space( 100 ) } }                      )
 
    hset( ::hColumns, "password",       {  "create"    => "VARCHAR ( 100 )"                         ,;
@@ -106,6 +113,19 @@ METHOD getColumns() CLASS SQLUsuariosModel
    ::getTimeStampColumns()   
 
 RETURN ( ::hColumns )
+
+//---------------------------------------------------------------------------//
+
+METHOD getInsertUsuariosSentence()
+
+   local cStatement 
+
+   cStatement  := "INSERT IGNORE INTO " + ::cTableName + " "
+   cStatement  +=    "( uuid, name, email, password ) "
+   cStatement  += "VALUES "
+   cStatement  +=    "( UUID(), 'administrador', 'admin@admin.com', " + quoted( ::Crypt( '12345678' ) ) + " )"
+
+RETURN ( cStatement )
 
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
