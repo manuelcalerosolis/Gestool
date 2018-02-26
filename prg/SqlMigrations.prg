@@ -17,6 +17,8 @@ CLASS SQLMigrations
 
    METHOD checkModel( oModel )
 
+   METHOD checkValues()
+
    METHOD getSchemaColumns( oModel )   
 
 ENDCLASS
@@ -30,6 +32,8 @@ METHOD Run()
    ::addModels()
 
    ::checkModels()
+
+   ::checkValues()
 
 RETURN ( Self )
 
@@ -60,6 +64,16 @@ METHOD checkModel( oModel )
       getSQLDatabase():Execs( oModel:getAlterTableSentences( aSchemaColumns ) )
    end if 
   
+RETURN ( Self )
+
+//----------------------------------------------------------------------------//
+
+METHOD checkValues()
+
+   getSQLDatabase():Exec( SQLUsuariosModel():getInsertUsuariosSentence() )
+
+   getSQLDatabase():Exec( SQLSettingsModel():getInsertSettingsSentence() )
+
 RETURN ( Self )
 
 //----------------------------------------------------------------------------//
@@ -115,11 +129,15 @@ METHOD addModels()
 
    aadd( ::aModels, SQLUsuariosModel():New() )
 
+   aadd( ::aModels, SQLSettingsModel():New() )
+
    aadd( ::aModels, SituacionesModel():New() )
 
    aadd( ::aModels, SQLConfiguracionVistasModel():New() )
 
    aadd( ::aModels, SQLTageableModel():New() )
+
+   aadd( ::aModels, SQLSeteableModel():New() )
                                       
    aadd( ::aModels, TiposVentasModel():New() )
 

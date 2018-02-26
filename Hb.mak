@@ -569,6 +569,7 @@ MaterialesConsumidosLineasModel.prg 									\
 TiposImpresorasController.prg 											\
 TagsController.prg 															\
 UsuariosController.prg														\
+SettingsController.prg														\
 TiposVentasModel.prg 														\
 TiposVentasController.prg 													\
 PropiedadesModel.obj       								   			\
@@ -599,6 +600,7 @@ PropiedadesController.obj       											\
 PropiedadesLineasModel.obj       										\
 PropiedadesLineasController.obj       									\
 SQLTageableModel.prg 														\
+SQLSeteableModel.prg 														\
 PedidosClientesLineasModel.prg 											\
 Categoria.prg                                                  \
 GroupCustomer.prg                                              \
@@ -1171,6 +1173,7 @@ DelegacionesModel.obj														\
 TiposImpresorasController.obj 											\
 TagsController.obj 															\
 UsuariosController.obj														\
+SettingsController.obj														\
 SQLEtiquetasModel.obj 														\
 ConfiguracionEmpresasModel.obj 											\
 TiposVentasModel.obj 														\
@@ -1181,6 +1184,7 @@ PropiedadesLineasModel.obj       										\
 PropiedadesLineasController.obj       									\
 IdentificadorRegistroView.obj             							\
 SQLTageableModel.obj 														\
+SQLSeteableModel.obj 														\
 ArticulosModel.obj                                    			\
 FamiliasModel.obj                                    				\
 TiposArticulosModel.obj                                    		\
@@ -1530,6 +1534,7 @@ $(OBJ)\MovimientosAlmacenReport.obj 									+
 $(OBJ)\MovimientosAlmacenLabel.obj 										+
 $(OBJ)\SQLBaseReport.obj 													+
 $(OBJ)\SQLTageableModel.obj 												+
+$(OBJ)\SQLSeteableModel.obj 												+
 $(OBJ)\ImportadorMovimientosAlmacenLineasView.obj 					+
 $(OBJ)\CapturadorMovimientosAlmacenLineasView.obj 					+
 $(OBJ)\ImportadorMovimientosAlmacenLineasController.obj			+
@@ -1758,6 +1763,7 @@ $(OBJ)\DelegacionesModel.obj 												+
 $(OBJ)\TiposImpresorasController.obj               				+
 $(OBJ)\TagsController.obj                 							+
 $(OBJ)\UsuariosController.obj               							+
+$(OBJ)\SettingsController.obj               							+
 $(OBJ)\SQLEtiquetasModel.obj                 						+
 $(OBJ)\ConfiguracionEmpresasModel.obj 									+
 $(OBJ)\TiposVentasModel.obj                 							+

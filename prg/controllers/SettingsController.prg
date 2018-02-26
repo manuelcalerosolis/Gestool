@@ -1,31 +1,25 @@
 #include "FiveWin.Ch"
 #include "Factu.ch" 
 
-#define  __encryption_key__ "snorlax"
-
 //---------------------------------------------------------------------------//
 
-CLASS UsuariosController FROM SQLNavigatorController
-   
-   DATA lMostrarRentabilidad 
+CLASS SettingsController FROM SQLNavigatorController
 
    METHOD New()
 
    METHOD End()
 
-   METHOD loadSettings()
-
 END CLASS
 
 //---------------------------------------------------------------------------//
 
-METHOD New() CLASS UsuariosController
+METHOD New() CLASS SettingsController
 
    ::Super:New()
 
-   ::cTitle                := "Usuarios"
+   ::cTitle                := "Settings"
 
-   ::setName( "usuarios" )
+   ::setName( "Settings" )
 
    ::lTransactional        := .t.
 
@@ -33,19 +27,17 @@ METHOD New() CLASS UsuariosController
 
    ::nLevel                := nLevelUsr( "01052" )
 
-   ::oModel                := SQLUsuariosModel():New( self )
+   ::oModel                := SQLSettingsModel():New( self )
 
-   ::oRepository           := UsuariosRepository():New( self )
+   ::oRepository           := SettingsRepository():New( self )
 
-   ::oBrowseView           := UsuariosBrowseView():New( self )
+   ::oBrowseView           := SettingsBrowseView():New( self )
 
-   ::oDialogView           := UsuariosView():New( self )
+   ::oDialogView           := SettingsView():New( self )
 
-   ::oValidator            := UsuariosValidator():New( self )
+   ::oValidator            := SettingsValidator():New( self )
 
    ::oFilterController:setTableToFilter( ::getName() )
-
-   ::setEvent( 'openingDialog', {|| ::loadSettings() })
 
 RETURN ( Self )
 
@@ -74,45 +66,28 @@ METHOD End()
 RETURN ( nil )
 
 //---------------------------------------------------------------------------//
-
-METHOD loadSettings()
-
-   local cUuid    := hget( ::oModel:hBuffer, "uuid" )
-
-   if empty( cUuid )
-      RETURN ( self )
-   endif
-
-   ::lMostrarRentabilidad  := SeteableRepository():getLogic( cUuid, 'usuarios', 'mostrar_rentabilidad', .f. ) 
-
-   msgalert( ::lMostrarRentabilidad, "lMostrarRentabilidad")
-
-RETURN ( self )
-
-//---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 
-CLASS SQLUsuariosModel FROM SQLBaseModel
+CLASS SQLSettingsModel FROM SQLBaseModel
 
-   DATA cTableName               INIT "usuarios"
+   DATA cTableName               INIT "Settings"
 
-   DATA cConstraints             INIT "PRIMARY KEY (id), KEY (uuid)"
+   DATA cConstraints             INIT "PRIMARY KEY (id), KEY (setting)"
 
    METHOD getColumns()
 
-   METHOD getInsertUsuariosSentence()
+   METHOD getInsertSettingsSentence()
 
-   METHOD Crypt( cPassword )     INLINE ( hb_crypt( alltrim( cPassword ), __encryption_key__ ) )
-   METHOD Decrypt( cPassword )   INLINE ( hb_decrypt( alltrim( cPassword ), __encryption_key__ ) )
+   METHOD getSettingUuid()
 
 END CLASS
 
 //---------------------------------------------------------------------------//
 
-METHOD getColumns() CLASS SQLUsuariosModel
+METHOD getColumns() CLASS SQLSettingsModel
 
    hset( ::hColumns, "id",             {  "create"    => "INTEGER AUTO_INCREMENT"                  ,;
                                           "default"   => {|| 0 } }                                 )
@@ -120,32 +95,54 @@ METHOD getColumns() CLASS SQLUsuariosModel
    hset( ::hColumns, "uuid",           {  "create"    => "VARCHAR(40) NOT NULL UNIQUE"             ,;
                                           "default"   => {|| win_uuidcreatestring() } }            )
 
-   hset( ::hColumns, "name",           {  "create"    => "VARCHAR ( 100 ) NOT NULL UNIQUE"                         ,;
+   hset( ::hColumns, "setting",        {  "create"    => "VARCHAR ( 100 ) NOT NULL UNIQUE"         ,;
                                           "default"   => {|| space( 100 ) } }                      )
 
-   hset( ::hColumns, "email",          {  "create"    => "VARCHAR ( 100 ) NOT NULL"                         ,;
+   hset( ::hColumns, "caption",        {  "create"    => "VARCHAR ( 100 ) NOT NULL"                ,;
                                           "default"   => {|| space( 100 ) } }                      )
 
-   hset( ::hColumns, "password",       {  "create"    => "VARCHAR ( 100 )"                         ,;
-                                          "default"   => {|| space( 100 ) } }                      )
+   hset( ::hColumns, "constrained",    {  "create"    => "TINYINT"                                 ,;
+                                          "default"   => {|| 0 } }                                 )
 
-   hset( ::hColumns, "remember_token", {  "create"    => "VARCHAR ( 100 )"                         ,;
-                                          "default"   => {|| "" } }                                )
+   hset( ::hColumns, "data_type",      {  "create"    => "VARCHAR ( 12 )"                          ,;
+                                          "default"   => {|| "alphanumeric" } }                    )
 
-   ::getTimeStampColumns()   
+   hset( ::hColumns, "min_value",      {  "create"    => "INT"                                     ,;
+                                          "default"   => {|| 0 } }                                 )
+
+   hset( ::hColumns, "max_value",      {  "create"    => "INT"                                     ,;
+                                          "default"   => {|| 0 } }                                 )
 
 RETURN ( ::hColumns )
 
 //---------------------------------------------------------------------------//
 
-METHOD getInsertUsuariosSentence()
+METHOD getInsertSettingsSentence()
 
    local cStatement 
 
    cStatement  := "INSERT IGNORE INTO " + ::cTableName + " "
-   cStatement  +=    "( uuid, name, email, password ) "
+   cStatement  +=    "( uuid, setting, caption, constrained, data_type, min_value, max_value ) "
    cStatement  += "VALUES "
-   cStatement  +=    "( UUID(), 'administrador', 'admin@admin.com', " + quoted( ::Crypt( '12345678' ) ) + " )"
+   cStatement  +=    "( UUID(), 'empresa_en_uso',              'Empresa en uso',              1, 'alphanumeric', NULL, NULL ), "
+   cStatement  +=    "( UUID(), 'caja_en_uso',                 'Caja en uso',                 1, 'alphanumeric', NULL, NULL ), "
+   cStatement  +=    "( UUID(), 'almacen_en_uso',              'Almacén en uso',              1, 'alphanumeric', NULL, NULL ), "
+   cStatement  +=    "( UUID(), 'mostrar_rentabilidad',        'Mostrar rentabilidad',        1, 'boolean',      NULL, NULL ), "
+   cStatement  +=    "( UUID(), 'cambiar_precios',             'Cambiar precios',             1, 'boolean',      NULL, NULL ), "
+   cStatement  +=    "( UUID(), 'ver_precios_costo',           'Ver precios costo',           1, 'boolean',      NULL, NULL ), "
+   cStatement  +=    "( UUID(), 'confirmacion_eliminacion',    'Confirmación eliminación',    1, 'boolean',      NULL, NULL ), "
+   cStatement  +=    "( UUID(), 'fitrar_ventas_por_usuario',   'Fitrar ventas por usuario',   1, 'boolean',      NULL, NULL )"
+
+RETURN ( cStatement )
+
+//---------------------------------------------------------------------------//
+
+METHOD getSettingUuid( cSetting )
+
+   local cStatement
+
+   cStatement  := "SELECT uuid FROM " + ::cTableName + " "
+   cStatement  +=    "WHERE setting = " + quoted( cSetting )
 
 RETURN ( cStatement )
 
@@ -155,7 +152,7 @@ RETURN ( cStatement )
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 
-CLASS UsuariosBrowseView FROM SQLBrowseView
+CLASS SettingsBrowseView FROM SQLBrowseView
 
    METHOD addColumns()                       
 
@@ -163,7 +160,7 @@ ENDCLASS
 
 //----------------------------------------------------------------------------//
 
-METHOD addColumns() CLASS UsuariosBrowseView
+METHOD addColumns() CLASS SettingsBrowseView
 
    with object ( ::oBrowse:AddCol() )
       :cSortOrder          := 'id'
@@ -238,7 +235,7 @@ RETURN ( self )
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 
-CLASS UsuariosView FROM SQLBaseView
+CLASS SettingsView FROM SQLBaseView
 
    DATA oGetPassword
    DATA cGetPassword          INIT space( 100 )
@@ -253,7 +250,7 @@ END CLASS
 
 //---------------------------------------------------------------------------//
 
-METHOD Activate() CLASS UsuariosView
+METHOD Activate() CLASS SettingsView
 
    local oDlg
    local oBtnOk
@@ -305,11 +302,6 @@ METHOD Activate() CLASS UsuariosView
 
    ::oGetRepeatPassword:bValid   := {|| ::oController:validate( "repeatPassword", ::cGetRepeatPassword ) }
 
-   REDEFINE CHECKBOX ::oController:lMostrarRentabilidad ;
-      ID          140 ;
-      WHEN        ( !::oController:isZoomMode() ) ;
-      OF          oDlg
-
    REDEFINE BUTTON oBtnOk ;
       ID          IDOK ;
       OF          oDlg ;
@@ -324,7 +316,7 @@ METHOD Activate() CLASS UsuariosView
 
    oDlg:AddFastKey( VK_F5, {|| oBtnOk:Click() } )
 
-   oDlg:Activate( , , , .t. )
+   ACTIVATE DIALOG oDlg CENTER
 
    oBmpGeneral:end()
 
@@ -339,7 +331,7 @@ METHOD saveView( oDlg )
    end if 
 
    if !empty( ::cGetPassword )
-      ::getModel():setBuffer( "password", ::oModel:Crypt( ::cGetPassword ) )
+      ::getModel():setBuffer( "password", hb_crypt( alltrim( ::cGetPassword ), "snorlax" ) )
    end if 
 
    oDlg:end( IDOK )
@@ -352,7 +344,7 @@ RETURN ( oDlg:nResult )
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 
-CLASS UsuariosValidator FROM SQLBaseValidator
+CLASS SettingsValidator FROM SQLBaseValidator
 
    METHOD getValidators()
 
@@ -364,7 +356,7 @@ END CLASS
 
 //---------------------------------------------------------------------------//
 
-METHOD getValidators() CLASS UsuariosValidator
+METHOD getValidators() CLASS SettingsValidator
 
    ::hValidators  := {  "name" =>            {  "required"        => "El nombre es un dato requerido",;
                                                 "unique"          => "El nombre ya existe" },; 
@@ -409,9 +401,9 @@ RETURN ( alltrim( ::oController:oDialogView:cGetPassword ) == alltrim( uValue ) 
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 
-CLASS UsuariosRepository FROM SQLBaseRepository
+CLASS SettingsRepository FROM SQLBaseRepository
 
-   METHOD getTableName()      INLINE ( SQLUsuariosModel():getTableName() ) 
+   METHOD getTableName()      INLINE ( SQLSettingsModel():getTableName() ) 
 
 END CLASS
 

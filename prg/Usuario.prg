@@ -657,10 +657,10 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfUser, oBrw, lGrupo, bValid, nMode )
 
       aAdd( aBmp, TBitmap():Define( "gc_folder_open_16"  , , oDlg ) )
       aAdd( aBmp, TBitmap():Define( "gc_sign_forbidden_16"   , , oDlg ) )
-      aAdd( aBmp, TBitmap():Define( "NEW16"     , , oDlg ) )
-      aAdd( aBmp, TBitmap():Define( "EDIT16"    , , oDlg ) )
+      aAdd( aBmp, TBitmap():Define( "new16"     , , oDlg ) )
+      aAdd( aBmp, TBitmap():Define( "edit16"    , , oDlg ) )
       aAdd( aBmp, TBitmap():Define( "gc_lock2_16"    , , oDlg ) )
-      aAdd( aBmp, TBitmap():Define( "DEL16"     , , oDlg ) )
+      aAdd( aBmp, TBitmap():Define( "del16"     , , oDlg ) )
       aAdd( aBmp, TBitmap():Define( "gc_printer2_16"     , , oDlg ) )
 
       aEval( aBmp, {| oBmp | oImgLst:AddMasked( oBmp, Rgb( 255, 0, 255 ) ) } )
