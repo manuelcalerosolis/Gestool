@@ -20,7 +20,7 @@ CLASS SQLConfiguracionesModel FROM SQLExportableModel
 
    METHOD getValue( cDocumento, cClave, uDefault )
 
-   METHOD getNumeric( cDocumento, cClave, uDefault );
+   METHOD getNumeric( cDocumento, cClave, uDefault )
 
    METHOD getSQLSentenceInsertValue( cDocumento, cClave, uValue )
 

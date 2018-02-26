@@ -579,9 +579,7 @@ METHOD getInsertOnDuplicateSentence( hBuffer )
    
    cSQLUpdate        := ::getInsertSentence( hBuffer ) + " "
 
-   cSQLUpdate        +=    "ON DUPLICATE KEY "
-
-   cSQLUpdate        +=    "UPDATE "
+   cSQLUpdate        += "ON DUPLICATE KEY UPDATE "
 
    hBuffer           := ::setUpdatedTimeStamp( hBuffer )
 

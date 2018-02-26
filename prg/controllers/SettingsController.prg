@@ -81,6 +81,8 @@ CLASS SQLSettingsModel FROM SQLBaseModel
 
    METHOD getInsertSettingsSentence()
 
+   METHOD getSettingUuid()
+
 END CLASS
 
 //---------------------------------------------------------------------------//
@@ -130,6 +132,17 @@ METHOD getInsertSettingsSentence()
    cStatement  +=    "( UUID(), 'ver_precios_costo',           'Ver precios costo',           1, 'boolean',      NULL, NULL ), "
    cStatement  +=    "( UUID(), 'confirmacion_eliminacion',    'Confirmación eliminación',    1, 'boolean',      NULL, NULL ), "
    cStatement  +=    "( UUID(), 'fitrar_ventas_por_usuario',   'Fitrar ventas por usuario',   1, 'boolean',      NULL, NULL )"
+
+RETURN ( cStatement )
+
+//---------------------------------------------------------------------------//
+
+METHOD getSettingUuid( cSetting )
+
+   local cStatement
+
+   cStatement  := "SELECT uuid FROM " + ::cTableName + " "
+   cStatement  +=    "WHERE setting = " + quoted( cSetting )
 
 RETURN ( cStatement )
 

@@ -6,10 +6,14 @@
 //---------------------------------------------------------------------------//
 
 CLASS UsuariosController FROM SQLNavigatorController
+   
+   DATA lMostrarRentabilidad 
 
    METHOD New()
 
    METHOD End()
+
+   METHOD loadSettings()
 
 END CLASS
 
@@ -41,6 +45,8 @@ METHOD New() CLASS UsuariosController
 
    ::oFilterController:setTableToFilter( ::getName() )
 
+   ::setEvent( 'openingDialog', {|| ::loadSettings() })
+
 RETURN ( Self )
 
 //---------------------------------------------------------------------------//
@@ -66,6 +72,22 @@ METHOD End()
    ::Super:End()
 
 RETURN ( nil )
+
+//---------------------------------------------------------------------------//
+
+METHOD loadSettings()
+
+   local cUuid    := hget( ::oModel:hBuffer, "uuid" )
+
+   if empty( cUuid )
+      RETURN ( self )
+   endif
+
+   ::lMostrarRentabilidad  := SeteableRepository():getLogic( cUuid, 'usuarios', 'mostrar_rentabilidad', .f. ) 
+
+   msgalert( ::lMostrarRentabilidad, "lMostrarRentabilidad")
+
+RETURN ( self )
 
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
@@ -283,6 +305,11 @@ METHOD Activate() CLASS UsuariosView
 
    ::oGetRepeatPassword:bValid   := {|| ::oController:validate( "repeatPassword", ::cGetRepeatPassword ) }
 
+   REDEFINE CHECKBOX ::oController:lMostrarRentabilidad ;
+      ID          140 ;
+      WHEN        ( !::oController:isZoomMode() ) ;
+      OF          oDlg
+
    REDEFINE BUTTON oBtnOk ;
       ID          IDOK ;
       OF          oDlg ;
@@ -297,7 +324,7 @@ METHOD Activate() CLASS UsuariosView
 
    oDlg:AddFastKey( VK_F5, {|| oBtnOk:Click() } )
 
-   ACTIVATE DIALOG oDlg CENTER
+   oDlg:Activate( , , , .t. )
 
    oBmpGeneral:end()
 
@@ -312,7 +339,7 @@ METHOD saveView( oDlg )
    end if 
 
    if !empty( ::cGetPassword )
-      ::getModel():setBuffer( "password", hb_crypt( alltrim( ::cGetPassword ), "snorlax" ) )
+      ::getModel():setBuffer( "password", ::oModel:Crypt( ::cGetPassword ) )
    end if 
 
    oDlg:end( IDOK )
