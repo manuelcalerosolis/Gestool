@@ -19,7 +19,7 @@ METHOD New()
 
    ::nLevel                := nLevelUsr( "01096" )
 
-   ::oModel                := SituacionesModel():New( self )
+   ::oModel                := SQLSituacionesModel():New( self )
 
    ::oDialogView           := SituacionesView():New( self )
 

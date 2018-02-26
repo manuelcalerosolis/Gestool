@@ -4,7 +4,7 @@
 
 //---------------------------------------------------------------------------//
 
-CLASS TiposVentasModel FROM SQLBaseModel
+CLASS SQLTiposVentasModel FROM SQLBaseModel
 
    DATA     cTableName           INIT "tipos_ventas"
 

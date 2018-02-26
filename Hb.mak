@@ -194,6 +194,7 @@ TFastComprasProveedores.prg 									\
 TFastProduccion.prg 												\
 TFastreportOptions.prg 											\
 Titemgroup.prg          										\
+TExplorerBar.prg 													\
 Tcobage.prg             										\
 Remcli.prg              										\
 Label.prg               										\
@@ -569,7 +570,9 @@ MaterialesConsumidosLineasModel.prg 									\
 TiposImpresorasController.prg 											\
 TagsController.prg 															\
 UsuariosController.prg														\
-SettingsController.prg														\
+AjustesController.prg														\
+AjustableController.prg														\
+AjustableView.prg																\
 TiposVentasModel.prg 														\
 TiposVentasController.prg 													\
 PropiedadesModel.obj       								   			\
@@ -600,7 +603,7 @@ PropiedadesController.obj       											\
 PropiedadesLineasModel.obj       										\
 PropiedadesLineasController.obj       									\
 SQLTageableModel.prg 														\
-SQLSeteableModel.prg 														\
+SQLAjustableModel.prg 														\
 PedidosClientesLineasModel.prg 											\
 Categoria.prg                                                  \
 GroupCustomer.prg                                              \
@@ -783,6 +786,7 @@ TFastComprasProveedores.obj                         				\
 TFastProduccion.obj		                           				\
 TFastreportOptions.obj 														\
 Titemgroup.obj                                     				\
+TExplorerBar.obj 																\
 Tartalb.obj                                        				\
 Tfamtik.obj                                        				\
 Tfampre.obj                                        				\
@@ -1173,7 +1177,9 @@ DelegacionesModel.obj														\
 TiposImpresorasController.obj 											\
 TagsController.obj 															\
 UsuariosController.obj														\
-SettingsController.obj														\
+AjustesController.obj														\
+AjustableController.obj														\
+AjustableView.obj																\
 SQLEtiquetasModel.obj 														\
 ConfiguracionEmpresasModel.obj 											\
 TiposVentasModel.obj 														\
@@ -1184,7 +1190,7 @@ PropiedadesLineasModel.obj       										\
 PropiedadesLineasController.obj       									\
 IdentificadorRegistroView.obj             							\
 SQLTageableModel.obj 														\
-SQLSeteableModel.obj 														\
+SQLAjustableModel.obj 														\
 ArticulosModel.obj                                    			\
 FamiliasModel.obj                                    				\
 TiposArticulosModel.obj                                    		\
@@ -1388,6 +1394,7 @@ $(OBJ)\TFastComprasProveedores.obj 										+
 $(OBJ)\TFastProduccion.obj    											+
 $(OBJ)\TFastreportOptions.obj    										+
 $(OBJ)\Titemgroup.obj           											+
+$(OBJ)\TExplorerBar.obj           										+
 $(OBJ)\Tartalb.obj              											+
 $(OBJ)\Tfamtik.obj              											+
 $(OBJ)\Remcli.obj               											+
@@ -1534,7 +1541,7 @@ $(OBJ)\MovimientosAlmacenReport.obj 									+
 $(OBJ)\MovimientosAlmacenLabel.obj 										+
 $(OBJ)\SQLBaseReport.obj 													+
 $(OBJ)\SQLTageableModel.obj 												+
-$(OBJ)\SQLSeteableModel.obj 												+
+$(OBJ)\SQLAjustableModel.obj 												+
 $(OBJ)\ImportadorMovimientosAlmacenLineasView.obj 					+
 $(OBJ)\CapturadorMovimientosAlmacenLineasView.obj 					+
 $(OBJ)\ImportadorMovimientosAlmacenLineasController.obj			+
@@ -1763,7 +1770,9 @@ $(OBJ)\DelegacionesModel.obj 												+
 $(OBJ)\TiposImpresorasController.obj               				+
 $(OBJ)\TagsController.obj                 							+
 $(OBJ)\UsuariosController.obj               							+
-$(OBJ)\SettingsController.obj               							+
+$(OBJ)\AjustesController.obj               							+
+$(OBJ)\AjustableController.obj              							+
+$(OBJ)\AjustableView.obj              									+
 $(OBJ)\SQLEtiquetasModel.obj                 						+
 $(OBJ)\ConfiguracionEmpresasModel.obj 									+
 $(OBJ)\TiposVentasModel.obj                 							+

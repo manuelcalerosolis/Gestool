@@ -1,3 +1,5 @@
+#include "FiveWin.ch"
+
 //----------------------------------------------------------------------------//
 
 // Class TExplorerBar
@@ -16,12 +18,12 @@
 #define BMP_HEIGHT         5
 
 //Bitmap Array position
-#define BMPDEFAULT       0
-#define BMPEXPAND        1
-#define BMPCOLLAP        2
+#define BMPDEFAULT         0
+#define BMPEXPAND          1
+#define BMPCOLLAP          2
 
-#define GWL_STYLE     (-16)
-#define D_HEIGHT        13
+#define GWL_STYLE       (-16)
+#define D_HEIGHT           13
 
 //----------------------------------------------------------------------------//
 
@@ -103,8 +105,7 @@ METHOD New( nTop, nLeft, nWidth, nHeight, oWnd ) CLASS TExplorerBar
    ::oVScroll:bPos      = {|nPos| ::VScrollSetPos( nPos ) }
    ::oVScroll:bTrack    = {|nPos| ::VScrollSetPos( nPos ) }
 
-
-return Self
+RETURN Self
 
 //----------------------------------------------------------------------------//
 
@@ -124,7 +125,7 @@ METHOD Redefine( nId, oDlg ) CLASS TExplorerBar
 
    oDlg:DefControl( Self )
 
-return Self
+RETURN Self
 
 //----------------------------------------------------------------------------//
 
@@ -136,7 +137,7 @@ METHOD AddPanel( cName, cBmpName, nBodyHeight ) CLASS TExplorerBar
 
    ::CheckScroll( oPanel )
 
-return oPanel
+RETURN oPanel
 
 //----------------------------------------------------------------------------//
 
@@ -166,7 +167,7 @@ METHOD CheckScroll() CLASS TExplorerBar
       ::lSBVisible = .F.
    endif
 
-return nil
+RETURN nil
 
 //----------------------------------------------------------------------------//
 
@@ -176,7 +177,7 @@ METHOD Initiate( hDlg ) CLASS TExplorerBar
 
    __ChangeStyleWindow( ::hWnd, WS_CLIPCHILDREN, GWL_STYLE, .T. )
 
-return uValue
+RETURN uValue
 
 //----------------------------------------------------------------------------//
 
@@ -208,7 +209,7 @@ METHOD Paint() CLASS TExplorerBar
 
    ::DispEnd( aInfo )
 
-return 0
+RETURN 0
 
 //----------------------------------------------------------------------------//
 
@@ -249,12 +250,11 @@ METHOD ReSize( nSizeType, nWidth, nHeight ) CLASS TExplorerBar
    ::CheckScroll()
 
 //   ::oWnd:cTitle = Time() + Str( nHeight )
-return ::Super:ReSize( nSizeType, nWidth, nHeight )
+RETURN ::Super:ReSize( nSizeType, nWidth, nHeight )
 
 //----------------------------------------------------------------------------//
 
 METHOD VScrollSetPos( nPos ) CLASS TExplorerBar
-
 
    LOCAL nHeight := ( ::nVirtualHeight - ::nHeight )
    LOCAL oPanel
@@ -271,7 +271,7 @@ METHOD VScrollSetPos( nPos ) CLASS TExplorerBar
    ::oVScroll:SetPos( ::nVirtualTop )
 
    for each oPanel in ::aPanels
-      nTop = oPanel:nTop + nAdvance
+      nTop := oPanel:nTop + nAdvance
       oPanel:Move( nTop )
    next
 
@@ -283,8 +283,8 @@ RETURN nil
 
 METHOD VScrollSkip( nSkip ) CLASS TExplorerBar
 
-   LOCAL nHeight := ( ::nVirtualHeight - ::nHeight )
    LOCAL oPanel
+   LOCAL nHeight := ( ::nVirtualHeight - ::nHeight )
 
    IF (::nVirtualTop == 0 .And. nSkip < 0) .Or. ;
       (::nVirtualTop == nHeight .And. nSkip > 0)
@@ -316,12 +316,10 @@ CLASS TTaskPanel FROM TControl
    DATA   nTopMargin, nLeftMargin, nRightMargin INIT 16
    DATA   nTitleHeight    INIT 25
    DATA   nBodyHeight     //INIT 50
-   DATA   lSpecial        INIT .F.
    DATA   lCollapsed      INIT .F.
    DATA   lOverTitle      INIT .F.
    DATA   lHasAlpha       INIT .F.
    DATA   aLinks          INIT {}
-   DATA   nClrTextSpecial INIT CLR_WHITE
    DATA   nClrHover       INIT RGB( 0, 0, 0 )
    DATA   hRegion
    DATA   aBitmaps
@@ -354,17 +352,18 @@ METHOD New( cTitle, oWnd, nIndex, cBmpPanel, nBodyHeight ) CLASS TTaskPanel
 
    local n
 
-   DEFAULT nBodyHeight := 50
+   DEFAULT nBodyHeight  := 50
 
-   ::lUnicode  = FW_SetUnicode()
-   ::cTitle  = cTitle
-   ::nTop    = ::nTopMargin
+   ::lUnicode           := FW_SetUnicode()
+   ::cTitle             := cTitle
+   ::nTop               := ::nTopMargin
 
-   ::nBodyHeight = nBodyHeight
+   ::nBodyHeight        := nBodyHeight
 
    if nIndex > 0
-      ::nTop += oWnd:aPanels[ nIndex ]:nTop + oWnd:aPanels[ nIndex ]:nTotalHeight + ;
-                oWnd:aPanels[ nIndex ]:nTopMargin
+      ::nTop += oWnd:aPanels[ nIndex ]:nTop 
+      ::nTop += oWnd:aPanels[ nIndex ]:nTotalHeight 
+      ::nTop += oWnd:aPanels[ nIndex ]:nTopMargin
    endif
 
    ::nLeft   = ::nLeftMargin
@@ -374,7 +373,7 @@ METHOD New( cTitle, oWnd, nIndex, cBmpPanel, nBodyHeight ) CLASS TTaskPanel
    ::nStyle  = nOr( WS_CHILD, WS_VISIBLE, WS_CLIPCHILDREN, WS_TABSTOP )
    ::lDrag   = .F.
    ::nClrPane = nRGB( 214, 223, 247 )
-   ::nClrText = nRGB( 33, 93, 198 )
+   ::nClrText = nRGB( 0, 0, 0 )
    ::nIndex  = nIndex + 1
    ::LoadBitmaps()
 
@@ -394,7 +393,7 @@ METHOD New( cTitle, oWnd, nIndex, cBmpPanel, nBodyHeight ) CLASS TTaskPanel
 
    ::SetColor( ::nClrText, ::nClrPane )
 
-return Self
+RETURN Self
 
 //----------------------------------------------------------------------------//
 
@@ -421,12 +420,12 @@ METHOD AddLink( cPrompt, bAction, cBitmap ) CLASS TTaskPanel
    endif
 
    if oUrlLink:nTop + oUrlLink:nHeight > ::nHeight
-      ::nHeight = oUrlLink:nTop + oUrlLink:nHeight + 10
-      ::nBodyHeight = ::nHeight - ::nTitleHeight
+      ::nHeight      := oUrlLink:nTop + oUrlLink:nHeight + 10
+      ::nBodyHeight  := ::nHeight - ::nTitleHeight
       ::UpdateRegion()
    endif
 
-return nil
+RETURN nil
 
 //----------------------------------------------------------------------------//
 
@@ -440,17 +439,17 @@ METHOD Destroy() CLASS TTaskPanel
 
    DeleteObject( ::hRegion )
 
-return ::Super:Destroy()
+RETURN ::Super:Destroy()
 
 //----------------------------------------------------------------------------//
 
 METHOD HandleEvent( nMsg, nWParam, nLParam ) CLASS TTaskPanel
 
    if nMsg == WM_MOUSELEAVE
-      return ::MouseLeave( nHiWord( nLParam ), nLoWord( nLParam ), nWParam )
+      RETURN ::MouseLeave( nHiWord( nLParam ), nLoWord( nLParam ), nWParam )
    endif
 
-return ::Super:HandleEvent( nMsg, nWParam, nLParam )
+RETURN ::Super:HandleEvent( nMsg, nWParam, nLParam )
 
 //----------------------------------------------------------------------------//
 
@@ -469,7 +468,7 @@ METHOD KeyDown( nKey, nFlags ) CLASS TTaskPanel
       endif
    endif
 
-return nil
+RETURN nil
 
 //----------------------------------------------------------------------------//
 
@@ -498,7 +497,7 @@ METHOD LButtonUp( nRow, nCol, nFlags ) CLASS TTaskPanel
       ::oWnd:CheckScroll()
    endif
 
-return nil
+RETURN nil
 
 //----------------------------------------------------------------------------//
 
@@ -510,15 +509,15 @@ METHOD LoadBitmaps( nType, cnBitmap ) CLASS TTaskPanel
    DEFAULT nType := BMPDEFAULT
 
    if nType > BMPCOLLAP .OR. nType < BMPDEFAULT
-      return nil
+      RETURN nil
    endif
 
    if nType == BMPDEFAULT
       ::aBitmaps = {}
-      hBitmap = fwBmpAsc()
+      hBitmap = fwBmpDes()
       AAdd( ::aBitmaps, { hBitmap, 0, HasAlpha( hBitmap ), nBmpWidth( hBitmap ), nBmpHeight( hBitmap ) } )
       ::aBitmaps[ BMPEXPAND ][ BMP_BRIGHT ] = BrightImg( ::hDC, hBitmap, 90 )
-      hBitmap = fwBmpDes()
+      hBitmap = fwBmpAsc()
       AAdd( ::aBitmaps, { hBitmap, 0, HasAlpha( hBitmap ), nBmpWidth( hBitmap ), nBmpHeight( hBitmap ) } )
       ::aBitmaps[ BMPCOLLAP ][ BMP_BRIGHT ] = BrightImg( ::hDC, hBitmap, 90 )
    else
@@ -536,7 +535,7 @@ METHOD LoadBitmaps( nType, cnBitmap ) CLASS TTaskPanel
       ::aBitmaps[ nType ][ BMP_BRIGHT ] = BrightImg( ::hDC, hBitmap, 2 )
    endif
 
-return nil
+RETURN nil
 
 //----------------------------------------------------------------------------//
 
@@ -545,7 +544,7 @@ METHOD MouseLeave( nRow, nCol, nFlags ) CLASS TTaskPanel
    ::lOverTitle = .F.
    ::Refresh()
 
-return nil
+RETURN nil
 
 //----------------------------------------------------------------------------//
 
@@ -563,12 +562,12 @@ METHOD MouseMove( nRow, nCol, nFlags ) CLASS TTaskPanel
    ::CheckToolTip()
 
    if ::bMMoved != nil
-      return Eval( ::bMMoved, nRow, nCol, nFlags )
+      RETURN Eval( ::bMMoved, nRow, nCol, nFlags )
    endif
 
    TrackMouseEvent( ::hWnd, TME_LEAVE )
 
-return 0
+RETURN 0
 
 //----------------------------------------------------------------------------//
 
@@ -576,16 +575,11 @@ METHOD Paint( nIndex ) CLASS TTaskPanel
 
    local aInfo := ::DispBegin(), oItem, n
 
-   Gradient( ::hDC,;
-             { 0, 0, ::nTitleHeight, ::nWidth },;
-             If( ::lSpecial, nRGB( 240, 240, 240 ), nRGB( 240, 240, 240 ) ),;
-             If( ::lSpecial, nRGB( 240, 240, 240 ), nRGB( 240, 240, 240 ) ), .F. )
+   Gradient( ::hDC, { 0, 0, ::nTitleHeight, ::nWidth }, nRGB( 240, 240, 240 ), nRGB( 240, 240, 240 ), .f. )
 
-   ::Say( 6, 15 + If( ! Empty( ::hBmpPanel ), nBmpWidth( ::hBmpPanel ) / 2, 0 ), ::cTitle,;
-          If( ::lSpecial, If( ::lOverTitle, ::nClrHover, ::nClrTextSpecial ),;
-              If( ::lOverTitle, ::nClrHover, ::nClrText ) ),, ::oFont, .T., .T. )
+   ::Say( 6, 15 + if( !empty( ::hBmpPanel ), nBmpWidth( ::hBmpPanel ) / 2, 0 ), ::cTitle, ::nClrHover, , ::oFont, .t., .t. )
 
-   FillRect( ::hDC,;
+   fillRect( ::hDC,;
              { ::nTitleHeight, 0, ::nTitleHeight + ::nBodyHeight + 1, ::nWidth },;
              ::oBrush:hBrush )
 
@@ -593,27 +587,27 @@ METHOD Paint( nIndex ) CLASS TTaskPanel
       if ::aBitmaps[ BMPEXPAND ][ BMP_HASALPHA ]
         ABPaint( ::hDC, ;
                  ::nWidth - ::aBitmaps[ BMPEXPAND ][ BMP_WIDTH ] * 1.5, 4,;
-                 ::aBitmaps[ BMPEXPAND ][ If( ! ::lOverTitle, BMP_HANDLE, BMP_BRIGHT ) ],;
+                 ::aBitmaps[ BMPEXPAND ][ BMP_HANDLE ],;
                  255 )
       else
-        DrawTransparent( ::hDC, ::aBitmaps[ BMPEXPAND ][ If( ! ::lOverTitle, BMP_HANDLE, BMP_BRIGHT ) ],;
+        DrawTransparent( ::hDC, ::aBitmaps[ BMPEXPAND ][ BMP_HANDLE ],;
                          4, ::nWidth - ::aBitmaps[ BMPEXPAND ][ BMP_WIDTH ] * 1.5 )
       endif
    else
       if ::aBitmaps[ BMPCOLLAP ][ BMP_HASALPHA ]
         ABPaint( ::hDC, ;
                  ::nWidth - ::aBitmaps[ BMPCOLLAP ][ BMP_WIDTH ] * 1.5, 4,;
-                 ::aBitmaps[ BMPCOLLAP ][ If( ! ::lOverTitle, BMP_HANDLE, BMP_BRIGHT ) ], ;
+                 ::aBitmaps[ BMPCOLLAP ][ BMP_HANDLE ], ;
                  255 )
       else
-        DrawTransparent( ::hDC, ::aBitmaps[ BMPCOLLAP ][ If( ! ::lOverTitle, BMP_HANDLE, BMP_BRIGHT ) ],;
+        DrawTransparent( ::hDC, ::aBitmaps[ BMPCOLLAP ][ BMP_HANDLE ],;
                          4, ::nWidth - ::aBitmaps[ BMPCOLLAP ][ BMP_WIDTH ] * 1.5 )
       endif
    endif
-
-   if GetFocus() == ::hWnd
-      FrameDot( ::hDC, 2, 3, ::nTitleHeight - 2, ::nWidth - 5 )
-   endif
+//
+//   if GetFocus() == ::hWnd
+//      FrameDot( ::hDC, 2, 3, ::nTitleHeight - 2, ::nWidth - 5 )
+//   endif
 
    if ! Empty( ::aControls )
       for n = 1 to Len( ::aControls )
@@ -644,7 +638,7 @@ METHOD Paint( nIndex ) CLASS TTaskPanel
 
    ::DispEnd( aInfo )
 
-return 0
+RETURN 0
 
 //----------------------------------------------------------------------------//
 
@@ -654,7 +648,7 @@ METHOD SetPanelBitmap( cnBitmap, hInstance ) CLASS TTaskPanel
 
    ::lHasAlpha = HasAlpha( ::hBmpPanel )
 
-return nil
+RETURN nil
 
 //----------------------------------------------------------------------------//
 
@@ -669,6 +663,6 @@ METHOD UpdateRegion() CLASS TTaskPanel
                                    ::nWidth }, 6, 6 )
    SetWindowRgn( ::hWnd, ::hRegion )
 */
-return nil
+RETURN nil
 
 //----------------------------------------------------------------------------//

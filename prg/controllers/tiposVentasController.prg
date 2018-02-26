@@ -20,7 +20,7 @@ METHOD New()
 
    ::nLevel                := nLevelUsr( "01043" )
 
-   ::oModel                := TiposVentasModel():New( self )
+   ::oModel                := SQLTiposVentasModel():New( self )
 
    ::oRepository           := TiposVentasRepository():New( self )
 

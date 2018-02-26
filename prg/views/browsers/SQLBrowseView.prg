@@ -134,6 +134,10 @@ METHOD Create( oWindow )
 
    DEFAULT oWindow            := ::oController:getWindow()
 
+   if empty( ::getRowSet() )
+      RETURN ( nil )
+   endif
+
    ::oBrowse                  := SQLXBrowse():New( oWindow )
    ::oBrowse:l2007            := .f.
 
@@ -287,6 +291,10 @@ RETURN ( Self )
 METHOD saveColumnOrderToModel()
 
    local cColumnOrder   
+
+   if empty( ::oBrowse )
+      RETURN ( Self )
+   end if 
 
    aeval( ::oBrowse:aCols, {|o| if( !empty( o:cOrder ), cColumnOrder := o:cSortOrder, ) } )
 

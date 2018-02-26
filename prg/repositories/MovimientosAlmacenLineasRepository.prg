@@ -383,7 +383,8 @@ METHOD getSQLSentenceMovimientosForArticulo( hParams ) CLASS MovimientosAlmacenL
       idEmpresa      := cCodEmp()
    end if 
 
-   cSentence         := "SELECT movimientos_almacen.id, "
+   cSentence         := "SELECT "
+   cSentence         :=    "movimientos_almacen.id, "
    cSentence         +=    "movimientos_almacen.numero, "
    cSentence         +=    "movimientos_almacen.delegacion, "
    cSentence         +=    "CAST( movimientos_almacen.fecha_hora AS DATE ) AS fecha, "
@@ -417,11 +418,6 @@ METHOD getSQLSentenceMovimientosForArticulo( hParams ) CLASS MovimientosAlmacenL
       cSentence      +=    "AND DATE_FORMAT( CAST( movimientos_almacen.fecha_hora AS date ), '%Y' ) = :year" + Str( hget( hParams, "year" ) ) + " "
    end if
    
-   /*
-   cSentence      +=    "AND Date_Format( CAST( movimientos_almacen.fecha_hora AS date ), '%Y' ) LIKE ?  "
-   "%"anio := "2018" 
-   */
-
    if hhaskey( hParams, "almacen" ) .and. !empty( hget( hParams, "almacen" ) )
       cSentence      +=    "AND ( movimientos_almacen.almacen_destino = " + quoted( hget( hParams, "almacen" ) ) + " OR movimientos_almacen.almacen_origen = " + quoted( hget( hParams, "almacen" ) ) + " ) "
    end if

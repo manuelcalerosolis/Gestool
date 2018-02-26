@@ -6,7 +6,7 @@
 
 CLASS TiposVentasRepository FROM SQLBaseRepository
 
-   METHOD getTableName()         INLINE ( if( !empty( ::getController() ), ::getModelTableName(), TiposVentasModel():getTableName() ) )
+   METHOD getTableName()         INLINE ( if( !empty( ::getController() ), ::getModelTableName(), SQLTiposVentasModel():getTableName() ) )
 
 END CLASS
 

@@ -4805,11 +4805,11 @@ METHOD ConvertDatosToSQL()
       :New();
       :makeImportDbfSQL()
 
-   SituacionesModel();
+   SQLSituacionesModel();
       :New();
       :makeImportDbfSQL()
 
-   TiposVentasModel();
+   SQLTiposVentasModel();
       :New();
       :makeImportDbfSQL()
 
