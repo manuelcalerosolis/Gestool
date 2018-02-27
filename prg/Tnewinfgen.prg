@@ -3281,8 +3281,8 @@ METHOD lGrupoCategoria( lInitGroup, lImp ) CLASS TNewInfGen
    ::oGrupoCategoria:Cargo:TextHasta   := {|| oRetFld( ::oGrupoCategoria:Cargo:Hasta, ::oDbfCat, "cNombre", "Codigo", .t. ) }
    ::oGrupoCategoria:Cargo:HelpDesde   := {|| BrwCategoria( ::oDesde, ::oSayDesde, , .f. ) }
    ::oGrupoCategoria:Cargo:HelpHasta   := {|| BrwCategoria( ::oHasta, ::oSayHasta, , .f. ) }
-   ::oGrupoCategoria:Cargo:ValidDesde  := {|oGet| if( cCategoria( if( !Empty( oGet ), oGet, ::oDesde ), ::oDbfCat:cAlias, ::oSayDesde ), ( ::ChangeValor(), .t. ), .f. ) }
-   ::oGrupoCategoria:Cargo:ValidHasta  := {|oGet| if( cCategoria( if( !Empty( oGet ), oGet, ::oHasta ), ::oDbfCat:cAlias, ::oSayHasta ), ( ::ChangeValor(), .t. ), .f. ) }
+   ::oGrupoCategoria:Cargo:ValidDesde  := {|oGet| if( cCategoria( if( !Empty( oGet ), oGet, ::oDesde ), ::oSayDesde ), ( ::ChangeValor(), .t. ), .f. ) }
+   ::oGrupoCategoria:Cargo:ValidHasta  := {|oGet| if( cCategoria( if( !Empty( oGet ), oGet, ::oHasta ), ::oSayHasta ), ( ::ChangeValor(), .t. ), .f. ) }
    ::oGrupoCategoria:Cargo:lImprimir   := lImp
    ::oGrupoCategoria:Cargo:cBitmap     := "gc_photographic_filters_16"
 

@@ -455,64 +455,37 @@ return ( nBitmapTipo )
 
 //---------------------------------------------------------------------------//
 
-Function cCategoria( oGet, dbfCategoria, oGet2, oBmpCategoria  )
+Function cCategoria( oGet, oGet2, oBmpCategoria  )
 
    local oBlock
    local oError
-   local nOrd
-   local lOpen          := .f.
    local lValid         := .f.
    local xValor         := oGet:varGet()
+   local dbfSql         := "Categorias"
 
    if Empty( xValor ) .or. ( xValor == replicate( "Z", 10 ) )
       if( oGet2 != nil, oGet2:cText( "" ), )
       return .t.
    end if
 
-   oBlock               := ErrorBlock( {| oError | ApoloBreak( oError ) } )
-   BEGIN SEQUENCE
+   CategoriasModel():getSelectFromCategoria( dbfSql, xValor )
 
-   if dbfCategoria == nil
+   if !( dbfSql )->( Eof() )
 
-      USE ( cPatArt() + "CATEGORIAS.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "CATEGORIAS", @dbfCategoria ) )
-      SET ADSINDEX TO ( cPatArt() + "CATEGORIAS.CDX" ) ADDITIVE
-
-      lOpen             := .t.
-
-   end if
-
-   nOrd                 := ( dbfCategoria )->( OrdSetFocus( "Codigo" ) )
-
-   if ( dbfCategoria )->( dbSeek( xValor ) )
-
-      oGet:cText( ( dbfCategoria )->cCodigo )
+      oGet:cText( ( dbfSql )->cCodigo )
 
       if !Empty( oGet2 )
-         oGet2:cText( ( dbfCategoria )->cNombre )
+         oGet2:cText( ( dbfSql )->cNombre )
       end if
 
-      if !Empty( oBmpCategoria ) .and. !Empty( ( dbfCategoria )->cTipo )
-         oBmpCategoria:ReLoad( aResTipo[ Max( aScan( aStrTipo, AllTrim( ( dbfCategoria )->cTipo ) ), 1 ) ] )
+      if !Empty( oBmpCategoria ) .and. !Empty( ( dbfSql )->cTipo )
+         oBmpCategoria:ReLoad( aResTipo[ Max( aScan( aStrTipo, AllTrim( ( dbfSql )->cTipo ) ), 1 ) ] )
       end if
 
       lValid            := .t.
 
    else
-      msgStop( getConfigTraslation( "Categoría" ) + " no encontrada", "Aviso del sistema" )
-   end if
-
-   ( dbfCategoria )->( OrdSetFocus( nOrd ) )
-
-   RECOVER USING oError
-
-      msgStop( "Imposible abrir todas las bases de datos " + CRLF + ErrorMessage( oError ) )
-
-   END SEQUENCE
-
-   ErrorBlock( oBlock )
-
-   if lOpen
-      CLOSE( dbfCategoria )
+      msgStop( "Categoría no encontrada", "Aviso del sistema" )
    end if
 
 Return lValid
