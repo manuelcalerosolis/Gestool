@@ -4,7 +4,7 @@
 
 //---------------------------------------------------------------------------//
 
-CLASS SituacionesModel FROM SQLBaseModel
+CLASS SQLSituacionesModel FROM SQLBaseModel
 
    DATA cTableName               INIT "situaciones"
 

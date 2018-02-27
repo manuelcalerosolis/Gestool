@@ -133,9 +133,13 @@ METHOD ActivateNavigatorView()
 
    ::oRowSet:build( ::oModel:getSelectSentence() )
 
-   ::oNavigatorView:Activate()
-   
-   ::EnableWindowsBar()
+   if !empty( ::oRowSet:get() )
+
+      ::oNavigatorView:Activate()
+      
+      ::EnableWindowsBar()
+
+   endif 
 
    cursorWE()
 

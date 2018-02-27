@@ -2218,7 +2218,7 @@ Return nil
 Function SQLBaseView()
 Return nil
 
-Function SituacionesModel()
+Function SQLSituacionesModel()
 Return nil
 
 Function SQLTShell()
@@ -2245,7 +2245,7 @@ Return nil
 Function SQLConfiguracionVistasModel()
 Return nil
 
-Function TIPOSVENTASMODEL()
+Function SQLTiposVentasModel()
 Return nil
 
 Function PEDIDOSCLIENTESLINEASMODEL()

@@ -1,3 +1,5 @@
+#include "FiveWin.ch"
+
 //----------------------------------------------------------------------------//
 
 // Class TExplorerBar
@@ -16,12 +18,12 @@
 #define BMP_HEIGHT         5
 
 //Bitmap Array position
-#define BMPDEFAULT       0
-#define BMPEXPAND        1
-#define BMPCOLLAP        2
+#define BMPDEFAULT         0
+#define BMPEXPAND          1
+#define BMPCOLLAP          2
 
-#define GWL_STYLE     (-16)
-#define D_HEIGHT        13
+#define GWL_STYLE       (-16)
+#define D_HEIGHT           13
 
 //----------------------------------------------------------------------------//
 

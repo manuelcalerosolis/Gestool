@@ -7,13 +7,13 @@
 
 CLASS UsuariosController FROM SQLNavigatorController
    
-   DATA lMostrarRentabilidad 
+   DATA oAjustableController 
 
    METHOD New()
 
    METHOD End()
 
-   METHOD loadSettings()
+   METHOD setConfig()
 
 END CLASS
 
@@ -29,6 +29,8 @@ METHOD New() CLASS UsuariosController
 
    ::lTransactional        := .t.
 
+   ::lConfig               := .t.
+
    ::hImage                := { "16" => "gc_businesspeople_16" }
 
    ::nLevel                := nLevelUsr( "01052" )
@@ -43,9 +45,9 @@ METHOD New() CLASS UsuariosController
 
    ::oValidator            := UsuariosValidator():New( self )
 
-   ::oFilterController:setTableToFilter( ::getName() )
+   ::oAjustableController  := AjustableController():New( self )
 
-   ::setEvent( 'openingDialog', {|| ::loadSettings() })
+   ::oFilterController:setTableToFilter( ::getName() )
 
 RETURN ( Self )
 
@@ -53,21 +55,25 @@ RETURN ( Self )
 
 METHOD End()
 
-   if !empty(::oModel)
+   if !empty( ::oModel )
       ::oModel:End()
    endif
 
-   if !empty(::oBrowseView)
+   if !empty( ::oBrowseView )
       ::oBrowseView:End()
    endif
 
-   if !empty(::oDialogView)
+   if !empty( ::oDialogView )
       ::oDialogView:End()
    endif
 
-   if !empty(::oValidator)
+   if !empty( ::oValidator )
       ::oValidator:End()
    endif
+
+   if !empty( ::oAjustableController )
+      ::oAjustableController:End()
+   end if 
 
    ::Super:End()
 
@@ -75,17 +81,48 @@ RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 
-METHOD loadSettings()
+METHOD setConfig()
 
-   local cUuid    := hget( ::oModel:hBuffer, "uuid" )
+   local aItems   := {}
+   local cUuid    := ::getRowSet():fieldGet( 'uuid' )
 
    if empty( cUuid )
+      msgalert( cUuid, "cUuid" )
       RETURN ( self )
-   endif
+   end if 
 
-   ::lMostrarRentabilidad  := SeteableRepository():getLogic( cUuid, 'usuarios', 'mostrar_rentabilidad', .f. ) 
+   msgalert( hb_valtoexp( EmpresasModel():aNombres() ), "EmpresasModel():aNombres()stock" )
 
-   msgalert( ::lMostrarRentabilidad, "lMostrarRentabilidad")
+   aadd( aItems,  {  'clave'  => 'Empresa en uso',;
+                     'valor'  => ::oAjustableController:oRepository:getValue( cUuid, 'usuarios', 'empresa_en_uso', space( 3 ) ) ,;
+                     'tipo'   => "B",;
+                     'lista'  => EmpresasModel():aNombres() } )
+
+   msgalert( hb_valtoexp( aItems ), "aItems" )
+
+   ::oAjustableController:oDialogView:setItems( aItems )
+
+   ::oAjustableController:DialogViewActivate()
+   
+/*
+   ::aItems    := {}
+
+   aadd( ::aItems, { 'clave'  => 'empresa_en_uso',;
+                     'valor'  => ::getValue( 'usuarios', 'empresa_en_uso', '' ),;
+                     'tipo'   => "B",;
+                     'lista'  => {"uno", "dos", "tres"} } )
+
+   aadd( ::aItems, { 'clave'  => 'caja_en_uso',;
+                     'valor'  => ::getValue( 'usuarios', 'caja_en_uso', '' ),;
+                     'tipo'   => "C" } )
+
+   aadd( ::aItems, { 'clave'  => 'almacen_en_uso',;
+                     'valor'  => ::getValue( 'usuarios', 'almacen_en_uso', '' ),;
+                     'tipo'   => "B",;
+                     'lista'  => {"uno", "dos", "tres"} } )
+
+   ::oAjustableController:Edit()
+*/
 
 RETURN ( self )
 
@@ -120,7 +157,7 @@ METHOD getColumns() CLASS SQLUsuariosModel
    hset( ::hColumns, "uuid",           {  "create"    => "VARCHAR(40) NOT NULL UNIQUE"             ,;
                                           "default"   => {|| win_uuidcreatestring() } }            )
 
-   hset( ::hColumns, "name",           {  "create"    => "VARCHAR ( 100 ) NOT NULL UNIQUE"                         ,;
+   hset( ::hColumns, "nombre",         {  "create"    => "VARCHAR ( 100 ) NOT NULL UNIQUE"                         ,;
                                           "default"   => {|| space( 100 ) } }                      )
 
    hset( ::hColumns, "email",          {  "create"    => "VARCHAR ( 100 ) NOT NULL"                         ,;
@@ -143,7 +180,7 @@ METHOD getInsertUsuariosSentence()
    local cStatement 
 
    cStatement  := "INSERT IGNORE INTO " + ::cTableName + " "
-   cStatement  +=    "( uuid, name, email, password ) "
+   cStatement  +=    "( uuid, nombre, email, password ) "
    cStatement  += "VALUES "
    cStatement  +=    "( UUID(), 'administrador', 'admin@admin.com', " + quoted( ::Crypt( '12345678' ) ) + " )"
 
@@ -183,10 +220,10 @@ METHOD addColumns() CLASS UsuariosBrowseView
    end with
 
    with object ( ::oBrowse:AddCol() )
-      :cSortOrder          := 'name'
+      :cSortOrder          := 'nombre'
       :cHeader             := 'Nombre'
       :nWidth              := 300
-      :bEditValue          := {|| ::getRowSet():fieldGet( 'name' ) }
+      :bEditValue          := {|| ::getRowSet():fieldGet( 'nombre' ) }
       :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
    end with
 
@@ -262,7 +299,7 @@ METHOD Activate() CLASS UsuariosView
    ::cGetPassword          := space( 100 )
    ::cGetRepeatPassword    := space( 100 )
 
-   DEFINE DIALOG oDlg ;
+   DEFINE DIALOG  oDlg ;
       RESOURCE    "USUARIO" ;
       TITLE       ::lblTitle() + "usuario" 
 
@@ -277,22 +314,22 @@ METHOD Activate() CLASS UsuariosView
       WHEN        ( .f. ) ;
       OF          oDlg
 
-   REDEFINE GET   ::getModel():hBuffer[ "name" ] ;
+   REDEFINE GET   ::getModel():hBuffer[ "nombre" ] ;
       ID          110 ;
-      WHEN        ( !::oController:isZoomMode() ) ;
-      VALID       ( ::oController:validate( "name" ) ) ;
+      WHEN        ( ::oController:isNotZoomMode() ) ;
+      VALID       ( ::oController:validate( "nombre" ) ) ;
       OF          oDlg
 
    REDEFINE GET   ::getModel():hBuffer[ "email" ] ;
       ID          120 ;
-      WHEN        ( !::oController:isZoomMode() ) ;
+      WHEN        ( ::oController:isNotZoomMode() ) ;
       VALID       ( ::oController:validate( "email" ) ) ;
       OF          oDlg
 
    REDEFINE GET   ::oGetPassword ;
       VAR         ::cGetPassword ;
       ID          130 ;
-      WHEN        ( !::oController:isZoomMode() ) ;
+      WHEN        ( ::oController:isNotZoomMode() ) ;
       OF          oDlg
    
    ::oGetPassword:bValid         := {|| ::oController:validate( "password", ::cGetPassword ) }
@@ -300,20 +337,15 @@ METHOD Activate() CLASS UsuariosView
    REDEFINE GET   ::oGetRepeatPassword ;
       VAR         ::cGetRepeatPassword ;
       ID          131 ;
-      WHEN        ( !::oController:isZoomMode() ) ;
+      WHEN        ( ::oController:isNotZoomMode() ) ;
       OF          oDlg
 
    ::oGetRepeatPassword:bValid   := {|| ::oController:validate( "repeatPassword", ::cGetRepeatPassword ) }
 
-   REDEFINE CHECKBOX ::oController:lMostrarRentabilidad ;
-      ID          140 ;
-      WHEN        ( !::oController:isZoomMode() ) ;
-      OF          oDlg
-
    REDEFINE BUTTON oBtnOk ;
       ID          IDOK ;
       OF          oDlg ;
-      WHEN        ( !::oController:isZoomMode() ) ;   
+      WHEN        ( ::oController:isNotZoomMode() ) ;
       ACTION      ( ::saveView( oDlg ) )
 
    REDEFINE BUTTON ;
@@ -366,7 +398,7 @@ END CLASS
 
 METHOD getValidators() CLASS UsuariosValidator
 
-   ::hValidators  := {  "name" =>            {  "required"        => "El nombre es un dato requerido",;
+   ::hValidators  := {  "nombre" =>          {  "required"        => "El nombre es un dato requerido",;
                                                 "unique"          => "El nombre ya existe" },; 
                         "email" =>           {  "required"        => "El email es un dato requerido",;
                                                 "mail"            => "El email no es valido" },;

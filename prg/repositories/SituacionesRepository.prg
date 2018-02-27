@@ -6,7 +6,7 @@
 
 CLASS SituacionesRepository FROM SQLBaseRepository
 
-   METHOD getTableName()         INLINE ( if( !empty( ::getController() ), ::getModelTableName(), SituacionesModel():getTableName() ) )
+   METHOD getTableName()         INLINE ( if( !empty( ::getController() ), ::getModelTableName(), SQLSituacionesModel():getTableName() ) )
 
    METHOD getNombres() 
 

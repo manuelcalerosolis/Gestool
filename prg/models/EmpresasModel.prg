@@ -31,6 +31,8 @@ CLASS EmpresasModel FROM ADSBaseModel
 
    METHOD DeleteEmpresa( cCodigoEmpresa )
 
+   METHOD aNombres()
+
 END CLASS
 
 //---------------------------------------------------------------------------//
@@ -133,6 +135,25 @@ METHOD DeleteEmpresa( cCodigoEmpresa )
    local cSql  := "DELETE FROM " + ::getEmpresaTableName() + " " + ;
                   "WHERE CodEmp = " + quoted( cCodigoEmpresa )
 
-Return ( ::ExecuteSqlStatement( cSql, @cStm ) )
+RETURN ( ::ExecuteSqlStatement( cSql, @cStm ) )
+
+//---------------------------------------------------------------------------//
+
+METHOD aNombres()
+
+   local cStm
+   local aEmp  := {}
+   local cSql  := "SELECT * FROM " + ::getEmpresaTableName() 
+
+   if !::ExecuteSqlStatement( cSql, @cStm )
+      RETURN ( aEmp )
+   endif 
+
+   while !( cStm )->( eof() ) 
+      aadd( aEmp, ( cStm )->cNombre )
+      ( cStm )->( dbskip() )
+   end while
+
+RETURN ( aEmp )
 
 //---------------------------------------------------------------------------//

@@ -72,7 +72,7 @@ METHOD checkValues()
 
    getSQLDatabase():Exec( SQLUsuariosModel():getInsertUsuariosSentence() )
 
-   getSQLDatabase():Exec( SQLSettingsModel():getInsertSettingsSentence() )
+   getSQLDatabase():Exec( SQLAjustesModel():getInsertAjustesSentence() )
 
 RETURN ( Self )
 
@@ -129,17 +129,17 @@ METHOD addModels()
 
    aadd( ::aModels, SQLUsuariosModel():New() )
 
-   aadd( ::aModels, SQLSettingsModel():New() )
+   aadd( ::aModels, SQLAjustesModel():New() )
 
-   aadd( ::aModels, SituacionesModel():New() )
+   aadd( ::aModels, SQLAjustableModel():New() )
+
+   aadd( ::aModels, SQLSituacionesModel():New() )
 
    aadd( ::aModels, SQLConfiguracionVistasModel():New() )
 
    aadd( ::aModels, SQLTageableModel():New() )
-
-   aadd( ::aModels, SQLSeteableModel():New() )
                                       
-   aadd( ::aModels, TiposVentasModel():New() )
+   aadd( ::aModels, SQLTiposVentasModel():New() )
 
    aadd( ::aModels, SQLConfiguracionEmpresasModel():New() )
 

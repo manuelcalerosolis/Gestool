@@ -61,9 +61,9 @@ RETURN ( ::insertOnDuplicate( hBuffer ) )
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 
-CLASS ajustableRepository FROM SQLBaseRepository
+CLASS AjustableRepository FROM SQLBaseRepository
 
-   METHOD getTableName()      INLINE ( SQLajustableModel():getTableName() ) 
+   METHOD getTableName()      INLINE ( SQLAjustableModel():getTableName() ) 
 
    METHOD getValue()
 
@@ -90,7 +90,11 @@ METHOD getValue( cUuid, cTipo, cAjuste, uDefault )
 
    uValue            := ::getDatabase():selectValue( cSentence )
 
-RETURN ( uValue )
+   if hb_ischar( uValue ) 
+      RETURN ( uValue ) 
+   endif
+
+RETURN ( uDefault )
 
 //---------------------------------------------------------------------------//
 
