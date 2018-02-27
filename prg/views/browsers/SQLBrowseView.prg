@@ -316,7 +316,11 @@ RETURN ( cColumnOrder )
 
 METHOD saveColumnOrientationToModel()
 
-   local cColumnOrientation   
+   local cColumnOrientation
+
+   if empty( ::oBrowse )
+      RETURN ( Self )
+   end if 
 
    aeval( ::oBrowse:aCols, {|o| if( !empty( o:cOrder ), cColumnOrientation := o:cOrder, ) } )
 

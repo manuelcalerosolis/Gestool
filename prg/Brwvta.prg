@@ -2623,6 +2623,8 @@ Static Function LoadMovimientosAlmacen( cCodArt, nYear )
 
    end while
 
+   oRowSet:Free()
+
 Return nil
 
 //---------------------------------------------------------------------------//

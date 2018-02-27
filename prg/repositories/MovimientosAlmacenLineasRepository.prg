@@ -350,7 +350,7 @@ METHOD getRowSetMovimientosAlmacenForReport( oReporting )
 
    local cSentence   := ::getSqlSentenceMovimientosAlmacenForReport( oReporting )
 
-RETURN ( ::getDatabase():fetchRowSet( cSentence ) )
+RETURN ( SQLRowSet():New():Build( cSentence ) ) // ::getDatabase():fetchRowSet( cSentence ) )
 
 //---------------------------------------------------------------------------//
 
@@ -384,7 +384,7 @@ METHOD getSQLSentenceMovimientosForArticulo( hParams ) CLASS MovimientosAlmacenL
    end if 
 
    cSentence         := "SELECT "
-   cSentence         :=    "movimientos_almacen.id, "
+   cSentence         +=    "movimientos_almacen.id, "
    cSentence         +=    "movimientos_almacen.numero, "
    cSentence         +=    "movimientos_almacen.delegacion, "
    cSentence         +=    "CAST( movimientos_almacen.fecha_hora AS DATE ) AS fecha, "
@@ -450,6 +450,6 @@ METHOD getRowSetMovimientosForArticulo( hParams ) CLASS MovimientosAlmacenLineas
 
    local cSentence   := ::getSqlSentenceMovimientosForArticulo( hParams )
 
-RETURN ( ::getDatabase():fetchRowSet( cSentence ) )
+RETURN ( SQLRowSet():New():Build( cSentence ) ) // ::getDatabase():fetchRowSet( cSentence ) )
 
 //---------------------------------------------------------------------------//

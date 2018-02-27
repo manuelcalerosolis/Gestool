@@ -2755,7 +2755,7 @@ METHOD nCostoMedio( cCodArt, cCodAlm, cCodPr1, cCodPr2, cValPr1, cValPr2, cLote 
    Recorremos movimientos de almacén-------------------------------------------
    */
 
-   if !empty( oRowSet )
+   if !empty( oRowSet:Get() )
 
       oRowSet:goTop()
       while !( oRowSet:Eof() )
@@ -2763,11 +2763,14 @@ METHOD nCostoMedio( cCodArt, cCodAlm, cCodPr1, cCodPr2, cValPr1, cValPr2, cLote 
          nUnidades   += oRowSet:fieldget( 'total_unidades' )
          nImporte    += oRowSet:fieldget( 'precio_articulo' )
 
-         oRowSet:skip()
+         oRowSet:Skip()
 
       end while
 
+      oRowSet:End()
+
    end if 
+
 
    /*
    Recorremos Albaranes de proveedores-----------------------------------------
@@ -3612,7 +3615,7 @@ METHOD aStockMovimientosAlmacen( cCodArt, cCodAlm, cCodEmp )
 
    SysRefresh()
 
-   if empty( oRowSet )
+   if empty( oRowSet:get() )
       RETURN ( nil )
    end if 
 
@@ -3667,6 +3670,8 @@ METHOD aStockMovimientosAlmacen( cCodArt, cCodAlm, cCodEmp )
       oRowSet:skip()
 
    end while
+
+   oRowSet:End()
 
 RETURN ( nil )
 

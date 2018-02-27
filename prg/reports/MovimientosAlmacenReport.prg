@@ -31,11 +31,19 @@ METHOD buildRowSet( uIds )
 
    DEFAULT uIds                        := ::getIds()
 
-   oMovimientosAlmacenSelect           := getSqlDataBase():query( MovimientosAlmacenRepository():getSqlSentenceByIdOrLast( uIds ) )
-   ::oMovimientosAlmacenRowSet         := oMovimientosAlmacenSelect:fetchRowSet()
+   // oMovimientosAlmacenSelect           := getSqlDataBase():query( MovimientosAlmacenRepository():getSqlSentenceByIdOrLast( uIds ) )
+   // ::oMovimientosAlmacenRowSet         := oMovimientosAlmacenSelect:fetchRowSet()
+   
+   ::oMovimientosAlmacenRowSet         := SQLRowSet();   
+                                             :New();
+                                             :Build( MovimientosAlmacenRepository():getSqlSentenceByIdOrLast( uIds ) )
 
-   oLineasMovimientosAlmacenSelect     := getSqlDataBase():query( MovimientosAlmacenLineasRepository():getSqlSentenceWhereParentUuid( ::oMovimientosAlmacenRowSet:fieldget( "uuid" ) ) )      
-   ::oLineasMovimientosAlmacenRowSet   := oLineasMovimientosAlmacenSelect:fetchRowSet()
+   // oLineasMovimientosAlmacenSelect     := getSqlDataBase():query( MovimientosAlmacenLineasRepository():getSqlSentenceWhereParentUuid( ::oMovimientosAlmacenRowSet:fieldget( "uuid" ) ) )      
+   // ::oLineasMovimientosAlmacenRowSet   := oLineasMovimientosAlmacenSelect:fetchRowSet()
+
+   ::oLineasMovimientosAlmacenRowSet   := SQLRowSet();   
+                                             :New();
+                                             :Build( MovimientosAlmacenLineasRepository():getSqlSentenceWhereParentUuid( ::oMovimientosAlmacenRowSet:fieldget( "uuid" ) ) )
 
 RETURN NIL
 

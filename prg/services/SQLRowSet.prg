@@ -19,6 +19,7 @@ CLASS SQLRowSet
 
    METHOD New()
    METHOD End()
+   METHOD Free()                                      INLINE ( ::End() )
 
    METHOD Get()                                       INLINE ( ::oRowSet )
 
@@ -29,7 +30,10 @@ CLASS SQLRowSet
    METHOD saveRecno()                                 INLINE ( if( !empty( ::oRowSet ), ::nRecno := ::oRowSet:recno(), ) ) 
    METHOD restoreRecno()                              INLINE ( if( !empty( ::oRowSet ), ::oRowSet:goto( ::nRecno ), ) ) 
    METHOD gotoRecno( nRecno )                         INLINE ( if( !empty( ::oRowSet ), ::oRowSet:goto( nRecno ), ) ) 
+   METHOD goTop()                                     INLINE ( if( !empty( ::oRowSet ), ::oRowSet:goTop(), ) )
+   METHOD Skip()                                      INLINE ( if( !empty( ::oRowSet ), ::oRowSet:Skip(), ) )
    METHOD Recno( nRecno )                             INLINE ( if( !empty( ::oRowSet ) .and. empty( nRecno ), ::oRowSet:Recno(), ::oRowSet:goto( nRecno ) ) )
+   METHOD Eof()                                       INLINE ( if( !empty( ::oRowSet ), ::oRowSet:eof(), ) ) 
 
    METHOD goDown()                                    INLINE ( if( !empty( ::oRowSet ), ::oRowSet:skip(1), ) ) 
    METHOD goUp()                                      INLINE ( if( !empty( ::oRowSet ), ::oRowSet:skip(-1), ) ) 
@@ -70,7 +74,11 @@ RETURN ( Self )
 METHOD End()
 
    ::oEvents:End()
-   
+
+   ::freeRowSet()
+
+   ::freeStatement()
+
 RETURN ( nil )
 
 //---------------------------------------------------------------------------//
@@ -117,7 +125,7 @@ METHOD Build( cSentence )
 
    cursorWE()
    
-RETURN ( ::oRowSet )
+RETURN ( Self )
 
 //---------------------------------------------------------------------------//
 
