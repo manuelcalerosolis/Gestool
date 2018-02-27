@@ -56,7 +56,6 @@ static oTagsEver
 static dbfProv
 static dbfCatalogo
 static dbfTemporada
-static dbfCategoria
 static dbfFamPrv
 static dbfTMov
 static dbfTarPreT 
@@ -251,9 +250,6 @@ STATIC FUNCTION OpenFiles( lExt, cPath )
 
       USE ( cPatArt() + "Temporadas.Dbf" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "TEMPORADA", @dbfTemporada ) )
       SET ADSINDEX TO ( cPatArt() + "Temporadas.Cdx" ) ADDITIVE
-
-      USE ( cPatArt() + "Categorias.Dbf" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "Categorias", @dbfCategoria ) )
-      SET ADSINDEX TO ( cPatArt() + "Categorias.Cdx" ) ADDITIVE
 
       USE ( cPatArt() + "FamPrv.Dbf" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "FAMPRV", @dbfFamPrv ) )
       SET ADSINDEX TO ( cPatArt() + "FamPrv.Cdx" ) ADDITIVE
@@ -507,10 +503,6 @@ STATIC FUNCTION CloseFiles( lDestroy )
       ( dbfTemporada )->( dbCloseArea() )
    end if
 
-   if dbfCategoria != nil
-      ( dbfCategoria )->( dbCloseArea() )
-   end if
-
    if dbfFamPrv != nil
       ( dbfFamPrv )->( dbCloseArea() )
    end if
@@ -711,7 +703,6 @@ STATIC FUNCTION CloseFiles( lDestroy )
    oNewImp           := nil
    oFraPub           := nil
    dbfDoc            := nil
-   dbfCategoria      := nil
    dbfTemporada      := nil
    dbfAlbPrvL        := nil
    dbfFacPrvL        := nil
@@ -939,7 +930,7 @@ Function Articulo( oMenuItem, oWnd, bOnInit )
    with object ( oWndBrw:AddXCol() )
       :cHeader          := "Categoría"
       :cSortOrder       := "cCodCate"
-      :bStrData         := {|| AllTrim( ( D():Articulos( nView ) )->cCodCate ) + if( !empty( ( D():Articulos( nView ) )->cCodCate ), " - ", "" ) + RetFld( ( D():Articulos( nView ) )->cCodCate, dbfCategoria, "cNombre" ) }
+      :bStrData         := {|| AllTrim( ( D():Articulos( nView ) )->cCodCate ) + if( !empty( ( D():Articulos( nView ) )->cCodCate ), " - ", "" ) + CategoriasModel():getField( "cNombre", "cCodigo", ( D():Articulos( nView ) )->cCodCate ) }
       :nWidth           := 140
       :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | oWndBrw:ClickOnHeader( oCol ) }
       :lHide            := .t. 
@@ -2027,7 +2018,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, cArticulo, oBrw, bWhen, bValid, nMode )
          ID       230 ;
          IDTEXT   231 ;
          WHEN     ( nMode != ZOOM_MODE ) ;
-         VALID    ( cCategoria( aGet[ ( D():Articulos( nView ) )->( fieldpos( "cCodCate" ) ) ], dbfCategoria, aGet[ ( D():Articulos( nView ) )->( fieldpos( "cCodCate" ) ) ]:oHelpText, oBmpCategoria ) ) ;
+         VALID    ( cCategoria( aGet[ ( D():Articulos( nView ) )->( fieldpos( "cCodCate" ) ) ], aGet[ ( D():Articulos( nView ) )->( fieldpos( "cCodCate" ) ) ]:oHelpText, oBmpCategoria ) ) ;
          ON HELP  ( BrwCategoria( aGet[ ( D():Articulos( nView ) )->( fieldpos( "cCodCate" ) ) ], aGet[ ( D():Articulos( nView ) )->( fieldpos( "cCodCate" ) ) ]:oHelpText, oBmpCategoria ) ) ;
          BITMAP   "LUPA" ;
          OF       fldGeneral
