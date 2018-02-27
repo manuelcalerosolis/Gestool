@@ -2571,53 +2571,28 @@ Static Function LoadMovimientosAlmacen( cCodArt, nYear )
 
    while !( oRowSet:Eof() )
 
-      if !Empty( oRowSet:fieldget( 'almacen_destino' ) )
-         oDbfTmp:Append()
-         oDbfTmp:nTypDoc   := MOV_ALM
-         oDbfTmp:cNumDoc   := AllTrim( oRowSet:fieldget( 'numero' ) )
-         oDbfTmp:cSufDoc   := oRowSet:fieldget( 'delegacion' )
-         oDbfTmp:cEstDoc   := "Movimiento"
-         oDbfTmp:dFecDoc   := oRowSet:fieldget( 'fecha' )
-         oDbfTmp:tFecDoc   := StrTran( oRowSet:fieldget( 'hora' ), ":", "" )
-         oDbfTmp:cNomDoc   := oRowSet:fieldget( 'nombre_movimiento' )
-         oDbfTmp:cRef      := oRowSet:fieldget( 'codigo_articulo' )
-         oDbfTmp:cCodPr1   := oRowSet:fieldget( 'codigo_primera_propiedad' )
-         oDbfTmp:cCodPr2   := oRowSet:fieldget( 'codigo_segunda_propiedad' )
-         oDbfTmp:cValPr1   := oRowSet:fieldget( 'valor_primera_propiedad' )
-         oDbfTmp:cValPr2   := oRowSet:fieldget( 'valor_segunda_propiedad' )
-         oDbfTmp:cLote     := oRowSet:fieldget( 'lote' )
-         oDbfTmp:cAlmDoc   := oRowSet:fieldget( 'almacen_destino' )
-         oDbfTmp:nUndDoc   := oRowSet:fieldget( 'total_unidades' )
-         oDbfTmp:nImpDoc   := oRowSet:fieldget( 'precio_articulo' )
-         oDbfTmp:nTotDoc   := oDbfTmp:nUndDoc * oDbfTmp:nImpDoc
-         oDbfTmp:nDtoDoc   := 0
-         oDbfTmp:nIdSql    := oRowSet:fieldget( 'id' )
-         oDbfTmp:Save()
-      end if
-
-      if !Empty( oRowSet:fieldget( 'almacen_origen' ) )
-         oDbfTmp:Append()
-         oDbfTmp:nTypDoc   := MOV_ALM
-         oDbfTmp:cNumDoc   := AllTrim( oRowSet:fieldget( 'numero' ) )
-         oDbfTmp:cSufDoc   := oRowSet:fieldget( 'delegacion' )
-         oDbfTmp:cEstDoc   := "Movimiento"
-         oDbfTmp:dFecDoc   := oRowSet:fieldget( 'fecha' )
-         oDbfTmp:tFecDoc   := StrTran( oRowSet:fieldget( 'hora' ), ":", "" )
-         oDbfTmp:cNomDoc   := oRowSet:fieldget( 'nombre_movimiento' )
-         oDbfTmp:cRef      := oRowSet:fieldget( 'codigo_articulo' )
-         oDbfTmp:cCodPr1   := oRowSet:fieldget( 'codigo_primera_propiedad' )
-         oDbfTmp:cCodPr2   := oRowSet:fieldget( 'codigo_segunda_propiedad' )
-         oDbfTmp:cValPr1   := oRowSet:fieldget( 'valor_primera_propiedad' )
-         oDbfTmp:cValPr2   := oRowSet:fieldget( 'valor_segunda_propiedad' )
-         oDbfTmp:cLote     := oRowSet:fieldget( 'lote' )
-         oDbfTmp:cAlmDoc   := oRowSet:fieldget( 'almacen_origen' )
-         oDbfTmp:nUndDoc   := oRowSet:fieldget( 'total_unidades' )
-         oDbfTmp:nImpDoc   := oRowSet:fieldget( 'precio_articulo' )
-         oDbfTmp:nTotDoc   := oDbfTmp:nUndDoc * oDbfTmp:nImpDoc
-         oDbfTmp:nDtoDoc   := 0
-         oDbfTmp:nIdSql    := oRowSet:fieldget( 'id' )
-         oDbfTmp:Save()
-      end if
+      oDbfTmp:Append()
+      oDbfTmp:nTypDoc   := MOV_ALM
+      oDbfTmp:cNumDoc   := AllTrim( oRowSet:fieldget( 'numero' ) )
+      oDbfTmp:cSufDoc   := oRowSet:fieldget( 'delegacion' )
+      oDbfTmp:cEstDoc   := "Movimiento"
+      oDbfTmp:dFecDoc   := oRowSet:fieldget( 'fecha' )
+      oDbfTmp:tFecDoc   := StrTran( oRowSet:fieldget( 'hora' ), ":", "" )
+      oDbfTmp:cNomDoc   := oRowSet:fieldget( 'nombre_movimiento' )
+      oDbfTmp:cRef      := oRowSet:fieldget( 'codigo_articulo' )
+      oDbfTmp:cCodPr1   := oRowSet:fieldget( 'codigo_primera_propiedad' )
+      oDbfTmp:cCodPr2   := oRowSet:fieldget( 'codigo_segunda_propiedad' )
+      oDbfTmp:cValPr1   := oRowSet:fieldget( 'valor_primera_propiedad' )
+      oDbfTmp:cValPr2   := oRowSet:fieldget( 'valor_segunda_propiedad' )
+      oDbfTmp:cLote     := oRowSet:fieldget( 'lote' )
+      oDbfTmp:cAlmDoc   := oRowSet:fieldget( 'almacen_destino' )
+      oDbfTmp:cAlmOrg   := oRowSet:fieldget( 'almacen_origen' )
+      oDbfTmp:nUndDoc   := oRowSet:fieldget( 'total_unidades' )
+      oDbfTmp:nImpDoc   := oRowSet:fieldget( 'precio_articulo' )
+      oDbfTmp:nTotDoc   := oDbfTmp:nUndDoc * oDbfTmp:nImpDoc
+      oDbfTmp:nDtoDoc   := 0
+      oDbfTmp:nIdSql    := oRowSet:fieldget( 'id' )
+      oDbfTmp:Save()
 
       oRowSet:skip()
 

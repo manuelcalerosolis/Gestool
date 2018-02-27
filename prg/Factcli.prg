@@ -2580,7 +2580,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, hHash, bValid, nMode )
    cSay[ 8 ]               := RetFld( aTmp[ _CCODRUT ], dbfRuta )
    cSay[ 3 ]               := RetFld( aTmp[ _CCODAGE ], D():Agentes( nView ) )
    cSay[ 5 ]               := RetFld( aTmp[ _CCODTAR ], dbfTarPreT )
-   cSay[ 7 ]               := RetFld( aTmp[ _CCODCLI ] + aTmp[ _CCODOBR ], dbfObrasT, "cNomObr" )
+   cSay[ 7 ]               := RetFld( aTmp[ _CCODCLI ] + aTmp[ _CCODOBR ], dbfObrasT, "cNomObr", "cCodCli" )
    cSay[ 9 ]               := oTrans:cNombre( aTmp[ _CCODTRN ] )
    cSay[ 10]               := RetFld( aTmp[ _CCODCAJ ], dbfCajT )
    cSay[ 11]               := RetFld( aTmp[ _CCODUSR ], dbfUsr, "cNbrUse" )
@@ -2785,7 +2785,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, hHash, bValid, nMode )
          WHEN     ( lWhen ) ;
          VALID    ( cObras( aGet[ _CCODOBR ], oSay[ 7 ], aTmp[ _CCODCLI ] ) ) ;
          BITMAP   "LUPA" ;
-         ON HELP  ( BrwObrasNuevo( aGet[ _CCODOBR ], oSay[ 7 ], aTmp[ _CCODCLI ], dbfObrasT ) ) ;
+         ON HELP  ( BrwObras( aGet[ _CCODOBR ], oSay[ 7 ], aTmp[ _CCODCLI ], dbfObrasT ) ) ;
          OF       fldGeneral
 
       REDEFINE GET oSay[ 7 ] VAR cSay[ 7 ] ;

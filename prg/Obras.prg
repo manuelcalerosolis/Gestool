@@ -566,7 +566,7 @@ RETURN ( aItmObr )
 
 //---------------------------------------------------------------------------//
 
-FUNCTION BrwObras( oGet, oGet2, cCodigoCliente, dbfObrasT )
+FUNCTION BrwObrasOLD( oGet, oGet2, cCodigoCliente, dbfObrasT )
 
 	local oDlg
 	local oBrw
@@ -755,7 +755,7 @@ Return lValid
 
 //---------------------------------------------------------------------------//
 
-FUNCTION BrwObrasNuevo( oGet, oGet2, cCodigoCliente )
+FUNCTION BrwObras( oGet, oGet2, cCodigoCliente, dbfObrasT )
 
    local oDlg
    local oBrw
@@ -829,7 +829,7 @@ FUNCTION BrwObrasNuevo( oGet, oGet2, cCodigoCliente )
 
       with object ( oBrw:AddCol() )
          :cHeader          := "Código"
-         :cSortOrder       := "Codigo"
+         :cSortOrder       := "cCodigo"
          :bEditValue       := {|| ( dbfSql )->cCodObr }
          :nWidth           := 80
          :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | oCbxOrd:Set( oCol:cHeader ), eval( oCbxOrd:bChange ) }
@@ -837,7 +837,7 @@ FUNCTION BrwObrasNuevo( oGet, oGet2, cCodigoCliente )
 
       with object ( oBrw:AddCol() )
          :cHeader          := "Nombre"
-         :cSortOrder       := "Nombre"
+         :cSortOrder       := "cNombre"
          :bEditValue       := {|| ( dbfSql )->cNomObr }
          :nWidth           := 360
          :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | oCbxOrd:Set( oCol:cHeader ), eval( oCbxOrd:bChange ) }
