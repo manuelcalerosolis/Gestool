@@ -129,12 +129,18 @@ METHOD set( cViewType, cViewName, cBrowseState, cColumnOrder, cOrientation, idTo
    if empty( cViewName )
       RETURN ( Self )
    end if 
+
+   if empty( cBrowseState ) .and. empty( cColumnOrder ) .and. empty( cOrientation ) .and. empty( idToFind )
+      RETURN ( Self )
+   end if 
    
    cSentence            := "INSERT INTO " + ::cTableName + " ( "                               
    cSentence            +=       "empresa, "                                               
    cSentence            +=       "usuario, "                                               
    cSentence            +=       "view_type, "                                               
    cSentence            +=       "view_name, "     
+
+   msgalert( cBrowseState, "cBrowseState 1 " )
 
    if !empty( cBrowseState )                                          
       cBrowseState      := getSQLDatabase():escapeStr( cBrowseState ) 
@@ -161,6 +167,8 @@ METHOD set( cViewType, cViewName, cBrowseState, cColumnOrder, cOrientation, idTo
    cSentence            +=       quoted( cViewType ) + ", "                          
    cSentence            +=       quoted( cViewName ) + ", "                                  
 
+   msgalert( cBrowseState, "cBrowseState 2 " )
+
    if !empty( cBrowseState )                                          
       cSentence         +=       quoted( cBrowseState ) + ", "                               
    end if 
@@ -183,6 +191,8 @@ METHOD set( cViewType, cViewName, cBrowseState, cColumnOrder, cOrientation, idTo
 
    cSentence            += "UPDATE "                                                      
    
+   msgalert( cBrowseState, "cBrowseState 3" )
+
    if !empty( cBrowseState )                                          
       cSentence         +=    "browse_state = " + quoted( cBrowseState ) + ", "           
    end if

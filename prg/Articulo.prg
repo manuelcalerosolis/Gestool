@@ -1996,25 +1996,23 @@ STATIC FUNCTION EdtRec( aTmp, aGet, cArticulo, oBrw, bWhen, bValid, nMode )
 
    oTagsEver            := TTagEver():Redefine( 100, fldGeneral, nil, aNombreEtiquetas ) 
    oTagsEver:lOverClose := .t.
-   oTagsEver:AddItem( "uno" )
-   oTagsEver:AddItem( "dos" )
-   oTagsEver:AddItem( "tres" )
 
    TBtnBmp():ReDefine( 101, "Lupa",,,,,{|| getEtiquetasBrowse( oTagsEver:getItems() ) }, fldGeneral, .f., , .f.,  )
 
-   REDEFINE GET oSay[9] VAR cSay[9] ;
-      ID       271 ;
+   REDEFINE GET oSay[9] ;
+      VAR         cSay[9] ;
+      ID          271 ;
       SPINNER ;
-      WHEN     ( .f. ) ;
-      OF       fldGeneral
+      WHEN        ( .f. ) ;
+      OF          fldGeneral
 
    REDEFINE GET   aGet[ ( D():Articulos( nView ) )->( fieldpos( "cCodFab" ) ) ] ;
-      VAR      aTmp[ ( D():Articulos( nView ) )->( fieldpos( "cCodFab" ) ) ] ;
-      ID       390 ;
-      IDTEXT   391 ;
-      WHEN     ( nMode != ZOOM_MODE ) ;
-      BITMAP   "LUPA" ;
-      OF       fldGeneral
+      VAR         aTmp[ ( D():Articulos( nView ) )->( fieldpos( "cCodFab" ) ) ] ;
+      ID          390 ;
+      IDTEXT      391 ;
+      WHEN        ( nMode != ZOOM_MODE ) ;
+      BITMAP      "LUPA" ;
+      OF          fldGeneral
 
    aGet[ ( D():Articulos( nView ) )->( fieldpos( "cCodFab" ) ) ]:bValid := {|| ( aGet[ ( D():Articulos( nView ) )->( fieldpos( "cCodFab" ) ) ]:oHelpText:cText( RetFld( aTmp[ ( D():Articulos( nView ) )->( fieldpos( "cCodFab" ) ) ], oFabricante:GetAlias() ) ), .t. ) }
    aGet[ ( D():Articulos( nView ) )->( fieldpos( "cCodFab" ) ) ]:bHelp  := {|| oFabricante:Buscar( aGet[ ( D():Articulos( nView ) )->( fieldpos( "cCodFab" ) ) ] ) }

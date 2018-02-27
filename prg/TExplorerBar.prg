@@ -59,6 +59,8 @@ CLASS TExplorerBar FROM TControl
 
    METHOD ReSize( nSizeType, nWidth, nHeight )
 
+   METHOD newVerticalScroll()
+
    METHOD VScrollSetPos( nPos )
    METHOD VScrollSkip( nSkip )
 
@@ -96,14 +98,8 @@ METHOD New( nTop, nLeft, nWidth, nHeight, oWnd ) CLASS TExplorerBar
       ::oWnd:DefControl( Self )
    endif
 
-   DEFINE SCROLLBAR ::oVScroll VERTICAL OF Self
+   ::newVerticalScroll()
 
-   ::oVScroll:bGoUp     = {|| ::VScrollSkip( - 10 ) }
-   ::oVScroll:bGoDown   = {|| ::VScrollSkip( 10 ) }
-   ::oVScroll:bPageUp   = {|| ::VScrollSkip( - ::oVScroll:nPgStep ) }
-   ::oVScroll:bPageDown = {|| ::VScrollSkip( ::oVScroll:nPgStep ) }
-   ::oVScroll:bPos      = {|nPos| ::VScrollSetPos( nPos ) }
-   ::oVScroll:bTrack    = {|nPos| ::VScrollSetPos( nPos ) }
 
 RETURN Self
 
@@ -125,7 +121,24 @@ METHOD Redefine( nId, oDlg ) CLASS TExplorerBar
 
    oDlg:DefControl( Self )
 
+   ::newVerticalScroll()
+
 RETURN Self
+
+//----------------------------------------------------------------------------//
+
+METHOD newVerticalScroll()
+
+   DEFINE SCROLLBAR  ::oVScroll VERTICAL OF Self
+
+   ::oVScroll:bGoUp     = {|| ::VScrollSkip( - 10 ) }
+   ::oVScroll:bGoDown   = {|| ::VScrollSkip( 10 ) }
+   ::oVScroll:bPageUp   = {|| ::VScrollSkip( - ::oVScroll:nPgStep ) }
+   ::oVScroll:bPageDown = {|| ::VScrollSkip( ::oVScroll:nPgStep ) }
+   ::oVScroll:bPos      = {|nPos| ::VScrollSetPos( nPos ) }
+   ::oVScroll:bTrack    = {|nPos| ::VScrollSetPos( nPos ) }
+
+RETURN ( ::oVScroll )
 
 //----------------------------------------------------------------------------//
 
@@ -314,13 +327,14 @@ CLASS TTaskPanel FROM TControl
 
    DATA   cTitle, nIndex
    DATA   nTopMargin, nLeftMargin, nRightMargin INIT 16
-   DATA   nTitleHeight    INIT 25
-   DATA   nBodyHeight     //INIT 50
-   DATA   lCollapsed      INIT .F.
-   DATA   lOverTitle      INIT .F.
-   DATA   lHasAlpha       INIT .F.
-   DATA   aLinks          INIT {}
-   DATA   nClrHover       INIT RGB( 0, 0, 0 )
+   DATA   nTitleHeight     INIT 25
+   DATA   nBodyHeight      
+   DATA   lCollapsed       INIT .F.
+   DATA   lOverTitle       INIT .F.
+   DATA   lHasAlpha        INIT .F.
+   DATA   aLinks           INIT {}
+   DATA   nClrHover        INIT RGB( 0, 0, 0 )
+   DATA   nClrText         INIT RGB( 0, 0, 0 )
    DATA   hRegion
    DATA   aBitmaps
    DATA   hBmpPanel
@@ -329,6 +343,7 @@ CLASS TTaskPanel FROM TControl
 
    METHOD New( cTitle, oWnd, nIndex, cBmpPanel )
    METHOD AddLink( cPrompt, bAction, cBitmap )
+   METHOD AddGet( cPrompt, bAction, cBitmap )
    METHOD Display() INLINE ::BeginPaint(), ::Paint(), ::EndPaint(), 0
    METHOD Destroy()
    METHOD End()       INLINE ::Destroy()
@@ -343,6 +358,8 @@ CLASS TTaskPanel FROM TControl
    METHOD MouseLeave( nRow, nCol, nFlags )
    METHOD UpdateRegion()
    METHOD SetPanelBitmap( cnBmp )
+
+   METHOD getTopControl()
 
 ENDCLASS
 
@@ -397,37 +414,58 @@ RETURN Self
 
 //----------------------------------------------------------------------------//
 
+METHOD getTopControl()
+
+   local nTop := ::nTitleHeight + 10
+
+   aeval( ::aControls, {|oControl| if( oControl:ClassName() != "TSAY", nTop += oControl:nHeight + 7, ) } )
+
+RETURN ( nTop )
+
+//----------------------------------------------------------------------------//
+
 METHOD AddLink( cPrompt, bAction, cBitmap ) CLASS TTaskPanel
 
-   local nTop := ::nTitleHeight + 10, n, oUrlLink
+   local oUrlLink
 
-   if ! Empty( ::aControls )
-      for n = 1 to Len( ::aControls )
-         nTop += ::aControls[ n ]:nHeight + 7
-      next
-   endif
-
-   oUrlLink := TUrlLink():New( nTop, 33, Self, .T., .F., ::oFont, "", cPrompt )
+   oUrlLink          := TUrlLink():New( ::getTopControl(), 33, Self, .T., .F., ::oFont, "", cPrompt )
 
    oUrlLink:SetColor( ::nClrHover, ::nClrPane )
-   oUrlLink:nClrOver = ::nClrHover
-   oUrlLink:bAction = bAction
+   oUrlLink:nClrOver := ::nClrHover
+   oUrlLink:bAction  := bAction
 
-   if File( cBitmap )
-      oUrlLink:hBmp = ReadBitmap( 0, cBitmap )
-   else
-      oUrlLink:hBmp = LoadBitmap( GetResources(), cBitmap )
+   if !empty( cBitmap )
+      oUrlLink:hBmp  := LoadBitmap( GetResources(), cBitmap )
    endif
 
    if oUrlLink:nTop + oUrlLink:nHeight > ::nHeight
       ::nHeight      := oUrlLink:nTop + oUrlLink:nHeight + 10
       ::nBodyHeight  := ::nHeight - ::nTitleHeight
-      ::UpdateRegion()
    endif
 
 RETURN nil
 
 //----------------------------------------------------------------------------//
+
+METHOD AddGet( cPrompt, cGet, cBitmap ) CLASS TTaskPanel
+
+   local oSay
+   local oGet
+   local nTop        := ::getTopControl()
+
+   @ nTop, 10  SAY oSay PROMPT cPrompt OF Self PIXEL COLOR RGB( 0, 0, 0 ), RGB( 255, 255, 255 )
+
+   @ nTop, 120 GET oGet VAR cGet SIZE 400, 20 OF Self PIXEL
+
+   if nTop + oGet:nHeight > ::nHeight
+      ::nHeight      := nTop + oGet:nHeight 
+      ::nBodyHeight  := ::nHeight - ::nTitleHeight
+   endif
+
+RETURN nil
+
+//----------------------------------------------------------------------------//
+
 
 METHOD Destroy() CLASS TTaskPanel
 

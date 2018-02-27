@@ -59,19 +59,19 @@ METHOD Activate()
    local oBmp
    local oBtnAceptar
 
-   DEFINE DIALOG     ::oDialog ;
-      TITLE          "Configuraciones" ;
-      RESOURCE       "AJUSTES"
+   DEFINE DIALOG        ::oDialog ;
+      TITLE             "Configuraciones" ;
+      RESOURCE          "AJUSTES"
 
-      REDEFINE BITMAP oBmp ;
-         ID          500 ;
-         RESOURCE    "gc_wrench_48" ;
+      REDEFINE BITMAP   oBmp ;
+         ID             500 ;
+         RESOURCE       "gc_wrench_48" ;
          TRANSPARENT ;
-         OF          ::oDialog
+         OF             ::oDialog
 
       REDEFINE EXPLORERBAR ::oExplorerBar ;
-         ID          100 ;
-         OF          ::oDialog
+         ID             100 ;
+         OF             ::oDialog
 
       ::oExplorerBar:nBottomColor  := RGB( 255, 255, 255 )
       ::oExplorerBar:nTopColor     := RGB( 255, 255, 255 )
@@ -101,19 +101,42 @@ RETURN ( ::oDialog:nResult == IDOK )
 
 METHOD StartActivate()
 
-   local oPanel
-   local cName       := "test"   
+   local oPanelTop
+   local oPanelBottom
 
-   oPanel            := ::oExplorerBar:AddPanel( "One" )
-   oPanel:nClrHover  := RGB( 0, 0, 0 )
-   oPanel:nClrText   := RGB( 0, 0, 0 )
-   oPanel:SetColor( nRGB( 255, 255, 255 ), nRGB( 255, 255, 255 ) )
+   oPanelTop            := ::oExplorerBar:AddPanel( "Propiedades usuario", nil, 1 ) 
+   oPanelTop:SetColor( nRGB( 255, 255, 255 ), nRGB( 255, 255, 255 ) )
 
-   @ 34, 10 SAY "This a say" OF oPanel PIXEL COLOR RGB( 0,0,0), RGB(255,255,255)
-   @ 34, 120 GET cName SIZE 200, 18 OF oPanel PIXEL
+   oPanelTop:AddLink( "First item", nil, "adddbf" )
+   oPanelTop:AddLink( "Second item", nil, "delete" )
 
-   @ 64, 10 SAY "This a say" OF oPanel PIXEL COLOR RGB( 0,0,0), RGB(255,255,255)
-   @ 64, 120 GET cName SIZE 200, 18 OF oPanel PIXEL
+   oPanelTop:AddGet( "Población", "la palma del condado" )
+
+   oPanelTop:AddGet( "Provincia", "huelva" )
+
+   oPanelTop:AddGet( "Región", "andalucia" )
+
+   // @ 34, 10 SAY "This a say" OF oPanelTop PIXEL COLOR RGB( 0,0,0), RGB(255,255,255)
+   // @ 34, 120 GET cName SIZE 200, 18 OF oPanelTop PIXEL
+
+   // @ 64, 10 SAY "This a say" OF oPanelTop PIXEL COLOR RGB( 0,0,0), RGB(255,255,255)
+   // @ 64, 120 GET cName SIZE 200, 18 OF oPanelTop PIXEL
+
+   oPanelBottom            := ::oExplorerBar:AddPanel( "Bottom" )
+   // oPanelBottom:nClrHover  := RGB( 0, 0, 0 )
+   // oPanelBottom:nClrText   := RGB( 0, 0, 0 )
+   oPanelBottom:SetColor( nRGB( 255, 255, 255 ), nRGB( 255, 255, 255 ) )
+
+
+   oPanelBottom:AddLink( "First item", nil, "adddbf" )
+   oPanelBottom:AddLink( "Second item", nil, "delete" )
+
+   oPanelBottom:AddGet( "Población", "la palma del condado" )
+
+   oPanelBottom:AddGet( "Provincia", "huelva" )
+
+   oPanelBottom:AddGet( "Región", "andalucia" )
+
 
 RETURN ( self )
 
