@@ -95,6 +95,10 @@ RETURN ( Self )
 
 METHOD Activate()
 
+   if hb_isnil( ::oController:oModel:hBuffer[ "fecha_caducidad" ] )
+      ::oController:oModel:hBuffer[ "fecha_caducidad" ]  := ctod( "" )
+   end if 
+
    DEFINE DIALOG     ::oDialog ;
       RESOURCE       "MOVIMIENTOS_ALMACEN_LINEAS" ;
       TITLE          ::lblTitle() + ::oController:getTitle() 
