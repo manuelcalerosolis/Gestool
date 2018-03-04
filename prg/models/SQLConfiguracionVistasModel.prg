@@ -140,8 +140,6 @@ METHOD set( cViewType, cViewName, cBrowseState, cColumnOrder, cOrientation, idTo
    cSentence            +=       "view_type, "                                               
    cSentence            +=       "view_name, "     
 
-   msgalert( cBrowseState, "cBrowseState 1 " )
-
    if !empty( cBrowseState )                                          
       cBrowseState      := getSQLDatabase():escapeStr( cBrowseState ) 
       cSentence         +=       "browse_state, "                                            
@@ -167,8 +165,6 @@ METHOD set( cViewType, cViewName, cBrowseState, cColumnOrder, cOrientation, idTo
    cSentence            +=       quoted( cViewType ) + ", "                          
    cSentence            +=       quoted( cViewName ) + ", "                                  
 
-   msgalert( cBrowseState, "cBrowseState 2 " )
-
    if !empty( cBrowseState )                                          
       cSentence         +=       quoted( cBrowseState ) + ", "                               
    end if 
@@ -191,8 +187,6 @@ METHOD set( cViewType, cViewName, cBrowseState, cColumnOrder, cOrientation, idTo
 
    cSentence            += "UPDATE "                                                      
    
-   msgalert( cBrowseState, "cBrowseState 3" )
-
    if !empty( cBrowseState )                                          
       cSentence         +=    "browse_state = " + quoted( cBrowseState ) + ", "           
    end if

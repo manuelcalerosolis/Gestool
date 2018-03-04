@@ -25,14 +25,14 @@ CLASS SQLDatabase
 
    DATA aModels                           INIT {}
 
-
-
    METHOD New()                           CONSTRUCTOR
    
    METHOD Conexion()                      INLINE ( ::oConexion )
    METHOD Connect() 
    METHOD ConnectWithoutDataBase()
    METHOD Disconnect()                    INLINE ( if( !empty( ::oConexion ), ::oConexion:disconnect(), ) )
+   
+   METHOD RowSet( cSql )                  INLINE ( if( !empty( ::oConexion ), ::oConexion:RowSet( cSql ), ) )
 
    METHOD Ping()                          INLINE ( if( !empty( ::oConexion ), ::oConexion:Ping(), ) )
 

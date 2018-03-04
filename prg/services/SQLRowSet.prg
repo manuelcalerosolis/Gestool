@@ -11,8 +11,6 @@ CLASS SQLRowSet
 
    DATA oRowSet 
 
-   DATA oStatement
-
    DATA oController
 
    DATA nRecno
@@ -47,9 +45,6 @@ CLASS SQLRowSet
 
    METHOD freeRowSet()                                INLINE ( if( !empty( ::oRowSet ), ( ::oRowSet:free(), ::oRowSet := nil ), ) )
 
-   METHOD getStatement()                              INLINE ( ::oStatement )
-   METHOD freeStatement()                             INLINE ( if( !empty( ::oStatement ), ( ::oStatement:free(), ::oStatement := nil ), ) )
-
    METHOD Refresh()                                   INLINE ( if( !empty( ::oRowSet ), ::oRowSet:Refresh(), ) )
 
    METHOD IdFromRecno( aRecno, cColumnKey )
@@ -77,8 +72,6 @@ METHOD End()
 
    ::freeRowSet()
 
-   ::freeStatement()
-
 RETURN ( nil )
 
 //---------------------------------------------------------------------------//
@@ -105,13 +98,11 @@ METHOD Build( cSentence )
 
       ::freeRowSet()
 
-      ::freeStatement()
+      ::oRowSet      := getSQLDatabase():RowSet( cSentence )
 
-      ::oStatement      := getSQLDatabase():Query( cSentence )
-
-      ::oStatement:setAttribute( ATTR_STR_PAD, .t. )
+      ::oRowSet:setAttribute( ATTR_STR_PAD, .t. )
       
-      ::oRowSet         := ::oStatement:fetchRowSet()
+      ::oRowSet:Load()
 
    catch oError
 
