@@ -123,10 +123,7 @@ METHOD StartActivate()
    // @ 64, 120 GET cName SIZE 200, 18 OF oPanelTop PIXEL
 
    oPanelBottom            := ::oExplorerBar:AddPanel( "Bottom" )
-   // oPanelBottom:nClrHover  := RGB( 0, 0, 0 )
-   // oPanelBottom:nClrText   := RGB( 0, 0, 0 )
    oPanelBottom:SetColor( nRGB( 255, 255, 255 ), nRGB( 255, 255, 255 ) )
-
 
    oPanelBottom:AddLink( "First item", nil, "adddbf" )
    oPanelBottom:AddLink( "Second item", nil, "delete" )
@@ -137,6 +134,19 @@ METHOD StartActivate()
 
    oPanelBottom:AddGet( "Región", "andalucia" )
 
+   oPanelBottom:AddGet( "Población", "la palma del condado" )
+
+   oPanelBottom:AddGet( "Provincia", "huelva" )
+
+   oPanelBottom:AddGet( "Región", "andalucia" )
+
+   oPanelBottom:AddGet( "Población", "la palma del condado" )
+
+   oPanelBottom:AddGet( "Provincia", "huelva" )
+
+   oPanelBottom:AddGet( "Región", "andalucia" )
+
+   ::oExplorerBar:checkScroll()
 
 RETURN ( self )
 

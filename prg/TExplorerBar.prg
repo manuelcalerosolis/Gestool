@@ -146,7 +146,7 @@ METHOD AddPanel( cName, cBmpName, nBodyHeight ) CLASS TExplorerBar
 
    local oPanel
 
-   oPanel := AAdd( ::aPanels, TTaskPanel():New( cName, Self, Len( ::aPanels ), cBmpName, nBodyHeight ) )
+   oPanel := aadd( ::aPanels, TTaskPanel():New( cName, Self, len( ::aPanels ), cBmpName, nBodyHeight ) )
 
    ::CheckScroll( oPanel )
 
