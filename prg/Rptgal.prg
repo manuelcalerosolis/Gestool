@@ -2329,6 +2329,24 @@ Return nil
 FUNCTION SQLTageableModel() 
 Return nil
 
+FUNCTION SQLUsuariosModel
+Return nil
+
+FUNCTION SQLAjustesModel
+Return nil
+
+FUNCTION SQLAjustableModel
+Return nil
+
+FUNCTION SQLRowset
+Return nil
+
+FUNCTION CategoriasModel
+Return nil
+
+FUNCTION UsuariosController
+Return nil
+
 //------------------------------------------------------------------//
 
 #pragma BEGINDUMP
