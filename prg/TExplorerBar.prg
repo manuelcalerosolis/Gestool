@@ -361,6 +361,8 @@ CLASS TTaskPanel FROM TControl
    METHOD New( cTitle, oWnd, nIndex, cBmpPanel )
    METHOD AddLink( cPrompt, bAction, cBitmap )
    METHOD AddGet( cPrompt, bAction, cBitmap )
+   METHOD AddComboBox( cPrompt, cItem, aItems )
+
    METHOD Display() INLINE ::BeginPaint(), ::Paint(), ::EndPaint(), 0
    METHOD Destroy()
    METHOD End()       INLINE ::Destroy()
@@ -484,6 +486,30 @@ METHOD AddGet( cPrompt, cGet ) CLASS TTaskPanel
 RETURN ( oGet )
 
 //----------------------------------------------------------------------------//
+
+METHOD AddComboBox( cPrompt, cItem, aItems ) CLASS TTaskPanel
+
+   local oSay
+   local oCbx
+   local nTop        := ::getTopControl()
+
+   DEFAULT cPrompt   := "Testing"
+   DEFAULT cItem     := "Testing"
+   DEFAULT aItems    := { "Testing", "this", "ComboBox" }
+
+   @ nTop, 10  SAY oSay PROMPT cPrompt OF Self PIXEL COLOR RGB( 0, 0, 0 ), RGB( 255, 255, 255 )
+
+   @ nTop, 120 COMBOBOX oCbx VAR cItem ITEMS aItems SIZE 400, 460 OF Self PIXEL HEIGHTGET 20 
+
+   if nTop + oCbx:nHeight > ::nHeight
+      ::nHeight      := nTop + oCbx:nHeight 
+      ::nBodyHeight  := ::nHeight - ::nTitleHeight
+   endif
+
+RETURN ( oCbx )
+
+//----------------------------------------------------------------------------//
+
 
 METHOD Destroy() CLASS TTaskPanel
 
